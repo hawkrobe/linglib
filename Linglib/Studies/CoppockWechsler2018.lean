@@ -8,87 +8,37 @@ import Linglib.Studies.Pearson2015
 # Coppock & Wechsler (2018): The Proper Treatment of Egophoricity in Kathmandu Newari
 
 This file formalizes Coppock and Wechsler's account of egophoric marking in Kathmandu Newari.
-Newari verbs do not agree with their subject in person. Instead, a special *egophoric* form of
-the verb appears in three places: in statements about the speaker (*I drank a lot*), in
-questions about the addressee (*Did you drink a lot?*), and in reports where the reported
-speaker was knowingly talking about herself (*Syam said that he drank a lot*, when what Syam
-said was *I drank a lot*). The plain form of the verb appears everywhere else.
+Newari verbs carry no person agreement. A special *egophoric* form appears in statements about
+the speaker, in questions about the addressee, and in reports where the reported speaker was
+knowingly talking about herself. The plain form appears elsewhere.
 
-The account has two parts. The first is a semantics. A sentence is evaluated at a context, a
-world and an agent called the *perspectival center*, so its meaning is a *centered proposition*,
-true or false of a world together with a center. To believe a centered proposition is to take
-oneself to be its center, which is Lewis's analysis of beliefs about oneself. The pronoun *I*
-denotes the speaker of the context, while a new term, SELF, denotes the center. The egophoric
-suffix leaves the meaning of the verb alone and adds the presupposition that the subject is
-SELF, so an egophoric clause can only be true of a center who is its subject. Wechsler
-introduced this idea informally as self-ascription.
-
-The second part is a model of conversation, built on the Table of Farkas and Bruce. Every
-context has an *authority*, the person who vouches for what is said: the speaker of a statement,
-the addressee of a question, and the source of a report marked with an evidential. A speech act
-proposes for the common ground the meaning of its clause with the authority filled in as the
-center. If the subject of an egophoric clause is not the authority, that proposal is the empty
-proposition, and the conversation is left with no consistent way to continue. This is why the
-egophoric form goes with *I* in statements and with *you* in questions. Verbs of saying
-quantify over the worlds and centers compatible with what was said, as in Pearson's semantics
-for attitude reports, so an egophoric report is true only if the reported speaker took the
-subject to be herself.
-
-Coppock and Wechsler compare a simpler account, which they call authority-indexical and find in
-Bickel and Nichols and in McCready's analysis of Japanese *zibun*. On that account the suffix
-presupposes that the subject is the authority of the context. The two accounts agree on main
-clauses. In reports the authority-indexical account has to shift the context, and it then
-requires only that the subject and the reported speaker be the same person. Newari requires
-more. If Syam points at a photograph of a drunken man without recognizing himself and says
-*that guy drank a lot*, the egophoric report of his words is false.
-
-## Main definitions
-
-* `Context`: a context of utterance together with its authority.
-* `ego`, `plain`: the meanings of a clause with the egophoric and with the plain verb form.
-* `egoAuth`: the meaning of an egophoric clause on the authority-indexical account.
-* `uncenter`: the ordinary proposition obtained by filling in the center.
-* `assert`, `ask`: statements and polar questions as moves on the Table.
-* `Says`, `report`: the meaning of a verb of saying and of the report it heads.
-
-## Main results
-
-* `inCrisis_assert_ego`, `inCrisis_ask_ego`: a statement or question with an egophoric verb
-  whose subject is not the authority leaves the conversation with no consistent continuation.
-* `assert_ego_of_eq`, `ask_ego_of_eq`: when the subject is the authority, the statement or
-  question is an ordinary one about the authority.
-* `says_ego_iff`: an egophoric report is true exactly when the reported speaker takes the
-  subject to be herself and ascribes the property to herself.
-* `eq_of_says_report_ego`: when one report is embedded in another, the subject of the
-  egophoric verb is the speaker of the inner report.
-* `uncenter_egoAuth`, `lampshade`: the authority-indexical account agrees with the paper's on
-  main clauses and gives the wrong answer in the photograph scenario.
-* `ego_acceptable_iff`: among the paper's examples with an egophoric verb, the acceptable ones
-  are exactly those whose subject is the authority.
+A sentence is evaluated at a context, a world and an agent called the *perspectival center*, and
+the egophoric suffix presupposes that the subject is the center (`ego`). Every context has an
+*authority*, the speaker of a statement and the addressee of a question, and a speech act
+proposes its meaning with the authority as center. When the subject is not the authority the
+proposal is empty and the conversation cannot continue (`inCrisis_assert_ego`,
+`inCrisis_ask_ego`), which gives *I* in statements and *you* in questions. A report is true only
+if the reported speaker took the subject to be herself (`says_ego_iff`). A simpler account, on
+which the suffix presupposes that the subject is the authority, agrees on main clauses and
+fails when Syam comments on a photograph of himself that he does not recognize (`lampshade`).
 
 ## Implementation notes
 
-In the paper a speaker's commitments and the issues on the Table are centered, while the common
-ground and the projected common grounds are ordinary propositions. The Table here records the
-second, public side, and the centered meaning is the argument of `assert`, `ask` and `Says`.
-The expressions of the paper's logic are given directly by their meanings rather than as
-syntax, and time is ignored as in the paper.
+* The Table records the public side of the paper's discourse model, the common ground and its
+  projections. The centered meaning is the argument of `assert`, `ask` and `Says`.
+* Expressions of the paper's logic are given by their meanings rather than as syntax, and time
+  is ignored as in the paper.
 
 ## TODO
 
-The paper marks the second-person question with the plain verb form as unacceptable. The
-account derives where the egophoric form is excluded, not where it is required, so this judgment
-is not derived here.
+The paper marks the second-person question with the plain form as unacceptable. The account
+derives where the egophoric form is excluded, not where it is required.
 
 ## References
 
 * [coppock-wechsler-2018]
-* [wechsler-2018]
 * [farkas-bruce-2010]
 * [pearson-2015]
-* [lewis-1979-attitudes]
-* [bickel-nichols-2007]
-* [mccready-2007]
 -/
 
 namespace CoppockWechsler2018
