@@ -1,29 +1,22 @@
-import Linglib.Core.Order.Normality
+import Linglib.Core.Order.OfCriteria
 import Mathlib.Order.Defs.PartialOrder
 
 /-!
-# Satisfaction Ordering
+# Satisfaction orderings
 
-A `SatisfactionOrdering α Criterion` bundles a `Preorder α` with the data
-that constructs it: a `satisfies : α → Criterion → Bool` relation and a
-`criteria : List Criterion`. The induced `≤` is subset inclusion of
-satisfied criteria.
+This file defines `SatisfactionOrdering α Criterion`, which bundles a `Preorder α` with the data
+that constructs it, a relation `satisfies : α → Criterion → Bool` and a list of criteria. The
+induced `a ≤ a'` holds when `a` satisfies every listed criterion that `a'` satisfies.
 
-Used by Kratzer modal semantics (worlds by ordering source) and
-Phillips-Brown desire semantics (propositions by desires).
+## Implementation notes
 
-## Design
-
-The structure `extends Preorder α`, so all of mathlib's order vocabulary
-(`≤`, `<`, `IsMax`, `Maximal`, etc.) is available on `α` once
-`o.toPreorder` is opened as an instance (e.g. `letI := o.toPreorder`).
-The smart constructor `ofCriteria` builds the canonical satisfaction-based
-preorder from a `satisfies` relation and a criteria list. A `decLE` field
-carries decidability of `≤`, automatic for the `ofCriteria` construction.
-
-`atLeastAsGood`, `equivalent`, `strictlyBetter` are kept as `@[reducible]`
-aliases for `o.le`, `AntisymmRel`, and `o.lt` so call sites can use
-domain-friendly names.
+The structure extends `Preorder α`, so the order vocabulary of mathlib (`≤`, `<`, `IsMax`,
+`Maximal`) is available on `α` once `o.toPreorder` is made an instance, for example with
+`letI := o.toPreorder`. The constructor `ofCriteria` builds the preorder from a satisfaction
+relation and a list of criteria, and agrees with the general `Preorder.ofCriteria`
+(`le_iff_ofCriteria`). The field `decLE` carries decidability of `≤`, which holds automatically
+for `ofCriteria`. The reducible aliases `atLeastAsGood`, `equivalent` and `strictlyBetter` stand
+for `o.le`, `AntisymmRel` and `o.lt`, so that call sites can use the names of the literature.
 -/
 
 namespace Core.Order
@@ -49,36 +42,35 @@ instance (o : SatisfactionOrdering α Criterion) (a a' : α) :
 def satisfiedBy (o : SatisfactionOrdering α Criterion) (a : α) : List Criterion :=
   o.criteria.filter (o.satisfies a)
 
-/-- Canonical constructor: build a `SatisfactionOrdering` from a satisfaction
-    relation and a criteria list. The induced `≤` is "every criterion `a'`
-    satisfies, `a` also satisfies". -/
+/-- The canonical constructor builds a `SatisfactionOrdering` from a satisfaction relation and a
+list of criteria, with `a ≤ a'` when `a` satisfies every criterion that `a'` satisfies. -/
 def ofCriteria (satisfies : α → Criterion → Bool) (criteria : List Criterion) :
     SatisfactionOrdering α Criterion :=
   let le' : α → α → Prop :=
-    fun a a' => ∀ p ∈ criteria.filter (satisfies a'), satisfies a p = true
+    fun a a' ↦ ∀ p ∈ criteria.filter (satisfies a'), satisfies a p = true
   { le := le'
-    le_refl := fun a p hp => by
+    le_refl := fun a p hp ↦ by
       simp only [List.mem_filter] at hp
       exact hp.2
-    le_trans := fun a b c hab hbc p hp => by
+    le_trans := fun a b c hab hbc p hp ↦ by
       simp only [List.mem_filter] at hp
       have hp_b : satisfies b p = true :=
         hbc p (by simp only [List.mem_filter]; exact hp)
       exact hab p (by simp only [List.mem_filter]; exact ⟨hp.1, hp_b⟩)
     satisfies := satisfies
     criteria := criteria
-    decLE := fun a a' =>
+    decLE := fun a a' ↦
       show Decidable (∀ p ∈ criteria.filter (satisfies a'), satisfies a p = true) by
         infer_instance }
 
-/-- The bundled construction agrees with the general criteria-derived
-    preorder `Preorder.ofCriteria` (Prop-valued satisfaction, `Set`
-    criteria): same order, with the `List.filter` membership unfolded.
-    `SatisfactionOrdering` is the decidable/bundled specialization. -/
+/-- The bundled construction agrees with the general criteria-derived preorder
+`Preorder.ofCriteria`, which takes Prop-valued satisfaction and a `Set` of criteria. The order is
+the same, with the `List.filter` membership unfolded, and `SatisfactionOrdering` is the decidable,
+bundled specialization. -/
 theorem le_iff_ofCriteria (satisfies : α → Criterion → Bool)
     (criteria : List Criterion) (a a' : α) :
     (SatisfactionOrdering.ofCriteria satisfies criteria).le a a' ↔
-      (Preorder.ofCriteria (fun x c => satisfies x c = true)
+      (Preorder.ofCriteria (fun x c ↦ satisfies x c = true)
         {c | c ∈ criteria}).le a a' := by
   show (∀ p ∈ criteria.filter (satisfies a'), satisfies a p = true) ↔
     ∀ c ∈ criteria, satisfies a' c = true → satisfies a c = true
@@ -129,29 +121,18 @@ theorem equivalent_trans (o : SatisfactionOrdering α Criterion) {a b c : α}
     (hab : o.equivalent a b) (hbc : o.equivalent b c) : o.equivalent a c :=
   ⟨o.le_trans a b c hab.1 hbc.1, o.le_trans c b a hbc.2 hab.2⟩
 
-/-! ## Normality-ordering projection -/
-
-/-- The induced normality ordering — just the underlying `Preorder`, which
-    connects satisfaction-based orderings (Kratzer modal semantics,
-    Phillips-Brown desire) to the default-reasoning infrastructure
-    (`Normality.optimal`, `Normality.refine`, `Normality.respects`, CR1–CR4). -/
-abbrev toNormalityOrder (o : SatisfactionOrdering α Criterion) : Preorder α :=
-  o.toPreorder
-
 /-! ## Maxima and undominated elements -/
 
-/-- Best elements: those at-least-as-good as every candidate. (Greatest
-    elements; when the order is partial, see `undominated` for maximal
-    elements.) -/
+/-- The best elements are those at least as good as every candidate, the greatest elements. When the
+order is partial, `undominated` gives the maximal elements. -/
 def best (o : SatisfactionOrdering α Criterion) (candidates : List α) : List α :=
-  candidates.filter fun a => decide (∀ a' ∈ candidates, o.le a a')
+  candidates.filter fun a ↦ decide (∀ a' ∈ candidates, o.le a a')
 
-/-- Undominated elements: those not strictly dominated by any candidate. The
-    Pareto frontier — equivalent to `best` when the ordering is total, but
-    more general for partial orders where incomparable elements can both be
-    undominated without either dominating all others. -/
+/-- The undominated elements are those not strictly dominated by any candidate, the Pareto frontier.
+They coincide with `best` when the ordering is total, and are more general for partial orders, where
+two incomparable elements can both be undominated. -/
 def undominated (o : SatisfactionOrdering α Criterion) (candidates : List α) : List α :=
-  candidates.filter fun a => decide (¬ ∃ a' ∈ candidates, o.strictlyBetter a' a)
+  candidates.filter fun a ↦ decide (¬ ∃ a' ∈ candidates, o.strictlyBetter a' a)
 
 /-- Membership characterization for `best`. -/
 @[simp] theorem mem_best_iff (o : SatisfactionOrdering α Criterion)
@@ -207,7 +188,7 @@ theorem ofCriteria_empty_best (satisfies : α → Criterion → Bool)
   rw [List.filter_eq_self]
   intro a _
   simp only [decide_eq_true_eq]
-  exact fun a' _ => ofCriteria_empty_le satisfies a a'
+  exact fun a' _ ↦ ofCriteria_empty_le satisfies a a'
 
 end SatisfactionOrdering
 

@@ -4,48 +4,41 @@ import Mathlib.Order.Defs.PartialOrder
 /-!
 # The criteria-derived preorder
 
-`Preorder.ofCriteria sat criteria` orders a carrier by inclusion of
-satisfied criteria: `a ≤ b` iff every criterion in `criteria` that `b`
-satisfies, `a` satisfies too. This is [kratzer-1981]'s ordering-source
-construction at full generality — the pullback of `⊇` along the
-satisfied-set map (`ofCriteria_le_iff_subset`; `Core.Order.PullbackPreorder`
-is the bundled, decidability-carrying form of the same pattern).
+This file defines the preorder that a family of criteria induces on a type. Given a relation
+`sat : α → C → Prop` and a set of criteria, `Preorder.ofCriteria sat criteria` ranks `a` below
+`b` when `a` satisfies every criterion of the set that `b` satisfies. It is the pullback of `⊇`
+along the map sending an element to the set of criteria it satisfies
+(`ofCriteria_le_iff_subset`), and `Core.Order.PullbackPreorder` is the bundled form of the same
+pattern that carries decidability.
 
-One construction, several instantiations across the library:
+## Main declarations
 
-- `Modality.Kratzer.kratzerPreorder` / `atLeastAsGoodAs` —
-  worlds ordered by an ordering source.
-- `Core.Order.NormalityOrder.fromProps` — the same order repackaged as a
-  `NormalityOrder` for the default-reasoning infrastructure.
-- `Desire.BestWorlds.le` — worlds ordered by desires (via `atLeastAsGoodAs`).
-- `Core.Order.SatisfactionOrdering.ofCriteria` — the bundled
-  `Bool`-valued/`List`-criteria specialization with decidable `≤`
-  (`SatisfactionOrdering.le_iff_ofCriteria`).
+* `Preorder.ofCriteria`: the criteria-derived preorder.
+* `Preorder.ofCriteria_le_of_subset`: fewer criteria give a coarser order.
+* `Preorder.satisfied`, `Preorder.maximalFor_satisfied_iff`: the criteria that an element
+  satisfies, and the minimal elements of the order as the elements satisfying a maximal set.
 -/
 
 namespace Preorder
 
 variable {α C : Type*}
 
-/-- **The criteria-derived preorder**: `a ≤ b` iff every criterion in
-    `criteria` that `b` satisfies, `a` satisfies too —
-    [kratzer-1981]'s ordering-source construction
-    `{c ∈ A : sat b c} ⊆ {c ∈ A : sat a c}` at full generality. -/
+/-- The criteria-derived preorder ranks `a` below `b` when `a` satisfies every criterion in
+`criteria` that `b` satisfies. -/
 @[reducible] def ofCriteria (sat : α → C → Prop) (criteria : Set C) :
     Preorder α where
   le a b := ∀ c ∈ criteria, sat b c → sat a c
   le_refl _ _ _ h := h
   le_trans _ _ _ hab hbc c hc h := hab c hc (hbc c hc h)
 
-/-- Unfolding lemma for the criteria-derived order. Not `@[simp]` —
-    unfolding is opt-in. -/
+/-- The criteria-derived order unfolds to its definition. The lemma is not tagged `simp`, so
+unfolding is opt-in. -/
 theorem ofCriteria_le_iff (sat : α → C → Prop) (criteria : Set C) (a b : α) :
     (ofCriteria sat criteria).le a b ↔ ∀ c ∈ criteria, sat b c → sat a c :=
   Iff.rfl
 
-/-- The criteria-derived order is the pullback of `⊇` along the
-    satisfied-set map `a ↦ {c ∈ criteria | sat a c}` — the
-    `Core.Order.PullbackPreorder` pattern with target `(Set C)ᵒᵈ`. -/
+/-- The criteria-derived order is the pullback of `⊇` along the map sending `a` to the set of
+criteria it satisfies, the `Core.Order.PullbackPreorder` pattern with target `(Set C)ᵒᵈ`. -/
 theorem ofCriteria_le_iff_subset (sat : α → C → Prop) (criteria : Set C)
     (a b : α) :
     (ofCriteria sat criteria).le a b ↔
@@ -57,21 +50,20 @@ theorem ofCriteria_le_iff_subset (sat : α → C → Prop) (criteria : Set C)
   · intro h c hc hsat
     exact (Set.mem_sep_iff.mp (h (Set.mem_sep_iff.mpr ⟨hc, hsat⟩))).2
 
-/-- Fewer criteria, coarser order: dominance over a criteria set transfers
-    to any subset. The general form of "adding a proposition to the
-    ordering source refines it". -/
+/-- Fewer criteria give a coarser order, so dominance over a set of criteria transfers to any
+subset. -/
 theorem ofCriteria_le_of_subset {sat : α → C → Prop}
     {criteria criteria' : Set C} (hsub : criteria ⊆ criteria') {a b : α}
     (h : (ofCriteria sat criteria').le a b) :
     (ofCriteria sat criteria).le a b :=
-  fun c hc => h c (hsub hc)
+  fun c hc ↦ h c (hsub hc)
 
 /-! ### The satisfied criteria as a valuation -/
 
-/-- The criteria that `a` satisfies. The criteria-derived order is the pullback of `⊇` along
-this map (`satisfied_subset_iff`), so the minimal elements of the order are the `MaximalFor`
-elements of the map (`maximalFor_satisfied_iff`): the best elements are those satisfying a
-maximal set of criteria, with no order instance on the carrier. -/
+/-- The criteria that `a` satisfies. The criteria-derived order is the pullback of `⊇` along this
+map (`satisfied_subset_iff`), so the minimal elements of the order are the `MaximalFor` elements of
+the map (`maximalFor_satisfied_iff`). The best elements are thus those satisfying a maximal set of
+criteria, with no order instance on the type. -/
 def satisfied (sat : α → C → Prop) (criteria : Set C) (a : α) : Set C :=
   {c ∈ criteria | sat a c}
 

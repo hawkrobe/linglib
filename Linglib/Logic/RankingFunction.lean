@@ -60,8 +60,6 @@ commutes.
 * [J. Y. Halpern, *Reasoning about Uncertainty* (2003)][halpern-2003]
 -/
 
-open Core.Order.Normality
-
 /-- A ranking function is a grading of disbelief in worlds under which some world has grade
 `0`. -/
 structure RankingFunction (W : Type*) where
@@ -219,13 +217,12 @@ theorem toPreorder_le {v : W} : κ.toPreorder.le w v ↔ κ.rank w ≤ κ.rank v
 
 theorem wellFounded_toPreorder_lt : WellFounded κ.toPreorder.lt := InvImage.wf κ.rank wellFounded_lt
 
-theorem connected_toPreorder : connected κ.toPreorder := fun w v ↦ le_total (κ.rank w) (κ.rank v)
+theorem total_toPreorder : Std.Total κ.toPreorder.le := ⟨fun w v ↦ le_total (κ.rank w) (κ.rank v)⟩
 
-/-- The optimal worlds of a proposition are its worlds of least rank. -/
-theorem mem_optimal_toPreorder :
-    w ∈ optimal κ.toPreorder A ↔ w ∈ A ∧ ∀ v ∈ A, κ.rank w ≤ κ.rank v :=
-  ⟨fun h ↦ ⟨h.1, fun v hv ↦ (le_total (κ.rank w) (κ.rank v)).elim id (h.2 hv)⟩,
-    fun h ↦ ⟨h.1, fun v hv _ ↦ h.2 v hv⟩⟩
+/-- The minimal worlds of a proposition are its worlds of least rank. -/
+theorem mem_minimals_toPreorder :
+    w ∈ κ.toPreorder.minimals A ↔ w ∈ A ∧ ∀ v ∈ A, κ.rank w ≤ κ.rank v :=
+  Preorder.mem_minimals_iff_forall_le κ.total_toPreorder
 
 /-- `B` follows from `A` in `κ` when the `A`-worlds of least rank are `B`-worlds. This is the
 consequence relation of the ranked model `κ.toPreorder`. -/
@@ -233,20 +230,20 @@ def Entails (A B : Set W) : Prop := Nonmonotonic.Entails κ.toPreorder A B
 
 theorem entails_iff_forall_least :
     κ.Entails A B ↔ ∀ w ∈ A, (∀ v ∈ A, κ.rank w ≤ κ.rank v) → w ∈ B :=
-  ⟨fun h _ hw hmin ↦ h (κ.mem_optimal_toPreorder.2 ⟨hw, hmin⟩),
-    fun h w hw ↦ have := κ.mem_optimal_toPreorder.1 hw; h w this.1 this.2⟩
+  ⟨fun h _ hw hmin ↦ h (κ.mem_minimals_toPreorder.2 ⟨hw, hmin⟩),
+    fun h w hw ↦ have := κ.mem_minimals_toPreorder.1 hw; h w this.1 this.2⟩
 
 /-- `B` follows from `A` exactly when every `A`-world outside `B` is outranked by an `A`-world
 in `B`. -/
 theorem entails_iff_exists_lt :
     κ.Entails A B ↔ ∀ x ∈ A, x ∉ B → ∃ y ∈ A, y ∈ B ∧ κ.rank y < κ.rank x := by
   refine ⟨fun h x hx hxB ↦ ?_, fun h w hw ↦ by_contra fun hwB ↦ ?_⟩
-  · obtain ⟨y, hy, hyx⟩ := exists_le_mem_optimal κ.wellFounded_toPreorder_lt hx
+  · obtain ⟨y, hy, hyx⟩ := Preorder.exists_le_mem_minimals κ.wellFounded_toPreorder_lt hx
     refine ⟨y, hy.1, h hy, lt_of_le_of_ne hyx fun e ↦ hxB (h ?_)⟩
-    exact κ.mem_optimal_toPreorder.2
-      ⟨hx, fun v hv ↦ e ▸ (κ.mem_optimal_toPreorder.1 hy).2 v hv⟩
+    exact κ.mem_minimals_toPreorder.2
+      ⟨hx, fun v hv ↦ e ▸ (κ.mem_minimals_toPreorder.1 hy).2 v hv⟩
   · obtain ⟨y, hy, -, hlt⟩ := h w hw.1 hwB
-    exact absurd ((κ.mem_optimal_toPreorder.1 hw).2 y hy) (not_le.2 hlt)
+    exact absurd ((κ.mem_minimals_toPreorder.1 hw).2 y hy) (not_le.2 hlt)
 
 /-- `B` follows from `A` exactly when `A` is impossible or `A ∩ B` is less disbelieved than
 `A \ B`. -/
@@ -278,7 +275,7 @@ instance [Fintype W] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
 
 /-- The consequence relation of a ranking function is rational. -/
 theorem isRational_entails : Nonmonotonic.IsRational κ.Entails :=
-  Nonmonotonic.isRational_entails κ.wellFounded_toPreorder_lt κ.connected_toPreorder
+  Nonmonotonic.isRational_entails κ.wellFounded_toPreorder_lt κ.total_toPreorder
 
 /-- The beliefs are the consequences of the tautology. -/
 theorem mem_beliefSet_iff_entails_univ : A ∈ κ.beliefSet ↔ κ.Entails Set.univ A := by
