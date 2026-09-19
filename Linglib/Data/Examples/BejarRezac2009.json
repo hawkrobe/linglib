@@ -12,7 +12,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "1>2 = 2"],
+      ["ea", "1"],
+      ["ia", "2"],
+      ["controller", "2"],
       ["context", "inverse"]
     ],
     "comment": "The core slot tracks the IA: a 2nd-person object fully checks the [u-3-2] probe."
@@ -30,7 +32,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "3>1 = 1"],
+      ["ea", "3"],
+      ["ia", "1"],
+      ["controller", "1"],
       ["context", "inverse"]
     ],
     "comment": ""
@@ -39,7 +43,7 @@
     "id": "br2009_2c",
     "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(2c)"},
     "language": "basq1248",
-    "primaryText": "ikusininduzun",
+    "primaryText": "ikusi ninduzun",
     "glossedTokens": [
       ["ikusi", "seen"], ["n-ind-u-zu-n", "1-X-have-2-PAST"]
     ],
@@ -48,7 +52,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "2>1 = 1"],
+      ["ea", "2"],
+      ["ia", "1"],
+      ["controller", "1"],
       ["context", "inverse"]
     ],
     "comment": "With (2a): no ranking of person values decides between two SAP arguments — the IA wins both times."
@@ -66,7 +72,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "1>3 = 1"],
+      ["ea", "1"],
+      ["ia", "3"],
+      ["controller", "1"],
       ["context", "direct"]
     ],
     "comment": "The 3rd-person IA leaves the [u2] residue, which the SAP EA checks on cycle II: displacement to the EA."
@@ -85,6 +93,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "3"],
+      ["controller", "1"],
       ["diagnostic", "case and binding unaffected"]
     ],
     "comment": "Ergative displacement changes neither case marking nor binding: agreement displacement is not movement."
@@ -120,7 +131,8 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "3>1"],
+      ["ea", "3"],
+      ["ia", "1"],
       ["repair", "added probe (INV)"]
     ],
     "comment": "The INV slot spells out the added probe that licenses the EA in inverse contexts."
@@ -156,7 +168,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "1>2 = 2"],
+      ["ea", "1"],
+      ["ia", "2"],
+      ["controller", "2"],
       ["context", "inverse"]
     ],
     "comment": "Nishnaabemwin (Odawa/Eastern Ojibwe): 2nd person is most specified ([u-3-1-2]), so the 2nd-person IA wins."
@@ -174,7 +188,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "2>1 = 2"],
+      ["ea", "2"],
+      ["ia", "1"],
+      ["controller", "2"],
       ["context", "direct"]
     ],
     "comment": "The 1st-person IA leaves the [u2] segment, checked by the 2nd-person EA on cycle II."
@@ -192,7 +208,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "3>1 = 1"],
+      ["ea", "3"],
+      ["ia", "1"],
+      ["controller", "1"],
       ["context", "inverse"]
     ],
     "comment": ""
@@ -210,7 +228,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "3>2 = 2"],
+      ["ea", "3"],
+      ["ia", "2"],
+      ["controller", "2"],
       ["context", "inverse"]
     ],
     "comment": ""
@@ -228,7 +248,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "3>1 = 1"],
+      ["ea", "3"],
+      ["ia", "1"],
+      ["controller", "1"],
       ["morphology", "first-cycle m-"]
     ],
     "comment": "1sg spelled m- when the probe is valued on cycle I (IA controls)."
@@ -246,7 +268,9 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "1>3 = 1"],
+      ["ea", "1"],
+      ["ia", "3"],
+      ["controller", "1"],
       ["morphology", "second-cycle v-"]
     ],
     "comment": "Same 1sg value spelled v- when valued on cycle II — a second-cycle effect."
@@ -265,7 +289,8 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "1>2"],
+      ["ea", "1"],
+      ["ia", "2"],
       ["context", "direct"],
       ["IA case", "unmarked"]
     ],
@@ -284,7 +309,8 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["combination", "2>1"],
+      ["ea", "2"],
+      ["ia", "1"],
       ["context", "inverse"],
       ["IA case", "R-Case (dative form)"]
     ],

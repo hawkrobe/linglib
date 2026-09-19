@@ -4,14 +4,16 @@ import Linglib.Syntax.Category.Pronoun.Personal
 /-!
 # Basque pronouns and allocutive markers
 
-Personal pronouns of Basque, with the T/V contrast *hi* (familiar) vs *zu*
-(formal) in the second-person singular, and the Souletin allocutive auxiliary
-suffixes of [alok-bhalla-2026]'s (1): *-k* and *-n* for a nonhonorific male
-and female addressee, *-zü* for an honorific addressee. The same suffixes
-serve as ordinary agreement with a second-person subject.
+Basque has two pronouns for a single addressee, the familiar *hi* and the ordinary *zu*. *Zu*
+was once the second person plural and still agrees as one: the verb takes the same plural
+marking with *zu* as with *gu* 'we'. The newer plural *zuek* is built on it. The Souletin
+dialect has allocutive suffixes on the auxiliary, *-k* and *-n* for a familiar male and female
+addressee and *-zü* for an addressee spoken to with respect. The same suffixes serve as ordinary
+agreement with a second person subject.
 
 ## References
 
+* [laka-1996]
 * [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
@@ -27,9 +29,10 @@ def gu : PersonalPronoun := { form := "gu", person := some .first, number := som
 def hi : PersonalPronoun :=
   { form := "hi", person := some .second, number := some .singular, register := .informal }
 
-/-- *zu* — 2sg formal. -/
+/-- *Zu* addresses one person and agrees as a second person plural. -/
 def zu : PersonalPronoun :=
-  { form := "zu", person := some .second, number := some .singular, register := .formal }
+  { form := "zu", person := some .second, number := some .plural, register := .formal,
+    referential := {.addressee} }
 
 /-- *zuek* — 2pl. -/
 def zuek : PersonalPronoun :=
@@ -45,6 +48,12 @@ def haiek : PersonalPronoun :=
 
 /-- The pronoun inventory. -/
 def pronouns : Finset PersonalPronoun := {ni, gu, hi, zu, zuek, hura, haiek}
+
+/-- *Zu* bears the agreement features of the plural *zuek*. -/
+theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
+
+/-- *Zu* denotes a single addressee, as the familiar *hi* does. -/
+theorem referential_zu : zu.referential = hi.referential := by decide
 
 /-- *-k* — nonhonorific male addressee. -/
 def allocM : AllocutiveMarker := { form := "-k", register := .informal, gender := some .masculine }
