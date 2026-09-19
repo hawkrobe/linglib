@@ -31,6 +31,8 @@ domain.
 * `Rules.assign_length`: the algorithm is total.
 * `Rules.assign_getElem?_of_some`: lexical case is kept, so it bleeds the dependent rules.
 * `Rules.case_mem_cases`: a caseless NP is valued only with a case the rules mention.
+* `Rules.assign_singleton`, `Rules.assign_pair`: the algorithm in closed form on domains of one
+  and two NPs.
 * `alignment_ofAlignment`: the rules of an alignment show that alignment.
 
 ## Implementation notes
@@ -384,6 +386,29 @@ theorem initial_mechanism {lexicalCase : α → Option Case} {xs : List α} {i :
   obtain ⟨rfl, hv⟩ := Prod.mk.injEq .. ▸ hy
   obtain ⟨c, -, rfl⟩ := Option.map_eq_some_iff.1 hv
   rfl
+
+/-! ### Domains of one and two NPs -/
+
+/-- The valuation of an NP no dependent rule reaches: its lexical case, or the elsewhere case. -/
+def Rules.elsewhere (r : Rules) (np : NP) : Valuation :=
+  (np.lexicalCase.map (·, Mechanism.lexical)).or (r.unmarked.map (·, .unmarked))
+
+/-- A sole NP is never reached by a dependent rule. -/
+theorem Rules.assign_singleton (r : Rules) (np : NP) : r.assign [np] = [(np, r.elsewhere np)] := by
+  obtain ⟨hi, lo, un⟩ := r
+  obtain ⟨lbl, _ | l⟩ := np <;> cases hi <;> cases lo <;> cases un <;> rfl
+
+/-- Of two NPs the dependent rules reach both or neither: when neither has lexical case, the
+    higher takes the high case and the lower the low case, where the rules have one. -/
+theorem Rules.assign_pair (r : Rules) (x y : NP) :
+    r.assign [x, y] =
+      [(x, if x.lexicalCase = none ∧ y.lexicalCase = none ∧ r.high.isSome
+            then r.high.map (·, .dependent) else r.elsewhere x),
+       (y, if x.lexicalCase = none ∧ y.lexicalCase = none ∧ r.low.isSome
+            then r.low.map (·, .dependent) else r.elsewhere y)] := by
+  obtain ⟨hi, lo, un⟩ := r
+  obtain ⟨lx, _ | cx⟩ := x <;> obtain ⟨ly, _ | cy⟩ := y <;>
+    cases hi <;> cases lo <;> cases un <;> rfl
 
 /-! ### Alignments on a transitive and an intransitive clause -/
 
