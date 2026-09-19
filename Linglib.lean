@@ -282,7 +282,6 @@ import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.LikelihoodRatio
 import Linglib.Core.Probability.PitmanYor
 import Linglib.Core.Probability.PolyaUrn
-import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.RandomUtility
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
@@ -1220,11 +1219,8 @@ import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.RSA.Profile
 import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.Incremental
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.Silence
-import Linglib.Pragmatics.RSA.SimpAttr
 import Linglib.Pragmatics.RelevanceTheory.CognitiveEffects
 import Linglib.Pragmatics.RelevanceTheory.CognitiveEnvironment
 import Linglib.Pragmatics.RelevanceTheory.Comprehension
