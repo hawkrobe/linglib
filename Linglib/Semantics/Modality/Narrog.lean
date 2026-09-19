@@ -1,5 +1,4 @@
 import Linglib.Semantics.Modality.Basic
-import Linglib.Semantics.Modality.Subjectivity
 
 /-!
 # Narrog's Semantic Map of Modality and Mood
@@ -23,10 +22,8 @@ The central diachronic claim: modal meanings always shift **upward** — toward
 increased speaker-orientation — independently of the volitive/non-volitive
 dimension. The well-known deontic → epistemic shift is just one instance.
 
-[narrog-2012] adds a third dimension: **performativity** — whether the
-utterance constitutes the modal act or merely describes it. This dimension
-is orthogonal to speaker-orientation and is precisely what Traugott's
-subjectivity cline fails to distinguish (§2.4, ch. 3).
+[narrog-2012] takes performativity, the use of a form to qualify a proposition with respect
+to the current speech situation, as the core criterion of subjectivity in modality.
 
 ## Bridges
 
@@ -34,17 +31,20 @@ subjectivity cline fails to distinguish (§2.4, ch. 3).
   deontic = volitive; epistemic, circumstantial = non-volitive.
 - `NarrogRegion` → `ModalFlavor`: reverse bridge from the 2D map back to
   Kratzer's flavor classification (partial — mood regions have no Kratzer analog).
-- `SpeakerOrientationLevel` → `SubjectivityLevel`: event-oriented = nonSubjective;
-  speaker-oriented = subjective; mood = intersubjective. Note: [narrog-2012]
-  argues this bridge is an oversimplification — see `performativity_invisible_to_traugott`.
 - The 200-language sample's NEC/POT cross-linguistic data lives with
   the formalised study at `Studies/Narrog2010.lean`.
+
+## TODO
+
+[narrog-2012] treats performativity as a gradient property of uses that defines speaker
+orientation, and [narrog-2010] says that speaker orientation subsumes both subjectivity and
+intersubjectivity in Traugott's sense. `NarrogPosition` instead stores performativity as a binary
+coordinate independent of orientation, and the canonical positions below are stipulated.
 -/
 
 namespace Modality.Narrog
 
 open Modality (ModalFlavor)
-open Modality (SubjectivityLevel Performativity)
 
 -- ============================================================================
 -- §1. Volitivity
@@ -96,29 +96,6 @@ instance : LinearOrder SpeakerOrientationLevel :=
   LinearOrder.lift' SpeakerOrientationLevel.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [SpeakerOrientationLevel.toNat])
 
-/-- Bridge to Traugott's subjectivity cline.
-
-    The vertical axis of Narrog's map aligns with Traugott's cline:
-    event-oriented = nonSubjective, speaker-oriented = subjective,
-    mood = intersubjective (imperatives direct the addressee).
-
-    **Caveat**: [narrog-2012] ch. 3 argues this bridge is an
-    oversimplification. Traugott's cline conflates speaker-orientation with
-    performativity: deontic obligation (performative, face-threatening) and
-    epistemic assessment (descriptive, not face-threatening) both map to
-    `subjective`, but they differ fundamentally in their pragmatic effects.
-    See `performativity_invisible_to_traugott`. -/
-def SpeakerOrientationLevel.toSubjectivityLevel : SpeakerOrientationLevel → SubjectivityLevel
-  | .eventOriented => .nonSubjective
-  | .speakerOriented => .subjective
-  | .mood => .intersubjective
-
-/-- The bridge preserves ordering. -/
-theorem speakerOrientation_toSubjectivity_monotone
-    (a b : SpeakerOrientationLevel) (h : a ≤ b) :
-    a.toSubjectivityLevel ≤ b.toSubjectivityLevel := by
-  cases a <;> cases b <;> first | exact Nat.le_refl _ | exact h
-
 -- ============================================================================
 -- §3. Positions in the Semantic Map
 -- ============================================================================
@@ -129,12 +106,16 @@ structure NarrogRegion where
   orientation : SpeakerOrientationLevel
   deriving Repr, DecidableEq
 
-/-- A position in Narrog's full 3D space: volitivity × orientation × performativity.
+/-- A form is used performatively to the extent that it qualifies a proposition with respect to
+the current speech situation, and descriptively to the extent that it does not. -/
+inductive Performativity where
+  /-- The form qualifies the proposition with respect to the current speech situation. -/
+  | performative
+  /-- The form reports a qualification without tying it to the current speech situation. -/
+  | descriptive
+  deriving DecidableEq, Repr, Inhabited
 
-    [narrog-2012] §2.4: "subjectivity" decomposes into speaker-orientation
-    (who is the modal source) and performativity (whether the utterance
-    constitutes the modal act). The 2D map captures the first two dimensions;
-    the full 3D space adds the third. -/
+/-- A position pairs a region of the semantic map with a performative or descriptive use. -/
 structure NarrogPosition where
   volitivity : Volitivity
   orientation : SpeakerOrientationLevel
@@ -186,23 +167,8 @@ theorem modalFlavor_roundtrip (f : ModalFlavor) (hf : f ≠ .bouletic) :
   | bouletic => exact absurd rfl hf
 
 -- ============================================================================
--- §5. Performativity and Traugott's Cline
+-- §5. Performativity and face threat
 -- ============================================================================
-
-/-- Performativity is invisible to the Traugott bridge: deontic obligation
-    (volitive, speaker-oriented, performative) and epistemic assessment
-    (non-volitive, speaker-oriented, descriptive) both map to the same
-    `SubjectivityLevel.subjective`, even though they differ radically in
-    face-threatening potential and pragmatic effects.
-
-    This is [narrog-2012]'s central critique of Traugott's
-    unidirectional subjectification: the cline conflates two independent
-    dimensions (speaker-orientation and performativity), collapsing
-    distinctions that matter for understanding both synchronic typology
-    and diachronic change. -/
-theorem performativity_invisible_to_traugott :
-    (NarrogRegion.mk .volitive .speakerOriented).orientation.toSubjectivityLevel =
-    (NarrogRegion.mk .nonVolitive .speakerOriented).orientation.toSubjectivityLevel := rfl
 
 /-- Derive face-threatening potential from the 3D position.
 
@@ -250,9 +216,8 @@ theorem epistemic_not_face_threatening :
 theorem imperative_face_threatening :
     imperative.isFaceThreatening = true := rfl
 
-/-- Strong and weak obligation differ ONLY in performativity — they share
-    volitivity and orientation. The Traugott bridge cannot distinguish them
-    because it drops performativity. -/
+/-- Strong and weak obligation share volitivity and orientation and differ in performativity
+    alone. -/
 theorem strong_weak_differ_only_in_performativity :
     strongObligation.toRegion = weakObligation.toRegion := rfl
 

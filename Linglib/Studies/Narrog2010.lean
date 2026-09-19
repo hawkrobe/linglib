@@ -9,8 +9,7 @@ map of `Semantics/Modality/Narrog`, volitivity against speaker orientation, and 
 §3.1 is that semantic change never decreases speaker orientation, whatever it does to
 volitivity (`Directional`). The eight most frequent changes of modal meaning in the sample of
 [bybee-perkins-pagliuca-1994], the chapter's Table 2, all satisfy it (`commonChanges`,
-`directionality`), and so preserve or raise subjectivity through the bridge to the cline of
-Traugott (`directionality_via_subjectivity`); the three most frequent run from non-volitive
+`directionality`); the three most frequent run from non-volitive
 to volitive meanings, future and possibility markers becoming imperatives, permissions, and
 admonitives (§3.2, `most_frequent_to_volitive`), so the deontic-to-epistemic shift is one
 change among several rather than the representative one, and volitivity is crossed in both
@@ -44,15 +43,15 @@ namespace Narrog2010
 
 open Modality.Narrog
 
-/-- The directionality claim of §3.1: a change from one region of the map to another never
-decreases speaker orientation, whatever it does to volitivity. -/
+/-- A change from one region of the map to another is directional when it does not decrease
+speaker orientation, whatever it does to volitivity. -/
 def Directional (source target : NarrogRegion) : Prop :=
   source.orientation ≤ target.orientation
 
 instance (s t : NarrogRegion) : Decidable (Directional s t) := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- An attested change of modal meaning: its source and target regions, and the number of
-grams of the sample of [bybee-perkins-pagliuca-1994] showing it. -/
+/-- An attested change of modal meaning has a source region, a target region, and the number
+of grams of the sample of [bybee-perkins-pagliuca-1994] that show it. -/
 structure Change where
   label : String
   source : NarrogRegion
@@ -67,11 +66,11 @@ def Change.ToVolitive (c : Change) : Prop :=
   c.source.volitivity = .nonVolitive ∧ c.target.volitivity = .volitive
 
 instance : DecidablePred Change.Directional :=
-  λ c => inferInstanceAs (Decidable (c.source.orientation ≤ c.target.orientation))
-instance : DecidablePred Change.ToVolitive := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+  fun c ↦ inferInstanceAs (Decidable (c.source.orientation ≤ c.target.orientation))
+instance : DecidablePred Change.ToVolitive := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Table 2: the eight most frequent changes of modal meaning in the sample of
-[bybee-perkins-pagliuca-1994], with their gram counts. Future, prediction, and possibility
+/-- The eight most frequent changes of modal meaning in the sample of
+[bybee-perkins-pagliuca-1994], with their gram counts, as the chapter tabulates them. Future, prediction, and possibility
 markers are event-oriented modality, obligation, permission, and epistemic assessment
 speaker-oriented, and the imperative and admonitive mood. -/
 def commonChanges : List Change :=
@@ -96,13 +95,6 @@ def commonChanges : List Change :=
 /-- Every attested change increases or preserves speaker orientation. -/
 theorem directionality : ∀ c ∈ commonChanges, c.Directional := by decide
 
-/-- Through the bridge to the subjectivity cline, every attested change increases or preserves
-subjectivity as well. -/
-theorem directionality_via_subjectivity :
-    ∀ c ∈ commonChanges,
-      c.source.orientation.toSubjectivityLevel ≤ c.target.orientation.toSubjectivityLevel :=
-  λ c hc => speakerOrientation_toSubjectivity_monotone _ _ (directionality c hc)
-
 /-- Table 2 lists the changes by frequency, and the three most frequent cross from non-volitive
 to volitive meaning (§3.2), the direction a deontic-to-epistemic theory would call
 counter-directional. -/
@@ -111,8 +103,8 @@ theorem most_frequent_to_volitive :
       ∀ c ∈ commonChanges.take 3, c.ToVolitive := by
   decide
 
-/-- Volitivity is orthogonal to the direction of change: the attested changes cross it in both
-directions, the deontic-to-epistemic shift being the volitive-to-non-volitive case. -/
+/-- Volitivity is orthogonal to the direction of change. The attested changes cross it in both
+directions, and the deontic-to-epistemic shift is the volitive-to-non-volitive case. -/
 theorem volitivity_both_directions :
     (∃ c ∈ commonChanges, c.ToVolitive) ∧
       ∃ c ∈ commonChanges,
