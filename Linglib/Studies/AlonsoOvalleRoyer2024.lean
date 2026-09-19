@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Semantics.Modality.ModalIndefinite
 import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
-import Linglib.Fragments.Spanish.ModalIndefinites
+import Linglib.Fragments.Romance.Spanish.ModalIndefinites
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.Romance.French.ModalIndefinites
 import Linglib.Fragments.Italian.ModalIndefinites

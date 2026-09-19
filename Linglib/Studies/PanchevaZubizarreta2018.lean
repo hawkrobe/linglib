@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Semantics.Reference.Logophoricity
 import Linglib.Syntax.Person.Features
 import Linglib.Fragments.Italian.Pronouns
-import Linglib.Fragments.Spanish.Clitics
+import Linglib.Fragments.Romance.Spanish.Clitics
 
 /-!
 # Pancheva and Zubizarreta (2018): The Person Case Constraint

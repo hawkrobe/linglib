@@ -2,8 +2,8 @@ import Linglib.Data.Examples.MunozPerez2026
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Person.Features
-import Linglib.Fragments.Spanish.Clitics
-import Linglib.Fragments.Spanish.Predicates
+import Linglib.Fragments.Romance.Spanish.Clitics
+import Linglib.Fragments.Romance.Spanish.Predicates
 
 /-!
 # Muñoz Pérez (2026): Stylistic Applicatives

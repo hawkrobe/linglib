@@ -1,4 +1,4 @@
-import Linglib.Fragments.Spanish.Binominals
+import Linglib.Fragments.Romance.Spanish.Binominals
 import Linglib.Syntax.Number.Basic
 import Linglib.Data.Examples.Saab2026
 import Mathlib.Tactic.DeriveFintype

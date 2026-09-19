@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
-import Linglib.Fragments.Spanish.Predicates
+import Linglib.Fragments.Romance.Spanish.Predicates
 
 /-!
 # Koontz-Garboden (2009): Anticausativization

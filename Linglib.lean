@@ -1030,16 +1030,6 @@ import Linglib.Fragments.Slavic.Sorbian.Case
 import Linglib.Fragments.Slavic.Ukrainian.Case
 import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
 import Linglib.Fragments.Somali.Gender
-import Linglib.Fragments.Spanish.Binominals
-import Linglib.Fragments.Spanish.Clitics
-import Linglib.Fragments.Spanish.Gender
-import Linglib.Fragments.Spanish.ModalIndefinites
-import Linglib.Fragments.Spanish.MoodChoice
-import Linglib.Fragments.Spanish.Negation
-import Linglib.Fragments.Spanish.PolarityItems
-import Linglib.Fragments.Spanish.PolarityMarking
-import Linglib.Fragments.Spanish.Predicates
-import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Fragments.Swahili.Comparison
