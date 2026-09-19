@@ -22,7 +22,7 @@ agreement targets the same positions across the split.
 ## Implementation notes
 
 Default case, the last resort of the hierarchy, is not modelled apart from unmarked case;
-the evidential series of Georgian is a morphological property of its inflection and outside
+the third series of Georgian is a morphological property of its inflection and outside
 the algorithm. [baker-2015] later develops the hierarchy into a cross-linguistic algorithm.
 
 ## References
@@ -236,7 +236,7 @@ namespace Marantz1991
 
 open Minimalist Minimalist.Voice
 open Case
-open Georgian.Agreement
+open Georgian
 
 /-- NP configuration for each Georgian verb class (present/aorist).
 
@@ -248,15 +248,25 @@ open Georgian.Agreement
       get ERG despite being intransitive.
     - Class 4 (psych): 2 NPs — DAT subject (lexical/quirky) + NOM object -/
 def georgianNPs : VerbClass → List NP
-  | .class1 => [⟨"subj", none⟩, ⟨"obj", none⟩]
-  | .class2 => [⟨"subj", none⟩]
-  | .class3 => [⟨"subj", none⟩, ⟨"empty", none⟩]  -- phantom object position
-  | .class4 => [⟨"subj", some .dat⟩, ⟨"obj", none⟩]  -- quirky DAT
+  | .transitive => [⟨"subj", none⟩, ⟨"obj", none⟩]
+  | .intransitive => [⟨"subj", none⟩]
+  | .medial => [⟨"subj", none⟩, ⟨"empty", none⟩]  -- phantom object position
+  | .indirect => [⟨"subj", some .dat⟩, ⟨"obj", none⟩]  -- quirky DAT
+
+/-- The direction in which the inflection of a series assigns dependent case, downward in
+Series I for an accusative pattern and upward in Series II for an ergative one. The paper does
+not treat Series III, which is given the value of Series I. -/
+def alignment : Series → Alignment.AlignmentType
+  | .aorist => .ergative
+  | .present | .perfect => .accusative
+
+/-- The two series the paper treats. -/
+def series : List Series := [.present, .aorist]
 
 /-- Run the dependent case algorithm for a Georgian verb class in a
     given tense series. -/
-def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List (NP × Valuation) :=
-  assignCases (Georgian.Agreement.alignment ts) (georgianNPs vc)
+def georgianCaseResult (vc : VerbClass) (ts : Series) : List (NP × Valuation) :=
+  assignCases (alignment ts) (georgianNPs vc)
 
 private def getCase! (label : String) (results : List (NP × Valuation)) : Case :=
   match getCaseOf label results with
@@ -284,24 +294,22 @@ theorem acc_surfaces_as_dat : georgianSpellout .acc = .dat := rfl
 theorem abs_surfaces_as_nom : georgianSpellout .abs = .nom := rfl
 
 /-! The dependent case algorithm + Georgian spell-out produces exactly
-    the surface case frames recorded in `Georgian.Agreement`.
+    the surface case frames of `Georgian.pattern`.
     This is the core empirical validation: the algorithm derives all
     8 verb-class × tense combinations for subjects. -/
 
-/-- All subject cases derived from the algorithm match the fragment data. -/
-theorem subject_derivation_matches_fragment :
-    [VerbClass.class1, .class2, .class3, .class4].all (λ vc =>
-      [TenseSeries.present, .aorist].all (λ ts =>
-        georgianSpellout (getCase! "subj" (georgianCaseResult vc ts)) ==
-        verbClassSubjectCase vc ts)) = true := by native_decide
+/-- The subject case the algorithm derives for each class in Series I and II is the Fragment's. -/
+theorem subject_derivation_matches_fragment : ∀ vc : VerbClass, ∀ ts ∈ series,
+    georgianSpellout (getCase! "subj" (georgianCaseResult vc ts)) =
+      (pattern vc ts).subject.case := by
+  decide +kernel
 
-/-- Object cases for transitive classes also match. -/
-theorem object_derivation_matches :
-    georgianSpellout (getCase! "obj" (georgianCaseResult .class1 .present)) = .dat ∧
-    georgianSpellout (getCase! "obj" (georgianCaseResult .class1 .aorist)) = .nom ∧
-    georgianSpellout (getCase! "obj" (georgianCaseResult .class4 .present)) = .nom ∧
-    georgianSpellout (getCase! "obj" (georgianCaseResult .class4 .aorist)) = .nom := by
-  native_decide
+/-- The object case the algorithm derives for the two classes with an object is the
+Fragment's. -/
+theorem object_derivation_matches : ∀ vc ∈ [VerbClass.transitive, .indirect], ∀ ts ∈ series,
+    georgianSpellout (getCase! "obj" (georgianCaseResult vc ts)) =
+      (pattern vc ts).directObject.case := by
+  decide +kernel
 
 /-! [marantz-1991]'s Ergative generalization: ergative case may appear
     on the subject of an intransitive clause, but not on a derived subject.
@@ -314,25 +322,25 @@ theorem object_derivation_matches :
 
 /-- Class 1 aorist: transitive subject gets ERG. -/
 theorem class1_aorist_erg :
-    georgianSpellout (getCase! "subj" (georgianCaseResult .class1 .aorist)) = .erg := by
-  native_decide
+    georgianSpellout (getCase! "subj" (georgianCaseResult .transitive .aorist)) = .erg := by
+  decide +kernel
 
 /-- Class 2 aorist: unaccusative subject does NOT get ERG. -/
 theorem class2_aorist_no_erg :
-    georgianSpellout (getCase! "subj" (georgianCaseResult .class2 .aorist)) = .nom := by
-  native_decide
+    georgianSpellout (getCase! "subj" (georgianCaseResult .intransitive .aorist)) = .nom := by
+  decide +kernel
 
 /-- Class 3 aorist: unergative subject DOES get ERG
     (empty object position serves as competitor). -/
 theorem class3_aorist_erg :
-    georgianSpellout (getCase! "subj" (georgianCaseResult .class3 .aorist)) = .erg := by
-  native_decide
+    georgianSpellout (getCase! "subj" (georgianCaseResult .medial .aorist)) = .erg := by
+  decide +kernel
 
 /-- Class 4: quirky DAT takes priority (lexical > dependent). -/
 theorem class4_lexical_dat :
-    getCase! "subj" (georgianCaseResult .class4 .aorist) = .dat ∧
-    getMechanismOf "subj" (georgianCaseResult .class4 .aorist) = some .lexical := by
-  native_decide
+    getCase! "subj" (georgianCaseResult .indirect .aorist) = .dat ∧
+    getMechanismOf "subj" (georgianCaseResult .indirect .aorist) = some .lexical := by
+  decide +kernel
 
 /-- The Ergative generalization follows from NP count:
     1 NP (unaccusative) → no ERG; ≥2 positions → ERG possible. -/
@@ -340,7 +348,7 @@ theorem ergative_requires_competitor :
     getMechanismOf "sole" (assignCases .ergative [⟨"sole", none⟩]) = some .unmarked ∧
     getMechanismOf "higher" (assignCases .ergative [⟨"higher", none⟩, ⟨"lower", none⟩]) =
       some .dependent := by
-  native_decide
+  decide +kernel
 
 /-! [marantz-1991]'s key insight: Burzio's generalization
     ("non-thematic subject → no accusative object") splits into:
@@ -362,13 +370,13 @@ theorem ergative_requires_competitor :
 theorem burzio_unaccusative_no_acc :
     getCaseOf "theme" (assignCases .accusative [⟨"theme", none⟩]) = some .nom ∧
     getMechanismOf "theme" (assignCases .accusative [⟨"theme", none⟩]) = some .unmarked := by
-  native_decide
+  decide +kernel
 
 /-- Transitive: external argument provides the case competitor → ACC. -/
 theorem burzio_transitive_has_acc :
     getCaseOf "theme" (assignCases .accusative [⟨"agent", none⟩, ⟨"theme", none⟩]) =
       some .acc := by
-  native_decide
+  decide +kernel
 
 /-- Marantz's counterexample: non-thematic subject with ACC object.
     Two NPs in distinct chains → dependent case applies despite
@@ -376,7 +384,7 @@ theorem burzio_transitive_has_acc :
 theorem nonthematic_subject_with_acc :
     getCaseOf "obj" (assignCases .accusative [⟨"derived_subj", none⟩, ⟨"obj", none⟩]) =
       some .acc := by
-  native_decide
+  decide +kernel
 
 /-- Voice determines NP count: θ-assigning Voice adds an external argument.
     This bridges Voice theory to the configural case algorithm. -/
@@ -403,17 +411,17 @@ def hindiTransitive (aspect : Aspect.Perfectivity) : List (NP × Valuation) :=
 theorem hindi_perfective_erg :
     getCaseOf "agent" (hindiTransitive .perfective) = some .erg ∧
     getCaseOf "theme" (hindiTransitive .perfective) = some .abs := by
-  native_decide
+  decide +kernel
 
 theorem hindi_imperfective_nom_acc :
     getCaseOf "agent" (hindiTransitive .imperfective) = some .nom ∧
     getCaseOf "theme" (hindiTransitive .imperfective) = some .acc := by
-  native_decide
+  decide +kernel
 
 /-- The split is derived from the same algorithm, not stipulated. -/
 theorem hindi_split_is_algorithmic :
     hindiTransitive .perfective ≠ hindiTransitive .imperfective := by
-  native_decide
+  decide +kernel
 
 /-- Hindi perfective unaccusative: sole NP, no ERG.
     Derives *siitta (\*ne) aayii* — ERG is prohibited on unaccusatives
@@ -423,7 +431,7 @@ theorem hindi_perfective_unaccusative_no_erg :
       [⟨"theme", none⟩]
     getCaseOf "theme" result = some .abs ∧
     getMechanismOf "theme" result = some .unmarked := by
-  native_decide
+  decide +kernel
 
 /-- Hindi unergative in the perfective: the unfilled object position
     may or may not count as a competitor, yielding optional ERG.
@@ -432,7 +440,7 @@ theorem hindi_perfective_unergative_with_phantom :
     let result := assignCases (Hindi.Case.alignment .perfective)
       [⟨"subj", none⟩, ⟨"empty", none⟩]
     getCaseOf "subj" result = some .erg := by
-  native_decide
+  decide +kernel
 
 /-- Without a phantom position, the unergative subject gets unmarked ABS
     (= no ERG). This models the optionality as a parameter: does the
@@ -442,7 +450,7 @@ theorem hindi_perfective_unergative_without_phantom :
       [⟨"subj", none⟩]
     getCaseOf "subj" result = some .abs ∧
     getMechanismOf "subj" result = some .unmarked := by
-  native_decide
+  decide +kernel
 
 /-- Cross-linguistic contrast: Georgian obligatorily counts unfilled
     positions (Class 3 always gets ERG), while Hindi optionally does
@@ -451,10 +459,10 @@ theorem hindi_perfective_unergative_without_phantom :
     included in the domain. -/
 theorem phantom_np_parameter :
     -- Georgian: Class 3 aorist with phantom → ERG
-    georgianSpellout (getCase! "subj" (georgianCaseResult .class3 .aorist)) = .erg ∧
+    georgianSpellout (getCase! "subj" (georgianCaseResult .medial .aorist)) = .erg ∧
     -- Hindi: unergative perfective without phantom → no ERG (ABS)
     getCaseOf "subj" (assignCases .ergative [⟨"subj", none⟩]) = some .abs := by
-  native_decide
+  decide +kernel
 
 /-! Georgian demonstrates all three levels of [marantz-1991]'s
     case realization hierarchy within a single language:
@@ -466,17 +474,17 @@ theorem phantom_np_parameter :
     | Unmarked  | `.unmarked` | Class 2 NOM, Class 1 present NOM | -/
 
 theorem all_three_sources_attested :
-    getMechanismOf "subj" (georgianCaseResult .class4 .present) = some .lexical ∧
-    getMechanismOf "subj" (georgianCaseResult .class1 .aorist) = some .dependent ∧
-    getMechanismOf "subj" (georgianCaseResult .class2 .aorist) = some .unmarked := by
-  native_decide
+    getMechanismOf "subj" (georgianCaseResult .indirect .present) = some .lexical ∧
+    getMechanismOf "subj" (georgianCaseResult .transitive .aorist) = some .dependent ∧
+    getMechanismOf "subj" (georgianCaseResult .intransitive .aorist) = some .unmarked := by
+  decide +kernel
 
 /-- Lexical case bleeds dependent case: Class 4's DAT subject prevents
     ACC on the object (no caseless competitor above it). -/
 theorem lexical_bleeds_dependent_georgian :
-    getMechanismOf "obj" (georgianCaseResult .class4 .present) = some .unmarked ∧
-    getMechanismOf "obj" (georgianCaseResult .class1 .present) = some .dependent := by
-  native_decide
+    getMechanismOf "obj" (georgianCaseResult .indirect .present) = some .unmarked ∧
+    getMechanismOf "obj" (georgianCaseResult .transitive .present) = some .dependent := by
+  decide +kernel
 
 /-! [marantz-1991]'s case realization hierarchy (lexical > dependent >
     unmarked) parallels the Moravcsik agreement accessibility hierarchy
@@ -547,14 +555,14 @@ def npsFromVoice (voice : Head) : List NP :=
 theorem voice_to_case_transitive :
     getCaseOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .acc ∧
     getMechanismOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .dependent := by
-  native_decide
+  decide +kernel
 
 /-- End-to-end: anticausative Voice → 1 NP → theme gets unmarked NOM. -/
 theorem voice_to_case_unaccusative :
     getCaseOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .nom ∧
     getMechanismOf "theme" (assignCases .accusative (npsFromVoice anticausative)) =
       some .unmarked := by
-  native_decide
+  decide +kernel
 
 /-- The Burzio effect derived end-to-end: ACC presence tracks Voice's
     θ-assignment. This is the full chain: Voice → NP count → case. -/
@@ -563,56 +571,29 @@ theorem burzio_from_voice :
     getCaseOf "obj" (assignCases .accusative (npsFromVoice agentive)) = some .acc ∧
     -- Non-thematic Voice: no ACC (sole NP gets NOM)
     getCaseOf "theme" (assignCases .accusative (npsFromVoice anticausative)) = some .nom := by
-  native_decide
+  decide +kernel
 
-/-! [marantz-1991]'s central insight about Georgian split ergativity:
-    case direction changes by tense series, but agreement does NOT.
+/-! ### Agreement across the split
 
-    Case: present = accusative (ACC downward), aorist = ergative (ERG upward).
-    Agreement: `pIsIndexed` (object agreement conditioned by person) is the
-    SAME function regardless of tense series. There is no correlation between
-    the "directional" features of INFL for case and the "directional" features
-    of Agr for agreement.
+The case marking of Georgian changes from Series I to Series II and the agreement does not: the
+suffixal agreement that goes with a nominative subject in Series I goes with the ergative
+subject in the aorist. The Agr of the paper's (31) picks up the features of an unmarked or
+dependent subject and passes over a subject with lexical case for the nominative object. -/
 
-    "Split ergativity of the Georgian sort simply exploits this lack of
-    correlation." This connects to the agreement data formalized in
-    `Georgian.Agreement` and verified in
-    `Aissen2003` and
-    `BejarRezac2009`. -/
+/-- The subject agrees by the Fragment's Set A exactly when the algorithm does not give it
+lexical case, in both series. -/
+theorem subject_setA_iff_not_lexical : ∀ vc : VerbClass, ∀ ts ∈ series,
+    ((pattern vc ts).subject.affixes = some .A ↔
+      getMechanismOf "subj" (georgianCaseResult vc ts) ≠ some .lexical) := by
+  decide +kernel
 
-/-- Case direction changes between present and aorist. -/
-theorem case_direction_changes :
-    Georgian.Agreement.alignment .present ≠ Georgian.Agreement.alignment .aorist := by native_decide
-
-/-- Agreement conditioning does NOT change between present and aorist.
-    `pIsIndexed` — the function determining which objects trigger agreement
-    prefixes — is defined once for all tense series, not parameterized by
-    tense. This is the formal content of agreement-case independence. -/
-theorem agreement_invariant_across_series :
-    -- The SAME isIndexed function applies in both series:
-    -- SAP objects are indexed regardless of case direction
-    isIndexed (.pn .first .singular) = true ∧ isIndexed (.pn .second .singular) = true ∧
-    isIndexed (.pn .third .singular) = false ∧
-    -- And case direction differs:
-    Georgian.Agreement.alignment .present = .accusative ∧
-    Georgian.Agreement.alignment .aorist = .ergative := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Subject agreement is non-differential regardless of tense series. -/
-theorem subject_agreement_invariant :
-    Agreement.Bundle.pnCells.all subjectIsIndexed = true := by decide
-
-/-- The split is in case only, not in agreement.
-    Case patterns differ across tense series (all 4 verb classes checked),
-    but the agreement function `pIsIndexed` is a single, tense-independent
-    definition — there is no `pIsIndexedForSeries`. -/
-theorem case_splits_but_agreement_does_not :
-    -- Case patterns differ: at least one class shows different subject case
-    verbClassSubjectCase .class1 .present ≠ verbClassSubjectCase .class1 .aorist ∧
-    -- All 6 φ-cells give the same isIndexed result regardless of which series
-    -- we're in (it's not parameterized)
-    Agreement.Bundle.pnCells.all (λ c => isIndexed c == decide c.IsSAP) = true := by
-  constructor
-  · decide
-  · decide
+/-- The split is in case alone. From Series I to Series II the subject keeps its affixes in
+every class, and changes case in the classes whose aorist subject the algorithm makes
+dependent. -/
+theorem case_splits_but_agreement_does_not (vc : VerbClass) :
+    (pattern vc .present).subject.affixes = (pattern vc .aorist).subject.affixes ∧
+    ((pattern vc .present).subject.case ≠ (pattern vc .aorist).subject.case ↔
+      getMechanismOf "subj" (georgianCaseResult vc .aorist) = some .dependent) := by
+  cases vc <;> exact ⟨rfl, by decide +kernel⟩
 
 end Marantz1991

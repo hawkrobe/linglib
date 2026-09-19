@@ -1,230 +1,180 @@
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Alignment
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Morphology.Morph
 import Linglib.Syntax.Agreement.Paradigm
+import Linglib.Syntax.Case.Basic
+
 /-!
-# Georgian Agreement Fragment [just-2024]
-[harris-1981]
+# Georgian case marking and verbal agreement
 
-Georgian (Kartvelian) has a polypersonal agreement system where the finite
-verb indexes both subject and object. Object agreement is
-**person-conditioned**: indirect objects (dative-marked) are cross-referenced
-on the verb for 1st/2nd person but not for 3rd person.
+The Georgian verb agrees with its subject and its objects by means of two sets of affixes. Set A
+has *v-* for the first person, nothing for the second and a suffix for the third, and adds *-t*
+for a first or second person plural. Set B has *m-* for the first person singular, *gv-* for
+the first person plural and *g-* for the second person, with *-t* for its plural. A third person
+direct object has no Set B affix, while a third person indirect object has *h-* or *s-* before
+certain consonants.
 
-This is **differential P indexing** conditioned by person prominence.
+Which set marks which argument, and in which case the arguments stand, depends on the class of
+the verb and on the series of its tense. The tenses fall into three series: the first contains
+the present and the future, the second the aorist, the third the perfect. Transitive verbs, and
+the medial verbs that pattern with them, such as *tamaš* 'play', have three patterns. In the
+first series the subject is nominative with Set A and the direct object dative with Set B. In
+the second the subject is ergative and the direct object nominative, with the same sets. In the
+third the subject is dative with Set B and the direct object nominative with Set A, and an
+indirect object loses its agreement and becomes the object of the postposition *-tvis* 'for'.
+Intransitive verbs have the first of these patterns in every series, and indirect verbs, such
+as *c'on* 'like', have the third in every series.
 
-## Agreement Paradigm Overview
+## Main declarations
 
-Georgian has two sets of verbal agreement markers:
+* `Georgian.setA`, `Georgian.setB`: the two sets of agreement affixes.
+* `Georgian.Series`, `Georgian.VerbClass`: the series of the tenses and the classes of verbs.
+* `Georgian.Pattern`: the case and the agreement set of the subject and the objects, with the
+  three patterns `Pattern.nominative`, `Pattern.ergative` and `Pattern.inverse`.
+* `Georgian.pattern`: the pattern of each class in each series.
 
-| Set | Position | Function |
-|-----|----------|----------|
-| Subject markers | prefix/suffix | Always present |
-| Object markers | prefix | SAP objects only (differential) |
+## Main results
 
-The object markers are prefixed to the verb stem:
-- *m-* 1sg object ("me")
-- *g-* 2sg object ("you")
-- No marker for 3rd person objects
+* `Georgian.hasObjectPrefix_iff_isSAP`: the direct objects with a Set B prefix are the first and
+  second persons.
+* `Georgian.subject_affixes_present_eq_aorist`: the subject keeps its set of affixes from the
+  first series to the second, whatever becomes of its case.
+* `Georgian.subject_case_ne_iff`: the subject changes case from the first series to the second
+  exactly in the transitive and medial classes.
 
-## Split-Ergative Case
+## Implementation notes
 
-Georgian has a tense/aspect-conditioned split ergative system:
-- Present series: NOM-DAT alignment
-- Aorist series: ERG-NOM alignment
-- Evidential series: DAT-NOM (inversion)
+The third person suffixes of Set A are those of the present; other tenses have *-a* or *-o* in
+the singular and *-es* or *-nen* in the plural. The classes are the four of Harris, who numbers
+them 1 (transitive), 2 (intransitive), 3 (medial) and 4 (indirect); Hewitt adds a small class of
+stative verbs, which pattern with the intransitives.
 
-The agreement split is orthogonal to the case split — object agreement
-is person-conditioned regardless of the case frame.
+## References
 
+* [hewitt-1995]
+* [harris-1981]
 -/
 
-namespace Georgian.Agreement
+namespace Georgian
 
-open Reference.Prominence
-open _root_.Agreement
+open Agreement Morphology
 
--- ============================================================================
--- § 1: Object Agreement (differential P indexing)
--- ============================================================================
+/-! ### The agreement affixes -/
 
-/-- Object agreement prefixes, as a descriptive paradigm over canonical φ-cells
-    (`Agreement.Bundle` — the same φ a pronoun carries). SAP objects
-    (1st/2nd person) receive an overt prefix; 3rd person objects have no entry
-    (unmarked). A controller's `Word.phi` indexes it directly. -/
-def objectAgr : Paradigm String :=
-  [(.pn .first .singular, "m-"), (.pn .second .singular, "g-"),
-   (.pn .first .plural, "gv-"), (.pn .second .plural, "g-")]
+/-- The affixes of Set A, as they stand in the present. -/
+def setA : Paradigm (List Morph) :=
+  [(.pn .first .singular, [.pref "v"]), (.pn .second .singular, []),
+   (.pn .third .singular, [.suff "s"]), (.pn .first .plural, [.pref "v", .suff "t"]),
+   (.pn .second .plural, [.suff "t"]), (.pn .third .plural, [.suff "en"])]
 
-/-- A P/R argument is indexed iff the object paradigm realizes its φ-cell.
-    Differential: SAP cells are present, 3rd person absent. -/
-def isIndexed (c : Bundle) : Bool := (objectAgr.realize c).isSome
+/-- The affixes of Set B, as they mark a direct object. -/
+def setB : Paradigm (List Morph) :=
+  [(.pn .first .singular, [.pref "m"]), (.pn .second .singular, [.pref "g"]),
+   (.pn .third .singular, []), (.pn .first .plural, [.pref "gv"]),
+   (.pn .second .plural, [.pref "g", .suff "t"]), (.pn .third .plural, [])]
 
-/-- Subject agreement is always present (not differential). -/
-def subjectIsIndexed (_ : Bundle) : Bool := true
+/-- The Set B prefix of a third person indirect object. It stands before *k*, *k'*, *g*, *q'*
+and *p'*, becomes *s-* before *c*, *c'*, *j*, *č*, *č'*, *ǰ*, *t*, *t'* and *d*, and is dropped
+before other consonants and before vowels. -/
+def thirdIndirect : Morph := .pref "h"
 
--- ============================================================================
--- § 2: Verification
--- ============================================================================
+/-- A direct object of the cell has a Set B prefix. -/
+def HasObjectPrefix (c : Bundle) : Prop := ∃ ms ∈ setB.realize c, ms ≠ []
 
-/-- SAP objects are indexed (receive an overt prefix). -/
-theorem sap_objects_indexed :
-    isIndexed (.pn .first .singular) = true ∧ isIndexed (.pn .second .singular) = true ∧
-    isIndexed (.pn .first .plural) = true ∧ isIndexed (.pn .second .plural) = true := by decide
+instance : DecidablePred HasObjectPrefix := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- 3rd person objects are NOT indexed (no prefix). -/
-theorem third_objects_not_indexed :
-    isIndexed (.pn .third .singular) = false ∧ isIndexed (.pn .third .plural) = false := by decide
+/-- The direct objects with a Set B prefix are the first and second persons. -/
+theorem hasObjectPrefix_iff_isSAP : ∀ c ∈ Bundle.pnCells, HasObjectPrefix c ↔ c.IsSAP := by
+  decide
 
-/-- P indexing is differential. -/
-theorem p_indexing_differential :
-    Bundle.pnCells.any isIndexed = true ∧
-    !(Bundle.pnCells.all isIndexed) = true := by decide
+/-! ### Series and verb classes -/
 
-/-- The indexed/not-indexed split aligns with SAP vs 3rd. -/
-theorem indexed_iff_sap :
-    Bundle.pnCells.all (fun c => isIndexed c == decide c.IsSAP) = true := by decide
+/-- The three series of tenses. The first contains the present, the imperfect, the future and
+the conditional, the second the aorist and the optative, the third the perfect and the
+pluperfect. -/
+inductive Series where
+  | present
+  | aorist
+  | perfect
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- § 5: Tense-Conditioned Split-Ergative Case ([harris-1981])
--- ============================================================================
-
-/-- Georgian tense series. Case alignment varies by series:
-    - Present: S/A = NOM, P/R = DAT (accusative-like framing)
-    - Aorist: A = ERG, S/P = NOM (ergative framing)
-    - Evidential: A = DAT, S/P = NOM ("inversion") -/
-inductive TenseSeries where
-  | present     -- includes future, present habitual
-  | aorist      -- includes optative
-  | evidential  -- sometimes called "perfect" or "inversion"
-  deriving DecidableEq, Repr
-
-/-- The alignment by tense series ([blake-1994], [harris-1981]): ergative in the aorist series
-alone, the present series with its nominative subject and dative object and the evidential
-series with the inverted frame both grouping the subjects together. -/
-def alignment : TenseSeries → Alignment.AlignmentType
-  | .aorist => .ergative
-  | .present | .evidential => .accusative
-
-/-- Case frame for the subject (A/S) in each tense series. -/
-def subjectCase : TenseSeries → Case
-  | .present    => .nom   -- A = NOM
-  | .aorist     => .erg   -- A = ERG
-  | .evidential => .dat   -- A = DAT (inversion)
-
-/-- Case frame for the object (P/R) in each tense series. -/
-def objectCase : TenseSeries → Case
-  | .present    => .dat   -- P = DAT
-  | .aorist     => .nom   -- P = NOM
-  | .evidential => .nom   -- P = NOM
-
-/-- Georgian agreement-relevant case inventory: {NOM, ERG, DAT}.
-
-    Note: the full Georgian case system also includes GEN (possessive)
-    and INST (instrumental), yielding {NOM, ERG, GEN, DAT, INST} which
-    satisfies contiguity. Here we validate only the agreement-visible
-    subset, which also satisfies contiguity (all rank ≥ 4). -/
-def caseInventory : Finset Case := {.nom, .erg, .dat}
-
-/-- The inventory covers all tense-series case frames. -/
-def allTenseSeries : List TenseSeries := [.present, .aorist, .evidential]
-
-theorem inventory_covers_subjects :
-    ∀ ts ∈ allTenseSeries, subjectCase ts ∈ caseInventory := by decide
-
-theorem inventory_covers_objects :
-    ∀ ts ∈ allTenseSeries, objectCase ts ∈ caseInventory := by decide
-
-/-- The agreement-relevant inventory {NOM, ERG, DAT} is valid per Blake's
-    hierarchy: NOM/ERG at rank 6, DAT at rank 4, GEN at rank 5 — but
-    wait: GEN is rank 5 and is NOT in the inventory, so there IS a gap!
-
-    This actually fails strict contiguity (Blake's hierarchy says you
-    "usually" need GEN before DAT). Georgian is a known exception: DAT
-    is so prominent in the case system (present P, evidential A, plus
-    indirect objects) that it exists without surface genitive case being
-    part of the agreement system.
-
-    We validate the full case system instead. -/
-def fullCaseInventory : Finset Case := {.nom, .erg, .gen, .dat}
-
-example : Case.IsValidInventory fullCaseInventory := by decide
-
--- ============================================================================
--- § 6: Verb Classes ([harris-1981], [marantz-1991])
--- ============================================================================
-
-/-- Georgian verb classes ([harris-1981]).
-
-    The class determines unaccusativity, case frame, and agreement pattern.
-    The key split for case theory: classes 1 and 3 (non-derived subjects)
-    take ERG in the aorist, while class 2 (derived/unaccusative subject)
-    does not — motivating [marantz-1991]'s Ergative generalization. -/
+/-- The classes of verbs, by their case marking and agreement. -/
 inductive VerbClass where
-  | class1  -- Transitive (ačvenebs 'shows', xedavs 'sees')
-  | class2  -- Medioactive: unaccusative/passive (šendeba 'is built')
-  | class3  -- Active intransitive: unergative (pikrobs 'thinks')
-  | class4  -- Inversion: psych with DAT subject (uqvars 'likes')
+  /-- Transitive verbs, as *k'l* 'kill'. -/
+  | transitive
+  /-- Intransitive verbs, among them the passives, as *i-k'vl-eb* 'be killed'. -/
+  | intransitive
+  /-- Medial verbs, which usually have a subject alone and pattern with the transitives, as
+  *tamaš* 'play'. -/
+  | medial
+  /-- Indirect verbs, whose experiencer is dative in every series, as *c'on* 'like'. -/
+  | indirect
+  deriving DecidableEq, Repr, Fintype
+
+/-- The two sets of agreement affixes. -/
+inductive AffixSet where
+  | A
+  | B
+  deriving DecidableEq, Repr, Fintype
+
+/-- The affixes of a set. -/
+def AffixSet.paradigm : AffixSet → Paradigm (List Morph)
+  | .A => setA
+  | .B => setB
+
+/-- The marking of an argument, its case and the set of affixes it agrees by, if any. -/
+structure Marking where
+  case : Case
+  affixes : Option AffixSet
   deriving DecidableEq, Repr
 
-/-- Does the subject take ERG in the aorist (Series II)?
+/-- A pattern of case marking and agreement for the subject and the two objects. -/
+structure Pattern where
+  subject : Marking
+  directObject : Marking
+  indirectObject : Marking
+  deriving DecidableEq, Repr
 
-    The Ergative generalization ([marantz-1991] ex. 6): ERG tracks
-    the thematic vs derived status of the subject. Class 2 (unaccusative)
-    subjects are derived (raised from object position) → no ERG. Class 4
-    subjects have quirky DAT (lexical case) → not eligible for ERG. -/
-def takesErgInAorist : VerbClass → Bool
-  | .class1 => true   -- transitive: ERG subject
-  | .class2 => false  -- unaccusative: NO ERG (derived subject)
-  | .class3 => true   -- unergative: ERG subject
-  | .class4 => false  -- psych: DAT subject (quirky, not structural)
+namespace Pattern
 
-theorem class1_takes_erg : takesErgInAorist .class1 = true := rfl
-theorem class2_no_erg : takesErgInAorist .class2 = false := rfl
-theorem class3_takes_erg : takesErgInAorist .class3 = true := rfl
-theorem class4_no_erg : takesErgInAorist .class4 = false := rfl
+/-- The subject is nominative with Set A, and both objects are dative with Set B. -/
+def nominative : Pattern := ⟨⟨.nom, some .A⟩, ⟨.dat, some .B⟩, ⟨.dat, some .B⟩⟩
 
-/-- Subject case by verb class and tense series ([marantz-1991] ex. 1–3).
+/-- The subject is ergative with Set A, the direct object nominative and the indirect object
+dative, both with Set B. -/
+def ergative : Pattern := ⟨⟨.erg, some .A⟩, ⟨.nom, some .B⟩, ⟨.dat, some .B⟩⟩
 
-    Present/aorist patterns from [marantz-1991]. Evidential follows
-    the general inversion pattern: all subjects surface as DAT
-    ([harris-1981]). -/
-def verbClassSubjectCase : VerbClass → TenseSeries → Case
-  | .class1, .present    => .nom
-  | .class1, .aorist     => .erg
-  | .class1, .evidential => .dat
-  | .class2, .present    => .nom
-  | .class2, .aorist     => .nom   -- derived subject: no ERG
-  | .class2, .evidential => .dat   -- inversion
-  | .class3, .present    => .nom
-  | .class3, .aorist     => .erg   -- unergatives DO get ERG
-  | .class3, .evidential => .dat   -- inversion
-  | .class4, _           => .dat   -- quirky DAT always
+/-- The subject is dative with Set B and the direct object nominative with Set A. The indirect
+object is a genitive governed by the postposition *-tvis* 'for', without agreement. -/
+def inverse : Pattern := ⟨⟨.dat, some .B⟩, ⟨.nom, some .A⟩, ⟨.gen, none⟩⟩
 
-/-- Object case by verb class and tense series.
-    Classes 2 and 3 are intransitive (no direct object). -/
-def verbClassObjectCase : VerbClass → TenseSeries → Option Case
-  | .class1, .present    => some .dat
-  | .class1, .aorist     => some .nom
-  | .class1, .evidential => some .nom
-  | .class2, _           => none   -- intransitive
-  | .class3, _           => none   -- intransitive
-  | .class4, _           => some .nom  -- stimulus = NOM
+end Pattern
 
-/-- Class 1 patterns match the existing `subjectCase`/`objectCase`. -/
-theorem class1_matches_subjectCase (ts : TenseSeries) :
-    verbClassSubjectCase .class1 ts = subjectCase ts := by
-  cases ts <;> rfl
+/-- The pattern of each class of verbs in each series. -/
+def pattern : VerbClass → Series → Pattern
+  | .transitive, .present | .medial, .present => .nominative
+  | .transitive, .aorist | .medial, .aorist => .ergative
+  | .transitive, .perfect | .medial, .perfect => .inverse
+  | .intransitive, _ => .nominative
+  | .indirect, _ => .inverse
 
-theorem class1_matches_objectCase (ts : TenseSeries) :
-    verbClassObjectCase .class1 ts = some (objectCase ts) := by
-  cases ts <;> rfl
+/-- The subject keeps its set of affixes from the first series to the second, whatever becomes
+of its case. -/
+theorem subject_affixes_present_eq_aorist (v : VerbClass) :
+    (pattern v .present).subject.affixes = (pattern v .aorist).subject.affixes := by
+  cases v <;> rfl
 
-/-- The Ergative generalization from verb classes:
-    ERG in the aorist ↔ non-derived subject (classes 1, 3). -/
-theorem erg_iff_nonderived :
-    takesErgInAorist .class1 = true ∧ takesErgInAorist .class3 = true ∧
-    takesErgInAorist .class2 = false ∧ takesErgInAorist .class4 = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- The subject changes case from the first series to the second exactly in the transitive and
+medial classes. -/
+theorem subject_case_ne_iff (v : VerbClass) :
+    (pattern v .present).subject.case ≠ (pattern v .aorist).subject.case ↔
+      v = .transitive ∨ v = .medial := by
+  cases v <;> decide
 
-end Georgian.Agreement
+/-- In every class and series the nominative argument is the one that agrees by Set A, unless
+the subject is ergative. -/
+theorem affixes_eq_A_iff (v : VerbClass) (s : Series) :
+    ((pattern v s).subject.affixes = some .A ↔ (pattern v s).subject.case ≠ .dat) ∧
+    ((pattern v s).directObject.affixes = some .A ↔ (pattern v s).subject.case = .dat) := by
+  cases v <;> cases s <;> decide
+
+end Georgian

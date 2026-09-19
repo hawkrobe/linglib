@@ -25,7 +25,9 @@ an added probe (Mohawk, Nishnaabemwin, Basque) or R-Case on the IA
 * `basque_not_hierarchy`: no ranking of the persons picks the controllers of (2).
 * `basque_prefix_rows`: the auxiliaries of (2) begin with the Fragment's absolutive prefix for
   the person cyclic Agree values the probe with.
-* `basque_hasPersonPrefix_iff_always_inverse`, `georgian_indexed_iff_always_inverse`:
+* `georgian_prefix_rows`: the 1st person singular of (18) is spelled by the Fragment's Set B
+  when the IA values the probe and by its Set A when the EA does.
+* `basque_hasPersonPrefix_iff_always_inverse`, `georgian_hasObjectPrefix_iff_always_inverse`:
   the Fragment paradigms have a marker for an object iff cyclic Agree puts every
   EA→IA combination into an inverse context.
 * `nishnaabemwin_direct_contexts`, `basque_direct_contexts`,
@@ -153,22 +155,36 @@ theorem basque_hasPersonPrefix_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
 
 /-! ### Georgian: the same [u-3-2] system, plus second-cycle morphology -/
 
-/-- Georgian's paradigm-derived object indexing (`objectAgr` has an
-exponent for a cell or not) matches the inverse classification of the
-shared standard-geometry [u-3-2] system, exactly as in Basque. -/
-theorem georgian_indexed_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
-    (Georgian.Agreement.isIndexed c = true ↔
-      ∀ ea ∈ corePersons,
-        isInverseContext .standard partialProbe ea c.person = true) := by
+/-- The Fragment's Set B has a prefix for a direct object of a person and number iff cyclic
+Agree puts every EA→IA combination with that object into an inverse context, exactly as in
+Basque. -/
+theorem georgian_hasObjectPrefix_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
+    (Georgian.HasObjectPrefix c ↔ ∀ ea : Person, basque.isInverse ea c.person = true) := by
   decide
 
-/-- 1sg *m-* is first-cycle morphology (18a), since whenever the IA is 1st person the probe is
-fully valued on cycle I, whatever the EA. -/
+/-- The set of affixes that spells the core probe, Set B when the IA values it on the first
+cycle and Set A when the EA values it on the second. -/
+def affixSet : Controller → Georgian.AffixSet
+  | .ia => .B
+  | .ea => .A
+
+/-- The argument cyclic Agree makes the controller of the core slot in an example. -/
+def controller? (e : LinguisticExample) : Option Controller := do
+  (← system? e).controller (← person? e "ea") (← person? e "ia")
+
+/-- Second-cycle morphology in (18). The 1st person singular is spelled by the Fragment's Set B
+*m-* in (18a), where the IA values the probe, and by its Set A *v-* in (18b), where the EA
+does. -/
+theorem georgian_prefix_rows : ∀ e ∈ [Examples.br2009_18a, Examples.br2009_18b],
+    ∃ v ∈ value? e, ∃ c ∈ controller? e,
+      ((affixSet c).paradigm.realize (.pn v .singular)).bind (·.head?) = slotPrefix? e := by
+  decide +kernel
+
+/-- A 1st-person IA is spelled by first-cycle morphology whatever the EA (18a), since it values
+the probe fully on cycle I. -/
 theorem georgian_m_is_cycle_I :
-    Georgian.Agreement.objectAgr.realize (.pn .first .singular) = some "m-" ∧
-    ∀ ea ∈ corePersons,
-      hasSecondCycleEffect .standard partialProbe ea .first = false := by
-  refine ⟨rfl, ?_⟩; decide
+    ∀ ea : Person, hasSecondCycleEffect .standard partialProbe ea .first = false := by
+  decide
 
 /-- 1sg *v-* is second-cycle morphology (18b), since with a 3rd-person IA the [u2] residue is
 valued by the SAP EA on cycle II, the same person value spelled by the cycle that valued it. -/
