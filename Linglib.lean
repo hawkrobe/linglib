@@ -50,7 +50,6 @@ import Linglib.Core.Analysis.Convex.Function
 import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
-import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.Enumerative.PermutationPattern
@@ -235,7 +234,6 @@ import Linglib.Core.Order.Interval
 import Linglib.Core.Order.IntervalContent
 import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.LeftLinear
-import Linglib.Core.Order.Markedness
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.Orthoframe
@@ -268,7 +266,6 @@ import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.ConditionalProbability
-import Linglib.Core.Probability.Confirmation
 import Linglib.Core.Probability.Constructions
 import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
