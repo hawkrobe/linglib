@@ -1,231 +1,131 @@
-import Linglib.Semantics.Modality.Basic
+import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Narrog's Semantic Map of Modality and Mood
-[narrog-2010] [narrog-2012] [heine-1995]
+# Narrog's semantic map of modality and mood
 
-[narrog-2010]'s two-dimensional semantic map classifies modal meanings along
-two orthogonal axes:
+[narrog-2010] and [narrog-2012] locate the uses of modal markers in a two-dimensional semantic
+space. *Volitivity* separates the modalities in which an element of will is present, deontic,
+teleological, preferential, and boulomaic modality, from those in which it is absent, epistemic,
+evidential, existential, and dynamic modality. *Speech act orientation* is the degree to which a
+use is linked to the speech situation, that is to the speaker's own judgment at the time of
+speech, to the hearer, or to the discourse. Its opposite pole is event orientation, a modal
+judgment about conditions on the described event and its participants. Clausal mood and
+illocutionary modification lie beyond modality proper at the speech act-oriented end. The
+diachronic hypothesis stated on the map is that modal meanings change towards greater speech act
+orientation, whatever the change does to volitivity.
 
-1. **Volitivity** (horizontal): whether a modal meaning involves the speaker's
-   or subject's will. Deontic obligation/permission and boulomaic wish/desire
-   are *volitive*; epistemic possibility, ability, and evidentiality are
-   *non-volitive*.
+## Main declarations
 
-2. **Speaker-orientation** (vertical): the degree to which the modal meaning is
-   anchored in the speech situation. Event-oriented modality (ability,
-   circumstantial) is at the bottom; speaker-oriented modality (epistemic
-   assessment, deontic imposition) is in the middle; mood and illocutionary
-   force modulation (imperative, hortative) are at the top.
+* `Modality.Narrog.Volitivity` is the horizontal dimension, a closed opposition.
+* `Modality.Narrog.Orientation` is the vertical dimension at the three positions the book's
+  figures label.
+* `Modality.Narrog.Region` is a position on the map. Regions are preordered by orientation
+  alone, so `s ≤ t` says that a change from `s` to `t` conforms to the directionality hypothesis,
+  and two regions that differ only in volitivity lie below each other.
 
-The central diachronic claim: modal meanings always shift **upward** — toward
-increased speaker-orientation — independently of the volitive/non-volitive
-dimension. The well-known deontic → epistemic shift is just one instance.
+## Implementation notes
 
-[narrog-2012] takes performativity, the use of a form to qualify a proposition with respect
-to the current speech situation, as the core criterion of subjectivity in modality.
-
-## Bridges
-
-- `toVolitivity` classifies `ModalFlavor` into Narrog's volitivity dimension:
-  deontic = volitive; epistemic, circumstantial = non-volitive.
-- `NarrogRegion` → `ModalFlavor`: reverse bridge from the 2D map back to
-  Kratzer's flavor classification (partial — mood regions have no Kratzer analog).
-- The 200-language sample's NEC/POT cross-linguistic data lives with
-  the formalised study at `Studies/Narrog2010.lean`.
+Both sources treat orientation as gradual and open-ended. [narrog-2012] derives it from
+performativity, a form being used performatively to the extent that it qualifies a proposition
+with respect to the current speech situation, and holds that no marker is event-oriented or
+speech act-oriented out of context. `Orientation` keeps only the three labelled positions, of
+which [narrog-2010] labels the two poles and calls the whole dimension speaker orientation. A
+position therefore belongs to a use. Modal categories receive none here, since the book gives
+deontic, boulomaic, epistemic, and evidential modality a broad range of orientations.
 
 ## TODO
 
-[narrog-2012] treats performativity as a gradient property of uses that defines speaker
-orientation, and [narrog-2010] says that speaker orientation subsumes both subjectivity and
-intersubjectivity in Traugott's sense. `NarrogPosition` instead stores performativity as a binary
-coordinate independent of orientation, and the canonical positions below are stipulated.
+`Modality.ModalFlavor` files teleological modality under the circumstantial flavor, but
+teleological modality is volitive and circumstantial modality non-volitive, so a volitivity map
+on flavors needs a finer flavor type.
+
+## References
+
+* [narrog-2010]
+* [narrog-2012]
 -/
 
 namespace Modality.Narrog
 
-open Modality (ModalFlavor)
-
--- ============================================================================
--- §1. Volitivity
--- ============================================================================
-
-/-- Whether a modal meaning involves the will of the speaker or subject.
-
-    [narrog-2010] §3.1, building on Jespersen ([1924] 1992) and
-    [heine-1995]: "the element of will" is the most fundamental
-    distinguishing element between different kinds of mood. -/
+/-- Volitivity is the presence or absence of an element of will in a modal meaning. -/
 inductive Volitivity where
-  | volitive     -- involves will/desire (deontic, boulomaic)
-  | nonVolitive  -- independent of will (epistemic, ability, evidential)
-  deriving DecidableEq, Repr, Inhabited
+  /-- An element of will is present, as in obligation, permission, and wish. -/
+  | volitive
+  /-- No element of will is present, as in epistemic assessment, evidentiality, and ability. -/
+  | nonVolitive
+  deriving DecidableEq, Fintype, Repr
 
-/-- Classify `ModalFlavor` into Narrog's volitivity dimension.
+/-- Speech act orientation at the three positions labelled on the vertical axis of the map. -/
+inductive Orientation where
+  /-- The modal judgment concerns conditions on the described event and its participants. -/
+  | eventOriented
+  /-- The modal judgment is the speaker's own at the time of speech. -/
+  | speakerOriented
+  /-- The use is tied to the speech act itself, including the hearer and the discourse. Clausal
+  mood and illocutionary modification lie here. -/
+  | speechActOriented
+  deriving DecidableEq, Fintype, Repr
 
-    Deontic modality (obligation, permission) is volitive because it involves
-    the speaker's or some authority's will. Epistemic and circumstantial
-    modality are non-volitive — they describe the world independently of
-    anyone's will. -/
-def toVolitivity : ModalFlavor → Volitivity
-  | .deontic => .volitive
-  | .bouletic => .volitive
-  | .epistemic => .nonVolitive
-  | .circumstantial => .nonVolitive
+namespace Orientation
 
--- ============================================================================
--- §2. Speaker-Orientation
--- ============================================================================
+/-- The positions are ordered as they are listed, from the event-oriented pole upwards. -/
+instance : LinearOrder Orientation := LinearOrder.lift' Orientation.ctorIdx (by decide)
 
-/-- Degree of anchoring to the speech situation.
+instance : BoundedOrder Orientation where
+  top := speechActOriented
+  le_top := by decide
+  bot := eventOriented
+  bot_le := by decide
 
-    [narrog-2010] Figure 1: the vertical axis ranges from event-oriented
-    (bottom) through speaker-oriented modality (middle) to mood / illocutionary
-    force modulation (top). -/
-inductive SpeakerOrientationLevel where
-  | eventOriented    -- modality describes event/situation properties (ability)
-  | speakerOriented  -- modality reflects speaker's assessment (epistemic, deontic)
-  | mood             -- illocutionary force: imperative, hortative, admonitive
-  deriving DecidableEq, Repr, Inhabited
+theorem top_def : (⊤ : Orientation) = speechActOriented := rfl
 
-def SpeakerOrientationLevel.toNat : SpeakerOrientationLevel → Nat
-  | .eventOriented => 0
-  | .speakerOriented => 1
-  | .mood => 2
+theorem bot_def : (⊥ : Orientation) = eventOriented := rfl
 
-instance : LinearOrder SpeakerOrientationLevel :=
-  LinearOrder.lift' SpeakerOrientationLevel.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [SpeakerOrientationLevel.toNat])
+end Orientation
 
--- ============================================================================
--- §3. Positions in the Semantic Map
--- ============================================================================
-
-/-- A region in Narrog's 2D semantic map of modality and mood. -/
-structure NarrogRegion where
+/-- A region of the semantic map, the position of one use of a modal marker. -/
+structure Region where
   volitivity : Volitivity
-  orientation : SpeakerOrientationLevel
-  deriving Repr, DecidableEq
+  orientation : Orientation
+  deriving DecidableEq, Repr
 
-/-- A form is used performatively to the extent that it qualifies a proposition with respect to
-the current speech situation, and descriptively to the extent that it does not. -/
-inductive Performativity where
-  /-- The form qualifies the proposition with respect to the current speech situation. -/
-  | performative
-  /-- The form reports a qualification without tying it to the current speech situation. -/
-  | descriptive
-  deriving DecidableEq, Repr, Inhabited
+namespace Region
 
-/-- A position pairs a region of the semantic map with a performative or descriptive use. -/
-structure NarrogPosition where
-  volitivity : Volitivity
-  orientation : SpeakerOrientationLevel
-  performativity : Performativity
-  deriving Repr, DecidableEq
+/-- Regions are compared by orientation alone, so `s ≤ t` says that a change of meaning from `s`
+to `t` does not decrease speech act orientation, which is the directionality hypothesis. -/
+instance : Preorder Region := Preorder.lift orientation
 
-/-- Project to the 2D semantic map (dropping performativity). -/
-def NarrogPosition.toRegion (r : NarrogPosition) : NarrogRegion :=
-  ⟨r.volitivity, r.orientation⟩
+variable {s t : Region} {v v' : Volitivity} {o o' : Orientation}
 
--- ============================================================================
--- §4. Bridges to Kratzer's Framework
--- ============================================================================
+theorem le_def : s ≤ t ↔ s.orientation ≤ t.orientation := Iff.rfl
 
-/-- Map Narrog's 2D region to Kratzer's modal flavor classification.
+theorem lt_def : s < t ↔ s.orientation < t.orientation := Iff.rfl
 
-    Mood-level regions (imperative, hortative) are illocutionary rather
-    than truth-conditional, so they have no clean Kratzer flavor.
+instance : DecidableLE Region := fun _ _ ↦ decidable_of_iff _ le_def.symm
 
-    [narrog-2012] §2.4: this bridge makes explicit Narrog's claim that
-    his 2D map *classifies* the Kratzer parameterization space — the
-    combination of volitivity and orientation determines whether the
-    conversational background is epistemic, deontic, or circumstantial. -/
-def NarrogRegion.toModalFlavor : NarrogRegion → Option ModalFlavor
-  | ⟨.volitive, .eventOriented⟩ => some .deontic       -- boulomaic desire
-  | ⟨.volitive, .speakerOriented⟩ => some .deontic     -- obligation, permission
-  | ⟨.nonVolitive, .eventOriented⟩ => some .circumstantial  -- ability, root possibility
-  | ⟨.nonVolitive, .speakerOriented⟩ => some .epistemic     -- epistemic assessment
-  | ⟨_, .mood⟩ => none                                  -- illocutionary (no Kratzer analog)
+instance : DecidableLT Region := fun _ _ ↦ decidable_of_iff _ lt_def.symm
 
-/-- The flavor bridge is consistent with the volitivity bridge:
-    if a region maps to a flavor, that flavor's volitivity matches. -/
-theorem toModalFlavor_consistent_volitivity (r : NarrogRegion) (f : ModalFlavor)
-    (h : r.toModalFlavor = some f) : toVolitivity f = r.volitivity := by
-  cases r with | mk v o => cases v <;> cases o <;>
-    simp [NarrogRegion.toModalFlavor] at h <;> subst h <;> rfl
+@[simp] theorem mk_le_mk : (⟨v, o⟩ : Region) ≤ ⟨v', o'⟩ ↔ o ≤ o' := Iff.rfl
 
-/-- Every non-mood `ModalFlavor` round-trips through the Narrog map:
-    flavor → (volitivity, canonical orientation) → flavor. -/
-theorem modalFlavor_roundtrip (f : ModalFlavor) (hf : f ≠ .bouletic) :
-    NarrogRegion.toModalFlavor ⟨toVolitivity f,
-      match f with
-      | .deontic => .speakerOriented
-      | .bouletic => .speakerOriented  -- bouletic collapses with deontic in Narrog's 2D space
-      | .epistemic => .speakerOriented
-      | .circumstantial => .eventOriented⟩ = some f := by
-  cases f with
-  | epistemic | deontic | circumstantial => rfl
-  | bouletic => exact absurd rfl hf
+@[simp] theorem mk_lt_mk : (⟨v, o⟩ : Region) < ⟨v', o'⟩ ↔ o < o' := Iff.rfl
 
--- ============================================================================
--- §5. Performativity and face threat
--- ============================================================================
+/-- A change that keeps the orientation conforms whichever way it crosses the volitivity
+dimension, so volitivity is independent of the direction of change. -/
+theorem le_of_orientation_eq (h : s.orientation = t.orientation) : s ≤ t := h.le
 
-/-- Derive face-threatening potential from the 3D position.
+/-- Every change into a speech act-oriented region conforms. -/
+theorem le_of_orientation_eq_top (h : t.orientation = ⊤) (s : Region) : s ≤ t :=
+  le_def.2 (h ▸ le_top)
 
-    An utterance is face-threatening when it is performative (creates rather
-    than describes the modal state), volitive (involves the will), and
-    speaker-oriented or higher (directed at the addressee).
+/-- No change out of a speech act-oriented region into a lower one conforms. -/
+theorem not_le_of_orientation_eq_top (hs : s.orientation = ⊤) (ht : t.orientation < ⊤) :
+    ¬ s ≤ t := fun h ↦ (hs ▸ le_def.1 h).not_gt ht
 
-    [narrog-2010] §4.2: strong obligation is cross-linguistically
-    avoided with 2nd-person subjects precisely because it occupies this
-    region — performative + volitive + speaker-oriented. -/
-def NarrogPosition.isFaceThreatening (r : NarrogPosition) : Bool :=
-  r.performativity == .performative &&
-  r.volitivity == .volitive &&
-  r.orientation != .eventOriented
+/-- No change into an event-oriented region from a higher one conforms. -/
+theorem not_le_of_orientation_eq_bot (hs : ⊥ < s.orientation) (ht : t.orientation = ⊥) :
+    ¬ s ≤ t := fun h ↦ (ht ▸ le_def.1 h).not_gt hs
 
-/-- Canonical positions for major modal types. -/
-def strongObligation : NarrogPosition :=
-  ⟨.volitive, .speakerOriented, .performative⟩
-
-def weakObligation : NarrogPosition :=
-  ⟨.volitive, .speakerOriented, .descriptive⟩
-
-def epistemicAssessment : NarrogPosition :=
-  ⟨.nonVolitive, .speakerOriented, .descriptive⟩
-
-def dynamicAbility : NarrogPosition :=
-  ⟨.nonVolitive, .eventOriented, .descriptive⟩
-
-def imperative : NarrogPosition :=
-  ⟨.volitive, .mood, .performative⟩
-
-/-- Strong obligation is face-threatening. -/
-theorem strong_obligation_face_threatening :
-    strongObligation.isFaceThreatening = true := rfl
-
-/-- Weak obligation is NOT face-threatening (descriptive, not performative). -/
-theorem weak_obligation_not_face_threatening :
-    weakObligation.isFaceThreatening = false := rfl
-
-/-- Epistemic assessment is NOT face-threatening. -/
-theorem epistemic_not_face_threatening :
-    epistemicAssessment.isFaceThreatening = false := rfl
-
-/-- Imperatives are face-threatening (performative + volitive + mood > eventOriented). -/
-theorem imperative_face_threatening :
-    imperative.isFaceThreatening = true := rfl
-
-/-- Strong and weak obligation share volitivity and orientation and differ in performativity
-    alone. -/
-theorem strong_weak_differ_only_in_performativity :
-    strongObligation.toRegion = weakObligation.toRegion := rfl
-
-/-! ## §6. Cross-Linguistic Modal Changes
-
-Diachronic modal change data and directionality theorems are now in
-`Studies/Narrog2010.lean`, which imports this file and uses
-`NarrogRegion` and `SpeakerOrientationLevel` to formalize the claim
-that modal meanings always shift upward in the semantic map. -/
+end Region
 
 end Modality.Narrog

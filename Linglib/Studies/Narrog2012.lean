@@ -23,7 +23,7 @@ orientation levels in the same direction (`langackerStages`, `langacker_stages_m
 The scope levels follow the combined hierarchy of the book's third chapter, categories on
 a shared level being unordered; the source and target classification extends the book's
 table of non-modal categories by placing the modal categories at the bidirectional level.
-The directionality of the attested changes themselves is proved in `Studies/Narrog2010`.
+The most frequent attested changes of modal meaning are tabulated in `Studies/Narrog2010`.
 
 ## References
 
@@ -114,7 +114,8 @@ theorem im_is_widest (c : GramCategory) : c ≤ GramCategory.illocutionaryMod :=
 /-- Map a category to its speaker-orientation level in Narrog's 2D map.
 
     Categories below the aspect boundary are event-oriented; categories
-    at the modal level are speaker-oriented; mood and IM are mood-level.
+    at the modal level are speaker-oriented; mood and illocutionary modification are
+    speech act-oriented.
 
     At scope level 2, event-oriented (perfective aspect) and speaker-oriented
     (deontic 1, evidentiality 1) categories coexist, reflecting Narrog's
@@ -122,13 +123,13 @@ theorem im_is_widest (c : GramCategory) : c ≤ GramCategory.illocutionaryMod :=
     descriptive use. The mapping is therefore approximate at the
     event/speaker boundary; see `scope_implies_orientation` for the
     precise (strict `<`) relationship. -/
-def GramCategory.toOrientation : GramCategory → SpeakerOrientationLevel
+def GramCategory.toOrientation : GramCategory → Orientation
   | .voice | .benefactive | .phasalAspect | .dynamicModality
   | .perfImperfAspect => .eventOriented
   | .deontic1 | .deontic2 | .epistemic1 | .epistemic2
   | .evidentiality1 | .evidentiality2 | .evidentiality3
   | .negation | .tense => .speakerOriented
-  | .epistemic3 | .volitiveMood | .illocutionaryMod => .mood
+  | .epistemic3 | .volitiveMood | .illocutionaryMod => .speechActOriented
 
 /-- Strict scope increase implies non-decreasing orientation.
 
@@ -192,7 +193,7 @@ theorem source_is_event_oriented (c : GramCategory) (h : c.changeRole = .source)
   revert h; cases c <;> decide
 
 theorem target_is_mood (c : GramCategory) (h : c.changeRole = .target) :
-    c.toOrientation = .mood := by
+    c.toOrientation = .speechActOriented := by
   revert h; cases c <;> decide
 
 /-- A stage in the diachronic development of English modals.
@@ -201,7 +202,7 @@ structure ModalDevelopmentStage where
   stageLabel : String
   semanticChange : String
   historicalCorrelate : String
-  orientation : SpeakerOrientationLevel
+  orientation : Orientation
   deriving Repr
 
 /-- Langacker's stages for English modal verbs ([narrog-2012] Table 3.3).
@@ -221,13 +222,13 @@ def langackerStages : List ModalDevelopmentStage :=
   , ⟨"II,III", "potency pertains to evolution of speaker's knowledge of reality",
     "present-oriented epistemic meanings", .speakerOriented⟩
   , ⟨"II>III", "directed potency loses profiled status",
-    "modals become grounding predications", .mood⟩
+    "modals become grounding predications", .speechActOriented⟩
   ]
 
 /-- The stages are monotonically non-decreasing in orientation —
     consistent with Narrog's directionality hypothesis. -/
 theorem langacker_stages_monotone :
-    langackerStages.Pairwise (λ a b => a.orientation ≤ b.orientation) := by
+    langackerStages.Pairwise (fun a b ↦ a.orientation ≤ b.orientation) := by
   simp [langackerStages]
   decide
 
