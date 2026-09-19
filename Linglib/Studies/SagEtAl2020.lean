@@ -66,14 +66,13 @@ inductive SAIEnt where
 
 /-- An aux-initial construct of sort `cxtSort` whose head daughter has inversion value
 `invSort` and whose mother has semantic type `semSort`. -/
-@[reducible] def saiConstruct (cxtSort invSort semSort : Srt) : Interpretation sig where
-  U := SAIEnt
-  S := λ
+@[reducible] def saiConstruct (cxtSort invSort semSort : Srt) : Interpretation sig SAIEnt where
+  S := fun
     | .cxt => cxtSort
     | .mtr | .hd => .sign
     | .inv => invSort
     | .sem => semSort
-  A := λ a u => match a, u with
+  A := fun a u ↦ match a, u with
     | .MTR, .cxt => some .mtr
     | .HDDTR, .cxt => some .hd
     | .INV, .hd => some .inv
@@ -81,9 +80,6 @@ inductive SAIEnt where
     | _, _ => none
   R := noRel
 
-instance (c i s : Srt) : Fintype (saiConstruct c i s).U := inferInstanceAs (Fintype SAIEnt)
-
-instance (c i s : Srt) : DecidableEq (saiConstruct c i s).U := inferInstanceAs (DecidableEq SAIEnt)
 
 /-- A polar interrogative satisfies the grammar exactly when its head is inverted and its
 mother is a question: the inversion comes from the aux-initial construction and the semantics
