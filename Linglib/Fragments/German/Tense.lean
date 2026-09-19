@@ -28,17 +28,18 @@ gesehen gehabt*, which is colloquial and not accepted as standard.
   participle of a verb, with its perfect auxiliary.
 * `German.haben`, `German.sein`, `German.werden`: the tense auxiliaries.
 * `German.perfectAuxiliary`: the perfect auxiliary of a verb entry, *sein* for an unaccusative.
-* `German.realize`: the words of a tense form of a verb, finite verb first.
+* `German.periphrasis`, `German.PrincipalParts.tenseForm`: the means by which German builds its
+  tense forms, and the words of a tense form of a verb, finite verb first.
 * `German.tenseForms`, `German.southernTenseForms`: the forms of the standard language and of
   southern speech.
 * `German.register`: the register of a form as a narrative tense.
 
 ## Implementation notes
 
-`realize` gives the third person singular, the finite verb first and the nonfinite verbs in
-their clause-final order, the lexical verb before the auxiliaries it stands under. The choice of
-*sein* keys on unaccusativity, which covers the verbs of motion and change of state; *bleiben*
-and *sein* themselves, which also take *sein*, are outside it.
+`PrincipalParts.tenseForm` gives the third person singular, the finite verb first and the
+nonfinite verbs in their clause-final order, the lexical verb before the auxiliaries it stands
+under. The choice of *sein* keys on unaccusativity, which covers the verbs of motion and change of
+state; *bleiben* and *sein* themselves, which also take *sein*, are outside it.
 
 ## References
 
@@ -93,49 +94,34 @@ theorem germanSelection_eq_be_iff (c : TransitivityClass) :
 def Predicates.GermanVerbEntry.principalParts (v : Predicates.GermanVerbEntry) : PrincipalParts :=
   ⟨v.form, v.form3sg, v.formPast, v.formPastPart, perfectAuxiliary v.toVerb⟩
 
-/-- `v.nonfinite ns` gives the nonfinite verbs of a tense form of `v` with nonfinite chain `ns`,
-innermost first, and the verb left to be inflected. Each nonfinite form is taken by the verb
-below it, and the auxiliary that governs it is the next verb up. German has no tense form with a
-present participle. -/
-def PrincipalParts.nonfinite (v : PrincipalParts) :
-    List Tense.Form.Nonfinite → Option (List String × PrincipalParts)
-  | [] => some ([], v)
-  | n :: ns => do
-    let (ws, u) ← v.nonfinite ns
-    match n with
-    | .pastParticiple => some (ws ++ [u.pastParticiple], u.perfectVerb)
-    | .infinitive => some (ws ++ [u.infinitive], werden)
-    | .presentParticiple => none
+/-- German builds its tense forms with the past participle under the verb's perfect auxiliary and
+the infinitive under *werden*. It has no future inflection and no form with a present
+participle. -/
+def periphrasis : Tense.Periphrasis PrincipalParts where
+  finite
+    | v, .present => some v.present
+    | v, .past => some v.past
+    | _, .future => none
+  nonfinite
+    | v, .pastParticiple => some v.pastParticiple
+    | v, .infinitive => some v.infinitive
+    | _, .presentParticiple => none
+  auxiliary
+    | v, .pastParticiple => some v.perfectVerb
+    | _, .infinitive => some werden
+    | _, .presentParticiple => none
 
-/-- `realize v f` gives the words of the tense form `f` of `v` in the third person singular, the
-finite verb first and then the nonfinite verbs in their clause-final order. -/
-def realize (v : PrincipalParts) (f : Tense.Form) : Option (List String) := do
-  let (ws, u) ← v.nonfinite f.nonfinite
-  match f.finite with
-  | .present => some (u.present :: ws)
-  | .past => some (u.past :: ws)
-  | .future => none
-
-/-- The nonfinite verbs of a tense form are as many as its nonfinite forms. -/
-theorem PrincipalParts.length_of_nonfinite (v : PrincipalParts) :
-    ∀ (ns : List Tense.Form.Nonfinite) {ws : List String} {u : PrincipalParts},
-      v.nonfinite ns = some (ws, u) → ws.length = ns.length
-  | [], ws, u, h => by
-    obtain ⟨rfl, -⟩ : [] = ws ∧ v = u := by simpa [nonfinite] using h
-    rfl
-  | n :: ns, ws, u, h => by
-    obtain ⟨⟨ws', u'⟩, h', h⟩ := Option.bind_eq_some_iff.1 h
-    have ih := v.length_of_nonfinite ns h'
-    cases n <;> simp only [Option.some.injEq, Prod.mk.injEq, reduceCtorEq] at h
-    all_goals obtain ⟨rfl, -⟩ := h; simp [ih]
+/-- `v.tenseForm f` gives the words of the tense form `f` of `v` in the third person singular, the
+finite verb first and then the nonfinite verbs in their clause-final order, the lexical verb
+before the auxiliaries it stands under. -/
+def PrincipalParts.tenseForm (v : PrincipalParts) (f : Tense.Form) : Option (List String) :=
+  (periphrasis.realize v f).map fun x ↦ x.1 :: x.2
 
 /-- A realized tense form has one word for its finite verb and one for each nonfinite form. -/
-theorem length_of_mem_realize {v : PrincipalParts} {f : Tense.Form} {ws : List String}
-    (h : ws ∈ realize v f) : ws.length = f.nonfinite.length + 1 := by
-  obtain ⟨⟨ws', u⟩, h', h⟩ := Option.bind_eq_some_iff.1 h
-  have ih := v.length_of_nonfinite _ h'
-  cases hf : f.finite <;> simp only [hf, Option.some.injEq, reduceCtorEq] at h
-  all_goals subst h; simp [ih]
+theorem PrincipalParts.length_of_mem_tenseForm {v : PrincipalParts} {f : Tense.Form}
+    {ws : List String} (h : ws ∈ v.tenseForm f) : ws.length = f.nonfinite.length + 1 := by
+  obtain ⟨x, hx, rfl⟩ := Option.mem_map.1 h
+  simp [periphrasis.length_of_mem_realize hx]
 
 /-- Standard German has the present, the past, the perfect, the pluperfect, the future and the
 future perfect. -/
@@ -148,8 +134,8 @@ def southernTenseForms : List Tense.Form :=
   [.simplePresent, .presentPerfect, .doublePerfect, .future, .futurePerfect]
 
 /-- Every tense form of either variety is realized for every verb. -/
-theorem realize_isSome (v : PrincipalParts) {f : Tense.Form}
-    (hf : f ∈ tenseForms ∨ f ∈ southernTenseForms) : (realize v f).isSome := by
+theorem PrincipalParts.tenseForm_isSome (v : PrincipalParts) {f : Tense.Form}
+    (hf : f ∈ tenseForms ∨ f ∈ southernTenseForms) : (v.tenseForm f).isSome := by
   simp only [tenseForms, southernTenseForms, List.mem_cons, List.not_mem_nil, or_false] at hf
   rcases hf with (rfl | rfl | rfl | rfl | rfl | rfl) | (rfl | rfl | rfl | rfl | rfl) <;> rfl
 
@@ -162,12 +148,12 @@ open Predicates in
 /-- *zerbrechen* 'break', a transitive verb, forms its perfect with *haben*, and the unaccusative
 *frieren* 'freeze' with *sein*. -/
 example :
-    realize zerbrechen.principalParts .presentPerfect = some ["hat", "zerbrochen"] ∧
-      realize zerbrechen.principalParts .doublePerfect = some ["hat", "zerbrochen", "gehabt"] ∧
-      realize zerbrechen.principalParts .futurePerfect = some ["wird", "zerbrochen", "haben"] ∧
-      realize frieren.principalParts .pastPerfect = some ["war", "gefroren"] ∧
-      realize frieren.principalParts .futurePerfect = some ["wird", "gefroren", "sein"] ∧
-      realize frieren.principalParts .pastProgressive = none := by
+    zerbrechen.principalParts.tenseForm .presentPerfect = some ["hat", "zerbrochen"] ∧
+      zerbrechen.principalParts.tenseForm .doublePerfect = some ["hat", "zerbrochen", "gehabt"] ∧
+      zerbrechen.principalParts.tenseForm .futurePerfect = some ["wird", "zerbrochen", "haben"] ∧
+      frieren.principalParts.tenseForm .pastPerfect = some ["war", "gefroren"] ∧
+      frieren.principalParts.tenseForm .futurePerfect = some ["wird", "gefroren", "sein"] ∧
+      frieren.principalParts.tenseForm .pastProgressive = none := by
   decide
 
 end German

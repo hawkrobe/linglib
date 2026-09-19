@@ -347,7 +347,7 @@ theorem rows_outOfTheBlue :
 *bauen*, exactly the labelled one has all its words in the row. -/
 theorem rows_realize :
     ∀ r ∈ [Examples.ex40b, Examples.ex40c], ∀ f ∈ German.tenseForms,
-      ((∃ ws ∈ German.realize German.Predicates.bauen.principalParts f, ws ⊆ r.surfaceTokens) ↔
+      ((∃ ws ∈ German.Predicates.bauen.principalParts.tenseForm f, ws ⊆ r.surfaceTokens) ↔
         r.parse? "form" forms = some f) := by
   decide +kernel
 
