@@ -11,7 +11,7 @@ impersonal construction *il est possible de* ('it is possible to').
 ## Semantic Properties
 
 *Devoir* and *pouvoir* are the French counterparts of Italian *dovere*
-and *potere* (see `Fragments/Italian/Modals.lean`). Like their Italian
+and *potere* (see `Fragments/Romance/Italian/Modals.lean`). Like their Italian
 cognates, both are polysemous across epistemic, deontic, and
 circumstantial readings.
 
