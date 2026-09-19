@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.SpeechActOrientation
+import Linglib.Studies.Narrog2010
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
@@ -23,7 +23,7 @@ The scope levels follow the combined hierarchy of the book's third chapter, cate
 a shared level being unordered. Possession, directionals, and the two kinds of
 honorification, which the book's table of source and target categories also lists, are not
 in the scope hierarchy and are left out. The most frequent attested changes of modal meaning
-are tabulated in `Studies/Narrog2010`.
+are tabulated in `Studies/Narrog2010`, and the last section checks them against the scale.
 
 ## TODO
 
@@ -34,13 +34,42 @@ whether the speculative category on the level of volitive mood counts as modalit
 ## References
 
 * [narrog-2012]
+* [narrog-2010]
 * [narrog-2009a]
 * [cinque-1999]
 -/
 
 namespace Narrog2012
 
-open Modality
+/-- Speech act orientation at the three positions labelled on the vertical axis of the book's
+semantic map. The book treats the dimension as gradual and open-ended, a property of a use that
+follows from performativity, and gives most modal categories a broad range of positions. -/
+inductive SpeechActOrientation where
+  /-- The modal judgment concerns conditions on the described event and its participants. -/
+  | eventOriented
+  /-- The modal judgment is the speaker's own at the time of speech. -/
+  | speakerOriented
+  /-- The use is tied to the speech act itself, including the hearer and the discourse. Clausal
+  mood and illocutionary modification lie here. -/
+  | speechActOriented
+  deriving DecidableEq, Fintype, Repr
+
+namespace SpeechActOrientation
+
+/-- The positions are ordered as they are listed, from the event-oriented pole upwards. A change
+of use from `o` to `o'` conforms to the directionality hypothesis when `o ≤ o'`. -/
+instance : LinearOrder SpeechActOrientation :=
+  LinearOrder.lift' SpeechActOrientation.ctorIdx (by decide)
+
+instance : BoundedOrder SpeechActOrientation where
+  top := speechActOriented
+  le_top := by decide
+  bot := eventOriented
+  bot_le := by decide
+
+theorem top_def : (⊤ : SpeechActOrientation) = speechActOriented := rfl
+
+end SpeechActOrientation
 
 /-- Grammatical categories relevant to the verbal clause, drawn from
     [narrog-2012] Tables 3.5–3.9 and [narrog-2009a].
@@ -188,5 +217,28 @@ theorem source_is_event_oriented (c : GramCategory) (hc : c.IsSource) (hc' : ¬ 
 theorem target_is_speech_act_oriented (c : GramCategory) (hc : c.IsTarget)
     (hc' : ¬ c.IsSource) : c.toOrientation = .speechActOriented := by
   revert hc hc'; cases c <;> decide
+
+/-! ### The changes of [narrog-2010] -/
+
+/-- The lowest position a use of a meaning tabulated in [narrog-2010] can take: the directive
+moods lie at the speech act-oriented end, and modality proper and the future reach down to the
+event-oriented pole. -/
+def minOrientation (m : Narrog2010.Meaning) : SpeechActOrientation :=
+  if m.IsMood then ⊤ else ⊥
+
+/-- Every tabulated change into mood conforms to the directionality hypothesis wherever the
+source use lay. -/
+theorem le_minOrientation_of_isMood :
+    ∀ c ∈ Narrog2010.commonChanges, c.target.IsMood →
+      ∀ o : SpeechActOrientation, o ≤ minOrientation c.target := by
+  intro c _ hc o
+  simp only [minOrientation, hc, ↓reduceIte, le_top]
+
+/-- A change out of mood would not conform unless its target were again speech act-oriented;
+none is tabulated (`Narrog2010.source_not_isMood`). -/
+theorem not_minOrientation_le {m : Narrog2010.Meaning} (hm : m.IsMood)
+    {o : SpeechActOrientation} (ho : o < ⊤) : ¬ minOrientation m ≤ o := by
+  simp only [minOrientation, hm, ↓reduceIte, top_le_iff]
+  exact ho.ne
 
 end Narrog2012

@@ -1,22 +1,25 @@
-import Linglib.Semantics.Modality.SpeechActOrientation
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Narrog (2010): (Inter)subjectification in the Domain of Modality and Mood
 
 This file formalizes the use [narrog-2010] makes of the eight most frequent changes of modal
-meaning in the sample of [bybee-perkins-pagliuca-1994]. The chapter's claim is that a change
-never decreases orientation towards the speaker and the speech situation, the ordering of
-`Modality.SpeechActOrientation`, whatever it does to volitivity. The tabulated meanings are
-force-flavor pairs, the future, and two directive moods (`Meaning`), which fixes the volitivity
-of source and target and tells modality proper from mood. On that basis change is attested
-within and across the two sides of volitivity in every combination (`volitivity_independent`),
-each change from non-volitive to volitive meaning is more frequent than each deontic-to-epistemic
-one (`toNonVolitive_lt_toVolitive`), so the deontic-to-epistemic shift is one change among
-several and not the representative one, and no change leads out of mood (`source_not_isMood`).
-The changes into mood, future and possibility markers becoming imperatives and admonitives and
-obligation markers becoming imperatives, reach the top of the scale and so conform wherever the
-source use lay. A change from probability to an event-oriented obligation is what the chapter
-names as a counterexample and finds undocumented (`probability_to_eventOriented_excluded`).
+meaning in the sample of [bybee-perkins-pagliuca-1994]. The chapter places the uses of modal
+markers on a map with two dimensions. Volitivity separates the modalities in which an element
+of will is present, deontic and boulomaic modality, from those in which it is absent, epistemic,
+evidential, and dynamic modality (`ModalFlavor.IsVolitive`). Speaker orientation runs from
+event-oriented uses up through modality proper to mood and illocutionary force modulation, and
+the chapter's claim is that a change never decreases it, whatever the change does to volitivity.
+The tabulated meanings are force-flavor pairs, the future, and two directive moods (`Meaning`),
+which fixes the volitivity of source and target and tells modality proper from mood. On that
+basis change is attested within and across the two sides of volitivity in every combination
+(`volitivity_independent`), each change from non-volitive to volitive meaning is more frequent
+than each deontic-to-epistemic one (`toNonVolitive_lt_toVolitive`), so the deontic-to-epistemic
+shift is one change among several and not the representative one, and no change leads out of
+mood (`source_not_isMood`). The changes into mood, future and possibility markers becoming
+imperatives and admonitives and obligation markers becoming imperatives, reach the top of the
+map and so conform wherever the source use lay. A change from probability to an event-oriented
+obligation is what the chapter names as a counterexample and finds undocumented.
 
 The chapter's second half asks why strong obligation is rarely grammaticalized: must-type
 markers were found in sixty of two hundred languages, and the Japanese strong-necessity
@@ -32,9 +35,12 @@ its counts are not formalized.
 The chapter argues that the five tabulated changes within modality proper also increase speaker
 orientation, the deontic-to-epistemic ones included, but it assigns no positions to their
 meanings, and orientation is a property of a use and not of a meaning label, so no orientation
-is assigned to a meaning here. Strong obligation and certainty are read as necessity, weak
-obligation and probability as weak necessity, and root possibility and ability as circumstantial
-possibility; a label that does not mention strength is read as the strong force.
+is assigned to a meaning here. The scale itself is `Narrog2012.SpeechActOrientation`, in the
+later book's terms, and that study checks these changes against it. Strong obligation and
+certainty are read as necessity, weak obligation and probability as weak necessity, and root
+possibility and ability as circumstantial possibility; a label that does not mention strength is
+read as the strong force. `ModalFlavor` files teleological modality under the circumstantial
+flavor, which `IsVolitive` treats as non-volitive.
 
 ## References
 
@@ -45,6 +51,13 @@ possibility; a label that does not mention strength is read as the strong force.
 namespace Narrog2010
 
 open Modality
+
+/-- A flavor is volitive when an element of will is present in it, as in obligation,
+permission, and wish, and non-volitive otherwise, as in epistemic assessment and ability. -/
+def _root_.Modality.ModalFlavor.IsVolitive (f : ModalFlavor) : Prop :=
+  f = .deontic ∨ f = .bouletic
+
+instance : DecidablePred ModalFlavor.IsVolitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A meaning between which the tabulated changes run. A modal meaning is the set of
 force-flavor pairs its label covers, as in `ModalItem.meaning`. -/
@@ -136,12 +149,6 @@ theorem source_not_isMood : ∀ c ∈ commonChanges, ¬ c.source.IsMood := by de
 theorem isMood_of_both_volitivities :
     (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsMood) ∧
     (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsMood) := by
-  decide
-
-/-- The chapter's own example of what a counterexample would be, a change from probability as
-the speaker's assessment to an event-oriented obligation, does not conform. -/
-theorem probability_to_eventOriented_excluded :
-    ¬ SpeechActOrientation.speakerOriented ≤ SpeechActOrientation.eventOriented := by
   decide
 
 end Narrog2010
