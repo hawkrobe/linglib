@@ -20,8 +20,13 @@ an added probe (Mohawk, Nishnaabemwin, Basque) or R-Case on the IA
 
 ## Main statements
 
-* `basque_indexed_iff_always_inverse`, `georgian_indexed_iff_always_inverse`:
-  the Fragment paradigms index an object iff cyclic Agree puts every
+* `controller_rows`, `context_rows`: the controller of the core slot and the direct or inverse
+  context the paper reports for each example are those of the language's probe.
+* `basque_not_hierarchy`: no ranking of the persons picks the controllers of (2).
+* `basque_prefix_rows`: the auxiliaries of (2) begin with the Fragment's absolutive prefix for
+  the person cyclic Agree values the probe with.
+* `basque_hasPersonPrefix_iff_always_inverse`, `georgian_indexed_iff_always_inverse`:
+  the Fragment paradigms have a marker for an object iff cyclic Agree puts every
   EA→IA combination into an inverse context.
 * `nishnaabemwin_direct_contexts`, `basque_direct_contexts`,
   `swahili_all_inverse`: the (22) direct/inverse classifications, derived
@@ -43,7 +48,7 @@ an added probe (Mohawk, Nishnaabemwin, Basque) or R-Case on the IA
 namespace BejarRezac2009
 
 open Minimalist.CyclicAgree
-open Agreement
+open Agreement Data.Examples
 
 /-- The three core person values the paper's paradigms range over. -/
 def corePersons : List Person := [.first, .second, .third]
@@ -60,17 +65,78 @@ def basque : AgreementSystem := ⟨.standard, partialProbe⟩
 geometry, second person the most specified. -/
 def nishnaabemwin : AgreementSystem := ⟨.addressee, fullProbeAddr⟩
 
+/-- The full system of Mohawk and Kashmiri, the probe `[u-3-2-1]` under the standard geometry. -/
+def kashmiri : AgreementSystem := ⟨.standard, fullProbeStd⟩
+
+/-! ### The examples -/
+
+/-- The person a feature of an example names. -/
+def person? (e : LinguisticExample) (key : String) : Option Person :=
+  e.parse? key [("1", .first), ("2", .second), ("3", .third)]
+
+/-- The agreement system of an example's language. -/
+def system? (e : LinguisticExample) : Option AgreementSystem :=
+  [("basq1248", basque), ("nucl1302", basque), ("otta1242", nishnaabemwin),
+    ("kash1277", kashmiri)].lookup e.language
+
+/-- The person cyclic Agree gives the core slot in an example. -/
+def value? (e : LinguisticExample) : Option Person := do
+  (← system? e).value (← person? e "ea") (← person? e "ia")
+
+/-- Whether cyclic Agree makes an example's context inverse. -/
+def isInverse? (e : LinguisticExample) : Option Bool := do
+  (← system? e).isInverse (← person? e "ea") (← person? e "ia")
+
+/-- The Basque paradigm (2), where the core slot tracks the IA in (2a–c) and displaces to the EA
+only when the 3rd-person IA leaves the [u2] residue (2d). -/
+def basqueRows : List LinguisticExample :=
+  [Examples.br2009_2a, Examples.br2009_2b, Examples.br2009_2c, Examples.br2009_2d]
+
+/-- The examples the paper annotates with the controller of the core slot. They are the Basque
+paradigm (2) and (3), the Nishnaabemwin paradigm (17) under the [u-3-1-2] probe of the addressee
+geometry, and the Georgian pair (18). -/
+def controllerRows : List LinguisticExample :=
+  basqueRows ++ [Examples.br2009_3, Examples.br2009_17a, Examples.br2009_17b,
+    Examples.br2009_17c, Examples.br2009_17d, Examples.br2009_18a, Examples.br2009_18b]
+
+/-- The controller the paper reports for each example is the person cyclic Agree gives the
+core slot. -/
+theorem controller_rows : ∀ e ∈ controllerRows,
+    (value? e).isSome ∧ value? e = person? e "controller" := by
+  decide +kernel
+
+/-- The direct and inverse contexts of (22) the paper reports for the Basque, Nishnaabemwin and
+Kashmiri examples are those of cyclic Agree. -/
+theorem context_rows : ∀ e ∈ Examples.all, ∀ c ∈ e.feature? "context",
+    isInverse? e = some (c == "inverse") := by
+  decide +kernel
+
 /-! ### Basque: ergative displacement ((2)) -/
 
-/-- In the paradigm (2) the core slot tracks the IA in (2a–c) and displaces to the EA only when
-the 3rd-person IA leaves the [u2] residue (2d); no ranking of person values covers both (2a)
-1>2 = 2 and (2c) 2>1 = 1. -/
-theorem basque_displacement_paradigm :
-    basque.value .first .second = .second ∧   -- (2a) 1>2 = 2
-    basque.value .third .first = .first ∧     -- (2b) 3>1 = 1
-    basque.value .second .first = .first ∧    -- (2c) 2>1 = 1
-    basque.value .first .third = .first := by -- (2d) 1>3 = 1
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+/-- No ranking of the persons picks the controllers of (2). The 2nd person wins over the 1st in
+(2a) and the 1st over the 2nd in (2c), so a hierarchy under which the higher-ranked argument
+controls would rank the two persons alike. -/
+theorem basque_not_hierarchy (r : Person → ℕ) (hr : r .first ≠ r .second) :
+    ¬ ∀ ea ia, basque.value ea ia = if r ia < r ea then ea else ia := by
+  intro h
+  have h12 := h .first .second
+  have h21 := h .second .first
+  rw [show basque.value .first .second = .second by decide] at h12
+  rw [show basque.value .second .first = .first by decide] at h21
+  split_ifs at h12 h21
+  omega
+
+/-- The first morph of an example's last word, a prefix. -/
+def slotPrefix? (e : LinguisticExample) : Option Morphology.Morph :=
+  e.surfaceTokens.getLast?.map fun w ↦ .pref (String.ofList (w.toList.takeWhile (· ≠ '-')))
+
+/-- The auxiliaries of (2) begin with the Fragment's absolutive prefix for the person cyclic
+Agree values the probe with, in some number: *z-* in (2a), and *n-* in (2b–d), where in (2d) it
+cross-references the EA. -/
+theorem basque_prefix_rows : ∀ e ∈ basqueRows, ∃ v ∈ value? e,
+    ∃ n ∈ [Number.singular, .plural],
+      (Basque.absolutive.realize (.pn v n)).bind (·.head?) = slotPrefix? e := by
+  decide +kernel
 
 /-- Basque's direct contexts (22b) are exactly a SAP EA over a 3rd-person IA, the only cells
 where the [u-3-2] probe keeps a residue the EA can check. -/
@@ -79,13 +145,11 @@ theorem basque_direct_contexts :
       (isDirectContext .standard partialProbe ea ia = true ↔
         (ea = .first ∨ ea = .second) ∧ ia = .third) := by decide
 
-/-- Differential object indexing. The Fragment's `pIsIndexed`, SAP objects indexed as in
-textbook Basque, holds of a φ-cell iff cyclic Agree puts every EA→IA combination with that
-object into an inverse context, since a SAP IA fully checks [u-3-2] and leaves no residue for
-any EA. -/
-theorem basque_indexed_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
-    (Basque.Agreement.pIsIndexed c = true ↔
-      ∀ ea : Person, basque.isInverse ea c.person = true) := by decide
+/-- The absolutive slot of the Fragment has a prefix for a person and number iff cyclic Agree
+puts every EA→IA combination with that object into an inverse context, since a SAP IA fully
+checks [u-3-2] and leaves no residue for any EA. -/
+theorem basque_hasPersonPrefix_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
+    (Basque.HasPersonPrefix c ↔ ∀ ea : Person, basque.isInverse ea c.person = true) := by decide
 
 /-! ### Georgian: the same [u-3-2] system, plus second-cycle morphology -/
 
@@ -115,19 +179,8 @@ theorem georgian_v_is_cycle_II :
 
 /-! ### Nishnaabemwin: the fully articulated probe ((17), Tables 4–5) -/
 
-/-- The core-slot paradigm (17) under the [u-3-1-2] probe of the addressee geometry, second
-person the most specified. The 2nd-person IA wins in (17a), the 2nd-person EA checks the [u2]
-residue over a 1st-person IA in (17b), and 3rd-person EAs never displace ((17c–d)). -/
-theorem nishnaabemwin_controllers :
-    nishnaabemwin.value .first .second = .second ∧   -- (17a) 1>2 = 2
-    nishnaabemwin.value .second .first = .second ∧   -- (17b) 2>1 = 2
-    nishnaabemwin.value .third .first = .first ∧     -- (17c) 3>1 = 1
-    nishnaabemwin.value .third .second = .second := by -- (17d) 3>2 = 2
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- Nishnaabemwin's direct contexts (22b): 2>1, 2>3, and 1>3 — the EA
-checks residue exactly when it is more specified than the IA on the
-2>1>3 geometry. -/
+/-- Nishnaabemwin's direct contexts (22b) are 2>1, 2>3 and 1>3, since the EA checks residue
+exactly when it is more specified than the IA on the 2>1>3 geometry. -/
 theorem nishnaabemwin_direct_contexts :
     ∀ ea ∈ corePersons, ∀ ia ∈ corePersons,
       (isDirectContext .addressee fullProbeAddr ea ia = true ↔
@@ -169,9 +222,8 @@ def kashmiriRCase : Person × Person → Bool
   | (.third, .second) | (.third, .third) => true
   | _ => false
 
-/-- The two repairs are identically distributed (§4.1): Mohawk's extra
-agreement and Kashmiri's special Case mark the same cells — one mechanism,
-two spell-outs. -/
+/-- The two repairs are identically distributed (§4.1). Mohawk's extra agreement and Kashmiri's
+special Case mark the same cells, one mechanism with two spell-outs. -/
 theorem repairs_identically_distributed :
     ∀ c ∈ attestedCells, mohawkAddedProbe c = kashmiriRCase c := by decide
 
