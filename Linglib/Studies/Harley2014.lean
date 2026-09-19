@@ -8,7 +8,7 @@ import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.Root.Certificates
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Clause.Arguments
-import Linglib.Studies.Marantz1991
+import Linglib.Studies.Bobaljik2008
 
 /-!
 # Harley (2014): On the identity of roots
@@ -148,30 +148,27 @@ suppletive intransitives must be unaccusative — the paper's prediction from
 locality. -/
 theorem unergative_elsewhere (n : Number) : spellout (unergative n) run = some "tenne" := rfl
 
-/-- Which arguments condition Hiaki suppletion, read off `spellout`: the sole
-argument of an intransitive and the object of a transitive, not the
-transitive subject. -/
-def conditioningPattern : Minimalist.AgreementPattern where
-  sAgrees := spellout (unaccusative .singular) run != spellout (unaccusative .plural) run
-  aAgrees := spellout (transitive .singular .singular) kill !=
+/-- Whether the number of an argument conditions Hiaki suppletion, read off `spellout`. That of
+the sole argument of an intransitive and of the object of a transitive does, and that of the
+transitive subject does not. -/
+def conditions : ArgumentRole → Bool
+  | .S => spellout (unaccusative .singular) run != spellout (unaccusative .plural) run
+  | .A => spellout (transitive .singular .singular) kill !=
     spellout (transitive .singular .plural) kill
-  pAgrees := spellout (transitive .singular .singular) kill !=
+  | .P => spellout (transitive .singular .singular) kill !=
     spellout (transitive .plural .singular) kill
+  | .R | .T => false
 
 /-- Suppletion follows an ergative–absolutive distribution. -/
-theorem conditioningPattern_isErgAbs : conditioningPattern.isErgAbs = true := by decide
+theorem isErgative_conditions : Alignment.IsErgative conditions := by decide
 
-/-- **Suppletion is not agreement**: Hiaki case is nominative–accusative
-((29)), and no agreement threshold over nominative–accusative case yields
-an ergative–absolutive pattern (`Minimalist.nomAcc_no_ergAbs_agreement`,
-[bobaljik-2008]'s generalization) — so the pattern is local Vocabulary-Item
+/-- **Suppletion is not agreement**: Hiaki case is nominative–accusative ((29)), and no
+setting of accessibility derives ergative agreement from accusative case
+(`Bobaljik2008.not_isErgative_controls_accusative`), so the pattern is local Vocabulary-Item
 competition, conditioned by the internal argument. -/
-theorem suppletion_not_agreement (t : Minimalist.CaseAccessibility) :
-    Minimalist.agreementFromThreshold Minimalist.nomAcc t ≠ conditioningPattern := by
-  intro h
-  have := Minimalist.nomAcc_no_ergAbs_agreement t
-  rw [h, conditioningPattern_isErgAbs] at this
-  exact Bool.noConfusion this
+theorem suppletion_not_agreement (t : Bobaljik2008.CaseCategory) :
+    Bobaljik2008.controls .accusative t ≠ conditions := fun h ↦
+  Bobaljik2008.not_isErgative_controls_accusative t (h ▸ isErgative_conditions)
 
 /-! ### §2.3 Individuation is not semantic: the caboodle item -/
 

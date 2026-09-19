@@ -1,0 +1,134 @@
+import Mathlib.Order.UpperLower.Basic
+import Linglib.Syntax.Case.Dependent
+import Linglib.Fragments.Hindi.Case
+
+/-!
+# Bobaljik (2008): Where's Phi? Agreement as a Postsyntactic Operation
+
+This file formalizes the claim that the finite verb agrees with the highest accessible noun
+phrase in its domain, where accessibility is a matter of morphological case. The categories of
+morphological case are those of Marantz's realization hierarchy, and they are ordered for
+agreement the other way round: unmarked case is more accessible than dependent case, and
+dependent case more accessible than lexical case. A language chooses how far down this order
+its verb can see. Since morphological case is assigned after the syntax, agreement, which
+feeds on it, is postsyntactic as well.
+
+Stated over case categories, Moravcsik's hierarchy of agreement controllers holds of
+ergative and accusative languages alike. It also explains a gap among the splits between
+case and agreement. An ergative case system gives absolutive agreement when only unmarked case
+is accessible and subject agreement when dependent case is accessible too, as in Nepali, while
+an accusative case system gives subject agreement at every setting. Ergative agreement over
+accusative case cannot be derived.
+
+## Main declarations
+
+* `CaseCategory`: the categories of morphological case, in their order of accessibility.
+* `controller`: the highest accessible noun phrase of a domain.
+* `controls`: whether an argument of a clause with the given alignment controls agreement.
+
+## Main results
+
+* `isUpperSet_accessible`: if a category is accessible, so is every category above it.
+* `isAccusative_controls_accusative`, `isErgative_controls_ergative_unmarked`,
+  `isAccusative_controls_ergative_dependent`: the predicted agreement alignments.
+* `not_isErgative_controls_accusative`: no setting derives ergative agreement from accusative
+  case.
+* `controller_quirky`: below a subject with lexical case the verb agrees with the object.
+
+## Implementation notes
+
+Case is assigned by the dependent case rules of `Syntax/Case/Dependent.lean`. Case valued by
+agreement with a functional head, which those rules also provide for, counts as unmarked.
+
+## References
+
+* [bobaljik-2008]
+* [marantz-1991]
+-/
+
+namespace Bobaljik2008
+
+open Case
+
+/-- The categories of morphological case, in their order of accessibility for agreement, with
+lexical case the least accessible and unmarked case the most. -/
+inductive CaseCategory where
+  | lexical
+  | dependent
+  | unmarked
+  deriving DecidableEq, Repr, Fintype
+
+namespace CaseCategory
+
+instance : LinearOrder CaseCategory := LinearOrder.lift' (·.ctorIdx) (by decide)
+
+/-- The category of a case, by what valued it. -/
+def ofMechanism : Mechanism → CaseCategory
+  | .lexical => .lexical
+  | .dependent => .dependent
+  | .unmarked | .agree => .unmarked
+
+end CaseCategory
+
+variable {α : Type*}
+
+/-- In a language whose least accessible category is `t`, the categories at or above `t` are
+accessible, so the accessible categories are closed upward. -/
+theorem isUpperSet_accessible (t : CaseCategory) : IsUpperSet {c | t ≤ c} := isUpperSet_Ici t
+
+/-- The controller of agreement is the highest noun phrase of the domain whose case is
+accessible. Noun phrases whose case is not accessible are invisible and do not intervene. -/
+def controller (t : CaseCategory) (domain : List (α × Valuation)) : Option ℕ :=
+  domain.findIdx? fun s ↦ s.2.any fun v ↦ t ≤ .ofMechanism v.2
+
+/-- Whether an argument controls agreement in a clause of the given alignment, in a language
+whose least accessible category is `t`. -/
+def controls (a : Alignment.AlignmentType) (t : CaseCategory) : ArgumentRole → Bool
+  | .S => controller t (assignCases a [{ label := "S" }]) = some 0
+  | .A => controller t (assignCases a [{ label := "A" }, { label := "P" }]) = some 0
+  | .P => controller t (assignCases a [{ label := "A" }, { label := "P" }]) = some 1
+  | .R | .T => false
+
+/-! ### The predicted agreement alignments -/
+
+/-- An accusative case system gives subject agreement at every setting. -/
+theorem isAccusative_controls_accusative (t : CaseCategory) :
+    Alignment.IsAccusative (controls .accusative t) := by
+  cases t <;> decide
+
+/-- An ergative case system gives absolutive agreement when only unmarked case is accessible,
+as in Hindi. -/
+theorem isErgative_controls_ergative_unmarked :
+    Alignment.IsErgative (controls .ergative .unmarked) := by
+  decide
+
+/-- An ergative case system gives subject agreement when dependent case is accessible, as in
+Nepali. -/
+theorem isAccusative_controls_ergative_dependent :
+    Alignment.IsAccusative (controls .ergative .dependent) := by
+  decide
+
+/-- No setting derives ergative agreement from accusative case. -/
+theorem not_isErgative_controls_accusative (t : CaseCategory) :
+    ¬ Alignment.IsErgative (controls .accusative t) :=
+  (isAccusative_controls_accusative t).not_isErgative
+
+/-! ### Case against grammatical function -/
+
+/-- Below a subject with lexical case, as the dative subjects of Icelandic, the verb agrees
+with the nominative object unless lexical case is itself accessible. -/
+theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
+    controller t (assignCases .accusative
+      [{ label := "subject", lexicalCase := some c }, { label := "object" }]) = some 1 := by
+  cases t <;> first | exact absurd rfl ht | rfl
+
+/-- In the Hindi perfective the verb agrees with the unmarked object past the ergative subject,
+and in the imperfective with the subject. -/
+theorem hindi_controller :
+    controller .unmarked (assignCases (Hindi.Case.alignment .perfective)
+      [{ label := "A" }, { label := "P" }]) = some 1 ∧
+    controller .unmarked (assignCases (Hindi.Case.alignment .imperfective)
+      [{ label := "A" }, { label := "P" }]) = some 0 := by
+  decide
+
+end Bobaljik2008
