@@ -13,64 +13,72 @@ import Linglib.Semantics.Questions.Partition.Inquisitive
 /-!
 # The mood state
 
-The mood state of [portner-2018] — his posw `⟨cs, ≤⟩`,
-[veltman-1996]'s expectation state under a modal reading — extended
-with a third coordinate recording the open question:
-`inquiry : Setoid W` partitions worlds into answers
-([groenendijk-stokhof-1984]'s partition theory, the QUD tradition of
-[roberts-2012]). Portner considers two interrogative extensions: his
-pposw (his (10)) *replaces* the context set with a partition of it,
-while a separate question-set coordinate — the design here — is the
-alternative he credits to [roberts-1996] and [portner-2004]. The
-separate coordinate preserves the disjoint-target architecture:
-`assert`, `promote`, and `inquire` each touch one coordinate, each
-update is meet in its coordinate's lattice, and the commutation and
-acceptance facts are one-line `inf`-facts.
+This file defines the mood state, an expectation state extended with a coordinate that records
+the open question, together with its three updates and the modal that reads the new coordinate.
+
+Portner's mood state is a partially ordered set of worlds, a context set with an ordering, which
+is Veltman's expectation state under a modal reading. Here it carries a third coordinate,
+`inquiry : Setoid W`, that partitions the worlds into answers, as in the partition theory of
+Groenendijk and Stokhof and the tradition of questions under discussion after Roberts. Portner
+considers two interrogative extensions. One replaces the context set with a partition of it.
+The other, which he credits to Roberts and to his own earlier work, adds a separate question
+coordinate, and that is the design here. The separate coordinate keeps the targets of the
+updates disjoint, so `assert`, `promote` and `inquire` each touch one coordinate, each update is
+a meet in the lattice of its coordinate, and the facts about commutation and acceptance are
+one-line facts about `⊓`.
 
 ## Main declarations
 
-* `State` — an `ExpState` plus `inquiry : Setoid W`.
-* `inquire`, `State.assert`, `State.promote` — the single-coordinate
-  updates.
-* `boxAns` — the third modal: settled by the question.
-* `polarSetoid` — the partition a single proposition contributes.
-* `stateAt` — the state a Kratzer pair induces at a world.
-* The `HasAssertion` and `Discourse.HasIssue` instances — the context
-  set as common ground and the inquiry partition as the current issue.
+* `State`: an `ExpState` together with `inquiry : Setoid W`.
+* `inquire`, `State.assert`, `State.promote`: the updates, each on a single coordinate.
+* `boxAns`: the third modal, holding of what the question settles.
+* `polarSetoid`: the partition that a single proposition contributes.
+* `stateAt`: the state that a Kratzer pair induces at a world.
+* The `HasAssertion` and `Discourse.HasIssue` instances: the context set as common ground and
+  the inquiry partition as the current issue.
 
 ## Main statements
 
-* `le_inquire_iff` — acceptance for `?`: support iff the inquiry
-  already refines the question.
-* `boxAns_of_inquiry_le_polarSetoid`,
-  `inquiry_le_polarSetoid_iff_boxAns_of_univ` — support vs
-  answerhood.
-* `boxAns_not_reducible_to_boxCs` — the inquiry coordinate does
-  genuine work.
-* `simpleNecessity_iff_boxCs`, `necessity_iff_boxLe` —
-  [portner-2018]'s (3a)/(3b): Kratzer necessity as the state modals.
+* `le_inquire_iff`: a state accepts `?` exactly when its inquiry already refines the question.
+* `boxAns_of_inquiry_le_polarSetoid`, `inquiry_le_polarSetoid_iff_boxAns_of_univ`: support
+  against answerhood.
+* `boxAns_not_reducible_to_boxCs`: the inquiry coordinate does genuine work.
+* `simpleNecessity_iff_boxCs`, `necessity_iff_boxLe`: Kratzer's simple and human necessity are
+  the informational and preferential modals of the induced state.
 
 ## Implementation notes
 
-The `?`-update, `boxAns`, and the interrogative column are this
-library's extensions; they do not appear in [portner-2018]. Inquiry
-is a partition, not a general inquisitive content: non-partition
-phenomena (mention-some, intermediate exhaustivity —
-[theiler-etal-2018], `Studies/TheilerRoelofsenAloni2018.lean`) live
-in `Question W`, with `Question.fromSetoid`
-(`Semantics/Questions/Partition/Inquisitive.lean`) as the faithful
-embedding.
+The `?`-update, `boxAns` and the interrogative column are additions of this library and do not
+appear in Portner's book. Inquiry is a partition and not a general inquisitive content.
+Phenomena that are not partitions, such as mention-some readings and intermediate exhaustivity
+(`Studies/TheilerRoelofsenAloni2018.lean`), live in `Question W`, with `Question.fromSetoid`
+(`Semantics/Questions/Partition/Inquisitive.lean`) as the faithful embedding.
+
+## References
+
+* [P. Portner, *Mood* (2018)][portner-2018]
+* [F. Veltman, *Defaults in Update Semantics* (1996)][veltman-1996]
+* [J. Groenendijk and M. Stokhof, *Studies on the Semantics of Questions and the Pragmatics of
+  Answers* (1984)][groenendijk-stokhof-1984]
+* [C. Roberts, *Information Structure in Discourse: Towards an Integrated Formal Theory of
+  Pragmatics* (1996)][roberts-1996]
+* [C. Roberts, *Information Structure in Discourse: Towards an Integrated Formal Theory of
+  Pragmatics* (2012)][roberts-2012]
+* [P. Portner, *The Semantics of Imperatives within a Theory of Clause Types*
+  (2004)][portner-2004]
+* [N. Theiler, F. Roelofsen and M. Aloni, *A uniform semantics for declarative and interrogative
+  complements* (2018)][theiler-etal-2018]
 -/
 
 namespace Mood
 
 open UpdateSemantics.Default
 
-/-- The mood state: an `ExpState` enriched with an inquiry partition
-recording the open question (`⊤` is "no question"). -/
+/-- A mood state is an `ExpState` enriched with an inquiry partition recording the open question,
+where `⊤` stands for no question. -/
 structure State (W : Type*) extends ExpState W where
-  /-- The inquiry partition: `inquiry.r w v` means worlds `w` and `v`
-      are indistinguishable answers to the open question. -/
+  /-- In the inquiry partition `inquiry.r w v` means that the worlds `w` and `v` are
+  indistinguishable answers to the open question. -/
   inquiry : Setoid W
 
 namespace State
@@ -89,27 +97,26 @@ def ofExpState (σ : ExpState W) : State W :=
 @[simp] theorem ofExpState_inquiry (σ : ExpState W) :
     (ofExpState σ).inquiry = (⊤ : Setoid W) := rfl
 
-/-- The polar Setoid of a proposition: worlds are equivalent iff they
-agree on `q`. Distinct from `Setoid.ker q`, which uses `=` on
-propositions rather than `↔`. -/
+/-- The polar setoid of a proposition makes two worlds equivalent iff they agree on `q`. It differs
+from `Setoid.ker q`, which uses `=` on propositions where this uses `↔`. -/
 def polarSetoid (q : W → Prop) : Setoid W where
   r w v := q w ↔ q v
   iseqv :=
-    { refl := fun _ => Iff.rfl
-      symm := fun h => h.symm
-      trans := fun h₁ h₂ => h₁.trans h₂ }
+    { refl := fun _ ↦ Iff.rfl
+      symm := fun h ↦ h.symm
+      trans := fun h₁ h₂ ↦ h₁.trans h₂ }
 
 @[simp] theorem polarSetoid_r (q : W → Prop) (w v : W) :
     (polarSetoid q).r w v ↔ (q w ↔ q v) := Iff.rfl
 
-@[simp] theorem polarSetoid_top : polarSetoid (W := W) (fun _ => True) = ⊤ := by
+@[simp] theorem polarSetoid_top : polarSetoid (W := W) (fun _ ↦ True) = ⊤ := by
   ext w v
   simp
 
 /-! ### The third update: `?` (inquiry refinement) -/
 
-/-- The `?`-update: refine the inquiry partition by meet with `q`,
-touching no other coordinate. -/
+/-- The `?`-update refines the inquiry partition by meet with `q` and touches no other coordinate.
+-/
 def inquire (c : State W) (q : Setoid W) : State W :=
   { c with inquiry := c.inquiry ⊓ q }
 
@@ -129,7 +136,7 @@ def inquire (c : State W) (q : Setoid W) : State W :=
 /-! ### Discourse-state projections -/
 
 /-- The inquiry partition, read as an issue. -/
-instance : Discourse.HasIssue (State W) W := ⟨λ c => Question.fromSetoid c.inquiry⟩
+instance : Discourse.HasIssue (State W) W := ⟨fun c ↦ Question.fromSetoid c.inquiry⟩
 
 @[simp] theorem toIssue_eq (c : State W) :
     Discourse.HasIssue.toIssue c = Question.fromSetoid c.inquiry := rfl
@@ -139,10 +146,9 @@ instance : Discourse.HasIssue (State W) W := ⟨λ c => Question.fromSetoid c.in
 
 /-! ### The third modal: `boxAns` (informational answerhood) -/
 
-/-- Informational answerhood: `p` is settled by the question iff it
-has a constant truth value on every inquiry cell within `info`
-([groenendijk-stokhof-1984]-style answerhood). Not upward-monotone in
-`p`, unlike `boxCs` and `boxLe`; the natural monotonicity is
+/-- Informational answerhood holds of `p` when the question settles it, that is, when `p` has a
+constant truth value on every inquiry cell within `info`, in the manner of Groenendijk and Stokhof.
+It is not upward-monotone in `p`, unlike `boxCs` and `boxLe`, and its natural monotonicity is
 `boxAns_anti` in the state. -/
 def boxAns (c : State W) (p : W → Prop) : Prop :=
   ∀ w v, w ∈ c.info → v ∈ c.info → c.inquiry.r w v → (p w ↔ p v)
@@ -168,34 +174,33 @@ theorem inquire_mono {c₁ c₂ : State W} (h : c₁ ≤ c₂) (q : Setoid W) :
     c₁.inquire q ≤ c₂.inquire q :=
   ⟨h.1, inf_le_inf_right q h.2⟩
 
-/-- Acceptance for `?`: the input refines its own update iff its
-inquiry already refines the question ([veltman-1996]'s acceptance at
-the third coordinate). -/
+/-- A state accepts its own `?`-update iff its inquiry already refines the question, which is
+Veltman's acceptance at the third coordinate. -/
 theorem le_inquire_iff (c : State W) (q : Setoid W) :
     c ≤ c.inquire q ↔ c.inquiry ≤ q :=
-  ⟨fun h => le_trans h.2 inf_le_right,
-   fun h => ⟨le_refl _, le_inf (le_refl _) h⟩⟩
+  ⟨fun h ↦ le_trans h.2 inf_le_right,
+   fun h ↦ ⟨le_refl _, le_inf (le_refl _) h⟩⟩
 
-/-- Support implies answerhood: an inquiry refining `p`'s polar
-partition settles `p`. -/
+/-- Support implies answerhood, since an inquiry that refines the polar partition of `p` settles
+`p`. -/
 theorem boxAns_of_inquiry_le_polarSetoid (c : State W) (p : W → Prop)
     (h : c.inquiry ≤ polarSetoid p) : c.boxAns p :=
-  fun _ _ _ _ hwv => h hwv
+  fun _ _ _ _ hwv ↦ h hwv
 
 /-- With total information, answerhood *is* polar-partition support:
 the `info`-guards are the only gap. -/
 theorem inquiry_le_polarSetoid_iff_boxAns_of_univ (c : State W)
     (p : W → Prop) (h : c.info = Set.univ) :
     c.inquiry ≤ polarSetoid p ↔ c.boxAns p :=
-  ⟨fun hle => c.boxAns_of_inquiry_le_polarSetoid p hle,
-   fun hbox w v hwv =>
+  ⟨fun hle ↦ c.boxAns_of_inquiry_le_polarSetoid p hle,
+   fun hbox w v hwv ↦
      hbox w v (h ▸ Set.mem_univ w) (h ▸ Set.mem_univ v) hwv⟩
 
 /-- Refining the state strengthens answerhood (the counterpart of
 `ExpState.boxCs_anti`). -/
 theorem boxAns_anti (c₁ c₂ : State W) (h : c₁ ≤ c₂) (p : W → Prop) :
     c₂.boxAns p → c₁.boxAns p :=
-  fun hbox w v hw hv hwv =>
+  fun hbox w v hw hv hwv ↦
     hbox w v (h.1.1 hw) (h.1.1 hv) (h.2 hwv)
 
 /-! ### Closure properties of `boxAns`
@@ -205,25 +210,25 @@ operations: answers combine like ordinary propositions. -/
 
 /-- Negation preserves answerhood. -/
 theorem boxAns_not (c : State W) (p : W → Prop) :
-    c.boxAns p → c.boxAns (fun w => ¬ p w) :=
-  fun hp w v hw hv hwv => not_congr (hp w v hw hv hwv)
+    c.boxAns p → c.boxAns (fun w ↦ ¬ p w) :=
+  fun hp w v hw hv hwv ↦ not_congr (hp w v hw hv hwv)
 
 /-- Conjunction preserves answerhood. -/
 theorem boxAns_and (c : State W) (p q : W → Prop) :
-    c.boxAns p → c.boxAns q → c.boxAns (fun w => p w ∧ q w) :=
-  fun hp hq w v hw hv hwv =>
+    c.boxAns p → c.boxAns q → c.boxAns (fun w ↦ p w ∧ q w) :=
+  fun hp hq w v hw hv hwv ↦
     and_congr (hp w v hw hv hwv) (hq w v hw hv hwv)
 
 /-- Disjunction preserves answerhood. -/
 theorem boxAns_or (c : State W) (p q : W → Prop) :
-    c.boxAns p → c.boxAns q → c.boxAns (fun w => p w ∨ q w) :=
-  fun hp hq w v hw hv hwv =>
+    c.boxAns p → c.boxAns q → c.boxAns (fun w ↦ p w ∨ q w) :=
+  fun hp hq w v hw hv hwv ↦
     or_congr (hp w v hw hv hwv) (hq w v hw hv hwv)
 
 /-- Material implication preserves answerhood. -/
 theorem boxAns_imp (c : State W) (p q : W → Prop) :
-    c.boxAns p → c.boxAns q → c.boxAns (fun w => p w → q w) :=
-  fun hp hq w v hw hv hwv =>
+    c.boxAns p → c.boxAns q → c.boxAns (fun w ↦ p w → q w) :=
+  fun hp hq w v hw hv hwv ↦
     imp_congr (hp w v hw hv hwv) (hq w v hw hv hwv)
 
 /-! ### Three-coordinate update disjointness -/
@@ -295,21 +300,20 @@ theorem inquire_inquire_self (c : State W) (s : Setoid W) :
 discrete inquiry. -/
 def sepInquiry : State Bool where
   info := Set.univ
-  order := Core.Order.Normality.total
+  order := ⊤
   inquiry := ⊥
 
 /-- A proposition constant on each cell but not throughout `info`. -/
-def sepProp : Bool → Prop := fun w => w = false
+def sepProp : Bool → Prop := fun w ↦ w = false
 
 theorem boxAns_sepInquiry_sepProp : sepInquiry.boxAns sepProp := by
   intro w v _ _ hwv
   rw [show w = v from hwv]
 
 theorem not_boxCs_sepInquiry_sepProp : ¬ sepInquiry.toExpState.boxCs sepProp :=
-  fun h => Bool.noConfusion (h true trivial)
+  fun h ↦ Bool.noConfusion (h true trivial)
 
-/-- The inquiry coordinate does genuine work: `boxAns` holds where
-`boxCs` fails. -/
+/-- The inquiry coordinate does genuine work, since `boxAns` holds where `boxCs` fails. -/
 theorem boxAns_not_reducible_to_boxCs :
     ∃ (c : State Bool) (p : Bool → Prop),
       c.boxAns p ∧ ¬ c.toExpState.boxCs p :=
@@ -321,9 +325,8 @@ end State
 
 variable {W : Type*}
 
-/-- The necessity modal quantifying over a component — `boxCs`,
-`boxLe`, or `boxAns`. Mood interpretations factor through it as
-`boxOn ∘ target` (`VerbalOp.interp`, `SpeechEvent.modal`). -/
+/-- The necessity modal quantifying over a component is `boxCs`, `boxLe` or `boxAns`. Mood
+interpretations factor through it as `boxOn ∘ target` (`VerbalOp.interp`, `SpeechEvent.modal`). -/
 def Component.boxOn : Component → State W → (W → Prop) → Prop
   | .informational, c, p => c.toExpState.boxCs p
   | .preferential,  c, p => c.toExpState.boxLe p
@@ -349,9 +352,8 @@ are his (3a)/(3b). -/
 
 open Modality.Kratzer
 
-/-- The expectation state a modal base and ordering source induce at a
-world: accessible worlds as information, the ordering-source ranking
-as pattern. -/
+/-- The expectation state that a modal base and ordering source induce at a world has the accessible
+worlds as information and the ordering-source ranking as pattern. -/
 def stateAt (f : ModalBase W) (g : OrderingSource W) (w : W) :
     ExpState W :=
   ⟨accessibleWorlds f w, kratzerPreorder (g w)⟩
@@ -367,30 +369,29 @@ theorem bestWorlds_eq_optimal (f : ModalBase W) (g : OrderingSource W)
     (w : W) :
     bestWorlds f g w = (stateAt f g w).optimal := rfl
 
-/-- Simple necessity is informational necessity over the induced state
-(the ordering source is irrelevant) — [portner-2018]'s (3a). -/
+/-- Simple necessity is informational necessity over the induced state, where the ordering source is
+irrelevant. -/
 theorem simpleNecessity_iff_boxCs (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W) :
     simpleNecessity f p w ↔ (stateAt f g w).boxCs p :=
   Iff.rfl
 
-/-- Kratzer necessity is preferential necessity over the induced state
-— human necessity as `□_≤`, [portner-2018]'s (3b). -/
+/-- Kratzer necessity is preferential necessity over the induced state, so human necessity is `□_≤`.
+-/
 theorem necessity_iff_boxLe (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W) :
     necessity f g p w ↔ (stateAt f g w).boxLe p :=
   Iff.rfl
 
-/-- Veltman acceptance at a Kratzer state: the induced state supports
-asserting `p` iff `p` is a simple necessity. -/
+/-- The state induced by a Kratzer frame supports asserting `p` iff `p` is a simple necessity. -/
 theorem le_assert_iff_simpleNecessity (f : ModalBase W)
     (g : OrderingSource W) (p : W → Prop) (w : W) :
     stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
   ((stateAt f g w).le_assert_iff p).trans
     (simpleNecessity_iff_boxCs f g p w).symm
 
-/-- Kratzer realism is fiber-reflexivity: a modal base is realistic iff
-every world belongs to its own induced information state. -/
+/-- Kratzer realism is fiber-reflexivity, so a modal base is realistic iff every world belongs to
+its own induced information state. -/
 theorem isRealistic_iff_mem_stateAt_info (f : ModalBase W)
     (g : OrderingSource W) :
     isRealistic f ↔ ∀ w, w ∈ (stateAt f g w).info :=
