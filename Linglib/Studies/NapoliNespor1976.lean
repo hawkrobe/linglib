@@ -1,4 +1,4 @@
-import Linglib.Fragments.Italian.PolarityItems
+import Linglib.Fragments.Romance.Italian.PolarityItems
 import Linglib.Semantics.Mood.Defs
 import Linglib.Data.Examples.Judgment
 

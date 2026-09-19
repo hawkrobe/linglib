@@ -8,7 +8,7 @@ import Linglib.Fragments.English.Negation
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.German.Negation
-import Linglib.Fragments.Italian.Negation
+import Linglib.Fragments.Romance.Italian.Negation
 import Linglib.Fragments.Romance.French.Negation
 import Linglib.Fragments.Slavic.Russian.Negation
 import Linglib.Fragments.Romance.Spanish.Negation

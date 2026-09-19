@@ -1,6 +1,6 @@
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Fragments.Italian.Predicates
+import Linglib.Fragments.Romance.Italian.Predicates
 import Linglib.Data.Examples.FuscoSgrizzi2026
 
 /-!
@@ -38,7 +38,7 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
 * The two heads are stated over abstract eventualities and worlds, with the content background,
   the circumstantial base and the inertial ordering as anchoring functions of the state.
 * The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
-  `Fragments/Italian/Predicates.lean`.
+  `Fragments/Romance/Italian/Predicates.lean`.
 
 ## References
 

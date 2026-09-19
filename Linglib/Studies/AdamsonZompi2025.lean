@@ -1,6 +1,6 @@
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Person.Resolve
-import Linglib.Fragments.Italian.Pronouns
+import Linglib.Fragments.Romance.Italian.Pronouns
 import Linglib.Fragments.Romance.Spanish.Pronouns
 import Linglib.Fragments.German.Pronouns
 import Linglib.Studies.Deal2024

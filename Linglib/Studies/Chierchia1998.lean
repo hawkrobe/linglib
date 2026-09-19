@@ -1,5 +1,5 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Fragments.Italian.NumberGender
+import Linglib.Fragments.Romance.Italian.NumberGender
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Romance.French.Nouns
@@ -8,8 +8,8 @@ import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Japanese.Determiners
-import Linglib.Fragments.Italian.Nouns
-import Linglib.Fragments.Italian.Determiners
+import Linglib.Fragments.Romance.Italian.Nouns
+import Linglib.Fragments.Romance.Italian.Determiners
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
 

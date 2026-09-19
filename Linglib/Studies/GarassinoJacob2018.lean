@@ -1,6 +1,6 @@
 import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Fragments.Italian.PolarityMarking
+import Linglib.Fragments.Romance.Italian.PolarityMarking
 import Linglib.Fragments.Romance.Spanish.PolarityMarking
 import Linglib.Fragments.Romance.French.PolarityMarking
 import Linglib.Data.Examples.GarassinoJacob2018

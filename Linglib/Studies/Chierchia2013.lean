@@ -3,7 +3,7 @@ import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Exhaustification.Antiexhaustive
 import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Fragments.English.PolarityItems
-import Linglib.Fragments.Italian.PolarityItems
+import Linglib.Fragments.Romance.Italian.PolarityItems
 import Linglib.Data.Examples.Chierchia2013
 
 /-!

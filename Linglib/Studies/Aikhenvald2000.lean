@@ -1,5 +1,5 @@
 import Linglib.Fragments.Romance.French.Nouns
-import Linglib.Fragments.Italian.NumberGender
+import Linglib.Fragments.Romance.Italian.NumberGender
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Xhosa.Basic

@@ -839,17 +839,6 @@ import Linglib.Fragments.Indonesian.Morphophonology
 import Linglib.Fragments.Indonesian.Predicates
 import Linglib.Fragments.Indonesian.TAM
 import Linglib.Fragments.Irish.Coordination
-import Linglib.Fragments.Italian.Binominals
-import Linglib.Fragments.Italian.Determiners
-import Linglib.Fragments.Italian.ModalIndefinites
-import Linglib.Fragments.Italian.Modals
-import Linglib.Fragments.Italian.Negation
-import Linglib.Fragments.Italian.Nouns
-import Linglib.Fragments.Italian.NumberGender
-import Linglib.Fragments.Italian.PolarityItems
-import Linglib.Fragments.Italian.PolarityMarking
-import Linglib.Fragments.Italian.Predicates
-import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Classifiers
