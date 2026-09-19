@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Judgment
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Spanish.PersonFeatures
+import Linglib.Syntax.Person.Features
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
 
@@ -11,11 +11,13 @@ This file formalizes the argument of [munoz-perez-2026] from the stylistic dativ
 *le* of Chilean Spanish, which co-occurs with the reflexive *se* of marked anticausatives
 and the ethical dative *me*, to the nature of anticausative *se*. The three clitic
 patterns are synonymous, which follows if the Voice head that hosts them is semantically
-vacuous (`three_way_synonymy_from_vacuity`); the stylistic clitic is restricted to a
-non-first-person form (`fission_person_restriction`), requires an inchoative predicate
-(`stylLE_requires_inchoative`), and is blocked by unmarked anticausatives
-(`unmarked_blocks_stylLE`), all of which the paper's structural fission rule accounts for
-(`spanishFissionRule`). Acceptability follows the library's six-level taxonomy, the paper's
+vacuous (`three_way_synonymy_from_vacuity`). The stylistic clitic arises by a fission rule on
+the applicative head, which applies to a participant singular bundle
+(`isFissionApplicable_iff`) in an inchoative context (`fission_eq_none_iff`) and is blocked by
+unmarked anticausatives (`unmarked_blocks_stylLE`). The first exponent of a fissioned head is
+read off the dative series of the Spanish fragment, and since that series is syncretic with the
+reflexive outside the third person, it marks the Voice projection overtly where *se* is absent
+(`marksVoice_of_fission`). Acceptability follows the library's six-level taxonomy, the paper's
 star mapping to the unacceptable level.
 
 ## References
@@ -213,100 +215,55 @@ theorem marking_restriction :
 theorem negative_controls_unacceptable :
     negativeControls.all (·.acceptability == .unacceptable) = true := by decide
 
-/-! ### Spanish Fission instantiation -/
+/-! ### The fission rule -/
 
 open Minimalist Minimalist.Voice
-open Spanish.PersonFeatures
 open Spanish.Predicates
-open Spanish.Clitics
 open Person
 
-/-- The Spanish-specific realization output of Fission: two clitic
-    positions. Cl₁ surfaces person features (`me`/`te`), Cl₂ is
-    invariably `le`. -/
+/-- The bundle condition of the fission rule holds of an applicative head that is
+[+PART, +SING]. -/
+def IsFissionApplicable (c : Category) : Prop :=
+  .participant ∈ c.toFeatures ∧ c.IsSingular
+
+instance : DecidablePred IsFissionApplicable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The bundle condition singles out the speaker and the addressee, since a third person lacks
+[+PART] and a group lacks [+SING]. -/
+theorem isFissionApplicable_iff (c : Category) :
+    IsFissionApplicable c ↔ c = .speaker ∨ c = .addressee := by
+  cases c <;> decide
+
+/-- The two exponents of a fissioned applicative head. -/
 structure FissionOutput where
-  /-- Cl₁: bears person features. -/
-  cl1Form : String
-  /-- Cl₂: bears case features. -/
-  cl2Form : String
-  deriving Repr, DecidableEq
+  /-- The forms of the first exponent, which keeps the person and number of the head. -/
+  cl1 : Finset String
+  /-- The form of the second exponent, a dative without person and number. -/
+  cl2 : String
+  deriving DecidableEq
 
-/-- A structural Fission rule with listed outputs: under its context and
-    bundle conditions the clitic node splits into the two positions whose
-    forms `realize` gives. -/
-structure ApplicativeFission where
-  /-- The structural condition licensing Fission. -/
-  contextOk : List VerbHead → Prop
-  /-- Decidability witness for `contextOk`. -/
-  decContext : DecidablePred contextOk
-  /-- The condition on the fissioned bundle. -/
-  bundleOk : Category → Prop
-  /-- Decidability witness for `bundleOk`. -/
-  decBundle : DecidablePred bundleOk
-  /-- The two positions' forms. -/
-  realize : Category → FissionOutput
+/-- The fission rule of Chilean Spanish splits an applicative head that is [+PART, +SING] in two
+when the context is inchoative. The first exponent has the dative forms of the head's category
+and the second is the inflectionless dative *le*. -/
+def fission (c : Category) (heads : List VerbHead) : Option FissionOutput :=
+  if isInchoative heads = true ∧ IsFissionApplicable c then
+    some ⟨PersonalPronoun.paradigm Spanish.Clitics.dative c, Spanish.Clitics.le.form⟩
+  else none
 
-instance (rule : ApplicativeFission) (c : List VerbHead) : Decidable (rule.contextOk c) :=
-  rule.decContext c
+theorem fission_eq_none_iff {c : Category} {heads : List VerbHead} :
+    fission c heads = none ↔ ¬ (isInchoative heads = true ∧ IsFissionApplicable c) := by
+  simp [fission]
 
-instance (rule : ApplicativeFission) (p : Category) : Decidable (rule.bundleOk p) :=
-  rule.decBundle p
+/-- A first person singular head fissions into *me le*. -/
+theorem fission_speaker : fission .speaker [.vCAUSE, .vGO, .vBE] = some ⟨{"me"}, "le"⟩ := by
+  decide +kernel
 
-/-- Apply the rule: the two positions when both conditions hold. -/
-def ApplicativeFission.apply (rule : ApplicativeFission) (p : Category) (c : List VerbHead) :
-    Option FissionOutput :=
-  if rule.contextOk c ∧ rule.bundleOk p then some (rule.realize p) else none
+/-- A second person singular head fissions into *te le*. -/
+theorem fission_addressee : fission .addressee [.vCAUSE, .vGO, .vBE] = some ⟨{"te"}, "le"⟩ := by
+  decide +kernel
 
-/-- The stylistic applicative Fission rule for Chilean Spanish
-    ([munoz-perez-2026] rule 55):
-    - Context: inchoative verbal-head sequence (vGO ⌒ vBE)
-    - Bundle: [+PART, +SING] person (1SG or 2SG)
-    - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/
-def spanishFissionRule : ApplicativeFission where
-  contextOk := λ heads => isInchoative heads = true
-  decContext := λ heads => inferInstanceAs (Decidable (isInchoative heads = true))
-  bundleOk := IsFissionApplicable
-  decBundle := inferInstance
-  realize := λ p => {
-    cl1Form := if .author ∈ p.toFeatures then "me" else "te"
-    cl2Form := "le"
-  }
-
-/-- [munoz-perez-2026]'s PF condition (rule 58): the non-thematic
-    VoiceP projection must be overtly marked on the verb by a
-    *reflexive clitic*. `se` is the directly-merged reflexive; `me`/`te`
-    count because they are DAT-REFL syncretic (the paper's table 59)
-    and syncretic elements are indistinguishable for PF purposes.
-    (1PL `nos` is also syncretic but is filtered upstream: Fission
-    requires [+SING], so `nos le` is never generated.) -/
-def AnticausativePF (out : FissionOutput) : Prop :=
-  out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"
-
-instance : DecidablePred AnticausativePF := λ out =>
-  inferInstanceAs
-    (Decidable (out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"))
-
-/-- Apply the Spanish stylistic applicative Fission rule. -/
-def applySpanishFission (p : Category) (heads : List VerbHead) :
-    Option FissionOutput :=
-  spanishFissionRule.apply p heads
-
-/-! ### Person restriction (paper §3.1) -/
-
-/-- Fission applies only to 1SG and 2SG.
-    DERIVED from [+PARTICIPANT, +SINGULAR] feature condition. -/
-theorem fission_person_restriction :
-    IsFissionApplicable .speaker ∧
-    IsFissionApplicable .addressee ∧
-    ¬ IsFissionApplicable .other ∧
-    ¬ IsFissionApplicable .speakerAddressee ∧
-    ¬ IsFissionApplicable .speakerAddresseeOthers ∧
-    ¬ IsFissionApplicable .speakerOthers ∧
-    ¬ IsFissionApplicable .addresseeOthers ∧
-    ¬ IsFissionApplicable .others := by decide
-
-/-- The person restriction matches the empirical data:
-    Fission applies ↔ stylistic LE is grammatical. -/
+/-- Fission applies to the first and second person singular, whose stylistic clitic is accepted,
+and not to the third, whose stylistic clitic is rejected. -/
 theorem person_restriction_matches_data :
     IsFissionApplicable .speaker ∧
     person_1sg.acceptability = .ok ∧
@@ -318,19 +275,17 @@ theorem person_restriction_matches_data :
 
 /-! ### Inchoative requirement (the context of rule 55) -/
 
-/-- Stylistic LE requires inchoative context (vGO ∧ vBE).
-    DERIVED from Fission's structural context condition. -/
+/-- Stylistic *le* requires an inchoative context, so fission applies neither to an activity nor
+to a causative. -/
 theorem stylLE_requires_inchoative :
-    (applySpanishFission .speaker [.vCAUSE, .vGO, .vBE]).isSome = true ∧
-    (applySpanishFission .speaker [.vDO]).isSome = false ∧
-    (applySpanishFission .speaker [.vDO, .vCAUSE, .vGO, .vBE]).isSome = false := by
-  decide
+    fission .speaker [.vDO] = none ∧ fission .speaker [.vDO, .vCAUSE, .vGO, .vBE] = none := by
+  decide +kernel
 
 /-- Every Muñoz-Pérez verb that licenses stylistic LE has inchoative structure.
     DERIVED from the verb fragment. -/
 theorem stylLE_verbs_inchoative :
     (Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
-      (λ v => isInchoative v.verbHead) = true := by decide
+      (fun v ↦ isInchoative v.verbHead) = true := by decide
 
 /-! ### Marking restriction -/
 
@@ -354,28 +309,53 @@ theorem optional_licenses_stylLE :
     DERIVED from the fragment data. -/
 theorem blocking_verbs_all_unmarked :
     (Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
-      (λ v => v.anticausativeMarking == .unmarked) = true := by decide
+      (fun v ↦ v.anticausativeMarking == .unmarked) = true := by decide
 
-/-! ### SE-optionality (the PF condition, rule 58) -/
+/-! ### The overt-marking condition -/
 
-/-- When Fission applies, the output clitic satisfies the PF
-    marking condition (syncretic with reflexive), making SE optional. -/
-theorem se_optional_1sg :
-    ∃ out, applySpanishFission .speaker [.vCAUSE, .vGO, .vBE] = some out ∧
-      AnticausativePF out :=
-  ⟨{ cl1Form := "me", cl2Form := "le" }, by decide, by decide⟩
+/-- A form counts as a reflexive clitic at PF when the reflexive series has it, syncretic
+elements being indistinguishable there. -/
+def IsReflexiveForm (f : String) : Prop := ∃ p ∈ Spanish.Clitics.reflexive, p.form = f
 
-theorem se_optional_2sg :
-    ∃ out, applySpanishFission .addressee [.vCAUSE, .vGO, .vBE] = some out ∧
-      AnticausativePF out :=
-  ⟨{ cl1Form := "te", cl2Form := "le" }, by decide, by decide⟩
+instance : DecidablePred IsReflexiveForm := fun _ ↦ inferInstanceAs (Decidable (∃ p ∈ _, _))
 
-/-- The DAT-REFL syncretism that enables SE-optionality is present
-    for exactly the persons where Fission applies. -/
-theorem syncretism_aligns_with_fission :
-    datReflSyncretic .first .singular = true ∧
-    datReflSyncretic .second .singular = true ∧
-    datReflSyncretic .third .singular = false := ⟨rfl, rfl, rfl⟩
+/-- The paper's PF condition on a fissioned head requires the non-thematic Voice projection to be
+overtly marked by a reflexive clitic, here the first exponent. -/
+def FissionOutput.MarksVoice (out : FissionOutput) : Prop := ∃ f ∈ out.cl1, IsReflexiveForm f
+
+/-- Outside the third person every dative form is a reflexive form, by the syncretism of the two
+series. -/
+theorem isReflexiveForm_of_mem_dative {c : Category} (hc : c.person ≠ .third) {f : String}
+    (hf : f ∈ PersonalPronoun.paradigm Spanish.Clitics.dative c) : IsReflexiveForm f := by
+  rw [(Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff c).mpr hc] at hf
+  obtain ⟨p, hp, -, rfl⟩ := ReflexivePronoun.mem_paradigm.mp hf
+  exact ⟨p, hp, rfl⟩
+
+/-- Whenever fission applies, its first exponent marks Voice, so *se* is optional beside a
+stylistic clitic. -/
+theorem marksVoice_of_fission {c : Category} {heads : List VerbHead} {out : FissionOutput}
+    (h : fission c heads = some out) : out.MarksVoice := by
+  unfold fission at h
+  split_ifs at h with hc
+  obtain rfl := Option.some.inj h
+  have hne : c.person ≠ .third := by
+    rcases (isFissionApplicable_iff c).mp hc.2 with rfl | rfl <;> decide
+  have hdat : (PersonalPronoun.paradigm Spanish.Clitics.dative c).Nonempty := by
+    rw [(Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff c).mpr hne]
+    exact Spanish.Clitics.paradigm_reflexive_nonempty c
+  obtain ⟨f, hf⟩ := hdat
+  exact ⟨f, hf, isReflexiveForm_of_mem_dative hne hf⟩
+
+/-- The second exponent *le* is not a reflexive form, so the marking comes from the first. -/
+theorem not_isReflexiveForm_le : ¬ IsReflexiveForm Spanish.Clitics.le.form := by decide +kernel
+
+/-- Syncretism with the reflexive does not suffice for a stylistic clitic. The first person
+plural *nos* is syncretic, and fission still skips it for want of [+SING]. -/
+theorem syncretic_not_isFissionApplicable :
+    PersonalPronoun.paradigm Spanish.Clitics.dative .speakerOthers =
+        ReflexivePronoun.paradigm Spanish.Clitics.reflexive .speakerOthers ∧
+      ¬ IsFissionApplicable .speakerOthers :=
+  ⟨(Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff _).mpr (by decide), by decide⟩
 
 /-! ### Three-way synonymy -/
 
@@ -395,43 +375,6 @@ theorem three_way_synonymy_from_vacuity :
     romper_se_me_le.acceptability = .ok ∧
     ¬ Minimalist.Voice.anticausative.HasSemantics := by
   refine ⟨rfl, rfl, rfl, ?_⟩; exact voice_semantically_vacuous
-
-/-! ### Fission verification -/
-
-/-- Fission applies to 1SG in inchoative context. -/
-theorem fission_1sg_inchoative :
-    applySpanishFission .speaker [.vCAUSE, .vGO, .vBE] =
-      some { cl1Form := "me", cl2Form := "le" } := by decide
-
-/-- Fission applies to 2SG in inchoative context. -/
-theorem fission_2sg_inchoative :
-    applySpanishFission .addressee [.vCAUSE, .vGO, .vBE] =
-      some { cl1Form := "te", cl2Form := "le" } := by decide
-
-/-- Fission does NOT apply to 3SG (not [+PART]). -/
-theorem fission_blocked_3sg :
-    applySpanishFission .other [.vCAUSE, .vGO, .vBE] = none := by decide
-
-/-- Fission does NOT apply in non-inchoative context (activity). -/
-theorem fission_blocked_activity :
-    applySpanishFission .speaker [.vDO] = none := by decide
-
-/-- Fission does NOT apply in causative context (has vDO). -/
-theorem fission_blocked_causative :
-    applySpanishFission .speaker [.vDO, .vCAUSE, .vGO, .vBE] = none := by decide
-
-/-- 1SG Cl₁ is "me" (reflects [+AUTHOR]). -/
-theorem cl1_1sg_is_me :
-    (applySpanishFission .speaker [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "me" := by decide
-
-/-- 2SG Cl₁ is "te" (reflects [-AUTHOR]). -/
-theorem cl1_2sg_is_te :
-    (applySpanishFission .addressee [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "te" := by decide
-
-/-- Cl₂ is always invariable "le". -/
-theorem cl2_invariable :
-    (applySpanishFission .speaker [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
-    (applySpanishFission .addressee [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by decide
 
 /-! ### Against a null-reflexive extension of [koontz-garboden-2009]
 

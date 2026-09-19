@@ -1,131 +1,170 @@
-import Linglib.Syntax.Person.Category
-import Linglib.Fragments.Romance.Clitics
+import Linglib.Syntax.Category.Pronoun.Personal
+import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
-# Spanish Clitic Paradigm
-[munoz-perez-2026]
+# Spanish object clitics
 
-The full Spanish clitic paradigm, with syncretism data critical for
-Muñoz [munoz-perez-2026]. The key observation: 1SG and 2SG are syncretic
-across accusative, dative, and reflexive, while 3SG/PL are not.
-This syncretism drives the availability of stylistic applicatives.
+Spanish object pronouns are clitics on the verb. The first and second persons have one form each
+for direct object, indirect object and reflexive use: *me*, *te*, *nos* and *os*. Only the third
+person tells the three apart: accusative *lo*, *la*, *los* and *las* mark gender and number,
+dative *le* and *les* mark number alone, and reflexive *se* marks neither. A third-person dative
+is replaced by *se* before a third-person accusative, *se lo doy* and never *le lo doy*, so *se*
+is also a form of the dative. *Os* belongs to *vosotros* and is confined to Spain; elsewhere the
+third-person plural forms serve for plural addressees. The description follows Butt, Benjamin and
+Moreira Rodríguez's reference grammar.
 
-## Paradigm (Muñoz [munoz-perez-2026], ex. 59)
+## Main declarations
 
-|       | ACC    | DAT   | REFL |
-|-------|--------|-------|------|
-| 1SG   | me     | me    | me   | ← fully syncretic
-| 2SG   | te     | te    | te   | ← fully syncretic
-| 3SG   | lo/la  | le/se | se   | ← NOT syncretic (DAT ≠ REFL)
-| 1PL   | nos    | nos   | nos  | ← syncretic, but not singular
-| 2/3PL | los/las| les/se| se   | ← NOT syncretic
+* `Spanish.Clitics.accusative`, `Spanish.Clitics.dative` — the two object series, personal
+  pronouns of the clitic strength class
+* `Spanish.Clitics.reflexive` — the reflexive series
+* `Spanish.Clitics.paradigm_accusative_eq_paradigm_dative_iff`,
+  `Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff` — the series are syncretic exactly
+  outside the third person
+* `Spanish.Clitics.isSome_gender_iff` — gender is marked by the third-person accusatives alone
 
+## References
+
+* [J. Butt, C. Benjamin and A. Moreira Rodríguez, *A New Reference Grammar of Modern Spanish*
+  (2019)][butt-benjamin-2019]
 -/
-
 
 namespace Spanish.Clitics
 
-open Romance.Clitics (CliticEntry CliticCase)
+/-! ### The accusative series -/
 
-/-! ### Paradigm data
+/-- *me*, first person singular accusative. -/
+def me_acc : PersonalPronoun :=
+  { form := "me", person := some .first, number := some .singular, case_ := some .acc,
+    strength := some .clitic }
 
-Schema and capability instances are the shared Romance clitic schema
-(`Fragments/Romance/Clitics.lean`). -/
+/-- *te*, second person singular accusative. -/
+def te_acc : PersonalPronoun :=
+  { form := "te", person := some .second, number := some .singular, case_ := some .acc,
+    strength := some .clitic }
 
--- 1SG clitics
-def me_acc : CliticEntry :=
-  { form := "me", person := .first, number := .singular, case_ := .accusative }
-def me_dat : CliticEntry :=
-  { form := "me", person := .first, number := .singular, case_ := .dative }
-def me_refl : CliticEntry :=
-  { form := "me", person := .first, number := .singular, case_ := .reflexive }
+/-- *lo*, third person singular masculine accusative. -/
+def lo : PersonalPronoun :=
+  { form := "lo", person := some .third, number := some .singular, case_ := some .acc,
+    gender := some .masculine, strength := some .clitic }
 
--- 2SG clitics
-def te_acc : CliticEntry :=
-  { form := "te", person := .second, number := .singular, case_ := .accusative }
-def te_dat : CliticEntry :=
-  { form := "te", person := .second, number := .singular, case_ := .dative }
-def te_refl : CliticEntry :=
-  { form := "te", person := .second, number := .singular, case_ := .reflexive }
+/-- *la*, third person singular feminine accusative. -/
+def la : PersonalPronoun :=
+  { form := "la", person := some .third, number := some .singular, case_ := some .acc,
+    gender := some .feminine, strength := some .clitic }
 
--- 3SG clitics
-def lo : CliticEntry :=
-  { form := "lo", person := .third, number := .singular, case_ := .accusative }
-def la : CliticEntry :=
-  { form := "la", person := .third, number := .singular, case_ := .accusative }
-def le_dat : CliticEntry :=
-  { form := "le", person := .third, number := .singular, case_ := .dative }
-def se_refl : CliticEntry :=
-  { form := "se", person := .third, number := .singular, case_ := .reflexive }
+/-- *nos*, first person plural accusative. -/
+def nos_acc : PersonalPronoun :=
+  { form := "nos", person := some .first, number := some .plural, case_ := some .acc,
+    strength := some .clitic }
 
--- 1PL clitics
-def nos_acc : CliticEntry :=
-  { form := "nos", person := .first, number := .plural, case_ := .accusative }
-def nos_dat : CliticEntry :=
-  { form := "nos", person := .first, number := .plural, case_ := .dative }
-def nos_refl : CliticEntry :=
-  { form := "nos", person := .first, number := .plural, case_ := .reflexive }
+/-- *os*, second person plural accusative, used in Spain. -/
+def os_acc : PersonalPronoun :=
+  { form := "os", person := some .second, number := some .plural, case_ := some .acc,
+    strength := some .clitic }
 
--- 3PL clitics
-def los : CliticEntry :=
-  { form := "los", person := .third, number := .plural, case_ := .accusative }
-def las : CliticEntry :=
-  { form := "las", person := .third, number := .plural, case_ := .accusative }
-def les_dat : CliticEntry :=
-  { form := "les", person := .third, number := .plural, case_ := .dative }
-def se_refl_pl : CliticEntry :=
-  { form := "se", person := .third, number := .plural, case_ := .reflexive }
+/-- *los*, third person plural masculine accusative. -/
+def los : PersonalPronoun :=
+  { form := "los", person := some .third, number := some .plural, case_ := some .acc,
+    gender := some .masculine, strength := some .clitic }
 
-/-! ### Paradigm and syncretism -/
+/-- *las*, third person plural feminine accusative. -/
+def las : PersonalPronoun :=
+  { form := "las", person := some .third, number := some .plural, case_ := some .acc,
+    gender := some .feminine, strength := some .clitic }
 
-/-- The full clitic paradigm as a flat list. -/
-def paradigm : List CliticEntry :=
-  [ me_acc, me_dat, me_refl,
-    te_acc, te_dat, te_refl,
-    lo, la, le_dat, se_refl,
-    nos_acc, nos_dat, nos_refl,
-    los, las, les_dat, se_refl_pl ]
+/-- The accusative series. -/
+def accusative : Finset PersonalPronoun := {me_acc, te_acc, lo, la, nos_acc, os_acc, los, las}
 
-/-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm : Person → Number → CliticCase → Option String :=
-  Romance.Clitics.lookupForm paradigm
+/-! ### The dative series -/
 
-/-- Are two clitic cases syncretic for a given person/number combination?
-    Derived from the paradigm data. -/
-def isSyncretic : Person → Number → CliticCase → CliticCase → Bool :=
-  Romance.Clitics.isSyncretic paradigm
+/-- *me*, first person singular dative. -/
+def me_dat : PersonalPronoun :=
+  { form := "me", person := some .first, number := some .singular, case_ := some .dat,
+    strength := some .clitic }
 
-/-- The set of person/number combinations where DAT and REFL are syncretic.
-    This is the key condition for SE-optionality. -/
-def datReflSyncretic : Person → Number → Bool :=
-  Romance.Clitics.datReflSyncretic paradigm
+/-- *te*, second person singular dative. -/
+def te_dat : PersonalPronoun :=
+  { form := "te", person := some .second, number := some .singular, case_ := some .dat,
+    strength := some .clitic }
 
-/-! ### Verification theorems -/
+/-- *le*, third person singular dative. -/
+def le : PersonalPronoun :=
+  { form := "le", person := some .third, number := some .singular, case_ := some .dat,
+    strength := some .clitic }
 
-/-- 1SG: dative and reflexive are syncretic (both "me"). -/
-theorem syncretic_1sg : datReflSyncretic .first .singular = true := by decide
+/-- *nos*, first person plural dative. -/
+def nos_dat : PersonalPronoun :=
+  { form := "nos", person := some .first, number := some .plural, case_ := some .dat,
+    strength := some .clitic }
 
-/-- 2SG: dative and reflexive are syncretic (both "te"). -/
-theorem syncretic_2sg : datReflSyncretic .second .singular = true := by decide
+/-- *os*, second person plural dative, used in Spain. -/
+def os_dat : PersonalPronoun :=
+  { form := "os", person := some .second, number := some .plural, case_ := some .dat,
+    strength := some .clitic }
 
-/-- 3SG: dative and reflexive are NOT syncretic ("le" ≠ "se"). -/
-theorem not_syncretic_3sg : datReflSyncretic .third .singular = false := by decide
+/-- *les*, third person plural dative. -/
+def les : PersonalPronoun :=
+  { form := "les", person := some .third, number := some .plural, case_ := some .dat,
+    strength := some .clitic }
 
-/-- 1PL: dative and reflexive are syncretic (both "nos"). -/
-theorem syncretic_1pl : datReflSyncretic .first .plural = true := by decide
+/-- *se*, the form *le* and *les* take before a third-person accusative clitic, as in
+*se lo doy* 'I give it to them'. It is number-neutral. -/
+def se_dat : PersonalPronoun :=
+  { form := "se", person := some .third, number := some .general, case_ := some .dat,
+    strength := some .clitic }
 
-/-- 3PL: dative and reflexive are NOT syncretic ("les" ≠ "se"). -/
-theorem not_syncretic_3pl : datReflSyncretic .third .plural = false := by decide
+/-- The dative series. -/
+def dative : Finset PersonalPronoun := {me_dat, te_dat, le, nos_dat, os_dat, les, se_dat}
 
-/-- 1SG forms are identical across all three cases. -/
-theorem me_forms_identical :
-    me_acc.form = me_dat.form ∧ me_dat.form = me_refl.form := ⟨rfl, rfl⟩
+/-! ### The reflexive series -/
 
-/-- 2SG forms are identical across all three cases. -/
-theorem te_forms_identical :
-    te_acc.form = te_dat.form ∧ te_dat.form = te_refl.form := ⟨rfl, rfl⟩
+/-- *me*, first person singular reflexive. -/
+def me_refl : ReflexivePronoun :=
+  { form := "me", person := some .first, number := some .singular, strength := some .clitic }
 
-/-- 3SG dative ≠ 3SG reflexive (le ≠ se). -/
-theorem le_ne_se : le_dat.form ≠ se_refl.form := by decide
+/-- *te*, second person singular reflexive. -/
+def te_refl : ReflexivePronoun :=
+  { form := "te", person := some .second, number := some .singular, strength := some .clitic }
+
+/-- *se*, third person reflexive, number-neutral. -/
+def se : ReflexivePronoun :=
+  { form := "se", person := some .third, number := some .general, strength := some .clitic }
+
+/-- *nos*, first person plural reflexive. -/
+def nos_refl : ReflexivePronoun :=
+  { form := "nos", person := some .first, number := some .plural, strength := some .clitic }
+
+/-- *os*, second person plural reflexive, used in Spain. -/
+def os_refl : ReflexivePronoun :=
+  { form := "os", person := some .second, number := some .plural, strength := some .clitic }
+
+/-- The reflexive series. -/
+def reflexive : Finset ReflexivePronoun := {me_refl, te_refl, se, nos_refl, os_refl}
+
+/-! ### Syncretism across the series -/
+
+/-- The accusative and the dative have the same forms exactly outside the third person. -/
+theorem paradigm_accusative_eq_paradigm_dative_iff (c : Person.Category) :
+    PersonalPronoun.paradigm accusative c = PersonalPronoun.paradigm dative c ↔
+      c.person ≠ .third := by
+  cases c <;> decide +kernel
+
+/-- The dative and the reflexive have the same forms exactly outside the third person, where the
+dative has *le* or *les* beside *se* and the reflexive *se* alone. -/
+theorem paradigm_dative_eq_paradigm_reflexive_iff (c : Person.Category) :
+    PersonalPronoun.paradigm dative c = ReflexivePronoun.paradigm reflexive c ↔
+      c.person ≠ .third := by
+  cases c <;> decide +kernel
+
+/-- Every category has a reflexive form. -/
+theorem paradigm_reflexive_nonempty (c : Person.Category) :
+    (ReflexivePronoun.paradigm reflexive c).Nonempty := by
+  cases c <;> decide +kernel
+
+/-- Gender is marked by the third-person accusatives alone. -/
+theorem isSome_gender_iff {p : PersonalPronoun} (hp : p ∈ accusative ∪ dative) :
+    p.gender.isSome ↔ p.person = some .third ∧ p.case_ = some .acc := by
+  revert p; decide +kernel
 
 end Spanish.Clitics

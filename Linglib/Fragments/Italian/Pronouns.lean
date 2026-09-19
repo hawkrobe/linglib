@@ -1,55 +1,50 @@
 import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Person.Category
-import Linglib.Fragments.Romance.Clitics
+import Linglib.Syntax.Category.Pronoun.Reflexive
 
-/-! # Italian Pronoun and Clitic Fragment
+/-!
+# Italian pronouns
 
-Personal pronouns (strong forms) and clitic paradigm for Italian.
+Italian has a tonic series of personal pronouns and an atonic series of object pronouns. The
+tonic second person distinguishes familiar *tu* and *voi* from polite *Lei*, which agrees as a
+third person singular, and the archaic polite plural *Loro*.
 
-## Strong Pronouns
-[munoz-perez-2026]
+The atonic first and second persons have one form each for direct object, indirect object and
+reflexive use: *mi*, *ti*, *ci* and *vi*. Only the third person tells the three apart: accusative
+*lo*, *la*, *li* and *le*, dative *gli* and *le*, and reflexive *si*, which marks neither gender
+nor number. The atonic forms are clitics except the third-person plural dative *loro*, which
+Cardinaletti and Starke class as weak: it is deficient, but it follows the verb, never enters a
+cluster and bears word stress.
 
-Italian has a T/V distinction in 2nd person:
-- Singular: *tu* (familiar T) vs *Lei* (formal V, 3sg agreement)
-- Plural: *voi* (familiar) vs *Loro* (formal, archaic; *voi* now used for both)
+## Main declarations
 
-## Clitic Paradigm
-
-Italian object clitics show the same syncretism pattern as Spanish: 1sg/2sg are
-syncretic across accusative, dative, and reflexive cases, while 3sg/3pl are not.
-
-| Person | ACC    | DAT    | REFL |
-|--------|--------|--------|------|
-| 1sg    | mi     | mi     | mi   | syncretic
-| 2sg    | ti     | ti     | ti   | syncretic
-| 3sg    | lo/la  | gli/le | si   | NOT syncretic
-| 1pl    | ci     | ci     | ci   | syncretic
-| 2pl    | vi     | vi     | vi   | syncretic
-| 3pl    | li/le  | loro   | si   | NOT syncretic
+* `Italian.Pronouns.pronouns` — the tonic series
+* `Italian.Pronouns.accusative`, `Italian.Pronouns.dative`, `Italian.Pronouns.reflexive` — the
+  atonic series
+* `Italian.Pronouns.paradigm_accusative_eq_paradigm_dative_iff`,
+  `Italian.Pronouns.paradigm_dative_eq_paradigm_reflexive_iff` — the atonic series are syncretic
+  exactly outside the third person
+* `Italian.Pronouns.strength_eq_weak_iff` — dative *loro* is the one atonic form that is not a
+  clitic
 
 ## References
 
-* [C. Muñoz Pérez, *Stylistic applicatives: A lens into the nature of anticausative SE*
-  (2026)][munoz-perez-2026]
 * [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
 * [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
   Three Classes of Pronouns* (1999)][cardinaletti-starke-1999]
 -/
 
-
 namespace Italian.Pronouns
 
--- ============================================================================
--- § 1: Strong Pronouns
--- ============================================================================
+/-! ### The tonic series -/
 
 /-- *io* — 1sg. -/
 def io : PersonalPronoun :=
-  { form := "io", person := some .first, number := some .singular }
+  { form := "io", person := some .first, number := some .singular, strength := some .strong }
 
 /-- *tu* — 2sg familiar (T form). -/
 def tu : PersonalPronoun :=
-  { form := "tu", person := some .second, number := some .singular, register := .informal }
+  { form := "tu", person := some .second, number := some .singular, register := .informal,
+    strength := some .strong }
 
 /-- *Lei* — polite 2sg (V form). Formally 3rd person: triggers 3sg verbal
     agreement, patterns with 3sg.f clitics, binds 3rd person reflexive *si*.
@@ -58,183 +53,167 @@ def tu : PersonalPronoun :=
     [adamson-zompi-2025] -/
 def lei_formal : PersonalPronoun :=
   { form := "Lei", person := some .third, number := some .singular, register := .formal,
-    referential := {.addressee} }
+    referential := {.addressee}, strength := some .strong }
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=
-  { form := "lui", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "lui", person := some .third, number := some .singular, gender := some .masculine,
+    strength := some .strong }
 
 /-- *lei* — 3sg feminine. -/
 def lei : PersonalPronoun :=
-  { form := "lei", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "lei", person := some .third, number := some .singular, gender := some .feminine,
+    strength := some .strong }
 
 /-- *noi* — 1pl. -/
 def noi : PersonalPronoun :=
-  { form := "noi", person := some .first, number := some .plural }
+  { form := "noi", person := some .first, number := some .plural, strength := some .strong }
 
 /-- *voi* — 2pl (familiar; also used as general 2pl in modern Italian). -/
 def voi : PersonalPronoun :=
-  { form := "voi", person := some .second, number := some .plural, register := .informal }
+  { form := "voi", person := some .second, number := some .plural, register := .informal,
+    strength := some .strong }
 
 /-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
 def loro_formal : PersonalPronoun :=
-  { form := "Loro", person := some .second, number := some .plural, register := .formal }
+  { form := "Loro", person := some .second, number := some .plural, register := .formal,
+    strength := some .strong }
 
 /-- *loro* — 3pl. -/
 def loro : PersonalPronoun :=
-  { form := "loro", person := some .third, number := some .plural }
+  { form := "loro", person := some .third, number := some .plural, strength := some .strong }
 
 /-- The strong-pronoun inventory. -/
 def pronouns : Finset PersonalPronoun := {io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro}
 
--- ============================================================================
--- § 2: Clitic Paradigm
--- ============================================================================
+/-! ### The accusative series -/
 
-open Romance.Clitics (CliticEntry CliticCase)
+/-- *mi*, first person singular accusative. -/
+def mi_acc : PersonalPronoun :=
+  { form := "mi", person := some .first, number := some .singular, case_ := some .acc,
+    strength := some .clitic }
 
-/-! The schema and its `HasPhi` instance are the shared Romance clitic schema
-(`Fragments/Romance/Clitics.lean`). -/
+/-- *ti*, second person singular accusative. -/
+def ti_acc : PersonalPronoun :=
+  { form := "ti", person := some .second, number := some .singular, case_ := some .acc,
+    strength := some .clitic }
 
--- 1sg clitics
-def mi_acc : CliticEntry :=
-  { form := "mi", person := .first, number := .singular, case_ := .accusative }
-def mi_dat : CliticEntry :=
-  { form := "mi", person := .first, number := .singular, case_ := .dative }
-def mi_refl : CliticEntry :=
-  { form := "mi", person := .first, number := .singular, case_ := .reflexive }
+/-- *lo*, third person singular masculine accusative. -/
+def lo : PersonalPronoun :=
+  { form := "lo", person := some .third, number := some .singular, case_ := some .acc,
+    gender := some .masculine, strength := some .clitic }
 
--- 2sg clitics
-def ti_acc : CliticEntry :=
-  { form := "ti", person := .second, number := .singular, case_ := .accusative }
-def ti_dat : CliticEntry :=
-  { form := "ti", person := .second, number := .singular, case_ := .dative }
-def ti_refl : CliticEntry :=
-  { form := "ti", person := .second, number := .singular, case_ := .reflexive }
+/-- *la*, third person singular feminine accusative. -/
+def la : PersonalPronoun :=
+  { form := "la", person := some .third, number := some .singular, case_ := some .acc,
+    gender := some .feminine, strength := some .clitic }
 
--- 3sg clitics
-def lo_cl : CliticEntry :=
-  { form := "lo", person := .third, number := .singular, case_ := .accusative }
-def la_cl : CliticEntry :=
-  { form := "la", person := .third, number := .singular, case_ := .accusative }
-def gli_dat : CliticEntry :=
-  { form := "gli", person := .third, number := .singular, case_ := .dative }
-def le_dat : CliticEntry :=
-  { form := "le", person := .third, number := .singular, case_ := .dative }
-def si_refl : CliticEntry :=
-  { form := "si", person := .third, number := .singular, case_ := .reflexive }
+/-- *ci*, first person plural accusative. -/
+def ci_acc : PersonalPronoun :=
+  { form := "ci", person := some .first, number := some .plural, case_ := some .acc,
+    strength := some .clitic }
 
--- 1pl clitics
-def ci_acc : CliticEntry :=
-  { form := "ci", person := .first, number := .plural, case_ := .accusative }
-def ci_dat : CliticEntry := { form := "ci", person := .first, number := .plural, case_ := .dative }
-def ci_refl : CliticEntry :=
-  { form := "ci", person := .first, number := .plural, case_ := .reflexive }
+/-- *vi*, second person plural accusative. -/
+def vi_acc : PersonalPronoun :=
+  { form := "vi", person := some .second, number := some .plural, case_ := some .acc,
+    strength := some .clitic }
 
--- 2pl clitics
-def vi_acc : CliticEntry :=
-  { form := "vi", person := .second, number := .plural, case_ := .accusative }
-def vi_dat : CliticEntry := { form := "vi", person := .second, number := .plural, case_ := .dative }
-def vi_refl : CliticEntry :=
-  { form := "vi", person := .second, number := .plural, case_ := .reflexive }
+/-- *li*, third person plural masculine accusative. -/
+def li : PersonalPronoun :=
+  { form := "li", person := some .third, number := some .plural, case_ := some .acc,
+    gender := some .masculine, strength := some .clitic }
 
--- 3pl clitics
-def li_cl : CliticEntry :=
-  { form := "li", person := .third, number := .plural, case_ := .accusative }
-def le_cl : CliticEntry :=
-  { form := "le", person := .third, number := .plural, case_ := .accusative }
-def loro_dat : CliticEntry :=
-  { form := "loro", person := .third, number := .plural, case_ := .dative }
-def si_refl_pl : CliticEntry :=
-  { form := "si", person := .third, number := .plural, case_ := .reflexive }
+/-- *le*, third person plural feminine accusative. -/
+def le_acc : PersonalPronoun :=
+  { form := "le", person := some .third, number := some .plural, case_ := some .acc,
+    gender := some .feminine, strength := some .clitic }
 
--- ============================================================================
--- § 3: Paradigm and Syncretism
--- ============================================================================
+/-- The accusative series. -/
+def accusative : Finset PersonalPronoun :=
+  {mi_acc, ti_acc, lo, la, ci_acc, vi_acc, li, le_acc}
 
-/-- The traditional atonic (object) paradigm as a flat list. NB: the series is
-    not strength-homogeneous — [cardinaletti-starke-1999] classify dative
-    *loro* as *weak*, not clitic (not verb-adjacent, never clusters); see
-    `loroDatStrength` below. The rest are clitics proper. -/
-def paradigm : List CliticEntry :=
-  [ mi_acc, mi_dat, mi_refl,
-    ti_acc, ti_dat, ti_refl,
-    lo_cl, la_cl, gli_dat, le_dat, si_refl,
-    ci_acc, ci_dat, ci_refl,
-    vi_acc, vi_dat, vi_refl,
-    li_cl, le_cl, loro_dat, si_refl_pl ]
+/-! ### The dative series -/
 
-/-! ### Capability checks -/
+/-- *mi*, first person singular dative. -/
+def mi_dat : PersonalPronoun :=
+  { form := "mi", person := some .first, number := some .singular, case_ := some .dat,
+    strength := some .clitic }
 
--- The reflexive clitic *si* is a Principle-A anaphor; the accusative *lo* a pronominal.
-example : si_refl.IsAnaphor := by decide
-example : lo_cl.IsPronominal := by decide
+/-- *ti*, second person singular dative. -/
+def ti_dat : PersonalPronoun :=
+  { form := "ti", person := some .second, number := some .singular, case_ := some .dat,
+    strength := some .clitic }
 
-/-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm : Person → Number → CliticCase → Option String :=
-  Romance.Clitics.lookupForm paradigm
+/-- *gli*, third person singular masculine dative. -/
+def gli : PersonalPronoun :=
+  { form := "gli", person := some .third, number := some .singular, case_ := some .dat,
+    gender := some .masculine, strength := some .clitic }
 
-/-- Are two clitic cases syncretic for a given person/number combination?
-    Derived from the paradigm data. -/
-def isSyncretic : Person → Number → CliticCase → CliticCase → Bool :=
-  Romance.Clitics.isSyncretic paradigm
+/-- *le*, third person singular feminine dative. -/
+def le_dat : PersonalPronoun :=
+  { form := "le", person := some .third, number := some .singular, case_ := some .dat,
+    gender := some .feminine, strength := some .clitic }
 
-/-- DAT/REFL syncretism for a given person/number. -/
-def datReflSyncretic : Person → Number → Bool :=
-  Romance.Clitics.datReflSyncretic paradigm
+/-- *ci*, first person plural dative. -/
+def ci_dat : PersonalPronoun :=
+  { form := "ci", person := some .first, number := some .plural, case_ := some .dat,
+    strength := some .clitic }
 
--- ============================================================================
--- § 4: Verification Theorems
--- ============================================================================
+/-- *vi*, second person plural dative. -/
+def vi_dat : PersonalPronoun :=
+  { form := "vi", person := some .second, number := some .plural, case_ := some .dat,
+    strength := some .clitic }
 
--- Syncretism
-/-- 1sg: dative and reflexive are syncretic (both "mi"). -/
-theorem syncretic_1sg : datReflSyncretic .first .singular = true := by decide
+/-- *loro*, third person plural dative, a weak pronoun that follows the verb. -/
+def loro_dat : PersonalPronoun :=
+  { form := "loro", person := some .third, number := some .plural, case_ := some .dat,
+    strength := some .weak }
 
-/-- 2sg: dative and reflexive are syncretic (both "ti"). -/
-theorem syncretic_2sg : datReflSyncretic .second .singular = true := by decide
+/-- The dative series. -/
+def dative : Finset PersonalPronoun := {mi_dat, ti_dat, gli, le_dat, ci_dat, vi_dat, loro_dat}
 
-/-- 3sg: dative and reflexive are NOT syncretic ("gli" ≠ "si"). -/
-theorem not_syncretic_3sg : datReflSyncretic .third .singular = false := by decide
+/-! ### The reflexive series -/
 
-/-- 1pl: dative and reflexive are syncretic (both "ci"). -/
-theorem syncretic_1pl : datReflSyncretic .first .plural = true := by decide
+/-- *mi*, first person singular reflexive. -/
+def mi_refl : ReflexivePronoun :=
+  { form := "mi", person := some .first, number := some .singular, strength := some .clitic }
 
-/-- 2pl: dative and reflexive are syncretic (both "vi"). -/
-theorem syncretic_2pl : datReflSyncretic .second .plural = true := by decide
+/-- *ti*, second person singular reflexive. -/
+def ti_refl : ReflexivePronoun :=
+  { form := "ti", person := some .second, number := some .singular, strength := some .clitic }
 
-/-- 3pl: dative and reflexive are NOT syncretic ("loro" ≠ "si"). -/
-theorem not_syncretic_3pl : datReflSyncretic .third .plural = false := by decide
+/-- *si*, third person reflexive, number-neutral. -/
+def si : ReflexivePronoun :=
+  { form := "si", person := some .third, number := some .general, strength := some .clitic }
 
--- ============================================================================
--- § 5: Cardinaletti–Starke deficiency classes
--- ============================================================================
+/-- *ci*, first person plural reflexive. -/
+def ci_refl : ReflexivePronoun :=
+  { form := "ci", person := some .first, number := some .plural, strength := some .clitic }
 
-/-- Italian's tonic series (`pronouns`) instantiates the Cardinaletti–Starke
-    `.strong` class ([cardinaletti-starke-1999]). -/
-def strongStrength : Pronoun.Strength := .strong
+/-- *vi*, second person plural reflexive. -/
+def vi_refl : ReflexivePronoun :=
+  { form := "vi", person := some .second, number := some .plural, strength := some .clitic }
 
-/-- The object clitics (`paradigm` minus dative *loro*) are the maximally
-    deficient `.clitic` class: verb-adjacent heads that cluster
-    ([cardinaletti-starke-1999]). -/
-def cliticStrength : Pronoun.Strength := .clitic
+/-- The reflexive series. -/
+def reflexive : Finset ReflexivePronoun := {mi_refl, ti_refl, si, ci_refl, vi_refl}
 
-/-- Dative *loro* is [cardinaletti-starke-1999]'s parade case for separating
-    weak from clitic: deficient (reduced vs *a loro*, no coordination) but a
-    maximal projection — not verb-adjacent, never clustering, bears word
-    stress. -/
-def loroDatStrength : Pronoun.Strength := .weak
+/-! ### Syncretism and strength -/
 
-/-- The clitic series is structurally more deficient than the strong series:
-    the deficiency ordering behind their complementary distribution (clitics
-    host-adjacent and unfocusable, strong forms free). -/
-theorem clitics_more_deficient : cliticStrength < strongStrength := by decide
+/-- The accusative and the dative have the same forms exactly outside the third person. -/
+theorem paradigm_accusative_eq_paradigm_dative_iff (c : Person.Category) :
+    PersonalPronoun.paradigm accusative c = PersonalPronoun.paradigm dative c ↔
+      c.person ≠ .third := by
+  cases c <;> decide +kernel
 
-/-- The traditional atonic paradigm is not strength-homogeneous: dative *loro*
-    (weak) sits strictly between the clitics and the strong series
-    ([cardinaletti-starke-1999]). -/
-theorem atonic_series_not_homogeneous :
-    cliticStrength < loroDatStrength ∧ loroDatStrength < strongStrength :=
-  ⟨by decide, by decide⟩
+/-- The dative and the reflexive have the same forms exactly outside the third person. -/
+theorem paradigm_dative_eq_paradigm_reflexive_iff (c : Person.Category) :
+    PersonalPronoun.paradigm dative c = ReflexivePronoun.paradigm reflexive c ↔
+      c.person ≠ .third := by
+  cases c <;> decide +kernel
+
+/-- Dative *loro* is the one atonic object form that is weak rather than a clitic. -/
+theorem strength_eq_weak_iff {p : PersonalPronoun} (hp : p ∈ accusative ∪ dative) :
+    p.strength = some .weak ↔ p = loro_dat := by
+  revert p; decide +kernel
 
 end Italian.Pronouns
