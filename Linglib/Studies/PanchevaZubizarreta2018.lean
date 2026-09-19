@@ -203,39 +203,34 @@ theorem family_logophoric_assignments :
 /-- Italian dative *gli* is third person and accusative *ti* second, so the weak PCC bans the
 pair. -/
 theorem italian_weak_glidat_tiacc :
-    Italian.Pronouns.gli_dat.person = .third ∧
-      Italian.Pronouns.ti_acc.person = .second ∧
-      ¬ IsLicit weakGrammar .third .second :=
-  ⟨rfl, rfl, by decide⟩
+    ∃ io ∈ Italian.Pronouns.gli.person, ∃ do_ ∈ Italian.Pronouns.ti_acc.person,
+      ¬ IsLicit weakGrammar io do_ := by
+  decide
 
 /-- Italian *ti la*, second-person dative over third-person accusative, is licit. -/
 theorem italian_weak_tidat_lacl :
-    Italian.Pronouns.ti_dat.person = .second ∧
-      Italian.Pronouns.la_cl.person = .third ∧
-      IsLicit weakGrammar .second .third :=
-  ⟨rfl, rfl, by decide⟩
+    ∃ io ∈ Italian.Pronouns.ti_dat.person, ∃ do_ ∈ Italian.Pronouns.la.person,
+      IsLicit weakGrammar io do_ := by
+  decide
 
 /-- Spanish *te me* (23), second-person dative over first-person accusative, is licit in the
 weak variety. -/
 theorem spanish_weak_tedat_meacc :
-    Spanish.Clitics.te_dat.person = .second ∧
-      Spanish.Clitics.me_acc.person = .first ∧
-      IsLicit weakGrammar .second .first :=
-  ⟨rfl, rfl, by decide⟩
+    ∃ io ∈ Spanish.Clitics.te_dat.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
+      IsLicit weakGrammar io do_ := by
+  decide
 
 /-- Spanish *me te*, first-person dative over second-person accusative, is licit as well. -/
 theorem spanish_weak_medat_teacc :
-    Spanish.Clitics.me_dat.person = .first ∧
-      Spanish.Clitics.te_acc.person = .second ∧
-      IsLicit weakGrammar .first .second :=
-  ⟨rfl, rfl, by decide⟩
+    ∃ io ∈ Spanish.Clitics.me_dat.person, ∃ do_ ∈ Spanish.Clitics.te_acc.person,
+      IsLicit weakGrammar io do_ := by
+  decide
 
 /-- Spanish *me le* (24), third-person dative over first-person accusative, is banned. -/
 theorem spanish_weak_ledat_meacc_banned :
-    Spanish.Clitics.le_dat.person = .third ∧
-      Spanish.Clitics.me_acc.person = .first ∧
-      ¬ IsLicit weakGrammar .third .first :=
-  ⟨rfl, rfl, by decide⟩
+    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
+      ¬ IsLicit weakGrammar io do_ := by
+  decide
 
 /-- French (16), strong PCC: a third-person dative with a first-person accusative is out,
 a second-person dative with a third-person accusative and two third persons are in. -/

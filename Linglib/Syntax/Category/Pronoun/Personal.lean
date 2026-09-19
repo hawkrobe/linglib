@@ -1,3 +1,4 @@
+import Linglib.Morphology.Paradigm.Basic
 import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Syntax.Category.Pronoun.Basic
 
@@ -79,18 +80,18 @@ section Paradigm
 
 variable {I J : Finset PersonalPronoun} {c : Person.Category} {f : String}
 
-/-- The paradigm of an inventory: the forms it offers for each referential category. A category
-no pronoun denotes gets `∅`, and two categories receive the same forms exactly when the
-inventory does not distinguish them. -/
-def paradigm (I : Finset PersonalPronoun) (c : Person.Category) : Finset String :=
-  (I.filter (c ∈ ·.referential)).image (·.form)
+/-- The paradigm of an inventory assigns each referential category the forms the inventory offers
+for it. A category no pronoun denotes gets `∅`, and two categories receive the same forms
+exactly when the inventory does not distinguish them. -/
+def paradigm : Finset PersonalPronoun → Person.Category → Finset String :=
+  Morphology.formsAt (·.referential) (·.form)
 
-theorem mem_paradigm : f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.referential ∧ p.form = f := by
-  simp [paradigm, and_assoc]
+theorem mem_paradigm : f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.referential ∧ p.form = f :=
+  Morphology.mem_formsAt
 
 @[gcongr]
 theorem paradigm_mono (h : I ⊆ J) (c : Person.Category) : paradigm I c ⊆ paradigm J c :=
-  Finset.image_subset_image (Finset.filter_subset_filter _ h)
+  Morphology.formsAt_mono h c
 
 end Paradigm
 

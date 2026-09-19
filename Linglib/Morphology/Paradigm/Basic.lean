@@ -1,3 +1,4 @@
+import Mathlib.Data.Finset.Image
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Data.Setoid.Basic
 
@@ -19,6 +20,7 @@ paradigms over graded cells.
 
 * `Paradigm n F` — assignment of a form to each of the `n` cells
 * `syncretism` — the kernel setoid of a form assignment, `Setoid.ker`
+* `formsAt` — the form assignment of an inventory: the forms its items offer for each cell
 * `ParadigmSystem n Form` — paradigms with frequency weights, organized
   by inflection class
 * `cellDistribution`, `jointCellDistribution` — empirical form
@@ -48,6 +50,34 @@ the same pairs of cells. -/
 theorem syncretism_eq_iff {Cell F G : Type*} {p : Cell → F} {q : Cell → G} :
     syncretism p = syncretism q ↔ ∀ a b, p a = p b ↔ q a = q b := by
   simp only [syncretism, Setoid.ext_iff, Setoid.ker_def]
+
+/-! ### The paradigm of an inventory -/
+
+section FormsAt
+
+variable {ι Cell F : Type*} [DecidableEq Cell] [DecidableEq F]
+  {cells : ι → Finset Cell} {form : ι → F} {I J : Finset ι} {c : Cell} {f : F}
+
+/-- The forms an inventory `I` offers for the cell `c`, where the item `i` has the form `form i`
+and realizes the cells `cells i`. A cell no item realizes gets `∅` and an overabundant cell
+several forms, and `syncretism (formsAt cells form I)` relates the cells the inventory does not
+distinguish. -/
+def formsAt (cells : ι → Finset Cell) (form : ι → F) (I : Finset ι) (c : Cell) : Finset F :=
+  (I.filter (c ∈ cells ·)).image form
+
+theorem mem_formsAt : f ∈ formsAt cells form I c ↔ ∃ i ∈ I, c ∈ cells i ∧ form i = f := by
+  simp [formsAt, and_assoc]
+
+@[gcongr]
+theorem formsAt_mono (h : I ⊆ J) (c : Cell) :
+    formsAt cells form I c ⊆ formsAt cells form J c :=
+  Finset.image_subset_image (Finset.filter_subset_filter _ h)
+
+theorem formsAt_union [DecidableEq ι] (I J : Finset ι) (c : Cell) :
+    formsAt cells form (I ∪ J) c = formsAt cells form I c ∪ formsAt cells form J c := by
+  simp [formsAt, Finset.filter_union, Finset.image_union]
+
+end FormsAt
 
 /-- A paradigm system: paradigms (inflection classes) paired with
 frequency weights. -/
