@@ -16,7 +16,9 @@ the Z-priority of its rules, and the ranking κᶻ gives a world one more than t
 falsifies. Two consequence relations are compared on the paper's Example 17: the cautious
 p-entailment, which holds in every admissible ranking, and z-entailment, which holds in κᶻ.
 Entailment in a ranking is the rational consequence relation `RankingFunction.Entails`, and a
-ranking is admissible exactly when it entails every rule. Table 2's verdicts are theorems:
+ranking is admissible exactly when it entails every rule. Rational monotony, in the sense of Lehmann
+and Magidor, holds in each admissible ranking, so z-entailment has it, while p-entailment is
+preferential but not rational (`not_isRational_pEntails`). Table 2's verdicts are theorems:
 z-entailment sanctions rule chaining and the discounting of an irrelevant feature where p-entailment
 is undecided (`z_birds_airborne`, `p_birds_airborne_undecided`), and neither inherits wings to the
 exceptional penguins.
@@ -41,6 +43,8 @@ revision, and causal networks are not formalized; Spohn's conditioning lives in 
   Revision, and Causal Modeling* (1996)][goldszmidt-pearl-1996]
 * [W. Spohn, *Ordinal Conditional Functions: A Dynamic Theory of Epistemic States*
   (1988)][spohn-1988]
+* [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
+  (1992)][lehmann-magidor-1992]
 * [E. W. Adams, *The Logic of Conditionals: An Application of Probability to Deductive Logic*
   (1975)][adams-1975]
 -/
@@ -145,6 +149,16 @@ theorem pEntails_of_mem {Δ : KnowledgeBase W} {r : Rule W} (h : r ∈ Δ) :
 theorem not_pEntails {Δ : KnowledgeBase W} {κ : RankingFunction W} (hκ : Admissible κ Δ)
     {φ σ : Set W} (h : ¬ κ.Entails φ σ) : ¬ PEntails Δ φ σ :=
   fun hp ↦ h (hp κ hκ)
+
+/-- P-entailment is a preferential consequence relation, since each rule of system P holds in
+every admissible ranking. -/
+theorem isPreferential_pEntails (Δ : KnowledgeBase W) :
+    Nonmonotonic.IsPreferential (PEntails Δ) where
+  refl φ κ _ := κ.isRational_entails.refl φ
+  rightWeakening h hs κ hκ := κ.isRational_entails.rightWeakening (h κ hκ) hs
+  and h₁ h₂ κ hκ := κ.isRational_entails.and (h₁ κ hκ) (h₂ κ hκ)
+  or h₁ h₂ κ hκ := κ.isRational_entails.or (h₁ κ hκ) (h₂ κ hκ)
+  cautiousMonotonicity h₁ h₂ κ hκ := κ.isRational_entails.cautiousMonotonicity (h₁ κ hκ) (h₂ κ hκ)
 
 /-! ### System Z⁺ (section 3) -/
 
@@ -323,6 +337,17 @@ theorem p_red_birds_fly_undecided :
     (κ := zRanking (zPriorities (Δpb ++ [⟨fun x ↦ red x ∧ bird x, fun x ↦ ¬ flies x⟩]))
     ⟨⟨true, false, true, true, true, false⟩, by decide⟩) (by decide) (by decide),
     not_pEntails admissible_κz (by decide)⟩
+
+/-- P-entailment from the penguin base is not rational. Birds fly, and birds are not normally
+other than red, yet red birds are not p-entailed to fly. Rational monotony holds in each
+admissible ranking, so z-entailment has it and p-entailment lacks it. -/
+theorem not_isRational_pEntails : ¬ Nonmonotonic.IsRational (PEntails Δpb) := fun h ↦
+  p_red_birds_fly_undecided.1 <| by
+    have h₁ : PEntails Δpb {x | bird x} {x | flies x} := pEntails_of_mem (r := r₁) (by simp [Δpb])
+    have h₂ : ¬ PEntails Δpb {x | bird x} {x | red x}ᶜ :=
+      not_pEntails admissible_κz (by decide)
+    have := h.rationalMonotonicity h₁ h₂
+    rwa [Set.inter_comm] at this
 
 /-- The query "Are birds airborne?" is answered YES under z-entailment, by chaining r₁ and r₅. -/
 theorem z_birds_airborne : κz.Entails {x | bird x} {x | airborne x} := by decide

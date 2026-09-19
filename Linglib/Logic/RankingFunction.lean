@@ -16,8 +16,11 @@ firmness. Revision conditionalizes at the firmness that just makes the propositi
 `Logic/BeliefRevision/Iterated.lean` proves the iterated-revision postulates of Darwiche and
 Pearl for it. A ranking function orders the worlds by rank, which makes it a ranked model in
 the sense of Lehmann and Magidor. A proposition `B` follows from `A` when the `A`-worlds of least
-rank are `B`-worlds, this consequence relation is rational, and the beliefs of the ranking
-function are the consequences of the tautology.
+rank are `B`-worlds, which Halpern characterizes as `A` being impossible or `A ∩ B` being less
+disbelieved than `A \ B`. This consequence relation is rational, and the beliefs of the ranking
+function are the consequences of the tautology. The L-conditioning of Goldszmidt and Pearl
+shifts the worlds outside a proposition by a fixed strength and, unlike conditionalization,
+commutes.
 
 ## Main definitions
 
@@ -26,7 +29,8 @@ function are the consequences of the tautology.
 * `RankingFunction.aPart`: the A-part of a ranking, the ranking within `A` shifted to `0`.
 * `RankingFunction.conditionα`, `RankingFunction.revise`: A,α-conditionalization, and revision
   as conditionalization at the canonical firmness.
-* `RankingFunction.lCondition`: the L-conditioning of Goldszmidt and Pearl.
+* `RankingFunction.lCondition`: the L-conditioning of Goldszmidt and Pearl, at a ranking that
+  holds the evidence possible.
 * `RankingFunction.beliefSet`: the propositions true at every world of rank `0`.
 * `RankingFunction.toPreorder`, `RankingFunction.Entails`: the normality order on worlds and
   its consequence relation.
@@ -37,8 +41,9 @@ function are the consequences of the tautology.
   and its negation one has rank `0`, and the rank of a disjunction is the smaller rank.
 * `RankingFunction.revise_success`: the revised ranking believes the evidence.
 * `RankingFunction.entails_iff_exists_lt`, `RankingFunction.entails_iff_rankSet`: a consequent
-  follows when each world falsifying it is outranked by one verifying it, equivalently when
-  verifying it is less disbelieved than falsifying it.
+  follows when each world falsifying it is outranked by one verifying it, equivalently when the
+  premise is impossible or verifying it is less disbelieved than falsifying it.
+* `RankingFunction.lCondition_comm`: L-conditionings commute.
 * `RankingFunction.isRational_entails`: the consequence relation is rational.
 * `RankingFunction.mem_beliefSet_iff_entails_univ`: belief is consequence from the tautology.
 
@@ -52,6 +57,7 @@ function are the consequences of the tautology.
   (1992)][lehmann-magidor-1992]
 * [A. Darwiche and J. Pearl, *On the Logic of Iterated Belief Revision*
   (1997)][darwiche-pearl-1997]
+* [J. Y. Halpern, *Reasoning about Uncertainty* (2003)][halpern-2003]
 -/
 
 open Core.Order.Normality
@@ -186,11 +192,22 @@ theorem revise_success (hA : A.Nonempty) : A ∈ (κ.revise A hA).beliefSet := f
   omega
 
 open Classical in
-/-- L-conditioning lifts the worlds outside `A` by `l`, at a ranking holding `A` possible. -/
+/-- L-conditioning on `A` with strength `l`, at a ranking holding `A` possible, lifts the worlds
+outside `A` by `l`. -/
 noncomputable def lCondition (A : Set W) (h0 : ∃ w ∈ A, κ.rank w = 0) (l : ℕ) :
     RankingFunction W where
   rank w := if w ∈ A then κ.rank w else κ.rank w + l
   normalized := let ⟨w, hw, hr⟩ := h0; ⟨w, by simp [hw, hr]⟩
+
+/-- L-conditionings commute, where two conditionalizations commute only on independent
+propositions. -/
+theorem lCondition_comm (hA : ∃ w ∈ A, κ.rank w = 0) (hB : ∃ w ∈ B, κ.rank w = 0) (l m : ℕ)
+    (hAB : ∃ w ∈ B, (κ.lCondition A hA l).rank w = 0)
+    (hBA : ∃ w ∈ A, (κ.lCondition B hB m).rank w = 0) :
+    (κ.lCondition A hA l).lCondition B hAB m = (κ.lCondition B hB m).lCondition A hBA l := by
+  ext w
+  simp only [lCondition]
+  split_ifs <;> omega
 
 /-! ### The induced consequence relation -/
 
@@ -231,21 +248,25 @@ theorem entails_iff_exists_lt :
   · obtain ⟨y, hy, -, hlt⟩ := h w hw.1 hwB
     exact absurd ((κ.mem_optimal_toPreorder.1 hw).2 y hy) (not_le.2 hlt)
 
-/-- `B` follows from `A` exactly when `A ∩ B` is less disbelieved than `A \ B`, or nothing in `A`
-falsifies `B`. -/
-theorem entails_iff_rankSet : κ.Entails A B ↔ A ⊆ B ∨ κ.rankSet (A ∩ B) < κ.rankSet (A \ B) := by
+/-- `B` follows from `A` exactly when `A` is impossible or `A ∩ B` is less disbelieved than
+`A \ B`. -/
+theorem entails_iff_rankSet :
+    κ.Entails A B ↔ κ.rankSet A = ⊤ ∨ κ.rankSet (A ∩ B) < κ.rankSet (A \ B) := by
   rw [entails_iff_exists_lt]
   constructor
   · intro h
+    rcases A.eq_empty_or_nonempty with rfl | hA
+    · exact Or.inl κ.rankSet_empty
     rcases (A \ B).eq_empty_or_nonempty with he | hne
-    · exact Or.inl (Set.sdiff_eq_empty.1 he)
+    · have hAB : A ∩ B = A := Set.inter_eq_left.2 (Set.sdiff_eq_empty.1 he)
+      exact Or.inr (by rw [he, hAB, rankSet_empty]; exact (κ.rankSet_ne_top hA).lt_top)
     · obtain ⟨x, hx, e⟩ := κ.exists_rank_eq_rankSet hne
       obtain ⟨y, hyA, hyB, hlt⟩ := h x hx.1 hx.2
       refine Or.inr ((κ.rankSet_le (A := A ∩ B) ⟨hyA, hyB⟩).trans_lt ?_)
       rw [← e]
       exact_mod_cast hlt
-  · rintro (hAB | hlt) x hx hxB
-    · exact absurd (hAB hx) hxB
+  · rintro (hA | hlt) x hx hxB
+    · exact absurd (κ.rankSet_eq_top_iff.1 hA ▸ hx) (Set.notMem_empty x)
     · have hne : (A ∩ B).Nonempty := Set.nonempty_iff_ne_empty.2 fun he ↦ by simp [he] at hlt
       obtain ⟨y, hy, e⟩ := κ.exists_rank_eq_rankSet hne
       have hxr := κ.rankSet_le (A := A \ B) ⟨hx, hxB⟩

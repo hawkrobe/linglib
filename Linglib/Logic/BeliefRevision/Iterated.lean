@@ -17,14 +17,17 @@ represents it, which means that the belief worlds of a state are its least world
 revision by `μ` selects the least `μ`-worlds (Theorem 2). A state accepts `β` given `α` when
 revising it by `α` yields a state that believes `β`. These conditional beliefs form a rational
 consequence relation in the sense of Lehmann and Magidor, and the preorder of the state encodes
-them. The iterated-revision postulates C1–C4 say which conditional beliefs a revision preserves.
-Each of them, and Boutilier's postulate CB, is equivalent to a condition on how the preorder of a
-state relates to the preorder of its revision (Theorems 3 and 4). The conditions are agreement on
-the `μ`-worlds, agreement on the non-`μ`-worlds, preservation of strict and of weak rankings of a
-`μ`-world over a non-`μ`-world, and agreement outside the revised belief set. Spohn's
-conditionalisation of rankings, which makes the evidence one degree more plausible than it was
-implausible, is represented by the rankings' own orderings and meets every postulate (Theorem 5).
-On normalised rankings it is the revision of `RankingFunction`.
+them. This is the translation between belief revision and nonmonotonic inference that Gärdenfors
+and Makinson describe, under which superexpansion corresponds to Or, subexpansion to rational
+monotonicity, and consistency to consistency preservation. The iterated-revision postulates C1–C4
+say which conditional beliefs a revision preserves. Each of them, and Boutilier's postulate CB, is
+equivalent to a condition on how the preorder of a state relates to the preorder of its revision
+(Theorems 3 and 4). The conditions are agreement on the `μ`-worlds, agreement on the
+non-`μ`-worlds, preservation of strict and of weak rankings of a `μ`-world over a non-`μ`-world,
+and agreement outside the revised belief set. Spohn's conditionalisation of rankings, which makes
+the evidence one degree more plausible than it was implausible, is represented by the rankings'
+own orderings and meets every postulate (Theorem 5). On normalised rankings it is the revision of
+`RankingFunction`.
 
 ## Implementation notes
 
@@ -46,6 +49,8 @@ On normalised rankings it is the revision of `RankingFunction`.
   (1991)][katsuno-mendelzon-1991]
 * [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
   (1992)][lehmann-magidor-1992]
+* [P. Gärdenfors and D. Makinson, *Nonmonotonic Inference Based on Expectations*
+  (1994)][gardenfors-makinson-1994]
 * [W. Spohn, *Ordinal Conditional Functions: A Dynamic Theory of Epistemic States*
   (1988)][spohn-1988]
 -/
@@ -202,6 +207,14 @@ theorem IsAGM.isRational_accepts (h : r.IsAGM) (Ψ : S) : Nonmonotonic.IsRationa
     intro α β γ hγ hβ
     obtain ⟨w, hw, hwβ⟩ := Set.not_subset.1 hβ
     exact ((h.subexpansion Ψ α β ⟨w, hw, not_not.1 hwβ⟩).trans Set.inter_subset_left).trans hγ
+
+/-- A state of an AGM operator accepts the contradiction only given the contradiction
+(consistency preservation). -/
+theorem IsAGM.accepts_empty_iff (h : r.IsAGM) {Ψ : S} {α : Set W} :
+    r.Accepts Ψ α ∅ ↔ α = ∅ :=
+  ⟨fun hα ↦ Set.not_nonempty_iff_eq_empty.1 fun hne ↦
+      (h.consistency Ψ α hne).ne_empty (Set.subset_empty_iff.1 hα),
+    fun hα ↦ hα ▸ h.success Ψ ∅⟩
 
 /-! ### The representation theorem -/
 
