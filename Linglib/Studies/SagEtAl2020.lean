@@ -35,12 +35,12 @@ namespace SagEtAl2020
 
 open HPSG.RSRL HPSG.Construction
 
-/-- The aux-initial construction: the head daughter is an inverted word. -/
-def auxInitialPrinciple : Desc sig :=
-  .imp (.sortAssign .colon .auxInitialCxt) (.sortAssign (.path [.HDDTR, .INV]) .invPlus)
+/-- The aux-initial construction requires the head daughter to be an inverted word. -/
+def auxInitialPrinciple : Constraint sig :=
+  ⟨.auxInitialCxt, .sortAssign (.path [.HDDTR, .INV]) .invPlus⟩
 
 /-- The filler-gap grammar extended with the aux-initial construction. -/
-def saiGrammar : Grammar sig := grammar ++ [auxInitialPrinciple]
+def saiGrammar : Grammar sig := (constraints ++ [auxInitialPrinciple]).map Constraint.toDesc
 
 /-- The aux-initial construction is a headed construction beside the filler-head construction,
 and the polar interrogative and aux-initial exclamative clauses cross-classify it with the
@@ -80,6 +80,12 @@ inductive SAIEnt where
     | _, _ => none
   R := noRel
 
+/-- The worked constructs are well-typed whenever the inversion value and the semantic type
+have sorts of the right kind. -/
+theorem saiConstruct_isWellTyped :
+    ∀ i ∈ [Srt.invPlus, .invMinus], ∀ σ ∈ [Srt.question, .fact, .austinean],
+      ∀ c ∈ [Srt.polarIntCl, .auxInitialExclCl], (saiConstruct c i σ).IsWellTyped := by
+  decide +kernel
 
 /-- A polar interrogative satisfies the grammar exactly when its head is inverted and its
 mother is a question: the inversion comes from the aux-initial construction and the semantics

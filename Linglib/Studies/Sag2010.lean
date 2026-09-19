@@ -98,6 +98,12 @@ theorem models_construct_iff (c : FGClause) (σ : Srt)
 abbrev FGClause.secondGap (c : FGClause) : Interpretation sig Ent :=
   twoGapConstruct c.sort c.sem .noun
 
+/-- The constructs of each clause are well-typed, so the grammar's verdict on them is a verdict
+of its constructions and not of the appropriateness conditions. -/
+theorem isWellTyped_constructs (c : FGClause) :
+    (c.construct c.sem).IsWellTyped ∧ c.secondGap.IsWellTyped := by
+  cases c <;> decide
+
 /-- A clause is an absolute island when the grammar rejects a construct of its sort with a
 second, undischarged gap: the amalgamated gap contradicts the construction's `[GAP ⟨⟩]`. -/
 def FGClause.IsIsland (c : FGClause) : Prop := ¬ c.secondGap.Models grammar
