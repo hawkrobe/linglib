@@ -1,19 +1,19 @@
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
-import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 
 /-!
 # Minimal Yield
 
+This file defines Minimal Yield and proves that External and Internal Merge satisfy it.
+
 Minimal Yield is a condition on a transformation `F → F'` of workspaces, stated on the size
 measures of a workspace, its components `Multiset.card`, its accessible terms (the summed
-`numEdges`), and its vertices (the summed `numNodes`): the number of components does not grow
-(no divergence), the
-number of accessible terms does not fall (no information loss), and the number of vertices grows
-by exactly one (minimality of yield). `MinimalYieldWeak` is the first two
-bounds and `MinimalYield` all three. The weak form is monotonicity of the signature `(b₀ᵒᵈ, α)`,
-so it is a pullback preorder on workspaces (`MinimalYieldWeak.pullbackPreorder`). The
+`numEdges`), and its vertices (the summed `numNodes`): the number of components does not grow (no
+divergence), the number of accessible terms does not fall (no information loss), and the number of
+vertices grows by exactly one (minimality of yield). `MinimalYieldWeak` is the first two bounds
+and `MinimalYield` all three. The weak form is monotonicity of the signature `(b₀ᵒᵈ, α)`, so it is
+the pullback of the product order along the signature (`minimalYieldWeak_iff_signature_le`). The
 trace-aware measures are those of `Workspace/TraceMeasures.lean`.
 
 The per-case theorems evaluate the condition on the shapes the cases of Merge produce, on the
@@ -48,12 +48,12 @@ variable {α β : Type*}
 
 /-! ### The Minimal Yield principle -/
 
-/-- The weak Minimal Yield principle: no increase in `b₀`, no decrease in `α`. -/
+/-- The weak Minimal Yield principle allows no increase in `b₀` and no decrease in `α`. -/
 structure MinimalYieldWeak (F F' : Forest (UnorderedTree (α ⊕ β))) : Prop where
   noDivergence : Multiset.card F' ≤ Multiset.card F
   noInfoLoss   : (F.map UnorderedTree.numEdges).sum ≤ (F'.map UnorderedTree.numEdges).sum
 
-/-- The Minimal Yield principle: the weak form plus `σ` up by exactly one. -/
+/-- The Minimal Yield principle is the weak form together with `σ` going up by exactly one. -/
 structure MinimalYield (F F' : Forest (UnorderedTree (α ⊕ β))) : Prop
     extends MinimalYieldWeak F F' where
   minimalYield : (F'.map UnorderedTree.numNodes).sum = (F.map UnorderedTree.numNodes).sum + 1
@@ -66,16 +66,11 @@ def MinimalYield.signature (F : Forest (UnorderedTree (α ⊕ β))) : ℕᵒᵈ 
 
 theorem minimalYieldWeak_iff_signature_le {F F' : Forest (UnorderedTree (α ⊕ β))} :
     MinimalYieldWeak F F' ↔ MinimalYield.signature F ≤ MinimalYield.signature F' :=
-  ⟨fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩, fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩⟩
-
-/-- `MinimalYieldWeak` packaged as a `PullbackPreorder`. -/
-def MinimalYieldWeak.pullbackPreorder :
-    Core.Order.PullbackPreorder (Forest (UnorderedTree (α ⊕ β))) (ℕᵒᵈ × ℕ) :=
-  Core.Order.PullbackPreorder.ofProj MinimalYield.signature (fun _ _ => inferInstance)
+  ⟨fun ⟨h_b, h_a⟩ ↦ ⟨h_b, h_a⟩, fun ⟨h_b, h_a⟩ ↦ ⟨h_b, h_a⟩⟩
 
 /-! ### External Merge -/
 
-/-- External Merge of a pair satisfies Minimal Yield: Δb₀ = −1, Δα = +2, Δσ = +1. -/
+/-- External Merge of a pair satisfies Minimal Yield, with Δb₀ = −1, Δα = +2 and Δσ = +1. -/
 theorem MinimalYield.em_pair (lbl : α) (S S' : UnorderedTree (α ⊕ β)) :
     MinimalYield ({S, S'} : Forest (UnorderedTree (α ⊕ β)))
                  ({UnorderedTree.node (Sum.inl lbl) {S, S'}}) := by
@@ -116,10 +111,9 @@ theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : UnorderedTree (α �
   · simp only [Multiset.map_singleton, Multiset.sum_singleton, ← UnorderedTree.numEdges_add_one]
     omega
 
-/-- `im_pair_size_deltas_deletion` with the α relation discharged from a Δᵈ
-    admissible cut: deleting `mover` from `T` and rebinarizing the remainder
-    (`contractUnary p.2`) leaves `b₀`, `α`, `σ` unchanged. `numUnary p.2 = 1`
-    characterizes a single edge cut at a binary node. -/
+/-- This is `im_pair_size_deltas_deletion` with the α relation discharged from a Δᵈ admissible cut.
+Deleting `mover` from `T` and rebinarizing the remainder (`contractUnary p.2`) leaves `b₀`, `α` and
+`σ` unchanged, and `numUnary p.2 = 1` characterizes a single edge cut at a binary node. -/
 theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : UnorderedTree (α ⊕ β))
     (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp
       : p ∈ ConnesKreimer.cutSummandsN T)
@@ -130,13 +124,13 @@ theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : UnorderedTree (α �
         : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numEdges).sum
         = (({T} : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numEdges).sum
       ∧ (({UnorderedTree.node (Sum.inl lbl) {mover, UnorderedTree.contractUnary p.2}}
-        : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numNodes).sum = (({T} : Forest (UnorderedTree
-          (α ⊕ β))).map UnorderedTree.numNodes).sum :=
+        : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numNodes).sum =
+          (({T} : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numNodes).sum :=
   im_pair_size_deltas_deletion lbl
     (ConnesKreimer.cutSummandsN_numEdges_single_deletion T p hp mover hcard huc)
 
-/-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ`, `σᶜ` by one
-    (Δᶜ counting): the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` is MCB eq. 1.6.8. -/
+/-- Internal Merge via composition leaves `b₀` fixed and raises `αᶜ` and `σᶜ` by one under Δᶜ
+counting, where the relation `αᶜ(T) = αᶜ(β_t) + αᶜ(trunk) + 1` is MCB eq. 1.6.8. -/
 theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : UnorderedTree (α ⊕ β)}
     (hβ : β_t.traceLeafCount < β_t.numNodes) (hQ : Q.traceLeafCount < Q.numNodes)
     (h : T.accessibleCount = β_t.accessibleCount + Q.accessibleCount + 1) :
@@ -156,9 +150,9 @@ theorem im_pair_size_deltas_contraction (lbl : α) {T β_t Q : UnorderedTree (α
     rw [UnorderedTree.accessibleCount_merge lbl β_t Q hβ hQ]
     omega
 
-/-- `im_pair_size_deltas_contraction` with the αᶜ relation discharged from a Δᶜ
-    admissible cut: re-merging an accessible subtree `β_t` of `T = node (inl a₀) F₀`
-    with the contraction quotient `p.2` raises `αᶜ`, `σᶜ` by one. -/
+/-- This is `im_pair_size_deltas_contraction` with the αᶜ relation discharged from a Δᶜ admissible
+cut. Re-merging an accessible subtree `β_t` of `T = node (inl a₀) F₀` with the contraction quotient
+`p.2` raises `αᶜ` and `σᶜ` by one. -/
 theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
     (τ : UnorderedTree (α ⊕ β) → β) (F₀ : Forest (UnorderedTree (α ⊕ β)))
     (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β))
@@ -224,14 +218,14 @@ theorem MinimalYieldWeak.not_sideward_3b
 theorem MinimalYield.not_sideward_3a (T_i Tnode T_iq : UnorderedTree (α ⊕ β)) :
     ¬ MinimalYield ({T_i} : Forest (UnorderedTree (α ⊕ β)))
                    ({Tnode, T_iq} : Forest (UnorderedTree (α ⊕ β))) :=
-  fun h => MinimalYieldWeak.not_sideward_3a T_i Tnode T_iq h.toMinimalYieldWeak
+  fun h ↦ MinimalYieldWeak.not_sideward_3a T_i Tnode T_iq h.toMinimalYieldWeak
 
 /-- Strong-form corollary of `MinimalYieldWeak.not_sideward_3b`. -/
 theorem MinimalYield.not_sideward_3b
     (T_i T_j Tnode T_iq T_jq : UnorderedTree (α ⊕ β)) :
     ¬ MinimalYield ({T_i, T_j} : Forest (UnorderedTree (α ⊕ β)))
                    ({Tnode, T_iq, T_jq} : Forest (UnorderedTree (α ⊕ β))) :=
-  fun h => MinimalYieldWeak.not_sideward_3b T_i T_j Tnode T_iq T_jq h.toMinimalYieldWeak
+  fun h ↦ MinimalYieldWeak.not_sideward_3b T_i T_j Tnode T_iq T_jq h.toMinimalYieldWeak
 
 /-! ### Unit merge -/
 

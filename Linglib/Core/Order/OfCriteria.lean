@@ -8,8 +8,7 @@ This file defines the preorder that a family of criteria induces on a type. Give
 `sat : α → C → Prop` and a set of criteria, `Preorder.ofCriteria sat criteria` ranks `a` below
 `b` when `a` satisfies every criterion of the set that `b` satisfies. It is the pullback of `⊇`
 along the map sending an element to the set of criteria it satisfies
-(`ofCriteria_le_iff_subset`), and `Core.Order.PullbackPreorder` is the bundled form of the same
-pattern that carries decidability.
+(`ofCriteria_le_iff_subset`).
 
 ## Main declarations
 
@@ -38,7 +37,7 @@ theorem ofCriteria_le_iff (sat : α → C → Prop) (criteria : Set C) (a b : α
   Iff.rfl
 
 /-- The criteria-derived order is the pullback of `⊇` along the map sending `a` to the set of
-criteria it satisfies, the `Core.Order.PullbackPreorder` pattern with target `(Set C)ᵒᵈ`. -/
+criteria it satisfies, with target `(Set C)ᵒᵈ`. -/
 theorem ofCriteria_le_iff_subset (sat : α → C → Prop) (criteria : Set C)
     (a b : α) :
     (ofCriteria sat criteria).le a b ↔
