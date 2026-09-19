@@ -1,3 +1,5 @@
+import Mathlib.Logic.Function.Basic
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.WALS.Features.F81A
 import Linglib.Data.WALS.Features.F82A
 import Linglib.Data.WALS.Features.F83A
@@ -15,9 +17,11 @@ a bare-root `WordOrder` namespace in `Features/`.
 * `WordOrderProfile` : the three classifications bundled per language, with the
   cross-field invariant `WordOrderProfile.IsConsistent` and the ISO-639-3 lookup
   constructor `WordOrderProfile.ofWALS`.
-* `HeadDirection` : head-initial vs head-final (root-named; used for FOFC and the like).
+* `HeadDirection` : head-initial vs head-final, root-named, with `HeadDirection.swap` the
+  opposite direction.
 * `BasicOrder.IsSubjectBeforeObject` : the antecedent of [greenberg-1963] Universal 1.
-* `OVOrder.verbPosition` : the verb position a basic order projects to.
+* `OVOrder.headDirection` : the head direction of the verb phrase an object–verb order
+  projects to, the sister of `Adposition.AdpositionOrder.headDirection`.
 
 ## Implementation notes
 
@@ -30,12 +34,40 @@ enforces their entailments. The substrate is neutral on primacy: [greenberg-1963
 `BasicOrder` as primary, [dryer-1992] the OV/VO cut.
 -/
 
-/-- Head direction of a construction: head-initial (VO, prepositions) vs head-final.
-Root-named (consumed across Fragments, Studies, Syntax); used for FOFC and the like. -/
+/-- Head direction of a construction: head-initial, the head preceding its complement as in
+VO order and prepositions, or head-final. Root-named, consumed across Fragments, Studies and
+Syntax. -/
 inductive HeadDirection where
   | headInitial
   | headFinal
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr, Fintype
+
+namespace HeadDirection
+
+/-- The opposite direction. -/
+def swap : HeadDirection → HeadDirection
+  | headInitial => headFinal
+  | headFinal => headInitial
+
+@[simp] theorem swap_headInitial : headInitial.swap = headFinal := rfl
+
+@[simp] theorem swap_headFinal : headFinal.swap = headInitial := rfl
+
+@[simp] theorem swap_swap : ∀ d : HeadDirection, d.swap.swap = d := by decide
+
+theorem swap_involutive : Function.Involutive swap := swap_swap
+
+theorem swap_injective : Function.Injective swap := swap_involutive.injective
+
+theorem swap_ne : ∀ d : HeadDirection, d.swap ≠ d := by decide
+
+theorem swap_eq_iff_eq_swap {d e : HeadDirection} : d.swap = e ↔ d = e.swap :=
+  swap_involutive.eq_iff
+
+/-- A direction is a given one or its opposite. -/
+theorem eq_or_eq_swap : ∀ d e : HeadDirection, e = d ∨ e = d.swap := by decide
+
+end HeadDirection
 
 namespace WordOrder
 
@@ -211,22 +243,14 @@ abbrev IsVO (o : OVOrder) : Prop := o = .vo
 
 end OVOrder
 
-/-! ### Verb position -/
+/-! ### Head direction of the verb phrase -/
 
-/-- Verb position in the clause, projected from object–verb order: VO ⇒ verb
-    precedes complement (head-initial), OV ⇒ verb follows complement (head-final). -/
-inductive VerbPosition where
-  /-- Verb precedes complement (head-initial VP). -/
-  | postverbal
-  /-- Verb follows complement (head-final VP). -/
-  | preverbal
-  deriving DecidableEq, Repr
-
-/-- Project an `OVOrder` to a `VerbPosition`. Returns `none` for
-    uninformative orders (`.noDominant`, `.notInWALS`). -/
-def OVOrder.verbPosition : OVOrder → Option VerbPosition
-  | .vo => some .postverbal
-  | .ov => some .preverbal
+/-- The head direction of the verb phrase an object–verb order projects to: VO is head-initial
+and OV head-final, and the uninformative orders (`.noDominant`, `.notInWALS`) project to
+nothing. -/
+def OVOrder.headDirection : OVOrder → Option HeadDirection
+  | .vo => some .headInitial
+  | .ov => some .headFinal
   | .noDominant | .notInWALS => none
 
 end WordOrder

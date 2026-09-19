@@ -58,7 +58,15 @@ instance (g : Graph n) (d : HeadDirection) : Decidable (Harmonic g d) :=
   inferInstanceAs (Decidable (∀ _ _, _))
 
 /-- An order that is neither head-first nor head-final. -/
-abbrev Disharmonic (g : Graph n) : Prop := ¬ Harmonic g .headInitial ∧ ¬ Harmonic g .headFinal
+def Disharmonic (g : Graph n) : Prop := ∀ d, ¬ Harmonic g d
+
+instance (g : Graph n) : Decidable (Disharmonic g) :=
+  inferInstanceAs (Decidable (∀ _, ¬ _))
+
+/-- Reversing an arc reverses its direction. -/
+theorem arcDirection_swap {v w : Fin n} (h : v ≠ w) :
+    arcDirection w v = (arcDirection v w).swap := by
+  rcases lt_or_gt_of_ne h with hlt | hlt <;> simp [arcDirection, hlt, lt_asymm hlt]
 
 /-! ### Section 5.1: the measure, on (99a) -/
 

@@ -103,7 +103,7 @@ abbrev IsPostpositional (a : AdpositionOrder) : Prop := a = .postpositional
     prepositional ⇒ head-initial PP, postpositional ⇒ head-final PP.
     Returns `none` for the categories that do not commit to a single
     direction (`.inpositional`, `.noAdpositions`, `.noDominant`,
-    `.notInWALS`). Sister of `OVOrder.verbPosition`; consumers needing
+    `.notInWALS`). Sister of `OVOrder.headDirection`; consumers needing
     BDT-style head-direction unification can iterate over both
     projections. -/
 def headDirection : AdpositionOrder → Option HeadDirection
