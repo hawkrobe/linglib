@@ -1,6 +1,5 @@
 import Linglib.Syntax.WordOrder
 import Linglib.Syntax.Tree.Cat
-import Linglib.Fragments.English.WordOrder
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -80,20 +79,20 @@ inductive FeaturePercolation where
   | linear
   deriving DecidableEq, Repr
 
-/-- The conjunct adjacent to the selecting head: the first when the head precedes the coordination,
-the last when it follows it. -/
+/-- The conjunct adjacent to the selecting head is the first when the head precedes the
+coordination and the last when it follows it. -/
 def adjacent : HeadDirection → ConjunctSlot
   | .headInitial => .first
   | .headFinal => .last
 
-/-- The conjunct that has to satisfy the head's selectional requirement: the adjacent one on the
-linear account, the prominent one — always the first — on the structural account. -/
+/-- The conjunct that has to satisfy the head's selectional requirement is the adjacent one on
+the linear account and the prominent one, always the first, on the structural account. -/
 def selectedSlot : FeaturePercolation → HeadDirection → ConjunctSlot
   | .linear, d => adjacent d
   | .structural, _ => .first
 
-/-- The order predicted for a coordination of a selected noun phrase with a clause: the noun phrase
-takes the selected slot, so the clause takes the other. -/
+/-- The order predicted for a coordination of a selected noun phrase with a clause, the noun
+phrase taking the selected slot and the clause the other. -/
 def predictOrder (fp : FeaturePercolation) (d : HeadDirection) : ConjunctOrder :=
   match selectedSlot fp d with
   | .first => .dpFirst
@@ -120,9 +119,9 @@ inductive SelectionViolationType where
 
 /-! ### The configurations that adjudicate -/
 
-/-- English complements follow the verb. -/
+/-- English complements follow the verb, its clause order being subject–verb–object. -/
 theorem english_complement_headInitial :
-    OVOrder.headDirection English.wordOrder.ovOrder = some .headInitial := rfl
+    Arrangement.svo.headDirection .verb .object = .headInitial := by decide
 
 /-- With the head preceding, both accounts predict the selected noun phrase first, and that is what
 is found: *you can depend on my assistant and that he will be on time* ((3a), from
@@ -143,9 +142,9 @@ theorem english_subject_diverges :
 /-- A verb-final language puts every complement before its verb, so the accounts diverge there
 too — the cross-linguistic version of the subject test. -/
 theorem ov_complement_diverges :
-    (OVOrder.headDirection .ov).map (predictOrder .structural)
-      ≠ (OVOrder.headDirection .ov).map (predictOrder .linear) := by
-  simp [OVOrder.headDirection, predictOrder, selectedSlot, adjacent]
+    predictOrder .structural (Arrangement.sov.headDirection .verb .object)
+      ≠ predictOrder .linear (Arrangement.sov.headDirection .verb .object) := by
+  decide
 
 /-! ### Supercategories -/
 

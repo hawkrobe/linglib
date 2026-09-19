@@ -51,9 +51,7 @@ inductive RelationType where
   | logical
   deriving DecidableEq, Repr, Fintype, Inhabited
 
-/-- A linearization of an adposition with respect to its complement
-    (criterion 4). The per-lexeme companion to the language-level
-    `Adposition.AdpositionOrder`. -/
+/-- A linearization of an adposition with respect to its complement (criterion 4). -/
 inductive Linearization where
   /-- Preposition: P precedes the complement. -/
   | pre
