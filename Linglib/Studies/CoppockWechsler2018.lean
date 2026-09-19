@@ -7,67 +7,78 @@ import Linglib.Studies.Pearson2015
 /-!
 # Coppock & Wechsler (2018): The Proper Treatment of Egophoricity in Kathmandu Newari
 
-This file formalizes [coppock-wechsler-2018]'s Egophoric Logic. Kathmandu Newari verbs carry no
-person marking; the egophoric (conjunct) form appears in first-person statements, second-person
-polar questions and de se speech reports, and the plain form elsewhere. Extensions are relative
-to a context, a world and an agent, the perspectival center, so a sentence has a centered
-intension, a partial proposition over centered worlds. The first-person pronoun and the
-epistemic authority are indexicals, read off the context; the egophor SELF is the center, a
-parameter of content. The egophoric suffix is a partial identity on predicates that presupposes
-its subject to be SELF, following [wechsler-2018]'s proposal that conjunct marking expresses
-self-ascription in the sense of [lewis-1979-attitudes].
+This file formalizes Coppock and Wechsler's account of egophoric marking in Kathmandu Newari.
+Newari verbs do not agree with their subject in person. Instead, a special *egophoric* form of
+the verb appears in three places: in statements about the speaker (*I drank a lot*), in
+questions about the addressee (*Did you drink a lot?*), and in reports where the reported
+speaker was knowingly talking about herself (*Syam said that he drank a lot*, when what Syam
+said was *I drank a lot*). The plain form of the verb appears everywhere else.
 
-Speech acts update the Table of [farkas-bruce-2010]. The common ground is uncentered: an
-assertion projects the intension of its clause uncentered by the authority of the context, and a
-polar question those of its two answers. The authority is the speaker of a declarative, the
-addressee of a question and the source of a reportative evidential. A projected set must be
-viable, which here is the Table not being in crisis, and an egophoric clause whose subject is
-not the authority uncenters to the empty proposition. The interrogative flip and the loss of
-egophoric marking under evidentials follow. Embedding verbs have the centered Hintikka semantics
-of [pearson-2015], so an egophoric report has the holder identify the subject as herself, which
-fails in the scenario of the unrecognized photograph, and under double embedding the subject is
-the closest reported speaker.
+The account has two parts. The first is a semantics. A sentence is evaluated at a context, a
+world and an agent called the *perspectival center*, so its meaning is a *centered proposition*,
+true or false of a world together with a center. To believe a centered proposition is to take
+oneself to be its center, which is Lewis's analysis of beliefs about oneself. The pronoun *I*
+denotes the speaker of the context, while a new term, SELF, denotes the center. The egophoric
+suffix leaves the meaning of the verb alone and adds the presupposition that the subject is
+SELF, so an egophoric clause can only be true of a center who is its subject. Wechsler
+introduced this idea informally as self-ascription.
 
-The paper sets its account against the authority-indexical one of [bickel-nichols-2007] and of
-[mccready-2007] for Japanese *zibun*, on which the suffix presupposes its subject to be the
-authority. The two agree on every root clause, but the indexical account needs a context shift
-in reports, a monster, and then predicts coreference where Newari requires self-reference.
+The second part is a model of conversation, built on the Table of Farkas and Bruce. Every
+context has an *authority*, the person who vouches for what is said: the speaker of a statement,
+the addressee of a question, and the source of a report marked with an evidential. A speech act
+proposes for the common ground the meaning of its clause with the authority filled in as the
+center. If the subject of an egophoric clause is not the authority, that proposal is the empty
+proposition, and the conversation is left with no consistent way to continue. This is why the
+egophoric form goes with *I* in statements and with *you* in questions. Verbs of saying
+quantify over the worlds and centers compatible with what was said, as in Pearson's semantics
+for attitude reports, so an egophoric report is true only if the reported speaker took the
+subject to be herself.
+
+Coppock and Wechsler compare a simpler account, which they call authority-indexical and find in
+Bickel and Nichols and in McCready's analysis of Japanese *zibun*. On that account the suffix
+presupposes that the subject is the authority of the context. The two accounts agree on main
+clauses. In reports the authority-indexical account has to shift the context, and it then
+requires only that the subject and the reported speaker be the same person. Newari requires
+more. If Syam points at a photograph of a drunken man without recognizing himself and says
+*that guy drank a lot*, the egophoric report of his words is false.
 
 ## Main definitions
 
-* `Context`: a Kaplanian context with an epistemic authority.
-* `ego`, `plain`, `egoAuth`: the centered intensions of an egophoric clause, a plain clause, and
-  an egophoric clause on the authority-indexical account.
-* `uncenter`: the ordinary intension of a centered proposition at an agent.
-* `assert`, `ask`: assertion and polar question as moves on the Table.
-* `Says`, `report`: the centered Hintikka semantics of a verb of saying.
+* `Context`: a context of utterance together with its authority.
+* `ego`, `plain`: the meanings of a clause with the egophoric and with the plain verb form.
+* `egoAuth`: the meaning of an egophoric clause on the authority-indexical account.
+* `uncenter`: the ordinary proposition obtained by filling in the center.
+* `assert`, `ask`: statements and polar questions as moves on the Table.
+* `Says`, `report`: the meaning of a verb of saying and of the report it heads.
 
-## Main statements
+## Main results
 
-* `inCrisis_assert_ego`, `inCrisis_ask_ego`: an egophoric clause whose subject is not the
-  authority leaves no viable projected set, asserted or asked.
-* `ask_ego_of_eq`: with the authority as subject, the egophoric question is the default polar
-  question on the uncentered prejacent.
-* `says_ego_iff`: an egophoric report is identification of the subject as oneself together with
-  self-ascription of the property.
-* `eq_of_says_report_ego`: under double embedding the subject is the closest reported speaker.
-* `uncenter_egoAuth`, `lampshade`: the authority-indexical account agrees on root clauses and
-  diverges on the unrecognized photograph.
-* `ego_acceptable_iff`: each egophoric example of the paper is acceptable exactly when its
-  subject is the authority.
+* `inCrisis_assert_ego`, `inCrisis_ask_ego`: a statement or question with an egophoric verb
+  whose subject is not the authority leaves the conversation with no consistent continuation.
+* `assert_ego_of_eq`, `ask_ego_of_eq`: when the subject is the authority, the statement or
+  question is an ordinary one about the authority.
+* `says_ego_iff`: an egophoric report is true exactly when the reported speaker takes the
+  subject to be herself and ascribes the property to herself.
+* `eq_of_says_report_ego`: when one report is embedded in another, the subject of the
+  egophoric verb is the speaker of the inner report.
+* `uncenter_egoAuth`, `lampshade`: the authority-indexical account agrees with the paper's on
+  main clauses and gives the wrong answer in the photograph scenario.
+* `ego_acceptable_iff`: among the paper's examples with an egophoric verb, the acceptable ones
+  are exactly those whose subject is the authority.
 
 ## Implementation notes
 
-The Table records the public side of the paper's discourse model, whose common ground and
-projected set are uncentered; the centered intension the authority commits to is the argument
-of `assert`, `ask` and `Says`. Expressions of Egophoric Logic are given by their extensions
-rather than as syntax, and time is ignored as in the paper.
+In the paper a speaker's commitments and the issues on the Table are centered, while the common
+ground and the projected common grounds are ordinary propositions. The Table here records the
+second, public side, and the centered meaning is the argument of `assert`, `ask` and `Says`.
+The expressions of the paper's logic are given directly by their meanings rather than as
+syntax, and time is ignored as in the paper.
 
 ## TODO
 
-The paper stars the second-person polar question with the plain form. The viability constraint
-derives where egophoric marking is excluded, not where it is obligatory, so that judgment is not
-derived here.
+The paper marks the second-person question with the plain verb form as unacceptable. The
+account derives where the egophoric form is excluded, not where it is required, so this judgment
+is not derived here.
 
 ## References
 
@@ -87,61 +98,63 @@ open Pearson2015 (Centered sayDeSe)
 
 variable {W E P T : Type*}
 
-/-! ### Egophoric Logic -/
+/-! ### Contexts, terms and meanings -/
 
-/-- A context of utterance with an epistemic authority, the participant whose commitment to the
-at-issue content the speech act projects. -/
+/-- A context of utterance together with its authority, the person who vouches for what is said
+in it. -/
 structure Context (W E P T : Type*) extends Reference.Context W E P T where
   /-- The epistemic authority of the context. -/
   authority : E
 
-/-- In a declarative context the authority is the speaker. -/
+/-- A context is declarative when its authority is the speaker. -/
 def Context.IsDeclarative (c : Context W E P T) : Prop := c.authority = c.agent
 
-/-- In an interrogative context the authority is the addressee. -/
+/-- A context is interrogative when its authority is the addressee. -/
 def Context.IsInterrogative (c : Context W E P T) : Prop := c.authority = c.addressee
 
-/-- An individual term, given by its extension at a context and a perspectival center. -/
+/-- A term denotes an individual, which may depend on the context and on the perspectival
+center. -/
 abbrev Term (W E P T : Type*) := Context W E P T → E → E
 
-/-- The first-person indexical, the speaker of the context. -/
+/-- The pronoun *I* denotes the speaker of the context. -/
 def I : Term W E P T := fun c _ ↦ c.agent
 
-/-- The second-person indexical, the addressee of the context. -/
+/-- The pronoun *you* denotes the addressee of the context. -/
 def you : Term W E P T := fun c _ ↦ c.addressee
 
-/-- The authority indexical. -/
+/-- The term `auth` denotes the authority of the context. -/
 def auth : Term W E P T := fun c _ ↦ c.authority
 
-/-- The egophor, the perspectival center. -/
+/-- The term `self` denotes the perspectival center. -/
 def self : Term W E P T := fun _ a ↦ a
 
-/-- A name or a free pronoun, rigid across contexts and centers. -/
+/-- A name denotes the same individual at every context and center. -/
 def name (x : E) : Term W E P T := fun _ _ ↦ x
 
-/-- A centered proposition with a presupposition, which is true, false or undefined at a world
-and a center. -/
+/-- A centered proposition is true, false or undefined at a world together with a center. It is
+undefined where its presupposition fails. -/
 abbrev CenteredProp (W E : Type*) := PartialProp (Centered W E)
 
 variable (V : E → W → Prop) (t : Term W E P T) (c : Context W E P T)
 
-/-- The centered intension of a clause with the egophoric suffix, which asserts that the subject
-has the property and presupposes that the subject is the center. -/
+/-- The meaning of a clause whose verb carries the egophoric suffix. It asserts that the subject
+has the property `V` and presupposes that the subject is the center. -/
 def ego : CenteredProp W E where
   presup p := t c p.2 = p.2
   assertion p := V (t c p.2) p.1
 
-/-- The centered intension of a clause with the plain verb form. -/
+/-- The meaning of a clause whose verb is in the plain form. It asserts that the subject has the
+property `V` and presupposes nothing. -/
 def plain : CenteredProp W E := .ofProp fun p ↦ V (t c p.2) p.1
 
-/-- The centered intension of an egophoric clause on the authority-indexical account, which
-presupposes that the subject is the authority of the context. -/
+/-- The meaning of an egophoric clause on the authority-indexical account, which presupposes
+that the subject is the authority of the context rather than the center. -/
 def egoAuth : CenteredProp W E where
   presup p := t c p.2 = c.authority
   assertion p := V (t c p.2) p.1
 
-/-- The ordinary intension of a centered proposition at the agent `x` is the set of worlds where
-it is defined and true with `x` at the center. -/
+/-- Filling in `x` as the center of a centered proposition gives an ordinary proposition, the
+set of worlds where it is defined and true of `x`. -/
 def uncenter (φ : CenteredProp W E) (x : E) : Set W := {w | φ.holds (w, x)}
 
 variable {V t c} {x : E}
@@ -159,58 +172,60 @@ theorem uncenter_neg_ego_of_eq (h : t c x = x) :
 theorem uncenter_neg_ego_of_ne (h : t c x ≠ x) : uncenter (ego V t c).neg x = ∅ := by
   ext w; simp [uncenter, ego, PartialProp.neg, PartialProp.holds, h]
 
-/-- The authority-indexical account and the egophoric account give a root clause the same
-authority-uncentered intension. -/
+/-- In a main clause the two accounts propose the same thing for the common ground. -/
 theorem uncenter_egoAuth :
     uncenter (egoAuth V t c) c.authority = uncenter (ego V t c) c.authority := rfl
 
-/-! ### Assertions and questions -/
+/-! ### Moves on the Table -/
 
-/-- Asserting `φ` in `c` commits the authority and proposes the authority-uncentered intension
-for the common ground. -/
+/-- Asserting `φ` commits the authority of the context and proposes `φ`, with the authority as
+center, for the common ground. -/
 def assert (K : Table E W) (c : Context W E P T) (φ : CenteredProp W E) : Table E W :=
   K.assert c.authority (uncenter φ c.authority)
 
-/-- Asking whether `φ` in `c` raises the two answers, each with the presuppositions of `φ`,
-uncentered by the authority. -/
+/-- Asking whether `φ` puts its two answers on the Table, each with the authority as center.
+Both answers keep the presupposition of `φ`. -/
 def ask (K : Table E W) (c : Context W E P T) (φ : CenteredProp W E) : Table E W :=
   K.push (ofSet (uncenter φ c.authority) ⊔ ofSet (uncenter φ.neg c.authority))
 
 variable {K : Table E W}
 
-/-- An issue whose only answer is the empty proposition leaves no viable projected set. -/
+/-- If the only answer to the issue on top of the Table is the empty proposition, the
+conversation has no consistent continuation. -/
 theorem inCrisis_push_ofSet_empty : (K.push (ofSet (∅ : Set W))).InCrisis := by
   refine (Table.inCrisis_iff _).2 fun f hf ↦ ?_
   obtain ⟨⟨g, -, q, hq, rfl⟩, hne⟩ := hf
   rw [alt_ofSet, Set.mem_singleton_iff] at hq
   simp [hq] at hne
 
-/-- An egophoric assertion whose subject is not the authority is not viable. -/
+/-- Asserting an egophoric clause whose subject is not the authority leaves the conversation
+with no consistent continuation. -/
 theorem inCrisis_assert_ego (h : t c c.authority ≠ c.authority) :
     (assert K c (ego V t c)).InCrisis := by
   rw [assert, uncenter_ego_of_ne h]
   exact inCrisis_push_ofSet_empty (K := K.commit c.authority ∅)
 
-/-- An egophoric question whose subject is not the authority is not viable. -/
+/-- Asking an egophoric question whose subject is not the authority leaves the conversation
+with no consistent continuation. -/
 theorem inCrisis_ask_ego (h : t c c.authority ≠ c.authority) :
     (ask K c (ego V t c)).InCrisis := by
   rw [ask, uncenter_ego_of_ne h, uncenter_neg_ego_of_ne h, sup_idem]
   exact inCrisis_push_ofSet_empty
 
-/-- With the authority as subject, an egophoric assertion is the default assertion of the
-property of the authority. -/
+/-- When the subject is the authority, asserting an egophoric clause is an ordinary assertion
+that the authority has the property. -/
 theorem assert_ego_of_eq (h : t c c.authority = c.authority) :
     assert K c (ego V t c) = K.assert c.authority {w | V c.authority w} := by
   rw [assert, uncenter_ego_of_eq h]
 
-/-- With the authority as subject, an egophoric question is the default polar question on the
-property of the authority. -/
+/-- When the subject is the authority, asking an egophoric question is an ordinary polar
+question about whether the authority has the property. -/
 theorem ask_ego_of_eq (h : t c c.authority = c.authority) :
     ask K c (ego V t c) = K.polarQuestion {w | V c.authority w} := by
   rw [ask, uncenter_ego_of_eq h, uncenter_neg_ego_of_eq h]; rfl
 
-/-- An egophoric assertion with the authority as subject is viable from a stable Table whose
-common ground is consistent with the authority having the property. -/
+/-- When the subject is the authority, an egophoric assertion can be continued consistently,
+provided the Table is empty and the common ground allows that the authority has the property. -/
 theorem not_inCrisis_assert_ego (h : t c c.authority = c.authority) (hK : K.IsStable)
     (hV : K.commonGround ⊓ 𝓟 {w | V c.authority w} ≠ ⊥) :
     ¬ (assert K c (ego V t c)).InCrisis := by
@@ -218,8 +233,9 @@ theorem not_inCrisis_assert_ego (h : t c c.authority = c.authority) (hK : K.IsSt
     Table.projectedSet_of_isStable hK, Table.project_singleton_ofSet hV]
   exact fun hf ↦ hV (hf _ rfl)
 
-/-- An egophoric question with the authority as subject is viable from a stable Table whose
-common ground leaves open whether the authority has the property. -/
+/-- When the subject is the authority, an egophoric question can be continued consistently,
+provided the Table is empty and the common ground leaves open whether the authority has the
+property. -/
 theorem not_inCrisis_ask_ego (h : t c c.authority = c.authority) (hK : K.IsStable)
     (hV : K.commonGround ⊓ 𝓟 {w | V c.authority w} ≠ ⊥)
     (hV' : K.commonGround ⊓ 𝓟 {w | V c.authority w}ᶜ ≠ ⊥) :
@@ -228,50 +244,50 @@ theorem not_inCrisis_ask_ego (h : t c c.authority = c.authority) (hK : K.IsStabl
     Table.projectedSet_of_isStable hK, Table.project_singleton_polar hV hV']
   exact fun hf ↦ hV (hf _ (Set.mem_insert _ _))
 
-/-! ### The egophoric paradigm -/
+/-! ### Which subjects the egophoric form allows -/
 
-/-- A second-person egophoric statement is not viable. -/
+/-- A statement with *you* as the subject of an egophoric verb has no consistent
+continuation. -/
 theorem inCrisis_assert_ego_you (hne : c.agent ≠ c.addressee) (hc : c.IsDeclarative) :
     (assert K c (ego V you c)).InCrisis :=
   inCrisis_assert_ego (t := you) fun h ↦ hne (h.trans hc).symm
 
-/-- A first-person egophoric question is not viable. -/
+/-- A question with *I* as the subject of an egophoric verb has no consistent continuation. -/
 theorem inCrisis_ask_ego_I (hne : c.agent ≠ c.addressee) (hc : c.IsInterrogative) :
     (ask K c (ego V I c)).InCrisis :=
   inCrisis_ask_ego (t := I) fun h ↦ hne (h.trans hc)
 
-/-- Under a reportative evidential whose source is not the speaker, a first-person egophoric
-statement is not viable. -/
+/-- When an evidential makes someone other than the speaker the authority, a statement with *I*
+as the subject of an egophoric verb has no consistent continuation. -/
 theorem inCrisis_assert_ego_I_of_source (hs : c.agent ≠ c.authority) :
     (assert K c (ego V I c)).InCrisis :=
   inCrisis_assert_ego (t := I) hs
 
-/-- The subject of a viable egophoric assertion is the authority, which is the speaker of a
-plain declarative and the source under a reportative evidential. -/
+/-- If an egophoric assertion can be continued consistently, its subject is the authority. -/
 theorem eq_authority_of_not_inCrisis_assert (h : ¬ (assert K c (ego V t c)).InCrisis) :
     t c c.authority = c.authority :=
   of_not_not fun hne ↦ h (inCrisis_assert_ego hne)
 
-/-- The subject of a viable egophoric question is the authority, the addressee. -/
+/-- If an egophoric question can be continued consistently, its subject is the authority. -/
 theorem eq_authority_of_not_inCrisis_ask (h : ¬ (ask K c (ego V t c)).InCrisis) :
     t c c.authority = c.authority :=
   of_not_not fun hne ↦ h (inCrisis_ask_ego hne)
 
-/-! ### The Newari paradigm -/
+/-! ### The paper's examples -/
 
 section Rows
 
 open Data.Examples
 
-/-- The subject term of an example, from the person of its pronoun. -/
+/-- The subject of an example is *I* or *you*, according to the person of its pronoun. -/
 def subject? (r : LinguisticExample) : Option (Term W E P T) :=
   match r.feature? "subject" with
   | some "1" => some I
   | some "2" => some you
   | _ => none
 
-/-- The context of an example over a Kaplanian context, with the speaker as the authority of a
-declarative and the addressee as the authority of an interrogative. -/
+/-- The context of an example has the speaker as its authority if the example is a statement
+and the addressee if it is a question. -/
 def context? (r : LinguisticExample) (c₀ : Reference.Context W E P T) :
     Option (Context W E P T) :=
   match r.feature? "clause" with
@@ -279,8 +295,8 @@ def context? (r : LinguisticExample) (c₀ : Reference.Context W E P T) :
   | some "interrogative" => some ⟨c₀, c₀.addressee⟩
   | _ => none
 
-/-- An egophoric example of the paper is acceptable exactly when its subject is the authority
-of its context, the condition under which its speech act can be viable. -/
+/-- Among the paper's examples with an egophoric verb, the acceptable ones are exactly those
+whose subject is the authority. -/
 theorem ego_acceptable_iff (c₀ : Reference.Context W E P T) (hne : c₀.agent ≠ c₀.addressee) :
     ∀ r ∈ Examples.all, r.feature? "marking" = some "ego" →
       ∃ t ∈ subject? r, ∃ c ∈ context? r c₀,
@@ -299,26 +315,26 @@ end Rows
 
 /-! ### Speech reports -/
 
-/-- `x` says `φ` in `w` when `φ` is defined and true at every centered world compatible with
+/-- `x` says `φ` in `w` when `φ` is defined and true at every world and center compatible with
 what `x` says in `w`. -/
 def Says (R : Centered W E → Centered W E → Prop) (x : E) (φ : CenteredProp W E) (w : W) :
     Prop :=
   ∀ p, R (w, x) p → φ.holds p
 
-/-- The centered intension of a speech report, which does not depend on its own center. -/
+/-- The meaning of *`x` says that `φ`*, which is the same at every center. -/
 def report (R : Centered W E → Centered W E → Prop) (x : E) (φ : CenteredProp W E) :
     CenteredProp W E :=
   .ofProp fun p ↦ Says R x φ p.1
 
 variable {R : Centered W E → Centered W E → Prop} {φ : CenteredProp W E} {w : W} {y z : E}
 
-/-- Saying is the de se *say* of [pearson-2015] over the alternatives of the say relation. -/
+/-- `Says` agrees with `Pearson2015.sayDeSe` when the say relation is listed as alternatives. -/
 theorem says_iff_sayDeSe {alts : List (Centered W E)} (h : ∀ p, R (w, x) p ↔ p ∈ alts) :
     Says R x φ w ↔ sayDeSe alts fun a w' ↦ φ.holds (w', a) := by
   simp [Says, sayDeSe, h]
 
-/-- In an egophoric report the holder identifies the subject as herself and self-ascribes the
-property. -/
+/-- An egophoric report is true exactly when the reported speaker takes the subject to be
+herself and ascribes the property to herself. -/
 theorem says_ego_iff :
     Says R x (ego V t c) w ↔
       (∀ p, R (w, x) p → t c p.2 = p.2) ∧ Says R x (ego V self c) w := by
@@ -326,17 +342,18 @@ theorem says_ego_iff :
   exact ⟨fun h ↦ ⟨fun p hp ↦ (h p hp).1, fun p hp ↦ (h p hp).1 ▸ (h p hp).2⟩,
     fun h p hp ↦ ⟨h.1 p hp, (h.1 p hp).symm ▸ h.2 p hp⟩⟩
 
-/-- An egophoric report entails the plain report. -/
+/-- If an egophoric report is true, so is the corresponding plain report. -/
 theorem says_plain_of_says_ego (h : Says R x (ego V t c) w) : Says R x (plain V t c) w :=
   fun p hp ↦ ⟨trivial, (h p hp).2⟩
 
-/-- A holder who says something, and who takes herself to be who she is. -/
+/-- A speaker is self-aware when she says something at every world and takes herself to be who
+she is. -/
 structure SelfAware (R : Centered W E → Centered W E → Prop) (x : E) : Prop where
   serial : ∀ w, ∃ p, R (w, x) p
   center : ∀ w p, R (w, x) p → p.2 = x
 
-/-- Under double embedding the egophoric subject is the closest reported speaker, whoever the
-outer speaker is. -/
+/-- When one report is embedded in another, the subject of the egophoric verb is the speaker of
+the inner report, whoever the outer speaker is. -/
 theorem eq_of_says_report_ego (hy : ∀ w, ∃ p, R (w, y) p) (hx : SelfAware R x)
     (h : Says R y (report R x (ego V (name z) c)) w) : z = x := by
   obtain ⟨p, hp⟩ := hy w
@@ -345,17 +362,17 @@ theorem eq_of_says_report_ego (hy : ∀ w, ∃ p, R (w, y) p) (hx : SelfAware R 
 
 /-! ### The authority-indexical account -/
 
-/-- The context shift a report needs on the authority-indexical account: the reported speaker
+/-- On the authority-indexical account a report shifts the context so that the reported speaker
 becomes the authority. -/
 def authorityShift (x : E) : Function.End (Context W E P T) := fun c ↦ { c with authority := x }
 
-/-- The shift is a monster. -/
+/-- The shift changes the context, so it is a monster in Kaplan's sense. -/
 theorem isMonster_authorityShift (h : c.authority ≠ x) :
     Reference.IsMonster (authorityShift (W := W) (P := P) (T := T) x) :=
   (Reference.isMonster_iff _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
 
-/-- On the authority-indexical account a shifted report of a rigid subject is the plain report
-together with coreference of the subject and the reported speaker. -/
+/-- On the authority-indexical account a shifted report about a named individual is true exactly
+when the individual is the reported speaker and the plain report is true. -/
 theorem says_egoAuth_name_iff (hR : ∃ p, R (w, x) p) :
     Says R x (egoAuth V (name z) (authorityShift x c)) w ↔
       z = x ∧ Says R x (plain V (name z) c) w := by
@@ -367,29 +384,31 @@ theorem says_egoAuth_name_iff (hR : ∃ p, R (w, x) p) :
 /-! ### The unrecognized photograph
 
 Syam points at a photograph of a man with a lampshade on his head and says *that guy drank too
-much*, not realizing that the man is himself. -/
+much*. He does not realize that the man is himself. -/
 
 section Lampshade
 
-/-- Syam, and the man Syam takes himself to be. -/
+/-- The people of the scenario are Syam and the man Syam takes himself to be. -/
 inductive Person | syam | other
   deriving DecidableEq
 
-/-- The world of the report and the world as Syam describes it. -/
+/-- The worlds of the scenario are the actual world and the world as Syam describes it. -/
 inductive World | actual | said
   deriving DecidableEq
 
-/-- What Syam says is compatible with his being someone other than the man in the photograph. -/
+/-- Everything Syam says is compatible with his being someone other than the man in the
+photograph. -/
 def sayAlt : Centered World Person → Centered World Person → Prop :=
   fun p q ↦ p = (.actual, .syam) ∧ q = (.said, .other)
 
-/-- The man in the photograph drank too much. -/
+/-- The man in the photograph drank too much in the world Syam describes. -/
 def drank : Person → World → Prop := fun x w ↦ x = .syam ∧ w = .said
 
 variable (c : Context World Person Unit Unit)
 
-/-- The plain report is true and the egophoric report false, while the authority-indexical
-account, which sees only coreference, makes the egophoric report true. -/
+/-- In the photograph scenario the plain report is true and the egophoric report is false. The
+authority-indexical account makes the egophoric report true, because it checks only that the
+subject is the reported speaker. -/
 theorem lampshade :
     Says sayAlt .syam (plain drank (name .syam) c) .actual ∧
     ¬ Says sayAlt .syam (ego drank (name .syam) c) .actual ∧
