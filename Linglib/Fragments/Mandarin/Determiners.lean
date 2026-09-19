@@ -5,40 +5,24 @@ import Linglib.Semantics.Denotation
 /-!
 # Mandarin determiners
 
-This file records the Mandarin determiner lexicon. Mandarin has no articles. A bare noun serves
-as a unique definite, the demonstrative *nà* 'that' is the obligatory exponent of anaphoric
-definites, donkey anaphora included, as Jenks shows, and possession is marked with *de*. The
-quantificational determiners are the carrier `QuantityWord`, drawn from Kuo and Yu's inventory:
-the cardinal *yīxiē* 'some', *méiyǒu* 'no' and *hěnduō* 'many', the proportional *shǎoshù* 'a
-minority of', *duōshù* and *dàbùfèn* 'most', and the universal *měi* 'every', *suǒyǒu* and
-*quánbù* 'all'.
+Mandarin has no articles. A bare noun serves as a unique definite, an anaphoric definite needs
+the demonstrative *nà* 'that', in donkey sentences too, and possession is marked with *de*. The
+quantifiers are cardinal, *yīxiē* 'some', *méiyǒu* 'no' and *hěnduō* 'many', proportional,
+*shǎoshù* 'a minority of', *duōshù* and *dàbùfèn* 'most', or universal, *měi* 'every', *suǒyǒu*
+and *quánbù* 'all'. Words that mean the same differ in what may follow them and in whether they
+need the adverb *dōu*. *Měi* must be followed by a classifier, as numerals and demonstratives
+must, *hěnduō* may be, and the other words stand directly before the noun. A preverbal phrase
+with *měi*, *suǒyǒu*, *quánbù* or *dàbùfèn* needs *dōu* before the verb, as in *suǒyǒu shīrén
+dōu zuò báirìmèng* 'all poets daydream', and one with *hěnduō* admits it. The existential verb
+*yǒu* introduces the cardinal phrases and not the universal ones.
 
-Two distributional facts set the words apart where their readings do not. The first is the
-classifier. Numerals and demonstratives need one, and among the quantifiers *měi* needs one,
-*hěnduō* takes one or the bare noun, and the rest take the bare noun only, *suǒyǒu* and *quánbù*
-being unable to precede a classifier at all. The second is the adverb *dōu*. A preverbal phrase
-headed by *měi*, *suǒyǒu*, *quánbù* or *dàbùfèn* needs *dōu* before the verb, *hěnduō* admits
-it, and Kuo and Yu's *duōshù* subjects stand without it. In the existential construction with
-*yǒu* the cardinal words and *shǎoshù* are admitted and the universal ones are not, which is the
-contrast between weak and strong phrases.
+## Implementation notes
 
-Each word denotes the set of generalized-quantifier readings available for it. Tsai denies that
-*suǒyǒu*, *quánbù* and *dàbùfèn* are quantificational determiners at all. On the evidence of
-their modifier morphology and their need for *dōu*, that account has them introduce sets of
-alternatives, which *dōu* closes. That reading lives at another type and is not a member of the
-sets recorded here.
-
-## Main declarations
-
-* `QuantityWord`: the carrier of the quantificational determiners, with the pinyin
-  `QuantityWord.form`, the characters `QuantityWord.hanzi` and the record
-  `QuantityWord.toQuantifier`.
-* `QuantityWord.TakesClassifier`, `QuantityWord.TakesBareNoun`: what may follow the word, by
-  which `QuantityWord.RequiresClassifier` and `QuantityWord.ExcludesClassifier` classify it.
-* `QuantityWord.RequiresDou`: the words whose preverbal phrase needs *dōu*.
-* The `Denotes` instance: the readings available for each word, from
-  `Quantification/Counting.lean`.
-* `inventory`, `marking`: the determiner inventory and the marking strategy it derives.
+* Each quantifier denotes the set of generalized-quantifier readings available for it, which is
+  empty for *hěnduō*, whose standard is left to context.
+* On Tsai's analysis *suǒyǒu*, *quánbù* and *dàbùfèn* are not determiners but introduce sets of
+  alternatives that *dōu* closes. That reading lives at another type and is not among the sets
+  recorded here.
 
 ## References
 
