@@ -1,6 +1,7 @@
 import Linglib.Data.Examples.Jenks2018
 import Linglib.Semantics.Reference.Description
 import Linglib.Semantics.Genericity.MeaningPreservation
+import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Cantonese.Determiners
 import Linglib.Fragments.German.Determiners

@@ -1,168 +1,192 @@
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.Mandarin.Classifiers
+import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Denotation
 
-/-! # Mandarin determiner inventory
-[kuo-yu-2012] [tsai-2015]
+/-!
+# Mandarin determiners
 
-Quantifier phrases in Mandarin, following [kuo-yu-2012]'s GQ-theoretic
-inventory (§12.1) and [tsai-2015]'s strong/weak classification (§5.3),
-plus the definiteness-marking inventory: Mandarin has no overt articles —
-bare nouns serve unique definites, the demonstrative *nà* 'that'
-obligatorily expones anaphoric definites including donkey anaphora, where
-bare nouns are impossible ([jenks-2018] §3.3), and possession is marked
-with *de* ([moroney-2021]).
+Mandarin has no articles. A bare noun serves as a unique definite, an anaphoric definite needs
+the demonstrative *nà* 'that', in donkey sentences too, and possession is marked with *de*. The
+quantifiers are cardinal, *yīxiē* 'some', *méiyǒu* 'no' and *hěnduō* 'many', proportional,
+*shǎoshù* 'a minority of', *duōshù* and *dàbùfèn* 'most', or universal, *měi* 'every', *suǒyǒu*
+and *quánbù* 'all'. Words that mean the same differ in what may follow them and in whether they
+need the adverb *dōu*. *Měi* must be followed by a classifier, as numerals and demonstratives
+must, *hěnduō* may be, and the other words stand directly before the noun. A preverbal phrase
+with *měi*, *suǒyǒu*, *quánbù* or *dàbùfèn* needs *dōu* before the verb, as in *suǒyǒu shīrén
+dōu zuò báirìmèng* 'all poets daydream', and one with *hěnduō* admits it. The existential verb
+*yǒu* introduces the cardinal phrases and not the universal ones.
 
-Existential (intersective) quantifiers — weak ([kuo-yu-2012] §12.1.1):
-- hěnduō 很多 (many)
+## Implementation notes
 
-Universal (co-intersective) quantifiers — strong ([kuo-yu-2012] §12.1.2):
-- měi 每 (every), suǒyǒu 所有 (all), quánbù 全部 (all)
+* Each quantifier denotes the set of generalized-quantifier readings available for it, which is
+  empty for *hěnduō*, whose standard is left to context.
+* On Tsai's analysis *suǒyǒu*, *quánbù* and *dàbùfèn* are not determiners but introduce sets of
+  alternatives that *dōu* closes. That reading lives at another type and is not among the sets
+  recorded here.
 
-Proportional quantifiers ([kuo-yu-2012] §12.1.5):
-- dà-bùfèn 大部分 (most)
+## References
 
-Key typological properties:
-- No definiteness-marked quantifiers (no "the")
-- Conservativity expected to hold (universal)
-- měi requires classifiers; suǒyǒu and quánbù do not ([kuo-yu-2012] §12.1.6)
-
+* [kuo-yu-2012]
+* [tsai-2015]
+* [li-thompson-1981]
+* [chao-1968]
+* [wang-2012]
+* [jenks-2018]
+* [moroney-2021]
 -/
 
 namespace Mandarin.Determiners
 
-open English.Determiners (QForce Monotonicity Strength)
-open Mandarin.Classifiers (ge)
+/-! ## Quantificational determiners -/
 
-/-- Mandarin quantifier entry. `extends Quantifier` (the
-    marked-determiner base — the inherited `form` holds the hànzì surface form)
-    and adds classifier requirements (Mandarin-specific morphosyntax) and the
-    typological metadata labels (`qforce`/`monotonicity`/`strength`). -/
-structure MandarinQuantEntry extends Quantifier where
-  /-- Pīnyīn romanization -/
-  pinyin : String
-  /-- English gloss -/
-  gloss : String
-  /-- Quantificational force -/
-  qforce : QForce
-  /-- Monotonicity -/
-  monotonicity : Monotonicity := .increasing
-  /-- Weak/strong (there-insertion diagnostic adapted to existential yǒu 有) -/
-  strength : Strength := .weak
-  /-- Requires a classifier (liàngcí 量词) between determiner and noun -/
-  requiresClassifier : Bool := false
-  /-- Typical classifier used with this quantifier (个 gè by default) -/
-  typicalClassifier : Option Classifier := none
-  deriving Repr, BEq
+/-- The quantificational determiners of Mandarin are the cardinal *yīxiē* 'some', *méiyǒu* 'no'
+and *hěnduō* 'many', the proportional *shǎoshù* 'a minority of', *duōshù* 'most' and *dàbùfèn*
+'most', and the universal *měi* 'every', *suǒyǒu* 'all' and *quánbù* 'all'. -/
+inductive QuantityWord where
+  | yixie | meiyou | henduo | shaoshu | duoshu | dabufen | mei | suoyou | quanbu
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- Entries
--- ============================================================================
+namespace QuantityWord
 
-/-- 每 měi "every" — universal, singular-like, requires classifier.
-    měi-gè xuéshēng 每个学生 "every-CL student" -/
-def mei : MandarinQuantEntry :=
-  { form := "每"
-  , pinyin := "měi"
-  , gloss := "every"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong
-  , requiresClassifier := true
-  , typicalClassifier := some ge }
+/-- The pinyin form. -/
+def form : QuantityWord → String
+  | .yixie => "yīxiē"
+  | .meiyou => "méiyǒu"
+  | .henduo => "hěnduō"
+  | .shaoshu => "shǎoshù"
+  | .duoshu => "duōshù"
+  | .dabufen => "dàbùfèn"
+  | .mei => "měi"
+  | .suoyou => "suǒyǒu"
+  | .quanbu => "quánbù"
 
-/-- 所有 suǒyǒu "all" — universal, plural-like, no classifier required.
-    suǒyǒu xuéshēng 所有学生 "all students" -/
-def suoyou : MandarinQuantEntry :=
-  { form := "所有"
-  , pinyin := "suǒyǒu"
-  , gloss := "all"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong }
+/-- The characters. -/
+def hanzi : QuantityWord → String
+  | .yixie => "一些"
+  | .meiyou => "没有"
+  | .henduo => "很多"
+  | .shaoshu => "少数"
+  | .duoshu => "多数"
+  | .dabufen => "大部分"
+  | .mei => "每"
+  | .suoyou => "所有"
+  | .quanbu => "全部"
 
-/-- 全部 quánbù "all" — universal, increasing, strong.
-    quánbù xuéshēng 全部学生 "all students".
-    Synonym of suǒyǒu; does not require a classifier. -/
-def quanbu : MandarinQuantEntry :=
-  { form := "全部"
-  , pinyin := "quánbù"
-  , gloss := "all"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong }
+/-- The word as a determiner record. No word restricts number, and the words that take a bare
+noun take a count or a mass noun alike, as in *suǒyǒu de zhūròu* 'all the pork' beside *suǒyǒu de
+zhū* 'all the pigs' ([kuo-yu-2012]). -/
+def toQuantifier (w : QuantityWord) : Quantifier := { form := w.form, selectsMass := true }
 
-/-- 很多 hěnduō "many" — existential/proportional, increasing, weak.
-    hěnduō xuéshēng 很多学生 "many students".
-    Can optionally co-occur with dōu but does not require it. -/
-def henduo : MandarinQuantEntry :=
-  { form := "很多"
-  , pinyin := "hěnduō"
-  , gloss := "many"
-  , qforce := .existential
-  , monotonicity := .increasing
-  , strength := .weak }
+/-- All the words. -/
+def toList : List QuantityWord :=
+  [.yixie, .meiyou, .henduo, .shaoshu, .duoshu, .dabufen, .mei, .suoyou, .quanbu]
 
-/-- 大部分 dà-bùfèn "most/the greater part" — proportional, increasing, strong.
-    dà-bùfèn xuéshēng 大部分学生 "most students" -/
-def dabufen : MandarinQuantEntry :=
-  { form := "大部分"
-  , pinyin := "dà-bùfèn"
-  , gloss := "most"
-  , qforce := .proportional
-  , monotonicity := .increasing
-  , strength := .strong }
+theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 
--- ============================================================================
--- Lexicon
--- ============================================================================
+/-! ### The classifier -/
 
-def allQuantifiers : List MandarinQuantEntry :=
-  [mei, suoyou, quanbu, henduo, dabufen]
+/-- The word may stand before a classifier, as in *měi-liàng chē* 'every car' and *hěnduō-tiáo
+kùzi* 'many pairs of pants'. The others may not, as in the ill-formed *\*suǒyǒu-ge xuéshēng*,
+*\*yīxiē-pǐ mǎ* and *\*duōshù-ge xiǎohái* ([kuo-yu-2012]). No source stars *dàbùfèn* before a
+classifier. It is entered with the others because its *bùfèn* 'part' is itself a partitive
+measure in [chao-1968]'s list, as the *xiē* of *yīxiē* is, and [tsai-2015] likens both *bùfèn*
+and the *shù* 'quantity' of *duōshù* to quantity-denoting classifiers, so the measure position
+of these words is filled. -/
+def TakesClassifier : QuantityWord → Prop
+  | .mei | .henduo => True
+  | _ => False
 
-def lookup (pinyin : String) : Option MandarinQuantEntry :=
-  allQuantifiers.find? λ e => e.pinyin == pinyin
+/-- The word may stand before the noun with no classifier between them, as in *hěnduō
+yìngzhēngzhě* 'many applicants' and *suǒyǒu shīrén* 'all poets'. *Měi* may not, *\*měi chē*,
+the noun *rén* 'person' apart. [kuo-yu-2012] star *hěnduō kùzi* in their survey of classifiers
+and give *hěnduō* before a bare noun elsewhere, as does [tsai-2015]. -/
+def TakesBareNoun : QuantityWord → Prop
+  | .mei => False
+  | _ => True
 
--- ============================================================================
--- Verification
--- ============================================================================
+instance : DecidablePred TakesClassifier := fun w ↦ by
+  unfold TakesClassifier; cases w <;> infer_instance
 
-/-- měi is strong (no existential yǒu sentence). -/
-theorem mei_strong : mei.strength = .strong := rfl
+instance : DecidablePred TakesBareNoun := fun w ↦ by
+  unfold TakesBareNoun; cases w <;> infer_instance
 
-/-- měi requires a classifier. -/
-theorem mei_requires_cl : mei.requiresClassifier = true := rfl
+/-- The word needs a classifier, as [li-thompson-1981] say of *měi*. -/
+def RequiresClassifier (w : QuantityWord) : Prop := w.TakesClassifier ∧ ¬ w.TakesBareNoun
 
-/-- suǒyǒu does not require a classifier. -/
-theorem suoyou_no_cl : suoyou.requiresClassifier = false := rfl
+/-- The word cannot precede a classifier. -/
+def ExcludesClassifier (w : QuantityWord) : Prop := ¬ w.TakesClassifier ∧ w.TakesBareNoun
 
-/-- hěnduō is weak; all others are strong QPs ([tsai-2015] §5.3). -/
-theorem henduo_weak : henduo.strength = .weak := rfl
+instance : DecidablePred RequiresClassifier := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-theorem strong_qps_are_strong :
-    (allQuantifiers.filter (·.pinyin != "hěnduō")).all
-      (·.strength == .strong) = true := by decide
+instance : DecidablePred ExcludesClassifier := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- All quantifiers that require a classifier have a typicalClassifier set. -/
-theorem requires_cl_has_typical :
-    (allQuantifiers.filter (·.requiresClassifier)).all
-      (·.typicalClassifier.isSome) = true := by decide
+/-- Every word combines with a noun one way or the other. -/
+theorem takesClassifier_or_takesBareNoun (w : QuantityWord) :
+    w.TakesClassifier ∨ w.TakesBareNoun := by decide +revert
 
-/-- All typical classifiers are 个 (the default). -/
-theorem typical_classifier_is_default :
-    (allQuantifiers.filterMap (·.typicalClassifier)).all
-      (·.isDefault) = true := by decide
+theorem requiresClassifier_iff {w : QuantityWord} : w.RequiresClassifier ↔ w = .mei := by
+  decide +revert
 
-/-! ### Definiteness marking -/
+/-- *Hěnduō* alone takes both a classifier and a bare noun. -/
+theorem takesClassifier_and_takesBareNoun_iff {w : QuantityWord} :
+    w.TakesClassifier ∧ w.TakesBareNoun ↔ w = .henduo := by decide +revert
 
-/-- The Mandarin definiteness-relevant determiners are the demonstrative
-    *nà*, the obligatory exponent of anaphoric definites including donkey
-    anaphora, and the possessive *de*. -/
+theorem excludesClassifier_iff {w : QuantityWord} :
+    w.ExcludesClassifier ↔ w ≠ .mei ∧ w ≠ .henduo := by decide +revert
+
+/-! ### The adverb *dōu* -/
+
+/-- A preverbal phrase headed by the word needs *dōu* before the verb, as in *{měi-ge,
+suǒyǒu-de, dàbùfèn-de} rén \*(dōu) mǎi-le shū* 'every person, all people, most people bought a
+book', against *hěnduō rén (dōu) mǎi-le shū* 'many people bought a book' ([tsai-2015]) and
+*duōshù shīrén huì zuò báirìmèng* 'most poets daydream' ([kuo-yu-2012]). -/
+def RequiresDou : QuantityWord → Prop
+  | .mei | .suoyou | .quanbu | .dabufen => True
+  | _ => False
+
+instance : DecidablePred RequiresDou := fun w ↦ by unfold RequiresDou; cases w <;> infer_instance
+
+/-! ### The available readings -/
+
+universe u
+
+/-- The readings available for a word, as generalized quantifiers on every finite domain.
+*Yīxiē* reads as `some_sem`, *méiyǒu* as `no_sem`, *shǎoshù* as `few_sem`, *duōshù* and
+*dàbùfèn* as `most_sem`, and *měi*, *suǒyǒu* and *quánbù* as `every_sem`; *hěnduō* has no reading,
+its standard being a value judgment left to context ([kuo-yu-2012]). Speakers judging
+*dàbùfèn* accept its majority reading far more often than a relative one ([wang-2012]). -/
+noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+  denote
+    | .yixie => {Quantifier.GQ.Family.some}
+    | .meiyou => {Quantifier.GQ.Family.no}
+    | .shaoshu => {Quantifier.GQ.Family.few}
+    | .duoshu | .dabufen => {Quantifier.GQ.Family.most}
+    | .mei | .suoyou | .quanbu => {Quantifier.GQ.Family.every}
+    | .henduo => ∅
+
+end QuantityWord
+
+/-! ## Demonstratives and the possessive -/
+
+/-- *zhè* 这 'this', the proximal demonstrative, which stands before a classifier. -/
+def zhe : DemonstrativeDeterminer := { form := "zhè", deictic := .proximal }
+
+/-- *nà* 那 'that', the distal demonstrative and the obligatory exponent of anaphoric definites,
+donkey anaphora included ([jenks-2018]). -/
+def na : DemonstrativeDeterminer :=
+  { form := "nà", deictic := .distal, definiteUses := {.anaphoric, .donkey} }
+
+/-- *de* 的, the marker of possession and of nominal modification. -/
+def de : PossessiveDeterminer := { form := "de" }
+
+/-- The determiner inventory holds the demonstratives, the quantifiers and the possessive
+marker, there being no articles. -/
 def inventory : Determiner.Inventory :=
-  [ .demonstrative { form := "na", deictic := .distal, definiteUses := {.anaphoric, .donkey} },
-    .possessive { form := "de" } ]
+  [.demonstrative zhe, .demonstrative na] ++
+    QuantityWord.toList.map (.quantifier ·.toQuantifier) ++ [.possessive de]
 
-/-- Mandarin derives the `.markedAnaphoric` Moroney cell. -/
+/-- Mandarin's inventory derives the `.markedAnaphoric` cell of [moroney-2021]: only the
+demonstrative marks a definite use, and the use it marks is the anaphoric one. -/
 theorem marking : inventory.markingStrategy = .markedAnaphoric := by decide
 
 end Mandarin.Determiners
