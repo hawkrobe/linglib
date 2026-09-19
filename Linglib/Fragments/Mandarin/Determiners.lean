@@ -29,6 +29,8 @@ dōu zuò báirìmèng* 'all poets daydream', and one with *hěnduō* admits it.
 * [kuo-yu-2012]
 * [tsai-2015]
 * [li-thompson-1981]
+* [chao-1968]
+* [wang-2012]
 * [jenks-2018]
 * [moroney-2021]
 -/
@@ -83,11 +85,13 @@ theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 
 /-! ### The classifier -/
 
--- UNVERIFIED: no source consulted stars *dàbùfèn* before a classifier; it is entered with
--- *duōshù*, whose frame `D (de) N` it shares and which [kuo-yu-2012] close to classifiers.
 /-- The word may stand before a classifier, as in *měi-liàng chē* 'every car' and *hěnduō-tiáo
-kùzi* 'many pairs of pants'. The others may not, as in the ill-formed *\*suǒyǒu-ge xuéshēng* and
-*\*yīxiē-pǐ mǎ* ([kuo-yu-2012]). -/
+kùzi* 'many pairs of pants'. The others may not, as in the ill-formed *\*suǒyǒu-ge xuéshēng*,
+*\*yīxiē-pǐ mǎ* and *\*duōshù-ge xiǎohái* ([kuo-yu-2012]). No source stars *dàbùfèn* before a
+classifier. It is entered with the others because its *bùfèn* 'part' is itself a partitive
+measure in [chao-1968]'s list, as the *xiē* of *yīxiē* is, and [tsai-2015] likens both *bùfèn*
+and the *shù* 'quantity' of *duōshù* to quantity-denoting classifiers, so the measure position
+of these words is filled. -/
 def TakesClassifier : QuantityWord → Prop
   | .mei | .henduo => True
   | _ => False
@@ -149,7 +153,8 @@ universe u
 /-- The readings available for a word, as generalized quantifiers on every finite domain.
 *Yīxiē* reads as `some_sem`, *méiyǒu* as `no_sem`, *shǎoshù* as `few_sem`, *duōshù* and
 *dàbùfèn* as `most_sem`, and *měi*, *suǒyǒu* and *quánbù* as `every_sem`; *hěnduō* has no reading,
-its standard being a value judgment left to context ([kuo-yu-2012]). -/
+its standard being a value judgment left to context ([kuo-yu-2012]). Speakers judging
+*dàbùfèn* accept its majority reading far more often than a relative one ([wang-2012]). -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .yixie => {Quantifier.GQ.Family.some}
