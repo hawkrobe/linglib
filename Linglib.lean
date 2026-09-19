@@ -138,7 +138,6 @@ import Linglib.Logic.Aristotelian.Morphism
 import Linglib.Logic.Aristotelian.Partition
 import Linglib.Logic.Aristotelian.Square
 import Linglib.Logic.Assignment
-import Linglib.Logic.BeliefRevision
 import Linglib.Logic.BeliefRevision.Iterated
 import Linglib.Logic.Bilateral.Classical
 import Linglib.Logic.Bilateral.Defs
@@ -245,7 +244,6 @@ import Linglib.Core.Order.Orthoframe.Representation
 import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PartialRank
 import Linglib.Core.Order.PartialUnify
-import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Positions
 import Linglib.Core.Order.PreorderLattice
 import Linglib.Core.Order.Probability.Basic
