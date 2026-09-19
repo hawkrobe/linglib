@@ -25,6 +25,8 @@ makes a constraint on a sort hold of the entities of every subsort.
   assignment.
 * `HPSG.RSRL.Grammar`: a list of principles.
 * `HPSG.RSRL.Interpretation.Models`: every entity satisfies every principle of the grammar.
+* `HPSG.RSRL.Constraint`: a principle that requires the entities of one sort to satisfy a formula.
+* `HPSG.RSRL.Constraint.inherited`: the formulae that a list of constraints imposes on a sort.
 
 ## Main results
 
@@ -32,8 +34,8 @@ makes a constraint on a sort hold of the entities of every subsort.
   assignment gives to the free variables.
 * `HPSG.RSRL.Interpretation.models_iff_forall_assignment`: a model of a grammar of closed
   formulae satisfies them under every assignment.
-* `HPSG.RSRL.Interpretation.Models.satisfies_of_le`: in a model, a constraint on a sort holds
-  of every entity whose sort lies below it.
+* `HPSG.RSRL.Interpretation.models_map_toDesc_iff`: an interpretation is a model of a list of
+  constraints exactly when every entity satisfies the formulae that its sort inherits.
 
 ## Implementation notes
 
@@ -252,13 +254,58 @@ theorem models_iff_forall_assignment (hG : ∀ d ∈ G, d.freeVars = ∅) :
 theorem Models.mono (hI : I.Models H) (hGH : G ⊆ H) : I.Models G :=
   fun u d hd ↦ hI u d (hGH hd)
 
-/-- In a model, a principle that constrains the sort `τ` holds of every entity whose sort is at
-least as specific as `τ`. An entity below several sorts therefore satisfies the constraints on
-all of them. -/
-theorem Models.satisfies_of_le (hI : I.Models G) {τ : Srt} {d : Desc Sig}
-    (hd : (Desc.sortAssign .colon τ).imp d ∈ G) (hu : I.S u ≤ τ) :
-    I.Satisfies (fun _ ↦ u) u d :=
-  hI u _ hd ⟨u, rfl, hu⟩
+end Interpretation
+
+/-! ### Constraints on sorts -/
+
+/-- A constraint `σ ⇒ d` requires every entity whose sort is at least as specific as `σ` to
+satisfy the formula `d`. -/
+structure Constraint (Sig : Signature Srt) where
+  /-- The sort that the constraint applies to. -/
+  sort : Srt
+  /-- The formula that the entities of that sort satisfy. -/
+  body : Desc Sig
+
+namespace Constraint
+
+/-- The formula that states a constraint. -/
+def toDesc (c : Constraint Sig) : Desc Sig := (Desc.sortAssign .colon c.sort).imp c.body
+
+instance : Coe (Constraint Sig) (Desc Sig) := ⟨toDesc⟩
+
+@[simp] theorem freeVars_toDesc (c : Constraint Sig) : c.toDesc.freeVars = c.body.freeVars := by
+  simp [toDesc, Desc.freeVars, Term.freeVars]
+
+/-- The formulae that the constraints `C` impose on the sort `σ`, those of the constraints on
+`σ` and on its supersorts. -/
+def inherited [DecidableLE Srt] (C : List (Constraint Sig)) (σ : Srt) : List (Desc Sig) :=
+  (C.filter fun c ↦ σ ≤ c.sort).map body
+
+end Constraint
+
+namespace Interpretation
+
+variable {I : Interpretation Sig U} {C : List (Constraint Sig)} {u : U}
+
+@[simp] theorem satisfies_toDesc {g : ℕ → U} {c : Constraint Sig} :
+    I.Satisfies g u c.toDesc ↔ I.S u ≤ c.sort → I.Satisfies g u c.body := by
+  simp [Constraint.toDesc]
+
+/-- An interpretation is a model of a list of constraints exactly when every entity satisfies
+the formulae that its sort inherits. An entity below several constrained sorts therefore
+satisfies the constraints on all of them. -/
+theorem models_map_toDesc_iff [DecidableLE Srt] : I.Models (C.map Constraint.toDesc) ↔
+    ∀ u, ∀ d ∈ Constraint.inherited C (I.S u), I.Satisfies (fun _ ↦ u) u d := by
+  simp only [Models, Constraint.inherited, List.mem_map, List.mem_filter, decide_eq_true_eq,
+    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, satisfies_toDesc]
+  exact forall_congr' fun u ↦
+    ⟨fun h d c hc hle hd ↦ hd ▸ h c hc hle, fun h c hc hle ↦ h _ c hc hle rfl⟩
+
+/-- In a model, a constraint among the principles holds of every entity whose sort is at least
+as specific as the constrained sort. -/
+theorem Models.satisfies_body {G : Grammar Sig} (hI : I.Models G) {c : Constraint Sig}
+    (hc : c.toDesc ∈ G) (hu : I.S u ≤ c.sort) : I.Satisfies (fun _ ↦ u) u c.body :=
+  satisfies_toDesc.1 (hI u _ hc) hu
 
 end Interpretation
 

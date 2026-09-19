@@ -188,10 +188,18 @@ example : ¬ (clause .ana .iObj .gMasc .nSing).Models [principleA] := by decide
 Principle B. -/
 example : ¬ (clause .ppro .iSubj .gMasc .nSing).Models [principleB] := by decide
 
-/-- A clause whose object has a species as its sort is well-typed, and one whose object has the
-underspecified sort `synsem` is not. -/
-example : (clause .ana .iSubj .gMasc .nSing).WellTyped ∧
-    ¬ (clause .synsem .iSubj .gMasc .nSing).WellTyped := by decide
+/-- Every clause whose object is a species of nominal object with an index, a gender and a
+number is sort-resolved and totally well-typed. -/
+theorem clause_isTotallyWellTyped :
+    ∀ σ ∈ [Srt.ana, .ppro, .npro], ∀ i ∈ [Ent.iSubj, .iObj], ∀ γ ∈ [Ent.gMasc, .gFem],
+      ∀ n ∈ [Ent.nSing, .nPlur],
+        (clause σ i γ n).IsSortResolved ∧ (clause σ i γ n).IsTotallyWellTyped := by
+  decide
+
+/-- A clause whose object has the underspecified sort `synsem` is not sort-resolved, and one
+whose object has a gender in place of its index is not well-typed. -/
+example : ¬ (clause .synsem .iSubj .gMasc .nSing).IsSortResolved ∧
+    ¬ (clause .ana .gMasc .gMasc .nSing).IsWellTyped := by decide
 
 /-- The object, its index and its gender are components of the clause, and nothing is a
 component of an index but the index itself. -/

@@ -74,15 +74,16 @@ theorem gap_principle_models : goodTwoGap.Models grammar := by decide
 
 /-- In the coordination construction the two conjuncts share their category and GAP list, and
 the mother carries them. -/
-def coordinationPrinciple : Desc sig :=
-  .imp (.sortAssign .colon .coordCxt)
-    (.and (.pathEq (.path [.CONJ1, .CAT]) (.path [.CONJ2, .CAT]))
+def coordinationPrinciple : Constraint sig where
+  sort := .coordCxt
+  body :=
+    .and (.pathEq (.path [.CONJ1, .CAT]) (.path [.CONJ2, .CAT]))
       (.and (.pathEq (.path [.CONJ1, .GAP]) (.path [.CONJ2, .GAP]))
         (.and (.pathEq (.path [.MTR, .CAT]) (.path [.CONJ1, .CAT]))
-          (.pathEq (.path [.MTR, .GAP]) (.path [.CONJ1, .GAP])))))
+          (.pathEq (.path [.MTR, .GAP]) (.path [.CONJ1, .GAP]))))
 
 /-- The filler-gap grammar with the coordination construction. -/
-def swbGrammar : Grammar sig := grammar ++ [coordinationPrinciple]
+def swbGrammar : Grammar sig := (constraints ++ [coordinationPrinciple]).map Constraint.toDesc
 
 /-- The entities of a worked coordinate construct are the construct, its mother and two
 conjuncts, their category, a one-gap list with its NP `loc` and index, and the empty list. -/
@@ -130,6 +131,9 @@ conjunct's. -/
     | _, _ => none
   R := noRel
 
+/-- The worked coordinate constructs are well-typed. -/
+theorem coordConstruct_isWellTyped (g₁ g₂ : Bool) : (coordConstruct g₁ g₂).IsWellTyped := by
+  cases g₁ <;> cases g₂ <;> decide
 
 private def bools : List (String × Bool) := [("true", true), ("false", false)]
 
@@ -142,10 +146,14 @@ theorem coordination_rows :
         (x.judgment = .acceptable ↔ (coordConstruct g₁ g₂).Models swbGrammar) := by
   decide +kernel
 
-/-- A conjunct is a sign and a gap is a `loc` object, an argument unrealized in the syntax, so no
-well-typed construct has a gap for a conjunct: the sort a conjunct must bear is `sign`, which
-`loc` does not resolve to. -/
-theorem gap_not_conjunct : sig.approp .coordCxt .CONJ1 = some .sign ∧ ¬ (Srt.loc ≤ .sign) := by
-  decide
+/-- A conjunct is a sign and a gap is a `loc` object, an argument unrealized in the syntax, so
+no well-typed interpretation has a gap for a conjunct. The sort of a conjunct lies below
+`sign`, and no sort lies below both `sign` and `loc`. -/
+theorem gap_not_conjunct {U : Type*} {I : Interpretation sig U} (hI : I.IsWellTyped) {u v : U}
+    (hu : I.S u = .coordCxt) (hv : I.A .CONJ1 u = some v) : ¬ I.S v ≤ .loc := by
+  obtain ⟨τ, hτ, hle⟩ := hI .CONJ1 u v hv
+  rw [hu, show sig.approp .coordCxt .CONJ1 = some .sign from by decide] at hτ
+  obtain rfl : Srt.sign = τ := Option.some.inj hτ
+  exact (by decide : ∀ σ : Srt, σ ≤ .sign → ¬ σ ≤ .loc) _ hle
 
 end SagWasowBender2003
