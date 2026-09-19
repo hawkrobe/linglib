@@ -1,0 +1,128 @@
+[
+  {
+    "id": "coppockwechsler2018_27",
+    "source": {"bibkey": "coppock-wechsler-2018", "paperLabel": "(27)"},
+    "language": "newa1246",
+    "primaryText": "jĩ: a:pwa twan-ā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jĩ:", "1.ERG"], ["a:pwa", "much"], ["twan-ā", "drink-PAST.EGO"]
+    ],
+    "translation": "I drank-EGO a lot",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["clause", "declarative"],
+      ["marking", "ego"]
+    ],
+    "comment": "Repeated from the paper's (1a), after Hargreaves 2005."
+  },
+  {
+    "id": "coppockwechsler2018_28",
+    "source": {"bibkey": "coppock-wechsler-2018", "paperLabel": "(28)"},
+    "language": "newa1246",
+    "primaryText": "chã a:pwa twan-ā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["chã", "2.ERG"], ["a:pwa", "much"], ["twan-ā", "drink-PAST.EGO"]
+    ],
+    "translation": "You drank-EGO a lot.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["clause", "declarative"],
+      ["marking", "ego"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockwechsler2018_34a",
+    "source": {"bibkey": "coppock-wechsler-2018", "paperLabel": "(34a)"},
+    "language": "newa1246",
+    "primaryText": "jĩ a:pwa twan-ā lā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jĩ", "1.ERG"], ["a:pwa", "much"], ["twan-ā", "drink-PAST.EGO"], ["lā", "Q"]
+    ],
+    "translation": "Did I drink-EGO a lot?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["clause", "interrogative"],
+      ["marking", "ego"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockwechsler2018_34b",
+    "source": {"bibkey": "coppock-wechsler-2018", "paperLabel": "(34b)"},
+    "language": "newa1246",
+    "primaryText": "jĩ: a:pwa twan-a lā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jĩ:", "1.ERG"], ["a:pwa", "much"], ["twan-a", "drink-PERF"], ["lā", "Q"]
+    ],
+    "translation": "Did I drink a lot?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "1"],
+      ["clause", "interrogative"],
+      ["marking", "plain"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockwechsler2018_35a",
+    "source": {"bibkey": "coppock-wechsler-2018", "paperLabel": "(35a)"},
+    "language": "newa1246",
+    "primaryText": "chã a:pwa twan-ā lā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["chã", "2.ERG"], ["a:pwa", "much"], ["twan-ā", "drink-PAST.EGO"], ["lā", "Q"]
+    ],
+    "translation": "Did you drink-EGO a lot?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["clause", "interrogative"],
+      ["marking", "ego"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "coppockwechsler2018_35b",
+    "source": {"bibkey": "coppock-wechsler-2018", "paperLabel": "(35b)"},
+    "language": "newa1246",
+    "primaryText": "chã a:pwa twan-a lā",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["chã", "2.ERG"], ["a:pwa", "much"], ["twan-a", "drink-PERF"], ["lā", "Q"]
+    ],
+    "translation": "Did you drink a lot?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subject", "2"],
+      ["clause", "interrogative"],
+      ["marking", "plain"]
+    ],
+    "comment": ""
+  }
+]

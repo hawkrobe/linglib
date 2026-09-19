@@ -1,29 +1,25 @@
+import Mathlib.Data.Nat.Basic
 import Mathlib.Order.Basic
-import Linglib.Semantics.Evidential.Epistemicity
 
 /-!
-# Subjectivity Cline
-[traugott-dasher-2002] [traugott-2010]
+# The subjectivity cline
 
-Traugott & Dasher's synchronic cline of (inter)subjectivity, formalized as an
-ordered type. Expressions range from **nonsubjective** (ideational, propositional)
-through **subjective** (speaker attitude/belief) to **intersubjective** (addressee
-face/self-image). The diachronic hypothesis is that coded (inter)subjective
-meanings arise later than non-subjective ones; subjectification precedes
-intersubjectification.
+This file defines the synchronic cline of (inter)subjectivity of Traugott and Dasher as an ordered
+type. Expressions range from nonsubjective, ideational and propositional, through subjective,
+expressing the speaker's attitude or belief, to intersubjective, attending to the addressee's
+face and self-image. The diachronic hypothesis is that coded (inter)subjective meanings arise
+later than nonsubjective ones, and that subjectification precedes intersubjectification. The
+file also defines the performative ~ descriptive distinction, which Narrog argues the cline
+conflates with speaker orientation.
 
-## Bridges
+## References
 
-- `EpistemicAuthority` to `SubjectivityLevel`: ego = subjective,
-  allocutive = intersubjective, nonparticipant = nonSubjective.
-- The cline connects modal semantics (speaker assessment = subjective),
-  politeness (addressee face = intersubjective), and RSA (speaker model =
-  subjectified speaker).
+* [traugott-dasher-2002]
+* [traugott-2010]
+* [narrog-2012]
 -/
 
 namespace Modality
-
-open Epistemicity
 
 /-- Synchronic subjectivity scale ([traugott-dasher-2002] Table 1,
     [traugott-2010] cline 2). Diachronic work shows that subjective
@@ -45,16 +41,6 @@ instance : LinearOrder SubjectivityLevel :=
   LinearOrder.lift' SubjectivityLevel.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [SubjectivityLevel.toNat])
 
-/-- Bridge: epistemic authority to subjectivity level.
-
-    - ego (speaker has privileged access) maps to subjective
-    - allocutive (addressee has privileged access) maps to intersubjective
-    - nonparticipant maps to nonSubjective -/
-def SubjectivityLevel.ofEpistemicAuthority : EpistemicAuthority → SubjectivityLevel
-  | .ego => .subjective
-  | .allocutive => .intersubjective
-  | .nonparticipant => .nonSubjective
-
 /-- Intersubjectivity presupposes subjectivity ([traugott-2010] section 2). -/
 theorem intersubjective_ge_subjective :
     SubjectivityLevel.subjective ≤ SubjectivityLevel.intersubjective := by decide
@@ -64,9 +50,7 @@ theorem nonSubjective_le (l : SubjectivityLevel) :
     SubjectivityLevel.nonSubjective ≤ l := by
   cases l <;> decide
 
--- ============================================================================
--- §2. Performativity
--- ============================================================================
+/-! ### Performativity -/
 
 /-- Whether the utterance constitutes the act it describes or merely reports it.
 
