@@ -215,7 +215,6 @@ import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Optimization.Linearization
 import Linglib.Core.Optimization.NoiseKernel
-import Linglib.Core.Optimization.Pareto
 import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Core.Optimization.Profile
 import Linglib.Core.Optimization.Semiring
@@ -253,8 +252,6 @@ import Linglib.Core.Order.Probability.Content
 import Linglib.Core.Order.Probability.Defs
 import Linglib.Core.Order.Probability.Representability
 import Linglib.Core.Order.Probability.Scott
-import Linglib.Core.Order.PullbackPreorder
-import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.SignVectors
 import Linglib.Core.Order.StrictBounds
