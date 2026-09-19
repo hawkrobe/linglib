@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
+import Linglib.Semantics.Focus.Marking
 import Linglib.Syntax.Gender.Basic
 
 /-!
@@ -19,11 +20,10 @@ strategy, and in-situ focus is otherwise unmarked, prosody included
 
 ## Main definitions
 
-* `Strategy`: in-situ vs ex-situ focus.
 * `Stabilizer`, `stabilizerFor`: the particle's two allomorphs and their
   selection by gender and number.
-* `FocusConfig`: a focused clause's PAC, strategy, focus agreement
-  features, and stabilizer.
+* `FocusConfig`: a focused clause's PAC, `Focus.Strategy`, focus
+  agreement features, and stabilizer.
 * `FocusConfig.Licensed`: ex-situ focus with a Relative-capable TAM must
   surface Relative mode ([jaggar-green-2003] analyse this as movement to
   a single CP-internal position; only the licensing condition is recorded
@@ -50,16 +50,9 @@ namespace Hausa
 
 open Tone (TRN)
 
-/-! ### Strategy and stabilizer -/
+/-! ### The stabilizer -/
 
-/-- The two focus strategies of Hausa. Pragmatic-type distinctions cut
-across both strategies and live in study files. -/
-inductive Strategy where
-  | inSitu
-  | exSitu
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The stabilizer's allomorphs: *cē* with feminine-singular focus, *nē*
+/-- The stabilizer has two allomorphs, *cē* with feminine-singular focus and *nē*
 elsewhere ([newman-2000] §66.1). -/
 inductive Stabilizer where
   | nee
@@ -81,13 +74,14 @@ def stabilizerFor (g : Gender) (singular : Bool) : Stabilizer :=
 
 /-! ### Focus configurations -/
 
-/-- A focused clause: its PAC, focus strategy, the focused constituent's
+/-- A focused clause carries its PAC, its focus strategy, the focused constituent's
 agreement features, and whether a stabilizer surfaces. -/
 structure FocusConfig where
   /-- The clause's person-aspect complex. -/
   pac      : PAC
-  /-- The focus strategy. -/
-  strategy : Strategy
+  /-- The focus strategy; pragmatic-type distinctions cut across both
+  strategies and live in study files. -/
+  strategy : Focus.Strategy
   /-- Gender of the focused constituent (selects *nē* vs *cē*). -/
   focusG   : Gender
   /-- Whether the focused constituent is singular. -/
