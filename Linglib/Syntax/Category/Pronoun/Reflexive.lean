@@ -1,3 +1,4 @@
+import Linglib.Morphology.Paradigm.Basic
 import Linglib.Semantics.Reference.Logophoricity
 import Linglib.Syntax.Category.Pronoun.Basic
 
@@ -14,6 +15,8 @@ where no role is recorded.
 
 * `ReflexivePronoun` — a pronoun with the role that licenses it at a distance, if any
 * `ReflexivePronoun.LicensedBy` — licensing at a distance by an antecedent's role
+* `ReflexivePronoun.paradigm` — the forms an inventory offers for each category its person and
+  number realize
 * `ReflexivePronoun.bindingClassOf_toWord` — the word of a reflexive classifies as a reflexive
 
 ## References
@@ -54,6 +57,16 @@ theorem LicensedBy.mono {r r' : Reference.LogophoricRole} (h : p.LicensedBy r) (
     p.LicensedBy r' :=
   let ⟨q, hq, hqr⟩ := h
   ⟨q, hq, hqr.trans hr⟩
+
+/-- The paradigm of an inventory assigns each category the forms of the reflexives whose person
+and number realize it. A reflexive denotes what its antecedent does, so its cells are those of
+its agreement features. -/
+def paradigm : Finset ReflexivePronoun → Person.Category → Finset String :=
+  Morphology.formsAt (·.categories) (·.form)
+
+theorem mem_paradigm {I : Finset ReflexivePronoun} {c : Person.Category} {f : String} :
+    f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.categories ∧ p.form = f :=
+  Morphology.mem_formsAt
 
 /-- A reflexive's word is of UD pronoun type `Prs` and marked reflexive. -/
 def toWord : Morphology.Word := p.toPronoun.toWord (some .Prs) true

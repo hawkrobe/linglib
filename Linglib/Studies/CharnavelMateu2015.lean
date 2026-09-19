@@ -168,19 +168,19 @@ def accusativeCenter : Person → Bool → LogoCenter
 /-- *Se lo* (underlyingly *le lo*), a third-person dative with a *de se* third-person accusative,
 is the clitic logophoric restriction's configuration: empathy locus with attitude holder. -/
 theorem spanish_le_lo_de_se_clash :
-    Clash (dativeCenter Spanish.Clitics.le_dat.person)
-      (accusativeCenter Spanish.Clitics.lo.person true) := by decide
+    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.lo.person,
+      Clash (dativeCenter io) (accusativeCenter do_ true) := by decide
 
 /-- *Le me*, a third-person dative with a first-person accusative, is the Person Case Constraint's
 configuration: empathy locus with discourse participant. -/
 theorem spanish_le_me_clash :
-    Clash (dativeCenter Spanish.Clitics.le_dat.person)
-      (accusativeCenter Spanish.Clitics.me_acc.person false) := by decide
+    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
+      Clash (dativeCenter io) (accusativeCenter do_ false) := by decide
 
 /-- *Me lo* is licit even on the *de se* reading: a first-person dative is a discourse
 participant, and that is the one center an attitude holder does not clash with. -/
 theorem spanish_me_lo_de_se_licit :
-    ¬ Clash (dativeCenter Spanish.Clitics.me_dat.person)
-      (accusativeCenter Spanish.Clitics.lo.person true) := by decide
+    ∃ io ∈ Spanish.Clitics.me_dat.person, ∃ do_ ∈ Spanish.Clitics.lo.person,
+      ¬ Clash (dativeCenter io) (accusativeCenter do_ true) := by decide
 
 end CharnavelMateu2015

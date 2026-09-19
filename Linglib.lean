@@ -963,7 +963,6 @@ import Linglib.Fragments.Romance.BrazilianPortuguese.Predicates
 import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
 import Linglib.Fragments.Romance.Catalan.Predicates
 import Linglib.Fragments.Romance.Catalan.Reciprocals
-import Linglib.Fragments.Romance.Clitics
 import Linglib.Fragments.Romance.French.Binominals
 import Linglib.Fragments.Romance.French.Comparison
 import Linglib.Fragments.Romance.French.Determiners
@@ -1037,7 +1036,6 @@ import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.Spanish.MoodChoice
 import Linglib.Fragments.Spanish.Negation
-import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.PolarityItems
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Spanish.Predicates
