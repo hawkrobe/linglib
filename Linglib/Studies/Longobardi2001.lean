@@ -1,5 +1,5 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Fragments.Italian.Nouns
+import Linglib.Fragments.Romance.Italian.Nouns
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.Greek.StandardModern.Nouns
 import Linglib.Data.Examples.Longobardi2001

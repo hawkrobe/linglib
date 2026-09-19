@@ -1,17 +1,165 @@
 import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
-# Italian Predicate Lexicon Fragment
-[palmieri-2024]
+# Italian verbs
 
-Italian verbs with lexical reciprocal entries alongside their
-transitive alternates ([palmieri-2024], Appendix A): the reciprocal
-reading emerges without *se* in the language's Table 2.2 environments.
-Membership in `Italian.Reciprocals.lexicalReciprocals` carries the
-reciprocal marking; the entries here are ordinary verb entries.
+Italian attitude and causative-attitude verbs, with emphasis on the
+*di*/*a* infinitival alternation documented in [fusco-sgrizzi-2026].
+
+## The *di*/*a* Alternation
+
+Italian *convincere* ('convince') selects two distinct infinitival
+complements: *di* + infinitive ("Maria ha convinto Paolo di essere in
+pericolo", 'Maria convinced Paolo that he was in danger') and *a* +
+infinitive ("Maria ha convinto Paolo a partire", 'Maria convinced
+Paolo to leave'). The entries record which complementizers each verb
+selects; [fusco-sgrizzi-2026]'s analysis of the alternation —
+complement size determining the belief/intention reading — lives in
+`Studies/FuscoSgrizzi2026.lean`.
+
+## Verbs with a lexical reciprocal entry
+
+The verbs with a lexical reciprocal entry beside their transitive use are those of
+[palmieri-2024]'s appendix. They are ordinary verb entries here, and
+`Italian.Reciprocals.lexicalReciprocals` records which of them are lexical reciprocals.
+
+## References
+
+* [A. Fusco and T. Sgrizzi, *Belief or Action? Semantic Ambiguity in the Italian Non-finite
+  Domain* (2026)][fusco-sgrizzi-2026]
+* [G. Palmieri, *Lexical and Grammatical Reciprocity: Perspectives from Romance, Bantu and
+  Beyond* (2024)][palmieri-2024]
 -/
 
 namespace Italian.Predicates
+
+open ArgumentStructure
+open Minimalist (ComplementSize)
+
+-- ════════════════════════════════════════════════════════════════
+-- § 1. Italian Infinitival Complementizers
+-- ════════════════════════════════════════════════════════════════
+
+/-- Italian infinitival complementizers, each associated with a complement size.
+
+    - *di*: introduces CP-sized infinitival complements (propositional)
+    - *a*: introduces sub-CP (aP) infinitival complements (event predicate)
+    - *che*: introduces full finite CP complements -/
+inductive InfComplementizer where
+  | di   -- CP infinitival (belief): "di essere in pericolo"
+  | a_   -- Sub-CP infinitival (intention): "a partire"
+  deriving DecidableEq, Repr
+
+-- ════════════════════════════════════════════════════════════════
+-- § 2. Italian Verb Entry
+-- ════════════════════════════════════════════════════════════════
+
+/-- An Italian verb entry extending `Verb` with the infinitival
+    complementizer alternation. -/
+structure ItalianVerbEntry extends Verb where
+  /-- Which infinitival complementizers the verb selects -/
+  infComplements : List InfComplementizer := []
+  deriving BEq
+
+-- ════════════════════════════════════════════════════════════════
+-- § 3. Verb Data
+-- ════════════════════════════════════════════════════════════════
+
+/-- *convincere* 'convince' — causative attitude verb with dual infinitival
+    selection. Takes *di*-infinitives (belief) and *a*-infinitives (intention).
+
+    [fusco-sgrizzi-2026], ex. (4):
+    - (4a) Marco ha convinto Gianni di avere un figlio (belief)
+    - (4b) Marco ha convinto Gianni a avere un figlio (intention) -/
+def convincere : ItalianVerbEntry :=
+  { form := "convincere"
+    frames := [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
+    readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+    opaqueContext := true
+    -- No fixed attitude: attitude type (belief vs intention)
+    -- is determined by complement size, not lexically specified.
+    infComplements := [.di, .a_] }
+
+/-- *credere* 'believe' — standard doxastic attitude verb.
+    Takes *di*-infinitives and *che*-finite clauses (belief only). -/
+def credere : ItalianVerbEntry :=
+  { form := "credere"
+    frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+    readings := [{ frame := ArgumentFrame.finiteClause, control := some .subjectControl }]
+    opaqueContext := true
+    attitude := some (.doxastic .nonVeridical)
+    infComplements := [.di] }
+
+-- ════════════════════════════════════════════════════════════════
+-- § 3b. Attitude Verb Data ([grano-2024])
+-- ════════════════════════════════════════════════════════════════
+
+/-- *volere* 'want' — core desiderative verb, robustly subjunctive-selecting.
+
+    [grano-2024], Table 1: Italian 'want' takes SBJV (marginally %IND).
+    - (4a) Gianni vuole che Maria *sia*/%è contenta. (SBJV preferred)
+    - (4b) Gianni vuole essere contento. (INF) -/
+def volere : ItalianVerbEntry :=
+  { form := "volere"
+    frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+    readings := [{ frame := ArgumentFrame.finiteClause, control := some .subjectControl }]
+    passivizable := false
+    opaqueContext := true
+    attitude := some (.preferential (.degreeComparison .positive))
+    infComplements := [.di] }
+
+/-- *sperare* 'hope' — cross-linguistically variable mood selection.
+
+    [grano-2024], Table 1: Italian 'hope' takes SBJV, %IND marginal.
+    - (12) Gianni spera che Maria *sia*/%è contenta. (SBJV preferred)
+    Unlike *volere*, *sperare* allows indicative marginally in Italian
+    and freely in other Romance languages (French *espérer*, Portuguese
+    *esperar*). -/
+def sperare : ItalianVerbEntry :=
+  { form := "sperare"
+    frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+    readings := [{ frame := ArgumentFrame.finiteClause, control := some .subjectControl }]
+    passivizable := false
+    opaqueContext := true
+    attitude := some (.preferential (.degreeComparison .positive))
+    infComplements := [.di] }
+
+/-- *intendere* 'intend' — intention-reporting verb, robustly rejects indicative.
+
+    [grano-2024], §2.2: Italian 'intend' primarily uses the periphrastic
+    *avere intenzione di* or the control verb *intendere*. Indicative
+    complements are never accepted. The rare literary usage with subjunctive
+    (ex. 30, from Treccani) has a 'demand'-like interpretation.
+    - (20) Intendo / Ho intenzione di andare al parco oggi. (INF only)
+    - (28) *Intendo che Giovanni vada/va al parco oggi. (rejected) -/
+def intendere : ItalianVerbEntry :=
+  { form := "intendere"
+    frames := [ArgumentFrame.infinitival]
+    readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+    passivizable := false
+    opaqueContext := true
+    attitude := some (.preferential (.degreeComparison .positive))
+    infComplements := [.di] }
+
+/-- *fare* 'make' — causative verb, robustly rejects indicative.
+
+    [grano-2024], §2.4: Italian causatives accept nonfinite and
+    subjunctive (with *sì che*) but reject indicative complements.
+    - (39) Ho fatto andare Giovanni al parco. (INF)
+    - (42a) Ho fatto sì che Giovanni *andasse*/*è andato al parco. (SBJV/*IND) -/
+def fare_caus : ItalianVerbEntry :=
+  { form := "fare"
+    frames := [ArgumentFrame.infinitival]
+    readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+    causative := some .make
+    infComplements := [.a_] }
+
+-- ════════════════════════════════════════════════════════════════
+-- § 5. Mood Choice Bridge Theorems ([grano-2024])
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Verbs with a lexical reciprocal entry -/
 
 /-- *abbracciare* 'hug' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/

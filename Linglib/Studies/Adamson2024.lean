@@ -4,7 +4,7 @@ import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
-import Linglib.Fragments.Italian.NumberGender
+import Linglib.Fragments.Romance.Italian.NumberGender
 import Linglib.Fragments.Yanyuwa.Gender
 import Linglib.Fragments.CoastalMarind.Gender
 import Linglib.Semantics.Possession.Relationalizer

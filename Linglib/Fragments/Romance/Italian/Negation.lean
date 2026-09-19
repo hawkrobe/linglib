@@ -9,7 +9,7 @@ stand between *non* and the verb. The same *non* occurs expletively, contributin
 under *prima che* 'before', *dubitare* 'doubt', *appena* 'hardly', *per poco* 'nearly', *di
 quanto* 'than', *a meno che* 'unless', *finché* 'until' and *senza che* 'without', the triggers
 [jin-koenig-2021] record for the language. N-words and the other polarity-sensitive items are
-entered in `Fragments/Italian/PolarityItems.lean`. The examples are those of [miestamo-2005].
+entered in `Fragments/Romance/Italian/PolarityItems.lean`. The examples are those of [miestamo-2005].
 
 ## References
 
