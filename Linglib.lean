@@ -255,7 +255,6 @@ import Linglib.Core.Order.SignVectors
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Core.Order.Valuation
-import Linglib.Core.Order.TotalPreorder
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.UpperLower.Finset
