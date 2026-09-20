@@ -1,21 +1,56 @@
-import Linglib.Phonology.OptimalityTheory.TableauSystem
-import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Fragments.Akan.Phonology
+import Linglib.Phonology.OptimalityTheory.Correspondence
+import Linglib.Phonology.OptimalityTheory.Tableau
+import Mathlib.Tactic.FinCases
 
 /-!
 # McCarthy and Prince (1995): Faithfulness and Reduplicative Identity
 
-This file formalizes the core results of correspondence theory in
-[mccarthy-prince-1995]: the interaction of input–output faithfulness, base–reduplicant
-identity, and markedness yields three patterns in the basic model, non-application,
-emergence of the unmarked, and overapplication, by ranking permutation, while normal
-application needs further candidates. The paper's striking result is that underapplication
-is not a basic-model category, no ranking of the three constraints producing it, which the
-factorial typology establishes; underapplication in Akan arises only when a fourth
-constraint blocks overapplication. Javanese intervocalic *h*-deletion is the signature
-overapplication case and Balangao partial reduplication the emergence of the unmarked.
+This file formalizes three analyses from McCarthy and Prince's correspondence theory of
+reduplication. In the basic model a reduplicated form has an input stem, a base and a
+reduplicant, with faithfulness between input and base and identity between base and
+reduplicant, and a phonological constraint interacts with both. Javanese deletes
+intervocalic *h*, and in a suffixed reduplication the *h* is lost from both copies although
+only one is intervocalic, which is overapplication (§3.4). Balangao copies the first two
+syllables of the base without the final coda although the language allows codas, which is
+emergence of the unmarked (§4.2). Akan palatalizes a velar before a front vowel, but not in
+the reduplicant of *kɪ–ka*, which is underapplication (§5.1).
+
+A candidate here is a correspondence between the input stem, the base and the reduplicant,
+and every constraint is computed from it: MAX and IDENT from the correspondence, and the
+phonological constraints from the surface string. The rankings are not fixed in advance.
+Each result says which rankings of the paper's constraints select which candidate.
+
+## Main definitions
+
+* `Javanese.Candidate`, `Balangao.Candidate`, `Akan.Candidate`: the candidates of tableaux
+  (39), (106) and (131), each with its `correspondence` and `surface`.
+* `Javanese.con`, `Balangao.con`, `Akan.con`: the constraints of those tableaux.
+
+## Main results
+
+* `Javanese.optimal_eq`: each candidate of (39) violates one constraint, and the winner is the
+  candidate whose constraint is ranked last.
+* `Javanese.overapplication`, `Javanese.normalApplication`,
+  `Javanese.underapplication_notMem`: with *VhV above MAX-IO, MAX-BR above MAX-IO gives
+  overapplication and the reverse gives normal application, and the underapplying candidate
+  wins under no such ranking.
+* `Balangao.optimal_iff`: the coda-sparing reduplicant wins exactly under MAX-IO ≫ NO-CODA ≫
+  MAX-BR.
+* `Akan.optimal_iff`: with PAL above IDENT-IO(−cor), the unpalatalized *kɪ–ka* wins exactly
+  when OCP(+cor) and IDENT-BR(−cor) both dominate PAL.
+
+## Implementation notes
+
+Javanese is analysed with suffixing reduplication, the paper's tableau (39). Its prefixing
+alternative (38), where DEP-BR does the work of MAX-BR, is not formalized. A coda is counted
+as a consonant that no vowel follows, which suffices for the CV(C) syllables of the Balangao
+forms. The paper measures OCP(+cor) by featural duplication in dissimilar constituents and
+prints three marks for the overapplying candidate of (131) without spelling the count out.
+Here the constraint is violated once by a syllable with a palatal onset and a front vowel
+before a syllable with a coronal onset and a vowel that is not front, which agrees with the
+paper's verdicts on *kita*, *tɕita*, *dʑidʑe* and the three candidates. The Akan segments are
+those of the Akan fragment.
 
 ## References
 
@@ -24,742 +59,400 @@ overapplication case and Balangao partial reduplication the emergence of the unm
 
 namespace McCarthyPrince1995
 
-open Core.Optimization Constraints OptimalityTheory
+open Phonology Constraints OptimalityTheory
+open OptimalityTheory.Correspondence
 
--- ============================================================================
--- § 1: Javanese Intervocalic h-Deletion (Overapplication)
--- ============================================================================
+/-! ### Phonological constraints on a surface string -/
 
-/-! ### Javanese h-deletion (ex. 1, 6-7)
+section Surface
 
-Javanese disallows *h* between vowels (*VhV). In reduplication, *h* is
-lost in **both** base and reduplicant (overapplication): the expected
-form *bədah–bəda–e is avoided in favor of bəda–bəda–e, maintaining
-B-R identity at the cost of I-O faithfulness.
+variable {σ : Type*} (IsVowel : σ → Prop) [DecidablePred IsVowel]
 
-Ranking: IDENT-BR, *VhV >> MAX-IO -/
+/-- The number of codas of a string, a coda being a consonant that no vowel follows. -/
+def codas : List σ → ℕ
+  | [] => 0
+  | [x] => if IsVowel x then 0 else 1
+  | x :: y :: rest =>
+    (if ¬ IsVowel x ∧ ¬ IsVowel y then 1 else 0) + codas (y :: rest)
 
-/-- Candidates for `RED-bədah + -e` in Javanese.
-    Each represents a different resolution of the *VhV vs. B-R identity
-    conflict. -/
-inductive JavaneseCand where
-  | over    -- bəda–bəda–e: h lost in both B and R (overapplication)
-  | under   -- bədah–bədah–e: h kept in both (violates *VhV)
-  | normal  -- bədah–bəda–e: h in B only (violates B-R identity)
-  deriving DecidableEq, Repr
+/-- The number of occurrences of `x` between two vowels. -/
+def intervocalic [DecidableEq σ] (x : σ) : List σ → ℕ
+  | a :: b :: c :: rest =>
+    (if IsVowel a ∧ b = x ∧ IsVowel c then 1 else 0) + intervocalic x (b :: c :: rest)
+  | _ => 0
 
-/-- IDENT-BR: penalizes featural mismatch between base and reduplicant.
-    Only the normal candidate has B ≠ R (B retains h, R lacks it). -/
-def javIdentBR : Constraint JavaneseCand :=
-  Constraint.binary (· = .normal)
+end Surface
 
-/-- *VhV: markedness constraint against intervocalic *h*.
-    Violated by `under` (h in both B and R) and `normal` (h in B). -/
-def javStarVhV : Constraint JavaneseCand :=
-  λ
-    | .over => 0
-    | .under => 1
-    | .normal => 1
+/-! ### Javanese *h*-deletion: overapplication -/
 
-/-- MAX-IO: I-O faithfulness — penalizes deletion from the input.
-    Only the `over` candidate deletes h from the input stem. -/
-def javMaxIO : Constraint JavaneseCand :=
-  Constraint.binary (· = .over)
+namespace Javanese
 
-/-- Skeletal ranking for overapplication (ex. 7):
-    IDENT-BR, *VhV >> MAX-IO -/
-def javRanking : List (Constraint JavaneseCand) :=
-  [javIdentBR, javStarVhV, javMaxIO]
-
-def javCandidates : List JavaneseCand := [.over, .under, .normal]
-theorem javCandidates_ne : javCandidates ≠ [] := by simp [javCandidates]
-
-/-- **Overapplication wins in Javanese**: the doubly h-lacking form
-    bəda–bəda–e is optimal under IDENT-BR, *VhV >> MAX-IO.
-
-    This is the paper's central empirical result: B-R identity and
-    phonological markedness both outrank I-O faithfulness, so the
-    output sacrifices faithfulness to achieve both identity and
-    phonological well-formedness. -/
-theorem javanese_overapplication :
-    (Tableau.ofRanking javCandidates javRanking javCandidates_ne).optimal
-    = {JavaneseCand.over} := by decide
-
--- ============================================================================
--- § 1.5: Javanese — Correspondence-grounded layer
--- ============================================================================
-
-/-! ### Grounding the Javanese tableau in `Correspondence`
-
-The constraints `javMaxIO`, `javIdentBR`, `javStarVhV` above stipulate
-violation counts via λ-tables. This section adds the *structural*
-substrate: each candidate is associated with a
-`Correspondence OptimalityTheory.Correspondence.ReduplicationRole Seg` recording the input → base /
-base ↔ reduplicant correspondences. MAX-IO and "IDENT-BR" violation
-counts are then **derived from `Correspondence.maxViol`** rather than stipulated.
-
-The 3-role substrate (`ReduplicationRole`, `Correspondence.reduplication`)
-lives in `Phonology/OptimalityTheory/Correspondence.lean` — paper-agnostic
-and reusable across reduplicative studies (Balangao, Akan, Tagalog, …).
-This section supplies only the Javanese-specific data + agreement theorems.
-
-(`*VhV` remains a markedness constraint with no `Correspondence`-derived form
-— markedness is structural over a single output, not a correspondence
-relation.) -/
-
-namespace JavaneseCorr
-
-open OptimalityTheory.Correspondence (ReduplicationRole)
-
-/-- Phonological segments for the Javanese stem. Minimal abstract
-    inventory (just the contrasts that matter for h-deletion). -/
+/-- The segments of *bədah* 'broken' and the demonstrative suffix *-e*. -/
 inductive Seg where
-  | b | schwa | d | a | h
+  | b | schwa | d | a | h | e
   deriving DecidableEq, Repr
 
-/-- The input stem `/bədah/` (5 segments). -/
-def stemInput : List Seg := [.b, .schwa, .d, .a, .h]
+/-- The vowels. -/
+def Seg.IsVowel : Seg → Prop
+  | .schwa | .a | .e => True
+  | _ => False
 
-/-- The base output `[bəda]` (h deleted, 4 segments). For `.over`. -/
-def baseDeleted : List Seg := [.b, .schwa, .d, .a]
+instance : DecidablePred Seg.IsVowel := fun s ↦ by cases s <;> unfold Seg.IsVowel <;> infer_instance
 
-/-- The base output `[bədah]` (h preserved, 5 segments). For `.under`/`.normal`. -/
-def baseFaithful : List Seg := [.b, .schwa, .d, .a, .h]
+/-- The stem *bədah*. -/
+def stem : List Seg := [.b, .schwa, .d, .a, .h]
 
-/-- The `Correspondence` for the `over` candidate: h deleted from base and
-    reduplicant. -/
-def overCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseDeleted baseDeleted
+/-- The stem without its *h*. -/
+def stemNoH : List Seg := [.b, .schwa, .d, .a]
 
-/-- The `Correspondence` for the `under` candidate: h preserved everywhere. -/
-def underCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseFaithful baseFaithful
+/-- The candidates of tableau (39) for /bədah–RED–e/. -/
+inductive Candidate where
+  /-- *bəda–bəda–e*, with *h* lost from base and reduplicant. -/
+  | overapplication
+  /-- *bədah–bədah–e*, with *h* kept in both. -/
+  | underapplication
+  /-- *bədah–bəda–e*, with *h* lost where it is intervocalic. -/
+  | normalApplication
+  deriving DecidableEq, Fintype, Repr
 
-/-- The `Correspondence` for the `normal` candidate: h preserved in base, *not*
-    in reduplicant. The default `Correspondence.reduplication` constructor uses
-    parallel-pair correspondence truncated to `min`-length, which gives
-    the right BR-MAX count (1 violation: base position 4 = h has no R
-    correspondent). -/
-def normalCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseFaithful baseDeleted
+namespace Candidate
 
-/-- Each candidate's structural `Correspondence` representation. -/
-def toCorr : JavaneseCand → Correspondence ReduplicationRole Seg
-  | .over   => overCorr
-  | .under  => underCorr
-  | .normal => normalCorr
+/-- The base of a candidate. -/
+def base : Candidate → List Seg
+  | overapplication => stemNoH
+  | underapplication | normalApplication => stem
 
-/-- **Structural derivation of MAX-IO**: the `Correspondence`-derived MAX-IO
-    violation count equals the original stipulated `javMaxIO`.
-    The deletion-based stipulation (`Constraint.binary (· = .over)`) now
-    follows from the structural fact that `over`'s base lacks an
-    input correspondent. -/
-theorem javMaxIO_eq_corr (c : JavaneseCand) :
-    javMaxIO c = (toCorr c).maxViol .input .base := by
-  cases c <;> decide
+/-- The reduplicant of a candidate. -/
+def reduplicant : Candidate → List Seg
+  | underapplication => stem
+  | overapplication | normalApplication => stemNoH
 
-/-- **Structural derivation of "IDENT-BR"**: the original constraint
-    (`Constraint.binary (· = .normal)`) is empirically MAX-BR — it
-    penalizes the `normal` candidate's base-only `h` (which has no R
-    correspondent). The structural count from `Correspondence.maxViol .base .reduplicant`
-    matches the stipulation. -/
-theorem javIdentBR_eq_corr (c : JavaneseCand) :
-    javIdentBR c = (toCorr c).maxViol .base .reduplicant := by
-  cases c <;> decide
+/-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
+def correspondence (c : Candidate) : Correspondence ReduplicationRole Seg :=
+  .reduplication stem c.base c.reduplicant
 
-/-- MAX-IO and MAX-BR as `Constraint (Correspondence ReduplicationRole Seg)`s. -/
-abbrev javMaxIOFromCorr : Constraint (Correspondence ReduplicationRole Seg) :=
-  (·.maxViol .input .base)
+/-- The surface string, the base followed by the reduplicant and the suffix. -/
+def surface (c : Candidate) : List Seg := c.base ++ c.reduplicant ++ [.e]
 
-abbrev javMaxBRFromCorr : Constraint (Correspondence ReduplicationRole Seg) :=
-  (·.maxViol .base .reduplicant)
+end Candidate
 
-/-- **Perfect copy is BR-faithful** (the keystone in action). The `under`
-    candidate copies the base exactly (base = reduplicant = `[bədah]`), so it
-    incurs zero MAX-BR — derived through the role-agnostic faithfulness keystone
-    `Correspondence.maxViol_eq_zero_of_diagonal` (the fully faithful candidate vanishes on a
-    faithfulness constraint, [mccarthy-prince-1995]), not by `decide` over the
-    toy table. -/
-theorem javMaxBR_under_zero : javMaxBRFromCorr underCorr = 0 := by
-  show underCorr.maxViol .base .reduplicant = 0
-  exact Correspondence.maxViol_eq_zero_of_diagonal underCorr .base .reduplicant rfl rfl
+/-- The constraints of (39) are MAX-BR, *VhV and MAX-IO. -/
+def con : CON Candidate 3 :=
+  ![fun c ↦ c.correspondence.maxViol .base .reduplicant,
+    fun c ↦ intervocalic Seg.IsVowel .h c.surface,
+    fun c ↦ c.correspondence.maxViol .input .base]
 
-end JavaneseCorr
+/-- The constraint a candidate violates. -/
+def Candidate.violated : Candidate → Fin 3
+  | .normalApplication => 0
+  | .underapplication => 1
+  | .overapplication => 2
 
--- ============================================================================
--- § 2: Balangao Partial Reduplication (Emergence of the Unmarked)
--- ============================================================================
+/-- The candidate that violates a given constraint. -/
+def violator : Fin 3 → Candidate
+  | 0 => .normalApplication
+  | 1 => .underapplication
+  | 2 => .overapplication
 
-/-! ### Balangao partial reduplication (ex. 106-107)
+@[simp] theorem violated_violator : ∀ i, (violator i).violated = i := by decide
 
-Balangao has a disyllabic prefixed reduplicant without a final coda:
-/RED-tagtag/ → tagta–tagtag, not *tagtag–tagtag. The reduplicant
-obeys NO-CODA even though the base (and the language generally)
-permits codas. This is **emergence of the unmarked**: a marked
-structure (codas) is avoided in the reduplicant because B-R identity
-is low-ranked.
+theorem violated_injective : Function.Injective Candidate.violated := by decide
 
-Ranking (ex. 107): MAX-IO >> NO-CODA >> MAX-BR -/
+/-- The cells of tableau (39), in which each candidate violates one constraint, once. -/
+theorem con_apply : ∀ (i : Fin 3) (c : Candidate), con i c = if i = c.violated then 1 else 0 := by
+  decide
 
-/-- Candidates for /RED-tagtag/ in Balangao.
-    Violation counts from the paper's tableau (ex. 106). -/
-inductive BalangaoCand where
-  | totalFaithful   -- tagta–tagta: base modified too (MAX-IO violated)
-  | totalRedup      -- tagtag–tagtag: perfect copy (many NO-CODA violations)
-  | partialRedup    -- tagta–tagtag: coda-free reduplicant (MAX-BR violated)
-  deriving DecidableEq, Repr
+/-- Tableau (39) under a ranking of its constraints. -/
+def tableau (r : Ranking 3) : Tableau Candidate 3 :=
+  .ofPerm con r [.overapplication, .underapplication, .normalApplication]
 
-/-- MAX-IO: penalizes deletion from input.
-    Only `totalFaithful` deletes a segment from the base. -/
-def balMaxIO : Constraint BalangaoCand :=
-  λ
-    | .totalFaithful => 1
-    | .totalRedup => 0
-    | .partialRedup => 0
+/-- The winner of (39) is the candidate whose one violated constraint is ranked last. -/
+theorem optimal_eq (r : Ranking 3) : (tableau r).optimal = {violator (r 2)} := by
+  refine (Tableau.ofPerm_optimal_eq_singleton_iff
+    (by cases violator (r 2) <;> simp)).2 fun d _ hne ↦ ?_
+  have hd : d.violated ≠ r 2 := fun h ↦
+    hne (violated_injective (h.trans (violated_violator _).symm))
+  refine ⟨d.violated, by simp [con_apply, hd], fun j hj ↦ ?_⟩
+  have hj' : j = r 2 := by
+    by_contra hjne
+    simp [con_apply, hjne] at hj
+  subst hj'
+  have hne2 : r.symm d.violated ≠ 2 := fun h ↦ hd (by rw [← h, Equiv.apply_symm_apply])
+  show r.symm d.violated < r.symm (r 2)
+  rw [Equiv.symm_apply_apply]
+  omega
 
-/-- NO-CODA: markedness constraint against syllable codas.
-    Violation counts from the tableau (ex. 106):
-    - totalFaithful (tagta–tagta): 2 codas (medial g in each half)
-    - totalRedup (tagtag–tagtag): 4 codas
-    - partial (tagta–tagtag): 3 codas (2 in base, 1 in R medial) -/
-def balNoCoda : Constraint BalangaoCand :=
-  λ
-    | .totalFaithful => 2
-    | .totalRedup => 4
-    | .partialRedup => 3
+/-- A constraint that two others dominate is ranked last. -/
+private theorem apply_two_eq {r : Ranking 3} {i j k : Fin 3} (hij : i ≠ j)
+    (hi : r.Dominates i k) (hj : r.Dominates j k) : r 2 = k := by
+  have hne : r.symm i ≠ r.symm j := fun h ↦ hij (r.symm.injective h)
+  have : r.symm k = 2 := by
+    unfold Ranking.Dominates at hi hj
+    omega
+  rw [← this, Equiv.apply_symm_apply]
 
-/-- MAX-BR: B-R identity — penalizes incomplete copying.
-    Only `partial` has a segment in the base without a correspondent
-    in the reduplicant (the final coda). -/
-def balMaxBR : Constraint BalangaoCand :=
-  λ
-    | .totalFaithful => 0
-    | .totalRedup => 0
-    | .partialRedup => 1
+/-- With MAX-BR and *VhV above MAX-IO, the paper's skeletal ranking for overapplication, *h* is
+lost from both copies. -/
+theorem overapplication {r : Ranking 3} (h₁ : r.Dominates 0 2) (h₂ : r.Dominates 1 2) :
+    (tableau r).optimal = {.overapplication} := by
+  rw [optimal_eq, apply_two_eq (by decide) h₁ h₂]; rfl
 
-/-- Ranking for emergence of the unmarked (ex. 107):
-    MAX-IO >> NO-CODA >> MAX-BR -/
-def balRanking : List (Constraint BalangaoCand) :=
-  [balMaxIO, balNoCoda, balMaxBR]
+/-- With *VhV above MAX-IO and MAX-IO above MAX-BR, application is normal. -/
+theorem normalApplication {r : Ranking 3} (h₁ : r.Dominates 1 2) (h₂ : r.Dominates 2 0) :
+    (tableau r).optimal = {.normalApplication} := by
+  rw [optimal_eq, apply_two_eq (by decide) (lt_trans h₁ h₂) h₂]; rfl
 
-def balCandidates : List BalangaoCand :=
-  [.totalFaithful, .totalRedup, .partialRedup]
-theorem balCandidates_ne : balCandidates ≠ [] := by simp [balCandidates]
+/-- Underapplication is out of reach. While *VhV dominates MAX-IO, as *h*-deletion in
+unreduplicated words requires, no ranking selects the candidate that keeps both *h*s. -/
+theorem underapplication_notMem {r : Ranking 3} (h : r.Dominates 1 2) :
+    .underapplication ∉ (tableau r).optimal := by
+  rw [optimal_eq, Finset.mem_singleton]
+  intro he
+  have h2 : r 2 = 1 := by
+    have := congrArg Candidate.violated he
+    rw [violated_violator] at this
+    exact this.symm
+  have : r.symm 1 = 2 := by rw [← h2, Equiv.symm_apply_apply]
+  unfold Ranking.Dominates at h
+  omega
 
-/-- **Emergence of the unmarked in Balangao**: the partial reduplicant
-    tagta–tagtag is optimal under MAX-IO >> NO-CODA >> MAX-BR.
+end Javanese
 
-    The reduplicant is coda-free even though the base and the language
-    generally permit codas — because B-R identity (MAX-BR) is low-ranked,
-    the unmarked (coda-free) structure emerges in the reduplicant. -/
-theorem balangao_emergence_unmarked :
-    (Tableau.ofRanking balCandidates balRanking balCandidates_ne).optimal
-    = {.partialRedup} := by decide
+/-! ### Balangao: emergence of the unmarked -/
 
--- ============================================================================
--- § 2.5: Balangao — Correspondence-grounded layer
--- ============================================================================
+namespace Balangao
 
-/-! ### Grounding the Balangao tableau in `Correspondence`
-
-Mirroring the Javanese §1.5 refactor: the MAX-IO and MAX-BR violation
-counts now follow from the structural correspondence diagram via
-`Correspondence.maxViol`, rather than being stipulated as λ-tables. NO-CODA is
-markedness over a single output and stays as the original stipulation. -/
-
-namespace BalangaoCorr
-
-open OptimalityTheory.Correspondence (ReduplicationRole)
-
-/-- Phonological segments for the Balangao stem. Minimal abstract
-    inventory (just the contrasts that matter for `tagtag`-reduplication). -/
+/-- The segments of *tagtag*. -/
 inductive Seg where
   | t | a | g
   deriving DecidableEq, Repr
 
-/-- The input stem `/tagtag/` (6 segments). -/
-def stemInput : List Seg := [.t, .a, .g, .t, .a, .g]
+/-- The vowel. -/
+def Seg.IsVowel : Seg → Prop
+  | .a => True
+  | _ => False
 
-/-- The faithful base output `[tagtag]` (6 segments). For
-    `.totalRedup` and `.partialRedup`. -/
-def baseFaithful : List Seg := [.t, .a, .g, .t, .a, .g]
+instance : DecidablePred Seg.IsVowel := fun s ↦ by cases s <;> unfold Seg.IsVowel <;> infer_instance
 
-/-- The deleted base output `[tagta]` (5 segments, final g deleted).
-    For `.totalFaithful` (counter-intuitively named: it deletes from
-    the input to make the base match the reduplicant's coda-less shape). -/
-def baseDeleted : List Seg := [.t, .a, .g, .t, .a]
+/-- The stem *tagtag*. -/
+def stem : List Seg := [.t, .a, .g, .t, .a, .g]
 
-/-- The full reduplicant `[tagtag]` (6 segments) for `.totalRedup`. -/
-def redFull : List Seg := [.t, .a, .g, .t, .a, .g]
+/-- The stem without its final coda. -/
+def stemNoCoda : List Seg := [.t, .a, .g, .t, .a]
 
-/-- The partial (coda-less) reduplicant `[tagta]` (5 segments) for
-    `.totalFaithful` and `.partialRedup`. -/
-def redPartial : List Seg := [.t, .a, .g, .t, .a]
+/-- The candidates of tableau (106) for /RED–tagtag/. -/
+inductive Candidate where
+  /-- *tagta–tagta*, with the final coda lost from the base too. -/
+  | unfaithfulBase
+  /-- *tagtag–tagtag*, an exact copy. -/
+  | exactCopy
+  /-- *tagta–tagtag*, with a reduplicant that lacks the final coda. -/
+  | codalessReduplicant
+  deriving DecidableEq, Fintype, Repr
 
-/-- The `Correspondence` for the `totalFaithful` candidate: input deleted to fit
-    the coda-less shape (1 MAX-IO violation); B = R structurally. -/
-def totalFaithfulCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseDeleted redPartial
+namespace Candidate
 
-/-- The `Correspondence` for the `totalRedup` candidate: full faithful copy
-    everywhere; 0 MAX-IO, 0 MAX-BR violations. -/
-def totalRedupCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseFaithful redFull
+/-- The base of a candidate. -/
+def base : Candidate → List Seg
+  | unfaithfulBase => stemNoCoda
+  | exactCopy | codalessReduplicant => stem
 
-/-- The `Correspondence` for the `partialRedup` candidate: faithful base, but
-    reduplicant misses the final coda (1 MAX-BR violation, 0 MAX-IO). -/
-def partialRedupCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseFaithful redPartial
+/-- The reduplicant of a candidate. -/
+def reduplicant : Candidate → List Seg
+  | exactCopy => stem
+  | unfaithfulBase | codalessReduplicant => stemNoCoda
 
-/-- Each candidate's structural `Correspondence` representation. -/
-def toCorr : BalangaoCand → Correspondence ReduplicationRole Seg
-  | .totalFaithful => totalFaithfulCorr
-  | .totalRedup    => totalRedupCorr
-  | .partialRedup  => partialRedupCorr
+/-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
+def correspondence (c : Candidate) : Correspondence ReduplicationRole Seg :=
+  .reduplication stem c.base c.reduplicant
 
-/-- **Structural derivation of MAX-IO**: the `Correspondence`-derived MAX-IO
-    violation count equals the original stipulated `balMaxIO`. -/
-theorem balMaxIO_eq_corr (c : BalangaoCand) :
-    balMaxIO c = (toCorr c).maxViol .input .base := by
-  cases c <;> decide
+/-- The surface string, the reduplicant followed by the base. -/
+def surface (c : Candidate) : List Seg := c.reduplicant ++ c.base
 
-/-- **Structural derivation of MAX-BR**: the `Correspondence`-derived MAX-BR
-    violation count equals the original stipulated `balMaxBR`. -/
-theorem balMaxBR_eq_corr (c : BalangaoCand) :
-    balMaxBR c = (toCorr c).maxViol .base .reduplicant := by
-  cases c <;> decide
+end Candidate
 
-end BalangaoCorr
+/-- The constraints of (106) are MAX-IO, NO-CODA and MAX-BR. -/
+def con : CON Candidate 3 :=
+  ![fun c ↦ c.correspondence.maxViol .input .base,
+    fun c ↦ codas Seg.IsVowel c.surface,
+    fun c ↦ c.correspondence.maxViol .base .reduplicant]
 
--- ============================================================================
--- § 3: Basic Model Factorial Typology (§4)
--- ============================================================================
-
-/-! ### Basic Model (§4)
-
-The Basic Model has faithfulness constraints on two correspondence
-dimensions — I-O faithfulness and B-R identity — interacting with a
-phonological markedness constraint ("Phono-Constraint"). Permuting
-the three constraints produces the factorial typology.
-
-We model this with an abstract candidate type carrying violation
-profiles, and verify the distinct optima across all 6 rankings. -/
-
-/-- Abstract candidate for the Basic Model interaction space.
-    Each candidate represents a different resolution of the three-way
-    conflict between I-O faithfulness, phonological well-formedness,
-    and B-R identity.
-
-    - `faithful`: preserves input, B=R, but phonologically marked
-    - `over`: unfaithful to input, B=R, but phonologically unmarked
-    - `normal`: preserves input, phonologically unmarked in R, but B≠R -/
-inductive BasicCand where
-  | faithful   -- IO=0, Phono=2 (marked in both B and R), BR=0
-  | over       -- IO=1, Phono=0 (unmarked), BR=0
-  | normal     -- IO=0, Phono=1 (marked in B only), BR=1
-  deriving DecidableEq, Repr
-
-def basicIOFaith : Constraint BasicCand :=
-  λ | .faithful => 0 | .over => 1 | .normal => 0
-
-def basicPhono : Constraint BasicCand :=
-  λ | .faithful => 2 | .over => 0 | .normal => 1
-
-def basicBRId : Constraint BasicCand :=
-  λ | .faithful => 0 | .over => 0 | .normal => 1
-
-def basicCandidates : List BasicCand := [.faithful, .over, .normal]
-theorem basicCandidates_ne : basicCandidates ≠ [] := by simp [basicCandidates]
-
-/-- Non-application ranking (ex. 104): IO-Faith, BR-Id >> Phono.
-    The faithful candidate wins — phonology cannot affect anything. -/
-theorem nonapplication_io_br_phono :
-    (Tableau.ofRanking basicCandidates [basicIOFaith, basicBRId, basicPhono]
-      basicCandidates_ne).optimal = {.faithful} := by decide
-
-/-- Non-application (symmetric): BR-Id, IO-Faith >> Phono.
-    Same outcome — faithful candidate wins regardless of IO/BR order. -/
-theorem nonapplication_br_io_phono :
-    (Tableau.ofRanking basicCandidates [basicBRId, basicIOFaith, basicPhono]
-      basicCandidates_ne).optimal = {.faithful} := by decide
-
-/-- Emergence of the unmarked (ex. 105): IO-Faith >> Phono >> BR-Id.
-    The normal candidate wins — phonology affects the reduplicant
-    (low BR-Id), but the base is protected (high IO-Faith). -/
-theorem emergence_unmarked :
-    (Tableau.ofRanking basicCandidates [basicIOFaith, basicPhono, basicBRId]
-      basicCandidates_ne).optimal = {BasicCand.normal} := by decide
-
-/-- Overapplication: Phono >> IO-Faith >> BR-Id.
-    The over candidate wins — phonological unmarking applies to both
-    B and R, sacrificing IO faithfulness. -/
-theorem overapplication_phono_io_br :
-    (Tableau.ofRanking basicCandidates [basicPhono, basicIOFaith, basicBRId]
-      basicCandidates_ne).optimal = {BasicCand.over} := by decide
-
-/-- Overapplication: Phono >> BR-Id >> IO-Faith.
-    Same outcome — phonology dominates. -/
-theorem overapplication_phono_br_io :
-    (Tableau.ofRanking basicCandidates [basicPhono, basicBRId, basicIOFaith]
-      basicCandidates_ne).optimal = {BasicCand.over} := by decide
-
-/-- Overapplication: BR-Id >> Phono >> IO-Faith.
-    B-R identity copies phonological effects to both B and R. -/
-theorem overapplication_br_phono_io :
-    (Tableau.ofRanking basicCandidates [basicBRId, basicPhono, basicIOFaith]
-      basicCandidates_ne).optimal = {BasicCand.over} := by decide
-
-/-- **Factorial typology summary**: all 6 rankings of 3 constraints produce
-    exactly 3 distinct optima — `faithful` (non-application), `normal`
-    (emergence of the unmarked), and `over` (overapplication).
-
-    The 4th interaction type from the paper — **normal application** —
-    requires additional candidates (where phonology targets the reduplicant
-    independently) and is demonstrated by the Balangao and Tagalog examples
-    in §§3-5 rather than the abstract model. -/
-theorem basic_model_factorial :
-    factorialOptima basicCandidates
-      [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne
-    = [{BasicCand.normal}, {BasicCand.over}, {BasicCand.faithful}] := by decide
-
--- ============================================================================
--- § 4: Underapplication Impossibility
--- ============================================================================
-
-/-! ### Underapplication is not a Basic Model category (§5)
-
-[mccarthy-prince-1995] §5 argues that underapplication cannot emerge
-from the Basic Model. Unlike overapplication and emergence of the unmarked,
-which follow from ranking permutations of {IO-Faith, Phono, BR-Id},
-underapplication requires an additional independent constraint (like the
-OCP in Akan) that blocks the overapplicational candidate. In the Basic
-Model, B-R identity can restrict the candidate set to B=R pairs, but
-within that set the choice between over and under is determined by
-Phono-Constraint — and Phono-Constraint always prefers the phonologically
-unmarked form (= over), never the marked form (= under).
-
-The factorial typology theorem already proves this: `.faithful` (non-
-application), `.over` (overapplication), and `.normal` (emergence of the
-unmarked) are the only optima. No ranking produces a 4th outcome. -/
-
-/-- **Underapplication impossibility**: every ranking of the Basic Model
-    selects one of `faithful`, `over`, or `normal`. No ranking can select
-    an underapplicational candidate because the Basic Model has no
-    independent blocking constraint to exclude overapplication.
-
-    This is the formal content of [mccarthy-prince-1995] §5's
-    argument that underapplication requires an additional constraint
-    beyond the three in the Basic Model. -/
-theorem basic_model_no_underapplication :
-    ∀ optima ∈ factorialOptima basicCandidates
-      [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne,
-    optima = {BasicCand.faithful} ∨ optima = {BasicCand.over} ∨ optima = {BasicCand.normal} := by
+/-- The cells of tableau (106). -/
+theorem con_apply :
+    (con · .unfaithfulBase) = ![1, 2, 0] ∧ (con · .exactCopy) = ![0, 4, 0] ∧
+      (con · .codalessReduplicant) = ![0, 3, 1] := by
   decide
 
-/-- The factorial typology produces exactly 3 distinct language types,
-    not 4 — confirming that underapplication is absent from the Basic
-    Model. -/
-theorem basic_model_exactly_three_types :
-    factorialTypologySize basicCandidates
-      [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne
-    = 3 := by decide
+/-- Tableau (106) under a ranking of its constraints. -/
+def tableau (r : Ranking 3) : Tableau Candidate 3 :=
+  .ofPerm con r [.unfaithfulBase, .exactCopy, .codalessReduplicant]
 
--- ============================================================================
--- § 5: Akan Underapplication (§5.1)
--- ============================================================================
+/-- The coda-sparing reduplicant wins exactly under MAX-IO ≫ NO-CODA ≫ MAX-BR, the paper's
+instance of the ranking for emergence of the unmarked. -/
+theorem optimal_iff (r : Ranking 3) :
+    (tableau r).optimal = {.codalessReduplicant} ↔ r.Dominates 0 1 ∧ r.Dominates 1 2 := by
+  obtain ⟨ha, hb, hc⟩ := con_apply
+  have va (i) : con i .unfaithfulBase = ![1, 2, 0] i := congrFun ha i
+  have vb (i) : con i .exactCopy = ![0, 4, 0] i := congrFun hb i
+  have vc (i) : con i .codalessReduplicant = ![0, 3, 1] i := congrFun hc i
+  rw [tableau, Tableau.ofPerm_optimal_eq_singleton_iff (by simp)]
+  constructor
+  · intro h
+    obtain ⟨i, hi, hdi⟩ := h .unfaithfulBase (by simp) (by decide)
+    obtain ⟨j, hj, hdj⟩ := h .exactCopy (by simp) (by decide)
+    have i0 : i = 0 := by fin_cases i <;> simp [va, vc] at hi ⊢
+    have j1 : j = 1 := by fin_cases j <;> simp [vb, vc] at hj ⊢
+    subst i0 j1
+    exact ⟨hdi 1 (by simp [va, vc]), hdj 2 (by simp [vb, vc])⟩
+  · rintro ⟨h01, h12⟩ d _ hd
+    cases d with
+    | codalessReduplicant => exact absurd rfl hd
+    | unfaithfulBase =>
+      refine ⟨0, by simp [va, vc], fun j hj ↦ ?_⟩
+      fin_cases j
+      · simp [va, vc] at hj
+      · exact h01
+      · exact lt_trans h01 h12
+    | exactCopy =>
+      refine ⟨1, by simp [vb, vc], fun j hj ↦ ?_⟩
+      fin_cases j
+      · simp [vb, vc] at hj
+      · simp [vb, vc] at hj
+      · exact h12
 
-/-! ### Akan underapplication (ex. 125, 130–131)
+end Balangao
 
-Akan has a monosyllabic reduplicative prefix with a high vowel.
-Palatalization (velar → palatal before front vowels) is productive in
-the language but **fails to apply** in reduplication: /RED-ka/ surfaces
-as kɪ–ka, not *tɕɪ–tɕa (overapplication) or *tɕɪ–ka (normal application).
+/-! ### Akan palatalization: underapplication -/
 
-This is underapplication: a process that normally applies (PAL) is blocked
-in reduplication. The mechanism is a **4th constraint** — OCP(+cor) — that
-blocks the overapplicational candidate. Since B-R identity (IDENT-BR)
-is high-ranked, normal application is also blocked, leaving
-underapplication as the only survivor.
+namespace Akan
 
-Ranking (ex. 129, 131): OCP(+cor) >> IDENT-BR(−cor) >> PAL >> IDENT-IO(−cor)
+open _root_.Akan Data.PHOIBLE
 
-This confirms the Basic Model impossibility result: underapplication
-requires a blocking constraint (here OCP) beyond the three in the
-Basic Model. -/
+/-- A coronal consonant. -/
+def IsCoronal (s : Segment) : Prop := s.HasValue .syllabic false ∧ s.HasValue .coronal true
 
-/-- Candidates for /RED-ka/ in Akan (ex. 130).
-    Each represents a different resolution of the palatalization
-    vs. B-R identity vs. OCP conflict. -/
-inductive AkanCand where
-  | over    -- tɕɪ–tɕa: palatalization in both B and R (overapplication)
-  | normal  -- tɕɪ–ka: palatalization in R only (normal application)
-  | under   -- kɪ–ka: no palatalization (underapplication)
-  deriving DecidableEq, Repr
+/-- A plain velar, which PAL requires to palatalize before a front vowel. -/
+def IsVelar (s : Segment) : Prop :=
+  s.HasValue .syllabic false ∧ s.HasValue .dorsal true ∧ s.HasValue .coronal false
 
-/-- OCP(+cor): prohibits cooccurrence of [+coronal] segments in
-    successive syllables. The overapplicational candidate tɕɪ–tɕa
-    has coronal obstruents in both syllables of the output.
+/-- A front vowel. -/
+def IsFrontVowel (s : Segment) : Prop := s.HasValue .syllabic true ∧ s.HasValue .front true
 
-    Violation counts from tableau (131):
-    - over (tɕɪ–tɕa): 2 violations (coronal in each syllable of B+R)
-    - normal (tɕɪ–ka): 0
-    - under (kɪ–ka): 0 -/
-def akanOCP : Constraint AkanCand :=
-  λ
-    | .over => 2
-    | .normal => 0
-    | .under => 0
+instance : DecidablePred IsCoronal := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsVelar := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsFrontVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- IDENT-BR(−cor): B-R identity for the [−coronal] feature.
-    Penalizes featural mismatch between base and reduplicant
-    consonants. Only the normal candidate has B ≠ R (R has
-    palatalized tɕ, B retains velar k).
+/-- PAL counts the plain velars that stand before a front vowel. -/
+def pal : List Segment → ℕ
+  | c :: v :: rest => (if IsVelar c ∧ IsFrontVowel v then 1 else 0) + pal (v :: rest)
+  | _ => 0
 
-    Violation counts from tableau (131):
-    - over (tɕɪ–tɕa): 0 (B = R)
-    - normal (tɕɪ–ka): 1 (R ≠ B in coronal feature)
-    - under (kɪ–ka): 0 (B = R) -/
-def akanIdentBR : Constraint AkanCand :=
-  λ
-    | .over => 0
-    | .normal => 1
-    | .under => 0
+/-- OCP(+cor) counts the syllables of palatal onset and front vowel that stand before a
+syllable of coronal onset and a vowel that is not front, the clash of syllabic and segmental
+palatality. -/
+def ocpCoronal : List Segment → ℕ
+  | c₁ :: v₁ :: c₂ :: v₂ :: rest =>
+    (if IsCoronal c₁ ∧ IsFrontVowel v₁ ∧ IsCoronal c₂ ∧ ¬ IsFrontVowel v₂ then 1 else 0) +
+      ocpCoronal (c₂ :: v₂ :: rest)
+  | _ => 0
 
-/-- PAL: palatalization constraint — velars must be palatalized
-    before front vowels. The underapplicational candidate kɪ–ka
-    has a velar before the front vowel ɪ in the reduplicant.
-
-    Violation counts from tableau (131):
-    - over (tɕɪ–tɕa): 0
-    - normal (tɕɪ–ka): 0
-    - under (kɪ–ka): 1 (velar k before front vowel ɪ) -/
-def akanPAL : Constraint AkanCand :=
-  λ
-    | .over => 0
-    | .normal => 0
-    | .under => 1
-
-/-- IDENT-IO(−cor): I-O faithfulness for the [−coronal] feature.
-    Penalizes changing the coronal specification of an input segment.
-    Only the overapplicational candidate changes the base consonant
-    from velar to palatal (unfaithful to input /k/).
-
-    Violation counts from tableau (131):
-    - over (tɕɪ–tɕa): 1 (input /k/ → output tɕ in base)
-    - normal (tɕɪ–ka): 0
-    - under (kɪ–ka): 0 -/
-def akanIdentIO : Constraint AkanCand :=
-  λ
-    | .over => 1
-    | .normal => 0
-    | .under => 0
-
-/-- Ranking for Akan underapplication (ex. 129, 131):
-    OCP(+cor) >> IDENT-BR(−cor) >> PAL >> IDENT-IO(−cor) -/
-def akanRanking : List (Constraint AkanCand) :=
-  [akanOCP, akanIdentBR, akanPAL, akanIdentIO]
-
-def akanCandidates : List AkanCand := [.over, .normal, .under]
-theorem akanCandidates_ne : akanCandidates ≠ [] := by simp [akanCandidates]
-
-/-- **Underapplication wins in Akan**: the non-palatalized form
-    kɪ–ka is optimal under OCP(+cor) >> IDENT-BR(−cor) >> PAL >> IDENT-IO(−cor).
-
-    This is the paper's key demonstration that underapplication requires
-    a 4th blocking constraint (OCP) beyond the Basic Model's three:
-    OCP blocks overapplication, IDENT-BR blocks normal application,
-    leaving underapplication as the only surviving candidate. -/
-theorem akan_underapplication :
-    (Tableau.ofRanking akanCandidates akanRanking akanCandidates_ne).optimal
-    = {AkanCand.under} := by decide
-
--- ============================================================================
--- § 5a: Akan Feature Grounding
--- ============================================================================
-
-/-! ### Grounding the Akan tableau in phonological features
-
-The violation counts in §5 are grounded in the featural representations
-from `Akan`. The key connection: palatalization is
-a [coronal] feature change (/k/ [−cor] → /tɕ/ [+cor]), and the four
-constraints target exactly this feature dimension.
-
-- **OCP(+cor)**: violated by adjacent [+coronal] segments — i.e., /tɕ/
-  in successive syllables. Only the `over` candidate has this.
-- **IDENT-BR(−cor)**: violated when B and R differ in [coronal]. Only
-  `normal` (R has /tɕ/, B has /k/).
-- **PAL**: violated when a velar ([−coronal]) precedes a front vowel
-  without palatalizing. Only `under` (/kɪ/).
-- **IDENT-IO(−cor)**: violated when the output changes an input segment's
-  [coronal] value. Only `over` (input /k/ → output /tɕ/ in base). -/
-
-section AkanGrounding
-open Akan
-open Phonology
-
-/-- The `over` candidate's OCP violation is grounded: /tɕ/ is [+coronal],
-    so two /tɕ/ in successive syllables violate OCP(+cor). -/
-theorem akan_over_ocp_grounded : Consonant.tcCurl.segment.HasValue Feature.coronal true := by
+/-- By the paper's verdicts on OCP(+cor) in (127), *kita* obeys it and *tɕita* violates it,
+while a word whose two syllables are both palatal obeys it. -/
+theorem ocpCoronal_kita :
+    ocpCoronal [Consonant.k.segment, Vowel.i.segment, FeatureMatrix.«t».toSegment,
+        Vowel.a.segment] = 0 ∧
+      ocpCoronal [Consonant.tcCurl.segment, Vowel.i.segment, FeatureMatrix.«t».toSegment,
+        Vowel.a.segment] = 1 ∧
+      ocpCoronal [Consonant.tcCurl.segment, Vowel.i.segment, Consonant.tcCurl.segment,
+        Vowel.e.segment] = 0 := by
   decide
 
-/-- The `normal` candidate's IDENT-BR violation is grounded: the
-    reduplicant has /tɕ/ ([+cor]) but the base has /k/ ([−cor]) — a
-    featural mismatch on [coronal]. -/
-theorem akan_normal_identBR_grounded :
-    Consonant.tcCurl.segment.HasValue Feature.coronal true ∧
-      Consonant.k.segment.HasValue Feature.coronal false := by
+/-- The stem *ka* 'bite'. -/
+def stem : List Segment := [Consonant.k.segment, Vowel.a.segment]
+
+/-- The candidates of tableau (131) for /RED–ka/. -/
+inductive Candidate where
+  /-- *tɕɪ–tɕa*, palatalized in reduplicant and base. -/
+  | overapplication
+  /-- *tɕɪ–ka*, palatalized before the front vowel only. -/
+  | normalApplication
+  /-- *kɪ–ka*, not palatalized. -/
+  | underapplication
+  deriving DecidableEq, Fintype, Repr
+
+namespace Candidate
+
+/-- The base of a candidate. -/
+def base : Candidate → List Segment
+  | overapplication => [Consonant.tcCurl.segment, Vowel.a.segment]
+  | normalApplication | underapplication => stem
+
+/-- The reduplicant of a candidate, a consonant and a high vowel. -/
+def reduplicant : Candidate → List Segment
+  | underapplication => [Consonant.k.segment, Vowel.smallCapitalI.segment]
+  | overapplication | normalApplication =>
+    [Consonant.tcCurl.segment, Vowel.smallCapitalI.segment]
+
+/-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
+def correspondence (c : Candidate) : Correspondence ReduplicationRole Segment :=
+  .reduplication stem c.base c.reduplicant
+
+/-- The surface string, the reduplicant followed by the base. -/
+def surface (c : Candidate) : List Segment := c.reduplicant ++ c.base
+
+end Candidate
+
+/-- The constraints of (131) are OCP(+cor), IDENT-BR(−cor), PAL and IDENT-IO(−cor). An
+IDENT(−cor) constraint is violated by a [−coronal] segment whose correspondent is not [−coronal]. -/
+def con : CON Candidate 4 :=
+  ![fun c ↦ ocpCoronal c.surface,
+    fun c ↦ c.correspondence.maxViolFeature (·.HasValue .coronal false) .base .reduplicant,
+    fun c ↦ pal c.surface,
+    fun c ↦ c.correspondence.maxViolFeature (·.HasValue .coronal false) .input .base]
+
+/-- The cells of tableau (131), with one mark where the paper prints three for OCP(+cor). -/
+theorem con_apply :
+    (con · .overapplication) = ![1, 0, 0, 1] ∧ (con · .normalApplication) = ![0, 1, 0, 0] ∧
+      (con · .underapplication) = ![0, 0, 1, 0] := by
   decide
 
-/-- The `under` candidate's PAL violation is grounded: /k/ is [−coronal]
-    and /ɪ/ is [+front] — a velar before a front vowel without
-    palatalization. -/
-theorem akan_under_pal_grounded :
-    Consonant.k.segment.HasValue Feature.coronal false ∧
-      Vowel.smallCapitalI.segment.HasValue Feature.front true := by
-  decide
+/-- Tableau (131) under a ranking of its constraints. -/
+def tableau (r : Ranking 4) : Tableau Candidate 4 :=
+  .ofPerm con r [.overapplication, .normalApplication, .underapplication]
 
-/-- The `over` candidate's IDENT-IO violation is grounded: input /k/
-    is [−coronal] but output /tɕ/ is [+coronal] — an IO faithfulness
-    violation on the [coronal] feature. -/
-theorem akan_over_identIO_grounded :
-    Consonant.k.segment.HasValue Feature.coronal false ∧
-      Consonant.tcCurl.segment.HasValue Feature.coronal true := by
-  decide
+/-- While PAL dominates IDENT-IO(−cor), as palatalization in unreduplicated words requires, the
+unpalatalized *kɪ–ka* wins exactly when OCP(+cor) and IDENT-BR(−cor) both dominate PAL. The
+blocking constraint rules out overapplication and identity rules out normal application. -/
+theorem optimal_iff {r : Ranking 4} (h : r.Dominates 2 3) :
+    (tableau r).optimal = {.underapplication} ↔ r.Dominates 0 2 ∧ r.Dominates 1 2 := by
+  obtain ⟨ha, hb, hc⟩ := con_apply
+  have va (i) : con i .overapplication = ![1, 0, 0, 1] i := congrFun ha i
+  have vb (i) : con i .normalApplication = ![0, 1, 0, 0] i := congrFun hb i
+  have vc (i) : con i .underapplication = ![0, 0, 1, 0] i := congrFun hc i
+  rw [tableau, Tableau.ofPerm_optimal_eq_singleton_iff (by simp)]
+  constructor
+  · intro hw
+    obtain ⟨i, hi, hdi⟩ := hw .overapplication (by simp) (by decide)
+    obtain ⟨j, hj, hdj⟩ := hw .normalApplication (by simp) (by decide)
+    have h2i := hdi 2 (by simp [va, vc])
+    have j1 : j = 1 := by fin_cases j <;> simp [vb, vc] at hj ⊢
+    subst j1
+    refine ⟨?_, hdj 2 (by simp [vb, vc])⟩
+    fin_cases i
+    · exact h2i
+    · simp [va, vc] at hi
+    · simp [va, vc] at hi
+    · exact absurd h2i (lt_asymm h)
+  · rintro ⟨h02, h12⟩ d _ hd
+    cases d with
+    | underapplication => exact absurd rfl hd
+    | overapplication =>
+      refine ⟨0, by simp [va, vc], fun j hj ↦ ?_⟩
+      fin_cases j <;> first | exact h02 | simp [va, vc] at hj
+    | normalApplication =>
+      refine ⟨1, by simp [vb, vc], fun j hj ↦ ?_⟩
+      fin_cases j <;> first | exact h12 | simp [vb, vc] at hj
 
-end AkanGrounding
-
--- ============================================================================
--- § 5b: Akan — Correspondence-grounded layer (featural)
--- ============================================================================
-
-/-! ### Grounding the Akan tableau in `Correspondence` via featural IDENT
-
-Mirroring the Javanese §1.5 / Balangao §2.5 refactors, with one addition:
-Akan's `IDENT-BR(-cor)` and `IDENT-IO(-cor)` are *featural* faithfulness
-constraints on the `[coronal]` feature, not segmental identity. This
-section uses `Correspondence.identViolFeature` with a `coronal` projection to
-derive the constraint values structurally.
-
-This is the first study file to exercise `Correspondence.identViolFeature`
-(introduced in 0.230.217). Successful agreement theorems here validate
-the featural-IDENT pattern for any future paper using `IDENT-[F]`
-constraints. -/
-
-namespace AkanCorr
-
-open OptimalityTheory.Correspondence (ReduplicationRole)
-
-/-- Phonological segments for the Akan /RED-ka/ paradigm. The minimal
-    abstract inventory tracking the [coronal] feature contrast. -/
-inductive Seg where
-  | k          -- velar [-coronal]
-  | tCpal         -- palatal affricate [+coronal] (the palatalization output)
-  | a          -- low back vowel
-  | iSmCap          -- high front vowel (the reduplicant's vowel)
-  deriving DecidableEq, Repr
-
-/-- The [coronal] feature projection. Vowels are `false` (out of the
-    relevant natural class for this paradigm; their featural value
-    doesn't enter the IDENT-[coronal] computation). -/
-def coronal : Seg → Bool
-  | .k  => false
-  | .tCpal => true
-  | .a  => false
-  | .iSmCap  => false
-
-/-- Input `/ka/`. -/
-def stemInput : List Seg := [.k, .a]
-
-/-- Faithful base (`k a`) — for `.normal` and `.under`. -/
-def baseFaithful : List Seg := [.k, .a]
-
-/-- Palatalized base (`tɕ a`) — for `.over` (palatalization in B). -/
-def basePalatalized : List Seg := [.tCpal, .a]
-
-/-- Palatalized reduplicant (`tɕ ɪ`) — for `.over` and `.normal`. -/
-def redPalatalized : List Seg := [.tCpal, .iSmCap]
-
-/-- Faithful reduplicant (`k ɪ`) — for `.under`. -/
-def redFaithful : List Seg := [.k, .iSmCap]
-
-/-- The `Correspondence` for the `over` candidate: palatalization in both B and R. -/
-def overCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput basePalatalized redPalatalized
-
-/-- The `Correspondence` for the `normal` candidate: palatalization in R only. -/
-def normalCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseFaithful redPalatalized
-
-/-- The `Correspondence` for the `under` candidate: no palatalization. -/
-def underCorr : Correspondence ReduplicationRole Seg :=
-  Correspondence.reduplication stemInput baseFaithful redFaithful
-
-/-- Each candidate's structural `Correspondence` representation. -/
-def toCorr : AkanCand → Correspondence ReduplicationRole Seg
-  | .over   => overCorr
-  | .normal => normalCorr
-  | .under  => underCorr
-
-/-- **Structural derivation of IDENT-IO(-cor)** via featural IDENT on
-    the `(.input, .base)` edge. Input /k/ → base /tɕ/ is the only IO
-    coronal mismatch; only `over` violates. -/
-theorem akanIdentIO_eq_corr (c : AkanCand) :
-    akanIdentIO c =
-      (toCorr c).identViolFeature coronal .input .base := by
-  cases c <;> decide
-
-/-- **Structural derivation of IDENT-BR(-cor)** via featural IDENT on
-    the `(.base, .reduplicant)` edge. Only `normal` has B/R coronal
-    mismatch (B has /k/ [-cor], R has /tɕ/ [+cor]); the vowels' coronal
-    values agree (both [-cor] in this featural inventory). -/
-theorem akanIdentBR_eq_corr (c : AkanCand) :
-    akanIdentBR c =
-      (toCorr c).identViolFeature coronal .base .reduplicant := by
-  cases c <;> decide
-
-end AkanCorr
-
--- ============================================================================
--- § 6: Generic ConstraintSystem Predictions
--- ============================================================================
-
-/-! Each tableau lifts to a generic `ConstraintSystem` via `tableauSystem`.
-For these deterministic OT analyses, the unique-winner pattern collapses
-the `argminDecoder` distribution to probability 1 on the winner. -/
-
-section PredictAPI
-open Core.Optimization Constraints
-
-/-- Javanese overapplication tableau as a generic `ConstraintSystem`. -/
-noncomputable def javaneseSystem : ConstraintSystem JavaneseCand (LexProfile Nat 3) :=
-  tableauSystem (Tableau.ofRanking javCandidates javRanking javCandidates_ne)
-
-/-- The OT prediction lifts: the overapplicational candidate is assigned
-    probability 1 under IDENT-BR, *VhV >> MAX-IO. -/
-theorem javaneseSystem_predict_over :
-    javaneseSystem.predict JavaneseCand.over = 1 :=
-  tableauSystem_predict_unique_winner _ _ javanese_overapplication
-
-/-- Balangao emergence-of-the-unmarked tableau as a generic `ConstraintSystem`. -/
-noncomputable def balangaoSystem : ConstraintSystem BalangaoCand (LexProfile Nat 3) :=
-  tableauSystem (Tableau.ofRanking balCandidates balRanking balCandidates_ne)
-
-/-- The OT prediction lifts: the partial-reduplicant candidate is assigned
-    probability 1 under MAX-IO >> NO-CODA >> MAX-BR. -/
-theorem balangaoSystem_predict_partial :
-    balangaoSystem.predict BalangaoCand.partialRedup = 1 :=
-  tableauSystem_predict_unique_winner _ _ balangao_emergence_unmarked
-
-/-- Akan underapplication tableau as a generic `ConstraintSystem`. -/
-noncomputable def akanSystem : ConstraintSystem AkanCand (LexProfile Nat 4) :=
-  tableauSystem (Tableau.ofRanking akanCandidates akanRanking akanCandidates_ne)
-
-/-- The OT prediction lifts: the underapplicational candidate is assigned
-    probability 1 under OCP(+cor) >> IDENT-BR(−cor) >> PAL >> IDENT-IO(−cor). -/
-theorem akanSystem_predict_under :
-    akanSystem.predict AkanCand.under = 1 :=
-  tableauSystem_predict_unique_winner _ _ akan_underapplication
-
-end PredictAPI
+end Akan
 
 end McCarthyPrince1995

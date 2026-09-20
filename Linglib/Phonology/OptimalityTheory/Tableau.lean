@@ -213,6 +213,15 @@ theorem ofPerm_profile_lt_iff_exists_dominates {d : C} :
       exact absurd (hj i (hd j hlt)) hi.ne'
     · exact hi.ne (by simpa using congrArg (· (r.symm i)) heq)
 
+/-- A candidate is the sole winner under a ranking iff, against each competitor, some
+constraint preferring it dominates every constraint preferring the competitor. -/
+theorem ofPerm_optimal_eq_singleton_iff (hc : c ∈ candidates) :
+    (ofPerm con r candidates h).optimal = {c} ↔
+      ∀ d ∈ candidates, d ≠ c →
+        ∃ i, con i c < con i d ∧ ∀ j, con j d < con j c → r.Dominates i j := by
+  rw [optimal_eq_singleton_iff (List.mem_toFinset.2 hc)]
+  simp only [ofPerm_candidates, List.mem_toFinset, ofPerm_profile_lt_iff_exists_dominates]
+
 /-- A candidate that beats another pointwise on the constraint set beats it under every
 ranking of the set. -/
 theorem ofPerm_profile_lt_of_lt {d : C} (hlt : (con · c) < (con · d)) :
