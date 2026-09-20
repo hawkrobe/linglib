@@ -72,7 +72,7 @@ inductive Feature
 
 open Feature
 
-/-- The Vocabulary Items (36), (37) and (42): the theme vowel of v in conjugation I, Asp[perf]
+/-- The Vocabulary Items (36), (37) and (42) are the theme vowel of v in conjugation I, Asp[perf]
 *-vi*, T[+past] *-rā* after Asp[perf] and *-bā* otherwise, the null T[−past] of (38), and the
 agreement endings, the perfect-specific set after Asp[perf], *-m* after T[+past], the defaults
 elsewhere. -/
@@ -99,7 +99,7 @@ inductive Tense
   | pluperfect
   deriving DecidableEq, Repr
 
-/-- The Asp and T morphemes of a tense: Asp[perf] in the perfects only (§4.6.1). -/
+/-- The Asp and T morphemes of a tense, with Asp[perf] in the perfects only (§4.6.1). -/
 def Tense.heads : Tense → List (Morpheme Feature String)
   | .present => [⟨[tense], none, .after⟩]
   | .imperfect => [⟨[tense, past], none, .after⟩]
@@ -115,7 +115,7 @@ def word (t : Tense) (p₁ p₂ pl : Bool) : ComplexHead Feature String :=
 /-- The surface morphs after inside-out insertion with the given discharge, the pruned T[−past]
 dropped. -/
 def morphs (dis : ComplexHead.Discharge) (w : ComplexHead Feature String) : List String :=
-  (w.insertAll (· = "") vocab .concatenation (λ _ => []) dis).exponents.filter (· ≠ "")
+  (w.insertAll (· = "") vocab .concatenation (fun _ ↦ []) dis).exponents.filter (· ≠ "")
 
 /-- The tenses as named in the rows. -/
 def tenseTable : List (String × Tense) :=
@@ -143,13 +143,13 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "lati1261" → (of
 def rows : List (ComplexHead Feature String × List String) :=
   (Examples.all.filter (·.language = "lati1261")).filterMap ofRow
 
-/-- (40): the four tenses derive with T[−past] pruned, so that Agr is concatenated with Asp[perf]
+/-- In (40) the four tenses derive with T[−past] pruned, so that Agr is concatenated with Asp[perf]
 in the perfect but with the overt T[+past] in the pluperfect (§7.3.2.1). -/
 theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide
 
-/-- §4.6.3: were the features an item spells out deleted at its insertion, Agr could see neither
-T[+past] nor Asp[perf], and the first singular of the imperfect and of the perfect would fall to
-the default *-ō*. -/
+/-- As §4.6.3 argues, were the features an item spells out deleted at its insertion, Agr could
+see neither T[+past] nor Asp[perf], and the first singular of the imperfect and of the perfect
+would fall to the default *-ō*. -/
 theorem rewriting_loses_conditioning :
     morphs .rewriting (word .imperfect true false false) = ["laud", "ā", "bā", "ō"] ∧
       morphs .rewriting (word .perfect true false false) = ["laud", "ā", "vi", "ō"] := by
@@ -169,7 +169,7 @@ inductive Feature
 
 open Feature
 
-/-- (8), with the concatenation of (28): the plural is *-((j)a)i-* before a possessive and
+/-- In (8), with the concatenation of (28), the plural is *-((j)a)i-* before a possessive and
 *-(V)k* otherwise; the first singular possessive is *-m*. -/
 def vocab : List (VocabularyItem Feature String) :=
   [⟨⟨[pl], [], [[poss]]⟩, "ai"⟩, [pl] ⟷ "k", [poss] ⟷ "m"]
@@ -181,7 +181,7 @@ def word (r : String) (possessed : Bool) : ComplexHead Feature String :=
 
 /-- The exponent of the plural after inside-out insertion. -/
 def plural (w : ComplexHead Feature String) : Option String :=
-  (w.insertAll (· = "") vocab .concatenation (λ _ => []) .nondeletion).heads[0]? >>= (·.exp)
+  (w.insertAll (· = "") vocab .concatenation (fun _ ↦ []) .nondeletion).heads[0]? >>= (·.exp)
 
 /-- Possession as named in the rows. -/
 def possTable : List (String × Bool) := [("yes", true), ("no", false)]
@@ -197,13 +197,13 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "hung1274" → (of
 def rows : List (ComplexHead Feature String × String) :=
   (Examples.all.filter (·.language = "hung1274")).filterMap ofRow
 
-/-- (7): outward conditioning by the possessive's feature. -/
+/-- The rows of (7) show outward conditioning by the possessive's feature. -/
 theorem rows_plural : ∀ r ∈ rows, plural r.1 = some r.2 := by decide
 
-/-- (43a, b): when the plural is reached, what it sees outward is the features of the possessive
-and nothing of an exponent, the possessive being still bare. -/
+/-- As (43a, b) state, when the plural is reached, what it sees outward is the features of the
+possessive and nothing of an exponent, the possessive being still bare. -/
 theorem outward_features_only :
-    ∀ r ∈ rows, (r.1.contextAt (· = "") .concatenation (λ _ => []) 0).rightCtx =
+    ∀ r ∈ rows, (r.1.contextAt (· = "") .concatenation (fun _ ↦ []) 0).rightCtx =
       (r.1.heads.drop 1).map (·.feats) := by
   decide
 
@@ -222,17 +222,17 @@ inductive Feature
 
 open Feature
 
-/-- (11): *-i* after a consonant, *-ka* after a vowel. -/
+/-- In (11) the nominative is *-i* after a consonant and *-ka* after a vowel. -/
 def vocab : List (VocabularyItem Feature String) :=
   [⟨⟨[nom], [[cFinal]], []⟩, "i"⟩, ⟨⟨[nom], [[vFinal]], []⟩, "ka"⟩]
 
 /-- The hosts of (10), transcribed into the segments of the fragment. -/
 def segments : List (String × List Phonology.Segment) :=
-  [("pap", [Korean.Phonology.p, Korean.Phonology.a, Korean.Phonology.p]),
-    ("ai", [Korean.Phonology.a, Korean.Phonology.i])]
+  [("pap", [Korean.Phoneme.p, .a, .p].map Korean.Phoneme.segment),
+    ("ai", [Korean.Phoneme.a, .i].map Korean.Phoneme.segment)]
 
-/-- The phonological feature a realized exponent presents to insertion: whether its final segment
-is a consonant. -/
+/-- The phonological feature a realized exponent presents to insertion is whether its final
+segment is a consonant. -/
 def shape (e : String) : List Feature :=
   match (segments.lookup e).bind List.getLast? with
   | some s => if s.IsConsonant then [cFinal] else [vFinal]
@@ -257,8 +257,8 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "kore1280" → (of
 def rows : List (ComplexHead Feature String × String) :=
   (Examples.all.filter (·.language = "kore1280")).filterMap ofRow
 
-/-- (10), (43d): inward conditioning by the host's phonology, visible through its realized
-exponent. -/
+/-- The rows of (10) show the inward conditioning of (43d), by the host's phonology as visible
+through its realized exponent. -/
 theorem rows_nominative : ∀ r ∈ rows, nominative r.1 = some r.2 := by decide
 
 end Korean

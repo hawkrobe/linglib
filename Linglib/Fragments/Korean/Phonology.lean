@@ -1,4 +1,5 @@
-import Linglib.Phonology.Segmental.Basic
+import Linglib.Data.PHOIBLE.Inventories.Korean
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -9,82 +10,73 @@ and /m n ŋ/, which contrast in *pak* 'gourd' and *paŋ* 'room', are pronounced 
 nasal: *tɕakɨn-pak nɛmsɛ-ka* 'the smell of a small gourd' and *tɕakɨn-paŋ nɛmsɛ-ka* 'the
 smell of a small room' are the same string of sounds, Hayes's illustration of neutralization.
 Hayes writes the rule as the change of a non-affricate stop to a voiced nasal sonorant before
-a nasal, leaving its place alone, and that is how it is written here over the segments the
-rule needs.
+a nasal, leaving its place alone, and that is how it is written here.
+
+The phonemes are the ones the rule needs, and each takes its feature values from its glyph in
+the PHOIBLE chart. There a stop and the nasal of its place differ in the three features the
+rule writes and in [delayed release], which is minus on a stop and not applicable on a nasal.
+The rule's output is therefore the nasal on every feature but [delayed release], and no two
+phonemes differ in that feature alone.
 
 ## Main definitions
 
-* `Korean.Phonology.stopNasalization` — a non-affricate stop becomes a voiced nasal sonorant
-  before a nasal
+* `Korean.Phoneme`: the phonemes of the illustration, with `chart` and `segment`.
+* `Korean.stopNasalization`: a non-affricate stop becomes a voiced nasal sonorant before a
+  nasal.
 
 ## Main results
 
-* `Korean.Phonology.pak_paŋ_neutralized` — *pak* and *paŋ* before *n* derive the same string,
-  and *pak* alone is unchanged
+* `Korean.Phoneme.segment_injective`, `Korean.Phoneme.chart_mem_kor`: distinct phonemes are
+  distinct segments, and each is a phoneme of PHOIBLE's Korean inventory.
+* `Korean.pak_paŋ_neutralized`: *pak* and *paŋ* before *n* derive the same string, the one
+  with the velar nasal on every feature but [delayed release]; *pak* alone is unchanged.
+* `Korean.derive_pak_ne_paŋ`: the derived string is not literally the one with the velar
+  nasal, since the rule leaves [−delayed release] in place.
+* `Korean.isDistinctive_compl_delayedRelease`: the features other than [delayed release]
+  distinguish the phonemes.
 
 ## References
 
 * [hayes-2009]
+* [moran-mccloy-2019]
 -/
 
-open Phonology Subregular.LocalRewrite
+open Phonology Subregular.LocalRewrite Data.PHOIBLE
 
-namespace Korean.Phonology
+namespace Korean
 
-/-! ### Segments -/
+/-- The phonemes of Hayes's illustration are the plain stops, the nasals, three vowels and the
+lateral. -/
+inductive Phoneme where
+  | p | t | k
+  | m | n | ŋ
+  | a | i | u
+  | l
+  deriving DecidableEq, Fintype, Repr
 
-/-- The features every plain stop shares. -/
-private def stop : List (Feature × Bool) :=
-  [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.approximant, false),
-    (.continuant, false), (.voice, false), (.delayedRelease, false)]
+namespace Phoneme
 
-/-- The features every nasal shares; a nasal is a non-continuant without delayed release, so
-the rule's change leaves a nasal as it is. -/
-private def nasalSpecs : List (Feature × Bool) :=
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
-    (.nasal, true), (.voice, true), (.continuant, false), (.delayedRelease, false)]
+/-- The PHOIBLE chart entry of a phoneme. -/
+def chart : Phoneme → FeatureMatrix
+  | p => .«p» | t => .«t» | k => .«k»
+  | m => .«m» | n => .«n» | ŋ => .«ŋ»
+  | a => .«a» | i => .«i» | u => .«u»
+  | l => .«l»
 
-/-- The features every vowel shares. -/
-private def vowel : List (Feature × Bool) :=
-  [(.syllabic, true), (.consonantal, false), (.sonorant, true), (.continuant, true),
-    (.voice, true)]
+/-- The segment of a phoneme is the segment of its chart entry. -/
+def segment (x : Phoneme) : Segment := x.chart.toSegment
 
-/-- The voiceless bilabial stop. -/
-def p : Segment := Segment.ofSpecs (stop ++ [(.labial, true)])
+theorem segment_injective : Function.Injective segment := by decide
 
-/-- The voiceless alveolar stop. -/
-def t : Segment := Segment.ofSpecs (stop ++ [(.coronal, true), (.anterior, true)])
+/-- Each phoneme is in PHOIBLE's Korean inventory. -/
+theorem chart_mem_kor (x : Phoneme) :
+    x.chart ∈ Inventories.Korean.kor.phonemes.map (·.features) := by
+  cases x <;> decide
 
-/-- The voiceless velar stop. -/
-def k : Segment := Segment.ofSpecs (stop ++ [(.dorsal, true)])
+end Phoneme
 
-/-- The bilabial nasal. -/
-def m : Segment := Segment.ofSpecs (nasalSpecs ++ [(.labial, true)])
-
-/-- The alveolar nasal. -/
-def n : Segment := Segment.ofSpecs (nasalSpecs ++ [(.coronal, true), (.anterior, true)])
-
-/-- The velar nasal. -/
-def ŋ : Segment := Segment.ofSpecs (nasalSpecs ++ [(.dorsal, true)])
-
-/-- The low vowel. -/
-def a : Segment := Segment.ofSpecs vowel
-
-/-- The high front unrounded vowel. -/
-def i : Segment :=
-  Segment.ofSpecs
-    (vowel ++ [(.dorsal, true), (.high, true), (.low, false), (.back, false), (.round, false)])
-
-/-- The high back rounded vowel. -/
-def u : Segment :=
-  Segment.ofSpecs
-    (vowel ++ [(.dorsal, true), (.high, true), (.low, false), (.back, true), (.round, true)])
-
-/-- The alveolar lateral. -/
-def l : Segment :=
-  Segment.ofSpecs
-    [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.continuant, true),
-      (.voice, true), (.coronal, true), (.anterior, true), (.lateral, true)]
+/-- The segments of the illustration. -/
+def inventory : Finset Segment := Finset.univ.image Phoneme.segment
 
 /-! ### The rule -/
 
@@ -95,12 +87,31 @@ def stopNasalization : Rule where
   effect := .changeFeatures (Segment.ofSpecs [(.nasal, true), (.voice, true), (.sonorant, true)])
   rightContext := [.seg (Segment.ofSpecs [(.nasal, true)])]
 
-/-- *pak* 'gourd' and *paŋ* 'room' before *n* derive the same string, with the velar nasal;
-*pak* alone is unchanged. -/
-theorem pak_paŋ_neutralized :
-    derive [stopNasalization] [p, a, k, n] = [p, a, ŋ, n] ∧
-      derive [stopNasalization] [p, a, ŋ, n] = [p, a, ŋ, n] ∧
-      derive [stopNasalization] [p, a, k] = [p, a, k] := by
+/-- The features other than [delayed release]. -/
+def exceptDelayedRelease : Finset Phonology.Feature := {.delayedRelease}ᶜ
+
+/-- No two phonemes differ in [delayed release] alone. -/
+theorem isDistinctive_compl_delayedRelease : IsDistinctive exceptDelayedRelease inventory := by
   decide
 
-end Korean.Phonology
+/-- *pak* 'gourd' and *paŋ* 'room' before *n* derive the same string, which has the velar
+nasal on every feature but [delayed release]; *paŋ* is unchanged there, and so is *pak*
+alone. -/
+theorem pak_paŋ_neutralized :
+    (derive [stopNasalization] ([.p, .a, .k, .n].map Phoneme.segment)).map
+        (Bundle.restrict exceptDelayedRelease) =
+      ([.p, .a, .ŋ, .n].map Phoneme.segment).map (Bundle.restrict exceptDelayedRelease) ∧
+      derive [stopNasalization] ([.p, .a, .ŋ, .n].map Phoneme.segment) =
+        [.p, .a, .ŋ, .n].map Phoneme.segment ∧
+      derive [stopNasalization] ([.p, .a, .k].map Phoneme.segment) =
+        [.p, .a, .k].map Phoneme.segment := by
+  decide
+
+/-- The string derived from *pak* before *n* is not the string with the velar nasal itself,
+because the rule leaves the stop its [−delayed release]. -/
+theorem derive_pak_ne_paŋ :
+    derive [stopNasalization] ([.p, .a, .k, .n].map Phoneme.segment) ≠
+      [.p, .a, .ŋ, .n].map Phoneme.segment := by
+  decide
+
+end Korean
