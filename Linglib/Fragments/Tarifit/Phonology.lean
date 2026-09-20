@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segmental.PHOIBLE
+import Linglib.Phonology.Segmental.SegmentLike
 
 /-!
 # Tarifit phones
@@ -18,17 +18,15 @@ fricative. PHOIBLE has no Tarifit inventory.
 
 ## Main definitions
 
-* `Tarifit.Phone`: the phones, with `ipa`, `chart`, `departure` and `segment`.
+* `Tarifit.Phone`: the phones, with `ipa`, `chart` and `departure`, read as segments.
 * `Tarifit.Phone.sonorityClass`, `Tarifit.Phone.rank`, `Tarifit.Phone.Voiceless`: the Parker
   class and rank of a phone, and the voiceless obstruents.
 
 ## Main results
 
-* `Tarifit.Phone.segment_injective`: distinct phones are distinct segments.
 * `Tarifit.Phone.departure_eq_bot_iff`: the phones that depart from the chart are the two
-  pharyngealized stops and the pharyngeal.
-* `Tarifit.Phone.restrict_segment_eq_chart`: a phone's segment has the chart's values off the
-  four features a departure writes.
+  pharyngealized stops and the pharyngeal. Elsewhere a phone has the chart's values, by
+  `Phonology.Segment.ofChart_apply`.
 
 ## References
 
@@ -74,26 +72,22 @@ def departure : Phone → Segment
   | .ayn => Segment.ofSpecs [(.consonantal, false), (.sonorant, true), (.approximant, true)]
   | _ => ⊥
 
-/-- The features a departure writes. -/
-def departed : Finset Phonology.Feature := {.back, .consonantal, .sonorant, .approximant}
-
-/-- The segment of a phone is its chart entry's with its departure merged over it. -/
-def segment (x : Phone) : Segment := Bundle.merge x.departure x.chart.toSegment
-
-theorem segment_injective : Function.Injective segment := by decide
-
 /-- The phones that depart from the chart are the pharyngealized stops and the pharyngeal. -/
 theorem departure_eq_bot_iff (x : Phone) :
     x.departure = ⊥ ↔ x ∉ ({.emphaticT, .emphaticD, .ayn} : Finset Phone) := by
   revert x; decide
 
-/-- A phone's segment has the chart's values off the features a departure writes. -/
-theorem restrict_segment_eq_chart (x : Phone) :
-    Bundle.restrict departedᶜ x.segment = Bundle.restrict departedᶜ x.chart.toSegment := by
-  revert x; decide
+end Phone
+
+/-- A phone is read as its chart entry's segment with its departure merged over it. -/
+instance : SegmentLike Phone where
+  coe x := .ofChart x.chart x.departure
+  coe_injective' := by decide
+
+namespace Phone
 
 /-- Parker sonority class, read off the phone's features. -/
-def sonorityClass (p : Phone) : Sonority.Class := Sonority.Class.ofSegment p.segment
+def sonorityClass (p : Phone) : Sonority.Class := Sonority.Class.ofSegment p
 
 /-- Parker sonority rank. -/
 def rank (p : Phone) : ℕ := p.sonorityClass.parkerRank
