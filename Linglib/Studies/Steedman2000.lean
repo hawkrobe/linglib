@@ -6,7 +6,6 @@ import Linglib.Syntax.CCG.Grammar
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Studies.BeckmanPierrehumbert1986
-import Linglib.Semantics.Composition.Scope
 
 /-!
 # Steedman (2000): The Syntactic Process
@@ -100,7 +99,7 @@ def john_tr : Derivation Atom (S / (S \ NP)) := .lex "John" (S / (S \ NP))
 
 def mary_tr : Derivation Atom (S / (S \ NP)) := .lex "Mary" (S / (S \ NP))
 
-/-- "John sees": the type-raised subject composed with the transitive verb, a constituent of
+/-- "John sees" is the type-raised subject composed with the transitive verb, a constituent of
 category `S/NP`. -/
 def john_sees : Derivation Atom (S / NP) := .fcomp (by decide) john_tr (.lex "sees" TV)
 
@@ -110,8 +109,8 @@ def mary_eats : Derivation Atom (S / NP) := .fcomp (by decide) mary_tr (.lex "ea
 `star` slashes confine it to application. -/
 def conj (c : Cat Atom) : Cat Atom := (c \⋆ c) /⋆ c
 
-/-- "John sees and Mary eats": coordination of two `S/NP` constituents through the lexical
-conjunction, the book's "Anna married, and I detest". -/
+/-- "John sees and Mary eats" coordinates two `S/NP` constituents through the lexical
+conjunction, as in the book's "Anna married, and I detest". -/
 def john_sees_and_mary_eats : Derivation Atom (S / NP) :=
   .bapp john_sees (.fapp (.lex "and" (conj (S / NP))) mary_eats)
 
@@ -125,7 +124,7 @@ theorem john_sees_and_mary_eats_pizza_yield :
 
 /-- The semantic lexicon over the toy English fragment: names, raised names, verbs, and the
 lexical conjunctions at `S` and, by generalized conjunction ([partee-rooth-1983]), at `S/NP`. -/
-def semLexicon : SemLexicon ToyEntity Unit := λ word cat =>
+def semLexicon : SemLexicon ToyEntity Unit := fun word cat ↦
   match word, cat with
   | "John", .atom .NP => some ToyEntity.john
   | "Mary", .atom .NP => some ToyEntity.mary
@@ -144,10 +143,10 @@ def semLexicon : SemLexicon ToyEntity Unit := λ word cat =>
   | "reads", .rslash (.lslash (.atom .S) _ (.atom .NP)) _ (.atom .NP) =>
       some ToyLexicon.reads_sem
   | "and", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
-      some (λ q p => p ∧ q)
+      some (fun q p ↦ p ∧ q)
   | "and", .rslash (.lslash (.rslash (.atom .S) _ (.atom .NP)) _
         (.rslash (.atom .S) _ (.atom .NP))) _ (.rslash (.atom .S) _ (.atom .NP)) =>
-      some (λ q p x => p x ∧ q x)
+      some (fun q p x ↦ p x ∧ q x)
   | _, _ => none
 
 /-- "John sees Mary" with a type-raised subject produces the same truth value as the
@@ -180,16 +179,16 @@ theorem nonConstituentCoord_eq_spelledOut :
 
 /-- A lexicon in which sentence `p` is true and `q` false, with the English coordinators
 interpreted by the Boolean operation of their role. -/
-private def pqLex : SemLexicon Unit Unit := λ w c =>
+private def pqLex : SemLexicon Unit Unit := fun w c ↦
   match w, c with
   | "p", .atom .S => some True
   | "q", .atom .S => some False
   | "and", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
       some (show Prop → Prop → Prop from
-        λ q p => Coordinator.op English.Coordination.and_.role p q)
+        fun q p ↦ Coordinator.op English.Coordination.and_.role p q)
   | "or", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
       some (show Prop → Prop → Prop from
-        λ q p => Coordinator.op English.Coordination.or_.role p q)
+        fun q p ↦ Coordinator.op English.Coordination.or_.role p q)
   | _, _ => none
 
 private def dp : Derivation Atom S := .lex "p" S
@@ -205,7 +204,7 @@ theorem coord_role_load_bearing :
   have hor : (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLex
       = some (True ∨ False) := rfl
   rw [hand, hor, ne_eq, Option.some.injEq, eq_iff_iff]
-  exact λ h => (h.mpr (Or.inl trivial)).2
+  exact fun h ↦ (h.mpr (Or.inl trivial)).2
 
 end Coordination
 
@@ -272,7 +271,7 @@ def gappedConjunct : Derivation Atom (S \ irishTV) :=
 
 theorem gappedConjunct_yield : gappedConjunct.yield = ["Warren", "potatoes"] := rfl
 
-/-- `RightwardInto t c`: `c` is a rightward function into `t`, the book's `t/$`. -/
+/-- `RightwardInto t c` holds when `c` is a rightward function into `t`, the book's `t/$`. -/
 def RightwardInto (t : Cat Atom) : Cat Atom → Prop
   | .rslash x _ _ => RightwardInto t x
   | .lslash x m y => Cat.lslash x m y = t
@@ -330,7 +329,7 @@ def SyntacticallyMediated : EllipsisType → Prop
   | .gapping | .stripping => True
   | .vpEllipsis | .sluicing => False
 
-instance : DecidablePred SyntacticallyMediated := λ x => by
+instance : DecidablePred SyntacticallyMediated := fun x ↦ by
   cases x <;> unfold SyntacticallyMediated <;> infer_instance
 
 end Gapping
@@ -374,7 +373,7 @@ theorem crossed_cluster_derives :
   .fc 1 zag_derives (.fc 0 helpen_derives zwemmen_derives ⟨by decide, rfl⟩ rfl)
     ⟨by decide, rfl⟩ rfl
 
-/-- "(dat) Jan Piet zag zwemmen": the two-verb cluster needs no composition and the NPs
+/-- In "(dat) Jan Piet zag zwemmen" the two-verb cluster needs no composition and the NPs
 attach leftward. -/
 theorem two_np_sub_derives : dutchGrammar.Derives S ["Jan", "Piet", "zag", "zwemmen"] :=
   .bc 0 jan_derives
@@ -382,7 +381,7 @@ theorem two_np_sub_derives : dutchGrammar.Derives S ["Jan", "Piet", "zag", "zwem
       ⟨by decide, rfl⟩ rfl)
     ⟨by decide, rfl⟩ rfl
 
-/-- "(dat) Jan Piet Marie zag helpen zwemmen": the three NPs attach leftward to the crossed
+/-- In "(dat) Jan Piet Marie zag helpen zwemmen" the three NPs attach leftward to the crossed
 cluster, Marie to the slot of "helpen", Piet to the object slot of "zag", Jan as subject, the
 cross-serial binding in the attested order. -/
 theorem three_np_sub_derives :
@@ -402,7 +401,7 @@ verb-projection-raising order it combines with the embedded verb alone. -/
 
 section Quantification
 
-open Semantics.Scope Data.Examples
+open Data.Examples
 
 /-- Word order in a West Germanic verb cluster. -/
 inductive VerbOrder
@@ -435,11 +434,6 @@ theorem verbRaisingDeriv_hasComp : verbRaisingDeriv.HasComp := by decide
 theorem verbProjectionRaisingDeriv_applicationOnly :
     ¬verbProjectionRaisingDeriv.HasComp := by decide
 
-/-- Scope availability as the account predicts it: a cluster built with composition is
-scope-ambiguous, an application-only cluster surface-only. -/
-def predictedAvailability (vo : VerbOrder) : BinaryScopeAvailability :=
-  if (schematicDeriv vo).HasComp then .ambiguous else .surfaceOnly
-
 /-- The word-order classification of an example. -/
 def wordOrderOf (ex : LinguisticExample) : Option VerbOrder :=
   match ex.paperFeatures.lookup "wordOrder" with
@@ -447,22 +441,23 @@ def wordOrderOf (ex : LinguisticExample) : Option VerbOrder :=
   | some "verbProjectionRaising" => some .verbProjectionRaising
   | _ => none
 
-/-- The observed availability: the judgment on the example's inverse reading. -/
-def observedAvailability (ex : LinguisticExample) : Option BinaryScopeAvailability :=
-  match ex.readings.lookup "inverse" with
-  | some .acceptable => some .ambiguous
-  | some .unacceptable => some .surfaceOnly
-  | _ => none
+/-- The scope examples as pairs of word order and the judgment on the inverse reading, on which
+the quantified object outscopes the tensed verb. -/
+def scopeData : List (VerbOrder × Judgment) :=
+  Examples.all.filterMap fun ex ↦
+    (wordOrderOf ex).bind fun vo ↦ (ex.readings.lookup "inverse").map (vo, ·)
 
-/-- The scope examples as pairs of word order and observed availability. -/
-def scopeData : List (VerbOrder × BinaryScopeAvailability) :=
-  Examples.all.filterMap λ ex =>
-    (wordOrderOf ex).bind λ vo => (observedAvailability ex).map λ av => (vo, av)
+/-- The inverse reading is acceptable exactly where the cluster is built with composition, in
+every judgment of the book's examples (96) to (100), credited in the data to [bayer-1996],
+[kayne-1998], [haegeman-van-riemsdijk-1986] and [haegeman-1992]. -/
+theorem inverse_acceptable_iff_hasComp :
+    ∀ d ∈ scopeData, d.2 = .acceptable ↔ (schematicDeriv d.1).HasComp := by
+  decide
 
-/-- The prediction matches every judgment of the book's examples (96) to (100), credited in
-the data to [bayer-1996], [kayne-1998], [haegeman-van-riemsdijk-1986] and [haegeman-1992]. -/
-theorem predictedAvailability_eq_observed :
-    ∀ d ∈ scopeData, predictedAvailability d.1 = d.2 := by
+/-- The data hold a verb-projection-raising example whose inverse reading is rejected, so the
+account's restriction to composed clusters is tested. -/
+theorem exists_verbProjectionRaising_unacceptable :
+    ∃ d ∈ scopeData, d.1 = .verbProjectionRaising ∧ d.2 = .unacceptable := by
   decide
 
 end Quantification
@@ -478,15 +473,15 @@ section Intonation
 
 open CCG.Intonation Prosody
 
-/-- Accents for "(ANNA married)(MANNY)": theme accent on "Anna", rheme accent on "Manny",
-"married" unaccented. -/
-def annaMannyAccents : AccentAssignment := λ w =>
+/-- The accents of "(ANNA married)(MANNY)" are a theme accent on "Anna" and a rheme accent on
+"Manny", with "married" unaccented. -/
+def annaMannyAccents : AccentAssignment := fun w ↦
   match w with
   | "Anna" => .L_plus_H_star
   | "Manny" => .H_star
   | _ => .null
 
-/-- "ANNA married": the composed theme constituent, category `S/NP`. -/
+/-- "ANNA married" is the composed theme constituent, of category `S/NP`. -/
 def anna_married : Derivation Atom (S / NP) :=
   .fcomp (by decide) (.lex "Anna" (S / (S \ NP))) (.lex "married" TV)
 
@@ -512,7 +507,7 @@ def annaMannyUtterance : List ProsodicPhrase :=
 /-- The extracted information structure: the theme is the `S/NP` constituent "ANNA married",
 the rheme "MANNY". -/
 theorem annaMannyUtterance_infoStructure :
-    (extractInfoStructure annaMannyUtterance).map (λ i => (i.theme.map (·.cat), i.rheme.cat))
+    (extractInfoStructure annaMannyUtterance).map (fun i ↦ (i.theme.map (·.cat), i.rheme.cat))
       = some (some (S / NP), NP) := rfl
 
 end Intonation
