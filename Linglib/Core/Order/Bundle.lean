@@ -273,6 +273,10 @@ theorem merge_apply_of_eq_some {b₁ : Bundle F V} {t : F} {v : V t} (h : b₁ t
     (b₂ : Bundle F V) : merge b₁ b₂ t = some v := by
   simp only [merge, h]
 
+theorem merge_apply_of_right_eq_none (b₁ : Bundle F V) {b₂ : Bundle F V} {t : F}
+    (h : b₂ t = none) : merge b₁ b₂ t = b₁ t := by
+  unfold merge; split <;> simp_all
+
 /-- An override merge extends its first argument. -/
 theorem le_merge_left (b₁ b₂ : Bundle F V) : b₁ ≤ merge b₁ b₂ := fun t ↦ by
   cases h : b₁ t with
