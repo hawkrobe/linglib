@@ -35,7 +35,7 @@ constraint-based frameworks such as `Phonology/OptimalityTheory/`).
 ## Main definitions
 
 * `ContextElem` — a segment pattern or word boundary.
-* `Effect` — feature merge, deletion, or assimilation of a feature class to a
+* `Effect` — feature merge, deletion, replacement, or assimilation of a feature class to a
   neighbour (SPE alpha-variables; node spreading when the class is natural).
 * `Rule` — the `target / effect / leftContext / rightContext` schema, with
   `Rule.leftReach` and `Rule.rightReach` the input it inspects on each side.
@@ -59,7 +59,7 @@ constraint-based frameworks such as `Phonology/OptimalityTheory/`).
 
 Application is single-pass and simultaneous: context matches and copied values
 are read from the input, not the partially-rewritten output (Chomsky and Halle,
-Chandlee and Heinz). `Effect` covers feature change, deletion, and copying a
+Chandlee and Heinz). `Effect` covers feature change, deletion, replacement, and copying a
 feature class from the adjacent input segment — Chomsky and Halle's
 alpha-variables, which is `Finset.piecewise` on the class — so insertion,
 metathesis and coalescence are not expressible, and application is neither
@@ -99,6 +99,9 @@ inductive Effect where
   | changeFeatures : Segment → Effect
   /-- Delete the target segment. SPE notation: `A → ∅`. -/
   | delete : Effect
+  /-- Replace the target segment by a given one, which may leave unspecified a feature the
+      target specifies, as a change to an archiphoneme does. -/
+  | replace : Segment → Effect
   /-- Assimilate the features of the class `C` to the following segment: the alpha-variable
       change `A → [αF, βG, …] / __ [αF, βG, …]` for `C = {F, G, …}`, and the spreading of a
       class node when `C` is a natural class (`Phonology/FeatureGeometry.lean`). -/
@@ -124,8 +127,9 @@ def Effect.apply (e : Effect) (w : List Segment) (s : Segment) (d : List Segment
   match e with
   | .changeFeatures change => some (Bundle.merge change s)
   | .delete => none
-  | .copyRight C => some (d.head?.elim s λ t => C.piecewise t s)
-  | .copyLeft C => some (w.getLast?.elim s λ t => C.piecewise t s)
+  | .replace t => some t
+  | .copyRight C => some (d.head?.elim s fun t ↦ C.piecewise t s)
+  | .copyLeft C => some (w.getLast?.elim s fun t ↦ C.piecewise t s)
 
 /-- An effect reads at most `leftReach` symbols of the prefix. -/
 theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : List Segment)
@@ -133,6 +137,7 @@ theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : L
   cases e with
   | changeFeatures _ => rfl
   | delete => rfl
+  | replace _ => rfl
   | copyRight _ => rfl
   | copyLeft C =>
     have h1 : 1 ≤ n := by simpa [Effect.leftReach] using h
@@ -144,6 +149,7 @@ theorem Effect.apply_append (e : Effect) (w : List Segment) (s : Segment) (d d' 
   cases e with
   | changeFeatures _ => rfl
   | delete => rfl
+  | replace _ => rfl
   | copyLeft _ => rfl
   | copyRight C =>
     have hd : d ≠ [] := by rintro rfl; simp [Effect.rightReach] at h
@@ -154,7 +160,7 @@ theorem Effect.apply_append (e : Effect) (w : List Segment) (s : Segment) (d d' 
 /-- A **local rewrite rule** in SPE notation `A → B / C __ D`.
 
 * `target` — natural class `A` matched by the affected segment.
-* `effect` — structural change `B`: feature merge or deletion.
+* `effect` — the structural change `B`.
 * `leftContext` — preceding context `C`, ordered left-to-right (so the
   rightmost element is closest to the target).
 * `rightContext` — following context `D`, ordered left-to-right.
@@ -167,12 +173,12 @@ structure Rule where
   leftContext : List ContextElem := []
   rightContext : List ContextElem := []
 
-/-- The input symbols to the left of the target a rule reads: its left context and whatever its
-effect copies. -/
+/-- `r.leftReach` is the number of input symbols to the left of the target that the rule reads,
+its left context and whatever its effect copies. -/
 def Rule.leftReach (r : Rule) : ℕ := max r.leftContext.length r.effect.leftReach
 
-/-- The input symbols to the right of the target a rule reads: its right context and whatever
-its effect copies. -/
+/-- `r.rightReach` is the number of input symbols to the right of the target that the rule
+reads, its right context and whatever its effect copies. -/
 def Rule.rightReach (r : Rule) : ℕ := max r.rightContext.length r.effect.rightReach
 
 /-! ### Context matching -/
@@ -262,9 +268,9 @@ theorem matchRightContext_append_of_le (ctx : List ContextElem) {d : List Segmen
 
 /-! ### The verdict at a position -/
 
-/-- The output block a rule contributes at one position: the effect applied when
-target, left context `w` and right context `d` all match, and the untouched
-segment otherwise. -/
+/-- `r.verdict w s d` is the output block the rule contributes at one position, which is the
+effect applied when target, left context `w` and right context `d` all match, and the
+untouched segment otherwise. -/
 def Rule.verdict (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) :
     List Segment :=
   if decide (r.target ≤ s) && matchLeftContext r.leftContext w
@@ -298,8 +304,8 @@ theorem Rule.verdict_append (r : Rule) (w : List Segment) (s : Segment) (d e : L
 
 /-! ### The bounded-window scan -/
 
-/-- `Rule.apply` rewritten to carry only the last `leftReach` input symbols: the unbounded
-prefix of `Rule.apply.go` is replaced by the window the rule can actually inspect. -/
+/-- `r.scan` is `Rule.apply` rewritten to carry only the last `leftReach` input symbols, the
+window the rule can inspect, in place of the unbounded prefix of `Rule.apply.go`. -/
 def Rule.scan (r : Rule) (w : List Segment) : List Segment → List Segment
   | [] => []
   | s :: right => r.verdict w s right ++ r.scan ((w ++ [s]).rtake r.leftReach) right

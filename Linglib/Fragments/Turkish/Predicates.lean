@@ -13,8 +13,9 @@ the accusative under *um-*, and the first two take it as a question as well. The
 done' are built on *öl-* 'die' and *yap-* 'do' by the voice suffix -DIr.
 
 Turkish is agglutinating, so a verb records the segments of its root and the voice suffixes of
-its stem. Its inflected forms are derived by the suffix forms of `Turkish.Morphotactics` and
-the surface forms of `Turkish.Phonology` rather than listed.
+its stem. Its inflected forms are derived by `Turkish.realize`, the attachment of suffixes in
+`Turkish.Morphotactics` followed by the surface forms of `Turkish.Phonology`, rather than
+listed.
 
 ## Main definitions
 
@@ -54,7 +55,7 @@ def suffixes (v : Verb) (sfx : List (Σ σ, system.Exponent σ)) : List (Σ σ, 
 /-- `v.inflect sfx` is the surface form of the verb under the inflectional suffixes `sfx`,
 which with no suffixes is the stem. -/
 def inflect (v : Verb) (sfx : List (Σ σ, system.Exponent σ)) : List Segment :=
-  surface (v.rootSegments ++ (v.suffixes sfx).flatMap fun e ↦ Exponent.form e.2)
+  realize v.rootSegments ((v.suffixes sfx).map fun e ↦ Exponent.form e.2)
 
 end Verb
 

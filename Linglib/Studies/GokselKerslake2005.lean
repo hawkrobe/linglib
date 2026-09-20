@@ -10,8 +10,9 @@ The vowel harmony of Chapter 3 is derived by the surface forms of `Turkish.Phono
 exponent forms of `Turkish.Morphotactics`. The permissible vowel sequences of §3.1 are the
 surface forms of the two suffix vowels. The last vowel of a disharmonic loan decides
 (*otobüs-ler*), an invariant suffix vowel is skipped and triggers what follows (*görüyorum*,
-§3.4), the palatal l of *gol* fronts its suffix (§3.4), and a stem-final vowel before -(I)yor
-leaves one high vowel (§8.2.3.3), the vowel of the negative among them.
+§3.4), and the palatal l of *gol* fronts its suffix (§3.4). The bracketed segments of Chapter 6
+appear where they keep vowels and consonants apart (§6.1.3), and a stem-final `a` or `e`,
+the vowel of the negative included, is raised before -(I)yor (§8.2.3.3).
 
 The suffix order of Chapter 8 is licensing by the position-class systems of the finite verb
 and the nominal. The grammar's example words are licensed with their stacked voice suffixes,
@@ -22,6 +23,8 @@ holds because the position is not iterable.
 
 * `followers_table`: the §3.1 table of permissible vowel sequences.
 * `retriggering`, `palatal_l`: the §3.4 exceptions to harmony, derived rather than listed.
+* `deletable_vowels`, `deletable_consonants`, `predicate_buffers`: the bracketed segments of
+  §6.1.3 after consonant-final and vowel-final stems.
 * `imperfective_of_vowel_stems`, `negative_raised`: the vowel-final stems of §8.2.3.3 and the
   negative of §8.2.2 before -(I)yor.
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
@@ -35,7 +38,7 @@ holds because the position is not iterable.
 
 namespace GokselKerslake2005
 
-open Turkish Phonology
+open Turkish Phonology Verb.Exponent Nominal.Exponent
 
 /-! ### Vowel harmony (Chapter 3) -/
 
@@ -53,97 +56,143 @@ theorem followers_table :
 /-- The second-person possessive -(I)n on *kız*, *el*, *kol* and *göz* surfaces with each of the
 four high vowels (§3.2.1). -/
 theorem iType :
-    surface ([k, ı, z] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
+    realize [k, ı, z] [(possessive (.pn .second .singular)).form] =
         [k, ı, z, ı, n] ∧
-    surface ([e, l] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
+    realize [e, l] [(possessive (.pn .second .singular)).form] =
         [e, l, i, n] ∧
-    surface ([k, o, l] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
+    realize [k, o, l] [(possessive (.pn .second .singular)).form] =
         [k, o, l, u, n] ∧
-    surface ([g, ö, z] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
+    realize [g, ö, z] [(possessive (.pn .second .singular)).form] =
         [g, ö, z, ü, n] := by
   decide
 
 /-- The last vowel of a stem decides, so the disharmonic loan *otobüs* takes *-ler*
 (Chapter 3). -/
 theorem last_vowel_decides :
-    surface ([o, t, o, b, ü, s] ++ Nominal.Exponent.plural.form) =
+    realize [o, t, o, b, ü, s] [plural.form] =
       [o, t, o, b, ü, s, l, e, r] := by
   decide
 
 /-- In *üz-ül-dü-nüz* 'you became sad' rounding is copied through three suffixes, and the `D`
 of -DI is voiced after `l` (§3.2). -/
 theorem iterated :
-    surface ([ü, z] ++ Verb.Exponent.passive.form ++ Verb.Exponent.di.form ++
-        (Verb.Exponent.person .one (.pn .second .plural)).form) =
+    realize [ü, z] [passive.form, di.form, (person .one (.pn .second .plural)).form] =
       [ü, z, ü, l, d, ü, n, ü, z] := by
   decide
 
 /-- The `o` of -(I)yor does not harmonize and triggers the person marker in *gör-üyor-um*, and
 the converb -(y)ken is invariable in *bak-mış-ken* (§3.4 (vi)). -/
 theorem retriggering :
-    surface ([g, ö, r] ++ Verb.Exponent.iyor.form ++
-        (Verb.Exponent.person .two (.pn .first .singular)).form) = [g, ö, r, ü, y, o, r, u, m] ∧
-    surface ([b, a, k] ++ Verb.Exponent.miş.form ++ [k, e, n]) = [b, a, k, m, ı, ş, k, e, n] := by
+    realize [g, ö, r] [iyor.form, (person .two (.pn .first .singular)).form] =
+      [g, ö, r, ü, y, o, r, u, m] ∧
+    realize [b, a, k] [miş.form, ⟨some y, [k, e, n]⟩] = [b, a, k, m, ı, ş, k, e, n] := by
   decide
 
 /-- The palatal l of *gol* and *hal* fronts the suffix in *gol-ü* and *hal-im*, while rounding
 still comes from the vowel (§3.4 (iv)). -/
 theorem palatal_l :
-    surface ([g, o, l'] ++ (Nominal.Exponent.possessive (.pn .third .singular)).form) =
+    realize [g, o, l'] [(possessive (.pn .third .singular)).form] =
       [g, o, l', ü] ∧
-    surface ([h, a, l'] ++ (Nominal.Exponent.possessive (.pn .first .singular)).form) =
+    realize [h, a, l'] [(possessive (.pn .first .singular)).form] =
       [h, a, l', i, m] := by
   decide
 
 /-- The `D` of -DI is `d` after a voiced segment and `t` after a voiceless one, as in *kal-dı*
 and *düş-tü* (§6.1.2). -/
 theorem voicing_of_D :
-    surface ([k, a, l] ++ Verb.Exponent.di.form) = [k, a, l, d, ı] ∧
-    surface ([d, ü, ş] ++ Verb.Exponent.di.form) = [d, ü, ş, t, ü] := by
+    realize [k, a, l] [di.form] = [k, a, l, d, ı] ∧
+    realize [d, ü, ş] [di.form] = [d, ü, ş, t, ü] := by
+  decide
+
+/-- A bracketed vowel appears after a consonant and is lost after a vowel, as in *pul-um*,
+*ev-im* against *araba-m*, *ev-iniz* against *araba-nız*, *ev-imiz* against *araba-mız*, and
+the aorist *gör-ür* against *ara-r* (§6.1.3, §8.1.2). -/
+theorem deletable_vowels :
+    realize [p, u, l] [(possessive (.pn .first .singular)).form] = [p, u, l, u, m] ∧
+    realize [e, v] [(possessive (.pn .first .singular)).form] = [e, v, i, m] ∧
+    realize [a, r, a, b, a] [(possessive (.pn .first .singular)).form] = [a, r, a, b, a, m] ∧
+    realize [e, v] [(possessive (.pn .second .plural)).form] = [e, v, i, n, i, z] ∧
+    realize [a, r, a, b, a] [(possessive (.pn .second .plural)).form] =
+      [a, r, a, b, a, n, ı, z] ∧
+    realize [e, v] [(possessive (.pn .first .plural)).form] = [e, v, i, m, i, z] ∧
+    realize [a, r, a, b, a] [(possessive (.pn .first .plural)).form] =
+      [a, r, a, b, a, m, ı, z] ∧
+    realize [g, ö, r] [aorist.form] = [g, ö, r, ü, r] ∧
+    realize [a, r, a] [aorist.form] = [a, r, a, r] := by
+  decide
+
+/-- A bracketed consonant appears after a vowel and is lost after a consonant. The buffer `y`
+does so in *Emine-ye*, *masa-ya* and *atla-yacak* against *sor-acak*, the `n` of the genitive
+in *Suna-nın* and *Emine-nin* against *Betül-ün*, and the `s` of the possessive in *araba-sı*
+and *elbise-si* against *ev-i* (§6.1.3, §8.1.2, §8.1.3). -/
+theorem deletable_consonants :
+    realize [e, m, i, n, e] [dative.form] = [e, m, i, n, e, y, e] ∧
+    realize [m, a, s, a] [dative.form] = [m, a, s, a, y, a] ∧
+    realize [a, t, l, a] [acak.form] = [a, t, l, a, y, a, c, a, K] ∧
+    realize [s, o, r] [acak.form] = [s, o, r, a, c, a, K] ∧
+    realize [s, u, n, a] [genitive.form] = [s, u, n, a, n, ı, n] ∧
+    realize [e, m, i, n, e] [genitive.form] = [e, m, i, n, e, n, i, n] ∧
+    realize [b, e, t, ü, l] [genitive.form] = [b, e, t, ü, l, ü, n] ∧
+    realize [a, r, a, b, a] [(possessive (.pn .third .singular)).form] = [a, r, a, b, a, s, ı] ∧
+    realize [e, l, b, i, s, e] [(possessive (.pn .third .singular)).form] =
+      [e, l, b, i, s, e, s, i] ∧
+    realize [e, v] [(possessive (.pn .third .singular)).form] = [e, v, i] := by
+  decide
+
+/-- The copular markers and the first-person markers of group 2 take the buffer `y` after a
+vowel, as in *okul-da-yım*, *ev-de-ydi-k*, *hasta-ysa-lar* and *kat-sa-ydı-lar* (§8.4). -/
+theorem predicate_buffers :
+    realize [o, k, u, l] [locative.form, (person .two (.pn .first .singular)).form] =
+      [o, k, u, l, d, a, y, ı, m] ∧
+    realize [e, v] [locative.form, pastCopula.form, (person .one (.pn .first .plural)).form] =
+      [e, v, d, e, y, d, i, k] ∧
+    realize [h, a, s, t, a] [conditionalCopula.form, (person .one (.pn .third .plural)).form] =
+      [h, a, s, t, a, y, s, a, l, a, r] ∧
+    realize [k, a, t] [sa.form, pastCopula.form, (person .one (.pn .third .plural)).form] =
+      [k, a, t, s, a, y, d, ı, l, a, r] := by
   decide
 
 /-- Before -(I)yor a stem-final `a` or `e` becomes high and harmonizes, as in *anlıyor*,
 *okşuyor*, *bekliyor* and *özlüyor*, and a stem-final high vowel stands, as in *eriyor* and
 *kuruyor* (§8.2.3.3). -/
 theorem imperfective_of_vowel_stems :
-    surface ([a, n, l, a] ++ Verb.Exponent.iyor.form) = [a, n, l, ı, y, o, r] ∧
-    surface ([o, k, ş, a] ++ Verb.Exponent.iyor.form) = [o, k, ş, u, y, o, r] ∧
-    surface ([b, e, k, l, e] ++ Verb.Exponent.iyor.form) = [b, e, k, l, i, y, o, r] ∧
-    surface ([ö, z, l, e] ++ Verb.Exponent.iyor.form) = [ö, z, l, ü, y, o, r] ∧
-    surface ([e, r, i] ++ Verb.Exponent.iyor.form) = [e, r, i, y, o, r] ∧
-    surface ([k, u, r, u] ++ Verb.Exponent.iyor.form) = [k, u, r, u, y, o, r] := by
+    realize [a, n, l, a] [iyor.form] = [a, n, l, ı, y, o, r] ∧
+    realize [o, k, ş, a] [iyor.form] = [o, k, ş, u, y, o, r] ∧
+    realize [b, e, k, l, e] [iyor.form] = [b, e, k, l, i, y, o, r] ∧
+    realize [ö, z, l, e] [iyor.form] = [ö, z, l, ü, y, o, r] ∧
+    realize [e, r, i] [iyor.form] = [e, r, i, y, o, r] ∧
+    realize [k, u, r, u] [iyor.form] = [k, u, r, u, y, o, r] := by
   decide
 
 /-- The vowel of the negative is a stem-final vowel before -(I)yor like any other, as in
 *anla-mı-yor*, *gör-mü-yor*, *sakla-mı-yor* and *söyle-mi-yor* (§8.2.2, §8.2.3.3). -/
 theorem negative_raised :
-    surface ([a, n, l, a] ++ Verb.Exponent.negative.form ++ Verb.Exponent.iyor.form) =
+    realize [a, n, l, a] [negative.form, iyor.form] =
       [a, n, l, a, m, ı, y, o, r] ∧
-    surface ([g, ö, r] ++ Verb.Exponent.negative.form ++ Verb.Exponent.iyor.form) =
+    realize [g, ö, r] [negative.form, iyor.form] =
       [g, ö, r, m, ü, y, o, r] ∧
-    surface ([s, a, k, l, a] ++ Verb.Exponent.negative.form ++ Verb.Exponent.iyor.form) =
+    realize [s, a, k, l, a] [negative.form, iyor.form] =
       [s, a, k, l, a, m, ı, y, o, r] ∧
-    surface ([s, ö, y, l, e] ++ Verb.Exponent.negative.form ++ Verb.Exponent.iyor.form) =
+    realize [s, ö, y, l, e] [negative.form, iyor.form] =
       [s, ö, y, l, e, m, i, y, o, r] := by
   decide
 
 /-- *Ev-ler-imiz-de-ymiş-ler* 'apparently they are at our homes' is the nominal string, the
-evidential copula with its buffer `y`, and a group-2 person marker (§8.1 (2)). -/
+evidential copula, whose buffer `y` appears after the locative's vowel, and a group-2 person
+marker (§8.1 (2)). -/
 theorem nominal_predicate :
-    surface ([e, v] ++ Nominal.Exponent.plural.form ++
-        (Nominal.Exponent.possessive (.pn .first .plural)).form ++ Nominal.Exponent.locative.form ++
-        [y] ++ Verb.Exponent.evidentialCopula.form ++
-        (Verb.Exponent.person .two (.pn .third .plural)).form) =
+    realize [e, v] [plural.form, (possessive (.pn .first .plural)).form, locative.form,
+        evidentialCopula.form, (person .two (.pn .third .plural)).form] =
       [e, v, l, e, r, i, m, i, z, d, e, y, m, i, ş, l, e, r] := by
   decide
 
 /-- The causative -DIr on *yap-*, *koy-*, *öl-* and *dol-* gives the stems *yaptır-*,
 *koydur-*, *öldür-* and *doldur-* (§8.2.1.1). -/
 theorem causative_stems :
-    surface ([y, a, p] ++ Verb.Exponent.causative.form) = [y, a, p, t, ı, r] ∧
-    surface ([k, o, y] ++ Verb.Exponent.causative.form) = [k, o, y, d, u, r] ∧
-    surface ([ö, l] ++ Verb.Exponent.causative.form) = [ö, l, d, ü, r] ∧
-    surface ([d, o, l] ++ Verb.Exponent.causative.form) = [d, o, l, d, u, r] := by
+    realize [y, a, p] [causative.form] = [y, a, p, t, ı, r] ∧
+    realize [k, o, y] [causative.form] = [k, o, y, d, u, r] ∧
+    realize [ö, l] [causative.form] = [ö, l, d, ü, r] ∧
+    realize [d, o, l] [causative.form] = [d, o, l, d, u, r] := by
   decide
 
 /-- The spelled stem of every verb of the Fragment writes the surface form of its root and
