@@ -21,6 +21,7 @@ phonemes differ in that feature alone.
 ## Main definitions
 
 * `Korean.Phoneme`: the phonemes of the illustration, with `chart`, read as segments.
+* `Korean.a`, `Korean.p` and the like: the segment of each phoneme, under its symbol.
 * `Korean.stopNasalization`: a non-affricate stop becomes a voiced nasal sonorant before a
   nasal.
 
@@ -74,6 +75,8 @@ instance : SegmentLike Phoneme where
   coe x := .ofChart x.chart
   coe_injective' := by decide
 
+segment_constants Phoneme
+
 /-! ### The rule -/
 
 /-- A non-affricate stop becomes a voiced nasal sonorant before a nasal. -/
@@ -95,20 +98,16 @@ theorem isDistinctive_compl_delayedRelease :
 nasal on every feature but [delayed release]; *paŋ* is unchanged there, and so is *pak*
 alone. -/
 theorem pak_paŋ_neutralized :
-    (derive [stopNasalization] ([.p, .a, .k, .n] : List Phoneme)).map
-        (Bundle.restrict exceptDelayedRelease) =
-      ([.p, .a, .ŋ, .n] : List Phoneme).map (Bundle.restrict exceptDelayedRelease) ∧
-      derive [stopNasalization] ([.p, .a, .ŋ, .n] : List Phoneme) =
-        ([.p, .a, .ŋ, .n] : List Phoneme) ∧
-      derive [stopNasalization] ([.p, .a, .k] : List Phoneme) =
-        ([.p, .a, .k] : List Phoneme) := by
+    (derive [stopNasalization] [p, a, k, n]).map (Bundle.restrict exceptDelayedRelease) =
+        [p, a, ŋ, n].map (Bundle.restrict exceptDelayedRelease) ∧
+      derive [stopNasalization] [p, a, ŋ, n] = [p, a, ŋ, n] ∧
+      derive [stopNasalization] [p, a, k] = [p, a, k] := by
   decide
 
 /-- The string derived from *pak* before *n* is not the string with the velar nasal itself,
 because the rule leaves the stop its [−delayed release]. -/
 theorem derive_pak_ne_paŋ :
-    derive [stopNasalization] ([.p, .a, .k, .n] : List Phoneme) ≠
-      ([.p, .a, .ŋ, .n] : List Phoneme) := by
+    derive [stopNasalization] [p, a, k, n] ≠ [p, a, ŋ, n] := by
   decide
 
 end Korean

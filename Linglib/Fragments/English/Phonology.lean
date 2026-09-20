@@ -12,6 +12,7 @@ and its segment is the segment of that chart entry, so the values are PHOIBLE's.
 ## Main definitions
 
 * `English.Phoneme`: the phonemes, with `chart`, read as segments.
+* `English.p`, `English.esh` and the like: the segment of each phoneme, under its symbol.
 * `English.preglottalization`, `English.postnasalDeletion`: two rules of Hayes's.
 
 ## Implementation notes
@@ -51,12 +52,14 @@ def chart : Phoneme → FeatureMatrix
   | l => .«l» | w => .«w» | turnedR => .«ɹ»
   | æ => .«æ» | smallCapitalI => .«ɪ» | i => .«i» | wedge => .«ʌ» | o => .«o» | schwa => .«ə»
 
+end Phoneme
+
 /-- A phoneme is read as the segment of its chart entry. -/
 instance : SegmentLike Phoneme where
   coe x := .ofChart x.chart
   coe_injective' := by decide
 
-end Phoneme
+segment_constants Phoneme
 
 /-! ### Rules -/
 

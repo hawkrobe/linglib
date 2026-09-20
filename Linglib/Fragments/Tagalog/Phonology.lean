@@ -24,6 +24,7 @@ of that place, so copying the place class onto /ŋ/ gives the chart's own /m/, /
 ## Main definitions
 
 * `Tagalog.Phoneme`: the phonemes of the examples, with `chart`, read as segments.
+* `Tagalog.a`, `Tagalog.p` and the like: the segment of each phoneme, under its symbol.
 * `Tagalog.placeAssimilation`, `Tagalog.obstruentDeletion`, `Tagalog.nasalSubstitution`: the
   two rules and their sequence.
 
@@ -67,10 +68,16 @@ def chart : Phoneme → FeatureMatrix
   | a => .«a» | i => .«i»
   | j => .«j»
 
+end Phoneme
+
 /-- A phoneme is read as the segment of its chart entry. -/
 instance : SegmentLike Phoneme where
   coe x := .ofChart x.chart
   coe_injective' := by decide
+
+segment_constants Phoneme
+
+namespace Phoneme
 
 /-- Each phoneme is in PHOIBLE's Tagalog inventory. -/
 theorem chart_mem_tgl (x : Phoneme) :
@@ -100,10 +107,8 @@ def nasalSubstitution : List Rule := [placeAssimilation, obstruentDeletion]
 
 /-- *maŋ-* with *bigáj* derives *mamigáj*; the bare stem is unchanged. -/
 theorem mamigaj :
-    derive nasalSubstitution (([.m, .a, .ŋ, .b, .i, .g, .a, .j] : List Phoneme)) =
-        ([.m, .a, .m, .i, .g, .a, .j] : List Phoneme) ∧
-      derive nasalSubstitution (([.b, .i, .g, .a, .j] : List Phoneme)) =
-        ([.b, .i, .g, .a, .j] : List Phoneme) := by
+    derive nasalSubstitution [m, a, ŋ, b, i, g, a, j] = [m, a, m, i, g, a, j] ∧
+      derive nasalSubstitution [b, i, g, a, j] = [b, i, g, a, j] := by
   decide
 
 /-- The nasal at the place of a stop or nasal. A vowel or glide is left as it is. -/
@@ -115,7 +120,7 @@ def Phoneme.nasal : Phoneme → Phoneme
 
 /-- Each stop coalesces with a preceding nasal into the nasal of its place. -/
 theorem coalescence (x : Phoneme) (hx : x ∈ ({.p, .b, .t, .d, .k, .g} : Finset Phoneme)) :
-    derive nasalSubstitution (([.ŋ, x] : List Phoneme)) = ([x.nasal] : List Phoneme) := by
+    derive nasalSubstitution [ŋ, x] = [x.nasal] := by
   revert x; decide
 
 end Tagalog

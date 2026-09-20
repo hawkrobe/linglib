@@ -14,6 +14,7 @@ chart, and its segment is the segment of that chart entry.
 ## Main definitions
 
 * `Farsi.Phoneme`: the phonemes, with `chart`, read as segments.
+* `Farsi.e`, `Farsi.h` and the like: the segment of each phoneme, under its symbol.
 
 ## Main results
 
@@ -53,10 +54,16 @@ def chart : Phoneme → FeatureMatrix
   | i => .«i» | e => .«e» | æ => .«a̟» | u => .«u» | o => .«o» | scriptA => .«ɑ»
   | h => .«h» | tesh => .«t̠ʃ» | m => .«m» | n => .«n» | glottalStop => .«ʔ»
 
+end Phoneme
+
 /-- A phoneme is read as the segment of its chart entry. -/
 instance : SegmentLike Phoneme where
   coe x := .ofChart x.chart
   coe_injective' := by decide
+
+segment_constants Phoneme
+
+namespace Phoneme
 
 /-- Each phoneme is in PHOIBLE's Persian inventory. -/
 theorem chart_mem_pes (x : Phoneme) :
