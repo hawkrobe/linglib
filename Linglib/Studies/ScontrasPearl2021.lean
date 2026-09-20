@@ -6,38 +6,47 @@ import Linglib.Core.Probability.Kernel.Posterior
 /-!
 # Scontras and Pearl (2021): When Pragmatics Matters More for Truth-Value Judgments
 
-This file formalizes the paper's Rational Speech Act model of utterance endorsement in the
-truth-value judgment task, for the scopally ambiguous *every horse didn't jump* (§3) and *two
-horses didn't jump* (§4), on the RSA kernel pipeline. A world is the number of horses that
-jumped. The test sentence is true on its surface reading when the determiner holds of the
-non-jumpers and on its inverse reading when it fails of the jumpers (`ext`); the literal listener
-is uniform on the extension (fn. 6); a question projects the worlds onto its answer (`project`);
-the speaker `S1` is the best response to the literal listener of its scope interpretation
-projected by its question; the pragmatic listener `L1` inverts the speaker jointly over worlds,
-interpretations and questions; and the endorsing speaker `S2`, who sees only the world, chooses
-between the sentence and silence by the world marginal of `L1`, so that a truth-value judgment is
-a production decision.
+This file formalizes Scontras and Pearl's Rational Speech Act model of the truth-value judgment
+task for the scopally ambiguous sentences *every horse didn't jump* and *two horses didn't jump*.
+A world is the number of horses that jumped. A speaker who knows the world, a scope
+interpretation and a question under discussion chooses between the sentence and silence, aiming
+to convey the answer to the question. A pragmatic listener inverts that speaker jointly over
+worlds, interpretations and questions. The endorsing speaker, who sees only the world, chooses
+between the sentence and silence by the listener's beliefs about the world, so that a truth-value
+judgment is a production decision.
 
-The endorsement probability has a closed form (`S2_real_amb`): writing `m` for the probability
-that a speaker at the observed world produces the sentence, averaged over interpretations and
-questions, and `z` for its expectation under the world prior, the sentence is endorsed with
-probability `m (1 - z) / (m (1 - z) + z (1 - m))`, hence more often than not exactly when it is
-produced at the observed world more often than on average (`one_half_lt_S2_real_amb_iff`). The
-paper's mechanisms follow. Under the question *all?* the two scope interpretations produce alike
-at every world (`S1_all_scope`), so with that question settled the scope prior does not affect
-endorsement (`S2_real_amb_all`, Figure 3); at the not-all world of the two-horse scenario *all?*
-maximizes and *none?* minimizes the production of the sentence under either interpretation
-(`share_le_share_all`, `share_none_le_share`, Figure 2); production falls with the number of
-jumpers (`share_antitone`), so a higher success base rate in the binomial world prior raises
-endorsement at every world (`S2_real_amb_mono_baseRate`, Figure 2). With two horses the two-not
-sentence has the extension of the every-not sentence on both interpretations under either
-numeral reading, so the two models coincide (`S2_twoExact_two`, `S2_twoAtLeast_two`, §4.2.1).
-With four horses and two jumpers the exact reading makes the surface interpretation true at that
-world alone (`ext_twoExact_surface`), so the surface speaker produces the sentence at least as
-often as under the at-least reading whatever the question (`share_twoAtLeast_le_share_twoExact`),
-while the inverse interpretation under *all?* favors the at-least reading
-(`share_twoExact_lt_share_twoAtLeast`), which is why the 2-of-4 fit needs a low prior on inverse
-scope (Figure 7).
+## Main definitions
+
+* `ext`: the worlds at which an utterance is true under a scope interpretation, for a determiner
+  given as a relation on counts.
+* `project`, `cell`: the answer a question assigns to a world, and the worlds sharing that answer.
+* `L0`, `S1`, `L1`, `S2`: the literal listener, the speaker, the pragmatic listener and the
+  endorsing speaker, as kernels.
+* `share`, `production`, `expectedProduction`: the probability that the speaker produces the
+  sentence at a world under an interpretation and a question, its average over interpretations
+  and questions, and the expectation of that average under the world prior.
+* `endorse`: the endorsement probability as a function of production and expected production.
+
+## Main results
+
+* `S2_real_amb`: the endorsement probability is `endorse` of the production at the observed world
+  and the expected production.
+* `one_half_lt_S2_real_amb_iff`: the sentence is endorsed more often than not exactly when it is
+  produced at the observed world more often than on average (§5.1).
+* `S1_all_scope`, `S2_real_amb_all`: under the question *all?* the two interpretations of
+  *every horse didn't jump* produce alike, so with that question settled the scope prior does
+  not affect endorsement (§3.2, Figure 3).
+* `share_le_share_all`, `share_none_le_share`: at the not-all world of the two-horse scenario
+  *all?* maximizes and *none?* minimizes production under either interpretation (Figure 2).
+* `share_antitone`, `S2_real_amb_mono_baseRate`: production falls with the number of jumpers, so
+  a higher success base rate in the binomial world prior raises endorsement (Figure 2).
+* `S2_numeral_eq_self`, `S2_numeral_ge_self`: with as many horses as the numeral counts, the
+  numeral sentence has the extension of the *every* sentence on both interpretations, so the two
+  models coincide (§4.2.1).
+* `share_twoAtLeast_le_share_twoExact`, `share_twoExact_lt_share_twoAtLeast`: with four horses
+  and two jumpers the surface speaker favors the exact reading whatever the question, while the
+  inverse speaker under *all?* favors the at-least reading, which is why the 2-of-4 fit needs a
+  low prior on inverse scope (§4.2.2, Figure 7).
 
 ## Implementation notes
 
@@ -46,12 +55,17 @@ scope (Figure 7).
   paper's grid of priors, are not restated, and the endorsement rates of the experiments the
   paper reviews are not data of this file.
 * A determiner is a relation between the number of restrictor members outside its scope and the
-  number inside it, so *every* is `every` and *two* is membership of the inside count in
-  `Comparison.eq.interval 2` or `Comparison.ge.interval 2`; (2) and (6) are the resulting
-  truth conditions at two and at four horses.
+  number inside it, so *every* is `every` and a numeral is membership of the inside count in
+  the interval of a `Degree.Comparison`, `.eq` for the exact reading and `.ge` for the at-least
+  reading. The truth conditions (2) and (6), which the paper tabulates at two and at four
+  horses, follow for any number of horses (`mem_ext_every_surface`, `mem_ext_numeral_surface`
+  and their inverse counterparts).
 * Both models share the five questions of (7): the every-not model is the case of a question
   prior carried by the first three, and with two horses the numeral questions partition the
   worlds as *all?* does (`cell_exactlyTwo_two`, `cell_atLeastTwo_two`).
+* The base-rate result is proved at two horses, the paper's scenario. For any number of horses
+  it would follow from `production` being antitone and the binomial family being stochastically
+  increasing in its success probability.
 * Utterances are costless (fn. 8) and the literal listener carries no world prior (fn. 6),
   following [qing-franke-2015]; the projected listener is that of [kao-etal-2014-hyperbole].
 
@@ -69,56 +83,57 @@ open scoped ENNReal unitInterval Fin.NatCast
 
 namespace ScontrasPearl2021
 
-/-- The utterances of (2): the null utterance, which says nothing, and the scopally ambiguous
+/-- The utterances of (2) are the null utterance, which says nothing, and the scopally ambiguous
 test sentence. -/
 inductive Utt
   | null | amb
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Utt := ⊤
-instance : DiscreteMeasurableSpace Utt := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utt := ⟨fun _ ↦ trivial⟩
 
-/-- The scope interpretations of the test sentence: the determiner over negation, or negation
+/-- The scope interpretations of the test sentence put the determiner over negation, or negation
 over the determiner. -/
 inductive Scope
   | surface | inverse
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Scope := ⊤
-instance : DiscreteMeasurableSpace Scope := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Scope := ⟨fun _ ↦ trivial⟩
 instance : Nonempty Scope := ⟨.surface⟩
 
-/-- The questions under discussion of (3) and (7): how many horses jumped, and whether all, none,
-exactly two or at least two did. -/
+/-- The questions under discussion of (3) and (7) ask how many horses jumped, and whether all,
+none, exactly two or at least two did. -/
 inductive QUD
   | howMany | all | none | exactlyTwo | atLeastTwo
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace QUD := ⊤
-instance : DiscreteMeasurableSpace QUD := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace QUD := ⟨fun _ ↦ trivial⟩
 instance : Nonempty QUD := ⟨.howMany⟩
 
-/-- A world: the number of horses, out of `n`, that jumped. -/
+/-- A world is the number of horses, out of `n`, that jumped. -/
 abbrev World (n : ℕ) := Fin (n + 1)
 
 /-! ### Semantics -/
 
-/-- The determiner *every* on counts: no restrictor member lies outside its scope. -/
+/-- The determiner *every* holds of counts when no restrictor member lies outside its scope. -/
 def every (outside _inside : ℕ) : Prop := outside = 0
 
-instance : DecidableRel every := λ _ _ => inferInstanceAs (Decidable (_ = 0))
+instance : DecidableRel every := fun _ _ ↦ inferInstanceAs (Decidable (_ = 0))
 
-/-- The numeral *two* on counts, on its exact reading. -/
-def twoExact (_outside inside : ℕ) : Prop := inside ∈ Degree.Comparison.eq.interval 2
+/-- A numeral on counts, whose inside count lies in the interval that the comparison `c` selects
+at `k`. The comparison `.eq` gives the exact reading and `.ge` the at-least reading. -/
+def numeral (c : Degree.Comparison) (k : ℕ) (_outside inside : ℕ) : Prop := inside ∈ c.interval k
 
-instance : DecidableRel twoExact :=
-  fun _ k ↦ inferInstanceAs (Decidable (k ∈ Degree.Comparison.eq.interval 2))
+instance (c : Degree.Comparison) (k : ℕ) : DecidableRel (numeral c k) :=
+  fun _ i ↦ inferInstanceAs (Decidable (i ∈ c.interval k))
 
-/-- The numeral *two* on counts, on its at-least reading. -/
-def twoAtLeast (_outside inside : ℕ) : Prop := inside ∈ Degree.Comparison.ge.interval 2
+/-- The numeral *two* on its exact reading. -/
+abbrev twoExact : ℕ → ℕ → Prop := numeral .eq 2
 
-instance : DecidableRel twoAtLeast :=
-  fun _ k ↦ inferInstanceAs (Decidable (k ∈ Degree.Comparison.ge.interval 2))
+/-- The numeral *two* on its at-least reading. -/
+abbrev twoAtLeast : ℕ → ℕ → Prop := numeral .ge 2
 
 /-- The extension of an utterance under a scope interpretation ((2), (6)) among `n` horses. The
 null utterance is true everywhere; *D horses didn't jump* is true at `w` on its surface reading
@@ -127,33 +142,89 @@ its inverse reading when `D` fails with the `n - w` non-jumpers outside and the 
 inside. -/
 def ext (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ) : Scope → Utt → Finset (World n)
   | _, .null => Finset.univ
-  | .surface, .amb => Finset.univ.filter λ w => D w (n - w)
-  | .inverse, .amb => Finset.univ.filter λ w => ¬ D (n - w) w
+  | .surface, .amb => Finset.univ.filter fun w ↦ D w (n - w)
+  | .inverse, .amb => Finset.univ.filter fun w ↦ ¬ D (n - w) w
 
-/-- With two horses, *two horses didn't jump* on its exact reading is true exactly where *every
-horse didn't jump* is, on both interpretations (§4.2.1). -/
-theorem ext_twoExact_two (i : Scope) (u : Utt) : ext twoExact 2 i u = ext every 2 i u := by
-  cases i <;> cases u <;> decide
+section Ext
 
-/-- With two horses, *two horses didn't jump* on its at-least reading is true exactly where *every
-horse didn't jump* is, on both interpretations (§4.2.1). -/
-theorem ext_twoAtLeast_two (i : Scope) (u : Utt) : ext twoAtLeast 2 i u = ext every 2 i u := by
-  cases i <;> cases u <;> decide
+variable {D : ℕ → ℕ → Prop} [DecidableRel D] {c : Degree.Comparison} {k n : ℕ} {w : World n}
 
-/-- With four horses, the surface reading of *two horses didn't jump* on the exact reading of the
-numeral is true only where exactly two jumped ((6), Figure 5). -/
+theorem mem_ext_surface : w ∈ ext D n .surface .amb ↔ D w (n - w) := by simp [ext]
+
+theorem mem_ext_inverse : w ∈ ext D n .inverse .amb ↔ ¬ D (n - w) w := by simp [ext]
+
+/-- On its surface interpretation *every horse didn't jump* is true where none jumped (2). -/
+theorem mem_ext_every_surface : w ∈ ext every n .surface .amb ↔ w = 0 := by
+  rw [mem_ext_surface, every, Fin.ext_iff, Fin.val_zero]
+
+/-- On its inverse interpretation *every horse didn't jump* is true where not all jumped (2). -/
+theorem mem_ext_every_inverse : w ∈ ext every n .inverse .amb ↔ w ≠ Fin.last n := by
+  rw [mem_ext_inverse, every, Ne, Fin.ext_iff, Fin.val_last]
+  omega
+
+/-- On its surface interpretation a numeral sentence is true where the number of non-jumpers
+stands in the numeral's comparison to its value (6). -/
+theorem mem_ext_numeral_surface :
+    w ∈ ext (numeral c k) n .surface .amb ↔ c.rel (n - w) k := by
+  rw [mem_ext_surface, numeral, Degree.Comparison.mem_interval]
+
+/-- On its inverse interpretation a numeral sentence is true where the number of jumpers does
+not stand in the numeral's comparison to its value (6). -/
+theorem mem_ext_numeral_inverse :
+    w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.rel (w : ℕ) k := by
+  rw [mem_ext_inverse, numeral, Degree.Comparison.mem_interval]
+
+/-- The extension sees a determiner only at counts that sum to the number of horses, the
+diagonal of the number triangle, so determiners that agree there have the same extensions. -/
+theorem ext_congr {D' : ℕ → ℕ → Prop} [DecidableRel D']
+    (h : ∀ a b, a + b = n → (D a b ↔ D' a b)) (i : Scope) (u : Utt) :
+    ext D n i u = ext D' n i u := by
+  cases u
+  · rfl
+  · ext w
+    cases i
+    · rw [mem_ext_surface, mem_ext_surface, h _ _ (Nat.add_sub_of_le w.is_le)]
+    · rw [mem_ext_inverse, mem_ext_inverse, h _ _ (Nat.sub_add_cancel w.is_le)]
+
+/-- Among `n` restrictor members, exactly `n` lie inside the scope just in case none lies
+outside. -/
+theorem numeral_eq_iff_every {a b : ℕ} (h : a + b = n) : numeral .eq n a b ↔ every a b := by
+  simp only [numeral, every, Degree.Comparison.mem_interval, Degree.Comparison.rel]
+  omega
+
+/-- Among `n` restrictor members, at least `n` lie inside the scope just in case none lies
+outside. -/
+theorem numeral_ge_iff_every {a b : ℕ} (h : a + b = n) : numeral .ge n a b ↔ every a b := by
+  simp only [numeral, every, Degree.Comparison.mem_interval, Degree.Comparison.rel]
+  omega
+
+/-- With as many horses as the numeral counts, the numeral sentence on the exact reading is true
+exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
+theorem ext_numeral_eq_self (n : ℕ) : ext (numeral .eq n) n = ext every n :=
+  funext₂ <| ext_congr fun _ _ ↦ numeral_eq_iff_every
+
+/-- With as many horses as the numeral counts, the numeral sentence on the at-least reading is
+true exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
+theorem ext_numeral_ge_self (n : ℕ) : ext (numeral .ge n) n = ext every n :=
+  funext₂ <| ext_congr fun _ _ ↦ numeral_ge_iff_every
+
+end Ext
+
+/-- With four horses, *two horses didn't jump* on the exact reading of the numeral is true on its
+surface interpretation only where exactly two jumped ((6), Figure 5). -/
 theorem ext_twoExact_surface : ext twoExact 4 .surface .amb = {2} := by decide
 
-theorem mem_ext_every_surface {n : ℕ} {w : World n} :
-    w ∈ ext every n .surface .amb ↔ w = 0 := by
-  rw [ext, Finset.mem_filter, every, Fin.ext_iff, Fin.val_zero]
-  simp only [Finset.mem_univ, true_and]
+/-- With four horses, *two horses didn't jump* on the exact reading is true on its inverse
+interpretation wherever the number of jumpers is not two (6). -/
+theorem ext_twoExact_inverse : ext twoExact 4 .inverse .amb = {0, 1, 3, 4} := by decide
 
-theorem mem_ext_every_inverse {n : ℕ} {w : World n} :
-    w ∈ ext every n .inverse .amb ↔ w ≠ Fin.last n := by
-  rw [ext, Finset.mem_filter, every, Ne, Fin.ext_iff, Fin.val_last]
-  simp only [Finset.mem_univ, true_and]
-  omega
+/-- With four horses, *two horses didn't jump* on the at-least reading is true on its surface
+interpretation where fewer than three jumped (6). -/
+theorem ext_twoAtLeast_surface : ext twoAtLeast 4 .surface .amb = {0, 1, 2} := by decide
+
+/-- With four horses, *two horses didn't jump* on the at-least reading is true on its inverse
+interpretation where fewer than two jumped (6). -/
+theorem ext_twoAtLeast_inverse : ext twoAtLeast 4 .inverse .amb = {0, 1} := by decide
 
 /-- The projection of a question ((3), (7)) sends a world to its answer: the number of jumpers
 for *how many?*, and for the polar questions whether all, none, exactly two or at least two
@@ -165,9 +236,9 @@ def project (n : ℕ) : QUD → World n → World n ⊕ Bool
   | .exactlyTwo, w => .inr (decide ((w : ℕ) = 2))
   | .atLeastTwo, w => .inr (decide (2 ≤ (w : ℕ)))
 
-/-- The cell of a world under a question: the worlds sharing its answer. -/
+/-- The cell of a world under a question is the set of worlds sharing its answer. -/
 def cell (n : ℕ) (q : QUD) (w : World n) : Finset (World n) :=
-  Finset.univ.filter λ w' => project n q w' = project n q w
+  Finset.univ.filter fun w' ↦ project n q w' = project n q w
 
 theorem mem_cell {n : ℕ} {q : QUD} {w w' : World n} :
     w' ∈ cell n q w ↔ project n q w' = project n q w := by
@@ -193,10 +264,10 @@ section Model
 
 variable (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ)
 
-/-- The literal listener: uniform on the extension of the utterance under the scope
+/-- The literal listener is uniform on the extension of the utterance under the scope
 interpretation, with no world prior (fn. 6). -/
 noncomputable def L0 (i : Scope) : Kernel Utt (World n) :=
-  literalListener (uniformOn Set.univ) λ u => (↑(ext D n i u) : Set (World n)).indicator 1
+  literalListener (uniformOn Set.univ) fun u ↦ (↑(ext D n i u) : Set (World n)).indicator 1
 
 theorem L0_apply (i : Scope) (u : Utt) : L0 D n i u = uniformOn ↑(ext D n i u) := by
   rw [L0, literalListener_indicator, Kernel.ofFunOfCountable_apply, uniformOn, uniformOn,
@@ -218,11 +289,11 @@ theorem projListener_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
 
 variable (α : ℝ)
 
-/-- The speaker (§3.1): at a world, a scope interpretation and a question, the best response at
-rationality `α` to the literal listener of the interpretation projected by the question; the
+/-- The speaker of §3.1 is, at a world, a scope interpretation and a question, the best response
+at rationality `α` to the literal listener of the interpretation projected by the question. The
 utterances are costless (fn. 8). -/
 noncomputable def S1 : Kernel (World n × (Scope × QUD)) Utt :=
-  familySpeaker (λ l => projListener (project n) (L0 D n l.1) l.2) α 1
+  familySpeaker (fun l ↦ projListener (project n) (L0 D n l.1) l.2) α 1
 
 theorem S1_apply (w : World n) (l : Scope × QUD) :
     S1 D n α (w, l) = speaker α 1 (projListener (project n) (L0 D n l.1) l.2) w := rfl
@@ -230,13 +301,13 @@ theorem S1_apply (w : World n) (l : Scope × QUD) :
 instance : IsFiniteKernel (S1 D n α) := inferInstanceAs (IsFiniteKernel (familySpeaker _ α 1))
 
 theorem isMarkovKernel_S1 (hα : 0 ≤ α) : IsMarkovKernel (S1 D n α) := by
-  refine ⟨λ p => ?_⟩
+  refine ⟨fun p ↦ ?_⟩
   obtain ⟨w, l⟩ := p
   rw [S1_apply]
-  have := isMarkovKernel_speaker hα (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
+  have := isMarkovKernel_speaker hα (fun _ ↦ one_ne_zero) (fun _ ↦ ENNReal.one_ne_top)
     (projListener (project n) (L0 D n l.1) l.2)
-    (λ u w => projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one D n l.1))
-    (λ w => ⟨.null, by
+    (fun u w ↦ projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one D n l.1))
+    (fun w ↦ ⟨.null, by
       rw [projListener_L0_apply, Ne, uniformOn_eq_zero_iff (Finset.finite_toSet _)]
       exact Set.nonempty_iff_ne_empty.mp
         ⟨w, Finset.mem_coe.mpr (Finset.mem_univ w), Finset.mem_coe.mpr (mem_cell_self l.2 w)⟩⟩)
@@ -244,25 +315,25 @@ theorem isMarkovKernel_S1 (hα : 0 ≤ α) : IsMarkovKernel (S1 D n α) := by
 
 variable (μ : Measure (World n)) [IsFiniteMeasure μ] (ν : Measure (Scope × QUD)) [IsFiniteMeasure ν]
 
-/-- The pragmatic listener (§3.1): the Bayesian inverse of the speaker over worlds,
+/-- The pragmatic listener of §3.1 is the Bayesian inverse of the speaker over worlds,
 interpretations and questions, against the product of the world prior and a prior on
 interpretations and questions (the paper's `P(i) P(q)`). -/
 noncomputable def L1 : Kernel Utt (World n × (Scope × QUD)) :=
-  familyListener (λ l => projListener (project n) (L0 D n l.1) l.2) α 1 (μ.prod ν)
+  familyListener (fun l ↦ projListener (project n) (L0 D n l.1) l.2) α 1 (μ.prod ν)
 
-/-- The endorsing speaker (§3.1): at the observed world, the best response at unit rationality to
-the world marginal of the pragmatic listener. -/
+/-- The endorsing speaker of §3.1 is, at the observed world, the best response at unit rationality
+to the world marginal of the pragmatic listener. -/
 noncomputable def S2 : Kernel (World n) Utt := speaker 1 1 (Kernel.fst (L1 D n α μ ν))
 
-/-- With two horses the two-not model on the exact reading is the every-not model (§4.2.1). -/
-theorem S2_twoExact_two (μ : Measure (World 2)) [IsFiniteMeasure μ] :
-    S2 twoExact 2 α μ ν = S2 every 2 α μ ν := by
-  simp only [S2, L1, L0, ext_twoExact_two]
+/-- With as many horses as the numeral counts, the numeral model on the exact reading is the
+every-not model (§4.2.1). -/
+theorem S2_numeral_eq_self : S2 (numeral .eq n) n α μ ν = S2 every n α μ ν := by
+  simp only [S2, L1, L0, ext_numeral_eq_self]
 
-/-- With two horses the two-not model on the at-least reading is the every-not model (§4.2.1). -/
-theorem S2_twoAtLeast_two (μ : Measure (World 2)) [IsFiniteMeasure μ] :
-    S2 twoAtLeast 2 α μ ν = S2 every 2 α μ ν := by
-  simp only [S2, L1, L0, ext_twoAtLeast_two]
+/-- With as many horses as the numeral counts, the numeral model on the at-least reading is the
+every-not model (§4.2.1). -/
+theorem S2_numeral_ge_self : S2 (numeral .ge n) n α μ ν = S2 every n α μ ν := by
+  simp only [S2, L1, L0, ext_numeral_ge_self]
 
 end Model
 
@@ -272,8 +343,9 @@ section Share
 
 variable (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ) (α : ℝ)
 
-/-- The fraction of the extension of an utterance under a scope interpretation that lies in the
-cell of a world under a question: the projected literal listener's mass on the world. -/
+/-- The cell mass is the fraction of the extension of an utterance under a scope interpretation
+that lies in the cell of a world under a question, which is the projected literal listener's mass
+on the world. -/
 noncomputable def cellMass (l : Scope × QUD) (u : Utt) (w : World n) : ℝ :=
   (projListener (project n) (L0 D n l.1) l.2 u).real {w}
 
@@ -291,8 +363,8 @@ theorem cellMass_null_pos (l : Scope × QUD) (w : World n) : 0 < cellMass D n l 
   exact Nat.cast_pos.mpr (Finset.card_pos.mpr ⟨w, Finset.mem_inter.mpr
     ⟨Finset.mem_univ w, mem_cell_self l.2 w⟩⟩)
 
-/-- The probability that the speaker produces the test sentence at a world under a scope
-interpretation and a question. -/
+/-- The share is the probability that the speaker produces the test sentence at a world under a
+scope interpretation and a question. -/
 noncomputable def share (l : Scope × QUD) (w : World n) : ℝ := (S1 D n α (w, l)).real {.amb}
 
 theorem share_eq (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
@@ -300,9 +372,9 @@ theorem share_eq (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
       = cellMass D n l .amb w ^ α / (cellMass D n l .amb w ^ α + cellMass D n l .null w ^ α) := by
   rw [share, S1_apply, speaker, Kernel.ofWeights_real_singleton_of_pair _ (b := Utt.amb)
     (b' := Utt.null) (by decide)
-    (λ u => ENNReal.mul_ne_top (weight_rpow_ne_top hα
+    (fun u ↦ ENNReal.mul_ne_top (weight_rpow_ne_top hα
       (projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one D n l.1))) ENNReal.one_ne_top)
-    (λ u _ => by cases u <;> simp)]
+    (fun u _ ↦ by cases u <;> simp)]
   simp only [Pi.one_apply, mul_one, cellMass, measureReal_def, ← ENNReal.toReal_rpow]
 
 theorem share_nonneg (l : Scope × QUD) (w : World n) : 0 ≤ share D n α l w := measureReal_nonneg
@@ -330,7 +402,7 @@ theorem share_pos (hα : 0 ≤ α) {l : Scope × QUD} {w : World n} (h : w ∈ e
     ⟨h, mem_cell_self l.2 w⟩⟩)) (Nat.cast_pos.mpr (Finset.card_pos.mpr ⟨w, h⟩))
 
 private theorem sum_utt (f : Utt → ℝ) : ∑ u, f u = f .amb + f .null :=
-  Fintype.sum_eq_add Utt.amb Utt.null (by decide) (λ u h => by cases u <;> simp at h)
+  Fintype.sum_eq_add Utt.amb Utt.null (by decide) (fun u h ↦ by cases u <;> simp at h)
 
 /-- The null utterance takes the rest of the speaker's mass. -/
 theorem S1_real_null (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
@@ -341,8 +413,8 @@ theorem S1_real_null (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
   rw [share]
   linarith
 
-/-- The number of worlds in the cell of `w` under the question of `l` at which `u` is true under
-the interpretation of `l`. -/
+/-- The cell count is the number of worlds in the cell of `w` under the question of `l` at which
+`u` is true under the interpretation of `l`. -/
 def cellCount (l : Scope × QUD) (u : Utt) (w : World n) : ℕ := (ext D n l.1 u ∩ cell n l.2 w).card
 
 private theorem cellMass_mul_cellMass_le_iff {D' : ℕ → ℕ → Prop} [DecidableRel D']
@@ -358,8 +430,8 @@ private theorem cellMass_mul_cellMass_le_iff {D' : ℕ → ℕ → Prop} [Decida
   have hN' : (ext D n l.1 .null).card = (ext D' n l'.1 .null).card := rfl
   rw [hN', div_mul_div_comm, div_mul_div_comm,
     div_le_div_iff₀ (by positivity) (by positivity), ← mul_assoc, ← mul_assoc]
-  exact ⟨λ h => by exact_mod_cast le_of_mul_le_mul_right h hN,
-    λ h => mul_le_mul_of_nonneg_right (by exact_mod_cast h) hN.le⟩
+  exact ⟨fun h ↦ by exact_mod_cast le_of_mul_le_mul_right h hN,
+    fun h ↦ mul_le_mul_of_nonneg_right (by exact_mod_cast h) hN.le⟩
 
 /-- Comparing production probabilities across worlds, interpretations, questions and
 determiners: the rationality cancels, leaving a comparison of the odds of the test sentence
@@ -400,16 +472,16 @@ section Endorsement
 variable (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ) (α : ℝ) (μ : Measure (World n))
   (ν : Measure (Scope × QUD))
 
-/-- The probability that the test sentence is produced at a world, the interpretation and the
-question drawn from `ν`. -/
+/-- The production at a world is the probability that the test sentence is produced there, the
+interpretation and the question drawn from `ν`. -/
 noncomputable def production (w : World n) : ℝ := ∑ l, ν.real {l} * share D n α l w
 
-/-- The prior probability that the test sentence is produced: the observation marginal of the
-speaker. -/
+/-- The expected production is the prior probability that the test sentence is produced, the
+observation marginal of the speaker. -/
 noncomputable def expectedProduction : ℝ := (S1 D n α ∘ₘ μ.prod ν).real {.amb}
 
 theorem production_nonneg (w : World n) : 0 ≤ production D n α ν w :=
-  Finset.sum_nonneg λ l _ => mul_nonneg measureReal_nonneg (share_nonneg D n α l w)
+  Finset.sum_nonneg fun l _ ↦ mul_nonneg measureReal_nonneg (share_nonneg D n α l w)
 
 private theorem sum_real_singleton_eq_one {X : Type*} [MeasurableSpace X] [Fintype X]
     [MeasurableSingletonClass X] (ρ : Measure X) [IsProbabilityMeasure ρ] :
@@ -424,19 +496,19 @@ instance : IsMarkovKernel (L1 D n α μ ν) :=
 theorem expectedProduction_eq_sum :
     expectedProduction D n α μ ν = ∑ w, μ.real {w} * production D n α ν w := by
   rw [expectedProduction, Measure.comp_real_singleton, Fintype.sum_prod_type]
-  refine Finset.sum_congr rfl λ w _ => ?_
+  refine Finset.sum_congr rfl fun w _ ↦ ?_
   rw [production, Finset.mul_sum]
-  exact Finset.sum_congr rfl λ l _ => by rw [Measure.prod_real_singleton, share, mul_assoc]
+  exact Finset.sum_congr rfl fun l _ ↦ by rw [Measure.prod_real_singleton, share, mul_assoc]
 
 theorem production_le_one (w : World n) : production D n α ν w ≤ 1 :=
-  (Finset.sum_le_sum λ l _ =>
+  (Finset.sum_le_sum fun l _ ↦
     mul_le_of_le_one_right measureReal_nonneg (share_le_one D n α l w)).trans_eq
     (sum_real_singleton_eq_one ν)
 
 theorem production_lt_one (hα : 0 ≤ α) (w : World n) : production D n α ν w < 1 := by
   obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
     ((sum_real_singleton_eq_one ν).trans_ne one_ne_zero)
-  refine (Finset.sum_lt_sum (λ l _ => mul_le_of_le_one_right measureReal_nonneg
+  refine (Finset.sum_lt_sum (fun l _ ↦ mul_le_of_le_one_right measureReal_nonneg
     (share_le_one D n α l w)) ⟨l, Finset.mem_univ l, ?_⟩).trans_eq (sum_real_singleton_eq_one ν)
   exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
     (share_lt_one D n α hα l w)
@@ -447,7 +519,7 @@ theorem production_pos (hα : 0 ≤ α) {w : World n} (h : ∀ l : Scope × QUD,
     0 < production D n α ν w := by
   obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
     ((sum_real_singleton_eq_one ν).trans_ne one_ne_zero)
-  exact Finset.sum_pos' (λ l _ => mul_nonneg measureReal_nonneg (share_nonneg D n α l w))
+  exact Finset.sum_pos' (fun l _ ↦ mul_nonneg measureReal_nonneg (share_nonneg D n α l w))
     ⟨l, Finset.mem_univ l, mul_pos (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
       (share_pos D n α hα (h l))⟩
 
@@ -455,7 +527,7 @@ theorem expectedProduction_lt_one (hα : 0 ≤ α) : expectedProduction D n α �
   rw [expectedProduction_eq_sum]
   obtain ⟨w, -, hw⟩ := Finset.exists_ne_zero_of_sum_ne_zero
     ((sum_real_singleton_eq_one μ).trans_ne one_ne_zero)
-  refine (Finset.sum_lt_sum (λ w _ => mul_le_of_le_one_right measureReal_nonneg
+  refine (Finset.sum_lt_sum (fun w _ ↦ mul_le_of_le_one_right measureReal_nonneg
     (production_le_one D n α ν w)) ⟨w, Finset.mem_univ w, ?_⟩).trans_eq
     (sum_real_singleton_eq_one μ)
   exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hw))
@@ -464,12 +536,12 @@ theorem expectedProduction_lt_one (hα : 0 ≤ α) : expectedProduction D n α �
 theorem expectedProduction_pos (hα : 0 ≤ α) {w : World n} (hμ : μ {w} ≠ 0)
     (h : ∀ l : Scope × QUD, w ∈ ext D n l.1 .amb) : 0 < expectedProduction D n α μ ν := by
   rw [expectedProduction_eq_sum]
-  exact Finset.sum_pos' (λ w _ => mul_nonneg measureReal_nonneg (production_nonneg D n α ν w))
+  exact Finset.sum_pos' (fun w _ ↦ mul_nonneg measureReal_nonneg (production_nonneg D n α ν w))
     ⟨w, Finset.mem_univ w, mul_pos (ENNReal.toReal_pos hμ (measure_ne_top _ _))
       (production_pos D n α ν hα h)⟩
 
-/-- The endorsement probability as a function of the production probability `m` at the observed
-world and its expectation `z` under the world prior. -/
+/-- `endorse m z` is the endorsement probability as a function of the production probability `m`
+at the observed world and its expectation `z` under the world prior. -/
 noncomputable def endorse (m z : ℝ) : ℝ := m * (1 - z) / (m * (1 - z) + z * (1 - m))
 
 section Endorse
@@ -509,8 +581,8 @@ theorem one_half_lt_endorse_iff (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hz0 : 0 < z) (h
 
 end Endorse
 
-/-- The endorsement probability at a world of positive prior (§3.1): the production probability
-at the world played against its expectation under the world prior. -/
+/-- The endorsement probability at a world of positive prior is the production probability at
+the world played against its expectation under the world prior (§3.1). -/
 theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
     (hz0 : 0 < expectedProduction D n α μ ν) (hz1 : expectedProduction D n α μ ν < 1) :
     (S2 D n α μ ν w).real {.amb}
@@ -541,7 +613,7 @@ theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
     familyListener_fst_real_singleton _ α 1 μ ν hZnull w
   rw [hnull, hZ] at hFnull
   rw [S2, speaker_real_singleton (cost := 1) (L := Kernel.fst (L1 D n α μ ν)) (w := w)
-    zero_le_one (λ _ => ENNReal.one_ne_top) (λ _ => prob_le_one)]
+    zero_le_one (fun _ ↦ ENNReal.one_ne_top) (fun _ ↦ prob_le_one)]
   simp only [ENNReal.rpow_one, Pi.one_apply, ENNReal.toReal_one, mul_one, ← measureReal_def]
   rw [sum_utt, hFamb, hFnull, endorse]
   have ha0 : 0 < a := ENNReal.toReal_pos hμ (measure_ne_top _ _)
@@ -575,7 +647,7 @@ section EveryNot
 
 variable (α : ℝ) {n : ℕ}
 
-private theorem zero_ne_last (hn : 0 < n) : (0 : World n) ≠ Fin.last n := λ h =>
+private theorem zero_ne_last (hn : 0 < n) : (0 : World n) ≠ Fin.last n := fun h ↦
   hn.ne (by simpa [Fin.ext_iff] using h)
 
 /-- The sentence *every horse didn't jump* is true at the no-success world on both
@@ -594,8 +666,8 @@ world short of total success. -/
 theorem projListener_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
     projListener (project n) (L0 every n i) .all .amb {w} = if w = Fin.last n then 0 else 1 := by
   rw [projListener_L0_apply]
-  have hcell : ∀ w', w' ∈ cell n .all w ↔ (w' = Fin.last n ↔ w = Fin.last n) := λ _ => mem_cell_all
-  have hext : ∀ w', w' ∈ ext every n i .amb → w' ≠ Fin.last n := λ w' h => by
+  have hcell : ∀ w', w' ∈ cell n .all w ↔ (w' = Fin.last n ↔ w = Fin.last n) := fun _ ↦ mem_cell_all
+  have hext : ∀ w', w' ∈ ext every n i .amb → w' ≠ Fin.last n := fun w' h ↦ by
     cases i
     · exact (mem_ext_every_surface.mp h) ▸ zero_ne_last hn
     · exact mem_ext_every_inverse.mp h
@@ -604,7 +676,7 @@ theorem projListener_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
     rintro w' ⟨h1, h2⟩
     exact hext w' (Finset.mem_coe.mp h1) (((hcell w').mp (Finset.mem_coe.mp h2)).mpr hw)
   · exact uniformOn_eq_one_of (Finset.finite_toSet _)
-      ⟨0, Finset.mem_coe.mpr (zero_mem_ext_every hn i)⟩ λ w' h =>
+      ⟨0, Finset.mem_coe.mpr (zero_mem_ext_every hn i)⟩ fun w' h ↦
       Finset.mem_coe.mpr ((hcell w').mpr (iff_of_false (hext w' (Finset.mem_coe.mp h)) hw))
 
 /-- Under the question *all?* the two scope interpretations of *every horse didn't jump* produce
@@ -620,20 +692,11 @@ theorem S1_all_scope (hn : 0 < n) (w : World n) :
     · rw [projListener_L0_apply, projListener_L0_apply]
       rfl
     · rw [projListener_L0_every_all hn, projListener_L0_every_all hn]
-  exact Measure.ext_of_singleton λ u => by simp only [Kernel.ofWeights_apply_singleton, key]
+  exact Measure.ext_of_singleton fun u ↦ by simp only [Kernel.ofWeights_apply_singleton, key]
 
 theorem share_all_scope (hn : 0 < n) (w : World n) :
     share every n α (.surface, .all) w = share every n α (.inverse, .all) w := by
   simp only [share, S1_all_scope α hn w]
-
-private theorem dirac_real_singleton (a q : QUD) :
-    (Measure.dirac a).real {q} = if q = a then 1 else 0 := by
-  rcases eq_or_ne q a with rfl | h
-  · rw [measureReal_def, Measure.dirac_apply_of_mem (Set.mem_singleton q), ENNReal.toReal_one,
-      ite_eq_left rfl]
-  · rw [measureReal_def, Measure.dirac_apply' _ (measurableSet_singleton q),
-      Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr (Ne.symm h)), ENNReal.toReal_zero,
-      ite_eq_right h]
 
 variable (ρ : Measure Scope) [IsProbabilityMeasure ρ]
 
@@ -642,10 +705,11 @@ depend on the scope prior. -/
 theorem production_all (hn : 0 < n) (w : World n) :
     production every n α (ρ.prod (Measure.dirac .all)) w = share every n α (.surface, .all) w := by
   rw [production, Fintype.sum_prod_type]
-  simp only [Measure.prod_real_singleton, dirac_real_singleton, mul_ite, mul_one, mul_zero,
-    ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  have hscope : ∀ f : Scope → ℝ, ∑ i, f i = f .surface + f .inverse := λ f =>
-    Fintype.sum_eq_add Scope.surface Scope.inverse (by decide) (λ i h => by cases i <;> simp at h)
+  simp only [Measure.prod_real_singleton, Measure.dirac_real_apply, Set.indicator_apply,
+    Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+  have hscope : ∀ f : Scope → ℝ, ∑ i, f i = f .surface + f .inverse := fun f ↦
+    Fintype.sum_eq_add Scope.surface Scope.inverse (by decide) (fun i h ↦ by cases i <;> simp at h)
   have hsum := sum_real_singleton_eq_one ρ
   rw [hscope] at hsum
   rw [hscope, ← share_all_scope α hn w, ← add_mul, hsum, one_mul]
@@ -704,18 +768,17 @@ theorem share_none_lt_share_howMany (hα : 0 < α) :
 
 /-- Production of the sentence falls with the number of jumpers, under every interpretation and
 question. -/
-theorem share_antitone (hα : 0 < α) (l : Scope × QUD) :
-    share every 2 α l 1 ≤ share every 2 α l 0 ∧ share every 2 α l 2 ≤ share every 2 α l 1 :=
-  ⟨(share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by revert l; decide),
-    (share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by revert l; decide)⟩
+theorem share_antitone (hα : 0 < α) (l : Scope × QUD) : Antitone (share every 2 α l) :=
+  Fin.antitone_iff_succ_le.mpr <| Fin.forall_fin_two.mpr
+    ⟨(share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr
+        (by revert l; decide),
+      (share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr
+        (by revert l; decide)⟩
 
 theorem production_antitone (hα : 0 < α) (ν : Measure (Scope × QUD)) :
-    production every 2 α ν 1 ≤ production every 2 α ν 0 ∧
-      production every 2 α ν 2 ≤ production every 2 α ν 1 :=
-  ⟨Finset.sum_le_sum λ l _ =>
-      mul_le_mul_of_nonneg_left (share_antitone α hα l).1 measureReal_nonneg,
-    Finset.sum_le_sum λ l _ =>
-      mul_le_mul_of_nonneg_left (share_antitone α hα l).2 measureReal_nonneg⟩
+    Antitone (production every 2 α ν) := fun _ _ h ↦
+  Finset.sum_le_sum fun l _ ↦
+    mul_le_mul_of_nonneg_left (share_antitone α hα l h) measureReal_nonneg
 
 variable (ν : Measure (Scope × QUD)) [IsProbabilityMeasure ν]
 
@@ -727,15 +790,15 @@ theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < (p : ℝ))
     (S2 every 2 α Bin(World 2, 2, p) ν w).real {.amb}
       ≤ (S2 every 2 α Bin(World 2, 2, p') ν w).real {.amb} := by
   have hpos : ∀ (q : I), 0 < (q : ℝ) → (q : ℝ) < 1 → ∀ w : World 2, Bin(World 2, 2, q) {w} ≠ 0 :=
-    λ q hq hq1 w => (measureReal_ne_zero_iff (measure_ne_top _ _)).mp (by
+    fun q hq hq1 w ↦ (measureReal_ne_zero_iff (measure_ne_top _ _)).mp (by
       rw [map_cast_binomial_fin_real_singleton]
       exact (mul_pos (mul_pos (Nat.cast_pos.mpr (Nat.choose_pos w.is_le)) (pow_pos hq _))
         (pow_pos (sub_pos.2 hq1) _)).ne')
   have hp1 : (p : ℝ) < 1 := hpp'.trans_lt hp'
   have hp'0 : 0 < (p' : ℝ) := hp.trans_le hpp'
   have hz0 : ∀ (q : I), 0 < (q : ℝ) → (q : ℝ) < 1 →
-      0 < expectedProduction every 2 α Bin(World 2, 2, q) ν := λ q hq hq1 =>
-    expectedProduction_pos _ _ _ _ _ hα.le (hpos q hq hq1 0) λ l => zero_mem_ext_every two_pos l.1
+      0 < expectedProduction every 2 α Bin(World 2, 2, q) ν := fun q hq hq1 ↦
+    expectedProduction_pos _ _ _ _ _ hα.le (hpos q hq hq1 0) fun l ↦ zero_mem_ext_every two_pos l.1
   rw [S2_real_amb _ _ _ _ _ hα (hpos p hp hp1 w) (hz0 p hp hp1)
       (expectedProduction_lt_one _ _ _ _ _ hα.le),
     S2_real_amb _ _ _ _ _ hα (hpos p' hp'0 hp' w) (hz0 p' hp'0 hp')
@@ -746,7 +809,8 @@ theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < (p : ℝ))
   simp only [map_cast_binomial_fin_real_singleton, Fin.val_zero, Fin.val_one, Fin.val_two,
     Nat.choose_zero_right, Nat.choose_one_right, Nat.choose_self, Nat.cast_one, Nat.cast_ofNat,
     pow_zero, Nat.sub_zero, Nat.sub_self, Nat.reduceSub, one_mul, mul_one, pow_one]
-  obtain ⟨h10, h21⟩ := production_antitone α hα ν
+  have h10 := production_antitone α hα ν (show (0 : World 2) ≤ 1 by decide)
+  have h21 := production_antitone α hα ν (show (1 : World 2) ≤ 2 by decide)
   nlinarith [mul_nonneg (mul_nonneg (sub_nonneg.2 hpp') (by linarith : (0 : ℝ) ≤ 2 - p - p'))
       (sub_nonneg.2 h10),
     mul_nonneg (mul_nonneg (sub_nonneg.2 hpp') (by linarith : (0 : ℝ) ≤ p + p'))
@@ -759,10 +823,6 @@ end EveryNot
 section TwoNot
 
 variable (α : ℝ)
-
-/-- With four horses, the inverse reading of *two horses didn't jump* on the exact reading of the
-numeral is true wherever the number of jumpers is not two ((6), Figure 5). -/
-theorem ext_twoExact_inverse : ext twoExact 4 .inverse .amb = {0, 1, 3, 4} := by decide
 
 /-- With four horses and two jumpers, the surface interpretation of the sentence is produced at
 least as often on the exact reading of the numeral as on the at-least reading, whatever the
