@@ -1,39 +1,41 @@
 import Linglib.Syntax.Reciprocal
+import Linglib.Fragments.Romance.Italian.Pronouns
 import Linglib.Fragments.Romance.Italian.Predicates
 
 /-!
-# Italian Reciprocal Fragment
-[palmieri-2024]
+# Italian reciprocals
 
-Italian encodes reciprocity with the reflexive-identical clitic *si*
-(the grammatical strategy) and the periphrastic *l'un l'altro*, alongside a
-class of lexical reciprocal verbs — verbs with a transitive entry whose
-reciprocal reading also emerges without *si* in language-specific
-environments ([palmieri-2024] ch. 2, Table 2.2; Appendix A carries the
-verb list formalized in `lexicalReciprocals`).
+Italian marks reciprocity with the clitic *si*, which is also the third-person reflexive clitic,
+so a clause such as *Mary e Lisa si sono descritte* reads as 'Mary and Lisa described
+themselves' or as 'Mary and Lisa described each other', and the adverbial *a vicenda* 'mutually'
+leaves only the reciprocal reading. A closed class of transitive verbs, *abbracciare* 'hug',
+*baciare* 'kiss', *sposare* 'marry' and the others of Palmieri's Appendix A, also reads
+reciprocally with no marker at all under the causative *fare*, *Ho fatto abbracciare Mary e
+Lisa* 'I made Mary and Lisa hug', where *si* is in fact excluded, though in a finite clause the
+same verbs still need it. These are the lexical reciprocals; their entries are those of
+`Predicates`, and Palmieri's analysis of the class is `Studies/Palmieri2024.lean`.
+
+## References
+
+* [palmieri-2024]
 -/
 
 namespace Italian.Reciprocals
 
 open Reciprocal
 
-/-- si — reflexive/reciprocal clitic ([palmieri-2024] ch. 2). -/
-def seClitic : Marker :=
-  { form := "si", strategy := .recipClitic
-  , readings := {.reciprocal, .reflexive} }
+/-- The clitic *si*, reciprocal or reflexive, the third-person reflexive clitic of `Pronouns`. -/
+def si : Marker :=
+  { form := Pronouns.si.form, strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
 
-/-- l'un l'altro — periphrastic bipartite reciprocal (consensus periphrastic; cf. the French sibling entry). -/
-def bipartite : Marker :=
-  { form := "l'un l'altro", strategy := .bipartiteNP }
+/-- The reciprocal marker inventory. -/
+def markers : List Marker := [si]
 
-/-- Marker inventory, primary strategy first. -/
-def markers : List Marker := [seClitic, bipartite]
-
-/-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
-    Appendix A), referenced as ordinary verb entries — the lexical
-    strategy marks predicates, not forms. The transitive alternate is
-    the entry itself (homophonous in Romance). -/
+/-- The transitive verbs of Palmieri's Appendix A with a lexical reciprocal use, as verb entries,
+since the lexical strategy marks predicates rather than forms. -/
 def lexicalReciprocals : List Verb :=
-  [Predicates.abbracciare, Predicates.baciare, Predicates.coccolare, Predicates.conoscere, Predicates.consultare, Predicates.frequentare, Predicates.incontrare, Predicates.incrociare, Predicates.lasciare, Predicates.sposare, Predicates.trovare, Predicates.vedere]
+  [Predicates.abbracciare, Predicates.baciare, Predicates.coccolare, Predicates.conoscere,
+    Predicates.consultare, Predicates.frequentare, Predicates.incontrare, Predicates.incrociare,
+    Predicates.lasciare, Predicates.sposare, Predicates.trovare, Predicates.vedere]
 
 end Italian.Reciprocals
