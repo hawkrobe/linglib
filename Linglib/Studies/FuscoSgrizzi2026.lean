@@ -60,11 +60,11 @@ section Semantics
 
 variable {I V W : Type*}
 
-/-- Existential closure of the eventuality argument of a bare infinitive, the paper's (23b): the
+/-- Existential closure of the eventuality argument of a bare infinitive, the paper's (23b), the
 head a *di*-infinitive contains and an *a*-infinitive lacks. -/
 def closure (P : V → W → Prop) : W → Prop := fun w ↦ ∃ e, P e w
 
-/-- The head *a* (25): anchored to the attitude state, it is necessity over the state's inertia
+/-- The head *a* (25), anchored to the attitude state, is necessity over the state's inertia
 worlds, the best worlds of a circumstantial base under an inertial ordering ([dowty-1979],
 [kratzer-2013]), with the eventuality of its complement bound to the state by the causal
 relation. -/
@@ -72,7 +72,7 @@ def aP (circumstances : AnchoringFn V W) (inertia : OrderingFn V W)
     (causeStar : V → V → W → Prop) (P : V → W → Prop) (s : V) (w : W) : Prop :=
   necessity (circumstances s) (inertia s) (fun w' ↦ ∃ e, causeStar s e w' ∧ P e w') w
 
-/-- The head *di* (26): necessity over the state's content worlds of a proposition. -/
+/-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
 def diP (content : AnchoringFn V W) (Q : W → Prop) (s : V) (w : W) : Prop :=
   simpleNecessity (content s) Q w
 
@@ -86,8 +86,8 @@ structure Frame (I V W : Type*) where
   rationalAttitude : V → Prop
   experiencer : I → V → Prop
 
-/-- ⟦convincere⟧ (24): an event of `y` convincing `x` causes a rational-attitude state of `x`
-with the property `P` the complement supplies. -/
+/-- ⟦convincere⟧ (24) holds when an event of `y` convincing `x` causes a rational-attitude state
+of `x` with the property `P` the complement supplies. -/
 def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W) : Prop :=
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
@@ -111,8 +111,8 @@ theorem intention_causal (h : intentionReport F circumstances inertia causeStar 
   let ⟨s, _, _, _, hc, _, _, ha⟩ := h
   ⟨s, hc, ha⟩
 
-/-- Future orientation: when causes precede their effects, the intended event of an intention
-report lies after the attitude state in every inertia world, which excludes a past-oriented
+/-- Future orientation follows when causes precede their effects: the intended event of an
+intention report lies after the attitude state in every inertia world, which excludes a past-oriented
 complement, as in (5b). -/
 theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
     (hτ : ∀ s e' w', causeStar s e' w' → τ s < τ e')
@@ -137,23 +137,24 @@ closure head, and intention for a smaller one. -/
 def readingFromSize (cs : ComplementSize) : Reading :=
   if ComplementSize.cP ≤ cs then .belief else .intention
 
-/-- The complement each infinitival complementizer selects, *di* a CP (21) and *a* a projection
-below tense with negation as its highest head (22). -/
-def InfComplementizer.complementSize : InfComplementizer → ComplementSize
-  | .di => .cP
-  | .a_ => ⟨.Neg⟩
+/-- The *di*-infinitive is a CP (21). -/
+def diSize : ComplementSize := .cP
 
-/-- The reading each complementizer yields. -/
-def InfComplementizer.reading (c : InfComplementizer) : Reading :=
-  readingFromSize (InfComplementizer.complementSize c)
+/-- The *a*-infinitive is a projection below tense with negation as its highest head (22). -/
+def aSize : ComplementSize := ⟨.Neg⟩
 
-/-- *convincere* has both readings, one per complementizer. -/
-theorem convincere_readings :
-    convincere.infComplements.map InfComplementizer.reading = [.belief, .intention] := by
-  decide
+/-- The complement an infinitival complementizer of the fragment selects. -/
+def sizeOf (z : Complementizer) : Option ComplementSize :=
+  if z = di then some diSize else if z = a then some aSize else none
 
-/-- *credere* 'believe' has the belief reading only. -/
-theorem credere_readings : credere.infComplements.map InfComplementizer.reading = [.belief] := by
+/-- The readings a verb's complementizers yield, in the order the fragment lists them. -/
+def readings (v : Italian.Predicates.Verb) : List Reading :=
+  v.typers.filterMap fun z ↦ (sizeOf z).map readingFromSize
+
+/-- *convincere* has both readings, one per complementizer (4), and *pensare* alternates the same
+way. -/
+theorem convincere_pensare_readings :
+    readings convincere = [.belief, .intention] ∧ readings pensare = [.belief, .intention] := by
   decide
 
 /-! ### The diagnostics of sections 3 and 3.1 -/
@@ -199,8 +200,7 @@ structure Row where
   deriving DecidableEq
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
-  let s ← ex.parse? "size" [("cP", InfComplementizer.complementSize .di),
-    ("aP", InfComplementizer.complementSize .a_), ("vP", ComplementSize.vP)]
+  let s ← ex.parse? "size" [("cP", diSize), ("aP", aSize), ("vP", ComplementSize.vP)]
   let d ← ex.parse? "diagnostic" [("belief", Diagnostic.belief), ("intention", .intention),
     ("truthAssessable", .truthAssessable), ("subjectControl", .subjectControl),
     ("passive", .passive), ("aspectual", .aspectual), ("negation", .negation),
