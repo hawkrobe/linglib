@@ -1,509 +1,155 @@
-/-
-# English Numeral Modifiers
-
-
-Fragment entries for numeral modification expressions, covering:
-- **Tolerance modifiers**: "around", "approximately", "roughly"
-- **Interval modifiers**: "between... and..."
-- **Exactifiers**: "exactly", "precisely"
-- **Bound-setting modifiers**: "at least", "at most", "more than", "fewer than",
-  "up to", "from... on"
-
-The bound-setting modifiers are classified following [kennedy-2015]:
-- Class A (strict: >, <): "more than", "fewer than" — no ignorance implicature
-- Class B (non-strict: ≥, ≤): "at least", "at most", "up to", "from...on" — ignorance
-
-Evaluative valence distinguishes "at most" (negative)
-from "up to" (positive), predicting divergent framing effects.
-
--/
-
-import Linglib.Semantics.Degree.PropertyDomain
-import Linglib.Semantics.Degree.Adjective
+import Linglib.Semantics.Denotation
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Mathlib.Data.Rat.Defs
+import Mathlib.Order.Interval.Set.Basic
+import Mathlib.Tactic.DeriveFintype
+
+/-!
+# English numeral modifiers
+
+This file records the English expressions that combine with a numeral to bound, fix or
+approximate the amount it names. The modifiers that set a bound are built on four
+constructions in Nouwen's survey: the comparatives *more than* and *fewer than*, the
+superlatives *at least* and *at most*, the locative prepositions *over* and *under* and the
+directional prepositions *up to* and *from*, beside the adverbs *minimally* and *maximally*.
+*Exactly* and *precisely* fix the amount, *about*, *around*, *approximately* and *roughly*
+place it near the numeral, and *almost* and *nearly* place it near the numeral and short of it.
+
+A modifier denotes the set of readings the literature makes available for it, each a map from
+the number to the set of amounts that verify the modified numeral. A bound-setting modifier
+and an exactifier have the one reading of the comparison they express, an interval of
+`Degree.Comparison.interval`, so a modifier of one class and its counterpart of the other
+differ in whether the interval keeps the number. An approximator has a reading for each value
+of a tolerance the context supplies: Égré, Spector, Mortier and Verheyen give *around n* the
+amounts within the tolerance of `n` on either side, and on Penka's analysis *almost n* is false
+of `n` and true of an amount close below it. Nouwen's two classes of modifier are derived from
+the kind of construction, not stored.
+
+## Main definitions
+
+* `English.NumeralModifiers.NumeralModifier`: the carrier of the modifiers, with its lexical
+  data `NumeralModifier.form` and `NumeralModifier.kind`.
+* `English.NumeralModifiers.NumeralModifier.modifierClass`: the class of a bound-setting
+  modifier, read off its kind.
+* The `Denotes` instance gives each modifier its available readings.
+
+## Main results
+
+* `English.NumeralModifiers.NumeralModifier.self_mem_of_isApproximator`: every reading of
+  *about*, *around*, *approximately* and *roughly* is true of the number itself, so the
+  approximated numeral is entailed by the exact one.
+* `English.NumeralModifiers.NumeralModifier.self_not_mem_almost`: no reading of *almost* or
+  *nearly* is true of the number itself.
+
+## Implementation notes
+
+The amounts are natural numbers, as in `Semantics/Quantification/Numerals/Basic.lean`, and
+truncated subtraction keeps the lower end of a tolerance interval at zero. *Between … and …*
+takes two numerals and is not in the carrier.
+
+## TODO
+
+Blok argues that *up to n* asserts only a lower bound and implicates its upper bound, which is
+why it is odd with the lowest number of a scale and does not license negative polarity items.
+The reading recorded here is the upper bound alone, which *up to* shares with *at most*; the
+split between asserted and implicated content is not represented.
+
+## References
+
+* [R. Nouwen, *Two kinds of modified numerals* (2010)][nouwen-2010]
+* [C. Kennedy, *A "de-Fregean" semantics (and neo-Gricean pragmatics) for modified and
+  unmodified numerals* (2015)][kennedy-2015]
+* [D. Blok, *The semantics and pragmatics of directional numeral modifiers* (2015)][blok-2015]
+* [P. Égré, B. Spector, A. Mortier and S. Verheyen, *On the Optimality of Vagueness: "Around",
+  "Between" and the Gricean Maxims* (2023)][egre-etal-2023]
+* [D. Penka, *"Almost there": The meaning of almost* (2006)][penka-2006]
+-/
 
 namespace English.NumeralModifiers
 
-open Numerals
-
-/--
-Semantic type of a numeral modifier.
-
-Modifiers can be:
-- Tolerance-based: "around n" = λx. |n-x| ≤ y (with hidden tolerance y)
-- Interval-based: "between a b" = λx. a ≤ x ≤ b
-- Exactifier: "exactly n" = λx. x = n
-- Bound-setting: "at least n", "more than n", etc.
--/
-inductive ModifierType where
-  | tolerance    -- "around", "approximately", "roughly"
-  | interval     -- "between ... and ..."
-  | exactifier   -- "exactly", "precisely"
-  | bound        -- "at least", "at most", "more than", "fewer than", "up to", "from...on"
-  | approximator -- "almost", "nearly": proximal + polar ([nouwen-2006] [penka-2006])
-  deriving Repr, DecidableEq
-
-/--
-Pragmatic function of a numeral modifier.
-
-Following Égré et al. (2023): modifiers signal the shape of the speaker's
-private distribution over the true value.
--/
-inductive PragmaticFunction where
-  | peakedSignal    -- Signals peaked distribution (around, approximately)
-  | flatSignal      -- Signals flat/uniform distribution (between)
-  | pointSignal     -- Signals point distribution (exactly)
-  | boundSignal     -- Signals bound on the distribution (at least, at most, etc.)
-  deriving Repr, DecidableEq
-
-
-/-- Lexical entry for a numeral modifier. -/
-structure NumeralModifierEntry where
-  /-- Surface form -/
-  form : String
-  /-- Modifier type -/
-  modType : ModifierType
-  /-- Pragmatic function -/
-  pragFunction : PragmaticFunction
-  /-- Requires round numeral? -/
-  requiresRound : Bool := false
-  /-- Is the modifier vague (tolerance-based)? -/
-  isVague : Bool
-  /-- Does it convey shape information beyond support? -/
-  conveysShape : Bool
-  /-- Can it license sorites chains? -/
-  soritesSusceptible : Bool
-  /-- Bound direction (for bound-setting modifiers) -/
-  boundDir : Option BoundDirection := none
-  /-- Modifier class (for bound-setting modifiers) -/
-  modClass : Option ModifierClass := none
-  /-- Evaluative valence ([blok-2015] / [claus-walch-2024]) -/
-  evaluativeValence : Degree.EvaluativeValence := .neutral
-  /-- Does this modifier generate ignorance implicatures? -/
-  generatesIgnorance : Bool := false
-  /-- Notes -/
-  notes : String := ""
-  deriving Repr, BEq
-
--- ============================================================================
--- Tolerance Modifiers (Égré et al. 2023)
--- ============================================================================
-
-/--
-"about": tolerance-based approximation.
-
-The most common English approximator. Used in BSB2022's stimuli:
-"about fifty minutes" vs "fifty minutes" vs "forty-nine minutes."
-
-⟦about n⟧ = λy.λx. |n-x| ≤ y
-Pragmatically signals peaked private distribution centered on n.
-
-Source: [beltrama-solt-burnett-2023]
--/
-def about : NumeralModifierEntry :=
-  { form := "about"
-  , modType := .tolerance
-  , pragFunction := .peakedSignal
-  , requiresRound := false
-  , isVague := true
-  , conveysShape := true
-  , soritesSusceptible := true
-  }
-
-/--
-"around": tolerance-based approximation.
-
-⟦around n⟧ = λy.λx. |n-x| ≤ y
-Pragmatically signals peaked private distribution centered on n.
-
-Source: Égré et al. 2023
--/
-def around : NumeralModifierEntry :=
-  { form := "around"
-  , modType := .tolerance
-  , pragFunction := .peakedSignal
-  , requiresRound := false  -- "around 47" is grammatical though marked
-  , isVague := true
-  , conveysShape := true    -- Key result of Égré et al.
-  , soritesSusceptible := true
-  }
-
-/--
-"approximately": explicit tolerance marker.
-
-Similar to "around" but more formal register.
-Interacts with roundness: "approximately 100" natural,
-"approximately 99" marked.
-
-Source: `Studies/Haslinger2025.lean` (ApproximatelyDatum)
--/
-def approximately : NumeralModifierEntry :=
-  { form := "approximately"
-  , modType := .tolerance
-  , pragFunction := .peakedSignal
-  , requiresRound := false  -- Grammatical but marked with non-round
-  , isVague := true
-  , conveysShape := true
-  , soritesSusceptible := true
-  , notes := "More formal register than 'around'"
-  }
-
-/--
-"roughly": informal tolerance marker.
-
-Behaves like "around" pragmatically.
--/
-def roughly : NumeralModifierEntry :=
-  { form := "roughly"
-  , modType := .tolerance
-  , pragFunction := .peakedSignal
-  , isVague := true
-  , conveysShape := true
-  , soritesSusceptible := true
-  , notes := "Informal register"
-  }
-
--- ============================================================================
--- Interval Modifiers
--- ============================================================================
-
-/--
-"between... and...": interval specification.
-
-⟦between a and b⟧ = λx. a ≤ x ≤ b
-Pragmatically signals flat distribution over [a,b].
-Does NOT convey shape information (only support).
-
-Source: Égré et al. 2023
--/
-def between : NumeralModifierEntry :=
-  { form := "between"
-  , modType := .interval
-  , pragFunction := .flatSignal
-  , isVague := false
-  , conveysShape := false   -- Only conveys support, not shape
-  , soritesSusceptible := false
-  }
-
--- ============================================================================
--- Exactifiers
--- ============================================================================
-
-/--
-"exactly": precision enforcer.
-
-⟦exactly n⟧ = λx. x = n
-Removes imprecision. Point signal.
-
-Source: `Studies/Haslinger2025.lean` (ExactlyModifierDatum)
--/
-def exactly : NumeralModifierEntry :=
-  { form := "exactly"
-  , modType := .exactifier
-  , pragFunction := .pointSignal
-  , isVague := false
-  , conveysShape := false  -- Trivially: point has no shape
-  , soritesSusceptible := false
-  , notes := "Removes imprecision from bare numerals"
-  }
-
-/--
-"precisely": formal exactifier.
-
-Behaves like "exactly" semantically.
--/
-def precisely : NumeralModifierEntry :=
-  { form := "precisely"
-  , modType := .exactifier
-  , pragFunction := .pointSignal
-  , isVague := false
-  , conveysShape := false
-  , soritesSusceptible := false
-  , notes := "Formal register variant of 'exactly'"
-  }
-
--- ============================================================================
--- Bound-Setting Modifiers ([kennedy-2015])
--- ============================================================================
-
-/-- "at least n": Class B lower bound (max ≥ n).
-
-Generates ignorance implicatures because compatible with the bare reading.
-Neutral evaluative valence. -/
-def atLeast : NumeralModifierEntry :=
-  { form := "at least"
-  , modType := .bound
-  , pragFunction := .boundSignal
-  , isVague := false
-  , conveysShape := false
-  , soritesSusceptible := false
-  , boundDir := some .lower
-  , modClass := some .classB
-  , evaluativeValence := .neutral
-  , generatesIgnorance := true
-  }
-
-/-- "at most n": Class B upper bound (max ≤ n).
-
-Generates ignorance implicatures. NEGATIVE evaluative valence:
-"at most" is endorsed more in negative contexts. [claus-walch-2024] show
-this produces reversed framing effects. -/
-def atMost : NumeralModifierEntry :=
-  { form := "at most"
-  , modType := .bound
-  , pragFunction := .boundSignal
-  , isVague := false
-  , conveysShape := false
-  , soritesSusceptible := false
-  , boundDir := some .upper
-  , modClass := some .classB
-  , evaluativeValence := .negative
-  , generatesIgnorance := true
-  }
-
-/-- "more than n": Class A lower bound (max > n).
-
-Does NOT generate ignorance implicatures (excludes the bare-numeral world).
-Neutral evaluative valence. -/
-def moreThan : NumeralModifierEntry :=
-  { form := "more than"
-  , modType := .bound
-  , pragFunction := .boundSignal
-  , isVague := false
-  , conveysShape := false
-  , soritesSusceptible := false
-  , boundDir := some .lower
-  , modClass := some .classA
-  , evaluativeValence := .neutral
-  , generatesIgnorance := false
-  }
-
-/-- "fewer than n": Class A upper bound (max < n).
-
-Does NOT generate ignorance implicatures (excludes the bare-numeral world).
-Neutral evaluative valence. -/
-def fewerThan : NumeralModifierEntry :=
-  { form := "fewer than"
-  , modType := .bound
-  , pragFunction := .boundSignal
-  , isVague := false
-  , conveysShape := false
-  , soritesSusceptible := false
-  , boundDir := some .upper
-  , modClass := some .classA
-  , evaluativeValence := .neutral
-  , generatesIgnorance := false
-  }
-
-/-- "up to n": Class B upper bound (max ≤ n).
-
-Same truth conditions as "at most n", but POSITIVE evaluative valence. [claus-walch-2024] show "up to" follows standard framing
-(endorsed more in positive contexts), unlike "at most". -/
-def upTo : NumeralModifierEntry :=
-  { form := "up to"
-  , modType := .bound
-  , pragFunction := .boundSignal
-  , isVague := false
-  , conveysShape := false
-  , soritesSusceptible := false
-  , boundDir := some .upper
-  , modClass := some .classB
-  , evaluativeValence := .positive
-  , generatesIgnorance := true
-  }
-
-/-- "from n on": Class B lower bound (max ≥ n).
-
-Positive evaluative valence: invites positive evaluation of the quantity.
-Generates ignorance implicatures (compatible with bare reading). -/
-def fromOn : NumeralModifierEntry :=
-  { form := "from ... on"
-  , modType := .bound
-  , pragFunction := .boundSignal
-  , isVague := false
-  , conveysShape := false
-  , soritesSusceptible := false
-  , boundDir := some .lower
-  , modClass := some .classB
-  , evaluativeValence := .positive
-  , generatesIgnorance := true
-  }
-
--- ============================================================================
--- Approximators ([penka-2006] [nouwen-2006])
--- ============================================================================
-
-/--
-"almost": proximal approximation with polar exclusion.
-
-⟦almost n⟧ = λx. close(x, n) ∧ ¬(x = n) [or ¬(x ≥ n) under LB]
-
-Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
-(the polar component). [nouwen-2006] decomposes "almost" into proximal
-(close to p) and polar (¬p) components. This creates a key LB/BL divergence:
-- Under LB: "almost three" = close to 3 AND <3 → only values below 3
-- Under BL: "almost three" = close to 3 AND ≠3 → values above OR below 3
-
-The empirical asymmetry (below only) is argued by [penka-2006] to
-favor LB. [nouwen-2006] shows that polar orientation is in general
-context-dependent (e.g., "almost that warm" vs "almost that cold" orient
-in opposite directions depending on the scale).
-
-Source: [penka-2006] "Almost there: The meaning of almost";
-  [nouwen-2006] "Remarks on the Polar Orientation of Almost".
--/
-def almost : NumeralModifierEntry :=
-  { form := "almost"
-  , modType := .approximator
-  , pragFunction := .peakedSignal
-  , isVague := true
-  , conveysShape := true
-  , soritesSusceptible := false
-  , notes := "Polar component excludes target value; LB/BL divergence from Penka 2006"
-  }
-
-/--
-"nearly": synonym of "almost" with slight register difference.
-
-Same proximal + polar semantics as "almost".
--/
-def nearly : NumeralModifierEntry :=
-  { form := "nearly"
-  , modType := .approximator
-  , pragFunction := .peakedSignal
-  , isVague := true
-  , conveysShape := true
-  , soritesSusceptible := false
-  , notes := "Register variant of 'almost'"
-  }
-
--- ============================================================================
--- Scale Structure
--- ============================================================================
-
-/--
-Informativity scale for numeral modifiers.
-
-Ordered by how much information about the true value they convey:
-  exactly > around > between
-
-"Exactly" gives the most information (point), "around" gives shape,
-"between" gives only support.
--/
-structure ModifierScale where
-  /-- More informative (stronger) -/
-  stronger : NumeralModifierEntry
-  /-- Less informative (weaker) -/
-  weaker : NumeralModifierEntry
-  /-- Scalar relation holds -/
-  isScalarPair : Bool
-  deriving Repr
-
-/-- "Exactly" is more informative than "around" -/
-def exactlyAroundScale : ModifierScale :=
-  { stronger := exactly
-  , weaker := around
-  , isScalarPair := true
-  }
-
-/-- "Around" is more informative than "between" (conveys shape) -/
-def aroundBetweenScale : ModifierScale :=
-  { stronger := around
-  , weaker := between
-  , isScalarPair := true
-  }
-
--- Collections
-
-def toleranceModifiers : List NumeralModifierEntry :=
-  [about, around, approximately, roughly]
-
-def intervalModifiers : List NumeralModifierEntry :=
-  [between]
-
-def exactifiers : List NumeralModifierEntry :=
-  [exactly, precisely]
-
-def boundModifiers : List NumeralModifierEntry :=
-  [atLeast, atMost, moreThan, fewerThan, upTo, fromOn]
-
-def classAModifiers : List NumeralModifierEntry :=
-  [moreThan, fewerThan]
-
-def classBModifiers : List NumeralModifierEntry :=
-  [atLeast, atMost, upTo, fromOn]
-
-def approximatorModifiers : List NumeralModifierEntry :=
-  [almost, nearly]
-
-def allModifiers : List NumeralModifierEntry :=
-  toleranceModifiers ++ intervalModifiers ++ exactifiers ++ boundModifiers
-    ++ approximatorModifiers
-
-def modifierScales : List ModifierScale :=
-  [exactlyAroundScale, aroundBetweenScale]
-
--- ============================================================================
--- Verification: Original Properties
--- ============================================================================
-
-/-- All tolerance modifiers convey shape information. -/
-theorem tolerance_modifiers_convey_shape :
-    toleranceModifiers.all (·.conveysShape) = true := by decide
-
-/-- No interval or exact modifiers convey shape information. -/
-theorem non_tolerance_no_shape :
-    (intervalModifiers ++ exactifiers).all (·.conveysShape == false) = true := by decide
-
-/-- Only tolerance modifiers are sorites-susceptible. -/
-theorem only_tolerance_sorites :
-    toleranceModifiers.all (·.soritesSusceptible) = true ∧
-    (intervalModifiers ++ exactifiers).all (·.soritesSusceptible == false) = true := by
-  constructor <;> decide
-
--- ============================================================================
--- Verification: [kennedy-2015] Class A/B Properties
--- ============================================================================
-
-/-- All Class B modifiers generate ignorance implicatures. -/
-theorem classB_all_generate_ignorance :
-    classBModifiers.all (·.generatesIgnorance) = true := by decide
-
-/-- No Class A modifiers generate ignorance implicatures. -/
-theorem classA_no_ignorance :
-    classAModifiers.all (·.generatesIgnorance == false) = true := by decide
-
-/-- "at most" and "up to" differ only in evaluative valence.
-
-Same modType, modClass, boundDir, but different evaluativeValence.
-This is the key [blok-2015] / [claus-walch-2024] observation. -/
-theorem atMost_upTo_differ_only_in_valence :
-    atMost.modType = upTo.modType ∧
-    atMost.modClass = upTo.modClass ∧
-    atMost.boundDir = upTo.boundDir ∧
-    atMost.evaluativeValence ≠ upTo.evaluativeValence := by
-  constructor; · decide
-  constructor; · decide
-  constructor; · decide
-  · decide
-
-/-- All bound modifiers are classified as bound type. -/
-theorem bound_modifiers_all_bound :
-    boundModifiers.all (·.modType == .bound) = true := by decide
-
-/-- No bound modifiers are vague. -/
-theorem bound_modifiers_not_vague :
-    boundModifiers.all (·.isVague == false) = true := by decide
-
-/-- Approximators are not sorites-susceptible (unlike tolerance modifiers). -/
-theorem approximators_not_sorites :
-    approximatorModifiers.all (·.soritesSusceptible == false) = true := by decide
-
-/-- Approximators have polar exclusion (distinguished from tolerance modifiers by type). -/
-theorem approximators_distinct_from_tolerance :
-    approximatorModifiers.all (·.modType == .approximator) = true ∧
-    toleranceModifiers.all (·.modType == .tolerance) = true := by
-  constructor <;> decide
+open Degree Numerals Semantics
+
+/-- The numeral modifiers of English. -/
+inductive NumeralModifier where
+  | moreThan | fewerThan | over | under
+  | atLeast | atMost | minimally | maximally | upTo | from_
+  | exactly | precisely
+  | about | around | approximately | roughly
+  | almost | nearly
+  deriving DecidableEq, Repr, Fintype
+
+namespace NumeralModifier
+
+/-- The surface form. -/
+def form : NumeralModifier → String
+  | .moreThan => "more than"
+  | .fewerThan => "fewer than"
+  | .over => "over"
+  | .under => "under"
+  | .atLeast => "at least"
+  | .atMost => "at most"
+  | .minimally => "minimally"
+  | .maximally => "maximally"
+  | .upTo => "up to"
+  | .from_ => "from"
+  | .exactly => "exactly"
+  | .precisely => "precisely"
+  | .about => "about"
+  | .around => "around"
+  | .approximately => "approximately"
+  | .roughly => "roughly"
+  | .almost => "almost"
+  | .nearly => "nearly"
+
+/-- The construction a bound-setting modifier is built on, `none` for the exactifiers and the
+approximators, which [nouwen-2010]'s survey does not cover. -/
+def kind : NumeralModifier → Option ModifierKind
+  | .moreThan | .fewerThan => some .comparative
+  | .over | .under => some .locative
+  | .atLeast | .atMost => some .superlative
+  | .minimally | .maximally => some .adverbial
+  | .upTo | .from_ => some .directional
+  | _ => none
+
+/-- The class of a bound-setting modifier in the sense of [nouwen-2010], read off its kind. -/
+def modifierClass (w : NumeralModifier) : Option ModifierClass := w.kind.map (·.modifierClass)
+
+/-- The approximators place the amount within a tolerance of the number. -/
+def IsApproximator (w : NumeralModifier) : Prop :=
+  w = .about ∨ w = .around ∨ w = .approximately ∨ w = .roughly
+
+instance : DecidablePred IsApproximator := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-! ### The available readings -/
+
+/-- The readings the literature makes available for a modifier, each a map from the number to
+the amounts verifying the modified numeral. A bound-setting modifier and an exactifier have the
+interval of their comparison. An approximator has the amounts within `y` of the number, one
+reading for each tolerance `y` ([egre-etal-2023]), and *almost* and *nearly* the amounts within
+`y` below the number and short of it ([penka-2006]). -/
+instance : Denotes NumeralModifier (Set (ℕ → Set ℕ)) where
+  denote
+    | .moreThan | .over => {Comparison.gt.interval}
+    | .fewerThan | .under => {Comparison.lt.interval}
+    | .atLeast | .minimally | .from_ => {Comparison.ge.interval}
+    | .atMost | .maximally | .upTo => {Comparison.le.interval}
+    | .exactly | .precisely => {Comparison.eq.interval}
+    | .about | .around | .approximately | .roughly =>
+        Set.range fun y n ↦ Set.Icc (n - y) (n + y)
+    | .almost | .nearly => Set.range fun y n ↦ Set.Ico (n - y) n
+
+variable {w : NumeralModifier} {r : ℕ → Set ℕ}
+
+/-- Every reading of an approximator is true of the number itself, so the exact numeral entails
+the approximated one. -/
+theorem self_mem_of_isApproximator (hw : w.IsApproximator) (hr : r ∈ ⟦w⟧) (n : ℕ) : n ∈ r n := by
+  rcases hw with rfl | rfl | rfl | rfl <;> obtain ⟨y, rfl⟩ := hr <;>
+    exact ⟨Nat.sub_le n y, Nat.le_add_right n y⟩
+
+/-- No reading of *almost* or *nearly* is true of the number itself. -/
+theorem self_not_mem_almost (hw : w = .almost ∨ w = .nearly) (hr : r ∈ ⟦w⟧) (n : ℕ) :
+    n ∉ r n := by
+  rcases hw with rfl | rfl <;> obtain ⟨y, rfl⟩ := hr <;> exact fun h ↦ lt_irrefl n h.2
+
+end NumeralModifier
 
 end English.NumeralModifiers

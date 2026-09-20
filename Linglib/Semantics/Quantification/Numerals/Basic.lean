@@ -39,7 +39,7 @@ interval endpoint; see `Degree.Comparison.boundary_mem`.
 
 ## Sections
 
-1. Modifier classification (Class A/B, Bound direction)
+1. Modifier classification (Class A/B, modifier kinds)
 2. Numeral meaning functions (5 `def`s over `Degree.Comparison.{...}.over id`)
 3. `BareNumeral`; `Comparison` interpretation (`Entry.denoteUnder`)
 4. Alternative sets (Kennedy §4.1)
@@ -57,36 +57,44 @@ namespace Numerals
 -- Section 1: Modifier Classification
 -- ============================================================================
 
-/-- Class A (strict `>`, `<`) vs Class B (non-strict `≥`, `≤`) modified
-numerals — a descriptive split due to [nouwen-2010].
+/-- The two classes of numeral modifiers of [nouwen-2010]. A Class A modifier relates the
+numeral to a definite amount, so *a hexagon has fewer than 11 sides* is a weak truth. A Class B
+modifier places a bound on a range of amounts, so *a hexagon has at most 10 sides* is odd and
+the modifier conveys that the speaker does not know the amount.
 
-Truth-conditionally the split is the reflexive/irreflexive boundary behavior:
-Class A EXCLUDES the bare-numeral world, Class B INCLUDES it (Class B iff the
-comparison's interval keeps its endpoint; see
-`Degree.Comparison.boundary_mem`). The further claim that this predicts
-a *categorical* ignorance-implicature pattern (Class B carries ignorance, Class
-A not) is contested: [schwarz-buccola-hamilton-2012] show *at most* and *up
-to* dissociate (so "Class B" is not one class), and
-[cremers-coppock-dotlacil-roelofsen-2022] find the ignorance contrast
-graded and QUD-dependent rather than categorical; [enguehard-2018] derives
-comparative-numeral inferences from granularity scales rather than from the
-strict/non-strict relation type.
-
-Truth-conditionally the split is `Degree.Comparison.boundary_mem` (the
-non-strict comparison's interval keeps its endpoint). -/
+[kennedy-2015] reduces the split to the ordering the modifier expresses, exclusive for Class A
+and inclusive for Class B (`Degree.Comparison.boundary_mem`), and derives the ignorance as an
+implicature. The categorical pattern is contested: [schwarz-buccola-hamilton-2012] show
+*at most* and *up to* dissociate, [cremers-coppock-dotlacil-roelofsen-2022] find the ignorance
+contrast graded and dependent on the question under discussion, and [enguehard-2018] derives
+the inferences of comparative numerals from granularity. -/
 inductive ModifierClass where
-  | classA  -- strict: >, <
-  | classB  -- non-strict: ≥, ≤
+  | classA
+  | classB
   deriving Repr, DecidableEq
 
-/-- Upper vs lower bound direction.
-
-- `.upper`: constrains from above (at most, fewer than)
-- `.lower`: constrains from below (at least, more than) -/
-inductive BoundDirection where
-  | upper  -- at most, fewer than, up to
-  | lower  -- at least, more than, from...on
+/-- The kinds of numeral modifier in [nouwen-2010]'s survey, by the construction the modifier is
+built on. -/
+inductive ModifierKind where
+  /-- A comparative: *more than*, *fewer than*. -/
+  | comparative
+  /-- A superlative: *at least*, *at most*. -/
+  | superlative
+  /-- A locative preposition: *over*, *under*. -/
+  | locative
+  /-- A directional preposition: *up to*, *from*. -/
+  | directional
+  /-- An adverb of minimality or maximality: *minimally*, *maximally*. -/
+  | adverbial
   deriving Repr, DecidableEq
+
+/-- The class of each kind. The comparatives are [nouwen-2010]'s model of Class A and the
+superlatives and the adverbs of Class B, and the prepositional modifiers follow their spatial
+use: a locative preposition gives a Class A modifier and a directional one a Class B
+modifier. -/
+def ModifierKind.modifierClass : ModifierKind → ModifierClass
+  | .comparative | .locative => .classA
+  | .superlative | .directional | .adverbial => .classB
 
 -- ============================================================================
 -- Section 2: Numeral Meaning Functions

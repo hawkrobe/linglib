@@ -95,12 +95,13 @@ open Numerals.Precision in
 theorem round_stim_is_approximate :
     inferPrecisionMode stimRound = .approximate := by decide
 
-open English.NumeralModifiers in
-/-- The Fragment entry "about" is a tolerance modifier: it forces an approximate reading and
-    conveys a peaked distribution shape. -/
-theorem about_is_tolerance_modifier :
-    about.modType = .tolerance ∧ about.conveysShape = true ∧
-    about.pragFunction = .peakedSignal := ⟨rfl, rfl, rfl⟩
+open English.NumeralModifiers Semantics in
+/-- The modifier of the approximate variant, *about*, is an approximator of the Fragment: on
+    every reading *about fifty* is true of fifty itself, so the variant is compatible with the
+    precise amount without asserting it. -/
+theorem about_true_of_number {r : ℕ → Set ℕ} (hr : r ∈ ⟦NumeralModifier.about⟧) (n : ℕ) :
+    n ∈ r n :=
+  NumeralModifier.self_mem_of_isApproximator (.inl rfl) hr n
 
 /-- Classify a numeral into a variant from the substrate roundness score and the presence of a
     tolerance modifier: non-round is `.precise` regardless of modifier; round is

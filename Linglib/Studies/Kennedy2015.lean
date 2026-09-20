@@ -1,3 +1,4 @@
+import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Semantics.Quantification.Numerals.Basic
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Pragmatics.NeoGricean.Basic
@@ -16,6 +17,11 @@ comparison of the count, so bare numerals are two-sided without a Horn scale
 matters of scope, `Degree.highScope`: a bare numeral scoping over a necessity modal names the
 least count the modal requires and over a possibility modal the greatest it allows
 (`necessity_wide_iff`, `possibility_wide_iff`).
+
+The two classes of [nouwen-2010] differ in the ordering they express ((4)), exclusive for
+Class A and inclusive for Class B. Over the English modifiers, whose class the Fragment reads
+off the construction, this is a fact about every reading: a Class A reading is false of the
+number itself and a Class B reading true of it (`classA_exclusive`, `classB_inclusive`).
 
 The ignorance inferences of the Class B modifiers are Sauerland's primary implicatures ((43))
 over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
@@ -60,6 +66,28 @@ the substrate's meaning of the numeral: two-sided bare content with no Horn scal
 theorem maxIn_interval_Iic (c : Comparison) (m n : ℕ) :
     maxIn (c.interval m) (Iic n) ↔ n ∈ c.over id m :=
   maxIn_Iic
+
+/-! ### The two classes (Section 1) -/
+
+section Classes
+
+open English.NumeralModifiers Semantics
+
+variable {w : NumeralModifier} {r : ℕ → Set ℕ}
+
+/-- (4a): a Class A modifier expresses an exclusive ordering, so none of its readings is true of
+the number itself. -/
+theorem classA_exclusive (hw : w.modifierClass = some .classA) (hr : r ∈ ⟦w⟧) (m : ℕ) :
+    m ∉ r m := by
+  cases w <;> cases hw <;> (obtain rfl : r = _ := hr; exact lt_irrefl m)
+
+/-- (4b): a Class B modifier expresses an inclusive ordering, so each of its readings is true of
+the number itself. -/
+theorem classB_inclusive (hw : w.modifierClass = some .classB) (hr : r ∈ ⟦w⟧) (m : ℕ) :
+    m ∈ r m := by
+  cases w <;> cases hw <;> (obtain rfl : r = _ := hr; exact le_refl m)
+
+end Classes
 
 section Modals
 
