@@ -1,28 +1,29 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Hausa Coordination Morphemes
-[schwartz-1989] [haspelmath-2007]
+# Hausa coordinators
 
-Hausa (Chadic, Nigeria) uses *da* for both comitative ("with") and
-conjunction ("and") — a classic WITH-language in [stassen-2000]'s
-classification. [haspelmath-2007] (12) cites [schwartz-1989]:32,36
-for the data.
+Hausa conjoins noun phrases with the free word *da* before the second coordinand. The same
+word is the comitative preposition 'with', the source from which Haspelmath derives the
+coordinator, citing Schwartz's data.
 
-- *da* — J, free, prepositive medial: "A da B" = 'A and B' / 'A with B'
+## Main definitions
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hausa`).
+* `Hausa.da`: the conjunctive coordinator.
+
+## References
+
+* [haspelmath-2007]
+* [schwartz-1989]
 -/
 
 namespace Hausa
 
-/-- *da* — J particle, also comitative marker. Free, prepositive.
-    Diachronic source: comitative ('with') → coordinator ('and'). -/
+/-- *da* 'and', also the comitative 'with'. -/
 def da : Coordinator :=
-  { form := "da", gloss := "and; with"
-  , role := .j, kind := .free
-  , note := "comitative-derived; identical form for 'with' and 'and'" }
+  { form := "da", gloss := "and; with", role := .conjunctive, kind := .free }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [da]
 
 end Hausa

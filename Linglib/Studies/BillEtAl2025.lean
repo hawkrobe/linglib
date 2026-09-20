@@ -1,7 +1,5 @@
 import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Plurality.Distributivity
-import Linglib.Syntax.Coordination
-import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016
 
 /-!
@@ -38,8 +36,8 @@ Hungarian *mu* less complex than Georgian *mu*.
   contrasts reverse the first prediction and split the strategies the rival equates.
 * `covertPieces_not_desiderata`, `structuralPieces_not_desiderata`: neither measure meets
   the desiderata.
-* `ms_decomposition_eq_coord`, `mu_is_distributive_check`: the decomposition computes
-  ordinary distributive conjunction.
+* `mu_is_distributive_check`: the decomposition, `MitrovicSauerland2016.conjunction_eq`,
+  computes ordinary distributive conjunction.
 
 ## References
 
@@ -52,7 +50,7 @@ Hungarian *mu* less complex than Georgian *mu*.
 
 namespace BillEtAl2025
 
-open Syntax.Coordination Haspelmath2007 MitrovicSauerland2016
+open MitrovicSauerland2016
 
 /-- Both test languages attest all three strategies, the precondition of the test ((1),
 (2)). -/
@@ -117,25 +115,20 @@ theorem structuralPieces_not_desiderata : ¬ Desiderata structuralPieces := by d
 Hungarian *mu* is free, the difference the paper suggests may make Hungarian *mu* the less
 complex. -/
 theorem mu_kind_differs :
-    georgian.muKind = some (.bound .after .clitic) ∧ hungarian.muKind = some .free := by
+    georgian.mu.map (·.kind) = some (.bound .after .clitic) ∧
+      hungarian.mu.map (·.kind) = some .free := by
   decide
 
 /-! ### The decomposition -/
 
-open Quantifier.NP (individual) in
-/-- The decomposition — singleton shift, subset, intersection — is the meet of the raised
-conjuncts, so *DP₁ and DP₂ VP* comes out as `VP(DP₁) ∧ VP(DP₂)` (Figure 2). -/
-theorem ms_decomposition_eq_coord {E : Type} (e1 e2 : E) (p : E → Prop) :
-    (individual e1 ⊓ individual e2) p = (p e1 ∧ p e2) :=
-  rfl
-
-open Quantifier.NP (individual) in
 open Plurality in
 open Plurality.Distributivity in
-/-- The decomposition is distributive predication over the pair of conjuncts. -/
+/-- The decomposition, J′ over the μ phrases of the singleton-shifted conjuncts (Figure 2), is
+distributive predication over the pair of conjuncts. -/
 theorem mu_is_distributive_check {E : Type} [DecidableEq E]
     (e1 e2 : E) (P : E → Unit → Prop) [∀ a u, Decidable (P a u)] :
-    (individual e1 ⊓ individual e2) (fun a => P a ()) ↔ distMaximal P {e1, e2} () := by
-  simp [individual, distMaximal_pair]
+    Coordinator.op .conjunctive (mu (shift e1)) (mu (shift e2)) (fun a ↦ P a ()) ↔
+      distMaximal P {e1, e2} () := by
+  simp [conjunction_apply, distMaximal_pair]
 
 end BillEtAl2025

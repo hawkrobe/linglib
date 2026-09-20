@@ -1,28 +1,30 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Lango Coordination Morphemes
-[noonan-1992] [haspelmath-2007]
+# Lango coordinators
 
-Lango (Nilotic, Uganda) uses *kèdè* for both comitative ('with') and
-conjunction ('and'). Classic AND-language in [stassen-2000]'s
-classification with diachronic source from comitative. [haspelmath-2007]
-(20) cites [noonan-1992]:163.
+Lango, a Nilotic language of Uganda, conjoins noun phrases with the free word *kèdè* before
+the second coordinand, *cây kèdè càk* 'tea and milk'. The same word is the comitative 'with',
+and Haspelmath gives the construction, from Noonan's grammar, as an example of a
+comitative-derived coordinator.
 
-- *kèdè* — J, free, medial prepositive: "A kèdè B" = 'A and B' / 'A with B'
+## Main definitions
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.lango`).
+* `Lango.Coordination.kede`: the conjunctive coordinator.
+
+## References
+
+* [haspelmath-2007]
+* [noonan-1992]
 -/
 
 namespace Lango.Coordination
 
-/-- *kèdè* — J particle, also comitative marker. Free, prepositive medial.
-    Diachronic source: comitative ('with') → coordinator ('and'). -/
+/-- *kèdè* 'and', also the comitative 'with'. -/
 def kede : Coordinator :=
-  { form := "kèdè", gloss := "and; with"
-  , role := .j, kind := .free
-  , note := "comitative-derived; identical form for 'with' and 'and'" }
+  { form := "kèdè", gloss := "and; with", role := .conjunctive, kind := .free }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [kede]
 
 end Lango.Coordination

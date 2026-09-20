@@ -1,31 +1,34 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Persian (Farsi) Coordination Morphemes
-[haspelmath-2007] [mitrovic-sauerland-2016]
+# Persian coordinators
 
-Persian has:
+Persian conjoins with the free word *va* 'and', an Arabic loan, before the second coordinand;
+the colloquial form is the enclitic *o*. The additive particle *ham* 'also, too', repeated with
+each coordinand, gives 'both … and'.
 
-- *va* — J, free, prepositive: "A va B" (Arabic-origin loan; colloquial *o*)
-- *ham* — MU, free, additive ('also'): "A ham B ham" — bisyndetic
+## Main definitions
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.persian`).
+* `Farsi.Coordination.va`, `Farsi.Coordination.ham`: the conjunctive coordinator and the
+  additive particle that conjoins when repeated.
+
+## TODO
+
+The entries have not been checked against a grammar of Persian.
 -/
 
 namespace Farsi.Coordination
 
-/-- *va* — J particle (Arabic loan; colloquial enclitic *o*). Free, prepositive. -/
+/-- *va* 'and', colloquially the enclitic *o*. -/
 def va : Coordinator :=
-  { form := "va", gloss := "and"
-  , role := .j, kind := .free
-  , note := "Arabic-origin loan; colloquial enclitic 'o'" }
+  { form := "va", gloss := "and", role := .conjunctive, kind := .free }
 
-/-- *ham* — MU particle, also additive. Free, used bisyndetically. -/
+/-- *ham* 'also, too', with each coordinand 'both … and'. -/
 def ham : Coordinator :=
-  { form := "ham", gloss := "also, too; and (MU)"
-  , role := .mu, kind := .free, alsoAdditive := true
-  , correlative := true }
+  { form := "ham", gloss := "also, too; and", role := .conjunctive, kind := .free,
+    alsoAdditive := true, correlative := true }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [va, ham]
 
 end Farsi.Coordination

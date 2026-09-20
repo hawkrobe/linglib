@@ -2460,7 +2460,6 @@ import Linglib.Syntax.Control.Basic
 import Linglib.Syntax.Control.Head
 import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Diagnostics
-import Linglib.Syntax.Coordination
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Catena
 import Linglib.Syntax.DependencyGrammar.Crossings

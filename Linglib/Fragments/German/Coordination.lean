@@ -1,57 +1,43 @@
 import Linglib.Syntax.Category.Coordinator
-import Linglib.Syntax.Coordination
 
 /-!
-# German Coordination Morphology
-[schwarzer-2026]
+# German coordinators
 
-German conjunction morphology. German uses a J-only strategy
-(like English and Irish): the single conjunction particle *und*
-realizes the J (set intersection) operator.
+German coordinates with free words that stand before the second coordinand: *und* 'and', *oder*
+'or', and two adversative coordinators, *aber* 'but' and the corrective *sondern* 'but rather',
+which requires a negated first coordinand. The emphatic conjunction is *sowohl … als auch*,
+neither member of which is the plain coordinator.
 
-*oder* "or" is the disjunction counterpart; *aber* / *sondern*
-are adversative.
+## Main definitions
+
+* `German.Coordination.und`, `German.Coordination.oder`: the conjunctive and the disjunctive
+  coordinator.
+* `German.Coordination.aber`, `German.Coordination.sondern`: the adversative coordinators.
+
+## References
+
+* [haspelmath-2007]
 -/
 
 namespace German.Coordination
 
-open Syntax.Coordination (ConjunctionStrategy)
+/-- *und* 'and'. -/
+def und : Coordinator :=
+  { form := "und", gloss := "and", role := .conjunctive, kind := .free }
 
-/-- *und* — conjunction proper (J particle, free word).
-    "Die Stadt beendet [DP die Überarbeitung] und [CP dass für
-    Neugeborene ein Baum gepflanzt wird]." -/
-def und : Coordinator where
-  form := "und"
-  gloss := "and"
-  role := .j
-  kind := .free
+/-- *oder* 'or'. -/
+def oder : Coordinator :=
+  { form := "oder", gloss := "or", role := .disjunctive, kind := .free }
 
-/-- *oder* — disjunction. -/
-def oder : Coordinator where
-  form := "oder"
-  gloss := "or"
-  role := .disj
-  kind := .free
+/-- *aber* 'but'. -/
+def aber : Coordinator :=
+  { form := "aber", gloss := "but", role := .adversative, kind := .free }
 
-/-- *aber* — adversative ("but", contrastive). -/
-def aber : Coordinator where
-  form := "aber"
-  gloss := "but"
-  role := .advers
-  kind := .free
+/-- *sondern* 'but rather', after a negated first coordinand. -/
+def sondern : Coordinator :=
+  { form := "sondern", gloss := "but rather", role := .adversative, kind := .free }
 
-/-- *sondern* — adversative ("but rather", corrective; requires negation). -/
-def sondern : Coordinator where
-  form := "sondern"
-  gloss := "but.rather"
-  role := .advers
-  kind := .free
-  note := "corrective; requires negation in first conjunct"
-
-/-- German uses a J-only conjunction strategy. -/
-def conjunctionStrategy : ConjunctionStrategy := .jOnly
-
-/-- German J-only strategy realizes exactly 1 overt morpheme. -/
-theorem german_overt_count : conjunctionStrategy.overtMorphemeCount = 1 := rfl
+/-- The coordinators. -/
+def allEntries : List Coordinator := [und, oder, aber, sondern]
 
 end German.Coordination

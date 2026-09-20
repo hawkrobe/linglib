@@ -3,92 +3,102 @@ import Linglib.Morphology.Morph
 import Linglib.Morphology.Word.Basic
 
 /-!
-# The Coordinator unit — marking + operation
+# Coordinators
 
-A coordinator (*and* / *or* / *but* / *nor*) is **one** thing: a lexical marking whose
-`role` selects a Boolean operation. This file is the carrier-agnostic core of the
-`Coordinator` API — it needs only `Mathlib.Order.BooleanAlgebra`, so Fragments import it
-directly to type their lexical coordinators (the `Syntax/Category/Verb/Defs.lean` precedent: a
-word-class lexical-entry type at `Semantics/{class}/Defs`). The composition engine's
-runtime form, dispatching on the sisters' type through `Ty.Domain.booleanAlgebra?`, is
-`tryCoord` in `Semantics/Composition/Coordination.lean`.
+A coordinator is a word or clitic that links the coordinands of a coordinate construction:
+*and*, *or*, *but*, *nor*. This file defines the lexical record of a coordinator and the Boolean
+operation its semantic type denotes: meet for conjunctive and adversative coordinators, join for
+disjunctive ones, and the complement of the join for negative ones.
 
-`op` is the *at-issue* truth-conditional operation: the role selects the Boolean method
-(`⊓` / `⊔` / `(·⊔·)ᶜ`), the instance supplies the algebra. It is faithful for *and* (`.j`),
-*or* (`.disj`), *nor* (`.negDisj`/`.negCoord`); the additive `.mu` and adversative `.advers`
-collapse onto *and*'s meet here (`op_mu_eq_j`/`op_advers_eq_j`), their surplus content (M&S
-additive/focus, adversative contrast) diverging to the relevant studies / the discourse layer.
+The operation is stated once over an arbitrary Boolean algebra, so the same coordinator conjoins
+truth values, predicates and generalized quantifiers. The composition engine applies it to two
+sisters of one conjoinable type in `Semantics/Composition/Coordination.lean`.
 
 ## Main definitions
 
-* `Coordinator.Role` — which Boolean operation a coordinator denotes.
-* `Coordinator.op` — the operation a role denotes, polymorphic over `[BooleanAlgebra α]`.
-* `Coordinator` — a lexical coordinator's marking (decidable data Fragments configure).
-* `Coordinator.toWord` — the entry as a UD `CCONJ` word.
+* `Coordinator.Role`: the semantic type of a coordinator.
+* `Coordinator.op`: the Boolean operation a semantic type denotes.
+* `Coordinator`: the form, gloss, semantic type and attachment of a coordinator, with the other
+  uses the same form has.
+* `Coordinator.toWord`, `Coordinator.morph`: the coordinator as a word and as a morph.
+
+## Implementation notes
+
+`Coordinator.op` is the truth-conditional content only. The contrast an adversative coordinator
+adds to conjunction is a relation between the coordinands in discourse, and `op_adversative`
+records that it is invisible here. Analyses that divide the conjunctive coordinators further, such
+as the two conjunction heads of [mitrovic-sauerland-2016], classify the entries in their own
+studies.
+
+## References
+
+* [haspelmath-2007]
+* [partee-rooth-1983]
 -/
 
 namespace Coordinator
 
-/-- The role of a coordinator — which Boolean operation it denotes. -/
+/-- The semantic type of a coordinator. -/
 inductive Role where
-  /-- J particle: set intersection / conjunction proper
-      (English "and", Hungarian "es", Georgian "da"). -/
-  | j
-  /-- MU particle: subset/additive (Hungarian "is", Georgian "-c", Japanese "mo");
-      at-issue identical to `j`. -/
-  | mu
-  /-- Disjunction (English "or", Hungarian "vagy"). -/
-  | disj
-  /-- Adversative (English "but", Hungarian "de"); at-issue identical to `j`. -/
-  | advers
-  /-- Negative disjunction (Irish "na" = "nor"). -/
-  | negDisj
-  /-- Negative coordination (Latin "neque/nec" = "neither...nor"). -/
-  | negCoord
-  deriving DecidableEq, Repr, BEq
+  /-- Conjunction, English *and*. -/
+  | conjunctive
+  /-- Disjunction, English *or*. -/
+  | disjunctive
+  /-- Adversative coordination, English *but*. -/
+  | adversative
+  /-- Negative coordination, English *nor*, Latin *neque*. -/
+  | negative
+  deriving DecidableEq, Repr
 
-/-- **THE operation** a role denotes, polymorphic over any Boolean carrier: the role selects
-    the Boolean method (`⊓` / `⊔` / `(·⊔·)ᶜ`), the instance supplies the algebra. Faithful for
-    *and* (`.j`), *or* (`.disj`), *nor* (`.negDisj`/`.negCoord`); the additive `.mu` and
-    adversative `.advers` give only the at-issue meet — `{j, mu, advers}` all collapse onto
-    `⊓` here, the surplus diverging (see `op_mu_eq_j`/`op_advers_eq_j`). -/
-def op {α : Type*} [BooleanAlgebra α] : Role → α → α → α
-  | .j | .mu | .advers => (· ⊓ ·)
-  | .disj => (· ⊔ ·)
-  | .negDisj | .negCoord => fun p q => (p ⊔ q)ᶜ
+variable {α : Type*} [BooleanAlgebra α]
 
-/-- Additive `.mu` has the same at-issue denotation as *and*; its M&S additive/focus
-    dimension diverges (see `Studies/MitrovicSauerland2016`). -/
-theorem op_mu_eq_j {α : Type*} [BooleanAlgebra α] : (op .mu : α → α → α) = op .j := rfl
+/-- The Boolean operation a semantic type denotes. -/
+def op : Role → α → α → α
+  | .conjunctive | .adversative => (· ⊓ ·)
+  | .disjunctive => (· ⊔ ·)
+  | .negative => fun p q ↦ (p ⊔ q)ᶜ
 
-/-- Adversative `.advers` (*but*) has the same at-issue denotation as *and*; its contrast is a
-    discourse relation outside `op` (and non-commutative there, which the commutative `⊓`
-    cannot represent). -/
-theorem op_advers_eq_j {α : Type*} [BooleanAlgebra α] : (op .advers : α → α → α) = op .j := rfl
+@[simp] theorem op_conjunctive (p q : α) : op .conjunctive p q = p ⊓ q := rfl
+
+@[simp] theorem op_disjunctive (p q : α) : op .disjunctive p q = p ⊔ q := rfl
+
+@[simp] theorem op_negative (p q : α) : op .negative p q = (p ⊔ q)ᶜ := rfl
+
+/-- An adversative coordinator has the truth conditions of conjunction. -/
+@[simp] theorem op_adversative (p q : α) : op .adversative p q = p ⊓ q := rfl
+
+theorem op_comm (r : Role) (p q : α) : op r p q = op r q p := by
+  cases r <;> simp [inf_comm, sup_comm]
+
+/-- Coordinating a constituent with itself returns it, except under negative coordination. -/
+theorem op_self {r : Role} (hr : r ≠ .negative) (p : α) : op r p p = p := by
+  cases r <;> simp_all
+
+/-- Negative coordination is the conjunction of the complements. -/
+theorem op_negative_eq_inf_compl (p q : α) : op .negative p q = pᶜ ⊓ qᶜ := compl_sup
 
 end Coordinator
 
-/-- A coordination morpheme's **marking** — decidable data Fragments configure. The
-    denotation is not stored: it is `Coordinator.op` of `role`. -/
+/-- A coordinator of a language. Its denotation is not stored: it is `Coordinator.op` of
+`role`. -/
 structure Coordinator where
-  /-- Surface form of the morpheme. -/
+  /-- The surface form. -/
   form : String
-  /-- Gloss / translation. -/
+  /-- The gloss. -/
   gloss : String
-  /-- Which Boolean operation it denotes. -/
+  /-- The semantic type. -/
   role : Coordinator.Role
-  /-- Full attachment kind. -/
+  /-- Whether the form is a free word or a bound affix or clitic, and on which side of its
+  host. -/
   kind : Morphology.Morph.Kind
-  /-- Does this morpheme also serve as an additive/focus particle? -/
+  /-- The form is also the additive focus particle 'also, too'. -/
   alsoAdditive : Bool := false
-  /-- Does this morpheme also serve as a quantifier particle?
-      Japanese "mo" and "ka" both do — tracks the coordination-quantification connection. -/
+  /-- The form also builds quantifiers, as Japanese *mo* and *ka* do on indeterminate
+  pronouns. -/
   alsoQuantifier : Bool := false
-  /-- Can this morpheme be used in correlative (bisyndetic) patterns?
-      Latin "et...et", "aut...aut". -/
+  /-- The form is repeated on each coordinand in a correlative construction, as Latin
+  *et … et* and *aut … aut*. -/
   correlative : Bool := false
-  /-- Notes on usage or distribution. -/
-  note : String := ""
   deriving DecidableEq, Repr
 
 /-- The coordinator as a word, UD category `CCONJ`. -/

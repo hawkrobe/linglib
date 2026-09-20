@@ -1,27 +1,28 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Classical Tibetan coordination
-[beyer-1992] [haspelmath-2007]
+# Classical Tibetan coordinators
 
-Classical Tibetan uses *-daŋ* postpositively on the first coordinand
-(monosyndetic A-co B), with diachronic source from the comitative marker
-'with'. [haspelmath-2007] (21) cites [beyer-1992]:240.
+Classical Tibetan conjoins noun phrases with *-daŋ*, attached to the first coordinand, in the
+example Haspelmath cites from Beyer; the form is a former case-marker meaning 'with'.
 
-- *-daŋ* — J, bound, postpositive on first coordinand
+## Main definitions
 
-Modern Tibetan dialects diverge; this Fragment encodes the Classical form.
+* `ClassicalTibetan.Coordination.dang`: the conjunctive enclitic.
+
+## References
+
+* [haspelmath-2007]
+* [beyer-1992]
 -/
 
 namespace ClassicalTibetan.Coordination
 
-/-- *-daŋ* — J particle (Classical Tibetan), comitative-derived. Bound,
-    postpositive on the first coordinand giving A-co B pattern. -/
+/-- *-daŋ* 'and', on the first coordinand, also 'with'. -/
 def dang : Coordinator :=
-  { form := "-daŋ", gloss := "and; with"
-  , role := .j, kind := .bound .after .clitic
-  , note := "Classical; comitative-derived; medial postpositive on first conjunct" }
+  { form := "-daŋ", gloss := "and; with", role := .conjunctive, kind := .bound .after .clitic }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [dang]
 
 end ClassicalTibetan.Coordination

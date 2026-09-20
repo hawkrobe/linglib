@@ -1,31 +1,40 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Finnish Coordination Morphemes
-[haspelmath-2007] [mitrovic-sauerland-2016]
+# Finnish coordinators
 
-Finnish has:
+Finnish coordinates with free words that stand before the second coordinand. Conjunction is
+*ja* 'and', with the emphatic *sekä … että* 'both … and', neither member of which is the plain
+coordinator. Disjunction distinguishes standard *tai* 'or', with the emphatic *joko … tai*
+'either … or', from interrogative *vai*, which asks the hearer to choose between the
+alternatives.
 
-- *ja* — J, free, prepositive: "A ja B"
-- *-kin* — MU, bound, additive ('also'): "koira-kin kissa-kin" = 'both the
-  dog and the cat' (bisyndetic postpositive)
+## Main definitions
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.finnish`).
+* `Finnish.Coordination.ja`: the conjunctive coordinator.
+* `Finnish.Coordination.tai`, `Finnish.Coordination.vai`: the standard and the interrogative
+  disjunctive coordinator.
+
+## References
+
+* [haspelmath-2007]
 -/
 
 namespace Finnish.Coordination
 
-/-- *ja* — J particle. Free, prepositive medial. -/
+/-- *ja* 'and'. -/
 def ja : Coordinator :=
-  { form := "ja", gloss := "and"
-  , role := .j, kind := .free }
+  { form := "ja", gloss := "and", role := .conjunctive, kind := .free }
 
-/-- *-kin* — MU particle, also additive. Bound, postpositive on each
-    coordinand for the bisyndetic 'both…and' pattern. -/
-def kin : Coordinator :=
-  { form := "-kin", gloss := "also, too; and (MU)"
-  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true }
+/-- *tai* 'or', in the emphatic *joko … tai*. -/
+def tai : Coordinator :=
+  { form := "tai", gloss := "or", role := .disjunctive, kind := .free, correlative := true }
 
-def allEntries : List Coordinator := [ja, kin]
+/-- *vai* 'or' of alternative questions. -/
+def vai : Coordinator :=
+  { form := "vai", gloss := "or", role := .disjunctive, kind := .free }
+
+/-- The coordinators. -/
+def allEntries : List Coordinator := [ja, tai, vai]
 
 end Finnish.Coordination

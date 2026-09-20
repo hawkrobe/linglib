@@ -16,7 +16,7 @@ moved for a criterial feature the other coordinand lacks is therefore not coordi
 features (Case 2, subcase I). Categorially identical coordinands fall under the Integrity
 Condition (50), by which a probe targets the coordinate structure and never a coordinand within
 it, and the same constituent cannot occupy both coordinated positions (71), a coordination the
-`Coordinator` substrate shows to be semantically vacuous (`op_self`).
+`Coordinator` substrate shows to be semantically vacuous (`Coordinator.op_self`).
 
 The paper's judgments are the rows of `Data/Examples/Fortuny2024.json`; `rows_predicted` checks
 them against the three-factor decomposition, and `rows_factor` that each ill-formed coordination
@@ -225,15 +225,10 @@ structure Occurrence where
   deriving DecidableEq
 
 /-- (71): a coordination is well formed only if its coordinands are coordinable and are distinct
-occurrences — a constituent cannot appear in both coordinated positions. -/
+occurrences — a constituent cannot appear in both coordinated positions. Such a coordination
+would also be semantically vacuous, the coordinator's operation returning the constituent
+(`Coordinator.op_self`), which §2.3 relates to the Least Effort Principle. -/
 def WellFormed (α β : Occurrence) : Prop := Coordinable α.cat β.cat ∧ α ≠ β
-
-/-- Self-coordination is semantically vacuous: for the conjunctive, additive, disjunctive and
-adversative roles the coordinator's operation on a constituent and itself returns it, the
-interface counterpart of (71) that §2.3 relates to the Least Effort Principle. -/
-theorem op_self {α : Type*} [BooleanAlgebra α] (r : Coordinator.Role)
-    (hr : r = .j ∨ r = .mu ∨ r = .disj ∨ r = .advers) (x : α) : Coordinator.op r x x = x := by
-  rcases hr with rfl | rfl | rfl | rfl <;> simp [Coordinator.op]
 
 /-! ### The judgments -/
 

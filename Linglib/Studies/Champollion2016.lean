@@ -7,8 +7,8 @@ import Linglib.Semantics.Plurality.Algebra
 
 This file formalizes the case in [champollion-2016-coordination] that *and* has one lexical entry,
 the intersective generalized conjunction of [partee-rooth-1983] — the Boolean meet that the
-substrate calls `Coordinator.op .j`. Collective readings such as *John and Mary met* are not a
-join on individuals folded into *and*; they come from silent type-shifters.
+substrate calls `Coordinator.op .conjunctive`. Collective readings such as *John and Mary met*
+are not a join on individuals folded into *and*; they come from silent type-shifters.
 
 Two results support the entry. The type-shift from an individual join to a meet of type-raised
 individuals is not an anti-homomorphism but holds exactly on the predicates that distribute the
@@ -51,7 +51,7 @@ open Plurality.Algebra
 /-! ### The type-shift `⊔ ↦ ⊓` is guarded to distributive predicates
 
 The intersective entry says *and* is `INT` ([champollion-2016-coordination] eq. 16):
-generalized conjunction, `Coordinator.op .j`, the Boolean meet `⊓`.
+generalized conjunction, `Coordinator.op .conjunctive`, the Boolean meet `⊓`.
 On two type-raised individuals it returns `λP. P x ∧ P y`. The collective behaviour
 people attribute to *and* (a join `x ⊔ y` on individuals) coincides with this meet only
 for predicates that *distribute* the join — for genuinely collective predicates the two
@@ -68,12 +68,12 @@ def DistributiveOverJoin {E : Type*} [SemilatticeSup E] (P : E → Prop) : Prop 
   ∀ x y : E, P (x ⊔ y) ↔ (P x ∧ P y)
 
 /-- **The type-shift `⊔ ↦ ⊓`, guarded.** Type-raising the individual-join `x ⊔ y` agrees
-    with the GQ-meet `Coordinator.op .j` of the raised individuals *at `P`* iff `P`
+    with the GQ-meet `Coordinator.op .conjunctive` of the raised individuals *at `P`* iff `P`
     distributes this join. The bare anti-homomorphism (for all `P`) is therefore FALSE;
     distributivity is exactly the guard. -/
 theorem individual_join_eq_op_iff (x y : E) (P : E → Prop) :
     (individual (x ⊔ y : E) P
-        ↔ Coordinator.op .j (individual x) (individual y) P)
+        ↔ Coordinator.op .conjunctive (individual x) (individual y) P)
       ↔ (P (x ⊔ y : E) ↔ (P x ∧ P y)) := Iff.rfl
 
 /-- For a distributive predicate the type-shift holds: `individual (x ⊔ y)` agrees with the
@@ -81,7 +81,7 @@ theorem individual_join_eq_op_iff (x y : E) (P : E → Prop) :
 theorem individual_join_eq_op_of_distributive (x y : E) {P : E → Prop}
     (hP : DistributiveOverJoin P) :
     individual (x ⊔ y : E) P
-      ↔ Coordinator.op .j (individual x) (individual y) P :=
+      ↔ Coordinator.op .conjunctive (individual x) (individual y) P :=
   (individual_join_eq_op_iff x y P).mpr (hP x y)
 
 /-- **The guard is Link distributivity.** A Link `ᴰ`-closed predicate `ᴰQ`
@@ -105,16 +105,16 @@ theorem linkD_distributiveOverJoin {E : Type*} [SemilatticeSup E]
 theorem individual_join_eq_op_of_linkD (hJP : AtomJoinPrime E) (x y : E)
     (Q : E → Prop) :
     individual (x ⊔ y : E) (D Q : E → Prop)
-      ↔ Coordinator.op .j (individual x) (individual y) (D Q : E → Prop) :=
+      ↔ Coordinator.op .conjunctive (individual x) (individual y) (D Q : E → Prop) :=
   individual_join_eq_op_of_distributive x y (linkD_distributiveOverJoin hJP Q)
 
 /-- **The guard is necessary, lifted to the type-shift.** A predicate that does NOT
     distribute the join breaks the `⊔ ↦ ⊓` agreement at the witnessing pair: there
-    `individual (x ⊔ y)` and the GQ-meet `Coordinator.op .j` come apart. -/
+    `individual (x ⊔ y)` and the GQ-meet `Coordinator.op .conjunctive` come apart. -/
 theorem individual_join_ne_op_of_not_distributive {P : E → Prop}
     (h : ¬ DistributiveOverJoin P) :
     ∃ x y : E, ¬ (individual (x ⊔ y : E) P
-                    ↔ Coordinator.op .j (individual x) (individual y) P) := by
+                    ↔ Coordinator.op .conjunctive (individual x) (individual y) P) := by
   simp only [DistributiveOverJoin, not_forall] at h
   obtain ⟨x, y, hxy⟩ := h
   exact ⟨x, y, fun hiff => hxy ((individual_join_eq_op_iff x y P).mp hiff)⟩
@@ -147,7 +147,7 @@ p. 608: `⟦no man⟧`/`⟦no woman⟧` as the *man-free* / *woman-free* witness
 The overgeneration: *No man and no woman smiled* (103a) comes out TRUE in the model where a
 smiling man (John) and a smiling woman (Mary) are the only smilers — take `A = {Mary}` (no
 man) and `B = {John}` (no woman), so `A ∪ B = {John, Mary} =` the smilers — even though a
-man did smile. The intersective `Coordinator.op .j` correctly makes it FALSE. -/
+man did smile. The intersective `Coordinator.op .conjunctive` correctly makes it FALSE. -/
 
 section Overgeneration
 
@@ -178,11 +178,11 @@ def noMan : Plur → Prop := fun X => ∀ a, X a → ¬ man a
 /-- `⟦no woman⟧` as a property of pluralities: the set contains no woman. -/
 def noWoman : Plur → Prop := fun X => ∀ a, X a → ¬ woman a
 
-/-- Champollion's **intersective** *and* on quantifier denotations is `Coordinator.op .j`
+/-- Champollion's **intersective** *and* on quantifier denotations is `Coordinator.op .conjunctive`
     (the Boolean meet `⊓` on the `Plur → Prop` carrier) —
     [champollion-2016-coordination] eq. 16. -/
 def andIntersective : (Plur → Prop) → (Plur → Prop) → (Plur → Prop) :=
-  Coordinator.op .j
+  Coordinator.op .conjunctive
 
 /-- Heycock & Zamparelli's **set-product** (collective) *and* ([heycock-zamparelli-2005];
     [champollion-2016-coordination] eq. 101): holds of a plurality `P` iff `P` is the union
@@ -202,7 +202,7 @@ def onlyJohn : Plur
   | .john => True
   | .mary => False
 
-/-- **Intersective: correct.** The intersective `Coordinator.op .j` entry predicts *No man
+/-- **Intersective: correct.** The intersective `Coordinator.op .conjunctive` entry predicts *No man
     and no woman smiled* FALSE — a man (John) smiled, so `no man` already fails. -/
 theorem intersective_false : ¬ andIntersective noMan noWoman smiled := by
   intro h
@@ -219,7 +219,7 @@ theorem setProduct_true : andSetProduct noMan noWoman smiled := by
 
 /-- **The payoff** ([champollion-2016-coordination] §7.1): on *No man and no woman smiled*
     in the John-and-Mary-smiled model, the collective set-product entry
-    ([heycock-zamparelli-2005]) and the intersective `Coordinator.op .j` entry assign
+    ([heycock-zamparelli-2005]) and the intersective `Coordinator.op .conjunctive` entry assign
     OPPOSITE truth values. The intersective answer (FALSE) is correct; the set-product
     (join-on-individuals) entry overgenerates (TRUE) — refuting the collective theory of
     *and*. -/

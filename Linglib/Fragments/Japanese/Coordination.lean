@@ -28,19 +28,19 @@ namespace Japanese.Coordination
 
 /-- *to* 'and', enclitic on the first conjunct, also the comitative 'with'. -/
 def to_ : Coordinator :=
-  { form := "to", gloss := "and; with", role := .j, kind := .bound .after .clitic }
+  { form := "to", gloss := "and; with", role := .conjunctive, kind := .bound .after .clitic }
 
 /-- *mo* 'and', enclitic on each conjunct, also the additive 'too' and the universal particle
 of the indeterminates. -/
 def mo : Coordinator :=
-  { form := "mo", gloss := "also, too; and; every", role := .mu, kind := .bound .after .clitic,
-    alsoAdditive := true, alsoQuantifier := true }
+  { form := "mo", gloss := "also, too; and; every", role := .conjunctive,
+    kind := .bound .after .clitic, alsoAdditive := true, alsoQuantifier := true }
 
 /-- *ka* 'or', enclitic, also the question particle and the existential particle of the
 indeterminates. -/
 def ka : Coordinator :=
-  { form := "ka", gloss := "or; question; some", role := .disj, kind := .bound .after .clitic,
-    alsoQuantifier := true }
+  { form := "ka", gloss := "or; question; some", role := .disjunctive,
+    kind := .bound .after .clitic, alsoQuantifier := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [to_, mo, ka]
