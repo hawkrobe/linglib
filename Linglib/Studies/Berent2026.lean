@@ -86,7 +86,7 @@ theorem onsetRise_setFeature_right {f : Feature} (hf : f ∉ Sonority.features) 
   rw [onsetRise, Sonority.ofSegment_setFeature hf, onsetRise]
 
 /-- The sonority rise across an onset of two English phonemes. -/
-abbrev onset (c₁ c₂ : English.Phoneme) : ℤ := onsetRise c₁.segment c₂.segment
+abbrev onset (c₁ c₂ : English.Phoneme) : ℤ := onsetRise c₁ c₂
 
 /-- The onset of blif is a larger rise than that of bnif, the onset of bdif is a plateau,
 and the onset of lbif is a fall. -/

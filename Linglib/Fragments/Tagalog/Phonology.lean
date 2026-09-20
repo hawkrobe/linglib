@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Tagalog
-import Linglib.Phonology.Segmental.PHOIBLE
+import Linglib.Phonology.Segmental.SegmentLike
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -23,14 +23,13 @@ of that place, so copying the place class onto /ŋ/ gives the chart's own /m/, /
 
 ## Main definitions
 
-* `Tagalog.Phoneme`: the phonemes of the examples, with `chart` and `segment`.
+* `Tagalog.Phoneme`: the phonemes of the examples, with `chart`, read as segments.
 * `Tagalog.placeAssimilation`, `Tagalog.obstruentDeletion`, `Tagalog.nasalSubstitution`: the
   two rules and their sequence.
 
 ## Main results
 
-* `Tagalog.Phoneme.segment_injective`, `Tagalog.Phoneme.chart_mem_tgl`: distinct phonemes are
-  distinct segments, and each is a phoneme of PHOIBLE's Tagalog inventory.
+* `Tagalog.Phoneme.chart_mem_tgl`: each phoneme is in PHOIBLE's Tagalog inventory.
 * `Tagalog.mamigaj`: *maŋ-* with *bigáj* derives *mamigáj*, and the bare stem is unchanged.
 * `Tagalog.coalescence`: each stop coalesces with a preceding nasal into the nasal of its
   place.
@@ -68,10 +67,10 @@ def chart : Phoneme → FeatureMatrix
   | a => .«a» | i => .«i»
   | j => .«j»
 
-/-- The segment of a phoneme is the segment of its chart entry. -/
-def segment (x : Phoneme) : Segment := x.chart.toSegment
-
-theorem segment_injective : Function.Injective segment := by decide
+/-- A phoneme is read as the segment of its chart entry. -/
+instance : SegmentLike Phoneme where
+  coe x := .ofChart x.chart
+  coe_injective' := by decide
 
 /-- Each phoneme is in PHOIBLE's Tagalog inventory. -/
 theorem chart_mem_tgl (x : Phoneme) :
@@ -79,9 +78,6 @@ theorem chart_mem_tgl (x : Phoneme) :
   cases x <;> decide
 
 end Phoneme
-
-/-- The segments of a string of phonemes. -/
-def segments (l : List Phoneme) : List Segment := l.map Phoneme.segment
 
 /-! ### The rules -/
 
@@ -104,10 +100,10 @@ def nasalSubstitution : List Rule := [placeAssimilation, obstruentDeletion]
 
 /-- *maŋ-* with *bigáj* derives *mamigáj*; the bare stem is unchanged. -/
 theorem mamigaj :
-    derive nasalSubstitution (segments [.m, .a, .ŋ, .b, .i, .g, .a, .j]) =
-        segments [.m, .a, .m, .i, .g, .a, .j] ∧
-      derive nasalSubstitution (segments [.b, .i, .g, .a, .j]) =
-        segments [.b, .i, .g, .a, .j] := by
+    derive nasalSubstitution (([.m, .a, .ŋ, .b, .i, .g, .a, .j] : List Phoneme)) =
+        ([.m, .a, .m, .i, .g, .a, .j] : List Phoneme) ∧
+      derive nasalSubstitution (([.b, .i, .g, .a, .j] : List Phoneme)) =
+        ([.b, .i, .g, .a, .j] : List Phoneme) := by
   decide
 
 /-- The nasal at the place of a stop or nasal. A vowel or glide is left as it is. -/
@@ -119,7 +115,7 @@ def Phoneme.nasal : Phoneme → Phoneme
 
 /-- Each stop coalesces with a preceding nasal into the nasal of its place. -/
 theorem coalescence (x : Phoneme) (hx : x ∈ ({.p, .b, .t, .d, .k, .g} : Finset Phoneme)) :
-    derive nasalSubstitution (segments [.ŋ, x]) = segments [x.nasal] := by
+    derive nasalSubstitution (([.ŋ, x] : List Phoneme)) = ([x.nasal] : List Phoneme) := by
   revert x; decide
 
 end Tagalog

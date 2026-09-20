@@ -215,19 +215,19 @@ instance (s : Stats) : Decidable (IsIsland s) := inferInstanceAs (Decidable (Les
 
 /-! ### The paper's steps on the English fragment -/
 
-def vote : List Segment := segments [.v, .o, .t]
-def need : List Segment := segments [.n, .i, .d]
-def rub : List Segment := segments [.turnedR, .wedge, .b]
-def sag : List Segment := segments [.s, .æ, .g]
-def plan : List Segment := segments [.p, .l, .æ, .n]
-def love : List Segment := segments [.l, .wedge, .v]
-def flow : List Segment := segments [.f, .l, .o]
-def jump : List Segment := segments [.dezh, .wedge, .m, .p]
-def miss : List Segment := segments [.m, .smallCapitalI, .s]
-def wish : List Segment := segments [.w, .smallCapitalI, .esh]
-def laugh : List Segment := segments [.l, .æ, .f]
-def fill : List Segment := segments [.f, .smallCapitalI, .l]
-def pick : List Segment := segments [.p, .smallCapitalI, .k]
+def vote : List Segment := ([.v, .o, .t] : List Phoneme)
+def need : List Segment := ([.n, .i, .d] : List Phoneme)
+def rub : List Segment := ([.turnedR, .wedge, .b] : List Phoneme)
+def sag : List Segment := ([.s, .æ, .g] : List Phoneme)
+def plan : List Segment := ([.p, .l, .æ, .n] : List Phoneme)
+def love : List Segment := ([.l, .wedge, .v] : List Phoneme)
+def flow : List Segment := ([.f, .l, .o] : List Phoneme)
+def jump : List Segment := ([.dezh, .wedge, .m, .p] : List Phoneme)
+def miss : List Segment := ([.m, .smallCapitalI, .s] : List Phoneme)
+def wish : List Segment := ([.w, .smallCapitalI, .esh] : List Phoneme)
+def laugh : List Segment := ([.l, .æ, .f] : List Phoneme)
+def fill : List Segment := ([.f, .smallCapitalI, .l] : List Phoneme)
+def pick : List Segment := ([.p, .smallCapitalI, .k] : List Phoneme)
 
 /-- The fragment's consonants. -/
 def consonants : List Phoneme :=
@@ -236,7 +236,7 @@ def consonants : List Phoneme :=
 /-- In (6), *vote* and *need* differ first in their final segments, so the learned `-əd` rule keeps
 what [t] and [d] share, a class no other consonant meets. -/
 theorem learned_vote_need : ∀ x ∈ consonants,
-    Matches (learned [vote, need]) [x.segment] ↔ x = .t ∨ x = .d := by
+    Matches (learned [vote, need]) [(x : Segment)] ↔ x = .t ∨ x = .d := by
   decide
 
 /-- As footnote 4 observes, whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned
@@ -247,19 +247,19 @@ theorem learned_rub_sag_plan : Matches (learned [rub, sag, plan]) need := by dec
 From *rub*, *sag*, *plan*, *love* and *flow*, whose final segments are all non-lateral, it
 reaches every voiced consonant but /l/, and a stem in /l/ completes it. -/
 theorem learned_voiced : ∀ x ∈ consonants,
-    (Matches (learned [rub, sag, plan, love, flow]) [x.segment] ↔
-        x.segment.HasValue .voice true ∧ x ≠ .l) ∧
-      (Matches (learned [rub, sag, plan, love, flow, fill]) [x.segment] ↔
-        x.segment.HasValue .voice true) := by
+    (Matches (learned [rub, sag, plan, love, flow]) [(x : Segment)] ↔
+        (x : Segment).HasValue .voice true ∧ x ≠ .l) ∧
+      (Matches (learned [rub, sag, plan, love, flow, fill]) [(x : Segment)] ↔
+        (x : Segment).HasValue .voice true) := by
   decide
 
 /-- In (7b) the `-t` rule does likewise. From *jump*, *miss* and *laugh*, whose final segments
 are all non-dorsal, it reaches every voiceless consonant but /k/, and a stem in /k/ completes it. -/
 theorem learned_voiceless : ∀ x ∈ consonants,
-    (Matches (learned [jump, miss, laugh]) [x.segment] ↔
-        x.segment.HasValue .voice false ∧ x ≠ .k) ∧
-      (Matches (learned [jump, miss, laugh, pick]) [x.segment] ↔
-        x.segment.HasValue .voice false) := by
+    (Matches (learned [jump, miss, laugh]) [(x : Segment)] ↔
+        (x : Segment).HasValue .voice false ∧ x ≠ .k) ∧
+      (Matches (learned [jump, miss, laugh, pick]) [(x : Segment)] ↔
+        (x : Segment).HasValue .voice false) := by
   decide
 
 /-- The island (8) is `-t` after a voiceless fricative. -/
@@ -268,7 +268,7 @@ def voicelessFricative : Context :=
 
 /-- (8) is met by the four voiceless fricatives and nothing else. -/
 theorem voicelessFricative_iff : ∀ x ∈ consonants,
-    Matches voicelessFricative [x.segment] ↔ x ∈ [.f, .θ, .s, .esh] := by
+    Matches voicelessFricative [(x : Segment)] ↔ x ∈ [.f, .θ, .s, .esh] := by
   decide
 
 /-- The rule learned from *miss*, *wish* and *laugh* lies inside the island (8), and further
@@ -276,7 +276,7 @@ fricative-final forms widen it to the island. -/
 theorem learned_le_voicelessFricative (x : Segment)
     (h : Matches (learned [miss, wish, laugh]) [x]) : Matches voicelessFricative [x] := by
   have e : learned [miss, wish, laugh] =
-      [.seg (Phoneme.s.segment ⊓ Phoneme.esh.segment ⊓ Phoneme.f.segment)] := by decide
+      [.seg ((Phoneme.s : Segment) ⊓ (Phoneme.esh : Segment) ⊓ (Phoneme.f : Segment))] := by decide
   rw [e, matches_single_iff] at h
   exact (matches_single_iff _ _).2 (le_trans (by decide) h)
 

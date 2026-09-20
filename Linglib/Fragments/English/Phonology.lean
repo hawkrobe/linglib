@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segmental.PHOIBLE
+import Linglib.Phonology.Segmental.SegmentLike
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -11,13 +11,8 @@ and its segment is the segment of that chart entry, so the values are PHOIBLE's.
 
 ## Main definitions
 
-* `English.Phoneme`: the phonemes, with `chart` and `segment`.
-* `English.segments`: the segments of a string of phonemes.
+* `English.Phoneme`: the phonemes, with `chart`, read as segments.
 * `English.preglottalization`, `English.postnasalDeletion`: two rules of Hayes's.
-
-## Main results
-
-* `English.Phoneme.segment_injective`: distinct phonemes are distinct segments.
 
 ## Implementation notes
 
@@ -56,15 +51,12 @@ def chart : Phoneme → FeatureMatrix
   | l => .«l» | w => .«w» | turnedR => .«ɹ»
   | æ => .«æ» | smallCapitalI => .«ɪ» | i => .«i» | wedge => .«ʌ» | o => .«o» | schwa => .«ə»
 
-/-- The segment of a phoneme is the segment of its chart entry. -/
-def segment (x : Phoneme) : Segment := x.chart.toSegment
-
-theorem segment_injective : Function.Injective segment := by decide
+/-- A phoneme is read as the segment of its chart entry. -/
+instance : SegmentLike Phoneme where
+  coe x := .ofChart x.chart
+  coe_injective' := by decide
 
 end Phoneme
-
-/-- The segments of a string of phonemes. -/
-def segments (l : List Phoneme) : List Segment := l.map Phoneme.segment
 
 /-! ### Rules -/
 

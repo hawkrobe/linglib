@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Persian
-import Linglib.Phonology.Segmental.PHOIBLE
+import Linglib.Phonology.Segmental.SegmentLike
 
 /-!
 # Persian phonemes
@@ -13,12 +13,11 @@ chart, and its segment is the segment of that chart entry.
 
 ## Main definitions
 
-* `Farsi.Phoneme`: the phonemes, with `chart` and `segment`.
+* `Farsi.Phoneme`: the phonemes, with `chart`, read as segments.
 
 ## Main results
 
-* `Farsi.Phoneme.segment_injective`, `Farsi.Phoneme.chart_mem_pes`: distinct phonemes are
-  distinct segments, and each is a phoneme of PHOIBLE's Persian inventory.
+* `Farsi.Phoneme.chart_mem_pes`: each phoneme is in PHOIBLE's Persian inventory.
 * `Farsi.Phoneme.isVowel_iff`: the six vowels are the vowels.
 
 ## Implementation notes
@@ -54,10 +53,10 @@ def chart : Phoneme → FeatureMatrix
   | i => .«i» | e => .«e» | æ => .«a̟» | u => .«u» | o => .«o» | scriptA => .«ɑ»
   | h => .«h» | tesh => .«t̠ʃ» | m => .«m» | n => .«n» | glottalStop => .«ʔ»
 
-/-- The segment of a phoneme is the segment of its chart entry. -/
-def segment (x : Phoneme) : Segment := x.chart.toSegment
-
-theorem segment_injective : Function.Injective segment := by decide
+/-- A phoneme is read as the segment of its chart entry. -/
+instance : SegmentLike Phoneme where
+  coe x := .ofChart x.chart
+  coe_injective' := by decide
 
 /-- Each phoneme is in PHOIBLE's Persian inventory. -/
 theorem chart_mem_pes (x : Phoneme) :
@@ -65,7 +64,7 @@ theorem chart_mem_pes (x : Phoneme) :
   cases x <;> decide
 
 theorem isVowel_iff (x : Phoneme) :
-    x.segment.IsVowel ↔ x ∈ ({i, e, æ, u, o, scriptA} : Finset Phoneme) := by
+    (x : Segment).IsVowel ↔ x ∈ ({i, e, æ, u, o, scriptA} : Finset Phoneme) := by
   revert x; decide
 
 end Phoneme

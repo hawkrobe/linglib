@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segmental.PHOIBLE
+import Linglib.Phonology.Segmental.SegmentLike
 
 /-!
 # Latin phonemes
@@ -13,12 +13,11 @@ entry, so the values are PHOIBLE's.
 ## Main definitions
 
 * `Latin.Phoneme`: the phonemes.
-* `Latin.Phoneme.chart`: the PHOIBLE chart entry of a phoneme.
-* `Latin.Phoneme.segment`: the segment of a phoneme.
+* `Latin.Phoneme.chart`: the PHOIBLE chart entry of a phoneme. A phoneme is read as the
+  segment of its chart entry, distinct phonemes as distinct segments.
 
 ## Main results
 
-* `Latin.Phoneme.segment_injective`: distinct phonemes are distinct segments.
 * `Latin.Phoneme.isVowel_iff`, `Latin.Phoneme.ofSegment_eq_nasal_iff`,
   `Latin.Phoneme.ofSegment_eq_liquid_iff`, `Latin.Phoneme.ofSegment_eq_glide_iff`: the
   vowels and the sonorant consonants fall in their sonority classes.
@@ -71,24 +70,25 @@ def chart : Phoneme → FeatureMatrix
   | l => .«l» | r => .«r»
   | w => .«w»
 
-/-- The segment of a phoneme is the segment of its chart entry. -/
-def segment (x : Phoneme) : Segment := x.chart.toSegment
-
-theorem segment_injective : Function.Injective segment := by decide
+/-- A phoneme is read as the segment of its chart entry. -/
+instance : SegmentLike Phoneme where
+  coe x := .ofChart x.chart
+  coe_injective' := by decide
 
 theorem isVowel_iff (x : Phoneme) :
-    x.segment.IsVowel ↔ x ∈ ({a, e, i, o, u} : Finset Phoneme) := by
+    (x : Segment).IsVowel ↔ x ∈ ({a, e, i, o, u} : Finset Phoneme) := by
   revert x; decide
 
 theorem ofSegment_eq_nasal_iff (x : Phoneme) :
-    Sonority.ofSegment x.segment = .nasal ↔ x = m ∨ x = n := by
+    Sonority.ofSegment (x : Segment) = .nasal ↔ x = m ∨ x = n := by
   revert x; decide
 
 theorem ofSegment_eq_liquid_iff (x : Phoneme) :
-    Sonority.ofSegment x.segment = .liquid ↔ x = l ∨ x = r := by
+    Sonority.ofSegment (x : Segment) = .liquid ↔ x = l ∨ x = r := by
   revert x; decide
 
-theorem ofSegment_eq_glide_iff (x : Phoneme) : Sonority.ofSegment x.segment = .glide ↔ x = w := by
+theorem ofSegment_eq_glide_iff (x : Phoneme) :
+    Sonority.ofSegment (x : Segment) = .glide ↔ x = w := by
   revert x; decide
 
 end Phoneme
