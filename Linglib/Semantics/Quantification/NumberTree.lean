@@ -25,6 +25,7 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
 * `Quantifier.NumberTree.innerNeg`: inner negation, the swap of the two coordinates.
 * `Quantifier.NumberTree.all`, `Quantifier.NumberTree.some`, `Quantifier.NumberTree.no`,
   `Quantifier.NumberTree.notAll`: the corners of the square of opposition.
+* `Quantifier.NumberTree.cardinal`: the quantifiers that depend on `|A ∩ B|` alone.
 * `Quantifier.NumberTree.Asymmetric`, `Quantifier.NumberTree.StronglyConnected`,
   `Quantifier.NumberTree.Euclidean`: relational conditions on a quantifier, read off the tree.
 * `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
@@ -46,9 +47,11 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
 
 ## Implementation notes
 
-`Variety` asks only that the quantifier hold somewhere and fail somewhere. Van Benthem's VAR asks
-for both among the points `(0, 0)`, `(1, 0)` and `(0, 1)`, which is stronger, so results assuming
-`Variety` apply under VAR.
+`Variety` asks only that the quantifier hold somewhere and fail somewhere. Van Benthem's VAR is
+stronger in both of its versions, so results assuming `Variety` apply under VAR. The paper asks
+for a presence and an absence among the points `(0, 0)`, `(1, 0)` and `(0, 1)`, and the book's
+chapter on quantifiers, which restates the tree and the postulates, asks for both in every row
+below the top.
 
 Continuity, absence of deadlock and uniformity each treat presence and absence of the quantifier
 alike. Each is stated as a condition on presence (`RowConvex`, `NoDeadlock`, `Homogeneous`) that
@@ -57,6 +60,7 @@ is imposed on the quantifier and on its complement.
 ## References
 
 * [van-benthem-1984]
+* [van-benthem-1986]
 -/
 
 namespace Quantifier
@@ -109,6 +113,16 @@ theorem innerNeg_some : NumberTree.some.innerNeg = NumberTree.notAll := rfl
 theorem compl_all : NumberTree.allᶜ = NumberTree.notAll := rfl
 
 theorem compl_no : NumberTree.noᶜ = NumberTree.some := rfl
+
+/-- A cardinal quantifier holds according to `|A ∩ B|` alone, as the numerals do. -/
+def cardinal (s : Set ℕ) : NumberTree := fun _ b ↦ b ∈ s
+
+@[simp] theorem cardinal_apply {s : Set ℕ} : cardinal s a b ↔ b ∈ s := Iff.rfl
+
+instance {s : Set ℕ} [DecidablePred (· ∈ s)] : DecidableRel (cardinal s) :=
+  fun _ b ↦ inferInstanceAs (Decidable (b ∈ s))
+
+theorem cardinal_singleton_zero : cardinal {0} = NumberTree.no := rfl
 
 /-! ### Relational conditions
 

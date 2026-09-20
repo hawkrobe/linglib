@@ -1,4 +1,5 @@
 import Linglib.Pragmatics.RSA.QUD
+import Linglib.Semantics.Quantification.NumberTree
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Core.Probability.Distributions.Binomial
 import Linglib.Core.Probability.Kernel.Posterior
@@ -17,8 +18,9 @@ judgment is a production decision.
 
 ## Main definitions
 
+* `Scope.negation`: the negation of a determiner that a scope interpretation expresses.
 * `ext`: the worlds at which an utterance is true under a scope interpretation, for a determiner
-  given as a relation on counts.
+  on the tree of numbers.
 * `project`, `cell`: the answer a question assigns to a world, and the worlds sharing that answer.
 * `L0`, `S1`, `L1`, `S2`: the literal listener, the speaker, the pragmatic listener and the
   endorsing speaker, as kernels.
@@ -54,12 +56,14 @@ judgment is a production decision.
   parameters. The numerical predictions of Figures 2, 3, 6 and 7, at unit rationality and the
   paper's grid of priors, are not restated, and the endorsement rates of the experiments the
   paper reviews are not data of this file.
-* A determiner is a relation between the number of restrictor members outside its scope and the
-  number inside it, so *every* is `every` and a numeral is membership of the inside count in
-  the interval of a `Degree.Comparison`, `.eq` for the exact reading and `.ge` for the at-least
-  reading. The truth conditions (2) and (6), which the paper tabulates at two and at four
-  horses, follow for any number of horses (`mem_ext_every_surface`, `mem_ext_numeral_surface`
-  and their inverse counterparts).
+* A determiner is a quantifier on van Benthem's tree of numbers, a relation between the number
+  of restrictor members outside its scope and the number inside it. So *every* is
+  `NumberTree.all`, a numeral is the cardinal quantifier of the interval of a
+  `Degree.Comparison`, `.eq` for the exact reading and `.ge` for the at-least reading, and a
+  scope interpretation is a negation of the determiner (`Scope.negation`), inner for surface
+  scope and outer for inverse scope. The truth conditions (2) and (6), which the paper
+  tabulates at two and at four horses, follow for any number of horses
+  (`mem_ext_every_surface`, `mem_ext_numeral_surface` and their inverse counterparts).
 * Both models share the five questions of (7): the every-not model is the case of a question
   prior carried by the first three, and with two horses the numeral questions partition the
   worlds as *all?* does (`cell_exactlyTwo_two`, `cell_atLeastTwo_two`).
@@ -76,9 +80,10 @@ judgment is a production decision.
 * [kao-etal-2014-hyperbole]
 * [qing-franke-2015]
 * [goodman-frank-2016]
+* [van-benthem-1984]
 -/
 
-open MeasureTheory ProbabilityTheory RSA
+open MeasureTheory ProbabilityTheory RSA Quantifier
 open scoped ENNReal unitInterval Fin.NatCast
 
 namespace ScontrasPearl2021
@@ -117,66 +122,81 @@ abbrev World (n : ℕ) := Fin (n + 1)
 
 /-! ### Semantics -/
 
-/-- The determiner *every* holds of counts when no restrictor member lies outside its scope. -/
-def every (outside _inside : ℕ) : Prop := outside = 0
+/-- A scope interpretation negates the determiner on the tree of numbers. The surface
+interpretation, the determiner over negation, is its inner negation, and the inverse
+interpretation, negation over the determiner, is its outer negation. -/
+def Scope.negation : Scope → NumberTree → NumberTree
+  | .surface, D => D.innerNeg
+  | .inverse, D => Dᶜ
 
-instance : DecidableRel every := fun _ _ ↦ inferInstanceAs (Decidable (_ = 0))
+instance (i : Scope) (D : NumberTree) [DecidableRel D] : DecidableRel (i.negation D) :=
+  match i with
+  | .surface => inferInstanceAs (DecidableRel D.innerNeg)
+  | .inverse => inferInstanceAs (DecidableRel Dᶜ)
 
-/-- A numeral on counts, whose inside count lies in the interval that the comparison `c` selects
-at `k`. The comparison `.eq` gives the exact reading and `.ge` the at-least reading. -/
-def numeral (c : Degree.Comparison) (k : ℕ) (_outside inside : ℕ) : Prop := inside ∈ c.interval k
+/-- On its surface interpretation *every horse didn't jump* is *no horse jumped*, the paper's
+"none" reading. -/
+theorem negation_surface_all : Scope.surface.negation NumberTree.all = NumberTree.no := rfl
+
+/-- On its inverse interpretation *every horse didn't jump* is *not all horses jumped*, the
+paper's "not-all" reading. -/
+theorem negation_inverse_all : Scope.inverse.negation NumberTree.all = NumberTree.notAll := rfl
+
+/-- A numeral is the cardinal quantifier of the interval that the comparison `c` selects at `k`.
+The comparison `.eq` gives the exact reading and `.ge` the at-least reading. -/
+def numeral (c : Degree.Comparison) (k : ℕ) : NumberTree := .cardinal (c.interval k)
 
 instance (c : Degree.Comparison) (k : ℕ) : DecidableRel (numeral c k) :=
-  fun _ i ↦ inferInstanceAs (Decidable (i ∈ c.interval k))
+  inferInstanceAs (DecidableRel (NumberTree.cardinal (c.interval k)))
 
 /-- The numeral *two* on its exact reading. -/
-abbrev twoExact : ℕ → ℕ → Prop := numeral .eq 2
+abbrev twoExact : NumberTree := numeral .eq 2
 
 /-- The numeral *two* on its at-least reading. -/
-abbrev twoAtLeast : ℕ → ℕ → Prop := numeral .ge 2
+abbrev twoAtLeast : NumberTree := numeral .ge 2
 
 /-- The extension of an utterance under a scope interpretation ((2), (6)) among `n` horses. The
-null utterance is true everywhere; *D horses didn't jump* is true at `w` on its surface reading
-when `D` holds with the `w` jumpers outside its scope and the `n - w` non-jumpers inside, and on
-its inverse reading when `D` fails with the `n - w` non-jumpers outside and the `w` jumpers
-inside. -/
-def ext (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ) : Scope → Utt → Finset (World n)
+null utterance is true everywhere. With `w` jumpers, `n - w` horses lie outside the scope *jump*
+and `w` inside it, and *D horses didn't jump* is true when the interpretation's negation of `D`
+holds of those two counts. -/
+def ext (D : NumberTree) [DecidableRel D] (n : ℕ) : Scope → Utt → Finset (World n)
   | _, .null => Finset.univ
-  | .surface, .amb => Finset.univ.filter fun w ↦ D w (n - w)
-  | .inverse, .amb => Finset.univ.filter fun w ↦ ¬ D (n - w) w
+  | i, .amb => Finset.univ.filter fun w ↦ i.negation D (n - w) w
 
 section Ext
 
-variable {D : ℕ → ℕ → Prop} [DecidableRel D] {c : Degree.Comparison} {k n : ℕ} {w : World n}
+variable {D : NumberTree} [DecidableRel D] {c : Degree.Comparison} {k n : ℕ} {w : World n}
 
-theorem mem_ext_surface : w ∈ ext D n .surface .amb ↔ D w (n - w) := by simp [ext]
+theorem mem_ext {i : Scope} : w ∈ ext D n i .amb ↔ i.negation D (n - w) w := by simp [ext]
 
-theorem mem_ext_inverse : w ∈ ext D n .inverse .amb ↔ ¬ D (n - w) w := by simp [ext]
+theorem mem_ext_surface : w ∈ ext D n .surface .amb ↔ D w (n - w) := mem_ext
+
+theorem mem_ext_inverse : w ∈ ext D n .inverse .amb ↔ ¬ D (n - w) w := mem_ext
 
 /-- On its surface interpretation *every horse didn't jump* is true where none jumped (2). -/
-theorem mem_ext_every_surface : w ∈ ext every n .surface .amb ↔ w = 0 := by
-  rw [mem_ext_surface, every, Fin.ext_iff, Fin.val_zero]
+theorem mem_ext_every_surface : w ∈ ext NumberTree.all n .surface .amb ↔ w = 0 := by
+  simp only [mem_ext_surface, NumberTree.all, Fin.ext_iff, Fin.val_zero]
 
 /-- On its inverse interpretation *every horse didn't jump* is true where not all jumped (2). -/
-theorem mem_ext_every_inverse : w ∈ ext every n .inverse .amb ↔ w ≠ Fin.last n := by
-  rw [mem_ext_inverse, every, Ne, Fin.ext_iff, Fin.val_last]
+theorem mem_ext_every_inverse : w ∈ ext NumberTree.all n .inverse .amb ↔ w ≠ Fin.last n := by
+  simp only [mem_ext_inverse, NumberTree.all, Ne, Fin.ext_iff, Fin.val_last]
   omega
 
 /-- On its surface interpretation a numeral sentence is true where the number of non-jumpers
 stands in the numeral's comparison to its value (6). -/
 theorem mem_ext_numeral_surface :
     w ∈ ext (numeral c k) n .surface .amb ↔ c.rel (n - w) k := by
-  rw [mem_ext_surface, numeral, Degree.Comparison.mem_interval]
+  simp only [mem_ext_surface, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
 
 /-- On its inverse interpretation a numeral sentence is true where the number of jumpers does
 not stand in the numeral's comparison to its value (6). -/
 theorem mem_ext_numeral_inverse :
     w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.rel (w : ℕ) k := by
-  rw [mem_ext_inverse, numeral, Degree.Comparison.mem_interval]
+  simp only [mem_ext_inverse, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
 
-/-- The extension sees a determiner only at counts that sum to the number of horses, the
-diagonal of the number triangle, so determiners that agree there have the same extensions. -/
-theorem ext_congr {D' : ℕ → ℕ → Prop} [DecidableRel D']
+/-- The extension sees a determiner only at counts that sum to the number of horses, a row of
+the tree of numbers, so determiners that agree there have the same extensions. -/
+theorem ext_congr {D' : NumberTree} [DecidableRel D']
     (h : ∀ a b, a + b = n → (D a b ↔ D' a b)) (i : Scope) (u : Utt) :
     ext D n i u = ext D' n i u := by
   cases u
@@ -188,25 +208,29 @@ theorem ext_congr {D' : ℕ → ℕ → Prop} [DecidableRel D']
 
 /-- Among `n` restrictor members, exactly `n` lie inside the scope just in case none lies
 outside. -/
-theorem numeral_eq_iff_every {a b : ℕ} (h : a + b = n) : numeral .eq n a b ↔ every a b := by
-  simp only [numeral, every, Degree.Comparison.mem_interval, Degree.Comparison.rel]
+theorem numeral_eq_iff_all {a b : ℕ} (h : a + b = n) :
+    numeral .eq n a b ↔ NumberTree.all a b := by
+  simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
+    Degree.Comparison.rel]
   omega
 
 /-- Among `n` restrictor members, at least `n` lie inside the scope just in case none lies
 outside. -/
-theorem numeral_ge_iff_every {a b : ℕ} (h : a + b = n) : numeral .ge n a b ↔ every a b := by
-  simp only [numeral, every, Degree.Comparison.mem_interval, Degree.Comparison.rel]
+theorem numeral_ge_iff_all {a b : ℕ} (h : a + b = n) :
+    numeral .ge n a b ↔ NumberTree.all a b := by
+  simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
+    Degree.Comparison.rel]
   omega
 
 /-- With as many horses as the numeral counts, the numeral sentence on the exact reading is true
 exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
-theorem ext_numeral_eq_self (n : ℕ) : ext (numeral .eq n) n = ext every n :=
-  funext₂ <| ext_congr fun _ _ ↦ numeral_eq_iff_every
+theorem ext_numeral_eq_self (n : ℕ) : ext (numeral .eq n) n = ext NumberTree.all n :=
+  funext₂ <| ext_congr fun _ _ ↦ numeral_eq_iff_all
 
 /-- With as many horses as the numeral counts, the numeral sentence on the at-least reading is
 true exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
-theorem ext_numeral_ge_self (n : ℕ) : ext (numeral .ge n) n = ext every n :=
-  funext₂ <| ext_congr fun _ _ ↦ numeral_ge_iff_every
+theorem ext_numeral_ge_self (n : ℕ) : ext (numeral .ge n) n = ext NumberTree.all n :=
+  funext₂ <| ext_congr fun _ _ ↦ numeral_ge_iff_all
 
 end Ext
 
@@ -262,7 +286,7 @@ theorem cell_atLeastTwo_two (w : World 2) : cell 2 .atLeastTwo w = cell 2 .all w
 
 section Model
 
-variable (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ)
+variable (D : NumberTree) [DecidableRel D] (n : ℕ)
 
 /-- The literal listener is uniform on the extension of the utterance under the scope
 interpretation, with no world prior (fn. 6). -/
@@ -327,12 +351,12 @@ noncomputable def S2 : Kernel (World n) Utt := speaker 1 1 (Kernel.fst (L1 D n �
 
 /-- With as many horses as the numeral counts, the numeral model on the exact reading is the
 every-not model (§4.2.1). -/
-theorem S2_numeral_eq_self : S2 (numeral .eq n) n α μ ν = S2 every n α μ ν := by
+theorem S2_numeral_eq_self : S2 (numeral .eq n) n α μ ν = S2 NumberTree.all n α μ ν := by
   simp only [S2, L1, L0, ext_numeral_eq_self]
 
 /-- With as many horses as the numeral counts, the numeral model on the at-least reading is the
 every-not model (§4.2.1). -/
-theorem S2_numeral_ge_self : S2 (numeral .ge n) n α μ ν = S2 every n α μ ν := by
+theorem S2_numeral_ge_self : S2 (numeral .ge n) n α μ ν = S2 NumberTree.all n α μ ν := by
   simp only [S2, L1, L0, ext_numeral_ge_self]
 
 end Model
@@ -341,7 +365,7 @@ end Model
 
 section Share
 
-variable (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ) (α : ℝ)
+variable (D : NumberTree) [DecidableRel D] (n : ℕ) (α : ℝ)
 
 /-- The cell mass is the fraction of the extension of an utterance under a scope interpretation
 that lies in the cell of a world under a question, which is the projected literal listener's mass
@@ -417,7 +441,7 @@ theorem S1_real_null (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
 `u` is true under the interpretation of `l`. -/
 def cellCount (l : Scope × QUD) (u : Utt) (w : World n) : ℕ := (ext D n l.1 u ∩ cell n l.2 w).card
 
-private theorem cellMass_mul_cellMass_le_iff {D' : ℕ → ℕ → Prop} [DecidableRel D']
+private theorem cellMass_mul_cellMass_le_iff {D' : NumberTree} [DecidableRel D']
     {l l' : Scope × QUD} {w w' : World n} (hS : 0 < (ext D n l.1 .amb).card)
     (hS' : 0 < (ext D' n l'.1 .amb).card) :
     cellMass D n l .amb w * cellMass D' n l' .null w'
@@ -437,7 +461,7 @@ private theorem cellMass_mul_cellMass_le_iff {D' : ℕ → ℕ → Prop} [Decida
 determiners: the rationality cancels, leaving a comparison of the odds of the test sentence
 against silence, each the fraction of the sentence's extension in the world's cell over the
 fraction of all worlds in it. -/
-theorem share_le_share_iff (hα : 0 < α) {D' : ℕ → ℕ → Prop} [DecidableRel D']
+theorem share_le_share_iff (hα : 0 < α) {D' : NumberTree} [DecidableRel D']
     {l l' : Scope × QUD} {w w' : World n} (hS : 0 < (ext D n l.1 .amb).card)
     (hS' : 0 < (ext D' n l'.1 .amb).card) :
     share D n α l w ≤ share D' n α l' w'
@@ -455,7 +479,7 @@ theorem share_le_share_iff (hα : 0 < α) {D' : ℕ → ℕ → Prop} [Decidable
     Real.mul_rpow (cellMass_nonneg _ _ _ _ _) (cellMass_nonneg _ _ _ _ _)]
   constructor <;> intro h <;> nlinarith
 
-theorem share_lt_share_iff (hα : 0 < α) {D' : ℕ → ℕ → Prop} [DecidableRel D']
+theorem share_lt_share_iff (hα : 0 < α) {D' : NumberTree} [DecidableRel D']
     {l l' : Scope × QUD} {w w' : World n} (hS : 0 < (ext D n l.1 .amb).card)
     (hS' : 0 < (ext D' n l'.1 .amb).card) :
     share D n α l w < share D' n α l' w'
@@ -469,7 +493,7 @@ end Share
 
 section Endorsement
 
-variable (D : ℕ → ℕ → Prop) [DecidableRel D] (n : ℕ) (α : ℝ) (μ : Measure (World n))
+variable (D : NumberTree) [DecidableRel D] (n : ℕ) (α : ℝ) (μ : Measure (World n))
   (ν : Measure (Scope × QUD))
 
 /-- The production at a world is the probability that the test sentence is produced there, the
@@ -652,22 +676,24 @@ private theorem zero_ne_last (hn : 0 < n) : (0 : World n) ≠ Fin.last n := fun 
 
 /-- The sentence *every horse didn't jump* is true at the no-success world on both
 interpretations. -/
-theorem zero_mem_ext_every (hn : 0 < n) (i : Scope) : (0 : World n) ∈ ext every n i .amb := by
+theorem zero_mem_ext_every (hn : 0 < n) (i : Scope) :
+    (0 : World n) ∈ ext NumberTree.all n i .amb := by
   cases i
   · exact mem_ext_every_surface.mpr rfl
   · exact mem_ext_every_inverse.mpr (zero_ne_last hn)
 
-theorem ext_every_amb_card_pos (hn : 0 < n) (i : Scope) : 0 < (ext every n i .amb).card :=
+theorem ext_every_amb_card_pos (hn : 0 < n) (i : Scope) : 0 < (ext NumberTree.all n i .amb).card :=
   Finset.card_pos.mpr ⟨0, zero_mem_ext_every hn i⟩
 
 /-- Under the question *all?* the sentence *every horse didn't jump* fully resolves the question
 in the negative on either interpretation: its projected literal listener is certain of every
 world short of total success. -/
 theorem projListener_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
-    projListener (project n) (L0 every n i) .all .amb {w} = if w = Fin.last n then 0 else 1 := by
+    projListener (project n) (L0 NumberTree.all n i) .all .amb {w}
+      = if w = Fin.last n then 0 else 1 := by
   rw [projListener_L0_apply]
   have hcell : ∀ w', w' ∈ cell n .all w ↔ (w' = Fin.last n ↔ w = Fin.last n) := fun _ ↦ mem_cell_all
-  have hext : ∀ w', w' ∈ ext every n i .amb → w' ≠ Fin.last n := fun w' h ↦ by
+  have hext : ∀ w', w' ∈ ext NumberTree.all n i .amb → w' ≠ Fin.last n := fun w' h ↦ by
     cases i
     · exact (mem_ext_every_surface.mp h) ▸ zero_ne_last hn
     · exact mem_ext_every_inverse.mp h
@@ -683,10 +709,10 @@ theorem projListener_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
 alike at every world: the sentence answers the question in the negative on either reading
 (§3.2, §5.1). -/
 theorem S1_all_scope (hn : 0 < n) (w : World n) :
-    S1 every n α (w, (.surface, .all)) = S1 every n α (w, (.inverse, .all)) := by
+    S1 NumberTree.all n α (w, (.surface, .all)) = S1 NumberTree.all n α (w, (.inverse, .all)) := by
   rw [S1_apply, S1_apply, speaker, speaker]
-  have key : ∀ u, projListener (project n) (L0 every n .surface) .all u {w}
-      = projListener (project n) (L0 every n .inverse) .all u {w} := by
+  have key : ∀ u, projListener (project n) (L0 NumberTree.all n .surface) .all u {w}
+      = projListener (project n) (L0 NumberTree.all n .inverse) .all u {w} := by
     intro u
     cases u
     · rw [projListener_L0_apply, projListener_L0_apply]
@@ -695,7 +721,7 @@ theorem S1_all_scope (hn : 0 < n) (w : World n) :
   exact Measure.ext_of_singleton fun u ↦ by simp only [Kernel.ofWeights_apply_singleton, key]
 
 theorem share_all_scope (hn : 0 < n) (w : World n) :
-    share every n α (.surface, .all) w = share every n α (.inverse, .all) w := by
+    share NumberTree.all n α (.surface, .all) w = share NumberTree.all n α (.inverse, .all) w := by
   simp only [share, S1_all_scope α hn w]
 
 variable (ρ : Measure Scope) [IsProbabilityMeasure ρ]
@@ -703,7 +729,8 @@ variable (ρ : Measure Scope) [IsProbabilityMeasure ρ]
 /-- With the question settled as *all?*, the production of the sentence at a world does not
 depend on the scope prior. -/
 theorem production_all (hn : 0 < n) (w : World n) :
-    production every n α (ρ.prod (Measure.dirac .all)) w = share every n α (.surface, .all) w := by
+    production NumberTree.all n α (ρ.prod (Measure.dirac .all)) w
+      = share NumberTree.all n α (.surface, .all) w := by
   rw [production, Fintype.sum_prod_type]
   simp only [Measure.prod_real_singleton, Measure.dirac_real_apply, Set.indicator_apply,
     Set.mem_singleton_iff, Pi.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
@@ -715,8 +742,8 @@ theorem production_all (hn : 0 < n) (w : World n) :
   rw [hscope, ← share_all_scope α hn w, ← add_mul, hsum, one_mul]
 
 theorem expectedProduction_all (hn : 0 < n) (μ : Measure (World n)) [IsProbabilityMeasure μ] :
-    expectedProduction every n α μ (ρ.prod (Measure.dirac .all))
-      = ∑ w, μ.real {w} * share every n α (.surface, .all) w := by
+    expectedProduction NumberTree.all n α μ (ρ.prod (Measure.dirac .all))
+      = ∑ w, μ.real {w} * share NumberTree.all n α (.surface, .all) w := by
   rw [expectedProduction_eq_sum]
   simp only [production_all α ρ hn]
 
@@ -725,10 +752,10 @@ scope prior matters only through questions the two interpretations answer differ
 Figure 3). -/
 theorem S2_real_amb_all (hα : 0 < α) (hn : 0 < n) (μ : Measure (World n)) [IsProbabilityMeasure μ]
     (ρ' : Measure Scope) [IsProbabilityMeasure ρ'] {w : World n} (hμ : μ {w} ≠ 0)
-    (hz0 : 0 < expectedProduction every n α μ (ρ.prod (Measure.dirac .all)))
-    (hz1 : expectedProduction every n α μ (ρ.prod (Measure.dirac .all)) < 1) :
-    (S2 every n α μ (ρ.prod (Measure.dirac .all)) w).real {.amb}
-      = (S2 every n α μ (ρ'.prod (Measure.dirac .all)) w).real {.amb} := by
+    (hz0 : 0 < expectedProduction NumberTree.all n α μ (ρ.prod (Measure.dirac .all)))
+    (hz1 : expectedProduction NumberTree.all n α μ (ρ.prod (Measure.dirac .all)) < 1) :
+    (S2 NumberTree.all n α μ (ρ.prod (Measure.dirac .all)) w).real {.amb}
+      = (S2 NumberTree.all n α μ (ρ'.prod (Measure.dirac .all)) w).real {.amb} := by
   have hz0' := hz0
   have hz1' := hz1
   rw [expectedProduction_all α ρ hn μ, ← expectedProduction_all α ρ' hn μ] at hz0' hz1'
@@ -738,45 +765,48 @@ theorem S2_real_amb_all (hα : 0 < α) (hn : 0 < n) (μ : Measure (World n)) [Is
 
 /-! #### Two horses (§3.2) -/
 
-private theorem ext_every_two (l : Scope × QUD) : 0 < (ext every 2 l.1 .amb).card :=
+private theorem ext_every_two (l : Scope × QUD) : 0 < (ext NumberTree.all 2 l.1 .amb).card :=
   ext_every_amb_card_pos two_pos l.1
 
 /-- At the not-all world of the two-horse scenario, the question *all?* maximizes the production of
 the sentence under either interpretation: the sentence answers it fully on either reading
 (§3.2, Figure 2). -/
 theorem share_le_share_all (hα : 0 < α) (i : Scope) (q : QUD) :
-    share every 2 α (i, q) 1 ≤ share every 2 α (i, .all) 1 :=
-  (share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by revert i q; decide)
+    share NumberTree.all 2 α (i, q) 1 ≤ share NumberTree.all 2 α (i, .all) 1 :=
+  (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
+    (by revert i q; decide)
 
 /-- At the not-all world, the question *none?* minimizes the production of the sentence under
 either interpretation (§3.2, Figure 2). -/
 theorem share_none_le_share (hα : 0 < α) (i : Scope) (q : QUD) :
-    share every 2 α (i, .none) 1 ≤ share every 2 α (i, q) 1 :=
-  (share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by revert i q; decide)
+    share NumberTree.all 2 α (i, .none) 1 ≤ share NumberTree.all 2 α (i, q) 1 :=
+  (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
+    (by revert i q; decide)
 
 /-- On the surface interpretation the sentence is false at the not-all world, so *how many?* has
 it produced less often than *all?*, under which it is nonetheless a full answer. -/
 theorem share_howMany_lt_share_all (hα : 0 < α) :
-    share every 2 α (.surface, .howMany) 1 < share every 2 α (.surface, .all) 1 :=
-  (share_lt_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by decide)
+    share NumberTree.all 2 α (.surface, .howMany) 1 < share NumberTree.all 2 α (.surface, .all) 1 :=
+  (share_lt_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by decide)
 
 /-- On the inverse interpretation, *none?* has the sentence produced less often than
 *how many?*: the sentence, *not all jumped*, leaves *none?* open. -/
 theorem share_none_lt_share_howMany (hα : 0 < α) :
-    share every 2 α (.inverse, .none) 1 < share every 2 α (.inverse, .howMany) 1 :=
-  (share_lt_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by decide)
+    share NumberTree.all 2 α (.inverse, .none) 1
+      < share NumberTree.all 2 α (.inverse, .howMany) 1 :=
+  (share_lt_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by decide)
 
 /-- Production of the sentence falls with the number of jumpers, under every interpretation and
 question. -/
-theorem share_antitone (hα : 0 < α) (l : Scope × QUD) : Antitone (share every 2 α l) :=
+theorem share_antitone (hα : 0 < α) (l : Scope × QUD) : Antitone (share NumberTree.all 2 α l) :=
   Fin.antitone_iff_succ_le.mpr <| Fin.forall_fin_two.mpr
-    ⟨(share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr
+    ⟨(share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
         (by revert l; decide),
-      (share_le_share_iff every 2 α hα (ext_every_two _) (ext_every_two _)).mpr
+      (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
         (by revert l; decide)⟩
 
 theorem production_antitone (hα : 0 < α) (ν : Measure (Scope × QUD)) :
-    Antitone (production every 2 α ν) := fun _ _ h ↦
+    Antitone (production NumberTree.all 2 α ν) := fun _ _ h ↦
   Finset.sum_le_sum fun l _ ↦
     mul_le_mul_of_nonneg_left (share_antitone α hα l h) measureReal_nonneg
 
@@ -787,8 +817,8 @@ variable (ν : Measure (Scope × QUD)) [IsProbabilityMeasure ν]
 out. -/
 theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < (p : ℝ))
     (hpp' : (p : ℝ) ≤ p') (hp' : (p' : ℝ) < 1) (w : World 2) :
-    (S2 every 2 α Bin(World 2, 2, p) ν w).real {.amb}
-      ≤ (S2 every 2 α Bin(World 2, 2, p') ν w).real {.amb} := by
+    (S2 NumberTree.all 2 α Bin(World 2, 2, p) ν w).real {.amb}
+      ≤ (S2 NumberTree.all 2 α Bin(World 2, 2, p') ν w).real {.amb} := by
   have hpos : ∀ (q : I), 0 < (q : ℝ) → (q : ℝ) < 1 → ∀ w : World 2, Bin(World 2, 2, q) {w} ≠ 0 :=
     fun q hq hq1 w ↦ (measureReal_ne_zero_iff (measure_ne_top _ _)).mp (by
       rw [map_cast_binomial_fin_real_singleton]
@@ -797,7 +827,7 @@ theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < (p : ℝ))
   have hp1 : (p : ℝ) < 1 := hpp'.trans_lt hp'
   have hp'0 : 0 < (p' : ℝ) := hp.trans_le hpp'
   have hz0 : ∀ (q : I), 0 < (q : ℝ) → (q : ℝ) < 1 →
-      0 < expectedProduction every 2 α Bin(World 2, 2, q) ν := fun q hq hq1 ↦
+      0 < expectedProduction NumberTree.all 2 α Bin(World 2, 2, q) ν := fun q hq hq1 ↦
     expectedProduction_pos _ _ _ _ _ hα.le (hpos q hq hq1 0) fun l ↦ zero_mem_ext_every two_pos l.1
   rw [S2_real_amb _ _ _ _ _ hα (hpos p hp hp1 w) (hz0 p hp hp1)
       (expectedProduction_lt_one _ _ _ _ _ hα.le),
