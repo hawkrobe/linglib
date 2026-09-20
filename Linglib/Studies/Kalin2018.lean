@@ -1,6 +1,5 @@
 import Linglib.Data.Examples.Kalin2018
 import Linglib.Syntax.Case.Assigner
-import Linglib.Syntax.Minimalist.Case
 
 /-!
 # Kalin (2018): Licensing and Differential Object Marking
@@ -19,9 +18,8 @@ algorithm reproduces the agreement data (8) to (12) and (38) row by row (`rows_a
 perfective ban is the paper's argument against a no-licensing theory of case: a total
 configurational assignment in the manner of [marantz-1991] still gives the perfective object an
 accusative where licensing leaves it unlicensed
-(`dependentCase_vs_licensing_diverge_on_perfective_object`). Licensing subsumes the Case Filter:
-against the Agree formulation of `Syntax/Minimalist/Case`, a nominal is licensed exactly when it
-satisfies the filter (`isLicensed_iff_satisfiesCaseFilter`).
+(`dependentCase_vs_licensing_diverge_on_perfective_object`). Licensing subsumes the Case Filter: a
+nominal is licensed exactly when it bears a case (`isLicensed_iff_assignedCase_isSome`).
 
 ## Implementation notes
 
@@ -39,24 +37,24 @@ satisfies the filter (`isLicensed_iff_satisfiesCaseFilter`).
 
 namespace Kalin2018
 
-open Data.Examples Case Case.Licensing Minimalist
+open Data.Examples Case Case.Licensing
 
 /-! ### Senaya's licensers
 
 Imperfective Asp licenses, agreeing as an S-suffix, and T licenses the next nominal as an
 L-suffix; perfective Asp does not, so T is the only licenser, (37) and (39). -/
 
-/-- Imperfective: Asp is the primary licenser and T the secondary. -/
+/-- In the imperfective, Asp is the primary licenser and T the secondary. -/
 def imperfective : ClauseLicensers where
   primary := { kind := .primary, head := "Asp", assignedCase := .nom }
   secondaries := [{ kind := .secondary, head := "T", assignedCase := .nom }]
 
-/-- Perfective: T is the only licenser. -/
+/-- In the perfective, T is the only licenser. -/
 def perfective : ClauseLicensers where
   primary := { kind := .primary, head := "T", assignedCase := .nom }
   secondaries := []
 
-/-- The agreement suffix a licensing head yields: an S-suffix from Asp, an L-suffix from T. -/
+/-- The agreement suffix a licensing head yields, an S-suffix from Asp and an L-suffix from T. -/
 inductive Suffix
   | S
   | L
@@ -67,15 +65,15 @@ def outcomeSuffix : LicensingOutcome → Option Suffix
   | .byPrimary h _ | .bySecondary h _ => some (if h = "Asp" then .S else .L)
   | .byLexical _ | .unlicensed => none
 
-/-- A transitive clause's nominals: the subject and an object that needs licensing exactly when
-specific, (40) to (42). -/
+/-- A transitive clause's nominals are the subject and an object that needs licensing exactly
+when specific, (40) to (42). -/
 def transitive (specific : Bool) : List LicensedNP :=
   [{ label := "subj", needsLicensing := true }, { label := "obj", needsLicensing := specific }]
 
 /-! ### The agreement data (Section 2.1) -/
 
-/-- A row: the aspect's licensers, the object if any, the subject's and the object's suffix, and
-the judgment. -/
+/-- A row carries the aspect's licensers, the object if any, the subject's and the object's
+suffix, and the judgment. -/
 structure Row where
   clause : ClauseLicensers
   object : Option Bool
@@ -108,7 +106,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row := do
 /-- The Senaya data, (8) to (12) and (38). -/
 def rows : List Row := Examples.all.filterMap Row.ofExample
 
-/-- The nominals of a row: the subject alone, or the subject and its object. -/
+/-- The nominals of a row are the subject alone, or the subject and its object. -/
 def Row.nominals (r : Row) : List LicensedNP :=
   match r.object with
   | none => [{ label := "subj", needsLicensing := true }]
@@ -147,24 +145,16 @@ theorem dependentCase_vs_licensing_diverge_on_perfective_object :
 
 /-! ### The Case Filter as a theorem of licensing -/
 
-/-- The DP feature bundle a licensing outcome induces: a valued outcome gives a DP with valued
-Case, the crash one with uCase. -/
-def dpFeaturesOf : LicensingOutcome → DPFeatures
-  | .byPrimary _ c | .bySecondary _ c | .byLexical c => DPFeatures.withCase [] c
-  | .unlicensed => DPFeatures.withUnvaluedCase []
+/-- Licensing subsumes the Case Filter: a nominal converges exactly when some licenser has valued
+its [Case] feature, so that it bears a case, and the filter need not be stipulated alongside
+licensing. -/
+theorem isLicensed_iff_assignedCase_isSome (o : LicensingOutcome) :
+    o.IsLicensed ↔ o.assignedCase.isSome := by
+  cases o <;> simp [LicensingOutcome.assignedCase]
 
-/-- A nominal is licensed iff it satisfies the Case Filter. -/
-theorem isLicensed_iff_satisfiesCaseFilter (o : LicensingOutcome) :
-    o.IsLicensed ↔ satisfiesCaseFilter (dpFeaturesOf o) := by
-  cases o <;>
-    simp [satisfiesCaseFilter, dpFeaturesOf, DPFeatures.case, DPFeatures.withCase,
-      DPFeatures.withUnvaluedCase]
-
-/-- A derivation converges under licensing iff its DPs satisfy the Case Filter. -/
-theorem all_isLicensed_iff_caseFilterHolds (results : List LicensedResult) :
-    (∀ r ∈ results, r.outcome.IsLicensed) ↔
-      caseFilterHolds (results.map λ r => dpFeaturesOf r.outcome) := by
-  simp only [caseFilterHolds, List.all_eq_true, List.mem_map, forall_exists_index, and_imp,
-    forall_apply_eq_imp_iff₂, isLicensed_iff_satisfiesCaseFilter]
+/-- A derivation converges under licensing iff every one of its nominals bears a case. -/
+theorem all_isLicensed_iff_all_assignedCase_isSome (results : List LicensedResult) :
+    (∀ r ∈ results, r.outcome.IsLicensed) ↔ ∀ r ∈ results, r.outcome.assignedCase.isSome := by
+  simp only [isLicensed_iff_assignedCase_isSome]
 
 end Kalin2018
