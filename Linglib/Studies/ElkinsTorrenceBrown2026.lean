@@ -36,11 +36,12 @@ in K'ichean, and temporals trigger neither.
 
 ## Implementation notes
 
-* Clause sizes are the substrate's `ClauseSpine`s, full CP, VoiceP and bare VP, with the
-  directional head `Head.dir`, a Mayan-specific category above VoiceP, spliced in by `spine`. A
-  dependency is the list of clauses the mover crosses, bottom-up; its `path` is the [Ā]-bearers of
-  those clauses and its `sites` the Voice and Dir heads among them, so the reflex in a clause is
-  decided by whether the clause projects Voice (`licensed_iff_projects_voice`). The rival
+* Clause sizes are `ClauseSpine`s, the Mam finite, aspectless and nonfinite clauses of (8) and
+  §3.3–3.4, with the directional head `Head.dir`, a Mayan-specific category above VoiceP, spliced
+  in by `spine`. A dependency is the list of clauses the mover crosses, bottom-up; its `path` is
+  the [Ā]-bearers of those clauses and its `sites` the Voice and Dir heads among them, so the
+  reflex in a clause is decided by whether the clause projects Voice (`licensed_iff_mem_voice`).
+  The rival
   mechanisms are predicates on the same dependencies, and the rows discriminate them.
 * The Agree-and-insertion step is the substrate's `applyAgree` and `spellout` on a Voice head with
   an unvalued [oblique] probe and the vocabulary item (46a); the null exponent (46b) is the
@@ -71,8 +72,8 @@ open Minimalist DistributedMorphology Data.Examples ElkinsTorrenceBrown2026.Exam
 
 /-! ### The extended verbal domain (§1.3) -/
 
-/-- A head of the SJO Mam clausal spine: a head of the substrate spine, or a directional auxiliary
-Dir⁰, the Mayan-specific head whose projection dominates VoiceP (8). -/
+/-- A head of the SJO Mam clausal spine is a head of the substrate spine or the directional
+auxiliary Dir⁰, the Mayan-specific head whose projection dominates VoiceP (8). -/
 inductive Head
   | cat (c : Cat)
   | dir
@@ -84,19 +85,28 @@ abbrev Spine := List Head
 /-- A clause of the given size with `n` directionals above Voice (8). Nonfinite clauses, which lack
 Voice, lack directionals (§3.4). -/
 def spine (s : ClauseSpine) (n : ℕ) : Spine :=
-  s.projectedHeads.flatMap fun c ↦
+  s.heads.flatMap fun c ↦
     if c = .Voice then .cat .Voice :: List.replicate n .dir else [.cat c]
 
-/-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
-def aspP : ClauseSpine := ⟨[.V, .Appl, .v, .Voice, .Asp], by decide⟩
+/-- The Mam finite clause of (8), a CP over the aspect layer, Voice, v and V. -/
+def finiteClause : ClauseSpine := ⟨[.V, .v, .Voice, .Asp, .C], by simp⟩
 
-/-- The feature bearers of [Ā], (41) and (44): C⁰, Voice⁰ and Dir⁰. -/
+/-- The aspectless clause, a VoiceP-sized reduced clause without the aspect layer or C (§3.3). -/
+def aspectlessClause : ClauseSpine := ⟨[.V, .v, .Voice], by simp⟩
+
+/-- The nonfinite clause, a VP-sized complement (§3.4). -/
+def nonfiniteClause : ClauseSpine := ⟨[.V], by simp⟩
+
+/-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
+def aspP : ClauseSpine := ⟨[.V, .v, .Voice, .Asp], by simp⟩
+
+/-- C⁰, Voice⁰ and Dir⁰ bear [Ā], (41) and (44). -/
 def BearsA (h : Head) : Prop := h = .cat .C ∨ h = .cat .Voice ∨ h = .dir
 
 instance : DecidablePred BearsA := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- The heads that copy the mover's [obl] and host the reflex, (45)–(46): Voice⁰ and Dir⁰. C⁰
-attracts by [Ā] alone, so there is no C-domain reflex. -/
+/-- Voice⁰ and Dir⁰ copy the mover's [obl] and host the reflex, (45)–(46), while C⁰ attracts by
+[Ā] alone, so there is no C-domain reflex. -/
 def HostsReflex (h : Head) : Prop := h = .cat .Voice ∨ h = .dir
 
 instance : DecidablePred HostsReflex := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
@@ -105,17 +115,17 @@ theorem HostsReflex.bearsA {h : Head} (hh : HostsReflex h) : BearsA h := Or.inr 
 
 /-! ### The movement path (§4.1–4.3) -/
 
-/-- A dependency: the clauses the extracted adjunct crosses, bottom-up, the clause of origin
-first. -/
+/-- A dependency is the list of clauses the extracted adjunct crosses, bottom-up, the clause of
+origin first. -/
 abbrev Dependency := List Spine
 
-/-- The movement path, (43): the [Ā]-bearing heads of the clauses crossed, bottom-up and tagged by
-clause. By Attract Closest (39) the mover stops in the specifier of each. -/
+/-- The movement path of (43) is the list of [Ā]-bearing heads of the clauses crossed, bottom-up
+and tagged by clause. By Attract Closest (39) the mover stops in the specifier of each. -/
 def path (d : Dependency) : List (ℕ × Head) :=
   (List.range d.length).flatMap fun i ↦
     ((d.getD i []).filter fun h ↦ decide (BearsA h)).map (i, ·)
 
-/-- The sites of the reflex: the Agree relations with Voice⁰ or Dir⁰ along the path (§4.2). -/
+/-- The sites of the reflex are the Agree relations with Voice⁰ or Dir⁰ along the path (§4.2). -/
 def sites (d : Dependency) : List (ℕ × Head) :=
   (path d).filter fun p ↦ decide (HostsReflex p.2)
 
@@ -152,8 +162,8 @@ theorem licensed_iff {d : Dependency} {i : ℕ} :
 /-- A clause of a given size contains a reflex host exactly when the size projects Voice, since
 directionals come only with Voice. -/
 theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
-    (∃ h ∈ spine s n, HostsReflex h) ↔ .Voice ∈ s.projectedHeads := by
-  simp only [spine, List.mem_flatMap]
+    (∃ h ∈ spine s n, HostsReflex h) ↔ .Voice ∈ s := by
+  simp only [spine, List.mem_flatMap, ClauseSpine.mem_def]
   constructor
   · rintro ⟨h, ⟨c, hc, hmem⟩, hh⟩
     split at hmem
@@ -166,25 +176,21 @@ theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
   · intro hv
     exact ⟨.cat .Voice, ⟨.Voice, hv, by simp⟩, Or.inl rfl⟩
 
-theorem projects_voice_iff (s : ClauseSpine) :
-    s.projects .Voice = true ↔ .Voice ∈ s.projectedHeads := by
-  simp [ClauseSpine.projects]
-
 /-- Table 3: =(y)a' is licensed in a clause of the dependency exactly when that clause's size
 projects Voice, so in full CP and aspectless complements but not in nonfinite ones (§3.3–3.4,
 §4.3). -/
-theorem licensed_iff_projects_voice {d : Dependency} {i : ℕ} {s : ClauseSpine} {n : ℕ}
-    (hd : d.getD i [] = spine s n) : Licensed d i ↔ s.projects .Voice = true := by
-  rw [licensed_iff, hd, exists_hostsReflex_spine_iff, projects_voice_iff]
+theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : ClauseSpine} {n : ℕ}
+    (hd : d.getD i [] = spine s n) : Licensed d i ↔ .Voice ∈ s := by
+  rw [licensed_iff, hd, exists_hostsReflex_spine_iff]
 
 /-! ### Multiple exponence (§3.1, §5.2) -/
 
-/-- Within a clause the sites are Voice⁰ and each directional, (45): `n + 1` of them. -/
+/-- Within a clause the sites are Voice⁰ and each directional, `n + 1` of them (45). -/
 theorem sites_monoclausal (n : ℕ) :
-    sites [spine .cP n] = (0, .cat .Voice) :: List.replicate n (0, .dir) := by
-  simp [sites, path, spine, ClauseSpine.cP, BearsA, HostsReflex, List.map_replicate]
+    sites [spine finiteClause n] = (0, .cat .Voice) :: List.replicate n (0, .dir) := by
+  simp [sites, path, spine, finiteClause, BearsA, HostsReflex, List.map_replicate]
 
-theorem sites_monoclausal_length (n : ℕ) : (sites [spine .cP n]).length = n + 1 := by
+theorem sites_monoclausal_length (n : ℕ) : (sites [spine finiteClause n]).length = n + 1 := by
   rw [sites_monoclausal]
   simp
 
@@ -194,12 +200,12 @@ def patterns (d : Dependency) : List (List (ℕ × Head)) := (sites d).sublists
 
 /-- (22): with one directional the enclitic may appear on both hosts, on neither, or on either
 alone, four combinations. -/
-theorem patterns_length_22 : (patterns [spine .cP 1]).length = 4 := by decide
+theorem patterns_length_22 : (patterns [spine finiteClause 1]).length = 4 := by decide
 
 /-- (63): with two directionals there are three sites although the intransitive clause has a
 single argument DP, so leapfrogging over intervening DPs ([keine-zeijlstra-2025]) yields too few
 stopovers (§5.2). -/
-theorem sites_exceed_interveners : 1 < (sites [spine .cP 2]).length := by
+theorem sites_exceed_interveners : 1 < (sites [spine finiteClause 2]).length := by
   rw [sites_monoclausal_length]
   decide
 
@@ -221,8 +227,8 @@ theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .cat .C ∈ e := by
 
 /-- Applied to Mam, copy spellout allows a single reflex in a monoclausal dependency, whereas
 Ā-agreement gives one per Voice⁰ and Dir⁰ (§3.1, §5.1). -/
-theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine .cP n] i → i = 0) ∧
-    (sites [spine .cP n]).length = n + 1 :=
+theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine finiteClause n] i → i = 0) ∧
+    (sites [spine finiteClause n]).length = n + 1 :=
   ⟨fun i h ↦ h.elim id fun h' ↦ by
     have h1 := h'.1
     have h2 := h'.2.1
@@ -232,26 +238,28 @@ theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine .cP n] i → i 
 /-- Over an aspectless complement, (31): copy spellout predicts no matrix reflex, since the
 complement has no Spec,CP, whereas Ā-agreement predicts one at the matrix Voice⁰. -/
 theorem copy_fails_aspectless :
-    ¬ CopyLicensed [spine .voiceP 0, spine .cP 0] 1 ∧
-      Licensed [spine .voiceP 0, spine .cP 0] 1 := by
+    ¬ CopyLicensed [spine aspectlessClause 0, spine finiteClause 0] 1 ∧
+      Licensed [spine aspectlessClause 0, spine finiteClause 0] 1 := by
   decide
 
 /-- Over a nonfinite complement, (34): copy spellout predicts a reflex in the complement, where
 the base copy sits, whereas Ā-agreement finds no Voice⁰ there. -/
 theorem copy_fails_nonfinite :
-    CopyLicensed [spine .bareVP 0, spine .cP 0] 0 ∧
-      ¬ Licensed [spine .bareVP 0, spine .cP 0] 0 := by
+    CopyLicensed [spine nonfiniteClause 0, spine finiteClause 0] 0 ∧
+      ¬ Licensed [spine nonfiniteClause 0, spine finiteClause 0] 0 := by
   decide
 
 /-- Conversely, Ā-agreement through the verbal domain would put a matrix reflex over a K'ichean
 AspP complement, (53), against the Fronting Particle Generalization; copy spellout does not. -/
 theorem agree_fails_fpg :
-    Licensed [spine aspP 0, spine .cP 0] 1 ∧ ¬ CopyLicensed [spine aspP 0, spine .cP 0] 1 := by
+    Licensed [spine aspP 0, spine finiteClause 0] 1 ∧
+      ¬ CopyLicensed [spine aspP 0, spine finiteClause 0] 1 := by
   decide
 
 /-- An Agent-Focus-like reflex is confined to the clause of origin, as the antipassive is in
 (38); =(y)a' is licensed in every clause of the path, (24). -/
-theorem origin_only_fails : Licensed [spine .cP 0, spine .cP 0] 1 ∧ (1 : ℕ) ≠ 0 := by
+theorem origin_only_fails :
+    Licensed [spine finiteClause 0, spine finiteClause 0] 1 ∧ (1 : ℕ) ≠ 0 := by
   decide
 
 /-! ### Which movers trigger the reflex (§2, §5.3) -/
@@ -274,7 +282,7 @@ theorem table4 (a : Mayan.Adjunct) :
     ¬ (BearsObl a ↔ IsLow a) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
   decide +revert
 
-/-- What is extracted, if anything: an absolutive argument, an ergative argument, or an adjunct. -/
+/-- The extracted element, if any, is an absolutive argument, an ergative argument or an adjunct. -/
 inductive Mover
   | none
   | absolutive
@@ -310,7 +318,7 @@ def Mover.ofSite : Mayan.ExtractionSite → Mover
 /-- At every extraction site the analysis licenses the enclitic on the verbal complex exactly
 when the Mam fragment does, the mover bearing [obl] and the clause of origin projecting Voice. -/
 theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
-    Realizable (.ofSite s) [spine .cP 0] 0 ↔
+    Realizable (.ofSite s) [spine finiteClause 0] 0 ↔
       Reflex.morpheme .verbalComplex [Mam.Extraction.movementEnclitic] ∈
         Mam.Extraction.realize s := by
   decide +revert
@@ -335,12 +343,12 @@ theorem kiche_mem_realize_iff (c : Mayan.VerbClass) (s : Mayan.ExtractionSite) :
 
 /-! ### Agree and insertion (§4.2) -/
 
-/-- Voice⁰ of the analysis: an [Ā]-bearing head with an unvalued [oblique] probe that Agree with
+/-- Voice⁰ of the analysis is an [Ā]-bearing head with an unvalued [oblique] probe that Agree with
 the mover values, (45a). -/
 def voice : Voice.Head :=
   { flavor := .agentive, hasD := true, features := .ofGramFeatures [.unvalued (.oblique false)] }
 
-/-- (46a): the vocabulary item realizing the valued [obl] on Voice⁰ or Dir⁰. -/
+/-- The vocabulary item (46a) realizes the valued [obl] on Voice⁰ or Dir⁰. -/
 def eqYa : VocabularyItem GramFeature String :=
   [.valued (.oblique true)] ⟷ toString Mam.Extraction.movementEnclitic
 
@@ -373,7 +381,7 @@ theorem mamRows_realizable :
         ex_19b, ex_20b, ex_21b, ex_35c, ex_37, ex_65],
       ∀ m, e.parse? "mover" moverTable = some m →
         ∀ b, e.parse? "reflex" reflexTable = some b →
-        (b = true ↔ Realizable m [spine .cP 0] 0) := by
+        (b = true ↔ Realizable m [spine finiteClause 0] 0) := by
   decide
 
 /-- The K'ichean rows (51), K'iche', and (64), Patzún Kaqchikel: *wi* is licensed exactly for
@@ -386,18 +394,18 @@ theorem kicheanRows_low :
 /-- The rows with directionals, (22) and (63): one host per Voice⁰ and directional. -/
 theorem directionalRows_sites :
     ∀ e ∈ [ex_22, ex_63], ∀ n, e.nat? "directionals" = some n →
-      ∀ k, e.nat? "hosts" = some k → (sites [spine .cP n]).length = k := by
+      ∀ k, e.nat? "hosts" = some k → (sites [spine finiteClause n]).length = k := by
   decide
 
 /-- The clause sizes as named in the rows. -/
 def sizeTable : List (String × ClauseSpine) :=
-  [("cP", .cP), ("voiceP", .voiceP), ("bareVP", .bareVP), ("aspP", aspP)]
+  [("cP", finiteClause), ("voiceP", aspectlessClause), ("bareVP", nonfiniteClause), ("aspP", aspP)]
 
 /-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands
 in the matrix clause, the full-CP matrix clause above it. -/
 def dependencyOf (e : LinguisticExample) : Option Dependency :=
   (e.parse? "embeddedSize" sizeTable).bind fun s ↦
-    e.parse? "landing" [("embedded", [spine s 0]), ("matrix", [spine s 0, spine .cP 0])]
+    e.parse? "landing" [("embedded", [spine s 0]), ("matrix", [spine s 0, spine finiteClause 0])]
 
 /-- The long-distance Mam rows (24), (26), (31) and (34), Table 3: the reflex in each clause
 follows from Ā-agreement along the path. -/

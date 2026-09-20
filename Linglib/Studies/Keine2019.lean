@@ -27,9 +27,9 @@ and the horizon bounds the position, the Height-Locality Theorem ((65)) instanti
 
 ## Implementation notes
 
-Labels are the projected heads of the substrate's `ClauseSpine`s and transparency is
-`Probe.Profile.transparentToLabel`; the article's probes are defined here, and vacuity is
-`Probe.Profile.isVacuous`, which takes the sister of a probe on C⁰ to be TP and of one on T⁰ to
+Labels are the bilateral labels of the substrate's `ClauseSpine`s and transparency is
+`Probe.Profile.TransparentTo`; the article's probes are defined here, and vacuity is
+`Probe.Profile.IsVacuous`, which takes the sister of a probe on C⁰ to be TP and of one on T⁰ to
 be vP.
 
 ## References
@@ -42,21 +42,22 @@ namespace Keine2019
 open Minimalist
 
 /-- The label of a finite clause, the categories inherited up its extended projection ((44)). -/
-def cpLabel : List Cat := ClauseSpine.cP.projectedHeads
+def cpLabel : Finset Cat := ClauseSpine.cP.label
 
 /-- The label of a large nonfinite clause. -/
-def tpLabel : List Cat := ClauseSpine.tP.projectedHeads
+def tpLabel : Finset Cat := ClauseSpine.tP.label
 
 /-- The label of a small nonfinite clause. -/
-def vpLabel : List Cat := ClauseSpine.vP.projectedHeads
+def vpLabel : Finset Cat := ClauseSpine.vP.label
 
 /-! ### Horizons and Upward Entailment (Section 4.1) -/
 
 /-- (45), (46): Upward Entailment follows from category inheritance. The three clause sizes
 stand in the extension order, TP extending vP and CP extending TP, and transparency is antitone
-in that order for every probe (`Probe.Profile.transparentToLabel_antitone`), so a probe blocked
+in that order for every probe (`Probe.Profile.transparentTo_label_antitone`), so a probe blocked
 by a clause is blocked by every larger one. -/
-theorem sizes_le : ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP := by decide
+theorem sizes_le : ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP :=
+  ⟨ClauseSpine.vP_le_tP, ClauseSpine.tP_le_cP⟩
 
 /-! ### The Hindi probes (Section 4.2) -/
 
@@ -74,7 +75,8 @@ def ābarProbe : Probe.Profile := ⟨.C, none⟩
 
 /-- A probe's row of the transparency table over the finite, large nonfinite and small
 nonfinite clauses. -/
-def row (p : Probe.Profile) : List Bool := [cpLabel, tpLabel, vpLabel].map p.transparentToLabel
+def row (p : Probe.Profile) : List Bool :=
+  [cpLabel, tpLabel, vpLabel].map fun L ↦ decide (p.TransparentTo L)
 
 /-- (58): φ-agreement and A-movement search only into vP clauses, wh-licensing into TP and vP
 clauses, Ā-movement into all three. -/
@@ -92,9 +94,8 @@ theorem three_locality_types :
 /-- Finite clauses, edge included, are opaque to A-movement and φ-agreement but not to
 Ā-movement, (23) for the finite clause embedding (49). -/
 theorem finite_clauses_selectively_opaque :
-    aProbe.transparentToLabel cpLabel = false ∧
-      phiProbe.transparentToLabel cpLabel = false ∧
-      ābarProbe.transparentToLabel cpLabel = true := by
+    ¬ aProbe.TransparentTo cpLabel ∧ ¬ phiProbe.TransparentTo cpLabel ∧
+      ābarProbe.TransparentTo cpLabel := by
   decide
 
 /-- The two probes on T⁰ share their horizon, so a nonfinite clause small enough for A-extraction
@@ -102,10 +103,8 @@ is the vP structure and is transparent to φ-agreement, which makes long-distanc
 obligatory, while Ā-movement enters the TP structure too and has no such effect, (21) for the
 nonfinite embeddings (50) and (51). -/
 theorem a_extraction_forces_lda :
-    (∀ L ∈ [tpLabel, vpLabel], aProbe.transparentToLabel L = true →
-        L = vpLabel ∧ phiProbe.transparentToLabel L = true) ∧
-      ābarProbe.transparentToLabel tpLabel = true ∧
-      phiProbe.transparentToLabel tpLabel = false := by
+    (∀ L ∈ [tpLabel, vpLabel], aProbe.TransparentTo L → L = vpLabel ∧ phiProbe.TransparentTo L) ∧
+      ābarProbe.TransparentTo tpLabel ∧ ¬ phiProbe.TransparentTo tpLabel := by
   decide
 
 /-! ### Hyperraising (Section 4.2.3) -/
@@ -119,59 +118,47 @@ def extrapositionProbe : Probe.Profile := ⟨.T, some .T⟩
 /-- No A-probe search enters a finite clause in English, while Ā-extraction is unaffected, and
 extraposition, with horizon T, cannot leave even a nonfinite clause (59). -/
 theorem hyperraising_blocked :
-    englishAProbe.transparentToLabel cpLabel = false ∧
-      ābarProbe.transparentToLabel cpLabel = true ∧
-      extrapositionProbe.transparentToLabel tpLabel = false := by
+    ¬ englishAProbe.TransparentTo cpLabel ∧ ābarProbe.TransparentTo cpLabel ∧
+      ¬ extrapositionProbe.TransparentTo tpLabel := by
   decide
 
 /-- Hyperraising is a horizon parameter. An A-probe on T⁰ enters finite clauses exactly when its
 horizon is none of the categories a finite clause inherits, as in the languages that allow it. -/
 theorem hyperraising_iff (h : Option Cat) :
-    (⟨.T, h⟩ : Probe.Profile).transparentToLabel cpLabel = true ↔ ∀ c ∈ cpLabel, h ≠ some c := by
-  cases h with
-  | none => simp [Probe.Profile.transparentToLabel]
-  | some x =>
-    simp only [Probe.Profile.transparentToLabel, Bool.not_eq_true', List.any_eq_false, beq_iff_eq,
-      ne_eq, Option.some.injEq]
-    exact ⟨λ h c hc hx => h c hc hx.symm, λ h c hc hx => h c hc hx.symm⟩
+    (⟨.T, h⟩ : Probe.Profile).TransparentTo cpLabel ↔ ∀ c ∈ cpLabel, h ≠ some c := by
+  simp only [Probe.Profile.TransparentTo, Option.mem_def, ne_eq]
+  exact ⟨fun H c hc e ↦ H c e hc, fun H c e hc ↦ H c hc e⟩
 
 /-! ### The Height-Locality Connection (Section 5) -/
 
 /-- A probe on C⁰ with horizon T finds its horizon in its sister and has no search space (63). -/
-theorem vacuous_example : (⟨.C, some .T⟩ : Probe.Profile).isVacuous = true := by decide
+theorem vacuous_example : (⟨.C, some .T⟩ : Probe.Profile).IsVacuous := by decide
 
 /-- Height to locality (65a). A nonvacuous probe on C⁰ has no horizon among the categories of
 its sister TP, and one on T⁰ none among those of vP, so those clauses are necessarily transparent
 to it. -/
 theorem height_to_locality (h : Cat) :
-    ((⟨.C, some h⟩ : Probe.Profile).isVacuous = false → h ∉ tpLabel) ∧
-      ((⟨.T, some h⟩ : Probe.Profile).isVacuous = false → h ∉ vpLabel) := by
-  simp [Probe.Profile.isVacuous, Probe.Profile.transparentToLabel, tpLabel, vpLabel]
+    (¬ (⟨.C, some h⟩ : Probe.Profile).IsVacuous → h ∉ tpLabel) ∧
+      (¬ (⟨.T, some h⟩ : Probe.Profile).IsVacuous → h ∉ vpLabel) := by
+  simp [Probe.Profile.IsVacuous, Probe.Profile.sisterLabel, tpLabel, vpLabel]
 
 /-- Locality to height (65b). A probe with horizon T is vacuous on C⁰, and one with horizon v on
 T⁰ and C⁰, so a nonvacuous probe's horizon bounds its position from below. -/
 theorem locality_to_height :
-    (⟨.C, some .T⟩ : Probe.Profile).isVacuous = true ∧
-      (⟨.T, some .v⟩ : Probe.Profile).isVacuous = true ∧
-      (⟨.C, some .v⟩ : Probe.Profile).isVacuous = true := by
+    (⟨.C, some .T⟩ : Probe.Profile).IsVacuous ∧ (⟨.T, some .v⟩ : Probe.Profile).IsVacuous ∧
+      (⟨.C, some .v⟩ : Probe.Profile).IsVacuous := by
   decide
 
 /-- A nonvacuous probe on C⁰ searches into TP and vP clauses, and one on T⁰ into vP clauses,
 whatever their horizons, which is the Height-Locality Connection for the two positions. -/
 theorem nonvacuous_transparent (h : Option Cat) :
-    ((⟨.C, h⟩ : Probe.Profile).isVacuous = false →
-        (⟨.C, h⟩ : Probe.Profile).transparentToLabel tpLabel = true ∧
-          (⟨.C, h⟩ : Probe.Profile).transparentToLabel vpLabel = true) ∧
-      ((⟨.T, h⟩ : Probe.Profile).isVacuous = false →
-        (⟨.T, h⟩ : Probe.Profile).transparentToLabel vpLabel = true) := by
-  cases h with
-  | none => simp [Probe.Profile.isVacuous, Probe.Profile.transparentToLabel]
-  | some x =>
-    have hsub : ∀ c ∈ vpLabel, c ∈ tpLabel := by decide
-    simp only [Probe.Profile.isVacuous, Probe.Profile.transparentToLabel, Bool.not_eq_true',
-      Bool.not_eq_false', List.any_eq_false, List.any_eq_true, beq_iff_eq,
-      decide_eq_false_iff_not, not_exists, not_and, tpLabel, vpLabel]
-    exact ⟨λ h => ⟨h, λ c hc => h c (hsub c hc)⟩, λ h => h⟩
+    (¬ (⟨.C, h⟩ : Probe.Profile).IsVacuous →
+        (⟨.C, h⟩ : Probe.Profile).TransparentTo tpLabel ∧
+          (⟨.C, h⟩ : Probe.Profile).TransparentTo vpLabel) ∧
+      (¬ (⟨.T, h⟩ : Probe.Profile).IsVacuous →
+        (⟨.T, h⟩ : Probe.Profile).TransparentTo vpLabel) := by
+  simp only [Probe.Profile.IsVacuous, Probe.Profile.sisterLabel, not_not, tpLabel, vpLabel]
+  exact ⟨fun ht ↦ ⟨ht, ht.anti (ClauseSpine.le_def.1 ClauseSpine.vP_le_tP)⟩, id⟩
 
 /-- The four Hindi probes are nonvacuous, so the two on C⁰ search into TP and vP clauses and the
 two on T⁰ into vP clauses, which is why nonfinite clauses are no islands for Ā-movement or
@@ -179,11 +166,10 @@ wh-licensing and why only these interact with long-distance agreement as (21) sa
 A-probe's horizon T would make it vacuous on C⁰, so A-movement lands inside nonfinite clauses,
 (66) and (67). -/
 theorem hindi_consequences :
-    (∀ p ∈ [phiProbe, aProbe, whLicensing, ābarProbe], p.isVacuous = false) ∧
-      (∀ p ∈ [whLicensing, ābarProbe],
-        p.transparentToLabel tpLabel = true ∧ p.transparentToLabel vpLabel = true) ∧
-      (∀ p ∈ [phiProbe, aProbe], p.transparentToLabel vpLabel = true) ∧
-      (⟨.C, aProbe.horizon⟩ : Probe.Profile).isVacuous = true := by
+    (∀ p ∈ [phiProbe, aProbe, whLicensing, ābarProbe], ¬ p.IsVacuous) ∧
+      (∀ p ∈ [whLicensing, ābarProbe], p.TransparentTo tpLabel ∧ p.TransparentTo vpLabel) ∧
+      (∀ p ∈ [phiProbe, aProbe], p.TransparentTo vpLabel) ∧
+      (⟨.C, aProbe.horizon⟩ : Probe.Profile).IsVacuous := by
   decide
 
 end Keine2019

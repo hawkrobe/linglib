@@ -1,145 +1,132 @@
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Mathlib.Data.Finset.Dedup
+import Mathlib.Data.List.DropRight
 
 /-!
-# Clause Spine: Fine-Grained Clause Size
-[elkins-torrence-brown-2026] [grimshaw-2005] [wurmbrand-2014]
+# Clause spines
 
-`ComplementSize` (ExtendedProjection/Basic.lean) classifies clausal complements
-by their highest functional head, which works well for tense-Agree transparency
-and CTP classification. But it can't distinguish VoiceP from ApplP, since both
-have fValue = 1. Languages like Mam need this
-distinction: =(y)a' appears when Voice⁰ is projected but not when only Appl⁰ is.
+This file defines the clause spine and its bilateral label. A clause spine is the nonempty list of
+heads a clause projects, from the lexical head upward, so a bare VP is `[V]`, a finite clause
+`[V, v, T, C]`, and a nominalized complement the finite clause with the nominal shell `[N, D]`
+appended. Keine observes that category features project bilaterally within an extended
+projection, so a clause is labeled by the set of every head it projects. The label of a spine is
+that finset, and spines are preordered by inclusion of labels, the extension order, in which the
+clause sizes of one extended projection form a chain and a nominalized clause and a finite clause
+are incomparable.
 
-`ClauseSpine` records the full list of projected heads, enabling per-head
-projection queries.
+## Main definitions
 
+* `Minimalist.ClauseSpine`: the nonempty list of heads a clause projects, bottom-up.
+* `Minimalist.ClauseSpine.label`: the bilateral label, the finset of heads a spine projects.
+* `Minimalist.ClauseSpine.append`: the spine with a nominal or adpositional shell over it.
+* `Minimalist.ClauseSpine.above`: the heads projected above the last occurrence of a category,
+  the shell over a clause's CP.
+* `Minimalist.ClauseSpine.vP`, `Minimalist.ClauseSpine.tP`, `Minimalist.ClauseSpine.cP`: the
+  clause sizes of the verbal extended projection.
+
+## Main results
+
+* `Minimalist.ClauseSpine.le_def`: the extension order is inclusion of labels.
+* `Minimalist.ClauseSpine.above_append`: appending a shell that does not contain a category
+  appends it to the heads above that category.
+
+## References
+
+* [grimshaw-2005]
+* [keine-2019]
+* [keine-2020]
+* [deal-2026]
 -/
 
 namespace Minimalist
 
--- ============================================================================
--- § 1: ClauseSpine Structure
--- ============================================================================
-
-/-- A clause spine: the ordered sequence of functional heads projected in a
-    clause, from lowest (V) to highest (e.g., C). Unlike `ComplementSize`,
-    which records only the highest head, `ClauseSpine` records every projected
-    head, enabling per-head queries.
-
-    Example: a transitive clause with Voice projects [V, Appl, v, Voice],
-    while an infinitival without Voice projects [V, Appl]. -/
+/-- A clause spine is the nonempty list of heads a clause projects, from the lexical head
+upward. -/
 structure ClauseSpine where
-  /-- Projected heads, ordered bottom-up (V first, highest last).
-      Non-empty: every clause projects at least a lexical head. -/
-  projectedHeads : List Cat
-  /-- The spine is non-empty -/
-  nonempty : projectedHeads ≠ []
-  deriving Repr
+  /-- The projected heads, bottom-up. -/
+  heads : List Cat
+  heads_ne_nil : heads ≠ []
+  deriving Repr, DecidableEq
 
--- ============================================================================
--- § 2: Queries
--- ============================================================================
+namespace ClauseSpine
 
-/-- Does this spine project a given functional head? -/
-def ClauseSpine.projects (spine : ClauseSpine) (c : Cat) : Bool :=
-  spine.projectedHeads.any (· == c)
+variable {s t : ClauseSpine} {c : Cat} {l : List Cat}
 
-/-- The highest head in the spine (always exists by nonempty invariant). -/
-def ClauseSpine.highestHead (spine : ClauseSpine) : Cat :=
-  match spine.projectedHeads.getLast? with
-  | some c => c
-  | none => .V  -- unreachable by invariant
+instance : Membership Cat ClauseSpine := ⟨fun s c ↦ c ∈ s.heads⟩
 
-/-- The lowest (lexical) head in the spine. -/
-def ClauseSpine.lowestHead (spine : ClauseSpine) : Cat :=
-  match spine.projectedHeads.head? with
-  | some c => c
-  | none => .V  -- unreachable by invariant
+@[simp] theorem mem_def : c ∈ s ↔ c ∈ s.heads := Iff.rfl
 
-/-- Number of projected heads. -/
-def ClauseSpine.size (spine : ClauseSpine) : Nat :=
-  spine.projectedHeads.length
+instance (c : Cat) (s : ClauseSpine) : Decidable (c ∈ s) :=
+  inferInstanceAs (Decidable (c ∈ s.heads))
 
-/-- Extend a spine upward with further projected heads — e.g. the
-    nominal or adpositional superstructure over an embedded CP
-    ([deal-2026]'s shelled notional complements). -/
-def ClauseSpine.extend (spine : ClauseSpine) (heads : List Cat) : ClauseSpine :=
-  ⟨spine.projectedHeads ++ heads, by simp [spine.nonempty]⟩
+instance (P : Cat → Prop) [DecidablePred P] (s : ClauseSpine) : Decidable (∀ c ∈ s, P c) :=
+  inferInstanceAs (Decidable (∀ c ∈ s.heads, P c))
 
-/-- The heads projected strictly above the last occurrence of `c`:
-    `above .C` is the CP-external superstructure (`[]` for a bare CP). -/
-def ClauseSpine.above (spine : ClauseSpine) (c : Cat) : List Cat :=
-  (spine.projectedHeads.reverse.takeWhile (· != c)).reverse
+instance (P : Cat → Prop) [DecidablePred P] (s : ClauseSpine) : Decidable (∃ c ∈ s, P c) :=
+  inferInstanceAs (Decidable (∃ c ∈ s.heads, P c))
 
-/-- The extension order: a spine lies below another when the other projects every head it
-does, as the clause sizes of one extended projection do ([keine-2020]'s bilateral labels). -/
-instance : Preorder ClauseSpine where
-  le s t := s.projectedHeads ⊆ t.projectedHeads
-  le_refl _ := List.Subset.refl _
-  le_trans _ _ _ := List.Subset.trans
+/-! ### Labels and the extension order -/
 
-instance (s t : ClauseSpine) : Decidable (s ≤ t) :=
-  decidable_of_iff (∀ c ∈ s.projectedHeads, c ∈ t.projectedHeads) Iff.rfl
+/-- The bilateral label of a spine is the set of heads it projects. -/
+def label (s : ClauseSpine) : Finset Cat := s.heads.toFinset
 
--- ============================================================================
--- § 3: Named Spines
--- ============================================================================
+@[simp] theorem mem_label : c ∈ s.label ↔ c ∈ s := List.mem_toFinset
 
-/-- ApplP-sized clause: [V, Appl]. Infinitival complement without Voice.
-    In Mam, this is the size of infinitival complements where =(y)a' is
-    impossible — Voice is not projected, so there is no host for [oblique]. -/
-def ClauseSpine.applP : ClauseSpine :=
-  ⟨[.V, .Appl], by decide⟩
+/-- The extension order. A spine lies below another when the other projects every head it does,
+as the clause sizes of one extended projection do. -/
+instance : Preorder ClauseSpine := Preorder.lift label
 
-/-- Bare VP: [V]. Minimal clause — just the lexical verb.
-    In Mam, this is the size of infinitival complements:
-    the embedded clause is just VP, lacking Voice, Appl, v. -/
-def ClauseSpine.bareVP : ClauseSpine :=
-  ⟨[.V], by decide⟩
+theorem le_def : s ≤ t ↔ s.label ⊆ t.label := Iff.rfl
 
-/-- vP-sized clause: [V, v]. Light verb shell without Voice or Appl. -/
-def ClauseSpine.vP : ClauseSpine :=
-  ⟨[.V, .v], by decide⟩
+theorem le_iff_forall_mem : s ≤ t ↔ ∀ c ∈ s, c ∈ t := by simp [le_def, Finset.subset_iff]
 
-/-- VoiceP-sized clause: [V, Appl, v, Voice]. Projects Voice head.
-    In Mam, this is the size of "aspectless" complements — Voice is projected,
-    so [oblique] can be hosted, and =(y)a' is licensed on oblique extraction. -/
-def ClauseSpine.voiceP : ClauseSpine :=
-  ⟨[.V, .Appl, .v, .Voice], by decide⟩
+instance : DecidableLE ClauseSpine := fun s t ↦ inferInstanceAs (Decidable (s.label ⊆ t.label))
 
-/-- TP-sized clause: [V, Appl, v, Voice, T]. Full inflectional domain. -/
-def ClauseSpine.tP : ClauseSpine :=
-  ⟨[.V, .Appl, .v, .Voice, .T], by decide⟩
+instance : DecidableLT ClauseSpine := fun s t ↦ inferInstanceAs (Decidable (s.label ⊂ t.label))
 
-/-- CP-sized clause: [V, Appl, v, Voice, T, C]. Full finite clause. -/
-def ClauseSpine.cP : ClauseSpine :=
-  ⟨[.V, .Appl, .v, .Voice, .T, .C], by decide⟩
+/-! ### Shells -/
 
-/-- NmlzP-sized clause: [V, Appl, v, Voice, T, Nmlz]. Hindi nominalized clause.
-    [keine-2020] ch. 2: NmlzP is a distinct clause type from CP — their
-    transparency profiles are incomparable (NmlzP blocks Ā but not wh;
-    CP blocks wh but not Ā in Hindi). -/
-def ClauseSpine.nmlzP : ClauseSpine :=
-  ⟨[.V, .Appl, .v, .Voice, .T, .Nmlz], by decide⟩
+/-- Appending heads to a spine projects a nominal or adpositional shell over the clause. -/
+def append (s : ClauseSpine) (l : List Cat) : ClauseSpine :=
+  ⟨s.heads ++ l, by simp [s.heads_ne_nil]⟩
 
-/-- ForceP-sized clause: [V, Appl, v, Voice, T, C, Force]. German V2 clause.
-    [keine-2020] ch. 4: V2 clauses in German are structurally larger
-    than V-final (CP) clauses — they project ForceP above CP. -/
-def ClauseSpine.forceP : ClauseSpine :=
-  ⟨[.V, .Appl, .v, .Voice, .T, .C, .Force], by decide⟩
+@[simp] theorem heads_append (s : ClauseSpine) (l : List Cat) :
+    (s.append l).heads = s.heads ++ l :=
+  rfl
 
--- ============================================================================
--- § 4: F-Level Bridge
--- ============================================================================
+@[simp] theorem mem_append : c ∈ s.append l ↔ c ∈ s ∨ c ∈ l := List.mem_append
 
-/-- The F-level of a clause spine: the `fValue` of its highest projected
-    head. This bridges `ClauseSpine` (concrete head list) to
-    `ExtendedProjection`'s F-value hierarchy, enabling
-    [keine-2019]'s transparency calculations.
+theorem le_append (s : ClauseSpine) (l : List Cat) : s ≤ s.append l :=
+  le_iff_forall_mem.2 fun _ hc ↦ mem_append.2 (Or.inl hc)
 
-    Example: `ClauseSpine.cP.fLevel = 6` (C is F6),
-    `ClauseSpine.tP.fLevel = 2` (T is F2). -/
-def ClauseSpine.fLevel (spine : ClauseSpine) : Nat :=
-  fValue spine.highestHead
+/-- The heads projected strictly above the last occurrence of `c`, so that `s.above .C` is the
+shell over the CP of `s` and `[]` for a bare CP. -/
+def above (s : ClauseSpine) (c : Cat) : List Cat := s.heads.rtakeWhile (· != c)
+
+theorem above_append (s : ClauseSpine) (h : c ∉ l) : (s.append l).above c = s.above c ++ l := by
+  induction l using List.reverseRecOn with
+  | nil => simp [above]
+  | append_singleton l x ih =>
+    simp only [List.mem_append, List.mem_singleton, not_or] at h
+    rw [above, heads_append, ← List.append_assoc,
+      List.rtakeWhile_concat_pos (· != c) _ x (bne_iff_ne.2 (Ne.symm h.2)), ← List.append_assoc]
+    exact congrArg (· ++ [x]) (ih h.1)
+
+/-! ### Clause sizes -/
+
+/-- The vP-sized clause `[V, v]`, the small nonfinite clause. -/
+def vP : ClauseSpine := ⟨[.V, .v], by simp⟩
+
+/-- The TP-sized clause `[V, v, T]`, the large nonfinite clause. -/
+def tP : ClauseSpine := ⟨[.V, .v, .T], by simp⟩
+
+/-- The CP-sized clause `[V, v, T, C]`, the finite clause. -/
+def cP : ClauseSpine := ⟨[.V, .v, .T, .C], by simp⟩
+
+theorem vP_le_tP : vP ≤ tP := by decide
+
+theorem tP_le_cP : tP ≤ cP := by decide
+
+end ClauseSpine
 
 end Minimalist

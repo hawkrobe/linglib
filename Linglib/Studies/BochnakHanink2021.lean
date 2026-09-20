@@ -58,7 +58,7 @@ theorem selects_iff_takes_ge : ∀ v ∈ verbs, Selects v ↔ v.toVerb.takes ge 
   decide
 
 /-- The spine of a nominalized complement, a CP under a silent D (3). -/
-def complementSpine : ClauseSpine := ClauseSpine.cP.extend [.D]
+def complementSpine : ClauseSpine := ClauseSpine.cP.append [.D]
 
 /-- The spine of a dependent-mood modifier, a MoodP without C ((4), (47b)). -/
 def modifierSpine : ClauseSpine := ClauseSpine.tP
@@ -69,8 +69,7 @@ def spine (v : Washo.Verb) : ClauseSpine :=
 
 /-- The embedded clause projects D, and then also C, iff it bears the nominalizer (Table 2). -/
 theorem spine_projects_D_iff :
-    ∀ v ∈ verbs, ((spine v).projects .D ↔ v.typer = ge) ∧
-      ((spine v).projects .C ↔ v.typer = ge) := by
+    ∀ v ∈ verbs, (.D ∈ spine v ↔ v.typer = ge) ∧ (.C ∈ spine v ↔ v.typer = ge) := by
   decide
 
 /-- 'Dream' selects without the reflexive and not with it ((53)–(55)). -/
