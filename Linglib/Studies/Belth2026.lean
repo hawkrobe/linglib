@@ -469,15 +469,17 @@ namespace Finnish
 
 open _root_.Finnish Phonology
 
+/-- The segments of a transcription, the morpheme boundary dropped. -/
+def segments (cs : List Char) : List Segment := (cs.filterMap ofChar).map SegmentLike.coe
+
 /-- The underlying form of a stem with the essive -nA. -/
-def ur (form : String) : List Segment :=
-  (stem form).filterMap ofChar ++ [Consonant.n.segment, archiphonemeA]
+def ur (form : String) : List Segment := segments (stem form) ++ [n, A]
 
 /-- Rule (52) is the search-and-copy reading of the fragment's harmony, whose tier excludes
 consonants and the neutral vowels and whose Elsewhere default is `[−back]`; it derives the
 four forms of (51). -/
 theorem rows : ∀ f ∈ forms Examples.ex_51,
-    palatalHarmony.searchCopy.apply (ur f) = segments f := by
+    palatalHarmony.searchCopy.apply (ur f) = segments f.toList := by
   decide
 
 end Finnish
