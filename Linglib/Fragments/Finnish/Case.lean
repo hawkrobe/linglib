@@ -26,9 +26,8 @@ elative/ablative → ABL, illative/allative → ALL) are collapsed into a
 single rank.
 
 Finnish lacks a dedicated **dative** case — the allative covers recipient
-function ([blake-1994], Ch. 6: ALL → DAT extension). This creates a gap at
-rank 4 (DAT) on Blake's hierarchy, making Finnish a known exception to
-strict contiguity.
+function, which leaves the dative position of [blake-1994]'s hierarchy unfilled
+(`Studies/Blake1994.lean`).
 
 -/
 
@@ -53,28 +52,10 @@ def inventory : Finset Case :=
   {.nom, .acc, .gen, .part, .ine, .ade, .ela, .abl, .ill, .all,
    .ess, .transl, .abess, .inst, .com}
 
-/-- Finnish's inventory **fails** strict contiguity: the spatial tier
-    (rank ≤ 2) and GEN/core (rank ≥ 5) have no LOC (rank 3) or DAT
-    (rank 4) between them. Finnish uses allative for recipient function
-    instead of a dedicated dative.
-
-    This illustrates Blake's hedge: the hierarchy holds "usually" but
-    languages like Finnish fill the dative slot with a local case
-    extension (ALL → DAT, formalized in `Case.Extends`). -/
-theorem inventory_fails_strict :
-    ¬ Case.IsValidInventory inventory := by decide
-
 /-- The allative-for-dative substitution is exactly the extension path
     in [heine-2009] Table 29.6, formalized in `Case.Extends`. -/
 theorem allative_extends_to_dative :
     Case.Extends .all .dat := by decide
-
--- ============================================================================
--- § 2: Syncretism
--- ============================================================================
-
-theorem abl_inst_distinct :
-    Case.HierarchyAdjacent .abl .inst := by decide
 
 -- ============================================================================
 -- § 3: Local Case Matrix (3 × 2)

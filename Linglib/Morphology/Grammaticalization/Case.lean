@@ -61,8 +61,7 @@ theorem caseGramCline_ordered :
 /-! ## Case-extension dot-methods
 
 These live under `namespace Grammaticalization` so they project onto the `Case`
-type via dot-notation (mirroring `Case.hierarchyRank` in
-`Syntax/Case/Basic.lean`). -/
+type via dot-notation. -/
 
 namespace Grammaticalization
 

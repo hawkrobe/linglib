@@ -90,7 +90,7 @@ def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.trip
 theorem isTripartite_perfective : Alignment.IsTripartite (assignCase .Perf) :=
   Alignment.isTripartite_tripartite
 
-/-! ### Case inventory ([blake-1994]) -/
+/-! ### Case inventory -/
 
 /-- The case inventory realized by the core positions: {ERG, ACC, ABS}. -/
 def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).toFinset
@@ -98,10 +98,6 @@ def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).to
 /-- The inventory covers all argument positions. -/
 theorem inventory_covers_positions :
     ∀ p ∈ ArgumentRole.core, (assignCase .Perf) p ∈ caseInventory := by decide
-
--- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
--- (all are core cases at rank 6, trivially no gaps).
-example : Case.IsValidInventory caseInventory := by decide
 
 /-! ### Marker verification -/
 

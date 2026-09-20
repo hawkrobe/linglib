@@ -27,8 +27,7 @@ collapse to a single marker drawn from the Set B paradigm.
   between the aspect marker and the stem, and case ergative outside the
   progressive; `IsPhiAgreed` records the (non-differential) φ-agreement
   status of each position.
-* `Kaqchikel.caseInventory`: the {ERG, ABS} case inventory, validated
-  against [blake-1994]'s hierarchy.
+* `Kaqchikel.caseInventory`: the {ERG, ABS} case inventory.
 
 ## Implementation notes
 
@@ -118,7 +117,7 @@ theorem all_positions_agreed (p : ArgumentRole) (_ : p ∈ ArgumentRole.core) :
     IsPhiAgreed p := by
   cases p <;> trivial
 
-/-! ### Case inventory ([blake-1994]) -/
+/-! ### Case inventory -/
 
 /-- The case inventory realized by the core positions: {ERG, ABS}. -/
 def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).toFinset
@@ -127,9 +126,5 @@ def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).to
     is in the inventory. -/
 theorem inventory_covers_positions :
     ∀ p ∈ ArgumentRole.core, (assignCase .Perf) p ∈ caseInventory := by decide
-
--- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
--- (both are core cases at the top `hierarchyRank`, trivially no gaps).
-example : Case.IsValidInventory caseInventory := by decide
 
 end Kaqchikel

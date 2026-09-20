@@ -20,14 +20,8 @@ lexemes refine the single *ni* entry, the matter of `Studies/SadakaneKoizumi1995
   the markers and Tsujimura's two classes
 * `Japanese.Case.inventory` — the cases the markers realize
 
-## Main results
-
-* `Japanese.Case.inventory_realizes_all_blake_ranks` — every rank of Blake's hierarchy is
-  realized, so the inventory is contiguous on the hierarchy (`inventory_isValid`)
-
 ## References
 
-* [blake-1994]
 * [kuno-1987]
 * [kuroda-1972]
 * [sadakane-koizumi-1995]
@@ -91,13 +85,5 @@ def caseMarkers : Finset Marker := caseParticles ∪ postpositions
 
 /-- The cases the markers realize. -/
 def inventory : Finset Case := _root_.Case.Marker.inventory (caseMarkers.image (·.toMarker))
-
-/-- Every rank of Blake's hierarchy is realized. -/
-theorem inventory_realizes_all_blake_ranks :
-    ∀ r : Fin 7, ∃ c ∈ inventory, c.hierarchyRank = r := by
-  decide
-
-/-- The inventory is contiguous on Blake's hierarchy. -/
-theorem inventory_isValid : Case.IsValidInventory inventory := by decide
 
 end Japanese.Case

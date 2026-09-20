@@ -88,13 +88,4 @@ def localCases : List (Case.Region × Case.PathDir) :=
 theorem localCases_distinct :
     (localCases.filterMap (fun rd => Case.toCase rd.1 rd.2)).Nodup := by decide
 
-/-- Hungarian fails Blake's strict contiguity at rank 5 (GEN), since
-    the inventory has DAT (rank 4) without GEN. Parallels Finnish's
-    failure at rank 4 (DAT) — `Finnish.Case.inventory_fails_strict`.
-    [caha-2008] §5 (pp. 266–267) cites Hungarian as the textbook
-    surface counterexample to Blake, resolved (per Blake fn. 8) by the
-    dative-as-possessor syncretism. -/
-theorem inventory_fails_strict :
-    ¬ Case.IsValidInventory inventory := by decide
-
 end Hungarian.Case

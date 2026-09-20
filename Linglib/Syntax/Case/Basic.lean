@@ -1,35 +1,32 @@
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Union
 import Mathlib.Order.Fin.Basic
-import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Case — the canonical inventory
-[blake-1994] [de-marneffe-zeman-2021]
+# Case
 
-The root-namespace `Case` type is the canonical, analytical case
-inventory: the values languages' case systems distinguish. All
-theoretical machinery — Blake's hierarchy (here), Caha containment
-(`Syntax/Case/Order.lean`), syncretism and *ABA
-(`Morphology.IsContiguous` over that order), grammaticalization clines
-(`Morphology/Grammaticalization/Case.lean`) — operates over this type.
+The comparative case values: the labels under which the case systems of different languages are
+compared. A language's own cases are its fragment's business, and a fragment maps them to these
+labels. The hierarchies and orders the literature places on the labels are each stated where they
+are used: the containment orders in `Syntax/Case/Order.lean`, the extension paths of
+grammaticalization in `Morphology/Grammaticalization/Case.lean`, and Blake's hierarchy of case
+systems in `Studies/Blake1994.lean`.
 
-The Universal Dependencies tags corpora annotate are the realization vocabulary, reached
-through `Morphology/Word/UD.lean`; the two inventories coincide cell for cell, and the
-analytical one is where refinements the tags conflate would land, such as the Latin
-syncretic ablative beside the Finnish exterior-source ablative.
+The Universal Dependencies case tags are the corpus vocabulary, reached through
+`Morphology/Word/UD.lean`. The two inventories coincide cell for cell
+([de-marneffe-zeman-2021]).
 
 ## Main declarations
 
-* `Case` — the 28-cell analytical inventory
-* `Case.hierarchyRank` — Blake's implicational hierarchy
-  ([blake-1994], `Fin 7`-codomain rank)
-* `Case.Marker` — a case marker, its form and the cases it realizes, with the inventory
-  `Case.Marker.inventory` a set of markers realizes
-* `Case.IsValidInventory` — inventory contiguity on the hierarchy,
-  decidable, with the order-theoretic characterization
-  `isValidInventory_iff_ordConnected`
+* `Case`: the comparative case values.
+* `Case.Marker`: a case marker, its form and the cases it realizes, with `Case.Marker.inventory`
+  the cases a set of markers realizes.
+
+## References
+
+* [blake-1994]
+* [de-marneffe-zeman-2021]
 -/
 
 /-- Grammatical case — the canonical analytical inventory. -/
@@ -96,73 +93,9 @@ inductive Case where
 
 namespace Case
 
-/-! ### Blake's case hierarchy [blake-1994]
-
-Implicational hierarchy over case inventories with contiguity checking.
-The fine-grained spatial cases all sit at the peripheral spatial tier
-(rank 1) since Blake's hierarchy collapses them into a single locative/
-spatial group. -/
-
-/-- Position on Blake's case hierarchy ([blake-1994]).
-
-    Higher rank = more likely to exist in a language's case inventory.
-    Blake's hierarchy orders NOM/ACC/ERG/ABS > GEN > DAT > LOC >
-    ABL/INST and lumps everything below into a single undifferentiated
-    "others" tier; the further split of that tier into rank 1
-    (COM/ALL/PERL/BEN + fine-grained spatial cases — Finnish/Hungarian
-    ADE/INE/ILL/ELA/SUB/SUP/DEL) vs rank 0 (peripheral non-spatial:
-    VOC/PART/CAUS/ESS/TRANSL/ABESS/TER/TEM) is this formalization's
-    extrapolation, not Blake's.
-
-    Codomain is `Fin 7` — the boundedness is encoded in the type, not as
-    a separate `*_bounded` theorem. -/
-def hierarchyRank : Case → Fin 7
-  | .nom | .acc | .erg | .abs => 6
-  | .gen                      => 5
-  | .dat                      => 4
-  | .loc                      => 3
-  | .abl | .inst              => 2
-  | .com | .all | .perl | .ben
-  | .ade | .ine | .ill | .ela | .sub | .sup | .del => 1
-  | .voc | .part | .caus | .ess | .transl | .abess
-  | .ter | .tem => 0
-
-/-- An inventory is **contiguous** on Blake's hierarchy: every rank
-    between two realized ranks is itself realized. Formalizes Blake's
-    implicational tendency ([blake-1994]), in a form `decide` can
-    mechanically check; `isValidInventory_iff_ordConnected` is the
-    order-theoretic content. -/
-def IsValidInventory (inv : Finset Case) : Prop :=
-  ∀ r : Fin 7,
-    (∃ c ∈ inv, c.hierarchyRank < r) →
-    (∃ c ∈ inv, r < c.hierarchyRank) →
-    (∃ c ∈ inv, c.hierarchyRank = r)
-
-instance (inv : Finset Case) : Decidable (IsValidInventory inv) := by
-  unfold IsValidInventory; infer_instance
-
-/-- **The transfer equation**: inventory validity is order-connectedness
-    of the rank image — Blake's implicational tendency is `Icc`-closure
-    in `Fin 7`. -/
-theorem isValidInventory_iff_ordConnected (inv : Finset Case) :
-    IsValidInventory inv ↔
-      (↑(inv.image hierarchyRank) : Set (Fin 7)).OrdConnected := by
-  simp only [Set.ordConnected_iff, Set.subset_def, Set.mem_Icc,
-    Finset.mem_coe, Finset.mem_image]
-  constructor
-  · rintro hval x ⟨cx, hcx, rfl⟩ y ⟨cy, hcy, rfl⟩ _ r ⟨hr1, hr2⟩
-    rcases eq_or_lt_of_le hr1 with rfl | h1
-    · exact ⟨cx, hcx, rfl⟩
-    rcases eq_or_lt_of_le hr2 with rfl | h2
-    · exact ⟨cy, hcy, rfl⟩
-    · exact hval r ⟨cx, hcx, h1⟩ ⟨cy, hcy, h2⟩
-  · rintro hconn r ⟨clo, hclo, hlo⟩ ⟨chi, hchi, hhi⟩
-    exact hconn _ ⟨clo, hclo, rfl⟩ _ ⟨chi, hchi, rfl⟩
-      (le_of_lt (lt_trans hlo hhi)) r ⟨le_of_lt hlo, le_of_lt hhi⟩
-
 /-! ### Markers -/
 
-/-- A case marker: its form and the cases it realizes, several for a polysemous marker. -/
+/-- A case marker, with its form and the cases it realizes, several for a polysemous marker. -/
 structure Marker where
   /-- The form. -/
   form : String
@@ -172,74 +105,5 @@ structure Marker where
 
 /-- The cases a set of markers realizes. -/
 def Marker.inventory (ms : Finset Marker) : Finset Case := ms.biUnion (·.cases)
-
-/-! Contiguity verdicts on representative inventories (positive: Latin-
-    through Finnish-sized systems; negative: hierarchy skips). Kept as
-    `example`s — no codebase consumer references them by name. -/
-
-example : IsValidInventory {.nom, .acc} := by decide
-example : IsValidInventory {.nom, .acc, .gen} := by decide
-example : IsValidInventory {.nom, .acc, .gen, .dat} := by decide
-example : IsValidInventory {.nom, .acc, .gen, .dat, .loc} := by decide
-example : IsValidInventory {.nom, .acc, .gen, .dat, .loc, .abl, .inst} := by
-  decide
-example : IsValidInventory {.erg, .abs, .gen, .dat} := by decide
-example : IsValidInventory {.nom, .erg, .abs, .gen} := by decide
-example : ¬ IsValidInventory {.nom, .acc, .dat} := by decide
-example : ¬ IsValidInventory {.nom, .acc, .loc} := by decide
-example : ¬ IsValidInventory {.nom, .acc, .abl} := by decide
-example : ¬ IsValidInventory {.nom, .acc, .gen, .loc} := by decide
-
-
-/-! ### Hierarchy adjacency
-
-Adjacency relations on the Blake hierarchy, companions to
-`IsValidInventory`: `HierarchyAdjacent` on canonical ranks,
-`InventoryAdjacent` relativized to a language's inventory. -/
-
-/-- Are two cases adjacent on the hierarchy (same rank or ranks differ
-by 1)? Stated over `Fin.val` so rank arithmetic cannot wrap: the `Fin 7`
-formulation `rank + 1 = rank` made rank-6 NOM "adjacent" to rank-0 VOC
-via mod-7 overflow. -/
-def HierarchyAdjacent (c1 c2 : Case) : Prop :=
-  c1.hierarchyRank = c2.hierarchyRank ∨
-  c1.hierarchyRank.val + 1 = c2.hierarchyRank.val ∨
-  c2.hierarchyRank.val + 1 = c1.hierarchyRank.val
-
-instance : DecidableRel HierarchyAdjacent := λ _ _ =>
-  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- Relaxed adjacency: no case in the inventory falls strictly between
-the two cases on the hierarchy. -/
-def InventoryAdjacent (inv : Finset Case) (c1 c2 : Case) : Prop :=
-  let lo := min c1.hierarchyRank c2.hierarchyRank
-  let hi := max c1.hierarchyRank c2.hierarchyRank
-  ∀ c ∈ inv, c = c1 ∨ c = c2 ∨ c.hierarchyRank ≤ lo ∨ c.hierarchyRank ≥ hi
-
-instance (inv : Finset Case) (c1 c2 : Case) :
-    Decidable (InventoryAdjacent inv c1 c2) := by
-  unfold InventoryAdjacent; infer_instance
-
-/-- Same-tier cases are always adjacent. -/
-theorem same_tier_adjacent (c1 c2 : Case)
-    (h : c1.hierarchyRank = c2.hierarchyRank) :
-    HierarchyAdjacent c1 c2 := Or.inl h
-
-example : HierarchyAdjacent .nom .acc := by decide
-example : HierarchyAdjacent .com .inst := by decide
-example : HierarchyAdjacent .gen .dat := by decide
-
-/-- ERG/INST hierarchy non-adjacency: Blake's known exception, explained
-by historical derivation. -/
-example : ¬ HierarchyAdjacent .erg .inst := by decide
-
-/-- The wraparound regression: NOM (top rank) and VOC (bottom rank) are
-not adjacent. -/
-example : ¬ HierarchyAdjacent .nom .voc := by decide
-
-/-- ERG/INST IS inventory-adjacent in a system with only
-{ERG, ABS, INST}. -/
-example : InventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst := by
-  decide
 
 end Case

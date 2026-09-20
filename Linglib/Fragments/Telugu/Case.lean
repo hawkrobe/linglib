@@ -29,9 +29,6 @@ namespace Telugu.Case
 def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc}
 
--- Contiguous on Blake's hierarchy (ranks 6 down to 3).
-example : Case.IsValidInventory inventory := by decide
-
 /-! ### Containment properties -/
 
 /-- All nonnominative Telugu cases bear the ACC feature. -/

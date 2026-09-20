@@ -1,5 +1,4 @@
 import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Basic
 
 /-!
 # Tamil Case Inventory
@@ -20,11 +19,5 @@ namespace Tamil.Case
 /-- Tamil 7-case core inventory (excluding VOC). -/
 def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com}
-
--- Contiguous on Blake's hierarchy (ranks 6 down to 1).
-example : Case.IsValidInventory inventory := by decide
-
-theorem com_inst_adjacent :
-    Case.HierarchyAdjacent .com .inst := by decide
 
 end Tamil.Case
