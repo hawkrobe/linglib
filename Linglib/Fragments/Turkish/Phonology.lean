@@ -1,5 +1,6 @@
 import Linglib.Data.PHOIBLE.Inventories.Turkish
 import Linglib.Phonology.Harmony.System
+import Linglib.Phonology.Segmental.NaturalClass
 import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -56,6 +57,7 @@ writing one segment.
 * `unspecified_back_iff`, `not_unspecified_voice`: a consonant lacks [back] unless it is the
   palatal lateral, and every phoneme has a value for [voice], which the tier tests of fronting
   and voicing rely on.
+* `naturalClass_archiphoneme`: the natural class of `A`, `I` or `D` is its alternants.
 * `setFeature_back_A`, `setFeature_voice_D`: an archiphoneme with its feature filled in is one
   of its alternants.
 
@@ -210,6 +212,13 @@ theorem unspecified_back_iff : ∀ x ∈ consonants, x.Unspecified .back ↔ x �
 
 /-- Every phoneme has a value for [voice], so that only `D` is a target of voicing. -/
 theorem not_unspecified_voice : ∀ x ∈ vowels ∪ consonants, ¬ x.Unspecified .voice := by decide
+
+/-- The natural class of a vowel archiphoneme among the vowels, and of `D` among the
+consonants, is its alternants. -/
+theorem naturalClass_archiphoneme :
+    A.naturalClass vowels = {a, e} ∧ I.naturalClass vowels = {ı, i, u, ü} ∧
+      D.naturalClass consonants = {t, d} := by
+  decide
 
 /-- `A` with [back] filled in is `a` or `e`. -/
 theorem setFeature_back_A :
