@@ -2482,9 +2482,6 @@ import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
 import Linglib.Syntax.Minimalist.Economy.MinimalYield.Laurent
 import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
 import Linglib.Syntax.Minimalist.Ellipsis
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
-import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Syntax.Minimalist.Case
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.LateMerger

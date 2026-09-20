@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.ElkinsTorrenceBrown2026
 import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Kiche.Extraction
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
+import Linglib.Syntax.Minimalist.Clause.Spine
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle

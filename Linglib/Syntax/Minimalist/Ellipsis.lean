@@ -109,7 +109,7 @@ theorem xStranding {α : Type*} [DeletionSpine α] (ePos base : α)
 /-- Positions in the clausal spine, ordered from lowest to highest.
     This is a deliberately coarse-grained linear order sufficient for
     ellipsis domain computation. It does not replace `Cat` or
-    `ExtendedProjection`; it captures the relative height relevant
+    the functional sequence; it captures the relative height relevant
     to Merchant's deletion-domain theory.
 
     `VP_adj` encodes VP-adjunction — the attachment site of restitutive

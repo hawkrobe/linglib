@@ -24,7 +24,7 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 
 ## Implementation notes
 
-* Clause size is `Minimalist.ComplementSize` on the shared functional sequence `fValue`, where
+* Clause size is `Minimalist.ComplementSize` on the shared functional sequence `Cat.fValue`, where
   `Cat.Say` sits at Say > Foc > T. The Williams Cycle (26) and its version for Agree (35) are one
   relation, `WilliamsCycle x y`, between the head of a dependency and the crossed projection.
 * Readings are `Tense.EmbeddedTenseReading`. The two clause types realize the two values of
@@ -72,7 +72,7 @@ inductive ClauseType
 /-- (21)–(22): a non-speech-reporting clause is a bare TP, a speech-reporting clause a SayP. -/
 def ClauseType.size : ClauseType → ComplementSize
   | .nonSpeechReporting => .tP
-  | .speechReporting => .sayP
+  | .speechReporting => ⟨.Say⟩
 
 /-- Speech-reporting clauses are the larger ones (§3.1). -/
 theorem size_nonSpeech_lt_speech :
@@ -83,7 +83,7 @@ theorem size_nonSpeech_lt_speech :
 
 /-- A dependency headed at `x`, movement to Spec,XP or Agree from X or XP, may cross or search
 a projection of `y` unless Y is above X in the functional sequence. -/
-def WilliamsCycle (x y : Cat) : Prop := fValue y ≤ fValue x
+def WilliamsCycle (x y : Cat) : Prop := y.fValue ≤ x.fValue
 
 instance (x y : Cat) : Decidable (WilliamsCycle x y) := inferInstanceAs (Decidable (_ ≤ _))
 
@@ -91,7 +91,7 @@ instance (x y : Cat) : Decidable (WilliamsCycle x y) := inferInstanceAs (Decidab
 theorem WilliamsCycle.refl (x : Cat) : WilliamsCycle x x := le_rfl
 
 /-- Upward entailment says that whatever a projection blocks, every higher projection blocks. -/
-theorem WilliamsCycle.of_le {x y y' : Cat} (h : fValue y' ≤ fValue y) (hxy : WilliamsCycle x y) :
+theorem WilliamsCycle.of_le {x y y' : Cat} (h : y'.fValue ≤ y.fValue) (hxy : WilliamsCycle x y) :
     WilliamsCycle x y' :=
   h.trans hxy
 
@@ -118,7 +118,7 @@ theorem raising_rows : ∀ e ∈ [ex_27, ex_28], ∀ cs ∈ crossed? e,
 
 /-- (23): evaluative adverbs such as *sajnos* sit in the Say layer above foci, so a clause hosts
 one iff it is at least a SayP. -/
-def HostsEvaluativeAdverb (cs : ComplementSize) : Prop := fValue .Say ≤ cs.fLevel
+def HostsEvaluativeAdverb (cs : ComplementSize) : Prop := Cat.fValue .Say ≤ cs.fLevel
 
 instance (cs : ComplementSize) : Decidable (HostsEvaluativeAdverb cs) :=
   inferInstanceAs (Decidable (_ ≤ _))
@@ -142,11 +142,11 @@ inductive Attachment
 /-- The functional-sequence level of the matrix projection an embedded clause attaches to. -/
 def Attachment.level : Attachment → ComplementSize → ℕ
   | .sizeDependent, cs => cs.fLevel
-  | .vpInternal, _ => fValue .V
+  | .vpInternal, _ => Cat.fValue .V
 
 /-- The Sequence of Tense Rule (31) can delete an embedded PAST iff the embedded T is contained
 in a projection of the matrix PAST T, that is, iff the clause attaches no higher than TP. -/
-def SOTRule.Applicable (a : Attachment) (cs : ComplementSize) : Prop := a.level cs ≤ fValue .T
+def SOTRule.Applicable (a : Attachment) (cs : ComplementSize) : Prop := a.level cs ≤ Cat.fValue .T
 
 instance (a : Attachment) (cs : ComplementSize) : Decidable (SOTRule.Applicable a cs) :=
   inferInstanceAs (Decidable (_ ≤ _))

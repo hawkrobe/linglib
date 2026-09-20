@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
+import Linglib.Syntax.Minimalist.Clause.Spine
 
 /-!
 # Keine (2019): Selective Opacity

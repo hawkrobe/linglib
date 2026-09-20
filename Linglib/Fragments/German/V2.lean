@@ -1,34 +1,32 @@
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.VerbSecond
 
 /-!
-# German V2 Profile
-[westergaard-2009]
+# German verb second
 
-V2 micro-parameter profile for German (Table 3.1, row "German").
+This file records the verb-second grammar of German, the clause-type heads of the split ForceP
+that the finite verb moves to, as Westergaard's Table 3.1 gives them: root declaratives,
+wh-questions and yes/no-questions, and the finiteness head of embedded clauses. The
+yes/no-question setting records verb fronting that surfaces as V1, with an empty specifier, and
+belongs with verb second because the target is in the CP domain. The finiteness setting records
+V-to-I in embedded clauses rather than V-to-C, which in German's verb-final base order yields
+verb-final embedded order. That setting is Vikner's analysis; for Harizanov and Gribanova the
+unification of T and V is postsyntactic amalgamation, V raising into T or T lowering as in
+Danish, which Haider's evidence favours, and the verb-second step is syntactic movement of T,
+see `Studies/HarizanovGribanova2019.lean`.
 
-## Caveats
+## References
 
-`.Pol` records the verb-fronting in matrix yes/no questions, which
-surfaces as V1 (Spec-CP empty), not V2 — included with the V2 cluster
-because the fronting target is in the CP domain.
-
-`.Fin` records V-to-I in embedded clauses, NOT V-to-C. In German's
-SOV base order, V-to-I yields verb-final embedded surface order. The
-+Fin° claim is the [vikner-1995] analysis; for
-[harizanov-gribanova-2019] the unification of T and V is postsyntactic
-amalgamation rather than syntactic movement (V Raising into T in their
-(59), or T Lowering as in Danish, which [haider-2010]'s evidence
-favours), and the verb-second step is syntactic movement of T. See
-`Studies/HarizanovGribanova2019.lean`.
+* [westergaard-2009]
+* [vikner-1995]
+* [harizanov-gribanova-2019]
+* [haider-2010]
 -/
 
 namespace German
 
-open Minimalist (ForceHead V2Profile)
+open Minimalist
 
-/-- German: V-to-C in root declaratives, matrix wh-questions, and
-    yes/no-questions; +Fin° for V-to-I in embedded clauses (contested). -/
-abbrev german : V2Profile :=
-  {.Decl, .Int, .Pol, .Fin}
+/-- German moves the finite verb to Decl⁰, Int⁰ and Pol⁰, and to Fin⁰ in embedded clauses. -/
+abbrev german : V2Grammar := {.Decl, .Int, .Pol, .Fin}
 
 end German

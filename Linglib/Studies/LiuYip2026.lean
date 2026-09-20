@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Verbal.Aspect
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.Clause.Size
 import Linglib.Fragments.Mandarin.Adverbs
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Cantonese.Aspect
@@ -57,7 +57,7 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
 
 ## Implementation notes
 
-The heights are those of the functional sequence in `Syntax/Minimalist/ExtendedProjection`,
+The heights are those of the functional sequence in `Syntax/Minimalist/FunctionalSequence`,
 outer aspect at the level of T and inner aspect at the level of v, so containment is a
 comparison of levels. Chomsky's defective intervention is not a relation between heads: an
 embedded projection blocks association whatever its features, which is the paper's claim. The
@@ -202,7 +202,7 @@ theorem correlation_I : ∀ a ∈ [Again.you, Again.zai], (a.Skips ↔ a.NeedsDy
 /-- Correlation II says that an *again*-element has exceptional scope iff its projection is at
 least as high as the aspectual heads, the level of `Asp` in the functional sequence. -/
 theorem correlation_II (a : Again) :
-    a.Skips ↔ ∃ f ∈ a.flavor, fValue .Asp ≤ f.defaultFLevel := by
+    a.Skips ↔ ∃ f ∈ a.flavor, Cat.fValue .Asp ≤ f.defaultFLevel := by
   cases a <;> decide
 
 /-! ### Aspect suffixes and phase complements -/

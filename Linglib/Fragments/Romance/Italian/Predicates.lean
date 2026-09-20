@@ -1,41 +1,28 @@
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Italian verbs
 
-Italian attitude and causative-attitude verbs, with emphasis on the
-*di*/*a* infinitival alternation documented in [fusco-sgrizzi-2026].
-
-## The *di*/*a* Alternation
-
-Italian *convincere* ('convince') selects two distinct infinitival
-complements: *di* + infinitive ("Maria ha convinto Paolo di essere in
-pericolo", 'Maria convinced Paolo that he was in danger') and *a* +
-infinitive ("Maria ha convinto Paolo a partire", 'Maria convinced
-Paolo to leave'). The entries record which complementizers each verb
-selects; [fusco-sgrizzi-2026]'s analysis of the alternation —
-complement size determining the belief/intention reading — lives in
-`Studies/FuscoSgrizzi2026.lean`.
-
-## Verbs with a lexical reciprocal entry
-
-The verbs with a lexical reciprocal entry beside their transitive use are those of
-[palmieri-2024]'s appendix. They are ordinary verb entries here, and
-`Italian.Reciprocals.lexicalReciprocals` records which of them are lexical reciprocals.
+This file lists the Italian attitude and causative-attitude verbs as `Verb` entries, with the
+infinitival complementizer each selects. *Convincere* 'convince' takes two infinitival
+complements, *di* with the infinitive, as in *Maria ha convinto Paolo di essere in pericolo*
+'Maria convinced Paolo that he was in danger', and *a* with the infinitive, as in *Maria ha
+convinto Paolo a partire* 'Maria convinced Paolo to leave'. The entries record which
+complementizers a verb selects; Fusco and Sgrizzi's analysis of the alternation, on which the
+size of the complement fixes the belief or intention reading, is `Studies/FuscoSgrizzi2026.lean`.
+The verbs with a lexical reciprocal entry beside their transitive use are those of Palmieri's
+appendix; they are ordinary verb entries here, and `Italian.Reciprocals.lexicalReciprocals`
+records which of them are lexical reciprocals.
 
 ## References
 
-* [A. Fusco and T. Sgrizzi, *Belief or Action? Semantic Ambiguity in the Italian Non-finite
-  Domain* (2026)][fusco-sgrizzi-2026]
-* [G. Palmieri, *Lexical and Grammatical Reciprocity: Perspectives from Romance, Bantu and
-  Beyond* (2024)][palmieri-2024]
+* [fusco-sgrizzi-2026]
+* [palmieri-2024]
 -/
 
 namespace Italian.Predicates
 
 open ArgumentStructure
-open Minimalist (ComplementSize)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Italian Infinitival Complementizers
