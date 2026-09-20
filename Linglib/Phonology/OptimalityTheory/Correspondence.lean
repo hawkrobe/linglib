@@ -345,26 +345,53 @@ theorem reduplication_isSymmetric (input base reduplicant : List α) :
 @[simp] theorem reduplication_form_reduplicant (input base reduplicant : List α) :
     (reduplication input base reduplicant).form .reduplicant = reduplicant := rfl
 
+theorem reduplication_edge (input base reduplicant : List α) {r₁ r₂ : ReduplicationRole}
+    (h : r₁ ≠ r₂) :
+    (reduplication input base reduplicant).edge r₁ r₂ =
+      diagonal ((reduplication input base reduplicant).form r₁).length
+        ((reduplication input base reduplicant).form r₂).length :=
+  diagram_edge_pos _ _ h
+
 /-! ### Faithfulness on the diagonal
 
 MAX, DEP and IDENT vanish on a diagonal edge between equal strings — the fully faithful
 candidate, and total reduplication read on its base–reduplicant edge. -/
 
+theorem card_image_fst_diagonal (m n : ℕ) :
+    ((diagonal m n).image Prod.fst).card = min m n := by
+  rw [Finset.card_image_of_injOn, card_diagonal]
+  rintro ⟨a, b⟩ hab ⟨a', b'⟩ hab' (rfl : a = a')
+  exact Prod.ext rfl (Fin.ext (((mem_diagonal _ _).1 hab).symm.trans ((mem_diagonal _ _).1 hab')))
+
+theorem card_image_snd_diagonal (m n : ℕ) :
+    ((diagonal m n).image Prod.snd).card = min m n := by
+  rw [Finset.card_image_of_injOn, card_diagonal]
+  rintro ⟨a, b⟩ hab ⟨a', b'⟩ hab' (rfl : b = b')
+  exact Prod.ext (Fin.ext (((mem_diagonal _ _).1 hab).trans ((mem_diagonal _ _).1 hab').symm)) rfl
+
+/-- On a diagonal edge MAX counts the truncated tail of the first string. -/
+theorem maxViol_of_diagonal
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
+    c.maxViol r₁ r₂ = (c.form r₁).length - (c.form r₂).length := by
+  rw [maxViol, hedge, Finset.card_univ_sdiff, card_image_fst_diagonal, Fintype.card_fin]
+  omega
+
+/-- On a diagonal edge DEP counts the tail of the second string beyond the first. -/
+theorem depViol_of_diagonal
+    (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
+    c.depViol r₁ r₂ = (c.form r₂).length - (c.form r₁).length := by
+  rw [depViol, hedge, Finset.card_univ_sdiff, card_image_snd_diagonal, Fintype.card_fin]
+  omega
+
 theorem maxViol_eq_zero_of_diagonal (hform : c.form r₁ = c.form r₂)
     (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.maxViol r₁ r₂ = 0 := by
-  have hlen : (c.form r₁).length = (c.form r₂).length := congrArg List.length hform
-  rw [maxViol_eq_zero_iff, hedge]
-  intro i _
-  exact Finset.mem_image.2 ⟨(i, ⟨i, hlen ▸ i.2⟩), (mem_diagonal _ _).2 rfl, rfl⟩
+  rw [maxViol_of_diagonal c r₁ r₂ hedge, hform, Nat.sub_self]
 
 theorem depViol_eq_zero_of_diagonal (hform : c.form r₁ = c.form r₂)
     (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.depViol r₁ r₂ = 0 := by
-  have hlen : (c.form r₁).length = (c.form r₂).length := congrArg List.length hform
-  rw [depViol_eq_zero_iff, hedge]
-  intro j _
-  exact Finset.mem_image.2 ⟨(⟨j, hlen.symm ▸ j.2⟩, j), (mem_diagonal _ _).2 rfl, rfl⟩
+  rw [depViol_of_diagonal c r₁ r₂ hedge, hform, Nat.sub_self]
 
 theorem identViolFeature_eq_zero_of_diagonal {F : Type*} [DecidableEq F] (proj : α → F)
     (hform : c.form r₁ = c.form r₂)

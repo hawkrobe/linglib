@@ -213,13 +213,27 @@ theorem ofPerm_profile_lt_iff_exists_dominates {d : C} :
       exact absurd (hj i (hd j hlt)) hi.ne'
     · exact hi.ne (by simpa using congrArg (· (r.symm i)) heq)
 
+/-- A candidate that beats another pointwise on the constraint set beats it under every
+ranking of the set. -/
+theorem ofPerm_profile_lt_of_lt {d : C} (hlt : (con · c) < (con · d)) :
+    (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d :=
+  Pi.toLex_strictMono <| by
+    obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 hlt
+    exact Pi.lt_def.2 ⟨fun p ↦ hle (r p), r.symm i, by simpa using hi⟩
+
 /-- Harmonic bounding: a candidate beaten pointwise on the constraint set by a competitor is
 optimal under no ranking of the set. -/
 theorem ofPerm_notMem_optimal_of_lt {d : C} (hc : c ∈ candidates)
     (hlt : (con · c) < (con · d)) : d ∉ (ofPerm con r candidates h).optimal :=
-  notMem_optimal_of_lt (List.mem_toFinset.2 hc) <| Pi.toLex_strictMono <| by
-    obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 hlt
-    exact Pi.lt_def.2 ⟨λ p => hle (r p), r.symm i, by simpa using hi⟩
+  notMem_optimal_of_lt (List.mem_toFinset.2 hc) (ofPerm_profile_lt_of_lt hlt)
+
+/-- A candidate that harmonically bounds every competitor is the sole winner under every
+ranking of the constraint set. -/
+theorem ofPerm_optimal_eq_singleton_of_forall_lt (hc : c ∈ candidates)
+    (hlt : ∀ d ∈ candidates, d ≠ c → (con · c) < (con · d)) :
+    (ofPerm con r candidates h).optimal = {c} :=
+  (optimal_eq_singleton_iff (List.mem_toFinset.2 hc)).2 fun d hd hne ↦
+    ofPerm_profile_lt_of_lt (hlt d (List.mem_toFinset.1 hd) hne)
 
 /-! ### Top-constraint optimality -/
 

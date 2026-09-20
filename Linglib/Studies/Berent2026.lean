@@ -1,104 +1,92 @@
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.OptimalityTheory.Doubling
-import Linglib.Phonology.OptimalityTheory.TableauSystem
+import Linglib.Studies.BerentEtAl2016
 
 /-!
-# Three arguments for abstraction in phonology
+# Berent (2026): Three arguments for abstraction in phonology
 
-Formalization of [berent-2026] (Glossa 12). Three experimental arguments that phonological
-grammar is substance-free: it is *abstract* — the sonority-cline preference on onsets
-(Figure 1, data from [berent-steriade-lennertz-vaknin-2007]) survives print presentation
-and articulatory suppression, engaging Broca's area rather than motor cortex (§3.1);
-*algebraic* — identity restrictions generalize to feature values unattested in the
-speaker's language, Hebrew /θ/ and novel ASL handshapes (§3.2); and *amodal* — English
-speakers project their spoken-language doubling constraints onto novel ASL signs, banning
-identity in phonological contexts and preferring reduplication in morphological ones
-(§3.3).
+This file formalizes Berent's three experimental arguments that phonological grammar is
+substance-free. Phonology is *abstract* (§3.1): the preference for onsets with large
+sonority rises, in data from Berent, Steriade, Lennertz and Vaknin, survives print
+presentation and articulatory suppression. It is *algebraic* (§3.2): identity restrictions
+generalize to feature values unattested in the speaker's language, Hebrew /θ/ and novel
+ASL handshapes. It is *amodal* (§3.3): English speakers project the doubling restrictions
+of their spoken language onto novel ASL signs, banning identity in phonological contexts
+and preferring reduplication in morphological ones.
 
-The three properties are carried by the substrate's types rather than restated:
-abstractness is rank-invariance of the markedness function over the featureless `Sonority`
-order; algebraicity is the parametric polymorphism of `mkOCP` (the constraint cannot
-inspect what it compares); amodality is the same polymorphic constraint applying to any
-feature type by construction, with the phonology–morphology reversal in
-`OptimalityTheory.Doubling` and its experimental 2×2 in `Studies/BerentEtAl2016.lean`.
+Each property is carried by a type rather than restated. Abstractness is the invariance of
+onset markedness under anything but the `Sonority` order. Algebraicity is the parametric
+polymorphism of `Constraints.mkOCP`, which cannot inspect what it compares. Amodality is
+the statement of the doubling reversal of `Studies/BerentEtAl2016.lean` over an arbitrary
+type of prosodic constituents, spoken or signed.
 
 ## Main definitions
 
-* `onsetProfile`, `onsetMarkedness` — the rise/plateau/fall classification and the
-  sonority-distance markedness of a two-consonant onset, on the abstract `Sonority` type.
+* `onsetProfile`, `onsetMarkedness`: the rise, plateau or fall of a two-consonant onset, and
+  its markedness by sonority distance, on the abstract `Sonority` type.
 
 ## Main results
 
-* `sonority_cline` — blif ≺ bnif ≺ bdif ≺ lbif: the four-point behavioral cline of
-  Figure 1A derived from rank distance; a three-way profile alone cannot separate blif
-  from bnif.
-* `onsetMarkedness_rank_invariant`, `markedness_vs_profile` — markedness sees only the
-  sonority ordering (substance-freeness), and refines the three-way profile.
-* `amodal_doubling_reversal`, `phonSystem_predict_nonidentical`,
-  `morphSystem_predict_reduplication` — Argument 3's reversal, from the substrate, lifted
-  to probability-1 `ConstraintSystem` predictions.
+* `sonority_cline`: the four-point cline blif ≺ bnif ≺ bdif ≺ lbif of Figure 1 follows from
+  rank distance, where the three-way profile cannot separate blif from bnif.
+* `onsetMarkedness_rank_invariant`, `markedness_vs_profile`: markedness sees only the
+  sonority ordering, and refines the three-way profile.
+* `amodal_doubling_reversal`: the doubling reversal holds for any type of constituents and
+  either ranking of the OCP and DEP.
 
 ## References
 
-* [berent-2026] — the paper.
-* [berent-steriade-lennertz-vaknin-2007] — the onset-cline data (Figure 1A).
-* [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016] — the doubling 2×2, formalized in
-  `Studies/BerentEtAl2016.lean`.
-* [mccarthy-1986] — the OCP.
+* [berent-2026]
+* [berent-steriade-lennertz-vaknin-2007]
+* [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
+* [mccarthy-1986]
 -/
 
 open Phonology (Sonority)
-open OptimalityTheory
-open OptimalityTheory.Doubling
 
 namespace Berent2026
 
-open Core.Optimization Constraints OptimalityTheory
+open Constraints OptimalityTheory BerentEtAl2016
 
 /-! ### Onset markedness: the sonority cline -/
 
-/-- Onset sonority profile: the relation between C1 and C2 sonority in a two-consonant
-    onset, on the abstract `Sonority` order. -/
+/-- The sonority profile of a two-consonant onset is the relation between the sonority of
+    its first and second consonant, on the abstract `Sonority` order. -/
 inductive OnsetProfile where
   | rise
   | plateau
   | fall
   deriving DecidableEq, Repr
 
-/-- Classify a two-consonant onset by its sonority profile. -/
+/-- The sonority profile of a two-consonant onset. -/
 def onsetProfile (c1 c2 : Sonority) : OnsetProfile :=
   if c1.rank < c2.rank then .rise
   else if c1.rank == c2.rank then .plateau
   else .fall
 
-/-- Onset markedness from sonority distance: the smaller the rise, the worse (§3.1 —
-    large rises over small rises over plateaus over falls). The pad `5` (the top rank)
-    keeps ℕ-subtraction total; only the ordering of the values matters. -/
+/-- Onset markedness falls with the sonority rise, so large rises beat small rises, which
+    beat plateaus, which beat falls. The pad `5`, the top rank, keeps the subtraction in
+    `ℕ` total, and only the ordering of the values matters. -/
 def onsetMarkedness : Constraint (Sonority × Sonority) :=
-  fun (c1, c2) => 5 + c1.rank - c2.rank
+  fun (c1, c2) ↦ 5 + c1.rank - c2.rank
 
-/-- The four-point behavioral cline ([berent-2026] Figure 1A, data from
-    [berent-steriade-lennertz-vaknin-2007]): blif ≺ bnif ≺ bdif ≺ lbif — stop+liquid ≺
-    stop+nasal ≺ stop+stop ≺ liquid+stop — derived from rank distance on the abstract
-    type. -/
+/-- The four-point behavioral cline blif ≺ bnif ≺ bdif ≺ lbif of Figure 1, that is
+    stop–liquid ≺ stop–nasal ≺ stop–stop ≺ liquid–stop, follows from rank distance on the
+    abstract type. -/
 theorem sonority_cline :
     onsetMarkedness (.stop, .liquid) < onsetMarkedness (.stop, .nasal) ∧
       onsetMarkedness (.stop, .nasal) < onsetMarkedness (.stop, .stop) ∧
         onsetMarkedness (.stop, .stop) < onsetMarkedness (.liquid, .stop) := by
   decide
 
-/-- Substance-freeness as invariance: markedness depends only on the sonority ranks —
-    onsets whose segments match in rank are treated identically, whatever their
-    articulatory realization. -/
+/-- Markedness depends only on the sonority ranks, so onsets whose segments match in rank
+    are treated identically, whatever their articulatory realization. -/
 theorem onsetMarkedness_rank_invariant (c1 c2 d1 d2 : Sonority)
     (h1 : c1.rank = d1.rank) (h2 : c2.rank = d2.rank) :
     onsetMarkedness (c1, c2) = onsetMarkedness (d1, d2) := by
   simp [onsetMarkedness, h1, h2]
 
-/-- The distance markedness refines the three-way profile: below `5` is a rise, `5` a
-    plateau, above `5` a fall. -/
+/-- The distance markedness refines the three-way profile, with values below `5` a rise,
+    `5` a plateau, and values above `5` a fall. -/
 theorem markedness_vs_profile (c1 c2 : Sonority) :
     (onsetMarkedness (c1, c2) < 5 ↔ onsetProfile c1 c2 = .rise) ∧
       (onsetMarkedness (c1, c2) = 5 ↔ onsetProfile c1 c2 = .plateau) ∧
@@ -116,46 +104,15 @@ construction (§3.2). The recursion lemmas `adjacentIdentical_cons_self` and
 
 /-! ### The doubling reversal (Argument 3) -/
 
-/-- The phonology–morphology reversal: the same identity ban yields opposite surface
-    preferences depending on whether the morphological context licenses reduplication —
-    amodal (it transfers from speech to sign) and L1-dependent. The proof is
-    `OptimalityTheory.Doubling.doubling_reversal`; the experimental 2×2 is
-    [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]. -/
-theorem amodal_doubling_reversal :
-    (Tableau.ofRanking phonCandidates phonRanking).optimal
-      = {DoublingParse.nonidentical} ∧
-    (Tableau.ofRanking morphCandidates morphRanking).optimal
-      = {DoublingParse.reduplication} :=
-  doubling_reversal
-
-/-! ### Probability-1 predictions
-
-Both doubling tableaux lift to generic `ConstraintSystem`s via `tableauSystem`: the same
-identity ban assigns probability 1 to `.nonidentical` in phonological contexts and to
-`.reduplication` in morphological ones. -/
-
-section PredictAPI
-open Core.Optimization Constraints
-
-/-- Phonological-context tableau as a generic `ConstraintSystem`. -/
-noncomputable def phonSystem : ConstraintSystem DoublingParse (LexProfile Nat 2) :=
-  tableauSystem (Tableau.ofRanking phonCandidates phonRanking)
-
-/-- In phonological contexts, `.nonidentical` has probability 1. -/
-theorem phonSystem_predict_nonidentical :
-    phonSystem.predict DoublingParse.nonidentical = 1 :=
-  tableauSystem_predict_unique_winner _ _ phon_prefers_XY
-
-/-- Morphological-context tableau as a generic `ConstraintSystem`. -/
-noncomputable def morphSystem : ConstraintSystem DoublingParse (LexProfile Nat 3) :=
-  tableauSystem (Tableau.ofRanking morphCandidates morphRanking)
-
-/-- In morphological contexts where reduplication is available, `.reduplication` has
-    probability 1. -/
-theorem morphSystem_predict_reduplication :
-    morphSystem.predict DoublingParse.reduplication = 1 :=
-  tableauSystem_predict_unique_winner _ _ morph_prefers_reduplication
-
-end PredictAPI
+/-- In the phonology–morphology reversal the same identity ban yields opposite surface
+    preferences depending on whether the morphological context licenses reduplication.
+    It is amodal in that the constituents `x` and `y` range over any type, syllables of
+    speech or of sign alike; the dependence on the spoken language is
+    `BerentEtAl2016.exists_optimal_surface_iff`. -/
+theorem amodal_doubling_reversal {α : Type*} [DecidableEq α] {x y : α} (h : x ≠ y)
+    (r : Ranking 2) :
+    (tableau x y .phonology r).optimal = {.simplex [x, y]} ∧
+      (tableau x y .morphology r).optimal = {.reduplicated [x]} :=
+  ⟨optimal_phonology h r, optimal_morphology h r⟩
 
 end Berent2026
