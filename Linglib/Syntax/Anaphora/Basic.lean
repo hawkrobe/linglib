@@ -17,8 +17,8 @@ models extraction and Landau's EIR test (`Syntax/Anaphora/Diagnostic.lean`).
 `Depth` is the genus, not an ellipsis classification: ellipsis ⊊ surface anaphora
 ⊊ anaphora, and the deep values (*do so*, NCA, *pro*) are precisely the
 *non-ellipsis* anaphors. Ellipsis-specific machinery (deletion domains,
-`[E]`-feature, ellipsis-type taxonomy) lives in `Syntax/Minimalist/Ellipsis/` and
-*consumes* this axis — an `EllipsisType` is a `HasDepth` carrier with depth
+`[E]`-feature, ellipsis-type taxonomy) lives in `Syntax/Minimalist/Ellipsis.lean` and
+*consumes* this axis — a `Minimalist.Ellipsis` is a `HasDepth` carrier with depth
 `.surface`.
 
 This is the **unbounded**-anaphora axis, orthogonal to (and a sibling of) the
