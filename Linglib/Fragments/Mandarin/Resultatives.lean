@@ -1,5 +1,5 @@
 import Linglib.Syntax.ConstructionGrammar.Resultatives
-import Linglib.Semantics.Aspect.ChangeOfState
+import Linglib.Semantics.Aspect.Phasal
 
 /-!
 # Mandarin resultative compounds and phase complements
@@ -24,7 +24,7 @@ it marks. Tay's analysis of the compounds as words built in morphology lives in
 The change-of-state types are a coarse fit. Sybesma distinguishes *-dào* (attainment of a
 goal) from *-hǎo* (attainment of a satisfactory state) and *-diào* (removal of the patient),
 all completions rather than inceptions, and *-wán* marks the cessation of the activity rather
-than a result of the patient; `Aspect.CoSType` has no completion constructor. The toneless form
+than a result of the patient; `Aspect.Phasal` has no completion constructor. The toneless form
 *dao* also covers 倒 'fall' in *tuī-dǎo* 'push over', which is not the phase complement 到.
 
 ## References
@@ -106,34 +106,34 @@ structure PhaseComplement where
   /-- The gloss. -/
   gloss : String
   /-- The change of state the complement marks. -/
-  cosType : Aspect.CoSType
+  phasal : Aspect.Phasal
   /-- A representative verb–complement combination with its translation. -/
   example_ : String
   deriving Repr, DecidableEq
 
 /-- *-dào* 到 'arrive', *mǎi-dào* 'succeed in buying'. -/
 def dao : PhaseComplement :=
-  { pinyin := "dào", hanzi := "到", gloss := "arrive", cosType := .inception,
+  { pinyin := "dào", hanzi := "到", gloss := "arrive", phasal := .inception,
     example_ := "mǎi-dào 'succeed in buying'" }
 
 /-- *-wán* 完 'finish', *chī-wán* 'finish eating'. -/
 def wan : PhaseComplement :=
-  { pinyin := "wán", hanzi := "完", gloss := "finish", cosType := .cessation,
+  { pinyin := "wán", hanzi := "完", gloss := "finish", phasal := .cessation,
     example_ := "chī-wán 'finish eating'" }
 
 /-- *-hǎo* 好 'good', *zuò-hǎo* 'get done'. -/
 def hao : PhaseComplement :=
-  { pinyin := "hǎo", hanzi := "好", gloss := "good", cosType := .inception,
+  { pinyin := "hǎo", hanzi := "好", gloss := "good", phasal := .inception,
     example_ := "zuò-hǎo 'get done'" }
 
 /-- *-diào* 掉 'fall off', *rēng-diào* 'throw away'. -/
 def diao : PhaseComplement :=
-  { pinyin := "diào", hanzi := "掉", gloss := "fall off", cosType := .inception,
+  { pinyin := "diào", hanzi := "掉", gloss := "fall off", phasal := .inception,
     example_ := "rēng-diào 'throw away'" }
 
 /-- *-zhù* 住 'hold', *jì-zhù* 'keep in mind'. -/
 def zhu : PhaseComplement :=
-  { pinyin := "zhù", hanzi := "住", gloss := "hold", cosType := .continuation,
+  { pinyin := "zhù", hanzi := "住", gloss := "hold", phasal := .continuation,
     example_ := "jì-zhù 'keep in mind'" }
 
 end Mandarin.Resultatives

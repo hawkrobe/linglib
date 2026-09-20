@@ -174,7 +174,7 @@ presupposition the factive class, question embedding without an attitude the int
 class, and a doxastic or preferential attitude the propositional or desiderative class; `none`
 where the fields decide nothing, as for *try*. -/
 def derivedLandauClass (v : Verb) : Option PredicateClass :=
-  if v.cosType ≠ none then some .aspectual
+  if v.phasal ≠ none then some .aspectual
   else if v.implicative ≠ none then some .implicative
   else if v.IsCausative then some .implicative
   else if v.IsFactive then some .factive
