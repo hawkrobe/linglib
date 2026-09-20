@@ -215,19 +215,19 @@ instance (s : Stats) : Decidable (IsIsland s) := inferInstanceAs (Decidable (Les
 
 /-! ### The paper's steps on the English fragment -/
 
-def vote : List Segment := ([.v, .o, .t] : List Phoneme)
-def need : List Segment := ([.n, .i, .d] : List Phoneme)
-def rub : List Segment := ([.turnedR, .wedge, .b] : List Phoneme)
-def sag : List Segment := ([.s, .æ, .g] : List Phoneme)
-def plan : List Segment := ([.p, .l, .æ, .n] : List Phoneme)
-def love : List Segment := ([.l, .wedge, .v] : List Phoneme)
-def flow : List Segment := ([.f, .l, .o] : List Phoneme)
-def jump : List Segment := ([.dezh, .wedge, .m, .p] : List Phoneme)
-def miss : List Segment := ([.m, .smallCapitalI, .s] : List Phoneme)
-def wish : List Segment := ([.w, .smallCapitalI, .esh] : List Phoneme)
-def laugh : List Segment := ([.l, .æ, .f] : List Phoneme)
-def fill : List Segment := ([.f, .smallCapitalI, .l] : List Phoneme)
-def pick : List Segment := ([.p, .smallCapitalI, .k] : List Phoneme)
+def vote : List Segment := [v, o, t]
+def need : List Segment := [n, i, d]
+def rub : List Segment := [turnedR, wedge, b]
+def sag : List Segment := [s, æ, g]
+def plan : List Segment := [p, l, æ, n]
+def love : List Segment := [l, wedge, v]
+def flow : List Segment := [f, l, o]
+def jump : List Segment := [dezh, wedge, m, p]
+def miss : List Segment := [m, smallCapitalI, s]
+def wish : List Segment := [w, smallCapitalI, esh]
+def laugh : List Segment := [l, æ, f]
+def fill : List Segment := [f, smallCapitalI, l]
+def pick : List Segment := [p, smallCapitalI, k]
 
 /-- The fragment's consonants. -/
 def consonants : List Phoneme :=
@@ -276,7 +276,7 @@ fricative-final forms widen it to the island. -/
 theorem learned_le_voicelessFricative (x : Segment)
     (h : Matches (learned [miss, wish, laugh]) [x]) : Matches voicelessFricative [x] := by
   have e : learned [miss, wish, laugh] =
-      [.seg ((Phoneme.s : Segment) ⊓ (Phoneme.esh : Segment) ⊓ (Phoneme.f : Segment))] := by decide
+      [.seg (s ⊓ esh ⊓ f)] := by decide
   rw [e, matches_single_iff] at h
   exact (matches_single_iff _ _).2 (le_trans (by decide) h)
 

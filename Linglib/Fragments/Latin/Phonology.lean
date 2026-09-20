@@ -13,6 +13,7 @@ entry, so the values are PHOIBLE's.
 ## Main definitions
 
 * `Latin.Phoneme`: the phonemes.
+* `Latin.a`, `Latin.p` and the like: the segment of each phoneme, under its symbol.
 * `Latin.Phoneme.chart`: the PHOIBLE chart entry of a phoneme. A phoneme is read as the
   segment of its chart entry, distinct phonemes as distinct segments.
 
@@ -70,10 +71,16 @@ def chart : Phoneme → FeatureMatrix
   | l => .«l» | r => .«r»
   | w => .«w»
 
+end Phoneme
+
 /-- A phoneme is read as the segment of its chart entry. -/
 instance : SegmentLike Phoneme where
   coe x := .ofChart x.chart
   coe_injective' := by decide
+
+segment_constants Phoneme
+
+namespace Phoneme
 
 theorem isVowel_iff (x : Phoneme) :
     (x : Segment).IsVowel ↔ x ∈ ({a, e, i, o, u} : Finset Phoneme) := by

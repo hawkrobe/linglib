@@ -8,7 +8,9 @@ language's phonemes form a small type of their own, with a name for each phoneme
 by cases for each claim about all of them, while rules and harmony systems act on `Segment`,
 the type of feature bundles. `SegmentLike P` relates the two. It gives a map from `P` to
 `Segment` that sends distinct terms to distinct segments, and a term of `P` is then used
-wherever a segment is expected, alone or in a list. The design follows mathlib's `SetLike`.
+wherever a segment is expected. The design follows mathlib's `SetLike`. Since a phoneme's
+symbol in the literature stands for its feature bundle, `segment_constants` names the segment
+of each phoneme by its symbol, and forms are written as lists of these.
 
 The file also defines `Segment.ofChart`, the usual way to give a phoneme its segment. It reads
 a PHOIBLE chart entry, merges over it the values on which a grammar departs from the chart,
@@ -70,8 +72,6 @@ namespace SegmentLike
 variable {P : Type*} [SegmentLike P]
 
 instance : CoeOut P Segment := ⟨coe⟩
-
-instance : CoeOut (List P) (List Segment) := ⟨List.map coe⟩
 
 theorem coe_injective : Function.Injective (coe : P → Segment) := coe_injective'
 

@@ -85,19 +85,19 @@ theorem onsetRise_setFeature_right {f : Feature} (hf : f ∉ Sonority.features) 
     onsetRise c₁ (c₂.setFeature f v) = onsetRise c₁ c₂ := by
   rw [onsetRise, Sonority.ofSegment_setFeature hf, onsetRise]
 
-/-- The sonority rise across an onset of two English phonemes. -/
-abbrev onset (c₁ c₂ : English.Phoneme) : ℤ := onsetRise c₁ c₂
+open English
 
 /-- The onset of blif is a larger rise than that of bnif, the onset of bdif is a plateau,
 and the onset of lbif is a fall. -/
 theorem sonority_cline :
-    0 < onset .b .n ∧ onset .b .n < onset .b .l ∧ onset .b .d = 0 ∧ onset .l .b < 0 := by
+    0 < onsetRise b n ∧ onsetRise b n < onsetRise b l ∧ onsetRise b d = 0 ∧ onsetRise l b < 0 := by
   decide
 
 /-- The labial onsets of plik, pnik and ptik, heard under suppression of the lips or the
 tongue, have the rises of the onsets of blif, bnif and bdif. -/
 theorem onsetRise_labial :
-    onset .p .l = onset .b .l ∧ onset .p .n = onset .b .n ∧ onset .p .t = onset .b .d :=
+    onsetRise p l = onsetRise b l ∧ onsetRise p n = onsetRise b n ∧
+      onsetRise p t = onsetRise b d :=
   ⟨onsetRise_congr (by decide) (by decide), onsetRise_congr (by decide) (by decide),
     onsetRise_congr (by decide) (by decide)⟩
 
