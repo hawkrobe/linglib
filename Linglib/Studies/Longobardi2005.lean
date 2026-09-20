@@ -1,225 +1,258 @@
-import Linglib.Semantics.Reference.Character
-import Linglib.Studies.Longobardi2001
+import Mathlib.Data.Nat.Basic
+import Mathlib.Order.Monotone.Defs
 
 /-!
 # Longobardi (2005): Toward a Unified Grammar of Reference
 
-This file formalizes the topological mapping theory of reference of [longobardi-2005]: a
-nominal refers to an individual, an object or a kind, exactly when its D position holds
-referential content. Individuals are denoted in D (52) and arguments denote individuals
-(53), a referential value being a constant when a lexically referential expression occupies
-or chains to D and a variable, ranging over the objects of the kind the noun names, otherwise
-(54). Only a kind-naming noun can supply the restriction of a variable, so the two axioms
-yield the paper's questions (57): an object-naming noun in argument position must fill D, by
-raising or an expletive article, while a kind-naming noun need not (`NominalConfig`,
-`Licensed`, `proper_names_must_raise`, `common_nouns_need_not_raise`). The four classes of
-nominal heads of the properness hierarchy (25) order access to N-to-D raising
-(`NominalHeadClass`, `raising_monotone`), and the definite article of *la Maria* is an
-expletive that fills D without contributing an operator, so it induces no kind reading
-(`ArticleType`, `kindReading_iff_operator`). Proper names in D are the directly referential
-expressions of the semantics substrate (`proper_name_in_d_is_constant`), and the parameters
-of [longobardi-2001] fix where D must be filled overtly (`strong_d_bridge`,
-`greek_confirms`).
+This file formalizes [longobardi-2005], which unifies the syntax of proper names and the
+semantics of bare nouns under one mapping theory. Access to N-to-D raising, the derivational
+route to object reference, is not bipolar but scalar: pronouns are always in D, proper names
+raise whenever D holds no lexical determiner, the names of days and *casa* and the kinship terms
+raise only under deixis or a genitive modifier, and ordinary common nouns never raise (25).
+Three tests rank the four classes of table (28): object reference in D, use as a predicative
+restriction outside D, and kind reference under the definite article, which no proper name has,
+*la Maria* being as rigid as *Maria* while *il cane* names a kind (26). Individuals are denoted
+in D and arguments denote individuals (52), (53), as constants, with one fixed referential value,
+or as variables ranging over a set (54), so an argument is a constant exactly when D holds a
+lexically referential expression, a raised noun, a pronoun, a demonstrative or an expletive
+article chained to the noun, and is otherwise a variable (55), (56), bound by the operator in D
+or unselectively when D is empty (59). A variable must range over a set and objects are not sets,
+so only a kind-naming noun restricts one: common nouns need not raise (57a), and by Last Resort
+(63) may not, while proper names, object-naming, must raise or take an expletive article, which
+answers (57b) and (57c). The article of a name is then obligatorily an expletive, whence the
+absence of a kind reading in (26b).
 
 ## Implementation notes
 
-N-to-D raising is head-to-head movement on the extended projection of the noun. The Italian
-*solo* paradigm, which diagnoses raising by the position of the noun relative to the adverb,
-and the scope and rigidity facts distinguishing *la Maria* from *il tavolo* are described in
-prose.
-
-## TODO
-
-The paper is not on file; the numbered axioms, theorems, and tables are transcribed from an
-earlier version of this file and are UNVERIFIED.
+The scale of properness is the linear order of the four classes of (28), and each test is a
+map into the three-valued scale of access, never, under marked conditions, or always, so that
+the paper's "conditioned" cells are values rather than lost. N-to-D raising is the choice of
+referential content for an empty D, and Last Resort licenses it exactly when the nominal would
+otherwise fail to denote. The *solo* diagnostic of raising, the mass and plural morphology of
+kind naming (62), and the type-shifting of names under restrictive modification are not
+formalized.
 
 ## References
 
 * [longobardi-2005]
-* [longobardi-2001]
 * [longobardi-1994]
+* [longobardi-2001]
 -/
 
 namespace Longobardi2005
 
-open Longobardi2001 (DPParameter ArgumentType
-  romance english greek PnRequiresOvertD BnCanBeReferential)
+/-! ### The properness hierarchy -/
 
-/-! ### The properness hierarchy (25), (28) -/
-
-/-- The four classes of nominal heads, from the most prototypically referential to the
-least: pronouns, proper names, the special common nouns *casa* 'home', *mamma* 'mom', and
-*lunedì* 'Monday', and ordinary common nouns. -/
-inductive NominalHeadClass where
+/-- The four classes of nominal head of table (28), from the most prototypically proper-like:
+pronouns; proper names, the names of persons and places; the special common nouns, the names of
+days and *casa* and the kinship terms, which raise to D only under deixis or a genitive
+modifier; and ordinary common nouns. -/
+inductive HeadClass
   | pronoun
   | properName
   | specialCommon
   | commonNoun
   deriving DecidableEq, Repr
 
-/-- Object-referential: the head can denote an object by occupying D. -/
-def ObjectReferential : NominalHeadClass → Prop
-  | .commonNoun => False
-  | _ => True
+namespace HeadClass
 
-/-- Can function as a predicate, without D. -/
-def CanBePredicate : NominalHeadClass → Prop
-  | .pronoun => False
-  | _ => True
-
-/-- Kind-referential: can denote a kind under the definite article. -/
-def KindReferential : NominalHeadClass → Prop
-  | .pronoun | .properName => False
-  | _ => True
-
-/-- N-to-D raising is obligatory in argument position. -/
-def RaisingObligatory : NominalHeadClass → Prop
-  | .pronoun | .properName => True
-  | _ => False
-
-instance : DecidablePred ObjectReferential := λ c => by
-  cases c <;> unfold ObjectReferential <;> infer_instance
-instance : DecidablePred CanBePredicate := λ c => by
-  cases c <;> unfold CanBePredicate <;> infer_instance
-instance : DecidablePred KindReferential := λ c => by
-  cases c <;> unfold KindReferential <;> infer_instance
-instance : DecidablePred RaisingObligatory := λ c => by
-  cases c <;> unfold RaisingObligatory <;> infer_instance
-
-/-- The scale of properness (25): pronouns, then names, then the special common nouns, then
-common nouns. -/
-def propernessRank : NominalHeadClass → ℕ
+/-- Position on the scale of properness. -/
+def rank : HeadClass → ℕ
   | .pronoun => 0
   | .properName => 1
   | .specialCommon => 2
   | .commonNoun => 3
 
-/-- Access to raising decreases along the scale: a more proper head raises at least as
-obligatorily. -/
-theorem raising_monotone (c₁ c₂ : NominalHeadClass) (h : propernessRank c₁ ≤ propernessRank c₂)
-    (h₂ : RaisingObligatory c₂) : RaisingObligatory c₁ := by
-  cases c₁ <;> cases c₂ <;> simp_all [propernessRank, RaisingObligatory]
+theorem rank_injective : Function.Injective rank := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [rank]
 
-/-- Kind reference and object reference come apart on the scale: the special common nouns
-alone have both. -/
-theorem both_references_iff (c : NominalHeadClass) :
-    ObjectReferential c ∧ KindReferential c ↔ c = .specialCommon := by
-  cases c <;> simp [ObjectReferential, KindReferential]
+/-- The scale of properness, the two prototypes at its ends. -/
+instance : LinearOrder HeadClass := .lift' rank rank_injective
 
-/-! ### The topological mapping (52) to (56) -/
+end HeadClass
 
-/-- The lexical naming type of a noun (§4): object-naming, learned by applying it to an
-object, or kind-naming, learned by recognizing an open set of objects. -/
-inductive LexicalNamingType where
-  | objectNaming
-  | kindNaming
+/-- How a class passes one of the three tests of (28): not at all, only under marked
+conditions, or freely. -/
+inductive Access
+  | never
+  | conditioned
+  | always
   deriving DecidableEq, Repr
 
-/-- Only a kind-naming noun supplies the restriction of a variable ranging over the objects
-of its kind (54b). -/
-def LexicalNamingType.CanRestrictVariable : LexicalNamingType → Prop
-  | .kindNaming => True
-  | .objectNaming => False
+namespace Access
 
-instance : DecidablePred LexicalNamingType.CanRestrictVariable := λ t => by
-  cases t <;> unfold LexicalNamingType.CanRestrictVariable <;> infer_instance
+/-- Position on the scale of access. -/
+def rank : Access → ℕ
+  | .never => 0
+  | .conditioned => 1
+  | .always => 2
 
-/-- A nominal in a syntactic position: the head's naming type, whether D holds lexically
-referential content, a raised noun, a determiner, or a pronoun, and whether the nominal is an
-argument. -/
-structure NominalConfig where
-  namingType : LexicalNamingType
-  dHasReferentialContent : Bool
-  isArgument : Bool
+theorem rank_injective : Function.Injective rank := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [rank]
+
+instance : LinearOrder Access := .lift' rank rank_injective
+
+end Access
+
+/-- Object reference in D, the first column of (28): the special common nouns achieve it only
+with the identifying context of deixis or a genitive restriction, and common nouns never do. -/
+def HeadClass.objectReference : HeadClass → Access
+  | .pronoun | .properName => .always
+  | .specialCommon => .conditioned
+  | .commonNoun => .never
+
+/-- Use as a predicative restriction outside D, the second column of (28): pronouns never
+serve as one, and proper names only under the marked conditions of restrictive modification. -/
+def HeadClass.predicative : HeadClass → Access
+  | .pronoun => .never
+  | .properName => .conditioned
+  | .specialCommon | .commonNoun => .always
+
+/-- Kind reference under the definite article, the third column of (28) and the test of (26)
+and (27): no pronoun or proper name has it. -/
+def HeadClass.kindReference : HeadClass → Access
+  | .pronoun | .properName => .never
+  | .specialCommon | .commonNoun => .always
+
+/-- Access to the raising strategy decreases along the scale of properness. -/
+theorem objectReference_antitone : Antitone HeadClass.objectReference := fun a b h ↦ by
+  cases a <;> cases b <;> first | decide | exact absurd h (by decide)
+
+/-- Predicative use increases along the scale. -/
+theorem predicative_monotone : Monotone HeadClass.predicative := fun a b h ↦ by
+  cases a <;> cases b <;> first | decide | exact absurd h (by decide)
+
+/-- Kind reference increases along the scale. -/
+theorem kindReference_monotone : Monotone HeadClass.kindReference := fun a b h ↦ by
+  cases a <;> cases b <;> first | decide | exact absurd h (by decide)
+
+/-- The major divide runs between the proper names and the special common nouns: kind reference
+is available from the special common nouns down the scale and to nothing above them. -/
+theorem kindReference_ne_never_iff (c : HeadClass) :
+    c.kindReference ≠ .never ↔ .specialCommon ≤ c := by
+  cases c <;> decide
+
+/-- The special common nouns alone have both object and kind reference, the former only under
+marked conditions. -/
+theorem objectReference_and_kindReference_iff (c : HeadClass) :
+    c.objectReference ≠ .never ∧ c.kindReference ≠ .never ↔ c = .specialCommon := by
+  cases c <;> decide
+
+/-! ### The topological mapping theory -/
+
+/-- What a noun names: an object, learned by applying the name to one term of experience, or a
+kind, a potentially open set of objects recognizable as such. Proper names are object-naming,
+common nouns kind-naming. -/
+inductive Naming
+  | object
+  | kind
   deriving DecidableEq, Repr
 
-/-- (54a): the nominal is a constant, denoting one individual through the content of D. -/
-def NominalConfig.IsConstant (nc : NominalConfig) : Prop := nc.dHasReferentialContent = true
-
-/-- (54b): the nominal is a variable, D being empty and the noun restricting it. -/
-def NominalConfig.IsVariable (nc : NominalConfig) : Prop :=
-  nc.dHasReferentialContent = false ∧ nc.namingType.CanRestrictVariable
-
-/-- (52) and (53): an argument denotes an individual, as a constant or as a variable. -/
-def NominalConfig.Licensed (nc : NominalConfig) : Prop :=
-  nc.isArgument = true → nc.IsConstant ∨ nc.IsVariable
-
-instance : DecidablePred NominalConfig.IsConstant := λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred NominalConfig.IsVariable := λ _ => inferInstanceAs (Decidable (_ ∧ _))
-instance : DecidablePred NominalConfig.Licensed := λ _ => inferInstanceAs (Decidable (_ → _))
-
-/-- (55): an argument with an empty D is a variable. -/
-theorem isVariable_of_licensed {nc : NominalConfig} (h : nc.Licensed) (ha : nc.isArgument = true)
-    (hd : nc.dHasReferentialContent = false) : nc.IsVariable :=
-  (h ha).resolve_left λ hc => Bool.noConfusion (hd.symm.trans hc)
-
-/-- Question (57c): an object-naming noun cannot restrict a variable, so as an argument it
-must fill D, by raising or by an expletive article. -/
-theorem proper_names_must_raise {nc : NominalConfig} (hn : nc.namingType = .objectNaming)
-    (ha : nc.isArgument = true) (h : nc.Licensed) : nc.dHasReferentialContent = true :=
-  (h ha).elim id λ hv => by
-    have := hv.2
-    rw [hn] at this
-    exact this.elim
-
-/-- Question (57a): a kind-naming noun is licensed as an argument with an empty D, as a
-variable, so it need not raise. -/
-theorem common_nouns_need_not_raise (isArgument : Bool) :
-    NominalConfig.Licensed ⟨.kindNaming, false, isArgument⟩ := by
-  cases isArgument <;> decide
-
-/-- The two argument types of [longobardi-2001] are the two referential values: a referential
-argument is a constant and a quantificational one a variable. -/
-def argumentTypeToConfig : ArgumentType → NominalConfig
-  | .referential => ⟨.objectNaming, true, true⟩
-  | .quantificational => ⟨.kindNaming, false, true⟩
-
-theorem argumentType_value (t : ArgumentType) :
-    (argumentTypeToConfig t).Licensed ∧
-      ((argumentTypeToConfig t).IsConstant ↔ t = .referential) := by
-  cases t <;> decide
-
-/-! ### Expletive articles (§8) -/
-
-/-- The definite article of *la Maria* is an expletive filling D with no semantic content,
-chained to the name; that of *il tavolo* is an operator. -/
-inductive ArticleType where
-  | expletive
+/-- The content of D: empty; a lexically referential expression, a noun raised to D, a pronoun,
+a demonstrative or an expletive article chained to the noun (56a); or an overt operator, a
+lexical determiner or quantifier (58). -/
+inductive DContent
+  | empty
+  | referential
   | operator
   deriving DecidableEq, Repr
 
-/-- A kind reading needs an operator in D: the expletive article of a name induces none, so
-*la Maria* is as rigid and scopeless as bare *Maria*. -/
-def KindReadingPossible : ArticleType → Prop
-  | .expletive => False
-  | .operator => True
+/-- A nominal, by what its head names and what its D contains. -/
+structure Nominal where
+  head : Naming
+  d : DContent
+  deriving DecidableEq, Repr
 
-instance : DecidablePred KindReadingPossible := λ a => by
-  cases a <;> unfold KindReadingPossible <;> infer_instance
+namespace Nominal
 
-theorem kindReading_iff_operator (a : ArticleType) : KindReadingPossible a ↔ a = .operator := by
-  cases a <;> simp [KindReadingPossible]
+variable (n : Nominal)
 
-/-! ### Bridges -/
+/-- A constant has one fixed referential value (54a), which requires referential content in D,
+by raising or by an expletive article chained to the noun (56a). -/
+def IsConstant : Prop := n.d = .referential
 
-/-- A proper name in D is a constant in the semantic sense too: directly referential, with a
-constant character. -/
-theorem proper_name_in_d_is_constant {C W E : Type*} (e : E) :
-    (Reference.Character.const e : Reference.Character C W E).IsDirectlyReferential ∧
-      Reference.IsRigid (Reference.Character.const e : Reference.Character C W E) :=
-  ⟨Reference.Character.const_isDirectlyReferential e, Reference.isRigid_const _⟩
+/-- A variable is bound by the operator in D or unselectively when D is empty and ranges over a
+set (54b), the objects of the kind the noun names (59); objects are not sets, so only a
+kind-naming noun restricts one. -/
+def IsVariable : Prop := n.d ≠ .referential ∧ n.head = .kind
 
-/-- The strong-D parameter of [longobardi-2001] is the requirement that D be filled overtly
-for a constant: Romance names need D filled and Romance bare nouns cannot be constants,
-while English allows both. -/
-theorem strong_d_bridge :
-    PnRequiresOvertD romance ∧ ¬ PnRequiresOvertD english ∧
-      ¬ BnCanBeReferential romance ∧ BnCanBeReferential english := by
-  decide
+/-- Individuals are denoted in D and arguments denote individuals (52), (53), as constants or as
+variables. -/
+def Denotes : Prop := n.IsConstant ∨ n.IsVariable
 
-/-- Greek, with strong D and adjectives opaque to raising, must fill D with an overt article
-on every name. -/
-theorem greek_confirms : PnRequiresOvertD greek ∧ ¬ BnCanBeReferential greek := by
-  decide
+instance : Decidable n.IsConstant := inferInstanceAs (Decidable (_ = _))
+
+instance : Decidable n.IsVariable := inferInstanceAs (Decidable (_ ∧ _))
+
+instance : Decidable n.Denotes := inferInstanceAs (Decidable (_ ∨ _))
+
+variable {n}
+
+/-- (55): an argument with an empty D is a variable. -/
+theorem isVariable_of_empty (h : n.Denotes) (hd : n.d = .empty) : n.IsVariable :=
+  h.resolve_left fun hc ↦ DContent.noConfusion (hd.symm.trans hc)
+
+/-- (56b): an argument that is not a constant is a variable. -/
+theorem isVariable_of_not_isConstant (h : n.Denotes) (hc : ¬ n.IsConstant) : n.IsVariable :=
+  h.resolve_left hc
+
+/-- A D occupied by a lexical determiner or quantifier is translated into a variable. -/
+theorem isVariable_of_operator (h : n.Denotes) (hd : n.d = .operator) : n.IsVariable :=
+  h.resolve_left fun hc ↦ DContent.noConfusion (hd.symm.trans hc)
+
+/-- (57a): a kind-naming noun denotes with any content of D, so a common noun need not raise. -/
+theorem denotes_of_kind (h : n.head = .kind) : n.Denotes := by
+  by_cases hd : n.d = .referential
+  · exact .inl hd
+  · exact .inr ⟨hd, h⟩
+
+/-- (57c): an object-naming noun denotes only as a constant, so a proper name in argument
+position must fill D, by raising or by an expletive article. -/
+theorem denotes_iff_of_object (h : n.head = .object) : n.Denotes ↔ n.IsConstant :=
+  ⟨fun hn ↦ hn.resolve_right fun hv ↦ Naming.noConfusion (h.symm.trans hv.2), .inl⟩
+
+end Nominal
+
+/-! ### Last Resort -/
+
+/-- N-to-D raising fills an empty D with referential content, and by Last Resort (63) it is
+licensed exactly when the nominal would otherwise fail to denote. -/
+def MayRaise (h : Naming) : Prop := ¬ (⟨h, .empty⟩ : Nominal).Denotes
+
+instance (h : Naming) : Decidable (MayRaise h) := inferInstanceAs (Decidable (¬ _))
+
+/-- The answer to (57b) and (57c): a common noun may not raise, since it denotes without, and a
+proper name may raise, since it must. -/
+theorem mayRaise_iff (h : Naming) : MayRaise h ↔ h = .object := by
+  cases h <;> decide
+
+/-! ### Expletive articles -/
+
+/-- An article in D is an operator, binding a variable over the kind the noun names, or an
+expletive, chained to the noun and contributing no operator. -/
+inductive Article
+  | operator
+  | expletive
+  deriving DecidableEq, Repr
+
+/-- The content an article gives D. -/
+def Article.dContent : Article → DContent
+  | .operator => .operator
+  | .expletive => .referential
+
+/-- The article of *la Maria* is obligatorily an expletive: with an object-naming head the
+nominal denotes only if the article is chained to the name, so it contributes no operator and
+no kind reading arises (26b). -/
+theorem denotes_iff_expletive (a : Article) :
+    (⟨.object, a.dContent⟩ : Nominal).Denotes ↔ a = .expletive := by
+  cases a <;> decide
+
+/-- With a kind-naming head either article yields a denoting argument: the operator binds a
+variable over the kind (59), and the expletive makes the argument a constant naming the kind,
+the singular generic of (26a). -/
+theorem denotes_of_kind_article (a : Article) : (⟨.kind, a.dContent⟩ : Nominal).Denotes :=
+  Nominal.denotes_of_kind rfl
 
 end Longobardi2005
