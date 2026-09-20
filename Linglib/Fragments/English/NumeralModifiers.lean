@@ -50,8 +50,9 @@ takes two numerals and is not in the carrier.
 
 Blok argues that *up to n* asserts only a lower bound and implicates its upper bound, which is
 why it is odd with the lowest number of a scale and does not license negative polarity items.
-The reading recorded here is the upper bound alone, which *up to* shares with *at most*; the
-split between asserted and implicated content is not represented.
+A reading here is truth-conditional content, so the reading recorded for *up to* is the upper
+bound it shares with *at most*, and the split between asserted and implicated content is left
+to the study of that paper.
 
 ## References
 
