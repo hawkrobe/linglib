@@ -24,10 +24,10 @@ them requires. This file gives them one shared signature.
   Divergence is the negation, witnessed by a stimulus — generalizing the
   `agree_on_…`/`diverge_on_…` pattern of `Studies/Baker2015.lean`.
 
-The Chomskyan Case Filter (`Syntax/Minimalist/Case.lean`) is a *checker*, not an
-assigner, and is bridged separately. The paper-anchored dependent-case ⟺
-licensing DOM divergence belongs in the later paper's study file
-(`Studies/Kalin2018.lean`); the `example`s here only validate that the harness
+The Case Filter is a checker rather than an assigner; as the convergence condition of
+licensing it is `LicensingOutcome.IsLicensed` in `Syntax/Case/Licensing.lean`. The
+paper-anchored dependent-case ⟺ licensing DOM divergence belongs in the later paper's study
+file (`Studies/Kalin2018.lean`); the `example`s here only validate that the harness
 is non-vacuous.
 -/
 
@@ -35,7 +35,7 @@ namespace Case
 
 open Licensing
 
-/-- What a case account assigns one nominal: a case together with its neutral
+/-- What a case account assigns one nominal is a case together with its neutral
     provenance, or nothing at all. An account that cannot fail simply never
     produces `unassigned`. -/
 inductive Assignment where
@@ -58,26 +58,23 @@ def Assignment.provenance : Assignment → Option _root_.Case.Source
     that makes rival theories runnable on one input. -/
 abbrev Assigner := List LicensedNP → String → Option Assignment
 
-/-- Marantz dependent case as an `Assigner`: it reads the configural
-    projection (`needsLicensing` ignored) and is total, so it never produces
-    `unassigned`. -/
+/-- Marantz dependent case as an `Assigner` reads the configural projection, ignoring
+    `needsLicensing`, and is total, so it never produces `unassigned`. -/
 def dependentAssigner (a : Alignment.AlignmentType) : Assigner := fun nps label =>
   ((_root_.Case.assignCases a (nps.map (·.toNP))).find? (·.1.label == label)).map fun r =>
     match r.2 with
     | some (c, m) => .assigned c m.toSource
     | none => .unassigned
 
-/-- A licensing outcome as a neutral assignment: primary and secondary
-    licensing are structural, lexical pre-licensing inherent, and the crash
-    assigns nothing. -/
+/-- A licensing outcome as a neutral assignment, where primary and secondary licensing are
+    structural, lexical pre-licensing inherent, and the crash assigns nothing. -/
 def Licensing.LicensingOutcome.toAssignment : LicensingOutcome → Assignment
   | .byPrimary _ c   => .assigned c .structural
   | .bySecondary _ c => .assigned c .structural
   | .byLexical c     => .assigned c .inherent
   | .unlicensed      => .unassigned
 
-/-- Kalin hybrid licensing as an `Assigner`: an unlicensed nominal is
-    `unassigned`. -/
+/-- Kalin hybrid licensing as an `Assigner`, on which an unlicensed nominal is `unassigned`. -/
 def kalinAssigner (cl : ClauseLicensers) : Assigner := fun nps label =>
   ((licenseNPs cl nps).find? (·.label == label)).map (·.outcome.toAssignment)
 
