@@ -85,15 +85,13 @@ def ŋ : Segment := Segment.ofSpecs
 def f : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, true),
-   (Feature.voice, false), (Feature.labial, true), (Feature.labiodental, true),
-   (Feature.strident, true)]
+   (Feature.voice, false), (Feature.labial, true), (Feature.labiodental, true)]
 
 /-- /v/ is the voiced labiodental fricative. -/
 def v : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, true),
-   (Feature.voice, true), (Feature.labial, true), (Feature.labiodental, true),
-   (Feature.strident, true)]
+   (Feature.voice, true), (Feature.labial, true), (Feature.labiodental, true)]
 
 /-- /s/ is the voiceless alveolar fricative. -/
 def s : Segment := Segment.ofSpecs
@@ -129,11 +127,12 @@ def w : Segment := Segment.ofSpecs
    (Feature.voice, true), (Feature.labial, true), (Feature.dorsal, true),
    (Feature.high, true)]
 
-/-- /r/ is the alveolar approximant. -/
+/-- /ɹ/ is the central approximant, which Hayes classes with the palato-alveolars. -/
 def r : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.approximant, true), (Feature.continuant, true),
-   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
+   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, false),
+   (Feature.distributed, true)]
 
 /-- /æ/ is the low front unrounded vowel. -/
 def æ : Segment := Segment.ofSpecs
@@ -182,7 +181,7 @@ def schwa : Segment := Segment.ofSpecs
 
 /-! ### Rules -/
 
-/-- Preglottalization: a voiceless stop is glottalized word-finally,
+/-- Preglottalization glottalizes a voiceless stop word-finally,
 `[−cont, −voice] → [+c.g.] / __ ]word`. -/
 def preglottalization : Rule where
   name := "Preglottalization"
@@ -190,7 +189,7 @@ def preglottalization : Rule where
   effect := .changeFeatures (Segment.ofSpecs [(Feature.constrGlottis, true)])
   rightContext := [.wordBoundary]
 
-/-- Postnasal /t/ deletion: a voiceless coronal stop deletes between a nasal and a vowel,
+/-- Postnasal /t/ deletion removes a voiceless coronal stop between a nasal and a vowel,
 `[−cont, +cor, +ant, −voice] → ∅ / [+nasal] __ [+syll]`. -/
 def postnasalDeletion : Rule where
   name := "Postnasal /t/ Deletion"

@@ -44,49 +44,49 @@ open Phonology.Harmony (System)
 -- § 1: Vowel Segments
 -- ============================================================================
 
-/-- Finnish back vowel /a/: [+syll, +low, +back, +dorsal, −high, −round]. -/
+/-- The Finnish back vowel /a/ is [+syll, +low, +back, +dorsal, −high, −round]. -/
 def a_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.low, true), (Feature.back, true),
    (Feature.high, false), (Feature.round, false)]
 
-/-- Finnish front vowel /ä/: [+syll, +low, −back, +dorsal, −high, −round]. -/
+/-- The Finnish front vowel /ä/ is [+syll, +low, −back, +dorsal, −high, −round]. -/
 def ä_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.low, true), (Feature.back, false),
    (Feature.high, false), (Feature.round, false)]
 
-/-- Finnish back vowel /o/: [+syll, +round, +back, +dorsal, −high, −low]. -/
+/-- The Finnish back vowel /o/ is [+syll, +round, +back, +dorsal, −high, −low]. -/
 def o_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.round, true), (Feature.back, true),
    (Feature.high, false), (Feature.low, false)]
 
-/-- Finnish front vowel /ö/: [+syll, +round, −back, +dorsal, −high, −low]. -/
+/-- The Finnish front vowel /ö/ is [+syll, +round, −back, +dorsal, −high, −low]. -/
 def ö_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.round, true), (Feature.back, false),
    (Feature.high, false), (Feature.low, false)]
 
-/-- Finnish back vowel /u/: [+syll, +high, +back, +round, +dorsal, −low]. -/
+/-- The Finnish back vowel /u/ is [+syll, +high, +back, +round, +dorsal, −low]. -/
 def u_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.high, true), (Feature.back, true),
    (Feature.round, true), (Feature.low, false)]
 
-/-- Finnish front vowel /y/: [+syll, +high, −back, +round, +dorsal, −low]. -/
+/-- The Finnish front vowel /y/ is [+syll, +high, −back, +round, +dorsal, −low]. -/
 def y_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.high, true), (Feature.back, false),
    (Feature.round, true), (Feature.low, false)]
 
-/-- Neutral vowel /e/: [+syll, −back, −round, −high, −low, +dorsal]. -/
+/-- The neutral vowel /e/ is [+syll, −back, −round, −high, −low, +dorsal]. -/
 def e_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.back, false), (Feature.round, false),
    (Feature.high, false), (Feature.low, false)]
 
-/-- Neutral vowel /i/: [+syll, +high, −back, −round, +dorsal, −low]. -/
+/-- The neutral vowel /i/ is [+syll, +high, −back, −round, +dorsal, −low]. -/
 def i_vowel : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.high, true), (Feature.back, false),
@@ -96,8 +96,8 @@ def i_vowel : Segment := Segment.ofSpecs
 -- § 2: Vowel Classification
 -- ============================================================================
 
-/-- The vowel of the alternating suffixes, unspecified for [back]: the A of the essive
--nA and the partitive -A. -/
+/-- The vowel of the alternating suffixes is unspecified for [back], as in the A of the
+essive -nA and the partitive -A. -/
 def A : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.dorsal, true),
    (Feature.low, true), (Feature.high, false), (Feature.round, false)]
@@ -112,8 +112,8 @@ def t : Segment := consonant [(.consonantal, true), (.sonorant, false), (.contin
   (.coronal, true), (.voice, false)]
 def k : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
   (.dorsal, true), (.voice, false)]
-def n : Segment := consonant [(.consonantal, true), (.sonorant, true), (.nasal, true),
-  (.coronal, true), (.voice, true)]
+def n : Segment := consonant [(.consonantal, true), (.sonorant, true), (.approximant, false),
+  (.nasal, true), (.coronal, true), (.voice, true)]
 def v : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
   (.labial, true), (.voice, true)]
 def l : Segment := consonant [(.consonantal, true), (.sonorant, true), (.lateral, true),
@@ -137,7 +137,7 @@ def isNeutral (s : Segment) : Bool :=
   s.HasValue .round false &&
   s.HasValue .low false
 
-/-- The harmony class of a vowel: back, front, or neutral. -/
+/-- The harmony class of a vowel is back, front, or neutral. -/
 inductive HarmonyClass where
   | back | front | neutral
   deriving DecidableEq, Repr
@@ -207,8 +207,8 @@ theorem back_with_neutral :
     finnishHarmony.searchCopy.sourceValue [a_vowel, i_vowel] = some true := by
   decide
 
-/-- The /a/–/ä/ pair differs only in [back]: dorsal agreement fails
-    between them, confirming they belong to different harmony classes. -/
+/-- The vowels /a/ and /ä/ differ in [back], so dorsal agreement fails between them and
+    they belong to different harmony classes. -/
 theorem a_ä_dorsal_disagree : ¬ Set.EqOn a_vowel ä_vowel ↑FeatureClass.dorsal.features := by
   decide
 
