@@ -1,5 +1,4 @@
 import Linglib.Semantics.Reference.Character
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Studies.Longobardi2001
 
 /-!

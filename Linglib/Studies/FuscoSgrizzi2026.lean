@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.Clause.Size
 import Linglib.Fragments.Romance.Italian.Predicates
 import Linglib.Data.Examples.FuscoSgrizzi2026
 
@@ -62,7 +62,7 @@ variable {I V W : Type*}
 
 /-- Existential closure of the eventuality argument of a bare infinitive, the paper's (23b): the
 head a *di*-infinitive contains and an *a*-infinitive lacks. -/
-def closure (P : V → W → Prop) : W → Prop := λ w => ∃ e, P e w
+def closure (P : V → W → Prop) : W → Prop := fun w ↦ ∃ e, P e w
 
 /-- The head *a* (25): anchored to the attitude state, it is necessity over the state's inertia
 worlds, the best worlds of a circumstantial base under an inertial ordering ([dowty-1979],
@@ -70,13 +70,13 @@ worlds, the best worlds of a circumstantial base under an inertial ordering ([do
 relation. -/
 def aP (circumstances : AnchoringFn V W) (inertia : OrderingFn V W)
     (causeStar : V → V → W → Prop) (P : V → W → Prop) (s : V) (w : W) : Prop :=
-  necessity (circumstances s) (inertia s) (λ w' => ∃ e, causeStar s e w' ∧ P e w') w
+  necessity (circumstances s) (inertia s) (fun w' ↦ ∃ e, causeStar s e w' ∧ P e w') w
 
 /-- The head *di* (26): necessity over the state's content worlds of a proposition. -/
 def diP (content : AnchoringFn V W) (Q : W → Prop) (s : V) (w : W) : Prop :=
   simpleNecessity (content s) Q w
 
-/-- The relations the denotation (24) draws on: convincing events, the thematic relations,
+/-- The relations the denotation (24) draws on, convincing events, the thematic relations,
 causation between eventualities, and the class of rational attitudes. -/
 structure Frame (I V W : Type*) where
   convince : V → W → Prop
@@ -95,12 +95,13 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
 variable (F : Frame I V W) (content circumstances : AnchoringFn V W) (inertia : OrderingFn V W)
   (causeStar : V → V → W → Prop) (P : V → W → Prop) (x y : I) (e : V) (w : W)
 
-/-- The belief report: *convincere* with the *di*-complement, the closed proposition held at the
+/-- The belief report is *convincere* with the *di*-complement, the closed proposition held at the
 state's content worlds. -/
-def beliefReport : Prop := F.convincere (λ s => diP content (closure P) s w) x y e w
+def beliefReport : Prop := F.convincere (fun s ↦ diP content (closure P) s w) x y e w
 
-/-- The intention report: *convincere* with the *a*-complement. -/
-def intentionReport : Prop := F.convincere (λ s => aP circumstances inertia causeStar P s w) x y e w
+/-- The intention report is *convincere* with the *a*-complement. -/
+def intentionReport : Prop :=
+  F.convincere (fun s ↦ aP circumstances inertia causeStar P s w) x y e w
 
 /-- Causal self-referentiality: an intention report puts the attitude state in a causal chain to
 the intended event throughout the state's inertia worlds. -/
@@ -119,7 +120,7 @@ theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
     ∃ s, F.cause e s ∧
       ∀ w', kratzerBestR (circumstances s) (inertia s) w w' → ∃ e', τ s < τ e' ∧ P e' w' :=
   let ⟨s, hc, ha⟩ := intention_causal F circumstances inertia causeStar P x y e w h
-  ⟨s, hc, λ w' hw' => let ⟨e', hce, hP⟩ := ha w' hw'; ⟨e', hτ s e' w' hce, hP⟩⟩
+  ⟨s, hc, fun w' hw' ↦ let ⟨e', hce, hP⟩ := ha w' hw'; ⟨e', hτ s e' w' hce, hP⟩⟩
 
 end Semantics
 
@@ -131,12 +132,12 @@ inductive Reading
   | intention
   deriving DecidableEq, Repr
 
-/-- The reading a complement size yields: a phase-sized complement carries the closure head and
-is read as belief, a smaller one as intention. -/
+/-- The reading a complement size yields, belief for a phase-sized complement, which carries the
+closure head, and intention for a smaller one. -/
 def readingFromSize (cs : ComplementSize) : Reading :=
   if ComplementSize.cP ≤ cs then .belief else .intention
 
-/-- The complement each infinitival complementizer selects: *di* a CP (21), *a* a projection
+/-- The complement each infinitival complementizer selects, *di* a CP (21) and *a* a projection
 below tense with negation as its highest head (22). -/
 def InfComplementizer.complementSize : InfComplementizer → ComplementSize
   | .di => .cP
@@ -170,7 +171,7 @@ inductive Diagnostic
   | cliticClimbing
   deriving DecidableEq, Repr
 
-/-- What complement size predicts for a diagnostic: the readings by the phase threshold; truth
+/-- What complement size predicts for a diagnostic, the readings by the phase threshold; truth
 assessment by propositionality; subject control by the finiteness head that hosts the logophoric
 centre ([rizzi-1997]); passive, low aspectual verbs and negation by the Voice, v and negation
 heads; a temporal domain of its own by structure above vP; clitic climbing by a complement no
@@ -189,8 +190,8 @@ def Diagnostic.Predicted : Diagnostic → ComplementSize → Prop
 instance (d : Diagnostic) (cs : ComplementSize) : Decidable (d.Predicted cs) := by
   cases d <;> unfold Diagnostic.Predicted <;> infer_instance
 
-/-- A sentence of the paper: the size of its infinitival complement, the diagnostic it tests, and
-whether it is grammatical. -/
+/-- A sentence of the paper carries the size of its infinitival complement, the diagnostic it
+tests and whether it is grammatical. -/
 structure Row where
   size : ComplementSize
   diagnostic : Diagnostic

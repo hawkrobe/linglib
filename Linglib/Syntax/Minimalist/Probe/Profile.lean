@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
+import Linglib.Syntax.Minimalist.Clause.Spine
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Mathlib.Order.Monotone.Defs
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Mereology
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.FunctionalSequence
 
 /-!
 # Borer 2005: dividing and counting in the nominal spine
@@ -239,6 +239,6 @@ theorem status_truncations :
 
 /-- The extended projection's F-values place the dividing head below the
 quantity head. -/
-theorem fValue_Q_lt_Num : fValue .Q < fValue .Num := by decide
+theorem fValue_Q_lt_Num : Cat.fValue .Q < Cat.fValue .Num := by decide
 
 end Borer2005

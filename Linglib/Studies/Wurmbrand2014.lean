@@ -1,6 +1,6 @@
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Tense.Embedding
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.Clause.Size
 import Linglib.Data.Examples.Wurmbrand2014
 
 /-!
@@ -49,6 +49,25 @@ namespace Wurmbrand2014
 
 open Semantics
 
+/-- The three classes of infinitival complement by tense behaviour. Future irrealis infinitives,
+*decide*, *want* and *plan*, are tenseless with *woll* and future-oriented; propositional
+infinitives, *believe* and *claim*, are anchored to the attitude holder's now; restructuring
+infinitives, *try*, *begin* and *seem*, have no attitude holder and take the matrix reference
+time. -/
+inductive InfinitivalTenseClass
+  | futureIrrealis
+  | propositional
+  | restructuring
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The structural size of each class, the modal layer of *woll* for a future irrealis
+infinitive, a TP for a propositional one and a bare vP for a restructuring one, the modal and
+tense layers sharing a level of the functional sequence. -/
+def InfinitivalTenseClass.complementSize : InfinitivalTenseClass → Minimalist.ComplementSize
+  | .futureIrrealis => .modP
+  | .propositional => .tP
+  | .restructuring => .vP
+
 open Tense Minimalist
 
 /-! ### Viewpoint aspect -/
@@ -57,10 +76,10 @@ section Aspect
 
 variable {T : Type*} [LinearOrder T]
 
-/-- Perfective aspect: the event time is included in the reference time. -/
+/-- Perfective aspect includes the event time in the reference time. -/
 def Perfective (e r : NonemptyInterval T) : Prop := e ≤ r
 
-/-- Imperfective aspect: the reference time is included in the event time. -/
+/-- Imperfective aspect includes the reference time in the event time. -/
 def Imperfective (e r : NonemptyInterval T) : Prop := r ≤ e
 
 /-- An extended event time cannot be included in an instant: perfective aspect fails at a
@@ -117,7 +136,7 @@ theorem episodic_restructuring_iff :
   constructor
   · rintro ⟨r, rfl, e, he, h⟩ hp
     exact not_perfective_of_isPoint he hp h
-  · exact λ h => ⟨matrixR, rfl, matrixR, h, le_rfl⟩
+  · exact fun h ↦ ⟨matrixR, rfl, matrixR, h, le_rfl⟩
 
 /-! ### Verbs -/
 
@@ -135,7 +154,7 @@ inductive Verb where
   | seem
   deriving DecidableEq, Repr
 
-/-- The classes a verb's infinitive may belong to: *expect* is future or, as a belief,
+/-- The classes a verb's infinitive may belong to. *Expect* is future or, as a belief,
 propositional; *seem* is tenseless simultaneous or, with an attitude holder, propositional. -/
 def Verb.classes : Verb → List InfinitivalTenseClass
   | .decide | .want | .promise => [.futureIrrealis]
@@ -163,7 +182,7 @@ theorem seem_episodic_iff : Verb.seem.Episodic matrixR now ↔ ¬ matrixR.IsPoin
     rcases hc with rfl | rfl
     · exact (episodic_restructuring_iff matrixR now).mp h
     · exact absurd h (not_episodic_propositional matrixR now)
-  · exact λ h => ⟨.restructuring, by simp [Verb.classes],
+  · exact fun h ↦ ⟨.restructuring, by simp [Verb.classes],
       (episodic_restructuring_iff matrixR now).mpr h⟩
 
 /-- *decide* always allows one. -/
@@ -174,23 +193,23 @@ end Aspect
 
 /-! ### Temporal composition -/
 
-/-- The temporal composition of a clause: an optional tense feature and whether the future
-modal *woll* is present. -/
+/-- The temporal composition of a clause is an optional tense feature together with whether the
+future modal *woll* is present. -/
 structure Composition where
   tense : Option (Finset Ordering)
   woll : Bool
   deriving DecidableEq
 
-/-- Finite *will*: present tense plus *woll*. -/
+/-- Finite *will* is present tense plus *woll*. -/
 def will : Composition := ⟨some ⟦present⟧, true⟩
 
-/-- Finite *would*: past tense plus *woll*. -/
+/-- Finite *would* is past tense plus *woll*. -/
 def would : Composition := ⟨some ⟦past⟧, true⟩
 
-/-- An infinitive: no tense, with or without *woll*. -/
+/-- An infinitive has no tense, with or without *woll*. -/
 def infinitive (woll : Bool) : Composition := ⟨none, woll⟩
 
-/-- The composition of each class: all tenseless, with *woll* in the future class only. -/
+/-- The composition of each class is tenseless, with *woll* in the future class only. -/
 def composition : InfinitivalTenseClass → Composition
   | .futureIrrealis => infinitive true
   | .propositional | .restructuring => infinitive false
@@ -198,15 +217,15 @@ def composition : InfinitivalTenseClass → Composition
 /-- *woll* projects the modal layer: a class has *woll* exactly when its complement is a
 ModP. -/
 theorem woll_iff_modP (c : InfinitivalTenseClass) :
-    (composition c).woll = true ↔ c.toComplementSize = .modP := by
+    (composition c).woll = true ↔ c.complementSize = .modP := by
   cases c <;> decide
 
 section Future
 
 variable {T : Type*} [LinearOrder T]
 
-/-- Where a composition with *woll* locates its event: after the utterance time when present
-tense is present, after the evaluation time otherwise. -/
+/-- A composition with *woll* locates its event after the utterance time when present tense is
+present and after the evaluation time otherwise. -/
 def Composition.Locates (c : Composition) (utterance eval e : T) : Prop :=
   c.woll = true ∧ if c.tense = some ⟦present⟧ then utterance < e else eval < e
 
@@ -226,14 +245,14 @@ end Future
 
 /-! ### Sequence of tense -/
 
-/-- The local tense feature of an embedded tense: the nearest tense feature above it,
+/-- The local tense feature of an embedded tense is the nearest tense feature above it,
 infinitives contributing none. -/
 def localTense : List (Option (Finset Ordering)) → Option (Finset Ordering)
   | [] => none
   | some f :: _ => some f
   | none :: rest => localTense rest
 
-/-- Ogihara's rule: an embedded tense may delete when its local tense feature is the same
+/-- Ogihara's rule lets an embedded tense delete when its local tense feature is the same
 feature. -/
 def sotApplies (above : List (Option (Finset Ordering))) (embedded : Finset Ordering) : Bool :=
   match localTense above with
@@ -262,7 +281,7 @@ theorem silent_would_wrong : sotApplies [would.tense, will.tense] ⟦past⟧ = t
 /-- *would*'s past must delete: it is licensed only below a past. -/
 def WouldLicensed (above : List (Option (Finset Ordering))) : Prop := sotApplies above ⟦past⟧ = true
 
-instance : DecidablePred WouldLicensed := λ _ => inferInstanceAs (Decidable (_ = true))
+instance : DecidablePred WouldLicensed := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
 /-- Temporal *would* under *will* is out, under a past matrix in. -/
 theorem would_licensing : ¬ WouldLicensed [will.tense] ∧ WouldLicensed [some ⟦past⟧] := by decide

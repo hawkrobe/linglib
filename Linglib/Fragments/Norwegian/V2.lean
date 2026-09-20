@@ -1,24 +1,27 @@
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.VerbSecond
 
 /-!
-# Norwegian V2 Profiles
-[westergaard-2009]
+# Norwegian verb second
 
-V2 micro-parameter profiles for Norwegian varieties (Table 3.1).
+This file records the verb-second grammars of Standard Norwegian and of the Nordmøre dialect,
+the clause-type heads of the split ForceP that the finite verb moves to, as Westergaard's Table
+3.1 gives them. Standard Norwegian moves the verb in declaratives, wh-questions and
+yes/no-questions. Nordmøre Norwegian moves it in declaratives and yes/no-questions but not in
+wh-questions, the mirror image of English on the declarative and wh-question heads.
+
+## References
+
+* [westergaard-2009]
 -/
 
 namespace Norwegian
 
-open Minimalist (ForceHead V2Profile)
+open Minimalist
 
-/-- Standard Norwegian: V-to-C in declaratives, wh-questions, and
-    yes/no-questions. -/
-abbrev stdNorwegian : V2Profile :=
-  {.Decl, .Int, .Pol}
+/-- Standard Norwegian moves the finite verb to Decl⁰, Int⁰ and Pol⁰. -/
+abbrev stdNorwegian : V2Grammar := {.Decl, .Int, .Pol}
 
-/-- Nordmøre Norwegian: V-to-C in declaratives and yes/no-questions but
-    NOT in wh-questions. Mirror image of English on Decl vs. Int. -/
-abbrev nordmoreNorwegian : V2Profile :=
-  {.Decl, .Pol}
+/-- Nordmøre Norwegian moves the finite verb to Decl⁰ and Pol⁰ but not to Int⁰. -/
+abbrev nordmoreNorwegian : V2Grammar := {.Decl, .Pol}
 
 end Norwegian

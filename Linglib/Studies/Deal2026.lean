@@ -8,7 +8,7 @@ import Linglib.Studies.BochnakHanink2021
 import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 import Linglib.Semantics.Presupposition.Environment
 import Linglib.Studies.Karttunen1971b
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
+import Linglib.Syntax.Minimalist.Clause.Spine
 import Linglib.Semantics.Presupposition.Verb
 import Linglib.Semantics.Attitudes.Verb
 

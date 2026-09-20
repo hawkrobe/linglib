@@ -1,4 +1,5 @@
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.FunctionalSequence
+import Mathlib.Data.List.Chain
 
 /-!
 # Syntactic objects of mereological syntax
@@ -120,9 +121,8 @@ def SynObj.isFull : SynObj → Bool
 
 /-! ### Subjoin -/
 
-/-- Subjoin `x` to `y`: make `x` a part of `y` in the next available
-    dimension. Returns `none` if `y` already has two parts
-    (dimensionality violation).
+/-- Subjoining `x` to `y` makes `x` a part of `y` in the next available dimension, and returns
+    `none` if `y` already has two parts, a dimensionality violation.
 
     - First subjunction → 1-part (dimension 1)
     - Second subjunction → 2-part (dimension 2) -/
@@ -163,46 +163,37 @@ def SynObj.containsLabel (l : MLabel) : SynObj → Bool
 /-! ### Extended Projection Bridge -/
 
 open Minimalist in
-/-- The nominal 1-part chain [N, Q, D] (leaf-to-root order), after
-    mapping through `toCat?`, is a valid Extended Projection: all
-    categories share [-V, +N] features (category-consistent) and
-    F-values increase monotonically (N=0 ≤ Q=2 ≤ D=4).
-
-    The classifier label Cl is filtered out (no Cat equivalent). This
-    does not affect EP validity — Cl spells out at Q and is not a
-    separate EP layer in [grimshaw-2005]'s system. -/
+/-- The nominal 1-part chain [N, Q, D], leaf to root and mapped through `toCat?`, is an extended
+projection, its categories of one family with nondecreasing F-values. The classifier label Cl,
+which has no `Cat` counterpart, is filtered out; it spells out at Q and is not a separate layer
+in [grimshaw-2005]'s system. -/
 theorem nominal_ep_valid :
-    let cats := [MLabel.N, .Q, .D].filterMap MLabel.toCat?
-    allCategoryConsistent cats = true ∧
-    allFMonotone cats = true := by decide
+    ([MLabel.N, .Q, .D].filterMap MLabel.toCat?).IsChain Cat.ExtendsTo := by decide
 
 open Minimalist in
-/-- The verbal 1-part chain [V, v, T, C] is a valid Extended Projection:
-    all categories share [+V, -N] features and F-values increase
-    (V=0 ≤ v=1 ≤ T=2 ≤ C=6). -/
+/-- The verbal 1-part chain [V, v, T, C] is an extended projection, its categories of one family
+with nondecreasing F-values. -/
 theorem verbal_ep_valid :
-    let cats := [MLabel.V, .v, .T, .C].filterMap MLabel.toCat?
-    allCategoryConsistent cats = true ∧
-    allFMonotone cats = true := by decide
+    ([MLabel.V, .v, .T, .C].filterMap MLabel.toCat?).IsChain Cat.ExtendsTo := by decide
 
 open Minimalist in
 /-- All MLabel-to-Cat mappings preserve EP family: nominal labels map to
     the nominal family, verbal labels to the verbal family. -/
 theorem toCat_preserves_family :
-    (MLabel.N.toCat?.map catFamily = some .nominal) ∧
-    (MLabel.Q.toCat?.map catFamily = some .nominal) ∧
-    (MLabel.Num.toCat?.map catFamily = some .nominal) ∧
-    (MLabel.D.toCat?.map catFamily = some .nominal) ∧
-    (MLabel.V.toCat?.map catFamily = some .verbal) ∧
-    (MLabel.v.toCat?.map catFamily = some .verbal) ∧
-    (MLabel.T.toCat?.map catFamily = some .verbal) ∧
-    (MLabel.C.toCat?.map catFamily = some .verbal) := by decide
+    (MLabel.N.toCat?.map Cat.family = some .nominal) ∧
+    (MLabel.Q.toCat?.map Cat.family = some .nominal) ∧
+    (MLabel.Num.toCat?.map Cat.family = some .nominal) ∧
+    (MLabel.D.toCat?.map Cat.family = some .nominal) ∧
+    (MLabel.V.toCat?.map Cat.family = some .verbal) ∧
+    (MLabel.v.toCat?.map Cat.family = some .verbal) ∧
+    (MLabel.T.toCat?.map Cat.family = some .verbal) ∧
+    (MLabel.C.toCat?.map Cat.family = some .verbal) := by decide
 
 open Minimalist in
 /-- Nominal and verbal labels map to different EP families — confirming
     that cross-EP 1-part chains would fail category consistency. -/
 theorem nominal_verbal_disjoint :
-    (MLabel.N.toCat?.map catFamily ≠ MLabel.V.toCat?.map catFamily) ∧
-    (MLabel.D.toCat?.map catFamily ≠ MLabel.C.toCat?.map catFamily) := by decide
+    (MLabel.N.toCat?.map Cat.family ≠ MLabel.V.toCat?.map Cat.family) ∧
+    (MLabel.D.toCat?.map Cat.family ≠ MLabel.C.toCat?.map Cat.family) := by decide
 
 end MereologicalSyntax

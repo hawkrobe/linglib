@@ -1,6 +1,5 @@
 import Linglib.Data.UD.UPOS
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
+import Linglib.Syntax.Minimalist.FunctionalSequence
 
 /-!
 # Panagiotidis (2015): Categorial Features
@@ -14,17 +13,19 @@ only, adjectives both, and adpositions neither, the adposition being the default
 (`categorizer_features`, `isCategorizer_iff`). The functional heads of an extended projection
 carry uninterpretable copies of their categorizer's features, so a category's features are
 fixed by its family (`categorialFeatures_eq_iff`), and the diacritic features of
-[chomsky-1970] cut the categories into the same four classes, the substrate's
-`Minimalist.chomsky_panagiotidis_agree`. Category change is change of categorizer: an English
-root surfaces in all three categorized classes (`RootFamily`, `all_families_tricategorial`).
+[chomsky-1970] cut the categories into the same four classes (`chomsky_panagiotidis_agree`).
+Category change is change of categorizer: an English root surfaces in all three categorized
+classes (`RootFamily`, `all_families_tricategorial`).
 
 ## Implementation notes
 
-`categorialFeatures` and `catFeatures` live in the extended-projection substrate, which does
-not represent the difference between a categorizer's interpretable features and the copies on
-its functional heads, so the two feature systems are compared on the partitions they induce.
-The root families are the standard English illustrations of category-neutral roots from the
-Distributed Morphology literature rather than data from the book.
+The features of a category are read off its extended-projection family, since the book has
+every functional head carry a copy of its categorizer's features; the substrate's `Cat.features`
+reads Chomsky's features off the family the same way, so the two systems are compared as
+images of the family. The book's distinction between a categorizer's interpretable features and
+the copies on functional heads is not represented. The root families are the standard English
+illustrations of category-neutral roots from the Distributed Morphology literature rather than
+data from the book.
 
 ## References
 
@@ -37,23 +38,67 @@ namespace Panagiotidis2015
 
 open Minimalist
 
-/-- The features of the lexical categorizers: *n* bears [N], *v* bears [V], *a* both, and the
+/-- Panagiotidis's categorial features, [N] a sortal perspective and [V] a perspective extending
+into time, substantive and interpretable on a categorizer. -/
+structure CategorialFeatures where
+  hasN : Bool
+  hasV : Bool
+  deriving DecidableEq, Repr
+
+/-- The features of a family's categorizer, where *n* bears [N], *v* bears [V], *a* both, and the
+adposition, the default categorizer, neither. -/
+def CategorialFeatures.ofFamily : CatFamily → CategorialFeatures
+  | .nominal => ⟨true, false⟩
+  | .verbal => ⟨false, true⟩
+  | .adjectival => ⟨true, true⟩
+  | .adpositional => ⟨false, false⟩
+
+theorem CategorialFeatures.ofFamily_injective :
+    Function.Injective CategorialFeatures.ofFamily := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [CategorialFeatures.ofFamily]
+
+/-- The features of a category are those of its family's categorizer, which every functional
+head of the extended projection carries as an uninterpretable copy. -/
+def categorialFeatures (c : Cat) : CategorialFeatures := .ofFamily c.family
+
+/-- The categorizers are *v*, *n* and *a*; the categorized lexical heads are root-plus-categorizer
+complexes. -/
+def IsCategorizer : Cat → Prop
+  | .v | .n | .a => True
+  | _ => False
+
+instance : DecidablePred IsCategorizer := fun c ↦ by
+  cases c <;> unfold IsCategorizer <;> infer_instance
+
+theorem isCategorizer_iff (c : Cat) : IsCategorizer c ↔ c = .v ∨ c = .n ∨ c = .a := by
+  cases c <;> simp [IsCategorizer]
+
+/-- The lexical categorizers bear the substantive features, *n* [N], *v* [V], *a* both, and the
 adposition, the default categorizer, neither. -/
 theorem categorizer_features :
     categorialFeatures .n = ⟨true, false⟩ ∧ categorialFeatures .v = ⟨false, true⟩ ∧
       categorialFeatures .a = ⟨true, true⟩ ∧ categorialFeatures .P = ⟨false, false⟩ := by
   decide
 
-/-- The categorizers are exactly *v*, *n*, and *a*; the categorized lexical heads are not
-categorizers but root-plus-categorizer complexes. -/
-theorem isCategorizer_iff (c : Cat) : isCategorizer c = true ↔ c = .v ∨ c = .n ∨ c = .a := by
-  cases c <;> decide
-
 /-- Features are fixed by the extended-projection family: every head of a projection carries
 its categorizer's [N] and [V] specification. -/
 theorem categorialFeatures_eq_iff (c₁ c₂ : Cat) :
-    categorialFeatures c₁ = categorialFeatures c₂ ↔ catFamily c₁ = catFamily c₂ := by
-  cases c₁ <;> cases c₂ <;> decide
+    categorialFeatures c₁ = categorialFeatures c₂ ↔ c₁.family = c₂.family :=
+  CategorialFeatures.ofFamily_injective.eq_iff
+
+/-- Chomsky's diacritic features and Panagiotidis's substantive ones cut the categories into the
+same four classes, both being injective images of the family; the conceptual difference, P as
+`[−V, −N]` against P as the default categorizer, is invisible to the partition. -/
+theorem chomsky_panagiotidis_agree (c₁ c₂ : Cat) :
+    categorialFeatures c₁ = categorialFeatures c₂ ↔ c₁.features = c₂.features := by
+  rw [categorialFeatures_eq_iff, Cat.features_eq_iff]
+
+/-- The categorizers sit at the first functional level of Grimshaw's sequence, above the lexical
+heads, which records Grimshaw's architecture rather than the book's claim that categorizers are
+the only lexical heads. -/
+theorem fValue_of_isCategorizer {c : Cat} (h : IsCategorizer c) : c.fValue = 1 := by
+  cases c <;> first | rfl | exact h.elim
 
 /-- A category-neutral root with the surface words it projects across the lexical categories,
 each stamped with its Universal Dependencies category ([marantz-1997]). -/
@@ -70,26 +115,26 @@ def RootFamily.HasCategory (rf : RootFamily) (c : UD.UPOS) : Prop :=
 instance (rf : RootFamily) (c : UD.UPOS) : Decidable (rf.HasCategory c) :=
   List.decidableBEx _ rf.forms
 
-/-- √DESTROY: destroy, destruction, destructive. -/
+/-- The root √DESTROY surfaces as destroy, destruction and destructive. -/
 def destroy : RootFamily :=
   ⟨"DESTROY", [("destroy", .VERB), ("destruction", .NOUN), ("destructive", .ADJ)]⟩
 
-/-- √BEAUTY: beautify, beauty, beautiful. -/
+/-- The root √BEAUTY surfaces as beautify, beauty and beautiful. -/
 def beauty : RootFamily :=
   ⟨"BEAUTY", [("beautify", .VERB), ("beauty", .NOUN), ("beautiful", .ADJ)]⟩
 
-/-- √CLEAR: clear, clarity, clear. -/
+/-- The root √CLEAR surfaces as clear, clarity and clear. -/
 def clear : RootFamily := ⟨"CLEAR", [("clear", .VERB), ("clarity", .NOUN), ("clear", .ADJ)]⟩
 
-/-- √PRODUCE: produce, production, productive. -/
+/-- The root √PRODUCE surfaces as produce, production and productive. -/
 def produce : RootFamily :=
   ⟨"PRODUCE", [("produce", .VERB), ("production", .NOUN), ("productive", .ADJ)]⟩
 
-/-- √CREATE: create, creation, creative. -/
+/-- The root √CREATE surfaces as create, creation and creative. -/
 def create : RootFamily :=
   ⟨"CREATE", [("create", .VERB), ("creation", .NOUN), ("creative", .ADJ)]⟩
 
-/-- √ACT: act, action, active. -/
+/-- The root √ACT surfaces as act, action and active. -/
 def act : RootFamily := ⟨"ACT", [("act", .VERB), ("action", .NOUN), ("active", .ADJ)]⟩
 
 /-- The sample root families. -/
