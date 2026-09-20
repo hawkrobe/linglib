@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Piecewise
 import Linglib.Core.Order.Flat
 
 /-!
@@ -52,6 +53,9 @@ theory is proved once at the Pi level and inherited by every choice of
   and the bundle read off an association list; `single_le_iff` and
   `ofList_le_iff` characterize lying below a bundle by the values it
   carries
+* `Bundle.comap`, `Bundle.restrict` — the bundle read along a map of features, and the
+  bundle kept on a finite set of features and unspecified elsewhere; two bundles have the
+  same restriction iff they agree on the set (`Bundle.restrict_eq_restrict_iff`)
 
 ## Implementation notes
 
@@ -259,6 +263,22 @@ def merge (b₁ b₂ : Bundle F V) : Bundle F V :=
 @[simp] theorem merge_self (b : Bundle F V) : merge b b = b := by
   funext t; simp only [merge]; cases b t <;> rfl
 
+@[simp] theorem bot_merge (b : Bundle F V) : merge ⊥ b = b := rfl
+
+theorem merge_apply_of_eq_none {b₁ : Bundle F V} {t : F} (h : b₁ t = none) (b₂ : Bundle F V) :
+    merge b₁ b₂ t = b₂ t := by
+  simp only [merge, h]
+
+theorem merge_apply_of_eq_some {b₁ : Bundle F V} {t : F} {v : V t} (h : b₁ t = some v)
+    (b₂ : Bundle F V) : merge b₁ b₂ t = some v := by
+  simp only [merge, h]
+
+/-- An override merge extends its first argument. -/
+theorem le_merge_left (b₁ b₂ : Bundle F V) : b₁ ≤ merge b₁ b₂ := fun t ↦ by
+  cases h : b₁ t with
+  | bot => exact bot_le
+  | coe v => rw [merge_apply_of_eq_some h]; exact le_rfl
+
 /-- Override sets the feature `t` to `some v`, whatever its current value. -/
 def set [DecidableEq F] (t : F) (v : V t) (b : Bundle F V) : Bundle F V :=
   Function.update b t (some v)
@@ -271,6 +291,72 @@ def delete [DecidableEq F] (t : F) (b : Bundle F V) : Bundle F V :=
 is left untouched. -/
 def assimilate [DecidableEq F] (t : F) (src tgt : Bundle F V) : Bundle F V :=
   Function.update tgt t (src t)
+
+/-! ### Pullback and restriction -/
+
+section Comap
+
+variable {F' : Type*} (e : F' → F)
+
+/-- `comap e b` reads the bundle `b` along a map `e` of features. -/
+def comap (b : Bundle F V) : Bundle F' fun t ↦ V (e t) := fun t ↦ b (e t)
+
+@[simp] theorem comap_apply (b : Bundle F V) (t : F') : comap e b t = b (e t) := rfl
+
+@[simp] theorem comap_bot : comap e (⊥ : Bundle F V) = ⊥ := rfl
+
+theorem comap_merge (b₁ b₂ : Bundle F V) :
+    comap e (merge b₁ b₂) = merge (comap e b₁) (comap e b₂) := by
+  funext t; simp only [comap, merge]; cases b₁ (e t) <;> rfl
+
+theorem comap_mono : Monotone (comap e : Bundle F V → _) := fun _ _ h t ↦ h (e t)
+
+end Comap
+
+section Restrict
+
+variable [DecidableEq F] (C D : Finset F) (b : Bundle F V)
+
+/-- `restrict C b` keeps the values of `b` on the features in `C` and is unspecified on the
+rest. -/
+def restrict : Bundle F V := C.piecewise b ⊥
+
+variable {C} in
+@[simp] theorem restrict_apply_of_mem {t : F} (h : t ∈ C) : restrict C b t = b t :=
+  Finset.piecewise_eq_of_mem _ _ _ h
+
+variable {C} in
+@[simp] theorem restrict_apply_of_notMem {t : F} (h : t ∉ C) : restrict C b t = none :=
+  Finset.piecewise_eq_of_notMem _ _ _ h
+
+theorem restrict_le : restrict C b ≤ b := fun t ↦ by
+  by_cases h : t ∈ C
+  · rw [restrict_apply_of_mem b h]
+  · rw [restrict_apply_of_notMem b h]; exact bot_le
+
+theorem restrict_mono : Monotone (restrict C : Bundle F V → _) := fun b₁ b₂ h t ↦ by
+  by_cases ht : t ∈ C
+  · rw [restrict_apply_of_mem b₁ ht, restrict_apply_of_mem b₂ ht]; exact h t
+  · rw [restrict_apply_of_notMem b₁ ht]; exact bot_le
+
+theorem restrict_restrict : restrict D (restrict C b) = restrict (C ∩ D) b := by
+  funext t
+  by_cases hD : t ∈ D <;> by_cases hC : t ∈ C <;>
+    simp [restrict, Finset.piecewise, hC, hD]
+
+@[simp] theorem restrict_idem : restrict C (restrict C b) = restrict C b := by
+  rw [restrict_restrict, Finset.inter_self]
+
+/-- Two bundles have the same restriction to `C` iff they agree on every feature in `C`. -/
+theorem restrict_eq_restrict_iff {b₁ b₂ : Bundle F V} :
+    restrict C b₁ = restrict C b₂ ↔ ∀ t ∈ C, b₁ t = b₂ t := by
+  refine ⟨fun h t ht ↦ ?_, fun h ↦ funext fun t ↦ ?_⟩
+  · simpa [restrict_apply_of_mem _ ht] using congrFun h t
+  · by_cases ht : t ∈ C
+    · rw [restrict_apply_of_mem b₁ ht, restrict_apply_of_mem b₂ ht, h t ht]
+    · rw [restrict_apply_of_notMem b₁ ht, restrict_apply_of_notMem b₂ ht]
+
+end Restrict
 
 /-! ### Association lists and the single-feature bundles -/
 
