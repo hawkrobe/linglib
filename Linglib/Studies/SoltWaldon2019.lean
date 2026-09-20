@@ -1,5 +1,6 @@
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Degree.Comparison
+import Mathlib.Order.Interval.Set.LinearOrder
 import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
@@ -24,11 +25,13 @@ acceptable where *not 95% certain* is not.
 `Felicitous f φ` states the constraint for a question that sorts the worlds by an ordered
 value `f`, the how-many question by the count and the polar question by the indicator; a
 felicitous assertion is one the question decides (`Felicitous.decides`), and for a polar
-question the converse holds (`felicitous_of_polar`). `not_felicitous_compl` is the general
-form of the infelicity: negating a bounded range leaves a disjoint region whenever the
-count reaches below, into, and above it. The lower-bounded reading of the numeral would
-negate to a convex region (`felicitous_not_atLeast`), but the paper argues it is unavailable
-in comment position, where a numeral answers the exact value the question asks for.
+question the converse holds (`felicitous_of_polar`). Every numeral form is felicitous
+(`felicitous_over`), and so is the negation of every form but the two-sided one
+(`felicitous_compl_over`). `not_felicitous_compl` is the general form of the infelicity:
+negating a bounded range leaves a disjoint region whenever the count reaches below, into, and
+above it. The lower-bounded reading of the numeral would negate to a convex region, but the
+paper argues it is unavailable in comment position, where a numeral answers the exact value
+the question asks for.
 
 ## Implementation notes
 
@@ -56,7 +59,7 @@ for reasons beyond convexity, which the paper leaves open.
 
 namespace SoltWaldon2019
 
-open Set Numerals
+open Set Degree
 
 variable {W ι : Type*} [Preorder ι]
 
@@ -91,89 +94,82 @@ theorem felicitous_of_polar {p φ : Set W} (h : (Setoid.polar p).Decides φ) :
   · rintro ⟨v, hv, hvw⟩
     exact (Setoid.decides_iff.1 h v w (Setoid.polar_iff.2 (eq_iff_iff.1 hvw))).1 hv
 
-/-! ### The how-many question -/
+/-! ### The how-many question
+
+The assertion that the value satisfies a numerical meaning `I` is `f ⁻¹' I`, the union of the
+question's cells over the values in `I`, and a numeral form with comparison `c` and number `m`
+asserts `c.over f m`. -/
+
+/-- A numerical meaning that is a convex set of values makes a felicitous assertion. -/
+theorem felicitous_preimage (f : W → ι) (I : Set ι) [hI : I.OrdConnected] :
+    Felicitous f (f ⁻¹' I) :=
+  ⟨I, hI, rfl⟩
+
+/-- Every numeral form is felicitous. *She has 40 sheep* on the two-sided reading is a single
+cell, and *she has more than 40 sheep* a final segment of the cells. -/
+theorem felicitous_over {ι : Type*} [PartialOrder ι] (f : W → ι) (c : Comparison) (m : ι) :
+    Felicitous f (c.over f m) :=
+  felicitous_preimage f (c.interval m)
 
 variable (count : W → ℕ)
 
-/-- The assertion that the count satisfies a numerical meaning: the union of the how-many
-question's cells over the values satisfying it. -/
-def assert (r : ℕ → Prop) : Set W := count ⁻¹' {n | r n}
-
-theorem compl_assert (r : ℕ → Prop) : (assert count r)ᶜ = assert count (λ n => ¬ r n) := rfl
-
-/-- A numerical meaning that is a convex set of values makes a felicitous assertion. -/
-theorem felicitous_of_ordConnected {r : ℕ → Prop} (h : OrdConnected {n | r n}) :
-    Felicitous count (assert count r) :=
-  ⟨_, h, rfl⟩
-
-/-- *She has 40 sheep* on the exact reading: a single cell. -/
-theorem felicitous_bare (m : ℕ) : Felicitous count (assert count (bareMeaning m)) :=
-  felicitous_of_ordConnected count
-    (by simp only [bareMeaning_def, ofPred_eq_eq_singleton]; exact ordConnected_singleton)
-
 /-- *She has between 40 and 50 sheep*. -/
-theorem felicitous_between (m k : ℕ) : Felicitous count (assert count (· ∈ Icc m k)) :=
-  felicitous_of_ordConnected count (by show OrdConnected (Icc m k); exact inferInstance)
+theorem felicitous_between (m k : ℕ) : Felicitous count (count ⁻¹' Icc m k) :=
+  felicitous_preimage count _
 
-/-- *She has more than 40 sheep*. -/
-theorem felicitous_moreThan (m : ℕ) : Felicitous count (assert count (moreThanMeaning m)) :=
-  felicitous_of_ordConnected count
-    (by simp only [moreThanMeaning_def]; exact (inferInstance : OrdConnected (Ioi m)))
-
-/-- *She doesn't have more than 40 sheep*: the negation of a lower-bounded meaning is
-convex, so it answers the how-many question. -/
-theorem felicitous_not_moreThan (m : ℕ) :
-    Felicitous count (assert count (λ n => ¬ moreThanMeaning m n)) :=
-  felicitous_of_ordConnected count
-    (by simp only [moreThanMeaning_def, not_lt]; exact (inferInstance : OrdConnected (Iic m)))
-
-/-- The negation of the lower-bounded reading is convex too; the paper takes that reading
-to be unavailable where the numeral answers a how-many question. -/
-theorem felicitous_not_atLeast (m : ℕ) :
-    Felicitous count (assert count (λ n => ¬ atLeastMeaning m n)) :=
-  felicitous_of_ordConnected count
-    (by simp only [atLeastMeaning_def, not_le]; exact (inferInstance : OrdConnected (Iio m)))
+/-- The negation of every form but the two-sided one is convex. *She doesn't have more than 40
+sheep* answers the how-many question, and the negation of the lower-bounded reading would too;
+the paper takes that reading to be unavailable where the numeral answers a how-many
+question. -/
+theorem felicitous_compl_over {ι : Type*} [LinearOrder ι] (f : W → ι) {c : Comparison}
+    (hc : c ≠ .eq) (m : ι) : Felicitous f (c.over f m)ᶜ := by
+  have h : ((c.interval m)ᶜ).OrdConnected := by
+    cases c
+    · exact absurd rfl hc
+    all_goals
+      simp only [Comparison.interval_ge, Comparison.interval_gt, Comparison.interval_le,
+        Comparison.interval_lt, compl_Ici, compl_Ioi, compl_Iic, compl_Iio]
+      infer_instance
+  exact ⟨_, h, rfl⟩
 
 /-- Negating a bounded range leaves a disjoint region: with worlds whose counts lie below,
 inside, and above the range, the negated assertion is not the union of a convex set of
 cells. -/
-theorem not_felicitous_compl {r : ℕ → Prop} {a b c : W} (ha : ¬ r (count a)) (hb : r (count b))
-    (hc : ¬ r (count c)) (hab : count a ≤ count b) (hbc : count b ≤ count c) :
-    ¬ Felicitous count (assert count (λ n => ¬ r n)) := by
-  rintro ⟨I, hI, hφ⟩
-  have mem : ∀ w, w ∈ assert count (λ n => ¬ r n) ↔ count w ∈ I := λ w => by rw [hφ]; rfl
-  exact (mem b).2 (hI.out ((mem a).1 ha) ((mem c).1 hc) ⟨hab, hbc⟩) hb
+theorem not_felicitous_compl {I : Set ℕ} {a b c : W} (ha : count a ∉ I) (hb : count b ∈ I)
+    (hc : count c ∉ I) (hab : count a ≤ count b) (hbc : count b ≤ count c) :
+    ¬ Felicitous count (count ⁻¹' I)ᶜ := by
+  rintro ⟨J, hJ, hφ⟩
+  have mem : ∀ w, count w ∉ I ↔ count w ∈ J := fun w ↦ by
+    rw [← mem_preimage (s := J), ← hφ]; rfl
+  exact (mem b).2 (hJ.out ((mem a).1 ha) ((mem c).1 hc) ⟨hab, hbc⟩) hb
 
-/-- *She doesn't have 40 sheep* on the exact reading, as an answer to the how-many
+/-- *She doesn't have 40 sheep* on the two-sided reading, as an answer to the how-many
 question: infelicitous whenever the count can fall below, at, and above 40. -/
 theorem not_felicitous_not_bare {m : ℕ} {a b c : W} (ha : count a < m) (hb : count b = m)
-    (hc : m < count c) :
-    ¬ Felicitous count (assert count (λ n => ¬ bareMeaning m n)) :=
-  not_felicitous_compl count (r := bareMeaning m) (a := a) (b := b) (c := c) (by simp; omega)
-    (by simp [hb]) (by simp; omega) (by omega) (by omega)
+    (hc : m < count c) : ¬ Felicitous count (Comparison.eq.over count m)ᶜ :=
+  not_felicitous_compl count (I := Comparison.eq.interval m) (a := a) (b := b) (c := c)
+    (by simp; omega) (by simp [hb]) (by simp; omega) (by omega) (by omega)
 
 /-- *She doesn't have between 40 and 50 sheep*: infelicitous for the same reason. -/
 theorem not_felicitous_not_between {m k : ℕ} {a b c : W} (ha : count a < m)
-    (hb : count b ∈ Icc m k) (hc : k < count c) :
-    ¬ Felicitous count (assert count (λ n => n ∉ Icc m k)) :=
-  not_felicitous_compl count (r := (· ∈ Icc m k)) (a := a) (b := b) (c := c) (by simp; omega)
-    (by simpa using hb) (by simp; omega) (by rw [mem_Icc] at hb; omega)
-    (by rw [mem_Icc] at hb; omega)
+    (hb : count b ∈ Icc m k) (hc : k < count c) : ¬ Felicitous count (count ⁻¹' Icc m k)ᶜ :=
+  not_felicitous_compl count (a := a) (b := b) (c := c) (by simp; omega) hb (by simp; omega)
+    (by rw [mem_Icc] at hb; omega) (by rw [mem_Icc] at hb; omega)
 
 /-- At the top of a bounded scale the negated endpoint is convex, the region below it:
 *it's not 100% certain* answers *how likely is it?* where *it's not 95% certain* does not. -/
 theorem felicitous_not_bare_of_max {m : ℕ} (hmax : ∀ w, count w ≤ m) :
-    Felicitous count (assert count (λ n => ¬ bareMeaning m n)) := by
+    Felicitous count (Comparison.eq.over count m)ᶜ := by
   refine ⟨Iio m, inferInstance, ?_⟩
   ext w
   have := hmax w
-  simp only [assert, mem_preimage, mem_ofPred_eq, bareMeaning_def, mem_Iio]
+  simp only [mem_compl_iff, Comparison.mem_over, Comparison.rel_eq, mem_preimage, mem_Iio]
   omega
 
 /-- The rescue by context: once the question is whether Lisa has exactly 40 sheep, the
 negative answer is a cell of the question and so felicitous. -/
 theorem felicitous_denial (m : ℕ) :
-    Felicitous (· ∈ assert count (bareMeaning m)) (assert count (bareMeaning m))ᶜ :=
+    Felicitous (· ∈ Comparison.eq.over count m) (Comparison.eq.over count m)ᶜ :=
   felicitous_of_polar Setoid.polar_decides.compl
 
 end SoltWaldon2019

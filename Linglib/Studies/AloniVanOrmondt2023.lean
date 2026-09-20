@@ -1,6 +1,6 @@
 import Linglib.Logic.Team.QBSML.FreeChoice
 import Linglib.Logic.Team.BSML.Scenarios
-import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Data.Examples.AloniVanOrmondt2023
 
 /-!
@@ -17,7 +17,7 @@ neglect-zero enrichment `[·]⁺` once BSML is raised to the first-order QBSML.
 
 The QBSML facts of §5 are the universal theorems of
 `Logic/Team/QBSML/FreeChoice`; here the denotations (14) and (16) are the
-split of `atLeastMeaning`/`atMostMeaning` in the numerals substrate, the
+split of the `≥` and `≤` intervals of `Degree.Comparison`, the
 results (56)–(61) and (63) are the facts instantiated at a universal-access
 model with the paper's `three`/`more` predicates, Fact 5 gives distribution
 at full information, and the obviation claim (57) is the Fig. 14 countermodel.
@@ -32,21 +32,19 @@ The example rows record the inference profile the analysis answers to.
 
 namespace AloniVanOrmondt2023
 
-open QBSML BSML Numerals Data.Examples FirstOrder Language
+open QBSML BSML Degree Data.Examples FirstOrder Language
 
 /-! ### Superlative modifiers as disjunctions -/
 
 /-- (14): *at least n* is *exactly n or more than n*. -/
-theorem atLeast_iff_bare_or_moreThan (m n : ℕ) :
-    atLeastMeaning m n ↔ bareMeaning m n ∨ moreThanMeaning m n := by
-  simp only [atLeastMeaning_def, bareMeaning_def, moreThanMeaning_def, ge_iff_le]
-  omega
+theorem atLeast_eq_bare_union_moreThan (m : ℕ) :
+    Comparison.ge.interval m = Comparison.eq.interval m ∪ Comparison.gt.interval m := by
+  simp [Set.Ioi_insert]
 
 /-- (16): *at most n* is *exactly n or fewer than n*. -/
-theorem atMost_iff_bare_or_fewerThan (m n : ℕ) :
-    atMostMeaning m n ↔ bareMeaning m n ∨ fewerThanMeaning m n := by
-  simp only [atMostMeaning_def, bareMeaning_def, fewerThanMeaning_def]
-  omega
+theorem atMost_eq_bare_union_fewerThan (m : ℕ) :
+    Comparison.le.interval m = Comparison.eq.interval m ∪ Comparison.lt.interval m := by
+  simp [Set.Iio_insert]
 
 /-- Superlative rows carry the ignorance inference in unembedded position and
     comparative rows never do (the contrast of (2)–(7)). -/

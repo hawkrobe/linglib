@@ -13,10 +13,10 @@ ambiguity account, lexical in [geurts-2006] and through a covert exhaustivity op
 [chierchia-fox-spector-2012], the numeral has both an *at least* and an *exactly* reading.
 The paper's three generalizations are that *at least* readings are available in every
 embedded environment, *exactly* readings in every environment, and *at most* readings only
-in downward-entailing ones. The readings are the substrate's `atLeastMeaning`, `bareMeaning`
-and `atMostMeaning`; the exhaustivity operator `exh` asserts its prejacent and denies every
-stronger numeral alternative, and on the numeral itself it is the exact reading
-(`exh_iff_bare`, the substrate's `exhNumeral`).
+in downward-entailing ones. The readings are the intervals `Comparison.ge.interval`,
+`Comparison.eq.interval` and `Comparison.le.interval` of the degree substrate; the exhaustivity
+operator `exh` asserts its prejacent and denies every stronger numeral alternative, and on the
+numeral itself it is the exact reading (`exh_iff_bare`, the substrate's `exhNumeral`).
 
 The theorems are symbolic in the numeral. Under a necessity modal the neo-Gricean wide-scope
 implicature is weaker than the exact reading (`necessity_implicature_of_exact`,
@@ -61,15 +61,15 @@ reviews are not formalized.
 
 namespace Spector2013
 
-open Numerals Set
+open Numerals Degree Set
 
 /-! ### Environments and exhaustification -/
 
-/-- Necessity over the accessible values `A`. -/
-def nec (A : Set ℕ) (φ : ℕ → Prop) : Prop := ∀ k ∈ A, φ k
+/-- Necessity over the accessible values `A` holds when every one of them is among `I`. -/
+def nec (A I : Set ℕ) : Prop := ∀ k ∈ A, k ∈ I
 
-/-- Possibility over the accessible values `A`. -/
-def poss (A : Set ℕ) (φ : ℕ → Prop) : Prop := ∃ k ∈ A, φ k
+/-- Possibility over the accessible values `A` holds when one of them is among `I`. -/
+def poss (A I : Set ℕ) : Prop := ∃ k ∈ A, k ∈ I
 
 /-- The exhaustivity operator on a family of sentences indexed by the numeral: the prejacent
 holds and no stronger numeral alternative does. -/
@@ -82,29 +82,32 @@ theorem exh_iff_succ {φ : ℕ → Prop} (hφ : Antitone φ) (m : ℕ) :
   · rintro ⟨h, h'⟩
     exact ⟨h, h' _ (Nat.lt_succ_self m)⟩
   · rintro ⟨h, h'⟩
-    exact ⟨h, λ _ hm' hφ' => h' (hφ (Nat.succ_le_of_lt hm') hφ')⟩
+    exact ⟨h, fun _ hm' hφ' ↦ h' (hφ (Nat.succ_le_of_lt hm') hφ')⟩
 
-theorem antitone_atLeast (k : ℕ) : Antitone (λ m => atLeastMeaning m k) :=
-  λ _ _ h hk => by simp only [atLeastMeaning_def] at *; omega
+theorem antitone_atLeast (k : ℕ) : Antitone (fun m ↦ k ∈ Comparison.ge.interval m) :=
+  fun _ _ h hk ↦ by simp only [Comparison.interval_ge, mem_Ici] at *; omega
 
-theorem antitone_nec (A : Set ℕ) : Antitone (λ m => nec A (atLeastMeaning m)) :=
-  λ _ _ h hb k hk => antitone_atLeast k h (hb k hk)
+theorem antitone_nec (A : Set ℕ) : Antitone (fun m ↦ nec A (Comparison.ge.interval m)) :=
+  fun _ _ h hb k hk ↦ antitone_atLeast k h (hb k hk)
 
-theorem antitone_poss (A : Set ℕ) : Antitone (λ m => poss A (atLeastMeaning m)) :=
-  λ _ _ h ⟨k, hk, hkb⟩ => ⟨k, hk, antitone_atLeast k h hkb⟩
+theorem antitone_poss (A : Set ℕ) : Antitone (fun m ↦ poss A (Comparison.ge.interval m)) :=
+  fun _ _ h ⟨k, hk, hkb⟩ ↦ ⟨k, hk, antitone_atLeast k h hkb⟩
 
 /-- On the numeral itself the operator is the substrate's `exhNumeral`. -/
-theorem exhNumeral_iff_exh (m k : ℕ) : exhNumeral m k ↔ exh (λ m => atLeastMeaning m k) m := by
+theorem exhNumeral_iff_exh (m k : ℕ) :
+    k ∈ exhNumeral m ↔ exh (fun m ↦ k ∈ Comparison.ge.interval m) m := by
   rw [exh_iff_succ (antitone_atLeast k)]
   exact Iff.rfl
 
 /-- Exhaustifying the *at least* reading is the *exactly* reading, the second
 generalization's source. -/
-theorem exh_iff_bare (m k : ℕ) : exh (λ m => atLeastMeaning m k) m ↔ bareMeaning m k :=
-  (exhNumeral_iff_exh m k).symm.trans (exhNumeral_iff_bare m k)
+theorem exh_iff_bare (m k : ℕ) :
+    exh (fun m ↦ k ∈ Comparison.ge.interval m) m ↔ k ∈ Comparison.eq.interval m :=
+  (exhNumeral_iff_exh m k).symm.trans (by rw [exhNumeral_eq])
 
-theorem exact_imp_atLeast {m k : ℕ} (h : bareMeaning m k) : atLeastMeaning m k := by
-  simp only [bareMeaning_def, atLeastMeaning_def] at *; omega
+theorem exact_imp_atLeast {m k : ℕ} (h : k ∈ Comparison.eq.interval m) :
+    k ∈ Comparison.ge.interval m :=
+  (mem_singleton_iff.1 h).ge
 
 /-! ### The neo-Gricean account -/
 
@@ -112,48 +115,52 @@ theorem exact_imp_atLeast {m k : ℕ} (h : bareMeaning m k) : atLeastMeaning m k
 solve exactly three entails required to solve at least three and not required to solve at
 least four. -/
 theorem necessity_implicature_of_exact {A : Set ℕ} (hA : A.Nonempty) {m : ℕ}
-    (h : nec A (bareMeaning m)) : exh (λ m => nec A (atLeastMeaning m)) m := by
+    (h : nec A (Comparison.eq.interval m)) : exh (fun m ↦ nec A (Comparison.ge.interval m)) m := by
   rw [exh_iff_succ (antitone_nec A)]
-  refine ⟨λ k hk => exact_imp_atLeast (h k hk), λ hall => ?_⟩
+  refine ⟨fun k hk ↦ exact_imp_atLeast (h k hk), fun hall ↦ ?_⟩
   obtain ⟨k, hk⟩ := hA
   have h1 := h k hk
   have h2 := hall k hk
-  simp only [bareMeaning_def, atLeastMeaning_def] at h1 h2
+  simp only [Comparison.interval_eq, mem_singleton_iff, Comparison.interval_ge, mem_Ici] at h1 h2
   omega
 
 /-- The converse fails: the requirement may be met by three or four, so the numeral loses
 its exact reading under the modal while the implicature is still triggered. -/
 theorem necessity_implicature_ne_exact (m : ℕ) :
-    ∃ A : Set ℕ, exh (λ m => nec A (atLeastMeaning m)) m ∧ ¬ nec A (bareMeaning m) := by
-  refine ⟨{m, m + 1}, ?_, λ hall => ?_⟩
+    ∃ A : Set ℕ, exh (fun m ↦ nec A (Comparison.ge.interval m)) m ∧
+      ¬ nec A (Comparison.eq.interval m) := by
+  refine ⟨{m, m + 1}, ?_, fun hall ↦ ?_⟩
   · rw [exh_iff_succ (antitone_nec _)]
-    refine ⟨λ k hk => ?_, λ hall => ?_⟩
+    refine ⟨fun k hk ↦ ?_, fun hall ↦ ?_⟩
     · rcases hk with rfl | rfl <;> simp
     · have := hall m (Or.inl rfl)
-      simp only [atLeastMeaning_def] at this
+      simp only [Comparison.interval_ge, mem_Ici] at this
       omega
   · have := hall (m + 1) (Or.inr rfl)
     simp at this
 
 /-- Under negation the scale reverses: the alternative with the next numeral is weaker. -/
-theorem neg_reversal (m k : ℕ) : ¬ atLeastMeaning m k → ¬ atLeastMeaning (m + 1) k :=
-  λ h h' => h (antitone_atLeast k (Nat.le_succ m) h')
+theorem neg_reversal (m k : ℕ) :
+    k ∉ Comparison.ge.interval m → k ∉ Comparison.ge.interval (m + 1) :=
+  fun h h' ↦ h (antitone_atLeast k (Nat.le_succ m) h')
 
 /-- The indirect implicature the account predicts for *Peter didn't solve n + 1 problems*:
 denying the stronger alternative *didn't solve n* yields *exactly n*, which is not
 perceived. -/
 theorem indirect_implicature (m k : ℕ) :
-    (¬ atLeastMeaning (m + 1) k ∧ ¬ ¬ atLeastMeaning m k) ↔ bareMeaning m k := by
-  simp only [atLeastMeaning_def, bareMeaning_def, not_not]
+    (k ∉ Comparison.ge.interval (m + 1) ∧ ¬ k ∉ Comparison.ge.interval m) ↔
+      k ∈ Comparison.eq.interval m := by
+  simp only [Comparison.interval_ge, mem_Ici, Comparison.interval_eq, mem_singleton_iff, not_not]
   constructor <;> intro h <;> omega
 
 /-- A pragmatic strengthening entails the literal meaning, so the *at most* reading of *if
 you have three children, you do not qualify* is out of the account's reach: it does not
 entail the *at least* reading's consequence that more than three disqualify. -/
 theorem atMost_reading_not_entails_literal (m : ℕ) :
-    ∃ B : ℕ → Prop, (∀ k, atMostMeaning m k → ¬ B k) ∧ ¬ ∀ k, moreThanMeaning m k → ¬ B k :=
-  ⟨(m < ·), λ k hk hB => by simp only [atMostMeaning_def] at hk; omega,
-    λ h => h (m + 1) (Nat.lt_succ_self m) (Nat.lt_succ_self m)⟩
+    ∃ B : ℕ → Prop, (∀ k ∈ Comparison.le.interval m, ¬ B k) ∧
+      ¬ ∀ k ∈ Comparison.gt.interval m, ¬ B k :=
+  ⟨(m < ·), fun k hk hB ↦ by simp only [Comparison.interval_le, mem_Iic] at hk; omega,
+    fun h ↦ h (m + 1) (Nat.lt_succ_self m) (Nat.lt_succ_self m)⟩
 
 /-! ### The underspecification account -/
 
@@ -161,78 +168,82 @@ theorem atMost_reading_not_entails_literal (m : ℕ) :
 value at or below the numeral: *Sue can have 2000 calories* would be true as soon as she can
 have one. -/
 theorem poss_atMost_of_le {A : Set ℕ} {k m : ℕ} (hk : k ∈ A) (h : k ≤ m) :
-    poss A (atMostMeaning m) :=
+    poss A (Comparison.le.interval m) :=
   ⟨k, hk, h⟩
 
 /-- The intended reading is the neo-Gricean one: the *at least* reading under the
 possibility modal, exhaustified, says that no accessible value exceeds the numeral. -/
 theorem poss_implicature_iff (A : Set ℕ) (m : ℕ) :
-    exh (λ m => poss A (atLeastMeaning m)) m ↔
-      poss A (atLeastMeaning m) ∧ nec A (atMostMeaning m) := by
+    exh (fun m ↦ poss A (Comparison.ge.interval m)) m ↔
+      poss A (Comparison.ge.interval m) ∧ nec A (Comparison.le.interval m) := by
   rw [exh_iff_succ (antitone_poss A)]
-  simp only [poss, nec, atLeastMeaning_def, atMostMeaning_def, not_exists, not_and, ge_iff_le]
-  constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨h1, λ k hk => by have := h2 k hk; omega⟩
+  simp only [poss, nec, Comparison.interval_ge, mem_Ici, Comparison.interval_le, mem_Iic,
+    not_exists, not_and]
+  constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨h1, fun k hk ↦ by have := h2 k hk; omega⟩
 
 /-! ### The exactly-only account -/
 
 /-- With a law-like background that is monotone in the count, the exact reading of the
 antecedent extends downward: if exactly three children disqualify, so do fewer. -/
 theorem exact_extends_downward {B : ℕ → Prop} (hB : ∀ k k', k ≤ k' → B k → B k') {m : ℕ}
-    (h : ¬ B m) : ∀ k, atMostMeaning m k → ¬ B k :=
-  λ k hk hBk => h (hB k m hk hBk)
+    (h : ¬ B m) : ∀ k, k ∈ Comparison.le.interval m → ¬ B k :=
+  fun k hk hBk ↦ h (hB k m hk hBk)
 
 /-- And upward: if exactly three children qualify, so do more. -/
 theorem exact_extends_upward {B : ℕ → Prop} (hB : ∀ k k', k ≤ k' → B k → B k') {m : ℕ}
-    (h : B m) : ∀ k, atLeastMeaning m k → B k :=
-  λ k hk => hB m k hk h
+    (h : B m) : ∀ k, k ∈ Comparison.ge.interval m → B k :=
+  fun k hk ↦ hB m k hk h
 
 /-- In an upward-entailing context no background can weaken the exact reading, which
 entails the *at least* reading: *I have four chairs; in fact, I have five* is consistent
 only with the latter. -/
-theorem atLeast_of_exact_background {B : ℕ → Prop} {m k : ℕ} (h : bareMeaning m k) (_ : B k) :
-    atLeastMeaning m k :=
+theorem atLeast_of_exact_background {B : ℕ → Prop} {m k : ℕ}
+    (h : k ∈ Comparison.eq.interval m) (_ : B k) :
+    k ∈ Comparison.ge.interval m :=
   exact_imp_atLeast h
 
 /-- In a degree use the exact reading under necessity is false whenever more than the
 numeral is admitted: *one has to be exactly 18* is not what the voting rule says. -/
-theorem not_nec_exact_Ici (m : ℕ) : ¬ nec (Ici m) (bareMeaning m) := λ h => by
+theorem not_nec_exact_Ici (m : ℕ) : ¬ nec (Ici m) (Comparison.eq.interval m) := fun h ↦ by
   have := h (m + 1) (Nat.le_succ m)
   simp at this
 
-theorem nec_Ici_atLeast (m : ℕ) : nec (Ici m) (atLeastMeaning m) := λ _ hk => hk
+theorem nec_Ici_atLeast (m : ℕ) : nec (Ici m) (Comparison.ge.interval m) := fun _ hk ↦ hk
 
 /-- The exhaustified *at least* reading under necessity says that the numeral is the
 minimum required. -/
-theorem nec_Ici_exh_iff (n m : ℕ) : exh (λ m => nec (Ici n) (atLeastMeaning m)) m ↔ n = m := by
+theorem nec_Ici_exh_iff (n m : ℕ) :
+    exh (fun m ↦ nec (Ici n) (Comparison.ge.interval m)) m ↔ n = m := by
   rw [exh_iff_succ (antitone_nec _)]
-  simp only [nec, mem_Ici, atLeastMeaning_def, ge_iff_le]
+  simp only [nec, mem_Ici, Comparison.interval_ge]
   constructor
   · rintro ⟨h1, h2⟩
     have := h1 n le_rfl
     by_contra hne
-    exact h2 λ k hk => by omega
+    exact h2 fun k hk ↦ by omega
   · rintro rfl
-    exact ⟨λ _ hk => hk, λ h => by have := h n le_rfl; omega⟩
+    exact ⟨fun _ hk ↦ hk, fun h ↦ by have := h n le_rfl; omega⟩
 
 /-! ### The ambiguity account and the third generalization -/
 
 /-- Unembedded, the *at most* reading does not entail the exact reading, so no background
 knowledge can produce it by strengthening. -/
 theorem atMost_not_entails_exact {m : ℕ} (hm : 0 < m) :
-    ¬ ∀ k, atMostMeaning m k → bareMeaning m k := λ h => by
+    ¬ ∀ k, k ∈ Comparison.le.interval m → k ∈ Comparison.eq.interval m := fun h ↦ by
   have := h 0 (Nat.zero_le m)
-  simp only [bareMeaning_def] at this
+  simp only [Comparison.interval_eq, mem_singleton_iff] at this
   omega
 
 /-- Under negation it does: *nobody read four or fewer* entails *nobody read exactly four*,
 which is why the *at most* reading surfaces only in downward-entailing environments. -/
-theorem not_atMost_imp_not_exact {m k : ℕ} (h : ¬ atMostMeaning m k) : ¬ bareMeaning m k :=
-  λ h' => h (by simp only [atMostMeaning_def, bareMeaning_def] at *; omega)
+theorem not_atMost_imp_not_exact {m k : ℕ} (h : k ∉ Comparison.le.interval m) :
+    k ∉ Comparison.eq.interval m :=
+  fun h' ↦ h (mem_singleton_iff.1 h').le
 
 /-! ### Exhaustivity operators and embedded implicatures -/
 
-theorem poss_exact_imp_poss_atLeast {A : Set ℕ} {m : ℕ} (h : poss A (bareMeaning m)) :
-    poss A (atLeastMeaning m) :=
+theorem poss_exact_imp_poss_atLeast {A : Set ℕ} {m : ℕ} (h : poss A (Comparison.eq.interval m)) :
+    poss A (Comparison.ge.interval m) :=
   let ⟨k, hk, h⟩ := h
   ⟨k, hk, exact_imp_atLeast h⟩
 
@@ -240,16 +251,17 @@ theorem poss_exact_imp_poss_atLeast {A : Set ℕ} {m : ℕ} (h : poss A (bareMea
 differs from the operator below it, *possible exactly n*: the former fails, the latter
 holds, when both `n` and `n + 1` are possible. -/
 theorem wide_scope_ne_narrow (m : ℕ) :
-    ∃ A : Set ℕ, poss A (bareMeaning m) ∧ ¬ exh (λ m => poss A (atLeastMeaning m)) m := by
+    ∃ A : Set ℕ, poss A (Comparison.eq.interval m) ∧
+      ¬ exh (fun m ↦ poss A (Comparison.ge.interval m)) m := by
   refine ⟨{m, m + 1}, ⟨m, Or.inl rfl, rfl⟩, ?_⟩
   rw [exh_iff_succ (antitone_poss _)]
   rintro ⟨-, h⟩
-  exact h ⟨m + 1, Or.inr rfl, (atLeastMeaning_def _ _).2 le_rfl⟩
+  exact h ⟨m + 1, Or.inr rfl, mem_Ici.2 le_rfl⟩
 
 /-- And the operator below the modal differs from its absence: when only `n + 1` is
 possible, *possible at least n* holds and *possible exactly n* does not. -/
 theorem narrow_ne_base (m : ℕ) :
-    ∃ A : Set ℕ, poss A (atLeastMeaning m) ∧ ¬ poss A (bareMeaning m) := by
+    ∃ A : Set ℕ, poss A (Comparison.ge.interval m) ∧ ¬ poss A (Comparison.eq.interval m) := by
   refine ⟨{m + 1}, ⟨m + 1, rfl, Nat.le_succ m⟩, ?_⟩
   rintro ⟨k, hk, h⟩
   rw [mem_singleton_iff] at hk
@@ -264,22 +276,22 @@ variable {S : Type*} (n : S → ℕ) (managed : S → Prop) (m : ℕ)
 she asked us to solve more*: the situations demanding more are situations demanding at least
 the numeral. -/
 theorem atLeast_parse_contradiction
-    (h : ∀ s, nec (Ici (n s)) (atLeastMeaning m) → managed s) :
+    (h : ∀ s, nec (Ici (n s)) (Comparison.ge.interval m) → managed s) :
     ¬ ∃ s, m < n s ∧ ¬ managed s := by
   rintro ⟨s, hs, hm⟩
-  exact hm (h s λ k hk => by simp only [mem_Ici] at hk; simp only [atLeastMeaning_def]; omega)
+  exact hm (h s fun k (hk : n s ≤ k) ↦ show m ≤ k by omega)
 
 /-- The *exactly* parse is vacuous when more than the demanded number may always be
 solved. -/
-theorem exact_parse_vacuous (s : S) : ¬ nec (Ici (n s)) (bareMeaning m) := λ h => by
+theorem exact_parse_vacuous (s : S) : ¬ nec (Ici (n s)) (Comparison.eq.interval m) := fun h ↦ by
   have := h (n s + m + 1) (by simp only [mem_Ici]; omega)
-  simp only [bareMeaning_def] at this
+  simp only [Comparison.interval_eq, mem_singleton_iff] at this
   omega
 
 /-- The intermediate embedded implicature, the operator between *whenever* and *demanded*,
 restricts the quantification to the situations whose minimum is the numeral. -/
 theorem intermediate_parse_iff :
-    (∀ s, exh (λ m => nec (Ici (n s)) (atLeastMeaning m)) m → managed s) ↔
+    (∀ s, exh (fun m ↦ nec (Ici (n s)) (Comparison.ge.interval m)) m → managed s) ↔
       ∀ s, n s = m → managed s := by
   simp only [nec_Ici_exh_iff]
 

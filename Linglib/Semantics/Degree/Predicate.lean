@@ -59,9 +59,9 @@ theorem bimonotone_constant {W : Type*} (P : α → W → Prop)
 The five degree predicates covering all comparison relations are
 `Degree.Comparison.{eq,ge,gt,le,lt}.over μ` directly — there is no separate
 named family. `c.over μ d : Set W`, with `w ∈ c.over μ d ↔ c.rel (μ w) d`
-(`Comparison.mem_over`). These are the building blocks for the named numeral
-meanings (`Numerals.atLeastMeaning` etc.) and degree question
-semantics.
+(`Comparison.mem_over`). These are the numeral meanings, at the identity
+measure the intervals `c.interval d` (`Comparison.over_id`), and the building
+blocks of degree question semantics.
 
 - `Comparison.ge.over μ`: closed `≥`, always has max⊨
 - `Comparison.gt.over μ`: open `>`, fails on dense scales

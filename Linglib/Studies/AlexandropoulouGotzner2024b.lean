@@ -47,7 +47,7 @@ theorem relative_like (h : (tp.neg : Bounded max) < tp.pos) :
   refine ⟨Degree.AntonymForm.strengthenedDenot_breaks_synonymy tp h, ↑tp.neg, ?_, ?_⟩
   · simpa [Degree.positiveMeaning, Degree.Comparison.mem_over, Degree.Comparison.rel]
       using le_of_lt h
-  · simp [Degree.negativeMeaning, Degree.Comparison.mem_over, Degree.Comparison.rel]
+  · simp [Degree.negativeMeaning]
 
 /-- The two residues are the same region — the gap — so the distinctions are
     symmetric across polarity. -/

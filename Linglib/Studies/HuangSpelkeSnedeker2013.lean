@@ -11,8 +11,8 @@ the instruction is a definite description, *the box with two fish*; under a read
 term the referent is the visible box satisfying `R` when exactly one does, the covered box when
 none does, and no box at all when both do (`choice`). In the critical trials a lower-bounded
 match is visible and an exact one is not: an exact *two* sends the participant to the covered
-box and a lower-bounded *two* to the visible box (`choice_bareMeaning_covered`,
-`choice_atLeastMeaning_visible`), while for *some* the literal meaning picks the box where
+box and a lower-bounded *two* to the visible box (`choice_exact_covered`,
+`choice_atLeast_visible`), while for *some* the literal meaning picks the box where
 Cookie Monster has all of the cookies and the strengthened meaning the covered box. Adults and
 two- to three-year-olds took the total set for *some* and the covered box for *two*.
 
@@ -40,7 +40,7 @@ route, an implicit alternative *more than two*, does recover exactness
 
 namespace HuangSpelkeSnedeker2013
 
-open Numerals
+open Numerals Degree
 
 /-! ### The covered-box task -/
 
@@ -96,47 +96,52 @@ theorem choice_covered_of_le {R' : α → Prop} [DecidablePred R'] (h : ∀ x, R
 
 /-- The critical trials show a smaller and a larger set: an exact numeral has no visible
 referent, so the covered box is chosen. -/
-theorem choice_bareMeaning_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
-    choice (bareMeaning m) ⟨a, b⟩ = some .covered :=
+theorem choice_exact_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
+    choice (· ∈ Comparison.eq.interval m) ⟨a, b⟩ = some .covered :=
   (choice_eq_covered_iff _ _).2 ⟨by simp; omega, by simp; omega⟩
 
 /-- A lower-bounded numeral refers to the larger set. -/
-theorem choice_atLeastMeaning_visible {m a b : ℕ} (ha : a < m) (hb : m ≤ b) :
-    choice (atLeastMeaning m) ⟨a, b⟩ = some (.visible b) :=
+theorem choice_atLeast_visible {m a b : ℕ} (ha : a < m) (hb : m ≤ b) :
+    choice (· ∈ Comparison.ge.interval m) ⟨a, b⟩ = some (.visible b) :=
   (choice_eq_visible_right_iff _ _).2 ⟨by simp; omega, by simp; omega⟩
 
 /-- The lower-bounded numeral strengthened against the full number scale chooses like the exact
 one, so the critical trials separate the two semantics only where the implicature is
 cancelled. -/
 theorem choice_exhNumeral_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
-    choice (exhNumeral m) ⟨a, b⟩ = some .covered :=
+    choice (· ∈ exhNumeral m) ⟨a, b⟩ = some .covered :=
   (choice_eq_covered_iff _ _).2
-    ⟨by simp only [exhNumeral_iff_bare, bareMeaning_def]; omega,
-      by simp only [exhNumeral_iff_bare, bareMeaning_def]; omega⟩
+    ⟨by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega,
+      by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega⟩
 
 /-- two(1,2): with an exact match visible against a smaller set, both readings pick it. -/
-theorem choice_one_two_bare : choice (bareMeaning 2) ⟨1, 2⟩ = some (.visible 2) := by decide
+theorem choice_one_two_bare :
+    choice (· ∈ Comparison.eq.interval 2) ⟨1, 2⟩ = some (.visible 2) := by decide
 
-theorem choice_one_two_atLeast : choice (atLeastMeaning 2) ⟨1, 2⟩ = some (.visible 2) := by
+theorem choice_one_two_atLeast :
+    choice (· ∈ Comparison.ge.interval 2) ⟨1, 2⟩ = some (.visible 2) := by
   decide
 
 /-- two(2,3∨5): against a larger set the lower-bounded reading leaves the description without
 a unique referent, and it is the implicature that restores the exact match. -/
-theorem choice_two_three_bare : choice (bareMeaning 2) ⟨2, 3⟩ = some (.visible 2) := by decide
+theorem choice_two_three_bare :
+    choice (· ∈ Comparison.eq.interval 2) ⟨2, 3⟩ = some (.visible 2) := by decide
 
-theorem choice_two_three_atLeast : choice (atLeastMeaning 2) ⟨2, 3⟩ = none := by decide
+theorem choice_two_three_atLeast : choice (· ∈ Comparison.ge.interval 2) ⟨2, 3⟩ = none := by decide
 
-theorem choice_two_three_exh : choice (exhNumeral 2) ⟨2, 3⟩ = some (.visible 2) := by decide
+theorem choice_two_three_exh : choice (· ∈ exhNumeral 2) ⟨2, 3⟩ = some (.visible 2) := by decide
 
 /-- two(1,3∨5), the critical trials: adults and two-knowers chose the covered box. -/
-theorem choice_one_three_bare : choice (bareMeaning 2) ⟨1, 3⟩ = some .covered :=
-  choice_bareMeaning_covered (by omega) (by omega)
+theorem choice_one_three_bare : choice (· ∈ Comparison.eq.interval 2) ⟨1, 3⟩ = some .covered :=
+  choice_exact_covered (by omega) (by omega)
 
-theorem choice_one_three_atLeast : choice (atLeastMeaning 2) ⟨1, 3⟩ = some (.visible 3) :=
-  choice_atLeastMeaning_visible (by omega) (by omega)
+theorem choice_one_three_atLeast :
+    choice (· ∈ Comparison.ge.interval 2) ⟨1, 3⟩ = some (.visible 3) :=
+  choice_atLeast_visible (by omega) (by omega)
 
-theorem choice_one_five_atLeast : choice (atLeastMeaning 2) ⟨1, 5⟩ = some (.visible 5) :=
-  choice_atLeastMeaning_visible (by omega) (by omega)
+theorem choice_one_five_atLeast :
+    choice (· ∈ Comparison.ge.interval 2) ⟨1, 5⟩ = some (.visible 5) :=
+  choice_atLeast_visible (by omega) (by omega)
 
 /-! ### Scalar trials -/
 
@@ -179,25 +184,27 @@ theorem all_some_none : choice universal ⟨.someNotAll, .none⟩ = some .covere
 /-- A child at knower level `k` has the numerals up to `k` as a count list; the numeral `i` of
 that list exhaustified against its known stronger alternatives. -/
 def exhKnown (k : ℕ) (i : Fin (k + 1)) (n : ℕ) : Prop :=
-  Exhaustification.exhChain (λ j : Fin (k + 1) => atLeastMeaning j) i n
+  Exhaustification.exhChain (fun j : Fin (k + 1) ↦ (· ∈ Comparison.ge.interval (j : ℕ))) i n
 
 instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := λ _ =>
   inferInstanceAs (Decidable (Exhaustification.exhChain _ _ _))
 
 /-- The top of the count list has no stronger known alternative, so exhaustification leaves its
 lower-bounded meaning as it is. -/
-theorem exhKnown_last (k n : ℕ) : exhKnown k (Fin.last k) n ↔ atLeastMeaning k n :=
+theorem exhKnown_last (k n : ℕ) :
+    exhKnown k (Fin.last k) n ↔ n ∈ Comparison.ge.interval k :=
   ⟨λ h => h.1, λ h => ⟨h, λ j hj => absurd hj (not_lt.2 (Fin.le_last j))⟩⟩
 
 /-- A numeral below the top is exhaustified to its exact meaning. -/
 theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : ℕ) :
-    exhKnown k i n ↔ bareMeaning i n := by
+    exhKnown k i n ↔ n ∈ Comparison.eq.interval (i : ℕ) := by
   have hs : (i : ℕ) + 1 < k + 1 := by have := Fin.lt_def.1 hi; simp at this; omega
-  rw [exhKnown, Exhaustification.exhChain_iff_succ (s := ⟨i + 1, hs⟩)
-    (λ j k hjk n hk => by simp only [atLeastMeaning_def] at hk ⊢; exact le_trans hjk hk)
+  rw [exhKnown, Exhaustification.exhChain_iff_succ (s := (⟨i + 1, hs⟩ : Fin (k + 1)))
+    (φ := fun j : Fin (k + 1) ↦ (· ∈ Comparison.ge.interval (j : ℕ)))
+    (fun j k hjk n (hk : (k : ℕ) ≤ n) ↦ show (j : ℕ) ≤ n from le_trans hjk hk)
     (Fin.lt_def.2 (Nat.lt_succ_self _))
     (λ j hj => Fin.le_def.2 (Nat.succ_le_of_lt (Fin.lt_def.1 hj)))]
-  simp only [atLeastMeaning_def, bareMeaning_def]
+  simp only [Comparison.interval_ge, Comparison.interval_eq, Set.mem_Ici, Set.mem_singleton_iff]
   omega
 
 /-- A two-knower's count list is *one*, *two*: under lower-bounded semantics, *two* stays
@@ -211,8 +218,8 @@ theorem threeKnower_exact : choice (exhKnown 3 2) ⟨1, 3⟩ = some .covered := 
 
 /-- Section 6.1: an implicit alternative *more than two* would exhaustify *two* to its exact
 meaning, the route the paper leaves logically open. -/
-theorem atLeast_not_moreThan_iff_bare (m n : ℕ) :
-    atLeastMeaning m n ∧ ¬ moreThanMeaning m n ↔ bareMeaning m n := by
-  simp only [atLeastMeaning_def, moreThanMeaning_def, bareMeaning_def]; omega
+theorem atLeast_diff_moreThan_eq_bare (m : ℕ) :
+    Comparison.ge.interval m \ Comparison.gt.interval m = Comparison.eq.interval m := by
+  simp
 
 end HuangSpelkeSnedeker2013

@@ -1,4 +1,5 @@
 import Mathlib.Order.Interval.Set.Basic
+import Mathlib.Order.Interval.Set.OrdConnected
 import Linglib.Core.Order.StrictBounds
 
 /-!
@@ -79,9 +80,37 @@ def Comparison.over {E α : Type*} [Preorder α]
     (c : Comparison) (μ : E → α) (n : α) : Set E :=
   μ ⁻¹' c.interval n
 
+section
+
+variable {α : Type*} [Preorder α] (a n : α)
+
+@[simp] theorem Comparison.interval_eq : Comparison.eq.interval n = {n} := rfl
+@[simp] theorem Comparison.interval_ge : Comparison.ge.interval n = Set.Ici n := rfl
+@[simp] theorem Comparison.interval_gt : Comparison.gt.interval n = Set.Ioi n := rfl
+@[simp] theorem Comparison.interval_le : Comparison.le.interval n = Set.Iic n := rfl
+@[simp] theorem Comparison.interval_lt : Comparison.lt.interval n = Set.Iio n := rfl
+
+@[simp] theorem Comparison.rel_eq : Comparison.eq.rel a n ↔ a = n := Iff.rfl
+@[simp] theorem Comparison.rel_ge : Comparison.ge.rel a n ↔ n ≤ a := Iff.rfl
+@[simp] theorem Comparison.rel_gt : Comparison.gt.rel a n ↔ n < a := Iff.rfl
+@[simp] theorem Comparison.rel_le : Comparison.le.rel a n ↔ a ≤ n := Iff.rfl
+@[simp] theorem Comparison.rel_lt : Comparison.lt.rel a n ↔ a < n := Iff.rfl
+
+end
+
 @[simp] theorem Comparison.mem_interval {α : Type*} [Preorder α]
     (c : Comparison) (a n : α) : a ∈ c.interval n ↔ c.rel a n := by
   cases c <;> simp [Comparison.interval, Comparison.rel]
+
+/-- The interval of a comparison is convex. -/
+instance Comparison.ordConnected_interval {α : Type*} [PartialOrder α] (c : Comparison) (n : α) :
+    (c.interval n).OrdConnected := by
+  cases c <;> simp only [interval_eq, interval_ge, interval_gt, interval_le, interval_lt] <;>
+    infer_instance
+
+/-- Over the identity measure a comparison selects its interval. -/
+@[simp] theorem Comparison.over_id {α : Type*} [Preorder α] (c : Comparison) (n : α) :
+    c.over id n = c.interval n := rfl
 
 @[simp] theorem Comparison.mem_over {E α : Type*} [Preorder α]
     (c : Comparison) (μ : E → α) (n : α) (x : E) :
@@ -91,6 +120,10 @@ def Comparison.over {E α : Type*} [Preorder α]
 instance Comparison.relDecidable {α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
     [DecidableLT α] (c : Comparison) (a n : α) : Decidable (c.rel a n) := by
   cases c <;> simp only [Comparison.rel, ge_iff_le, gt_iff_lt] <;> infer_instance
+
+instance Comparison.intervalDecidable {α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
+    [DecidableLT α] (c : Comparison) (a n : α) : Decidable (a ∈ c.interval n) :=
+  decidable_of_iff _ (Comparison.mem_interval c a n).symm
 
 instance Comparison.overDecidable {E α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
     [DecidableLT α] (c : Comparison) (μ : E → α) (n : α) (x : E) : Decidable (x ∈ c.over μ n) :=

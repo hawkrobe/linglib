@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.RSA.QUD
-import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Degree.Comparison
 import Linglib.Core.Probability.Distributions.Binomial
 import Linglib.Core.Probability.Kernel.Posterior
 
@@ -46,9 +46,9 @@ scope (Figure 7).
   paper's grid of priors, are not restated, and the endorsement rates of the experiments the
   paper reviews are not data of this file.
 * A determiner is a relation between the number of restrictor members outside its scope and the
-  number inside it, so *every* is `every` and *two* is `Numerals.bareMeaning 2` or
-  `Numerals.atLeastMeaning 2` of the inside count; (2) and (6) are the resulting truth conditions
-  at two and at four horses.
+  number inside it, so *every* is `every` and *two* is membership of the inside count in
+  `Comparison.eq.interval 2` or `Comparison.ge.interval 2`; (2) and (6) are the resulting
+  truth conditions at two and at four horses.
 * Both models share the five questions of (7): the every-not model is the case of a question
   prior carried by the first three, and with two horses the numeral questions partition the
   worlds as *all?* does (`cell_exactlyTwo_two`, `cell_atLeastTwo_two`).
@@ -109,15 +109,16 @@ def every (outside _inside : ℕ) : Prop := outside = 0
 instance : DecidableRel every := λ _ _ => inferInstanceAs (Decidable (_ = 0))
 
 /-- The numeral *two* on counts, on its exact reading. -/
-def twoExact (_outside inside : ℕ) : Prop := Numerals.bareMeaning 2 inside
+def twoExact (_outside inside : ℕ) : Prop := inside ∈ Degree.Comparison.eq.interval 2
 
-instance : DecidableRel twoExact := λ _ k => inferInstanceAs (Decidable (Numerals.bareMeaning 2 k))
+instance : DecidableRel twoExact :=
+  fun _ k ↦ inferInstanceAs (Decidable (k ∈ Degree.Comparison.eq.interval 2))
 
 /-- The numeral *two* on counts, on its at-least reading. -/
-def twoAtLeast (_outside inside : ℕ) : Prop := Numerals.atLeastMeaning 2 inside
+def twoAtLeast (_outside inside : ℕ) : Prop := inside ∈ Degree.Comparison.ge.interval 2
 
 instance : DecidableRel twoAtLeast :=
-  λ _ k => inferInstanceAs (Decidable (Numerals.atLeastMeaning 2 k))
+  fun _ k ↦ inferInstanceAs (Decidable (k ∈ Degree.Comparison.ge.interval 2))
 
 /-- The extension of an utterance under a scope interpretation ((2), (6)) among `n` horses. The
 null utterance is true everywhere; *D horses didn't jump* is true at `w` on its surface reading

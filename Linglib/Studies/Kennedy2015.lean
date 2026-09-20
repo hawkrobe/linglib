@@ -27,14 +27,14 @@ The ignorance inferences of the Class B modifiers are Sauerland's primary implic
 over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
 asymmetrically entailed by the bare numeral and by *more than m* and by no other alternative,
 *at most m* by the bare numeral and *fewer than m* ((47)), while the bare numeral and the
-Class A forms are entailed by no alternative at all (`over_ssubset_iff`, `stronger_ge`,
+Class A forms are entailed by no alternative at all (`interval_ssubset_iff`, `stronger_ge`,
 `stronger_gt`, and the rest); and neither primary implicature of a Class B form
 strengthens to a secondary one ((44)), each contradicting the assertion together with the other
 (`not_isSecondaryImplicature_ge`, `not_isSecondaryImplicature_le`).
 
 ## Implementation notes
 
-The worlds of the pragmatics are counts, so a form's content is the set `c.over id m` of counts,
+The worlds of the pragmatics are counts, so a form's content is the set `c.interval m` of counts,
 the alternatives are the five forms of the numeral, one for each `Degree.Comparison`, and the
 neo-Gricean operators are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. A
 root modal is the quantifier `every_sem R` or `some_sem R` over its accessible worlds `R`, and
@@ -57,14 +57,10 @@ open Degree Numerals NeoGricean Quantifier Quantifier.GQ Set
 (29), (41), (42): the numeral form `c m` is true of a degree property when its greatest degree
 stands in the relation `c` to `m`, the substrate's `maxIn (c.interval m)`. -/
 
-/-- A count reaching a degree is a member of the comparison's interval. -/
-theorem mem_over (c : Comparison) (m n : ℕ) : n ∈ c.over id m ↔ c.rel n m :=
-  Comparison.mem_interval c n m
-
 /-- On the degrees a count reaches, the de-Fregean form is the comparison of the count itself,
 the substrate's meaning of the numeral: two-sided bare content with no Horn scale. -/
 theorem maxIn_interval_Iic (c : Comparison) (m n : ℕ) :
-    maxIn (c.interval m) (Iic n) ↔ n ∈ c.over id m :=
+    maxIn (c.interval m) (Iic n) ↔ n ∈ c.interval m :=
   maxIn_Iic
 
 /-! ### The two classes (Section 1) -/
@@ -124,20 +120,20 @@ end Modals
 
 /-- (46): the alternatives of a numeral form are the five forms of the same numeral, the
 one for each comparison, as sets of counts. -/
-def alternatives (m : ℕ) : Set (Set ℕ) := Set.range fun c : Comparison ↦ c.over id m
+def alternatives (m : ℕ) : Set (Set ℕ) := Set.range fun c : Comparison ↦ c.interval m
 
 /-- (43): the alternatives that asymmetrically entail a form, as comparisons; their negated
 knowledge is the form's primary implicatures. -/
 def stronger (m : ℕ) (c : Comparison) : Set Comparison :=
-  {c' | c'.over id m ⊂ c.over id m}
+  {c' | c'.interval m ⊂ c.interval m}
 
 /-- Inclusion between two forms of a positive numeral is decided at three counts, one below,
 at, and above the number. -/
-private theorem over_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
-    c.over id m ⊆ c'.over id m ↔
+private theorem interval_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
+    c.interval m ⊆ c'.interval m ↔
       (c.rel 0 m → c'.rel 0 m) ∧ (c.rel m m → c'.rel m m) ∧
         (c.rel (m + 1) m → c'.rel (m + 1) m) := by
-  simp only [Set.subset_def, mem_over]
+  simp only [Set.subset_def, Comparison.mem_interval]
   refine ⟨λ h => ⟨h 0, h m, h (m + 1)⟩, λ ⟨h0, hm', h1⟩ x hx => ?_⟩
   cases c <;> cases c' <;>
     simp only [Comparison.rel, imp_iff_not_or, not_true_eq_false, false_or] at h0 hm' h1 hx ⊢ <;>
@@ -145,72 +141,77 @@ private theorem over_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
 
 /-- Asymmetric entailment among the forms of a positive numeral: the bare numeral entails both
 Class B forms and each Class A form entails the Class B form on its side, and nothing else. -/
-theorem over_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
-    c.over id m ⊂ c'.over id m ↔
+theorem interval_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
+    c.interval m ⊂ c'.interval m ↔
       (c, c') ∈ [(Comparison.eq, Comparison.ge), (.eq, .le), (.gt, .ge), (.lt, .le)] := by
-  rw [Set.ssubset_def, over_subset_iff c c' hm, over_subset_iff c' c hm]
+  rw [Set.ssubset_def, interval_subset_iff c c' hm, interval_subset_iff c' c hm]
   cases c <;> cases c' <;> simp [Comparison.rel, imp_iff_not_or] <;> omega
 
 /-- (47a): *at least m* is asymmetrically entailed by the bare numeral and by *more than m*, so
 its primary implicatures are ignorance of both. -/
 theorem stronger_ge {m : ℕ} (hm : 0 < m) : stronger m .ge = {.eq, .gt} := by
   ext c
-  cases c <;> simp [stronger, over_ssubset_iff hm]
+  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
+  cases c <;> simp
 
 /-- (47b): *at most m* is asymmetrically entailed by the bare numeral and by *fewer than m*. -/
 theorem stronger_le {m : ℕ} (hm : 0 < m) : stronger m .le = {.eq, .lt} := by
   ext c
-  cases c <;> simp [stronger, over_ssubset_iff hm]
+  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
+  cases c <;> simp
 
 /-- The bare numeral is entailed by none of its alternatives: no primary implicatures, and none
 of the upper-bounding secondary ones a Horn scale would give. -/
 theorem stronger_eq {m : ℕ} (hm : 0 < m) : stronger m .eq = ∅ := by
   ext c
-  cases c <;> simp [stronger, over_ssubset_iff hm]
+  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
+  cases c <;> simp
 
 /-- Class A: *more than m* is entailed by no alternative, so it carries no ignorance
 implicature. -/
 theorem stronger_gt {m : ℕ} (hm : 0 < m) : stronger m .gt = ∅ := by
   ext c
-  cases c <;> simp [stronger, over_ssubset_iff hm]
+  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
+  cases c <;> simp
 
 /-- Class A: *fewer than m* is entailed by no alternative. -/
 theorem stronger_lt {m : ℕ} (hm : 0 < m) : stronger m .lt = ∅ := by
   ext c
-  cases c <;> simp [stronger, over_ssubset_iff hm]
+  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
+  cases c <;> simp
 
 /-- (44) fails for *at least m*: knowing the bare numeral false with the assertion is knowing
 *more than m*, and knowing *more than m* false with the assertion is knowing the bare numeral,
 each contradicting the other primary implicature; the ignorance is not strengthened. -/
 theorem not_isSecondaryImplicature_ge (m : ℕ) :
-    ¬ IsSecondaryImplicature (Comparison.ge.over id m) (alternatives m)
-        (Comparison.eq.over id m) ∧
-      ¬ IsSecondaryImplicature (Comparison.ge.over id m) (alternatives m)
-        (Comparison.gt.over id m) := by
+    ¬ IsSecondaryImplicature (Comparison.ge.interval m) (alternatives m)
+        (Comparison.eq.interval m) ∧
+      ¬ IsSecondaryImplicature (Comparison.ge.interval m) (alternatives m)
+        (Comparison.gt.interval m) := by
   refine ⟨λ h => ?_, λ h => ?_⟩
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.gt.over id m)
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.gt.interval m)
       ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
-    simp only [mem_over, Comparison.rel] at *
+    simp only [Comparison.mem_interval, Comparison.rel] at *
     omega
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.interval m)
       ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
-    simp only [mem_over, Comparison.rel] at *
+    simp only [Comparison.mem_interval, Comparison.rel] at *
     omega
 
 /-- (44) fails for *at most m* the same way, with *fewer than m* in place of *more than m*. -/
 theorem not_isSecondaryImplicature_le (m : ℕ) :
-    ¬ IsSecondaryImplicature (Comparison.le.over id m) (alternatives m)
-        (Comparison.eq.over id m) ∧
-      ¬ IsSecondaryImplicature (Comparison.le.over id m) (alternatives m)
-        (Comparison.lt.over id m) := by
+    ¬ IsSecondaryImplicature (Comparison.le.interval m) (alternatives m)
+        (Comparison.eq.interval m) ∧
+      ¬ IsSecondaryImplicature (Comparison.le.interval m) (alternatives m)
+        (Comparison.lt.interval m) := by
   refine ⟨λ h => ?_, λ h => ?_⟩
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.lt.over id m)
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.lt.interval m)
       ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
-    simp only [mem_over, Comparison.rel] at *
+    simp only [Comparison.mem_interval, Comparison.rel] at *
     omega
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
+  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.interval m)
       ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
-    simp only [mem_over, Comparison.rel] at *
+    simp only [Comparison.mem_interval, Comparison.rel] at *
     omega
 
 end Kennedy2015
