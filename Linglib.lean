@@ -814,7 +814,6 @@ import Linglib.Fragments.Hungarian.Modals
 import Linglib.Fragments.Hungarian.PolarityItems
 import Linglib.Fragments.Hungarian.Predicates
 import Linglib.Fragments.Hungarian.Reciprocals
-import Linglib.Fragments.Hungarian.VowelHarmony
 import Linglib.Fragments.Icelandic.Case
 import Linglib.Fragments.Icelandic.Gender
 import Linglib.Fragments.Icelandic.Nominalizations

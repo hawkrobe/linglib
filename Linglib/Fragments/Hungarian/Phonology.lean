@@ -3,16 +3,16 @@ import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Harmony.System
 
 /-!
-# Hungarian vowel harmony
+# Hungarian phonology
 
-The short vowels of Hungarian as segments, their harmonic classification, and the two harmony
-systems the suffix alternations follow: palatal harmony, the backness of the last harmonic
-stem vowel spreading rightward through the transparent neutral vowels, and rounding harmony,
-the rounding of the last stem vowel, which resolves the three-way suffixes. The seven vowels
-are the system (7) of [siptar-torkenczy-2000], with long vowels identical in features since
-length is prosodic; the harmonic classification is that of their (27), the front unrounded
-vowels being neutral; and the two systems compile the [rose-walker-2011] decomposition to the
-substrate's `Harmony.System`.
+This file gives the short vowels of Hungarian as segments, classifies them for harmony, and
+states the two harmony systems the suffix alternations follow. The seven vowels are those of
+Siptár and Törkenczy's vowel system, and a long vowel has the features of its short
+counterpart, length being prosodic. In their classification the front unrounded vowels are
+neutral, the front rounded vowels front harmonic, and the back vowels back harmonic. Palatal
+harmony spreads the backness of the last harmonic stem vowel rightward through the transparent
+neutral vowels. Rounding harmony spreads the rounding of the last stem vowel, and resolves the
+three-way suffixes. Both are systems in the sense of Rose and Walker's decomposition.
 
 The feature values come from the PHOIBLE chart, read at the short vowels of PHOIBLE's
 Hungarian inventory and kept on the features the system (7) uses. The short low vowel is the
@@ -21,18 +21,18 @@ rounding being a matter of phonetic implementation, so it departs from the chart
 
 ## Main definitions
 
-* `Hungarian.VowelHarmony.Vowel`: the seven short vowels, with `chart`, `departure` and
+* `Hungarian.Vowel`: the seven short vowels, with `chart`, `departure` and
   `segment`.
-* `Hungarian.VowelHarmony.contrastive`: the features the vowel system uses.
-* `Hungarian.VowelHarmony.hungarianPalatalHarmony`,
-  `Hungarian.VowelHarmony.hungarianLabialHarmony`: the two harmony systems.
+* `Hungarian.contrastive`: the features the vowel system uses.
+* `Hungarian.palatalHarmony`,
+  `Hungarian.labialHarmony`: the two harmony systems.
 
 ## Main results
 
-* `Hungarian.VowelHarmony.Vowel.segment_injective`,
-  `Hungarian.VowelHarmony.Vowel.chart_mem_hun`: the contrastive features distinguish the
+* `Hungarian.Vowel.segment_injective`,
+  `Hungarian.Vowel.chart_mem_hun`: the contrastive features distinguish the
   vowels, and each vowel is a phoneme of PHOIBLE's Hungarian inventory.
-* `Hungarian.VowelHarmony.Vowel.isNeutral_iff`: the neutral vowels are /i/ and /ɛ/.
+* `Hungarian.Vowel.isNeutral_iff`: the neutral vowels are /i/ and /ɛ/.
 
 ## Implementation notes
 
@@ -47,7 +47,7 @@ rounding being a matter of phonetic implementation, so it departs from the chart
 * [moran-mccloy-2019]
 -/
 
-namespace Hungarian.VowelHarmony
+namespace Hungarian
 
 open Phonology Phonology.Harmony Data.PHOIBLE
 
@@ -135,7 +135,7 @@ theorem Vowel.isNeutral_iff (v : Vowel) :
 
 /-- Palatal harmony spreads the backness of the last harmonic stem vowel rightward to the
 suffix vowels unspecified for it, consonants and the neutral vowels being off the tier. -/
-def hungarianPalatalHarmony : System Segment :=
+def palatalHarmony : System Segment :=
   System.mk' (feature := .back)
     (IsTarget := fun s ↦ s.HasValue .syllabic true ∧ s .back = none)
     (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true ∨ IsNeutral s)
@@ -144,10 +144,10 @@ def hungarianPalatalHarmony : System Segment :=
 /-- Rounding harmony spreads the rounding of the last stem vowel to the suffix vowels
 unspecified for it, with no transparent vowels; it matters only for front stems, since a
 back stem takes the back alternant of a three-way suffix. -/
-def hungarianLabialHarmony : System Segment :=
+def labialHarmony : System Segment :=
   System.mk' (feature := .round)
     (IsTarget := fun s ↦ s.HasValue .syllabic true ∧ s .round = none)
     (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true)
     (direction := .rightward)
 
-end Hungarian.VowelHarmony
+end Hungarian

@@ -1,5 +1,5 @@
 import Linglib.Phonology.Autosegmental.Melody
-import Linglib.Fragments.Hungarian.VowelHarmony
+import Linglib.Fragments.Hungarian.Phonology
 import Linglib.Data.Forms.SiptarTorkenczy2000
 
 /-!
@@ -21,7 +21,7 @@ its (13) to (23) (`derivations`), transparency, antiharmony and opacity followin
 prelinking alone, and the vacillating stem of section 3.2.3.1 has two representations deriving
 its two forms (`dzsungel_vacillates`). The surface generalization of section 3.2, that the
 last harmonic vowel governs suffix backness through the transparent neutral vowels, is the
-Fragment's `hungarianPalatalHarmony`; it agrees with the derivations on the regular stems and
+Fragment's `palatalHarmony`; it agrees with the derivations on the regular stems and
 is silent or wrong exactly on the neutral, antiharmonic and opaque stems the analysis handles
 by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
 `sourceValue_kodex`).
@@ -50,7 +50,7 @@ by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
 
 namespace SiptarTorkenczy2000
 
-open Autosegmental Hungarian.VowelHarmony Phonology.Harmony
+open Autosegmental Hungarian Phonology.Harmony
 
 /-- The unary place features of the vowels, (1) of the chapter. -/
 inductive Place
@@ -63,8 +63,8 @@ structure VNode where
   open2 : Bool
   deriving DecidableEq
 
-/-- The aperture of the vowel a letter writes: the high vowels closed on both, the mid vowels
-and *é* open on the second, the low vowels and *e* open on both. -/
+/-- The aperture of the vowel a letter writes. The high vowels are closed on both features, the
+mid vowels and *é* open on the second, and the low vowels and *e* open on both. -/
 def VNode.ofLetter (l : String) : VNode :=
   if l ∈ ["i", "í", "ü", "ű", "u", "ú"] then ⟨false, false⟩
   else if l ∈ ["ö", "ő", "o", "ó", "é"] then ⟨false, true⟩
@@ -109,10 +109,10 @@ def linkAll (k : Fin w.upper.len) (p : Place) : Candidate w :=
 def floating (p : Place) : List (Fin w.upper.len) :=
   (List.finRange w.upper.len).filter fun k ↦ decide (c.IsFloating k ∧ valueAt k = p)
 
-/-- Link DOR (3b): every floating DOR associates to every node without COR. -/
+/-- By Link DOR (3b), every floating DOR associates to every node without COR. -/
 def linkDor : Candidate w := (floating c .dor).foldl (fun g k ↦ linkAll g k .dor) c
 
-/-- Link Place (3a): every floating place feature associates to every node it may link to. -/
+/-- By Link Place (3a), every floating place feature associates to every node it may link to. -/
 def linkPlace : Candidate w :=
   (List.finRange w.upper.len).foldl
     (fun g k ↦ if g.IsFloating k then linkAll g k (valueAt k) else g) c
@@ -130,19 +130,20 @@ def spreadAt (p : Place) (i : Fin w.lower.len) : Candidate w :=
     else c
   | none => c
 
-/-- Spread DOR (4b): iterating left to right, an anchored DOR extends to the next node. -/
+/-- By Spread DOR (4b), iterating left to right, an anchored DOR extends to the next node. -/
 def spreadDor : Candidate w := (List.finRange w.lower.len).foldl (fun g i ↦ spreadAt g .dor i) c
 
-/-- Spread Place (4a): iterating left to right, an anchored COR extends to the next node when
+/-- By Spread Place (4a), iterating left to right, an anchored COR extends to the next node when
 it is placeless, and an anchored LAB when it bears no DOR and is not low. -/
 def spreadPlace : Candidate w :=
   (List.finRange w.lower.len).foldl (fun g i ↦ spreadAt (spreadAt g .cor i) .lab i) c
 
-/-- The derivation: the linking rules, the DOR rule first, then the spreading rules. -/
+/-- The derivation applies the linking rules, the DOR rule first, and then the spreading
+rules. -/
 def derive : Candidate w := spreadPlace (spreadDor (linkPlace (linkDor c)))
 
-/-- The harmonic quality a node surfaces with: back with DOR, front rounded with LAB alone,
-and front unrounded with COR or, by Default COR (5), placeless. -/
+/-- A node surfaces back with DOR, front rounded with LAB alone, and front unrounded with COR
+or, by Default COR (5), when placeless. -/
 inductive Quality
   | back | frontRounded | frontUnrounded
   deriving DecidableEq
@@ -155,7 +156,7 @@ def quality (ps : List Place) : Quality :=
 
 variable {c}
 
-/-- Constraint (6a): no node bears both COR and DOR. -/
+/-- By constraint (6a), no node bears both COR and DOR. -/
 def Sound (g : Candidate w) : Prop := ∀ i, ¬ (.cor ∈ places g i ∧ .dor ∈ places g i)
 
 theorem mem_places_insertLink {p : Place} {k : Fin w.upper.len} {i j : Fin w.lower.len} :
@@ -175,7 +176,7 @@ theorem Sound.insertLink {p : Place} {k : Fin w.upper.len} {i : Fin w.lower.len}
   · exact List.ne_nil_of_mem (hji ▸ hd) (hm.2.1 (hv.symm.trans hc))
   · exact Place.noConfusion (hc.symm.trans hd)
 
-/-- What every rule preserves: the association lines and soundness. -/
+/-- Every rule preserves the association lines and soundness. -/
 structure Preserves (f g : Candidate w) : Prop where
   subset : f.links ⊆ g.links
   sound : Sound f → Sound g
@@ -247,8 +248,8 @@ theorem derive_sound (hs : Sound c) : Sound (derive c) := preserves_derive.sound
 
 /-! ### Stems and suffixes -/
 
-/-- A stem's underlying representation, Table 18: for each vowel its aperture and the place
-features prelinked to it, and the floating place features of the morpheme. -/
+/-- A stem's underlying representation in Table 18 gives for each vowel its aperture and the
+place features prelinked to it, and the floating place features of the morpheme. -/
 structure Stem where
   nodes : List (VNode × List Place)
   floating : List Place
@@ -256,10 +257,10 @@ structure Stem where
 /-- The representation of a stem row whose vowels bear the given prelinked features. -/
 def Stem.ofRow (row : Data.Forms.Form) (linked : List (List Place)) (floating : List Place) :
     Stem :=
-  ⟨((row.segments.filter λ l => (ofLetter l).isSome).map VNode.ofLetter).zip linked, floating⟩
+  ⟨((row.segments.filter fun l ↦ (ofLetter l).isSome).map VNode.ofLetter).zip linked, floating⟩
 
-/-- The suffixes of the derivations, (2): the possessive ü/u and the ablative ö/o carry a
-linked LAB; the dative e/a, the allative ö/o/e and the inessive e/a are placeless. -/
+/-- Of the suffixes of the derivations, (2), the possessive ü/u and the ablative ö/o carry a
+linked LAB, and the dative e/a, the allative ö/o/e and the inessive e/a are placeless. -/
 inductive Suffix
   | poss | abl | dat | all | iness
   deriving DecidableEq
@@ -317,39 +318,39 @@ def Stem.isBack (s : Stem) : Bool :=
 
 namespace Stem
 
-/-- The pure DOR stem *ház* 'house': a floating DOR (8a). -/
+/-- The pure DOR stem *ház* 'house' has a floating DOR (8a). -/
 def haz : Stem := ofRow Forms.haz [[]] [.dor]
 
-/-- The pure LAB stem *tűz* 'fire': a floating LAB (8b). -/
+/-- The pure LAB stem *tűz* 'fire' has a floating LAB (8b). -/
 def tuz : Stem := ofRow Forms.tuz [[]] [.lab]
 
-/-- The pure COR stem *víz* 'water': a floating COR (8c). -/
+/-- The pure COR stem *víz* 'water' has a floating COR (8c). -/
 def viz : Stem := ofRow Forms.viz [[]] [.cor]
 
-/-- The COR + DOR stem *piros* 'red': a linked COR and a floating DOR (9a). -/
+/-- The COR + DOR stem *piros* 'red' has a linked COR and a floating DOR (9a). -/
 def piros : Stem := ofRow Forms.piros [[.cor], []] [.dor]
 
-/-- The LAB + DOR stem *nüansz* 'nuance': both features linked (10a). -/
+/-- The LAB + DOR stem *nüansz* 'nuance' has both features linked (10a). -/
 def nuansz : Stem := ofRow Forms.nuansz [[.lab], [.dor]] []
 
-/-- The LAB + COR stem *öreg* 'old': both features linked (10b). -/
+/-- The LAB + COR stem *öreg* 'old' has both features linked (10b). -/
 def oreg : Stem := ofRow Forms.oreg [[.lab], [.cor]] []
 
-/-- The COR + LAB stem *szemölcs* 'wart': a floating COR and a linked LAB (11a). -/
+/-- The COR + LAB stem *szemölcs* 'wart' has a floating COR and a linked LAB (11a). -/
 def szemolcs : Stem := ofRow Forms.szemolcs [[], [.lab]] [.cor]
 
-/-- The DOR + LAB stem *sofőr* 'driver': a linked DOR and a labial vowel exceptionally also
+/-- The DOR + LAB stem *sofőr* 'driver' has a linked DOR and a labial vowel exceptionally also
 coronal, which keeps DOR from spreading onto it (11b). -/
 def sofor : Stem := ofRow Forms.sofor [[.dor], [.cor, .lab]] []
 
-/-- The transparent DOR + COR stem *papír* 'paper': a floating DOR and a linked COR (12a). -/
+/-- The transparent DOR + COR stem *papír* 'paper' has a floating DOR and a linked COR (12a). -/
 def papir : Stem := ofRow Forms.papir [[], [.cor]] [.dor]
 
-/-- The antiharmonic DOR + COR stem *híd* 'bridge': a linked COR and a floating DOR with no
+/-- The antiharmonic DOR + COR stem *híd* 'bridge' has a linked COR and a floating DOR with no
 node in the stem to link to (12b). -/
 def hid : Stem := ofRow Forms.hid [[.cor]] [.dor]
 
-/-- The opaque DOR + COR stem *kódex* 'codex': both features linked (12c). -/
+/-- The opaque DOR + COR stem *kódex* 'codex' has both features linked (12c). -/
 def kodex : Stem := ofRow Forms.kodex [[.dor], [.cor]] []
 
 /-- The vacillating stem *dzsungel* 'jungle' represented like *papír*. -/
@@ -365,7 +366,7 @@ def paradigm (stem : Data.Forms.Form) (s : Stem) (poss abl dat all : Data.Forms.
     List (Data.Forms.Form × Stem × Suffix × Data.Forms.Form) :=
   [(stem, s, .poss, poss), (stem, s, .abl, abl), (stem, s, .dat, dat), (stem, s, .all, all)]
 
-/-- The derivations (13) to (23): the eleven stems of Table 18, each with the possessive,
+/-- The derivations (13) to (23) are the eleven stems of Table 18, each with the possessive,
 ablative, dative and allative. -/
 def derivationTable : List (Data.Forms.Form × Stem × Suffix × Data.Forms.Form) :=
   paradigm Forms.haz .haz Forms.hazunk Forms.haztol Forms.haznak Forms.hazhoz ++
@@ -382,8 +383,8 @@ def derivationTable : List (Data.Forms.Form × Stem × Suffix × Data.Forms.Form
     paradigm Forms.hid .hid Forms.hidunk Forms.hidtol Forms.hidnak Forms.hidhoz ++
     paradigm Forms.kodex .kodex Forms.kodexunk Forms.kodextol Forms.kodexnek Forms.kodexhez
 
-/-- Every derivation of (13) to (23) yields the attested suffix: transparency, antiharmony and
-opacity follow from the prelinking of Table 18 by the same rules. -/
+/-- Every derivation of (13) to (23) yields the attested suffix, so transparency, antiharmony
+and opacity follow from the prelinking of Table 18 by the same rules. -/
 theorem derivations : ∀ t ∈ derivationTable,
     derived t.2.1 t.2.2.1 = some (t.2.2.2.segments.drop t.1.segments.length) := by
   decide +kernel
@@ -410,27 +411,27 @@ def regular : List (Data.Forms.Form × Stem) :=
 
 /-- On the regular stems the surface generalization and the derivations agree. -/
 theorem sourceValue_agrees : ∀ t ∈ regular,
-    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf t.1.segments) = some t.2.isBack := by
+    palatalHarmony.searchCopy.sourceValue (vowelsOf t.1.segments) = some t.2.isBack := by
   decide +kernel
 
 /-- A pure COR stem has no harmonic vowel to read, and its floating COR derives front
 suffixes. -/
 theorem sourceValue_viz :
-    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf Forms.viz.segments) = none ∧
+    palatalHarmony.searchCopy.sourceValue (vowelsOf Forms.viz.segments) = none ∧
       Stem.viz.isBack = false := by
   decide
 
 /-- An antiharmonic stem has no harmonic vowel to read either; its floating DOR derives back
 suffixes. -/
 theorem sourceValue_hid :
-    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf Forms.hid.segments) = none ∧
+    palatalHarmony.searchCopy.sourceValue (vowelsOf Forms.hid.segments) = none ∧
       Stem.hid.isBack = true := by
   decide
 
 /-- An opaque stem's last harmonic vowel is back, yet its linked DOR cannot reach the suffix
 and its linked COR derives front suffixes. -/
 theorem sourceValue_kodex :
-    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf Forms.kodex.segments) = some true ∧
+    palatalHarmony.searchCopy.sourceValue (vowelsOf Forms.kodex.segments) = some true ∧
       Stem.kodex.isBack = false := by
   decide
 
