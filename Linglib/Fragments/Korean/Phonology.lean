@@ -35,14 +35,14 @@ namespace Korean.Phonology
 
 /-- The features every plain stop shares. -/
 private def stop : List (Feature × Bool) :=
-  [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.continuant, false),
-    (.voice, false), (.delayedRelease, false)]
+  [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.approximant, false),
+    (.continuant, false), (.voice, false), (.delayedRelease, false)]
 
 /-- The features every nasal shares; a nasal is a non-continuant without delayed release, so
 the rule's change leaves a nasal as it is. -/
 private def nasalSpecs : List (Feature × Bool) :=
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.nasal, true), (.voice, true),
-    (.continuant, false), (.delayedRelease, false)]
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
+    (.nasal, true), (.voice, true), (.continuant, false), (.delayedRelease, false)]
 
 /-- The features every vowel shares. -/
 private def vowel : List (Feature × Bool) :=

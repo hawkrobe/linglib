@@ -23,8 +23,8 @@ open Phonology
 
 namespace Farsi.Phonology
 
-/-- Canonical Persian phoneme inventory: first PHOIBLE inventory for ISO
-`pes` (the Stanford Phonology Archive doculect). -/
+/-- The canonical Persian phoneme inventory is the first PHOIBLE inventory for ISO `pes`,
+the Stanford Phonology Archive doculect. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Persian.pes
 
@@ -65,17 +65,17 @@ def ch : Segment := Segment.ofSpecs
 
 /-- /m/ — bilabial nasal. -/
 def m : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
    (.nasal, true), (.voice, true), (.labial, true)]
 
 /-- /n/ — alveolar nasal. -/
 def n : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
    (.nasal, true), (.voice, true), (.coronal, true), (.anterior, true)]
 
 /-- /ʔ/ — glottal stop, the epenthetic hiatus-breaker. -/
 def glottal : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
+  [(.syllabic, false), (.consonantal, true), (.sonorant, false),
    (.continuant, false), (.voice, false), (.constrGlottis, true)]
 
 /-! ### Consistency with the substrate and with PHOIBLE -/

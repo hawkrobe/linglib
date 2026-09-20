@@ -162,12 +162,12 @@ def s : Segment := .ofSpecs
 
 /-- /m/ — bilabial nasal. -/
 def m : Segment := .ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
    (.nasal, true), (.voice, true), (.labial, true)]
 
 /-- /n/ — alveolar nasal. -/
 def n : Segment := .ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true),
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
    (.nasal, true), (.voice, true),
    (.coronal, true), (.anterior, true)]
 

@@ -119,10 +119,10 @@ def v : Segment := consonant [(.consonantal, true), (.sonorant, false), (.contin
   (.labial, true), (.voice, true)]
 def h : Segment := consonant [(.consonantal, false), (.sonorant, false), (.continuant, true),
   (.spreadGlottis, true), (.voice, false)]
-def m : Segment := consonant [(.consonantal, true), (.sonorant, true), (.nasal, true),
-  (.labial, true), (.voice, true)]
-def n : Segment := consonant [(.consonantal, true), (.sonorant, true), (.nasal, true),
-  (.coronal, true), (.voice, true)]
+def m : Segment := consonant [(.consonantal, true), (.sonorant, true), (.approximant, false),
+  (.nasal, true), (.labial, true), (.voice, true)]
+def n : Segment := consonant [(.consonantal, true), (.sonorant, true), (.approximant, false),
+  (.nasal, true), (.coronal, true), (.voice, true)]
 def l : Segment := consonant [(.consonantal, true), (.sonorant, true), (.lateral, true),
   (.coronal, true), (.voice, true)]
 /-- `l'` is the palatal l of loans such as *gol* and *hal*. It is [−back] and so triggers

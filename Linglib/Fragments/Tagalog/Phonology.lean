@@ -47,7 +47,8 @@ private def stop : List (Feature × Bool) :=
 
 /-- The features every nasal shares. -/
 private def nasalSpecs : List (Feature × Bool) :=
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.nasal, true), (.voice, true)]
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
+    (.nasal, true), (.voice, true)]
 
 /-- The voiceless bilabial stop. -/
 def p : Segment := Segment.ofSpecs (stop ++ [(.voice, false), (.labial, true)])
@@ -112,7 +113,7 @@ def obstruentDeletion : Rule where
   effect := .delete
   leftContext := [.seg (Segment.ofSpecs [(.nasal, true)])]
 
-/-- Nasal substitution: place assimilation feeding obstruent deletion. -/
+/-- Nasal substitution is place assimilation feeding obstruent deletion. -/
 def nasalSubstitution : List Rule := [placeAssimilation, obstruentDeletion]
 
 /-- *maŋ-* with *bigáj* derives *mamigáj*; the bare stem is unchanged. -/
