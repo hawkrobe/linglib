@@ -43,7 +43,7 @@ def io : PersonalPronoun :=
 
 /-- *tu* — 2sg familiar (T form). -/
 def tu : PersonalPronoun :=
-  { form := "tu", person := some .second, number := some .singular, register := .informal,
+  { form := "tu", person := some .second, number := some .singular, honorific := some .nonhonorific,
     strength := some .strong }
 
 /-- *Lei* — polite 2sg (V form). Formally 3rd person: triggers 3sg verbal
@@ -52,7 +52,7 @@ def tu : PersonalPronoun :=
     2PL resolved agreement in coordination.
     [adamson-zompi-2025] -/
 def lei_formal : PersonalPronoun :=
-  { form := "Lei", person := some .third, number := some .singular, register := .formal,
+  { form := "Lei", person := some .third, number := some .singular, honorific := some .honorific,
     referential := {.addressee}, strength := some .strong }
 
 /-- *lui* — 3sg masculine. -/
@@ -71,12 +71,12 @@ def noi : PersonalPronoun :=
 
 /-- *voi* — 2pl (familiar; also used as general 2pl in modern Italian). -/
 def voi : PersonalPronoun :=
-  { form := "voi", person := some .second, number := some .plural, register := .informal,
+  { form := "voi", person := some .second, number := some .plural, honorific := some .nonhonorific,
     strength := some .strong }
 
 /-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
 def loro_formal : PersonalPronoun :=
-  { form := "Loro", person := some .second, number := some .plural, register := .formal,
+  { form := "Loro", person := some .second, number := some .plural, honorific := some .honorific,
     strength := some .strong }
 
 /-- *loro* — 3pl. -/

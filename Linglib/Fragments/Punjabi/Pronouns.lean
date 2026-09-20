@@ -24,11 +24,13 @@ def asiiN : PersonalPronoun := { form := "asiiṃ", person := some .first, numbe
 
 /-- *tũ* — 2sg nonhonorific. -/
 def tuN : PersonalPronoun :=
-  { form := "tũ", person := some .second, number := some .singular, register := .informal }
+  { form := "tũ", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *tusii* — 2sg honorific, also 2pl. -/
 def tusii : PersonalPronoun :=
-  { form := "tusii", person := some .second, number := some .singular, register := .formal }
+  { form := "tusii", person := some .second, number := some .singular,
+    honorific := some .honorific }
 
 /-- *uh* — 3sg, the distal demonstrative. -/
 def uhSg : PersonalPronoun := { form := "uh", person := some .third, number := some .singular }

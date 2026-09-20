@@ -1,20 +1,21 @@
 import Linglib.Morphology.Paradigm.Basic
+import Linglib.Pragmatics.SocialMeaning.Honorific
 import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Personal pronouns
 
-A personal pronoun is a pronoun with a register and the referential categories it denotes. The
-categories are by default those its agreement person and number realize. A polite pronoun
-overrides the default: Italian *Lei* and German *Sie* agree as third person and denote the
-addressee, so their formal features govern agreement, clitic allomorphy and reflexive binding
-while their referential categories govern the person-case constraint and resolved agreement
-([adamson-zompi-2025]).
+A personal pronoun is a pronoun with a register, an honorific level where the language grades its
+pronouns for one, and the referential categories it denotes. The categories are by default those its
+agreement person and number realize. A polite pronoun overrides the default: Italian *Lei* and
+German *Sie* agree as third person and denote the addressee, so their formal features govern
+agreement, clitic allomorphy and reflexive binding while their referential categories govern the
+person-case constraint and resolved agreement ([adamson-zompi-2025]).
 
 ## Main definitions
 
-* `PersonalPronoun` — a pronoun with its register and referential categories
+* `PersonalPronoun` — a pronoun with its register, honorific level and referential categories
 * `PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber` — the person and
   number the pronoun contributes to interpretation
 * `PersonalPronoun.IsOrdinary` — the pronoun denotes what its agreement features realize
@@ -33,12 +34,16 @@ while their referential categories govern the person-case constraint and resolve
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
 
-/-- A personal pronoun: a `Pronoun` with its register and the referential categories it
-denotes. -/
+/-- A personal pronoun is a `Pronoun` with its register, its honorific level and the referential
+categories it denotes. -/
 structure PersonalPronoun extends Pronoun where
-  /-- The register. A binary system uses `informal` and `formal`; a ternary honorific system,
-  as in Hindi, Magahi, Maithili and Korean, all three levels. -/
-  register : SocialMeaning.Register.Level := .informal
+  /-- The register. Japanese *boku* is an informal first person, and Korean *geu* a third person
+  of written narrative. -/
+  register : SocialMeaning.Register := .neutral
+  /-- The honorific level the pronoun presents its referent at, `none` where the language does not
+  grade the pronoun. A binary system uses `nonhonorific` and `honorific`; a ternary one, as in
+  Hindi, Magahi and Maithili, all three levels. -/
+  honorific : Option SocialMeaning.HonorificLevel := none
   /-- The referential categories the pronoun can denote, by default those its agreement person
   and number realize. Italian *Lei* denotes `{addressee}` and German *Sie*
   `{addressee, addresseeOthers}` ([adamson-zompi-2025]). -/

@@ -25,19 +25,22 @@ def nos : PersonalPronoun := { form := "nós", person := some .first, number := 
 
 /-- *ti* — 2sg familiar. -/
 def ti : PersonalPronoun :=
-  { form := "ti", person := some .second, number := some .singular, register := .informal }
+  { form := "ti", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *vostede* — 2sg formal. -/
 def vostede : PersonalPronoun :=
-  { form := "vostede", person := some .second, number := some .singular, register := .formal }
+  { form := "vostede", person := some .second, number := some .singular,
+    honorific := some .honorific }
 
 /-- *vós* — 2pl familiar. -/
 def vosPl : PersonalPronoun :=
-  { form := "vós", person := some .second, number := some .plural, register := .informal }
+  { form := "vós", person := some .second, number := some .plural, honorific := some .nonhonorific }
 
 /-- *vostedes* — 2pl formal. -/
 def vostedes : PersonalPronoun :=
-  { form := "vostedes", person := some .second, number := some .plural, register := .formal }
+  { form := "vostedes", person := some .second, number := some .plural,
+    honorific := some .honorific }
 
 /-- *el* — 3sg masculine. -/
 def el : PersonalPronoun :=
@@ -60,10 +63,11 @@ def pronouns : Finset PersonalPronoun :=
   {eu, nos, ti, vostede, vosPl, vostedes, el, ela, eles, elas}
 
 /-- *che* — familiar dative clitic, singular addressee. -/
-def che : AllocutiveMarker := { form := "che", register := .informal, number := some .singular }
+def che : AllocutiveMarker :=
+  { form := "che", honorific := .nonhonorific, number := some .singular }
 
 /-- *vos* — familiar dative clitic, plural addressee. -/
-def vos : AllocutiveMarker := { form := "vos", register := .informal, number := some .plural }
+def vos : AllocutiveMarker := { form := "vos", honorific := .nonhonorific, number := some .plural }
 
 /-- The allocutive clitics. -/
 def allocutiveClitics : List AllocutiveMarker := [che, vos]

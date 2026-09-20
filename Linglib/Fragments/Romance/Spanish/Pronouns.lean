@@ -39,7 +39,8 @@ def yo : PersonalPronoun :=
 
 /-- *tú* — 2sg familiar (T form). -/
 def tu : PersonalPronoun :=
-  { form := "tú", person := some .second, number := some .singular, register := .informal }
+  { form := "tú", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *usted* — polite 2sg (V form, triggers 3sg agreement).
     Agreement person is 3rd, interpretable person is 2nd. Triggers PCC
@@ -47,7 +48,7 @@ def tu : PersonalPronoun :=
     ([rezac-2011], [adamson-zompi-2025] §6.1).
     [adamson-zompi-2025] -/
 def usted : PersonalPronoun :=
-  { form := "usted", person := some .third, number := some .singular, register := .formal,
+  { form := "usted", person := some .third, number := some .singular, honorific := some .honorific,
     referential := {.addressee} }
 
 /-- *él* — 3sg masculine. -/
@@ -64,11 +65,12 @@ def nosotros : PersonalPronoun :=
 
 /-- *vosotros* — 2pl familiar (Peninsular). -/
 def vosotros : PersonalPronoun :=
-  { form := "vosotros", person := some .second, number := some .plural, register := .informal }
+  { form := "vosotros", person := some .second, number := some .plural,
+    honorific := some .nonhonorific }
 
 /-- *ustedes* — 2pl formal / general (triggers 3pl agreement). -/
 def ustedes : PersonalPronoun :=
-  { form := "ustedes", person := some .third, number := some .plural, register := .formal,
+  { form := "ustedes", person := some .third, number := some .plural, honorific := some .honorific,
     referential := {.addresseeOthers} }
 
 /-- *ellos* — 3pl masculine. -/

@@ -47,12 +47,12 @@ def watashitachi : PersonalPronoun :=
 /-- 君 *kimi* — 2sg plain. -/
 def kimi : PersonalPronoun :=
   { form := "kimi", script := some "君", person := some .second, number := some .singular,
-    register := .informal }
+    honorific := some .nonhonorific }
 
 /-- あなた *anata* — 2sg polite. -/
 def anata : PersonalPronoun :=
   { form := "anata", script := some "あなた", person := some .second, number := some .singular,
-    register := .formal }
+    honorific := some .honorific }
 
 /-- 彼 *kare* — 3sg masculine. -/
 def kare : PersonalPronoun :=
@@ -86,6 +86,6 @@ theorem zibun_licensedBy (r : Reference.LogophoricRole) : zibun.LicensedBy r :=
   ⟨.pivot, rfl, bot_le (a := r)⟩
 
 /-- *-mas-* — the addressee-honorific marker on the verb. -/
-def mas : AllocutiveMarker := { form := "-mas-", register := .formal }
+def mas : AllocutiveMarker := { form := "-mas-", honorific := .honorific }
 
 end Japanese.Pronouns

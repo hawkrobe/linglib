@@ -27,11 +27,12 @@ def gu : PersonalPronoun := { form := "gu", person := some .first, number := som
 
 /-- *hi* — 2sg familiar. -/
 def hi : PersonalPronoun :=
-  { form := "hi", person := some .second, number := some .singular, register := .informal }
+  { form := "hi", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *Zu* addresses one person and agrees as a second person plural. -/
 def zu : PersonalPronoun :=
-  { form := "zu", person := some .second, number := some .plural, register := .formal,
+  { form := "zu", person := some .second, number := some .plural, honorific := some .honorific,
     referential := {.addressee} }
 
 /-- *zuek* — 2pl. -/
@@ -56,13 +57,15 @@ theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
 theorem referential_zu : zu.referential = hi.referential := by decide
 
 /-- *-k* — nonhonorific male addressee. -/
-def allocM : AllocutiveMarker := { form := "-k", register := .informal, gender := some .masculine }
+def allocM : AllocutiveMarker :=
+  { form := "-k", honorific := .nonhonorific, gender := some .masculine }
 
 /-- *-n* — nonhonorific female addressee. -/
-def allocF : AllocutiveMarker := { form := "-n", register := .informal, gender := some .feminine }
+def allocF : AllocutiveMarker :=
+  { form := "-n", honorific := .nonhonorific, gender := some .feminine }
 
 /-- *-zü* — honorific addressee. -/
-def allocH : AllocutiveMarker := { form := "-zü", register := .formal }
+def allocH : AllocutiveMarker := { form := "-zü", honorific := .honorific }
 
 /-- The Souletin allocutive markers. -/
 def allocutiveMarkers : List AllocutiveMarker := [allocM, allocF, allocH]

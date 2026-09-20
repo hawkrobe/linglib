@@ -48,7 +48,7 @@ state; *bleiben* and *sein* themselves, which also take *sein*, are outside it.
 
 namespace German
 
-open ArgumentStructure.AuxiliarySelection SocialMeaning.Register
+open ArgumentStructure.AuxiliarySelection
 
 /-- The principal parts of a verb, in the third person singular, with the auxiliary of its
 perfect. -/
@@ -141,7 +141,7 @@ theorem PrincipalParts.tenseForm_isSome (v : PrincipalParts) {f : Tense.Form}
 
 /-- As a narrative tense the past belongs to written German and the double perfect to colloquial
 speech, and the other forms are unmarked. -/
-def register (f : Tense.Form) : Level :=
+def register (f : Tense.Form) : SocialMeaning.Register :=
   if f = .simplePast then .formal else if f = .doublePerfect then .informal else .neutral
 
 open Predicates in

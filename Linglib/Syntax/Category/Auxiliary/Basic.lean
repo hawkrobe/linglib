@@ -10,7 +10,6 @@ import Linglib.Syntax.Person.Basic
 
 open Morphology (Word Features)
 open Modality (ForceFlavor ModalItem)
-open SocialMeaning.Register (Level)
 
 /-!
 # Auxiliary
@@ -45,7 +44,7 @@ structure Auxiliary where
   /-- The modality, as force–flavor pairs; empty for the non-modal
       auxiliaries. -/
   modality : Finset ForceFlavor := ∅
-  register : Level := .neutral
+  register : SocialMeaning.Register := .neutral
   deriving DecidableEq
 
 namespace Auxiliary

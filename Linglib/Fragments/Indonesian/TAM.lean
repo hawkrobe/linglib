@@ -53,7 +53,7 @@ structure TemporalMarker where
   /-- `.formal` for *telah*, "almost entirely confined to writing and very
       formal speech"; `.neutral` for the rest, which [sneddon-1996] leaves
       unrestricted (§2.144). -/
-  register : SocialMeaning.Register.Level
+  register : SocialMeaning.Register
   /-- `some b`: §§2.143–51 states or illustrates that the marker does
       (`true`) or does not (`false`) occur with non-verbal predicates;
       `none`: not addressed there. -/
@@ -125,7 +125,7 @@ def TemporalMarker.toAuxiliary (m : TemporalMarker) : Auxiliary :=
 /-- *telah* has the same meaning as *sudah*; the difference between the two
 is in register (§2.144). -/
 theorem telah_sudah_same_meaning_distinct_register :
-    telah.meaning = sudah.meaning ∧ telah.register ≠ sudah.register := by decide
+    telah.meaning = sudah.meaning ∧ sudah.register < telah.register := by decide
 
 /-- *lagi* and *tengah* are the replacements for progressive *sedang*
 (§2.146). -/

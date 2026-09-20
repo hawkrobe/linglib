@@ -1,100 +1,59 @@
-import Mathlib.Data.Rat.Defs
+import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Register
-[fiske-cuddy-glick-xu-2002]
 
-Sociolinguistic register as a lexical feature. Register encodes the
-formality level of a linguistic form — whether it belongs to formal
-(literary, careful) speech, neutral (unmarked) speech, or informal
-(colloquial, casual) speech.
+This file defines the register of a linguistic form. A register is a way of speaking that a
+speech community ties to a kind of situation, and variation in register is variation within
+one speaker across situations rather than between speakers. The formality of the situation is
+the dimension recorded here: a form belongs to careful or written language, to casual speech,
+or to neither. English *must* and *perhaps* are formal beside *have to* and *maybe*, the German
+simple past is the narrative tense of writing, and Indonesian *telah* is the written
+counterpart of *sudah*.
 
-Register is currently stipulated as a lexical property of individual
-forms. A future direction is to derive register effects from pragmatic
-factors (e.g., RSA models where formality emerges from competing social
-goals, as in [yoon-etal-2020] for politeness).
+Register is a property of the form and of the situation of use. The social relation a form
+presents between the speaker and a person it refers to or addresses is a separate property,
+its honorific level, `SocialMeaning.HonorificLevel`. The Korean speech-style particles carry
+one value of each: the polite and the formal particle present the same relation to the
+addressee and differ in the formality of the discourse.
 
-## Connections
+## Main definitions
 
-* `PersonalPronoun.register`: pronoun register (T/V/honorific)
-* `AllocutiveMarker.register`: allocutive marker register
-* `Auxiliary.register`: auxiliary register
+* `SocialMeaning.Register`: the informal, neutral and formal registers, linearly ordered by
+  formality.
 
-Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.
-Ternary honorific systems (Hindi, Magahi, Maithili, Korean) use all three levels.
+## References
 
+* [S. Rotter and M. Liu, *A Register Approach to Modal (Non-)Concord in English: An
+  Experimental Study of Linguistic and Social Meaning* (2025)][rotter-liu-2025]
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
-namespace SocialMeaning.Register
+namespace SocialMeaning
 
-/-- Register level: the formality of a linguistic form.
+/-- The register of a form is the formality of the situations in which speakers use it. -/
+inductive Register where
+  /-- Colloquial, casual speech: *have to*, *maybe*. -/
+  | informal
+  /-- Unmarked for formality. -/
+  | neutral
+  /-- Written, literary or careful language: *must*, *shall*, *perhaps*. -/
+  | formal
+  deriving DecidableEq, Fintype, Repr
 
-    Three levels suffice for the phenomena currently formalized
-    (modal concord, T/V pronouns, honorific systems). Finer-grained scales are
-    possible (Biber's multi-dimensional analysis uses continuous
-    features) but not yet needed. -/
-inductive Level where
-  | formal    -- literary, written, careful speech (e.g., *must*, *shall*, *aap*)
-  | neutral   -- unmarked (e.g., *can*, *will*, *tum*, *gayo*)
-  | informal  -- colloquial, casual speech (e.g., *have to*, *tuu*, *boku*)
-  deriving DecidableEq, Repr, Inhabited
+namespace Register
 
-instance : ToString Level where
-  toString
-    | .formal => "formal"
-    | .neutral => "neutral"
-    | .informal => "informal"
+/-- Registers are ordered by formality, `informal < neutral < formal`. -/
+instance : LinearOrder Register :=
+  LinearOrder.lift' Register.ctorIdx fun a b h ↦ by cases a <;> cases b <;> first | rfl | cases h
 
-/-- All register levels, ordered from informal to formal. -/
-def Level.all : List Level := [.informal, .neutral, .formal]
+instance : BoundedOrder Register where
+  top := formal
+  le_top := by decide
+  bot := informal
+  bot_le := by decide
 
-/-- Numeric encoding: informal=0 < neutral=1 < formal=2. -/
-def Level.toNat : Level → Nat
-  | .informal => 0
-  | .neutral  => 1
-  | .formal   => 2
+end Register
 
-/-- Inverse of `toNat`: 0 → informal, 1 → neutral, 2+ → formal. -/
-def Level.fromNat : Nat → Level
-  | 0 => .informal
-  | 1 => .neutral
-  | _ => .formal
-
-/-- Ordering: informal < neutral < formal. -/
-instance : LinearOrder Level :=
-  LinearOrder.lift' Level.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [Level.toNat])
-
-/-- Round-trip: `ofNat` inverts `toNat`. -/
-theorem ofNat_toNat (l : Level) : Level.fromNat l.toNat = l := by cases l <;> decide
-
-/-- Rational-valued encoding: informal=0, neutral=1/2, formal=1. -/
-def Level.toRat : Level → ℚ
-  | .informal => 0
-  | .neutral  => 1/2
-  | .formal   => 1
-
-/-- Two forms are **register variants** if they differ in register
-    level. This is the structural precondition for register mixing
-    and split-register constructions. -/
-def areVariants (a b : Level) : Prop := a ≠ b
-
-instance (a b : Level) : Decidable (areVariants a b) :=
-  inferInstanceAs (Decidable (a ≠ b))
-
-/-! ## Social indexation -/
-
-/-- Social indexation of grammatical doubling.
-
-    Concord phenomena carry social meaning along a competence/solidarity
-    axis (drawing on the competence/warmth dichotomy in social cognition;
-    Fiske, Cuddy, [fiske-cuddy-glick-xu-2002]).
-
-    * `competence`: standard dialect, educated, formal, high-SES, confident.
-    * `solidarity`: non-standard, friendly, warm, in-group, casual. -/
-inductive SocialIndex where
-  | competence
-  | solidarity
-  deriving DecidableEq, Repr, Inhabited
-
-end SocialMeaning.Register
+end SocialMeaning
