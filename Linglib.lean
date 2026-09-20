@@ -743,7 +743,6 @@ import Linglib.Fragments.Finnish.Possession
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.Finnish.TemporalConnectives
-import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.Ga.Basic
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Fragments.Georgian.Agreement
