@@ -40,7 +40,7 @@ rows are the paper's ellipsis clauses under the null adjunct reading (`rows_pred
 
 namespace Funakoshi2016
 
-open Minimalist.Ellipsis Data.Examples
+open Minimalist Data.Examples
 
 /-- Where the adjunct attaches: inside the verb phrase, as manner, instrumental and temporal
 adjuncts do, or above negation, as reason adverbial clauses do. -/
@@ -51,8 +51,8 @@ inductive Attachment
 
 /-- The spine position of the adjunct: adjoined to VP, or at the height of tense, above the
 negation a reason clause outscopes. -/
-def Attachment.spinePos : Attachment → SpinePos
-  | .vp => .VP_adj
+def Attachment.spinePosition : Attachment → SpinePosition
+  | .vp => .vpAdjunct
   | .reason => .T
 
 /-- The clause-mate object of the ellipsis clause: absent in an intransitive clause, null, overt
@@ -71,16 +71,13 @@ structure Config where
   subjectNull : Bool
   deriving DecidableEq, Repr
 
-/-- Verb-stranding verb phrase ellipsis: [E] on Voice deletes the verb phrase with its adjuncts,
-and the verb, raised to tense, is stranded. -/
-def vvpe : EllipsisType := ⟨.Voice, "verb-stranding VP-ellipsis"⟩
-
-/-- The null adjunct reading by verb-stranding ellipsis: the adjunct sits in the site, and the
-object, if any, is elided with it or extracted as a contrastively focused remnant. -/
+/-- The null adjunct reading by verb-stranding ellipsis, [E] on Voice deleting the verb phrase
+with its adjuncts while the verb, raised to tense, is stranded: the adjunct sits in the site, and
+the object, if any, is elided with it or extracted as a contrastively focused remnant. -/
 def NullAdjunct (c : Config) : Prop :=
-  isInDeletionDomain c.adjunct.spinePos vvpe ∧ c.object ≠ .overt
+  Ellipsis.vpEllipsis.Deletes c.adjunct.spinePosition ∧ c.object ≠ .overt
 
-instance : DecidablePred NullAdjunct := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred NullAdjunct := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Generalizations (12) and (59) with the prediction of §2.2: an adjunct is null only inside the
 verb phrase and only with the object null, absent, or a contrastively focused remnant. -/
@@ -92,7 +89,7 @@ theorem nullAdjunct_iff (c : Config) : NullAdjunct c ↔ c.adjunct = .vp ∧ c.o
 takes both. -/
 def ObliqueMovement (c : Config) : Prop := c.object = .null ∨ c.subjectNull = true
 
-instance : DecidablePred ObliqueMovement := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred ObliqueMovement := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-! ### The paper's ellipsis clauses -/
 
