@@ -38,15 +38,16 @@ through the underspecified segment, in the sense of [keating-1988].
 
 namespace Sen2015
 
-open Phonology Latin.Phonology
+open Phonology Latin
 
-/-- The three categorical positions of /l/ (19): syllable coda, onset, and geminate. -/
+/-- The three categorical positions of /l/ (19) are the syllable coda, the onset, and the
+geminate. -/
 inductive Position
   | coda | onset | geminate
   deriving DecidableEq, Repr
 
-/-- The contexts of /l/ that the colouring evidence distinguishes (18), Figure 2.1: the coda,
-onset /l/ before /a o u/, before /e/, before /ē/, before /i/, and the geminate. -/
+/-- The contexts of /l/ that the colouring evidence distinguishes (18), Figure 2.1, are the
+coda, onset /l/ before /a o u/, before /e/, before /ē/, before /i/, and the geminate. -/
 inductive Context
   | coda | preBack | preE | preLongE | preI | geminate
   deriving DecidableEq, Repr, Fintype
@@ -70,23 +71,23 @@ def Context.darkness : Context → ℕ
 instance : Preorder Context := Preorder.lift Context.darkness
 
 instance : DecidableRel (α := Context) (· ≤ ·) :=
-  λ a b => inferInstanceAs (Decidable (a.darkness ≤ b.darkness))
+  fun a b ↦ inferInstanceAs (Decidable (a.darkness ≤ b.darkness))
 
 instance : DecidableRel (α := Context) (· < ·) :=
-  λ a b => inferInstanceAs (Decidable (a.darkness < b.darkness))
+  fun a b ↦ inferInstanceAs (Decidable (a.darkness < b.darkness))
 
-/-- The colouring of a short vowel before /l/: to /u/, to /o/, or unchanged. -/
+/-- A short vowel before /l/ is coloured to /u/, coloured to /o/, or left unchanged. -/
 inductive Colouring
   | toU | toO | unchanged
   deriving DecidableEq, Repr
 
 /-- The vowel a colouring produces, from the Fragment. -/
-def Colouring.vowel : Colouring → Option Segment
-  | .toU => some u
-  | .toO => some o
+def Colouring.vowel : Colouring → Option Phoneme
+  | .toU => some .u
+  | .toO => some .o
   | .unchanged => none
 
-/-- Colouring strength: to /u/ is stronger than to /o/, which is stronger than unchanged. -/
+/-- Colouring to /u/ is stronger than colouring to /o/, which is stronger than none. -/
 def Colouring.strength : Colouring → ℕ
   | .toU => 2
   | .toO => 1
@@ -97,7 +98,7 @@ inductive Syllable
   | internal | initial
   deriving DecidableEq, Repr
 
-/-- The regular colouring of a preceding short vowel by context (Figure 2.1): in an internal
+/-- The regular colouring of a preceding short vowel by context (Figure 2.1) is in an internal
 syllable to /u/ before the coda and before onset /l/ followed by /a o u/ or /e/, to /o/ before
 /lē/, and none before /li/ and /ll/; in an initial syllable to /u/ before the coda and to /o/
 before /la lo lu/ only. -/
@@ -109,9 +110,9 @@ def colouring : Syllable → Context → Colouring
   | .initial, .preBack => .toO
   | .initial, .preE | .initial, .preLongE | .initial, .preI | .initial, .geminate => .unchanged
 
-/-- Colouring follows the scale of darkness (18): in either syllable, a darker context colours
-at least as strongly. -/
-theorem colouring_monotone (s : Syllable) : Monotone λ c => (colouring s c).strength := by
+/-- Colouring follows the scale of darkness (18), in that a darker context colours at least as
+strongly in either syllable. -/
+theorem colouring_monotone (s : Syllable) : Monotone fun c ↦ (colouring s c).strength := by
   cases s <;> intro c₁ c₂ <;> revert c₁ c₂ <;> decide
 
 /-- The coda is the darkest context and the geminate the clearest ((18), Figure 2.2). -/
@@ -119,15 +120,15 @@ theorem coda_darkest (c : Context) : c ≤ .coda := by revert c; decide
 
 theorem geminate_clearest (c : Context) : Context.geminate ≤ c := by revert c; decide
 
-/-- The surface specification of /l/ by position (23): the Fragment's /l/ with the dorsal
+/-- The surface specification of /l/ by position (23) is the Fragment's /l/ with the dorsal
 articulation `[+high]` common to the three variants, `[+back]` in the coda, `[−back]` in the
 geminate, and no value for `[back]` in the onset. -/
 def spec : Position → Segment
-  | .coda => (l.setFeature .high true).setFeature .back true
-  | .geminate => (l.setFeature .high true).setFeature .back false
-  | .onset => l.setFeature .high true
+  | .coda => (Phoneme.l.segment.setFeature .high true).setFeature .back true
+  | .geminate => (Phoneme.l.segment.setFeature .high true).setFeature .back false
+  | .onset => Phoneme.l.segment.setFeature .high true
 
-/-- The ternary surface contrast (19), (23): plus, minus and unspecified `[back]`, all
+/-- The surface contrast (19), (23) is ternary, with plus, minus and unspecified `[back]`, all
 `[+high]`. -/
 theorem spec_ternary :
     (spec .coda).HasValue .back true ∧ (spec .geminate).HasValue .back false ∧
@@ -136,7 +137,7 @@ theorem spec_ternary :
   intro p
   cases p <;> decide
 
-/-- The specified variants are the extremes of the scale: a context at least as dark as the coda
+/-- The specified variants are the extremes of the scale. A context at least as dark as the coda
 is the coda, and one at least as clear as the geminate is the geminate or onset /l/ before /i/,
 its equal in darkness. -/
 theorem extremes_specified (c : Context) :
@@ -144,7 +145,7 @@ theorem extremes_specified (c : Context) :
       (c ≤ .geminate → c = .geminate ∨ c = .preI) := by
   revert c; decide
 
-/-- Within the onset the specification is one and the darkness is not: before /a o u/, /e/ and
+/-- Within the onset the specification is one and the darkness is not. Before /a o u/, /e/ and
 /i/ the same `[Ø back]` /l/ ranges over three degrees, so the categorical specification does not
 determine the colouring, the chapter's reason for rejecting synchronic feature spreading as its
 mechanism (§2.5). -/
