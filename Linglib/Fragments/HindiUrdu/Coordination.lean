@@ -26,7 +26,7 @@ def aur : Coordinator :=
 /-- *bhii* 'also, too', after each coordinand 'both … and'. -/
 def bhii : Coordinator :=
   { form := "bhii", gloss := "also, too; and", role := .conjunctive, kind := .free,
-    alsoAdditive := true, correlative := true }
+    alsoAdditive := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [aur, bhii]

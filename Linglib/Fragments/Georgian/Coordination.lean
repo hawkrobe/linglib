@@ -30,7 +30,7 @@ def da : Coordinator :=
 /-- *-c* 'also, too', enclitic on each coordinand 'both … and'. -/
 def c_ : Coordinator :=
   { form := "-c", gloss := "also, too; and", role := .conjunctive, kind := .bound .after .clitic,
-    alsoAdditive := true, correlative := true }
+    alsoAdditive := true }
 
 /-- *an* 'or'. -/
 def an : Coordinator :=

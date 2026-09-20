@@ -26,7 +26,7 @@ def va : Coordinator :=
 /-- *ham* 'also, too', with each coordinand 'both … and'. -/
 def ham : Coordinator :=
   { form := "ham", gloss := "also, too; and", role := .conjunctive, kind := .free,
-    alsoAdditive := true, correlative := true }
+    alsoAdditive := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [va, ham]

@@ -5,11 +5,11 @@ import Linglib.Syntax.Category.Coordinator
 
 Latin conjoins with the free word *et* 'and', before the second coordinand, with the enclitic
 *-que*, attached to the first word of the second coordinand as in *senatus populusque*, and with
-the emphatic *atque*, *ac* before consonants. *Et* is repeated on each coordinand for 'both …
-and', and *et* on the first coordinand may be answered by *-que* on the second. The enclitic also
-builds the universal pronoun *quisque* 'each' on the interrogative. Disjunction is *aut* or
-*vel*, each repeated for 'either … or'; negative coordination is *neque*, *nec*, repeated for
-'neither … nor'; and the adversative coordinator is *sed*.
+the emphatic *atque*, *ac* before consonants. *Et* on the first coordinand answered by *-que*
+on the second is emphatic, *et singulis universisque* 'both for individuals and for all
+together'. The enclitic also builds the universal pronoun *quisque* 'each' on the
+interrogative. Disjunction is *aut* or *vel*; negative coordination is *neque*, *nec*, repeated
+for 'neither … nor'; and the adversative coordinator is *sed*.
 
 ## Main definitions
 
@@ -27,9 +27,9 @@ builds the universal pronoun *quisque* 'each' on the interrogative. Disjunction 
 
 namespace Latin.Coordination
 
-/-- *et* 'and', repeated for 'both … and'. -/
+/-- *et* 'and'. -/
 def et : Coordinator :=
-  { form := "et", gloss := "and", role := .conjunctive, kind := .free, correlative := true }
+  { form := "et", gloss := "and", role := .conjunctive, kind := .free }
 
 /-- *-que* 'and', enclitic in the second coordinand, also in *quisque* 'each'. -/
 def que : Coordinator :=
@@ -42,16 +42,15 @@ def atque : Coordinator :=
 
 /-- *neque*, *nec* 'and not', repeated for 'neither … nor'. -/
 def neque : Coordinator :=
-  { form := "neque", gloss := "and not, nor", role := .negative, kind := .free,
-    correlative := true }
+  { form := "neque", gloss := "and not, nor", role := .negative, kind := .free }
 
-/-- *aut* 'or', repeated for 'either … or'. -/
+/-- *aut* 'or'. -/
 def aut : Coordinator :=
-  { form := "aut", gloss := "or", role := .disjunctive, kind := .free, correlative := true }
+  { form := "aut", gloss := "or", role := .disjunctive, kind := .free }
 
-/-- *vel* 'or', repeated for 'either … or'. -/
+/-- *vel* 'or'. -/
 def vel : Coordinator :=
-  { form := "vel", gloss := "or", role := .disjunctive, kind := .free, correlative := true }
+  { form := "vel", gloss := "or", role := .disjunctive, kind := .free }
 
 /-- *sed* 'but'. -/
 def sed : Coordinator :=

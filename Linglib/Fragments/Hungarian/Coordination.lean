@@ -14,6 +14,7 @@ adversative coordinator is *de* 'but'. The emphatic conjunction is *mind … min
   the additive particle that conjoins when repeated.
 * `Hungarian.Coordination.vagy`, `Hungarian.Coordination.de`: the disjunctive and the
   adversative coordinator.
+* `Hungarian.Coordination.mindMind`: the emphatic conjunction.
 
 ## References
 
@@ -31,7 +32,7 @@ def es : Coordinator :=
 /-- *is* 'also, too', after each coordinand 'both … and'. -/
 def is_ : Coordinator :=
   { form := "is", gloss := "also, too; and", role := .conjunctive, kind := .free,
-    alsoAdditive := true, correlative := true }
+    alsoAdditive := true }
 
 /-- *vagy* 'or'. -/
 def vagy : Coordinator :=
@@ -43,5 +44,11 @@ def de : Coordinator :=
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [es, is_, vagy, de]
+
+/-- *mind … mind* 'both … and'. -/
+def mindMind : Coordinator.Correlative := ⟨"mind", "mind", es⟩
+
+/-- The emphatic constructions. -/
+def correlatives : List Coordinator.Correlative := [mindMind]
 
 end Hungarian.Coordination

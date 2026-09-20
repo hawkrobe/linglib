@@ -24,11 +24,11 @@ namespace Dargwa.Coordination
 /-- *=ra* 'and', enclitic on each coordinand, also the additive 'also, too'. -/
 def ra : Coordinator :=
   { form := "=ra", gloss := "and; also, too", role := .conjunctive, kind := .bound .after .clitic,
-    alsoAdditive := true, correlative := true }
+    alsoAdditive := true }
 
 /-- *ja* 'or', repeated before each alternative. -/
 def ja : Coordinator :=
-  { form := "ja", gloss := "or", role := .disjunctive, kind := .free, correlative := true }
+  { form := "ja", gloss := "or", role := .disjunctive, kind := .free }
 
 /-- *=nu* 'but; because', enclitic. -/
 def nu : Coordinator :=

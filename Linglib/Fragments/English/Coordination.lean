@@ -12,6 +12,8 @@ plain coordinator: *both … and*, *either … or*, *neither … nor*.
 * `English.Coordination.and_`, `English.Coordination.or_`, `English.Coordination.but_`,
   `English.Coordination.nor_`: the conjunctive, disjunctive, adversative and negative
   coordinators.
+* `English.Coordination.bothAnd`, `English.Coordination.eitherOr`,
+  `English.Coordination.neitherNor`: the emphatic constructions.
 
 ## References
 
@@ -20,23 +22,35 @@ plain coordinator: *both … and*, *either … or*, *neither … nor*.
 
 namespace English.Coordination
 
-/-- *and*, in the emphatic *both … and*. -/
+/-- *and*. -/
 def and_ : Coordinator :=
-  { form := "and", gloss := "and", role := .conjunctive, kind := .free, correlative := true }
+  { form := "and", gloss := "and", role := .conjunctive, kind := .free }
 
-/-- *or*, in the emphatic *either … or*. -/
+/-- *or*. -/
 def or_ : Coordinator :=
-  { form := "or", gloss := "or", role := .disjunctive, kind := .free, correlative := true }
+  { form := "or", gloss := "or", role := .disjunctive, kind := .free }
 
 /-- *but*. -/
 def but_ : Coordinator :=
   { form := "but", gloss := "but", role := .adversative, kind := .free }
 
-/-- *nor*, in the emphatic *neither … nor*. -/
+/-- *nor*. -/
 def nor_ : Coordinator :=
-  { form := "nor", gloss := "nor", role := .negative, kind := .free, correlative := true }
+  { form := "nor", gloss := "nor", role := .negative, kind := .free }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [and_, or_, but_, nor_]
+
+/-- *both … and*. -/
+def bothAnd : Coordinator.Correlative := ⟨"both", and_.form, and_⟩
+
+/-- *either … or*. -/
+def eitherOr : Coordinator.Correlative := ⟨"either", or_.form, or_⟩
+
+/-- *neither … nor*. -/
+def neitherNor : Coordinator.Correlative := ⟨"neither", nor_.form, nor_⟩
+
+/-- The emphatic constructions. -/
+def correlatives : List Coordinator.Correlative := [bothAnd, eitherOr, neitherNor]
 
 end English.Coordination
