@@ -1,5 +1,6 @@
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Studies.Condoravdi2002
+import Linglib.Fragments.Romance.Italian.Modals
 import Linglib.Data.Examples.Hacquard2006
 
 /-!
@@ -22,8 +23,10 @@ binder, aspect, the speech event, or an attitude (200), (309), so a modal is key
 event's participants and time (201), `positionPerspective`; an epistemic relation needs an
 event with content (310a), so an aspect-bound modal is epistemic only under a contentful
 complement, `not_aspectBoundEpistemic_of_eq_none`, and its reading (248) is an epistemic
-necessity for the attitude holder, `aspectBoundEpistemic_iff`. The dissertation's examples are
-the rows of `Data.Examples.Hacquard2006`.
+necessity for the attitude holder, `aspectBoundEpistemic_iff`. The starting point of the
+account is that one modal verb has root and epistemic readings alike, as Italian *potere* and
+*dovere* do, `italian_modals_one_entry`, so the contrast in actuality entailments cannot be
+lexical. The dissertation's examples are the rows of `Data.Examples.Hacquard2006`.
 
 ## Implementation notes
 
@@ -48,6 +51,15 @@ namespace Hacquard2006
 open Modality
 
 variable {W E T : Type*}
+
+/-! ### One entry per modal, chapter 1 -/
+
+/-- Each Italian modal verb keeps one force across an epistemic and a root flavor, the pattern
+that argues for a single entry whose reading is fixed by structure. -/
+theorem italian_modals_one_entry :
+    ∀ m ∈ Italian.modals,
+      m.VariesFlavor ∧ ¬ m.VariesForce ∧ ¬ m.Epistemic ∧ ¬ m.Circumstantial := by
+  decide
 
 /-! ### Aspect as a world-anchored quantifier over events, chapter 1 -/
 
