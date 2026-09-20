@@ -9,8 +9,7 @@ import Mathlib.Tactic.DeriveFintype
 The comparative case values: the labels under which the case systems of different languages are
 compared. A language's own cases are its fragment's business, and a fragment maps them to these
 labels. The hierarchies and orders the literature places on the labels are each stated where they
-are used: the containment orders in `Syntax/Case/Order.lean`, the extension paths of
-grammaticalization in `Morphology/Grammaticalization/Case.lean`, and Blake's hierarchy of case
+are used: the containment orders in `Syntax/Case/Order.lean` and Blake's hierarchy of case
 systems in `Studies/Blake1994.lean`.
 
 The Universal Dependencies case tags are the corpus vocabulary, reached through

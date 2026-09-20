@@ -1,5 +1,4 @@
 import Linglib.Syntax.Case.Basic
-import Linglib.Morphology.Grammaticalization.Case
 import Linglib.Syntax.Case.Order
 
 /-!
@@ -51,11 +50,6 @@ namespace Finnish.Case
 def inventory : Finset Case :=
   {.nom, .acc, .gen, .part, .ine, .ade, .ela, .abl, .ill, .all,
    .ess, .transl, .abess, .inst, .com}
-
-/-- The allative-for-dative substitution is exactly the extension path
-    in [heine-2009] Table 29.6, formalized in `Case.Extends`. -/
-theorem allative_extends_to_dative :
-    Case.Extends .all .dat := by decide
 
 -- ============================================================================
 -- § 3: Local Case Matrix (3 × 2)

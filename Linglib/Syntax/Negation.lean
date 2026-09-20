@@ -1,7 +1,6 @@
 import Linglib.Data.WALS.Features.F112A
 import Linglib.Data.WALS.Features.F114A
 import Linglib.Syntax.Category.Auxiliary.Constructions
-import Linglib.Morphology.Grammaticalization.Verbal
 import Linglib.Morphology.Morph
 
 /-!
@@ -26,8 +25,7 @@ expletive negation in `Semantics/Polarity/ExpletiveNegation.lean`.
 * `Marker`: a standard negation marker, as the morphs exponing it.
 * `Pair`: an affirmative and its negative counterpart, as morphs.
 * `Strategy`: negative verb, affix, or particle — the grain at which
-  negation meets auxiliary-verb constructions and the
-  grammaticalization cline.
+  negation meets auxiliary-verb constructions.
 * `asymmetrySubtypeOfISO`: a language's WALS Ch 114A value.
 
 ## Implementation notes
@@ -48,7 +46,6 @@ marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 * [miestamo-2013], Ch 114A
 * [miestamo-2005]
 * [anderson-2006a], §1.7.2
-* [heine-1993]
 * [jin-koenig-2021]
 -/
 
@@ -102,7 +99,6 @@ the aux-headed auxiliary-verb construction; an affix or a particle does
 not. `Strategy` classifies negation at that grain. -/
 
 open AuxiliaryVerbs (InflectionPattern)
-open Grammaticalization (GramStage)
 
 /-- How a language expresses sentential negation. -/
 inductive Strategy where
@@ -130,15 +126,6 @@ instance : DecidablePred Strategy.IsVerbal
   | .negVerb => isTrue trivial
   | .negAffix | .negParticle => isFalse id
 
-/-- The strategy's stage on the grammaticalization cline ([heine-1993];
-[anderson-2006a] ch. 7): a negative verb is an auxiliary, a negative affix
-one stage further. A particle is not a bleached verb, so it is off the
-cline entirely. -/
-def Strategy.toGramStage : Strategy → Option GramStage
-  | .negVerb => some .auxiliary
-  | .negAffix => some .affix
-  | .negParticle => none
-
 /-- The strategy's negative morpheme in the WALS Ch 112A
 classification. -/
 def Strategy.morphemeType : Strategy → Data.WALS.F112A.NegativeMorphemeType
@@ -146,12 +133,10 @@ def Strategy.morphemeType : Strategy → Data.WALS.F112A.NegativeMorphemeType
   | .negAffix => .negativeAffix
   | .negParticle => .negativeParticle
 
-/-- The two projections agree on which strategy is verbal: the cline stage
-[anderson-2006a] assigns and the morpheme type [miestamo-2005] assigns
-partition the strategies identically. -/
-theorem toGramStage_auxiliary_iff_morphemeType_auxVerb (s : Strategy) :
-    s.toGramStage = some .auxiliary ↔
-      s.morphemeType = .negativeAuxiliaryVerb := by
+/-- The verbal strategy is the one whose morpheme [miestamo-2005] types as a negative
+auxiliary verb. -/
+theorem isVerbal_iff_morphemeType_auxVerb (s : Strategy) :
+    s.IsVerbal ↔ s.morphemeType = .negativeAuxiliaryVerb := by
   cases s <;> decide
 
 end Negation

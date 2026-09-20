@@ -2,7 +2,6 @@ import Mathlib.Data.Finset.Basic
 import Linglib.Data.Examples.Judgment
 import Linglib.Fragments.Japanese.Case
 import Linglib.Syntax.Case.Dependent
-import Linglib.Morphology.Grammaticalization.Case
 /-!
 # Sadakane & Koizumi 1995 [sadakane-koizumi-1995] [martin-1975]
 
@@ -71,17 +70,6 @@ distinct lexemes), Japanese-learning children should acquire them
 independently. Morii (1993) confirms: case-marker *ni* (categories A, O1)
 is acquired between 2;0 and 2;11; postposition *ni* (categories B–U) is
 acquired only after 3;0.
-
-## Heine 2009 grammaticalization
-
-The four S&K classifications align partially with Heine's case
-grammaticalization cline (`CaseGramStage`: lexical → adposition →
-caseAffix → lost). Both case-marker *ni* and postposition *ni* are at
-`.adposition` stage in modern Japanese (morphologically free), but
-case-marker *ni* is more grammaticalized within that stage (no inherent
-meaning, omissible in casual speech). The cline doesn't capture
-intra-adposition gradience; the projection `Classification.gramStage` is
-correspondingly coarse.
 
 ## Layered grounding to linglib
 
@@ -496,41 +484,5 @@ theorem case_marker_acquired_before_postposition :
   intro a b ha hb
   simp only [Classification.acquisitionOrder, Option.some.injEq] at ha hb
   omega
-
-/-! ## §9 Heine grammaticalization stage projection
-
-Connects S&K's classification to `CaseGramStage` (Heine 2009's
-case grammaticalization cline: lexical → adposition → caseAffix → lost).
-Both case-marker *ni* and postposition *ni* are at `.adposition` stage
-in modern Japanese (morphologically free); the cline doesn't capture
-intra-adposition gradience, so the projection is correspondingly coarse.
-The diachronic prediction (case-marker *ni* should be CLOSER to
-`.caseAffix` than postposition *ni*) is documented in prose pending a
-finer-grained stage type.
--/
-
-namespace Classification
-
-/-- Heine grammaticalization stage projection. Both case-marker and
-    postposition *ni* are at `.adposition` in modern Japanese; copula *ni*
-    is outside the case cline (`none`). -/
-def gramStage : Classification → Option CaseGramStage
-  | .dativeCaseMarker => some .adposition
-  | .postposition     => some .adposition
-  | .niInsertion      => some .adposition
-  | .copula           => none
-
-end Classification
-
-/-- All case-relevant *ni* lexemes are at the `.adposition` stage on
-    Heine's cline. The diachronic prediction that case-marker *ni* is
-    MORE grammaticalized (closer to `.caseAffix`) than postposition *ni*
-    is currently invisible at this granularity — `CaseGramStage` lacks
-    intra-stage gradience. -/
-theorem case_ni_lexemes_all_adposition :
-    Classification.gramStage .dativeCaseMarker = some .adposition ∧
-    Classification.gramStage .postposition     = some .adposition ∧
-    Classification.gramStage .niInsertion      = some .adposition := by
-  refine ⟨rfl, rfl, rfl⟩
 
 end SadakaneKoizumi1995

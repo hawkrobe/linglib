@@ -78,7 +78,7 @@ inductive Complement where
 
 /-- Exponence on the grammaticalization cline (criterion 5). `affix` is the
     boundary at which the adposition becomes a `Case` exponent — the point where
-    this object and `Case` meet on the cline (`Morphology/Grammaticalization/Case.lean`). -/
+    this object and `Case` meet on the cline. -/
 inductive Exponence where
   | free
   | clitic
