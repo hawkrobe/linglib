@@ -580,7 +580,7 @@ theorem akan_underapplication :
 /-! ### Grounding the Akan tableau in phonological features
 
 The violation counts in §5 are grounded in the featural representations
-from `Akan.Phonology`. The key connection: palatalization is
+from `Akan`. The key connection: palatalization is
 a [coronal] feature change (/k/ [−cor] → /tɕ/ [+cor]), and the four
 constraints target exactly this feature dimension.
 
@@ -594,19 +594,19 @@ constraints target exactly this feature dimension.
   [coronal] value. Only `over` (input /k/ → output /tɕ/ in base). -/
 
 section AkanGrounding
-open Akan.Phonology
+open Akan
 open Phonology
 
 /-- The `over` candidate's OCP violation is grounded: /tɕ/ is [+coronal],
     so two /tɕ/ in successive syllables violate OCP(+cor). -/
-theorem akan_over_ocp_grounded : Consonant.tc.segment.HasValue Feature.coronal true := by
+theorem akan_over_ocp_grounded : Consonant.tcCurl.segment.HasValue Feature.coronal true := by
   decide
 
 /-- The `normal` candidate's IDENT-BR violation is grounded: the
     reduplicant has /tɕ/ ([+cor]) but the base has /k/ ([−cor]) — a
     featural mismatch on [coronal]. -/
 theorem akan_normal_identBR_grounded :
-    Consonant.tc.segment.HasValue Feature.coronal true ∧
+    Consonant.tcCurl.segment.HasValue Feature.coronal true ∧
       Consonant.k.segment.HasValue Feature.coronal false := by
   decide
 
@@ -615,7 +615,7 @@ theorem akan_normal_identBR_grounded :
     palatalization. -/
 theorem akan_under_pal_grounded :
     Consonant.k.segment.HasValue Feature.coronal false ∧
-      Vowel.I.segment.HasValue Feature.front true := by
+      Vowel.smallCapitalI.segment.HasValue Feature.front true := by
   decide
 
 /-- The `over` candidate's IDENT-IO violation is grounded: input /k/
@@ -623,7 +623,7 @@ theorem akan_under_pal_grounded :
     violation on the [coronal] feature. -/
 theorem akan_over_identIO_grounded :
     Consonant.k.segment.HasValue Feature.coronal false ∧
-      Consonant.tc.segment.HasValue Feature.coronal true := by
+      Consonant.tcCurl.segment.HasValue Feature.coronal true := by
   decide
 
 end AkanGrounding
