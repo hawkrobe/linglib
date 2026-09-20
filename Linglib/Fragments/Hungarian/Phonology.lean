@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Hungarian
-import Linglib.Phonology.Segmental.PHOIBLE
+import Linglib.Phonology.Segmental.SegmentLike
 import Linglib.Phonology.Harmony.System
 
 /-!
@@ -21,17 +21,14 @@ rounding being a matter of phonetic implementation, so it departs from the chart
 
 ## Main definitions
 
-* `Hungarian.Vowel`: the seven short vowels, with `chart`, `departure` and
-  `segment`.
+* `Hungarian.Vowel`: the seven short vowels, with `chart` and `departure`, read as segments.
 * `Hungarian.contrastive`: the features the vowel system uses.
 * `Hungarian.palatalHarmony`,
   `Hungarian.labialHarmony`: the two harmony systems.
 
 ## Main results
 
-* `Hungarian.Vowel.segment_injective`,
-  `Hungarian.Vowel.chart_mem_hun`: the contrastive features distinguish the
-  vowels, and each vowel is a phoneme of PHOIBLE's Hungarian inventory.
+* `Hungarian.Vowel.chart_mem_hun`: each vowel is a phoneme of PHOIBLE's Hungarian inventory.
 * `Hungarian.Vowel.isNeutral_iff`: the neutral vowels are /i/ and /ɛ/.
 
 ## Implementation notes
@@ -75,13 +72,6 @@ def departure : Vowel → Segment
   | turnedScriptA => Segment.ofSpecs [(.round, false)]
   | _ => ⊥
 
-/-- The segment of a vowel is its chart entry's, with its departure, on the contrastive
-features. -/
-def segment (v : Vowel) : Segment :=
-  Bundle.restrict contrastive (Bundle.merge v.departure v.chart.toSegment)
-
-theorem segment_injective : Function.Injective segment := by decide
-
 /-- Each vowel is in PHOIBLE's Hungarian inventory. -/
 theorem chart_mem_hun (v : Vowel) :
     v.chart ∈ Inventories.Hungarian.hun.phonemes.map (·.features) := by
@@ -100,8 +90,14 @@ def ofLetter : String → Option Vowel
 
 end Vowel
 
+/-- A vowel is read as its chart entry's segment, with its departure, on the contrastive
+features. -/
+instance : SegmentLike Vowel where
+  coe v := .ofChart v.chart v.departure contrastive
+  coe_injective' := by decide
+
 /-- The segment written by an orthographic vowel letter. -/
-def ofLetter (l : String) : Option Segment := (Vowel.ofLetter l).map Vowel.segment
+def ofLetter (l : String) : Option Segment := (Vowel.ofLetter l).map fun v ↦ (v : Segment)
 
 /-- The vowels of a word written as a list of orthographic segments. -/
 def vowelsOf (segments : List String) : List Segment := segments.filterMap ofLetter
@@ -126,9 +122,9 @@ instance : DecidablePred IsBackHarmonic := fun _ ↦ inferInstanceAs (Decidable 
 /-- The neutral vowels are /i/ and /ɛ/, the front harmonic ones /y/ and /ø/, and the rest are
 back harmonic. -/
 theorem Vowel.isNeutral_iff (v : Vowel) :
-    (IsNeutral v.segment ↔ v = .i ∨ v = .epsilon) ∧
-      (IsFrontHarmonic v.segment ↔ v = .y ∨ v = .ø) ∧
-      (IsBackHarmonic v.segment ↔ v = .u ∨ v = .o ∨ v = .turnedScriptA) := by
+    (IsNeutral (v : Segment) ↔ v = .i ∨ v = .epsilon) ∧
+      (IsFrontHarmonic (v : Segment) ↔ v = .y ∨ v = .ø) ∧
+      (IsBackHarmonic (v : Segment) ↔ v = .u ∨ v = .o ∨ v = .turnedScriptA) := by
   revert v; decide
 
 /-! ### The harmony systems -/

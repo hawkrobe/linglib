@@ -358,16 +358,13 @@ def ocpCoronal : List Segment → ℕ
 /-- By the paper's verdicts on OCP(+cor) in (127), *kita* obeys it and *tɕita* violates it,
 while a word whose two syllables are both palatal obeys it. -/
 theorem ocpCoronal_kita :
-    ocpCoronal [Consonant.k.segment, Vowel.i.segment, FeatureMatrix.«t».toSegment,
-        Vowel.a.segment] = 0 ∧
-      ocpCoronal [Consonant.tcCurl.segment, Vowel.i.segment, FeatureMatrix.«t».toSegment,
-        Vowel.a.segment] = 1 ∧
-      ocpCoronal [Consonant.tcCurl.segment, Vowel.i.segment, Consonant.tcCurl.segment,
-        Vowel.e.segment] = 0 := by
+    ocpCoronal [k, i, FeatureMatrix.«t».toSegment, a] = 0 ∧
+      ocpCoronal [tcCurl, i, FeatureMatrix.«t».toSegment, a] = 1 ∧
+      ocpCoronal [tcCurl, i, tcCurl, e] = 0 := by
   decide
 
 /-- The stem *ka* 'bite'. -/
-def stem : List Segment := [Consonant.k.segment, Vowel.a.segment]
+def stem : List Segment := [k, a]
 
 /-- The candidates of tableau (131) for /RED–ka/. -/
 inductive Candidate where
@@ -383,14 +380,13 @@ namespace Candidate
 
 /-- The base of a candidate. -/
 def base : Candidate → List Segment
-  | overapplication => [Consonant.tcCurl.segment, Vowel.a.segment]
+  | overapplication => [tcCurl, a]
   | normalApplication | underapplication => stem
 
 /-- The reduplicant of a candidate, a consonant and a high vowel. -/
 def reduplicant : Candidate → List Segment
-  | underapplication => [Consonant.k.segment, Vowel.smallCapitalI.segment]
-  | overapplication | normalApplication =>
-    [Consonant.tcCurl.segment, Vowel.smallCapitalI.segment]
+  | underapplication => [k, smallCapitalI]
+  | overapplication | normalApplication => [tcCurl, smallCapitalI]
 
 /-- The correspondence of a candidate between the stem, its base and its reduplicant. -/
 def correspondence (c : Candidate) : Correspondence ReduplicationRole Segment :=
