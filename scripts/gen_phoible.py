@@ -7,6 +7,7 @@ Usage:
 
 Examples:
     python3 scripts/gen_phoible.py eng deu jpn   # specific ISO codes
+    python3 scripts/gen_phoible.py kor=2197      # a chosen inventory, by InventoryID
     python3 scripts/gen_phoible.py               # the 16 PhonProfile defaults
     python3 scripts/gen_phoible.py --chart       # the glyph-indexed feature chart
 
@@ -21,8 +22,9 @@ are left out, and so are glyphs with a contour value such as `-,+`, which a `Boo
 matrix cannot hold.
 
 The first inventory per ISO is taken (lowest InventoryID), which matches
-PHOIBLE's canonical doculect pick. Multi-inventory languages (e.g. English
-has 5 inventories in PHOIBLE) get only the canonical one.
+PHOIBLE's canonical doculect pick, unless `ISO=ID` names another. A phoneme
+whose glyph is in the chart takes its feature matrix from `Chart.lean`; tones
+and contour-valued glyphs carry theirs inline.
 
 Dependencies: pure stdlib (csv module).
 
@@ -139,15 +141,22 @@ def lang_module_name(lang_name: str, iso: str) -> str:
 
 # ── Per-inventory emission ─────────────────────────────────────────────────
 
+def in_chart(row: dict) -> bool:
+    """Whether the chart has this row's glyph: not a tone, no contour value."""
+    return (row["SegmentClass"] != "tone"
+            and not any("," in row[c] for c in FEATURE_COLS + ["tone", "stress"]))
+
 def emit_phoneme(row: dict) -> str:
     """Emit one Lean `Phoneme` literal."""
-    # Build the feature bundle from the specified columns.
-    pairs = []
-    for col in FEATURE_COLS + ["tone", "stress"]:
-        val = feature_value(row.get(col, "0"))
-        if val is not None:
-            pairs.append((COL_TO_FIELD.get(col, col), val))
-    feature_block = format_features(pairs)
+    if in_chart(row):
+        feature_block = f".«{row['Phoneme']}»"
+    else:
+        pairs = []
+        for col in FEATURE_COLS + ["tone", "stress"]:
+            val = feature_value(row.get(col, "0"))
+            if val is not None:
+                pairs.append((COL_TO_FIELD.get(col, col), val))
+        feature_block = format_features(pairs)
 
     glyph = row.get("Phoneme", "").strip().strip('"')
     glyph_id = row.get("GlyphID", "").strip().strip('"')
@@ -189,11 +198,11 @@ def emit_inventory(rows: list, var_name: str) -> str:
     phonemes := [
 {phoneme_blocks} ] }}"""
 
-def emit_module(iso: str, rows_by_inv: dict, module_name: str) -> str:
-    """Emit a complete Lean module for one ISO — uses first inventory."""
+def emit_module(iso: str, rows_by_inv: dict, module_name: str, inv_id=None) -> str:
+    """Emit a complete Lean module for one ISO: the chosen inventory, else the first."""
     if not rows_by_inv:
         raise ValueError(f"no inventories for {iso}")
-    first_inv_id = min(rows_by_inv.keys())
+    first_inv_id = min(rows_by_inv.keys()) if inv_id is None else inv_id
     rows = rows_by_inv[first_inv_id]
     var_name = iso.lower()
     if not var_name.isidentifier():
@@ -204,14 +213,15 @@ def emit_module(iso: str, rows_by_inv: dict, module_name: str) -> str:
     head = rows[0]
     lang_name = head.get("LanguageName", "").strip().strip('"')
 
-    return f"""import Linglib.Data.PHOIBLE.Schema
+    regen = iso if inv_id is None else f"{iso}={inv_id}"
+    return f"""import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: {lang_name} ({iso}, ID {first_inv_id})
 [moran-mccloy-2019]
 
 Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
-**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py {iso}`.
+**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py {regen}`.
 
 {n_phonemes} phonemes. PHOIBLE inventory ID {first_inv_id}, Glottocode `{head.get("Glottocode", "").strip().strip(chr(34))}`.
 Source: PHOIBLE donor `{head.get("Source", "").strip().strip(chr(34))}`.
@@ -311,8 +321,12 @@ def main():
         sys.stdout.write(f"[gen] {CHART.relative_to(ROOT)} ({content.count(chr(10))} lines)\n")
         return
 
-    isos = sys.argv[1:] if len(sys.argv) > 1 else DEFAULT_ISOS
-    isos = [iso.lower() for iso in isos]
+    args = sys.argv[1:] if len(sys.argv) > 1 else DEFAULT_ISOS
+    chosen = {}
+    for a in args:
+        iso, _, inv = a.lower().partition("=")
+        chosen[iso] = int(inv) if inv else None
+    isos = list(chosen)
 
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -333,13 +347,15 @@ def main():
         if not invs:
             sys.stderr.write(f"WARN: no rows for ISO {iso}; skipping\n")
             continue
-        first_inv_id = min(invs.keys())
+        first_inv_id = min(invs.keys()) if chosen[iso] is None else chosen[iso]
+        if first_inv_id not in invs:
+            sys.exit(f"FATAL: ISO {iso} has no inventory {first_inv_id}; it has {sorted(invs)}")
         head = invs[first_inv_id][0]
         lang_name = head.get("LanguageName", "").strip().strip('"')
         module_name = lang_module_name(lang_name, iso)
 
         out_path = OUT / f"{module_name}.lean"
-        content = emit_module(iso, invs, module_name)
+        content = emit_module(iso, invs, module_name, chosen[iso])
         out_path.write_text(content, encoding="utf-8")
         sys.stdout.write(f"[gen] {module_name}.lean ({len(invs[first_inv_id])} phonemes, ISO {iso}, InvID {first_inv_id})\n")
 
