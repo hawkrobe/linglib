@@ -21,15 +21,15 @@ namespace OptimalityTheory
 
 variable {n : ℕ}
 
-/-- A constraint ranking: a permutation of `Fin n` ([prince-2002]'s total domination
-order `≫`). `r i` is the constraint at rank position `i` (position `0` is most
-dominant); `r.symm k` is the rank position of `k`. -/
+/-- A constraint ranking is a permutation of `Fin n`, Prince's total domination order `≫`.
+Here `r i` is the constraint at rank position `i`, position `0` being the most dominant, and
+`r.symm k` is the rank position of `k`. -/
 abbrev Ranking (n : ℕ) := Equiv.Perm (Fin n)
 
 variable {n : ℕ}
 
-/-- A total relation is maximal among antisymmetric relations: anything above
-it in the pointwise lattice collapses back onto it. -/
+/-- A total relation is maximal among antisymmetric relations, so an antisymmetric relation
+above it in the pointwise lattice equals it. -/
 theorem total_eq_of_le {α : Type*} {r s : α → α → Prop}
     [ht : Std.Total r] [ha : Std.Antisymm s] (h : r ≤ s) : r = s := by
   refine le_antisymm h fun a b hs => ?_
@@ -42,17 +42,18 @@ namespace Ranking
 
 variable (r : Ranking n)
 
-/-- Constraint `i` *dominates* constraint `j` under `r`: it sits at a lower
-(more dominant) rank position. -/
+/-- Constraint `i` dominates constraint `j` under `r` when it sits at a lower, more dominant,
+rank position. -/
 def Dominates (i j : Fin n) : Prop := r.symm i < r.symm j
 
-instance (i j : Fin n) : Decidable (r.Dominates i j) := inferInstanceAs (Decidable (r.symm i < r.symm j))
+instance (i j : Fin n) : Decidable (r.Dominates i j) :=
+  inferInstanceAs (Decidable (r.symm i < r.symm j))
 
 /-- Dominance between ranked positions is position order. -/
 @[simp] theorem dominates_apply_iff {p q : Fin n} : r.Dominates (r p) (r q) ↔ p < q := by
   simp [Dominates]
 
-/-- The identity ranking: rank position equals constraint index. -/
+/-- Under the identity ranking the rank position of a constraint is its index. -/
 def id (n : ℕ) : Ranking n := Equiv.refl _
 
 /-- Under the identity ranking, dominance is index order. -/
@@ -71,12 +72,20 @@ instance {α : Type*} : SMul (Ranking n) (Lex (Fin n → α)) :=
 
 @[simp] theorem id_smul {α : Type*} (v : Lex (Fin n → α)) : Ranking.id n • v = v := rfl
 
-/-- Any two distinct constraints can be ranked either way: some ranking makes `i`
-dominate `j`. -/
+/-- Any two distinct constraints can be ranked either way, so some ranking makes `i` dominate
+`j`. -/
 theorem exists_dominates {i j : Fin n} (hij : i ≠ j) : ∃ r : Ranking n, r.Dominates i j := by
   rcases lt_or_gt_of_ne hij with h | h
   · exact ⟨Ranking.id n, id_dominates_iff.mpr h⟩
   · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
+
+/-- Any constraint can be ranked above all the others. -/
+theorem exists_forall_dominates (i : Fin n) : ∃ r : Ranking n, ∀ j, j ≠ i → r.Dominates i j := by
+  refine ⟨Equiv.swap ⟨0, i.pos⟩ i, fun j hj ↦ ?_⟩
+  have hi : (Equiv.swap ⟨0, i.pos⟩ i).symm i = ⟨0, i.pos⟩ := by simp
+  rw [Dominates, hi, Fin.lt_def]
+  exact Nat.pos_of_ne_zero fun h0 ↦ hj <| (Equiv.swap ⟨0, i.pos⟩ i).symm.injective <|
+    Fin.ext (h0.trans (congrArg Fin.val hi).symm)
 
 /-! ### The ranking as a total order -/
 

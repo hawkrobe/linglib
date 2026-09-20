@@ -71,8 +71,8 @@ abbrev optimal : Finset C := lexMins t
 
 variable {t c}
 
-/-- Membership in the winner set, unfolded: a winner is a candidate whose profile
-lexicographically bounds the whole tableau. -/
+/-- A winner is a candidate whose profile is lexicographically below that of every
+candidate. -/
 theorem mem_optimal_iff :
     c ∈ t.optimal ↔ c ∈ t.candidates ∧ ∀ d ∈ t.candidates, t.profile c ≤ t.profile d :=
   mem_lexMins_iff t c
@@ -92,7 +92,7 @@ scoring like a winner is winning. -/
 theorem mem_optimal_of_profile_eq {d : C} (hd : d ∈ t.optimal) (hc : c ∈ t.candidates)
     (he : t.profile c = t.profile d) : c ∈ t.optimal := mem_argMinSet_of_eq hd hc he
 
-/-- A candidate whose profile vanishes wins: `0` is the global lex-minimum. -/
+/-- A candidate whose profile vanishes wins, since `0` is the least profile. -/
 theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
     c ∈ t.optimal := mem_argMinSet_of_eq_bot hc h0
 
@@ -111,15 +111,15 @@ theorem optimal_eq_singleton_iff_pair {d : C} (hcand : t.candidates = {c, d}) (h
 /-- A candidate strictly lex-dominated by a competitor is no winner. -/
 theorem notMem_optimal_of_lt {d : C} (hc : c ∈ t.candidates) (h : t.profile c < t.profile d) :
     d ∉ t.optimal :=
-  λ hd => (le_of_mem_optimal hd hc).not_gt h
+  fun hd ↦ (le_of_mem_optimal hd hc).not_gt h
 
 /-! ### Tableau constructors -/
 
 variable (con : CON C n) (r : Ranking n) (candidates : List C)
   (ranking : List (Constraint C)) (h : candidates ≠ [])
 
-/-- Build a `Tableau C n` from a fixed constraint set `con : CON C n` under a ranking
-`r : Ranking n`: priority position `p` reads constraint `r p`, so coordinate `0` of the
+/-- `ofPerm con r candidates` is the tableau of a fixed constraint set `con : CON C n` under a
+ranking `r : Ranking n`. Priority position `p` reads constraint `r p`, so coordinate `0` of the
 lexicographic profile is the most dominant constraint. Candidates are deduplicated via
 `List.toFinset`. -/
 def ofPerm (h : candidates ≠ [] := by first | decide | simp) : Tableau C n where
@@ -190,25 +190,25 @@ distinguishes them prefers it. -/
 theorem ofPerm_profile_lt_iff {d : C} :
     (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d ↔
       ∃ i, (∀ j, r.Dominates j i → con j c = con j d) ∧ con i c < con i d :=
-  ⟨λ ⟨p, hp, hlt⟩ => ⟨r p, λ j hj => by
+  ⟨fun ⟨p, hp, hlt⟩ ↦ ⟨r p, fun j hj ↦ by
       simpa using hp (r.symm j) (by simpa [Ranking.Dominates] using hj), hlt⟩,
-    λ ⟨i, hi, hlt⟩ => ⟨r.symm i, λ q hq => hi (r q) (by simpa [Ranking.Dominates] using hq),
+    fun ⟨i, hi, hlt⟩ ↦ ⟨r.symm i, fun q hq ↦ hi (r q) (by simpa [Ranking.Dominates] using hq),
       by simpa using hlt⟩⟩
 
-/-- The elementary ranking condition: one candidate beats another iff some constraint
-preferring it dominates every constraint preferring the other. -/
+/-- One candidate beats another iff some constraint preferring it dominates every constraint
+preferring the other, which is the elementary ranking condition. -/
 theorem ofPerm_profile_lt_iff_exists_dominates {d : C} :
     (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d ↔
       ∃ i, con i c < con i d ∧ ∀ j, con j d < con j c → r.Dominates i j := by
-  refine ⟨λ hlt => ?_, λ ⟨i, hi, hd⟩ => ?_⟩
+  refine ⟨fun hlt ↦ ?_, fun ⟨i, hi, hd⟩ ↦ ?_⟩
   · obtain ⟨i, hi, hlt⟩ := ofPerm_profile_lt_iff.1 hlt
-    refine ⟨i, hlt, λ j hj => ?_⟩
+    refine ⟨i, hlt, fun j hj ↦ ?_⟩
     rcases lt_trichotomy (r.symm i) (r.symm j) with h | h | h
     · exact h
     · obtain rfl := r.symm.injective h
       exact absurd hj hlt.asymm
     · exact absurd (hi j h) hj.ne'
-  · refine lt_of_le_of_ne (not_lt.1 λ hlt => ?_) λ heq => ?_
+  · refine lt_of_le_of_ne (not_lt.1 fun hlt ↦ ?_) fun heq ↦ ?_
     · obtain ⟨j, hj, hlt⟩ := ofPerm_profile_lt_iff.1 hlt
       exact absurd (hj i (hd j hlt)) hi.ne'
     · exact hi.ne (by simpa using congrArg (· (r.symm i)) heq)
@@ -221,8 +221,8 @@ theorem ofPerm_profile_lt_of_lt {d : C} (hlt : (con · c) < (con · d)) :
     obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 hlt
     exact Pi.lt_def.2 ⟨fun p ↦ hle (r p), r.symm i, by simpa using hi⟩
 
-/-- Harmonic bounding: a candidate beaten pointwise on the constraint set by a competitor is
-optimal under no ranking of the set. -/
+/-- A candidate beaten pointwise on the constraint set by a competitor is harmonically bounded,
+that is, optimal under no ranking of the set. -/
 theorem ofPerm_notMem_optimal_of_lt {d : C} (hc : c ∈ candidates)
     (hlt : (con · c) < (con · d)) : d ∉ (ofPerm con r candidates h).optimal :=
   notMem_optimal_of_lt (List.mem_toFinset.2 hc) (ofPerm_profile_lt_of_lt hlt)
@@ -234,6 +234,20 @@ theorem ofPerm_optimal_eq_singleton_of_forall_lt (hc : c ∈ candidates)
     (ofPerm con r candidates h).optimal = {c} :=
   (optimal_eq_singleton_iff (List.mem_toFinset.2 hc)).2 fun d hd hne ↦
     ofPerm_profile_lt_of_lt (hlt d (List.mem_toFinset.1 hd) hne)
+
+/-- A candidate beats a competitor under a ranking that puts a constraint preferring it on
+top. -/
+theorem ofPerm_profile_lt_of_forall_dominates {d : C} {i : Fin n} (hi : con i c < con i d)
+    (hr : ∀ j, j ≠ i → r.Dominates i j) :
+    (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d :=
+  ofPerm_profile_lt_iff_exists_dominates.2 ⟨i, hi, fun j hj ↦ hr j fun hji ↦ (hji ▸ hj).asymm hi⟩
+
+/-- A candidate that some constraint prefers to a competitor beats it under some ranking, the
+converse of harmonic bounding for a pair. -/
+theorem exists_ofPerm_profile_lt {d : C} {i : Fin n} (hi : con i c < con i d) :
+    ∃ r : Ranking n,
+      (ofPerm con r candidates h).profile c < (ofPerm con r candidates h).profile d :=
+  (Ranking.exists_forall_dominates i).imp fun _ hr ↦ ofPerm_profile_lt_of_forall_dominates hi hr
 
 /-! ### Top-constraint optimality -/
 
@@ -248,7 +262,7 @@ theorem ofRanking_optimal_zero_first (top : Constraint C) (rest : List (Constrai
     ViolationProfile.le_apply_zero (le_of_mem_optimal hc (List.mem_toFinset.mpr hmem))
 
 /-- A candidate with `0` violations on every constraint of `con` is optimal in
-`Tableau.ofPerm con r` under **every** ranking `r`: permuting the coordinates of the
+`Tableau.ofPerm con r` under every ranking `r`, since permuting the coordinates of the
 all-zero profile leaves it zero. -/
 theorem ofPerm_zero_mem_optimal (hc : c ∈ candidates) (hzero : ∀ i, con i c = 0) :
     c ∈ (ofPerm con r candidates h).optimal :=
