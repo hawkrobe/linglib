@@ -62,8 +62,8 @@ open Minimalist Tense Data.Examples Hungarian.Predicates Egressy2026.Examples
 
 /-! ### The two clause types and their size (§2, §3.1) -/
 
-/-- Whether an embedded clause encodes the content of a verbal or other sign (§2.2): a property
-of the clause, not of the matrix predicate, which may embed either type. -/
+/-- An embedded clause either encodes the content of a verbal or other sign or does not (§2.2),
+a property of the clause, not of the matrix predicate, which may embed either type. -/
 inductive ClauseType
   | nonSpeechReporting
   | speechReporting
@@ -90,7 +90,7 @@ instance (x y : Cat) : Decidable (WilliamsCycle x y) := inferInstanceAs (Decidab
 /-- A projection of the dependency's own category is crossed. -/
 theorem WilliamsCycle.refl (x : Cat) : WilliamsCycle x x := le_rfl
 
-/-- Upward entailment: whatever a projection blocks, every higher projection blocks. -/
+/-- Upward entailment says that whatever a projection blocks, every higher projection blocks. -/
 theorem WilliamsCycle.of_le {x y y' : Cat} (h : fValue y' ≤ fValue y) (hxy : WilliamsCycle x y) :
     WilliamsCycle x y' :=
   h.trans hxy
@@ -131,8 +131,8 @@ theorem hostsEvaluativeAdverb_iff (ct : ClauseType) :
 
 /-! ### The Sequence of Tense Rule (31) and size-dependent adjunction (41) -/
 
-/-- Where an embedded clause attaches (§4): by (41) to the matrix projection of its own size, as
-in Hungarian, or inside the matrix VP as the sister of V, as in English, where (41) does not
+/-- An embedded clause attaches (§4) by (41) to the matrix projection of its own size, as in
+Hungarian, or inside the matrix VP as the sister of V, as in English, where (41) does not
 hold. -/
 inductive Attachment
   | sizeDependent
@@ -171,7 +171,7 @@ theorem applicable_vpInternal_cP :
 def sotParameter (a : Attachment) (cs : ComplementSize) : SOTParameter :=
   if SOTRule.Applicable a cs then .relative else .absolute
 
-/-- The readings of a past clause under a past matrix: backshift is the default, the
+/-- The readings of a past clause under a past matrix, where backshift is the default and the
 simultaneous reading arises only through the rule. -/
 def readings (a : Attachment) (cs : ComplementSize) : List EmbeddedTenseReading :=
   availableReadings (sotParameter a cs)
@@ -186,7 +186,7 @@ theorem sotParameter_speech :
     sotParameter .sizeDependent ClauseType.speechReporting.size = .absolute := by
   decide
 
-/-- The core asymmetry (§2.4): the simultaneous reading is available exactly in
+/-- The core asymmetry (§2.4) is that the simultaneous reading is available exactly in
 non-speech-reporting clauses. -/
 theorem simultaneous_iff (ct : ClauseType) :
     EmbeddedTenseReading.simultaneous ∈ readings .sizeDependent ct.size ↔
@@ -285,7 +285,7 @@ theorem clauseType_not_of_verb :
 
 /-! ### Multiple embedding (§2.3, §4) -/
 
-/-- An embedded clause: its morphological tense and its size. -/
+/-- An embedded clause carries its morphological tense and its size. -/
 structure Clause where
   /-- The clause's tense as a comparison cell, `⟦Tense.past⟧` or `⟦Tense.future⟧`. -/
   tense : Finset Ordering
@@ -359,15 +359,15 @@ def sotProbe : Probe.Profile := ⟨.T, some .Say⟩
 
 /-- The horizon account agrees with the Williams Cycle on the two Hungarian clause types. -/
 theorem sotProbe_clauseTypes :
-    sotProbe.transparentToLabel [.V, .v, .T] = true ∧
-      sotProbe.transparentToLabel [.V, .v, .T, .Foc, .Say] = false := by
+    sotProbe.TransparentTo ClauseSpine.tP.label ∧
+      ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]).label := by
   decide
 
 /-- §4: the horizon account is the less restrictive of the two. A clause whose highest head lies
 strictly between T and Say, such as a FocP, is transparent to the probe yet beyond the reach of
 T under the Williams Cycle, the pattern footnote 9 needs for the complements of *mond*. -/
 theorem horizon_admits_FocP :
-    sotProbe.transparentToLabel [.V, .v, .T, .Foc] = true ∧ ¬ WilliamsCycle .T .Foc := by
+    sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]).label ∧ ¬ WilliamsCycle .T .Foc := by
   decide
 
 end Egressy2026

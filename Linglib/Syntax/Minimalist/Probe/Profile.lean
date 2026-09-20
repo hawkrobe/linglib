@@ -6,25 +6,24 @@ import Mathlib.Order.Monotone.Defs
 # Probe profiles
 
 This file defines a probe's locality profile, the head that hosts it together with the category
-that terminates its search, its horizon ([keine-2019], [keine-2020]). Labels are bilateral within
-an extended projection, so a clause's label is the list of heads it projects, and a clause is
-transparent to a probe exactly when its label does not contain the horizon. Transparency is then
-antitone in the extension order of clause spines, which is Upward Entailment, and a probe whose
-horizon lies in the label of its own sister is vacuous, the premise of the Height–Locality
-Theorem. A profile denotes a `Probe` over any goal type that exposes a label; the tree-native
-counterpart of a horizon is `SyntacticObject.behindHorizonIn`.
+that terminates its search, its horizon. Keine labels a clause bilaterally, by the set of heads
+it projects, and a clause is transparent to a probe exactly when its label does not contain the
+horizon. Transparency is then antitone in the extension order of clause spines, which is Upward
+Entailment, and a probe whose horizon lies in the label of its own sister is vacuous, the premise
+of the Height–Locality Theorem. A profile denotes a `Probe` over any goal type that exposes a
+label; the tree-native counterpart of a horizon is `SyntacticObject.behindHorizonIn`.
 
 ## Main definitions
 
 * `Minimalist.Probe.Profile`: the head hosting a probe and the category that is its horizon.
-* `Minimalist.Probe.Profile.transparentToLabel`: a bilateral label not containing the horizon.
-* `Minimalist.Probe.Profile.isVacuousFor`, `Minimalist.Probe.Profile.isVacuous`: a horizon
-  lying in the probe's own sister, for a given sister label and for the standard spine.
+* `Minimalist.Probe.Profile.TransparentTo`: a bilateral label not containing the horizon.
+* `Minimalist.Probe.Profile.IsVacuous`: a horizon lying in the label of the probe's sister on the
+  standard verbal spine.
 * `Minimalist.Probe.Profile.toProbe`: the probe a profile denotes over goals exposing labels.
 
 ## Main results
 
-* `Minimalist.Probe.Profile.transparentToLabel_antitone`, Upward Entailment.
+* `Minimalist.Probe.Profile.transparentTo_label_antitone`: Upward Entailment.
 
 ## References
 
@@ -35,7 +34,7 @@ counterpart of a horizon is `SyntacticObject.behindHorizonIn`.
 namespace Minimalist
 
 /-- A probe's profile is the head that hosts it and the category that terminates its search, its
-horizon; a probe without horizon searches into any domain ([keine-2020]). -/
+horizon; a probe without horizon searches into any domain. -/
 structure Probe.Profile where
   /-- The head that hosts the probe. -/
   probeHead : Cat
@@ -45,71 +44,64 @@ structure Probe.Profile where
 
 namespace Probe.Profile
 
-variable (p : Probe.Profile)
+variable (p : Probe.Profile) {L L₁ L₂ : Finset Cat}
 
 /-! ### Transparency -/
 
-/-- A domain with bilateral label `label` is transparent to `p` when `p` has no horizon or the
-label does not contain it. -/
-def transparentToLabel (label : List Cat) : Bool :=
-  match p.horizon with
-  | none => true
-  | some h => !(label.any (· == h))
+/-- A domain with bilateral label `L` is transparent to `p` when `p` has no horizon or the label
+does not contain it. -/
+def TransparentTo (L : Finset Cat) : Prop := ∀ h ∈ p.horizon, h ∉ L
+
+instance : Decidable (p.TransparentTo L) := Option.decidableForallMem _
+
+@[simp] theorem transparentTo_mk_none (head : Cat) (L : Finset Cat) :
+    (Probe.Profile.mk head none).TransparentTo L := by
+  simp [TransparentTo]
+
+@[simp] theorem transparentTo_mk_some {head h : Cat} :
+    (Probe.Profile.mk head (some h)).TransparentTo L ↔ h ∉ L := by
+  simp [TransparentTo]
+
+variable {p}
 
 /-- Upward Entailment. A label containing every head of a label opaque to `p` is opaque to `p`. -/
-theorem transparentToLabel_eq_false_of_subset {L₁ L₂ : List Cat} (h_sub : ∀ c ∈ L₁, c ∈ L₂)
-    (h_opaque : p.transparentToLabel L₁ = false) : p.transparentToLabel L₂ = false := by
-  simp only [transparentToLabel] at *
-  cases h_hz : p.horizon with
-  | none => simp_all
-  | some h =>
-    simp_all only [Bool.not_eq_false']
-    rw [List.any_eq_true] at h_opaque ⊢
-    obtain ⟨x, hx_mem, hx_eq⟩ := h_opaque
-    exact ⟨x, h_sub x hx_mem, hx_eq⟩
+theorem TransparentTo.anti (h : L₁ ⊆ L₂) (hL : p.TransparentTo L₂) : p.TransparentTo L₁ :=
+  fun c hc hm ↦ hL c hc (h hm)
+
+variable (p)
 
 /-- Upward Entailment. Transparency is antitone in the extension order of clause spines, since a
 spine's label contains the horizon whenever a spine below it does. -/
-theorem transparentToLabel_antitone :
-    Antitone λ s : ClauseSpine => p.transparentToLabel s.projectedHeads :=
-  λ s _ h => Bool.le_iff_imp.mpr λ ht => by
-    cases hs : p.transparentToLabel s.projectedHeads
-    · exact absurd (p.transparentToLabel_eq_false_of_subset h hs) (by simp [ht])
-    · exact hs
+theorem transparentTo_label_antitone : Antitone fun s : ClauseSpine ↦ p.TransparentTo s.label :=
+  fun _ _ h ht ↦ ht.anti h
 
 /-! ### Vacuity -/
 
-/-- `p` is vacuous for a sister with label `sisterLabel` when its horizon lies in that label, so
-that its search terminates at its sister and no domain remains ([keine-2020]). -/
-def isVacuousFor (sisterLabel : List Cat) : Bool :=
-  match p.horizon with
-  | none => false
-  | some _ => p.transparentToLabel sisterLabel = false
+/-- The label of the sister of a head on the standard verbal spine, TP under C⁰, CP under Force⁰
+and vP under T⁰. -/
+def sisterLabel : Cat → Finset Cat
+  | .C => ClauseSpine.tP.label
+  | .Force => ClauseSpine.cP.label
+  | .T => ClauseSpine.vP.label
+  | _ => ∅
 
-/-- `p` is vacuous in the standard verbal spine, where the sister of C⁰ is TP, of T⁰ is vP and of
-Force⁰ is CP ([keine-2020]). Vacuous probes trigger no dependency and are undetectable, which
-is what makes the Height–Locality Theorem emerge. -/
-def isVacuous : Bool :=
-  match p.horizon with
-  | none => false
-  | some _ =>
-    let sisterLabel := match p.probeHead with
-      | .C     => ClauseSpine.tP.projectedHeads
-      | .Force => ClauseSpine.cP.projectedHeads
-      | .T     => ClauseSpine.vP.projectedHeads
-      | _      => []
-    p.transparentToLabel sisterLabel = false
+/-- `p` is vacuous when its horizon lies in the label of its sister on the standard verbal spine,
+so that its search terminates at its sister and no domain remains. Vacuous probes trigger no
+dependency and are undetectable, which is what makes the Height–Locality Theorem emerge. -/
+def IsVacuous : Prop := ¬ p.TransparentTo (sisterLabel p.probeHead)
+
+instance : Decidable p.IsVacuous := inferInstanceAs (Decidable (¬ _))
 
 /-- A probe without horizon is never vacuous. -/
-theorem isVacuous_mk_none (head : Cat) : (Probe.Profile.mk head none).isVacuous = false := by
-  simp [isVacuous]
+@[simp] theorem not_isVacuous_mk_none (head : Cat) : ¬ (Probe.Profile.mk head none).IsVacuous :=
+  not_not_intro (transparentTo_mk_none head _)
 
 /-! ### Denotation into the canonical `Probe` -/
 
 /-- The probe a profile denotes over goals exposing a label, which sees a goal iff the goal's
 label is transparent to it. -/
-def toProbe {α : Type*} (labelOf : α → List Cat) : Probe α :=
-  .relativized λ a => p.transparentToLabel (labelOf a)
+def toProbe {α : Type*} (labelOf : α → Finset Cat) : Probe α :=
+  .relativized fun a ↦ decide (p.TransparentTo (labelOf a))
 
 end Probe.Profile
 

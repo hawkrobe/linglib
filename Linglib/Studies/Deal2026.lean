@@ -77,8 +77,8 @@ open NezPerce Minimalist Data.Examples
 
 /-! ### The embedding strategy -/
 
-/-- The two embedding strategies: a relative embedding, whose complement obligatorily carries
-the *yox̂ ke* edge and contains an Ā-dependency above TP, and a simplex embedding, a bare CP. -/
+/-- The two embedding strategies are relative embedding, whose complement obligatorily carries
+the *yox̂ ke* edge and contains an Ā-dependency above TP, and simplex embedding of a bare CP. -/
 inductive EmbeddingStrategy where
   | relative
   | simplex
@@ -127,23 +127,23 @@ theorem cuukwe_conditional_projects :
 
 /-! ### Table (79): internal against external syntax -/
 
-/-- A cell of table (79): the extended spine of a notional complement, the heads projected
-from V up through any shell over C, and whether the CP contains an Ā-dependency. -/
+/-- A cell of table (79) pairs the extended spine of a notional complement, the heads projected
+from V up through any shell over C, with whether the CP contains an Ā-dependency. -/
 structure Cell where
   spine : ClauseSpine
   internalAbar : Bool
 
-/-- A Nez Perce cell: a bare CP whose Ā-dependency is the relative strategy. -/
+/-- A Nez Perce cell is a bare CP whose Ā-dependency is the relative strategy. -/
 def nezPerce (v : NezPerce.Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .relative⟩
 
-/-- English simplex V complementation, *think*: a bare CP without an Ā-dependency. -/
+/-- English simplex V complementation, *think*, is a bare CP without an Ā-dependency. -/
 def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
 
 /-- The Adyghe relative embedding of (43), V D N CP with an Ā-dependency, the flag from the
 Fragment: 'think' takes the relativizer *ze-* with the applicative *re-* on its tensed
 complement ([caponigro-polinsky-2011]). -/
 def adygheRelative : Cell :=
-  ⟨ClauseSpine.cP.extend [.N, .D], decide (Adyghe.gwepshesa.toVerb.takes Adyghe.zeRe)⟩
+  ⟨ClauseSpine.cP.append [.N, .D], decide (Adyghe.gwepshesa.toVerb.takes Adyghe.zeRe)⟩
 
 /-- [krapova-2010]'s double requirement, reported at footnote 22: *deto* introduces the
 complement of a predicate that is an emotive factive, a factive preferential attitude, and
@@ -197,26 +197,26 @@ theorem krapova_contradiction_rows :
         ((∃ a ∈ row.alternatives, a.2 = .unacceptable) ↔ v.toVerb.IsFactive) := by
   decide
 
-/-- English N complementation, *the fact that S*: V D N CP without an Ā-dependency, the DP
+/-- English N complementation, *the fact that S*, is V D N CP without an Ā-dependency, the DP
 shell with an N co-argument of [hankamer-mikkelsen-2021]. -/
-def englishNComplementation : Cell := ⟨ClauseSpine.cP.extend [.N, .D], false⟩
+def englishNComplementation : Cell := ⟨ClauseSpine.cP.append [.N, .D], false⟩
 
 /-- The Bulgarian relative embedding of (49), V P D CP with an Ā-dependency, the flag from the
 Fragment: *săžaljavam* 'regret' meets the double requirement, so it takes the *deto*
 complement [krapova-2010] analyzes as a hidden relative. -/
 def bulgarianRelative : Cell :=
-  ⟨ClauseSpine.cP.extend [.D, .P], decide (DetoComplement Bulgarian.sazhaljavam)⟩
+  ⟨ClauseSpine.cP.append [.D, .P], decide (DetoComplement Bulgarian.sazhaljavam)⟩
 
 /-- The Ndebele embedding of (78), V P D CP without an Ā-dependency: the preposition *nga*
 'about' over the class-15 augment [pietraszko-2019] takes as a D over *kuthi*. -/
-def ndebeleEmbedding : Cell := ⟨ClauseSpine.cP.extend [.D, .P], false⟩
+def ndebeleEmbedding : Cell := ⟨ClauseSpine.cP.append [.D, .P], false⟩
 
 /-- The Washo factive of footnote 33, V D CP without an Ā-dependency or an N: a silent D over
 the nominalized clause ([hanink-bochnak-2017], [bochnak-hanink-2021]), whose index binds without
 movement ([hanink-2021]). -/
 def washoFactive : Cell := ⟨BochnakHanink2021.complementSpine, false⟩
 
-/-- The rows: the six cells of table (79), with the V CP cell without an Ā-dependency
+/-- The rows are the six cells of table (79), with the V CP cell without an Ā-dependency
 witnessed twice, and the Washo structure. -/
 def rows : List Cell :=
   [nezPerce liloy, nezPerce neki, englishThink, adygheRelative, englishNComplementation,
