@@ -1,7 +1,7 @@
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Linglib.Phonology.Harmony.System
 import Linglib.Fragments.Finnish.VowelHarmony
-import Linglib.Fragments.Turkish.VowelHarmony
+import Linglib.Fragments.Turkish.Phonology
 import Linglib.Studies.Yang2016
 import Linglib.Data.Examples.Belth2026
 
@@ -118,7 +118,7 @@ def trace (g : SearchCopy α) :
   | x :: xs, y :: ys, last, lastUR =>
     if g.tier x then
       let out := g.emit last x
-      let ctx := if (last.filter fun c => decide (g.IsSource c x)).isSome then lastUR else none
+      let ctx := if (last.filter fun c ↦ decide (g.IsSource c x)).isSome then lastUR else none
       (if g.IsTarget x then [(ctx, out, y)] else []) ++ trace g xs ys (some out) (some x)
     else trace g xs ys last lastUR
   | _, _, _, _ => []
@@ -144,7 +144,7 @@ def precedingContexts (T : List α) : List α → Option α → List α
 /-- The context class `C` of the rule on side `d` over the tier `T`, every segment
 tier-adjacent to a target on that side in some underlying form. -/
 def contexts (T : List α) (d : ScanDirection) : List α :=
-  (P.vocabulary.flatMap fun p =>
+  (P.vocabulary.flatMap fun p ↦
     P.precedingContexts T (match d with | .left => p.1 | .right => p.1.reverse) none).dedup
 
 /-- The candidate rule over the tier `T` with the contexts `C`. -/
@@ -164,11 +164,11 @@ def candidate (T C : List α) (rel : SearchCopy.Relation) (d : ScanDirection)
 /-- The summary of `g` over the vocabulary. -/
 def summary (g : SearchCopy α) : Summary α :=
   let apps := P.vocabulary.flatMap (applications g)
-  let applied := apps.filterMap fun t => t.1.map fun c => (c, decide (t.2.1 = t.2.2))
+  let applied := apps.filterMap fun t ↦ t.1.map fun c ↦ (c, decide (t.2.1 = t.2.2))
   { n := applied.length
     c := (applied.filter (·.2)).length
-    errors := (((applied.filter fun a => !a.2).map (·.1)).filter (· ∉ P.targets)).dedup
-    untouched := apps.filterMap fun t => if t.1.isNone then some t.2.2 else none }
+    errors := (((applied.filter fun a ↦ !a.2).map (·.1)).filter (· ∉ P.targets)).dedup
+    untouched := apps.filterMap fun t ↦ if t.1.isNone then some t.2.2 else none }
 
 /-- The Elsewhere default the untouched targets determine; `none` when their surface forms
 disagree, which rejects the rule. -/
@@ -191,8 +191,8 @@ def step (rel : SearchCopy.Relation) (T D : List α) : Iteration α :=
 
 /-- The smallest natural class containing `D` and no target. -/
 def deletionClass (D : List α) : Option (List α) :=
-  (P.classes.filter fun N => D.all (· ∈ N) && P.targets.all (· ∉ N)).foldl
-    (fun acc N => match acc with
+  (P.classes.filter fun N ↦ D.all (· ∈ N) && P.targets.all (· ∉ N)).foldl
+    (fun acc N ↦ match acc with
       | none => some N
       | some M => if N.length < M.length then some N else some M) none
 
@@ -214,13 +214,13 @@ def iterate (rel : SearchCopy.Relation) : ℕ → List α → List α → List (
 
 /-- The rule an iteration proposes, the chosen side's candidate with its inferred default. -/
 def rule (rel : SearchCopy.Relation) (it : Iteration α) : Option (SearchCopy α) :=
-  it.default.map fun d => P.candidate it.tier it.contexts rel it.chosen d
+  it.default.map fun d ↦ P.candidate it.tier it.contexts rel it.chosen d
 
 /-- D2L returns the rule of the first iteration the criterion `sat` accepts on its
 applications and exceptions. -/
 def learn (rel : SearchCopy.Relation) (sat : ℕ → ℕ → Prop) [DecidableRel sat] :
     Option (SearchCopy α) :=
-  ((P.iterate rel P.alphabet.length P.alphabet []).find? fun it =>
+  ((P.iterate rel P.alphabet.length P.alphabet []).find? fun it ↦
     it.default.isSome && decide (sat it.summary.n (it.summary.n - it.summary.c))).bind (P.rule rel)
 
 end Problem
@@ -276,8 +276,8 @@ def problem : D2L.Problem Seg where
   targets := [.S]
   value := Seg.ant
   write v _ := if v then .s else .sh
-  value_write := fun v _ _ => by cases v <;> rfl
-  write_value := fun _ seg h hv => by
+  value_write := fun v _ _ ↦ by cases v <;> rfl
+  write_value := fun _ seg h hv ↦ by
     simp only [List.mem_singleton] at h; subst h; simp [Seg.ant] at hv
   classes := classes
   vocabulary := vocabulary
@@ -365,8 +365,8 @@ theorem not_tolerates_8_4 : ¬ Yang2016.tolerates 8 4 := by
 /-- With Yang's Tolerance Principle as the criterion, D2L learns rule (33a) from (20). -/
 theorem Toy.learn_tolerates :
     @D2L.Problem.learn _ _ Toy.problem .agree Yang2016.tolerates
-      (fun _ _ => Classical.propDecidable _) = some Toy.rule33 :=
-  @Toy.learn Yang2016.tolerates (fun _ _ => Classical.propDecidable _) not_tolerates_8_7
+      (fun _ _ ↦ Classical.propDecidable _) = some Toy.rule33 :=
+  @Toy.learn Yang2016.tolerates (fun _ _ ↦ Classical.propDecidable _) not_tolerates_8_7
     not_tolerates_8_4 (Yang2016.tolerates_zero 7)
 
 /-! ### Latin liquid dissimilation (54) -/
@@ -386,7 +386,7 @@ def IsCons : LatSeg → Prop
   | .a | .e | .i | .o | .u => False
   | _ => True
 
-instance : DecidablePred IsCons := fun seg => by cases seg <;> unfold IsCons <;> infer_instance
+instance : DecidablePred IsCons := fun seg ↦ by cases seg <;> unfold IsCons <;> infer_instance
 
 /-- Laterality, on which `l` alone is `[+lat]` and `L` is unspecified. -/
 def isLat : LatSeg → Option Bool
@@ -414,8 +414,8 @@ def latinDissimRule : SearchCopy LatSeg where
   relation := .disagree
   value := LatSeg.isLat
   write v _ := if v then .l else .r
-  value_write := fun v _ _ => by cases v <;> rfl
-  write_value := fun _ seg h hv => by subst h; simp [LatSeg.isLat] at hv
+  value_write := fun v _ _ ↦ by cases v <;> rfl
+  write_value := fun _ seg h hv ↦ by subst h; simp [LatSeg.isLat] at hv
 
 /-- The rule is subsequential, as every search-and-copy rule is. -/
 theorem latinDissimRule_isSubsequential : IsSubsequential .left latinDissimRule.apply :=
@@ -499,13 +499,9 @@ namespace Turkish
 
 open _root_.Turkish.Phonology Phonology
 
-/-- A letter of the paper's Turkish transcription. -/
-def ofChar : Char → Option Segment
-  | 'a' => some a | 'e' => some e | 'ı' => some ı | 'i' => some i | 'o' => some o
-  | 'ö' => some ö | 'u' => some u | 'ü' => some ü
-  | 'd' => some d | 'l' => some l | 'r' => some r | 'n' => some n | 'j' | 'y' => some y
-  | 'p' => some p | 'z' => some z | 'k' => some k | 'b' => some b
-  | _ => none
+/-- `ofChar c` is the segment that the letter `c` of the paper's Turkish transcription writes,
+which is the Fragment's spelling with the glide written *j*. -/
+def ofChar (c : Char) : Option Segment := Turkish.Phonology.ofChar (if c = 'j' then 'y' else c)
 
 /-- A letter of an affix, its vowel the archiphoneme unspecified for the harmonic features. -/
 def ofAffixChar : Char → Option Segment
@@ -522,13 +518,8 @@ def ur (form : String) : List Segment :=
   | [] => []
   | stem :: affixes => stem.filterMap ofChar ++ affixes.flatMap (·.filterMap ofAffixChar)
 
-/-- The surface form of a suffixed word, the search-and-copy runs of the fragment's three
-alternations in turn. -/
-def surface (w : List Segment) : List Segment :=
-  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w))
-
 /-- Rule (49a), backness and rounding from the tier-preceding vowel, is the fragment's two
-harmonies applied in turn; they derive the forms of (46) and (47). -/
+harmonies applied in turn; its surface forms derive the forms of (46) and (47). -/
 theorem rows : ∀ e ∈ [Examples.ex_46, Examples.ex_47], ∀ f ∈ forms e,
     surface (ur f) = segments f := by
   decide

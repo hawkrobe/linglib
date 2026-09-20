@@ -1,110 +1,125 @@
 import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Fragments.Turkish.Morphotactics
 
 /-!
-# Turkish Predicate Lexicon Fragment
-[qing-uegaki-2025]
+# Turkish predicates
 
-Turkish predicates relevant to [qing-uegaki-2025]. Properties like
-C-distributivity and NVP class are DERIVED from the `attitude` field.
+This file defines the Turkish verbs that the studies of Qing and colleagues and of Göksel and
+Kerslake consume. The preferential attitudes are *kork-* 'fear', *um-* 'hope' and *endişelen-*
+'worry', whose distributivity over alternatives follows from the kind of preference each
+records. They take a nominalized clause, in the ablative under *kork-* and *endişelen-* and in
+the accusative under *um-*, and the first two take it as a question as well. The intransitive
+*dolan-* 'walk around' takes no complement. The causatives *öldür-* 'kill' and *yaptır-* 'have
+done' are built on *öl-* 'die' and *yap-* 'do' by the voice suffix -DIr.
+
+Turkish is agglutinating, so a verb records the segments of its root and the voice suffixes of
+its stem. Its inflected forms are derived by the suffix forms of `Turkish.Morphotactics` and
+the surface forms of `Turkish.Phonology` rather than listed.
+
+## Main definitions
+
+* `Turkish.Verb`: a Turkish verb, the root `Verb` with its root segments and voice suffixes.
+* `Turkish.Verb.suffixes`, `Turkish.Verb.inflect`: the suffix string of a verb under a string
+  of inflectional suffixes, and its surface form.
+* `Turkish.verbs`: the inventory of the entries.
+
+## References
+
+* [goksel-kerslake-2005]
+* [qing-uegaki-2025]
 -/
 
-namespace Turkish.Predicates
+open Phonology
 
-open ArgumentStructure
+namespace Turkish
 
-/-- Turkish verb entry: extends Verb with Turkish inflectional paradigm. -/
-structure TurkishVerbEntry extends Verb where
-  /-- Progressive form (-yor) -/
-  formProg : String
-  /-- Past form (-dı, -tı) -/
-  formPast : String
-  /-- Evidential form (-mış) -/
-  formEvidential : String
-  /-- Participle form (-an, -en) -/
-  formParticiple : String
+open ArgumentStructure Turkish.Phonology
+
+/-- A Turkish verb is the root entry, whose `form` is the spelled stem, together with the
+segments of its root and the voice suffixes that build its stem. -/
+structure Verb extends _root_.Verb where
+  /-- The segments of the root. -/
+  rootSegments : List Segment
+  /-- The voice suffixes of the stem, in order. -/
+  voice : List (Verb.Exponent .voice) := []
   deriving BEq
 
-/-- "kork-" — fear (Class 2: C-distributive, negative). -/
-def kork : TurkishVerbEntry where
-  form := "kork-"
-  formProg := "korkuyor"
-  formPast := "korktu"
-  formEvidential := "korkmuş"
-  formParticiple := "korkan"
-  frames := [ArgumentFrame.finiteClause]
+namespace Verb
+
+/-- `v.suffixes sfx` is the suffix string of the verb under the inflectional suffixes `sfx`,
+its voice suffixes followed by `sfx`. -/
+def suffixes (v : Verb) (sfx : List (Σ σ, system.Exponent σ)) : List (Σ σ, system.Exponent σ) :=
+  v.voice.map (⟨.voice, ·⟩) ++ sfx
+
+/-- `v.inflect sfx` is the surface form of the verb under the inflectional suffixes `sfx`,
+which with no suffixes is the stem. -/
+def inflect (v : Verb) (sfx : List (Σ σ, system.Exponent σ)) : List Segment :=
+  surface (v.rootSegments ++ (v.suffixes sfx).flatMap fun e ↦ Exponent.form e.2)
+
+end Verb
+
+/-- The frame of a verb that takes a nominalized clause as a question. -/
+private def nominalizedQuestion : ArgumentFrame :=
+  ⟨some .nominal, [.clausal (coding := some .nominalized) (force := some .interrogative)]⟩
+
+/-! ### Preferential attitudes -/
+
+/-- *kork-* 'fear', a negative preference by comparison of degrees. -/
+def kork : Verb where
+  form := "kork"
+  rootSegments := [k, o, r, k]
+  frames := [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
 
-/-- "um-" — hope (Class 3: C-distributive, positive, anti-rogative). -/
-def um : TurkishVerbEntry where
-  form := "um-"
-  formProg := "umuyor"
-  formPast := "umdu"
-  formEvidential := "ummuş"
-  formParticiple := "uman"
-  frames := [ArgumentFrame.finiteClause]
+/-- *um-* 'hope', a positive preference by comparison of degrees. -/
+def um : Verb where
+  form := "um"
+  rootSegments := [u, m]
+  frames := [ArgumentFrame.gerund]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
 
-/-- "merak et-" — wonder/be curious (rogative, non-preferential). -/
-def merakEt : TurkishVerbEntry where
-  form := "merak et-"
-  formProg := "merak ediyor"
-  formPast := "merak etti"
-  formEvidential := "merak etmiş"
-  formParticiple := "merak eden"
-  frames := [ArgumentFrame.question]
-  passivizable := false
-  opaqueContext := true
-
-/-- "endişelen-" — worry (Class 1: non-C-distributive). -/
-def endiselen : TurkishVerbEntry where
-  form := "endişelen-"
-  formProg := "endişeleniyor"
-  formPast := "endişelendi"
-  formEvidential := "endişelenmiş"
-  formParticiple := "endişelenen"
-  frames := [ArgumentFrame.finiteClause]
+/-- *endişelen-* 'worry', a preference relative to uncertainty. -/
+def endişelen : Verb where
+  form := "endişelen"
+  rootSegments := [e, n, d, i, ş, e, l, e, n]
+  frames := [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
 
-/-! ## Causative predicates
+/-! ### Motion -/
 
-Turkish morphological causative suffix -dür ([song-1996]: COMPACT type).
-Allomorphs: -dür, -tür, -dir, -tir (vowel harmony).
-"Ali Hasan-ı öl-dür-dü" = "Ali killed Hasan" (öl 'die' + -dür CAUS) -/
+/-- *dolan-* 'walk around', intransitive. -/
+def dolan : Verb where
+  form := "dolan"
+  rootSegments := [d, o, l, a, n]
+  frames := [ArgumentFrame.intransitive]
+  passivizable := false
 
-/-- öl-dür-mek — die-CAUS = "to kill" (morphological COMPACT causative). -/
-def ol_dur : TurkishVerbEntry where
-  form := "öldürmek"
-  formProg := "öldürüyor"
-  formPast := "öldürdü"
-  formEvidential := "öldürmüş"
-  formParticiple := "öldüren"
+/-! ### Causatives -/
+
+/-- *öldür-* 'kill', the causative of *öl-* 'die'. -/
+def öldür : Verb where
+  form := "öldür"
+  rootSegments := [ö, l]
+  voice := [.causative]
   frames := [ArgumentFrame.np]
   causative := some .make
 
-/-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
-def yap_tir : TurkishVerbEntry where
-  form := "yaptırmak"
-  formProg := "yaptırıyor"
-  formPast := "yaptırdı"
-  formEvidential := "yaptırmış"
-  formParticiple := "yaptıran"
+/-- *yaptır-* 'have done, make do', the causative of *yap-* 'do, make'. -/
+def yaptır : Verb where
+  form := "yaptır"
+  rootSegments := [y, a, p]
+  voice := [.causative]
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
-/-- Turkish causative *-dür* uses `.make` builder. -/
-theorem ol_dur_is_make :
-    ol_dur.causative = some .make := rfl
+/-- `verbs` lists the entries. -/
+def verbs : List Verb := [kork, um, endişelen, dolan, öldür, yaptır]
 
-def allVerbs : List TurkishVerbEntry := [kork, um, merakEt, endiselen, ol_dur, yap_tir]
-
-def lookup (form : String) : Option TurkishVerbEntry :=
-  allVerbs.find? (·.form == form)
-
-end Turkish.Predicates
+end Turkish
