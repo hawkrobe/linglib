@@ -26,6 +26,7 @@ holds because the position is not iterable.
 * `deletable_vowels`, `deletable_consonants`, `predicate_buffers`: the bracketed segments of
   §6.1.3 after consonant-final and vowel-final stems.
 * `hiatus_repairs`: the two kinds of bracketed segment as elision and insertion at a juncture.
+* `pronominal_n`: the final `n` of a third-person possessive before a case suffix.
 * `imperfective_of_vowel_stems`, `negative_raised`: the vowel-final stems of §8.2.3.3 and the
   negative of §8.2.2 before -(I)yor.
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
@@ -138,6 +139,25 @@ theorem deletable_consonants :
     realize [e, l, b, i, s, e] [(possessive (.pn .third .singular)).form] =
       [e, l, b, i, s, e, s, i] ∧
     realize [e, v] [(possessive (.pn .third .singular)).form] = [e, v, i] := by
+  decide
+
+/-- A third-person possessive takes a final `n` before a case suffix, as in *tepe-si-n-de*,
+*yüz-ü-n-e* and *elbise-leri-n-e*, where the `n` also keeps the buffer `y` of the dative away.
+It takes none word-finally, as in *tepe-si*, and the other possessives take none, as in
+*oda-m-da* (§6.2 (iib), §8.1.2). -/
+theorem pronominal_n :
+    realize [t, e, p, e]
+        (Nominal.forms [⟨_, possessive (.pn .third .singular)⟩, ⟨_, locative⟩]) =
+      [t, e, p, e, s, i, n, d, e] ∧
+    realize [y, ü, z] (Nominal.forms [⟨_, possessive (.pn .third .singular)⟩, ⟨_, dative⟩]) =
+      [y, ü, z, ü, n, e] ∧
+    realize [e, l, b, i, s, e]
+        (Nominal.forms [⟨_, possessive (.pn .third .plural)⟩, ⟨_, dative⟩]) =
+      [e, l, b, i, s, e, l, e, r, i, n, e] ∧
+    realize [t, e, p, e] (Nominal.forms [⟨_, possessive (.pn .third .singular)⟩]) =
+      [t, e, p, e, s, i] ∧
+    realize [o, d, a] (Nominal.forms [⟨_, possessive (.pn .first .singular)⟩, ⟨_, locative⟩]) =
+      [o, d, a, m, d, a] := by
   decide
 
 /-- The juncture of *araba* 'car' and the vowel of -(I)m. -/
