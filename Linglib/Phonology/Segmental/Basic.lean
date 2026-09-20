@@ -26,6 +26,8 @@ sonority rise between two classes, and the Parker sonority ranking.
 * `Segment.isVowel_iff_le`: a natural class is the segments above its specification, and
   likewise for consonants, stops, fricatives, nasals and glides.
 * `Segment.setFeature_hasValue`: the feature-change operations act as specified.
+* `IsDistinctive`: a feature set on which no two segments of an inventory agree, with
+  `Segment.restrict_eq_restrict_iff` relating restriction to agreement on the set.
 * `Sonority.ofSegment_congr`: sonority depends on a segment only through the major-class
   features and continuancy, so it is blind to place and laryngeal features.
 * `Sonority.rise_pos`, `Sonority.rise_eq_zero`, `Sonority.rise_neg`: the sign of the
@@ -128,13 +130,46 @@ theorem fillFromContext_apply_self_of_specified {f : Feature} {w : Bool} (h : s.
 
 end Segment
 
+/-! ### Distinctive feature sets -/
+
+section Distinctive
+
+variable {C D : Finset Feature} {I J : Finset Segment}
+
+/-- Two segments have the same restriction to a feature set iff they agree on it. -/
+theorem Segment.restrict_eq_restrict_iff {s s' : Segment} :
+    Bundle.restrict C s = Bundle.restrict C s' ↔ Set.EqOn s s' ↑C :=
+  Bundle.restrict_eq_restrict_iff C
+
+/-- A feature set is distinctive for an inventory when no two segments of the inventory agree
+on it. -/
+def IsDistinctive (C : Finset Feature) (I : Finset Segment) : Prop :=
+  Set.InjOn (Bundle.restrict C) (I : Set Segment)
+
+instance : Decidable (IsDistinctive C I) :=
+  decidable_of_iff (∀ s ∈ I, ∀ s' ∈ I, Bundle.restrict C s = Bundle.restrict C s' → s = s')
+    ⟨fun h _ hs _ hs' ↦ h _ hs _ hs', fun h _ hs _ hs' ↦ h hs hs'⟩
+
+/-- A larger feature set is still distinctive. -/
+theorem IsDistinctive.mono (h : IsDistinctive C I) (hCD : C ⊆ D) : IsDistinctive D I :=
+  fun s hs s' hs' he ↦ h hs hs' <| by
+    have := congrArg (Bundle.restrict C) he
+    rwa [Bundle.restrict_restrict, Bundle.restrict_restrict,
+      Finset.inter_eq_right.2 hCD] at this
+
+/-- A distinctive feature set is distinctive for every smaller inventory. -/
+theorem IsDistinctive.subset (h : IsDistinctive C I) (hJI : J ⊆ I) : IsDistinctive C J :=
+  Set.InjOn.mono (Finset.coe_subset.2 hJI) h
+
+end Distinctive
+
 /-! ### Sonority -/
 
 namespace Sonority
 
 theorem rank_strictMono : StrictMono rank := fun _ _ h ↦ h
 
-/-- The features `ofSegment` reads: the major-class features and continuancy. Place and
+/-- The features `ofSegment` reads are the major-class features and continuancy. Place and
 laryngeal features are absent. -/
 def features : Finset Feature := {.sonorant, .continuant, .approximant, .consonantal, .syllabic}
 
@@ -152,8 +187,8 @@ theorem ofSegment_setFeature {f : Feature} (hf : f ∉ features) (s : Segment) (
     ofSegment (s.setFeature f v) = ofSegment s :=
   ofSegment_congr fun g hg ↦ Segment.setFeature_apply_of_ne (s := s) (by rintro rfl; exact hf hg) v
 
-/-- The sonority rise from `a` to `b`: positive when sonority rises, zero on a plateau,
-negative when it falls. -/
+/-- The sonority rise from `a` to `b` is positive when sonority rises, zero on a plateau,
+and negative when it falls. -/
 def rise (a b : Sonority) : ℤ := b.rank - a.rank
 
 @[simp] theorem rise_self (a : Sonority) : rise a a = 0 := by simp only [rise]; omega
@@ -177,9 +212,9 @@ end Sonority
 
 namespace Sonority.Class
 
-/-- The eight Parker classes receive distinct ranks: `parkerRank` is injective
-    ([parker-2002]). The ranking is Parker's reversible default, so this is the
-    faithful invariant — no fixed order on `Sonority.Class` is implied. -/
+/-- The eight Parker classes receive distinct ranks ([parker-2002]). The ranking is Parker's
+    reversible default, so injectivity is the faithful invariant, and no fixed order on
+    `Sonority.Class` is implied. -/
 theorem parkerRank_injective : Function.Injective parkerRank := by
   intro a b h
   cases a <;> cases b <;> simp_all [parkerRank]
