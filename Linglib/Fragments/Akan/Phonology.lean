@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Akan
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Segmental.FeatureClass
 
 /-!
@@ -24,17 +24,17 @@ corono-dorsal analysis adds.
 
 ## Main definitions
 
-* `Akan.Vowel`: the nine vowels, with `chart` and `departure`, read as segments.
-* `Akan.Vowel.atr`: the [ATR] value of each vowel.
-* `Akan.Consonant`: the velar stop and its palatalized output, read as segments.
-* `Akan.i`, `Akan.k` and the like: each vowel and consonant as a segment, under its symbol.
+* `Akan.vowel`: the segment of a vowel's chart entry, with [tense] read as [ATR].
+* `Akan.i`, `Akan.smallCapitalI` and the like: the nine vowels, and `Akan.vowels` the set of
+  them.
+* `Akan.k`, `Akan.tcCurl`: the velar stop and its palatalized output.
 
 ## Main results
 
-* `Akan.Vowel.chart_mem_aka`: each vowel is a phoneme of PHOIBLE's Akan inventory.
-* `Akan.Vowel.coe_apply`: a vowel has the chart's values off [ATR] and [tense].
-* `Akan.Vowel.atr_iff`: the advanced vowels are /i e o u/.
-* `Akan.Consonant.restrict_tcCurl_eq_k`: the affricate has the stop's values off the four features
+* `Akan.exists_mem_aka`: each vowel is the segment of a phoneme of PHOIBLE's Akan inventory.
+* `Akan.vowel_apply`: a vowel has the chart's values off [ATR] and [tense].
+* `Akan.hasValue_atr_iff`: the advanced vowels are /i e o u/.
+* `Akan.restrict_tcCurl_eq_k`: the affricate has the stop's values off the four features
   palatalization writes.
 
 ## References
@@ -53,101 +53,83 @@ namespace Akan
 
 /-! ### Vowels -/
 
-/-- The nine vowels of Akan. A constructor is the vowel's IPA symbol where that is an
-identifier, and otherwise the symbol's name: `smallCapitalI` is ɪ, `epsilon` is ɛ, `openO`
-is ɔ and `upsilon` is ʊ. -/
-inductive Vowel where
-  | i | e | o | u
-  | smallCapitalI | epsilon | a | openO | upsilon
-  deriving DecidableEq, Repr, Fintype
-
-namespace Vowel
-
-/-- The PHOIBLE chart entry of a vowel. -/
-def chart : Vowel → FeatureMatrix
-  | i => .«i» | e => .«e» | o => .«o» | u => .«u»
-  | smallCapitalI => .«ɪ» | epsilon => .«ɛ» | a => .«a» | openO => .«ɔ» | upsilon => .«ʊ»
-
-/-- A vowel departs from its chart entry by taking the chart's [tense] value as its [ATR]
-value. The low vowel, which the chart leaves without [tense], keeps the chart's [−ATR]. -/
-def departure (v : Vowel) : Segment := fun f ↦ if f = .atr then v.chart.toSegment .tense else ⊥
-
-/-- Every feature but [tense] is contrastive. -/
-def contrastive : Finset Phonology.Feature := {.tense}ᶜ
-
-/-- Each vowel is in PHOIBLE's Akan inventory. -/
-theorem chart_mem_aka (v : Vowel) :
-    v.chart ∈ Inventories.Akan.aka.phonemes.map (·.features) := by
-  cases v <;> decide
-
-end Vowel
-
-/-- A vowel is read as its chart entry's segment, with its departure, on the contrastive
-features. -/
-instance : SegmentLike Vowel where
-  coe v := .ofChart v.chart v.departure Vowel.contrastive
-  coe_injective' := by decide
-
-segment_constants Vowel
-
-namespace Vowel
+/-- A vowel is its chart entry's segment with the chart's [tense] value as its [ATR] value and
+no [tense]. The low vowel, which the chart leaves without [tense], keeps the chart's
+[−ATR]. -/
+def vowel (m : FeatureMatrix) : Segment :=
+  .ofChart m (fun f ↦ if f = .atr then m.toSegment .tense else ⊥) {.tense}ᶜ
 
 /-- A vowel has the chart's values off [ATR] and [tense]. -/
-theorem coe_apply (v : Vowel) {f : Phonology.Feature} (ha : f ≠ .atr) (ht : f ≠ .tense) :
-    (v : Segment) f = v.chart.toSegment f :=
-  Segment.ofChart_apply (by simpa [contrastive] using ht) (ite_eq_right ha)
+theorem vowel_apply (m : FeatureMatrix) {f : Phonology.Feature} (ha : f ≠ .atr)
+    (ht : f ≠ .tense) : vowel m f = m.toSegment f :=
+  Segment.ofChart_apply (by simpa using ht) (ite_eq_right ha)
 
-/-- The [ATR] value of a vowel is read off its segment. -/
-def atr (v : Vowel) : Bool := decide ((v : Segment).HasValue .atr true)
+/-- The advanced high front vowel /i/. -/
+def i : Segment := vowel .«i»
+
+/-- The advanced mid front vowel /e/. -/
+def e : Segment := vowel .«e»
+
+/-- The advanced mid back vowel /o/. -/
+def o : Segment := vowel .«o»
+
+/-- The advanced high back vowel /u/. -/
+def u : Segment := vowel .«u»
+
+/-- The unadvanced high front vowel /ɪ/. -/
+def smallCapitalI : Segment := vowel .«ɪ»
+
+/-- The unadvanced mid front vowel /ɛ/. -/
+def epsilon : Segment := vowel .«ɛ»
+
+/-- The low vowel /a/, which has no advanced partner. -/
+def a : Segment := vowel .«a»
+
+/-- The unadvanced mid back vowel /ɔ/. -/
+def openO : Segment := vowel .«ɔ»
+
+/-- The unadvanced high back vowel /ʊ/. -/
+def upsilon : Segment := vowel .«ʊ»
+
+/-- The nine vowels, pairwise distinct. -/
+def vowels : Finset Segment :=
+  ⟨↑[i, e, o, u, smallCapitalI, epsilon, a, openO, upsilon], by decide⟩
+
+/-- Each vowel is the segment of a phoneme of PHOIBLE's Akan inventory. -/
+theorem exists_mem_aka :
+    ∀ x ∈ vowels, ∃ y ∈ Inventories.Akan.aka.phonemes, x = vowel y.features := by
+  decide
 
 /-- Dolphyne's advanced set is /i e o u/. -/
-theorem atr_iff (v : Vowel) : v.atr = true ↔ v ∈ ({i, e, o, u} : Finset Vowel) := by
-  revert v; decide
-
-end Vowel
+theorem hasValue_atr_iff :
+    ∀ x ∈ vowels, x.HasValue .atr true ↔ x ∈ ({i, e, o, u} : Finset Segment) := by
+  decide
 
 /-! ### The velar–palatal alternation -/
-
-/-- The voiceless velar stop /k/ and the voiceless palatal affricate /tɕ/ it becomes before
-a front vowel, `tcCurl` being the name of the symbol tɕ. -/
-inductive Consonant where
-  | k | tcCurl
-  deriving DecidableEq, Repr, Fintype
-
-namespace Consonant
 
 /-- The features palatalization writes on the velar stop. -/
 def palatalized : Segment :=
   Segment.ofSpecs [(.coronal, true), (.anterior, false), (.distributed, true),
     (.delayedRelease, true)]
 
-end Consonant
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
 
-/-- The stop is the chart's /k/. The affricate keeps the stop's values, [+dorsal] among them,
-and adds [+coronal, −anterior, +distributed] with delayed release, so it is a corono-dorsal
-complex segment. -/
-instance : SegmentLike Consonant where
-  coe
-    | .k => .ofChart .«k»
-    | .tcCurl => .ofChart .«k» Consonant.palatalized
-  coe_injective' := by decide
-
-segment_constants Consonant
-
-namespace Consonant
+/-- The voiceless palatal affricate /tɕ/ that the stop becomes before a front vowel, `tcCurl`
+being the name of the symbol tɕ. It keeps the stop's values, [+dorsal] among them, and adds
+[+coronal, −anterior, +distributed] with delayed release, so it is a corono-dorsal complex
+segment. -/
+def tcCurl : Segment := .ofChart .«k» palatalized
 
 /-- The affricate has the stop's values off the features palatalization writes. -/
 theorem restrict_tcCurl_eq_k :
-    Bundle.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) (tcCurl : Segment) =
-      Bundle.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) (k : Segment) := by
+    Bundle.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) tcCurl =
+      Bundle.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) k := by
   decide
-
-end Consonant
 
 /-- Palatalization changes the value of [coronal]. -/
 theorem k_tcCurl_coronal :
-    k.HasValue .coronal false ∧
-      tcCurl.HasValue .coronal true := by
+    k.HasValue .coronal false ∧ tcCurl.HasValue .coronal true := by
   decide
 
 /-- The palatal affricate has two designated articulators. -/
@@ -155,8 +137,7 @@ theorem tcCurl_isComplex : tcCurl.IsComplex := by decide
 
 /-- The front vowel /ɪ/ triggers palatalization and the low vowel /a/ does not. -/
 theorem smallCapitalI_front_a_not_front :
-    smallCapitalI.HasValue .front true ∧
-      a.HasValue .front false := by
+    smallCapitalI.HasValue .front true ∧ a.HasValue .front false := by
   decide
 
 end Akan

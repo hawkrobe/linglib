@@ -15,23 +15,33 @@ The two systems differ in one convention. PHOIBLE specifies [round] only on labi
 and marks it not applicable elsewhere, where Hayes's charts give every other segment
 [−round]. The segment of a matrix therefore takes [−round] as its default.
 
+A fragment gives each phoneme by `Segment.ofChart`. It reads a chart entry, merges over it
+the values on which a grammar departs from the chart, and keeps the result on the features
+the grammar treats as contrastive. A phoneme is then a segment, named by its symbol, and an
+inventory is a finite set of segments.
+
 ## Main definitions
 
 * `Phonology.Feature.toPHOIBLE`: the PHOIBLE column of each feature.
 * `Data.PHOIBLE.FeatureMatrix.toSegment`: the segment of a feature matrix.
+* `Phonology.Segment.ofChart`: the segment of a chart entry, a departure and a contrastive
+  feature set.
 
 ## Main results
 
 * `Phonology.Feature.toPHOIBLE_injective`: distinct features are distinct columns.
 * `Data.PHOIBLE.FeatureMatrix.toSegment_apply_of_ne_round`: off [round], a segment has the
   values of its matrix.
+* `Phonology.Segment.ofChart_apply`: on a contrastive feature where the departure is silent,
+  the segment has the chart's value.
 
 ## Implementation notes
 
 Dropping PHOIBLE's further features can identify two phonemes of an inventory, a long and a
-short vowel or a plain and a fortis stop. A fragment guards against this by proving its map
-from phonemes to segments injective. Velar consonants are [−front, −back] in PHOIBLE, so a
-vowel tier is picked out by `Segment.IsVowel` and not by the absence of a [back] value.
+short vowel or a plain and a fortis stop. A fragment guards against this by giving its
+inventory as a list of segments with a proof that it has no duplicates. Velar consonants are
+[−front, −back] in PHOIBLE, so a vowel tier is picked out by `Segment.IsVowel` and not by the
+absence of a [back] value.
 
 ## References
 
@@ -110,3 +120,20 @@ consonants. -/
 example : «k».toSegment.HasValue .back false := by decide
 
 end Data.PHOIBLE.FeatureMatrix
+
+namespace Phonology.Segment
+
+open Data.PHOIBLE
+
+/-- The segment of a chart entry `m` has the values of `departure` where that is specified and
+those of `m` elsewhere, kept on the features in `contrastive`. -/
+def ofChart (m : FeatureMatrix) (departure : Segment := ⊥)
+    (contrastive : Finset Feature := Finset.univ) : Segment :=
+  Bundle.restrict contrastive (Bundle.merge departure m.toSegment)
+
+theorem ofChart_apply {m : FeatureMatrix} {departure : Segment} {contrastive : Finset Feature}
+    {f : Feature} (hf : f ∈ contrastive) (hd : departure f = none) :
+    ofChart m departure contrastive f = m.toSegment f := by
+  rw [ofChart, Bundle.restrict_apply_of_mem _ hf, Bundle.merge_apply_of_eq_none hd]
+
+end Phonology.Segment

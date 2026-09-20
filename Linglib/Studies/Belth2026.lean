@@ -470,7 +470,7 @@ namespace Finnish
 open _root_.Finnish Phonology
 
 /-- The segments of a transcription, the morpheme boundary dropped. -/
-def segments (cs : List Char) : List Segment := (cs.filterMap ofChar).map SegmentLike.coe
+def segments (cs : List Char) : List Segment := cs.filterMap ofChar
 
 /-- The underlying form of a stem with the essive -nA. -/
 def ur (form : String) : List Segment := segments (stem form) ++ [n, A]
@@ -498,7 +498,7 @@ def ofChar (c : Char) : Option Segment := Turkish.Phonology.ofChar (if c = 'j' t
 def ofAffixChar : Char → Option Segment
   | 'a' | 'e' => some A
   | 'ı' | 'i' | 'u' | 'ü' => some I
-  | c => (ofChar c).map fun x ↦ (x : Segment)
+  | c => ofChar c
 
 /-- The segments of a form, the morpheme boundaries dropped. -/
 def segments (s : String) : List Segment := s.toList.filterMap ofChar

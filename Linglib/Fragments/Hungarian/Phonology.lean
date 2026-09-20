@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Hungarian
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Harmony.System
 
 /-!
@@ -21,15 +21,18 @@ rounding being a matter of phonetic implementation, so it departs from the chart
 
 ## Main definitions
 
-* `Hungarian.Vowel`: the seven short vowels, with `chart` and `departure`, read as segments.
 * `Hungarian.contrastive`: the features the vowel system uses.
-* `Hungarian.palatalHarmony`,
-  `Hungarian.labialHarmony`: the two harmony systems.
+* `Hungarian.i`, `Hungarian.epsilon` and the like: the seven short vowels, and
+  `Hungarian.vowels` the set of them.
+* `Hungarian.ofLetter`: the vowel an orthographic letter writes.
+* `Hungarian.palatalHarmony`, `Hungarian.labialHarmony`: the two harmony systems.
 
 ## Main results
 
-* `Hungarian.Vowel.chart_mem_hun`: each vowel is a phoneme of PHOIBLE's Hungarian inventory.
-* `Hungarian.Vowel.isNeutral_iff`: the neutral vowels are /i/ and /ɛ/.
+* `Hungarian.exists_mem_hun`: each vowel's chart entry is in PHOIBLE's Hungarian inventory.
+* `Hungarian.isNeutral_iff`, `Hungarian.isFrontHarmonic_iff`, `Hungarian.isBackHarmonic_iff`:
+  the neutral vowels are /i/ and /ɛ/, the front harmonic ones /y/ and /ø/, and the rest are
+  back harmonic.
 
 ## Implementation notes
 
@@ -53,32 +56,45 @@ open Phonology Phonology.Harmony Data.PHOIBLE
 /-- The features the vowel system (7) uses, with [syllabic] marking the vowels. -/
 def contrastive : Finset Phonology.Feature := {.syllabic, .high, .low, .back, .round}
 
-/-- The seven short vowels. A constructor is the vowel's IPA symbol where that is an
-identifier, and otherwise the symbol's name: `epsilon` is ɛ, orthographic ⟨e⟩, and
-`turnedScriptA` is ɒ, orthographic ⟨a⟩; `y` and `ø` are orthographic ⟨ü⟩ and ⟨ö⟩. -/
-inductive Vowel where
-  | i | y | u | epsilon | ø | o | turnedScriptA
-  deriving DecidableEq, Fintype, Repr
+/-- A vowel is its chart entry's segment, with its departure, on the contrastive features. -/
+def vowel (m : FeatureMatrix) (departure : Segment := ⊥) : Segment :=
+  .ofChart m departure contrastive
 
-namespace Vowel
+/-- The high front unrounded vowel /i/, orthographic ⟨i⟩. -/
+def i : Segment := vowel .«i»
 
-/-- The PHOIBLE chart entry of a vowel. -/
-def chart : Vowel → FeatureMatrix
-  | i => .«i» | y => .«y» | u => .«u» | epsilon => .«ɛ» | ø => .«ø» | o => .«o»
-  | turnedScriptA => .«ɒ»
+/-- The high front rounded vowel /y/, orthographic ⟨ü⟩. -/
+def y : Segment := vowel .«y»
 
-/-- The low vowel departs from the chart in being phonologically unrounded. -/
-def departure : Vowel → Segment
-  | turnedScriptA => Segment.ofSpecs [(.round, false)]
-  | _ => ⊥
+/-- The high back vowel /u/. -/
+def u : Segment := vowel .«u»
 
-/-- Each vowel is in PHOIBLE's Hungarian inventory. -/
-theorem chart_mem_hun (v : Vowel) :
-    v.chart ∈ Inventories.Hungarian.hun.phonemes.map (·.features) := by
-  cases v <;> decide
+/-- The front unrounded vowel /ɛ/, orthographic ⟨e⟩. -/
+def epsilon : Segment := vowel .«ɛ»
+
+/-- The mid front rounded vowel /ø/, orthographic ⟨ö⟩. -/
+def ø : Segment := vowel .«ø»
+
+/-- The mid back vowel /o/. -/
+def o : Segment := vowel .«o»
+
+/-- The low back vowel /ɒ/, orthographic ⟨a⟩, which departs from the chart in being phonologically
+unrounded. -/
+def turnedScriptA : Segment := vowel .«ɒ» (Segment.ofSpecs [(.round, false)])
+
+/-- The seven short vowels, pairwise distinct. -/
+def vowels : Finset Segment := ⟨↑[i, y, u, epsilon, ø, o, turnedScriptA], by decide⟩
+
+/-- Each vowel but the low one, which departs from the chart, is the segment of a phoneme of
+PHOIBLE's Hungarian inventory, and the low vowel's chart entry is in that inventory. -/
+theorem exists_mem_hun :
+    (∀ x ∈ vowels, x ≠ turnedScriptA →
+        ∃ y ∈ Inventories.Hungarian.hun.phonemes, x = vowel y.features) ∧
+      FeatureMatrix.«ɒ» ∈ Inventories.Hungarian.hun.phonemes.map (·.features) := by
+  decide
 
 /-- The vowel written by an orthographic vowel letter, long and short alike. -/
-def ofLetter : String → Option Vowel
+def ofLetter : String → Option Segment
   | "i" | "í" => some i
   | "ü" | "ű" => some y
   | "u" | "ú" => some u
@@ -87,17 +103,6 @@ def ofLetter : String → Option Vowel
   | "o" | "ó" => some o
   | "a" | "á" => some turnedScriptA
   | _ => none
-
-end Vowel
-
-/-- A vowel is read as its chart entry's segment, with its departure, on the contrastive
-features. -/
-instance : SegmentLike Vowel where
-  coe v := .ofChart v.chart v.departure contrastive
-  coe_injective' := by decide
-
-/-- The segment written by an orthographic vowel letter. -/
-def ofLetter (l : String) : Option Segment := (Vowel.ofLetter l).map fun v ↦ (v : Segment)
 
 /-- The vowels of a word written as a list of orthographic segments. -/
 def vowelsOf (segments : List String) : List Segment := segments.filterMap ofLetter
@@ -119,13 +124,16 @@ instance : DecidablePred IsNeutral := fun _ ↦ inferInstanceAs (Decidable (_ �
 instance : DecidablePred IsFrontHarmonic := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsBackHarmonic := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The neutral vowels are /i/ and /ɛ/, the front harmonic ones /y/ and /ø/, and the rest are
-back harmonic. -/
-theorem Vowel.isNeutral_iff (v : Vowel) :
-    (IsNeutral (v : Segment) ↔ v = .i ∨ v = .epsilon) ∧
-      (IsFrontHarmonic (v : Segment) ↔ v = .y ∨ v = .ø) ∧
-      (IsBackHarmonic (v : Segment) ↔ v = .u ∨ v = .o ∨ v = .turnedScriptA) := by
-  revert v; decide
+/-- The neutral vowels are /i/ and /ɛ/. -/
+theorem isNeutral_iff : ∀ x ∈ vowels, IsNeutral x ↔ x = i ∨ x = epsilon := by decide
+
+/-- The front harmonic vowels are /y/ and /ø/. -/
+theorem isFrontHarmonic_iff : ∀ x ∈ vowels, IsFrontHarmonic x ↔ x = y ∨ x = ø := by decide
+
+/-- The back harmonic vowels are /u/, /o/ and /ɒ/. -/
+theorem isBackHarmonic_iff :
+    ∀ x ∈ vowels, IsBackHarmonic x ↔ x = u ∨ x = o ∨ x = turnedScriptA := by
+  decide
 
 /-! ### The harmony systems -/
 

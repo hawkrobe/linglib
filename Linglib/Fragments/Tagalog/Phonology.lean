@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Tagalog
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -23,14 +23,16 @@ of that place, so copying the place class onto /ŋ/ gives the chart's own /m/, /
 
 ## Main definitions
 
-* `Tagalog.Phoneme`: the phonemes of the examples, with `chart`, read as segments.
-* `Tagalog.a`, `Tagalog.p` and the like: the segment of each phoneme, under its symbol.
+* `Tagalog.a`, `Tagalog.p` and the like: the phonemes of the examples, as segments of their
+  chart entries.
+* `Tagalog.inventory`: the set of them.
 * `Tagalog.placeAssimilation`, `Tagalog.obstruentDeletion`, `Tagalog.nasalSubstitution`: the
   two rules and their sequence.
 
 ## Main results
 
-* `Tagalog.Phoneme.chart_mem_tgl`: each phoneme is in PHOIBLE's Tagalog inventory.
+* `Tagalog.exists_mem_tgl`: each phoneme is the segment of one in PHOIBLE's Tagalog
+  inventory.
 * `Tagalog.mamigaj`: *maŋ-* with *bigáj* derives *mamigáj*, and the bare stem is unchanged.
 * `Tagalog.coalescence`: each stop coalesces with a preceding nasal into the nasal of its
   place.
@@ -48,43 +50,52 @@ open Phonology Subregular.LocalRewrite Data.PHOIBLE
 
 namespace Tagalog
 
+/-! ### Phonemes -/
+
+/-- The voiceless bilabial stop /p/. -/
+def p : Segment := .ofChart .«p»
+
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
+
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
+
+/-- The voiced bilabial stop /b/. -/
+def b : Segment := .ofChart .«b»
+
+/-- The voiced alveolar stop /d/. -/
+def d : Segment := .ofChart .«d»
+
+/-- The voiced velar stop /g/, the IPA glyph `ɡ` in the chart. -/
+def g : Segment := .ofChart .«ɡ»
+
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
+
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
+
+/-- The velar nasal /ŋ/. -/
+def ŋ : Segment := .ofChart .«ŋ»
+
+/-- The low vowel /a/. -/
+def a : Segment := .ofChart .«a»
+
+/-- The high front vowel /i/. -/
+def i : Segment := .ofChart .«i»
+
+/-- The palatal glide /j/. -/
+def j : Segment := .ofChart .«j»
+
 /-- The phonemes of the examples are the six oral stops, the nasals of their places, two
-vowels and the palatal glide. -/
-inductive Phoneme where
-  | p | t | k
-  | b | d | g
-  | m | n | ŋ
-  | a | i
-  | j
-  deriving DecidableEq, Fintype, Repr
+vowels and the palatal glide, and they are pairwise distinct. -/
+def inventory : Finset Segment := ⟨↑[p, t, k, b, d, g, m, n, ŋ, a, i, j], by decide⟩
 
-namespace Phoneme
-
-/-- The PHOIBLE chart entry of a phoneme. The voiced velar stop is the IPA glyph `ɡ`. -/
-def chart : Phoneme → FeatureMatrix
-  | p => .«p» | t => .«t» | k => .«k»
-  | b => .«b» | d => .«d» | g => .«ɡ»
-  | m => .«m» | n => .«n» | ŋ => .«ŋ»
-  | a => .«a» | i => .«i»
-  | j => .«j»
-
-end Phoneme
-
-/-- A phoneme is read as the segment of its chart entry. -/
-instance : SegmentLike Phoneme where
-  coe x := .ofChart x.chart
-  coe_injective' := by decide
-
-segment_constants Phoneme
-
-namespace Phoneme
-
-/-- Each phoneme is in PHOIBLE's Tagalog inventory. -/
-theorem chart_mem_tgl (x : Phoneme) :
-    x.chart ∈ Inventories.Tagalog.tgl.phonemes.map (·.features) := by
-  cases x <;> decide
-
-end Phoneme
+/-- Each phoneme is the segment of a phoneme of PHOIBLE's Tagalog inventory. -/
+theorem exists_mem_tgl :
+    ∀ x ∈ inventory, ∃ y ∈ Inventories.Tagalog.tgl.phonemes, x = .ofChart y.features := by
+  decide
 
 /-! ### The rules -/
 
@@ -111,16 +122,10 @@ theorem mamigaj :
       derive nasalSubstitution [b, i, g, a, j] = [b, i, g, a, j] := by
   decide
 
-/-- The nasal at the place of a stop or nasal. A vowel or glide is left as it is. -/
-def Phoneme.nasal : Phoneme → Phoneme
-  | .p | .b => .m
-  | .t | .d => .n
-  | .k | .g => .ŋ
-  | x => x
-
 /-- Each stop coalesces with a preceding nasal into the nasal of its place. -/
-theorem coalescence (x : Phoneme) (hx : x ∈ ({.p, .b, .t, .d, .k, .g} : Finset Phoneme)) :
-    derive nasalSubstitution [ŋ, x] = [x.nasal] := by
-  revert x; decide
+theorem coalescence :
+    ∀ x ∈ [(p, m), (b, m), (t, n), (d, n), (k, ŋ), (g, ŋ)],
+      derive nasalSubstitution [ŋ, x.1] = [x.2] := by
+  decide
 
 end Tagalog

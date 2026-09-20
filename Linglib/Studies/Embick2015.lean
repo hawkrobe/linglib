@@ -228,7 +228,7 @@ def vocab : List (VocabularyItem Feature String) :=
 
 /-- The hosts of (10), transcribed into the segments of the fragment. -/
 def segments : List (String × List Phonology.Segment) :=
-  [("pap", ([.p, .a, .p] : List Korean.Phoneme)), ("ai", ([.a, .i] : List Korean.Phoneme))]
+  [("pap", [Korean.p, Korean.a, Korean.p]), ("ai", [Korean.a, Korean.i])]
 
 /-- The phonological feature a realized exponent presents to insertion is whether its final
 segment is a consonant. -/

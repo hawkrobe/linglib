@@ -82,9 +82,9 @@ inductive Colouring
   deriving DecidableEq, Repr
 
 /-- The vowel a colouring produces, from the Fragment. -/
-def Colouring.vowel : Colouring → Option Phoneme
-  | .toU => some .u
-  | .toO => some .o
+def Colouring.vowel : Colouring → Option Segment
+  | .toU => some u
+  | .toO => some o
   | .unchanged => none
 
 /-- Colouring to /u/ is stronger than colouring to /o/, which is stronger than none. -/

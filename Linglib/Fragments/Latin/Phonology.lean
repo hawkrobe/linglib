@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Latin phonemes
@@ -12,15 +12,13 @@ entry, so the values are PHOIBLE's.
 
 ## Main definitions
 
-* `Latin.Phoneme`: the phonemes.
-* `Latin.a`, `Latin.p` and the like: the segment of each phoneme, under its symbol.
-* `Latin.Phoneme.chart`: the PHOIBLE chart entry of a phoneme. A phoneme is read as the
-  segment of its chart entry, distinct phonemes as distinct segments.
+* `Latin.a`, `Latin.p` and the like: the phonemes, as segments of their chart entries.
+* `Latin.inventory`: the set of them.
 
 ## Main results
 
-* `Latin.Phoneme.isVowel_iff`, `Latin.Phoneme.ofSegment_eq_nasal_iff`,
-  `Latin.Phoneme.ofSegment_eq_liquid_iff`, `Latin.Phoneme.ofSegment_eq_glide_iff`: the
+* `Latin.isVowel_iff`, `Latin.ofSegment_eq_nasal_iff`, `Latin.ofSegment_eq_liquid_iff`,
+  `Latin.ofSegment_eq_glide_iff`: the
   vowels and the sonorant consonants fall in their sonority classes.
 
 ## Implementation notes
@@ -49,55 +47,78 @@ open Phonology Data.PHOIBLE
 
 namespace Latin
 
-/-- The phonemes of Classical Latin. The constructor `w` is orthographic ⟨v⟩. -/
-inductive Phoneme where
-  | a | e | i | o | u
-  | p | b | t | d | k | g
-  | f | s
-  | m | n
-  | l | r
-  | w
-  deriving DecidableEq, Fintype, Repr
+/-! ### Phonemes -/
 
-namespace Phoneme
+/-- The low vowel /a/. -/
+def a : Segment := .ofChart .«a»
 
-/-- The PHOIBLE chart entry of a phoneme. The voiced velar stop is the IPA glyph `ɡ`, and
-/r/ is the alveolar trill. -/
-def chart : Phoneme → FeatureMatrix
-  | a => .«a» | e => .«e» | i => .«i» | o => .«o» | u => .«u»
-  | p => .«p» | b => .«b» | t => .«t» | d => .«d» | k => .«k» | g => .«ɡ»
-  | f => .«f» | s => .«s»
-  | m => .«m» | n => .«n»
-  | l => .«l» | r => .«r»
-  | w => .«w»
+/-- The mid front vowel /e/. -/
+def e : Segment := .ofChart .«e»
 
-end Phoneme
+/-- The high front vowel /i/. -/
+def i : Segment := .ofChart .«i»
 
-/-- A phoneme is read as the segment of its chart entry. -/
-instance : SegmentLike Phoneme where
-  coe x := .ofChart x.chart
-  coe_injective' := by decide
+/-- The mid back rounded vowel /o/. -/
+def o : Segment := .ofChart .«o»
 
-segment_constants Phoneme
+/-- The high back rounded vowel /u/. -/
+def u : Segment := .ofChart .«u»
 
-namespace Phoneme
+/-- The voiceless bilabial stop /p/. -/
+def p : Segment := .ofChart .«p»
 
-theorem isVowel_iff (x : Phoneme) :
-    (x : Segment).IsVowel ↔ x ∈ ({a, e, i, o, u} : Finset Phoneme) := by
-  revert x; decide
+/-- The voiced bilabial stop /b/. -/
+def b : Segment := .ofChart .«b»
 
-theorem ofSegment_eq_nasal_iff (x : Phoneme) :
-    Sonority.ofSegment (x : Segment) = .nasal ↔ x = m ∨ x = n := by
-  revert x; decide
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
 
-theorem ofSegment_eq_liquid_iff (x : Phoneme) :
-    Sonority.ofSegment (x : Segment) = .liquid ↔ x = l ∨ x = r := by
-  revert x; decide
+/-- The voiced alveolar stop /d/. -/
+def d : Segment := .ofChart .«d»
 
-theorem ofSegment_eq_glide_iff (x : Phoneme) :
-    Sonority.ofSegment (x : Segment) = .glide ↔ x = w := by
-  revert x; decide
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
 
-end Phoneme
+/-- The voiced velar stop /g/, the IPA glyph `ɡ` in the chart. -/
+def g : Segment := .ofChart .«ɡ»
+
+/-- The voiceless labiodental fricative /f/. -/
+def f : Segment := .ofChart .«f»
+
+/-- The voiceless alveolar fricative /s/. -/
+def s : Segment := .ofChart .«s»
+
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
+
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
+
+/-- The lateral /l/. -/
+def l : Segment := .ofChart .«l»
+
+/-- The alveolar trill /r/. -/
+def r : Segment := .ofChart .«r»
+
+/-- The labial-velar glide /w/, orthographic ⟨v⟩. -/
+def w : Segment := .ofChart .«w»
+
+/-- The phonemes of Classical Latin, pairwise distinct. -/
+def inventory : Finset Segment :=
+  ⟨↑[a, e, i, o, u, p, b, t, d, k, g, f, s, m, n, l, r, w], by decide⟩
+
+theorem isVowel_iff : ∀ x ∈ inventory, x.IsVowel ↔ x ∈ ({a, e, i, o, u} : Finset Segment) := by
+  decide
+
+theorem ofSegment_eq_nasal_iff :
+    ∀ x ∈ inventory, Sonority.ofSegment x = .nasal ↔ x = m ∨ x = n := by
+  decide
+
+theorem ofSegment_eq_liquid_iff :
+    ∀ x ∈ inventory, Sonority.ofSegment x = .liquid ↔ x = l ∨ x = r := by
+  decide
+
+theorem ofSegment_eq_glide_iff : ∀ x ∈ inventory, Sonority.ofSegment x = .glide ↔ x = w := by
+  decide
 
 end Latin
