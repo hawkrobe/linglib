@@ -33,6 +33,9 @@ So neither constraint is an instance of the other.
 * `Juncture.not_free_input`: the unrepaired concatenation has a hiatus.
 * `Juncture.free_epenthesize`, `Juncture.free_elideV1`, `Juncture.free_elideV2`: a repaired
   form is free of hiatus exactly when the material on each side of the juncture is.
+* `Juncture.elideV1_eq_eraseIdx`, `Juncture.elideV2_eq_eraseIdx`,
+  `Juncture.epenthesize_eq_insertIdx`: the repairs as the deletion of one position of the
+  unrepaired concatenation and the insertion of one segment into it.
 * `Juncture.elideV2_eq_stem_iff`: elision of the second vowel merges the suffixed form with
   the bare stem exactly for a suffix of one segment.
 
@@ -164,6 +167,39 @@ suffix has one segment. -/
 stem has one segment. -/
 @[simp] theorem elideV1_eq_suffix_iff : j.elideV1 = j.suffix ↔ j.stemBody = [] := by
   simp [elideV1]
+
+/-! ### The repairs as deletion and insertion -/
+
+/-- `j.v1Idx` is the position of the first vowel in the unrepaired concatenation. -/
+def v1Idx : ℕ := j.stemBody.length
+
+/-- `j.v2Idx` is the position of the second vowel in the unrepaired concatenation. -/
+def v2Idx : ℕ := j.stemBody.length + 1
+
+theorem v1Idx_lt_length_input : j.v1Idx < j.input.length := by
+  simp only [v1Idx, length_input]; omega
+
+theorem v2Idx_lt_length_input : j.v2Idx < j.input.length := by
+  simp only [v2Idx, length_input]; omega
+
+/-- Elision of the first vowel deletes its position from the unrepaired concatenation. -/
+theorem elideV1_eq_eraseIdx : j.elideV1 = j.input.eraseIdx j.v1Idx := by
+  simp [elideV1, suffix, input, v1Idx, List.eraseIdx_append_of_length_le]
+
+/-- Elision of the second vowel deletes its position from the unrepaired concatenation. -/
+theorem elideV2_eq_eraseIdx : j.elideV2 = j.input.eraseIdx j.v2Idx := by
+  simp [elideV2, stem, input, v2Idx, List.eraseIdx_append_of_length_le]
+
+private theorem insertIdx_append_cons {α : Type*} (l : List α) (x c : α) (r : List α) :
+    (l ++ x :: r).insertIdx (l.length + 1) c = l ++ x :: c :: r := by
+  induction l with
+  | nil => simp [List.insertIdx_succ_cons]
+  | cons a l ih => simp [List.insertIdx_succ_cons, ih]
+
+/-- Insertion of a consonant puts it at the position of the second vowel. -/
+theorem epenthesize_eq_insertIdx (c : Segment) :
+    j.epenthesize c = j.input.insertIdx j.v2Idx c :=
+  (insertIdx_append_cons _ _ _ _).symm
 
 /-! ### The repairs remove the hiatus -/
 

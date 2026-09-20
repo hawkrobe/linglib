@@ -1,5 +1,6 @@
 import Linglib.Phonology.Constraints.Harmony
 import Linglib.Phonology.Hiatus
+import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
@@ -48,7 +49,7 @@ is not formalized.
 
 namespace Storme2026
 
-open Constraints Phonology Farsi.Phonology Finset Real
+open Constraints OptimalityTheory Phonology Farsi.Phonology Finset Real
 
 /-! ### Systemic constraints, joint evaluation, and marginalization -/
 
@@ -120,24 +121,45 @@ def resolve : Resolution → Hiatus.Juncture → List Segment
 def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
   Hiatus.count (resolve c.2 c.1)
 
-/-- DEP counts inserted segments as the excess of the surface form's length over the input's,
-which is exact here, since each candidate is a pure insertion or a pure deletion. -/
+/-- `corr o j` is the correspondence between the unrepaired concatenation and the candidate
+`o`, which is the identity for faithful hiatus, the insertion of a glottal stop before the
+suffix vowel for epenthesis, and the deletion of the suffix vowel for elision. -/
+def corr : Resolution → Hiatus.Juncture → Correspondence Correspondence.Side Segment
+  | .hiatus, j => Correspondence.identity j.input
+  | .epenthesis, j => Correspondence.insertIdx j.input j.v2Idx glottal
+  | .deletion, j => Correspondence.eraseIdx j.input j.v2Idx
+
+/-- The output of each correspondence is the surface form of its candidate. -/
+theorem corr_form_rhs (o : Resolution) (j : Hiatus.Juncture) :
+    (corr o j).form .rhs = resolve o j := by
+  cases o
+  · rfl
+  · exact (j.epenthesize_eq_insertIdx glottal).symm
+  · exact j.elideV2_eq_eraseIdx.symm
+
+/-- DEP counts the output segments that have no correspondent in the input. -/
 def depConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
-  (resolve c.2 c.1).length - c.1.input.length
+  (corr c.2 c.1).depViol .lhs .rhs
 
-/-- MAX counts deleted segments as the excess of the input's length over the surface form's. -/
+/-- MAX counts the input segments that have no correspondent in the output. -/
 def maxConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
-  c.1.input.length - (resolve c.2 c.1).length
+  (corr c.2 c.1).maxViol .lhs .rhs
 
-/-- DEP's string count is its binary tableau column, for any juncture. -/
+/-- DEP is violated once by epenthesis and by no other candidate, for any juncture. -/
 theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     depConstraint (j, o) = if o = .epenthesis then 1 else 0 := by
-  cases o <;> simp [depConstraint, resolve]
+  cases o
+  · exact Correspondence.depViol_identity _
+  · exact Correspondence.depViol_insertIdx _ j.v2Idx_lt_length_input.le
+  · exact Correspondence.depViol_eraseIdx j.v2Idx_lt_length_input
 
-/-- MAX's string count is its binary tableau column, for any juncture. -/
+/-- MAX is violated once by deletion and by no other candidate, for any juncture. -/
 theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     maxConstraint (j, o) = if o = .deletion then 1 else 0 := by
-  cases o <;> simp [maxConstraint, resolve]
+  cases o
+  · exact Correspondence.maxViol_identity _
+  · exact Correspondence.maxViol_insertIdx _ j.v2Idx_lt_length_input.le
+  · exact Correspondence.maxViol_eraseIdx j.v2Idx_lt_length_input
 
 /-- \*HIATUS's string count is its binary tableau column on the paradigm's
 junctures — unlike DEP and MAX this depends on their segmental content, since
