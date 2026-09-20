@@ -52,12 +52,11 @@ open Constraints Phonology Farsi.Phonology Finset Real
 
 /-! ### Systemic constraints, joint evaluation, and marginalization -/
 
-/-- \*HOMOPHONY: the number of pairs of distinct inputs receiving identical
-outputs. A **systemic** constraint scores a whole output tuple rather than a
-single mapping — a `Constraint` on `Fin n → O` that does not decompose over
-the mappings. -/
+/-- \*HOMOPHONY counts the pairs of distinct inputs that receive identical outputs. It is a
+systemic constraint, one that scores a whole output tuple and not a single mapping, so it is a
+`Constraint` on `Fin n → O` that does not decompose over the mappings. -/
 def homophonyAvoidance {n : ℕ} {O : Type*} [DecidableEq O] : Constraint (Fin n → O) :=
-  λ f => #{p : Fin n × Fin n | p.1 < p.2 ∧ f p.1 = f p.2}
+  fun f ↦ #{p : Fin n × Fin n | p.1 < p.2 ∧ f p.1 = f p.2}
 
 section Method
 
@@ -74,12 +73,12 @@ theorem marginal_eq_classical_of_systemic_zero (inputs : ι → I) (scon : CON (
     (con : CON (I × O) m) (w : Fin m → ℝ) (i : ι) (o : O) :
     ∑ f with f i = o,
         softmax (harmonyScore (Fin.append scon (con.joint inputs)) (Fin.append 0 w)) f =
-      softmax (λ o' => harmonyScore con w (inputs i, o')) o := by
+      softmax (fun o' ↦ harmonyScore con w (inputs i, o')) o := by
   have : harmonyScore (Fin.append scon (con.joint inputs)) (Fin.append 0 w) =
-      λ f => ∑ i, harmonyScore con w (inputs i, f i) :=
-    funext λ f => by simp [harmonyScore_append, harmonyScore_joint]
+      fun f ↦ ∑ i, harmonyScore con w (inputs i, f i) :=
+    funext fun f ↦ by simp [harmonyScore_append, harmonyScore_joint]
   rw [this]
-  exact sum_softmax_eval_eq (λ i o' => harmonyScore con w (inputs i, o')) i o
+  exact sum_softmax_eval_eq (fun i o' ↦ harmonyScore con w (inputs i, o')) i o
 
 end Method
 
@@ -105,11 +104,11 @@ def definite : Hiatus.Juncture := ⟨[h, u, ch], aa, e, [], by decide, by decide
 /-- The possessive-suffix juncture /hutʃɑ-emun/: a polysegmental suffix. -/
 def possessive : Hiatus.Juncture := ⟨[h, u, ch], aa, e, [m, u, n], by decide, by decide⟩
 
-/-- The joint tableau's inputs: the definite and the possessive junctures. -/
+/-- The inputs of the joint tableau are the definite and the possessive junctures. -/
 def inputs : Fin 2 → Hiatus.Juncture := ![definite, possessive]
 
-/-- The surface form of each candidate: faithful hiatus, glottal-stop
-epenthesis, or suffix-vowel elision. -/
+/-- `resolve o j` is the surface form of the candidate `o` at the juncture `j`, with faithful
+hiatus, glottal-stop epenthesis, or elision of the suffix vowel. -/
 def resolve : Resolution → Hiatus.Juncture → List Segment
   | .hiatus => Hiatus.Juncture.input
   | .epenthesis => (Hiatus.Juncture.epenthesize · glottal)
@@ -117,33 +116,28 @@ def resolve : Resolution → Hiatus.Juncture → List Segment
 
 /-! ### The constraints and the joint tableau -/
 
-/-- \*HIATUS: vowel–vowel adjacencies surviving in the surface form. -/
-def starHiatus : Constraint (Hiatus.Juncture × Resolution) := λ c =>
+/-- \*HIATUS counts the adjacent vowel pairs that survive in the surface form. -/
+def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
   Hiatus.count (resolve c.2 c.1)
 
-/-- DEP: inserted segments, as the surface form's length excess over the input
-(exact here, since each candidate is a pure insertion or a pure deletion). -/
-def depConstraint : Constraint (Hiatus.Juncture × Resolution) := λ c =>
+/-- DEP counts inserted segments as the excess of the surface form's length over the input's,
+which is exact here, since each candidate is a pure insertion or a pure deletion. -/
+def depConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
   (resolve c.2 c.1).length - c.1.input.length
 
-/-- MAX: deleted segments, as the input's length excess over the surface
-form. -/
-def maxConstraint : Constraint (Hiatus.Juncture × Resolution) := λ c =>
+/-- MAX counts deleted segments as the excess of the input's length over the surface form's. -/
+def maxConstraint : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
   c.1.input.length - (resolve c.2 c.1).length
 
 /-- DEP's string count is its binary tableau column, for any juncture. -/
 theorem depConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     depConstraint (j, o) = if o = .epenthesis then 1 else 0 := by
-  cases o <;>
-    (simp [depConstraint, resolve, Hiatus.Juncture.input, Hiatus.Juncture.stem,
-      Hiatus.Juncture.epenthesize, Hiatus.Juncture.elideV2]; all_goals omega)
+  cases o <;> simp [depConstraint, resolve]
 
 /-- MAX's string count is its binary tableau column, for any juncture. -/
 theorem maxConstraint_eq (j : Hiatus.Juncture) (o : Resolution) :
     maxConstraint (j, o) = if o = .deletion then 1 else 0 := by
-  cases o <;>
-    (simp [maxConstraint, resolve, Hiatus.Juncture.input, Hiatus.Juncture.stem,
-      Hiatus.Juncture.epenthesize, Hiatus.Juncture.elideV2]; all_goals omega)
+  cases o <;> simp [maxConstraint, resolve]
 
 /-- \*HIATUS's string count is its binary tableau column on the paradigm's
 junctures — unlike DEP and MAX this depends on their segmental content, since
@@ -152,7 +146,7 @@ theorem starHiatus_eq (k : Fin 2) (o : Resolution) :
     starHiatus (inputs k, o) = if o = .hiatus then 1 else 0 := by
   revert k o; decide
 
-/-- The classical constraint set: DEP, \*HIATUS, MAX. -/
+/-- The classical constraint set consists of DEP, \*HIATUS and MAX. -/
 def classicalCon : CON (Hiatus.Juncture × Resolution) 3 :=
   ![depConstraint, starHiatus, maxConstraint]
 
@@ -163,26 +157,28 @@ noncomputable def classicalW : Fin 3 → ℝ := ![2.47, 1.89, 1]
 @[simp] theorem classicalW_one : classicalW 1 = 1.89 := rfl
 @[simp] theorem classicalW_two : classicalW 2 = 1 := rfl
 
-/-- \*HOMOPHONY over the paradigm: collisions among the surface forms of the
-base — realized faithfully as the bare stem, its only candidate — and of the
-two suffixed inputs. Which outputs collide is string identity. -/
-def starHomophony : Constraint (Fin 2 → Resolution) := λ f =>
-  homophonyAvoidance (Fin.cons definite.stem λ k => resolve (f k) (inputs k))
+/-- \*HOMOPHONY over the paradigm counts the collisions among the surface forms of the base,
+which is realized faithfully as the bare stem, its only candidate, and of the two suffixed
+inputs. Two outputs collide when they are the same string. -/
+def starHomophony : Constraint (Fin 2 → Resolution) := fun f ↦
+  homophonyAvoidance (Fin.cons definite.stem fun k ↦ resolve (f k) (inputs k))
 
 /-- The fitted \*HOMOPHONY weight, a posterior mean. -/
 noncomputable def homophonyWeight : ℝ := 2.27
 
-/-- The joint tableau's constraint set: \*HOMOPHONY beside the jointly evaluated
-classical constraints — the columns of the paper's Table 4, over its nine
-output tuples. -/
+/-- The constraint set of the joint tableau puts \*HOMOPHONY beside the jointly evaluated
+classical constraints. These are the columns of the paper's Table 4, over its nine output
+tuples. -/
 def jointCon : CON (Fin 2 → Resolution) 4 :=
   Fin.append ![starHomophony] (classicalCon.joint inputs)
 
-/-- The joint tableau's weights: `wh` for \*HOMOPHONY and `w` for the classical constraints. -/
+/-- The weights of the joint tableau are `wh` for \*HOMOPHONY and `w` for the classical
+constraints. -/
 def jointW (wh : ℝ) (w : Fin 3 → ℝ) : Fin 4 → ℝ := Fin.append ![wh] w
 
-/-- The marginalized probability that input `k` is realized as `o`: the paper's
-marginalization equation on the joint MaxEnt distribution, its Table 5 at the fitted weights. -/
+/-- `predicted wh w k o` is the marginalized probability that input `k` is realized as `o`, by
+the paper's marginalization equation on the joint MaxEnt distribution, which gives its Table 5
+at the fitted weights. -/
 noncomputable def predicted (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) : ℝ :=
   ∑ f with f k = o, softmax (harmonyScore jointCon (jointW wh w)) f
 
@@ -194,10 +190,10 @@ REALIZEMORPHEME) in place of \*HOMOPHONY. [storme-2026] notes that the two
 coincide here, and that only the systemic constraint extends to homophony
 avoidance not involving a null morpheme. -/
 
-/-- REALIZEMORPHEME: the suffix has a null realization — the suffixed form
-surfaces as its bare stem. -/
+/-- REALIZEMORPHEME is violated when the suffix has a null realization, the suffixed form
+surfacing as its bare stem. -/
 def realizeMorpheme : Constraint (Hiatus.Juncture × Resolution) :=
-  Constraint.binary λ c => resolve c.2 c.1 = c.1.stem
+  Constraint.binary fun c ↦ resolve c.2 c.1 = c.1.stem
 
 /-- Only deletion at a monosegmental juncture leaves the suffix unrealized —
 for any juncture, by the string algebra of `Hiatus.Juncture`. -/
@@ -205,8 +201,8 @@ theorem realizeMorpheme_eq (j : Hiatus.Juncture) (o : Resolution) :
     realizeMorpheme (j, o) = if o = .deletion ∧ j.suffixBody = [] then 1 else 0 := by
   cases o <;> simp [realizeMorpheme, resolve, j.input_ne_stem, j.epenthesize_ne_stem]
 
-/-- On this paradigm \*HOMOPHONY is the jointly evaluated REALIZEMORPHEME: the
-suffixed forms never collide with each other, only with the base. -/
+/-- On this paradigm \*HOMOPHONY is the jointly evaluated REALIZEMORPHEME, since the suffixed
+forms never collide with each other, only with the base. -/
 theorem starHomophony_eq_joint_realizeMorpheme :
     starHomophony = realizeMorpheme.joint inputs := by
   funext f; revert f; decide
@@ -231,10 +227,10 @@ theorem harmonyScore_jointCon (wh : ℝ) (w : Fin 3 → ℝ) (f : Fin 2 → Reso
 distribution factorizes over the inputs, so each marginal is the softmax of
 its per-mapping scores. -/
 theorem predicted_eq_softmax (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) :
-    predicted wh w k o = softmax (λ o' => harmonyScore ajCon (ajW wh w) (inputs k, o')) o := by
+    predicted wh w k o = softmax (fun o' ↦ harmonyScore ajCon (ajW wh w) (inputs k, o')) o := by
   unfold predicted
   rw [funext (harmonyScore_jointCon wh w)]
-  exact sum_softmax_eval_eq (λ k o' => harmonyScore ajCon (ajW wh w) (inputs k, o')) k o
+  exact sum_softmax_eval_eq (fun k o' ↦ harmonyScore ajCon (ajW wh w) (inputs k, o')) k o
 
 /-- The per-mapping scores: each candidate costs its constraint's weight, with the
 \*HOMOPHONY weight landing on top of MAX exactly for deletion at the monosegmental
@@ -279,7 +275,7 @@ deletion is less likely for the monosegmental suffix than for the polysegmental 
 theorem deletion_lt_deletion {wh : ℝ} (hwh : 0 < wh) (w : Fin 3 → ℝ) :
     predicted wh w 0 .deletion < predicted wh w 1 .deletion := by
   simp only [predicted_eq_softmax]
-  refine softmax_lt_softmax_of_single_lt ?_ λ o ho => ?_
+  refine softmax_lt_softmax_of_single_lt ?_ fun o ho ↦ ?_
   · simp only [ajScore_eq]; simp; linarith
   · cases o <;> simp_all [ajScore_eq]
 
@@ -296,7 +292,7 @@ theorem log_odds_deletion_sub (wh : ℝ) (w : Fin 3 → ℝ) :
 profiles. -/
 theorem harmonyScore_classicalCon_inputs (w : Fin 3 → ℝ) (k k' : Fin 2) (o : Resolution) :
     harmonyScore classicalCon w (inputs k, o) = harmonyScore classicalCon w (inputs k', o) :=
-  harmonyScore_congr λ j => by
+  harmonyScore_congr fun j ↦ by
     fin_cases j <;> simp [classicalCon, depConstraint_eq, starHiatus_eq, maxConstraint_eq]
 
 /-- Without \*HOMOPHONY there is no suffix-length effect to fit: the classical
@@ -304,8 +300,8 @@ grammar assigns the two suffixes the same distribution under every weighting.
 The paper reports the correspondingly worse fit of the model without
 \*HOMOPHONY. -/
 theorem classical_no_length_effect (w : Fin 3 → ℝ) (o : Resolution) :
-    softmax (λ o' => harmonyScore classicalCon w (inputs 0, o')) o =
-      softmax (λ o' => harmonyScore classicalCon w (inputs 1, o')) o := by
+    softmax (fun o' ↦ harmonyScore classicalCon w (inputs 0, o')) o =
+      softmax (fun o' ↦ harmonyScore classicalCon w (inputs 1, o')) o := by
   simp only [harmonyScore_classicalCon_inputs w 0 1]
 
 end Storme2026
