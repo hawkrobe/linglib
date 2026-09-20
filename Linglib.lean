@@ -1054,7 +1054,6 @@ import Linglib.Fragments.Turkish.Possession
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Relativization
-import Linglib.Fragments.Turkish.VowelHarmony
 import Linglib.Fragments.Tuyuca.Evidentiality
 import Linglib.Fragments.Urdu.CausativeSystem
 import Linglib.Fragments.Uyghur.Complementizers

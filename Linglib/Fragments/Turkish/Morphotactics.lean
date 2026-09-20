@@ -1,44 +1,53 @@
 import Linglib.Morphology.Morphotactics.Template
 import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Fragments.Turkish.VowelHarmony
+import Linglib.Fragments.Turkish.Phonology
 
 /-!
 # Turkish morphotactics
 
-Turkish is suffixing: derivational suffixes precede inflectional ones and clitics follow
-both ([goksel-kerslake-2005] §6.3). The inflectional suffixes of a finite verb appear in
-the order root - voice - negation - tense/aspect/modality - copular marker - person
-marker - -DIr (§8.2), the tense/aspect/modality markers themselves falling into five
-positions (§8.2.3): the possibility suffix -(y)A (1), which precedes the negative
-(§8.2.3.1), the bound auxiliaries (2), the markers of tense, aspect and modality proper
-(3), the copular markers (4) and -DIr (5). Markers of one position cannot co-occur, and
-every finite verb but the imperative and the third-person optative carries one of
-position 3; the voice slot alone admits a sequence of suffixes, up to four (§8.2 (7),
-§8.2.1.1). The inflectional suffixes of a nominal appear in the order number -
-possession - case (§8.1). The finite verb and the nominal are each a
-`Morphology.PositionClassSystem`: a slot inventory, its template, and the exponents of
-each slot, with the person markers (§8.4) and the possessives (§8.1.2) as
-`Agreement.Paradigm`s. The clitics mI and dA, which can interrupt the inflectional string
-(§6.3 (5)), are Chapter 11 material outside both systems. The markers' meanings are the
-matter of Chapter 21 and Appendix 2: -DI marks past tense, perfective aspect and direct
-knowledge, -mIş relative past tense, perfective aspect and indirect knowledge (evidential
-modality, §21.4.3), the copular -(y)mIş evidential modality alone; -mIş followed by a
-copular marker or -DIr is perfective only (§8.2.3.3). Negation of the aorist is
-irregular, -mAz for -(A/I)r (§8.2.2; see `Turkish.Negation`). The grammar's examples are
-checked against both systems in `Studies/GokselKerslake2005.lean`.
+This file defines the inflectional suffixes of the Turkish finite verb and nominal and the
+order in which they appear, following the reference grammar of Göksel and Kerslake.
+
+Turkish is suffixing. Derivational suffixes precede inflectional ones, and clitics follow both
+(§6.3). The inflectional suffixes of a finite verb appear in the order root, voice, negation,
+tense/aspect/modality, copular marker, person marker, -DIr (§8.2). The tense/aspect/modality
+markers themselves fall into five positions (§8.2.3): the possibility suffix -(y)A (1), which
+precedes the negative (§8.2.3.1), the bound auxiliaries (2), the markers of tense, aspect and
+modality proper (3), the copular markers (4) and -DIr (5). Markers of one position cannot
+co-occur, and every finite verb but the imperative and the third-person optative carries one
+of position 3. The voice slot alone admits a sequence of suffixes, up to four (§8.2 (7),
+§8.2.1.1). The inflectional suffixes of a nominal appear in the order number, possession, case
+(§8.1).
+
+The finite verb and the nominal are each a `Morphology.PositionClassSystem`, which consists of
+a slot inventory, its template, and the exponents of each slot. The person markers (§8.4) and
+the possessives (§8.1.2) are `Agreement.Paradigm`s.
 
 ## Main definitions
 
-* `Turkish.Verb.Slot`, `Turkish.Verb.Exponent`, `Turkish.Verb.system` — the finite verb.
-* `Turkish.Nominal.Slot`, `Turkish.Nominal.Exponent`, `Turkish.Nominal.system` — the nominal.
-* `Exponent.form` — each exponent's form after a consonant-final stem, as segments.
+* `Turkish.Verb.Slot`, `Turkish.Verb.Exponent`, `Turkish.Verb.system`: the slots, exponents
+  and position-class system of the finite verb.
+* `Turkish.Nominal.Slot`, `Turkish.Nominal.Exponent`, `Turkish.Nominal.system`: the same for
+  the nominal.
+* `Exponent.form`: the form of an exponent after a consonant-final stem, as segments.
+
+## Implementation notes
+
+The clitics mI and dA, which can interrupt the inflectional string (§6.3 (5)), are Chapter 11
+material outside both systems. The markers' meanings are the matter of Chapter 21 and
+Appendix 2. There -DI marks past tense, perfective aspect and direct knowledge, -mIş marks
+relative past tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3),
+and the copular -(y)mIş marks evidential modality alone; -mIş followed by a copular marker or
+-DIr is perfective only (§8.2.3.3). Negation of the aorist is irregular, -mAz for -(A/I)r
+(§8.2.2; see `Turkish.Negation`). The grammar's examples are checked against both systems in
+`Studies/GokselKerslake2005.lean`.
 
 ## References
 
 * [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
 -/
 
-open Phonology (Segment)
+open Phonology
 
 namespace Turkish
 
@@ -59,8 +68,8 @@ inductive Slot where
   /-- The bound auxiliaries -(y)Abil, -(y)Iver, -(y)Agel, -(y)Ayaz, -(y)Akal and
   -(y)Adur, position 2 (§8.2.3.2). -/
   | auxiliary
-  /-- Position 3: -DI, -mIş, -sA, the aorist, -(y)AcAK, -(I)yor, -mAlI, -mAktA and the
-  optative -(y)A (§8.2.3.3). -/
+  /-- The position 3 markers -DI, -mIş, -sA, the aorist, -(y)AcAK, -(I)yor, -mAlI, -mAktA and
+  the optative -(y)A (§8.2.3.3). -/
   | tam
   /-- The copular markers -(y)DI, -(y)mIş and -(y)sA, position 4 (§8.3.2). -/
   | copula
@@ -70,8 +79,8 @@ inductive Slot where
   | generalizing
   deriving DecidableEq, Repr
 
-/-- The person-marker groups of §8.4: group 1 after -DI, -sA and the copular markers -(y)DI
-and -(y)sA; group 2 after the other position-3 markers, the copular -(y)mIş and nominal
+/-- A person-marker group of §8.4. Group 1 follows -DI, -sA and the copular markers -(y)DI and
+-(y)sA, and group 2 follows the other position-3 markers, the copular -(y)mIş and nominal
 predicates. The optative and imperative groups 3 and 4 are not represented. -/
 inductive PersonGroup where
   | one
@@ -141,7 +150,7 @@ inductive Exponent : Slot → Type where
   | evidentialCopula : Exponent .copula
   /-- -(y)sA, conditional copula. -/
   | conditionalCopula : Exponent .copula
-  /-- A person marker: the cell of a group's paradigm (§8.4). -/
+  /-- A person marker, the cell of a group's paradigm (§8.4). -/
   | person (group : PersonGroup) (cell : Agreement.Bundle) : Exponent .person
   /-- -DIr, generalizing modality (§8.3.3). -/
   | dir : Exponent .generalizing
@@ -149,9 +158,10 @@ inductive Exponent : Slot → Type where
 
 variable {σ : Slot}
 
-/-- The form of an exponent after a consonant-final stem; the deletable vowels and buffer
-`y` of §6.1.3 and the stem-conditioned allomorphs of §8.2.1 are not represented, and a
-person cell outside its group's paradigm has no form. -/
+/-- The form of an exponent after a consonant-final stem. The deletable vowels and buffer `y`
+of §6.1.3 are not represented, except that `Turkish.Phonology.surface` resolves the `I` of
+-(I)yor after a vowel; nor are the stem-conditioned allomorphs of §8.2.1. A person cell outside
+its group's paradigm has no form. -/
 def Exponent.form : Exponent σ → List Segment
   | .reciprocal => [I, ş]
   | .reflexive => [I, n]
@@ -180,7 +190,7 @@ def Exponent.form : Exponent σ → List Segment
   | .person g c => (g.paradigm.realize c).getD []
   | .dir => [D, I, r]
 
-/-- The finite verb: its slots in the order of §8.2, the voice slot iterable. -/
+/-- The finite verb has its slots in the order of §8.2, and its voice slot is iterable. -/
 def system : Morphology.PositionClassSystem where
   Slot := Slot
   template :=
@@ -239,7 +249,7 @@ def Exponent.form : Exponent σ → List Segment
   | .ablative => [D, A, n]
   | .genitive => [I, n]
 
-/-- The nominal: number - possession - case (§8.1). -/
+/-- The nominal has the slots number, possession and case, in that order (§8.1). -/
 def system : Morphology.PositionClassSystem where
   Slot := Slot
   template := { suffixSlots := [.number, .possession, .case] }
