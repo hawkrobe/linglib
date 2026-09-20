@@ -73,7 +73,7 @@ theorem image_snd_skip {m n i : ℕ} (hm : m = n + 1) :
 /-- `deletion s t i` relates `s` to a string `t` one segment shorter by skipping position `i` of
 `s`, every other position of `s` corresponding to the position of `t` in the same order. The
 segments of `t` need not be those of `s`, so a deletion may come with changes elsewhere. -/
-def deletion (s t : List α) (i : ℕ) : Correspondence Side α where
+def deletion (s t : List α) (i : ℕ) : Correspondence BinaryRole α where
   form
     | .lhs => s
     | .rhs => t
@@ -85,11 +85,11 @@ def deletion (s t : List α) (i : ℕ) : Correspondence Side α where
 
 /-- `eraseIdx s i` is the deletion of the segment at position `i` of `s` with every other
 segment unchanged. -/
-def eraseIdx (s : List α) (i : ℕ) : Correspondence Side α := deletion s (s.eraseIdx i) i
+def eraseIdx (s : List α) (i : ℕ) : Correspondence BinaryRole α := deletion s (s.eraseIdx i) i
 
 /-- `insertIdx s i a` is the insertion of the segment `a` at position `i` of `s`, the converse
 of the deletion of position `i` from the longer string. -/
-def insertIdx (s : List α) (i : ℕ) (a : α) : Correspondence Side α where
+def insertIdx (s : List α) (i : ℕ) (a : α) : Correspondence BinaryRole α where
   form
     | .lhs => s
     | .rhs => s.insertIdx i a

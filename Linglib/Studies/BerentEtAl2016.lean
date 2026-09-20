@@ -96,7 +96,7 @@ theorem surface_reduplicated (base : List α) :
 /-- The correspondence diagram of a parse against an input treats a simplex name as all
 stem, and the copy of a reduplicated name as its reduplicant. -/
 def correspondence (input : List α) :
-    Parse α → Correspondence Correspondence.ReduplicationRole α
+    Parse α → Correspondence ReduplicationRole α
   | simplex form => .reduplication input form []
   | reduplicated base => .reduplication input base base
 

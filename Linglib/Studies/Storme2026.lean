@@ -128,7 +128,7 @@ def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 /-- `corr o j` is the correspondence between the unrepaired concatenation and the candidate
 `o`, which is the identity for faithful hiatus, the insertion of a glottal stop before the
 suffix vowel for epenthesis, and the deletion of the suffix vowel for elision. -/
-def corr : Resolution → Hiatus.Juncture → Correspondence Correspondence.Side Segment
+def corr : Resolution → Hiatus.Juncture → Correspondence BinaryRole Segment
   | .hiatus, j => Correspondence.identity j.input
   | .epenthesis, j => Correspondence.insertIdx j.input j.v2Idx Phoneme.glottalStop.segment
   | .deletion, j => Correspondence.eraseIdx j.input j.v2Idx
