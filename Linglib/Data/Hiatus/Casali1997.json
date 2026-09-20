@@ -1,0 +1,37 @@
+{
+  "paper": "Casali1997",
+  "bibkey": "casali-1997",
+  "description": "The languages the paper's Section 2 lists for each of its four generalizations about which vowel elides: the first vowel between two lexical words, the second vowel before a function word, the first vowel after a prefix of at least a consonant and a vowel, and either vowel between a root and a suffix. A language the paper introduces with 'possibly' is tentative.",
+  "groups": [
+    {
+      "juncture": "lexicalLexical",
+      "elided": "first",
+      "languages": ["Au", "Babole", "Bemba", "Bobangi", "Bolia", "Central Kambari", "Chicano Spanish", "Chumburung", "Ebira", "Efik", "Eggon", "Emai", "Engenni", "Etsako", "Ghotuo", "Gichode", "Gonja", "Igbo", "Igede", "Isekiri", "Isoko", "Ivie", "Izi", "Krachi", "Lamba", "Lokəə", "Logo", "LuGanda", "Lulobo", "Malakmalak", "Nawuri", "Nupe", "Ogbia", "Ogoja Yala", "Ogori", "Owon Afa", "Pero", "Sango", "Urhobo", "Yakata", "Yoruba", "Zulu"],
+      "tentative": []
+    },
+    {
+      "juncture": "lexicalFunction",
+      "elided": "second",
+      "languages": ["Basque", "Dangme", "Emai", "Etsako", "Ewe", "Isekiri", "Isoko", "Ivie", "Mundani", "Sango", "Shona", "Vata"],
+      "tentative": ["Efik", "Ogoja Yala"]
+    },
+    {
+      "juncture": "prefixRoot",
+      "elided": "first",
+      "languages": ["Avatime", "Babole", "Bemba", "Bobangi", "Chagga", "Chichewa", "Chiyao", "Diola-Fogny", "Ila", "Kamba", "KiYaka", "Kongo", "Lamba", "LuGanda", "Lugisu", "Pero", "Shona", "Si-Luyana", "SiSwati", "Tsonga", "Uma Juman", "West Tarangan", "Xhosa", "Yakata", "Yoruba", "Zulu"],
+      "tentative": ["Santee Dakota"]
+    },
+    {
+      "juncture": "rootSuffix",
+      "elided": "first",
+      "languages": ["Afar", "Aghem", "Avatime", "Daga", "Diola-Fogny", "Igede", "Iraqw", "KiYaka", "Lamba", "LuGanda", "Moba", "Nawuri", "Nupe", "Niaboua", "Ogbia", "Santee Dakota", "Shilluk", "Shona", "Tabla", "Tsonga", "Vata"],
+      "tentative": []
+    },
+    {
+      "juncture": "rootSuffix",
+      "elided": "second",
+      "languages": ["Afar", "Aghem", "Avatime", "Basque", "Chichewa", "Dangme", "Daga", "Diola-Fogny", "Edo", "Kagate", "Lulobo", "Niaboua", "Okpe", "Vata"],
+      "tentative": []
+    }
+  ]
+}
