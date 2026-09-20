@@ -1,6 +1,6 @@
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Linglib.Phonology.Harmony.System
-import Linglib.Fragments.Finnish.VowelHarmony
+import Linglib.Fragments.Finnish.Phonology
 import Linglib.Fragments.Turkish.Phonology
 import Linglib.Studies.Yang2016
 import Linglib.Data.Examples.Belth2026
@@ -23,7 +23,7 @@ iterations with the tiers Σ, [+cons] and [+sib], accuracies 1/8, 4/8 and 7/7, a
 `Toy.learn`). The rules D2L converges to on natural language data are run on the paper's
 examples: Latin liquid dissimilation (54) on (53), with the *lunaris* row it mispredicts
 (`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the
-search-and-copy reading of the fragment's `Finnish.VowelHarmony.finnishHarmony`, on (51)
+search-and-copy reading of the fragment's `Finnish.palatalHarmony`, on (51)
 (`finnish_rows`); and Turkish vowel harmony (49a) on (46) and (47) through the fragment's
 two harmonies (`turkish_rows`).
 
@@ -467,14 +467,18 @@ def morphemes : List Char → List (List Char)
 
 namespace Finnish
 
-open _root_.Finnish.VowelHarmony Phonology
+open _root_.Finnish Phonology
 
 /-- A letter of Finnish orthography. -/
 def ofChar : Char → Option Segment
-  | 'a' => some a_vowel | 'ä' => some ä_vowel | 'o' => some o_vowel | 'ö' => some ö_vowel
-  | 'u' => some u_vowel | 'y' => some y_vowel | 'e' => some e_vowel | 'i' => some i_vowel
-  | 'p' => some p | 't' => some t | 'k' => some k | 'n' => some n | 'v' => some v
-  | 'l' => some l | 'j' => some j | 'A' => some A
+  | 'a' => some Vowel.scriptA.segment | 'ä' => some Vowel.æ.segment
+  | 'o' => some Vowel.o.segment | 'ö' => some Vowel.ø.segment
+  | 'u' => some Vowel.u.segment | 'y' => some Vowel.y.segment
+  | 'e' => some Vowel.e.segment | 'i' => some Vowel.i.segment
+  | 'p' => some Consonant.p.segment | 't' => some Consonant.t.segment
+  | 'k' => some Consonant.k.segment | 'n' => some Consonant.n.segment
+  | 'v' => some Consonant.v.segment | 'l' => some Consonant.l.segment
+  | 'j' => some Consonant.j.segment | 'A' => some archiphonemeA
   | _ => none
 
 /-- The segments of a form, the morpheme boundary dropped. -/
@@ -482,13 +486,13 @@ def segments (s : String) : List Segment := s.toList.filterMap ofChar
 
 /-- The underlying form of a stem with the essive -nA. -/
 def ur (form : String) : List Segment :=
-  (stem form).filterMap ofChar ++ [n, A]
+  (stem form).filterMap ofChar ++ [Consonant.n.segment, archiphonemeA]
 
 /-- Rule (52) is the search-and-copy reading of the fragment's harmony, whose tier excludes
 consonants and the neutral vowels and whose Elsewhere default is `[−back]`; it derives the
 four forms of (51). -/
 theorem rows : ∀ f ∈ forms Examples.ex_51,
-    finnishHarmony.searchCopy.apply (ur f) = segments f := by
+    palatalHarmony.searchCopy.apply (ur f) = segments f := by
   decide
 
 end Finnish
