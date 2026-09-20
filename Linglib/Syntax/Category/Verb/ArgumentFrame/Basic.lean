@@ -401,6 +401,10 @@ def np_pp (p : Option Adposition := none) : ArgumentFrame :=
 def finiteClause : ArgumentFrame :=
   ⟨some .nominal, [.clausal (coding := some .indicative) (force := some .declarative)]⟩
 
+/-- Finite declarative clause in the subjunctive. -/
+def subjunctiveClause : ArgumentFrame :=
+  ⟨some .nominal, [.clausal (coding := some .subjunctive) (force := some .declarative)]⟩
+
 /-- Infinitival clause. The embedded-subject requirement varies by verb
     (equi-deletion, raising, or adposition-marked overt subjects,
     [noonan-2007] §1.3.4), so it lives on the verb's reading, not here. -/
