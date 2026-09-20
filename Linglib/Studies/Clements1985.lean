@@ -95,14 +95,14 @@ the sets a rule may copy, not between formalisms.
 
 namespace Clements1985
 
-open Phonology Phonology.FeatureGeometry English.Phonology Subregular.LocalRewrite
+open Phonology Phonology.FeatureGeometry English Subregular.LocalRewrite
 
 attribute [local instance] Set.decidableEqOnOfFintype
 
 /-! ### Class nodes -/
 
-/-- The class nodes of (3): the root, linked to the CV tier; laryngeal and supralaryngeal
-below it; manner and place below supralaryngeal. -/
+/-- The class nodes of (3) are the root, linked to the CV tier, with laryngeal and
+supralaryngeal below it, and manner and place below supralaryngeal. -/
 inductive Node where
   | root | laryngeal | supralaryngeal | manner | place
   deriving DecidableEq, Repr, Fintype
@@ -115,7 +115,7 @@ def pred : Node → Node
   | .laryngeal | .supralaryngeal => .root
   | .manner | .place => .supralaryngeal
 
-/-- A node with its ancestors: the iterates of `pred`. -/
+/-- A node with its ancestors, the iterates of `pred`. -/
 def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
 
 instance : PartialOrder Node := PartialOrder.lift up (by decide)
@@ -139,9 +139,9 @@ end Node
 
 /-! ### Terminal features (§4) -/
 
-/-- The class node a terminal feature hangs from: `[spread]`, `[constricted]` and
-`[voiced]` under laryngeal; `[consonantal]`, `[sonorant]`, `[continuant]`, `[lateral]`,
-`[strident]` and, tentatively, `[nasal]` under manner; the place features under place.
+/-- The class node a terminal feature hangs from. It is laryngeal for `[spread]`,
+`[constricted]` and `[voiced]`, manner for `[consonantal]`, `[sonorant]`, `[continuant]`,
+`[lateral]`, `[strident]` and, tentatively, `[nasal]`, and place for the place features.
 Features the paper does not place have none. -/
 def classNode? : Feature → Option Node
   | .voice | .spreadGlottis | .constrGlottis => some .laryngeal
@@ -149,7 +149,7 @@ def classNode? : Feature → Option Node
   | .labial | .coronal | .anterior | .distributed | .high | .back | .round => some .place
   | _ => none
 
-/-- The two sets of place features: P, distinguishing place in consonants, and S,
+/-- The two sets of place features are P, distinguishing place in consonants, and S,
 distinguishing place in vowels (§4). -/
 inductive PlaceSet where
   | primary | secondary
@@ -173,9 +173,9 @@ theorem mem_place_naturalClass_iff (f : Feature) :
 
 /-! ### Assimilation as spreading ((5)) -/
 
-/-- What an assimilation rule spreads: the root node (total assimilation), a class node
-(partial assimilation) or a single feature (single-feature assimilation), after
-Mohanan; a rule spreading more than one node costs more. -/
+/-- An assimilation rule spreads the root node (total assimilation), a class node (partial
+assimilation) or a single feature (single-feature assimilation), after Mohanan. A rule
+spreading more than one node costs more. -/
 inductive Spreading where
   | node (a : Node)
   | feature (f : Feature)
@@ -190,12 +190,12 @@ def features : Spreading → Finset Feature
   | .node a => naturalClass classNode? a
   | .feature f => {f}
 
-/-- Spread from `src` onto `tgt`: the carried features take `src`'s values, specified or
-not, the target's own being delinked ((13)); every other feature keeps `tgt`'s value. -/
+/-- Spreading from `src` onto `tgt` gives the carried features the values of `src`, specified
+or not, the target's own being delinked ((13)), and leaves every other feature of `tgt`. -/
 def apply : Segment := σ.features.piecewise src tgt
 
 theorem apply_eqOn : Set.EqOn (σ.apply src tgt) src ↑σ.features :=
-  λ _ hf => Finset.piecewise_eq_of_mem _ _ _ hf
+  fun _ hf ↦ Finset.piecewise_eq_of_mem _ _ _ hf
 
 /-- Single-feature spreading is the bundle primitive `Bundle.assimilate`. -/
 theorem apply_feature (f : Feature) :
@@ -231,7 +231,7 @@ theorem apply_eqOn_supralaryngeal_of_nasal_of_distributed (h₁ : Feature.nasal 
   (σ.apply_eqOn src tgt).mono
     (Finset.coe_subset.2 (supralaryngeal_subset_of_nasal_of_distributed σ h₁ h₂))
 
-/-- Kikuyu assigns `[−continuant, +voiced]` to postnasal obstruents (§5.1, (24)): only the
+/-- Kikuyu assigns `[−continuant, +voiced]` to postnasal obstruents (§5.1, (24)). Only the
 root reaches a manner and a laryngeal feature at once, so the theory makes `[voiced]`
 redundant there, filled in by a later rule. -/
 theorem eq_root_of_continuant_of_voice (h₁ : Feature.continuant ∈ σ.features)
@@ -248,65 +248,72 @@ theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior
 
 /-! ### English coronal place assimilation ((10)–(14)) -/
 
-/-- Rule (12) as a local rewrite rule: a `[−continuant, +coronal, +anterior]` target, one of
-/t d n/, takes the place node of a following `[+consonantal, +coronal]` segment. -/
+/-- In rule (12) as a local rewrite rule, a `[−continuant, +coronal, +anterior]` target, one
+of /t d n/, takes the place node of a following `[+consonantal, +coronal]` segment. -/
 def rule12 : Rule where
   target := Segment.ofSpecs [(.continuant, false), (.coronal, true), (.anterior, true)]
   effect := .copyRight (naturalClass classNode? Node.place)
   rightContext := [.seg (Segment.ofSpecs [(.consonantal, true), (.coronal, true)])]
 
-/-- The SPE statement (14): the same target before a `[+coronal]` segment copies that
+/-- In the SPE statement (14), the same target before a `[+coronal]` segment copies that
 segment's `[anterior]` and `[distributed]` by alpha-variables. -/
 def rule14 : Rule where
   target := Segment.ofSpecs [(.coronal, true), (.anterior, true), (.continuant, false)]
   effect := .copyRight {Feature.anterior, Feature.distributed}
   rightContext := [.seg (Segment.ofSpecs [(.coronal, true)])]
 
-/-- The variant of (14) with `[αnasal]` for `[αanterior]`: "no more and no less ordinary" as
+/-- The variant of (14) with `[αnasal]` for `[αanterior]` is "no more and no less ordinary" as
 an SPE rule, and unattested. -/
 def rule14Nasal : Rule := { rule14 with effect := .copyRight {Feature.nasal, Feature.distributed} }
 
-/-- *tenth*: /n/ before /θ/ takes `[+distributed]` and nothing else — a dental nasal. -/
-theorem rule12_n_θ : rule12.apply [n, θ] = [n.setFeature .distributed true, θ] := by decide
+/-- In *tenth*, /n/ before /θ/ takes `[+distributed]` and nothing else, a dental nasal. -/
+theorem rule12_n_θ : rule12.apply (segments [.n, .θ]) =
+      [Phoneme.n.segment.setFeature .distributed true, Phoneme.θ.segment] := by decide
 
-/-- *eighth*: /t/ before /θ/. -/
-theorem rule12_t_θ : rule12.apply [t, θ] = [t.setFeature .distributed true, θ] := by decide
+/-- In *eighth*, /t/ before /θ/ does the same. -/
+theorem rule12_t_θ : rule12.apply (segments [.t, .θ]) =
+      [Phoneme.t.segment.setFeature .distributed true, Phoneme.θ.segment] := by decide
 
-/-- *hundredth*: /d/ before /θ/. -/
-theorem rule12_d_θ : rule12.apply [d, θ] = [d.setFeature .distributed true, θ] := by decide
+/-- In *hundredth*, /d/ before /θ/ does the same. -/
+theorem rule12_d_θ : rule12.apply (segments [.d, .θ]) =
+      [Phoneme.d.segment.setFeature .distributed true, Phoneme.θ.segment] := by decide
 
-/-- *insure*: /n/ before /ʃ/ is postalveolar, `[−anterior, +distributed]`, and still a
+/-- In *insure*, /n/ before /ʃ/ is postalveolar, `[−anterior, +distributed]`, and still a
 non-strident nasal, `[strident]` and `[nasal]` being manner features. -/
 theorem rule12_n_esh :
-    rule12.apply [n, esh] = [(n.setFeature .anterior false).setFeature .distributed true, esh] := by
+    rule12.apply (segments [.n, .esh]) =
+      [(Phoneme.n.segment.setFeature .anterior false).setFeature .distributed true,
+        Phoneme.esh.segment] := by
   decide
 
-/-- A labial trigger is no site: *impossible* falls to the separate nasal assimilation
+/-- A labial trigger is no site, and *impossible* falls to the separate nasal assimilation
 rule. -/
-theorem rule12_n_p : rule12.apply [n, p] = [n, p] := by decide
+theorem rule12_n_p : rule12.apply (segments [.n, .p]) = segments [.n, .p] := by decide
 
-/-- A fricative target is no site: the rule affects the stops /t d n/ only. -/
-theorem rule12_s_θ : rule12.apply [s, θ] = [s, θ] := by decide
+/-- A fricative target is no site, since the rule affects the stops /t d n/ only. -/
+theorem rule12_s_θ : rule12.apply (segments [.s, .θ]) = segments [.s, .θ] := by decide
 
 /-- On the English data (14) is not distinguishable from (12). -/
-theorem rule14_n_θ : rule14.apply [n, θ] = rule12.apply [n, θ] := by decide
+theorem rule14_n_θ :
+    rule14.apply (segments [.n, .θ]) = rule12.apply (segments [.n, .θ]) := by decide
 
-theorem rule14_n_esh : rule14.apply [n, esh] = rule12.apply [n, esh] := by decide
+theorem rule14_n_esh :
+    rule14.apply (segments [.n, .esh]) = rule12.apply (segments [.n, .esh]) := by decide
 
-/-- What separates them: the `[αnasal]` variant is a rule of the same form and applies, while
-no single-node spreading carries `[nasal]` and `[distributed]` without the whole
+/-- What separates them is that the `[αnasal]` variant is a rule of the same form and applies,
+while no single-node spreading carries `[nasal]` and `[distributed]` without the whole
 supralaryngeal class (`supralaryngeal_subset_of_nasal_of_distributed`). -/
 theorem no_spreading_nasal_distributed :
     ∀ σ : Spreading, σ.features ≠ {Feature.nasal, Feature.distributed} := by
   decide
 
-theorem rule14Nasal_n_θ : rule14Nasal.apply [n, θ] ≠ [n, θ] := by decide
+theorem rule14Nasal_n_θ : rule14Nasal.apply (segments [.n, .θ]) ≠ segments [.n, .θ] := by decide
 
 /-! ### Supralaryngeal spreading: Icelandic preaspiration ((6)–(7)) -/
 
-/-- (7): the first half of a geminate aspirated stop loses its supralaryngeal node and
+/-- In (7) the first half of a geminate aspirated stop loses its supralaryngeal node and
 takes the preceding vowel's, so the output shares every supralaryngeal feature with the
-vowel and keeps only the stop's laryngeal features `[+spread, −voiced]` — an [h]. Klamath
+vowel and keeps only the stop's laryngeal features `[+spread, −voiced]`, an [h]. Klamath
 (9a) and Sierra Popoluca (16) spread the same node from a lateral and from a nasal. -/
 theorem preaspiration (v c : Segment) :
     Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v
@@ -317,10 +324,11 @@ theorem preaspiration (v c : Segment) :
 
 /-! ### Primary and secondary place features (§4) -/
 
-/-- Table (22): the primary features alone separate the English stop places, so `[high]`
-and `[back]` are not needed for consonant place. -/
+/-- As table (22) shows, the primary features alone separate the English stop places, so
+`[high]` and `[back]` are not needed for consonant place. -/
 theorem primary_separates_stops :
-    ∀ x ∈ [p, t, k], ∀ y ∈ [p, t, k], Set.EqOn x y ↑PlaceSet.primary.features → x = y := by
+    ∀ x ∈ segments [.p, .t, .k], ∀ y ∈ segments [.p, .t, .k],
+      Set.EqOn x y ↑PlaceSet.primary.features → x = y := by
   decide
 
 end Clements1985

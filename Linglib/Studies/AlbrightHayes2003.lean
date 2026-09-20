@@ -49,7 +49,7 @@ discount, and the analogical model itself are not modelled.
 
 namespace AlbrightHayes2003
 
-open Data.Examples Phonology Subregular.LocalRewrite English.Phonology
+open Data.Examples Phonology Subregular.LocalRewrite English
 
 deriving instance DecidableEq for ContextElem
 
@@ -69,8 +69,9 @@ def Matches (c : Context) (stem : List Segment) : Prop := matchLeftContext c ste
 instance (c : Context) (stem : List Segment) : Decidable (Matches c stem) :=
   inferInstanceAs (Decidable (_ = true))
 
-/-- Generalization from the change site outward ((5)): shared segments are kept, the first pair
-that differ become the class of their shared features, and everything beyond them is freed. -/
+/-- Generalization proceeds from the change site outward ((5)). Shared segments are kept, the
+first pair that differ become the class of their shared features, and everything beyond them
+is freed. -/
 def mgRev : List ContextElem → List ContextElem → List ContextElem
   | .seg a :: as, .seg b :: bs => if a = b then .seg a :: mgRev as bs else [.seg (a ⊓ b)]
   | .wordBoundary :: _, .wordBoundary :: _ => [.wordBoundary]
@@ -79,11 +80,11 @@ def mgRev : List ContextElem → List ContextElem → List ContextElem
 /-- The minimal generalization of two descriptions. -/
 def mg (c₁ c₂ : Context) : Context := (mgRev c₁.reverse c₂.reverse).reverse
 
-/-- The rule learned from a list of stems: each stem's word-specific rule generalized in
+/-- The rule learned from a list of stems generalizes each stem's word-specific rule in
 turn. -/
 def learned : List (List Segment) → Context
   | [] => []
-  | s :: ss => ss.foldl (λ c w => mg c (wordSpecific w)) (wordSpecific s)
+  | s :: ss => ss.foldl (fun c w ↦ mg c (wordSpecific w)) (wordSpecific s)
 
 variable {c c₁ c₂ : Context} {stem : List Segment}
 
@@ -145,7 +146,8 @@ private theorem matchRightContext_mgRev {r₁ r₂ : List ContextElem} {l : List
           | nil => rfl
           | cons s ss => simp [matchRightContext] at h
 
-/-- The generalized rule covers everything either rule covered: generalization only widens. -/
+/-- The generalized rule covers everything either rule covered, so generalization only
+widens. -/
 theorem matches_mg_left (h : Matches c₁ stem) : Matches (mg c₁ c₂) stem := by
   simp only [Matches, matchLeftContext, mg, List.reverse_reverse] at h ⊢
   exact matchRightContext_mgRev h
@@ -153,18 +155,18 @@ theorem matches_mg_left (h : Matches c₁ stem) : Matches (mg c₁ c₂) stem :=
 theorem matches_mg_right (h : Matches c₂ stem) : Matches (mg c₁ c₂) stem :=
   mg_comm ▸ matches_mg_left h
 
-/-- A description one segment long reads the final segment alone: the structured similarity a
+/-- A description one segment long reads the final segment alone, the structured similarity a
 rule is confined to. -/
 theorem matches_rtake_one (h : c.length ≤ 1) : Matches c stem ↔ Matches c (stem.rtake 1) := by
   simp only [Matches, matchLeftContext_rtake_of_le c h]
 
 /-! ### Reliability -/
 
-/-- The stems of a lexicon meeting a description: the rule's scope. -/
+/-- The scope of a rule is the stems of a lexicon meeting its description. -/
 def scopeOf {C : Type*} (c : Context) (lex : List (List Segment × C)) : List (List Segment × C) :=
   lex.filter (matchLeftContext c ·.1)
 
-/-- A rule's performance in a lexicon: the forms meeting its description and, among them,
+/-- A rule's performance in a lexicon is the forms meeting its description and, among them,
 those whose past shows its change. -/
 structure Stats where
   scope : ℕ
@@ -183,11 +185,12 @@ theorem hits_le_scope : (Stats.ofLexicon ch c lex).hits ≤ (Stats.ofLexicon ch 
   List.length_filter_le _ _
 
 /-- Generalization never loses a form. -/
-theorem scope_mono : (Stats.ofLexicon ch c₁ lex).scope ≤ (Stats.ofLexicon ch (mg c₁ c₂) lex).scope :=
-  (List.monotone_filter_right lex λ _ h => matches_mg_left h).length_le
+theorem scope_mono :
+    (Stats.ofLexicon ch c₁ lex).scope ≤ (Stats.ofLexicon ch (mg c₁ c₂) lex).scope :=
+  (List.monotone_filter_right lex fun _ h ↦ matches_mg_left h).length_le
 end
 
-/-- Raw confidence: hits over scope. -/
+/-- Raw confidence is hits over scope. -/
 def Stats.rawConfidence (s : Stats) : ℚ := s.hits / s.scope
 
 /-- `r` is less reliable than `s`, the ratios cross-multiplied. -/
@@ -204,69 +207,82 @@ theorem lessReliable_iff {r s : Stats} (hr : 0 < r.scope) (hs : 0 < s.scope) :
 /-- The general suffixation rule (7a) over the learning set. -/
 def general : Stats := ⟨4253, 4034⟩
 
-/-- An island of reliability: a rule the change works better in than the general rule ((8)). -/
+/-- An island of reliability is a rule the change works better in than the general rule
+((8)). -/
 def IsIsland (s : Stats) : Prop := LessReliable general s
 
 instance (s : Stats) : Decidable (IsIsland s) := inferInstanceAs (Decidable (LessReliable _ _))
 
 /-! ### The paper's steps on the English fragment -/
 
-def vote : List Segment := [v, o, t]
-def need : List Segment := [n, tenseI, d]
-def rub : List Segment := [r, wedge, b]
-def sag : List Segment := [s, æ, g]
-def plan : List Segment := [p, l, æ, n]
-def love : List Segment := [l, wedge, v]
-def flow : List Segment := [f, l, o]
-def jump : List Segment := [dezh, wedge, m, p]
-def miss : List Segment := [m, laxI, s]
-def wish : List Segment := [w, laxI, esh]
-def laugh : List Segment := [l, æ, f]
+def vote : List Segment := segments [.v, .o, .t]
+def need : List Segment := segments [.n, .i, .d]
+def rub : List Segment := segments [.turnedR, .wedge, .b]
+def sag : List Segment := segments [.s, .æ, .g]
+def plan : List Segment := segments [.p, .l, .æ, .n]
+def love : List Segment := segments [.l, .wedge, .v]
+def flow : List Segment := segments [.f, .l, .o]
+def jump : List Segment := segments [.dezh, .wedge, .m, .p]
+def miss : List Segment := segments [.m, .smallCapitalI, .s]
+def wish : List Segment := segments [.w, .smallCapitalI, .esh]
+def laugh : List Segment := segments [.l, .æ, .f]
+def fill : List Segment := segments [.f, .smallCapitalI, .l]
+def pick : List Segment := segments [.p, .smallCapitalI, .k]
 
 /-- The fragment's consonants. -/
-def consonants : List Segment := [p, t, k, b, d, g, m, n, ŋ, f, v, θ, s, esh, dezh, l, r, w]
+def consonants : List Phoneme :=
+  [.p, .t, .k, .b, .d, .g, .m, .n, .ŋ, .f, .v, .θ, .s, .esh, .dezh, .l, .turnedR, .w]
 
-/-- (6): *vote* and *need* differ first in their final segments, so the learned `-əd` rule keeps
+/-- In (6), *vote* and *need* differ first in their final segments, so the learned `-əd` rule keeps
 what [t] and [d] share, a class no other consonant meets. -/
-theorem learned_vote_need : ∀ x ∈ consonants, Matches (learned [vote, need]) [x] ↔ x = t ∨ x = d := by
+theorem learned_vote_need : ∀ x ∈ consonants,
+    Matches (learned [vote, need]) [x.segment] ↔ x = .t ∨ x = .d := by
   decide
 
-/-- Footnote 4: whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned from *rub*,
-*sag* and *plan* reaches *need*, and only the phonology keeps *needd* out. -/
+/-- As footnote 4 observes, whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned
+from *rub*, *sag* and *plan* reaches *need*, and only the phonology keeps *needd* out. -/
 theorem learned_rub_sag_plan : Matches (learned [rub, sag, plan]) need := by decide
 
-/-- (7b): once the data include a voiced continuant and a vowel-final stem, the `-d` rule keeps
-[+voice] alone and is met by every voiced consonant. -/
+/-- In (7b) the `-d` rule generalizes to [+voice] as the stems come to span the voiced segments.
+From *rub*, *sag*, *plan*, *love* and *flow*, whose final segments are all non-lateral, it
+reaches every voiced consonant but /l/, and a stem in /l/ completes it. -/
 theorem learned_voiced : ∀ x ∈ consonants,
-    Matches (learned [rub, sag, plan, love, flow]) [x] ↔ x.HasValue .voice true := by
+    (Matches (learned [rub, sag, plan, love, flow]) [x.segment] ↔
+        x.segment.HasValue .voice true ∧ x ≠ .l) ∧
+      (Matches (learned [rub, sag, plan, love, flow, fill]) [x.segment] ↔
+        x.segment.HasValue .voice true) := by
   decide
 
-/-- (7b): the `-t` rule learned from *jump*, *miss* and *laugh* is met by every voiceless
-consonant. -/
+/-- In (7b) the `-t` rule does likewise. From *jump*, *miss* and *laugh*, whose final segments
+are all non-dorsal, it reaches every voiceless consonant but /k/, and a stem in /k/ completes it. -/
 theorem learned_voiceless : ∀ x ∈ consonants,
-    Matches (learned [jump, miss, laugh]) [x] ↔ x.HasValue .voice false := by
+    (Matches (learned [jump, miss, laugh]) [x.segment] ↔
+        x.segment.HasValue .voice false ∧ x ≠ .k) ∧
+      (Matches (learned [jump, miss, laugh, pick]) [x.segment] ↔
+        x.segment.HasValue .voice false) := by
   decide
 
-/-- The island (8): `-t` after a voiceless fricative. -/
+/-- The island (8) is `-t` after a voiceless fricative. -/
 def voicelessFricative : Context :=
   [.seg (Segment.ofSpecs [(.sonorant, false), (.continuant, true), (.voice, false)])]
 
 /-- (8) is met by the four voiceless fricatives and nothing else. -/
 theorem voicelessFricative_iff : ∀ x ∈ consonants,
-    Matches voicelessFricative [x] ↔ x ∈ [f, θ, s, esh] := by
+    Matches voicelessFricative [x.segment] ↔ x ∈ [.f, .θ, .s, .esh] := by
   decide
 
-/-- The rule learned from *miss*, *wish* and *laugh* lies inside the island (8): further
+/-- The rule learned from *miss*, *wish* and *laugh* lies inside the island (8), and further
 fricative-final forms widen it to the island. -/
 theorem learned_le_voicelessFricative (x : Segment)
     (h : Matches (learned [miss, wish, laugh]) [x]) : Matches voicelessFricative [x] := by
-  have e : learned [miss, wish, laugh] = [.seg (s ⊓ esh ⊓ f)] := by decide
+  have e : learned [miss, wish, laugh] =
+      [.seg (Phoneme.s.segment ⊓ Phoneme.esh.segment ⊓ Phoneme.f.segment)] := by decide
   rw [e, matches_single_iff] at h
   exact (matches_single_iff _ _).2 (le_trans (by decide) h)
 
 /-! ### Appendix A -/
 
-/-- Table 3's cells: whether the stem occupies an island for the regular past and for some
+/-- A cell of Table 3 records whether the stem occupies an island for the regular past and for some
 irregular past. -/
 structure IORCategory where
   iorForRegular : Bool
@@ -280,24 +296,24 @@ def IORCategory.ofString : String → Option IORCategory
   | "neither" => some ⟨false, false⟩
   | _ => none
 
-/-- A printed decimal read as the integer of its digits: ratings in hundredths, production
-probabilities in thousandths. -/
+/-- A printed decimal is read as the integer of its digits, ratings in hundredths and
+production probabilities in thousandths. -/
 def digits (s : String) : ℕ :=
-  s.toList.foldl (λ n c => if c.isDigit then 10 * n + (c.toNat - '0'.toNat) else n) 0
+  s.toList.foldl (fun n c ↦ if c.isDigit then 10 * n + (c.toNat - '0'.toNat) else n) 0
 
 /-- A row's numeric feature. -/
 def value (key : String) (r : LinguisticExample) : ℕ := digits ((r.feature? key).getD "0")
 
 /-- A row's reported rule statistics (Tables 1 and 4). -/
 def statsOf (r : LinguisticExample) : Option Stats :=
-  (r.nat? "ruleScope").bind λ s => (r.nat? "ruleHits").map (⟨s, ·⟩)
+  (r.nat? "ruleScope").bind fun s ↦ (r.nat? "ruleHits").map (⟨s, ·⟩)
 
-/-- Table 4: the twelve regular islands all outscore the general rule. -/
+/-- In Table 4 the twelve regular islands all outscore the general rule. -/
 theorem table4_islands :
     ∀ r ∈ Examples.all, (r.feature? "island").isSome → ∀ s ∈ statsOf r, IsIsland s := by
   decide +kernel
 
-/-- Table 1: *gleed*'s pasts by raw confidence, *gleed* below *gled* below *gleeded*. -/
+/-- Table 1 ranks *gleed*'s pasts by raw confidence, *gleed* below *gled* below *gleeded*. -/
 theorem gleed_ranking :
     ∀ s₁ ∈ statsOf Examples.a1_25_gleed, ∀ s₂ ∈ statsOf Examples.a1_25_gled,
       ∀ s₃ ∈ statsOf Examples.a1_25_gleeded, LessReliable s₁ s₂ ∧ LessReliable s₂ s₃ := by
@@ -306,7 +322,7 @@ theorem gleed_ranking :
 /-- The Appendix A rows of one past type in the cells satisfying `p` (the Peripheral stems of
 Table A2 have no cell). -/
 def rows (regular : Bool) (p : IORCategory → Bool) : List LinguisticExample :=
-  Examples.all.filter λ r =>
+  Examples.all.filter fun r ↦
     r.feature? "pastType" = some (if regular then "regular" else "irregular") ∧
       ((r.feature? "cell").bind IORCategory.ofString).any p
 
@@ -320,7 +336,7 @@ def MeanGT (key : String) (A B : List LinguisticExample) : Prop :=
 instance (key : String) (A B : List LinguisticExample) : Decidable (MeanGT key A B) :=
   inferInstanceAs (Decidable (_ > _))
 
-/-- Islands of reliability for regulars (Fig. 2): novel regular pasts are rated higher, and
+/-- Regulars show islands of reliability (Fig. 2), in that novel regular pasts are rated higher, and
 volunteered more often, when the stem occupies an island for the regular change. -/
 theorem regulars_ior :
     MeanGT "adjustedRating" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) ∧
@@ -357,7 +373,7 @@ stimuli were chosen by the model. -/
 theorem ruleBased_islands :
     MeanGT "ruleBased" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by decide
 
-/-- Table 4: on the twelve regular pasts in the best islands the analogical model, unable to
+/-- In Table 4, on the twelve regular pasts in the best islands the analogical model, unable to
 locate structured similarity, scores below both the participants and the rule-based model. -/
 theorem analogical_misses_islands :
     ∀ r ∈ Examples.all, (r.feature? "island").isSome →
@@ -377,8 +393,8 @@ theorem burnt_underestimated :
 
 /-- Participants preferred regular pasts overall. -/
 theorem regulars_preferred :
-    MeanGT "rating" (Examples.all.filter λ r => r.feature? "pastType" = some "regular")
-      (Examples.all.filter λ r => r.feature? "pastType" = some "irregular") := by
+    MeanGT "rating" (Examples.all.filter fun r ↦ r.feature? "pastType" = some "regular")
+      (Examples.all.filter fun r ↦ r.feature? "pastType" = some "irregular") := by
   decide
 
 end AlbrightHayes2003
