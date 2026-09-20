@@ -301,8 +301,8 @@ theorem uv_le_ov :
       depMinusHigh ⟨stem, a⟩ .uv < depMinusHigh ⟨stem, a⟩ .ov := by
   decide
 
-/-- So no ranking of the paper's constraints gives [ov]: the candidate [uv] harmonically bounds
-it. -/
+/-- No ranking of the paper's constraints gives [ov], since the candidate [uv] harmonically
+bounds it. -/
 theorem uv_bounds_ov {stem : Segment} (hstem : stem ∈ [plain, palatal])
     {rk : List (Constraint Candidate)} (hrk : rk.Perm (paperConstraints ⟨stem, a⟩)) :
     Candidate.ov ∉
