@@ -118,7 +118,7 @@ structure ModalItem where
   form : String
   /-- The force-flavor pairs the item can express. -/
   meaning : Finset ForceFlavor
-  register : SocialMeaning.Register.Level := .neutral
+  register : SocialMeaning.Register := .neutral
   deriving DecidableEq
 
 namespace ModalItem

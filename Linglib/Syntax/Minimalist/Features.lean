@@ -1,4 +1,5 @@
 import Linglib.Core.Order.Bundle
+import Linglib.Pragmatics.SocialMeaning.Honorific
 import Linglib.Syntax.Case.Basic
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Number.Basic
@@ -64,19 +65,6 @@ inductive PhiFeature where
   | gender : Nat → PhiFeature        -- language-specific encoding
   deriving Repr, DecidableEq
 
--- ============================================================================
--- § 2: Honorific Features
--- ============================================================================
-
-/-- Honorific level: social ordering between speaker and referent.
-    Relational, not absolute.
-    ⟦iHON⟧ = λx. S_i ≺ x, where ≺ encodes social hierarchy. -/
-inductive HonLevel where
-  | nh    -- nonhonorific: S ≥ referent
-  | h     -- honorific: S < referent
-  | hh    -- high honorific: S << referent
-  deriving Repr, DecidableEq
-
 /-- Inflectional feature values: `[Infl]` ([bjorkman-2011]) is valued on the verb by
 the higher temporal/aspectual head that selects it (`perf` for a participle under
 Perf/Asp, `impf` under imperfective Asp). -/
@@ -86,7 +74,7 @@ inductive Infl where
   deriving Repr, DecidableEq
 
 -- ============================================================================
--- § 3: Feature Values
+-- § 2: Feature Values
 -- ============================================================================
 
 /-- Feature values that can be checked via Agree -/
@@ -97,7 +85,7 @@ inductive FeatureVal where
   | q : Bool → FeatureVal            -- [±Q] (question)
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
   | tense : Bool → FeatureVal        -- [±tense]
-  | hon : HonLevel → FeatureVal      -- [iHON] ([alok-bhalla-2026])
+  | hon : SocialMeaning.HonorificLevel → FeatureVal -- [iHON] ([alok-bhalla-2026])
   | infl : Infl → FeatureVal         -- [Infl] ([bjorkman-2011])
   | finite : Bool → FeatureVal       -- [±finite] (Fin head, [rizzi-1997])
   | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
@@ -158,7 +146,7 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
   | _, _ => false
 
 -- ============================================================================
--- § 4: Grammatical Features (Valued / Unvalued)
+-- § 3: Grammatical Features (Valued / Unvalued)
 -- ============================================================================
 
 /-- A grammatical feature: either valued or unvalued.
@@ -202,7 +190,7 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
   f1.featureType.sameType f2.featureType
 
 -- ============================================================================
--- § 5: Feature Bundles as Assignments ([marcolli-chomsky-berwick-2025])
+-- § 4: Feature Bundles as Assignments ([marcolli-chomsky-berwick-2025])
 -- ============================================================================
 
 /-! A feature bundle is a **total assignment** from feature dimensions to
@@ -269,13 +257,13 @@ def FeatureVal.dimension : FeatureVal → FeatureType
 
 /-- The value space of a dimension: the canonical type a slot at that
 dimension carries (`person ↦ Person`, `number ↦ Number`, `gender ↦ Nat`,
-`case ↦ Case`, `hon ↦ HonLevel`, every binary dimension `↦ Bool`). -/
+`case ↦ Case`, `hon ↦ HonorificLevel`, every binary dimension `↦ Bool`). -/
 @[reducible] def FeatureType.ValueOf : FeatureType → Type
   | .person => Person
   | .number => Number
   | .gender => Nat
   | .case => Case
-  | .hon => HonLevel
+  | .hon => SocialMeaning.HonorificLevel
   | .infl => Infl
   | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
   | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
@@ -411,7 +399,7 @@ def FeatureType.placeholderValue : (t : FeatureType) → t.ValueOf
   | .number => .singular
   | .gender => 0
   | .case => .nom
-  | .hon => .nh
+  | .hon => .nonhonorific
   | .infl => .perf
   | .wh | .q | .epp | .tense | .finite | .factive | .neg | .rel
   | .oblique | .ellipsis | .catN | .catV | .foc | .pol | .pov
@@ -432,7 +420,7 @@ def FeatureBundle.toGramFeatures (fb : FeatureBundle) : List GramFeature :=
     | .valued v => some (.valued (t.toFeatureVal v))
 
 -- ============================================================================
--- § 6: ±Interpretable Features
+-- § 5: ±Interpretable Features
 -- ============================================================================
 
 /-- Whether a feature is interpretable (contributes to LF) or

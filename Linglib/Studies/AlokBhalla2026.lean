@@ -21,11 +21,10 @@ so every phrase in a clause sets its own level.
 The marker kinds, distributions and loci are recorded per language as the
 review reports them, and the example rows check the distributional claims
 through each language's assignment. The Magahi rows check the fused
-subject/addressee suffixes against the Fragment's paradigm, the matching of
-second-person pronouns with the marker, and the independence of third-person
-levels; the Hindi rows check the plural-agreement route to subject
-honorification. The old survey table this file used to carry was not the
-paper's Table 1, which is Tamil number marking.
+subject/addressee suffixes against the Fragment's paradigm, the honorific
+levels of their pronouns against the Fragment's, the matching of second-person
+pronouns with the marker, and the independence of third-person levels; the
+Hindi rows check the plural-agreement route to subject honorification.
 
 ## References
 
@@ -94,11 +93,11 @@ def analyses : Language → List MarkerType
   | .japanese => [.agreement, .head]
   | .galician => [.clitic]
 
-/-- Register level named by a row's honorific feature. -/
-def levelOf : String → Option SocialMeaning.Register.Level
-  | "nh" => some .informal
-  | "h" => some .neutral
-  | "hh" => some .formal
+/-- The honorific level named by a row's honorific feature. -/
+def levelOf : String → Option SocialMeaning.HonorificLevel
+  | "nh" => some .nonhonorific
+  | "h" => some .honorific
+  | "hh" => some .highHonorific
   | _ => none
 
 /-- Magahi's suffixes are composites of the subject's and the addressee's
@@ -215,52 +214,27 @@ theorem japanese_complementizer_rows :
 
 /-! ### Honorific features -/
 
-/-- The social ordering [iHON] establishes between the speaker and a referent:
-    ⟦iHON⟧ = λx. S ≺ x with ≺ one of ≥, <, <<. -/
-inductive SocialOrder where
-  | ge
-  | lt
-  | ll
-  deriving DecidableEq, Repr
-
-/-- The honorific level a social ordering determines. -/
-def levelOfOrder : SocialOrder → HonLevel
-  | .ge => .nh
-  | .lt => .h
-  | .ll => .hh
-
-/-- The ordering a level encodes. -/
-def orderOfLevel : HonLevel → SocialOrder
-  | .nh => .ge
-  | .h => .lt
-  | .hh => .ll
-
-@[simp] theorem levelOfOrder_orderOfLevel (l : HonLevel) : levelOfOrder (orderOfLevel l) = l := by
-  cases l <;> rfl
-
-@[simp] theorem orderOfLevel_levelOfOrder (o : SocialOrder) :
-    orderOfLevel (levelOfOrder o) = o := by
-  cases o <;> rfl
+/-- The honorific level a row's status feature names. [iHON] orders the speaker against a
+    referent, ⟦iHON⟧ = λx. S ≺ x with ≺ one of ≥, <, <<, and the three orderings are the
+    nonhonorific, honorific and high honorific levels. -/
+def statusOf : String → Option SocialMeaning.HonorificLevel
+  | "ge" => some .nonhonorific
+  | "lt" => some .honorific
+  | "ll" => some .highHonorific
+  | _ => none
 
 /-- [portner-pak-zanuttini-2019]'s Korean speech-style particles as bundles of
     the speaker–addressee status and discourse formality (ex 34). -/
-def portnerParticle : SocialOrder → Bool → Option String
-  | .lt, true => some "supnita"
-  | .lt, false => some "eyo"
-  | .ge, false => some "e"
+def portnerParticle : SocialMeaning.HonorificLevel → Bool → Option String
+  | .honorific, true => some "supnita"
+  | .honorific, false => some "eyo"
+  | .nonhonorific, false => some "e"
   | _, _ => none
-
-/-- The status a row's feature names. -/
-def orderOf : String → Option SocialOrder
-  | "ge" => some .ge
-  | "lt" => some .lt
-  | "ll" => some .ll
-  | _ => none
 
 /-- The Korean rows with status and formality features carry the particle the
     bundle realizes (exx 8a, 8b, 8d). -/
 theorem korean_particle_rows :
-    ∀ row ∈ Examples.all, ∀ o ∈ (row.feature? "status").bind orderOf,
+    ∀ row ∈ Examples.all, ∀ o ∈ (row.feature? "status").bind statusOf,
       ∀ f ∈ row.feature? "formal",
         portnerParticle o (f = "+") = row.feature? "particle" := by
   decide +kernel
@@ -272,6 +246,17 @@ theorem magahi_second_person_rows :
       ∀ p ∈ row.feature? "pronoun2",
         (∀ q ∈ row.feature? "pronoun2Other", q = p) ∧
         ∀ a ∈ row.feature? "addressee", a = p := by
+  decide +kernel
+
+/-- The pronouns of the Magahi rows carry the Fragment's honorific levels. Each level a row
+    names for a second- or third-person pronoun is that of a Fragment pronoun of that person
+    among the row's words (exx 39–45). -/
+theorem magahi_pronoun_rows :
+    ∀ row ∈ Examples.all, row.language = "maga1260" →
+      ∀ kp ∈ [("pronoun2", Person.second), ("pronoun3", .third), ("pronoun3Other", .third)],
+        ∀ v ∈ row.feature? kp.1, ∃ l, levelOf v = some l ∧
+          ∃ p ∈ Magahi.Pronouns.pronouns, p.person = some kp.2 ∧ p.honorific = some l ∧
+            p.form ∈ row.surfaceTokens.map String.toLower := by
   decide +kernel
 
 /-- A mismatch between two second-person pronouns is out (ex 41). -/

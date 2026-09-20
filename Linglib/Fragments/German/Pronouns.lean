@@ -7,8 +7,8 @@ import Linglib.Fragments.German.Case
 This file defines the German personal pronouns and the case paradigms of the interrogative
 pronouns *wer* 'who' and *was* 'what', which also head free relatives.
 
-The second person distinguishes a familiar register, *du* and *ihr*, from a polite one with
-the single form *Sie*. *Sie* takes the third person plural series for agreement and reflexive
+The second person distinguishes the familiar *du* and *ihr* from the polite level, with the
+single form *Sie*. *Sie* takes the third person plural series for agreement and reflexive
 binding (*sich*, not *dich* or *euch*) while denoting the addressee alone or with others, so its
 `person` is third and its `referential` categories are those of *du* and *ihr* together. *wer*
 declines for the four German cases; *was* has one form for the nominative and the accusative and
@@ -21,9 +21,9 @@ no dative.
 
 ## Main results
 
-* `German.Pronouns.addressee_register`, `German.Pronouns.addressee_formal`,
-  `German.Pronouns.sie_formal_referential` — the addressee pronouns come in two registers,
-  and the single polite form denotes what the two familiar forms denote together
+* `German.Pronouns.addressee_honorific`, `German.Pronouns.addressee_polite`,
+  `German.Pronouns.sie_formal_referential` — the addressee pronouns come in two honorific
+  levels, and the single polite form denotes what the two familiar forms denote together
 * `German.Pronouns.wer_isSome_iff`, `German.Pronouns.was_isSome_iff` — the paradigms are
   defined on the German case inventory, *was* lacking the dative
 
@@ -42,13 +42,15 @@ namespace German.Pronouns
 def ich : PersonalPronoun := { form := "ich", person := some .first, number := some .singular }
 
 /-- The familiar second person singular *du*. -/
-def du : PersonalPronoun := { form := "du", person := some .second, number := some .singular }
+def du : PersonalPronoun :=
+  { form := "du", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- The polite second person *Sie*, for one or several addressees. Its agreement person and
 number are those of the third person plural; it denotes the addressee alone or with others
 ([adamson-zompi-2025]). -/
 def sie_formal : PersonalPronoun :=
-  { form := "Sie", person := some .third, number := some .plural, register := .formal,
+  { form := "Sie", person := some .third, number := some .plural, honorific := some .honorific,
     referential := {.addressee, .addresseeOthers} }
 
 /-- The third person singular masculine *er*. -/
@@ -67,7 +69,9 @@ def es : PersonalPronoun :=
 def wir : PersonalPronoun := { form := "wir", person := some .first, number := some .plural }
 
 /-- The familiar second person plural *ihr*. -/
-def ihr : PersonalPronoun := { form := "ihr", person := some .second, number := some .plural }
+def ihr : PersonalPronoun :=
+  { form := "ihr", person := some .second, number := some .plural,
+    honorific := some .nonhonorific }
 
 /-- The third person plural *sie*. -/
 def sie_pl : PersonalPronoun := { form := "sie", person := some .third, number := some .plural }
@@ -75,20 +79,20 @@ def sie_pl : PersonalPronoun := { form := "sie", person := some .third, number :
 /-- The personal pronoun inventory. -/
 def pronouns : Finset PersonalPronoun := {ich, du, sie_formal, er, sie_sg, es, wir, ihr, sie_pl}
 
-/-- The pronouns referring to the addressee come in a familiar and a polite register. -/
-theorem addressee_register :
-    (pronouns.filter (·.referentialPerson = some .second)).image (·.register) =
-      {.informal, .formal} := by
+/-- The pronouns referring to the addressee come in a familiar and a polite level. -/
+theorem addressee_honorific :
+    (pronouns.filter (·.referentialPerson = some .second)).image (·.honorific) =
+      {some .nonhonorific, some .honorific} := by
   decide
 
 /-- *Sie* is the only polite addressee pronoun. -/
-theorem addressee_formal :
-    pronouns.filter (fun p ↦ p.referentialPerson = some .second ∧ p.register = .formal) =
+theorem addressee_polite :
+    pronouns.filter (fun p ↦ p.referentialPerson = some .second ∧ p.honorific = some .honorific) =
       {sie_formal} := by
   decide
 
 /-- The polite form denotes exactly what the two familiar forms denote between them: *Sie* is
-number-neutral where the familiar register distinguishes *du* from *ihr*. -/
+number-neutral where the familiar level distinguishes *du* from *ihr*. -/
 theorem sie_formal_referential : sie_formal.referential = du.referential ∪ ihr.referential := by
   decide
 

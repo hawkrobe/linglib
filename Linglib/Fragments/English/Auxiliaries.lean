@@ -37,7 +37,6 @@ namespace English.Auxiliaries
 
 section Modals
 open Modality (ForceFlavor ModalForce ModalFlavor)
-open SocialMeaning.Register (Level)
 
 /-- Agreement features of a finite auxiliary. "Past" modals (*could*,
 *would*) carry `Past` as a morphological feature even where they are

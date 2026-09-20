@@ -25,23 +25,25 @@ def humSab : PersonalPronoun :=
 
 /-- *tõ* — 2sg nonhonorific. -/
 def toN : PersonalPronoun :=
-  { form := "tõ", person := some .second, number := some .singular, register := .informal }
+  { form := "tõ", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *ahã* — 2sg honorific. -/
 def ahaN : PersonalPronoun :=
-  { form := "ahã", person := some .second, number := some .singular, register := .neutral }
+  { form := "ahã", person := some .second, number := some .singular, honorific := some .honorific }
 
 /-- *apne* — 2sg high honorific. -/
 def apne : PersonalPronoun :=
-  { form := "apne", person := some .second, number := some .singular, register := .formal }
+  { form := "apne", person := some .second, number := some .singular,
+    honorific := some .highHonorific }
 
 /-- *ũ* — 3sg nonhonorific. -/
 def uN : PersonalPronoun :=
-  { form := "ũ", person := some .third, number := some .singular, register := .informal }
+  { form := "ũ", person := some .third, number := some .singular, honorific := some .nonhonorific }
 
 /-- *o* — 3sg honorific. -/
 def o : PersonalPronoun :=
-  { form := "o", person := some .third, number := some .singular, register := .neutral }
+  { form := "o", person := some .third, number := some .singular, honorific := some .honorific }
 
 /-- *ũ sab* — 3pl. -/
 def uNSab : PersonalPronoun := { form := "ũ sab", person := some .third, number := some .plural }

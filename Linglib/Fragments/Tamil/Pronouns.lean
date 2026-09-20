@@ -32,23 +32,27 @@ def naangaL : PersonalPronoun :=
 
 /-- *nii* — 2sg nonhonorific. -/
 def nii : PersonalPronoun :=
-  { form := "nii", person := some .second, number := some .singular, register := .informal }
+  { form := "nii", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *niingaL* — 2sg honorific, also 2pl. -/
 def niingaL : PersonalPronoun :=
-  { form := "niingaL", person := some .second, number := some .singular, register := .formal }
+  { form := "niingaL", person := some .second, number := some .singular,
+    honorific := some .honorific }
 
-/-- *avan* — 3sg masculine. -/
+/-- *avan* — 3sg masculine nonhonorific. -/
 def avan : PersonalPronoun :=
-  { form := "avan", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "avan", person := some .third, number := some .singular, gender := some .masculine,
+    honorific := some .nonhonorific }
 
-/-- *avaL* — 3sg feminine. -/
+/-- *avaL* — 3sg feminine nonhonorific. -/
 def avaL : PersonalPronoun :=
-  { form := "avaL", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "avaL", person := some .third, number := some .singular, gender := some .feminine,
+    honorific := some .nonhonorific }
 
 /-- *avar* — 3sg honorific. -/
 def avar : PersonalPronoun :=
-  { form := "avar", person := some .third, number := some .singular, register := .formal }
+  { form := "avar", person := some .third, number := some .singular, honorific := some .honorific }
 
 /-- *avarkaL* — 3pl human. -/
 def avarkaL : PersonalPronoun :=
@@ -62,7 +66,7 @@ def pronouns : Finset PersonalPronoun :=
 def pluralSuffix : String := "-ŋgæ"
 
 /-- *-ŋgæ* — politeness to the addressee; the plural suffix itself. -/
-def alloc : AllocutiveMarker := { form := pluralSuffix, register := .formal }
+def alloc : AllocutiveMarker := { form := pluralSuffix, honorific := .honorific }
 
 /-- Number marking on nominals, singular and plural (Table 1 of
     [alok-bhalla-2026], after McFadden 2020). -/

@@ -27,30 +27,32 @@ def humSab : PersonalPronoun :=
 
 /-- *tõ* — 2sg nonhonorific. -/
 def toN : PersonalPronoun :=
-  { form := "tõ", person := some .second, number := some .singular, register := .informal }
+  { form := "tõ", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *tũ* — 2sg honorific. -/
 def tuN : PersonalPronoun :=
-  { form := "tũ", person := some .second, number := some .singular, register := .neutral }
+  { form := "tũ", person := some .second, number := some .singular, honorific := some .honorific }
 
 /-- *apne* — 2sg high honorific. -/
 def apne : PersonalPronoun :=
-  { form := "apne", person := some .second, number := some .singular, register := .formal }
+  { form := "apne", person := some .second, number := some .singular,
+    honorific := some .highHonorific }
 
 /-- *toraa* — 2sg nonhonorific accusative ([alok-bhalla-2026] (39)). -/
 def toraa : PersonalPronoun :=
   { form := "toraa", person := some .second, number := some .singular, case_ := some .acc,
-    register := .informal }
+    honorific := some .nonhonorific }
 
 /-- *tor* — 2sg nonhonorific genitive ([alok-bhalla-2026] (41)). -/
 def tor : PersonalPronoun :=
   { form := "tor", person := some .second, number := some .singular, case_ := some .gen,
-    register := .informal }
+    honorific := some .nonhonorific }
 
 /-- *apne-ke* — 2sg high honorific accusative/dative ([alok-bhalla-2026] (40)). -/
 def apneKe : PersonalPronoun :=
   { form := "apne-ke", person := some .second, number := some .singular, case_ := some .acc,
-    register := .formal }
+    honorific := some .highHonorific }
 
 /-- *i* — 3sg proximal. -/
 def iProx : PersonalPronoun := { form := "i", person := some .third, number := some .singular }
@@ -64,17 +66,17 @@ def uNSab : PersonalPronoun := { form := "ũ sab", person := some .third, number
 /-- *okraa* — 3sg nonhonorific accusative ([alok-bhalla-2026] (44a)). -/
 def okraa : PersonalPronoun :=
   { form := "okraa", person := some .third, number := some .singular, case_ := some .acc,
-    register := .informal }
+    honorific := some .nonhonorific }
 
 /-- *okar* — 3sg nonhonorific genitive ([alok-bhalla-2026] (45)). -/
 def okar : PersonalPronoun :=
   { form := "okar", person := some .third, number := some .singular, case_ := some .gen,
-    register := .informal }
+    honorific := some .nonhonorific }
 
 /-- *unkaa* — 3sg honorific accusative/dative ([alok-bhalla-2026] (44b)). -/
 def unkaa : PersonalPronoun :=
   { form := "unkaa", person := some .third, number := some .singular, case_ := some .acc,
-    register := .neutral }
+    honorific := some .honorific }
 
 /-- The pronoun inventory. -/
 def pronouns : Finset PersonalPronoun :=
@@ -82,18 +84,18 @@ def pronouns : Finset PersonalPronoun :=
 
 /-- The fused subject/addressee agreement suffix by the subject's and the
     addressee's honorific level; `none` where no form is attested. -/
-def allocutive : SocialMeaning.Register.Level → SocialMeaning.Register.Level → Option String
-  | .informal, .informal => some "-au"
-  | .informal, .neutral => some "-o"
-  | .informal, .formal => some "-ain"
-  | .neutral, .informal => some "-thu(n)"
-  | .formal, .formal => some "-thi(n)"
+def allocutive : SocialMeaning.HonorificLevel → SocialMeaning.HonorificLevel → Option String
+  | .nonhonorific, .nonhonorific => some "-au"
+  | .nonhonorific, .honorific => some "-o"
+  | .nonhonorific, .highHonorific => some "-ain"
+  | .honorific, .nonhonorific => some "-thu(n)"
+  | .highHonorific, .highHonorific => some "-thi(n)"
   | _, _ => none
 
 /-- The allocutive markers of a nonhonorific subject, *-au*, *-o* and *-ain*: one for each
     honorific level of the addressee, read off `allocutive`. -/
 def allocutiveMarkers : List AllocutiveMarker :=
-  [.informal, .neutral, .formal].filterMap fun a ↦
-    (allocutive .informal a).map fun form ↦ { form, register := a }
+  [.nonhonorific, .honorific, .highHonorific].filterMap fun a ↦
+    (allocutive .nonhonorific a).map fun form ↦ { form, honorific := a }
 
 end Magahi.Pronouns

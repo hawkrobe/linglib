@@ -23,15 +23,17 @@ def ham : PersonalPronoun := { form := "ham", person := some .first, number := s
 
 /-- *tuu* — 2sg nonhonorific. -/
 def tuu : PersonalPronoun :=
-  { form := "tuu", person := some .second, number := some .singular, register := .informal }
+  { form := "tuu", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- *tum* — 2sg honorific. -/
 def tum : PersonalPronoun :=
-  { form := "tum", person := some .second, number := some .singular, register := .neutral }
+  { form := "tum", person := some .second, number := some .singular, honorific := some .honorific }
 
 /-- *aap* — 2sg high honorific. -/
 def aap : PersonalPronoun :=
-  { form := "aap", person := some .second, number := some .singular, register := .formal }
+  { form := "aap", person := some .second, number := some .singular,
+    honorific := some .highHonorific }
 
 /-- *vah* — 3sg, the distal demonstrative. -/
 def vah : PersonalPronoun := { form := "vah", person := some .third, number := some .singular }

@@ -16,10 +16,11 @@ third person *geu* 'he' and *geunyeo* 'she', with the plural *geudeul*, are rece
 of written narrative used anaphorically, while the colloquial *gyae*, contracted from *geu ai*,
 is neutral for gender and implies familiarity with the referent, as Kwon and Lee describe.
 Before the nominative particle *na*, *jeo* and *neo* become *nae*, *je* and *ne*. The
-sentence-final speech-style particles *-yo* and *-(seu)mnida* encode the formality of the
-speaker's relation to the addressee and occur in root clauses only. Forms are in the Revised
-Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*, *caney*, *tangsin*, *tayk*, *ku*,
-*ku nye* and *ku-tul*.
+sentence-final speech-style particles *-yo* and *-(seu)mnida* occur in root clauses only. Both
+present the addressee as above the speaker, and they differ in the formality of the discourse:
+*-yo* is the polite particle of informal speech and *-(seu)mnida* that of formal speech. Forms
+are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*, *caney*,
+*tangsin*, *tayk*, *ku*, *ku nye* and *ku-tul*.
 
 ## Main definitions
 
@@ -56,21 +57,22 @@ def jeohui : PersonalPronoun :=
 /-- The plain second person *neo*, to a child or an intimate. -/
 def neo : PersonalPronoun :=
   { form := "neo", script := some "너", person := some .second, number := some .singular,
-    register := .informal }
+    honorific := some .nonhonorific }
 
 /-- The familiar second person *jane*, to an adult or pre-adult inferior. -/
 def jane : PersonalPronoun :=
   { form := "jane", script := some "자네", person := some .second, number := some .singular,
-    register := .informal }
+    honorific := some .nonhonorific }
 
 /-- The blunt second person *dangsin*, to an adult equal or inferior and between spouses. -/
 def dangsin : PersonalPronoun :=
-  { form := "dangsin", script := some "당신", person := some .second, number := some .singular }
+  { form := "dangsin", script := some "당신", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
 /-- The deferential second person *taek*, to an adult stranger. -/
 def taek : PersonalPronoun :=
   { form := "taek", script := some "댁", person := some .second, number := some .singular,
-    register := .formal }
+    honorific := some .honorific }
 
 /-- The written-narrative masculine third person *geu*. -/
 def geu : PersonalPronoun :=
@@ -96,11 +98,12 @@ def geudeul : PersonalPronoun :=
 def pronouns : Finset PersonalPronoun :=
   {na, jeo, uri, jeohui, neo, jane, dangsin, taek, geu, geunyeo, gyae, geudeul}
 
-/-- The polite speech-style particle *-yo*. -/
-def yo : AllocutiveMarker := { form := "-yo", register := .neutral }
+/-- The polite speech-style particle *-yo*, of informal discourse. -/
+def yo : AllocutiveMarker := { form := "-yo", honorific := .honorific, register := .informal }
 
-/-- The formal speech-style particle *-(seu)mnida*. -/
-def supnida : AllocutiveMarker := { form := "-(seu)mnida", register := .formal }
+/-- The speech-style particle *-(seu)mnida*, of formal discourse. -/
+def supnida : AllocutiveMarker :=
+  { form := "-(seu)mnida", honorific := .honorific, register := .formal }
 
 /-- The speech-style particles. -/
 def allocutiveParticles : List AllocutiveMarker := [yo, supnida]
