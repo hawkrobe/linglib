@@ -1,11 +1,13 @@
 import Linglib.Data.PHOIBLE.Inventories.Finnish
 import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Harmony.System
+import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Finnish phonology
 
-This file gives the Finnish vowels as segments and states palatal harmony over them. In
+This file gives Finnish vowels and consonants as segments and states palatal harmony and
+consonant gradation over them. In
 Karlsson's description the vowels fall into three classes. The back vowels /ɑ o u/ and the
 front vowels /æ ø y/, written ⟨a o u⟩ and ⟨ä ö y⟩, do not mix within a word, and the neutral
 vowels /e i/ occur with either set. A suffix vowel alternates with the stem, so that the
@@ -19,12 +21,23 @@ The feature values come from the PHOIBLE chart, read at the vowels of a PHOIBLE 
 inventory and kept on the features that distinguish the eight vowels. The alternating suffix
 vowel is the meet of /ɑ/ and /æ/, the features they share, and so has no value for [back].
 
+Consonant gradation, the second of Karlsson's two important sound alternations, weakens a
+stop at the onset of a syllable that an ending closes. The long stops shorten, *kukka*
+'flower' but *kuka-n*, which is quantitative gradation, and the short stops change, *katu*
+'street' but *kadu-lla*, *tupa* 'hut' but *tuva-ssa*, *tauko* 'pause' but *tauo-n*, which is
+qualitative gradation. By Karlsson's rule A the ending consists of one consonant or begins
+with two, and only a short vowel stands between the stop and the ending, so that *katto*
+'roof' gives *kato-n* and *kato-lla* but *katto-na*.
+
 ## Main definitions
 
 * `Finnish.Vowel`, `Finnish.Consonant`: the vowels, and the
   consonants of the example forms, each with `chart` and `segment`.
 * `Finnish.archiphonemeA`: the alternating suffix vowel.
 * `Finnish.palatalHarmony`: palatal harmony.
+* `Finnish.ofChar`, `Finnish.segments`: the segment a letter writes, and the segments of a
+  written form.
+* `Finnish.consonantGradation`: the qualitative rules followed by the quantitative ones.
 
 ## Main results
 
@@ -37,11 +50,28 @@ vowel is the meet of /ɑ/ and /æ/, the features they share, and so has no value
 * `Finnish.sourceValue_back`: a back stem vowel is the source across a neutral
   one, and a stem of neutral vowels has no source.
 
+* `Finnish.katto`: Karlsson's paradigm of *katto*, gradation in *katon*, *katolla* and
+  *katolta* and none in *kattona*.
+* `Finnish.quantitative_gradation`, `Finnish.qualitative_gradation`: his examples of the two
+  types.
+
 ## Implementation notes
 
 The inventory is PHOIBLE 2535, which transcribes the low back vowel [ɑ] and the mid vowels
 with lowering diacritics. The consonants take plain chart glyphs, which that inventory
 writes with place diacritics, so membership is stated for the vowels only.
+
+A rule has one right context, so each alternation is two rules, one for an ending of a
+single consonant and one for an ending that begins with two. The qualitative rules apply
+first, since the short stop that quantitative gradation leaves does not weaken again. The
+qualitative rules are stated after a vowel. A long stop is two segments, and so is a long
+vowel, which the rules do not yet tell from a short one.
+
+## TODO
+
+* The qualitative alternations after /h l r/ and the assimilations after a nasal or liquid,
+  Karlsson's types (6) and (8) to (12), the rare types (13) to (16), the ban on gradation
+  before a long vowel, and rule B for verbs.
 
 ## References
 
@@ -53,7 +83,7 @@ writes with place diacritics, so membership is stated for the vowels only.
 
 namespace Finnish
 
-open Phonology Phonology.Harmony Data.PHOIBLE
+open Phonology Phonology.Harmony Subregular.LocalRewrite Data.PHOIBLE
 
 /-! ### Vowels -/
 
@@ -96,14 +126,15 @@ def archiphonemeA : Segment := Vowel.scriptA.segment ⊓ Vowel.æ.segment
 
 /-- The consonants of the example forms. -/
 inductive Consonant where
-  | p | t | k | n | v | l | j
+  | p | t | k | d | s | n | v | l | j
   deriving DecidableEq, Fintype, Repr
 
 namespace Consonant
 
 /-- The PHOIBLE chart entry of a consonant. -/
 def chart : Consonant → FeatureMatrix
-  | p => .«p» | t => .«t» | k => .«k» | n => .«n» | v => .«v» | l => .«l» | j => .«j»
+  | p => .«p» | t => .«t» | k => .«k» | d => .«d» | s => .«s»
+  | n => .«n» | v => .«v» | l => .«l» | j => .«j»
 
 /-- The segment of a consonant is the segment of its chart entry. -/
 def segment (c : Consonant) : Segment := c.chart.toSegment
@@ -161,6 +192,83 @@ theorem sourceValue_back :
         some true ∧
       palatalHarmony.searchCopy.sourceValue [Vowel.æ.segment] = some false ∧
       palatalHarmony.searchCopy.sourceValue [Vowel.e.segment, Vowel.i.segment] = none := by
+  decide
+
+/-! ### Written forms -/
+
+/-- The segment a letter of Finnish orthography writes, with `A` for the archiphoneme. -/
+def ofChar : Char → Option Segment
+  | 'a' => some Vowel.scriptA.segment | 'ä' => some Vowel.æ.segment
+  | 'o' => some Vowel.o.segment | 'ö' => some Vowel.ø.segment
+  | 'u' => some Vowel.u.segment | 'y' => some Vowel.y.segment
+  | 'e' => some Vowel.e.segment | 'i' => some Vowel.i.segment
+  | 'p' => some Consonant.p.segment | 't' => some Consonant.t.segment
+  | 'k' => some Consonant.k.segment | 'd' => some Consonant.d.segment
+  | 's' => some Consonant.s.segment | 'n' => some Consonant.n.segment
+  | 'v' => some Consonant.v.segment | 'l' => some Consonant.l.segment
+  | 'j' => some Consonant.j.segment | 'A' => some archiphonemeA
+  | _ => none
+
+/-- The segments of a written form. A long vowel or stop, written double, is two segments. -/
+def segments (form : String) : List Segment := form.toList.filterMap ofChar
+
+/-! ### Consonant gradation -/
+
+/-- A vowel, as a rule context. -/
+private def vowel : ContextElem := .seg (Segment.ofSpecs [(.syllabic, true)])
+
+/-- A consonant, as a rule context. -/
+private def consonant : ContextElem := .seg (Segment.ofSpecs [(.syllabic, false)])
+
+/-- The rules weakening `target` after `left`, before a short vowel and an ending that is one
+consonant or begins with two. -/
+def gradation (target : Segment) (effect : Effect) (left : ContextElem) : List Rule :=
+  [[vowel, consonant, .wordBoundary], [vowel, consonant, consonant]].map fun right ↦
+    { target, effect, leftContext := [left], rightContext := right }
+
+/-- In qualitative gradation after a vowel, /p/ becomes /v/, /t/ becomes /d/ and /k/ is
+lost. -/
+def qualitativeGradation : List Rule :=
+  gradation Consonant.p.segment (.replace Consonant.v.segment) vowel ++
+    gradation Consonant.t.segment (.changeFeatures (Segment.ofSpecs [(.voice, true)])) vowel ++
+    gradation Consonant.k.segment .delete vowel
+
+/-- In quantitative gradation a long stop loses its second half. -/
+def quantitativeGradation : List Rule :=
+  [Consonant.p, .t, .k].flatMap fun c ↦ gradation c.segment .delete (.seg c.segment)
+
+/-- Consonant gradation is the qualitative rules followed by the quantitative ones. -/
+def consonantGradation : List Rule := qualitativeGradation ++ quantitativeGradation
+
+/-- The written forms of the theorems below. -/
+private def forms : List String :=
+  ["katton", "katon", "kattolla", "katolla", "kattolta", "katolta", "kattona", "kaappissa",
+    "kaapissa", "kukkan", "kukan", "tupassa", "tuvassa", "katulla", "kadulla", "taukon",
+    "tauon"]
+
+/-- Every letter of the written forms is read. -/
+theorem length_segments : ∀ w ∈ forms, (segments w).length = w.length := by decide
+
+/-- Karlsson's paradigm of *katto* 'roof'. The genitive, adessive and ablative endings close
+the syllable and the long stop shortens, and before the essive -na it does not. -/
+theorem katto :
+    derive consonantGradation (segments "katton") = segments "katon" ∧
+      derive consonantGradation (segments "kattolla") = segments "katolla" ∧
+      derive consonantGradation (segments "kattolta") = segments "katolta" ∧
+      derive consonantGradation (segments "kattona") = segments "kattona" := by
+  decide
+
+/-- Quantitative gradation in *kaappi* 'cupboard' and *kukka* 'flower'. -/
+theorem quantitative_gradation :
+    derive consonantGradation (segments "kaappissa") = segments "kaapissa" ∧
+      derive consonantGradation (segments "kukkan") = segments "kukan" := by
+  decide
+
+/-- Qualitative gradation in *tupa* 'hut', *katu* 'street' and *tauko* 'pause'. -/
+theorem qualitative_gradation :
+    derive consonantGradation (segments "tupassa") = segments "tuvassa" ∧
+      derive consonantGradation (segments "katulla") = segments "kadulla" ∧
+      derive consonantGradation (segments "taukon") = segments "tauon" := by
   decide
 
 end Finnish
