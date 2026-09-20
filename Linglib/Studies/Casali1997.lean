@@ -1,4 +1,5 @@
 import Linglib.Phonology.Hiatus
+import Linglib.Data.Hiatus.Casali1997
 import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
 import Linglib.Phonology.OptimalityTheory.Tableau
 
@@ -34,8 +35,10 @@ The general constraint against deletion, which the position-sensitive constraint
 dominate, is violated once by either elision (`max_apply`) and so never decides between them; it
 is kept as the last constraint of the set. A word-initial vowel is also morpheme-initial, so the
 second vowel violates the morpheme-initial constraint at a word boundary too, which the paper's
-table of violations leaves out and which changes no prediction. The paper's survey of languages
-is not recorded.
+table of violations leaves out and which changes no prediction. The languages that Section 2
+lists for each generalization are the rows of `Data/Hiatus/Casali1997`. Every elision they
+report is one the analysis allows (`survey_allowed`), and none is reported where it allows none
+(`survey_no_v2`).
 
 ## References
 
@@ -369,5 +372,58 @@ theorem soleSegment_over_lexical {r : Ranking 5}
     · simp [hc.right] at hq
     · exact h₂
     · exact absurd (prominent_v2_soleSegment.1 hq) hs
+
+/-! ### The survey -/
+
+/-- The status of the first word or morpheme at a kind of juncture of the survey. -/
+def leftStatus : Data.Hiatus.Juncture → Status
+  | .lexicalLexical | .lexicalFunction | .rootSuffix => .lexical
+  | .prefixRoot => .functional
+
+/-- The status of the second word or morpheme at a kind of juncture of the survey. -/
+def rightStatus : Data.Hiatus.Juncture → Status
+  | .lexicalLexical | .prefixRoot => .lexical
+  | .lexicalFunction | .rootSuffix => .functional
+
+/-- `c.IsOfKind k` holds when the context `c` is a juncture of the survey's kind `k`, the first
+vowel beginning no morpheme. -/
+structure Context.IsOfKind (c : Context) (k : Data.Hiatus.Juncture) : Prop where
+  stemBody_ne_nil : c.stemBody ≠ []
+  left : c.left = leftStatus k
+  right : c.right = rightStatus k
+
+/-- The elision that a row of the survey reports. -/
+def elision : Data.Hiatus.ElidedVowel → Elision
+  | .first => .v1
+  | .second => .v2
+
+/-- Every elision the survey reports is one the analysis allows, in that some ranking elides the
+reported vowel at a juncture of the reported kind. -/
+theorem survey_allowed :
+    ∀ row ∈ Data.Hiatus.Casali1997.rows, ∀ c : Context, c.IsOfKind row.juncture →
+      ∃ r, elision row.elided ∈ (tableau c r).optimal := by
+  have key : ∀ row ∈ Data.Hiatus.Casali1997.rows, row.elided = .second →
+      leftStatus row.juncture = .lexical ∧ rightStatus row.juncture = .functional := by
+    decide
+  intro row hrow c hc
+  cases he : row.elided with
+  | first =>
+    obtain ⟨r, hr⟩ := exists_optimal_eq_v1 hc.stemBody_ne_nil
+    exact ⟨r, hr ▸ Finset.mem_singleton_self _⟩
+  | second =>
+    have := key row hrow he
+    exact (exists_mem_optimal_v2_iff hc.stemBody_ne_nil).2
+      ⟨hc.left.trans this.1, hc.right.trans this.2⟩
+
+/-- At the kinds of juncture where the analysis lets no ranking elide the second vowel, between
+two lexical words and between a prefix and a root, the survey reports no language that does. -/
+theorem survey_no_v2 (k : Data.Hiatus.Juncture) {c : Context} (hc : c.IsOfKind k)
+    (h : ¬ ∃ r, .v2 ∈ (tableau c r).optimal) :
+    ∀ row ∈ Data.Hiatus.Casali1997.rows, row.juncture = k → row.elided = .first := by
+  have hk : ¬ (leftStatus k = .lexical ∧ rightStatus k = .functional) := fun hk ↦
+    h ((exists_mem_optimal_v2_iff hc.stemBody_ne_nil).2
+      ⟨hc.left.trans hk.1, hc.right.trans hk.2⟩)
+  revert hk
+  cases k <;> decide
 
 end Casali1997

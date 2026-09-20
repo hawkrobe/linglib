@@ -71,6 +71,17 @@ at fixed sentence lengths, as a paper prints them (values as scaled integers).
 - **Generator**: `scripts/gen_ud_deplength.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/UD/DependencyLength/{Paper}.json` → `{Paper}.lean`
 
+### Hiatus resolution samples
+
+A paper's survey of which vowel elides where two vowels meet: for each language of the sample,
+the kind of juncture (two lexical words, a lexical word before a function word, a prefix before
+a root, a root before a suffix) and the vowel that elides there, with the reports the paper
+marks as uncertain flagged.
+
+- **Schema**: `Linglib/Data/Hiatus/Schema.lean`
+- **Generator**: `scripts/gen_hiatus.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/Hiatus/{Paper}.json` → `{Paper}.lean`
+
 ### Word order samples
 
 A paper's classification of its language sample: dominant clause order, adposition
