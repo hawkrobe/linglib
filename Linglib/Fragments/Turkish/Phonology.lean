@@ -19,11 +19,10 @@ palatal l of loans such as *gol*, which Clements and Sezer discuss, carries [−
 the suffix (§3.4). The suffix-initial D of -DI and -DA copies [voice] from the preceding
 segment (§6.1.2).
 
-Before -(I)yor a vowel-final stem keeps one high vowel. A final high vowel stands and the
-suffix's `I` is lost, as in *eri-yor*. A final `a` or `e` becomes high and then harmonizes, as
-in *anlıyor* from *anla-* and the negative *-mIyor* from *-mA* (§8.2.2, §8.2.3.3). The surface
-form of a word resolves that hiatus and then applies the three alternations. The spelling is
-phonemic, each letter writing one segment.
+Before -(I)yor a stem-final `a` or `e` becomes high and then harmonizes, as in *anlıyor* from
+*anla-* and the negative *-mIyor* from *-mA* (§8.2.2, §8.2.3.3). The surface form of a word
+applies that raising and then the three alternations. The spelling is phonemic, each letter
+writing one segment.
 
 ## Main definitions
 
@@ -31,17 +30,17 @@ phonemic, each letter writing one segment.
 * `fronting`, `rounding`, `voicing`: the two vowel harmonies and D-voicing, as
   `Phonology.Harmony.System`s. The suffixes they apply to are the exponent forms of
   `Turkish.Morphotactics`.
-* `stemVowelElision`, `suffixVowelElision`: the resolution of hiatus before -(I)yor, as
-  `Subregular.LocalRewrite.Rule`s.
+* `raising`: the raising of a stem-final `a` or `e` before -(I)yor, as a
+  `Subregular.LocalRewrite.Rule`.
 * `surface`: the surface form of an underlying word.
 * `ofChar`, `ofString?`: the segments that a spelled word writes.
 
 ## Implementation notes
 
-The grammar states the change before -(I)yor as a raising of the stem's `a` or `e`, with the
-suffix's `I` absent after a vowel. Over archiphonemes the raised vowel, high and unspecified
-for the harmonic features, is the suffix's own `I`, so the change is written as the loss of
-the stem vowel before `I`. The letters *ç*, *f*, *ğ* and *j* write segments outside the
+The raised vowel harmonizes for rounding as well as backness, as in *okşuyor* from *okşa-*, so
+raising replaces the stem vowel by the archiphoneme `I` instead of setting [high] alone. The
+loss of the suffix's own `I` after a vowel is a matter of attachment, in
+`Turkish.Morphotactics`. The letters *ç*, *f*, *ğ* and *j* write segments outside the
 inventory and have no value under `ofChar`. The grammar's examples are derived in
 `Studies/GokselKerslake2005.lean`.
 
@@ -159,30 +158,22 @@ def voicing : System Segment :=
     (IsTarget      := fun s ↦ s .voice = none)
     (IsTransparent := fun _ ↦ False)
 
-/-! ### Hiatus before -(I)yor -/
+/-! ### Raising before -(I)yor -/
 
-/-- A stem-final `a` or `e` is lost before the `I` of -(I)yor, which then harmonizes, so that
-*anla-* gives *anlıyor* and the negative -mA gives -mIyor (§8.2.2, §8.2.3.3). -/
-def stemVowelElision : Rule where
+/-- A stem-final `a` or `e` becomes high before -(I)yor and then harmonizes, so that *anla-*
+gives *anlıyor* and the negative -mA gives -mIyor (§8.2.2, §8.2.3.3). The raised vowel is the
+archiphoneme `I`. -/
+def raising : Rule where
   target := A
-  effect := .delete
-  rightContext := [.seg I, .seg y]
-
-/-- After a stem-final high vowel the `I` of -(I)yor is lost, as in *eri-yor* and *kuru-yor*
-(§8.2.3.3). -/
-def suffixVowelElision : Rule where
-  target := I
-  effect := .delete
-  leftContext := [.seg I]
-  rightContext := [.seg y]
+  effect := .replace I
+  rightContext := [.seg y, .seg o, .seg r]
 
 /-! ### Surface forms -/
 
-/-- The surface form of an underlying word resolves hiatus before -(I)yor and then applies
-the search-and-copy runs of fronting, rounding and voicing in turn. -/
+/-- The surface form of an underlying word applies raising before -(I)yor and then the
+search-and-copy runs of fronting, rounding and voicing in turn. -/
 def surface (w : List Segment) : List Segment :=
-  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply
-    (derive [stemVowelElision, suffixVowelElision] w)))
+  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply (raising.apply w)))
 
 /-! ### Spelling -/
 
