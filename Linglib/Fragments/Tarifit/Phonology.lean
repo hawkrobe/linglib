@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Tarifit phones
@@ -7,10 +7,10 @@ This file lists the consonants of Tarifit (Nador variety) that occur in the CCə
 of Afkir and Zellou's production study, as they surface in the simple imperative, together with
 the schwa, and gives each its segment. Singleton /b, d, t/ spirantize to [β, ð, θ] outside
 post-nasal and pharyngealized contexts. The sonority class of a phone on the Parker scale is
-read off its segment by `Sonority.Class.ofSegment` and not stored.
+read off the phone by `Sonority.Class.ofSegment` and not stored.
 
-The feature values come from the PHOIBLE chart, and the segment of a phone is its chart
-entry's with the phone's departure merged over it. There are two departures. PHOIBLE separates
+The feature values come from the PHOIBLE chart, and a phone is its chart entry's segment
+with the phone's departure merged over it. There are two departures. PHOIBLE separates
 the pharyngealized stops /tˤ dˤ/ from plain /t d/ by its retracted tongue root feature alone,
 which the feature system here lacks, so they take the chart entries of /t d/ and the value
 [+back]. Afkir and Zellou describe the pharyngeal /ʕ/ as an approximant, where the chart has a
@@ -18,15 +18,11 @@ fricative. PHOIBLE has no Tarifit inventory.
 
 ## Main definitions
 
-* `Tarifit.Phone`: the phones, with `ipa`, `chart` and `departure`, read as segments.
-* `Tarifit.Phone.sonorityClass`, `Tarifit.Phone.rank`, `Tarifit.Phone.Voiceless`: the Parker
-  class and rank of a phone, and the voiceless obstruents.
-
-## Main results
-
-* `Tarifit.Phone.departure_eq_bot_iff`: the phones that depart from the chart are the two
-  pharyngealized stops and the pharyngeal. Elsewhere a phone has the chart's values, by
-  `Phonology.Segment.ofChart_apply`.
+* `Tarifit.q`, `Tarifit.emphaticT` and the like: the phones, as segments. A name is the phone's
+  IPA symbol where that is an identifier, and otherwise the symbol's name: `emphaticT` and
+  `emphaticD` are tˤ and dˤ, `ghayn` is ʁ, `ayn` is ʕ and `hbar` is ħ.
+* `Tarifit.transcriptions`, `Tarifit.ipa?`: the IPA transcription of each phone.
+* `Tarifit.inventory`: the set of phones.
 
 ## References
 
@@ -39,64 +35,85 @@ open Phonology Data.PHOIBLE
 
 namespace Tarifit
 
-/-- The phones of the CCəC target words, as they surface. A constructor is the phone's IPA
-symbol where that is an identifier, and otherwise the symbol's name; `emphaticT` and
-`emphaticD` are the pharyngealized stops tˤ and dˤ, `ghayn` is ʁ, `ayn` is ʕ and `hbar` is
-ħ. -/
-inductive Phone
-  | q | k | t | emphaticT | emphaticD | beta | eth | theta | f | s | esh | chi | hbar | z | ezh
-  | ghayn | ayn | m | n | r | l | schwa
-  deriving DecidableEq, Fintype, Repr
+/-! ### Phones -/
 
-namespace Phone
+/-- The voiceless uvular stop /q/. -/
+def q : Segment := .ofChart .«q»
+
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
+
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
+
+/-- The pharyngealized stop /tˤ/, the chart's /t/ with [+back]. -/
+def emphaticT : Segment := .ofChart .«t» (Segment.ofSpecs [(.back, true)])
+
+/-- The pharyngealized stop /dˤ/, the chart's /d/ with [+back]. -/
+def emphaticD : Segment := .ofChart .«d» (Segment.ofSpecs [(.back, true)])
+
+/-- The voiced bilabial fricative /β/. -/
+def beta : Segment := .ofChart .«β»
+
+/-- The voiced dental fricative /ð/. -/
+def eth : Segment := .ofChart .«ð»
+
+/-- The voiceless dental fricative /θ/. -/
+def theta : Segment := .ofChart .«θ»
+
+/-- The voiceless labiodental fricative /f/. -/
+def f : Segment := .ofChart .«f»
+
+/-- The voiceless alveolar fricative /s/. -/
+def s : Segment := .ofChart .«s»
+
+/-- The voiceless postalveolar fricative /ʃ/. -/
+def esh : Segment := .ofChart .«ʃ»
+
+/-- The voiceless uvular fricative /χ/. -/
+def chi : Segment := .ofChart .«χ»
+
+/-- The voiceless pharyngeal fricative /ħ/. -/
+def hbar : Segment := .ofChart .«ħ»
+
+/-- The voiced alveolar fricative /z/. -/
+def z : Segment := .ofChart .«z»
+
+/-- The voiced postalveolar fricative /ʒ/. -/
+def ezh : Segment := .ofChart .«ʒ»
+
+/-- The voiced uvular fricative /ʁ/. -/
+def ghayn : Segment := .ofChart .«ʁ»
+
+/-- The pharyngeal /ʕ/, an approximant where the chart has a fricative. -/
+def ayn : Segment :=
+  .ofChart .«ʕ» (Segment.ofSpecs [(.consonantal, false), (.sonorant, true), (.approximant, true)])
+
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
+
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
+
+/-- The tap /r/. -/
+def r : Segment := .ofChart .«ɾ»
+
+/-- The lateral /l/. -/
+def l : Segment := .ofChart .«l»
+
+/-- The schwa /ə/. -/
+def schwa : Segment := .ofChart .«ə»
+
+/-- The phones of the CCəC target words, as they surface, each with its IPA transcription. -/
+def transcriptions : List (Segment × String) :=
+  [(q, "q"), (k, "k"), (t, "t"), (emphaticT, "tˤ"), (emphaticD, "dˤ"), (beta, "β"), (eth, "ð"),
+    (theta, "θ"), (f, "f"), (s, "s"), (esh, "ʃ"), (chi, "χ"), (hbar, "ħ"), (z, "z"), (ezh, "ʒ"),
+    (ghayn, "ʁ"), (ayn, "ʕ"), (m, "m"), (n, "n"), (r, "r"), (l, "l"), (schwa, "ə")]
+
+/-- The phones, pairwise distinct. -/
+def inventory : Finset Segment := ⟨↑(transcriptions.map (·.1)), by decide⟩
 
 /-- The IPA transcription of a phone. -/
-def ipa : Phone → String
-  | .q => "q" | .k => "k" | .t => "t" | .emphaticT => "tˤ" | .emphaticD => "dˤ" | .beta => "β"
-  | .eth => "ð" | .theta => "θ" | .f => "f" | .s => "s" | .esh => "ʃ" | .chi => "χ"
-  | .hbar => "ħ" | .z => "z" | .ezh => "ʒ" | .ghayn => "ʁ" | .ayn => "ʕ" | .m => "m"
-  | .n => "n" | .r => "r" | .l => "l" | .schwa => "ə"
-
-/-- The PHOIBLE chart entry of a phone. The pharyngealized stops take the entries of the
-plain stops, and /r/ is the tap. -/
-def chart : Phone → FeatureMatrix
-  | .q => .«q» | .k => .«k» | .t => .«t» | .emphaticT => .«t» | .emphaticD => .«d»
-  | .beta => .«β» | .eth => .«ð» | .theta => .«θ» | .f => .«f» | .s => .«s» | .esh => .«ʃ»
-  | .chi => .«χ» | .hbar => .«ħ» | .z => .«z» | .ezh => .«ʒ» | .ghayn => .«ʁ» | .ayn => .«ʕ»
-  | .m => .«m» | .n => .«n» | .r => .«ɾ» | .l => .«l» | .schwa => .«ə»
-
-/-- The values on which a phone departs from its chart entry are [+back] on the pharyngealized
-stops and the values of an approximant on the pharyngeal. -/
-def departure : Phone → Segment
-  | .emphaticT | .emphaticD => Segment.ofSpecs [(.back, true)]
-  | .ayn => Segment.ofSpecs [(.consonantal, false), (.sonorant, true), (.approximant, true)]
-  | _ => ⊥
-
-/-- The phones that depart from the chart are the pharyngealized stops and the pharyngeal. -/
-theorem departure_eq_bot_iff (x : Phone) :
-    x.departure = ⊥ ↔ x ∉ ({.emphaticT, .emphaticD, .ayn} : Finset Phone) := by
-  revert x; decide
-
-end Phone
-
-/-- A phone is read as its chart entry's segment with its departure merged over it. -/
-instance : SegmentLike Phone where
-  coe x := .ofChart x.chart x.departure
-  coe_injective' := by decide
-
-namespace Phone
-
-/-- Parker sonority class, read off the phone's features. -/
-def sonorityClass (p : Phone) : Sonority.Class := Sonority.Class.ofSegment p
-
-/-- Parker sonority rank. -/
-def rank (p : Phone) : ℕ := p.sonorityClass.parkerRank
-
-/-- A voiceless obstruent. -/
-def Voiceless (p : Phone) : Prop := p.sonorityClass.Voiceless
-
-instance : DecidablePred Voiceless := fun p ↦ inferInstanceAs (Decidable p.sonorityClass.Voiceless)
-
-end Phone
+def ipa? (x : Segment) : Option String := transcriptions.lookup x
 
 end Tarifit

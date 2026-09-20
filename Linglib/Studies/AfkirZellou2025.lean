@@ -43,44 +43,47 @@ here.
 
 namespace AfkirZellou2025
 
-open Tarifit Morphology Data.Examples
+open Tarifit Morphology Phonology Data.Examples
 
 /-! ### The simple imperative -/
 
 /-- The prosodic template CCəC of the simple imperative. -/
 def imperativeTemplate : CVTemplate := ⟨[.C, .C, .V, .C]⟩
 
-/-- A root in the simple imperative: its consonants fill the C-slots in order and the schwa
+/-- In the simple imperative the consonants of a root fill the C-slots in order and the schwa
 the V-slot. -/
-def imperative (r : ConsonantalRoot Phone) : TemplateMatch Phone where
+def imperative (r : ConsonantalRoot Segment) : TemplateMatch Segment where
   root := r
-  vocalism := [.schwa]
+  vocalism := [schwa]
   template := imperativeTemplate
   associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.vocalism, 0, 2⟩, ⟨.root, 2, 3⟩]
 
-theorem spellout_imperative (a b c : Phone) :
-    (imperative ⟨[a, b, c]⟩).spellout = [a, b, .schwa, c] := rfl
+theorem spellout_imperative (a b c : Segment) :
+    (imperative ⟨[a, b, c]⟩).spellout = [a, b, schwa, c] := rfl
 
 /-- The transcription of a root's imperative. -/
-def surface (r : ConsonantalRoot Phone) : String :=
-  String.join ((imperative r).spellout.map Phone.ipa)
+def surface (r : ConsonantalRoot Segment) : String :=
+  String.join ((imperative r).spellout.filterMap ipa?)
+
+/-- The Parker sonority rank of a phone. -/
+def rank (x : Segment) : ℕ := (Sonority.Class.ofSegment x).parkerRank
 
 /-- The phone at root position `i` is a voiceless obstruent. -/
-def VoicelessAt (r : ConsonantalRoot Phone) (i : ℕ) : Prop :=
-  ∃ p, r.segmentAt i = some p ∧ p.Voiceless
+def VoicelessAt (r : ConsonantalRoot Segment) (i : ℕ) : Prop :=
+  ∃ p ∈ r.segmentAt i, (Sonority.Class.ofSegment p).Voiceless
 
 /-- The initial cluster rises in sonority. -/
-def Rising (r : ConsonantalRoot Phone) : Prop :=
-  ∃ a b, r.segmentAt 0 = some a ∧ r.segmentAt 1 = some b ∧ a.rank < b.rank
+def Rising (r : ConsonantalRoot Segment) : Prop :=
+  ∃ a ∈ r.segmentAt 0, ∃ b ∈ r.segmentAt 1, rank a < rank b
 
 /-- The initial cluster falls in sonority. -/
-def Falling (r : ConsonantalRoot Phone) : Prop :=
-  ∃ a b, r.segmentAt 0 = some a ∧ r.segmentAt 1 = some b ∧ b.rank < a.rank
+def Falling (r : ConsonantalRoot Segment) : Prop :=
+  ∃ a ∈ r.segmentAt 0, ∃ b ∈ r.segmentAt 1, rank b < rank a
 
-instance (r : ConsonantalRoot Phone) (i : ℕ) : Decidable (VoicelessAt r i) := by
+instance (r : ConsonantalRoot Segment) (i : ℕ) : Decidable (VoicelessAt r i) := by
   unfold VoicelessAt; infer_instance
-instance (r : ConsonantalRoot Phone) : Decidable (Rising r) := by unfold Rising; infer_instance
-instance (r : ConsonantalRoot Phone) : Decidable (Falling r) := by unfold Falling; infer_instance
+instance (r : ConsonantalRoot Segment) : Decidable (Rising r) := by unfold Rising; infer_instance
+instance (r : ConsonantalRoot Segment) : Decidable (Falling r) := by unfold Falling; infer_instance
 
 /-! ### The tables -/
 
@@ -100,7 +103,7 @@ inductive Vowelless
   deriving DecidableEq, Repr
 
 /-- The root a row reports, by the transcription of its imperative. -/
-def root? (e : LinguisticExample) : Option (ConsonantalRoot Phone) :=
+def root? (e : LinguisticExample) : Option (ConsonantalRoot Segment) :=
   roots.find? (surface · == e.primaryText)
 
 /-- The row's intrusion category. -/
@@ -130,7 +133,7 @@ theorem rows_complete :
 /-- Intrusion is near-categorical exactly in the words whose second consonant is /r/. -/
 theorem almostExclusively_iff_c2_r :
     ∀ e ∈ Examples.all, ∀ r ∈ root? e,
-      intrusion? e = some .almostExclusively ↔ r.segmentAt 1 = some .r := by
+      intrusion? e = some .almostExclusively ↔ r.segmentAt 1 = some Tarifit.r := by
   decide
 
 /-- A rising cluster shows intrusion at least variably unless its second consonant is

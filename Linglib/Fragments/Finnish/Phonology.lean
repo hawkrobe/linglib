@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Finnish
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Harmony.System
 import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -9,9 +9,9 @@ import Linglib.Phonology.Subregular.LocalRewrite
 This file gives Finnish phonemes as segments and states palatal harmony and consonant
 gradation over them. In Karlsson's description the vowels fall into three classes. The back
 vowels /ɑ o u/ and the front vowels /æ ø y/, written ⟨a o u⟩ and ⟨ä ö y⟩, do not mix within a
-word, and the neutral vowels /e i/ occur with either set. A suffix vowel alternates with the stem, so that the
-partitive is *kirja-a* 'book' but *käsi-ä* 'hand', and the inessive *talo-ssa* 'in the house'
-but *metsä-ssä* 'in the forest'. Harmony is a single system in the sense of Rose and Walker.
+word, and the neutral vowels /e i/ occur with either set. A suffix vowel alternates with the
+stem, so that the partitive is *kirja-a* 'book' but *käsi-ä* 'hand', and the inessive
+*talo-ssa* 'in the house' but *metsä-ssä* 'in the forest'. Harmony is a single system in the sense of Rose and Walker.
 The feature [back] spreads rightward from the last harmonic stem vowel to suffix vowels
 unspecified for it, consonants and the neutral vowels are transparent, and a stem with no
 harmonic vowel takes front suffixes.
@@ -31,9 +31,8 @@ with two, and only a short vowel stands between the stop and the ending, so that
 
 ## Main definitions
 
-* `Finnish.Phoneme`: the vowels and the consonants of the example forms, with `chart` and
-  `contrastive`, read as segments.
-* `Finnish.a`, `Finnish.k` and the like: the segment of each phoneme, under its letter.
+* `Finnish.a`, `Finnish.k` and the like: the vowels and the consonants of the example forms,
+  and `Finnish.vowels`, `Finnish.consonants` the sets of them.
 * `Finnish.A`: the alternating suffix vowel.
 * `Finnish.palatalHarmony`: palatal harmony.
 * `Finnish.ofChar`: the phoneme that a letter writes.
@@ -41,7 +40,8 @@ with two, and only a short vowel stands between the stop and the ending, so that
 
 ## Main results
 
-* `Finnish.Phoneme.chart_mem_fin`: each vowel is a phoneme of PHOIBLE's Finnish inventory.
+* `Finnish.exists_mem_fin`: each vowel is the segment of a phoneme of PHOIBLE's Finnish
+  inventory.
 * `Finnish.isNeutral_iff`, `Finnish.isBackVowel_iff`: the neutral vowels are /e i/ and the
   back vowels /ɑ o u/.
 * `Finnish.unspecified_back_A`, `Finnish.setFeature_back_A`: the suffix vowel has no [back],
@@ -83,44 +83,77 @@ namespace Finnish
 
 open Phonology Phonology.Harmony Subregular.LocalRewrite Data.PHOIBLE
 
-/-! ### Segments -/
+/-! ### Phonemes
 
-/-- The phonemes, named by their letters, where `a` is ɑ, `ä` is æ and `ö` is ø. The
-consonants are those of the example forms. -/
-inductive Phoneme where
-  | a | o | u | ä | ö | y | e | i
-  | p | t | k | d | s | n | v | l | j
-  deriving DecidableEq, Fintype, Repr
+A phoneme is named by its letter, so `a` is ɑ, `ä` is æ and `ö` is ø. -/
 
-namespace Phoneme
+/-- The features that distinguish the vowels, with [syllabic] marking them as vowels. -/
+def contrastive : Finset Phonology.Feature := {.syllabic, .high, .low, .back, .round}
 
-/-- The PHOIBLE chart entry of a phoneme, the vowels in the glyphs of the inventory. -/
-def chart : Phoneme → FeatureMatrix
-  | a => .«ɑ» | o => .«o̞» | u => .«u» | ä => .«æ» | ö => .«ø̞» | y => .«y» | e => .«e̞»
-  | i => .«i» | p => .«p» | t => .«t» | k => .«k» | d => .«d» | s => .«s» | n => .«n»
-  | v => .«v» | l => .«l» | j => .«j»
+/-- A vowel is its chart entry's segment on the contrastive features. -/
+def vowel (m : FeatureMatrix) : Segment := .ofChart m ⊥ contrastive
 
-/-- The vowels. -/
-def vowels : Finset Phoneme := {a, o, u, ä, ö, y, e, i}
+/-- The low back vowel /ɑ/. -/
+def a : Segment := vowel .«ɑ»
 
-/-- A vowel keeps the features that distinguish the eight vowels, with [syllabic] marking it
-as a vowel, and a consonant keeps every feature. -/
-def contrastive (x : Phoneme) : Finset Phonology.Feature :=
-  if x ∈ vowels then {.syllabic, .high, .low, .back, .round} else Finset.univ
+/-- The mid back vowel /o/. -/
+def o : Segment := vowel .«o̞»
 
-/-- Each vowel is in PHOIBLE's Finnish inventory. -/
-theorem chart_mem_fin (x : Phoneme) (hx : x ∈ vowels) :
-    x.chart ∈ Inventories.Finnish.fin.phonemes.map (·.features) := by
-  revert x; decide
+/-- The high back vowel /u/. -/
+def u : Segment := vowel .«u»
 
-end Phoneme
+/-- The low front vowel /æ/. -/
+def ä : Segment := vowel .«æ»
 
-/-- A phoneme is read as its chart entry's segment on its contrastive features. -/
-instance : SegmentLike Phoneme where
-  coe x := .ofChart x.chart ⊥ x.contrastive
-  coe_injective' := by decide
+/-- The mid front rounded vowel /ø/. -/
+def ö : Segment := vowel .«ø̞»
 
-segment_constants Phoneme
+/-- The high front rounded vowel /y/. -/
+def y : Segment := vowel .«y»
+
+/-- The mid front unrounded vowel /e/. -/
+def e : Segment := vowel .«e̞»
+
+/-- The high front unrounded vowel /i/. -/
+def i : Segment := vowel .«i»
+
+/-- The voiceless bilabial stop /p/. -/
+def p : Segment := .ofChart .«p»
+
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
+
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
+
+/-- The voiced alveolar stop /d/. -/
+def d : Segment := .ofChart .«d»
+
+/-- The voiceless alveolar fricative /s/. -/
+def s : Segment := .ofChart .«s»
+
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
+
+/-- The labiodental /v/. -/
+def v : Segment := .ofChart .«v»
+
+/-- The lateral /l/. -/
+def l : Segment := .ofChart .«l»
+
+/-- The palatal glide /j/. -/
+def j : Segment := .ofChart .«j»
+
+/-- The eight vowels, pairwise distinct. -/
+def vowels : Finset Segment := ⟨↑[a, o, u, ä, ö, y, e, i], by decide⟩
+
+/-- The consonants of the example forms, pairwise distinct. -/
+def consonants : Finset Segment := ⟨↑[p, t, k, d, s, n, v, l, j], by decide⟩
+
+/-- Each vowel is the segment of a phoneme of PHOIBLE's Finnish inventory. -/
+theorem exists_mem_fin :
+    ∀ x ∈ vowels, ∃ y ∈ Inventories.Finnish.fin.phonemes, x = vowel y.features := by
+  decide
 
 /-- `A` is the vowel of the alternating suffixes such as the essive -nA and the partitive -A.
 It is what `a` and `ä` share. -/
@@ -140,11 +173,10 @@ instance : DecidablePred IsBackVowel := fun _ ↦ inferInstanceAs (Decidable (_ 
 instance : DecidablePred IsNeutral := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The neutral vowels are /e i/. -/
-theorem isNeutral_iff (x : Phoneme) : IsNeutral x ↔ x = .e ∨ x = .i := by revert x; decide
+theorem isNeutral_iff : ∀ x ∈ vowels, IsNeutral x ↔ x = e ∨ x = i := by decide
 
 /-- The back vowels are /ɑ o u/. -/
-theorem isBackVowel_iff (x : Phoneme) : IsBackVowel x ↔ x = .a ∨ x = .o ∨ x = .u := by
-  revert x; decide
+theorem isBackVowel_iff : ∀ x ∈ vowels, IsBackVowel x ↔ x = a ∨ x = o ∨ x = u := by decide
 
 /-! ### The harmony system -/
 
@@ -179,33 +211,33 @@ theorem sourceValue_back :
 
 /-- `ofChar c` is the phoneme that the letter `c` writes. A long vowel or stop is written
 double. -/
-def ofChar : Char → Option Phoneme
-  | 'a' => some .a | 'o' => some .o | 'u' => some .u | 'ä' => some .ä | 'ö' => some .ö
-  | 'y' => some .y | 'e' => some .e | 'i' => some .i | 'p' => some .p | 't' => some .t
-  | 'k' => some .k | 'd' => some .d | 's' => some .s | 'n' => some .n | 'v' => some .v
-  | 'l' => some .l | 'j' => some .j
+def ofChar : Char → Option Segment
+  | 'a' => some a | 'o' => some o | 'u' => some u | 'ä' => some ä | 'ö' => some ö
+  | 'y' => some y | 'e' => some e | 'i' => some i | 'p' => some p | 't' => some t
+  | 'k' => some k | 'd' => some d | 's' => some s | 'n' => some n | 'v' => some v
+  | 'l' => some l | 'j' => some j
   | _ => none
 
 /-! ### Consonant gradation -/
 
 /-- A vowel, as a rule context. -/
-private def vowel : ContextElem := .seg (Segment.ofSpecs [(.syllabic, true)])
+private def V : ContextElem := .seg (Segment.ofSpecs [(.syllabic, true)])
 
 /-- A consonant, as a rule context. -/
-private def consonant : ContextElem := .seg (Segment.ofSpecs [(.syllabic, false)])
+private def C : ContextElem := .seg (Segment.ofSpecs [(.syllabic, false)])
 
 /-- The rules weakening `target` after `left`, before a short vowel and an ending that is one
 consonant or begins with two. -/
 def gradation (target : Segment) (effect : Effect) (left : ContextElem) : List Rule :=
-  [[vowel, consonant, .wordBoundary], [vowel, consonant, consonant]].map fun right ↦
+  [[V, C, .wordBoundary], [V, C, C]].map fun right ↦
     { target, effect, leftContext := [left], rightContext := right }
 
 /-- In qualitative gradation after a vowel, /p/ becomes /v/, /t/ becomes /d/ and /k/ is
 lost. -/
 def qualitativeGradation : List Rule :=
-  gradation p (.replace v) vowel ++
-    gradation t (.changeFeatures (Segment.ofSpecs [(.voice, true)])) vowel ++
-    gradation k .delete vowel
+  gradation p (.replace v) V ++
+    gradation t (.changeFeatures (Segment.ofSpecs [(.voice, true)])) V ++
+    gradation k .delete V
 
 /-- In quantitative gradation a long stop loses its second half. -/
 def quantitativeGradation : List Rule :=

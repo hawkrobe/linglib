@@ -1,6 +1,6 @@
 import Linglib.Data.PHOIBLE.Inventories.Turkish
 import Linglib.Phonology.Harmony.System
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -21,8 +21,8 @@ palatal l of loans such as *gol*, which Clements and Sezer discuss, carries [−
 the suffix (§3.4). The suffix-initial D of -DI and -DA copies [voice] from the preceding
 segment (§6.1.2).
 
-The phonemes are a type of their own, read as segments, and their feature values come from
-the PHOIBLE chart. A vowel keeps the chart's values for the features that distinguish the
+The phonemes are segments named by their letters, and their feature values come from the
+PHOIBLE chart. A vowel keeps the chart's values for the features that distinguish the
 eight vowels, together with [voice], which the voicing of D copies. Among consonants [back] is
 contrastive only on the palatal lateral, so every other consonant keeps each chart value but
 [back], as in Clements and Sezer's analysis, where plain consonants are unspecified for the
@@ -37,9 +37,9 @@ writing one segment.
 
 ## Main definitions
 
-* `Phoneme`: the phonemes, with `chart`, `departure` and `contrastive`, read as segments.
-* `a`, `e`, …, `y`: the segment of each phoneme, under the phoneme's own name, so that
-  underlying forms mix phonemes with archiphonemes, as in `[A, c, A, K]`.
+* `a`, `e`, …, `y`: the phonemes, in Göksel and Kerslake's phonemic spelling, so that
+  underlying forms mix phonemes with archiphonemes, as in `[A, c, A, K]`; `vowels` and
+  `consonants` are the sets of them.
 * `A`, `I`, `D`, `K`: the suffix archiphonemes.
 * `fronting`, `rounding`, `voicing`: the two vowel harmonies and D-voicing, as
   `Phonology.Harmony.System`s. The suffixes they apply to are the exponent forms of
@@ -51,8 +51,8 @@ writing one segment.
 
 ## Main results
 
-* `Phoneme.chart_mem_tur`: every phoneme but the two laterals is in PHOIBLE's Turkish
-  inventory.
+* `exists_mem_tur`: every phoneme but `a` and the two laterals is the segment of a phoneme of
+  PHOIBLE's Turkish inventory.
 * `unspecified_back_iff`, `not_unspecified_voice`: a consonant lacks [back] unless it is the
   palatal lateral, and every phoneme has a value for [voice], which the tier tests of fronting
   and voicing rely on.
@@ -84,53 +84,109 @@ namespace Turkish.Phonology
 
 /-! ### Segments -/
 
-/-- The phonemes, in Göksel and Kerslake's phonemic spelling, where `ı` is ɯ, `ö` is œ, `ü` is
-y, `c` is dʒ, `ş` is ʃ, `y` is j and `r` is ɾ. The palatal l of loans such as *gol* and *hal*
-is `l'`. -/
-inductive Phoneme where
-  | a | e | ı | i | o | ö | u | ü
-  | p | b | t | d | k | g | c | s | z | ş | v | h | m | n | l | l' | r | y
-  deriving DecidableEq, Fintype, Repr
+/-- A vowel is its chart entry's segment, with its departure, on the features that distinguish
+the eight vowels and [voice]. -/
+def vowel (m : FeatureMatrix) (departure : Segment := ⊥) : Segment :=
+  .ofChart m departure {.syllabic, .voice, .high, .back, .round}
 
-namespace Phoneme
+/-- A consonant is its chart entry's segment on every feature but [back], which is contrastive
+among consonants on the palatal lateral alone. -/
+def consonant (m : FeatureMatrix) : Segment := .ofChart m ⊥ {.back}ᶜ
 
-/-- The PHOIBLE chart entry of a phoneme, in the glyphs of the Turkish inventory. The palatal
-l shares the entry of `l`. -/
-def chart : Phoneme → FeatureMatrix
-  | a => .«a» | e => .«e» | ı => .«ɯ» | i => .«i» | o => .«o» | ö => .«œ» | u => .«u»
-  | ü => .«y» | p => .«p» | b => .«b» | t => .«t̪» | d => .«d̪» | k => .«k» | g => .«ɡ»
-  | c => .«d̠ʒ» | s => .«s̪» | z => .«z̪» | ş => .«ʃ» | v => .«v» | h => .«h» | m => .«m»
-  | n => .«n̪» | l | l' => .«l» | r => .«ɾ» | y => .«j»
+/-- The low back vowel `a`, a back vowel where the chart's is central. -/
+def a : Segment := vowel .«a» (Segment.ofSpecs [(.back, true)])
 
-/-- The vowels. -/
-def vowels : Finset Phoneme := {a, e, ı, i, o, ö, u, ü}
+/-- The non-high front unrounded vowel `e`. -/
+def e : Segment := vowel .«e»
 
-/-- The grammar's `a` is a back vowel where the chart's is central, and the palatal l is
-[−back] (§3.4 (iv)). -/
-def departure : Phoneme → Segment
-  | a => Segment.ofSpecs [(.back, true)]
-  | l' => Segment.ofSpecs [(.back, false)]
-  | _ => ⊥
+/-- The high back unrounded vowel `ı`, /ɯ/. -/
+def ı : Segment := vowel .«ɯ»
 
-/-- A vowel keeps the features that distinguish the eight vowels and [voice]. A consonant keeps
-every feature but [back], which is contrastive among consonants on the palatal lateral
-alone. -/
-def contrastive (x : Phoneme) : Finset Phonology.Feature :=
-  if x ∈ vowels then {.syllabic, .voice, .high, .back, .round}
-  else if x = l' then Finset.univ else {.back}ᶜ
+/-- The high front unrounded vowel `i`. -/
+def i : Segment := vowel .«i»
 
-/-- Every phoneme but the two laterals is in PHOIBLE's Turkish inventory. -/
-theorem chart_mem_tur (x : Phoneme) (hl : x ≠ l) (hl' : x ≠ l') :
-    x.chart ∈ Inventories.Turkish.tur.phonemes.map (·.features) := by
-  revert x; decide
+/-- The non-high back rounded vowel `o`. -/
+def o : Segment := vowel .«o»
 
-end Phoneme
+/-- The non-high front rounded vowel `ö`, /œ/. -/
+def ö : Segment := vowel .«œ»
 
-instance : SegmentLike Phoneme where
-  coe x := .ofChart x.chart x.departure x.contrastive
-  coe_injective' := by decide
+/-- The high back rounded vowel `u`. -/
+def u : Segment := vowel .«u»
 
-segment_constants Phoneme
+/-- The high front rounded vowel `ü`, /y/. -/
+def ü : Segment := vowel .«y»
+
+/-- The voiceless bilabial stop `p`. -/
+def p : Segment := consonant .«p»
+
+/-- The voiced bilabial stop `b`. -/
+def b : Segment := consonant .«b»
+
+/-- The voiceless dental stop `t`. -/
+def t : Segment := consonant .«t̪»
+
+/-- The voiced dental stop `d`. -/
+def d : Segment := consonant .«d̪»
+
+/-- The voiceless velar stop `k`. -/
+def k : Segment := consonant .«k»
+
+/-- The voiced velar stop `g`. -/
+def g : Segment := consonant .«ɡ»
+
+/-- The voiced postalveolar affricate `c`, /dʒ/. -/
+def c : Segment := consonant .«d̠ʒ»
+
+/-- The voiceless dental fricative `s`. -/
+def s : Segment := consonant .«s̪»
+
+/-- The voiced dental fricative `z`. -/
+def z : Segment := consonant .«z̪»
+
+/-- The voiceless postalveolar fricative `ş`, /ʃ/. -/
+def ş : Segment := consonant .«ʃ»
+
+/-- The voiced labiodental fricative `v`. -/
+def v : Segment := consonant .«v»
+
+/-- The glottal fricative `h`. -/
+def h : Segment := consonant .«h»
+
+/-- The bilabial nasal `m`. -/
+def m : Segment := consonant .«m»
+
+/-- The dental nasal `n`. -/
+def n : Segment := consonant .«n̪»
+
+/-- The lateral `l`. -/
+def l : Segment := consonant .«l»
+
+/-- The tap `r`, /ɾ/. -/
+def r : Segment := consonant .«ɾ»
+
+/-- The palatal glide `y`, /j/. -/
+def y : Segment := consonant .«j»
+
+/-- The palatal `l'` of loans such as *gol* and *hal*, which shares the chart entry of `l` and
+is [−back] (§3.4 (iv)). -/
+def l' : Segment := .ofChart .«l» (Segment.ofSpecs [(.back, false)])
+
+/-- The vowels, pairwise distinct. -/
+def vowels : Finset Segment := ⟨↑[a, e, ı, i, o, ö, u, ü], by decide⟩
+
+/-- The consonants, pairwise distinct. -/
+def consonants : Finset Segment :=
+  ⟨↑[p, b, t, d, k, g, c, s, z, ş, v, h, m, n, l, l', r, y], by decide⟩
+
+/-- Every phoneme but `a` and the two laterals is the segment of a phoneme of PHOIBLE's
+Turkish inventory, and the chart entry of `a` is in that inventory. -/
+theorem exists_mem_tur :
+    (∀ x ∈ vowels, x ≠ a → ∃ y ∈ Inventories.Turkish.tur.phonemes, x = vowel y.features) ∧
+      (∀ x ∈ consonants, x ≠ l → x ≠ l' →
+        ∃ y ∈ Inventories.Turkish.tur.phonemes, x = consonant y.features) ∧
+      FeatureMatrix.«a» ∈ Inventories.Turkish.tur.phonemes.map (·.features) := by
+  decide
 
 /-- `A` is the vowel of A-type suffixes such as -lAr and -mA. It is what `a` and `e` share,
 unrounded and non-high, and fronting harmony supplies its backness (§3.2.2). -/
@@ -150,13 +206,10 @@ def K : Segment := Bundle.restrict {.continuant}ᶜ k
 
 /-- A consonant lacks a value for [back] unless it is the palatal lateral, which is what
 fronting's tier test reads. -/
-theorem unspecified_back_iff (x : Phoneme) (hx : x ∉ Phoneme.vowels) :
-    (x : Segment).Unspecified .back ↔ x ≠ .l' := by
-  revert x; decide
+theorem unspecified_back_iff : ∀ x ∈ consonants, x.Unspecified .back ↔ x ≠ l' := by decide
 
 /-- Every phoneme has a value for [voice], so that only `D` is a target of voicing. -/
-theorem not_unspecified_voice (x : Phoneme) : ¬ (x : Segment).Unspecified .voice := by
-  revert x; decide
+theorem not_unspecified_voice : ∀ x ∈ vowels ∪ consonants, ¬ x.Unspecified .voice := by decide
 
 /-- `A` with [back] filled in is `a` or `e`. -/
 theorem setFeature_back_A :
@@ -213,18 +266,17 @@ def surface (w : List Segment) : List Segment :=
 
 /-- `ofChar c` is the phoneme that the letter `c` writes. The palatal `l'` is spelled like
 `l` and so is the value of no letter. -/
-def ofChar : Char → Option Phoneme
-  | 'a' => some .a | 'e' => some .e | 'ı' => some .ı | 'i' => some .i
-  | 'o' => some .o | 'ö' => some .ö | 'u' => some .u | 'ü' => some .ü
-  | 'p' => some .p | 'b' => some .b | 't' => some .t | 'd' => some .d | 'k' => some .k
-  | 'g' => some .g | 'c' => some .c | 's' => some .s | 'z' => some .z | 'ş' => some .ş
-  | 'v' => some .v | 'h' => some .h | 'm' => some .m | 'n' => some .n | 'l' => some .l
-  | 'r' => some .r | 'y' => some .y
+def ofChar : Char → Option Segment
+  | 'a' => some a | 'e' => some e | 'ı' => some ı | 'i' => some i
+  | 'o' => some o | 'ö' => some ö | 'u' => some u | 'ü' => some ü
+  | 'p' => some p | 'b' => some b | 't' => some t | 'd' => some d | 'k' => some k
+  | 'g' => some g | 'c' => some c | 's' => some s | 'z' => some z | 'ş' => some ş
+  | 'v' => some v | 'h' => some h | 'm' => some m | 'n' => some n | 'l' => some l
+  | 'r' => some r | 'y' => some y
   | _ => none
 
 /-- `ofString? s` is the string of segments that the spelled word `s` writes, if every letter
 writes one. -/
-def ofString? (s : String) : Option (List Segment) :=
-  (s.toList.mapM ofChar).map fun w ↦ w.map SegmentLike.coe
+def ofString? (s : String) : Option (List Segment) := s.toList.mapM ofChar
 
 end Turkish.Phonology

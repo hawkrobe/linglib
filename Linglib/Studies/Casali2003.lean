@@ -155,8 +155,8 @@ instance (dominant : Bool) : Decidable (SystemDependent I dominant) := by
 (20); the [−ATR] spreading from a dominant affix it also shows (Table 5) is the indirect
 kind. -/
 theorem akan_conforms :
-    inventoryType? (SegmentLike.inventory Akan.Vowel) = some .fiveHeight ∧
-      SystemDependent (SegmentLike.inventory Akan.Vowel) true := by
+    inventoryType? Akan.vowels = some .fiveHeight ∧
+      SystemDependent Akan.vowels true := by
   decide
 
 /-- Standard Yoruba's seven vowels form a 4Ht(M) system, and its [−ATR] dominance

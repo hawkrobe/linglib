@@ -5,9 +5,9 @@ import Linglib.Morphology.Root.Consonantal
 # Tarifit triconsonantal roots
 
 The thirty-eight verb roots of the CCəC target words in the Tarifit production study, as
-consonantal melodies over `Tarifit.Phone`; the simple-imperative template that vocalizes them
-with a schwa between the second and third consonants is stated with the study. Roots are named
-by their imperative citation form.
+consonantal melodies over the segments of `Fragments/Tarifit/Phonology.lean`; the
+simple-imperative template that vocalizes them with a schwa between the second and third
+consonants is stated with the study. Roots are named by their imperative citation form.
 
 ## References
 
@@ -16,87 +16,87 @@ by their imperative citation form.
 
 namespace Tarifit
 
-open Morphology
+open Morphology Phonology
 
 /-- /ðfəʕ/ -/
-def dfes : ConsonantalRoot Phone := ⟨[.eth, .f, .ayn]⟩
+def dfes : ConsonantalRoot Segment := ⟨[eth, f, ayn]⟩
 /-- /ðqər/ -/
-def dqer : ConsonantalRoot Phone := ⟨[.eth, .q, .r]⟩
+def dqer : ConsonantalRoot Segment := ⟨[eth, q, r]⟩
 /-- /ʁdˤər/ -/
-def ghder : ConsonantalRoot Phone := ⟨[.ghayn, .emphaticD, .r]⟩
+def ghder : ConsonantalRoot Segment := ⟨[ghayn, emphaticD, r]⟩
 /-- /ʁfər/ -/
-def ghfer : ConsonantalRoot Phone := ⟨[.ghayn, .f, .r]⟩
+def ghfer : ConsonantalRoot Segment := ⟨[ghayn, f, r]⟩
 /-- /ʁrəβ/ -/
-def ghreb : ConsonantalRoot Phone := ⟨[.ghayn, .r, .beta]⟩
+def ghreb : ConsonantalRoot Segment := ⟨[ghayn, r, beta]⟩
 /-- /ħməð/ -/
-def hmed : ConsonantalRoot Phone := ⟨[.hbar, .m, .eth]⟩
+def hmed : ConsonantalRoot Segment := ⟨[hbar, m, eth]⟩
 /-- /nqər/ -/
-def nqer : ConsonantalRoot Phone := ⟨[.n, .q, .r]⟩
+def nqer : ConsonantalRoot Segment := ⟨[n, q, r]⟩
 /-- /qβər/ -/
-def qber : ConsonantalRoot Phone := ⟨[.q, .beta, .r]⟩
+def qber : ConsonantalRoot Segment := ⟨[q, beta, r]⟩
 /-- /qðəf/ -/
-def qdef : ConsonantalRoot Phone := ⟨[.q, .eth, .f]⟩
+def qdef : ConsonantalRoot Segment := ⟨[q, eth, f]⟩
 /-- /qfər/ -/
-def qfer : ConsonantalRoot Phone := ⟨[.q, .f, .r]⟩
+def qfer : ConsonantalRoot Segment := ⟨[q, f, r]⟩
 /-- /qrəβ/ -/
-def qreb : ConsonantalRoot Phone := ⟨[.q, .r, .beta]⟩
+def qreb : ConsonantalRoot Segment := ⟨[q, r, beta]⟩
 /-- /qrəʕ/ 'rip!' -/
-def qres : ConsonantalRoot Phone := ⟨[.q, .r, .ayn]⟩
+def qres : ConsonantalRoot Segment := ⟨[q, r, ayn]⟩
 /-- /qtˤəʕ/ -/
-def qtes : ConsonantalRoot Phone := ⟨[.q, .emphaticT, .ayn]⟩
+def qtes : ConsonantalRoot Segment := ⟨[q, emphaticT, ayn]⟩
 /-- /rməð/ -/
-def rmed : ConsonantalRoot Phone := ⟨[.r, .m, .eth]⟩
+def rmed : ConsonantalRoot Segment := ⟨[r, m, eth]⟩
 /-- /srəm/ -/
-def srem : ConsonantalRoot Phone := ⟨[.s, .r, .m]⟩
+def srem : ConsonantalRoot Segment := ⟨[s, r, m]⟩
 /-- /stˤər/ -/
-def ster : ConsonantalRoot Phone := ⟨[.s, .emphaticT, .r]⟩
+def ster : ConsonantalRoot Segment := ⟨[s, emphaticT, r]⟩
 /-- /χrəf/ -/
-def xref : ConsonantalRoot Phone := ⟨[.chi, .r, .f]⟩
+def xref : ConsonantalRoot Segment := ⟨[chi, r, f]⟩
 /-- /ʒβəð/ -/
-def zhbed : ConsonantalRoot Phone := ⟨[.ezh, .beta, .eth]⟩
+def zhbed : ConsonantalRoot Segment := ⟨[ezh, beta, eth]⟩
 /-- /ʒməð/ 'freeze!' -/
-def zhmed : ConsonantalRoot Phone := ⟨[.ezh, .m, .eth]⟩
+def zhmed : ConsonantalRoot Segment := ⟨[ezh, m, eth]⟩
 /-- /ʕβəð/ -/
-def aybed : ConsonantalRoot Phone := ⟨[.ayn, .beta, .eth]⟩
+def aybed : ConsonantalRoot Segment := ⟨[ayn, beta, eth]⟩
 /-- /ʕrəm/ -/
-def ayrem : ConsonantalRoot Phone := ⟨[.ayn, .r, .m]⟩
+def ayrem : ConsonantalRoot Segment := ⟨[ayn, r, m]⟩
 /-- /ħsəβ/ 'count!' -/
-def hseb : ConsonantalRoot Phone := ⟨[.hbar, .s, .beta]⟩
+def hseb : ConsonantalRoot Segment := ⟨[hbar, s, beta]⟩
 /-- /ħzən/ -/
-def hzen : ConsonantalRoot Phone := ⟨[.hbar, .z, .n]⟩
+def hzen : ConsonantalRoot Segment := ⟨[hbar, z, n]⟩
 /-- /ʃməθ/ -/
-def shmeth : ConsonantalRoot Phone := ⟨[.esh, .m, .theta]⟩
+def shmeth : ConsonantalRoot Segment := ⟨[esh, m, theta]⟩
 /-- /χzən/ -/
-def xzen : ConsonantalRoot Phone := ⟨[.chi, .z, .n]⟩
+def xzen : ConsonantalRoot Segment := ⟨[chi, z, n]⟩
 /-- /βkəm/ -/
-def bkem : ConsonantalRoot Phone := ⟨[.beta, .k, .m]⟩
+def bkem : ConsonantalRoot Segment := ⟨[beta, k, m]⟩
 /-- /ħləm/ -/
-def hlem : ConsonantalRoot Phone := ⟨[.hbar, .l, .m]⟩
+def hlem : ConsonantalRoot Segment := ⟨[hbar, l, m]⟩
 /-- /ħsən/ -/
-def hsen : ConsonantalRoot Phone := ⟨[.hbar, .s, .n]⟩
+def hsen : ConsonantalRoot Segment := ⟨[hbar, s, n]⟩
 /-- /nqəβ/ 'pick!' -/
-def nqeb : ConsonantalRoot Phone := ⟨[.n, .q, .beta]⟩
+def nqeb : ConsonantalRoot Segment := ⟨[n, q, beta]⟩
 /-- /qməʕ/ 'suppress!' -/
-def qmes : ConsonantalRoot Phone := ⟨[.q, .m, .ayn]⟩
+def qmes : ConsonantalRoot Segment := ⟨[q, m, ayn]⟩
 /-- /sʃən/ 'show!' -/
-def sshen : ConsonantalRoot Phone := ⟨[.s, .esh, .n]⟩
+def sshen : ConsonantalRoot Segment := ⟨[s, esh, n]⟩
 /-- /χnəs/ 'bend down!' -/
-def xnes : ConsonantalRoot Phone := ⟨[.chi, .n, .s]⟩
+def xnes : ConsonantalRoot Segment := ⟨[chi, n, s]⟩
 /-- /ʒməʕ/ -/
-def zhmes : ConsonantalRoot Phone := ⟨[.ezh, .m, .ayn]⟩
+def zhmes : ConsonantalRoot Segment := ⟨[ezh, m, ayn]⟩
 /-- /sχəf/ 'pass out!' -/
-def sxef : ConsonantalRoot Phone := ⟨[.s, .chi, .f]⟩
+def sxef : ConsonantalRoot Segment := ⟨[s, chi, f]⟩
 /-- /ħkəm/ 'judge!' -/
-def hkem : ConsonantalRoot Phone := ⟨[.hbar, .k, .m]⟩
+def hkem : ConsonantalRoot Segment := ⟨[hbar, k, m]⟩
 /-- /ntəf/ 'pluck!' -/
-def ntef : ConsonantalRoot Phone := ⟨[.n, .t, .f]⟩
+def ntef : ConsonantalRoot Segment := ⟨[n, t, f]⟩
 /-- /skəf/ -/
-def skef : ConsonantalRoot Phone := ⟨[.s, .k, .f]⟩
+def skef : ConsonantalRoot Segment := ⟨[s, k, f]⟩
 /-- /rsəq/ -/
-def rseq : ConsonantalRoot Phone := ⟨[.r, .s, .q]⟩
+def rseq : ConsonantalRoot Segment := ⟨[r, s, q]⟩
 
 /-- The thirty-eight target roots. -/
-def roots : List (ConsonantalRoot Phone) :=
+def roots : List (ConsonantalRoot Segment) :=
   [dfes, dqer, ghder, ghfer, ghreb, hmed, nqer, qber, qdef, qfer, qreb, qres, qtes, rmed, srem,
     ster, xref, zhbed, zhmed, aybed, ayrem, hseb, hzen, shmeth, xzen, bkem, hlem, hsen, nqeb,
     qmes, sshen, xnes, zhmes, sxef, hkem, ntef, skef, rseq]

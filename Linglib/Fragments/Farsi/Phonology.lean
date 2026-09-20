@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Persian
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Persian phonemes
@@ -13,13 +13,13 @@ chart, and its segment is the segment of that chart entry.
 
 ## Main definitions
 
-* `Farsi.Phoneme`: the phonemes, with `chart`, read as segments.
-* `Farsi.e`, `Farsi.h` and the like: the segment of each phoneme, under its symbol.
+* `Farsi.e`, `Farsi.h` and the like: the phonemes, as segments of their chart entries.
+* `Farsi.inventory`: the set of them.
 
 ## Main results
 
-* `Farsi.Phoneme.chart_mem_pes`: each phoneme is in PHOIBLE's Persian inventory.
-* `Farsi.Phoneme.isVowel_iff`: the six vowels are the vowels.
+* `Farsi.exists_mem_pes`: each phoneme is the segment of one in PHOIBLE's Persian inventory.
+* `Farsi.isVowel_iff`: the six vowels are the vowels.
 
 ## Implementation notes
 
@@ -39,41 +39,51 @@ open Phonology Data.PHOIBLE
 
 namespace Farsi
 
-/-- The Persian phonemes of the hiatus data. A constructor is the phoneme's IPA symbol where
-that is an identifier, and otherwise the symbol's name: `scriptA` is ɑ, `tesh` is tʃ and
-`glottalStop` is ʔ. -/
-inductive Phoneme where
-  | i | e | æ | u | o | scriptA
-  | h | tesh | m | n | glottalStop
-  deriving DecidableEq, Fintype, Repr
+/-! ### Phonemes -/
 
-namespace Phoneme
+/-- The high front vowel /i/. -/
+def i : Segment := .ofChart .«i»
 
-/-- The PHOIBLE chart entry of a phoneme, in the glyphs of the Persian inventory. -/
-def chart : Phoneme → FeatureMatrix
-  | i => .«i» | e => .«e» | æ => .«a̟» | u => .«u» | o => .«o» | scriptA => .«ɑ»
-  | h => .«h» | tesh => .«t̠ʃ» | m => .«m» | n => .«n» | glottalStop => .«ʔ»
+/-- The mid front vowel /e/. -/
+def e : Segment := .ofChart .«e»
 
-end Phoneme
+/-- The low front vowel /æ/, the glyph `a̟` of the Persian inventory. -/
+def æ : Segment := .ofChart .«a̟»
 
-/-- A phoneme is read as the segment of its chart entry. -/
-instance : SegmentLike Phoneme where
-  coe x := .ofChart x.chart
-  coe_injective' := by decide
+/-- The high back rounded vowel /u/. -/
+def u : Segment := .ofChart .«u»
 
-segment_constants Phoneme
+/-- The mid back rounded vowel /o/. -/
+def o : Segment := .ofChart .«o»
 
-namespace Phoneme
+/-- The low back vowel /ɑ/. -/
+def scriptA : Segment := .ofChart .«ɑ»
 
-/-- Each phoneme is in PHOIBLE's Persian inventory. -/
-theorem chart_mem_pes (x : Phoneme) :
-    x.chart ∈ Inventories.Persian.pes.phonemes.map (·.features) := by
-  cases x <;> decide
+/-- The glottal fricative /h/. -/
+def h : Segment := .ofChart .«h»
 
-theorem isVowel_iff (x : Phoneme) :
-    (x : Segment).IsVowel ↔ x ∈ ({i, e, æ, u, o, scriptA} : Finset Phoneme) := by
-  revert x; decide
+/-- The voiceless postalveolar affricate /tʃ/. -/
+def tesh : Segment := .ofChart .«t̠ʃ»
 
-end Phoneme
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
+
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
+
+/-- The glottal stop /ʔ/. -/
+def glottalStop : Segment := .ofChart .«ʔ»
+
+/-- The Persian phonemes of the hiatus data, pairwise distinct. -/
+def inventory : Finset Segment := ⟨↑[i, e, æ, u, o, scriptA, h, tesh, m, n, glottalStop], by decide⟩
+
+/-- Each phoneme is the segment of a phoneme of PHOIBLE's Persian inventory. -/
+theorem exists_mem_pes :
+    ∀ x ∈ inventory, ∃ y ∈ Inventories.Persian.pes.phonemes, x = .ofChart y.features := by
+  decide
+
+theorem isVowel_iff :
+    ∀ x ∈ inventory, x.IsVowel ↔ x ∈ ({i, e, æ, u, o, scriptA} : Finset Segment) := by
+  decide
 
 end Farsi

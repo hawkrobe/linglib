@@ -1,4 +1,4 @@
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -11,8 +11,8 @@ and its segment is the segment of that chart entry, so the values are PHOIBLE's.
 
 ## Main definitions
 
-* `English.Phoneme`: the phonemes, with `chart`, read as segments.
-* `English.p`, `English.esh` and the like: the segment of each phoneme, under its symbol.
+* `English.p`, `English.esh` and the like: the phonemes, as segments of their chart entries.
+* `English.inventory`: the set of them.
 * `English.preglottalization`, `English.postnasalDeletion`: two rules of Hayes's.
 
 ## Implementation notes
@@ -31,35 +31,84 @@ open Phonology Subregular.LocalRewrite Data.PHOIBLE
 
 namespace English
 
-/-- The English phonemes of the examples. A constructor is the phoneme's IPA symbol where that
-is an identifier, and otherwise the symbol's name: `dezh` is dʒ, `esh` is ʃ, `turnedR` is ɹ,
-`smallCapitalI` is ɪ, `wedge` is ʌ and `schwa` is ə. -/
-inductive Phoneme where
-  | p | t | k | b | d | g | dezh
-  | m | n | ŋ
-  | f | v | s | θ | esh
-  | l | w | turnedR
-  | æ | smallCapitalI | i | wedge | o | schwa
-  deriving DecidableEq, Fintype, Repr
+/-! ### Phonemes -/
 
-namespace Phoneme
+/-- The voiceless bilabial stop /p/. -/
+def p : Segment := .ofChart .«p»
 
-/-- The PHOIBLE chart entry of a phoneme. The voiced velar stop is the IPA glyph `ɡ`. -/
-def chart : Phoneme → FeatureMatrix
-  | p => .«p» | t => .«t» | k => .«k» | b => .«b» | d => .«d» | g => .«ɡ» | dezh => .«d̠ʒ»
-  | m => .«m» | n => .«n» | ŋ => .«ŋ»
-  | f => .«f» | v => .«v» | s => .«s» | θ => .«θ» | esh => .«ʃ»
-  | l => .«l» | w => .«w» | turnedR => .«ɹ»
-  | æ => .«æ» | smallCapitalI => .«ɪ» | i => .«i» | wedge => .«ʌ» | o => .«o» | schwa => .«ə»
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
 
-end Phoneme
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
 
-/-- A phoneme is read as the segment of its chart entry. -/
-instance : SegmentLike Phoneme where
-  coe x := .ofChart x.chart
-  coe_injective' := by decide
+/-- The voiced bilabial stop /b/. -/
+def b : Segment := .ofChart .«b»
 
-segment_constants Phoneme
+/-- The voiced alveolar stop /d/. -/
+def d : Segment := .ofChart .«d»
+
+/-- The voiced velar stop /g/, the IPA glyph `ɡ` in the chart. -/
+def g : Segment := .ofChart .«ɡ»
+
+/-- The voiced postalveolar affricate /dʒ/. -/
+def dezh : Segment := .ofChart .«d̠ʒ»
+
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
+
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
+
+/-- The velar nasal /ŋ/. -/
+def ŋ : Segment := .ofChart .«ŋ»
+
+/-- The voiceless labiodental fricative /f/. -/
+def f : Segment := .ofChart .«f»
+
+/-- The voiced labiodental fricative /v/. -/
+def v : Segment := .ofChart .«v»
+
+/-- The voiceless alveolar fricative /s/. -/
+def s : Segment := .ofChart .«s»
+
+/-- The voiceless dental fricative /θ/. -/
+def θ : Segment := .ofChart .«θ»
+
+/-- The voiceless postalveolar fricative /ʃ/. -/
+def esh : Segment := .ofChart .«ʃ»
+
+/-- The lateral /l/. -/
+def l : Segment := .ofChart .«l»
+
+/-- The labial-velar glide /w/. -/
+def w : Segment := .ofChart .«w»
+
+/-- The alveolar approximant /ɹ/. -/
+def turnedR : Segment := .ofChart .«ɹ»
+
+/-- The low front vowel /æ/. -/
+def æ : Segment := .ofChart .«æ»
+
+/-- The lax high front vowel /ɪ/. -/
+def smallCapitalI : Segment := .ofChart .«ɪ»
+
+/-- The high front vowel /i/. -/
+def i : Segment := .ofChart .«i»
+
+/-- The mid back unrounded vowel /ʌ/. -/
+def wedge : Segment := .ofChart .«ʌ»
+
+/-- The mid back rounded vowel /o/. -/
+def o : Segment := .ofChart .«o»
+
+/-- The mid central vowel /ə/. -/
+def schwa : Segment := .ofChart .«ə»
+
+/-- The English phonemes of the examples, pairwise distinct. -/
+def inventory : Finset Segment :=
+  ⟨↑[p, t, k, b, d, g, dezh, m, n, ŋ, f, v, s, θ, esh, l, w, turnedR, æ, smallCapitalI, i, wedge,
+    o, schwa], by decide⟩
 
 /-! ### Rules -/
 

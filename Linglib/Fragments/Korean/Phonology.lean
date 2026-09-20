@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Korean
-import Linglib.Phonology.Segmental.SegmentLike
+import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -20,14 +20,14 @@ phonemes differ in that feature alone.
 
 ## Main definitions
 
-* `Korean.Phoneme`: the phonemes of the illustration, with `chart`, read as segments.
-* `Korean.a`, `Korean.p` and the like: the segment of each phoneme, under its symbol.
+* `Korean.p`, `Korean.ŋ` and the like: the phonemes of the illustration, as segments.
+* `Korean.inventory`: the set of them.
 * `Korean.stopNasalization`: a non-affricate stop becomes a voiced nasal sonorant before a
   nasal.
 
 ## Main results
 
-* `Korean.Phoneme.chart_mem_kor`: each phoneme is in PHOIBLE's Korean inventory.
+* `Korean.exists_mem_kor`: each phoneme is the segment of one in PHOIBLE's Korean inventory.
 * `Korean.pak_paŋ_neutralized`: *pak* and *paŋ* before *n* derive the same string, the one
   with the velar nasal on every feature but [delayed release]; *pak* alone is unchanged.
 * `Korean.derive_pak_ne_paŋ`: the derived string is not literally the one with the velar
@@ -45,37 +45,46 @@ open Phonology Subregular.LocalRewrite Data.PHOIBLE
 
 namespace Korean
 
+/-! ### Phonemes -/
+
+/-- The voiceless bilabial stop /p/. -/
+def p : Segment := .ofChart .«p»
+
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
+
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
+
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
+
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
+
+/-- The velar nasal /ŋ/. -/
+def ŋ : Segment := .ofChart .«ŋ»
+
+/-- The low vowel /a/. -/
+def a : Segment := .ofChart .«a»
+
+/-- The high front vowel /i/. -/
+def i : Segment := .ofChart .«i»
+
+/-- The high back rounded vowel /u/. -/
+def u : Segment := .ofChart .«u»
+
+/-- The lateral /l/. -/
+def l : Segment := .ofChart .«l»
+
 /-- The phonemes of Hayes's illustration are the plain stops, the nasals, three vowels and the
-lateral. -/
-inductive Phoneme where
-  | p | t | k
-  | m | n | ŋ
-  | a | i | u
-  | l
-  deriving DecidableEq, Fintype, Repr
+lateral, and they are pairwise distinct. -/
+def inventory : Finset Segment := ⟨↑[p, t, k, m, n, ŋ, a, i, u, l], by decide⟩
 
-namespace Phoneme
-
-/-- The PHOIBLE chart entry of a phoneme. -/
-def chart : Phoneme → FeatureMatrix
-  | p => .«p» | t => .«t» | k => .«k»
-  | m => .«m» | n => .«n» | ŋ => .«ŋ»
-  | a => .«a» | i => .«i» | u => .«u»
-  | l => .«l»
-
-/-- Each phoneme is in PHOIBLE's Korean inventory. -/
-theorem chart_mem_kor (x : Phoneme) :
-    x.chart ∈ Inventories.Korean.kor.phonemes.map (·.features) := by
-  cases x <;> decide
-
-end Phoneme
-
-/-- A phoneme is read as the segment of its chart entry. -/
-instance : SegmentLike Phoneme where
-  coe x := .ofChart x.chart
-  coe_injective' := by decide
-
-segment_constants Phoneme
+/-- Each phoneme is the segment of a phoneme of PHOIBLE's Korean inventory. -/
+theorem exists_mem_kor :
+    ∀ x ∈ inventory, ∃ y ∈ Inventories.Korean.kor.phonemes, x = .ofChart y.features := by
+  decide
 
 /-! ### The rule -/
 
@@ -91,7 +100,7 @@ def exceptDelayedRelease : Finset Phonology.Feature := {.delayedRelease}ᶜ
 
 /-- No two phonemes differ in [delayed release] alone. -/
 theorem isDistinctive_compl_delayedRelease :
-    IsDistinctive exceptDelayedRelease (SegmentLike.inventory Phoneme) := by
+    IsDistinctive exceptDelayedRelease inventory := by
   decide
 
 /-- *pak* 'gourd' and *paŋ* 'room' before *n* derive the same string, which has the velar
