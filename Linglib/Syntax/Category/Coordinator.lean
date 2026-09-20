@@ -20,6 +20,8 @@ sisters of one conjoinable type in `Semantics/Composition/Coordination.lean`.
 * `Coordinator.op`: the Boolean operation a semantic type denotes.
 * `Coordinator`: the form, gloss, semantic type and attachment of a coordinator, with the other
   uses the same form has.
+* `Coordinator.Correlative`: a pair of correlative coordinators with the single coordinator
+  of the plain construction.
 * `Coordinator.toWord`, `Coordinator.morph`: the coordinator as a word and as a morph.
 
 ## Implementation notes
@@ -96,9 +98,17 @@ structure Coordinator where
   /-- The form also builds quantifiers, as Japanese *mo* and *ka* do on indeterminate
   pronouns. -/
   alsoQuantifier : Bool := false
-  /-- The form is repeated on each coordinand in a correlative construction, as Latin
-  *et … et* and *aut … aut*. -/
-  correlative : Bool := false
+  deriving DecidableEq, Repr
+
+/-- An emphatic coordination with correlative coordinators, English *both … and*: the
+coordinators of the two coordinands and the single coordinator of the plain construction. -/
+structure Coordinator.Correlative where
+  /-- The form on the first coordinand. -/
+  first : String
+  /-- The form on the second coordinand. -/
+  second : String
+  /-- The coordinator of the plain construction. -/
+  single : Coordinator
   deriving DecidableEq, Repr
 
 /-- The coordinator as a word, UD category `CCONJ`. -/

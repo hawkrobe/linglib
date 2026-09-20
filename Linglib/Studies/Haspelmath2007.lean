@@ -38,7 +38,8 @@ The chapter's examples are the rows of `Data/Examples/Haspelmath2007.json`.
 ## Implementation notes
 
 The chapter's exemplar languages with Fragment coordination entries use them, in the
-attestations and in the plain coordinators of (45); the others carry their coordinator inline.
+attestations and in the correlative pairs of (45), conjunctive and disjunctive; the others
+carry their coordinator inline.
 A binary pattern is the pair of its coordinands' markings, so syndesis is the number of marked
 coordinands, and `marking_agrees_with_side` checks the patterns against the attachment side the
 Fragments record for each coordinator. Whether a construction is emphatic is recorded only
@@ -262,40 +263,53 @@ inductive CorrelativeShape where
   deriving DecidableEq, Repr
 
 /-- The shape of a correlative pair, read off the forms. -/
-def CorrelativeShape.classify (first second single : String) : CorrelativeShape :=
-  if first = single ∧ second = single then .bothSingle
-  else if second = single then .secondSingle
-  else if first = second then .sameNotSingle
+def CorrelativeShape.classify (c : Coordinator.Correlative) : CorrelativeShape :=
+  if c.first = c.single.form ∧ c.second = c.single.form then .bothSingle
+  else if c.second = c.single.form then .secondSingle
+  else if c.first = c.second then .sameNotSingle
   else .allDifferent
 
-/-- A language's emphatic correlative pair and its single coordinator. -/
-structure Correlative where
-  language : String
-  first : String
-  second : String
-  single : String
-  deriving Repr
+/-- A disjunctive coordinator with no Fragment entry. -/
+private def dis (form : String) : Coordinator :=
+  { form, gloss := "or", role := .disjunctive, kind := .free }
 
-/-- The conjunctive rows of (45), with the letter the chapter files each under. -/
-def correlatives : List (Correlative × CorrelativeShape) :=
-  [ (⟨"Russian", "i", "i", "i"⟩, .bothSingle), (⟨"Italian", "e", "e", "e"⟩, .bothSingle),
-    (⟨"Modern Greek", "ke", "ke", "ke"⟩, .bothSingle),
-    (⟨"Albanian", "edhe", "edhe", "edhe"⟩, .bothSingle),
-    (⟨"English", "both", English.Coordination.and_.form, English.Coordination.and_.form⟩,
-      .secondSingle),
-    (⟨"Irish", "idir", Irish.Coordination.agus.form, Irish.Coordination.agus.form⟩,
-      .secondSingle),
-    (⟨"Hungarian", "mind", "mind", Hungarian.Coordination.es.form⟩, .sameNotSingle),
-    (⟨"Korean", Korean.Coordination.to_.form, Korean.Coordination.to_.form, "-hako"⟩,
-      .sameNotSingle),
-    (⟨"German", "sowohl", "als auch", German.Coordination.und.form⟩, .allDifferent),
-    (⟨"Polish", "jak", "tak (i)", "i"⟩, .allDifferent),
-    (⟨"Finnish", "sekä", "että", Finnish.Coordination.ja.form⟩, .allDifferent),
-    (⟨"Indonesian", "baik", "maupun", "dan"⟩, .allDifferent) ]
+/-- The rows of (45), each with its language and the letter the chapter files it under. -/
+def correlatives : List (String × Coordinator.Correlative × CorrelativeShape) :=
+  [ ("Russian", ⟨"i", "i", co "i" .free⟩, .bothSingle),
+    ("Italian", ⟨"e", "e", co "e" .free⟩, .bothSingle),
+    ("Modern Greek", ⟨"ke", "ke", co "ke" .free⟩, .bothSingle),
+    ("Albanian", ⟨"edhe", "edhe", co "edhe" .free⟩, .bothSingle),
+    ("Polish", ⟨"albo", "albo", dis "albo"⟩, .bothSingle),
+    ("Dutch", ⟨"of", "of", dis "of"⟩, .bothSingle),
+    ("Basque", ⟨"ala", "ala", dis "ala"⟩, .bothSingle),
+    ("Somali", ⟨"ama", "ama", dis "ama"⟩, .bothSingle),
+    ("English", English.Coordination.bothAnd, .secondSingle),
+    ("Irish", Irish.Coordination.idirAgus, .secondSingle),
+    ("English", English.Coordination.eitherOr, .secondSingle),
+    ("German", German.Coordination.entwederOder, .secondSingle),
+    ("Finnish", Finnish.Coordination.jokoTai, .secondSingle),
+    ("Hungarian", Hungarian.Coordination.mindMind, .sameNotSingle),
+    ("Korean", Korean.Coordination.toTo, .sameNotSingle),
+    ("Lezgian", ⟨"ja", "ja", dis "waja"⟩, .sameNotSingle),
+    ("German", German.Coordination.sowohlAlsAuch, .allDifferent),
+    ("Polish", ⟨"jak", "tak (i)", co "i" .free⟩, .allDifferent),
+    ("Finnish", Finnish.Coordination.sekaEtta, .allDifferent),
+    ("Indonesian", ⟨"baik", "maupun", co "dan" .free⟩, .allDifferent) ]
 
 /-- The letters of (45) are the shapes the forms give. -/
 theorem correlatives_classified :
-    ∀ c ∈ correlatives, CorrelativeShape.classify c.1.first c.1.second c.1.single = c.2 := by
+    ∀ r ∈ correlatives, CorrelativeShape.classify r.2.1 = r.2.2 := by
+  decide
+
+/-- The correlative coordinators of (45) emphasize a conjunction or a disjunction. -/
+theorem correlatives_conjunctive_or_disjunctive : ∀ r ∈ correlatives,
+    r.2.1.single.role = .conjunctive ∨ r.2.1.single.role = .disjunctive := by
+  decide
+
+/-- Yoruba *àtí … àtí*, the emphatic construction of the attestations, has the shape of
+(45a). -/
+theorem yoruba_bothSingle :
+    CorrelativeShape.classify Yoruba.Coordination.atiAti = .bothSingle := by
   decide
 
 /-! ### Payne's implicational sequence, §3 -/

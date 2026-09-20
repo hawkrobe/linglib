@@ -14,6 +14,7 @@ alternatives.
 * `Finnish.Coordination.ja`: the conjunctive coordinator.
 * `Finnish.Coordination.tai`, `Finnish.Coordination.vai`: the standard and the interrogative
   disjunctive coordinator.
+* `Finnish.Coordination.sekaEtta`, `Finnish.Coordination.jokoTai`: the emphatic constructions.
 
 ## References
 
@@ -26,9 +27,9 @@ namespace Finnish.Coordination
 def ja : Coordinator :=
   { form := "ja", gloss := "and", role := .conjunctive, kind := .free }
 
-/-- *tai* 'or', in the emphatic *joko … tai*. -/
+/-- *tai* 'or'. -/
 def tai : Coordinator :=
-  { form := "tai", gloss := "or", role := .disjunctive, kind := .free, correlative := true }
+  { form := "tai", gloss := "or", role := .disjunctive, kind := .free }
 
 /-- *vai* 'or' of alternative questions. -/
 def vai : Coordinator :=
@@ -36,5 +37,14 @@ def vai : Coordinator :=
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [ja, tai, vai]
+
+/-- *sekä … että* 'both … and'. -/
+def sekaEtta : Coordinator.Correlative := ⟨"sekä", "että", ja⟩
+
+/-- *joko … tai* 'either … or'. -/
+def jokoTai : Coordinator.Correlative := ⟨"joko", tai.form, tai⟩
+
+/-- The emphatic constructions. -/
+def correlatives : List Coordinator.Correlative := [sekaEtta, jokoTai]
 
 end Finnish.Coordination

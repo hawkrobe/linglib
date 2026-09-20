@@ -13,6 +13,7 @@ the ordinary sentence negation, which is also the particle 'than' of comparative
 
 * `Irish.Coordination.agus`, `Irish.Coordination.no_`, `Irish.Coordination.na_`,
   `Irish.Coordination.ach`: the conjunctive, disjunctive, negative and adversative coordinators.
+* `Irish.Coordination.idirAgus`: the emphatic conjunction.
 
 ## TODO
 
@@ -26,9 +27,9 @@ Irish.
 
 namespace Irish.Coordination
 
-/-- *agus* 'and', in the emphatic *idir … agus*. -/
+/-- *agus* 'and'. -/
 def agus : Coordinator :=
-  { form := "agus", gloss := "and", role := .conjunctive, kind := .free, correlative := true }
+  { form := "agus", gloss := "and", role := .conjunctive, kind := .free }
 
 /-- *nó* 'or'. -/
 def no_ : Coordinator :=
@@ -44,5 +45,11 @@ def ach : Coordinator :=
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [agus, no_, na_, ach]
+
+/-- *idir … agus* 'both … and'. -/
+def idirAgus : Coordinator.Correlative := ⟨"idir", agus.form, agus⟩
+
+/-- The emphatic constructions. -/
+def correlatives : List Coordinator.Correlative := [idirAgus]
 
 end Irish.Coordination

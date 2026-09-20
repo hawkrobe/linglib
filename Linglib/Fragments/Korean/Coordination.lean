@@ -13,9 +13,12 @@ conjunct, as Sohn describes them. Mitrović and Sauerland take *-(i)rang* for th
 
 * `Korean.Coordination.irang`, `Korean.Coordination.to_` — the comitative *-(i)rang* 'and'
   and the additive *-to* 'also', Mitrović and Sauerland's J and μ particles
+* `Korean.Coordination.hako`, `Korean.Coordination.toTo` — the comitative *-hako* and the
+  emphatic *-to … -to* that Haspelmath sets against it
 
 ## References
 
+* [haspelmath-2007]
 * [mitrovic-2021]
 * [mitrovic-sauerland-2016]
 * [sohn-1994]
@@ -32,7 +35,17 @@ def to_ : Coordinator :=
   { form := "-to", gloss := "also, too; and", role := .conjunctive, kind := .bound .after .clitic,
     alsoAdditive := true }
 
+/-- *-hako* 'and, with', enclitic on the first conjunct, in Sohn's spelling. -/
+def hako : Coordinator :=
+  { form := "-hako", gloss := "and; with", role := .conjunctive, kind := .bound .after .clitic }
+
 /-- The coordinators. -/
-def allEntries : List Coordinator := [irang, to_]
+def allEntries : List Coordinator := [irang, hako, to_]
+
+/-- *-to … -to* 'both … and', which Haspelmath sets against the single coordinator *-hako*. -/
+def toTo : Coordinator.Correlative := ⟨to_.form, to_.form, hako⟩
+
+/-- The emphatic constructions. -/
+def correlatives : List Coordinator.Correlative := [toTo]
 
 end Korean.Coordination

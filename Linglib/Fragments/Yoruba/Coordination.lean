@@ -10,6 +10,7 @@ Haspelmath cites from Rowlands.
 ## Main definitions
 
 * `Yoruba.Coordination.ati`: the conjunctive coordinator.
+* `Yoruba.Coordination.atiAti`: the emphatic conjunction.
 
 ## References
 
@@ -21,9 +22,15 @@ namespace Yoruba.Coordination
 
 /-- *àtí* 'and', repeated for 'both … and'. -/
 def ati : Coordinator :=
-  { form := "àtí", gloss := "and", role := .conjunctive, kind := .free, correlative := true }
+  { form := "àtí", gloss := "and", role := .conjunctive, kind := .free }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [ati]
+
+/-- *àtí … àtí* 'both … and'. -/
+def atiAti : Coordinator.Correlative := ⟨ati.form, ati.form, ati⟩
+
+/-- The emphatic constructions. -/
+def correlatives : List Coordinator.Correlative := [atiAti]
 
 end Yoruba.Coordination
