@@ -28,7 +28,7 @@ def IsFactive (v : Verb) : Prop := v.factivity ≠ none
 instance : DecidablePred IsFactive := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 /-- The verb presupposes its complement, by factivity or as a change of state. -/
-def PresupposesComplement (v : Verb) : Prop := v.IsFactive ∨ v.cosType ≠ none
+def PresupposesComplement (v : Verb) : Prop := v.IsFactive ∨ v.phasal ≠ none
 
 instance : DecidablePred PresupposesComplement := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
@@ -55,7 +55,7 @@ theorem isFactive_iff_exists : v.IsFactive ↔ ∃ c, v.factivity = some c :=
 
 theorem IsFactive.presupposesComplement (h : v.IsFactive) : v.PresupposesComplement := Or.inl h
 
-theorem presupposesComplement_of_cosType (h : v.cosType ≠ none) : v.PresupposesComplement :=
+theorem presupposesComplement_of_phasal (h : v.phasal ≠ none) : v.PresupposesComplement :=
   Or.inr h
 
 theorem triggerType_of_presupposesComplement (h : v.PresupposesComplement) :

@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.RSA.QUD
-import Linglib.Semantics.Aspect.ChangeOfState
+import Linglib.Semantics.Aspect.Phasal
 
 /-!
 # Qing, Goodman, and Lassiter (2016): A Rational Speech-Act Model of Projective Content
@@ -80,17 +80,17 @@ two times. -/
 def Positive.ext : Positive → Set World
   | .smokes => {w | w.now}
   | .smoked => {w | w.past}
-  | .always => {w | CoSType.continuation.eval w.past w.now}
-  | .stopped => {w | CoSType.cessation.eval w.past w.now}
-  | .started => {w | CoSType.inception.eval w.past w.now}
+  | .always => {w | Phasal.continuation.Transition w.past w.now}
+  | .stopped => {w | Phasal.cessation.Transition w.past w.now}
+  | .started => {w | Phasal.inception.Transition w.past w.now}
   | .never => {w | ¬ w.past ∧ ¬ w.now}
 
 instance : ∀ p : Positive, DecidablePred (· ∈ p.ext)
   | .smokes, _ => inferInstanceAs (Decidable (_ = true))
   | .smoked, _ => inferInstanceAs (Decidable (_ = true))
-  | .always, _ => inferInstanceAs (Decidable (_ = true))
-  | .stopped, _ => inferInstanceAs (Decidable (_ = true))
-  | .started, _ => inferInstanceAs (Decidable (_ = true))
+  | .always, _ => inferInstanceAs (Decidable (Aspect.Phasal.Transition _ _ _))
+  | .stopped, _ => inferInstanceAs (Decidable (Aspect.Phasal.Transition _ _ _))
+  | .started, _ => inferInstanceAs (Decidable (Aspect.Phasal.Transition _ _ _))
   | .never, _ => inferInstanceAs (Decidable (¬ _ ∧ ¬ _))
 
 /-- An utterance: silence, or a positive utterance affirmed or negated. -/

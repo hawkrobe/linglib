@@ -14,8 +14,8 @@ temporal *token* with runtime and sort), and
 `Aspect.TemporalDecomposition` (interval-valued
 activity/result phases of a token). `EventPhase` is type-level and modal —
 phases as predicates over worlds, not intervals. For change-of-state verbs
-its precondition/consequence coincide with `Aspect/ChangeOfState.lean`'s
-presupposition/assertion pair (instantiated in `Studies/RobertsSimons2024.lean`).
+its precondition and consequence are the prior and result states of
+`Aspect.Phasal` (instantiated in `Studies/RobertsSimons2024.lean`).
 
 ## Main declarations
 
@@ -28,7 +28,7 @@ presupposition/assertion pair (instantiated in `Studies/RobertsSimons2024.lean`)
 
 variable {W : Type*}
 
-/-- An event type decomposed into temporal phases: the state that must hold
+/-- An event type is decomposed into three phases, the state that must hold
     *before* for the event to be possible, the occurrence itself, and the
     state that holds *after*. -/
 structure EventPhase (W : Type*) where

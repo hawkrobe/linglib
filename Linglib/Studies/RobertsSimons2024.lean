@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Aboutness
-import Linglib.Semantics.Aspect.ChangeOfState
+import Linglib.Semantics.Aspect.Phasal
 import Linglib.Semantics.Questions.Resolution
 
 /-!
@@ -10,7 +10,7 @@ predicates, factives and selectional restrictions as the ontological preconditio
 event types they describe. A sentence refers to an event type and claims, according to its
 polarity, that the event's result obtains; its affirmative and negative forms share the
 reference, so the precondition projects while the claim flips, the substrate's
-`EventSentence`. The change-of-state predicates are read off `Aspect/ChangeOfState.lean`,
+`EventSentence`. The change-of-state predicates are read off `Aspect/Phasal.lean`,
 `cosEventPhase`, which makes *stop* and *start* telic and *continue* atelic; factives and
 selectional restrictions are the other two instances, *discover* carrying prior ignorance as
 a second precondition. Projection is a pragmatic default, the presumption that the speaker's
@@ -54,37 +54,37 @@ variable {W : Type*}
 
 /-! ### The three verb classes -/
 
-/-- A change-of-state predicate as an event type: its prior state is the precondition and
-its result state the consequence. -/
-def cosEventPhase (t : CoSType) (P : W → Prop) : EventPhase W where
-  precondition := priorStatePresup t P
-  eventOccurs := resultStateAssertion t P
-  consequence := resultStateAssertion t P
+/-- A change-of-state predicate is the event type whose precondition is its prior state and
+whose consequence is its result state. -/
+def cosEventPhase (t : Phasal) (P : W → Prop) : EventPhase W where
+  precondition w := t.Prior (P w)
+  eventOccurs w := t.Result (P w)
+  consequence w := t.Result (P w)
 
 /-- *Stop* and *start* are telic, a change from the prior state to its negation, and
 *continue* is atelic, its result being its prior state. -/
-theorem cosEventPhase_isTelic_iff [Nonempty W] (t : CoSType) (P : W → Prop) :
+theorem cosEventPhase_isTelic_iff [Nonempty W] (t : Phasal) (P : W → Prop) :
     (cosEventPhase t P).isTelic ↔ t ≠ .continuation := by
   cases t
-  · exact ⟨λ _ => nofun, λ _ => ⟨Classical.arbitrary W, λ h => iff_not_self (iff_of_eq h)⟩⟩
-  · exact ⟨λ _ => nofun, λ _ => ⟨Classical.arbitrary W, λ h => iff_not_self (iff_of_eq h).symm⟩⟩
-  · exact ⟨λ ⟨_, h⟩ => absurd rfl h, λ h => absurd rfl h⟩
+  · exact ⟨fun _ ↦ nofun, fun _ ↦ ⟨Classical.arbitrary W, fun h ↦ iff_not_self (iff_of_eq h)⟩⟩
+  · exact ⟨fun _ ↦ nofun, fun _ ↦ ⟨Classical.arbitrary W, fun h ↦ iff_not_self (iff_of_eq h).symm⟩⟩
+  · exact ⟨fun ⟨_, h⟩ ↦ absurd rfl h, fun h ↦ absurd rfl h⟩
 
-/-- A factive state: the truth of the complement is the precondition of the agent's state
+/-- A factive state has the truth of the complement as the precondition of the agent's state
 of knowing it. -/
 def factive (complement knows : W → Prop) : EventPhase W where
   precondition := complement
   eventOccurs := knows
   consequence := knows
 
-/-- A cognitive change of state such as *discover*: the truth of the complement and the
-agent's prior ignorance of it are its preconditions, knowing it the result. -/
+/-- A cognitive change of state such as *discover* has the truth of the complement and the
+agent's prior ignorance of it as its preconditions, and knowing it as the result. -/
 def discover (complement ignorant knows : W → Prop) : EventPhase W where
-  precondition := λ w => complement w ∧ ignorant w
+  precondition := fun w ↦ complement w ∧ ignorant w
   eventOccurs := knows
   consequence := knows
 
-/-- An emotive factive such as *regret*: the agent's belief in the complement is the
+/-- An emotive factive such as *regret* has the agent's belief in the complement as the
 precondition of the emotive state, veridicality being a default rather than a
 precondition. -/
 def emotive (believes regrets : W → Prop) : EventPhase W where
@@ -92,7 +92,7 @@ def emotive (believes regrets : W → Prop) : EventPhase W where
   eventOccurs := regrets
   consequence := regrets
 
-/-- A selectional restriction as an event type: the requirement is a precondition of the
+/-- A selectional restriction is an event type whose requirement is a precondition of the
 event. -/
 def selectional (requirement event : W → Prop) : EventPhase W where
   precondition := requirement
@@ -116,32 +116,32 @@ theorem precondition_projects (e : EventPhase W) (w : W) :
 
 variable (C : Set W) (s : EventSentence W)
 
-/-- The projective reading: the speaker is taken to presume a context entailing the
+/-- On the projective reading the speaker is taken to presume a context entailing the
 precondition of the event they raise. -/
 def Presumes : Prop := C ⊆ {w | s.presupposition w}
 
-/-- Suppression where the precondition is taken to be false: a nonempty context settling the
-precondition negatively admits no projective reading, and the precondition is merely
+/-- Projection is suppressed where the precondition is taken to be false, since a nonempty context
+settling the precondition negatively admits no projective reading, and the precondition is merely
 locally entailed. -/
 theorem not_presumes_of_settled_false (hC : C.Nonempty)
     (h : C ⊆ {w | ¬ s.presupposition w}) : ¬ Presumes C s :=
-  λ hp => let ⟨_, hw⟩ := hC; h hw (hp hw)
+  fun hp ↦ let ⟨_, hw⟩ := hC; h hw (hp hw)
 
-/-- Suppression where the speaker is uncommitted: a speaker whose commitments leave the
-precondition open cannot be presuming it. -/
+/-- Projection is suppressed where the speaker is uncommitted, since a speaker whose commitments
+leave the precondition open cannot be presuming it. -/
 theorem not_presumes_of_open (hopen : ∃ w ∈ C, ¬ s.presupposition w) : ¬ Presumes C s :=
-  λ hp => let ⟨_, hw, hn⟩ := hopen; hn (hp hw)
+  fun hp ↦ let ⟨_, hw, hn⟩ := hopen; hn (hp hw)
 
-/-- Suppression where the precondition is at issue: presuming a precondition that is one of
-the alternatives of the question under discussion resolves that question, which a speaker
-still addressing it cannot do. -/
+/-- Projection is suppressed where the precondition is at issue, since presuming a precondition
+that is one of the alternatives of the question under discussion resolves that question, which a
+speaker still addressing it cannot do. -/
 theorem resolves_of_presumes {Q : Question W} (h : {w | s.presupposition w} ∈ alt Q)
     (hp : Presumes C s) : C ∈ Q :=
   mem_of_exists_alt_subset ⟨_, h, hp⟩
 
 /-! ### Filtering -/
 
-/-- The filtering constructions (41), (42), (43): the trigger in the second conjunct, in the
+/-- The filtering constructions (41), (42), (43) place the trigger in the second conjunct, in the
 consequent, or in a disjunct. -/
 inductive Construction
   | conjunction
@@ -149,28 +149,28 @@ inductive Construction
   | disjunction
   deriving DecidableEq, Fintype
 
-/-- The local context of the trigger: the context updated with the first conjunct, with the
+/-- The local context of the trigger is the context updated with the first conjunct, with the
 antecedent, or with the negation of the other disjunct. -/
 def localContext (A : Set W) : Construction → Set W
   | .conjunction => C ∩ A
   | .conditional => C ∩ A
   | .disjunction => C ∩ Aᶜ
 
-/-- Filtering: where the first clause asserts or supposes the precondition, or the other
+/-- Filtering arises where the first clause asserts or supposes the precondition, or the other
 disjunct is its negation, the trigger's local context entails the precondition, so no
 global presumption is attributable to the speaker; in disjunction the condition concerns the
 other disjunct whichever comes first. -/
 theorem localContext_subset {A pre : Set W} :
     (A ⊆ pre → localContext C A .conjunction ⊆ pre ∧ localContext C A .conditional ⊆ pre) ∧
       (Aᶜ ⊆ pre → localContext C A .disjunction ⊆ pre) :=
-  ⟨λ h => ⟨λ _ hw => h hw.2, λ _ hw => h hw.2⟩, λ h _ hw => h hw.2⟩
+  ⟨fun h ↦ ⟨fun _ hw ↦ h hw.2, fun _ hw ↦ h hw.2⟩, fun h _ hw ↦ h hw.2⟩
 
-/-- The contrast in (44): in a context that leaves the precondition open, a disjunctive
+/-- The contrast in (44) is that, in a context that leaves the precondition open, a disjunctive
 antecedent whose other disjunct negates the precondition filters it, whereas a simple
 antecedent leaves the precondition to be presumed globally, which the open context
 forbids. -/
 theorem disjunctive_antecedent_filters {pre : Set W} (hopen : ¬ C ⊆ pre) :
     localContext C preᶜ .disjunction ⊆ pre ∧ ¬ localContext C Set.univ .conditional ⊆ pre :=
-  ⟨λ _ hw => not_not.mp hw.2, λ h => hopen λ _ hw => h ⟨hw, trivial⟩⟩
+  ⟨fun _ hw ↦ not_not.mp hw.2, fun h ↦ hopen fun _ hw ↦ h ⟨hw, trivial⟩⟩
 
 end RobertsSimons2024

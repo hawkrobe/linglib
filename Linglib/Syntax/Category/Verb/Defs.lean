@@ -8,7 +8,7 @@ import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Logic.Natural.Basic
-import Linglib.Semantics.Aspect.ChangeOfState
+import Linglib.Semantics.Aspect.Phasal
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.Causation.Psych
@@ -120,7 +120,7 @@ structure ArgStructure where
   deriving Repr, BEq
 
 /-- Aspectual class: Vendler class, degree-achievement scale, incrementality,
-    and change-of-state type. -/
+    and phasal class. -/
 structure Aspect where
   /-- [vendler-1957] aspectual class of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
@@ -137,8 +137,8 @@ structure Aspect where
       with backups (read); `.cumOnly` = cumulative only (push, carry).
       `none` for intransitives and clause-embedding verbs. -/
   verbIncClass : Option VerbIncClass := none
-  /-- For CoS verbs: which type (cessation, inception, continuation)? -/
-  cosType : Option CoSType := none
+  /-- The phasal class of a phasal verb such as *stop*, *start* or *continue*. -/
+  phasal : Option Phasal := none
   deriving Repr, BEq
 
 /-- Presupposition profile: factivity class and complement-projection behavior. Whether the

@@ -424,7 +424,7 @@ def notice : Verb := .mkRegular {
 
 /-! ### Change of State -/
 
-/-- "stop" — CoS cessation, presupposes activity was happening -/
+/-- "stop" — phasal cessation, presupposes activity was happening -/
 def stop : Verb where
   form := "stop"
   form3sg := "stops"
@@ -436,10 +436,10 @@ def stop : Verb where
   vendlerClass := some .achievement
   passivizable := false
   projectionBehavior := some .hole
-  cosType := some .cessation
+  phasal := some .cessation
   levinClasses := {LevinClass.begin, .lodge}
 
-/-- "quit" — CoS cessation -/
+/-- "quit" — phasal cessation -/
 def quit : Verb where
   form := "quit"
   form3sg := "quits"
@@ -450,20 +450,20 @@ def quit : Verb where
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  cosType := some .cessation
+  phasal := some .cessation
   levinClasses := {LevinClass.complete}
 
-/-- "start" — CoS inception, presupposes activity wasn't happening -/
+/-- "start" — phasal inception, presupposes activity wasn't happening -/
 def start : Verb := .mkRegular {
   form := "start"
   frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  cosType := some .inception
+  phasal := some .inception
   levinClasses := {LevinClass.begin} }
 
-/-- "begin" — CoS inception -/
+/-- "begin" — phasal inception -/
 def begin_ : Verb where
   form := "begin"
   form3sg := "begins"
@@ -474,20 +474,20 @@ def begin_ : Verb where
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  cosType := some .inception
+  phasal := some .inception
   levinClasses := {LevinClass.begin}
 
-/-- "continue" — CoS continuation, presupposes activity was happening -/
+/-- "continue" — phasal continuation, presupposes activity was happening -/
 def continue_ : Verb := .mkRegular {
   form := "continue"
   frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
-  cosType := some .continuation
+  phasal := some .continuation
   levinClasses := {LevinClass.begin} }
 
-/-- "keep" — CoS continuation -/
+/-- "keep" — phasal continuation -/
 def keep : Verb where
   form := "keep"
   form3sg := "keeps"
@@ -498,7 +498,7 @@ def keep : Verb where
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
-  cosType := some .continuation
+  phasal := some .continuation
   levinClasses := {LevinClass.begin, .get, .keep}
 
 /-! ### Implicative / Control -/

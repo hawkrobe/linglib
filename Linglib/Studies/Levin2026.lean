@@ -47,7 +47,7 @@ open ArgumentStructure
 open LevinClass (pushPull hit wipeManner)
 open English (push pull kick)
 open English.Adjectives
-open Aspect (CoSType)
+open Aspect (Phasal)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   Construction)
 
@@ -436,11 +436,11 @@ For tr-*push open* (§3, example 30):
   `[Sam_effector push the door] CAUSE [the door BECOME open]`
 
 The constructional CAUSE comes from the resultative, not from the verb.
-The constructional BECOME maps to `CoSType.inception` (¬open → open). -/
+The constructional BECOME maps to `Phasal.inception` (¬open → open). -/
 
-/-- The constructional BECOME in resultatives = inception (¬P → P).
-    This connects to the existing `ChangeOfState` infrastructure. -/
-def resultativeBECOME : CoSType := .inception
+/-- The constructional BECOME of the resultative is an inception, `Aspect.Become` where it is
+defined and true (`Aspect.Phasal.holds_denote_inception`). -/
+def resultativeBECOME : Phasal := .inception
 
 /-! ### Key contrast: intr-push-open ≠ freeze-solid
 
@@ -699,7 +699,7 @@ theorem blocked_wrong_adjective :
 3. **Fusion**: resultative construction adds CoS + causation → composed
    meaning now predicts the causative alternation
 4. Resultative construction adds CAUSE (a non-trivial `BoolSEM` law)
-5. Constructional BECOME = inception (CoSType.inception)
+5. Constructional BECOME = inception (Phasal.inception)
 6. Anticausative: cause suppressed under discourse licensing
 7. PCC: projectile has independent energy → cause not continuously needed
 8. Theme passes autonomous-motion check → anticausative OK -/

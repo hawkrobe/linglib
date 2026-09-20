@@ -107,7 +107,7 @@ def kaishi : Verb := {
   form := "kaishi"
   frames := [ArgumentFrame.infinitival]
   passivizable := false
-  cosType := some .inception }
+  phasal := some .inception }
 
 /-! ### Control and causative predicates
 
