@@ -1,4 +1,5 @@
 import Linglib.Morphology.Morphotactics.Template
+import Linglib.Phonology.Hiatus
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Fragments.Turkish.Phonology
 
@@ -45,17 +46,20 @@ exactly when it differs from the last segment of the stem in being a vowel.
 
 * `Suffix.attach_concat_alternates`: a bracketed suffix attaches with vowels and consonants
   alternating across the juncture.
+* `Suffix.attach_eq_elideV2`, `Suffix.attach_eq_epenthesize`: after a vowel-final stem,
+  attachment is one of the repairs of `Phonology.Hiatus`, elision of the suffix's vowel or
+  insertion of its bracketed consonant.
 
 ## Implementation notes
 
 The clitics mI and dA, which can interrupt the inflectional string (§6.3 (5)), are Chapter 11
-material outside both systems. The markers' meanings are the matter of Chapter 21 and
-Appendix 2. There -DI marks past tense, perfective aspect and direct knowledge, -mIş marks
-relative past tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3),
-and the copular -(y)mIş marks evidential modality alone; -mIş followed by a copular marker or
--DIr is perfective only (§8.2.3.3). The final `n` that the third-person possessives take
-before a case suffix (§8.1.2) is not represented. Negation of the aorist is irregular, -mAz for -(A/I)r
-(§8.2.2; see `Turkish.Negation`). The grammar's examples are checked against both systems in
+material outside both systems. The markers' meanings are the matter of Chapter 21 and Appendix
+2. There -DI marks past tense, perfective aspect and direct knowledge, -mIş marks relative past
+tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3), and the copular
+-(y)mIş marks evidential modality alone; -mIş followed by a copular marker or -DIr is perfective
+only (§8.2.3.3). The final `n` that the third-person possessives take before a case suffix
+(§8.1.2) is not represented. Negation of the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see
+`Turkish.Negation`). The grammar's examples are checked against both systems in
 `Studies/GokselKerslake2005.lean`.
 
 ## References
@@ -110,6 +114,21 @@ theorem attach_concat_alternates {s : Suffix} {b h : Segment} {t : List Segment}
   by_cases hbl : (b.IsVowel ↔ l.IsVowel)
   · exact ⟨h, t, by simp [attach, initial_concat hb, hbl, hs], fun hlh ↦ hbh (hbl.trans hlh)⟩
   · exact ⟨b, h :: t, by simp [attach, initial_concat hb, hbl, hs], fun hlb ↦ hbl hlb.symm⟩
+
+/-- After a vowel-final stem a bracketed vowel is lost, so attachment is the elision of the
+second vowel of the juncture. -/
+theorem attach_eq_elideV2 (j : Hiatus.Juncture) {s : Suffix} (hb : s.bracketed = some j.v2)
+    (hs : s.segments = j.suffixBody) : s.attach j.stem = j.elideV2 := by
+  simp [attach, Hiatus.Juncture.stem, Hiatus.Juncture.elideV2, initial_concat hb, hs,
+    j.v1_isVowel, j.v2_isVowel]
+
+/-- After a vowel-final stem a bracketed consonant appears before the vowel of the suffix, so
+attachment is the insertion of that consonant at the juncture. -/
+theorem attach_eq_epenthesize (j : Hiatus.Juncture) {s : Suffix} {c : Segment}
+    (hb : s.bracketed = some c) (hc : ¬ c.IsVowel) (hs : s.segments = j.suffix) :
+    s.attach j.stem = j.epenthesize c := by
+  simp [attach, Hiatus.Juncture.stem, Hiatus.Juncture.epenthesize, Hiatus.Juncture.suffix,
+    initial_concat hb, hs, j.v1_isVowel, hc]
 
 end Suffix
 

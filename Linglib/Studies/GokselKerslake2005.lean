@@ -25,6 +25,7 @@ holds because the position is not iterable.
 * `retriggering`, `palatal_l`: the §3.4 exceptions to harmony, derived rather than listed.
 * `deletable_vowels`, `deletable_consonants`, `predicate_buffers`: the bracketed segments of
   §6.1.3 after consonant-final and vowel-final stems.
+* `hiatus_repairs`: the two kinds of bracketed segment as elision and insertion at a juncture.
 * `imperfective_of_vowel_stems`, `negative_raised`: the vowel-final stems of §8.2.3.3 and the
   negative of §8.2.2 before -(I)yor.
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
@@ -138,6 +139,21 @@ theorem deletable_consonants :
       [e, l, b, i, s, e, s, i] ∧
     realize [e, v] [(possessive (.pn .third .singular)).form] = [e, v, i] := by
   decide
+
+/-- The juncture of *araba* 'car' and the vowel of -(I)m. -/
+def arabaIm : Hiatus.Juncture := ⟨[a, r, a, b], a, I, [m], by decide, by decide⟩
+
+/-- The juncture of *masa* 'table' and the vowel of -(y)A. -/
+def masaA : Hiatus.Juncture := ⟨[m, a, s], a, A, [], by decide, by decide⟩
+
+/-- The two kinds of bracketed segment are the two repairs of hiatus at a juncture. In
+*araba-m* the vowel of -(I)m is elided, and in *masa-ya* the `y` of -(y)A is inserted
+(§6.1.3). -/
+theorem hiatus_repairs :
+    (possessive (.pn .first .singular)).form.attach arabaIm.stem = arabaIm.elideV2 ∧
+    dative.form.attach masaA.stem = masaA.epenthesize y :=
+  ⟨Suffix.attach_eq_elideV2 arabaIm rfl rfl,
+    Suffix.attach_eq_epenthesize masaA rfl (by decide) rfl⟩
 
 /-- The copular markers and the first-person markers of group 2 take the buffer `y` after a
 vowel, as in *okul-da-yım*, *ev-de-ydi-k*, *hasta-ysa-lar* and *kat-sa-ydı-lar* (§8.4). -/
