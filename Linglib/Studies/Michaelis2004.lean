@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.ConstructionGrammar.Composition
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SituationType
 
 /-!
 # Michaelis (2004): Type Shifting in Construction Grammar

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SituationType
 import Linglib.Semantics.Plurality.MassCount
 
 /-!
@@ -182,7 +182,7 @@ theorem override_absorbs_composition (v : AspectualProfile) (np : MassCount)
 
 /-! [smith-1997] §3.2.2, §3.2.5: semelfactives shift to activities
     under duration. This is the same shift captured by `duratize_semelfactive`
-    in `Semantics/Aspect/Basic.lean`, but here derived compositionally via
+    in `Semantics/Aspect/SituationType.lean`, but here derived compositionally via
     external override of the duration feature. -/
 
 /-- Semelfactive + durative adverbial → activity (multiple-event reading).

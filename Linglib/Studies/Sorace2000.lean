@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SituationType
 
 /-!
 # Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
@@ -7,7 +7,7 @@ import Linglib.Semantics.Aspect.Basic
 
 Connects the auxiliary selection substrate in
 `AuxiliarySelection` to Vendler's aspectual
-classification from `Semantics/Aspect/Basic.lean`.
+classification from `Semantics/Aspect/SituationType.lean`.
 
 ## Known gaps
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 
 /-!
 # Mandarin aspect markers

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 import Linglib.Studies.Karttunen1974
 import Linglib.Fragments.English.TemporalConnectives
 import Linglib.Fragments.English.PolarityItems

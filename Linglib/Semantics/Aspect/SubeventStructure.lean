@@ -1,5 +1,6 @@
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Viewpoint
 
 /-!
 # Temporal Decomposition of Events

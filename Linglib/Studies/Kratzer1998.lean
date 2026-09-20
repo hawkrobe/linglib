@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Verb.Tense
 import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
 import Linglib.Data.Examples.Kratzer1998

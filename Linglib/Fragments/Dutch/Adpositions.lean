@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Path
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SituationType
 
 /-!
 # Dutch adpositions

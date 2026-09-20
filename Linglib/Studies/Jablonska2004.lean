@@ -1,3 +1,4 @@
+import Linglib.Semantics.Aspect.SituationType
 import Linglib.Data.Examples.Jablonska2004
 import Linglib.Studies.Svenonius2004
 

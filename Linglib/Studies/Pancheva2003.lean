@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 import Linglib.Data.Examples.Pancheva2003
 
 /-!
