@@ -33,7 +33,8 @@ relations: [dolatian-heinz-2020]).
 * `Correspondence.maxViol`, `depViol`, `identViol`, `identViolFeature`, `contigIViol`,
   `contigOViol`, `anchorLViol`, `anchorRViol`, `linearityViol`, `uniformityViol`,
   `integrityViol` — the constraint families of Appendix A; `maxViolOn`, `depViolOn` are
-  their segment-class restrictions (MAX-V, DEP-C, …).
+  their segment-class restrictions (MAX-V, DEP-C, …), and `maxViolAt`, `depViolAt` their
+  restrictions to positions (positional faithfulness).
 * `Correspondence.ofPairs`, `diagram`, `parallel`, `identity`, `reduplication` —
   constructors: from index pairs, the diagonal on a role predicate, and the binary
   and input–base–reduplicant diagonal diagrams.
@@ -54,8 +55,8 @@ namespace OptimalityTheory
 
 open Constraints
 
-/-- A correspondence diagram: a string per role and, for each ordered pair of roles,
-a directed relation between their positions. -/
+/-- A correspondence diagram consists of a string for each role and, for each ordered pair of
+roles, a directed relation between their positions. -/
 structure Correspondence (Role : Type*) (α : Type*) where
   form : Role → List α
   edge : (r₁ r₂ : Role) → Finset (Fin (form r₁).length × Fin (form r₂).length)
@@ -70,7 +71,8 @@ inductive Side where
   | rhs
   deriving DecidableEq, Repr
 
-/-- Roles of the basic model of reduplication: input, base, reduplicant. -/
+/-- The roles of the basic model of reduplication are the input, the base and the
+reduplicant. -/
 inductive ReduplicationRole where
   | input
   | base
@@ -84,11 +86,11 @@ def IsSymmetric (c : Correspondence Role α) : Prop :=
 
 /-! ### Constraint families -/
 
-/-- MAX (A.1): the positions of `form r₁` without a correspondent in `form r₂`. -/
+/-- MAX (A.1) counts the positions of `form r₁` without a correspondent in `form r₂`. -/
 def maxViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.fst).card
 
-/-- DEP (A.2): the positions of `form r₂` without a correspondent in `form r₁`. -/
+/-- DEP (A.2) counts the positions of `form r₂` without a correspondent in `form r₁`. -/
 def depViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.snd).card
 
@@ -106,24 +108,35 @@ def depViolOn (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (
   ((Finset.univ.filter fun j : Fin (c.form r₂).length => P (c.form r₂)[j]) \
     (c.edge r₁ r₂).image Prod.snd).card
 
-/-- IDENT (A.3) on whole segments: corresponding pairs whose segments differ. -/
+/-- MAX restricted to the positions of `form r₁` that satisfy `P`, the positional
+faithfulness constraints that protect a segment by where it stands, not by what it is. -/
+def maxViolAt (P : ℕ → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  ((Finset.univ.filter fun i : Fin (c.form r₁).length ↦ P i) \
+    (c.edge r₁ r₂).image Prod.fst).card
+
+/-- DEP restricted to the positions of `form r₂` that satisfy `P`. -/
+def depViolAt (P : ℕ → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
+  ((Finset.univ.filter fun j : Fin (c.form r₂).length ↦ P j) \
+    (c.edge r₁ r₂).image Prod.snd).card
+
+/-- IDENT (A.3) on whole segments counts the corresponding pairs whose segments differ. -/
 def identViol [DecidableEq α] (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p => (c.form r₁)[p.1] ≠ (c.form r₂)[p.2]).card
 
-/-- IDENT(F) (A.3) for the feature `proj`: corresponding pairs differing under
+/-- IDENT(F) (A.3) for the feature `proj` counts the corresponding pairs that differ under
 `proj`. -/
 def identViolFeature {F : Type*} [DecidableEq F] (proj : α → F)
     (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p => proj (c.form r₁)[p.1] ≠ proj (c.form r₂)[p.2]).card
 
-/-- MAX of a privative property along a segmental correspondence: corresponding pairs
-whose first member has `P` and whose second lacks it — the autosegment is lost. -/
+/-- MAX of a privative property along a segmental correspondence counts the corresponding
+pairs whose first member has `P` and whose second lacks it, the autosegment being lost. -/
 def maxViolFeature (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
     ℕ :=
   ((c.edge r₁ r₂).filter fun p => P (c.form r₁)[p.1] ∧ ¬ P (c.form r₂)[p.2]).card
 
-/-- DEP of a privative property along a segmental correspondence: corresponding pairs whose
-second member has `P` and whose first lacks it — the autosegment is inserted. -/
+/-- DEP of a privative property along a segmental correspondence counts the corresponding pairs
+whose second member has `P` and whose first lacks it, the autosegment being inserted. -/
 def depViolFeature (P : α → Prop) [DecidablePred P] (c : Correspondence Role α) (r₁ r₂ : Role) :
     ℕ :=
   ((c.edge r₁ r₂).filter fun p => ¬ P (c.form r₁)[p.1] ∧ P (c.form r₂)[p.2]).card
@@ -162,18 +175,18 @@ def anchorRViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
         ⟨(c.form r₂).length - 1, Nat.pred_lt_self h.2⟩) ∈ c.edge r₁ r₂ then 0 else 1
   else 0
 
-/-- LINEARITY, "No Metathesis" (A.6): the pairs of correspondences `(i₁, j₁)`,
+/-- LINEARITY, "No Metathesis" (A.6), counts the pairs of correspondences `(i₁, j₁)`,
 `(i₂, j₂)` with `i₁ < i₂` but `j₂ < j₁`. -/
 def linearityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂ ×ˢ c.edge r₁ r₂).filter fun pq => pq.1.1 < pq.2.1 ∧ pq.2.2 < pq.1.2).card
 
-/-- UNIFORMITY, "No Coalescence" (A.7): the positions of `form r₂` with more than one
+/-- UNIFORMITY, "No Coalescence" (A.7), counts the positions of `form r₂` with more than one
 correspondent in `form r₁`. -/
 def uniformityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₂).length)).filter fun j =>
     1 < ((c.edge r₁ r₂).filter fun p => p.2 = j).card).card
 
-/-- INTEGRITY, "No Breaking" (A.8): the positions of `form r₁` with more than one
+/-- INTEGRITY, "No Breaking" (A.8), counts the positions of `form r₁` with more than one
 correspondent in `form r₂`. -/
 def integrityViol (c : Correspondence Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₁).length)).filter fun i =>
@@ -199,6 +212,12 @@ theorem maxViolOn_true : maxViolOn (fun _ => True) c r₁ r₂ = c.maxViol r₁ 
 
 theorem depViolOn_true : depViolOn (fun _ => True) c r₁ r₂ = c.depViol r₁ r₂ := by
   simp [depViolOn, depViol]
+
+theorem maxViolAt_true : maxViolAt (fun _ ↦ True) c r₁ r₂ = c.maxViol r₁ r₂ := by
+  simp [maxViolAt, maxViol]
+
+theorem depViolAt_true : depViolAt (fun _ ↦ True) c r₁ r₂ = c.depViol r₁ r₂ := by
+  simp [depViolAt, depViol]
 
 theorem integrityViol_eq_zero_iff :
     c.integrityViol r₁ r₂ = 0 ↔ ∀ i, ((c.edge r₁ r₂).filter fun p => p.1 = i).card ≤ 1 := by
@@ -231,8 +250,8 @@ def edgeOfPairs (m n : ℕ) (l : List (ℕ × ℕ)) : Finset (Fin m × Fin n) :=
   obtain ⟨⟨a, ha⟩, ⟨b, hb⟩⟩ := p
   simp [edgeOfPairs, ha, hb]
 
-/-- A correspondence from index pairs: `edge r₁ r₂` reads `pairs r₁ r₂` into the two
-position types. -/
+/-- `ofPairs form pairs` is the correspondence whose relation `edge r₁ r₂` reads the index
+pairs `pairs r₁ r₂` into the two position types. -/
 def ofPairs (form : Role → List α) (pairs : Role → Role → List (ℕ × ℕ)) :
     Correspondence Role α where
   form := form
@@ -304,7 +323,8 @@ end diagram
 def parallel (s₁ s₂ : List α) : Correspondence Side α :=
   diagram (fun | .lhs => s₁ | .rhs => s₂) (· ≠ ·)
 
-/-- The fully faithful candidate: the diagonal correspondence of a string with itself. -/
+/-- `identity s` is the fully faithful candidate, the diagonal correspondence of a string with
+itself. -/
 def identity (s : List α) : Correspondence Side α := parallel s s
 
 /-- The input–base–reduplicant diagram with diagonal correspondence between each pair of
