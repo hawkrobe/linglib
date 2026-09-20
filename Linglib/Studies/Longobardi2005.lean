@@ -72,7 +72,7 @@ instance : LinearOrder HeadClass := .lift' rank rank_injective
 
 end HeadClass
 
-/-- How a class passes one of the three tests of (28): not at all, only under marked
+/-- How a class passes one of the three tests of (28), which is not at all, only under marked
 conditions, or freely. -/
 inductive Access
   | never
@@ -96,15 +96,15 @@ instance : LinearOrder Access := .lift' rank rank_injective
 
 end Access
 
-/-- Object reference in D, the first column of (28): the special common nouns achieve it only
-with the identifying context of deixis or a genitive restriction, and common nouns never do. -/
+/-- Object reference in D, the first column of (28), which the special common nouns achieve only
+with the identifying context of deixis or a genitive restriction and common nouns never do. -/
 def HeadClass.objectReference : HeadClass → Access
   | .pronoun | .properName => .always
   | .specialCommon => .conditioned
   | .commonNoun => .never
 
-/-- Use as a predicative restriction outside D, the second column of (28): pronouns never
-serve as one, and proper names only under the marked conditions of restrictive modification. -/
+/-- Use as a predicative restriction outside D, the second column of (28), which pronouns never
+have and proper names only under the marked conditions of restrictive modification. -/
 def HeadClass.predicative : HeadClass → Access
   | .pronoun => .never
   | .properName => .conditioned
@@ -142,7 +142,7 @@ theorem objectReference_and_kindReference_iff (c : HeadClass) :
 
 /-! ### The topological mapping theory -/
 
-/-- What a noun names: an object, learned by applying the name to one term of experience, or a
+/-- What a noun names, an object, learned by applying the name to one term of experience, or a
 kind, a potentially open set of objects recognizable as such. Proper names are object-naming,
 common nouns kind-naming. -/
 inductive Naming
@@ -150,9 +150,9 @@ inductive Naming
   | kind
   deriving DecidableEq, Repr
 
-/-- The content of D: empty; a lexically referential expression, a noun raised to D, a pronoun,
-a demonstrative or an expletive article chained to the noun (56a); or an overt operator, a
-lexical determiner or quantifier (58). -/
+/-- The content of D, which is empty, a lexically referential expression, a noun raised to D, a
+pronoun, a demonstrative or an expletive article chained to the noun (56a), or an overt
+operator, a lexical determiner or quantifier (58). -/
 inductive DContent
   | empty
   | referential
