@@ -20,129 +20,129 @@ namespace English.Phonology
 
 /-! ### Segments -/
 
-/-- /p/: voiceless bilabial stop -/
+/-- /p/ is the voiceless bilabial stop. -/
 def p : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, false),
    (Feature.voice, false), (Feature.labial, true)]
 
-/-- /t/: voiceless alveolar stop -/
+/-- /t/ is the voiceless alveolar stop. -/
 def t : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, false),
    (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, true)]
 
-/-- /k/: voiceless velar stop -/
+/-- /k/ is the voiceless velar stop. -/
 def k : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, false),
    (Feature.voice, false), (Feature.dorsal, true)]
 
-/-- /b/: voiced bilabial stop -/
+/-- /b/ is the voiced bilabial stop. -/
 def b : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, false),
    (Feature.voice, true), (Feature.labial, true)]
 
-/-- /d/: voiced alveolar stop -/
+/-- /d/ is the voiced alveolar stop. -/
 def d : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, false),
    (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
 
-/-- /g/: voiced velar stop -/
+/-- /g/ is the voiced velar stop. -/
 def g : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, false),
    (Feature.voice, true), (Feature.dorsal, true)]
 
-/-- /dʒ/: voiced postalveolar affricate -/
+/-- /dʒ/ is the voiced postalveolar affricate. -/
 def dezh : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, false), (Feature.delayedRelease, true),
    (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, false),
    (Feature.distributed, true), (Feature.strident, true)]
 
-/-- /m/: bilabial nasal -/
+/-- /m/ is the bilabial nasal. -/
 def m : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.continuant, false), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.labial, true)]
+   (Feature.sonorant, true), (Feature.approximant, false), (Feature.continuant, false),
+   (Feature.nasal, true), (Feature.voice, true), (Feature.labial, true)]
 
-/-- /n/: alveolar nasal -/
+/-- /n/ is the alveolar nasal. -/
 def n : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.continuant, false), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
+   (Feature.sonorant, true), (Feature.approximant, false), (Feature.continuant, false),
+   (Feature.nasal, true), (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
 
-/-- /ŋ/: velar nasal -/
+/-- /ŋ/ is the velar nasal. -/
 def ŋ : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.continuant, false), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.dorsal, true)]
+   (Feature.sonorant, true), (Feature.approximant, false), (Feature.continuant, false),
+   (Feature.nasal, true), (Feature.voice, true), (Feature.dorsal, true)]
 
-/-- /f/: voiceless labiodental fricative -/
+/-- /f/ is the voiceless labiodental fricative. -/
 def f : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, true),
    (Feature.voice, false), (Feature.labial, true), (Feature.labiodental, true),
    (Feature.strident, true)]
 
-/-- /v/: voiced labiodental fricative -/
+/-- /v/ is the voiced labiodental fricative. -/
 def v : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, true),
    (Feature.voice, true), (Feature.labial, true), (Feature.labiodental, true),
    (Feature.strident, true)]
 
-/-- /s/: voiceless alveolar fricative -/
+/-- /s/ is the voiceless alveolar fricative. -/
 def s : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, true),
    (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, true),
    (Feature.strident, true)]
 
-/-- /θ/: voiceless dental fricative -/
+/-- /θ/ is the voiceless dental fricative. -/
 def θ : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, true),
    (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, true),
    (Feature.distributed, true), (Feature.strident, false)]
 
-/-- /ʃ/: voiceless postalveolar fricative -/
+/-- /ʃ/ is the voiceless postalveolar fricative. -/
 def esh : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, false), (Feature.continuant, true),
    (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, false),
    (Feature.distributed, true), (Feature.strident, true)]
 
-/-- /l/: alveolar lateral -/
+/-- /l/ is the alveolar lateral. -/
 def l : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),
    (Feature.sonorant, true), (Feature.approximant, true), (Feature.lateral, true),
    (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
 
-/-- /w/: labial-velar glide -/
+/-- /w/ is the labial-velar glide. -/
 def w : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, false),
-   (Feature.sonorant, true), (Feature.continuant, true),
+   (Feature.sonorant, true), (Feature.approximant, true), (Feature.continuant, true),
    (Feature.voice, true), (Feature.labial, true), (Feature.dorsal, true),
    (Feature.high, true)]
 
-/-- /r/: alveolar approximant -/
+/-- /r/ is the alveolar approximant. -/
 def r : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, false),
-   (Feature.sonorant, true), (Feature.continuant, true),
+   (Feature.sonorant, true), (Feature.approximant, true), (Feature.continuant, true),
    (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
 
-/-- /æ/: low front unrounded vowel -/
+/-- /æ/ is the low front unrounded vowel. -/
 def æ : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),
    (Feature.voice, true), (Feature.dorsal, true),
    (Feature.high, false), (Feature.low, true), (Feature.front, true)]
 
-/-- /ɪ/: high front lax vowel -/
+/-- /ɪ/ is the high front lax vowel. -/
 def laxI : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),
@@ -150,7 +150,7 @@ def laxI : Segment := Segment.ofSpecs
    (Feature.high, true), (Feature.low, false), (Feature.front, true),
    (Feature.tense, false)]
 
-/-- /i/: high front tense vowel -/
+/-- /i/ is the high front tense vowel. -/
 def tenseI : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),
@@ -158,7 +158,7 @@ def tenseI : Segment := Segment.ofSpecs
    (Feature.high, true), (Feature.low, false), (Feature.front, true),
    (Feature.tense, true)]
 
-/-- /ʌ/: mid back lax unrounded vowel -/
+/-- /ʌ/ is the mid back lax unrounded vowel. -/
 def wedge : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),
@@ -166,7 +166,7 @@ def wedge : Segment := Segment.ofSpecs
    (Feature.high, false), (Feature.low, false), (Feature.back, true), (Feature.front, false),
    (Feature.round, false), (Feature.tense, false)]
 
-/-- /o/: mid back tense rounded vowel -/
+/-- /o/ is the mid back tense rounded vowel. -/
 def o : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),
@@ -174,7 +174,7 @@ def o : Segment := Segment.ofSpecs
    (Feature.high, false), (Feature.low, false), (Feature.back, true), (Feature.front, false),
    (Feature.labial, true), (Feature.round, true), (Feature.tense, true)]
 
-/-- /ə/: mid central vowel (schwa) -/
+/-- /ə/ is the mid central vowel (schwa). -/
 def schwa : Segment := Segment.ofSpecs
   [(Feature.syllabic, true), (Feature.consonantal, false),
    (Feature.sonorant, true), (Feature.continuant, true),

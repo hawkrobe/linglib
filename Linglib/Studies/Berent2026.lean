@@ -1,37 +1,50 @@
-import Linglib.Phonology.Segmental.Basic
+import Linglib.Fragments.English.Phonology
+import Linglib.Morphology.Root.Consonantal
 import Linglib.Studies.BerentEtAl2016
 
 /-!
 # Berent (2026): Three arguments for abstraction in phonology
 
 This file formalizes Berent's three experimental arguments that phonological grammar is
-substance-free. Phonology is *abstract* (§3.1): the preference for onsets with large
-sonority rises, in data from Berent, Steriade, Lennertz and Vaknin, survives print
-presentation and articulatory suppression. It is *algebraic* (§3.2): identity restrictions
-generalize to feature values unattested in the speaker's language, Hebrew /θ/ and novel
-ASL handshapes. It is *amodal* (§3.3): English speakers project the doubling restrictions
-of their spoken language onto novel ASL signs, banning identity in phonological contexts
-and preferring reduplication in morphological ones.
+substance-free. Phonology is *abstract* (§3.1): onsets with large sonority rises are
+preferred to small rises, these to plateaus, and these to falls, as in blif, bnif, bdif and
+lbif, and the preference survives print presentation and the suppression of the lips or
+the tongue. It is *algebraic* (§3.2): the Hebrew ban on roots that begin with two
+identical consonants extends to /θ/, which Hebrew lacks, and the preference of ASL signers
+for reduplication extends to unattested handshapes. It is *amodal* (§3.3): English
+speakers project the doubling restrictions of their spoken language onto novel ASL signs.
 
-Each property is carried by a type rather than restated. Abstractness is the invariance of
-onset markedness under anything but the `Sonority` order. Algebraicity is the parametric
-polymorphism of `Constraints.mkOCP`, which cannot inspect what it compares. Amodality is
-the statement of the doubling reversal of `Studies/BerentEtAl2016.lean` over an arbitrary
-type of prosodic constituents, spoken or signed.
+Each property is stated as an invariance. The markedness of an onset is its sonority rise,
+which depends on the two segments only through the major-class features that sonority
+reads, so it is blind to the articulator that the suppression experiments manipulate.
+Identity restrictions are invariant under any injective relabelling of the elements they
+compare, so they cannot distinguish attested from unattested feature values. The doubling
+reversal of `Studies/BerentEtAl2016.lean` holds over an arbitrary type of prosodic
+constituents, spoken or signed.
 
 ## Main definitions
 
-* `onsetProfile`, `onsetMarkedness`: the rise, plateau or fall of a two-consonant onset, and
-  its markedness by sonority distance, on the abstract `Sonority` type.
+* `onsetRise`: the sonority rise across a two-consonant onset of feature-specified segments.
+* `InitialIdentity`: a consonantal root begins with two identical consonants.
 
 ## Main results
 
-* `sonority_cline`: the four-point cline blif ≺ bnif ≺ bdif ≺ lbif of Figure 1 follows from
-  rank distance, where the three-way profile cannot separate blif from bnif.
-* `onsetMarkedness_rank_invariant`, `markedness_vs_profile`: markedness sees only the
-  sonority ordering, and refines the three-way profile.
+* `sonority_cline`: the onsets of blif, bnif, bdif and lbif are a large rise, a small rise,
+  a plateau and a fall.
+* `onsetRise_congr`, `onsetRise_setFeature_left`: the rise is unchanged by any difference
+  outside `Sonority.features`, and the labial onsets of plik, pnik and ptik pattern with
+  those of blif, bnif and bdif.
+* `initialIdentity_map`, `optimal_morphology_map`: the root restriction and the preference
+  for reduplication give the same verdict on a form and on its image under an injective
+  relabelling.
 * `amodal_doubling_reversal`: the doubling reversal holds for any type of constituents and
   either ranking of the OCP and DEP.
+
+## Implementation notes
+
+The paper states the syllable hierarchy without a constraint set, deferring the formal
+analysis to earlier work, so the hierarchy is the order on sonority rises and no tableau
+is built. The acoustic, articulatory and neural measures of Figure 1 are not modelled.
 
 ## References
 
@@ -41,74 +54,103 @@ type of prosodic constituents, spoken or signed.
 * [mccarthy-1986]
 -/
 
-open Phonology (Sonority)
-
 namespace Berent2026
 
-open Constraints OptimalityTheory BerentEtAl2016
+open Phonology Morphology Constraints OptimalityTheory BerentEtAl2016
 
-/-! ### Onset markedness: the sonority cline -/
+/-! ### Abstract: the syllable hierarchy -/
 
-/-- The sonority profile of a two-consonant onset is the relation between the sonority of
-    its first and second consonant, on the abstract `Sonority` order. -/
-inductive OnsetProfile where
-  | rise
-  | plateau
-  | fall
-  deriving DecidableEq, Repr
+section Abstract
 
-/-- The sonority profile of a two-consonant onset. -/
-def onsetProfile (c1 c2 : Sonority) : OnsetProfile :=
-  if c1.rank < c2.rank then .rise
-  else if c1.rank == c2.rank then .plateau
-  else .fall
+variable {c₁ c₂ d₁ d₂ : Segment}
 
-/-- Onset markedness falls with the sonority rise, so large rises beat small rises, which
-    beat plateaus, which beat falls. The pad `5`, the top rank, keeps the subtraction in
-    `ℕ` total, and only the ordering of the values matters. -/
-def onsetMarkedness : Constraint (Sonority × Sonority) :=
-  fun (c1, c2) ↦ 5 + c1.rank - c2.rank
+/-- The sonority rise across a two-consonant onset. Larger rises are better formed. -/
+def onsetRise (c₁ c₂ : Segment) : ℤ := Sonority.rise (.ofSegment c₁) (.ofSegment c₂)
 
-/-- The four-point behavioral cline blif ≺ bnif ≺ bdif ≺ lbif of Figure 1, that is
-    stop–liquid ≺ stop–nasal ≺ stop–stop ≺ liquid–stop, follows from rank distance on the
-    abstract type. -/
+/-- The rise of an onset depends on its segments only through the features that sonority
+reads, whatever their place of articulation and laryngeal setting. -/
+theorem onsetRise_congr (h₁ : ∀ f ∈ Sonority.features, c₁ f = d₁ f)
+    (h₂ : ∀ f ∈ Sonority.features, c₂ f = d₂ f) : onsetRise c₁ c₂ = onsetRise d₁ d₂ := by
+  rw [onsetRise, onsetRise, Sonority.ofSegment_congr h₁, Sonority.ofSegment_congr h₂]
+
+/-- Changing a feature that sonority does not read in the first consonant leaves the rise
+unchanged. -/
+theorem onsetRise_setFeature_left {f : Feature} (hf : f ∉ Sonority.features) (v : Bool) :
+    onsetRise (c₁.setFeature f v) c₂ = onsetRise c₁ c₂ := by
+  rw [onsetRise, Sonority.ofSegment_setFeature hf, onsetRise]
+
+/-- Changing a feature that sonority does not read in the second consonant leaves the rise
+unchanged. -/
+theorem onsetRise_setFeature_right {f : Feature} (hf : f ∉ Sonority.features) (v : Bool) :
+    onsetRise c₁ (c₂.setFeature f v) = onsetRise c₁ c₂ := by
+  rw [onsetRise, Sonority.ofSegment_setFeature hf, onsetRise]
+
+open English.Phonology in
+/-- The onset of blif is a larger rise than that of bnif, the onset of bdif is a plateau,
+and the onset of lbif is a fall. -/
 theorem sonority_cline :
-    onsetMarkedness (.stop, .liquid) < onsetMarkedness (.stop, .nasal) ∧
-      onsetMarkedness (.stop, .nasal) < onsetMarkedness (.stop, .stop) ∧
-        onsetMarkedness (.stop, .stop) < onsetMarkedness (.liquid, .stop) := by
+    0 < onsetRise b n ∧ onsetRise b n < onsetRise b l ∧ onsetRise b d = 0 ∧
+      onsetRise l b < 0 := by
   decide
 
-/-- Markedness depends only on the sonority ranks, so onsets whose segments match in rank
-    are treated identically, whatever their articulatory realization. -/
-theorem onsetMarkedness_rank_invariant (c1 c2 d1 d2 : Sonority)
-    (h1 : c1.rank = d1.rank) (h2 : c2.rank = d2.rank) :
-    onsetMarkedness (c1, c2) = onsetMarkedness (d1, d2) := by
-  simp [onsetMarkedness, h1, h2]
+open English.Phonology in
+/-- The labial onsets of plik, pnik and ptik, heard under suppression of the lips or the
+tongue, have the rises of the onsets of blif, bnif and bdif. -/
+theorem onsetRise_labial :
+    onsetRise p l = onsetRise b l ∧ onsetRise p n = onsetRise b n ∧
+      onsetRise p t = onsetRise b d :=
+  ⟨onsetRise_congr (by decide) (by decide), onsetRise_congr (by decide) (by decide),
+    onsetRise_congr (by decide) (by decide)⟩
 
-/-- The distance markedness refines the three-way profile, with values below `5` a rise,
-    `5` a plateau, and values above `5` a fall. -/
-theorem markedness_vs_profile (c1 c2 : Sonority) :
-    (onsetMarkedness (c1, c2) < 5 ↔ onsetProfile c1 c2 = .rise) ∧
-      (onsetMarkedness (c1, c2) = 5 ↔ onsetProfile c1 c2 = .plateau) ∧
-        (5 < onsetMarkedness (c1, c2) ↔ onsetProfile c1 c2 = .fall) := by
-  cases c1 <;> cases c2 <;> decide
+end Abstract
 
-/-! ### Algebraic OCP (Argument 2)
+/-! ### Algebraic: identity restrictions -/
 
-`mkOCP` and `adjacentIdentical` (`Phonology/Constraints/Basic.lean`) are parametrically
-polymorphic over the feature type: the constraint cannot inspect what kind of features it
-compares, only whether they are identical. That parametricity is Argument 2's
-algebraicity — the OCP extends to Hebrew /θ/ and to unattested ASL handshapes by
-construction (§3.2). The recursion lemmas `adjacentIdentical_cons_self` and
-`adjacentIdentical_cons_of_ne` live with the definition. -/
+section Algebraic
 
-/-! ### The doubling reversal (Argument 3) -/
+variable {α β : Type*} {f : α → β} {x y : α}
 
-/-- In the phonology–morphology reversal the same identity ban yields opposite surface
-    preferences depending on whether the morphological context licenses reduplication.
-    It is amodal in that the constituents `x` and `y` range over any type, syllables of
-    speech or of sign alike; the dependence on the spoken language is
-    `BerentEtAl2016.exists_optimal_surface_iff`. -/
+/-- A consonantal root begins with two identical consonants, the pattern that Hebrew bans
+while allowing identical consonants at the end of a root. -/
+def InitialIdentity (r : ConsonantalRoot α) : Prop := ¬ OCP.IsClean (r.segments.take 2)
+
+instance [DecidableEq α] : DecidablePred (InitialIdentity (α := α)) :=
+  fun _ ↦ inferInstanceAs (Decidable (¬ _))
+
+theorem initialIdentity_double_left (x y : α) : InitialIdentity ⟨[x, x, y]⟩ := by
+  simp [InitialIdentity]
+
+theorem not_initialIdentity_double_right (h : y ≠ x) : ¬ InitialIdentity ⟨[y, x, x]⟩ := by
+  simp [InitialIdentity, h]
+
+/-- The root restriction gives the same verdict on a root and on its image under an
+injective relabelling, so it extends to consonants the language lacks. -/
+theorem initialIdentity_map (hf : Function.Injective f) (r : ConsonantalRoot α) :
+    InitialIdentity ⟨r.segments.map f⟩ ↔ InitialIdentity r := by
+  simp only [InitialIdentity, OCP.IsClean, ← List.map_take, List.isChain_map, hf.ne_iff]
+
+/-- The root of kathath ends in identical consonants and the root of thathak begins with
+them, so the restriction rejects thathak alone, although /θ/ is not a Hebrew consonant. -/
+theorem initialIdentity_theta :
+    ¬ InitialIdentity (⟨["k", "θ", "θ"]⟩ : ConsonantalRoot String) ∧
+      InitialIdentity (⟨["θ", "θ", "k"]⟩ : ConsonantalRoot String) :=
+  ⟨not_initialIdentity_double_right (by decide), initialIdentity_double_left _ _⟩
+
+/-- The preference for reduplication carries over to the image of the constituents under
+an injective relabelling, so it extends to handshapes the language lacks. -/
+theorem optimal_morphology_map [DecidableEq β] (hf : Function.Injective f) (h : x ≠ y)
+    (r : Ranking 2) :
+    (tableau (f x) (f y) .morphology r).optimal = {.reduplicated [f x]} :=
+  optimal_morphology (hf.ne h) r
+
+end Algebraic
+
+/-! ### Amodal: the doubling reversal -/
+
+/-- The same identity ban yields opposite surface preferences at the two levels of
+analysis. The constituents `x` and `y` range over any type, syllables of speech or of sign
+alike, and the dependence on the spoken language is
+`BerentEtAl2016.exists_optimal_surface_iff`. -/
 theorem amodal_doubling_reversal {α : Type*} [DecidableEq α] {x y : α} (h : x ≠ y)
     (r : Ranking 2) :
     (tableau x y .phonology r).optimal = {.simplex [x, y]} ∧

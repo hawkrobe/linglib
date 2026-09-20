@@ -57,6 +57,12 @@ theorem adjacentIdentical_cons_of_ne {α : Type*} [DecidableEq α] {a b : α}
     adjacentIdentical (a :: b :: rest) = adjacentIdentical (b :: rest) := by
   simp [adjacentIdentical, countAdjacent, h]
 
+/-- Adjacent identity is invariant under an injective relabelling of the elements. -/
+theorem adjacentIdentical_map {α β : Type*} [DecidableEq α] [DecidableEq β] {f : α → β}
+    (hf : Function.Injective f) (xs : List α) :
+    adjacentIdentical (xs.map f) = adjacentIdentical xs :=
+  Subregular.countAdjacent_map (· = ·) (S := (· = ·)) (fun _ _ ↦ hf.eq_iff) xs
+
 /-- An OCP constraint ([mccarthy-1986]): penalizes adjacent identical elements on
 the tier extracted by `project`. Polymorphic over the feature type ([berent-2026]). -/
 def mkOCP {C α : Type*} [DecidableEq α] (project : C → List α) : Constraint C :=

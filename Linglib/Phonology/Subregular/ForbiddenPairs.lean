@@ -111,6 +111,18 @@ def countAdjacent [DecidableRel R] : List α → Nat
   | [] | [_] => 0
   | a :: b :: rest => (if R a b then 1 else 0) + countAdjacent (b :: rest)
 
+/-- Counting adjacent pairs commutes with a relabelling that preserves and reflects the
+relation. -/
+lemma countAdjacent_map {β : Type*} {S : β → β → Prop} [DecidableRel R] [DecidableRel S]
+    {f : α → β} (hf : ∀ a b, S (f a) (f b) ↔ R a b) (xs : List α) :
+    countAdjacent S (xs.map f) = countAdjacent R xs := by
+  induction xs with
+  | nil => rfl
+  | cons a rest ih =>
+    cases rest with
+    | nil => rfl
+    | cons b rest => simpa [countAdjacent, hf] using ih
+
 /-- `countAdjacent R xs = 0` iff `xs` is a chain for `¬ R · ·`. -/
 lemma countAdjacent_eq_zero_iff_isChain [DecidableRel R] (xs : List α) :
     countAdjacent R xs = 0 ↔ xs.IsChain (fun a b => ¬ R a b) := by
