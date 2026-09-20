@@ -18,17 +18,18 @@ standardly (more sure-option choices / approvals under the positive frame),
 *at most* patterns in reverse, with a significant MODIFIER × FRAME
 interaction in both experiments and no main effects.
 
-Both modifiers set an upper bound; they differ in evaluative valence — the
-directional *up to* vs the superlative *at most* contrast of [blok-2015],
-(5) in the paper — and the paper takes the interaction to show that valence
-appraisal (operationalized as goal conduciveness) plays a crucial role in
-the emergence of framing effects.
+Both modifiers set an upper bound; they contrast in evaluative contexts, (5)
+in the paper, and following [blok-2015] the paper ties the contrast to the
+kind of modifier: the superlative *at most*, but not the directional
+*up to*, makes the complement set salient. It takes the interaction to show
+that valence appraisal (operationalized as goal conduciveness) plays a
+crucial role in the emergence of framing effects.
 
 The Lean content: the choice/approval proportions of Tables 1–4 as exact
 rationals, the direction claims the paper draws from them, and the Fragment
-side of the account — `English.NumeralModifiers` gives *at most* and
-*up to* the same modifier class and bound direction but opposite
-`evaluativeValence`.
+side of the account — in `English.NumeralModifiers` *at most* and *up to*
+have the same readings and the same class, and differ in the kind of
+construction, superlative against directional.
 
 ## Main results
 
@@ -38,8 +39,8 @@ side of the account — `English.NumeralModifiers` gives *at most* and
   opposite-direction pattern (Table 3)
 * `exp3_upTo_standard` / `exp3_atMost_reversed` — the Experiment 3
   replication for attribute framing (Table 4)
-* `upper_bound_shared_valence_differs` — the Fragment: same class and
-  bound direction, opposite evaluative valence
+* `upper_bound_shared_kind_differs` — the Fragment: same readings and class,
+  superlative against directional
 
 ## References
 
@@ -116,21 +117,25 @@ attribute framing. -/
 theorem exp3_atMost_reversed : exp3AtMostPos < exp3AtMostNeg := by
   norm_num [exp3AtMostPos, exp3AtMostNeg]
 
-/-! ### The Fragment side: shared upper bound, opposite valence
+/-! ### The Fragment side: shared upper bound, different kind
 
-The paper's premise (its (5), after [blok-2015]): *at most* and *up to*
-both set an upper bound — same modifier class, same bound direction — yet
-contrast sharply in evaluative contexts. The Fragment records exactly this
-profile, and the opposite framing directions above track the valence
-split. -/
+The paper's premise: *at most* and *up to* both set an upper bound, so
+*at most 200* and *up to 200* convey that 200 is the maximum, yet they
+contrast sharply in evaluative contexts ((5)). Following [blok-2015] the
+paper locates the difference in the kind of modifier, the superlative making
+the complement set salient where the directional does not, and the opposite
+framing directions above track that split. -/
 
-open English.NumeralModifiers in
-/-- *at most* and *up to* share their modifier class and bound direction
-but carry opposite evaluative valence in the Fragment. -/
-theorem upper_bound_shared_valence_differs :
-    atMost.modClass = upTo.modClass ∧ atMost.boundDir = upTo.boundDir ∧
-    atMost.evaluativeValence = .negative ∧
-    upTo.evaluativeValence = .positive := by
-  refine ⟨rfl, rfl, rfl, rfl⟩
+open English.NumeralModifiers Semantics in
+/-- *At most* and *up to* have the same readings, each an upper bound true of
+no amount above the number, and the same class; *at most* is a superlative
+and *up to* a directional modifier. -/
+theorem upper_bound_shared_kind_differs :
+    ⟦NumeralModifier.atMost⟧ = ⟦NumeralModifier.upTo⟧ ∧
+      (∀ r ∈ ⟦NumeralModifier.upTo⟧, ∀ m n, n ∈ r m → n ≤ m) ∧
+      NumeralModifier.atMost.modifierClass = NumeralModifier.upTo.modifierClass ∧
+      NumeralModifier.atMost.kind = some .superlative ∧
+      NumeralModifier.upTo.kind = some .directional :=
+  ⟨rfl, fun _ hr _ _ h ↦ by obtain rfl : _ = _ := hr; exact h, rfl, rfl, rfl⟩
 
 end ClausWalch2024
