@@ -1,111 +1,101 @@
 import Linglib.Semantics.Quantification.Basic
 
 /-!
-# Polyadic Quantifiers
-[peters-westerstahl-2006] [hintikka-1996]
+# Polyadic quantifiers
 
-Three mechanisms for building polyadic (multi-sorted) quantifiers from
-monadic (type ⟨1,1⟩) ones:
+This file defines three ways of building a quantifier over binary relations from generalized
+quantifiers over sets. Iteration nests one quantifier in the scope of another, as in
+*every student read some book*. Resumption lets a single quantifier bind both argument places,
+so that it sees only the diagonal of the relation, as in *most students like themselves*.
+Branching evaluates two quantifiers independently, neither in the scope of the other, as
+Hintikka proposed for *some relative of each villager and some friend of each townsman hate
+each other*. Peters and Westerståhl treat all three.
 
-1. **Iteration**: Q₁x Q₂y R(x,y) — nested quantification
-2. **Resumption**: Qx R(x,x) — a single quantifier on the diagonal
-3. **Branching**: Hintikka's partially ordered quantifiers
+A sentence with two quantifiers has two linear scope readings, which are the two orders of
+iteration.
 
-These capture the semantic content of multi-quantifier sentences at the
-model-theoretic level, complementing linglib's syntactic scope mechanisms
-in `Semantics/Composition/Scope.lean` and `Studies/HeimKratzer1998.lean`.
+## Main definitions
+
+* `Quantifier.Polyadic.iterate`: the iteration `Q₁x Q₂y R(x, y)` of two quantifiers.
+* `Quantifier.Polyadic.resume`: the resumption `Qx R(x, x)` of a quantifier.
+* `Quantifier.Polyadic.branch`: the branching of two quantifiers, witnessed by choice functions.
+* `Quantifier.Polyadic.surfaceScope`, `Quantifier.Polyadic.inverseScope`: the two linear scope
+  readings of a two-quantifier sentence.
+
+## Main results
+
+* `Quantifier.Polyadic.iterate_every_some_of_some_every`: `∃∀` entails `∀∃`, so the two linear
+  readings of an *every*/*some* pair are nested.
+* `Quantifier.Polyadic.iterate_mono`, `Quantifier.Polyadic.resume_mono`: iteration and resumption
+  of scope-upward-monotone quantifiers are monotone in the relation.
+
+## TODO
+
+`branch` states branching with a pair of choice functions. Barwise's formulation for
+upward-monotone quantifiers instead asks for sets `X ⊆ A` and `Y ⊆ B` with `Q₁ A X`, `Q₂ B Y`
+and `X × Y ⊆ R`; the two should be compared against the sources.
+
+## References
+
+* [peters-westerstahl-2006]
+* [hintikka-1996]
 -/
 
 namespace Quantifier.Polyadic
 
 open Quantifier Quantifier.GQ
 
-variable {α : Type*}
+variable {α : Type*} {Q Q₁ Q₂ : GQ α} {A B : α → Prop} {R R' : α → α → Prop}
 
-/-! ### Core Operations -/
+/-! ### Iteration, resumption and branching -/
 
-/-- Iteration: Q₁x Q₂y R(x,y). Nested quantification where Q₂ is in the
-    scope of Q₁.
-
-    "Every student read some book" =
-    iterate(every, student, some, book)(read)
-    = every(student, λx. some(book, λy. read(x,y)))
-
-    [peters-westerstahl-2006] Ch 10. -/
+/-- The iteration `Q₁x Q₂y R(x, y)` nests `Q₂` in the scope of `Q₁`, so that *every student
+read some book* is `iterate every student some book read`. -/
 def iterate (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
-  Q₁ A (λ x => Q₂ B (λ y => R x y))
+  Q₁ A fun x ↦ Q₂ B fun y ↦ R x y
 
-/-- Resumption: one quantifier binding two argument positions.
-
-    "Most students like themselves" =
-    resume(most, student)(like)
-    = most(student, λx. like(x,x))
-
-    Resumption only accesses the diagonal of R.
-    [peters-westerstahl-2006] Ch 10. -/
+/-- The resumption `Qx R(x, x)` binds both argument places of `R` with one quantifier, so that
+*most students like themselves* is `resume most student like`. -/
 def resume (Q : GQ α) (A : α → Prop) (R : α → α → Prop) : Prop :=
-  Q A (λ x => R x x)
+  Q A fun x ↦ R x x
 
-/-- Branching (Hintikka) quantifier: Q₁ and Q₂ are evaluated independently
-    (neither is in the scope of the other).
-
-    The Skolem-function characterization: there exist choice functions
-    witnessing both quantifiers simultaneously.
-
-    "Some relative of each villager and some friend of each townsman
-     hate each other" — the two quantifiers don't scope over each other.
-
-    Simplified Barwise (1979) version:
-    branch(Q₁, A, Q₂, B)(R) ↔ ∃f g. Q₁(A, λx. R(x, f(x))) ∧ Q₂(B, λy. R(g(y), y))
-
-    [hintikka-1996] [peters-westerstahl-2006] Ch 10. -/
+/-- The branching of `Q₁` and `Q₂` evaluates them independently, neither in the scope of the
+other. There are choice functions `f` and `g` such that `Q₁` holds of the `x` related to their
+`B`-witness `f x`, and `Q₂` of the `y` related to their `A`-witness `g y`. -/
 def branch (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
-  ∃ (f g : α → α),
-    Q₁ A (λ x => B (f x) ∧ R x (f x)) ∧
-    Q₂ B (λ y => A (g y) ∧ R (g y) y)
+  ∃ f g : α → α,
+    Q₁ A (fun x ↦ B (f x) ∧ R x (f x)) ∧
+    Q₂ B (fun y ↦ A (g y) ∧ R (g y) y)
 
-/-! ### Scope Order and Iteration -/
+/-! ### Scope order -/
 
-/-- Surface scope = iterate(Q₁, A, Q₂, B)(R).
-    Inverse scope = iterate(Q₂, B, Q₁, A)(flip R).
-    These are the two "linear" readings of a two-quantifier sentence.
-    [peters-westerstahl-2006] Ch 10. -/
+/-- The surface-scope reading of a two-quantifier sentence, on which the first quantifier
+outscopes the second. -/
 def surfaceScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   iterate Q₁ Q₂ A B R
 
+/-- The inverse-scope reading of a two-quantifier sentence, on which the second quantifier
+outscopes the first. -/
 def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
-  iterate Q₂ Q₁ B A (λ y x => R x y)
+  iterate Q₂ Q₁ B A fun y x ↦ R x y
 
-/-- `∃∀ ⊨ ∀∃`: an existential scoping over a universal entails the universal scoping over
-the existential, so the two linear readings of an *every*/*some* pair are nested. -/
+/-- An existential scoping over a universal entails the universal scoping over the existential,
+so the two linear readings of an *every*/*some* pair are nested. -/
 theorem iterate_every_some_of_some_every (A B : α → Prop) (R : α → α → Prop)
     (h : iterate some_sem every_sem A B R) : iterate every_sem some_sem B A (flip R) :=
-  let ⟨x, hx, hall⟩ := h; fun y hy => ⟨x, hx, hall y hy⟩
+  let ⟨x, hx, hall⟩ := h; fun y hy ↦ ⟨x, hx, hall y hy⟩
 
-/-! ### Monotonicity Inheritance -/
+/-! ### Monotonicity -/
 
-/-- Iteration preserves scope monotonicity: if both Q₁ and Q₂ are Mon↑,
-    then iterate(Q₁, A, Q₂, B) is monotone in R (pointwise).
-    [peters-westerstahl-2006] Ch 10. -/
-theorem iterate_mono_in_R (Q₁ Q₂ : GQ α) (A B : α → Prop)
-    (R R' : α → α → Prop)
-    (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂)
-    (hR : ∀ x y, R x y → R' x y)
-    (hIt : iterate Q₁ Q₂ A B R) :
-    iterate Q₁ Q₂ A B R' := by
-  unfold iterate at *
-  apply h₁ A _ _ _ hIt
-  intro x hx
-  exact h₂ B _ _ (λ y => hR x y) hx
+/-- The iteration of two scope-upward-monotone quantifiers is monotone in the relation. -/
+theorem iterate_mono (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂)
+    (hR : ∀ x y, R x y → R' x y) : iterate Q₁ Q₂ A B R → iterate Q₁ Q₂ A B R' :=
+  h₁ A _ _ fun x ↦ h₂ B _ _ (hR x)
 
-/-- Resumption preserves scope monotonicity. -/
-theorem resume_mono_in_R (Q : GQ α) (A : α → Prop)
-    (R R' : α → α → Prop)
-    (hUp : ScopeUpwardMono Q)
-    (hR : ∀ x, R x x → R' x x)
-    (hRes : resume Q A R) :
-    resume Q A R' := by
-  unfold resume at *
-  exact hUp A _ _ hR hRes
+/-- The resumption of a scope-upward-monotone quantifier is monotone in the diagonal of the
+relation. -/
+theorem resume_mono (h : ScopeUpwardMono Q) (hR : ∀ x, R x x → R' x x) :
+    resume Q A R → resume Q A R' :=
+  h A _ _ hR
 
 end Quantifier.Polyadic
