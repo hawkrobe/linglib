@@ -10,7 +10,7 @@ verb2 = collections.defaultdict(set)
 for ctor, lst in re.findall(r"\| \.(\w+) => \[([\s\S]*?)\]\n", body):
     for w in re.findall(r'"([^"]*)"', lst):
         verb2[w].add(ctor)
-frag = (root / "Linglib/Fragments/English/Predicates.lean").read_text()
+frag = (root / "Linglib/Fragments/English/Verbs.lean").read_text()
 blocks = re.split(r"(?=^(?:/--(?:(?!-/).)*?-/\n)?def \w+ : Verb)", frag, flags=re.M | re.S)
 bad = 0
 checked = 0

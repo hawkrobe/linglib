@@ -1,9 +1,9 @@
 import Linglib.Studies.UegakiSudo2019
 import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Fragments.English.Predicates
-import Linglib.Fragments.Mandarin.Predicates
-import Linglib.Fragments.Japanese.Predicates
-import Linglib.Fragments.Turkish.Predicates
+import Linglib.Fragments.English.Verbs
+import Linglib.Fragments.Mandarin.Verbs
+import Linglib.Fragments.Japanese.Verbs
+import Linglib.Fragments.Turkish.Verbs
 import Linglib.Data.Examples.QingEtAl2025
 
 /-!

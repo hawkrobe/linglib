@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Data.Examples.Benz2025
-import Linglib.Fragments.German.Predicates
+import Linglib.Fragments.German.Verbs
 import Linglib.Semantics.ArgumentStructure.Unaccusativity
 
 /-!
@@ -40,7 +40,7 @@ Ch. 5, with the base verbs read from the German fragment.
 
 namespace Benz2025
 
-open DistributedMorphology DistributedMorphology.Allosemy Data.Examples German.Predicates
+open DistributedMorphology DistributedMorphology.Allosemy Data.Examples German.Verbs
   ArgumentStructure
 open Aspect
 

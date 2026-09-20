@@ -1,6 +1,6 @@
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Syntax.Minimalist.Clause.Size
-import Linglib.Fragments.Romance.Italian.Predicates
+import Linglib.Fragments.Romance.Italian.Verbs
 import Linglib.Data.Examples.FuscoSgrizzi2026
 
 /-!
@@ -38,7 +38,7 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
 * The two heads are stated over abstract eventualities and worlds, with the content background,
   the circumstantial base and the inertial ordering as anchoring functions of the state.
 * The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
-  `Fragments/Romance/Italian/Predicates.lean`.
+  `Fragments/Romance/Italian/Verbs.lean`.
 
 ## References
 
@@ -54,7 +54,7 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
 
 namespace FuscoSgrizzi2026
 
-open Modality Modality.Kratzer Minimalist Italian.Predicates Data.Examples
+open Modality Modality.Kratzer Minimalist Italian.Verbs Data.Examples
 
 section Semantics
 
@@ -148,7 +148,7 @@ def sizeOf (z : Complementizer) : Option ComplementSize :=
   if z = di then some diSize else if z = a then some aSize else none
 
 /-- The readings a verb's complementizers yield, in the order the fragment lists them. -/
-def readings (v : Italian.Predicates.Verb) : List Reading :=
+def readings (v : Italian.Verbs.Verb) : List Reading :=
   v.typers.filterMap fun z ↦ (sizeOf z).map readingFromSize
 
 /-- *convincere* has both readings, one per complementizer (4), and *pensare* alternates the same

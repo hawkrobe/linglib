@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Swahili Predicate Lexicon Fragment
+# Swahili verbs
 [palmieri-2024]
 
 Swahili *-an-* verbs with lexicalized reciprocal entries and their
@@ -12,7 +12,7 @@ habituality) and affix ordering; some bases drift semantically
 base at all (\**jibiza*).
 -/
 
-namespace Swahili.Predicates
+namespace Swahili.Verbs
 
 /-! ### Lexical reciprocal verbs -/
 
@@ -103,4 +103,4 @@ def shinda : Verb where
   form := "shinda"
   frames := [ArgumentFrame.np]
 
-end Swahili.Predicates
+end Swahili.Verbs

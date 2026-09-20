@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Studies.Larson1988
 import Linglib.Studies.Pylkkanen2008
 

@@ -1,4 +1,4 @@
-import Linglib.Fragments.Indonesian.Predicates
+import Linglib.Fragments.Indonesian.Verbs
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Studies.Beavers2010
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation

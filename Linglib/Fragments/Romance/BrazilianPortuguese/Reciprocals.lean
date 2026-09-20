@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Romance.BrazilianPortuguese.Predicates
+import Linglib.Fragments.Romance.BrazilianPortuguese.Verbs
 
 /-!
 # Brazilian Portuguese Reciprocal Fragment
@@ -34,6 +34,6 @@ def markers : List Marker := [seClitic, bipartite]
     strategy marks predicates, not forms. The transitive alternate is
     the entry itself (homophonous in Romance). -/
 def lexicalReciprocals : List Verb :=
-  [Predicates.abracar, Predicates.beijar, Predicates.casar, Predicates.consultar, Predicates.cumprimentar, Predicates.encontrar, Predicates.namorar]
+  [Verbs.abracar, Verbs.beijar, Verbs.casar, Verbs.consultar, Verbs.cumprimentar, Verbs.encontrar, Verbs.namorar]
 
 end BrazilianPortuguese.Reciprocals

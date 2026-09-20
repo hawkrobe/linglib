@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Romance.Catalan.Predicates
+import Linglib.Fragments.Romance.Catalan.Verbs
 
 /-!
 # Catalan Reciprocal Fragment
@@ -34,6 +34,6 @@ def markers : List Marker := [seClitic, bipartite]
     strategy marks predicates, not forms. The transitive alternate is
     the entry itself (homophonous in Romance). -/
 def lexicalReciprocals : List Verb :=
-  [Predicates.abracar, Predicates.casar, Predicates.deixar, Predicates.petonejar, Predicates.topar, Predicates.trobar]
+  [Verbs.abracar, Verbs.casar, Verbs.deixar, Verbs.petonejar, Verbs.topar, Verbs.trobar]
 
 end Catalan.Reciprocals

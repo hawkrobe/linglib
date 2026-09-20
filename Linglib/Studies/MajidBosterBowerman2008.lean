@@ -4,7 +4,7 @@ import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 
 /-!
 # Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
@@ -439,7 +439,7 @@ theorem cut_break_same_template :
   rfl
 
 /-! Rather than defining inline profiles, we derive them from the actual
-    Fragment entries in `English.Predicates`. This
+    Fragment entries in `English.Verbs`. This
     ensures that compatibility theorems test the real lexical data. -/
 
 open English hiding Verb in

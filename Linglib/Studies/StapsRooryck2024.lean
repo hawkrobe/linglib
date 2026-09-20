@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.Presupposition.Defs
-import Linglib.Fragments.Romance.French.Predicates
+import Linglib.Fragments.Romance.French.Verbs
 
 /-!
 # Staps and Rooryck (2024): Formalizing Spatial-Causal Polysemy of Agent Prepositions
@@ -64,7 +64,7 @@ inanimate agent allows *par* when a change on an inferred scale is at stake.
 
 namespace StapsRooryck2024
 
-open ArgumentStructure Presupposition French.Predicates
+open ArgumentStructure Presupposition French.Verbs
 
 /-! ### Polymorphic types -/
 

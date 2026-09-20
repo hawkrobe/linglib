@@ -1,4 +1,4 @@
-import Linglib.Fragments.German.Predicates
+import Linglib.Fragments.German.Verbs
 import Linglib.Syntax.Category.Verb.Tense
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.Unaccusativity
@@ -91,7 +91,7 @@ theorem germanSelection_eq_be_iff (c : TransitivityClass) :
   cases c <;> decide
 
 /-- The principal parts of a verb entry. -/
-def Predicates.GermanVerbEntry.principalParts (v : Predicates.GermanVerbEntry) : PrincipalParts :=
+def Verbs.GermanVerbEntry.principalParts (v : Verbs.GermanVerbEntry) : PrincipalParts :=
   ⟨v.form, v.form3sg, v.formPast, v.formPastPart, perfectAuxiliary v.toVerb⟩
 
 /-- German builds its tense forms with the past participle under the verb's perfect auxiliary and
@@ -144,7 +144,7 @@ speech, and the other forms are unmarked. -/
 def register (f : Tense.Form) : SocialMeaning.Register :=
   if f = .simplePast then .formal else if f = .doublePerfect then .informal else .neutral
 
-open Predicates in
+open Verbs in
 /-- *zerbrechen* 'break', a transitive verb, forms its perfect with *haben*, and the unaccusative
 *frieren* 'freeze' with *sein*. -/
 example :

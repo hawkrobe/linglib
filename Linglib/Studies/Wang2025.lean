@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mandarin.Adverbs
-import Linglib.Fragments.Mandarin.Predicates
+import Linglib.Fragments.Mandarin.Verbs
 import Linglib.Semantics.Presupposition.Verb
 import Linglib.Semantics.Presupposition.Iterative
 import Mathlib.Data.Finset.Powerset

@@ -1,4 +1,4 @@
-import Linglib.Fragments.Turkish.Predicates
+import Linglib.Fragments.Turkish.Verbs
 
 /-!
 # Göksel and Kerslake (2005): Turkish suffixation

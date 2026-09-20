@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Studies.Karttunen1971a
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.Verb
 

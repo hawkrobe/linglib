@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Term
 import Linglib.Syntax.Binding.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.English.Coordination
 import Linglib.Processing.Acceptability.MinimalPairs
 

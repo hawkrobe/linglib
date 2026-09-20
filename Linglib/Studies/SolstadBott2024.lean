@@ -1,6 +1,6 @@
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Studies.SolstadBott2022
-import Linglib.Fragments.German.Predicates
+import Linglib.Fragments.German.Verbs
 
 /-!
 # Solstad & Bott (2024): Cataphoric Resolution of Projective Content
@@ -211,7 +211,7 @@ theorem exp3_predictions {c : Set W} {t : PartialProp W} {s : W → Prop}
 
 /-! ### Occasion verbs as agent-evocator verbs -/
 
-open German.Predicates in
+open German.Verbs in
 /-- The paper's occasion verbs, the fragment entries carrying the occasion sense. -/
 def occasionVerbs : List GermanVerbEntry := allVerbs.filter (·.senseTag = .occasion)
 

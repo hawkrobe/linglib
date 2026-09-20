@@ -1,7 +1,7 @@
 import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Head
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Semantics.Presupposition.Verb
 import Linglib.Semantics.Causation.Verb
 

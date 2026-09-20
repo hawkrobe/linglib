@@ -3,7 +3,7 @@ import Mathlib.Algebra.Order.Group.Defs
 import Mathlib.Algebra.Order.Field.Rat
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Data.Examples.HayKennedyLevin1999
 
 /-!

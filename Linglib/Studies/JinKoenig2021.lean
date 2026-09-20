@@ -4,7 +4,7 @@ import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Semantics.Attitudes.Verb
 
 /-!

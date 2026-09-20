@@ -13,7 +13,7 @@ the copular realization ("be" + adjective) is English-specific. The
 that need a uniform `Verb` interface.
 -/
 
-namespace English.Predicates.Copular
+namespace English.Verbs.Copular
 
 open ArgumentStructure
 
@@ -42,7 +42,7 @@ def beAble : Verb where
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
 
-end English.Predicates.Copular
+end English.Verbs.Copular
 
 -- ════════════════════════════════════════════════════
 -- § English copular realization

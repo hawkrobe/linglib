@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.Boundedness
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.English.Adjectives
 import Mathlib.Order.Max
 import Mathlib.Order.Bounds.Basic

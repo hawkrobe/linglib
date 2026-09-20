@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
-import Linglib.Fragments.Romance.Spanish.Predicates
+import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
 # Koontz-Garboden (2009): Anticausativization
@@ -53,7 +53,7 @@ tabulates is a typological argument left in prose.
 
 namespace KoontzGarboden2009
 
-open ArgumentStructure ArgumentStructure.EventStructure Spanish.Predicates
+open ArgumentStructure ArgumentStructure.EventStructure Spanish.Verbs
 
 /-- The reflexivization operator restricts a two-place relation to its diagonal. It is the
 denotation of the reflexive clitic *se*. -/

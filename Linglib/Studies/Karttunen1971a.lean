@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 
 /-!
 # Karttunen (1971): Implicative Verbs

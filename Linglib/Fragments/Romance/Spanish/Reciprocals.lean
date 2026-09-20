@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Romance.Spanish.Predicates
+import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
 # Spanish Reciprocal Fragment
@@ -34,6 +34,6 @@ def markers : List Marker := [seClitic, bipartite]
     strategy marks predicates, not forms. The transitive alternate is
     the entry itself (homophonous in Romance). -/
 def lexicalReciprocals : List Verb :=
-  [Predicates.abrazar, Predicates.acurrucar, Predicates.besar, Predicates.casar, Predicates.consultar, Predicates.cruzar, Predicates.dejar, Predicates.encontrar]
+  [Verbs.abrazar, Verbs.acurrucar, Verbs.besar, Verbs.casar, Verbs.consultar, Verbs.cruzar, Verbs.dejar, Verbs.encontrar]
 
 end Spanish.Reciprocals

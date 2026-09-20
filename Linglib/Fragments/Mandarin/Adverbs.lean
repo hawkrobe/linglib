@@ -18,7 +18,7 @@ a telic predicate. *Fǎn'ér* 反而 'instead' asserts its clause against a sali
 is false, where *yě* requires one that is true. The description follows Li and Thompson for
 *yě*, *yòu*, *zài* and *jiù*, and Wang for the focus association of *jiù* and for *réng*,
 *búzài* and *fǎn'ér*. The presuppositional verbs *zhīdào* 'know', *hòuhuǐ* 'regret' and *kāishǐ*
-'start' are entries of `Fragments/Mandarin/Predicates.lean`.
+'start' are entries of `Fragments/Mandarin/Verbs.lean`.
 
 ## References
 

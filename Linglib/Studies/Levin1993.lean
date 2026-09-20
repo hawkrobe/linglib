@@ -1,7 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 import Linglib.Syntax.Voice.Basic
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.English.Adposition
 import Linglib.Data.Examples.Levin1993
 

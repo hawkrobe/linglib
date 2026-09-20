@@ -1,10 +1,10 @@
 import Linglib.Syntax.Minimalist.Verbal.Aspect
 import Linglib.Syntax.Minimalist.Clause.Size
 import Linglib.Fragments.Mandarin.Adverbs
-import Linglib.Fragments.Mandarin.Predicates
+import Linglib.Fragments.Mandarin.Verbs
 import Linglib.Fragments.Cantonese.Aspect
 import Linglib.Fragments.Cantonese.Particles
-import Linglib.Fragments.Cantonese.Predicates
+import Linglib.Fragments.Cantonese.Verbs
 import Linglib.Fragments.Cantonese.ResultativeComplements
 
 /-!
@@ -312,15 +312,15 @@ inductive CPred where
   deriving DecidableEq, Repr
 
 /-- The lexical entry of a predicate. -/
-def CPred.entry : CPred → Cantonese.Predicates.Verb
-  | .soeng => Cantonese.Predicates.soeng
-  | .hyun => Cantonese.Predicates.hyun
-  | .bik => Cantonese.Predicates.bik
-  | .giu => Cantonese.Predicates.giu
-  | .daasyun => Cantonese.Predicates.daasyun
-  | .seon => Cantonese.Predicates.seon
-  | .gong => Cantonese.Predicates.gong
-  | .geidak => Cantonese.Predicates.geidak
+def CPred.entry : CPred → Cantonese.Verbs.Verb
+  | .soeng => Cantonese.Verbs.soeng
+  | .hyun => Cantonese.Verbs.hyun
+  | .bik => Cantonese.Verbs.bik
+  | .giu => Cantonese.Verbs.giu
+  | .daasyun => Cantonese.Verbs.daasyun
+  | .seon => Cantonese.Verbs.seon
+  | .gong => Cantonese.Verbs.gong
+  | .geidak => Cantonese.Verbs.geidak
 
 /-- The size of the complement each predicate selects. -/
 def CPred.size : CPred → ComplementSize

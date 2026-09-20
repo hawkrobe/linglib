@@ -1,5 +1,5 @@
 import Linglib.Core.LinearAlgebra.LinearIndependent
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Processing.DiscriminativeLexicon.Realization
 import Linglib.Processing.DiscriminativeLexicon.Training
 

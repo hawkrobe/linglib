@@ -1,19 +1,721 @@
+import Linglib.Semantics.Presupposition.Verb
+import Linglib.Semantics.Root.Kinds
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic
 
 /-!
-# German verb paradigms
+# German verbs
+[qing-uegaki-2025] [song-1996] [solstad-bott-2024]
 
-The present indicative of *kaufen* 'buy' by person and number: the first and third
-plural share *kaufen*, the second plural and the third singular share *kauft*.
+German causative and attitude verb entries, extending `Verb` with the
+German inflectional paradigm (3sg present, Präteritum, Partizip II).
 
-## References
+## Causative verbs
 
-* [M. Dalrymple and R. M. Kaplan, *Feature indeterminacy and feature resolution*
-  (2000)][dalrymple-kaplan-2000]
+German has both analytic and lexical causatives:
+- *lassen* — permissive COMPACT causative (like French *laisser*)
+- *machen* — productive analytic causative ("make")
+- *töten*, *zerbrechen* — lexical COMPACT causatives
+
+## Attitude verbs
+
+German preferential attitudes pattern with other Indo-European languages:
+- *hoffen* / *wünschen* — Class 3 (positive, C-distributive, anti-rogative)
+- *fürchten* / *befürchten* — Class 2 (negative, C-distributive, takes questions)
+- *sich sorgen* — Class 1 (uncertainty-based, non-C-distributive)
+
+The present indicative of *kaufen* 'buy' by person and number, `kaufen`, is the paradigm of
+[dalrymple-kaplan-2000]: the first and third plural share *kaufen*, the second plural and the
+third singular share *kauft*.
 -/
 
 namespace German.Verbs
+
+open ArgumentStructure
+
+/-- German verb entry: extends Verb with German inflectional paradigm. -/
+structure GermanVerbEntry extends Verb where
+  /-- 3sg present (er/sie/es) -/
+  form3sg : String
+  /-- Past (Präteritum) -/
+  formPast : String
+  /-- Past participle (Partizip II) -/
+  formPastPart : String
+  /-- Root type ([beavers-etal-2021]): result vs property concept.
+      Only set for change-of-state verbs where the distinction is applicable. -/
+  rootType : Option Semantics.Root.ChangeType := none
+  deriving BEq
+
+-- ============================================================================
+-- § 1: Causative Verbs
+-- ============================================================================
+
+/-- *lassen* — COMPACT permissive causative (like French *laisser*).
+    "Sie ließ ihn gehen" = "She let him go." -/
+def lassen : GermanVerbEntry where
+  form := "lassen"
+  form3sg := "lässt"
+  formPast := "ließ"
+  formPastPart := "gelassen"
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  causative := some .enable
+
+/-- *machen* — productive analytic causative.
+    "Das macht mich traurig" = "That makes me sad." -/
+def machen : GermanVerbEntry where
+  form := "machen"
+  form3sg := "macht"
+  formPast := "machte"
+  formPastPart := "gemacht"
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
+  causative := some .make
+
+/-- The verb *bauen* 'build' is a weak transitive verb of creation, as in *Borromini baute diese
+Kirche* 'Borromini built this church'. -/
+def bauen : GermanVerbEntry where
+  form := "bauen"
+  form3sg := "baut"
+  formPast := "baute"
+  formPastPart := "gebaut"
+  frames := [ArgumentFrame.np]
+
+/-- *töten* — lexical COMPACT causative ("kill" = tot + -en).
+    Deadjectival causative: *tot* "dead" → *töten* "make dead". -/
+def toeten : GermanVerbEntry where
+  form := "töten"
+  form3sg := "tötet"
+  formPast := "tötete"
+  formPastPart := "getötet"
+  frames := [ArgumentFrame.np]
+  causative := some .make
+
+/-- *zerbrechen* — lexical COMPACT causative ("break").
+    Prefix *zer-* marks destructive result state. -/
+def zerbrechen : GermanVerbEntry where
+  form := "zerbrechen"
+  form3sg := "zerbricht"
+  formPast := "zerbrach"
+  formPastPart := "zerbrochen"
+  frames := [ArgumentFrame.np]
+  causative := some .make
+
+-- ============================================================================
+-- § 2: Attitude Verbs ([qing-uegaki-2025])
+-- ============================================================================
+
+/-- *hoffen* — "hope" (Class 3: positive, C-distributive, anti-rogative). -/
+def hoffen : GermanVerbEntry where
+  form := "hoffen"
+  form3sg := "hofft"
+  formPast := "hoffte"
+  formPastPart := "gehofft"
+  frames := [ArgumentFrame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+
+/-- *fürchten* — "fear" (Class 2: negative, C-distributive, takes questions). -/
+def fuerchten : GermanVerbEntry where
+  form := "fürchten"
+  form3sg := "fürchtet"
+  formPast := "fürchtete"
+  formPastPart := "gefürchtet"
+  frames := [ArgumentFrame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .negative))
+
+/-- *befürchten* — "be afraid / apprehend" (Class 2: negative, C-distributive). -/
+def befuerchten : GermanVerbEntry where
+  form := "befürchten"
+  form3sg := "befürchtet"
+  formPast := "befürchtete"
+  formPastPart := "befürchtet"
+  frames := [ArgumentFrame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .negative))
+
+/-- *wünschen* — "wish" (Class 3: positive, C-distributive, anti-rogative). -/
+def wuenschen : GermanVerbEntry where
+  form := "wünschen"
+  form3sg := "wünscht"
+  formPast := "wünschte"
+  formPastPart := "gewünscht"
+  frames := [ArgumentFrame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+
+/-- *sich sorgen* — "worry" (Class 1: uncertainty-based, non-C-distributive). -/
+def sorgen : GermanVerbEntry where
+  form := "sich sorgen"
+  form3sg := "sorgt sich"
+  formPast := "sorgte sich"
+  formPastPart := "sich gesorgt"
+  frames := [ArgumentFrame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential .uncertaintyBased)
+
+-- ============================================================================
+-- § 3: Occasion Verbs ([solstad-bott-2024], S&P 17:11)
+-- ============================================================================
+
+/-! German interpersonal occasion verbs presuppose a prior occasioning
+    eventuality. The subject performs an
+    interpersonal action triggered by the object's prior behavior.
+
+    These verbs were tested for projectivity in Experiments 1–3 of the
+    S&P paper and for IC bias (as "agent-evocator" verbs) in [solstad-bott-2022]. -/
+
+/-- *bestrafen* — "punish": presupposes the object did something wrong -/
+def bestrafen : GermanVerbEntry where
+  form := "bestrafen"
+  form3sg := "bestraft"
+  formPast := "bestrafte"
+  formPastPart := "bestraft"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *belohnen* — "reward": presupposes the object did something praiseworthy -/
+def belohnen : GermanVerbEntry where
+  form := "belohnen"
+  form3sg := "belohnt"
+  formPast := "belohnte"
+  formPastPart := "belohnt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *loben* — "praise": presupposes praiseworthy behavior by the object -/
+def loben : GermanVerbEntry where
+  form := "loben"
+  form3sg := "lobt"
+  formPast := "lobte"
+  formPastPart := "gelobt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *kritisieren* — "criticise": presupposes the object did something wrong -/
+def kritisieren : GermanVerbEntry where
+  form := "kritisieren"
+  form3sg := "kritisiert"
+  formPast := "kritisierte"
+  formPastPart := "kritisiert"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *danken* — "thank": presupposes the object did something helpful -/
+def danken : GermanVerbEntry where
+  form := "danken"
+  form3sg := "dankt"
+  formPast := "dankte"
+  formPastPart := "gedankt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *verklagen* — "sue": presupposes the object caused harm -/
+def verklagen : GermanVerbEntry where
+  form := "verklagen"
+  form3sg := "verklagt"
+  formPast := "verklagte"
+  formPastPart := "verklagt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *gratulieren* — "congratulate": presupposes the object achieved something -/
+def gratulieren : GermanVerbEntry where
+  form := "gratulieren"
+  form3sg := "gratuliert"
+  formPast := "gratulierte"
+  formPastPart := "gratuliert"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *zurechtweisen* — "rebuke": presupposes the object misbehaved -/
+def zurechtweisen : GermanVerbEntry where
+  form := "zurechtweisen"
+  form3sg := "weist zurecht"
+  formPast := "wies zurecht"
+  formPastPart := "zurechtgewiesen"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *anzeigen* — "report (to authorities)": presupposes the object did something illegal -/
+def anzeigen : GermanVerbEntry where
+  form := "anzeigen"
+  form3sg := "zeigt an"
+  formPast := "zeigte an"
+  formPastPart := "angezeigt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *auszeichnen* — "award/honor": presupposes the object did something meritorious -/
+def auszeichnen : GermanVerbEntry where
+  form := "auszeichnen"
+  form3sg := "zeichnet aus"
+  formPast := "zeichnete aus"
+  formPastPart := "ausgezeichnet"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *belangen* — "prosecute": presupposes the object committed an offense -/
+def belangen : GermanVerbEntry where
+  form := "belangen"
+  form3sg := "belangt"
+  formPast := "belangte"
+  formPastPart := "belangt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *ehren* — "honor": presupposes the object did something worthy of honor -/
+def ehren : GermanVerbEntry where
+  form := "ehren"
+  form3sg := "ehrt"
+  formPast := "ehrte"
+  formPastPart := "geehrt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *entlassen* — "dismiss/fire": presupposes the object did something
+    warranting dismissal -/
+def entlassen : GermanVerbEntry where
+  form := "entlassen"
+  form3sg := "entlässt"
+  formPast := "entließ"
+  formPastPart := "entlassen"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *sich rächen an* — "take revenge on": presupposes the object
+    wronged the subject -/
+def raechen : GermanVerbEntry where
+  form := "sich rächen an"
+  form3sg := "rächt sich"
+  formPast := "rächte sich"
+  formPastPart := "sich gerächt"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *sich revanchieren bei* — "reciprocate/repay": presupposes the
+    object did something for the subject -/
+def revanchieren : GermanVerbEntry where
+  form := "sich revanchieren bei"
+  form3sg := "revanchiert sich"
+  formPast := "revanchierte sich"
+  formPastPart := "sich revanchiert"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+/-- *zur Verantwortung ziehen* — "hold accountable": presupposes
+    the object is responsible for a wrongdoing -/
+def zurVerantwortungZiehen : GermanVerbEntry where
+  form := "zur Verantwortung ziehen"
+  form3sg := "zieht zur Verantwortung"
+  formPast := "zog zur Verantwortung"
+  formPastPart := "zur Verantwortung gezogen"
+  frames := [ArgumentFrame.np]
+  senseTag := .occasion
+
+-- ============================================================================
+-- § 4: Verbs from [benz-2025] (Chs. 3–5)
+-- ============================================================================
+
+/-! ### Simplex manner/activity verbs
+
+These verbs have no inherent result state. They cannot form *-ung*
+nominalizations on their own, but can participate in resultative
+constructions (as the M predicate). -/
+
+/-- *hämmern* — "hammer": manner-of-action activity. Used in resultatives
+    (*Er hämmerte das Metall platt*) and -ung tests (**Platt-hämmer-ung*). -/
+def haemmern : GermanVerbEntry where
+  form := "hämmern"
+  form3sg := "hämmert"
+  formPast := "hämmerte"
+  formPastPart := "gehämmert"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .activity
+
+/-- *malen* — "paint": activity. Contrast: **Mal-ung* vs *Be-mal-ung* ✓.
+    The *be-* prefix creates a complex change-of-state event. -/
+def malen : GermanVerbEntry where
+  form := "malen"
+  form3sg := "malt"
+  formPast := "malte"
+  formPastPart := "gemalt"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .activity
+
+/-- *bemalen* — "paint (all over)" (*be-* prefix): accomplishment. The
+    prefixed counterpart of *malen*; the pair grounds the *-ung* contrast
+    *Be-mal-ung* vs **Mal-ung* ([benz-2025]'s illustration that *-ung*
+    needs complex change-of-state event structure). -/
+def bemalen : GermanVerbEntry where
+  form := "bemalen"
+  form3sg := "bemalt"
+  formPast := "bemalte"
+  formPastPart := "bemalt"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment
+
+/-- *küssen* — "kiss": activity. Used in RSP examples (*wach-küssen*). -/
+def kuessen : GermanVerbEntry where
+  form := "küssen"
+  form3sg := "küsst"
+  formPast := "küsste"
+  formPastPart := "geküsst"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .activity
+
+/-- *führen* — "lead": activity. Base for *ein-führen* (introduce).
+    *Führ-ung* is an -ung nominalization but only with the meaning
+    "leadership" (RN), not a CEN of simplex *führen*. -/
+def fuehren : GermanVerbEntry where
+  form := "führen"
+  form3sg := "führt"
+  formPast := "führte"
+  formPastPart := "geführt"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .activity
+
+/-- *rauben* — "rob": activity. Contrast: **arm be-raubt* (RSP + prefix = blocked)
+    vs *arm geraubt* (RSP + simplex = OK). -/
+def rauben : GermanVerbEntry where
+  form := "rauben"
+  form3sg := "raubt"
+  formPast := "raubte"
+  formPastPart := "geraubt"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .activity
+
+/-! ### Change-of-state verbs
+
+These verbs have inherent result states. Their root type determines the
+canonical v alloseme via `Verbalizer.Alloseme.fromRootType`. -/
+
+/-- *brechen* — "break": achievement with result root. The broken state
+    entails prior change (you can't be broken without having been broken).
+    Used in RSP data (*Hans hat den Stock kaputt gebrochen*). -/
+def brechen : GermanVerbEntry where
+  form := "brechen"
+  form3sg := "bricht"
+  formPast := "brach"
+  formPastPart := "gebrochen"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .achievement
+  rootType := some .result
+
+/-- *frieren* — "freeze": achievement, unaccusative. PC root: the frozen
+    state does not entail prior change (ice can be perpetually frozen).
+    *Das Wasser fror fest* — used in RSP data. -/
+def frieren : GermanVerbEntry where
+  form := "frieren"
+  form3sg := "friert"
+  formPast := "fror"
+  formPastPart := "gefroren"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  rootType := some .propertyConcept
+
+/-! ### Prefix verbs (complex event structure)
+
+Prefix verbs have complex event structure: the prefix creates a
+change-of-state interpretation from the root. They can typically
+form *-ung* nominalizations (CEN reading). -/
+
+/-- *beobachten* — "observe" (*be-* prefix): accomplishment. The running
+    example in [benz-2025] Ch. 3 — all three nominalization readings
+    (CEN, RN, CCN) are available for *Beobachtung*. -/
+def beobachten : GermanVerbEntry where
+  form := "beobachten"
+  form3sg := "beobachtet"
+  formPast := "beobachtete"
+  formPastPart := "beobachtet"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment
+
+/-- *einführen* — "introduce" (*ein-* particle): accomplishment.
+    *Ein-führ-ung* is a productive -ung nominalization.
+    Demonstrates that particle verbs with complex event structure
+    can undergo -ung nominalization (particles-as-heads solution). -/
+def einfuehren : GermanVerbEntry where
+  form := "einführen"
+  form3sg := "führt ein"
+  formPast := "führte ein"
+  formPastPart := "eingeführt"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment
+
+/-- *verbinden* — "connect" (*ver-* prefix): accomplishment.
+    *Ver-bind-ung* — productive -ung nominalization. -/
+def verbinden : GermanVerbEntry where
+  form := "verbinden"
+  form3sg := "verbindet"
+  formPast := "verband"
+  formPastPart := "verbunden"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment
+
+-- ============================================================================
+-- § 5: Selection-Violating Coordination Verbs ([schwarzer-2026])
+-- ============================================================================
+
+/-! Verbs used in [schwarzer-2026] to test DP-CP coordination in German.
+
+**Non-CP-selecting** (DP complement only): *beenden*, *streichen*,
+*übereilen*, *entwickeln*. These verbs do not independently license a
+*dass*-clause complement; a CP can only appear via coordination with a DP.
+
+**CP-and-DP-selecting**: *veranlassen*, *vergessen*, *erwarten*, *beschließen*.
+These verbs take both DP and *dass*-clause complements. -/
+
+section NonCPSelecting
+
+/-- *beenden* — "end/stop": takes only DP complement.
+    "Die Stadt beendet [DP die Überarbeitung]."
+    "*Die Stadt beendet, [CP dass für Neugeborene ein Baum gepflanzt wird]." -/
+def beenden : GermanVerbEntry where
+  form := "beenden"
+  form3sg := "beendet"
+  formPast := "beendete"
+  formPastPart := "beendet"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment
+
+/-- *streichen* — "cancel/delete": takes only DP complement.
+    "Die Stadt streicht [DP das Programm]."
+    "*Die Stadt streicht, [CP dass Neugeborene einen Baum bekommen]." -/
+def streichen : GermanVerbEntry where
+  form := "streichen"
+  form3sg := "streicht"
+  formPast := "strich"
+  formPastPart := "gestrichen"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment
+
+/-- *übereilen* — "(not) rush": takes only DP complement.
+    "Die Stadt übereilt [DP die Entscheidung] (nicht)." -/
+def uebereilen : GermanVerbEntry where
+  form := "übereilen"
+  form3sg := "übereilt"
+  formPast := "übereilte"
+  formPastPart := "übereilt"
+  frames := [ArgumentFrame.np]
+
+/-- *entwickeln* — "develop": takes only DP complement.
+    "Die Stadt entwickelt [DP ein neues Konzept]." -/
+def entwickeln : GermanVerbEntry where
+  form := "entwickeln"
+  form3sg := "entwickelt"
+  formPast := "entwickelte"
+  formPastPart := "entwickelt"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment
+
+end NonCPSelecting
+
+section CPAndDPSelecting
+
+/-- *veranlassen* — "induce/arrange": takes DP or *dass*-clause.
+    "Die Stadt veranlasst [DP die Überarbeitung]."
+    "Die Stadt veranlasst, [CP dass ein Baum gepflanzt wird]." -/
+def veranlassen : GermanVerbEntry where
+  form := "veranlassen"
+  form3sg := "veranlasst"
+  formPast := "veranlasste"
+  formPastPart := "veranlasst"
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
+
+/-- *vergessen* — "forget": takes DP or *dass*-clause.
+    "Ich vergesse [DP den Termin]."
+    "Ich vergesse, [CP dass ich einen Termin habe]." -/
+def vergessen : GermanVerbEntry where
+  form := "vergessen"
+  form3sg := "vergisst"
+  formPast := "vergaß"
+  formPastPart := "vergessen"
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
+  opaqueContext := true
+
+/-- *erwarten* — "expect": takes DP or *dass*-clause.
+    "Ich erwarte [DP eine Antwort]."
+    "Ich erwarte, [CP dass er kommt]." -/
+def erwarten : GermanVerbEntry where
+  form := "erwarten"
+  form3sg := "erwartet"
+  formPast := "erwartete"
+  formPastPart := "erwartet"
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
+  opaqueContext := true
+
+/-- *beschließen* — "decide": takes DP or *dass*-clause.
+    "Die Stadt beschließt [DP den Plan]."
+    "Die Stadt beschließt, [CP dass der Plan umgesetzt wird]." -/
+def beschliessen : GermanVerbEntry where
+  form := "beschließen"
+  form3sg := "beschließt"
+  formPast := "beschloss"
+  formPastPart := "beschlossen"
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
+
+end CPAndDPSelecting
+
+-- ============================================================================
+-- § 6: Verb List
+-- ============================================================================
+
+def allVerbs : List GermanVerbEntry :=
+  [lassen, machen, toeten, zerbrechen,
+   hoffen, fuerchten, befuerchten, wuenschen, sorgen,
+   bestrafen, belohnen, loben, kritisieren, danken,
+   verklagen, gratulieren, zurechtweisen,
+   anzeigen, auszeichnen, belangen, ehren, entlassen,
+   raechen, revanchieren, zurVerantwortungZiehen,
+   haemmern, malen, bemalen, kuessen, fuehren, rauben,
+   brechen, frieren, beobachten, einfuehren, verbinden,
+   beenden, streichen, uebereilen, entwickeln,
+   veranlassen, vergessen, erwarten, beschliessen]
+
+def lookup (form : String) : Option GermanVerbEntry :=
+  allVerbs.find? (·.form == form)
+
+-- ============================================================================
+-- § 7: Occasion Verb Grounding Theorems
+-- ============================================================================
+
+/-- All 16 German occasion verbs are soft presupposition triggers, derived from their
+    occasion sense ([solstad-bott-2024]). -/
+theorem occasion_verbs_soft_trigger :
+    bestrafen.triggerType? = some .soft ∧
+    belohnen.triggerType? = some .soft ∧
+    loben.triggerType? = some .soft ∧
+    kritisieren.triggerType? = some .soft ∧
+    danken.triggerType? = some .soft ∧
+    verklagen.triggerType? = some .soft ∧
+    gratulieren.triggerType? = some .soft ∧
+    zurechtweisen.triggerType? = some .soft ∧
+    anzeigen.triggerType? = some .soft ∧
+    auszeichnen.triggerType? = some .soft ∧
+    belangen.triggerType? = some .soft ∧
+    ehren.triggerType? = some .soft ∧
+    entlassen.triggerType? = some .soft ∧
+    raechen.triggerType? = some .soft ∧
+    revanchieren.triggerType? = some .soft ∧
+    zurVerantwortungZiehen.triggerType? = some .soft := by
+  decide
+
+/-- All 16 German occasion verbs use the `.occasion` sense tag. -/
+theorem occasion_verbs_sense_tag :
+    bestrafen.senseTag = .occasion ∧
+    belohnen.senseTag = .occasion ∧
+    loben.senseTag = .occasion ∧
+    kritisieren.senseTag = .occasion ∧
+    danken.senseTag = .occasion ∧
+    verklagen.senseTag = .occasion ∧
+    gratulieren.senseTag = .occasion ∧
+    zurechtweisen.senseTag = .occasion ∧
+    anzeigen.senseTag = .occasion ∧
+    auszeichnen.senseTag = .occasion ∧
+    belangen.senseTag = .occasion ∧
+    ehren.senseTag = .occasion ∧
+    entlassen.senseTag = .occasion ∧
+    raechen.senseTag = .occasion ∧
+    revanchieren.senseTag = .occasion ∧
+    zurVerantwortungZiehen.senseTag = .occasion :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl,
+   rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 8: Causative Grounding Theorems
+-- ============================================================================
+
+/-- *lassen* uses `.enable` builder (permissive). -/
+theorem lassen_is_enable :
+    lassen.causative = some .enable := rfl
+
+/-- *machen* uses `.make` builder. -/
+theorem machen_is_make :
+    machen.causative = some .make := rfl
+
+/-- *lassen* and *machen* have different builders. -/
+theorem lassen_machen_different :
+    lassen.causative ≠ machen.causative := by decide
+
+/-- Lexical causatives (*töten*, *zerbrechen*) use `.make`. -/
+theorem lexical_causatives_use_make :
+    toeten.causative = some .make ∧
+    zerbrechen.causative = some .make := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 9: Attitude Grounding Theorems
+-- ============================================================================
+
+/-- *hoffen* and *wünschen* are positive preferential (Class 3). -/
+theorem hoffen_is_positive :
+    hoffen.attitude = some (.preferential (.degreeComparison .positive)) ∧
+    wuenschen.attitude = some (.preferential (.degreeComparison .positive)) :=
+  ⟨rfl, rfl⟩
+
+/-- *fürchten* and *befürchten* are negative preferential (Class 2). -/
+theorem fuerchten_is_negative :
+    fuerchten.attitude = some (.preferential (.degreeComparison .negative)) ∧
+    befuerchten.attitude = some (.preferential (.degreeComparison .negative)) :=
+  ⟨rfl, rfl⟩
+
+/-- *sich sorgen* is uncertainty-based (Class 1). -/
+theorem sorgen_is_uncertainty :
+    sorgen.attitude = some (.preferential .uncertaintyBased) := rfl
+
+-- ============================================================================
+-- § 10: Selection-Violating Coordination Grounding Theorems ([schwarzer-2026])
+-- ============================================================================
+
+/-- Non-CP-selecting verbs cannot take clausal complements.
+    Their only frame is `ArgumentFrame.np`. -/
+theorem nonCPSelecting_profile :
+    ¬ beenden.toVerb.TakesClausal ∧ ¬ streichen.toVerb.TakesClausal ∧
+    ¬ uebereilen.toVerb.TakesClausal ∧ ¬ entwickeln.toVerb.TakesClausal := by
+  decide
+
+/-- CP-and-DP-selecting verbs can take clausal complements.
+    Their `frames` include a `ArgumentFrame.finiteClause` alternate. -/
+theorem cpSelecting_profile :
+    veranlassen.toVerb.TakesClausal ∧ vergessen.toVerb.TakesClausal ∧
+    erwarten.toVerb.TakesClausal ∧ beschliessen.toVerb.TakesClausal := by
+  decide
+
+/-- All 8 experimental verbs can take nominal (DP) complements. -/
+theorem all_experimental_select_dp :
+    beenden.toVerb.TakesNominal ∧ streichen.toVerb.TakesNominal ∧
+    uebereilen.toVerb.TakesNominal ∧ entwickeln.toVerb.TakesNominal ∧
+    veranlassen.toVerb.TakesNominal ∧ vergessen.toVerb.TakesNominal ∧
+    erwarten.toVerb.TakesNominal ∧ beschliessen.toVerb.TakesNominal := by
+  decide
+
+-- ============================================================================
+-- § 11: Cross-Linguistic Bridge Theorems
+-- ============================================================================
+
+/-- German *fürchten* matches Japanese 恐れ *osore* and Turkish *kork-*:
+    all are Class 2 negative preferential (degreeComparison.negative). -/
+theorem fuerchten_matches_crosslinguistic :
+    fuerchten.attitude =
+      some (.preferential (.degreeComparison .negative)) := rfl
+
+/-- German *sich sorgen* matches Japanese 心配 *shinpai* and Turkish *endişelen-*:
+    all are Class 1 uncertainty-based. -/
+theorem sorgen_matches_crosslinguistic :
+    sorgen.attitude = some (.preferential .uncertaintyBased) := rfl
+
+/-- German *lassen* matches French *laisser*: both use `.enable` (permissive). -/
+theorem lassen_matches_french_laisser :
+    lassen.causative = some .enable := rfl
+
+/-! ### The *kaufen* paradigm -/
 
 /-- The present indicative of *kaufen* 'buy'. -/
 def kaufen : Person × Number → Option String

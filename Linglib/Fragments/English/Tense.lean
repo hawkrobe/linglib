@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Syntax.Category.Verb.Tense
 
 /-!

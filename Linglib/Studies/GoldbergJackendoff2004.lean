@@ -1,6 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Syntax.Category.Verb.Argument
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Data.Examples.GoldbergJackendoff2004
 
 /-!

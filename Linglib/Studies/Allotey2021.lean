@@ -1,4 +1,4 @@
-import Linglib.Fragments.Ga.Predicates
+import Linglib.Fragments.Ga.Verbs
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Control.Head

@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Catalan Predicate Lexicon Fragment
+# Catalan verbs
 [palmieri-2024]
 
 Catalan verbs with lexical reciprocal entries alongside their
@@ -11,7 +11,7 @@ Membership in `Catalan.Reciprocals.lexicalReciprocals` carries the
 reciprocal marking; the entries here are ordinary verb entries.
 -/
 
-namespace Catalan.Predicates
+namespace Catalan.Verbs
 
 /-- *abraçar* 'hug' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
@@ -49,4 +49,4 @@ def trobar : Verb where
   form := "trobar"
   frames := [ArgumentFrame.np]
 
-end Catalan.Predicates
+end Catalan.Verbs

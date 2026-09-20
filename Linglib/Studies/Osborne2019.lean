@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.Adposition
 import Linglib.Syntax.WordGrammar.LexicalRules
