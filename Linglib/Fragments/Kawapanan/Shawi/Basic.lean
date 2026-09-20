@@ -71,6 +71,4 @@ def caseMarker : Case → Option String
   | .erg => some "-ri"
   | _ => none
 
-example : Case.IsValidInventory caseInventory := by decide
-
 end Kawapanan.Shawi

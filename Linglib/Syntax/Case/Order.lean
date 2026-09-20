@@ -51,7 +51,7 @@ open Core.Order (RankLT RankLE)
     Returns `none` for cases not on the containment hierarchy
     (e.g., ERG/ABS in ergative systems, or minor cases whose containment
     structure is less well established). Codomain `Option (Fin 5)` — the
-    boundedness is encoded in the type, matching `Case.hierarchyRank`.
+    boundedness is encoded in the type.
 
     **Encoding caveat.** [caha-2009]'s Universal Case sequence is
     NOM-ACC-GEN-DAT-INST-COM (no LOC); his Russian-specific sequence

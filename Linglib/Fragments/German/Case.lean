@@ -3,9 +3,8 @@ import Linglib.Syntax.Case.Basic
 /-!
 # German Case Inventory [blake-1994]
 
-German has **4 cases**: NOM, ACC, GEN, DAT. This is the largest contiguous
-inventory possible without any peripheral (spatial) cases — exactly the
-"inner peripheral" boundary on Blake's hierarchy.
+German has **4 cases**: NOM, ACC, GEN, DAT, one of the four-case systems
+[blake-1994] cites (`Studies/Blake1994.lean`).
 
 ## Syncretism
 
@@ -20,8 +19,5 @@ namespace German.Case
 /-- German 4-case inventory. -/
 def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat}
-
--- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4).
-example : Case.IsValidInventory inventory := by decide
 
 end German.Case

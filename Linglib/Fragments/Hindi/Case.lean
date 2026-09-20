@@ -19,14 +19,8 @@ is marked at all ([blake-1994]).
 namespace Hindi.Case
 
 /-- The case inventory, with the two syncretic pairs, accusative and dative and ablative and
-instrumental, as distinct cases since they occupy different ranks of Blake's hierarchy. -/
+instrumental, as distinct cases. -/
 def inventory : Finset Case := {.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst}
-
-/-- The inventory is contiguous on Blake's hierarchy. -/
-example : Case.IsValidInventory inventory := by decide
-
-/-- The ablative and the instrumental, both *-se*, share a rank of Blake's hierarchy. -/
-theorem abl_inst_same_tier : Case.hierarchyRank .abl = Case.hierarchyRank .inst := rfl
 
 /-- The alignment by aspect: ergative in the perfective, where the transitive subject takes
 *-ne*, and accusative otherwise. -/

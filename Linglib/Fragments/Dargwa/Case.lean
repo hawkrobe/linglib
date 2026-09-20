@@ -40,16 +40,6 @@ namespace Dargwa.Case
 def inventory : Finset Case :=
   {.abs, .erg, .gen, .dat, .com, .ess}
 
-/-- Dargwa's grammatical case inventory violates strict contiguity
-    on Blake's hierarchy: COM (rank 1) and ESS (rank 0) are present
-    without LOC (rank 3) or ABL/INST (rank 2). This is expected:
-    Dargwa's rich *locative system* (8 localizations × 4 orientations)
-    functionally covers spatial and source meanings that LOC and ABL
-    encode in other languages. The grammatical vs. locative split is
-    a structural feature of Nakh-Dagestanian languages. -/
-theorem inventory_not_strictly_contiguous :
-    ¬ Case.IsValidInventory inventory := by decide
-
 -- ============================================================================
 -- § 2: Consistent Ergative Alignment
 -- ============================================================================

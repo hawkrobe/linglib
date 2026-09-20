@@ -1,5 +1,4 @@
 import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Basic
 /-!
 # Greek Case Inventory [blake-1994]
 
@@ -22,13 +21,8 @@ namespace Greek.Case
 def inventory : Finset Case :=
   {.nom, .acc, .gen}
 
--- Contiguous on Blake's hierarchy (ranks 6, 6, 5).
-example : Case.IsValidInventory inventory := by decide
-
 /-- Classical Greek with dative. -/
 def classicalInventory : Finset Case :=
   {.nom, .acc, .gen, .dat}
-
-example : Case.IsValidInventory classicalInventory := by decide
 
 end Greek.Case

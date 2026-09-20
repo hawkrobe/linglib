@@ -1,5 +1,5 @@
 import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Basic
+
 /-!
 # Turkish Case Inventory [blake-1994]
 [goksel-kerslake-2005]
@@ -7,9 +7,8 @@ import Linglib.Syntax.Case.Basic
 Turkish has **6 cases** with agglutinative suffixes:
 NOM (∅), ACC (-I), GEN (-In), DAT (-A), LOC (-DA), ABL (-DAn).
 
-This inventory is perfectly contiguous on Blake's hierarchy: ranks 6–2
-with no gaps. Turkish is the typological ideal case for the hierarchy —
-a rich peripheral inventory built up exactly in the predicted order.
+The instrumental function is expressed by a postposition. [blake-1994] cites the
+system for the ablative stage of his hierarchy (`Studies/Blake1994.lean`).
 
 -/
 
@@ -19,8 +18,5 @@ namespace Turkish.Case
     LOC(-DA), ABL(-DAn). -/
 def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl}
-
--- Perfectly contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 3, 2).
-example : Case.IsValidInventory inventory := by decide
 
 end Turkish.Case

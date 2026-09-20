@@ -10,22 +10,16 @@ after a consonant and *-ga* after a vowel, the accusative *-eul* and *-reul*, th
 *-e* of a state and goal and *-eseo* of an action and source, the ablative *-buteo*, the
 instrumental and directional *-(eu)ro*, and the comitative *-gwa* and *-wa*, *-hago* and the
 casual *-(i)rang*. Casual speech drops the nominative, accusative, genitive and dative
-particles. The cases the markers realize run from the nominative to the comitative without a
-gap on Blake's hierarchy. Forms are in the Revised Romanization; Sohn writes *ka*, *(l)ul*,
-*uy*, *eykey*, *hanthey*, *kkey*, *ey*, *eyse*, *pwuthe*, *(u)lo* and *(k)wa*.
+particles. Forms are in the Revised Romanization; Sohn writes *ka*, *(l)ul*, *uy*, *eykey*,
+*hanthey*, *kkey*, *ey*, *eyse*, *pwuthe*, *(u)lo* and *(k)wa*.
 
 ## Main definitions
 
 * `Korean.Case.markers` — the markers, with allomorphs in the form
 * `Korean.Case.inventory` — the cases they realize
 
-## Main results
-
-* `Korean.Case.inventory_isValid` — the inventory is contiguous on Blake's hierarchy
-
 ## References
 
-* [blake-1994]
 * [sohn-1994]
 -/
 
@@ -67,8 +61,5 @@ def markers : Finset Case.Marker := {ga, reul, ui, ege, kke, e, eseo, buteo, ro,
 
 /-- The cases the markers realize. -/
 def inventory : Finset Case := Case.Marker.inventory markers
-
-/-- The inventory is contiguous on Blake's hierarchy. -/
-theorem inventory_isValid : Case.IsValidInventory inventory := by decide
 
 end Korean.Case

@@ -1,82 +1,65 @@
+import Mathlib.Data.Fintype.Basic
 import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Basic
-import Linglib.Morphology.Grammaticalization.Case
 
 /-!
-# Latin Case Inventory [blake-1994]
+# Latin case
 
-Latin has **6 cases** in the standard description ([blake-1994], passim):
-NOM, ACC, GEN, DAT, ABL, VOC. Latin is Blake's primary example language
-throughout *Case* — its paradigms illustrate syncretism patterns (Ch. 2,
-pp. 19–24), the core/peripheral distinction, and the ABL's wide functional
-range (source, instrument, cause, comparison).
+The traditional description of Latin has six cases: nominative, vocative, accusative, genitive,
+dative and ablative. The vocative is a form of address standing outside the clause, and it is
+distinct from the nominative only in the singular of non-neuter second-declension nouns
+(`Latin.Declension`).
 
-A vestigial **locative** survives for a few nouns (place names, *domī*
-'at home', *humī* 'on the ground'). Including it gives a 7-case inventory
-that satisfies Blake's contiguity; the standard 6-case inventory has a gap
-at rank 3 (LOC) between DAT and ABL.
+The ablative continues three cases that were once distinct, an ablative, a locative and an
+instrumental, and it expresses source, location and instrument accordingly. A separate locative
+survives for names of towns and a few nouns such as *domī* 'at home'. The goal of motion is
+expressed by the accusative, there being no allative. Blake takes Latin as his running example
+of an inflectional case system.
 
-## Syncretism
+## References
 
-Latin syncretism patterns divide into two groups:
-- NOM + ACC: neuter nouns (2nd, 3rd, 4th declension)
-- DAT + ABL: plural across all declensions
-
+* [blake-1994]
 -/
 
 namespace Latin.Case
 
--- ============================================================================
--- § 1: Case Inventory
--- ============================================================================
+/-- The six cases of the traditional description, in the order of the school paradigms. -/
+inductive Value where
+  | nom
+  | voc
+  | acc
+  | gen
+  | dat
+  | abl
+  deriving DecidableEq, Repr, Fintype
 
-/-- Standard Latin 6-case inventory (NOM ACC GEN DAT ABL VOC). -/
-def inventory : Finset Case :=
-  {.nom, .acc, .gen, .dat, .abl, .voc}
+/-- The comparative label of each case. -/
+def Value.toLabel : Value → Case
+  | .nom => .nom
+  | .voc => .voc
+  | .acc => .acc
+  | .gen => .gen
+  | .dat => .dat
+  | .abl => .abl
 
-/-- The hierarchy-relevant subset (excluding VOC at rank 0). -/
-def coreInventory : Finset Case :=
-  {.nom, .acc, .gen, .dat, .abl}
+/-- The comparative case functions a case expresses. The ablative expresses location and
+instrument beside source, and the accusative the goal of motion beside the direct object. -/
+def Value.functions : Value → Finset Case
+  | .abl => {.abl, .loc, .inst}
+  | .acc => {.acc, .all}
+  | v => {v.toLabel}
 
-/-- Latin's 5-case core inventory **fails** strict contiguity: DAT (rank 4)
-    and ABL (rank 2) have no LOC (rank 3) between them. -/
-theorem core_inventory_fails_strict :
-    ¬ Case.IsValidInventory coreInventory := by decide
+/-- The Latin cases under their comparative labels. -/
+def inventory : Finset Case := Finset.univ.image Value.toLabel
 
-/-- With the vestigial locative, contiguous on ranks 6–2.
-    VOC (rank 0) creates a gap at rank 1 under strict checking, so
-    we validate the hierarchy-relevant subset without it. -/
-def inventoryWithLocative : Finset Case :=
-  {.nom, .acc, .gen, .dat, .loc, .abl}
+/-- Every case function some Latin case expresses. -/
+def functions : Finset Case := Finset.univ.biUnion Value.functions
 
-example : Case.IsValidInventory inventoryWithLocative := by decide
+theorem toLabel_injective : Function.Injective Value.toLabel := by decide
 
--- ============================================================================
--- § 2: Syncretism Patterns ([blake-1994], pp. 19–24)
--- ============================================================================
+/-- Every case expresses the function it is labelled for. -/
+theorem toLabel_mem_functions (v : Value) : v.toLabel ∈ v.functions := by
+  cases v <;> decide
 
-theorem neuter_syncretism_adjacent :
-    Case.HierarchyAdjacent .nom .acc := by decide
-
-theorem dat_abl_not_strictly_adjacent :
-    ¬ Case.HierarchyAdjacent .dat .abl := by decide
-
-theorem dat_abl_inventory_adjacent :
-    Case.InventoryAdjacent coreInventory .dat .abl := by decide
-
--- ============================================================================
--- § 3: Case Extension ([heine-2009], Table 29.6)
--- ============================================================================
-
-/-- Latin ABL is the textbook case of case extension: a single
-    morphological form covers source (ablativus separativus), instrumental
-    (ablativus instrumenti), and causal (ablativus causae) functions.
-    These are exactly the ablative extension targets in [heine-2009]
-    Table 29.6, formalized in `Case.Extends`. -/
-theorem abl_extends_to_inst :
-    Case.Extends .abl .inst := by decide
-
-theorem abl_extends_to_caus :
-    Case.Extends .abl .caus := by decide
+theorem inventory_subset_functions : inventory ⊆ functions := by decide
 
 end Latin.Case

@@ -99,11 +99,9 @@ def RespectsCahaContainment (inv : Finset Case) : Prop :=
 instance (inv : Finset Case) : Decidable (RespectsCahaContainment inv) := by
   unfold RespectsCahaContainment; infer_instance
 
-/-- Containment-respect is `IsLowerSet` under the scoped Caha order — the
-    Caha analogue of `Case.isValidInventory_iff_ordConnected` (Blake).
-    The two contiguity predicates on `Finset Case` are thus both
-    order-theoretic closure properties, on the partial Caha order and the
-    total Blake rank respectively. -/
+/-- Containment-respect is `IsLowerSet` under the scoped Caha order, as
+    conformity to Blake's hierarchy is `IsLowerSet` of the positions an
+    inventory fills (`Blake1994.Conforms`). -/
 theorem respectsCahaContainment_iff_isLowerSet (inv : Finset Case) :
     RespectsCahaContainment inv ↔ IsLowerSet (inv : Set Case) := by
   simp only [RespectsCahaContainment, IsLowerSet, Finset.mem_coe]
