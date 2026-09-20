@@ -45,7 +45,7 @@ possible*, which it attributes to the permission reading of *pouvoir*, is not de
 namespace RuytenbeekEtAl2017
 
 open Data.Examples Discourse.SpeechAct French
-open Modality (ModalFlavor ModalForce)
+open Modality
 open Mood (Illocutionary)
 open Mood.Illocutionary (primaryFlavor)
 
@@ -70,21 +70,14 @@ def Construction.mood : Construction → Illocutionary
   | .youMust | .youCan | .itIsPossible | .controlDeclarative => .declarative
 
 /-- The modal of a construction, from the French fragment. -/
-def Construction.modal : Construction → Option FrenchModalEntry
+def Construction.modal : Construction → Option ModalItem
   | .canYou | .youCan => some pouvoir
-  | .isItPossible | .itIsPossible => some ilEstPossible
+  | .isItPossible | .itIsPossible => some ilEstPossibleDe
   | .youMust => some devoir
   | _ => none
 
-/-- The force of a construction's modal. -/
-def Construction.modalForce (c : Construction) : Option ModalForce := c.modal.map (·.force)
-
-/-- The flavors of a construction's modal. -/
-def Construction.modalFlavors (c : Construction) : List ModalFlavor :=
-  (c.modal.map (·.flavors)).getD []
-
-/-- The preparatory condition a construction questions: the two interrogative requests ask
-about the addressee's ability. -/
+/-- The preparatory condition a construction questions, which for the two interrogative
+requests is the addressee's ability. -/
 def Construction.queriedPrep : Construction → Option PreparatoryCondition
   | .canYou | .isItPossible => some .ability
   | _ => none
@@ -107,7 +100,7 @@ inductive Force where
   | assertion
   deriving DecidableEq, Repr
 
-/-- Literalism: the force a sentence type encodes. -/
+/-- The force a sentence type encodes under literalism. -/
 def encodedForce : Illocutionary → Option Force
   | .imperative => some .directive
   | .interrogative => some .question
@@ -118,7 +111,7 @@ def encodedForce : Illocutionary → Option Force
 
 /-- The paper's corpus coding of a construction's uses, as a percentage. -/
 def corpusPct (c : Construction) (use : String) : ℕ :=
-  ((Examples.all.filter λ x => x.feature? "construction" = some c.tag ∧
+  ((Examples.all.filter fun x ↦ x.feature? "construction" = some c.tag ∧
       (x.feature? "corpusN").isSome).filterMap (·.nat? use)).headD 0
 
 /-- A construction is conventionalised as a request when its directive uses outnumber its
@@ -145,9 +138,8 @@ def Literalist.DirectivePrimary (c : Construction) : Prop :=
 imperative's directive-making semantics: the imperative's own deontic necessity, the
 questioning of the addressee's ability, or a possibility modal's enablement. -/
 def NonLiteralist.DirectivePrimary (c : Construction) : Prop :=
-  c.mood = .imperative ∨
-    (c.modalForce = some .necessity ∧ primaryFlavor .imperative ∈ c.modalFlavors) ∨
-    c.queriedPrep = some .ability ∨ c.modalForce = some .possibility
+  c.mood = .imperative ∨ (∃ m ∈ c.modal, (.necessity, primaryFlavor .imperative) ∈ m.meaning) ∨
+    c.queriedPrep = some .ability ∨ ∃ m ∈ c.modal, .possibility ∈ m.forces
 
 instance (c : Construction) : Decidable (Literalist.DirectivePrimary c) := by
   unfold Literalist.DirectivePrimary; infer_instance
@@ -159,7 +151,7 @@ instance (c : Construction) : Decidable (NonLiteralist.DirectivePrimary c) := by
 request, and differ on every other modal construction. -/
 theorem accounts_differ (c : Construction) :
     (Literalist.DirectivePrimary c ↔ NonLiteralist.DirectivePrimary c) ↔
-      c.modalForce = none ∨ Conventionalised c := by
+      c.modal = none ∨ Conventionalised c := by
   cases c <;> decide +kernel
 
 /-! ### The observations -/
@@ -174,9 +166,9 @@ inductive Directiveness where
 
 private def constructions : List (String × Construction) :=
   [.imperative, .controlInterrogative, .canYou, .isItPossible, .youMust, .youCan, .itIsPossible,
-    .controlDeclarative].map λ c => (c.tag, c)
+    .controlDeclarative].map fun c ↦ (c.tag, c)
 
-/-- A stimulus row: its construction and how often it was interpreted as a directive. -/
+/-- A stimulus row gives its construction and how often it was interpreted as a directive. -/
 def datum (x : LinguisticExample) : Option (Construction × Directiveness) := do
   pure (← x.parse? "construction" constructions,
     ← x.parse? "directive"
@@ -184,7 +176,7 @@ def datum (x : LinguisticExample) : Option (Construction × Directiveness) := do
 
 /-- The stimulus rows of the two experiments. -/
 def stimuli : List (LinguisticExample × Construction × Directiveness) :=
-  Examples.all.filterMap λ x => (datum x).map (x, ·)
+  Examples.all.filterMap fun x ↦ (datum x).map (x, ·)
 
 /-- The construction received directive interpretations. -/
 def Directive (p : LinguisticExample × Construction × Directiveness) : Prop := p.2.2 ≠ .none
@@ -192,8 +184,8 @@ def Directive (p : LinguisticExample × Construction × Directiveness) : Prop :=
 instance (p : LinguisticExample × Construction × Directiveness) : Decidable (Directive p) := by
   unfold Directive; infer_instance
 
-/-- The directive interpretations came without activation of the encoded force: no fixations
-on the answer buttons and response times equal to the imperative's. -/
+/-- The directive interpretations came without activation of the encoded force, with no
+fixations on the answer buttons and response times equal to the imperative's. -/
 def Unactivated (p : LinguisticExample × Construction × Directiveness) : Prop :=
   p.1.feature? "activation" = some "none"
 
@@ -211,7 +203,7 @@ theorem nonLiteralist_predicts :
     ∀ p ∈ stimuli, Directive p ↔ NonLiteralist.DirectivePrimary p.2.1 := by
   decide +kernel
 
-/-- Literalism is refuted on both of the paper's predictions: the non-conventionalised
+/-- Literalism is refuted on both of the paper's predictions. The non-conventionalised
 *Est-il possible de VP?* and the deontic *Vous devez VP*, like the two possibility
 declaratives, received directive interpretations without activating the question or the
 assertion, although literalism makes those readings secondary. -/
@@ -227,7 +219,7 @@ theorem literalist_secondary_found :
 
 /-- The reported response time of a construction's answer responses, in milliseconds. -/
 def rtAnswer (c : Construction) : ℕ :=
-  ((Examples.all.filter λ x => x.feature? "construction" = some c.tag ∧
+  ((Examples.all.filter fun x ↦ x.feature? "construction" = some c.tag ∧
       x.feature? "study" = some "1").filterMap (·.nat? "rtAnswer")).headD 0
 
 /-- Answering the conventionalised request as a question is slower than answering a control
