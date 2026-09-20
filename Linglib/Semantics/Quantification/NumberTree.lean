@@ -1,730 +1,400 @@
-import Linglib.Semantics.Quantification.Defs
+import Linglib.Semantics.Quantification.Counting
+import Mathlib.Data.Finset.NatAntidiagonal
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Tactic.Ring
 
 /-!
-# Number-Tree Quantifiers
-[van-benthem-1984] [van-benthem-1986]
+# The tree of numbers
 
-The number-tree representation of conservative, quantity-invariant GQs.
-Under CONSERV + QUANT, a quantifier's truth value depends only on
-`a = |A ∩ B|` and `b = |A \ B|`, yielding a function `ℕ → ℕ → Bool`.
+This file defines quantifiers on van Benthem's tree of numbers. A conservative quantifier that is
+invariant under permutations of the universe holds of finite sets `A` and `B` according to the
+two numbers `a = |A \ B|` and `b = |A ∩ B|` alone, so it is a set of points `(a, b)`. The points
+with `a + b = n` form the `n`-th row of the tree, the ways of splitting an `n`-element `A`.
 
-Includes impossibility theorems (§10), the Square of Opposition
-uniqueness theorem (§10e), the GQ→NumberTree bridge (§10f),
-and counting quantifiers (§11).
+On this representation inner negation, which negates the scope, swaps the two coordinates, and
+outer negation is the complement. The four corners of the square of opposition are *all*,
+*some*, *no* and *not all*, and the two negations carry each corner to its neighbours.
+
+Van Benthem's postulates of variety, continuity, absence of deadlock and uniformity are each
+invariant under both negations. That symmetry carries the verification of the postulates, and the
+proof that the corners are the only quantifiers satisfying them, from *all* to the other three.
+
+## Main definitions
+
+* `Quantifier.NumberTree`: a quantifier as a relation between `|A \ B|` and `|A ∩ B|`.
+* `Quantifier.NumberTree.innerNeg`: inner negation, the swap of the two coordinates.
+* `Quantifier.NumberTree.all`, `Quantifier.NumberTree.some`, `Quantifier.NumberTree.no`,
+  `Quantifier.NumberTree.notAll`: the corners of the square of opposition.
+* `Quantifier.NumberTree.Asymmetric`, `Quantifier.NumberTree.StronglyConnected`,
+  `Quantifier.NumberTree.Euclidean`: relational conditions on a quantifier, read off the tree.
+* `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
+  `Quantifier.NumberTree.Uniform`: the postulates VAR, CONT, PLUS and UNIF.
+* `Quantifier.NumberTree.ofGQ`: the tree of a generalized quantifier over a finite universe.
+
+## Main results
+
+* `Quantifier.NumberTree.Asymmetric.eq_bot`, `Quantifier.NumberTree.StronglyConnected.eq_top`,
+  `Quantifier.NumberTree.Euclidean.eq_top`: the only asymmetric quantifier is the empty one, the
+  only strongly connected one is the universal one, and a nonempty Euclidean quantifier is
+  universal.
+* `Quantifier.NumberTree.variety_cont_plus_uniform_iff`: the quantifiers satisfying the four
+  postulates are exactly the four corners of the square of opposition.
+* `Quantifier.NumberTree.ofGQ_iff`: a conservative, permutation-invariant generalized quantifier
+  holds of `A` and `B` exactly when its tree holds of `|A \ B|` and `|A ∩ B|`.
+* `Quantifier.NumberTree.card_powerset_points`: there are `2 ^ ((n + 1) * (n + 2) / 2)` sets of
+  points in rows `0` to `n`, the number of quantifiers on a universe of `n` individuals.
+
+## Implementation notes
+
+`Variety` asks only that the quantifier hold somewhere and fail somewhere. Van Benthem's VAR asks
+for both among the points `(0, 0)`, `(1, 0)` and `(0, 1)`, which is stronger, so results assuming
+`Variety` apply under VAR.
+
+Continuity, absence of deadlock and uniformity each treat presence and absence of the quantifier
+alike. Each is stated as a condition on presence (`RowConvex`, `NoDeadlock`, `Homogeneous`) that
+is imposed on the quantifier and on its complement.
+
+## References
+
+* [van-benthem-1984]
 -/
 
 namespace Quantifier
 
-open Quantifier.GQ
-
-variable {α : Type*}
-
-/-! ### Number-Tree Impossibility Theorems (§3.2) -/
-
-/-- Number-tree representation of a conservative, quantity-invariant GQ.
-    Under CONSERV + QUANT, a quantifier's truth value depends only on
-    `a = |A ∩ B|` and `b = |A \ B|` (§2, "tree of numbers").
-    This is inherently cross-domain: any `(a, b)` pair is realizable in some
-    universe of size ≥ a + b. -/
-abbrev NumberTree := Nat → Nat → Bool
+/-- A quantifier on the tree of numbers is a relation between `a = |A \ B|` and `b = |A ∩ B|`. -/
+abbrev NumberTree := ℕ → ℕ → Prop
 
 namespace NumberTree
 
-/-- Variety for number-tree quantifiers: Q is non-trivial. -/
-def Variety (q : NumberTree) : Prop :=
-  (∃ a b, q a b = true) ∧ (∃ a b, q a b = false)
+variable {q : NumberTree} {a b : ℕ}
 
-/-- Thm 3.2.1: No asymmetric CONSERV+QUANT quantifiers exist.
+theorem compl_apply : qᶜ a b ↔ ¬ q a b := Iff.rfl
 
-    On the number tree, asymmetry means: for all `a b c`,
-    `q(a, b) → ¬q(a, c)` — because `|A ∩ B| = a` and `|B \ A| = c` is free
-    (any `c` is realizable in a large enough universe).
+/-! ### Negations and the square of opposition -/
 
-    Proof: Set `c = b`. Then `q(a, b) → ¬q(a, b)`, so `q` is identically
-    false. Contradicts Variety. -/
-theorem no_asymmetric (q : NumberTree) (hVar : q.Variety)
-    (hAsym : ∀ a b c, q a b = true → q a c = false) : False := by
-  obtain ⟨⟨a, b, hab⟩, _⟩ := hVar
-  exact absurd hab (Bool.eq_false_iff.mp (hAsym a b b hab))
+/-- Inner negation negates the scope, which swaps `A \ B` with `A ∩ B`. -/
+def innerNeg (q : NumberTree) : NumberTree := fun a b ↦ q b a
 
-/-- §3.2 consequence: No strict partial order quantifiers.
+@[simp] theorem innerNeg_apply : q.innerNeg a b ↔ q b a := Iff.rfl
 
-    On the number tree, irreflexivity is `∀ n, q(n, 0) = false` (since
-    `Q(A,A)` has `|A ∩ A| = n`, `|A \ A| = 0`). Transitivity (with C = A
-    in the 3-set diagram) gives: `q(a, b) ∧ q(a, c) → q(a+b, 0)`.
+@[simp] theorem innerNeg_innerNeg (q : NumberTree) : q.innerNeg.innerNeg = q := rfl
 
-    Proof: From transitivity, `q(a, b) → q(a, c) → q(a+b, 0)`.
-    From irreflexivity, `q(a+b, 0) = false`. So `q(a, b) → q(a, c) = false`
-    — number-tree asymmetry. Apply `no_asymmetric`. -/
-theorem no_strict_partial_order (q : NumberTree) (hVar : q.Variety)
-    (hIrrefl : ∀ n, q n 0 = false)
-    (hTrans : ∀ a b c, q a b = true → q a c = true → q (a + b) 0 = true) :
-    False := by
-  exact no_asymmetric q hVar (λ a b c hab => by
-    by_contra h
-    rw [Bool.not_eq_false] at h
-    have := hTrans a b c hab h
-    rw [hIrrefl] at this
-    exact absurd this (by decide))
+theorem innerNeg_compl (q : NumberTree) : qᶜ.innerNeg = q.innerNegᶜ := rfl
 
-/-- Thm 3.2.3: No Euclidean CONSERV+QUANT quantifiers exist.
+instance [DecidableRel q] : DecidableRel q.innerNeg := fun a b ↦ inferInstanceAs (Decidable (q b a))
 
-    On the number tree (3-set Venn diagram with 7 free size parameters
-    `p, q, r, s, t, u` plus one more), the Euclidean property becomes:
-    `q(p+q_, r+s) ∧ q(p+r, q_+s) → q(p+t, q_+u)` for all `p q_ r s t u`.
+instance [DecidableRel q] : DecidableRel qᶜ := fun a b ↦ inferInstanceAs (Decidable ¬ q a b)
 
-    Proof (4 steps):
-    1. From Variety witness `q(α, β) = true`, set `p=α, q_=0, r=0, s=β`:
-       `q(α+t, u)` for all `t, u`. So `q(a, b) = true` for `a ≥ α`.
-    2. If `α = 0`, step 1 gives `q ≡ true`, contradicting Variety.
-       If `α > 0`: pair `q(α, 2α)` and `q(2α, α)` (both from step 1)
-       with `p=0, q_=α, r=2α, s=0`: get `q(t, α+u)` for all `t, u`.
-       Combined: `q(a, b) = true` when `a ≥ α` or `b ≥ α`.
-    3. `q(0, α)` (from step 2) and `q(α, 0)` (from step 1) with
-       `p=0, q_=0, r=α, s=0`: get `q(t, u)` for all `t, u`.
-    4. Contradicts Variety. -/
-theorem no_euclidean (q : NumberTree) (hVar : q.Variety)
-    (hEuc : ∀ p q_ r s t u,
-      q (p + q_) (r + s) = true → q (p + r) (q_ + s) = true →
-      q (p + t) (q_ + u) = true) : False := by
-  obtain ⟨⟨α, β, hαβ⟩, ⟨a₀, b₀, hFalse⟩⟩ := hVar
-  -- Step 1: q(α + t, u) for all t, u
-  -- Use hEuc with p=α, q_=0, r=0, s=β: q(α+0)(0+β) ∧ q(α+0)(0+β) → q(α+t)(0+u)
-  have step1 : ∀ t u, q (α + t) u = true := by
-    intro t u
-    have := hEuc α 0 0 β t u (by rwa [Nat.add_zero, Nat.zero_add])
-      (by rwa [Nat.add_zero, Nat.zero_add])
-    simpa [Nat.zero_add] using this
-  -- Step 3 (shortcut): q(α, 0) from step1 (t=0, u=0)
-  have qα0 : q α 0 = true := step1 0 0
-  -- If α = 0: step1 gives q(t, u) for all t, u → contradiction
-  by_cases hα : α = 0
-  · subst hα; simp only [Nat.zero_add] at step1; rw [step1] at hFalse; exact absurd hFalse (by decide)
-  -- α > 0
-  -- Step 2: q(t, α + u) for all t, u
-  -- q(α, β) is our witness. Use step1 to get q at larger first args.
-  -- q(2*α, α) from step1 (t = α, u = α)
-  have q_2α_α : q (2 * α) α = true := by
-    have := step1 α α; rwa [show α + α = 2 * α from by omega] at this
-  -- q(α, 2*α) via step1: need q(α + t', 2*α) — take t' = 0
-  have q_α_2α : q α (2 * α) = true := by
-    have := step1 0 (2 * α); rwa [Nat.add_zero] at this
-  -- Use hEuc with p=0, q_=α, r=2*α, s=0: q(0+α)(2α+0) ∧ q(0+2α)(α+0) → q(0+t)(α+u)
-  have step2 : ∀ t u, q t (α + u) = true := by
-    intro t u
-    have := hEuc 0 α (2 * α) 0 t u
-      (by rwa [Nat.zero_add, Nat.add_zero])
-      (by rwa [Nat.zero_add, Nat.add_zero])
-    simpa [Nat.zero_add] using this
-  -- Step 3: q(0, α) from step2 (t=0, u=0)
-  have q0α : q 0 α = true := by have := step2 0 0; rwa [Nat.add_zero] at this
-  -- Use hEuc with p=0, q_=0, r=α, s=0: q(0+0)(α+0) ∧ q(0+α)(0+0) → q(0+t)(0+u)
-  have step3 : ∀ t u, q t u = true := by
-    intro t u
-    have := hEuc 0 0 α 0 t u
-      (by rwa [Nat.zero_add, Nat.add_zero])
-      (by rwa [Nat.zero_add, Nat.add_zero])
-    simpa [Nat.zero_add] using this
-  -- Step 4: contradiction with Variety
-  rw [step3] at hFalse; exact absurd hFalse (by decide)
+/-- The quantifier *all* holds when nothing in `A` lies outside `B`. -/
+protected def all : NumberTree := fun a _ ↦ a = 0
 
-/-! ### Number-tree representations of the Square of Opposition -/
+/-- The quantifier *some* holds when something in `A` lies in `B`. -/
+protected def some : NumberTree := fun _ b ↦ b ≠ 0
 
-/-- "all" on the number tree: Q(A,B) iff A ⊆ B iff |A\B| = 0. -/
-def allNT : NumberTree := λ _ b => b == 0
+/-- The quantifier *no* holds when nothing in `A` lies in `B`. -/
+protected def no : NumberTree := fun _ b ↦ b = 0
 
-/-- "some" on the number tree: Q(A,B) iff A∩B ≠ ∅ iff |A∩B| ≥ 1. -/
-def someNT : NumberTree := λ a _ => decide (a ≥ 1)
+/-- The quantifier *not all* holds when something in `A` lies outside `B`. -/
+protected def notAll : NumberTree := fun a _ ↦ a ≠ 0
 
-/-- "no" on the number tree: Q(A,B) iff A∩B = ∅ iff |A∩B| = 0. -/
-def noNT : NumberTree := λ a _ => a == 0
+instance : DecidableRel NumberTree.all := fun a _ ↦ inferInstanceAs (Decidable (a = 0))
+instance : DecidableRel NumberTree.some := fun _ b ↦ inferInstanceAs (Decidable (b ≠ 0))
+instance : DecidableRel NumberTree.no := fun _ b ↦ inferInstanceAs (Decidable (b = 0))
+instance : DecidableRel NumberTree.notAll := fun a _ ↦ inferInstanceAs (Decidable (a ≠ 0))
 
-/-- "not all" on the number tree: Q(A,B) iff A ⊄ B iff |A\B| ≥ 1. -/
-def notAllNT : NumberTree := λ _ b => decide (b ≥ 1)
+theorem innerNeg_all : NumberTree.all.innerNeg = NumberTree.no := rfl
 
-/-! ### Additivity (§5.2, p.460) -/
+theorem innerNeg_some : NumberTree.some.innerNeg = NumberTree.notAll := rfl
 
-/-- Additive: (a,b) ∈ Q and (a',b') ∈ Q implies (a+a', b+b') ∈ Q.
-    p.460: all, some, no, not all are additive.
-    Additivity means Q's truth set is closed under componentwise addition
-    in the number tree. -/
+theorem compl_all : NumberTree.allᶜ = NumberTree.notAll := rfl
+
+theorem compl_no : NumberTree.noᶜ = NumberTree.some := rfl
+
+/-! ### Relational conditions
+
+A condition on the relation `Q A B` between sets becomes a condition on the tree once the sets
+are replaced by the sizes of the cells of their Venn diagram. -/
+
+/-- A quantifier is asymmetric when `Q A B` excludes `Q B A`. The two share `|A ∩ B|`, and
+`|A \ B|` and `|B \ A|` are arbitrary. -/
+def Asymmetric (q : NumberTree) : Prop := ∀ a b c, q a c → ¬ q b c
+
+/-- A quantifier is strongly connected when `Q A B` or `Q B A` holds of any two sets. -/
+def StronglyConnected (q : NumberTree) : Prop := ∀ a b c, q a c ∨ q b c
+
+/-- A quantifier is irreflexive when `Q A A` never holds. -/
+def Irreflexive (q : NumberTree) : Prop := ∀ n, ¬ q 0 n
+
+/-- A quantifier is Euclidean when `Q X Y` and `Q X Z` give `Q Y Z`. Among the cells of the Venn
+diagram of `X`, `Y` and `Z`, `p` counts `X ∩ Y ∩ Z`, `x` the rest of `X ∩ Y`, `y` the rest of
+`X ∩ Z`, `s` the rest of `X`, `t` the rest of `Y ∩ Z`, and `u` the rest of `Y`. -/
+def Euclidean (q : NumberTree) : Prop :=
+  ∀ p x y s t u, q (y + s) (p + x) → q (x + s) (p + y) → q (x + u) (p + t)
+
+/-- The only asymmetric quantifier is the empty one. -/
+theorem Asymmetric.eq_bot (h : q.Asymmetric) : q = ⊥ :=
+  funext₂ fun a c ↦ eq_false fun hq ↦ h a a c hq hq
+
+/-- The only strongly connected quantifier is the universal one. -/
+theorem StronglyConnected.eq_top (h : q.StronglyConnected) : q = ⊤ :=
+  funext₂ fun a c ↦ eq_true ((h a a c).elim id id)
+
+/-- An irreflexive quantifier for which `Q A B` and `Q B A` give `Q A A`, as transitivity
+requires, is asymmetric. So there is no strict partial order among the nonempty quantifiers. -/
+theorem Irreflexive.asymmetric (hI : q.Irreflexive)
+    (hT : ∀ a b c, q a c → q b c → q 0 (a + c)) : q.Asymmetric :=
+  fun a b c h₁ h₂ ↦ hI _ (hT a b c h₁ h₂)
+
+/-- A nonempty Euclidean quantifier is universal. -/
+theorem Euclidean.eq_top (h : q.Euclidean) (hq : ∃ a b, q a b) : q = ⊤ := by
+  obtain ⟨d, c, hdc⟩ := hq
+  have h₁ : ∀ t u, q u (c + t) := fun t u ↦ by
+    simpa using h c 0 0 d t u (by simpa using hdc) (by simpa using hdc)
+  have h₂ : ∀ t u, q (c + u) t := fun t u ↦ by
+    have hl : q (2 * c) c := by simpa using h₁ 0 (2 * c)
+    have hr : q c (2 * c) := by simpa [two_mul] using h₁ c c
+    simpa using h 0 c (2 * c) 0 t u (by simpa using hl) (by simpa using hr)
+  refine funext₂ fun a b ↦ eq_true ?_
+  simpa using h 0 0 c 0 b a (by simpa using h₂ 0 0) (by simpa using h₁ 0 0)
+
+/-! ### The postulates -/
+
+/-- A quantifier has variety when it holds somewhere and fails somewhere. -/
+def Variety (q : NumberTree) : Prop := (∃ a b, q a b) ∧ ∃ a b, ¬ q a b
+
+/-- A quantifier is row-convex when it meets each row of the tree in an uninterrupted stretch. -/
+def RowConvex (q : NumberTree) : Prop :=
+  ∀ ⦃a₁ b₁ a b a₂ b₂ : ℕ⦄, a₁ + b₁ = a + b → a₂ + b₂ = a + b → a₁ ≤ a → a ≤ a₂ →
+    q a₁ b₁ → q a₂ b₂ → q a b
+
+/-- The postulate CONT asks that both the presence and the absence of the quantifier be
+uninterrupted along each row. -/
+def Cont (q : NumberTree) : Prop := q.RowConvex ∧ qᶜ.RowConvex
+
+/-- A quantifier has no deadlock when adding an individual to `A` can always keep it true. -/
+def NoDeadlock (q : NumberTree) : Prop := ∀ ⦃a b : ℕ⦄, q a b → q (a + 1) b ∨ q a (b + 1)
+
+/-- The postulate PLUS asks that neither the truth nor the falsity of the quantifier reach a
+deadlock. -/
+def Plus (q : NumberTree) : Prop := q.NoDeadlock ∧ qᶜ.NoDeadlock
+
+/-- A quantifier is homogeneous when adding an individual to `A` has the same two outcomes
+wherever the quantifier holds. -/
+def Homogeneous (q : NumberTree) : Prop :=
+  ∀ ⦃a₁ b₁ a₂ b₂ : ℕ⦄, q a₁ b₁ → q a₂ b₂ →
+    (q (a₁ + 1) b₁ ↔ q (a₂ + 1) b₂) ∧ (q a₁ (b₁ + 1) ↔ q a₂ (b₂ + 1))
+
+/-- The postulate UNIF asks that adding an individual have the same outcomes wherever the
+quantifier holds, and the same outcomes wherever it fails. -/
+def Uniform (q : NumberTree) : Prop := q.Homogeneous ∧ qᶜ.Homogeneous
+
+theorem Variety.compl (h : q.Variety) : qᶜ.Variety :=
+  ⟨h.2, h.1.imp fun _ ↦ Exists.imp fun _ ↦ not_not_intro⟩
+
+theorem Cont.compl (h : q.Cont) : qᶜ.Cont := ⟨h.2, by rw [compl_compl]; exact h.1⟩
+
+theorem Plus.compl (h : q.Plus) : qᶜ.Plus := ⟨h.2, by rw [compl_compl]; exact h.1⟩
+
+theorem Uniform.compl (h : q.Uniform) : qᶜ.Uniform := ⟨h.2, by rw [compl_compl]; exact h.1⟩
+
+theorem Variety.innerNeg (h : q.Variety) : q.innerNeg.Variety :=
+  ⟨let ⟨a, b, hq⟩ := h.1; ⟨b, a, hq⟩, let ⟨a, b, hq⟩ := h.2; ⟨b, a, hq⟩⟩
+
+theorem RowConvex.innerNeg (h : q.RowConvex) : q.innerNeg.RowConvex :=
+  fun _ _ _ _ _ _ h₁ h₂ _ _ p₁ p₂ ↦ h (by omega) (by omega) (by omega) (by omega) p₂ p₁
+
+theorem NoDeadlock.innerNeg (h : q.NoDeadlock) : q.innerNeg.NoDeadlock :=
+  fun _ _ hq ↦ (h hq).symm
+
+theorem Homogeneous.innerNeg (h : q.Homogeneous) : q.innerNeg.Homogeneous :=
+  fun _ _ _ _ h₁ h₂ ↦ (h h₁ h₂).symm
+
+theorem Cont.innerNeg (h : q.Cont) : q.innerNeg.Cont := ⟨h.1.innerNeg, h.2.innerNeg⟩
+
+theorem Plus.innerNeg (h : q.Plus) : q.innerNeg.Plus := ⟨h.1.innerNeg, h.2.innerNeg⟩
+
+theorem Uniform.innerNeg (h : q.Uniform) : q.innerNeg.Uniform := ⟨h.1.innerNeg, h.2.innerNeg⟩
+
+/-! ### The square of opposition
+
+The four corners are the only quantifiers with variety that satisfy CONT, PLUS and UNIF. -/
+
+theorem variety_all : NumberTree.all.Variety := ⟨⟨0, 0, rfl⟩, 1, 0, one_ne_zero⟩
+
+theorem cont_all : NumberTree.all.Cont := by
+  refine ⟨fun _ _ _ _ _ _ _ _ _ _ h₁ h₂ ↦ ?_, fun _ _ _ _ _ _ _ _ _ _ h₁ _ ↦ ?_⟩ <;>
+    simp only [NumberTree.all, compl_apply] at * <;> omega
+
+theorem plus_all : NumberTree.all.Plus :=
+  ⟨fun _ _ h ↦ .inr h, fun _ _ _ ↦ .inl (Nat.succ_ne_zero _)⟩
+
+theorem uniform_all : NumberTree.all.Uniform := by
+  refine ⟨fun _ _ _ _ h₁ h₂ ↦ ?_, fun _ _ _ _ h₁ h₂ ↦ ?_⟩ <;>
+    simp only [NumberTree.all, compl_apply] at * <;> omega
+
+/-- A quantifier that holds at `(0, 0)` and whose row `1` reads absence, presence is *all*. -/
+private theorem eq_all (hC : q.RowConvex) (hU : q.Uniform) (h00 : q 0 0) (h10 : ¬ q 1 0)
+    (h01 : q 0 1) : q = NumberTree.all := by
+  have hT : ∀ {a b}, q a b → ¬ q (a + 1) b ∧ q a (b + 1) := fun h ↦
+    let ⟨hl, hr⟩ := hU.1 h h00; ⟨fun h' ↦ h10 (hl.mp h'), hr.mpr h01⟩
+  have hcol : ∀ b, q 0 b := fun b ↦ by
+    induction b with
+    | zero => exact h00
+    | succ b ih => exact (hT ih).2
+  have h20 : ¬ q 2 0 := fun h ↦
+    (hT (hcol 1)).1 (hC (a₁ := 0) (b₁ := 2) (a := 1) (b := 1) (b₂ := 0) rfl rfl zero_le_one
+      one_le_two (hcol 2) h)
+  have hF : ∀ {a b}, ¬ q a b → ¬ q (a + 1) b ∧ ¬ q a (b + 1) := fun h ↦
+    let ⟨hl, hr⟩ := hU.2 h h10; ⟨hl.mpr h20, hr.mpr (hT (hcol 1)).1⟩
+  have hrow : ∀ a b, ¬ q (a + 1) b := fun a ↦ by
+    induction a with
+    | zero => exact fun b ↦ (hT (hcol b)).1
+    | succ a ih => exact fun b ↦ (hF (ih b)).1
+  funext a b
+  cases a with
+  | zero => exact propext ⟨fun _ ↦ rfl, fun _ ↦ hcol b⟩
+  | succ a => exact propext ⟨fun h ↦ (hrow a b h).elim, fun h ↦ (Nat.succ_ne_zero a h).elim⟩
+
+/-- A quantifier satisfying the postulates that holds at `(0, 0)` is *all* or *no*. -/
+private theorem eq_all_or_eq_no (hV : q.Variety) (hC : q.Cont) (hP : q.Plus) (hU : q.Uniform)
+    (h00 : q 0 0) : q = NumberTree.all ∨ q = NumberTree.no := by
+  by_cases h10 : q 1 0 <;> by_cases h01 : q 0 1
+  · have hT : ∀ {a b}, q a b → q (a + 1) b ∧ q a (b + 1) := fun h ↦
+      let ⟨hl, hr⟩ := hU.1 h h00; ⟨hl.mpr h10, hr.mpr h01⟩
+    have hcol : ∀ b, q 0 b := fun b ↦ by
+      induction b with
+      | zero => exact h00
+      | succ b ih => exact (hT ih).2
+    have hall : ∀ a b, q a b := fun a ↦ by
+      induction a with
+      | zero => exact hcol
+      | succ a ih => exact fun b ↦ (hT (ih b)).1
+    obtain ⟨a, b, hq⟩ := hV.2
+    exact (hq (hall a b)).elim
+  · right
+    have := eq_all (q := q.innerNeg) hC.1.innerNeg hU.innerNeg h00 h01 h10
+    rw [← innerNeg_innerNeg q, this, innerNeg_all]
+  · exact .inl (eq_all hC.1 hU h00 h10 h01)
+  · exact ((hP.1 h00).elim h10 h01).elim
+
+/-- The quantifiers with variety that satisfy CONT, PLUS and UNIF are exactly *all*, *some*,
+*no* and *not all*. -/
+theorem variety_cont_plus_uniform_iff :
+    q.Variety ∧ q.Cont ∧ q.Plus ∧ q.Uniform ↔
+      q = NumberTree.all ∨ q = NumberTree.some ∨ q = NumberTree.no ∨ q = NumberTree.notAll := by
+  constructor
+  · rintro ⟨hV, hC, hP, hU⟩
+    by_cases h00 : q 0 0
+    · exact (eq_all_or_eq_no hV hC hP hU h00).imp_right fun h ↦ .inr (.inl h)
+    · rcases eq_all_or_eq_no hV.compl hC.compl hP.compl hU.compl h00 with h | h
+      · exact .inr (.inr (.inr (by rw [← compl_compl q, h, compl_all])))
+      · exact .inr (.inl (by rw [← compl_compl q, h, compl_no]))
+  · have hno : NumberTree.no.Variety ∧ NumberTree.no.Cont ∧ NumberTree.no.Plus ∧
+        NumberTree.no.Uniform :=
+      ⟨variety_all.innerNeg, cont_all.innerNeg, plus_all.innerNeg, uniform_all.innerNeg⟩
+    rintro (rfl | rfl | rfl | rfl)
+    · exact ⟨variety_all, cont_all, plus_all, uniform_all⟩
+    · exact ⟨hno.1.compl, hno.2.1.compl, hno.2.2.1.compl, hno.2.2.2.compl⟩
+    · exact hno
+    · exact ⟨variety_all.compl, cont_all.compl, plus_all.compl, uniform_all.compl⟩
+
+/-- The quantifier *at least two* is not uniform. Adding an individual to `A ∩ B` leaves it false
+at `(0, 0)` and makes it true at `(0, 1)`. -/
+theorem not_uniform_two_le : ¬ Uniform fun _ b ↦ 2 ≤ b := fun h ↦ by
+  have := (h.2 (a₁ := 0) (b₁ := 0) (a₂ := 0) (b₂ := 1) (by simp [compl_apply])
+    (by simp [compl_apply])).2
+  simp [compl_apply] at this
+
+/-! ### Additivity -/
+
+/-- A quantifier is additive when its points are closed under coordinatewise addition. -/
 def Additive (q : NumberTree) : Prop :=
-  ∀ a b a' b', q a b = true → q a' b' = true → q (a + a') (b + b') = true
+  ∀ ⦃a b a' b' : ℕ⦄, q a b → q a' b' → q (a + a') (b + b')
 
-theorem allNT_additive : Additive allNT := by
-  intro a b a' b' h1 h2
-  simp only [allNT, beq_iff_eq] at *; omega
+theorem Additive.innerNeg (h : q.Additive) : q.innerNeg.Additive := fun _ _ _ _ h₁ h₂ ↦ h h₁ h₂
 
-theorem someNT_additive : Additive someNT := by
-  intro a b a' b' h1 h2
-  simp only [someNT, decide_eq_true_eq] at *; omega
+theorem additive_all : NumberTree.all.Additive := fun _ _ _ _ h₁ h₂ ↦ by
+  simp only [NumberTree.all] at *; omega
 
-theorem noNT_additive : Additive noNT := by
-  intro a b a' b' h1 h2
-  simp only [noNT, beq_iff_eq] at *; omega
+theorem additive_notAll : NumberTree.notAll.Additive := fun _ _ _ _ h₁ _ ↦ by
+  simp only [NumberTree.notAll] at *; omega
 
-theorem notAllNT_additive : Additive notAllNT := by
-  intro a b a' b' h1 h2
-  simp only [notAllNT, decide_eq_true_eq] at *; omega
+theorem additive_no : NumberTree.no.Additive := additive_all.innerNeg
 
-/-! ### Continuity, PLUS, UNIF (§4.3, §7) -/
+theorem additive_some : NumberTree.some.Additive := additive_notAll.innerNeg
 
-/-- Right continuity on the number tree (CONT): on each diagonal a+b = n,
-    the true points form a contiguous interval.
-    §4.3: all right-monotone quantifiers are
-    continuous. "precisely one" is continuous but non-monotone. -/
-def RightCont (q : NumberTree) : Prop :=
-  ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
-    q a₁ (n - a₁) = true → q a₂ (n - a₂) = true →
-    q a (n - a) = true
+/-! ### The tree of a generalized quantifier -/
 
-/-- Left continuity on the number tree: on each diagonal, the false
-    points (absence) also form a contiguous interval.
-    §4.3: equivalent to right continuity of ¬Q. -/
-def LeftCont (q : NumberTree) : Prop :=
-  ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
-    q a₁ (n - a₁) = false → q a₂ (n - a₂) = false →
-    q a (n - a) = false
+section OfGQ
 
-/-- PLUS (§7): adding one individual to the
-    situation cannot create a "dead end." Both presence and absence must
-    be extensible in at least one direction.
-    - For + positions: q(a+1,b) or q(a,b+1) is true.
-    - For − positions: q(a+1,b) or q(a,b+1) is false. -/
-def Plus (q : NumberTree) : Prop :=
-  (∀ a b, q a b = true → q (a + 1) b = true ∨ q a (b + 1) = true) ∧
-  (∀ a b, q a b = false → q (a + 1) b = false ∨ q a (b + 1) = false)
+open Classical GQ
 
-/-- UNIF (§7): the addition experiment
-    (a,b) → (a+1,b) and (a,b) → (a,b+1) always yields the same
-    pattern for positions of the same truth value. The experiment
-    result depends only on whether Q holds, not on *where* in the
-    tree we are. -/
-def Uniform (q : NumberTree) : Prop :=
-  (∀ a₁ b₁ a₂ b₂, q a₁ b₁ = true → q a₂ b₂ = true →
-    q (a₁ + 1) b₁ = q (a₂ + 1) b₂ ∧ q a₁ (b₁ + 1) = q a₂ (b₂ + 1)) ∧
-  (∀ a₁ b₁ a₂ b₂, q a₁ b₁ = false → q a₂ b₂ = false →
-    q (a₁ + 1) b₁ = q (a₂ + 1) b₂ ∧ q a₁ (b₁ + 1) = q a₂ (b₂ + 1))
+variable {α : Type*} [Fintype α] {Q : GQ α} {A B A' B' : α → Prop}
 
--- Verification: the four basic quantifiers satisfy CONT, PLUS, UNIF
+/-- Counts of equivalent predicates agree, whatever their decidability instances. -/
+private theorem count_congr {P P' : α → Prop} {i : DecidablePred P} {i' : DecidablePred P'}
+    (h : ∀ x, P x ↔ P' x) : @count α _ P i = @count α _ P' i' :=
+  count_congr_iff h
 
-private theorem beq_zero_iff (n : Nat) : (n == 0) = true ↔ n = 0 := beq_iff_eq
-private theorem beq_zero_false_iff (n : Nat) : (n == 0) = false ↔ n ≠ 0 := by
-  cases n <;> simp
+/-- A conservative, permutation-invariant quantifier holds of `A` and `B` according to
+`|A \ B|` and `|A ∩ B|` alone. -/
+theorem _root_.Quantifier.GQ.iff_of_count_eq (hC : Conservative Q) (hQ : QuantityInvariant Q)
+    (hd : count (fun x ↦ A x ∧ ¬ B x) = count fun x ↦ A' x ∧ ¬ B' x)
+    (hi : count (fun x ↦ A x ∧ B x) = count fun x ↦ A' x ∧ B' x) : Q A B ↔ Q A' B' := by
+  have hn : count (fun x ↦ ¬ A x) = count fun x ↦ ¬ A' x := by
+    have hA := count_decompose A B
+    have hA' := count_decompose A' B'
+    have hN := count_decompose (fun _ : α ↦ True) A
+    have hN' := count_decompose (fun _ : α ↦ True) A'
+    have e : count (fun x ↦ True ∧ A x) = count fun x ↦ A x := count_congr fun _ ↦ by simp
+    have e' : count (fun x ↦ True ∧ A' x) = count fun x ↦ A' x :=
+      count_congr fun _ ↦ by simp
+    have f : count (fun x ↦ True ∧ ¬ A x) = count fun x ↦ ¬ A x :=
+      count_congr fun _ ↦ by simp
+    have f' : count (fun x ↦ True ∧ ¬ A' x) = count fun x ↦ ¬ A' x :=
+      count_congr fun _ ↦ by simp
+    omega
+  rw [hC A B, hC A' B']
+  refine quantity_of_quantityInvariant Q hQ _ _ _ _ ?_ ?_ ?_ ?_
+  · exact (count_congr fun x ↦ by tauto).trans (hi.trans (count_congr fun x ↦ by tauto))
+  · exact (count_congr fun x ↦ by tauto).trans (hd.trans (count_congr fun x ↦ by tauto))
+  · exact count_congr fun x ↦ by tauto
+  · exact (count_congr fun x ↦ by tauto).trans (hn.trans (count_congr fun x ↦ by tauto))
 
-theorem allNT_rightCont : RightCont allNT := by
-  intro n a₁ _ a ha₁ _ _ h1 _
-  simp only [allNT, beq_zero_iff] at *; omega
+/-- The tree of a generalized quantifier holds of `(a, b)` when the quantifier holds of some
+`A` and `B` with `|A \ B| = a` and `|A ∩ B| = b`. -/
+def ofGQ (Q : GQ α) : NumberTree := fun a b ↦
+  ∃ A B : α → Prop, count (fun x ↦ A x ∧ ¬ B x) = a ∧ count (fun x ↦ A x ∧ B x) = b ∧ Q A B
 
-theorem someNT_rightCont : RightCont someNT := by
-  intro n a₁ _ a ha₁ _ _ h1 _
-  simp only [someNT, decide_eq_true_eq] at *; omega
+/-- A conservative, permutation-invariant quantifier holds of `A` and `B` exactly when its tree
+holds of `|A \ B|` and `|A ∩ B|`. -/
+theorem ofGQ_iff (hC : Conservative Q) (hQ : QuantityInvariant Q) (A B : α → Prop) :
+    ofGQ Q (count fun x ↦ A x ∧ ¬ B x) (count fun x ↦ A x ∧ B x) ↔ Q A B :=
+  ⟨fun ⟨_, _, hd, hi, h⟩ ↦ (GQ.iff_of_count_eq hC hQ hd hi).mp h, fun h ↦ ⟨A, B, rfl, rfl, h⟩⟩
 
-theorem noNT_rightCont : RightCont noNT := by
-  intro n _ a₂ a _ ha₂ _ _ h2
-  simp only [noNT, beq_zero_iff] at *; omega
+end OfGQ
 
-theorem notAllNT_rightCont : RightCont notAllNT := by
-  intro n a₁ _ a ha₁ ha₂ ha₂n h1 _
-  simp only [notAllNT, decide_eq_true_eq] at *; omega
+/-! ### Counting quantifiers -/
 
-theorem allNT_plus : Plus allNT := by
-  unfold Plus allNT
-  exact ⟨λ _ _ h => Or.inl h,
-         λ _ b h => Or.inr (by cases b <;> simp_all)⟩
+/-- The points of rows `0` to `n` of the tree, each given with its row. -/
+def points (n : ℕ) : Finset (Σ _ : ℕ, ℕ × ℕ) := (Finset.range (n + 1)).sigma Finset.antidiagonal
 
-theorem someNT_plus : Plus someNT := by
-  unfold Plus someNT
-  constructor
-  · intro a _ h; left; simp only [decide_eq_true_eq] at *; omega
-  · intro a _ h; right; simp only [decide_eq_false_iff_not, not_le] at *; omega
-
-theorem noNT_plus : Plus noNT := by
-  unfold Plus noNT
-  exact ⟨λ _ _ h => Or.inr (by simp only [beq_zero_iff] at h; subst h; simp),
-         λ _ _ _ => Or.inl (by simp)⟩
-
-theorem notAllNT_plus : Plus notAllNT := by
-  unfold Plus notAllNT
-  constructor
-  · intro _ b h; left; simp only [decide_eq_true_eq] at *; omega
-  · intro _ b h; left; simp only [decide_eq_false_iff_not, not_le] at *; omega
-
-theorem allNT_uniform : Uniform allNT := by
-  unfold Uniform allNT
-  constructor
-  · intro _ b₁ _ b₂ h1 h2
-    simp only [beq_zero_iff] at h1 h2; subst h1; subst h2; simp
-  · intro _ b₁ _ b₂ h1 h2
-    simp only [beq_zero_false_iff] at h1 h2
-    exact ⟨by rw [beq_false_of_ne h1, beq_false_of_ne h2],
-           by rw [beq_false_of_ne (Nat.succ_ne_zero b₁), beq_false_of_ne (Nat.succ_ne_zero b₂)]⟩
-
-theorem someNT_uniform : Uniform someNT := by
-  unfold Uniform someNT
-  constructor
-  · intro a₁ _ a₂ _ h1 h2
-    simp only [decide_eq_true_eq] at h1 h2
-    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
-  · intro a₁ _ a₂ _ h1 h2
-    simp only [decide_eq_false_iff_not, not_le] at h1 h2
-    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
-
-theorem noNT_uniform : Uniform noNT := by
-  unfold Uniform noNT
-  constructor
-  · intro a₁ _ a₂ _ h1 h2
-    simp only [beq_zero_iff] at h1 h2; subst h1; subst h2; simp
-  · intro a₁ _ a₂ _ h1 h2
-    simp only [beq_zero_false_iff] at h1 h2
-    exact ⟨by rw [beq_false_of_ne (Nat.succ_ne_zero a₁), beq_false_of_ne (Nat.succ_ne_zero a₂)],
-           by rw [beq_false_of_ne h1, beq_false_of_ne h2]⟩
-
-theorem notAllNT_uniform : Uniform notAllNT := by
-  unfold Uniform notAllNT
-  constructor
-  · intro _ b₁ _ b₂ h1 h2
-    simp only [decide_eq_true_eq] at h1 h2
-    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
-  · intro _ b₁ _ b₂ h1 h2
-    simp only [decide_eq_false_iff_not, not_le] at h1 h2
-    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
-
-/-! ### Theorem 7.1: Square of Opposition uniqueness -/
-
-/-- Two number-tree quantifiers that agree at (0,0) and satisfy the same
-    row/column recurrence must be identical. Used to factor out the common
-    double-induction pattern in `square_uniqueness`. -/
-private theorem grid_ext (f g : ℕ → ℕ → Bool)
-    (h0 : f 0 0 = g 0 0)
-    (hrow : ∀ a, f a 0 = g a 0 → f (a + 1) 0 = g (a + 1) 0)
-    (hcol : ∀ a b, f a b = g a b → f a (b + 1) = g a (b + 1)) :
-    f = g := by
-  funext a
-  induction a with
-  | zero => funext b; induction b with
-    | zero => exact h0
-    | succ _ ihb => exact hcol 0 _ ihb
-  | succ a iha => funext b; induction b with
-    | zero => exact hrow a (congr_fun iha 0)
-    | succ _ ihb => exact hcol _ _ ihb
-
-/-- The six postulates that §7 uses to characterize
-    the Square of Opposition. -/
-structure SixPostulates (q : NumberTree) : Prop where
-  variety : q.Variety
-  cont    : q.RightCont
-  lcont   : q.LeftCont
-  plus    : q.Plus
-  uniform : q.Uniform
-
-/-- [van-benthem-1986] Thm 7.1: On the finite sets, the only
-    CONSERV+QUANT quantifiers satisfying VAR, CONT, PLUS, and UNIF are
-    precisely the four corners of the logical Square of Opposition:
-    **all**, **some**, **no**, and **not all**.
-
-    Proof strategy: UNIF reduces every cell's truth value to four
-    experiment booleans (tr, tu, fr, fu). PLUS eliminates 12 of the
-    16 combinations; CONT and VAR eliminate 2 more (via path
-    inconsistencies). The 4 survivors each determine exactly one
-    quantifier, proved via `grid_ext`. -/
-theorem square_uniqueness (q : NumberTree) (h : SixPostulates q) :
-    q = allNT ∨ q = someNT ∨ q = noNT ∨ q = notAllNT := by
-  obtain ⟨⟨at_, bt, habt⟩, ⟨af, bf, habf⟩⟩ := h.variety
-  -- UNIF: every cell's step is determined by four experiment booleans
-  have hTR (a b : ℕ) (hq : q a b = true) : q (a + 1) b = q (at_ + 1) bt :=
-    (h.uniform.1 a b at_ bt hq habt).1
-  have hTU (a b : ℕ) (hq : q a b = true) : q a (b + 1) = q at_ (bt + 1) :=
-    (h.uniform.1 a b at_ bt hq habt).2
-  have hFR (a b : ℕ) (hq : q a b = false) : q (a + 1) b = q (af + 1) bf :=
-    (h.uniform.2 a b af bf hq habf).1
-  have hFU (a b : ℕ) (hq : q a b = false) : q a (b + 1) = q af (bf + 1) :=
-    (h.uniform.2 a b af bf hq habf).2
-  have hPT := h.plus.1 at_ bt habt
-  have hPF := h.plus.2 af bf habf
-  have var_not_all_true (h0 : q 0 0 = true)
-      (htr : q (at_ + 1) bt = true) (htu : q at_ (bt + 1) = true) : False := by
-    have : ∀ a b, q a b = true := by
-      intro a; induction a with
-      | zero => intro b; induction b with
-        | zero => exact h0
-        | succ _ ihb => rw [hTU 0 _ ihb]; exact htu
-      | succ a iha => intro b; induction b with
-        | zero => rw [hTR a 0 (iha 0)]; exact htr
-        | succ _ ihb => rw [hTU _ _ ihb]; exact htu
-    exact absurd (this af bf) (by rw [habf]; decide)
-  have var_not_all_false (h0 : q 0 0 = false)
-      (hfr : q (af + 1) bf = false) (hfu : q af (bf + 1) = false) : False := by
-    have : ∀ a b, q a b = false := by
-      intro a; induction a with
-      | zero => intro b; induction b with
-        | zero => exact h0
-        | succ _ ihb => rw [hFU 0 _ ihb]; exact hfu
-      | succ a iha => intro b; induction b with
-        | zero => rw [hFR a 0 (iha 0)]; exact hfr
-        | succ _ ihb => rw [hFU _ _ ihb]; exact hfu
-    exact absurd (this at_ bt) (by rw [habt]; decide)
-  -- === Main case analysis on (tr, tu, fr, fu) ===
-  rcases Bool.eq_false_or_eq_true (q (at_ + 1) bt) with htr | htr
-  · -- tr = TRUE
-    rcases Bool.eq_false_or_eq_true (q at_ (bt + 1)) with htu | htu
-    · -- (T, T, *, *)
-      rcases Bool.eq_false_or_eq_true (q (af + 1) bf) with hfr | hfr
-      · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
-        · -- (T,T,T,T) → PLUS-F violation
-          exfalso; rcases hPF with h | h
-          · exact absurd hfr (by rw [h]; decide)
-          · exact absurd hfu (by rw [h]; decide)
-        · -- (T,T,T,F) → someNT
-          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-          · exact (var_not_all_true hv htr htu).elim
-          · right; left
-            exact grid_ext q someNT hv
-              (λ a heq => by
-                cases hqa : q a 0
-                · rw [hFR a 0 hqa, hfr]; rfl
-                · rw [hTR a 0 hqa, htr]; rfl)
-              (λ a b heq => by
-                cases hqa : q a b
-                · rw [hFU a b hqa, hfu]; exact (heq.symm.trans hqa).symm
-                · rw [hTU a b hqa, htu]; exact (heq.symm.trans hqa).symm)
-      · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
-        · -- (T,T,F,T) → notAllNT
-          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-          · exact (var_not_all_true hv htr htu).elim
-          · right; right; right
-            exact grid_ext q notAllNT hv
-              (λ a heq => by
-                cases hqa : q a 0
-                · rw [hFR a 0 hqa, hfr]; rfl
-                · have h := heq.symm.trans hqa; simp [notAllNT] at h)
-              (λ a b heq => by
-                cases hqa : q a b
-                · rw [hFU a b hqa, hfu]; rfl
-                · rw [hTU a b hqa, htu]; rfl)
-        · -- (T,T,F,F) → VAR contradiction
-          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-          · exact (var_not_all_true hv htr htu).elim
-          · exact (var_not_all_false hv hfr hfu).elim
-    · -- tu = FALSE
-      rcases Bool.eq_false_or_eq_true (q (af + 1) bf) with hfr | hfr
-      · -- PLUS-F forces fu = F
-        have hfu : q af (bf + 1) = false := by
-          rcases hPF with h | h
-          · exact absurd hfr (by rw [h]; decide)
-          · exact h
-        -- (T,F,T,F) → path inconsistency
-        exfalso
-        rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-        · have h10 : q 1 0 = true := by rw [hTR 0 0 hv, htr]
-          have h01 : q 0 1 = false := by rw [hTU 0 0 hv, htu]
-          have h11a : q 1 1 = false := by rw [hTU 1 0 h10, htu]
-          have h11b : q 1 1 = true := by rw [hFR 0 1 h01, hfr]
-          rw [h11a] at h11b; exact absurd h11b (by decide)
-        · have h10 : q 1 0 = true := by rw [hFR 0 0 hv, hfr]
-          have h01 : q 0 1 = false := by rw [hFU 0 0 hv, hfu]
-          have h11a : q 1 1 = false := by rw [hTU 1 0 h10, htu]
-          have h11b : q 1 1 = true := by rw [hFR 0 1 h01, hfr]
-          rw [h11a] at h11b; exact absurd h11b (by decide)
-      · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
-        · -- (T,F,F,T) → CONT contradiction
-          exfalso
-          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-          · have h10 : q 1 0 = true := by rw [hTR 0 0 hv, htr]
-            have h01 : q 0 1 = false := by rw [hTU 0 0 hv, htu]
-            have h11 : q 1 1 = false := by rw [hTU 1 0 h10, htu]
-            have h02 : q 0 2 = true := by rw [hFU 0 1 h01, hfu]
-            have h20 : q 2 0 = true := by rw [hTR 1 0 h10, htr]
-            exact absurd (h.cont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20)
-              (by rw [h11]; decide)
-          · have h10 : q 1 0 = false := by rw [hFR 0 0 hv, hfr]
-            have h01 : q 0 1 = true := by rw [hFU 0 0 hv, hfu]
-            have h11 : q 1 1 = true := by rw [hFU 1 0 h10, hfu]
-            have h02 : q 0 2 = false := by rw [hTU 0 1 h01, htu]
-            have h20 : q 2 0 = false := by rw [hFR 1 0 h10, hfr]
-            exact absurd h11 (Bool.eq_false_iff.mp
-              (h.lcont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20))
-        · -- (T,F,F,F) → allNT
-          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-          · left
-            exact grid_ext q allNT hv
-              (λ a heq => by
-                cases hqa : q a 0
-                · have h := heq.symm.trans hqa; simp [allNT] at h
-                · rw [hTR a 0 hqa, htr]; rfl)
-              (λ a b heq => by
-                cases hqa : q a b
-                · rw [hFU a b hqa, hfu]; rfl
-                · rw [hTU a b hqa, htu]; rfl)
-          · exact (var_not_all_false hv hfr hfu).elim
-  · -- tr = FALSE → PLUS forces tu = TRUE
-    have htu : q at_ (bt + 1) = true := by
-      rcases hPT with h | h
-      · exact absurd htr (by rw [h]; decide)
-      · exact h
-    rcases Bool.eq_false_or_eq_true (q (af + 1) bf) with hfr | hfr
-    · -- PLUS-F forces fu = F
-      have hfu : q af (bf + 1) = false := by
-        rcases hPF with h | h
-        · exact absurd hfr (by rw [h]; decide)
-        · exact h
-      -- (F,T,T,F) → CONT contradiction
-      exfalso
-      rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-      · have h10 : q 1 0 = false := by rw [hTR 0 0 hv, htr]
-        have h01 : q 0 1 = true := by rw [hTU 0 0 hv, htu]
-        have h11 : q 1 1 = false := by rw [hFU 1 0 h10, hfu]
-        have h02 : q 0 2 = true := by rw [hTU 0 1 h01, htu]
-        have h20 : q 2 0 = true := by rw [hFR 1 0 h10, hfr]
-        exact absurd (h.cont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20)
-          (by rw [h11]; decide)
-      · have h10 : q 1 0 = true := by rw [hFR 0 0 hv, hfr]
-        have h01 : q 0 1 = false := by rw [hFU 0 0 hv, hfu]
-        have h11 : q 1 1 = true := by rw [hTU 1 0 h10, htu]
-        have h02 : q 0 2 = false := by rw [hFU 0 1 h01, hfu]
-        have h20 : q 2 0 = false := by rw [hTR 1 0 h10, htr]
-        exact absurd h11 (Bool.eq_false_iff.mp
-          (h.lcont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20))
-    · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
-      · -- (F,T,F,T) → path inconsistency
-        exfalso
-        rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-        · have h10 : q 1 0 = false := by rw [hTR 0 0 hv, htr]
-          have h01 : q 0 1 = true := by rw [hTU 0 0 hv, htu]
-          have h11a : q 1 1 = true := by rw [hFU 1 0 h10, hfu]
-          have h11b : q 1 1 = false := by rw [hTR 0 1 h01, htr]
-          rw [h11a] at h11b; exact absurd h11b (by decide)
-        · have h10 : q 1 0 = false := by rw [hFR 0 0 hv, hfr]
-          have h01 : q 0 1 = true := by rw [hFU 0 0 hv, hfu]
-          have h11a : q 1 1 = true := by rw [hFU 1 0 h10, hfu]
-          have h11b : q 1 1 = false := by rw [hTR 0 1 h01, htr]
-          rw [h11a] at h11b; exact absurd h11b (by decide)
-      · -- (F,T,F,F) → noNT
-        rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
-        · right; right; left
-          exact grid_ext q noNT hv
-            (λ a heq => by
-              cases hqa : q a 0
-              · rw [hFR a 0 hqa, hfr]; rfl
-              · rw [hTR a 0 hqa, htr]; rfl)
-            (λ a b heq => by
-              cases hqa : q a b
-              · rw [hFU a b hqa, hfu]; exact (heq.symm.trans hqa).symm
-              · rw [hTU a b hqa, htu]; exact (heq.symm.trans hqa).symm)
-        · exact (var_not_all_false hv hfr hfu).elim
+theorem card_points (n : ℕ) : (points n).card = (n + 1) * (n + 2) / 2 := by
+  have h : ∀ n, (∑ k ∈ Finset.range (n + 1), (k + 1)) * 2 = (n + 1) * (n + 2) := fun n ↦ by
+    induction n with
+    | zero => rfl
+    | succ n ih => rw [Finset.sum_range_succ, add_mul, ih]; ring
+  rw [points, Finset.card_sigma, Finset.sum_congr rfl fun k _ ↦ Finset.Nat.card_antidiagonal k,
+    ← h n, Nat.mul_div_cancel _ two_pos]
 
 end NumberTree
 
-/-! ### GQ → NumberTree Bridge -/
+/-- The number of quantifiers on a universe of `n` individuals, which are the sets of points in
+rows `0` to `n` of the tree. -/
+def conservativeQuantifierCount (n : ℕ) : ℕ := 2 ^ ((n + 1) * (n + 2) / 2)
 
-section NumberTreeBridge
-open Classical Finset
-
-/-- Decompose α into 4 cells based on two Boolean predicates (A, B).
-    Each element x lands in cell (A x, B x). -/
-private def cellEquiv (A B : α → Bool) :
-    α ≃ Σ (b₁ : Bool) (b₂ : Bool), {x : α // A x == b₁ && B x == b₂} where
-  toFun x := ⟨A x, B x, ⟨x, by simp⟩⟩
-  invFun := fun ⟨_, _, ⟨x, _⟩⟩ => x
-  left_inv _ := rfl
-  right_inv := fun ⟨b₁, b₂, ⟨x, h⟩⟩ => by
-    simp only [Bool.and_eq_true, beq_iff_eq] at h
-    rcases h with ⟨h₁, h₂⟩; subst h₁; subst h₂; rfl
-
-/-- Build a cell-preserving bijection from matching 4-cell cardinalities. -/
-private noncomputable def cellBijection [Fintype α] [DecidableEq α]
-    (A₁ B₁ A₂ B₂ : α → Bool)
-    (h_card : ∀ b₁ b₂, Fintype.card {x : α // A₁ x == b₁ && B₁ x == b₂} =
-                         Fintype.card {x : α // A₂ x == b₁ && B₂ x == b₂}) :
-    α ≃ α :=
-  (cellEquiv A₂ B₂).trans
-    ((Equiv.sigmaCongrRight fun b₁ => Equiv.sigmaCongrRight fun b₂ =>
-        Fintype.equivOfCardEq (h_card b₁ b₂).symm).trans
-      (cellEquiv A₁ B₁).symm)
-
-/-- The cell bijection preserves both predicates pointwise. -/
-private lemma cellBijection_spec [Fintype α] [DecidableEq α]
-    (A₁ B₁ A₂ B₂ : α → Bool)
-    (h_card : ∀ b₁ b₂, Fintype.card {x : α // A₁ x == b₁ && B₁ x == b₂} =
-                         Fintype.card {x : α // A₂ x == b₁ && B₂ x == b₂})
-    (x : α) :
-    A₁ (cellBijection A₁ B₁ A₂ B₂ h_card x) = A₂ x ∧
-    B₁ (cellBijection A₁ B₁ A₂ B₂ h_card x) = B₂ x := by
-  unfold cellBijection
-  simp only [Equiv.trans_apply, Equiv.sigmaCongrRight_apply, cellEquiv]
-  have h := (Fintype.equivOfCardEq (h_card (A₂ x) (B₂ x)).symm ⟨x, by simp⟩).property
-  simp only [Bool.and_eq_true, beq_iff_eq] at h
-  exact h
-
-/-- Bool complement partition: |{f}| + |{¬f}| = |α|. -/
-private lemma bool_filter_partition [Fintype α] [DecidableEq α] (f : α → Bool) :
-    (univ.filter fun x => f x).card + (univ.filter fun x => !(f x)).card =
-    Fintype.card α := by
-  have hunion : (univ.filter fun x => f x) ∪ (univ.filter fun x => !(f x)) = univ := by
-    ext x; simp only [mem_union, mem_filter, mem_univ, true_and]
-    cases f x <;> simp
-  have hdisj : Disjoint (univ.filter fun x => f x) (univ.filter fun x => !(f x)) :=
-    disjoint_filter.mpr fun x _ h1 h2 => by cases f x <;> simp_all
-  rw [← card_union_of_disjoint hdisj, hunion, card_univ]
-
-/-- |A| = |A∩B| + |A\B| for Bool predicates. -/
-private lemma bool_filter_split [Fintype α] [DecidableEq α] (A B : α → Bool) :
-    (univ.filter fun x => A x).card =
-    (univ.filter fun x => A x && B x).card +
-    (univ.filter fun x => A x && !(B x)).card := by
-  have hunion : (univ.filter fun x => A x && B x) ∪ (univ.filter fun x => A x && !(B x)) =
-                univ.filter fun x => A x := by
-    ext x; simp only [mem_union, mem_filter, mem_univ, true_and]
-    cases A x <;> cases B x <;> simp
-  have hdisj : Disjoint (univ.filter fun x => A x && B x)
-      (univ.filter fun x => A x && !(B x)) :=
-    disjoint_filter.mpr fun x _ h1 h2 => by cases A x <;> cases B x <;> simp_all
-  rw [← card_union_of_disjoint hdisj, hunion]
-
-/-- Relate Fintype.card of a Bool-predicate subtype to Finset.filter card. -/
-private lemma card_subtype_bool [Fintype α] (f : α → Bool) :
-    Fintype.card {x : α // f x} = (univ.filter fun x => f x).card := by
-  rw [Fintype.card_subtype]
-
-/-- Lift a Bool predicate to a Prop predicate via `(· = true)`. -/
-private abbrev liftP (f : α → Bool) : α → Prop := fun x => f x = true
-
-/-- CONSERV + QUANT GQs agree on any two pairs (A, B) and (A', B') with
-    matching `|A∩B|` and `|A\B|` cardinalities. The proof decomposes the
-    domain into 4 cells via conservativity (collapsing B to A∧B),
-    builds a cell-preserving bijection from `Fintype.equivOfCardEq`,
-    then applies `QuantityInvariant`. -/
-private theorem gq_depends_on_card [Fintype α] [DecidableEq α]
-    (q : GQ α) (hCons : Conservative q) (hQ : QuantityInvariant q)
-    (A B A' B' : α → Bool)
-    (h_ab : (univ.filter (fun x => A x && B x)).card =
-            (univ.filter (fun x => A' x && B' x)).card)
-    (h_anb : (univ.filter (fun x => A x && !(B x))).card =
-             (univ.filter (fun x => A' x && !(B' x))).card) :
-    q (liftP A) (liftP B) ↔ q (liftP A') (liftP B') := by
-  rw [hCons (liftP A) (liftP B), hCons (liftP A') (liftP B')]
-  -- Cell simplification: relate each (b₁, b₂) cell to a simple filter
-  have cell_TT (R S : α → Bool) :
-      (univ.filter fun x => R x == true && (R x && S x) == true).card =
-      (univ.filter fun x => R x && S x).card := by
-    congr 1; ext x; simp only [mem_filter, mem_univ, true_and]
-    cases R x <;> cases S x <;> simp
-  have cell_TF (R S : α → Bool) :
-      (univ.filter fun x => R x == true && (R x && S x) == false).card =
-      (univ.filter fun x => R x && !(S x)).card := by
-    congr 1; ext x; simp only [mem_filter, mem_univ, true_and]
-    cases R x <;> cases S x <;> simp
-  have cell_FT (R S : α → Bool) :
-      (univ.filter fun x => R x == false && (R x && S x) == true).card = 0 := by
-    rw [card_eq_zero, filter_eq_empty_iff]
-    intro x _; simp only [Bool.and_eq_true, beq_iff_eq, not_and]
-    intro h1 h2; rw [h1] at h2; exact absurd h2 (by decide)
-  have cell_FF (R S : α → Bool) :
-      (univ.filter fun x => R x == false && (R x && S x) == false).card =
-      (univ.filter fun x => !(R x)).card := by
-    congr 1; ext x; simp only [mem_filter, mem_univ, true_and]
-    cases R x <;> cases S x <;> simp
-  -- Build 4-cell cardinality match
-  have h_card : ∀ b₁ b₂,
-      Fintype.card {x : α // A x == b₁ && (A x && B x) == b₂} =
-      Fintype.card {x : α // A' x == b₁ && (A' x && B' x) == b₂} := by
-    intro b₁ b₂
-    rw [card_subtype_bool, card_subtype_bool]
-    cases b₁ <;> cases b₂
-    · rw [cell_FF, cell_FF]
-      have hA : (univ.filter fun x => A x).card = (univ.filter fun x => A' x).card := by
-        rw [bool_filter_split A B, bool_filter_split A' B', h_ab, h_anb]
-      have p1 := bool_filter_partition A
-      have p2 := bool_filter_partition A'
-      omega
-    · rw [cell_FT, cell_FT]
-    · rw [cell_TF, cell_TF, h_anb]
-    · rw [cell_TT, cell_TT, h_ab]
-  let f := cellBijection A (fun x => A x && B x) A' (fun x => A' x && B' x) h_card
-  -- Goal: q (liftP A) (fun x => liftP A x ∧ liftP B x) ↔
-  --       q (liftP A') (fun x => liftP A' x ∧ liftP B' x).
-  -- Reduce the conjoined scopes to the lifted Bool intersection, then
-  -- apply QuantityInvariant via the cell bijection.
-  have hAndA : (fun x => liftP A x ∧ liftP B x) = liftP (fun x => A x && B x) := by
-    funext x; exact propext ⟨fun ⟨h1, h2⟩ => by simp [liftP, h1, h2],
-      fun h => by simp [liftP, Bool.and_eq_true] at h; exact ⟨h.1, h.2⟩⟩
-  have hAndA' : (fun x => liftP A' x ∧ liftP B' x) = liftP (fun x => A' x && B' x) := by
-    funext x; exact propext ⟨fun ⟨h1, h2⟩ => by simp [liftP, h1, h2],
-      fun h => by simp [liftP, Bool.and_eq_true] at h; exact ⟨h.1, h.2⟩⟩
-  rw [hAndA, hAndA']
-  exact hQ (liftP A) (liftP (fun x => A x && B x))
-    (liftP A') (liftP (fun x => A' x && B' x)) f f.bijective
-    (fun x => by
-      have h := (cellBijection_spec _ _ _ _ h_card x).1
-      show (A (f x) = true) ↔ (A' x = true); rw [h])
-    (fun x => by
-      have h := (cellBijection_spec _ _ _ _ h_card x).2
-      show ((A (f x) && B (f x)) = true) ↔ ((A' x && B' x) = true); rw [h])
-
-section ToNumberTree
-open Classical
-
-/-- Extract the number-tree representation of a CONSERV+QUANT quantifier.
-    Under conservativity and quantity-invariance, Q(A,B) depends only on
-    `|A ∩ B|` and `|A \ B|`. This definition picks a canonical witness
-    pair for each (a,b) coordinate.
-
-    For (a,b) realizable in the domain (a + b ≤ |α|), the value is
-    determined by any witness; for unrealizable pairs, we default to false. -/
-noncomputable def toNumberTree [Fintype α] (q : GQ α) : NumberTree :=
-  λ a b =>
-    if h : ∃ (A B : α → Bool),
-      (Finset.univ.filter (λ x => A x && B x)).card = a ∧
-      (Finset.univ.filter (λ x => A x && !(B x))).card = b
-    then decide (q (liftP h.choose) (liftP h.choose_spec.choose))
-    else false
-
-/-- The number-tree representation faithfully reflects the GQ on
-    realizable coordinates: for any A, B, the GQ holds iff the
-    number-tree value at (|A∩B|, |A\B|) is `true`.
-
-    Proof: A and B themselves witness the existential in `toNumberTree`,
-    so the `dite` takes the positive branch. The chosen witness pair has
-    matching `|A∩B|` and `|A\B|` cardinalities, so `gq_depends_on_card`
-    (via cell-preserving bijection) gives the GQ-level Iff between
-    `q A B` and `q A_chosen B_chosen`. -/
-theorem toNumberTree_spec [Fintype α] [DecidableEq α] (q : GQ α)
-    (hCons : Conservative q) (hQ : QuantityInvariant q) :
-    ∀ (A B : α → Bool),
-      q (liftP A) (liftP B) ↔
-        toNumberTree q
-          (Finset.univ.filter (λ x => A x && B x)).card
-          (Finset.univ.filter (λ x => A x && !(B x))).card = true := by
-  intro A B
-  have hexists : ∃ (A' B' : α → Bool),
-      (univ.filter (fun x => A' x && B' x)).card =
-        (univ.filter (fun x => A x && B x)).card ∧
-      (univ.filter (fun x => A' x && !(B' x))).card =
-        (univ.filter (fun x => A x && !(B x))).card :=
-    ⟨A, B, rfl, rfl⟩
-  unfold toNumberTree
-  rw [dite_eq_left hexists]
-  have hspec := hexists.choose_spec.choose_spec
-  have hIff := gq_depends_on_card q hCons hQ A B _ _ hspec.1.symm hspec.2.symm
-  rw [hIff, decide_eq_true_iff]
-
-end ToNumberTree
-
-end NumberTreeBridge
-
-/-! ### Counting Quantifiers (§5.4) -/
-
-/-- Thm 5.4: On a finite set with n individuals, there are
-    exactly 2^((n+1)(n+2)/2) conservative quantifiers (satisfying QUANT).
-    The tree of numbers has (n+1)(n+2)/2 points at levels a + b ≤ n. -/
-def conservativeQuantifierCount (n : Nat) : Nat :=
-  2 ^ ((n + 1) * (n + 2) / 2)
-
-#guard conservativeQuantifierCount 0 == 2
-#guard conservativeQuantifierCount 1 == 8
-#guard conservativeQuantifierCount 2 == 64
-#guard conservativeQuantifierCount 3 == 1024
-#guard conservativeQuantifierCount 4 == 32768
-
+theorem NumberTree.card_powerset_points (n : ℕ) :
+    (NumberTree.points n).powerset.card = conservativeQuantifierCount n := by
+  rw [Finset.card_powerset, NumberTree.card_points, conservativeQuantifierCount]
 
 end Quantifier
