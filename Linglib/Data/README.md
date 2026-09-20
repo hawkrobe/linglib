@@ -101,7 +101,7 @@ clauses recording the order of object and verb with text type, object length, an
 - **Citation**: Moran, Steven & McCloy, Daniel (eds.) 2019. *PHOIBLE 2.0*. Jena: Max Planck Institute for the Science of Human History. <http://phoible.org>. DOI: 10.5281/zenodo.2626687
 - **Download**: <https://github.com/phoible/dev/blob/master/data/phoible.csv> (`PHOIBLE/raw/phoible.csv`)
 - **Generator**: `scripts/gen_phoible.py`
-- **Output**: `Linglib/Data/PHOIBLE/Inventories/{Lang}.lean`
+- **Output**: `Linglib/Data/PHOIBLE/Inventories/{Lang}.lean`, and `Linglib/Data/PHOIBLE/Chart.lean`, the feature matrix of each glyph. A glyph has the same feature values in every PHOIBLE inventory, so the chart is language-independent; it leaves out tones and the glyphs with contour values such as `-,+`.
 - **Coverage**: 16 PhonProfile-aligned languages (English, German, Finnish, Turkish, Russian, French, Spanish, Japanese, Mandarin, Hindi/Urdu, Georgian, Hungarian, Swahili, Yoruba, Maori, Zulu); first inventory per ISO. Full 3000-inventory ingestion is a multi-session project.
 
 #### Regenerating
@@ -109,6 +109,7 @@ clauses recording the order of object and verb with text type, object length, an
 ```bash
 python3 scripts/gen_phoible.py            # default 16 ISOs
 python3 scripts/gen_phoible.py jpn ces    # specific ISOs
+python3 scripts/gen_phoible.py --chart    # the glyph chart (`--chart --check` validates sync)
 ```
 
 ### WALS v2020.4
