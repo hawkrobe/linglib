@@ -733,7 +733,6 @@ import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.Fering.Determiners
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.Comparison
-import Linglib.Fragments.Finnish.ConsonantGradation
 import Linglib.Fragments.Finnish.Coordination
 import Linglib.Fragments.Finnish.Evidentiality
 import Linglib.Fragments.Finnish.Infinitives

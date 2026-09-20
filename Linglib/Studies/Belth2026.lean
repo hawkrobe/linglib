@@ -469,21 +469,6 @@ namespace Finnish
 
 open _root_.Finnish Phonology
 
-/-- A letter of Finnish orthography. -/
-def ofChar : Char → Option Segment
-  | 'a' => some Vowel.scriptA.segment | 'ä' => some Vowel.æ.segment
-  | 'o' => some Vowel.o.segment | 'ö' => some Vowel.ø.segment
-  | 'u' => some Vowel.u.segment | 'y' => some Vowel.y.segment
-  | 'e' => some Vowel.e.segment | 'i' => some Vowel.i.segment
-  | 'p' => some Consonant.p.segment | 't' => some Consonant.t.segment
-  | 'k' => some Consonant.k.segment | 'n' => some Consonant.n.segment
-  | 'v' => some Consonant.v.segment | 'l' => some Consonant.l.segment
-  | 'j' => some Consonant.j.segment | 'A' => some archiphonemeA
-  | _ => none
-
-/-- The segments of a form, the morpheme boundary dropped. -/
-def segments (s : String) : List Segment := s.toList.filterMap ofChar
-
 /-- The underlying form of a stem with the essive -nA. -/
 def ur (form : String) : List Segment :=
   (stem form).filterMap ofChar ++ [Consonant.n.segment, archiphonemeA]
