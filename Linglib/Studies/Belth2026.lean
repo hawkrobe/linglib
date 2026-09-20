@@ -496,7 +496,7 @@ def ofChar (c : Char) : Option Segment := Turkish.Phonology.ofChar (if c = 'j' t
 def ofAffixChar : Char → Option Segment
   | 'a' | 'e' => some A
   | 'ı' | 'i' | 'u' | 'ü' => some I
-  | c => ofChar c
+  | c => (ofChar c).map fun x ↦ (x : Segment)
 
 /-- The segments of a form, the morpheme boundaries dropped. -/
 def segments (s : String) : List Segment := s.toList.filterMap ofChar

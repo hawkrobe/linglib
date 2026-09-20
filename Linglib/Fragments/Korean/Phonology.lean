@@ -1,5 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Korean
-import Linglib.Phonology.Segmental.PHOIBLE
+import Linglib.Phonology.Segmental.SegmentLike
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
@@ -20,14 +20,13 @@ phonemes differ in that feature alone.
 
 ## Main definitions
 
-* `Korean.Phoneme`: the phonemes of the illustration, with `chart` and `segment`.
+* `Korean.Phoneme`: the phonemes of the illustration, with `chart`, read as segments.
 * `Korean.stopNasalization`: a non-affricate stop becomes a voiced nasal sonorant before a
   nasal.
 
 ## Main results
 
-* `Korean.Phoneme.segment_injective`, `Korean.Phoneme.chart_mem_kor`: distinct phonemes are
-  distinct segments, and each is a phoneme of PHOIBLE's Korean inventory.
+* `Korean.Phoneme.chart_mem_kor`: each phoneme is in PHOIBLE's Korean inventory.
 * `Korean.pak_paŋ_neutralized`: *pak* and *paŋ* before *n* derive the same string, the one
   with the velar nasal on every feature but [delayed release]; *pak* alone is unchanged.
 * `Korean.derive_pak_ne_paŋ`: the derived string is not literally the one with the velar
@@ -63,11 +62,6 @@ def chart : Phoneme → FeatureMatrix
   | a => .«a» | i => .«i» | u => .«u»
   | l => .«l»
 
-/-- The segment of a phoneme is the segment of its chart entry. -/
-def segment (x : Phoneme) : Segment := x.chart.toSegment
-
-theorem segment_injective : Function.Injective segment := by decide
-
 /-- Each phoneme is in PHOIBLE's Korean inventory. -/
 theorem chart_mem_kor (x : Phoneme) :
     x.chart ∈ Inventories.Korean.kor.phonemes.map (·.features) := by
@@ -75,8 +69,10 @@ theorem chart_mem_kor (x : Phoneme) :
 
 end Phoneme
 
-/-- The segments of the illustration. -/
-def inventory : Finset Segment := Finset.univ.image Phoneme.segment
+/-- A phoneme is read as the segment of its chart entry. -/
+instance : SegmentLike Phoneme where
+  coe x := .ofChart x.chart
+  coe_injective' := by decide
 
 /-! ### The rule -/
 
@@ -91,27 +87,28 @@ def stopNasalization : Rule where
 def exceptDelayedRelease : Finset Phonology.Feature := {.delayedRelease}ᶜ
 
 /-- No two phonemes differ in [delayed release] alone. -/
-theorem isDistinctive_compl_delayedRelease : IsDistinctive exceptDelayedRelease inventory := by
+theorem isDistinctive_compl_delayedRelease :
+    IsDistinctive exceptDelayedRelease (SegmentLike.inventory Phoneme) := by
   decide
 
 /-- *pak* 'gourd' and *paŋ* 'room' before *n* derive the same string, which has the velar
 nasal on every feature but [delayed release]; *paŋ* is unchanged there, and so is *pak*
 alone. -/
 theorem pak_paŋ_neutralized :
-    (derive [stopNasalization] ([.p, .a, .k, .n].map Phoneme.segment)).map
+    (derive [stopNasalization] ([.p, .a, .k, .n] : List Phoneme)).map
         (Bundle.restrict exceptDelayedRelease) =
-      ([.p, .a, .ŋ, .n].map Phoneme.segment).map (Bundle.restrict exceptDelayedRelease) ∧
-      derive [stopNasalization] ([.p, .a, .ŋ, .n].map Phoneme.segment) =
-        [.p, .a, .ŋ, .n].map Phoneme.segment ∧
-      derive [stopNasalization] ([.p, .a, .k].map Phoneme.segment) =
-        [.p, .a, .k].map Phoneme.segment := by
+      ([.p, .a, .ŋ, .n] : List Phoneme).map (Bundle.restrict exceptDelayedRelease) ∧
+      derive [stopNasalization] ([.p, .a, .ŋ, .n] : List Phoneme) =
+        ([.p, .a, .ŋ, .n] : List Phoneme) ∧
+      derive [stopNasalization] ([.p, .a, .k] : List Phoneme) =
+        ([.p, .a, .k] : List Phoneme) := by
   decide
 
 /-- The string derived from *pak* before *n* is not the string with the velar nasal itself,
 because the rule leaves the stop its [−delayed release]. -/
 theorem derive_pak_ne_paŋ :
-    derive [stopNasalization] ([.p, .a, .k, .n].map Phoneme.segment) ≠
-      [.p, .a, .ŋ, .n].map Phoneme.segment := by
+    derive [stopNasalization] ([.p, .a, .k, .n] : List Phoneme) ≠
+      ([.p, .a, .ŋ, .n] : List Phoneme) := by
   decide
 
 end Korean
