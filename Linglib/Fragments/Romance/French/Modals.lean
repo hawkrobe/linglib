@@ -1,248 +1,60 @@
-import Linglib.Semantics.Mood.SpeechEvent
+import Linglib.Semantics.Modality.Basic
 
 /-!
-# French Modal Auxiliaries and Modal Constructions
+# French modal verbs
 
-[kaufmann-2012] [ruytenbeek-etal-2017] [kratzer-1991]
+This file records the core modal expressions of French. *Pouvoir* 'can, may' is a possibility
+modal that expresses an ability or another circumstantial possibility, a permission, or an
+epistemic possibility, and *devoir* 'must, have to' expresses the corresponding necessities, with
+the context of use settling the reading. *Falloir* 'be necessary' is an impersonal necessity
+verb, and *il est possible de* 'it is possible to' an impersonal possibility construction with
+an infinitive. In the conditional, *devoir* expresses weak necessity, *tu devrais partir* 'you
+should leave' beside *tu dois partir* 'you must leave'. Italian *potere* and *dovere* show the
+same range as *pouvoir* and *devoir*.
 
-French modal verbs *pouvoir* ('can') and *devoir* ('must'), plus the
-impersonal construction *il est possible de* ('it is possible to').
+## References
 
-## Semantic Properties
-
-*Devoir* and *pouvoir* are the French counterparts of Italian *dovere*
-and *potere* (see `Fragments/Romance/Italian/Modals.lean`). Like their Italian
-cognates, both are polysemous across epistemic, deontic, and
-circumstantial readings.
-
-Key asymmetry relevant to [ruytenbeek-etal-2017]:
-
-- *Devoir* (necessity) in 2nd person declaratives (*Vous devez VP*)
-  receives directive force as readily as imperatives — same RT, same
-  response pattern (virtually 100% directive interpretations).
-- *Pouvoir* (possibility) in 2nd person declaratives (*Vous pouvez VP*)
-  receives directive interpretations less readily (~30%).
-- *Il est possible de VP* patterns with *pouvoir*, not *devoir*.
-
-[kaufmann-2012]: imperatives have the semantics of deontic necessity
-modals. The *devoir* data confirms the reverse: deontic necessity modals
-in declaratives receive directive force because they share the semantic
-feature (deontic necessity) with imperatives.
-
-## Connection to Italian Fragment
-
-French and Italian modal systems are cognate (Latin *debēre* → Fr.
-*devoir*, It. *dovere*; Latin *posse/potēre* → Fr. *pouvoir*, It.
-*potere*). Both show the epistemic/root ambiguity and both participate
-in position-sensitive flavor selection ([hacquard-2006]).
-
+* [hacquard-2006]
+* [hacquard-2010]
+* [ruytenbeek-etal-2017]
+* [agha-jeretic-2022]
 -/
 
 namespace French
 
-open Modality (ModalForce ModalFlavor ForceFlavor)
-open Mood.Illocutionary (primaryFlavor)
-open Mood (Illocutionary)
+open Modality
 
-
--- ════════════════════════════════════════════════════
--- § 1. Entry Type
--- ════════════════════════════════════════════════════
-
-/-- A French modal entry. Simpler than the Italian entry (which tracks
-    restructuring position) — here we track the available flavors and
-    whether the modal is a personal verb or impersonal construction. -/
-structure FrenchModalEntry where
-  /-- Citation form -/
-  form : String
-  /-- Modal force (necessity or possibility) -/
-  force : ModalForce
-  /-- Available modal flavors -/
-  flavors : List ModalFlavor
-  /-- Whether this is a personal verb (conjugated for subject) or
-      impersonal construction -/
-  isPersonal : Bool
-  /-- Whether the modal takes an infinitive complement -/
-  takesInfinitive : Bool := true
-  deriving Repr, BEq
-
-
--- ════════════════════════════════════════════════════
--- § 2. Lexical Entries
--- ════════════════════════════════════════════════════
-
-/-- *Pouvoir* ('can/may'): personal possibility modal.
-
-    Dynamic/deontic: *Vous pouvez partir* ('You can/may leave')
-    Epistemic: *Il peut être intelligent* ('He may be intelligent')
-
-    In 2nd person declaratives, the most salient reading is
-    permission (deontic possibility) or ability (circumstantial). -/
-def pouvoir : FrenchModalEntry where
+/-- *pouvoir* 'can, may' is a possibility modal with epistemic, deontic and circumstantial
+readings, the last including ability. -/
+def pouvoir : ModalItem where
   form := "pouvoir"
-  force := .possibility
-  flavors := [.epistemic, .deontic, .circumstantial]
-  isPersonal := true
+  meaning := {(.possibility, .epistemic), (.possibility, .deontic), (.possibility, .circumstantial)}
 
-/-- *Devoir* ('must/have to'): personal necessity modal.
-
-    Deontic: *Vous devez partir* ('You must leave')
-    Epistemic: *Il doit être chez lui* ('He must be at home')
-
-    [kaufmann-2012]: in 2nd person declaratives, *devoir* receives
-    directive force as readily as imperatives because both express
-    deontic necessity. -/
-def devoir : FrenchModalEntry where
+/-- *devoir* 'must, have to' is a necessity modal with epistemic, deontic and circumstantial
+readings, the last including goal-oriented necessity. -/
+def devoir : ModalItem where
   form := "devoir"
-  force := .necessity
-  flavors := [.epistemic, .deontic, .circumstantial]
-  isPersonal := true
+  meaning := {(.necessity, .epistemic), (.necessity, .deontic), (.necessity, .circumstantial)}
 
-/-- *Il est possible de VP* ('it is possible to VP'): impersonal
-    possibility construction.
+/-- *devoir* in the conditional, as in *tu devrais partir*, expresses weak necessity in each
+flavor of *devoir*. -/
+def devoirConditional : ModalItem where
+  form := "devrait"
+  meaning := devoir.meaning.image fun ff ↦ (.weakNecessity, ff.flavor)
 
-    Not restricted to a particular modal base — can express epistemic,
-    deontic, or circumstantial possibility depending on context
-    ([kratzer-1991]).
-
-    [ruytenbeek-etal-2017]: in the Frantext corpus, this construction
-    is used as a direct question 70% of the time, vs only 16% as a
-    directive. Much less conventionalized as an indirect request than
-    *Pouvez-vous VP?* (71% directive). -/
-def ilEstPossible : FrenchModalEntry where
-  form := "il est possible de"
-  force := .possibility
-  flavors := [.epistemic, .deontic, .circumstantial]
-  isPersonal := false
-
-/-- *Falloir* ('to be necessary'): impersonal necessity modal.
-
-    *Il faut partir* ('One must leave / It is necessary to leave')
-
-    Always impersonal (conjugated only as *il faut*). Primarily
-    deontic/circumstantial in root uses. -/
-def falloir : FrenchModalEntry where
+/-- *falloir* 'be necessary' is an impersonal necessity verb with deontic and circumstantial
+readings. -/
+def falloir : ModalItem where
   form := "falloir"
-  force := .necessity
-  flavors := [.epistemic, .deontic, .circumstantial]
-  isPersonal := false
+  meaning := {(.necessity, .deontic), (.necessity, .circumstantial)}
 
-/-- *Devrais* ('should'): weak necessity = *devoir* + counterfactual morphology.
+/-- *il est possible de* 'it is possible to' is an impersonal possibility construction with an
+infinitive, with deontic and circumstantial readings. -/
+def ilEstPossibleDe : ModalItem where
+  form := "il est possible de"
+  meaning := {(.possibility, .deontic), (.possibility, .circumstantial)}
 
-    [agha-jeretic-2022] §5.2: the CF morpheme picks out a witness set
-    from the strong necessity quantifier, yielding a definite plurality
-    of worlds (= weak necessity). Unlike Javanese NE, CF does not require
-    a unique witness, so it also applies to possibility (*pourrais*).
-
-    [von-fintel-iatridou-2008]: counterfactual morphology is the
-    cross-linguistically productive strategy for deriving weak necessity
-    (also seen in Spanish *debería*, Hungarian *kell*+CF, etc.). -/
-def devrais : FrenchModalEntry where
-  form := "devrais"
-  force := .weakNecessity
-  flavors := [.epistemic, .deontic, .circumstantial]
-  isPersonal := true
-
-def allModals : List FrenchModalEntry :=
-  [pouvoir, devoir, ilEstPossible, falloir, devrais]
-
-def lookup (form : String) : Option FrenchModalEntry :=
-  allModals.find? (·.form == form)
-
-
--- ════════════════════════════════════════════════════
--- § 3. Per-Entry Verification
--- ════════════════════════════════════════════════════
-
-theorem pouvoir_is_possibility : pouvoir.force = .possibility := rfl
-theorem devoir_is_necessity : devoir.force = .necessity := rfl
-theorem ilEstPossible_is_possibility : ilEstPossible.force = .possibility := rfl
-theorem falloir_is_necessity : falloir.force = .necessity := rfl
-theorem devrais_is_weak_necessity : devrais.force = .weakNecessity := rfl
-
-theorem pouvoir_is_personal : pouvoir.isPersonal = true := rfl
-theorem devoir_is_personal : devoir.isPersonal = true := rfl
-theorem ilEstPossible_is_impersonal : ilEstPossible.isPersonal = false := rfl
-theorem falloir_is_impersonal : falloir.isPersonal = false := rfl
-
-/-- Both personal modals are polysemous across all three flavors. -/
-theorem pouvoir_polysemous :
-    pouvoir.flavors = [.epistemic, .deontic, .circumstantial] := rfl
-
-theorem devoir_polysemous :
-    devoir.flavors = [.epistemic, .deontic, .circumstantial] := rfl
-
-
--- ════════════════════════════════════════════════════
--- § 4. Force-Flavor Pairs
--- ════════════════════════════════════════════════════
-
-/-- The set of force-flavor pairs expressed by a modal entry. -/
-def FrenchModalEntry.forceFlavors (m : FrenchModalEntry) : List ForceFlavor :=
-  m.flavors.map (⟨m.force, ·⟩)
-
-/-- *Devoir* expresses deontic necessity — the same force-flavor pair
-    as the imperative speech act's primary flavor. -/
-theorem devoir_has_deontic_necessity :
-    (⟨.necessity, .deontic⟩ : ForceFlavor) ∈ devoir.forceFlavors := by
-  decide
-
-/-- *Pouvoir* expresses deontic possibility — permission, not obligation. -/
-theorem pouvoir_has_deontic_possibility :
-    (⟨.possibility, .deontic⟩ : ForceFlavor) ∈ pouvoir.forceFlavors := by
-  decide
-
-
--- ════════════════════════════════════════════════════
--- § 5. Bridge to Assert.lean
--- ════════════════════════════════════════════════════
-
-/-! The imperative speech act has deontic content (`primaryFlavor .imperative
-    = .deontic`). *Devoir* in a 2nd person declarative shares this flavor.
-    This is why *Vous devez VP* receives directive force as readily as
-    imperatives — the deontic feature is the semantic basis for directive
-    compatibility, not the sentence type. -/
-
-/-- *Devoir* shares a modal flavor with the imperative speech act:
-    both have deontic as a primary flavor. -/
-theorem devoir_shares_imperative_flavor :
-    .deontic ∈ devoir.flavors ∧
-    primaryFlavor .imperative = .deontic := by
-  constructor
-  · decide
-  · rfl
-
-/-- *Pouvoir* also has deontic as an available flavor, but its force
-    is possibility (permission), not necessity (obligation). The
-    force distinction explains why *Vous pouvez VP* gets fewer directive
-    interpretations than *Vous devez VP*: permission is weaker than
-    obligation. -/
-theorem pouvoir_devoir_force_contrast :
-    pouvoir.force = .possibility ∧ devoir.force = .necessity := ⟨rfl, rfl⟩
-
-
--- ════════════════════════════════════════════════════
--- § 6. Bridge to Italian Cognates
--- ════════════════════════════════════════════════════
-
-/-! French and Italian modals are cognate and share key properties:
-    same force (necessity/possibility), same flavor polysemy. -/
-
-/-- *Devoir* and *dovere* share the same force. -/
-theorem devoir_dovere_same_force :
-    devoir.force = .necessity := rfl
-
-/-- *Pouvoir* and *potere* share the same force. -/
-theorem pouvoir_potere_same_force :
-    pouvoir.force = .possibility := rfl
-
-/-- French necessity and possibility modals form a dual pair. -/
-theorem french_modal_duality :
-    devoir.force = .necessity ∧ pouvoir.force = .possibility := ⟨rfl, rfl⟩
-
-/-- Both personal modals have the same flavor inventory. -/
-theorem devoir_pouvoir_same_flavors :
-    devoir.flavors = pouvoir.flavors := rfl
-
+/-- The modal expressions of the fragment. -/
+def modals : List ModalItem := [pouvoir, devoir, devoirConditional, falloir, ilEstPossibleDe]
 
 end French
