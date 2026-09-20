@@ -1,3 +1,4 @@
+import Linglib.Phonology.Segmental.NaturalClass
 import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -14,6 +15,14 @@ and its segment is the segment of that chart entry, so the values are PHOIBLE's.
 * `English.p`, `English.esh` and the like: the phonemes, as segments of their chart entries.
 * `English.inventory`: the set of them.
 * `English.preglottalization`, `English.postnasalDeletion`: two rules of Hayes's.
+
+## Main results
+
+* `English.naturalClass_nasal`, `English.isNaturalClass_voicelessStops`: Hayes's examples of
+  natural classes, the nasals and /p t k/.
+* `English.isNaturalClass_sonorantConsonants`, `English.not_isNaturalClass_stops_liquids`: the
+  sonorant consonants, contiguous in sonority, are a natural class, and the stops with the
+  liquids are not.
 
 ## Implementation notes
 
@@ -109,6 +118,28 @@ def schwa : Segment := .ofChart .«ə»
 def inventory : Finset Segment :=
   ⟨↑[p, t, k, b, d, g, dezh, m, n, ŋ, f, v, s, θ, esh, l, w, turnedR, æ, smallCapitalI, i, wedge,
     o, schwa], by decide⟩
+
+/-! ### Natural classes -/
+
+/-- The nasals are the complete set of [+nasal] sounds. -/
+theorem naturalClass_nasal :
+    (Segment.ofSpecs [(.nasal, true)]).naturalClass inventory = {m, n, ŋ} := by
+  decide
+
+/-- The voiceless stops /p t k/ are a natural class. -/
+theorem isNaturalClass_voicelessStops : IsNaturalClass inventory {p, t, k} := by decide
+
+/-- The glides, liquids and nasals, contiguous on the sonority hierarchy, are a natural
+class. -/
+theorem isNaturalClass_sonorantConsonants :
+    IsNaturalClass inventory {w, l, turnedR, m, n, ŋ} := by
+  decide
+
+/-- The stops and the liquids, which are not contiguous on the sonority hierarchy, are not a
+natural class. -/
+theorem not_isNaturalClass_stops_liquids :
+    ¬ IsNaturalClass inventory {p, t, k, b, d, g, l, turnedR} := by
+  decide
 
 /-! ### Rules -/
 

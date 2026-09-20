@@ -2,6 +2,7 @@ import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Tactic.Positivity
 import Linglib.Data.Examples.AlbrightHayes2003
 import Linglib.Fragments.English.Phonology
+import Linglib.Phonology.Segmental.NaturalClass
 
 /-!
 # Albright and Hayes (2003): Rules vs. analogy in English past tenses
@@ -28,7 +29,8 @@ depends on the final segment alone.
 Minimal generalization is `mg` on the substrate's rewrite contexts, in which a leading word
 boundary is the anchored word-specific rule and its absence the free variable. The paper's own
 steps (6) and footnote 4, the island (8), and the regular allomorphy of (7b) are computed on
-the English fragment's segments, whose meet is the featural term. Reliability is `Stats`; the
+the English fragment's segments, whose meet is the featural term and whose natural classes
+in the English inventory are what a featural term covers. Reliability is `Stats`; the
 statistics reported in Tables 1 and 4 and the ratings and production probabilities of Appendix
 A are rows. Vowel changes, which generalize on both sides of the change, the confidence-limit
 discount, and the analogical model itself are not modelled.
@@ -229,52 +231,68 @@ def laugh : List Segment := [l, æ, f]
 def fill : List Segment := [f, smallCapitalI, l]
 def pick : List Segment := [p, smallCapitalI, k]
 
-/-- In (6), *vote* and *need* differ first in their final segments, so the learned `-əd` rule keeps
-what [t] and [d] share, a class no other consonant meets. -/
-theorem learned_vote_need : ∀ x ∈ English.inventory, x.IsConsonant →
-    (Matches (learned [vote, need]) [x] ↔ x = t ∨ x = d) := by
+/-- The stems of an inventory that a description one segment long covers are the natural class
+of its featural term. -/
+theorem filter_matches_single (k : Segment) (I : Finset Segment) :
+    I.filter (fun x ↦ Matches [.seg k] [x]) = k.naturalClass I := by
+  simp only [matches_single_iff]; rfl
+
+/-- In (6), *vote* and *need* differ first in their final segments, so the learned `-əd` rule
+keeps what [t] and [d] share, and that featural term characterizes the class [t, d]
+uniquely. -/
+theorem learned_vote_need :
+    learned [vote, need] = [.seg (t ⊓ d)] ∧ (t ⊓ d).naturalClass English.inventory = {t, d} := by
   decide
 
 /-- As footnote 4 observes, whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned
 from *rub*, *sag* and *plan* reaches *need*, and only the phonology keeps *needd* out. -/
-theorem learned_rub_sag_plan : Matches (learned [rub, sag, plan]) need := by decide
+theorem learned_rub_sag_plan :
+    learned [rub, sag, plan] = [.seg (b ⊓ g ⊓ n)] ∧
+      d ∈ (b ⊓ g ⊓ n).naturalClass English.inventory := by
+  decide
+
+/-- The voiced segments, as a description. -/
+def voiced : Segment := Segment.ofSpecs [(.voice, true)]
+
+/-- The voiceless segments, as a description. -/
+def voiceless : Segment := Segment.ofSpecs [(.voice, false)]
 
 /-- In (7b) the `-d` rule generalizes to [+voice] as the stems come to span the voiced segments.
 From *rub*, *sag*, *plan*, *love* and *flow*, whose final segments are all non-lateral, it
-reaches every voiced consonant but /l/, and a stem in /l/ completes it. -/
-theorem learned_voiced : ∀ x ∈ English.inventory, x.IsConsonant →
-    (Matches (learned [rub, sag, plan, love, flow]) [x] ↔
-        x.HasValue .voice true ∧ x ≠ l) ∧
-      (Matches (learned [rub, sag, plan, love, flow, fill]) [x] ↔
-        x.HasValue .voice true) := by
+reaches every voiced segment but /l/, and a stem in /l/ completes it. -/
+theorem learned_voiced :
+    learned [rub, sag, plan, love, flow] = [.seg (b ⊓ g ⊓ n ⊓ v ⊓ o)] ∧
+      (b ⊓ g ⊓ n ⊓ v ⊓ o).naturalClass English.inventory =
+        voiced.naturalClass English.inventory \ {l} ∧
+      (b ⊓ g ⊓ n ⊓ v ⊓ o ⊓ l).naturalClass English.inventory =
+        voiced.naturalClass English.inventory := by
   decide
 
 /-- In (7b) the `-t` rule does likewise. From *jump*, *miss* and *laugh*, whose final segments
-are all non-dorsal, it reaches every voiceless consonant but /k/, and a stem in /k/ completes it. -/
-theorem learned_voiceless : ∀ x ∈ English.inventory, x.IsConsonant →
-    (Matches (learned [jump, miss, laugh]) [x] ↔
-        x.HasValue .voice false ∧ x ≠ k) ∧
-      (Matches (learned [jump, miss, laugh, pick]) [x] ↔
-        x.HasValue .voice false) := by
+are all non-dorsal, it reaches every voiceless segment but /k/, and a stem in /k/ completes
+it. -/
+theorem learned_voiceless :
+    learned [jump, miss, laugh] = [.seg (p ⊓ s ⊓ f)] ∧
+      (p ⊓ s ⊓ f).naturalClass English.inventory =
+        voiceless.naturalClass English.inventory \ {k} ∧
+      (p ⊓ s ⊓ f ⊓ k).naturalClass English.inventory =
+        voiceless.naturalClass English.inventory := by
   decide
 
 /-- The island (8) is `-t` after a voiceless fricative. -/
-def voicelessFricative : Context :=
-  [.seg (Segment.ofSpecs [(.sonorant, false), (.continuant, true), (.voice, false)])]
+def voicelessFricative : Segment :=
+  Segment.ofSpecs [(.sonorant, false), (.continuant, true), (.voice, false)]
 
 /-- (8) is met by the four voiceless fricatives and nothing else. -/
-theorem voicelessFricative_iff : ∀ x ∈ English.inventory, x.IsConsonant →
-    (Matches voicelessFricative [x] ↔ x ∈ [f, θ, s, esh]) := by
+theorem naturalClass_voicelessFricative :
+    voicelessFricative.naturalClass English.inventory = {f, θ, s, esh} := by
   decide
 
 /-- The rule learned from *miss*, *wish* and *laugh* lies inside the island (8), and further
 fricative-final forms widen it to the island. -/
-theorem learned_le_voicelessFricative (x : Segment)
-    (h : Matches (learned [miss, wish, laugh]) [x]) : Matches voicelessFricative [x] := by
-  have e : learned [miss, wish, laugh] =
-      [.seg (s ⊓ esh ⊓ f)] := by decide
-  rw [e, matches_single_iff] at h
-  exact (matches_single_iff _ _).2 (le_trans (by decide) h)
+theorem learned_le_voicelessFricative :
+    learned [miss, wish, laugh] = [.seg (s ⊓ esh ⊓ f)] ∧ voicelessFricative ≤ s ⊓ esh ⊓ f := by
+  decide
 
 /-! ### Appendix A -/
 

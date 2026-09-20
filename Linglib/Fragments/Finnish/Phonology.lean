@@ -1,4 +1,5 @@
 import Linglib.Data.PHOIBLE.Inventories.Finnish
+import Linglib.Phonology.Segmental.NaturalClass
 import Linglib.Phonology.Segmental.PHOIBLE
 import Linglib.Phonology.Harmony.System
 import Linglib.Phonology.Subregular.LocalRewrite
@@ -11,10 +12,10 @@ gradation over them. In Karlsson's description the vowels fall into three classe
 vowels /ɑ o u/ and the front vowels /æ ø y/, written ⟨a o u⟩ and ⟨ä ö y⟩, do not mix within a
 word, and the neutral vowels /e i/ occur with either set. A suffix vowel alternates with the
 stem, so that the partitive is *kirja-a* 'book' but *käsi-ä* 'hand', and the inessive
-*talo-ssa* 'in the house' but *metsä-ssä* 'in the forest'. Harmony is a single system in the sense of Rose and Walker.
-The feature [back] spreads rightward from the last harmonic stem vowel to suffix vowels
-unspecified for it, consonants and the neutral vowels are transparent, and a stem with no
-harmonic vowel takes front suffixes.
+*talo-ssa* 'in the house' but *metsä-ssä* 'in the forest'. Harmony is a single system in the
+sense of Rose and Walker. The feature [back] spreads rightward from the last harmonic stem
+vowel to suffix vowels unspecified for it, consonants and the neutral vowels are transparent,
+and a stem with no harmonic vowel takes front suffixes.
 
 The feature values come from the PHOIBLE chart, read at the vowels of a PHOIBLE Finnish
 inventory and kept on the features that distinguish the eight vowels. The alternating suffix
@@ -44,6 +45,7 @@ with two, and only a short vowel stands between the stop and the ending, so that
   inventory.
 * `Finnish.isNeutral_iff`, `Finnish.isBackVowel_iff`: the neutral vowels are /e i/ and the
   back vowels /ɑ o u/.
+* `Finnish.naturalClass_A`: the natural class of the suffix vowel is /ɑ æ/.
 * `Finnish.unspecified_back_A`, `Finnish.setFeature_back_A`: the suffix vowel has no [back],
   and with [back] filled in it is /ɑ/ or /æ/.
 * `Finnish.sourceValue_back`: a back stem vowel is the source across a neutral one, and a
@@ -189,6 +191,9 @@ def palatalHarmony : System Segment :=
     (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true ∨ IsNeutral s)
     (direction := .rightward)
     (default := some false)
+
+/-- The natural class of the suffix vowel among the vowels is its two alternants. -/
+theorem naturalClass_A : A.naturalClass vowels = {a, ä} := by decide
 
 /-- The suffix vowel has no value for [back], so it is a target of harmony. -/
 theorem unspecified_back_A : A.Unspecified .back := by decide
