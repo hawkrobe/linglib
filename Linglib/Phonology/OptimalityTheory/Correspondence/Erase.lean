@@ -13,12 +13,13 @@ insertion violates DEP once and MAX never.
 
 ## Main definitions
 
-* `Correspondence.eraseIdx`: the deletion of the segment at a position.
+* `Correspondence.deletion`, `Correspondence.eraseIdx`: the deletion of the segment at a
+  position, with and without changes to the other segments.
 * `Correspondence.insertIdx`: the insertion of a segment at a position.
 
 ## Main results
 
-* `Correspondence.maxViol_eraseIdx`, `depViol_eraseIdx`, `maxViolAt_eraseIdx`: the profile of
+* `Correspondence.maxViol_deletion`, `depViol_deletion`, `maxViolAt_deletion`: the profile of
   a deletion.
 * `Correspondence.depViol_insertIdx`, `maxViol_insertIdx`, `depViolAt_insertIdx`: the profile
   of an insertion.
@@ -69,18 +70,22 @@ theorem image_snd_skip {m n i : ℕ} (hm : m = n + 1) :
   · exact Finset.mem_image.2 ⟨(⟨b, by omega⟩, b), mem_skip.2 (by simp [h]), rfl⟩
   · exact Finset.mem_image.2 ⟨(⟨b + 1, by omega⟩, b), mem_skip.2 (by simp [h]), rfl⟩
 
-/-- `eraseIdx s i` is the deletion of the segment at position `i` of `s`. The left string is
-`s`, the right string is `s` without that segment, and every other segment corresponds to
-itself. -/
-def eraseIdx (s : List α) (i : ℕ) : Correspondence Side α where
+/-- `deletion s t i` relates `s` to a string `t` one segment shorter by skipping position `i` of
+`s`, every other position of `s` corresponding to the position of `t` in the same order. The
+segments of `t` need not be those of `s`, so a deletion may come with changes elsewhere. -/
+def deletion (s t : List α) (i : ℕ) : Correspondence Side α where
   form
     | .lhs => s
-    | .rhs => s.eraseIdx i
+    | .rhs => t
   edge
     | .lhs, .rhs => skip _ _ i
     | .rhs, .lhs => (skip _ _ i).image Prod.swap
     | .lhs, .lhs => diagonal _ _
     | .rhs, .rhs => diagonal _ _
+
+/-- `eraseIdx s i` is the deletion of the segment at position `i` of `s` with every other
+segment unchanged. -/
+def eraseIdx (s : List α) (i : ℕ) : Correspondence Side α := deletion s (s.eraseIdx i) i
 
 /-- `insertIdx s i a` is the insertion of the segment `a` at position `i` of `s`, the converse
 of the deletion of position `i` from the longer string. -/
@@ -94,7 +99,11 @@ def insertIdx (s : List α) (i : ℕ) (a : α) : Correspondence Side α where
     | .lhs, .lhs => diagonal _ _
     | .rhs, .rhs => diagonal _ _
 
-variable (s : List α) (i : ℕ) (a : α)
+variable (s t : List α) (i : ℕ) (a : α)
+
+@[simp] theorem deletion_form_lhs : (deletion s t i).form .lhs = s := rfl
+
+@[simp] theorem deletion_form_rhs : (deletion s t i).form .rhs = t := rfl
 
 @[simp] theorem eraseIdx_form_lhs : (eraseIdx s i).form .lhs = s := rfl
 
@@ -130,21 +139,37 @@ private theorem card_filter_sdiff {m n i : ℕ} (hm : m = n + 1) (hi : i < m) (P
       exact fun h h' ↦ hP (h' ▸ h)
   rw [this]; split_ifs <;> rfl
 
-variable {s i}
+variable {s t i}
 
 /-- A deletion violates a positional MAX exactly when the deleted position is protected. -/
-theorem maxViolAt_eraseIdx (hi : i < s.length) (P : ℕ → Prop) [DecidablePred P] :
-    (eraseIdx s i).maxViolAt P .lhs .rhs = if P i then 1 else 0 :=
-  card_filter_sdiff (by simp [List.length_eraseIdx, hi]; omega) hi P
+theorem maxViolAt_deletion (hlen : s.length = t.length + 1) (hi : i < s.length) (P : ℕ → Prop)
+    [DecidablePred P] : (deletion s t i).maxViolAt P .lhs .rhs = if P i then 1 else 0 :=
+  card_filter_sdiff hlen hi P
 
 /-- A deletion violates MAX once. -/
-theorem maxViol_eraseIdx (hi : i < s.length) : (eraseIdx s i).maxViol .lhs .rhs = 1 := by
-  rw [← maxViolAt_true, maxViolAt_eraseIdx hi, ite_eq_left trivial]
+theorem maxViol_deletion (hlen : s.length = t.length + 1) (hi : i < s.length) :
+    (deletion s t i).maxViol .lhs .rhs = 1 := by
+  rw [← maxViolAt_true, maxViolAt_deletion hlen hi, ite_eq_left trivial]
 
 /-- A deletion does not violate DEP. -/
-theorem depViol_eraseIdx (hi : i < s.length) : (eraseIdx s i).depViol .lhs .rhs = 0 := by
+theorem depViol_deletion (hlen : s.length = t.length + 1) :
+    (deletion s t i).depViol .lhs .rhs = 0 := by
   rw [depViol_eq_zero_iff]
-  exact (image_snd_skip (by simp [List.length_eraseIdx, hi]; omega)).ge
+  exact (image_snd_skip hlen).ge
+
+private theorem length_eq_length_eraseIdx_add_one (hi : i < s.length) :
+    s.length = (s.eraseIdx i).length + 1 := by
+  simp [List.length_eraseIdx, hi]; omega
+
+theorem maxViolAt_eraseIdx (hi : i < s.length) (P : ℕ → Prop) [DecidablePred P] :
+    (eraseIdx s i).maxViolAt P .lhs .rhs = if P i then 1 else 0 :=
+  maxViolAt_deletion (length_eq_length_eraseIdx_add_one hi) hi P
+
+theorem maxViol_eraseIdx (hi : i < s.length) : (eraseIdx s i).maxViol .lhs .rhs = 1 :=
+  maxViol_deletion (length_eq_length_eraseIdx_add_one hi) hi
+
+theorem depViol_eraseIdx (hi : i < s.length) : (eraseIdx s i).depViol .lhs .rhs = 0 :=
+  depViol_deletion (length_eq_length_eraseIdx_add_one hi)
 
 /-! ### The profile of an insertion -/
 
