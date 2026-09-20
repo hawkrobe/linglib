@@ -1,506 +1,232 @@
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Semantics.Root.Defs
 import Linglib.Syntax.Anaphora.Basic
+import Mathlib.Data.Nat.Basic
+import Mathlib.Order.Monotone.Defs
 
 /-!
-# Ellipsis: [E] Features and Deletion Domains
-[merchant-2001] [merchant-2013] [benz-salzmann-2025]
+# Ellipsis
 
-The [E] feature on a functional head triggers PF-deletion of the head's
-complement and presupposes e-GIVENness ([merchant-2001]). Different
-ellipsis types correspond to different [E] positions in a functional spine.
+This file defines Merchant's [E] feature and the deletion domain it determines. An [E] feature on
+a functional head instructs the phonology not to pronounce the head's complement, under the
+presupposition that the complement is given, and each kind of ellipsis is an [E] feature at a
+position of the spine: VP-ellipsis puts it on Voice and deletes vP, sluicing puts it on C and
+deletes TP, and v-stranding VP-ellipsis puts it on v and deletes VP alone. A position is external
+to an ellipsis when it lies outside the deletion domain; it then survives deletion and is
+invisible to the identity condition, so a mismatch in a feature its head bears is tolerated.
+Lowering [E] shrinks the domain, so whatever a higher ellipsis tolerates a lower one tolerates too,
+which is Sailor's generalization. A deletion spine is any preorder of positions with a
+deletion-domain relation that is irreflexive and monotone in the position of [E]; the clausal
+spine defined here and the nominal spine of Benz and Salzmann are instances.
 
-## Generic Framework (`DeletionSpine`)
+## Main definitions
 
-The deletion-domain mechanism is domain-general: the same theory governs
-clausal ellipsis (VP-ellipsis, sluicing) and nominal ellipsis (NP-ellipsis,
-N-stranding). The `DeletionSpine` class captures the shared structure:
+* `Minimalist.DeletionSpine`: positions with a deletion-domain relation, and
+  `Minimalist.DeletionSpine.External`, a position outside the domain of [E] at another.
+* `Minimalist.SpinePosition`: the positions of the clausal spine, V, the VP-adjunction site, v,
+  Voice, T and C, linearly ordered by height.
+* `Minimalist.Ellipsis`: an ellipsis, identified by the position of its [E] feature, with
+  `Minimalist.Ellipsis.sluicing`, `Minimalist.Ellipsis.vpEllipsis` and
+  `Minimalist.Ellipsis.vStrandingVPE`.
+* `Minimalist.Ellipsis.Mismatch`: the dimensions in which an elided phrase may differ from its
+  antecedent, each regulated by a head of the spine.
+* `Minimalist.AgainReading`: the two readings of *again* and their adjunction sites.
 
-- A set of spine positions with a complement-of relation (`isBelow`)
-- [E] on position p → everything strictly below p is deleted
-- Monotonicity: lower [E] → smaller domain → more external positions
-- X-stranding ([liptak-saab-2014]): head movement out of the
-  deletion domain lets the moved head survive ellipsis
+## Main results
 
-The clausal instance is `SpinePos` (V, VP_adj, v, Voice, T, C); the nominal
-spine of [benz-salzmann-2025] instantiates the same class study-side.
+* `Minimalist.DeletionSpine.external_self`: the [E]-bearing head survives its own ellipsis, the
+  core of X-stranding.
+* `Minimalist.Ellipsis.Tolerates.of_le`: Sailor's generalization, a mismatch tolerated by an
+  ellipsis is tolerated by every lower one.
 
-## Clausal Ellipsis ([merchant-2013])
+## Implementation notes
 
-Voice mismatch tolerance tracks the *height* of ellipsis:
-- **VPE** ([E] on Voice): Voice is *external* → voice mismatch OK
-- **Sluicing** ([E] on C): Voice is *internal* → voice mismatch blocked
-- **vVPE** ([E] on v): both v and Voice are *external* →
-  voice *and* transitivity mismatches OK ([kalyakin-2026])
+The VP-adjunction site is a position of its own, below v but outside v's complement, so that
+restitutive *again* and manner roots survive v-stranding VP-ellipsis while V does not; it is what
+separates the domain of [E] on v from that of [E] on Voice. Every ellipsis is a surface anaphor in
+Hankamer and Sag's sense, which the `Anaphor.HasDepth` instance records.
 
-## Monotonicity ([sailor-2014]'s Generalization)
+## References
 
-Lower [E] position → smaller deletion domain → more features external
-→ more mismatches tolerated. This is a strict monotonicity proved
-generically for all `DeletionSpine` instances.
+* [merchant-2001]
+* [merchant-2013]
+* [kalyakin-2026]
+* [sailor-2014]
+* [liptak-saab-2014]
+* [hankamer-sag-1976]
 -/
 
-namespace Minimalist.Ellipsis
+namespace Minimalist
 
-open Semantics
+/-- A deletion spine is a preorder of positions with a deletion-domain relation. `InDomain d p`
+holds when `d` lies in the complement of `p`, which an [E] feature on `p` deletes; no position is
+in its own domain, and raising [E] never shrinks the domain. -/
+class DeletionSpine (α : Type*) [Preorder α] where
+  /-- `d` lies in the deletion domain of [E] at `p`. -/
+  InDomain : α → α → Prop
+  not_inDomain_self : ∀ p, ¬ InDomain p p
+  inDomain_mono : ∀ d, Monotone (InDomain d)
 
--- ════════════════════════════════════════════════════
--- § 0. Generic Deletion Spine
--- ════════════════════════════════════════════════════
+export DeletionSpine (InDomain not_inDomain_self inDomain_mono)
 
-/-- A deletion spine: a finite set of positions in a functional spine
-    equipped with a deletion-domain relation and structural ordering.
+namespace DeletionSpine
 
-    Both clausal spines (V, v, Voice, T, C) and nominal spines (N, n, Num, D)
-    are instances. The class captures the domain-general logic of
-    [merchant-2001]'s [E]-feature theory:
+variable {α : Type*} [Preorder α] [DeletionSpine α] {d p q : α}
 
-    - [E] on head H → complement of H (everything `isBelow` H) is deleted
-    - Monotonicity: lower [E] → smaller deletion domain
-    - Irreflexivity: H itself is never in its own deletion domain -/
-class DeletionSpine (α : Type*) where
-  /-- `isBelow p₁ p₂` = true iff p₁ is in the deletion domain when [E]
-      is at p₂. Encodes the complement-of relation, NOT simple structural
-      ordering — adjunction sites may be structurally between two heads
-      without being in the lower head's complement. A `Bool` decision
-      procedure; the `Prop` predicate layer (`inDomain`/`canMismatch`)
-      is built on top. -/
-  isBelow : α → α → Bool
-  /-- `isAtOrBelow p₁ p₂` = true iff p₁ is structurally at or below p₂.
-      A simple linear ordering used for monotonicity reasoning.
-      (A mathlib `LinearOrder` upgrade of this is a planned follow-up.) -/
-  isAtOrBelow : α → α → Bool
-  /-- No position is in its own deletion domain. -/
-  isBelow_irrefl : ∀ (p : α), isBelow p p = false
-  /-- If d is external (not below) at p₁, it is external at any lower p₂.
-      This is [sailor-2014]'s monotonicity generalization. -/
-  isBelow_mono : ∀ (d p₁ p₂ : α),
-    isBelow d p₁ = false → isAtOrBelow p₂ p₁ = true → isBelow d p₂ = false
+/-- `d` is external to ellipsis at `p` when it lies outside the deletion domain, so that it
+survives deletion and is invisible to the identity condition. -/
+def External (d p : α) : Prop := ¬ InDomain d p
 
-/-- Generic: is position c in the deletion domain of [E] at ePos?
-    A `Prop` predicate; the underlying `isBelow` stays a `Bool` decision
-    procedure (the `Nat.ble`-style computational core). -/
-def inDomain {α : Type*} [DeletionSpine α] (c ePos : α) : Prop :=
-  DeletionSpine.isBelow c ePos = true
+instance [DecidableRel (InDomain (α := α))] (d p : α) : Decidable (External d p) :=
+  inferInstanceAs (Decidable (¬ _))
 
-instance {α : Type*} [DeletionSpine α] (c ePos : α) : Decidable (inDomain c ePos) := by
-  unfold inDomain; infer_instance
+/-- The [E]-bearing head survives its own ellipsis, which is the core of X-stranding: a head that
+has moved to the [E]-bearing position is pronounced while its base position is deleted. -/
+theorem external_self (p : α) : External p p := not_inDomain_self p
 
-/-- X-stranding ([liptak-saab-2014]): if X has moved from `base` to
-    the [E]-bearing head at `ePos`, X is external (survives ellipsis)
-    while its base position is deleted.
+/-- Sailor's generalization. What is external at an [E] position is external at every lower
+one. -/
+theorem External.of_le (h : External d p) (hq : q ≤ p) : External d q :=
+  fun hd ↦ h (inDomain_mono d hq hd)
 
-    This is the abstract core of the X-stranding diagnostic for head
-    movement: X-stranding XP-ellipsis exists in a language iff both
-    X-movement and XP-ellipsis exist independently.
+end DeletionSpine
 
-    Instances:
-    - V-stranding VPE: V moves to v, [E] on v → V survives, VP deleted
-    - N-stranding NP-ellipsis: N moves to n, [E] on n → N survives, NP deleted -/
-theorem xStranding {α : Type*} [DeletionSpine α] (ePos base : α)
-    (h_base_in_domain : inDomain base ePos) :
-    ¬ inDomain ePos ePos ∧ inDomain base ePos :=
-  ⟨by simp [inDomain, DeletionSpine.isBelow_irrefl ePos], h_base_in_domain⟩
+export DeletionSpine (External external_self)
 
--- ════════════════════════════════════════════════════
--- § 1. Clausal Spine
--- ════════════════════════════════════════════════════
+/-! ### The clausal spine -/
 
-/-- Positions in the clausal spine, ordered from lowest to highest.
-    This is a deliberately coarse-grained linear order sufficient for
-    ellipsis domain computation. It does not replace `Cat` or
-    the functional sequence; it captures the relative height relevant
-    to Merchant's deletion-domain theory.
-
-    `VP_adj` encodes VP-adjunction — the attachment site of restitutive
-    *again* and result-state modifiers. Structurally below v but NOT in
-    v's complement: adjuncts to XP are part of the XP projection but
-    not selected by the head that takes XP as complement. This matters
-    for vVPE ([kalyakin-2026]): VP-adjuncts survive when [E] is on
-    v (complement of v = bare VP, excluding adjuncts) but are deleted
-    when [E] is on Voice (complement of Voice = full vP, including
-    VP-adjuncts). -/
-inductive SpinePos where
-  | V      -- Lexical verb
-  | VP_adj -- VP-adjunction (restitutive *again*, result-state modifiers)
-  | v      -- Little v (transitivity, event structure)
-  | Voice  -- Voice head (active/passive/anticausative)
-  | T      -- Tense
-  | C      -- Complementizer
+/-- The positions of the clausal spine that ellipsis distinguishes, lowest first. They are the
+lexical verb, the VP-adjunction site of restitutive *again* and manner roots, v, Voice, T and C. -/
+inductive SpinePosition
+  | V
+  | vpAdjunct
+  | v
+  | Voice
+  | T
+  | C
   deriving DecidableEq, Repr
 
-/-- Strict "in deletion domain of" relation on spine positions.
+namespace SpinePosition
 
-    `isBelow p₁ p₂` means "p₁ is inside the deletion domain when [E]
-    is at p₂." This is NOT a simple structural ordering — it encodes
-    the complement-vs-adjunction distinction:
+/-- Height in the spine. -/
+def rank : SpinePosition → ℕ
+  | .V => 0
+  | .vpAdjunct => 1
+  | .v => 2
+  | .Voice => 3
+  | .T => 4
+  | .C => 5
 
-    - `V.isBelow .v = true`: V is in v's complement (VP)
-    - `VP_adj.isBelow .v = false`: VP-adjuncts are NOT in v's complement
-    - `VP_adj.isBelow .Voice = true`: VP-adjuncts ARE inside Voice's
-      complement (vP contains the full VP projection including adjuncts)
+theorem rank_injective : Function.Injective rank := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [rank]
 
-    This distinction is what makes vVPE ([kalyakin-2026]) predict
-    both *again* readings survive: restitutive *again* (VP-adjoined) is
-    outside the complement of v but inside vP. -/
-def SpinePos.isBelow : SpinePos → SpinePos → Bool
-  | .V, .VP_adj | .V, .v | .V, .Voice | .V, .T | .V, .C => true
-  | .VP_adj, .Voice | .VP_adj, .T | .VP_adj, .C => true
-  | .v, .Voice | .v, .T | .v, .C => true
-  | .Voice, .T | .Voice, .C => true
-  | .T, .C => true
-  | _, _ => false
+instance : LinearOrder SpinePosition := .lift' rank rank_injective
 
-/-- Structural height comparison (non-strict).
-    Used for monotonicity: `p₁.isAtOrBelow p₂` means p₁ is structurally
-    at or below p₂. Unlike `isBelow`, this IS a simple linear ordering
-    with VP_adj between V and v.
-    Fully pattern-matched to avoid BEq reduction issues in proofs. -/
-def SpinePos.isAtOrBelow : SpinePos → SpinePos → Bool
-  | .V, _ => true
-  | .VP_adj, .VP_adj | .VP_adj, .v | .VP_adj, .Voice
-  | .VP_adj, .T | .VP_adj, .C => true
-  | .v, .v | .v, .Voice | .v, .T | .v, .C => true
-  | .Voice, .Voice | .Voice, .T | .Voice, .C => true
-  | .T, .T | .T, .C => true
-  | .C, .C => true
-  | _, _ => false
+/-- `d` lies in the complement of `p` when it is below `p`, except that the VP-adjunction site is
+outside the complement of v: adjuncts to VP belong to the VP projection but are not selected by
+v, and are deleted only by an [E] above v. -/
+def InDomain (d p : SpinePosition) : Prop := d < p ∧ (d = .vpAdjunct → .v < p)
 
-instance : DeletionSpine SpinePos where
-  isBelow := SpinePos.isBelow
-  isAtOrBelow := SpinePos.isAtOrBelow
-  isBelow_irrefl := by intro p; cases p <;> decide
-  isBelow_mono := by
-    intro d p₁ p₂
-    cases d <;> cases p₁ <;> cases p₂ <;>
-      simp_all [SpinePos.isBelow, SpinePos.isAtOrBelow]
+instance : DecidableRel InDomain := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
--- ════════════════════════════════════════════════════
--- § 2. Ellipsis Types
--- ════════════════════════════════════════════════════
+instance : DeletionSpine SpinePosition where
+  InDomain := InDomain
+  not_inDomain_self p h := lt_irrefl p h.1
+  inDomain_mono _ _ _ h := fun ⟨hd, ha⟩ ↦ ⟨hd.trans_le h, fun e ↦ (ha e).trans_le h⟩
 
-/-- An ellipsis type is defined by the spine position of the [E]-bearing
-    head. The deletion domain is the complement of that head —
-    everything strictly below it in the spine. -/
-structure EllipsisType where
-  /-- The head carrying [E] -/
-  ePosition : SpinePos
-  /-- Label for display -/
-  name : String := ""
-  deriving Repr
+instance : DecidableRel (DeletionSpine.InDomain (α := SpinePosition)) :=
+  inferInstanceAs (DecidableRel InDomain)
 
-/-- Every ellipsis type is a Hankamer–Sag **surface** anaphor ([hankamer-sag-1976]):
-    PF-deletion under identity leaves full internal structure in place. So
-    `EllipsisType` is an `Anaphor.HasDepth` carrier (depth `.surface` throughout). -/
-instance : Anaphor.HasDepth EllipsisType := ⟨fun _ => .surface⟩
+end SpinePosition
 
-/-- Witness: every ellipsis type is surface. -/
-theorem isSurface (e : EllipsisType) : Anaphor.HasDepth.IsSurface e := rfl
+/-! ### Ellipsis types -/
 
-/-- Is a spine position inside the deletion domain of an ellipsis type?
-    A position is in the deletion domain iff it is strictly below the
-    [E]-bearing head. -/
-def isInDeletionDomain (c : SpinePos) (e : EllipsisType) : Prop :=
-  inDomain c e.ePosition
-
-instance (c : SpinePos) (e : EllipsisType) : Decidable (isInDeletionDomain c e) := by
-  unfold isInDeletionDomain; infer_instance
-
-/-- Sluicing: [E] on C, deletes TP. Contains Voice → voice mismatch blocked. -/
-def sluicing : EllipsisType := ⟨.C, "sluicing"⟩
-
-/-- TP ellipsis: [E] on T, deletes VoiceP. -/
-def tpEllipsis : EllipsisType := ⟨.T, "TP ellipsis"⟩
-
-/-- English VPE: [E] on Voice, deletes vP.
-    Voice is external → voice mismatch tolerated.
-    v is internal → transitivity mismatch blocked. -/
-def englishVPE : EllipsisType := ⟨.Voice, "English VPE"⟩
-
-/-- v-stranding VPE: [E] on v, deletes VP.
-    Both Voice and v are external → voice and transitivity mismatches OK.
-    Attested in Muira Dargwa complex predicates ([kalyakin-2026]). -/
-def vVPE : EllipsisType := ⟨.v, "v-stranding VPE"⟩
-
--- ════════════════════════════════════════════════════
--- § 3. Mismatch Dimensions
--- ════════════════════════════════════════════════════
-
-/-- A mismatch dimension: a syntactic feature whose head position
-    determines whether mismatches in that feature are tolerated. -/
-structure MismatchDimension where
-  /-- Label for the dimension -/
-  name : String
-  /-- The spine position of the head bearing this feature -/
-  headPosition : SpinePos
-  deriving Repr
-
-/-- Voice mismatch: active vs. passive, determined by Voice head. -/
-def voiceMismatch : MismatchDimension := ⟨"voice", .Voice⟩
-
-/-- Transitivity mismatch: transitive v vs. unaccusative v. -/
-def transitivityMismatch : MismatchDimension := ⟨"transitivity", .v⟩
-
-/-- Lexical verb mismatch: different V heads. -/
-def lexicalMismatch : MismatchDimension := ⟨"lexical verb", .V⟩
-
-/-- Dative alternation: double-object vs prepositional dative.
-    Regulated by distinct v heads below Voice ([merchant-2013] §3.3). -/
-def dativeAlternation : MismatchDimension := ⟨"dative alternation", .v⟩
-
-/-- Applicative/prepositional alternation: embroider X with Y vs embroider Y on X.
-    Regulated by applicative v heads below Voice ([merchant-2013] §3.3). -/
-def prepAlternation : MismatchDimension := ⟨"prepositional alternation", .v⟩
-
-/-- Transitive/middle alternation: they market ethanol vs ethanol markets well.
-    Regulated by v heads determining external argument realization
-    ([merchant-2013] §3.3). -/
-def middleAlternation : MismatchDimension := ⟨"middle alternation", .v⟩
-
-/-- A mismatch in dimension d is tolerated by ellipsis type e iff the
-    head bearing the feature is NOT in the deletion domain — i.e., it
-    is at or above the [E]-bearing head. -/
-def canMismatch (e : EllipsisType) (d : MismatchDimension) : Prop :=
-  ¬ isInDeletionDomain d.headPosition e
-
-instance (e : EllipsisType) (d : MismatchDimension) : Decidable (canMismatch e d) := by
-  unfold canMismatch; infer_instance
-
--- ════════════════════════════════════════════════════
--- § 4. Core Predictions
--- ════════════════════════════════════════════════════
-
--- English VPE: [E] on Voice
-
-/-- English VPE tolerates voice mismatches: Voice is external to vP. -/
-theorem englishVPE_voice_ok :
-    canMismatch englishVPE voiceMismatch := by decide
-
-/-- English VPE blocks transitivity mismatches: v is inside vP. -/
-theorem englishVPE_transitivity_blocked :
-    ¬ canMismatch englishVPE transitivityMismatch := by decide
-
-/-- English VPE blocks lexical verb mismatches: V is inside vP. -/
-theorem englishVPE_lexical_blocked :
-    ¬ canMismatch englishVPE lexicalMismatch := by decide
-
--- Sluicing: [E] on C
-
-/-- Sluicing blocks voice mismatches: Voice is inside TP. -/
-theorem sluicing_voice_blocked :
-    ¬ canMismatch sluicing voiceMismatch := by decide
-
-/-- Sluicing blocks transitivity mismatches: v is inside TP. -/
-theorem sluicing_transitivity_blocked :
-    ¬ canMismatch sluicing transitivityMismatch := by decide
-
--- v-stranding VPE: [E] on v
-
-/-- vVPE tolerates voice mismatches: Voice is external to VP. -/
-theorem vVPE_voice_ok :
-    canMismatch vVPE voiceMismatch := by decide
-
-/-- vVPE tolerates transitivity mismatches: v is external to VP. -/
-theorem vVPE_transitivity_ok :
-    canMismatch vVPE transitivityMismatch := by decide
-
-/-- vVPE blocks lexical verb mismatches: V is inside VP. -/
-theorem vVPE_lexical_blocked :
-    ¬ canMismatch vVPE lexicalMismatch := by decide
-
--- ════════════════════════════════════════════════════
--- § 5. Monotonicity
--- ════════════════════════════════════════════════════
-
-/-- Monotonicity of mismatch tolerance: if ellipsis type e₁ tolerates
-    a mismatch dimension d, then any ellipsis type e₂ whose [E] position
-    is at or below e₁'s also tolerates d. [sailor-2014]'s monotonicity:
-    lower [E] → smaller domain → more mismatches tolerated. Routed through
-    the generic class law `DeletionSpine.isBelow_mono`. -/
-theorem mismatch_monotone (d : MismatchDimension) (e₁ e₂ : EllipsisType)
-    (h₁ : canMismatch e₁ d)
-    (h₂ : e₂.ePosition.isAtOrBelow e₁.ePosition = true) :
-    canMismatch e₂ d := by
-  simp only [canMismatch, isInDeletionDomain, inDomain, Bool.not_eq_true] at h₁ ⊢
-  exact DeletionSpine.isBelow_mono d.headPosition e₁.ePosition e₂.ePosition h₁ h₂
-
--- ════════════════════════════════════════════════════
--- § 6. Root Attachment Position
--- ════════════════════════════════════════════════════
-
-/-- Spine position of a root by its `Root.Position` ([beavers-koontz-garboden-2020]
-    §4.5), where change-of-state `.complement` roots sit at `V` in v's complement and
-    manner `.adjoined` roots at `VP_adj` outside it. -/
-def rootSpinePos : Root.Position → SpinePos
-  | .complement => .V
-  | .adjoined => .VP_adj
-
-/-- Is a root inside the vVPE deletion domain (= complement of v)?
-    Derived from the spine, not stipulated: a root is deleted under vVPE
-    iff its attachment position is below `v`. -/
-def rootInVVPEDomain (p : Root.Position) : Prop :=
-  isInDeletionDomain (rootSpinePos p) vVPE
-
-instance (p : Root.Position) : Decidable (rootInVVPEDomain p) := by
-  unfold rootInVVPEDomain; infer_instance
-
-/-- Complement roots (change-of-state) are deleted under vVPE: `V` is in
-    v's complement (follows from the spine, not stipulated). -/
-theorem complementRoot_in_vVPE : rootInVVPEDomain .complement := by decide
-
-/-- Adjoined roots (manner/activity) survive vVPE — `VP_adj` is outside
-    v's complement. This is why antipassive roots block vVPE in Muira
-    Dargwa: antipassive coerces adjunction ([kalyakin-2026]). -/
-theorem adjoinedRoot_outside_vVPE : ¬ rootInVVPEDomain .adjoined := by decide
-
--- ════════════════════════════════════════════════════
--- § 7. Again Ambiguity
--- ════════════════════════════════════════════════════
-
-/-- Adjunction position of *again*, following [merchant-2013]
-    (building on Johnson 2004, von Stechow 1996). -/
-inductive AgainPosition where
-  | vP_adjunction  -- Repetitive: event-level *again* (high)
-  | VP_adjunction  -- Restitutive: result-state *again* (low)
+/-- An ellipsis is identified by the position of its [E] feature; its deletion domain is that
+head's complement. -/
+structure Ellipsis where
+  /-- The head carrying [E]. -/
+  ePosition : SpinePosition
   deriving DecidableEq, Repr
 
-/-- Is an *again* reading available under a given ellipsis type?
+namespace Ellipsis
 
-    Repetitive *again* adjoins high (vP or VoiceP): modeled at `Voice`
-    level — outside the deletion domain of both VPE and vVPE.
+variable {e e' : Ellipsis} {d : SpinePosition}
 
-    Restitutive *again* adjoins to VP — modeled at `VP_adj`. This is
-    inside vP (deleted under English VPE, [E] on Voice) but NOT inside
-    v's complement (survives vVPE, [E] on v). The distinction between
-    `VP_adj` and `V` is crucial: V (the head) is in v's complement,
-    but VP-adjunction is at the complement boundary, outside it. -/
-def againSurvives (pos : AgainPosition) (e : EllipsisType) : Prop :=
-  match pos with
-  | .vP_adjunction => ¬ isInDeletionDomain .Voice e   -- VoiceP-level adjunction
-  | .VP_adjunction => ¬ isInDeletionDomain .VP_adj e   -- VP-adjunction level
+/-- `e.Deletes d` when the position `d` lies in the deletion domain of `e`. -/
+def Deletes (e : Ellipsis) (d : SpinePosition) : Prop := InDomain d e.ePosition
 
-instance (pos : AgainPosition) (e : EllipsisType) : Decidable (againSurvives pos e) := by
-  unfold againSurvives; split <;> infer_instance
+instance : Decidable (e.Deletes d) := inferInstanceAs (Decidable (InDomain _ _))
 
-/-- Under English VPE, restitutive *again* is inside the deletion domain
-    (deleted), while repetitive *again* survives.
-    [merchant-2013]: only repetitive reading available (Johnson 2004
-    exx. 49a–b). -/
-theorem englishVPE_again :
-    againSurvives .vP_adjunction englishVPE ∧
-    ¬ againSurvives .VP_adjunction englishVPE := by decide
+/-- `e.Spares d` when the position `d` is external to `e` and survives it. -/
+def Spares (e : Ellipsis) (d : SpinePosition) : Prop := External d e.ePosition
 
-/-- Under vVPE, BOTH readings survive: restitutive *again* (VP-adjoined)
-    is outside v's complement, so it is not deleted.
-    [kalyakin-2026] §4.1 (exx. 52a–b): both repetitive and
-    restitutive ʔibrra 'again' are available under vVPE in Muira Dargwa.
-    This is the key diagnostic proving the deletion domain is VP (smaller
-    than English VPE's vP). -/
-theorem vVPE_again :
-    againSurvives .vP_adjunction vVPE ∧
-    againSurvives .VP_adjunction vVPE := by decide
+instance : Decidable (e.Spares d) := inferInstanceAs (Decidable (External _ _))
 
--- ════════════════════════════════════════════════════
--- § 8. Cross-Linguistic Comparison
--- ════════════════════════════════════════════════════
+theorem spares_ePosition (e : Ellipsis) : e.Spares e.ePosition := external_self _
 
-/-- English VPE and vVPE agree on voice: both tolerate voice mismatches. -/
-theorem voice_agreement :
-    canMismatch englishVPE voiceMismatch ∧
-    canMismatch vVPE voiceMismatch := by decide
+theorem Spares.of_le (h : e.Spares d) (hle : e'.ePosition ≤ e.ePosition) : e'.Spares d :=
+  DeletionSpine.External.of_le h hle
 
-/-- English VPE and vVPE diverge on transitivity: English blocks it,
-    vVPE allows it. This is the key prediction that distinguishes the
-    two ellipsis types. -/
-theorem transitivity_divergence :
-    ¬ canMismatch englishVPE transitivityMismatch ∧
-    canMismatch vVPE transitivityMismatch := by decide
+/-- Every ellipsis is a surface anaphor in Hankamer and Sag's sense, since deletion under identity
+leaves the full structure in place. -/
+instance : Anaphor.HasDepth Ellipsis := ⟨fun _ ↦ .surface⟩
 
-/-- Both block lexical verb mismatches: V is inside the deletion domain
-    of both English VPE and vVPE. -/
-theorem lexical_blocked_both :
-    ¬ canMismatch englishVPE lexicalMismatch ∧
-    ¬ canMismatch vVPE lexicalMismatch := by decide
+/-- Sluicing puts [E] on C and deletes TP. -/
+def sluicing : Ellipsis := ⟨.C⟩
 
--- ════════════════════════════════════════════════════
--- § 9. Cross-Linguistic vVPE Typology
--- ════════════════════════════════════════════════════
+/-- VP-ellipsis puts [E] on Voice and deletes vP, so that Voice is external to the ellipsis. -/
+def vpEllipsis : Ellipsis := ⟨.Voice⟩
 
-/-- Extended ellipsis type with cross-linguistic variation parameters.
-    Languages with verb-stranding ellipsis vary in:
-    - deletion domain size (*again* test: VP vs vP)
-    - whether the Verbal Identity Requirement holds (LV must match)
-    - whether argument-structure alternations are tolerated -/
-structure VPEProfile where
-  /-- The core ellipsis type (spine position of [E]) -/
-  ellipsisType : EllipsisType
-  /-- Verbal Identity Requirement ([goldberg-2005]): antecedent and
-      target light verbs must be identical in root and derivational
-      morphology. Active in Persian and Bangla; inactive in Muira Dargwa. -/
-  virRequired : Bool
-  /-- Language label -/
-  language : String
-  deriving Repr
+/-- v-stranding VP-ellipsis puts [E] on v and deletes VP alone, stranding the light verb. -/
+def vStrandingVPE : Ellipsis := ⟨.v⟩
 
-/-- Muira Dargwa vVPE: [E] on v, deletion domain = VP.
-    Both *again* readings survive; arg-structure alternations tolerated;
-    LV mismatches tolerated ([kalyakin-2026] ex. 78). -/
-def muiraDargwaVVPE : VPEProfile :=
-  { ellipsisType := vVPE, virRequired := false, language := "Muira Dargwa" }
+/-! ### Mismatches -/
 
-/-- Persian vVPE: [E] on v, deletion domain = VP.
-    Both *again* readings survive ([toosarvandani-2009] ex. 90).
-    But arg-structure alternations blocked (ex. 91) and LV identity
-    required — VIR is active. -/
-def persianVVPE : VPEProfile :=
-  { ellipsisType := vVPE, virRequired := true, language := "Persian" }
+/-- A dimension in which an elided phrase may differ from its antecedent, each regulated by a head
+of the spine: voice by Voice, the causative, dative, prepositional and middle alternations by
+flavours of v, and the lexical verb by V. -/
+inductive Mismatch
+  | voice
+  | transitivity
+  | dative
+  | prepositional
+  | middle
+  | lexical
+  deriving DecidableEq, Repr
 
-/-- Bangla verb-stranding: deletion domain = vP (NOT VP).
-    Only repetitive *again* survives (Haldar 2021 ex. 94a–b);
-    adjuncts CAN be interpreted in the ellipsis site (ex. 95).
-    This means the [E] position is Voice (same as English VPE),
-    with the LV evacuating via head movement. -/
-def banglaVVPE : VPEProfile :=
-  { ellipsisType := englishVPE, virRequired := true, language := "Bangla" }
+/-- The head that regulates each dimension. -/
+def Mismatch.head : Mismatch → SpinePosition
+  | .voice => .Voice
+  | .transitivity | .dative | .prepositional | .middle => .v
+  | .lexical => .V
 
-/-- British *do* ellipsis: [E] on v, deletion domain = VP.
-    Tolerates voice mismatches (Silk 2025 ex. 97) and arg-structure
-    alternations (ex. 98), matching Muira Dargwa vVPE. -/
-def britishDoVVPE : VPEProfile :=
-  { ellipsisType := vVPE, virRequired := false, language := "British English" }
+/-- `e.Tolerates m` when the head regulating `m` is external to `e`, so that a mismatch in `m`
+is invisible to the identity condition. -/
+def Tolerates (e : Ellipsis) (m : Mismatch) : Prop := e.Spares m.head
 
-/-- Muira Dargwa and Persian share the same [E] position but differ on VIR. -/
-theorem dargwa_persian_same_domain :
-    muiraDargwaVVPE.ellipsisType.ePosition = persianVVPE.ellipsisType.ePosition ∧
-    muiraDargwaVVPE.virRequired ≠ persianVVPE.virRequired := ⟨rfl, by decide⟩
+instance (e : Ellipsis) (m : Mismatch) : Decidable (e.Tolerates m) :=
+  inferInstanceAs (Decidable (e.Spares _))
 
-/-- Bangla has a LARGER deletion domain than Muira Dargwa: [E] on Voice
-    (= English VPE) vs [E] on v. The *again* test diagnoses this: Bangla
-    deletes restitutive *again* (Haldar 2021), Muira Dargwa does not. -/
-theorem bangla_larger_domain :
-    banglaVVPE.ellipsisType.ePosition = SpinePos.Voice ∧
-    muiraDargwaVVPE.ellipsisType.ePosition = SpinePos.v ∧
-    inDomain SpinePos.v SpinePos.Voice := by decide
+/-- Sailor's generalization. A mismatch tolerated by an ellipsis is tolerated by every ellipsis
+whose [E] sits lower. -/
+theorem Tolerates.of_le {m : Mismatch} (h : e.Tolerates m) (hle : e'.ePosition ≤ e.ePosition) :
+    e'.Tolerates m :=
+  Spares.of_le h hle
 
-/-- The *again* test correctly differentiates Bangla (vP domain) from
-    Muira Dargwa (VP domain): restitutive *again* is deleted under
-    Bangla's ellipsis but survives Muira Dargwa's. -/
-theorem again_differentiates_bangla_dargwa :
-    ¬ againSurvives .VP_adjunction banglaVVPE.ellipsisType ∧
-    againSurvives .VP_adjunction muiraDargwaVVPE.ellipsisType := by
-  decide
+end Ellipsis
 
--- ════════════════════════════════════════════════════
--- § 10. X-Stranding
--- ════════════════════════════════════════════════════
+/-! ### The two readings of *again* -/
 
-/-- V-to-v movement instantiates generic X-stranding: V (base) is below v
-    (landing), so when [E] is on v, V's base position is in the deletion
-    domain but the v head, where V has moved, is external — v-stranding VPE
-    ([kalyakin-2026]). -/
-theorem v_stranding_is_xStranding :
-    ¬ inDomain SpinePos.v SpinePos.v ∧
-    inDomain SpinePos.V SpinePos.v :=
-  xStranding SpinePos.v SpinePos.V (by decide)
+/-- The two readings of *again* and their adjunction sites. Repetitive *again* adjoins to vP or
+VoiceP and presupposes an earlier event, restitutive *again* adjoins to VP and presupposes an
+earlier result state. -/
+inductive AgainReading
+  | repetitive
+  | restitutive
+  deriving DecidableEq, Repr
 
-end Minimalist.Ellipsis
+/-- The adjunction site of each reading. -/
+def AgainReading.site : AgainReading → SpinePosition
+  | .repetitive => .Voice
+  | .restitutive => .vpAdjunct
+
+end Minimalist

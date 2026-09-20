@@ -4,19 +4,21 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 /-!
 # Merchant (2013): Voice and Ellipsis
 
-This file formalizes the account in [merchant-2013] of the uneven distribution of voice
-mismatches under ellipsis: tolerated under verb-phrase ellipsis, blocked under sluicing,
-fragment answers, gapping, and stripping. Verb-phrase ellipsis targets the complement of
-Voice, so Voice is external to the ellipsis site and mismatches are invisible to the
-identity condition, whereas the clausal ellipses target a phrase containing Voice, so
-mismatches violate identity. No argument-structure alternation, causative–inchoative,
-dative, middle, or prepositional, is tolerated under any ellipsis, the heads regulating them
-all sitting at or below v and hence inside every deletion domain. Every judgment is derived
-from the substrate's deletion-domain predicate, with German and Greek data beside English.
+This file formalizes Merchant's account of the uneven distribution of voice mismatches: an elided
+VP may differ from its antecedent in voice under VP-ellipsis but not under sluicing, fragment
+answers, gapping, stripping or pseudogapping. VP-ellipsis deletes vP, the complement of Voice, so
+Voice is external to the ellipsis site and invisible to the identity condition, whereas the
+clausal ellipses delete TP or more, which contains VoiceP. No argument-structure alternation,
+causative, middle, dative or prepositional, survives any ellipsis, since the heads regulating them
+sit at v or below and so inside every deletion domain. The paper's judgments are recorded as rows
+and checked against `Ellipsis.Tolerates`, and Johnson's observation that only repetitive *again*
+survives VP-ellipsis follows from the adjunction site of restitutive *again*.
 
 ## References
 
 * [merchant-2013]
+* [merchant-2004]
+* [kratzer-1996]
 -/
 
 namespace Merchant2013
@@ -24,26 +26,26 @@ namespace Merchant2013
 open Minimalist Minimalist.Voice
 open Minimalist.Ellipsis
 
-/-- Fragment answers: movement to Spec,CP + TP-deletion.
-    Same [E] position as sluicing ([merchant-2004]). -/
-def fragmentAnswers : EllipsisType := ⟨.C, "fragment answers"⟩
+/-- Fragment answers move the remnant to Spec,CP and delete TP, the [E] position of sluicing
+    ([merchant-2004]). -/
+def fragmentAnswers : Ellipsis := ⟨.C⟩
 
-/-- Gapping: elides material containing VoiceP. [E] at C or higher. -/
-def gapping : EllipsisType := ⟨.C, "gapping"⟩
+/-- Gapping elides material containing VoiceP, with [E] at C or higher. -/
+def gapping : Ellipsis := ⟨.C⟩
 
-/-- Stripping (bare argument ellipsis): subcase of gapping. -/
-def stripping : EllipsisType := ⟨.C, "stripping"⟩
+/-- Stripping, bare argument ellipsis, is a subcase of gapping. -/
+def stripping : Ellipsis := ⟨.C⟩
 
-/-- Pseudogapping: remnant extracted from vP; deletion domain includes
-    VoiceP. [E] at T or higher. -/
-def pseudogapping : EllipsisType := ⟨.T, "pseudogapping"⟩
+/-- Pseudogapping extracts the remnant from vP and deletes a domain that includes VoiceP, with
+    [E] at T or higher. -/
+def pseudogapping : Ellipsis := ⟨.T⟩
 
 /-- A voice mismatch datum across an ellipsis boundary. -/
 structure VoiceMismatchDatum where
   description : String
   antecedentVoice : Flavor
   targetVoice : Flavor
-  ellipsisType : EllipsisType
+  ellipsisType : Ellipsis
   grammatical : Bool
   language : String := "English"
   deriving Repr
@@ -56,14 +58,14 @@ structure VoiceMismatchDatum where
 def ex1a : VoiceMismatchDatum :=
   { description := "Active → passive under VPE"
     antecedentVoice := .agentive, targetVoice := .passive
-    ellipsisType := englishVPE, grammatical := true }
+    ellipsisType := vpEllipsis, grammatical := true }
 
 /-- (2a) Passive → active under VPE.
     "The system can be used by anyone who wants to ⟨use it⟩." -/
 def ex2a : VoiceMismatchDatum :=
   { description := "Passive → active under VPE"
     antecedentVoice := .passive, targetVoice := .agentive
-    ellipsisType := englishVPE, grammatical := true }
+    ellipsisType := vpEllipsis, grammatical := true }
 
 -- § 2.2 Sluicing: voice mismatches blocked (§1.2, exx. 5–7, 25)
 
@@ -109,28 +111,28 @@ def ex11a : VoiceMismatchDatum :=
     antecedentVoice := .agentive, targetVoice := .passive
     ellipsisType := stripping, grammatical := false }
 
-/-- VP-ellipsis data matches canMismatch. -/
+/-- The VP-ellipsis rows are as `Ellipsis.Tolerates` predicts. -/
 theorem vpe_voice_predicted :
-    (ex1a.grammatical = true ↔ canMismatch englishVPE voiceMismatch) ∧
-    (ex2a.grammatical = true ↔ canMismatch englishVPE voiceMismatch) := by decide
+    (ex1a.grammatical = true ↔ vpEllipsis.Tolerates .voice) ∧
+    (ex2a.grammatical = true ↔ vpEllipsis.Tolerates .voice) := by decide
 
-/-- Sluicing data matches canMismatch across three languages. -/
+/-- The sluicing rows in three languages are as `Ellipsis.Tolerates` predicts. -/
 theorem sluicing_voice_predicted :
-    (ex5.grammatical = true ↔ canMismatch sluicing voiceMismatch) ∧
-    (ex6a.grammatical = true ↔ canMismatch sluicing voiceMismatch) ∧
-    (ex25a.grammatical = true ↔ canMismatch sluicing voiceMismatch) := by decide
+    (ex5.grammatical = true ↔ sluicing.Tolerates .voice) ∧
+    (ex6a.grammatical = true ↔ sluicing.Tolerates .voice) ∧
+    (ex25a.grammatical = true ↔ sluicing.Tolerates .voice) := by decide
 
 /-- All high ellipsis types block voice mismatches. -/
 theorem high_ellipsis_voice_predicted :
-    (ex9a.grammatical = true ↔ canMismatch fragmentAnswers voiceMismatch) ∧
-    (ex10a.grammatical = true ↔ canMismatch gapping voiceMismatch) ∧
-    (ex11a.grammatical = true ↔ canMismatch stripping voiceMismatch) := by decide
+    (ex9a.grammatical = true ↔ fragmentAnswers.Tolerates .voice) ∧
+    (ex10a.grammatical = true ↔ gapping.Tolerates .voice) ∧
+    (ex11a.grammatical = true ↔ stripping.Tolerates .voice) := by decide
 
 /-- A datum for argument structure alternation under ellipsis. -/
 structure ArgStructureDatum where
   description : String
-  alternationType : MismatchDimension
-  ellipsisType : EllipsisType
+  alternationType : Mismatch
+  ellipsisType : Ellipsis
   grammatical : Bool
   deriving Repr
 
@@ -139,13 +141,13 @@ structure ArgStructureDatum where
 /-- (30a) "This can freeze. *Please do." -/
 def ex30a : ArgStructureDatum :=
   { description := "Causative/inchoative blocked under VPE"
-    alternationType := transitivityMismatch
-    ellipsisType := englishVPE, grammatical := false }
+    alternationType := .transitivity
+    ellipsisType := vpEllipsis, grammatical := false }
 
 /-- (31a) Greek: "*Eklisan ena δromo, alla δen ksero pjos ⟨eklise⟩" -/
 def ex31a : ArgStructureDatum :=
   { description := "Causative/inchoative blocked under sluicing"
-    alternationType := transitivityMismatch
+    alternationType := .transitivity
     ellipsisType := sluicing, grammatical := false }
 
 -- § 4.2 Middle (§3.3.1, exx. 35–36)
@@ -153,21 +155,21 @@ def ex31a : ArgStructureDatum :=
 /-- (35a) "*They market ethanol well in the Midwest, but regular gas doesn't." -/
 def ex35a : ArgStructureDatum :=
   { description := "Trans → middle blocked under VPE"
-    alternationType := middleAlternation
-    ellipsisType := englishVPE, grammatical := false }
+    alternationType := .middle
+    ellipsisType := vpEllipsis, grammatical := false }
 
 /-- (36a) "*Ethanol markets well in the Midwest, though they don't in the South." -/
 def ex36a : ArgStructureDatum :=
   { description := "Middle → trans blocked under VPE"
-    alternationType := middleAlternation
-    ellipsisType := englishVPE, grammatical := false }
+    alternationType := .middle
+    ellipsisType := vpEllipsis, grammatical := false }
 
 -- § 4.3 Dative alternation (§3.3.2, exx. 37–39)
 
 /-- (39a) "*They served₁ someone the meal, but I don't know to whom." -/
 def ex39a : ArgStructureDatum :=
   { description := "Dative alternation blocked under sluicing"
-    alternationType := dativeAlternation
+    alternationType := .dative
     ellipsisType := sluicing, grammatical := false }
 
 -- § 4.4 Prepositional alternation (§3.3.2, exx. 42–44)
@@ -176,26 +178,26 @@ def ex39a : ArgStructureDatum :=
      what on ⟨they embroidered peace signs t⟩" -/
 def ex43a : ArgStructureDatum :=
   { description := "Prep alternation blocked under sluicing"
-    alternationType := prepAlternation
+    alternationType := .prepositional
     ellipsisType := sluicing, grammatical := false }
 
 /-- (44) "*She embroiders peace signs on jackets more often than
      she does with swastikas." -/
 def ex44 : ArgStructureDatum :=
   { description := "Prep alternation blocked under pseudogapping"
-    alternationType := prepAlternation
+    alternationType := .prepositional
     ellipsisType := pseudogapping, grammatical := false }
 
-/-- Per-datum verification: each datum's grammaticality equals the
-    canMismatch prediction for its alternation type and ellipsis type. -/
+/-- Each row's grammaticality is as `Ellipsis.Tolerates` predicts for its alternation and
+    ellipsis. -/
 theorem argStructure_data_predicted :
-    (ex30a.grammatical = true ↔ canMismatch ex30a.ellipsisType ex30a.alternationType) ∧
-    (ex31a.grammatical = true ↔ canMismatch ex31a.ellipsisType ex31a.alternationType) ∧
-    (ex35a.grammatical = true ↔ canMismatch ex35a.ellipsisType ex35a.alternationType) ∧
-    (ex36a.grammatical = true ↔ canMismatch ex36a.ellipsisType ex36a.alternationType) ∧
-    (ex39a.grammatical = true ↔ canMismatch ex39a.ellipsisType ex39a.alternationType) ∧
-    (ex43a.grammatical = true ↔ canMismatch ex43a.ellipsisType ex43a.alternationType) ∧
-    (ex44.grammatical = true ↔ canMismatch ex44.ellipsisType ex44.alternationType) := by
+    (ex30a.grammatical = true ↔ ex30a.ellipsisType.Tolerates ex30a.alternationType) ∧
+    (ex31a.grammatical = true ↔ ex31a.ellipsisType.Tolerates ex31a.alternationType) ∧
+    (ex35a.grammatical = true ↔ ex35a.ellipsisType.Tolerates ex35a.alternationType) ∧
+    (ex36a.grammatical = true ↔ ex36a.ellipsisType.Tolerates ex36a.alternationType) ∧
+    (ex39a.grammatical = true ↔ ex39a.ellipsisType.Tolerates ex39a.alternationType) ∧
+    (ex43a.grammatical = true ↔ ex43a.ellipsisType.Tolerates ex43a.alternationType) ∧
+    (ex44.grammatical = true ↔ ex44.ellipsisType.Tolerates ex44.alternationType) := by
   decide
 
 /-- All v-level alternations are blocked under high-[E] ellipsis types
@@ -204,62 +206,54 @@ theorem argStructure_data_predicted :
     Under vVPE ([E] on v), these alternations ARE tolerated
     ([kalyakin-2026]). -/
 theorem v_alternations_blocked_high_ellipsis :
-    ¬ canMismatch sluicing dativeAlternation ∧
-    ¬ canMismatch sluicing prepAlternation ∧
-    ¬ canMismatch sluicing middleAlternation ∧
-    ¬ canMismatch englishVPE dativeAlternation ∧
-    ¬ canMismatch englishVPE prepAlternation ∧
-    ¬ canMismatch englishVPE middleAlternation ∧
-    ¬ canMismatch fragmentAnswers dativeAlternation ∧
-    ¬ canMismatch gapping middleAlternation ∧
-    ¬ canMismatch pseudogapping prepAlternation := by
+    ¬ sluicing.Tolerates .dative ∧
+    ¬ sluicing.Tolerates .prepositional ∧
+    ¬ sluicing.Tolerates .middle ∧
+    ¬ vpEllipsis.Tolerates .dative ∧
+    ¬ vpEllipsis.Tolerates .prepositional ∧
+    ¬ vpEllipsis.Tolerates .middle ∧
+    ¬ fragmentAnswers.Tolerates .dative ∧
+    ¬ gapping.Tolerates .middle ∧
+    ¬ pseudogapping.Tolerates .prepositional := by
   decide
 
-/-- The uneven distribution: voice mismatches are tolerated in VP-ellipsis
-    (low [E]) but blocked in all clausal ellipses (high [E]). -/
+/-- The uneven distribution is that voice mismatches are tolerated in VP-ellipsis, with [E] low,
+    but blocked in all clausal ellipses, with [E] high. -/
 theorem uneven_distribution :
-    canMismatch englishVPE voiceMismatch ∧
-    ¬ canMismatch sluicing voiceMismatch ∧
-    ¬ canMismatch fragmentAnswers voiceMismatch ∧
-    ¬ canMismatch gapping voiceMismatch ∧
-    ¬ canMismatch stripping voiceMismatch ∧
-    ¬ canMismatch pseudogapping voiceMismatch := by
+    vpEllipsis.Tolerates .voice ∧
+    ¬ sluicing.Tolerates .voice ∧
+    ¬ fragmentAnswers.Tolerates .voice ∧
+    ¬ gapping.Tolerates .voice ∧
+    ¬ stripping.Tolerates .voice ∧
+    ¬ pseudogapping.Tolerates .voice := by
   decide
 
-/-- Voice is the discriminating dimension: the only mismatch that
-    distinguishes VP-ellipsis from sluicing. All v-level and V-level
-    dimensions are blocked under both. -/
+/-- Voice is the discriminating dimension, the only mismatch that distinguishes VP-ellipsis from
+    sluicing; all v-level and V-level dimensions are blocked under both. -/
 theorem voice_uniquely_discriminates :
     -- voice DISCRIMINATES: VPE tolerates it, sluicing does not
-    (canMismatch englishVPE voiceMismatch ∧ ¬ canMismatch sluicing voiceMismatch) ∧
+    (vpEllipsis.Tolerates .voice ∧ ¬ sluicing.Tolerates .voice) ∧
     -- all other dimensions AGREE between VPE and sluicing
-    (canMismatch englishVPE transitivityMismatch ↔
-      canMismatch sluicing transitivityMismatch) ∧
-    (canMismatch englishVPE dativeAlternation ↔
-      canMismatch sluicing dativeAlternation) ∧
-    (canMismatch englishVPE lexicalMismatch ↔
-      canMismatch sluicing lexicalMismatch) := by
+    (vpEllipsis.Tolerates .transitivity ↔
+      sluicing.Tolerates .transitivity) ∧
+    (vpEllipsis.Tolerates .dative ↔
+      sluicing.Tolerates .dative) ∧
+    (vpEllipsis.Tolerates .lexical ↔
+      sluicing.Tolerates .lexical) := by
   decide
 
-/-- Merchant's negative prediction: if voice mismatches were tolerated
-    in sluicing (high [E]), monotonicity would force them to be tolerated
-    in VP-ellipsis (low [E]) too. No language can have the reverse of
-    the attested pattern. -/
-theorem no_inverse_language :
-    canMismatch sluicing voiceMismatch →
-    canMismatch englishVPE voiceMismatch :=
-  λ h => mismatch_monotone voiceMismatch sluicing englishVPE h rfl
+/-- Merchant's negative prediction. If voice mismatches were tolerated in sluicing, with [E]
+high, Sailor's generalization would force them to be tolerated in VP-ellipsis, with [E] low, so
+no language has the reverse of the attested pattern. -/
+theorem no_inverse_language : sluicing.Tolerates .voice → vpEllipsis.Tolerates .voice :=
+  fun h ↦ h.of_le (by decide)
 
-/-- Voice's discriminating power follows from its spine position:
-    it sits between the VPE boundary (Voice) and the sluicing boundary (C).
-    All other mismatch dimensions sit at v or below. -/
+/-- Voice's discriminating power follows from its spine position: it sits between the VP-ellipsis
+boundary, Voice, and the sluicing boundary, C, while every other mismatch dimension sits at v or
+below. -/
 theorem voice_between_boundaries :
-    voiceMismatch.headPosition = .Voice ∧
-    transitivityMismatch.headPosition = .v ∧
-    dativeAlternation.headPosition = .v ∧
-    prepAlternation.headPosition = .v ∧
-    middleAlternation.headPosition = .v ∧
-    lexicalMismatch.headPosition = .V := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    Mismatch.voice.head = .Voice ∧ ∀ m : Mismatch, m ≠ .voice → m.head ≤ .v :=
+  ⟨rfl, fun m hm ↦ by cases m <;> first | exact absurd rfl hm | decide⟩
 
 /-- End-to-end chain: Voice severing ([kratzer-1996]) →
     Merchant's deletion domain theory ([merchant-2013]) →
@@ -268,28 +262,27 @@ theorem voice_between_boundaries :
     Step 1 (Voice.lean): Active and passive are distinct Voice flavors;
     Voice is an independent head above vP.
 
-    Step 2 (DeletionDomain.lean): VPE's [E] sits on Voice, deleting vP.
+    Step 2 (Ellipsis.lean): VPE's [E] sits on Voice, deleting vP.
     Voice is external → mismatches invisible to identity.
 
     Step 3 (this file): Active→passive and passive→active under VPE
-    are both grammatical, matching `canMismatch`. -/
+    are both grammatical, as `Ellipsis.Tolerates` predicts. -/
 theorem end_to_end_voice_chain :
     -- Step 1: Active and passive are distinct Voice flavors
     Flavor.agentive ≠ Flavor.passive ∧
     -- Step 2: Voice is external to VPE's deletion domain
-    canMismatch englishVPE voiceMismatch ∧
+    vpEllipsis.Tolerates .voice ∧
     -- Step 3: Empirical data matches
     ex1a.grammatical = true ∧
     ex2a.grammatical = true := by
   refine ⟨?_, by decide, rfl, rfl⟩
   intro h; cases h
 
-/-- The *again* diagnostic (§4): under VPE, only repetitive *again*
-    (high, VoiceP-adjunction) survives; restitutive *again* (low,
-    VP-adjunction) is inside the deletion domain. This confirms
-    that VPE targets vP, not VP. -/
+/-- The *again* diagnostic (§4) shows that under VPE only repetitive *again*, adjoined high to
+    VoiceP, survives, while restitutive *again*, adjoined low to VP, is inside the deletion
+    domain, which confirms that VPE targets vP rather than VP. -/
 theorem again_confirms_vp_boundary :
-    againSurvives .vP_adjunction englishVPE ∧
-    ¬ againSurvives .VP_adjunction englishVPE := by decide
+    vpEllipsis.Spares AgainReading.repetitive.site ∧
+      ¬ vpEllipsis.Spares AgainReading.restitutive.site := by decide
 
 end Merchant2013
