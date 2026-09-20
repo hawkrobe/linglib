@@ -1,0 +1,338 @@
+[
+  {
+    "id": "blok2015_3a",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most three students will show up to the lecture, if any.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "At most three students will show up to the lecture, if any.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "ifAny"],
+      ["numeral", "3"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_3b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Up to three students will show up to the lecture, if any.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Up to three students will show up to the lecture, if any.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "+"],
+      ["test", "ifAny"],
+      ["numeral", "3"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_4a",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I expect to see at most ten people, but maybe no-one will show up.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I expect to see at most ten people, but maybe no-one will show up.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "butNone"],
+      ["numeral", "10"]
+    ],
+    "comment": "Provided by a reviewer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_4b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(4b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I expect to see up to ten people, but maybe no-one will show up.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I expect to see up to ten people, but maybe no-one will show up.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "+"],
+      ["test", "butNone"],
+      ["numeral", "10"]
+    ],
+    "comment": "Provided by a reviewer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_7a",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most ten people died in the crash, perhaps even more.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "At most ten people died in the crash, perhaps even more.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "evenMore"],
+      ["numeral", "10"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_7b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Up to ten people died in the crash, perhaps even more.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Up to ten people died in the crash, perhaps even more.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "+"],
+      ["test", "evenMore"],
+      ["numeral", "10"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_11a",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You're allowed to choose at most ten presents, but no more than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You're allowed to choose at most ten presents, but no more than that.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "noMore"],
+      ["numeral", "10"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_11b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You're allowed to choose up to ten presents, but no more than that.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You're allowed to choose up to ten presents, but no more than that.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "+"],
+      ["test", "noMore"],
+      ["numeral", "10"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_22a",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(21a)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(22a)"},
+    "language": "stan1293",
+    "primaryText": "At most ten people died in the crash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "At most ten people died in the crash.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "range"],
+      ["numeral", "10"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_22b",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(22a)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(22b)"},
+    "language": "stan1293",
+    "primaryText": "At most one person died in the crash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "At most one person died in the crash.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "range"],
+      ["numeral", "1"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_23a",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(21b)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(23a)"},
+    "language": "stan1293",
+    "primaryText": "Up to ten people died in the crash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Up to ten people died in the crash.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "+"],
+      ["test", "range"],
+      ["numeral", "10"]
+    ],
+    "comment": "Cited in the source from Nouwen 2008.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_23b",
+    "source": {"bibkey": "schwarz-buccola-hamilton-2012", "paperLabel": "(22b)"},
+    "reportedIn": {"bibkey": "blok-2015", "paperLabel": "(23b)"},
+    "language": "stan1293",
+    "primaryText": "Up to one person died in the crash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Up to one person died in the crash.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "+"],
+      ["test", "range"],
+      ["numeral", "1"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_29",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(29)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most 0 people died in the crash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "At most 0 people died in the crash.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "range"],
+      ["numeral", "0"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "blok2015_34a",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(34a)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Er hoeven maximaal vijf studenten te komen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "there"], ["hoeven", "must.NPI"], ["maximaal", "maximally"], ["vijf", "five"],
+      ["studenten", "students"], ["te", "to"], ["komen", "come"]
+    ],
+    "translation": "At most five students have to show up.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "-"],
+      ["test", "npi"],
+      ["numeral", "5"]
+    ],
+    "comment": "The modal hoeven is a negative polarity item.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "blok2015_34b",
+    "source": {"bibkey": "blok-2015", "paperLabel": "(34b)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Er hoeven tot vijf studenten te komen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Er", "there"], ["hoeven", "must.NPI"], ["tot", "TOT"], ["vijf", "five"],
+      ["studenten", "students"], ["te", "to"], ["komen", "come"]
+    ],
+    "translation": "Up to five students have to show up.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["directional", "+"],
+      ["test", "npi"],
+      ["numeral", "5"]
+    ],
+    "comment": "The modal hoeven is a negative polarity item.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
