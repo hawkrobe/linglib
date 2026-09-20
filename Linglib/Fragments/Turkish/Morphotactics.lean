@@ -41,14 +41,16 @@ exactly when it differs from the last segment of the stem in being a vowel.
 * `Turkish.underlying`, `Turkish.realize`: the underlying and the surface form of a stem with
   a string of suffixes.
 * `Exponent.form`: the citation form of an exponent.
+* `Nominal.forms`: the forms of a string of nominal exponents, with the final `n` of a
+  third-person possessive before a case suffix.
 
 ## Main results
 
 * `Suffix.attach_concat_alternates`: a bracketed suffix attaches with vowels and consonants
   alternating across the juncture.
-* `Suffix.attach_eq_elideV2`, `Suffix.attach_eq_epenthesize`: after a vowel-final stem,
-  attachment is one of the repairs of `Phonology.Hiatus`, elision of the suffix's vowel or
-  insertion of its bracketed consonant.
+* `Suffix.attach_eq_elideV2`, `Suffix.attach_eq_epenthesize`, `Suffix.attach_concat_eq_repair`:
+  after a vowel-final stem, attachment is one of the repairs of `Phonology.Hiatus`, elision of
+  the suffix's vowel or insertion of its bracketed consonant.
 
 ## Implementation notes
 
@@ -58,9 +60,9 @@ material outside both systems. The markers' meanings are the matter of Chapter 2
 tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3), and the copular
 -(y)mIş marks evidential modality alone; -mIş followed by a copular marker or -DIr is perfective
 only (§8.2.3.3). The final `n` that the third-person possessives take before a case suffix
-(§8.1.2) is not represented. Negation of the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see
-`Turkish.Negation`). The grammar's examples are checked against both systems in
-`Studies/GokselKerslake2005.lean`.
+(§6.2, §8.1.2) belongs to neither citation form and is supplied by `Nominal.forms`. Negation of
+the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see `Turkish.Negation`). The grammar's
+examples are checked against both systems in `Studies/GokselKerslake2005.lean`.
 
 ## References
 
@@ -129,6 +131,21 @@ theorem attach_eq_epenthesize (j : Hiatus.Juncture) {s : Suffix} {c : Segment}
     s.attach j.stem = j.epenthesize c := by
   simp [attach, Hiatus.Juncture.stem, Hiatus.Juncture.epenthesize, Hiatus.Juncture.suffix,
     initial_concat hb, hs, j.v1_isVowel, hc]
+
+/-- After a vowel-final stem the attachment of a bracketed suffix is a repair of hiatus. If the
+bracketed segment is a vowel it is elided, and if it is a consonant it is inserted before the
+suffix's vowel. -/
+theorem attach_concat_eq_repair {s : Suffix} {b h : Segment} {t : List Segment}
+    (hb : s.bracketed = some b) (hs : s.segments = h :: t) (hbh : ¬ (b.IsVowel ↔ h.IsVowel))
+    (w : List Segment) {l : Segment} (hl : l.IsVowel) :
+    (∃ j : Hiatus.Juncture, j.stem = w ++ [l] ∧ s.attach (w ++ [l]) = j.elideV2) ∨
+      ∃ j : Hiatus.Juncture, j.stem = w ++ [l] ∧ s.attach (w ++ [l]) = j.epenthesize b := by
+  by_cases hbv : b.IsVowel
+  · exact .inl ⟨⟨w, l, b, s.segments, hl, hbv⟩, rfl,
+      attach_eq_elideV2 ⟨w, l, b, s.segments, hl, hbv⟩ hb rfl⟩
+  · have hh : h.IsVowel := by tauto
+    exact .inr ⟨⟨w, l, h, t, hl, hh⟩, rfl,
+      attach_eq_epenthesize ⟨w, l, h, t, hl, hh⟩ hb hbv hs⟩
 
 end Suffix
 
@@ -310,7 +327,7 @@ inductive Slot where
   deriving DecidableEq, Repr
 
 /-- The possessive suffixes (§8.1.2). The second-person plural is also the formal singular, and
-the final `n` that the third-person forms take before a case suffix is not represented. -/
+the final `n` that the third-person forms take before a case suffix is supplied by `forms`. -/
 def possessives : Agreement.Paradigm Suffix :=
   [(.pn .first .singular, ⟨some I, [m]⟩), (.pn .second .singular, ⟨some I, [n]⟩),
    (.pn .third .singular, ⟨some s, [I]⟩), (.pn .first .plural, ⟨some I, [m, I, z]⟩),
@@ -345,6 +362,24 @@ def Exponent.form : Exponent σ → Suffix
   | .locative => ⟨none, [D, A]⟩
   | .ablative => ⟨none, [D, A, n]⟩
   | .genitive => ⟨some n, [I, n]⟩
+
+/-- The third-person possessives are the exponents that take a final `n` before a case suffix
+(§6.2 (iib), §8.1.2). -/
+def Exponent.IsThirdPossessive : (Σ σ, Exponent σ) → Prop
+  | ⟨_, .possessive c⟩ => c = .pn .third .singular ∨ c = .pn .third .plural
+  | _ => False
+
+instance : DecidablePred Exponent.IsThirdPossessive := fun e ↦ by
+  rcases e with ⟨_, _ | _ | _ | _ | _ | _ | _⟩ <;> unfold Exponent.IsThirdPossessive <;>
+    infer_instance
+
+/-- `forms es` lists the citation forms of a string of exponents, a third-person possessive
+taking its final `n` when a case suffix follows, as in *tepe-si-n-de* (§8.1.2). -/
+def forms : List (Σ σ, Exponent σ) → List Suffix
+  | [] => []
+  | e :: es =>
+    (if Exponent.IsThirdPossessive e ∧ ∃ e' ∈ es.head?, e'.1 = .case then
+      { e.2.form with segments := e.2.form.segments ++ [n] } else e.2.form) :: forms es
 
 /-- The nominal has the slots number, possession and case, in that order (§8.1). -/
 def system : Morphology.PositionClassSystem where
