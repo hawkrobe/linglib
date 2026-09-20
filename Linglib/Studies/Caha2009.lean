@@ -161,8 +161,7 @@ theorem dargwa_not_respectsCaha :
     its only on-nominal-chain cases are NOM/ACC/GEN — downward-closed.
     The richness Finnish shows is on the directional dimension
     ([pantcheva-2011]); on the nominal chain it has no LOC-without-DAT
-    gap. (Its allative-for-dative recipient function lives in
-    `Finnish.Case.allative_extends_to_dative`.) -/
+    gap. -/
 theorem finnish_respectsCaha :
     RespectsCahaContainment Finnish.Case.inventory := by decide
 
