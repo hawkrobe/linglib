@@ -132,7 +132,7 @@ instance (e : Elision) (p : Prominence) : Decidable (c.Prominent e p) :=
 
 /-- `c.corr e` is the correspondence between the unrepaired concatenation and the form that
 the elision `e` gives, the deletion of one vowel. -/
-def Context.corr (e : Elision) : Correspondence Correspondence.Side Segment :=
+def Context.corr (e : Elision) : Correspondence BinaryRole Segment :=
   Correspondence.eraseIdx c.input (c.idx e)
 
 /-- `c.resolve e` is the form that the elision `e` gives. -/

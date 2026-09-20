@@ -129,7 +129,7 @@ def output : Candidate → List Segment
 
 /-- `corr c k` is the correspondence of the candidate `k` to the input, a deletion of the empty
 node for `delete` and position by position for the others. -/
-def corr : Candidate → Correspondence Correspondence.Side Segment
+def corr : Candidate → Correspondence BinaryRole Segment
   | .delete => .deletion (input c) (output c .delete) 1
   | k => .parallel (input c) (output c k)
 

@@ -31,11 +31,11 @@ paper's tableaux: `luo_exchange` (11), `dominant_accented` (21), `recessive` (22
 
 namespace Alderete2001
 
-open Constraints OptimalityTheory Correspondence
+open Constraints OptimalityTheory
 
 /-! ### Transderivational correspondence -/
 
-/-- The roles of a transderivational diagram: the input, its base, and the derivative. -/
+/-- The roles of a transderivational diagram are the input, its base, and the derivative. -/
 inductive Role where
   | input
   | base
@@ -44,18 +44,21 @@ inductive Role where
 
 variable {α : Type*}
 
-/-- The diagram of (8): the input and the base each correspond diagonally to the derivative. -/
+/-- In the diagram of (8) the input and the base each correspond diagonally to the
+derivative. -/
 def tct (input base output : List α) : Correspondence Role α :=
-  diagram (fun | .input => input | .base => base | .output => output)
+  .diagram (fun | .input => input | .base => base | .output => output)
     fun r₁ r₂ => r₁ ≠ .output ∧ r₂ = .output
 
 /-- Satisfying `¬F` for `F` the loss of `P` along some correspondence means some correspondent
 of that relation loses `P`: anti-faithfulness on a base–derivative relation can only be met by
 mutating the base ((27)). -/
 theorem strict_base_mutation (P : α → Prop) [DecidablePred P] (c : Correspondence Role α)
-    (r₁ r₂ : Role) (h : Constraint.antifaithful (maxViolFeature P c r₁ r₂ |> fun n _ => n) () = 0) :
+    (r₁ r₂ : Role)
+    (h : Constraint.antifaithful (c.maxViolFeature P r₁ r₂ |> fun n _ => n) () = 0) :
     ∃ p ∈ c.edge r₁ r₂, P (c.form r₁)[p.1] ∧ ¬ P (c.form r₂)[p.2] :=
-  (maxViolFeature_pos_iff P c r₁ r₂).1 ((Constraint.antifaithful_eq_zero_iff _ _).1 h)
+  (Correspondence.maxViolFeature_pos_iff P c r₁ r₂).1
+    ((Constraint.antifaithful_eq_zero_iff _ _).1 h)
 
 /-! ### Luo: voicing exchange ((6), (11)) -/
 
@@ -74,9 +77,9 @@ def e : Seg := ⟨'e', none⟩
 
 /-- OO-IDENT[voice] between a base and a candidate derivative (10a). -/
 def ooIdentVoice (base : List Seg) : Constraint (List Seg) := fun out =>
-  identViolFeature Seg.voice (parallel base out) .lhs .rhs
+  (Correspondence.parallel base out).identViolFeature Seg.voice .lhs .rhs
 
-/-- (11a): under `¬OO-IDENT[voice] ≫ OO-IDENT[voice]` the plural of *bat* is *bed-e* — the
+/-- In (11a), under `¬OO-IDENT[voice] ≫ OO-IDENT[voice]` the plural of *bat* is *bed-e*. The
 faithful *bet-e* violates the anti-faithfulness constraint, and the total reversal *ped-e*
 satisfies it only with a gratuitous second violation of faithfulness. -/
 theorem luo_exchange :
@@ -99,16 +102,16 @@ def un (s : String) : Syl := ⟨s, false⟩
 
 /-- MAX(Accent) (14a) from role `r₁` to the derivative. -/
 def maxAccent (input base : List Syl) (r₁ : Role) : Constraint (List Syl) := fun out =>
-  maxViolFeature (·.accent = true) (tct input base out) r₁ .output
+  (tct input base out).maxViolFeature (·.accent = true) r₁ .output
 
 /-- DEP(Accent) (14b) from the input to the derivative. -/
 def depAccent (input base : List Syl) : Constraint (List Syl) := fun out =>
-  depViolFeature (·.accent = true) (tct input base out) .input .output
+  (tct input base out).depViolFeature (·.accent = true) .input .output
 
-/-- CULMINATIVITY (15a): the word bears an accent. -/
+/-- CULMINATIVITY (15a) requires the word to bear an accent. -/
 def culmin : Constraint (List Syl) := Constraint.binary fun out => out.all (!·.accent)
 
-/-- The inputs and bases of (21)–(23): *adá+ppó+i*, *yóm+tára*, *kóobe+kko*. -/
+/-- The inputs and bases of (21)–(23) are *adá+ppó+i*, *yóm+tára* and *kóobe+kko*. -/
 def adaInput : List Syl := [un "a", acc "da", acc "ppo", un "i"]
 def adaBase : List Syl := [un "a", acc "da"]
 def yomInput : List Syl := [acc "yom", acc "ta", un "ra"]
@@ -116,8 +119,8 @@ def yomBase : List Syl := [acc "yon", un "da"]
 def koobeInput : List Syl := [acc "koo", un "be", un "kko"]
 def koobeBase : List Syl := [acc "koo", un "be"]
 
-/-- (21): the dominant accented suffix *-ppó* under `¬OO-MAX ≫ OO-MAX ≫ IO-MAX` deletes the base
-accent and keeps its own: *ada-ppó-i*. -/
+/-- In (21) the dominant accented suffix *-ppó* under `¬OO-MAX ≫ OO-MAX ≫ IO-MAX` deletes the
+base accent and keeps its own, giving *ada-ppó-i*. -/
 theorem dominant_accented :
     (Tableau.ofRanking
       [[un "a", acc "da", un "ppo", un "i"], [un "a", un "da", un "ppo", un "i"],
@@ -126,16 +129,17 @@ theorem dominant_accented :
         maxAccent adaInput adaBase .input]).optimal = {[un "a", un "da", acc "ppo", un "i"]} := by
   decide
 
-/-- (22): the recessive suffix *-tára*, with `OO-MAX ≫ ¬OO-MAX`, leaves the base accent:
-*yón-dara*. -/
+/-- In (22) the recessive suffix *-tára*, with `OO-MAX ≫ ¬OO-MAX`, leaves the base accent,
+giving *yón-dara*. -/
 theorem recessive :
     (Tableau.ofRanking [[un "yon", acc "da", un "ra"], [acc "yon", un "da", un "ra"]]
       [maxAccent yomInput yomBase .base, (maxAccent yomInput yomBase .base).antifaithful]).optimal =
       {[acc "yon", un "da", un "ra"]} := by
   decide
 
-/-- (23): the dominant unaccented suffix *-kko* deletes the base accent, and with
-`IO-DEP(Accent) ≫ CULMIN` nothing replaces it: *koobe-kko*, unaccented like any accentless word. -/
+/-- In (23) the dominant unaccented suffix *-kko* deletes the base accent, and with
+`IO-DEP(Accent) ≫ CULMIN` nothing replaces it, giving *koobe-kko*, unaccented like any
+accentless word. -/
 theorem dominant_unaccented :
     (Tableau.ofRanking
       [[acc "koo", un "be", un "kko"], [un "koo", acc "be", un "kko"],
@@ -153,24 +157,25 @@ unattested. -/
 /-- ALIGN-L(H, σ) (44): a linked H must be linked to the first mora. -/
 def alignL : Constraint (List Bool) := Constraint.binary fun t => t.head? = some false ∧ t.any id
 
-/-- NOFLOP(Tone) between a base and a candidate: links of the base lost in the derivative. -/
+/-- NOFLOP(Tone) between a base and a candidate counts the links of the base lost in the
+derivative. -/
 def noFlop (base : List Bool) : Constraint (List Bool) := fun out =>
-  maxViolFeature (· = true) (parallel base out) .lhs .rhs
+  (Correspondence.parallel base out).maxViolFeature (· = true) .lhs .rhs
 
-/-- NOSPREAD(Tone): links inserted in the derivative. -/
+/-- NOSPREAD(Tone) counts the links inserted in the derivative. -/
 def noSpread (base : List Bool) : Constraint (List Bool) := fun out =>
-  depViolFeature (· = true) (parallel base out) .lhs .rhs
+  (Correspondence.parallel base out).depViolFeature (· = true) .lhs .rhs
 
-/-- (52): under `ALIGN-L ≫ ¬OO-NOFLOP ≫ OO-NOFLOP` the dragging tone of *káál* loses its second
-link — *káal-ə* — rather than its first, which would leave a rising tone. -/
+/-- In (52), under `ALIGN-L ≫ ¬OO-NOFLOP ≫ OO-NOFLOP` the dragging tone of *káál* loses its
+second link, giving *káal-ə*, rather than its first, which would leave a rising tone. -/
 theorem dragging_mutates :
     (Tableau.ofRanking [[true, false], [true, true], [false, true]]
       [alignL, (noFlop [true, true]).antifaithful, noFlop [true, true]]).optimal =
       {[true, false]} := by
   decide
 
-/-- (53): a falling-tone base cannot mutate — losing its only link leaves the rising tone
-ALIGN-L bans, and spreading it violates NOSPREAD — so *stúur-ə* stays faithful. -/
+/-- In (53) a falling-tone base cannot mutate, since losing its only link leaves the rising
+tone ALIGN-L bans and spreading it violates NOSPREAD, so *stúur-ə* stays faithful. -/
 theorem falling_stays :
     (Tableau.ofRanking [[true, false], [true, true], [false, true]]
       [alignL, (noFlop [true, false]).antifaithful, noSpread [true, false]]).optimal =
@@ -189,13 +194,14 @@ def stripAccent (s : String) : List Char :=
     | '́' => none
     | c => some c
 
-/-- (17), (18): with a dominant affix the derivative begins with the base de-accented. -/
+/-- As in (17) and (18), with a dominant affix the derivative begins with the base
+de-accented. -/
 theorem dominant_rows :
     ∀ row ∈ Examples.all, row.feature? "affixClass" = some "dominant" →
       stripAccent ((row.feature? "base").getD "") <+: row.primaryText.toList := by
   decide
 
-/-- (1): with a recessive affix the derivative begins with the base as it is. -/
+/-- As in (1), with a recessive affix the derivative begins with the base as it is. -/
 theorem recessive_rows :
     ∀ row ∈ Examples.all, row.feature? "affixClass" = some "recessive" →
       ((row.feature? "base").getD "").toList <+: row.primaryText.toList := by

@@ -61,12 +61,9 @@ structure Correspondence (Role : Type*) (α : Type*) where
   form : Role → List α
   edge : (r₁ r₂ : Role) → Finset (Fin (form r₁).length × Fin (form r₂).length)
 
-namespace Correspondence
-
-variable {Role : Type*} {α : Type*}
-
-/-- Roles of a binary correspondence (`parallel`, `identity`). -/
-inductive Side where
+/-- The roles of a binary correspondence are its two strings, as in `Correspondence.parallel`
+and `Correspondence.identity`. -/
+inductive BinaryRole where
   | lhs
   | rhs
   deriving DecidableEq, Repr
@@ -78,6 +75,10 @@ inductive ReduplicationRole where
   | base
   | reduplicant
   deriving DecidableEq, Repr
+
+namespace Correspondence
+
+variable {Role : Type*} {α : Type*}
 
 /-- Correspondence is symmetric when each relation is the converse of the reverse
 one. -/
@@ -320,12 +321,12 @@ theorem diagram_isSymmetric (hsymm : ∀ {r₁ r₂}, hasEdge r₁ r₂ → hasE
 end diagram
 
 /-- The diagonal correspondence between two strings, truncated to the shorter. -/
-def parallel (s₁ s₂ : List α) : Correspondence Side α :=
+def parallel (s₁ s₂ : List α) : Correspondence BinaryRole α :=
   diagram (fun | .lhs => s₁ | .rhs => s₂) (· ≠ ·)
 
 /-- `identity s` is the fully faithful candidate, the diagonal correspondence of a string with
 itself. -/
-def identity (s : List α) : Correspondence Side α := parallel s s
+def identity (s : List α) : Correspondence BinaryRole α := parallel s s
 
 /-- The input–base–reduplicant diagram with diagonal correspondence between each pair of
 distinct roles. -/
@@ -343,7 +344,7 @@ theorem reduplication_isSymmetric (input base reduplicant : List α) :
 
 @[simp] theorem parallel_form_rhs (s₁ s₂ : List α) : (parallel s₁ s₂).form .rhs = s₂ := rfl
 
-@[simp] theorem parallel_edge_diag (s₁ s₂ : List α) (r : Side) :
+@[simp] theorem parallel_edge_diag (s₁ s₂ : List α) (r : BinaryRole) :
     (parallel s₁ s₂).edge r r = ∅ :=
   diagram_edge_neg _ _ (by cases r <;> decide)
 
@@ -530,7 +531,7 @@ structural, and non-vacuous: \*STRUC is markedness and fires on `identity s`. -/
 
 /-- A constraint over binary correspondences is **faithfulness** when the fully faithful
 candidate `identity s` satisfies it. -/
-def IsFaithfulness (k : Constraint (Correspondence Side α)) : Prop :=
+def IsFaithfulness (k : Constraint (Correspondence BinaryRole α)) : Prop :=
   ∀ s : List α, k (identity s) = 0
 
 /-- A constraint is **markedness** for the role `out` when it depends only on
@@ -549,7 +550,7 @@ theorem isFaithfulness_identViol [DecidableEq α] :
   identViol_identity
 
 theorem exists_isMarkedness_not_isFaithfulness [Inhabited α] :
-    ∃ k : Constraint (Correspondence Side α), IsMarkedness .rhs k ∧ ¬ IsFaithfulness k :=
+    ∃ k : Constraint (Correspondence BinaryRole α), IsMarkedness .rhs k ∧ ¬ IsFaithfulness k :=
   ⟨fun c => (c.form .rhs).length, fun _ _ h => by simp [h],
     fun h => by simpa [identity] using h [default]⟩
 
