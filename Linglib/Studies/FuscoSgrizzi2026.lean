@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Syntax.Minimalist.Clause.Size
 import Linglib.Fragments.Romance.Italian.Verbs
 import Linglib.Data.Examples.FuscoSgrizzi2026
@@ -68,12 +68,12 @@ def closure (P : V → W → Prop) : W → Prop := fun w ↦ ∃ e, P e w
 worlds, the best worlds of a circumstantial base under an inertial ordering ([dowty-1979],
 [kratzer-2013]), with the eventuality of its complement bound to the state by the causal
 relation. -/
-def aP (circumstances : AnchoringFn V W) (inertia : OrderingFn V W)
+def aP (circumstances : V → ModalBase W) (inertia : V → OrderingSource W)
     (causeStar : V → V → W → Prop) (P : V → W → Prop) (s : V) (w : W) : Prop :=
   necessity (circumstances s) (inertia s) (fun w' ↦ ∃ e, causeStar s e w' ∧ P e w') w
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
-def diP (content : AnchoringFn V W) (Q : W → Prop) (s : V) (w : W) : Prop :=
+def diP (content : V → ModalBase W) (Q : W → Prop) (s : V) (w : W) : Prop :=
   simpleNecessity (content s) Q w
 
 /-- The relations the denotation (24) draws on, convincing events, the thematic relations,
@@ -92,7 +92,8 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
   ∃ s, F.convince e w ∧ F.agent e y w ∧ F.patient e x w ∧ F.cause e s ∧ F.rationalAttitude s ∧
     F.experiencer x s ∧ P s
 
-variable (F : Frame I V W) (content circumstances : AnchoringFn V W) (inertia : OrderingFn V W)
+variable (F : Frame I V W) (content circumstances : V → ModalBase W)
+  (inertia : V → OrderingSource W)
   (causeStar : V → V → W → Prop) (P : V → W → Prop) (x y : I) (e : V) (w : W)
 
 /-- The belief report is *convincere* with the *di*-complement, the closed proposition held at the
@@ -111,9 +112,9 @@ theorem intention_causal (h : intentionReport F circumstances inertia causeStar 
   let ⟨s, _, _, _, hc, _, _, ha⟩ := h
   ⟨s, hc, ha⟩
 
-/-- Future orientation follows when causes precede their effects: the intended event of an
-intention report lies after the attitude state in every inertia world, which excludes a past-oriented
-complement, as in (5b). -/
+/-- Future orientation follows when causes precede their effects. The intended event of an
+intention report lies after the attitude state in every inertia world, which excludes a
+past-oriented complement, as in (5b). -/
 theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
     (hτ : ∀ s e' w', causeStar s e' w' → τ s < τ e')
     (h : intentionReport F circumstances inertia causeStar P x y e w) :

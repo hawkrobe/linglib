@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Semantics.Mood.SpeechEvent
 
 /-!
@@ -30,9 +30,9 @@ open Mood Modality.Kratzer
 
 variable {Event W : Type*}
 
-/-- What an event projects a modal domain from: a speech act's content `CON(e*)`, an
-attitude holder's doxastic alternatives, or the fulfilment conditions of the decision that
-caused a volitional event. -/
+/-- An event projects a modal domain from a speech act's content `CON(e*)`, from an attitude
+holder's doxastic alternatives, or from the fulfilment conditions of the decision that caused a
+volitional event. -/
 inductive ModalSource (W : Type*)
   | speechAct (sa : SpeechEvent W)
   | attitude (dox : ConvBackground W)
@@ -44,8 +44,8 @@ def ModalSource.background : ModalSource W → ConvBackground W
   | .attitude dox => dox
   | .decision fulfilled => fulfilled
 
-/-- The flavor a source projects: the speech act's own, epistemic for an attitude, and
-circumstantial — random choice — for a decision. -/
+/-- The flavor a source projects is the speech act's own, epistemic for an attitude, and
+circumstantial, as random choice, for a decision. -/
 def ModalSource.flavor : ModalSource W → ModalFlavor
   | .speechAct sa => sa.force.primaryFlavor
   | .attitude _ => .epistemic
@@ -63,8 +63,8 @@ instance (s : ModalSource W) : Decidable s.IsDecision := by
 def anchoring (src : Event → Option (ModalSource W)) (e : Event) : Option (ConvBackground W) :=
   (src e).map ModalSource.background
 
-/-- The definedness condition a modal item imposes on its anchor: any source, or only
-the decision of a volitional event. -/
+/-- The definedness condition a modal item imposes on its anchor admits any source or only the
+decision of a volitional event. -/
 inductive AnchorConstraint
   | unrestricted
   | volitionalOnly

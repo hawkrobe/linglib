@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Mood.State
-import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # The speech event and its content
@@ -49,7 +49,6 @@ namespace Mood
 open UpdateSemantics.Default
 open Modality (ModalFlavor)
 open HasTarget (target)
-open Modality (EventProjection)
 
 variable {W : Type*}
 
@@ -63,19 +62,19 @@ structure SpeechEvent (W : Type*) where
   /-- `CON(e*)`: the propositional content of the speech event. -/
   content : W → List (W → Prop)
 
-/-- A declarative speech event: `CON(e*)` is the speaker's beliefs
+/-- In a declarative speech event `CON(e*)` is the speaker's beliefs
 ([hacquard-2006], her (222)). -/
 def SpeechEvent.declarative (beliefs : W → List (W → Prop)) : SpeechEvent W :=
   ⟨.declarative, beliefs⟩
 
-/-- An imperative speech event: `CON(e*)` is the addressee's To-Do
+/-- In an imperative speech event `CON(e*)` is the addressee's To-Do
 List ([hacquard-2006] after [portner-2004]). -/
 def SpeechEvent.imperative (todo : W → List (W → Prop)) : SpeechEvent W :=
   ⟨.imperative, todo⟩
 
 /-! ### The induced state -/
 
-/-- The state a speech event induces at anchor world `w₀`: fold
+/-- The state a speech event induces at anchor world `w₀` folds
 `CON(e*)(w₀)` through the targeted component's update. -/
 def SpeechEvent.toState (sa : SpeechEvent W) (w₀ : W) : ExpState W :=
   match target sa.force with
@@ -121,7 +120,7 @@ theorem SpeechEvent.toState_imperative_info
 
 /-! ### The licensed modal -/
 
-/-- The necessity modal a speech event licenses: the targeted
+/-- The necessity modal a speech event licenses is the targeted
 component's modal on the induced state ([hacquard-2006]'s epistemic
 and deontic readings). -/
 def SpeechEvent.modal (sa : SpeechEvent W) (w₀ : W) : (W → Prop) → Prop :=
@@ -201,16 +200,15 @@ Same modal, same proposition, different speech events: the force,
 routed through its targeted component, determines the modal
 domain. -/
 
-/-- Two outcomes: leave or stay. -/
+/-- The two outcomes are leaving and staying. -/
 inductive LeaveWorld where | leave | stay
   deriving DecidableEq, Repr, Inhabited
 
-/-- Declarative context: the speaker's evidence is compatible with
-    both outcomes. -/
+/-- In the declarative context the speaker's evidence is compatible with both outcomes. -/
 def declarativeEvidence : SpeechEvent LeaveWorld :=
   .declarative (fun _ => [])
 
-/-- Imperative context: *leave* is on the addressee's To-Do List. -/
+/-- In the imperative context *leave* is on the addressee's To-Do List. -/
 def imperativePermission : SpeechEvent LeaveWorld :=
   .imperative (fun _ => [(· = .leave)])
 
@@ -239,27 +237,5 @@ theorem imperative_leave_required :
     exact hstay ((SpeechEvent.toState_imperative_le _ LeaveWorld.leave v
       LeaveWorld.leave).mp hvl (· = LeaveWorld.leave) (List.mem_singleton_self _) rfl)
   exact fun v hv => hchar v hv
-
-/-! ### Participant projection -/
-
-/-- Speaker and addressee for the projection example. -/
-inductive Interlocutor where | speaker | addressee
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Speech time. -/
-inductive SpeechTime where | now
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Whose attitudes provide `CON(e*)`, at speech time
-([speas-tenny-2003]'s participant structure; distinct from the seat
-of knowledge, tracked per-force by `Illocutionary.authority`). -/
-def speechActProjection : EventProjection Illocutionary Interlocutor SpeechTime where
-  holder
-    | .declarative => .speaker
-    | .imperative => .addressee
-    | .promissive => .speaker
-    | .interrogative => .speaker
-    | .exclamative => .speaker
-  time _ := .now
 
 end Mood

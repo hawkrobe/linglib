@@ -1,4 +1,5 @@
 import Linglib.Syntax.Category.Determiner.ModalIndefinite
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Presupposition.Defs
 
 /-!
@@ -40,8 +41,8 @@ def upperBoundedSat : Prop := modalIndefiniteSat src D P Q w ∧ ¬ ∀ x ∈ D,
 theorem modalIndefiniteSat_of_upperBoundedSat (h : upperBoundedSat src D P Q w) :
     modalIndefiniteSat src D P Q w := h.1
 
-/-- The denotation of a modal indefinite anchored to `src`: defined when the item's anchor
-constraint admits the source, asserting the modal component with the item's upper bound. -/
+/-- The denotation of a modal indefinite anchored to `src` is defined when the item's anchor
+constraint admits the source, and asserts the modal component with the item's upper bound. -/
 def ModalIndefinite.denotation (mi : ModalIndefinite) : PartialProp W where
   presup _ := ∀ c ∈ mi.anchorConstraint, c.Admits src
   assertion w :=

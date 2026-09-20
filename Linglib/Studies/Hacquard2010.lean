@@ -1,3 +1,4 @@
+import Linglib.Semantics.Modality.Basic
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Data.Examples.Hacquard2010
 
@@ -8,17 +9,17 @@ This file formalizes [hacquard-2010]'s event-relative semantics for modal auxili
 modal base is a function of an event rather than a world (29), `must` and `can`, and its event
 variable is bound by the closest binder (37), (38): the speech event for a high modal in a matrix
 clause, the attitude event for a high modal in a complement, and the VP event for a low modal
-(48), which `Semantics/Modality/EventRelativity.lean` records as the binders of
-`Modality.ModalPosition`. Speech and attitude events carry propositional content and embed a
-proposition under universal quantification over it (41), (44), `attitude`; the epistemic modal
-base is the content of the event the modal is anchored to (51), `canEpis` and `mustEpis`, so it
-is undefined where a low modal is anchored to a contentless VP event (59),
-`not_canEpis_of_content_eq_none`, and defined again when the complement is itself an attitude
-(60). Anchored to the event that embeds it, an epistemic modal quantifies over the same worlds as
-that event, so the outer layer of quantification is vacuous, (53) to (57),
-`attitude_canEpis_iff` and `attitude_mustEpis_iff`, the possibility case once the information
-state is consistent; and Yalcin's supposition (58) is incoherent because the modal quantifies
-over the supposition's own content, `not_attitude_suppose`. Cinque's puzzle (section 3) is that
+(48), the binders of `Modality.ModalPosition`. Speech and attitude events carry propositional
+content and embed a proposition under universal quantification over it (41), (44), `attitude`;
+the epistemic modal base is the content of the event the modal is anchored to (51),
+`Modality.contentNecessity` and `Modality.contentPossibility`, so it is undefined where a low
+modal is anchored to a contentless VP event (49e), (59),
+`Modality.not_contentPossibility_of_eq_none`, and defined again when the complement is itself an
+attitude (60). Anchored to the event that embeds it, an epistemic modal quantifies over the same
+worlds as that event, so the outer layer of quantification is vacuous, (53) to (57),
+`attitude_can_iff` and `attitude_must_iff`, the possibility case once the information state is
+consistent; and Yalcin's supposition (58) is incoherent because the modal quantifies over the
+supposition's own content, `not_attitude_suppose`. Cinque's puzzle (section 3) is that
 [cinque-1999]'s hierarchy fixes the epistemic head above tense and the root head below aspect,
 `CinqueHead`, where a single flavor-neutral entry should suffice; the paper derives the same
 matrix correlation from the content of the binding event, `epistemic_high_iff`. The paper's
@@ -48,99 +49,65 @@ variable {E W : Type*}
 
 /-! ### Event-relative modals, section 5 -/
 
-/-- (29): a necessity modal quantifies over the worlds its event-relative modal base returns. -/
+/-- A necessity modal (29) quantifies over the worlds its event-relative modal base returns. -/
 def must (f : E → Set W) (q : W → Prop) (e : E) : Prop := ∀ w' ∈ f e, q w'
 
-/-- (29): a possibility modal over the event-relative modal base. -/
+/-- A possibility modal (29) quantifies existentially over the same worlds. -/
 def can (f : E → Set W) (q : W → Prop) (e : E) : Prop := ∃ w' ∈ f e, q w'
 
-/-- (41) and (44): a contentful event, an attitude or the speech event, embeds a proposition
-under universal quantification over its content; `holds e w` is the event's descriptive part. -/
+/-- A contentful event, an attitude or the speech event, embeds a proposition under universal
+quantification over its content (41), (44); `holds e w` is the event's descriptive part. -/
 def attitude (con : E → Option (Set W)) (holds : E → W → Prop) (e : E) (p : W → Prop)
     (w : W) : Prop :=
-  holds e w ∧ ∃ C, con e = some C ∧ ∀ w' ∈ C, p w'
+  holds e w ∧ contentNecessity con p e
 
-/-- (51): the epistemic modal base is the content of the event the modal is anchored to, so an
-epistemic possibility is defined only for a contentful event. -/
-def canEpis (con : E → Option (Set W)) (q : W → Prop) (e : E) : Prop :=
-  ∃ C, con e = some C ∧ ∃ w' ∈ C, q w'
+variable {con : E → Option (Set W)} {holds : E → W → Prop} {f : E → Set W} {e : E}
+  {q : W → Prop} {w : W} {C : Set W}
 
-/-- (51): epistemic necessity over the content of the anchoring event. -/
-def mustEpis (con : E → Option (Set W)) (q : W → Prop) (e : E) : Prop :=
-  ∃ C, con e = some C ∧ ∀ w' ∈ C, q w'
+/-- The epistemic modal base is the content of the event the modal is anchored to (51). -/
+theorem must_iff_contentNecessity (h : con e = some (f e)) :
+    must f q e ↔ contentNecessity con q e :=
+  (contentNecessity_iff_of_eq_some h).symm
 
-variable {con : E → Option (Set W)} {holds : E → W → Prop} {e : E} {q : W → Prop} {w : W}
-  {C : Set W}
+theorem can_iff_contentPossibility (h : con e = some (f e)) :
+    can f q e ↔ contentPossibility con q e :=
+  (contentPossibility_iff_of_eq_some h).symm
 
 /-! ### Content licensing, section 6.1 -/
 
-/-- (49e) and (59): an event without content licenses no epistemic modal base, so a low modal
-anchored to a train-taking cannot report what its subject knew. -/
-theorem not_canEpis_of_content_eq_none (h : con e = none) : ¬ canEpis con q e :=
-  λ ⟨_, hC, _⟩ => by simp [h] at hC
-
-theorem not_mustEpis_of_content_eq_none (h : con e = none) : ¬ mustEpis con q e :=
-  λ ⟨_, hC, _⟩ => by simp [h] at hC
-
-/-- (60): when the complement is itself an attitude, the aspect-bound modal's event has content,
-and the modal expresses a possibility given what the subject came to know. -/
-theorem canEpis_of_content_eq_some (hC : con e = some C) {w' : W} (hw' : w' ∈ C) (hq : q w') :
-    canEpis con q e :=
-  ⟨C, hC, w', hw', hq⟩
-
-/-- (53) and (57): a possibility modal anchored to the event that embeds it quantifies over the
-same worlds as that event, so the outer universal layer is vacuous whenever the content is
+/-- A possibility modal anchored to the event that embeds it quantifies over the same worlds as
+that event (53), (57), so the outer universal layer is vacuous whenever the content is
 consistent. -/
-theorem attitude_canEpis_iff :
-    attitude con holds e (λ _ => canEpis con q e) w ↔
-      holds e w ∧ ∃ C, con e = some C ∧ (C.Nonempty → ∃ w' ∈ C, q w') := by
-  simp only [attitude, canEpis]
-  refine and_congr_right λ _ => exists_congr λ C => and_congr_right λ hC => ⟨?_, ?_⟩
-  · rintro h ⟨w₀, hw₀⟩
-    obtain ⟨C', hC', hex⟩ := h w₀ hw₀
-    rw [hC] at hC'
-    cases hC'
-    exact hex
-  · exact λ h w₀ hw₀ => ⟨C, hC, h ⟨w₀, hw₀⟩⟩
+theorem attitude_can_iff (hC : con e = some C) :
+    attitude con holds e (fun _ ↦ contentPossibility con q e) w ↔
+      holds e w ∧ (C.Nonempty → ∃ w' ∈ C, q w') := by
+  rw [attitude, contentNecessity_const hC, contentPossibility_iff_of_eq_some hC]
 
-/-- (54): with a consistent content, an embedded epistemic possibility says that `q` is
-compatible with the content of the embedding event, the speaker's beliefs under `ASSERT` or the
-attitude holder's under `believe`. -/
-theorem attitude_canEpis_iff_of_nonempty (hC : con e = some C) (hne : C.Nonempty) :
-    attitude con holds e (λ _ => canEpis con q e) w ↔ holds e w ∧ ∃ w' ∈ C, q w' := by
-  rw [attitude_canEpis_iff]
-  refine and_congr_right λ _ => ⟨λ ⟨C', hC', h⟩ => ?_, λ h => ⟨C, hC, λ _ => h⟩⟩
-  rw [hC] at hC'
-  cases hC'
-  exact h hne
+/-- With a consistent content, an embedded epistemic possibility says that `q` is compatible
+with the content of the embedding event, the speaker's beliefs under `ASSERT` or the attitude
+holder's under `believe` (54). -/
+theorem attitude_can_iff_of_nonempty (hC : con e = some C) (hne : C.Nonempty) :
+    attitude con holds e (fun _ ↦ contentPossibility con q e) w ↔
+      holds e w ∧ ∃ w' ∈ C, q w' := by
+  rw [attitude_can_iff hC, forall_prop_of_true hne]
 
-/-- (55) and (57): an embedded epistemic necessity is necessity over the embedding event's
-content, the outer layer again vacuous. -/
-theorem attitude_mustEpis_iff :
-    attitude con holds e (λ _ => mustEpis con q e) w ↔ holds e w ∧ mustEpis con q e := by
-  simp only [attitude, mustEpis]
-  refine and_congr_right λ _ => ⟨?_, ?_⟩
-  · rintro ⟨C, hC, h⟩
-    refine ⟨C, hC, λ w'' hw'' => ?_⟩
-    obtain ⟨C', hC', hall⟩ := h w'' hw''
-    rw [hC] at hC'
-    cases hC'
-    exact hall w'' hw''
-  · rintro ⟨C, hC, h⟩
-    exact ⟨C, hC, λ _ _ => ⟨C, hC, h⟩⟩
+/-- An embedded epistemic necessity is necessity over the embedding event's content, the outer
+layer again vacuous (55), (57). -/
+theorem attitude_must_iff :
+    attitude con holds e (fun _ ↦ contentNecessity con q e) w ↔
+      holds e w ∧ contentNecessity con q e :=
+  and_congr_right' contentNecessity_contentNecessity
 
 /-- (58), [yalcin-2007]'s puzzle: supposing that it is raining and that it might not be raining
 is incoherent, since the epistemic quantifies over the supposition's own content and no
 consistent content satisfies both. -/
 theorem not_attitude_suppose {rain : W → Prop} (hC : con e = some C) (hne : C.Nonempty) :
-    ¬ attitude con holds e (λ w' => rain w' ∧ canEpis con (λ w'' => ¬ rain w'') e) w := by
-  rintro ⟨-, C', hC', h⟩
-  rw [hC] at hC'
-  cases hC'
+    ¬ attitude con holds e
+      (fun w' ↦ rain w' ∧ contentPossibility con (fun w'' ↦ ¬ rain w'') e) w := by
+  rintro ⟨-, h⟩
+  rw [contentNecessity_iff_of_eq_some hC] at h
   obtain ⟨w₀, hw₀⟩ := hne
-  obtain ⟨-, C'', hC'', w₁, hw₁, hnr⟩ := h w₀ hw₀
-  rw [hC] at hC''
-  cases hC''
+  obtain ⟨w₁, hw₁, hnr⟩ := (contentPossibility_iff_of_eq_some hC).1 (h w₀ hw₀).2
   exact hnr (h w₁ hw₁).1
 
 /-! ### Cinque's puzzle, section 3 -/
@@ -166,12 +133,12 @@ def height : CinqueHead → ℕ
 /-- `h` sits above `h'` in the hierarchy. -/
 def Above (h h' : CinqueHead) : Prop := h'.height < h.height
 
-instance : DecidableRel Above := λ h h' => inferInstanceAs (Decidable (h'.height < h.height))
+instance : DecidableRel Above := fun h h' ↦ inferInstanceAs (Decidable (h'.height < h.height))
 
 /-- A high head sits above tense. -/
 def IsHigh (h : CinqueHead) : Prop := h.Above .tense
 
-instance : DecidablePred IsHigh := λ h => inferInstanceAs (Decidable (h.Above .tense))
+instance : DecidablePred IsHigh := fun h ↦ inferInstanceAs (Decidable (h.Above .tense))
 
 /-- The flavor the hierarchy stipulates for each modal head. -/
 def flavor : CinqueHead → Option ModalFlavor
@@ -179,8 +146,8 @@ def flavor : CinqueHead → Option ModalFlavor
   | .modRoot => some .circumstantial
   | _ => none
 
-/-- In the hierarchy the correlation of height and flavor is built in: the high modal head is the
-epistemic one, and the root head is below aspect. -/
+/-- In the hierarchy the correlation of height and flavor is built in, since the high modal head
+is the epistemic one and the root head is below aspect. -/
 theorem isHigh_iff (h : CinqueHead) : h.IsHigh ↔ h.flavor = some .epistemic := by
   cases h <;> decide
 
@@ -188,11 +155,13 @@ theorem aspect_above_modRoot : CinqueHead.aspect.Above .modRoot := by decide
 
 end CinqueHead
 
-/-- Section 6.3: the same matrix correlation derived from one flavor-neutral entry. A modal
+/-- The same matrix correlation follows from one flavor-neutral entry (section 6.3). A modal
 above tense is bound by the speech event, which has content, and a modal below aspect by the VP
-event, which has none, so an epistemic modal base is available exactly in the high position. -/
-theorem epistemic_high_iff (pos : ModalPosition) :
-    pos.defaultBinder.canProjectEpistemic = true ↔ pos = .aboveAsp := by
-  cases pos <;> decide
+event, which in (59) has none, so an epistemic modal base is available exactly in the high
+position. -/
+theorem epistemic_high_iff {con : E → Option (Set W)} {ev : EventBinder → E}
+    (hs : (con (ev .speechAct)).isSome) (hv : con (ev .vpEvent) = none) (pos : ModalPosition) :
+    (con (ev pos.matrixBinder)).isSome ↔ pos = .aboveAsp := by
+  cases pos <;> simp [ModalPosition.matrixBinder, hs, hv]
 
 end Hacquard2010

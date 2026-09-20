@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Italian Modal Auxiliaries
@@ -31,7 +31,6 @@ When non-restructured (high): epistemic readings available.
 namespace Italian
 
 open Modality (ModalForce ModalFlavor ForceFlavor)
-open Modality (ModalPosition EventBinder)
 
 
 -- ════════════════════════════════════════════════════
@@ -188,8 +187,7 @@ theorem restructuring_blocks_epistemic :
 -- § 5. Position → Flavor Bridge
 -- ════════════════════════════════════════════════════
 
-/-- The entry's position-sensitive flavors match EventRelativity's
-content licensing predictions. -/
+/-- *Potere* has an epistemic reading in the high position and none when restructured. -/
 theorem potere_flavors_match_position :
     -- High: epistemic available (content licensing: speech act is contentful)
     (.epistemic ∈ potere.highFlavors) ∧
