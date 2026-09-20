@@ -23,7 +23,7 @@ def dfes : ConsonantalRoot Phone := ⟨[.eth, .f, .ayn]⟩
 /-- /ðqər/ -/
 def dqer : ConsonantalRoot Phone := ⟨[.eth, .q, .r]⟩
 /-- /ʁdˤər/ -/
-def ghder : ConsonantalRoot Phone := ⟨[.ghayn, .dE, .r]⟩
+def ghder : ConsonantalRoot Phone := ⟨[.ghayn, .emphaticD, .r]⟩
 /-- /ʁfər/ -/
 def ghfer : ConsonantalRoot Phone := ⟨[.ghayn, .f, .r]⟩
 /-- /ʁrəβ/ -/
@@ -43,13 +43,13 @@ def qreb : ConsonantalRoot Phone := ⟨[.q, .r, .beta]⟩
 /-- /qrəʕ/ 'rip!' -/
 def qres : ConsonantalRoot Phone := ⟨[.q, .r, .ayn]⟩
 /-- /qtˤəʕ/ -/
-def qtes : ConsonantalRoot Phone := ⟨[.q, .tE, .ayn]⟩
+def qtes : ConsonantalRoot Phone := ⟨[.q, .emphaticT, .ayn]⟩
 /-- /rməð/ -/
 def rmed : ConsonantalRoot Phone := ⟨[.r, .m, .eth]⟩
 /-- /srəm/ -/
 def srem : ConsonantalRoot Phone := ⟨[.s, .r, .m]⟩
 /-- /stˤər/ -/
-def ster : ConsonantalRoot Phone := ⟨[.s, .tE, .r]⟩
+def ster : ConsonantalRoot Phone := ⟨[.s, .emphaticT, .r]⟩
 /-- /χrəf/ -/
 def xref : ConsonantalRoot Phone := ⟨[.chi, .r, .f]⟩
 /-- /ʒβəð/ -/
