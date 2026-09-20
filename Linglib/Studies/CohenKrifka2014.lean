@@ -1,5 +1,5 @@
 import Linglib.Discourse.Commitment.Space
-import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Cohen and Krifka 2014: superlative quantifiers and meta-speech acts
@@ -236,24 +236,24 @@ end Bounds
 
 section Numeral
 
-open Numerals
+open Degree
 
 variable {A W : Type*} (C : Space (State A W)) (a : A) (n : ℕ)
 
-/-- The scale of exact numeral claims over the count `f` ((74)): the bare numeral meaning
+/-- The scale of exact numeral claims over the count `f` ((74)): the two-sided numeral meaning
 at each value. -/
-def exactly (f : W → ℕ) : ℕ → Set W := fun m => {w | bareMeaning m (f w)}
+def exactly (f : W → ℕ) : ℕ → Set W := Comparison.eq.over f
 
 /-- The derived truth conditions of *at most `n`* are the classical Keenan and Stavi
 meaning of the quantifier ((82)). -/
 theorem contextSet_atMost_exactly (f : W → ℕ) :
     contextSet (atMost C a (exactly f) n).root
-      = {w | atMostMeaning n (f w)} ∩ contextSet C.root := by
+      = Comparison.le.over f n ∩ contextSet C.root := by
   rw [atMost, contextSet_exclude_root]
   congr 1
   ext w
-  simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Set.mem_ofPred_eq, bareMeaning_def,
-    atMostMeaning_def, Set.mem_Ioi]
+  simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Comparison.mem_over, Comparison.rel_eq,
+    Comparison.rel_le, Set.mem_Ioi]
   exact ⟨fun h => not_lt.1 fun hlt => h (f w) hlt rfl,
     fun h m hm e => absurd hm (not_lt.2 (e ▸ h))⟩
 
@@ -261,12 +261,12 @@ theorem contextSet_atMost_exactly (f : W → ℕ) :
 meaning of the quantifier ((82)). -/
 theorem contextSet_atLeast_exactly (f : W → ℕ) :
     contextSet (atLeast C a (exactly f) n).root
-      = {w | atLeastMeaning n (f w)} ∩ contextSet C.root := by
+      = Comparison.ge.over f n ∩ contextSet C.root := by
   rw [atLeast, contextSet_exclude_root]
   congr 1
   ext w
-  simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Set.mem_ofPred_eq, bareMeaning_def,
-    atLeastMeaning_def, Set.mem_Iio]
+  simp only [Set.mem_iInter, Set.mem_compl_iff, exactly, Comparison.mem_over, Comparison.rel_eq,
+    Comparison.rel_ge, Set.mem_Iio]
   exact ⟨fun h => not_lt.1 fun hlt => h (f w) hlt rfl,
     fun h m hm e => absurd hm (not_lt.2 (e ▸ h))⟩
 
@@ -297,7 +297,7 @@ not among the commitments ((53)), and three is the least grantable value ((48)).
 
 section Model
 
-open Numerals
+open Degree
 
 /-- The free space over counting worlds, with no prior commitments. -/
 def rabbits : Space (State Discourse.Role ℕ) := full ∅
@@ -313,7 +313,7 @@ theorem rabbits_root_fresh (m : ℕ) :
 
 /-- The derived truth conditions of (1a) are the classical *at least three* ((82)). -/
 theorem rabbits_atLeast_contextSet :
-    contextSet (atLeast rabbits .speaker (exactly id) 3).root = {w | atLeastMeaning 3 w} := by
+    contextSet (atLeast rabbits .speaker (exactly id) 3).root = Comparison.ge.interval 3 := by
   rw [contextSet_atLeast_exactly]
   simp [rabbits]
 

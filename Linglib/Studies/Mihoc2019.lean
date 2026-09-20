@@ -69,10 +69,10 @@ def much (n : ℕ) : Set ℕ := Comparison.le.interval n
 def little (n : ℕ) : Set ℕ := Comparison.ge.interval n
 
 @[simp] theorem mem_much {d n : ℕ} : d ∈ much n ↔ d ≤ n := by
-  simp [much, Comparison.rel]
+  simp [much]
 
 @[simp] theorem mem_little {d n : ℕ} : d ∈ little n ↔ n ≤ d := by
-  simp [little, Comparison.rel]
+  simp [little]
 
 /-! ### The modifiers [comp] and [at-sup] (her Ch. 2 (30)–(31))
 
@@ -88,26 +88,26 @@ def atSupTC (f : ℕ → Set ℕ) (n maxD : ℕ) : Prop := maxD ∈ f n
 
 /-! ### Reduction to the Kennedy spine (her Ch. 2 (32)–(33))
 
-The four cross-pairings recover exactly the named meanings of
-`Numerals`. That *at least* pairs with `little` and *at most* with
+The four cross-pairings recover exactly the four modified numeral forms, the
+intervals of `Degree.Comparison`. That *at least* pairs with `little` and *at most* with
 `much` — inverting the pairing of the comparatives — is what captures the
 shared `much`/`little` morphology across CMNs and SMNs. -/
 
 theorem compTC_much_iff (n maxD : ℕ) :
-    compTC much n maxD ↔ Numerals.moreThanMeaning n maxD := by
-  simp [compTC, Numerals.moreThanMeaning, Comparison.rel]
+    compTC much n maxD ↔ maxD ∈ Comparison.gt.interval n := by
+  simp [compTC, much]
 
 theorem compTC_little_iff (n maxD : ℕ) :
-    compTC little n maxD ↔ Numerals.fewerThanMeaning n maxD := by
-  simp [compTC, Numerals.fewerThanMeaning, Comparison.rel]
+    compTC little n maxD ↔ maxD ∈ Comparison.lt.interval n := by
+  simp [compTC, little]
 
 theorem atSupTC_little_iff (n maxD : ℕ) :
-    atSupTC little n maxD ↔ Numerals.atLeastMeaning n maxD := by
-  simp [atSupTC, Numerals.atLeastMeaning, Comparison.rel]
+    atSupTC little n maxD ↔ maxD ∈ Comparison.ge.interval n := by
+  simp [atSupTC, little]
 
 theorem atSupTC_much_iff (n maxD : ℕ) :
-    atSupTC much n maxD ↔ Numerals.atMostMeaning n maxD := by
-  simp [atSupTC, Numerals.atMostMeaning, Comparison.rel]
+    atSupTC much n maxD ↔ maxD ∈ Comparison.le.interval n := by
+  simp [atSupTC, much]
 
 /-! ### Assertion forms (her §2.6)
 
@@ -157,9 +157,9 @@ abbrev Form.atMost (n : ℕ) : Form := .modified .atSup .much n
 
 /-- Truth conditions of a form, as a predicate on the maximum of the degree
 predicate. Bare numerals get the lower-bounded Horn meaning
-(`Numerals.atLeastMeaning`; her §2.3, following [horn-1972]). -/
+(`Comparison.ge.interval`; her §2.3, following [horn-1972]). -/
 def Form.tc : Form → ℕ → Prop
-  | .bare n, maxD => Numerals.atLeastMeaning n maxD
+  | .bare n, maxD => maxD ∈ Comparison.ge.interval n
   | .modified .comp f n, maxD => compTC f.set n maxD
   | .modified .atSup f n, maxD => atSupTC f.set n maxD
 
@@ -206,7 +206,7 @@ theorem Form.tc_iff_rel (φ : Form) (maxD : ℕ) :
       omega
 
 @[simp] theorem tc_bare (n maxD : ℕ) : (Form.bare n).tc maxD ↔ n ≤ maxD := by
-  simp [Form.tc, Numerals.atLeastMeaning, Comparison.rel]
+  simp [Form.tc]
 
 @[simp] theorem tc_moreThan (n maxD : ℕ) :
     (Form.moreThan n).tc maxD ↔ n < maxD := by
@@ -307,26 +307,25 @@ instance (g : ℕ) (φ : Form) (maxD : ℕ) : Decidable (φ.exhSigma g maxD) :=
 
 /-- At granularity 1 on a bare numeral, her `O_σA` *is* the spine's
 `Numerals.exhNumeral`, chain exhaustification over the numeral scale
-(`Numerals.exhNumeral_eq_exhChain`).
+(`Numerals.mem_exhNumeral_iff_exhChain`).
 `exhSigma` is its generalization to arbitrary granularity and to the
 upper-bounding scalemate direction. -/
 theorem exhSigma_bare_eq_exhNumeral (n maxD : ℕ) :
-    (Form.bare n).exhSigma 1 maxD ↔ Numerals.exhNumeral n maxD :=
+    (Form.bare n).exhSigma 1 maxD ↔ maxD ∈ Numerals.exhNumeral n :=
   Iff.rfl
 
 /-- The *at least* form agrees with the bare form under `O_σA` at
 granularity 1 — both are `exhNumeral`. -/
 theorem exhSigma_atLeast_eq_exhNumeral (n maxD : ℕ) :
-    (Form.atLeast n).exhSigma 1 maxD ↔ Numerals.exhNumeral n maxD := by
-  simp [Form.exhSigma, Form.strongerAlt, Numerals.exhNumeral,
-    Numerals.atLeastMeaning, Comparison.rel]
+    (Form.atLeast n).exhSigma 1 maxD ↔ maxD ∈ Numerals.exhNumeral n := by
+  simp [Form.exhSigma, Form.strongerAlt, Numerals.exhNumeral]
 
 /-- Her Ch. 3 (2): `O_σA`(bare n) = 'exactly n' — the classical Horn
 derivation. -/
 theorem exhSigma_bare_g1 (n maxD : ℕ) :
     (Form.bare n).exhSigma 1 maxD ↔ maxD = n := by
-  rw [exhSigma_bare_eq_exhNumeral, Numerals.exhNumeral_iff_bare,
-    Numerals.bareMeaning_def]
+  rw [exhSigma_bare_eq_exhNumeral, Numerals.exhNumeral_eq]
+  rfl
 
 /-- Her Ch. 3 (24): `O_σA`(more than n) = 'exactly n+1' — unwelcome. -/
 theorem exhSigma_moreThan_g1 (n maxD : ℕ) :

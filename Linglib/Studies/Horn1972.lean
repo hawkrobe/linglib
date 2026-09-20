@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Degree.Comparison
+import Mathlib.Order.Fin.Basic
+import Mathlib.Order.Interval.Set.LinearOrder
 import Mathlib.Order.Monotone.Basic
 import Mathlib.Data.Fin.Rev
 
@@ -41,7 +43,7 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
 
 namespace Horn1972
 
-open Numerals
+open Degree
 
 variable {W : Type*} {n : ℕ}
 
@@ -94,29 +96,30 @@ theorem redundant_iff_subset (p q : Set W) : Redundant p q ↔ p ⊆ q := by
 
 /-- The cardinals form a scale: *at least m + 1* strictly entails *at least m*. -/
 theorem atLeast_succ_ssubset (m : ℕ) :
-    {k | atLeastMeaning (m + 1) k} ⊂ {k | atLeastMeaning m k} :=
-  ⟨λ _ hk => Nat.le_of_succ_le hk, λ h => Nat.not_succ_le_self m (h (le_refl m))⟩
+    Comparison.ge.interval (m + 1) ⊂ Comparison.ge.interval m :=
+  Set.Ici_ssubset_Ici.2 m.lt_succ_self
 
 /-- (1.59b): negating a cardinal contradicts its lower bound, *fewer than m*. -/
-theorem not_atLeast_iff_fewerThan (m k : ℕ) : ¬ atLeastMeaning m k ↔ fewerThanMeaning m k := by
-  simp
+theorem compl_atLeast_eq_fewerThan (m : ℕ) :
+    (Comparison.ge.interval m)ᶜ = Comparison.lt.interval m :=
+  Set.compl_Ici
 
 /-- The exact reading is the asserted lower bound together with the implicated upper bound. -/
-theorem bare_iff_atLeast_and_atMost (m k : ℕ) :
-    bareMeaning m k ↔ atLeastMeaning m k ∧ atMostMeaning m k := by
-  simp [le_antisymm_iff, and_comm]
+theorem bare_eq_atLeast_inter_atMost (m : ℕ) :
+    Comparison.eq.interval m = Comparison.ge.interval m ∩ Comparison.le.interval m := by
+  simp [Set.Ici_inter_Iic]
 
 /-- (1.60a): *I have three children, in fact more* is consistent, so the upper bound is no
 entailment. -/
-theorem atLeast_consistent_with_more (m : ℕ) : ∃ k, atLeastMeaning m k ∧ moreThanMeaning m k :=
+theorem atLeast_consistent_with_more (m : ℕ) :
+    (Comparison.ge.interval m ∩ Comparison.gt.interval m).Nonempty :=
   ⟨m + 1, by simp⟩
 
 /-- (1.60b): *I have only three children, in fact fewer* is contradictory, since *only* asserts
 the upper bound. -/
 theorem only_inconsistent_with_fewer (m : ℕ) :
-    ¬ ∃ k, (atLeastMeaning m k ∧ atMostMeaning m k) ∧ fewerThanMeaning m k := by
-  simp only [atLeastMeaning_def, atMostMeaning_def, fewerThanMeaning_def, not_exists, not_and]
-  omega
+    Disjoint (Comparison.ge.interval m ∩ Comparison.le.interval m) (Comparison.lt.interval m) := by
+  simp [Set.Ici_inter_Iic]
 
 /-! ### The quantificational scale (Section 2.1) -/
 
