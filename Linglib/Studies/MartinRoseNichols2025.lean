@@ -1,6 +1,6 @@
 import Linglib.Pragmatics.Superoptimal
 import Linglib.Semantics.Root.Defs
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 
 /-!
 # Martin, Rose and Nichols (2025): Burning facts: thick and thin causatives

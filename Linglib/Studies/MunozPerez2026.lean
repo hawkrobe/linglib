@@ -3,7 +3,7 @@ import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Person.Features
 import Linglib.Fragments.Romance.Spanish.Clitics
-import Linglib.Fragments.Romance.Spanish.Predicates
+import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
 # Muñoz Pérez (2026): Stylistic Applicatives
@@ -72,7 +72,7 @@ two-flavour Voice of [martin-schaefer-kastner-2025] is not formalized.
 
 namespace MunozPerez2026
 
-open Data.Examples Minimalist Person Spanish.Predicates
+open Data.Examples Minimalist Person Spanish.Verbs
 
 /-! ### Clauses -/
 

@@ -1,5 +1,5 @@
-import Linglib.Fragments.English.Predicates
-import Linglib.Fragments.Romance.Spanish.Predicates
+import Linglib.Fragments.English.Verbs
+import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
 # Spalek & McNally (2026): The Anatomy of a Verb
@@ -48,7 +48,7 @@ for the foil, robustness and force for the silence, force for the rough.
 
 namespace SpalekMcNally2026
 
-open Semantics.Root Semantics.Root.Content English Spanish.Predicates
+open Semantics.Root Semantics.Root.Content English Spanish.Verbs
 
 /-! ### Situations and admission -/
 

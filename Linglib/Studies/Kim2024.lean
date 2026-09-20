@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Causation.PsychLink
 import Linglib.Studies.Pesetsky1995
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 
 /-!
 # Kim (2024): On the Argument Structure of Object Experiencer Verbs

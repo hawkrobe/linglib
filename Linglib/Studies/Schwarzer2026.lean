@@ -31,7 +31,7 @@ notes that the latter is thereby supported only indirectly.
 * The verb positions are read off the German verb-second profile, with the finite verb in the
   clause-final position of an embedded clause and in second position of a root declarative.
   The predicates of the experiments are recorded with their clausal frames in
-  `Fragments/German/Predicates`.
+  `Fragments/German/Verbs`.
 * The experiments' scores are recorded in the example rows' comments; the mixed model and the
   logistic regression are not formalized.
 

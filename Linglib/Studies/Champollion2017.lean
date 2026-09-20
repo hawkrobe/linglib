@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Plurality.Algebra
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Studies.Krifka1998
 
 /-!

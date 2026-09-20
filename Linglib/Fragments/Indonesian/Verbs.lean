@@ -3,7 +3,7 @@ import Linglib.Syntax.Voice.Middle
 import Linglib.Fragments.Indonesian.Morphophonology
 
 /-!
-# Indonesian Verbal Predicates
+# Indonesian verbs
 [sneddon-1996] [beavers-udayana-2022]
 
 Indonesian verb entries with voice paradigm forms (*meN-*, *ber-*,
@@ -46,7 +46,7 @@ are the most productive class. When *diri* 'self' is incorporated,
 a reflexive reading arises even for obviative roots.
 -/
 
-namespace Indonesian.Predicates
+namespace Indonesian.Verbs
 
 open Verb
 open ArgumentStructure
@@ -646,4 +646,4 @@ theorem all_men_forms_derived :
     allVerbs.all (fun (v : IndonesianVerbEntry) =>
       v.formMeN == deriveMeN v.form) = true := by decide
 
-end Indonesian.Predicates
+end Indonesian.Verbs

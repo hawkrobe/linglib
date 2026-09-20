@@ -1,5 +1,5 @@
 import Linglib.Semantics.Questions.QParticleLayer
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Semantics.Presupposition.Verb
 
 /-!

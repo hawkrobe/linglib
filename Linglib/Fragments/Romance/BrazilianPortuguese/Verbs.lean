@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Brazilian Portuguese Predicate Lexicon Fragment
+# Brazilian Portuguese verbs
 [palmieri-2024]
 
 Brazilian Portuguese verbs with lexical reciprocal entries alongside their
@@ -11,7 +11,7 @@ Membership in `BrazilianPortuguese.Reciprocals.lexicalReciprocals` carries the
 reciprocal marking; the entries here are ordinary verb entries.
 -/
 
-namespace BrazilianPortuguese.Predicates
+namespace BrazilianPortuguese.Verbs
 
 /-- *abraçar* 'hug' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
@@ -55,4 +55,4 @@ def namorar : Verb where
   form := "namorar"
   frames := [ArgumentFrame.np]
 
-end BrazilianPortuguese.Predicates
+end BrazilianPortuguese.Verbs

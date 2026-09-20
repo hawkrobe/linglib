@@ -16,7 +16,7 @@ the morphological criterion of [steinert-threlkeld-imel-guo-2023].
 * [steinert-threlkeld-imel-guo-2023]
 -/
 
-namespace German.Predicates.Modal
+namespace German.Verbs.Modal
 
 open Modality (ForceFlavor ModalForce ModalFlavor)
 
@@ -72,4 +72,4 @@ def allModals : List Auxiliary :=
 theorem sollen_flavors_ssubset_sollte :
     sollen.toModalItem.flavors ⊂ sollte.toModalItem.flavors := by decide
 
-end German.Predicates.Modal
+end German.Verbs.Modal

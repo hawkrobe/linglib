@@ -1,5 +1,5 @@
 import Linglib.Semantics.Reference.Definiteness
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Phase.Domain
 import Linglib.Data.Examples.ShenHuang2026

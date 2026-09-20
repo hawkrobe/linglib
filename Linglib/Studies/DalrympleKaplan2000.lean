@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.DalrympleKaplan2000
 import Linglib.Syntax.Person.Resolve
 import Linglib.Fragments.Chichewa.Gender
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.German.Pronouns
 import Linglib.Fragments.German.Verbs
 import Linglib.Fragments.Slavic.Polish.Pronouns

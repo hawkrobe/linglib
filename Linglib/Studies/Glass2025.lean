@@ -1,7 +1,7 @@
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Fragments.English.Predicates
-import Linglib.Fragments.Mandarin.Predicates
+import Linglib.Fragments.English.Verbs
+import Linglib.Fragments.Mandarin.Verbs
 import Linglib.Data.Examples.Glass2025
 import Linglib.Semantics.Attitudes.Verb
 

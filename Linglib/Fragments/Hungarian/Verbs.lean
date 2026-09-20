@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Hungarian Predicate Lexicon Fragment
+# Hungarian verbs
 [kiss-2002]
 
 Hungarian matrix predicates that embed finite *hogy*-clauses, extending `Verb`
@@ -29,7 +29,7 @@ records only general lexical class (perception / communication / attitude); the
 clause-type analysis lives in `Studies.Egressy2026`.
 -/
 
-namespace Hungarian.Predicates
+namespace Hungarian.Verbs
 
 open ArgumentStructure
 
@@ -190,4 +190,4 @@ theorem def_indef_distinct :
     simp [lat, hall, gondol, hisz, tud, mond]
 
 
-end Hungarian.Predicates
+end Hungarian.Verbs

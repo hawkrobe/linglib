@@ -1,5 +1,5 @@
 import Linglib.Morphology.DistributedMorphology.Allosemy
-import Linglib.Fragments.Icelandic.Predicates
+import Linglib.Fragments.Icelandic.Verbs
 
 /-!
 # Icelandic Nominalization Fragment
@@ -13,13 +13,13 @@ or RN (Result/Referring Nominal) readings depending on the allosemes
 of v and n in the structure [nP n [vP v √ROOT]].
 
 This fragment provides lexical entries for key Icelandic nominalizations,
-connecting them to the -st verb data in `Predicates.lean`.
+connecting them to the -st verb data in `Verbs.lean`.
 -/
 
 namespace Icelandic.Nominalizations
 
 open DistributedMorphology.Allosemy
-open Icelandic.Predicates
+open Icelandic.Verbs
 
 -- ============================================================================
 -- § 1: Nominalizing Suffixes ([wood-2023] Ch. 3)

@@ -25,7 +25,7 @@ records which of them are lexical reciprocals.
 * [A. A. Spalek and L. McNally, *The anatomy of a verb* (2026)][spalek-mcnally-2026]
 -/
 
-namespace Spanish.Predicates
+namespace Spanish.Verbs
 
 open ArgumentStructure
 
@@ -245,4 +245,4 @@ def encontrar : Verb where
   form := "encontrar"
   frames := [ArgumentFrame.np]
 
-end Spanish.Predicates
+end Spanish.Verbs

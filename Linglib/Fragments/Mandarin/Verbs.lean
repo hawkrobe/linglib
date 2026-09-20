@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Mandarin predicates
+# Mandarin verbs
 
 The Mandarin clause-embedding predicates the studies of Qing and Uegaki, of Glass, of Wang and
 of Liu and Yip consume: the preferential attitudes *qidai* 'look forward to', *danxin* 'worry',

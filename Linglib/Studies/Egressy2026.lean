@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Egressy2026
-import Linglib.Fragments.Hungarian.Predicates
+import Linglib.Fragments.Hungarian.Verbs
 import Linglib.Semantics.Tense.Embedding
 import Linglib.Syntax.Minimalist.Probe.Profile
 
@@ -32,7 +32,7 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
   is `Tense.availableReadings` at the clause-internal parameter, and a chain of embeddings is
   read pairwise by `profile`.
 * The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
-  feature, its matrix verb the `Hungarian.Predicates` entry named by its `matrixVerb` feature,
+  feature, its matrix verb the `Hungarian.Verbs` entry named by its `matrixVerb` feature,
   and direct perception, which the paper says removes the backshifted reading pragmatically, its
   `directPerception` feature.
 * Footnote 9 allows the complement of *mond* to be an XP with Say > Foc > X > T, which movement
@@ -58,7 +58,7 @@ namespace Egressy2026
 
 open Semantics
 
-open Minimalist Tense Data.Examples Hungarian.Predicates Egressy2026.Examples
+open Minimalist Tense Data.Examples Hungarian.Verbs Egressy2026.Examples
 
 /-! ### The two clause types and their size (§2, §3.1) -/
 

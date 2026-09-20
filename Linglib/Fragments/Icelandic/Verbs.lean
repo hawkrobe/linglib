@@ -1,8 +1,8 @@
-import Linglib.Syntax.Case.Source
 import Linglib.Fragments.Icelandic.Case
+import Linglib.Syntax.Case.Source
 
 /-!
-# Icelandic Verb Case Frames
+# Icelandic verbs
 [thrainsson-2007] [yip-maling-jackendoff-1987]
 [zaenen-maling-thrainsson-1985]
 
@@ -46,13 +46,37 @@ affected by passivization. Structural case (NOM, ACC in standard frames)
 changes under passivization (ACC object → NOM subject in passive). The
 distinction is the subject's case provenance, encoded as `Case.Source`
 (`.inherent` vs `.structural`).
+
+## The *-st* and *-na* verbs
+
+Consensus lexical data for Icelandic verbs participating in the
+*-st* / *-na* alternations made famous by [wood-2015]. Each
+entry carries only the surface forms and a Boolean for whether an
+active variant exists — every other piece of information about each
+verb (the *-st* classification, the anticausative-marking morpheme,
+the [cuervo-2003]-style root decomposition, the
+possessive-dative diagnostic) is paper-specific apparatus and lives
+in `Wood2015`, where it can
+participate in further analysis without polluting the Fragment
+schema.
+
+
+Note on classification: in [wood-2015]'s analysis *-st* (historically
+*sik* → *-sk* → *-st*) is **not** an exponent of Voice. It is a defective
+`[−participant]` clitic — a featural subset of the reflexive pronoun —
+that merges in a specifier/argument position and cliticizes to the verb.
+It appears across the descriptive categories [wood-2015] distinguishes
+(anticausative, generic middle, figure reflexive, reflexive, inherent,
+subject-experiencer, reciprocal); the Voice/v exponents proper are *-na*
+(Voice{∅}), *-Ø* (the elsewhere Voice exponent), and *-ka* (v), with
+*-na*-marked anticausatives like *brotna*. The merge-site classification
+and the *-st* / *-na* contrast are formalized in the Wood2015 study file,
+not here.
 -/
 
 namespace Icelandic.Verbs
 
--- ============================================================================
--- § 1: Verb Case Frames
--- ============================================================================
+/-! #### Verb Case Frames -/
 
 /-- A verb's case frame: the cases assigned to its arguments.
     Theory-neutral — records the morphological facts without committing
@@ -86,9 +110,7 @@ structure VerbCaseFrame where
 def VerbCaseFrame.quirkySubject (v : VerbCaseFrame) : Bool :=
   v.subjectCase != .nom
 
--- ============================================================================
--- § 2: Dyadic Verb Data — Productive Patterns
--- ============================================================================
+/-! #### Dyadic Verb Data — Productive Patterns -/
 
 -- § 2.1: NOM-ACC (NA) — default, most common
 
@@ -155,7 +177,7 @@ def batna : VerbCaseFrame :=
 
 /-- *leiðast* 'be bored' — DN frame ([thrainsson-2007] ex. 4.61d).
     *Stráknum leiddust kennararnir.* 'Boy-the(D) bored(pl.) teachers-the(Npl.).'
-    Also an -st verb (see Predicates.lean). -/
+    Also an -st verb (see Verbs.lean). -/
 def leidastCF : VerbCaseFrame :=
   { form := "leiðast", gloss := "be bored"
     subjectCase := .dat, firstObject := some .nom }
@@ -186,9 +208,7 @@ def bresta : VerbCaseFrame :=
   { form := "bresta", gloss := "fail (of courage)"
     subjectCase := .acc, firstObject := some .acc }
 
--- ============================================================================
--- § 3: Rare / Marginal Dyadic Patterns
--- ============================================================================
+/-! #### Rare / Marginal Dyadic Patterns -/
 
 /-- ACC-NOM impersonal — extremely rare, possibly one construction
     ([thrainsson-2007] ex. 4.52a, parenthesized in ex. 4.48 grid).
@@ -208,9 +228,7 @@ def vera_kostur : VerbCaseFrame :=
   { form := "vera (kostur)", gloss := "be an option (copula + pred. noun)"
     subjectCase := .gen, firstObject := some .nom }
 
--- ============================================================================
--- § 4: Triadic (Ditransitive) Verb Data
--- ============================================================================
+/-! #### Triadic (Ditransitive) Verb Data -/
 
 /-- *gefa* 'give' — NDA frame ([thrainsson-2007] ex. 4.63a).
     *María gaf Haraldi bókina.* 'Mary(N) gave Harold(D) book-the(A).'
@@ -270,9 +288,7 @@ def kosta : VerbCaseFrame :=
   { form := "kosta", gloss := "cost"
     subjectCase := .nom, firstObject := some .acc, secondObject := some .acc }
 
--- ============================================================================
--- § 5: Subject Diagnostics
--- ============================================================================
+/-! #### Subject Diagnostics -/
 
 /-- The 10 standard subject diagnostics for Icelandic
     ([thrainsson-2007] §4.1.1, [zaenen-maling-thrainsson-1985]). -/
@@ -296,9 +312,7 @@ def SubjectDiagnostic.passedByQuirkySubject : SubjectDiagnostic → Bool
   | .verbAgreement => false
   | _              => true
 
--- ============================================================================
--- § 6: Agreement
--- ============================================================================
+/-! #### Agreement -/
 
 /-- Which argument does the finite verb agree with?
     In Icelandic, the verb agrees with the **nominative** argument,
@@ -319,9 +333,7 @@ def VerbCaseFrame.agreementTarget (v : VerbCaseFrame) : AgreementTarget :=
   else if v.secondObject == some .nom then .nominativeArg
   else .default3sg
 
--- ============================================================================
--- § 7: Verb Collections
--- ============================================================================
+/-! #### Verb Collections -/
 
 /-- Dyadic verbs with nominative subjects. -/
 def nomSubjectVerbs : List VerbCaseFrame :=
@@ -339,9 +351,7 @@ def allDyadicVerbs : List VerbCaseFrame :=
 def ditransitiveVerbs : List VerbCaseFrame :=
   [gefa, segja, svipta, leyna, lofa, skila, spyrja, oska, kosta]
 
--- ============================================================================
--- § 8: Case Frame Typology
--- ============================================================================
+/-! #### Case Frame Typology -/
 
 /-- The 5 productive dyadic case patterns in Icelandic
     ([thrainsson-2007] §4.1.2.2, [yip-maling-jackendoff-1987]).
@@ -363,9 +373,7 @@ theorem all_verbs_use_attested_pattern :
       | some o => attested.contains (v.subjectCase, o)
       | none => false) = true := by decide
 
--- ============================================================================
--- § 9: Verification Theorems
--- ============================================================================
+/-! #### Verification Theorems -/
 
 -- § 9.1: Quirky subject identification
 
@@ -469,12 +477,131 @@ theorem ditransitive_verb_count : ditransitiveVerbs.length = 9 := rfl
 
 /-- *leiðast* 'be bored' is both an -st verb AND a quirky-subject verb
     (DAT-NOM frame). The form and gloss match between this fragment
-    and Predicates.lean — verified by inspection (structural link
+    and Verbs.lean — verified by inspection (structural link
     requires a study file that imports both). -/
 theorem leidast_is_quirky_dn :
     leidastCF.subjectCase = .dat ∧
     leidastCF.firstObject = some .nom ∧
     leidastCF.quirkySubject = true ∧
     leidastCF.subjectCaseSource = .inherent := ⟨rfl, rfl, rfl, rfl⟩
+
+/-! ### The *-st* verbs -/
+
+/-! #### Verb Entry -/
+
+/-- A lexical entry for an Icelandic verb participating in the
+    *-st* / *-na* alternation. Carries only consensus surface data. -/
+structure IcelandicStVerb where
+  /-- Active / bare form, if one exists. `none` for inherent *-st*
+      verbs (*nálgast*, *minnast*) and the subject-experiencer
+      *leiðast*. -/
+  activeForm : Option String
+  /-- The intransitive form: typically suffixed with *-st*, with
+      *-na* on `brotna` and friends, or identical to the active when
+      the alternation is unmarked. -/
+  stForm : String
+  /-- English gloss for human readers. -/
+  gloss : String
+  /-- Whether an active variant exists (must agree with
+      `activeForm.isSome`; the redundancy is a sanity check used by
+      the consistency theorem below). -/
+  hasActiveVariant : Bool
+  deriving Repr, BEq, DecidableEq
+
+/-! #### Verb Data -/
+
+/-- *opna* / *opnast* 'open'. -/
+def opnast : IcelandicStVerb :=
+  { activeForm := some "opna"
+    stForm := "opnast"
+    gloss := "open"
+    hasActiveVariant := true }
+
+/-- *splundra* / *splundrast* 'shatter'. -/
+def splundrast : IcelandicStVerb :=
+  { activeForm := some "splundra"
+    stForm := "splundrast"
+    gloss := "shatter"
+    hasActiveVariant := true }
+
+/-- *brjóta* / *brotna* 'break' — the canonical *-na*-marked
+    anticausative (cf. *opnast* / *splundrast* with *-st*). -/
+def brotna : IcelandicStVerb :=
+  { activeForm := some "brjóta"
+    stForm := "brotna"
+    gloss := "break"
+    hasActiveVariant := true }
+
+/-- *selja* / *seljast* 'sell'. -/
+def seljast : IcelandicStVerb :=
+  { activeForm := some "selja"
+    stForm := "seljast"
+    gloss := "sell"
+    hasActiveVariant := true }
+
+/-- *lesa* / *lesast* 'read'. -/
+def lesast : IcelandicStVerb :=
+  { activeForm := some "lesa"
+    stForm := "lesast"
+    gloss := "read"
+    hasActiveVariant := true }
+
+/-- *setja* / *setjast* 'sit down' — a posture verb. -/
+def setjast : IcelandicStVerb :=
+  { activeForm := some "setja"
+    stForm := "setjast"
+    gloss := "sit down"
+    hasActiveVariant := true }
+
+/-- *klæða* / *klæðast* 'dress'. -/
+def klaedast : IcelandicStVerb :=
+  { activeForm := some "klæða"
+    stForm := "klæðast"
+    gloss := "dress"
+    hasActiveVariant := true }
+
+/-- *nálgast* 'approach' — no active variant; *-st* is lexicalized. -/
+def nalgast : IcelandicStVerb :=
+  { activeForm := none
+    stForm := "nálgast"
+    gloss := "approach"
+    hasActiveVariant := false }
+
+/-- *minnast* 'remember' — no active variant. -/
+def minnast : IcelandicStVerb :=
+  { activeForm := none
+    stForm := "minnast"
+    gloss := "remember"
+    hasActiveVariant := false }
+
+/-- *leiðast* 'be bored' — subject-experiencer; no active variant.
+    *Mér leiðist í skólanum* 'I am bored in school'. -/
+def leidast : IcelandicStVerb :=
+  { activeForm := none
+    stForm := "leiðast"
+    gloss := "be bored"
+    hasActiveVariant := false }
+
+/-- *kyssa* / *kyssast* 'kiss' — used in reciprocal contexts:
+    *Þau kyssast* 'They kissed (each other)'. -/
+def kyssast : IcelandicStVerb :=
+  { activeForm := some "kyssa"
+    stForm := "kyssast"
+    gloss := "kiss"
+    hasActiveVariant := true }
+
+/-- All *-st*-marked verb entries (excludes *-na*-marked verbs like
+    *brotna*). -/
+def allStVerbs : List IcelandicStVerb :=
+  [opnast, splundrast, seljast, lesast, setjast, klaedast,
+   nalgast, minnast, leidast, kyssast]
+
+/-! #### Self-Consistency -/
+
+/-- Sanity check: every verb whose `hasActiveVariant` is true also
+    has `activeForm.isSome`. Catches schema drift in either field. -/
+theorem alternating_have_active :
+    (allStVerbs.filter (·.hasActiveVariant)).all
+      (fun v => v.activeForm.isSome) = true := by decide
 
 end Icelandic.Verbs

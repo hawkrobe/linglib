@@ -33,7 +33,7 @@ and *intendere* are carried over from the earlier entries and are not in those s
 * [palmieri-2024]
 -/
 
-namespace Italian.Predicates
+namespace Italian.Verbs
 
 open ArgumentStructure
 
@@ -182,4 +182,4 @@ def vedere : _root_.Verb where
   form := "vedere"
   frames := [ArgumentFrame.np]
 
-end Italian.Predicates
+end Italian.Verbs

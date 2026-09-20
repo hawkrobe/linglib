@@ -1,7 +1,7 @@
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Data.Examples.LuPanDegen2025
 
 /-!

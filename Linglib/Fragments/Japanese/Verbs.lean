@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Japanese predicates
+# Japanese verbs
 
 The Japanese clause-embedding and departure predicates the studies of Qing and Uegaki and of
 Ozaki consume: the preferential attitudes *tanoshimi* 'look forward to', *osore* 'fear',

@@ -19,7 +19,7 @@ their implicative class.
 * [nadathur-2023-implicatives]
 -/
 
-namespace Finnish.Predicates
+namespace Finnish.Verbs
 
 -- ============================================================================
 -- § 1: Verb Entry Type
@@ -373,4 +373,4 @@ def FinnishImplicativeVerb.toImplicativeClass (v : FinnishImplicativeVerb) : Imp
 theorem uskaltaa_matches_dare :
     uskaltaa.toImplicativeClass = ImplicativeClass.dare := rfl
 
-end Finnish.Predicates
+end Finnish.Verbs

@@ -1,7 +1,7 @@
 import Linglib.Syntax.Voice.Basic
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Composition.Ty
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 
 /-!
 # Chierchia (1984): Topics in the syntax and semantics of infinitives and gerunds

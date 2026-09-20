@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# French Predicate Lexicon Fragment
+# French verbs
 [song-1996]
 
 French causative predicates, centered on the *faire* causative.
@@ -14,7 +14,7 @@ despite being separate words.
 
 -/
 
-namespace French.Predicates
+namespace French.Verbs
 
 open ArgumentStructure
 open ArgumentStructure
@@ -403,4 +403,4 @@ def allVerbs : List FrenchVerbEntry :=
 def lookup (form : String) : Option FrenchVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end French.Predicates
+end French.Verbs

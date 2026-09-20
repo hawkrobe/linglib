@@ -3,7 +3,7 @@ import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.English.Adjectives
 import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Data.Examples.Levin1993

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Embedding
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Data.Examples.Klecha2016
 
 /-!

@@ -15,7 +15,7 @@ the pronoun paradigm of Table 3 as `PersonalPronoun` entries, the three
 complementizers as `Complementizer` entries, the three-way embedded clause
 typology they head together with the complement `ArgumentFrame` each type records, and
 the pro-drop profile. The complement-taking verbs are in
-`Fragments/Ga/Predicates`.
+`Fragments/Ga/Verbs`.
 
 ## Implementation notes
 

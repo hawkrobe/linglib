@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Verbs
 import Linglib.Semantics.Presupposition.Environment
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Data.Examples.Karttunen1971b

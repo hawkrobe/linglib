@@ -2,7 +2,7 @@ import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Fragments.Turkish.Morphotactics
 
 /-!
-# Turkish predicates
+# Turkish verbs
 
 This file defines the Turkish verbs that the studies of Qing and colleagues and of Göksel and
 Kerslake consume. The preferential attitudes are *kork-* 'fear', *um-* 'hope' and *endişelen-*

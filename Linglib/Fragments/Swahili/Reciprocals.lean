@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Swahili.Predicates
+import Linglib.Fragments.Swahili.Verbs
 
 /-!
 # Swahili Reciprocal Fragment
@@ -29,17 +29,17 @@ def markers : List Marker := [anSuffix]
 /-- The *-an-* verbs with lexicalized reciprocal entries ([palmieri-2024],
     Appendix C), referenced as ordinary verb entries. -/
 def lexicalReciprocals : List Verb :=
-  [Predicates.achana, Predicates.gawana, Predicates.gombana,
-   Predicates.gongana, Predicates.jibizana, Predicates.pambana,
-   Predicates.patana, Predicates.pigana, Predicates.shindana]
+  [Verbs.achana, Verbs.gawana, Verbs.gombana,
+   Verbs.gongana, Verbs.jibizana, Verbs.pambana,
+   Verbs.patana, Verbs.pigana, Verbs.shindana]
 
 /-- Derivational pairing of each lexical reciprocal with its binary base
     ([palmieri-2024], Appendix C). *jibizana* is absent: it has no
     binary base (\**jibiza*). -/
 def derivedFrom : List (Verb × Verb) :=
-  [(Predicates.achana, Predicates.acha), (Predicates.gawana, Predicates.gawa),
-   (Predicates.gombana, Predicates.gomba), (Predicates.gongana, Predicates.gonga),
-   (Predicates.pambana, Predicates.pamba), (Predicates.patana, Predicates.pata),
-   (Predicates.pigana, Predicates.piga), (Predicates.shindana, Predicates.shinda)]
+  [(Verbs.achana, Verbs.acha), (Verbs.gawana, Verbs.gawa),
+   (Verbs.gombana, Verbs.gomba), (Verbs.gongana, Verbs.gonga),
+   (Verbs.pambana, Verbs.pamba), (Verbs.patana, Verbs.pata),
+   (Verbs.pigana, Verbs.piga), (Verbs.shindana, Verbs.shinda)]
 
 end Swahili.Reciprocals

@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Ozaki2026
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Japanese.Predicates
+import Linglib.Fragments.Japanese.Verbs
 import Linglib.Fragments.Japanese.Voice
 import Linglib.Semantics.ArgumentStructure.Unaccusativity
 

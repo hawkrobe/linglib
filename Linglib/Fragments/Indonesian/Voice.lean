@@ -14,7 +14,7 @@ obligatory and pronominal, *aku* and *kamu* appearing as the bound *ku-* and *ka
 'by', and may be omitted, as in *Kue ini dimakan (oleh) Arna* 'This cake was eaten by Arna';
 its agent is third person, *dia*, *mereka* or a noun, so that the third-person pronouns alone
 take both patient-subject voices. The middle *ber-* selects no pivot and is the matter of
-`Predicates.lean` and `Syntax/Voice/Middle.lean`. Sneddon, Cole, Hermon and Yanti, and
+`Verbs.lean` and `Syntax/Voice/Middle.lean`. Sneddon, Cole, Hermon and Yanti, and
 Erlewine, Levin and van Urk describe the three voices, and Creissels reads *di-* two ways: as
 a patient voice whose bare postverbal agent remains a core term, which makes the system a
 binary symmetrical one, or as a passive whose agent is demoted to the *oleh*-phrase.

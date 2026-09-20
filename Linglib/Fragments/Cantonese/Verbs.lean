@@ -2,7 +2,7 @@ import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Clause.Complementation
 
 /-!
-# Cantonese complement-taking predicates
+# Cantonese complement-taking verbs
 
 Cantonese complement-taking verbs as `Verb`s with their character and their [noonan-2007] class:
 the desideratives *soeng* 'want' and *daasyun* 'intend', the manipulatives *hyun* 'urge', *bik*
@@ -18,7 +18,7 @@ live in `Studies/LiuYip2026.lean`.
 * [liu-yip-2026]
 -/
 
-namespace Cantonese.Predicates
+namespace Cantonese.Verbs
 
 open ArgumentStructure
 
@@ -79,4 +79,4 @@ def geidak : Verb :=
 /-- The verbs. -/
 def all : List Verb := [soeng, hyun, bik, giu, daasyun, seon, gong, geidak]
 
-end Cantonese.Predicates
+end Cantonese.Verbs

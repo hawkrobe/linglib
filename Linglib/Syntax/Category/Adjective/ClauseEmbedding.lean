@@ -15,7 +15,7 @@ entailment signature.
 Whether predication requires a copula is a language-level property
 ([stassen-2013]), not a property of the adjective: English realizes
 these predicates as *be* + adjective (`ClauseEmbeddingAdjective.toVerb`
-in `Fragments/English/Predicates/Copular.lean`), Mandarin and Japanese
+in `Fragments/English/Verbs/Copular.lean`), Mandarin and Japanese
 without a copula.
 -/
 
