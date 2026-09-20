@@ -73,7 +73,7 @@ end Indeterminate
 universal for the conjunction *mo*. -/
 def particleForce (p : Coordinator) : QForce :=
   match p.role with
-  | .disj => .existential
+  | .disjunctive => .existential
   | _ => .universal
 
 /-- A quantifier built from an indeterminate and a particle, with the classifier or noun
@@ -106,7 +106,7 @@ def toQuantifier : Quantifier := { form := q.romaji }
 instance : Semantics.Denotes Indefinite (Set Quantifier.GQ.Family.{u}) where
   denote q :=
     match q.particle.role with
-    | .disj => {Quantifier.GQ.Family.some}
+    | .disjunctive => {Quantifier.GQ.Family.some}
     | _ => {Quantifier.GQ.Family.every}
 
 end Indefinite
@@ -163,7 +163,7 @@ def inventory : Determiner.Inventory :=
 
 /-- The universal indeterminates are the ones not built on the disjunction. -/
 theorem Indefinite.force_eq_universal_iff (q : Indefinite) :
-    q.force = .universal ↔ q.particle.role ≠ .disj := by
+    q.force = .universal ↔ q.particle.role ≠ .disjunctive := by
   unfold Indefinite.force particleForce
   cases q.particle.role <;> simp
 

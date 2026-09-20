@@ -1,28 +1,30 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Kannada Coordination Morphemes
-[sridhar-1990] [haspelmath-2007]
+# Kannada coordinators
 
-Kannada (Dravidian, India) uses the postpositive enclitic *-u* (often *-ū*)
-on each coordinand for conjunction (A-co B-co), bisyndetic postpositive.
-The same morpheme is the Dravidian additive/focus particle ('also').
-[haspelmath-2007] (5) cites [sridhar-1990]:106.
+Kannada, a Dravidian language of southern India, conjoins noun phrases with the enclitic *-u*
+on each coordinand, *Narahariy-u: So:maše:kharan-u:* 'Narahari and Somashekhara' in the
+example Haspelmath cites from Sridhar. The same enclitic is the additive particle 'also'.
 
-- *-u* — MU, bound enclitic, additive: "Narahari-u Somashekhara-u" = 'N and S'
+## Main definitions
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.kannada`).
+* `Kannada.Coordination.u`: the conjunctive enclitic.
+
+## References
+
+* [haspelmath-2007]
+* [sridhar-1990]
 -/
 
 namespace Kannada.Coordination
 
-/-- *-u* — MU particle, also additive/focus. Bound enclitic, postpositive
-    on each coordinand giving the bisyndetic A-co B-co pattern. -/
+/-- *-u* 'and', enclitic on each coordinand, also the additive 'also'. -/
 def u : Coordinator :=
-  { form := "-u", gloss := "and; also"
-  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true
-  , note := "bisyndetic postpositive enclitic; Dravidian additive particle" }
+  { form := "-u", gloss := "and; also", role := .conjunctive, kind := .bound .after .clitic,
+    alsoAdditive := true, correlative := true }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [u]
 
 end Kannada.Coordination

@@ -1,26 +1,29 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Yoruba Coordination Morphemes
-[rowlands-1969] [haspelmath-2007]
+# Yoruba coordinators
 
-Yoruba (Kwa, Nigeria) shows canonical prepositive bisyndetic coordination
-(*àtí A àtí B*). [haspelmath-2007] (25) cites [rowlands-1969]:201ff.
+Yoruba conjoins noun phrases with the free word *àtí* before the second coordinand. Repeated
+before each coordinand, *àtí A àtí B*, it gives the emphatic 'both … and', the construction
+Haspelmath cites from Rowlands.
 
-- *àtí* — J, free, prepositive on each conjunct (bisyndetic A-co B-co)
+## Main definitions
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.yoruba`).
+* `Yoruba.Coordination.ati`: the conjunctive coordinator.
+
+## References
+
+* [haspelmath-2007]
+* [rowlands-1969]
 -/
 
 namespace Yoruba.Coordination
 
-/-- *àtí* — J particle, used bisyndetically: "àtí A àtí B". Free, prepositive. -/
+/-- *àtí* 'and', repeated for 'both … and'. -/
 def ati : Coordinator :=
-  { form := "àtí", gloss := "and"
-  , role := .j, kind := .free
-  , correlative := true
-  , note := "bisyndetic prepositive (co-A co-B pattern)" }
+  { form := "àtí", gloss := "and", role := .conjunctive, kind := .free, correlative := true }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [ati]
 
 end Yoruba.Coordination

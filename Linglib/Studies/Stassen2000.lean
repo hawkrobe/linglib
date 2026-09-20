@@ -1,4 +1,7 @@
-import Linglib.Syntax.Coordination
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.Sigma
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Order.Basic
 
 /-!
 # Stassen (2000): AND-languages and WITH-languages

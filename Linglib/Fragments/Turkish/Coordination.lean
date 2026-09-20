@@ -1,39 +1,36 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Turkish Coordination Morphemes
-[kornfilt-1997] [haspelmath-2007]
+# Turkish coordinators
 
-Turkish has:
+Turkish conjoins with the free word *ve* 'and', an Arabic loan, before the second coordinand,
+and with the enclitic *de*, *da* by vowel harmony, which follows the first word of the second
+coordinand, as in the example Haspelmath cites from Kornfilt. The enclitic is also the additive
+particle 'also, too'.
 
-- *ve* — J, free, prepositive: "A ve B" (Arabic-origin loan)
-- *de* — MU, bound clitic, postpositive on first word of second coordinand:
-  "Hasan ıstakoz-u pisirdi, Ali de balığ-ı" — monosyndetic A B-co
-  ([haspelmath-2007] (23), [kornfilt-1997]:120). Also bisyndetic
-  *de…de* as a marked emphatic variant ('also A, also B').
+## Main definitions
 
-The original `Haspelmath2007.turkish` record had *de* as free; corrected
-here per [kornfilt-1997]'s enclitic analysis.
+* `Turkish.Coordination.ve`, `Turkish.Coordination.de`: the conjunctive coordinator and the
+  conjunctive enclitic.
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.turkish`).
+## References
+
+* [haspelmath-2007]
+* [kornfilt-1997]
 -/
 
 namespace Turkish.Coordination
 
-/-- *ve* — J particle (Arabic loan). Free, prepositive medial. -/
+/-- *ve* 'and'. -/
 def ve : Coordinator :=
-  { form := "ve", gloss := "and"
-  , role := .j, kind := .free
-  , note := "Arabic-origin loan" }
+  { form := "ve", gloss := "and", role := .conjunctive, kind := .free }
 
-/-- *de* — MU clitic, also additive. Bound enclitic on first word of
-    non-initial coordinand (monosyndetic A B-co); bisyndetic *de…de* as
-    a marked emphatic variant. -/
+/-- *de* 'and', enclitic in the second coordinand, also the additive 'also, too'. -/
 def de : Coordinator :=
-  { form := "de", gloss := "also; and (MU)"
-  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true
-  , note := "enclitic per Kornfilt 1997; also vowel-harmony variant 'da'" }
+  { form := "de", gloss := "and; also", role := .conjunctive, kind := .bound .after .clitic,
+    alsoAdditive := true }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [ve, de]
 
 end Turkish.Coordination

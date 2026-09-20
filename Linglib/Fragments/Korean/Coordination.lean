@@ -25,11 +25,11 @@ namespace Korean.Coordination
 
 /-- *-(i)rang* 'and, with', enclitic on the first conjunct, casual. -/
 def irang : Coordinator :=
-  { form := "-(i)rang", gloss := "and", role := .j, kind := .bound .after .clitic }
+  { form := "-(i)rang", gloss := "and", role := .conjunctive, kind := .bound .after .clitic }
 
 /-- *-to* 'and', enclitic on each conjunct, also the additive 'too'. -/
 def to_ : Coordinator :=
-  { form := "-to", gloss := "also, too; and", role := .mu, kind := .bound .after .clitic,
+  { form := "-to", gloss := "also, too; and", role := .conjunctive, kind := .bound .after .clitic,
     alsoAdditive := true }
 
 /-- The coordinators. -/

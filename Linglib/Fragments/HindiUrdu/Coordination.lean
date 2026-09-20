@@ -1,34 +1,34 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Hindi-Urdu Coordination Morphemes
-[haspelmath-2007] [mitrovic-sauerland-2016]
+# Hindi-Urdu coordinators
 
-Hindi-Urdu has:
+Hindi-Urdu conjoins with the free word *aur* 'and' before the second coordinand. The additive
+particle *bhii* 'also, too' follows the phrase it associates with, and repeated after each
+coordinand gives 'both … and'.
 
-- *aur* — J, free, prepositive: "A aur B"
-- *bhii* — MU, free, additive ('also'): "A bhii B bhii" = 'both A and B'
+## Main definitions
 
-The bisyndetic *bhii…bhii* pattern is the canonical M&S μ-only construction
-where the additive particle iterates on each coordinand.
+* `HindiUrdu.Coordination.aur`, `HindiUrdu.Coordination.bhii`: the conjunctive coordinator and
+  the additive particle that conjoins when repeated.
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hindiUrdu`).
+## TODO
+
+The entries have not been checked against a grammar of Hindi-Urdu.
 -/
 
 namespace HindiUrdu.Coordination
 
-/-- *aur* — J particle. Free, prepositive medial. -/
+/-- *aur* 'and'. -/
 def aur : Coordinator :=
-  { form := "aur", gloss := "and"
-  , role := .j, kind := .free }
+  { form := "aur", gloss := "and", role := .conjunctive, kind := .free }
 
-/-- *bhii* — MU particle, also additive ('also/too').
-    Free, used bisyndetically: "A bhii B bhii". -/
+/-- *bhii* 'also, too', after each coordinand 'both … and'. -/
 def bhii : Coordinator :=
-  { form := "bhii", gloss := "also, too; and (MU)"
-  , role := .mu, kind := .free, alsoAdditive := true
-  , correlative := true }
+  { form := "bhii", gloss := "also, too; and", role := .conjunctive, kind := .free,
+    alsoAdditive := true, correlative := true }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [aur, bhii]
 
 end HindiUrdu.Coordination

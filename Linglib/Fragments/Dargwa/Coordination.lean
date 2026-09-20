@@ -1,85 +1,40 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Dargwa (Tanti) Coordination [sumbatova-2021]
+# Tanti Dargwa coordinators
 
-Clause coordination is not typical of Dargwa — subordination via
-non-finite verb forms is the primary strategy for combining clauses
-([sumbatova-2021] §4.8.1). When coordination does occur, it uses
-the following strategies:
+Clause coordination is not typical of Tanti Dargwa, which combines clauses mainly by
+subordination with non-finite verb forms, as Sumbatova describes. Noun phrases are conjoined
+with the additive enclitic *=ra* 'also, too' after each coordinand. Disjunction repeats the free
+word *ja* before each alternative, which with negation gives 'neither … nor', and the enclitic
+*=nu* marks contrast or cause.
 
-## NP Coordination
+## Main definitions
 
-- **=ra** (ADD): enclitic additive particle, repeated after each conjunct.
-  Also used as a sentence-level additive ('also, too').
-  "c'al malla=ra ca qulki=ra" = 'two mullahs and a thief'.
+* `Dargwa.Coordination.ra`, `Dargwa.Coordination.ja`, `Dargwa.Coordination.nu`: the additive
+  enclitic that conjoins, the disjunctive coordinator and the contrastive enclitic.
 
-- **ja ... ja** (DISJ ... DISJ): repeated disjunction.
-  "ja ... ja" = 'neither ... nor' (with negation).
+## References
 
-- **=nu**: contrastive/causal particle.
-
-These patterns connect to the M&S (Mitrovic & Sauerland) typology
-formalized in `Haspelmath2007`.
-
-## Connection to Typology
-
-Dargwa's *=ra* is a MU particle (repeated on each conjunct, also
-additive), making Dargwa a MU-only conjunction language. The
-absence of a J-only strategy (no free "and" between conjuncts)
-is predicted by M&S: languages can have MU without J.
+* [sumbatova-2021]
 -/
 
 namespace Dargwa.Coordination
 
--- ============================================================================
--- Lexical entries
--- ============================================================================
-
-/-- *=ra* — additive/conjunction particle. Bound enclitic, postpositive.
-    Repeated after each conjunct: "A=ra B=ra" = 'A and B'.
-    Also sentence-level additive: "nuka=ra" = 'we too'.
-    This is a MU particle. -/
+/-- *=ra* 'and', enclitic on each coordinand, also the additive 'also, too'. -/
 def ra : Coordinator :=
-  { form := "=ra", gloss := "and, also, too; ADD"
-  , role := .mu, kind := .bound .after .clitic
-  , alsoAdditive := true
-  , note := "repeated after each conjunct" }
+  { form := "=ra", gloss := "and; also, too", role := .conjunctive, kind := .bound .after .clitic,
+    alsoAdditive := true, correlative := true }
 
-/-- *ja...ja* — disjunction. Free, repeated before each disjunct.
-    "ja A ja B" = 'either A or B'.
-    With negation: 'neither A nor B'. -/
+/-- *ja* 'or', repeated before each alternative. -/
 def ja : Coordinator :=
-  { form := "ja", gloss := "or; neither...nor (with NEG)"
-  , role := .disj, kind := .free
-  , note := "repeated before each disjunct" }
+  { form := "ja", gloss := "or", role := .disjunctive, kind := .free, correlative := true }
 
-/-- *=nu* — contrastive/causal particle.
-    Marks contrast between clauses or causal relation. -/
+/-- *=nu* 'but; because', enclitic. -/
 def nu : Coordinator :=
-  { form := "=nu", gloss := "but; because"
-  , role := .advers, kind := .bound .after .clitic }
+  { form := "=nu", gloss := "but; because", role := .adversative, kind := .bound .after .clitic }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [ra, ja, nu]
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-/-- Dargwa has no J-only conjunction particle. Its conjunction
-    strategy is MU-only (*=ra* repeated on each conjunct). -/
-theorem no_j_particle :
-    (allEntries.filter (·.role == .j)).length = 0 := by decide
-
-/-- The MU particle *=ra* is also an additive particle,
-    as predicted by M&S typology. -/
-theorem mu_is_additive :
-    (allEntries.filter (·.role == .mu)).all (·.alsoAdditive) = true := by
-  decide
-
-/-- The MU particle is bound (enclitic). -/
-theorem mu_is_bound :
-    (allEntries.filter (·.role == .mu)).all (fun e => e.kind matches .bound ..) = true := by
-  decide
 
 end Dargwa.Coordination

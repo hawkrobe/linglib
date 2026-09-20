@@ -1,65 +1,48 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Irish Coordination Morphemes
-[haspelmath-2007]
+# Irish coordinators
 
-Irish coordination morphemes. Irish is a J-only language for conjunction:
-"agus" is the sole conjunctive coordinator. There is no MU (additive
-particle) strategy for conjunction attested.
+Irish coordinates with free words that stand before the second coordinand: *agus* 'and', *nó*
+'or' and *ach* 'but'. The emphatic conjunction is *idir … agus* 'both … and', which Haspelmath
+lists among the correlatives whose second member is the plain coordinator. Irish has no emphatic
+negative pair like *neither … nor*: Haspelmath records the single word *ná* 'nor', used after
+the ordinary sentence negation, which is also the particle 'than' of comparatives.
 
-Connection to Typology.lean: `Haspelmath2007.irish`
-encodes the structural pattern (a_co_b only, J-only strategy).
+## Main definitions
 
+* `Irish.Coordination.agus`, `Irish.Coordination.no_`, `Irish.Coordination.na_`,
+  `Irish.Coordination.ach`: the conjunctive, disjunctive, negative and adversative coordinators.
+
+## TODO
+
+*nó* and *ach* are not in Haspelmath's chapter and have not been checked against a grammar of
+Irish.
+
+## References
+
+* [haspelmath-2007]
 -/
 
 namespace Irish.Coordination
 
--- ============================================================================
--- Lexical entries
--- ============================================================================
-
-/-- *agus* — conjunction, J particle. Free, prepositive.
-    "Sean agus Maire" = "Sean and Maire". -/
+/-- *agus* 'and', in the emphatic *idir … agus*. -/
 def agus : Coordinator :=
-  { form := "agus", gloss := "and"
-  , role := .j, kind := .free }
+  { form := "agus", gloss := "and", role := .conjunctive, kind := .free, correlative := true }
 
-/-- *no* — disjunction. Free, prepositive.
-    "Sean no Maire" = "Sean or Maire". -/
+/-- *nó* 'or'. -/
 def no_ : Coordinator :=
-  { form := "nó", gloss := "or"
-  , role := .disj, kind := .free }
+  { form := "nó", gloss := "or", role := .disjunctive, kind := .free }
 
-/-- *na* — negative disjunction / comparative particle.
-    "ni Sean na Maire" = "neither Sean nor Maire".
-    Also used in comparatives: "nios mo na" = "bigger than". -/
+/-- *ná* 'nor', also the comparative particle 'than'. -/
 def na_ : Coordinator :=
-  { form := "ná", gloss := "nor, than"
-  , role := .negDisj, kind := .free
-  , note := "also comparative particle" }
+  { form := "ná", gloss := "nor; than", role := .negative, kind := .free }
 
-/-- *ach* — adversative conjunction.
-    "Ta se fuar ach tirim" = "It is cold but dry". -/
+/-- *ach* 'but'. -/
 def ach : Coordinator :=
-  { form := "ach", gloss := "but"
-  , role := .advers, kind := .free }
+  { form := "ach", gloss := "but", role := .adversative, kind := .free }
 
-def allEntries : List Coordinator :=
-  [agus, no_, na_, ach]
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-/-- All Irish coordination morphemes are free (no bound clitics). -/
-theorem all_free :
-    allEntries.all (fun e => decide (e.kind = .free)) = true := by
-  decide
-
-/-- Irish has exactly one conjunction morpheme (J-only, no MU). -/
-theorem one_conjunction :
-    (allEntries.filter (·.role == .j)).length = 1 := by
-  decide
+/-- The coordinators. -/
+def allEntries : List Coordinator := [agus, no_, na_, ach]
 
 end Irish.Coordination
