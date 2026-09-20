@@ -174,34 +174,39 @@ theorem mem_ext_numeral_inverse :
     w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.rel (w : ℕ) k := by
   rw [mem_ext_inverse, numeral, Degree.Comparison.mem_interval]
 
-/-- With as many horses as the numeral counts, the numeral sentence on the exact reading is true
-exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
-theorem ext_numeral_eq_self (n : ℕ) (i : Scope) (u : Utt) :
-    ext (numeral .eq n) n i u = ext every n i u := by
+/-- The extension sees a determiner only at counts that sum to the number of horses, the
+diagonal of the number triangle, so determiners that agree there have the same extensions. -/
+theorem ext_congr {D' : ℕ → ℕ → Prop} [DecidableRel D']
+    (h : ∀ a b, a + b = n → (D a b ↔ D' a b)) (i : Scope) (u : Utt) :
+    ext D n i u = ext D' n i u := by
   cases u
   · rfl
   · ext w
     cases i
-    · rw [mem_ext_numeral_surface, mem_ext_every_surface, Fin.ext_iff, Fin.val_zero]
-      simp only [Degree.Comparison.rel]
-      omega
-    · rw [mem_ext_numeral_inverse, mem_ext_every_inverse, Ne, Fin.ext_iff, Fin.val_last]
-      rfl
+    · rw [mem_ext_surface, mem_ext_surface, h _ _ (Nat.add_sub_of_le w.is_le)]
+    · rw [mem_ext_inverse, mem_ext_inverse, h _ _ (Nat.sub_add_cancel w.is_le)]
+
+/-- Among `n` restrictor members, exactly `n` lie inside the scope just in case none lies
+outside. -/
+theorem numeral_eq_iff_every {a b : ℕ} (h : a + b = n) : numeral .eq n a b ↔ every a b := by
+  simp only [numeral, every, Degree.Comparison.mem_interval, Degree.Comparison.rel]
+  omega
+
+/-- Among `n` restrictor members, at least `n` lie inside the scope just in case none lies
+outside. -/
+theorem numeral_ge_iff_every {a b : ℕ} (h : a + b = n) : numeral .ge n a b ↔ every a b := by
+  simp only [numeral, every, Degree.Comparison.mem_interval, Degree.Comparison.rel]
+  omega
+
+/-- With as many horses as the numeral counts, the numeral sentence on the exact reading is true
+exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
+theorem ext_numeral_eq_self (n : ℕ) : ext (numeral .eq n) n = ext every n :=
+  funext₂ <| ext_congr fun _ _ ↦ numeral_eq_iff_every
 
 /-- With as many horses as the numeral counts, the numeral sentence on the at-least reading is
 true exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
-theorem ext_numeral_ge_self (n : ℕ) (i : Scope) (u : Utt) :
-    ext (numeral .ge n) n i u = ext every n i u := by
-  cases u
-  · rfl
-  · ext w
-    cases i
-    · rw [mem_ext_numeral_surface, mem_ext_every_surface, Fin.ext_iff, Fin.val_zero]
-      simp only [Degree.Comparison.rel]
-      omega
-    · rw [mem_ext_numeral_inverse, mem_ext_every_inverse, Ne, Fin.ext_iff, Fin.val_last]
-      simp only [Degree.Comparison.rel]
-      omega
+theorem ext_numeral_ge_self (n : ℕ) : ext (numeral .ge n) n = ext every n :=
+  funext₂ <| ext_congr fun _ _ ↦ numeral_ge_iff_every
 
 end Ext
 
