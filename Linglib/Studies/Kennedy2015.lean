@@ -35,7 +35,7 @@ strengthens to a secondary one ((44)), each contradicting the assertion together
 ## Implementation notes
 
 The worlds of the pragmatics are counts, so a form's content is the set `c.over id m` of counts,
-the alternatives are the images of the substrate's `Numerals.kennedyAlternatives`, and the
+the alternatives are the five forms of the numeral, one for each `Degree.Comparison`, and the
 neo-Gricean operators are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. A
 root modal is the quantifier `every_sem R` or `some_sem R` over its accessible worlds `R`, and
 the numeral's two scopes are `Degree.lowScope` and `Degree.highScope` of `maxIn {m}` over it. The
@@ -123,13 +123,13 @@ end Modals
 /-! ### Ignorance implicatures (Section 4.1) -/
 
 /-- (46): the alternatives of a numeral form are the five forms of the same numeral, the
-substrate's `kennedyAlternatives`, as sets of counts. -/
-def alternatives (m : ℕ) : Set (Set ℕ) := (·.over id m) '' {c | c ∈ kennedyAlternatives}
+one for each comparison, as sets of counts. -/
+def alternatives (m : ℕ) : Set (Set ℕ) := Set.range fun c : Comparison ↦ c.over id m
 
 /-- (43): the alternatives that asymmetrically entail a form, as comparisons; their negated
 knowledge is the form's primary implicatures. -/
 def stronger (m : ℕ) (c : Comparison) : Set Comparison :=
-  {c' | c' ∈ kennedyAlternatives ∧ c'.over id m ⊂ c.over id m}
+  {c' | c'.over id m ⊂ c.over id m}
 
 /-- Inclusion between two forms of a positive numeral is decided at three counts, one below,
 at, and above the number. -/
@@ -155,29 +155,29 @@ theorem over_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
 its primary implicatures are ignorance of both. -/
 theorem stronger_ge {m : ℕ} (hm : 0 < m) : stronger m .ge = {.eq, .gt} := by
   ext c
-  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
+  cases c <;> simp [stronger, over_ssubset_iff hm]
 
 /-- (47b): *at most m* is asymmetrically entailed by the bare numeral and by *fewer than m*. -/
 theorem stronger_le {m : ℕ} (hm : 0 < m) : stronger m .le = {.eq, .lt} := by
   ext c
-  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
+  cases c <;> simp [stronger, over_ssubset_iff hm]
 
 /-- The bare numeral is entailed by none of its alternatives: no primary implicatures, and none
 of the upper-bounding secondary ones a Horn scale would give. -/
 theorem stronger_eq {m : ℕ} (hm : 0 < m) : stronger m .eq = ∅ := by
   ext c
-  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
+  cases c <;> simp [stronger, over_ssubset_iff hm]
 
 /-- Class A: *more than m* is entailed by no alternative, so it carries no ignorance
 implicature. -/
 theorem stronger_gt {m : ℕ} (hm : 0 < m) : stronger m .gt = ∅ := by
   ext c
-  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
+  cases c <;> simp [stronger, over_ssubset_iff hm]
 
 /-- Class A: *fewer than m* is entailed by no alternative. -/
 theorem stronger_lt {m : ℕ} (hm : 0 < m) : stronger m .lt = ∅ := by
   ext c
-  cases c <;> simp [stronger, kennedyAlternatives, over_ssubset_iff hm]
+  cases c <;> simp [stronger, over_ssubset_iff hm]
 
 /-- (44) fails for *at least m*: knowing the bare numeral false with the assertion is knowing
 *more than m*, and knowing *more than m* false with the assertion is knowing the bare numeral,
@@ -189,11 +189,11 @@ theorem not_isSecondaryImplicature_ge (m : ℕ) :
         (Comparison.gt.over id m) := by
   refine ⟨λ h => ?_, λ h => ?_⟩
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.gt.over id m)
-      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
-      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
 
@@ -205,11 +205,11 @@ theorem not_isSecondaryImplicature_le (m : ℕ) :
         (Comparison.lt.over id m) := by
   refine ⟨λ h => ?_, λ h => ?_⟩
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.lt.over id m)
-      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
   · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.over id m)
-      ⟨_, by simp [kennedyAlternatives], rfl⟩ λ n ⟨h1, h2⟩ => ?_
+      ⟨_, rfl⟩ λ n ⟨h1, h2⟩ => ?_
     simp only [mem_over, Comparison.rel] at *
     omega
 
