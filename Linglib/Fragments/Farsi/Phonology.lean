@@ -1,95 +1,73 @@
 import Linglib.Data.PHOIBLE.Inventories.Persian
-import Linglib.Phonology.Segmental.Defs
+import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
-# Persian (Farsi) phonology
+# Persian phonemes
 
-Modern Persian distinguishes six vowels — front unrounded /i e æ/ against
-back /u o ɑ/, the back series rounded except for the variably rounded low
-vowel — and some two dozen consonants, among them the glottal stop /ʔ/ that
-breaks vowel hiatus. This file provides the PHOIBLE phoneme inventory and
-distinctive-feature specifications for the vowels and for /h tʃ m n ʔ/.
+This file lists the Persian phonemes that the hiatus data use and gives each its segment.
+Modern Persian distinguishes six vowels, front unrounded /i e æ/ against back /u o ɑ/, the
+back series rounded except for the variably rounded low vowel, and some two dozen consonants,
+among them the glottal stop /ʔ/ that breaks vowel hiatus. The vowels are here with /h tʃ m n ʔ/.
+The feature values of a phoneme are not listed. Each phoneme names its glyph in the PHOIBLE
+chart, and its segment is the segment of that chart entry.
+
+## Main definitions
+
+* `Farsi.Phoneme`: the phonemes, with `chart` and `segment`.
+
+## Main results
+
+* `Farsi.Phoneme.segment_injective`, `Farsi.Phoneme.chart_mem_pes`: distinct phonemes are
+  distinct segments, and each is a phoneme of PHOIBLE's Persian inventory.
+* `Farsi.Phoneme.isVowel_iff`: the six vowels are the vowels.
+
+## Implementation notes
+
+PHOIBLE's Persian inventory is the Stanford Phonology Archive's, which writes the low front
+vowel `a̟` and the affricate `t̠ʃ`, and those are the chart entries taken here. Majidi and
+Ternes transcribe the vowel /æ/.
 
 ## References
 
-* [M.-R. Majidi and E. Ternes, *Persian (Farsi)*][majidi-ternes-1991]
-* [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
-* [B. Hayes, *Introductory Phonology*][hayes-2009]
-* [K. Ariyaee and P. Jurgec, *Variable hiatus in Persian is affected by
-  suffix length*][ariyaee-jurgec-2021]
+* [majidi-ternes-1991]
+* [moran-mccloy-2019]
+* [hayes-2009]
+* [ariyaee-jurgec-2021]
 -/
 
-open Phonology
+open Phonology Data.PHOIBLE
 
-namespace Farsi.Phonology
+namespace Farsi
 
-/-- The canonical Persian phoneme inventory is the first PHOIBLE inventory for ISO `pes`,
-the Stanford Phonology Archive doculect. -/
-def phonemeInventory : Data.PHOIBLE.Inventory :=
-  Data.PHOIBLE.Inventories.Persian.pes
+/-- The Persian phonemes of the hiatus data. A constructor is the phoneme's IPA symbol where
+that is an identifier, and otherwise the symbol's name: `scriptA` is ɑ, `tesh` is tʃ and
+`glottalStop` is ʔ. -/
+inductive Phoneme where
+  | i | e | æ | u | o | scriptA
+  | h | tesh | m | n | glottalStop
+  deriving DecidableEq, Fintype, Repr
 
-/-! ### Vowels
+namespace Phoneme
 
-The six-vowel system of modern Persian ([majidi-ternes-1991]). -/
+/-- The PHOIBLE chart entry of a phoneme, in the glyphs of the Persian inventory. -/
+def chart : Phoneme → FeatureMatrix
+  | i => .«i» | e => .«e» | æ => .«a̟» | u => .«u» | o => .«o» | scriptA => .«ɑ»
+  | h => .«h» | tesh => .«t̠ʃ» | m => .«m» | n => .«n» | glottalStop => .«ʔ»
 
-/-- /i/ — high front unrounded vowel. -/
-def i : Segment := .vowel .high .front
+/-- The segment of a phoneme is the segment of its chart entry. -/
+def segment (x : Phoneme) : Segment := x.chart.toSegment
 
-/-- /e/ — mid front unrounded vowel. -/
-def e : Segment := .vowel .mid .front
+theorem segment_injective : Function.Injective segment := by decide
 
-/-- /æ/ — low front unrounded vowel. -/
-def ae : Segment := .vowel .low .front
+/-- Each phoneme is in PHOIBLE's Persian inventory. -/
+theorem chart_mem_pes (x : Phoneme) :
+    x.chart ∈ Inventories.Persian.pes.phonemes.map (·.features) := by
+  cases x <;> decide
 
-/-- /u/ — high back rounded vowel. -/
-def u : Segment := (Segment.vowel .high .back).setFeature .round true
+theorem isVowel_iff (x : Phoneme) :
+    x.segment.IsVowel ↔ x ∈ ({i, e, æ, u, o, scriptA} : Finset Phoneme) := by
+  revert x; decide
 
-/-- /o/ — mid back rounded vowel. -/
-def o : Segment := (Segment.vowel .mid .back).setFeature .round true
+end Phoneme
 
-/-- /ɑ/ — low back vowel, variably rounded [ɑ ~ ɒ]. -/
-def aa : Segment := .vowel .low .back
-
-/-! ### Consonants -/
-
-/-- /h/ — voiceless glottal fricative. -/
-def h : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, false), (.sonorant, false),
-   (.continuant, true), (.voice, false), (.spreadGlottis, true)]
-
-/-- /tʃ/ — voiceless postalveolar affricate. -/
-def ch : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, false),
-   (.continuant, false), (.delayedRelease, true), (.voice, false),
-   (.coronal, true), (.anterior, false), (.strident, true)]
-
-/-- /m/ — bilabial nasal. -/
-def m : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
-   (.nasal, true), (.voice, true), (.labial, true)]
-
-/-- /n/ — alveolar nasal. -/
-def n : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.approximant, false),
-   (.nasal, true), (.voice, true), (.coronal, true), (.anterior, true)]
-
-/-- /ʔ/ — glottal stop, the epenthetic hiatus-breaker. -/
-def glottal : Segment := Segment.ofSpecs
-  [(.syllabic, false), (.consonantal, true), (.sonorant, false),
-   (.continuant, false), (.voice, false), (.constrGlottis, true)]
-
-/-! ### Consistency with the substrate and with PHOIBLE -/
-
-/-- The six vowels are pairwise distinct feature bundles. -/
-example : ([i, e, ae, u, o, aa] : List Segment).Pairwise (· ≠ ·) := by decide
-
-/-- All six vowels are vowels; none of the consonants is. -/
-example : (∀ v ∈ ([i, e, ae, u, o, aa] : List Segment), v.IsVowel) ∧
-    ∀ c ∈ ([h, ch, m, n, glottal] : List Segment), ¬c.IsVowel := by decide
-
-/-- Every segment named here has its glyph in the canonical PHOIBLE doculect
-(whose SPA transcription writes /æ/ as `a̟` and /tʃ/ as `t̠ʃ`). -/
-example : ∀ g ∈ ["i", "e", "a̟", "u", "o", "ɑ", "h", "t̠ʃ", "m", "n", "ʔ"],
-    g ∈ phonemeInventory.phonemes.map (·.glyph) := by decide
-
-end Farsi.Phonology
+end Farsi
