@@ -124,9 +124,9 @@ theorem geminate_clearest (c : Context) : Context.geminate ≤ c := by revert c;
 articulation `[+high]` common to the three variants, `[+back]` in the coda, `[−back]` in the
 geminate, and no value for `[back]` in the onset. -/
 def spec : Position → Segment
-  | .coda => (Phoneme.l.segment.setFeature .high true).setFeature .back true
-  | .geminate => (Phoneme.l.segment.setFeature .high true).setFeature .back false
-  | .onset => Phoneme.l.segment.setFeature .high true
+  | .coda => ((Phoneme.l : Segment).setFeature .high true).setFeature .back true
+  | .geminate => ((Phoneme.l : Segment).setFeature .high true).setFeature .back false
+  | .onset => (Phoneme.l : Segment).setFeature .high true
 
 /-- The surface contrast (19), (23) is ternary, with plus, minus and unspecified `[back]`, all
 `[+high]`. -/

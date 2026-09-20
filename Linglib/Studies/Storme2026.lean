@@ -101,13 +101,13 @@ instance : Nontrivial Resolution := ⟨.hiatus, .deletion, by decide⟩
 
 /-- The definite-suffix juncture /hutʃɑ-e/: a monosegmental suffix. -/
 def definite : Hiatus.Juncture :=
-  ⟨[.h, .u, .tesh].map Phoneme.segment, Phoneme.scriptA.segment, Phoneme.e.segment, [],
+  ⟨([.h, .u, .tesh] : List Phoneme), (Phoneme.scriptA : Segment), (Phoneme.e : Segment), [],
     by decide, by decide⟩
 
 /-- The possessive-suffix juncture /hutʃɑ-emun/: a polysegmental suffix. -/
 def possessive : Hiatus.Juncture :=
-  ⟨[.h, .u, .tesh].map Phoneme.segment, Phoneme.scriptA.segment, Phoneme.e.segment,
-    [.m, .u, .n].map Phoneme.segment, by decide, by decide⟩
+  ⟨([.h, .u, .tesh] : List Phoneme), (Phoneme.scriptA : Segment), (Phoneme.e : Segment),
+    ([.m, .u, .n] : List Phoneme), by decide, by decide⟩
 
 /-- The inputs of the joint tableau are the definite and the possessive junctures. -/
 def inputs : Fin 2 → Hiatus.Juncture := ![definite, possessive]
@@ -116,7 +116,7 @@ def inputs : Fin 2 → Hiatus.Juncture := ![definite, possessive]
 hiatus, glottal-stop epenthesis, or elision of the suffix vowel. -/
 def resolve : Resolution → Hiatus.Juncture → List Segment
   | .hiatus => Hiatus.Juncture.input
-  | .epenthesis => (Hiatus.Juncture.epenthesize · Phoneme.glottalStop.segment)
+  | .epenthesis => (Hiatus.Juncture.epenthesize · (Phoneme.glottalStop : Segment))
   | .deletion => Hiatus.Juncture.elideV2
 
 /-! ### The constraints and the joint tableau -/
@@ -130,7 +130,7 @@ def starHiatus : Constraint (Hiatus.Juncture × Resolution) := fun c ↦
 suffix vowel for epenthesis, and the deletion of the suffix vowel for elision. -/
 def corr : Resolution → Hiatus.Juncture → Correspondence BinaryRole Segment
   | .hiatus, j => Correspondence.identity j.input
-  | .epenthesis, j => Correspondence.insertIdx j.input j.v2Idx Phoneme.glottalStop.segment
+  | .epenthesis, j => Correspondence.insertIdx j.input j.v2Idx (Phoneme.glottalStop : Segment)
   | .deletion, j => Correspondence.eraseIdx j.input j.v2Idx
 
 /-- The output of each correspondence is the surface form of its candidate. -/
@@ -138,7 +138,7 @@ theorem corr_form_rhs (o : Resolution) (j : Hiatus.Juncture) :
     (corr o j).form .rhs = resolve o j := by
   cases o
   · rfl
-  · exact (j.epenthesize_eq_insertIdx Phoneme.glottalStop.segment).symm
+  · exact (j.epenthesize_eq_insertIdx (Phoneme.glottalStop : Segment)).symm
   · exact j.elideV2_eq_eraseIdx.symm
 
 /-- DEP counts the output segments that have no correspondent in the input. -/

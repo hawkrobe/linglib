@@ -267,38 +267,41 @@ an SPE rule, and unattested. -/
 def rule14Nasal : Rule := { rule14 with effect := .copyRight {Feature.nasal, Feature.distributed} }
 
 /-- In *tenth*, /n/ before /θ/ takes `[+distributed]` and nothing else, a dental nasal. -/
-theorem rule12_n_θ : rule12.apply (segments [.n, .θ]) =
-      [Phoneme.n.segment.setFeature .distributed true, Phoneme.θ.segment] := by decide
+theorem rule12_n_θ : rule12.apply ([.n, .θ] : List Phoneme) =
+      [(Phoneme.n : Segment).setFeature .distributed true, (Phoneme.θ : Segment)] := by decide
 
 /-- In *eighth*, /t/ before /θ/ does the same. -/
-theorem rule12_t_θ : rule12.apply (segments [.t, .θ]) =
-      [Phoneme.t.segment.setFeature .distributed true, Phoneme.θ.segment] := by decide
+theorem rule12_t_θ : rule12.apply ([.t, .θ] : List Phoneme) =
+      [(Phoneme.t : Segment).setFeature .distributed true, (Phoneme.θ : Segment)] := by decide
 
 /-- In *hundredth*, /d/ before /θ/ does the same. -/
-theorem rule12_d_θ : rule12.apply (segments [.d, .θ]) =
-      [Phoneme.d.segment.setFeature .distributed true, Phoneme.θ.segment] := by decide
+theorem rule12_d_θ : rule12.apply ([.d, .θ] : List Phoneme) =
+      [(Phoneme.d : Segment).setFeature .distributed true, (Phoneme.θ : Segment)] := by decide
 
 /-- In *insure*, /n/ before /ʃ/ is postalveolar, `[−anterior, +distributed]`, and still a
 non-strident nasal, `[strident]` and `[nasal]` being manner features. -/
 theorem rule12_n_esh :
-    rule12.apply (segments [.n, .esh]) =
-      [(Phoneme.n.segment.setFeature .anterior false).setFeature .distributed true,
-        Phoneme.esh.segment] := by
+    rule12.apply ([.n, .esh] : List Phoneme) =
+      [((Phoneme.n : Segment).setFeature .anterior false).setFeature .distributed true,
+        (Phoneme.esh : Segment)] := by
   decide
 
 /-- A labial trigger is no site, and *impossible* falls to the separate nasal assimilation
 rule. -/
-theorem rule12_n_p : rule12.apply (segments [.n, .p]) = segments [.n, .p] := by decide
+theorem rule12_n_p :
+    rule12.apply ([.n, .p] : List Phoneme) = ([.n, .p] : List Phoneme) := by decide
 
 /-- A fricative target is no site, since the rule affects the stops /t d n/ only. -/
-theorem rule12_s_θ : rule12.apply (segments [.s, .θ]) = segments [.s, .θ] := by decide
+theorem rule12_s_θ :
+    rule12.apply ([.s, .θ] : List Phoneme) = ([.s, .θ] : List Phoneme) := by decide
 
 /-- On the English data (14) is not distinguishable from (12). -/
 theorem rule14_n_θ :
-    rule14.apply (segments [.n, .θ]) = rule12.apply (segments [.n, .θ]) := by decide
+    rule14.apply ([.n, .θ] : List Phoneme) = rule12.apply ([.n, .θ] : List Phoneme) := by decide
 
 theorem rule14_n_esh :
-    rule14.apply (segments [.n, .esh]) = rule12.apply (segments [.n, .esh]) := by decide
+    rule14.apply ([.n, .esh] : List Phoneme) = rule12.apply ([.n, .esh] : List Phoneme) := by
+  decide
 
 /-- What separates them is that the `[αnasal]` variant is a rule of the same form and applies,
 while no single-node spreading carries `[nasal]` and `[distributed]` without the whole
@@ -307,7 +310,8 @@ theorem no_spreading_nasal_distributed :
     ∀ σ : Spreading, σ.features ≠ {Feature.nasal, Feature.distributed} := by
   decide
 
-theorem rule14Nasal_n_θ : rule14Nasal.apply (segments [.n, .θ]) ≠ segments [.n, .θ] := by decide
+theorem rule14Nasal_n_θ :
+    rule14Nasal.apply ([.n, .θ] : List Phoneme) ≠ ([.n, .θ] : List Phoneme) := by decide
 
 /-! ### Supralaryngeal spreading: Icelandic preaspiration ((6)–(7)) -/
 
@@ -327,8 +331,8 @@ theorem preaspiration (v c : Segment) :
 /-- As table (22) shows, the primary features alone separate the English stop places, so
 `[high]` and `[back]` are not needed for consonant place. -/
 theorem primary_separates_stops :
-    ∀ x ∈ segments [.p, .t, .k], ∀ y ∈ segments [.p, .t, .k],
-      Set.EqOn x y ↑PlaceSet.primary.features → x = y := by
+    ∀ x ∈ ([.p, .t, .k] : List Phoneme), ∀ y ∈ ([.p, .t, .k] : List Phoneme),
+      Set.EqOn (x : Segment) (y : Segment) ↑PlaceSet.primary.features → x = y := by
   decide
 
 end Clements1985
