@@ -27,11 +27,19 @@ are in the Revised Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*,
 * `Korean.Pronouns.pronouns` — the personal pronouns
 * `Korean.Pronouns.allocutiveParticles` — the speech-style particles
 
+## Implementation notes
+
+The humble first person is chosen by the standing of the addressee. That is neither the
+formality of the situation, which a pronoun's register records, nor the level at which a
+pronoun presents its own referent, so *jeo* and *jeohui* carry neither value and differ from
+*na* and *uri* in form alone.
+
 ## References
 
 * [alok-bhalla-2026]
 * [kwon-lee-2026]
 * [sohn-1994]
+* [sohn-1999]
 -/
 
 namespace Korean.Pronouns
@@ -40,10 +48,10 @@ namespace Korean.Pronouns
 def na : PersonalPronoun :=
   { form := "na", script := some "나", person := some .first, number := some .singular }
 
-/-- The humble first person *jeo*. -/
+/-- The humble first person *jeo*, used to a senior or an adult equal where the plain *na* is
+used to a child or a younger adult ([sohn-1999]). -/
 def jeo : PersonalPronoun :=
-  { form := "jeo", script := some "저", person := some .first, number := some .singular,
-    register := .formal }
+  { form := "jeo", script := some "저", person := some .first, number := some .singular }
 
 /-- The neutral first person plural *uri*. -/
 def uri : PersonalPronoun :=
@@ -51,8 +59,7 @@ def uri : PersonalPronoun :=
 
 /-- The humble first person plural *jeohui*. -/
 def jeohui : PersonalPronoun :=
-  { form := "jeohui", script := some "저희", person := some .first, number := some .plural,
-    register := .formal }
+  { form := "jeohui", script := some "저희", person := some .first, number := some .plural }
 
 /-- The plain second person *neo*, to a child or an intimate. -/
 def neo : PersonalPronoun :=
