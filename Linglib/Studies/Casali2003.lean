@@ -70,7 +70,7 @@ inductive InventoryType where
 
 variable (I : Finset Segment)
 
-/-- An [ATR] contrast among the vowels of `I` satisfying `P`: a [+ATR] member whose [−ATR]
+/-- An [ATR] contrast among the vowels of `I` satisfying `P` is a [+ATR] member whose [−ATR]
 twin is also a member. -/
 def HasContrastAmong (P : Segment → Prop) [DecidablePred P] : Prop :=
   ∃ v ∈ I, P v ∧ v.HasValue .atr true ∧ v.setFeature .atr false ∈ I
@@ -135,8 +135,8 @@ theorem inventoryType?_schematic :
 
 /-! ### System-Dependent [ATR] Dominance (20) -/
 
-/-- The lexically specified, hence systematically dominant, [ATR] value: [+ATR] where high
-vowels contrast, [−ATR] where only mid vowels do. -/
+/-- The lexically specified, hence systematically dominant, [ATR] value is [+ATR] where high
+vowels contrast and [−ATR] where only mid vowels do. -/
 def InventoryType.specifiedValue : InventoryType → Bool
   | .fiveHeight | .fourHeightHigh => true
   | .fourHeightMid => false
@@ -155,8 +155,8 @@ instance (dominant : Bool) : Decidable (SystemDependent I dominant) := by
 (20); the [−ATR] spreading from a dominant affix it also shows (Table 5) is the indirect
 kind. -/
 theorem akan_conforms :
-    inventoryType? Akan.Phonology.inventory = some .fiveHeight ∧
-      SystemDependent Akan.Phonology.inventory true := by
+    inventoryType? Akan.inventory = some .fiveHeight ∧
+      SystemDependent Akan.inventory true := by
   decide
 
 /-- Standard Yoruba's seven vowels form a 4Ht(M) system, and its [−ATR] dominance
@@ -166,7 +166,7 @@ theorem yoruba_conforms :
       SystemDependent Yoruba.inventory false := by
   decide
 
-/-- Yoruba⁺, a 4Ht(M) language with [+ATR] dominance, would violate (20): the typological
+/-- Yoruba⁺, a 4Ht(M) language with [+ATR] dominance, would violate (20), the typological
 gap the survey finds nearly empty. -/
 theorem yoruba_plus_violates : ¬ SystemDependent Yoruba.inventory true := by decide
 
@@ -184,17 +184,17 @@ structure Word where
 
 variable (s : Bool) (w : Word)
 
-/-- HARMONY: root and affix agree. -/
+/-- HARMONY requires root and affix to agree. -/
 def harmony : Constraint Word := .binary fun o ↦ o.root ≠ o.affix
 
-/-- MAX([ATR])root: a specified root value survives. -/
+/-- MAX([ATR])root requires a specified root value to survive. -/
 def maxRoot : Constraint Word := .binary fun o ↦ w.root = s ∧ o.root ≠ s
 
-/-- MAX([ATR]): every specified input value survives, one violation per loss. -/
+/-- MAX([ATR]) requires every specified input value to survive, with one violation per loss. -/
 def maxAtr : Constraint Word := fun o ↦
   (if w.root = s ∧ o.root ≠ s then 1 else 0) + if w.affix = s ∧ o.affix ≠ s then 1 else 0
 
-/-- *[ATR]: one violation per specified value on the surface. -/
+/-- *[ATR] assigns one violation per specified value on the surface. -/
 def starAtr : Constraint Word := fun o ↦
   (if o.root = s then 1 else 0) + if o.affix = s then 1 else 0
 
@@ -213,14 +213,14 @@ theorem rootControl_optimal : (rootControl s w).optimal = {⟨w.root, w.root⟩}
   obtain ⟨r, a⟩ := w
   cases s <;> cases r <;> cases a <;> decide
 
-/-- The dominant ranking: MAX([ATR]) promoted above *[ATR]. -/
+/-- The dominant ranking promotes MAX([ATR]) above *[ATR]. -/
 def dominant : Tableau Word 4 :=
   Tableau.ofRanking outputs [harmony, maxRoot s w, maxAtr s w, starAtr s]
 
-/-- The value a dominant system assigns: the specified value when either input carries it. -/
+/-- A dominant system assigns the specified value when either input carries it. -/
 def Word.dominantValue : Bool := if w.root = s ∨ w.affix = s then s else !s
 
-/-- Under the dominant ranking the specified value spreads from root or affix alike: the
+/-- Under the dominant ranking the specified value spreads from root or affix alike, the
 classic dominant–recessive pattern. -/
 theorem dominant_optimal :
     (dominant s w).optimal = {⟨w.dominantValue s, w.dominantValue s⟩} := by
@@ -258,8 +258,8 @@ structure LowSuffixCand where
   suffixLow : Bool
   deriving DecidableEq, Repr
 
-/-- Tableau (23): *[+ATR, +low] and the preservation of [+low] above HARMONY above MAX([ATR]),
-over [tola], [tɔla], [tolæ] and [tole]. -/
+/-- Tableau (23) ranks *[+ATR, +low] and the preservation of [+low] above HARMONY above
+MAX([ATR]), over [tola], [tɔla], [tolæ] and [tole]. -/
 def reversal : Tableau LowSuffixCand 4 :=
   Tableau.ofRanking
     [⟨true, false, true⟩, ⟨false, false, true⟩, ⟨true, true, true⟩,
@@ -267,8 +267,8 @@ def reversal : Tableau LowSuffixCand 4 :=
     [.binary fun c ↦ c.suffixAtr ∧ c.suffixLow, .binary fun c ↦ ¬ c.suffixLow,
       .binary fun c ↦ c.root ≠ c.suffixAtr, .binary fun c ↦ ¬ c.root]
 
-/-- The root loses its [+ATR] to the low suffix, [tɔla]: indirect [−ATR] dominance in a
-language whose specified value is [+ATR]. -/
+/-- The root loses its [+ATR] to the low suffix, [tɔla], which is indirect [−ATR] dominance in
+a language whose specified value is [+ATR]. -/
 theorem reversal_optimal : reversal.optimal = {⟨false, false, true⟩} := by decide
 
 end Casali2003
