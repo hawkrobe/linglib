@@ -130,7 +130,8 @@ theorem necessity_implicature_ne_exact (m : ℕ) :
     refine ⟨λ k hk => ?_, λ hall => ?_⟩
     · rcases hk with rfl | rfl <;> simp
     · have := hall m (Or.inl rfl)
-      simp at this
+      simp only [atLeastMeaning_def] at this
+      omega
   · have := hall (m + 1) (Or.inr rfl)
     simp at this
 
@@ -187,7 +188,7 @@ theorem exact_extends_upward {B : ℕ → Prop} (hB : ∀ k k', k ≤ k' → B k
 
 /-- In an upward-entailing context no background can weaken the exact reading, which
 entails the *at least* reading: *I have four chairs; in fact, I have five* is consistent
-only with the latter, the substrate's `atLeast_strictly_weaker_than_bare`. -/
+only with the latter. -/
 theorem atLeast_of_exact_background {B : ℕ → Prop} {m k : ℕ} (h : bareMeaning m k) (_ : B k) :
     atLeastMeaning m k :=
   exact_imp_atLeast h

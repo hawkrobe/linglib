@@ -4,58 +4,53 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Degree.Comparison
-import Linglib.Semantics.Denotation
 import Linglib.Semantics.Exhaustification.Chain
-import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Quantification.NP
-import Linglib.Syntax.Category.Numeral.Basic
-import Mathlib.Order.Interval.Set.Basic
 
 /-!
-# Unified Numeral Semantics
-[blok-2015] [chierchia-fox-spector-2012] [fox-2007]
-[goodman-stuhlmuller-2013] [horn-1972] [kennedy-2015]
-[hackl-2000] [link-1983] [partee-1987] [spector-2013]
+# Numeral meanings
 
-The numeral surface forms ("three", "more than three", "at least three", "at
-most three", "fewer than three") are five `Nat`-instantiations of
-[kennedy-2015]'s unified de-Fregean GQ
-`λP. max{d | #P ≥ d} REL m`, captured by `Degree.Comparison.over`. Each named
-meaning is the corresponding `Degree.Comparison.{eq,gt,lt,ge,le}.over id`
-specialization, and so inherits the scale infrastructure (maximal informativity,
-monotonicity, density) by construction.
+This file defines the meanings of the numeral forms on counts. A bare numeral and its four
+modifications, *more than*, *fewer than*, *at least* and *at most*, are the five comparisons
+of `Degree.Comparison` applied to the identity measure: in Kennedy's de-Fregean semantics the
+form with relation `REL` and number `m` is true of a degree property whose greatest degree
+stands in `REL` to `m`, and on counts that degree is the count itself. The meanings of the
+modified forms are common ground. Accounts differ on the bare numeral, which has the
+two-sided meaning `bareMeaning` for Kennedy and the lower-bounded meaning `atLeastMeaning` in
+the tradition of Horn, each account deriving the other reading. Exhaustifying the
+lower-bounded meaning against the scale of higher numerals gives the two-sided one, and
+Kennedy's type lowering takes the two-sided meaning to the lower-bounded one
+(`Degree.typeLower_eqOver_iff`).
 
-The only theory disagreement is the bare-numeral semantics:
+## Main definitions
 
-| Theory      | Bare "three" | bare semantics    |
-|-------------|--------------|-------------------|
-| Lower-bound | ≥3           | `atLeastMeaning`  |
-| Exact       | =3           | `bareMeaning`     |
+* `Numerals.ModifierClass`, `Numerals.ModifierKind`: Nouwen's two classes of numeral modifier
+  and the constructions modifiers are built on, with `ModifierKind.modifierClass`.
+* `Numerals.bareMeaning`, `Numerals.moreThanMeaning`, `Numerals.fewerThanMeaning`,
+  `Numerals.atLeastMeaning`, `Numerals.atMostMeaning`: the meanings of the five forms.
+* `Numerals.exhNumeral`: the lower-bounded meaning exhaustified against the next numeral.
 
-Modified numerals are theory-independent — everyone agrees "more than 3"
-means `> 3`. The Class A / Class B distinction ([geurts-nouwen-2007],
-[nouwen-2010]) reduces to whether the modifier's comparison keeps its
-interval endpoint; see `Degree.Comparison.boundary_mem`.
+## Main results
 
-## Sections
+* `Numerals.exhNumeral_iff_bare`: the exhaustified lower-bounded meaning is the two-sided one.
+* `Numerals.exhNumeral_eq_exhChain`: exhaustifying against the next numeral is exhaustifying
+  against the whole scale.
 
-1. Modifier classification (Class A/B, modifier kinds)
-2. Numeral meaning functions (5 `def`s over `Degree.Comparison.{...}.over id`)
-3. `BareNumeral`; `Comparison` interpretation (`Entry.denoteUnder`)
-4. Alternative sets (Kennedy §4.1)
-5. Class A/B corollaries, anti-Horn-scale corollaries
-6. Type-shifting (Kennedy §3.1)
-7. EXH–type-shift duality (Spector §6.2)
-8. GQT bridge (Bylinina & Nouwen)
+## References
 
-Precision/halo machinery lives in `Numerals/Precision.lean`.
+* [C. Kennedy, *A "de-Fregean" semantics (and neo-Gricean pragmatics) for modified and
+  unmodified numerals* (2015)][kennedy-2015]
+* [R. Nouwen, *Two kinds of modified numerals* (2010)][nouwen-2010]
+* [L. R. Horn, *On the Semantic Properties of Logical Operators in English* (1972)][horn-1972]
+* [B. Spector, *Bare numerals and scalar implicatures* (2013)][spector-2013]
+* [G. Chierchia, D. Fox and B. Spector, *Scalar Implicature as a Grammatical Phenomenon*
+  (2012)][chierchia-fox-spector-2012]
 -/
 
 namespace Numerals
 
--- ============================================================================
--- Section 1: Modifier Classification
--- ============================================================================
+open Degree
+
+/-! ### Numeral modifiers -/
 
 /-- The two classes of numeral modifiers of [nouwen-2010]. A Class A modifier relates the
 numeral to a definite amount, so *a hexagon has fewer than 11 sides* is a weak truth. A Class B
@@ -96,348 +91,62 @@ def ModifierKind.modifierClass : ModifierKind → ModifierClass
   | .comparative | .locative => .classA
   | .superlative | .directional | .adverbial => .classB
 
--- ============================================================================
--- Section 2: Numeral Meaning Functions
--- ============================================================================
+/-! ### The meanings of the five forms -/
 
-/-! Five named meanings — one per surface form. Each is the `id`-instantiation
-of the corresponding `Degree.Comparison.over` degree property. They capture
-[kennedy-2015]'s
+variable (m n : ℕ)
 
-  ⟦modifier m⟧ = λP. max{d | #P ≥ d} REL m
+/-- The two-sided meaning of the bare numeral `m` is true of the count `m` alone. -/
+def bareMeaning : ℕ → ℕ → Prop := fun m n ↦ n ∈ Comparison.eq.over id m
 
-where `n` plays the role of `max{d | #P ≥ d}` and `m` is the numeral.
-`bareMeaning` is the exact (Kennedy) reading; the lower-bound (Horn) reading
-of bare numerals is `atLeastMeaning`. Grounding in `Comparison.over` makes the
-density predictions (`Comparison.antitone_ge_over`, `not_hasMaxInf_gt_over`,
-`hasMaxInf_ge_over`, etc.) hold by construction. -/
+/-- *More than `m`* is true of the counts that exceed `m`. -/
+def moreThanMeaning : ℕ → ℕ → Prop := fun m n ↦ n ∈ Comparison.gt.over id m
 
-/-- Bare numeral meaning (exact reading): `n = m`. -/
-def bareMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.eq.over id m
+/-- *Fewer than `m`* is true of the counts below `m`. -/
+def fewerThanMeaning : ℕ → ℕ → Prop := fun m n ↦ n ∈ Comparison.lt.over id m
 
-/-- "More than `m`": `n > m`. -/
-def moreThanMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.gt.over id m
+/-- *At least `m`*, which is also the lower-bounded meaning of the bare numeral, is true of the
+counts that reach `m`. -/
+def atLeastMeaning : ℕ → ℕ → Prop := fun m n ↦ n ∈ Comparison.ge.over id m
 
-/-- "Fewer than `m`": `n < m`. -/
-def fewerThanMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.lt.over id m
+/-- *At most `m`* is true of the counts that do not exceed `m`. -/
+def atMostMeaning : ℕ → ℕ → Prop := fun m n ↦ n ∈ Comparison.le.over id m
 
-/-- "At least `m`": `n ≥ m`. -/
-def atLeastMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.ge.over id m
+@[simp] theorem bareMeaning_def : bareMeaning m n ↔ n = m := Iff.rfl
+@[simp] theorem moreThanMeaning_def : moreThanMeaning m n ↔ n > m := Iff.rfl
+@[simp] theorem fewerThanMeaning_def : fewerThanMeaning m n ↔ n < m := Iff.rfl
+@[simp] theorem atLeastMeaning_def : atLeastMeaning m n ↔ n ≥ m := Iff.rfl
+@[simp] theorem atMostMeaning_def : atMostMeaning m n ↔ n ≤ m := Iff.rfl
 
-/-- "At most `m`": `n ≤ m`. -/
-def atMostMeaning : Nat → Nat → Prop := fun m n => n ∈ Degree.Comparison.le.over id m
+instance : Decidable (bareMeaning m n) := inferInstanceAs (Decidable (n = m))
+instance : Decidable (moreThanMeaning m n) := inferInstanceAs (Decidable (n > m))
+instance : Decidable (fewerThanMeaning m n) := inferInstanceAs (Decidable (n < m))
+instance : Decidable (atLeastMeaning m n) := inferInstanceAs (Decidable (n ≥ m))
+instance : Decidable (atMostMeaning m n) := inferInstanceAs (Decidable (n ≤ m))
 
-@[simp] theorem bareMeaning_def (m n : Nat) : bareMeaning m n ↔ n = m := Iff.rfl
-@[simp] theorem moreThanMeaning_def (m n : Nat) : moreThanMeaning m n ↔ n > m := Iff.rfl
-@[simp] theorem fewerThanMeaning_def (m n : Nat) : fewerThanMeaning m n ↔ n < m := Iff.rfl
-@[simp] theorem atLeastMeaning_def (m n : Nat) : atLeastMeaning m n ↔ n ≥ m := Iff.rfl
-@[simp] theorem atMostMeaning_def (m n : Nat) : atMostMeaning m n ↔ n ≤ m := Iff.rfl
+/-! ### Exhaustification
 
-instance (m n : Nat) : Decidable (bareMeaning m n) :=
-  inferInstanceAs (Decidable (n = m))
-instance (m n : Nat) : Decidable (moreThanMeaning m n) :=
-  inferInstanceAs (Decidable (n > m))
-instance (m n : Nat) : Decidable (fewerThanMeaning m n) :=
-  inferInstanceAs (Decidable (n < m))
-instance (m n : Nat) : Decidable (atLeastMeaning m n) :=
-  inferInstanceAs (Decidable (n ≥ m))
-instance (m n : Nat) : Decidable (atMostMeaning m n) :=
-  inferInstanceAs (Decidable (n ≤ m))
+On the account of [chierchia-fox-spector-2012] that [spector-2013] discusses, the bare numeral
+has the lower-bounded meaning and its two-sided reading comes from a covert exhaustivity
+operator, which asserts *at least `m`* and denies *at least `m + 1`*. [kennedy-2015] runs the
+derivation the other way, lowering the two-sided meaning to the lower-bounded one. -/
 
--- ============================================================================
--- Section 3: BareNumeral and Comparison interpretation
--- ============================================================================
+/-- The lower-bounded meaning of `m` exhaustified against the next numeral. -/
+def exhNumeral : Prop := atLeastMeaning m n ∧ ¬ atLeastMeaning (m + 1) n
 
-/-- Bare numeral utterances (one through five). -/
-inductive BareNumeral where
-  | one | two | three | four | five
-  deriving DecidableEq, Repr, Inhabited
+instance : Decidable (exhNumeral m n) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Convert `BareNumeral` to its numeric value. -/
-def BareNumeral.toNat : BareNumeral → Nat
-  | .one => 1 | .two => 2 | .three => 3 | .four => 4 | .five => 5
-
-/-- Next-higher `BareNumeral` (for computing scalar alternatives). -/
-def BareNumeral.succ : BareNumeral → Option BareNumeral
-  | .one => some .two
-  | .two => some .three
-  | .three => some .four
-  | .four => some .five
-  | .five => none
-
-instance : ToString BareNumeral where
-  toString
-    | .one => "one" | .two => "two" | .three => "three"
-    | .four => "four" | .five => "five"
-
-/-! The five numeral forms are the five `Degree.Comparison`s applied to an
-    argument; the object lives in `Typology/Numeral/Basic.lean`. Here we give the
-    semantics: the order relation each comparison names, and the theory-choice
-    meaning. -/
-
-/-- Denotation of a numeral word `e`: the predicate over cardinalities it is true
-    of, under a choice of bare-numeral semantics (`bareMeaning` exact vs.
-    `atLeastMeaning` lower-bound — only the bare `.eq` form consults `bare`; the
-    four modified forms are theory-independent `Comparison.over` denotations). A
-    method on the numeral object, mirroring `PersonalPronoun.denote`. -/
-def _root_.Numeral.Entry.denoteUnder (e : Numeral.Entry) (bare : Nat → Nat → Prop) :
-    Nat → Prop :=
-  match e.comparison with
-  | .eq => bare e.argument
-  | c   => fun n => n ∈ c.over id e.argument
-
-instance (e : Numeral.Entry) (bare : Nat → Nat → Prop)
-    [∀ m n, Decidable (bare m n)] (n : Nat) : Decidable (e.denoteUnder bare n) := by
-  obtain ⟨_, c, _⟩ := e
-  cases c <;>
-    simp only [Numeral.Entry.denoteUnder] <;>
-    infer_instance
-
-/-- The bare-world meaning of a *modified* numeral word (`comparison ≠ .eq`) is
-    endpoint membership in the comparison's interval — connecting `meaning` to
-    the interval form. -/
-theorem _root_.Numeral.Entry.denoteUnder_boundary (e : Numeral.Entry) (bare : Nat → Nat → Prop)
-    (h : e.comparison ≠ .eq) :
-    e.denoteUnder bare e.argument ↔ e.argument ∈ e.comparison.interval e.argument := by
-  obtain ⟨_, c, _⟩ := e
-  cases c <;>
-    simp_all [Numeral.Entry.denoteUnder, Degree.Comparison.over,
-      Degree.Comparison.interval]
-
--- ============================================================================
--- Section 4: Alternative Set ([kennedy-2015] §4.1)
--- ============================================================================
-
-/-- [kennedy-2015]'s single alternative set — the five numeral forms (bare
-    plus four modifications) as `Degree.Comparison`s. The point is
-    **anti-Horn-scale**: there is no fixed scale direction. The Class A / Class B
-    split is read off asymmetric entailment (cf. `classA_excludes_bare_world`,
-    `classB_includes_bare_world`), not from membership in a pre-split sublist. -/
-def kennedyAlternatives : List Degree.Comparison :=
-  [.eq, .gt, .lt, .ge, .le]
-
--- ============================================================================
--- Section 5: Class A/B Corollaries and Anti-Horn-Scale Corollaries
--- ============================================================================
-
-/-! Class A/B is the central typological generalization ([geurts-nouwen-2007],
-    [nouwen-2010]): strict modifiers (`>`, `<`) exclude the bare-numeral
-    world; non-strict modifiers (`≥`, `≤`) include it. Both theorems below are
-    now corollaries of `Degree.Comparison.boundary_mem` (Class A/B = whether the
-    comparison's interval is closed at its endpoint) via `meaning_boundary`. -/
-
-/-- **Class A excludes the bare-numeral world** (universal). A strict comparison
-    (`>`, `<`) fails at the boundary `n = m`, regardless of which bare-numeral
-    semantics is chosen. Corollary of `boundary_mem`. -/
-theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
-    (h : e.comparison.isStrict) :
-    ¬ e.denoteUnder bare e.argument := by
-  have hne : e.comparison ≠ .eq := by intro heq; rw [heq] at h; exact h
-  rw [e.denoteUnder_boundary bare hne, Degree.Comparison.boundary_mem]
-  exact not_not_intro h
-
-/-- **Class B includes the bare-numeral world** (universal). A non-strict
-    *modifier* (`≥`, `≤`) holds at the boundary `n = m`, regardless of which
-    bare-numeral semantics is chosen. Corollary of `boundary_mem`. -/
-theorem classB_includes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
-    (h : ¬ e.comparison.isStrict) (hne : e.comparison ≠ .eq) :
-    e.denoteUnder bare e.argument := by
-  rw [e.denoteUnder_boundary bare hne, Degree.Comparison.boundary_mem]
-  exact h
-
-/-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
-    of `Degree.eqOver_imp_geOver`. -/
-theorem classB_entailed_by_bare (m n : Nat) :
-    bareMeaning m n → atLeastMeaning m n :=
-  Degree.eqOver_imp_geOver id m n
-
-/-- Exact bare numerals are not upward-monotone: the `id`-specialization of
-    `Degree.eqOver_not_upward_monotone` (witness `d = 3`, `d' = 4`). -/
-theorem bare_not_upward_monotone :
-    ¬ ∀ m m' n, m ≤ m' → bareMeaning m n → bareMeaning m' n := by
-  intro h
-  exact Degree.eqOver_not_upward_monotone (W := Nat) id (d := 3) (d' := 4)
-    (by decide) (by decide) (w := 3) rfl
-    (fun x y hxy hex => h x y 3 hxy hex)
-
-/-- Bare numerals are not downward-monotone either, so they fail the
-    Horn-scale criterion in both directions. The `id`-specialization of
-    `Degree.eqOver_not_downward_monotone`. -/
-theorem bare_not_downward_monotone :
-    ¬ ∀ m m' n, m' ≤ m → bareMeaning m n → bareMeaning m' n := by
-  intro h
-  exact Degree.eqOver_not_downward_monotone (W := Nat) id (d := 3) (d' := 2)
-    (by decide) (by decide) (w := 3) rfl
-    (fun x y hyx hex => h x y 3 hyx hex)
-
-/-- "At least `m`" is strictly weaker than "bare `m`" — the `id`-specialization
-    of `Degree.geOver_strictly_weaker_than_eqOver` (witness `d' = m+1`). -/
-theorem atLeast_strictly_weaker_than_bare (m : Nat) :
-    atLeastMeaning m (m + 1) ∧ ¬ bareMeaning m (m + 1) :=
-  Degree.geOver_strictly_weaker_than_eqOver id (Nat.lt_succ_self m) (w := m + 1) rfl
-
-/-- "More than `m`" and "bare `m`" have disjoint denotations — the
-    `id`-specialization of `Degree.gtOver_disjoint_eqOver`. -/
-theorem moreThan_disjoint_from_bare (m n : Nat) :
-    ¬ (bareMeaning m n ∧ moreThanMeaning m n) :=
-  Degree.gtOver_disjoint_eqOver id m n
-
--- ============================================================================
--- Section 6: Type-Shifting ([kennedy-2015] §3.1)
--- ============================================================================
-
-/-! ## De-Fregean type-shifting: exact → lower-bound
-
-The general operation `Degree.typeLower` (`∃ d' ≥ d, exact d' w`) and
-its collapse `typeLower_eqOver_iff` (existentially lowering `Comparison.eq.over μ`
-yields `Comparison.ge.over μ`) live in `Semantics/Degree/Predicate.lean`.
-Numerals are the `id`-instantiation: `typeLower bareMeaning m n ↔ atLeastMeaning m n`
-follows by definitional unfolding (`bareMeaning ≡ Comparison.eq.over id`,
-`atLeastMeaning ≡ Comparison.ge.over id`).
-
-The general theorem `Degree.distinct_no_universal_witness` rules out
-the alternative universal-closure reading of Partee's iota. -/
-
-/-- The numeral instantiation of `Degree.typeLower_eqOver_iff`. -/
-theorem typeLower_bareMeaning_iff (m n : Nat) :
-    Degree.typeLower bareMeaning m n ↔ atLeastMeaning m n :=
-  Degree.typeLower_eqOver_iff id m n
-
--- ============================================================================
--- Section 7: EXH–Type-Shift Duality ([spector-2013] §6.2 vs [kennedy-2015])
--- ============================================================================
-
-/-! ## EXH and type-shifting are inverses
-
-[spector-2013] (§6.2) presents an approach (from
-[chierchia-fox-spector-2012]) where the exact reading of bare numerals
-arises from a covert exhaustivity operator: `EXH(≥n) = ≥n ∧ ¬(≥n+1) = (=n)`.
-[kennedy-2015] proposes the reverse: the lower-bound reading arises
-from type-shifting the exact meaning: `typeShift(=n) = (≥n)`.
-
-Both directions are general theorems on ℕ — the duality is not a
-spot-check, it follows from the linear order. For RSA the **pair**
-{exact, lower-bound} is what matters; type-shifting is preferable to EXH
-because it is independently motivated (Partee's universal),
-parameter-free, and grammatically always available (no insertion-site
-stipulation). The two halves of the duality are
-`exhNumeral_iff_bare` (EXH(≥n) = (=n)) and `typeLower_bareMeaning_iff`
-(typeShift(=n) = (≥n)). -/
-
-/-- Scalar exhaustification for numerals: "at least `m` AND NOT at least
-    `m+1`" — i.e., "exactly `m`". -/
-def exhNumeral (m n : Nat) : Prop :=
-  atLeastMeaning m n ∧ ¬ atLeastMeaning (m + 1) n
-
-instance (m n : Nat) : Decidable (exhNumeral m n) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- **EXH(lower-bound) = exact** (general). Exhaustifying the lower-bound
-    meaning produces the exact meaning at every world. -/
-theorem exhNumeral_iff_bare (m n : Nat) :
-    exhNumeral m n ↔ bareMeaning m n := by
-  unfold exhNumeral
-  show n ≥ m ∧ ¬ n ≥ m + 1 ↔ n = m
+/-- The exhaustified lower-bounded meaning is the two-sided meaning. -/
+theorem exhNumeral_iff_bare : exhNumeral m n ↔ bareMeaning m n := by
+  simp only [exhNumeral, atLeastMeaning_def, bareMeaning_def]
   omega
 
-/-- `exhNumeral` is chain-exhaustification against the full Horn scale of
-stronger numerals (`Exhaustification.exhChain`): the scale is an entailment
-chain, so negating the next-stronger alternative negates them all
-(`Exhaustification.exhChain_iff_succ`). -/
-theorem exhNumeral_eq_exhChain (m n : Nat) :
-    exhNumeral m n ↔
-      Exhaustification.exhChain (fun k => atLeastMeaning (m + k)) 0 n := by
+/-- Exhaustifying against the next numeral is exhaustifying against the whole scale of higher
+numerals, which is an entailment chain (`Exhaustification.exhChain_iff_succ`). -/
+theorem exhNumeral_eq_exhChain :
+    exhNumeral m n ↔ Exhaustification.exhChain (fun k ↦ atLeastMeaning (m + k)) 0 n := by
   rw [Exhaustification.exhChain_iff_succ
-      (fun j k hjk d hd => by
-        simp only [atLeastMeaning_def, ge_iff_le] at hd ⊢; omega)
-      Nat.zero_lt_one fun j hj => hj]
+      (fun j k hjk d hd ↦ by simp only [atLeastMeaning_def, ge_iff_le] at hd ⊢; omega)
+      Nat.zero_lt_one fun j hj ↦ hj]
   simp [exhNumeral]
-
--- ============================================================================
--- Section 8: GQT Bridge ([bylinina-nouwen-2020])
--- ============================================================================
-
-/-! The GQT numeral quantifiers in `Quantifier.lean` (`exactly_n_sem`,
-`at_least_n_sem`, `at_most_n_sem`) compute the same truth values as the
-named numeral meanings applied to the intersection cardinality. This
-connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩) to the Kennedy
-maximality view (type ⟨d,t⟩). -/
-
-section GQTBridge
-open Classical Semantics.Composition Quantifier Quantifier.GQ
-
-/-- GQT "at least `n`" agrees with `atLeastMeaning` on intersection cardinality. -/
-theorem gqt_atLeast_agrees {α : Type*} [Fintype α]
-    (n : Nat) (R S : α → Prop) :
-    at_least_n_sem n R S ↔
-    atLeastMeaning n (count (fun x : α => R x ∧ S x)) :=
-  Iff.rfl
-
-/-- GQT "at most `n`" agrees with `atMostMeaning` on intersection cardinality. -/
-theorem gqt_atMost_agrees {α : Type*} [Fintype α]
-    (n : Nat) (R S : α → Prop) :
-    at_most_n_sem n R S ↔
-    atMostMeaning n (count (fun x : α => R x ∧ S x)) :=
-  Iff.rfl
-
-/-- GQT "exactly `n`" agrees with `bareMeaning` on intersection cardinality. -/
-theorem gqt_exactly_agrees {α : Type*} [Fintype α]
-    (n : Nat) (R S : α → Prop) :
-    exactly_n_sem n R S ↔
-    bareMeaning n (count (fun x : α => R x ∧ S x)) :=
-  Iff.rfl
-
-end GQTBridge
-
-/-! ### Denotation of the `Numeral` object
-
-The lexical numeral object (`Degree.Comparison`, `Numeral.Entry`) is owned by
-`Typology/Numeral/Basic.lean`; this section is the *semantics* side — it imports
-that object and provides its `Comparison.over` denotation, mirroring how
-`Semantics/Reference/Pronoun.lean` denotes the `PersonalPronoun` object.
-The denotation is **by construction** a `Degree.Comparison.over`, so every lemma
-about `Comparison.over` transfers to every numeral entry. `Entry.denoteUnder` (the
-cardinal, theory-parameterized reading) is in Section 3. -/
-
-/-- Denotation of a numeral entry against a measure `μ : E → α` and a magnitude
-    `m`: [kennedy-2015]'s de-Fregean GQ `λx. REL (μ x) m`. The measure and
-    magnitude are supplied compositionally; bare cardinals take `μ = id`,
-    `α = ℕ`. -/
-def _root_.Numeral.Entry.denote {E α : Type*} [LinearOrder α]
-    (e : Numeral.Entry) (μ : E → α) (m : α) : E → Prop :=
-  e.comparison.over μ m
-
-universe u
-
-/-- A numeral entry denotes on every model, the measure and the magnitude being the Reader
-arguments of its domain. -/
-instance : Semantics.Denotes Numeral.Entry
-    (∀ (E α : Type u) [LinearOrder α], (E → α) → α → E → Prop) :=
-  ⟨fun e _ _ _ ↦ e.denote⟩
-
-/-- Bare cardinal denotation: count with `μ = id` and the entry's own argument. -/
-def _root_.Numeral.Entry.denoteCard (e : Numeral.Entry) : Nat → Prop :=
-  e.denote id e.argument
-
-/-- The bare-comparison cardinal recovers `bareMeaning` (definitionally). -/
-theorem denoteCard_eq_bareMeaning (e : Numeral.Entry) (h : e.comparison = .eq) :
-    e.denoteCard = bareMeaning e.argument := by
-  simp only [Numeral.Entry.denoteCard, Numeral.Entry.denote, h]; rfl
-
-/-- The "at least" cardinal recovers `atLeastMeaning`. -/
-theorem denoteCard_eq_atLeastMeaning (e : Numeral.Entry) (h : e.comparison = .ge) :
-    e.denoteCard = atLeastMeaning e.argument := by
-  simp only [Numeral.Entry.denoteCard, Numeral.Entry.denote, h]; rfl
-
-/-- **Class A/B boundary behaviour, free for every numeral entry.** At an entity
-    whose measure equals the magnitude, the numeral holds iff its comparison is
-    non-strict (bare `=`, Class B `≥`/`≤`) and fails for the strict Class A
-    comparisons (`>`/`<`). Inherited from `Comparison.over`, no per-entry proof. -/
-theorem denote_at_boundary {E α : Type*} [LinearOrder α]
-    (e : Numeral.Entry) (μ : E → α) (m : α) {x : E} (h : μ x = m) :
-    e.denote μ m x ↔ ¬ e.comparison.isStrict := by
-  show x ∈ e.comparison.over μ m ↔ ¬ e.comparison.isStrict
-  rw [Degree.Comparison.mem_over, ← Degree.Comparison.mem_interval, h,
-    Degree.Comparison.boundary_mem]
 
 end Numerals

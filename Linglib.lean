@@ -2429,7 +2429,6 @@ import Linglib.Syntax.Category.Coordinator
 import Linglib.Syntax.Category.Degree.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Syntax.Category.Numeral.Basic
 import Linglib.Syntax.Category.Numeral.Composition
 import Linglib.Syntax.Category.Particle.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
