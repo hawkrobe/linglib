@@ -1,5 +1,6 @@
 import Linglib.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.DPL.Context
+import Linglib.Semantics.Dynamic.DRS.Dynamics
 
 /-!
 # Groenendijk and Stokhof (1991): Dynamic Predicate Logic
@@ -33,7 +34,9 @@ double negation and its alphabetic variant `∃y Py ∧ Qx` do not. Section 4.1'
 (`nbf`) is defined by structural recursion, Definition 24's rebracketing clauses being theorems
 of it; a formula is equivalent to its normal binding form, which is scope-bound, so that the
 dynamic truth conditions of any formula are the static ones of its normal binding form
-(`dom_eval_eq_static_nbf`).
+(`dom_eval_eq_static_nbf`). Section 4.2's translation of discourse representation structures
+(`DRT.DRS.toDPL`, Definition 28) preserves meaning: a condition becomes the test of its
+verification and a box denotes its box relation (`DRT.DRS.eval_toDPL`, Fact 25).
 
 ## Implementation notes
 
@@ -55,13 +58,14 @@ test in every structure and has an active quantifier (`isTest_eval_equal_conj_ex
 
 * [groenendijk-stokhof-1991]
 * [henkin-monk-tarski-1971]
+* [kamp-reyle-1993]
 
 ## TODO
 
 The remaining laws of section 3.4 with side conditions (the leftward scope extension,
 commutativity and idempotency of conjunction, contraposition, distribution), Fact 22's converse
-translation from predicate logic, and the translations from discourse representation theory and
-to quantificational dynamic logic of sections 4.2 and 4.3.
+translation from predicate logic, Facts 26 and 27 on the translated conditions, and the
+translation to quantificational dynamic logic of section 4.3.
 -/
 
 namespace GroenendijkStokhof1991
@@ -745,5 +749,97 @@ theorem isTest_eval_equal_conj_ex_equal (hxy : x ≠ y) :
   rw [he, ← hg, Function.update_eq_self]
 
 end Formulas
+
+/-! ### Discourse representation theory, section 4.2
+
+Definition 28 translates a discourse representation structure into a formula: a box becomes the
+existential closure, over its referents, of the conjunction of its translated conditions, and
+a complex condition the corresponding connective over its translated sub-boxes. Fact 25 says
+the translation preserves meaning: a condition becomes a test of its verification, and a box
+denotes its box relation `DRT.DRS.toRel`. -/
+
+section DRT
+
+open FirstOrder DPL DPL.Formula DRT
+
+universe u v w x
+
+variable {L : Language.{u, v}} {V : Type w}
+
+/-- The translation of a condition, Definition 28. -/
+noncomputable def _root_.DRT.Condition.toDPL : Condition L V → Formula L V
+  | .rel R args => rel R (Language.Term.var ∘ args)
+  | .eq a b => .var a ≐ .var b
+  | .neg K => ¬ᵈ(exs K.referents.toList (conjs (K.conditions.map DRT.Condition.toDPL)))
+  | .imp a c => exs a.referents.toList (conjs (a.conditions.map DRT.Condition.toDPL)) ⟿
+      exs c.referents.toList (conjs (c.conditions.map DRT.Condition.toDPL))
+  | .dis l r => exs l.referents.toList (conjs (l.conditions.map DRT.Condition.toDPL)) ⋎
+      exs r.referents.toList (conjs (r.conditions.map DRT.Condition.toDPL))
+
+/-- The translation of a discourse representation structure, Definition 28. The order in which
+the referents are closed is immaterial to the interpretation. -/
+noncomputable def _root_.DRT.DRS.toDPL (K : DRS L V) : Formula L V :=
+  exs K.referents.toList (conjs (K.conditions.map DRT.Condition.toDPL))
+
+theorem _root_.DRT.Condition.toDPL_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
+    (Condition.rel R args).toDPL = rel R (Language.Term.var ∘ args) := by
+  simp only [DRT.Condition.toDPL]
+
+theorem _root_.DRT.Condition.toDPL_eq (a b : V) :
+    (Condition.eq a b : Condition L V).toDPL = .var a ≐ .var b := by
+  simp only [DRT.Condition.toDPL]
+
+theorem _root_.DRT.Condition.toDPL_neg (K : DRS L V) :
+    (Condition.neg K).toDPL = ¬ᵈK.toDPL := by
+  simp only [DRT.Condition.toDPL]; rfl
+
+theorem _root_.DRT.Condition.toDPL_imp (a c : DRS L V) :
+    (Condition.imp a c).toDPL = a.toDPL ⟿ c.toDPL := by
+  simp only [DRT.Condition.toDPL]; rfl
+
+theorem _root_.DRT.Condition.toDPL_dis (l r : DRS L V) :
+    (Condition.dis l r).toDPL = l.toDPL ⋎ r.toDPL := by
+  simp only [DRT.Condition.toDPL]; rfl
+
+variable [DecidableEq V] (M : Type x) [L.Structure M]
+
+/-- A box whose conditions translate to the tests of their verification denotes its box
+relation. -/
+private theorem eval_toDPL_of_conditions (K : DRS L V)
+    (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | Embedding.VerifiesCondition f c}) :
+    K.toDPL.eval M = K.toRel := by
+  ext ⟨g, k⟩
+  rw [DRS.toDPL, mem_eval_exs, eval_conjs_map M _ _ _ h]
+  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff]
+  exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
+
+/-- Fact 25 for conditions: the translation of a condition is the test of its verification. -/
+theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
+    c.toDPL.eval M = test {f : V → M | Embedding.VerifiesCondition f c} := by
+  induction c with
+  | rel R args =>
+    rw [Condition.toDPL_rel, eval_rel]
+    exact congrArg test (Set.ext fun f ↦ by simp [Function.comp_def])
+  | eq a b =>
+    rw [Condition.toDPL_eq, eval_equal]
+    exact congrArg test (Set.ext fun f ↦ by simp)
+  | neg K ih =>
+    rw [Condition.toDPL_neg, eval_neg, eval_toDPL_of_conditions M K ih]
+    exact congrArg test (Set.ext fun f ↦ (Embedding.verifies_neg_toRel K f).symm)
+  | imp a c iha ihc =>
+    rw [Condition.toDPL_imp, eval_imp, eval_toDPL_of_conditions M a iha,
+      eval_toDPL_of_conditions M c ihc]
+    exact congrArg test (Set.ext fun f ↦ (Embedding.verifies_imp_toRel a c f).symm)
+  | dis l r ihl ihr =>
+    rw [Condition.toDPL_dis, eval_disj, eval_toDPL_of_conditions M l ihl,
+      eval_toDPL_of_conditions M r ihr]
+    exact congrArg test (Set.ext fun f ↦ (Embedding.verifies_dis_toRel l r f).symm)
+
+/-- Fact 25 for boxes: the translation of a discourse representation structure denotes its box
+relation. -/
+theorem _root_.DRT.DRS.eval_toDPL (K : DRS L V) : K.toDPL.eval M = K.toRel :=
+  eval_toDPL_of_conditions M K fun c _ ↦ c.eval_toDPL M
+
+end DRT
 
 end GroenendijkStokhof1991

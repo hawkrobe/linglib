@@ -14,7 +14,8 @@ quantifier variable of a left conjunct or an antecedent is free in what follows.
 
 ## Main definitions
 
-* `DPL.Formula L V`: the formulas, with scoped notation `¬ᵈ`, `⋏`, `⋎`, `⟿`, `∃[x]`, `∀[x]`, `≐`.
+* `DPL.Formula L V`: the formulas, with scoped notation `¬ᵈ`, `⋏`, `⋎`, `⟿`, `∃[x]`, `∀[x]`, `≐`;
+  `DPL.Formula.exs` and `DPL.Formula.conjs` close over a list of variables and conjoin a list.
 * `DPL.Formula.aqv`: the active quantifier variables.
 * `DPL.Formula.fv`: the free variables.
 * `DPL.Formula.IsScopeBound`: every variable a quantifier binds is in its scope.
@@ -76,16 +77,34 @@ inductive Formula (L : Language.{u, v}) (V : Type w) : Type (max u v w)
   | all (x : V) (φ : Formula L V) : Formula L V
 
 @[inherit_doc] scoped prefix:max "¬ᵈ" => Formula.neg
-@[inherit_doc] scoped infixr:35 " ⋏ " => Formula.conj
-@[inherit_doc] scoped infixr:30 " ⋎ " => Formula.disj
-@[inherit_doc] scoped infixr:25 " ⟿ " => Formula.imp
+@[inherit_doc] scoped infixr:69 " ⋏ " => Formula.conj
+@[inherit_doc] scoped infixr:68 " ⋎ " => Formula.disj
+@[inherit_doc] scoped infixr:62 " ⟿ " => Formula.imp
 @[inherit_doc] scoped notation:max "∃[" x "] " φ:max => Formula.ex x φ
 @[inherit_doc] scoped notation:max "∀[" x "] " φ:max => Formula.all x φ
-@[inherit_doc] scoped infix:50 " ≐ " => Formula.equal
+@[inherit_doc] scoped infix:88 " ≐ " => Formula.equal
 
 namespace Formula
 
-variable {L : Language.{u, v}} {V : Type w} [DecidableEq V]
+variable {L : Language.{u, v}} {V : Type w}
+
+/-- The existential closure of a formula over a list of variables. -/
+def exs (xs : List V) (φ : Formula L V) : Formula L V := xs.foldr ex φ
+
+/-- The conjunction of a list of formulas, `top` for the empty list. -/
+def conjs (φs : List (Formula L V)) : Formula L V := φs.foldr conj top
+
+@[simp] theorem exs_nil (φ : Formula L V) : exs [] φ = φ := rfl
+
+@[simp] theorem exs_cons (x : V) (xs : List V) (φ : Formula L V) :
+    exs (x :: xs) φ = ∃[x] (exs xs φ) := rfl
+
+@[simp] theorem conjs_nil : conjs ([] : List (Formula L V)) = top := rfl
+
+@[simp] theorem conjs_cons (φ : Formula L V) (φs : List (Formula L V)) :
+    conjs (φ :: φs) = φ ⋏ conjs φs := rfl
+
+variable [DecidableEq V]
 
 /-- The active quantifier variables are those `x` with an occurrence of `∃x` that can still
 bind to the right. Only an existential contributes one, and only conjunction passes them on. -/
