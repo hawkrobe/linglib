@@ -80,6 +80,11 @@ theorem isVowel_iff_le : s.IsVowel ↔ ofSpecs [(.syllabic, true)] ≤ s := by
 theorem isConsonant_iff_le : s.IsConsonant ↔ ofSpecs [(.consonantal, true)] ≤ s := by
   rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsConsonant]
 
+/-- The obstruents are the segments above `[+cons, −son]`. -/
+theorem isObstruent_iff_le :
+    s.IsObstruent ↔ ofSpecs [(.consonantal, true), (.sonorant, false)] ≤ s := by
+  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsObstruent]
+
 /-- The stops are the segments above `[+cons, −son, −cont]`. -/
 theorem isStop_iff_le :
     s.IsStop ↔

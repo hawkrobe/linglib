@@ -156,8 +156,9 @@ theorem exists_mem_ind :
 
 /-! ### Natural classes -/
 
-/-- The obstruents, [+consonantal, −sonorant]. The glottal `h` is [−consonantal]. -/
-def obstruent : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
+/-- The segments that a preceding nasal assimilates to, which are the obstruents. The glottal
+`h` is not consonantal. -/
+def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
 
 /-- The voiceless obstruents. -/
 def voicelessObstruent : Segment :=
@@ -170,7 +171,7 @@ def sonorantConsonant : Segment := Segment.ofSpecs [(.sonorant, true), (.syllabi
 /-! ### Nasal assimilation -/
 
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following obstruent. -/
-def assimilate : List Segment → List Segment := NasalSubstitution.assimilate obstruent ng
+def assimilate : List Segment → List Segment := NasalSubstitution.assimilate trigger ng
 
 /-! ### Nasal substitution -/
 
@@ -180,7 +181,7 @@ def substituting : Finset Segment := {p, t, k, s}
 /-- What the prefix nasal and a root-initial `x` fuse into, which is the assimilated nasal,
 except that with `s` it is the palatal `ny`. -/
 def fuse (x : Segment) : List Segment :=
-  if x = s then [ny] else NasalSubstitution.substitute obstruent ng x
+  if x = s then [ny] else NasalSubstitution.substitute trigger ng x
 
 /-- What the prefix nasal and the base-initial segment `x` surface as. A substituting
 consonant fuses with the nasal, the nasal is lost before a sonorant consonant, and otherwise it
@@ -232,14 +233,14 @@ theorem juncture_of_vowel_or_h : ∀ x ∈ insert h vowels, juncture x = [ng, x]
 
 /-- Before an obstruent that does not substitute, the nasal and the obstruent both surface. -/
 theorem juncture_of_obstruent :
-    ∀ x ∈ consonants, obstruent ≤ x → x ∉ substituting → juncture x = assimilate [ng, x] := by
+    ∀ x ∈ consonants, x.IsObstruent → x ∉ substituting → juncture x = assimilate [ng, x] := by
   decide
 
 /-- Before every obstruent but `s` the nasal at the juncture is a nasal that agrees with the
 obstruent in every place feature but [strident]. -/
 theorem juncture_head_agrees :
-    ∀ x ∈ consonants, obstruent ≤ x → x ≠ s →
-      ∀ N ∈ (juncture x).head?, NasalSubstitution.nasal ≤ N ∧
+    ∀ x ∈ consonants, x.IsObstruent → x ≠ s →
+      ∀ N ∈ (juncture x).head?, N.IsNasal ∧
         ∀ ft ∈ FeatureClass.place.erase .strident, N ft = x ft := by
   decide
 
@@ -255,7 +256,7 @@ theorem junctureRetained_s : junctureRetained s = [n, s] := by
 /-- The place class alone makes the nasal before `s` strident, and the redundancy rule
 restores `n`. -/
 theorem placeAssimilation_s :
-    (NasalSubstitution.placeAssimilation obstruent).apply [ng, s]
+    (NasalSubstitution.placeAssimilation trigger).apply [ng, s]
         = [n.setFeature .strident true, s] ∧
       assimilate [ng, s] = [n, s] := by
   decide

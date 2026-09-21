@@ -174,6 +174,10 @@ instance : Decidable s.IsVowel := by unfold IsVowel; infer_instance
 def IsConsonant : Prop := s.HasValue .consonantal true
 instance : Decidable s.IsConsonant := by unfold IsConsonant; infer_instance
 
+/-- A segment is an obstruent iff it is [+cons, -son]. -/
+def IsObstruent : Prop := s.HasValue .consonantal true ∧ s.HasValue .sonorant false
+instance : Decidable s.IsObstruent := by unfold IsObstruent; infer_instance
+
 /-- A segment is an oral stop iff it is [+cons, -son, -cont]. -/
 def IsStop : Prop :=
   s.HasValue .consonantal true ∧ s.HasValue .sonorant false ∧ s.HasValue .continuant false

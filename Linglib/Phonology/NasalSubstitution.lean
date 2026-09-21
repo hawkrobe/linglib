@@ -47,13 +47,10 @@ namespace Phonology.NasalSubstitution
 
 open Subregular.LocalRewrite
 
-/-- The nasals. -/
-def nasal : Segment := Segment.ofSpecs [(.nasal, true)]
-
 /-- A nasal takes the place of a following segment of the class `trigger`. -/
 def placeAssimilation (trigger : Segment) : Rule where
   name := "nasal place assimilation"
-  target := nasal
+  target := Segment.ofSpecs [(.nasal, true)]
   effect := .copyRight FeatureClass.place
   rightContext := [.seg trigger]
 

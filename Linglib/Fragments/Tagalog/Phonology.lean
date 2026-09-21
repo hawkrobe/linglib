@@ -126,9 +126,6 @@ theorem exists_mem_tgl :
 The glides and `h` are not consonantal. -/
 def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.nasal, false)]
 
-/-- The obstruents, which can substitute. -/
-def obstruent : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
-
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following non-nasal
 consonant. -/
 def assimilate : List Segment → List Segment := NasalSubstitution.assimilate trigger ŋ
