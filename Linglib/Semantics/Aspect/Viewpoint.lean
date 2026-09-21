@@ -1,3 +1,4 @@
+import Mathlib.Order.UpperLower.Closure
 import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.Reference.Context.Index
 import Linglib.Core.Order.Interval
@@ -12,7 +13,9 @@ Following Klein, a viewpoint relates the topic time to the situation time
 event gives an operator from event predicates to interval predicates (`IntervalPred.ofRel`),
 monotone in the relation, and the operator of a viewpoint is that of its relation
 (`ViewpointType.denote`). The compositional operators of Knick and Sharf are instances (`IMPF`,
-`PRFV`, `PROSP`). The perfect takes an interval predicate to a point predicate through the
+`PRFV`, `PROSP`), and the perfective and the non-strict imperfective are the upper and the lower
+closure of the predicate's run times (`prfv_iff_mem_upperClosure`,
+`unbounded_iff_mem_lowerClosure`). The perfect takes an interval predicate to a point predicate through the
 perfect time span (`PERF`, `PERF_XN`), and on to tense. The perfect time span of Iatridou,
 Anagnostopoulou and Izvorski admits the spans a perfect-level adverbial allows (`PERF_ADV`), of
 which the plain and extended-now perfects are the two instances.
@@ -127,6 +130,19 @@ theorem unbounded_iff : UNBOUNDED P w t ↔ ∃ e : Event T, t ≤ e.τ ∧ P w 
 theorem impf_entails_unbounded (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T) :
     IMPF P w t → UNBOUNDED P w t :=
   IntervalPred.ofRel_mono (R := (· < ·)) (S := (· ≤ ·)) fun _ _ ↦ le_of_lt
+
+/-- The non-strict imperfective holds at the intervals in the lower closure of the predicate's
+run times. -/
+theorem unbounded_iff_mem_lowerClosure :
+    UNBOUNDED P w t ↔ t ∈ lowerClosure (eventDenotation (P w)) :=
+  ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e.τ, mem_eventDenotation_of hP, hle⟩,
+    fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
+
+/-- The perfective holds at the intervals in the upper closure of the predicate's run times. -/
+theorem prfv_iff_mem_upperClosure :
+    PRFV P w t ↔ t ∈ upperClosure (eventDenotation (P w)) :=
+  ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e.τ, mem_eventDenotation_of hP, hle⟩,
+    fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
 
 /-- The right boundary of a perfect time span is the reference time, (22a). -/
 def RB (pts : NonemptyInterval T) (t : T) : Prop := pts.snd = t
