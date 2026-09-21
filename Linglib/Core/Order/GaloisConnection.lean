@@ -1,5 +1,7 @@
-import Mathlib.Data.Fintype.Order
-import Mathlib.Order.GaloisConnection.Basic
+module
+
+public import Mathlib.Data.Fintype.Order
+public import Mathlib.Order.GaloisConnection.Basic
 
 /-!
 # The poset adjoint functor theorem
@@ -10,6 +12,8 @@ arbitrary suprema (`exists_galoisConnection_iff_forall_sSup`); mathlib has
 binary sup-preservation plus `⊥`-preservation
 (`exists_galoisConnection_iff_forall_sup`).
 -/
+
+@[expose] public section
 
 section AdjointFunctorTheorem
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.RingTheory.Coalgebra.Convolution
-import Mathlib.Algebra.Ring.Commute
+module
+
+public import Mathlib.RingTheory.Coalgebra.Convolution
+public import Mathlib.Algebra.Ring.Commute
 
 /-!
 # Commutator bracket through a Sweedler representation
@@ -14,6 +16,8 @@ Evaluation of the ring commutator `⁅f, g⁆` of the convolution algebra
 candidate for `Mathlib.RingTheory.Coalgebra.Convolution`, beside
 `Coalgebra.Repr.convMul_apply`.
 -/
+
+@[expose] public section
 
 namespace Coalgebra.Repr
 

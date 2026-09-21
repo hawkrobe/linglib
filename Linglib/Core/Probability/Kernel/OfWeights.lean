@@ -1,6 +1,8 @@
-import Mathlib.Probability.Kernel.Basic
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.Probability.UniformOn
+module
+
+public import Mathlib.Probability.Kernel.Basic
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.UniformOn
 
 /-!
 # Kernels from weight functions
@@ -24,6 +26,8 @@ total.
 * `ProbabilityTheory.Kernel.ofWeights_uniformOn_mul_uniformOn` — the product of two uniform
   experts is uniform on their agreement set.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

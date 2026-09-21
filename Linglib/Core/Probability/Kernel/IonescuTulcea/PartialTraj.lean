@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.Kernel.IonescuTulcea.PartialTraj
+module
+
+public import Mathlib.Probability.Kernel.IonescuTulcea.PartialTraj
 
 /-!
 # Partial trajectories at the next time
@@ -13,6 +15,8 @@ however far the trajectory runs, and the one-step trajectory from `x` is the ste
 pushed forward by appending its value to `x`. `[UPSTREAM]` candidate for
 `Mathlib/Probability/Kernel/IonescuTulcea/PartialTraj.lean`.
 -/
+
+@[expose] public section
 
 open Finset MeasureTheory ProbabilityTheory Preorder
 

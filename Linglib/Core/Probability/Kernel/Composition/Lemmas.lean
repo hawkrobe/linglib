@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.Kernel.Composition.Lemmas
-import Mathlib.Probability.Kernel.Disintegration.StandardBorel
+module
+
+public import Mathlib.Probability.Kernel.Composition.Lemmas
+public import Mathlib.Probability.Kernel.Disintegration.StandardBorel
 
 /-!
 # Marginals of a joint pushed through a parallel composition
@@ -15,6 +17,8 @@ second with `η`. The joint is disintegrated as `ρ.fst ⊗ₘ ρ.condKernel`. O
 composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at atoms.
 `[UPSTREAM]` candidate for `Mathlib/Probability/Kernel/Composition/Lemmas.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ProbabilityTheory

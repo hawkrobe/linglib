@@ -1,7 +1,9 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Fintype.Pi
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # The argmax set of a function on a finset
@@ -25,6 +27,8 @@ Option α`; the set-valued form is the natural companion of `Finset.max'` and
 * `argmax_nonempty` — nonempty on nonempty input (via `exists_max_image`).
 * `argmax_comp_strictMono` — invariance under strictly monotone rescaling.
 -/
+
+@[expose] public section
 
 namespace Finset
 

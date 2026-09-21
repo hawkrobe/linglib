@@ -1,5 +1,7 @@
-import Mathlib.Order.Hom.WithTopBot
-import Mathlib.Order.Interval.Basic
+module
+
+public import Mathlib.Order.Hom.WithTopBot
+public import Mathlib.Order.Interval.Basic
 
 /-!
 # Relational vocabulary for intervals
@@ -25,6 +27,8 @@ the null interval `⊥`, where `≤` is inclusion and `⊓` intersection:
 interval into `WithTop α`, and `Interval.Ici a` is the ray from `a` to the
 end of time.
 -/
+
+@[expose] public section
 
 namespace NonemptyInterval
 

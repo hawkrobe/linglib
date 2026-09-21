@@ -1,6 +1,8 @@
-import Mathlib.Algebra.Order.Interval.Set.Instances
-import Mathlib.Algebra.Order.Ring.Unbundled.Rat
-import Mathlib.Order.Monotone.Basic
+module
+
+public import Mathlib.Algebra.Order.Interval.Set.Instances
+public import Mathlib.Algebra.Order.Ring.Unbundled.Rat
+public import Mathlib.Order.Monotone.Basic
 
 /-!
 # The unit-interval involution
@@ -13,6 +15,8 @@ Linglib uses `Set.Icc (0 : ℚ) 1` as the home of gradient linguistic degrees
 (at-issueness, projectivity, prior credence): mathlib's `unitInterval` is
 real-valued and topological, while linguistic degrees are exact rationals.
 -/
+
+@[expose] public section
 
 namespace Set.Icc
 

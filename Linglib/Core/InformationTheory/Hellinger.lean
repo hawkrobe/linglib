@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+module
+
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
 # Hellinger distance on a finite type
@@ -18,6 +20,8 @@ measures the coefficient lies in `[0, 1]`, so the Hellinger distance is bounded 
 Kullback–Leibler divergence may be infinite. Mathlib has no Hellinger distance; `[UPSTREAM]`
 candidate for `Mathlib/InformationTheory/`.
 -/
+
+@[expose] public section
 
 open MeasureTheory Real
 

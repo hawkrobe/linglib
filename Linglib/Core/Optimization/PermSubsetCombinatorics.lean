@@ -1,13 +1,15 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Fintype.Perm
-import Mathlib.Data.List.FinRange
-import Mathlib.Data.List.OfFn
-import Mathlib.Data.Rat.Defs
-import Mathlib.GroupTheory.Perm.Basic
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Data.Fintype.Perm
+public import Mathlib.Data.List.FinRange
+public import Mathlib.Data.List.OfFn
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.GroupTheory.Perm.Basic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Permutation-subset combinatorics
@@ -42,6 +44,8 @@ and `{σ ∈ S : … = y'}` whenever `S` is closed under it. All fibers thus
 have equal cardinality; summing over `D` (which partitions `S` when `D`
 is nonempty) gives `|D| × |fiber| = |S|`.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization.PermSubsetCombinatorics
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.Defs.PartialOrder
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.Defs.PartialOrder
 
 /-!
 # The criteria-derived preorder
@@ -17,6 +19,8 @@ along the map sending an element to the set of criteria it satisfies
 * `Preorder.satisfied`, `Preorder.maximalFor_satisfied_iff`: the criteria that an element
   satisfies, and the minimal elements of the order as the elements satisfying a maximal set.
 -/
+
+@[expose] public section
 
 namespace Preorder
 

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.BigOperators.Ring.Multiset
-import Mathlib.Algebra.Order.BigOperators.Group.Multiset
-import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import Mathlib.Data.Multiset.Bind
+module
+
+public import Mathlib.Algebra.BigOperators.Ring.Multiset
+public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
+public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import Mathlib.Data.Multiset.Bind
 
 /-!
 # Inverse-power sums over multisets of naturals
@@ -33,6 +35,8 @@ clears to the ℕ-valued `divPowSum D k`, so pinned-exponent comparisons also cl
 * `Multiset.invPowSum_prodMul`
 * `Multiset.invPowSum_mul_pow_eq_divPowSum`
 -/
+
+@[expose] public section
 
 open scoped ENNReal
 

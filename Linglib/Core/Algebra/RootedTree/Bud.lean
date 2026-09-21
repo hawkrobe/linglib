@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Lemmas
+module
+
+public import Mathlib.Data.List.Lemmas
 
 /-!
 # Bud generating systems on colored binary trees
@@ -48,6 +50,8 @@ terminal/nonterminal type split. Mathlib's `SimpleGraph.Coloring` is not
 applicable: proper graph coloring constrains adjacent colors to *differ*,
 while operadic coloring constrains composed colors to *match*.
 -/
+
+@[expose] public section
 
 namespace Bud
 

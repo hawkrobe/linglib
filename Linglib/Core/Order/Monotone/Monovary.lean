@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Monotone.Monovary
-import Mathlib.Data.Set.Insert
-import Mathlib.Data.Set.Image
+module
+
+public import Mathlib.Order.Monotone.Monovary
+public import Mathlib.Data.Set.Insert
+public import Mathlib.Data.Set.Image
 
 /-!
 # `MonovaryOn` on `singleton`, `union`, `insert`, and `image`
@@ -28,6 +30,8 @@ beside `MonovaryOn.empty` and `MonovaryOn.comp_right`.
 * `monovaryOn_image` — `MonovaryOn f g (k '' u) ↔ MonovaryOn (f ∘ k) (g ∘ k) u`,
   the image companion of `MonovaryOn.comp_right` (and `antivaryOn_image` twin).
 -/
+
+@[expose] public section
 
 variable {ι ι' α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g : ι → β}
   {s t : Set ι}

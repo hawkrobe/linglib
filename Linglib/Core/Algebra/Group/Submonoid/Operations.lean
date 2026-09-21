@@ -6,7 +6,9 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.Submonoid.Operations`, beside
 `MulEquiv.ofLeftInverse'`.
 -/
-import Mathlib.Algebra.Group.Submonoid.Operations
+module
+
+public import Mathlib.Algebra.Group.Submonoid.Operations
 
 /-!
 # `MulEquiv.ofInjective'`
@@ -16,6 +18,8 @@ counterpart of the group-level `MonoidHom.ofInjective`, packaging `MulEquiv.ofLe
 at an injectivity hypothesis. Primed like `MulEquiv.ofLeftInverse'`: the unprimed name is
 reserved for the `f.range` version.
 -/
+
+@[expose] public section
 
 /-- An injective monoid homomorphism is a `MulEquiv` onto its range — the `MulOneClass`
 counterpart of `MonoidHom.ofInjective`. -/

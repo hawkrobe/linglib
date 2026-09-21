@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Destutter
+module
+
+public import Mathlib.Data.List.Destutter
 
 /-!
 # `List.destutter` and `++`
@@ -28,6 +30,8 @@ as in `List.map_destutter_ne`. [UPSTREAM] candidates for that file.
 * `List.IsChain.length_destutter_ne_append`: two chains concatenated and destuttered lose exactly
   one element when the seam matches, the numerical core of the autosegmental OCP quotient.
 -/
+
+@[expose] public section
 
 namespace List
 variable {α : Type*} {R : α → α → Prop} [DecidableRel R] {a b : α} {l m : List α}

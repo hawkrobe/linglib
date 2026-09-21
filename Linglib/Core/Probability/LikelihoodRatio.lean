@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.Independence.Basic
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Event-level likelihood ratios of two measures
@@ -34,6 +36,8 @@ candidates.
   `one_lt_likelihoodRatio_union`: for probability measures with both events
   of ratio above one, intersection beats both events beats union beats one.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

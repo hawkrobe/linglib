@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.SuccPred.Archimedean
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.Comparable
-import Mathlib.Data.Nat.Find
+module
+
+public import Mathlib.Order.SuccPred.Archimedean
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.Comparable
+public import Mathlib.Data.Nat.Find
 
 /-!
 # Rooted trees
@@ -23,6 +25,8 @@ Meets: with a bottom, binary meets exist, `a ⊓ b` being the first `pred`-itera
 lies below `b`. `RootedTree` asks for `SemilatticeInf` as a field; on orders with decidable `≤`
 it is derivable.
 -/
+
+@[expose] public section
 
 section Subtrees
 

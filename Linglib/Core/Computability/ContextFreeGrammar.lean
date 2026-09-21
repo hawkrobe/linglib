@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.ContextFreeGrammar
-import Mathlib.Basic.Countable.Basic
+module
+
+public import Mathlib.Computability.ContextFreeGrammar
+public import Mathlib.Basic.Countable.Basic
 
 /-!
 # Symbols, rules and derivations of a context-free grammar
@@ -25,6 +27,8 @@ trees, the closure properties and the weighted grammars share. `[UPSTREAM]` cand
 * `ContextFreeGrammar.Derives.append_split`: a derivation from a concatenation splits into
   derivations from the two halves.
 -/
+
+@[expose] public section
 
 namespace Symbol
 

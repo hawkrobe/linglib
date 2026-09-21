@@ -1,7 +1,9 @@
-import Mathlib.Combinatorics.SetFamily.FourFunctions
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Order.UpperLower.Basic
-import Mathlib.Tactic.Linarith
+module
+
+public import Mathlib.Combinatorics.SetFamily.FourFunctions
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Correlation inequalities for upper sets
@@ -17,6 +19,8 @@ raises the share of every upper set and reweighting by an antitone factor lowers
 
 * [fortuin-kasteleyn-ginibre-1971]
 -/
+
+@[expose] public section
 
 open Finset
 

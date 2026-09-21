@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Pareto dominance and positive linearizations
@@ -31,6 +33,8 @@ characterization; on upstreaming, generalize the codomain from `ℕ`.
 * `exists_pos_weights_disagree` — incomparable vectors are ordered oppositely
   by two positive weightings.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

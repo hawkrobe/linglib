@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Set.Card
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # Antimatroids
@@ -37,6 +39,8 @@ ground set and `Prop` axioms.
 [korte-lovasz-schrader-1991] — Greedoids
 [merchant-riggle-2016] — OT grammars, beyond partial orders: ERC sets and antimatroids
 -/
+
+@[expose] public section
 
 /-! ### Set systems -/
 

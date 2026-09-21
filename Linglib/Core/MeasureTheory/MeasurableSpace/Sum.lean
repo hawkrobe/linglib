@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+module
+
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Singletons in a sum of measurable spaces
@@ -12,6 +14,8 @@ A singleton in `α ⊕ β` is the image of a singleton under `Sum.inl` or `Sum.i
 measurable when singletons in `α` and `β` are. `[UPSTREAM]` candidate for
 `Mathlib/MeasureTheory/MeasurableSpace/Constructions.lean`.
 -/
+
+@[expose] public section
 
 instance Sum.instMeasurableSingletonClass {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
     [MeasurableSingletonClass α] [MeasurableSingletonClass β] :

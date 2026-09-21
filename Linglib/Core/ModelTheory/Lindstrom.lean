@@ -1,5 +1,7 @@
-import Mathlib.ModelTheory.Bundled
-import Mathlib.Order.Hom.Lattice
+module
+
+public import Mathlib.ModelTheory.Bundled
+public import Mathlib.Order.Hom.Lattice
 
 /-!
 # Lindström generalized quantifiers
@@ -25,6 +27,8 @@ and the linguistic generalized-quantifier API live downstream in `Semantics.Quan
   obtained by pulling the powerset algebra back along the injective `holds`; `holdsHom` bundles that
   embedding as a `BoundedLatticeHom`.
 -/
+
+@[expose] public section
 
 universe u v w
 

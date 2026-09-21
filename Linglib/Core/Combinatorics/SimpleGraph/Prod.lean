@@ -1,4 +1,6 @@
-import Mathlib.Combinatorics.SimpleGraph.Prod
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Prod
 
 /-!
 # Decidable adjacency in a box product
@@ -6,6 +8,8 @@ import Mathlib.Combinatorics.SimpleGraph.Prod
 The adjacency of a box product of two graphs with decidable adjacency and decidable vertex
 equality is decidable.
 -/
+
+@[expose] public section
 
 namespace SimpleGraph
 

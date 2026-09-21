@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Algebra.Basic
-import Mathlib.LinearAlgebra.Span.Basic
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.LinearCombination
+module
+
+public import Mathlib.Algebra.Algebra.Basic
+public import Mathlib.LinearAlgebra.Span.Basic
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.LinearCombination
 
 /-!
 # Rota–Baxter operators  `[UPSTREAM]`
@@ -38,6 +40,8 @@ values so as to incorporate the consistency checking over all substructures."
 
 [marcolli-chomsky-berwick-2025] (Def. 3.1.1, Def. 3.1.2, Prop. 3.1.7)
 -/
+
+@[expose] public section
 
 variable (k A : Type*) [CommRing k] [CommRing A] [Algebra k A]
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.Distributions.Bernoulli
-import Mathlib.Probability.Moments.Variance
+module
+
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Probability.Moments.Variance
 
 /-!
 # Bernoulli distribution: bind and variance
@@ -20,6 +22,8 @@ a real observable under `Ber(x, y, p)` is `p * (1 - p) * (f x - f y) ^ 2`.
 
 [UPSTREAM] candidates for `Mathlib.Probability.Distributions.Bernoulli`.
 -/
+
+@[expose] public section
 
 open MeasureTheory unitInterval
 

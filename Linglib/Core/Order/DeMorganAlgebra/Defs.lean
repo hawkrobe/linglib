@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.BooleanAlgebra.Basic
+module
+
+public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
 # De Morgan algebras and Kleene algebras
@@ -34,6 +36,8 @@ instances and the `OrderIso α αᵒᵈ` bundling live in `DeMorganAlgebra/Basic
 * `Order.KleeneAlgebra` — a `DeMorganAlgebra` with the Kleene law
   (`inf_compl_le_sup_compl`); every `BooleanAlgebra` is an instance.
 -/
+
+@[expose] public section
 
 /-- A bounded lattice with an involutive, order-reversing complement — the common reduct
 of `OrthocomplementedLattice` and `DeMorganAlgebra`. `Compl` is pure notation, so `ᶜ`

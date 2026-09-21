@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.Defs
-import Mathlib.Algebra.Group.Nat.Defs
-import Mathlib.Data.Finset.Card
-import Mathlib.Order.Disjoint
-import Mathlib.Order.ModularLattice
-import Mathlib.Order.Monotone.Defs
+module
+
+public import Mathlib.Algebra.Group.Defs
+public import Mathlib.Algebra.Group.Nat.Defs
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Order.Disjoint
+public import Mathlib.Order.ModularLattice
+public import Mathlib.Order.Monotone.Defs
 
 /-!
 # Valuations on lattices
@@ -37,6 +39,8 @@ positive valuation is modular. `[UPSTREAM]` candidate.
 
 * [birkhoff-1967], Chapter X
 -/
+
+@[expose] public section
 
 variable {α M : Type*}
 

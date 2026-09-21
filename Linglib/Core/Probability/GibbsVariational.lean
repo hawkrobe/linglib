@@ -1,7 +1,9 @@
-import Mathlib.MeasureTheory.Measure.Tilted
-import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
-import Mathlib.InformationTheory.KullbackLeibler.Basic
-import Mathlib.Probability.Moments.Basic
+module
+
+public import Mathlib.MeasureTheory.Measure.Tilted
+public import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.Probability.Moments.Basic
 
 /-!
 # The Gibbs / Donsker–Varadhan variational principle  [UPSTREAM]
@@ -40,6 +42,8 @@ generating function `cgf f μ 1` (= `log ∫ exp f ∂μ`), connecting the princ
 by `integral_llr_tilted_right` (which requires it on its left measure), so relaxing
 it is a separate upstream concern in `LogLikelihoodRatio`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory InformationTheory
 open scoped ENNReal

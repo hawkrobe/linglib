@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Lifting a relation from points to sets
@@ -11,6 +13,8 @@ Gale order when `r` is a linear order). Two closure properties of set relations,
 `RightUnion` and `DeterminedBySingletons`, and the fact that the domination lift
 has both.
 -/
+
+@[expose] public section
 
 section
 

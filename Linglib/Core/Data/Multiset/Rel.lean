@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Perm.Basic
-import Mathlib.Data.Multiset.ZeroCons
+module
+
+public import Mathlib.Data.List.Perm.Basic
+public import Mathlib.Data.Multiset.ZeroCons
 
 /-!
 # Deciding `Multiset.Rel` for a partial equivalence
@@ -44,6 +46,8 @@ available beneath a termination bound (see `UnorderedTree/DecEq.lean`). The unco
 
 `[UPSTREAM]` candidate.
 -/
+
+@[expose] public section
 
 namespace Multiset
 

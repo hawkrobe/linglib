@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.RingTheory.Bialgebra.Basic
+module
+
+public import Mathlib.RingTheory.Bialgebra.Basic
 
 /-!
 # Sweedler representation of a product
@@ -13,6 +15,8 @@ representations of `x` and `y` multiply to one of `x * y`. `[UPSTREAM]`
 candidate for `Mathlib.RingTheory.Bialgebra.Basic`, beside
 `Bialgebra.comul_mul`.
 -/
+
+@[expose] public section
 
 namespace Coalgebra.Repr
 

@@ -5,8 +5,10 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.WithOne.Basic`.
 -/
-import Mathlib.Algebra.Group.WithOne.Basic
-import Mathlib.Data.Fintype.Option
+module
+
+public import Mathlib.Algebra.Group.WithOne.Basic
+public import Mathlib.Data.Fintype.Option
 
 /-!
 # Finiteness and surjectivity for `WithOne`
@@ -14,6 +16,8 @@ import Mathlib.Data.Fintype.Option
 `WithOne α` is finite when `α` is, and `WithOne.lift f` is surjective exactly when `1` and the
 range of `f` cover the target.
 -/
+
+@[expose] public section
 
 namespace WithOne
 

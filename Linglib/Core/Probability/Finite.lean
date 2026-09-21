@@ -1,7 +1,9 @@
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import Mathlib.Probability.Distributions.Uniform
-import Mathlib.Basic.ENNReal.Operations
-import Mathlib.Basic.ENNReal.Inv
+module
+
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import Mathlib.Probability.Distributions.Uniform
+public import Mathlib.Basic.ENNReal.Operations
+public import Mathlib.Basic.ENNReal.Inv
 
 /-!
 # Finite-fintype convenience naming for `Mathlib.PMF`
@@ -27,6 +29,8 @@ finite normalization) are provided for the patterns that recur in
 `Studies/` files. ENNReal arithmetic at consumer sites
 goes through the `ENNReal.toReal` lift.
 -/
+
+@[expose] public section
 
 namespace PMF
 

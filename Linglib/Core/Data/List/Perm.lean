@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Perm.Basic
-import Mathlib.Data.List.Forall2
+module
+
+public import Mathlib.Data.List.Perm.Basic
+public import Mathlib.Data.List.Forall2
 
 /-!
 # Lifting a permutation of images through `List.map`
@@ -15,6 +17,8 @@ instance of mathlib's relator law `List.forallâ‚‚_comp_perm_eq_perm_comp_forallâ
 `R a b := f a = b`. [UPSTREAM] candidate for `Mathlib/Data/List/Perm/Basic.lean`, beside
 `List.Perm.map`.
 -/
+
+@[expose] public section
 
 namespace List
 

@@ -1,6 +1,8 @@
-import Mathlib.LinearAlgebra.Dimension.Constructions
-import Mathlib.LinearAlgebra.Dimension.Finite
-import Mathlib.Tactic.Linarith
+module
+
+public import Mathlib.LinearAlgebra.Dimension.Constructions
+public import Mathlib.LinearAlgebra.Dimension.Finite
+public import Mathlib.Tactic.Linarith
 
 /-! # Conic Carathéodory: thinning positive dependences
 
@@ -17,6 +19,8 @@ linear pivot step that strictly shrinks the positive support each round.
 * `Caratheodory.exists_posdep_card_le_five` — the specialisation to
   `Fin 4 → ℚ` (bound `5`) consumed by the `Fin 4` cancellation proof.
 -/
+
+@[expose] public section
 
 open Finset Module
 

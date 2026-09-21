@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Sublists
+module
+
+public import Mathlib.Data.List.Sublists
 
 /-!
 # Sublists paired with their complements
@@ -18,6 +20,8 @@ starts with `a`. [UPSTREAM] candidate for `Mathlib/Data/List/Sublists.lean`.
 * `List.revzip_sublists'_cons`: the head recursion of `sublists'.revzip`.
 * `List.revzip_singleton`: the base case.
 -/
+
+@[expose] public section
 
 namespace List
 

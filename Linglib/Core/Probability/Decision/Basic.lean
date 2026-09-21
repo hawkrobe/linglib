@@ -3,16 +3,18 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Rat.Defs
-import Mathlib.Order.Partition.Finpartition
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.Finset.Max
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.Order.GroupWithZero.Finset
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Order.Partition.Finpartition
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Order.GroupWithZero.Finset
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
 
 /-!
 # Decision problems and the value of information
@@ -67,6 +69,8 @@ Empty action sets get the junk value `0` (the `Real.sSup` convention), with
 - [van-rooy-2003]. Questioning to Resolve Decision Problems. L&P 26.
 - [blackwell-1953]. Equivalent Comparisons of Experiments.
 -/
+
+@[expose] public section
 
 namespace Core.DecisionTheory
 

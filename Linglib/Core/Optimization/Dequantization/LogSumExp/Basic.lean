@@ -1,6 +1,8 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Exp
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Log-sum-exp: the warped semiring deforming to max-plus
@@ -30,6 +32,8 @@ what makes max-plus suitable for shortest-path style computation. The
 "warp" terminology emphasises this deviation from idempotence:
 `lse α` only behaves like `max` up to a temperature-dependent slack.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

@@ -1,6 +1,8 @@
-import Mathlib.Basic.Logic.Basic
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Order.Hom.Basic
+module
+
+public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Order.Hom.Basic
 
 /-!
 # The four Aristotelian relations [demey-smessaert-2018]
@@ -50,6 +52,8 @@ subcontrariety are `Disjoint` / `Codisjoint` combinations, so symmetry and the
   ([deklerck-vignero-demey-2024]); the `OrderIso` transfer lemmas are the
   immediately-useful slice.
 -/
+
+@[expose] public section
 
 namespace Aristotelian
 

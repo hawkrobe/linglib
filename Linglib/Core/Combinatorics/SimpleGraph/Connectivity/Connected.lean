@@ -1,4 +1,6 @@
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # Neighbours in a preconnected induced subgraph
@@ -7,6 +9,8 @@ A vertex of a nontrivial set inducing a preconnected subgraph has a neighbour in
 form of `SimpleGraph.Preconnected.exists_adj_of_nontrivial` for induced subgraphs, stated on
 the ambient graph.
 -/
+
+@[expose] public section
 
 namespace SimpleGraph
 

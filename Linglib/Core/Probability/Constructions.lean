@@ -1,8 +1,12 @@
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import Mathlib.Probability.Distributions.Uniform
-import Mathlib.Probability.ConditionalProbability
-import Mathlib.Basic.ENNReal.Operations
-import Mathlib.Basic.ENNReal.Inv
+module
+
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import Mathlib.Probability.Distributions.Uniform
+public import Mathlib.Probability.ConditionalProbability
+public import Mathlib.Basic.ENNReal.Operations
+public import Mathlib.Basic.ENNReal.Inv
+
+@[expose] public section
 
 open scoped NNReal
 

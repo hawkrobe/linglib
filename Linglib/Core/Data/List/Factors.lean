@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Infix
+module
+
+public import Mathlib.Data.List.Infix
 
 /-!
 # Length-`k` infixes of a list
@@ -23,6 +25,8 @@ name is the subregular literature's "`k`-factor"; mathlib has no length-`k` infi
 * `List.kFactors_nil`, `List.kFactors_cons`, `List.kFactors_two_cons_cons`: the recursion, and its
   `k = 2` form used by chain characterizations of the strictly 2-local languages.
 -/
+
+@[expose] public section
 
 namespace List
 

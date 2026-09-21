@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
+module
+
+public import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
 
 /-!
 # The Radon–Nikodym derivative on a countable type
@@ -13,6 +15,8 @@ to a finite measure `ν` has density `a ↦ μ {a} / ν {a}`, so its Radon–Nik
 the ratio of atom masses `ν`-almost everywhere. `[UPSTREAM]` candidate for
 `Mathlib/MeasureTheory/Measure/Decomposition/RadonNikodym.lean`.
 -/
+
+@[expose] public section
 
 open scoped ENNReal
 

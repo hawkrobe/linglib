@@ -1,8 +1,10 @@
-import Mathlib.Order.UpperLower.Basic
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Lower sets carried by finsets
@@ -23,6 +25,8 @@ implicational hierarchy places a language on a rung.
 * `Finset.lowerSubsets` — the lower sets contained in a finset.
 * `Finset.filter_not_le_mem_lowerSubsets` — removing an upper cone stays inside.
 -/
+
+@[expose] public section
 
 open Finset
 

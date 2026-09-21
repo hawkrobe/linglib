@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Defs
+module
+
+public import Mathlib.Data.Fintype.Defs
 
 /-!
 # Decidability of unique existence on a finite type
@@ -15,6 +17,8 @@ instance.
 
 [UPSTREAM] `Mathlib.Data.Fintype.Defs`, beside `Fintype.decidableExistsFintype`.
 -/
+
+@[expose] public section
 
 instance Fintype.decidableExistsUniqueFintype {α : Type*} {p : α → Prop}
     [DecidablePred p] [Fintype α] [DecidableEq α] :

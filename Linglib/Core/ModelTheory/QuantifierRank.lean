@@ -1,4 +1,6 @@
-import Mathlib.ModelTheory.Complexity
+module
+
+public import Mathlib.ModelTheory.Complexity
 
 /-!
 # Quantifier rank of first-order formulas
@@ -18,6 +20,8 @@ layer.
 
 * `FirstOrder.Language.BoundedFormula.qr` — quantifier rank (max quantifier nesting).
 -/
+
+@[expose] public section
 
 namespace FirstOrder.Language.BoundedFormula
 

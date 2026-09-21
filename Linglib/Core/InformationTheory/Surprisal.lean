@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
-import Mathlib.MeasureTheory.Measure.Real
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # Surprisal
@@ -17,6 +19,8 @@ its surprisal.
 
 * [cover-thomas-2006], chapter 2.
 -/
+
+@[expose] public section
 
 open MeasureTheory Real
 

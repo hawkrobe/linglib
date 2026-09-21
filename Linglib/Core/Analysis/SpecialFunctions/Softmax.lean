@@ -1,8 +1,10 @@
-import Mathlib.Analysis.SpecialFunctions.Sigmoid
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Data.Fintype.BigOperators
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Sigmoid
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Data.Fintype.BigOperators
 
 /-!
 # The softmax function
@@ -43,6 +45,8 @@ log-sum-exp as `cgf` — is `Core.Probability.SoftmaxTheory`.
   product type gives a product distribution, with coordinate marginals.
 * `Real.rpow_div_sum_rpow` — Luce's power rule is softmax of log-scores.
 -/
+
+@[expose] public section
 
 namespace Real
 

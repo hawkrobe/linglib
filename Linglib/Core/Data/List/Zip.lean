@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Zip
+module
+
+public import Mathlib.Data.List.Zip
 
 /-!
 # `revzip` of a mapped list
@@ -12,6 +14,8 @@ import Mathlib.Data.List.Zip
 `List.revzip_map_fst` and `List.revzip_map_snd` and the `revzip` instance of `List.zip_map`.
 [UPSTREAM] candidate for `Mathlib/Data/List/Zip.lean`.
 -/
+
+@[expose] public section
 
 namespace List
 

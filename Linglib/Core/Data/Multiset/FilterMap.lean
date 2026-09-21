@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Order.Group.Multiset
+module
+
+public import Mathlib.Algebra.Order.Group.Multiset
 
 /-!
 # `Multiset.filterMap` as a bundled hom
@@ -11,6 +13,8 @@ import Mathlib.Algebra.Order.Group.Multiset
 `[UPSTREAM]` candidate: the `filterMap` analogue of
 `Multiset.mapAddMonoidHom`.
 -/
+
+@[expose] public section
 
 namespace Multiset
 

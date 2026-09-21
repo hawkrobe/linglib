@@ -1,4 +1,6 @@
-import Mathlib.Order.Basic
+module
+
+public import Mathlib.Order.Basic
 
 /-!
 # The strict order on propositions
@@ -11,6 +13,8 @@ decidable whenever both propositions are. Mathlib gives `Prop` its partial order
 
 * [UPSTREAM] candidate for `Mathlib.Order.Basic`.
 -/
+
+@[expose] public section
 
 variable {p q : Prop}
 

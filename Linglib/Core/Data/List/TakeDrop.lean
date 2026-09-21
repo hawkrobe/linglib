@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.TakeDrop
+module
+
+public import Mathlib.Data.List.TakeDrop
 
 /-!
 # Membership and extensionality for `take` and `drop` by index
@@ -16,6 +18,8 @@ and agreeing from `n` on have the same `drop n`; and `List.take_append_take`, tr
 right operand before taking a prefix is a no-op. [UPSTREAM] candidates for
 `Init/Data/List/Nat/TakeDrop.lean`, beside their `getElem` counterparts and `List.ext_getElem?`.
 -/
+
+@[expose] public section
 
 namespace List
 

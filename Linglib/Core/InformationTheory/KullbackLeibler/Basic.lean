@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.InformationTheory.KullbackLeibler.Basic
+module
+
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
 
 /-!
 # Kullback-Leibler divergence: probability-measure forms
@@ -13,6 +15,8 @@ Extensions to mathlib's `InformationTheory/KullbackLeibler/Basic.lean`, its
 in `klDiv` cancels, giving the textbook integral form; a distribution whose
 density is a.e. constant has KL divergence `log c`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.EquivFin
+module
+
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Universe transfer for finite-type existentials
@@ -21,6 +23,8 @@ the two-predicate statement (a universe-polymorphic predicate cannot be abstract
 each call site passes the same transport at two universe instantiations) makes it
 pattern infrastructure rather than a `Data/Fintype` lemma.
 -/
+
+@[expose] public section
 
 /-- Transports a finite-type existential across universes: any finite type is
 equivalent to a `ULift (Fin n)` in the target universe, so an equivalence-stable

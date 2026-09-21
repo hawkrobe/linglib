@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.Distributions.Binomial
+module
+
+public import Mathlib.Probability.Distributions.Binomial
 
 /-!
 # The binomial distribution on `Fin (n + 1)`
@@ -20,6 +22,8 @@ the `Bin(R, n, p)` formulas, stated in mathlib for `CharZero R`, hold for the fi
 
 [UPSTREAM] candidates for `Mathlib.Probability.Distributions.Binomial`.
 -/
+
+@[expose] public section
 
 open MeasureTheory unitInterval
 open scoped ProbabilityTheory Fin.NatCast

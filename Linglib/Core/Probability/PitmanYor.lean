@@ -1,15 +1,17 @@
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset
-import Mathlib.Combinatorics.Enumerative.Composition
-import Mathlib.Combinatorics.Enumerative.Partition.Basic
-import Mathlib.Basic.Real.Basic
-import Mathlib.Order.Partition.Finpartition
-import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
-import Mathlib.RingTheory.Polynomial.Pochhammer
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Positivity
+module
+
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset
+public import Mathlib.Combinatorics.Enumerative.Composition
+public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.Partition.Finpartition
+public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
+public import Mathlib.RingTheory.Polynomial.Pochhammer
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Positivity
 
 /-!
 # Pitman–Yor process
@@ -109,6 +111,8 @@ at `α = 0, θ = 1, n = 3` the bare sum is `2/3`.
   `discount = 1` ⇒ all-singletons partition) require a CRP file
   (linglib has none) and are deferred.
 -/
+
+@[expose] public section
 
 namespace Nat.Partition
 

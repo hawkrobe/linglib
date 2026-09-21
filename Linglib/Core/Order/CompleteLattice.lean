@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.CompleteLattice.Basic
+module
+
+public import Mathlib.Order.CompleteLattice.Basic
 
 /-!
 # Diagonal suprema
@@ -12,6 +14,8 @@ A supremum over two indices of a family monotone in both is the supremum along t
 `[UPSTREAM]` candidate for `Mathlib/Order/CompleteLattice/Basic.lean`, beside
 `iSup_iSup_eq_left`.
 -/
+
+@[expose] public section
 
 /-- For a family monotone in both indices, the double supremum is the diagonal supremum. -/
 theorem iSup_iSup_eq_iSup_diag {L : Type*} [CompleteLattice L] {g : ℕ → ℕ → L}

@@ -1,4 +1,6 @@
-import Mathlib.Analysis.SpecificLimits.Basic
+module
+
+public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Rescorla-Wagner associative learning
@@ -19,6 +21,8 @@ makes learning competitive across cues.
 
 The real-valued generalization of the rule is `Core.Learning.WidrowHoff`.
 -/
+
+@[expose] public section
 
 namespace Core
 

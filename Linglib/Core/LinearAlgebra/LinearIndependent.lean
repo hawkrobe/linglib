@@ -1,4 +1,6 @@
-import Mathlib.LinearAlgebra.Basis.VectorSpace
+module
+
+public import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
 # Linear maps prescribed on a linearly independent family
@@ -13,6 +15,8 @@ values by a linear map: given `hv : LinearIndependent K v` and `w : ι → W`, t
 * `LinearIndependent.exists_linearMap_apply_eq`: a linear map with prescribed values on a
   linearly independent family.
 -/
+
+@[expose] public section
 
 variable {ι K V W : Type*} [Field K] [AddCommGroup V] [Module K V] [AddCommGroup W]
   [Module K W]

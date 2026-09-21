@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Basic
-import Mathlib.Data.List.Nodup
+module
+
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.List.Nodup
 
 /-!
 # Sublists across a block of one symbol, and pair sublists as positional order
@@ -21,6 +23,8 @@ Two additions to the `List.Sublist` API.
   `b` are members with `a` at a strictly earlier index (`List.pair_sublist_iff_idxOf_lt`): the
   pair-sublist relation is the strict linear order a duplicate-free list carries.
 -/
+
+@[expose] public section
 
 namespace List
 

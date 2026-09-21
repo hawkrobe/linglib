@@ -1,10 +1,12 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
 
 /-! # Fourier-Motzkin elimination and Farkas' lemma over ℚ
 
@@ -26,6 +28,8 @@ development is complementary.)
 * `Polyhedral.fmElim_equisat` — FM step preserves feasibility
 * `Polyhedral.farkas` — Farkas' lemma: feasible ∨ infeasibility certificate
 -/
+
+@[expose] public section
 
 namespace Polyhedral
 
