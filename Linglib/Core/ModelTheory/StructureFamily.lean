@@ -1,4 +1,6 @@
-import Linglib.Core.ModelTheory.Binders
+module
+
+public import Linglib.Core.ModelTheory.Binders
 
 /-!
 # Satisfaction in an indexed family of structures
@@ -9,6 +11,8 @@ instance selected per index — and the transport of the `Formula.realize_*`
 simp set. `[UPSTREAM]` candidate for `Mathlib/ModelTheory`, which carries
 one structure at a time.
 -/
+
+@[expose] public section
 
 namespace FirstOrder.Language
 

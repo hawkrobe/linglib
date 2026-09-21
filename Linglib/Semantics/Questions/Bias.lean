@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Polar Question Bias — vocabulary
@@ -21,6 +23,8 @@ frames lives study-side (`Studies/RomeroHan2004.lean`).
 * `OriginalBias`, `ContextualEvidence` — the two directional bias dimensions.
 * `originalBiasOK`, `evidenceBiasOK` — Romero's compatibility tables.
 -/
+
+@[expose] public section
 
 namespace Question
 

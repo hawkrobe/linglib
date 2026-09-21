@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Finset.Lattice.Union
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Finset.Lattice.Union
 
 /-!
 # Team algebra — pure `Finset` combinatorics for team semantics
@@ -56,6 +58,8 @@ the abstraction forward (cf. the ≥ 3-systems rule). Full long-run shape,
 target tree, and dependency-ordered build phases:
 `Logic/Modal/README.md`.
 -/
+
+@[expose] public section
 
 namespace Team
 

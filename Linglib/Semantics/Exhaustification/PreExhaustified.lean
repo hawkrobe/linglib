@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Basic.Logic.Basic
-import Mathlib.Basic.ExistsUnique
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Basic.ExistsUnique
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Pre-exhaustified alternatives and proper strengthening
@@ -41,6 +43,8 @@ exhaustification is vacuous and the requirement fails
 - `not_properlyStrengthens_of_iff`: vacuous exhaustification fails proper
   strengthening
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

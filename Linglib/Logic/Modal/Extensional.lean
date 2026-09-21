@@ -1,4 +1,6 @@
-import Mathlib.Logic.Function.Basic
+module
+
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Extensional operators
@@ -18,6 +20,8 @@ composition, so scope-inertness lifts through a whole stack of extensional opera
 * `IsExtensionalAt.and`, `IsExtensionalAt.or`, `IsExtensionalAt.not`,
   `IsExtensionalAt.comp`: closure of extensional operators.
 -/
+
+@[expose] public section
 
 namespace ModalLogic
 

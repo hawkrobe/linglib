@@ -1,3 +1,5 @@
+module
+
 /-!
 # The syntax of questions
 
@@ -28,6 +30,8 @@ directly and is not re-labelled here.
 * [rudin-1988]
 * [citko-gracanin-yuksek-2025]
 -/
+
+@[expose] public section
 
 namespace Question
 

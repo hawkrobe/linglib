@@ -1,16 +1,18 @@
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
-import Mathlib.Analysis.SpecialFunctions.Sigmoid
-import Mathlib.InformationTheory.KullbackLeibler.KLFun
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Analysis.MeanInequalities
-import Mathlib.Probability.Moments.Basic
-import Mathlib.MeasureTheory.Measure.Tilted
-import Mathlib.MeasureTheory.Measure.Count
-import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-import Linglib.Core.Analysis.SpecialFunctions.Softmax
+module
+
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.Analysis.SpecialFunctions.Sigmoid
+public import Mathlib.InformationTheory.KullbackLeibler.KLFun
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Analysis.MeanInequalities
+public import Mathlib.Probability.Moments.Basic
+public import Mathlib.MeasureTheory.Measure.Tilted
+public import Mathlib.MeasureTheory.Measure.Count
+public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Rational action
@@ -44,6 +46,8 @@ layer on top of those pure-math cores.
 * `RationalAction.iia`, `RationalAction.product_rule` — Luce's choice axiom for `pChoice`.
 * `axiom1_ratio_iff_pairwiseIIA` — equivalence of the choice-axiom forms.
 -/
+
+@[expose] public section
 
 namespace Core
 

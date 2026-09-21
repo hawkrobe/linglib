@@ -1,9 +1,11 @@
-import Mathlib.Data.Finset.Sort
-import Mathlib.Data.List.NodupEquivFin
-import Mathlib.GroupTheory.Perm.Basic
-import Mathlib.Order.Fin.Basic
-import Mathlib.Order.PiLex
-import Mathlib.Order.Preorder.Finite
+module
+
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Data.List.NodupEquivFin
+public import Mathlib.GroupTheory.Perm.Basic
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Order.PiLex
+public import Mathlib.Order.Preorder.Finite
 
 /-!
 # Constraint rankings
@@ -16,6 +18,8 @@ ranking is recoverable (`toRel_le_toRel_iff`). The `Tableau` machinery evaluates
 under a ranking, and the elementary-ranking-condition layer
 (`ElementaryRankingCondition.lean`) infers rankings from winner–loser pairs.
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 

@@ -1,5 +1,7 @@
-import Mathlib.Order.WithBot
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.WithBot
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The extended nominal projection
@@ -53,6 +55,8 @@ which this substrate does not represent.
 * [L. J. Adamson, *Gender assignment is local*][adamson-2024]
 * [N. Myler, *Building and interpreting possession sentences*][myler-2016]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

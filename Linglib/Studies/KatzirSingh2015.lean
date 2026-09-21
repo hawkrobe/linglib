@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Katzir and Singh (2015): Economy of Structure and Information
@@ -42,6 +44,8 @@ not represented.
 * [katzir-singh-2015]
 * [magri-2009], [spector-2014], [heim-1991], [hurford-1974], [katzir-2007]
 -/
+
+@[expose] public section
 
 namespace KatzirSingh2015
 

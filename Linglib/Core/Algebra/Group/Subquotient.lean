@@ -6,10 +6,12 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.Subquotient`, beside the GreensRelations stack;
 split `Defs`/`Finite` at upstream time (the cardinality import doubles the import cone).
 -/
-import Linglib.Core.Algebra.Group.Submonoid.Operations
-import Mathlib.Algebra.Group.Prod
-import Mathlib.GroupTheory.Congruence.Hom
-import Mathlib.SetTheory.Cardinal.Finite
+module
+
+public import Linglib.Core.Algebra.Group.Submonoid.Operations
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.GroupTheory.Congruence.Hom
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Subquotients of monoids
@@ -24,6 +26,8 @@ isomorphism.
 
 * `Monoid.IsSubquotient T S`: `T` is a homomorphic image of a submonoid of `S`.
 -/
+
+@[expose] public section
 
 namespace Monoid
 

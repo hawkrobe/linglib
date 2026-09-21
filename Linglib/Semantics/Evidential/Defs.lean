@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Evidentials
@@ -30,6 +32,8 @@ disjoint, so that they partition the parameters the language expresses
 * [aikhenvald-2004], §2.5
 * [willett-1988]
 -/
+
+@[expose] public section
 
 namespace Evidential
 

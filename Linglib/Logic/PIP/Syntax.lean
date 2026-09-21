@@ -1,5 +1,7 @@
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.List.FinRange
+module
+
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.List.FinRange
 
 /-!
 # Syntax of PIP
@@ -37,6 +39,8 @@ Truth is defined in `Semantics.lean` and felicity in `Felicity.lean`.
 * [keshet-abney-2024]
 * [abney-keshet-2025]
 -/
+
+@[expose] public section
 
 namespace PIP
 

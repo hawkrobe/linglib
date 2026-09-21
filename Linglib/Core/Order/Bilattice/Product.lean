@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Bilattice.Interlaced
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Core.Order.Bilattice.Interlaced
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # The Ginsberg–Fitting product bilattice
@@ -38,6 +40,8 @@ term names an older single-factor lineage, so this file keeps Avron's name.
 * the `Interlaced (L ⊙ R)` instance — the four interlacing laws
 * `Product.neg` — Ginsberg negation on the diagonal `L ⊙ L`
 -/
+
+@[expose] public section
 
 /-- Componentwise product of order isomorphisms. `[UPSTREAM]` candidate:
 mathlib has `Equiv.prodCongr` but no order-iso version. -/

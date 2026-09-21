@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.Closure
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Closure
 
 /-!
 # Compatibility Frames (Possibility Semantics for Orthologic)
@@ -41,6 +43,8 @@ Decidability of `compat` is not bundled — use sites take
 idiom), and `[Fintype S]` appears only where decidability of universally
 quantified propositions needs it.
 -/
+
+@[expose] public section
 
 namespace Orthologic
 

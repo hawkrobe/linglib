@@ -1,5 +1,7 @@
-import Mathlib.Basic.Real.Basic
-import Mathlib.Order.BooleanAlgebra.Basic
+module
+
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
 # Semantic types and denotation domains
@@ -32,6 +34,8 @@ composition engine's runtime type dispatch.
 * [D. Gallin, *Intensional and Higher-Order Modal Logic* (1975)][gallin-1975]
 * [B. Partee, M. Rooth, *Generalized Conjunction and Type Ambiguity* (1983)][partee-rooth-1983]
 -/
+
+@[expose] public section
 
 namespace Semantics.Composition
 

@@ -1,7 +1,9 @@
-import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
-import Mathlib.Topology.Algebra.Order.Field
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Exp
+module
+
+public import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
+public import Mathlib.Topology.Algebra.Order.Field
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
 # Maslov Dequantization: `lse α → max` as `α → ∞`
@@ -37,6 +39,8 @@ nothing) and `(log 2) / α` (when `b = a`, the loser contributes a tied
 share). Both bounds tend to `0` as `α → ∞`, so the correction tends to
 `0` by the squeeze theorem, and `lse α a b → a = max a b`.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

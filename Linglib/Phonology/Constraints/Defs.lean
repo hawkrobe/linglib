@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Basic.Real.Basic
-import Mathlib.Algebra.BigOperators.Fin
+module
+
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Constraints
@@ -30,6 +32,8 @@ candidate. A bare `C → ℕ` over an opaque candidate type has no family, by de
 * `weightedViolations` / `harmonyScore` — the Harmonic-Grammar weighted sum
   `Σⱼ wⱼ · Cⱼ(c)` and its negation `H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]).
 -/
+
+@[expose] public section
 
 namespace Constraints
 

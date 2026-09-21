@@ -1,4 +1,6 @@
-import Mathlib.Data.List.Basic
+module
+
+public import Mathlib.Data.List.Basic
 
 /-!
 # Neighborhoods
@@ -24,6 +26,8 @@ empty site, so a context-free Vocabulary Item is written
 `⟨[f₁, f₂], e⟩` and the Elsewhere item `⟨∅, e⟩`. Positions count outward
 from the focus: `left` toward the root, `right` toward the clause.
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

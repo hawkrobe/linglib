@@ -1,4 +1,6 @@
-import Mathlib.Order.Nat
+module
+
+public import Mathlib.Order.Nat
 
 /-!
 # Musan (1995): On the Temporal Interpretation of Noun Phrases
@@ -26,6 +28,8 @@ the third chapter's account of the predication times of noun phrases are not rep
 
 * [musan-1995]
 -/
+
+@[expose] public section
 
 namespace Musan1995
 

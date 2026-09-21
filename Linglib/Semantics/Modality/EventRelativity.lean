@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Event-relative modality
@@ -41,6 +43,8 @@ an event as they do to any other.
 * [hacquard-2006]
 * [hacquard-2010]
 -/
+
+@[expose] public section
 
 namespace Modality
 

@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.BigOperators.Group.List.Basic
-import Mathlib.Algebra.Order.BigOperators.GroupWithZero.List
-import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
+module
+
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.List
+public import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
 
 /-!
 # Incremental RSA: prefix meanings
@@ -38,6 +40,8 @@ the probabilistic turn surveyed in [erk-2022].
 * [F. Schlotterbeck, H. Wang, *An incremental RSA model for adjective ordering preferences in
   referential visual context*][schlotterbeck-wang-2023]
 -/
+
+@[expose] public section
 
 namespace RSA
 

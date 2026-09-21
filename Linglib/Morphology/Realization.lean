@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finset.Union
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Union
 
 /-!
 # Root realizations: indices realized in context
@@ -66,6 +68,8 @@ into `Ctx`, quietly encoding the Categorization Assumption.
   `Interpreted.reduce`, `Hom.profileEq_of_onRoot_eq` — the reduced
   presentation and the strict-merger bound.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

@@ -1,6 +1,8 @@
-import Mathlib.Order.Lattice
-import Mathlib.Order.PropInstances
-import Mathlib.Order.BoundedOrder.Basic
+module
+
+public import Mathlib.Order.Lattice
+public import Mathlib.Order.PropInstances
+public import Mathlib.Order.BoundedOrder.Basic
 
 /-!
 # Relational nouns: the relationalizer and its closures
@@ -35,6 +37,8 @@ possessor slot, the domain and codomain of the relation at each situation.
 * [partee-borschev-2001]
 * [hanink-koontz-garboden-2025]
 -/
+
+@[expose] public section
 
 namespace Possession
 variable {E Y S : Type*}

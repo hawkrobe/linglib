@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Set.Image
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Set.Image
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Control Diagnostics and Profiles
@@ -30,6 +32,8 @@ clauses of its OC signature (`Studies/Landau2013.lean`).
 - `Control.admits`, `Control.ofAttested`: from a profile to its admitted
   diagnostics and back from attested diagnostics to a profile
 -/
+
+@[expose] public section
 
 namespace Control
 

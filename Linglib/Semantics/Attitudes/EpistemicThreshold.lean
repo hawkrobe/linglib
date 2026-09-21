@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Algebra.Order.Ring.Rat
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # Epistemic threshold semantics
@@ -25,6 +27,8 @@ lexicon of Ying et al.'s Language-augmented Bayesian Theory of Mind
 ([ying-zhi-xuan-wong-mansinghka-tenenbaum-2025], their Table 1) lives
 in `Studies/YingEtAl2025.lean`.
 -/
+
+@[expose] public section
 
 namespace EpistemicThreshold
 

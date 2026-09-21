@@ -1,5 +1,7 @@
-import Mathlib.Order.Nat
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Nat
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Grammatical number — the canonical value space
@@ -40,6 +42,8 @@ The [harbour-2014] feature decomposition and its lattice grounding live in
 `Semantics/Plurality/NumberFeatures.lean`; coordinate resolution in
 `Syntax/Number/Resolve.lean`.
 -/
+
+@[expose] public section
 
 /-- Grammatical number: [corbett-2000]'s analytical inventory of number values. -/
 inductive Number where

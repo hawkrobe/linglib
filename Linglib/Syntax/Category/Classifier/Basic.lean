@@ -1,3 +1,5 @@
+module
+
 /-!
 # Classifiers
 
@@ -30,6 +32,8 @@ noun-class languages; the record assembling them is study-local (`Aikhenvald2000
 * [allan-1977]
 * [little-moroney-royer-2022]
 -/
+
+@[expose] public section
 
 namespace Classifier
 

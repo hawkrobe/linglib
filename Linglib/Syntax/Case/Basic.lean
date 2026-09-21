@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finset.Union
-import Mathlib.Order.Fin.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Case
@@ -27,6 +29,8 @@ The Universal Dependencies case tags are the corpus vocabulary, reached through
 * [blake-1994]
 * [de-marneffe-zeman-2021]
 -/
+
+@[expose] public section
 
 /-- Grammatical case — the canonical analytical inventory. -/
 inductive Case where

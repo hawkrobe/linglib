@@ -1,6 +1,8 @@
-import Mathlib.Algebra.Order.Group.Unbundled.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.LinearAlgebra.Matrix.Defs
+module
+
+public import Mathlib.Algebra.Order.Group.Unbundled.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.LinearAlgebra.Matrix.Defs
 
 /-!
 # Indexical fields
@@ -43,6 +45,8 @@ Stereotype Content Model properties.
 * [beltrama-solt-burnett-2023]
 * [burnett-2019]
 -/
+
+@[expose] public section
 
 namespace SocialMeaning
 

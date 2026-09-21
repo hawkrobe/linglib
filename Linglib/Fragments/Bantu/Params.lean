@@ -1,3 +1,5 @@
+module
+
 /-!
 # Bantu noun classes
 
@@ -12,6 +14,8 @@ the status of a gender as interpretable, bearing a core, or uninterpretable, pur
 * [carstens-1991]
 * [carstens-2026]
 -/
+
+@[expose] public section
 
 namespace Bantu
 

@@ -1,3 +1,5 @@
+module
+
 /-!
 # Deixis
 
@@ -14,6 +16,8 @@ and a word-class-neutral carrier exposes it through the `Demonstrative` class.
 * [moroney-2021]
 * [patel-grosz-grosz-2017]
 -/
+
+@[expose] public section
 
 namespace Reference
 

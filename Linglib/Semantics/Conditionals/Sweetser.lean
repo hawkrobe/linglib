@@ -1,3 +1,5 @@
+module
+
 /-!
 # Sweetser's three domains of conditional meaning
 
@@ -16,6 +18,8 @@ Conditionals can express dependencies at three levels:
 presuppose or invite causal interpretations, connecting conditional
 semantics to the causal-model infrastructure in `Causation/`.
 -/
+
+@[expose] public section
 
 namespace Conditional
 

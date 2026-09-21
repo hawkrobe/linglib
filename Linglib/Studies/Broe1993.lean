@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Tactic.FinCases
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Broe 1993: structured specification
@@ -28,6 +30,8 @@ analysis. The Quileute vowel system and its gapped variant are the worked exampl
 
 * [broe-1993]
 -/
+
+@[expose] public section
 
 namespace Broe1993
 

@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The energy source of a force bearer
@@ -24,6 +26,8 @@ Rappaport Hovav and Levin's projectile the second.
 * [M. Rappaport Hovav, B. Levin, *Variable agentivity: polysemy or underspecification?*
   (2024)][rappaport-hovav-levin-2024]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

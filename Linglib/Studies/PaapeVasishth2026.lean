@@ -1,5 +1,7 @@
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum
+module
+
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Paape and Vasishth (2026): Context Ameliorates but Does Not Eliminate Garden-Pathing
@@ -42,6 +44,8 @@ from its earlier work.
 * [paape-vasishth-2026]
 * [altmann-garnham-dennis-1992]
 -/
+
+@[expose] public section
 
 namespace PaapeVasishth2026
 

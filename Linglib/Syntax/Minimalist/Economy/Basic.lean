@@ -1,5 +1,7 @@
-import Mathlib.Data.DFinsupp.WellFounded
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.DFinsupp.WellFounded
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Derivational economy
@@ -25,6 +27,8 @@ is well-founded (Dickson's lemma, `Pi.wellFoundedLT`), so every reference set ha
 * [N. Chomsky, *The Minimalist Program* (1995)][chomsky-1995]
 * [B. Citko and M. Gračanin-Yuksek, *Economy in PF reduction* (2025)][citko-gracanin-yuksek-2025]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

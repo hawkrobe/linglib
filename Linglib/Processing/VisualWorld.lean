@@ -1,6 +1,8 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Visual-World Paradigm
@@ -58,6 +60,8 @@ manipulation, so a lens would have no consumer.
 - Eye-tracker apparatus (saccade detection thresholds, sampling rate) —
   measurement modality
 -/
+
+@[expose] public section
 
 namespace VisualWorld
 

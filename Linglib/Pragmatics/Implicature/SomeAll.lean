@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The canonical *some*/*all* world model
@@ -25,6 +27,8 @@ of richer scenario types (belief worlds, picture cells).
   over a domain of individuals: the literal reading, its stronger
   alternative, and the reading with the implicature computed locally.
 -/
+
+@[expose] public section
 
 /-- The minimal scenario type for evaluating the *some*/*all* scalar
 contrast. Three worlds, parameterized by an implicit entity-set whose

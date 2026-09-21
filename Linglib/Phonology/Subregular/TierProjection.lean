@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Basic
-import Mathlib.Algebra.FreeMonoid.Basic
+module
+
+public import Mathlib.Data.List.Basic
+public import Mathlib.Algebra.FreeMonoid.Basic
 
 /-!
 # Tier Projections (erasing letterwise homomorphisms)
@@ -46,6 +48,8 @@ coincide by `rfl`) is a follow-up.
 
 [goldsmith-1976] [belth-2026]
 -/
+
+@[expose] public section
 
 universe u v
 

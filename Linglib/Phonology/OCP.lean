@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Monotone.Basic
-import Linglib.Core.Data.List.Destutter
+module
+
+public import Mathlib.Order.Monotone.Basic
+public import Linglib.Core.Data.List.Destutter
 
 /-!
 # The Obligatory Contour Principle
@@ -38,6 +40,8 @@ and lives in the thresholded-TSL substrate, not here.
   substrate; the autosegmental reading is in `Autosegmental.Collapse`).
 * `block_eq_self` — antigemination: a rule is blocked when it would violate the OCP.
 -/
+
+@[expose] public section
 
 namespace OCP
 

@@ -1,10 +1,12 @@
-import Mathlib.Algebra.Order.Archimedean.Basic
-import Mathlib.Data.Set.Card
-import Mathlib.Order.Atoms
-import Mathlib.Order.SupClosed
-import Mathlib.Order.Zorn
-import Linglib.Core.Order.Antichain
-import Linglib.Core.Order.Valuation
+module
+
+public import Mathlib.Algebra.Order.Archimedean.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Atoms
+public import Mathlib.Order.SupClosed
+public import Mathlib.Order.Zorn
+public import Linglib.Core.Order.Antichain
+public import Linglib.Core.Order.Valuation
 
 /-!
 # Algebraic mereology
@@ -58,6 +60,8 @@ overlap.
 * [champollion-2017], [hovda-2009], [krifka-1989], [krifka-1998], [link-1983],
   [schwarzschild-1996]
 -/
+
+@[expose] public section
 
 namespace Mereology
 

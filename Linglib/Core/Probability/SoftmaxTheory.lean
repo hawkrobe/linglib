@@ -1,14 +1,16 @@
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.Analysis.MeanInequalities
-import Mathlib.Analysis.Normed.Module.Basic
-import Mathlib.Topology.Instances.RealVectorSpace
-import Mathlib.Probability.Moments.Basic
-import Mathlib.Probability.UniformOn
-import Mathlib.MeasureTheory.Measure.Tilted
-import Mathlib.MeasureTheory.Measure.Count
-import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-import Linglib.Core.Analysis.SpecialFunctions.Softmax
+module
+
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.MeanInequalities
+public import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.Topology.Instances.RealVectorSpace
+public import Mathlib.Probability.Moments.Basic
+public import Mathlib.Probability.UniformOn
+public import Mathlib.MeasureTheory.Measure.Tilted
+public import Mathlib.MeasureTheory.Measure.Count
+public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Softmax: characterization, log-partition function, exponential tilting
@@ -40,6 +42,8 @@ Three faces of `Real.softmax` beyond its elementary algebra.
   `ProbabilityTheory.hasDerivAt_cgf_count`, `MeasureTheory.tilted_count`,
   `ProbabilityTheory.tilted_uniformOn_univ` — the counting-measure face.
 -/
+
+@[expose] public section
 
 open Real Finset
 

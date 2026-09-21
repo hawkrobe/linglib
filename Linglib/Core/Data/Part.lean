@@ -1,5 +1,7 @@
-import Linglib.Core.Order.PartialUnify
-import Mathlib.Data.Part
+module
+
+public import Linglib.Core.Order.PartialUnify
+public import Mathlib.Data.Part
 
 /-!
 # Left-biased choice of partial values
@@ -14,6 +16,8 @@ are bounded above exactly when they agree wherever both are defined
 (`compat_iff`), with `p.or q` the witnessing bound. `[UPSTREAM]`
 candidates for `Mathlib/Data/Part.lean`.
 -/
+
+@[expose] public section
 
 namespace Part
 

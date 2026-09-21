@@ -1,4 +1,6 @@
-import Mathlib.Data.Finset.Defs
+module
+
+public import Mathlib.Data.Finset.Defs
 
 /-!
 # Kripke models
@@ -13,6 +15,8 @@ It is the decidable specialization of the relational primitives of
 
 * [vaananen-2008] — modal dependence logic and team semantics
 -/
+
+@[expose] public section
 
 namespace ModalLogic
 

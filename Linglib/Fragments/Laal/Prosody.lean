@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 
+module
+
 /-!
 # Laal prosodic fragment
 
@@ -15,6 +17,8 @@ and verb roots illustrating M-lowering. Transcriptional facts only — the
 subtonal `[±upper]`/`[±raised]` featural analysis and the M-lowering mechanism
 live in `Studies/Lionnet2022.lean`.
 -/
+
+@[expose] public section
 
 namespace Laal.Prosody
 

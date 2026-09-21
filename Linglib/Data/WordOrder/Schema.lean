@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Word order samples: schema
@@ -17,6 +19,8 @@ does not record for a language is `none`.
 
 * [greenberg-1963]
 -/
+
+@[expose] public section
 
 namespace Data.WordOrder
 

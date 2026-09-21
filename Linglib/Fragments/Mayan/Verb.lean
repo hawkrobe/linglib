@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Mayan transitive verb classes
@@ -12,6 +14,8 @@ of the K'ichean languages select their allomorphs by the class.
 * [heaton-deen-ogrady-2016]
 * [mondloch-2017]
 -/
+
+@[expose] public section
 
 namespace Mayan
 

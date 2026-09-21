@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.Defs
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.Lattice
+module
+
+public import Mathlib.Algebra.Group.Defs
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.Lattice
 
 /-!
 # Marked types for the monotonicity calculus
@@ -30,6 +32,8 @@ each arrow marked as monotone (`+`), antitone (`−`), or unmarked
 
 * [icard-moss-tune-2017] — Definitions 3.1–3.3.
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 

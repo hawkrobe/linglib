@@ -1,4 +1,6 @@
-import Mathlib.Control.Monad.Writer
+module
+
+public import Mathlib.Control.Monad.Writer
 
 /-!
 # Writer Monad for Compositional Side-Effects
@@ -35,6 +37,8 @@ See `Studies/Charlow2021.lean` (`PostSupp`) for the same pattern applied to
 dynamic GQs, with the log monoid `(Update S, ○, SetRel.id)` in place of
 `List P`.
 -/
+
+@[expose] public section
 
 universe u
 

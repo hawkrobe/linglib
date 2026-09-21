@@ -1,8 +1,12 @@
+module
+
 /-!
 # Binding Semantics
 
 Data types for H&K-style assignment-based binding semantics.
 -/
+
+@[expose] public section
 
 namespace BindingSemantics
 

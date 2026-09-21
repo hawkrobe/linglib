@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.Surprisal
-import Mathlib.Probability.Distributions.Bernoulli
-import Mathlib.Probability.Kernel.Composition.MapComap
+module
+
+public import Linglib.Core.InformationTheory.Surprisal
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
 # Memory processes
@@ -39,6 +41,8 @@ theory is the lossless special case.
 
 * [futrell-gibson-levy-2020]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory InformationTheory
 open scoped ProbabilityTheory unitInterval

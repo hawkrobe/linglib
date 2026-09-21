@@ -1,8 +1,10 @@
-import Mathlib.Algebra.Group.Defs
-import Mathlib.Basic.Rel
-import Mathlib.Tactic.TypeStar
-import Mathlib.Tactic.ByContra
-import Mathlib.Tactic.Use
+module
+
+public import Mathlib.Algebra.Group.Defs
+public import Mathlib.Basic.Rel
+public import Mathlib.Tactic.TypeStar
+public import Mathlib.Tactic.ByContra
+public import Mathlib.Tactic.Use
 
 /-!
 # The update algebra
@@ -75,6 +77,8 @@ studies. [groenendijk-stokhof-1991]'s entailment notions live in
 * [D. Rothschild and S. Yalcin, *Three Notions of Dynamicness in Language*][rothschild-yalcin-2016]
 * [A. Gillies, *On Groenendijk and Stokhof's "Dynamic Predicate Logic"*][gillies-2022]
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

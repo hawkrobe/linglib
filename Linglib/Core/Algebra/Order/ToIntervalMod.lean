@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Order.Round
-import Mathlib.Algebra.Order.Floor.Semiring
-import Mathlib.Data.Rat.Floor
-import Linglib.Core.Data.Setoid.Basic
+module
+
+public import Mathlib.Algebra.Order.Round
+public import Mathlib.Algebra.Order.Floor.Semiring
+public import Mathlib.Data.Rat.Floor
+public import Linglib.Core.Data.Setoid.Basic
 
 /-!
 # Round-to-multiple bounds and bucket refinement
@@ -34,6 +36,8 @@ on bucket partitions, derived from the kernel keystone
 - `Setoid.ker_floor_div_le_natCast_mul`, `Nat.ker_div_le_of_dvd`: finer
   widths refine the bucket partition
 -/
+
+@[expose] public section
 
 /-- Finer grain widths refine the bucket partition on ℕ: if `ε₁ ∣ ε₂`, the
 `ε₁`-buckets sit inside the `ε₂`-buckets. -/

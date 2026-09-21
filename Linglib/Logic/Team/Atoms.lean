@@ -1,7 +1,9 @@
-import Linglib.Core.Relation.FactorsThroughOn
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Set.Restrict
-import Mathlib.Order.UpperLower.Basic
+module
+
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Set.Restrict
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Dependence and variation atoms
@@ -36,6 +38,8 @@ Teams are finite so that the atoms are decidable over a finite domain.
 * [vaananen-2007]
 * [degano-aloni-2025]
 -/
+
+@[expose] public section
 
 namespace Team
 

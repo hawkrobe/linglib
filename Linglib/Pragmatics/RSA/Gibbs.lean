@@ -1,12 +1,14 @@
-import Mathlib.MeasureTheory.Measure.Tilted
-import Mathlib.MeasureTheory.Measure.Count
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-import Mathlib.Probability.Kernel.Posterior
-import Mathlib.InformationTheory.KullbackLeibler.Basic
-import Mathlib.Analysis.SpecialFunctions.Exp
-import Mathlib.Order.Filter.AtTopBot.Field
-import Linglib.Core.Probability.GibbsVariational
+module
+
+public import Mathlib.MeasureTheory.Measure.Tilted
+public import Mathlib.MeasureTheory.Measure.Count
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Mathlib.Probability.Kernel.Posterior
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Order.Filter.AtTopBot.Field
+public import Linglib.Core.Probability.GibbsVariational
 
 /-!
 # The RSA speaker as a Gibbs (exponentially-tilted) measure
@@ -47,6 +49,8 @@ reimplementation, and is the object on which the variational (free-energy /
 * `speaker_isGreatest` — the RSA speaker is the **rational optimizer** (Gibbs /
   Donsker–Varadhan variational principle).
 -/
+
+@[expose] public section
 
 open MeasureTheory Real Filter Topology
 open scoped ENNReal

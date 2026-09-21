@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.RingTheory.Coalgebra.Basic
-import Linglib.Core.RingTheory.Coalgebra.Convolution
-import Linglib.Core.RingTheory.Bialgebra.Basic
-import Mathlib.Algebra.Lie.OfAssociative
-import Mathlib.Algebra.Lie.Subalgebra
+module
+
+public import Linglib.Core.RingTheory.Coalgebra.Basic
+public import Linglib.Core.RingTheory.Coalgebra.Convolution
+public import Linglib.Core.RingTheory.Bialgebra.Basic
+public import Mathlib.Algebra.Lie.OfAssociative
+public import Mathlib.Algebra.Lie.Subalgebra
 
 /-!
 # Dual-primitive functionals on a bialgebra
@@ -34,6 +36,8 @@ finite dual it coincides with `IsPrimitiveElem`.
 `[UPSTREAM]` target: `Mathlib.RingTheory.Bialgebra.Primitive` (created by
 mathlib4#39841), as the dual companion of `IsPrimitiveElem`.
 -/
+
+@[expose] public section
 
 namespace Bialgebra
 

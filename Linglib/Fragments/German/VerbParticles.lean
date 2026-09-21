@@ -1,4 +1,6 @@
-import Mathlib.Tactic.FinCases
+module
+
+public import Mathlib.Tactic.FinCases
 
 /-!
 # German Verbal Prefix and Particle Verbs
@@ -32,6 +34,8 @@ ergative-particle / SC-head proposal.
 * `IsSeparable` predicate with decidable instance.
 
 -/
+
+@[expose] public section
 
 namespace German.VerbParticles
 

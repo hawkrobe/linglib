@@ -1,3 +1,5 @@
+module
+
 /-!
 # Expressive
 [potts-2007b] [kubota-2026]
@@ -13,6 +15,8 @@ a denotation. It is `Prop`-free and depends on no theory layer, so Fragments may
 without pulling in any account of conventional implicature. The diagnostic *fingerprint*
 (`Pragmatics.Expressives.SecondaryMeaningProperties`) and the denotations live one layer up.
 -/
+
+@[expose] public section
 
 namespace Pragmatics.Expressives
 

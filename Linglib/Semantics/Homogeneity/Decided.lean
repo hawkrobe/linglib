@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Subsingleton
+module
+
+public import Mathlib.Data.Set.Subsingleton
 
 /-!
 # Decided domains: the no-gap / force-collapse boundary
@@ -30,6 +32,8 @@ The lemmas are stated over an arbitrary `Set W`, so all three are instances.
   `p` iff the domain is decided.
 * `negRaising_iff_forceCollapse` — the two faces coincide.
 -/
+
+@[expose] public section
 
 namespace Homogeneity
 

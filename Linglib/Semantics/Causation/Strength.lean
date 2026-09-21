@@ -1,6 +1,8 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Causal Strength Models
@@ -20,6 +22,8 @@ Two models are formalized:
 These definitions are theory-layer infrastructure imported by study files
 (e.g., `KonukEtAl2026`).
 -/
+
+@[expose] public section
 
 namespace Causation.Strength
 

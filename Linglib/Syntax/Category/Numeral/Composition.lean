@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Order.Group.Nat
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Algebra.Order.Group.Nat
+public import Mathlib.Tactic.Ring
 
 /-!
 # Hurford's universal numeral grammar
@@ -49,6 +51,8 @@ which of these structures surface) and `Studies/JansenPollmann2001.lean`
 - `Number.exists_value_eq`: every positive number is expressible
   (the tally structure his rule schema (6) generates)
 -/
+
+@[expose] public section
 
 namespace Numeral
 

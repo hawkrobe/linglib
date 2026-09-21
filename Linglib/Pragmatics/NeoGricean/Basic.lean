@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Order.BooleanAlgebra.Set
+module
+
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.BooleanAlgebra.Set
 
 /-!
 # Neo-Gricean pragmatics: secondary implicatures and the Standard Recipe
@@ -41,6 +43,8 @@ implicatures; `K¬ψ` is a secondary implicature iff it is consistent with that 
 * [soames-1982], [horn-1989] — the epistemic modalization `¬Kψ`
 * [vanrooij-schulz-2004], [spector-2006] — the competence step `Kψ ∨ K¬ψ`
 -/
+
+@[expose] public section
 
 namespace NeoGricean
 

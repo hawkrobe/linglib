@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Basic.Rel
-import Mathlib.Order.Basic
-import Mathlib.Logic.Relator
+module
+
+public import Mathlib.Basic.Rel
+public import Mathlib.Order.Basic
+public import Mathlib.Logic.Relator
 
 /-!
 # Control: Basic Definitions
@@ -32,6 +34,8 @@ whose clauses are mathlib vocabulary: refinement `r ⊆ s`,
 - `Control.Mechanism`
 - `Control.IsSaturating`
 -/
+
+@[expose] public section
 
 namespace Control
 

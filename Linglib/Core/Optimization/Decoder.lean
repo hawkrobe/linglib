@@ -1,4 +1,6 @@
-import Linglib.Core.Analysis.SpecialFunctions.Softmax
+module
+
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Decoders — from scored candidates to probability distributions
@@ -40,6 +42,8 @@ on scores is a semiring:
 The zero-temperature limit `softmax → argmax` is precisely the semiring
 homomorphism `log-sum-exp → max` in the limit `α → ∞`; see `Semiring.lean`.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

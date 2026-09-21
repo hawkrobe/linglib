@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The sibilant-harmony tier alphabet
@@ -17,6 +19,8 @@ Substrate only: a study of a particular system supplies its own forbidden-pair r
 over this alphabet — symmetric (`TierStrictlyLocalGrammar.agree`) or asymmetric
 (`TierStrictlyLocalGrammar.ofForbiddenPairs`) — and keeps its language-specific data and citations.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

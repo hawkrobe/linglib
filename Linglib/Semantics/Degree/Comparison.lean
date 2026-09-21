@@ -1,6 +1,8 @@
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Order.Interval.Set.OrdConnected
-import Linglib.Core.Order.StrictBounds
+module
+
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Linglib.Core.Order.StrictBounds
 
 /-!
 # Reified degree comparison
@@ -31,6 +33,8 @@ proofs reduce into `Set.mem_Ici` & friends rather than a bespoke lemma set:
 * `Comparison.over` / `Comparison.overSet` — point- and set-standard predications.
 * `Comparison.boundary_mem` — Class A/B as interval-endpoint membership.
 -/
+
+@[expose] public section
 
 namespace Degree
 

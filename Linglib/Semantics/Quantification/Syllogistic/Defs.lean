@@ -1,5 +1,7 @@
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Syllogistic substrate: types
@@ -18,6 +20,8 @@ Used by:
 - `TesslerTenenbaumGoodman2022` and any
   future Bayesian/RSA/mental-models paper formalisation
 -/
+
+@[expose] public section
 
 namespace Quantifier.Syllogistic
 

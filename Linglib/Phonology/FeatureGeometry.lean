@@ -1,5 +1,7 @@
-import Linglib.Core.Order.SuccPred.Tree
-import Mathlib.Data.Finset.Piecewise
+module
+
+public import Linglib.Core.Order.SuccPred.Tree
+public import Mathlib.Data.Finset.Piecewise
 
 /-!
 # Feature geometry
@@ -43,6 +45,8 @@ spreading, is `Finset.piecewise` on that set, and single-feature spreading is
 * [E. C. Sagey, *The Representation of Features and Relations in Non-Linear Phonology*
   (1986)][sagey-1986]
 -/
+
+@[expose] public section
 
 namespace Phonology.FeatureGeometry
 

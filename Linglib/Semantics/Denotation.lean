@@ -1,4 +1,6 @@
-import Mathlib.Tactic.TypeStar
+module
+
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Denotation
@@ -35,6 +37,8 @@ mathlib's `Term.realize`) and gains an instance once its type is indexed by that
 * [montague-1973]
 * [kaplan-1989]
 -/
+
+@[expose] public section
 
 namespace Semantics
 

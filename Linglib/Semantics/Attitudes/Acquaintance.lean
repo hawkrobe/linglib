@@ -1,4 +1,6 @@
-import Mathlib.Tactic.TypeStar
+module
+
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # De re attitudes by acquaintance
@@ -29,6 +31,8 @@ of a past tense embedded under a past attitude a de re reading.
 * [cresswell-vonstechow-1982]
 * [abusch-1997]
 -/
+
+@[expose] public section
 
 namespace Acquaintance
 

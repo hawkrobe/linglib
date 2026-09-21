@@ -1,5 +1,7 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Typed atoms and small world models for free-choice scenarios
@@ -17,6 +19,8 @@ Shared scenario substrate for the BSML and QBSML free-choice studies
   ([aloni-2022] Figure 1: `w_∅`, `w_a`, `w_b`, `w_ab`), with the typed
   `holds` truth table.
 -/
+
+@[expose] public section
 
 namespace BSML
 

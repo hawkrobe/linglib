@@ -146,18 +146,24 @@ def fix(paths: list[str]) -> int:
             continue
         lines = (ROOT / rel).read_text(encoding='utf-8').split('\n')
         import_lines = [i for i, l in enumerate(lines) if PLAIN_IMPORT_RE.match(l)]
-        if not import_lines:
-            print(f'skipped {rel}: no imports to anchor on, convert by hand', file=sys.stderr)
-            status = 1
-            continue
-        first, last = import_lines[0], import_lines[-1]
+        if import_lines:
+            first, last = import_lines[0], import_lines[-1]
+            after = last + 1
+        else:
+            # No imports: `module` goes after the copyright comment, if there is one.
+            first = 0
+            if lines and lines[0].startswith('/-') and not lines[0].startswith('/-!'):
+                first = next(i for i, l in enumerate(lines) if '-/' in l) + 1
+                while first < len(lines) and not lines[first].strip():
+                    first += 1
+            after = first
         # End of the module docstring, if one follows the imports.
-        section_at = last + 1
-        doc = next((i for i in range(last + 1, len(lines)) if lines[i].strip()), None)
+        section_at = after
+        doc = next((i for i in range(after, len(lines)) if lines[i].strip()), None)
         if doc is not None and lines[doc].startswith('/-!'):
             section_at = next(i for i in range(doc, len(lines)) if '-/' in lines[i]) + 1
         lines[section_at:section_at] = ['', '@[expose] public section']
-        for i in range(first, last + 1):
+        for i in import_lines:
             lines[i] = PLAIN_IMPORT_RE.sub('public import ', lines[i])
         lines[first:first] = ['module', '']
         (ROOT / rel).write_text('\n'.join(lines), encoding='utf-8')

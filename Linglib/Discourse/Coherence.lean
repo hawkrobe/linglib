@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Coherence relations
@@ -26,6 +28,8 @@ exchanged, and Denial of Preventer is Violated Expectation with the segments exc
 * [kehler-2002]
 * [hobbs-1979]
 -/
+
+@[expose] public section
 
 namespace Discourse.Coherence
 

@@ -1,5 +1,7 @@
-import Mathlib.Order.Basic
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Rules of exponence
@@ -15,6 +17,8 @@ This file defines the `Exponence.Rule` typeclass, pairing an exponent
   Elsewhere Condition); not an instance — each engine installs it on its
   own carrier.
 -/
+
+@[expose] public section
 
 namespace Morphology.Exponence
 

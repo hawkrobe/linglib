@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Proto-role entailment profiles
@@ -48,6 +50,8 @@ flat-counting selection principle is preserved for comparison in
 Causation priority ([davis-koenig-2000]) needs no extra clause: it falls out
 of feature-set inclusion.
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

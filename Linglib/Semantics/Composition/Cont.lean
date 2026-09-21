@@ -1,4 +1,6 @@
-import Mathlib.Control.Monad.Cont
+module
+
+public import Mathlib.Control.Monad.Cont
 
 /-!
 # Evaluating continuation computations
@@ -17,6 +19,8 @@ applications see `Studies/BumfordCharlow2024.lean` and
 
 - <https://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-Cont.html#v:evalCont>
 -/
+
+@[expose] public section
 
 universe u v
 

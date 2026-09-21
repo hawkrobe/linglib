@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Image
-import Mathlib.Data.Finset.Insert
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Finset.Prod
-import Linglib.Core.Order.Monotone.Monovary
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Finset.Prod
+public import Linglib.Core.Order.Monotone.Monovary
 
 /-!
 # Non-crossing constraint for two-layer association lines
@@ -41,6 +43,8 @@ filter on autosegmental GEN.
   node's window; `IsNonCrossing.union_of_leftBound` / `union_of_rightBound`: spreading to the
   nearest index on one side never crosses.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

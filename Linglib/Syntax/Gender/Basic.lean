@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.BigOperators
-import Linglib.Core.Relation.FactorsThroughOn
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.BigOperators
+public import Linglib.Core.Relation.FactorsThroughOn
 
 /-!
 # Gender systems
@@ -53,6 +55,8 @@ assignment systems of `Syntax/Gender/Assignment.lean`.
 * [corbett-fedden-2016] — canonical gender
 * [harbour-2014] — the universal calculi of number and person, which gender lacks
 -/
+
+@[expose] public section
 
 /-- Comparative-concept labels for controller genders ([corbett-1991]).
 

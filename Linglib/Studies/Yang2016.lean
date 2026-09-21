@@ -1,7 +1,9 @@
-import Mathlib.NumberTheory.Harmonic.Bounds
-import Mathlib.NumberTheory.Harmonic.Int
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Tactic.Positivity
+module
+
+public import Mathlib.NumberTheory.Harmonic.Bounds
+public import Mathlib.NumberTheory.Harmonic.Int
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Tactic.Positivity
 
 /-!
 # Yang (2016): The Price of Linguistic Productivity
@@ -35,6 +37,8 @@ Mathlib's convention that division by zero is zero makes the threshold vanish at
 * [yang-2016]
 * [yang-2005]
 -/
+
+@[expose] public section
 
 namespace Yang2016
 

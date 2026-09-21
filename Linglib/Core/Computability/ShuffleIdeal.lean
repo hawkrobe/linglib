@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.MyhillNerode
-import Mathlib.Data.Nat.Find
-import Linglib.Core.Order.WellFoundedSet
+module
+
+public import Mathlib.Computability.MyhillNerode
+public import Mathlib.Data.Nat.Find
+public import Linglib.Core.Order.WellFoundedSet
 
 /-!
 # Shuffle ideals and sublist-closed languages
@@ -29,6 +31,8 @@ sublist-closed language is the complement of finitely many shuffle ideals (by Hi
   basis.
 * `Language.IsSublistClosed.isRegular`: Haines' theorem.
 -/
+
+@[expose] public section
 
 open List
 

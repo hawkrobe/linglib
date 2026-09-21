@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Tense and tense forms
@@ -34,6 +36,8 @@ each is a matter of analysis left to studies.
 * `Tense.Periphrasis`, `Tense.Periphrasis.realize`: a language's means of building tense forms
   over its verbs, and the words of a form of a verb.
 -/
+
+@[expose] public section
 
 /-- A grammatical tense is past, present or future. -/
 inductive Tense where

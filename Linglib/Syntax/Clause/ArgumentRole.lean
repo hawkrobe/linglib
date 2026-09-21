@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Comparative argument roles
@@ -25,6 +27,8 @@ linking theories relating the two tiers live in
 * [comrie-1978]
 * [haspelmath-2021]
 -/
+
+@[expose] public section
 
 /-- Argument roles spanning monotransitive and ditransitive clauses,
     following [comrie-1978] and [haspelmath-2021] in using S/A/P/R/T

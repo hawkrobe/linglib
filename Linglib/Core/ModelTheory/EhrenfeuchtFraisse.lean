@@ -1,5 +1,7 @@
-import Linglib.Core.ModelTheory.QuantifierRank
-import Mathlib.ModelTheory.Bundled
+module
+
+public import Linglib.Core.ModelTheory.QuantifierRank
+public import Mathlib.ModelTheory.Bundled
 
 /-!
 # Ehrenfeucht–Fraïssé: n-equivalence and first-order inexpressibility
@@ -21,6 +23,8 @@ itself is `BoundedFormula.qr` (this directory).
 * `FirstOrder.Language.FODefinable` — a structure property captured by a sentence.
 * `FirstOrder.Language.not_foDefinable_of_nEquiv` — the EF inexpressibility corollary.
 -/
+
+@[expose] public section
 
 universe u v w
 

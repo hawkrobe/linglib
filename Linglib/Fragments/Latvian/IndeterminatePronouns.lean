@@ -1,3 +1,5 @@
+module
+
 /-!
 # Latvian Indeterminate Pronoun Paradigm
 [haspelmath-1997] [kratzer-shimoyama-2002]
@@ -19,6 +21,8 @@ different particles.
 
 Diacritics omitted following [kratzer-shimoyama-2002].
 -/
+
+@[expose] public section
 
 namespace Latvian.IndeterminatePronouns
 

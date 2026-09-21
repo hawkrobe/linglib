@@ -1,5 +1,7 @@
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Honorific levels
@@ -27,6 +29,8 @@ to a form and not to an utterance. It is independent of the form's register,
 
 * [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
+
+@[expose] public section
 
 namespace SocialMeaning
 

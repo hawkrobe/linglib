@@ -1,3 +1,5 @@
+module
+
 /-!
 # Degree constructions
 
@@ -6,6 +8,8 @@ predicate can appear in — bare positive, comparative, equative, measure
 phrase, and degree question ([beck-2011], [rett-2015]). The Deg⁰ head
 inventory is defined in `Linglib/Syntax/Category/Degree/Basic.lean`.
 -/
+
+@[expose] public section
 
 namespace Degree
 

@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Algebra.Group.Basic
-import Mathlib.Algebra.Group.Pi.Basic
-import Mathlib.Algebra.Group.TypeTags.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Algebra.Group.Basic
+public import Mathlib.Algebra.Group.Pi.Basic
+public import Mathlib.Algebra.Group.TypeTags.Basic
 
 /-!
 # Dimensions of measurement
@@ -17,6 +19,8 @@ abelian group on the base dimensions, written multiplicatively, so that
 * [zabbal-2005]
 * [de-boer-1995]
 -/
+
+@[expose] public section
 
 namespace Degree
 

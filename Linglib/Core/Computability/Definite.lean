@@ -5,13 +5,15 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.Definite`.
 -/
-import Mathlib.Computability.Language
-import Mathlib.Logic.Function.Basic
-import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Core.Data.List.DropRight
-import Mathlib.Data.Fintype.Order
-import Mathlib.Data.Set.Finite.Lemmas
-import Mathlib.Data.Set.Finite.List
+module
+
+public import Mathlib.Computability.Language
+public import Mathlib.Logic.Function.Basic
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Data.List.DropRight
+public import Mathlib.Data.Fintype.Order
+public import Mathlib.Data.Set.Finite.Lemmas
+public import Mathlib.Data.Set.Finite.List
 
 /-!
 # Definite languages
@@ -38,6 +40,8 @@ tests prefix and suffix jointly ([pin-mfa]).
   finite alphabet, `𝒩 = 𝒟 ∩ 𝒦` [pin-mfa]: a language is finite-or-cofinite iff it
   is definite and reverse-definite.
 -/
+
+@[expose] public section
 
 variable {α : Type*}
 

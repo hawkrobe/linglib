@@ -1,3 +1,5 @@
+module
+
 /-!
 # Polarity Operators
 
@@ -19,6 +21,8 @@ its syntactic realization. The semantics layer only owns the operator.
 Equational simp lemmas (`affirm_eq_id`, `neg_apply`, `neg_neg`) make the
 operators transparent to downstream reasoning.
 -/
+
+@[expose] public section
 
 namespace Polarity
 

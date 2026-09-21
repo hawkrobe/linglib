@@ -3,13 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Basic
-import Mathlib.Order.Lattice
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.Hom.BoundedLattice
-import Mathlib.Order.MinMax
-import Mathlib.Basic.Sign.Defs
-import Linglib.Core.Order.DeMorganAlgebra.Defs
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Order.Lattice
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.Hom.BoundedLattice
+public import Mathlib.Order.MinMax
+public import Mathlib.Basic.Sign.Defs
+public import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
 # Three-valued truth
@@ -55,6 +57,8 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 [kleene-1952] [bochvar-1937] [belnap-1970] [peters-1979] [beaver-krahmer-2001]
 [cobreros-etal-2012] [wang-davidson-2026]
 -/
+
+@[expose] public section
 
 /-- Three-valued truth: the 3-element bounded chain `false < indet < true`.
 Strong Kleene logic ([kleene-1952]) corresponds to the order-derived operations:

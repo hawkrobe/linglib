@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 
+module
+
 /-!
 # Possession: classification vocabulary
 
@@ -23,6 +25,8 @@ looked up in `Data/WALS/Features/`, never restated as substrate.
 * [aikhenvald-2012]
 * [nichols-1986], [nichols-bickel-2013c]
 -/
+
+@[expose] public section
 
 namespace Possession
 

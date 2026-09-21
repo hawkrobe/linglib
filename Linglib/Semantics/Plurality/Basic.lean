@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Powerset
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Powerset
 
 /-!
 # Plural predication over sets of atoms
@@ -24,6 +26,8 @@ plurality.
 * [kriz-spector-2021]
 * [haslinger-etal-2025]
 -/
+
+@[expose] public section
 
 namespace Plurality
 

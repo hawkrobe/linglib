@@ -1,5 +1,7 @@
-import Linglib.Core.Combinatorics.SimpleGraph.MaximalIndepSet
-import Mathlib.Basic.Sign.Defs
+module
+
+public import Linglib.Core.Combinatorics.SimpleGraph.MaximalIndepSet
+public import Mathlib.Basic.Sign.Defs
 
 /-!
 # Dimensions of social evaluation
@@ -31,6 +33,8 @@ of one dimension, and a persona, a maximal set of compatible poles in the sense 
 * [beltrama-solt-burnett-2023]
 * [burnett-2019]
 -/
+
+@[expose] public section
 
 namespace SocialMeaning
 

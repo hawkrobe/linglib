@@ -1,3 +1,5 @@
+module
+
 /-!
 # Proto-role attribution data schema
 
@@ -21,6 +23,8 @@ the paper explicitly attributes or denies the entailment for that argument;
 * `ProtoRoleDatum` — one verb argument's attributed entailments plus a
   locator into the source text.
 -/
+
+@[expose] public section
 
 namespace Dowty1991
 

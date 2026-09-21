@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.OfFn
-import Mathlib.Data.Set.Function
-import Mathlib.Logic.Function.DependsOn
-import Mathlib.Order.Interval.Set.Basic
-import Linglib.Core.Data.List.TakeDrop
+module
+
+public import Mathlib.Data.List.OfFn
+public import Mathlib.Data.Set.Function
+public import Mathlib.Logic.Function.DependsOn
+public import Mathlib.Order.Interval.Set.Basic
+public import Linglib.Core.Data.List.TakeDrop
 
 /-!
 # `DependsOn` for functions on lists
@@ -26,6 +28,8 @@ into the word-pair form consumers use: equal-length lists whose `getElem?` funct
 * `Set.EqOn.take_eq`, `Set.EqOn.drop_eq`, `Set.EqOn.getElem?_eq`: agreement of `getElem?` on
   `Set.Iic j` or `Set.Ici j` transports prefixes and suffixes, in dot-notation form.
 -/
+
+@[expose] public section
 
 namespace List
 

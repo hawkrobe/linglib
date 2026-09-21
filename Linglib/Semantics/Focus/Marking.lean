@@ -1,3 +1,5 @@
+module
+
 /-!
 # Focus marking
 
@@ -14,6 +16,8 @@ cut of the West African focus literature ([hartmann-zimmermann-2007]).
 * [hartmann-zimmermann-2007]
 * [krifka-2008]
 -/
+
+@[expose] public section
 
 namespace Focus
 

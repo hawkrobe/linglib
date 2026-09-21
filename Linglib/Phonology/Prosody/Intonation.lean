@@ -1,4 +1,6 @@
-import Mathlib.Order.Nat
+module
+
+public import Mathlib.Order.Nat
 
 /-!
 # Prosody
@@ -21,6 +23,8 @@ These types are used across multiple theories:
 - Autosegmental phonology: tone and register systems
 
 -/
+
+@[expose] public section
 
 namespace Prosody
 

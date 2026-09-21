@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.Finset.NAry
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Finset.Prod
+module
+
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Data.Finset.NAry
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Finset.Prod
 
 /-!
 # Phi lattices and their operations
@@ -40,6 +42,8 @@ feature geometry) and `Phi.Recursion` (the number calculus).
   `oplus_nePowerset_containing`), with Lexical Complementarity between two such
   (`mem_lexComp_containing_iff`).
 -/
+
+@[expose] public section
 
 namespace Minimalist.Phi.Lattice
 

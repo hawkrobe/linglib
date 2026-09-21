@@ -5,12 +5,14 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.TransitionMonoid`.
 -/
-import Linglib.Core.Algebra.Group.End
-import Linglib.Core.Algebra.Opposites
-import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.Computability.DFA
-import Mathlib.GroupTheory.Congruence.Basic
-import Mathlib.GroupTheory.Congruence.Hom
+module
+
+public import Linglib.Core.Algebra.Group.End
+public import Linglib.Core.Algebra.Opposites
+public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Computability.DFA
+public import Mathlib.GroupTheory.Congruence.Basic
+public import Mathlib.GroupTheory.Congruence.Hom
 
 /-!
 # The transition monoid of a DFA
@@ -36,6 +38,8 @@ is an anti-homomorphism, so the target of `DFA.transitionHom` is the opposite mo
 transformations. `DFA` has a total `step`, so the transformations here are total and the target is
 `Function.End σ`.
 -/
+
+@[expose] public section
 
 universe u v
 

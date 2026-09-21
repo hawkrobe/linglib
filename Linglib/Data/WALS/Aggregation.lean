@@ -1,3 +1,5 @@
+module
+
 /-!
 # Data.WALS.Aggregation
 
@@ -14,6 +16,8 @@ Substrate-only: depends on no Data/WALS feature files. Each consumer
 imports this module and constructs its `List WALSCount` from
 `Data.WALS.F{N}A.allData`.
 -/
+
+@[expose] public section
 
 namespace Data.WALS
 

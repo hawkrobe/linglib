@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Basic
+module
+
+public import Linglib.Core.Data.RoseTree.Basic
 
 /-!
 # Partial label maps on rose trees
@@ -23,6 +25,8 @@ dropped. It is the rose-tree analogue of `List.filterMap`.
 * `RoseTree.filterMap_some`: a total map drops nothing,
   `filterMap (fun a => some (g a)) t = some (map g t)`.
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

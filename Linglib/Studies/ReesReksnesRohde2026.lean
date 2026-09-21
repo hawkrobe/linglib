@@ -1,5 +1,7 @@
-import Mathlib.Algebra.Order.Ring.Rat
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Tactic.Ring
 
 /-!
 # Rees, Reksnes, and Rohde (2026): Why are you telling me this? The availability and timing of relevance inferences
@@ -48,6 +50,8 @@ and constant for what it excluded.
 * [L. Bott, I. A. Noveck, *Some utterances are underinformative: the onset and time course of
   scalar inferences* (2004)][bott-noveck-2004]
 -/
+
+@[expose] public section
 
 namespace ReesReksnesRohde2026
 

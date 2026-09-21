@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Finite.Basic
-import Mathlib.Order.WellFounded
+module
+
+public import Mathlib.Data.Set.Finite.Basic
+public import Mathlib.Order.WellFounded
 
 /-!
 # Alternatives and minimal worlds
@@ -17,6 +19,8 @@ from one.
 * [groenendijk-stokhof-1984]
 * [spector-2016]
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

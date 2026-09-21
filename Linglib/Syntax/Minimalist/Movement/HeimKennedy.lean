@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Defs
+module
+
+public import Mathlib.Data.Set.Defs
 
 /-!
 # Degree movement
@@ -23,6 +25,8 @@ position.
 * [bhatt-takahashi-2011]
 * [kennedy-1999]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Krifka (2013): Definitional Generics
@@ -44,6 +46,8 @@ do (`defUpdateTopic_descUpdate`).
 * [cohen-2001] — the rule types of indefinite-singular generics
 * [greenberg-2007], [kripke-1980] — in-virtue-of generics; necessity a posteriori
 -/
+
+@[expose] public section
 
 namespace Krifka2013
 

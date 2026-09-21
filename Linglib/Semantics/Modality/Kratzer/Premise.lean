@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Data.List.Sublists
+module
+
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.List.Sublists
 
 /-!
 # Premise sets
@@ -33,6 +35,8 @@ index is: worlds, situations, or times.
 * [A. Kratzer, *What 'must' and 'can' must and can mean* (1977)][kratzer-1977]
 * [A. Kratzer, *Modals and Conditionals* (2012)][kratzer-2012]
 -/
+
+@[expose] public section
 
 namespace Modality.Kratzer
 

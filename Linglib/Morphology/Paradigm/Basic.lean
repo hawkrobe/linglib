@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Image
-import Mathlib.Data.Rat.Defs
-import Linglib.Core.Data.Setoid.Basic
+module
+
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Rat.Defs
+public import Linglib.Core.Data.Setoid.Basic
 
 /-!
 # Paradigms: forms over ordered cells
@@ -28,6 +30,8 @@ paradigms over graded cells.
 * `eComplexity` — count of inflection classes (Ackerman-Malouf
   E-complexity)
 -/
+
+@[expose] public section
 
 namespace Morphology
 

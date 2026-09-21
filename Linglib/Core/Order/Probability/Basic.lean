@@ -1,7 +1,9 @@
-import Linglib.Core.Order.Probability.Defs
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Data.Set.Image
-import Mathlib.Logic.Equiv.Set
+module
+
+public import Linglib.Core.Order.Probability.Defs
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Data.Set.Image
+public import Mathlib.Logic.Equiv.Set
 
 /-!
 # Qualitative probability orders: basic API
@@ -17,6 +19,8 @@ set-carriers: pullback along an injection (`comap`) and along an equivalence
   `sup_le_sup`.
 * `QualitativeProbability.comap`, `transport`, `elim0`.
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

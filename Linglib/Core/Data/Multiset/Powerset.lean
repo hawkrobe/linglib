@@ -3,13 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.List.Sublists
-import Linglib.Core.Data.List.Zip
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Multiset.Bind
-import Mathlib.Data.Multiset.Powerset
-import Mathlib.Data.Nat.Choose.Basic
-import Mathlib.Tactic.Abel
+module
+
+public import Linglib.Core.Data.List.Sublists
+public import Linglib.Core.Data.List.Zip
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Multiset.Bind
+public import Mathlib.Data.Multiset.Powerset
+public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Tactic.Abel
 
 /-!
 # Decomposing and counting `Multiset.powerset`
@@ -40,6 +42,8 @@ unconditional induction hypothesis absorbs the `s ≰ t` boundary cases by
 `Mathlib.Data.Multiset.Powerset`.
 
 -/
+
+@[expose] public section
 
 namespace Multiset
 

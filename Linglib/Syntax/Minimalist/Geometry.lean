@@ -1,4 +1,6 @@
-import Mathlib.Data.Finset.Basic
+module
+
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Feature geometries
@@ -24,6 +26,8 @@ common feature, the premise of coordination resolution without default insertion
 * [adamson-anagnostopoulou-2025]
 * [deal-2025a]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

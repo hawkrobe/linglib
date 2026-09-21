@@ -3,13 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.Defs
-import Mathlib.CategoryTheory.Monoidal.OfHasFiniteProducts
-import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
-import Mathlib.CategoryTheory.Limits.Shapes.Terminal
-import Mathlib.Data.List.OfFn
-import Mathlib.Data.Fintype.Basic
-import Linglib.Core.Data.Fin.Tuple.Basic
+module
+
+public import Mathlib.Algebra.Group.Defs
+public import Mathlib.CategoryTheory.Monoidal.OfHasFiniteProducts
+public import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
+public import Mathlib.CategoryTheory.Limits.Shapes.Terminal
+public import Mathlib.Data.List.OfFn
+public import Mathlib.Data.Fintype.Basic
+public import Linglib.Core.Data.Fin.Tuple.Basic
 
 /-!
 # The monoidal category of labeled finite tuples
@@ -42,6 +44,8 @@ links — consume those directly rather than the opaque coproduct tensor.
 * `MonoidalCategory`/`SymmetricCategory (LabeledTuple α)` — the cocartesian
   structure: `concat` as `⊗` (up to coproduct iso), `empty` as `𝟙_`.
 -/
+
+@[expose] public section
 
 universe u
 

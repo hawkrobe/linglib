@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Image
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Exhaustification
@@ -40,6 +42,8 @@ restriction and the formal alternative source. The innocent excluder is `innocen
 * [fox-katzir-2011]
 * [magri-2009]
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

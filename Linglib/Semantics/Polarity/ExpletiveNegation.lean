@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Insert
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Expletive negation
@@ -19,6 +21,8 @@ namespace with the markers and strategies of standard negation in `Syntax/Negati
 * [jin-koenig-2021]
 * [rett-2026]
 -/
+
+@[expose] public section
 
 namespace Negation
 

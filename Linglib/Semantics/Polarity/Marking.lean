@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Polarity-marking strategies
@@ -32,6 +34,8 @@ encoded, so entries under one strategy may differ in it. This is a separate syst
 * [matic-nikolaeva-2018]
 * [garassino-jacob-2018]
 -/
+
+@[expose] public section
 
 namespace Polarity.Marking
 

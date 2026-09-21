@@ -1,3 +1,5 @@
+module
+
 /-!
 # Cantonese phase complements
 
@@ -17,6 +19,8 @@ the diagnostics separating them from resultative verb compounds, are the analysi
 * [wong-shing-kit-2018]
 * [liu-yip-2026]
 -/
+
+@[expose] public section
 
 namespace Cantonese.ResultativeComplements
 

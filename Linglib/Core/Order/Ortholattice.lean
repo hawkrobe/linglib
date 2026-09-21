@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Order.CompleteLattice.Basic
-import Mathlib.Order.Disjoint
-import Linglib.Core.Order.DeMorganAlgebra.Defs
+module
+
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Order.CompleteLattice.Basic
+public import Mathlib.Order.Disjoint
+public import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
 # Orthocomplemented Lattices
@@ -64,6 +66,8 @@ provides every ingredient (`Submodule.orthogonal`, `inf_orthogonal_eq_bot`,
 `le_orthogonal_orthogonal`) but stops short of packaging an
 `OrthocomplementedLattice` instance because the typeclass is missing.
 -/
+
+@[expose] public section
 
 /-- An *orthocomplemented lattice* (ortholattice) is a `LatticeWithInvolution`
     additionally satisfying non-contradiction (`a ⊓ aᶜ ≤ ⊥`) and excluded middle

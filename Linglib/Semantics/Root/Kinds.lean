@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Order.UpperLower.Closure
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.UpperLower.Closure
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Root kind signatures
@@ -32,6 +34,8 @@ entails a prior change.
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
 * [beavers-etal-2021]: States and changes of state.
 -/
+
+@[expose] public section
 
 namespace Semantics
 

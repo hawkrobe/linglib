@@ -1,4 +1,6 @@
-import Mathlib.Tactic.NormNum
+module
+
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Labov (2012): Dialect Diversity in America
@@ -23,6 +25,8 @@ the figure and page on which they appear were not checked against a copy of the 
 * [labov-2012]
 * [labov-2006]
 -/
+
+@[expose] public section
 
 namespace Labov2012
 

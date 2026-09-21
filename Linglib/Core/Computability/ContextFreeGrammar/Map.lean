@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.ContextFreeGrammar
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar
 
 /-!
 # Context-free languages are closed under string homomorphisms
@@ -29,6 +31,8 @@ language under it is context-free: replace every terminal `a` in every rule by t
 
 * [hopcroft-motwani-ullman-2000]
 -/
+
+@[expose] public section
 
 open scoped Classical
 

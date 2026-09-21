@@ -1,5 +1,7 @@
-import Mathlib.Logic.Function.Basic
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Variable assignments
@@ -37,6 +39,8 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   variable-binding state (interpretation tables, lookup arrays) should
   stay a plain function type.
 -/
+
+@[expose] public section
 
 /-! ### Total assignments -/
 

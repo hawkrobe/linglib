@@ -1,4 +1,6 @@
-import Mathlib.Tactic.TypeStar
+module
+
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Event types as phase signatures
@@ -25,6 +27,8 @@ its precondition and consequence are the prior and result states of
 * `EventPhase.isTelic` / `EventPhase.isAtelic` — whether the consequence
   differs from the precondition (a state change) or coincides with it.
 -/
+
+@[expose] public section
 
 variable {W : Type*}
 

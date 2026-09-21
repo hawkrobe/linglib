@@ -1,4 +1,6 @@
-import Linglib.Core.Order.Interval
+module
+
+public import Linglib.Core.Order.Interval
 
 /-!
 # Kiparsky (2002): Event Structure and the Perfect
@@ -45,6 +47,8 @@ activity be presupposed and the change of state asserted, the source of the Wh-p
 * [declerck-1991]
 * [klein-1992]
 -/
+
+@[expose] public section
 
 namespace Kiparsky2002
 

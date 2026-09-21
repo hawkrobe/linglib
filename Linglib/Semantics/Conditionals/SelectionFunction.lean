@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Selection Functions
@@ -23,6 +25,8 @@ conditionals all rely on selection functions of this form.
 Behavior on empty `A` is left unspecified: the axioms are vacuous
 there, and concrete instances may pick any default.
 -/
+
+@[expose] public section
 
 namespace Conditional
 

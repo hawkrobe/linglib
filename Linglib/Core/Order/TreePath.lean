@@ -1,8 +1,10 @@
-import Mathlib.Data.List.Infix
-import Mathlib.Order.SuccPred.Archimedean
-import Mathlib.Order.Atoms
-import Mathlib.Order.SuccPred.Tree
-import Linglib.Core.Order.LeftLinear
+module
+
+public import Mathlib.Data.List.Infix
+public import Mathlib.Order.SuccPred.Archimedean
+public import Mathlib.Order.Atoms
+public import Mathlib.Order.SuccPred.Tree
+public import Linglib.Core.Order.LeftLinear
 
 /-!
 # Tree Positions: `TreePath` and the Rooted-Tree Order Stack
@@ -28,6 +30,8 @@ Positions are pure combinatorics, instantiable by any rose-tree
 carrier (CFG derivation trees via Gorn addresses, Hopf-algebra rooted
 trees, constituency trees) without importing linguistic theory.
 -/
+
+@[expose] public section
 
 /-! ### Generic list API: longest common prefix
 

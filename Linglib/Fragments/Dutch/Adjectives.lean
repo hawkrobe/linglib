@@ -1,3 +1,5 @@
+module
+
 /-!
 # Dutch Adjective Lexicon Fragment
 [mcnally-deswart-2011] [broekhuis-keizer-2011]
@@ -34,6 +36,8 @@ The suffix `-heid` derives a non-neuter noun from an adjective base:
 adjectives admit `-heid` derivation; concrete adjectives (`dicht` 'closed')
 admit it less productively than abstract ones.
 -/
+
+@[expose] public section
 
 namespace Dutch.Adjectives
 

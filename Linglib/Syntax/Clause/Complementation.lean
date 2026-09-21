@@ -1,5 +1,7 @@
-import Mathlib.Order.Basic
-import Mathlib.Data.Nat.Basic
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Data.Nat.Basic
 
 /-!
 # Complementation — Noonan typology and control
@@ -29,6 +31,8 @@ typological vocabulary rather than analytical commitments.
 * `ControlType` — subject/object control vs raising for infinitival
   complements
 -/
+
+@[expose] public section
 
 /--
 Control type for verbs with infinitival complements.

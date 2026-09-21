@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
-import Mathlib.MeasureTheory.Measure.Prod
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.Probability.ConditionalProbability
+module
+
+public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Measures on a product at atoms
@@ -18,6 +20,8 @@ marginals; and a product measure, conditioned on an event of the first coordinat
 given by its fibers over a finite second coordinate. `[UPSTREAM]` candidate for
 `Mathlib/MeasureTheory/Measure/Prod.lean`.
 -/
+
+@[expose] public section
 
 open ProbabilityTheory
 open scoped ENNReal

@@ -1,9 +1,11 @@
-import Linglib.Core.Probability.Decision.Basic
-import Linglib.Core.Analysis.Convex.Function
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Analysis.Convex.Jensen
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Basic.Real.Basic
+module
+
+public import Linglib.Core.Probability.Decision.Basic
+public import Linglib.Core.Analysis.Convex.Function
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Analysis.Convex.Jensen
+public import Mathlib.Data.Rat.Cast.Order
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Experiments, posteriors and the expected value of information
@@ -38,6 +40,8 @@ unconditional. `decisionValue` is the `Finset.sup'` of the linear functionals
 * [van-rooy-2003]
 * [blackwell-1953]
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

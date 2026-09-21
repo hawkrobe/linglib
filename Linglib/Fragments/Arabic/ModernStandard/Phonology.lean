@@ -1,4 +1,6 @@
-import Mathlib.Data.Finset.Insert
+module
+
+public import Mathlib.Data.Finset.Insert
 
 /-!
 # Modern Standard Arabic phonology
@@ -8,6 +10,8 @@ place class `Consonant.IsLabial` consumed by the OCP-Place co-occurrence literat
 consensus values /dʒ/ (ج) and /ðˤ/ (ظ) are those of [ryding-2005]; corpus-transcription
 traditions write them as g and zˤ.
 -/
+
+@[expose] public section
 
 namespace Arabic.ModernStandard
 
