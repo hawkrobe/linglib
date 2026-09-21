@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.Root.Defs

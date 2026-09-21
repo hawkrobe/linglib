@@ -1,4 +1,5 @@
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Defs
+import Linglib.Semantics.Aspect.Viewpoint
 import Mathlib.Data.Finset.Image
 
 /-!

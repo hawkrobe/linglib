@@ -3,7 +3,7 @@ import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.TriggerTypology
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass

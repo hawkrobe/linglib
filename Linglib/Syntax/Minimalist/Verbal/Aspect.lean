@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Aspect Heads (Outer / Inner Split)
@@ -25,7 +25,7 @@ unchanged.
 
 ## What does NOT live here
 
-- The viewpoint-aspect denotation (`Semantics/Aspect/Basic.lean`
+- The viewpoint-aspect denotation (`Semantics/Aspect/Viewpoint.lean`
   `ViewpointType`). Travis, MacDonald, Tsai disagree on AspO denotation, so
   "AspP_outer hosts viewpoint aspect" is *not* a uniform substrate identity.
   Per-morpheme bridges live in the relevant Fragment files (e.g.,
@@ -37,7 +37,7 @@ unchanged.
   (Aktionsart-derived), (b) a *selectional requirement* on AspO to combine
   with a dynamic complement. We model only (b) here, by exposing
   `selectsDynamicity : Option Aspect.Dynamicity`. The predicate-side
-  property already lives in `Semantics/Aspect/Basic.lean` (`Dynamicity`); this
+  property already lives in `Semantics/Aspect/Defs.lean` (`Dynamicity`); this
   field on AspHead encodes which value (if any) the head requires.
 
 - [liu-yip-2026]'s Cantonese -faan does NOT carry the dynamicity

@@ -33,7 +33,7 @@ The eval* operators instantiate the situation (fixing world and time).
 
 -/
 
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 import Linglib.Semantics.Quantification.Basic
 
 namespace Tense.TenseAspectComposition

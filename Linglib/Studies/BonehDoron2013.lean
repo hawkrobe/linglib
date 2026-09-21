@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Genericity.Basic
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.Kratzer.Ordering
 

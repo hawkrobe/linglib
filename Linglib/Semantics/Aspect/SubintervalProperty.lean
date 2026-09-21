@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Order.UpperLower.Basic
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Defs
+import Linglib.Semantics.Aspect.Viewpoint
 
 /-!
 # The Subinterval Property
@@ -131,7 +132,7 @@ theorem hasClosedSubintervalProp_iff_witnesses {P : W → Event T → Prop} :
     the extensional imperfective entails the perfective, and for telic ones
     it need not.
 
-    `Semantics/Aspect/Basic.lean` carries the VendlerClass enum used to
+    `Semantics/Aspect/Defs.lean` carries the VendlerClass enum used to
     state the consumer-side facts (`c = .state ∨ c = .activity` for
     SUB-having classes). Here we prove the operator-level consequences:
 

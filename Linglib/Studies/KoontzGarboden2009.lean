@@ -1,3 +1,4 @@
+import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 import Linglib.Fragments.Romance.Spanish.Verbs

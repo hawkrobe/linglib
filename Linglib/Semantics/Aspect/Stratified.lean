@@ -1,6 +1,6 @@
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 
 /-!
 # Stratified reference [champollion-2017]

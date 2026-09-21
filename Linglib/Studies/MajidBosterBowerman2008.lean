@@ -1,4 +1,3 @@
-import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
