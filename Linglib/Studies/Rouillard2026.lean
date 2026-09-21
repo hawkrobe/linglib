@@ -118,16 +118,16 @@ theorem eTIA_monotone (Q : W → Event T → Prop) : Monotone (eTIA μ Q) := by
   exact ⟨j, hjm, e, he, het.trans hj.1⟩
 
 omit [IsOrderedCancelAddMonoid α] in
-/-- (83): under the closed subinterval property the E-TIA property does not depend on the
+/-- (83): under the subinterval property the E-TIA property does not depend on the
 numeral — information collapse. -/
-theorem eTIA_eq_of_hasClosedSubintervalProp {Q : W → Event T → Prop}
-    (hQ : HasClosedSubintervalProp Q) (n m : α) : eTIA μ Q n = eTIA μ Q m := by
+theorem eTIA_eq_of_hasSubintervalProperty {Q : W → Event T → Prop}
+    (hQ : HasSubintervalProperty Q) (n m : α) : eTIA μ Q n = eTIA μ Q m := by
   suffices h : ∀ n m w, w ∈ eTIA μ Q n → w ∈ eTIA μ Q m from
     Set.ext fun w => ⟨h n m w, h m n w⟩
   rintro n m w ⟨t, rfl, e, he, het⟩
   rcases le_total m (μ e.τ) with hle | hge
   · obtain ⟨j, hj, hjm⟩ := TimeMeasure.trim e.τ m hle
-    obtain ⟨e', he'τ, he'⟩ := hasClosedSubintervalProp_iff_witnesses.1 hQ e w he j hj.1
+    obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hQ e w he j hj.1
     exact ⟨j, hjm, e', he', he'τ.le⟩
   · obtain ⟨j, hj, hjm⟩ := TimeMeasure.extend e.τ m hge
     exact ⟨j, hjm, e, he, hj.1⟩
@@ -135,8 +135,8 @@ theorem eTIA_eq_of_hasClosedSubintervalProp {Q : W → Event T → Prop}
 omit [IsOrderedCancelAddMonoid α] in
 /-- *Mary was sick in three days*: an atelic VP is not licensed (§4.1.1). -/
 theorem not_isMIPLicensed_eTIA [Nontrivial α] {Q : W → Event T → Prop}
-    (hQ : HasClosedSubintervalProp Q) : ¬ IsMIPLicensed (eTIA μ Q) :=
-  not_isMIPLicensed_of_forall_eq (eTIA_eq_of_hasClosedSubintervalProp μ hQ)
+    (hQ : HasSubintervalProperty Q) : ¬ IsMIPLicensed (eTIA μ Q) :=
+  not_isMIPLicensed_of_forall_eq (eTIA_eq_of_hasSubintervalProperty μ hQ)
 
 /-- The telic case: at a world whose shortest `Q`-event is `e₀`, the least true numeral is its
 duration. -/
@@ -272,11 +272,11 @@ def uPerfGTIA (P : W → Event T → Prop) (s : T) (n : α) : Set W :=
   {w | ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = s ∧ (∃ t, μ t = n ∧ i ≤ t) ∧
     ∃ e, P w e ∧ Ioo i.fst i.snd ⊆ (e.τ : Set T)}
 
-/-- The E-perfect frame inherits the closed subinterval property. -/
-theorem hasClosedSubintervalProp_ePerfFrame {P : W → Event T → Prop} {s : T}
-    (hP : HasClosedSubintervalProp P) : HasClosedSubintervalProp (ePerfFrame P s) :=
-  hasClosedSubintervalProp_iff_witnesses.2 fun e w ⟨he, i, his, hei⟩ t ht =>
-    let ⟨e', he'τ, he'⟩ := hasClosedSubintervalProp_iff_witnesses.1 hP e w he t ht
+/-- The E-perfect frame inherits the subinterval property. -/
+theorem hasSubintervalProperty_ePerfFrame {P : W → Event T → Prop} {s : T}
+    (hP : HasSubintervalProperty P) : HasSubintervalProperty (ePerfFrame P s) :=
+  hasSubintervalProperty_iff_witnesses.2 fun e w ⟨he, i, his, hei⟩ t ht =>
+    let ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he t ht
     ⟨e', he'τ, he', i, his, he'τ ▸ hei.mono ht⟩
 
 /-- A span of positive measure is nondegenerate. -/
@@ -286,7 +286,7 @@ private theorem fst_lt_snd_of_pos {i : NonemptyInterval T} (h : 0 < μ i) : i.fs
 /-- (117) collapses to (118): for positive numerals the U-perfect E-TIA property does not
 depend on the numeral. -/
 theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → Event T → Prop} {s : T}
-    (hP : HasClosedSubintervalProp P) {n m : α} (hn : 0 < n) (hm : 0 < m) :
+    (hP : HasSubintervalProperty P) {n m : α} (hn : 0 < n) (hm : 0 < m) :
     eTIA μ (uPerfFrame P s) n = eTIA μ (uPerfFrame P s) m := by
   suffices h : ∀ n m : α, 0 < m → ∀ w, w ∈ eTIA μ (uPerfFrame P s) n →
       w ∈ eTIA μ (uPerfFrame P s) m from Set.ext fun w => ⟨h n m hm w, h m n hn w⟩
@@ -306,7 +306,7 @@ theorem eTIA_uPerfFrame_eq [DenselyOrdered T] {P : W → Event T → Prop} {s : 
   have hjpos : 0 < μ j := hjμ ▸ lt_min hm hpos
   have hjs : j.snd = s := hj.2
   have hje : j ≤ e.τ := hj.1.trans (le_def.2 ⟨hel, hse⟩)
-  obtain ⟨e', he'τ, he'⟩ := hasClosedSubintervalProp_iff_witnesses.1 hP e w he j hje
+  obtain ⟨e', he'τ, he'⟩ := hasSubintervalProperty_iff_witnesses.1 hP e w he j hje
   obtain ⟨t', ht', ht'μ⟩ := TimeMeasure.extend j m (hjμ ▸ min_le_left _ _)
   refine ⟨t', ht'μ, e', ⟨he', j.fst, hjs ▸ fst_lt_snd_of_pos μ hjpos, ?_⟩, he'τ ▸ ht'.1⟩
   rw [he'τ, coe_def, ← hjs]
@@ -362,13 +362,13 @@ private instance [NoMaxOrder α] : Nontrivial {n : α // 0 < n} :=
 cells and the imperfective G-TIA cell by information collapse, the positive perfective G-TIA
 by density, and negation preserves collapse. -/
 theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → Event T → Prop} {s : T}
-    (hP : HasClosedSubintervalProp P) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
+    (hP : HasSubintervalProperty P) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (h : (pol, a, v) ≠ (.neg, .gap, .pfv)) : ¬ IsMIPLicensed (reading μ P s pol a v) := by
   have hconst : ∀ a v, (a, v) ≠ (.gap, .pfv) → ∀ n m : {n : α // 0 < n},
       positiveReading μ P s a v n = positiveReading μ P s a v m := by
     rintro a v h ⟨n, hn⟩ ⟨m, hm⟩
     cases a <;> cases v
-    · exact eTIA_eq_of_hasClosedSubintervalProp μ (hasClosedSubintervalProp_ePerfFrame hP) n m
+    · exact eTIA_eq_of_hasSubintervalProperty μ (hasSubintervalProperty_ePerfFrame hP) n m
     · exact eTIA_uPerfFrame_eq μ hP hn hm
     · exact absurd rfl h
     · exact uPerfGTIA_eq μ hn hm

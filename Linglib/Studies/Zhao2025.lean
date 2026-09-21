@@ -15,7 +15,7 @@ condition is one property of a quantifier and a trace, Atomic Distributivity, (5
 whenever the quantifier applies to the events with trace `i` it applies to those with any
 subinterval of `i` as trace, down to the points. For the existential quantifier of an event
 description this says that the traces form a lower set, `atomDist_ofPred_iff`, the closed
-subinterval property of the substrate, `hasClosedSubintervalProp_iff_forall_atomDist`. A state
+subinterval property of the substrate, `hasSubintervalProperty_iff_forall_atomDist`. A state
 holding throughout a period, (5.38), and the degrees above a standard, (5.53), satisfy it,
 `atomDist_ofPred_le` and `atomDist_ofPred_lt_fst`. A description none of whose events has a point
 trace fails it, `not_atomDist_ofPred`: the non-stative classes, whose minimal parts are larger
@@ -41,7 +41,7 @@ substrate assigns to the perfect, `le_get_iff_perfect`. The first part of the di
 ⌈then⌉-present puzzle, is the joint work published as [tsilia-zhao-2026] and is formalized in
 `Studies/TsiliaZhao2026.lean`.
 
-The substrate takes states and activities alike to have the closed subinterval property; here an
+The substrate takes states and activities alike to have the subinterval property; here an
 activity fails it because of its minimal parts, (5.41), which is what lets *le* attach to
 activities.
 
@@ -125,11 +125,11 @@ theorem not_atomDist_ofPred_surpasses {θ : E → α} (hne : ∃ e, P e)
 
 end Preorder
 
-/-- A predicate of events in time has the closed subinterval property exactly when its
+/-- A predicate of events in time has the subinterval property exactly when its
 existential quantifier is atomically distributive over time at every world. -/
-theorem hasClosedSubintervalProp_iff_forall_atomDist {W T : Type*} [LinearOrder T]
+theorem hasSubintervalProperty_iff_forall_atomDist {W T : Type*} [LinearOrder T]
     {P : W → Event T → Prop} :
-    Aspect.HasClosedSubintervalProp P ↔ ∀ w, AtomDist Event.τ (.ofPred (P w)) :=
+    Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist Event.τ (.ofPred (P w)) :=
   forall_congr' fun _ ↦ atomDist_ofPred_iff.symm
 
 /-- (5.44), (5.57): a duration argument or a measure phrase gives the trace a positive length, so
