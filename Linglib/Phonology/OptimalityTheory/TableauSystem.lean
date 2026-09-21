@@ -1,6 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Optimization.System
-import Linglib.Core.Optimization.Profile
 import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -13,8 +12,8 @@ This is the OT counterpart of the Harmonic-Grammar `ConstraintSystem` (a
 kept on the OT layer so the neutral `Core.Optimization` machinery stays
 independent of the `Tableau` API.
 
-A study file can keep its `Tableau`/`optimal` formulation and additionally
-expose the unified `ConstraintSystem.predict` distribution via `tableauSystem`.
+A study can keep its `Tableau`/`optimal` formulation and state the same prediction as the
+`ConstraintSystem.predict` distribution via `tableauSystem`.
 
 ## Main definitions
 
@@ -24,7 +23,11 @@ expose the unified `ConstraintSystem.predict` distribution via `tableauSystem`.
 
 * `tableauSystem_predict_eq` — `predict` is uniform over `Tableau.optimal`.
 * `tableauSystem_predict_unique_winner` / `tableauSystem_predict_loser` —
-  the deterministic (single-winner) specialisations used in study files.
+  the deterministic (single-winner) specialisations.
+
+## TODO
+
+No study consumes this file yet.
 -/
 
 namespace OptimalityTheory
@@ -34,12 +37,10 @@ open Core.Optimization.Evaluation
 
 variable {C : Type*} [DecidableEq C] {n : Nat}
 
-/-- An OT tableau viewed as a generic `ConstraintSystem`. The score type
-    `LexProfile Nat n` is definitionally `ViolationProfile n`, so the
-    `argminDecoder`'s `LinearOrder` requirement is satisfied by the
-    standard `Pi.Lex` instance. -/
+/-- An OT tableau viewed as a generic `ConstraintSystem`, scored in `ViolationProfile n`, whose
+    `Pi.Lex` linear order is what `argminDecoder` minimizes. -/
 noncomputable def tableauSystem
-    (t : Tableau C n) : ConstraintSystem C (LexProfile Nat n) where
+    (t : Tableau C n) : ConstraintSystem C (Constraints.ViolationProfile n) where
   candidates := t.candidates
   score := t.profile
   decoder := argminDecoder
@@ -74,8 +75,8 @@ theorem tableauSystem_predict_pos_iff_optimal
     simp [hc, inv_pos.mpr hcard]
   · simp [hc]
 
-/-- When `Tableau.optimal = {winner}` (the typical deterministic-OT pattern
-    used in study files via `by decide`), the unified `predict` view assigns
+/-- When `Tableau.optimal = {winner}` (the typical deterministic-OT pattern, proved in study
+    files by `decide`), the unified `predict` view assigns
     probability 1 to the winner. -/
 theorem tableauSystem_predict_unique_winner
     (t : Tableau C n) (winner : C) (h : t.optimal = {winner}) :

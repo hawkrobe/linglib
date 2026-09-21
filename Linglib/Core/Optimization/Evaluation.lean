@@ -41,7 +41,7 @@ is prohibitive when a coordinate is a constraint evaluation.
 instances. Weakest correct structure — `LexLE` on variable-length lists
 is a preorder but not a partial order (trailing-zero ambiguity).
 
-**Fixed-length** (`Lex (Fin n → Nat)`, accessed as `LexProfile Nat n`):
+**Fixed-length** (`Lex (Fin n → Nat)`):
 full `LinearOrder` (lex). Fixing the length eliminates trailing-zero
 ambiguity, upgrading `LexLE` to a linear order. `LexMinProblem C n`
 always has a non-empty lex-min set via `Finset.exists_min_image`.
@@ -166,7 +166,7 @@ theorem toLex_fin_le_succ {n : Nat} (f g : Fin (n + 1) → Nat) :
         · exact congrFun htf i'
 
 /-- The decidable variable-length `LexLE` on `List.ofFn` agrees with the fixed-length lexicographic
-order `toLex` on `Fin n → Nat`, that is, on `LexProfile Nat n`. This is the finite-tuple analogue of
+order `toLex` on `Fin n → Nat`. This is the finite-tuple analogue of
 mathlib's `MonomialOrder.lex`, kept as a separate computable order because mathlib's is
 noncomputable and based on `Finsupp`. The agreement lets a directional constraint be spliced into a
 fixed-length profile as a block of positions and still compare under the lexicographic evaluation.
@@ -247,8 +247,8 @@ theorem lexLE_antisymm : ∀ (a b : List Nat),
 
 /-- `List Nat` wrapped to carry the `Preorder` instance of `LexLE`, which the bare type does not
 carry. It is only a `Preorder` and not a `PartialOrder`, since trailing zeros are invisible (`LexLE
-[] [0]` and `LexLE [0] []` both hold). For a `LinearOrder`, use the fixed-length `Lex (Fin n →
-Nat)`, that is, `LexProfile Nat n`. -/
+[] [0]` and `LexLE [0] []` both hold). For a `LinearOrder`, use the fixed-length
+`Lex (Fin n → Nat)`. -/
 structure LexNatList where
   value : List Nat
   deriving DecidableEq, Repr

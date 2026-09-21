@@ -215,7 +215,6 @@ import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Optimization.Linearization
 import Linglib.Core.Optimization.NoiseKernel
 import Linglib.Core.Optimization.PermSubsetCombinatorics
-import Linglib.Core.Optimization.Profile
 import Linglib.Core.Optimization.Semiring
 import Linglib.Core.Optimization.System
 import Linglib.Core.Order.AllenRelation
