@@ -184,7 +184,7 @@ inductive CRel | member
   deriving DecidableEq, Fintype, Repr
 
 /-- The signature of the fragment. -/
-@[reducible] def sig : Signature Srt := .ofDecl Feat CRel (fun _ ↦ 2) Feat.decl (by decide)
+@[reducible] def sig : Signature Srt := .ofDecl Feat CRel (fun _ ↦ 2) Feat.decl (by decide +kernel)
 
 /-- A nonsubject wh-interrogative construct inherits its mother from `construct` and its filler
 daughter from `filler-head-cxt`, and a coordinate construct has no filler daughter. -/
@@ -534,7 +534,7 @@ def memberDef : Desc sig :=
       (.or (.pathEq (.var 0) (.feat (.var 1) .FIRST))
         (.ex 2 (.and (.pathEq (.var 2) (.feat (.var 1) .REST)) (.rel .member ![0, 2])))))))
 
-example : gapSetModel.Models [memberDef] := by decide
+example : gapSetModel.Models [memberDef] := by decide +kernel
 
 /-- Some member of the head daughter's `GAP` list shares its category and its index with the
 filler. -/
@@ -542,7 +542,7 @@ example : gapSetModel.Satisfies (fun _ ↦ .cxt) .cxt
     (.ex 0 (.ex 1 (.and (.pathEq (.var 1) (.path [.HDDTR, .GAP]))
       (.and (.rel .member ![0, 1])
         (.and (.pathEq (.feat (.var 0) .CAT) (.path [.FILLERDTR, .CAT]))
-          (.pathEq (.feat (.var 0) .INDEX) (.path [.FILLERDTR, .INDEX]))))))) := by decide
+          (.pathEq (.feat (.var 0) .INDEX) (.path [.FILLERDTR, .INDEX]))))))) := by decide +kernel
 
 /-- The same construct violates the filler-head construction, which looks only at the first
 element of the list. -/
