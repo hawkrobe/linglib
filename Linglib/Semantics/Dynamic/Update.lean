@@ -1,7 +1,5 @@
 import Mathlib.Algebra.Group.Defs
-import Mathlib.Algebra.Order.Quantale
-import Mathlib.Data.Set.Basic
-import Mathlib.Logic.Relation
+import Mathlib.Basic.Rel
 import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.ByContra
 import Mathlib.Tactic.Use
@@ -11,44 +9,53 @@ import Mathlib.Tactic.Use
 
 Dynamic meanings come in two forms: a relational update `Update S` relates
 input states to output states, and a context change potential `CCP S`
-transforms sets of states as wholes. `lift` sends an update to its image
-transformer, `lower` recovers it, and the distributive transformers are
+transforms sets of states as wholes. An update is a mathlib `SetRel S S`, so
+sequencing is `SetRel.comp`, truth at a state is `SetRel.dom`, and the
+strongest postcondition, the weakest precondition, and its dual are
+`SetRel.image`, `SetRel.preimage`, and `SetRel.core`; this file adds the
+tests and the static connectives built from them. The image sends an update
+to a transformer, `lower` recovers it, and the distributive transformers are
 exactly the relational images. A satisfaction relation induces the standard
 eliminative fragment (`updateFromSat`), which PLA, DRT, and DPL instantiate.
 The monadic reading of the pair is in `Collapse.lean`.
 
 ## Main definitions
 
-* `Update S`, `Condition S`: relations on states, properties of states.
-* `Update.test`, `Update.neg`, `Update.seq`, `Update.impl`, `Update.disj`,
-  `Update.closure`: the relational connectives.
+* `Update S`, `Condition S`: relations on states, sets of states.
+* `Update.test`, `Update.neg`, `Update.impl`, `Update.disj`: the test of a
+  condition, and the conditions `D.domᶜ`, `D₁.core D₂.dom`, and `D₁.dom ∪ D₂.dom`.
 * `Update.IsTest`: updates that never change the state.
 * `CCP.guard`, `CCP.might`, `CCP.must`, `CCP.negTest`: whole-state tests.
 * `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`,
   `CCP.IsClassical`: the classification of transformers.
 * `CCP.up`, `CCP.down`: the content–update coercions.
-* `Update.lift`, `CCP.lower`: the bridge between the two forms.
+* `CCP.lower`: the inverse of `SetRel.image` on distributive transformers.
 * `supportOf`, `contentOf`, `CCP.updateFromSat`, `dynamicEntailsOf`: the layer a
   satisfaction relation induces.
 
 ## Main results
 
-* `Update S` is a `Monoid` and an `IsQuantale` under sequencing (scoped);
-  tests are its subidentities (`Update.isTest_iff_le_one`).
-* `Update.IsTest.eq_test_closure`, `CCP.IsTest.eq_guard`: a test is the test
+* `Update S` is a `Monoid` under sequencing (scoped); tests are its
+  subidentities, by definition.
+* `Update.dom_test`, `Update.preimage_test`, `Update.core_test`,
+  `Update.test_comp_test`: the calculus of tests.
+* `Update.IsTest.eq_test_dom`, `CCP.IsTest.eq_guard`: a test is the test
   of its truth condition, a guard of its acceptance condition.
-* `Update.lower_lift`, `CCP.lift_lower`: `lift` and `lower` are mutually inverse on
+* `Update.lower_image`, `CCP.image_lower`: the image and `lower` are mutually inverse on
   distributive transformers.
-* `CCP.isClassical_iff_up_down_eq`, `CCP.exists_eq_lift_test_iff`: the classical
+* `CCP.isClassical_iff_up_down_eq`, `CCP.exists_eq_image_test_iff`: the classical
   transformers are exactly the static ones — `up` of their own content, the
-  lifted test filters; `CCP.might_not_isDistributive` separates.
+  images of tests; `CCP.might_not_isDistributive` separates.
 * `support_iff_update_eq`: support is being a fixed point of the update.
 
 ## Implementation notes
 
-The algebraic instances are scoped: `Update S` and `CCP S` abbreviate
-function types. `CCP.updateFromSat` is the literal filter rather than
-`lift (test _)` so that instantiating frameworks connect to it by `rfl`.
+The algebraic instances are scoped: `Update S` abbreviates a set of pairs and
+`CCP S` a function type. Sequencing distributes over arbitrary unions by
+mathlib's `SetRel.comp_sUnion` and `SetRel.sUnion_comp`, and the image is left
+adjoint to the core by `SetRel.image_core_gc`. `CCP.updateFromSat` is the
+literal filter rather than `(test _).image` so that instantiating frameworks
+connect to it by `rfl`.
 `Update.neg` does not validate double-negation elimination and `CCP.negTest`
 is not `CCP.neg`; the framework-specific repairs and comparisons live in the
 studies. [groenendijk-stokhof-1991]'s entailment notions live in
@@ -71,125 +78,147 @@ studies. [groenendijk-stokhof-1991]'s entailment notions live in
 
 namespace DynamicSemantics
 
+open SetRel
+
 /-! ## The relational face -/
 
-/-- A dynamic meaning as a binary relation between input and output states. -/
-abbrev Update (S : Type*) := S → S → Prop
+/-- A dynamic meaning as a binary relation between input and output states. Sequencing is
+`SetRel.comp`, the trivial test `SetRel.id`, truth at a state `SetRel.dom`, the possible outputs
+`SetRel.cod`, and the strongest postcondition, weakest precondition, and its dual are
+`SetRel.image`, `SetRel.preimage`, and `SetRel.core`. -/
+abbrev Update (S : Type*) := SetRel S S
 
 /-- A static property of a single state; `test` embeds conditions into updates. -/
-abbrev Condition (S : Type*) := S → Prop
+abbrev Condition (S : Type*) := Set S
 
 namespace Update
 
-variable {S : Type*} {C : Condition S} {D : Update S} {i j : S}
+variable {S : Type*} {C C₁ C₂ t : Condition S} {D D₁ D₂ : Update S} {i j : S}
 
 /-! ### The connectives -/
 
 /-- `test C` checks `C` without changing the state. -/
-def test (C : Condition S) : Update S := λ i j => i = j ∧ C j
+def test (C : Condition S) : Update S := {(a, b) | a = b ∧ b ∈ C}
 
-/-- A test constrains its input and output alike. -/
-theorem test_eq_input (C : Condition S) :
-    test C = λ i j => i = j ∧ C i := by
-  ext i j
-  constructor <;> rintro ⟨rfl, h⟩ <;> exact ⟨rfl, h⟩
-
-/-- `neg D` holds at `i` iff no output `k` satisfies `D`. -/
-def neg (D : Update S) : Condition S := λ i => ¬∃ k, D i k
-
-/-- `seq D₁ D₂` relates `i` to `k` iff some intermediate `j` has `D₁ i j` and `D₂ j k`. -/
-def seq (D₁ D₂ : Update S) : Update S := Relation.Comp D₁ D₂
+/-- `neg D` holds at `i` iff `D` has no output from `i`. -/
+def neg (D : Update S) : Condition S := D.domᶜ
 
 /-- `impl D₁ D₂` holds at `i` iff every `D₁`-output from `i` has a `D₂`-output. -/
-def impl (D₁ D₂ : Update S) : Condition S := λ i => ∀ h, D₁ i h → ∃ k, D₂ h k
+def impl (D₁ D₂ : Update S) : Condition S := D₁.core D₂.dom
 
 /-- `disj D₁ D₂` holds at `i` iff some disjunct has an output from `i`. -/
-def disj (D₁ D₂ : Update S) : Condition S := λ i => ∃ k, D₁ i k ∨ D₂ i k
+def disj (D₁ D₂ : Update S) : Condition S := D₁.dom ∪ D₂.dom
 
-/-- `closure D` holds at `i` iff `D` has an output from `i` — [heim-1982]'s truth definition. -/
-def closure (D : Update S) : Condition S := λ i => ∃ k, D i k
+@[simp] theorem mem_test : i ~[test C] j ↔ i = j ∧ j ∈ C := Iff.rfl
 
-/-! ### The update quantale -/
+@[simp] theorem mem_neg : i ∈ neg D ↔ ¬∃ k, i ~[D] k := Iff.rfl
 
-/-- `Update S` is a monoid under `seq` with the trivial test as unit (scoped;
-see the implementation notes). -/
+@[simp] theorem mem_impl : i ∈ impl D₁ D₂ ↔ ∀ ⦃h⦄, i ~[D₁] h → ∃ k, h ~[D₂] k := Iff.rfl
+
+@[simp] theorem mem_disj : i ∈ disj D₁ D₂ ↔ (∃ k, i ~[D₁] k) ∨ ∃ k, i ~[D₂] k := Iff.rfl
+
+/-- A test constrains its input and output alike. -/
+theorem mem_test_iff_left : i ~[test C] j ↔ i = j ∧ i ∈ C :=
+  ⟨by rintro ⟨rfl, h⟩; exact ⟨rfl, h⟩, by rintro ⟨rfl, h⟩; exact ⟨rfl, h⟩⟩
+
+/-- Negation is the core of the empty condition. -/
+theorem neg_eq_core_empty (D : Update S) : neg D = D.core ∅ := by
+  ext; simp [neg]
+
+/-- The core of a complement is the complement of the preimage. -/
+theorem core_compl (D : Update S) (t : Condition S) : D.core tᶜ = (D.preimage t)ᶜ := by
+  ext; simp only [mem_core, Set.mem_compl_iff, mem_preimage]; grind
+
+/-! ### The update monoid -/
+
+/-- `Update S` is a monoid under composition with the identity as unit (scoped, since
+`Update S` abbreviates a set of pairs). -/
 scoped instance : Monoid (Update S) where
-  mul := seq
-  one := test (λ _ => True)
-  mul_assoc _ _ _ := Relation.comp_assoc
-  one_mul D := funext₂ λ i _ => propext ⟨λ ⟨_, ⟨h, _⟩, d⟩ => h ▸ d, λ d => ⟨i, ⟨rfl, ⟨⟩⟩, d⟩⟩
-  mul_one D := funext₂ λ _ j => propext ⟨λ ⟨_, d, h, _⟩ => h ▸ d, λ d => ⟨j, d, rfl, ⟨⟩⟩⟩
+  mul := comp
+  one := .id
+  mul_assoc := comp_assoc
+  one_mul := id_comp
+  mul_one := comp_id
 
-/-- `Update S` is a quantale: sequencing distributes over arbitrary unions of
-updates, so mathlib's residuation vocabulary applies (scoped). -/
-scoped instance : IsQuantale (Update S) where
-  mul_sSup_distrib D s := by
-    funext i k
-    show seq D (sSup s) i k = (⨆ E ∈ s, seq D E) i k
-    simp only [seq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
-    exact propext ⟨fun ⟨b, hD, ⟨E, hE⟩, hbk⟩ => ⟨E, hE, b, hD, hbk⟩,
-      fun ⟨E, hE, b, hD, hbk⟩ => ⟨b, hD, ⟨E, hE⟩, hbk⟩⟩
-  sSup_mul_distrib s D := by
-    funext i k
-    show seq (sSup s) D i k = (⨆ E ∈ s, seq E D) i k
-    simp only [seq, Relation.Comp, sSup_apply, iSup_apply, iSup_Prop_eq]
-    exact propext ⟨fun ⟨b, ⟨⟨E, hE⟩, hib⟩, hbk⟩ => ⟨E, hE, b, hib, hbk⟩,
-      fun ⟨E, hE, b, hib, hbk⟩ => ⟨b, ⟨⟨E, hE⟩, hib⟩, hbk⟩⟩
+theorem mul_def (D₁ D₂ : Update S) : D₁ * D₂ = D₁ ○ D₂ := rfl
 
-/-! ### Tests are the subidentities -/
+theorem one_def : (1 : Update S) = .id := rfl
 
-/-- An update is a *test* if it never changes the state
-([groenendijk-stokhof-1991], Definition 11). -/
-def IsTest (D : Update S) : Prop := ∀ ⦃i j⦄, D i j → i = j
+/-! ### Tests -/
 
-/-- `test C` is a test. -/
-theorem isTest_test (C : Condition S) : IsTest (test C) :=
-  fun _ _ h => h.1
+/-- A test's domain is its condition. -/
+@[simp] theorem dom_test (C : Condition S) : (test C).dom = C := by ext; simp
 
-/-- Tests are closed under sequencing. -/
-theorem IsTest.seq {D₁ D₂ : Update S} (h₁ : IsTest D₁) (h₂ : IsTest D₂) :
-    IsTest (seq D₁ D₂) :=
-  fun _ _ ⟨_, a, b⟩ => (h₁ a).trans (h₂ b)
-
-/-- Sequenced tests test the conjunction. -/
-theorem test_seq_test (C₁ C₂ : Condition S) :
-    seq (test C₁) (test C₂) = test fun i => C₁ i ∧ C₂ i := by
-  ext i o
-  exact ⟨fun ⟨_, ⟨h, h₁⟩, h', h₂⟩ => ⟨h.trans h', h' ▸ h₁, h₂⟩,
-    fun ⟨h, h₁, h₂⟩ => ⟨o, ⟨h, h₁⟩, rfl, h₂⟩⟩
-
-/-- A test's closure is its condition. -/
-@[simp] theorem closure_test (C : Condition S) : closure (test C) = C :=
-  funext fun i => propext ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨i, rfl, h⟩⟩
+/-- A test's codomain is its condition. -/
+@[simp] theorem cod_test (C : Condition S) : (test C).cod = C := by ext; simp
 
 /-- A test is determined by its condition. -/
 theorem test_injective : Function.Injective (test : Condition S → Update S) :=
-  Function.LeftInverse.injective closure_test
+  Function.LeftInverse.injective dom_test
 
-@[simp] theorem test_inj {C₁ C₂ : Condition S} : test C₁ = test C₂ ↔ C₁ = C₂ :=
-  test_injective.eq_iff
+@[simp] theorem test_inj : test C₁ = test C₂ ↔ C₁ = C₂ := test_injective.eq_iff
 
-/-- Negation is the complement of closure. -/
-theorem neg_eq_compl_closure (D : Update S) : neg D = (closure D)ᶜ := rfl
+/-- The trivial test is the identity. -/
+@[simp] theorem test_univ : test (Set.univ : Condition S) = .id := by ext ⟨i, j⟩; simp
+
+/-- Sequenced tests test the conjunction. -/
+@[simp] theorem test_comp_test (C₁ C₂ : Condition S) : test C₁ ○ test C₂ = test (C₁ ∩ C₂) := by
+  ext ⟨i, j⟩; simp only [mem_comp, mem_test]; grind
 
 /-- Negating a test complements its condition. -/
-@[simp] theorem neg_test (C : Condition S) : neg (test C) = Cᶜ := by
-  rw [neg_eq_compl_closure, closure_test]
+@[simp] theorem neg_test (C : Condition S) : neg (test C) = Cᶜ := by rw [neg, dom_test]
 
-/-- A disjunction holds where either disjunct has an output. -/
-theorem disj_eq_sup_closure (D₁ D₂ : Update S) : disj D₁ D₂ = closure D₁ ⊔ closure D₂ :=
-  funext fun _ => propext exists_or
+/-- The strongest postcondition of a test is the filter by its condition. -/
+@[simp] theorem image_test (C σ : Set S) : (test C).image σ = σ ∩ C := by
+  ext; simp only [mem_image, mem_test]; grind
 
-/-- Tests are the subidentities of the update monoid: the coreflexives `D ≤ 1`. -/
-theorem isTest_iff_le_one : D.IsTest ↔ D ≤ 1 :=
-  ⟨fun h _ _ hij => ⟨h hij, trivial⟩, fun h _ _ hij => (h _ _ hij).1⟩
+/-- The weakest precondition of a test conjoins its condition. -/
+@[simp] theorem preimage_test (C t : Condition S) : (test C).preimage t = C ∩ t := by
+  ext; simp only [mem_preimage, mem_test]; grind
 
-/-- A test is the test of its own closure ([groenendijk-stokhof-1991]'s
-Fact 6); the transformer-face mirror is `CCP.IsTest.eq_guard`. -/
-theorem IsTest.eq_test_closure (h : IsTest D) :
-    D = test (closure D) := by
-  funext i j
-  exact propext (by grind [test, closure, IsTest])
+@[simp] theorem core_test (C t : Condition S) : (test C).core t = Cᶜ ∪ t := by
+  ext; simp only [mem_core, mem_test]; grind
+
+/-- An update is a *test* if it never changes the state
+([groenendijk-stokhof-1991], Definition 11): the tests are the subidentities. -/
+def IsTest (D : Update S) : Prop := D ⊆ .id
+
+theorem IsTest.eq (h : IsTest D) (hij : i ~[D] j) : i = j := h hij
+
+/-- `test C` is a test. -/
+theorem isTest_test (C : Condition S) : IsTest (test C) := fun _ h => h.1
+
+/-- Tests are closed under sequencing. -/
+theorem IsTest.comp (h₁ : IsTest D₁) (h₂ : IsTest D₂) : IsTest (D₁ ○ D₂) := by
+  rintro ⟨_, _⟩ ⟨_, a, b⟩
+  exact (h₁ a).trans (h₂ b)
+
+/-- A test is the test of its own domain ([groenendijk-stokhof-1991]'s Fact 6); the
+transformer-face mirror is `CCP.IsTest.eq_guard`. -/
+theorem IsTest.eq_test_dom (h : IsTest D) : D = test D.dom := by
+  ext ⟨i, j⟩
+  constructor
+  · intro hij
+    obtain rfl := h.eq hij
+    exact ⟨rfl, i, hij⟩
+  · rintro ⟨rfl, k, hk⟩
+    obtain rfl := h.eq hk
+    exact hk
+
+/-- A test's outputs are its inputs. -/
+theorem IsTest.cod_eq_dom (h : IsTest D) : D.cod = D.dom := by
+  rw [h.eq_test_dom, cod_test, dom_test]
+
+/-- Negation, implication, and disjunction in terms of the domain. -/
+theorem neg_eq_compl_dom (D : Update S) : neg D = D.domᶜ := rfl
+
+theorem impl_eq_core_dom (D₁ D₂ : Update S) : impl D₁ D₂ = D₁.core D₂.dom := rfl
+
+theorem disj_eq_dom_union_dom (D₁ D₂ : Update S) : disj D₁ D₂ = D₁.dom ∪ D₂.dom := rfl
+
+/-- The domain of a sequence is the weakest precondition of the second domain. -/
+theorem dom_comp (D₁ D₂ : Update S) : (D₁ ○ D₂).dom = D₁.preimage D₂.dom := by
+  rw [← preimage_univ_right, preimage_comp, preimage_univ_right]
 
 end Update
 
@@ -205,7 +234,7 @@ variable {S : Type*} {u v : CCP S}
 /-- Sequential composition of CCPs, in diagrammatic order. -/
 def seq (u v : CCP S) : CCP S := λ s => v (u s)
 
-/-- `CCP S` is a monoid under `seq` (scoped; see the implementation notes). -/
+/-- `CCP S` is a monoid under `CCP.seq` (scoped; see the implementation notes). -/
 scoped instance : Monoid (CCP S) where
   mul := seq
   one := id
@@ -273,7 +302,7 @@ theorem guard_isTest (C : Set S → Prop) : IsTest (guard C) :=
   λ s => (Classical.em (C s)).elim (λ h => .inl (guard_pos h)) (λ h => .inr (guard_neg h))
 
 /-- A test is the guard of its own acceptance condition — the mirror of
-`Update.IsTest.eq_test_closure`. -/
+`Update.IsTest.eq_test_dom`. -/
 theorem IsTest.eq_guard (h : IsTest u) : u = guard fun s => u s = s :=
   funext λ s => Set.ext λ p =>
     ⟨λ hp => (h s).elim (λ hs => ⟨hs ▸ hp, hs⟩)
@@ -340,98 +369,67 @@ section RelationalBridge
 
 variable {S : Type*} {R R' : Update S} {C : Condition S} {σ : Set S} {i j : S}
 
-open Update
+open Update SetRel
 
-/-- The relational image: `lift R σ` collects the `R`-outputs of the elements
-of `σ` — the strongest postcondition of [muskens-van-benthem-visser-2011]. -/
-def Update.lift (R : Update S) : CCP S := λ σ => { j | ∃ i ∈ σ, R i j }
+/-- `lower φ` relates `i` to the outputs of `φ` on the singleton `{i}`. The other direction is
+the relational image `SetRel.image`, the strongest postcondition of
+[muskens-van-benthem-visser-2011]. -/
+def CCP.lower (φ : CCP S) : Update S := {p | p.2 ∈ φ {p.1}}
 
-/-- `lower φ i j` holds iff `j` is an output of `φ` on the singleton `{i}`. -/
-def CCP.lower (φ : CCP S) : Update S := λ i j => j ∈ φ {i}
+@[simp] theorem CCP.mem_lower {φ : CCP S} : i ~[CCP.lower φ] j ↔ j ∈ φ {i} := Iff.rfl
 
-theorem Update.mem_lift : j ∈ lift R σ ↔ ∃ i ∈ σ, R i j := Iff.rfl
+/-- Relational images are distributive. -/
+theorem Update.image_isDistributive (R : Update S) : CCP.IsDistributive R.image :=
+  fun _ => by ext; simp only [mem_image, Set.mem_ofPred_eq, Set.mem_singleton_iff]; grind
 
-/-- `lift` sends sequencing to composition. -/
-theorem Update.lift_seq (R₁ R₂ : Update S) :
-    lift (seq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) :=
-  funext λ _ => Set.ext λ _ => ⟨λ ⟨i, m, j, a, b⟩ => ⟨j, ⟨i, m, a⟩, b⟩,
-    λ ⟨j, ⟨i, m, a⟩, b⟩ => ⟨i, m, j, a, b⟩⟩
+/-- `lower` is a left inverse of the image, so the relational face loses nothing. -/
+theorem Update.lower_image (R : Update S) : CCP.lower R.image = R := by
+  ext ⟨i, j⟩; simp
 
-/-- `lift (test C)` is the filter by `C`. -/
-theorem Update.lift_test (C : Condition S) :
-    lift (test C) = λ σ => { i ∈ σ | C i } :=
-  funext λ _ => Set.ext λ j => ⟨λ ⟨_, m, e, c⟩ => ⟨e ▸ m, c⟩, λ ⟨m, c⟩ => ⟨j, m, rfl, c⟩⟩
+/-- The image is a right inverse of `lower` on distributive transformers. -/
+theorem CCP.image_lower (φ : CCP S) (hd : CCP.IsDistributive φ) : (lower φ).image = φ :=
+  funext fun σ => (hd σ).symm
 
-/-- Lifted transformers are distributive. -/
-theorem Update.lift_isDistributive (R : Update S) : CCP.IsDistributive (lift R) :=
-  λ _ => Set.ext λ _ => ⟨λ ⟨i, m, r⟩ => ⟨i, m, i, rfl, r⟩, λ ⟨i, m, _, e, r⟩ => ⟨i, m, e ▸ r⟩⟩
-
-/-- `lower` is a left inverse of `lift`: the relational face loses nothing. -/
-theorem Update.lower_lift (R : Update S) : CCP.lower (lift R) = R :=
-  funext₂ λ i _ => propext ⟨λ ⟨_, e, r⟩ => e ▸ r, λ r => ⟨i, rfl, r⟩⟩
-
-/-- `lift` is a right inverse of `lower` on distributive transformers. -/
-theorem CCP.lift_lower (φ : CCP S) (hd : CCP.IsDistributive φ) :
-    lift (lower φ) = φ :=
-  funext λ σ => (hd σ).symm
-
-/-- `lift` reflects (and preserves) the pointwise order. -/
-theorem Update.lift_le_lift_iff : lift R ≤ lift R' ↔ R ≤ R' :=
-  ⟨λ h i _ r => match h {i} ⟨i, rfl, r⟩ with | ⟨_, e, r'⟩ => e ▸ r',
-   λ h _ j ⟨i, m, r⟩ => ⟨i, m, h i j r⟩⟩
-
-/-! ### Test filters -/
-
-@[simp] theorem Update.mem_lift_test : i ∈ lift (test C) σ ↔ i ∈ σ ∧ C i := by
-  rw [lift_test]; exact Iff.rfl
-
-/-- `lift (test C)` is eliminative: it only removes elements. -/
-theorem Update.lift_test_isEliminative (C : Condition S) :
-    CCP.IsEliminative (lift (test C)) := by
-  rw [lift_test]; intro σ j ⟨hj, _⟩; exact hj
-
-/-- Composing test filters conjoins the conditions. -/
-theorem Update.lift_test_lift_test (C₁ C₂ : Condition S) (σ : Set S) :
-    lift (test C₂) (lift (test C₁) σ) = lift (test fun i => C₁ i ∧ C₂ i) σ :=
-  Set.ext fun i => by
-    simp only [mem_lift_test]
-    exact and_assoc
-
-/-- Test filters are idempotent. -/
-theorem Update.lift_test_idem (C : Condition S) (σ : Set S) :
-    lift (test C) (lift (test C) σ) = lift (test C) σ := by
-  rw [lift_test_lift_test]
-  exact Set.ext fun i => by simp only [mem_lift_test, and_self]
+/-- The image reflects (and preserves) the order. -/
+theorem Update.image_le_image_iff : R.image ≤ R'.image ↔ R ⊆ R' :=
+  ⟨fun h ⟨i, _⟩ r => by
+      obtain ⟨_, rfl, r'⟩ := h {i} ⟨i, rfl, r⟩
+      exact r',
+    fun h _ => image_subset_image_left h⟩
 
 /-! ### The static fragment
 
 Van Benthem's additivity ([van-benthem-1986]; [rothschild-yalcin-2016];
-[gillies-2022]): the classical transformers are exactly the lifted test
-filters. Update semantics keeps eliminativity but its whole-state tests
-break distributivity; DPL's random reassignment does the reverse
-([groenendijk-stokhof-1990], §4). -/
+[gillies-2022]): the classical transformers are exactly the images of tests. Update semantics
+keeps eliminativity but its whole-state tests break distributivity; DPL's random reassignment
+does the reverse ([groenendijk-stokhof-1990], §4). -/
 
-/-- `up` of a condition's extension is its lifted test filter. -/
-theorem CCP.up_eq_lift_test (C : Condition S) : CCP.up {i | C i} = lift (test C) :=
-  (lift_test C).symm
+/-- `up` of a condition is the image of its test. -/
+theorem CCP.up_eq_image_test (C : Condition S) : CCP.up C = (test C).image :=
+  funext fun σ => (image_test C σ).symm
 
-/-- A transformer is a lifted test filter iff it is classical. -/
-theorem CCP.exists_eq_lift_test_iff {φ : CCP S} :
-    (∃ C : Condition S, φ = lift (test C)) ↔ CCP.IsClassical φ := by
-  refine ⟨λ ⟨C, hC⟩ => hC ▸ ⟨lift_test_isEliminative C, lift_isDistributive _⟩,
-    λ ⟨he, hd⟩ => ⟨λ i => i ∈ φ {i}, funext λ s => ?_⟩⟩
-  rw [hd s, lift_test]
+/-- The image of a test is eliminative. -/
+theorem Update.image_test_isEliminative (C : Condition S) :
+    CCP.IsEliminative (test C).image :=
+  CCP.up_eq_image_test C ▸ (CCP.isClassical_up C).1
+
+/-- A transformer is the image of a test iff it is classical. -/
+theorem CCP.exists_eq_image_test_iff {φ : CCP S} :
+    (∃ C : Condition S, φ = (test C).image) ↔ CCP.IsClassical φ := by
+  refine ⟨fun ⟨C, hC⟩ => hC ▸ ⟨image_test_isEliminative C, image_isDistributive _⟩,
+    fun ⟨he, hd⟩ => ⟨{i | i ∈ φ {i}}, funext fun s => ?_⟩⟩
+  rw [hd s, image_test]
   ext p
-  exact ⟨λ ⟨i, hi, hpi⟩ => have h : p = i := he {i} hpi; ⟨h ▸ hi, h ▸ hpi⟩,
-    λ ⟨hp, hC⟩ => ⟨p, hp, hC⟩⟩
+  exact ⟨fun ⟨i, hi, hpi⟩ => have h : p = i := he {i} hpi; ⟨h ▸ hi, h ▸ hpi⟩,
+    fun ⟨hp, hC⟩ => ⟨p, hp, hC⟩⟩
 
 /-- The classical updates are exactly the static ones: `up ∘ down` is
 their normal form. -/
 theorem CCP.isClassical_iff_up_down_eq {φ : CCP S} :
     CCP.IsClassical φ ↔ CCP.up (CCP.down φ) = φ :=
-  ⟨λ h => by obtain ⟨C, rfl⟩ := exists_eq_lift_test_iff.mpr h
-             rw [← up_eq_lift_test, down_up],
-   λ h => h ▸ CCP.isClassical_up _⟩
+  ⟨fun h => by obtain ⟨C, rfl⟩ := exists_eq_image_test_iff.mpr h
+               rw [← up_eq_image_test, down_up],
+   fun h => h ▸ CCP.isClassical_up _⟩
 
 end RelationalBridge
 
@@ -509,16 +507,15 @@ theorem CCP.updateFromSat_eq_inter_content (sat : S → φ → Prop)
     updateFromSat sat ψ s = s ∩ contentOf sat ψ :=
   rfl
 
-/-- The induced update is the lift of the satisfaction test. -/
-theorem CCP.updateFromSat_eq_lift_test (sat : S → φ → Prop) (ψ : φ) :
-    updateFromSat sat ψ = lift (test (λ p => sat p ψ)) :=
-  funext λ _ => Set.ext λ p =>
-    ⟨λ ⟨hp, hs⟩ => ⟨p, hp, rfl, hs⟩, λ ⟨_, hi, hip, hs⟩ => ⟨hip ▸ hi, hs⟩⟩
+/-- The induced update is the image of the satisfaction test. -/
+theorem CCP.updateFromSat_eq_image_test (sat : S → φ → Prop) (ψ : φ) :
+    updateFromSat sat ψ = (test (contentOf sat ψ)).image :=
+  funext fun s => (image_test _ s).symm
 
 /-- Induced updates are distributive. -/
 theorem CCP.updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
     CCP.IsDistributive (updateFromSat sat ψ) :=
-  updateFromSat_eq_lift_test sat ψ ▸ lift_isDistributive _
+  updateFromSat_eq_image_test sat ψ ▸ image_isDistributive _
 
 /-- Support is being a fixed point of the update ([dekker-2012]'s Proper
 Support). -/

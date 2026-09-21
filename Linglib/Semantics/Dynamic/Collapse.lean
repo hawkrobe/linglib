@@ -12,10 +12,10 @@ The descent from indexed dynamic semantics to level 0 — the relational
 algebra of procedures over a single state space
 ([muskens-van-benthem-visser-2011]'s "Dynamic Constants as Operators in
 Relational Algebra") — and the canonicity of level 0 itself. An update
-`S → S → Prop` is a Kleisli arrow `S → Set S` of the powerset monad —
-definitionally — so sequencing is Kleisli composition, the trivial test is
-`pure`, and `lift` is `bind` ([charlow-2014]'s monadic view of dynamic
-semantics, as theorems); `lift` is then an equivalence onto the
+curries to a Kleisli arrow `S → Set S` of the powerset monad, so
+sequencing is Kleisli composition, the trivial test is
+`pure`, and the image is `bind` ([charlow-2014]'s monadic view of dynamic
+semantics, as theorems); the image is then an equivalence onto the
 completely-join-preserving transformers (`sSupHom`), so the transformer
 algebra is the suplattice completion of the relational one and the
 non-distributive tests (`might`, `must`) are exactly the residue.
@@ -38,7 +38,7 @@ continuation-based systems choose further effects.
 
 - `Ctx.collapse`: the functor `Ctx W M V ⥤ RelCat` sending a context to
   its possibility space and a transition to its world-threaded relation.
-- `liftEquiv`: `Update S ≃ sSupHom (Set S) (Set S)`.
+- `imageEquiv`: `Update S ≃ sSupHom (Set S) (Set S)`.
 - `relCatEquivKleisli`: `RelCat ≌ KleisliCat Set`. [UPSTREAM] candidate —
   pure category theory, absent from mathlib.
 
@@ -46,10 +46,10 @@ continuation-based systems choose further effects.
 
 - `Ctx.collapse_faithful`: a transition is recoverable from its collapsed
   relation; what the collapse forgets is the base-indexing of objects.
-- `seq_eq_kleisliComp`, `test_top_eq_pure`, `lift_eq_bind`: the monadic
+- `comp_eq_kleisliComp`, `id_eq_pure`, `image_eq_bind`: the monadic
   reading of the update algebra.
-- `isDistributive_iff_map_sSup`, `liftEquiv_seq`: distributive CCPs are
-  exactly the completely-join-preserving maps, and `lift`/`lower` is an
+- `isDistributive_iff_map_sSup`, `imageEquiv_comp`: distributive CCPs are
+  exactly the completely-join-preserving maps, and `SetRel.image`/`lower` is an
   equivalence onto them, sending sequencing to composition.
 
 ## Implementation notes
@@ -122,7 +122,7 @@ end Ctx
 
 /-! ### The Set-monad reading -/
 
-open Update
+open Update SetRel
 
 attribute [local instance] Set.monad
 
@@ -130,26 +130,24 @@ universe u
 
 variable {S : Type*}
 
-/-- Sequencing is Kleisli composition for the powerset monad: an update
-is a Kleisli arrow `S → Set S`, definitionally. -/
-theorem seq_eq_kleisliComp (D₁ D₂ : S → Set S) :
-    (seq D₁ D₂ : S → Set S) = D₁ >=> D₂ :=
+/-- Sequencing is Kleisli composition for the powerset monad, an update
+being the Kleisli arrow that sends a state to its image. -/
+theorem comp_eq_kleisliComp (D₁ D₂ : Update S) :
+    (fun i => (D₁ ○ D₂).image {i}) = (fun i => D₁.image {i}) >=> fun i => D₂.image {i} :=
   funext fun i => Set.ext fun j => by
     rw [Bind.kleisliRight, Set.bind_def, Set.mem_iUnion₂]
-    exact exists_congr fun k => exists_prop.symm
+    simp only [SetRel.mem_image, Set.mem_singleton_iff, exists_eq_left, SetRel.mem_comp,
+      exists_prop]
 
 /-- The trivial test is `pure`. -/
-theorem test_top_eq_pure :
-    (test (fun _ => True) : Update S) = fun i => (pure i : Set S) :=
-  funext fun _ => Set.ext fun _ => (and_iff_left trivial).trans eq_comm
+theorem id_eq_pure : (fun i => (SetRel.id : Update S).image {i}) = fun i => (pure i : Set S) :=
+  funext fun _ => SetRel.image_id _
 
-/-- `lift` is `bind`: the relational image is the monad's extension
-operator. -/
-theorem lift_eq_bind (R : Update S) (σ : Set S) :
-    lift R σ = σ >>= (R : S → Set S) :=
+/-- The relational image is `bind`, the monad's extension operator. -/
+theorem image_eq_bind (R : Update S) (σ : Set S) : R.image σ = σ >>= fun i => R.image {i} :=
   Set.ext fun j => by
     rw [Set.bind_def, Set.mem_iUnion₂]
-    exact exists_congr fun i => exists_prop.symm
+    simp only [SetRel.mem_image, Set.mem_singleton_iff, exists_eq_left, exists_prop]
 
 /-! ### Distributivity is complete join preservation -/
 
@@ -187,21 +185,21 @@ theorem isDistributive_iff_map_sSup (φ : CCP S) :
       exact ⟨φ {i}, ⟨{i}, ⟨i, hi, rfl⟩, rfl⟩, hji⟩
 
 /-- The relational algebra is exactly the completely-join-preserving
-fragment of the transformer algebra: `lift`/`lower` as an equivalence
+fragment of the transformer algebra: `SetRel.image`/`lower` as an equivalence
 onto `sSupHom`. -/
-def liftEquiv : Update S ≃ sSupHom (Set S) (Set S) where
-  toFun R := ⟨lift R, (isDistributive_iff_map_sSup _).mp (lift_isDistributive R)⟩
+def imageEquiv : Update S ≃ sSupHom (Set S) (Set S) where
+  toFun R := ⟨R.image, (isDistributive_iff_map_sSup _).mp (image_isDistributive R)⟩
   invFun f := CCP.lower f
-  left_inv := lower_lift
+  left_inv := lower_image
   right_inv f := sSupHom.ext fun σ =>
-    congrFun (CCP.lift_lower _ ((isDistributive_iff_map_sSup _).mpr f.map_sSup')) σ
+    congrFun (CCP.image_lower _ ((isDistributive_iff_map_sSup _).mpr f.map_sSup')) σ
 
 /-- The equivalence sends sequencing to composition (diagrammatic order):
 the transformer monoid restricts to the relational one. -/
-theorem liftEquiv_seq (D₁ D₂ : Update S) :
-    (liftEquiv (seq D₁ D₂) : Set S → Set S) =
-      (liftEquiv D₂ : Set S → Set S) ∘ (liftEquiv D₁ : Set S → Set S) :=
-  lift_seq D₁ D₂
+theorem imageEquiv_comp (D₁ D₂ : Update S) :
+    (imageEquiv (D₁ ○ D₂) : Set S → Set S) =
+      (imageEquiv D₂ : Set S → Set S) ∘ (imageEquiv D₁ : Set S → Set S) :=
+  funext fun _ => SetRel.image_comp ..
 
 /-! ### `RelCat ≌ KleisliCat Set` -/
 

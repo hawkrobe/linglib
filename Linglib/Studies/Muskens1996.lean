@@ -13,10 +13,12 @@ The compositional fragment gives lexical translations for a fragment of English 
 generalized coordination at every category (`cn`, `iv`, `tv`, `detA`, `detEvery`, `detNo`,
 `andNP`, `orVP`) and runs the paper's derivations: cross-sentential anaphora, the donkey
 sentence, and verb-phrase coordination with anaphora across the conjuncts. The weakest
-precondition calculus extracts first-order truth conditions from update meanings (`wp`),
-with the compositional rules for tests, sequencing, and random assignment
-(`wp_test`, `wp_seq`, `wp_randomAssign`), the reduction of truth to the weakest
-precondition of the trivial condition (`wp_true_eq_closure`), and the syntactic
+precondition calculus extracts first-order truth conditions from update meanings; the
+paper's `wp` is the relational preimage `SetRel.preimage`, so the compositional rules for
+tests, sequencing, and random assignment and the reduction of truth to the weakest
+precondition of the trivial condition are the substrate's and mathlib's
+(`Update.preimage_test`, `SetRel.preimage_comp`, `Update.preimage_randomAssign`,
+`SetRel.preimage_univ_right`), leaving the existential rule (`preimage_dexists`) and the syntactic
 characterization of entailment (`drtEntails`).
 
 ## Implementation notes
@@ -34,7 +36,7 @@ separate formalization.
 
 namespace Muskens1996
 
-open DynamicSemantics DynamicSemantics.Update
+open DynamicSemantics DynamicSemantics.Update SetRel
 
 variable {R S E : Type*}
 
@@ -64,21 +66,19 @@ def tv (R : E → E → Prop) : DynQuant S E → DynPred S E :=
 /-- Indefinite determiner: `aⁿ ↝ λP'λP([uₙ]; P'(uₙ); P(uₙ))`.
 Type `[π] → [[π]]`; introduces discourse referent `u`. -/
 def detA [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
-  λ noun vp => seq (randomAssign u)
-    (seq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))
+  λ noun vp => randomAssign u ○ (noun (RegisterStructure.val u) ○ vp (RegisterStructure.val u))
 
 /-- Universal determiner: `everyⁿ ↝ λP'λP(([uₙ]; P'(uₙ)) ⇒ P(uₙ))`.
 Dynamic implication gives universal force. -/
 def detEvery [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (impl (seq (randomAssign u) (noun (RegisterStructure.val u)))
-      (vp (RegisterStructure.val u)))
+    test (impl (randomAssign u ○ noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))
 
 /-- Negative determiner: `noⁿ ↝ λP'λP[|not([uₙ]; P'(uₙ); P(uₙ))]`. -/
 def detNo [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (neg (seq (randomAssign u)
-      (seq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))))
+    test (neg (randomAssign u ○
+      (noun (RegisterStructure.val u) ○ vp (RegisterStructure.val u))))
 
 /-- Proper name NP: `Maryⁿ ↝ λP.P(Mary)`. Type `[[π]]`. -/
 def properNP (name : Dref S E) : DynQuant S E :=
@@ -103,7 +103,7 @@ def auxNeg : DynPred S E → DynQuant S E → Update S :=
 pointwise. The same schema works at every syntactic category. -/
 
 /-- Sentence-level `and`: `K₁ and K₂ = K₁; K₂`. -/
-def andS : Update S → Update S → Update S := seq
+def andS : Update S → Update S → Update S := comp
 
 /-- Sentence-level `or`: `K₁ or K₂ = [K₁ or K₂]` (disjunction test). -/
 def orS : Update S → Update S → Update S :=
@@ -111,7 +111,7 @@ def orS : Update S → Update S → Update S :=
 
 /-- VP-level `and`: `λv(P₁(v); P₂(v))`. -/
 def andVP : DynPred S E → DynPred S E → DynPred S E :=
-  λ P₁ P₂ u => seq (P₁ u) (P₂ u)
+  λ P₁ P₂ u => P₁ u ○ P₂ u
 
 /-- VP-level `or`: `λv[P₁(v) or P₂(v)]`. -/
 def orVP : DynPred S E → DynPred S E → DynPred S E :=
@@ -119,7 +119,7 @@ def orVP : DynPred S E → DynPred S E → DynPred S E :=
 
 /-- NP-level `and`: `λP(Q₁(P); Q₂(P))`. -/
 def andNP : DynQuant S E → DynQuant S E → DynQuant S E :=
-  λ Q₁ Q₂ P => seq (Q₁ P) (Q₂ P)
+  λ Q₁ Q₂ P => Q₁ P ○ Q₂ P
 
 /-- NP-level `or`: `λP[Q₁(P) or Q₂(P)]`. -/
 def orNP : DynQuant S E → DynQuant S E → DynQuant S E :=
@@ -139,9 +139,8 @@ abhors box is the worked example Muskens runs the wp calculus on (p. 173),
 with truth conditions `∃x₁ x₂ (man x₁ ∧ woman x₂ ∧ adores x₁ x₂ ∧
 abhors x₂ x₁)`. -/
 def exampleText (man woman : E → Prop) (adores abhors : E → E → Prop) : Update S :=
-  seq
-    (detA u₁ (cn man) (tv adores (detA u₂ (cn woman))))
-    (pro (RegisterStructure.val u₂) (tv abhors (pro (RegisterStructure.val u₁))))
+  detA u₁ (cn man) (tv adores (detA u₂ (cn woman))) ○
+    pro (RegisterStructure.val u₂) (tv abhors (pro (RegisterStructure.val u₁)))
 
 /-- "Every¹ farmer who owns a² donkey beats it₂." — universal force from
 `detEvery`, anaphoric `it₂` picking up the indefinite's dref:
@@ -149,7 +148,7 @@ def exampleText (man woman : E → Prop) (adores abhors : E → E → Prop) : Up
 def donkeySentence
     (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) : Update S :=
   detEvery u₁
-    (λ v => seq (cn farmer v) (detA u₂ (cn donkey_) (λ w => test (Condition.atom2 owns v w))))
+    (λ v => cn farmer v ○ detA u₂ (cn donkey_) (λ w => test (Condition.atom2 owns v w)))
     (tv beats (pro (RegisterStructure.val u₂)))
 
 /-- "A² cat catches a¹ fish and eats it₁." — the paper's (52), decorated as
@@ -165,116 +164,57 @@ end Examples
 
 /-! ### Weakest preconditions (§III.6)
 
-Given an `Update` `D` and postcondition `χ`, `wp D χ` characterizes the input
-states from which `D` can transition to a state satisfying `χ`. The rules
-WP_{[]}, WP_{;} and the TR extraction rules make truth-condition computation
-compositional. -/
+The paper's `wp(K, χ)`, the input states from which `K` can reach a state satisfying `χ`, is
+the relational preimage `SetRel.preimage K χ`. Its rules are the substrate's and mathlib's:
+WP of a test is `preimage_test`, WP_{;} is `SetRel.preimage_comp`, the existential clause of
+WP_{[]} is `preimage_randomAssign`, and Proposition 2, that `wp(K, ⊤)` is the truth condition
+`∃j K(i)(j)`, is `SetRel.preimage_univ_right`. Muskens's statement of Proposition 2 carries a
+closedness antecedent (proper `K`); in the semantic formulation the identity is unconditional. -/
 
-/-- Weakest precondition: `wp D χ i` iff some output `j` has `D i j ∧ χ j`. -/
-def wp (D : Update S) (χ : Condition S) : Condition S :=
-  λ i => ∃ j, D i j ∧ χ j
-
-/-- WP of a test: `wp [C] χ = C ∧ χ`. -/
-theorem wp_test (C : Condition S) (χ : Condition S) :
-    wp (test C) χ = λ i => C i ∧ χ i := by
-  ext i
-  simp only [wp, test]
-  constructor
-  · rintro ⟨j, ⟨rfl, hC⟩, hχ⟩; exact ⟨hC, hχ⟩
-  · rintro ⟨hC, hχ⟩; exact ⟨i, ⟨rfl, hC⟩, hχ⟩
-
-/-- WP of sequencing (WP_{;}): the postcondition threads through. -/
-theorem wp_seq (D₁ D₂ : Update S) (χ : Condition S) :
-    wp (seq D₁ D₂) χ = wp D₁ (wp D₂ χ) := by
-  ext i
-  simp only [wp, seq, Relation.Comp]
-  constructor
-  · rintro ⟨j, ⟨h, hD₁, hD₂⟩, hχ⟩
-    exact ⟨h, hD₁, j, hD₂, hχ⟩
-  · rintro ⟨h, hD₁, j, hD₂, hχ⟩
-    exact ⟨j, ⟨h, hD₁, hD₂⟩, hχ⟩
-
-/-- WP of random assignment (the ∃ clause of WP_{[]}): introducing a dref
-existentially quantifies over its values. -/
-theorem wp_randomAssign [RegisterStructure R S E] (u : R) (χ : Condition S) :
-    wp (randomAssign u) χ =
-    λ i => ∃ e : E, χ (RegisterStructure.extend i u e) := by
-  ext i
-  simp only [wp, randomAssign]
-  constructor
-  · rintro ⟨j, ⟨e, rfl⟩, hχ⟩; exact ⟨e, hχ⟩
-  · rintro ⟨e, hχ⟩; exact ⟨_, ⟨e, rfl⟩, hχ⟩
-
-/-- WP of existential `Update`: `wp (∃u. D) χ = ∃e, wp D χ (extend i u e)`. -/
-theorem wp_dexists [RegisterStructure R S E] (u : R) (D : Update S) (χ : Condition S) :
-    wp (dexists u D) χ =
-    λ i => ∃ e : E, wp D χ (RegisterStructure.extend i u e) := by
-  simp only [dexists]
-  rw [wp_seq, wp_randomAssign]
-
-/-- Proposition 2: `wp(K, ⊤)` is the existential closure `∃j K(i)(j)` —
-truth is satisfiability. Muskens's statement carries a closedness
-antecedent (proper `K`); in the semantic formulation the identity is
-definitional and unconditional. -/
-theorem wp_true_eq_closure (D : Update S) :
-    wp D (λ _ => True) = closure D := by
-  ext i; simp only [wp, closure, and_true]
+/-- The weakest precondition of an existential update quantifies that of its scope over the
+values of the register. -/
+theorem preimage_dexists [RegisterStructure R S E] (u : R) (D : Update S) (χ : Condition S) :
+    (dexists u D).preimage χ = {i | ∃ e : E, RegisterStructure.extend i u e ∈ D.preimage χ} := by
+  rw [dexists, preimage_comp, preimage_randomAssign]
 
 /-- DRT entailment: all premises true at `i` force the conclusion true at `i`. -/
 def drtEntails (premises : List (Update S)) (conclusion : Update S) : Prop :=
-  ∀ i, (∀ D ∈ premises, closure D i) → closure conclusion i
+  ∀ i, (∀ D ∈ premises, i ∈ D.dom) → i ∈ conclusion.dom
 
 /-- Proposition 3: DRT entailment reduces to entailment of truth conditions
 `wp(Kᵢ, ⊤)`. -/
 theorem proposition_3 (premises : List (Update S)) (conclusion : Update S) :
     drtEntails premises conclusion ↔
-    (∀ i, (∀ D ∈ premises, wp D (λ _ => True) i) → wp conclusion (λ _ => True) i) := by
-  simp only [drtEntails, wp_true_eq_closure]
+    (∀ i, (∀ D ∈ premises, i ∈ D.preimage Set.univ) → i ∈ conclusion.preimage Set.univ) := by
+  simp only [drtEntails, preimage_univ_right]
 
 /-- DPL-style entailment: every output of `D₁` can be extended by `D₂`. -/
 def dplEntails (D₁ D₂ : Update S) : Prop :=
-  ∀ i j, D₁ i j → ∃ k, D₂ j k
+  D₁.cod ⊆ D₂.dom
 
 /-- Corollary to Proposition 3: DPL entailment = validity of dynamic
 implication. -/
 theorem dpl_entailment_eq_dimpl_valid (D₁ D₂ : Update S) :
-    dplEntails D₁ D₂ ↔ ∀ i, impl D₁ D₂ i := by
-  simp only [dplEntails, impl]
+    dplEntails D₁ D₂ ↔ ∀ i, i ∈ impl D₁ D₂ :=
+  ⟨fun h _ _ hj => h ⟨_, hj⟩, fun h _ ⟨i, hj⟩ => h i hj⟩
 
 /-! ### Truth-condition extraction rules -/
 
 /-- TR of negation: `tr(not K) = ¬wp(K, ⊤)`. -/
-theorem tr_neg_eq (D : Update S) :
-    neg D = λ i => ¬ wp D (λ _ => True) i := by
-  simp only [wp_true_eq_closure]; rfl
+theorem tr_neg_eq (D : Update S) : neg D = (D.preimage Set.univ)ᶜ := by
+  rw [preimage_univ_right, neg_eq_compl_dom]
 
 /-- TR of disjunction: `tr(K₁ or K₂) = wp(K₁, ⊤) ∨ wp(K₂, ⊤)` — the
 existential distributes over disjunction. -/
 theorem tr_disj_eq (D₁ D₂ : Update S) :
-    disj D₁ D₂ = λ i => wp D₁ (λ _ => True) i ∨ wp D₂ (λ _ => True) i := by
-  ext i
-  simp only [disj, wp, and_true]
-  constructor
-  · rintro ⟨k, hk⟩
-    cases hk with
-    | inl h => left; exact ⟨k, h⟩
-    | inr h => right; exact ⟨k, h⟩
-  · rintro (⟨k, hk⟩ | ⟨k, hk⟩)
-    · exact ⟨k, Or.inl hk⟩
-    · exact ⟨k, Or.inr hk⟩
+    disj D₁ D₂ = D₁.preimage Set.univ ∪ D₂.preimage Set.univ := by
+  rw [preimage_univ_right, preimage_univ_right, disj_eq_dom_union_dom]
 
 /-- TR of implication: `tr(K₁ ⇒ K₂) = ¬wp(K₁, ¬wp(K₂, ⊤))` — no way to
 satisfy the antecedent without satisfying the consequent. -/
 theorem tr_impl_eq (D₁ D₂ : Update S) :
-    impl D₁ D₂ = λ i => ¬ wp D₁ (λ j => ¬ wp D₂ (λ _ => True) j) i := by
-  ext i
-  simp only [impl, wp, and_true]
-  constructor
-  · intro h ⟨j, hD₁, hNot⟩
-    exact hNot (h j hD₁)
-  · intro h j hD₁
-    by_contra hNot
-    exact h ⟨j, hD₁, hNot⟩
+    impl D₁ D₂ = (D₁.preimage (D₂.preimage Set.univ)ᶜ)ᶜ := by
+  rw [preimage_univ_right, ← core_compl, compl_compl, impl_eq_core_dom]
 
 /-! ### Semantic properness -/
 
@@ -286,40 +226,27 @@ proper box and a non-proper box may have the same semantic value (his
 (45) vs (47)), which is why this semantic version is only a counterpart,
 not a reformulation. -/
 def isProper (D : Update S) : Prop :=
-  ∀ i₁ i₂, closure D i₁ ↔ closure D i₂
+  ∀ i₁ i₂, i₁ ∈ D.dom ↔ i₂ ∈ D.dom
 
 /-- Proper DRSes have state-independent weakest preconditions. -/
 theorem proper_wp_uniform (D : Update S) (h : isProper D) :
-    ∀ i₁ i₂, wp D (λ _ => True) i₁ ↔ wp D (λ _ => True) i₂ := by
-  simp only [wp_true_eq_closure]; exact h
+    ∀ i₁ i₂, i₁ ∈ D.preimage Set.univ ↔ i₂ ∈ D.preimage Set.univ := by
+  simp only [preimage_univ_right]; exact h
 
-/-! ### Cylindric-algebra bridges
+/-! ### Cylindric algebra
 
-CDRT's dref introduction and dref equality are cylindric-algebra
-operations under `closure` ([henkin-monk-tarski-1971]) — the CDRT face of
-the correspondence whose DPL face lives in
-`Studies/GroenendijkStokhof1991.lean`. -/
+CDRT's dref introduction and dref equality are cylindric-algebra operations
+([henkin-monk-tarski-1971]): an existential is true where the cylindrification of its scope's
+truth set is, by the substrate's `dom_dexists`, and dref equality is the diagonal. -/
 
 section CylindricAlgebra
 
 open CylindricAlgebra
 open CDRT
 
-/-- Introducing the discourse referent `n` and continuing with `φ` has as its closure the
-cylindrification of the closure of `φ` along `n`. -/
-theorem closure_new_mul_eq_cyl {E : Type*} (n : Nat) (φ : DProp E) :
-    closure (DProp.new n * φ) = cyl n (closure φ) := by
-  ext g; simp only [closure, cyl_apply]
-  constructor
-  · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
-    exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩
-  · rintro ⟨e, o, hφ⟩
-    exact ⟨o, _, ⟨e, rfl⟩, by convert hφ using 2; simp [Function.update_apply]⟩
-
 /-- The equality condition on two discourse referents is the diagonal element. -/
 theorem eq_dref_eq_diag {E : Type*} (i j : Nat) :
-    Condition.eq (dref i : Dref (State E) E) (dref j) = diag i j := by
-  ext g; simp only [Condition.eq, dref, diag_apply]
+    Condition.eq (dref i : Dref (State E) E) (dref j) = diag i j := rfl
 
 end CylindricAlgebra
 

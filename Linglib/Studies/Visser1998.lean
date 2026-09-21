@@ -47,7 +47,7 @@ the syntax, so Theorem 3.13 is the induction `DPLExpressible.hasContext` over th
 
 namespace Visser1998
 
-open DynamicSemantics DynamicSemantics.Update
+open DynamicSemantics DynamicSemantics.Update SetRel
 
 variable {E : Type*}
 
@@ -55,33 +55,33 @@ variable {E : Type*}
 
 /-- Agreement on `V` relates the assignments equal on `V` (Definition 2.2); the reset `[x]` of
 the existential is agreement off `x`, the substrate's `randomAssign`
-(`randomAssign_iff_eqOn`). -/
-def agreeOn (V : Set ℕ) : Update (Assignment E) := fun f g ↦ Set.EqOn f g V
+(`mem_randomAssign_iff_eqOn`). -/
+def agreeOn (V : Set ℕ) : Update (Assignment E) := {(f, g) | Set.EqOn f g V}
 
 /-- A relation embeds in its composition with agreement on either side. -/
-theorem le_agreeOn_seq (R : Update (Assignment E)) (V W : Set ℕ) :
-    R ≤ seq (agreeOn V) (seq R (agreeOn W)) :=
-  fun f g hR ↦ ⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩
+theorem subset_agreeOn_comp (R : Update (Assignment E)) (V W : Set ℕ) :
+    R ⊆ agreeOn V ○ (R ○ agreeOn W) :=
+  fun ⟨f, g⟩ hR ↦ ⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩
 
 /-- Agreements compose to agreement on the intersection. -/
-theorem agreeOn_seq_agreeOn (V W : Set ℕ) :
-    seq (agreeOn V) (agreeOn W) = agreeOn (E := E) (V ∩ W) := by
+theorem agreeOn_comp_agreeOn (V W : Set ℕ) :
+    agreeOn V ○ agreeOn W = agreeOn (E := E) (V ∩ W) := by
   classical
-  funext f h
-  exact propext ⟨fun ⟨g, hV, hW⟩ v hv ↦ (hV hv.1).trans (hW hv.2),
+  ext ⟨f, h⟩
+  exact ⟨fun ⟨g, hV, hW⟩ v hv ↦ (hV hv.1).trans (hW hv.2),
     fun hVW ↦ ⟨V.piecewise f h, (V.piecewise_eqOn f h).symm,
       V.eqOn_piecewise.mpr ⟨fun v hv ↦ hVW ⟨hv.2, hv.1⟩, fun _ _ ↦ rfl⟩⟩⟩
 
 /-- Agreements meet in agreement on the union. -/
-theorem agreeOn_inf_agreeOn (V W : Set ℕ) :
-    agreeOn V ⊓ agreeOn W = agreeOn (E := E) (V ∪ W) := by
-  funext f g
-  exact propext Set.eqOn_union.symm
+theorem agreeOn_inter_agreeOn (V W : Set ℕ) :
+    agreeOn V ∩ agreeOn W = agreeOn (E := E) (V ∪ W) := by
+  ext ⟨f, g⟩
+  exact Set.eqOn_union.symm
 
 /-- Agreement on no variables is trivial. -/
-theorem agreeOn_empty : agreeOn (E := E) ∅ = ⊤ := by
-  funext f g
-  exact propext ⟨fun _ ↦ trivial, fun _ ↦ Set.eqOn_empty f g⟩
+theorem agreeOn_empty : agreeOn (E := E) ∅ = Set.univ := by
+  ext ⟨f, g⟩
+  exact ⟨fun _ ↦ trivial, fun _ ↦ Set.eqOn_empty f g⟩
 
 /-! ### Contexts (Definition 3.1) -/
 
@@ -182,35 +182,36 @@ at `c.I`, constrains its output only at `c.O`, and changes values only
 at `c.B`. -/
 structure HasContext (R : Update (Assignment E)) (c : Context) : Prop where
   /-- Only blocked variables change. -/
-  blocks : ∀ ⦃f g⦄, R f g → Set.EqOn f g (↑c.B)ᶜ
+  blocks : ∀ ⦃f g⦄, f ~[R] g → Set.EqOn f g (↑c.B)ᶜ
   /-- Membership is invariant under input agreement on `I`, output
   agreement on `O`, and preservation off `B`. -/
-  stable : ∀ ⦃f f' g g'⦄, R f g → Set.EqOn f' f ↑c.I →
-    Set.EqOn g g' ↑c.O → Set.EqOn f' g' (↑c.B)ᶜ → R f' g'
+  stable : ∀ ⦃f f' g g'⦄, f ~[R] g → Set.EqOn f' f ↑c.I →
+    Set.EqOn g g' ↑c.O → Set.EqOn f' g' (↑c.B)ᶜ → f' ~[R] g'
 
 /-- The paper's equational form of Definition 3.4. -/
 theorem hasContext_iff_eq (R : Update (Assignment E)) (c : Context) :
     HasContext R c ↔
-      R = seq (agreeOn ↑c.I) (seq R (agreeOn ↑c.O)) ⊓ agreeOn (↑c.B)ᶜ := by
-  rw [le_antisymm_iff, le_inf_iff, and_iff_right (le_agreeOn_seq R _ _)]
-  exact ⟨fun h ↦ ⟨h.blocks,
-      fun f g ⟨⟨f₀, hI, g₀, hR, hO⟩, hB⟩ ↦ h.stable hR hI hO hB⟩,
-    fun ⟨hb, hs⟩ ↦ ⟨hb,
-      fun f f' g g' hR hI hO hB ↦ hs f' g' ⟨⟨f, hI, g, hR, hO⟩, hB⟩⟩⟩
+      R = (agreeOn ↑c.I ○ (R ○ agreeOn ↑c.O)) ∩ agreeOn (↑c.B)ᶜ := by
+  rw [Set.Subset.antisymm_iff, Set.subset_inter_iff,
+    and_iff_right (subset_agreeOn_comp R _ _)]
+  exact ⟨fun h ↦ ⟨fun ⟨_, _⟩ hR ↦ h.blocks hR,
+      fun ⟨_, _⟩ ⟨⟨f₀, hI, g₀, hR, hO⟩, hB⟩ ↦ h.stable hR hI hO hB⟩,
+    fun ⟨hb, hs⟩ ↦ ⟨fun _ _ hR ↦ hb hR,
+      fun f f' g g' hR hI hO hB ↦ hs ⟨⟨f, hI, g, hR, hO⟩, hB⟩⟩⟩
 
 /-- The `test V`-typed relations are exactly the `V`-invariant tests —
 Definition 2.2's ⟨V⟩-conditions (noted after Definition 3.4). -/
 theorem hasContext_test_iff {V : Finset ℕ} {R : Update (Assignment E)} :
     HasContext R (Context.test V) ↔
       IsTest R ∧
-        ∀ ⦃f f'⦄, Set.EqOn f' f ↑V → R f f → R f' f' := by
+        ∀ ⦃f f'⦄, Set.EqOn f' f ↑V → f ~[R] f → f' ~[R] f' := by
   constructor
-  · exact fun h ↦ ⟨fun f g hR ↦ funext fun v ↦ h.blocks hR (by simp),
+  · exact fun h ↦ ⟨fun ⟨f, g⟩ hR ↦ funext fun v ↦ h.blocks hR (by simp),
       fun f f' hV hR ↦ h.stable hR hV hV.symm (Set.eqOn_refl _ _)⟩
   · rintro ⟨hdiag, hinv⟩
-    refine ⟨fun f g hR v _ ↦ congrFun (hdiag hR) v,
+    refine ⟨fun f g hR v _ ↦ congrFun (hdiag.eq hR) v,
       fun f f' g g' hR hI hO hB ↦ ?_⟩
-    obtain rfl : f = g := hdiag hR
+    obtain rfl : f = g := hdiag.eq hR
     obtain rfl : f' = g' := funext fun v ↦ hB (by simp)
     exact hinv hI hR
 
@@ -236,7 +237,7 @@ theorem mono (h : HasContext R c) (hcd : c ≤ d) : HasContext R d := by
 
 /-- Lemma 3.7, transfer: the patch agrees with `g` at the blocks and
 wherever the inputs agree. -/
-theorem patch_eqOn {J : Set ℕ} (h : HasContext R c) (hR : R f g)
+theorem patch_eqOn {J : Set ℕ} (h : HasContext R c) (hR : f ~[R] g)
     (hJ : Set.EqOn f' f J) :
     Set.EqOn (c.B.piecewise g f') g (J ∪ ↑c.B) := by
   intro v hv
@@ -247,7 +248,7 @@ theorem patch_eqOn {J : Set ℕ} (h : HasContext R c) (hR : R f g)
 `f R g`, then `R` relates `f'` to the patch of `f'` by `g` at the
 blocks. -/
 theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
-    (hR : R f g) : R f' (c.B.piecewise g f') :=
+    (hR : f ~[R] g) : f' ~[R] c.B.piecewise g f' :=
   h.stable hR hI
     ((h.patch_eqOn hR hI).mono (fun v hv ↦ by
       have hc := c.coh_mem (v := v)
@@ -256,7 +257,7 @@ theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
 
 /-- Lemma 3.7, uniqueness: the patch is the only output over `f'`
 agreeing with `g` on the blocks. -/
-theorem patch_unique (h : HasContext R c) (hR : R f' g')
+theorem patch_unique (h : HasContext R c) (hR : f' ~[R] g')
     (hB : Set.EqOn g' g ↑c.B) : g' = c.B.piecewise g f' := by
   have hb := h.blocks hR
   funext v
@@ -266,8 +267,8 @@ theorem patch_unique (h : HasContext R c) (hR : R f' g')
 
 /-- Theorem 3.8: composition of a `c`-relation and a `d`-relation is a
 `c * d`-relation. -/
-theorem seq (hR : HasContext R c) (hS : HasContext S d) :
-    HasContext (Update.seq R S) (c * d) where
+theorem comp (hR : HasContext R c) (hS : HasContext S d) :
+    HasContext (R ○ S) (c * d) where
   blocks := by
     rintro f g ⟨k, hfk, hkg⟩ v hv
     rw [Context.B_mul, Finset.coe_union, Set.compl_union] at hv
@@ -298,12 +299,12 @@ theorem seq (hR : HasContext R c) (hS : HasContext S d) :
 a `(c → d)`-relation. -/
 theorem impl (hR : HasContext R c) (hS : HasContext S d) :
     HasContext (test (Update.impl R S)) (c.impl d) := by
-  refine hasContext_test_iff.mpr ⟨fun _ _ h ↦ h.1, ?_⟩
+  refine hasContext_test_iff.mpr ⟨isTest_test _, ?_⟩
   rintro f f' hI ⟨-, hall⟩
   refine ⟨rfl, fun k hRk ↦ ?_⟩
   -- Lemma 3.7 twice: patch the antecedent back to `f`, then transfer
   -- the consequent forward to `k`.
-  obtain ⟨j, hSj⟩ := hall (c.B.piecewise k f) (hR.patch
+  obtain ⟨j, hSj⟩ := hall (hR.patch
     (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left)).symm hRk)
   exact ⟨_, hS.patch ((hR.patch_eqOn hRk hI.symm).mono
     (fun v hv ↦ by grind [Context.I_mul])).symm hSj⟩
@@ -317,22 +318,22 @@ test (the atomic case of the paper's semantic Theorem 3.13). -/
 theorem hasContext_test (V : Finset ℕ) (p : (ℕ → E) → Prop)
     (hp : ∀ ⦃f f'⦄, Set.EqOn f f' ↑V → p f → p f') :
     HasContext (test p) (Context.test V) :=
-  hasContext_test_iff.mpr ⟨fun _ _ h ↦ h.1,
+  hasContext_test_iff.mpr ⟨isTest_test _,
     fun _ _ hV hR ↦ ⟨rfl, hp hV.symm hR.2⟩⟩
 
 /-- The reset is typed at `⟨∅, {x}, ∅⟩` — Definition 3.12's `c_{∃v}`: it
 reads nothing, constrains no output, and blocks `x`. -/
 theorem hasContext_randomAssign (x : ℕ) :
     HasContext (randomAssign (S := Assignment E) x) ⟨∅, {x}, ∅, rfl⟩ :=
-  ⟨fun f g hR v hv ↦ randomAssign_iff_eqOn.mp hR (by simpa using hv),
-   fun f f' g g' _ _ _ hB ↦ randomAssign_iff_eqOn.mpr fun v hv ↦ hB (by simpa using hv)⟩
+  ⟨fun f g hR v hv ↦ mem_randomAssign_iff_eqOn.mp hR (by simpa using hv),
+   fun f f' g g' _ _ _ hB ↦ mem_randomAssign_iff_eqOn.mpr fun v hv ↦ hB (by simpa using hv)⟩
 
 /-- The existential typing (Definition 3.12's `c_{∃v} • c_φ`): blocking
 `x` before a `c`-relation types `∃x φ`. -/
 theorem HasContext.dexists {c : Context} {φ : Update (Assignment E)} (x : ℕ)
     (h : HasContext φ c) :
     HasContext (dexists x φ) (⟨∅, {x}, ∅, rfl⟩ * c) :=
-  (hasContext_randomAssign x).seq h
+  (hasContext_randomAssign x).comp h
 
 /-! ### The language-free soundness result (Theorem 3.11) -/
 
@@ -343,8 +344,8 @@ inductive DPLExpressible : Update (Assignment E) → Prop
       (hp : ∀ ⦃f f'⦄, Set.EqOn f f' ↑V → p f → p f') :
       DPLExpressible (test p)
   | randomAssign (x : ℕ) : DPLExpressible (randomAssign x)
-  | seq {R S : Update (Assignment E)} :
-      DPLExpressible R → DPLExpressible S → DPLExpressible (seq R S)
+  | comp {R S : Update (Assignment E)} :
+      DPLExpressible R → DPLExpressible S → DPLExpressible (R ○ S)
 
 /-- Theorem 3.11: every DPL-expressible relation is an IBO-relation —
 typed by some context. -/
@@ -353,9 +354,9 @@ theorem DPLExpressible.hasContext {R : Update (Assignment E)} (h : DPLExpressibl
   induction h with
   | test V p hp => exact ⟨_, hasContext_test V p hp⟩
   | randomAssign x => exact ⟨_, hasContext_randomAssign x⟩
-  | seq _ _ ih ih' =>
+  | comp _ _ ih ih' =>
     obtain ⟨c, hc⟩ := ih
     obtain ⟨d, hd⟩ := ih'
-    exact ⟨c * d, hc.seq hd⟩
+    exact ⟨c * d, hc.comp hd⟩
 
 end Visser1998

@@ -32,7 +32,7 @@ content can flow into side-issue computations, but side-issue content cannot
 leak back into at-issue computation.
 
 See `Studies/Charlow2021.lean` (`PostSupp`) for the same pattern applied to
-dynamic GQs, with the log monoid `(Update S, Update.seq, test ⊤)` in place of
+dynamic GQs, with the log monoid `(Update S, ○, SetRel.id)` in place of
 `List P`.
 -/
 

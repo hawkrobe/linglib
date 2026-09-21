@@ -438,15 +438,14 @@ hypothesis also had to forbid re-declaration. -/
 theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.freeVarFinset ⊆ X)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (DRS.toRelAt X (K₁.merge K₂) : (V → M) → (V → M) → Prop) =
-      DynamicSemantics.Update.seq (DRS.toRelAt X K₁)
-        (DRS.toRelAt (X ∪ K₁.referents) K₂) := by
+      Relation.Comp (DRS.toRelAt X K₁) (DRS.toRelAt (X ∪ K₁.referents) K₂) := by
   obtain ⟨U₁, c₁⟩ := K₁
   obtain ⟨U₂, c₂⟩ := K₂
   have hfvc₁ := DRS.freeVarFinset_subset_iff.mp h₁
   funext f g
   apply propext
   simp only [DRS.merge, DRS.toRelAt_mk,
-    Condition.holdsAllAt_append, DynamicSemantics.Update.seq, Relation.Comp]
+    Condition.holdsAllAt_append, Relation.Comp]
   rw [← Finset.union_assoc]
   constructor
   · rintro ⟨hag, hh₁, hh₂⟩
@@ -503,7 +502,7 @@ private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition 
     (hXU : Disjoint X U)
     (hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
       Condition.holdsAllAt (X ∪ U) conds k)
-    {g g' : V → M} (h : DRS.toRel (.mk U conds) g g') :
+    {g g' : V → M} (h : (g, g') ∈ DRS.toRel (.mk U conds)) :
     DRS.toRelAt X (.mk U conds) g g' := by
   obtain ⟨hag, hh⟩ := h
   exact ⟨fun x hx => hag x (Finset.disjoint_left.mp hXU (Finset.mem_coe.mp hx)),
@@ -516,7 +515,7 @@ private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition 
     (hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
       Condition.holdsAllAt (X ∪ U) conds k)
     {g g' : V → M} (h : DRS.toRelAt X (.mk U conds) g g') :
-    DRS.toRel (.mk U conds) g (fun x => if x ∈ U then g' x else g x) ∧
+    (g, fun x => if x ∈ U then g' x else g x) ∈ DRS.toRel (M := M) (.mk U conds) ∧
       Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
   obtain ⟨hag, hh⟩ := h
   have heq : Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
@@ -623,7 +622,8 @@ end
 
 /-- Flat-to-indexed: on a reuse-free DRS every flat output is a indexed output. -/
 theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
-    (hfv : K.freeVarFinset ⊆ X) {g g' : V → M} (h : DRS.toRel K g g') : DRS.toRelAt X K g g' := by
+    (hfv : K.freeVarFinset ⊆ X) {g g' : V → M} (h : (g, g') ∈ DRS.toRel K) :
+    DRS.toRelAt X K g g' := by
   obtain ⟨U, conds⟩ := K
   simp only [DRS.reuseFreeAt_mk] at hrf
   exact DRS.toRelAt_of_toRel' hrf.1
@@ -633,7 +633,7 @@ theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
 base, into a flat output. -/
 theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
     (hfv : K.freeVarFinset ⊆ X) {g g' : V → M} (h : DRS.toRelAt X K g g') :
-    ∃ g'', DRS.toRel K g g'' ∧ Set.EqOn g'' g' ↑(X ∪ K.referents) := by
+    ∃ g'', (g, g'') ∈ DRS.toRel K ∧ Set.EqOn g'' g' ↑(X ∪ K.referents) := by
   obtain ⟨U, conds⟩ := K
   simp only [DRS.reuseFreeAt_mk] at hrf
   exact ⟨_, DRS.toRel_of_toRelAt' (DRS.freeVarFinset_subset_iff.mp hfv)

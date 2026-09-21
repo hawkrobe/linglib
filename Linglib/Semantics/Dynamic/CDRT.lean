@@ -1,4 +1,5 @@
 import Linglib.Logic.Assignment
+import Linglib.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.Update
 import Mathlib.Data.Set.Function
 
@@ -27,10 +28,11 @@ as coordinates of a function type: `RegisterStructure V (V → E) E`.
   updates it supports, `Update.randomAssign`, `Update.dexists`, `Update.dforall`.
 - `Condition.atom1`, `Condition.atom2`, `Condition.eq`: atomic conditions
   from predicates and drefs.
-- `CDRT.State`, `CDRT.DProp`, `CDRT.SProp` and the box connectives:
-  the concrete CDRT instance at `State E := Assignment E`, with
-  `DProp.new n` agreeing with the register structure's random assignment
-  (`DProp.new_eq_randomAssign`).
+- `Update.mem_randomAssign`, `Update.mem_randomAssign_iff_eqOn`, `Update.dom_dexists`: at the
+  canonical register structure a random assignment is `Function.update` at an arbitrary value,
+  agreement off the register, and, under the weakest precondition, cylindrification.
+- `CDRT.State`, `CDRT.DProp`, `CDRT.dref`: the concrete CDRT instance at
+  `State E := Assignment E`.
 
 The compositional fragment (T₀ translations, generalized coordination,
 the paper's derivations) and the weakest-precondition calculus live in
@@ -72,25 +74,36 @@ instance {V E : Type*} [DecidableEq V] : RegisterStructure V (V → E) E where
 
 namespace Update
 
+open SetRel
+
 variable {R S E : Type*} [RegisterStructure R S E]
 
 /-- Random assignment: `[r]` introduces the register `r` with an
 arbitrary value. -/
 def randomAssign (r : R) : Update S :=
-  fun i j => ∃ e : E, j = RegisterStructure.extend i r e
+  {(a, b) | ∃ e : E, b = RegisterStructure.extend a r e}
 
 /-- Existential update: `∃r(D) = [r]; D`. -/
 def dexists (r : R) (D : Update S) : Update S :=
-  seq (randomAssign r) D
+  randomAssign r ○ D
 
 /-- Universal condition: `∀r(D)` holds iff `D` has an output from every
 `r`-variant — [groenendijk-stokhof-1991]'s clause for the universal. -/
 def dforall (r : R) (D : Update S) : Condition S :=
   impl (randomAssign r) D
 
+/-- The weakest precondition of a random assignment quantifies over the values of the
+register. -/
+theorem preimage_randomAssign (r : R) (t : Condition S) :
+    (randomAssign r).preimage t = {i | ∃ e : E, RegisterStructure.extend i r e ∈ t} := by
+  ext i
+  exact ⟨fun ⟨_, hj, e, he⟩ => ⟨e, he ▸ hj⟩, fun ⟨e, he⟩ => ⟨_, he, e, rfl⟩⟩
+
 end Update
 
 namespace Update
+
+open SetRel CylindricAlgebra
 
 variable {V E : Type*} [DecidableEq V] {g h : V → E} {x : V}
 
@@ -102,13 +115,24 @@ variable {V E : Type*} [DecidableEq V] {g h : V → E} {x : V}
 
 /-- At the canonical register structure, random assignment is
 `Function.update` at an arbitrary value. -/
-theorem randomAssign_apply : randomAssign x g h ↔ ∃ e, h = Function.update g x e := Iff.rfl
+theorem mem_randomAssign : g ~[randomAssign x] h ↔ ∃ e, h = Function.update g x e := Iff.rfl
 
 /-- At the canonical register structure, random assignment at `x` is
 agreement off `x`. -/
-theorem randomAssign_iff_eqOn : randomAssign x g h ↔ Set.EqOn g h {x}ᶜ :=
+theorem mem_randomAssign_iff_eqOn : g ~[randomAssign x] h ↔ Set.EqOn g h {x}ᶜ :=
   ⟨by rintro ⟨e, rfl⟩ v hv; exact (Function.update_of_ne hv e g).symm,
     fun hk => ⟨h x, (Function.update_eq_iff.mpr ⟨rfl, fun _ hv => hk hv⟩).symm⟩⟩
+
+/-- The weakest precondition of a random assignment is cylindrification
+([henkin-monk-tarski-1971]). -/
+theorem preimage_randomAssign_eq_cyl (t : Condition (V → E)) :
+    (randomAssign x).preimage t = cyl x t :=
+  preimage_randomAssign x t
+
+/-- An existential is true where the cylindrification of its scope's truth set is. -/
+theorem dom_dexists (D : Update (V → E)) : (dexists x D).dom = cyl x D.dom := by
+  rw [← preimage_randomAssign_eq_cyl, ← preimage_univ_right, ← preimage_univ_right, dexists,
+    preimage_comp]
 
 end Update
 
@@ -118,15 +142,15 @@ variable {S E : Type*}
 
 /-- Atomic condition from a one-place predicate and a dref. -/
 def Condition.atom1 (P : E → Prop) (u : Dref S E) : Condition S :=
-  fun i => P (u i)
+  {i | P (u i)}
 
 /-- Atomic condition from a two-place predicate and two drefs. -/
 def Condition.atom2 (P : E → E → Prop) (u v : Dref S E) : Condition S :=
-  fun i => P (u i) (v i)
+  {i | P (u i) (v i)}
 
 /-- Equality condition on two drefs. -/
 def Condition.eq (u v : Dref S E) : Condition S :=
-  fun i => u i = v i
+  {i | u i = v i}
 
 end Atomic
 
@@ -149,64 +173,5 @@ def dref {E : Type*} (n : Nat) : DynamicSemantics.Dref (State E) E :=
 /-- Dynamic proposition (box, type `s(st)`): the relational `Update`
 specialized to CDRT states. -/
 abbrev DProp (E : Type*) := Update (State E)
-
-/-- Static proposition: the spine's `Condition` at CDRT states. -/
-abbrev SProp (E : Type*) := Condition (State E)
-
-/-- Embed a static proposition as a dynamic one: the spine's `test`. -/
-abbrev DProp.ofStatic {E : Type*} (p : SProp E) : DProp E := test p
-
-/-- Dynamic conjunction: the spine's relational composition `seq`. -/
-abbrev DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E := Update.seq φ ψ
-
-/-- New discourse referent: `[new n]` extends the state at position `n`
-with an arbitrary value. -/
-def DProp.new {E : Type*} (n : Nat) : DProp E :=
-  fun i o => ∃ e : E, o = fun m => if m = n then e else i m
-
-/-- `DProp.new` is the register structure's random assignment at the
-canonical instance. -/
-theorem DProp.new_eq_randomAssign {E : Type*} (n : Nat) :
-    DProp.new (E := E) n = randomAssign n := by
-  funext i o
-  simp only [DProp.new, randomAssign, eq_iff_iff]
-  exact exists_congr fun e => by
-    constructor <;> (rintro rfl; funext m; simp [RegisterStructure.extend,
-      Function.update_apply])
-
-/-- Dynamic negation: the spine's `neg`, re-entering the update algebra
-via `test`. -/
-abbrev DProp.neg {E : Type*} (φ : DProp E) : DProp E := test (Update.neg φ)
-
-/-- Dynamic implication: the spine's `impl` via `test`. -/
-abbrev DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E := test (Update.impl φ ψ)
-
-/-- Dynamic disjunction as a test (SEM2, [muskens-1996] p. 148): the
-spine's `disj` via `test`. -/
-abbrev DProp.disj {E : Type*} (φ ψ : DProp E) : DProp E :=
-  test (Update.disj φ ψ)
-
-/-- Truth at a state: the spine's `closure`. -/
-abbrev DProp.true_at {E : Type*} (φ : DProp E) (i : State E) : Prop :=
-  closure φ i
-
-/-! ### Reduction lemmas -/
-
-/-- The output of a negated `DProp` always equals the input state. -/
-theorem DProp.neg_output {E : Type*} {φ : DProp E} {i o : State E}
-    (h : DProp.neg φ i o) : o = i := h.1.symm
-
-/-- `DProp.impl` is true at `i` iff every antecedent extension satisfies
-the consequent. -/
-theorem DProp.impl_true_at {E : Type*} (φ ψ : DProp E) (i : State E) :
-    DProp.true_at (DProp.impl φ ψ) i ↔ ∀ k, φ i k → DProp.true_at ψ k := by
-  simp only [DProp.true_at, closure, DProp.impl, test, Update.impl]
-  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨i, rfl, h⟩⟩
-
-/-- A static `DProp` is true at `i` iff its static content holds. -/
-theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : State E) :
-    DProp.true_at (DProp.ofStatic p) i ↔ p i := by
-  simp only [DProp.true_at, closure, DProp.ofStatic, test]
-  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨i, rfl, h⟩⟩
 
 end CDRT

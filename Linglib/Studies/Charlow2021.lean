@@ -68,7 +68,8 @@ Appendix B as a Writer monad.
 namespace Charlow2021
 
 open DynamicSemantics
-open DynamicSemantics.Update (test seq closure neg)
+open DynamicSemantics.Update (test neg)
+open SetRel
 open DynamicSemantics.CCP (IsDistributive)
 open scoped DynamicSemantics.Update
 
@@ -153,7 +154,7 @@ theorem scenarioB_pseudo_true :
 /-! ### Pointwise dynamic GQs (§2)
 
 [muskens-1996]/[brasoveanu-2007]-style operators over the pointwise
-`Update S := S → S → Prop`. The pointwise system derives only the
+`Update S`, a relation on states. The pointwise system derives only the
 pseudo-cumulative LF; the cumulative LF is the target the repairs below
 must reach. -/
 
@@ -164,46 +165,42 @@ variable {R S E : Type*} [RegisterStructure R S E] [PartialOrder E] [Fintype E]
 /-- Existential dref introduction (eq. 17): introduce a referent satisfying
 `P` at dref `v`. -/
 def Evar (v : R) (P : E → Prop) : Update S :=
-  λ i j => ∃ x, P x ∧ j = RegisterStructure.extend i v x
+  {(i, j) | ∃ x, P x ∧ j = RegisterStructure.extend i v x}
 
 /-- Mereological maximization (eq. 18): retain outputs of `D` whose `v`-value
 is maximal among the `v`-values of all outputs of `D`. -/
 def Mvar (v : R) (D : Update S) : Update S :=
-  λ i j => D i j ∧ Maximal (λ x => ∃ k, D i k ∧ RegisterStructure.val v k = x) (RegisterStructure.val v j)
+  {(i, j) | i ~[D] j ∧
+    Maximal (λ x => ∃ k, i ~[D] k ∧ RegisterStructure.val v k = x) (RegisterStructure.val v j)}
 
 /-- Cardinality test (eq. 19): test (identity on assignments) that the atom
 count of `v` equals `n`. -/
 def CardTest (v : R) (n : ℕ) : Update S :=
-  λ i j => i = j ∧ Mereology.atomCount E (RegisterStructure.val v j) = n
+  test {j | Mereology.atomCount E (RegisterStructure.val v j) = n}
 
 /-- Transitive verb as a test that `R` holds between two drefs. -/
 def sawDRS (u v : R) (rel : E → E → Prop) : Update S :=
-  test (λ i => rel (RegisterStructure.val u i) (RegisterStructure.val v i))
+  test {i | rel (RegisterStructure.val u i) (RegisterStructure.val v i)}
 
 /-- Composed pointwise "exactly n" with trivial nuclear scope:
 `E^v P ; M_v(E^v P) ; n_v` (the flat counterpart of the scope-taking
 dynamic-GQ entry, eq. 3). -/
 def exactlyN_pw (v : R) (P : E → Prop) (n : ℕ) : Update S :=
-  seq (seq (Evar v P) (Mvar v (Evar v P))) (CardTest v n)
+  Evar v P ○ Mvar v (Evar v P) ○ CardTest v n
 
 /-- The pseudo-cumulative LF (5): the object's cardinality test is trapped
 inside the subject's maximization. -/
 def pseudoCumulative (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) : Update S :=
-  seq
-    (Mvar v (seq
-      (seq (Evar v boys) (Mvar u (seq (Evar u movies) (sawDRS u v saw'))))
-      (CardTest u 5)))
-    (CardTest v 3)
+  Mvar v (Evar v boys ○ Mvar u (Evar u movies ○ sawDRS u v saw') ○ CardTest u 5) ○
+    CardTest v 3
 
 /-- The cumulative LF (6): both cardinality tests scope outside both
 maximizations. -/
 def cumulative (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) : Update S :=
-  seq (seq
-    (Mvar v (seq (Evar v boys) (Mvar u (seq (Evar u movies) (sawDRS u v saw')))))
-    (CardTest u 5))
-    (CardTest v 3)
+  Mvar v (Evar v boys ○ Mvar u (Evar u movies ○ sawDRS u v saw')) ○ CardTest u 5 ○
+    CardTest v 3
 
 end Pointwise
 
@@ -230,7 +227,7 @@ abbrev TowerGQ (S : Type*) := Cont (Update S) (Update S → Update S)
 `Update S → Update S`. The cardinality test is evaluated after the
 higher-order scope argument `c` — the key that unlocks cumulative readings. -/
 def exactlyN_tower (v : R) (P : E → Prop) (n : ℕ) : TowerGQ S :=
-  λ k => seq (k (λ body => Mvar v (seq (Evar v P) body))) (CardTest v n)
+  λ k => k (λ body => Mvar v (Evar v P ○ body)) ○ CardTest v n
 
 /-- Higher-order derivation of "exactly 3 boys saw exactly 5 movies"
 (eq. 27, derived in §3.3 by β-reduction of the linearized terms; §3.4's
@@ -312,10 +309,10 @@ universe u
 
 /-- Bi-dimensional meaning (§5.1): an at-issue value paired with accumulated
 post-suppositional content — mathlib's Writer monad `WriterT (Update S) Id`
-over the monoid `(Update S, Update.seq, test ⊤)`. The `Monad`/`LawfulMonad` instances
+over the monoid `(Update S, ○, SetRel.id)`. The `Monad`/`LawfulMonad` instances
 come from mathlib via the scoped `Monoid (Update S)` instance, and agree with
 the paper's `pure`/`bind` (Appendix B, eqs. 120–121): `pure` carries the
-trivial post-supposition; `bind` accumulates post-suppositions via `seq`. -/
+trivial post-supposition; `bind` accumulates post-suppositions via `○`. -/
 abbrev PostSupp (S A : Type u) : Type u := WriterT (Update S) Id A
 
 namespace PostSupp
@@ -340,26 +337,26 @@ def postsup (p : PostSupp S A) : Update S := p.run.2
 @[simp] theorem val_pure (a : A) : (pure a : PostSupp S A).val = a := rfl
 
 @[simp] theorem postsup_pure (a : A) :
-    (pure a : PostSupp S A).postsup = test (λ _ => True) := rfl
+    (pure a : PostSupp S A).postsup = .id := rfl
 
 @[simp] theorem val_bind (m : PostSupp S A) (f : A → PostSupp S B) :
     (m >>= f).val = (f m.val).val := rfl
 
 @[simp] theorem postsup_bind (m : PostSupp S A) (f : A → PostSupp S B) :
-    (m >>= f).postsup = seq m.postsup (f m.val).postsup := rfl
+    (m >>= f).postsup = m.postsup ○ (f m.val).postsup := rfl
 
 /-- Reification (the bullet operator, eq. 58): sequence the at-issue update
 with its accumulated post-supposition. -/
-def reify (p : PostSupp S (Update S)) : Update S := seq p.val p.postsup
+def reify (p : PostSupp S (Update S)) : Update S := p.val ○ p.postsup
 
 @[simp] theorem reify_pure (D : Update S) :
     (pure D : PostSupp S (Update S)).reify = D :=
-  mul_one D
+  comp_id D
 
 /-- Truth of a bi-dimensional meaning at an assignment (eq. 56): the reified
 update is true at `i` in the substrate sense. -/
 def trueAt (p : PostSupp S (Update S)) (i : S) : Prop :=
-  DynamicSemantics.Update.closure p.reify i
+  i ∈ p.reify.dom
 
 end PostSupp
 
@@ -374,12 +371,12 @@ def exactlyN_postsup (v : R) (P : E → Prop) (n : ℕ) :
 /-- Bi-dimensional derivation of "exactly 3 boys saw exactly 5 movies":
 nested maximizations at issue; both cardinality tests accumulate
 post-suppositionally (under `bind`, tests from different quantifiers simply
-`seq`-accumulate, independent of scope). -/
+`○`-accumulate, independent of scope). -/
 def cumulativePostsup (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) : PostSupp S (Update S) :=
   PostSupp.mk
-    (Mvar v (seq (Evar v boys) (Mvar u (seq (Evar u movies) (sawDRS u v saw')))))
-    (seq (CardTest u 5) (CardTest v 3))
+    (Mvar v (Evar v boys ○ Mvar u (Evar u movies ○ sawDRS u v saw')))
+    (CardTest u 5 ○ CardTest v 3)
 
 /-- Reifying the bi-dimensional derivation recovers exactly the cumulative
 LF (6): deferring cardinality tests as post-suppositions yields the
@@ -388,7 +385,7 @@ theorem reify_cumulativePostsup (v u : R) (boys movies : E → Prop)
     (saw' : E → E → Prop) :
     (cumulativePostsup (S := S) v u boys movies saw').reify =
       cumulative v u boys movies saw' :=
-  (mul_assoc _ _ _).symm
+  (comp_assoc _ _ _).symm
 
 end PostSuppositional
 

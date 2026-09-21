@@ -306,4 +306,19 @@ theorem dimSet_subset_of_dependsOn {s : Set ι} (hp : DependsOn p s) : dimSet p 
 
 end Pi
 
+/-- Sets of assignments form the cylindric set algebra of [henkin-monk-tarski-1971], the algebra
+of predicates under `Set`'s order. -/
+instance {E : Type*} [DecidableEq ι] : CylindricAlgebra ι (Set (ι → E)) :=
+  inferInstanceAs (CylindricAlgebra ι ((ι → E) → Prop))
+
+@[simp]
+theorem mem_cyl {E : Type*} [DecidableEq ι] {t : Set (ι → E)} {g : ι → E} :
+    g ∈ cyl i t ↔ ∃ e, update g i e ∈ t :=
+  Iff.rfl
+
+@[simp]
+theorem mem_diag {E : Type*} [DecidableEq ι] {g : ι → E} :
+    g ∈ (diag i j : Set (ι → E)) ↔ g i = g j :=
+  Iff.rfl
+
 end CylindricAlgebra
