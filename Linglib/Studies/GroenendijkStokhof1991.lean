@@ -600,20 +600,20 @@ section SatisfactionSets
 
 open CylindricAlgebra
 
-theorem closure_exists_eq_cylindrify :
-    closure (toDRS (Rel.exists_ x φ)) = cylindrify x (closure (toDRS φ)) := by
+theorem closure_exists_eq_cyl :
+    closure (toDRS (Rel.exists_ x φ)) = cyl x (closure (toDRS φ)) := by
   have hup : ∀ (g : Assignment E) (d : E),
       (λ n => if n = x then d else g n) = Function.update g x d := λ g d => by
     funext n
     simp [Function.update_apply]
   ext g
-  simp only [closure, toDRS, Rel.exists_, cylindrify]
+  simp only [closure, toDRS, Rel.exists_, cyl_apply]
   exact ⟨λ ⟨h, d, hφ⟩ => ⟨d, h, hup g d ▸ hφ⟩, λ ⟨d, h, hφ⟩ => ⟨h, d, (hup g d).symm ▸ hφ⟩⟩
 
-theorem closure_identity_eq_diagonal (y : ℕ) :
-    closure (toDRS (Rel.atom λ g : Assignment E => g x = g y)) = @diagonal E x y := by
+theorem closure_identity_eq_diag (y : ℕ) :
+    closure (toDRS (Rel.atom fun g : Assignment E ↦ g x = g y)) = diag x y := by
   ext g
-  simp only [closure, toDRS, Rel.atom, diagonal]
+  simp only [closure, toDRS, Rel.atom, diag_apply]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨g, rfl, h⟩⟩
 
 theorem closure_neg_eq : closure (toDRS φ.neg) = λ g => ¬ closure (toDRS φ) g := by

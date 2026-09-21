@@ -16,8 +16,8 @@ duplicator `W κ x = κ x x` applied to the body (`bsBinding`), and the two agre
 binding (`hk_bs_reflexive_equiv`). Assignment-indexed meanings are the reader monad `Reader E`,
 whose `pure` and `<*>` are the constant and pointwise application; and binding a pronoun at
 `κ` to a binder at `l` is the cylindric substitution of [henkin-monk-tarski-1971]
-(`binding_eq_directSubst`), after which the two coordinates satisfy the diagonal
-(`binding_establishes_diagonal`).
+(`subst_apply_iff_binding`), after which the two coordinates satisfy the diagonal
+(`diag_apply_binding`).
 
 ## References
 
@@ -55,14 +55,15 @@ instance : Monad (Reader E) where
   pure a := λ _ => a
   bind m f := λ e => f (m e) e
 
-/-- Binding the pronoun at `κ` to the binder at `l` is cylindric substitution. -/
-theorem binding_eq_directSubst (κ l : ℕ) (φ : Assignment E → Prop) (g : Assignment E) :
-    φ (g[κ ↦ g l]) = directSubst κ l φ g :=
-  rfl
+/-- Binding the pronoun at `κ` to the binder at `l` is cylindric substitution, which equates the
+two coordinates and then cylindrifies along `κ`. -/
+theorem subst_apply_iff_binding (κ l : ℕ) (φ : Assignment E → Prop) (g : Assignment E) :
+    subst κ l φ g ↔ φ (g[κ ↦ g l]) :=
+  subst_apply
 
 /-- After binding, the pronoun and its binder agree: the diagonal. -/
-theorem binding_establishes_diagonal (κ l : ℕ) (g : Assignment E) (h : κ ≠ l) :
-    diagonal κ l (g[κ ↦ g l]) := by
-  simp [diagonal, Function.update_of_ne (Ne.symm h) (g l) g]
+theorem diag_apply_binding (κ l : ℕ) (g : Assignment E) :
+    (diag κ l : Assignment E → Prop) (g[κ ↦ g l]) := by
+  obtain rfl | h := eq_or_ne κ l <;> simp [*, Function.update_of_ne, Ne.symm]
 
 end Semantics.Composition
