@@ -1,649 +1,259 @@
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Voice.Middle
-import Linglib.Fragments.Indonesian.Morphophonology
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Fragments.Indonesian.Phonology
 
 /-!
 # Indonesian verbs
-[sneddon-1996] [beavers-udayana-2022]
 
-Indonesian verb entries with voice paradigm forms (*meN-*, *ber-*,
-*ter-*, *di-*), root class annotations from [beavers-udayana-2022],
-and *ter-* semantic classification (stative, accidental, abilitative)
-from [sneddon-1996] §1.265–1.275.
+This file defines the Indonesian verbs of Beavers and Udayana's study of the middle voice,
+together with three verbs from Sneddon's grammar that show the readings of the prefix *ter-*.
 
-## Root classes
+A transitive root takes *meN-* in the active and *di-* in the passive. The prefix *ber-* forms
+middles, and *ter-* forms verbs of three kinds in Sneddon's description: a stative, the state
+that follows an action, which has no actor (*tertulis* 'written'), an accidental, an action
+that was not intended (*terbawa* 'taken by mistake'), and an abilitative, usually negated
+(*tidak terdengar* 'cannot be heard'). An entry records the segments of the root, whether the
+root has a *ber-* form, and the reading of its *ter-* form if it has one. The prefixed forms
+are derived, the active by the nasal alternation of `Indonesian.Phonology.meN`.
 
-The paper distinguishes three root classes that determine the default
-interpretation of the suppressed variable *z* in *ber-* middles:
+## Main definitions
 
-- **Reflexive roots** (body care/grooming): the conventional expectation
-  is self-action, so the default reading of *z* is coreferent with the
-  surface subject. Examples: *dandan* 'dress', *cukur* 'shave'.
-- **Obviative roots** (all others): the conventional expectation is
-  disjoint reference, so the default reading is dispositional/passive.
-  Examples: *jual* 'sell', *masak* 'cook'.
-- **Causer-unspecified roots** (change-of-state without entailed
-  external cause): the verb does not entail an external causer, and
-  *ber-* surfaces as *ter-* with an anticausative reading.
-  Examples: *buka* 'open', *pecah* 'break'.
+* `TerClass`: Sneddon's three readings of *ter-*, with `TerClass.HasAgent`,
+  `TerClass.volitionality` and `TerClass.RetainsSuffix`.
+* `Indonesian.Verb`: a verb entry, the root `Verb` with its root segments and prefixation.
+* `Verb.meN`, `Verb.di`, `Verb.ber?`, `Verb.ter?`: the prefixed forms.
+* `verbs`: the inventory of the entries.
 
-## *ter-* classification ([sneddon-1996] §1.265–1.275)
+## Implementation notes
 
-The prefix *ter-* has three semantic categories:
-- **Stative** (§1.266): result state, no agent (*terbuka* 'open', *tertulis* 'written')
-- **Accidental** (§1.267–1.270): unintended action (*terbawa* 'accidentally carried')
-- **Abilitative** (§1.272): ability (*terdengar* 'audible', *tidak terbeli* 'unaffordable')
+Beavers and Udayana write the active forms with a morpheme boundary and the substituted
+consonant in brackets, as in *men-(t)ambat*. The derived forms here are surface forms, as in
+*menambat*. The root classes of their analysis are in `Studies/BeaversUdayana2022.lean`.
 
-These connect to linglib's semantic infrastructure: accidental *ter-* maps to
-`Volitionality.nonvolitional`, abilitative *ter-* expresses circumstantial
-modality, and stative *ter-* is agentless.
+## References
 
-## Incorporation
-
-Some verbs additionally license noun incorporation (*ber-V=NP*),
-where the incorporated NP classifies the patient. Body-part nouns
-are the most productive class. When *diri* 'self' is incorporated,
-a reflexive reading arises even for obviative roots.
+* [sneddon-1996]
+* [beavers-udayana-2022]
 -/
 
-namespace Indonesian.Verbs
+open Phonology
 
-open Verb
-open ArgumentStructure
-open Voice
-open Indonesian.Morphophonology
+namespace Indonesian
 
--- ============================================================================
--- § 1: Root Classes
--- ============================================================================
+open ArgumentStructure Indonesian.Phonology
 
-/-- Root class of Indonesian verbs, determining the default interpretation
-    of the suppressed variable in *ber-* middles
-    ([beavers-udayana-2022], §3.5, table (58)). -/
-inductive RootClass where
-  /-- Body care/grooming verbs: default coreferent (*z* = surface subject). -/
-  | reflexive
-  /-- All other transitive verbs: default disjoint (*z* ≠ surface subject). -/
-  | obviative
-  /-- Change-of-state verbs without entailed external cause: anticausative
-      via *ter-*. The causer is left unspecified in the verb root. -/
-  | causerUnspecified
-  deriving DecidableEq, Repr
+/-! ### Readings of *ter-* -/
 
-/-- The root class predicts the default reading of the suppressed variable
-    in non-incorporation *ber-* forms. -/
-def RootClass.defaultReading : RootClass → SuppressedVarReading
-  | .reflexive => .coreferent
-  | .obviative => .disjoint
-  | .causerUnspecified => .disjoint
-
--- ============================================================================
--- § 1b: ter- Classification ([sneddon-1996] §1.265–1.275)
--- ============================================================================
-
-/-- The three semantic categories of *ter-* verbs, following
-    [sneddon-1996] §1.265–1.275.
-
-    - **Stative** (§1.266): refers to a resulting state, not an action.
-      No agent is possible. Corresponds to *di-* passives but describes
-      the state rather than the action: *tertulis* 'written (in a state)'
-      vs *ditulis* 'written (by someone)'.
-    - **Accidental** (§1.267–1.270): unintended, involuntary action.
-      Contrasts with deliberate *di-*: *tertinggal* 'left accidentally'
-      vs *ditinggalkan* 'left deliberately'. Can be intransitive or
-      transitive. Suffixes (-kan, -i) are usually dropped.
-    - **Abilitative** (§1.272): indicates ability to perform the action.
-      Almost always negated: *tidak terbeli* 'can't afford'. Suffixes
-      (-kan, -i) are regularly retained. Expresses circumstantial
-      possibility (Kratzer's modal flavor).
-
-    Some verbs are ambiguous across categories (§1.273): *terbuka* is
-    primarily stative ('open') but can be accidental ('opened by accident')
-    or abilitative ('managed to open'). The `terClass` field records the
-    primary/default reading. -/
+/-- The three readings of a verb in *ter-* in Sneddon's grammar. Some verbs have more than one,
+as *terbuka* 'open', which can also be accidental or abilitative. -/
 inductive TerClass where
-  /-- Result state: no agent, no action — the state following an event. -/
+  /-- The state that follows an action, as in *tertulis* 'written'. -/
   | stative
-  /-- Unintended/involuntary action: the agent exists but did not intend
-      the action. Suffixes usually dropped. -/
+  /-- An action that was not intended, as in *terbawa* 'taken by mistake'. -/
   | accidental
-  /-- Ability: the agent can (or usually cannot) perform the action.
-      Suffixes retained. Expresses circumstantial modality. -/
+  /-- The ability to carry out the action, as in *tidak terbeli* 'cannot be afforded'. -/
   | abilitative
   deriving DecidableEq, Repr
 
-/-- Whether the *ter-* reading entails the existence of an agent.
-    Stative *ter-* is agentless (no *oleh* 'by' phrase possible);
-    accidental and abilitative *ter-* allow an (often pronoun) agent
-    ([sneddon-1996] §1.266 vs §1.269, §1.272). -/
-def TerClass.hasAgent : TerClass → Bool
-  | .stative => false
-  | .accidental => true
-  | .abilitative => true
+namespace TerClass
 
-/-- The volitionality entailed by a *ter-* reading.
-    Accidental *ter-* explicitly encodes nonvolitional action;
-    stative and abilitative are neutral (stative has no agent,
-    abilitative is about capacity not intention). -/
-def TerClass.volitionality : TerClass → Volitionality
-  | .stative => .neutral
+/-- A stative *ter-* verb involves no action and so has no actor, and an accidental or
+abilitative one can take an agent phrase with *oleh*. -/
+def HasAgent (c : TerClass) : Prop := c ≠ .stative
+
+instance : DecidablePred HasAgent := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- An accidental *ter-* verb marks the action as not intended, and the other two readings
+leave volition open. -/
+def volitionality : TerClass → Volitionality
   | .accidental => .nonvolitional
-  | .abilitative => .neutral
+  | .stative | .abilitative => .neutral
 
-/-- Whether transitive suffixes (*-kan*, *-i*) are retained in the *ter-* form.
-    Abilitative *ter-* regularly retains suffixes: *terpecahkan* 'can be
-    solved', *terhindarkan* 'can be avoided' (§1.272, §1.274).
-    Accidental *ter-* usually drops them: *terpikir* not *terpikirkan*
-    for the accidental reading (§1.270, §1.274).
-    Stative *ter-* has no suffix to retain (§1.266). -/
-def TerClass.retainsSuffix : TerClass → Bool
-  | .stative => false
-  | .accidental => false
-  | .abilitative => true
+/-- An abilitative *ter-* verb keeps the suffix *-kan* or *-i* of its base, as in
+*terpecahkan* 'can be solved', which the other two readings drop. -/
+def RetainsSuffix (c : TerClass) : Prop := c = .abilitative
 
--- ============================================================================
--- § 2: Indonesian Verb Entry
--- ============================================================================
+instance : DecidablePred RetainsSuffix := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- An Indonesian verb entry extending Verb with voice paradigm forms.
+end TerClass
 
-    Voice prefixes follow [sneddon-1996] (§1.167–177 for *ber-*,
-    §1.265–275 for *ter-*, §3.26–40 for active/passive voice):
-    - *meN-*: agent voice / active ([sneddon-1996] §3.26)
-    - *di-*: patient voice / passive ([sneddon-1996] §3.27–28)
-    - *ber-*: middle voice — reflexive, dispositional, incorporation
-      ([beavers-udayana-2022])
-    - *ter-*: stative / accidental / abilitative ([sneddon-1996] §1.265–275);
-      analyzed as anticausative for causer-unspecified roots by
-      [beavers-udayana-2022] -/
-structure IndonesianVerbEntry extends Verb where
-  /-- Active voice *meN-* form (with allomorph selection). -/
-  formMeN : Option String := none
-  /-- Middle voice *ber-* form. -/
-  formBer : Option String := none
-  /-- Anticausative / stative / accidental / abilitative *ter-* form. -/
-  formTer : Option String := none
-  /-- Semantic class of the *ter-* form ([sneddon-1996] §1.265–1.275). -/
+/-! ### Entries -/
+
+/-- An Indonesian verb is the root entry, whose `form` is the spelled root, together with the
+segments of the root and its prefixation. -/
+structure Verb extends _root_.Verb where
+  /-- The segments of the root. -/
+  rootSegments : List Segment
+  /-- Whether the root has a middle in *ber-*. -/
+  ber : Bool := false
+  /-- The reading of the *ter-* form, for a root that has one. -/
   terClass : Option TerClass := none
-  /-- Passive voice *di-* form. -/
-  formDi : Option String := none
-  /-- Root class determining default middle reading. -/
-  rootClass : RootClass
-  /-- Body-part or lexical NPs that can incorporate with *ber-*. -/
+  /-- The nouns that the *ber-* form incorporates. -/
   incorporatedNPs : List String := []
-  /-- Whether *diri* 'self' can incorporate to force reflexive reading. -/
-  incorporatesDiri : Bool := false
   deriving BEq
 
--- ============================================================================
--- § 3: Verb Entries from Beavers & Udayana 2022
--- ============================================================================
-
--- § 3a: Dispositional/passive middles (the paper's table (4))
-
-/-- *jual* 'sell': core example of dispositional/passive *ber-* middle.
-    Active: *Dia men-jual mobil itu.* 'S/he sold the car.' (the paper's (6a))
-    Middle: *Mobil itu ber-jual dengan mudah.* 'The car sells easily.' ((2b))
-    Also licenses: incorporation (*ber-jual=baju* (18b)),
-    reflexive incorporation (*ber-jual=diri* (26b)). -/
-def jual : IndonesianVerbEntry :=
-  { form := "jual"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-jual"
-  , formBer := some "ber-jual"
-  , formDi := some "di-jual"
-  , rootClass := .obviative
-  , incorporatedNPs := ["baju", "diri"]
-  , incorporatesDiri := true }
-
-/-- *masak* 'cook': dispositional middle.
-    Active: *Dia me-masak.* Middle: *ber-masak*.
-    (the paper's table (4)). -/
-def masak : IndonesianVerbEntry :=
-  { form := "masak"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "me-masak"
-  , formBer := some "ber-masak"
-  , formDi := some "di-masak"
-  , rootClass := .obviative }
-
-/-- *cuci* 'wash': both dispositional and reflexive readings.
-    Active: *Dia men-cuci.* Middle: *ber-cuci*.
-    Also licenses body-part incorporation: *ber-cuci=mata* (18a).
-    (the paper's table (4) and (18)). -/
-def cuci : IndonesianVerbEntry :=
-  { form := "cuci"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-cuci"
-  , formBer := some "ber-cuci"
-  , formDi := some "di-cuci"
-  , rootClass := .obviative
-  , incorporatedNPs := ["mata", "kaki", "muka", "mulut", "rambut",
-                         "baju", "ikan", "pisang", "diri"]
-  , incorporatesDiri := true }
-
-/-- *tambat* 'tie': dispositional middle.
-    Active: *Dia men-(t)ambat kapal itu.* 'S/he moored the boat.' ((5a))
-    Middle: *Kapal itu ber-tambat dengan mudah.* 'The boat moors easily.' ((5b))
-    (the paper's table (4)). -/
-def tambat : IndonesianVerbEntry :=
-  { form := "tambat"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-tambat"
-  , formBer := some "ber-tambat"
-  , formDi := some "di-tambat"
-  , rootClass := .obviative }
-
--- § 3b: Natural reflexives (the paper's table (15))
-
-/-- *dandan* 'dress': canonical natural reflexive.
-    Active: *Tono men-dandan Ali.* 'Tono dressed Ali.' ((3a))
-    Middle: *Ali ber-dandan.* 'Ali dressed.' ((2a))
-    Body care verb — default coreferent reading.
-    (the paper's table (15)). -/
-def dandan : IndonesianVerbEntry :=
-  { form := "dandan"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-dandan"
-  , formBer := some "ber-dandan"
-  , formDi := some "di-dandan"
-  , rootClass := .reflexive }
-
-/-- *cukur* 'shave': natural reflexive.
-    Active: *men-cukur*. Middle: *ber-cukur*.
-    (the paper's table (15)). -/
-def cukur : IndonesianVerbEntry :=
-  { form := "cukur"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-cukur"
-  , formBer := some "ber-cukur"
-  , formDi := some "di-cukur"
-  , rootClass := .reflexive }
-
-/-- *jemur* 'sunbathe': natural reflexive.
-    Active: *men-jemur*. Middle: *ber-jemur*.
-    Optionally takes *diri* 'self': *ber-jemur (diri)*
-    ([sneddon-1996] §1.168; the paper's table (15)). -/
-def jemur : IndonesianVerbEntry :=
-  { form := "jemur"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-jemur"
-  , formBer := some "ber-jemur"
-  , formDi := some "di-jemur"
-  , rootClass := .reflexive
-  , incorporatesDiri := true }
-
-/-- *sisir* 'comb': natural reflexive.
-    Active: *meny-(s)isir*. Middle: *ber-sisir*.
-    (the paper's table (15)). -/
-def sisir : IndonesianVerbEntry :=
-  { form := "sisir"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "meny-sisir"
-  , formBer := some "ber-sisir"
-  , formDi := some "di-sisir"
-  , rootClass := .reflexive }
-
--- § 3c: Anticausatives (the paper's §5)
-
-/-- *buka* 'open': anticausative via *ter-*.
-    Active: *Dia mem-buka pintu.* 'S/he opened the door.'
-    Anticausative: *Pintu itu ter-buka.* 'The door opened.' ((2d))
-    Change-of-state verb without entailed external cause. -/
-def buka : IndonesianVerbEntry :=
-  { form := "buka"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "mem-buka"
-  , formTer := some "ter-buka"
-  , terClass := some .stative
-  , formDi := some "di-buka"
-  , rootClass := .causerUnspecified }
-
-/-- *pecah* 'break': anticausative via *ter-*.
-    Active: *Dia mem-(p)ecah jendela.* 'S/he broke the window.'
-    Anticausative: *Jendela itu ter-pecah.* 'The window broke.' ((68))
-    (the paper's §5, (67)–(68)). -/
-def pecah : IndonesianVerbEntry :=
-  { form := "pecah"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "mem-pecah"
-  , formTer := some "ter-pecah"
-  , terClass := some .stative
-  , formDi := some "di-pecah"
-  , rootClass := .causerUnspecified }
-
--- § 3d: Stative ter- ([sneddon-1996] §1.266)
-
-/-- *tulis* 'write': stative *ter-*.
-    Active: *Surat itu di-tulis(nya) dalam bahasa Inggris.*
-      'That letter was written (by him) in English.'
-    Stative: *Surat itu ter-tulis dalam bahasa Inggris.*
-      'That letter is written in English.'
-    The *ter-* form describes the resulting state; the *di-* form
-    describes the action. No agent (*oleh*) possible with stative *ter-*.
-    ([sneddon-1996] §1.266). -/
-def tulis : IndonesianVerbEntry :=
-  { form := "tulis"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-tulis"
-  , formTer := some "ter-tulis"
-  , terClass := some .stative
-  , formDi := some "di-tulis"
-  , rootClass := .obviative }
-
--- § 3e: Accidental ter- ([sneddon-1996] §1.267–1.270)
-
-/-- *bawa* 'carry, bring': accidental *ter-*.
-    Active: *Dia mem-bawa koran saudara.* 'He carried your newspaper.'
-    Accidental: *Maaf, koran saudara ter-bawa oleh saya.*
-      'Sorry, I took your newspaper by mistake.'
-    The accidental *ter-* form explicitly marks the action as unintended.
-    Contrasts with deliberate *di-bawa*. Agent expressed with *oleh* (§1.269).
-    ([sneddon-1996] §1.269, §1.273). -/
-def bawa : IndonesianVerbEntry :=
-  { form := "bawa"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "mem-bawa"
-  , formTer := some "ter-bawa"
-  , terClass := some .accidental
-  , formDi := some "di-bawa"
-  , rootClass := .obviative }
-
--- § 3f: Abilitative ter- ([sneddon-1996] §1.272)
-
-/-- *dengar* 'hear': abilitative *ter-*.
-    Active: *Dia men-dengar suara dosen.* 'He heard the lecturer's voice.'
-    Abilitative: *Suara dosen tidak ter-dengar dari sini.*
-      'The lecturer can't be heard from here.'
-    Abilitative *ter-* is usually negated, expressing inability.
-    The negated form *tidak terdengar* corresponds to English 'inaudible'.
-    ([sneddon-1996] §1.272). -/
-def dengar : IndonesianVerbEntry :=
-  { form := "dengar"
-  , frames := [ArgumentFrame.np]
-  , formMeN := some "men-dengar"
-  , formTer := some "ter-dengar"
-  , terClass := some .abilitative
-  , formDi := some "di-dengar"
-  , rootClass := .obviative }
-
--- ============================================================================
--- § 4: Root Class → Middle Type Predictions
--- ============================================================================
-
-/-- Reflexive roots predict coreferent default reading. -/
-theorem reflexive_root_coreferent :
-    RootClass.reflexive.defaultReading = .coreferent := rfl
-
-/-- Obviative roots predict disjoint default reading. -/
-theorem obviative_root_disjoint :
-    RootClass.obviative.defaultReading = .disjoint := rfl
-
--- ============================================================================
--- § 5: Per-Verb Verification Theorems
--- ============================================================================
-
--- § 5a: Root class verification
-
-theorem jual_is_obviative : jual.rootClass = .obviative := rfl
-theorem masak_is_obviative : masak.rootClass = .obviative := rfl
-theorem cuci_is_obviative : cuci.rootClass = .obviative := rfl
-theorem tambat_is_obviative : tambat.rootClass = .obviative := rfl
-
-theorem dandan_is_reflexive : dandan.rootClass = .reflexive := rfl
-theorem cukur_is_reflexive : cukur.rootClass = .reflexive := rfl
-theorem jemur_is_reflexive : jemur.rootClass = .reflexive := rfl
-theorem sisir_is_reflexive : sisir.rootClass = .reflexive := rfl
-
-theorem buka_is_causerUnspecified : buka.rootClass = .causerUnspecified := rfl
-theorem pecah_is_causerUnspecified : pecah.rootClass = .causerUnspecified := rfl
-
-theorem tulis_is_obviative : tulis.rootClass = .obviative := rfl
-theorem bawa_is_obviative : bawa.rootClass = .obviative := rfl
-theorem dengar_is_obviative : dengar.rootClass = .obviative := rfl
-
--- § 5b: Voice paradigm verification (formBer / formTer presence)
-
-/-- All obviative verbs have ber- forms. -/
-theorem jual_has_ber : jual.formBer.isSome = true := rfl
-theorem masak_has_ber : masak.formBer.isSome = true := rfl
-theorem cuci_has_ber : cuci.formBer.isSome = true := rfl
-theorem tambat_has_ber : tambat.formBer.isSome = true := rfl
-
-/-- All reflexive verbs have ber- forms. -/
-theorem dandan_has_ber : dandan.formBer.isSome = true := rfl
-theorem cukur_has_ber : cukur.formBer.isSome = true := rfl
-
-/-- Causer-unspecified verbs have ter- forms, not ber- forms. -/
-theorem buka_has_ter : buka.formTer.isSome = true := rfl
-theorem buka_no_ber : buka.formBer.isNone = true := rfl
-theorem pecah_has_ter : pecah.formTer.isSome = true := rfl
-theorem pecah_no_ber : pecah.formBer.isNone = true := rfl
-
-/-- Sneddon ter- verbs also have ter- forms (without ber-). -/
-theorem tulis_has_ter : tulis.formTer.isSome = true := rfl
-theorem tulis_no_ber : tulis.formBer.isNone = true := rfl
-theorem bawa_has_ter : bawa.formTer.isSome = true := rfl
-theorem bawa_no_ber : bawa.formBer.isNone = true := rfl
-theorem dengar_has_ter : dengar.formTer.isSome = true := rfl
-theorem dengar_no_ber : dengar.formBer.isNone = true := rfl
-
--- § 5c: Incorporation verification
-
-/-- *jual* licenses diri incorporation → reflexive incorporation middle. -/
-theorem jual_incorporates_diri : jual.incorporatesDiri = true := rfl
-
-/-- *cuci* has the richest incorporation paradigm: body parts + diri. -/
-theorem cuci_incorporates_diri : cuci.incorporatesDiri = true := rfl
-theorem cuci_incorporation_count : cuci.incorporatedNPs.length = 9 := rfl
-
-/-- *jemur* 'sunbathe' optionally incorporates *diri* 'self'
-    ([sneddon-1996] §1.168: *berjemur (diri)*). -/
-theorem jemur_incorporates_diri : jemur.incorporatesDiri = true := rfl
-
-/-- Reflexive-root verbs (dandan, cukur) do not incorporate lexical NPs
-    by default — their ber- forms are already reflexive. -/
-theorem dandan_no_incorporation : dandan.incorporatedNPs.length = 0 := rfl
-theorem cukur_no_incorporation : cukur.incorporatedNPs.length = 0 := rfl
-
--- § 5d: Predicted default reading
-
-/-- Obviative verbs predict dispositional/passive middles (disjoint). -/
-theorem jual_predicted_reading :
-    jual.rootClass.defaultReading = .disjoint := rfl
-theorem masak_predicted_reading :
-    masak.rootClass.defaultReading = .disjoint := rfl
-
-/-- Reflexive verbs predict inherent reflexive middles (coreferent). -/
-theorem dandan_predicted_reading :
-    dandan.rootClass.defaultReading = .coreferent := rfl
-theorem cukur_predicted_reading :
-    cukur.rootClass.defaultReading = .coreferent := rfl
-
--- § 5f: ter- class verification ([sneddon-1996] §1.265–1.275)
-
-theorem buka_ter_stative : buka.terClass = some .stative := rfl
-theorem pecah_ter_stative : pecah.terClass = some .stative := rfl
-theorem tulis_ter_stative : tulis.terClass = some .stative := rfl
-theorem bawa_ter_accidental : bawa.terClass = some .accidental := rfl
-theorem dengar_ter_abilitative : dengar.terClass = some .abilitative := rfl
-
--- § 5g: ter- class semantic bridges
-
-/-- Stative *ter-* has no agent — the *oleh* 'by' phrase is impossible
-    ([sneddon-1996] §1.266). -/
-theorem stative_no_agent : TerClass.stative.hasAgent = false := rfl
-
-/-- Accidental *ter-* entails the agent acted nonvolitionally
-    ([sneddon-1996] §1.267: "unintended, unexpected, sudden"). -/
-theorem accidental_nonvolitional :
-    TerClass.accidental.volitionality = .nonvolitional := rfl
-
-/-- Accidental *ter-* has an agent (expressed or implied) — unlike stative,
-    which is agentless. *Maaf, koran saudara terbawa oleh saya.*
-    'Sorry, I took your newspaper by mistake.' (§1.269). -/
-theorem accidental_has_agent : TerClass.accidental.hasAgent = true := rfl
-
-/-- Abilitative *ter-* retains transitive suffixes (-kan, -i) from the
-    base verb, unlike accidental *ter-*, which drops them
-    ([sneddon-1996] §1.272, §1.274). -/
-theorem abilitative_retains_suffix :
-    TerClass.abilitative.retainsSuffix = true := rfl
-theorem accidental_drops_suffix :
-    TerClass.accidental.retainsSuffix = false := rfl
-
-/-- The causer-unspecified roots from [beavers-udayana-2022] have
-    stative *ter-* — their *ter-* forms describe resulting states, not
-    unintended actions or abilities. This connects B&U's root class
-    analysis to Sneddon's ter- classification. -/
-theorem causer_unspecified_have_stative_ter :
-    [buka, pecah].all (fun (v : IndonesianVerbEntry) =>
-      v.rootClass == .causerUnspecified && v.terClass == some .stative
-    ) = true := rfl
-
--- ============================================================================
--- § 6: Aggregate Properties
--- ============================================================================
-
--- ============================================================================
--- § 6b: Denominal ber- middles ([beavers-udayana-2022] §4)
--- ============================================================================
-
-/-- Denominal root class: relational nouns (body parts, kin terms,
-    clothing) that form *ber-* middles with stative possessional readings.
-    The root names a relational noun, not a verbal action.
-
-    Examples: *ber-topi* 'have a hat on', *ber-kaki* 'have legs',
-    *ber-istri* 'have a wife'.
-
-    These combine incorporation (the noun head-adjoins to *ber-*) with
-    object promotion (the possessor surfaces as subject). The reading
-    derives from the relational noun's possession relation π'
-    ([barker-1995]; [beavers-udayana-2022] §4). -/
-inductive DenominalNounClass where
-  /-- Body part nouns: inalienable possession. -/
-  | bodyPart
-  /-- Kin terms: social/familial relation. -/
-  | kinTerm
-  /-- Clothing nouns: wearing relation. -/
-  | clothing
-  deriving DecidableEq, Repr
-
-/-- A denominal *ber-* entry: a relational noun that forms a stative
-    possessional middle via *ber-* + incorporation. -/
-structure DenominalBerEntry where
-  /-- The noun root. -/
-  root : String
-  /-- The *ber-* form. -/
-  formBer : String
-  /-- The noun class determining the possession relation. -/
-  nounClass : DenominalNounClass
-  /-- English gloss. -/
-  gloss : String
-  deriving Repr, BEq
-
--- Body parts ([beavers-udayana-2022] table (61))
-
-def kaki : DenominalBerEntry :=
-  { root := "kaki", formBer := "ber-kaki", nounClass := .bodyPart
-  , gloss := "have legs" }
-
-def mulut : DenominalBerEntry :=
-  { root := "mulut", formBer := "ber-mulut", nounClass := .bodyPart
-  , gloss := "have a mouth" }
-
-def tangan : DenominalBerEntry :=
-  { root := "tangan", formBer := "ber-tangan", nounClass := .bodyPart
-  , gloss := "have hands" }
-
--- Kin terms ([beavers-udayana-2022] table (61))
-
-def istri : DenominalBerEntry :=
-  { root := "istri", formBer := "ber-istri", nounClass := .kinTerm
-  , gloss := "have a wife" }
-
-def suami : DenominalBerEntry :=
-  { root := "suami", formBer := "ber-suami", nounClass := .kinTerm
-  , gloss := "have a husband" }
-
-def adik : DenominalBerEntry :=
-  { root := "adik", formBer := "ber-adik", nounClass := .kinTerm
-  , gloss := "have a younger sibling" }
-
--- Clothing ([beavers-udayana-2022] table (61))
-
-def topi : DenominalBerEntry :=
-  { root := "topi", formBer := "ber-topi", nounClass := .clothing
-  , gloss := "have a hat on" }
-
-def sepatu : DenominalBerEntry :=
-  { root := "sepatu", formBer := "ber-sepatu", nounClass := .clothing
-  , gloss := "have shoes on" }
-
-def baju : DenominalBerEntry :=
-  { root := "baju", formBer := "ber-baju", nounClass := .clothing
-  , gloss := "have a dress on" }
-
-/-- All denominal ber- entries. -/
-def denominalEntries : List DenominalBerEntry :=
-  [kaki, mulut, tangan, istri, suami, adik, topi, sepatu, baju]
-
-/-- All three noun classes are covered in the fragment. -/
-theorem denominal_classes_covered :
-    [DenominalNounClass.bodyPart, .kinTerm, .clothing].all
-      (fun nc => denominalEntries.any (fun e => e.nounClass == nc))
-    = true := rfl
-
-/-- All 13 verbs in the fragment. -/
-def allVerbs : List IndonesianVerbEntry :=
-  [jual, masak, cuci, tambat, dandan, cukur, jemur, sisir, buka, pecah,
-   tulis, bawa, dengar]
-
-/-- Every verb has an active meN- form. -/
-theorem all_have_men :
-    allVerbs.all (fun (v : IndonesianVerbEntry) => v.formMeN.isSome) = true := rfl
-
-/-- Every verb has a passive di- form. -/
-theorem all_have_di :
-    allVerbs.all (fun (v : IndonesianVerbEntry) => v.formDi.isSome) = true := rfl
-
-/-- Every verb has EITHER ber- OR ter- (middle or anticausative). -/
-theorem all_have_middle_or_anticausative :
-    allVerbs.all (fun (v : IndonesianVerbEntry) =>
-      v.formBer.isSome || v.formTer.isSome) = true := rfl
-
-/-- No verb has BOTH ber- and ter-. For B&U verbs this follows from
-    root class (ber- for reflexive/obviative, ter- for causer-unspecified).
-    For Sneddon verbs, ter- serves stative/accidental/abilitative functions
-    on roots that lack ber- forms. -/
-theorem ber_ter_complementary :
-    allVerbs.all (fun (v : IndonesianVerbEntry) =>
-      !(v.formBer.isSome && v.formTer.isSome)) = true := rfl
-
-/-- The five *ter-* verbs in the fragment. -/
-def terVerbs : List IndonesianVerbEntry :=
-  allVerbs.filter (fun v => v.formTer.isSome)
-
-/-- Every ter- verb has a ter- class assigned — no unclassified ter- forms. -/
-theorem all_ter_classified :
-    terVerbs.all (fun (v : IndonesianVerbEntry) =>
-      v.terClass.isSome) = true := rfl
-
-/-- The fragment covers all three ter- classes from [sneddon-1996]. -/
-theorem ter_classes_covered :
-    [TerClass.stative, TerClass.accidental, TerClass.abilitative].all
-      (fun tc => terVerbs.any (fun v => v.terClass == some tc)) = true := rfl
-
--- ============================================================================
--- § 7: meN- Allomorph Verification
--- ============================================================================
-
-/-- Every verb's stored meN- form matches the phonologically derived
-    form from [sneddon-1996] §1.5. This proves the stipulated
-    forms are not arbitrary — they follow the regular nasal assimilation
-    rules. If a root or meN- form is changed incorrectly, this breaks. -/
-theorem all_men_forms_derived :
-    allVerbs.all (fun (v : IndonesianVerbEntry) =>
-      v.formMeN == deriveMeN v.form) = true := by decide
-
-end Indonesian.Verbs
+namespace Verb
+
+/-- The active form in *meN-*. -/
+def meN (v : Verb) : List Segment := Phonology.meN v.rootSegments
+
+/-- The passive form in *di-*. -/
+def di (v : Verb) : List Segment := [d, i] ++ v.rootSegments
+
+/-- The middle in *ber-*, for a root that has one. -/
+def ber? (v : Verb) : Option (List Segment) :=
+  if v.ber then some ([b, e, r] ++ v.rootSegments) else none
+
+/-- The form in *ter-*, for a root that has one. -/
+def ter? (v : Verb) : Option (List Segment) :=
+  v.terClass.map fun _ ↦ [t, e, r] ++ v.rootSegments
+
+/-- The *ber-* form of the verb can incorporate *diri* 'self', which gives it a reflexive
+reading. -/
+def IncorporatesDiri (v : Verb) : Prop := "diri" ∈ v.incorporatedNPs
+
+instance : DecidablePred IncorporatesDiri := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+end Verb
+
+/-! ### Roots with a middle in *ber-* -/
+
+/-- *jual* 'sell', as in *Mobil itu berjual dengan mudah* 'The car sells easily'. Its middle
+incorporates a noun, as in *berjual baju* and *berjual diri*. -/
+def jual : Verb where
+  form := "jual"
+  rootSegments := [j, u, a, l]
+  frames := [ArgumentFrame.np]
+  ber := true
+  incorporatedNPs := ["baju", "diri"]
+
+/-- *masak* 'cook'. -/
+def masak : Verb where
+  form := "masak"
+  rootSegments := [m, a, s, a, k]
+  frames := [ArgumentFrame.np]
+  ber := true
+
+/-- *cuci* 'wash', whose middle incorporates body-part nouns and others, as in *bercuci mata*
+'wash one's eyes'. -/
+def cuci : Verb where
+  form := "cuci"
+  rootSegments := [c, u, c, i]
+  frames := [ArgumentFrame.np]
+  ber := true
+  incorporatedNPs := ["mata", "kaki", "muka", "mulut", "rambut", "baju", "ikan", "pisang", "diri"]
+
+/-- *tambat* 'tie, moor', as in *Kapal itu bertambat dengan mudah* 'The boat moors easily'. -/
+def tambat : Verb where
+  form := "tambat"
+  rootSegments := [t, a, m, b, a, t]
+  frames := [ArgumentFrame.np]
+  ber := true
+
+/-- *dandan* 'dress', as in *Ali berdandan* 'Ali dressed'. -/
+def dandan : Verb where
+  form := "dandan"
+  rootSegments := [d, a, n, d, a, n]
+  frames := [ArgumentFrame.np]
+  ber := true
+
+/-- *cukur* 'shave'. -/
+def cukur : Verb where
+  form := "cukur"
+  rootSegments := [c, u, k, u, r]
+  frames := [ArgumentFrame.np]
+  ber := true
+
+/-- *jemur* 'dry in the sun', whose middle *berjemur (diri)* is 'sunbathe'. -/
+def jemur : Verb where
+  form := "jemur"
+  rootSegments := [j, e, m, u, r]
+  frames := [ArgumentFrame.np]
+  ber := true
+  incorporatedNPs := ["diri"]
+
+/-- *sisir* 'comb'. -/
+def sisir : Verb where
+  form := "sisir"
+  rootSegments := [s, i, s, i, r]
+  frames := [ArgumentFrame.np]
+  ber := true
+
+/-! ### Roots with a form in *ter-* -/
+
+/-- *buka* 'open', as in *Pintu itu terbuka* 'The door opened'. -/
+def buka : Verb where
+  form := "buka"
+  rootSegments := [b, u, k, a]
+  frames := [ArgumentFrame.np]
+  terClass := some .stative
+
+/-- *pecah* 'break', as in *Jendela itu terpecah* 'The window broke'. -/
+def pecah : Verb where
+  form := "pecah"
+  rootSegments := [p, e, c, a, h]
+  frames := [ArgumentFrame.np]
+  terClass := some .stative
+
+/-- *tulis* 'write', whose stative is *Surat itu tertulis dalam bahasa Inggris* 'That letter is
+written in English', beside the passive *ditulis* 'was written'. -/
+def tulis : Verb where
+  form := "tulis"
+  rootSegments := [t, u, l, i, s]
+  frames := [ArgumentFrame.np]
+  terClass := some .stative
+
+/-- *bawa* 'carry, take', whose accidental is *Koran saudara terbawa oleh saya* 'I took your
+newspaper by mistake'. -/
+def bawa : Verb where
+  form := "bawa"
+  rootSegments := [b, a, w, a]
+  frames := [ArgumentFrame.np]
+  terClass := some .accidental
+
+/-- *dengar* 'hear', whose abilitative is *tidak terdengar dari sini* 'cannot be heard from
+here'. -/
+def dengar : Verb where
+  form := "dengar"
+  rootSegments := [d, e, ng, a, r]
+  frames := [ArgumentFrame.np]
+  terClass := some .abilitative
+
+/-- The entries of this file. -/
+def verbs : List Verb :=
+  [jual, masak, cuci, tambat, dandan, cukur, jemur, sisir, buka, pecah, tulis, bawa, dengar]
+
+/-! ### Derived forms -/
+
+/-- *memecah* and *terpecah*. The root-initial `p` is substituted in the active alone. -/
+theorem pecah_forms :
+    pecah.meN = [m, e, m, e, c, a, h] ∧ pecah.ter? = some [t, e, r, p, e, c, a, h] := by
+  decide
+
+/-- *menambat* and *bertambat*. Substitution takes the root-initial `t` and leaves the cluster
+inside the root. -/
+theorem tambat_forms :
+    tambat.meN = [m, e, n, a, m, b, a, t] ∧
+      tambat.ber? = some [b, e, r, t, a, m, b, a, t] := by
+  decide
+
+/-- *menyisir*, with the palatal nasal for the root-initial `s` and the second `s` kept. -/
+theorem sisir_meN : sisir.meN = [m, e, ny, i, s, i, r] := by decide
+
+/-- *memasak*, with the prefix nasal lost before a nasal. -/
+theorem masak_meN : masak.meN = [m, e, m, a, s, a, k] := by decide
+
+/-- *mendengar* and *didengar*, with assimilation alone before a voiced stop. -/
+theorem dengar_forms :
+    dengar.meN = [m, e, n, d, e, ng, a, r] ∧ dengar.di = [d, i, d, e, ng, a, r] := by
+  decide
+
+/-- The active keeps the whole root after a root-initial segment that is not substituted, and
+loses exactly that segment otherwise. -/
+theorem meN_suffix :
+    ∀ v ∈ verbs, ∀ x ∈ v.rootSegments.head?,
+      if x ∈ substituting then v.rootSegments.tail <:+ v.meN ∧ ¬ v.rootSegments <:+ v.meN
+      else v.rootSegments <:+ v.meN := by
+  decide
+
+end Indonesian

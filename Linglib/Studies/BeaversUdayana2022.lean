@@ -88,6 +88,53 @@ def incorporationMiddle : MiddleType := ⟨.incorporation, .disjoint⟩
 himself' (26b); incorporated *diri* 'self' fixes the coreferent reading. -/
 def incorporationReflexive : MiddleType := ⟨.incorporation, .coreferent⟩
 
+/-! ### Root classes (§3.5, §5)
+
+Which reading the suppressed variable of a plain *ber-* form gets by default follows the class
+of the root. A naturally reflexive root describes an event for which the conventional
+expectation is self-action, and every other dyadic root is obviative. A causer-unspecified root
+takes *ter-* where the others take *ber-*. The members are the paper's own roots, as entries
+of `Fragments/Indonesian/Verbs.lean`. -/
+
+/-- The classes of dyadic root. -/
+inductive RootClass where
+  /-- The conventional expectation is self-action, as with verbs of body care. -/
+  | naturallyReflexive
+  /-- The conventional expectation is disjoint reference, as with every other dyadic root. -/
+  | obviative
+  /-- A change of state whose root entails no external causer. -/
+  | causerUnspecified
+  deriving DecidableEq, Repr
+
+namespace RootClass
+
+/-- The paper's roots of each class: the body-care verbs of (15), the roots of (4) with a
+dispositional or passive *ber-* form, and *buka* 'open' and *pecah* 'break' of §5. -/
+def roots : RootClass → List Indonesian.Verb
+  | .naturallyReflexive =>
+    [Indonesian.dandan, Indonesian.cukur, Indonesian.jemur, Indonesian.sisir]
+  | .obviative => [Indonesian.masak, Indonesian.jual, Indonesian.cuci, Indonesian.tambat]
+  | .causerUnspecified => [Indonesian.buka, Indonesian.pecah]
+
+/-- The default middle of a plain *ber-* form, which matches the conventional expectation of
+the root class. A causer-unspecified root has no *ber-* form. -/
+def defaultMiddle : RootClass → Option MiddleType
+  | .naturallyReflexive => some reflexiveMiddle
+  | .obviative => some dispositionalMiddle
+  | .causerUnspecified => none
+
+/-- A root has a *ber-* form exactly when its class has a default middle, and a form in *ter-*
+otherwise. -/
+theorem ber_iff_defaultMiddle (c : RootClass) :
+    ∀ v ∈ c.roots, (v.ber ↔ c.defaultMiddle.isSome) ∧ (v.terClass.isSome ↔ ¬ v.ber) := by
+  cases c <;> decide
+
+end RootClass
+
+/-- An obviative root gets its reflexive reading from incorporated *diri* 'self', as in
+*berjual diri* (26b), the marked form that blocks the reading for the plain *ber-* form. -/
+theorem jual_incorporatesDiri : Indonesian.jual.IncorporatesDiri := by decide
+
 /-! ### Voice profiles ((35), (39), (58))
 
 The paper's syntax (35) and semantics (39)/(43) assign each voice form an
