@@ -16,8 +16,7 @@ force (the speech-act type — the F in F(p)) and a grammatical mood
 freely ([holmberg-2016]): a polar question is [interrogative,
 indicative], while the Spanish deliberative "¿Que duerma?" is
 [interrogative, subjunctive]. This file defines the two category
-enums, their pairing `ClauseType`, the mood-selection classes of
-embedding predicates, and the bridge from the UD `Mood` feature.
+enums, their pairing `ClauseType`, and the bridge from the UD `Mood` feature.
 
 ## Main declarations
 
@@ -25,7 +24,6 @@ embedding predicates, and the bridge from the UD `Mood` feature.
 * `Illocutionary`, `Illocutionary.authority` — speech-act force and
   its epistemic-authority assignment.
 * `ClauseType` — force × mood.
-* `Selector` — mood selection by embedding predicate class.
 * `Component`, `HasTarget` — [portner-2018]'s classification: the
   coordinate of the mood state each category operates on.
 * `UD.Mood.toClauseType` — corpus bridge.
@@ -139,21 +137,6 @@ instance : HasTarget Illocutionary where
     | .promissive    => .preferential
     | .interrogative => .inquisitive
     | .exclamative   => .informational
-
-/-! ### Mood selection by predicate class -/
-
-/-- The mood-selection class of an embedding predicate; the projection onto
-the semantic operators is `Selector.toVerbalOp` (`Semantics/Mood/Verbal.lean`). -/
-inductive Selector where
-  /-- Indicative-selecting: *know*, *see*, *believe*. -/
-  | indicativeSelecting
-  /-- Robustly subjunctive-selecting: *want*, *wish*, *demand*, *intend*. -/
-  | subjunctiveSelecting
-  /-- Variable across languages: *hope*, *expect* ([grano-2024], Table 1). -/
-  | crossLinguisticallyVariable
-  /-- Pragmatically flexible: *say*, *think*. -/
-  | moodNeutral
-  deriving DecidableEq, Repr
 
 end Mood
 

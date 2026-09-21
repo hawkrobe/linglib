@@ -47,10 +47,9 @@ def an : Complementizer where
   coding := some .indicative
   force := some .interrogative
 
-/-- *na* — subjunctive ([grano-2024]); the *na*-selecting mood-choice
-    verbs are in `MoodChoice.lean`. Whether *na* heads C or a Mood
-    projection is debated; the schema is head-agnostic, and
-    [angelopoulos-2026] sets *na* aside. -/
+/-- *na* — subjunctive ([grano-2024]), selected by volitional, intention and causative
+    verbs. Whether *na* heads C or a Mood projection is debated; the schema is head-agnostic,
+    and [angelopoulos-2026] sets *na* aside. -/
 def na : Complementizer where
   morphs := [.free "na"]
   coding := some .subjunctive
@@ -243,6 +242,34 @@ def thelo : Verb where
   frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
   attitude := some (.preferential (.degreeComparison .positive))
   vendlerClass := some .state
+
+/-- *elpízo* (ελπίζω) 'hope' — takes a *na*-clause or an *oti*-clause ([grano-2024],
+    from [giannakidou-mari-2021]). -/
+def elpizo : Verb where
+  form := "elpízo"
+  frames :=
+    [{ complements := [.clausal (coding := some .subjunctive)] }, ArgumentFrame.finiteClause]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+  vendlerClass := some .state
+
+/-- *protítheme* (προτίθεμαι) 'intend' — takes only a *na*-clause ([grano-2024], from
+    [giannakidou-mari-2021], in the third singular *protíthete*). -/
+def protitheme : Verb where
+  form := "protítheme"
+  frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+  vendlerClass := some .state
+
+/-- *vázo* (βάζω) 'put', causative 'make' — takes an object and a *na*-clause
+    ([grano-2024]). -/
+def vazo : Verb where
+  form := "vázo"
+  frames := [{ complements := [.nominal, .clausal (coding := some .subjunctive)] }]
+  causative := some .make
 
 /-! ### Occurrence verbs -/
 

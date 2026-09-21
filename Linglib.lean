@@ -768,7 +768,6 @@ import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Fragments.Greek.StandardModern.Declension
 import Linglib.Fragments.Greek.StandardModern.Gender
 import Linglib.Fragments.Greek.StandardModern.Modals
-import Linglib.Fragments.Greek.StandardModern.MoodChoice
 import Linglib.Fragments.Greek.StandardModern.Negation
 import Linglib.Fragments.Greek.StandardModern.Nouns
 import Linglib.Fragments.Greek.StandardModern.Reciprocals
@@ -909,7 +908,6 @@ import Linglib.Fragments.Norwegian.VerbParticles
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Poko.Tone
 import Linglib.Fragments.Portuguese.Modals
-import Linglib.Fragments.Portuguese.MoodChoice
 import Linglib.Fragments.Punjabi.Pronouns
 import Linglib.Fragments.Quechua.Evidentiality
 import Linglib.Fragments.Quechua.Negation
@@ -932,7 +930,6 @@ import Linglib.Fragments.Romance.Galician.Pronouns
 import Linglib.Fragments.Romance.Italian.Reciprocals
 import Linglib.Fragments.Romance.Spanish.Reciprocals
 import Linglib.Fragments.Romanian.Gender
-import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Sesotho.Morph
 import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Determiners

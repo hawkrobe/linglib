@@ -28,7 +28,6 @@ is restricted to declarative complementation.
 
 * `VerbalOp`: the three operators, with `HasTarget` sending each to its component.
 * `VerbalOp.interp`: interpretation as `boxOn ∘ target`.
-* `Selector.toVerbalOp`: the map from predicate-class selection to operators.
 
 ## Main statements
 
@@ -146,18 +145,5 @@ theorem target_injective :
     Function.Injective (target : VerbalOp → Component) := by
   intro a b h
   cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
-
-/-! ### Bridge to `Selector` -/
-
-/-- The verbal-mood operator a predicate class selects, when the class
-is committed to a single mood cross-linguistically; variable and
-mood-neutral classes project to `none`. `Selector` covers
-declarative-complement embedders only, so `.interrogative` is not in
-its image. -/
-def Selector.toVerbalOp : Selector → Option VerbalOp
-  | .indicativeSelecting          => some .indicative
-  | .subjunctiveSelecting         => some .subjunctive
-  | .crossLinguisticallyVariable  => none
-  | .moodNeutral                  => none
 
 end Mood

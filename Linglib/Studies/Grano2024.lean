@@ -1,6 +1,11 @@
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Events.Closure
 import Linglib.Data.Examples.Grano2024
+import Linglib.Fragments.Greek.StandardModern.Complementizers
+import Linglib.Fragments.Portuguese.Verbs
+import Linglib.Fragments.Romance.Italian.Verbs
+import Linglib.Fragments.Romance.Spanish.Verbs
+import Linglib.Fragments.Romanian.Verbs
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -170,6 +175,7 @@ inductive Diagnostic where
 
 /-- A judged complement clause. -/
 structure Row where
+  language : Glottocode
   cls : Class
   complement : Complement
   reading : Option Reading
@@ -186,7 +192,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     [("indicative", Complement.indicative), ("subjunctive", .subjunctive),
       ("infinitive", .infinitive), ("forTo", .forTo), ("gerund", .gerund),
       ("bareInfinitive", .bareInfinitive)]
-  pure ⟨cls, complement,
+  pure ⟨ex.language, cls, complement,
     ex.parse? "reading"
       [("intention", Reading.intention), ("belief", .belief), ("assertion", .assertion),
         ("foresee", .foresee), ("event", .event), ("proposition", .proposition)],
@@ -197,6 +203,9 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
 
 /-- The paper's judged complements, sections 2, 3, 6, and 7. -/
 def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Every example of the paper is a row. -/
+theorem rows_length : rows.length = Examples.all.length := by decide +kernel
 
 /-! ### Premises 1 and 2 and the conclusion, over the pool -/
 
@@ -238,6 +247,63 @@ theorem want_rejects_indicative :
 theorem hope_varies :
     (∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .acceptable) ∧
       ∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .ungrammatical := by
+  decide
+
+/-! ### Table 1 and the fragment entries -/
+
+/-- The finite moods among the complement types, as codings of a clausal argument position. -/
+def Complement.coding? : Complement → Option _root_.Complement.Coding
+  | .indicative => some .indicative
+  | .subjunctive => some .subjunctive
+  | _ => none
+
+/-- The fragment verb for a language and a class of Table 1. -/
+def verbOf : Glottocode → Class → Option Verb
+  | "stan1288", .want => some Spanish.Verbs.querer
+  | "stan1288", .hope => some Spanish.Verbs.esperar
+  | "stan1288", .causative => some Spanish.Verbs.hacer
+  | "port1283", .want => some Portuguese.Verbs.querer
+  | "port1283", .hope => some Portuguese.Verbs.esperar
+  | "port1283", .intend => some Portuguese.Verbs.pretender
+  | "port1283", .causative => some Portuguese.Verbs.fazer
+  | "ital1282", .want => some Italian.Verbs.volere.toVerb
+  | "ital1282", .hope => some Italian.Verbs.sperare.toVerb
+  | "ital1282", .intend => some Italian.Verbs.intendere.toVerb
+  | "ital1282", .causative => some Italian.Verbs.fare.toVerb
+  | "mode1248", .want => some Greek.StandardModern.Complementizers.thelo
+  | "mode1248", .hope => some Greek.StandardModern.Complementizers.elpizo
+  | "mode1248", .intend => some Greek.StandardModern.Complementizers.protitheme
+  | "mode1248", .causative => some Greek.StandardModern.Complementizers.vazo
+  | "roma1327", .want => some Romanian.Verbs.a_vrea
+  | "roma1327", .hope => some Romanian.Verbs.a_spera
+  | "roma1327", .intend => some Romanian.Verbs.a_intentiona
+  | "roma1327", .causative => some Romanian.Verbs.a_face
+  | _, _ => none
+
+/-- The cells of Table 1 with a verb entry, and the causatives of section 2.2. Spanish 'intend' is
+the nominal *tener la intención*, and the French and English entries do not record finite mood. -/
+def cells : List (Glottocode × Class) :=
+  (["port1283", "ital1282", "mode1248", "roma1327"].flatMap fun l ↦
+    [(l, .want), (l, .hope), (l, .intend), (l, .causative)]) ++
+  [("stan1288", .want), ("stan1288", .hope), ("stan1288", .causative)]
+
+/-- Every cell has its verb. -/
+theorem verbOf_isSome : ∀ c ∈ cells, (verbOf c.1 c.2).isSome := by decide
+
+/-- The fragment entries record the paper's judgments: in each cell the verb has a finite
+complement in a mood exactly when the pool has an acceptable complement in that mood, outside the
+rows that test a diagnostic or a second reading. -/
+theorem fragments_match_pool :
+    ∀ c ∈ cells, ∀ v ∈ verbOf c.1 c.2, ∀ m : Complement, ∀ k ∈ m.coding?,
+      (k ∈ v.codings ↔ ∃ r ∈ rows, r.language = c.1 ∧ r.cls = c.2 ∧ r.complement = m ∧
+        r.diagnostic = none ∧ r.reading = none ∧ r.judgment = .acceptable) := by
+  decide +kernel
+
+/-- The variation of 'hope' in two entries with one form: Portuguese *esperar* takes the
+indicative and Spanish *esperar* does not. -/
+theorem esperar_varies :
+    .indicative ∈ Portuguese.Verbs.esperar.codings ∧
+      .indicative ∉ Spanish.Verbs.esperar.codings := by
   decide
 
 /-! ### Section 3: the logical profile of 'intend' -/

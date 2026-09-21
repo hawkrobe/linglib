@@ -15,6 +15,10 @@ The verbs with a lexical reciprocal entry beside their transitive use are those 
 appendix. They are ordinary verb entries here, and `Spanish.Reciprocals.lexicalReciprocals`
 records which of them are lexical reciprocals.
 
+The attitude and causative verbs record the mood of the finite complement each selects in an
+affirmative declarative clause, the data of Grano's survey of mood choice; a subjunctive licensed
+by matrix negation or a question is not a frame of the verb.
+
 ## References
 
 * [A. Koontz-Garboden, *Anticausativization* (2009)][koontz-garboden-2009]
@@ -23,6 +27,8 @@ records which of them are lexical reciprocals.
 * [C. Muñoz Pérez, *Stylistic applicatives: A lens into the nature of anticausative SE*
   (2026)][munoz-perez-2026]
 * [A. A. Spalek and L. McNally, *The anatomy of a verb* (2026)][spalek-mcnally-2026]
+* [T. Grano, *Intention Reports and Eventuality Abstraction in a Theory of Mood Choice*
+  (2024)][grano-2024]
 -/
 
 namespace Spanish.Verbs
@@ -244,5 +250,45 @@ def dejar : Verb where
 def encontrar : Verb where
   form := "encontrar"
   frames := [ArgumentFrame.np]
+
+/-! ### Attitude and causative verbs -/
+
+/-- *querer* 'want' takes a *que* clause in the subjunctive, with disjoint reference, and an
+infinitive under subject control. -/
+def querer : Verb where
+  form := "querer"
+  frames := [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+
+/-- *esperar* 'hope' takes a *que* clause in the subjunctive and an infinitive under subject
+control. With an indicative clause about the future the verb means 'expect', a sense this entry
+does not cover. -/
+def esperar : Verb where
+  form := "esperar"
+  frames := [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+
+/-- The causative *hacer* 'make' takes an infinitive under object control and a *que* clause in
+the subjunctive. -/
+def hacer : Verb where
+  form := "hacer"
+  frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
+  causative := some .make
+
+/-- *convencer* 'convince' takes an object and a *de que* clause, which reports an intention in
+the subjunctive and a belief in the indicative. -/
+def convencer : Verb where
+  form := "convencer"
+  frames :=
+    [⟨some .nominal, [.nominal, .clausal (some .subjunctive) (some .declarative)]⟩,
+     ⟨some .nominal, [.nominal, .clausal (some .indicative) (some .declarative)]⟩]
+  opaqueContext := true
 
 end Spanish.Verbs

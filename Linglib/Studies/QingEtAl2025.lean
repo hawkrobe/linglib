@@ -4,6 +4,7 @@ import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.Mandarin.Verbs
 import Linglib.Fragments.Japanese.Verbs
 import Linglib.Fragments.Turkish.Verbs
+import Linglib.Fragments.Romance.Spanish.Verbs
 import Linglib.Data.Examples.QingEtAl2025
 
 /-!
@@ -46,7 +47,8 @@ to any answer. The pragmatic derivation compares the two outcomes the paper's gl
 Tabatowski's condition compares, coming to believe the radical or not, by Kratzer's
 ordering with the event's goals as ordering source, leaving the doxastic and similarity
 machinery of (82) aside; the event summation of the adjunction analysis is not formalized. The
-Spanish predicates, which have no Fragment entries, are classified in this file. The rows carry
+Spanish predicates without a Fragment entry, *temer* and *preocupar*, are classified in this
+file. The rows carry
 the paper's truth values where it gives them and its felicity judgments otherwise; the attested
 *hope whether* examples, (63a) included, are recorded as marginal following the paper's own
 assessment of the construction, and *temer* with a polar question and *haipa* with a
@@ -183,8 +185,8 @@ theorem trivial_iff_class [Inhabited E] (k : Strategy)
 /-! ### The paper's judgments -/
 
 /-- `attitude? s` is the attitude that the predicate name `s` denotes, read off the Fragment
-entry for English, Mandarin, Japanese, and Turkish, and off the paper's classification for
-Spanish. -/
+entry for English, Mandarin, Japanese, Turkish, and Spanish *esperar*, and off the paper's
+classification for the other Spanish predicates. -/
 def attitude? : String → Option Attitude
   | "hope" => English.hope.attitude
   | "fear" => English.fear.attitude
@@ -202,7 +204,7 @@ def attitude? : String → Option Attitude
   | "endiselen" => Turkish.endişelen.attitude
   | "preocupar" => some (.preferential .uncertaintyBased)
   | "temer" => some (.preferential (.degreeComparison .negative))
-  | "esperar" => some (.preferential (.degreeComparison .positive))
+  | "esperar" => Spanish.Verbs.esperar.attitude
   | _ => none
 
 /-- The class of a row's predicate. -/
