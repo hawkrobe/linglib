@@ -1,3 +1,4 @@
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.Mereology.Relation
 
 /-!
@@ -18,12 +19,13 @@ satisfies.
   (`SINC.mse`, `SINC.mso`).
 * `INC` — incrementality: the closure of a strictly incremental relation under sums,
   `AlgClosure` of its graph.
-* `VerbIncClass` — the classification of verbs by the incrementality of their theme.
+* `Incrementality.Holds` — the property an incrementality class of `Aspect/Defs.lean` names.
 
 ## Main results
 
 * `SINC.inc_of_sum` — a summative strictly incremental relation is incremental, being its own
   closure.
+* `INC.sum` — an incremental relation is summative.
 
 ## References
 
@@ -36,9 +38,9 @@ open Mereology
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
-/-- Strict incrementality: a part of a related object is related to exactly one part of the
-event and conversely, and some related pair has related proper parts, so the relation is not
-confined to atoms. -/
+/-- A relation is strictly incremental when a part of a related object is related to exactly one
+part of the event and conversely, and some related pair has related proper parts, so the
+relation is not confined to atoms. -/
 structure SINC (θ : α → β → Prop) : Prop where
   ue : UE θ
   uo : UO θ
@@ -55,20 +57,37 @@ theorem SINC.me (h : SINC θ) : ME θ := h.ue.me
 
 theorem SINC.mo (h : SINC θ) : MO θ := h.uo.mo
 
-/-- Incrementality: the closure of some strictly incremental relation under sums. -/
+/-- A relation is incremental when it is the closure of some strictly incremental relation under
+sums. -/
 def INC (θ : α → β → Prop) : Prop :=
   ∃ θ', SINC θ' ∧ ∀ x e, θ x e ↔ AlgClosure (Function.uncurry θ') (x, e)
 
-/-- A summative strictly incremental relation is incremental: it is its own closure. -/
+/-- A summative strictly incremental relation is incremental, being its own closure. -/
 theorem SINC.inc_of_sum (h : SINC θ) (hs : SUM θ) : INC θ :=
-  ⟨θ, h, λ x e => (algClosure_of_cum (x := (x, e)) (sum_iff_cum_uncurry.1 hs)).symm⟩
+  ⟨θ, h, fun x e ↦ (algClosure_of_cum (x := (x, e)) (sum_iff_cum_uncurry.1 hs)).symm⟩
 
-/-- The incrementality of a verb's theme relation: strictly incremental (*eat*, *draw*),
-incremental (*read*), or summative without incrementality (*push*, *carry*). -/
-inductive VerbIncClass where
-  | sinc
-  | inc
-  | cumOnly
-  deriving DecidableEq, Repr
+/-- An incremental relation is summative, being a closure under sums. -/
+theorem INC.sum (h : INC θ) : SUM θ := by
+  obtain ⟨θ', -, hθ⟩ := h
+  have : Function.uncurry θ = AlgClosure (Function.uncurry θ') :=
+    funext fun ⟨x, e⟩ ↦ propext (hθ x e)
+  exact sum_iff_cum_uncurry.2 (this ▸ algClosure_cum)
+
+/-- The property of a thematic relation that an incrementality class names. A verb is classed
+by the strongest that its theme relation has. -/
+def Incrementality.Holds : Incrementality → (α → β → Prop) → Prop
+  | .strict, θ => SINC θ
+  | .incremental, θ => INC θ
+  | .cumulative, θ => SUM θ
+
+/-- The incremental class is included in the cumulative one. -/
+theorem Incrementality.Holds.cumulative (h : Incrementality.incremental.Holds θ) :
+    Incrementality.cumulative.Holds θ :=
+  INC.sum h
+
+/-- A summative relation of the strict class is of the incremental class. -/
+theorem Incrementality.Holds.incremental (h : Incrementality.strict.Holds θ) (hs : SUM θ) :
+    Incrementality.incremental.Holds θ :=
+  SINC.inc_of_sum h hs
 
 end Aspect

@@ -202,7 +202,7 @@ def eat : Verb where
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some consumptionObject
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   root := { content := {
     force := {.low, .moderate}
     agentControl := {.compatible}
@@ -262,7 +262,7 @@ def cover : Verb := .mkRegular {
   form := "cover"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.contiguousLocation, .fill} }
 
 /-- "measure" — general measurement predicate. -/
@@ -903,7 +903,7 @@ def tear_ : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   causative := some .make
   root := { content := {
     force := {.moderate, .high}
@@ -975,7 +975,7 @@ def burn : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   causative := some .make
   root := { content := {
     force := {.moderate, .high}
@@ -1006,7 +1006,7 @@ def melt : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef), ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   causative := some .make
   root := { content := {
     force := {.low, .moderate}
@@ -1223,7 +1223,7 @@ def devour : Verb := .mkRegular {
   form := "devour"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   root := { content := {
     force := {.moderate, .high}
     agentControl := {.neutral}
@@ -1240,7 +1240,7 @@ def drink : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef),
     ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.eat}
 
 /-- "read" — Levin 14 Learn verbs, with learn and study; also listed among the verbs of
@@ -1253,7 +1253,7 @@ def read : Verb where
   formPresPart := "reading"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  verbIncClass := some .inc
+  incrementality := some .incremental
   levinClasses := {LevinClass.learn, .register, .transferOfMessage}
 
 /-- "build" — creation verb, strictly incremental theme.
@@ -1270,7 +1270,7 @@ def build : Verb where
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some creationObject
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.build}
 
 /-- "write" — Levin 25.2 Scribble verbs, cross-listed with the build verbs;
@@ -1286,7 +1286,7 @@ def write : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp,
     ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, ArgumentFrame.objectDrop (some .indef)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.performance, .scribble, .transferOfMessage}
 
 /-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
@@ -2069,7 +2069,7 @@ def chase : Verb := .mkRegular {
   form := "chase"
   frames := [ArgumentFrame.np]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.chase} }
 
 /-- "hit" — AgPat verb (Levin 18.1) -/
@@ -2089,7 +2089,7 @@ def push : Verb := .mkRegular {
   form := "push"
   frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.carry, .funnel, .pushPull, .split} }
 
 /-- "pull" — AgPat verb (Levin 12) -/
@@ -2097,7 +2097,7 @@ def pull : Verb := .mkRegular {
   form := "pull"
   frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.carry, .get, .hurt, .pushPull, .split} }
 
 /-- "shove" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
@@ -2246,7 +2246,7 @@ def carry : Verb where
   formPresPart := "carrying"
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.to_), ArgumentFrame.np_np]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.carry, .cost, .fit}
 
 /-- "drag" — AgPat verb (Levin 11.4/12) -/
@@ -2258,7 +2258,7 @@ def drag : Verb where
   formPresPart := "dragging"
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.to_), ArgumentFrame.np_np]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.carry, .search}
 
 /-- "call" — AgPat verb (communication + agent-patient frame) -/
@@ -2289,7 +2289,7 @@ def pour : Verb := .mkRegular {
   form := "pour"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.pour, .prepare, .substanceEmission, .weather} }
 
 /-- "spray" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
@@ -2299,7 +2299,7 @@ def spray : Verb := .mkRegular {
     ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.sprayLoad} }
 
 /-- "load" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
@@ -2309,7 +2309,7 @@ def load : Verb := .mkRegular {
     ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.sprayLoad} }
 
 /-! ### Removing (§ 10) -/
@@ -2330,7 +2330,7 @@ def clean : Verb := .mkRegular {
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
   scaleDimension := some .cleanliness
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.clear, .otherChangeOfState, .prepare} }
 
 /-- "steal" — Levin 10.5 Steal verbs. -/
@@ -2368,7 +2368,7 @@ def drive : Verb where
   formPresPart := "driving"
   frames := [ArgumentFrame.np]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.drive, .nonVehicleName}
 
 /-! ### Change of Possession (§ 13) -/
@@ -2474,7 +2474,7 @@ def cut : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_),
     ArgumentFrame.np_pp (some Adpositions.on), ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   root := { content := {
     resultGeometry := {.surfaceBreach}
     instrument := {.sharpBlade}
@@ -2490,7 +2490,7 @@ def chop : Verb where
   formPresPart := "chopping"
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.carve}
 
 /-! ### Combining and Separating (§ 22–23) -/
@@ -2500,7 +2500,7 @@ def mix : Verb := .mkRegular {
   form := "mix"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.correspond, .mix, .prepare} }
 
 /-- "separate" — Levin 23.1 Separate verbs. -/
@@ -2517,7 +2517,7 @@ def paint : Verb := .mkRegular {
   form := "paint"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.characterize, .color, .imageImpression, .performance, .scribble} }
 
 /-- "draw" — Levin 25 Image Creation verbs. Incremental by extent. -/
@@ -2529,7 +2529,7 @@ def draw : Verb where
   formPresPart := "drawing"
   frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.performance, .pushPull, .remove, .scribble, .split}
 
 /-! ### Creation and Transformation (§ 26) -/
@@ -2564,7 +2564,7 @@ def grow : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.outOf), ArgumentFrame.np_pp (some Adpositions.into)]
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
+  incrementality := some .strict
   levinClasses := {LevinClass.appear, .build, .calibratableChangeOfState,
     .entitySpecificModeOfBeing, .grow, .otherChangeOfState}
 
@@ -2608,7 +2608,7 @@ def blame : Verb := .mkRegular {
   form := "blame"
   frames := [ArgumentFrame.np]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
  }
 
 /-- "evaluate" — Levin 34 Assessment verbs. -/
@@ -2616,7 +2616,7 @@ def evaluate : Verb := .mkRegular {
   form := "evaluate"
   frames := [ArgumentFrame.np]
   vendlerClass := some .activity
-  verbIncClass := some .cumOnly
+  incrementality := some .cumulative
   levinClasses := {LevinClass.assessment} }
 
 /-! ### Social Interaction (§ 36) -/

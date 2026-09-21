@@ -14,7 +14,6 @@ import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Degree.Scale
 import Linglib.Semantics.Degree.Antonymy
-import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Root.Defs
 
@@ -134,11 +133,9 @@ structure Aspect where
   /-- The pole of the dimension towards which a degree achievement measures change, negative
       for *dry*, a decrease in wetness. -/
   scalePolarity : Degree.Polarity := .positive
-  /-- [krifka-1998] incrementality class of the object/theme role.
-      `.sinc` = strictly incremental (eat, build); `.inc` = incremental
-      with backups (read); `.cumOnly` = cumulative only (push, carry).
-      `none` for intransitives and clause-embedding verbs. -/
-  verbIncClass : Option VerbIncClass := none
+  /-- The [krifka-1998] incrementality class of the theme relation, `none` for intransitives
+      and clause-embedding verbs. -/
+  incrementality : Option Incrementality := none
   /-- The phasal class of a phasal verb such as *stop*, *start* or *continue*. -/
   phasal : Option Phasal := none
   deriving Repr, BEq
