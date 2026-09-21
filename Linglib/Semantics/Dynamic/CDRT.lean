@@ -123,6 +123,18 @@ theorem mem_randomAssign_iff_eqOn : g ~[randomAssign x] h ↔ Set.EqOn g h {x}�
   ⟨by rintro ⟨e, rfl⟩ v hv; exact (Function.update_of_ne hv e g).symm,
     fun hk => ⟨h x, (Function.update_eq_iff.mpr ⟨rfl, fun _ hv => hk hv⟩).symm⟩⟩
 
+/-- At the canonical register structure, an existential runs its scope from some variant of the
+input at `x`. -/
+theorem mem_dexists {D : Update (V → E)} :
+    g ~[dexists x D] h ↔ ∃ e, Function.update g x e ~[D] h :=
+  ⟨by rintro ⟨_, ⟨e, rfl⟩, hD⟩; exact ⟨e, hD⟩, fun ⟨e, hD⟩ => ⟨_, ⟨e, rfl⟩, hD⟩⟩
+
+/-- At the canonical register structure, a universal holds when its scope has an output from
+every variant of the input at `x`. -/
+theorem mem_dforall {D : Update (V → E)} :
+    g ∈ dforall x D ↔ ∀ e, Function.update g x e ∈ D.dom :=
+  ⟨fun hall e => hall ⟨e, rfl⟩, by rintro hall _ ⟨e, rfl⟩; exact hall e⟩
+
 /-- The weakest precondition of a random assignment is cylindrification
 ([henkin-monk-tarski-1971]). -/
 theorem preimage_randomAssign_eq_cyl (t : Condition (V → E)) :

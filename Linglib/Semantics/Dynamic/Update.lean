@@ -216,6 +216,11 @@ theorem impl_eq_core_dom (D₁ D₂ : Update S) : impl D₁ D₂ = D₁.core D�
 
 theorem disj_eq_dom_union_dom (D₁ D₂ : Update S) : disj D₁ D₂ = D₁.dom ∪ D₂.dom := rfl
 
+/-- Implication curries, an implication from a sequence being an implication to the test of an
+implication. -/
+theorem impl_comp (D₁ D₂ D₃ : Update S) : impl (D₁ ○ D₂) D₃ = impl D₁ (test (impl D₂ D₃)) := by
+  simp only [impl_eq_core_dom, dom_test, core_comp]
+
 /-- The domain of a sequence is the weakest precondition of the second domain. -/
 theorem dom_comp (D₁ D₂ : Update S) : (D₁ ○ D₂).dom = D₁.preimage D₂.dom := by
   rw [← preimage_univ_right, preimage_comp, preimage_univ_right]

@@ -1,5 +1,5 @@
 import Linglib.Logic.CylindricAlgebra
-import Linglib.Semantics.Dynamic.CDRT
+import Linglib.Semantics.Dynamic.DPL.Semantics
 
 /-!
 # Groenendijk and Stokhof (1991): Dynamic Predicate Logic
@@ -26,7 +26,10 @@ satisfies the deduction theorem and reduces s-entailment to entailment from the 
 premiss, and it is neither reflexive nor transitive, by the paper's own counterexamples. The
 satisfaction set of an existential computed in the proof of Fact 19 is the cylindrification of
 its scope's, in the cylindric set algebra of [henkin-monk-tarski-1971]; that is the substrate's
-`dom_dexists`.
+`dom_dexists`. The laws are then read off
+for the formulas of `DPL/Syntax.lean` under their interpretation `DPL.Formula.eval`, and the
+paper's opening contrast is computed: `∃x Px ∧ Qx` binds the last occurrence of `x`, while its
+double negation and its alphabetic variant `∃y Py ∧ Qx` do not.
 
 ## Implementation notes
 
@@ -38,7 +41,10 @@ are tests, that tests are closed under conjunction, and that a test's production
 satisfaction set are the substrate's `isTest_test`, `IsTest.comp`, and `IsTest.cod_eq_dom`;
 that closure and negation are idempotent on tests is `dom_test`. The paper lists idempotency
 of disjunction as unconditional, but a disjunction is a test by Definition 2, so `φ ∨ φ` is the
-closure of `φ` (`disj_self`) and the law holds exactly of tests.
+closure of `φ` (`disj_self`) and the law holds exactly of tests. Fact 5, that a condition is a
+test, is the substrate's `DPL.Formula.isTest_eval`; the converse half of Fact 6, that a test is a
+condition or a contradiction, fails, `x = y ∧ ∃x[x = y]` being a test in every structure with an
+active quantifier (`isTest_eval_equal_conj_ex_equal`).
 
 ## References
 
@@ -48,8 +54,9 @@ closure of `φ` (`disj_self`) and the law holds exactly of tests.
 ## TODO
 
 The laws with side conditions on active quantifiers and free variables, Facts 8, 9, and 13 to
-16, the leftward scope extension, alphabetic variance, and the normal binding form of section
-4.1 with Facts 17 to 24 need a syntax for DPL formulas.
+16, the leftward scope extension, and the normal binding form of section 4.1 with Facts 17 to
+24 are to be stated on the formulas of `DPL/Syntax.lean`, through `Formula.fv`, `Formula.aqv`
+and `Formula.IsScopeBound`.
 -/
 
 namespace GroenendijkStokhof1991
@@ -213,13 +220,13 @@ theorem neg_impl_comm : (∼φ ⇒ ψ) = (∼ψ ⇒ φ) := by
 theorem close_impl_eq_neg_impl_neg : (◇φ ⇒ ψ) = (∼ψ ⇒ ∼φ) := by
   rw [close_impl, disj_comm, disj_eq_neg_impl]
 
-/-- An implication is a test and turns its consequent into one, and it curries, by
-`SetRel.core_comp`. -/
+/-- An implication is a test and turns its consequent into one, and it curries, by the
+substrate's `impl_comp`. -/
 theorem impl_close_right : (φ ⇒ ◇ψ) = (φ ⇒ ψ) := by
   rw [impl_eq_neg_comp_neg, neg_close, ← impl_eq_neg_comp_neg]
 
-theorem impl_impl : (φ ⇒ (ψ ⇒ χ)) = ((φ ○ ψ) ⇒ χ) := by
-  simp only [impl_eq_core_dom, dom_test, core_comp]
+theorem impl_impl : (φ ⇒ (ψ ⇒ χ)) = ((φ ○ ψ) ⇒ χ) :=
+  congrArg test (impl_comp φ ψ χ).symm
 
 /-! #### Quantifiers and connectives
 
@@ -444,5 +451,112 @@ theorem not_entails_comp_exists [Nontrivial E] :
   exact hab (by simpa using hb.symm)
 
 end Assignments
+
+/-! ### The laws on formulas
+
+The formulas of `DPL/Syntax.lean` are interpreted by `DPL.Formula.eval` in the update algebra, so
+the laws above hold of them: two formulas are equivalent in a structure when their
+interpretations are the same relation. -/
+
+section Formulas
+
+open FirstOrder DPL DPL.Formula CylindricAlgebra
+
+universe u v w x
+
+variable {L : Language.{u, v}} {V : Type w} [DecidableEq V] (M : Type x) [L.Structure M]
+  (φ ψ χ : Formula L V) (x y : V)
+
+/-- Implication, disjunction, and the universal are definable from negation, conjunction, and
+the existential. -/
+theorem eval_imp_eq : (φ ⟿ ψ).eval M = (¬ᵈ(φ ⋏ ¬ᵈψ)).eval M :=
+  impl_eq_neg_comp_neg _ _
+
+theorem eval_disj_eq : (φ ⋎ ψ).eval M = (¬ᵈ(¬ᵈφ ⋏ ¬ᵈψ)).eval M :=
+  disj_eq_neg_comp_neg_neg _ _
+
+theorem eval_all_eq : (∀[x] φ).eval M = (¬ᵈ∃[x] ¬ᵈφ).eval M :=
+  forall_eq_neg_exists_neg x _
+
+/-- The restricted law of double negation on formulas. -/
+theorem eval_neg_neg_eq_iff : (¬ᵈ¬ᵈφ).eval M = φ.eval M ↔ IsTest (φ.eval M) :=
+  neg_neg_eq_self_iff_isTest _
+
+/-- Scope extension and the donkey equivalence on formulas. -/
+theorem eval_ex_conj : ((∃[x] φ) ⋏ ψ).eval M = (∃[x] (φ ⋏ ψ)).eval M :=
+  scope_extension x _ _
+
+theorem eval_ex_imp : ((∃[x] φ) ⟿ ψ).eval M = (∀[x] (φ ⟿ ψ)).eval M :=
+  donkey_equivalence x _ _
+
+/-! #### Binding beyond scope
+
+*A man walks in the park. He whistles*, `∃x Px ∧ Qx`: the existential binds the occurrence of
+its variable in the second conjunct, outside its scope. Under a double negation it does not,
+and neither does the existential of an alphabetic variant, so the three formulas below have
+different truth conditions while the first and the third are alphabetic variants. -/
+
+variable {M} (P Q : L.Relations 1) (g : V → M)
+
+/-- The atomic formula `Px`. -/
+private abbrev atom (P : L.Relations 1) (x : V) : Formula L V := rel P fun _ ↦ .var x
+
+/-- `∃x Px ∧ Qx` is true iff some individual is both `P` and `Q`. -/
+theorem mem_dom_eval_ex_conj_atom :
+    g ∈ (((∃[x] (atom P x)) ⋏ atom Q x).eval M).dom ↔
+      ∃ d : M, Language.Structure.RelMap P (fun _ ↦ d) ∧ Language.Structure.RelMap Q fun _ ↦ d := by
+  simp only [eval_conj, eval_ex, eval_rel, dom_comp, dom_test, mem_preimage, mem_dexists,
+    mem_test]
+  constructor
+  · rintro ⟨_, hQ, d, rfl, hP⟩
+    exact ⟨d, by simpa using hP, by simpa using hQ⟩
+  · rintro ⟨d, hP, hQ⟩
+    exact ⟨_, by simpa using hQ, d, rfl, by simpa using hP⟩
+
+/-- `¬¬∃x Px ∧ Qx` is true iff something is `P` and the input value of `x` is `Q`, the doubly
+negated existential binding nothing. -/
+theorem mem_dom_eval_neg_neg_ex_conj_atom :
+    g ∈ (((¬ᵈ¬ᵈ∃[x] (atom P x)) ⋏ atom Q x).eval M).dom ↔
+      (∃ d : M, Language.Structure.RelMap P fun _ ↦ d) ∧
+        Language.Structure.RelMap Q fun _ ↦ g x := by
+  simp only [eval_conj, eval_neg, eval_ex, eval_rel, neg_eq_compl_dom, compl_compl,
+    dom_comp, preimage_test, dom_test, dom_dexists, Set.mem_inter_iff, mem_cyl]
+  simp
+
+/-- `∃y Py ∧ Qx`, an alphabetic variant of `∃x Px ∧ Qx`, has the truth conditions of the doubly
+negated formula. -/
+theorem mem_dom_eval_ex_conj_atom_of_ne (hxy : x ≠ y) :
+    g ∈ (((∃[y] (atom P y)) ⋏ atom Q x).eval M).dom ↔
+      (∃ d : M, Language.Structure.RelMap P fun _ ↦ d) ∧
+        Language.Structure.RelMap Q fun _ ↦ g x := by
+  simp only [eval_conj, eval_ex, eval_rel, dom_comp, dom_test, mem_preimage, mem_dexists,
+    mem_test]
+  constructor
+  · rintro ⟨_, hQ, d, rfl, hP⟩
+    exact ⟨⟨d, by simpa using hP⟩, by simpa [Function.update_of_ne hxy] using hQ⟩
+  · rintro ⟨⟨d, hP⟩, hQ⟩
+    exact ⟨_, by simpa [Function.update_of_ne hxy] using hQ, d, rfl, by simpa using hP⟩
+
+/-- The binding theory sees the difference, the first formula not being scope-bound and the
+variant being so. -/
+theorem not_isScopeBound_ex_conj_atom : ¬ ((∃[x] (atom P x)) ⋏ atom Q x).IsScopeBound := by
+  simp [IsScopeBound, aqv, fv]
+
+theorem isScopeBound_ex_conj_atom_of_ne (hxy : x ≠ y) :
+    ((∃[y] (atom P y)) ⋏ atom Q x).IsScopeBound := by
+  simp [IsScopeBound, aqv, fv, hxy.symm]
+
+/-- A test need not be a condition. `x = y ∧ ∃x[x = y]` resets `x` to the value it had, so it
+is a test in every structure, and it has an active quantifier and is no contradiction. -/
+theorem isTest_eval_equal_conj_ex_equal (hxy : x ≠ y) :
+    IsTest (((.var x ≐ .var y) ⋏ ∃[x] (.var x ≐ .var y) : Formula L V).eval M) := by
+  rintro ⟨g, h⟩ ⟨_, ⟨rfl, hg⟩, hex⟩
+  obtain ⟨e, rfl, he⟩ := mem_dexists.mp hex
+  simp only [Set.mem_ofPred_eq, Language.Term.realize_var, Function.update_self,
+    Function.update_of_ne hxy.symm] at he hg
+  show g = Function.update g x e
+  rw [he, ← hg, Function.update_eq_self]
+
+end Formulas
 
 end GroenendijkStokhof1991
