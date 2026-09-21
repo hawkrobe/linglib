@@ -1,287 +1,432 @@
-import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Composition.Cont
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fintype.Pi
+import Linglib.Semantics.Reference.ChoiceFunction
 import Linglib.Data.Examples.Barker2002
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.List.Infix
 
 /-!
-# Barker 2002: continuations and the nature of quantification
+# Barker (2002): Continuations and the nature of quantification
 
-Quantificational noun phrases denote functions on their own continuations. Continuizing an
-ordinary grammar hands every constituent its continuation, so that noun phrases come out as
-generalized quantifiers, *everyone* and *someone* can be stated in situ, and their scope
-falls out of the truth conditions rather than from movement, storage or type-shifting.
-Each rule of arity two continuizes in two ways, one per priority order of its daughters,
-which is where scope ambiguity comes from; making the clause an island is a matter of
-handing the clause's continuation the finished clause. The paper's Simulation Theorem says
-that on quantifier-free derivations the continuized grammar computes what the direct one
-did, and its Integrity constraint that a constituent's quantifiers scope together, which
-leaves *someone saw a friend of everyone* four readings instead of six. Generalized
-coordination distributes the continuation over the conjuncts, with no polymorphic *and*.
+This file formalizes Barker's continuized grammar. A continuation is what the rest of the
+sentence does with a constituent's value, and continuizing a grammar hands every constituent its
+continuation. Noun phrases then come out as generalized quantifiers, *everyone* and *someone* can
+be stated in situ, and they take scope without movement, storage or type-shifting. A rule with
+two daughters continuizes in two ways, one per priority order of the daughters, which is where
+scope ambiguity comes from. A scope island hands its continuation the finished clause, and
+coordination distributes its continuation over the conjuncts.
 
-Derivations are trees over the direct grammar with each binary node marked for priority;
-the schema is `Deriv.continuize`, the direct meaning `Deriv.direct`, and the scope order a
-prioritized derivation induces `Deriv.scopeOrder`. Transitive verbs take the object first,
-so `saw m j` is *John saw Mary*.
+A derivation is a tree over the direct grammar with each binary node marked for priority.
+`Deriv.continuize` is the Continuation Schema, `Deriv.direct` the meaning the direct grammar
+assigns, and `Deriv.scopeOrder` the order in which the quantificational items take scope. The
+Simulation Theorem (`Deriv.continuize_eq_pure`) says that a derivation the direct grammar
+interprets denotes its direct meaning, and Integrity (`Deriv.Constituent.scopeOrder_isInfix`)
+that the quantifiers of a constituent are contiguous in the scope order of the sentence.
+
+## Implementation notes
+
+* The paper states the schema for rules of any arity, with one continuized rule per permutation
+  of the daughters. Its grammar has rules of arity at most two, and so does `Deriv`.
+* The expository determiners, which apply to the continuized nominal, are `Deriv.bind` at a
+  generalized-quantifier denotation. The determiners of the final grammar quantify over correct
+  choice functions.
+* Transitive verbs take the object first, so `saw m j` is *John saw Mary*.
+
+## TODO
+
+The paper calls the four scopings of *someone saw a friend of everyone* logically distinct. The
+restrictor of *a* contains the variable that *everyone* binds, so by
+`Reference.CF.exists_isCorrect_forall_iff` the two scopings that differ in the order of *a* and
+*everyone* are equivalent (`a_everyone_iff_everyone_a`), and the grammar gives the sentence two
+truth conditions. A wide-scope *a friend* common to everyone is not among them.
 
 ## References
 
 * [barker-2002]
-* [montague-1973]
 * [partee-rooth-1983]
-* [heim-kratzer-1998]
+* [reinhart-1997]
 -/
 
 namespace Barker2002
 
-open Quantifier (NP)
-open Quantifier.NP (individual)
-
-variable {α β γ E : Type}
+variable {ι α β γ E : Type}
 
 /-! ### Derivations and the Continuation Schema -/
 
-/-- A derivation: a lexical item of the direct grammar, a quantificational item stated only
-in continuized terms, a rule of arity one or two applied to its daughters (a binary node
-marked with which daughter takes priority), a clause closed off as a scope island, or a
-coordination. -/
-inductive Deriv : Type → Type 1
-  | lex {α : Type} (a : α) : Deriv α
-  | quant {α : Type} (label : String) (q : Cont Prop α) : Deriv α
-  | unary {α β : Type} (M : α → β) (d : Deriv α) : Deriv β
-  | binary {α β γ : Type} (M : α → β → γ) (first : Bool) (d₁ : Deriv α) (d₂ : Deriv β) :
-      Deriv γ
-  | island (d : Deriv Prop) : Deriv Prop
-  | coord {α : Type} (d₁ d₂ : Deriv α) : Deriv α
+/-- The daughter of a binary rule that takes priority, and with it scope over the other. -/
+inductive Priority
+  | left
+  | right
+  deriving DecidableEq, Fintype
+
+/-- A derivation with quantificational items labelled in `ι` is a lexical item of the direct
+grammar, a quantificational item stated only in continuized terms, a rule of arity one or two
+applied to its daughters, a quantificational item applied to the value of its daughter, a clause
+closed off as a scope island, or a coordination. -/
+inductive Deriv (ι : Type) : Type → Type 1
+  | lex {α : Type} (a : α) : Deriv ι α
+  | quant {α : Type} (i : ι) (q : Cont Prop α) : Deriv ι α
+  | unary {α β : Type} (M : α → β) (d : Deriv ι α) : Deriv ι β
+  | binary {α β γ : Type} (M : α → β → γ) (p : Priority) (d₁ : Deriv ι α) (d₂ : Deriv ι β) :
+      Deriv ι γ
+  | bind {α β : Type} (i : ι) (q : α → Cont Prop β) (d : Deriv ι α) : Deriv ι β
+  | island (d : Deriv ι Prop) : Deriv ι Prop
+  | coord {α : Type} (d₁ d₂ : Deriv ι α) : Deriv ι α
 
 namespace Deriv
 
-/-- The Continuation Schema: a lexical item is a unit, a rule nests its daughters'
-continuations in priority order, an island evaluates its clause, and coordination
-distributes the continuation over the conjuncts. -/
-def continuize : ∀ {α : Type}, Deriv α → Cont Prop α
+/-- The Continuation Schema makes a lexical item a unit and has a rule nest the continuations
+of its daughters in priority order. An island evaluates its clause, and coordination hands its
+continuation to each conjunct. -/
+def continuize : ∀ {α : Type}, Deriv ι α → Cont Prop α
   | _, lex a => pure a
   | _, quant _ q => q
   | _, unary M d => M <$> d.continuize
-  | _, binary M true d₁ d₂ => M <$> d₁.continuize <*> d₂.continuize
-  | _, binary M false d₁ d₂ => flip M <$> d₂.continuize <*> d₁.continuize
+  | _, binary M .left d₁ d₂ => M <$> d₁.continuize <*> d₂.continuize
+  | _, binary M .right d₁ d₂ => flip M <$> d₂.continuize <*> d₁.continuize
+  | _, bind _ q d => d.continuize >>= q
   | _, island d => ContT.reset d.continuize
-  | _, coord d₁ d₂ => λ k => d₁.continuize k ∧ d₂.continuize k
+  | _, coord d₁ d₂ => fun k ↦ d₁.continuize k ∧ d₂.continuize k
+
+/-- The sentence meaning is the continuized meaning at the trivial continuation. -/
+def eval (d : Deriv ι Prop) : Prop := ContT.eval d.continuize
 
 /-- The meaning the direct grammar assigns, where it assigns one. -/
-def direct : ∀ {α : Type}, Deriv α → Option α
+def direct : ∀ {α : Type}, Deriv ι α → Option α
   | _, lex a => some a
-  | _, quant _ _ => none
   | _, unary M d => d.direct.map M
-  | _, binary M _ d₁ d₂ => d₁.direct.bind λ x => d₂.direct.map (M x)
+  | _, binary M _ d₁ d₂ => d₁.direct.bind fun x ↦ d₂.direct.map (M x)
   | _, island d => d.direct
-  | _, coord _ _ => none
+  | _, quant _ _ | _, bind _ _ _ | _, coord _ _ => none
 
-/-- The quantificational items in the order they take scope; an island's are trapped. -/
-def scopeOrder : ∀ {α : Type}, Deriv α → List String
-  | _, lex _ => []
-  | _, quant l _ => [l]
+/-- The quantificational items in the order they take scope. Those of an island are trapped,
+and those of a coordination are listed together although neither conjunct outscopes the
+other. -/
+def scopeOrder : ∀ {α : Type}, Deriv ι α → List ι
+  | _, lex _ | _, island _ => []
+  | _, quant i _ => [i]
   | _, unary _ d => d.scopeOrder
-  | _, binary _ true d₁ d₂ => d₁.scopeOrder ++ d₂.scopeOrder
-  | _, binary _ false d₁ d₂ => d₂.scopeOrder ++ d₁.scopeOrder
-  | _, island _ => []
-  | _, coord d₁ d₂ => d₁.scopeOrder ++ d₂.scopeOrder
+  | _, binary _ .left d₁ d₂ | _, coord d₁ d₂ => d₁.scopeOrder ++ d₂.scopeOrder
+  | _, binary _ .right d₁ d₂ => d₂.scopeOrder ++ d₁.scopeOrder
+  | _, bind i _ d => d.scopeOrder ++ [i]
 
-/-- The lemma behind the Simulation Theorem: a derivation the direct grammar interprets
-hands any continuation its direct meaning. -/
-theorem continuize_run {d : Deriv α} {a : α} (h : d.direct = some a) (k : α → Prop) :
-    d.continuize.run k = k a := by
+/-! ### Simulation -/
+
+/-- The lemma behind the Simulation Theorem says that a derivation the direct grammar interprets
+denotes the unit at its direct meaning. -/
+theorem continuize_eq_pure {d : Deriv ι α} {a : α} (h : d.direct = some a) :
+    d.continuize = pure a := by
   induction d with
-  | lex b => simp only [direct, Option.some.injEq] at h; subst h; rfl
-  | quant => simp [direct] at h
+  | lex b => cases h; rfl
+  | quant | bind | coord => cases h
   | unary M d ih =>
-    simp only [direct, Option.map_eq_some_iff] at h
-    obtain ⟨b, hb, rfl⟩ := h
-    exact ih hb _
-  | binary M first d₁ d₂ ih₁ ih₂ =>
+    obtain ⟨b, hb, rfl⟩ := Option.map_eq_some_iff.mp h
+    rw [continuize, ih hb, map_pure]
+  | binary M p d₁ d₂ ih₁ ih₂ =>
     simp only [direct, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
     obtain ⟨b₁, hb₁, b₂, hb₂, rfl⟩ := h
-    cases first
-    · exact (ih₂ hb₂ _).trans (ih₁ hb₁ _)
-    · exact (ih₁ hb₁ _).trans (ih₂ hb₂ _)
-  | island d ih => exact congrArg k (ih h id)
-  | coord => simp [direct] at h
+    cases p <;> simp only [continuize, ih₁ hb₁, ih₂ hb₂] <;> rfl
+  | island d ih => rw [continuize, ih h, ContT.reset_pure]
 
-/-- The Simulation Theorem: at the trivial continuation the continuized grammar computes the
-direct meaning. -/
-theorem eval_continuize {d : Deriv Prop} {p : Prop} (h : d.direct = some p) :
-    ContT.eval d.continuize = p :=
-  continuize_run h id
+/-- The Simulation Theorem says that at the trivial continuation the continuized grammar
+computes the direct meaning. -/
+theorem eval_eq_of_direct {d : Deriv ι Prop} {p : Prop} (h : d.direct = some p) : d.eval = p := by
+  rw [eval, continuize_eq_pure h]; rfl
 
-/-- The sentence meaning: the continuized meaning at the trivial continuation. -/
-def eval (d : Deriv Prop) : Prop := ContT.eval d.continuize
+/-- Closing a clause off as an island leaves its own meaning alone. -/
+@[simp] theorem eval_island (d : Deriv ι Prop) : (island d).eval = d.eval :=
+  ContT.eval_reset _
 
-/-- Integrity: a daughter's quantifiers scope together, before or after the other
-daughter's. -/
-theorem scopeOrder_binary (M : α → β → γ) (first : Bool) (d₁ : Deriv α) (d₂ : Deriv β) :
-    (binary M first d₁ d₂).scopeOrder = d₁.scopeOrder ++ d₂.scopeOrder ∨
-      (binary M first d₁ d₂).scopeOrder = d₂.scopeOrder ++ d₁.scopeOrder := by
-  cases first <;> simp [scopeOrder]
+/-- Priority is idle next to a left daughter that the direct grammar interprets. -/
+theorem continuize_binary_of_direct_left (M : α → β → γ) (p : Priority) {d₁ : Deriv ι α} {a : α}
+    (h : d₁.direct = some a) (d₂ : Deriv ι β) :
+    (binary M p d₁ d₂).continuize = M a <$> d₂.continuize := by
+  cases p <;> simp only [continuize, continuize_eq_pure h] <;> rfl
+
+/-- Priority is idle next to a right daughter that the direct grammar interprets. -/
+theorem continuize_binary_of_direct_right (M : α → β → γ) (p : Priority) (d₁ : Deriv ι α)
+    {d₂ : Deriv ι β} {b : β} (h : d₂.direct = some b) :
+    (binary M p d₁ d₂).continuize = (M · b) <$> d₁.continuize := by
+  cases p <;> simp only [continuize, continuize_eq_pure h] <;> rfl
+
+/-! ### Integrity -/
+
+/-- `Constituent d' d` says that `d'` is a constituent of `d` that no island separates from
+it. -/
+inductive Constituent : ∀ {α β : Type}, Deriv ι α → Deriv ι β → Prop
+  | refl {α : Type} (d : Deriv ι α) : Constituent d d
+  | unary {α β γ : Type} {d' : Deriv ι α} {d : Deriv ι β} (M : β → γ) :
+      Constituent d' d → Constituent d' (unary M d)
+  | binaryLeft {α β γ δ : Type} {d' : Deriv ι α} {d₁ : Deriv ι β} (M : β → γ → δ) (p : Priority)
+      (d₂ : Deriv ι γ) : Constituent d' d₁ → Constituent d' (binary M p d₁ d₂)
+  | binaryRight {α β γ δ : Type} {d' : Deriv ι α} {d₂ : Deriv ι γ} (M : β → γ → δ)
+      (p : Priority) (d₁ : Deriv ι β) : Constituent d' d₂ → Constituent d' (binary M p d₁ d₂)
+  | bind {α β γ : Type} {d' : Deriv ι α} {d : Deriv ι β} (i : ι) (q : β → Cont Prop γ) :
+      Constituent d' d → Constituent d' (bind i q d)
+  | coordLeft {α β : Type} {d' : Deriv ι α} {d₁ : Deriv ι β} (d₂ : Deriv ι β) :
+      Constituent d' d₁ → Constituent d' (coord d₁ d₂)
+  | coordRight {α β : Type} {d' : Deriv ι α} {d₂ : Deriv ι β} (d₁ : Deriv ι β) :
+      Constituent d' d₂ → Constituent d' (coord d₁ d₂)
+
+namespace Constituent
+
+variable {d' : Deriv ι α} {d : Deriv ι β}
+
+/-- Integrity says that the quantifiers of a constituent are contiguous in the scope order of
+the whole, so an outside quantifier scopes over all of them or under all of them. -/
+theorem scopeOrder_isInfix (h : Constituent d' d) : d'.scopeOrder <:+: d.scopeOrder := by
+  induction h with
+  | refl => exact List.infix_rfl
+  | unary _ _ ih => exact ih
+  | binaryLeft _ p _ _ ih =>
+    cases p
+    · exact ih.trans (List.prefix_append _ _).isInfix
+    · exact ih.trans (List.suffix_append _ _).isInfix
+  | binaryRight _ p _ _ ih =>
+    cases p
+    · exact ih.trans (List.suffix_append _ _).isInfix
+    · exact ih.trans (List.prefix_append _ _).isInfix
+  | bind _ _ _ ih => exact ih.trans (List.prefix_append _ _).isInfix
+  | coordLeft _ _ ih => exact ih.trans (List.prefix_append _ _).isInfix
+  | coordRight _ _ ih => exact ih.trans (List.suffix_append _ _).isInfix
+
+/-- Integrity is a test on a scope order in which no item occurs twice, since the items of a
+constituent are then an uninterrupted stretch of the order. -/
+theorem filter_scopeOrder_isInfix [DecidableEq ι] (h : Constituent d' d)
+    (hd : d.scopeOrder.Nodup) :
+    d.scopeOrder.filter (· ∈ d'.scopeOrder) <:+: d.scopeOrder := by
+  obtain ⟨s, t, hst⟩ := h.scopeOrder_isInfix
+  rw [← hst] at hd ⊢
+  have hs : s.filter (· ∈ d'.scopeOrder) = [] := List.filter_eq_nil_iff.mpr fun x hx ↦ by
+    simpa using List.disjoint_of_nodup_append hd.of_append_left hx
+  have ht : t.filter (· ∈ d'.scopeOrder) = [] := List.filter_eq_nil_iff.mpr fun x hx ↦ by
+    simpa using fun hx' ↦ List.disjoint_of_nodup_append hd (List.mem_append_right _ hx') hx
+  have hm : d'.scopeOrder.filter (· ∈ d'.scopeOrder) = d'.scopeOrder :=
+    List.filter_eq_self.mpr (by simp)
+  rw [List.filter_append, List.filter_append, hs, ht, hm]
+  exact ⟨s, t, by simp⟩
+
+end Constituent
 
 end Deriv
 
-/-! ### The fragment -/
+/-! ### The grammar -/
 
-open Deriv
+open Deriv Reference
 
-/-- S → NP VP, `VP(NP)`; `first` gives the subject priority. -/
-def S (first : Bool) (np : Deriv E) (vp : Deriv (E → Prop)) : Deriv Prop :=
-  binary (λ x P => P x) first np vp
+/-- S → NP VP, `VP(NP)`. -/
+def S (p : Priority) (np : Deriv ι E) (vp : Deriv ι (E → Prop)) : Deriv ι Prop :=
+  binary (fun x P ↦ P x) p np vp
 
 /-- VP → Vt NP, `Vt(NP)`. -/
-def VP (first : Bool) (vt : Deriv (E → E → Prop)) (obj : Deriv E) : Deriv (E → Prop) :=
-  binary (λ R x => R x) first vt obj
+def VP (p : Priority) (vt : Deriv ι (E → E → Prop)) (obj : Deriv ι E) : Deriv ι (E → Prop) :=
+  binary (fun R x ↦ R x) p vt obj
 
 /-- VP → Vs S, `Vs(S)`. -/
-def VS (first : Bool) (vs : Deriv (Prop → E → Prop)) (s : Deriv Prop) : Deriv (E → Prop) :=
-  binary (λ T p => T p) first vs s
+def VS (p : Priority) (vs : Deriv ι (Prop → E → Prop)) (s : Deriv ι Prop) :
+    Deriv ι (E → Prop) :=
+  binary (fun T q ↦ T q) p vs s
 
-/-- NP → Det N, `Det(N)`, determiners denoting choice functions. -/
-def NP (first : Bool) (det : Deriv ((E → Prop) → E)) (n : Deriv (E → Prop)) : Deriv E :=
-  binary (λ D P => D P) first det n
+/-- NP → Det N, `Det(N)`, with determiners denoting choice functions. -/
+def NP (p : Priority) (det : Deriv ι (CF E)) (n : Deriv ι (E → Prop)) : Deriv ι E :=
+  binary (fun D P ↦ D P) p det n
 
 /-- N → Nr PPof, `Nr(PP)`. -/
-def N (first : Bool) (nr : Deriv (E → E → Prop)) (pp : Deriv E) : Deriv (E → Prop) :=
-  binary (λ R x => R x) first nr pp
+def N (p : Priority) (nr : Deriv ι (E → E → Prop)) (pp : Deriv ι E) : Deriv ι (E → Prop) :=
+  binary (fun R x ↦ R x) p nr pp
 
-/-- *everyone*: a universal over the continuation. -/
-def everyone : Deriv E := quant "everyone" λ k => ∀ x, k x
+/-- PPof → of NP, with a transparent preposition. -/
+def PPof (np : Deriv ι E) : Deriv ι E := unary id np
 
-/-- *someone*: an existential over the continuation. -/
-def someone : Deriv E := quant "someone" λ k => ∃ x, k x
+/-- *everyone* is a universal over its continuation. -/
+def everyone : Deriv String E := quant "everyone" fun k ↦ ∀ x, k x
 
-/-- *every* quantifies over choice functions; the restriction to proper choice functions is
-left to the choice-function literature, as in the paper. -/
-def every : Deriv ((E → Prop) → E) := quant "every" λ D => ∀ f, D f
+/-- *someone* is an existential over its continuation. -/
+def someone : Deriv String E := quant "someone" fun k ↦ ∃ x, k x
 
-/-- *a* as an existential over choice functions. -/
-def a : Deriv ((E → Prop) → E) := quant "a" λ D => ∃ f, D f
+/-- The expository NP → Det N applies a generalized-quantifier determiner to the continuized
+nominal, so the determiner scopes under whatever the nominal contains. -/
+def NPgq (w : String) (Q : Quantifier.GQ E) (n : Deriv String (E → Prop)) : Deriv String E :=
+  bind w (fun P ↦ Q P) n
 
-/-- The expository *every*, typed as a generalized quantifier over the nominal. -/
-def everyGQ (n : Deriv (E → Prop)) : Deriv E :=
-  quant "every" λ k => n.continuize λ P => ∀ x, P x → k x
+/-- *every* quantifies universally over correct choice functions. -/
+def every : Deriv String (CF E) := quant "every" fun D ↦ ∀ f : CF E, f.IsCorrect → D f
 
-/-- The expository *a*. -/
-def aGQ (n : Deriv (E → Prop)) : Deriv E :=
-  quant "a" λ k => n.continuize λ P => ∃ x, P x ∧ k x
+/-- *a* quantifies existentially over correct choice functions. -/
+def a : Deriv String (CF E) := quant "a" fun D ↦ ∃ f : CF E, f.IsCorrect ∧ D f
 
-variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' : E → E → Prop)
-  (friendOf : E → E → Prop) (thought' : Prop → E → Prop) (the : (E → Prop) → E)
+variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' friendOf : E → E → Prop)
+  (thought' : Prop → E → Prop) (the : CF E)
 
-/-! ### Worked derivations -/
+/-! ### Scope displacement and scope ambiguity -/
 
-theorem john_left : eval (S false (lex j) (lex left')) = left' j := rfl
+theorem john_left (p : Priority) : (S p (lex j) (lex left' : Deriv ι _)).eval = left' j :=
+  eval_eq_of_direct (by cases p <;> rfl)
 
-theorem everyone_left : eval (S false everyone (lex left')) = ∀ x, left' x :=
-  rfl
+theorem everyone_left (p : Priority) : (S p everyone (lex left')).eval = ∀ x, left' x := by
+  cases p <;> rfl
 
-/-- *John saw everyone*, in situ. -/
-theorem john_saw_everyone :
-    eval (S false (lex j) (VP true (lex saw') everyone)) = ∀ x, saw' x j :=
-  rfl
+/-- A quantifier in object position takes scope over the clause, whatever determiner it has:
+*John saw every man*, *John saw most men*. -/
+theorem john_saw_NPgq (w : String) (Q : Quantifier.GQ E) (p p' : Priority) :
+    (S p (lex j) (VP p' (lex saw') (NPgq w Q (lex man')))).eval = Q man' (saw' · j) := by
+  cases p <;> cases p' <;> rfl
 
-/-- *Every man saw a woman* with VP priority: the inverse reading. -/
-theorem every_man_saw_a_woman_inverse :
-    eval (S false (everyGQ (lex man')) (VP true (lex saw') (aGQ (lex woman'))))
-      = ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := rfl
+/-- *Every man saw a woman* with VP priority has the inverse reading. -/
+theorem every_man_saw_a_woman_inverse (p : Priority) :
+    (S .right (NPgq "every" Quantifier.GQ.every_sem (lex man'))
+      (VP p (lex saw') (NPgq "a" Quantifier.GQ.some_sem (lex woman')))).eval =
+      ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := by
+  cases p <;> rfl
 
-/-- With subject priority: the surface reading. -/
-theorem every_man_saw_a_woman_surface :
-    eval (S true (everyGQ (lex man')) (VP true (lex saw') (aGQ (lex woman'))))
-      = ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := rfl
+/-- With subject priority it has the surface reading. -/
+theorem every_man_saw_a_woman_surface (p : Priority) :
+    (S .left (NPgq "every" Quantifier.GQ.every_sem (lex man'))
+      (VP p (lex saw') (NPgq "a" Quantifier.GQ.some_sem (lex woman')))).eval =
+      ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := by
+  cases p <;> rfl
 
-/-- *John saw every man*: for every way of choosing a man, John saw him. -/
-theorem john_saw_every_man :
-    eval (S false (lex j) (VP true (lex saw') (NP true every (lex man')))) =
-      ∀ f : (E → Prop) → E, saw' (f man') j := rfl
+/-- In *a man thought everyone saw Mary* the island traps *everyone* under every priority. -/
+theorem a_man_thought_everyone_saw_mary (p₁ p₂ p₃ p₄ : Priority) :
+    (S p₁ (NPgq "a" Quantifier.GQ.some_sem (lex man'))
+      (VS p₂ (lex thought') (island (S p₃ everyone (VP p₄ (lex saw') (lex m)))))).eval =
+      ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := by
+  cases p₁ <;> cases p₂ <;> cases p₃ <;> cases p₄ <;> rfl
 
-/-- *A man thought everyone saw Mary*: the island traps *everyone*. -/
-theorem a_man_thought_everyone_saw_mary :
-    eval (S false (aGQ (lex man'))
-      (VS true (lex thought') (island (S false everyone (VP true (lex saw') (lex m)))))) =
-      ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := rfl
+/-- In *someone saw the friend of the friend of everyone* the embedded quantifier takes scope
+from any depth, and the priority at S decides between the two scopings. -/
+theorem someone_saw_the_friend_of_the_friend_of_everyone (p : Priority) :
+    (S p someone (VP .left (lex saw') (NP .left (lex the) (N .left (lex friendOf)
+      (PPof (NP .left (lex the) (N .left (lex friendOf) (PPof everyone)))))))).eval =
+      match p with
+      | .left => ∃ x, ∀ y, saw' (the (friendOf (the (friendOf y)))) x
+      | .right => ∀ y, ∃ x, saw' (the (friendOf (the (friendOf y)))) x := by
+  cases p <;> rfl
 
-/-- *Someone saw the friend of the friend of everyone*: scope displacement is unbounded, and
-both scopings are available. -/
-theorem someone_saw_the_friend_of_the_friend_of_everyone (first : Bool) :
-    eval (S first someone (VP true (lex saw')
-      (NP true (lex the) (N true (lex friendOf)
-        (NP true (lex the) (N true (lex friendOf) everyone)))))) =
-      if first then ∃ x, ∀ y, saw' (the (friendOf (the (friendOf y)))) x
-        else ∀ y, ∃ x, saw' (the (friendOf (the (friendOf y)))) x := by
-  cases first <;> rfl
+/-! ### Choice-function determiners -/
 
-/-! ### The four scopings of *someone saw a friend of everyone* -/
+/-- *John saw every man* says that for every way of choosing a man, John saw him. -/
+theorem john_saw_every_man (p₁ p₂ p₃ : Priority) :
+    (S p₁ (lex j) (VP p₂ (lex saw') (NP p₃ every (lex man')))).eval =
+      ∀ f : CF E, f.IsCorrect → saw' (f man') j := by
+  cases p₁ <;> cases p₂ <;> cases p₃ <;> rfl
 
-/-- The derivation, with a priority bit at the S, VP, NP and N nodes. -/
-def someoneSawAFriendOfEveryone (p : Fin 4 → Bool) : Deriv Prop :=
-  S (p 0) someone (VP (p 1) (lex saw') (NP (p 2) a (N (p 3) (lex friendOf) everyone)))
+/-- When there are men, the choice-function *every* and the generalized-quantifier *every*
+give *John saw every man* the same truth conditions. -/
+theorem john_saw_every_man_iff (hman : ∃ x, man' x) (p₁ p₂ p₃ : Priority) :
+    (S p₁ (lex j) (VP p₂ (lex saw') (NP p₃ every (lex man')))).eval ↔
+      Quantifier.GQ.every_sem man' (saw' · j) := by
+  rw [john_saw_every_man]
+  exact CF.forall_isCorrect_iff_every_sem hman (saw' · j)
 
-theorem scoping_yfx :
-    eval (someoneSawAFriendOfEveryone saw' friendOf ![true, true, true, true])
-      = ∃ y, ∃ f : (E → Prop) → E, ∀ x, saw' (f (friendOf x)) y := rfl
+/-- When there are no men they come apart, since the choice-function sentence says that John
+saw everyone and the generalized-quantifier sentence is vacuously true. -/
+theorem john_saw_every_man_iff_of_not_exists (hman : ¬ ∃ x, man' x) (p₁ p₂ p₃ : Priority) :
+    (S p₁ (lex j) (VP p₂ (lex saw') (NP p₃ every (lex man')))).eval ↔ ∀ x, saw' x j := by
+  rw [john_saw_every_man]
+  exact CF.forall_isCorrect_iff_of_not_exists hman (saw' · j)
 
-theorem scoping_yxf :
-    eval (someoneSawAFriendOfEveryone saw' friendOf ![true, true, false, true])
-      = ∃ y, ∀ x, ∃ f : (E → Prop) → E, saw' (f (friendOf x)) y := rfl
+/-! ### The scopings of *someone saw a friend of everyone* -/
 
-theorem scoping_fxy :
-    eval (someoneSawAFriendOfEveryone saw' friendOf ![false, true, true, true])
-      = ∃ f : (E → Prop) → E, ∀ x, ∃ y, saw' (f (friendOf x)) y := rfl
+/-- The derivation, with a priority at the S, VP, NP and N nodes. -/
+def someoneSawAFriendOfEveryone (pS pVP pNP pN : Priority) : Deriv String Prop :=
+  S pS someone (VP pVP (lex saw') (NP pNP a (N pN (lex friendOf) (PPof everyone))))
 
-theorem scoping_xfy :
-    eval (someoneSawAFriendOfEveryone saw' friendOf ![false, true, false, true])
-      = ∀ x, ∃ f : (E → Prop) → E, ∃ y, saw' (f (friendOf x)) y := rfl
+/-- The priorities at S and NP fix the scope order. -/
+theorem scopeOrder_someoneSawAFriendOfEveryone (pS pVP pNP pN : Priority) :
+    (someoneSawAFriendOfEveryone saw' friendOf pS pVP pNP pN).scopeOrder =
+      match pS, pNP with
+      | .left, .left => ["someone", "a", "everyone"]
+      | .left, .right => ["someone", "everyone", "a"]
+      | .right, .left => ["a", "everyone", "someone"]
+      | .right, .right => ["everyone", "a", "someone"] := by
+  cases pS <;> cases pVP <;> cases pNP <;> cases pN <;> rfl
 
-/-- Integrity leaves four of the six orders: *a* and *everyone*, sharing the object, scope
-together. -/
-theorem scopeOrders (p : Fin 4 → Bool) :
-    (someoneSawAFriendOfEveryone saw' friendOf p).scopeOrder ∈
-      [["someone", "a", "everyone"], ["someone", "everyone", "a"],
-        ["a", "everyone", "someone"], ["everyone", "a", "someone"]] := by
-  cases h0 : p 0 <;> cases h1 : p 1 <;> cases h2 : p 2 <;> cases h3 : p 3 <;>
-    simp [someoneSawAFriendOfEveryone, S, VP, NP, N, scopeOrder, everyone, someone, a, h0, h1, h2,
-      h3]
+/-- The truth conditions follow the scope order. -/
+theorem eval_someoneSawAFriendOfEveryone (pS pVP pNP pN : Priority) :
+    (someoneSawAFriendOfEveryone saw' friendOf pS pVP pNP pN).eval =
+      match pS, pNP with
+      | .left, .left => ∃ y, ∃ f : CF E, f.IsCorrect ∧ ∀ x, saw' (f (friendOf x)) y
+      | .left, .right => ∃ y, ∀ x, ∃ f : CF E, f.IsCorrect ∧ saw' (f (friendOf x)) y
+      | .right, .left => ∃ f : CF E, f.IsCorrect ∧ ∀ x, ∃ y, saw' (f (friendOf x)) y
+      | .right, .right => ∀ x, ∃ f : CF E, f.IsCorrect ∧ ∃ y, saw' (f (friendOf x)) y := by
+  cases pS <;> cases pVP <;> cases pNP <;> cases pN <;> rfl
 
-/-- The excluded orders split the object's quantifiers around the subject. -/
-theorem no_split_scoping (p : Fin 4 → Bool) :
-    (someoneSawAFriendOfEveryone saw' friendOf p).scopeOrder ≠ ["everyone", "someone", "a"] ∧
-    (someoneSawAFriendOfEveryone saw' friendOf p).scopeOrder ≠ ["a", "someone", "everyone"] := by
-  cases h0 : p 0 <;> cases h1 : p 1 <;> cases h2 : p 2 <;> cases h3 : p 3 <;>
-    simp [someoneSawAFriendOfEveryone, S, VP, NP, N, scopeOrder, everyone, someone, a, h0, h1, h2,
-      h3]
+/-- The priority at NP orders the object's two quantifiers. -/
+theorem scopeOrder_object (pNP pN : Priority) :
+    (NP pNP a (N pN (lex friendOf) (PPof everyone))).scopeOrder =
+      match pNP with
+      | .left => ["a", "everyone"]
+      | .right => ["everyone", "a"] := by
+  cases pNP <;> cases pN <;> rfl
+
+/-- The object noun phrase is a constituent of the sentence. -/
+theorem constituent_object (pS pVP pNP pN : Priority) :
+    Constituent (NP pNP a (N pN (lex friendOf) (PPof everyone)))
+      (someoneSawAFriendOfEveryone saw' friendOf pS pVP pNP pN) :=
+  .binaryRight _ _ _ (.binaryRight _ _ _ (.refl _))
+
+/-- Integrity excludes the orders that split the object's quantifiers around the subject. -/
+theorem no_split_scoping (pS pVP pNP pN : Priority) :
+    (someoneSawAFriendOfEveryone saw' friendOf pS pVP pNP pN).scopeOrder ≠
+        ["everyone", "someone", "a"] ∧
+      (someoneSawAFriendOfEveryone saw' friendOf pS pVP pNP pN).scopeOrder ≠
+        ["a", "someone", "everyone"] := by
+  have h := (constituent_object saw' friendOf pS pVP pNP pN).scopeOrder_isInfix
+  rw [scopeOrder_object] at h
+  constructor <;> intro h' <;> rw [h'] at h <;> cases pNP <;> exact absurd h (by decide)
+
+/-- The order of *a* and *everyone* makes no difference to the truth conditions, because the
+restrictor of *a* contains the variable that *everyone* binds. -/
+theorem a_everyone_iff_everyone_a [Nonempty E] (pS pVP pN pVP' pN' : Priority) :
+    (someoneSawAFriendOfEveryone saw' friendOf pS pVP .left pN).eval ↔
+      (someoneSawAFriendOfEveryone saw' friendOf pS pVP' .right pN').eval := by
+  rw [eval_someoneSawAFriendOfEveryone, eval_someoneSawAFriendOfEveryone]
+  cases pS
+  · exact exists_congr fun y ↦ CF.exists_isCorrect_forall_iff friendOf (saw' · y)
+  · exact CF.exists_isCorrect_forall_iff friendOf fun z ↦ ∃ y, saw' z y
 
 /-! ### Generalized coordination -/
 
-theorem john_left_and_slept :
-    eval (S false (lex j) (coord (lex left') (lex slept'))) =
-      (left' j ∧ slept' j) := rfl
+/-- With subject priority, coordinated verb phrases denote their pointwise conjunction, as in
+Partee and Rooth's generalized conjunction. -/
+theorem coord_VP_subject_priority (np : Deriv ι E) (P Q : E → Prop) :
+    (S .left np (coord (lex P) (lex Q))).eval = (S .left np (lex (P ⊓ Q))).eval :=
+  rfl
 
-theorem john_and_mary_left :
-    eval (S false (coord (lex j) (lex m)) (lex left')) =
-      (left' j ∧ left' m) := rfl
+/-- With VP priority the conjunction distributes over the subject. -/
+theorem coord_VP_priority (np : Deriv ι E) (P Q : E → Prop) :
+    (S .right np (coord (lex P) (lex Q))).eval =
+      ((S .right np (lex P)).eval ∧ (S .right np (lex Q)).eval) :=
+  rfl
+
+/-- Coordinated noun phrases need no conjoinable type, as in *John and Mary left*. -/
+theorem john_and_mary_left (p : Priority) :
+    (S p (coord (lex j) (lex m)) (lex left' : Deriv ι _)).eval = (left' j ∧ left' m) := by
+  cases p <;> rfl
 
 /-! ### The paper's examples -/
 
-open Data.Examples (LinguisticExample)
-
-/-- A reading named by its scope order, `someone > a > everyone`. -/
-def order (s : String) : List String :=
-  (s.toList.splitOn '>').map λ cs =>
-    String.ofList ((cs.dropWhile (· = ' ')).reverse.dropWhile (· = ' ') |>.reverse)
+/-- The words of a string, split at a separator. -/
+def wordsOn (c : Char) (s : String) : List String :=
+  (s.toList.splitOn c).filterMap fun cs ↦
+    let w := cs.filter (· ≠ ' ')
+    if w = [] then none else some (String.ofList w)
 
 /-- The readings the paper lists for *someone saw a friend of everyone* are exactly the scope
 orders some prioritization of its derivation induces. -/
 theorem rows_scopings : ∀ e ∈ Examples.all,
     e.feature? "derivation" = some "someone saw a friend of everyone" → ∀ r ∈ e.readings,
-      (r.2 = .acceptable ↔ ∃ p : Fin 4 → Bool,
-        (someoneSawAFriendOfEveryone (E := Unit) (λ _ _ => True) (λ _ _ => True) p).scopeOrder =
-          order r.1) := by
+      (r.2 = .acceptable ↔ ∃ pS pVP pNP pN : Priority,
+        (someoneSawAFriendOfEveryone (E := Unit) (fun _ _ ↦ True) (fun _ _ ↦ True)
+          pS pVP pNP pN).scopeOrder = wordsOn '>' r.1) := by
+  decide +kernel
+
+/-- Wherever the paper names a constituent holding two of a sentence's quantifiers, the
+readings it accepts are those that keep the two together, as
+`Deriv.Constituent.filter_scopeOrder_isInfix` requires. -/
+theorem rows_integrity : ∀ e ∈ Examples.all, ∀ c ∈ e.feature? "constituent",
+    ∀ r ∈ e.readings, (r.2 = .acceptable ↔
+      (wordsOn '>' r.1).filter (· ∈ wordsOn ' ' c) <:+: wordsOn '>' r.1) := by
   decide +kernel
 
 end Barker2002

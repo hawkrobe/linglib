@@ -24,7 +24,7 @@ namespace ContT
 
 variable {r α β : Type u} {m : Type u → Type v}
 
-/-- Evaluation at the trivial continuation: `eval c = c.run pure`. -/
+/-- `eval c` runs `c` at the trivial continuation `pure`. -/
 def eval [Pure m] (c : ContT r m r) : m r := c.run pure
 
 /-! ### Interaction with the monad operations -/
@@ -33,13 +33,13 @@ def eval [Pure m] (c : ContT r m r) : m r := c.run pure
     eval (pure a : ContT r m r) = pure a := rfl
 
 @[simp] theorem eval_bind [Pure m] (c : ContT r m α) (f : α → ContT r m r) :
-    eval (c >>= f) = c.run λ x => eval (f x) := rfl
+    eval (c >>= f) = c.run fun x ↦ eval (f x) := rfl
 
 @[simp] theorem eval_map [Pure m] (f : α → r) (c : ContT r m α) :
-    eval (f <$> c) = c.run λ x => pure (f x) := rfl
+    eval (f <$> c) = c.run fun x ↦ pure (f x) := rfl
 
 @[simp] theorem eval_seq [Pure m] (mf : ContT r m (α → r)) (mx : ContT r m α) :
-    eval (mf <*> mx) = mf.run λ f => mx.run λ x => pure (f x) := rfl
+    eval (mf <*> mx) = mf.run fun f ↦ mx.run fun x ↦ pure (f x) := rfl
 
 /-! ### Evaluating lifted computations -/
 
@@ -53,11 +53,22 @@ scope-island rule is an instance. -/
 def reset {r' : Type u} [Monad m] (c : ContT r m r) : ContT r' m r :=
   monadLift (eval c)
 
-/-- `reset` is transparent to lifted effects: effects escape islands,
-scope-takers do not. -/
+/-- `reset` is transparent to lifted effects, so effects escape islands where scope-takers do
+not. -/
 theorem reset_monadLift {r' : Type u} [Monad m] [LawfulMonad m] (x : m r) :
     reset (monadLift x : ContT r m r) = (monadLift x : ContT r' m r) :=
   congrArg monadLift (eval_monadLift x)
+
+/-- Evaluating a reset computation is evaluating the computation. -/
+@[simp] theorem eval_reset [Monad m] [LawfulMonad m] (c : ContT r m r) :
+    eval (reset c : ContT r m r) = eval c :=
+  eval_monadLift _
+
+/-- A pure value passes through `reset`. -/
+@[simp] theorem reset_pure {r' : Type u} [Monad m] [LawfulMonad m] (a : r) :
+    reset (pure a : ContT r m r) = (pure a : ContT r' m r) := by
+  ext k
+  simp only [reset, eval_pure, run_monadLift, pure_bind, run_pure]
 
 /-- Lifting, combining, and evaluating is just combining in `m`:
 scopal combination subsumes applicative combination. -/
