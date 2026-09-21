@@ -35,6 +35,8 @@ variables of [groenendijk-stokhof-1991], and the formula's interpretation has it
 * `DPL.HasContext.dom_comp`: a relation that blocks no input of another commutes with its truth.
 * `DPL.Formula.hasContext_eval`: a formula's interpretation has its context (Theorem 3.13), with
   `DPL.Formula.context_I` and `DPL.Formula.context_B` identifying its inputs and blocks.
+* `DPL.Formula.IsScopeBound.dom_eval`: on the scope-bound formulas dynamic truth is static
+  satisfaction.
 
 ## Implementation notes
 
@@ -352,6 +354,14 @@ theorem dom_comp (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B 
         let ⟨j, hj⟩ := (hR.mem_dom_iff hS hd hk).mp hf
         ⟨j, k, hk, hj⟩⟩
 
+/-- An implication from a relation that blocks no input of the consequent is material. -/
+theorem impl_eq (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d.I) :
+    Update.impl R S = R.domᶜ ∪ S.dom :=
+  Set.ext fun f ↦
+    ⟨fun hall ↦ (Classical.em (f ∈ R.dom)).elim
+        (fun ⟨_, hk⟩ ↦ .inr ((hR.mem_dom_iff hS hd hk).mpr (hall hk))) .inl,
+      fun h _ hk ↦ (hR.mem_dom_iff hS hd hk).mp (h.resolve_left fun hn ↦ hn ⟨_, hk⟩)⟩
+
 /-- The negation of a `c`-relation is a test at its inputs. -/
 theorem neg (h : HasContext R c) : HasContext (test (Update.neg R)) (Context.test c.I) :=
   hasContext_test_of_dependsOn fun _ _ hI ↦ congrArg Not (h.dependsOn_dom hI)
@@ -417,6 +427,33 @@ theorem hasContext_eval (φ : Formula L V) : HasContext (φ.eval M) φ.context :
   | imp φ ψ ihφ ihψ => exact ihφ.impl ihψ
   | ex x φ ih => exact ih.dexists x
   | all x φ ih => exact (hasContext_randomAssign x).impl ih
+
+/-- A scope-bound formula is true under the dynamic interpretation exactly where it is
+satisfied under the static one ([groenendijk-stokhof-1991]'s Fact 19). -/
+theorem IsScopeBound.dom_eval {φ : Formula L V} (h : φ.IsScopeBound) :
+    (φ.eval M).dom = φ.static M := by
+  induction φ with
+  | top => exact Set.ext fun g ↦ ⟨fun _ ↦ trivial, fun _ ↦ ⟨g, rfl⟩⟩
+  | rel R ts => exact dom_test _
+  | equal t₁ t₂ => exact dom_test _
+  | neg φ ih => rw [eval_neg, dom_test, neg_eq_compl_dom, ih h]; rfl
+  | conj φ ψ ihφ ihψ =>
+    obtain ⟨hφ, hψ, hd⟩ := h
+    rw [eval_conj, (φ.hasContext_eval M).dom_comp (ψ.hasContext_eval M)
+      (by rwa [context_B, context_I]), ihφ hφ, ihψ hψ]
+    rfl
+  | disj φ ψ ihφ ihψ =>
+    rw [eval_disj, dom_test, disj_eq_dom_union_dom, ihφ h.1, ihψ h.2]; rfl
+  | imp φ ψ ihφ ihψ =>
+    obtain ⟨hφ, hψ, hd⟩ := h
+    rw [eval_imp, dom_test, (φ.hasContext_eval M).impl_eq (ψ.hasContext_eval M)
+      (by rwa [context_B, context_I]), ihφ hφ, ihψ hψ]
+    rfl
+  | ex x φ ih => rw [eval_ex, dom_dexists, ih h]; rfl
+  | all x φ ih =>
+    rw [eval_all, dom_test, dforall, impl_eq_core_dom, ← compl_compl (φ.eval M).dom, core_compl,
+      preimage_randomAssign_eq_cyl, ih h]
+    rfl
 
 end Formula
 

@@ -29,7 +29,11 @@ its scope's, in the cylindric set algebra of [henkin-monk-tarski-1971]; that is 
 `dom_dexists`. The laws are then read off
 for the formulas of `DPL/Syntax.lean` under their interpretation `DPL.Formula.eval`, and the
 paper's opening contrast is computed: `∃x Px ∧ Qx` binds the last occurrence of `x`, while its
-double negation and its alphabetic variant `∃y Py ∧ Qx` do not.
+double negation and its alphabetic variant `∃y Py ∧ Qx` do not. Section 4.1's normal binding form
+(`nbf`) is defined by structural recursion, Definition 24's rebracketing clauses being theorems
+of it; a formula is equivalent to its normal binding form, which is scope-bound, so that the
+dynamic truth conditions of any formula are the static ones of its normal binding form
+(`dom_eval_eq_static_nbf`).
 
 ## Implementation notes
 
@@ -55,9 +59,9 @@ test in every structure and has an active quantifier (`isTest_eval_equal_conj_ex
 ## TODO
 
 The remaining laws of section 3.4 with side conditions (the leftward scope extension,
-commutativity and idempotency of conjunction, contraposition, distribution) and the normal
-binding form of section 4.1 with Facts 17 to 24 are to be stated on the formulas of
-`DPL/Syntax.lean`, through `Formula.fv`, `Formula.aqv` and `Formula.IsScopeBound`.
+commutativity and idempotency of conjunction, contraposition, distribution), Fact 22's converse
+translation from predicate logic, and the translations from discourse representation theory and
+to quantificational dynamic logic of sections 4.2 and 4.3.
 -/
 
 namespace GroenendijkStokhof1991
@@ -462,6 +466,74 @@ theorem EntailsOn.entails {V E : Type*} {X : Finset V} {D₁ D₂ : Update (V �
     (h : EntailsOn X D₁ D₂) : Entails D₁ D₂ :=
   fun g hg ↦ let ⟨k, hk, _⟩ := h g hg; ⟨k, hk⟩
 
+/-! ### The normal binding form, section 4.1
+
+Definition 24's recipe `b` brings every variable a quantifier binds into its scope: it
+rebrackets a conjunction to the right, moves an existential out of a left conjunct, and does
+the same for an antecedent, where the existential becomes a universal. -/
+
+section NormalBindingForm
+
+open FirstOrder DPL DPL.Formula
+
+universe u v w
+
+variable {L : Language.{u, v}} {V : Type w}
+
+/-- The normal binding form of a conjunction whose conjuncts are in normal binding form. -/
+def conjNbf : Formula L V → Formula L V → Formula L V
+  | .conj χ₁ χ₂, ρ => conjNbf χ₁ (conjNbf χ₂ ρ)
+  | .ex x χ, ρ => ∃[x] (conjNbf χ ρ)
+  | φ, ρ => φ ⋏ ρ
+
+/-- The normal binding form of an implication whose parts are in normal binding form. -/
+def impNbf : Formula L V → Formula L V → Formula L V
+  | .conj χ₁ χ₂, ρ => impNbf χ₁ (impNbf χ₂ ρ)
+  | .ex x χ, ρ => ∀[x] (impNbf χ ρ)
+  | φ, ρ => φ ⟿ ρ
+
+/-- The normal binding form of a formula, Definition 24. -/
+def nbf : Formula L V → Formula L V
+  | .neg φ => ¬ᵈ(nbf φ)
+  | .conj φ ψ => conjNbf (nbf φ) (nbf ψ)
+  | .disj φ ψ => nbf φ ⋎ nbf ψ
+  | .imp φ ψ => impNbf (nbf φ) (nbf ψ)
+  | .ex x φ => ∃[x] (nbf φ)
+  | .all x φ => ∀[x] (nbf φ)
+  | φ => φ
+
+variable (φ ψ χ ρ : Formula L V) (x : V)
+
+theorem conjNbf_conjNbf : conjNbf (conjNbf φ ψ) ρ = conjNbf φ (conjNbf ψ ρ) := by
+  induction φ generalizing ψ ρ <;> simp_all [conjNbf]
+
+theorem impNbf_conjNbf : impNbf (conjNbf φ ψ) ρ = impNbf φ (impNbf ψ ρ) := by
+  induction φ generalizing ψ ρ <;> simp_all [conjNbf, impNbf]
+
+/-- Clauses 7(a) and 7(b) of Definition 24. -/
+theorem nbf_conj_conj : nbf ((φ ⋏ ψ) ⋏ χ) = nbf (φ ⋏ (ψ ⋏ χ)) := by
+  simp only [nbf, conjNbf_conjNbf]
+
+theorem nbf_ex_conj : nbf ((∃[x] φ) ⋏ ψ) = ∃[x] (nbf (φ ⋏ ψ)) := by
+  simp only [nbf, conjNbf]
+
+/-- Clauses 8(a) and 8(b) of Definition 24. -/
+theorem nbf_conj_imp : nbf ((φ ⋏ ψ) ⟿ χ) = nbf (φ ⟿ (ψ ⟿ χ)) := by
+  simp only [nbf, impNbf_conjNbf]
+
+theorem nbf_ex_imp : nbf ((∃[x] φ) ⟿ ψ) = ∀[x] (nbf (φ ⟿ ψ)) := by
+  simp only [nbf, impNbf]
+
+/-- The paper's example: `[∃xPx ∧ ∃yQy] ∧ Rxy` has the normal binding form
+`∃x[Px ∧ ∃y[Qy ∧ Rxy]]`. -/
+example (P Q : L.Relations 1) (R : L.Relations 2) (y : V) :
+    nbf (((∃[x] (rel P fun _ ↦ .var x)) ⋏ ∃[y] (rel Q fun _ ↦ .var y)) ⋏
+        rel R ![.var x, .var y]) =
+      ∃[x] (rel P (fun _ ↦ .var x) ⋏ ∃[y] (rel Q (fun _ ↦ .var y) ⋏ rel R ![.var x, .var y])) :=
+  rfl
+
+end NormalBindingForm
+
 /-! ### The laws on formulas
 
 The formulas of `DPL/Syntax.lean` are interpreted by `DPL.Formula.eval` in the update algebra, so
@@ -559,6 +631,49 @@ theorem EntailsOn.trans (h₁ : EntailsOn (ψ.aqv ∩ χ.fv) (φ.eval M) (ψ.eva
   · exact (eqOn_of_eval hgk (by simpa using hv')).symm
 
 variable (M φ ψ χ)
+
+/-! #### The normal binding form and predicate logic
+
+A formula and its normal binding form have the same interpretation, the normal binding form is
+scope-bound, and on a scope-bound formula dynamic truth is static satisfaction
+(`DPL.Formula.IsScopeBound.dom_eval`, Fact 19). So the dynamic truth conditions of any formula
+are the static ones of its normal binding form. -/
+
+theorem eval_conjNbf : (conjNbf φ ψ).eval M = φ.eval M ○ ψ.eval M := by
+  induction φ generalizing ψ <;> simp_all [conjNbf, dexists, comp_assoc]
+
+theorem eval_impNbf : (impNbf φ ψ).eval M = test (impl (φ.eval M) (ψ.eval M)) := by
+  induction φ generalizing ψ <;> simp_all [impNbf, dexists, dforall, impl_comp]
+
+/-- Fact 17: a formula is equivalent to its normal binding form. -/
+theorem eval_nbf : (nbf φ).eval M = φ.eval M := by
+  induction φ <;> simp_all [nbf, eval_conjNbf, eval_impNbf]
+
+theorem isScopeBound_conjNbf (hφ : φ.IsScopeBound) (hψ : ψ.IsScopeBound) :
+    (conjNbf φ ψ).IsScopeBound := by
+  induction φ generalizing ψ <;> simp_all [conjNbf, IsScopeBound, aqv]
+
+theorem isScopeBound_impNbf (hφ : φ.IsScopeBound) (hψ : ψ.IsScopeBound) :
+    (impNbf φ ψ).IsScopeBound := by
+  induction φ generalizing ψ <;> simp_all [impNbf, IsScopeBound, aqv]
+
+/-- Fact 18: in a normal binding form every variable a quantifier binds is in its scope. -/
+theorem isScopeBound_nbf : (nbf φ).IsScopeBound := by
+  induction φ with
+  | conj φ ψ ihφ ihψ => exact isScopeBound_conjNbf _ _ ihφ ihψ
+  | imp φ ψ ihφ ihψ => exact isScopeBound_impNbf _ _ ihφ ihψ
+  | _ => simp_all [nbf, IsScopeBound]
+
+/-- Facts 20 and 21: the dynamic truth conditions of a formula are the static ones of its normal
+binding form. -/
+theorem dom_eval_eq_static_nbf : (φ.eval M).dom = (nbf φ).static M := by
+  rw [← eval_nbf, (isScopeBound_nbf φ).dom_eval M]
+
+/-- Fact 23: a scope-bound formula is valid in dynamic predicate logic iff it is in predicate
+logic. -/
+theorem valid_eval_iff (hφ : φ.IsScopeBound) : Valid (φ.eval M) ↔ φ.static M = Set.univ := by
+  rw [← hφ.dom_eval M, Set.eq_univ_iff_forall]
+  rfl
 
 /-! #### Binding beyond scope
 
