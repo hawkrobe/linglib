@@ -175,6 +175,24 @@ def ex4_23b : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
+def ex4_24b : LinguisticExample :=
+  { id := "charlow2014_ex4_24b"
+    source := ⟨"charlow-2014", "(4.24b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Either everyone ate a steak or a hamburger."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Either everyone ate a steak or a hamburger."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("either everyone ate a steak, or everyone ate a hamburger (or > every > a)", .acceptable)]
+    paperFeatures := []
+    comment := "Disjunction scopes over the universal while each disjoined indefinite stays within it."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
 def ex4_25b : LinguisticExample :=
   { id := "charlow2014_ex4_25b"
     source := ⟨"charlow-2014", "(4.25b)"⟩
@@ -265,6 +283,6 @@ def ex5_27b : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [ex4_1a, ex4_1b, ex4_1c, ex4_2a, ex4_4, ex4_6, ex4_18b, ex4_23a, ex4_23b, ex4_25b, ex5_7a, ex5_22, ex5_23, ex5_27b]
+def all : List LinguisticExample := [ex4_1a, ex4_1b, ex4_1c, ex4_2a, ex4_4, ex4_6, ex4_18b, ex4_23a, ex4_23b, ex4_24b, ex4_25b, ex5_7a, ex5_22, ex5_23, ex5_27b]
 
 end Charlow2014.Examples

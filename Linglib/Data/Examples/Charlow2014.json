@@ -165,6 +165,24 @@
     "lgrConformance": ""
   },
   {
+    "id": "charlow2014_ex4_24b",
+    "source": {"bibkey": "charlow-2014", "paperLabel": "(4.24b)"},
+    "language": "stan1293",
+    "primaryText": "Either everyone ate a steak or a hamburger.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Either everyone ate a steak or a hamburger.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "either everyone ate a steak, or everyone ate a hamburger (or > every > a)", "judgment": "acceptable"}
+    ],
+    "comment": "Disjunction scopes over the universal while each disjoined indefinite stays within it.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
     "id": "charlow2014_ex4_25b",
     "source": {"bibkey": "charlow-2014", "paperLabel": "(4.25b)"},
     "language": "stan1293",
