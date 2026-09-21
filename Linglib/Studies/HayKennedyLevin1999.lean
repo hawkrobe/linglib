@@ -2,8 +2,9 @@ import Mathlib.Order.Interval.Set.Basic
 import Mathlib.Algebra.Order.Group.Defs
 import Mathlib.Algebra.Order.Field.Rat
 import Linglib.Semantics.Degree.Measure.Temporal
-import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Degree.Scale
 import Linglib.Fragments.English.Verbs
+import Linglib.Fragments.English.Adjectives
 import Linglib.Data.Examples.HayKennedyLevin1999
 
 /-!
@@ -253,35 +254,38 @@ end Semantics
 
 /-! ### The English degree achievements (§3.2, (25)) -/
 
-/-- The closed-range adjectives the paper names: *straight*, *empty*, *dry* ((25a)) and
+/-- The closed-range adjectives the paper names are *straight*, *empty* and *dry* ((25a)), and
     *flat*. -/
-def closedRange : List String := ["straight", "empty", "dry", "flat"]
+def closedRange : List GradableAdjective :=
+  open English.Adjectives in [straight, empty, dry, flat]
 
-/-- The open-range adjectives the paper names: *long*, *wide*, *short* ((25b)). -/
-def openRange : List String := ["long", "wide", "short"]
+/-- The open-range adjectives the paper names are *long*, *wide* and *short* ((25b)). -/
+def openRange : List GradableAdjective :=
+  open English.Adjectives in [long, wide, short]
 
-/-- The fragment's degree achievements agree with the paper's classification: a verb whose base
-    adjective is closed-range has a scale with a maximum, and one whose base is open-range has
-    not. -/
+/-- The fragment's adjectives agree with the paper's classification, a closed-range adjective
+    having a scale with a maximum and an open-range one a scale without. -/
 theorem fragment_range :
-    ∀ v ∈ verbs, ∀ s ∈ v.degreeAchievementScale, ∀ a ∈ s.baseAdjective,
-      (a ∈ closedRange → s.scaleBoundedness.HasMax) ∧
-        (a ∈ openRange → ¬ s.scaleBoundedness.HasMax) := by
-  decide +kernel
+    (∀ a ∈ closedRange, a.scaleType.HasMax) ∧ ∀ a ∈ openRange, ¬ a.scaleType.HasMax := by
+  decide
+
+/-- The fragment's degree achievements measure change on scales of the same kind as their base
+    adjectives, *straighten*, *dry* and *flatten* on a scale with a maximum and *lengthen* and
+    *widen* on one without. -/
+theorem fragment_verbs :
+    (∀ v ∈ [English.straighten, English.dry, English.flatten], ∃ b ∈ v.changeScale, b.HasMax) ∧
+    ∀ v ∈ [English.lengthen, English.widen], ∃ b ∈ v.changeScale, ¬ b.HasMax := by
+  decide
 
 /-- The default telicity the fragment derives for a degree achievement is the telicity of the
     unmodified reading in a context whose only salient bound is the scale's maximum, when it
     has one. -/
-theorem defaultTelicity_iff (s : Aspect.DegreeAchievementScale) (i top : ℚ)
-    (hi : i < top) :
-    s.defaultTelicity = .telic ↔
-      HasTelic ⟨if s.scaleBoundedness.HasMax then some top else none, none⟩ i .none := by
-  have key : s.defaultTelicity = .telic ↔ s.scaleBoundedness.HasMax := by
-    rw [Aspect.DegreeAchievementScale.defaultTelicity,
-      ScalarDimension.defaultTelicity_telic_iff_hasGreatest]
-    exact Boundedness.exists_isTop_degreeShape _
-  rw [key]
-  by_cases hmax : s.scaleBoundedness.HasMax
+theorem defaultTelicity_iff (d : ScalarDimension) (i top : ℚ) (hi : i < top) :
+    d.defaultTelicity = .telic ↔
+      HasTelic ⟨if d.boundedness.HasMax then some top else none, none⟩ i .none := by
+  rw [ScalarDimension.defaultTelicity_telic_iff_hasGreatest,
+    ScalarDimension.hasGreatest_degree_iff]
+  by_cases hmax : d.boundedness.HasMax
   · rw [ite_eq_left hmax]
     exact iff_of_true hmax (hasTelic_of_bound rfl hi)
   · rw [ite_eq_right hmax]

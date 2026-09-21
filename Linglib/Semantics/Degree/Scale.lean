@@ -123,6 +123,17 @@ theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
 
 /-! ### Derived aspectual views (verb side) -/
 
+/-- The default Vendler class of a degree achievement that measures change on a scale of this
+    shape. Degree achievements are dynamic and durative, so a scale with a maximum gives an
+    accomplishment and one without an activity ([kennedy-levin-2008]). -/
+def Boundedness.defaultVendlerClass : Boundedness → VendlerClass
+  | .closed | .upperClosed => .accomplishment
+  | .open_ | .lowerClosed => .activity
+
+theorem Boundedness.defaultVendlerClass_eq_accomplishment_iff {b : Boundedness} :
+    b.defaultVendlerClass = .accomplishment ↔ b.HasMax := by
+  cases b <;> simp [defaultVendlerClass, HasMax]
+
 /-- Default telicity of a degree achievement on this dimension: a scale with a
     greatest degree gives a telic reading ([kennedy-levin-2008]). -/
 def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
@@ -130,12 +141,10 @@ def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
   | .closed | .upperClosed => .telic
   | .open_ | .lowerClosed => .atelic
 
-/-- Default Vendler class: degree achievements are dynamic and durative, so a
-    closed scale gives an accomplishment, an open one an activity. -/
+/-- Default Vendler class of a degree achievement towards the positive pole of this
+    dimension. -/
 def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
-  match d.boundedness with
-  | .closed | .upperClosed => .accomplishment
-  | .open_ | .lowerClosed => .activity
+  d.boundedness.defaultVendlerClass
 
 /-- **The Kennedy–Levin thesis as a theorem.** `defaultTelicity` is exactly the
     order-theoretic fact: a degree achievement is telic iff its scale's degree type
@@ -143,6 +152,22 @@ def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
 theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
     d.defaultTelicity = .telic ↔ ∃ m : d.degree, IsTop m := by
   rw [ScalarDimension.hasGreatest_degree_iff]; cases d <;> decide
+
+/-- The default Vendler class has the default telicity. -/
+@[simp] theorem ScalarDimension.telicity_defaultVendlerClass (d : ScalarDimension) :
+    d.defaultVendlerClass.telicity = d.defaultTelicity := by
+  unfold defaultVendlerClass defaultTelicity Boundedness.defaultVendlerClass
+  cases d.boundedness <;> rfl
+
+/-- A degree achievement is durative. -/
+@[simp] theorem ScalarDimension.duration_defaultVendlerClass (d : ScalarDimension) :
+    d.defaultVendlerClass.duration = .durative := by
+  unfold defaultVendlerClass Boundedness.defaultVendlerClass; cases d.boundedness <;> rfl
+
+/-- A degree achievement is dynamic. -/
+@[simp] theorem ScalarDimension.dynamicity_defaultVendlerClass (d : ScalarDimension) :
+    d.defaultVendlerClass.dynamicity = .dynamic := by
+  unfold defaultVendlerClass Boundedness.defaultVendlerClass; cases d.boundedness <;> rfl
 
 
 end Degree

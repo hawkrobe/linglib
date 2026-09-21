@@ -929,9 +929,7 @@ def crack : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .achievement
-  degreeAchievementScale := some {
-    dimension := .cracking,
-    baseAdjective := some "cracked" }
+  scaleDimension := some .cracking
   causative := some .make
   levinClasses := {LevinClass.break_, .soundEmission} }
 
@@ -942,9 +940,7 @@ def dent : Verb := .mkRegular {
   form := "dent"
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .achievement
-  degreeAchievementScale := some {
-    dimension := .denting,
-    baseAdjective := some "dented" }
+  scaleDimension := some .denting
   causative := some .make
   levinClasses := {LevinClass.carve} }
 
@@ -957,9 +953,7 @@ def scratch : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_),
     ArgumentFrame.np_pp (some Adpositions.on), ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .achievement
-  degreeAchievementScale := some {
-    dimension := .scratching,
-    baseAdjective := some "scratched" }
+  scaleDimension := some .scratching
   causative := some .make
   levinClasses := {LevinClass.cut, .hurt, .rummage, .scribble, .swat, .wipeManner} }
 
@@ -1170,10 +1164,9 @@ def close : Verb := .mkRegular {
 def dry : Verb := .mkRegular {
   form := "dry"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
-  vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .wetness,
-    baseAdjective := some "dry" }
+  vendlerClass := some .accomplishment
+  scaleDimension := some .wetness
+  scalePolarity := .negative
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-- "enhance" — improvement in quality; not listed by Levin. -/
@@ -1202,9 +1195,7 @@ def slow : Verb := .mkRegular {
   form := "slow"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .speed,
-    baseAdjective := some "slow" }
+  scaleDimension := some .speed
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*). -/
@@ -2338,9 +2329,7 @@ def clean : Verb := .mkRegular {
     ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  degreeAchievementScale := some {
-    dimension := .cleanliness,
-    baseAdjective := some "clean" }
+  scaleDimension := some .cleanliness
   verbIncClass := some .sinc
   levinClasses := {LevinClass.clear, .otherChangeOfState, .prepare} }
 
@@ -2847,8 +2836,7 @@ def bend : Verb where
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  degreeAchievementScale := some {
-    dimension := .curvature }
+  scaleDimension := some .curvature
   causative := some .make
   levinClasses := {LevinClass.assumePosition, .bend, .knead, .spatialConfiguration}
 
@@ -2859,9 +2847,7 @@ def boil : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  degreeAchievementScale := some {
-    dimension := .boiling,
-    baseAdjective := some "hot" }
+  scaleDimension := some .boiling
   causative := some .make
   levinClasses := {LevinClass.cooking} }
 
@@ -2872,8 +2858,7 @@ def rust : Verb := .mkRegular {
   frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .corrosion }
+  scaleDimension := some .corrosion
   levinClasses := {LevinClass.entitySpecificChangeOfState, .entitySpecificModeOfBeing} }
 
 /-- "increase" — Levin 45.6 Calibratable CoS verbs (degree achievements).
@@ -2882,8 +2867,7 @@ def increase : Verb := .mkRegular {
   form := "increase"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .quantity }
+  scaleDimension := some .quantity
   levinClasses := {LevinClass.calibratableChangeOfState, .otherChangeOfState} }
 
 /-! ### Degree achievement verb pairs ([kennedy-2007]) -/
@@ -2895,9 +2879,7 @@ def straighten : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  degreeAchievementScale := some {
-    dimension := .straightness,
-    baseAdjective := some "straight" }
+  scaleDimension := some .straightness
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-- "flatten" — Closed-scale degree achievement (base adj: flat).
@@ -2907,9 +2889,7 @@ def flatten : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  degreeAchievementScale := some {
-    dimension := .flatness,
-    baseAdjective := some "flat" }
+  scaleDimension := some .flatness
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-- "open" — Closed-scale degree achievement (base adj: open, closed scale).
@@ -2919,9 +2899,7 @@ def open_ : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
-  degreeAchievementScale := some {
-    dimension := .openness,
-    baseAdjective := some "open" }
+  scaleDimension := some .openness
   levinClasses := {LevinClass.appear, .crane, .otherChangeOfState, .spatialConfiguration} }
 
 /-- "lengthen" — Open-scale degree achievement (base adj: long, open scale).
@@ -2931,9 +2909,7 @@ def lengthen : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .length,
-    baseAdjective := some "long" }
+  scaleDimension := some .length
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-- "widen" — Open-scale degree achievement (base adj: wide, open scale).
@@ -2943,9 +2919,7 @@ def widen : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .width,
-    baseAdjective := some "wide" }
+  scaleDimension := some .width
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-- "cool" — Open-scale degree achievement (base adj: cool, open scale).
@@ -2955,9 +2929,7 @@ def cool : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .temperature,
-    baseAdjective := some "cool" }
+  scaleDimension := some .temperature
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-- "warm" — Open-scale degree achievement (base adj: warm, open scale).
@@ -2967,9 +2939,7 @@ def warm : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .activity
-  degreeAchievementScale := some {
-    dimension := .temperature,
-    baseAdjective := some "warm" }
+  scaleDimension := some .temperature
   levinClasses := {LevinClass.otherChangeOfState} }
 
 /-! ### Existence, Appearance, Position (§ 47–50) -/

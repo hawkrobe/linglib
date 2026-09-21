@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Degree.Scale
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Fragments.English.Verbs
@@ -115,7 +115,7 @@ end Readings
 def daVerbs : List Verb :=
   [English.bend.toVerb, English.boil.toVerb,
    English.rust.toVerb, English.increase.toVerb,
-   English.clean.toVerb, English.straighten.toVerb,
+   English.clean.toVerb, English.dry.toVerb, English.straighten.toVerb,
    English.flatten.toVerb, English.open_.toVerb,
    English.lengthen.toVerb, English.widen.toVerb,
    English.cool.toVerb, English.warm.toVerb]
@@ -123,13 +123,14 @@ def daVerbs : List Verb :=
 /-- Every degree achievement's Vendler class is the one its base scale derives: closed above,
 an accomplishment; otherwise an activity. -/
 theorem da_vendler_classes_agree :
-    ∀ v ∈ daVerbs, v.vendlerClass = v.degreeAchievementScale.map (·.defaultVendlerClass) := by
+    ∀ v ∈ daVerbs, v.vendlerClass = v.changeScale.map (·.defaultVendlerClass) := by
   decide
 
-/-- The adjective–verb pairs of the fragment: *clean*, *straight*, *flat* and *open* with
-closed scales, *long*, *wide*, *cool* and *warm* with open ones. -/
+/-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
+with closed scales, and *long*, *wide*, *cool* and *warm* with open ones. -/
 def pairs : List (GradableAdjective × Verb) :=
   [(English.Adjectives.clean, English.clean.toVerb),
+   (English.Adjectives.dry, English.dry.toVerb),
    (English.Adjectives.straight, English.straighten.toVerb),
    (English.Adjectives.flat, English.flatten.toVerb),
    (English.Adjectives.open_, English.open_.toVerb),
@@ -140,7 +141,7 @@ def pairs : List (GradableAdjective × Verb) :=
 
 /-- A degree achievement measures on its adjective's scale. -/
 theorem adjective_verb_scales :
-    ∀ p ∈ pairs, p.2.degreeAchievementScale.map (·.scaleBoundedness) = some p.1.scaleType := by
+    ∀ p ∈ pairs, p.2.changeScale = some p.1.scaleType := by
   decide
 
 /-- (1) and (6): a degree achievement takes *in X* exactly when its scale is closed above, and
@@ -150,12 +151,12 @@ theorem inX_iff_hasMax (d : Degree.ScalarDimension) :
       (forXPrediction d.defaultVendlerClass = .accept ↔ ¬ d.boundedness.HasMax) := by
   cases d <;> decide
 
-/-- The diagnostics on the fragment: *bend*, *boil*, *clean*, *straighten*, *flatten* and
-*open* take *in X*, *rust*, *increase*, *lengthen*, *widen*, *cool* and *warm* take *for X*. -/
+/-- On the fragment, *bend*, *boil*, *clean*, *dry*, *straighten*, *flatten* and *open* take
+*in X*, and *rust*, *increase*, *lengthen*, *widen*, *cool* and *warm* take *for X*. -/
 theorem diagnostics :
-    ∀ v ∈ daVerbs, ∀ s ∈ v.degreeAchievementScale,
-      (v.vendlerClass.map inXPrediction = some .accept ↔ s.scaleBoundedness.HasMax) ∧
-        (v.vendlerClass.map forXPrediction = some .accept ↔ ¬ s.scaleBoundedness.HasMax) := by
+    ∀ v ∈ daVerbs, ∃ b ∈ v.changeScale,
+      (v.vendlerClass.map inXPrediction = some .accept ↔ b.HasMax) ∧
+        (v.vendlerClass.map forXPrediction = some .accept ↔ ¬ b.HasMax) := by
   decide
 
 end KennedyLevin2008
