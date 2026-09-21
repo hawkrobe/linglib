@@ -120,9 +120,8 @@ theorem not_transition_cessation_of_continuation (h : continuation.Transition p 
 
 /-- `t.denote r P` asserts the result state of `P` at an index and presupposes its prior state
 at an index that `r`-precedes it. -/
-def denote (t : Phasal) (r : ι → ι → Prop) (P : ι → Prop) : PartialProp ι where
-  presup i := ∃ i', r i' i ∧ t.Prior (P i')
-  assertion i := t.Result (P i)
+def denote (t : Phasal) (r : ι → ι → Prop) (P : ι → Prop) : PartialProp ι :=
+  prior r (fun i ↦ t.Prior (P i)) fun i ↦ t.Result (P i)
 
 @[simp] theorem denote_presup {t : Phasal} :
     (t.denote r P).presup i ↔ ∃ i', r i' i ∧ t.Prior (P i') := Iff.rfl
@@ -166,12 +165,12 @@ theorem prior_cessation_iff_not_prior_inception : cessation.Prior p ↔ ¬ incep
 /-- The presupposition is monotone in the precedence relation. -/
 theorem denote_presup_mono_left {t : Phasal} (h : r ≤ r') :
     (t.denote r P).presup ≤ (t.denote r' P).presup :=
-  fun i ⟨i', hr, hp⟩ ↦ ⟨i', h i' i hr, hp⟩
+  prior_presup_mono_left h
 
 /-- Nothing stops, starts or continues at a first index. -/
 theorem not_presup_of_isMin [Preorder ι] {t : Phasal} (h : IsMin i) :
     ¬ (t.denote (· < ·) P).presup i :=
-  fun ⟨_, hlt, _⟩ ↦ h.not_lt hlt
+  not_prior_presup_of_isMin h
 
 end Phasal
 
