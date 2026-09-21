@@ -52,6 +52,11 @@ theorem FactorsThrough.factorsThroughOn {g : α → γ} {f : α → β}
     (h : FactorsThrough g f) (s : Set α) : FactorsThroughOn g f s :=
   fun _ _ _ _ hab => h hab
 
+/-- Factoring through on a set restricts to its subsets. -/
+theorem FactorsThroughOn.mono {g : α → γ} {f : α → β} {s t : Set α}
+    (h : FactorsThroughOn g f t) (hst : s ⊆ t) : FactorsThroughOn g f s :=
+  fun _ _ ha hb hab ↦ h (hst ha) (hst hb) hab
+
 theorem not_factorsThroughOn_iff_exists_witness {g : α → γ} {f : α → β} {s : Set α} :
     ¬ FactorsThroughOn g f s ↔
     ∃ a b, a ∈ s ∧ b ∈ s ∧ f a = f b ∧ g a ≠ g b := by

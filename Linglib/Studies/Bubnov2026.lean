@@ -28,7 +28,6 @@ whichever direction it takes along the map.
 ## Main results
 
 * `russian_spans_properly_nested` — the containment the nanosyntactic analysis predicts
-* `type_vi_contradictory` — the unattested type's restriction cannot be met
 * `uses_ne_skPlusNS_profile` — it is also the profile no connected region of the map covers
 * `attested_changes_are_weakenings`, `attested_changes_gain_opposite_functions` — the two attested
   changes weaken a restriction while moving in opposite directions along the hierarchy
@@ -65,14 +64,16 @@ theorem russian_spans_properly_nested :
 
 The unattested type would have to require constancy of the value across all epistemic
 alternatives and variation of it within one of them at once, which cannot be met
-(`DeganoAloni2025.not_requires_skPlusNS`), so the type can be stated only as a disjunction. -/
+(`DeganoAloni2025.not_var_of_dep_empty`), so the type can be stated only as a disjunction, and
+the disjunction is the one requirement that is not convex
+(`DeganoAloni2025.IndefiniteType.not_ordConnected_skPlusNS`). -/
 
 /-- The same type is the one the implicational map excludes: its profile skips the
 specific-unknown function lying between the two it covers, so no connected region of the map
 covers exactly its uses. The semantic account and the adjacency requirement rule out the same
 cell for unrelated reasons. -/
 theorem uses_ne_skPlusNS_profile {s : Finset HaspelmathFunction} (h : Contiguous s) :
-    uses s ≠ DAType.skPlusNS.profile := fun he ↦ by
+    uses s ≠ IndefiniteType.skPlusNS.profile := fun he ↦ by
   have hk : Use.specificKnown ∈ uses s := he ▸ by decide
   have hn : Use.nonSpecific ∈ uses s := he ▸ by decide
   have hu : Use.specificUnknown ∈ uses s :=
@@ -81,7 +82,7 @@ theorem uses_ne_skPlusNS_profile {s : Finset HaspelmathFunction} (h : Contiguous
   exact absurd (he ▸ hu) (by decide)
 
 /-- No other type's profile skips it. -/
-theorem other_profiles_contiguous (t : DAType) (h : t ≠ .skPlusNS)
+theorem other_profiles_contiguous (t : IndefiniteType) (h : t ≠ .skPlusNS)
     (hsk : Use.specificKnown ∈ t.profile) (hns : Use.nonSpecific ∈ t.profile) :
     Use.specificUnknown ∈ t.profile := by
   cases t <;> first | exact absurd rfl h | (revert hsk hns; decide)
@@ -91,15 +92,17 @@ theorem other_profiles_contiguous (t : DAType) (h : t ≠ .skPlusNS)
 /-- Both attested changes weaken the restriction, so the form comes to cover more of the map: a
 specific-unknown form becomes epistemic, and a non-specific form becomes epistemic. -/
 theorem attested_changes_are_weakenings :
-    DAType.specificUnknown.profile ⊆ DAType.epistemic.profile ∧
-      DAType.nonSpecific.profile ⊆ DAType.epistemic.profile := by decide
+    IndefiniteType.specificUnknown.profile ⊆ IndefiniteType.epistemic.profile ∧
+      IndefiniteType.nonSpecific.profile ⊆ IndefiniteType.epistemic.profile := by decide
 
 /-- The two changes move in opposite directions along the hierarchy: one form gains the
 non-specific function, at the bottom, and the other gains the specific-unknown function above it.
 No rule that extends coverage in a single direction produces both. -/
 theorem attested_changes_gain_opposite_functions :
-    Use.nonSpecific ∈ DAType.epistemic.profile \ DAType.specificUnknown.profile ∧
-      Use.specificUnknown ∈ DAType.epistemic.profile \ DAType.nonSpecific.profile := by
+    Use.nonSpecific ∈
+        IndefiniteType.epistemic.profile \ IndefiniteType.specificUnknown.profile ∧
+      Use.specificUnknown ∈
+        IndefiniteType.epistemic.profile \ IndefiniteType.nonSpecific.profile := by
   decide
 
 /-- The narrow entry of a language with a non-specific and a specific-unknown marker. -/
@@ -126,7 +129,7 @@ restriction, Yakut *-ere* constancy within an epistemic alternative, Latin *ali-
 them, Latin *-dam* and Russian *koe-* constancy across them, Kannada *-oo* the conjunction of
 constancy within and variation across, and Russian *-nibud'*, Yakut *-eme* and Kannada *-aadaruu*
 variation within one. -/
-def witnesses : List (List Series × IndefinitePronoun × DAType) :=
+def witnesses : List (List Series × IndefinitePronoun × IndefiniteType) :=
   [(english, English.Indefinites.someEntry, .unmarked),
    (yakut, Yakut.Indefinites.ereEntry, .specific),
    (latin, Latin.Indefinites.aliEntry, .epistemic),
@@ -156,6 +159,6 @@ theorem to_is_epistemic_under_competition :
 epistemic restriction is the one the modal-indefinite literature attributes to it. -/
 theorem irgend_is_epistemic :
     (∃ s ∈ german, s.pronoun = German.Indefinites.irgendEntry ∧ Instantiates s .epistemic) ∧
-      DAType.nonSpecific.profile ⊆ DAType.epistemic.profile := by decide
+      IndefiniteType.nonSpecific.profile ⊆ IndefiniteType.epistemic.profile := by decide
 
 end Bubnov2026
