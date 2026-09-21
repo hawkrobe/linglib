@@ -18,9 +18,7 @@ constructional subevent, determined by the construction, and in the core family 
 subevent is the means by which the constructional one comes about. The family is the product of
 two choices, whether the constructional subevent is causative and whether the result phrase names
 a property or a path. The construction's aspect follows from the boundedness of the result phrase,
-and its argument roles fuse with the verb's under a semantic coherence principle. The orientation
-of the result phrase, to the object or to the subject, is the parameter along which Mandarin verb
-compounds, which Tay shows admit subject-oriented transitives, differ from the English family.
+and its argument roles fuse with the verb's under a semantic coherence principle.
 
 ## Main definitions
 
@@ -30,14 +28,12 @@ compounds, which Tay shows admit subject-oriented transitives, differ from the E
   verbal one.
 * `RPType.undergoer`, `RolesCoherent` — the constructional role of the result phrase's argument
   and the semantic coherence principle.
-* `ResultOrientation` — whether the result phrase is predicated of the object or the subject.
 
 ## References
 
 * [goldberg-jackendoff-2004]
 * [kennedy-2007] — scale structure and the boundedness of the result phrase.
 * [mueller-2013] — the constructional network.
-* [tay-2024] — subject-oriented transitive compounds in Mandarin.
 -/
 
 namespace ConstructionGrammar.Resultatives
@@ -210,18 +206,6 @@ inductive ObjectSelection where
       "We yelled ourselves hoarse" (cf. *We yelled Harry hoarse) (9a) -/
   | fakeReflexive
   deriving Repr, DecidableEq, BEq
-
-/-! ## Orientation
-
-Whether the result phrase is predicated of the postverbal NP or of the subject. In the English
-family a transitive resultative is object-oriented and an intransitive one subject-oriented;
-Mandarin verb compounds also admit subject-oriented transitives (*chī-bǎo* 'eat full'). -/
-
-/-- The argument the result phrase is predicated of. -/
-inductive ResultOrientation where
-  | objectOriented
-  | subjectOriented
-  deriving DecidableEq, Repr
 
 /-! ## Aspectual profile (§4 of [goldberg-jackendoff-2004], Principle 27)
 

@@ -41,10 +41,12 @@ Predicates take their arguments as tuples `Fin n → D`, so a family of null aff
 the arities of V1 and V2 is one definition. The causal relation between the macroevent and its
 subevents and the participant relation are parameters; the thesis takes the former to be
 Lewis's counterfactual causation and leaves its precise characterization open. Temporal traces
-are rational intervals. The examples are rows of `Data.Examples.Tay2024`. The V-*de*
-construction's syntax (chapter 6), the change-of-location resultatives (chapter 4), the case
-against the No Argument Theory (chapter 5), and the one-causer-per-event condition are not
-formalized.
+are rational intervals. The examples are rows of `Data.Examples.Tay2024` and the compounds
+are entries of `Fragments/Mandarin/Resultatives.lean`, which record no orientation: the
+apparent subject-oriented transitives *chī-bǎo* (3) and *qí-lèi* (330) are the hybrid
+resultatives of chapter 4, whose postverbal phrase is an argument of V2, and that chapter, the
+V-*de* construction's syntax (chapter 6), the case against the No Argument Theory (chapter 5),
+and the one-causer-per-event condition are not formalized.
 
 ## References
 
@@ -53,7 +55,7 @@ formalized.
 
 namespace Tay2024
 
-open Mandarin.Resultatives Morphology
+open Mandarin Morphology
 
 /-! ### The null affix (chapter 2, section 3.3) -/
 
@@ -195,10 +197,16 @@ def nullMorph : Morph := .pref ""
 def vvTree (v1 v2 : Morph) : Word.Tree Morph :=
   .compound (.root v1) (.prefixed nullMorph (.root v2))
 
-/-- The word-formation tree of a Fragment compound. -/
-def Compound.tree (c : Compound) : Word.Tree Morph := vvTree (.root c.v1) (.root c.v2)
+@[simp] theorem toList_vvTree (v1 v2 : Morph) : (vvTree v1 v2).toList = [v1, nullMorph, v2] :=
+  rfl
 
-theorem toList_vvTree (v1 v2 : Morph) : (vvTree v1 v2).toList = [v1, nullMorph, v2] := rfl
+/-- The word V1-∅-V2 of a compound of the fragment. -/
+def word (c : Resultative) : Word.Tree Morph := vvTree (.root c.v1.form) (.root c.v2.form)
+
+/-- The word differs from the fragment's root compound by the null affix alone. -/
+theorem toList_word_erase (c : Resultative) :
+    (word c).toList.erase nullMorph = c.tree.toList.map (Morph.root ·.form) := by
+  simp [word, nullMorph, Morph.root, Morph.pref, Morph.bound]
 
 /-! ### Typology (chapter 8, section 2) -/
 
@@ -212,7 +220,7 @@ structure ResultativeType where
   intransitiveX_le : intransitiveX → verbalX
 
 /-- Mandarin V-V resultatives are compounds with a verbal X, and a transitive resultative can
-take an intransitive X (673). -/
+take an intransitive X: *dǎ-pò* (673) with an object, whose result verb `po` is unaccusative. -/
 def mandarin : ResultativeType := ⟨true, true, true, fun h ↦ h⟩
 
 /-- English resultatives are not compounds, and X is never a verb (669). -/

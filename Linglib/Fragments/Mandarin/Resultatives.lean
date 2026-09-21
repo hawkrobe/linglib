@@ -1,139 +1,144 @@
-import Linglib.Syntax.ConstructionGrammar.Resultatives
-import Linglib.Semantics.Aspect.Phasal
+import Linglib.Fragments.Mandarin.Verbs
+import Linglib.Morphology.Word.Tree
 
 /-!
-# Mandarin resultative compounds and phase complements
+# Mandarin resultative compounds
 
-This file enters Mandarin V-V resultative compounds and phase complements. A resultative
-compound such as *dǎ-sǐ* 'hit-die' pairs a verb describing the causing event with a verb
-describing the result, and the result is predicated either of the object, as in *dǎ-sǐ*, or of
-the subject, as in *kū-lèi* 'cry-tired'; Mandarin admits both and does not restrict the result
-to the direct object. A phase complement is one of a closed class of grammaticalized second
-verbs, *dào* 到, *wán* 完, *hǎo* 好, *diào* 掉 and *zhù* 住, marking the attainment,
-completion, removal or persistence of a result, and each is entered with the change of state
-it marks. Tay's analysis of the compounds as words built in morphology lives in
+A Mandarin V-V resultative compound pairs a verb describing the causing event with a verb
+describing its result: *dǎ-pò* 打破 'hit-break', *kū-lèi* 哭累 'cry-tired'. This file enters
+the component verbs and the compounds built from them, so a compound's argument structure is
+read off its verbs rather than stipulated: the result verb of every entry is monovalent, a
+change-of-state verb such as *pò* 'break' or a stative such as *lèi* 'tired'
+(`valency_v2`). Which argument the result is predicated of is not a property of the entry:
+*zhuī-lèi* 'chase-tired' with an object is read with either the chaser or the chased tired,
+so orientation belongs to a sentence, and the studies state it about the sentences they
+analyze. Tay's account of the compounds as words built in morphology lives in
 `Studies/Tay2024.lean`.
 
 ## Main definitions
 
-* `Compound` — a V-V resultative compound with the orientation of its result.
-* `PhaseComplement` — a phase complement with the change of state it marks.
-
-## TODO
-
-The change-of-state types are a coarse fit. Sybesma distinguishes *-dào* (attainment of a
-goal) from *-hǎo* (attainment of a satisfactory state) and *-diào* (removal of the patient),
-all completions rather than inceptions, and *-wán* marks the cessation of the activity rather
-than a result of the patient; `Aspect.Phasal` has no completion constructor. The toneless form
-*dao* also covers 倒 'fall' in *tuī-dǎo* 'push over', which is not the phase complement 到.
+* `Mandarin.Resultative` — a V-V resultative compound, its causing verb and its result verb.
+* `Mandarin.Resultative.tree` — the compound as a root compound of its verbs.
+* `Mandarin.resultatives` — the inventory of the entries.
 
 ## References
 
 * [tay-2024]
-* [sybesma-2017]
 -/
 
-namespace Mandarin.Resultatives
+namespace Mandarin
+
+open ArgumentStructure
+
+/-! ### Component verbs -/
+
+/-- 打 *dǎ* 'hit'. -/
+def da : Verb := { form := "da", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+
+/-- 哭 *kū* 'cry'. -/
+def ku : Verb :=
+  { form := "ku", frames := [ArgumentFrame.intransitive], vendlerClass := some .activity }
+
+/-- 吃 *chī* 'eat'. -/
+def chi : Verb :=
+  { form := "chi", frames := [ArgumentFrame.np, ArgumentFrame.intransitive],
+    vendlerClass := some .activity }
+
+/-- 喝 *hē* 'drink'. -/
+def he : Verb :=
+  { form := "he", frames := [ArgumentFrame.np, ArgumentFrame.intransitive],
+    vendlerClass := some .activity }
+
+/-- 推 *tuī* 'push'. -/
+def tui : Verb :=
+  { form := "tui", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+
+/-- 追 *zhuī* 'chase'. -/
+def zhui : Verb :=
+  { form := "zhui", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+
+/-- 射 *shè* 'shoot'. -/
+def she : Verb :=
+  { form := "she", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+
+/-- 破 *pò* 'break', intransitive. -/
+def po : Verb :=
+  { form := "po", frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement }
+
+/-- 死 *sǐ* 'die'. -/
+def si : Verb :=
+  { form := "si", frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement }
+
+/-- 开 *kāi* 'open', intransitive. -/
+def kai : Verb :=
+  { form := "kai", frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement }
+
+/-- 累 *lèi* 'tired'. -/
+def lei : Verb :=
+  { form := "lei", frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
+
+/-- 饱 *bǎo* 'full'. -/
+def bao : Verb :=
+  { form := "bao", frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
+
+/-- 湿 *shī* 'wet'. -/
+def shi : Verb :=
+  { form := "shi", frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
+
+/-- 醉 *zuì* 'drunk'. -/
+def zui : Verb :=
+  { form := "zui", frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
 
 /-! ### Compounds -/
 
-/-- A Mandarin V-V resultative compound with its two verbs, its characters, its gloss, its
-translation and the argument its result is predicated of. -/
-structure Compound where
+/-- A V-V resultative compound: a verb describing the causing event and a verb describing its
+result. -/
+structure Resultative where
   /-- The first verb, describing the causing event. -/
-  v1 : String
+  v1 : Verb
   /-- The second verb, describing the result. -/
-  v2 : String
-  /-- The characters. -/
-  hanzi : String
-  /-- The verb-by-verb gloss. -/
-  gloss : String
-  /-- The translation. -/
-  translation : String
-  /-- The argument the result is predicated of. -/
-  orientation : ConstructionGrammar.Resultatives.ResultOrientation
-  deriving Repr, DecidableEq
+  v2 : Verb
+  deriving BEq
 
-/-- *dǎ-sǐ* 打死 'hit-die', 'beat to death'. -/
-def da_si : Compound :=
-  { v1 := "dǎ", v2 := "sǐ", hanzi := "打死", gloss := "hit-die", translation := "beat to death",
-    orientation := .objectOriented }
+/-- *dǎ-pò* 打破 'hit-break', 'break by hitting', Tay's (668). -/
+def da_po : Resultative := ⟨da, po⟩
 
-/-- *dǎ-pò* 打破 'hit-break', 'break by hitting'. -/
-def da_po : Compound :=
-  { v1 := "dǎ", v2 := "pò", hanzi := "打破", gloss := "hit-break",
-    translation := "break by hitting", orientation := .objectOriented }
+/-- *shè-sǐ* 射死 'shoot-die', 'shoot dead', Tay's (107). -/
+def she_si : Resultative := ⟨she, si⟩
 
-/-- *kū-lèi* 哭累 'cry-tired', 'cry oneself tired'. -/
-def ku_lei : Compound :=
-  { v1 := "kū", v2 := "lèi", hanzi := "哭累", gloss := "cry-tired",
-    translation := "cry oneself tired", orientation := .subjectOriented }
+/-- *tuī-kāi* 推开 'push-open', Tay's (60). -/
+def tui_kai : Resultative := ⟨tui, kai⟩
 
-/-- *chī-bǎo* 吃饱 'eat-full', 'eat until full'. -/
-def chi_bao : Compound :=
-  { v1 := "chī", v2 := "bǎo", hanzi := "吃饱", gloss := "eat-full",
-    translation := "eat until full", orientation := .subjectOriented }
+/-- *kū-lèi* 哭累 'cry-tired', 'cry oneself tired', Tay's (219). -/
+def ku_lei : Resultative := ⟨ku, lei⟩
 
-/-- *pǎo-lèi* 跑累 'run-tired', 'run oneself tired'. -/
-def pao_lei : Compound :=
-  { v1 := "pǎo", v2 := "lèi", hanzi := "跑累", gloss := "run-tired",
-    translation := "run oneself tired", orientation := .subjectOriented }
+/-- *kū-shī* 哭湿 'cry-wet', 'become wet from crying', Tay's (221). -/
+def ku_shi : Resultative := ⟨ku, shi⟩
 
-/-- *kū-shī* 哭湿 'cry-wet', 'cry (a handkerchief) wet'. -/
-def ku_shi : Compound :=
-  { v1 := "kū", v2 := "shī", hanzi := "哭湿", gloss := "cry-wet",
-    translation := "cry (a handkerchief) wet", orientation := .objectOriented }
+/-- *zhuī-lèi* 追累 'chase-tired', read with either the chaser or the chased tired, Tay's (362)
+after Li. -/
+def zhui_lei : Resultative := ⟨zhui, lei⟩
 
-/-- *tuī-kāi* 推开 'push-open'. -/
-def tui_kai : Compound :=
-  { v1 := "tuī", v2 := "kāi", hanzi := "推开", gloss := "push-open", translation := "push open",
-    orientation := .objectOriented }
+/-- *chī-bǎo* 吃饱 'eat-full', 'become full from eating', Tay's (3). -/
+def chi_bao : Resultative := ⟨chi, bao⟩
 
-/-- *hē-zuì* 喝醉 'drink-drunk', 'drink oneself drunk'. -/
-def he_zui : Compound :=
-  { v1 := "hē", v2 := "zuì", hanzi := "喝醉", gloss := "drink-drunk",
-    translation := "drink oneself drunk", orientation := .subjectOriented }
+/-- *hē-zuì* 喝醉 'drink-drunk', 'drink oneself drunk', Tay's (360). -/
+def he_zui : Resultative := ⟨he, zui⟩
 
-/-! ### Phase complements -/
+/-- The inventory of the compounds. -/
+def resultatives : List Resultative :=
+  [da_po, she_si, tui_kai, ku_lei, ku_shi, zhui_lei, chi_bao, he_zui]
 
-/-- A Mandarin phase complement with its pinyin, its character, its gloss, the change of state
-it marks and a representative verb it combines with. -/
-structure PhaseComplement where
-  /-- The pinyin form. -/
-  pinyin : String
-  /-- The character. -/
-  hanzi : String
-  /-- The gloss. -/
-  gloss : String
-  /-- The change of state the complement marks. -/
-  phasal : Aspect.Phasal
-  /-- A representative verb–complement combination with its translation. -/
-  example_ : String
-  deriving Repr, DecidableEq
+namespace Resultative
 
-/-- *-dào* 到 'arrive', *mǎi-dào* 'succeed in buying'. -/
-def dao : PhaseComplement :=
-  { pinyin := "dào", hanzi := "到", gloss := "arrive", phasal := .inception,
-    example_ := "mǎi-dào 'succeed in buying'" }
+/-- The compound as a root compound of its two verbs. -/
+def tree (c : Resultative) : Morphology.Word.Tree Verb := .compound (.root c.v1) (.root c.v2)
 
-/-- *-wán* 完 'finish', *chī-wán* 'finish eating'. -/
-def wan : PhaseComplement :=
-  { pinyin := "wán", hanzi := "完", gloss := "finish", phasal := .cessation,
-    example_ := "chī-wán 'finish eating'" }
+@[simp] theorem toList_tree (c : Resultative) : c.tree.toList = [c.v1, c.v2] := rfl
 
-/-- *-hǎo* 好 'good', *zuò-hǎo* 'get done'. -/
-def hao : PhaseComplement :=
-  { pinyin := "hǎo", hanzi := "好", gloss := "good", phasal := .inception,
-    example_ := "zuò-hǎo 'get done'" }
+/-- The result verb of every compound is monovalent. -/
+theorem valency_v2 : ∀ c ∈ resultatives, ∀ fr ∈ c.v2.frames, fr.valency = 1 := by decide
 
-/-- *-diào* 掉 'fall off', *rēng-diào* 'throw away'. -/
-def diao : PhaseComplement :=
-  { pinyin := "diào", hanzi := "掉", gloss := "fall off", phasal := .inception,
-    example_ := "rēng-diào 'throw away'" }
+end Resultative
 
-/-- *-zhù* 住 'hold', *jì-zhù* 'keep in mind'. -/
-def zhu : PhaseComplement :=
-  { pinyin := "zhù", hanzi := "住", gloss := "hold", phasal := .continuation,
-    example_ := "jì-zhù 'keep in mind'" }
-
-end Mandarin.Resultatives
+end Mandarin
