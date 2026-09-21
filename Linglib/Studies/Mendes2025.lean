@@ -72,10 +72,6 @@ theorem ind_apply :
     ind s s' ℙ i o ↔ (s i).world = (s' i).world ∧ ℙ s s' i o := by
   simp [ind, seq, Relation.Comp, test]
 
-private theorem randomAssign_apply {n : ℕ} :
-    randomAssign (S := State W T) n i o ↔ ∃ e, o = Function.update i n e :=
-  Iff.rfl
-
 variable [LinearOrder T] (history : HistoricalAlternatives W T)
 
 /-- A temporal morpheme, `λ𝒫.λs.λs'.[ | τ(s) ⋈ τ(s')]; 𝒫(s)`: it tests that the running times

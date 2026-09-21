@@ -352,8 +352,9 @@ end Bathroom
 existential, so no discourse referent escapes ([groenendijk-stokhof-1991]). -/
 theorem dne_bus_not_dpl [Nontrivial E] :
     (∀ φ : BUSDen W E, ~~φ = φ) ∧
-      ∃ (x : ℕ) (φ : DPL.Rel E),
-        DPL.Rel.neg (DPL.Rel.neg (DPL.Rel.exists_ x φ)) ≠ DPL.Rel.exists_ x φ :=
+      ∃ (x : ℕ) (φ : Update (Assignment E)),
+        Update.test (Update.neg (Update.test (Update.neg (Update.dexists x φ)))) ≠
+          Update.dexists x φ :=
   ⟨BilateralDen.neg_neg, GroenendijkStokhof1991.dne_fails_anaphora⟩
 
 /-- Egli's positive equivalence (59) is the substrate's `egli`; its negative counterpart (62)

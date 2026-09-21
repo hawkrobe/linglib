@@ -162,6 +162,24 @@ theorem test_seq_test (C₁ C₂ : Condition S) :
 @[simp] theorem closure_test (C : Condition S) : closure (test C) = C :=
   funext fun i => propext ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨i, rfl, h⟩⟩
 
+/-- A test is determined by its condition. -/
+theorem test_injective : Function.Injective (test : Condition S → Update S) :=
+  Function.LeftInverse.injective closure_test
+
+@[simp] theorem test_inj {C₁ C₂ : Condition S} : test C₁ = test C₂ ↔ C₁ = C₂ :=
+  test_injective.eq_iff
+
+/-- Negation is the complement of closure. -/
+theorem neg_eq_compl_closure (D : Update S) : neg D = (closure D)ᶜ := rfl
+
+/-- Negating a test complements its condition. -/
+@[simp] theorem neg_test (C : Condition S) : neg (test C) = Cᶜ := by
+  rw [neg_eq_compl_closure, closure_test]
+
+/-- A disjunction holds where either disjunct has an output. -/
+theorem disj_eq_sup_closure (D₁ D₂ : Update S) : disj D₁ D₂ = closure D₁ ⊔ closure D₂ :=
+  funext fun _ => propext exists_or
+
 /-- Tests are the subidentities of the update monoid: the coreflexives `D ≤ 1`. -/
 theorem isTest_iff_le_one : D.IsTest ↔ D ≤ 1 :=
   ⟨fun h _ _ hij => ⟨h hij, trivial⟩, fun h _ _ hij => (h _ _ hij).1⟩
