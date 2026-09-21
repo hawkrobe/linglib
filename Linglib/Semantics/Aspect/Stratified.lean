@@ -66,7 +66,7 @@ property.
 ## TODO
 
 * The stativity opposition along τ (Champollion's fourth opposition) is
-  realized in linglib by `HasSubintervalProp` in
+  realized in linglib by `HasClosedSubintervalProp` in
   `Semantics/Aspect/SubintervalProperty.lean` rather than as a decomposition
   form. The `(τ, point-granularity)` form has no current consumer.
 

@@ -41,35 +41,6 @@ open _root_.Aspect
 
 variable {W T : Type*} [LinearOrder T]
 
-/-- **Subinterval property for event predicates** (mereological version).
-    SUB(P) iff every subinterval of a P-event's runtime that is also
-    the runtime of some event is the runtime of a P-event.
-    States and activities have this property; accomplishments/achievements
-    lack it.
-
-    This is the *universal-over-witnesses* form: it constrains only those
-    subintervals that already happen to be some event's runtime. It is
-    therefore **vacuously satisfiable** when the event ontology is sparse
-    (no event has runtime exactly `t` ⇒ the inner `∀ e₂` is empty). The
-    contentful, witness-*producing* form is `HasClosedSubintervalProp`
-    (CSUB) below, which every operator-level theorem in this file consumes;
-    plain SUB is the weaker conditional and does not on its own express
-    Bennett-Partee/Dowty homogeneity.
-
-    The `SubintervalReference` decomposition form at
-    [champollion-2017]'s analogous parameter-space point (dim = τ,
-    point-interval granularity) is genuinely different math — ∃-decomposition
-    over P-parts vs ∀-projection over hypothetical witness events; the
-    distinctness is backed by the counterexamples in
-    `Semantics/Aspect/Stratified.lean`. The two formulations are not directly
-    interderivable; bridging requires explicit witness-existence assumptions. -/
-def HasSubintervalProp (P : W → Event T → Prop) : Prop :=
-  ∀ (e₁ : Event T) (w : W),
-    P w e₁ →
-    ∀ (t : NonemptyInterval T), t ≤ e₁.τ →
-    ∀ (e₂ : Event T), e₂.τ = t →
-    P w e₂
-
 /-- **Closed subinterval property** (CSUB): `P`'s run-times form a *lower set*.
 
     This is the contentful homogeneity property — `eventDenotation (P w ·)`
@@ -84,12 +55,7 @@ def HasSubintervalProp (P : W → Event T → Prop) : Prop :=
     holds definitionally. Stating CSUB directly on mathlib's `IsLowerSet`
     collapses three former encodings of the same concept — the bespoke
     ∀∀∃ witness predicate, `Mereology.DIV`, and the lower-set fact proved
-    ad hoc in `Tense/RunTimes.lean` — onto one carrier.
-
-    Stronger than `HasSubintervalProp` (SUB): SUB only constrains witnesses
-    that already exist and is vacuous under a sparse event ontology; CSUB
-    *produces* a witness at every subinterval, which is what every
-    operator-level theorem below consumes. -/
+    ad hoc in `Tense/RunTimes.lean` — onto one carrier. -/
 def HasClosedSubintervalProp (P : W → Event T → Prop) : Prop :=
   ∀ w, IsLowerSet (eventDenotation (fun e => P w e))
 
@@ -124,7 +90,7 @@ theorem hasClosedSubintervalProp_iff_witnesses {P : W → Event T → Prop} :
 
     **Caveat — these are *extensional* results.** `IMPF`/`PRFV` here
     existentially quantify over a *completed* event in the evaluation world
-    (`Basic.lean`). The genuine imperfective paradox — "John was building a
+    (`Viewpoint.lean`). The genuine imperfective paradox — "John was building a
     house" can be true with no house ever completed — is *intensional* and
     requires a modal PROG over inertia/continuation worlds ([dowty-1979];
     Landman 1992; Portner 1998), which this file does NOT model. What is
@@ -132,71 +98,22 @@ theorem hasClosedSubintervalProp_iff_witnesses {P : W → Event T → Prop} :
     the extensional imperfective entails the perfective, and for telic ones
     it need not.
 
-    `Semantics/Aspect/Defs.lean` carries the VendlerClass enum used to
-    state the consumer-side facts (`c = .state ∨ c = .activity` for
-    SUB-having classes). Here we prove the operator-level consequences:
-
-    1. **Activity entailment**: for CSUB predicates, holding at `e₁` yields a
-       P-event at every subinterval of `e₁`'s runtime — part-whole homogeneity.
-    2. **Telic non-homogeneity**: not every predicate is subinterval-closed
-       (the missing-endpoint predicate is a witness).
-    3. **IMPF ⊢ PRFV ⟺ CSUB**: the extensional imperfective entails the
-       perfective iff the predicate has the closed subinterval property. -/
+    Two operator-level consequences are proved. Not every predicate is
+    subinterval-closed, the predicate of events with a fixed endpoint being a
+    witness, and the extensional imperfective entails the perfective exactly
+    when the predicate has the closed subinterval property. -/
 
 
-/-- **Activity entailment** ([dowty-1979]; [bennett-partee-1972]):
-    if an activity predicate `P` has the closed subinterval property and
-    holds of event `e₁`, then every subinterval `t` of `e₁`'s runtime is
-    itself the runtime of a P-event.
-
-    Formally: `HasClosedSubintervalProp P → P w e₁ → t ≤ e₁.τ →
-    ∃ e₂, e₂.τ = t ∧ P w e₂`.
-
-    This is the part-whole homogeneity behind "activities entail their own
-    imperfective" — "John was running" entails "John ran" at every
-    subinterval. It is the witness form of CSUB
-    (`hasClosedSubintervalProp_iff_witnesses`). -/
-theorem activity_entailment
-    (P : W → Event T → Prop) (hSub : HasClosedSubintervalProp P)
-    (w : W) (e₁ : Event T) (hP : P w e₁)
-    (t : NonemptyInterval T) (hSub' : t ≤ e₁.τ) :
-    ∃ (e₂ : Event T), e₂.τ = t ∧ P w e₂ :=
-  hasClosedSubintervalProp_iff_witnesses.mp hSub e₁ w hP t hSub'
-
-/-- **Telic non-homogeneity** (the extensional core of the imperfective
-    paradox, [dowty-1979]): the subinterval property is not universal — some
-    predicates fail it. This is why "John was building a house" does not
-    entail "John built a house": proper subintervals of a house-building
-    event are not themselves house-building events (the result state is
-    missing). (The *full* paradox — truth without any completed event — is
-    intensional and modeled elsewhere; see the section caveat above. This
-    theorem only exhibits a non-subinterval-closed predicate.)
-
-    The hypothesis `t₁ < t₂` ensures `T` is nontrivial — in a singleton
-    `T` there is only one interval and SUB holds vacuously for all P.
-    With two distinct time points, we construct a "telic" predicate
-    P that holds only for events finishing at t₂ and fails for proper
-    subintervals like [t₁, t₁]. -/
-theorem imperfective_paradox_possible
-    (w : W) (t₁ t₂ : T) (hlt : t₁ < t₂) :
-    ¬ (∀ (P : W → Event T → Prop), HasSubintervalProp P) := by
-  intro hall
-  -- Define a "telic" predicate: P holds iff the event's runtime ends at t₂
-  let P : W → Event T → Prop := λ _ e => e.τ.snd = t₂
-  have hSub := hall P
-  -- Construct an event e₁ with runtime [t₁, t₂]; P holds (finish = t₂)
-  -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  let e₁ : Event T := ⟨⟨⟨t₁, t₂⟩, le_of_lt hlt⟩, .action⟩
-  have hPe₁ : P w e₁ := rfl
-  -- [t₁, t₁] is a subinterval of [t₁, t₂]
-  let sub : NonemptyInterval T := ⟨⟨t₁, t₁⟩, le_refl t₁⟩
-  have hSI : sub ≤ e₁.τ := NonemptyInterval.le_def.mpr ⟨le_refl t₁, le_of_lt hlt⟩
-  -- SIP says P must hold for any event with runtime [t₁, t₁]
-  -- sort is irrelevant here (defaults to .dynamic); the proof never reads .sort
-  let e₂ : Event T := ⟨sub, .action⟩
-  have hPe₂ := hSub e₁ w hPe₁ sub hSI e₂ rfl
-  -- But P w e₂ means t₁ = t₂, contradicting t₁ < t₂
-  exact absurd hPe₂ (ne_of_lt hlt)
+/-- The closed subinterval property is not universal. Over two distinct times, the predicate of
+    events that end at the later one holds of an event but of none whose run time is the initial
+    point, as a house-building holds of no proper part that lacks the result. -/
+theorem not_forall_hasClosedSubintervalProp (w : W) {t₁ t₂ : T} (hlt : t₁ < t₂) :
+    ¬ ∀ P : W → Event T → Prop, HasClosedSubintervalProp P := fun hall ↦ by
+  obtain ⟨e₂, hτ, hP⟩ := hasClosedSubintervalProp_iff_witnesses.mp
+    (hall fun _ e ↦ e.τ.snd = t₂) ⟨⟨⟨t₁, t₂⟩, hlt.le⟩, .action⟩ w rfl (.pure t₁)
+    (NonemptyInterval.le_def.mpr ⟨le_rfl, hlt.le⟩)
+  rw [hτ] at hP
+  exact hlt.ne hP
 
 -- ════════════════════════════════════════════════════
 -- § IMPF ⊢ PRFV for Homogeneous Predicates

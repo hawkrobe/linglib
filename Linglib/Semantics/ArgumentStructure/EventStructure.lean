@@ -21,7 +21,7 @@ at `Studies/RappaportHovavLevin2024.lean`.
 
 ## Bridges
 
-- `Template.toAspectualProfile` → `AspectualProfile` (aspect)
+- `Template.vendlerClass` → `VendlerClass` (aspect)
 - `HasResultState` → bieventive sub-event boundary ([krejci-2012]; [dowty-1979]; structural-scope alternative: [von-stechow-1996], [beck-2005])
 - `cause_implies_resultState` → CAUSE entails result state
 - `intransitiveVariant` → causative/inchoative alternation ([krejci-2012]; [rappaport-hovav-levin-1998])
@@ -66,16 +66,12 @@ def Template.predicateCount : Template → Nat
   | .achievement => 1
   | .accomplishment => 2  -- ACT + BECOME
 
-/-- Predicted aspectual profile for each template. -/
-def Template.toAspectualProfile : Template → AspectualProfile
-  | .state => stateProfile
-  | .activity => activityProfile
-  | .achievement => achievementProfile
-  | .accomplishment => accomplishmentProfile
-
-/-- Predicted Vendler class for each template (derived from profile). -/
-def Template.vendlerClass (t : Template) : VendlerClass :=
-  t.toAspectualProfile.toVendlerClass
+/-- The situation type a template predicts. -/
+def Template.vendlerClass : Template → VendlerClass
+  | .state => .state
+  | .activity => .activity
+  | .achievement => .achievement
+  | .accomplishment => .accomplishment
 
 /-! ### Bieventive structure diagnostics -/
 

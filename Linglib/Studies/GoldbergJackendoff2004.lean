@@ -87,7 +87,7 @@ example : ∀ r ∈ rows, r.selection.isSome → r.subconstruction.isCausative =
 result phrase is not end-bounded, that is, when the resultative is atelic. -/
 theorem rows_for_adverbial :
     ∀ r ∈ rows, ∀ b ∈ r.boundedness,
-      (r.judgment = .acceptable ↔ (resultativeAspect b).telicity = .atelic) := by
+      (r.judgment = .acceptable ↔ (resultativeVendlerClass b).telicity = .atelic) := by
   decide
 
 /-- Section 6.2: the resultative is acceptable exactly when the paper's role for the fusing verb

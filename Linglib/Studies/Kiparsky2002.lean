@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.SubeventStructure
+import Linglib.Core.Order.Interval
 
 /-!
 # Kiparsky (2002): Event Structure and the Perfect
@@ -10,9 +10,10 @@ assignments of a verbal predicate's event structure to the temporal parameters E
 reading places the event in E, the universal reading makes it coextensive with E, the resultative
 reading places the activity of a telic predicate in E and its change of state between E and R
 with the result state holding through R, and the present state reading places R in the result
-state and leaves the change of state implicit (`PerfectReading.mapping`). Event structure is the
-substrate's `TemporalDecomposition`, so the two result-state readings need the complex
-decomposition of a telic predicate (`isComplex_of_presentState`).
+state and leaves the change of state implicit (`PerfectReading.mapping`). An event structure is
+simple, a single run time, or complex, a run time with an activity and a result state
+(`TemporalDecomposition`), so the two result-state readings need the complex decomposition of a
+telic predicate (`isComplex_of_presentState`).
 
 The three arguments for the polysemy rest on one structural contrast: under the existential and
 universal readings the event precedes R (`precedes_of_existential`), under the resultative and
@@ -47,9 +48,35 @@ activity be presupposed and the change of state asserted, the source of the Wh-p
 
 namespace Kiparsky2002
 
-open Aspect NonemptyInterval
+open NonemptyInterval
 
 variable {T : Type*} [LinearOrder T]
+
+/-- The two phases of a telic event, an activity and the result state it leads to, the activity
+ending no later than the result state begins. -/
+structure SubeventPhases (T : Type*) [LinearOrder T] where
+  activityTrace : NonemptyInterval T
+  resultTrace : NonemptyInterval T
+  activity_precedes_result : activityTrace.snd ≤ resultTrace.fst
+
+/-- The event structure of a predicate is simple, a single run time, as for states and
+activities, or complex, a run time containing an activity and a result state, as for
+accomplishments and achievements. -/
+inductive TemporalDecomposition (T : Type*) [LinearOrder T]
+  | simple (runtime : NonemptyInterval T)
+  | complex (runtime : NonemptyInterval T) (phases : SubeventPhases T)
+      (activity_in_runtime : phases.activityTrace ≤ runtime)
+      (result_in_runtime : phases.resultTrace ≤ runtime)
+
+/-- The run time of an event structure. -/
+def TemporalDecomposition.runtime : TemporalDecomposition T → NonemptyInterval T
+  | .simple r => r
+  | .complex r _ _ _ => r
+
+/-- An event structure is complex when it has an activity and a result state. -/
+def TemporalDecomposition.isComplex : TemporalDecomposition T → Prop
+  | .simple _ => False
+  | .complex _ _ _ _ => True
 
 /-- The readings of the perfect, [1], the recent past being a special case of the resultative. -/
 inductive PerfectReading
@@ -59,8 +86,8 @@ inductive PerfectReading
   | presentState
   deriving DecidableEq, Repr
 
-/-- The perfect's temporal schema, [4]: the event interval E precedes the reference interval R,
-and tense relates R to the perspective interval P. -/
+/-- In the perfect's temporal schema, [4], the event interval E precedes the reference interval
+R, and tense relates R to the perspective interval P. -/
 structure Perfect (T : Type*) [LinearOrder T] where
   E : NonemptyInterval T
   R : NonemptyInterval T
@@ -71,10 +98,10 @@ namespace Perfect
 
 variable (s : Perfect T)
 
-/-- The present perfect, [3a]: the unmarked inclusion of P in R. -/
+/-- The present perfect, [3a], is the unmarked inclusion of P in R. -/
 def Present : Prop := s.P ≤ s.R
 
-/-- The past perfect, [4]: R precedes P. -/
+/-- In the past perfect, [4], R precedes P. -/
 def Past : Prop := s.R.precedes s.P
 
 end Perfect
@@ -124,8 +151,8 @@ theorem le_runtime_of_presentState (h : presentState.mapping s d) : s.R ≤ d.ru
   | simple _ => exact (h : False).elim
   | complex _ _ _ hr => exact le_trans h hr
 
-/-- The readings are semantically distinct, §1: no configuration is both existential and a
-result-state one. -/
+/-- The readings are semantically distinct, §1, since no configuration is both existential and
+a result-state one. -/
 theorem not_existential_of_presentState (h : presentState.mapping s d) :
     ¬ existential.mapping s d :=
   λ he => precedes_not_overlaps (precedes_of_existential he)
