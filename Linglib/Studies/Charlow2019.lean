@@ -28,7 +28,7 @@ the other direction does not — which is exactly where the state's extra struct
 * `dynamic_changes_assignment`, `static_is_test` — while differing on the output assignment
 * `lowerPW_liftPW`, `liftPW_injective`, `liftPW_preserves_distributive`, `liftPW_lowerPW_not_id` —
   what the lift keeps and what the state adds
-* `closure_staticExists`, `closure_dynamicExists` — both existentials are true where the
+* `dom_staticExists`, `dom_dynamicExists` — both existentials are true where the
   cylindrification of the body is
 
 ## References
@@ -38,14 +38,14 @@ the other direction does not — which is exactly where the state's extra struct
 
 namespace Charlow2019
 
-open DynamicSemantics DynamicSemantics.Update CylindricAlgebra
+open DynamicSemantics DynamicSemantics.Update CylindricAlgebra SetRel
 open DynamicSemantics.CCP (IsDistributive)
 open DynamicSemantics.ICDRT
 
 /-- Destructive update preserves truth conditions (§4). -/
 theorem destructive_preserves_truth {E : Type*}
     (P Q : E → Prop) (g : Assignment E) :
-    closure (seq (dexists 6 (test fun g' ↦ P (g' 6))) (dexists 6 (test fun g' ↦ Q (g' 6)))) g ↔
+    g ∈ (dexists 6 (test {g' | P (g' 6)}) ○ dexists 6 (test {g' | Q (g' 6)})).dom ↔
       (∃ x, P x) ∧ (∃ y, Q y) := by
   constructor
   · rintro ⟨_, _, ⟨_, ⟨d₁, rfl⟩, rfl, hP⟩, _, ⟨d₂, rfl⟩, rfl, hQ⟩
@@ -54,56 +54,56 @@ theorem destructive_preserves_truth {E : Type*}
     exact ⟨_, _, ⟨_, ⟨x, rfl⟩, rfl, by simpa⟩, _, ⟨y, rfl⟩, rfl, by simpa⟩
 
 /-- Static ↑: evaluates truth, discards modified assignment (Table 1, row 1). -/
-def staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : Update (Assignment E) :=
+def staticExists {E : Type*} (x : Nat) (body : Set (Assignment E)) : Update (Assignment E) :=
   test (cyl x body)
 
 /-- Dynamic ↑: retains modified assignment (Table 1, row 2). -/
-def dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : Update (Assignment E) :=
+def dynamicExists {E : Type*} (x : Nat) (body : Set (Assignment E)) : Update (Assignment E) :=
   dexists x (test body)
 
 /-- Static existential is a test: output = input. -/
-theorem static_is_test {E : Type*} (x : Nat) (body : Assignment E → Prop) :
+theorem static_is_test {E : Type*} (x : Nat) (body : Set (Assignment E)) :
     (staticExists x body).IsTest :=
   isTest_test _
 
 /-- Dynamic existential can change the assignment. -/
 theorem dynamic_changes_assignment {E : Type*} [Nontrivial E] :
-    ∃ (x : Nat) (body : Assignment E → Prop) (g h : Assignment E),
-      dynamicExists x body g h ∧ g ≠ h := by
+    ∃ (x : Nat) (body : Set (Assignment E)) (g h : Assignment E),
+      g ~[dynamicExists x body] h ∧ g ≠ h := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨0, fun _ ↦ True, fun _ ↦ e₁, Function.update (fun _ ↦ e₁) 0 e₂,
+  refine ⟨0, Set.univ, fun _ ↦ e₁, Function.update (fun _ ↦ e₁) 0 e₂,
     ⟨_, ⟨e₂, rfl⟩, rfl, trivial⟩, fun heq ↦ hne ?_⟩
   simpa using congr_fun heq 0
 
 /-- The static existential is true where the cylindrification of its body along `x` is. -/
-theorem closure_staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) :
-    closure (staticExists x body) = cyl x body :=
-  closure_test _
+theorem dom_staticExists {E : Type*} (x : Nat) (body : Set (Assignment E)) :
+    (staticExists x body).dom = cyl x body :=
+  dom_test _
 
 /-- The dynamic existential is true where the cylindrification of its body along `x` is. -/
-theorem closure_dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) :
-    closure (dynamicExists x body) = cyl x body := by
-  rw [dynamicExists, GroenendijkStokhof1991.closure_dexists_eq_cyl, closure_test]
+theorem dom_dynamicExists {E : Type*} (x : Nat) (body : Set (Assignment E)) :
+    (dynamicExists x body).dom = cyl x body := by
+  rw [dynamicExists, dom_dexists, dom_test]
 
 /-- Static and dynamic agree on truth conditions (§4, §7). -/
-theorem static_dynamic_same_truth {E : Type*} (x : Nat) (body : Assignment E → Prop) :
-    closure (staticExists x body) = closure (dynamicExists x body) := by
-  rw [closure_staticExists, closure_dynamicExists]
+theorem static_dynamic_same_truth {E : Type*} (x : Nat) (body : Set (Assignment E)) :
+    (staticExists x body).dom = (dynamicExists x body).dom := by
+  rw [dom_staticExists, dom_dynamicExists]
 
 /-- Reachable: h is reachable from g via some DPL formula (Charlow's (24)). -/
 def reachable {E : Type*} (g h : Assignment E) : Prop :=
-  ∃ φ : Update (Assignment E), φ g h
+  ∃ φ : Update (Assignment E), g ~[φ] h
 
 /-- Reachability is reflexive. -/
 theorem reachable_refl {E : Type*} (g : Assignment E) : reachable g g :=
-  ⟨test fun _ ↦ True, rfl, trivial⟩
+  ⟨.id, rfl⟩
 
 /-- Reachability is transitive (via dynamic conjunction). -/
 theorem reachable_trans {E : Type*} {g h k : Assignment E}
     (hgh : reachable g h) (hhk : reachable h k) : reachable g k := by
   obtain ⟨φ, hφ⟩ := hgh
   obtain ⟨ψ, hψ⟩ := hhk
-  exact ⟨seq φ ψ, h, hφ, hψ⟩
+  exact ⟨φ ○ ψ, h, hφ, hψ⟩
 
 /-- Antisymmetry fails: distinct assignments can be mutually reachable (§8). -/
 theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
@@ -111,8 +111,8 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   refine ⟨fun _ ↦ e₁, Function.update (fun _ ↦ e₁) 0 e₂,
     fun heq ↦ hne (by simpa using congr_fun heq 0),
-    ⟨dexists 0 (test fun g' ↦ g' 0 = e₂), _, ⟨e₂, rfl⟩, rfl, by simp⟩,
-    ⟨dexists 0 (test fun g' ↦ g' 0 = e₁), _, ⟨e₁, by simp⟩, rfl, rfl⟩⟩
+    ⟨dexists 0 (test {g' | g' 0 = e₂}), _, ⟨e₂, rfl⟩, rfl, by simp⟩,
+    ⟨dexists 0 (test {g' | g' 0 = e₁}), _, ⟨e₁, by simp⟩, rfl, rfl⟩⟩
 
 /-- Charlow's context type: a set of world-assignment pairs. -/
 abbrev State (W E : Type*) := Set (W × Assignment E)
@@ -170,12 +170,12 @@ require non-distributive updates, which live only in `State.CCP`. -/
     Each world-assignment pair in the output comes from applying D to some
     input assignment in s, preserving the world. -/
 def liftPW {W E : Type*} (D : Update (Assignment E)) : State.CCP W E :=
-  λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ D q.2 p.2}
+  λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ q.2 ~[D] p.2}
 
 /-- Charlow's ↓: extract a pointwise Update from a state update by
     evaluating K on a singleton context at an arbitrary world. -/
 def lowerPW {W E : Type*} (K : State.CCP W E) (w₀ : W) : Update (Assignment E) :=
-  λ g h => (w₀, h) ∈ K {(w₀, g)}
+  {p | (w₀, p.2) ∈ K {(w₀, p.1)}}
 
 /-- Round-trip identity: lowering a lifted Update recovers the original.
 
@@ -183,10 +183,10 @@ def lowerPW {W E : Type*} (K : State.CCP W E) (w₀ : W) : Update (Assignment E)
     with only `(w₀, g)` as witness, leaving exactly the pairs `h` with `D g h`. -/
 theorem lowerPW_liftPW {W E : Type*} (D : Update (Assignment E)) (w₀ : W) :
     lowerPW (liftPW D) w₀ = D := by
-  ext g h
+  ext ⟨g, h⟩
   constructor
   · intro hm
-    show D g h
+    show g ~[D] h
     simp only [lowerPW, liftPW, Set.mem_ofPred_eq] at hm
     obtain ⟨q, hq, h1, h2⟩ := hm
     cases hq; exact h2

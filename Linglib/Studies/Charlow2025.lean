@@ -272,21 +272,20 @@ section DPL
 variable {E : Type*}
 
 instance : Substrate (Update (Assignment E)) where
-  conj := Update.seq
+  conj := SetRel.comp
   neg φ := Update.test (Update.neg φ)
 
-/-- Program disjunction on DPL relations, the union of the outputs. -/
-def programDisj (φ ψ : Update (Assignment E)) : Update (Assignment E) := λ g h => φ g h ∨ ψ g h
-
+/-- Program disjunction on DPL relations is the union of the outputs. -/
 instance : ProgramDisj (Update (Assignment E)) where
-  pdisj := programDisj
+  pdisj φ ψ := φ ∪ ψ
 
 instance : Truth (Update (Assignment E)) (ℕ → E) where
-  truth := Update.closure
-  restrict m p := λ g h => p g ∧ m g h
+  truth φ g := g ∈ φ.dom
+  restrict m p := {q | p q.1 ∧ q ∈ m}
 
-private theorem rel_ext {φ ψ : Update (Assignment E)} (h : ∀ g k, φ g k ↔ ψ g k) : φ = ψ :=
-  funext λ g => funext λ k => propext (h g k)
+private theorem rel_ext {φ ψ : Update (Assignment E)} (h : ∀ g k, (g, k) ∈ φ ↔ (g, k) ∈ ψ) :
+    φ = ψ :=
+  Set.ext λ ⟨g, k⟩ => h g k
 
 end DPL
 
@@ -398,7 +397,7 @@ theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → Update (Assignment E))
     subst hX
     show Decomposed.mk
       (Update.test (Update.neg (Update.test (Update.neg (Update.test (Update.neg X)))))) n = _
-    rw [(GroenendijkStokhof1991.neg_neg_eq_self_iff_isTest _).2 λ _ _ h => h.1]
+    rw [(GroenendijkStokhof1991.neg_neg_eq_self_iff_isTest _).2 (Update.isTest_test _)]
 
 end Decomposed
 

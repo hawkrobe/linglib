@@ -17,11 +17,11 @@ carrier types) and below paper-specific theories such as [hofmann-2025]
 
 ICDRT's *delta* over the level-0 spine is exactly its carrier and its
 conditions: `ICDRT.Update` is the spine's relational `Update` at ICDRT
-assignments, sequencing is the spine's `seq`, and the static-to-dynamic
-bridge `toUpdate` is `lift ∘ fiberDRS` — by definition, not by theorem.
-`fiberDRS` embeds assignment-only relations into pair relations (passive
-worlds); `lift` is the spine's relational image. Consequently `toUpdate`
-is always distributive (`lift_isDistributive`) — the algebraic content
+assignments, sequencing is relational composition, and the static-to-dynamic
+bridge `toUpdate` is the relational image of `fiberDRS` — by definition, not by
+theorem. `fiberDRS` embeds assignment-only relations into pair relations (passive
+worlds). Consequently `toUpdate`
+is always distributive (`Update.image_isDistributive`) — the algebraic content
 of [hofmann-2025]'s observation that ICDRT-style negation via
 propositional dref complementation stays distributive, unlike test-based
 dynamic negation that inspects whole states.
@@ -29,8 +29,8 @@ dynamic negation that inspects whole states.
 ## Main definitions
 
 - `ICDRT.Context`: information states — sets of assignment-world pairs.
-- `ICDRT.Update` (the spine's `Update` at ICDRT assignments), `idUp`,
-  `fiberDRS`, and `toUpdate := lift ∘ fiberDRS`.
+- `ICDRT.Update` (the spine's `Update` at ICDRT assignments), `fiberDRS`, and
+  `toUpdate`, the image of `fiberDRS`.
 - `propVarUp`, `indivVarUp`, `multiVarUp`, `relVarUp`: variable updates.
 - `dynInclusion`, `isComplement`: dynamic conditions on propositional drefs.
 - `dynPred`, `localEntailment`: predication and local contextual entailment.
@@ -40,7 +40,7 @@ dynamic negation that inspects whole states.
 
 namespace DynamicSemantics.ICDRT
 
-open Update
+open Update SetRel
 
 variable {W E : Type*}
 variable (φ φ₁ φ₂ φ₃ φ_DC φ_anaphor φ_antecedent : PVar) (v : IVar)
@@ -63,13 +63,10 @@ def Context.univ : Context W E := Set.univ
 /-- Static update relation between input and output assignments: the
 spine's relational `Update` at ICDRT assignments. Following
 [muskens-1996]'s Compositional DRT, dynamic updates are relations between
-assignments; sequencing is the spine's `seq` and the lift to context
+assignments; sequencing is relational composition and the lift to context
 transformers is `toUpdate` below. -/
 abbrev Update (W : Type*) (E : Type*) :=
   DynamicSemantics.Update (Assignment W E)
-
-/-- Identity update: output equals input. -/
-def idUp : Update W E := Eq
 
 section Bridge
 
@@ -77,22 +74,22 @@ variable (D D₁ D₂ : Update W E) (c : Context W E)
 
 /-- Embed an assignment-only relation into a pair relation with passive worlds.
 
-`fiberDRS D (i, w) (j, w') ↔ w = w' ∧ D i j`
+`(i, w) ~[fiberDRS D] (j, w') ↔ w = w' ∧ i ~[D] j`
 
 ICDRT updates operate on assignments only and worlds are inert fibers.
 `fiberDRS` makes this structure explicit at the type level of
 `Update (Assignment W E × W)`. -/
 def fiberDRS : DynamicSemantics.Update (Assignment W E × W) :=
-  λ ⟨i, w⟩ ⟨j, w'⟩ => w = w' ∧ D i j
+  {(p, q) | p.2 = q.2 ∧ p.1 ~[D] q.1}
 
 /-- Lift a static update relation to a context transformer: the fiberwise
-embedding followed by the spine's relational image. -/
+embedding followed by the relational image. -/
 def toUpdate : CCP (Assignment W E × W) :=
-  lift (fiberDRS D)
+  (fiberDRS D).image
 
 /-- Membership in the lifted update. -/
 theorem mem_toUpdate {p : Assignment W E × W} :
-    p ∈ toUpdate D c ↔ ∃ i, (i, p.2) ∈ c ∧ D i p.1 := by
+    p ∈ toUpdate D c ↔ ∃ i, (i, p.2) ∈ c ∧ i ~[D] p.1 := by
   obtain ⟨j, w⟩ := p
   constructor
   · rintro ⟨⟨i, w'⟩, hic, rfl, hD⟩
@@ -100,17 +97,15 @@ theorem mem_toUpdate {p : Assignment W E × W} :
   · rintro ⟨i, hic, hD⟩
     exact ⟨(i, w), hic, rfl, hD⟩
 
-/-- Identity update lifts to identity on contexts. -/
-theorem idUp_toUpdate : toUpdate (idUp : Update W E) c = c :=
-  Set.ext λ ⟨j, w⟩ =>
-    ⟨λ ⟨⟨_, _⟩, hic, hw, hij⟩ => by obtain rfl := hw; obtain rfl := hij; exact hic,
-     λ hjc => ⟨(j, w), hjc, rfl, rfl⟩⟩
+/-- The identity update lifts to the identity on contexts. -/
+theorem id_toUpdate : toUpdate (SetRel.id : Update W E) c = c :=
+  Set.ext fun ⟨j, w⟩ =>
+    ⟨fun ⟨⟨_, _⟩, hic, hw, hij⟩ => by obtain rfl := hw; obtain rfl := hij; exact hic,
+     fun hjc => ⟨(j, w), hjc, rfl, rfl⟩⟩
 
 /-- `fiberDRS` preserves sequential composition. -/
-theorem fiberDRS_seq :
-    fiberDRS (Update.seq D₁ D₂) = seq (fiberDRS D₁) (fiberDRS D₂) := by
-  funext p q; cases p; cases q
-  simp only [fiberDRS, seq, Relation.Comp, eq_iff_iff]
+theorem fiberDRS_comp : fiberDRS (D₁ ○ D₂) = fiberDRS D₁ ○ fiberDRS D₂ := by
+  ext ⟨⟨i, w⟩, ⟨j, w'⟩⟩
   constructor
   · rintro ⟨rfl, k, h1, h2⟩
     exact ⟨⟨k, _⟩, ⟨rfl, h1⟩, ⟨rfl, h2⟩⟩
@@ -118,19 +113,19 @@ theorem fiberDRS_seq :
     exact ⟨rfl, k, h1, h2⟩
 
 /-- Sequential composition lifts to function composition on contexts. -/
-theorem seq_toUpdate : toUpdate (Update.seq D₁ D₂) c = toUpdate D₂ (toUpdate D₁ c) := by
-  rw [toUpdate, fiberDRS_seq, lift_seq]
+theorem comp_toUpdate : toUpdate (D₁ ○ D₂) c = toUpdate D₂ (toUpdate D₁ c) := by
+  rw [toUpdate, fiberDRS_comp, SetRel.image_comp]
   rfl
 
 /-- `toUpdate D` is always distributive: it processes each
-assignment-world pair independently. Corollary of `lift_isDistributive`. -/
+assignment-world pair independently. -/
 theorem toUpdate_isDistributive : CCP.IsDistributive (toUpdate D) :=
-  lift_isDistributive (fiberDRS D)
+  image_isDistributive (fiberDRS D)
 
 /-- A test update — one that preserves the assignment — lifts to an
 eliminative CCP: it can only shrink the context, never grow it. -/
-theorem toUpdate_test_eliminative (C : Assignment W E → Prop) :
-    CCP.IsEliminative (toUpdate (λ i j => i = j ∧ C j)) := by
+theorem toUpdate_test_eliminative (C : Set (Assignment W E)) :
+    CCP.IsEliminative (toUpdate (test C)) := by
   intro _ ⟨_, _⟩ hjw
   obtain ⟨⟨_, _⟩, hiw, rfl, rfl, _⟩ := hjw
   exact hiw
@@ -331,9 +326,8 @@ assigns a proper superset to any interlocutor's commitment-set dref:
 
 A formal articulation of the Gricean Quantity maxim: speakers commit to
 the strongest claim supported by the evidence. -/
-def pragMaxDC {Speaker : Type*} (dcVar : Speaker → PVar) (D : Update W E)
-    (i j : Assignment W E) : Prop :=
-  D i j ∧ ∀ h, D i h → ∀ x : Speaker, ¬(j.prop (dcVar x) ⊂ h.prop (dcVar x))
+def pragMaxDC {Speaker : Type*} (dcVar : Speaker → PVar) (D : Update W E) : Update W E :=
+  {(i, j) | i ~[D] j ∧ ∀ h, i ~[D] h → ∀ x : Speaker, ¬(j.prop (dcVar x) ⊂ h.prop (dcVar x))}
 
 /-- Propositional maximization: `max_φ(D)`.
 
@@ -344,9 +338,8 @@ other successful output `k` assigns a proper superset to `φ`:
 
 Used to ensure local contexts are as wide as the truth conditions allow,
 e.g. for the inner content of a negated existential. -/
-def propMaxOp (φ : PVar) (D : Update W E)
-    (i j : Assignment W E) : Prop :=
-  D i j ∧ ∀ k, D i k → ¬(j.prop φ ⊂ k.prop φ)
+def propMaxOp (φ : PVar) (D : Update W E) : Update W E :=
+  {(i, j) | i ~[D] j ∧ ∀ k, i ~[D] k → ¬(j.prop φ ⊂ k.prop φ)}
 
 /-- Doxastic accessibility condition for an attitude verb's local context.
 
