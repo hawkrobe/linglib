@@ -1,4 +1,5 @@
-import Linglib.Semantics.Mood.Eventuality
+import Linglib.Semantics.Mood.Defs
+import Linglib.Semantics.Events.Closure
 import Linglib.Data.Examples.Grano2024
 import Mathlib.Data.Set.Basic
 
@@ -8,26 +9,33 @@ import Mathlib.Data.Set.Basic
 This file formalizes [grano-2024]'s account of why 'intend' accepts nonfinite and subjunctive
 complements but rejects indicative ones across Spanish, French, Portuguese, Italian, Greek,
 Romanian, and English, as 'want' does and as 'hope' does not (Table 1). Three premises carry the
-argument: intention reports have causally self-referential content ([searle-1983],
-[harman-1976]), an intention being carried out only if it causes the outcome in the right way;
-encoding that content takes abstraction over the complement's eventuality argument, since
-causation relates eventualities; and subjunctive and nonfinite clauses leave that argument open
-where the indicative closes it (`Mood.Grammatical.eventDenotation`). The pool of the paper's judged
-complements records each predicate's class, the complement type, and where it matters the
-reading, and `abstraction_rejects_indicative` checks the conclusion over every row that requires
-abstraction: intention reports, causatives, the intention-rigid *aim* and *try*, aspectual
-predicates, the intention readings of *persuade*, *decide*, *promise*, and *plan*, and the event
-readings of memory and perception reports. Section 3's case against [portner-rubinstein-2020]
-and [giannakidou-mari-2021] is `intend_like_hope_in_logic`: on realism, consistency, and
-monotonicity 'intend' patterns with 'hope', whose indicative those theories license by that very
-profile, yet every indicative row under 'intend' is rejected. The Hintikka semantics of (73)
-derives the three properties from the overlap of intention and doxastic alternatives (`realism`
-and its siblings), and section 7's synthesis reads the availability of the indicative off the two
-departures from default clausal semantics, a pair of modal backgrounds and eventuality
-abstraction (`indicative_possible_iff`).
+argument: intention reports have causally self-referential content ([searle-1983], [harman-1976]),
+an intention being carried out only if it causes the outcome in the right way; encoding that content
+takes abstraction over the complement's eventuality argument, since causation relates eventualities
+(`Event.causedClosure_factorsThrough_iff`); and subjunctive and nonfinite clauses can leave that
+argument open where the indicative closes it (`MoodHead`). The pool of the paper's judged
+complements records each predicate's class, the complement type, and where it matters the reading,
+and `abstraction_rejects_indicative` checks the conclusion over every row that requires abstraction:
+intention reports, causatives, the intention-rigid *aim* and *try*, aspectual predicates, the
+intention readings of *persuade*, *decide*, *promise*, and *plan*, and the event readings of memory
+and perception reports. Section 3's case against [portner-rubinstein-2020] and
+[giannakidou-mari-2021] is `intend_like_hope_in_logic`: on realism, consistency, and monotonicity
+'intend' patterns with 'hope', whose indicative those theories license by that very profile, yet
+every indicative row under 'intend' is rejected. The Hintikka semantics of (73) derives the three
+properties from the overlap of intention and doxastic alternatives (`realism` and its siblings), and
+section 7's synthesis reads the availability of the indicative off the two departures from default
+clausal semantics, a pair of modal backgrounds and eventuality abstraction
+(`indicative_possible_iff`).
 
 ## Implementation notes
 
+The mood heads are those of section 5, (87) to (89): the subjunctive is ambiguous between a head
+that closes the eventuality argument as the indicative does and one that passes it up, so an open
+argument implies subjunctive or nonfinite form and not conversely. A head's clause denotes in a
+sum type, a proposition or a predicate of eventualities, the type mismatch under 'intend' being
+the absence of the second. Nonfinite complements carry the subjunctive's two heads, as the paper
+says without illustrating. `sbjvCausal` is the alternative of section 7, (134), which moves the
+quantification of 'intend' into the mood head.
 Whether a class needs eventuality abstraction is the paper's premise per class; for the hybrid,
 commissive, *plan*, memory, and perception predicates the reading of the row decides. The
 simplification condition of [portner-rubinstein-2020] is read off the consistency rows: a pair of
@@ -40,18 +48,16 @@ non-control complements under 'intend' altogether are recorded as rows without a
 
 * [grano-2024]
 * [portner-rubinstein-2020]
-* [silk-2018]
 * [giannakidou-mari-2021]
 * [searle-1983]
 * [harman-1976]
 * [heim-1992]
-* [jackendoff-culicover-2003]
 * [higginbotham-1983]
 -/
 
 namespace Grano2024
 
-open Data.Examples Mood
+open Data.Examples Mood Event
 
 /-! ### The pool -/
 
@@ -84,10 +90,64 @@ inductive Complement where
   | bareInfinitive
   deriving DecidableEq, Repr, Fintype
 
-/-- Premise 3: every complement type but the indicative leaves its eventuality argument open. -/
-def Complement.Abstracts (c : Complement) : Prop := c ≠ .indicative
+/-! ### Section 5: mood heads and the eventuality argument -/
 
-instance (c : Complement) : Decidable c.Abstracts := inferInstanceAs (Decidable (_ ≠ _))
+/-- The mood heads of section 5. The indicative and the first subjunctive close the eventuality
+argument of their clause and the second subjunctive passes it up; mood in nonfinite clauses
+patterns with the subjunctive. -/
+inductive MoodHead where
+  | indic
+  | sbjv₁
+  | sbjv₂
+  deriving DecidableEq, Repr
+
+/-- The morphological mood a head is spelled out as. -/
+def MoodHead.mood : MoodHead → Grammatical
+  | .indic => .indicative
+  | .sbjv₁ | .sbjv₂ => .subjunctive
+
+/-- The head passes the eventuality argument up. -/
+def MoodHead.Opens (m : MoodHead) : Prop := m = .sbjv₂
+
+instance : DecidablePred MoodHead.Opens := fun m ↦ inferInstanceAs (Decidable (m = _))
+
+/-- The denotation of a mood head applied to its clause: a proposition once the eventuality
+argument is closed, the clause's own predicate of eventualities otherwise. The indicative and the
+first subjunctive denote alike, which is why section 7 adds a second departure from the default
+to keep the subjunctive out of indicative environments. -/
+def MoodHead.denote {W Ev : Type*} (m : MoodHead) (P : W → Ev → Prop) :
+    (W → Prop) ⊕ (W → Ev → Prop) :=
+  if m.Opens then .inr P else .inl (closure P)
+
+/-- A head's clause offers an open predicate of eventualities exactly when the head opens. -/
+theorem MoodHead.isRight_denote {W Ev : Type*} {m : MoodHead} {P : W → Ev → Prop} :
+    (m.denote P).isRight ↔ m.Opens := by
+  unfold MoodHead.denote; split <;> simp [*]
+
+/-- (87a) and (88a): the indicative and the first subjunctive denote alike. -/
+theorem MoodHead.denote_indic_eq_sbjv₁ {W Ev : Type*} (P : W → Ev → Prop) :
+    MoodHead.indic.denote P = MoodHead.sbjv₁.denote P := rfl
+
+/-- Premise 3, one direction: a clause with an open eventuality argument is not indicative. -/
+theorem MoodHead.mood_of_opens {m : MoodHead} (h : m.Opens) : m.mood = .subjunctive := by
+  rw [h]; rfl
+
+/-- The other direction fails: the first subjunctive closes the argument as the indicative does. -/
+theorem MoodHead.not_opens_sbjv₁ : ¬ MoodHead.sbjv₁.Opens := by decide
+
+/-- The mood heads a complement type may carry. -/
+def Complement.heads : Complement → List MoodHead
+  | .indicative => [.indic]
+  | _ => [.sbjv₁, .sbjv₂]
+
+/-- Premise 3 for complement types: some head of the complement leaves its eventuality argument
+open. -/
+def Complement.Abstracts (c : Complement) : Prop := ∃ m ∈ c.heads, m.Opens
+
+instance (c : Complement) : Decidable c.Abstracts := by unfold Complement.Abstracts; infer_instance
+
+theorem Complement.abstracts_iff {c : Complement} : c.Abstracts ↔ c ≠ .indicative := by
+  cases c <;> decide
 
 /-- The reading a row is judged on, where the predicate has more than one. -/
 inductive Reading where
@@ -145,14 +205,14 @@ self-reference of Premises 1 and 2, causation, the intention-rigid predicates, a
 def Class.RequiresAbstraction (c : Class) : Prop :=
   c = .intend ∨ c = .causative ∨ c = .intentionRigid ∨ c = .aspectual
 
-instance : DecidablePred Class.RequiresAbstraction := λ c => by
+instance : DecidablePred Class.RequiresAbstraction := fun c ↦ by
   unfold Class.RequiresAbstraction; infer_instance
 
 /-- A row requires eventuality abstraction by its class or by an intention or event reading. -/
 def Row.RequiresAbstraction (r : Row) : Prop :=
   r.cls.RequiresAbstraction ∨ r.reading = some .intention ∨ r.reading = some .event
 
-instance : DecidablePred Row.RequiresAbstraction := λ r => by
+instance : DecidablePred Row.RequiresAbstraction := fun r ↦ by
   unfold Row.RequiresAbstraction; infer_instance
 
 /-- The conclusion (72d) over the pool: wherever abstraction is required the indicative is
@@ -233,35 +293,54 @@ theorem monotonicity {int : W → Set W} {p q : Set W} {w : W} (hpq : p ⊆ q)
 
 end Hintikka
 
-/-- The ingredients of (79): intention states, their holders, their content as world, time,
-and individual triples, causation in the right way between eventualities, and runtimes. -/
+/-- The ingredients of (78) and (79): intention states, their holders, their content as world,
+time, and individual triples, and causation in the right way between eventualities. -/
 structure IntentionFrame (E W T Ev : Type*) where
   intention : Ev → W → Prop
   holder : E → Ev → W → Prop
   content : Ev → Set (W × T × E)
   causeStar : Ev → Ev → W → Prop
-  runtime : Ev → T
 
-/-- (79): `x` intends `P` at `w` when some intention state of `x` is such that, at every triple of
-its content, the state causes in the right way a later eventuality satisfying `P`. The
-complement is a predicate of individuals, times, worlds, and eventualities. -/
-def IntentionFrame.Report {E W T Ev : Type*} [LT T] (F : IntentionFrame E W T Ev) (x : E)
-    (P : E → T → W → Ev → Prop) (w : W) : Prop :=
+namespace IntentionFrame
+
+variable {E W T Ev : Type*} [LT T] (F : IntentionFrame E W T Ev)
+
+/-- (78): `x` intends `Q` at `w` when some intention state of `x` has, at every triple of its
+content, a later time at which `Q` holds. The complement is a property of individuals, times, and
+worlds, which an indicative clause can supply. -/
+def Report₃ (x : E) (Q : E → T → W → Prop) (w : W) : Prop :=
+  ∃ s, F.intention s w ∧ F.holder x s w ∧ ∀ c ∈ F.content s, ∃ t > c.2.1, Q c.2.2 t c.1
+
+/-- (79): as (78), but at every triple of its content the state causes in the right way an
+eventuality of the complement at a later time. The complement keeps its eventuality argument,
+closed here over what the state causes. -/
+def Report (x : E) (P : E → T → W → Ev → Prop) (w : W) : Prop :=
   ∃ s, F.intention s w ∧ F.holder x s w ∧
-    ∀ c ∈ F.content s, ∃ e, F.causeStar s e c.1 ∧ c.2.1 < F.runtime e ∧ P c.2.2 (F.runtime e) c.1 e
+    ∀ c ∈ F.content s, causedClosure F.causeStar s (fun w' e ↦ ∃ t > c.2.1, P c.2.2 t w' e) c.1
 
-/-- What a mood's denotation of the complement offers a predicate that needs the eventuality:
-the open predicate, or nothing once the argument is closed. -/
-def openArgument {Ev : Type*} : EventDenotation Ev → Option (Ev → Prop)
-  | .closed _ => none
-  | .abstracted P => some P
+variable {F} {x : E} {P : E → T → W → Ev → Prop} {w : W}
 
-/-- Premise 3 by the mood denotations (87) and (89): the indicative leaves nothing for `Report`
-to take, the subjunctive passes the predicate up. -/
-theorem indicative_closes_subjunctive_opens {Ev : Type*} (P : Ev → Prop) :
-    openArgument (Grammatical.indicative.eventDenotation P) = none ∧
-      openArgument (Grammatical.subjunctive.eventDenotation P) = some P :=
-  ⟨rfl, rfl⟩
+/-- The causally self-referential report entails the report of the closed complement. -/
+theorem Report.report₃ (h : F.Report x P w) : F.Report₃ x (fun y t ↦ closure (P y t)) w :=
+  let ⟨s, hs, hx, hc⟩ := h
+  ⟨s, hs, hx, fun c hcs ↦ let ⟨e, _, t, ht, hP⟩ := hc c hcs; ⟨t, ht, e, hP⟩⟩
+
+/-- When every state causes every eventuality, (79) says no more than (78) of the closed
+complement. Otherwise its prejacent is not a function of the closed complement
+(`Event.causedClosure_factorsThrough_iff`). -/
+theorem report_iff_report₃ (h : ∀ s e w, F.causeStar s e w) :
+    F.Report x P w ↔ F.Report₃ x (fun y t ↦ closure (P y t)) w :=
+  ⟨Report.report₃, fun ⟨s, hs, hx, hc⟩ ↦
+    ⟨s, hs, hx, fun c hcs ↦ let ⟨t, ht, e, hP⟩ := hc c hcs; ⟨e, h s e c.1, t, ht, hP⟩⟩⟩
+
+end IntentionFrame
+
+/-- The subjunctive of (134), for a theory that moves the modal quantification from 'intend' into
+the mood head: simple necessity over the content worlds of the attitude state, with the causally
+self-referential prejacent. -/
+def sbjvCausal {W Ev : Type*} (content : Ev → W → Prop) (causeStar : Ev → Ev → W → Prop)
+    (P : W → Ev → Prop) (s : Ev) : Prop :=
+  ∀ w, content s w → causedClosure causeStar s P w
 
 /-! ### Section 7: the two departures from default clausal semantics -/
 
@@ -269,7 +348,7 @@ theorem indicative_closes_subjunctive_opens {Ev : Type*} (P : Ev → Prop) :
 ([portner-rubinstein-2020]); 'intend' is taken to carry one, the paper's footnote 50. -/
 def Class.TwoBackgrounds (c : Class) : Prop := c = .want ∨ c = .hope
 
-instance : DecidablePred Class.TwoBackgrounds := λ c => by
+instance : DecidablePred Class.TwoBackgrounds := fun c ↦ by
   unfold Class.TwoBackgrounds; infer_instance
 
 /-- [portner-rubinstein-2020]'s simplification read off the pool: the pair may collapse to one
@@ -277,14 +356,14 @@ background when the class requires its backgrounds to be consistent, that is, re
 inconsistent prejacents. -/
 def Class.Simplifiable (c : Class) : Prop := c.Fails .consistency
 
-instance : DecidablePred Class.Simplifiable := λ c => by unfold Class.Simplifiable; infer_instance
+instance : DecidablePred Class.Simplifiable := fun c ↦ by unfold Class.Simplifiable; infer_instance
 
 /-- The indicative is available when neither departure is in force: no eventuality abstraction,
 and a single background or a pair that may simplify. -/
 def Class.IndicativePossible (c : Class) : Prop :=
   ¬ c.RequiresAbstraction ∧ (¬ c.TwoBackgrounds ∨ c.Simplifiable)
 
-instance : DecidablePred Class.IndicativePossible := λ c => by
+instance : DecidablePred Class.IndicativePossible := fun c ↦ by
   unfold Class.IndicativePossible; infer_instance
 
 /-- For the four classes of sections 2 and 3, the indicative is possible exactly when the pool

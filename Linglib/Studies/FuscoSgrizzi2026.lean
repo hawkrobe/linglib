@@ -1,7 +1,9 @@
+import Linglib.Semantics.Events.Closure
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Syntax.Minimalist.Clause.Size
 import Linglib.Fragments.Romance.Italian.Verbs
 import Linglib.Data.Examples.FuscoSgrizzi2026
+import Linglib.Studies.Grano2024
 
 /-!
 # Fusco and Sgrizzi (2026): Belief or Action? Semantic Ambiguity in the Italian Non-finite Domain
@@ -36,7 +38,9 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
   the absence of modal auxiliaries ((9) and (10)) and the ban on past-oriented complements ((5))
   stay in the prose and in `intention_future`.
 * The two heads are stated over abstract eventualities and worlds, with the content background,
-  the circumstantial base and the inertial ordering as anchoring functions of the state.
+  the circumstantial base and the inertial ordering as anchoring functions of the state. The
+  closure head (23b) is `Event.closure` and the prejacent of *a* is `Event.causedClosure`, the
+  operators of [grano-2024]'s account, so a complement takes its world before its eventuality.
 * The examples are `Data.Examples.FuscoSgrizzi2026`; the lexical entries are those of
   `Fragments/Romance/Italian/Verbs.lean`.
 
@@ -54,23 +58,28 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
 
 namespace FuscoSgrizzi2026
 
-open Modality Modality.Kratzer Minimalist Italian.Verbs Data.Examples
+open Modality Modality.Kratzer Minimalist Italian.Verbs Data.Examples Event
 
 section Semantics
 
 variable {I V W : Type*}
 
-/-- Existential closure of the eventuality argument of a bare infinitive, the paper's (23b), the
-head a *di*-infinitive contains and an *a*-infinitive lacks. -/
-def closure (P : V → W → Prop) : W → Prop := fun w ↦ ∃ e, P e w
-
 /-- The head *a* (25), anchored to the attitude state, is necessity over the state's inertia
 worlds, the best worlds of a circumstantial base under an inertial ordering ([dowty-1979],
-[kratzer-2013]), with the eventuality of its complement bound to the state by the causal
-relation. -/
+[kratzer-2013]), with the eventuality argument of its complement closed over what the state
+causes. -/
 def aP (circumstances : V → ModalBase W) (inertia : V → OrderingSource W)
-    (causeStar : V → V → W → Prop) (P : V → W → Prop) (s : V) (w : W) : Prop :=
-  necessity (circumstances s) (inertia s) (fun w' ↦ ∃ e, causeStar s e w' ∧ P e w') w
+    (causeStar : V → V → W → Prop) (P : W → V → Prop) (s : V) (w : W) : Prop :=
+  necessity (circumstances s) (inertia s) (causedClosure causeStar s P) w
+
+/-- The head *a* is the causal subjunctive of [grano-2024]'s (134) with an inertial ordering
+added: with no ordering it is simple necessity of the same prejacent over the circumstantially
+accessible worlds. -/
+theorem aP_emptyBackground (circumstances : V → ModalBase W) (causeStar : V → V → W → Prop)
+    (P : W → V → Prop) (s : V) (w : W) :
+    aP circumstances (fun _ ↦ emptyBackground) causeStar P s w ↔
+      Grano2024.sbjvCausal (fun s w' ↦ kratzerR (circumstances s) w w') causeStar P s :=
+  necessity_empty_iff_simple ..
 
 /-- The head *di* (26) is necessity over the state's content worlds of a proposition. -/
 def diP (content : V → ModalBase W) (Q : W → Prop) (s : V) (w : W) : Prop :=
@@ -94,10 +103,10 @@ def Frame.convincere (F : Frame I V W) (P : V → Prop) (x y : I) (e : V) (w : W
 
 variable (F : Frame I V W) (content circumstances : V → ModalBase W)
   (inertia : V → OrderingSource W)
-  (causeStar : V → V → W → Prop) (P : V → W → Prop) (x y : I) (e : V) (w : W)
+  (causeStar : V → V → W → Prop) (P : W → V → Prop) (x y : I) (e : V) (w : W)
 
-/-- The belief report is *convincere* with the *di*-complement, the closed proposition held at the
-state's content worlds. -/
+/-- The belief report is *convincere* with the *di*-complement, whose closure head (23b) turns the
+bare infinitive into a proposition held at the state's content worlds. -/
 def beliefReport : Prop := F.convincere (fun s ↦ diP content (closure P) s w) x y e w
 
 /-- The intention report is *convincere* with the *a*-complement. -/
@@ -108,7 +117,7 @@ def intentionReport : Prop :=
 the intended event throughout the state's inertia worlds. -/
 theorem intention_causal (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
-      ∀ w', kratzerBestR (circumstances s) (inertia s) w w' → ∃ e', causeStar s e' w' ∧ P e' w' :=
+      ∀ w', kratzerBestR (circumstances s) (inertia s) w w' → causedClosure causeStar s P w' :=
   let ⟨s, _, _, _, hc, _, _, ha⟩ := h
   ⟨s, hc, ha⟩
 
@@ -119,7 +128,7 @@ theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
     (hτ : ∀ s e' w', causeStar s e' w' → τ s < τ e')
     (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
-      ∀ w', kratzerBestR (circumstances s) (inertia s) w w' → ∃ e', τ s < τ e' ∧ P e' w' :=
+      ∀ w', kratzerBestR (circumstances s) (inertia s) w w' → ∃ e', τ s < τ e' ∧ P w' e' :=
   let ⟨s, hc, ha⟩ := intention_causal F circumstances inertia causeStar P x y e w h
   ⟨s, hc, fun w' hw' ↦ let ⟨e', hce, hP⟩ := ha w' hw'; ⟨e', hτ s e' w' hce, hP⟩⟩
 
