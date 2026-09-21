@@ -331,6 +331,13 @@ theorem spelloutWinner_spec {v : List (SpanRule n F)} {g : Fin n}
     have hsp : it.spans = m := by simpa using List.find?_some h
     exact ⟨List.mem_of_find?_eq_some h, by rw [hsp]⟩
 
+/-- The Superset Principle bounds the winner: the entry spelling out grade `g` stores a
+constituent containing grade `g`'s structure. -/
+theorem le_spans_of_spelloutWinner_eq_some {v : List (SpanRule n F)} {g : Fin n}
+    {it : SpanRule n F} (h : spelloutWinner v g = some it) : g ≤ it.spans := by
+  obtain ⟨-, -, -, hle⟩ := exists_of_minSpan_eq_coe (spelloutWinner_spec h).2
+  exact hle
+
 theorem exists_spelloutWinner_of_coe {v : List (SpanRule n F)} {g m : Fin n}
     (h : minSpan v g = ↑m) : ∃ it, spelloutWinner v g = some it := by
   rw [spelloutWinner_of_coe h]
