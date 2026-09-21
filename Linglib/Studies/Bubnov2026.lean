@@ -1,12 +1,6 @@
 import Linglib.Studies.DeganoAloni2025
 import Linglib.Studies.Dekier2021
 import Linglib.Studies.Haspelmath1997
-import Linglib.Fragments.Slavic.Russian.Indefinites
-import Linglib.Fragments.English.Indefinites
-import Linglib.Fragments.German.Indefinites
-import Linglib.Fragments.Latin.Indefinites
-import Linglib.Fragments.Yakut.Indefinites
-import Linglib.Fragments.Kannada.Indefinites
 
 /-!
 # Bubnov 2026: not all coexpressions are syncretisms
@@ -35,7 +29,7 @@ whichever direction it takes along the map.
 
 * `russian_spans_properly_nested` — the containment the nanosyntactic analysis predicts
 * `type_vi_contradictory` — the unattested type's restriction cannot be met
-* `skPlusNS_profile_skips_specificUnknown` — it is also the profile the map excludes
+* `uses_ne_skPlusNS_profile` — it is also the profile no connected region of the map covers
 * `attested_changes_are_weakenings`, `attested_changes_gain_opposite_functions` — the two attested
   changes weaken a restriction while moving in opposite directions along the hierarchy
 * `entry_loss_extends_downward_only` — losing an entry derives only one of them
@@ -53,8 +47,7 @@ whichever direction it takes along the map.
 namespace Bubnov2026
 
 open DeganoAloni2025 Dekier2021 Indefinite Morphology.Containment
-open Russian.Indefinites English.Indefinites German.Indefinites Latin.Indefinites
-open Yakut.Indefinites Kannada.Indefinites
+open Haspelmath1997 (Series english german latin yakut kannada)
 
 /-! ### The containment the hierarchy predicts -/
 
@@ -63,9 +56,9 @@ structures: *-nibud'* the bare non-specific layer, *-to* that layer with the spe
 above it, *koe-* all three. Distinct exponents for nested structures are what morphological
 containment consists in, and none is attested in any indefinite paradigm. -/
 theorem russian_spans_properly_nested :
-    (spelloutWinner (lexicon Russian.Indefinites.paradigm) 0).map SpanRule.spans = some 0 ∧
-      (spelloutWinner (lexicon Russian.Indefinites.paradigm) 1).map SpanRule.spans = some 1 ∧
-      (spelloutWinner (lexicon Russian.Indefinites.paradigm) 2).map SpanRule.spans = some 2 := by
+    (spelloutWinner (lexicon russian) 0).map SpanRule.spans = some 0 ∧
+      (spelloutWinner (lexicon russian) 1).map SpanRule.spans = some 1 ∧
+      (spelloutWinner (lexicon russian) 2).map SpanRule.spans = some 2 := by
   decide
 
 /-! ### The unattested type
@@ -75,18 +68,22 @@ alternatives and variation of it within one of them at once, which cannot be met
 (`DeganoAloni2025.not_requires_skPlusNS`), so the type can be stated only as a disjunction. -/
 
 /-- The same type is the one the implicational map excludes: its profile skips the
-specific-unknown function lying between the two it covers. The semantic account and the hierarchy
-rule out the same cell for unrelated reasons. -/
-theorem skPlusNS_profile_skips_specificUnknown :
-    HaspelmathFunction.specificKnown ∈ DAType.skPlusNS.profile ∧
-      HaspelmathFunction.irrealis ∈ DAType.skPlusNS.profile ∧
-      HaspelmathFunction.specificUnknown ∉ DAType.skPlusNS.profile := by decide
+specific-unknown function lying between the two it covers, so no connected region of the map
+covers exactly its uses. The semantic account and the adjacency requirement rule out the same
+cell for unrelated reasons. -/
+theorem uses_ne_skPlusNS_profile {s : Finset HaspelmathFunction} (h : Contiguous s) :
+    uses s ≠ DAType.skPlusNS.profile := fun he ↦ by
+  have hk : Use.specificKnown ∈ uses s := he ▸ by decide
+  have hn : Use.nonSpecific ∈ uses s := he ▸ by decide
+  have hu : Use.specificUnknown ∈ uses s :=
+    mem_uses.2 (Haspelmath1997.specificUnknown_mem_of_irrealis_mem h (mem_uses.1 hk)
+      (mem_uses.1 hn))
+  exact absurd (he ▸ hu) (by decide)
 
 /-- No other type's profile skips it. -/
 theorem other_profiles_contiguous (t : DAType) (h : t ≠ .skPlusNS)
-    (hsk : HaspelmathFunction.specificKnown ∈ t.profile)
-    (hns : HaspelmathFunction.irrealis ∈ t.profile) :
-    HaspelmathFunction.specificUnknown ∈ t.profile := by
+    (hsk : Use.specificKnown ∈ t.profile) (hns : Use.nonSpecific ∈ t.profile) :
+    Use.specificUnknown ∈ t.profile := by
   cases t <;> first | exact absurd rfl h | (revert hsk hns; decide)
 
 /-! ### Diachrony -/
@@ -101,9 +98,9 @@ theorem attested_changes_are_weakenings :
 non-specific function, at the bottom, and the other gains the specific-unknown function above it.
 No rule that extends coverage in a single direction produces both. -/
 theorem attested_changes_gain_opposite_functions :
-    HaspelmathFunction.irrealis ∈ DAType.epistemic.profile \ DAType.specificUnknown.profile ∧
-      HaspelmathFunction.specificUnknown ∈
-        DAType.epistemic.profile \ DAType.nonSpecific.profile := by decide
+    Use.nonSpecific ∈ DAType.epistemic.profile \ DAType.specificUnknown.profile ∧
+      Use.specificUnknown ∈ DAType.epistemic.profile \ DAType.nonSpecific.profile := by
+  decide
 
 /-- The narrow entry of a language with a non-specific and a specific-unknown marker. -/
 def nonSpecificRule : SpanRule 3 String := ⟨"A", 0, none⟩
@@ -129,28 +126,37 @@ restriction, Yakut *-ere* constancy within an epistemic alternative, Latin *ali-
 them, Latin *-dam* and Russian *koe-* constancy across them, Kannada *-oo* the conjunction of
 constancy within and variation across, and Russian *-nibud'*, Yakut *-eme* and Kannada *-aadaruu*
 variation within one. -/
-def witnesses : List (IndefinitePronoun × DAType) :=
-  [(someEntry, .unmarked), (ereEntry, .specific), (aliEntry, .epistemic),
-   (irgendEntry, .epistemic), (damEntry, .specificKnown), (koeEntry, .specificKnown),
-   (ooEntry, .specificUnknown), (nibudEntry, .nonSpecific), (emeEntry, .nonSpecific),
-   (aadaruuEntry, .nonSpecific)]
+def witnesses : List (List Series × IndefinitePronoun × DAType) :=
+  [(english, English.Indefinites.someEntry, .unmarked),
+   (yakut, Yakut.Indefinites.ereEntry, .specific),
+   (latin, Latin.Indefinites.aliEntry, .epistemic),
+   (german, German.Indefinites.irgendEntry, .epistemic),
+   (latin, Latin.Indefinites.damEntry, .specificKnown),
+   (russian, Russian.Indefinites.koeEntry, .specificKnown),
+   (kannada, Kannada.Indefinites.ooEntry, .specificUnknown),
+   (russian, Russian.Indefinites.nibudEntry, .nonSpecific),
+   (yakut, Yakut.Indefinites.emeEntry, .nonSpecific),
+   (kannada, Kannada.Indefinites.aadaruuEntry, .nonSpecific)]
 
-/-- Every witness covers exactly the functions its type permits. -/
+/-- Every witness is a series of its paradigm covering exactly the uses its type permits, on
+the regions [haspelmath-1997] draws. -/
 theorem paradigms_realize_types :
-    ∀ w ∈ witnesses, typeOf w.1 = some w.2 := by decide
+    ∀ w ∈ witnesses, ∃ s ∈ w.1, s.pronoun = w.2.1 ∧ Instantiates s w.2.2 := by decide
 
-/-- Russian *-to* is the epistemic type, but covers only the specific-unknown function: *-nibud'*
-is the non-specific form of the same paradigm and takes that function from it. Coverage is the
-restriction net of paradigmatic competition, which is why the surface classification of *-to* is
-narrower than its type. -/
+/-- Russian *-to* is the epistemic type, but the region drawn for it covers only the
+specific-unknown function: *-nibud'* is the non-specific form of the same paradigm and takes
+that function from it. Coverage is the restriction net of paradigmatic competition, which is why
+the surface classification of *-to* is narrower than its type; the book's own example of
+*kogo-to* under *xočet* 'wants' finds the non-specific reading possible beside the preferred
+*-nibud'*. -/
 theorem to_is_epistemic_under_competition :
-    ConsistentWith toEntry .epistemic ∧ toEntry.functions ≠ DAType.epistemic.profile := by
-  refine ⟨by decide, fun h => absurd h (by decide)⟩
+    ∃ s ∈ russian, s.pronoun = Russian.Indefinites.toEntry ∧
+      ConsistentWith s .epistemic ∧ ¬ Instantiates s .epistemic := by decide
 
 /-- German *irgend-* instantiates the change from a non-specific form to an epistemic one, and its
 epistemic restriction is the one the modal-indefinite literature attributes to it. -/
 theorem irgend_is_epistemic :
-    typeOf irgendEntry = some .epistemic ∧
+    (∃ s ∈ german, s.pronoun = German.Indefinites.irgendEntry ∧ Instantiates s .epistemic) ∧
       DAType.nonSpecific.profile ⊆ DAType.epistemic.profile := by decide
 
 end Bubnov2026

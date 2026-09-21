@@ -1,10 +1,5 @@
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Syntax.Category.Pronoun.Indefinite
-import Linglib.Fragments.English.Indefinites
-import Linglib.Fragments.Slavic.Russian.Indefinites
-import Linglib.Fragments.Yakut.Indefinites
-import Linglib.Fragments.Latin.Indefinites
-import Linglib.Fragments.Kannada.Indefinites
+import Linglib.Studies.Haspelmath1997
 import Linglib.Data.Examples.Dekier2021
 
 /-!
@@ -18,21 +13,24 @@ structural containment, (4): the non-specific layer inside the specific unknown 
 specific known one, the direction fixed by functional complexity, (37). A language's lexicon
 stores for each marker the largest layer it spells out; the Superset Principle of
 [starke-2009] and [caha-2009], (42), lets an entry spell out any layer it contains and the
-Elsewhere Principle, (47), picks the smallest match, so the lexicon read off each Fragment
-paradigm's coverage of the map reproduces that coverage by spellout, the absence of ABA is
-the contiguity of spellout, (48), and a paradigm gap, Table 6, sits above every filled layer,
-since an entry spelling out a layer spells out every layer below it. An interrogative pronoun
+Elsewhere Principle, (47), picks the smallest match, so the lexicon read off the coverage
+[haspelmath-1997] draws for each paradigm reproduces that coverage by spellout, the absence of
+ABA is the contiguity of spellout, (48), and a paradigm gap, Table 6, sits above every filled
+layer, since an entry spelling out a layer spells out every layer below it. An interrogative pronoun
 can be spelled out as a subset of an indefinite entry, (78) and (79), and suffixes arise by
 spellout-driven movement where prefixes arise by subderivation, (57).
 
 ## Implementation notes
 
 Layers are the grades `Fin 3` of the containment substrate and entries its context-free span
-rules, with `spellout` the exponent of the Superset-and-Elsewhere winner. Fragment forms are
-whole pronouns where the paper lists markers, so the Fragment-side theorems compare coverage
-patterns and the paper's marker tables are rows; a layer's form is the one series covering its
-function, `none` at a gap or where series overlap. The derivations of prefixes and suffixes in
-§4.2 are not modelled.
+rules, with `spellout` the exponent of the Superset-and-Elsewhere winner. The paradigms are
+those of `Studies/Haspelmath1997.lean`, a series covering a layer when the layer's function lies
+in the region the book draws for it. Their forms are whole pronouns where the paper lists
+markers, so the theorems over them compare coverage patterns and the paper's marker tables are
+rows; a layer's form is the one series covering its function, `none` at a gap or where series
+overlap. The paper's Russian row has the three series that divide the hierarchy and not
+*-libo*, which the book draws over the non-specific function beside *-nibud'*. The derivations
+of prefixes and suffixes in §4.2 are not modelled.
 
 ## References
 
@@ -47,6 +45,7 @@ namespace Dekier2021
 
 open Morphology Morphology.Containment Indefinite
 open Data.Examples (LinguisticExample)
+open Haspelmath1997 (Series english yakut latin kannada)
 
 /-! ### The hierarchy -/
 
@@ -64,46 +63,51 @@ def function : Fin 3 → HaspelmathFunction := ![.irrealis, .specificUnknown, .s
 
 /-- The form of a paradigm at a function, when one series covers it: `none` at a gap or where
 series overlap. -/
-def formAt (p : List IndefinitePronoun) (f : HaspelmathFunction) : Option String :=
+def formAt (p : List Series) (f : HaspelmathFunction) : Option String :=
   match p.filter (f ∈ ·.functions) with
-  | [e] => some e.form
+  | [e] => some e.pronoun.form
   | _ => none
 
 /-- A paradigm's forms over the three layers, the triple the syncretism patterns classify. -/
-def pattern (p : List IndefinitePronoun) : Paradigm 3 (Option String) :=
+def pattern (p : List Series) : Paradigm 3 (Option String) :=
   fun g ↦ formAt p (function g)
 
 /-- The layers a series covers. -/
-def layers (e : IndefinitePronoun) : Finset (Fin 3) :=
+def layers (e : Series) : Finset (Fin 3) :=
   Finset.univ.filter (function · ∈ e.functions)
 
 /-- The nanosyntactic lexicon of a paradigm: each form stores the largest layer it covers, the
 Superset and Elsewhere Principles deriving the rest of its coverage. -/
-def lexicon (p : List IndefinitePronoun) : List (SpanRule 3 String) :=
-  p.filterMap fun e ↦ (layers e).max.map (⟨e.form, ·, none⟩)
+def lexicon (p : List Series) : List (SpanRule 3 String) :=
+  p.filterMap fun e ↦ (layers e).max.map (⟨e.pronoun.form, ·, none⟩)
+
+/-- The Russian series of the paper's row: *koe-*, *-to* and *-nibud'*. -/
+def russian : List Series :=
+  Haspelmath1997.russian.filter fun e ↦
+    e.pronoun ∈ [Russian.Indefinites.koeEntry, Russian.Indefinites.toEntry,
+      Russian.Indefinites.nibudEntry]
 
 /-! ### Syncretism and its absence -/
 
-/-- The syncretism patterns of Table 1 from the Fragments' coverage of the map: English AAA,
+/-- The syncretism patterns of Table 1 from the paradigms' coverage of the map: English AAA,
 Yakut ABB, Latin AAB and Russian ABC. -/
-theorem fragment_syncretism :
-    syncretism (pattern English.Indefinites.paradigm) = syncretism Paradigm.aaa ∧
-      syncretism (pattern Yakut.Indefinites.paradigm) = syncretism Paradigm.abb ∧
-      syncretism (pattern Latin.Indefinites.paradigm) = syncretism Paradigm.aab ∧
-      syncretism (pattern Russian.Indefinites.paradigm) = syncretism Paradigm.abc := by
+theorem map_syncretism :
+    syncretism (pattern english) = syncretism Paradigm.aaa ∧
+      syncretism (pattern yakut) = syncretism Paradigm.abb ∧
+      syncretism (pattern latin) = syncretism Paradigm.aab ∧
+      syncretism (pattern russian) = syncretism Paradigm.abc := by
   decide
 
-/-- Kannada's paradigm has a gap at the specific known layer. -/
-theorem kannada_gap : pattern Kannada.Indefinites.paradigm 2 = none := rfl
+/-- With *-libo* beside *-nibud'* the non-specific layer of Russian has no single form. -/
+theorem libo_overlap : pattern Haspelmath1997.russian 0 = none := by decide
 
-/-- The lexicon read off each Fragment paradigm reproduces its coverage of the three functions
-by spellout: (59) English, (63) Russian, (67) Yakut, (70) Latin, and Kannada with its gap. -/
+/-- Kannada's paradigm has a gap at the specific known layer. -/
+theorem kannada_gap : pattern kannada 2 = none := by decide
+
+/-- The lexicon read off each paradigm reproduces its coverage of the three functions by
+spellout: (59) English, (63) Russian, (67) Yakut, (70) Latin, and Kannada with its gap. -/
 theorem spellout_lexicon :
-    spellout (lexicon English.Indefinites.paradigm) = pattern English.Indefinites.paradigm ∧
-      spellout (lexicon Russian.Indefinites.paradigm) = pattern Russian.Indefinites.paradigm ∧
-      spellout (lexicon Yakut.Indefinites.paradigm) = pattern Yakut.Indefinites.paradigm ∧
-      spellout (lexicon Latin.Indefinites.paradigm) = pattern Latin.Indefinites.paradigm ∧
-      spellout (lexicon Kannada.Indefinites.paradigm) = pattern Kannada.Indefinites.paradigm := by
+    ∀ p ∈ [english, russian, yakut, latin, kannada], spellout (lexicon p) = pattern p := by
   decide
 
 /-- The Elsewhere Principle rules out ABA, (48): spellout is contiguous, so a marker spelling

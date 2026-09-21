@@ -1,8 +1,5 @@
 import Linglib.Logic.Team.Atoms
-import Linglib.Syntax.Category.Pronoun.Indefinite
-import Linglib.Fragments.German.Indefinites
-import Linglib.Fragments.Kannada.Indefinites
-import Linglib.Fragments.Slavic.Russian.Indefinites
+import Linglib.Studies.Haspelmath1997
 
 /-!
 # Degano and Aloni (2025): How to be (non-)specific?
@@ -20,8 +17,9 @@ use's condition entails its requirement. The requirements reproduce the attested
 while the unattested type's requirement, constancy across the team together with variation
 within a world, cannot be met, since variation within a world is variation across the team,
 so that type admits no use at all. German *irgend-*, Russian *koe-* and *-nibud'* and Kannada
-*-oo* instantiate types (iv), (v), (iii) and (vii) from their Fragments' coverage of
-[haspelmath-1997]'s map, the non-specific use being the irrealis function.
+*-oo* instantiate types (iv), (v), (iii) and (vii): the uses are three of the functions of
+[haspelmath-1997]'s map, the non-specific use being the irrealis function, and a series covers
+the uses whose functions lie in the region the book draws for it.
 
 ## References
 
@@ -32,6 +30,7 @@ so that type admits no use at all. German *irgend-*, Russian *koe-* and *-nibud'
 namespace DeganoAloni2025
 
 open Team Indefinite
+open Haspelmath1997 (Series)
 
 /-! ### Uses and types -/
 
@@ -40,7 +39,7 @@ inductive Use where
   | specificKnown
   | specificUnknown
   | nonSpecific
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- The function on Haspelmath's map a use is: the non-specific use is the irrealis
 function. -/
@@ -59,20 +58,20 @@ inductive DAType where
   | specificKnown
   | skPlusNS
   | specificUnknown
-  deriving DecidableEq, Repr
-
-def DAType.all : List DAType :=
-  [.unmarked, .specific, .nonSpecific, .epistemic, .specificKnown, .skPlusNS, .specificUnknown]
+  deriving DecidableEq, Fintype, Repr
 
 /-- The uses a type is built for, the check marks of Table 14. -/
-def DAType.profile : DAType → Finset HaspelmathFunction
-  | .unmarked => {.specificKnown, .specificUnknown, .irrealis}
+def DAType.profile : DAType → Finset Use
+  | .unmarked => {.specificKnown, .specificUnknown, .nonSpecific}
   | .specific => {.specificKnown, .specificUnknown}
-  | .nonSpecific => {.irrealis}
-  | .epistemic => {.specificUnknown, .irrealis}
+  | .nonSpecific => {.nonSpecific}
+  | .epistemic => {.specificUnknown, .nonSpecific}
   | .specificKnown => {.specificKnown}
-  | .skPlusNS => {.specificKnown, .irrealis}
+  | .skPlusNS => {.specificKnown, .nonSpecific}
   | .specificUnknown => {.specificUnknown}
+
+/-- The seven types are the seven non-empty sets of uses. -/
+theorem DAType.profile_injective : Function.Injective DAType.profile := by decide
 
 /-! ### Conditions on teams -/
 
@@ -116,7 +115,7 @@ omit [DecidableEq E] in
 /-- The unattested type's requirement cannot be met: constancy across the team is constancy
 within a world, which excludes variation there, footnote 16. -/
 theorem not_requires_skPlusNS : ¬ DAType.skPlusNS.Requires T v x :=
-  λ ⟨hdep, hvar⟩ => (hdep.mono (Finset.empty_subset _)).not_var hvar
+  fun ⟨hdep, hvar⟩ ↦ (hdep.mono (Finset.empty_subset _)).not_var hvar
 
 end Teams
 
@@ -126,58 +125,72 @@ def Admits (t : DAType) (u : Use) : Prop :=
   ∀ {V E : Type} [DecidableEq E] (T : Finset (V → E)) (v x : V), u.Renders T v x → t.Requires T v x
 
 /-- One world with one individual: the specific known use. -/
-private def known : Finset (Fin 2 → Fin 2) := {λ _ => 0}
+private def known : Finset (Fin 2 → Fin 2) := {fun _ ↦ 0}
 
 /-- Two worlds, each with its own individual: the specific unknown use. -/
-private def unknown : Finset (Fin 2 → Fin 2) := {λ _ => 0, λ _ => 1}
+private def unknown : Finset (Fin 2 → Fin 2) := {fun _ ↦ 0, fun _ ↦ 1}
 
 /-- One world with two individuals: the non-specific use. -/
-private def open_ : Finset (Fin 2 → Fin 2) := {λ _ => 0, λ k => if k = 0 then 0 else 1}
+private def open_ : Finset (Fin 2 → Fin 2) := {fun _ ↦ 0, fun k ↦ if k = 0 then 0 else 1}
 
 /-- The requirements reproduce the profiles: an attested type admits exactly the uses Table 14
 lists for it. -/
 theorem admits_iff {t : DAType} (ht : t ≠ .skPlusNS) (u : Use) :
-    Admits t u ↔ u.haspelmath ∈ t.profile := by
+    Admits t u ↔ u ∈ t.profile := by
   cases t <;> cases u <;> first
     | exact absurd rfl ht
-    | exact iff_of_true (λ _ _ _ _ => trivial) (by decide)
-    | exact iff_of_true (λ _ _ _ h => h) (by decide)
-    | exact iff_of_true (λ _ _ _ h => h.1) (by decide)
-    | exact iff_of_true (λ _ _ _ h => h.2) (by decide)
-    | exact iff_of_true (λ _ _ _ h => h.mono (Finset.empty_subset _)) (by decide)
-    | exact iff_of_true (λ _ _ _ h => h.anti (Finset.empty_subset _)) (by decide)
-    | exact iff_of_false (λ h => absurd (h known 0 1 (by decide)) (by decide)) (by decide)
-    | exact iff_of_false (λ h => absurd (h unknown 0 1 (by decide)) (by decide)) (by decide)
-    | exact iff_of_false (λ h => absurd (h open_ 0 1 (by decide)) (by decide)) (by decide)
+    | exact iff_of_true (fun _ _ _ _ ↦ trivial) (by decide)
+    | exact iff_of_true (fun _ _ _ h ↦ h) (by decide)
+    | exact iff_of_true (fun _ _ _ h ↦ h.1) (by decide)
+    | exact iff_of_true (fun _ _ _ h ↦ h.2) (by decide)
+    | exact iff_of_true (fun _ _ _ h ↦ h.mono (Finset.empty_subset _)) (by decide)
+    | exact iff_of_true (fun _ _ _ h ↦ h.anti (Finset.empty_subset _)) (by decide)
+    | exact iff_of_false (fun h ↦ absurd (h known 0 1 (by decide)) (by decide)) (by decide)
+    | exact iff_of_false (fun h ↦ absurd (h unknown 0 1 (by decide)) (by decide)) (by decide)
+    | exact iff_of_false (fun h ↦ absurd (h open_ 0 1 (by decide)) (by decide)) (by decide)
 
 /-- The unattested type admits no use, not even the two it is built for. -/
 theorem not_admits_skPlusNS (u : Use) : ¬ Admits .skPlusNS u := by
   cases u <;> first
-    | exact λ h => not_requires_skPlusNS _ _ _ (h known 0 1 (by decide))
-    | exact λ h => not_requires_skPlusNS _ _ _ (h unknown 0 1 (by decide))
-    | exact λ h => not_requires_skPlusNS _ _ _ (h open_ 0 1 (by decide))
+    | exact fun h ↦ not_requires_skPlusNS _ _ _ (h known 0 1 (by decide))
+    | exact fun h ↦ not_requires_skPlusNS _ _ _ (h unknown 0 1 (by decide))
+    | exact fun h ↦ not_requires_skPlusNS _ _ _ (h open_ 0 1 (by decide))
 
 /-! ### The types on the map -/
 
-/-- The type a form instantiates: the one whose profile is exactly the form's coverage of the
-map, none for a form covering a region the typology does not subdivide. -/
-def typeOf (e : IndefinitePronoun) : Option DAType :=
-  DAType.all.find? λ t => decide (e.functions = t.profile)
+/-- The uses a region of the map covers. -/
+def uses (s : Finset HaspelmathFunction) : Finset Use := Finset.univ.filter (·.haspelmath ∈ s)
 
-/-- Coverage within a type's profile, as for a form whose paradigm mates take some of its uses
-from it. -/
-def ConsistentWith (e : IndefinitePronoun) (t : DAType) : Prop := e.functions ⊆ t.profile
+@[simp]
+theorem mem_uses {s : Finset HaspelmathFunction} {u : Use} : u ∈ uses s ↔ u.haspelmath ∈ s := by
+  simp [uses]
 
-instance (e : IndefinitePronoun) (t : DAType) : Decidable (ConsistentWith e t) :=
-  inferInstanceAs (Decidable (e.functions ⊆ t.profile))
+/-- A series instantiates the type whose profile is exactly the uses it covers; by
+`DAType.profile_injective` there is at most one. A series covering none of the three uses
+instantiates no type. -/
+def Instantiates (s : Series) (t : DAType) : Prop := uses s.functions = t.profile
 
-/-- Table 14's examples from the Fragments: German *irgend-* is epistemic, Russian *koe-*
-specific known, Russian *-nibud'* non-specific, and Kannada *-oo* specific unknown. -/
+instance (s : Series) (t : DAType) : Decidable (Instantiates s t) :=
+  inferInstanceAs (Decidable (uses s.functions = t.profile))
+
+/-- Coverage within a type's profile, as for a series whose paradigm mates take some of its
+uses from it. -/
+def ConsistentWith (s : Series) (t : DAType) : Prop := uses s.functions ⊆ t.profile
+
+instance (s : Series) (t : DAType) : Decidable (ConsistentWith s t) :=
+  inferInstanceAs (Decidable (uses s.functions ⊆ t.profile))
+
+/-- Table 14's examples on the map: German *irgend-* is epistemic, Russian *koe-* specific
+known, Russian *-nibud'* non-specific, and Kannada *-oo* specific unknown. -/
 theorem examples :
-    typeOf German.Indefinites.irgendEntry = some .epistemic ∧
-      typeOf Russian.Indefinites.koeEntry = some .specificKnown ∧
-      typeOf Russian.Indefinites.nibudEntry = some .nonSpecific ∧
-      typeOf Kannada.Indefinites.ooEntry = some .specificUnknown := by
+    (∃ s ∈ Haspelmath1997.german,
+        s.pronoun = German.Indefinites.irgendEntry ∧ Instantiates s .epistemic) ∧
+      (∃ s ∈ Haspelmath1997.russian,
+        s.pronoun = Russian.Indefinites.koeEntry ∧ Instantiates s .specificKnown) ∧
+      (∃ s ∈ Haspelmath1997.russian,
+        s.pronoun = Russian.Indefinites.nibudEntry ∧ Instantiates s .nonSpecific) ∧
+      ∃ s ∈ Haspelmath1997.kannada,
+        s.pronoun = Kannada.Indefinites.ooEntry ∧ Instantiates s .specificUnknown := by
   decide
 
 end DeganoAloni2025

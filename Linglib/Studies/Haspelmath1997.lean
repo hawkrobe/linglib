@@ -4,7 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Combinatorics.SimpleGraph.Connectivity.Connected
-import Linglib.Syntax.Category.Pronoun.Indefinite
+import Linglib.Fragments.English.Indefinites
+import Linglib.Fragments.German.Indefinites
+import Linglib.Fragments.Kannada.Indefinites
+import Linglib.Fragments.Latin.Indefinites
+import Linglib.Fragments.Slavic.Russian.Indefinites
+import Linglib.Fragments.Yakut.Indefinites
 
 /-!
 # Haspelmath (1997): Indefinite Pronouns
@@ -12,14 +17,15 @@ import Linglib.Syntax.Category.Pronoun.Indefinite
 This file formalizes the implicational map of [haspelmath-1997] and the distributional claims
 made over it: the adjacency requirement that every indefinite series cover a connected region of
 the nine-function map, the two further principles of §4.5 restricting which connected regions
-occur, and the series of fourteen languages of the 40-language sample as Appendix A draws them.
+occur, and the series of seventeen languages of the 40-language sample as Appendix A draws them.
 
 `attestedCombinations` is Table 4.1, the combinations of functions attested in the sample;
 `Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_contiguous` shows to
 be independent of adjacency. `exists_adj_mem_of_contiguous` derives from contiguity that every
 function of a multi-function region has a map neighbour in the region, so a series covering a
 leaf of the map (specific known, direct negation, free choice) covers the leaf's unique
-neighbour; the specific-known case is the ban on the ABA syncretism. The paradigms verify the
+neighbour; the specific-known case is the ban on the ABA syncretism
+(`specificUnknown_mem_of_irrealis_mem`). The paradigms verify the
 adjacency requirement (`sample_contiguous`) and the overlap of series that the book holds against
 contrast-based accounts of grammatical meaning (`sample_overlap`). The book's examples for these
 languages are the rows of `Data/Examples/Haspelmath1997.json`.
@@ -36,11 +42,22 @@ comparative, which the book restricts to equative standards, and Swahili CL-o CL
 comparative the book predicts without data; both are the book's own map-driven analyses. Series
 that are not pronouns in the book's sense (Georgian free-choice *nebismieri*, Turkish *kimse*,
 the Italian determiner *qualsiasi*) are omitted, so a paradigm need not cover all nine
-functions. The Fragments' English, German and Russian paradigms record narrower,
-competition-driven allocations for the studies that consume them; the paradigms here are the
-book's data.
+functions.
+
+A `Series` pairs a pronoun with the region its Appendix A figure encloses. The region is the
+book's analysis of the series and not a lexical property of the pronoun: a figure idealizes
+(Russian *-to* is drawn as specific unknown alone, while the book's own example of *kogo-to*
+under *xočet* 'wants' finds its non-specific reading possible beside the preferred *-nibud'*)
+and fills cells the book has no data for on the strength of the map (Yakut *da* and Mandarin
+bare interrogatives under indirect negation, the Swahili comparative). For those cells
+`sample_contiguous` restates the map; it tests the adjacency requirement on the others. The
+pronouns of English, German, Kannada, Latin, Russian and Yakut are their Fragments' entries.
 
 ## TODO
+
+* The rows of `Data/Examples/Haspelmath1997.json` carry the function and the series of each of
+  the book's examples and are not yet joined to the figures; the join would test each region
+  against the examples and expose the idealizations noted above.
 
 * The book counts 95 geometrically possible combinations under the adjacency requirement; the
   encoded map has 108 connected regions, and no reading of the edges of Fig. 4.4 recovers the
@@ -72,6 +89,13 @@ theorem specificUnknown_mem_of_specificKnown_mem (h : Contiguous s) (hs : 1 < s.
   obtain ⟨g, hg, hadj⟩ := exists_adj_mem_of_contiguous h hs hf
   simp only [implicationalMap, HaspelmathFunction.adjacent, List.mem_singleton] at hadj
   exact hadj ▸ hg
+
+/-- A series covering specific known and irrealis non-specific covers specific unknown: the ABA
+syncretism of the three specific functions is not a connected region. -/
+theorem specificUnknown_mem_of_irrealis_mem (h : Contiguous s) (hk : .specificKnown ∈ s)
+    (hi : .irrealis ∈ s) : .specificUnknown ∈ s :=
+  specificUnknown_mem_of_specificKnown_mem h
+    (Finset.one_lt_card.2 ⟨_, hk, _, hi, by decide⟩) hk
 
 /-- Direct negation's only neighbour is indirect negation. -/
 theorem indirectNeg_mem_of_directNeg_mem (h : Contiguous s) (hs : 1 < s.card)
@@ -161,144 +185,150 @@ theorem excluded_violate :
       ∀ s ∈ excludedByPrinciple2, ¬ Principle2 s := by
   decide +kernel
 
-/-! ### Fourteen languages of the 40-language sample -/
+/-! ### Seventeen languages of the 40-language sample -/
 
-/-- A series of the person category, the ontological category Appendix A tabulates first. -/
-private def series (form : String) (basis : MorphologicalBasis)
-    (functions : Finset HaspelmathFunction) (ontology : OntologicalCategory := .person) :
-    IndefinitePronoun :=
-  { form, ontology, basis, functions }
+/-- An indefinite series as a figure of Appendix A draws it: a pronoun of the series with the
+region of the map the figure encloses for it. -/
+structure Series where
+  /-- A member of the series, of the person category where the series has one. -/
+  pronoun : IndefinitePronoun
+  /-- The functions the series covers. -/
+  functions : Finset HaspelmathFunction
+  deriving DecidableEq
+
+/-- A series of the person category, the ontological category Appendix A tabulates first, with
+its functions in the book's digit notation. -/
+private def series (form : String) (basis : MorphologicalBasis) (ns : List ℕ)
+    (ontology : OntologicalCategory := .person) : Series :=
+  ⟨{ form, ontology, basis }, region ns⟩
 
 /-- English (A.3, §4.3.1): *some-* 12345, *any-* 456789, *no-* 7. -/
-def english : List IndefinitePronoun :=
-  [ series "some-" .genericNoun
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional},
-    series "any-" .genericNoun
-      {.question, .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice},
-    series "no-" .genericNoun {.directNeg} ]
+def english : List Series :=
+  [ ⟨English.Indefinites.someEntry, region [1, 2, 3, 4, 5]⟩,
+    ⟨English.Indefinites.anyEntry, region [4, 5, 6, 7, 8, 9]⟩,
+    ⟨English.Indefinites.noEntry, region [7]⟩ ]
 
 /-- Russian (A.16): *koe-* 1, *-to* 2, *-nibud'* 345, *-libo* 34568, *by to ni bylo* 568,
 *ni-* 7, *ugodno* 9; the *-to*-series is mainly specific, and *-libo* replaces *-nibud'* under
 indirect negation and in comparatives. -/
-def russian : List IndefinitePronoun :=
-  [ series "koe-kto" .interrogative {.specificKnown},
-    series "kto-to" .interrogative {.specificUnknown},
-    series "kto-nibud'" .interrogative {.irrealis, .question, .conditional},
-    series "kto-libo" .interrogative
-      {.irrealis, .question, .conditional, .indirectNeg, .comparative},
-    series "kto by to ni bylo" .interrogative {.conditional, .indirectNeg, .comparative},
-    series "nikto" .interrogative {.directNeg},
-    series "kto ugodno" .interrogative {.freeChoice} ]
+def russian : List Series :=
+  [ ⟨Russian.Indefinites.koeEntry, region [1]⟩,
+    ⟨Russian.Indefinites.toEntry, region [2]⟩,
+    ⟨Russian.Indefinites.nibudEntry, region [3, 4, 5]⟩,
+    ⟨Russian.Indefinites.liboEntry, region [3, 4, 5, 6, 8]⟩,
+    ⟨Russian.Indefinites.byToNiByloEntry, region [5, 6, 8]⟩,
+    ⟨Russian.Indefinites.niEntry, region [7]⟩,
+    ⟨Russian.Indefinites.ugodnoEntry, region [9]⟩ ]
 
 /-- German (A.1): *etwas* 123456, *irgend-* 2345689, temporal *je* 4568, *jeder* 689, *n-* 7. -/
-def german : List IndefinitePronoun :=
-  [ series "jemand" .genericNoun
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
-    series "irgendwer" .special
-      {.specificUnknown, .irrealis, .question, .conditional, .indirectNeg, .comparative,
-        .freeChoice},
-    series "je" .special {.question, .conditional, .indirectNeg, .comparative} .time,
-    series "jeder" .special {.indirectNeg, .comparative, .freeChoice},
-    series "niemand" .genericNoun {.directNeg} ]
+def german : List Series :=
+  [ ⟨German.Indefinites.jemandEntry, region [1, 2, 3, 4, 5, 6]⟩,
+    ⟨German.Indefinites.irgendEntry, region [2, 3, 4, 5, 6, 8, 9]⟩,
+    ⟨German.Indefinites.jeEntry, region [4, 5, 6, 8]⟩,
+    ⟨German.Indefinites.jederEntry, region [6, 8, 9]⟩,
+    ⟨German.Indefinites.niemandEntry, region [7]⟩ ]
+
+/-- Latin (A.6): *-dam* 1, *ali-* 2345, *-quam* 4568, the negative series 7, *-vis* and
+*-libet* 9. -/
+def latin : List Series :=
+  [ ⟨Latin.Indefinites.damEntry, region [1]⟩,
+    ⟨Latin.Indefinites.aliEntry, region [2, 3, 4, 5]⟩,
+    ⟨Latin.Indefinites.quamEntry, region [4, 5, 6, 8]⟩,
+    ⟨Latin.Indefinites.nemoEntry, region [7]⟩,
+    ⟨Latin.Indefinites.visEntry, region [9]⟩ ]
+
+/-- Yakut (A.25): *ere* 12, *eme* 345, *da* 6789 with indirect negation predicted, *bayarar*
+9. -/
+def yakut : List Series :=
+  [ ⟨Yakut.Indefinites.ereEntry, region [1, 2]⟩,
+    ⟨Yakut.Indefinites.emeEntry, region [3, 4, 5]⟩,
+    ⟨Yakut.Indefinites.daEntry, region [6, 7, 8, 9]⟩,
+    ⟨Yakut.Indefinites.bayararEntry, region [9]⟩ ]
+
+/-- Kannada (A.35): *-oo* 2, *-aadaruu* 345, *-uu* 6789; no series for a referent the speaker
+has in mind. -/
+def kannada : List Series :=
+  [ ⟨Kannada.Indefinites.ooEntry, region [2]⟩,
+    ⟨Kannada.Indefinites.aadaruuEntry, region [3, 4, 5]⟩,
+    ⟨Kannada.Indefinites.uuEntry, region [6, 7, 8, 9]⟩ ]
 
 /-- Japanese (A.38): *-ka* 12345, *-mo* 678, *-demo* 9. -/
-def japanese : List IndefinitePronoun :=
-  [ series "dare-ka" .interrogative
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional},
-    series "dare-mo" .interrogative {.indirectNeg, .directNeg, .comparative},
-    series "dare-demo" .interrogative {.freeChoice} ]
+def japanese : List Series :=
+  [ series "dare-ka" .interrogative [1, 2, 3, 4, 5],
+    series "dare-mo" .interrogative [6, 7, 8],
+    series "dare-demo" .interrogative [9] ]
 
 /-- Mandarin Chinese (A.36): generic nouns 12, the bare interrogatives in all non-specific
 non-emphatic functions 34567 (with no data for indirect negation), *dōu*/*yě* 7, the determiner
 *rènhé* 6789. -/
-def mandarin : List IndefinitePronoun :=
-  [ series "rén" .genericNoun {.specificKnown, .specificUnknown},
-    series "shéi" .interrogative
-      {.irrealis, .question, .conditional, .indirectNeg, .directNeg},
-    series "shéi dōu / shéi yě" .interrogative {.directNeg},
-    series "rènhé" .special {.indirectNeg, .directNeg, .comparative, .freeChoice}
-      .determiner ]
+def mandarin : List Series :=
+  [ series "rén" .genericNoun [1, 2],
+    series "shéi" .interrogative [3, 4, 5, 6, 7],
+    series "shéi dōu / shéi yě" .interrogative [7],
+    series "rènhé" .special [6, 7, 8, 9] .determiner ]
 
 /-- Turkish (A.23): *bir-* 1234567, *hiç* 467, *herhangi* 23456789. -/
-def turkish : List IndefinitePronoun :=
-  [ series "biri(si)" .genericNoun
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg,
-        .directNeg},
-    series "hiç kimse" .genericNoun {.question, .indirectNeg, .directNeg},
-    series "herhangi biri" .genericNoun
-      {.specificUnknown, .irrealis, .question, .conditional, .indirectNeg, .directNeg,
-        .comparative, .freeChoice} ]
+def turkish : List Series :=
+  [ series "biri(si)" .genericNoun [1, 2, 3, 4, 5, 6, 7],
+    series "hiç kimse" .genericNoun [4, 6, 7],
+    series "herhangi biri" .genericNoun [2, 3, 4, 5, 6, 7, 8, 9] ]
 
 /-- Hindi/Urdu (A.22): *koii* 1234567, *koii bhii* 3456789. -/
-def hindi : List IndefinitePronoun :=
-  [ series "koii" .special
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg,
-        .directNeg},
-    series "koii bhii" .special
-      {.irrealis, .question, .conditional, .indirectNeg, .directNeg, .comparative,
-        .freeChoice} ]
+def hindi : List Series :=
+  [ series "koii" .special [1, 2, 3, 4, 5, 6, 7],
+    series "koii bhii" .special [3, 4, 5, 6, 7, 8, 9] ]
 
 /-- Italian (A.10): *qualche-* 123456, *nessuno* 467 (questions but not conditionals),
 *-unque* 89. -/
-def italian : List IndefinitePronoun :=
-  [ series "qualcuno" .special
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
-    series "nessuno" .special {.question, .indirectNeg, .directNeg},
-    series "chiunque" .interrogative {.comparative, .freeChoice} ]
+def italian : List Series :=
+  [ series "qualcuno" .special [1, 2, 3, 4, 5, 6],
+    series "nessuno" .special [4, 6, 7],
+    series "chiunque" .interrogative [8, 9] ]
 
 /-- Finnish (A.27): *eräs* 1, *-kin* 2345, *-kaan* 4678, *hyvänsä* 589 with the comparative
 only as an equative standard. -/
-def finnish : List IndefinitePronoun :=
-  [ series "eräs" .special {.specificKnown},
-    series "joku" .special {.specificUnknown, .irrealis, .question, .conditional},
-    series "kukaan" .interrogative {.question, .indirectNeg, .directNeg, .comparative},
-    series "kuka hyvänsä" .interrogative {.conditional, .comparative, .freeChoice} ]
+def finnish : List Series :=
+  [ series "eräs" .special [1],
+    series "joku" .special [2, 3, 4, 5],
+    series "kukaan" .interrogative [4, 6, 7, 8],
+    series "kuka hyvänsä" .interrogative [5, 8, 9] ]
 
 /-- Korean (A.39): the bare interrogatives and *-nka* 123456 alike, *-to* 678, *-na* and
 *-tunci* 9. -/
-def korean : List IndefinitePronoun :=
-  [ series "nwukwu / nwukwu-nka" .interrogative
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
-    series "nwukwu-to / amu-to" .interrogative {.indirectNeg, .directNeg, .comparative},
-    series "nwukwu-na / nwukwu-tunci" .interrogative {.freeChoice} ]
+def korean : List Series :=
+  [ series "nwukwu / nwukwu-nka" .interrogative [1, 2, 3, 4, 5, 6],
+    series "nwukwu-to / amu-to" .interrogative [6, 7, 8],
+    series "nwukwu-na / nwukwu-tunci" .interrogative [9] ]
 
 /-- Hungarian (A.26): *vala-* 123456, *sem-* 7, *akár-* and *bár-* 5689, excluded from
 questions. -/
-def hungarian : List IndefinitePronoun :=
-  [ series "valaki" .interrogative
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
-    series "senki" .interrogative {.directNeg},
-    series "akárki / bárki" .interrogative
-      {.conditional, .indirectNeg, .comparative, .freeChoice} ]
+def hungarian : List Series :=
+  [ series "valaki" .interrogative [1, 2, 3, 4, 5, 6],
+    series "senki" .interrogative [7],
+    series "akárki / bárki" .interrogative [5, 6, 8, 9] ]
 
 /-- Georgian (A.34): *-yac* 12, *-me* 34568, *ara-* 7; free choice is expressed by the adjective
 *nebismieri*, not an indefinite pronoun. -/
-def georgian : List IndefinitePronoun :=
-  [ series "vi-yac" .interrogative {.specificKnown, .specificUnknown},
-    series "vin-me" .interrogative
-      {.irrealis, .question, .conditional, .indirectNeg, .comparative},
-    series "ara-vin" .interrogative {.directNeg} ]
+def georgian : List Series :=
+  [ series "vi-yac" .interrogative [1, 2],
+    series "vin-me" .interrogative [3, 4, 5, 6, 8],
+    series "ara-vin" .interrogative [7] ]
 
 /-- Ancash Quechua (A.37): the bare interrogatives for the specific functions, which the map of
 the language does not distinguish, and *-pis* 3456789. -/
-def quechua : List IndefinitePronoun :=
-  [ series "pi" .interrogative {.specificKnown, .specificUnknown},
-    series "pi-pis" .interrogative
-      {.irrealis, .question, .conditional, .indirectNeg, .directNeg, .comparative,
-        .freeChoice} ]
+def quechua : List Series :=
+  [ series "pi" .interrogative [1, 2],
+    series "pi-pis" .interrogative [3, 4, 5, 6, 7, 8, 9] ]
 
 /-- Swahili (A.33): generic nouns 1234567, CL-o CL-ote 456789 with the comparative predicted. -/
-def swahili : List IndefinitePronoun :=
-  [ series "mtu" .genericNoun
-      {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg,
-        .directNeg},
-    series "mtu ye yote" .special
-      {.question, .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice} ]
+def swahili : List Series :=
+  [ series "mtu" .genericNoun [1, 2, 3, 4, 5, 6, 7],
+    series "mtu ye yote" .special [4, 5, 6, 7, 8, 9] ]
 
-/-- The fourteen languages. -/
-def sample : List (List IndefinitePronoun) :=
-  [ english, russian, german, japanese, mandarin, turkish, hindi, italian, finnish, korean,
-    hungarian, georgian, quechua, swahili ]
+/-- The seventeen languages. -/
+def sample : List (List Series) :=
+  [ english, russian, german, latin, yakut, kannada, japanese, mandarin, turkish, hindi,
+    italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
 /-- The adjacency requirement on the sample: every series covers a connected region. -/
 theorem sample_contiguous : ∀ p ∈ sample, ∀ e ∈ p, Contiguous e.functions := by decide
@@ -309,11 +339,11 @@ theorem sample_principles :
   decide
 
 /-- In most languages several series overlap in distribution, which the book holds against
-accounts of grammatical meaning that rely on contrast: eleven of the fourteen paradigms have a
-function expressed by more than one series. -/
+accounts of grammatical meaning that rely on contrast: thirteen of the seventeen paradigms have
+a function expressed by more than one series. -/
 theorem sample_overlap :
-    ∀ p ∈ [english, russian, german, mandarin, turkish, hindi, italian, finnish, korean,
-      hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
+    ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, italian, finnish,
+      korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
 /-- The comparative's other neighbour is indirect negation, and a series may cover it with the

@@ -4,17 +4,16 @@ import Linglib.Syntax.Category.Pronoun.Basic
 /-!
 # Indefinite pronouns
 
-An indefinite pronoun is a pronoun with a place in an indefinite series: the region of
-[haspelmath-1997]'s implicational map its series covers, the ontological category it belongs to
-and the morphological basis it is built from. A language's paradigm is the list of its series,
-a `List IndefinitePronoun`; the adjacency requirement on each series and the syncretism of a
-paradigm across the specific functions are the matter of `Studies/Haspelmath1997.lean` and
-`Studies/Dekier2021.lean`.
+An indefinite pronoun is a pronoun with a place in an indefinite series: the ontological
+category it belongs to and the morphological basis the series is built from. The functions a
+series covers on [haspelmath-1997]'s implicational map are an analysis of its distribution and
+not a lexical property, so they are paired with the entry in `Studies/Haspelmath1997.lean`,
+which also states the adjacency requirement on them.
 
 ## Main declarations
 
-* `IndefinitePronoun` — a pronoun with the ontological category, morphological basis and
-  functions of its series
+* `IndefinitePronoun` — a pronoun with its ontological category and the morphological basis
+  of its series
 * `IndefinitePronoun.toWord` — its token, of UD pronoun type `Ind`
 
 ## References
@@ -22,16 +21,13 @@ paradigm across the specific functions are the matter of `Studies/Haspelmath1997
 * [M. Haspelmath, *Indefinite Pronouns* (1997)][haspelmath-1997]
 -/
 
-/-- An indefinite pronoun: its surface form and φ-features as a `Pronoun`, with the ontological
-category and morphological basis of its series and the functions of the map the series covers.
-The functions are the series' attested distribution, which a paradigm mate may narrow. -/
+/-- An indefinite pronoun: its surface form and φ-features as a `Pronoun`, with its ontological
+category and the morphological basis of its series. -/
 structure IndefinitePronoun extends Pronoun where
-  /-- The ontological category of the series. -/
+  /-- The ontological category of the pronoun within its series. -/
   ontology : Indefinite.OntologicalCategory
   /-- The morphological basis the series is built from. -/
   basis : Indefinite.MorphologicalBasis
-  /-- The functions of the map the series covers. -/
-  functions : Finset Indefinite.HaspelmathFunction
   deriving DecidableEq
 
 instance : HasPhi IndefinitePronoun := ⟨fun e ↦ e.toPronoun.phi⟩

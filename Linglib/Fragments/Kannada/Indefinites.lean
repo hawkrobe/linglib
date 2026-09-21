@@ -3,9 +3,11 @@ import Linglib.Syntax.Category.Pronoun.Indefinite
 /-!
 # Kannada indefinite pronouns
 
-Kannada builds its indefinite pronouns by suffixing a particle to an interrogative pronoun:
-*yāru-oo* 'someone', on *yāru* 'who', for a referent the speaker presupposes but cannot
-identify, and *yāru-aadaruu* 'anyone' for irrealis non-specific reference. Neither is used for a
+Kannada builds its indefinite pronouns by suffixing a particle to an interrogative pronoun,
+three series on *yaaru* 'who': *yaar-oo* 'someone', with *-oo* 'or', for a referent the speaker
+presupposes but cannot identify; *yaar-aadaruu* 'anyone', with *-aadaruu* 'even if it be', for
+irrealis non-specific reference and in questions and conditionals; and *yaar-uu*, with *-uu*
+'also, even', under negation, in comparatives and for free choice. No series is used for a
 referent the speaker has in mind.
 
 ## References
@@ -16,25 +18,27 @@ referent the speaker has in mind.
 
 namespace Kannada.Indefinites
 
-open Indefinite
-
-/-- The *-oo* series, *yāru-oo* 'someone': on an interrogative base, for a referent the speaker
-cannot identify. -/
+/-- The *-oo* series, *yaar-oo* 'someone': for a referent the speaker cannot identify. -/
 def ooEntry : IndefinitePronoun where
-  form := "yāru-oo"
+  form := "yaar-oo"
   ontology := .person
   basis := .interrogative
-  functions := {.specificUnknown}
 
-/-- The *-aadaruu* series, *yāru-aadaruu* 'anyone': on an interrogative base, for irrealis
-non-specific reference. -/
+/-- The *-aadaruu* series, *yaar-aadaruu* 'anyone': for irrealis non-specific reference and in
+questions and conditionals. -/
 def aadaruuEntry : IndefinitePronoun where
-  form := "yāru-aadaruu"
+  form := "yaar-aadaruu"
   ontology := .person
   basis := .interrogative
-  functions := {.irrealis}
+
+/-- The *-uu* series, *yaar-uu* 'anyone, no one': under both negations, in comparatives and
+for free choice. -/
+def uuEntry : IndefinitePronoun where
+  form := "yaar-uu"
+  ontology := .person
+  basis := .interrogative
 
 /-- The Kannada paradigm: no series for a referent the speaker has in mind. -/
-def paradigm : List IndefinitePronoun := [ooEntry, aadaruuEntry]
+def paradigm : List IndefinitePronoun := [ooEntry, aadaruuEntry, uuEntry]
 
 end Kannada.Indefinites
