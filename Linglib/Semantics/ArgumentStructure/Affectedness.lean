@@ -190,7 +190,7 @@ class IsNonQuantizedAffected : Prop where
   isNonQuantized : NonQuantized (δ := δ) θ
 
 /-- Eq. (60a): the verb's specific final degree, kept as data (*break*,
-*destroy*; the SINC bridge is in `Semantics/Aspect/Incremental.lean`). -/
+*destroy*; the SINC bridge is in `Semantics/Aspect/Telicity.lean`). -/
 class IsQuantizedAffected where
   /-- The lexically-named specific final degree `g_φ`. -/
   finalDegree : δ

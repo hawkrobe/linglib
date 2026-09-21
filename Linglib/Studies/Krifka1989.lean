@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Aspect.Telicity
 import Mathlib.Order.WellFounded
 
 /-!
