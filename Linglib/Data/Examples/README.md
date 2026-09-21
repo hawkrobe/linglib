@@ -61,6 +61,16 @@ field reference:
 | `metaLanguage` | Glottocode | optional; default `"stan1293"` |
 | `lgrConformance` | string | `""`, `"WORD_ALIGNED"`, or `"MORPHEME_ALIGNED"` |
 
+## One sentence per row
+
+`primaryText` is one sentence, without judgment marks or variant notation. A line a source
+prints with slashes, parentheses or stars (`kto-nibud'/kto-libo`, `some (*any)`) packs several
+sentences: write each variant as its own row with its own `judgment` and `paperFeatures`,
+sharing the `paperLabel`, when the variants differ in what the paper classifies; keep a
+contrast the paper does not classify in `alternatives`. A feature a sentence bears twice (two
+indefinite series in one clause) is two entries under the same key, not a slash-joined value.
+A judgment that holds only in a scenario records the scenario in `context`.
+
 ## Leipzig glossing conventions
 
 The `gloss` component of `glossedTokens` follows the **Leipzig Glossing Rules**:
