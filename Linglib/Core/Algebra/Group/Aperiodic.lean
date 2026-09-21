@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.Prod
-import Mathlib.Data.Nat.Init
-import Mathlib.Order.MinMax
+module
+
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Data.Nat.Init
+public import Mathlib.Order.MinMax
 
 /-!
 # Aperiodic monoids
@@ -29,6 +31,8 @@ candidate for `Mathlib/Algebra/Group/`.
 * `Monoid.IsAperiodic.prod` — a product of aperiodic monoids is aperiodic.
 * `Monoid.IsAperiodic.of_mulEquiv` — aperiodicity transports across isomorphisms.
 -/
+
+@[expose] public section
 
 namespace Monoid
 

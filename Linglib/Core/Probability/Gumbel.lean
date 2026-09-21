@@ -1,6 +1,8 @@
-import Mathlib.Probability.CDF
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+module
+
+public import Mathlib.Probability.CDF
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Gumbel distribution
@@ -33,6 +35,8 @@ against `Mathlib.Probability.Distributions.*`); this whole file follows the
 inlines a reflection argument because mathlib has `integrableOn_Ioi_deriv_of_nonneg'`
 but no `Iic` mirror — that general lemma is a separate small upstream candidate.
 -/
+
+@[expose] public section
 
 namespace Core
 

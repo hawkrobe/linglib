@@ -1,5 +1,7 @@
-import Mathlib.Order.Bounds.Basic
-import Mathlib.Order.Interval.Set.Basic
+module
+
+public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Strict bounds of a set
@@ -24,6 +26,8 @@ modelled on it lemma-for-lemma. It backs any "strictly exceeds a whole set" noti
   mirror of `upperBounds_singleton`.
 * `strictUpperBounds_subset_upperBounds` — strict bounds are bounds.
 -/
+
+@[expose] public section
 
 variable {α : Type*} [Preorder α] {s : Set α} {a x : α}
 

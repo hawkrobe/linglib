@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Defs
-import Mathlib.Order.Basic
+module
+
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Order.Basic
 
 /-!
 # Decidable order predicates on finite types
@@ -16,6 +18,8 @@ Minimality and maximality of an element are decidable on a finite type with a de
 
 `[UPSTREAM]` candidate for `Mathlib/Data/Fintype/Defs.lean`, beside the `DecidableLE` instance.
 -/
+
+@[expose] public section
 
 namespace Fintype
 

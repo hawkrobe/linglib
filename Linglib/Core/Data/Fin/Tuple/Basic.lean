@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Logic.Equiv.Fin.Basic
-import Mathlib.Data.Fin.Tuple.Basic
+module
+
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import Mathlib.Data.Fin.Tuple.Basic
 
 /-!
 # `Fin.appendMap`: `Fin.append` as a bifunctor on index maps
@@ -16,6 +18,8 @@ routes a `Fin (m + n)` index through `f` on the left block and `g` on the right,
 and is functorial (`appendMap_id`/`appendMap_comp`) with `Fin.append` natural in it
 (`append_comp_appendMap`).
 -/
+
+@[expose] public section
 
 namespace Fin
 

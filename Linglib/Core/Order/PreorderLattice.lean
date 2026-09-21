@@ -1,5 +1,7 @@
-import Mathlib.Order.Basic
-import Mathlib.Order.CompleteLattice.Basic
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Order.CompleteLattice.Basic
 
 /-!
 # The complete lattice of preorders on a type
@@ -24,6 +26,8 @@ orders; this file supplies the algebra that combines them.
 `Mathlib` has `CompleteLattice (Setoid α)` but no order structure on
 `Preorder α`; this fills that gap.
 -/
+
+@[expose] public section
 
 namespace Preorder
 

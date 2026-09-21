@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Forall2
-import Mathlib.Logic.Relation
+module
+
+public import Mathlib.Data.List.Forall2
+public import Mathlib.Logic.Relation
 
 /-!
 # Composition, transitivity, and antisymmetry of `List.Forall₂`
@@ -22,6 +24,8 @@ pointwise order on lists of equal length. [UPSTREAM] candidates for that file, b
 * `List.Forall₂.trans`, `List.Forall₂.antisymm`, and the `Std.Refl`, `IsTrans`, `Std.Antisymm`
   instances on `Forall₂ R`.
 -/
+
+@[expose] public section
 
 namespace List
 

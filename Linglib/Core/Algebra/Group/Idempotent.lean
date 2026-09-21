@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.Idempotent
-import Mathlib.Algebra.Group.Opposite
-import Mathlib.Algebra.GroupWithZero.Defs
+module
+
+public import Mathlib.Algebra.Group.Idempotent
+public import Mathlib.Algebra.Group.Opposite
+public import Mathlib.Algebra.GroupWithZero.Defs
 
 /-!
 # Left- and right-zero elements
@@ -17,6 +19,8 @@ one-sided zero is idempotent — and dual to each other under `MulOpposite`.
 
 `[UPSTREAM]`: this would extend `Mathlib/Algebra/Group/Idempotent.lean`.
 -/
+
+@[expose] public section
 
 variable {M : Type*}
 

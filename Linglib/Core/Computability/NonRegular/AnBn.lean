@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.MyhillNerode
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Mathlib.Computability.MyhillNerode
+public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # `{ aⁿ bⁿ | n ≥ 0 }`: a two-symbol non-regular witness language
@@ -48,6 +50,8 @@ uses only mathlib primitives (`Language.IsRegular.finite_range_leftQuotient`,
 `Set.infinite_of_injective_forall_mem`, `List.count_replicate`,
 `List.count_append`).
 -/
+
+@[expose] public section
 
 /-- The two-symbol alphabet `{a, b}`. -/
 inductive AB | a | b

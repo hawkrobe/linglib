@@ -1,6 +1,8 @@
-import Mathlib.Order.UpperLower.Closure
-import Mathlib.Order.Closure
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Mathlib.Order.UpperLower.Closure
+public import Mathlib.Order.Closure
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # The order-convex hull
@@ -24,6 +26,8 @@ file is deleted.
 * `ordConnectedHull_eq_upperClosure_inter_lowerClosure` — the bridge to
   `upperClosure`/`lowerClosure`.
 -/
+
+@[expose] public section
 
 open Set
 

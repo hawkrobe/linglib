@@ -1,5 +1,7 @@
-import Mathlib.Combinatorics.SimpleGraph.Clique
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Maximal independent sets of a finite graph
@@ -20,6 +22,8 @@ independent sets of a finite graph form a computable finset.
 * `SimpleGraph.mem_maximalIndepSets`: membership in `maximalIndepSets` is `Maximal
   G.IsIndepSet`.
 -/
+
+@[expose] public section
 
 namespace SimpleGraph
 

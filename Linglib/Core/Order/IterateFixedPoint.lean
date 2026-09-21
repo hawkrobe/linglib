@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.FixedPoints
-import Mathlib.Dynamics.FixedPoints.Basic
-import Mathlib.Data.Fintype.Card
+module
+
+public import Mathlib.Order.FixedPoints
+public import Mathlib.Dynamics.FixedPoints.Basic
+public import Mathlib.Data.Fintype.Card
 
 /-!
 # Least fixed points by bottom-up iteration
@@ -20,6 +22,8 @@ Together these give the computable face of Knaster–Tarski used by the recursiv
 and modal-μ semantics (the quantifier-free logic layer): compute `f^[k] ⊥`,
 check one more application, conclude `lfp`.
 -/
+
+@[expose] public section
 
 /-- **A well-founded descent has eventually-constant iterates**: if `f` moves every
 non-fixed point strictly down a well-founded relation, then from any start the orbit

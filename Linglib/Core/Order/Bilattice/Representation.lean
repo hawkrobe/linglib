@@ -1,6 +1,8 @@
-import Mathlib.Order.Hom.Basic
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Order.Disjoint
+module
+
+public import Mathlib.Order.Hom.Basic
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.Disjoint
 
 /-!
 # Representation of distributive bilattices
@@ -30,6 +32,8 @@ the two principal ideals, via `x ↦ (x ⊗ t, x ⊗ f)` with inverse `(a, b) �
   the twisted order on the factors (first factor up, second factor down): the
   bilattice representation (cf. `Bilattice.Product.mk_le_mk`)
 -/
+
+@[expose] public section
 
 variable {B : Type*}
 

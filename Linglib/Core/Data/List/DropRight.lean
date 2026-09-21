@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.DropRight
+module
+
+public import Mathlib.Data.List.DropRight
 
 /-!
 # Lemmas about `List.rtake` and `List.rdrop`
@@ -35,6 +37,8 @@ its front counterpart through `List.rtake_eq_reverse_take_reverse` or
   are a sufficient state, so truncating before appending, or prepending anything to a block of
   length at least `n`, leaves the tail-take unchanged.
 -/
+
+@[expose] public section
 
 namespace List
 

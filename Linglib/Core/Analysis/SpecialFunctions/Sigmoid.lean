@@ -1,4 +1,6 @@
-import Mathlib.Analysis.SpecialFunctions.Sigmoid
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!
 # The logistic function as a two-term softmax
@@ -6,6 +8,8 @@ import Mathlib.Analysis.SpecialFunctions.Sigmoid
 The share of one of two exponentials in their sum is the logistic function of the difference
 of their exponents, and the logistic function inverts the log-odds.
 -/
+
+@[expose] public section
 
 namespace Real
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Algebra.Bilinear
-import Mathlib.RingTheory.Coalgebra.Basic
+module
+
+public import Mathlib.Algebra.Algebra.Bilinear
+public import Mathlib.RingTheory.Coalgebra.Basic
 
 /-!
 # Counit collapse through a Sweedler representation
@@ -13,6 +15,8 @@ Applying `L ⊗ ε` or `ε ⊗ L` to a Sweedler representation of `a` recovers
 `L a`, for any linear functional `L`. `[UPSTREAM]` candidates for
 `Mathlib.RingTheory.Coalgebra.Basic`, beside `Coalgebra.sum_counit_smul`.
 -/
+
+@[expose] public section
 
 namespace Coalgebra.Repr
 

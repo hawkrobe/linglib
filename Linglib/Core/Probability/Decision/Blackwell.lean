@@ -3,14 +3,16 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.Decision.Risk.Basic
-import Mathlib.Probability.Decision.Risk.Countable
-import Mathlib.Analysis.Convex.StdSimplex
-import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
-import Mathlib.Geometry.Convex.ConvexSpace.Module
-import Mathlib.Analysis.LocallyConvex.Separation
-import Mathlib.Analysis.Normed.Module.FiniteDimension
-import Mathlib.MeasureTheory.Measure.Count
+module
+
+public import Mathlib.Probability.Decision.Risk.Basic
+public import Mathlib.Probability.Decision.Risk.Countable
+public import Mathlib.Analysis.Convex.StdSimplex
+public import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
+public import Mathlib.Geometry.Convex.ConvexSpace.Module
+public import Mathlib.Analysis.LocallyConvex.Separation
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.MeasureTheory.Measure.Count
 
 /-!
 # Blackwell comparison of experiments
@@ -79,6 +81,8 @@ correspondence that would naturally graduate to its own public file when upstrea
 
 * [blackwell-1953]
 -/
+
+@[expose] public section
 
 universe u
 

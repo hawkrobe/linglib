@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Vector
+module
+
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Vector
 
 /-!
 # Finiteness of bounded-length lists
@@ -12,6 +14,8 @@ import Mathlib.Data.Fintype.Vector
 Over a finite alphabet, the lists of length at most `n` form a finite type — the state
 space of window-based transducers.
 -/
+
+@[expose] public section
 
 /-- The "lists of length at most `n`" subtype is finite when `α` is: it is a surjective
 image of `Σ m : Fin (n + 1), List.Vector α m`. Uses `classical` for the `DecidableEq`

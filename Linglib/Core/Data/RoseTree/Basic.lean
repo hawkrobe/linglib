@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.BigOperators.Group.List.Basic
-import Mathlib.Data.List.MinMax
-import Mathlib.Order.Nat
+module
+
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Data.List.MinMax
+public import Mathlib.Order.Nat
 
 /-!
 # N-ary rooted trees (rose trees)
@@ -32,6 +34,8 @@ per-`List` motive rather than a `∀ c ∈ children, motive c` hypothesis. The
 recurse and prove with a single `List`-shaped induction hypothesis instead of a
 hand-written `mutual` block per operation.
 -/
+
+@[expose] public section
 
 
 /-- An **n-ary rooted tree** (rose tree): a root `value : α` and an ordered list

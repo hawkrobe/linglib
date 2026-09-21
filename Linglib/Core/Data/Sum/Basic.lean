@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Sum.Basic
-import Mathlib.Logic.Function.Basic
+module
+
+public import Mathlib.Data.Sum.Basic
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Factoring through a sum of functions
@@ -15,6 +17,8 @@ of `Function.Injective.sumElim`.
 
 `[UPSTREAM]` candidate for `Mathlib/Data/Sum/Basic.lean`, beside `Function.Injective.sumElim`.
 -/
+
+@[expose] public section
 
 open Sum
 

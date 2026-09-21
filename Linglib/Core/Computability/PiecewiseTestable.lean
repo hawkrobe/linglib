@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.MyhillNerode
-import Mathlib.Data.Set.Finite.List
-import Mathlib.Logic.Function.Basic
+module
+
+public import Mathlib.Computability.MyhillNerode
+public import Mathlib.Data.Set.Finite.List
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Piecewise testable languages (PT_k)
@@ -25,6 +27,8 @@ factors through the map `subseqSet k`, the piecewise analogue of locally testabl
 * `Language.IsPiecewiseTestable.compl` / `.inter` / `.union`: boolean closure.
 * `Language.IsPiecewiseTestable.isRegular`: over a finite alphabet PT languages are regular.
 -/
+
+@[expose] public section
 
 open List
 

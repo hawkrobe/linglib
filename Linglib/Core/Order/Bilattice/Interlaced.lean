@@ -1,7 +1,9 @@
-import Mathlib.Order.Lattice
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.Hom.Basic
-import Mathlib.Order.Interval.Set.Basic
+module
+
+public import Mathlib.Order.Lattice
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.Hom.Basic
+public import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Interlaced bilattices (abstract)
@@ -59,6 +61,8 @@ proof steps are `negIicIso` and `neg_kInf_top`); abstract uniqueness of the
 factors up to isomorphism (ibid. Thm 4.3; the concrete half for products is
 `Bilattice.Product.decomposeProdIso`).
 -/
+
+@[expose] public section
 
 universe u
 

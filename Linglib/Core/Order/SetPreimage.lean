@@ -1,4 +1,6 @@
-import Mathlib.Order.Hom.CompleteLattice
+module
+
+public import Mathlib.Order.Hom.CompleteLattice
 
 /-!
 # Injectivity of `CompleteLatticeHom.setPreimage`
@@ -16,6 +18,8 @@ homomorphisms from their threshold functions).
 
 Candidate for upstreaming to mathlib.
 -/
+
+@[expose] public section
 
 namespace Core.Order
 

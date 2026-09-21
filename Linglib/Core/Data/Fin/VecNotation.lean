@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Composing a function with `![…]`
@@ -24,6 +26,8 @@ that structural recursion through a `Fin n → α` argument produces (a substitu
 * `Matrix.comp_vecCons`, `Matrix.comp_vecEmpty`: `f ∘ ![…]` pushes `f` into the literal.
 * `Matrix.comp_vecCons'`, `Matrix.comp_vecEmpty'`: the same for `fun i => f (![…] i)`.
 -/
+
+@[expose] public section
 
 namespace Matrix
 

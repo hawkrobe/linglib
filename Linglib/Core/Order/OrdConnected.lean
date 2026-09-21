@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Max
-import Mathlib.Order.Interval.Finset.Basic
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Order.Interval.Finset.Basic
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Order-connected finite sets are closed intervals
@@ -18,6 +20,8 @@ linguistic scale is linearly ordered and a strategy covers a run of it.
 * `Set.OrdConnected.isUpperSet_of_top_mem`: an order-connected set containing the top element
   is an upper set.
 -/
+
+@[expose] public section
 
 /-- An order-connected set containing the top element is an upper set. -/
 theorem Set.OrdConnected.isUpperSet_of_top_mem {α : Type*} [Preorder α] [OrderTop α]

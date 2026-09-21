@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
-import Mathlib.RingTheory.HopfAlgebra.TensorProduct
+module
+
+public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
+public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 
 /-!
 # Hopf algebra structure on `SymmetricAlgebra R M`
@@ -48,6 +50,8 @@ public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 ```
 plus `@[expose] public section`.
 -/
+
+@[expose] public section
 
 namespace SymmetricAlgebra
 

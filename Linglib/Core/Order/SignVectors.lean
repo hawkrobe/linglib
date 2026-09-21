@@ -1,11 +1,13 @@
-import Mathlib.Algebra.BigOperators.Pi
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Data.Finset.Card
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Algebra.BigOperators.Pi
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 
 /-! # Balanced sign-vector families on `Fin 4` have an anti-dominating pair
 
@@ -38,6 +40,8 @@ positively weighted balance) is threaded flat rather than packaged in a
 structure: every consumer below `exists_antidom_pair` is private, and the
 theorem has a single external caller.
 -/
+
+@[expose] public section
 
 namespace SignVec
 

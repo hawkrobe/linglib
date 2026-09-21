@@ -1,4 +1,6 @@
-import Mathlib.Order.Antichain
+module
+
+public import Mathlib.Order.Antichain
 
 /-!
 # Strict-monotone preimage of an antichain
@@ -18,6 +20,8 @@ deleted.
 
 * `IsAntichain.preimage_strictMono`
 -/
+
+@[expose] public section
 
 namespace IsAntichain
 

@@ -1,6 +1,8 @@
-import Mathlib.Data.List.Basic
-import Mathlib.Data.List.Nodup
-import Mathlib.Data.List.Lemmas
+module
+
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.List.Nodup
+public import Mathlib.Data.List.Lemmas
 
 /-!
 # Block-Structured Witnesses for Pumping-Lemma Arguments
@@ -32,6 +34,8 @@ share this substrate: `anbncndn`, `anbnc`, and `ambncmdn`.
   one-line invocation with `(by decide)` discharging the `Nodup` and
   index-distance hypotheses.
 -/
+
+@[expose] public section
 
 universe u
 

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Chain
+module
+
+public import Mathlib.Data.List.Chain
 
 /-!
 # Lemmas about `List.IsChain`
@@ -18,6 +20,8 @@ but which `Mathlib/Data/List/Chain.lean` lacks. [UPSTREAM] candidates for that f
 * `List.isChain_and_iff` and `List.IsChain.and`: a chain for a conjunction of relations is
   exactly a chain for each conjunct, mirroring `List.pairwise_and_iff` and `List.Pairwise.and`.
 -/
+
+@[expose] public section
 
 namespace List
 

@@ -5,14 +5,18 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Algebra.Opposites`, where `MulOpposite` is defined.
 -/
-import Mathlib.Algebra.Opposites
-import Mathlib.Basic.Finite.Defs
+module
+
+public import Mathlib.Algebra.Opposites
+public import Mathlib.Basic.Finite.Defs
 
 /-!
 # Finiteness of the multiplicative opposite
 
 `MulOpposite α` carries no multiplication of its own here: it is finite exactly when `α` is.
 -/
+
+@[expose] public section
 
 instance MulOpposite.instFinite {α : Type*} [Finite α] : Finite αᵐᵒᵖ :=
   Finite.of_equiv α MulOpposite.opEquiv

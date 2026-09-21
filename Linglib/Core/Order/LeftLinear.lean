@@ -1,5 +1,7 @@
-import Mathlib.Order.Preorder.Chain
-import Mathlib.Order.Interval.Set.Basic
+module
+
+public import Mathlib.Order.Preorder.Chain
+public import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Left-linear orders
@@ -23,6 +25,8 @@ Condition** of [barker-pullum-1990] syntactic trees (`Core.Order.TreePath`) and 
 
 * `IsLeftLinear.isChain_Iic`, `IsLeftLinear.isChain_Iio` — every principal down-set is a chain.
 -/
+
+@[expose] public section
 
 /-- A partial order is **left-linear** when the predecessors of every element are linearly
 ordered (no backward branching). The order-theoretic notion of a tree order. -/

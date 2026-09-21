@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.Language
-import Mathlib.Data.List.Basic
-import Mathlib.Order.Interval.Set.Defs
-import Mathlib.Order.Nat
+module
+
+public import Mathlib.Computability.Language
+public import Mathlib.Data.List.Basic
+public import Mathlib.Order.Interval.Set.Defs
+public import Mathlib.Order.Nat
 
 /-!
 # Scan direction
@@ -18,6 +20,8 @@ conjugation `revConj` realizing the flip on string functions. Extracted to its o
 leaf so the footprint-predicate file (`Dependence.lean`) does not have to depend on
 the transducer machine file just to name a `left`/`right` tag.
 -/
+
+@[expose] public section
 
 /-- The orientation of an FST scan: `left` consumes input head-first, `right`
 tail-first (via `List.reverse` conjugation). The two scan modes give rise to

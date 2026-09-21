@@ -1,4 +1,6 @@
-import Mathlib.ModelTheory.Order
+module
+
+public import Mathlib.ModelTheory.Order
 
 /-!
 # The theory of total preorders
@@ -14,6 +16,8 @@ for `Mathlib.ModelTheory.Order`.
 * `FirstOrder.Language.totalPreorderTheory`: the theory of total preorders.
 * `FirstOrder.Language.model_totalPreorder`: a total preorder is a model of the theory.
 -/
+
+@[expose] public section
 
 namespace FirstOrder.Language
 

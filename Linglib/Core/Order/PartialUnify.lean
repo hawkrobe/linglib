@@ -1,7 +1,9 @@
-import Mathlib.Order.Bounds.Image
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.UpperLower.Closure
-import Mathlib.Order.UpperLower.CompleteLattice
+module
+
+public import Mathlib.Order.Bounds.Image
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.UpperLower.Closure
+public import Mathlib.Order.UpperLower.CompleteLattice
 
 /-!
 # Partial unification: computable pairwise least upper bounds
@@ -35,6 +37,8 @@ Smolka), not the primitive; this file deliberately does not take it.
   `unify_mono` — the unification laws
 * the Pi instance: pointwise unification over a `Fintype` index
 -/
+
+@[expose] public section
 
 /-- A computable partial join on a partial order: `unify a b` is `some`
 of the least upper bound of `{a, b}` when the pair is bounded above,

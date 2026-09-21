@@ -6,8 +6,10 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Algebra.FreeMonoid.FreeSemigroup`, next to
 `FreeMonoid.equivWithOneFreeSemigroup`.
 -/
-import Mathlib.Algebra.Group.WithOne.Basic
-import Mathlib.Algebra.FreeMonoid.FreeSemigroup
+module
+
+public import Mathlib.Algebra.Group.WithOne.Basic
+public import Mathlib.Algebra.FreeMonoid.FreeSemigroup
 
 /-!
 # The free monoid as the unitization of the free semigroup
@@ -16,6 +18,8 @@ import Mathlib.Algebra.FreeMonoid.FreeSemigroup
 `WithOne` coercion, and a homomorphism out of the free semigroup extends along it to the free
 monoid (`FreeMonoid.mapWithOne`), with the empty word sent to `1`.
 -/
+
+@[expose] public section
 
 variable {α : Type*} (u : FreeSemigroup α)
 

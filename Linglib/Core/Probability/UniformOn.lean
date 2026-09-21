@@ -1,5 +1,7 @@
-import Mathlib.Probability.UniformOn
-import Mathlib.MeasureTheory.Measure.Real
+module
+
+public import Mathlib.Probability.UniformOn
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # The uniform measure on a finite type
@@ -7,6 +9,8 @@ import Mathlib.MeasureTheory.Measure.Real
 Evaluation of `ProbabilityTheory.uniformOn` on a finset or on `Set.univ` at singletons and
 finite sets, in `ℝ≥0∞` and on reals.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

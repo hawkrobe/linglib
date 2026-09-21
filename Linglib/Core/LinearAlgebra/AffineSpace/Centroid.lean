@@ -1,4 +1,6 @@
-import Mathlib.LinearAlgebra.AffineSpace.Centroid
+module
+
+public import Mathlib.LinearAlgebra.AffineSpace.Centroid
 
 /-!
 # Centroids under affine and linear maps
@@ -7,6 +9,8 @@ import Mathlib.LinearAlgebra.AffineSpace.Centroid
 centroid case of `Finset.map_affineCombination`; so do linear maps, a module being an affine space
 over itself; and in a module the centroid is the average of the points.
 -/
+
+@[expose] public section
 
 open Affine
 

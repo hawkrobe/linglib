@@ -7,8 +7,10 @@ Authors: Robert Hawkins
 Upstreaming needs `@[to_additive]` on each declaration, and the monoid `Con.lift`/`Con.map`
 should then be re-derived from these, as `Con.mk'` already is from `Con.mkMulHom`.
 -/
-import Mathlib.Algebra.Group.Prod
-import Mathlib.GroupTheory.Congruence.Hom
+module
+
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.GroupTheory.Congruence.Hom
 
 /-!
 # Homomorphisms on a congruence quotient of a magma
@@ -36,6 +38,8 @@ universal-property statements coerce the argument, as in `liftMulHom_comp_mkMulH
 * `Con.ker_prod`, `Con.ker_prodMulHom`: the kernel of a paired homomorphism is the meet of the
   kernels.
 -/
+
+@[expose] public section
 
 variable {M N : Type*} [Mul M] [Mul N] {F : Type*} [FunLike F M N] [MulHomClass F M N]
 

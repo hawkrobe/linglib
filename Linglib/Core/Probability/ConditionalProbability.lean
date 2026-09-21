@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.ConditionalProbability
-import Mathlib.MeasureTheory.Measure.Decomposition.Lebesgue
+module
+
+public import Mathlib.Probability.ConditionalProbability
+public import Mathlib.MeasureTheory.Measure.Decomposition.Lebesgue
 
 /-!
 # Conditional measures are densities
@@ -22,6 +24,8 @@ the pattern of `WithDensityFinite.lean`), unless review pulls
 `cond_eq_withDensity` alone into `ConditionalProbability.lean` at the cost of
 one import.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal ProbabilityTheory

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.WellFoundedSet
+module
+
+public import Mathlib.Order.WellFoundedSet
 
 /-!
 # Well-quasi-orders: finite bases and Higman's lemma
@@ -13,6 +15,8 @@ finitely many principal filters — stated relation-style, and Higman's lemma: o
 alphabet the sublist order on `List α` is a well-quasi-order, specialising mathlib's
 `Set.PartiallyWellOrderedOn.partiallyWellOrderedOn_sublistForall₂` to equality.
 -/
+
+@[expose] public section
 
 variable {α : Type*}
 

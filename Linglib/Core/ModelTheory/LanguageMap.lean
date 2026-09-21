@@ -1,4 +1,6 @@
-import Mathlib.ModelTheory.Basic
+module
+
+public import Mathlib.ModelTheory.Basic
 
 /-!
 # The monadic language on a type of predicate symbols
@@ -22,6 +24,8 @@ The monadic signature with individual constants is `(monadic Pred)[[Const]]`, ma
 and `constantsOn.structure`, the constant symbol of `c` is `(monadic Pred).con c`, and the
 relation symbol of `P` is `Sum.inl P`.
 -/
+
+@[expose] public section
 
 universe u
 

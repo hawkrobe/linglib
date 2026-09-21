@@ -1,6 +1,8 @@
-import Mathlib.LinearAlgebra.Matrix.Symmetric
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Tactic.Linarith
+module
+
+public import Mathlib.LinearAlgebra.Matrix.Symmetric
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Diagonals of symmetric idempotent matrices
@@ -11,6 +13,8 @@ diagonal entry is a sum of squares, `P i i = ∑ j, P i j ^ 2`, and over an orde
 
 `[UPSTREAM]` candidate.
 -/
+
+@[expose] public section
 
 namespace Matrix
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.BourbakiWitt
-import Mathlib.Order.FixedPoints
+module
+
+public import Mathlib.Order.BourbakiWitt
+public import Mathlib.Order.FixedPoints
 
 /-!
 # ω-suprema in complete lattices
@@ -16,6 +18,8 @@ that is independent of which of the two instances a continuity proof was carried
 (`OrderHom.lfp_eq_iSup_iterate`). `[UPSTREAM]` candidate for
 `Mathlib/Order/OmegaCompletePartialOrder.lean` and `Mathlib/Order/FixedPoints.lean`.
 -/
+
+@[expose] public section
 
 open OmegaCompletePartialOrder
 

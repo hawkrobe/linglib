@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Probability.Kernel.Basic
-import Mathlib.MeasureTheory.Measure.WithDensity
+module
+
+public import Mathlib.Probability.Kernel.Basic
+public import Mathlib.MeasureTheory.Measure.WithDensity
 
 /-!
 # Kernels between countable spaces
@@ -14,6 +16,8 @@ measurable singletons is a countable sum of the kernels concentrated at one poin
 kernel between two countable types is s-finite. `[UPSTREAM]` candidate for
 `Mathlib/Probability/Kernel/Basic.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

@@ -1,5 +1,7 @@
-import Mathlib.Order.RelClasses
-import Mathlib.Order.Interval.Finset.Basic
+module
+
+public import Mathlib.Order.RelClasses
+public import Mathlib.Order.Interval.Finset.Basic
 
 /-!
 # Partial-Rank Orders
@@ -38,6 +40,8 @@ totality whenever any element is unranked.
   between the down-sets (the structural fact behind nanosyntactic "feature
   stack" decompositions, replacing per-instance stipulate-a-table-and-`decide`)
 -/
+
+@[expose] public section
 
 namespace Core.Order
 

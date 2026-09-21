@@ -1,5 +1,7 @@
-import Mathlib.Logic.Function.DependsOn
-import Mathlib.ModelTheory.Semantics
+module
+
+public import Mathlib.Logic.Function.DependsOn
+public import Mathlib.ModelTheory.Semantics
 
 /-!
 # Satisfaction: dependence on variables and decidability
@@ -15,6 +17,8 @@ so that `decide` checks `Realize` facts on concrete finite models.
   recursion on the formula.
 - `FirstOrder.Language.Formula.decidableRealize` is the same for formulas.
 -/
+
+@[expose] public section
 
 namespace FirstOrder.Language
 

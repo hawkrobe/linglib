@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fin.Tuple.Sort
-import Mathlib.Data.Fintype.Perm
-import Mathlib.GroupTheory.Perm.ViaEmbedding
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
+
+public import Mathlib.Data.Fin.Tuple.Sort
+public import Mathlib.Data.Fintype.Perm
+public import Mathlib.GroupTheory.Perm.ViaEmbedding
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Permutations realizing an order pattern
@@ -31,6 +33,8 @@ precomposition into postcomposition and gives the bijections between classes.
 [UPSTREAM] Mathlib has no permutation-pattern material; this belongs at
 `Mathlib/Combinatorics/Enumerative/PermutationPattern.lean`.
 -/
+
+@[expose] public section
 
 open Finset Equiv Nat
 

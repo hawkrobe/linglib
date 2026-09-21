@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.MeasureTheory.Measure.WithDensity
-import Mathlib.MeasureTheory.Integral.Lebesgue.Map
+module
+
+public import Mathlib.MeasureTheory.Measure.WithDensity
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 
 /-!
 # Densities and pushforwards
@@ -12,6 +14,8 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 A density that factors through a map commutes with the pushforward along it.
 `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/WithDensity.lean`.
 -/
+
+@[expose] public section
 
 open scoped ENNReal
 

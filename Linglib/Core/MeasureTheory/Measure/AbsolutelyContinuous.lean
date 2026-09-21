@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.MeasureTheory.Measure.AbsolutelyContinuous
+module
+
+public import Mathlib.MeasureTheory.Measure.AbsolutelyContinuous
 
 /-!
 # Absolute continuity on a countable type
@@ -11,6 +13,8 @@ import Mathlib.MeasureTheory.Measure.AbsolutelyContinuous
 On a countable type with measurable singletons, absolute continuity is checked on atoms.
 `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/AbsolutelyContinuous.lean`.
 -/
+
+@[expose] public section
 
 namespace MeasureTheory.Measure
 

@@ -1,10 +1,12 @@
-import Mathlib.Order.Interval.Basic
-import Mathlib.Order.Bounds.Image
-import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
-import Mathlib.Algebra.Order.Group.Defs
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Ring.Rat
-import Mathlib.Tactic.Abel
+module
+
+public import Mathlib.Order.Interval.Basic
+public import Mathlib.Order.Bounds.Image
+public import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
+public import Mathlib.Algebra.Order.Group.Defs
+public import Mathlib.Algebra.Order.Interval.Basic
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Tactic.Abel
 
 /-!
 # Interval contents on ordered types
@@ -36,6 +38,8 @@ additivity axiomatized here, which mathlib does not state.
   point have no least element — the domain-general form of
   [rouillard-2026]'s G-TIA information collapse.
 -/
+
+@[expose] public section
 
 namespace Core.Order
 

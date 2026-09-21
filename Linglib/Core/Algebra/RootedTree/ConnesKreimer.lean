@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.MonoidAlgebra.Basic
-import Mathlib.LinearAlgebra.Finsupp.VectorSpace
+module
+
+public import Mathlib.Algebra.MonoidAlgebra.Basic
+public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 
 /-!
 # Connes-Kreimer Hopf algebra carrier on n-ary rooted trees
@@ -43,6 +45,8 @@ transport.
 
 `[UPSTREAM]` candidate.
 -/
+
+@[expose] public section
 
 noncomputable section
 

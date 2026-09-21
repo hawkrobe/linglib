@@ -1,4 +1,6 @@
-import Mathlib.Order.Hom.Order
+module
+
+public import Mathlib.Order.Hom.Order
 
 /-!
 # Distributive lattice structure on order homomorphisms
@@ -10,6 +12,8 @@ file records that the structure is distributive when `β` is.
 
 * [birkhoff-1967]
 -/
+
+@[expose] public section
 
 namespace OrderHom
 

@@ -1,4 +1,6 @@
-import Mathlib.Order.BooleanAlgebra.Defs
+module
+
+public import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
 # Qualitative probability orders
@@ -23,6 +25,8 @@ the sibling files (`Content.lean`, `Scott.lean`, `Representability.lean`,
 
 [kraft-pratt-seidenberg-1959]
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.Idempotent
-import Mathlib.Algebra.Group.WithOne.Basic
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.Set.Finite.Basic
-import Mathlib.Order.Preorder.Finite
+module
+
+public import Mathlib.Algebra.Group.Idempotent
+public import Mathlib.Algebra.Group.WithOne.Basic
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.Set.Finite.Basic
+public import Mathlib.Order.Preorder.Finite
 
 /-!
 # Idempotent powers in finite monoids and semigroups
@@ -42,6 +44,8 @@ syntactic monoid satisfies `s · x^ω = x^ω`, reverse-definite ones
 
 `[UPSTREAM]` candidate (`Mathlib.Algebra.Group.Idempotent` sibling).
 -/
+
+@[expose] public section
 
 namespace Monoid
 

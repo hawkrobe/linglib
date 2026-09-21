@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Analysis.Convex.Function
+module
+
+public import Mathlib.Analysis.Convex.Function
 
 /-!
 # Finite suprema of convex functions
@@ -17,6 +19,8 @@ support function of a finite family of affine functionals — the "max of
 affine is convex" fact underlying decision values, Bayes risk, and Blackwell
 comparison — is the instance over a `Finset` of linear maps.
 -/
+
+@[expose] public section
 
 open Finset
 

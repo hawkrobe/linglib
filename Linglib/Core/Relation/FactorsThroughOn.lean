@@ -1,9 +1,11 @@
-import Mathlib.Logic.Function.Basic
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Set.Finite.Range
-import Mathlib.SetTheory.Cardinal.Finite
-import Mathlib.Data.Setoid.Basic
+module
+
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Set.Finite.Range
+public import Mathlib.SetTheory.Cardinal.Finite
+public import Mathlib.Data.Setoid.Basic
 
 /-!
 # Factor-through on a subset
@@ -28,6 +30,8 @@ equality of `g a` and `g b`.
   another takes no more values.
 * `Function.factorsThrough_iff_ker_le`: factoring through is the order of kernels.
 -/
+
+@[expose] public section
 
 namespace Function
 

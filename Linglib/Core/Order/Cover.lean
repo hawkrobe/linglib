@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Defs
-import Mathlib.Data.List.Chain
-import Mathlib.Order.Cover
+module
+
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Data.List.Chain
+public import Mathlib.Order.Cover
 
 /-!
 # Chains of covers
@@ -20,6 +22,8 @@ The file also decides the covering relations on a finite order, which mathlib do
 * `List.IsChain.mem_of_le_of_le`: a chain of weak covers that starts at or below `x` and reaches
   an element at or above `x` contains `x`.
 -/
+
+@[expose] public section
 
 variable {α : Type*}
 

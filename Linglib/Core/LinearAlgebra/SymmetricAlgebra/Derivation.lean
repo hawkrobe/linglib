@@ -3,209 +3,98 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
-import Mathlib.RingTheory.Derivation.Basic
-import Mathlib.Algebra.TrivSqZeroExt.Basic
+module
+
+public import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Basic
+public import Mathlib.Algebra.TrivSqZeroExt.Basic
+public import Mathlib.RingTheory.Derivation.Basic
 
 /-!
-# Derivations on the symmetric algebra
+# Derivations of the symmetric algebra
 
-The universal property of `SymmetricAlgebra R M` for derivations: an
-`R`-linear map `f : M → SymmetricAlgebra R M` extends uniquely to a
-self-derivation `D : SymmetricAlgebra R M → SymmetricAlgebra R M` with
-`D ∘ ι = f`. Packaged as a linear equivalence
-`SymmetricAlgebra.liftDerivation` between `R`-linear maps and self-derivations.
+In this file we prove that a derivation of `SymmetricAlgebra R M` is determined by its values on
+the generators. We also provide a constructor `SymmetricAlgebra.mkDerivation` that builds a
+derivation from its values on the generators and a linear equivalence
+`SymmetricAlgebra.mkDerivationEquiv` between `M →ₗ[R] N` and
+`Derivation R (SymmetricAlgebra R M) N`, the siblings of `MvPolynomial.mkDerivation` and
+`MvPolynomial.mkDerivationEquiv`. [UPSTREAM]
 
-Sibling of `Mathlib/LinearAlgebra/SymmetricAlgebra/Basic.lean`'s `lift`
-(which gives the algebra-hom universal property). This file fills the
-mathlib gap for the derivation universal property — candidate for upstream.
+## Implementation notes
 
-## Main definitions
-
-* `SymmetricAlgebra.liftDerivation` — the linear equivalence between
-  `M →ₗ[R] SymmetricAlgebra R M` and `Derivation R (SymmetricAlgebra R M)
-  (SymmetricAlgebra R M)`.
-
-## Main results
-
-* `SymmetricAlgebra.derivation_ext` — derivation extensionality on the
-  generators `ι R M`. Two self-derivations of `SymmetricAlgebra R M` are
-  equal iff they agree on `ι R M y` for all `y : M`.
-* `SymmetricAlgebra.liftDerivation_ι` — the forward direction:
-  `liftDerivation f (ι R M y) = f y`.
-
-## Construction
-
-The forward direction uses the **dual-number trick** (Cartan-Eilenberg):
-the trivial square-zero extension `tsze (S(M)) (S(M)) = S(M) ⊕ S(M) ε`
-(with `ε² = 0`) carries an algebra structure such that an algebra hom
-`φ : S(M) → tsze (S(M)) (S(M))` of the form `s ↦ (s, D s)` corresponds
-exactly to a derivation `D`. We construct `φ` via `SymmetricAlgebra.lift`
-applied to `y ↦ (ι R M y, f y)`, then extract `D s := (φ s).snd`.
+`mkDerivation f` is the second component of the algebra homomorphism into the trivial square-zero
+extension `TrivSqZeroExt (SymmetricAlgebra R M) N` that lifts `x ↦ (ι R M x, f x)`: a map
+`a ↦ (a, D a)` into the extension is multiplicative exactly when `D` satisfies the Leibniz rule.
 -/
+
+@[expose] public section
 
 namespace SymmetricAlgebra
 
-variable {R : Type*} [CommRing R]
-variable {M : Type*} [AddCommGroup M] [Module R M]
+variable {R M N : Type*} [CommSemiring R] [AddCommMonoid M] [Module R M]
+  [AddCommMonoid N] [Module R N] [Module (SymmetricAlgebra R M) N]
 
-/-! ### Derivation extensionality on generators -/
-
-/-- A self-derivation of `SymmetricAlgebra R M` is determined by its
-values on the canonical generators `ι R M y`. The standard universal
-property of derivations on a free commutative algebra. -/
 @[ext]
-theorem derivation_ext
-    {D₁ D₂ : Derivation R (SymmetricAlgebra R M) (SymmetricAlgebra R M)}
-    (h : ∀ y : M, D₁ (ι R M y) = D₂ (ι R M y)) :
-    D₁ = D₂ := by
-  ext s
-  induction s using SymmetricAlgebra.induction with
-  | algebraMap r => simp only [Derivation.map_algebraMap]
-  | ι y => exact h y
-  | mul a b ha hb =>
-    rw [Derivation.leibniz, Derivation.leibniz, ha, hb]
-  | add a b ha hb =>
-    rw [Derivation.map_add, Derivation.map_add, ha, hb]
+theorem derivation_ext {D₁ D₂ : Derivation R (SymmetricAlgebra R M) N}
+    (h : ∀ x, D₁ (ι R M x) = D₂ (ι R M x)) : D₁ = D₂ :=
+  Derivation.ext_of_adjoin_eq_top _ adjoin_range_ι (Set.forall_mem_range.2 h)
 
-/-! ### Construction via the dual-number trick
+variable [IsScalarTower R (SymmetricAlgebra R M) N]
 
-The forward map `liftDerivation : (M →ₗ[R] S(M)) → Derivation R (S(M)) (S(M))`,
-extended to a linear equivalence below. -/
+section
 
-/-- The `R`-linear inclusion `M →ₗ[R] tsze (S(M)) (S(M))` sending `y` to
-`(ι y, f y)`. Helper for `liftDerivation`. -/
-private noncomputable def liftDerivationInclusion
-    (f : M →ₗ[R] SymmetricAlgebra R M) :
-    M →ₗ[R] TrivSqZeroExt (SymmetricAlgebra R M) (SymmetricAlgebra R M) :=
-  (TrivSqZeroExt.inrHom (R := SymmetricAlgebra R M) (M := SymmetricAlgebra R M)).restrictScalars R
-    ∘ₗ f
-  + (TrivSqZeroExt.inlAlgHom R (SymmetricAlgebra R M) (SymmetricAlgebra R M)).toLinearMap
-    ∘ₗ (ι R M)
+open TrivSqZeroExt
 
-/-- The algebra hom `S(M) →ₐ[R] tsze (S(M)) (S(M))` extending
-`liftDerivationInclusion f`. The corresponding derivation is the second
-projection of this map. Helper for `liftDerivation`. -/
-private noncomputable def liftDerivationAlgHom
-    (f : M →ₗ[R] SymmetricAlgebra R M) :
-    SymmetricAlgebra R M →ₐ[R]
-      TrivSqZeroExt (SymmetricAlgebra R M) (SymmetricAlgebra R M) :=
-  SymmetricAlgebra.lift (liftDerivationInclusion f)
+/-- The right action of the commutative algebra `SymmetricAlgebra R M` on `N` needed by
+`TrivSqZeroExt`; it agrees with the left action. -/
+local instance : Module (SymmetricAlgebra R M)ᵐᵒᵖ N :=
+  Module.compHom N ((RingHom.id (SymmetricAlgebra R M)).fromOpposite mul_comm)
 
-private theorem liftDerivationAlgHom_apply_ι
-    (f : M →ₗ[R] SymmetricAlgebra R M) (y : M) :
-    liftDerivationAlgHom f (ι R M y) =
-      TrivSqZeroExt.inr (f y) + TrivSqZeroExt.inl (ι R M y) := by
-  unfold liftDerivationAlgHom liftDerivationInclusion
-  rw [SymmetricAlgebra.lift_ι_apply]
-  simp [TrivSqZeroExt.inrHom, TrivSqZeroExt.inlAlgHom]
+local instance : IsCentralScalar (SymmetricAlgebra R M) N := ⟨fun _ _ => rfl⟩
 
-/-- The first projection of `liftDerivationAlgHom f` is the identity:
-`(liftDerivationAlgHom f s).fst = s` for all `s`. By the uniqueness of
-the algebra-hom lift. -/
-private theorem liftDerivationAlgHom_fst
-    (f : M →ₗ[R] SymmetricAlgebra R M) (s : SymmetricAlgebra R M) :
-    (liftDerivationAlgHom f s).fst = s := by
-  have heq : (TrivSqZeroExt.fstHom R (SymmetricAlgebra R M) (SymmetricAlgebra R M)).comp
-                (liftDerivationAlgHom f) =
-              AlgHom.id R (SymmetricAlgebra R M) := by
-    apply SymmetricAlgebra.algHom_ext
-    ext y
-    show (TrivSqZeroExt.fstHom R _ _) (liftDerivationAlgHom f (ι R M y)) = ι R M y
-    rw [liftDerivationAlgHom_apply_ι]
-    simp [TrivSqZeroExt.fstHom_apply, TrivSqZeroExt.fst_add,
-          TrivSqZeroExt.fst_inr, TrivSqZeroExt.fst_inl]
-  exact AlgHom.congr_fun heq s
+/-- The algebra homomorphism into the trivial square-zero extension lifting
+`x ↦ (ι R M x, f x)`. Its first component is the identity and its second component is
+`mkDerivation f`; use `SymmetricAlgebra.mkDerivation` instead. -/
+def liftTrivSqZeroExt (f : M →ₗ[R] N) :
+    SymmetricAlgebra R M →ₐ[R] TrivSqZeroExt (SymmetricAlgebra R M) N :=
+  lift <| (inlAlgHom R (SymmetricAlgebra R M) N).toLinearMap ∘ₗ ι R M +
+    (inrHom (SymmetricAlgebra R M) N).restrictScalars R ∘ₗ f
 
-/-- The forward direction of `liftDerivation`: extract a derivation from
-the second projection of the dual-number lift. -/
-private noncomputable def liftDerivationFun
-    (f : M →ₗ[R] SymmetricAlgebra R M) :
-    Derivation R (SymmetricAlgebra R M) (SymmetricAlgebra R M) where
-  toFun := fun s => (liftDerivationAlgHom f s).snd
-  map_add' a b := by
-    show (liftDerivationAlgHom f (a + b)).snd =
-         (liftDerivationAlgHom f a).snd + (liftDerivationAlgHom f b).snd
-    simp only [map_add, TrivSqZeroExt.snd_add]
-  map_smul' r a := by
-    show (liftDerivationAlgHom f (r • a)).snd = r • (liftDerivationAlgHom f a).snd
-    simp only [map_smul, TrivSqZeroExt.snd_smul]
-  map_one_eq_zero' := by
-    show (liftDerivationAlgHom f 1).snd = 0
-    simp only [map_one, TrivSqZeroExt.snd_one]
-  leibniz' a b := by
-    show (liftDerivationAlgHom f (a * b)).snd =
-         a • (liftDerivationAlgHom f b).snd + b • (liftDerivationAlgHom f a).snd
-    simp only [map_mul, TrivSqZeroExt.snd_mul, liftDerivationAlgHom_fst]
-    simp only [smul_eq_mul, MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op]
-    ring
+theorem fst_liftTrivSqZeroExt (f : M →ₗ[R] N) (a : SymmetricAlgebra R M) :
+    (liftTrivSqZeroExt f a).fst = a := by
+  have : (fstHom R (SymmetricAlgebra R M) N).comp (liftTrivSqZeroExt f) = .id R _ :=
+    algHom_ext <| LinearMap.ext fun x => by simp [liftTrivSqZeroExt]
+  exact AlgHom.congr_fun this a
 
-private theorem liftDerivationFun_ι
-    (f : M →ₗ[R] SymmetricAlgebra R M) (y : M) :
-    liftDerivationFun f (ι R M y) = f y := by
-  show (liftDerivationAlgHom f (ι R M y)).snd = f y
-  rw [liftDerivationAlgHom_apply_ι]
-  simp [TrivSqZeroExt.snd_add, TrivSqZeroExt.snd_inr, TrivSqZeroExt.snd_inl]
-
-/-! ### Linearity in the input map
-
-The forward map `f ↦ liftDerivationFun f` is `R`-linear, packaged via
-`derivation_ext`. -/
-
-private theorem liftDerivationFun_add
-    (f g : M →ₗ[R] SymmetricAlgebra R M) :
-    liftDerivationFun (f + g) = liftDerivationFun f + liftDerivationFun g := by
-  apply derivation_ext
-  intro y
-  rw [Derivation.add_apply, liftDerivationFun_ι, liftDerivationFun_ι,
-      liftDerivationFun_ι]
-  rfl
-
-private theorem liftDerivationFun_smul
-    (r : R) (f : M →ₗ[R] SymmetricAlgebra R M) :
-    liftDerivationFun (r • f) = r • liftDerivationFun f := by
-  apply derivation_ext
-  intro y
-  rw [Derivation.smul_apply, liftDerivationFun_ι, liftDerivationFun_ι]
-  rfl
-
-/-! ### The bundled `LinearEquiv` -/
-
-/-- The **derivation universal property** of `SymmetricAlgebra R M`: an
-`R`-linear map `f : M → SymmetricAlgebra R M` extends uniquely to a
-self-derivation `D : SymmetricAlgebra R M → SymmetricAlgebra R M`. The
-correspondence is an `R`-linear equivalence.
-
-The forward direction is constructed via the dual-number trick (see file
-docstring). The inverse is restriction-to-`ι`: `D ↦ D.toLinearMap ∘ ι R M`. -/
-@[simps! apply_apply]
-noncomputable def liftDerivation :
-    (M →ₗ[R] SymmetricAlgebra R M) ≃ₗ[R]
-      Derivation R (SymmetricAlgebra R M) (SymmetricAlgebra R M) where
-  toFun := liftDerivationFun
-  map_add' := liftDerivationFun_add
-  map_smul' := liftDerivationFun_smul
-  invFun := fun D => D.toLinearMap ∘ₗ (ι R M)
-  left_inv f := by
-    ext y
-    show liftDerivationFun f (ι R M y) = f y
-    exact liftDerivationFun_ι f y
-  right_inv D := by
-    apply derivation_ext
-    intro y
-    show liftDerivationFun _ (ι R M y) = D (ι R M y)
-    rw [liftDerivationFun_ι]
-    rfl
+/-- The derivation on `SymmetricAlgebra R M` that takes the value `f x` on `ι R M x`. -/
+def mkDerivation (f : M →ₗ[R] N) : Derivation R (SymmetricAlgebra R M) N where
+  toLinearMap :=
+    (sndHom (SymmetricAlgebra R M) N).restrictScalars R ∘ₗ (liftTrivSqZeroExt f).toLinearMap
+  map_one_eq_zero' := by simp
+  leibniz' a b := by simp [snd_mul, fst_liftTrivSqZeroExt]
 
 @[simp]
-theorem liftDerivation_apply_ι (f : M →ₗ[R] SymmetricAlgebra R M) (y : M) :
-    liftDerivation f (ι R M y) = f y :=
-  liftDerivationFun_ι f y
+theorem mkDerivation_ι (f : M →ₗ[R] N) (x : M) : mkDerivation f (ι R M x) = f x := by
+  simp [mkDerivation, liftTrivSqZeroExt]
+
+end
+
+/-- `SymmetricAlgebra.mkDerivation` as a linear equivalence. -/
+def mkDerivationEquiv : (M →ₗ[R] N) ≃ₗ[R] Derivation R (SymmetricAlgebra R M) N :=
+  LinearEquiv.symm
+    { toFun := fun D => (D : SymmetricAlgebra R M →ₗ[R] N) ∘ₗ ι R M
+      invFun := mkDerivation
+      map_add' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl
+      left_inv := fun _ => derivation_ext <| mkDerivation_ι _
+      right_inv := fun _ => LinearMap.ext <| mkDerivation_ι _ }
 
 @[simp]
-theorem liftDerivation_symm_apply
-    (D : Derivation R (SymmetricAlgebra R M) (SymmetricAlgebra R M)) :
-    liftDerivation.symm D = D.toLinearMap ∘ₗ (ι R M) :=
+theorem mkDerivationEquiv_apply (f : M →ₗ[R] N) : mkDerivationEquiv f = mkDerivation f :=
+  rfl
+
+@[simp]
+theorem mkDerivationEquiv_symm_apply (D : Derivation R (SymmetricAlgebra R M) N) :
+    mkDerivationEquiv.symm D = (D : SymmetricAlgebra R M →ₗ[R] N) ∘ₗ ι R M :=
   rfl
 
 end SymmetricAlgebra

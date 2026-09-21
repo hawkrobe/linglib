@@ -1,6 +1,8 @@
-import Mathlib.Analysis.InnerProductSpace.Adjoint
-import Mathlib.Analysis.InnerProductSpace.Projection.Basic
-import Mathlib.Order.Filter.Extr
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+public import Mathlib.Order.Filter.Extr
 
 /-!
 # Least-squares solutions
@@ -26,6 +28,8 @@ fitted values, and the solution coset.
 * `IsLeastSquares.map_eq`, `IsLeastSquares.iff_map_eq`: fitted values are unique, and the
   solutions are exactly the preimages of the fitted value.
 -/
+
+@[expose] public section
 
 namespace Core
 
