@@ -4,11 +4,12 @@
 This file defines the classificatory vocabulary of aspect, following the two components of
 Smith's theory. Situation type classifies an eventuality by three binary features: whether it
 has a natural endpoint (`Telicity`), whether it takes time (`Duration`) and whether it involves
-change (`Dynamicity`). The features are bundled as an `AspectualProfile` and projected onto the
-four classes of Vendler together with Smith's semelfactives (`VendlerClass`). The aspectual
-shifts of compositional coercion change one feature of a profile (`AspectualProfile.telicize`
-and its siblings), and Dowty's adverbial and progressive diagnostics are functions of the
-features (`forXPrediction`, `inXPrediction`, `progressivePrediction`). Viewpoint is the
+change (`Dynamicity`). The situation types are the four classes of Vendler together with
+Smith's semelfactives (`VendlerClass`), each determined by its features
+(`VendlerClass.eq_of_features`). The aspectual shifts of compositional coercion change one
+feature of a situation type (`VendlerClass.telicize` and its siblings), and Dowty's adverbial
+and progressive diagnostics are functions of the features (`forXPrediction`, `inXPrediction`,
+`progressivePrediction`). Viewpoint is the
 presentation of a situation, Klein's four relations between the topic time and the situation
 time together with Smith's neutral viewpoint (`ViewpointType`), and at its coarsest the
 opposition of perfective and imperfective (`Perfectivity`). The operators that viewpoints
@@ -16,9 +17,7 @@ denote are in `Semantics/Aspect/Viewpoint.lean`.
 
 ## Main definitions
 
-* `Aspect.VendlerClass`: the five situation types.
-* `Aspect.AspectualProfile`: a bundle of the three features, with `toVendlerClass` its
-  situation type.
+* `Aspect.VendlerClass`: the five situation types, with their features and shifts.
 * `Aspect.DiagnosticResult`: the outcome of a diagnostic, with the *for*-adverbial,
   *in*-adverbial and progressive tests as functions of a situation type.
 * `Aspect.ViewpointType`, `Aspect.Perfectivity`: the viewpoints.
@@ -82,63 +81,66 @@ def dynamicity : VendlerClass → Dynamicity
 
 end VendlerClass
 
-/-- The three features of a situation type, bundled. -/
-structure AspectualProfile where
-  telicity : Telicity
-  duration : Duration
-  dynamicity : Dynamicity
-  deriving DecidableEq, Repr
+namespace VendlerClass
 
-namespace AspectualProfile
+variable {c d : VendlerClass}
 
-/-- The situation type of a profile. -/
-@[simp] def toVendlerClass (p : AspectualProfile) : VendlerClass :=
-  match p.dynamicity, p.duration, p.telicity with
-  | .stative, _, _ => .state
-  | .dynamic, .durative, .atelic => .activity
-  | .dynamic, .punctual, .telic => .achievement
-  | .dynamic, .durative, .telic => .accomplishment
-  | .dynamic, .punctual, .atelic => .semelfactive
+/-- A situation type is determined by its three features. -/
+theorem eq_of_features (ht : c.telicity = d.telicity) (hd : c.duration = d.duration)
+    (hy : c.dynamicity = d.dynamicity) : c = d := by
+  revert ht hd hy
+  cases c <;> cases d <;> decide
 
-/-- Add a natural endpoint. -/
-def telicize (p : AspectualProfile) : AspectualProfile := { p with telicity := .telic }
+/-- Add a natural endpoint, by which an activity becomes an accomplishment and a semelfactive
+an achievement. -/
+def telicize : VendlerClass → VendlerClass
+  | activity => accomplishment
+  | semelfactive => achievement
+  | c => c
 
 /-- Remove the natural endpoint, the effect of the progressive. -/
-def atelicize (p : AspectualProfile) : AspectualProfile := { p with telicity := .atelic }
+def atelicize : VendlerClass → VendlerClass
+  | accomplishment => activity
+  | achievement => semelfactive
+  | c => c
 
 /-- Stretch a punctual eventuality over time, the iterative reading. -/
-def duratize (p : AspectualProfile) : AspectualProfile := { p with duration := .durative }
+def duratize : VendlerClass → VendlerClass
+  | achievement => accomplishment
+  | semelfactive => activity
+  | c => c
 
-end AspectualProfile
+theorem telicity_telicize (h : c.dynamicity = .dynamic) : c.telicize.telicity = .telic := by
+  cases c <;> first | rfl | cases h
 
-/-- The canonical profile of a situation type. -/
-@[simp] def VendlerClass.toProfile (c : VendlerClass) : AspectualProfile :=
-  ⟨c.telicity, c.duration, c.dynamicity⟩
-
-/-- The canonical profile of a state. -/
-def stateProfile : AspectualProfile := ⟨.atelic, .durative, .stative⟩
-
-/-- The canonical profile of an activity. -/
-def activityProfile : AspectualProfile := ⟨.atelic, .durative, .dynamic⟩
-
-/-- The canonical profile of an achievement. -/
-def achievementProfile : AspectualProfile := ⟨.telic, .punctual, .dynamic⟩
-
-/-- The canonical profile of an accomplishment. -/
-def accomplishmentProfile : AspectualProfile := ⟨.telic, .durative, .dynamic⟩
-
-/-- The canonical profile of a semelfactive. -/
-def semelfactiveProfile : AspectualProfile := ⟨.atelic, .punctual, .dynamic⟩
-
-@[simp] theorem VendlerClass.toProfile_toVendlerClass (c : VendlerClass) :
-    c.toProfile.toVendlerClass = c := by
+@[simp] theorem duration_telicize (c : VendlerClass) : c.telicize.duration = c.duration := by
   cases c <;> rfl
 
-/-- Telicizing an activity gives an accomplishment. -/
-theorem telicize_activity : activityProfile.telicize.toVendlerClass = .accomplishment := rfl
+@[simp] theorem dynamicity_telicize (c : VendlerClass) :
+    c.telicize.dynamicity = c.dynamicity := by
+  cases c <;> rfl
 
-/-- Duratizing a semelfactive gives an activity, the iterative reading. -/
-theorem duratize_semelfactive : semelfactiveProfile.duratize.toVendlerClass = .activity := rfl
+@[simp] theorem telicity_atelicize (c : VendlerClass) : c.atelicize.telicity = .atelic := by
+  cases c <;> rfl
+
+@[simp] theorem duration_atelicize (c : VendlerClass) : c.atelicize.duration = c.duration := by
+  cases c <;> rfl
+
+@[simp] theorem dynamicity_atelicize (c : VendlerClass) :
+    c.atelicize.dynamicity = c.dynamicity := by
+  cases c <;> rfl
+
+@[simp] theorem duration_duratize (c : VendlerClass) : c.duratize.duration = .durative := by
+  cases c <;> rfl
+
+@[simp] theorem telicity_duratize (c : VendlerClass) : c.duratize.telicity = c.telicity := by
+  cases c <;> rfl
+
+@[simp] theorem dynamicity_duratize (c : VendlerClass) :
+    c.duratize.dynamicity = c.dynamicity := by
+  cases c <;> rfl
+
+end VendlerClass
 
 /-! ### Diagnostics
 

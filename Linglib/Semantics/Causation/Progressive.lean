@@ -1,7 +1,6 @@
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Causation.CCSelection
-import Linglib.Semantics.Aspect.SubeventStructure
 
 /-!
 # Progressive Aspect and Causal Structure
@@ -35,7 +34,6 @@ checks type-level sufficiency (`BoolSEM.causallySufficient`);
 
 namespace Causation.Progressive
 
-open Reference
 open Causation Causation.Mechanism Causation.SEM
 
 /-! ### Causal Process -/
@@ -251,28 +249,5 @@ theorem typeLevelHolds_is_develop {V : Type*} [Fintype V] [DecidableEq V]
     (proc.M.developDet
       (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true :=
   Iff.rfl
-
-/-! ### Bridge to Temporal Decomposition -/
-
-/-- A causally grounded telic event: bridges `CausalProcess` (causal
-    explanation) with `SubeventPhases` (temporal realization).
-
-    [nadathur-bar-asher-siegal-2024]: telic predicates encode
-    structured causal models. The activity phase corresponds to the
-    initiating action; the result phase corresponds to the effect
-    variable. The causal model explains WHY the activity leads to the
-    result: the initiator is type-level sufficient. -/
-structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
-    (T : Type*) [LinearOrder T] where
-  /-- The causal process underlying the event -/
-  process : CausalProcess V
-  /-- IsDAG instance for process.M.graph (carried explicitly). -/
-  dagInst : CausalGraph.IsDAG process.M.graph
-  /-- IsDeterministic instance for proc.M (carried explicitly). -/
-  detInst : SEM.IsDeterministic process.M
-  /-- The temporal phases: activity and result with ordering -/
-  phases : Aspect.SubeventPhases T
-  /-- The causal trajectory is viable: initiator is type-level sufficient. -/
-  causallyViable : @CausalProcess.typeLevelHolds V _ _ process dagInst detInst
 
 end Causation.Progressive

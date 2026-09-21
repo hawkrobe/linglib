@@ -29,7 +29,7 @@ does not show it (`CompletionInvisible`).
   cases are witnessed on the integers.
 * The per-language systems are the chapter's claims about which viewpoints a language
   grammaticizes, which viewpoint is dominant in an asymmetric system, and how its perfective
-  treats statives. The compositional rules of section 3.3 live in `Semantics/Aspect/Composition`.
+  treats statives. The compositional rules of section 3.3 are not formalized.
 
 ## References
 

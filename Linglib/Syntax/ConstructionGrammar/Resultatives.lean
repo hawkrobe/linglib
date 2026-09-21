@@ -230,17 +230,11 @@ The resultative's aspect is derived compositionally:
 - Always durative (extends over time)
 - Telic iff the RP denotes a bounded path/property -/
 
-/-- The aspectual profile of a resultative, from RP boundedness. -/
-def resultativeAspect (b : Boundedness) : AspectualProfile :=
-  { telicity := match b with
-      | .bounded => .telic
-      | .unbounded => .atelic
-  , duration := .durative
-  , dynamicity := .dynamic }
-
-/-- The Vendler class of a resultative. -/
-def resultativeVendlerClass (b : Boundedness) : VendlerClass :=
-  (resultativeAspect b).toVendlerClass
+/-- The situation type of a resultative, which is dynamic and durative, and telic when the
+result phrase is bounded. -/
+def resultativeVendlerClass : Boundedness → VendlerClass
+  | .bounded => .accomplishment
+  | .unbounded => .activity
 
 /-! ## Semantic roles
 
@@ -309,8 +303,7 @@ theorem lower_bounded_scale_unbounded :
 theorem closed_scale_telic_resultative (b : Degree.Boundedness) (hMax : b.HasMax) :
     resultativeVendlerClass (adjScaleToRPBoundedness b) = .accomplishment := by
   cases b <;> simp [Degree.Boundedness.HasMax] at hMax <;>
-    simp [adjScaleToRPBoundedness, Degree.Boundedness.HasMax,
-      resultativeVendlerClass, resultativeAspect, AspectualProfile.toVendlerClass]
+    simp [adjScaleToRPBoundedness, Degree.Boundedness.HasMax, resultativeVendlerClass]
 
 /-- In the dry/wet contrast, dry is productive (bounded → telic),
     wet is not (unbounded → atelic). Derives from scale structure alone. -/
@@ -609,7 +602,7 @@ theorem unbounded_rp_atelic :
     yields an accomplishment (§4 of [goldberg-jackendoff-2004],
     Principle 27). -/
 theorem resultative_telicizes_activity :
-    activityProfile.telicize.toVendlerClass = .accomplishment := rfl
+    VendlerClass.activity.telicize = .accomplishment := rfl
 
 /-! ## General chain theorems
 
