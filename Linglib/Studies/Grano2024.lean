@@ -1,7 +1,12 @@
+import Linglib.Logic.Modal.Basic
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Events.Closure
 import Linglib.Data.Examples.Grano2024
-import Mathlib.Data.Set.Basic
+import Linglib.Fragments.Greek.StandardModern.Verbs
+import Linglib.Fragments.Portuguese.Verbs
+import Linglib.Fragments.Romance.Italian.Verbs
+import Linglib.Fragments.Romance.Spanish.Verbs
+import Linglib.Fragments.Romanian.Verbs
 
 /-!
 # Grano (2024): Intention Reports and Eventuality Abstraction in a Theory of Mood Choice
@@ -21,11 +26,12 @@ intention readings of *persuade*, *decide*, *promise*, and *plan*, and the event
 and perception reports. Section 3's case against [portner-rubinstein-2020] and
 [giannakidou-mari-2021] is `intend_like_hope_in_logic`: on realism, consistency, and monotonicity
 'intend' patterns with 'hope', whose indicative those theories license by that very profile, yet
-every indicative row under 'intend' is rejected. The Hintikka semantics of (73) derives the three
-properties from the overlap of intention and doxastic alternatives (`realism` and its siblings), and
-section 7's synthesis reads the availability of the indicative off the two departures from default
-clausal semantics, a pair of modal backgrounds and eventuality abstraction
-(`indicative_possible_iff`).
+every indicative row under 'intend' is rejected. The Hintikka semantics of (73) is the modal box
+over intention alternatives, and the three properties follow from their overlap with the doxastic
+alternatives (`realism` and its siblings); the verb entries of the language fragments record the
+finite moods the pool accepts (`fragments_match_pool`); and section 7's synthesis reads the
+availability of the indicative off the two departures from default clausal semantics, a pair of
+modal backgrounds and eventuality abstraction (`indicative_possible_iff`).
 
 ## Implementation notes
 
@@ -170,6 +176,7 @@ inductive Diagnostic where
 
 /-- A judged complement clause. -/
 structure Row where
+  language : Glottocode
   cls : Class
   complement : Complement
   reading : Option Reading
@@ -186,7 +193,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     [("indicative", Complement.indicative), ("subjunctive", .subjunctive),
       ("infinitive", .infinitive), ("forTo", .forTo), ("gerund", .gerund),
       ("bareInfinitive", .bareInfinitive)]
-  pure ⟨cls, complement,
+  pure ⟨ex.language, cls, complement,
     ex.parse? "reading"
       [("intention", Reading.intention), ("belief", .belief), ("assertion", .assertion),
         ("foresee", .foresee), ("event", .event), ("proposition", .proposition)],
@@ -197,6 +204,9 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
 
 /-- The paper's judged complements, sections 2, 3, 6, and 7. -/
 def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Every example of the paper is a row. -/
+theorem rows_length : rows.length = Examples.all.length := by decide +kernel
 
 /-! ### Premises 1 and 2 and the conclusion, over the pool -/
 
@@ -240,6 +250,63 @@ theorem hope_varies :
       ∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .ungrammatical := by
   decide
 
+/-! ### Table 1 and the fragment entries -/
+
+/-- The finite moods among the complement types, as codings of a clausal argument position. -/
+def Complement.coding? : Complement → Option _root_.Complement.Coding
+  | .indicative => some .indicative
+  | .subjunctive => some .subjunctive
+  | _ => none
+
+/-- The fragment verb for a language and a class of Table 1. -/
+def verbOf : Glottocode → Class → Option Verb
+  | "stan1288", .want => some Spanish.Verbs.querer
+  | "stan1288", .hope => some Spanish.Verbs.esperar
+  | "stan1288", .causative => some Spanish.Verbs.hacer
+  | "port1283", .want => some Portuguese.Verbs.querer
+  | "port1283", .hope => some Portuguese.Verbs.esperar
+  | "port1283", .intend => some Portuguese.Verbs.pretender
+  | "port1283", .causative => some Portuguese.Verbs.fazer
+  | "ital1282", .want => some Italian.Verbs.volere.toVerb
+  | "ital1282", .hope => some Italian.Verbs.sperare.toVerb
+  | "ital1282", .intend => some Italian.Verbs.intendere.toVerb
+  | "ital1282", .causative => some Italian.Verbs.fare.toVerb
+  | "mode1248", .want => some Greek.StandardModern.Verbs.thelo
+  | "mode1248", .hope => some Greek.StandardModern.Verbs.elpizo
+  | "mode1248", .intend => some Greek.StandardModern.Verbs.protitheme
+  | "mode1248", .causative => some Greek.StandardModern.Verbs.vazo
+  | "roma1327", .want => some Romanian.Verbs.a_vrea
+  | "roma1327", .hope => some Romanian.Verbs.a_spera
+  | "roma1327", .intend => some Romanian.Verbs.a_intentiona
+  | "roma1327", .causative => some Romanian.Verbs.a_face
+  | _, _ => none
+
+/-- The cells of Table 1 with a verb entry, and the causatives of section 2.2. Spanish 'intend' is
+the nominal *tener la intención*, and the French and English entries do not record finite mood. -/
+def cells : List (Glottocode × Class) :=
+  (["port1283", "ital1282", "mode1248", "roma1327"].flatMap fun l ↦
+    [(l, .want), (l, .hope), (l, .intend), (l, .causative)]) ++
+  [("stan1288", .want), ("stan1288", .hope), ("stan1288", .causative)]
+
+/-- Every cell has its verb. -/
+theorem verbOf_isSome : ∀ c ∈ cells, (verbOf c.1 c.2).isSome := by decide
+
+/-- The fragment entries record the paper's judgments: in each cell the verb has a finite
+complement in a mood exactly when the pool has an acceptable complement in that mood, outside the
+rows that test a diagnostic or a second reading. -/
+theorem fragments_match_pool :
+    ∀ c ∈ cells, ∀ v ∈ verbOf c.1 c.2, ∀ m : Complement, ∀ k ∈ m.coding?,
+      (k ∈ v.codings ↔ ∃ r ∈ rows, r.language = c.1 ∧ r.cls = c.2 ∧ r.complement = m ∧
+        r.diagnostic = none ∧ r.reading = none ∧ r.judgment = .acceptable) := by
+  decide +kernel
+
+/-- The variation of 'hope' in two entries with one form: Portuguese *esperar* takes the
+indicative and Spanish *esperar* does not. -/
+theorem esperar_varies :
+    .indicative ∈ Portuguese.Verbs.esperar.codings ∧
+      .indicative ∉ Spanish.Verbs.esperar.codings := by
+  decide
+
 /-! ### Section 3: the logical profile of 'intend' -/
 
 /-- The class fails diagnostic `d` somewhere in the pool. -/
@@ -261,35 +328,31 @@ theorem intend_like_hope_in_logic :
 
 /-! ### The semantics of intention reports, section 4
 
-(73) quantifies over the worlds compatible with the agent's intentions; the one substantive
-constraint is that they overlap the worlds compatible with the agent's beliefs, from which
-realism, consistency, and monotonicity follow. (79) adds the de se triples, the intention state,
-and the causal self-reference, relating the state by `causeStar` to an eventuality of the
-complement, which therefore keeps its eventuality argument. -/
+(73) is necessity over the worlds compatible with the agent's intentions, `□[int]`. Its one
+substantive constraint is that those worlds overlap the worlds compatible with the agent's
+beliefs, `◇[int] (dox w) w`, from which realism, consistency, and monotonicity follow. (78) moves
+to the de se triples of an intention state, and (79) adds the causal self-reference, closing the
+complement's eventuality argument over what the state causes. -/
 
 section Hintikka
 
-variable {W : Type*}
+open ModalLogic
 
-/-- (73): the agent intends `p` at `w` when `p` holds throughout the intention alternatives. -/
-def Intends (int : W → Set W) (p : Set W) (w : W) : Prop := int w ⊆ p
+variable {W : Type*} {int dox : W → W → Prop} {p q : W → Prop} {w : W}
 
 /-- Realism: what is intended is believed possible. -/
-theorem realism {int dox : W → Set W} {p : Set W} {w : W} (h : (int w ∩ dox w).Nonempty)
-    (hp : Intends int p w) : ∃ w' ∈ dox w, w' ∈ p :=
-  let ⟨w', hw'⟩ := h
-  ⟨w', hw'.2, hp hw'.1⟩
+theorem realism (h : ◇[int] (dox w) w) (hp : □[int] p w) : ◇[dox] p w :=
+  diamond_of_box h hp
 
-/-- Consistency: two intentions are believed jointly possible. -/
-theorem consistency {int dox : W → Set W} {p q : Set W} {w : W} (h : (int w ∩ dox w).Nonempty)
-    (hp : Intends int p w) (hq : Intends int q w) : ∃ w' ∈ dox w, w' ∈ p ∩ q :=
-  let ⟨w', hw'⟩ := h
-  ⟨w', hw'.2, hp hw'.1, hq hw'.1⟩
+/-- Consistency: two intentions are believed jointly possible, by realism for their
+conjunction. -/
+theorem consistency (h : ◇[int] (dox w) w) (hp : □[int] p w) (hq : □[int] q w) :
+    ◇[dox] (fun v ↦ p v ∧ q v) w :=
+  realism h ((box_and int p q w).2 ⟨hp, hq⟩)
 
 /-- Monotonicity: intending the narrower prejacent is intending the wider. -/
-theorem monotonicity {int : W → Set W} {p q : Set W} {w : W} (hpq : p ⊆ q)
-    (hp : Intends int p w) : Intends int q w :=
-  hp.trans hpq
+theorem monotonicity (hpq : p ≤ q) (hp : □[int] p w) : □[int] q w :=
+  box_mono int hpq w hp
 
 end Hintikka
 
@@ -319,6 +382,14 @@ def Report (x : E) (P : E → T → W → Ev → Prop) (w : W) : Prop :=
     ∀ c ∈ F.content s, causedClosure F.causeStar s (fun w' e ↦ ∃ t > c.2.1, P c.2.2 t w' e) c.1
 
 variable {F} {x : E} {P : E → T → W → Ev → Prop} {w : W}
+
+/-- Monotonicity survives the causal self-reference: a report of the narrower complement is a
+report of the wider. -/
+theorem Report.mono {Q : E → T → W → Ev → Prop} (hPQ : ∀ y t w e, P y t w e → Q y t w e)
+    (h : F.Report x P w) : F.Report x Q w :=
+  let ⟨s, hs, hx, hc⟩ := h
+  ⟨s, hs, hx, fun c hcs ↦
+    causedClosure_mono (fun _ _ ⟨t, ht, hP⟩ ↦ ⟨t, ht, hPQ _ _ _ _ hP⟩) (hc c hcs)⟩
 
 /-- The causally self-referential report entails the report of the closed complement. -/
 theorem Report.report₃ (h : F.Report x P w) : F.Report₃ x (fun y t ↦ closure (P y t)) w :=

@@ -1,4 +1,3 @@
-import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
@@ -6,8 +5,15 @@ import Linglib.Syntax.Category.Complementizer.Basic
 [roussou-2019] [angelopoulos-2026]
 
 The four Modern Greek complementizers, as root `Complementizer`
-entries, and the matrix verbs that select them (with the attitude and
-stativity metadata [angelopoulos-2026]'s data turns on).
+entries. The matrix verbs that select them are in `Verbs.lean`.
+
+## References
+
+* [christidis-1982]
+* [roussou-2010]
+* [roussou-2019]
+* [angelopoulos-2026]
+* [grano-2024]
 
 [angelopoulos-2026]-specific apparatus — the [n]-feature/light-noun
 selection (§3.1), the content/situation typing, the attested selection
@@ -47,212 +53,14 @@ def an : Complementizer where
   coding := some .indicative
   force := some .interrogative
 
-/-- *na* — subjunctive ([grano-2024]); the *na*-selecting mood-choice
-    verbs are in `MoodChoice.lean`. Whether *na* heads C or a Mood
-    projection is debated; the schema is head-agnostic, and
-    [angelopoulos-2026] sets *na* aside. -/
+/-- *na* — subjunctive ([grano-2024]), selected by volitional, intention and causative
+    verbs (`Verbs.lean`). Whether *na* heads C or a Mood projection is debated; the schema is head-agnostic,
+    and [angelopoulos-2026] sets *na* aside. -/
 def na : Complementizer where
   morphs := [.free "na"]
   coding := some .subjunctive
 
 /-- The complementizer inventory. -/
 def complementizers : List Complementizer := [oti, pu, an, na]
-
-/-! ### Matrix verbs selecting *oti*
-
-Verbs of saying / belief / knowledge / understanding
-([angelopoulos-2026] ex. 1a, 3, 36). -/
-
-/-- *léo* (λέω) 'say' — past tense *ípe* in [angelopoulos-2026]
-    ex. 1a. Speech-act verb, eventive (activity). -/
-def leo : Verb where
-  form := "léo"
-  frames := [ArgumentFrame.finiteClause]
-  speechActVerb := true
-  vendlerClass := some .activity
-
-/-- *pistévo* (πιστεύω) 'believe' — doxastic, stative; the impersonal
-    passive *pistévetai oti* is standard. -/
-def pistevo : Verb where
-  form := "pistévo"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .nonVeridical)
-  vendlerClass := some .state
-  opaqueContext := true
-
-/-- *kséro* (ξέρω) 'know' (alongside *gnorízo*) — factive doxastic,
-    stative. Rejects manner adverbs ([angelopoulos-2026] ex. 21a). -/
-def ksero : Verb where
-  form := "kséro"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .veridical)
-  factivity := some .semi
-  vendlerClass := some .state
-
-/-- *katalavéno* (καταλαβαίνω) 'understand' — eventive (allows
-    manner adverbs in [angelopoulos-2026] ex. 21b),
-    factive doxastic. -/
-def katalaveno : Verb where
-  form := "katalavéno"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .veridical)
-  factivity := some .semi
-  vendlerClass := some .achievement
-
-/-- *sinidhitopió* (συνειδητοποιώ) 'realize' — eventive (achievement),
-    factive doxastic ([angelopoulos-2026] ex. 21b). -/
-def sinidhitopio : Verb where
-  form := "sinidhitopió"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .veridical)
-  factivity := some .semi
-  vendlerClass := some .achievement
-
-/-- *eksigó* (εξηγώ) 'explain' — accomplishment, takes *oti*
-    yielding *explanans* reading ([angelopoulos-2026] ex. 4a). -/
-def eksigo : Verb where
-  form := "eksigó"
-  frames := [ArgumentFrame.finiteClause]
-  vendlerClass := some .accomplishment
-
-/-! ### Matrix verbs selecting *pu*
-
-Emotive-factive predicates, stative under [angelopoulos-2026]'s §2.3
-stativity restriction. -/
-
-/-- *metanióno* (μετανιώνω) 'regret' — preferential (negative
-    valence), stative. [angelopoulos-2026] ex. 1b, 20. -/
-def metaniono : Verb where
-  form := "metanióno"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .negative))
-  vendlerClass := some .state
-
-/-- *aréso* (αρέσω) 'appeal to / be liked by' — Class III experiencer,
-    stative ([angelopoulos-2026] ex. 13, 14; [landau-2010]). -/
-def areso : Verb where
-  form := "aréso"
-  frames := [{ ArgumentFrame.finiteClause with external := none }]
-  attitude := some (.preferential (.degreeComparison .positive))
-  vendlerClass := some .state
-
-/-- *xérome* (χαίρομαι) 'be happy/glad' — preferential positive,
-    stative. -/
-def xerome : Verb where
-  form := "xérome"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .positive))
-  vendlerClass := some .state
-
-/-! ### Verbs compatible with both *oti* and *pu*
-
-Eventive with *oti*, stative with *pu* ([angelopoulos-2026] ex. 19,
-22–23, fn. 16). Both complements are finite indicative clauses, so the
-polysemy rides on sense-tagged entry pairs (`SenseTag.stative`, the
-`suivreStat` pattern) rather than frame-keyed `Verb.readings` rows. -/
-
-/-- *thimáme* (θυμάμαι) 'remember' — eventive attitude sense ('recall,
-    infer that'), the one available with *oti* ([angelopoulos-2026]
-    ex. 22, fn. 16); the stative direct-perception recollection sense
-    is `thimameStat`. -/
-def thimame : Verb where
-  form := "thimáme"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .veridical)
-  factivity := some .semi
-  vendlerClass := some .achievement
-
-/-- *thimáme* — stative direct-perception recollection sense
-    ('remember him reading'), the one available with *pu*
-    ([angelopoulos-2026] fn. 16; [roussou-2010] ex. 17's strong
-    presupposition). -/
-def thimameStat : Verb where
-  form := "thimáme"
-  frames := [ArgumentFrame.finiteClause]
-  senseTag := .stative
-  attitude := some (.doxastic .veridical)
-  factivity := some .semi
-  vendlerClass := some .state
-
-/-- *thimóno* (θυμώνω) 'get angry' — eventive (achievement) sense, the
-    one available with *oti*; the stative sense is `thimonoStat`
-    ([angelopoulos-2026] ex. 19, 23). -/
-def thimono : Verb where
-  form := "thimóno"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .negative))
-  vendlerClass := some .achievement
-
-/-- *thimóno* — stative 'be angry' sense, the one available with *pu*
-    ([angelopoulos-2026] ex. 19, 23). -/
-def thimonoStat : Verb where
-  form := "thimóno"
-  frames := [ArgumentFrame.finiteClause]
-  senseTag := .stative
-  attitude := some (.preferential (.degreeComparison .negative))
-  vendlerClass := some .state
-
-/-- *nomízo* (νομίζω) 'think' — doxastic, non-veridical, stative; takes *oti*, and *na*
-    under matrix negation or question ([roussou-2010]). -/
-def nomizo : Verb where
-  form := "nomízo"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .nonVeridical)
-  vendlerClass := some .state
-  opaqueContext := true
-
-/-- *paradhéxome* (παραδέχομαι) 'admit' — factive speech-act verb; takes *oti* and not
-    *pu* ([roussou-2010]). -/
-def paradhexome : Verb where
-  form := "paradhéxome"
-  frames := [ArgumentFrame.finiteClause]
-  speechActVerb := true
-  attitude := some (.doxastic .veridical)
-  vendlerClass := some .achievement
-
-/-- *antilamvánome* (αντιλαμβάνομαι) 'realize' — factive doxastic, eventive; takes *oti*
-    and not *pu* ([roussou-2010]). -/
-def antilamvanome : Verb where
-  form := "antilamvánome"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .veridical)
-  factivity := some .semi
-  vendlerClass := some .achievement
-
-/-- *anisixó* (ανησυχώ) 'worry' — preferential (negative valence) experiencer verb,
-    stative; takes *pu* on the factive reading and *oti* otherwise ([roussou-2010]). -/
-def anisixo : Verb where
-  form := "anisixó"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .negative))
-  vendlerClass := some .state
-
-/-! ### Interrogative and volitional predicates -/
-
-/-- *anarotjéme* (αναρωτιέμαι) 'wonder' — rogative, selecting the interrogative
-    complementizer *an* ([roussou-2010]). -/
-def anarotjeme : Verb where
-  form := "anarotjéme"
-  frames := [ArgumentFrame.question]
-  vendlerClass := some .state
-  senseTag := .rogative
-
-/-- *thélo* (θέλω) 'want' — volitional, taking only a *na*-clause ([roussou-2010]). -/
-def thelo : Verb where
-  form := "thélo"
-  frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
-  attitude := some (.preferential (.degreeComparison .positive))
-  vendlerClass := some .state
-
-/-! ### Occurrence verbs -/
-
-/-- *simvéni* (συμβαίνει) 'happen/occur' — unaccusative achievement,
-    the [angelopoulos-2026] ex. 34 diagnostic. Rejects both *oti*- and
-    *pu*-complements and takes subjunctive *na*-clauses
-    ([angelopoulos-2026] fn. 14). -/
-def simveni : Verb where
-  form := "simvéni"
-  frames := [{ external := none, complements := [.clausal (coding := some .subjunctive)] }]
-  vendlerClass := some .achievement
 
 end Greek.StandardModern.Complementizers

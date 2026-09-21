@@ -1,6 +1,7 @@
 import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
+import Linglib.Fragments.Greek.StandardModern.Verbs
 import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Data.Examples.Angelopoulos2026
@@ -41,7 +42,7 @@ against the transparent syntax–semantics mapping.
 
 namespace Angelopoulos2026
 
-open Greek.StandardModern.Complementizers Data.Examples
+open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs Data.Examples
 open Bondarenko2022 (NominalSort CompositionPath)
 open Aspect
 open Anchor (existsClosure)

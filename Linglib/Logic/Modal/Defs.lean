@@ -108,6 +108,11 @@ theorem box_T [Std.Refl R] (h : □[R] p w) : p w :=
 theorem box_D [hS : IsSerial R] (h : □[R] p w) : ◇[R] p w :=
   let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
 
+/-- Necessity along `R` gives possibility along any relation that overlaps `R` at the world:
+`□[R] p → ◇[S] p` when some `R`-accessible world is `S`-accessible. `box_D` is the case `S = R`. -/
+theorem diamond_of_box {S : W → W → Prop} (h : ◇[R] (S w) w) (hp : □[R] p w) : ◇[S] p w :=
+  let ⟨v, hR, hS⟩ := h; ⟨v, hS, hp v hR⟩
+
 /-- **B**: over a symmetric relation, `p → □◇p`. -/
 theorem box_B [Std.Symm R] (h : p w) : □[R] (◇[R] p) w :=
   fun v hwv => ⟨w, Std.Symm.symm w v hwv, h⟩

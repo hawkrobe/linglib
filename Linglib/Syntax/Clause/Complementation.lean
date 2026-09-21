@@ -54,7 +54,7 @@ inductive Coding where
   | infinitive     -- Non-finite with "to" or equivalent
   | nominalized    -- Gerund / action nominal
   | participle     -- Participial complement
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The coding is finite: an indicative, subjunctive or paratactic clause. -/
 def Coding.IsFinite : Coding → Prop
