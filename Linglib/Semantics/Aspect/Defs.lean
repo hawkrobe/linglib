@@ -18,6 +18,7 @@ denote are in `Semantics/Aspect/Viewpoint.lean`.
 ## Main definitions
 
 * `Aspect.VendlerClass`: the five situation types, with their features and shifts.
+* `Aspect.Incrementality`: the incrementality classes of a verb's theme relation.
 * `Aspect.DiagnosticResult`: the outcome of a diagnostic, with the *for*-adverbial,
   *in*-adverbial and progressive tests as functions of a situation type.
 * `Aspect.ViewpointType`, `Aspect.Perfectivity`: the viewpoints.
@@ -27,6 +28,7 @@ denote are in `Semantics/Aspect/Viewpoint.lean`.
 * [smith-1997]
 * [vendler-1957]
 * [dowty-1979]
+* [krifka-1998]
 * [klein-1994]
 -/
 
@@ -141,6 +143,15 @@ theorem telicity_telicize (h : c.dynamicity = .dynamic) : c.telicize.telicity = 
   cases c <;> rfl
 
 end VendlerClass
+
+/-- The incrementality of a verb's theme relation is the strongest of [krifka-1998]'s properties
+it has, strictly incremental (*eat*, *draw*), incremental (*read*), or cumulative without
+incrementality (*push*, *carry*). -/
+inductive Incrementality
+  | strict
+  | incremental
+  | cumulative
+  deriving DecidableEq, Repr
 
 /-! ### Diagnostics
 
