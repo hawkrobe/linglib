@@ -1193,12 +1193,6 @@ import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.Silence
-import Linglib.Pragmatics.RelevanceTheory.CognitiveEffects
-import Linglib.Pragmatics.RelevanceTheory.CognitiveEnvironment
-import Linglib.Pragmatics.RelevanceTheory.Comprehension
-import Linglib.Pragmatics.RelevanceTheory.Nonliteral
-import Linglib.Pragmatics.RelevanceTheory.Ostension
-import Linglib.Pragmatics.RelevanceTheory.Relevance
 import Linglib.Pragmatics.SignalingGame.Basic
 import Linglib.Pragmatics.SignalingGame.Interpretation
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
