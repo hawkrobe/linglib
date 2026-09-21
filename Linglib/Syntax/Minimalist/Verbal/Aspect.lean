@@ -1,7 +1,6 @@
 import Linglib.Syntax.Minimalist.Probe.Profile
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Semantics.Aspect.SituationType
-import Linglib.Semantics.Aspect.Viewpoint
+import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Aspect Heads (Outer / Inner Split)
@@ -38,7 +37,7 @@ unchanged.
   (Aktionsart-derived), (b) a *selectional requirement* on AspO to combine
   with a dynamic complement. We model only (b) here, by exposing
   `selectsDynamicity : Option Aspect.Dynamicity`. The predicate-side
-  property already lives in `Semantics/Aspect/SituationType.lean` (`Dynamicity`); this
+  property already lives in `Semantics/Aspect/Defs.lean` (`Dynamicity`); this
   field on AspHead encodes which value (if any) the head requires.
 
 - [liu-yip-2026]'s Cantonese -faan does NOT carry the dynamicity

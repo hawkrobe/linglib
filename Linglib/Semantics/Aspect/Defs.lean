@@ -1,14 +1,18 @@
 /-!
-# Situation type
+# Aspect: basic definitions
 
-This file defines situation type, the first of the two components of aspect in Smith's theory.
-A situation type classifies an eventuality by three binary features: whether it has a natural
-endpoint (`Telicity`), whether it takes time (`Duration`) and whether it involves change
-(`Dynamicity`). The features are bundled as an `AspectualProfile` and projected onto the four
-classes of Vendler together with Smith's semelfactives (`VendlerClass`). The aspectual shifts of
-compositional coercion change one feature of a profile (`AspectualProfile.telicize` and its
-siblings), and Dowty's adverbial and progressive diagnostics are functions of the features
-(`forXPrediction`, `inXPrediction`, `progressivePrediction`).
+This file defines the classificatory vocabulary of aspect, following the two components of
+Smith's theory. Situation type classifies an eventuality by three binary features: whether it
+has a natural endpoint (`Telicity`), whether it takes time (`Duration`) and whether it involves
+change (`Dynamicity`). The features are bundled as an `AspectualProfile` and projected onto the
+four classes of Vendler together with Smith's semelfactives (`VendlerClass`). The aspectual
+shifts of compositional coercion change one feature of a profile (`AspectualProfile.telicize`
+and its siblings), and Dowty's adverbial and progressive diagnostics are functions of the
+features (`forXPrediction`, `inXPrediction`, `progressivePrediction`). Viewpoint is the
+presentation of a situation, Klein's four relations between the topic time and the situation
+time together with Smith's neutral viewpoint (`ViewpointType`), and at its coarsest the
+opposition of perfective and imperfective (`Perfectivity`). The operators that viewpoints
+denote are in `Semantics/Aspect/Viewpoint.lean`.
 
 ## Main definitions
 
@@ -17,15 +21,19 @@ siblings), and Dowty's adverbial and progressive diagnostics are functions of th
   situation type.
 * `Aspect.DiagnosticResult`: the outcome of a diagnostic, with the *for*-adverbial,
   *in*-adverbial and progressive tests as functions of a situation type.
+* `Aspect.ViewpointType`, `Aspect.Perfectivity`: the viewpoints.
 
 ## References
 
 * [smith-1997]
 * [vendler-1957]
 * [dowty-1979]
+* [klein-1994]
 -/
 
 namespace Aspect
+
+/-! ### Situation type -/
 
 /-- Whether an eventuality has a natural endpoint. -/
 inductive Telicity
@@ -178,5 +186,26 @@ theorem forXPrediction_eq_accept_iff (c : VendlerClass) :
 theorem progressivePrediction_eq_accept_iff (c : VendlerClass) :
     progressivePrediction c = .accept ↔ c.duration = .durative ∧ c.dynamicity = .dynamic := by
   cases c <;> decide
+
+/-! ### Viewpoint -/
+
+/-- The viewpoints are the four relations of [klein-1994] between the topic time and the situation
+time, and the neutral viewpoint of [smith-1997], the default in the absence of aspect
+morphology. -/
+inductive ViewpointType
+  | imperfective
+  | perfective
+  | perfect
+  | prospective
+  | neutral
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The opposition of perfective and imperfective is viewpoint aspect at its coarsest, the right
+granularity where the fact at issue is that the perfective requires actualization and the
+imperfective does not, or where the opposition is lexically encoded, as on a `Verb.Stem`. -/
+inductive Perfectivity
+  | perfective
+  | imperfective
+  deriving DecidableEq, Repr, Inhabited
 
 end Aspect

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Case.Alignment
-import Linglib.Semantics.Aspect.Viewpoint
+import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Hindi case

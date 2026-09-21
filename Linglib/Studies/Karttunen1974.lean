@@ -1,5 +1,5 @@
 import Linglib.Studies.Heinamaki1974
-import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Data.Examples.Karttunen1974
 
 /-!

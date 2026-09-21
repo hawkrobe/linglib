@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.Viewpoint
+import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Verb stem entries

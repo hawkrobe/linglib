@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Degree.Boundedness
-import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.Degree.PropertyDomain
 import Linglib.Semantics.Degree.Measure.Dimension
 

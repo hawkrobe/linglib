@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.Aspect.Viewpoint
 
 /-!

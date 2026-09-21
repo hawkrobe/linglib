@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Events.Path
-import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Defs
 import Mathlib.Data.Finset.Fold
 import Mathlib.Tactic.DeriveFintype
 

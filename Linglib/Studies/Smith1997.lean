@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.Aspect.Viewpoint
 
 /-!

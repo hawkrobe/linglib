@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Karlsson2017
 import Linglib.Syntax.Case.Basic
-import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Karlsson (2017): Finnish: A Comprehensive Grammar

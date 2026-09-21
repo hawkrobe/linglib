@@ -1,3 +1,4 @@
+import Linglib.Semantics.Aspect.Defs
 import Linglib.Semantics.Reference.Context.Index
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Events.Basic
@@ -6,8 +7,8 @@ import Linglib.Semantics.Events.Basic
 # Viewpoint aspect
 
 This file defines viewpoint, the second of the two components of aspect in Smith's theory.
-Following Klein, a viewpoint relates the topic time to the situation time (`ViewpointType`,
-`ViewpointType.ttTSitRelation`). A relation between the reference time and the run time of an
+Following Klein, a viewpoint relates the topic time to the situation time
+(`ViewpointType.ttTSitRelation`). A relation between the reference time and the run time of an
 event gives an operator from event predicates to interval predicates (`IntervalPred.ofRel`),
 monotone in the relation, and the operator of a viewpoint is that of its relation
 (`ViewpointType.denote`). The compositional operators of Knick and Sharf are instances (`IMPF`,
@@ -52,25 +53,6 @@ abbrev IntervalPred (W T : Type*) [LinearOrder T] := W → NonemptyInterval T �
 
 /-- A predicate over world-time points, the output of the perfect and the input to tense. -/
 abbrev PointPred (W T : Type*) := Reference.Index W T → Prop
-
-/-- The viewpoints are the four relations of [klein-1994] between the topic time and the situation
-time, and the neutral viewpoint of [smith-1997], the default in the absence of aspect
-morphology. -/
-inductive ViewpointType
-  | imperfective
-  | perfective
-  | perfect
-  | prospective
-  | neutral
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The opposition of perfective and imperfective is viewpoint aspect at its coarsest, the right
-granularity where the fact at issue is that the perfective requires actualization and the
-imperfective does not, or where the opposition is lexically encoded, as on a `Verb.Stem`. -/
-inductive Perfectivity
-  | perfective
-  | imperfective
-  deriving DecidableEq, Repr, Inhabited
 
 /-- `v.ttTSitRelation tt tsit` is the relation the viewpoint `v` imposes between the topic time and
 the situation time, which is inclusion in the situation, containment of the situation,

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Scale
-import Linglib.Semantics.Aspect.SituationType
+import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Degree Achievements
