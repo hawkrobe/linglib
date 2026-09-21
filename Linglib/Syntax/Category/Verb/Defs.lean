@@ -12,7 +12,8 @@ import Linglib.Semantics.Aspect.Phasal
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.Causation.Psych
-import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Degree.Scale
+import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Root.Defs
@@ -128,10 +129,11 @@ structure Aspect where
       (bounded) object. `none` for verbs where Vendler class is inapplicable
       (e.g., clause-embedding verbs). -/
   vendlerClass : Option VendlerClass := none
-  /-- For degree achievements: the scale structure from
-      which default vendlerClass is derived. When present, vendlerClass should
-      agree with degreeAchievementScale.defaultVendlerClass. -/
-  degreeAchievementScale : Option DegreeAchievementScale := none
+  /-- The dimension of the scale along which a degree achievement measures change. -/
+  scaleDimension : Option Degree.ScalarDimension := none
+  /-- The pole of the dimension towards which a degree achievement measures change, negative
+      for *dry*, a decrease in wetness. -/
+  scalePolarity : Degree.Polarity := .positive
   /-- [krifka-1998] incrementality class of the object/theme role.
       `.sinc` = strictly incremental (eat, build); `.inc` = incremental
       with backups (read); `.cumOnly` = cumulative only (push, carry).
@@ -238,6 +240,11 @@ structure Verb extends
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
   deriving BEq
+
+/-- The scale along which a degree achievement measures change: its dimension's, dualized when
+the change is towards the negative pole, as the scale of a negative adjective is. -/
+def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
+  v.scaleDimension.map (v.scalePolarity • ·.boundedness)
 
 /-! ### ArgumentFrame accessors
 
