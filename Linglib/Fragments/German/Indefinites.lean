@@ -3,13 +3,15 @@ import Linglib.Syntax.Category.Pronoun.Indefinite
 /-!
 # German indefinite pronouns
 
-German has indefinite pronouns of two morphological kinds: *jemand* 'someone' and *etwas*
-'something', built on generic nouns (*jemand* from *je-man* 'ever-person'), and the *irgend-*
-series, *irgendwer*, *irgendwas*, built with a dedicated indefinite prefix. *Jemand* and *etwas*
-are used for a referent the speaker has in mind or presupposes; *irgend-* is used for one the
-speaker presupposes but cannot identify and for irrealis non-specific reference, a distribution
-it reached from an earlier non-specific use, as Aloni and Port describe. Kratzer and Shimoyama's
-domain-widening analysis of *irgendein* is the matter of `German.ModalIndefinites`.
+German has indefinite pronouns of two morphological kinds. *Jemand* 'someone', *etwas*
+'something' and negative *niemand*, *nichts* are built on generic nouns (*jemand* from *je-man*
+'ever-person'); the *irgend-* series, *irgendwer*, *irgendwas*, temporal *je* 'ever' and
+*jeder* 'any, every' are built with dedicated markers. *Jemand* runs from the specific
+functions to indirect negation. *Irgend-* is excluded where the speaker has the referent in
+mind and under direct negation and covers the rest of the map, a distribution it reached from
+an earlier non-specific use, as Aloni and Port describe; the two series overlap from specific
+unknown to indirect negation. Kratzer and Shimoyama's domain-widening analysis of *irgendein*
+is the matter of `German.ModalIndefinites`.
 
 ## References
 
@@ -20,25 +22,40 @@ domain-widening analysis of *irgendein* is the matter of `German.ModalIndefinite
 
 namespace German.Indefinites
 
-open Indefinite
-
-/-- The *irgend-* series: built with a dedicated prefix, used for a referent the speaker cannot
-identify and for irrealis non-specific reference. -/
-def irgendEntry : IndefinitePronoun where
-  form := "irgend-"
-  ontology := .person
-  basis := .special
-  functions := {.specificUnknown, .irrealis}
-
-/-- *Jemand* 'someone' and *etwas* 'something': built on generic nouns, used for a referent the
-speaker has in mind or presupposes. -/
+/-- *Jemand* 'someone', with *etwas* 'something': built on generic nouns, from the specific
+functions through questions and conditionals to indirect negation. -/
 def jemandEntry : IndefinitePronoun where
-  form := "jemand/etwas"
+  form := "jemand"
   ontology := .person
   basis := .genericNoun
-  functions := {.specificKnown, .specificUnknown}
 
-/-- The German paradigm: the dedicated prefix and the generic-noun forms. -/
-def paradigm : List IndefinitePronoun := [irgendEntry, jemandEntry]
+/-- The *irgend-* series, *irgendwer*: built with a dedicated prefix, everywhere on the map but
+for a referent the speaker has in mind and under direct negation. -/
+def irgendEntry : IndefinitePronoun where
+  form := "irgendwer"
+  ontology := .person
+  basis := .special
+
+/-- Temporal *je* 'ever': questions, conditionals, indirect negation and the comparative. -/
+def jeEntry : IndefinitePronoun where
+  form := "je"
+  ontology := .time
+  basis := .special
+
+/-- *Jeder* 'any, every': indirect negation, the comparative and free choice. -/
+def jederEntry : IndefinitePronoun where
+  form := "jeder"
+  ontology := .person
+  basis := .special
+
+/-- *Niemand* 'nobody', with *nichts* 'nothing': direct negation. -/
+def niemandEntry : IndefinitePronoun where
+  form := "niemand"
+  ontology := .person
+  basis := .genericNoun
+
+/-- The German paradigm. -/
+def paradigm : List IndefinitePronoun :=
+  [jemandEntry, irgendEntry, jeEntry, jederEntry, niemandEntry]
 
 end German.Indefinites

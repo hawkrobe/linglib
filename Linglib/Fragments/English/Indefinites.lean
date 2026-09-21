@@ -3,11 +3,13 @@ import Linglib.Syntax.Category.Pronoun.Indefinite
 /-!
 # English indefinite pronouns
 
-English builds its indefinite pronouns on generic nouns: *some-* prefixed to *-one*, *-body*,
-*-thing* and *-where* gives *someone*, *somebody*, *something* and *somewhere*, with parallel
-*any-*, *no-* and *every-* series. The *some-* series is used alike for a referent the speaker
-has in mind, for one the speaker presupposes but cannot identify, and for irrealis non-specific
-reference.
+English builds its indefinite pronouns on generic nouns: *some-*, *any-* and *no-* prefixed to
+*-one*, *-body*, *-thing* and *-where*. The *some-* series is used for a referent the speaker
+has in mind, for one the speaker presupposes but cannot identify and for irrealis non-specific
+reference, and reaches into questions and conditionals; the *any-* series takes over from
+questions and conditionals through both negations and the comparative to free choice; the *no-*
+series is confined to direct negation. The two longer series overlap in questions and
+conditionals (*Did you see someone?*, *Did you see anyone?*).
 
 ## References
 
@@ -16,17 +18,27 @@ reference.
 
 namespace English.Indefinites
 
-open Indefinite
-
-/-- The *some-* series, *someone*, *somebody*, *something*: built on generic nouns and used in
-all three specific functions. -/
+/-- The *some-* series, *someone*, *somebody*, *something*: the three specific functions,
+questions and conditionals. -/
 def someEntry : IndefinitePronoun where
-  form := "someone/-body/-thing"
+  form := "someone"
   ontology := .person
   basis := .genericNoun
-  functions := {.specificKnown, .specificUnknown, .irrealis}
 
-/-- The English paradigm, its *some-* series; *any-* and *no-* are not entered. -/
-def paradigm : List IndefinitePronoun := [someEntry]
+/-- The *any-* series, *anyone*, *anybody*, *anything*: from questions and conditionals through
+both negations and the comparative to free choice. -/
+def anyEntry : IndefinitePronoun where
+  form := "anyone"
+  ontology := .person
+  basis := .genericNoun
+
+/-- The *no-* series, *no one*, *nobody*, *nothing*: direct negation. -/
+def noEntry : IndefinitePronoun where
+  form := "no one"
+  ontology := .person
+  basis := .genericNoun
+
+/-- The English paradigm: the *some-*, *any-* and *no-* series. -/
+def paradigm : List IndefinitePronoun := [someEntry, anyEntry, noEntry]
 
 end English.Indefinites
