@@ -1,1161 +1,313 @@
-import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Causation.CCSelection
+import Linglib.Core.Order.Interval
+import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.English.Adjectives
-import Linglib.Fragments.Mandarin.Resultatives
-import Linglib.Data.Examples.Levin1993
+import Linglib.Data.Examples.Levin2026
 
 /-!
-# Levin (2026): The Door Pushed Open
+# Levin (2026): The door pushed open
 
 This file formalizes Levin's analysis of the English intransitive resultative with
-transitive-only verbs, *The door pushed open*, *The cork pulled free*, *The door slammed
-shut*, as the anticausative variant of the causative alternation, licensed by the resultative
-construction rather than by the verb, which cannot occur intransitively without the result
-phrase. The verbs are verbs of exerting force and of surface contact, whose classes lack the
-causative alternation in isolation (`all_classes_no_causative_alternation`); the result
-adjectives describe spatially instantiated states; neither ingredient suffices alone; the
-anticausative discourse conditions and a subject capable of autonomous motion, a projectile,
-license the intransitive; and the proper containment condition of
-[rappaport-hovav-levin-2012] forces the causative variant while the cause stays continuously
-involved.
+transitive-only verbs, *The door pushed open*, *The cork pulled free*, *The valve slammed
+shut*. Outside the resultative these verbs have no intransitive use whose subject is their
+object, *The door pushed*. Levin takes the intransitive resultative to be the anticausative
+variant of the causative alternation and its transitive counterpart the causative variant. The
+resultative describes a change of state that the verb alone does not, which is what makes the
+alternation available, and the conditions on the anticausative variant decide when the cause
+may go unexpressed.
+
+The verbs are verbs of exerting force and verbs of surface contact, manner verbs that do not
+lexicalize a change (`VerbKind`). The result adjectives are *open*, *closed*, *shut*, *free*,
+*loose* and *flat* in the sense that describes a spatial configuration with respect to a
+reference entity, and not in their other senses, *free of shards*. The subject must be able to
+move without the continuous involvement of a cause, as an animate, a machine or a projectile
+can (`Theme.SelfEnergetic`), since a change of state properly contained in the causing act
+requires the cause to be expressed, the Proper Containment Condition of Rappaport Hovav and
+Levin (`CauseRequired`). Neither the verb nor the adjective suffices alone, and a sentence of
+the paper is acceptable exactly when the three conditions meet or the verb alternates by
+itself (`acceptable_iff_licensed`). Fusing the meaning of a manner verb with that of the
+resultative predicts the alternation for every such verb, *The tub scrubbed clean* included, so
+the restrictions are not those of the construction (`fusion_overgenerates`).
 
 ## Implementation notes
 
-The verb and adjective entries come from the English fragments, the alternation judgments from
-`Data/Examples/Levin1993.json`, and the proper containment condition maps onto the
-independent-source tightness of the causal models. The construction-level licensing of an
-alternation the verb lacks is stated for this case only.
+The verb classes are the paper's own lists, not the classes of Levin's 1993 book, from which
+they differ, *fling* being there a verb of throwing, as the paper notes
+(`exertingForce_not_all_pushPull`). The discourse conditions on the anticausative
+variant, a cause recoverable from the context or of unknown identity, are conditions of use
+that no judgment of the paper isolates, and are not modelled; nor are the two intransitive
+resultatives with other adjectives that the paper offers as possible one-off instances. The
+kind of the subject is recorded for the rows whose subject the paper discusses.
 
 ## References
 
 * [levin-2026]
 * [rappaport-hovav-levin-2012]
+* [rappaport-hovav-2014]
 * [levin-1993]
+* [goldberg-1995]
 -/
 
 namespace Levin2026
 
-open Verb
-open Semantics
-open Reference
+open Data.Examples ArgumentStructure ConstructionGrammar
 
-open ArgumentStructure
-open LevinClass (pushPull hit wipeManner)
-open English (push pull kick)
-open English.Adjectives
-open Aspect (Phasal)
-open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
-  Construction)
+/-! ### The proper containment condition -/
 
-/-! ## Verb inventory
+section ProperContainment
 
-The verbs attested in intr-*push open* resultatives describe the
-application of force to an entity. They are drawn from two subclasses
-of manner verbs: verbs of exerting force (§12) and verbs of surface
-contact (§18 hitting, §10.4 wiping).
+variable {T : Type*} [LinearOrder T] {act change : NonemptyInterval T}
 
-Note: *scrape* and *sweep* are Levin §10.4 (wipe) verbs, but in
-intr-*push open* they participate through their **surface contact**
-sense, not their removing sense. Wipe verbs as a class DO show the
-causative alternation (they lexicalize CoS). These verbs enter the
-construction because only their force-application component is
-relevant, not the removal result. -/
+/-- The cause must be expressed when the change of state is properly contained within the
+causing act. -/
+def CauseRequired (act change : NonemptyInterval T) : Prop := change < act
 
-/-- The paper characterizes the core classes by contact and motion without a change
-of state or causation, the components of *hit* in [levin-1993]'s Introduction. -/
-def components : LevinClass → MeaningComponents
-  | .pushPull | .hit => MeaningComponents.hit
-  | _ => .none
+/-- A change that outlasts the causing act, as the swing of a door outlasts the push, is not
+contained in it, so the cause may go unexpressed. -/
+theorem not_causeRequired_of_outlasts (h : act.snd < change.snd) :
+    ¬ CauseRequired act change :=
+  fun hlt ↦ absurd (NonemptyInterval.le_def.1 hlt.le).2 h.not_ge
 
-/-- The core Levin classes for intr-*push open* verbs.
-    Verbs of exerting force (§12 = pushPull) and verbs of surface
-    contact, hitting subtype (§18.1 = hit). Wipe verbs (§10.4) also
-    participate but are handled separately (see `all_verbs_from_predicted_classes`). -/
-def intrPushOpenClasses : List LevinClass := [.pushPull, .hit]
+end ProperContainment
 
-/-- All core intr-*push open* verb classes lack the causative alternation
-    in isolation. This is the key precondition: the verb alone does not
-    alternate, so the construction must license the alternation. -/
-theorem all_classes_no_causative_alternation :
-    intrPushOpenClasses.all
-      (fun c ↦ !decide (c.Participates .causativeInchoative)) = true := by
-  decide
+/-! ### Verbs, adjectives and subjects -/
 
-/-- Cross-reference: [levin-1993]'s judgment rows already record that *hit*
-    (§18.1) is blocked for causative/inchoative ("*The door hit.", ex. 25b).
-    Our theorem agrees. -/
-theorem agrees_with_diathesis_data :
-    Levin1993.Examples.ci_hit.judgment = .ungrammatical := rfl
-
-/-- All core classes are pure manner roots
-    ([beavers-koontz-garboden-2020]): they encode no state, no result,
-    no causation. The result and causation come from the construction. -/
-theorem all_classes_pure_manner :
-    intrPushOpenClasses.all
-      (·.rootEntailments == some Root.Kinds.pureManner) = true := by
-  decide
-
-/-- All core classes encode contact and motion but NOT change of state
-    and NOT causation. This is why they don't show the causative alternation
-    ([fillmore-1970]): no scalar change is lexicalized. -/
-theorem all_classes_no_cos_no_causation :
-    intrPushOpenClasses.all (fun c ↦
-      let mc := (components c)
-      mc.contact && mc.motion && !mc.changeOfState && !mc.causation
-    ) = true := by
-  decide
-
-/-- Fragment verb entries confirm the classification. -/
-theorem push_is_pushPull : LevinClass.pushPull ∈ push.levinClasses := by decide
-theorem pull_is_pushPull : LevinClass.pushPull ∈ pull.levinClasses := by decide
-theorem kick_is_hit : LevinClass.hit ∈ kick.levinClasses := by decide
-
-/-! ### Construction-dependent alternation ([goldberg-1995])
-
-The key derivation: these verbs cannot alternate *alone* (shown above),
-but they CAN alternate *inside the resultative construction*. The
-resultative adds CoS + causation via `semanticContribution`; the
-composed meaning has all four components needed for the causative
-alternation. No new alternation logic is needed — `predictedAlternation`
-on the fused result fires automatically.
-
-This formalizes the paper's central insight (§3): "when such verbs are
-found in a resultative, the construction as a whole describes a change
-of state ... properties of the resultative construction itself are
-implicated in the 'loosening' of transitivity that characterizes
-intr-*push open* resultatives." -/
-
-/-- The push/pull class alone predicts no causative alternation. -/
-theorem pushPull_alone_no_alternation :
-    (components .pushPull).predictedAlternation
-      .causativeInchoative = false := by decide
-
-/-- The push/pull class in the resultative predicts the causative alternation.
-    The construction adds CoS + causation → the composed meaning
-    has `changeOfState && causation`, which is the precondition. -/
-theorem pushPull_alternates_in_resultative :
-    predictedAlternationInConstruction
-      (components .pushPull)
-      resultative .causativeInchoative = true := by decide
-
-/-- The hit class alone predicts no causative alternation. -/
-theorem hit_alone_no_alternation :
-    (components .hit).predictedAlternation
-      .causativeInchoative = false := by decide
-
-/-- The hit class in the resultative predicts the causative alternation. -/
-theorem hit_alternates_in_resultative :
-    predictedAlternationInConstruction
-      (components .hit)
-      resultative .causativeInchoative = true := by decide
-
-/-- All core intr-push-open classes alternate in the resultative. -/
-theorem all_classes_alternate_in_resultative :
-    intrPushOpenClasses.all (fun c ↦
-      predictedAlternationInConstruction
-        (components c) resultative .causativeInchoative
-    ) = true := by decide
-
-/-! ### Event structure shift (bridge to `EventStructure`)
-
-The same fusion operation that predicts new alternations also predicts
-template shift: manner verbs (activity template) become accomplishments
-inside the resultative. This connects to telicity, result state
-diagnostics (*again*/*re-* ambiguity), and CAUSE structure. -/
-
-open ArgumentStructure.EventStructure
-
-/-- PushPull alone is an activity (no CoS, no CAUSE). -/
-theorem pushPull_is_activity :
-    (components .pushPull).predictedTemplate = .activity := rfl
-
-/-- PushPull in the resultative shifts to accomplishment (the construction
-    adds [CAUSE [BECOME [STATE]]]). -/
-theorem pushPull_accomplishment_in_resultative :
-    ((components .pushPull).fuse
-      resultative.meaning).predictedTemplate = .accomplishment := by
-  exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
-
-/-- Hit alone is an activity. -/
-theorem hit_is_activity' :
-    (components .hit).predictedTemplate = .activity := rfl
-
-/-- Hit in the resultative shifts to accomplishment. -/
-theorem hit_accomplishment_in_resultative :
-    ((components .hit).fuse
-      resultative.meaning).predictedTemplate = .accomplishment := by
-  exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
-
-/-- The full prediction for the push/pull class in the resultative, a template shift
-    AND alternation AND intransitive variant, all from one fusion. -/
-theorem pushPull_dual_in_resultative :
-    ((components .pushPull).fuse
-      resultative.meaning).predictedTemplate = .accomplishment ∧
-    ((components .pushPull).fuse
-      resultative.meaning).predictedAlternation
-        .causativeInchoative = true ∧
-    ((components .pushPull).fuse
-      resultative.meaning).predictedTemplate.intransitiveVariant
-        = some .achievement := by
-  exact fuse_dual_prediction _ _ rfl rfl rfl rfl
-
-/-- The Vendler class shifts, the push/pull class going from atelic activity to telic
-    accomplishment inside the resultative. -/
-theorem pushPull_vendler_shift :
-    (components .pushPull).predictedTemplate.vendlerClass = .activity ∧
-    ((components .pushPull).fuse
-      resultative.meaning).predictedTemplate.vendlerClass
-        = .accomplishment :=
-  ⟨rfl, fuse_vendler_class_shift _ _ rfl rfl⟩
-
-/-! ### Middle construction parallel (§2, examples 17–18)
-
-The paper shows *pound* enters the middle construction only with a
-result phrase: "*This kind of metal pounds easily" vs "This kind of
-metal pounds flat easily." The existing `predictedAlternationInConstruction`
-infrastructure derives this — the middle alternation requires CoS,
-which comes from the resultative construction, not the verb. -/
-
-/-- Hit-class verbs (including *pound*) cannot enter the middle alone. -/
-theorem hit_no_middle_alone :
-    (components .hit).predictedAlternation .middle = false := by
-  decide
-
-/-- Hit-class verbs CAN enter the middle inside the resultative.
-    This derives the paper's observation (18b) from the same mechanism. -/
-theorem hit_middle_in_resultative :
-    predictedAlternationInConstruction
-      (components .hit) resultative .middle = true := by
-  decide
-
-/-! ## Adjective inventory
-
-Only a small set of adjectives heads the result phrase in intr-*push open*
-resultatives. Each describes a spatially instantiated state — a state
-whose attainment requires the entity to be in a specific spatial
-configuration with respect to a reference entity.
-
-Three semantic subtypes:
-1. **Barrier configuration**: *open*, *closed*, *shut* — spatial
-   configuration of a barrier (door, gate, window) relative to its frame
-2. **Unattachment**: *free*, *loose* — freedom from spatial contiguity
-   with a reference entity (frame, bottle, ground)
-3. **Surface orientation**: *flat* — orientation relative to a reference
-   surface -/
-
-/-- Reuse the theory-level `SpatialConfigType` from `Adjective.Theory`. -/
-abbrev SpatialAdjType := Degree.SpatialConfigType
-
-/-- All six attested adjectives have a spatial classification in their
-    Fragment entries (structural, not string-based). -/
-theorem all_attested_adjs_spatial :
-    [open_, closed_, shut, free_, loose, flat].all
-      (·.spatialConfigType |>.isSome) = true := by
-  decide
-
-/-- All attested adjectives are absolute with a maximal endpoint in
-    [kennedy-2007]'s terms: spatially instantiated states have a crisp
-    endpoint (fully open, fully closed, fully flat). -/
-theorem all_attested_adjs_closed_scale :
-    [open_, closed_, shut, free_, loose, flat].all
-      (fun a ↦ decide a.scaleType.HasMax) = true := by
-  decide
-
-/-! Adjectives in senses that are NOT spatially instantiated do not
-appear in intr-*push open* resultatives, even when they occur in
-transitive resultatives. The non-spatial senses of *free* ("free
-of charge", "free of debris") and *loose* ("loose shoelaces") are
-not attested. Adjectives like *bald*, *firm*, *senseless*, *red* have no
-`spatialConfigType` in the Fragment and are never attested in
-intr-*push open* resultatives (examples 57b–60b). -/
-
-/-! ## Transitive–intransitive pairing
-
-The paper's central argument (§3): tr-*push open* and intr-*push open*
-form a **causative alternation pair**. The transitive is the causative
-variant; the intransitive is the anticausative variant. Both share the
-same verb–adjective combination and the same constructional meaning:
-
-- Causative: `[Agent_effector V NP] CAUSE [NP BECOME Adj]`
-- Anticausative: `[NP BECOME Adj]` (cause suppressed) -/
-
-/-- An alternation pair is a transitive and an intransitive resultative
-    with the same verb–adjective combination. -/
-structure AlternationPair where
-  verb : String
-  adjective : String
-  transitive : String
-  intransitive : String
-  bareIntransitive : String   -- without RP: ungrammatical
-  verbClass : LevinClass
-  adjType : SpatialAdjType
-  deriving Repr, BEq
-
-/-- Push–open (examples 19, 20; 10a,b). -/
-def push_open : AlternationPair :=
-  { verb := "push", adjective := "open"
-  , transitive := "He pushed the silent wooden door open."
-  , intransitive := "The back door pushed open."
-  , bareIntransitive := "*The door pushed."
-  , verbClass := .pushPull, adjType := .barrierConfig }
-
-/-- Pull–free (examples 21, 22; 13a,b). -/
-def pull_free : AlternationPair :=
-  { verb := "pull", adjective := "free"
-  , transitive := "Nuttall finally pulled the cork free."
-  , intransitive := "The cork pulled free with a satisfying pop."
-  , bareIntransitive := "*The cork pulled."
-  , verbClass := .pushPull, adjType := .unattachment }
-
-/-- Slam–shut (fn. 11; intransitive from example 23).
-    Note: *slam* is polysemous — in *Pat slammed the door / The door slammed*
-    it has a closing-with-impact sense that independently shows the causative
-    alternation. The `.hit` classification here applies to the surface-contact
-    sense, not the closing sense. The transitive resultative is not explicitly
-    given in the paper but is implied by the alternation pair analysis. -/
-def slam_shut : AlternationPair :=
-  { verb := "slam", adjective := "shut"
-  , transitive := "She slammed the valve shut."
-  , intransitive := "The valve slammed shut."
-  , bareIntransitive := "*The valve slammed."
-  , verbClass := .hit, adjType := .barrierConfig }
-
-/-- Punch–open (intransitive from example 11a; transitive implied). -/
-def punch_open : AlternationPair :=
-  { verb := "punch", adjective := "open"
-  , transitive := "The two men punched the door open."
-  , intransitive := "The door punched open and two more men leaped into the room."
-  , bareIntransitive := "*The door punched."
-  , verbClass := .hit, adjType := .barrierConfig }
-
-/-- Fling–open (intransitive from example 33; transitive implied). -/
-def fling_open : AlternationPair :=
-  { verb := "fling", adjective := "open"
-  , transitive := "She flung the front door open."
-  , intransitive := "The door flung open immediately."
-  , bareIntransitive := "*The door flung."
-  , verbClass := .pushPull, adjType := .barrierConfig }
-
-/-- Scrape–free (intransitive from example 39; transitive implied). -/
-def scrape_free : AlternationPair :=
-  { verb := "scrape", adjective := "free"
-  , transitive := "She scraped the plane's door free."
-  , intransitive := "The door scraped free of its frame."
-  , bareIntransitive := "*The door scraped."
-  , verbClass := .wipeManner, adjType := .unattachment }
-
-/-- Smack–flat (intransitive from example 48; transitive implied). -/
-def smack_flat : AlternationPair :=
-  { verb := "smack", adjective := "flat"
-  , transitive := "She smacked the poster board flat against the windshield."
-  , intransitive := "The poster board smacked flat against my windshield."
-  , bareIntransitive := "*The poster board smacked."
-  , verbClass := .hit, adjType := .surfaceOrient }
-
-/-- Thump–closed (intransitive from example 12a; transitive from 12b). -/
-def thump_closed : AlternationPair :=
-  { verb := "thump", adjective := "closed"
-  , transitive := "She thumped the door closed."
-  , intransitive := "The front door thumped closed."
-  , bareIntransitive := "*The door thumped."
-  , verbClass := .hit, adjType := .barrierConfig }
-
-def alternationPairs : List AlternationPair :=
-  [ push_open, pull_free, slam_shut, punch_open
-  , fling_open, scrape_free, smack_flat, thump_closed ]
-
-/-- All pairs use verbs from the predicted classes
-    (pushPull, hit — or wipe for scrape/sweep). -/
-theorem all_verbs_from_predicted_classes :
-    alternationPairs.all (fun d ↦
-      intrPushOpenClasses.contains d.verbClass ||
-      d.verbClass == .wipeManner) = true := by
-  decide
-
-/-- Each core-class pair (pushPull, hit) is blocked alone but gains the
-    causative alternation inside the resultative construction.
-    Wipe verbs (scrape/sweep) are excluded: they independently alternate
-    because they lexicalize CoS; they enter the construction through
-    their surface-contact sense, not their removing sense. -/
-theorem per_pair_alternation_core :
-    (alternationPairs.filter (intrPushOpenClasses.contains ·.verbClass)).all (fun p ↦
-      !decide (p.verbClass.Participates .causativeInchoative) &&
-      predictedAlternationInConstruction
-        (components p.verbClass) resultative .causativeInchoative
-    ) = true := by decide
-
-/-- Each pair's `adjType` agrees with the Fragment entry's `spatialConfigType`. -/
-theorem push_open_adj_agrees : open_.spatialConfigType = some push_open.adjType := rfl
-theorem pull_free_adj_agrees : free_.spatialConfigType = some pull_free.adjType := rfl
-theorem slam_shut_adj_agrees : shut.spatialConfigType = some slam_shut.adjType := rfl
-theorem punch_open_adj_agrees : open_.spatialConfigType = some punch_open.adjType := rfl
-theorem fling_open_adj_agrees : open_.spatialConfigType = some fling_open.adjType := rfl
-theorem scrape_free_adj_agrees : free_.spatialConfigType = some scrape_free.adjType := rfl
-theorem smack_flat_adj_agrees : flat.spatialConfigType = some smack_flat.adjType := rfl
-theorem thump_closed_adj_agrees : closed_.spatialConfigType = some thump_closed.adjType := rfl
-
-/-! ### Negative evidence: verb alone doesn't suffice
-
-Verbs outside the predicted classes do not license intr-*push open*
-even with an appropriate adjective (examples 51–56). -/
-
-/-- Verbs that occur in transitive resultatives with the relevant
-    adjectives but lack intr-*push open* counterparts. -/
-def blockedVerbs : List (String × String × String) :=
-  [ ("paint", "shut",  "*The window painted shut.")    -- (51b)
-  , ("wire",  "shut",  "*The windows wired shut.")     -- (52b)
-  , ("shovel","free",  "*Her car shoveled free.")      -- (53b)
-  , ("lever", "free",  "*One of the clasps levered free.")  -- (54b)
-  , ("nudge", "loose", "*The tooth nudged loose.")      -- (55b)
-  , ("oil",   "flat",  "*His hair oiled flat.")        -- (56b)
-  , ("nail",  "shut",  "*The root cellar door nailed shut.") ]  -- (74→75)
-
-/-! ### Negative evidence: adjective alone doesn't suffice
-
-Even in their spatially instantiated senses, the adjectives can appear
-in transitive resultatives with verbs of the right type, yet the
-transitive resultative lacks an intr-*push open* counterpart when the
-COMBINATION is wrong (examples 57–60). -/
-
-def blockedCombinations : List (String × String × String) :=
-  [ ("yank", "bald",      "*I yanked bald./*My scalp yanked bald.")           -- (57b)
-  , ("pull", "firm",      "*The skin of her temples and cheeks pulled firm.") -- (58b)
-  , ("scrape","smooth",   "*The ground scraped smooth and clean.")            -- (59b)
-  , ("punch","senseless", "*Frank punched senseless.") ]                      -- (60b)
-
-/-! ## Causal dynamics and event decomposition
-
-The constructional meaning of resultatives (§3, example 25):
-  `[Action denoted by verb] causes [change into state denoted by RP]`
-
-For tr-*push open* (§3, example 30):
-  `[Sam_effector push the door] CAUSE [the door BECOME open]`
-
-The constructional CAUSE comes from the resultative, not from the verb.
-The constructional BECOME maps to `Phasal.inception` (¬open → open). -/
-
-/-- The constructional BECOME of the resultative is an inception, `Aspect.Become` where it is
-defined and true (`Aspect.Phasal.holds_denote_inception`). -/
-def resultativeBECOME : Phasal := .inception
-
-/-! ### Key contrast: intr-push-open ≠ freeze-solid
-
-"The river froze solid" is a noncausative resultative where *freeze*
-independently shows the causative alternation; the verbal alternation
-plus the noncausative subconstruction explain why it surfaces without
-a causer.
-
-"The door pushed open" is fundamentally different: *push* does NOT
-independently alternate; the construction adds the CAUSE that the verb
-lacks. This is an **anticausative** licensed by the construction, not
-a lexically noncausative.
-
-Per-scenario causal models for these contrasts live below in §7
-(`HammerFlat`, `KickIntoField`, `FreezeSolid`, etc.) on the `BoolSEM`
-models, using `BoolSEM.causallySufficient` from
-`Causation.SEM.Counterfactual` and `CCSelection.completesForEffect`
-from `Causation.CCSelection`. -/
-
-/-- *Freeze* independently shows the causative alternation;
-    *push* does not. This confirms the classification: *freeze solid*
-    is a standard noncausative resultative with an alternating verb,
-    while *push open* must be an anticausative licensed by the
-    construction. -/
-theorem freeze_alternates_push_does_not :
-    LevinClass.otherChangeOfState.Participates .causativeInchoative ∧
-    ¬ LevinClass.pushPull.Participates .causativeInchoative := by decide
-
-/-! ## PCC and the independent-source analysis
-
-The Proper Containment Condition ([rappaport-hovav-levin-2012]):
-"When a change of state is properly contained within a causing act,
-the argument representing that act must be expressed in the same clause
-as the verb describing the change of state."
-
-This maps onto the **independent-source/tightness** analysis already
-formalized in `Causation/Resultatives.lean`:
-
-- **Projectile** (door after a push): the door has kinetic energy —
-  an **independent source**. Once pushed, the door continues to swing
-  without the agent. The agent's involvement is NOT continuously
-  required. → The theme has an independent source → the cause is
-  not necessary → anticausative OK.
-
-- **Continuous involvement** (nailing a door shut): the agent must
-  sustain force throughout. The door has NO independent source of
-  motion. → No independent source → the cause IS necessary → the
-  anticausative is blocked (PCC requires expressing the cause). -/
-
-/-! The PCC tightness analysis (projectile vs continuous, with the
-    intervening-source breakdown of necessity) is formalized on the
-    `BoolSEM` models below by `IndependentSourceBreaksNecessity` (§7)
-    — see `independent_source_breaks_necessity` for the canonical
-    not-tight witness.
-
-    Note: the witness is *our model*, not Levin 2019's specific
-    sentence-licensing argument. A genuine refutation theorem against
-    Goldberg & Jackendoff's licensing-not-necessity stance — using this
-    scenario as the disagreement witness — is the natural next step;
-    currently deferred. -/
-
-/-! ## Anticausative discourse conditions
-
-[rappaport-hovav-2014] identifies two discourse situations where
-the anticausative variant is preferred over the causative:
-
-1. The cause is **recoverable** from the discourse context — it has been
-   established earlier or follows from the natural course of events
-   (§5, examples 62–68).
-2. The speaker **does not know** the identity of the cause — the
-   existence of a cause can be inferred but its identity is unknown
-   (§5, examples 69–71; McCawley 1978).
-
-Intr-*push open* resultatives are found in precisely these two contexts. -/
-
-/-- How the cause relates to the discourse context. -/
-inductive CauseStatus where
-  /-- Cause established in prior discourse or natural course of events.
-      "The dry soil thawed ... the roots pulled free." (§5, ex. 64) -/
-  | recoverableInContext
-  /-- Cause inferable but identity unknown to speaker.
-      "The door pushed open and a man walked in." (§5, ex. 70) -/
-  | identityUnknown
-  /-- Cause novel and not recoverable; causative variant required. -/
-  | notRecoverable
+/-- The verbs of the paper's examples are the verbs of exerting force, the two subtypes of verbs
+of surface contact, the verbs of change of state, which show the causative alternation by
+themselves, and the other verbs, which are outside the paper's lists. -/
+inductive VerbKind
+  | exertingForce
+  | hitting
+  | wiping
+  | changeOfState
+  | other
   deriving DecidableEq, Repr
 
-/-- The anticausative variant is licensed when the cause is
-    recoverable or unknown. -/
-def anticausativeLicensed : CauseStatus → Bool
-  | .recoverableInContext => true
-  | .identityUnknown      => true
-  | .notRecoverable       => false
+/-- A verb of exerting force or of surface contact describes the application of a force to an
+entity. -/
+def VerbKind.AppliesForce (k : VerbKind) : Prop :=
+  k = .exertingForce ∨ k = .hitting ∨ k = .wiping
 
-theorem recoverable_licenses : anticausativeLicensed .recoverableInContext = true := rfl
-theorem unknown_licenses : anticausativeLicensed .identityUnknown = true := rfl
-theorem not_recoverable_blocks : anticausativeLicensed .notRecoverable = false := rfl
+instance : DecidablePred VerbKind.AppliesForce := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-! ## The projectile property
+/-- A verb of surface contact describes an entity coming into contact with another through the
+imparting of a force. -/
+def VerbKind.IsSurfaceContact (k : VerbKind) : Prop := k = .hitting ∨ k = .wiping
 
-The subject DP must be capable of **autonomous motion**: it must be
-able to move along the trajectory defined by the result state without
-requiring an external agent's sustained participation (§6).
+instance : DecidablePred VerbKind.IsSurfaceContact :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-The attested subjects qualify as "projectiles" ([kearns-2000]):
-entities that move due to their own kinetic energy and can impart
-this energy to another entity through contact. This includes entities
-that are not machines but are construed as force-imbued (doors after
-a push, corks in bottles, roots in thawing soil).
+/-- The attested verbs of exerting force. -/
+def exertingForceVerbs : List String :=
+  ["fling", "jerk", "pull", "push", "shove", "tug", "wrench", "yank"]
 
-The same types of entities pass the "What X did" diagnostic for
-effectors (fn. 17): agents, natural forces, machines, and projectiles. -/
+/-- The attested verbs of hitting. -/
+def hittingVerbs : List String := ["bang", "kick", "punch", "slam", "smack", "thrash", "thump"]
 
-/-- Classification of the theme (subject DP). -/
-inductive ThemeMotionCapacity where
-  /-- Self-energetic entity (agent, animal). -/
+/-- The attested verbs of wiping, with *wipe* itself. -/
+def wipingVerbs : List String := ["scrape", "sweep", "wipe"]
+
+/-- The verbs by their `paperFeatures` labels. -/
+def VerbKind.labels : List (String × VerbKind) :=
+  exertingForceVerbs.map (·, .exertingForce) ++ hittingVerbs.map (·, .hitting) ++
+    wipingVerbs.map (·, .wiping) ++ [("freeze", .changeOfState)] ++
+    ["scrub", "cut", "sew", "brush", "pat", "paint", "wire", "shovel", "lever", "nudge", "oil",
+      "nail"].map (·, .other)
+
+/-- A result adjective is used in its spatially instantiated sense or in another. -/
+inductive Sense
+  | spatial
+  | other
+  deriving DecidableEq, Repr
+
+/-- The senses by their `paperFeatures` labels. -/
+def Sense.labels : List (String × Sense) := [("spatial", .spatial), ("other", .other)]
+
+/-- The result adjectives by their `paperFeatures` labels, with the fragment entry of those the
+fragment has. -/
+def adjectiveLabels : List (String × Option Degree.GradableAdjective) :=
+  open English.Adjectives in
+  [("open", some open_), ("closed", some closed_), ("shut", some shut), ("free", some free_),
+   ("loose", some loose), ("flat", some flat), ("solid", none), ("clean", none), ("bald", none),
+   ("firm", none), ("smooth", none), ("senseless", none)]
+
+/-- The kinds of entity a subject denotes. -/
+inductive Theme
   | animate
-  /-- Machine with independent power source (tractor, vehicle). -/
   | machine
-  /-- Entity imbued with force via the verbal action: after a push,
-      the door continues to swing without the agent's involvement.
-      Includes entities construed as moving under transferred kinetic
-      energy (doors, corks, roots, prongs). -/
   | projectile
-  /-- Entity requiring continuous external manipulation to move:
-      nails being hammered, instruments being wielded. -/
-  | requiresContinuousForce
+  | naturalForce
+  | manipulated
   deriving DecidableEq, Repr
 
-/-- Whether a theme can serve as subject of intr-*push open*. -/
-def canBeIntrPushOpenSubject : ThemeMotionCapacity → Bool
-  | .animate                 => true
-  | .machine                 => true
-  | .projectile              => true
-  | .requiresContinuousForce => false
+/-- A self-energetic entity moves without the continuous involvement of an external cause;
+an entity that an agent manipulates throughout the event does not. -/
+def Theme.SelfEnergetic (t : Theme) : Prop := t ≠ .manipulated
 
-theorem projectile_licenses : canBeIntrPushOpenSubject .projectile = true := rfl
-theorem animate_licenses : canBeIntrPushOpenSubject .animate = true := rfl
-theorem machine_licenses : canBeIntrPushOpenSubject .machine = true := rfl
+instance : DecidablePred Theme.SelfEnergetic := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
-/-- Entities requiring continuous external manipulation are blocked.
-    "My father nailed the door shut" (§6, ex. 74) is OK, but
-    "*The root cellar door nailed shut" (§6, ex. 75) is unacceptable. -/
-theorem continuous_force_blocks :
-    canBeIntrPushOpenSubject .requiresContinuousForce = false := rfl
+/-- The kinds of subject by their `paperFeatures` labels. -/
+def Theme.labels : List (String × Theme) :=
+  [("animate", .animate), ("machine", .machine), ("projectile", .projectile),
+   ("natural force", .naturalForce), ("manipulated", .manipulated)]
 
-/-! ## Connection to directed motion
+/-- The frames of the paper's examples. -/
+inductive Frame
+  | transitive
+  | intransitive
+  | directedMotion
+  deriving DecidableEq, Repr
 
-The same verbs appear intransitively in directed motion event
-descriptions (§7, examples 84–85):
-- "The tennis ball slammed into the net." (84a)
-- "The chair scraped across the floor." (84b)
+/-- The frames by their `paperFeatures` labels. -/
+def Frame.labels : List (String × Frame) :=
+  [("transitive", .transitive), ("intransitive", .intransitive),
+   ("directed motion", .directedMotion)]
 
-These share the same licensing condition: the theme must be capable
-of autonomous motion. This provides independent support.
+/-! ### Licensing -/
 
-Note: natural forces (*storm*, *wind*) are attested as subjects of
-directed motion (85b) but NOT of intr-*push open* resultatives,
-because the relevant adjectives cannot be predicated of them
-(*\*an open storm/wind*). -/
+/-- A result phrase has an adjective, recorded where the fragment has it, and the sense the
+adjective is used in. -/
+structure Result where
+  adjective : Option Degree.GradableAdjective
+  sense : Sense
 
-/-- A directed motion event description with a surface-contact verb. -/
-structure DirectedMotionDatum where
-  verb : String
-  sentence : String
-  themeType : ThemeMotionCapacity
-  deriving Repr, BEq
+/-- A result phrase describes a spatially instantiated state when its adjective has a spatial
+configuration and is used in that sense. -/
+def Result.IsSpatial (r : Result) : Prop :=
+  r.sense = .spatial ∧ ∃ a ∈ r.adjective, a.spatialConfigType.isSome
 
-def ball_slammed : DirectedMotionDatum :=
-  { verb := "slam", sentence := "The tennis ball slammed into the net."
-  , themeType := .projectile }
+instance : DecidablePred Result.IsSpatial := fun r ↦
+  inferInstanceAs (Decidable (r.sense = .spatial ∧ ∃ a ∈ r.adjective, a.spatialConfigType.isSome))
 
-def chair_scraped : DirectedMotionDatum :=
-  { verb := "scrape", sentence := "The chair scraped across the floor."
-  , themeType := .projectile }
+/-- An example of the paper records the kind of its verb, its result phrase and the kind of its
+subject, where it has them, its frame and its judgment. -/
+structure Datum where
+  verb : VerbKind
+  result : Option Result
+  theme : Option Theme
+  frame : Frame
+  judgment : Judgment
 
-def horse_banged : DirectedMotionDatum :=
-  { verb := "bang", sentence := "The run-away horse banged into the fence."
-  , themeType := .animate }
+/-- An intransitive whose subject is the verb's object is licensed when the verb is a verb of
+change of state, or when a verb that applies a force combines with a spatially instantiated
+result predicated of a self-energetic subject. -/
+def Datum.Licensed (d : Datum) : Prop :=
+  d.verb = .changeOfState ∨
+    (d.verb.AppliesForce ∧ (∃ r ∈ d.result, r.IsSpatial) ∧ ∃ t ∈ d.theme, t.SelfEnergetic)
 
-def truck_smacked : DirectedMotionDatum :=
-  { verb := "smack", sentence := "The truck smacked into the retaining wall."
-  , themeType := .machine }
+instance : DecidablePred Datum.Licensed := fun d ↦
+  inferInstanceAs (Decidable (d.verb = .changeOfState ∨
+    (d.verb.AppliesForce ∧ (∃ r ∈ d.result, r.IsSpatial) ∧ ∃ t ∈ d.theme, t.SelfEnergetic)))
 
-def directedMotionData : List DirectedMotionDatum :=
-  [ball_slammed, chair_scraped, horse_banged, truck_smacked]
+/-- An optional feature of an example, read through a table. -/
+def optional? {α : Type*} (e : LinguisticExample) (key : String) (table : List (String × α)) :
+    Option (Option α) :=
+  match e.feature? key with
+  | none => some none
+  | some v => (table.lookup v).map some
 
-/-- All directed motion themes satisfy the autonomous motion condition,
-    paralleling intr-*push open*. -/
-theorem directed_motion_themes_autonomous :
-    directedMotionData.all (canBeIntrPushOpenSubject ·.themeType) = true := by
-  decide
+/-- The result phrase of an example, none when the row names no adjective. -/
+def result? (e : LinguisticExample) : Option (Option Result) :=
+  match e.feature? "adjective" with
+  | none => some none
+  | some _ => do
+    pure (some { adjective := ← e.parse? "adjective" adjectiveLabels
+                 sense := ← e.parse? "sense" Sense.labels })
 
-/-! Natural forces (*storm*, *wind*) are attested as directed motion
-subjects — (85b) "The storm swept through the valley" — but NOT in
-intr-*push open* resultatives. The blocking mechanism is the adjective
-restriction: the relevant adjectives cannot be predicated of natural
-forces (*\*an open storm*), so no licensed verb–adjective combination
-exists. The theme passes the autonomous motion test but the adjective
-filter blocks it independently. -/
+/-- An example read into its datum. -/
+def datum (e : LinguisticExample) : Option Datum := do
+  pure { verb := ← e.parse? "verb" VerbKind.labels
+         result := ← result? e
+         theme := ← optional? e "theme" Theme.labels
+         frame := ← e.parse? "frame" Frame.labels
+         judgment := e.judgment }
 
-/-! ## The licensing conjunction
+/-- Every example is read. -/
+theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide +kernel
 
-An intr-*push open* resultative is licensed iff ALL of:
-1. The verb is from a force-application class (§12, §18)
-2. The adjective describes a spatially instantiated state
-3. The discourse context licenses cause suppression
-4. The theme is capable of autonomous motion -/
+/-- The paper's examples. -/
+def data : List Datum := Examples.all.filterMap datum
 
-/-- Full licensing check for an intr-*push open* resultative. -/
-def isLicensed (verbClass : LevinClass) (adj : Degree.GradableAdjective)
-    (causeStatus : CauseStatus) (theme : ThemeMotionCapacity) : Bool :=
-  intrPushOpenClasses.contains verbClass &&
-  adj.spatialConfigType.isSome &&
-  anticausativeLicensed causeStatus &&
-  canBeIntrPushOpenSubject theme
+/-- An intransitive of the paper, with or without a result phrase, is acceptable exactly when
+it is licensed. -/
+theorem acceptable_iff_licensed :
+    ∀ d ∈ data, d.frame = .intransitive → (d.judgment = .acceptable ↔ d.Licensed) := by
+  decide +kernel
 
-/-- "The door pushed open" in a recoverable-cause context is licensed. -/
-theorem door_pushed_open_licensed :
-    isLicensed .pushPull open_ .recoverableInContext .projectile = true := by
-  decide
+/-- The verb does not suffice, since a verb that applies a force is unacceptable without a result
+phrase and with a result that is not spatially instantiated. -/
+theorem exists_unacceptable_appliesForce :
+    (∃ d ∈ data, d.verb.AppliesForce ∧ d.frame = .intransitive ∧ d.result = none ∧
+      d.judgment ≠ .acceptable) ∧
+    ∃ d ∈ data, d.verb.AppliesForce ∧ d.frame = .intransitive ∧ d.result.isSome ∧
+      d.judgment ≠ .acceptable := by
+  decide +kernel
 
-/-- "The door pushed open" in a cause-unknown context is licensed. -/
-theorem door_pushed_open_licensed_unknown :
-    isLicensed .pushPull open_ .identityUnknown .projectile = true := by
-  decide
+/-- The adjective does not suffice, since a spatially instantiated result is unacceptable with a
+verb outside the two classes. -/
+theorem exists_unacceptable_spatial :
+    ∃ d ∈ data, d.frame = .intransitive ∧ (∃ r ∈ d.result, r.IsSpatial) ∧
+      d.judgment ≠ .acceptable := by
+  decide +kernel
 
-/-- The intransitive is blocked when the cause is not recoverable. -/
-theorem blocked_no_context :
-    isLicensed .pushPull open_ .notRecoverable .projectile = false := by
-  decide
+/-- The verbs of exerting force and the verbs of hitting are attested in both variants, the
+transitive resultative and the intransitive one. -/
+theorem causative_variants :
+    ∀ k ∈ [VerbKind.exertingForce, .hitting],
+      (∃ d ∈ data, d.verb = k ∧ d.frame = .transitive ∧ d.result.isSome ∧
+        d.judgment = .acceptable) ∧
+      ∃ d ∈ data, d.verb = k ∧ d.frame = .intransitive ∧ d.result.isSome ∧
+        d.judgment = .acceptable := by
+  decide +kernel
 
-/-- The intransitive is blocked when the theme requires continuous force. -/
-theorem blocked_continuous_force :
-    isLicensed .pushPull open_ .recoverableInContext
-      .requiresContinuousForce = false := by
-  decide
+/-- The subjects of the directed motion descriptions with verbs of surface contact are
+self-energetic, as the subjects of the intransitive resultatives are. -/
+theorem directedMotion_selfEnergetic :
+    ∀ d ∈ data, d.frame = .directedMotion →
+      d.verb.IsSurfaceContact ∧ ∃ t ∈ d.theme, t.SelfEnergetic := by
+  decide +kernel
 
-/-- The intransitive is blocked for the wrong verb class; *break* is a change-of-state verb. -/
-theorem blocked_wrong_verb_class :
-    isLicensed .break_ open_ .recoverableInContext .projectile = false := by
-  decide
+/-- An entity that must be manipulated throughout is never the subject of a licensed
+intransitive resultative with a verb that applies a force. -/
+theorem not_licensed_of_manipulated {d : Datum} (hv : d.verb ≠ .changeOfState)
+    (ht : d.theme = some .manipulated) : ¬ d.Licensed := by
+  rintro (h | ⟨-, -, t, ht', hs⟩)
+  · exact hv h
+  · rw [ht] at ht'
+    exact hs (Option.some.inj ht').symm
 
-/-- The intransitive is blocked when the adjective is not spatially instantiated, as *red*. -/
-private def red_ : Degree.GradableAdjective where
-  form := "red"; dimension := some .color
+/-! ### The construction does not restrict the alternation -/
 
-theorem blocked_wrong_adjective :
-    isLicensed .pushPull red_ .recoverableInContext .projectile = false := by
-  decide
-
-/-! ### End-to-end: the full argument chain
-
-1. *push* is pushPull (§12) → pure manner, no CoS, no causation
-2. No causative alternation for pushPull alone (meaning-component prediction)
-3. **Fusion**: resultative construction adds CoS + causation → composed
-   meaning now predicts the causative alternation
-4. Resultative construction adds CAUSE (a non-trivial `BoolSEM` law)
-5. Constructional BECOME = inception (Phasal.inception)
-6. Anticausative: cause suppressed under discourse licensing
-7. PCC: projectile has independent energy → cause not continuously needed
-8. Theme passes autonomous-motion check → anticausative OK -/
-
-theorem end_to_end_push_open :
-    -- Step 1-2: verb class blocks alternation alone
+/-- The classes of verbs of exerting force and of hitting lack the causative alternation in
+[levin-1993], and the verbs of change of state have it. -/
+theorem participates_causativeInchoative :
     ¬ LevinClass.pushPull.Participates .causativeInchoative ∧
-    LevinClass.rootEntailments .pushPull == some Root.Kinds.pureManner ∧
-    -- Step 3: fusion — construction adds CoS + causation → alternation predicted
-    predictedAlternationInConstruction
-      (components .pushPull)
-      resultative .causativeInchoative = true ∧
-    -- Step 5: BECOME = inception
-    resultativeBECOME == .inception ∧
-    -- Step 6: discourse licenses anticausative
-    anticausativeLicensed .recoverableInContext = true ∧
-    -- Step 7-8: theme is projectile → autonomous motion OK
-    canBeIntrPushOpenSubject .projectile = true := by
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl⟩ <;> decide
-
-/-! ## FilledResultative: bundling lexical material with the construction
-
-The construction grammar layer (MeaningComponents, fusion, alternation
-prediction) carries the structural content. `FilledResultative` bundles
-the lexical fillers as proof obligations on the type — the filling must
-satisfy the Boolean-level alternation prediction.
-
-This is the formal reflex of [levin-2026]'s analysis: a resultative
-is a **construction filled with specific lexical material** (verb class,
-adjective).
-
-The structural-causation layer for these resultatives lives in §7 below
-on `BoolSEM` models (see `HammerFlat`, `KickIntoField`, etc.).
-Linking a specific `FilledResultative` to its `BoolSEM` model would be a
-separate study extension.
--/
-
-/-- A resultative construction instantiated with its lexical fillers. -/
-structure FilledResultative where
-  /-- The verb's Levin class (manner root) -/
-  verbClass : LevinClass
-  /-- The result-state adjective (from Fragment) -/
-  adjective : Degree.GradableAdjective
-  /-- The argument structure construction (typically `resultative`) -/
-  construction : Construction MeaningComponents
-  /-- The construction adds what the verb lacks: fusion predicts the
-      causative alternation for the composed meaning. -/
-  alternationPredicted :
-    predictedAlternationInConstruction
-      (components verbClass) construction .causativeInchoative = true
-  /-- The adjective describes a spatially instantiated state. -/
-  adjSpatial : adjective.spatialConfigType.isSome = true
-
-/-- Whether this filled resultative can surface as an anticausative
-    (intr-*push open*), given discourse and theme conditions.
-    Checks the verb class restriction in addition to discourse/theme. -/
-def FilledResultative.canAnticausativize (fr : FilledResultative)
-    (cause : CauseStatus) (theme : ThemeMotionCapacity) : Bool :=
-  intrPushOpenClasses.contains fr.verbClass &&
-  anticausativeLicensed cause &&
-  canBeIntrPushOpenSubject theme
-
-/-! ### Concrete instances -/
-
-def pushOpen_filled : FilledResultative :=
-  { verbClass := .pushPull
-  , adjective := open_
-  , construction := resultative
-  , alternationPredicted := by decide
-  , adjSpatial := by decide }
-
-def pullFree_filled : FilledResultative :=
-  { verbClass := .pushPull
-  , adjective := free_
-  , construction := resultative
-  , alternationPredicted := by decide
-  , adjSpatial := by decide }
-
-def slamShut_filled : FilledResultative :=
-  { verbClass := .hit
-  , adjective := shut
-  , construction := resultative
-  , alternationPredicted := by decide
-  , adjSpatial := by decide }
-
-/-! ### FilledResultative → licensing
-
-The `isLicensed` function and the `FilledResultative` type encode the same
-conditions from different angles. `isLicensed` is a flat Boolean check;
-`FilledResultative` bundles the conditions as proof obligations. The bridge
-theorem shows they agree: any `FilledResultative` with appropriate discourse
-and theme conditions passes `isLicensed`. -/
-
-/-- A `FilledResultative` whose verb class is in `intrPushOpenClasses`
-    passes `isLicensed` for any licensed cause status and theme. -/
-theorem filled_implies_licensed (fr : FilledResultative)
-    (cause : CauseStatus) (theme : ThemeMotionCapacity)
-    (hClass : intrPushOpenClasses.contains fr.verbClass = true)
-    (hCause : anticausativeLicensed cause = true)
-    (hTheme : canBeIntrPushOpenSubject theme = true) :
-    isLicensed fr.verbClass fr.adjective cause theme = true := by
-  unfold isLicensed
-  rw [hClass, hCause, hTheme]
-  simp [fr.adjSpatial]
-
-/-- The filled construction `pushOpen_filled` passes `isLicensed` in a recoverable-cause,
-    projectile context. -/
-theorem pushOpen_filled_licensed :
-    isLicensed pushOpen_filled.verbClass pushOpen_filled.adjective
-      .recoverableInContext .projectile = true := by
+    ¬ LevinClass.hit.Participates .causativeInchoative ∧
+    LevinClass.otherChangeOfState.Participates .causativeInchoative := by
   decide
 
-/-- The anticausative of `pushOpen_filled` is licensed in the right
-    discourse context. -/
-theorem pushOpen_anticausative_licensed :
-    pushOpen_filled.canAnticausativize .recoverableInContext .projectile = true := by
-  decide
-
-/-- The anticausative is blocked when the cause is not recoverable. -/
-theorem pushOpen_anticausative_blocked_no_context :
-    pushOpen_filled.canAnticausativize .notRecoverable .projectile = false := by
-  decide
-
-/-- The anticausative is blocked when the theme requires continuous force. -/
-theorem pushOpen_anticausative_blocked_continuous :
-    pushOpen_filled.canAnticausativize .recoverableInContext
-      .requiresContinuousForce = false := by
-  decide
-
-/-! ### FilledResultative ↔ end-to-end chain
-
-The `end_to_end_push_open` theorem proved 9 conjuncts individually.
-`pushOpen_filled` encodes three of those (alternation prediction,
-spatial adjective, causal consistency) as proof obligations on the type.
-The remaining conditions (discourse, theme) are runtime parameters. -/
-
-/-- `pushOpen_filled` subsumes the core of `end_to_end_push_open`:
-    the type's proof obligations cover the alternation prediction
-    and the spatial-adjective step. -/
-theorem pushOpen_filled_covers_core :
-    -- From alternationPredicted: steps 1-3 (verb blocked alone → construction enables)
-    predictedAlternationInConstruction
-      (components pushOpen_filled.verbClass)
-      pushOpen_filled.construction .causativeInchoative = true ∧
-    -- From adjSpatial: step 2 (adjective spatial)
-    pushOpen_filled.adjective.spatialConfigType.isSome = true := by
-  exact ⟨pushOpen_filled.alternationPredicted,
-         pushOpen_filled.adjSpatial⟩
-
-/-! ## Mandarin cognate
-
-The paper (§1) motivates the English analysis by drawing parallels to
-Mandarin, where the verb *tuī* "push" similarly cannot occur intransitively
-outside resultative constructions (example 4: *tuī fān* "push-upend";
-examples 5–6 show *tuī* alone cannot appear intransitively).
-The Mandarin cognate compound *tuī-kāi* "push-open" exists
-as a V-V compound in the Fragment — this bridge connects it to the English
-analysis. -/
-
-/-- The Mandarin push-open compound is the cross-linguistic cognate:
-    same verb meaning (push), same result meaning (open), object-oriented. -/
-theorem mandarin_tui_kai_is_cognate :
-    Mandarin.Resultatives.tui_kai.gloss = "push-open" ∧
-    Mandarin.Resultatives.tui_kai.orientation = .objectOriented := ⟨rfl, rfl⟩
-
-/-! ## Per-scenario causal models
-
-Each causative resultative maps to a concrete `BoolSEM V` where the
-verbal subevent causally determines the result vertex. Sufficiency and
-completion are stated via the canonical `BoolSEM.causallySufficient` /
-`CCSelection.completesForEffect` predicates, proved by lifting
-`developDetOn` computations through the soundness bridges.
-
-Per-scenario inductive `V` enums give `Fintype + DecidableEq + Repr`
-so the `developDetOn` computations close by `decide`. -/
-
-section Scenarios
-open Causation Causation.Mechanism Causation.SEM
-open Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
-
-namespace HammerFlat
-
-inductive V | hammering | flat
-  deriving DecidableEq, Fintype, Repr
-
-def varList : List V := [.hammering, .flat]
-
-def graph : CausalGraph V := ⟨fun | .hammering => ∅ | .flat => {.hammering}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .hammering => 0 | .flat => 1)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .hammering => const (G := graph) false
-      | .flat => deterministic (fun ρ ↦ ρ ⟨.hammering, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .hammering => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .flat => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-theorem hammer_sufficient_for_flat :
-    BoolSEM.causallySufficient model Valuation.empty .hammering .flat :=
-  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
-
-theorem hammer_completes_flat :
-    completesForEffect model Valuation.empty .hammering true false .flat true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
-
-end HammerFlat
-
-namespace KickIntoField
-
-inductive V | kicking | in_field
-  deriving DecidableEq, Fintype, Repr
-
-def varList : List V := [.kicking, .in_field]
-
-def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .in_field => {.kicking}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .in_field => 1)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .kicking => const (G := graph) false
-      | .in_field => deterministic (fun ρ ↦ ρ ⟨.kicking, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .in_field => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-theorem kick_sufficient_for_field :
-    BoolSEM.causallySufficient model Valuation.empty .kicking .in_field :=
-  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
-
-theorem kick_completes_field :
-    completesForEffect model Valuation.empty .kicking true false .in_field true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
-
-end KickIntoField
-
-namespace LaughSilly
-
-inductive V | laughing | silly
-  deriving DecidableEq, Fintype, Repr
-
-def varList : List V := [.laughing, .silly]
-
-def graph : CausalGraph V := ⟨fun | .laughing => ∅ | .silly => {.laughing}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .laughing => 0 | .silly => 1)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .laughing => const (G := graph) false
-      | .silly => deterministic (fun ρ ↦ ρ ⟨.laughing, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .laughing => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .silly => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-theorem laugh_sufficient_for_silly :
-    BoolSEM.causallySufficient model Valuation.empty .laughing .silly :=
-  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
-
-end LaughSilly
-
-namespace FreezeSolid
-
-/-! "The river froze solid" — noncausative resultative. Empty graph
-    captures the absence of constructional CAUSE. -/
-
-inductive V | freezing | solid
-  deriving DecidableEq, Fintype, Repr
-
-def varList : List V := [.freezing, .solid]
-
-/-- The empty graph has no causal relations, the noncausative resultative. -/
-def graph : CausalGraph V := ⟨fun _ ↦ ∅⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun _ ↦ 0)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun _ ↦ const (G := graph) false }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det _ := inferInstanceAs (Mechanism.IsDeterministic (const _))
-
-/-- Freezing is NOT sufficient for solidity in the empty-edge model. -/
-theorem freeze_not_sufficient :
-    ¬ BoolSEM.causallySufficient model Valuation.empty .freezing .solid := by
-  intro h
-  have hf : (model.developDet (Valuation.empty.extend V.freezing true)).get V.solid
-      = some false :=
-    SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
-  have h' : (model.developDet (Valuation.empty.extend V.freezing true)).get V.solid
-      = some true := h
-  exact Bool.noConfusion (Option.some.inj (h'.symm.trans hf))
-
-end FreezeSolid
-
-namespace DrinkTeapotDry
-
-/-! "Drink the teapot dry" — passive chain: drinking → tea_removal →
-    teapot_dry. Tight because tea_removal has no independent source. -/
-
-inductive V | drinking | tea_removal | teapot_dry
-  deriving DecidableEq, Fintype, Repr
-
-def varList : List V := [.drinking, .tea_removal, .teapot_dry]
-
-def graph : CausalGraph V := ⟨fun
-  | .drinking => ∅
-  | .tea_removal => {.drinking}
-  | .teapot_dry => {.tea_removal}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph
-    (fun | .drinking => 0 | .tea_removal => 1 | .teapot_dry => 2)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .drinking => const (G := graph) false
-      | .tea_removal => deterministic (fun ρ ↦ ρ ⟨.drinking, by simp [graph]⟩)
-      | .teapot_dry => deterministic (fun ρ ↦ ρ ⟨.tea_removal, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .drinking => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .tea_removal => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .teapot_dry => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-/-- Tight despite being a chain, since removing drinking leaves tea_removal
-    undetermined (no independent source), so teapot_dry doesn't fire. -/
-theorem drink_completes_dry :
-    completesForEffect model Valuation.empty .drinking true false .teapot_dry true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
-
-end DrinkTeapotDry
-
-namespace KickDoorDirect
-
-inductive V | kicking | door_open
-  deriving DecidableEq, Fintype, Repr
-
-def varList : List V := [.kicking, .door_open]
-
-def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .door_open => {.kicking}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .door_open => 1)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .kicking => const (G := graph) false
-      | .door_open => deterministic (fun ρ ↦ ρ ⟨.kicking, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-theorem kick_door_completes_direct :
-    completesForEffect model Valuation.empty .kicking true false .door_open true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
-
-end KickDoorDirect
-
-namespace IndependentSourceBreaksNecessity
-
-/-! NOT-tight case: kick → ball_motion → door_open + ball_energy →
-    ball_motion. Ball has its own independent energy source, so kicking
-    is not necessary for door_open in this model.
-
-    *In our model*, parallel mechanisms break but-for necessity. This
-    is an illustration of the general independent-source phenomenon
-    rather than a direct formalization of any specific paper's
-    sentence-licensing argument. -/
-
-inductive V | kicking | ball_motion | ball_energy | door_open
-  deriving DecidableEq, Fintype, Repr
-
-def varList : List V := [.kicking, .ball_energy, .ball_motion, .door_open]
-
-def graph : CausalGraph V := ⟨fun
-  | .kicking => ∅
-  | .ball_energy => ∅
-  | .ball_motion => {.kicking, .ball_energy}
-  | .door_open => {.ball_motion}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph
-    (fun | .kicking => 0 | .ball_energy => 0 | .ball_motion => 1 | .door_open => 2)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .kicking => const (G := graph) false
-      | .ball_energy => const (G := graph) false
-      | .ball_motion => deterministic (fun ρ ↦
-          ρ ⟨.kicking, by simp [graph]⟩ || ρ ⟨.ball_energy, by simp [graph]⟩)
-      | .door_open => deterministic (fun ρ ↦ ρ ⟨.ball_motion, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .ball_energy => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .ball_motion => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-def ballHasEnergyBg : Valuation (fun _ : V ↦ Bool) :=
-  Valuation.empty.extend .ball_energy true
-
-/-- Not tight, since removing kicking still allows ball_energy → ball_motion
-    → door_open, so the but-for half of `completesForEffect` fails.
-    The kick is not necessary. -/
-theorem independent_source_breaks_necessity :
-    ¬ completesForEffect model ballHasEnergyBg .kicking true false .door_open true :=
-  fun ⟨_, hb⟩ ↦ hb (SEM.developDet_hasValue_of_developDetOn_hasValue
-    (vs := varList) (n := 1) (by decide))
-
-end IndependentSourceBreaksNecessity
-
-end Scenarios
+/-- The paper's verbs of exerting force are not all verbs of pushing and pulling in
+[levin-1993]: *fling* is there a verb of throwing. -/
+theorem exertingForce_not_all_pushPull :
+    ∃ v ∈ exertingForceVerbs, "fling" = v ∧ v ∉ LevinClass.members .pushPull ∧
+      v ∈ LevinClass.members .throw := by
+  decide +kernel
+
+/-- Fused with the resultative, the meaning of any verb that specifies no instrument is
+predicted to alternate. -/
+theorem predictedAlternation_resultative (mc : MeaningComponents)
+    (h : mc.instrumentSpec = false) :
+    predictedAlternationInConstruction mc resultative .causativeInchoative = true :=
+  (fuse_cos_caus_enables mc resultative.meaning rfl rfl h rfl).1
+
+/-- The resultative makes the alternation available but does not restrict it, since the meaning of a
+manner verb of contact and motion is predicted to alternate in the resultative, and the paper
+has unacceptable intransitive resultatives with manner verbs. -/
+theorem fusion_overgenerates :
+    predictedAlternationInConstruction .hit resultative .causativeInchoative = true ∧
+    ∃ d ∈ data, d.verb = .other ∧ d.frame = .intransitive ∧ d.result.isSome ∧
+      d.judgment ≠ .acceptable :=
+  ⟨predictedAlternation_resultative _ rfl, by decide +kernel⟩
 
 end Levin2026
