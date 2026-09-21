@@ -1233,7 +1233,6 @@ import Linglib.Semantics.Root.Content
 import Linglib.Semantics.Root.PropertyConcept
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Acquaintance

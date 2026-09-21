@@ -1,6 +1,6 @@
 import Linglib.Fragments.Indonesian.Verbs
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Semantics.ArgumentStructure.VoiceSemantics
+import Linglib.Studies.BeaversZubair2013
 import Linglib.Data.Examples.BeaversUdayana2022
 
 /-!
@@ -17,6 +17,7 @@ gives the four middles of the paper.
 
 ## Main definitions
 
+* `ber`, `incorporate`: the denotation of *ber-* and the incorporating variant of a verb.
 * `MiddleType`, `MiddleType.denote`: a cell of the two-by-two classification, and the truth
   conditions that *ber-* derives for it.
 * `RootClass`: the classes of root that fix the default reading.
@@ -29,6 +30,8 @@ gives the four middles of the paper.
   `denote_incorporationReflexive`: the truth conditions of the four middles.
 * `denote_incorporationReflexive_iff_reflexive`: incorporated *diri* and an inherent reflexive
   have the same truth conditions.
+* `causerSuppress_eq_ber`, `denote_reflexive_iff_resolve`: *ber-* generalizes the causer
+  suppression of Beavers and Zubair.
 * `subjectIsAgent_iff`, `separateAgent_of_dispositional`: the subject is the agent in every
   cell but the dispositional one, which entails an agent other than the subject.
 * `licensesOleh_iff`, `licensesSendirinya_not_licensesRationale_iff`: only *di-* licenses
@@ -43,7 +46,6 @@ gives the four middles of the paper.
 
 namespace BeaversUdayana2022
 
-open ArgumentStructure.VoiceSemantics
 open Minimalist.Voice (Params Flavor)
 
 /-! ### The middles -/
@@ -88,6 +90,13 @@ section Composition
 
 variable {E : Type} (V : E → E → Prop) (P : E → Prop) (s z : E)
 
+/-- *ber-* saturates the first open argument of its VP with the free variable `z` (43). -/
+def ber {α : Type} (z : E) (vp : E → α) : α := vp z
+
+/-- An incorporating verb predicates the noun of its patient and keeps the patient as an
+argument (49). -/
+def incorporate : E → E → Prop := fun x y ↦ V x y ∧ P x
+
 /-- The VP of a middle before *ber-* applies, as a function of its first open argument. With a
 promoted object, whose trace the verb has combined with, that argument is the agent, and with an
 incorporated noun it is the patient. -/
@@ -103,7 +112,7 @@ def Reading.resolve (φ : E → Prop) : Reading → Prop
 /-- The truth conditions of a middle with subject `s`, which are those of *ber-* applied to the
 VP, with the free variable resolved by the reading. -/
 def MiddleType.denote (m : MiddleType) : Prop :=
-  m.reading.resolve s fun z ↦ suppressArg z (vp V P s m.objRealization)
+  m.reading.resolve s fun z ↦ ber z (vp V P s m.objRealization)
 
 /-- As an incorporated noun *diri* 'self' is semantically vacuous. -/
 def diri : E → Prop := fun x ↦ ∃ y, y = x
@@ -153,6 +162,36 @@ theorem subjectIsAgent_iff (m : MiddleType) : m.SubjectIsAgent ↔ m ≠ disposi
 theorem separateAgent_of_dispositional (h : dispositional.denote V P s) : ∃ z, z ≠ s ∧ V s z := h
 
 end Composition
+
+/-! ### Causer suppression (§3.3)
+
+*ber-* generalizes the causer suppression of Beavers and Zubair, which applies to a causer of
+the individual sort alone. Their verbs take the causer first. -/
+
+section CauserSuppression
+
+open BeaversZubair2013 Causation
+
+variable {E : Type} {c : CauserSort} (h : c.admitsIndividual) (V : E → E → Prop) (P : E → Prop)
+  (s : E)
+
+/-- Causer suppression is *ber-* under a condition on the sort of the causer. -/
+theorem causerSuppress_eq_ber {α : Type} (z : E) (vp : E → α) :
+    causerSuppress c h z vp = ber z vp :=
+  rfl
+
+/-- An inherent reflexive is the reflexive resolution of a suppressed causer. -/
+theorem denote_reflexive_iff_resolve :
+    reflexive.denote V P s ↔ BeaversZubair2013.Reading.reflexive.resolve h (flip V) s :=
+  Iff.rfl
+
+/-- A dispositional middle entails the existential resolution of a suppressed causer, to which
+it adds that the causer is not the subject. -/
+theorem resolve_existential_of_dispositional (hs : dispositional.denote V P s) :
+    BeaversZubair2013.Reading.existential.resolve h (flip V) s :=
+  let ⟨z, _, hz⟩ := hs; ⟨z, hz⟩
+
+end CauserSuppression
 
 /-! ### A model
 
@@ -319,8 +358,8 @@ end Voice
 /-- A relational noun such as *topi* 'hat' denotes a relation of possessum and possessor, and
 *ber-* suppresses the possessum, so that *Tono bertopi* says that Tono has some hat on. A sortal
 noun has one argument, and suppressing it leaves none for a subject. -/
-theorem suppressArg_relationalNoun {E : Type} (π : E → E → Prop) (possessum possessor : E) :
-    suppressArg possessum π possessor ↔ π possessum possessor :=
+theorem ber_relationalNoun {E : Type} (π : E → E → Prop) (possessum possessor : E) :
+    ber possessum π possessor ↔ π possessum possessor :=
   Iff.rfl
 
 /-! ### The voice typology of Alexiadou and Schäfer (§7.3) -/
