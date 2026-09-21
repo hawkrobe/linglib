@@ -46,7 +46,7 @@ Files that synthesise across multiple papers but aren't anchored on a
 single paper (e.g., `AspectualConsistency`, `TheoryComparison`,
 `SPEDerivations`, `TowerDerivation`) belong in the relevant phenomenon
 directory as topical siblings of the data files, or in `Theories/` if
-they extend a framework (e.g., `Theories/Pragmatics/RelevanceTheory/Nonliteral.lean`).
+they extend a framework.
 Studies/ is paper-anchored content only.
 
 ## Examples and generated content
