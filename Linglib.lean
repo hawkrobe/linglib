@@ -1206,10 +1206,7 @@ import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Memory.LossyContext
 import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Processing.Psychophysics.GaussianChoice
-import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Processing.Psychophysics.SignalDetection
-import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Processing.VisualWorld
 import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Extremum
@@ -2047,8 +2044,6 @@ import Linglib.Studies.Longobardi2001
 import Linglib.Studies.Longobardi2005
 import Linglib.Studies.LuChuangBaayen2026
 import Linglib.Studies.LuPanDegen2025
-import Linglib.Studies.Luce1959.Basic
-import Linglib.Studies.Luce1959.Ranking
 import Linglib.Studies.LuckingGinzburg2022
 import Linglib.Studies.Lucy1994
 import Linglib.Studies.MacuchSilvaEtAl2024

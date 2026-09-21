@@ -31,9 +31,7 @@ model with utilities `(d' * x, 0)` and unit scale, so its signal probability
 `L(x) / (L(x) + 1)` is the Bayesian posterior under a uniform prior
 (`SDTModel.posteriorAt_uniform`). That posterior exceeds one half exactly when the observation
 is positive (`SDTModel.posterior_gt_half_iff_pos_obs`), which is the sense in which the
-criterion `c = 0` is optimal under a uniform prior. The identification of the hit rate with
-Thurstone's Case V choice probability at `σ = 1/√2`, and its two-alternative forced-choice
-version, are proved in `GaussianChoice.lean`.
+criterion `c = 0` is optimal under a uniform prior.
 
 ## Main definitions
 
@@ -300,8 +298,7 @@ theorem roc_above_diagonal (m : SDTModel) (hd : 0 < m.dPrime) :
     m.falseAlarmRate < m.hitRate :=
   m.tailProb_strictMono (by linarith : -(m.dPrime / 2) < m.dPrime / 2)
 
-/-! Note: monotonicity of the equal-variance AUC `Φ(d'/√2)` in `d'` lives in
-`GaussianChoice.lean` as `SDTModel.twoAFC_mono`; the AUC integral identity
+/-! The AUC integral identity
 `∫₀¹ rocCurve d' f df = Φ(d'/√2)` (Green & Swets 1966 [green-swets-1966])
 is correct but unproved — integrating `rocCurve` requires additional measure-
 theoretic infrastructure not currently developed. -/
@@ -458,16 +455,11 @@ probabilities (Lemma 1 of [mcfadden-1974]; see `integral_gumbelPDFReal_mul_prod_
 in `Core/Probability/Gumbel.lean`). The Gaussian model gives `Φ`. These agree up to the
 numerical approximation `Φ ≈ logistic`.
 
-The constant `k = π/√3` equals `thurstoneLuceK(1/√2)`, unifying the SDT
-and Thurstone parameterizations — proved as
-`logisticApproxConst_eq_thurstoneLuceK` in `GaussianChoice.lean`.
-
 The variance-matching constant `π/√3 ≈ 1.8138` is exact (logistic has
 variance `π²/3`, so scaling `Φ` by `π/√3` matches unit-variance normal).
 The optimal sup-norm constant for `Φ(x) ≈ σ(k · x)` is approximately
 `1.7009` (Page 1977). We use `π/√3` rather than the sup-norm optimum
-because it has a clean variance-matching derivation and equals
-`thurstoneLuceK(1/√2)`. UNVERIFIED: the sup-error figure `≈ 0.023` is
+because it has a clean variance-matching derivation. UNVERIFIED: the sup-error figure `≈ 0.023` is
 quoted from secondary sources; verify against Bowling et al. 2009 or
 Page 1977 before relying on it. -/
 
