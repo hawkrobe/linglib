@@ -5,30 +5,19 @@ import Linglib.Fragments.Indonesian.Phonology
 /-!
 # Indonesian verbs
 
-This file defines the Indonesian verbs of Beavers and Udayana's study of the middle voice,
-together with three verbs from Sneddon's grammar that show the readings of the prefix *ter-*.
+This file defines the Indonesian verbs of Beavers and Udayana's study of the middle voice and
+three verbs that show the readings of the prefix *ter-* in Sneddon's grammar.
 
-A transitive root takes *meN-* in the active and *di-* in the passive. The prefix *ber-* forms
-middles, and *ter-* forms verbs of three kinds in Sneddon's description: a stative, the state
-that follows an action, which has no actor (*tertulis* 'written'), an accidental, an action
-that was not intended (*terbawa* 'taken by mistake'), and an abilitative, usually negated
-(*tidak terdengar* 'cannot be heard'). An entry records the segments of the root, whether the
-root has a *ber-* form, and the reading of its *ter-* form if it has one. The prefixed forms
-are derived, the active by the nasal alternation of `Indonesian.Phonology.meN`.
+An entry records the segments of the root, whether the root has a middle in *ber-*, and the
+reading of its *ter-* form if it has one. The prefixed forms are derived, the active by the
+nasal alternation of `Indonesian.Phonology.meN`.
 
 ## Main definitions
 
-* `TerClass`: Sneddon's three readings of *ter-*, with `TerClass.HasAgent`,
-  `TerClass.volitionality` and `TerClass.RetainsSuffix`.
-* `Indonesian.Verb`: a verb entry, the root `Verb` with its root segments and prefixation.
-* `Verb.meN`, `Verb.di`, `Verb.ber?`, `Verb.ter?`: the prefixed forms.
-* `verbs`: the inventory of the entries.
-
-## Implementation notes
-
-Beavers and Udayana write the active forms with a morpheme boundary and the substituted
-consonant in brackets, as in *men-(t)ambat*. The derived forms here are surface forms, as in
-*menambat*. The root classes of their analysis are in `Studies/BeaversUdayana2022.lean`.
+* `TerClass`: the stative, accidental and abilitative readings of *ter-*.
+* `Indonesian.Verb`: a verb entry, with the forms `Verb.meN`, `Verb.di`, `Verb.ber?` and
+  `Verb.ter?`.
+* `verbs`: the entries of this file.
 
 ## References
 

@@ -9,82 +9,40 @@ import Linglib.Phonology.Subregular.LocalRewrite
 This file defines the segments of Standard Indonesian and the alternation of the nasal that
 ends the prefixes *meN-* and *peN-*.
 
-The capital N of the grammars is a velar nasal /ŋ/, which surfaces unchanged before a vowel or
-*h*, as in *mengajar* from *ajar*. Before an obstruent it takes the obstruent's place of
-articulation, as in *membeli* from *beli* and *mendengar* from *dengar*. Before a nasal, a
-liquid or a glide it is lost, as in *melihat* from *lihat*. A base-initial *p*, *t*, *k* or *s*
-is not itself realized, so that *pakai* gives *memakai* and *tulis* gives *menulis*, the process
-known as nasal substitution, which Indonesian shares with Tagalog and many other Malayo-Polynesian
-languages (Donohue). Two facts are particular to the standard language
-(McDonnell and colleagues). The affricate *c* is not substituted, as in *mencari*, although it
-is in most other Malayic varieties, and the nasal that replaces *s* is the palatal *ny*, as in
-*menyewa*, where assimilation gives an alveolar.
-
-Assimilation and substitution differ in where they apply (Pater). A nasal is homorganic with a
-following obstruent throughout the word, inside a root as in *tampar* and between two prefixes
-as in *memperbesar*, so assimilation is a rewrite rule over the whole string. Substitution is
-confined to the left edge of the root. The cluster of *tampar* and the *p* of the prefix *per-*
-in *memperbesar* are not substituted, and Pater analyses substitution as the fusion of
-the nasal with the root-initial obstruent. It is therefore defined here on the root-initial
-segment alone and not as a rule that deletes an obstruent after a nasal. A base that keeps its
-initial consonant, as recent loans do, shows assimilation without fusion, and there the nasal
-before *s* is the alveolar, as in *mensukseskan* beside *menyukseskan* (Sneddon).
+The nasal is a velar /ŋ/. It takes the place of a following obstruent, as in *membeli* from
+*beli*, and it is lost before a nasal, a liquid or a glide, as in *melihat* from *lihat*. A
+root-initial *p*, *t*, *k* or *s* fuses with it into one nasal, as in *memakai* from *pakai*,
+which is called nasal substitution. Following Pater, assimilation applies throughout the word
+and fusion only at the left edge of the root.
 
 ## Main definitions
 
-* `p`, `t`, …, `a`: the phonemes, named by their spelling, with `ny`, `ng`, `sy` and `kh` for
-  the digraphs. The spelling writes *e* for both the schwa and /e/, and as in the dictionaries
-  `e` is the schwa and `é` is /e/. `consonants` and `vowels` are the sets of them.
-* `nasalAssimilation`, `nasalStridency`, `assimilate`: the assimilation of a nasal to the place
-  of a following obstruent and the redundancy rule that keeps nasals non-strident, as
-  `Subregular.LocalRewrite.Rule`s, and their sequence.
-* `substituting`, `fuse`: the root-initial consonants that fuse with the prefix nasal, and the
-  nasal that results.
-* `juncture`, `junctureRetained`: what the prefix nasal and the base-initial segment surface
-  as, with fusion and for a base that keeps its initial consonant.
-* `prefixN`, `meN`, `peN`: a prefix in N attached to a base.
+* `consonants`, `vowels`: the phonemes, named by their spelling. `e` is the schwa and `é` is /e/.
+* `assimilate`: each nasal of a word takes the place of a following obstruent.
+* `substituting`, `fuse`: the consonants that fuse with the prefix nasal, and the nasal that
+  results.
+* `juncture`: what the prefix nasal and the base-initial segment surface as.
+* `meN`, `peN`: the two prefixes attached to a base.
 
 ## Main results
 
-* `exists_mem_ind`: every phoneme but the palatal glide is the segment of a phoneme of
-  PHOIBLE's Standard Indonesian inventory.
-* `substituting_subset`, `voicelessObstruents_sdiff_substituting`: the substituting consonants
-  are voiceless obstruents, and the voiceless obstruents that do not substitute are *c* and the
-  loan fricatives.
-* `juncture_of_mem_substituting`, `juncture_of_sonorant`, `juncture_of_vowel_or_h`,
-  `juncture_of_obstruent`: the outcome at the juncture for each class of base-initial segment.
-* `juncture_head_agrees`: before every obstruent but *s* the juncture begins with a nasal that
-  agrees with the obstruent in every place feature but [strident].
-* `assimilate_eq_fuse_cons`: but for *s*, the fused nasal is the assimilated one, which is
-  Donohue's decomposition of substitution into assimilation and the loss of the obstruent.
-* `nasalAssimilation_s`: the place class alone makes the nasal before *s* strident, and the
-  redundancy rule restores *n*.
+* `exists_mem_ind`: the phonemes are those of PHOIBLE's Standard Indonesian inventory.
+* `voicelessObstruents_sdiff_substituting`: the voiceless obstruents that do not fuse are *c*
+  and the fricatives of loans.
+* `juncture_of_sonorant`, `juncture_of_vowel_or_h`, `juncture_of_obstruent`: the juncture for
+  each class of base-initial segment.
+* `assimilate_eq_fuse_cons`: but for *s*, the fused nasal is the assimilated one.
 
 ## Implementation notes
 
-Hayes's notation for place assimilation copies every place feature, and he places [strident]
-under the coronal articulator, where other textbooks make it a manner feature (see
-`Phonology/Segmental/FeatureClass.lean`). The chart specifies [strident] on coronals alone, so
-a velar nasal that becomes coronal must get a value for it from somewhere, and copying gives
-[+strident] before *s*, *z*, *c*, *j* and *sy*. `nasalStridency` is the redundancy rule that a
-nasal is [−strident]. The fusing stops are not strident, so `fuse` needs no such repair.
-Before *c*, *j* and *sy* the assimilated nasal is the postalveolar [n̠] of the chart, and before
-*f* it is the labiodental [ɱ]. Both are allophones, written *n* and *m*, and the descriptions
-differ on whether the first is the palatal phoneme.
-
-The inventory is PHOIBLE 1690, the standard language. It lists the palatal glide under the
-glyph of a front rounded vowel, so `y` is outside it, and its /v/, /x/, /ʔ/ and /ɛ/ are left
-out here except /x/, the *kh* of loans.
-
-## TODO
-
-A base of one syllable takes *menge-*, as in *mengebom* from *bom* (Sneddon), which needs a
-syllable count on the base. The prefixes *ber-*, *per-* and *ter-* lose their *r* before a base
-in *r* and before some first syllables in *er*.
+The place class contains [strident], which the chart specifies on coronals alone, so a nasal
+assimilated to a sibilant comes out [+strident], and `nasalStridency` resets it. That *c* does
+not fuse and that *s* fuses into the palatal *ny* are the two exceptions that McDonnell and
+colleagues list for the standard language. The *menge-* of one-syllable bases is not defined.
 
 ## References
 
-* [J. N. Sneddon, *Indonesian: A Comprehensive Grammar* (1996)][sneddon-1996]
+* [J. N. Sneddon, *Indonesian: A comprehensive grammar* (1996)][sneddon-1996]
 * [B. McDonnell, J. Wu, T. McKinnon and A. Adelaar, *Malayic languages*
   (2024)][mcdonnell-wu-mckinnon-adelaar-2024]
 * [M. Donohue, *Phonotactics and morphophonology* (2024)][donohue-2024]

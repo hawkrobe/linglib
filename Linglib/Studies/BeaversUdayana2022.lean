@@ -90,11 +90,8 @@ def incorporationReflexive : MiddleType := ⟨.incorporation, .coreferent⟩
 
 /-! ### Root classes (§3.5, §5)
 
-Which reading the suppressed variable of a plain *ber-* form gets by default follows the class
-of the root. A naturally reflexive root describes an event for which the conventional
-expectation is self-action, and every other dyadic root is obviative. A causer-unspecified root
-takes *ter-* where the others take *ber-*. The members are the paper's own roots, as entries
-of `Fragments/Indonesian/Verbs.lean`. -/
+The default reading of a plain *ber-* form follows the class of its root. The members are the
+paper's own roots, as entries of `Fragments/Indonesian/Verbs.lean`. -/
 
 /-- The classes of dyadic root. -/
 inductive RootClass where
