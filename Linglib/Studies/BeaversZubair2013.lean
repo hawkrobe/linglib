@@ -1,5 +1,4 @@
 import Linglib.Semantics.Causation.CauserSort
-import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Syntax.Case.Basic
 import Linglib.Fragments.Sinhala.Verbs
 
@@ -19,7 +18,7 @@ and since the volitive ((71), p. 35) demands an event-sort subject while suppres
 outputs an individual, anticausatives are obligatorily involitive
 (`Causation.CauserSort.not_admitsVolitive_individual`).
 
-The operator is `ArgumentStructure.VoiceSemantics.causerSuppress`; the sort lattice is
+The operator is `causerSuppress`; the sort lattice is
 `Causation.CauserSort` ((81), p. 40); the verbs are `Fragments/Sinhala/Verbs`. §6
 rejects [koontz-garboden-2009]'s reflexivization-only analysis because the accusative
 variant's causer is not coidentified with the patient; §4.2 rejects deletion analyses
@@ -62,8 +61,14 @@ namespace BeaversZubair2013
 
 open Causation
 open Sinhala.Verbs
-open ArgumentStructure.VoiceSemantics
-open Semantics.Composition
+
+/-! ### Causer suppression -/
+
+/-- Causer suppression ((77), p. 37) saturates the causer argument of `vp` with the open
+    variable `z`. It is defined only for a root whose causer sort admits individuals. -/
+def causerSuppress {E α : Type} (s : CauserSort) (_h : s.admitsIndividual) (z : E)
+    (vp : E → α) : α :=
+  vp z
 
 /-! ### The two resolutions of the suppressed causer -/
 
