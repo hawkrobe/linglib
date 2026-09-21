@@ -12,7 +12,7 @@ to a probability distribution over those candidates:
 ```
 
 This file exposes the `Decoder` interface and three foundational
-instances: `argminDecoder` (uniform over `LexProfile`-lex-minimizers),
+instances: `argminDecoder` (uniform over the minimizers of a linearly ordered score),
 `argmaxDecoder` (uniform over `ℝ`-maximizers), and `softmaxDecoder α`
 (`exp(α·s) / Z` over `ℝ`-scores).
 
@@ -116,7 +116,7 @@ noncomputable def argmaxDecoder {Cand : Type*} {Score : Type*} [LinearOrder Scor
 
 open scoped Classical in
 /-- The argmin decoder: uniform distribution over the minimizers of
-    `score` on `cands`. Instantiate `Score = LexProfile Nat n` for
+    `score` on `cands`. Instantiate `Score = Lex (Fin n → ℕ)` for
     lex-min on integer cost vectors; with a single optimum, Dirac on it. -/
 noncomputable def argminDecoder {Cand : Type*} {Score : Type*} [LinearOrder Score] :
     Decoder Cand Score where
