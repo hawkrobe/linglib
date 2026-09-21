@@ -6,7 +6,8 @@ import Linglib.Syntax.Category.Pronoun.Indefinite
 Yakut builds its indefinite pronouns from an interrogative pronoun and an enclitic particle,
 four series on *kim* 'who': *kim ere* 'somebody' for a referent the speaker has in mind or
 presupposes; *kim eme* 'somebody, anybody' for irrealis non-specific reference and in questions
-and conditionals; *kim da* 'anybody' under negation, in comparatives and for free choice; and
+and conditionals; *kim da* 'anybody', with the variant *kim dayanï*, in affirmative and negative
+sentences alike, under negation, in comparatives and for free choice; and the generalising
 *kim bayarar* 'whoever', on *bayar* 'want', for free choice.
 
 ## References
@@ -30,7 +31,8 @@ def emeEntry : IndefinitePronoun where
   ontology := .person
   basis := .interrogative
 
-/-- *Kim da* 'anybody': under both negations, in comparatives and for free choice. -/
+/-- *Kim da* 'anybody', with the variant *kim dayanï*: under both negations, in comparatives
+and for free choice. -/
 def daEntry : IndefinitePronoun where
   form := "kim da"
   ontology := .person

@@ -1,44 +1,12 @@
 [
   {
-    "id": "haspelmath1997_en_98a",
-    "source": {
-      "bibkey": "haspelmath-1997",
-      "paperLabel": "(98a)"
-    },
-    "language": "stan1293",
-    "primaryText": "I met with someone at 19 hours.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2.4"
-      ],
-      [
-        "function",
-        "specificKnown"
-      ],
-      [
-        "series",
-        "some-"
-      ]
-    ],
-    "comment": "The book gives the Russian original; the English gloss is its translation, with the referent known to the speaker.",
-    "lgrConformance": ""
-  },
-  {
     "id": "haspelmath1997_en_102a",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(102a)"
     },
     "language": "stan1293",
-    "primaryText": "John is looking for some book on reserve (*and I know which one).",
+    "primaryText": "John is looking for some book on reserve.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -56,11 +24,43 @@
         "specificUnknown"
       ],
       [
-        "series",
-        "some-"
+        "item",
+        "some (determiner)"
       ]
     ],
     "comment": "Determiner some marks the referent as unknown to the speaker, unlike someone and something.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_en_102a_known",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(102a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is looking for some book on reserve, and I know which one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3.2.4"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "item",
+        "some (determiner)"
+      ]
+    ],
+    "comment": "The continuation presupposes that the speaker can identify the referent.",
     "lgrConformance": ""
   },
   {
@@ -134,18 +134,13 @@
       "paperLabel": "(154a)"
     },
     "language": "stan1293",
-    "primaryText": "I promise you that, if you eat some (*any) spinach, I'll give you ten dollars.",
+    "primaryText": "I promise you that, if you eat some spinach, I'll give you ten dollars.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
+    "context": "A promise: the speaker hopes the hearer will fulfil the condition.",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "if you eat any spinach",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -165,24 +160,19 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_en_154b",
+    "id": "haspelmath1997_en_154a_any",
     "source": {
       "bibkey": "haspelmath-1997",
-      "paperLabel": "(154b)"
+      "paperLabel": "(154a)"
     },
     "language": "stan1293",
-    "primaryText": "I warn you that, if you eat any (*some) candy, I'll whip you.",
+    "primaryText": "I promise you that, if you eat any spinach, I'll give you ten dollars.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "if you eat some candy",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "context": "A promise: the speaker hopes the hearer will fulfil the condition.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -196,6 +186,70 @@
       [
         "series",
         "any-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_en_154b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(154b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I warn you that, if you eat any candy, I'll whip you.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A warning: the speaker hopes the hearer will not fulfil the condition.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "any-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_en_154b_some",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(154b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I warn you that, if you eat some candy, I'll whip you.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A warning: the speaker hopes the hearer will not fulfil the condition.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "4.3.1"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "some-"
       ]
     ],
     "comment": "",
@@ -490,13 +544,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A1b",
+    "id": "haspelmath1997_de_A1b_etwas",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A1b)"
     },
     "language": "stan1295",
-    "primaryText": "Ich habe etwas/irgend etwas verloren, aber ich weiss nicht, was.",
+    "primaryText": "Ich habe etwas verloren, aber ich weiss nicht, was.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I lost something, but I don't know what.",
@@ -515,20 +569,52 @@
       ],
       [
         "series",
-        "etwas-/irgend-"
+        "etwas-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A2",
+    "id": "haspelmath1997_de_A1b_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A1b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich habe irgend etwas verloren, aber ich weiss nicht, was.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I lost something, but I don't know what.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "irgend-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A2_etwas",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A2)"
     },
     "language": "stan1295",
-    "primaryText": "Sie möchte jemanden/irgend jemanden mit schwarzen Haaren heiraten.",
+    "primaryText": "Sie möchte jemanden mit schwarzen Haaren heiraten.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "She wants to marry someone (non-specific or specific) with black hair.",
@@ -547,20 +633,52 @@
       ],
       [
         "series",
-        "etwas-/irgend-"
+        "etwas-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A3a",
+    "id": "haspelmath1997_de_A2_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A2)"
+    },
+    "language": "stan1295",
+    "primaryText": "Sie möchte irgend jemanden mit schwarzen Haaren heiraten.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She wants to marry someone (non-specific or specific) with black hair.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "irgend-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A3a_etwas",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3a)"
     },
     "language": "stan1295",
-    "primaryText": "Hast du (irgend) etwas gehört?",
+    "primaryText": "Hast du etwas gehört?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did you hear anything?",
@@ -579,20 +697,52 @@
       ],
       [
         "series",
-        "etwas-/irgend-"
+        "etwas-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A3b",
+    "id": "haspelmath1997_de_A3a_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A3a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Hast du irgend etwas gehört?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you hear anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "irgend-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A3b_irgend",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3b)"
     },
     "language": "stan1295",
-    "primaryText": "Ist sie irgend-wann/je in Chittagong gewesen?",
+    "primaryText": "Ist sie irgend-wann in Chittagong gewesen?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Has she ever been to Chittagong?",
@@ -611,20 +761,52 @@
       ],
       [
         "series",
-        "irgend-/je"
+        "irgend-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A3c",
+    "id": "haspelmath1997_de_A3b_je",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A3b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ist sie je in Chittagong gewesen?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Has she ever been to Chittagong?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "je"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A3c_etwas",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A3c)"
     },
     "language": "stan1295",
-    "primaryText": "Wenn (irgend) jemand anruft, sag mir Bescheid!",
+    "primaryText": "Wenn jemand anruft, sag mir Bescheid!",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If anyone calls, tell me!",
@@ -643,20 +825,52 @@
       ],
       [
         "series",
-        "etwas-/irgend-"
+        "etwas-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A4",
+    "id": "haspelmath1997_de_A3c_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A3c)"
+    },
+    "language": "stan1295",
+    "primaryText": "Wenn irgend jemand anruft, sag mir Bescheid!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If anyone calls, tell me!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "irgend-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A4_je_etwas",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A4)"
     },
     "language": "stan1295",
-    "primaryText": "Ich glaube nicht, dass hier je/irgend-wann (irgend) jemand war.",
+    "primaryText": "Ich glaube nicht, dass hier je jemand war.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I don't think that anyone has ever been here.",
@@ -675,7 +889,115 @@
       ],
       [
         "series",
-        "etwas-/irgend-/je"
+        "je"
+      ],
+      [
+        "series",
+        "etwas-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A4_je_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A4)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich glaube nicht, dass hier je irgend jemand war.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't think that anyone has ever been here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "je"
+      ],
+      [
+        "series",
+        "irgend-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A4_irgend_etwas",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A4)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich glaube nicht, dass hier irgend-wann jemand war.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't think that anyone has ever been here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "irgend-"
+      ],
+      [
+        "series",
+        "etwas-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A4_irgend_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A4)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich glaube nicht, dass hier irgend-wann irgend jemand war.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't think that anyone has ever been here.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "irgend-"
       ]
     ],
     "comment": "",
@@ -707,7 +1029,11 @@
       ],
       [
         "series",
-        "irgend-/je"
+        "irgend-"
+      ],
+      [
+        "series",
+        "je"
       ]
     ],
     "comment": "Only the irgend-series and je are possible in the comparative; the irgend-indefinite must be stressed.",
@@ -810,13 +1136,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A9a",
+    "id": "haspelmath1997_de_A9a_jeder",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9a)"
     },
     "language": "stan1295",
-    "primaryText": "ohne jede/irgend-welche Hilfe",
+    "primaryText": "ohne jede Hilfe",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "without any help",
@@ -835,20 +1161,52 @@
       ],
       [
         "series",
-        "jeder/irgend-"
+        "jeder"
       ]
     ],
     "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A9b",
+    "id": "haspelmath1997_de_A9a_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A9a)"
+    },
+    "language": "stan1295",
+    "primaryText": "ohne irgend-welche Hilfe",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "without any help",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "irgend-"
+      ]
+    ],
+    "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A9b_jeder",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A9b)"
     },
     "language": "stan1295",
-    "primaryText": "Sie stritt jede/irgend-eine Beteiligung ab.",
+    "primaryText": "Sie stritt jede Beteiligung ab.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "She denied any participation.",
@@ -867,7 +1225,39 @@
       ],
       [
         "series",
-        "jeder/irgend-"
+        "jeder"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A9b_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A9b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Sie stritt irgend-eine Beteiligung ab.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She denied any participation.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "irgend-"
       ]
     ],
     "comment": "",
@@ -906,13 +1296,45 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_de_A10b",
+    "id": "haspelmath1997_de_A10b_etwas",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A10b)"
     },
     "language": "stan1295",
-    "primaryText": "Ich habe niemandem (irgend) etwas gesagt.",
+    "primaryText": "Ich habe niemandem etwas gesagt.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I didn't tell anything to anybody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "n-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A10b_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A10b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich habe niemandem irgend etwas gesagt.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I didn't tell anything to anybody.",
@@ -1034,13 +1456,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_it_A77",
+    "id": "haspelmath1997_it_A77_qualche",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A77)"
     },
     "language": "ital1282",
-    "primaryText": "Vedi qualcosa/niente?",
+    "primaryText": "Vedi qualcosa?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Can you see anything?",
@@ -1059,7 +1481,39 @@
       ],
       [
         "series",
-        "qualche-/nessuno"
+        "qualche-"
+      ]
+    ],
+    "comment": "The nessuno-series is possible in questions but not in conditionals.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_it_A77_nessuno",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A77)"
+    },
+    "language": "ital1282",
+    "primaryText": "Vedi niente?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Can you see anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.10"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "nessuno"
       ]
     ],
     "comment": "The nessuno-series is possible in questions but not in conditionals.",
@@ -1072,18 +1526,13 @@
       "paperLabel": "(A78)"
     },
     "language": "ital1282",
-    "primaryText": "Se senti qualcosa (*niente), svegliami.",
+    "primaryText": "Se senti qualcosa, svegliami.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If you hear anything, wake me up.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Se senti niente, svegliami.",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1103,13 +1552,45 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_it_A79",
+    "id": "haspelmath1997_it_A78_nessuno",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A78)"
+    },
+    "language": "ital1282",
+    "primaryText": "Se senti niente, svegliami.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If you hear anything, wake me up.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.10"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "nessuno"
+      ]
+    ],
+    "comment": "The nessuno-series is possible in questions but not in conditionals.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_it_A79_nessuno",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A79)"
     },
     "language": "ital1282",
-    "primaryText": "Non è necessario che venga nessuno/che qualcuno venga.",
+    "primaryText": "Non è necessario che venga nessuno.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "It is not necessary that anyone come.",
@@ -1128,7 +1609,39 @@
       ],
       [
         "series",
-        "qualche-/nessuno"
+        "nessuno"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_it_A79_qualche",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A79)"
+    },
+    "language": "ital1282",
+    "primaryText": "Non è necessario che qualcuno venga.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is not necessary that anyone come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.10"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "qualche-"
       ]
     ],
     "comment": "",
@@ -1237,13 +1750,18 @@
       "paperLabel": "(A82b)"
     },
     "language": "ital1282",
-    "primaryText": "Nessuno (*non) è venuto.",
+    "primaryText": "Nessuno è venuto.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Nobody has come.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {
+        "form": "Nessuno non è venuto.",
+        "judgment": "ungrammatical"
+      }
+    ],
     "readings": [],
     "paperFeatures": [
       [
@@ -1327,13 +1845,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A122a",
+    "id": "haspelmath1997_ru_A122a_nibud",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A122a)"
     },
     "language": "russ1263",
-    "primaryText": "Spojte nam kakoj-nibud'/kakoj-libo romans.",
+    "primaryText": "Spojte nam kakoj-nibud' romans.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Sing some romance for us.",
@@ -1352,20 +1870,52 @@
       ],
       [
         "series",
-        "-nibud'/-libo"
+        "-nibud'"
       ]
     ],
     "comment": "Imperative.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A122b",
+    "id": "haspelmath1997_ru_A122a_libo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A122a)"
+    },
+    "language": "russ1263",
+    "primaryText": "Spojte nam kakoj-libo romans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Sing some romance for us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "-libo"
+      ]
+    ],
+    "comment": "Imperative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A122b_nibud",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A122b)"
     },
     "language": "russ1263",
-    "primaryText": "My vstretimsja gde-nibud'/gde-libo.",
+    "primaryText": "My vstretimsja gde-nibud'.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "We'll meet somewhere.",
@@ -1384,20 +1934,52 @@
       ],
       [
         "series",
-        "-nibud'/-libo"
+        "-nibud'"
       ]
     ],
     "comment": "Future.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A123a",
+    "id": "haspelmath1997_ru_A122b_libo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A122b)"
+    },
+    "language": "russ1263",
+    "primaryText": "My vstretimsja gde-libo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "We'll meet somewhere.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "-libo"
+      ]
+    ],
+    "comment": "Future.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A123a_nibud",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A123a)"
     },
     "language": "russ1263",
-    "primaryText": "Zvonil li mne kto-nibud'/kto-libo?",
+    "primaryText": "Zvonil li mne kto-nibud'?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did anyone call me?",
@@ -1416,20 +1998,52 @@
       ],
       [
         "series",
-        "-nibud'/-libo"
+        "-nibud'"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A123b",
+    "id": "haspelmath1997_ru_A123a_libo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A123a)"
+    },
+    "language": "russ1263",
+    "primaryText": "Zvonil li mne kto-libo?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did anyone call me?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "-libo"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A123b_nibud",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A123b)"
     },
     "language": "russ1263",
-    "primaryText": "Esli čto-nibud'/čto-libo slučitsja, ja skažu mame.",
+    "primaryText": "Esli čto-nibud' slučitsja, ja skažu mame.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If anything happens, I'll tell mom.",
@@ -1448,7 +2062,39 @@
       ],
       [
         "series",
-        "-nibud'/-libo"
+        "-nibud'"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A123b_libo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A123b)"
+    },
+    "language": "russ1263",
+    "primaryText": "Esli čto-libo slučitsja, ja skažu mame.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If anything happens, I'll tell mom.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "-libo"
       ]
     ],
     "comment": "",
@@ -1487,13 +2133,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A124b",
+    "id": "haspelmath1997_ru_A124b_nibud",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A124b)"
     },
     "language": "russ1263",
-    "primaryText": "Ona xočet vyjti zamuž za kogo-nibud'/kogo-to iz Ameriki.",
+    "primaryText": "Ona xočet vyjti zamuž za kogo-nibud' iz Ameriki.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "She wants to marry someone (non-specific) from America.",
@@ -1512,20 +2158,52 @@
       ],
       [
         "series",
-        "-nibud'/-to"
+        "-nibud'"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A124b_to",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A124b)"
+    },
+    "language": "russ1263",
+    "primaryText": "Ona xočet vyjti zamuž za kogo-to iz Ameriki.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She wants to marry someone (non-specific) from America.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "-to"
       ]
     ],
     "comment": "The non-specific reading of -to seems possible, but -nibud' is clearly preferred.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A125",
+    "id": "haspelmath1997_ru_A125_libo",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A125)"
     },
     "language": "russ1263",
-    "primaryText": "Zdes' prijatnee žit' čem gde-libo/gde by to ni bylo v mire.",
+    "primaryText": "Zdes' prijatnee žit' čem gde-libo v mire.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Here it is more pleasant to live than anywhere in the world.",
@@ -1544,20 +2222,52 @@
       ],
       [
         "series",
-        "-libo/by to ni bylo"
+        "-libo"
       ]
     ],
     "comment": "-nibud' is not possible in the comparative or indirect-negation functions.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A126a",
+    "id": "haspelmath1997_ru_A125_byToNiBylo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A125)"
+    },
+    "language": "russ1263",
+    "primaryText": "Zdes' prijatnee žit' čem gde by to ni bylo v mire.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Here it is more pleasant to live than anywhere in the world.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "comparative"
+      ],
+      [
+        "series",
+        "by to ni bylo"
+      ]
+    ],
+    "comment": "-nibud' is not possible in the comparative or indirect-negation functions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A126a_libo",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A126a)"
     },
     "language": "russ1263",
-    "primaryText": "Otsutstvujut kakie-libo/kakie by to ni bylo ukazanija o sposobe ix primenenija.",
+    "primaryText": "Otsutstvujut kakie-libo ukazanija o sposobe ix primenenija.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Any indications about the mode of their use are lacking.",
@@ -1576,20 +2286,52 @@
       ],
       [
         "series",
-        "-libo/by to ni bylo"
+        "-libo"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A126b",
+    "id": "haspelmath1997_ru_A126a_byToNiBylo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A126a)"
+    },
+    "language": "russ1263",
+    "primaryText": "Otsutstvujut kakie by to ni bylo ukazanija o sposobe ix primenenija.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Any indications about the mode of their use are lacking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "by to ni bylo"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A126b_libo",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A126b)"
     },
     "language": "russ1263",
-    "primaryText": "bez kakoj-libo/kakoj by to ni bylo pomošči",
+    "primaryText": "bez kakoj-libo pomošči",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "without any help",
@@ -1608,7 +2350,39 @@
       ],
       [
         "series",
-        "-libo/by to ni bylo"
+        "-libo"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A126b_byToNiBylo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A126b)"
+    },
+    "language": "russ1263",
+    "primaryText": "bez kakoj by to ni bylo pomošči",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "without any help",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "by to ni bylo"
       ]
     ],
     "comment": "",
@@ -1653,7 +2427,7 @@
       "paperLabel": "(A127b)"
     },
     "language": "russ1263",
-    "primaryText": "*Slyšala li ty čto by to ni bylo?",
+    "primaryText": "Slyšala li ty čto by to ni bylo?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did you hear anything (at all)?",
@@ -1679,13 +2453,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ru_A128",
+    "id": "haspelmath1997_ru_A128_ljuboj",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A128)"
     },
     "language": "russ1263",
-    "primaryText": "Ty možeš' kupit' ljubuju/kakuju ugodno/?kakuju by to ni bylo knigu.",
+    "primaryText": "Ty možeš' kupit' ljubuju knigu.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "You may buy any book.",
@@ -1704,10 +2478,74 @@
       ],
       [
         "series",
-        "ugodno/ljuboj"
+        "ljuboj"
       ]
     ],
-    "comment": "The determiner ljuboj or the ugodno-series; by to ni bylo only marginally.",
+    "comment": "The determiner ljuboj or the ugodno-series.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A128_ugodno",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A128)"
+    },
+    "language": "russ1263",
+    "primaryText": "Ty možeš' kupit' kakuju ugodno knigu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You may buy any book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "ugodno"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ru_A128_byToNiBylo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A128)"
+    },
+    "language": "russ1263",
+    "primaryText": "Ty možeš' kupit' kakuju by to ni bylo knigu.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "You may buy any book.",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.16"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "by to ni bylo"
+      ]
+    ],
+    "comment": "The by to ni bylo-series is only marginally possible for free choice.",
     "lgrConformance": ""
   },
   {
@@ -1775,24 +2613,19 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hi_A167",
+    "id": "haspelmath1997_hi_A167_known",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A167)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ne (*bhii) fon kiyaa thaa, par mai tumhe nahii bataaugii, kis-ne. / par mujhe nahii maaluum, kis-ne.",
+    "primaryText": "Kisii-ne fon kiyaa thaa, par mai tumhe nahii bataaugii, kis-ne.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Someone has phoned, but I won't tell you who. / but I don't know who.",
+    "translation": "Someone has phoned, but I won't tell you who.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Kisii-ne bhii fon kiyaa thaa",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -1808,17 +2641,81 @@
         "koii"
       ]
     ],
-    "comment": "Specific known and specific unknown alike; the bhii-series is excluded.",
+    "comment": "Specific known and specific unknown alike.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hi_A168",
+    "id": "haspelmath1997_hi_A167_unknown",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A167)"
+    },
+    "language": "hind1269",
+    "primaryText": "Kisii-ne fon kiyaa thaa, par mujhe nahii maaluum, kis-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone has phoned, but I don't know who.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "koii"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A167_bhii",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A167)"
+    },
+    "language": "hind1269",
+    "primaryText": "Kisii-ne bhii fon kiyaa thaa.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone has phoned.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "bhii"
+      ]
+    ],
+    "comment": "The bhii-series is excluded from the specific functions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A168_koii",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A168)"
     },
     "language": "hind1269",
-    "primaryText": "Mujhe nahii lagtaa hai ki kal koii (bhii) aaegaa.",
+    "primaryText": "Mujhe nahii lagtaa hai ki kal koii aaegaa.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "It doesn't seem to me that anyone will come tomorrow.",
@@ -1837,23 +2734,55 @@
       ],
       [
         "series",
-        "koii/bhii"
+        "koii"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hi_A169a",
+    "id": "haspelmath1997_hi_A168_bhii",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A168)"
+    },
+    "language": "hind1269",
+    "primaryText": "Mujhe nahii lagtaa hai ki kal koii bhii aaegaa.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It doesn't seem to me that anyone will come tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "bhii"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A169a_koii",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A169a)"
     },
     "language": "hind1269",
-    "primaryText": "Ghar me koii (bhii) nahii hai.",
+    "primaryText": "Ghar me koii nahii hai.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "No one (at all) is at home.",
+    "translation": "No one is at home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1869,7 +2798,39 @@
       ],
       [
         "series",
-        "koii/bhii"
+        "koii"
+      ]
+    ],
+    "comment": "Under direct negation the bhii-series seems to be preferred.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A169a_bhii",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A169a)"
+    },
+    "language": "hind1269",
+    "primaryText": "Ghar me koii bhii nahii hai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "No one at all is at home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "bhii"
       ]
     ],
     "comment": "Under direct negation the bhii-series seems to be preferred.",
@@ -1908,13 +2869,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hi_A170a",
+    "id": "haspelmath1997_hi_A170a_koii",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A170a)"
     },
     "language": "hind1269",
-    "primaryText": "Wah kisii-ko/kisii-ko bhii fon karnaa caahtii hai.",
+    "primaryText": "Wah kisii-ko fon karnaa caahtii hai.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "She wants to phone someone (specific or non-specific).",
@@ -1933,20 +2894,52 @@
       ],
       [
         "series",
-        "koii/bhii"
+        "koii"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A170a_bhii",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A170a)"
+    },
+    "language": "hind1269",
+    "primaryText": "Wah kisii-ko bhii fon karnaa caahtii hai.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "She wants to phone someone (non-specific).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "bhii"
       ]
     ],
     "comment": "In irrealis contexts the bhii-series is always non-specific.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hi_A170b",
+    "id": "haspelmath1997_hi_A170b_koii",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A170b)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ko (bhii) fon karo!",
+    "primaryText": "Kisii-ko fon karo!",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Phone someone!",
@@ -1965,20 +2958,52 @@
       ],
       [
         "series",
-        "koii/bhii"
+        "koii"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hi_A171a",
+    "id": "haspelmath1997_hi_A170b_bhii",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A170b)"
+    },
+    "language": "hind1269",
+    "primaryText": "Kisii-ko bhii fon karo!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Phone someone!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "bhii"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A171a_koii",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A171a)"
     },
     "language": "hind1269",
-    "primaryText": "Kyaa aap-ne kisii-ko/kisii-ko bhii dekhaa?",
+    "primaryText": "Kyaa aap-ne kisii-ko dekhaa?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did you see somebody/anybody?",
@@ -1997,23 +3022,55 @@
       ],
       [
         "series",
-        "koii/bhii"
+        "koii"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A171a_bhii",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A171a)"
+    },
+    "language": "hind1269",
+    "primaryText": "Kyaa aap-ne kisii-ko bhii dekhaa?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you see somebody/anybody?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "bhii"
       ]
     ],
     "comment": "The bhii-series is more emphatic in questions and conditionals.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hi_A171b",
+    "id": "haspelmath1997_hi_A171b_koii",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A171b)"
     },
     "language": "hind1269",
-    "primaryText": "Agar koii (bhii) fon kare, mujhe bataanaa.",
+    "primaryText": "Agar koii fon kare, mujhe bataanaa.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "If anybody (at all) calls, tell me.",
+    "translation": "If anybody calls, tell me.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2029,7 +3086,39 @@
       ],
       [
         "series",
-        "koii/bhii"
+        "koii"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hi_A171b_bhii",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A171b)"
+    },
+    "language": "hind1269",
+    "primaryText": "Agar koii bhii fon kare, mujhe bataanaa.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If anybody at all calls, tell me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "bhii"
       ]
     ],
     "comment": "",
@@ -2132,13 +3221,13 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_tr_A175",
+    "id": "haspelmath1997_tr_A175_bir",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A175)"
     },
     "language": "nucl1301",
-    "primaryText": "Sana biri(si)/herhangi biri telefon etti. Kim olduğunu bilmiyorum.",
+    "primaryText": "Sana biri(si) telefon etti. Kim olduğunu bilmiyorum.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Someone phoned you. I don't know who.",
@@ -2157,20 +3246,52 @@
       ],
       [
         "series",
-        "bir-/herhangi"
+        "bir-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_tr_A176",
+    "id": "haspelmath1997_tr_A175_herhangi",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A175)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Sana herhangi biri telefon etti. Kim olduğunu bilmiyorum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone phoned you. I don't know who.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "herhangi"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A176_herhangi",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A176)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi bir yere/bir yere telefon et!",
+    "primaryText": "Herhangi bir yere telefon et!",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Call somewhere (or other)!",
@@ -2189,20 +3310,52 @@
       ],
       [
         "series",
-        "bir-/herhangi"
+        "herhangi"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_tr_A177a",
+    "id": "haspelmath1997_tr_A176_bir",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A176)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Bir yere telefon et!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Call somewhere (or other)!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "bir-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A177a_herhangi",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A177a)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi bir şey/bir şey/hiç bir şey duydun mu?",
+    "primaryText": "Herhangi bir şey duydun mu?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did you hear anything?",
@@ -2221,20 +3374,84 @@
       ],
       [
         "series",
-        "bir-/herhangi/hiç"
+        "herhangi"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_tr_A177b",
+    "id": "haspelmath1997_tr_A177a_bir",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A177a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Bir şey duydun mu?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you hear anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "bir-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A177a_hic",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A177a)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Hiç bir şey duydun mu?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you hear anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "hiç"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A177b_herhangi",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A177b)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi biri/biri telefon ederse, bana hemen söyle.",
+    "primaryText": "Herhangi biri telefon ederse, bana hemen söyle.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If anyone calls, tell me immediately.",
@@ -2253,20 +3470,84 @@
       ],
       [
         "series",
-        "bir-/herhangi"
+        "herhangi"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_tr_A178",
+    "id": "haspelmath1997_tr_A177b_bir",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A177b)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Biri telefon ederse, bana hemen söyle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If anyone calls, tell me immediately.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "bir-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A178_kimse",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A178)"
     },
     "language": "nucl1301",
-    "primaryText": "Kimsenin/herhangi birinin/hiç kimsenin gelmesi gerekli değil.",
+    "primaryText": "Kimsenin gelmesi gerekli değil.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is not necessary for anyone to come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "item",
+        "kimse"
+      ]
+    ],
+    "comment": "Kimse is an isolated indefinite outside the three series.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A178_herhangi",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A178)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Herhangi birinin gelmesi gerekli değil.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "It is not necessary for anyone to come.",
@@ -2285,20 +3566,52 @@
       ],
       [
         "series",
-        "bir-/herhangi/hiç"
+        "herhangi"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_tr_A179",
+    "id": "haspelmath1997_tr_A178_hic",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A178)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Hiç kimsenin gelmesi gerekli değil.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is not necessary for anyone to come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "hiç"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A179_hic",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A179)"
     },
     "language": "nucl1301",
-    "primaryText": "Hiç bir şey/herhangi bir şey/bir şey görmedim.",
+    "primaryText": "Hiç bir şey görmedim.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I didn't see anything.",
@@ -2317,10 +3630,74 @@
       ],
       [
         "series",
-        "hiç/herhangi/bir-"
+        "hiç"
       ]
     ],
     "comment": "The hiç-indefinites are the most usual form and always co-occur with verbal negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A179_herhangi",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A179)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Herhangi bir şey görmedim.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I didn't see anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "herhangi"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_tr_A179_bir",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A179)"
+    },
+    "language": "nucl1301",
+    "primaryText": "Bir şey görmedim.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I didn't see anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.23"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "bir-"
+      ]
+    ],
+    "comment": "",
     "lgrConformance": ""
   },
   {
@@ -2490,22 +3867,13 @@
       "paperLabel": "(A199a)"
     },
     "language": "hung1274",
-    "primaryText": "Nem láttam semmit (*akármit, *bármit).",
+    "primaryText": "Nem láttam semmit.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I did not see anything.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Nem láttam akármit.",
-        "judgment": "ungrammatical"
-      },
-      {
-        "form": "Nem láttam bármit.",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2522,6 +3890,70 @@
       ]
     ],
     "comment": "The sem-series can only be used under direct negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A199a_akar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A199a)"
+    },
+    "language": "hung1274",
+    "primaryText": "Nem láttam akármit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I did not see anything.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "akár-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A199a_bar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A199a)"
+    },
+    "language": "hung1274",
+    "primaryText": "Nem láttam bármit.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I did not see anything.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "bár-"
+      ]
+    ],
+    "comment": "",
     "lgrConformance": ""
   },
   {
@@ -2582,20 +4014,20 @@
       ],
       [
         "series",
-        "akár-/bár-"
+        "akár-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hu_A201",
+    "id": "haspelmath1997_hu_A201_akar",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A201)"
     },
     "language": "hung1274",
-    "primaryText": "Itt jobb a klíma, mint akárhol/bárhol Európában.",
+    "primaryText": "Itt jobb a klíma, mint akárhol Európában.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Here the climate is better than anywhere in Europe.",
@@ -2614,20 +4046,52 @@
       ],
       [
         "series",
-        "akár-/bár-"
+        "akár-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hu_A202",
+    "id": "haspelmath1997_hu_A201_bar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A201)"
+    },
+    "language": "hung1274",
+    "primaryText": "Itt jobb a klíma, mint bárhol Európában.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Here the climate is better than anywhere in Europe.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "comparative"
+      ],
+      [
+        "series",
+        "bár-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A202_vala",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A202)"
     },
     "language": "hung1274",
-    "primaryText": "Nem hiszem, hogy valaki/bárki/akárki látta volna.",
+    "primaryText": "Nem hiszem, hogy valaki látta volna.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "I don't think that anybody has seen it.",
@@ -2646,20 +4110,84 @@
       ],
       [
         "series",
-        "vala-/akár-/bár-"
+        "vala-"
       ]
     ],
     "comment": "",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_hu_A203",
+    "id": "haspelmath1997_hu_A202_bar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A202)"
+    },
+    "language": "hung1274",
+    "primaryText": "Nem hiszem, hogy bárki látta volna.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't think that anybody has seen it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "bár-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A202_akar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A202)"
+    },
+    "language": "hung1274",
+    "primaryText": "Nem hiszem, hogy akárki látta volna.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't think that anybody has seen it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "akár-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A203_bar",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A203)"
     },
     "language": "hung1274",
-    "primaryText": "Ha bármit/akármit/valamit hallasz, ébressz fel.",
+    "primaryText": "Ha bármit hallasz, ébressz fel.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If you hear anything (at all), wake me up.",
@@ -2678,10 +4206,74 @@
       ],
       [
         "series",
-        "vala-/akár-/bár-"
+        "bár-"
       ]
     ],
     "comment": "The akár- and bár-series have an emphatic value in conditionals.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A203_akar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A203)"
+    },
+    "language": "hung1274",
+    "primaryText": "Ha akármit hallasz, ébressz fel.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If you hear anything (at all), wake me up.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "akár-"
+      ]
+    ],
+    "comment": "The akár- and bár-series have an emphatic value in conditionals.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A203_vala",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A203)"
+    },
+    "language": "hung1274",
+    "primaryText": "Ha valamit hallasz, ébressz fel.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If you hear anything, wake me up.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "vala-"
+      ]
+    ],
+    "comment": "",
     "lgrConformance": ""
   },
   {
@@ -2691,22 +4283,13 @@
       "paperLabel": "(A204)"
     },
     "language": "hung1274",
-    "primaryText": "Hallottál valamit (*akármit, *bármit)?",
+    "primaryText": "Hallottál valamit?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Hallottál akármit?",
-        "judgment": "ungrammatical"
-      },
-      {
-        "form": "Hallottál bármit?",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2722,6 +4305,70 @@
         "vala-"
       ]
     ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A204_akar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A204)"
+    },
+    "language": "hung1274",
+    "primaryText": "Hallottál akármit?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you hear anything?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "akár-"
+      ]
+    ],
+    "comment": "The akár- and bár-series cannot be used in questions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_hu_A204_bar",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A204)"
+    },
+    "language": "hung1274",
+    "primaryText": "Hallottál bármit?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you hear anything?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.26"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "bár-"
+      ]
+    ],
     "comment": "The akár- and bár-series cannot be used in questions.",
     "lgrConformance": ""
   },
@@ -2732,7 +4379,7 @@
       "paperLabel": "(A205a)"
     },
     "language": "finn1318",
-    "primaryText": "*Joku soitti. Arvaa kuka (se oli)?",
+    "primaryText": "Joku soitti. Arvaa kuka (se oli)?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Someone called. Guess who (it was).",
@@ -2854,24 +4501,19 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_fi_A208",
+    "id": "haspelmath1997_fi_A208_kin",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A208)"
     },
     "language": "finn1318",
-    "primaryText": "Soittiko joku/kukaan/*kuka hyvänsä?",
+    "primaryText": "Soittiko joku?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did someone/anyone call?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Soittiko kuka hyvänsä?",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2884,31 +4526,90 @@
       ],
       [
         "series",
-        "-kin/-kaan"
+        "-kin"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_fi_A208_kaan",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A208)"
+    },
+    "language": "finn1318",
+    "primaryText": "Soittiko kukaan?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did someone/anyone call?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.27"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "-kaan"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_fi_A208_hyvansa",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A208)"
+    },
+    "language": "finn1318",
+    "primaryText": "Soittiko kuka hyvänsä?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did someone/anyone call?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.27"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "hyvänsä"
       ]
     ],
     "comment": "The hyvänsä-series is impossible in questions.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_fi_A209",
+    "id": "haspelmath1997_fi_A209_kin",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A209)"
     },
     "language": "finn1318",
-    "primaryText": "Jos joku/kuka hyvänsä/*kukaan soittaa, sano minulle.",
+    "primaryText": "Jos joku soittaa, sano minulle.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If someone/anyone at all calls, tell me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Jos kukaan soittaa, sano minulle.",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -2921,7 +4622,71 @@
       ],
       [
         "series",
-        "-kin/hyvänsä"
+        "-kin"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_fi_A209_hyvansa",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A209)"
+    },
+    "language": "finn1318",
+    "primaryText": "Jos kuka hyvänsä soittaa, sano minulle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If someone/anyone at all calls, tell me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.27"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "hyvänsä"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_fi_A209_kaan",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A209)"
+    },
+    "language": "finn1318",
+    "primaryText": "Jos kukaan soittaa, sano minulle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If someone/anyone at all calls, tell me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.27"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "-kaan"
       ]
     ],
     "comment": "The -kaan-series is impossible in conditionals.",
@@ -3446,18 +5211,13 @@
       "paperLabel": "(A251b)"
     },
     "language": "nucl1302",
-    "primaryText": "Movida vi-yac (*vin-me) rusi.",
+    "primaryText": "Movida vi-yac rusi.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Some Russian person has come (I don't know them).",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Movida vin-me rusi.",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3471,6 +5231,38 @@
       [
         "series",
         "-yac"
+      ]
+    ],
+    "comment": "The -yac-series is restricted to the specific functions.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ka_A251b_me",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A251b)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Movida vin-me rusi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Some Russian person has come (I don't know them).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.34"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "-me"
       ]
     ],
     "comment": "The -yac-series is restricted to the specific functions.",
@@ -3515,18 +5307,13 @@
       "paperLabel": "(A253a)"
     },
     "language": "nucl1302",
-    "primaryText": "Mosula vin-me (*vi-yac)?",
+    "primaryText": "Mosula vin-me?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Has anyone come?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Mosula vi-yac?",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -3543,6 +5330,38 @@
       ]
     ],
     "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ka_A253a_yac",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A253a)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Mosula vi-yac?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Has anyone come?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.34"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "-yac"
+      ]
+    ],
+    "comment": "The -yac-series is restricted to the specific functions.",
     "lgrConformance": ""
   },
   {
@@ -3776,7 +5595,7 @@
       "paperLabel": "(A267c)"
     },
     "language": "mand1415",
-    "primaryText": "?Tā bù xǐhuan shéi.",
+    "primaryText": "Tā bù xǐhuan shéi.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "He does not like anyone.",
@@ -3802,16 +5621,16 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_zh_A268",
+    "id": "haspelmath1997_zh_A268_unknown",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A268)"
     },
     "language": "mand1415",
-    "primaryText": "Yǒu rén dǎ diànhuà le. (Wǒ bù zhīdào shì shéi. / Cāi yi cāi shì shéi.)",
+    "primaryText": "Yǒu rén dǎ diànhuà le. Wǒ bù zhīdào shì shéi.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Someone called. (I don't know who. / Guess who.)",
+    "translation": "Someone called. I don't know who.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3831,6 +5650,38 @@
       ]
     ],
     "comment": "Bare interrogatives are not admissible in specific contexts that lack an element of uncertainty.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_zh_A268_known",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A268)"
+    },
+    "language": "mand1415",
+    "primaryText": "Yǒu rén dǎ diànhuà le. Cāi yi cāi shì shéi.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone called. Guess who.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "generic noun"
+      ]
+    ],
+    "comment": "",
     "lgrConformance": ""
   },
   {
@@ -3859,7 +5710,7 @@
       ],
       [
         "series",
-        "dōu/yě"
+        "dōu"
       ]
     ],
     "comment": "The dōu- and yě-series occur only preverbally and are used interchangeably.",
@@ -3891,7 +5742,7 @@
       ],
       [
         "series",
-        "dōu/yě"
+        "dōu"
       ]
     ],
     "comment": "",
@@ -4250,16 +6101,16 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ja_A281",
+    "id": "haspelmath1997_ja_A281_unknown",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A281)"
     },
     "language": "nucl1643",
-    "primaryText": "Dare-ka kara denwa at-ta kedo, dare kara da ka wakara-na-i. / dare kara da ka ate-te goran.",
+    "primaryText": "Dare-ka kara denwa at-ta kedo, dare kara da ka wakara-na-i.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Someone called; I don't know who. / guess who!",
+    "translation": "Someone called; I don't know who.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -4279,6 +6130,38 @@
       ]
     ],
     "comment": "Specific unknown and specific known alike.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ja_A281_known",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A281)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Dare-ka kara denwa at-ta kedo, dare kara da ka ate-te goran.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Someone called; guess who!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.38"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "-ka"
+      ]
+    ],
+    "comment": "",
     "lgrConformance": ""
   },
   {
@@ -4320,18 +6203,13 @@
       "paperLabel": "(A283a)"
     },
     "language": "nucl1643",
-    "primaryText": "Rusutyuu-ni dare-ka (*dare-mo) ki-masi-ta ka?",
+    "primaryText": "Rusutyuu-ni dare-ka ki-masi-ta ka?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did somebody/anybody come while I was gone?",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Rusutyuu-ni dare-mo ki-masi-ta ka?",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4351,24 +6229,51 @@
     "lgrConformance": ""
   },
   {
+    "id": "haspelmath1997_ja_A283a_mo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A283a)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Rusutyuu-ni dare-mo ki-masi-ta ka?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did somebody/anybody come while I was gone?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.38"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "-mo"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
     "id": "haspelmath1997_ja_A283b",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A283b)"
     },
     "language": "nucl1643",
-    "primaryText": "Nani-ka (*nani-mo) tabe-tara, eiga e ture-te it-te age-na-i yo.",
+    "primaryText": "Nani-ka tabe-tara, eiga e ture-te it-te age-na-i yo.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If you eat something/anything, I won't take you to the movie.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {
-        "form": "Nani-mo tabe-tara, eiga e ture-te it-te age-na-i yo.",
-        "judgment": "ungrammatical"
-      }
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       [
@@ -4382,6 +6287,38 @@
       [
         "series",
         "-ka"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ja_A283b_mo",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A283b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Nani-mo tabe-tara, eiga e ture-te it-te age-na-i yo.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If you eat something/anything, I won't take you to the movie.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.38"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "-mo"
       ]
     ],
     "comment": "",
@@ -4516,17 +6453,17 @@
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ko_A288a",
+    "id": "haspelmath1997_ko_A288a_bare_unknown",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A288a)"
     },
     "language": "kore1280",
-    "primaryText": "Nwu-ka/nwukwu-inka-ka kel-ess-ta.",
+    "primaryText": "Nwu-ka kel-ess-ta.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Somebody called. (I didn't catch her name. / Guess who.)",
-    "context": "",
+    "translation": "Somebody called.",
+    "context": "The speaker did not catch the caller's name.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -4541,20 +6478,116 @@
       ],
       [
         "series",
-        "bare interrogative/-nka"
+        "bare interrogative"
       ]
     ],
     "comment": "Specific unknown and specific known alike.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ko_A289a",
+    "id": "haspelmath1997_ko_A288a_nka_unknown",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A288a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Nwukwu-inka-ka kel-ess-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Somebody called.",
+    "context": "The speaker did not catch the caller's name.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "-nka"
+      ]
+    ],
+    "comment": "Specific unknown and specific known alike.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A288a_bare_known",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A288a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Nwu-ka kel-ess-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Somebody called.",
+    "context": "The speaker goes on: guess who.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "Specific unknown and specific known alike.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A288a_nka_known",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A288a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Nwukwu-inka-ka kel-ess-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Somebody called.",
+    "context": "The speaker goes on: guess who.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "-nka"
+      ]
+    ],
+    "comment": "Specific unknown and specific known alike.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A289a_bare",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A289a)"
     },
     "language": "kore1280",
-    "primaryText": "Molu-myen, nwukwu-eykey/nwukwu-nka-eykey mul-ela.",
+    "primaryText": "Molu-myen, nwukwu-eykey mul-ela.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If you don't know, ask somebody.",
@@ -4573,20 +6606,52 @@
       ],
       [
         "series",
-        "bare interrogative/-nka"
+        "bare interrogative"
       ]
     ],
     "comment": "Imperative.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ko_A290a",
+    "id": "haspelmath1997_ko_A289a_nka",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A289a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Molu-myen, nwukwu-nka-eykey mul-ela.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If you don't know, ask somebody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "-nka"
+      ]
+    ],
+    "comment": "Imperative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A290a_bare",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A290a)"
     },
     "language": "kore1280",
-    "primaryText": "Ku sonye-ka mues-ul/mue-nka-lul (*mues-ina/*mues-itunci) chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "primaryText": "Ku sonye-ka mues-ul chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If the girl finds anything, she will tell her mother.",
@@ -4605,20 +6670,116 @@
       ],
       [
         "series",
-        "bare interrogative/-nka"
+        "bare interrogative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A290a_nka",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A290a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Ku sonye-ka mue-nka-lul chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If the girl finds anything, she will tell her mother.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "-nka"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A290a_na",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A290a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Ku sonye-ka mues-ina chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If the girl finds anything, she will tell her mother.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "-na"
       ]
     ],
     "comment": "The free-choice series are excluded.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ko_A290b",
+    "id": "haspelmath1997_ko_A290a_tunci",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A290a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Ku sonye-ka mues-itunci chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If the girl finds anything, she will tell her mother.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "-tunci"
+      ]
+    ],
+    "comment": "The free-choice series are excluded.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A290b_bare",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A290b)"
     },
     "language": "kore1280",
-    "primaryText": "Chelswu mues-ul/mue-nka-lul (*mues-ina/*mues-itunci) ilk-ess-ni?",
+    "primaryText": "Chelswu mues-ul ilk-ess-ni?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Did Chelswu read anything?",
@@ -4637,20 +6798,116 @@
       ],
       [
         "series",
-        "bare interrogative/-nka"
+        "bare interrogative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A290b_nka",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A290b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Chelswu mue-nka-lul ilk-ess-ni?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did Chelswu read anything?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "-nka"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A290b_na",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A290b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Chelswu mues-ina ilk-ess-ni?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did Chelswu read anything?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "-na"
       ]
     ],
     "comment": "The free-choice series are excluded.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ko_A291",
+    "id": "haspelmath1997_ko_A290b_tunci",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A290b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Chelswu mues-itunci ilk-ess-ni?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did Chelswu read anything?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "-tunci"
+      ]
+    ],
+    "comment": "The free-choice series are excluded.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A291_na",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A291)"
     },
     "language": "kore1280",
-    "primaryText": "Nwukwu-na/nwukwu-tunci/amu-na/amu-tunci i muncey-lul phul swu-iss-ta.",
+    "primaryText": "Nwukwu-na i muncey-lul phul swu-iss-ta.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Anybody can solve this problem.",
@@ -4669,20 +6926,116 @@
       ],
       [
         "series",
-        "-na/-tunci"
+        "-na"
       ]
     ],
     "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ko_A292",
+    "id": "haspelmath1997_ko_A291_tunci",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A291)"
+    },
+    "language": "kore1280",
+    "primaryText": "Nwukwu-tunci i muncey-lul phul swu-iss-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Anybody can solve this problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "-tunci"
+      ]
+    ],
+    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A291_amu_na",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A291)"
+    },
+    "language": "kore1280",
+    "primaryText": "Amu-na i muncey-lul phul swu-iss-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Anybody can solve this problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "-na"
+      ]
+    ],
+    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A291_amu_tunci",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A291)"
+    },
+    "language": "kore1280",
+    "primaryText": "Amu-tunci i muncey-lul phul swu-iss-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Anybody can solve this problem.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "-tunci"
+      ]
+    ],
+    "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A292_to",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A292)"
     },
     "language": "kore1280",
-    "primaryText": "Nwukwu-to/nwukwu-lul/nwukwu-nka-lul chacki-ka pulkanung ha-ta.",
+    "primaryText": "Nwukwu-to chacki-ka pulkanung ha-ta.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "It's impossible to find anyone.",
@@ -4701,20 +7054,116 @@
       ],
       [
         "series",
-        "-to/bare interrogative/-nka"
+        "-to"
       ]
     ],
     "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
     "lgrConformance": ""
   },
   {
-    "id": "haspelmath1997_ko_A293a",
+    "id": "haspelmath1997_ko_A292_bare",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A292)"
+    },
+    "language": "kore1280",
+    "primaryText": "Nwukwu-lul chacki-ka pulkanung ha-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's impossible to find anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A292_nka",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A292)"
+    },
+    "language": "kore1280",
+    "primaryText": "Nwukwu-nka-lul chacki-ka pulkanung ha-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's impossible to find anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "-nka"
+      ]
+    ],
+    "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A293a_amu",
     "source": {
       "bibkey": "haspelmath-1997",
       "paperLabel": "(A293a)"
     },
     "language": "kore1280",
-    "primaryText": "Ku sonye-nun amu-to/nwukwu-to an po-ass-ta.",
+    "primaryText": "Ku sonye-nun amu-to an po-ass-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The girl did not see anybody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "-to"
+      ]
+    ],
+    "comment": "With verbal negation.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_ko_A293a_nwukwu",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A293a)"
+    },
+    "language": "kore1280",
+    "primaryText": "Ku sonye-nun nwukwu-to an po-ass-ta.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "The girl did not see anybody.",
