@@ -1,4 +1,3 @@
-import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Supervaluation
 
 /-!

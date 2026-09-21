@@ -35,32 +35,25 @@ open Degree AlexandropoulouGotzner2024a
 
 /-! ### Precision-level gap -/
 
-variable {max : ℕ} (tp : ThresholdPair max)
+variable {D : Type*} [LinearOrder D] (tp : ThresholdPair D)
 
-/-- Under a precision-opened gap, *not dirty* is not *clean* and *not clean* is not
-    *dirty*: the relative-like distinctions of the single-statement data. -/
-theorem relative_like (h : (tp.neg : Bounded max) < tp.pos) :
-    (∃ d, AntonymForm.strengthenedDenot tp .notNegative d ∧
-      ¬ AntonymForm.strengthenedDenot tp .positive d) ∧
-    ∃ d, AntonymForm.strengthenedDenot tp .notPositive d ∧
-      ¬ AntonymForm.strengthenedDenot tp .negative d := by
-  refine ⟨Degree.AntonymForm.strengthenedDenot_breaks_synonymy tp h, ↑tp.neg, ?_, ?_⟩
-  · simpa [Degree.positiveMeaning, Degree.Comparison.mem_over, Degree.Comparison.rel]
-      using le_of_lt h
-  · simp [Degree.negativeMeaning]
+/-- The two residues are the same region, the gap, so the distinctions are symmetric across
+polarity. -/
+theorem residues_symmetric :
+    AntonymForm.strengthenedDenot tp .notNegative \ AntonymForm.strengthenedDenot tp .positive =
+      AntonymForm.strengthenedDenot tp .notPositive \ AntonymForm.strengthenedDenot tp .negative :=
+  (AntonymForm.strengthenedDenot_notNegative_diff_positive tp).trans
+    (AntonymForm.strengthenedDenot_notPositive_diff_negative tp).symm
 
-/-- The two residues are the same region — the gap — so the distinctions are
-    symmetric across polarity. -/
-theorem residues_symmetric (d : Bounded max) :
-    (AntonymForm.strengthenedDenot tp .notNegative d ∧
-      ¬ AntonymForm.strengthenedDenot tp .positive d) ↔
-    (AntonymForm.strengthenedDenot tp .notPositive d ∧
-      ¬ AntonymForm.strengthenedDenot tp .negative d) := by
-  simp only [AntonymForm.strengthenedDenot, Degree.positiveMeaning', Degree.contraryNegMeaning,
-    Degree.notContraryNegMeaning, Degree.contradictoryNeg, Degree.positiveMeaning,
-    Degree.negativeMeaning, Degree.notPositiveMeaning, Degree.Comparison.mem_over,
-    Degree.Comparison.rel, id_eq, not_lt]
-  exact and_comm
+/-- Under a precision-opened gap, *not dirty* is not *clean* and *not clean* is not *dirty*,
+the relative-like distinctions of the single-statement data. -/
+theorem relative_like (h : tp.neg ≤ tp.pos) :
+    (AntonymForm.strengthenedDenot tp .notNegative \
+        AntonymForm.strengthenedDenot tp .positive).Nonempty ∧
+      (AntonymForm.strengthenedDenot tp .notPositive \
+        AntonymForm.strengthenedDenot tp .negative).Nonempty := by
+  rw [← residues_symmetric, and_self, AntonymForm.strengthenedDenot_notNegative_diff_positive]
+  exact tp.gap_nonempty_iff.2 h
 
 /-! ### Rows -/
 

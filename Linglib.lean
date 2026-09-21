@@ -1318,7 +1318,6 @@ import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Defs
 import Linglib.Semantics.Degree.Delineation
-import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Hom
 import Linglib.Semantics.Degree.Measure.Basic
