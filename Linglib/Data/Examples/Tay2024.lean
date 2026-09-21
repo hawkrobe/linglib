@@ -409,6 +409,42 @@ def ex_224 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "MORPHEME_ALIGNED" }
 
-def all : List LinguisticExample := [ex_41, ex_42, ex_45, ex_46, ex_107, ex_131, ex_132, ex_133, ex_134, ex_146, ex_148, ex_149, ex_150, ex_151, ex_202, ex_205, ex_206, ex_216, ex_217, ex_219, ex_221, ex_224]
+def ex_330 : LinguisticExample :=
+  { id := "tay2024_330"
+    source := ⟨"tay-2024", "(330), (349)"⟩
+    reportedIn := none
+    language := "mand1415"
+    primaryText := "Zhāngsān qí-lèi-le mǎ."
+    discourseSegments := []
+    glossedTokens := [("Zhāngsān", "Zhangsan"), ("qí-lèi-le", "ride-tired-PFV"), ("mǎ", "horse")]
+    translation := "Zhangsan rode a horse and as a result the horse, or Zhangsan, became tired."
+    context := "A hybrid resultative, commonly described as a subject-oriented transitive resultative."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("the horse became tired", .acceptable), ("Zhangsan became tired", .marginal)]
+    paperFeatures := []
+    comment := "The second reading is marked % for speaker variation; on both readings Tay analyzes the postverbal phrase as an argument of V2, a Locatum on the second."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def ex_668 : LinguisticExample :=
+  { id := "tay2024_668"
+    source := ⟨"tay-2024", "(668), (673)"⟩
+    reportedIn := none
+    language := "mand1415"
+    primaryText := "Zhāngsān dǎ-pò-le huāpíng."
+    discourseSegments := []
+    glossedTokens := [("Zhāngsān", "Zhangsan"), ("dǎ-pò-le", "hit-break-PFV"), ("huāpíng", "vase")]
+    translation := "Zhangsan broke the vase by hitting it."
+    context := "A transitive V-V resultative whose result verb is an intransitive change-of-state verb."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "The witness for two of chapter 8's three typological parameters: X is a verb, and a transitive resultative takes an intransitive X, unlike Japanese (674)-(675)."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def all : List LinguisticExample := [ex_41, ex_42, ex_45, ex_46, ex_107, ex_131, ex_132, ex_133, ex_134, ex_146, ex_148, ex_149, ex_150, ex_151, ex_202, ex_205, ex_206, ex_216, ex_217, ex_219, ex_221, ex_224, ex_330, ex_668]
 
 end Tay2024.Examples

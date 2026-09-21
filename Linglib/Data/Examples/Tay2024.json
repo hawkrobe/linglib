@@ -387,5 +387,42 @@
     "comment": "An unaccusative resultative whose sole argument must be the agent of V1, a restriction the thesis leaves open.",
     "metaLanguage": "stan1293",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "tay2024_330",
+    "source": {"bibkey": "tay-2024", "paperLabel": "(330), (349)"},
+    "language": "mand1415",
+    "primaryText": "Zhāngsān qí-lèi-le mǎ.",
+    "discourseSegments": [],
+    "glossedTokens": [["Zhāngsān", "Zhangsan"], ["qí-lèi-le", "ride-tired-PFV"], ["mǎ", "horse"]],
+    "translation": "Zhangsan rode a horse and as a result the horse, or Zhangsan, became tired.",
+    "context": "A hybrid resultative, commonly described as a subject-oriented transitive resultative.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the horse became tired", "judgment": "acceptable"},
+      {"name": "Zhangsan became tired", "judgment": "marginal"}
+    ],
+    "paperFeatures": [],
+    "comment": "The second reading is marked % for speaker variation; on both readings Tay analyzes the postverbal phrase as an argument of V2, a Locatum on the second.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "tay2024_668",
+    "source": {"bibkey": "tay-2024", "paperLabel": "(668), (673)"},
+    "language": "mand1415",
+    "primaryText": "Zhāngsān dǎ-pò-le huāpíng.",
+    "discourseSegments": [],
+    "glossedTokens": [["Zhāngsān", "Zhangsan"], ["dǎ-pò-le", "hit-break-PFV"], ["huāpíng", "vase"]],
+    "translation": "Zhangsan broke the vase by hitting it.",
+    "context": "A transitive V-V resultative whose result verb is an intransitive change-of-state verb.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The witness for two of chapter 8's three typological parameters: X is a verb, and a transitive resultative takes an intransitive X, unlike Japanese (674)-(675).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
   }
 ]
