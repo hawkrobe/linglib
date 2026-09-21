@@ -8,58 +8,101 @@ module
 public import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
-# Disintegrating a finite product measure along one coordinate
+# Splitting one coordinate off a finite product measure
 
-`MeasureTheory.Measure.pi_setOf_forall_ne_mem` computes the measure, under `Measure.pi μ`, of a set
-of the form `{x | ∀ j ≠ i, x j ∈ s j (x i)}` as an integral against `μ i`. It is Tonelli's theorem
-for an indicator whose slices at a fixed `i`-th coordinate are boxes; in probabilistic terms, it
-conditions independent variables on one of them.
+Mathlib splits a coordinate off `Measure.pi` only for index type `Fin (n + 1)`
+(`measurePreserving_piFinSuccAbove`). This file gives the same tower for `Equiv.piSplitAt`, which
+works over any finite index type: the measurable equivalence and the statement that it carries
+`Measure.pi μ` to `(μ i).prod (Measure.pi fun j : {j // j ≠ i} ↦ μ j)`. With `Measure.prod_apply`
+and `Measure.pi_pi` this computes probabilities that tie the other coordinates to the `i`-th.
+
+## Main definitions
+
+* `MeasurableEquiv.piSplitAt`: the measurable version of `Equiv.piSplitAt`.
+
+## Main results
+
+* `MeasureTheory.measurePreserving_piSplitAt`: splitting a coordinate preserves the product measure.
+* `MeasureTheory.Measure.pi_setOf_apply_eq_apply`: two coordinates are almost surely distinct when
+  one of the factors has no atoms.
 
 ## Implementation notes
 
-Mathlib's general form of peeling one coordinate off a finite product is
-`MeasureTheory.lmarginal_erase`. This lemma is the special case that random utility models need,
-proved through `measurePreserving_piEquivPiSubtypeProd` because the `lmarginal` route needs a base
-point of `∀ j, α j` and is no shorter. It is a convenience corollary and not an `[UPSTREAM]`
-candidate in this shape.
+`[UPSTREAM]` candidates: the equivalence for `Mathlib/MeasureTheory/MeasurableSpace/Embedding.lean`,
+beside `MeasurableEquiv.piFinSuccAbove`, and the two theorems for
+`Mathlib/MeasureTheory/Constructions/Pi.lean`.
 -/
 
-public section
+@[expose] public section
 
-open Set Finset
-open scoped ENNReal
+open MeasureTheory Set
+
+universe u
+variable {ι : Type*} [DecidableEq ι] {α : ι → Type u}
+
+namespace MeasurableEquiv
+
+/-- Measurable version of `Equiv.piSplitAt`. -/
+@[simps! -fullyApplied]
+def piSplitAt (α : ι → Type*) [∀ i, MeasurableSpace (α i)] (i : ι) :
+    (∀ j, α j) ≃ᵐ α i × ∀ j : {j // j ≠ i}, α j where
+  toEquiv := Equiv.piSplitAt i α
+  measurable_toFun := (measurable_pi_apply i).prodMk <| measurable_pi_iff.2 fun _ ↦
+    measurable_pi_apply _
+  measurable_invFun := measurable_pi_iff.2 fun j ↦ by
+    by_cases h : j = i
+    · subst h; simpa using measurable_fst
+    · simpa [h] using! (measurable_pi_apply (⟨j, h⟩ : {j // j ≠ i})).comp measurable_snd
+
+end MeasurableEquiv
+
+namespace MeasureTheory
+
+variable [Fintype ι]
+
+/-- Splitting one coordinate off a finite product measure is measure preserving: under
+`Measure.pi μ` the `i`-th coordinate is independent of the others. General-index sibling of
+`measurePreserving_piFinSuccAbove`. -/
+theorem measurePreserving_piSplitAt {m : ∀ i, MeasurableSpace (α i)} (μ : ∀ i, Measure (α i))
+    [∀ i, SigmaFinite (μ i)] (i : ι) :
+    MeasurePreserving (MeasurableEquiv.piSplitAt α i) (Measure.pi μ)
+      ((μ i).prod <| Measure.pi fun j : {j // j ≠ i} ↦ μ j) := by
+  set e := (MeasurableEquiv.piSplitAt α i).symm
+  refine MeasurePreserving.symm e ?_
+  refine ⟨e.measurable, (Measure.pi_eq fun s _ ↦ ?_).symm⟩
+  rw [e.map_apply, Fintype.prod_eq_mul_prod_subtype_ne _ i, ← Measure.pi_pi, ← Measure.prod_prod]
+  congr 1 with ⟨x, f⟩
+  simp only [mem_preimage, mem_pi, mem_univ, forall_true_left, mem_prod, Subtype.forall]
+  refine ⟨fun h ↦ ⟨by simpa [e] using h i, fun j hj ↦ by simpa [e, hj] using h j⟩, fun h j ↦ ?_⟩
+  by_cases hj : j = i
+  · subst hj; simpa [e] using h.1
+  · simpa [e, hj] using h.2 j hj
+
+/-- `measurePreserving_piSplitAt` for `volume`. -/
+theorem volume_preserving_piSplitAt (α : ι → Type u) [∀ i, MeasureSpace (α i)]
+    [∀ i, SigmaFinite (volume : Measure (α i))] (i : ι) :
+    MeasurePreserving (MeasurableEquiv.piSplitAt α i) :=
+  measurePreserving_piSplitAt (fun _ ↦ volume) i
+
+end MeasureTheory
 
 namespace MeasureTheory.Measure
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] {α : ι → Type*} [∀ i, MeasurableSpace (α i)]
-  (μ : ∀ i, Measure (α i)) [∀ i, SigmaFinite (μ i)]
+open Finset
 
-/-- Disintegration of a finite product measure along coordinate `i`: the measure of a set cut out
-by constraints tying each other coordinate to the `i`-th is the integral over the `i`-th coordinate
-of the product of the measures of the constraint sets. -/
-theorem pi_setOf_forall_ne_mem (i : ι) {s : ∀ j, α i → Set (α j)}
-    (hs : ∀ j, MeasurableSet {p : α i × α j | p.2 ∈ s j p.1}) :
-    Measure.pi μ {x | ∀ j, j ≠ i → x j ∈ s j (x i)} =
-      ∫⁻ a, ∏ j ∈ univ.erase i, μ j (s j a) ∂μ i := by
-  let e := MeasurableEquiv.piEquivPiSubtypeProd α (· = i)
-  let T : Set ((∀ j : {j // j = i}, α j) × ∀ j : {j // ¬j = i}, α j) :=
-    {p | ∀ j : {j // ¬j = i}, p.2 j ∈ s j (p.1 ⟨i, rfl⟩)}
-  have hT : MeasurableSet T := by
-    have : T = ⋂ j : {j // ¬j = i}, (fun p ↦ (p.1 ⟨i, rfl⟩, p.2 j)) ⁻¹'
-        {p : α i × α j | p.2 ∈ s j p.1} := by ext; simp [T]
-    rw [this]
-    exact .iInter fun j ↦ (hs j).preimage (by fun_prop)
-  have hS : {x | ∀ j, j ≠ i → x j ∈ s j (x i)} = e ⁻¹' T := by
-    ext x; simp [T, e, MeasurableEquiv.piEquivPiSubtypeProd, Equiv.piEquivPiSubtypeProd]
-  rw [hS, (measurePreserving_piEquivPiSubtypeProd μ (· = i)).measure_preimage_equiv,
-    Measure.prod_apply hT]
-  have hslice : ∀ y : ∀ j : {j // j = i}, α j, Prod.mk y ⁻¹' T =
-      Set.pi univ fun j : {j // ¬j = i} ↦ s j (y ⟨i, rfl⟩) := by
-    intro y; ext; simp [T]
-  simp_rw [hslice, Measure.pi_pi]
-  have h := (measurePreserving_piUnique fun j : {j // j = i} ↦ μ j).lintegral_comp_emb
-    (MeasurableEquiv.measurableEmbedding _) (fun a : α i ↦ ∏ j ∈ univ.erase i, μ j (s j a))
-  convert h using 3 with y
-  exact (Finset.prod_subtype (univ.erase i) (by simp) fun j ↦ μ j (s j (y ⟨i, rfl⟩))).symm
+variable {ι : Type*} [Fintype ι] [DecidableEq ι] {X : Type*} [MeasurableSpace X]
+  [MeasurableEq X] (μ : ι → Measure X) [∀ i, SigmaFinite (μ i)]
+
+/-- Two coordinates of a product measure are almost surely distinct when one has no atoms. -/
+theorem pi_setOf_apply_eq_apply {j k : ι} (hjk : j ≠ k) [NullSingletonClass (μ j)] :
+    Measure.pi μ {x | x j = x k} = 0 := by
+  have hS : {x : ι → X | x j = x k} = MeasurableEquiv.piSplitAt (fun _ ↦ X) k ⁻¹'
+      {p | p.2 ⟨j, hjk⟩ = p.1} := by ext; simp
+  rw [hS, (measurePreserving_piSplitAt μ k).measure_preimage_equiv]
+  refine measure_prod_null_of_ae_null ?_ (.of_forall fun a ↦ ?_)
+  · have h : Measurable fun p : X × ({l // l ≠ k} → X) ↦ (p.2 ⟨j, hjk⟩, p.1) := by fun_prop
+    exact h measurableSet_diagonal
+  · exact pi_eval_preimage_null (fun l : {l // l ≠ k} ↦ μ l) (i := ⟨j, hjk⟩)
+      (measure_singleton a)
 
 end MeasureTheory.Measure

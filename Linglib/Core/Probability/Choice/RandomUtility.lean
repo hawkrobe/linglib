@@ -18,9 +18,9 @@ mass that the product measure `Measure.pi ν` gives to the event that coordinate
 maximum. The additive model, with utility `u j + ε j` for a systematic part `u j` and noise `ε j`,
 is the case where `ν` is a location family.
 
-The theory here is independent of the noise family. Disintegrating the product measure along
-coordinate `i` writes the choice probability as the integral against `ν i` of the product of the
-other coordinates' distribution functions. For atomless noise ties are null, so the choice
+The theory here is independent of the noise family. Splitting coordinate `i` off the product measure
+(`measurePreserving_piSplitAt`) writes the choice probability as the integral against `ν i` of the
+product of the other coordinates' distribution functions. For atomless noise ties are null, so the choice
 probabilities of the alternatives sum to one. Gumbel noise gives the logit rule
 (`Linglib/Core/Probability/Choice/GumbelLuce.lean`), and Gaussian noise gives the probit rule, whose
 binary case is computed here from the convolution of two Gaussians.
@@ -71,9 +71,18 @@ noncomputable def rumChoiceProb (ν : ι → Measure ℝ) (i : ι) : ℝ≥0∞ 
 /-- The choice probability of `i` is the integral, against the law of the `i`-th utility, of the
 probability that every other utility falls below it. -/
 theorem rumChoiceProb_eq_lintegral (ν : ι → Measure ℝ) [∀ j, SigmaFinite (ν j)] (i : ι) :
-    rumChoiceProb ν i = ∫⁻ x, ∏ j ∈ univ.erase i, ν j (Iio x) ∂ν i :=
-  Measure.pi_setOf_forall_ne_mem ν i (s := fun _ x ↦ Iio x)
-    fun _ ↦ measurableSet_lt measurable_snd measurable_fst
+    rumChoiceProb ν i = ∫⁻ x, ∏ j ∈ univ.erase i, ν j (Iio x) ∂ν i := by
+  have hS : {x : ι → ℝ | ∀ j, j ≠ i → x j < x i} = MeasurableEquiv.piSplitAt (fun _ ↦ ℝ) i ⁻¹'
+      {p | ∀ j, p.2 j < p.1} := by ext; simp
+  have hT : MeasurableSet {p : ℝ × ({j // j ≠ i} → ℝ) | ∀ j, p.2 j < p.1} := by
+    simp only [ofPred_forall]
+    exact .iInter fun j ↦ measurableSet_lt (by fun_prop) measurable_fst
+  rw [rumChoiceProb, hS, (measurePreserving_piSplitAt ν i).measure_preimage_equiv,
+    Measure.prod_apply hT]
+  refine lintegral_congr fun x ↦ ?_
+  rw [show Prod.mk x ⁻¹' {p : ℝ × ({j // j ≠ i} → ℝ) | ∀ j, p.2 j < p.1} =
+    Set.pi univ fun _ ↦ Iio x by ext; simp, Measure.pi_pi]
+  exact (prod_subtype (univ.erase i) (by simp) fun j ↦ ν j (Iio x)).symm
 
 /-- For atomless noise the choice probability integrates the product of the other alternatives'
 distribution functions. -/
@@ -86,28 +95,6 @@ theorem rumChoiceProb_eq_lintegral_cdf (ν : ι → Measure ℝ) [∀ j, IsProba
   exact prod_congr rfl fun j _ ↦ by rw [ofReal_cdf, measure_congr Iio_ae_eq_Iic]
 
 variable (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)] [∀ j, NullSingletonClass (ν j)]
-
-/-- Ties between two distinct coordinates are null under atomless independent noise. -/
-theorem pi_setOf_apply_eq_apply {j k : ι} (hjk : j ≠ k) : Measure.pi ν {x | x j = x k} = 0 := by
-  have hs : ∀ l, MeasurableSet {p : ℝ × ℝ | p.2 ∈ (if l = j then {p.1} else univ : Set ℝ)} := by
-    intro l
-    by_cases hl : l = j
-    · simpa [hl] using measurableSet_eq_fun measurable_snd measurable_fst
-    · simp [hl]
-  have h := Measure.pi_setOf_forall_ne_mem ν k
-    (s := fun l a ↦ if l = j then {a} else univ) hs
-  have hset : {x : ι → ℝ | ∀ l, l ≠ k → x l ∈ (if l = j then {x k} else univ : Set ℝ)} =
-      {x | x j = x k} := by
-    ext x
-    simp only [mem_ofPred_eq]
-    refine ⟨fun h ↦ by simpa using h j hjk, fun h l _ ↦ ?_⟩
-    by_cases hl : l = j
-    · simp [hl, h]
-    · simp [hl]
-  rw [hset] at h
-  rw [h]
-  refine lintegral_eq_zero_of_ae_eq_zero (.of_forall fun a ↦ ?_)
-  exact prod_eq_zero (mem_erase.2 ⟨hjk, mem_univ j⟩) (by simp)
 
 /-- For atomless noise the choice probabilities of the alternatives sum to one. -/
 theorem sum_rumChoiceProb [Nonempty ι] : ∑ i, rumChoiceProb ν i = 1 := by
@@ -127,7 +114,7 @@ theorem sum_rumChoiceProb [Nonempty ι] : ∑ i, rumChoiceProb ν i = 1 := by
     obtain ⟨i, hi⟩ := Finite.exists_max x
     exact hx (mem_iUnion₂.2 ⟨i, mem_univ i, fun j hj ↦ (hi j).lt_of_ne fun h ↦ hinj j i hj h⟩)
   · exact measure_iUnion_null fun j ↦ measure_iUnion_null fun k ↦ measure_iUnion_null fun hjk ↦
-      pi_setOf_apply_eq_apply ν hjk
+      Measure.pi_setOf_apply_eq_apply ν hjk
 
 end ChoiceProb
 
