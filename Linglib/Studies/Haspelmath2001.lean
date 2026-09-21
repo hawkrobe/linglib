@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Haspelmath (2001): The European linguistic area: Standard Average European
@@ -44,6 +46,8 @@ per map.
 
 * [haspelmath-2001]
 -/
+
+@[expose] public section
 
 namespace Haspelmath2001
 

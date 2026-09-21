@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Yanyuwa gender
@@ -12,6 +14,8 @@ feminine classes share their prefix.
 
 * [adamson-2024]
 -/
+
+@[expose] public section
 
 namespace Yanyuwa
 

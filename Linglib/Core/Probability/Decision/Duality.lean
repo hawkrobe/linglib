@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Probability.Decision.Blackwell
-import Linglib.Core.Probability.Decision.Basic
+module
+
+public import Linglib.Core.Probability.Decision.Blackwell
+public import Linglib.Core.Probability.Decision.Basic
 
 /-!
 # Utility–loss duality for finite decision problems
@@ -26,6 +28,8 @@ Fact becomes a *biconditional* theorem about the Blackwell order:
   (`isGarblingOf_of_blackwellDominates`) plus the deterministic factoring
   characterization (`Kernel.deterministic_isGarblingOf_deterministic_iff`).
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

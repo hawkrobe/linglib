@@ -1,5 +1,7 @@
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Anti-additivity
@@ -13,6 +15,8 @@ implies antitonicity, and complementation realizes the full anti-morphism. The d
 properties (preserving joins or meets) have no named classes — consumers state the equations
 directly, with `monotone_of_map_sup` and `monotone_of_map_inf` supplying monotonicity.
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 

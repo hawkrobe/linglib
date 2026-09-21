@@ -1,4 +1,6 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Communicative efficiency
@@ -37,6 +39,8 @@ over a list of values of `β`, from the pair that is optimal at that `β`.
 * [N. Zaslavsky, C. Kemp, T. Regier and N. Tishby, *Efficient compression in color naming and its
   evolution* (2018)][zaslavsky-kemp-regier-tishby-2018]
 -/
+
+@[expose] public section
 
 namespace Pragmatics.Efficiency
 

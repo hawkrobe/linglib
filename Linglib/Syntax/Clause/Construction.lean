@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Sum
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Sum
 
 /-!
 # Clause constructions
@@ -34,6 +36,8 @@ dimension.
 * `Predicational` — the §6 bifurcation
 * `Copular` — the §7 copula domain
 -/
+
+@[expose] public section
 
 namespace Clause
 

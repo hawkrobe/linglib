@@ -1,4 +1,6 @@
-import Mathlib.Tactic.FinCases
+module
+
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Dutch Verbal Prefix and Particle Verbs
@@ -26,6 +28,8 @@ verbs lack *ge-* entirely (*verstaan* → *verstaan*, not *\*ge-verstaan*).
 * `IsSeparable` predicate with decidable instance.
 
 -/
+
+@[expose] public section
 
 namespace Dutch.VerbParticles
 

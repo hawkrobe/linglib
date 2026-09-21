@@ -1,7 +1,9 @@
-import Mathlib.Logic.Relation
-import Mathlib.Logic.Function.Basic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Pi
+module
+
+public import Mathlib.Logic.Relation
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # Dimensioned parthood
@@ -37,6 +39,8 @@ acyclicity, and how parthood chains leave a domain closed under parenthood.
 
 * [adger-2025]
 -/
+
+@[expose] public section
 
 namespace MereologicalSyntax
 

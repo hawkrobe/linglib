@@ -1,4 +1,6 @@
-import Mathlib.ModelTheory.Syntax
+module
+
+public import Mathlib.ModelTheory.Syntax
 
 /-!
 # The syntax of dynamic predicate logic
@@ -48,6 +50,8 @@ as `x ≐ x` shows.
 * [groenendijk-stokhof-1991]
 * [visser-1998]
 -/
+
+@[expose] public section
 
 open FirstOrder
 

@@ -1,3 +1,5 @@
+module
+
 /-!
 # Chatzikyriakidis and Luo 2020: MTT semantics via coercive subtyping
 
@@ -40,6 +42,8 @@ Props below.
 
 * [chatzikyriakidis-luo-2020]
 -/
+
+@[expose] public section
 
 namespace ChatzikyriakidisLuo2020
 

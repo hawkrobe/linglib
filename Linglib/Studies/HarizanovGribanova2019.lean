@@ -1,4 +1,6 @@
-import Linglib.Core.Data.List.Sublist
+module
+
+public import Linglib.Core.Data.List.Sublist
 
 /-!
 # Harizanov and Gribanova (2019): Whither head movement?
@@ -49,6 +51,8 @@ parenthesis there indicates.
 * [embick-noyer-2001]
 * [travis-1984]
 -/
+
+@[expose] public section
 
 namespace HarizanovGribanova2019
 

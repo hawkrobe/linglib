@@ -1,3 +1,5 @@
+module
+
 /-!
 # German Clause Types
 
@@ -15,6 +17,8 @@ composes) lives in `Studies/Gutzmann2015.lean`.
 | V2-interrogative  | "Kommt Peter?"         |
 | Imperative        | "Tritt zurück!"        |
 -/
+
+@[expose] public section
 
 namespace German.ClauseTypes
 

@@ -1,6 +1,8 @@
-import Linglib.Core.Learning.RescorlaWagner
-import Mathlib.LinearAlgebra.Finsupp.LinearCombination
-import Mathlib.LinearAlgebra.Pi
+module
+
+public import Linglib.Core.Learning.RescorlaWagner
+public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
+public import Mathlib.LinearAlgebra.Pi
 
 /-!
 # The Widrow-Hoff (LMS) learning rule
@@ -26,6 +28,8 @@ member of the error-driven family.
   specialization; overshadowing does not (non-uniform salience has no channel
   in binary cue coding).
 -/
+
+@[expose] public section
 
 namespace Core
 

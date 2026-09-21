@@ -1,5 +1,7 @@
-import Mathlib.MeasureTheory.MeasurableSpace.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Corpus word-order data: schema
@@ -22,6 +24,8 @@ Language codes are ISO 639-3 codes as the datasets print them.
 
 * [levshina-etal-2023]
 -/
+
+@[expose] public section
 
 namespace Data.WordOrder.Corpus
 

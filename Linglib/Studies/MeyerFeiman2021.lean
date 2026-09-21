@@ -1,4 +1,6 @@
-import Mathlib.Data.Finset.Insert
+module
+
+public import Mathlib.Data.Finset.Insert
 
 /-!
 # Meyer and Feiman (2021): Priming Reveals Similarities and Differences Between Implicatures
@@ -34,6 +36,8 @@ experiments' picture-similarity controls are not represented.
 * [fox-2007]
 * [simons-2005]
 -/
+
+@[expose] public section
 
 namespace MeyerFeiman2021
 

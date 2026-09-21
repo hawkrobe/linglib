@@ -1,5 +1,7 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Root content
@@ -31,6 +33,8 @@ one region per dimension, `univ` where a root says nothing.
 * [talmy-1988]: Force dynamics in language and cognition.
 * [levin-1993]: English Verb Classes and Alternations.
 -/
+
+@[expose] public section
 
 namespace Semantics.Root.Content
 

@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.Pi
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # Partitions induced by logical fragments
@@ -16,6 +18,8 @@ exhaustive (Lemma 3), and their count is the bitstring length.
 * `partition` — the consistent anchors of a fragment.
 * `anchor_mutually_exclusive` / `anchor_jointly_exhaustive` — Lemma 3.
 -/
+
+@[expose] public section
 
 namespace Aristotelian
 

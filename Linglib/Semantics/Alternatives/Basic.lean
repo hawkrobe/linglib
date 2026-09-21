@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Insert
-import Mathlib.Data.Set.Lattice.Bounded
+module
+
+public import Mathlib.Data.Set.Insert
+public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Meanings with alternatives
@@ -34,6 +36,8 @@ and the semantics of the focus and givenness features in `Semantics/Focus/`.
 * [rooth-1992]
 * [kratzer-selkirk-2020]
 -/
+
+@[expose] public section
 
 /-- An ordinary denotation together with the alternatives the expression evokes
 ([rooth-1992]). -/

@@ -1,3 +1,5 @@
+module
+
 /-!
 # Sentence Polarity
 
@@ -12,6 +14,8 @@ Note: This is distinct from other polarity-like distinctions in the library:
 - `Rett2015.Polarity` — adjective markedness
 - `Presupposition.Aboutness.EventSentence.polarity` — polarity of the event claim
 -/
+
+@[expose] public section
 
 /--
 Sentence polarity: whether a sentence is affirmative or negated.

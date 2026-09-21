@@ -1,3 +1,5 @@
+module
+
 /-!
 # Wh-modifiers
 
@@ -20,6 +22,8 @@ supplies.
 * [hoeksema-napoli-2008]
 * [jackendoff-audring-2020]
 -/
+
+@[expose] public section
 
 /-- How the modifier reaches its scope position: adjoined to the wh-head and carried by the
 wh-phrase (English and Singlish *the-hell*, [merchant-2002]), or by movement of its own

@@ -1,8 +1,10 @@
-import Mathlib.Algebra.Order.Ring.Int
-import Mathlib.Order.Directed
-import Mathlib.Order.Interval.Set.Defs
-import Mathlib.Order.WithBot
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Algebra.Order.Ring.Int
+public import Mathlib.Order.Directed
+public import Mathlib.Order.Interval.Set.Defs
+public import Mathlib.Order.WithBot
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Scale boundedness
@@ -40,6 +42,8 @@ operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order du
 * [kennedy-mcnally-2005]
 * [rotstein-winter-2004]
 -/
+
+@[expose] public section
 
 namespace Degree
 

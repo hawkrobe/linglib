@@ -1,6 +1,8 @@
-import Mathlib.Logic.Relation
-import Mathlib.Data.List.Defs
-import Linglib.Core.Relation.ReflTransGen
+module
+
+public import Mathlib.Logic.Relation
+public import Mathlib.Data.List.Defs
+public import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Inheritance Networks — Basic Types and Taxonomy
@@ -41,6 +43,8 @@ producers. `IsA` is decidable for any concrete network via the
 negative `IsA` claims both reduce by `decide`. Termination of `ancestors`
 is bounded by `nodeUniverse.length`, not a magic constant.
 -/
+
+@[expose] public section
 
 universe u v
 

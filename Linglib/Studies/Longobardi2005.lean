@@ -1,5 +1,7 @@
-import Mathlib.Data.Nat.Basic
-import Mathlib.Order.Monotone.Defs
+module
+
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Order.Monotone.Defs
 
 /-!
 # Longobardi (2005): Toward a Unified Grammar of Reference
@@ -38,6 +40,8 @@ formalized.
 * [longobardi-1994]
 * [longobardi-2001]
 -/
+
+@[expose] public section
 
 namespace Longobardi2005
 

@@ -1,7 +1,9 @@
-import Mathlib.Order.Minimal
-import Mathlib.Order.Preorder.Finite
-import Mathlib.Data.Finset.Filter
-import Linglib.Core.Order.PreorderLattice
+module
+
+public import Mathlib.Order.Minimal
+public import Mathlib.Order.Preorder.Finite
+public import Mathlib.Data.Finset.Filter
+public import Linglib.Core.Order.PreorderLattice
 
 /-!
 # Similarity orderings
@@ -15,6 +17,8 @@ maximally similar to `w₀` — the minimal elements of `s` under `closer w₀` 
 `closestWorlds_nonempty`) is `Set.Finite.exists_minimal`. `isCentered` is strong
 centering, and `w₁ ≤[sim, w₀] w₂` is notation for `sim.closer w₀ w₁ w₂`.
 -/
+
+@[expose] public section
 
 namespace Conditional
 

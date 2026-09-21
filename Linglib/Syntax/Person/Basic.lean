@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Person — the canonical inventory
@@ -26,6 +28,8 @@ person complex (`Syntax/Person/Clusivity.lean`).
 `Person.prominence` is the graded prominence scale over this
 inventory, consumed by person-hierarchy and scenario-split accounts.
 -/
+
+@[expose] public section
 
 /-- Grammatical person — the canonical analytical inventory. Clusivity
     is a person-value distinction ([cysouw-2003]; [harbour-2016]'s

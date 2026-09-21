@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Hiatus resolution samples: schema
@@ -16,6 +18,8 @@ vowel with some suffixes and the second with others has two rows.
 
 * [casali-1997]
 -/
+
+@[expose] public section
 
 namespace Data.Hiatus
 

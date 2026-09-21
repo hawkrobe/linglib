@@ -1,4 +1,6 @@
-import Mathlib.Tactic.FinCases
+module
+
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Norwegian Verb-Particle Constructions
@@ -31,6 +33,8 @@ as a cross-linguistically available operation.
   contrasts with English).
 
 -/
+
+@[expose] public section
 
 namespace Norwegian.VerbParticles
 

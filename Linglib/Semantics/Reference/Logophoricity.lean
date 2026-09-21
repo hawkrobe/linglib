@@ -1,4 +1,6 @@
-import Mathlib.Order.Nat
+module
+
+public import Mathlib.Order.Nat
 
 /-!
 # Logophoric roles
@@ -28,6 +30,8 @@ pronouns. [pancheva-zubizarreta-2018] map their prominence values onto the same 
 * [R. Pancheva and M. L. Zubizarreta, *The Person Case Constraint: The Syntactic Encoding of
   Perspective* (2018)][pancheva-zubizarreta-2018]
 -/
+
+@[expose] public section
 
 namespace Reference
 

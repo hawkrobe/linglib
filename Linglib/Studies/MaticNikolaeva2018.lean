@@ -1,3 +1,5 @@
+module
+
 /-!
 # Matić and Nikolaeva (2018): From Polarity Focus to Salient Polarity
 
@@ -24,6 +26,8 @@ theorems are about the attested inventory rather than about the category.
 * [matic-nikolaeva-2018]
 * [hohle-1992]
 -/
+
+@[expose] public section
 
 namespace MaticNikolaeva2018
 

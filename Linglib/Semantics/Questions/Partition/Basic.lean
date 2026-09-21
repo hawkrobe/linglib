@@ -1,5 +1,7 @@
-import Linglib.Core.Data.Setoid.Basic
-import Mathlib.Data.Setoid.Partition
+module
+
+public import Linglib.Core.Data.Setoid.Basic
+public import Mathlib.Data.Setoid.Partition
 
 /-!
 # Partition questions
@@ -31,6 +33,8 @@ relation, a proposition settling a question, is `Question.Resolves`.
 * [cariani-2013]
 * [phillips-brown-2025]
 -/
+
+@[expose] public section
 
 namespace Setoid
 

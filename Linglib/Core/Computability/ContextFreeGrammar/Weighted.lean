@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.ContextFreeGrammar
-import Mathlib.Algebra.Order.Group.Defs
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar
+public import Mathlib.Algebra.Order.Group.Defs
 
 /-!
 # Weighted context-free grammars
@@ -15,6 +17,8 @@ each nonterminal, and `DirichletPCFG`, whose pseudo-counts are positive on the r
 grammar. The weight type is a parameter, as for `Polynomial R`, so a consumer chooses `ℝ`,
 `ℝ≥0∞` or any ordered type with a zero.
 -/
+
+@[expose] public section
 
 /-- A weighted context-free grammar over `G` with weights in `W`: a nonnegative weight on rules,
 with no normalisation. -/

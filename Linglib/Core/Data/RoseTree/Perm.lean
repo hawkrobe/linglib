@@ -3,8 +3,10 @@ Copyright (c) 2026 The Linglib Authors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Linglib contributors
 -/
-import Linglib.Core.Data.RoseTree.Basic
-import Linglib.Core.Data.Multiset.Rel
+module
+
+public import Linglib.Core.Data.RoseTree.Basic
+public import Linglib.Core.Data.Multiset.Rel
 
 /-!
 # Permutation of rose trees
@@ -28,6 +30,8 @@ instead of `Eq`) is mutually inductive with it, in the `fold`/`foldList` pattern
 * `RoseTree.perm_node_iff`: node inversion, `Perm (node a cs) (node b ds) ↔
   a = b ∧ Multiset.Rel Perm (↑cs : Multiset (RoseTree α)) ↑ds`.
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

@@ -1,6 +1,8 @@
-import Mathlib.Order.Basic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.Simps.Basic
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.Simps.Basic
 
 /-!
 # Reciprocal scope: anaphoric relations, locus, and readings
@@ -39,6 +41,8 @@ needs.
 * [S. Beck, *Reciprocals are definites* (2001)][beck-2001]
 * [J. Dotlačil, *Reciprocals distribute over information states* (2013)][dotlacil-2013]
 -/
+
+@[expose] public section
 
 namespace Reciprocal
 

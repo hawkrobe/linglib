@@ -1,3 +1,5 @@
+module
+
 /-!
 # Positions in a two-link causal chain
 
@@ -13,6 +15,8 @@ different classification and belong with the accounts that use them.
 
 * `CausalChainPosition` — the causing and caused ends of a two-link chain
 -/
+
+@[expose] public section
 
 namespace Causation
 

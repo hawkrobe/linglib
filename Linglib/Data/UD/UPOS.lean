@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Universal Dependencies: part-of-speech tags
@@ -10,6 +12,8 @@ modifier classes they fall into.
 
 Official site: <https://universaldependencies.org/>
 -/
+
+@[expose] public section
 
 namespace UD
 

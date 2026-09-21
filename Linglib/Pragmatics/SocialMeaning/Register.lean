@@ -1,5 +1,7 @@
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Register
@@ -29,6 +31,8 @@ addressee and differ in the formality of the discourse.
   Experimental Study of Linguistic and Social Meaning* (2025)][rotter-liu-2025]
 * [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
+
+@[expose] public section
 
 namespace SocialMeaning
 

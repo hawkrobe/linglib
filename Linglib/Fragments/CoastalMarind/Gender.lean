@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Coastal Marind gender
@@ -14,6 +16,8 @@ where *-pe* is glossed as the article).
 * [adamson-2024]
 * [G. G. Corbett, *Morphology and agreement* (1998)][corbett-1998]
 -/
+
+@[expose] public section
 
 namespace CoastalMarind
 

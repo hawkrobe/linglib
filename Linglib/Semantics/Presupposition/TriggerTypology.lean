@@ -1,3 +1,5 @@
+module
+
 /-!
 # Presupposition triggers
 
@@ -24,6 +26,8 @@ particle or affix that triggers a presupposition is a `TriggerItem`.
 * [ippolito-2007]
 * [kripke-2009]
 -/
+
+@[expose] public section
 
 namespace Presupposition
 

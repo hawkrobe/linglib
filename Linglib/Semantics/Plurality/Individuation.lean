@@ -1,5 +1,7 @@
-import Mathlib.Order.Nat
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Nat
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The scale of individuation
@@ -17,6 +19,8 @@ same notional classes (granulars are the pivotal type: count as English
 content of the middle types (units clumped together vs. connected but
 separable) is self-connection in the sense of [casati-varzi-1999].
 -/
+
+@[expose] public section
 
 /-- Individuation types ([grimm-2018] (17)/(19)): the scale
     substance < granular aggregate < collective aggregate < individual. -/

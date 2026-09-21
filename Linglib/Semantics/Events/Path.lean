@@ -1,4 +1,6 @@
-import Mathlib.Data.List.Infix
+module
+
+public import Mathlib.Data.List.Infix
 
 /-!
 # Spatial paths
@@ -30,6 +32,8 @@ every operation computable.
   prepositions ([zwarts-2005]); paired with `Aspect.Telicity` at use sites
   — the paper's two independent classificatory axes.
 -/
+
+@[expose] public section
 
 namespace Spatial
 

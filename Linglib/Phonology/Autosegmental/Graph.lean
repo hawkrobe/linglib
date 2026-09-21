@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
-import Mathlib.CategoryTheory.Limits.Shapes.Terminal
-import Mathlib.CategoryTheory.MorphismProperty.Composition
-import Mathlib.Combinatorics.Digraph.Basic
-import Mathlib.Combinatorics.SimpleGraph.Sum
+module
+
+public import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
+public import Mathlib.CategoryTheory.Limits.Shapes.Terminal
+public import Mathlib.CategoryTheory.MorphismProperty.Composition
+public import Mathlib.Combinatorics.Digraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Sum
 
 /-!
 # Labeled mixed graphs
@@ -54,6 +56,8 @@ Morphisms deliberately do not preserve precedence — reassociation analyses mov
 material across the order — so `Hom` is the broad class where the coproduct and the
 OCP repair live; `precPreserving` marks the wide class of full-structure maps.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

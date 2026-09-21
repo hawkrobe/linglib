@@ -1,3 +1,5 @@
+module
+
 /-!
 # Q-Particle Layer Feature
 [dayal-2025] [turk-hirsch-2026]
@@ -11,6 +13,8 @@ Lives in `Features/` (not `Semantics/Questions/`) because it
 is a feature taxonomy with no semantic commitments — sibling of
 `Polarity`, `Mood`, `Evidentiality`.
 -/
+
+@[expose] public section
 
 namespace Question
 

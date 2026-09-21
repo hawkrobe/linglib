@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Order.Lattice
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Order.Lattice
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Causer sort lattice
@@ -24,6 +26,8 @@ mechanically blocks roots that select for `event` or `eventuality`
 requires `event`. Both predictions follow from `≤`-checks on the
 lattice rather than from stipulated lexical exceptions.
 -/
+
+@[expose] public section
 
 namespace Causation
 

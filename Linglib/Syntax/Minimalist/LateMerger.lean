@@ -1,4 +1,6 @@
-import Mathlib.Data.Nat.Notation
+module
+
+public import Mathlib.Data.Nat.Notation
 
 /-!
 # Late merger
@@ -21,6 +23,8 @@ distinction.
 * [bhatt-pancheva-2004]
 * [gong-2022]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

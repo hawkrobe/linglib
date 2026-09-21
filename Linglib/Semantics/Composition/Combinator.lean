@@ -1,4 +1,6 @@
-import Mathlib.Logic.Function.Basic
+module
+
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Combinatory logic primitives
@@ -28,6 +30,8 @@ other composition primitives rather than inside the CCG files.
 - [curry-feys-1958]
 - [smullyan-1985]
 -/
+
+@[expose] public section
 
 namespace Combinator
 

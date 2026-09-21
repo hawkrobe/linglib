@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Perfect-auxiliary selection (be/have)
@@ -34,6 +36,8 @@ reflexive parameter. A faithful graded scale, derived from
 `Semantics/ArgumentStructure/EntailmentProfile.lean`'s proto-role predicates, is
 the documented successor (it would discharge `Studies/Sorace2000`'s standing TODO).
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure.AuxiliarySelection
 

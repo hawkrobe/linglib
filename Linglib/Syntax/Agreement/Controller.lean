@@ -1,3 +1,5 @@
+module
+
 /-!
 # Agreement Controller — Grammatical Role of the Controlling NP
 [corbett-2006] ch 2 §2.1, ch 6 §6.6
@@ -63,6 +65,8 @@ With the parametric form, the projection round-trips:
 - **Animacy / topicality / focus** — agreement *conditions* per
   [corbett-2006] ch 6, not controller-role labels.
 -/
+
+@[expose] public section
 
 namespace Agreement
 

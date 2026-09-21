@@ -1,4 +1,6 @@
-import Mathlib.Logic.Function.Basic
+module
+
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Classical bilateral satisfaction — `SatDuality`
@@ -43,6 +45,8 @@ the bilateral-substrate joint. The `consequence_dual` theorem (Cobreros
 Lemma 6) stays with the Consequence machinery in `Consequence.lean` and
 imports this file.
 -/
+
+@[expose] public section
 
 namespace Bilateral
 

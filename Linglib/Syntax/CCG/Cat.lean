@@ -1,5 +1,7 @@
-import Mathlib.Order.Bounds.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Bounds.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # CCG categories
@@ -40,6 +42,8 @@ All are scoped to the `CCG` namespace. Because `/` overloads Lean's division,
 categories are written fully parenthesized (`(S \ NP) / NP`) rather than relying on
 the Steedman left-to-right reading.
 -/
+
+@[expose] public section
 
 namespace CCG
 

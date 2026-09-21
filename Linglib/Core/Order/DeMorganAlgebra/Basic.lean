@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Hom.Basic
-import Linglib.Core.Order.DeMorganAlgebra.Defs
+module
+
+public import Mathlib.Order.Hom.Basic
+public import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
 # De Morgan and Kleene algebras: instances
@@ -14,6 +16,8 @@ and `Order.KleeneAlgebra`, plus the involution bundled as an order isomorphism
 `α ≃o αᵒᵈ` — the `Defs`/`Basic` split mathlib uses for `BooleanAlgebra`
 (cf. `OrderIso.compl` there, which this generalizes past complementation).
 -/
+
+@[expose] public section
 
 open LatticeWithInvolution OrderDual
 

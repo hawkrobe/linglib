@@ -1,3 +1,5 @@
+module
+
 /-!
 # Definiteness
 
@@ -31,6 +33,8 @@ here; which cell a language's determiner inventory falls in is derived in
 * [moroney-2021]
 * [patel-grosz-grosz-2017]
 -/
+
+@[expose] public section
 
 namespace Reference
 

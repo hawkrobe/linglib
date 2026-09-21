@@ -1,6 +1,8 @@
-import Linglib.Core.Order.UpperLower.Finset
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Core.Order.UpperLower.Finset
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Containment feature pairs
@@ -42,6 +44,8 @@ exclusive. That calculus lives at `Syntax/Minimalist/Phi/` and `Studies/Harbour2
 * [D. Adger and D. Harbour, *Why phi?* (2008)][adger-harbour-2008]
 * [D. Harbour, *Impossible Persons* (2016)][harbour-2016]
 -/
+
+@[expose] public section
 
 namespace Agreement
 

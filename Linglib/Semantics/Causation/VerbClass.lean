@@ -1,3 +1,5 @@
+module
+
 /-!
 # Causative and implicative verb features
 
@@ -14,6 +16,8 @@ This file defines two classifications carried by verb lexical entries:
 * [Phillip Wolff, *Direct causation in the linguistic coding and individuation
   of causal events*][wolff-2003]
 -/
+
+@[expose] public section
 
 /-! ### Force-dynamic causatives -/
 

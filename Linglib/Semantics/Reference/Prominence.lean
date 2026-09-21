@@ -1,6 +1,8 @@
-import Mathlib.Order.Nat
-import Mathlib.Order.UpperLower.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Nat
+public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Referential prominence
@@ -34,6 +36,8 @@ principle of differential indexing in `Studies/Just2024.lean`.
   (2021)][haspelmath-2021]
 * [T. C. Smith-Stark, *The Plurality Split* (1974)][smith-stark-1974]
 -/
+
+@[expose] public section
 
 namespace Reference.Prominence
 

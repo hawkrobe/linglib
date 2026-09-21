@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Licensing contexts
@@ -44,6 +46,8 @@ per Giannakidou 1998, rather than by surface construction); see the
 `Semantics/Polarity/Licensing.lean` "Out of scope" section
 for the documented gap.
 -/
+
+@[expose] public section
 
 namespace Polarity
 

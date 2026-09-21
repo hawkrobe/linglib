@@ -1,4 +1,6 @@
-import Mathlib.Order.PropInstances
+module
+
+public import Mathlib.Order.PropInstances
 
 /-!
 # Modifiers
@@ -27,6 +29,8 @@ classes at the carriers `W → E → Prop` and `E → Prop`.
 * `Modifier.isIntersective` / `.isSubsective` / `.isPrivative` — the
   [kamp-1975] classification over an ordered carrier.
 -/
+
+@[expose] public section
 
 /-- A modifier of `τ` is a function on the modificand's denotation
     ([parsons-1970]). Adjectives, adverbs, and relative clauses are modifiers

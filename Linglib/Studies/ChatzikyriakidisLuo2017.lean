@@ -1,5 +1,7 @@
-import Mathlib.Basic.Logic.Basic
-import Mathlib.Order.Basic
+module
+
+public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Order.Basic
 
 /-!
 # Chatzikyriakidis & Luo 2017: common nouns as types versus predicates
@@ -55,6 +57,8 @@ chapter's grade axioms are `LinearOrder` plus `DenselyOrdered`).
 * [ranta-1994]
 * [asher-2011]
 -/
+
+@[expose] public section
 
 namespace ChatzikyriakidisLuo2017
 

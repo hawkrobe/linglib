@@ -1,6 +1,8 @@
-import Mathlib.Order.Monotone.Basic
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Monotone.Basic
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Labov (2006): The Social Stratification of English in New York City
@@ -42,6 +44,8 @@ with their style shifting, the theorems above, and is not restated as a table.
 
 * [labov-2006]
 -/
+
+@[expose] public section
 
 namespace Labov2006
 

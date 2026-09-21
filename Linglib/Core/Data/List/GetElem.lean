@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Basic
-import Mathlib.Data.Int.Notation
-import Linglib.Core.Data.List.TakeDrop
+module
+
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.Int.Notation
+public import Linglib.Core.Data.List.TakeDrop
 
 /-!
 # Integer indexing into lists
@@ -26,6 +28,8 @@ subtraction. The instance is lawful, so the generic `getElem?_pos`, `getElem?_ne
 * `List.getElem?_int_append_left` and `List.getElem?_int_take_of_lt`: the integer mirrors of
   `List.getElem?_append_left` and `List.getElem?_take_of_lt`.
 -/
+
+@[expose] public section
 
 namespace List
 

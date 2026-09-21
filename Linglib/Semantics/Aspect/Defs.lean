@@ -1,3 +1,5 @@
+module
+
 /-!
 # Aspect: basic definitions
 
@@ -31,6 +33,8 @@ denote are in `Semantics/Aspect/Viewpoint.lean`.
 * [krifka-1998]
 * [klein-1994]
 -/
+
+@[expose] public section
 
 namespace Aspect
 

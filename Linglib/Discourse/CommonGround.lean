@@ -1,4 +1,6 @@
-import Mathlib.Order.Filter.Ker
+module
+
+public import Mathlib.Order.Filter.Ker
 
 /-!
 # Common ground
@@ -51,6 +53,8 @@ models are deliberate non-instances of `HasAssertion`; see
   permutation-invariant (`commonGround_play_perm`) — states may record assertion order,
   but the common ground cannot.
 -/
+
+@[expose] public section
 
 open Filter Set
 

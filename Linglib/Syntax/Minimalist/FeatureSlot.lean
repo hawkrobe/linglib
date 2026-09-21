@@ -1,5 +1,7 @@
-import Mathlib.Order.Basic
-import Mathlib.Order.BoundedOrder.Basic
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Order.BoundedOrder.Basic
 
 /-!
 # Feature-checking slots
@@ -37,6 +39,8 @@ antichain: a probe is more specified than an absent dimension and less specified
 than a value, and two values are incomparable. This is the per-slot order that
 the bundle subsumption order (`Features.BundleLike.Subsumes`) is built from.
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

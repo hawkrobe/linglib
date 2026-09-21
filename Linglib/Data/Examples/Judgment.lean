@@ -1,5 +1,7 @@
-import Mathlib.Order.Fin.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Data.Examples.Acceptability — Linguistic Acceptability Diacritics
@@ -28,6 +30,8 @@ minimal-pair vocabulary in `Linglib/Processing/Acceptability/MinimalPairs.lean`.
 factorial-design machinery over experimental ratings (difference-in-
 differences scores etc.), see `Linglib/Studies/SprouseEtAl2012.lean`.
 -/
+
+@[expose] public section
 
 namespace Data.Examples
 

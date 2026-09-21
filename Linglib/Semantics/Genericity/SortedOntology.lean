@@ -1,3 +1,5 @@
+module
+
 /-!
 # A Unified Analysis of the English Bare Plural
 [carlson-1977]
@@ -60,6 +62,8 @@ kind predication without any generic quantifier.
 See `Studies/LeBruynDeSwart2022.lean` for the Chierchia-vs-Krifka comparison
 on the scrambling data.
 -/
+
+@[expose] public section
 
 namespace Genericity.SortedOntology
 

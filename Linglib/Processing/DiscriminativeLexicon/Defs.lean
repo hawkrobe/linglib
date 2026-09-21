@@ -1,6 +1,8 @@
-import Mathlib.Algebra.Module.LinearMap.Basic
-import Mathlib.Algebra.Module.Submodule.Ker
-import Mathlib.Basic.Real.Basic
+module
+
+public import Mathlib.Algebra.Module.LinearMap.Basic
+public import Mathlib.Algebra.Module.Submodule.Ker
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # The discriminative lexicon
@@ -34,6 +36,8 @@ replacements for the linear maps, ResLDL and DDL, are not formalised.
 * [M. Heitmeier, V. Schmidt, H. P. A. Lensch and R. H. Baayen, *Is deeper always better?*
   (2025)][heitmeier-schmidt-lensch-baayen-2025]
 -/
+
+@[expose] public section
 
 namespace DiscriminativeLexicon
 

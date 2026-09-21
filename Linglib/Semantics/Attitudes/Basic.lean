@@ -1,3 +1,5 @@
+module
+
 /-!
 # Attitude predicates: the classification
 
@@ -32,6 +34,8 @@ published label. Speech-act predicates are outside the classification.
 * [qing-uegaki-2025]
 * [hintikka-1962]
 -/
+
+@[expose] public section
 
 /-- Veridicality of a doxastic predicate: *know* and *discover* entail their complement,
 *believe* and *think* do not. -/

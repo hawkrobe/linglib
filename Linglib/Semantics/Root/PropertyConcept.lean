@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Property-concept classes
@@ -16,6 +18,8 @@ surface as adjectives in English and as verbs, nouns, or adjectives elsewhere.
 
 * [dixon-1982]: Where Have All the Adjectives Gone?
 -/
+
+@[expose] public section
 
 namespace Semantics
 

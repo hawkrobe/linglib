@@ -1,5 +1,7 @@
-import Mathlib.Data.List.Chain
-import Mathlib.Tactic.TypeStar
+module
+
+public import Mathlib.Data.List.Chain
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Templates: word-skeletal morphotactic substrate
@@ -32,6 +34,8 @@ prefix/suffix split encoding a morpheme's position relative to the verb stem.
   slots that may be filled more than once; `PositionClassSystem.Licenses` is the affix
   strings it admits.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

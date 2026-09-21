@@ -1,9 +1,11 @@
-import Mathlib.Order.UpperLower.Basic
-import Mathlib.Order.SupClosed
-import Mathlib.Order.Ideal
-import Mathlib.Order.Interval.Set.OrdConnected
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Lattice.Union
+module
+
+public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Order.SupClosed
+public import Mathlib.Order.Ideal
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Lattice.Union
 
 /-!
 # Closure properties of team-sets
@@ -49,6 +51,8 @@ infrastructure to consumers of `IsFlat`.
 * Generalise `IsFlat` to atomistic lattices (`[SemilatticeSup L]
   [OrderBot L] [IsAtomistic L]`) once a non-`Finset` consumer surfaces.
 -/
+
+@[expose] public section
 
 namespace Team
 

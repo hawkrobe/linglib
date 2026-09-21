@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.KullbackLeibler.Basic
-import Linglib.Core.MeasureTheory.Measure.Decomposition.RadonNikodym
-import Linglib.Core.Probability.UniformOn
-import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
+module
+
+public import Linglib.Core.InformationTheory.KullbackLeibler.Basic
+public import Linglib.Core.MeasureTheory.Measure.Decomposition.RadonNikodym
+public import Linglib.Core.Probability.UniformOn
+public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 
 /-!
 # Kullback–Leibler divergence on a finite type
@@ -17,6 +19,8 @@ masses, so `klDiv` is a finite sum, and for probability measures its real part i
 relative entropy `∑ a, μ {a} * log (μ {a} / ν {a})` ([cover-thomas-2006], chapter 2).
 `[UPSTREAM]` candidate for `Mathlib/InformationTheory/KullbackLeibler/`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Real
 open scoped ENNReal

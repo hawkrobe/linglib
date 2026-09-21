@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 
+module
+
 /-!
 # Tangale tense–aspect morphology
 
@@ -22,6 +24,8 @@ the morphological ground for the focus-marking asymmetry between
 perfective and progressive clauses in [hartmann-zimmermann-2004].
 [jungraithmayr-1991] is the lexical companion source.
 -/
+
+@[expose] public section
 
 namespace Tangale
 

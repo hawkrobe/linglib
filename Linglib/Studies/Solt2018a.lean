@@ -1,3 +1,5 @@
+module
+
 /-!
 # Solt (2018): Multidimensionality, Subjectivity and Scales
 
@@ -44,6 +46,8 @@ disagreement about orderings.
 
 * [solt-2018a]
 -/
+
+@[expose] public section
 
 namespace Solt2018a
 

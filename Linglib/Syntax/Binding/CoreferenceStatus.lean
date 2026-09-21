@@ -1,3 +1,5 @@
+module
+
 /-!
 # Binding.CoreferenceStatus
 
@@ -7,6 +9,8 @@ Dependency Grammar, Minimalism) each provide a
 return type is what makes their predictions comparable rather than each
 framework's verdict living in a private namespace.
 -/
+
+@[expose] public section
 
 namespace Binding
 

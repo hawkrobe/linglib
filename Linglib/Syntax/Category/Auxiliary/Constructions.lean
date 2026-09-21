@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 
+module
+
 /-!
 # The inflectional patterns of auxiliary verb constructions
 
@@ -23,6 +25,8 @@ the analysis that needs it, as in `Studies/Anderson2006a.lean`.
 
 * [anderson-2006a], §1.4, chs. 2-5
 -/
+
+@[expose] public section
 
 namespace AuxiliaryVerbs
 

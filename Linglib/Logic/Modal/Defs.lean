@@ -1,7 +1,9 @@
-import Mathlib.Basic.Logic.Basic
-import Mathlib.Logic.Relator
-import Mathlib.Order.Defs.Unbundled
-import Mathlib.Order.PropInstances
+module
+
+public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Logic.Relator
+public import Mathlib.Order.Defs.Unbundled
+public import Mathlib.Order.PropInstances
 
 /-!
 # Modal operators and frame conditions
@@ -17,6 +19,8 @@ operators are `Rel.core` and `Rel.preimage`.
 * [kripke-1963] — relational semantics
 * [blackburn-derijke-venema-2001] — Chapter 3, frame definability
 -/
+
+@[expose] public section
 
 namespace ModalLogic
 

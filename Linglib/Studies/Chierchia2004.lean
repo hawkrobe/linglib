@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Lattice.Bounded
+module
+
+public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Chierchia 2004: parallel recursive strengthening
@@ -51,6 +53,8 @@ admissible strengthening, the path the paper's own computations follow.
 * [chierchia-2004]
 * [krifka-1995a]
 -/
+
+@[expose] public section
 
 namespace Chierchia2004
 

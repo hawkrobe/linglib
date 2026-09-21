@@ -1,3 +1,5 @@
+module
+
 /-!
 # The degree head (Deg)
 
@@ -7,6 +9,8 @@ Deg that heads the adjectival extended projection ([abney-1987];
 *too* ~ *enough* pair belongs to the sufficiency-excess literature
 ([meier-2003]).
 -/
+
+@[expose] public section
 
 namespace Degree
 

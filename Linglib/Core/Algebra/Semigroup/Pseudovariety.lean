@@ -5,9 +5,11 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.Semigroup.Pseudovariety`.
 -/
-import Linglib.Core.Algebra.Group.IdempotentPower
-import Mathlib.Algebra.Group.Prod
-import Mathlib.Algebra.Group.PUnit
+module
+
+public import Linglib.Core.Algebra.Group.IdempotentPower
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Algebra.Group.PUnit
 
 /-!
 # Pseudovarieties of finite semigroups
@@ -39,6 +41,8 @@ idempotent need not be idempotent — and is discharged by
 finiteness characteristic of a *pseudo*variety lives on the closure-field hypotheses. The variety
 `N` of nilpotent semigroups is the intersection of `D` and `K` and is not bundled here.
 -/
+
+@[expose] public section
 
 universe u
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Image
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Image
 
 /-!
 # The DRT box
@@ -11,6 +13,8 @@ instantiate conditions in different ways
 ([venhuizen-bos-hendriks-brouwer-2018]; [liu-2021]). This file develops basic
 results about boxes, including renaming, extension, and recursions.
 -/
+
+@[expose] public section
 
 namespace DRT
 

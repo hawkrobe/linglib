@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Setoid.Basic
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Setoid.Basic
 
 /-!
 # Reference to ad hoc kinds
@@ -26,6 +28,8 @@ Consumers:
 * `Semantics/Genericity/MeaningPreservation.lean` — singular kinds satisfy
   the framework with the discrete partition (one-class-per-kind).
 -/
+
+@[expose] public section
 
 namespace Genericity.Subkinds
 

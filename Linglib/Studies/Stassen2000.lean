@@ -1,7 +1,9 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Order.Basic
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Order.Basic
 
 /-!
 # Stassen (2000): AND-languages and WITH-languages
@@ -47,6 +49,8 @@ WITH-languages.
 * [stassen-2000]
 * [wals-2013]
 -/
+
+@[expose] public section
 
 namespace Stassen2000
 

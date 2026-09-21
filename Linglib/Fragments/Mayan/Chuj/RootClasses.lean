@@ -1,3 +1,5 @@
+module
+
 /-!
 # Chuj Root Classes
 
@@ -21,6 +23,8 @@ licensing) are a derived projection `RootClass.toRoot` in
 `Studies/Coon2019.lean`, following the derived-projection pattern of
 `Studies/HaninkKoontzGarboden2025.lean`.
 -/
+
+@[expose] public section
 
 namespace Chuj
 

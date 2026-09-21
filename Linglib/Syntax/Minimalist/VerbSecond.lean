@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Defs
+module
+
+public import Mathlib.Data.Set.Defs
 
 /-!
 # Verb second
@@ -21,6 +23,8 @@ head by head as micro-cues.
 * [westergaard-2009]
 * [rizzi-1997]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

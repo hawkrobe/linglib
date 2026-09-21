@@ -1,4 +1,6 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Communication Channels
@@ -26,6 +28,8 @@ purely Shannon character. Capacity-specific theorems live in the sibling
 - `commPrecision`: expected surprisal `S(c) = -Σ_w p(w|c) · log p(c|w)`
 - `mutualInfo`: `I(W;C) = Σ_{c,w} p(c) · p(w|c) · log(p(c|w)/p(c))`
 -/
+
+@[expose] public section
 
 namespace Pragmatics.InformationTheory
 

@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # CausalGraph: Bare Directed Graph over a Vertex Type
@@ -14,6 +16,8 @@ This separation mirrors mathlib's `Mathlib/Combinatorics/Digraph/Basic.lean`
 because Pearl SEM API consumes parent enumerations directly (mechanisms
 fold over `parents v`).
 -/
+
+@[expose] public section
 
 namespace Causation
 

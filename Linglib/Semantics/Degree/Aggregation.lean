@@ -1,12 +1,14 @@
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Algebra.Order.Ring.Rat
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Matrix.Mul
-import Mathlib.Order.Antisymmetrization
-import Mathlib.Order.Defs.Unbundled
+module
+
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Order.Defs.Unbundled
 
 /-!
 # Dimensional aggregation
@@ -62,6 +64,8 @@ multiplicative composition that Sassoon and Fadlon argue for natural kind nouns.
   Interpretation* (2023)][waldon-etal-2023]
 * [J. A. Weymark, *Arrow's Theorem with Social Quasi-Orderings* (1984)][weymark-1984]
 -/
+
+@[expose] public section
 
 /-- The asymmetric part of a relation holds of `a` and `b` when `r a b` and not `r b a`. Mathlib's
 `AntisymmRel r` is the symmetric part. -/

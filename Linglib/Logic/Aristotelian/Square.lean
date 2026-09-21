@@ -1,4 +1,6 @@
-import Linglib.Core.Order.Aristotelian
+module
+
+public import Linglib.Core.Order.Aristotelian
 
 /-!
 # Square of Opposition
@@ -9,6 +11,8 @@ by contradiction (A–O, E–I), contrariety (A–E), subcontrariety (I–O), an
 subalternation (A→I, E→O). Concrete instantiations (quantifiers, modals,
 attitudes) live in their respective theory modules.
 -/
+
+@[expose] public section
 
 namespace Aristotelian
 

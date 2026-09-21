@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.Monotone.Basic
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.Monotone.Basic
 
 /-!
 # The focus particle *even*
@@ -33,6 +35,8 @@ in `Studies/Francescotti1995.lean`.
 * [crnic-2014]
 * [francescotti-1995]
 -/
+
+@[expose] public section
 
 namespace Focus.Particles
 

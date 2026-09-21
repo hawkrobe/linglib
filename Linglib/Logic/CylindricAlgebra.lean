@@ -1,6 +1,8 @@
-import Mathlib.Logic.Function.DependsOn
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Order.Closure
+module
+
+public import Mathlib.Logic.Function.DependsOn
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Order.Closure
 
 /-!
 # Cylindric algebras
@@ -49,6 +51,8 @@ assignments.
 
 * [henkin-monk-tarski-1971]
 -/
+
+@[expose] public section
 
 open Function
 

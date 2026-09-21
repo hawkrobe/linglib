@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.Fintype.Order
-import Linglib.Core.Data.Sum.Basic
-import Linglib.Core.Order.PartialUnify
-import Mathlib.Order.Lattice
+module
+
+public import Linglib.Core.Data.Fintype.Order
+public import Linglib.Core.Data.Sum.Basic
+public import Linglib.Core.Order.PartialUnify
+public import Mathlib.Order.Lattice
 
 /-!
 # Constructional schemas
@@ -71,6 +73,8 @@ Marking a constant slot as open has no effect.
 * [plotkin-1970]
 * [albright-hayes-2003]
 -/
+
+@[expose] public section
 
 namespace ConstructionMorphology
 

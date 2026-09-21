@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Finset.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Belief and complement worlds
@@ -17,6 +19,8 @@ when it is true throughout an information state.
 * [scontras-tonhauser-2025]
 * [grove-white-2025]
 -/
+
+@[expose] public section
 
 namespace Factivity
 

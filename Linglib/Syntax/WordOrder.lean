@@ -1,7 +1,9 @@
-import Mathlib.Data.Fin.Rev
-import Mathlib.Data.Fintype.Perm
-import Mathlib.Logic.Function.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fin.Rev
+public import Mathlib.Data.Fintype.Perm
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Word order
@@ -42,6 +44,8 @@ rank count is a parameter rather than `Fintype.card α`, so that numerals and `d
 * [dryer-2013-wals]
 * [greenberg-1963]
 -/
+
+@[expose] public section
 
 /-- The order of a head and one of its dependents, head-initial when the head precedes, as a
 verb precedes its object in VO order and a preposition its noun phrase, head-final otherwise. -/

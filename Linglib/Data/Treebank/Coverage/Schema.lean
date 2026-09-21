@@ -1,4 +1,6 @@
-import Mathlib.Data.Rat.Defs
+module
+
+public import Mathlib.Data.Rat.Defs
 
 /-!
 # Treebank coverage of non-projectivity constraints: schema
@@ -21,6 +23,8 @@ rather than a printed value.
 * [kuhlmann-2013]
 * [kuhlmann-nivre-2006]
 -/
+
+@[expose] public section
 
 namespace Data.Treebank.Coverage
 

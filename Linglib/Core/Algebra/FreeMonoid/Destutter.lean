@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.BigOperators.Group.List.Basic
-import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.Algebra.PresentedMonoid.Basic
-import Mathlib.GroupTheory.Congruence.Basic
-import Linglib.Core.Data.List.Destutter
+module
+
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.Algebra.PresentedMonoid.Basic
+public import Mathlib.GroupTheory.Congruence.Basic
+public import Linglib.Core.Data.List.Destutter
 
 /-!
 # The destutter quotient monoid of a free monoid
@@ -49,6 +51,8 @@ the presentation is identified with the concrete model by the normalization lemm
 Obligatory Contour Principle (`Phonology.OCP`) is one consumer, reading the presentation as
 autosegmental tier fusion.
 -/
+
+@[expose] public section
 
 namespace List
 

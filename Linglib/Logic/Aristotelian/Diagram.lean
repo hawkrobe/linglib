@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Aristotelian
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Core.Order.Aristotelian
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Aristotelian diagrams
@@ -21,6 +23,8 @@ Hexagon (`ι = Fin 6`) and cube (`ι = Fin 8`) specializations; the opposition/
 implication informativity preorders and the morphism category
 ([deklerck-vignero-demey-2024]).
 -/
+
+@[expose] public section
 
 namespace Aristotelian
 

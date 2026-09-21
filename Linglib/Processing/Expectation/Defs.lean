@@ -1,3 +1,5 @@
+module
+
 /-!
 # Generalised surprisal configurations
 
@@ -16,6 +18,8 @@ identity, a distance, and a horizon and level. The tags denote real functions in
 * [smith-levy-2013]
 * [meister-giulianelli-pimentel-2024]
 -/
+
+@[expose] public section
 
 namespace Processing.PredictiveUncertainty
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.KullbackLeibler.Basic
-import Linglib.Core.Probability.ConditionalProbability
+module
+
+public import Linglib.Core.InformationTheory.KullbackLeibler.Basic
+public import Linglib.Core.Probability.ConditionalProbability
 
 /-!
 # Kullback-Leibler divergence of a conditional measure
@@ -17,6 +19,8 @@ restriction costs exactly the information content of the event.
 (placement and namespace mirror `ChainRule.lean`, the directory's other
 file combining `klDiv` with probability constructions).
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal ProbabilityTheory

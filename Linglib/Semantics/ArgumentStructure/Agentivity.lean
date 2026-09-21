@@ -1,6 +1,8 @@
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Pi
+module
+
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # The agentivity cube ([grimm-2011] §2.1)
@@ -16,6 +18,8 @@ The persistence axis is `PersistenceLevel.lean`; the product object is
 `ParticipantType.lean`; the projection from [dowty-1991]'s profiles is
 `Projection.lean`.
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

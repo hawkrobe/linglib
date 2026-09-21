@@ -1,4 +1,6 @@
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # PropertyDomain — Perceptual/Cognitive Channels for Adjective Dimensions
@@ -15,6 +17,8 @@ typological completeness.
 
 `PropertyDomain` is the codomain of `Degree.ScalarDimension.domain`.
 -/
+
+@[expose] public section
 
 namespace Degree
 

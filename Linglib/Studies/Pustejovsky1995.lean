@@ -1,5 +1,7 @@
-import Mathlib.Order.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Pustejovsky (1995): The Generative Lexicon
@@ -34,6 +36,8 @@ aspectual coercion of the ninth chapter are not formalized.
 
 * [pustejovsky-1995]
 -/
+
+@[expose] public section
 
 namespace Pustejovsky1995
 

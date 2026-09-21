@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Interval
-import Mathlib.Tactic.Order
+module
+
+public import Linglib.Core.Order.Interval
+public import Mathlib.Tactic.Order
 
 /-!
 # Allen's interval relations
@@ -51,6 +53,8 @@ comparisons is a `Finset Ordering` with `compare a b ∈ s` as the constraint
 algebra collapses to `{precedes, equal, precededBy}` (the only three Allen
 relations consistent with zero-length intervals).
 -/
+
+@[expose] public section
 
 
 -- ════════════════════════════════════════════════════

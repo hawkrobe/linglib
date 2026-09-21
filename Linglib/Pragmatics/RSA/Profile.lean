@@ -1,5 +1,7 @@
-import Linglib.Core.Data.Multiset.Dominates
-import Mathlib.Data.Fintype.BigOperators
+module
+
+public import Linglib.Core.Data.Multiset.Dominates
+public import Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Informativity profiles
@@ -22,6 +24,8 @@ over these multisets (`Linglib.Pragmatics.RSA.Uniform`), so preference certifica
 * `RSA.invPowSum_odds_lt_of_prodMul_strictDominates` — strict dominance of fibre-by-rest
   products decides the odds comparison uniformly in the exponent.
 -/
+
+@[expose] public section
 
 open scoped ENNReal
 

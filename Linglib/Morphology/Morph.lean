@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Sum
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Sum
 
 /-!
 # Morphs
@@ -43,6 +45,8 @@ pieces.
 
 * [haspelmath-2020]
 -/
+
+@[expose] public section
 
 namespace Morphology
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Subsingleton
-import Mathlib.Data.List.Basic
+module
+
+public import Mathlib.Data.Set.Subsingleton
+public import Mathlib.Data.List.Basic
 
 /-!
 # Probes as interaction and satisfaction specifications
@@ -43,6 +45,8 @@ denote a `Probe` by a `toProbe` map rather than re-implementing search.
 * [bejar-rezac-2003], [preminger-2014]
 * [chomsky-2000]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

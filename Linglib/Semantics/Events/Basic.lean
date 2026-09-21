@@ -1,6 +1,8 @@
-import Mathlib.Order.Basic
-import Mathlib.Data.Set.Image
-import Linglib.Core.Order.Interval
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Data.Set.Image
+public import Linglib.Core.Order.Interval
 
 /-!
 # Neo-Davidsonian Event Semantics
@@ -42,6 +44,8 @@ attribute of a token.
 * [champollion-2017], [zhao-2025] (event-as-generic)
 * [liefke-2024] §4.3 (manner ontology)
 -/
+
+@[expose] public section
 
 /-- The two sorts of eventualities: actions, which involve change, and states, which do not
 ([bach-1986]). -/

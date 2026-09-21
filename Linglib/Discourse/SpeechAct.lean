@@ -1,5 +1,7 @@
-import Mathlib.Order.Max
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Max
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Preparatory conditions of a request for information
@@ -23,6 +25,8 @@ neither a top nor a bottom, since willingness and the speaker's memory stand apa
 * [searle-1969]
 * [francik-clark-1985]
 -/
+
+@[expose] public section
 
 namespace Discourse.SpeechAct
 

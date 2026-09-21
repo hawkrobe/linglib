@@ -1,6 +1,8 @@
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Data.Fintype.BigOperators
-import Linglib.Core.Order.Argmax
+module
+
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Data.Fintype.BigOperators
+public import Linglib.Core.Order.Argmax
 
 /-!
 # Signaling games
@@ -38,6 +40,8 @@ constrains nothing.
 * `posterior_of_injective` — under a separating (injective) sender strategy,
   the on-path posterior is a point mass: full information transmission.
 -/
+
+@[expose] public section
 
 /-- A signaling game: the sender privately knows her type and chooses a
 message; the receiver observes the message and chooses an action. Utilities

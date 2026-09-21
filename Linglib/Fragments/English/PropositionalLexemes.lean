@@ -1,3 +1,5 @@
+module
+
 /-!
 # Propositional Lexemes
 [ginzburg-2012] Appendix C (exx. 10–12)
@@ -20,6 +22,8 @@ regular affirmatives/negatives in languages that use verbal echo
 3. **Register**: mmh/uh-huh are informal variants of yes
 4. **CR function**: huh requests clarification (constituent reading)
 -/
+
+@[expose] public section
 
 namespace English.PropositionalLexemes
 

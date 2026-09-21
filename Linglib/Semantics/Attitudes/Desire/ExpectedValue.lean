@@ -1,6 +1,8 @@
-import Linglib.Core.Probability.Decision.Basic
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.FieldSimp
+module
+
+public import Linglib.Core.Probability.Decision.Basic
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Tactic.FieldSimp
 
 /-!
 # Expected-value desire semantics
@@ -19,6 +21,8 @@ The bare threshold admits simultaneous `want p` and `want ¬p` (`exists_want_and
 * [lassiter-2011]
 * [lassiter-2017]
 -/
+
+@[expose] public section
 
 namespace Desire.ExpectedValue
 

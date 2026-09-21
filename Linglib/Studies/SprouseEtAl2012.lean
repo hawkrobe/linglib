@@ -1,7 +1,9 @@
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Order.Monotone.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Order.Monotone.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
 
 /-!
 # Sprouse, Wagers and Phillips (2012): A Test of the Relation Between Working-Memory Capacity and Syntactic Island Effects
@@ -41,6 +43,8 @@ results and their resampling analyses are not formalized.
 * [hofmeister-sag-2010]
 * [sprouse-2007]
 -/
+
+@[expose] public section
 
 namespace SprouseEtAl2012
 

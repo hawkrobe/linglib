@@ -1,4 +1,6 @@
-import Mathlib.Tactic.NormNum
+module
+
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Measure-phrase modification of degree constructions
@@ -20,6 +22,8 @@ Hence "3 inches taller" ✓ but "*3 units more beautiful" ✗ (beauty is
 ordinal), "twice as tall" ✓ but "*twice as hot" in °C ✗ (temperature is
 interval, no meaningful zero).
 -/
+
+@[expose] public section
 
 namespace Degree
 

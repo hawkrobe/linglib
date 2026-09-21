@@ -1,3 +1,5 @@
+module
+
 /-!
 # Dependency length by language: schema
 
@@ -16,6 +18,8 @@ code is a UD language code, an annotation for cross-study joins rather than a pr
 
 * [de-marneffe-zeman-2021]
 -/
+
+@[expose] public section
 
 namespace Data.UD.DependencyLength
 

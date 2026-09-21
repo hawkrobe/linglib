@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Givenness
@@ -38,6 +40,8 @@ consumer meaning another axis should say so. The finer scales over referring for
 * [prince-1981]
 * [chafe-1976]
 -/
+
+@[expose] public section
 
 namespace Discourse
 

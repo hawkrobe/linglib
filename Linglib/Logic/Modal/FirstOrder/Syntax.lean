@@ -1,4 +1,6 @@
-import Mathlib.ModelTheory.Syntax
+module
+
+public import Mathlib.ModelTheory.Syntax
 
 /-!
 # The quantified modal language
@@ -9,6 +11,8 @@ in mathlib's `BoundedFormula` basis — atomic `equal`/`rel`, `falsum`,
 `⊔`, `ex`, and `diamond` derived exactly as for `BoundedFormula`.
 `[UPSTREAM]` candidate for `Mathlib/ModelTheory`.
 -/
+
+@[expose] public section
 
 namespace FirstOrder.Language
 

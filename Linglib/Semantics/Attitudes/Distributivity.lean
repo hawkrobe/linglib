@@ -1,4 +1,6 @@
-import Mathlib.Data.Finset.Basic
+module
+
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Clausal distributivity
@@ -23,6 +25,8 @@ Questions are alternative lists over `Finset W` propositions,
 matching the question representation of
 `Semantics/Attitudes/Desire/`.
 -/
+
+@[expose] public section
 
 namespace Distributivity
 

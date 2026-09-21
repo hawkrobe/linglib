@@ -1,8 +1,10 @@
-import Linglib.Core.Order.Probability.Defs
-import Mathlib.Tactic.Linarith
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Linglib.Core.Order.Probability.Defs
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Additive contents and the orders they induce
@@ -31,6 +33,8 @@ would trade the ordered-field axioms for monoid-valued contents over a set
 system with `sUnion` side conditions, so the structure stays local.
 `FinAddMeasure.inducedGe` is `Order.Preimage ⇑m (· ≥ ·)`.
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Relation.ReflTransGen
-import Linglib.Core.Data.List.Sublist
-import Mathlib.Data.List.Sort
-import Mathlib.Order.Extension.Linear
+module
+
+public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Core.Data.List.Sublist
+public import Mathlib.Data.List.Sort
+public import Mathlib.Order.Extension.Linear
 
 /-!
 # Cyclic linearization of syntactic structure
@@ -36,6 +38,8 @@ only the set of snapshots (`spelloutOrder_perm`); and `Consistent` decides on co
 
 * [fox-pesetsky-2005]
 -/
+
+@[expose] public section
 
 namespace Minimalist.Linearization
 

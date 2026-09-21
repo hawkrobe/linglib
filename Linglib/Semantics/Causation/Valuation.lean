@@ -1,6 +1,8 @@
-import Mathlib.Data.Option.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.List.Basic
+module
+
+public import Mathlib.Data.Option.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.List.Basic
 
 /-!
 # Valuation: Pi-Typed Partial Variable Assignment
@@ -15,6 +17,8 @@ has its own value type `α v`. The Pi pattern follows mathlib's
 A `DecidableValuation` aggregator typeclass bundles
 `∀ v, DecidableEq (α v)` for use throughout the API.
 -/
+
+@[expose] public section
 
 namespace Causation
 

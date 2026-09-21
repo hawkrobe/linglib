@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Order.Max
+module
+
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Order.Max
 
 /-!
 # Lumping
@@ -44,6 +46,8 @@ formal definitions in §5.4.4 — is out of scope here.
   `Lumps.follows_singleton` bridge below shows how to recover Kratzer's
   worlds-only reading.
 -/
+
+@[expose] public section
 
 namespace Conditional.Counterfactual
 

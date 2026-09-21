@@ -1,5 +1,7 @@
-import Mathlib.Basic.Logic.Basic
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Question Support — cross-tradition `s ⊨ Q` interface
@@ -51,6 +53,8 @@ canonical one).
   doxastic, and parameterised by a context's evidence relation, so it
   does **not** fit this typeclass; see that file's `Context.QSupports`.
 -/
+
+@[expose] public section
 
 namespace Question
 

@@ -1,3 +1,5 @@
+module
+
 /-!
 # WALS Generic Datapoint
 
@@ -9,6 +11,8 @@ live here.
 See `Data/WALS/Features/` for the per-feature data files, auto-generated
 by `python3 scripts/gen_wals.py`.
 -/
+
+@[expose] public section
 
 namespace Data.WALS
 

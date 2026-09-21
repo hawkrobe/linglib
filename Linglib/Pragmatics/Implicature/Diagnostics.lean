@@ -1,4 +1,6 @@
-import Mathlib.Tactic.TypeStar
+module
+
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Gricean diagnostics for pragmatic inference
@@ -28,6 +30,8 @@ consistent continuation contradicting the EXH'd implicature, so
 the strengthened meaning — is `magri_blindOdd_no_ck_realizer` in
 `Studies/Magri2009.lean`.
 -/
+
+@[expose] public section
 
 namespace Implicature
 

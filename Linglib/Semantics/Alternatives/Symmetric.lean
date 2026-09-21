@@ -1,5 +1,7 @@
-import Mathlib.Order.BooleanSubalgebra
-import Mathlib.Data.Finset.Basic
+module
+
+public import Mathlib.Order.BooleanSubalgebra
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Symmetric alternatives
@@ -19,6 +21,8 @@ contains both or neither.
 * [katzir-2007]
 * [fox-katzir-2011]
 -/
+
+@[expose] public section
 
 namespace Alternatives
 

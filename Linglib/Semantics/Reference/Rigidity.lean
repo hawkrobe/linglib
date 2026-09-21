@@ -1,5 +1,7 @@
-import Mathlib.Logic.Function.Basic
-import Mathlib.Data.Set.Image
+module
+
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Data.Set.Image
 
 /-!
 # Rigid designation
@@ -28,6 +30,8 @@ Rigid intensions that agree at one index agree everywhere, which is the necessit
 * [D. Kaplan, *Demonstratives* (1989)][kaplan-1989]
 * [D. Gallin, *Intensional and Higher-Order Modal Logic* (1975)][gallin-1975]
 -/
+
+@[expose] public section
 
 namespace Reference
 

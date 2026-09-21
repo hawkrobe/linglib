@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Basic
+module
+
+public import Mathlib.Order.Basic
 
 /-!
 # Processing profiles and Pareto comparison
@@ -34,6 +36,8 @@ are chosen here.
 * `locality_monotone` (and siblings) — increasing a cost dimension cannot make
   processing easier.
 -/
+
+@[expose] public section
 
 namespace ProcessingModel
 

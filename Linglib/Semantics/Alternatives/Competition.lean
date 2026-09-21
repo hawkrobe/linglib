@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Pragmatic competition
@@ -32,6 +34,8 @@ disagreement over one definition without either importing the other.
 * [heim-1991]
 * [lo-guercio-2025]
 -/
+
+@[expose] public section
 
 namespace Alternatives
 

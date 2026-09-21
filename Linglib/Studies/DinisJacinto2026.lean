@@ -1,6 +1,8 @@
-import Mathlib.Algebra.Order.Ring.Rat
-import Mathlib.Data.Prod.Lex
-import Mathlib.Logic.Relation
+module
+
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Data.Prod.Lex
+public import Mathlib.Logic.Relation
 
 /-!
 # Dinis and Jacinto (2026): Marginality scales for gradable adjectives
@@ -44,6 +46,8 @@ satisfy ML and to carry the examples of §5.2 and fn. 9.
 * [kennedy-1999]
 * [kennedy-2007]
 -/
+
+@[expose] public section
 
 namespace DinisJacinto2026
 

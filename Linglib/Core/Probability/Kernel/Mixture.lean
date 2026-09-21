@@ -1,4 +1,6 @@
-import Linglib.Core.Probability.Kernel.OfWeights
+module
+
+public import Linglib.Core.Probability.Kernel.OfWeights
 
 /-!
 # Mixtures of kernels
@@ -20,6 +22,8 @@ are finite kernels.
   when some positively weighted member does.
 * `ProbabilityTheory.Kernel.isFiniteKernel_mixture` — finiteness under finite weights.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

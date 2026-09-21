@@ -1,4 +1,6 @@
-import Mathlib.Data.Fintype.EquivFin
+module
+
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Roots
@@ -16,6 +18,8 @@ categorizer inventory (`card_categorizer`).
   inflection*][halle-marantz-1993]
 * [H. Harley, *On the identity of roots*][harley-2014]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

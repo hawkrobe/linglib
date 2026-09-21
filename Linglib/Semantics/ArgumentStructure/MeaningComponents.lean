@@ -1,3 +1,5 @@
+module
+
 /-!
 # Meaning components
 
@@ -17,6 +19,8 @@ distinguish from these surface components, are `Root.Kinds`.
 * [beavers-koontz-garboden-2020]
 * [goldberg-1995]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

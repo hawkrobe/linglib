@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Krifka (2020): Layers of Assertive Clauses: Propositions, Judgements, Commitments, Acts
@@ -41,6 +43,8 @@ follows from the layer selected (`Licensed`).
 * [stalnaker-1978] — informative update
 * [farkas-bruce-2010] — assertions that stick to the common ground even when rejected
 -/
+
+@[expose] public section
 
 namespace Krifka2020
 

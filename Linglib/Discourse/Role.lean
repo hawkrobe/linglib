@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Card
-import Mathlib.Basic.Nontrivial.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Basic.Nontrivial.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Discourse roles
@@ -28,6 +30,8 @@ form a nontrivial type.
 * [gunlogson-2001]
 * [farkas-bruce-2010]
 -/
+
+@[expose] public section
 
 namespace Discourse
 

@@ -1,3 +1,5 @@
+module
+
 /-!
 # Anaphor — Hankamer & Sag's deep/surface anaphora theory
 
@@ -40,6 +42,8 @@ deep anaphora, and the Backwards Anaphora Constraint.
   typology's two correlated properties coincide by construction.
 * `Anaphor.HasDepth` — the carrier capability on the depth axis.
 -/
+
+@[expose] public section
 
 namespace Anaphor
 

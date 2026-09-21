@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.TypeStar
+module
+
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Indices of evaluation
@@ -17,6 +19,8 @@ preordered type with parthood, nor the Pearl–Halpern partial valuation (`Causa
 
 * [kaplan-1989]
 -/
+
+@[expose] public section
 
 namespace Reference
 

@@ -1,4 +1,6 @@
-import Mathlib.Data.Nat.Log
+module
+
+public import Mathlib.Data.Nat.Log
 
 /-!
 # Graded Numeral Roundness (k-ness Model)
@@ -39,6 +41,8 @@ the 2-ness and multiple-of-10 credible intervals overlap.
 * [M. Krifka, *Approximate interpretation of number words* (2007)][krifka-2007]
 * [C. Cummins, *Constraints on numerical expressions* (2015)][cummins-2015]
 -/
+
+@[expose] public section
 
 namespace Numerals.Roundness
 

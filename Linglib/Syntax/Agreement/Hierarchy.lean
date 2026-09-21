@@ -1,6 +1,8 @@
-import Mathlib.Order.Basic
-import Mathlib.Order.Monotone.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Order.Monotone.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The Agreement Hierarchy
@@ -46,6 +48,8 @@ are compared only across comparable positions that both carry one.
 * [corbett-1991] — the hierarchy applied to gender, chapter 8
 * [corbett-2006] — the standard monograph on agreement
 -/
+
+@[expose] public section
 
 namespace Agreement
 

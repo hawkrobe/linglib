@@ -1,7 +1,9 @@
-import Linglib.Core.Order.OfCriteria
-import Linglib.Core.Order.PreorderLattice
-import Mathlib.Order.Minimal
-import Mathlib.Data.Fintype.Card
+module
+
+public import Linglib.Core.Order.OfCriteria
+public import Linglib.Core.Order.PreorderLattice
+public import Mathlib.Order.Minimal
+public import Mathlib.Data.Fintype.Card
 
 /-!
 # Minimal elements under a preorder given as a term
@@ -28,6 +30,8 @@ definition here unfolds to `Minimal` for the membership predicate, so the lemmas
 * `Preorder.minimals_ofCriteria_eq`: under a criteria-derived preorder, when some element of
   the set satisfies every criterion, the minimal elements are exactly those that do.
 -/
+
+@[expose] public section
 
 namespace Preorder
 

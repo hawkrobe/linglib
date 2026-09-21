@@ -1,5 +1,7 @@
-import Mathlib.Logic.Equiv.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Speas & Tenny (2003): Configurational Properties of Point of View Roles
@@ -48,6 +50,8 @@ configuration.
 * [ross-1970]
 * [willett-1988]
 -/
+
+@[expose] public section
 
 namespace SpeasTenny2003
 

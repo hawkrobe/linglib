@@ -1,6 +1,8 @@
-import Mathlib.Basic.Logic.Basic
-import Mathlib.Basic.ExistsUnique
-import Mathlib.Basic.Nontrivial.Basic
+module
+
+public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Basic.ExistsUnique
+public import Mathlib.Basic.Nontrivial.Basic
 
 /-!
 # Exclusive satisfaction of a predicate
@@ -24,6 +26,8 @@ prejacent") but the facts themselves are framework-agnostic.
 Naming follows mathlib idiom: theorems describe what they prove rather
 than the EFCI-literature label, so non-EFCI consumers can find them.
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

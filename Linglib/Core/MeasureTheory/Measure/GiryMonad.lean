@@ -3,13 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.MeasureTheory.Measure.GiryMonad
-import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
-import Mathlib.MeasureTheory.Integral.Lebesgue.Add
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
-import Mathlib.MeasureTheory.Measure.Prod
-import Linglib.Core.Order.CompleteLattice
-import Linglib.Core.Order.OmegaCompletePartialOrder
+module
+
+public import Mathlib.MeasureTheory.Measure.GiryMonad
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Linglib.Core.Order.CompleteLattice
+public import Linglib.Core.Order.OmegaCompletePartialOrder
 
 /-!
 # Monotonicity and ω-continuity of the Giry monad
@@ -49,6 +51,8 @@ proofs are pinned to explicit suprema through `CompleteLattice.ωSup_eq_iSup` an
 * [giry-1982]
 * [kozen-1981]
 -/
+
+@[expose] public section
 
 open MeasureTheory OmegaCompletePartialOrder
 open scoped ENNReal

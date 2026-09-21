@@ -1,8 +1,10 @@
-import Mathlib.Order.WithBot
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Data.Nat.Cast.Order.Basic
+module
+
+public import Mathlib.Order.WithBot
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Data.Nat.Cast.Order.Basic
 
 /-!
 # Macuch Silva, Lorson, Franke, Cummins and Rohde (2024): Strategic Use of English Quantifiers
@@ -36,6 +38,8 @@ described in prose.
 * [macuch-silva-etal-2024]
 * [cummins-franke-2021]
 -/
+
+@[expose] public section
 
 namespace MacuchSilvaEtAl2024
 

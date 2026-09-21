@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Basic.Logic.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Basic.Logic.Basic
 
 /-!
 # Resolution rules
@@ -34,6 +36,8 @@ parameter.
 * [givon-1970] — the resolution of gender conflicts in Bantu
 * [corbett-2006] — the standard monograph on agreement
 -/
+
+@[expose] public section
 
 namespace Agreement
 

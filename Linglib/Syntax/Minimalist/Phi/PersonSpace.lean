@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Subsingleton
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Data.Set.Subsingleton
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The person space and function-valued person features
@@ -35,6 +37,8 @@ the inventory. Plural is defined only on an output of the person system with mor
 
 * [ackema-neeleman-2018]
 -/
+
+@[expose] public section
 
 namespace Minimalist.Phi
 

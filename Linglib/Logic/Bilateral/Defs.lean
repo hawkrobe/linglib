@@ -1,4 +1,6 @@
-import Mathlib.Logic.Function.Basic
+module
+
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Bilateral logic — paraconsistent polarity-flip substrate
@@ -55,6 +57,8 @@ are already top-level definitions used pervasively. Wrapping them in a
 record would force every call site to project. The unbundled-axioms
 form lets consumers continue to use their existing names.
 -/
+
+@[expose] public section
 
 namespace Bilateral
 
