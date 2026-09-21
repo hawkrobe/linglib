@@ -59,7 +59,7 @@ theorem mem_timeTrace_pure {a t : T} :
     the principal downset `Set.Iic i`, a lower set, which *is* the
     subinterval-closure property. The *activity* case (a minimal-parts floor:
     a single step is not "running") is the stratified reference of
-    `Aspect/Stratified` ([champollion-2017]), not this lower set. -/
+    `Studies/Champollion2017.lean` ([champollion-2017]), not this lower set. -/
 def stativeDenotation (i : NonemptyInterval T) : RunTimes T :=
   Set.Iic i
 
