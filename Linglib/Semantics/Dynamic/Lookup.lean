@@ -2,13 +2,12 @@ import Linglib.Logic.Assignment
 
 /-!
 # Fibered variable lookup
-[hofmann-2025], [charlow-2019]
+[hofmann-2025]
 
 The lookup interface of dynamic semantics: `iLookup : Ctx → V → W → M E`
 returns the `M`-family of values for a variable at a world. Frameworks
 diverge on what a lookup *returns* when a variable has no referent —
-Hofmann's `.star` (`M = Entity`, instance in `ICDRT/Basic.lean`), Charlow's
-`∅` (`M = Set`, instance in `Studies/Charlow2019.lean`), plain values for
+Hofmann's `.star` (`M = Entity`, instance in `ICDRT/Basic.lean`), plain values for
 the extensional baseline (`M = Id`, the `Assignment` instance below) — and
 the shared signature is what makes per-family lookups comparable: the static
 pronoun selector of `Reference/Pronoun.lean` is its `Id` instance.
@@ -16,7 +15,7 @@ pronoun selector of `Reference/Pronoun.lean` is its `Id` instance.
 The class is data-only (the `Membership`/`GetElem` pattern): update laws
 and accessibility predicates are each family's own commitments and live in
 the family's file; the comparisons live in the studies that draw them
-(`Studies/Hofmann2025.lean`, `Studies/Charlow2019.lean`).
+(`Studies/Hofmann2025.lean`).
 -/
 
 namespace DynamicSemantics
@@ -25,8 +24,8 @@ namespace DynamicSemantics
 universe u v w x
 
 /-- Fibered lookup: `iLookup i v w : M E` returns the `M`-family of values
-for variable `v` at world `w` — `M = Entity` (ICDRT), `M = Set` (Charlow's
-marginal), `M = Id` (extensional baseline). `M` is `outParam`: each `Ctx`
+for variable `v` at world `w` — `M = Entity` (ICDRT), `M = Id` (extensional
+baseline). `M` is `outParam`: each `Ctx`
 carries exactly one effect functor. -/
 class HasFiberedLookup (M : outParam (Type u → Type u))
     (Ctx : Type v) (V : outParam (Type w))

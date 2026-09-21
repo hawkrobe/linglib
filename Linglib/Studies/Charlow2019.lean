@@ -1,97 +1,160 @@
-import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.Lookup
-import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
-# Charlow 2019: where is the destructive update problem?
+# Charlow (2019): Where is the destructive update problem?
 
-This file formalizes the argument of [charlow-2019] that destructive update is not a problem
-peculiar to dynamic semantics. Overwriting an assignment's value at a variable is something the
-static and the dynamic system do alike, and it costs neither of them its truth conditions; what
-separates them is only whether the modified assignment is retained, which is one operator's worth
-of difference. Lifting a pointwise update into a state of world-assignment pairs is injective and
-preserves anaphoric distributivity, and lowering back at a world undoes it, but the round trip in
-the other direction does not — which is exactly where the state's extra structure lives.
+This file formalizes [charlow-2019], "Where is the destructive update problem?", which argues
+that overwriting the value an assignment gives a variable is not a problem peculiar to dynamic
+semantics. In the dynamic system of [groenendijk-stokhof-1991] two indefinites with the same
+index leave only the second as a discourse referent, the first update being destroyed, at no
+cost to truth conditions. The static system overwrites assignments in the same way: a
+superscripted expression is a scope-taker that evaluates its scope at a shifted assignment, and
+the two systems differ only in the operator `↑` that closes off the part of a sentence that does
+not care about assignments, the static one discarding the shifted assignment and the dynamic one
+returning it. The dynamic `↑` is the test of the static one, so the two agree on truth.
+
+What destructive update does cost is antisymmetry: an assignment reachable from another by some
+formula reaches it back, reachability being the relation of differing at finitely many
+variables. That is a problem only for a negation defined by descent along an order on points.
+Over states of world-assignment pairs, the negation that tests each point is distributive
+whatever its prejacent, which collapses negated possibility and negated necessity, and the one
+that removes the surviving points fails once points are modified. Processing a state cell by
+cell, a cell being its points with one assignment, gives a possibility modal and a negation that
+are distributive over assignments and not over worlds, and the negation is the pointwise one on
+the updates that only change assignments.
 
 ## Main definitions
 
-* `staticExists`, `dynamicExists` — the static and dynamic existentials
-* `reachable` — assignment reachability by a formula of dynamic predicate logic, a preorder that
-  is not antisymmetric
-* `liftPW`, `lowerPW` — Charlow's ↑ and its inverse at a world
-* `anaphoricallyDistributive` — distributivity over the partition by assignment
+* `sup`, `pro`, `upStatic`, `upDynamic`: the superscript, the pronoun, and the two operators `↑`.
+* `reachable`: reachability of an assignment from another by a formula.
+* `distNeg`, `descNeg`: the pointwise negation and the negation by descent.
+* `Part`, `slice`, `IsAnaphoricallyDistributive`, `anaMight`, `anaNeg`: the cells of a state,
+  processing a state cell by cell, and the possibility modal and negation defined that way.
 
 ## Main results
 
-* `destructive_preserves_truth`, `static_dynamic_same_truth` — overwriting costs no truth
-  conditions, and the two existentials agree on them
-* `dynamic_changes_assignment`, `static_is_test` — while differing on the output assignment
-* `reachable_iff_finite`, `reachable_symm`, `antisymmetry_fails` — reachability by a formula is
-  differing at finitely many variables, so it is symmetric and no partial order
-* `lowerPW_liftPW`, `liftPW_injective`, `liftPW_preserves_distributive`, `liftPW_lowerPW_not_id` —
-  what the lift keeps and what the state adds
-* `dom_staticExists`, `dom_dynamicExists` — both existentials are true where the
-  cylindrification of the body is
+* `mem_indefinites_iff`: the second of two coindexed indefinites overwrites the first.
+* `upDynamic_eq_test`, `nonempty_upDynamic_iff`: the dynamic `↑` is the test of the static one.
+* `pollyAnnaStatic_eq`, `pollyAnnaDynamic_eq`: the static and the dynamic meaning of a sentence
+  with two names competing for one index.
+* `reachable_iff_finite`, `reachable_symm`, `antisymmetry_fails`: reachability is differing at
+  finitely many variables, so it is symmetric and no partial order.
+* `isDistributive_distNeg`, `distNeg_might_eq_distNeg_must`: the pointwise negation is
+  distributive and conflates the two modals.
+* `isAnaphoricallyDistributive_slice`, `not_isDistributive_anaMight`, `anaNeg_image`: slicing is
+  distributive over assignments only, and its negation is pointwise on anaphoric updates.
+
+## Implementation notes
+
+A dynamic proposition is an `Update (Assignment E)`, the paper's functions from assignments to
+sets of assignments uncurried; the operators of the modular analysis are stated in the paper's
+curried form, with `upDynamic_eq_test` relating the two. The paper's cells are the maximal
+subsets of a state with one assignment, which are the nonempty fibres of the projection to
+assignments. Descent needs an order on assignments, which total assignments do not have, so
+`descNeg` is stated over any preordered type of anaphoric contexts.
 
 ## References
 
 * [charlow-2019]
+* [groenendijk-stokhof-1991]
 -/
 
 namespace Charlow2019
 
-open DynamicSemantics DynamicSemantics.Update CylindricAlgebra SetRel
-open DynamicSemantics.CCP (IsDistributive)
-open DynamicSemantics.ICDRT
+open DynamicSemantics DynamicSemantics.Update SetRel
 
-/-- Destructive update preserves truth conditions (§4). -/
-theorem destructive_preserves_truth {E : Type*}
-    (P Q : E → Prop) (g : Assignment E) :
-    g ∈ (dexists 6 (test {g' | P (g' 6)}) ○ dexists 6 (test {g' | Q (g' 6)})).dom ↔
-      (∃ x, P x) ∧ (∃ y, Q y) := by
+/-! ### Destructive update, sections 3 and 4 -/
+
+section DestructiveUpdate
+
+variable {E : Type*} {P Q : E → Prop} {g h : Assignment E}
+
+/-- *A linguist⁶ entered the room. A linguist⁶ was already there*: the outputs map the index to
+a witness of the second indefinite, the value the first gave it being overwritten. -/
+theorem mem_indefinites_iff (n : ℕ) :
+    g ~[dexists n (test {k | P (k n)}) ○ dexists n (test {k | Q (k n)})] h ↔
+      (∃ x, P x) ∧ ∃ y, Q y ∧ h = Function.update g n y := by
   constructor
-  · rintro ⟨_, _, ⟨_, ⟨d₁, rfl⟩, rfl, hP⟩, _, ⟨d₂, rfl⟩, rfl, hQ⟩
-    exact ⟨⟨d₁, by simpa using hP⟩, ⟨d₂, by simpa using hQ⟩⟩
-  · rintro ⟨⟨x, hPx⟩, ⟨y, hQy⟩⟩
-    exact ⟨_, _, ⟨_, ⟨x, rfl⟩, rfl, by simpa⟩, _, ⟨y, rfl⟩, rfl, by simpa⟩
+  · rintro ⟨_, ⟨_, ⟨x, rfl⟩, rfl, hP⟩, _, ⟨y, rfl⟩, rfl, hQ⟩
+    exact ⟨⟨x, by simpa using hP⟩, y, by simpa using hQ, Function.update_idem ..⟩
+  · rintro ⟨⟨x, hP⟩, y, hQ, rfl⟩
+    exact ⟨_, ⟨_, ⟨x, rfl⟩, rfl, by simpa using hP⟩, _, ⟨y, rfl⟩, by simp, by simpa using hQ⟩
 
-/-- Static ↑: evaluates truth, discards modified assignment (Table 1, row 1). -/
-def staticExists {E : Type*} (x : Nat) (body : Set (Assignment E)) : Update (Assignment E) :=
-  test (cyl x body)
+/-- Overwriting costs no truth conditions: the text is true iff each indefinite has a
+witness. -/
+theorem mem_dom_indefinites_iff (n : ℕ) :
+    g ∈ (dexists n (test {k | P (k n)}) ○ dexists n (test {k | Q (k n)})).dom ↔
+      (∃ x, P x) ∧ ∃ y, Q y :=
+  ⟨fun ⟨_, hh⟩ ↦ let ⟨hP, y, hQ, _⟩ := (mem_indefinites_iff n).mp hh; ⟨hP, y, hQ⟩,
+    fun ⟨hP, y, hQ⟩ ↦ ⟨_, (mem_indefinites_iff n).mpr ⟨hP, y, hQ, rfl⟩⟩⟩
 
-/-- Dynamic ↑: retains modified assignment (Table 1, row 2). -/
-def dynamicExists {E : Type*} (x : Nat) (body : Set (Assignment E)) : Update (Assignment E) :=
-  dexists x (test body)
+end DestructiveUpdate
 
-/-- Static existential is a test: output = input. -/
-theorem static_is_test {E : Type*} (x : Nat) (body : Set (Assignment E)) :
-    (staticExists x body).IsTest :=
-  isTest_test _
+/-! ### The static/dynamic divide, section 7
 
-/-- Dynamic existential can change the assignment. -/
-theorem dynamic_changes_assignment {E : Type*} [Nontrivial E] :
-    ∃ (x : Nat) (body : Set (Assignment E)) (g h : Assignment E),
-      g ~[dynamicExists x body] h ∧ g ≠ h := by
-  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨0, Set.univ, fun _ ↦ e₁, Function.update (fun _ ↦ e₁) 0 e₂,
-    ⟨_, ⟨e₂, rfl⟩, rfl, trivial⟩, fun heq ↦ hne ?_⟩
-  simpa using congr_fun heq 0
+A logical form is cleaved at `↑`: below it nothing looks at the assignment, above it
+superscripted expressions shift the assignment and pronouns read it. The shifting is the same
+in the static and the dynamic system. -/
 
-/-- The static existential is true where the cylindrification of its body along `x` is. -/
-theorem dom_staticExists {E : Type*} (x : Nat) (body : Set (Assignment E)) :
-    (staticExists x body).dom = cyl x body :=
-  dom_test _
+section Divide
 
-/-- The dynamic existential is true where the cylindrification of its body along `x` is. -/
-theorem dom_dynamicExists {E : Type*} (x : Nat) (body : Set (Assignment E)) :
-    (dynamicExists x body).dom = cyl x body := by
-  rw [dynamicExists, dom_dexists, dom_test]
+variable {E ρ : Type*}
 
-/-- Static and dynamic agree on truth conditions (§4, §7). -/
-theorem static_dynamic_same_truth {E : Type*} (x : Nat) (body : Set (Assignment E)) :
-    (staticExists x body).dom = (dynamicExists x body).dom := by
-  rw [dom_staticExists, dom_dynamicExists]
+/-- A superscripted individual is a scope-taker that evaluates its scope at the assignment
+shifted to map its index to it. -/
+def sup (n : ℕ) (x : E) (c : E → Assignment E → ρ) : Assignment E → ρ :=
+  fun g ↦ c x (Function.update g n x)
+
+/-- A pronoun passes the value of its index to its scope (18). -/
+def pro (n : ℕ) (c : E → Assignment E → ρ) : Assignment E → ρ :=
+  fun g ↦ c (g n) g
+
+/-- The static `↑` returns the truth value and drops the assignment. -/
+def upStatic (p : Prop) : Assignment E → Prop :=
+  fun _ ↦ p
+
+/-- The dynamic `↑` returns the assignment, conditional on the truth value. -/
+def upDynamic (p : Prop) : Assignment E → Set (Assignment E) :=
+  fun g ↦ {h | h = g ∧ p}
+
+/-- The dynamic `↑` is the test of the static one. -/
+theorem upDynamic_eq_test (p : Prop) :
+    {i : Assignment E × Assignment E | i.2 ∈ upDynamic p i.1} = test {g | upStatic p g} := by
+  ext ⟨g, h⟩
+  exact ⟨fun ⟨hgh, hp⟩ ↦ ⟨hgh.symm, hp⟩, fun ⟨hgh, hp⟩ ↦ ⟨hgh.symm, hp⟩⟩
+
+/-- A dynamic proposition built with `↑` is true where the static one is. -/
+theorem nonempty_upDynamic_iff (p : Prop) (g : Assignment E) :
+    (upDynamic p g).Nonempty ↔ upStatic p g :=
+  ⟨fun ⟨_, _, hp⟩ ↦ hp, fun hp ↦ ⟨g, rfl, hp⟩⟩
+
+variable (gave : E → E → E → Prop) (polly anna : E)
+
+/-- *Polly⁵ gave Anna⁵ her₅ paper* (20), statically: `gave x y z` says `x` gave `y` the paper of
+`z`. -/
+def pollyAnnaStatic : Assignment E → Prop :=
+  sup 5 polly fun x ↦ sup 5 anna fun y ↦ pro 5 fun z ↦ upStatic (gave x y z)
+
+/-- *Polly⁵ gave Anna⁵ her₅ paper* (20), dynamically. -/
+def pollyAnnaDynamic : Assignment E → Set (Assignment E) :=
+  sup 5 polly fun x ↦ sup 5 anna fun y ↦ pro 5 fun z ↦ upDynamic (gave x y z)
+
+/-- The static meaning (22): the pronoun is Anna, and the shifted assignment is gone. -/
+theorem pollyAnnaStatic_eq :
+    pollyAnnaStatic gave polly anna = fun _ ↦ gave polly anna anna := by
+  funext g
+  simp [pollyAnnaStatic, sup, pro, upStatic]
+
+/-- The dynamic meaning (23): the same truth condition, with the doubly shifted assignment
+returned, in which Polly's update is overwritten by Anna's. -/
+theorem pollyAnnaDynamic_eq (g : Assignment E) :
+    pollyAnnaDynamic gave polly anna g =
+      {h | h = Function.update g 5 anna ∧ gave polly anna anna} := by
+  simp [pollyAnnaDynamic, sup, pro, upDynamic]
+
+end Divide
+
+/-! ### Antisymmetry, section 8 -/
 
 section Reachability
 
@@ -134,8 +197,8 @@ theorem reachable_symm (hgh : reachable L g h) : reachable L h g := by
   rw [reachable_iff_finite] at hgh ⊢
   simpa only [ne_comm] using hgh
 
-/-- Antisymmetry fails: distinct assignments are reachable from one another (§8), an
-overwritten variable being overwritten again with its old value. -/
+/-- Antisymmetry fails: distinct assignments are reachable from one another, an overwritten
+variable being overwritten again with its old value. -/
 theorem antisymmetry_fails [Nontrivial E] :
     ∃ g h : Assignment E, g ≠ h ∧ reachable L g h ∧ reachable L h g := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
@@ -145,284 +208,187 @@ theorem antisymmetry_fails [Nontrivial E] :
 
 end Reachability
 
-/-- Charlow's context type: a set of world-assignment pairs. -/
-abbrev State (W E : Type*) := Set (W × Assignment E)
+/-! ### Negation and distributivity
 
-/-- Context change potential over Charlow's contexts. -/
-abbrev State.CCP (W E : Type*) := DynamicSemantics.CCP (W × Assignment E)
+Over states, the possibility modal is the substrate's `CCP.might`, which is not distributive
+(`CCP.might_not_isDistributive`), and the negation (28) that removes the surviving points is
+`CCP.neg`. -/
 
-/-- Non-distributive negation (28): removes from s points that survive φ. -/
-def stateNeg {W E : Type*} (φ : State.CCP W E) : State.CCP W E :=
-  λ s => {i ∈ s | i ∉ φ s}
+section Negation
 
-/-- Distributive negation (29): tests each point individually. -/
-def stateDistNeg {W E : Type*} (φ : State.CCP W E) : State.CCP W E :=
-  λ s => {i ∈ s | φ {i} = ∅}
+variable {S : Type*} {φ : CCP S} {s : Set S}
 
-/-- Partition by assignment: groups points sharing the same assignment (Charlow's (35)). -/
-def partByAssignment {W E : Type*} (s : State W E) : Set (State W E) :=
-  {t | t ⊆ s ∧ t.Nonempty ∧ ∀ i ∈ t, ∀ j ∈ t, i.2 = j.2}
+/-- The pointwise negation (29) keeps the points whose singleton the prejacent rejects. -/
+def distNeg (φ : CCP S) : CCP S :=
+  fun s ↦ {i ∈ s | φ {i} = ∅}
 
-/-- Anaphorically distributive: processes each assignment-group separately (Charlow's (39)). -/
-def anaphoricallyDistributive {W E : Type*} (φ : State.CCP W E) : Prop :=
-  ∀ s, φ s = {p | ∃ t ∈ partByAssignment s, p ∈ φ t}
+/-- The pointwise negation is the image of a test, of the points with no output. -/
+theorem distNeg_eq_image (φ : CCP S) : distNeg φ = (test (Update.neg (CCP.lower φ))).image := by
+  funext s
+  rw [image_test]
+  ext i
+  simp [distNeg, Set.eq_empty_iff_forall_notMem]
 
-/-- Every distributive meaning is anaphorically distributive. -/
-theorem distributive_implies_anaphoric {W E : Type*} (φ : State.CCP W E) :
-    IsDistributive φ → anaphoricallyDistributive φ := by
-  intro hD s
-  ext p; simp only [Set.mem_ofPred_eq]
+/-- The pointwise negation is distributive, whatever its prejacent. -/
+theorem isDistributive_distNeg (φ : CCP S) : CCP.IsDistributive (distNeg φ) :=
+  distNeg_eq_image φ ▸ image_isDistributive _
+
+/-- The negation that removes survivors gets a negated possibility right: it rejects a state
+compatible with the prejacent and accepts one that is not. -/
+theorem neg_might_of_nonempty (h : (φ s).Nonempty) : CCP.neg (CCP.might φ) s = ∅ := by
+  simp [CCP.neg, CCP.might, CCP.guard_pos (C := fun s ↦ (φ s).Nonempty) h]
+
+theorem neg_might_of_eq_empty (h : φ s = ∅) : CCP.neg (CCP.might φ) s = s := by
+  simp [CCP.neg, CCP.might, CCP.guard_neg (C := fun s ↦ (φ s).Nonempty) (s := s) (by simp [h])]
+
+/-- Once an update modifies points, so that none of the input survives in the output, the
+negation that removes survivors removes nothing. -/
+theorem neg_eq_self_of_disjoint (h : Disjoint s (φ s)) : CCP.neg φ s = s :=
+  sdiff_eq_left.mpr h
+
+/-- The pointwise negation conflates negated possibility and negated necessity: on an
+eliminative prejacent both keep the points the prejacent rejects. -/
+theorem distNeg_might_eq_distNeg_must (hφ : CCP.IsEliminative φ) :
+    distNeg (CCP.might φ) = distNeg (CCP.must φ) := by
+  funext s
+  ext i
+  have hsub : φ {i} ⊆ {i} := hφ {i}
+  have key : CCP.might φ {i} = ∅ ↔ CCP.must φ {i} = ∅ := by
+    rcases Set.subset_singleton_iff_eq.mp hsub with h | h <;>
+      simp [CCP.might, CCP.must, CCP.guard, h, Set.eq_empty_iff_forall_notMem]
+  simp only [distNeg, Set.mem_ofPred_eq, key]
+
+end Negation
+
+/-! ### Descent and slicing
+
+A state is a set of points, pairs of a world and an anaphoric context. -/
+
+section States
+
+variable {W A : Type*} {s : Set (W × A)}
+
+/-- The negation by descent (33) removes the points with a descendant among the outputs, a
+descendant (34) having the same world and an anaphoric context above. -/
+def descNeg [Preorder A] (φ : CCP (W × A)) : CCP (W × A) :=
+  fun s ↦ {i ∈ s | ¬∃ i' ∈ φ s, i.1 = i'.1 ∧ i.2 ≤ i'.2}
+
+/-- Descent removes at least the surviving points. -/
+theorem descNeg_subset_neg [Preorder A] (φ : CCP (W × A)) (s : Set (W × A)) :
+    descNeg φ s ⊆ CCP.neg φ s :=
+  fun i ⟨hi, hno⟩ ↦ ⟨hi, fun hφ ↦ hno ⟨i, hφ, rfl, le_rfl⟩⟩
+
+/-- Descent removes the points that subsist in the output without being in it: a point with an
+output, under an update that keeps the world and grows the anaphoric context. -/
+theorem descNeg_image_subset [Preorder A] {D : Update (W × A)}
+    (hD : ∀ ⦃i j⦄, i ~[D] j → i.1 = j.1 ∧ i.2 ≤ j.2) (s : Set (W × A)) :
+    descNeg D.image s ⊆ s \ D.dom :=
+  fun i ⟨hi, hno⟩ ↦ ⟨hi, fun ⟨j, hij⟩ ↦ hno ⟨j, ⟨i, hi, hij⟩, hD hij⟩⟩
+
+/-- The cells of a state (35): its nonempty sets of points with one anaphoric context. -/
+def Part (s : Set (W × A)) : Set (Set (W × A)) :=
+  {t | t.Nonempty ∧ ∃ g, t = {i ∈ s | i.2 = g}}
+
+/-- Slicing processes a state cell by cell. -/
+def slice (ψ : CCP (W × A)) : CCP (W × A) :=
+  fun s ↦ ⋃ t ∈ Part s, ψ t
+
+/-- A transformer is anaphorically distributive (39) when it processes a state cell by
+cell. -/
+def IsAnaphoricallyDistributive (φ : CCP (W × A)) : Prop :=
+  slice φ = φ
+
+theorem subset_of_mem_part {t : Set (W × A)} (ht : t ∈ Part s) : t ⊆ s := by
+  obtain ⟨-, g, rfl⟩ := ht
+  exact Set.sep_subset _ _
+
+/-- Every point of a state lies in the cell of its anaphoric context. -/
+theorem mem_part_of_mem {i : W × A} (hi : i ∈ s) : {j ∈ s | j.2 = i.2} ∈ Part s :=
+  ⟨⟨i, hi, rfl⟩, i.2, rfl⟩
+
+/-- A cell is its own only cell. -/
+theorem part_of_mem_part {t : Set (W × A)} (ht : t ∈ Part s) : Part t = {t} := by
+  obtain ⟨⟨i, hi⟩, g, rfl⟩ := ht
+  ext u
   constructor
-  · intro hp
-    rw [hD s] at hp
+  · rintro ⟨⟨j, hj⟩, g', rfl⟩
+    obtain rfl : g' = g := hj.2.symm.trans hj.1.2
+    exact Set.ext fun k ↦ ⟨fun hk ↦ hk.1, fun hk ↦ ⟨hk, hk.2⟩⟩
+  · rintro rfl
+    exact ⟨⟨i, hi⟩, g, Set.ext fun k ↦ ⟨fun hk ↦ ⟨hk, hk.2⟩, fun hk ↦ hk.1⟩⟩
+
+/-- Slicing is anaphorically distributive. -/
+theorem isAnaphoricallyDistributive_slice (ψ : CCP (W × A)) :
+    IsAnaphoricallyDistributive (slice ψ) := by
+  funext s
+  ext p
+  simp only [slice, Set.mem_iUnion, exists_prop]
+  constructor
+  · rintro ⟨t, ht, u, hu, hp⟩
+    rw [part_of_mem_part ht] at hu
+    exact ⟨t, ht, hu ▸ hp⟩
+  · rintro ⟨t, ht, hp⟩
+    exact ⟨t, ht, t, by rw [part_of_mem_part ht]; rfl, hp⟩
+
+/-- A distributive transformer is anaphorically distributive. -/
+theorem _root_.DynamicSemantics.CCP.IsDistributive.isAnaphoricallyDistributive
+    {φ : CCP (W × A)} (hφ : CCP.IsDistributive φ) : IsAnaphoricallyDistributive φ := by
+  funext s
+  ext p
+  simp only [slice, Set.mem_iUnion, exists_prop]
+  constructor
+  · rintro ⟨t, ht, hp⟩
+    rw [hφ t] at hp
     obtain ⟨i, hi, hpi⟩ := hp
-    refine ⟨{i}, ⟨?_, ⟨i, rfl⟩, ?_⟩, hpi⟩
-    · intro x (hx : x = i); rwa [hx]
-    · intro a (ha : a = i) b (hb : b = i); rw [ha, hb]
-  · intro ⟨t, ⟨ht_sub, _, _⟩, hpt⟩
-    rw [hD t] at hpt
-    obtain ⟨i, hi, hpi⟩ := hpt
-    rw [hD s]
-    exact ⟨i, ht_sub hi, hpi⟩
-
--- ════════════════════════════════════════════════════════════════
--- Pointwise ↔ update-theoretic bridge (Charlow's ↑ / ↓)
--- ════════════════════════════════════════════════════════════════
-
-/-! Charlow's ↑ (`liftPW`) promotes a pointwise `Update (Assignment E)`
-(Dynamic Ty2, [muskens-1996]) to a context-level `State.CCP W E`; his ↓
-(`lowerPW`) extracts a pointwise relation back. Lifted meanings are always
-distributive (`liftPW_preserves_distributive`), so pointwise meanings can
-never produce irreducibly context-level effects — cumulative readings
-require non-distributive updates, which live only in `State.CCP`. -/
-
-/-- Charlow's ↑: lift a pointwise Update to an update on states.
-    `liftPW D s = {⟨w, h⟩ | ∃ ⟨w, g⟩ ∈ s, D g h}`
-    Each world-assignment pair in the output comes from applying D to some
-    input assignment in s, preserving the world. -/
-def liftPW {W E : Type*} (D : Update (Assignment E)) : State.CCP W E :=
-  λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ q.2 ~[D] p.2}
-
-/-- Charlow's ↓: extract a pointwise Update from a state update by
-    evaluating K on a singleton context at an arbitrary world. -/
-def lowerPW {W E : Type*} (K : State.CCP W E) (w₀ : W) : Update (Assignment E) :=
-  {p | (w₀, p.2) ∈ K {(w₀, p.1)}}
-
-/-- Round-trip identity: lowering a lifted Update recovers the original.
-
-    `↓(↑D) = D` because the singleton context `{(w₀, g)}` passes through ↑
-    with only `(w₀, g)` as witness, leaving exactly the pairs `h` with `D g h`. -/
-theorem lowerPW_liftPW {W E : Type*} (D : Update (Assignment E)) (w₀ : W) :
-    lowerPW (liftPW D) w₀ = D := by
-  ext ⟨g, h⟩
-  constructor
-  · intro hm
-    show g ~[D] h
-    simp only [lowerPW, liftPW, Set.mem_ofPred_eq] at hm
-    obtain ⟨q, hq, h1, h2⟩ := hm
-    cases hq; exact h2
-  · intro hD
-    show (w₀, h) ∈ liftPW D {(w₀, g)}
-    simp only [liftPW, Set.mem_ofPred_eq]
-    exact ⟨(w₀, g), rfl, rfl, hD⟩
-
-/-- ↑ is injective: distinct DRSs yield distinct state updates.
-
-    Follows from the round-trip: `D = ↓(↑D)`, so `↑D₁ = ↑D₂` implies
-    `D₁ = ↓(↑D₁) = ↓(↑D₂) = D₂`. Requires `W` to be nonempty for the
-    lowering witness world. -/
-theorem liftPW_injective {W E : Type*} [Nonempty W] (D₁ D₂ : Update (Assignment E))
-    (h : liftPW (W := W) D₁ = liftPW D₂) :
-    D₁ = D₂ := by
-  have w₀ : W := Classical.arbitrary W
-  calc D₁ = lowerPW (liftPW D₁) w₀ := (lowerPW_liftPW D₁ w₀).symm
-    _ = lowerPW (liftPW D₂) w₀ := by rw [h]
-    _ = D₂ := lowerPW_liftPW D₂ w₀
-
-/-- Lifted pointwise DRSs are always distributive.
-
-    `↑D` processes each element of the input state independently — the output
-    at `p` depends only on whether some `q ∈ s` satisfies `D q.2 p.2` with
-    matching world `p.1 = q.1`. This is exactly the singleton decomposition
-    `(↑D)(s) = ⋃_{i∈s} (↑D)({i})`, which is the definition of distributivity. -/
-theorem liftPW_preserves_distributive {W E : Type*} (D : Update (Assignment E)) :
-    IsDistributive (liftPW (W := W) D) := by
-  intro s; ext p
-  constructor
+    rw [hφ s]
+    exact ⟨i, subset_of_mem_part ht hi, hpi⟩
   · intro hp
-    simp only [liftPW, Set.mem_ofPred_eq] at hp
-    obtain ⟨q, hq, h1, h2⟩ := hp
-    exact ⟨q, hq, by simp only [liftPW, Set.mem_ofPred_eq]; exact ⟨q, rfl, h1, h2⟩⟩
-  · rintro ⟨i, hi, hp⟩
-    simp only [liftPW, Set.mem_ofPred_eq] at hp ⊢
-    obtain ⟨q, hq, h1, h2⟩ := hp
-    cases hq; exact ⟨i, hi, h1, h2⟩
+    rw [hφ s] at hp
+    obtain ⟨i, hi, hpi⟩ := hp
+    refine ⟨_, mem_part_of_mem hi, ?_⟩
+    rw [hφ]
+    exact ⟨i, ⟨hi, rfl⟩, hpi⟩
 
-/-- ↑↓ ≠ id: there exist irreducibly update-theoretic meanings K such that
-    liftPW (lowerPW K w₀) ≠ K.
+/-- The possibility modal that tests each cell (36). -/
+def anaMight (φ : CCP (W × A)) : CCP (W × A) :=
+  slice (CCP.might φ)
 
-    The simplest witness is `K _ = {(w₀, g₀)}` (constant function ignoring
-    input). Then `K ∅ = {(w₀, g₀)}`, but `liftPW (lowerPW K w₀) ∅ = ∅`
-    because ↑ has no input pairs to draw.
+/-- The negation that removes from each cell the points whose world survives in its update
+(37), sameness of world (38) standing in for descent. -/
+def anaNeg (φ : CCP (W × A)) : CCP (W × A) :=
+  slice fun t ↦ {i ∈ t | ¬∃ i' ∈ φ t, i'.1 = i.1}
 
-    Requires `Nonempty W` and `Nonempty E` to construct the witness. -/
-theorem liftPW_lowerPW_not_id {W E : Type*} [Nonempty W] [Nonempty E] :
-    ∃ (K : State.CCP W E) (w₀ : W), liftPW (lowerPW K w₀) ≠ K := by
-  let w₀ : W := Classical.arbitrary W
-  let g₀ : Assignment E := λ _ => Classical.arbitrary E
-  let K : State.CCP W E := λ _ => {(w₀, g₀)}
-  use K, w₀
-  intro heq
-  have h₁ : liftPW (lowerPW K w₀) ∅ = (∅ : State W E) := by
-    ext p; simp only [liftPW, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-    rintro ⟨q, hq, _, _⟩; exact hq
-  have h₂ : K ∅ = ({(w₀, g₀)} : State W E) := rfl
-  rw [heq] at h₁
-  rw [h₂] at h₁
-  have : (w₀, g₀) ∈ ({(w₀, g₀)} : State W E) := rfl
-  rw [h₁] at this
-  exact this
+/-- The sliced modal is not distributive (40): with one anaphoric context and two worlds, one of
+which verifies the prejacent, it keeps both points, and point by point it keeps one. -/
+theorem not_isDistributive_anaMight :
+    ∃ (W A : Type) (φ : CCP (W × A)), ¬CCP.IsDistributive (anaMight φ) := by
+  refine ⟨Bool, Unit, CCP.up {i | i.1 = true}, fun hD ↦ ?_⟩
+  have hmem : ((false, ()) : Bool × Unit) ∈
+      anaMight (CCP.up {i | i.1 = true}) {(true, ()), (false, ())} := by
+    refine Set.mem_iUnion₂.mpr ⟨_, mem_part_of_mem (i := (true, ())) (Or.inl rfl), ?_⟩
+    exact ⟨⟨Or.inr rfl, rfl⟩, (true, ()), ⟨Or.inl rfl, rfl⟩, rfl⟩
+  rw [hD] at hmem
+  obtain ⟨i, -, hi⟩ := hmem
+  obtain ⟨t, ht, hft, j, hjt, hj⟩ := Set.mem_iUnion₂.mp hi
+  have hsub := subset_of_mem_part ht
+  obtain rfl : j = (false, ()) := (hsub hjt).trans (hsub hft).symm
+  exact Bool.false_ne_true hj
 
-/- Charlow's thesis (meta-theoretical): destructive update is not empirically
-problematic. Assignment modification is shared between static and dynamic
-systems. The static/dynamic divide reduces to a single operator ↑ determining
-whether modified assignments are retained. This claim is demonstrated by the
-theorems above (`static_dynamic_same_truth`, `destructive_preserves_truth`,
-`liftPW_preserves_distributive`), not by a single formal statement. -/
+/-- On an update that only changes the anaphoric context, the sliced negation is the pointwise
+one: within a cell a world identifies its point, so a surviving world is a surviving point. -/
+theorem anaNeg_image {D : Update (W × A)} (hD : ∀ ⦃i j⦄, i ~[D] j → i.1 = j.1)
+    (s : Set (W × A)) : anaNeg D.image s = s \ D.dom := by
+  ext i
+  simp only [anaNeg, slice, Set.mem_iUnion, exists_prop]
+  constructor
+  · rintro ⟨t, ht, hit, hno⟩
+    exact ⟨subset_of_mem_part ht hit, fun ⟨j, hij⟩ ↦ hno ⟨j, ⟨i, hit, hij⟩, (hD hij).symm⟩⟩
+  · rintro ⟨his, hno⟩
+    refine ⟨_, mem_part_of_mem his, ⟨his, rfl⟩, ?_⟩
+    rintro ⟨i', ⟨j, ⟨-, hj⟩, hji'⟩, hw⟩
+    obtain rfl : j = i := Prod.ext ((hD hji').trans hw) hj
+    exact hno ⟨i', hji'⟩
 
--- ════════════════════════════════════════════════════════════════
--- Effect-functor lookup interface — Charlow as `M = Set` instance
--- ════════════════════════════════════════════════════════════════
-
-/-- Charlow's `State W E = Set (W × Assignment E)` as the **nondeterministic**
-(`M = Set`) instance of the fibered lookup interface. The lookup at
-variable `v` at world `w` yields `{ g v | (w, g) ∈ s }` — one alternative
-per assignment containing `w`. The empty set is the falsifier (no
-assignment defines `v` at `w`): Charlow rejects a value-level `⋆`, so
-compositional negation is preserved by the empty-set convention. The
-fibered projection is lossy — the native joint state records which worlds
-pair with which assignments beyond what a single `(v, w)` query reveals;
-the `supportCollapse` bridge below collapses genuinely-uncertain states. -/
-instance instCharlowHasFiberedLookup (W E : Type) :
-    DynamicSemantics.HasFiberedLookup Set (State W E) Nat W E where
-  iLookup s v w := { e | ∃ g : Assignment E, (w, g) ∈ s ∧ g v = e }
-
--- ════════════════════════════════════════════════════════════════
--- Bridge natural transformations — Hofmann ⇄ Charlow
--- ════════════════════════════════════════════════════════════════
-
-/-- **Hofmann ↪ Charlow**: lift an `ICDRT.Assignment` to a Charlow state on
-the worlds where every `vars`-listed variable has a non-`⋆` referent.
-At such worlds the resulting state has exactly one alternative — the
-assignment forced by Hofmann's values on `vars` (free elsewhere).
-At ⋆-worlds for any `vars`-listed variable, the world contributes no
-alternatives. -/
-def singletonLift {W E : Type} [Inhabited E]
-    (worlds : Set W) (vars : Finset Nat) (i : ICDRT.Assignment W E) :
-    State W E :=
-  { p | p.1 ∈ worlds ∧
-        (∀ v ∈ vars, i.indiv ⟨v⟩ p.1 ≠ Entity.star) ∧
-        (∀ v ∈ vars,
-          match i.indiv ⟨v⟩ p.1 with
-          | .some e => p.2 v = e
-          | .star => True) }
-
-/-- **Charlow ↠ Hofmann**: collapse a Charlow state to a Hofmann-style
-assignment by "agreement-or-`⋆`". At each world, if all alternatives
-agree on `v`'s value, that's `v`'s value; otherwise `⋆`. Propositional
-drefs are dropped (Charlow has no propositional-dref structure to
-preserve). The reverse-image `singletonLift` ∘ `supportCollapse` loses
-information whenever the Charlow state has genuine uncertainty. -/
-noncomputable def supportCollapse {W E : Type}
-    (s : State W E) : ICDRT.Assignment W E where
-  prop _ := ∅
-  indiv v w :=
-    open Classical in
-    if h : ∃ e : E, ∀ g : Assignment E, (w, g) ∈ s → g v.idx = e
-      then Entity.some (Classical.choose h)
-      else Entity.star
-
-/-- **Bridge / section-retraction**: on the deterministic image,
-`supportCollapse ∘ singletonLift = id` for individual variables in the
-lift's `vars` set, at worlds in the lift's `worlds` set, where every
-listed variable has a non-`⋆` referent. (Outside this domain the maps
-behave differently — `singletonLift` produces an empty state at ⋆-worlds,
-and `supportCollapse` falls through to `⋆`.)
-
-This is a section/retraction relationship in the spirit of
-`Function.LeftInverse`, witnessing that `singletonLift` injects Hofmann
-states into Charlow states without information loss on its image. The
-reverse direction (`singletonLift ∘ supportCollapse`) is *not* the
-identity — collapsing genuine Charlow uncertainty to `⋆` and then
-re-singleton-lifting forgets which alternatives were possible. -/
-theorem supportCollapse_singletonLift {W E : Type} [Inhabited E]
-    (worlds : Set W) (vars : Finset Nat) (i : ICDRT.Assignment W E)
-    (v : IVar) (w : W) (hw : w ∈ worlds) (hv : v.idx ∈ vars)
-    (hall : ∀ u ∈ vars, i.indiv ⟨u⟩ w ≠ Entity.star) :
-    (supportCollapse (singletonLift worlds vars i)).indiv v w =
-      i.indiv v w := by
-  -- Recover the entity v points to at w
-  obtain ⟨e₀, he₀⟩ : ∃ e, i.indiv v w = Entity.some e := by
-    cases h : i.indiv v w with
-    | some e => exact ⟨e, rfl⟩
-    | star =>
-      cases v
-      exact absurd h (hall _ hv)
-  -- Build a witness assignment g₀ at world w
-  let g₀ : Assignment E := fun n =>
-    if hn : n ∈ vars then
-      match i.indiv ⟨n⟩ w with
-      | .some e => e
-      | .star => default
-    else default
-  have hg₀ : (w, g₀) ∈ singletonLift worlds vars i := by
-    refine ⟨hw, hall, ?_⟩
-    intro v' hv'
-    show match i.indiv ⟨v'⟩ w with | .some e => g₀ v' = e | .star => True
-    cases h : i.indiv ⟨v'⟩ w with
-    | some e =>
-      show g₀ v' = e
-      simp only [g₀, dite_eq_left hv', h]
-    | star => trivial
-  -- The chosen value equals e₀
-  have hkey : ∀ g : Assignment E,
-      (w, g) ∈ singletonLift worlds vars i → g v.idx = e₀ := by
-    intro g ⟨_, _, hmatch⟩
-    have hfix := hmatch v.idx hv
-    have : i.indiv ⟨v.idx⟩ w = Entity.some e₀ := by cases v; exact he₀
-    rw [this] at hfix
-    exact hfix
-  have hex : ∃ e : E, ∀ g : Assignment E,
-      (w, g) ∈ singletonLift worlds vars i → g v.idx = e := ⟨e₀, hkey⟩
-  -- Unfold supportCollapse and discharge
-  show (open Classical in
-    if h : ∃ e : E, ∀ g : Assignment E,
-      (w, g) ∈ singletonLift worlds vars i → g v.idx = e
-      then Entity.some (Classical.choose h)
-      else Entity.star) = i.indiv v w
-  rw [dite_eq_left hex, he₀]
-  congr 1
-  -- Classical.choose hex satisfies the property; pin it down via g₀
-  have hch := Classical.choose_spec hex g₀ hg₀
-  have hg₀_v : g₀ v.idx = e₀ := hkey g₀ hg₀
-  rw [← hch, hg₀_v]
-
--- ════════════════════════════════════════════════════════════════
--- Anaphora resolution: no propositional drefs
--- ════════════════════════════════════════════════════════════════
-
-/-! Charlow's `State W E = Set (W × Assignment E)` deliberately carries
-**no propositional-dref structure**, so the bathroom-sentence blocking
-theorem (`counterfactual_blocks_veridical`, `ICDRT/Basic.lean`) — whose
-every hypothesis is about propositional drefs — has no analogue here.
-The same anaphora-under-negation phenomenon ("There isn't a bathroom.
-#It is upstairs.") is handled by **alternative-set filtering** — a
-negative antecedent yields an empty alternative set, which by the
-empty-set falsifier makes downstream lookup empty. -/
-
-/-! ### Truth conditions as cylindrification
-
-The static and the dynamic existential have the same truth conditions, the cylindrification of
-the body along the bound variable. -/
+end States
 
 end Charlow2019

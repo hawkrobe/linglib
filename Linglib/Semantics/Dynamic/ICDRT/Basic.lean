@@ -255,11 +255,7 @@ abbrev decCondition (φ_DC φ : PVar) (j : Assignment W E) : Prop :=
 #It is upstairs."). If `j` extends `i` keeping the commitment set and the
 negated content fixed, the antecedent is counterfactual
 (`φ_DC(i) ∩ φ_neg(i) = ∅`), and `j` satisfies both the DEC condition and
-the anaphor's subset requirement, then the discourse is inconsistent.
-
-Frameworks without propositional-dref structure have no analogue —
-[charlow-2019]'s `State W E` handles the same phenomenon by
-alternative-set filtering (`Studies/Charlow2019.lean`). -/
+the anaphor's subset requirement, then the discourse is inconsistent. -/
 theorem counterfactual_blocks_veridical (i j : Assignment W E)
     (φ_DC φ_anaphor φ_neg : PVar)
     (h_extends_DC : j.prop φ_DC = i.prop φ_DC)
@@ -441,7 +437,7 @@ theorem dec_complement_counterfactual (φ_DC φ_outer φ_inner : PVar)
 
 /-- ICDRT contexts expose the shared lookup interface at `M = Entity`
 (`Dynamic/Lookup.lean`), making ICDRT lookups comparable with the
-extensional (`M = Id`) and [charlow-2019] (`M = Set`) families. -/
+extensional (`M = Id`) family. -/
 instance : DynamicSemantics.HasFiberedLookup Entity
     (Assignment W E) IVar W E where
   iLookup i v w := i.indiv v w
