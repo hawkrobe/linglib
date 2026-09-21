@@ -17,7 +17,6 @@ events; thematic roles are independent two-place predicates
 * `Event.τ` — temporal trace function
 * `Event.isAction` / `Event.isState` — decidable `Prop` sort predicates
 * `Event.isPunctual` / `Event.isDurative` — decidable `Prop` duration predicates
-* `Event.existsClosure` — Davidsonian existential closure
 * `Event.Mereology` — part-of typeclass with τ-monotonicity + sort-preservation
 * `Event.partialOrder` — `PartialOrder` instance derived from `Event.Mereology`
 * `Event.Manner` — manner ontology ([liefke-2024] §4.3)
@@ -118,13 +117,6 @@ instance : DecidablePred (isDurative (T := T)) :=
 /-- `isDurative` and `isPunctual` are complementary. -/
 theorem isDurative_iff_not_isPunctual (e : Event T) :
     e.isDurative ↔ ¬ e.isPunctual := Iff.rfl
-
-/-! ### Existential closure -/
-
-/-- Existential closure: ∃e. P(e). The fundamental step from event
-    semantics to truth conditions. -/
-def existsClosure (P : Event T → Prop) : Prop :=
-  ∃ e : Event T, P e
 
 /-! ### Mereology -/
 
