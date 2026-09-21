@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Core.Probability.Gaussian
+import Linglib.Core.Probability.Distributions.Gaussian
 
 /-!
 # Signal detection theory
@@ -71,7 +71,7 @@ continuous observation.
 
 namespace Core
 
-open Real MeasureTheory BigOperators
+open Real MeasureTheory ProbabilityTheory BigOperators
 
 section Model
 
@@ -102,32 +102,26 @@ hit rate is the tail at the *signal* mean, false-alarm rate is the tail at the
 *noise* mean. Factoring the shared structure makes the bound proofs apply
 uniformly. -/
 
-/-- The tail probability `1 - Φ(c - μ)` is the probability that a response distributed as `N(μ, 1)`
-exceeds the model's criterion `c`. -/
+/-- The tail probability is the probability that a response distributed as `N(μ, 1)` exceeds the
+model's criterion `c`. -/
 noncomputable def SDTModel.tailProb (m : SDTModel) (μ : ℝ) : ℝ :=
-  1 - normalCDF (m.criterion - μ)
-
-/-- The tail probability lies in `[0, 1]`. -/
-@[simp]
-theorem SDTModel.tailProb_mem_Icc (m : SDTModel) (μ : ℝ) :
-    m.tailProb μ ∈ Set.Icc (0 : ℝ) 1 := by
-  refine ⟨?_, ?_⟩ <;> simp only [SDTModel.tailProb]
-  · linarith [normalCDF_le_one (m.criterion - μ)]
-  · linarith [normalCDF_nonneg (m.criterion - μ)]
-
-/-- The upper-tail probability is strictly monotone in the mean of the distribution, so shifting the
-distribution rightward makes it larger. -/
-theorem SDTModel.tailProb_strictMono (m : SDTModel) : StrictMono m.tailProb := by
-  intro μ₁ μ₂ h
-  simp only [SDTModel.tailProb]
-  linarith [normalCDF_strictMono (show m.criterion - μ₂ < m.criterion - μ₁ by linarith)]
+  (gaussianReal μ 1).real (Set.Ioi m.criterion)
 
 /-- The tail probability equals `Φ(μ - c)`. -/
 @[simp]
 theorem SDTModel.tailProb_eq_normalCDF (m : SDTModel) (μ : ℝ) :
     m.tailProb μ = normalCDF (μ - m.criterion) := by
-  simp only [SDTModel.tailProb, show μ - m.criterion = -(m.criterion - μ) from by ring,
-             normalCDF_neg]
+  simp [SDTModel.tailProb, gaussianReal_real_Ioi]
+
+/-- The tail probability lies in `[0, 1]`. -/
+theorem SDTModel.tailProb_mem_Icc (m : SDTModel) (μ : ℝ) :
+    m.tailProb μ ∈ Set.Icc (0 : ℝ) 1 :=
+  ⟨measureReal_nonneg, measureReal_le_one⟩
+
+/-- The upper-tail probability is strictly monotone in the mean of the distribution, so shifting the
+distribution rightward makes it larger. -/
+theorem SDTModel.tailProb_strictMono (m : SDTModel) : StrictMono m.tailProb := fun _ _ h ↦ by
+  simpa using normalCDF_strictMono (sub_lt_sub_right h m.criterion)
 
 /-- The hit rate is the probability of a "signal" response when the signal is present, the tail
 probability at mean `d'/2`. -/
@@ -212,10 +206,9 @@ theorem biasFromRates_roundtrip :
 
 /-- For rates strictly between zero and one, the recovered sensitivity is positive exactly when the
 hit rate exceeds the false-alarm rate. -/
-theorem dPrimeFromRates_pos_iff {H F : ℝ}
-    (hH_lo : 0 < H) (hH_hi : H < 1) (hF_lo : 0 < F) (hF_hi : F < 1) :
+theorem dPrimeFromRates_pos_iff {H F : ℝ} (hH : H ∈ Set.Ioo 0 1) (hF : F ∈ Set.Ioo 0 1) :
     0 < dPrimeFromRates H F ↔ F < H := by
-  rw [dPrimeFromRates, sub_pos, probit_lt_iff hF_lo hF_hi hH_lo hH_hi]
+  rw [dPrimeFromRates, sub_pos, probit_lt_probit_iff hF hH]
 
 end Recovery
 
@@ -255,12 +248,9 @@ theorem SDTModel.isUnbiased_iff_beta_eq_one_of_pos
 /-- The hit rate and the false-alarm rate of an unbiased observer sum to one. -/
 theorem SDTModel.IsUnbiased.hit_plus_fa_eq_one {m : SDTModel} (h : m.IsUnbiased) :
     m.hitRate + m.falseAlarmRate = 1 := by
-  have hc : m.criterion = 0 := h
-  simp only [SDTModel.hitRate, SDTModel.falseAlarmRate, SDTModel.tailProb,
-    hc, zero_sub, zero_add, sub_neg_eq_add]
-  have hneg : 1 - normalCDF (-(m.dPrime / 2)) = normalCDF (m.dPrime / 2) := by
-    rw [normalCDF_neg]; ring
-  rw [hneg]; ring
+  rw [SDTModel.hitRate, SDTModel.falseAlarmRate, m.tailProb_eq_normalCDF,
+    m.tailProb_eq_normalCDF, show m.criterion = 0 from h, sub_zero, sub_zero, normalCDF_neg,
+    add_sub_cancel]
 
 /-- The proportion correct of an unbiased observer of positive sensitivity exceeds one half. -/
 theorem SDTModel.IsUnbiased.proportionCorrect_gt_half {m : SDTModel}
@@ -285,12 +275,8 @@ noncomputable def rocCurve (dPrime : ℝ) (falseAlarmRate : ℝ) : ℝ :=
 
 /-- At zero sensitivity the receiver operating characteristic is the diagonal on the open unit
 interval. -/
-theorem roc_diagonal (f : ℝ) (hf : 0 < f) (hf' : f < 1) :
-    rocCurve 0 f = f := by
-  simp only [rocCurve, sub_zero]
-  have h1f0 : 0 < 1 - f := by linarith
-  have h1f1 : 1 - f < 1 := by linarith
-  rw [probit_spec h1f0 h1f1]; ring
+theorem roc_diagonal {f : ℝ} (hf : f ∈ Set.Ioo 0 1) : rocCurve 0 f = f := by
+  rw [rocCurve, sub_zero, probit_one_sub, normalCDF_neg, normalCDF_probit hf, sub_sub_cancel]
 
 /-- At positive sensitivity the hit rate exceeds the false-alarm rate, so the receiver operating
 characteristic lies above the diagonal. -/

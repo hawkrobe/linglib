@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Choice.RationalAction
-import Linglib.Core.Probability.Gaussian
+import Linglib.Core.Probability.Distributions.Gaussian
 import Linglib.Core.Probability.RandomUtility
 import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import Mathlib.Order.BooleanAlgebra.Basic
@@ -613,9 +613,8 @@ noncomputable def ThurstoneCaseV.choiceProb (m : ThurstoneCaseV Stimulus)
 /-- When `u(a) = u(b)`, the choice probability is `1/2` (indifference). -/
 theorem ThurstoneCaseV.choiceProb_eq (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) (h : m.scale a = m.scale b) :
-    m.choiceProb a b = 1 / 2 := by
-  simp only [choiceProb, h, sub_self]
-  exact gaussianChoiceProb_zero _
+    m.choiceProb a b = 2⁻¹ := by
+  rw [choiceProb, h, sub_self, gaussianChoiceProb_zero]
 
 /-- Complementarity: `P(a,b) + P(b,a) = 1`. -/
 theorem ThurstoneCaseV.choiceProb_complement (m : ThurstoneCaseV Stimulus)
@@ -629,10 +628,8 @@ theorem ThurstoneCaseV.choiceProb_complement (m : ThurstoneCaseV Stimulus)
     is chosen more often than chance. -/
 theorem ThurstoneCaseV.choiceProb_gt_half (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) (h : m.scale b < m.scale a) :
-    1 / 2 < m.choiceProb a b := by
-  simp only [choiceProb]
-  exact half_lt_gaussianChoiceProb (sub_pos.mpr h)
-    (mul_pos m.sigma_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2)))
+    2⁻¹ < m.choiceProb a b :=
+  inv_two_lt_gaussianChoiceProb (sub_pos.mpr h) (mul_pos m.sigma_pos (Real.sqrt_pos.mpr two_pos))
 
 /-! ### Strong stochastic transitivity -/
 
