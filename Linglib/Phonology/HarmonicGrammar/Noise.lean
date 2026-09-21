@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Core.Probability.RandomUtility
+import Linglib.Core.Probability.Choice.RandomUtility
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
@@ -20,7 +20,7 @@ Normal MaxEnt ([flemming-2021]) instead adds i.i.d. Gaussian noise
 N(0,ε²) directly to candidate scores, giving a constant noise standard
 deviation σ_d = ε√2 for binary choice.
 
-Both are instances of the Gaussian random utility model (`Core.gaussianChoiceProb`,
+Both are instances of the Gaussian random utility model (`ProbabilityTheory.gaussianChoiceProb`,
 the probit choice rule) — the Gaussian sibling of softmax. They ground directly in
 that pure-math fact, not in Thurstone's psychophysics: Noisy HG and Thurstone Case V
 are sibling applications of the same probit RUM, neither depending on the other.
@@ -46,7 +46,7 @@ noise variance σ_d depends on the violation profile.
 namespace HarmonicGrammar
 
 
-open Core Real Constraints ProbabilityTheory
+open Real Constraints ProbabilityTheory
 
 variable {C : Type*} {n : Nat}
 
@@ -112,6 +112,16 @@ noncomputable def normalMaxEntChoiceProb (con : CON C n) (w : Fin n → ℝ)
     (epsilon : ℝ) (a b : C) : ℝ :=
   gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
     (normalMaxEntSigmaD epsilon)
+
+/-- The constant `σ_d = ε√2` is derived and not stipulated: when the harmonies of `a` and `b` are
+    perturbed by independent `N(0, ε²)` noise, the probability that `a` has the higher perturbed
+    harmony is `normalMaxEntChoiceProb`. -/
+theorem rumChoiceProb_eq_normalMaxEntChoiceProb (con : CON C n) (w : Fin n → ℝ)
+    {epsilon : ℝ} (hε : 0 < epsilon) (a b : C) :
+    rumChoiceProb (fun j ↦ gaussianReal (![harmonyScore con w a, harmonyScore con w b] j)
+      (.mk (epsilon ^ 2) (sq_nonneg _))) 0 =
+      ENNReal.ofReal (normalMaxEntChoiceProb con w epsilon a b) :=
+  rumChoiceProb_gaussianReal_sq _ hε
 
 /-- Normal MaxEnt choice probability in closed form: `Φ((H(a) − H(b)) / (ε√2))`
     ([flemming-2021] eq (17)). -/
