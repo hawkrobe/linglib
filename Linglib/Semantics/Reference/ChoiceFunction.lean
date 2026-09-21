@@ -37,6 +37,10 @@ takes wide scope over negation; a situation quantifier separates them (`bound_fr
   situation quantifiers separate, the free and bound construals of the situation argument.
 * `isCorrect_some_of_apply`, `correct_cfs_disagree_on_some_sem`: a correct choice function
   witnesses the existential reading, and distinct correct functions commit to distinct witnesses.
+* `CF.exists_isCorrect_iff_some_sem`, `CF.forall_isCorrect_iff_every_sem`: quantifying over
+  correct choice functions gives the existential and universal readings on a nonempty restrictor.
+* `CF.exists_isCorrect_forall_iff`: a choice function whose restrictor contains a bound variable
+  takes no scope relative to the binder.
 
 ## References
 
@@ -53,21 +57,21 @@ namespace Reference
 
 variable {S E : Type*}
 
-/-- A choice function: from a property to an individual ([reinhart-1997]). -/
+/-- A choice function sends a property to an individual ([reinhart-1997]). -/
 def CF (E : Type*) := (E → Prop) → E
 
 /-- A choice function is correct when it picks a member of every nonempty property. -/
 def CF.IsCorrect (f : CF E) : Prop := ∀ P : E → Prop, (∃ x, P x) → P (f P)
 
-/-- A skolemized choice function: a choice function at each situation
+/-- A skolemized choice function is a choice function at each situation
 ([kratzer-1998-pseudoscope]). -/
 def SkolemCF (S E : Type*) := S → CF E
 
 /-- A skolemized choice function is correct when it is correct at every situation. -/
 def SkolemCF.IsCorrect (f : SkolemCF S E) : Prop := ∀ s, (f s).IsCorrect
 
-/-- The two analyses of an indefinite determiner: an existential quantifier, scoping by
-quantifier raising, or a choice function, scoping by the binding of its situation variable. -/
+/-- The two analyses of an indefinite determiner are an existential quantifier, scoping by
+quantifier raising, and a choice function, scoping by the binding of its situation variable. -/
 inductive IndefiniteAnalysis where
   | existential
   | choiceFunction
@@ -93,8 +97,8 @@ theorem cf_wide_scope_specific {f : CF E} (hf : f.IsCorrect) {N VP : E → Prop}
     (h : ¬ VP (f N)) : ∃ x, N x ∧ ¬ VP x :=
   ⟨f N, hf N hN, h⟩
 
-/-- An existential indefinite can take narrow scope under negation: the negated existential is
-satisfiable on a nonempty restrictor. -/
+/-- An existential indefinite can take narrow scope under negation, since the negated
+existential is satisfiable on a nonempty restrictor. -/
 theorem exists_narrow_scope_under_negation {N VP : E → Prop} (h : ∀ x, N x → ¬ VP x) :
     ¬ ∃ x, N x ∧ VP x :=
   fun ⟨x, hN, hVP⟩ ↦ h x hN hVP
@@ -140,8 +144,8 @@ theorem bound_free_collapse {O : (S → Prop) → S → Prop} {s₀ : S} (hO : I
       O (fun s ↦ VP (f.applyIntensionAt .free s s₀ P) s) s₀ :=
   iff_of_eq (hO _ _ rfl)
 
-/-- A situation quantifier separates the bound and free construals: two situations, a
-restrictor whose extension varies, and a function tracking its situation. -/
+/-- A situation quantifier separates the bound and free construals. The witness has two
+situations, a restrictor whose extension varies, and a function tracking its situation. -/
 theorem bound_free_diverge_box :
     ∃ (S E : Type) (R : S → S → Prop) (f : SkolemCF S E) (P : S → E → Prop) (VP : E → S → Prop)
       (s₀ : S), box R (fun s ↦ VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ∧
@@ -171,7 +175,69 @@ theorem isCorrect_some_of_apply {f : CF E} (hf : f.IsCorrect) {N VP : E → Prop
     (hVP : VP (f N)) : some_sem N VP :=
   ⟨f N, hf N hN, hVP⟩
 
-/-- Two correct choice functions disagree on the same restrictor and predicate: over `Bool`,
+/-- Every member of a property is the pick of some correct choice function. -/
+theorem CF.exists_isCorrect_apply_eq {N : E → Prop} {x : E} (hx : N x) :
+    ∃ f : CF E, f.IsCorrect ∧ f N = x := by
+  classical
+  refine ⟨fun P ↦ if P = N then x else if h : ∃ y, P y then h.choose else x, fun P hP ↦ ?_,
+    by simp⟩
+  beta_reduce
+  split_ifs with hPN
+  exacts [hPN ▸ hx, hP.choose_spec]
+
+/-- Existential quantification over correct choice functions is the existential reading. -/
+theorem CF.exists_isCorrect_iff_some_sem {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
+    (∃ f : CF E, f.IsCorrect ∧ VP (f N)) ↔ some_sem N VP :=
+  ⟨fun ⟨_, hf, h⟩ ↦ isCorrect_some_of_apply hf hN h, fun ⟨_, hx, h⟩ ↦
+    let ⟨f, hf, hfx⟩ := CF.exists_isCorrect_apply_eq hx; ⟨f, hf, hfx ▸ h⟩⟩
+
+/-- Universal quantification over correct choice functions is the universal reading, on a
+nonempty restrictor. -/
+theorem CF.forall_isCorrect_iff_every_sem {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
+    (∀ f : CF E, f.IsCorrect → VP (f N)) ↔ every_sem N VP :=
+  ⟨fun h _ hx ↦ let ⟨f, hf, hfx⟩ := CF.exists_isCorrect_apply_eq hx; hfx ▸ h f hf,
+    fun h _ hf ↦ h _ (hf N hN)⟩
+
+/-- On an empty restrictor a correct choice function is unconstrained, so universal
+quantification over correct choice functions ranges over the whole domain, where the
+universal reading is vacuous. -/
+theorem CF.forall_isCorrect_iff_of_not_exists {N : E → Prop} (hN : ¬ ∃ x, N x) (VP : E → Prop) :
+    (∀ f : CF E, f.IsCorrect → VP (f N)) ↔ ∀ x, VP x := by
+  classical
+  refine ⟨fun h x ↦ ?_, fun h f _ ↦ h _⟩
+  have := h (fun P ↦ if hP : ∃ y, P y then hP.choose else x) fun P hP ↦ by
+    beta_reduce
+    split_ifs
+    exact hP.choose_spec
+  beta_reduce at this
+  rwa [dite_eq_right hN] at this
+
+/-- A choice function applied to a restrictor that contains a bound variable takes no scope
+relative to the binder: since the restrictor already varies with the variable, one correct
+function can be assembled from the pointwise choices. -/
+theorem CF.exists_isCorrect_forall_iff [Nonempty E] {ι : Type*} (R : ι → E → Prop)
+    (VP : E → Prop) :
+    (∃ f : CF E, f.IsCorrect ∧ ∀ i, VP (f (R i))) ↔
+      ∀ i, ∃ f : CF E, f.IsCorrect ∧ VP (f (R i)) := by
+  classical
+  refine ⟨fun ⟨f, hf, h⟩ i ↦ ⟨f, hf, h i⟩, fun h ↦ ?_⟩
+  by_cases hι : Nonempty ι
+  · obtain ⟨i₀⟩ := hι
+    choose F hF hVP using h
+    refine ⟨fun P ↦ if hP : ∃ i, P = R i then F hP.choose P else F i₀ P, fun P hP ↦ ?_,
+      fun i ↦ ?_⟩
+    · beta_reduce
+      split_ifs <;> exact hF _ P hP
+    · beta_reduce
+      split_ifs with h'
+      · have := hVP h'.choose
+        rwa [← h'.choose_spec] at this
+      · exact (h' ⟨i, rfl⟩).elim
+  · obtain ⟨x⟩ := ‹Nonempty E›
+    obtain ⟨f, hf, -⟩ := CF.exists_isCorrect_apply_eq (N := (· = x)) rfl
+    exact ⟨f, hf, fun i ↦ (hι ⟨i⟩).elim⟩
+
+/-- Two correct choice functions disagree on the same restrictor and predicate. Over `Bool`,
 the function preferring `true` hits the witness of `(· = true)` and the one preferring `false`
 does not. -/
 theorem correct_cfs_disagree_on_some_sem :
