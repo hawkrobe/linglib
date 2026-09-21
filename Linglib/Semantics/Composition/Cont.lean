@@ -68,4 +68,23 @@ theorem eval_seq_monadLift [Monad m] [LawfulMonad m]
   simp only [eval, seq_eq_bind_map, bind_map_left, run_bind, run_map,
     run_monadLift, Function.comp_def, bind_pure_comp]
 
+/-- Evaluating a lifted computation under a value-level map is mapping in `m`. -/
+theorem eval_map_monadLift [Monad m] [LawfulMonad m] (f : α → r) (x : m α) :
+    eval (f <$> (monadLift x : ContT r m α)) = f <$> x := by
+  simp only [eval_map, run_monadLift, bind_pure_comp]
+
+/-- Resetting a lifted computation changes nothing, whatever sits on the bottom level
+([charlow-2014]'s Fact 4.1): evaluation leaves the side effects of the underlying monad
+intact. -/
+theorem reset_map_monadLift {r' : Type u} [Monad m] [LawfulMonad m] (f : α → r) (x : m α) :
+    reset (f <$> (monadLift x : ContT r m α)) = (monadLift (f <$> x) : ContT r' m r) :=
+  congrArg monadLift (eval_map_monadLift f x)
+
+/-- Resetting a combination of lifted computations is lifting their combination in `m`. -/
+theorem reset_seq_monadLift {r' : Type u} [Monad m] [LawfulMonad m]
+    (f : α → β → r) (x : m α) (y : m β) :
+    reset (f <$> (monadLift x : ContT r m α) <*> monadLift y) =
+      (monadLift (f <$> x <*> y) : ContT r' m r) :=
+  congrArg monadLift (eval_seq_monadLift f x y)
+
 end ContT
