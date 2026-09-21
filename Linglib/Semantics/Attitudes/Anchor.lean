@@ -84,9 +84,8 @@ that p*, *the claim*, *every rumor*, *her wish*. Content individuals are
 the shared ontological sort underlying beliefs, desires, and percepts
 ([liefke-2024]); what distinguishes a belief from a desire or a percept
 is not the sort but the attitude relation that embeds it. In Bayesian
-theory-of-mind models ([baker-jara-ettinger-saxe-tenenbaum-2017],
-`Pragmatics/BToM.lean`) they correspond to the type parameters over which
-the observer's posterior is defined.
+theory-of-mind models ([baker-jara-ettinger-saxe-tenenbaum-2017]) they correspond to the
+latent variables over which the observer's posterior is defined.
 
 Content individuals are the content-mode instance of the `Anchor` class:
 the projection is CONT, so `Anchor.comp` is the *that*-complementizer of

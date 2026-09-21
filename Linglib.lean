@@ -1170,14 +1170,11 @@ import Linglib.Phonology.Tone.Grammatical
 import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Register
 import Linglib.Phonology.Tone.Surfacing
-import Linglib.Pragmatics.BToM
-import Linglib.Pragmatics.BToMCredence
 import Linglib.Pragmatics.Bidirectional
 import Linglib.Pragmatics.DecisionTheoretic.Also
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.DecisionTheoretic.But
 import Linglib.Pragmatics.DecisionTheoretic.Even
-import Linglib.Pragmatics.DecisionTheoretic.PartitionAdjunction
 import Linglib.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Pragmatics.Efficiency
 import Linglib.Pragmatics.Expressives.Basic
@@ -1196,7 +1193,6 @@ import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.SignalingGame.Basic
 import Linglib.Pragmatics.SignalingGame.Interpretation
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Pragmatics.SoftmaxOptimality
 import Linglib.Pragmatics.Superoptimal
 import Linglib.Processing.Cost.Profile
 import Linglib.Processing.DiscriminativeLexicon.Coding
