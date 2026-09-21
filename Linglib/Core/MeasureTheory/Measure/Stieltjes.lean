@@ -16,16 +16,16 @@ for `Mathlib/MeasureTheory/Measure/Stieltjes.lean`.
 
 public section
 
-open Set
-
 namespace StieltjesFunction
 
+variable {R : Type*} [LinearOrder R] [TopologicalSpace R] [OrderTopology R] [CompactIccSpace R]
+  [MeasurableSpace R] [BorelSpace R] [SecondCountableTopology R] [DenselyOrdered R]
+
 /-- A Stieltjes function is continuous at `x` iff its measure has no atom at `x`. -/
-theorem continuousAt_iff_measure_singleton (f : StieltjesFunction ℝ) {x : ℝ} :
+theorem continuousAt_iff_measure_singleton (f : StieltjesFunction R) {x : R} :
     ContinuousAt f x ↔ f.measure {x} = 0 := by
   rw [measure_singleton, ENNReal.ofReal_eq_zero, sub_nonpos,
-    continuousAt_iff_continuous_left'_right', f.mono.continuousWithinAt_Iio_iff_leftLim_eq]
-  exact ⟨fun h ↦ h.1.ge, fun h ↦
-    ⟨(f.mono.leftLim_le le_rfl).antisymm h, (f.right_continuous x).mono Ioi_subset_Ici_self⟩⟩
+    f.mono.continuousAt_iff_leftLim_eq_rightLim, f.rightLim_eq,
+    (f.mono.leftLim_le le_rfl).ge_iff_eq]
 
 end StieltjesFunction
