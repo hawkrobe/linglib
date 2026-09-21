@@ -17,7 +17,8 @@ the other direction does not — which is exactly where the state's extra struct
 ## Main definitions
 
 * `staticExists`, `dynamicExists` — the static and dynamic existentials
-* `reachable` — assignment reachability, a preorder that is not antisymmetric
+* `reachable` — assignment reachability by a formula of dynamic predicate logic, a preorder that
+  is not antisymmetric
 * `liftPW`, `lowerPW` — Charlow's ↑ and its inverse at a world
 * `anaphoricallyDistributive` — distributivity over the partition by assignment
 
@@ -26,6 +27,8 @@ the other direction does not — which is exactly where the state's extra struct
 * `destructive_preserves_truth`, `static_dynamic_same_truth` — overwriting costs no truth
   conditions, and the two existentials agree on them
 * `dynamic_changes_assignment`, `static_is_test` — while differing on the output assignment
+* `reachable_iff_finite`, `reachable_symm`, `antisymmetry_fails` — reachability by a formula is
+  differing at finitely many variables, so it is symmetric and no partial order
 * `lowerPW_liftPW`, `liftPW_injective`, `liftPW_preserves_distributive`, `liftPW_lowerPW_not_id` —
   what the lift keeps and what the state adds
 * `dom_staticExists`, `dom_dynamicExists` — both existentials are true where the
@@ -90,29 +93,57 @@ theorem static_dynamic_same_truth {E : Type*} (x : Nat) (body : Set (Assignment 
     (staticExists x body).dom = (dynamicExists x body).dom := by
   rw [dom_staticExists, dom_dynamicExists]
 
-/-- Reachable: h is reachable from g via some DPL formula (Charlow's (24)). -/
-def reachable {E : Type*} (g h : Assignment E) : Prop :=
-  ∃ φ : Update (Assignment E), g ~[φ] h
+section Reachability
 
-/-- Reachability is reflexive. -/
-theorem reachable_refl {E : Type*} (g : Assignment E) : reachable g g :=
-  ⟨.id, rfl⟩
+open FirstOrder DPL DPL.Formula
 
-/-- Reachability is transitive (via dynamic conjunction). -/
-theorem reachable_trans {E : Type*} {g h k : Assignment E}
-    (hgh : reachable g h) (hhk : reachable h k) : reachable g k := by
+variable {L : Language} {E : Type*} [L.Structure E] {g h k : Assignment E}
+
+variable (L) in
+/-- An assignment is reachable from another when some formula of dynamic predicate logic takes
+the one to the other (24). -/
+def reachable (g h : Assignment E) : Prop :=
+  ∃ φ : Formula L ℕ, g ~[φ.eval E] h
+
+/-- Reachability is reflexive, by the tautology. -/
+theorem reachable_refl (g : Assignment E) : reachable L g g :=
+  ⟨.top, rfl⟩
+
+/-- Reachability is transitive, by conjunction. -/
+theorem reachable_trans (hgh : reachable L g h) (hhk : reachable L h k) : reachable L g k := by
   obtain ⟨φ, hφ⟩ := hgh
   obtain ⟨ψ, hψ⟩ := hhk
-  exact ⟨φ ○ ψ, h, hφ, hψ⟩
+  exact ⟨φ ⋏ ψ, h, hφ, hψ⟩
 
-/-- Antisymmetry fails: distinct assignments can be mutually reachable (§8). -/
-theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
-    ∃ (g h : Assignment E), g ≠ h ∧ reachable g h ∧ reachable h g := by
+/-- The assignments reachable from one another are those that differ at finitely many
+variables: a formula changes only its active quantifier variables, and resetting the variables
+where two assignments differ takes the one to the other. -/
+theorem reachable_iff_finite : reachable L g h ↔ {x | g x ≠ h x}.Finite := by
+  constructor
+  · rintro ⟨φ, hφ⟩
+    refine φ.aqv.finite_toSet.subset fun x hx ↦ ?_
+    by_contra hxφ
+    exact hx (GroenendijkStokhof1991.eqOn_of_eval hφ hxφ)
+  · intro hfin
+    refine ⟨exs hfin.toFinset.toList .top, (mem_eval_exs E _).mpr ⟨h, fun y hy ↦ ?_, rfl⟩⟩
+    by_contra hne
+    exact hy (by simpa using fun heq ↦ hne heq.symm)
+
+/-- Reachability is symmetric, so it is a partial order only if it is trivial. -/
+theorem reachable_symm (hgh : reachable L g h) : reachable L h g := by
+  rw [reachable_iff_finite] at hgh ⊢
+  simpa only [ne_comm] using hgh
+
+/-- Antisymmetry fails: distinct assignments are reachable from one another (§8), an
+overwritten variable being overwritten again with its old value. -/
+theorem antisymmetry_fails [Nontrivial E] :
+    ∃ g h : Assignment E, g ≠ h ∧ reachable L g h ∧ reachable L h g := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨fun _ ↦ e₁, Function.update (fun _ ↦ e₁) 0 e₂,
-    fun heq ↦ hne (by simpa using congr_fun heq 0),
-    ⟨dexists 0 (test {g' | g' 0 = e₂}), _, ⟨e₂, rfl⟩, rfl, by simp⟩,
-    ⟨dexists 0 (test {g' | g' 0 = e₁}), _, ⟨e₁, by simp⟩, rfl, rfl⟩⟩
+  have hr : reachable L (fun _ ↦ e₁) (Function.update (fun _ ↦ e₁) 0 e₂) :=
+    ⟨∃[0] .top, mem_dexists.mpr ⟨e₂, rfl⟩⟩
+  exact ⟨_, _, fun heq ↦ hne (by simpa using congr_fun heq 0), hr, reachable_symm hr⟩
+
+end Reachability
 
 /-- Charlow's context type: a set of world-assignment pairs. -/
 abbrev State (W E : Type*) := Set (W × Assignment E)
