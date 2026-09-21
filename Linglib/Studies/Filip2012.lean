@@ -1,4 +1,4 @@
-import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Aspect.Telicity
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Data.Examples.Filip2012
 
@@ -57,6 +57,12 @@ abbrev Telic (P : β → Prop) : Prop := QUA P
 
 /-- (24): an atelic predicate is cumulative. -/
 abbrev Atelic (P : β → Prop) : Prop := CUM P
+
+/-- A predicate telic in this sense is telic in the initial and final part sense of
+[krifka-1998], where parts of an event neither precede nor follow it. -/
+theorem isTelic_of_telic {precedes : β → β → Prop} (h : NoPartPrecedes precedes) {P : β → Prop}
+    (hP : Telic P) : IsTelic precedes P :=
+  isTelic_of_qua h hP
 
 /-! ### The three classes of verbs (28) -/
 

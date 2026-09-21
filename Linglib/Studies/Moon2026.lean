@@ -1,5 +1,5 @@
 import Linglib.Semantics.Plurality.Number
-import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Aspect.Telicity
 import Mathlib.Topology.Connected.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum

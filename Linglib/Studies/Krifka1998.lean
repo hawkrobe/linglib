@@ -1,11 +1,12 @@
-import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Aspect.Telicity
 
 /-!
 # Krifka (1998): The Origins of Telicity
 
 This file formalizes [krifka-1998]'s account of telicity as a property of event
 predicates rather than of events: a predicate is telic when no event it applies to has a
-proper part it also applies to that starts or ends at a different time. Telicity is then
+proper part it also applies to that starts or ends at a different time (`Aspect.IsTelic`, with
+the incremental relations, in `Semantics/Aspect/Telicity.lean`). Telicity is then
 derived rather than stipulated. For verbs of consumption and creation it follows from the
 mereological transfer between object and event that the thematic relation performs, the
 strictly incremental relations of `Aspect.SINC`; for movement verbs it follows from
@@ -49,60 +50,6 @@ namespace Krifka1998
 open Mereology Aspect
 
 variable {α β : Type*}
-
-/-! ### Telicity by initial and final parts -/
-
-section Telicity
-
-variable [PartialOrder β] (precedes : β → β → Prop)
-
-/-- An initial part of an event: a part no part of the event precedes. -/
-def IsInitialPart (e' e : β) : Prop := e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'
-
-/-- A final part of an event: a part no part of the event follows. -/
-def IsFinalPart (e' e : β) : Prop := e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e' e''
-
-/-- A telic predicate: every `P`-part of a `P`-event is an initial and a final part of it. -/
-def IsTelic (P : β → Prop) : Prop :=
-  ∀ e e', P e → P e' → e' ≤ e → IsInitialPart precedes e' e ∧ IsFinalPart precedes e' e
-
-/-- Parts of an event neither precede nor follow it. -/
-def NoPartPrecedes : Prop := ∀ a b : β, a ≤ b → ¬ precedes a b ∧ ¬ precedes b a
-
-variable {precedes}
-
-theorem isInitialPart_self (h : NoPartPrecedes precedes) (e : β) :
-    IsInitialPart precedes e e :=
-  ⟨le_rfl, λ ⟨_, h', hp⟩ => (h _ _ h').1 hp⟩
-
-theorem isFinalPart_self (h : NoPartPrecedes precedes) (e : β) : IsFinalPart precedes e e :=
-  ⟨le_rfl, λ ⟨_, h', hp⟩ => (h _ _ h').2 hp⟩
-
-/-- Quantized predicates are telic. -/
-theorem isTelic_of_qua (h : NoPartPrecedes precedes) {P : β → Prop} (hP : QUA P) :
-    IsTelic precedes P := λ e e' he he' hle => by
-  obtain rfl : e' = e := by_contra λ hne => hP he' he hne hle
-  exact ⟨isInitialPart_self h _, isFinalPart_self h _⟩
-
-/-- Among contemporaneous events every predicate is telic. -/
-theorem isTelic_of_not_precedes (h : ∀ a b, ¬ precedes a b) (P : β → Prop) :
-    IsTelic precedes P :=
-  λ _ _ _ _ hle => ⟨⟨hle, λ ⟨_, _, hp⟩ => h _ _ hp⟩, ⟨hle, λ ⟨_, _, hp⟩ => h _ _ hp⟩⟩
-
-end Telicity
-
-/-- Telic but not quantized: the predicate true of every event running from three to four,
-on two such events one part of the other. -/
-theorem exists_isTelic_not_qua : ∃ P : Bool → Prop, IsTelic (λ _ _ => False) P ∧ ¬ QUA P :=
-  ⟨λ _ => True, isTelic_of_not_precedes (λ _ _ => id) _,
-    λ h => h (x := false) trivial (y := true) trivial Bool.noConfusion (Bool.false_le true)⟩
-
-/-- A cumulative predicate true of two events, a part of one following the other, is not
-telic. -/
-theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop} {P : β → Prop}
-    (hP : CUM P) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
-    (hp : precedes e' e'') : ¬ IsTelic precedes P :=
-  λ hT => (hT (e ⊔ e') e' (hP he he') he' le_sup_right).2.2 ⟨e'', h''.trans le_sup_left, hp⟩
 
 /-! ### Measure adverbials -/
 
