@@ -24,7 +24,7 @@ the same evaluation over the quadruplet's forms and regions yields Krifka's assi
 ## Implementation notes
 
 * Literal meanings are the substrate's single-threshold `AntonymForm.contradictoryDenot`;
-  the admissible borders form a finite set of thresholds, and the paper's diagrams are read
+  the admissible borders form a set of thresholds on a linear order, and the diagrams are read
   relative to a speaker's border within that set.
 * Bidirectional evaluation is the substrate's `superoptimal`, the weak optimality of (14).
   The quadruplet game is built from the literal semantics (a form and a region on the same
@@ -47,7 +47,7 @@ namespace Krifka2007b
 
 open Degree Pragmatics.Bidirectional
 
-variable {max : ℕ}
+variable {D : Type*} [LinearOrder D]
 
 /-! ### Safe and marked uses -/
 
@@ -59,60 +59,54 @@ def simple : AntonymForm → AntonymForm
   | f => f
 
 /-- The literal meaning at a border `θ`: antonyms are contradictories (16). -/
-abbrev literal (θ : Threshold max) (f : AntonymForm) (d : Bounded max) : Prop :=
-  AntonymForm.contradictoryDenot θ f d
+abbrev literal (θ : D) (f : AntonymForm) : Set D := AntonymForm.contradictoryDenot θ f
 
 /-- A safe use (18): true under every admissible border, so that speaker and addressee agree
 on it whichever border they set. -/
-def Safe (Θ : Finset (Threshold max)) (f : AntonymForm) (d : Bounded max) : Prop :=
-  ∀ θ ∈ Θ, literal θ f d
+def Safe (Θ : Set D) (f : AntonymForm) (d : D) : Prop := ∀ θ ∈ Θ, d ∈ literal θ f
 
 /-- A marked use of a complex form ((19), (20)): literally true at the speaker's border, where
 the simpler form with the same literal meaning is not safe. -/
-def Marked (Θ : Finset (Threshold max)) (θ : Threshold max) (f : AntonymForm)
-    (d : Bounded max) : Prop :=
-  literal θ f d ∧ ¬ Safe Θ (simple f) d
+def Marked (Θ : Set D) (θ : D) (f : AntonymForm) (d : D) : Prop :=
+  d ∈ literal θ f ∧ ¬ Safe Θ (simple f) d
 
-variable {Θ : Finset (Threshold max)} {θ θ₁ θ₂ : Threshold max} {d d₁ d₂ : Bounded max}
+variable {Θ : Set D} {θ θ₁ θ₂ d d₁ d₂ : D}
 
 /-- The literal meanings exhaust the scale: *neither happy nor unhappy* (21) is a
 contradiction, and an unconditional over the pair (22) covers everyone. -/
-theorem literal_positive_or_negative (θ : Threshold max) (d : Bounded max) :
-    literal θ .positive d ∨ literal θ .negative d :=
-  em _
+theorem literal_positive_or_negative (θ d : D) :
+    d ∈ literal θ .positive ∨ d ∈ literal θ .negative :=
+  lt_or_ge θ d
 
 /-- Two admissible borders open a gap: a degree between them is safely neither *happy* nor
 *unhappy*, which is how *neither happy nor unhappy* comes to be sayable. -/
-theorem not_safe_of_between (h₂ : θ₂ ∈ Θ) (h₁ : θ₁ ∈ Θ) (hd : (θ₁ : Bounded max) < d)
-    (hd' : d ≤ θ₂) : ¬ Safe Θ .positive d ∧ ¬ Safe Θ .negative d :=
-  ⟨λ h => absurd (h θ₂ h₂) (not_lt.2 hd'), λ h => h θ₁ h₁ hd⟩
+theorem not_safe_of_between (h₂ : θ₂ ∈ Θ) (h₁ : θ₁ ∈ Θ) (hd : θ₁ < d) (hd' : d ≤ θ₂) :
+    ¬ Safe Θ .positive d ∧ ¬ Safe Θ .negative d :=
+  ⟨fun h ↦ absurd (h θ₂ h₂) (not_lt.2 hd'), fun h ↦ absurd (h θ₁ h₁) (not_le.2 hd)⟩
 
 /-- A marked *not unhappy* is a mild state of happiness ((3), (19)): happy at the speaker's
 border, but not safely so. -/
-theorem marked_notNegative_iff :
-    Marked Θ θ .notNegative d ↔ (θ : Bounded max) < d ∧ ∃ θ' ∈ Θ, d ≤ θ' := by
-  refine and_congr Iff.rfl ⟨λ h => ?_, λ ⟨θ', hθ', hle⟩ h => absurd (h θ' hθ') (not_lt.2 hle)⟩
+theorem marked_notNegative_iff : Marked Θ θ .notNegative d ↔ θ < d ∧ ∃ θ' ∈ Θ, d ≤ θ' := by
+  refine and_congr Iff.rfl ⟨fun h ↦ ?_, fun ⟨θ', hθ', hle⟩ h ↦ absurd (h θ' hθ') (not_lt.2 hle)⟩
   by_contra hn
-  exact h λ θ' hθ' => lt_of_not_ge λ hle => hn ⟨θ', hθ', hle⟩
+  exact h fun θ' hθ' ↦ lt_of_not_ge fun hle ↦ hn ⟨θ', hθ', hle⟩
 
 /-- A marked *not happy* is a mild state of unhappiness ((9), (20)): unhappy at the speaker's
 border, but not safely so. -/
-theorem marked_notPositive_iff :
-    Marked Θ θ .notPositive d ↔ d ≤ θ ∧ ∃ θ' ∈ Θ, (θ' : Bounded max) < d := by
-  refine and_congr (not_lt (a := (θ : Bounded max)) (b := d))
-    ⟨λ h => ?_, λ ⟨θ', hθ', hlt⟩ h => h θ' hθ' hlt⟩
+theorem marked_notPositive_iff : Marked Θ θ .notPositive d ↔ d ≤ θ ∧ ∃ θ' ∈ Θ, θ' < d := by
+  refine and_congr Iff.rfl ⟨fun h ↦ ?_, fun ⟨θ', hθ', hlt⟩ h ↦ absurd (h θ' hθ') (not_le.2 hlt)⟩
   by_contra hn
-  exact h λ θ' hθ' hlt => hn ⟨θ', hθ', hlt⟩
+  exact h fun θ' hθ' ↦ le_of_not_gt fun hlt ↦ hn ⟨θ', hθ', hlt⟩
 
 /-- At a given border, *not unhappy* reports higher states than *not happy* (20). -/
 theorem lt_of_marked (h₁ : Marked Θ θ .notPositive d₁) (h₂ : Marked Θ θ .notNegative d₂) :
     d₁ < d₂ :=
-  lt_of_le_of_lt (not_lt.1 h₁.1) h₂.1
+  lt_of_le_of_lt h₁.1 h₂.1
 
 /-- Between two admissible borders a degree is *not unhappy* for a speaker with the lower
 border and *not happy* for one with the higher: the two expressions are not exhaustive and
 have no fixed border between them (20). -/
-theorem marked_both (h₁ : θ₁ ∈ Θ) (h₂ : θ₂ ∈ Θ) (hlt : (θ₁ : Bounded max) < θ₂) :
+theorem marked_both (h₁ : θ₁ ∈ Θ) (h₂ : θ₂ ∈ Θ) (hlt : θ₁ < θ₂) :
     Marked Θ θ₁ .notNegative θ₂ ∧ Marked Θ θ₂ .notPositive θ₂ :=
   ⟨marked_notNegative_iff.2 ⟨hlt, θ₂, h₂, le_rfl⟩, marked_notPositive_iff.2 ⟨le_rfl, θ₁, h₁, hlt⟩⟩
 
@@ -189,7 +183,7 @@ border. -/
 def quadrupletPairs : Finset (AntonymForm × Region) :=
   ([.positive, .notPositive, .negative, .notNegative].toFinset ×ˢ
       [.positive, .plateauHigh, .plateauLow, .negative].toFinset).filter
-    λ p => formAbove p.1 = p.2.above
+    fun p ↦ formAbove p.1 = p.2.above
 
 /-- Krifka's assignment: the simple forms take the safe regions, the complex forms the border
 regions on their side. -/

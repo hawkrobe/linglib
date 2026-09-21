@@ -24,7 +24,7 @@ is **super-true** iff true under all admissible precisifications,
 
 This file provides the *general* supervaluation framework, parameterized
 by an abstract specification type `Spec`. Study files specialize `Spec`:
-- `Threshold max` for gradable adjectives ([fine-1975])
+- a threshold on the degree scale for gradable adjectives ([fine-1975])
 - `ComparisonClass Entity` for delineation ([klein-1980])
 - Product types for multi-predicate penumbral connections
 

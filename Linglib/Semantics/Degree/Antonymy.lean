@@ -4,7 +4,7 @@ import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Order.Aristotelian
 import Linglib.Semantics.Degree.Boundedness
-import Linglib.Semantics.Degree.Discrete
+import Mathlib.Order.Interval.Set.Disjoint
 
 /-!
 # Antonymy
@@ -19,7 +19,7 @@ boundedness through the order dual. `Degree.AntonymRelation` is the opposition b
 members' positive forms, contradictory (*clean* and *dirty*) or contrary (*tall* and *short*,
 which leave a gap), a cell of the Aristotelian square ([cruse-1986], [horn-1989]).
 
-The contrary case is modelled by a `Degree.ThresholdPair` on a finite degree scale, the
+The contrary case is modelled by a `Degree.ThresholdPair` on a linearly ordered scale, the
 positive form true above its upper threshold and the negative form below its lower one, and
 `Degree.AntonymForm` is the quadruplet *happy*, *not happy*, *unhappy*, *not unhappy* that
 sentential negation generates from a pair, with a contradictory denotation on one threshold,
@@ -31,17 +31,18 @@ keeps them apart ([krifka-2007b]).
 * `Polarity`, the sign group `ℤˣ`, with the members `Polarity.positive` and `Polarity.negative`
   and its action `p • b` on `Boundedness`.
 * `AntonymRelation`, contradictory or contrary, embedded in `Aristotelian.OppositionRel`.
-* `ThresholdPair` and the two-threshold meanings `positiveMeaning'`, `contraryNegMeaning`,
-  `notContraryNegMeaning`, `inGapRegion`; `contradictoryNeg` and `contraryNeg`.
+* `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
 * `AntonymForm` with `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot` and
   `AntonymForm.complexity`.
 
 ## Main results
 
-* `contradictoryNeg_iff`, `not_contradictoryNeg_iff`: contradictory negation is the complement
-  and double negation eliminates.
-* `ThresholdPair.exists_notContraryNegMeaning_not_positiveMeaning'`,
-  `ThresholdPair.exists_inGapRegion`: a strict pair leaves a gap.
+* `AntonymForm.contradictoryDenot_notPositive`: contradictory negation is the complement, so
+  double negation eliminates.
+* `ThresholdPair.gap_nonempty_iff`, `AntonymForm.strengthenedDenot_notNegative_diff_positive`,
+  `AntonymForm.strengthenedDenot_notPositive_diff_negative`: a pair leaves a gap when its lower
+  threshold does not exceed its upper one, and the gap is what each negated form adds to the
+  opposite simple form.
 * `isContradictory_contradictoryDenot`, `isContrary_strengthenedDenot`: the two denotations
   realize the two cells of the Aristotelian square.
 
@@ -90,7 +91,7 @@ theorem eq_positive_or_eq_negative (p : Polarity) : p = positive ∨ p = negativ
 
 /-- Two inversions restore the ordering: the antonym of *short* is *tall*, and *less short than*
 is *taller than*. Sentential negation is not a polarity: *not short* is the contradictory of
-*short* and does not entail *tall* (`contradictoryNeg`). -/
+*short* and does not entail *tall* (`AntonymForm.strengthenedDenot`). -/
 @[simp] theorem negative_mul_negative : negative * negative = positive := by decide
 
 @[simp] theorem mul_self (p : Polarity) : p * p = positive := by
@@ -147,81 +148,26 @@ theorem AntonymRelation.range_toOpposition (r : Aristotelian.OppositionRel) :
 
 /-! ### The two-threshold model of a contrary pair -/
 
-/-- The two thresholds of a contrary antonym pair (*happy* and *unhappy*): `pos` for the
-positive form, true above it, and `neg` for the negative form, true below it. When `neg < pos`
-the gap `[neg, pos]` is the region that is neither; that strict inequality is a hypothesis where
-a gap is needed, not a stored invariant. -/
-structure ThresholdPair (max : Nat) where
-  pos : Threshold max
-  neg : Threshold max
-  deriving Repr, DecidableEq, BEq
-
-section TwoThreshold
-variable {max : Nat} (d : Bounded max)
-
-/-- Contradictory negation *not happy*, `d ≤ θ` (`notPositiveMeaning`). -/
-abbrev contradictoryNeg (θ : Threshold max) : Prop := notPositiveMeaning d θ
-
-/-- Contrary negation *unhappy*, `d < θ_neg` (`negativeMeaning`). -/
-abbrev contraryNeg (θ_neg : Threshold max) : Prop := negativeMeaning d θ_neg
-
-/-- The gap: `d` is neither positive nor negative, `neg ≤ d ≤ pos`. -/
-abbrev inGapRegion (tp : ThresholdPair max) : Prop :=
-  (tp.neg : Bounded max) ≤ d ∧ d ≤ (tp.pos : Bounded max)
-
-/-- The positive form *happy* at the pair's upper threshold, `d > pos`. -/
-abbrev positiveMeaning' (tp : ThresholdPair max) : Prop := positiveMeaning d tp.pos
-
-/-- The negative form *unhappy* at the pair's lower threshold, `d < neg`. -/
-abbrev contraryNegMeaning (tp : ThresholdPair max) : Prop := negativeMeaning d tp.neg
-
-/-- *not unhappy*, the complement of the negative form, `neg ≤ d`. -/
-abbrev notContraryNegMeaning (tp : ThresholdPair max) : Prop := (tp.neg : Bounded max) ≤ d
-
-/-- Contradictory negation is the complement of the positive form. -/
-@[simp] theorem contradictoryNeg_iff (θ : Threshold max) :
-    contradictoryNeg d θ ↔ ¬ positiveMeaning d θ := by
-  simp only [contradictoryNeg, notPositiveMeaning, positiveMeaning, Comparison.mem_over,
-    Comparison.rel, id_eq, not_lt]
-
-/-- Double contradictory negation eliminates: *not [not happy]* is *happy*. Under a
-contradictory reading of the pair *not unhappy* is therefore synonymous with *happy*, the
-puzzle [krifka-2007b] solves pragmatically. -/
-theorem not_contradictoryNeg_iff (θ : Threshold max) :
-    ¬ contradictoryNeg d θ ↔ positiveMeaning d θ := by
-  rw [contradictoryNeg_iff, not_not]
-
-/-- A contradictory pair exhausts the scale: every degree is positive or negated. -/
-theorem positiveMeaning_or_contradictoryNeg (θ : Threshold max) :
-    positiveMeaning d θ ∨ contradictoryNeg d θ :=
-  (em _).imp_right (contradictoryNeg_iff d θ).2
-
-/-- The gap is exactly *not unhappy* and *not happy*. -/
-@[simp] theorem inGapRegion_iff (tp : ThresholdPair max) :
-    inGapRegion d tp ↔ notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
-  simp only [inGapRegion, notContraryNegMeaning, positiveMeaning', positiveMeaning,
-    Comparison.mem_over, Comparison.rel, id_eq, not_lt]
-
-end TwoThreshold
+/-- The two thresholds of a contrary antonym pair (*happy* and *unhappy*) are `pos` for the
+positive form, true above it, and `neg` for the negative form, true below it. That the lower
+threshold does not exceed the upper is a hypothesis where a gap is needed, not a stored
+invariant. -/
+structure ThresholdPair (D : Type*) where
+  pos : D
+  neg : D
+  deriving Repr, DecidableEq
 
 namespace ThresholdPair
-variable {max : Nat} (tp : ThresholdPair max)
+variable {D : Type*} [Preorder D] (tp : ThresholdPair D)
 
-/-- A strict pair has a degree, its lower threshold, that is *not unhappy* but not *happy*:
-double negation through a contrary fails. -/
-theorem exists_notContraryNegMeaning_not_positiveMeaning'
-    (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
-    ∃ d : Bounded max, notContraryNegMeaning d tp ∧ ¬ positiveMeaning' d tp := by
-  refine ⟨↑tp.neg, le_refl _, ?_⟩
-  simp only [positiveMeaning', positiveMeaning, Comparison.mem_over, Comparison.rel, id_eq,
-    not_lt]
-  exact le_of_lt h
+/-- The gap of a pair is the region that is neither positive nor negative, from the lower
+threshold to the upper. -/
+def gap : Set D := Set.Icc tp.neg tp.pos
 
-/-- A strict pair leaves a gap. -/
-theorem exists_inGapRegion (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
-    ∃ d : Bounded max, inGapRegion d tp := by
-  obtain ⟨d, h1, h2⟩ := tp.exists_notContraryNegMeaning_not_positiveMeaning' h
-  exact ⟨d, (inGapRegion_iff d tp).mpr ⟨h1, h2⟩⟩
+theorem mem_gap {d : D} : d ∈ tp.gap ↔ tp.neg ≤ d ∧ d ≤ tp.pos := Iff.rfl
+
+/-- A pair leaves a gap exactly when its lower threshold does not exceed its upper one. -/
+theorem gap_nonempty_iff : tp.gap.Nonempty ↔ tp.neg ≤ tp.pos := Set.nonempty_Icc
 
 end ThresholdPair
 
@@ -248,7 +194,7 @@ def flip : AntonymForm → AntonymForm
   | .notPositive => .notNegative
   | .notNegative => .notPositive
 
-theorem flip_involutive : Function.Involutive flip := λ f => by cases f <;> rfl
+theorem flip_involutive : Function.Involutive flip := fun f ↦ by cases f <;> rfl
 
 @[simp] theorem flip_flip (f : AntonymForm) : f.flip.flip = f := flip_involutive f
 
@@ -276,72 +222,70 @@ theorem complexity_strictMono :
     complexity .notPositive < complexity .notNegative := by
   decide
 
-/-- The contradictory denotation of a form on a single threshold `θ`: both poles share `θ`, so
-the four forms collapse to two, *happy* and *not unhappy* above it, *not happy* and *unhappy*
-at or below it. This is the literal semantics [krifka-2007b] attributes to a pair before
-pragmatic strengthening. -/
-abbrev contradictoryDenot {max : Nat} (θ : Threshold max) (q : AntonymForm) (d : Bounded max) :
-    Prop :=
-  match q with
-  | .positive    => positiveMeaning d θ
-  | .notPositive => ¬ positiveMeaning d θ
-  | .negative    => ¬ positiveMeaning d θ
-  | .notNegative => positiveMeaning d θ
+section Denotation
+variable {D : Type*}
 
-/-- The strengthened denotation of a form on a threshold pair: the gap `[neg, pos]` lifts *not
-unhappy* away from *happy* and *not happy* away from *unhappy*, the effective semantics after
+/-- The contradictory denotation of a form on a single threshold `θ`, which both poles share, so
+that the four forms collapse to two, *happy* and *not unhappy* above it, *not happy* and
+*unhappy* at or below it. This is the literal semantics [krifka-2007b] attributes to a pair
+before pragmatic strengthening. -/
+def contradictoryDenot [Preorder D] (θ : D) : AntonymForm → Set D
+  | .positive | .notNegative => Set.Ioi θ
+  | .notPositive | .negative => Set.Iic θ
+
+/-- The strengthened denotation of a form on a threshold pair, whose gap lifts *not unhappy*
+away from *happy* and *not happy* away from *unhappy*. This is the effective semantics after
 strengthening ([krifka-2007b]) or the lexical one ([alexandropoulou-gotzner-2024a]). -/
-abbrev strengthenedDenot {max : Nat} (tp : ThresholdPair max) (q : AntonymForm)
-    (d : Bounded max) : Prop :=
-  match q with
-  | .positive    => positiveMeaning' d tp
-  | .notPositive => contradictoryNeg d tp.pos
-  | .negative    => contraryNegMeaning d tp
-  | .notNegative => notContraryNegMeaning d tp
+def strengthenedDenot [Preorder D] (tp : ThresholdPair D) : AntonymForm → Set D
+  | .positive => Set.Ioi tp.pos
+  | .notPositive => Set.Iic tp.pos
+  | .negative => Set.Iio tp.neg
+  | .notNegative => Set.Ici tp.neg
+
+variable [LinearOrder D] (θ : D) (tp : ThresholdPair D)
 
 /-- Under the contradictory denotation *unhappy* is *not happy* and *not unhappy* is *happy*. -/
-theorem contradictoryDenot_synonymy {max : Nat} (θ : Threshold max) (d : Bounded max) :
-    (contradictoryDenot θ .negative d ↔ contradictoryDenot θ .notPositive d) ∧
-    (contradictoryDenot θ .notNegative d ↔ contradictoryDenot θ .positive d) :=
-  ⟨Iff.rfl, Iff.rfl⟩
+theorem contradictoryDenot_synonymy :
+    contradictoryDenot θ .negative = contradictoryDenot θ .notPositive ∧
+      contradictoryDenot θ .notNegative = contradictoryDenot θ .positive :=
+  ⟨rfl, rfl⟩
 
-/-- Under the strengthened denotation of a strict pair, *not unhappy* and *happy* come apart at
-the lower threshold. -/
-theorem strengthenedDenot_breaks_synonymy {max : Nat} (tp : ThresholdPair max)
-    (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
-    ∃ d : Bounded max, strengthenedDenot tp .notNegative d ∧ ¬ strengthenedDenot tp .positive d :=
-  tp.exists_notContraryNegMeaning_not_positiveMeaning' h
+/-- Contradictory negation is the complement of the positive form, so double negation
+eliminates: *not unhappy* is *happy*, the puzzle [krifka-2007b] solves pragmatically. -/
+theorem contradictoryDenot_notPositive :
+    contradictoryDenot θ .notPositive = (contradictoryDenot θ .positive)ᶜ :=
+  Set.compl_Ioi.symm
+
+/-- What *not unhappy* adds to *happy* under the strengthened denotation is the gap. -/
+theorem strengthenedDenot_notNegative_diff_positive :
+    strengthenedDenot tp .notNegative \ strengthenedDenot tp .positive = tp.gap := by
+  rw [strengthenedDenot, strengthenedDenot, Set.sdiff_eq, Set.compl_Ioi, Set.Ici_inter_Iic,
+    ThresholdPair.gap]
+
+/-- What *not happy* adds to *unhappy* under the strengthened denotation is the gap too. -/
+theorem strengthenedDenot_notPositive_diff_negative :
+    strengthenedDenot tp .notPositive \ strengthenedDenot tp .negative = tp.gap := by
+  rw [strengthenedDenot, strengthenedDenot, Set.sdiff_eq, Set.compl_Iio, Set.inter_comm,
+    Set.Ici_inter_Iic, ThresholdPair.gap]
 
 open Aristotelian in
 /-- With one threshold the negative form is the complement of the positive form, so the pair is
-contradictory in the Boolean algebra `Bounded max → Prop`. -/
-theorem isContradictory_contradictoryDenot {max : Nat} (θ : Threshold max) :
-    IsContradictory (λ d : Bounded max => contradictoryDenot θ .positive d)
-      (λ d => contradictoryDenot θ .negative d) :=
-  isCompl_compl
+contradictory. -/
+theorem isContradictory_contradictoryDenot :
+    IsContradictory (contradictoryDenot θ .positive) (contradictoryDenot θ .negative) :=
+  contradictoryDenot_notPositive θ ▸ isCompl_compl
 
 open Aristotelian in
-/-- With a strict pair the positive and negative forms are disjoint but, by the gap, not
+/-- With a pair that leaves a gap the positive and negative forms are disjoint but not
 exhaustive, so the pair is contrary. -/
-theorem isContrary_strengthenedDenot {max : Nat} (tp : ThresholdPair max)
-    (h : (tp.neg : Bounded max) < (tp.pos : Bounded max)) :
-    IsContrary (λ d : Bounded max => strengthenedDenot tp .positive d)
-      (λ d => strengthenedDenot tp .negative d) := by
-  refine ⟨?_, ?_⟩
-  · rw [disjoint_iff]
-    funext d
-    simp only [strengthenedDenot, positiveMeaning', contraryNegMeaning, positiveMeaning,
-      negativeMeaning, Pi.inf_apply, Pi.bot_apply, inf_Prop_eq]
-    exact eq_false (λ ⟨h1, h2⟩ => absurd (h1.trans h2) (lt_asymm h))
-  · rw [codisjoint_iff]
-    obtain ⟨d, hd1, hd2⟩ := tp.exists_notContraryNegMeaning_not_positiveMeaning' h
-    intro hco
-    have hd := congrFun hco d
-    simp only [strengthenedDenot, positiveMeaning', contraryNegMeaning, notContraryNegMeaning,
-      positiveMeaning, negativeMeaning, Pi.sup_apply, Pi.top_apply, sup_Prop_eq] at hd hd1 hd2
-    rcases of_eq_true hd with hp | hn
-    · exact hd2 hp
-    · exact absurd hn (not_lt.mpr hd1)
+theorem isContrary_strengthenedDenot (h : tp.neg ≤ tp.pos) :
+    IsContrary (strengthenedDenot tp .positive) (strengthenedDenot tp .negative) :=
+  ⟨Set.Ioi_disjoint_Iio_of_le h, fun hco ↦ by
+    have hmem : tp.neg ∈ strengthenedDenot tp .positive ⊔ strengthenedDenot tp .negative := by
+      rw [hco.eq_top]; trivial
+    exact hmem.elim (fun hp ↦ h.not_gt hp) (lt_irrefl _)⟩
+
+end Denotation
 
 end AntonymForm
 

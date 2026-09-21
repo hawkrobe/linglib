@@ -85,7 +85,7 @@ theorem exists_pursued [NoMaxOrder D] (hs : IsNecessityStandard Acc pursued μ x
   by_contra h
   have : pursuedValues Acc pursued μ x w = ∅ := by
     rw [pursuedValues, Set.image_eq_empty, Set.eq_empty_iff_forall_notMem]
-    exact λ w' hw' => h ⟨w', hw'.1, hw'.2⟩
+    exact fun w' hw' ↦ h ⟨w', hw'.1, hw'.2⟩
   rw [IsNecessityStandard, this, isGLB_empty_iff] at hs
   obtain ⟨t, ht⟩ := exists_gt s
   exact lt_irrefl s (ht.trans_le (hs t))
@@ -95,7 +95,7 @@ the standard. -/
 theorem standard_antitone {Acc' : W → Set W} {s' : D}
     (hs : IsNecessityStandard Acc pursued μ x w s) (hs' : IsNecessityStandard Acc' pursued μ x w s')
     (h : Acc w ⊆ Acc' w) : s' ≤ s :=
-  hs.2 λ _ hv => by
+  hs.2 fun _ hv ↦ by
     obtain ⟨w', hw', rfl⟩ := hv
     exact hs'.1 ⟨w', ⟨h hw'.1, hw'.2⟩, rfl⟩
 
@@ -106,10 +106,10 @@ variable (x w) in
 exactly that some accessible world pursues it. -/
 theorem acceptable_iff [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x w) :
     Acceptable Acc pursued μ x w ↔ ∃ w' ∈ Acc w, pursued x w' := by
-  refine ⟨λ ⟨_, hs, _⟩ => exists_pursued hs, λ ⟨w', hw', hp⟩ => ⟨μ x w, ?_, le_rfl⟩⟩
+  refine ⟨fun ⟨_, hs, _⟩ ↦ exists_pursued hs, fun ⟨w', hw', hp⟩ ↦ ⟨μ x w, ?_, le_rfl⟩⟩
   have h : pursuedValues Acc pursued μ x w = {μ x w} :=
     Set.eq_singleton_iff_unique_mem.2
-      ⟨⟨w', ⟨hw', hp⟩, hμ w' hw'⟩, λ _ ⟨w'', hw'', e⟩ => e ▸ hμ w'' hw''.1⟩
+      ⟨⟨w', ⟨hw', hp⟩, hμ w' hw'⟩, fun _ ⟨w'', hw'', e⟩ ↦ e ▸ hμ w'' hw''.1⟩
   rw [IsNecessityStandard, h]
   exact isGLB_singleton
 
@@ -123,9 +123,8 @@ theorem neither_defective [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x
 
 /-- *good* and *bad* on [kennedy-2007]'s two standards leave a zone of indifference between
 them, which the necessity standard's single point does not. -/
-theorem good_gap {max : ℕ} (tp : Degree.ThresholdPair max)
-    (h : (tp.neg : Degree.Bounded max) < tp.pos) : ∃ d, Degree.inGapRegion d tp :=
-  ⟨tp.neg, le_rfl, h.le⟩
+theorem good_gap (tp : Degree.ThresholdPair D) (h : tp.neg ≤ tp.pos) : tp.gap.Nonempty :=
+  tp.gap_nonempty_iff.2 h
 
 /-! ### Against the minimum-standard analysis -/
 
@@ -184,9 +183,9 @@ theorem isNecessityStandard_iff :
     constructor
     · rintro hd v ⟨w', hw', rfl⟩
       exact hd w' hw'.1 hw'.2
-    · exact λ hd w' hw' hp => hd ⟨w', ⟨hw', hp⟩, rfl⟩
+    · exact fun hd w' hw' hp ↦ hd ⟨w', ⟨hw', hp⟩, rfl⟩
   rw [h, sSup_lowerBounds_eq_sInf, IsNecessityStandard]
-  exact ⟨λ hs => hs.sInf_eq.symm, λ hs => hs ▸ isGLB_sInf _⟩
+  exact ⟨fun hs ↦ hs.sInf_eq.symm, fun hs ↦ hs ▸ isGLB_sInf _⟩
 
 end Complete
 

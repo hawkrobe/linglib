@@ -1,7 +1,6 @@
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Scale
 import Linglib.Semantics.Degree.Antonymy
-import Linglib.Semantics.Degree.Discrete
 import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
@@ -19,9 +18,8 @@ classification, and multidimensional binding ([sassoon-2013]).
 * `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024b]).
 * `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
 
-The finite degree carrier `Bounded`, its `Threshold`, and the threshold semantics
-(`positiveMeaning`, `negativeMeaning`) live in `Semantics/Degree/Discrete`; the antonym
-pair's polarity, relation and two-threshold model in `Semantics/Degree/Antonymy`.
+The antonym pair's polarity, relation and two-threshold model live in
+`Semantics/Degree/Antonymy`, and threshold predications in `Semantics/Degree/Comparison`.
 The intersective/subsective/privative classification lives in
 `Semantics/Modification/Classification.lean`.
 -/
