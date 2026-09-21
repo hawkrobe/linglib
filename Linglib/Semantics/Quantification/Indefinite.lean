@@ -22,6 +22,9 @@ existential construction); the carrier bundling these with a form is `Indefinite
   neighbours `adjacent` of each on the map.
 * `Indefinite.implicationalMap`: the map as a `SimpleGraph`.
 * `Indefinite.Contiguous`: a region of the map induces a connected subgraph; decidable.
+* `Indefinite.SpecificityFunction`: the specific known, specific unknown and non-specific
+  functions, with their embedding `toFunction` in the map and the ones a region covers,
+  `specificityFunctions`.
 * `Indefinite.npiRegion`: the functions of the map in which negative polarity items occur.
 * `Polarity.LicensingContext.haspelmathFunction`: the function a licensing environment realizes.
 * `Indefinite.OntologicalCategory`, `Indefinite.MorphologicalBasis`: the two further dimensions
@@ -123,6 +126,34 @@ def Contiguous (s : Finset HaspelmathFunction) : Prop :=
 
 instance (s : Finset HaspelmathFunction) : Decidable (Contiguous s) :=
   inferInstanceAs (Decidable (implicationalMap.induce (s : Set HaspelmathFunction)).Connected)
+
+/-! ### The specificity functions -/
+
+/-- The three functions at the specific end of the map, which differ in whether the indefinite
+has a specific referent and in whether the speaker can identify it. -/
+inductive SpecificityFunction where
+  | specificKnown
+  | specificUnknown
+  | nonSpecific
+  deriving DecidableEq, Fintype, Repr
+
+/-- The function of the map a specificity function is: the non-specific function is the
+irrealis one. -/
+def SpecificityFunction.toFunction : SpecificityFunction → HaspelmathFunction
+  | .specificKnown => .specificKnown
+  | .specificUnknown => .specificUnknown
+  | .nonSpecific => .irrealis
+
+theorem SpecificityFunction.toFunction_injective : Function.Injective toFunction := by decide
+
+/-- The specificity functions a region of the map covers. -/
+def specificityFunctions (s : Finset HaspelmathFunction) : Finset SpecificityFunction :=
+  Finset.univ.filter (·.toFunction ∈ s)
+
+@[simp]
+theorem mem_specificityFunctions {s : Finset HaspelmathFunction} {u : SpecificityFunction} :
+    u ∈ specificityFunctions s ↔ u.toFunction ∈ s := by
+  simp [specificityFunctions]
 
 /-- The region of the map in which negative polarity items occur: questions, conditionals and
 the two negations. -/

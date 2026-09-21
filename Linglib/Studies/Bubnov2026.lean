@@ -68,8 +68,8 @@ alternatives and variation of it within one of them at once, which cannot be met
 the disjunction is the one requirement that is not convex
 (`DeganoAloni2025.IndefiniteType.not_ordConnected_skPlusNS`). It is also the pattern ABA: its
 profile is the one no connected region of the map covers
-(`DeganoAloni2025.uses_ne_skPlusNS_profile`), and the convex requirements are exactly the
-connected profiles (`DeganoAloni2025.contiguous_profile_iff`). -/
+(`DeganoAloni2025.specificityFunctions_ne_skPlusNS_profile`), and the convex requirements are
+exactly the connected profiles (`DeganoAloni2025.contiguous_profile_iff`). -/
 
 /-! ### Diachrony -/
 
@@ -86,9 +86,9 @@ theorem attested_changes_are_weakenings {V E : Type*} (T : Finset (V → E)) (v 
 non-specific function, at the bottom, and the other gains the specific-unknown function above it.
 No rule that extends coverage in a single direction produces both. -/
 theorem attested_changes_gain_opposite_functions :
-    Use.nonSpecific ∈
+    SpecificityFunction.nonSpecific ∈
         IndefiniteType.epistemic.profile \ IndefiniteType.specificUnknown.profile ∧
-      Use.specificUnknown ∈
+      SpecificityFunction.specificUnknown ∈
         IndefiniteType.epistemic.profile \ IndefiniteType.nonSpecific.profile := by
   decide
 

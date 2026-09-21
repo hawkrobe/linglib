@@ -26,13 +26,13 @@ subteams or under superteams and their conjunction is an intersection of the two
 attested requirements are all convex.
 
 German *irgend-*, Russian *koe-* and *-nibud'*, Kannada *-oo*, Italian *qualche-* and Georgian
-*-γac* instantiate the six attested types: the uses are three of the functions of
+*-γac* instantiate the six attested types: the uses are the three specificity functions of
 [haspelmath-1997]'s map, the non-specific use being the irrealis function, and a series covers
 the uses whose functions lie in the region the book draws for it.
 
 ## Main results
 
-* `Use.exists_renders`, `Use.renders_unique`: the three uses partition the teams.
+* `exists_renders`, `renders_unique`: the three uses partition the teams.
 * `IndefiniteType.requires_iff`: a requirement is the disjunction of the uses of the profile.
 * `forall_renders_imp_requires_iff`: a use entails a requirement exactly when the profile
   lists it.
@@ -60,20 +60,6 @@ open Haspelmath1997 (Series)
 
 /-! ### Uses and types -/
 
-/-- The three uses of an indefinite. -/
-inductive Use where
-  | specificKnown
-  | specificUnknown
-  | nonSpecific
-  deriving DecidableEq, Fintype, Repr
-
-/-- The function on Haspelmath's map a use is: the non-specific use is the irrealis
-function. -/
-def Use.haspelmath : Use → HaspelmathFunction
-  | .specificKnown => .specificKnown
-  | .specificUnknown => .specificUnknown
-  | .nonSpecific => .irrealis
-
 /-- The seven types of indefinite: the restriction a marked indefinite imposes on its uses, the
 unmarked indefinite imposing none. -/
 inductive IndefiniteType where
@@ -89,7 +75,7 @@ inductive IndefiniteType where
 namespace IndefiniteType
 
 /-- The uses a type is built for, the check marks of the table of marked indefinites. -/
-def profile : IndefiniteType → Finset Use
+def profile : IndefiniteType → Finset SpecificityFunction
   | .unmarked => {.specificKnown, .specificUnknown, .nonSpecific}
   | .specific => {.specificKnown, .specificUnknown}
   | .nonSpecific => {.nonSpecific}
@@ -101,7 +87,8 @@ def profile : IndefiniteType → Finset Use
 theorem profile_injective : Function.Injective profile := by decide
 
 /-- The seven types are the seven non-empty sets of uses. -/
-theorem exists_profile_eq {s : Finset Use} (hs : s.Nonempty) : ∃ t, profile t = s := by
+theorem exists_profile_eq {s : Finset SpecificityFunction} (hs : s.Nonempty) :
+    ∃ t, profile t = s := by
   revert s; decide
 
 end IndefiniteType
@@ -110,12 +97,13 @@ end IndefiniteType
 
 section Teams
 
-variable {V E : Type*} {T : Finset (V → E)} {v x : V} {u u' : Use} {t : IndefiniteType}
+variable {V E : Type*} {T : Finset (V → E)} {v x : V} {u u' : SpecificityFunction}
+  {t : IndefiniteType}
 
 /-- The rendering of a use on a team, `v` the world variable and `x` the individual:
 constancy, constancy within a world with variation across the team, and variation within a
 world. -/
-def Use.Renders (T : Finset (V → E)) (v x : V) : Use → Prop
+def Renders (T : Finset (V → E)) (v x : V) : SpecificityFunction → Prop
   | .specificKnown => Dep T ∅ x
   | .specificUnknown => Dep T {v} x ∧ Var T ∅ x
   | .nonSpecific => Var T {v} x
@@ -137,7 +125,8 @@ theorem not_var_of_dep_empty (h : Dep T ∅ x) : ¬ Var T {v} x :=
   (h.mono (Finset.empty_subset _)).not_var
 
 /-- Every team renders some use. -/
-theorem Use.exists_renders (T : Finset (V → E)) (v x : V) : ∃ u : Use, u.Renders T v x := by
+theorem exists_renders (T : Finset (V → E)) (v x : V) :
+    ∃ u : SpecificityFunction, Renders T v x u := by
   by_cases hv : Dep T {v} x
   · by_cases hc : Dep T ∅ x
     · exact ⟨.specificKnown, hc⟩
@@ -145,7 +134,7 @@ theorem Use.exists_renders (T : Finset (V → E)) (v x : V) : ∃ u : Use, u.Ren
   · exact ⟨.nonSpecific, not_dep.1 hv⟩
 
 /-- No team renders two uses. -/
-theorem Use.renders_unique (h : u.Renders T v x) (h' : u'.Renders T v x) : u = u' := by
+theorem renders_unique (h : Renders T v x u) (h' : Renders T v x u') : u = u' := by
   cases u <;> cases u' <;> first
     | rfl
     | exact absurd h'.2 h.not_var
@@ -159,11 +148,11 @@ theorem Use.renders_unique (h : u.Renders T v x) (h' : u'.Renders T v x) : u = u
 the specific and the epistemic type this is the collapse of the disjunction of two adjacent
 uses into a single atom. -/
 theorem IndefiniteType.requires_iff :
-    t.Requires T v x ↔ ∃ u ∈ t.profile, u.Renders T v x := by
+    t.Requires T v x ↔ ∃ u ∈ t.profile, Renders T v x u := by
   have h : Dep T ∅ x → Dep T {v} x := Dep.mono (Finset.empty_subset _)
   cases t <;>
     simp only [Requires, profile, Finset.mem_insert, Finset.mem_singleton, exists_eq_or_imp,
-      exists_eq_left, Use.Renders, ← not_dep] <;>
+      exists_eq_left, Renders, ← not_dep] <;>
     tauto
 
 /-! ### Witnesses
@@ -177,21 +166,21 @@ section Witnesses
 variable [DecidableEq (V → E)] {a b : E}
 
 private theorem renders_unknown (hab : a ≠ b) :
-    Use.specificUnknown.Renders ({fun _ ↦ a, fun _ ↦ b} : Finset (V → E)) v x := by
+    Renders ({fun _ ↦ a, fun _ ↦ b} : Finset (V → E)) v x .specificUnknown := by
   refine ⟨dep_iff.2 ?_, fun _ ↦ a, by simp, fun _ ↦ b, by simp, by simp, hab⟩
   simp [hab, hab.symm]
 
 private theorem renders_nonSpecific [DecidableEq V] (hab : a ≠ b) (hvx : v ≠ x) :
-    Use.nonSpecific.Renders ({fun _ ↦ a, Function.update (fun _ ↦ a) x b} : Finset (V → E))
-      v x :=
+    Renders ({fun _ ↦ a, Function.update (fun _ ↦ a) x b} : Finset (V → E)) v x
+      .nonSpecific :=
   ⟨fun _ ↦ a, by simp, Function.update (fun _ ↦ a) x b, by simp, by simp [hvx],
     by simpa using hab⟩
 
 end Witnesses
 
 /-- Each use has a team, given two individuals and distinct world and individual variables. -/
-theorem Use.exists_team_renders [Nontrivial E] (hvx : v ≠ x) (u : Use) :
-    ∃ T : Finset (V → E), u.Renders T v x := by
+theorem exists_team_renders [Nontrivial E] (hvx : v ≠ x) (u : SpecificityFunction) :
+    ∃ T : Finset (V → E), Renders T v x u := by
   classical
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   cases u
@@ -202,11 +191,11 @@ theorem Use.exists_team_renders [Nontrivial E] (hvx : v ≠ x) (u : Use) :
 /-- The requirements reproduce the profiles: a use entails a type's requirement exactly when
 the type's profile lists it. -/
 theorem forall_renders_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) :
-    (∀ T : Finset (V → E), u.Renders T v x → t.Requires T v x) ↔ u ∈ t.profile := by
+    (∀ T : Finset (V → E), Renders T v x u → t.Requires T v x) ↔ u ∈ t.profile := by
   refine ⟨fun h ↦ ?_, fun hu T hT ↦ IndefiniteType.requires_iff.2 ⟨u, hu, hT⟩⟩
-  obtain ⟨T, hT⟩ := u.exists_team_renders (E := E) hvx
+  obtain ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
   obtain ⟨u', hu', hT'⟩ := IndefiniteType.requires_iff.1 (h T hT)
-  exact Use.renders_unique hT hT' ▸ hu'
+  exact renders_unique hT hT' ▸ hu'
 
 /-- Semantic weakening is inclusion of profiles: one requirement entails another exactly when
 every use of the first type is a use of the second. -/
@@ -214,9 +203,9 @@ theorem forall_requires_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) {t t' : 
     (∀ T : Finset (V → E), t.Requires T v x → t'.Requires T v x) ↔ t.profile ⊆ t'.profile := by
   simp only [IndefiniteType.requires_iff]
   refine ⟨fun h u hu ↦ ?_, fun h T ⟨u, hu, hT⟩ ↦ ⟨u, h hu, hT⟩⟩
-  obtain ⟨T, hT⟩ := u.exists_team_renders (E := E) hvx
+  obtain ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
   obtain ⟨u', hu', hT'⟩ := h T ⟨u, hu, hT⟩
-  exact Use.renders_unique hT hT' ▸ hu'
+  exact renders_unique hT hT' ▸ hu'
 
 /-! ### Convexity -/
 
@@ -247,7 +236,7 @@ theorem IndefiniteType.not_ordConnected_skPlusNS [Nontrivial E] (hvx : v ≠ x) 
           Finset.singleton_subset_iff, true_or, or_true, and_self])))
       ⟨by simp, Finset.insert_subset_insert _ (by simp)⟩
   obtain ⟨u, hu, hT⟩ := requires_iff.1 hmid
-  exact absurd (Use.renders_unique (renders_unknown hab) hT ▸ hu) (by decide)
+  exact absurd (renders_unique (renders_unknown hab) hT ▸ hu) (by decide)
 
 /-- Convexity separates the attested types from the unattested one. -/
 theorem IndefiniteType.ordConnected_requires_iff [Nontrivial E] (hvx : v ≠ x) :
@@ -258,47 +247,42 @@ end Teams
 
 /-! ### The types on the map -/
 
-/-- The uses a region of the map covers. -/
-def uses (s : Finset HaspelmathFunction) : Finset Use := Finset.univ.filter (·.haspelmath ∈ s)
-
-@[simp]
-theorem mem_uses {s : Finset HaspelmathFunction} {u : Use} : u ∈ uses s ↔ u.haspelmath ∈ s := by
-  simp [uses]
-
 /-- A series instantiates the type whose profile is exactly the uses it covers; by
 `IndefiniteType.profile_injective` there is at most one. A series covering none of the three uses
 instantiates no type. -/
-def Instantiates (s : Series) (t : IndefiniteType) : Prop := uses s.functions = t.profile
+def Instantiates (s : Series) (t : IndefiniteType) : Prop :=
+  specificityFunctions s.functions = t.profile
 
 instance (s : Series) (t : IndefiniteType) : Decidable (Instantiates s t) :=
-  inferInstanceAs (Decidable (uses s.functions = t.profile))
+  inferInstanceAs (Decidable (specificityFunctions s.functions = t.profile))
 
 /-- The unattested profile skips the specific unknown function, which lies between the two it
 covers, so no connected region of the map covers exactly its uses. -/
-theorem uses_ne_skPlusNS_profile {s : Finset HaspelmathFunction} (h : Contiguous s) :
-    uses s ≠ IndefiniteType.skPlusNS.profile := fun he ↦ by
-  have hk : Use.specificKnown ∈ uses s := he ▸ by decide
-  have hn : Use.nonSpecific ∈ uses s := he ▸ by decide
-  have hu : Use.specificUnknown ∈ uses s :=
-    mem_uses.2 (Haspelmath1997.specificUnknown_mem_of_irrealis_mem h (mem_uses.1 hk)
-      (mem_uses.1 hn))
+theorem specificityFunctions_ne_skPlusNS_profile {s : Finset HaspelmathFunction}
+    (h : Contiguous s) :
+    specificityFunctions s ≠ IndefiniteType.skPlusNS.profile := fun he ↦ by
+  have hk : SpecificityFunction.specificKnown ∈ specificityFunctions s := he ▸ by decide
+  have hn : SpecificityFunction.nonSpecific ∈ specificityFunctions s := he ▸ by decide
+  have hu : SpecificityFunction.specificUnknown ∈ specificityFunctions s :=
+    mem_specificityFunctions.2 (Haspelmath1997.specificUnknown_mem_of_irrealis_mem h
+      (mem_specificityFunctions.1 hk) (mem_specificityFunctions.1 hn))
   exact absurd (he ▸ hu) (by decide)
 
 /-- The map orders the uses as the meaning space does: a type's uses form a connected region of
 the map exactly when the type is not the unattested one, which is when its requirement is
 convex. -/
 theorem contiguous_profile_iff {t : IndefiniteType} :
-    Contiguous (t.profile.image Use.haspelmath) ↔ t ≠ .skPlusNS := by
+    Contiguous (t.profile.image SpecificityFunction.toFunction) ↔ t ≠ .skPlusNS := by
   cases t <;> decide
 
 /-- The unattested type is unattested in the sample: every series covering one of the three
 uses instantiates an attested type, because it covers a connected region. -/
 theorem sample_instantiates_attested :
-    ∀ p ∈ Haspelmath1997.sample, ∀ s ∈ p, (uses s.functions).Nonempty →
+    ∀ p ∈ Haspelmath1997.sample, ∀ s ∈ p, (specificityFunctions s.functions).Nonempty →
       ∃ t, t ≠ .skPlusNS ∧ Instantiates s t := fun p hp s hs hne ↦
   let ⟨t, ht⟩ := IndefiniteType.exists_profile_eq hne
-  ⟨t, fun h ↦ uses_ne_skPlusNS_profile (Haspelmath1997.sample_contiguous p hp s hs) (h ▸ ht.symm),
-    ht.symm⟩
+  ⟨t, fun h ↦ specificityFunctions_ne_skPlusNS_profile
+    (Haspelmath1997.sample_contiguous p hp s hs) (h ▸ ht.symm), ht.symm⟩
 
 /-- The paper's examples of the six attested types on the map: Italian *qualche-* is unmarked,
 Georgian *-γac* specific, Russian *-nibud'* non-specific, German *irgend-* epistemic, Russian
