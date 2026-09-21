@@ -51,17 +51,19 @@ open Haspelmath1997 (Series english yakut latin kannada)
 
 /-! ### The hierarchy -/
 
-/-- The layer of the hierarchy (4) a function's marker spells out: the non-specific (irrealis)
-function the lowest and the specific known the highest, the other functions of the map lying
-outside the hierarchy. -/
-def layer : HaspelmathFunction → Option (Fin 3)
-  | .irrealis => some 0
-  | .specificUnknown => some 1
-  | .specificKnown => some 2
-  | _ => none
+/-- The layer of the hierarchy (4) a specificity function's marker spells out: the non-specific
+function the lowest and the specific known the highest. -/
+def layer : SpecificityFunction ≃ Fin 3 where
+  toFun
+    | .nonSpecific => 0
+    | .specificUnknown => 1
+    | .specificKnown => 2
+  invFun := ![.nonSpecific, .specificUnknown, .specificKnown]
+  left_inv := by decide
+  right_inv := by decide
 
-/-- The function each layer spells out. -/
-def function : Fin 3 → HaspelmathFunction := ![.irrealis, .specificUnknown, .specificKnown]
+/-- The function of the map each layer spells out. -/
+def function (g : Fin 3) : HaspelmathFunction := (layer.symm g).toFunction
 
 /-- The form of a paradigm at a function, when one series covers it: `none` at a gap or where
 series overlap. -/
