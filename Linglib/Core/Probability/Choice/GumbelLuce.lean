@@ -78,9 +78,8 @@ end GumbelRUM
 /-! ### Binary case: the logistic function -/
 
 /-- **Binary Gumbel RUM = logistic**: for two alternatives the choice
-    probability is `sigmoid ((u 0 - u 1) / β)`. Compare Thurstone Case V
-    (`Processing/Psychophysics/Thurstone.lean`): `Φ((u 0 - u 1)/(σ√2))` for
-    Gaussian noise. By [yellott-1977] the two are indistinguishable on binary
+    probability is `sigmoid ((u 0 - u 1) / β)`. Compare Thurstone Case V,
+    `Φ((u 0 - u 1)/(σ√2))` for Gaussian noise. By [yellott-1977] the two are indistinguishable on binary
     data alone. -/
 theorem rumMaxProb_gumbel_binary (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
     rumMaxProb (gumbelPDFReal 0 β) (fun x => cdf (gumbelMeasure 0 β) x) u 0 =

@@ -28,7 +28,7 @@ The noise distribution determines the choice rule. Three classical results:
 
 The Gumbel ↔ softmax equivalence is McFadden's theorem (proved as
 `rumMaxProb_gumbel_eq_softmax` in `Core.Probability.Choice.GumbelLuce`). The Gaussian
-binary case is Thurstone Case V (`Processing.Psychophysics.Thurstone`); the n-ary
+binary case is Thurstone Case V ([thurstone-1927]); the n-ary
 Gaussian case requires multivariate normal integration and is not yet
 implemented as a `Decoder`.
 
@@ -38,7 +38,7 @@ The `Decoder` interface is the *what* (a probability distribution over
 candidates). `NoiseKernel` is the *why* (a noise distribution that
 induces it via argmax). Two different noise distributions can yield
 the same decoder up to numerical approximation (Gumbel ≈ Gaussian via
-the logistic-Φ approximation, see `Processing.Psychophysics.Thurstone` §4), and the
+the logistic approximation of the normal distribution function), and the
 same noise distribution can yield different decoders at different
 temperatures. Separating the layers lets us state and use those
 correspondences cleanly.
