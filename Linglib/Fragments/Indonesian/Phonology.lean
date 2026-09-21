@@ -1,7 +1,6 @@
 import Linglib.Data.PHOIBLE.Inventories.Indonesian
 import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Segmental.FeatureClass
-import Linglib.Phonology.Subregular.LocalRewrite
+import Linglib.Phonology.NasalSubstitution
 
 /-!
 # Indonesian phonology
@@ -18,7 +17,8 @@ and fusion only at the left edge of the root.
 ## Main definitions
 
 * `consonants`, `vowels`: the phonemes, named by their spelling. `e` is the schwa and `é` is /e/.
-* `assimilate`: each nasal of a word takes the place of a following obstruent.
+* `assimilate`: each nasal of a word takes the place of a following obstruent, by the rules of
+  `Phonology/NasalSubstitution.lean`.
 * `substituting`, `fuse`: the consonants that fuse with the prefix nasal, and the nasal that
   results.
 * `juncture`: what the prefix nasal and the base-initial segment surface as.
@@ -31,14 +31,13 @@ and fusion only at the left edge of the root.
   and the fricatives of loans.
 * `juncture_of_sonorant`, `juncture_of_vowel_or_h`, `juncture_of_obstruent`: the juncture for
   each class of base-initial segment.
-* `assimilate_eq_fuse_cons`: but for *s*, the fused nasal is the assimilated one.
+* `fuse_eq`: the fused nasals are *m*, *n*, *ng* and, for *s*, *ny*.
 
 ## Implementation notes
 
-The place class contains [strident], which the chart specifies on coronals alone, so a nasal
-assimilated to a sibilant comes out [+strident], and `nasalStridency` resets it. That *c* does
-not fuse and that *s* fuses into the palatal *ny* are the two exceptions that McDonnell and
-colleagues list for the standard language. The *menge-* of one-syllable bases is not defined.
+That *c* does not fuse and that *s* fuses into the palatal *ny* are the two exceptions that
+McDonnell and colleagues list for the standard language. The *menge-* of one-syllable bases is
+not defined.
 
 ## References
 
@@ -48,11 +47,10 @@ colleagues list for the standard language. The *menge-* of one-syllable bases is
 * [M. Donohue, *Phonotactics and morphophonology* (2024)][donohue-2024]
 * [J. Pater, *Austronesian nasal substitution revisited: what's wrong with \*NC (and what's
   not)* (2001)][pater-2001]
-* [B. P. Hayes, *Introductory Phonology* (2009)][hayes-2009]
 * [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
 -/
 
-open Phonology Subregular.LocalRewrite Data.PHOIBLE
+open Phonology Data.PHOIBLE
 
 namespace Indonesian.Phonology
 
@@ -158,8 +156,9 @@ theorem exists_mem_ind :
 
 /-! ### Natural classes -/
 
-/-- The obstruents, [+consonantal, −sonorant]. The glottal `h` is [−consonantal]. -/
-def obstruent : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
+/-- The segments that a preceding nasal assimilates to, which are the obstruents. The glottal
+`h` is not consonantal. -/
+def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
 
 /-- The voiceless obstruents. -/
 def voicelessObstruent : Segment :=
@@ -169,42 +168,26 @@ def voicelessObstruent : Segment :=
 glides. -/
 def sonorantConsonant : Segment := Segment.ofSpecs [(.sonorant, true), (.syllabic, false)]
 
-/-- The nasals. -/
-def nasal : Segment := Segment.ofSpecs [(.nasal, true)]
-
 /-! ### Nasal assimilation -/
 
-/-- A nasal takes the place of a following obstruent, in any position of the word. -/
-def nasalAssimilation : Rule where
-  name := "nasal place assimilation"
-  target := nasal
-  effect := .copyRight FeatureClass.place
-  rightContext := [.seg obstruent]
-
-/-- A nasal is not strident. The place class includes [strident], which assimilation to a
-sibilant therefore copies, and this redundancy rule removes. -/
-def nasalStridency : Rule where
-  name := "nasal stridency"
-  target := Segment.ofSpecs [(.nasal, true), (.strident, true)]
-  effect := .changeFeatures (Segment.ofSpecs [(.strident, false)])
-
 /-- `assimilate w` is the word `w` with each nasal assimilated to a following obstruent. -/
-def assimilate : List Segment → List Segment := derive [nasalAssimilation, nasalStridency]
+def assimilate : List Segment → List Segment := NasalSubstitution.assimilate trigger ng
 
 /-! ### Nasal substitution -/
 
 /-- The root-initial consonants that fuse with the prefix nasal. -/
 def substituting : Finset Segment := {p, t, k, s}
 
-/-- The nasal in which the prefix nasal and a root-initial `x` fuse, which has the place of `x`,
+/-- What the prefix nasal and a root-initial `x` fuse into, which is the assimilated nasal,
 except that with `s` it is the palatal `ny`. -/
-def fuse (x : Segment) : Segment := if x = s then ny else FeatureClass.place.piecewise x ng
+def fuse (x : Segment) : List Segment :=
+  if x = s then [ny] else NasalSubstitution.substitute trigger ng x
 
 /-- What the prefix nasal and the base-initial segment `x` surface as. A substituting
 consonant fuses with the nasal, the nasal is lost before a sonorant consonant, and otherwise it
 assimilates. -/
 def juncture (x : Segment) : List Segment :=
-  if x ∈ substituting then [fuse x]
+  if x ∈ substituting then fuse x
   else if sonorantConsonant ≤ x then [x]
   else assimilate [ng, x]
 
@@ -237,7 +220,7 @@ theorem voicelessObstruents_sdiff_substituting :
 
 /-- A substituting consonant is replaced by one nasal. -/
 theorem juncture_of_mem_substituting {x : Segment} (hx : x ∈ substituting) :
-    juncture x = [fuse x] := by
+    juncture x = fuse x := by
   simp only [juncture, hx, ↓reduceIte]
 
 /-- The nasal is lost before a nasal, a liquid or a glide. -/
@@ -250,26 +233,20 @@ theorem juncture_of_vowel_or_h : ∀ x ∈ insert h vowels, juncture x = [ng, x]
 
 /-- Before an obstruent that does not substitute, the nasal and the obstruent both surface. -/
 theorem juncture_of_obstruent :
-    ∀ x ∈ consonants, obstruent ≤ x → x ∉ substituting → juncture x = assimilate [ng, x] := by
+    ∀ x ∈ consonants, x.IsObstruent → x ∉ substituting → juncture x = assimilate [ng, x] := by
   decide
 
 /-- Before every obstruent but `s` the nasal at the juncture is a nasal that agrees with the
 obstruent in every place feature but [strident]. -/
 theorem juncture_head_agrees :
-    ∀ x ∈ consonants, obstruent ≤ x → x ≠ s →
-      ∀ N ∈ (juncture x).head?, nasal ≤ N ∧ ∀ ft ∈ FeatureClass.place.erase .strident,
-        N ft = x ft := by
-  decide
-
-/-- But for `s`, the fused nasal is the one that assimilation gives, so substitution is
-assimilation together with the loss of the obstruent. -/
-theorem assimilate_eq_fuse_cons :
-    ∀ x ∈ substituting, x ≠ s → assimilate [ng, x] = [fuse x, x] := by
+    ∀ x ∈ consonants, x.IsObstruent → x ≠ s →
+      ∀ N ∈ (juncture x).head?, N.IsNasal ∧
+        ∀ ft ∈ FeatureClass.place.erase .strident, N ft = x ft := by
   decide
 
 /-- The fused nasals are phonemes, the nasal of the place of each stop and the palatal for
 `s`. -/
-theorem fuse_eq : fuse p = m ∧ fuse t = n ∧ fuse k = ng ∧ fuse s = ny := by
+theorem fuse_eq : fuse p = [m] ∧ fuse t = [n] ∧ fuse k = [ng] ∧ fuse s = [ny] := by
   decide
 
 /-- Where `s` is kept the nasal before it is alveolar, as in *mensukseskan*. -/
@@ -278,8 +255,9 @@ theorem junctureRetained_s : junctureRetained s = [n, s] := by
 
 /-- The place class alone makes the nasal before `s` strident, and the redundancy rule
 restores `n`. -/
-theorem nasalAssimilation_s :
-    nasalAssimilation.apply [ng, s] = [n.setFeature .strident true, s] ∧
+theorem placeAssimilation_s :
+    (NasalSubstitution.placeAssimilation trigger).apply [ng, s]
+        = [n.setFeature .strident true, s] ∧
       assimilate [ng, s] = [n, s] := by
   decide
 
