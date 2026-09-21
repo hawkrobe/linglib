@@ -54,6 +54,8 @@ Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `
   exceptional scope over negation and conditionals, feeding anaphora, and the Binder Roof
   Constraint
 * `monadLift_layered`, `indef_visits_indef_layered` — selective exceptional scope via layering
+* `or_over_every`, `or_or_names` — disjunction over a universal whose indefinites stay under it,
+  and higher-order disjunctive programs
 * `name_dref_inverse`, `dynGQ_neg` — name drefs and maximal drefs escape islands
 * `Focus.only_focus_layered`, `Focus.also_only_focus_layered` — selective association with focus
 * `island_cond_every` — a universal does not scope out of a Reset antecedent
@@ -78,8 +80,7 @@ Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `
 ## TODO
 
 * Relative-clause islands (`Examples.ex4_2a`), the second Binder Roof datum with layered DPs
-  (`Examples.ex4_6`), donkey disjunction (`Examples.ex4_25b`), the full derivation of
-  `Examples.ex4_24b` with the universal, higher-order disjunctive programs, the restrictor drefs of
+  (`Examples.ex4_6`), donkey disjunction (`Examples.ex4_25b`), the restrictor drefs of
   dynamic generalized quantifiers (`Examples.ex5_22`), and selective association with focus across
   islands.
 * Determiners composed as tripartite towers need an indexed continuation transformer, and the
@@ -756,12 +757,39 @@ theorem or_subparts (me a c : E) (see hear : E → E → Prop) :
   funext s; ext q; simp [combine, ContT.eval]
 
 /-- Disjunction and the BRC (4.29): disjoining externally lifted indefinites puts program
-disjunction above the continuation and the indefinites below it, the step behind the reading of
-`Examples.ex4_24b` with `or` over `everyone` and each indefinite under it. -/
+disjunction above the continuation and the indefinites below it. -/
 theorem or_pure_pure (steak burger : E → Prop) :
     or (pure (monadLift (indef steak)) : Tower E Prop (Tower E Prop E))
       (pure (monadLift (indef burger))) =
       fun c ↦ c (monadLift (indef steak)) <|> c (monadLift (indef burger)) := rfl
+
+/-- Either everyone ate a steak or a hamburger (`Examples.ex4_24b`): with `everyone` externally
+lifted beside the disjunction of (4.29), the universal outscopes each indefinite and not the
+disjunction's nondeterminism, which lives on the top level. -/
+theorem or_over_every (person steak burger : E → Prop) (ate : E → E → Prop) :
+    eval₂ (combine (combine (fun x f ↦ f x))
+      (pure (everyDP person) : Tower E Prop (Tower E Prop E))
+      (combine (combine (· ·)) (pure (liftValue ate))
+        (or (pure (monadLift (indef steak))) (pure (monadLift (indef burger)))))) =
+      (pure (∀ y, person y → ∃ x, steak x ∧ ate x y) <|>
+        pure (∀ y, person y → ∃ x, burger x ∧ ate x y)) := by
+  funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
+
+/-- Someone ate every steak or every burger (4.30): disjoining internally lifted universals puts
+their scopal effects, with the disjunction, on the top level. -/
+theorem or_map_pure_every (steak burger : E → Prop) :
+    or (pure <$> everyDP steak : Tower E Prop (Tower E Prop E)) (pure <$> everyDP burger) =
+      fun c ↦ (everyDP steak).run (fun x ↦ c (pure x)) <|>
+        (everyDP burger).run (fun x ↦ c (pure x)) := rfl
+
+/-- Mary or John or Bill (4.31), a higher-order disjunctive program: the disjunction of Mary and
+John is lifted and disjoined with Bill, and lowering twice leaves the layering `{{m, j}, b}`. -/
+theorem or_or_names (m j b : E) :
+    ContT.eval (ContT.eval <$>
+      or (pure (or (liftValue m) (liftValue j)) : Tower E (StateSet E E) (Tower E E E))
+        (pure (liftValue b))) =
+      (pure (pure m <|> pure j) <|> pure (pure b)) := by
+  funext s; ext q; simp [ContT.eval]
 
 /-! ### Drefs of proper names take exceptional scope
 
