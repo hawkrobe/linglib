@@ -29,8 +29,10 @@ in the region the book draws for it. Their forms are whole pronouns where the pa
 markers, so the theorems over them compare coverage patterns and the paper's marker tables are
 rows; a layer's form is the one series covering its function, `none` at a gap or where series
 overlap. The paper's Russian row has the three series that divide the hierarchy and not
-*-libo*, which the book draws over the non-specific function beside *-nibud'*. The derivations
-of prefixes and suffixes in §4.2 are not modelled.
+*-libo*, which the book draws over the non-specific function beside *-nibud'*; the book draws
+*-to* over that function too, so Russian's coverage has no single non-specific form and its
+ABC pattern is the work of the Elsewhere Principle (`russian_elsewhere`). The derivations of
+prefixes and suffixes in §4.2 are not modelled.
 
 ## References
 
@@ -90,24 +92,29 @@ def russian : List Series :=
 /-! ### Syncretism and its absence -/
 
 /-- The syncretism patterns of Table 1 from the paradigms' coverage of the map: English AAA,
-Yakut ABB, Latin AAB and Russian ABC. -/
+Yakut ABB and Latin AAB. -/
 theorem map_syncretism :
     syncretism (pattern english) = syncretism Paradigm.aaa ∧
       syncretism (pattern yakut) = syncretism Paradigm.abb ∧
-      syncretism (pattern latin) = syncretism Paradigm.aab ∧
-      syncretism (pattern russian) = syncretism Paradigm.abc := by
+      syncretism (pattern latin) = syncretism Paradigm.aab := by
   decide
 
-/-- With *-libo* beside *-nibud'* the non-specific layer of Russian has no single form. -/
-theorem libo_overlap : pattern Haspelmath1997.russian 0 = none := by decide
+/-- Russian's ABC is the Elsewhere Principle at work: *-to* covers the non-specific function
+beside *-nibud'*, so coverage gives that layer no single form, and the lexicon, storing *-to* at
+the specific unknown layer, gives it to the smaller match *-nibud'*. -/
+theorem russian_elsewhere :
+    pattern russian 0 = none ∧
+      spellout (lexicon russian) = ![some "kto-nibud'", some "kto-to", some "koe-kto"] ∧
+      syncretism (spellout (lexicon russian)) = syncretism Paradigm.abc := by
+  decide
 
 /-- Kannada's paradigm has a gap at the specific known layer. -/
 theorem kannada_gap : pattern kannada 2 = none := by decide
 
 /-- The lexicon read off each paradigm reproduces its coverage of the three functions by
-spellout: (59) English, (63) Russian, (67) Yakut, (70) Latin, and Kannada with its gap. -/
+spellout: (59) English, (67) Yakut, (70) Latin, and Kannada with its gap. -/
 theorem spellout_lexicon :
-    ∀ p ∈ [english, russian, yakut, latin, kannada], spellout (lexicon p) = pattern p := by
+    ∀ p ∈ [english, yakut, latin, kannada], spellout (lexicon p) = pattern p := by
   decide
 
 /-- The Elsewhere Principle rules out ABA, (48): spellout is contiguous, so a marker spelling

@@ -31,7 +31,7 @@ adjacency requirement (`sample_contiguous`) and the overlap of series that the b
 contrast-based accounts of grammatical meaning (`sample_overlap`). The book's examples for
 fourteen of the languages are the rows of `Data/Examples/Haspelmath1997.json`, one row for each
 variant the book prints in a line; the figures cover the acceptable rows and exclude the starred
-ones (`acceptable_covers`, `ungrammatical_excludes`), with one idealization (`to_irrealis`).
+ones (`acceptable_covers`, `ungrammatical_excludes`).
 
 ## Implementation notes
 
@@ -48,10 +48,10 @@ the Italian determiner *qualsiasi*) are omitted, so a paradigm need not cover al
 functions.
 
 A `Series` pairs a pronoun with the region its Appendix A figure encloses. The region is the
-book's analysis of the series and not a lexical property of the pronoun: a figure idealizes
-(Russian *-to* is drawn as specific unknown alone, while the book's own example of *kogo-to*
-under *xočet* 'wants' finds its non-specific reading possible beside the preferred *-nibud'*)
-and fills cells the book has no data for on the strength of the map (Yakut *da* and Mandarin
+book's analysis of the series and not a lexical property of the pronoun: a figure records
+where a series is possible and not where it is preferred (Russian *-to* is drawn over the
+functions of *-nibud'*, which is preferred there), and it fills cells the book has no data for
+on the strength of the map (Yakut *da* and Mandarin
 bare interrogatives under indirect negation, the Swahili comparative). For those cells
 `sample_contiguous` restates the map; it tests the adjacency requirement on the others. The
 pronouns of English, German, Kannada, Latin, Russian and Yakut are their Fragments' entries.
@@ -209,12 +209,13 @@ def english : List Series :=
     ⟨"any-", English.Indefinites.anyEntry, region [4, 5, 6, 7, 8, 9]⟩,
     ⟨"no-", English.Indefinites.noEntry, region [7]⟩ ]
 
-/-- Russian (A.16): *koe-* 1, *-to* 2, *-nibud'* 345, *-libo* 34568, *by to ni bylo* 568,
-*ni-* 7, *ugodno* and the determiner *ljuboj* 9; the *-to*-series is mainly specific, and *-libo* replaces *-nibud'* under
-indirect negation and in comparatives. -/
+/-- Russian (A.16): *koe-* 1, *-to* 2345, *-nibud'* 345, *-libo* 34568, *by to ni bylo* 568,
+*ni-* 7, *ugodno* and the determiner *ljuboj* 9. The *-to*-series is mainly used specifically
+but is not excluded from the functions of *-nibud'*, where *-nibud'* is preferred; *-libo*
+replaces *-nibud'* under indirect negation and in comparatives. -/
 def russian : List Series :=
   [ ⟨"koe-", Russian.Indefinites.koeEntry, region [1]⟩,
-    ⟨"-to", Russian.Indefinites.toEntry, region [2]⟩,
+    ⟨"-to", Russian.Indefinites.toEntry, region [2, 3, 4, 5]⟩,
     ⟨"-nibud'", Russian.Indefinites.nibudEntry, region [3, 4, 5]⟩,
     ⟨"-libo", Russian.Indefinites.liboEntry, region [3, 4, 5, 6, 8]⟩,
     ⟨"by to ni bylo", Russian.Indefinites.byToNiByloEntry, region [5, 6, 8]⟩,
@@ -270,7 +271,10 @@ def mandarin : List Series :=
     series "yě" "shéi yě" .interrogative [7],
     series "rènhé" "rènhé" .special [6, 7, 8, 9] .determiner ]
 
-/-- Turkish (A.23): *bir-* 1234567, *hiç* 467, *herhangi* 23456789. -/
+/-- Turkish (A.23): *bir-* 1234567, *hiç* 467, *herhangi* 23456789. The figure starts the
+*herhangi* outline at irrealis non-specific; the text admits either series in every function
+from specific unknown to direct negation and gives *herhangi biri* as a specific-unknown
+example, and the region follows the text. -/
 def turkish : List Series :=
   [ series "bir-" "biri(si)" .genericNoun [1, 2, 3, 4, 5, 6, 7],
     series "hiç" "hiç kimse" .genericNoun [4, 6, 7],
@@ -313,10 +317,10 @@ def hungarian : List Series :=
     series "akár-" "akárki" .interrogative [5, 6, 8, 9],
     series "bár-" "bárki" .interrogative [5, 6, 8, 9] ]
 
-/-- Georgian (A.34): *-yac* 12, *-me* 34568, *ara-* 7; free choice is expressed by the adjective
+/-- Georgian (A.34): *-γac* 12, *-me* 34568, *ara-* 7; free choice is expressed by the adjective
 *nebismieri*, not an indefinite pronoun. -/
 def georgian : List Series :=
-  [ series "-yac" "vi-yac" .interrogative [1, 2],
+  [ series "-γac" "vi-γac" .interrogative [1, 2],
     series "-me" "vin-me" .interrogative [3, 4, 5, 6, 8],
     series "ara-" "ara-vin" .interrogative [7] ]
 
@@ -412,16 +416,9 @@ instance (e : LinguisticExample) (label : String) : Decidable (Excludes e label)
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
 /-- The figures cover the book's examples: every acceptable example lies in the region drawn
-for each of its series, but for *kogo-to* under *xočet* 'wants'. -/
+for each of its series. -/
 theorem acceptable_covers :
-    ∀ e ∈ Examples.all, e.judgment = .acceptable → e ≠ Examples.ru_A124b_to →
-      ∀ l ∈ seriesLabels e, Covers e l := by
-  decide +kernel
-
-/-- The figure for Russian idealizes: the non-specific reading of *kogo-to* is possible beside
-the preferred *-nibud'*, and the figure draws *-to* as specific unknown alone. -/
-theorem to_irrealis :
-    Examples.ru_A124b_to.judgment = .acceptable ∧ Excludes Examples.ru_A124b_to "-to" := by
+    ∀ e ∈ Examples.all, e.judgment = .acceptable → ∀ l ∈ seriesLabels e, Covers e l := by
   decide +kernel
 
 /-- The figures exclude what the book stars: every example starred out of context lies outside

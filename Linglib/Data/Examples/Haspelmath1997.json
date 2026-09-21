@@ -544,6 +544,70 @@
     "lgrConformance": ""
   },
   {
+    "id": "haspelmath1997_de_A1a_etwas",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A1a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich habe etwas verloren. Rate mal, was!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I lost something. Guess what!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "etwas-"
+      ]
+    ],
+    "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_de_A1a_irgend",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A1a)"
+    },
+    "language": "stan1295",
+    "primaryText": "Ich habe irgend etwas verloren. Rate mal, was!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I lost something. Guess what!",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.1"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "irgend-"
+      ]
+    ],
+    "comment": "The etwas-series can always be replaced by the irgend-series, except in the specific-known function.",
+    "lgrConformance": ""
+  },
+  {
     "id": "haspelmath1997_de_A1b_etwas",
     "source": {
       "bibkey": "haspelmath-1997",
@@ -617,7 +681,7 @@
     "primaryText": "Sie möchte jemanden mit schwarzen Haaren heiraten.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She wants to marry someone (non-specific or specific) with black hair.",
+    "translation": "She wants to marry someone [non-specific/specific] with black hair.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -649,7 +713,7 @@
     "primaryText": "Sie möchte irgend jemanden mit schwarzen Haaren heiraten.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She wants to marry someone (non-specific or specific) with black hair.",
+    "translation": "She wants to marry someone [non-specific/specific] with black hair.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1196,7 +1260,7 @@
         "irgend-"
       ]
     ],
-    "comment": "The indirect-negation use is what makes jeder an indefinite rather than only a distributive universal.",
+    "comment": "",
     "lgrConformance": ""
   },
   {
@@ -1324,7 +1388,7 @@
         "n-"
       ]
     ],
-    "comment": "",
+    "comment": "The second indefinite, in the scope of niemandem, is from the etwas-series.",
     "lgrConformance": ""
   },
   {
@@ -1356,7 +1420,7 @@
         "n-"
       ]
     ],
-    "comment": "",
+    "comment": "The second indefinite, in the scope of niemandem, is from the irgend-series.",
     "lgrConformance": ""
   },
   {
@@ -1452,7 +1516,7 @@
         "qualche-"
       ]
     ],
-    "comment": "Imperative.",
+    "comment": "Imperative. The book's translation reads 'Buy something for your niece.'",
     "lgrConformance": ""
   },
   {
@@ -2110,7 +2174,7 @@
     "primaryText": "Ona xočet vyjti zamuž za kogo-to iz Ameriki.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She wants to marry someone (specific) from America.",
+    "translation": "She wants to marry someone [specific] from America.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2142,7 +2206,7 @@
     "primaryText": "Ona xočet vyjti zamuž za kogo-nibud' iz Ameriki.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She wants to marry someone (non-specific) from America.",
+    "translation": "She wants to marry someone [non-specific] from America.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2174,7 +2238,7 @@
     "primaryText": "Ona xočet vyjti zamuž za kogo-to iz Ameriki.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She wants to marry someone (non-specific) from America.",
+    "translation": "She wants to marry someone [non-specific] from America.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2257,7 +2321,7 @@
         "by to ni bylo"
       ]
     ],
-    "comment": "-nibud' is not possible in the comparative or indirect-negation functions.",
+    "comment": "",
     "lgrConformance": ""
   },
   {
@@ -2619,9 +2683,50 @@
       "paperLabel": "(A167)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ne fon kiyaa thaa, par mai tumhe nahii bataaugii, kis-ne.",
+    "primaryText": "Kisii-ne fon kiy-aa thaa, par mãĩ tumhẽ nahĩ bataaũgii, kis-ne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kisii-ne",
+        "someone-ERG"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kiy-aa",
+        "do-PFV"
+      ],
+      [
+        "thaa",
+        "was"
+      ],
+      [
+        "par",
+        "but"
+      ],
+      [
+        "mãĩ",
+        "I"
+      ],
+      [
+        "tumhẽ",
+        "you"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "bataaũgii",
+        "I:will:tell"
+      ],
+      [
+        "kis-ne",
+        "who-ERG"
+      ]
+    ],
     "translation": "Someone has phoned, but I won't tell you who.",
     "context": "",
     "judgment": "acceptable",
@@ -2641,8 +2746,8 @@
         "koii"
       ]
     ],
-    "comment": "Specific known and specific unknown alike.",
-    "lgrConformance": ""
+    "comment": "The heading is specific-known/unknown.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A167_unknown",
@@ -2651,9 +2756,46 @@
       "paperLabel": "(A167)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ne fon kiyaa thaa, par mujhe nahii maaluum, kis-ne.",
+    "primaryText": "Kisii-ne fon kiy-aa thaa, par mujhe nahĩ maaluum, kis-ne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kisii-ne",
+        "someone-ERG"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kiy-aa",
+        "do-PFV"
+      ],
+      [
+        "thaa",
+        "was"
+      ],
+      [
+        "par",
+        "but"
+      ],
+      [
+        "mujhe",
+        "I:DAT"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "maaluum",
+        "known"
+      ],
+      [
+        "kis-ne",
+        "who-ERG"
+      ]
+    ],
     "translation": "Someone has phoned, but I don't know who.",
     "context": "",
     "judgment": "acceptable",
@@ -2674,7 +2816,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A167_bhii",
@@ -2683,10 +2825,55 @@
       "paperLabel": "(A167)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ne bhii fon kiyaa thaa.",
+    "primaryText": "Kisii-ne bhii fon kiy-aa thaa, par mãĩ tumhẽ nahĩ bataaũgii, kis-ne.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Someone has phoned.",
+    "glossedTokens": [
+      [
+        "Kisii-ne",
+        "someone-ERG"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kiy-aa",
+        "do-PFV"
+      ],
+      [
+        "thaa",
+        "was"
+      ],
+      [
+        "par",
+        "but"
+      ],
+      [
+        "mãĩ",
+        "I"
+      ],
+      [
+        "tumhẽ",
+        "you"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "bataaũgii",
+        "I:will:tell"
+      ],
+      [
+        "kis-ne",
+        "who-ERG"
+      ]
+    ],
+    "translation": "Someone has phoned, but I won't tell you who.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -2705,8 +2892,81 @@
         "bhii"
       ]
     ],
-    "comment": "The bhii-series is excluded from the specific functions.",
-    "lgrConformance": ""
+    "comment": "The book stars bhii before both continuations.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_hi_A167_bhii_unknown",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A167)"
+    },
+    "language": "hind1269",
+    "primaryText": "Kisii-ne bhii fon kiy-aa thaa, par mujhe nahĩ maaluum, kis-ne.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Kisii-ne",
+        "someone-ERG"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kiy-aa",
+        "do-PFV"
+      ],
+      [
+        "thaa",
+        "was"
+      ],
+      [
+        "par",
+        "but"
+      ],
+      [
+        "mujhe",
+        "I:DAT"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "maaluum",
+        "known"
+      ],
+      [
+        "kis-ne",
+        "who-ERG"
+      ]
+    ],
+    "translation": "Someone has phoned, but I don't know who.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.22"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "bhii"
+      ]
+    ],
+    "comment": "The book stars bhii before both continuations.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A168_koii",
@@ -2715,9 +2975,42 @@
       "paperLabel": "(A168)"
     },
     "language": "hind1269",
-    "primaryText": "Mujhe nahii lagtaa hai ki kal koii aaegaa.",
+    "primaryText": "Mujhe nahĩ lag-taa hai ki kal koii aaege.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mujhe",
+        "I:DAT"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "lag-taa",
+        "seem-IMPF"
+      ],
+      [
+        "hai",
+        "is"
+      ],
+      [
+        "ki",
+        "that"
+      ],
+      [
+        "kal",
+        "tomorrow"
+      ],
+      [
+        "koii",
+        "someone"
+      ],
+      [
+        "aaege",
+        "he:will:come"
+      ]
+    ],
     "translation": "It doesn't seem to me that anyone will come tomorrow.",
     "context": "",
     "judgment": "acceptable",
@@ -2738,7 +3031,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A168_bhii",
@@ -2747,9 +3040,46 @@
       "paperLabel": "(A168)"
     },
     "language": "hind1269",
-    "primaryText": "Mujhe nahii lagtaa hai ki kal koii bhii aaegaa.",
+    "primaryText": "Mujhe nahĩ lag-taa hai ki kal koii bhii aaege.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mujhe",
+        "I:DAT"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "lag-taa",
+        "seem-IMPF"
+      ],
+      [
+        "hai",
+        "is"
+      ],
+      [
+        "ki",
+        "that"
+      ],
+      [
+        "kal",
+        "tomorrow"
+      ],
+      [
+        "koii",
+        "someone"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "aaege",
+        "he:will:come"
+      ]
+    ],
     "translation": "It doesn't seem to me that anyone will come tomorrow.",
     "context": "",
     "judgment": "acceptable",
@@ -2770,7 +3100,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A169a_koii",
@@ -2779,9 +3109,30 @@
       "paperLabel": "(A169a)"
     },
     "language": "hind1269",
-    "primaryText": "Ghar me koii nahii hai.",
+    "primaryText": "Ghar mẽ koii nahĩ hai.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ghar",
+        "house"
+      ],
+      [
+        "mẽ",
+        "in"
+      ],
+      [
+        "koii",
+        "someone"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "hai",
+        "is"
+      ]
+    ],
     "translation": "No one is at home.",
     "context": "",
     "judgment": "acceptable",
@@ -2802,7 +3153,7 @@
       ]
     ],
     "comment": "Under direct negation the bhii-series seems to be preferred.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A169a_bhii",
@@ -2811,9 +3162,34 @@
       "paperLabel": "(A169a)"
     },
     "language": "hind1269",
-    "primaryText": "Ghar me koii bhii nahii hai.",
+    "primaryText": "Ghar mẽ koii bhii nahĩ hai.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ghar",
+        "house"
+      ],
+      [
+        "mẽ",
+        "in"
+      ],
+      [
+        "koii",
+        "someone"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "hai",
+        "is"
+      ]
+    ],
     "translation": "No one at all is at home.",
     "context": "",
     "judgment": "acceptable",
@@ -2834,7 +3210,7 @@
       ]
     ],
     "comment": "Under direct negation the bhii-series seems to be preferred.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A169b",
@@ -2843,9 +3219,26 @@
       "paperLabel": "(A169b)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ne kuch nahii dekhaa.",
+    "primaryText": "Kisii-ne kuch nahĩ dekh-aa.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kisii-ne",
+        "someone-ERG"
+      ],
+      [
+        "kuch",
+        "something"
+      ],
+      [
+        "nahĩ",
+        "NEG"
+      ],
+      [
+        "dekh-aa",
+        "see-PFV"
+      ]
+    ],
     "translation": "Nobody saw anything. (Or: Someone saw nothing.)",
     "context": "",
     "judgment": "acceptable",
@@ -2866,7 +3259,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A170a_koii",
@@ -2875,9 +3268,34 @@
       "paperLabel": "(A170a)"
     },
     "language": "hind1269",
-    "primaryText": "Wah kisii-ko fon karnaa caahtii hai.",
+    "primaryText": "Wah kisii-ko fon kar-naa caah-tii hai.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Wah",
+        "she"
+      ],
+      [
+        "kisii-ko",
+        "someone-DAT"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kar-naa",
+        "do-INF"
+      ],
+      [
+        "caah-tii",
+        "want-IMPF"
+      ],
+      [
+        "hai",
+        "is"
+      ]
+    ],
     "translation": "She wants to phone someone (specific or non-specific).",
     "context": "",
     "judgment": "acceptable",
@@ -2898,7 +3316,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A170a_bhii",
@@ -2907,9 +3325,38 @@
       "paperLabel": "(A170a)"
     },
     "language": "hind1269",
-    "primaryText": "Wah kisii-ko bhii fon karnaa caahtii hai.",
+    "primaryText": "Wah kisii-ko bhii fon kar-naa caah-tii hai.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Wah",
+        "she"
+      ],
+      [
+        "kisii-ko",
+        "someone-DAT"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kar-naa",
+        "do-INF"
+      ],
+      [
+        "caah-tii",
+        "want-IMPF"
+      ],
+      [
+        "hai",
+        "is"
+      ]
+    ],
     "translation": "She wants to phone someone (non-specific).",
     "context": "",
     "judgment": "acceptable",
@@ -2930,7 +3377,7 @@
       ]
     ],
     "comment": "In irrealis contexts the bhii-series is always non-specific.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A170b_koii",
@@ -2939,9 +3386,22 @@
       "paperLabel": "(A170b)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ko fon karo!",
+    "primaryText": "Kisii-ko fon kar-o!",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kisii-ko",
+        "someone-DAT"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kar-o",
+        "do-IMPV"
+      ]
+    ],
     "translation": "Phone someone!",
     "context": "",
     "judgment": "acceptable",
@@ -2962,7 +3422,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A170b_bhii",
@@ -2971,9 +3431,26 @@
       "paperLabel": "(A170b)"
     },
     "language": "hind1269",
-    "primaryText": "Kisii-ko bhii fon karo!",
+    "primaryText": "Kisii-ko bhii fon kar-o!",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kisii-ko",
+        "someone-DAT"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kar-o",
+        "do-IMPV"
+      ]
+    ],
     "translation": "Phone someone!",
     "context": "",
     "judgment": "acceptable",
@@ -2994,7 +3471,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A171a_koii",
@@ -3003,9 +3480,26 @@
       "paperLabel": "(A171a)"
     },
     "language": "hind1269",
-    "primaryText": "Kyaa aap-ne kisii-ko dekhaa?",
+    "primaryText": "Kyaa aap-ne kisii-ko dekh-aa?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kyaa",
+        "Q"
+      ],
+      [
+        "aap-ne",
+        "you-ERG"
+      ],
+      [
+        "kisii-ko",
+        "someone-DAT"
+      ],
+      [
+        "dekh-aa",
+        "see-PFV"
+      ]
+    ],
     "translation": "Did you see somebody/anybody?",
     "context": "",
     "judgment": "acceptable",
@@ -3026,7 +3520,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A171a_bhii",
@@ -3035,9 +3529,30 @@
       "paperLabel": "(A171a)"
     },
     "language": "hind1269",
-    "primaryText": "Kyaa aap-ne kisii-ko bhii dekhaa?",
+    "primaryText": "Kyaa aap-ne kisii-ko bhii dekh-aa?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kyaa",
+        "Q"
+      ],
+      [
+        "aap-ne",
+        "you-ERG"
+      ],
+      [
+        "kisii-ko",
+        "someone"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "dekh-aa",
+        "see-PFV"
+      ]
+    ],
     "translation": "Did you see somebody/anybody?",
     "context": "",
     "judgment": "acceptable",
@@ -3058,7 +3573,7 @@
       ]
     ],
     "comment": "The bhii-series is more emphatic in questions and conditionals.",
-    "lgrConformance": ""
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A171b_koii",
@@ -3069,7 +3584,32 @@
     "language": "hind1269",
     "primaryText": "Agar koii fon kare, mujhe bataanaa.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Agar",
+        "if"
+      ],
+      [
+        "koii",
+        "someone"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kare",
+        "calls"
+      ],
+      [
+        "mujhe",
+        "I:DAT"
+      ],
+      [
+        "bataanaa",
+        "tell"
+      ]
+    ],
     "translation": "If anybody calls, tell me.",
     "context": "",
     "judgment": "acceptable",
@@ -3090,7 +3630,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A171b_bhii",
@@ -3101,7 +3641,36 @@
     "language": "hind1269",
     "primaryText": "Agar koii bhii fon kare, mujhe bataanaa.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Agar",
+        "if"
+      ],
+      [
+        "koii",
+        "someone"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "fon",
+        "phone"
+      ],
+      [
+        "kare",
+        "calls"
+      ],
+      [
+        "mujhe",
+        "I:DAT"
+      ],
+      [
+        "bataanaa",
+        "tell"
+      ]
+    ],
     "translation": "If anybody at all calls, tell me.",
     "context": "",
     "judgment": "acceptable",
@@ -3122,7 +3691,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A172",
@@ -3131,9 +3700,62 @@
       "paperLabel": "(A172)"
     },
     "language": "hind1269",
-    "primaryText": "Yeh larkaa apne vidyaalay ke kisii bhii larke se zyaadaa tez daurtaa hai.",
+    "primaryText": "Yeh laṛkaa apne vidyaalay ke kisii bhii laṛke se zyaada tez dauṛ-taa hai.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Yeh",
+        "this"
+      ],
+      [
+        "laṛkaa",
+        "boy"
+      ],
+      [
+        "apne",
+        "his"
+      ],
+      [
+        "vidyaalay",
+        "class"
+      ],
+      [
+        "ke",
+        "of"
+      ],
+      [
+        "kisii",
+        "someone"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "laṛke",
+        "boy"
+      ],
+      [
+        "se",
+        "from"
+      ],
+      [
+        "zyaada",
+        "more"
+      ],
+      [
+        "tez",
+        "fast"
+      ],
+      [
+        "dauṛ-taa",
+        "run-IMPF"
+      ],
+      [
+        "hai",
+        "is"
+      ]
+    ],
     "translation": "This boy runs faster than anyone in his class.",
     "context": "",
     "judgment": "acceptable",
@@ -3154,7 +3776,7 @@
       ]
     ],
     "comment": "The comparative and free-choice functions are expressed only by the bhii-series.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hi_A173",
@@ -3163,9 +3785,38 @@
       "paperLabel": "(A173)"
     },
     "language": "hind1269",
-    "primaryText": "Ghar me koii bhii aa saktaa hai.",
+    "primaryText": "Ghar mẽ koii bhii aa sak-taa hai.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ghar",
+        "house"
+      ],
+      [
+        "mẽ",
+        "in"
+      ],
+      [
+        "koii",
+        "someone"
+      ],
+      [
+        "bhii",
+        "INDEF"
+      ],
+      [
+        "aa",
+        "come"
+      ],
+      [
+        "sak-taa",
+        "can-IMPF"
+      ],
+      [
+        "hai",
+        "is"
+      ]
+    ],
     "translation": "Anyone can come into the house.",
     "context": "",
     "judgment": "acceptable",
@@ -3186,7 +3837,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A174",
@@ -3195,9 +3846,38 @@
       "paperLabel": "(A174)"
     },
     "language": "nucl1301",
-    "primaryText": "Sana biri(si) telefon etti. Bil, bakalım, kim.",
+    "primaryText": "San-a biri(si) telefon et-ti. Bil, bakalım, kim.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "San-a",
+        "you-DAT"
+      ],
+      [
+        "biri(si)",
+        "one"
+      ],
+      [
+        "telefon",
+        "phone"
+      ],
+      [
+        "et-ti",
+        "do-PAST"
+      ],
+      [
+        "Bil",
+        "know"
+      ],
+      [
+        "bakalım",
+        "we'll.see"
+      ],
+      [
+        "kim",
+        "who"
+      ]
+    ],
     "translation": "Someone phoned you. Guess who.",
     "context": "",
     "judgment": "acceptable",
@@ -3218,7 +3898,7 @@
       ]
     ],
     "comment": "Only the bir-series is possible in the specific-known function.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A175_bir",
@@ -3227,9 +3907,38 @@
       "paperLabel": "(A175)"
     },
     "language": "nucl1301",
-    "primaryText": "Sana biri(si) telefon etti. Kim olduğunu bilmiyorum.",
+    "primaryText": "San-a biri(si) telefon et-ti. Kim ol-duğ-u-nu bil-m-iyor-um.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "San-a",
+        "you-DAT"
+      ],
+      [
+        "biri(si)",
+        "one"
+      ],
+      [
+        "telefon",
+        "phone"
+      ],
+      [
+        "et-ti",
+        "do-PAST"
+      ],
+      [
+        "Kim",
+        "who"
+      ],
+      [
+        "ol-duğ-u-nu",
+        "be-REL-3SG-ACC"
+      ],
+      [
+        "bil-m-iyor-um",
+        "know-NEG-IMPF-1SG"
+      ]
+    ],
     "translation": "Someone phoned you. I don't know who.",
     "context": "",
     "judgment": "acceptable",
@@ -3250,7 +3959,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A175_herhangi",
@@ -3259,9 +3968,42 @@
       "paperLabel": "(A175)"
     },
     "language": "nucl1301",
-    "primaryText": "Sana herhangi biri telefon etti. Kim olduğunu bilmiyorum.",
+    "primaryText": "San-a herhangi biri telefon et-ti. Kim ol-duğ-u-nu bil-m-iyor-um.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "San-a",
+        "you-DAT"
+      ],
+      [
+        "herhangi",
+        "any"
+      ],
+      [
+        "biri",
+        "one"
+      ],
+      [
+        "telefon",
+        "phone"
+      ],
+      [
+        "et-ti",
+        "do-PAST"
+      ],
+      [
+        "Kim",
+        "who"
+      ],
+      [
+        "ol-duğ-u-nu",
+        "be-REL-3SG-ACC"
+      ],
+      [
+        "bil-m-iyor-um",
+        "know-NEG-IMPF-1SG"
+      ]
+    ],
     "translation": "Someone phoned you. I don't know who.",
     "context": "",
     "judgment": "acceptable",
@@ -3282,7 +4024,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A176_herhangi",
@@ -3291,9 +4033,30 @@
       "paperLabel": "(A176)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi bir yere telefon et!",
+    "primaryText": "Herhangi bir yer-e telefon et!",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Herhangi",
+        "any"
+      ],
+      [
+        "bir",
+        "one"
+      ],
+      [
+        "yer-e",
+        "place-DAT"
+      ],
+      [
+        "telefon",
+        "phone"
+      ],
+      [
+        "et",
+        "do(IMPV)"
+      ]
+    ],
     "translation": "Call somewhere (or other)!",
     "context": "",
     "judgment": "acceptable",
@@ -3314,7 +4077,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A176_bir",
@@ -3323,9 +4086,26 @@
       "paperLabel": "(A176)"
     },
     "language": "nucl1301",
-    "primaryText": "Bir yere telefon et!",
+    "primaryText": "Bir yer-e telefon et!",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Bir",
+        "one"
+      ],
+      [
+        "yer-e",
+        "place-DAT"
+      ],
+      [
+        "telefon",
+        "phone"
+      ],
+      [
+        "et",
+        "do(IMPV)"
+      ]
+    ],
     "translation": "Call somewhere (or other)!",
     "context": "",
     "judgment": "acceptable",
@@ -3346,7 +4126,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A177a_herhangi",
@@ -3355,9 +4135,30 @@
       "paperLabel": "(A177a)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi bir şey duydun mu?",
+    "primaryText": "Herhangi bir şey duy-du-n mu?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Herhangi",
+        "any"
+      ],
+      [
+        "bir",
+        "one"
+      ],
+      [
+        "şey",
+        "thing"
+      ],
+      [
+        "duy-du-n",
+        "hear-PAST-2SG"
+      ],
+      [
+        "mu",
+        "Q"
+      ]
+    ],
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
@@ -3378,7 +4179,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A177a_bir",
@@ -3387,9 +4188,26 @@
       "paperLabel": "(A177a)"
     },
     "language": "nucl1301",
-    "primaryText": "Bir şey duydun mu?",
+    "primaryText": "Bir şey duy-du-n mu?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Bir",
+        "one"
+      ],
+      [
+        "şey",
+        "thing"
+      ],
+      [
+        "duy-du-n",
+        "hear-PAST-2SG"
+      ],
+      [
+        "mu",
+        "Q"
+      ]
+    ],
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
@@ -3410,7 +4228,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A177a_hic",
@@ -3419,9 +4237,30 @@
       "paperLabel": "(A177a)"
     },
     "language": "nucl1301",
-    "primaryText": "Hiç bir şey duydun mu?",
+    "primaryText": "Hiç bir şey duy-du-n mu?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hiç",
+        "INDEF"
+      ],
+      [
+        "bir",
+        "one"
+      ],
+      [
+        "şey",
+        "thing"
+      ],
+      [
+        "duy-du-n",
+        "hear-PAST-2SG"
+      ],
+      [
+        "mu",
+        "Q"
+      ]
+    ],
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
@@ -3442,7 +4281,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A177b_herhangi",
@@ -3451,9 +4290,38 @@
       "paperLabel": "(A177b)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi biri telefon ederse, bana hemen söyle.",
+    "primaryText": "Herhangi biri telefon ed-er-se, ban-a hemen söyle.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Herhangi",
+        "any"
+      ],
+      [
+        "biri",
+        "one"
+      ],
+      [
+        "telefon",
+        "phone"
+      ],
+      [
+        "ed-er-se",
+        "do-AOR-COND"
+      ],
+      [
+        "ban-a",
+        "I-DAT"
+      ],
+      [
+        "hemen",
+        "straight.away"
+      ],
+      [
+        "söyle",
+        "say(IMPV)"
+      ]
+    ],
     "translation": "If anyone calls, tell me immediately.",
     "context": "",
     "judgment": "acceptable",
@@ -3474,7 +4342,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A177b_bir",
@@ -3483,9 +4351,34 @@
       "paperLabel": "(A177b)"
     },
     "language": "nucl1301",
-    "primaryText": "Biri telefon ederse, bana hemen söyle.",
+    "primaryText": "Biri telefon ed-er-se, ban-a hemen söyle.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Biri",
+        "one"
+      ],
+      [
+        "telefon",
+        "phone"
+      ],
+      [
+        "ed-er-se",
+        "do-AOR-COND"
+      ],
+      [
+        "ban-a",
+        "I-DAT"
+      ],
+      [
+        "hemen",
+        "straight.away"
+      ],
+      [
+        "söyle",
+        "say(IMPV)"
+      ]
+    ],
     "translation": "If anyone calls, tell me immediately.",
     "context": "",
     "judgment": "acceptable",
@@ -3506,7 +4399,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A178_kimse",
@@ -3515,9 +4408,26 @@
       "paperLabel": "(A178)"
     },
     "language": "nucl1301",
-    "primaryText": "Kimsenin gelmesi gerekli değil.",
+    "primaryText": "Kimse-nin gel-me-si gerekli değil.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kimse-nin",
+        "anyone-GEN"
+      ],
+      [
+        "gel-me-si",
+        "come-MASD-3SG"
+      ],
+      [
+        "gerekli",
+        "necessary"
+      ],
+      [
+        "değil",
+        "NEG.is"
+      ]
+    ],
     "translation": "It is not necessary for anyone to come.",
     "context": "",
     "judgment": "acceptable",
@@ -3538,7 +4448,7 @@
       ]
     ],
     "comment": "Kimse is an isolated indefinite outside the three series.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A178_herhangi",
@@ -3547,9 +4457,30 @@
       "paperLabel": "(A178)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi birinin gelmesi gerekli değil.",
+    "primaryText": "Herhangi biri-nin gel-me-si gerekli değil.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Herhangi",
+        "any"
+      ],
+      [
+        "biri-nin",
+        "one-GEN"
+      ],
+      [
+        "gel-me-si",
+        "come-MASD-3SG"
+      ],
+      [
+        "gerekli",
+        "necessary"
+      ],
+      [
+        "değil",
+        "NEG.is"
+      ]
+    ],
     "translation": "It is not necessary for anyone to come.",
     "context": "",
     "judgment": "acceptable",
@@ -3570,7 +4501,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A178_hic",
@@ -3579,9 +4510,30 @@
       "paperLabel": "(A178)"
     },
     "language": "nucl1301",
-    "primaryText": "Hiç kimsenin gelmesi gerekli değil.",
+    "primaryText": "Hiç kimse-nin gel-me-si gerekli değil.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hiç",
+        "INDEF"
+      ],
+      [
+        "kimse-nin",
+        "anyone-GEN"
+      ],
+      [
+        "gel-me-si",
+        "come-MASD-3SG"
+      ],
+      [
+        "gerekli",
+        "necessary"
+      ],
+      [
+        "değil",
+        "NEG.is"
+      ]
+    ],
     "translation": "It is not necessary for anyone to come.",
     "context": "",
     "judgment": "acceptable",
@@ -3602,7 +4554,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A179_hic",
@@ -3611,9 +4563,26 @@
       "paperLabel": "(A179)"
     },
     "language": "nucl1301",
-    "primaryText": "Hiç bir şey görmedim.",
+    "primaryText": "Hiç bir şey gör-me-di-m.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hiç",
+        "INDEF"
+      ],
+      [
+        "bir",
+        "one"
+      ],
+      [
+        "şey",
+        "thing"
+      ],
+      [
+        "gör-me-di-m",
+        "see-NEG-PAST-1SG"
+      ]
+    ],
     "translation": "I didn't see anything.",
     "context": "",
     "judgment": "acceptable",
@@ -3634,7 +4603,7 @@
       ]
     ],
     "comment": "The hiç-indefinites are the most usual form and always co-occur with verbal negation.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A179_herhangi",
@@ -3643,9 +4612,26 @@
       "paperLabel": "(A179)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi bir şey görmedim.",
+    "primaryText": "Herhangi bir şey gör-me-di-m.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Herhangi",
+        "any"
+      ],
+      [
+        "bir",
+        "one"
+      ],
+      [
+        "şey",
+        "thing"
+      ],
+      [
+        "gör-me-di-m",
+        "see-NEG-PAST-1SG"
+      ]
+    ],
     "translation": "I didn't see anything.",
     "context": "",
     "judgment": "acceptable",
@@ -3666,7 +4652,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A179_bir",
@@ -3675,9 +4661,22 @@
       "paperLabel": "(A179)"
     },
     "language": "nucl1301",
-    "primaryText": "Bir şey görmedim.",
+    "primaryText": "Bir şey gör-me-di-m.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Bir",
+        "one"
+      ],
+      [
+        "şey",
+        "thing"
+      ],
+      [
+        "gör-me-di-m",
+        "see-NEG-PAST-1SG"
+      ]
+    ],
     "translation": "I didn't see anything.",
     "context": "",
     "judgment": "acceptable",
@@ -3698,7 +4697,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A180",
@@ -3707,9 +4706,30 @@
       "paperLabel": "(A180)"
     },
     "language": "nucl1301",
-    "primaryText": "Herhangi biri bu problemi çözebilir.",
+    "primaryText": "Herhangi biri bu problem-i çöz-ebil-ir.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Herhangi",
+        "any"
+      ],
+      [
+        "biri",
+        "one"
+      ],
+      [
+        "bu",
+        "this"
+      ],
+      [
+        "problem-i",
+        "problem-ACC"
+      ],
+      [
+        "çöz-ebil-ir",
+        "solve-ABIL-AOR(3SG)"
+      ]
+    ],
     "translation": "Anyone can solve this problem.",
     "context": "",
     "judgment": "acceptable",
@@ -3730,7 +4750,7 @@
       ]
     ],
     "comment": "Only the herhangi-series is possible in the free-choice and comparative functions.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_tr_A181",
@@ -3739,9 +4759,38 @@
       "paperLabel": "(A181)"
     },
     "language": "nucl1301",
-    "primaryText": "Murat sınıfındaki herhangi birinden daha hızlı koşar.",
+    "primaryText": "Murat sınıf-ın-da-ki herhangi birin-den daha hızlı koş-ar.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Murat",
+        "Murat"
+      ],
+      [
+        "sınıf-ın-da-ki",
+        "class-3SG-LOC-ATTR"
+      ],
+      [
+        "herhangi",
+        "any"
+      ],
+      [
+        "birin-den",
+        "one-ABL"
+      ],
+      [
+        "daha",
+        "more"
+      ],
+      [
+        "hızlı",
+        "fast"
+      ],
+      [
+        "koş-ar",
+        "run-AOR"
+      ]
+    ],
     "translation": "Murat runs faster than anyone in his class.",
     "context": "",
     "judgment": "acceptable",
@@ -3762,7 +4811,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A196",
@@ -3771,9 +4820,22 @@
       "paperLabel": "(A196)"
     },
     "language": "hung1274",
-    "primaryText": "Valahol már találkoztunk.",
+    "primaryText": "Vala-hol már talál-koz-t-unk.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Vala-hol",
+        "INDEF-where"
+      ],
+      [
+        "már",
+        "already"
+      ],
+      [
+        "talál-koz-t-unk",
+        "meet-REFL-PAST-1PL"
+      ]
+    ],
     "translation": "We have met somewhere before.",
     "context": "",
     "judgment": "acceptable",
@@ -3793,8 +4855,8 @@
         "vala-"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": "The book prints 'tolál-koz-t-unk'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A197",
@@ -3803,9 +4865,46 @@
       "paperLabel": "(A197)"
     },
     "language": "hung1274",
-    "primaryText": "Mester, láttunk valakit, a ki a te neveddel ördögöket űz.",
+    "primaryText": "Mester, lát-ánk vala-ki-t, a ki a te nev-ed-del ördög-ök-et űz.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mester",
+        "master"
+      ],
+      [
+        "lát-ánk",
+        "see-1PL"
+      ],
+      [
+        "vala-ki-t",
+        "INDEF-who-ACC"
+      ],
+      [
+        "a ki",
+        "who"
+      ],
+      [
+        "a",
+        "ART"
+      ],
+      [
+        "te",
+        "you"
+      ],
+      [
+        "nev-ed-del",
+        "name-2SG-INSTR"
+      ],
+      [
+        "ördög-ök-et",
+        "devil-PL-ACC"
+      ],
+      [
+        "űz",
+        "drive"
+      ]
+    ],
     "translation": "Master, we saw one casting out devils in thy name.",
     "context": "",
     "judgment": "acceptable",
@@ -3826,7 +4925,7 @@
       ]
     ],
     "comment": "New Testament, Mark 9:38.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A198",
@@ -3835,9 +4934,26 @@
       "paperLabel": "(A198)"
     },
     "language": "hung1274",
-    "primaryText": "Majd csak megleszünk valahogy.",
+    "primaryText": "Majd csak meglesz-ünk vala-hogy.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Majd",
+        "later"
+      ],
+      [
+        "csak",
+        "only"
+      ],
+      [
+        "meglesz-ünk",
+        "manage-1PL"
+      ],
+      [
+        "vala-hogy",
+        "INDEF-how"
+      ]
+    ],
     "translation": "We'll manage somehow.",
     "context": "",
     "judgment": "acceptable",
@@ -3858,7 +4974,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A199a",
@@ -3867,9 +4983,22 @@
       "paperLabel": "(A199a)"
     },
     "language": "hung1274",
-    "primaryText": "Nem láttam semmit.",
+    "primaryText": "Nem lát-t-am sem-mi-t.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nem",
+        "NEG"
+      ],
+      [
+        "lát-t-am",
+        "see-PAST-1SG"
+      ],
+      [
+        "sem-mi-t",
+        "INDEF-what-ACC"
+      ]
+    ],
     "translation": "I did not see anything.",
     "context": "",
     "judgment": "acceptable",
@@ -3890,7 +5019,7 @@
       ]
     ],
     "comment": "The sem-series can only be used under direct negation.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A199a_akar",
@@ -3899,9 +5028,22 @@
       "paperLabel": "(A199a)"
     },
     "language": "hung1274",
-    "primaryText": "Nem láttam akármit.",
+    "primaryText": "Nem lát-t-am akár-mi-t.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nem",
+        "NEG"
+      ],
+      [
+        "lát-t-am",
+        "see-PAST-1SG"
+      ],
+      [
+        "akár-mi-t",
+        "INDEF-what-ACC"
+      ]
+    ],
     "translation": "I did not see anything.",
     "context": "",
     "judgment": "ungrammatical",
@@ -3922,7 +5064,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A199a_bar",
@@ -3931,9 +5073,22 @@
       "paperLabel": "(A199a)"
     },
     "language": "hung1274",
-    "primaryText": "Nem láttam bármit.",
+    "primaryText": "Nem lát-t-am bár-mi-t.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nem",
+        "NEG"
+      ],
+      [
+        "lát-t-am",
+        "see-PAST-1SG"
+      ],
+      [
+        "bár-mi-t",
+        "INDEF-what-ACC"
+      ]
+    ],
     "translation": "I did not see anything.",
     "context": "",
     "judgment": "ungrammatical",
@@ -3954,7 +5109,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A199b",
@@ -3963,9 +5118,26 @@
       "paperLabel": "(A199b)"
     },
     "language": "hung1274",
-    "primaryText": "Senkinek semmit sem szólának.",
+    "primaryText": "Sen-ki-nek sem-mi-t sem szólának.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Sen-ki-nek",
+        "INDEF-who-DAT"
+      ],
+      [
+        "sem-mi-t",
+        "INDEF-what-ACC"
+      ],
+      [
+        "sem",
+        "NEG"
+      ],
+      [
+        "szólának",
+        "say:3PL"
+      ]
+    ],
     "translation": "Neither said they any thing to any man.",
     "context": "",
     "judgment": "acceptable",
@@ -3986,7 +5158,7 @@
       ]
     ],
     "comment": "New Testament, Mark 16:8.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A200",
@@ -3995,9 +5167,18 @@
       "paperLabel": "(A200)"
     },
     "language": "hung1274",
-    "primaryText": "Akárki tanulhatott.",
+    "primaryText": "Akár-ki tanul-hat-ott.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Akár-ki",
+        "INDEF-who"
+      ],
+      [
+        "tanul-hat-ott",
+        "learn-POT-PAST(3SG)"
+      ]
+    ],
     "translation": "Anybody could learn.",
     "context": "",
     "judgment": "acceptable",
@@ -4018,7 +5199,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A201_akar",
@@ -4027,9 +5208,38 @@
       "paperLabel": "(A201)"
     },
     "language": "hung1274",
-    "primaryText": "Itt jobb a klíma, mint akárhol Európában.",
+    "primaryText": "Itt jobb a klíma, mint akár-hol Európá-ban.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Itt",
+        "here"
+      ],
+      [
+        "jobb",
+        "better"
+      ],
+      [
+        "a",
+        "ART"
+      ],
+      [
+        "klíma",
+        "climate"
+      ],
+      [
+        "mint",
+        "than"
+      ],
+      [
+        "akár-hol",
+        "INDEF-where"
+      ],
+      [
+        "Európá-ban",
+        "Europe-INESS"
+      ]
+    ],
     "translation": "Here the climate is better than anywhere in Europe.",
     "context": "",
     "judgment": "acceptable",
@@ -4050,7 +5260,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A201_bar",
@@ -4059,9 +5269,38 @@
       "paperLabel": "(A201)"
     },
     "language": "hung1274",
-    "primaryText": "Itt jobb a klíma, mint bárhol Európában.",
+    "primaryText": "Itt jobb a klíma, mint bár-hol Európá-ban.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Itt",
+        "here"
+      ],
+      [
+        "jobb",
+        "better"
+      ],
+      [
+        "a",
+        "ART"
+      ],
+      [
+        "klíma",
+        "climate"
+      ],
+      [
+        "mint",
+        "than"
+      ],
+      [
+        "bár-hol",
+        "INDEF-where"
+      ],
+      [
+        "Európá-ban",
+        "Europe-INESS"
+      ]
+    ],
     "translation": "Here the climate is better than anywhere in Europe.",
     "context": "",
     "judgment": "acceptable",
@@ -4082,7 +5321,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A202_vala",
@@ -4091,9 +5330,34 @@
       "paperLabel": "(A202)"
     },
     "language": "hung1274",
-    "primaryText": "Nem hiszem, hogy valaki látta volna.",
+    "primaryText": "Nem hisz-em, hogy vala-ki lát-t-a volna.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nem",
+        "NEG"
+      ],
+      [
+        "hisz-em",
+        "think-1SG"
+      ],
+      [
+        "hogy",
+        "that"
+      ],
+      [
+        "vala-ki",
+        "INDEF-who"
+      ],
+      [
+        "lát-t-a",
+        "see-PAST-3SG"
+      ],
+      [
+        "volna",
+        "SBJV"
+      ]
+    ],
     "translation": "I don't think that anybody has seen it.",
     "context": "",
     "judgment": "acceptable",
@@ -4114,7 +5378,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A202_bar",
@@ -4123,9 +5387,34 @@
       "paperLabel": "(A202)"
     },
     "language": "hung1274",
-    "primaryText": "Nem hiszem, hogy bárki látta volna.",
+    "primaryText": "Nem hisz-em, hogy bár-ki lát-t-a volna.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nem",
+        "NEG"
+      ],
+      [
+        "hisz-em",
+        "think-1SG"
+      ],
+      [
+        "hogy",
+        "that"
+      ],
+      [
+        "bár-ki",
+        "INDEF-who"
+      ],
+      [
+        "lát-t-a",
+        "see-PAST-3SG"
+      ],
+      [
+        "volna",
+        "SBJV"
+      ]
+    ],
     "translation": "I don't think that anybody has seen it.",
     "context": "",
     "judgment": "acceptable",
@@ -4146,7 +5435,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A202_akar",
@@ -4155,9 +5444,34 @@
       "paperLabel": "(A202)"
     },
     "language": "hung1274",
-    "primaryText": "Nem hiszem, hogy akárki látta volna.",
+    "primaryText": "Nem hisz-em, hogy akár-ki lát-t-a volna.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nem",
+        "NEG"
+      ],
+      [
+        "hisz-em",
+        "think-1SG"
+      ],
+      [
+        "hogy",
+        "that"
+      ],
+      [
+        "akár-ki",
+        "INDEF-who"
+      ],
+      [
+        "lát-t-a",
+        "see-PAST-3SG"
+      ],
+      [
+        "volna",
+        "SBJV"
+      ]
+    ],
     "translation": "I don't think that anybody has seen it.",
     "context": "",
     "judgment": "acceptable",
@@ -4178,7 +5492,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A203_bar",
@@ -4187,9 +5501,30 @@
       "paperLabel": "(A203)"
     },
     "language": "hung1274",
-    "primaryText": "Ha bármit hallasz, ébressz fel.",
+    "primaryText": "Ha bár-mi-t hall-asz, ébressz fel.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ha",
+        "if"
+      ],
+      [
+        "bár-mi-t",
+        "INDEF-what-ACC"
+      ],
+      [
+        "hall-asz",
+        "hear-2SG"
+      ],
+      [
+        "ébressz",
+        "wake"
+      ],
+      [
+        "fel",
+        "up"
+      ]
+    ],
     "translation": "If you hear anything (at all), wake me up.",
     "context": "",
     "judgment": "acceptable",
@@ -4209,8 +5544,8 @@
         "bár-"
       ]
     ],
-    "comment": "The akár- and bár-series have an emphatic value in conditionals.",
-    "lgrConformance": ""
+    "comment": "The akár- and bár-series have an emphatic value in conditionals. The book prints 'hal-asz'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A203_akar",
@@ -4219,9 +5554,30 @@
       "paperLabel": "(A203)"
     },
     "language": "hung1274",
-    "primaryText": "Ha akármit hallasz, ébressz fel.",
+    "primaryText": "Ha akár-mi-t hall-asz, ébressz fel.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ha",
+        "if"
+      ],
+      [
+        "akár-mi-t",
+        "INDEF-what-ACC"
+      ],
+      [
+        "hall-asz",
+        "hear-2SG"
+      ],
+      [
+        "ébressz",
+        "wake"
+      ],
+      [
+        "fel",
+        "up"
+      ]
+    ],
     "translation": "If you hear anything (at all), wake me up.",
     "context": "",
     "judgment": "acceptable",
@@ -4241,8 +5597,8 @@
         "akár-"
       ]
     ],
-    "comment": "The akár- and bár-series have an emphatic value in conditionals.",
-    "lgrConformance": ""
+    "comment": "The akár- and bár-series have an emphatic value in conditionals. The book prints 'hal-asz'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A203_vala",
@@ -4251,9 +5607,30 @@
       "paperLabel": "(A203)"
     },
     "language": "hung1274",
-    "primaryText": "Ha valamit hallasz, ébressz fel.",
+    "primaryText": "Ha vala-mi-t hall-asz, ébressz fel.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ha",
+        "if"
+      ],
+      [
+        "vala-mi-t",
+        "INDEF-what-ACC"
+      ],
+      [
+        "hall-asz",
+        "hear-2SG"
+      ],
+      [
+        "ébressz",
+        "wake"
+      ],
+      [
+        "fel",
+        "up"
+      ]
+    ],
     "translation": "If you hear anything, wake me up.",
     "context": "",
     "judgment": "acceptable",
@@ -4273,8 +5650,8 @@
         "vala-"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": "The book prints 'hal-asz'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A204",
@@ -4283,9 +5660,18 @@
       "paperLabel": "(A204)"
     },
     "language": "hung1274",
-    "primaryText": "Hallottál valamit?",
+    "primaryText": "Hall-ott-ál vala-mi-t?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hall-ott-ál",
+        "hear-PAST-2SG"
+      ],
+      [
+        "vala-mi-t",
+        "INDEF-what-ACC"
+      ]
+    ],
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "acceptable",
@@ -4306,7 +5692,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A204_akar",
@@ -4315,9 +5701,18 @@
       "paperLabel": "(A204)"
     },
     "language": "hung1274",
-    "primaryText": "Hallottál akármit?",
+    "primaryText": "Hall-ott-ál akár-mi-t?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hall-ott-ál",
+        "hear-PAST-2SG"
+      ],
+      [
+        "akár-mi-t",
+        "INDEF-what-ACC"
+      ]
+    ],
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "ungrammatical",
@@ -4338,7 +5733,7 @@
       ]
     ],
     "comment": "The akár- and bár-series cannot be used in questions.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_hu_A204_bar",
@@ -4347,9 +5742,18 @@
       "paperLabel": "(A204)"
     },
     "language": "hung1274",
-    "primaryText": "Hallottál bármit?",
+    "primaryText": "Hall-ott-ál bár-mi-t?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hall-ott-ál",
+        "hear-PAST-2SG"
+      ],
+      [
+        "bár-mi-t",
+        "INDEF-what-ACC"
+      ]
+    ],
     "translation": "Did you hear anything?",
     "context": "",
     "judgment": "ungrammatical",
@@ -4370,7 +5774,7 @@
       ]
     ],
     "comment": "The akár- and bár-series cannot be used in questions.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A205a",
@@ -4379,9 +5783,34 @@
       "paperLabel": "(A205a)"
     },
     "language": "finn1318",
-    "primaryText": "Joku soitti. Arvaa kuka (se oli)?",
+    "primaryText": "Joku soitt-i. Arvaa kuka (se oli)?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Joku",
+        "someone"
+      ],
+      [
+        "soitt-i",
+        "call-PAST(3SG)"
+      ],
+      [
+        "Arvaa",
+        "guess:IMPV"
+      ],
+      [
+        "kuka",
+        "who"
+      ],
+      [
+        "(se",
+        "it"
+      ],
+      [
+        "oli)",
+        "was"
+      ]
+    ],
     "translation": "Someone called. Guess who (it was).",
     "context": "",
     "judgment": "ungrammatical",
@@ -4402,7 +5831,7 @@
       ]
     ],
     "comment": "The -kin-series is excluded from the specific-known function.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A205b",
@@ -4411,9 +5840,26 @@
       "paperLabel": "(A205b)"
     },
     "language": "finn1318",
-    "primaryText": "Eräs ystäväni kertoi sen.",
+    "primaryText": "Eräs ystäväni kerto-i sen.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Eräs",
+        "certain"
+      ],
+      [
+        "ystäväni",
+        "friend"
+      ],
+      [
+        "kerto-i",
+        "tell-PAST(3SG)"
+      ],
+      [
+        "sen",
+        "it"
+      ]
+    ],
     "translation": "A certain friend told him.",
     "context": "",
     "judgment": "acceptable",
@@ -4434,7 +5880,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A206",
@@ -4443,9 +5889,38 @@
       "paperLabel": "(A206)"
     },
     "language": "finn1318",
-    "primaryText": "Joku soitti, mutta en saanut nimestä selvää.",
+    "primaryText": "Joku soitt-i, mutta en saa-nut nime-stä selvää.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Joku",
+        "someone"
+      ],
+      [
+        "soitt-i",
+        "call-PAST(3SG)"
+      ],
+      [
+        "mutta",
+        "but"
+      ],
+      [
+        "en",
+        "NEG:1SG"
+      ],
+      [
+        "saa-nut",
+        "get-PAST.PTCP"
+      ],
+      [
+        "nime-stä",
+        "name-ELAT"
+      ],
+      [
+        "selvää",
+        "clear:PRTV"
+      ]
+    ],
     "translation": "Someone called, but I didn't understand the name.",
     "context": "",
     "judgment": "acceptable",
@@ -4466,7 +5941,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A207",
@@ -4477,8 +5952,49 @@
     "language": "finn1318",
     "primaryText": "Hän haluaa mennä naimisiin jonkun kanssa, jolla on tumma tukka.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "She wants to marry someone (non-specific) with black hair.",
+    "glossedTokens": [
+      [
+        "Hän",
+        "she"
+      ],
+      [
+        "haluaa",
+        "wants"
+      ],
+      [
+        "mennä",
+        "go"
+      ],
+      [
+        "naimisiin",
+        "marriage"
+      ],
+      [
+        "jonkun",
+        "someone"
+      ],
+      [
+        "kanssa",
+        "with"
+      ],
+      [
+        "jolla",
+        "who-on"
+      ],
+      [
+        "on",
+        "is"
+      ],
+      [
+        "tumma",
+        "dark"
+      ],
+      [
+        "tukka",
+        "hair"
+      ]
+    ],
+    "translation": "She wants to marry someone [non-specific] with black hair.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -4498,7 +6014,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A208_kin",
@@ -4507,9 +6023,18 @@
       "paperLabel": "(A208)"
     },
     "language": "finn1318",
-    "primaryText": "Soittiko joku?",
+    "primaryText": "Soitt-i-ko joku?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Soitt-i-ko",
+        "call-PAST(3SG)-Q"
+      ],
+      [
+        "joku",
+        "someone"
+      ]
+    ],
     "translation": "Did someone/anyone call?",
     "context": "",
     "judgment": "acceptable",
@@ -4530,7 +6055,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A208_kaan",
@@ -4539,9 +6064,18 @@
       "paperLabel": "(A208)"
     },
     "language": "finn1318",
-    "primaryText": "Soittiko kukaan?",
+    "primaryText": "Soitt-i-ko kuka-an?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Soitt-i-ko",
+        "call-PAST(3SG)-Q"
+      ],
+      [
+        "kuka-an",
+        "who-INDEF"
+      ]
+    ],
     "translation": "Did someone/anyone call?",
     "context": "",
     "judgment": "acceptable",
@@ -4562,7 +6096,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A208_hyvansa",
@@ -4571,9 +6105,22 @@
       "paperLabel": "(A208)"
     },
     "language": "finn1318",
-    "primaryText": "Soittiko kuka hyvänsä?",
+    "primaryText": "Soitt-i-ko kuka hyvänsä?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Soitt-i-ko",
+        "call-PAST(3SG)-Q"
+      ],
+      [
+        "kuka",
+        "who"
+      ],
+      [
+        "hyvänsä",
+        "INDEF"
+      ]
+    ],
     "translation": "Did someone/anyone call?",
     "context": "",
     "judgment": "ungrammatical",
@@ -4594,7 +6141,7 @@
       ]
     ],
     "comment": "The hyvänsä-series is impossible in questions.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A209_kin",
@@ -4605,7 +6152,28 @@
     "language": "finn1318",
     "primaryText": "Jos joku soittaa, sano minulle.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Jos",
+        "if"
+      ],
+      [
+        "joku",
+        "someone"
+      ],
+      [
+        "soittaa",
+        "calls"
+      ],
+      [
+        "sano",
+        "tell(IMPV)"
+      ],
+      [
+        "minulle",
+        "I:on"
+      ]
+    ],
     "translation": "If someone/anyone at all calls, tell me.",
     "context": "",
     "judgment": "acceptable",
@@ -4626,7 +6194,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A209_hyvansa",
@@ -4637,7 +6205,32 @@
     "language": "finn1318",
     "primaryText": "Jos kuka hyvänsä soittaa, sano minulle.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Jos",
+        "if"
+      ],
+      [
+        "kuka",
+        "who"
+      ],
+      [
+        "hyvänsä",
+        "INDEF"
+      ],
+      [
+        "soittaa",
+        "calls"
+      ],
+      [
+        "sano",
+        "tell(IMPV)"
+      ],
+      [
+        "minulle",
+        "I:on"
+      ]
+    ],
     "translation": "If someone/anyone at all calls, tell me.",
     "context": "",
     "judgment": "acceptable",
@@ -4658,7 +6251,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A209_kaan",
@@ -4667,9 +6260,30 @@
       "paperLabel": "(A209)"
     },
     "language": "finn1318",
-    "primaryText": "Jos kukaan soittaa, sano minulle.",
+    "primaryText": "Jos kuka-an soittaa, sano minulle.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Jos",
+        "if"
+      ],
+      [
+        "kuka-an",
+        "who-INDEF"
+      ],
+      [
+        "soittaa",
+        "calls"
+      ],
+      [
+        "sano",
+        "tell(IMPV)"
+      ],
+      [
+        "minulle",
+        "I:on"
+      ]
+    ],
     "translation": "If someone/anyone at all calls, tell me.",
     "context": "",
     "judgment": "ungrammatical",
@@ -4690,7 +6304,7 @@
       ]
     ],
     "comment": "The -kaan-series is impossible in conditionals.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A210",
@@ -4699,9 +6313,30 @@
       "paperLabel": "(A210)"
     },
     "language": "finn1318",
-    "primaryText": "Kukaan ei kertonut minulle mitään.",
+    "primaryText": "Kuka-an ei kerto-nut minulle mitä-än.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuka-an",
+        "who-INDEF"
+      ],
+      [
+        "ei",
+        "NEG:3SG"
+      ],
+      [
+        "kerto-nut",
+        "tell-PAST.PTCP"
+      ],
+      [
+        "minulle",
+        "I:on"
+      ],
+      [
+        "mitä-än",
+        "what-INDEF"
+      ]
+    ],
     "translation": "Nobody told me anything.",
     "context": "",
     "judgment": "acceptable",
@@ -4721,8 +6356,8 @@
         "-kaan"
       ]
     ],
-    "comment": "With verbal negation.",
-    "lgrConformance": ""
+    "comment": "With verbal negation. The book glosses mitä-än as 'when-INDEF' here.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A211",
@@ -4731,9 +6366,30 @@
       "paperLabel": "(A211)"
     },
     "language": "finn1318",
-    "primaryText": "Epäilen että poika varasti mitään.",
+    "primaryText": "Epäilen että poika varast-i mitä-än.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Epäilen",
+        "I:doubt"
+      ],
+      [
+        "että",
+        "that"
+      ],
+      [
+        "poika",
+        "boy"
+      ],
+      [
+        "varast-i",
+        "steal-PAST(3SG)"
+      ],
+      [
+        "mitä-än",
+        "what-INDEF"
+      ]
+    ],
     "translation": "I doubt that the boy stole anything.",
     "context": "",
     "judgment": "acceptable",
@@ -4754,7 +6410,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A212",
@@ -4763,9 +6419,42 @@
       "paperLabel": "(A212)"
     },
     "language": "finn1318",
-    "primaryText": "Ilmasto on täällä miellyttävämpi kuin missään muualla Euroopassa.",
+    "primaryText": "Ilmasto on täällä miellyttävä-mpi kuin missä-än muualla Euroopa-ssa.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ilmasto",
+        "climate"
+      ],
+      [
+        "on",
+        "is"
+      ],
+      [
+        "täällä",
+        "here"
+      ],
+      [
+        "miellyttävä-mpi",
+        "pleasant-COMPR"
+      ],
+      [
+        "kuin",
+        "than"
+      ],
+      [
+        "missä-än",
+        "where-INDEF"
+      ],
+      [
+        "muualla",
+        "else"
+      ],
+      [
+        "Euroopa-ssa",
+        "Europe-INESS"
+      ]
+    ],
     "translation": "Here the climate is more pleasant than anywhere in Europe.",
     "context": "",
     "judgment": "acceptable",
@@ -4785,8 +6474,8 @@
         "-kaan"
       ]
     ],
-    "comment": "The standard of comparison of inequality.",
-    "lgrConformance": ""
+    "comment": "The standard of comparison of inequality. The book prints 'mielyttävä-mpi'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A213",
@@ -4797,7 +6486,32 @@
     "language": "finn1318",
     "primaryText": "Kuka tahansa osaa ratkaista tämän ongelman.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kuka",
+        "who"
+      ],
+      [
+        "tahansa",
+        "INDEF"
+      ],
+      [
+        "osaa",
+        "can"
+      ],
+      [
+        "ratkaista",
+        "solve"
+      ],
+      [
+        "tämän",
+        "this"
+      ],
+      [
+        "ongelman",
+        "problem"
+      ]
+    ],
     "translation": "Anyone can solve this problem.",
     "context": "",
     "judgment": "acceptable",
@@ -4817,8 +6531,8 @@
         "hyvänsä"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": "The book prints 'natkaista'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_fi_A214",
@@ -4829,7 +6543,40 @@
     "language": "finn1318",
     "primaryText": "Täällä on yhtä mukavaa kuin missä tahansa muualla.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Täällä",
+        "here"
+      ],
+      [
+        "on",
+        "is"
+      ],
+      [
+        "yhtä",
+        "as"
+      ],
+      [
+        "mukavaa",
+        "pleasant"
+      ],
+      [
+        "kuin",
+        "as"
+      ],
+      [
+        "missä",
+        "where"
+      ],
+      [
+        "tahansa",
+        "INDEF"
+      ],
+      [
+        "muualla",
+        "else"
+      ]
+    ],
     "translation": "It is as pleasant here as anywhere else.",
     "context": "",
     "judgment": "acceptable",
@@ -4850,7 +6597,7 @@
       ]
     ],
     "comment": "The standard of equative comparison only, as the map predicts from the conditional use.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A243a",
@@ -4859,9 +6606,18 @@
       "paperLabel": "(A243a)"
     },
     "language": "swah1253",
-    "primaryText": "Mtu alinigusa.",
+    "primaryText": "Mtu a-li-ni-gusa.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mtu",
+        "man"
+      ],
+      [
+        "a-li-ni-gusa",
+        "3SG-PAST-me-touch"
+      ]
+    ],
     "translation": "Somebody has touched me.",
     "context": "",
     "judgment": "acceptable",
@@ -4882,7 +6638,7 @@
       ]
     ],
     "comment": "New Testament, Luke 8:46; the book labels the example simply specific.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A243b",
@@ -4891,9 +6647,26 @@
       "paperLabel": "(A243b)"
     },
     "language": "swah1253",
-    "primaryText": "Ana neno la kumwarifu.",
+    "primaryText": "A-na neno la ku-mw-arifu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "A-na",
+        "3SG-has"
+      ],
+      [
+        "neno",
+        "word"
+      ],
+      [
+        "la",
+        "of"
+      ],
+      [
+        "ku-mw-arifu",
+        "INF-him-tell"
+      ]
+    ],
     "translation": "She has something to tell him.",
     "context": "",
     "judgment": "acceptable",
@@ -4914,7 +6687,7 @@
       ]
     ],
     "comment": "The book labels the example simply specific.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A244",
@@ -4923,9 +6696,34 @@
       "paperLabel": "(A244)"
     },
     "language": "swah1253",
-    "primaryText": "Yesu alimwambia ... kwamba awape maskini kitu.",
+    "primaryText": "Yesu a-li-mw-ambia ... kwamba a-wa-pe maskini kitu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Yesu",
+        "Jesus"
+      ],
+      [
+        "a-li-mw-ambia",
+        "3SG-PAST-him-tell"
+      ],
+      [
+        "kwamba",
+        "that"
+      ],
+      [
+        "a-wa-pe",
+        "3SG-them-give:SBJV"
+      ],
+      [
+        "maskini",
+        "poor"
+      ],
+      [
+        "kitu",
+        "thing"
+      ]
+    ],
     "translation": "Jesus told him to give something to the poor.",
     "context": "",
     "judgment": "acceptable",
@@ -4946,7 +6744,7 @@
       ]
     ],
     "comment": "New Testament, John 13:29.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A245a",
@@ -4955,9 +6753,18 @@
       "paperLabel": "(A245a)"
     },
     "language": "swah1253",
-    "primaryText": "Waona kitu?",
+    "primaryText": "Wa-ona kitu?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Wa-ona",
+        "2SG-see"
+      ],
+      [
+        "kitu",
+        "thing"
+      ]
+    ],
     "translation": "Do you see anything?",
     "context": "",
     "judgment": "acceptable",
@@ -4978,7 +6785,7 @@
       ]
     ],
     "comment": "New Testament, Mark 8:23.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A245b",
@@ -4987,10 +6794,47 @@
       "paperLabel": "(A245b)"
     },
     "language": "swah1253",
-    "primaryText": "Kama mtu akiwaambia neno, semeni, Bwana ana haja nao.",
+    "primaryText": "Kama mtu a-ki-wa-ambia neno, seme-ni, Bwana a-na haja na-o.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "If anyone says anything to you, say, the Lord needs them.",
+    "glossedTokens": [
+      [
+        "Kama",
+        "if"
+      ],
+      [
+        "mtu",
+        "man"
+      ],
+      [
+        "a-ki-wa-ambia",
+        "3SG-if-you-tell"
+      ],
+      [
+        "neno",
+        "word"
+      ],
+      [
+        "seme-ni",
+        "say-PL"
+      ],
+      [
+        "Bwana",
+        "Lord"
+      ],
+      [
+        "a-na",
+        "3SG-has"
+      ],
+      [
+        "haja",
+        "need"
+      ],
+      [
+        "na-o",
+        "with-3PL"
+      ]
+    ],
+    "translation": "If anyone says anything to you say, the Lord needs them.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -5010,7 +6854,7 @@
       ]
     ],
     "comment": "New Testament, Matthew 21:3.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A246",
@@ -5019,9 +6863,46 @@
       "paperLabel": "(A246)"
     },
     "language": "swah1253",
-    "primaryText": "Tokea hapo haijasikiwa ya kuwa mtu ameyafumbua macho ya kipofu.",
+    "primaryText": "Tokea hapo ha-i-ja-siki-wa ya kuwa mtu a-me-ya-fumbua macho ya kipofu",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tokea",
+        "since"
+      ],
+      [
+        "hapo",
+        "then"
+      ],
+      [
+        "ha-i-ja-siki-wa",
+        "NEG-hear-PASS"
+      ],
+      [
+        "ya kuwa",
+        "that"
+      ],
+      [
+        "mtu",
+        "man"
+      ],
+      [
+        "a-me-ya-fumbua",
+        "3SG-PERF-them-open"
+      ],
+      [
+        "macho",
+        "eyes"
+      ],
+      [
+        "ya",
+        "of"
+      ],
+      [
+        "kipofu",
+        "blind"
+      ]
+    ],
     "translation": "Since the world began was it not heard that any man opened the eyes of one that was born blind.",
     "context": "",
     "judgment": "acceptable",
@@ -5042,7 +6923,7 @@
       ]
     ],
     "comment": "New Testament, John 9:32.",
-    "lgrConformance": ""
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A247",
@@ -5051,9 +6932,26 @@
       "paperLabel": "(A247)"
     },
     "language": "swah1253",
-    "primaryText": "Wala hawakumwambia mtu neno.",
+    "primaryText": "Wala ha-wa-kumw-ambia mtu neno.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Wala",
+        "and"
+      ],
+      [
+        "ha-wa-kumw-ambia",
+        "NEG-them-him-say"
+      ],
+      [
+        "mtu",
+        "man"
+      ],
+      [
+        "neno",
+        "thing"
+      ]
+    ],
     "translation": "And they did not say anything to anybody.",
     "context": "",
     "judgment": "acceptable",
@@ -5074,7 +6972,7 @@
       ]
     ],
     "comment": "New Testament, Mark 16:8; bare generic nouns only postverbally under direct negation.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A248",
@@ -5083,9 +6981,30 @@
       "paperLabel": "(A248)"
     },
     "language": "swah1253",
-    "primaryText": "Daktari yule ataponya magonjwa yo yote.",
+    "primaryText": "Daktari yule a-ta-ponya magonjwa yo yote.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Daktari",
+        "doctor"
+      ],
+      [
+        "yule",
+        "that"
+      ],
+      [
+        "a-ta-ponya",
+        "3SG-FUT-cure"
+      ],
+      [
+        "magonjwa",
+        "disease"
+      ],
+      [
+        "yo yote",
+        "any"
+      ]
+    ],
     "translation": "That doctor will cure any disease whatsoever.",
     "context": "",
     "judgment": "acceptable",
@@ -5106,7 +7025,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A249",
@@ -5115,9 +7034,26 @@
       "paperLabel": "(A249)"
     },
     "language": "swah1253",
-    "primaryText": "Ninyi hamjui neno lo lote.",
+    "primaryText": "Ninyi ha-m-jui neno lo lote.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ninyi",
+        "you"
+      ],
+      [
+        "ha-m-jui",
+        "NEG-it-know"
+      ],
+      [
+        "neno",
+        "word"
+      ],
+      [
+        "lo lote",
+        "any"
+      ]
+    ],
     "translation": "You don't know anything.",
     "context": "",
     "judgment": "acceptable",
@@ -5138,7 +7074,7 @@
       ]
     ],
     "comment": "New Testament, John 11:49.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A250a",
@@ -5147,9 +7083,38 @@
       "paperLabel": "(A250a)"
     },
     "language": "swah1253",
-    "primaryText": "Alimwambia malaika yupi wakati wo wote, Ndiwe mwanangu?",
+    "primaryText": "A-li-mw-ambia malaika yupi wakati wo wote, Ndi-we mwana-ngu?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "A-li-mw-ambia",
+        "3SG-past-him-say"
+      ],
+      [
+        "malaika",
+        "angel"
+      ],
+      [
+        "yupi",
+        "which"
+      ],
+      [
+        "wakati",
+        "time"
+      ],
+      [
+        "wo wote",
+        "any"
+      ],
+      [
+        "Ndi-we",
+        "you-are"
+      ],
+      [
+        "mwana-ngu",
+        "son-1SG"
+      ]
+    ],
     "translation": "To which of the angels did he ever say, You are my son?",
     "context": "",
     "judgment": "acceptable",
@@ -5170,7 +7135,7 @@
       ]
     ],
     "comment": "New Testament, Hebrews 1:5; a rhetorical question, with emphatic value.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_sw_A250b",
@@ -5179,9 +7144,38 @@
       "paperLabel": "(A250b)"
     },
     "language": "swah1253",
-    "primaryText": "Mkiniomba neno lo lote kwa jina langu, nitalifanya.",
+    "primaryText": "M-ki-ni-omba neno lo lote kwa jina langu, ni-ta-li-fanya.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "M-ki-ni-omba",
+        "you-COND-me-ask"
+      ],
+      [
+        "neno",
+        "word"
+      ],
+      [
+        "lo lote",
+        "any"
+      ],
+      [
+        "kwa",
+        "by"
+      ],
+      [
+        "jina",
+        "name"
+      ],
+      [
+        "langu",
+        "mine"
+      ],
+      [
+        "ni-ta-li-fanya",
+        "1SG-FUT-it-do"
+      ]
+    ],
     "translation": "If you ask anything in my name, I will do it.",
     "context": "",
     "judgment": "acceptable",
@@ -5202,7 +7196,56 @@
       ]
     ],
     "comment": "New Testament, John 14:14.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ka_A251a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A251a)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Es c'igni sad-γac v-išove.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Es",
+        "this"
+      ],
+      [
+        "c'igni",
+        "book"
+      ],
+      [
+        "sad-γac",
+        "where-INDEF"
+      ],
+      [
+        "v-išove",
+        "1SG-found"
+      ]
+    ],
+    "translation": "I found this book somewhere [I could say where].",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.34"
+      ],
+      [
+        "function",
+        "specificKnown"
+      ],
+      [
+        "series",
+        "-γac"
+      ]
+    ],
+    "comment": "The -γac-series is restricted to specific functions.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A251b",
@@ -5211,10 +7254,23 @@
       "paperLabel": "(A251b)"
     },
     "language": "nucl1302",
-    "primaryText": "Movida vi-yac rusi.",
+    "primaryText": "Movida vi-γac rusi.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Some Russian person has come (I don't know them).",
+    "glossedTokens": [
+      [
+        "Movida",
+        "came"
+      ],
+      [
+        "vi-γac",
+        "who-INDEF"
+      ],
+      [
+        "rusi",
+        "Russian"
+      ]
+    ],
+    "translation": "Some Russian person has come [I don't know him/her].",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -5230,11 +7286,11 @@
       ],
       [
         "series",
-        "-yac"
+        "-γac"
       ]
     ],
-    "comment": "The -yac-series is restricted to the specific functions.",
-    "lgrConformance": ""
+    "comment": "The -γac-series is restricted to the specific functions.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A251b_me",
@@ -5245,8 +7301,21 @@
     "language": "nucl1302",
     "primaryText": "Movida vin-me rusi.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Some Russian person has come (I don't know them).",
+    "glossedTokens": [
+      [
+        "Movida",
+        "came"
+      ],
+      [
+        "vin-me",
+        "who-INDEF"
+      ],
+      [
+        "rusi",
+        "Russian"
+      ]
+    ],
+    "translation": "Some Russian person has come [I don't know him/her].",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -5265,8 +7334,49 @@
         "-me"
       ]
     ],
-    "comment": "The -yac-series is restricted to the specific functions.",
-    "lgrConformance": ""
+    "comment": "The -γac-series is restricted to the specific functions.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ka_A252a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A252a)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Dauʒaxet vi-s-me!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dauʒaxet",
+        "call:IMPV:PL"
+      ],
+      [
+        "vi-s-me",
+        "who-DAT-INDEF"
+      ]
+    ],
+    "translation": "Call somebody!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.34"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "-me"
+      ]
+    ],
+    "comment": "In all non-emphatic non-specific functions, including indirect negation and comparative, the -me-series is used.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A252b",
@@ -5275,9 +7385,30 @@
       "paperLabel": "(A252b)"
     },
     "language": "nucl1302",
-    "primaryText": "Es c'igni sad-me unda vipovo.",
+    "primaryText": "Es c'igni sad-me unda v-išovo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Es",
+        "this"
+      ],
+      [
+        "c'igni",
+        "book"
+      ],
+      [
+        "sad-me",
+        "where-INDEF"
+      ],
+      [
+        "unda",
+        "necessary"
+      ],
+      [
+        "v-išovo",
+        "1SG-find:SBJV"
+      ]
+    ],
     "translation": "I have to find this book somewhere.",
     "context": "",
     "judgment": "acceptable",
@@ -5298,7 +7429,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A253a",
@@ -5309,7 +7440,16 @@
     "language": "nucl1302",
     "primaryText": "Mosula vin-me?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mosula",
+        "came"
+      ],
+      [
+        "vin-me",
+        "who-INDEF"
+      ]
+    ],
     "translation": "Has anyone come?",
     "context": "",
     "judgment": "acceptable",
@@ -5330,7 +7470,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A253a_yac",
@@ -5339,9 +7479,18 @@
       "paperLabel": "(A253a)"
     },
     "language": "nucl1302",
-    "primaryText": "Mosula vi-yac?",
+    "primaryText": "Mosula vi-γac?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mosula",
+        "came"
+      ],
+      [
+        "vi-γac",
+        "who-INDEF"
+      ]
+    ],
     "translation": "Has anyone come?",
     "context": "",
     "judgment": "ungrammatical",
@@ -5358,11 +7507,11 @@
       ],
       [
         "series",
-        "-yac"
+        "-γac"
       ]
     ],
-    "comment": "The -yac-series is restricted to the specific functions.",
-    "lgrConformance": ""
+    "comment": "The -γac-series is restricted to the specific functions.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A253b",
@@ -5373,7 +7522,24 @@
     "language": "nucl1302",
     "primaryText": "Tu vin-me movides, utxari.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tu",
+        "if"
+      ],
+      [
+        "vin-me",
+        "who-INDEF"
+      ],
+      [
+        "movides",
+        "comes"
+      ],
+      [
+        "utxari",
+        "tell:IMPV"
+      ]
+    ],
     "translation": "If anyone comes, tell (me).",
     "context": "",
     "judgment": "acceptable",
@@ -5394,7 +7560,76 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ka_A254",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A254)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Vera-prit ver daitanxmes rom rogor-me sad-me sc'avla ganegrʒo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vera-prit",
+        "NEG-way"
+      ],
+      [
+        "ver",
+        "NEG"
+      ],
+      [
+        "daitanxmes",
+        "persuade:him"
+      ],
+      [
+        "rom",
+        "that"
+      ],
+      [
+        "rogor-me",
+        "how-INDEF"
+      ],
+      [
+        "sad-me",
+        "where-INDEF"
+      ],
+      [
+        "sc'avla",
+        "study"
+      ],
+      [
+        "ganegrʒo",
+        "he:continue:SBJV"
+      ]
+    ],
+    "translation": "They couldn't persuade him to continue his studies anywhere in any way.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.34"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "-me"
+      ],
+      [
+        "item",
+        "vera-"
+      ]
+    ],
+    "comment": "In all non-emphatic non-specific functions, including indirect negation and comparative, the -me-series is used.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A255",
@@ -5405,7 +7640,40 @@
     "language": "nucl1302",
     "primaryText": "Man kartuli ena uk'et icis vidre sxva vin-me-m.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Man",
+        "he:ERG"
+      ],
+      [
+        "kartuli",
+        "Georgian"
+      ],
+      [
+        "ena",
+        "language"
+      ],
+      [
+        "uk'et",
+        "better"
+      ],
+      [
+        "icis",
+        "knows"
+      ],
+      [
+        "vidre",
+        "than"
+      ],
+      [
+        "sxva",
+        "other"
+      ],
+      [
+        "vin-me-m",
+        "who-INDEF-ERG"
+      ]
+    ],
     "translation": "He knows Georgian better than anyone else.",
     "context": "",
     "judgment": "acceptable",
@@ -5426,7 +7694,64 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ka_A256a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A256a)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Me ara-sodes ara-vis-gan ara-pers ar mi-v-iγeb.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Me",
+        "I"
+      ],
+      [
+        "ara-sodes",
+        "NEG-when"
+      ],
+      [
+        "ara-vis-gan",
+        "NEG-who-from"
+      ],
+      [
+        "ara-pers",
+        "NEG-thing"
+      ],
+      [
+        "ar",
+        "NEG"
+      ],
+      [
+        "mi-v-iγeb",
+        "PREV-1SG-get"
+      ]
+    ],
+    "translation": "I'll never get anything from anybody.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.34"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "ara-"
+      ]
+    ],
+    "comment": "In the direct-negation function, one of the three negative series (ara-, vera-, nura-) is used, normally together with verbal negation (though this may optionally be omitted).",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ka_A256b",
@@ -5437,7 +7762,20 @@
     "language": "nucl1302",
     "primaryText": "Mas ara-vis-tvis utkvams.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mas",
+        "he"
+      ],
+      [
+        "ara-vis-tvis",
+        "NEG-who-for"
+      ],
+      [
+        "utkvams",
+        "has:told"
+      ]
+    ],
     "translation": "He hasn't told anybody.",
     "context": "",
     "judgment": "acceptable",
@@ -5458,7 +7796,52 @@
       ]
     ],
     "comment": "One of the three negative series, normally with verbal negation.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ka_A256c",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A256c)"
+    },
+    "language": "nucl1302",
+    "primaryText": "Nura-vi-s nu et'q'vi!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nura-vi-s",
+        "NEG-who-DAT"
+      ],
+      [
+        "nu",
+        "NEG"
+      ],
+      [
+        "et'q'vi",
+        "tell"
+      ]
+    ],
+    "translation": "Don't tell anybody!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.34"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "item",
+        "nura-"
+      ]
+    ],
+    "comment": "Ar is the unmarked negator, ver contains an additional semantic component of possibility, and nu is used in prohibitive sentences.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A264",
@@ -5469,7 +7852,32 @@
     "language": "mand1415",
     "primaryText": "Chī diǎn shénme zài zǒu ba!",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Chī",
+        "eat"
+      ],
+      [
+        "diǎn",
+        "(a).bit"
+      ],
+      [
+        "shénme",
+        "what"
+      ],
+      [
+        "zài",
+        "then"
+      ],
+      [
+        "zǒu",
+        "go"
+      ],
+      [
+        "ba",
+        "PT"
+      ]
+    ],
     "translation": "Please eat a little something before you leave.",
     "context": "",
     "judgment": "acceptable",
@@ -5490,7 +7898,7 @@
       ]
     ],
     "comment": "Imperative.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A265a",
@@ -5501,7 +7909,24 @@
     "language": "mand1415",
     "primaryText": "Tā hǎoxiàng xǐhuan shénme.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "hǎoxiàng",
+        "seem"
+      ],
+      [
+        "xǐhuan",
+        "like"
+      ],
+      [
+        "shénme",
+        "what"
+      ]
+    ],
     "translation": "He seems to like something.",
     "context": "",
     "judgment": "acceptable",
@@ -5522,7 +7947,109 @@
       ]
     ],
     "comment": "A context of uncertainty or inference.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A265b_le",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A265b)"
+    },
+    "language": "mand1415",
+    "primaryText": "Tā kàndao le shénme le.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "kàndao",
+        "see"
+      ],
+      [
+        "le",
+        "PERF"
+      ],
+      [
+        "shénme",
+        "what"
+      ],
+      [
+        "le",
+        "PERF"
+      ]
+    ],
+    "translation": "He must have seen something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A265b_bare",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A265b)"
+    },
+    "language": "mand1415",
+    "primaryText": "Tā kàndao shénme le.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "kàndao",
+        "see"
+      ],
+      [
+        "shénme",
+        "what"
+      ],
+      [
+        "le",
+        "PERF"
+      ]
+    ],
+    "translation": "He must have seen something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "No function heading is printed over (A265); it follows the prose 'bare interrogatives are also used in contexts of uncertainty and inference' after the irrealis example (A264).",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A266a",
@@ -5533,7 +8060,24 @@
     "language": "mand1415",
     "primaryText": "Shéi xǐhuan tā ma?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Shéi",
+        "who"
+      ],
+      [
+        "xǐhuan",
+        "like"
+      ],
+      [
+        "tā",
+        "him"
+      ],
+      [
+        "ma",
+        "Q"
+      ]
+    ],
     "translation": "Does anyone like him?",
     "context": "",
     "judgment": "acceptable",
@@ -5554,7 +8098,100 @@
       ]
     ],
     "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A266b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A266b)"
+    },
+    "language": "mand1415",
+    "primaryText": "Nǐ yàoshì yào shénme dehuà, èn língr zhòu xíngle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If you want something, ring the bell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "The book's gloss line is incomplete (only 'you if want what ... press'; dehuà, língr, zhòu, xíngle are unglossed), so no glossed tokens are given.",
     "lgrConformance": ""
+  },
+  {
+    "id": "haspelmath1997_zh_A267a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A267a)"
+    },
+    "language": "mand1415",
+    "primaryText": "Tā bù wèi shénme rén zuò shì.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "wèi",
+        "for"
+      ],
+      [
+        "shénme",
+        "what"
+      ],
+      [
+        "rén",
+        "man"
+      ],
+      [
+        "zuò",
+        "do"
+      ],
+      [
+        "shì",
+        "thing"
+      ]
+    ],
+    "translation": "He does not work for anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A267b",
@@ -5565,7 +8202,24 @@
     "language": "mand1415",
     "primaryText": "Tā bù xǐhuan shénme.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "xǐhuan",
+        "like"
+      ],
+      [
+        "shénme",
+        "what"
+      ]
+    ],
     "translation": "He does not like anything.",
     "context": "",
     "judgment": "acceptable",
@@ -5586,7 +8240,7 @@
       ]
     ],
     "comment": "Under direct negation only shénme is perfect; shéi is less acceptable.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A267c",
@@ -5597,7 +8251,24 @@
     "language": "mand1415",
     "primaryText": "Tā bù xǐhuan shéi.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "xǐhuan",
+        "like"
+      ],
+      [
+        "shéi",
+        "who"
+      ]
+    ],
     "translation": "He does not like anyone.",
     "context": "",
     "judgment": "questionable",
@@ -5618,7 +8289,109 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A267d_ren",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A267d)"
+    },
+    "language": "mand1415",
+    "primaryText": "Tā bù xǐhuan nǎge rén.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "xǐhuan",
+        "like"
+      ],
+      [
+        "nǎge",
+        "which"
+      ],
+      [
+        "rén",
+        "man"
+      ]
+    ],
+    "translation": "He does not like anyone.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "item",
+        "nǎge"
+      ]
+    ],
+    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A267d_bare",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A267d)"
+    },
+    "language": "mand1415",
+    "primaryText": "Tā bù xǐhuan nǎge.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "xǐhuan",
+        "like"
+      ],
+      [
+        "nǎge",
+        "which"
+      ]
+    ],
+    "translation": "He does not like anyone.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "item",
+        "nǎge"
+      ]
+    ],
+    "comment": "In the direct-negation function, only shénme is perfect, shéi being less acceptable, and nǎge (N) 'which (N)' is unacceptable.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A268_unknown",
@@ -5627,9 +8400,50 @@
       "paperLabel": "(A268)"
     },
     "language": "mand1415",
-    "primaryText": "Yǒu rén dǎ diànhuà le. Wǒ bù zhīdào shì shéi.",
+    "primaryText": "Yǒu rén dǎ diànhuà le. Wo bù zhīdao shì shéi.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Yǒu",
+        "exist"
+      ],
+      [
+        "rén",
+        "man"
+      ],
+      [
+        "dǎ",
+        "hit"
+      ],
+      [
+        "diànhuà",
+        "phone"
+      ],
+      [
+        "le",
+        "PERF"
+      ],
+      [
+        "Wo",
+        "I"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "zhīdao",
+        "know"
+      ],
+      [
+        "shì",
+        "is"
+      ],
+      [
+        "shéi",
+        "who"
+      ]
+    ],
     "translation": "Someone called. I don't know who.",
     "context": "",
     "judgment": "acceptable",
@@ -5650,7 +8464,7 @@
       ]
     ],
     "comment": "Bare interrogatives are not admissible in specific contexts that lack an element of uncertainty.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A268_known",
@@ -5659,9 +8473,50 @@
       "paperLabel": "(A268)"
     },
     "language": "mand1415",
-    "primaryText": "Yǒu rén dǎ diànhuà le. Cāi yi cāi shì shéi.",
+    "primaryText": "Yǒu rén dǎ diànhuà le. Cāi yī cāi shì shéi.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Yǒu",
+        "exist"
+      ],
+      [
+        "rén",
+        "man"
+      ],
+      [
+        "dǎ",
+        "hit"
+      ],
+      [
+        "diànhuà",
+        "phone"
+      ],
+      [
+        "le",
+        "PERF"
+      ],
+      [
+        "Cāi",
+        "guess"
+      ],
+      [
+        "yī",
+        "one"
+      ],
+      [
+        "cāi",
+        "guess"
+      ],
+      [
+        "shì",
+        "is"
+      ],
+      [
+        "shéi",
+        "who"
+      ]
+    ],
     "translation": "Someone called. Guess who.",
     "context": "",
     "judgment": "acceptable",
@@ -5682,7 +8537,56 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A269a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A269a)"
+    },
+    "language": "mand1415",
+    "primaryText": "Wǒ shéi-yě bù rènshi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wǒ",
+        "I"
+      ],
+      [
+        "shéi-yě",
+        "who-INDEF"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "rènshi",
+        "know"
+      ]
+    ],
+    "translation": "I don't know anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "yě"
+      ]
+    ],
+    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A269b",
@@ -5691,9 +8595,26 @@
       "paperLabel": "(A269b)"
     },
     "language": "mand1415",
-    "primaryText": "Tā shéi-dōu bù xìnrèn.",
+    "primaryText": "Tā shéi-dōu bù xìnren.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "she"
+      ],
+      [
+        "shéi-dōu",
+        "who-INDEF"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "xìnren",
+        "trust"
+      ]
+    ],
     "translation": "She doesn't trust anyone.",
     "context": "",
     "judgment": "acceptable",
@@ -5714,7 +8635,121 @@
       ]
     ],
     "comment": "The dōu- and yě-series occur only preverbally and are used interchangeably.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A269c_dou",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A269c)"
+    },
+    "language": "mand1415",
+    "primaryText": "Wǒ shénme dìfang dōu bù qù.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wǒ",
+        "I"
+      ],
+      [
+        "shénme",
+        "which"
+      ],
+      [
+        "dìfang",
+        "place"
+      ],
+      [
+        "dōu",
+        "INDEF"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "qù",
+        "go"
+      ]
+    ],
+    "translation": "I'm not going anywhere.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "dōu"
+      ]
+    ],
+    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_zh_A269c_ye",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A269c)"
+    },
+    "language": "mand1415",
+    "primaryText": "Wǒ shénme dìfang yě bù qù.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Wǒ",
+        "I"
+      ],
+      [
+        "shénme",
+        "which"
+      ],
+      [
+        "dìfang",
+        "place"
+      ],
+      [
+        "yě",
+        "INDEF"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "qù",
+        "go"
+      ]
+    ],
+    "translation": "I'm not going anywhere.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.36"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "yě"
+      ]
+    ],
+    "comment": "The dōu- and yě-series are used interchangeably in the direct-negation function.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A269d",
@@ -5723,9 +8758,22 @@
       "paperLabel": "(A269d)"
     },
     "language": "mand1415",
-    "primaryText": "Shéi-dōu bù cōngming.",
+    "primaryText": "Shéi-dōu bù cōngmíng.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Shéi-dōu",
+        "who-INDEF"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "cōngmíng",
+        "intelligent"
+      ]
+    ],
     "translation": "No one is intelligent.",
     "context": "",
     "judgment": "acceptable",
@@ -5745,8 +8793,8 @@
         "dōu"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": "The book prints 'Shèi-dōu'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A270",
@@ -5757,7 +8805,32 @@
     "language": "mand1415",
     "primaryText": "Rènhé shíhou nǐ dōu kěyǐ lái.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Rènhé",
+        "any"
+      ],
+      [
+        "shíhou",
+        "time"
+      ],
+      [
+        "nǐ",
+        "you"
+      ],
+      [
+        "dōu",
+        "INDEF"
+      ],
+      [
+        "kěyǐ",
+        "can"
+      ],
+      [
+        "lái",
+        "come"
+      ]
+    ],
     "translation": "You can come anytime.",
     "context": "",
     "judgment": "acceptable",
@@ -5778,7 +8851,7 @@
       ]
     ],
     "comment": "Mainly in conjunction with the adverb dōu.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A271",
@@ -5787,9 +8860,46 @@
       "paperLabel": "(A271)"
     },
     "language": "mand1415",
-    "primaryText": "Tā pǎo de bǐ rènhé yíge nánshēng dōu kuài.",
+    "primaryText": "Tā pǎo de bǐ rènhé yīge nánshēng dōu kuài.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "pǎo",
+        "run"
+      ],
+      [
+        "de",
+        "PT"
+      ],
+      [
+        "bǐ",
+        "than"
+      ],
+      [
+        "rènhé",
+        "any"
+      ],
+      [
+        "yīge",
+        "one"
+      ],
+      [
+        "nánshēng",
+        "boy"
+      ],
+      [
+        "dōu",
+        "INDEF"
+      ],
+      [
+        "kuài",
+        "fast"
+      ]
+    ],
     "translation": "He runs faster than any boy.",
     "context": "",
     "judgment": "acceptable",
@@ -5810,7 +8920,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A272",
@@ -5819,9 +8929,42 @@
       "paperLabel": "(A272)"
     },
     "language": "mand1415",
-    "primaryText": "Tā bù néng táo dào rènhé dìfang qù.",
+    "primaryText": "Tā bù néng táo dào rènhé dìfang qu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tā",
+        "he"
+      ],
+      [
+        "bù",
+        "NEG"
+      ],
+      [
+        "néng",
+        "can"
+      ],
+      [
+        "táo",
+        "escape"
+      ],
+      [
+        "dào",
+        "to"
+      ],
+      [
+        "rènhé",
+        "any"
+      ],
+      [
+        "dìfang",
+        "place"
+      ],
+      [
+        "qu",
+        "go"
+      ]
+    ],
     "translation": "He cannot escape anywhere.",
     "context": "",
     "judgment": "acceptable",
@@ -5842,7 +8985,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_zh_A273",
@@ -5853,7 +8996,36 @@
     "language": "mand1415",
     "primaryText": "Wǒ bù xiāngxìn rènhé rén lái le.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Wǒ",
+        "I"
+      ],
+      [
+        "bù",
+        "not"
+      ],
+      [
+        "xiāngxìn",
+        "think"
+      ],
+      [
+        "rènhé",
+        "any"
+      ],
+      [
+        "rén",
+        "man"
+      ],
+      [
+        "lái",
+        "come"
+      ],
+      [
+        "le",
+        "PERF"
+      ]
+    ],
     "translation": "I don't think that anyone came.",
     "context": "",
     "judgment": "acceptable",
@@ -5873,8 +9045,61 @@
         "rènhé"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": "The book prints 'xiǎngxin'.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_qu_A274a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A274a)"
+    },
+    "language": "huay1240",
+    "primaryText": "Ima-ta-chi wambra yurapa waqta-n-chaw riqa-rqa-n.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ima-ta-chi",
+        "what-ACC-VAL"
+      ],
+      [
+        "wambra",
+        "boy"
+      ],
+      [
+        "yurapa",
+        "tree"
+      ],
+      [
+        "waqta-n-chaw",
+        "behind-3SG-LOC"
+      ],
+      [
+        "riqa-rqa-n",
+        "see-PAST-3SG"
+      ]
+    ],
+    "translation": "The boy saw something behind the tree.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.37"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "The bare interrogative pronouns are used in the specific-unknown function.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_qu_A274b",
@@ -5885,7 +9110,24 @@
     "language": "huay1240",
     "primaryText": "Pi-wan-chi qanyan awtobus-chaw parla-rqu-u.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Pi-wan-chi",
+        "who-COMIT-VAL"
+      ],
+      [
+        "qanyan",
+        "yesterday"
+      ],
+      [
+        "awtobus-chaw",
+        "bus-LOC"
+      ],
+      [
+        "parla-rqu-u",
+        "talk-PAST-1SG"
+      ]
+    ],
     "translation": "I talked to someone on the bus yesterday.",
     "context": "",
     "judgment": "acceptable",
@@ -5906,7 +9148,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_qu_A275a",
@@ -5917,7 +9159,24 @@
     "language": "huay1240",
     "primaryText": "Mana musya-pti-iki-qa pi-ta-pis tapuku-y.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mana",
+        "not"
+      ],
+      [
+        "musya-pti-iki-qa",
+        "know-CONV-2SG-TOP"
+      ],
+      [
+        "pi-ta-pis",
+        "who-ACC-INDEF"
+      ],
+      [
+        "tapuku-y",
+        "ask-IMPV"
+      ]
+    ],
     "translation": "If you don't know, ask somebody.",
     "context": "",
     "judgment": "acceptable",
@@ -5938,7 +9197,52 @@
       ]
     ],
     "comment": "Imperative.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_qu_A275b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A275b)"
+    },
+    "language": "huay1240",
+    "primaryText": "Imay-pis Afrika-man-mi aywa-shaq.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Imay-pis",
+        "when-INDEF"
+      ],
+      [
+        "Afrika-man-mi",
+        "Africa-ALL-VAL"
+      ],
+      [
+        "aywa-shaq",
+        "go-FUT.1SG"
+      ]
+    ],
+    "translation": "I'll go to Africa some time next year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.37"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "-pis"
+      ]
+    ],
+    "comment": "The -pis-series is used in all non-specific functions.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_qu_A276a",
@@ -5949,7 +9253,16 @@
     "language": "huay1240",
     "primaryText": "Ima-ta-pis rika-rqu-nki-ku?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ima-ta-pis",
+        "what-ACC-INDEF"
+      ],
+      [
+        "rika-rqu-nki-ku",
+        "see-PAST-2SG-Q"
+      ]
+    ],
     "translation": "Did you see anything?",
     "context": "",
     "judgment": "acceptable",
@@ -5970,7 +9283,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_qu_A276b",
@@ -5979,9 +9292,22 @@
       "paperLabel": "(A276b)"
     },
     "language": "huay1240",
-    "primaryText": "Ima-ta-pis rika-r-qa willa-ma-y.",
+    "primaryText": "Ima-ta-pis rika-rnin-qa willa-ma-y.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ima-ta-pis",
+        "what-ACC-INDEF"
+      ],
+      [
+        "rika-rnin-qa",
+        "see-2SG-TOP"
+      ],
+      [
+        "willa-ma-y",
+        "tell-1SG-IMPV"
+      ]
+    ],
     "translation": "If you see anything, tell me.",
     "context": "",
     "judgment": "acceptable",
@@ -6001,8 +9327,61 @@
         "-pis"
       ]
     ],
+    "comment": "The middle segment of rika-rnin-qa is hard to read in the scan and may be -min-.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_qu_A277",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A277)"
+    },
+    "language": "huay1240",
+    "primaryText": "Ollqu wambra-m pi-piq-pis ras ayqiqninmi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ollqu",
+        "male"
+      ],
+      [
+        "wambra-m",
+        "boy-VAL"
+      ],
+      [
+        "pi-piq-pis",
+        "who-ABL-INDEF"
+      ],
+      [
+        "ras",
+        "fast"
+      ],
+      [
+        "ayqiqninmi",
+        "runs"
+      ]
+    ],
+    "translation": "The boy can run faster than anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.37"
+      ],
+      [
+        "function",
+        "comparative"
+      ],
+      [
+        "series",
+        "-pis"
+      ]
+    ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_qu_A278",
@@ -6013,7 +9392,24 @@
     "language": "huay1240",
     "primaryText": "Pi-pis kay problema-ta-qa atinman-mi.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Pi-pis",
+        "who-INDEF"
+      ],
+      [
+        "kay",
+        "this"
+      ],
+      [
+        "problema-ta-qa",
+        "problem-ACC-TOP"
+      ],
+      [
+        "atinman-mi",
+        "solves"
+      ]
+    ],
     "translation": "Anyone can solve this problem.",
     "context": "",
     "judgment": "acceptable",
@@ -6034,7 +9430,52 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_qu_A279a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A279a)"
+    },
+    "language": "huay1240",
+    "primaryText": "Ama ima-pis ni-y-chu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ama",
+        "not"
+      ],
+      [
+        "ima-pis",
+        "what-INDEF"
+      ],
+      [
+        "ni-y-chu",
+        "say-IMPV.2SG-NEG"
+      ]
+    ],
+    "translation": "Don't say anything!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.37"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "-pis"
+      ]
+    ],
+    "comment": "The -pis-series is also used in the negative functions.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_qu_A279b",
@@ -6045,7 +9486,24 @@
     "language": "huay1240",
     "primaryText": "Pi-pis ni ima-ta-pis ni-ma-rqa-n-tsu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Pi-pis",
+        "who-INDEF"
+      ],
+      [
+        "ni",
+        "not.even"
+      ],
+      [
+        "ima-ta-pis",
+        "what-ACC-INDEF"
+      ],
+      [
+        "ni-ma-rqa-n-tsu",
+        "tell-1SG-PAST-3SG-NEG"
+      ]
+    ],
     "translation": "Nobody told me anything.",
     "context": "",
     "judgment": "acceptable",
@@ -6066,7 +9524,7 @@
       ]
     ],
     "comment": "The scope of negation is marked by the discontinuous negators.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_qu_A280",
@@ -6077,7 +9535,24 @@
     "language": "huay1240",
     "primaryText": "Mana muna-shkaa-chu pi-pis musyanan-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mana",
+        "not"
+      ],
+      [
+        "muna-shkaa-chu",
+        "want-PERF.1SG-NEG"
+      ],
+      [
+        "pi-pis",
+        "who-INDEF"
+      ],
+      [
+        "musyanan-ta",
+        "know-ACC"
+      ]
+    ],
     "translation": "I didn't want anyone to know.",
     "context": "",
     "judgment": "acceptable",
@@ -6098,7 +9573,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A281_unknown",
@@ -6109,7 +9584,48 @@
     "language": "nucl1643",
     "primaryText": "Dare-ka kara denwa at-ta kedo, dare kara da ka wakara-na-i.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Dare-ka",
+        "who-INDEF"
+      ],
+      [
+        "kara",
+        "from"
+      ],
+      [
+        "denwa",
+        "phone"
+      ],
+      [
+        "at-ta",
+        "be-PAST"
+      ],
+      [
+        "kedo",
+        "though"
+      ],
+      [
+        "dare",
+        "who"
+      ],
+      [
+        "kara",
+        "from"
+      ],
+      [
+        "da",
+        "be:PRES"
+      ],
+      [
+        "ka",
+        "Q"
+      ],
+      [
+        "wakara-na-i",
+        "know-NEG-PRES"
+      ]
+    ],
     "translation": "Someone called; I don't know who.",
     "context": "",
     "judgment": "acceptable",
@@ -6130,7 +9646,7 @@
       ]
     ],
     "comment": "Specific unknown and specific known alike.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A281_known",
@@ -6141,7 +9657,52 @@
     "language": "nucl1643",
     "primaryText": "Dare-ka kara denwa at-ta kedo, dare kara da ka ate-te goran.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Dare-ka",
+        "who-INDEF"
+      ],
+      [
+        "kara",
+        "from"
+      ],
+      [
+        "denwa",
+        "phone"
+      ],
+      [
+        "at-ta",
+        "be-PAST"
+      ],
+      [
+        "kedo",
+        "though"
+      ],
+      [
+        "dare",
+        "who"
+      ],
+      [
+        "kara",
+        "from"
+      ],
+      [
+        "da",
+        "be:PRES"
+      ],
+      [
+        "ka",
+        "Q"
+      ],
+      [
+        "ate-te",
+        "figure.out-CONV"
+      ],
+      [
+        "goran",
+        "try:IMPV"
+      ]
+    ],
     "translation": "Someone called; guess who!",
     "context": "",
     "judgment": "acceptable",
@@ -6162,7 +9723,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A282a",
@@ -6173,7 +9734,24 @@
     "language": "nucl1643",
     "primaryText": "Dare-ka ni ki-ite mi-masyoo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Dare-ka",
+        "who-INDEF"
+      ],
+      [
+        "ni",
+        "DAT"
+      ],
+      [
+        "ki-ite",
+        "ask-CONV"
+      ],
+      [
+        "mi-masyoo",
+        "try-POL:HORT"
+      ]
+    ],
     "translation": "Let's ask somebody.",
     "context": "",
     "judgment": "acceptable",
@@ -6194,7 +9772,52 @@
       ]
     ],
     "comment": "Hortative.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ja_A282b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A282b)"
+    },
+    "language": "nucl1643",
+    "primaryText": "Minna-ga nani-ka-o tabe-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Minna-ga",
+        "every-NOM"
+      ],
+      [
+        "nani-ka-o",
+        "what-INDEF-ACC"
+      ],
+      [
+        "tabe-ta",
+        "eat-PAST"
+      ]
+    ],
+    "translation": "Everybody ate something (non-specific).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.38"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "-ka"
+      ]
+    ],
+    "comment": "Distributive.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A283a",
@@ -6205,7 +9828,24 @@
     "language": "nucl1643",
     "primaryText": "Rusutyuu-ni dare-ka ki-masi-ta ka?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Rusutyuu-ni",
+        "absence.duration-DAT"
+      ],
+      [
+        "dare-ka",
+        "who-INDEF"
+      ],
+      [
+        "ki-masi-ta",
+        "come-POL-PAST"
+      ],
+      [
+        "ka",
+        "Q"
+      ]
+    ],
     "translation": "Did somebody/anybody come while I was gone?",
     "context": "",
     "judgment": "acceptable",
@@ -6226,7 +9866,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A283a_mo",
@@ -6237,7 +9877,24 @@
     "language": "nucl1643",
     "primaryText": "Rusutyuu-ni dare-mo ki-masi-ta ka?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Rusutyuu-ni",
+        "absence.duration-DAT"
+      ],
+      [
+        "dare-mo",
+        "who-INDEF"
+      ],
+      [
+        "ki-masi-ta",
+        "come-POL-PAST"
+      ],
+      [
+        "ka",
+        "Q"
+      ]
+    ],
     "translation": "Did somebody/anybody come while I was gone?",
     "context": "",
     "judgment": "ungrammatical",
@@ -6258,7 +9915,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A283b",
@@ -6269,7 +9926,40 @@
     "language": "nucl1643",
     "primaryText": "Nani-ka tabe-tara, eiga e ture-te it-te age-na-i yo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nani-ka",
+        "what-INDEF"
+      ],
+      [
+        "tabe-tara",
+        "eat-COND"
+      ],
+      [
+        "eiga",
+        "movie"
+      ],
+      [
+        "e",
+        "to"
+      ],
+      [
+        "ture-te",
+        "take-CONV"
+      ],
+      [
+        "it-te",
+        "go-CONV"
+      ],
+      [
+        "age-na-i",
+        "give-NEG-PRES"
+      ],
+      [
+        "yo",
+        "ASS"
+      ]
+    ],
     "translation": "If you eat something/anything, I won't take you to the movie.",
     "context": "",
     "judgment": "acceptable",
@@ -6290,7 +9980,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A283b_mo",
@@ -6301,7 +9991,40 @@
     "language": "nucl1643",
     "primaryText": "Nani-mo tabe-tara, eiga e ture-te it-te age-na-i yo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nani-mo",
+        "what-INDEF"
+      ],
+      [
+        "tabe-tara",
+        "eat-COND"
+      ],
+      [
+        "eiga",
+        "movie"
+      ],
+      [
+        "e",
+        "to"
+      ],
+      [
+        "ture-te",
+        "take-CONV"
+      ],
+      [
+        "it-te",
+        "go-CONV"
+      ],
+      [
+        "age-na-i",
+        "give-NEG-PRES"
+      ],
+      [
+        "yo",
+        "ASS"
+      ]
+    ],
     "translation": "If you eat something/anything, I won't take you to the movie.",
     "context": "",
     "judgment": "ungrammatical",
@@ -6322,7 +10045,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A284",
@@ -6333,7 +10056,36 @@
     "language": "nucl1643",
     "primaryText": "Kono syoonen-wa kono kurasu-no dare-yori-mo hayaku hasir-u.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kono",
+        "this"
+      ],
+      [
+        "syoonen-wa",
+        "boy-TOP"
+      ],
+      [
+        "kono",
+        "this"
+      ],
+      [
+        "kurasu-no",
+        "class-GEN"
+      ],
+      [
+        "dare-yori-mo",
+        "who-from-INDEF"
+      ],
+      [
+        "hayaku",
+        "fast"
+      ],
+      [
+        "hasir-u",
+        "run-PRES"
+      ]
+    ],
     "translation": "This boy can run faster than anyone in his class.",
     "context": "",
     "judgment": "acceptable",
@@ -6354,7 +10106,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A285",
@@ -6365,7 +10117,24 @@
     "language": "nucl1643",
     "primaryText": "Dare-mo kanojo-o aisi-te i-na-i.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Dare-mo",
+        "who-INDEF"
+      ],
+      [
+        "kanojo-o",
+        "she-ACC"
+      ],
+      [
+        "aisi-te",
+        "love-CONV"
+      ],
+      [
+        "i-na-i",
+        "DUR-NEG-PRES"
+      ]
+    ],
     "translation": "Nobody loves her.",
     "context": "",
     "judgment": "acceptable",
@@ -6386,7 +10155,7 @@
       ]
     ],
     "comment": "With verbal negation.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A286",
@@ -6397,7 +10166,28 @@
     "language": "nucl1643",
     "primaryText": "Kyoo-wa dare-mo ku-ru to omow-ana-i.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Kyoo-wa",
+        "today-TOP"
+      ],
+      [
+        "dare-mo",
+        "who-INDEF"
+      ],
+      [
+        "ku-ru",
+        "come-PRES"
+      ],
+      [
+        "to",
+        "SBOR"
+      ],
+      [
+        "omow-ana-i",
+        "think-NEG-PRES"
+      ]
+    ],
     "translation": "I don't think anybody is coming today.",
     "context": "",
     "judgment": "acceptable",
@@ -6418,7 +10208,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ja_A287",
@@ -6429,7 +10219,16 @@
     "language": "nucl1643",
     "primaryText": "Dare-demo deki-masu.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Dare-demo",
+        "who-INDEF"
+      ],
+      [
+        "deki-masu",
+        "possible-POL-PRES"
+      ]
+    ],
     "translation": "Anybody can do it.",
     "context": "",
     "judgment": "acceptable",
@@ -6450,7 +10249,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "WORD_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A288a_bare_unknown",
@@ -6459,9 +10258,18 @@
       "paperLabel": "(A288a)"
     },
     "language": "kore1280",
-    "primaryText": "Nwu-ka kel-ess-ta.",
+    "primaryText": "Nwu'-ka kel-ess-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwu'-ka",
+        "who-NOM"
+      ],
+      [
+        "kel-ess-ta",
+        "call-PAST-DECL"
+      ]
+    ],
     "translation": "Somebody called.",
     "context": "The speaker did not catch the caller's name.",
     "judgment": "acceptable",
@@ -6482,7 +10290,7 @@
       ]
     ],
     "comment": "Specific unknown and specific known alike.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A288a_nka_unknown",
@@ -6493,7 +10301,16 @@
     "language": "kore1280",
     "primaryText": "Nwukwu-inka-ka kel-ess-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwukwu-inka-ka",
+        "who-INDEF-NOM"
+      ],
+      [
+        "kel-ess-ta",
+        "call-PAST-DECL"
+      ]
+    ],
     "translation": "Somebody called.",
     "context": "The speaker did not catch the caller's name.",
     "judgment": "acceptable",
@@ -6514,7 +10331,7 @@
       ]
     ],
     "comment": "Specific unknown and specific known alike.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A288a_bare_known",
@@ -6523,9 +10340,18 @@
       "paperLabel": "(A288a)"
     },
     "language": "kore1280",
-    "primaryText": "Nwu-ka kel-ess-ta.",
+    "primaryText": "Nwu'-ka kel-ess-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwu'-ka",
+        "who-NOM"
+      ],
+      [
+        "kel-ess-ta",
+        "call-PAST-DECL"
+      ]
+    ],
     "translation": "Somebody called.",
     "context": "The speaker goes on: guess who.",
     "judgment": "acceptable",
@@ -6546,7 +10372,7 @@
       ]
     ],
     "comment": "Specific unknown and specific known alike.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A288a_nka_known",
@@ -6557,7 +10383,16 @@
     "language": "kore1280",
     "primaryText": "Nwukwu-inka-ka kel-ess-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwukwu-inka-ka",
+        "who-INDEF-NOM"
+      ],
+      [
+        "kel-ess-ta",
+        "call-PAST-DECL"
+      ]
+    ],
     "translation": "Somebody called.",
     "context": "The speaker goes on: guess who.",
     "judgment": "acceptable",
@@ -6578,7 +10413,105 @@
       ]
     ],
     "comment": "Specific unknown and specific known alike.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ko_A288b_bare",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A288b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Ku sonyen-un mues-ul po-ass-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonyen-un",
+        "boy-NOM"
+      ],
+      [
+        "mues-ul",
+        "what-ACC"
+      ],
+      [
+        "po-ass-ta",
+        "see-PAST-DECL"
+      ]
+    ],
+    "translation": "The boy saw something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "The heading is specific known/unknown.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ko_A288b_nka",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A288b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Ku sonyen-un mues-inka-lul po-ass-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonyen-un",
+        "boy-NOM"
+      ],
+      [
+        "mues-inka-lul",
+        "what-INDEF-ACC"
+      ],
+      [
+        "po-ass-ta",
+        "see-PAST-DECL"
+      ]
+    ],
+    "translation": "The boy saw something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "-nka"
+      ]
+    ],
+    "comment": "The heading is specific known/unknown.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A289a_bare",
@@ -6589,7 +10522,20 @@
     "language": "kore1280",
     "primaryText": "Molu-myen, nwukwu-eykey mul-ela.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Molu-myen",
+        "ignorant-CONV"
+      ],
+      [
+        "nwukwu-eykey",
+        "who-DAT"
+      ],
+      [
+        "mul-ela",
+        "ask-IMPV"
+      ]
+    ],
     "translation": "If you don't know, ask somebody.",
     "context": "",
     "judgment": "acceptable",
@@ -6610,7 +10556,7 @@
       ]
     ],
     "comment": "Imperative.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A289a_nka",
@@ -6621,7 +10567,20 @@
     "language": "kore1280",
     "primaryText": "Molu-myen, nwukwu-nka-eykey mul-ela.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Molu-myen",
+        "ignorant-CONV"
+      ],
+      [
+        "nwukwu-nka-eykey",
+        "who-INDEF-DAT"
+      ],
+      [
+        "mul-ela",
+        "ask-IMPV"
+      ]
+    ],
     "translation": "If you don't know, ask somebody.",
     "context": "",
     "judgment": "acceptable",
@@ -6642,7 +10601,48 @@
       ]
     ],
     "comment": "Imperative.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ko_A289b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A289b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Eti ka-psita.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Eti",
+        "where"
+      ],
+      [
+        "ka-psita",
+        "go-HORT"
+      ]
+    ],
+    "translation": "Let's go somewhere.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "bare interrogative"
+      ]
+    ],
+    "comment": "Hortative.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290a_bare",
@@ -6651,9 +10651,38 @@
       "paperLabel": "(A290a)"
     },
     "language": "kore1280",
-    "primaryText": "Ku sonye-ka mues-ul chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "primaryText": "Ku sonye-ka mues-ul chacu-myen, kunye emeni-eykey malha-lkesi-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonye-ka",
+        "girl-TOP"
+      ],
+      [
+        "mues-ul",
+        "what-ACC"
+      ],
+      [
+        "chacu-myen",
+        "find-CONV"
+      ],
+      [
+        "kunye",
+        "she"
+      ],
+      [
+        "emeni-eykey",
+        "mother-DAT"
+      ],
+      [
+        "malha-lkesi-ta",
+        "tell-FUT-DECL"
+      ]
+    ],
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "acceptable",
@@ -6674,7 +10703,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290a_nka",
@@ -6683,9 +10712,38 @@
       "paperLabel": "(A290a)"
     },
     "language": "kore1280",
-    "primaryText": "Ku sonye-ka mue-nka-lul chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "primaryText": "Ku sonye-ka mue-nka-lul chacu-myen, kunye emeni-eykey malha-lkesi-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonye-ka",
+        "girl-TOP"
+      ],
+      [
+        "mue-nka-lul",
+        "what-INDEF-ACC"
+      ],
+      [
+        "chacu-myen",
+        "find-CONV"
+      ],
+      [
+        "kunye",
+        "she"
+      ],
+      [
+        "emeni-eykey",
+        "mother-DAT"
+      ],
+      [
+        "malha-lkesi-ta",
+        "tell-FUT-DECL"
+      ]
+    ],
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "acceptable",
@@ -6706,7 +10764,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290a_na",
@@ -6715,9 +10773,38 @@
       "paperLabel": "(A290a)"
     },
     "language": "kore1280",
-    "primaryText": "Ku sonye-ka mues-ina chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "primaryText": "Ku sonye-ka mues-ina chacu-myen, kunye emeni-eykey malha-lkesi-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonye-ka",
+        "girl-TOP"
+      ],
+      [
+        "mues-ina",
+        "what-INDEF"
+      ],
+      [
+        "chacu-myen",
+        "find-CONV"
+      ],
+      [
+        "kunye",
+        "she"
+      ],
+      [
+        "emeni-eykey",
+        "mother-DAT"
+      ],
+      [
+        "malha-lkesi-ta",
+        "tell-FUT-DECL"
+      ]
+    ],
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "ungrammatical",
@@ -6738,7 +10825,7 @@
       ]
     ],
     "comment": "The free-choice series are excluded.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290a_tunci",
@@ -6747,9 +10834,38 @@
       "paperLabel": "(A290a)"
     },
     "language": "kore1280",
-    "primaryText": "Ku sonye-ka mues-itunci chac-umyen, kunye emeni-eykey malha-lkesi-ta.",
+    "primaryText": "Ku sonye-ka mues-itunci chacu-myen, kunye emeni-eykey malha-lkesi-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonye-ka",
+        "girl-TOP"
+      ],
+      [
+        "mues-itunci",
+        "what-INDEF"
+      ],
+      [
+        "chacu-myen",
+        "find-CONV"
+      ],
+      [
+        "kunye",
+        "she"
+      ],
+      [
+        "emeni-eykey",
+        "mother-DAT"
+      ],
+      [
+        "malha-lkesi-ta",
+        "tell-FUT-DECL"
+      ]
+    ],
     "translation": "If the girl finds anything, she will tell her mother.",
     "context": "",
     "judgment": "ungrammatical",
@@ -6770,7 +10886,7 @@
       ]
     ],
     "comment": "The free-choice series are excluded.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290b_bare",
@@ -6781,7 +10897,20 @@
     "language": "kore1280",
     "primaryText": "Chelswu mues-ul ilk-ess-ni?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Chelswu",
+        "Chelswu"
+      ],
+      [
+        "mues-ul",
+        "what-ACC"
+      ],
+      [
+        "ilk-ess-ni",
+        "read-PAST-Q"
+      ]
+    ],
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "acceptable",
@@ -6802,7 +10931,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290b_nka",
@@ -6813,7 +10942,20 @@
     "language": "kore1280",
     "primaryText": "Chelswu mue-nka-lul ilk-ess-ni?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Chelswu",
+        "Chelswu"
+      ],
+      [
+        "mue-nka-lul",
+        "what-INDEF-ACC"
+      ],
+      [
+        "ilk-ess-ni",
+        "read-PAST-Q"
+      ]
+    ],
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "acceptable",
@@ -6834,7 +10976,7 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290b_na",
@@ -6845,7 +10987,20 @@
     "language": "kore1280",
     "primaryText": "Chelswu mues-ina ilk-ess-ni?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Chelswu",
+        "Chelswu"
+      ],
+      [
+        "mues-ina",
+        "what-INDEF"
+      ],
+      [
+        "ilk-ess-ni",
+        "read-PAST-Q"
+      ]
+    ],
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "ungrammatical",
@@ -6866,7 +11021,7 @@
       ]
     ],
     "comment": "The free-choice series are excluded.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A290b_tunci",
@@ -6877,7 +11032,20 @@
     "language": "kore1280",
     "primaryText": "Chelswu mues-itunci ilk-ess-ni?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Chelswu",
+        "Chelswu"
+      ],
+      [
+        "mues-itunci",
+        "what-INDEF"
+      ],
+      [
+        "ilk-ess-ni",
+        "read-PAST-Q"
+      ]
+    ],
     "translation": "Did Chelswu read anything?",
     "context": "",
     "judgment": "ungrammatical",
@@ -6898,7 +11066,7 @@
       ]
     ],
     "comment": "The free-choice series are excluded.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A291_na",
@@ -6909,7 +11077,28 @@
     "language": "kore1280",
     "primaryText": "Nwukwu-na i muncey-lul phul swu-iss-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwukwu-na",
+        "who-INDEF"
+      ],
+      [
+        "i",
+        "this"
+      ],
+      [
+        "muncey-lul",
+        "problem-ACC"
+      ],
+      [
+        "phul",
+        "solve"
+      ],
+      [
+        "swu-iss-ta",
+        "do-can-DECL"
+      ]
+    ],
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
@@ -6930,7 +11119,7 @@
       ]
     ],
     "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A291_tunci",
@@ -6941,7 +11130,28 @@
     "language": "kore1280",
     "primaryText": "Nwukwu-tunci i muncey-lul phul swu-iss-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwukwu-tunci",
+        "who-INDEF"
+      ],
+      [
+        "i",
+        "this"
+      ],
+      [
+        "muncey-lul",
+        "problem-ACC"
+      ],
+      [
+        "phul",
+        "solve"
+      ],
+      [
+        "swu-iss-ta",
+        "do-can-DECL"
+      ]
+    ],
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
@@ -6962,7 +11172,7 @@
       ]
     ],
     "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A291_amu_na",
@@ -6973,7 +11183,28 @@
     "language": "kore1280",
     "primaryText": "Amu-na i muncey-lul phul swu-iss-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Amu-na",
+        "any-INDEF"
+      ],
+      [
+        "i",
+        "this"
+      ],
+      [
+        "muncey-lul",
+        "problem-ACC"
+      ],
+      [
+        "phul",
+        "solve"
+      ],
+      [
+        "swu-iss-ta",
+        "do-can-DECL"
+      ]
+    ],
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
@@ -6994,7 +11225,7 @@
       ]
     ],
     "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A291_amu_tunci",
@@ -7005,7 +11236,28 @@
     "language": "kore1280",
     "primaryText": "Amu-tunci i muncey-lul phul swu-iss-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Amu-tunci",
+        "any-INDEF"
+      ],
+      [
+        "i",
+        "this"
+      ],
+      [
+        "muncey-lul",
+        "problem-ACC"
+      ],
+      [
+        "phul",
+        "solve"
+      ],
+      [
+        "swu-iss-ta",
+        "do-can-DECL"
+      ]
+    ],
     "translation": "Anybody can solve this problem.",
     "context": "",
     "judgment": "acceptable",
@@ -7026,7 +11278,7 @@
       ]
     ],
     "comment": "The -na- and -tunci-series are used interchangeably in the free-choice function.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A292_to",
@@ -7037,7 +11289,24 @@
     "language": "kore1280",
     "primaryText": "Nwukwu-to chacki-ka pulkanung ha-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwukwu-to",
+        "who-INDEF"
+      ],
+      [
+        "chacki-ka",
+        "find-TOP"
+      ],
+      [
+        "pulkanung",
+        "impossible"
+      ],
+      [
+        "ha-ta",
+        "be-DECL"
+      ]
+    ],
     "translation": "It's impossible to find anyone.",
     "context": "",
     "judgment": "acceptable",
@@ -7058,7 +11327,7 @@
       ]
     ],
     "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A292_bare",
@@ -7069,7 +11338,24 @@
     "language": "kore1280",
     "primaryText": "Nwukwu-lul chacki-ka pulkanung ha-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwukwu-lul",
+        "who-ACC"
+      ],
+      [
+        "chacki-ka",
+        "find-TOP"
+      ],
+      [
+        "pulkanung",
+        "impossible"
+      ],
+      [
+        "ha-ta",
+        "be-DECL"
+      ]
+    ],
     "translation": "It's impossible to find anyone.",
     "context": "",
     "judgment": "acceptable",
@@ -7090,7 +11376,7 @@
       ]
     ],
     "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A292_nka",
@@ -7101,7 +11387,24 @@
     "language": "kore1280",
     "primaryText": "Nwukwu-nka-lul chacki-ka pulkanung ha-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Nwukwu-nka-lul",
+        "who-INDEF-ACC"
+      ],
+      [
+        "chacki-ka",
+        "find-TOP"
+      ],
+      [
+        "pulkanung",
+        "impossible"
+      ],
+      [
+        "ha-ta",
+        "be-DECL"
+      ]
+    ],
     "translation": "It's impossible to find anyone.",
     "context": "",
     "judgment": "acceptable",
@@ -7122,7 +11425,7 @@
       ]
     ],
     "comment": "Under indirect negation the bare interrogatives and the -nka-series are also possible.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A293a_amu",
@@ -7133,7 +11436,28 @@
     "language": "kore1280",
     "primaryText": "Ku sonye-nun amu-to an po-ass-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonye-nun",
+        "girl-TOP"
+      ],
+      [
+        "amu-to",
+        "any-INDEF"
+      ],
+      [
+        "an",
+        "NEG"
+      ],
+      [
+        "po-ass-ta",
+        "see-PAST-DECL"
+      ]
+    ],
     "translation": "The girl did not see anybody.",
     "context": "",
     "judgment": "acceptable",
@@ -7154,7 +11478,7 @@
       ]
     ],
     "comment": "With verbal negation.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A293a_nwukwu",
@@ -7165,7 +11489,28 @@
     "language": "kore1280",
     "primaryText": "Ku sonye-nun nwukwu-to an po-ass-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ku",
+        "this"
+      ],
+      [
+        "sonye-nun",
+        "girl-TOP"
+      ],
+      [
+        "nwukwu-to",
+        "who-INDEF"
+      ],
+      [
+        "an",
+        "NEG"
+      ],
+      [
+        "po-ass-ta",
+        "see-PAST-DECL"
+      ]
+    ],
     "translation": "The girl did not see anybody.",
     "context": "",
     "judgment": "acceptable",
@@ -7186,7 +11531,60 @@
       ]
     ],
     "comment": "With verbal negation.",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_ko_A293b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A293b)"
+    },
+    "language": "kore1280",
+    "primaryText": "Amu-to amu kes-to malha-ci anha-ss-ta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Amu-to",
+        "any-INDEF"
+      ],
+      [
+        "amu",
+        "any"
+      ],
+      [
+        "kes-to",
+        "thing-INDEF"
+      ],
+      [
+        "malha-ci",
+        "say-CONV"
+      ],
+      [
+        "anha-ss-ta",
+        "NEG-PAST-DECL"
+      ]
+    ],
+    "translation": "Nobody said anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.39"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "-to"
+      ]
+    ],
+    "comment": "In the direct-negation function, it co-occurs with verbal negation.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "haspelmath1997_ko_A294",
@@ -7195,9 +11593,38 @@
       "paperLabel": "(A294)"
     },
     "language": "kore1280",
-    "primaryText": "Yeki-ka enu kos pota-to te alumtap-ta.",
+    "primaryText": "Yeki-ka enu kos pota to te alumtap-ta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Yeki-ka",
+        "here-TOP"
+      ],
+      [
+        "enu",
+        "which"
+      ],
+      [
+        "kos",
+        "place"
+      ],
+      [
+        "pota",
+        "than"
+      ],
+      [
+        "to",
+        "INDEF"
+      ],
+      [
+        "te",
+        "more"
+      ],
+      [
+        "alumtap-ta",
+        "beautiful-DECL"
+      ]
+    ],
     "translation": "Here it is more beautiful than anywhere.",
     "context": "",
     "judgment": "acceptable",
@@ -7218,6 +11645,6 @@
       ]
     ],
     "comment": "",
-    "lgrConformance": ""
+    "lgrConformance": "MORPHEME_ALIGNED"
   }
 ]
