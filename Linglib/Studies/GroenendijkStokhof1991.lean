@@ -1,5 +1,5 @@
 import Linglib.Logic.CylindricAlgebra
-import Linglib.Semantics.Dynamic.DPL.Context
+import Linglib.Semantics.Dynamic.DPL.FirstOrder
 import Linglib.Semantics.Dynamic.DRS.Dynamics
 
 /-!
@@ -34,7 +34,8 @@ double negation and its alphabetic variant `∃y Py ∧ Qx` do not. Section 4.1'
 (`nbf`) is defined by structural recursion, Definition 24's rebracketing clauses being theorems
 of it; a formula is equivalent to its normal binding form, which is scope-bound, so that the
 dynamic truth conditions of any formula are the static ones of its normal binding form
-(`dom_eval_eq_static_nbf`). Section 4.2's translation of discourse representation structures
+(`dom_eval_eq_static_nbf`), which are the satisfaction of a mathlib first-order formula
+(`mem_dom_eval_iff_realize_nbf`). Section 4.2's translation of discourse representation structures
 (`DRT.DRS.toDPL`, Definition 28) preserves meaning: a condition becomes the test of its
 verification and a box denotes its box relation (`DRT.DRS.eval_toDPL`, Fact 25).
 
@@ -672,6 +673,12 @@ theorem isScopeBound_nbf : (nbf φ).IsScopeBound := by
 binding form. -/
 theorem dom_eval_eq_static_nbf : (φ.eval M).dom = (nbf φ).static M := by
   rw [← eval_nbf, (isScopeBound_nbf φ).dom_eval M]
+
+/-- Fact 21 in first-order terms: a formula is true under the dynamic interpretation exactly
+where the first-order translation of its normal binding form is satisfied. -/
+theorem mem_dom_eval_iff_realize_nbf {g : V → M} :
+    g ∈ (φ.eval M).dom ↔ (nbf φ).toFormula.Realize g := by
+  rw [dom_eval_eq_static_nbf, mem_static_iff]
 
 /-- Fact 23: a scope-bound formula is valid in dynamic predicate logic iff it is in predicate
 logic. -/
