@@ -1,14 +1,16 @@
+import Mathlib.Logic.Function.DependsOn
 import Mathlib.ModelTheory.Semantics
 
 /-!
-# Decidable satisfaction on finite structures
+# Satisfaction: dependence on variables and decidability
 
-This file shows that first-order satisfaction is decidable on a finite structure with decidable
-equality and decidable relations, so that `decide` checks `Realize` facts on concrete finite
-models.
+This file shows that the value of a term depends only on its variables, and that first-order
+satisfaction is decidable on a finite structure with decidable equality and decidable relations,
+so that `decide` checks `Realize` facts on concrete finite models.
 
 ## Main definitions
 
+- `FirstOrder.Language.Term.dependsOn_realize`: a term's value depends only on its variables.
 - `FirstOrder.Language.BoundedFormula.decidableRealize` decides `BoundedFormula.Realize` by
   recursion on the formula.
 - `FirstOrder.Language.Formula.decidableRealize` is the same for formulas.
@@ -17,6 +19,16 @@ models.
 namespace FirstOrder.Language
 
 open Structure
+
+/-- [UPSTREAM] The value of a term depends only on the values of its variables. -/
+theorem Term.dependsOn_realize {L : Language} {M : Type*} [L.Structure M] {α : Type*}
+    [DecidableEq α] (t : L.Term α) : DependsOn (fun v : α → M ↦ t.realize v) t.varFinset := by
+  intro v₁ v₂ h
+  induction t with
+  | var a => exact h a (Finset.mem_coe.2 (Finset.mem_singleton_self a))
+  | func f ts ih =>
+    refine congrArg _ (funext fun i ↦ ih i fun a ha ↦ h a ?_)
+    exact Finset.mem_coe.2 (Finset.mem_biUnion.2 ⟨i, Finset.mem_univ _, ha⟩)
 
 section DecidableRealize
 
