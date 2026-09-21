@@ -11,8 +11,17 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 # Disintegrating a finite product measure along one coordinate
 
 `MeasureTheory.Measure.pi_setOf_forall_ne_mem` computes the measure, under `Measure.pi μ`, of a set
-of the form `{x | ∀ j ≠ i, x j ∈ s j (x i)}` as an integral against `μ i`. `[UPSTREAM]` candidate
-for `Mathlib/MeasureTheory/Constructions/Pi.lean`.
+of the form `{x | ∀ j ≠ i, x j ∈ s j (x i)}` as an integral against `μ i`. It is Tonelli's theorem
+for an indicator whose slices at a fixed `i`-th coordinate are boxes; in probabilistic terms, it
+conditions independent variables on one of them.
+
+## Implementation notes
+
+Mathlib's general form of peeling one coordinate off a finite product is
+`MeasureTheory.lmarginal_erase`. This lemma is the special case that random utility models need,
+proved through `measurePreserving_piEquivPiSubtypeProd` because the `lmarginal` route needs a base
+point of `∀ j, α j` and is no shorter. It is a convenience corollary and not an `[UPSTREAM]`
+candidate in this shape.
 -/
 
 public section
