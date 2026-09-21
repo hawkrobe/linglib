@@ -691,7 +691,6 @@ import Linglib.Fragments.Dargwa.Locatives
 import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Dutch.Adjectives
 import Linglib.Fragments.Dutch.Adpositions
-import Linglib.Fragments.Dutch.Binominals
 import Linglib.Fragments.Dutch.Modals
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
@@ -699,7 +698,6 @@ import Linglib.Fragments.Dutch.TemporalConnectives
 import Linglib.Fragments.Dutch.VerbParticles
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Fragments.English.Binominals
 import Linglib.Fragments.English.Comparison
 import Linglib.Fragments.English.Complementizers
 import Linglib.Fragments.English.Conditionals
@@ -922,7 +920,6 @@ import Linglib.Fragments.Quechua.PolarityItems
 import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
 import Linglib.Fragments.Romance.Catalan.Reciprocals
-import Linglib.Fragments.Romance.French.Binominals
 import Linglib.Fragments.Romance.French.Comparison
 import Linglib.Fragments.Romance.French.Determiners
 import Linglib.Fragments.Romance.French.Evidentiality
@@ -1470,8 +1467,6 @@ import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.TriggerTypology
 import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Semantics.Quantification.Basic
-import Linglib.Semantics.Quantification.Binominal
-import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Quantification.Defs

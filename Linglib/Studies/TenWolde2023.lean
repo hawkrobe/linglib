@@ -1,27 +1,37 @@
-import Linglib.Semantics.Quantification.BinominalDefs
-import Linglib.Semantics.Quantification.Binominal
-import Linglib.Fragments.English.Binominals
+import Mathlib.Order.Interval.Set.OrdConnected
+import Mathlib.Order.UpperLower.Basic
+import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Studies.Traugott2010
 
 /-!
-# ten Wolde (2023): The English Binominal Noun Phrase
+# ten Wolde (2023): The English Binominal Noun Phrase: A Cognitive-Functional Approach
 
-This file formalizes the empirical claims of [ten-wolde-2023] about English *of*-binominals over
-the six-way taxonomy and diagnostics of `Semantics/Quantification/BinominalDefs` and the
-English fragment: the diagnostic profiles that separate the evaluative binominal, the
-evaluative modifier and the binominal intensifier (Table 4.2), `ebnp_profile`, `em_profile`,
-`bi_profile`, `premod_distinguishes_evaluative_types`; the dependence of a noun's
-grammaticalization path on its semantic class, inanimate nouns developing pseudo-partitive
-uses and animate and abstract nouns skipping them (chapters 5 and 6),
-`inanimate_develop_pseudopartitive`, `animate_skip_pseudopartitive`, `snake_exception`; the
-entailment from the intensifier to the modifier reading and the independence of the evaluative
-binominal from both, `entailment_summary`; and the evaluative cline as subjectification in
-[traugott-2010]'s sense, `binominalHistory`, `binominal_unidirectional`.
+This file formalizes ten Wolde's account of the English *of*-binominal as a grammaticalization
+path from the prototypical N+PP (*the hell of his own invention*) through the head-classifier
+(*a hell of loneliness*) and the evaluative binominal noun phrase (*a hell of a hotel*) to the
+evaluative modifier (*a hell of a man*) and the binominal intensifier (*a hell of a large sum*)
+(`Stage`). The features of the book's two overview tables hold over intervals of the path, with
+one exception (`ordConnected_span_iff`): the second determiner is lost in the head-classifier and
+reappears in the evaluative binominal, which the book explains by inheritance from the N+PP. A
+feature that holds over an interval is never lost once gained if it holds at the last stage
+(`isUpperSet_span_of_top_mem`), and the features together tell every two stages apart
+(`profile_injective`).
+
+Every first noun of the case studies and of the corpus study is attested at all stages below the
+ones it has reached (`isLowerSet_stages`). In the constructional network the metaphorical links
+are the covering relation of the path (`metaphorical_iff_covBy`), and the step onto the
+evaluative stages is a subjectification in Traugott's sense.
 
 ## Implementation notes
 
-The book is not available to this formalization, so the section and table locators are the
-substrate's and unverified, and the diagnostic profiles are the substrate's tables restated.
+* The spans of the diagnostics are read off the feature rows of Tables 3.2 and 4.2, the path off
+  Figure 6.1, the semantic classes off Table 2.1, the attestations off Figures 5.1 and 5.2 and
+  the summary of chapter 6, and the links off the network figures of chapter 8.
+* A diagnostic is the set of stages at which it holds. The second determiner of the N+PP is an
+  open determiner slot, which is counted here as marking number.
+* A noun records the pseudo-partitive separately from its stages. Figure 6.1 draws that
+  construction as an optional detour between the head-classifier and the evaluative binominal,
+  not as a stage of the path.
 
 ## References
 
@@ -31,212 +41,315 @@ substrate's and unverified, and the diagnostic profiles are the substrate's tabl
 
 namespace TenWolde2023
 
-open Quantifier.Binominal
-open Degree (exampleIdiot)
-open English.Binominals
+/-! ### The path -/
 
--- ═══════════════════════════════════════════════════════════════
--- § 1: Table 4.2 — Diagnostic Profile Verification
--- ═══════════════════════════════════════════════════════════════
+/-- The constructions on the grammaticalization path, from the most lexical to the most
+grammaticalized. -/
+inductive Stage where
+  /-- The first noun denotes a referent and the prepositional phrase ascribes a property to it,
+  as in *the hell of his own invention*. -/
+  | nPP
+  /-- The second noun classifies the type or material of the first, as in *a hell of loneliness*. -/
+  | headClassifier
+  /-- The first noun ascribes an evaluative property to the referent of the second, as in *a hell
+  of a hotel*. -/
+  | evaluative
+  /-- The chunk [N₁ *of a*] is a modifier evaluating the second noun, as in *a hell of a man*. -/
+  | evaluativeModifier
+  /-- The chunk [N₁ *of a*] intensifies a following adjective or quantifier, as in *a hell of
+  a large sum*. -/
+  | binominalIntensifier
+  deriving DecidableEq, Fintype, Repr
 
-/-! ### Table 4.2: Overview of evaluative categories
+/-- The stages are ordered as they are listed. -/
+instance : LinearOrder Stage := LinearOrder.lift' Stage.ctorIdx (by decide)
 
-The three evaluative constructions differ on multiple diagnostics.
-These theorems verify the Table 4.2 claims against the formalized
-diagnostic functions in `Quantifier.Binominal`. -/
+instance : BoundedOrder Stage where
+  top := .binominalIntensifier
+  le_top := by decide
+  bot := .nPP
+  bot_le := by decide
 
-/-- EBNP: N₁ allows plural, Det₂ marks number, of replaceable by copula. -/
-theorem ebnp_profile :
-    OfBinominalType.evaluative.n₁AllowsPlural = true ∧
-    OfBinominalType.evaluative.det₂MarksNumber = true ∧
-    OfBinominalType.evaluative.ofReplaceableByCopula = true ∧
-    OfBinominalType.evaluative.n₁OfAIsConstituent = false := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+/-- The path, from the first stage to the last. -/
+def Stage.path : List Stage :=
+  [nPP, headClassifier, evaluative, evaluativeModifier, binominalIntensifier]
 
-/-- EM: N₁ frozen singular, Det₂ no longer marks number,
-    [N₁ of a] is a constituent, of not replaceable by copula. -/
-theorem em_profile :
-    OfBinominalType.evaluativeModifier.n₁AllowsPlural = false ∧
-    OfBinominalType.evaluativeModifier.det₂MarksNumber = false ∧
-    OfBinominalType.evaluativeModifier.ofReplaceableByCopula = false ∧
-    OfBinominalType.evaluativeModifier.n₁OfAIsConstituent = true := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+/-- Each stage of the path is the immediate successor of the one before it. -/
+theorem Stage.path_isChain : Stage.path.IsChain (· ⋖ ·) := by decide
 
-/-- BI: same as EM on these diagnostics — further bleaching is
-    syntactic (shifts into AdjP), not visible in these features. -/
-theorem bi_profile :
-    OfBinominalType.binominalIntensifier.n₁AllowsPlural = false ∧
-    OfBinominalType.binominalIntensifier.det₂MarksNumber = false ∧
-    OfBinominalType.binominalIntensifier.ofReplaceableByCopula = false ∧
-    OfBinominalType.binominalIntensifier.n₁OfAIsConstituent = true := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+/-! ### Diagnostics -/
 
-/-- All three evaluative types are N₂-headed. -/
-theorem all_evaluative_n₂_headed :
-    OfBinominalType.evaluative.head = .n₂ ∧
-    OfBinominalType.evaluativeModifier.head = .n₂ ∧
-    OfBinominalType.binominalIntensifier.head = .n₂ := by
-  exact ⟨rfl, rfl, rfl⟩
+/-- The features that separate the constructions in the book's overview tables. -/
+inductive Diagnostic where
+  /-- *of* has prepositional meaning, such as 'out of', 'with' or 'from'. -/
+  | ofMeaningful
+  /-- *of* can be left out or fused, where elsewhere it is mandatory. -/
+  | ofOmissible
+  /-- The first determiner can be absent. -/
+  | det₁Omissible
+  /-- There is a second determiner. -/
+  | det₂
+  /-- The second determiner marks number. -/
+  | det₂Number
+  /-- The first noun is the semantic, syntactic and discourse head. -/
+  | n₁Head
+  /-- The second noun is the syntactic head, beyond being the semantic and discourse head. -/
+  | n₂SyntacticHead
+  /-- The first noun ascribes an evaluative property to the second or evaluates its referent. -/
+  | n₁Evaluative
+  /-- [N₁ *of a*] functions as a unit, a modifier or an intensifier. -/
+  | chunk
+  /-- The first determiner is selected by the first noun and does not scope over the whole. -/
+  | det₁ScopeN₁
+  /-- The *of*-phrase can be moved and coordinated. -/
+  | ofPhraseMoves
+  /-- The first noun can be plural. -/
+  | n₁Plural
+  /-- The first noun is modified without restriction to a limited set of modifiers. -/
+  | n₁FullModification
+  /-- The first noun can be modified at all. -/
+  | n₁Modification
+  /-- The two nouns agree in number without exception. -/
+  | strictAgreement
+  /-- The two nouns agree in number at least as a rule. -/
+  | agreement
+  /-- The second noun must be a count or collective noun. -/
+  | n₂CountOnly
+  deriving DecidableEq, Fintype, Repr
 
-/-- Ch. 7, Table 4.2: N₁ premodification distinguishes EBNP from EM/BI.
-    EBNP allows descriptive premodification of N₁ (*a total idiot of a
-    doctor*); EM and BI block it (*#a total hell of a time*) because
-    [N₁ of a] has been reanalyzed as a modifier unit. -/
-theorem premod_distinguishes_evaluative_types :
-    OfBinominalType.evaluative.n₁AllowsDescriptivePremod = true ∧
-    OfBinominalType.evaluativeModifier.n₁AllowsDescriptivePremod = false ∧
-    OfBinominalType.binominalIntensifier.n₁AllowsDescriptivePremod = false := by
-  exact ⟨rfl, rfl, rfl⟩
+open Stage in
+/-- The stages at which a diagnostic holds. -/
+def Diagnostic.span : Diagnostic → Set Stage
+  | .ofMeaningful | .ofPhraseMoves => Set.Iic nPP
+  | .n₁Head | .det₁ScopeN₁ => Set.Iic headClassifier
+  | .n₁Plural | .n₁FullModification => Set.Iic evaluative
+  | .n₁Modification => Set.Iic evaluativeModifier
+  | .n₁Evaluative => Set.Ici evaluative
+  | .det₁Omissible | .n₂SyntacticHead | .chunk => Set.Ici evaluativeModifier
+  | .ofOmissible => Set.Ici binominalIntensifier
+  | .strictAgreement => Set.Icc evaluative evaluative
+  | .agreement | .n₂CountOnly => Set.Icc evaluative evaluativeModifier
+  | .det₂ => {nPP} ∪ Set.Ici evaluative
+  | .det₂Number => {nPP, evaluative}
 
-/-- Table 4.2: N₂ type restriction distinguishes BI from EBNP/EM.
-    EBNP and EM restrict N₂ to count/collective nouns; BI extends to mass. -/
-theorem n₂_type_distinguishes_bi :
-    OfBinominalType.evaluative.n₂AllowsMass = false ∧
-    OfBinominalType.evaluativeModifier.n₂AllowsMass = false ∧
-    OfBinominalType.binominalIntensifier.n₂AllowsMass = true := by
-  exact ⟨rfl, rfl, rfl⟩
+instance (d : Diagnostic) : DecidablePred (· ∈ d.span) := fun _ ↦ by
+  cases d <;> unfold Diagnostic.span <;> infer_instance
 
-/-- Table 4.2: N₁ & N₂ agreement loosens along the evaluative path. -/
-theorem agreement_loosens_on_evaluative_path :
-    OfBinominalType.evaluative.n₁N₂Agreement = .agree ∧
-    OfBinominalType.evaluativeModifier.n₁N₂Agreement = .usuallyAgree ∧
-    OfBinominalType.binominalIntensifier.n₁N₂Agreement = .noAgreement := by
-  exact ⟨rfl, rfl, rfl⟩
+/-- Every diagnostic but those of the second determiner holds over a contiguous span of the path.
+The head-classifier has no second determiner, while the N+PP before it and the evaluative
+binominal after it do. -/
+theorem ordConnected_span_iff (d : Diagnostic) :
+    d.span.OrdConnected ↔ d ≠ .det₂ ∧ d ≠ .det₂Number := by
+  have gap {s : Set Stage} (h₁ : Stage.nPP ∈ s) (h₂ : Stage.evaluative ∈ s)
+      (h₃ : Stage.headClassifier ∉ s) : ¬ s.OrdConnected :=
+    fun h ↦ h₃ (h.out h₁ h₂ ⟨by decide, by decide⟩)
+  cases d
+  case det₂ => exact iff_of_false (gap (by decide) (by decide) (by decide)) (by decide)
+  case det₂Number => exact iff_of_false (gap (by decide) (by decide) (by decide)) (by decide)
+  all_goals exact iff_of_true (by unfold Diagnostic.span; infer_instance) (by decide)
 
-/-- Table 4.2: *of* becomes optional at the BI stage. -/
-theorem of_optional_at_bi :
-    OfBinominalType.evaluative.ofObligatory = true ∧
-    OfBinominalType.evaluativeModifier.ofObligatory = true ∧
-    OfBinominalType.binominalIntensifier.ofObligatory = false := by
-  exact ⟨rfl, rfl, rfl⟩
+/-- A feature of the most grammaticalized stage that holds over a contiguous span is never lost
+once gained. -/
+theorem isUpperSet_span_of_top_mem {d : Diagnostic} (hd : d.span.OrdConnected)
+    (h : ⊤ ∈ d.span) : IsUpperSet d.span :=
+  fun _ _ hab ha ↦ hd.out ha h ⟨hab, le_top⟩
 
--- ═══════════════════════════════════════════════════════════════
--- § 2: Semantic Class → Grammaticalization Path
--- ═══════════════════════════════════════════════════════════════
+/-- A feature of the most lexical stage that holds over a contiguous span is never regained once
+lost. -/
+theorem isLowerSet_span_of_bot_mem {d : Diagnostic} (hd : d.span.OrdConnected)
+    (h : ⊥ ∈ d.span) : IsLowerSet d.span :=
+  fun _ _ hba ha ↦ hd.out h ha ⟨bot_le, hba⟩
 
-/-! ### Ch. 5–6: Diachronic path depends on N₁ semantic class
+/-- Number agreement between the nouns is transient, arising with the evaluative binominal and
+already weakened at the next stage. -/
+theorem strictAgreement_span : Diagnostic.strictAgreement.span = {.evaluative} :=
+  Set.Icc_self _
 
-Inanimate nouns (cake, nub, breeze, husk) develop pseudo-partitive
-readings. Animate (beast, whale, snake) and abstract (hell, bitch)
-nouns generally skip pseudo-partitive. -/
+/-- The restriction of the second noun to count nouns is transient, arising with the evaluative
+binominal and lifted again at the intensifier. -/
+theorem n₂CountOnly_not_upper_not_lower :
+    ¬ IsUpperSet Diagnostic.n₂CountOnly.span ∧ ¬ IsLowerSet Diagnostic.n₂CountOnly.span :=
+  ⟨fun h ↦ absurd (h (b := .binominalIntensifier) (by decide)
+      (show Stage.evaluativeModifier ∈ _ by decide)) (by decide),
+    fun h ↦ absurd (h (b := .nPP) (by decide) (show Stage.evaluative ∈ _ by decide)) (by decide)⟩
 
-/-- All inanimate entries have pseudo-partitive in their construction list. -/
-theorem inanimate_develop_pseudopartitive :
-    cake.constructions.elem .pseudoPartitive = true ∧
-    nub.constructions.elem .pseudoPartitive = true ∧
-    breeze.constructions.elem .pseudoPartitive = true ∧
-    husk.constructions.elem .pseudoPartitive = true := by
-  constructor <;> (try constructor) <;> decide
+/-- The head switches to the second noun exactly where the first noun becomes evaluative. -/
+theorem n₁Head_span_compl : Diagnostic.n₁Head.spanᶜ = Diagnostic.n₁Evaluative.span := by
+  ext s; cases s <;> decide
 
-/-- Most animate entries skip pseudo-partitive (beast, whale). -/
-theorem animate_skip_pseudopartitive :
-    beast.constructions.elem .pseudoPartitive = false ∧
-    whale.constructions.elem .pseudoPartitive = false := by
-  constructor <;> decide
+/-- The chunk [N₁ *of a*] forms exactly where the first noun stops inflecting. -/
+theorem n₁Plural_span_compl : Diagnostic.n₁Plural.spanᶜ = Diagnostic.chunk.span := by
+  ext s; cases s <;> decide
 
-/-- Snake is the exception: an animate noun with pseudo-partitive. -/
-theorem snake_exception :
-    snake.semanticClass = .animate ∧
-    snake.constructions.elem .pseudoPartitive = true := by
-  constructor <;> decide
+/-- The diagnostics that hold at a stage. -/
+def Stage.profile (s : Stage) : Finset Diagnostic := {d | s ∈ d.span}
 
-/-- The semantic class predicate agrees with the entry data for
-    all inanimate nouns in the corpus. -/
-theorem inanimate_class_predicts :
-    cake.semanticClass.developsPseudoPartitive = true ∧
-    nub.semanticClass.developsPseudoPartitive = true ∧
-    breeze.semanticClass.developsPseudoPartitive = true ∧
-    husk.semanticClass.developsPseudoPartitive = true := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+/-- The diagnostics tell every two stages apart. -/
+theorem profile_injective : Function.Injective Stage.profile := by decide
 
--- ═══════════════════════════════════════════════════════════════
--- § 2b: Main Grammaticalization Path (Ch. 5–6, Ch. 8)
--- ═══════════════════════════════════════════════════════════════
+/-! ### First nouns -/
 
-/-! ### The main grammaticalization path
+/-- The semantic classes of first nouns. -/
+inductive SemanticClass where
+  /-- Inanimate concrete nouns such as *cake*, *nub*, *breeze* and *husk*. -/
+  | inanimate
+  /-- Animate nouns such as *beast*, *snake* and *whale*. -/
+  | animate
+  /-- Abstract nouns, among them mythical beings and expletives, such as *hell* and *bitch*. -/
+  | abstract
+  deriving DecidableEq, Repr
 
-[ten-wolde-2023] Ch. 8: the main evaluative path is
-N+PP → Head-Classifier → EBNP → EM → BI, skipping pseudo-partitive.
-Animate and abstract nouns follow this path; inanimate nouns may
-develop pseudo-partitive as an intermediate stage. -/
+/-- A first noun with the constructions it is attested in. -/
+structure Noun where
+  semanticClass : SemanticClass
+  /-- The stages of the path the noun is attested at. -/
+  stages : Finset Stage
+  /-- Whether the noun has pseudo-partitive uses, as in *a hell of microwaves*. -/
+  pseudoPartitive : Bool
+  /-- The orthographically reduced form of [N₁ *of a*], if there is one. -/
+  fused : Option String := none
+  deriving DecidableEq
 
-/-- Animate nouns skip pseudo-partitive: beast and whale have evaluative
-    uses but no pseudo-partitive attestations. -/
-theorem animate_main_path :
-    beast.constructions.elem .nPP = true ∧
-    beast.constructions.elem .headClassifier = true ∧
-    beast.constructions.elem .pseudoPartitive = false ∧
-    beast.constructions.elem .evaluative = true ∧
-    beast.constructions.elem .evaluativeModifier = true ∧
-    beast.constructions.elem .binominalIntensifier = true := by
-  constructor <;> (try constructor) <;> decide
+namespace Noun
 
-/-- Abstract nouns also skip pseudo-partitive (except *hell* which
-    participates in all six). *bitch* follows the main path. -/
-theorem abstract_main_path :
-    bitch.constructions.elem .nPP = true ∧
-    bitch.constructions.elem .pseudoPartitive = false ∧
-    bitch.constructions.elem .evaluative = true ∧
-    bitch.constructions.elem .evaluativeModifier = true := by
-  constructor <;> (try constructor) <;> decide
+/-- The case-study noun *hell* is attested at every stage and fuses to *helluva*. -/
+def hell : Noun := ⟨.abstract, Finset.univ, true, some "helluva"⟩
 
-/-- The semantic class predicate correctly predicts which nouns
-    skip pseudo-partitive: animate and abstract predict no PP,
-    inanimate predicts PP. -/
-theorem semantic_class_predicts_path :
-    beast.semanticClass.developsPseudoPartitive = false ∧
-    whale.semanticClass.developsPseudoPartitive = false ∧
-    bitch.semanticClass.developsPseudoPartitive = false ∧
-    cake.semanticClass.developsPseudoPartitive = true ∧
-    nub.semanticClass.developsPseudoPartitive = true := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- The case-study noun *beast* is attested at every stage and has no pseudo-partitive uses. -/
+def beast : Noun := ⟨.animate, Finset.univ, false, none⟩
 
--- ═══════════════════════════════════════════════════════════════
--- § 4: End-to-End Semantic Chain
--- ═══════════════════════════════════════════════════════════════
+/-- The case-study noun *cake* is attested up to the evaluative modifier. -/
+def cake : Noun :=
+  ⟨.inanimate, {.nPP, .headClassifier, .evaluative, .evaluativeModifier}, true, none⟩
 
-/-! ### Semantic composition across the three evaluative stages
+/-- The noun *whale* is attested at every stage and fuses to *whaleuva*. -/
+def whale : Noun := ⟨.animate, Finset.univ, false, some "whaleuva"⟩
 
-Demonstrates the progression from EBNP (full gradable predicate)
-to EM (evaluative measure) to BI (degree intensifier) using the
-worked examples from `Semantics/Lexical/Noun/Binominal`. -/
+/-- The noun *bitch* is attested at every stage, at the intensifier by a single token. -/
+def bitch : Noun := ⟨.abstract, Finset.univ, false, none⟩
 
-/-- The three evaluative semantics form an entailment chain:
-    BI → EM (proved), but EBNP is independent of EM. -/
-theorem entailment_summary :
-    -- BI entails EM (bi_entails_em instantiated)
-    (biSemantics (Degree.Intensification.muHorrible 10)
-      doctorQuality (Degree.thr 5) (Degree.thr 3) isDoctor .george = true →
-     emSemantics (Degree.Intensification.muHorrible 10)
-      doctorQuality (Degree.thr 3) isDoctor .george = true) ∧
-    -- EBNP and EM have different truth conditions
-    (ebnpSemantics exampleIdiot isDoctor .sarah = true ∧
-     emSemantics (Degree.Intensification.muHorrible 10)
-      doctorQuality (Degree.thr 3) isDoctor .sarah = false) := by
-  constructor
-  · exact bi_entails_em _ _ _ _ _ _
-  · constructor <;> decide +kernel
+/-- The noun *nub* is attested up to the evaluative binominal. -/
+def nub : Noun := ⟨.inanimate, {.nPP, .headClassifier, .evaluative}, true, none⟩
 
--- ═══════════════════════════════════════════════════════════════
--- § 5: Binominal Subjectification
--- ═══════════════════════════════════════════════════════════════
+/-- The noun *breeze* is attested up to the evaluative binominal. -/
+def breeze : Noun := ⟨.inanimate, {.nPP, .headClassifier, .evaluative}, true, none⟩
 
-/-! ### The EBNP → EM → BI cline as subjectification
+/-- The noun *husk* is attested up to the evaluative binominal. -/
+def husk : Noun := ⟨.inanimate, {.nPP, .headClassifier, .evaluative}, true, none⟩
 
-[ten-wolde-2023] §4.5: the EBNP → EM → BI transitions are driven by
-subjectification ([traugott-2010]) — N₁ shifts from ascribing
-objective/physical properties to expressing the speaker's subjective
-evaluation. -/
+/-- The noun *snake* is animate and yet has pseudo-partitive uses. -/
+def snake : Noun := ⟨.animate, {.nPP, .headClassifier, .evaluative}, true, none⟩
 
-/-- The levels of N₁'s coded meaning along N+PP → EBNP → EM → BI: the first step, from a
-referential property (*the beast of the field*) to an evaluative one (*that idiot of a
-doctor*), is the subjectification; the later ones, to pure speaker evaluation (*a hell of a
-game*) and to a degree intensifier (*a hell of a good time*), bleach within the subjective
-level. -/
-def binominalHistory : Traugott2010.History :=
-  [.nonSubjective, .subjective, .subjective, .subjective]
+/-- The nouns of the three case studies. -/
+def caseStudies : List Noun := [cake, beast, hell]
 
-/-- The binominal cline follows [traugott-2010]'s cline. -/
-theorem binominal_unidirectional : Traugott2010.Unidirectional binominalHistory := by decide
+/-- The nouns of the case studies and of the corpus study. -/
+def all : List Noun := caseStudies ++ [whale, bitch, nub, breeze, husk, snake]
+
+end Noun
+
+/-- A first noun attested at a stage is attested at every earlier stage. -/
+theorem isLowerSet_stages : ∀ n ∈ Noun.all, IsLowerSet (n.stages : Set Stage) := by
+  simp only [IsLowerSet, Finset.mem_coe]; decide
+
+/-- Every inanimate first noun develops pseudo-partitive uses. -/
+theorem pseudoPartitive_of_inanimate :
+    ∀ n ∈ Noun.all, n.semanticClass = .inanimate → n.pseudoPartitive := by decide
+
+/-- The animate and abstract nouns with pseudo-partitive uses are *snake* and *hell*. -/
+theorem pseudoPartitive_iff :
+    ∀ n ∈ Noun.all, n.pseudoPartitive ↔
+      n.semanticClass = .inanimate ∨ n = .snake ∨ n = .hell := by decide
+
+/-- A first noun has a reduced form only if it reaches a stage at which [N₁ *of a*] is a unit. -/
+theorem exists_mem_chunk_of_fused :
+    ∀ n ∈ Noun.all, n.fused.isSome → ∃ s ∈ n.stages, s ∈ Diagnostic.chunk.span := by decide
+
+/-! ### The constructional network -/
+
+open ConstructionGrammar
+
+/-- The form of the construction at each stage; the optional *a* of the modifier and the
+intensifier is left out. -/
+def Stage.construction : Stage → Construction Unit
+  | .nPP => ⟨"N+PP",
+      [{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
+       { filler := .fixed "of" }, { filler := .open_ .DET }, { filler := .open_ .NOUN }], (), false⟩
+  | .headClassifier => ⟨"Head-Classifier",
+      [{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
+       { filler := .fixed "of" }, { filler := .open_ .NOUN }], (), false⟩
+  | .evaluative => ⟨"Evaluative BNP",
+      [{ filler := .open_ .DET }, { filler := .open_ .NOUN }, { filler := .fixed "of" },
+       { filler := .fixed "a" }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+  | .evaluativeModifier => ⟨"Evaluative Modifier",
+      [{ filler := .open_ .DET }, { filler := .open_ .NOUN }, { filler := .fixed "of" },
+       { filler := .open_ .NOUN, isHead := true }], (), false⟩
+  | .binominalIntensifier => ⟨"Binominal Intensifier",
+      [{ filler := .open_ .DET }, { filler := .open_ .NOUN }, { filler := .fixed "of" },
+       { filler := .open_ .ADJ }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+
+/-- The simple noun phrase, whose classifying and evaluative premodifiers share their function
+with the binominals. -/
+def simpleNP : Construction Unit :=
+  ⟨"Simple NP", [{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+
+/-- The adjective phrase, whose intensifiers share their function with the binominal
+intensifier. -/
+def adjectivePhrase : Construction Unit :=
+  ⟨"AP", [{ filler := .open_ .ADV }, { filler := .open_ .ADJ, isHead := true }], (), false⟩
+
+/-- A link between two constructions of the network. -/
+private def link (parent child : Construction Unit) (type : LinkType) (shared : String) :
+    InheritanceLink :=
+  { parent := parent.name, child := child.name, mode := .normal, linkType := some type,
+    sharedProperties := [shared] }
+
+open Stage in
+/-- The network of the *of*-binominals: metaphorical links along the path, and polysemy links
+from each stage to the phrase whose modifier shares its function (*a book of poetry* and *a
+poetry book*, *her round moon of a face* and *her moon-like face*). -/
+def network : Constructicon Unit where
+  constructions := Stage.path.map Stage.construction ++ [simpleNP, adjectivePhrase]
+  links :=
+    [ link nPP.construction headClassifier.construction .metaphorical "N₁ heads"
+    , link headClassifier.construction evaluative.construction .metaphorical
+        "descriptive content of N₁"
+    , link evaluative.construction evaluativeModifier.construction .metaphorical "N₁ evaluates"
+    , link evaluativeModifier.construction binominalIntensifier.construction .metaphorical
+        "[N₁ of a] is a chunk"
+    , link headClassifier.construction simpleNP .polysemy "classifying modifier"
+    , link evaluative.construction simpleNP .polysemy "N₁ denotes an attribute"
+    , link evaluativeModifier.construction simpleNP .polysemy "evaluative premodifier"
+    , link binominalIntensifier.construction adjectivePhrase .polysemy "intensifier" ]
+
+/-- Every link of the network joins two of its constructions. -/
+theorem network_wellFormed : network.WellFormed := by decide
+
+/-- The metaphorical links are the covering relation of the path, so each stage is a metaphorical
+extension of the one before it and of no other. -/
+theorem metaphorical_iff_covBy (s t : Stage) :
+    (∃ l ∈ network.links, l.linkType = some .metaphorical ∧
+      l.parent = s.construction.name ∧ l.child = t.construction.name) ↔ s ⋖ t := by
+  revert s t; decide
+
+/-- The head of the form precedes *of* exactly at the stages where the first noun is the semantic
+head. -/
+theorem head_before_of_iff (s : Stage) :
+    ((s.construction.form.takeWhile (·.filler ≠ .fixed "of")).any (·.isHead)) ↔
+      s ∈ Diagnostic.n₁Head.span := by
+  revert s; decide
+
+/-! ### Subjectification -/
+
+/-- The coded level of the first noun's meaning at a stage is nonsubjective while the noun
+ascribes an objective property and subjective once it expresses the speaker's evaluation. -/
+def Stage.level (s : Stage) : Traugott2010.SubjectivityLevel :=
+  if s ∈ Diagnostic.n₁Evaluative.span then .subjective else .nonSubjective
+
+/-- The path follows [traugott-2010]'s cline, with one subjectification at the evaluative
+binominal and bleaching within the subjective level after it. -/
+theorem path_unidirectional :
+    Traugott2010.Unidirectional (Stage.path.map Stage.level) := by
+  decide
 
 end TenWolde2023

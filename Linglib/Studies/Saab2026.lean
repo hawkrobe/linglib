@@ -45,11 +45,11 @@ proposition types are not formalized.
 
 namespace Saab2026
 
-open Quantifier.Binominal Spanish.Binominals Data.Examples
+open Spanish.Binominals Data.Examples
 
 /-! ### Structures -/
 
-/-- The nominals of a binominal: the first noun, the genitive coda, and the indexical empty
+/-- The nominals of a binominal are the first noun, the genitive coda, and the indexical empty
 noun of the equative structure. -/
 inductive Nominal where
   | first
@@ -57,22 +57,22 @@ inductive Nominal where
   | index
   deriving DecidableEq, Repr, Fintype
 
-/-- A structure: the nominal that is the complement of Num, the head of the extended
+/-- A structure records the nominal that is the complement of Num, the head of the extended
 projection, and the nominal in the specifier above it. -/
 structure Structure where
   head : Nominal
   spec : Option Nominal
   deriving DecidableEq, Repr, Fintype
 
-/-- The primeval-genitive structure of pseudo-partitive and quantificational binominals: the
+/-- In the primeval-genitive structure of pseudo-partitive and quantificational binominals the
 coda is the nP complement of Num and the quantity phrase sits in the specifier. -/
 def quantificational : Structure := ⟨.coda, some .first⟩
 
-/-- The descriptive reading of a quantity noun: the noun heads the projection and the coda is
-its complement. -/
+/-- Under the descriptive reading of a quantity noun the noun heads the projection and the coda
+is its complement. -/
 def descriptive : Structure := ⟨.first, none⟩
 
-/-- The equative structure of qualitative binominals: the complement of Num is the indexical
+/-- In the equative structure of qualitative binominals the complement of Num is the indexical
 empty noun, which the equative head relates to the coda in its specifier. -/
 def equative : Structure := ⟨.index, some .coda⟩
 
@@ -84,7 +84,7 @@ def Structure.Elidable (s : Structure) (x : Nominal) : Prop := s.head = x ∧ x 
 instance (s : Structure) (x : Nominal) : Decidable (s.Elidable x) := by
   unfold Structure.Elidable; infer_instance
 
-/-- The number of a nominal, given the coda's: the first noun is singular, and the indexical
+/-- The number of a nominal, given the coda's. The first noun is singular, and the indexical
 empty noun takes the coda's number through the equation. -/
 def Nominal.number (c : Number) : Nominal → Number
   | .first => .singular
@@ -93,14 +93,14 @@ def Nominal.number (c : Number) : Nominal → Number
 /-- The verb agrees with the Num head, whose number is that of its complement. -/
 def Structure.agreement (s : Structure) (c : Number) : Number := s.head.number c
 
-/-- The gap left by a missing nominal: a true ellipsis or an indexical empty noun. -/
+/-- The gap left by a missing nominal is a true ellipsis or an indexical empty noun. -/
 inductive Gap where
   | ellipsis
   | index
   deriving DecidableEq, Repr
 
-/-- The gap of a binominal whose coda is missing: an indexical empty noun when the structure
-has one, an ellipsis otherwise. -/
+/-- The gap of a binominal whose coda is missing is an indexical empty noun when the structure
+has one, and an ellipsis otherwise. -/
 def Structure.gap (s : Structure) : Gap := if s.head = .index then .index else .ellipsis
 
 /-- A gap with internal structure hosts arguments and allows sub-extraction. -/
@@ -113,14 +113,14 @@ def Gap.ContextResolved : Gap → Prop
   | .ellipsis => False
   | .index => True
 
-instance : DecidablePred Gap.Structured := λ g => by
+instance : DecidablePred Gap.Structured := fun g ↦ by
   cases g <;> unfold Gap.Structured <;> infer_instance
 
-instance : DecidablePred Gap.ContextResolved := λ g => by
+instance : DecidablePred Gap.ContextResolved := fun g ↦ by
   cases g <;> unfold Gap.ContextResolved <;> infer_instance
 
-/-- Nothing in the equative structure can be elided: the coda has no licensor and the index is
-atomic. -/
+/-- Nothing in the equative structure can be elided, since the coda has no licensor and the
+index is atomic. -/
 theorem equative_not_elidable (x : Nominal) : ¬ equative.Elidable x := by
   cases x <;> decide
 
@@ -156,30 +156,34 @@ theorem elidable_first_iff_singular (b : BinominalType) (r : Reading) (hb : b �
 
 /-- A row's binominal type, from the fragment entry of its first noun. -/
 def binominalType? (x : LinguisticExample) : Option BinominalType :=
-  (x.feature? "noun").bind λ f => (lookup f).map (·.binominalType)
+  (x.feature? "noun").bind fun f ↦ (lookup f).map (·.binominalType)
 
 private def readings : List (String × Reading) :=
   [("quantificational", .quantificational), ("descriptive", .descriptive)]
 
-/-- The structure the paper assigns to a row: from its first noun's type and, for a quantity
-noun, its reading, quantificational unless recorded otherwise. -/
+/-- The structure the paper assigns to a row follows from its first noun's type and, for a
+quantity noun, its reading, which is quantificational unless recorded otherwise. -/
 def structure? (x : LinguisticExample) : Option Structure :=
-  (binominalType? x).map λ b =>
+  (binominalType? x).map fun b ↦
     structureOf b ((x.parse? "reading" readings).getD .quantificational)
 
 private def nominals : List (String × Nominal) := [("first", .first), ("coda", .coda)]
 
 private def numbers : List (String × Number) := [("singular", .singular), ("plural", .plural)]
 
-/-- Whether the ellipsis reading of a row is acceptable: the reading's judgment when one is
-recorded, else the row's. -/
+/-- The ellipsis reading of a row is acceptable when the reading's judgment, or the row's if
+none is recorded for the reading, is acceptable. -/
 def EllipsisAcceptable (x : LinguisticExample) : Prop :=
   (x.readings.lookup "ellipsis").getD x.judgment = .acceptable
 
 instance (x : LinguisticExample) : Decidable (EllipsisAcceptable x) := by
   unfold EllipsisAcceptable; infer_instance
 
-/-- The rows that elide a nominal: the ellipsis reading is acceptable exactly when the row's
+/-- Every row names a first noun of the fragment, so each of the theorems below speaks about all
+the rows. -/
+theorem structure?_isSome : ∀ x ∈ Examples.all, (structure? x).isSome := by decide +kernel
+
+/-- In the rows that elide a nominal, the ellipsis reading is acceptable exactly when the row's
 structure licenses eliding that nominal. -/
 theorem ellipsis_matches :
     ∀ x ∈ Examples.all, ∀ s, structure? x = some s → ∀ e, x.parse? "elided" nominals = some e →
@@ -192,7 +196,7 @@ theorem agreement_matches :
       x.parse? "agreement" numbers = (x.parse? "codaNumber" numbers).map s.agreement := by
   decide +kernel
 
-/-- The diagnostics of the rows: sub-extraction and argument structure succeed exactly in a
+/-- In the diagnostic rows, sub-extraction and argument structure succeed exactly in a
 structured gap, and contextual resolution exactly in an indexical one. -/
 theorem diagnostics_match :
     ∀ x ∈ Examples.all, ∀ s, structure? x = some s →

@@ -1,27 +1,35 @@
-import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 
 /-!
-# Spanish Binominal Nouns [saab-2026]
+# Spanish binominal nouns
 
-Lexical entries for Spanish nouns appearing in binominal constructions,
-classified by their structural type.
+Spanish binominals join a first noun to a second by *de*. They fall into three types by the
+class of the first noun. Group nouns (*grupo*, *conjunto*, *serie*) head pseudo-partitives,
+quantity nouns (*montón*, *pila*, *cantidad*) head quantificational binominals, which also have a
+descriptive reading in which the noun keeps its literal meaning, and expressive nouns (*mierda*,
+*maravilla*, *desastre*) head qualitative binominals, in which the first noun evaluates the
+referent of the second.
 
-## Noun Classes
+## References
 
-- **Group nouns** (pseudo-partitive): *grupo*, *conjunto*, *serie*
-- **Quantity nouns** (quantificational): *montón*, *pila*, *cantidad*
-- **Expressive nouns** (qualitative): *mierda*, *maravilla*, *desastre*
-
-Each class determines the internal structure of the binominal DP
-and thereby the availability of NP-ellipsis.
+* [saab-2026]
+* [kramer-2015]
 -/
 
 namespace Spanish.Binominals
 
-open Quantifier.Binominal
 open DistributedMorphology
 open DistributedMorphology.Categorizer (Head)
+
+/-- The types of Spanish binominal, by the class of the first noun. -/
+inductive BinominalType where
+  /-- A group noun and the set it groups, as in *un grupo de estudiantes*. -/
+  | pseudoPartitive
+  /-- A quantity noun and what it quantifies, as in *un montón de estudiantes*. -/
+  | quantificational
+  /-- An expressive noun and what it evaluates, as in *una mierda de departamento*. -/
+  | qualitative
+  deriving DecidableEq, Repr
 
 /-- A Spanish binominal noun entry, with gender encoded via the DM
     categorizing head on n ([kramer-2015]). -/
