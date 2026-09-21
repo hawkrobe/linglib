@@ -1,4 +1,6 @@
-import Mathlib.ModelTheory.Semantics
+module
+
+public import Mathlib.ModelTheory.Semantics
 
 /-!
 # Computable named-variable binders for first-order formulas
@@ -20,6 +22,8 @@ Upstream candidates.
   variables, as a sentence.
 -/
 
+@[expose] public section
+
 universe u v
 
 namespace FirstOrder.Language.Formula
@@ -28,49 +32,34 @@ open FirstOrder Language
 
 variable {L : Language.{u, v}} {α : Type*} [DecidableEq α]
 
-/-- The relabeling sending the named free variable `n` to the bound side. -/
-private def toBound (n : α) : α → α ⊕ Fin 1 := fun k =>
-  if k = n then Sum.inr 0 else Sum.inl k
-
-/-- Universally close the named free variable `n`. Computable, unlike
-mathlib's `Formula.iAlls`. -/
+/-- Universally close the named free variable `n`: relabel it to the bound variable and
+quantify. Computable, unlike mathlib's `Formula.iAlls`. -/
 def all₁ (n : α) (φ : L.Formula α) : L.Formula α :=
-  (BoundedFormula.relabel (toBound n) φ).all
+  (BoundedFormula.relabel (Function.update Sum.inl n (Sum.inr (0 : Fin 1))) φ).all
 
-/-- Existentially close the named free variable `n`. Computable, unlike
-mathlib's `Formula.iExs`. -/
+/-- Existentially close the named free variable `n`. Computable, unlike mathlib's
+`Formula.iExs`. -/
 def ex₁ (n : α) (φ : L.Formula α) : L.Formula α :=
-  (BoundedFormula.relabel (toBound n) φ).ex
+  (BoundedFormula.relabel (Function.update Sum.inl n (Sum.inr (0 : Fin 1))) φ).ex
 
 variable {M : Type*} [L.Structure M]
 
-private theorem realize_relabel_update (n : α) (φ : L.Formula α) (v : α → M)
-    (x : M) :
-    (BoundedFormula.relabel (toBound n) φ).Realize v
-      (Fin.snoc (default : Fin 0 → M) x) ↔
-      φ.Realize (Function.update v n x) := by
-  rw [BoundedFormula.realize_relabel]
-  refine iff_of_eq (congrArg₂ (BoundedFormula.Realize φ) ?_ ?_)
-  · funext k
-    by_cases hk : k = n <;> simp [hk, toBound, Fin.snoc]
-  · funext i
-    exact i.elim0
+/-- Relabeling `n` to the bound variable and supplying `x` for it is updating the valuation
+at `n`. -/
+theorem realize_relabel_update (n : α) (φ : L.Formula α) (v : α → M) (x : M) :
+    (BoundedFormula.relabel (Function.update Sum.inl n (Sum.inr (0 : Fin 1))) φ).Realize v
+      (Fin.snoc (default : Fin 0 → M) x) ↔ φ.Realize (Function.update v n x) := by
+  rw [BoundedFormula.realize_relabel, Function.comp_update]
+  refine iff_of_eq (congrArg₂ (BoundedFormula.Realize φ) ?_ (funext fun i ↦ i.elim0))
+  simp [Fin.snoc, Function.comp_def]
 
 theorem realize_all₁ {n : α} {φ : L.Formula α} {v : α → M} :
-    (all₁ n φ).Realize v ↔ ∀ x : M, φ.Realize (Function.update v n x) := by
-  have h : (all₁ n φ).Realize v
-      = BoundedFormula.Realize (BoundedFormula.relabel (toBound n) φ).all v
-          default := rfl
-  rw [h, BoundedFormula.realize_all]
-  exact forall_congr' fun x => realize_relabel_update n φ v x
+    (all₁ n φ).Realize v ↔ ∀ x : M, φ.Realize (Function.update v n x) :=
+  BoundedFormula.realize_all.trans <| forall_congr' <| realize_relabel_update n φ v
 
 theorem realize_ex₁ {n : α} {φ : L.Formula α} {v : α → M} :
-    (ex₁ n φ).Realize v ↔ ∃ x : M, φ.Realize (Function.update v n x) := by
-  have h : (ex₁ n φ).Realize v
-      = BoundedFormula.Realize (BoundedFormula.relabel (toBound n) φ).ex v
-          default := rfl
-  rw [h, BoundedFormula.realize_ex]
-  exact exists_congr fun x => realize_relabel_update n φ v x
+    (ex₁ n φ).Realize v ↔ ∃ x : M, φ.Realize (Function.update v n x) :=
+  BoundedFormula.realize_ex.trans <| exists_congr <| realize_relabel_update n φ v
 
 /-- A formula with no occurring free variables, as a sentence. -/
 def toSentence (φ : L.Formula α) (h : φ.freeVarFinset = ∅) : L.Sentence :=

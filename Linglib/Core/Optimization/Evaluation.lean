@@ -1,11 +1,15 @@
-import Mathlib.Order.Defs.PartialOrder
-import Mathlib.Order.Defs.LinearOrder
-import Mathlib.Order.PiLex
-import Mathlib.Order.Fin.Basic
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Finset.Max
-import Mathlib.Algebra.Order.Monoid.Defs
-import Mathlib.Algebra.Tropical.Basic
+module
+
+public import Mathlib.Order.Defs.PartialOrder
+public import Mathlib.Order.Defs.LinearOrder
+public import Mathlib.Order.PiLex
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Algebra.Order.Group.Nat
+public import Mathlib.Algebra.Order.Group.PiLex
+public import Mathlib.Algebra.Order.Monoid.Defs
+public import Mathlib.Algebra.Tropical.Basic
 
 /-!
 # Lexicographic order on `Nat`-valued profiles
@@ -17,25 +21,19 @@ subset-inclusion order on satisfied criteria lives at `Preorder.ofCriteria` in
 
 ## Architecture
 
-`LexLE`, `LexLT` are decidable `Prop` relations defined by
-structural recursion, delegating to standard combinators
-(`And.decidable`, `Or.decidable`). `LexMinProblem C n` packages a finite
-candidate set with a `Fin n → Nat`-valued score, exposing the
-non-empty lex-min set via `Finset.exists_min_image`.
+`LexLE`, `LexLT` are decidable `Prop` relations defined by structural recursion.
+`LexMinProblem C n` packages a finite candidate set with a `Fin n → Nat`-valued score, exposing
+the non-empty lex-min set via `Finset.exists_min_image`.
 
-## Algebraic structure — ordered additive monoid
+## Algebraic structure
 
-`Lex (Fin n → Nat)` carries:
-
-- **`AddCommMonoid`** — componentwise addition.
-- **`LinearOrder`** — the lex order.
-- **`IsOrderedAddMonoid`** — additive monotonicity: adding the same
-  vector to both sides preserves the lex order.
-- **`IsOrderedCancelAddMonoid`** — strict version of the above.
-
-Together these say: `Lex (Fin n → Nat)` is a standard mathlib ordered
-commutative monoid. Equivalently, the tropical (min-plus) semiring
-view via `Mathlib.Algebra.Tropical.Basic`.
+`Lex (Fin n → Nat)` is an ordered cancellative commutative monoid under componentwise addition,
+by mathlib's `Pi.Lex.isOrderedCancelAddMonoid`, and a linear order, so the tropical (min-plus)
+semiring of `Mathlib.Algebra.Tropical.Basic` applies. The `LinearOrder` of `Pi.Lex` is classical;
+`≤` and `<` are decided here by materializing both profiles as lists (`lexLE_ofFn`), a single
+structural pass that `by decide` evaluates quickly. A bounded search for the first differing
+coordinate is also decidable but re-evaluates every earlier coordinate at each position, which
+is prohibitive when a coordinate is a constraint evaluation.
 
 ## Variable-length vs fixed-length
 
@@ -48,6 +46,8 @@ full `LinearOrder` (lex). Fixing the length eliminates trailing-zero
 ambiguity, upgrading `LexLE` to a linear order. `LexMinProblem C n`
 always has a non-empty lex-min set via `Finset.exists_min_image`.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization.Evaluation
 
@@ -122,11 +122,6 @@ theorem lexLE_total (a b : List Nat) (h : a.length = b.length) :
 -/
 theorem lexLE_nil (b : List Nat) : LexLE [] b := by
   cases b <;> trivial
-
-/-- `LexLE (x :: xs) []` holds exactly when all entries are zero. -/
-theorem lexLE_cons_nil_iff (x : Nat) (xs : List Nat) :
-    LexLE (x :: xs) [] ↔ x = 0 ∧ LexLE xs [] :=
-  Iff.rfl
 
 /-- `LexLE (x :: xs) (y :: ys)` holds exactly when the head is strictly less, or the heads are equal
 and the tails are related. -/
@@ -224,15 +219,6 @@ theorem lexLE_trans : ∀ (a b c : List Nat),
       · exact .inl hlt₂
       · exact .inr ⟨rfl, lexLE_trans xs ys zs htl₁ htl₂⟩
 
-/-- Lexicographic < is irreflexive. -/
-theorem lexLT_irrefl (a : List Nat) : ¬ LexLT a a :=
-  fun ⟨h, hn⟩ ↦ hn h
-
-/-- Lexicographic < is asymmetric. -/
-theorem lexLT_asymm (a b : List Nat) (h : LexLT a b) :
-    ¬ LexLT b a :=
-  fun ⟨hba, _⟩ ↦ h.2 hba
-
 /-- Lexicographic < is transitive. -/
 theorem lexLT_trans (a b c : List Nat)
     (hab : LexLT a b) (hbc : LexLT b c) : LexLT a c :=
@@ -254,42 +240,6 @@ theorem lexLE_antisymm : ∀ (a b : List Nat),
     · rcases hba with hlt' | ⟨_, htl'⟩
       · omega
       · exact congrArg _ (lexLE_antisymm xs ys hlen htl htl')
-
--- ============================================================================
--- § 4d: Minimum Element Existence
--- ============================================================================
-
-/-- A nonempty list has a minimum element under `LexLE`, provided all profiles have equal length. It
-follows that the set of lexicographic minima is nonempty (`optimal_nonempty`). -/
-theorem exists_lexLE_minimum {α : Type*} (xs : List α) (hne : xs ≠ [])
-    (f : α → List Nat)
-    (hlen : ∀ a ∈ xs, ∀ b ∈ xs, (f a).length = (f b).length) :
-    ∃ x ∈ xs, ∀ y ∈ xs, LexLE (f x) (f y) := by
-  induction xs with
-  | nil => exact absurd rfl hne
-  | cons a rest ih =>
-    by_cases hrest : rest = []
-    · subst hrest
-      exact ⟨a, .head _, fun y hy ↦ by
-        cases hy with
-        | head => exact lexLE_refl (f a)
-        | tail _ h => nomatch h⟩
-    · have hlen' : ∀ c ∈ rest, ∀ d ∈ rest, (f c).length = (f d).length :=
-        fun c hc d hd ↦ hlen c (.tail a hc) d (.tail a hd)
-      obtain ⟨m, hm_mem, hm_min⟩ := ih hrest hlen'
-      have hlen_am : (f a).length = (f m).length :=
-        hlen a (.head _) m (.tail a hm_mem)
-      cases lexLE_total (f a) (f m) hlen_am with
-      | inl ham =>
-        exact ⟨a, .head _, fun y hy ↦ by
-          cases hy with
-          | head => exact lexLE_refl (f a)
-          | tail _ h => exact lexLE_trans (f a) (f m) (f y) ham (hm_min y h)⟩
-      | inr hma =>
-        exact ⟨m, .tail a hm_mem, fun y hy ↦ by
-          cases hy with
-          | head => exact hma
-          | tail _ h => exact hm_min y h⟩
 
 -- ============================================================================
 -- § 10: LexNatList — Variable-Length Lexicographic Preorder
@@ -335,116 +285,12 @@ theorem LexNatList.le_total (a b : LexNatList)
 -- § 12: Instances on `Lex (Fin n → Nat)`
 -- ============================================================================
 
-/-- Extensionality helper for `Lex (Fin n → Nat)` (mathlib's `Lex`
-    deliberately has no `@[ext]`). -/
-private theorem lexFin_ext {n : Nat} {a b : Lex (Fin n → Nat)}
-    (h : ∀ i, a i = b i) : a = b :=
-  show toLex (ofLex a) = toLex (ofLex b) from congrArg toLex (funext h)
-
-/-- Pointwise addition on `Lex (Fin n → Nat)` reduces componentwise. -/
-theorem lexFinNat_add_apply {n : Nat}
-    (a b : Lex (Fin n → Nat)) (i : Fin n) :
-    (a + b) i = a i + b i := rfl
-
-/-- The zero `Lex (Fin n → Nat)` is pointwise zero. -/
-theorem lexFinNat_zero_apply {n : Nat} (i : Fin n) :
-    (0 : Lex (Fin n → Nat)) i = 0 := rfl
-
--- `AddCommMonoid` is NOT lifted automatically (Lex deliberately strips
--- algebraic instances — mathlib's PiLex.lean has `assert_not_exists Monoid`).
--- We prove the axioms manually; Lean picks up `instAddLex`/`instZeroLex`
--- as parent instances, so there is no instance diamond.
-instance (n : Nat) : AddCommMonoid (Lex (Fin n → Nat)) where
-  add_assoc a b c := lexFin_ext fun i ↦ Nat.add_assoc ..
-  zero_add a := lexFin_ext fun i ↦ Nat.zero_add ..
-  add_zero a := lexFin_ext fun i ↦ Nat.add_zero ..
-  add_comm a b := lexFin_ext fun i ↦ Nat.add_comm ..
-  nsmul := nsmulRec
-
-/-- `Lex (Fin n → Nat)` is an ordered additive commutative monoid, since componentwise addition
-preserves the lexicographic ordering. The proof transfers the existential witness, so that if `a <
-b` at position `i` with all earlier positions equal, then `a + c < b + c` at the same position. -/
-instance (n : Nat) : IsOrderedAddMonoid (Lex (Fin n → Nat)) where
-  add_le_add_left a b hab c := by
-    rcases eq_or_lt_of_le hab with rfl | hlt
-    · exact le_refl _
-    · apply le_of_lt
-      obtain ⟨i, hpre, hi⟩ := hlt
-      exact ⟨i,
-        fun j hj ↦ show a j + c j = b j + c j by rw [hpre j hj],
-        Nat.add_lt_add_right hi (c i)⟩
-
-/-- Left cancellation for lexicographic ≤. -/
-instance (n : Nat) : IsOrderedCancelAddMonoid (Lex (Fin n → Nat)) where
-  le_of_add_le_add_left a b c hab := by
-    rcases eq_or_lt_of_le hab with heq | hlt
-    · exact le_of_eq (lexFin_ext fun i ↦ Nat.add_left_cancel (congrFun heq i))
-    · apply le_of_lt
-      obtain ⟨i, hpre, hi⟩ := hlt
-      exact ⟨i,
-        fun j hj ↦ Nat.add_left_cancel (hpre j hj),
-        Nat.lt_of_add_lt_add_left hi⟩
+-- The ordered cancellative monoid structure is mathlib's `Pi.Lex.isOrderedCancelAddMonoid`.
+example (n : Nat) : IsOrderedCancelAddMonoid (Lex (Fin n → Nat)) := inferInstance
 
 -- ============================================================================
 -- § 12a: Decidable Ordering on `Lex (Fin n → Nat)`
 -- ============================================================================
-
-/-- Recursive computable lex-≤ on `Fin n → Nat` (decision procedure for the
-    noncomputable `Pi.Lex` order). -/
-private def lexFinNatLE : (n : Nat) → (Fin n → Nat) → (Fin n → Nat) → Prop
-  | 0, _, _ => True
-  | _ + 1, a, b => a 0 < b 0 ∨ (a 0 = b 0 ∧ lexFinNatLE _ (a ∘ Fin.succ) (b ∘ Fin.succ))
-
-private instance instDecidableLexFinNatLE :
-    (n : Nat) → (a b : Fin n → Nat) → Decidable (lexFinNatLE n a b)
-  | 0, _, _ => isTrue trivial
-  | _ + 1, a, b =>
-    have : Decidable (lexFinNatLE _ (a ∘ Fin.succ) (b ∘ Fin.succ)) :=
-      instDecidableLexFinNatLE _ _ _
-    inferInstanceAs (Decidable (a 0 < b 0 ∨ (a 0 = b 0 ∧ lexFinNatLE _ _ _)))
-
-/-- `lexFinNatLE` is the negation of `Pi.Lex (· < ·) (· < ·) b a`. The proof is by induction on `n`,
-where the recursive structure of `lexFinNatLE` into head and tail mirrors the existential structure
-of `Pi.Lex` at the first differing position. -/
-private theorem lexFinNatLE_iff_not_lt :
-    (n : Nat) → (a b : Fin n → Nat) →
-    lexFinNatLE n a b ↔
-      ¬ (∃ i : Fin n, (∀ j : Fin n, j < i → b j = a j) ∧ b i < a i)
-  | 0, _, _ => by
-    constructor
-    · intro _ ⟨i, _, _⟩; exact i.elim0
-    · intro _; exact trivial
-  | n + 1, a, b => by
-    constructor
-    · intro hvp ⟨i, hpre, hlt⟩
-      rcases hvp with h_head_lt | ⟨h_head_eq, h_tail⟩
-      · rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩
-        · exact absurd hlt (Nat.not_lt.mpr (Nat.le_of_lt h_head_lt))
-        · exact absurd (hpre 0 (Fin.succ_pos j)).symm (Nat.ne_of_lt h_head_lt)
-      · rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩
-        · exact absurd hlt (Nat.not_lt.mpr (le_of_eq h_head_eq))
-        · exact absurd ⟨j,
-            fun k hk ↦ hpre k.succ (Fin.succ_lt_succ_iff.mpr hk), hlt⟩
-            ((lexFinNatLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mp h_tail)
-    · intro hno
-      rcases Nat.lt_trichotomy (a 0) (b 0) with hlt | heq | hgt
-      · exact Or.inl hlt
-      · right; exact ⟨heq,
-          (lexFinNatLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mpr fun ⟨j, hp, hl⟩ ↦
-            hno ⟨j.succ,
-              fun k hk ↦ by
-                rcases Fin.eq_zero_or_eq_succ k with rfl | ⟨k', rfl⟩
-                · exact heq.symm
-                · exact hp k' (Fin.succ_lt_succ_iff.mp hk),
-              hl⟩⟩
-      · exact absurd ⟨(0 : Fin (n + 1)),
-          fun j hj ↦ absurd hj (Fin.not_lt_zero j), hgt⟩ hno
-
-/-- `lexFinNatLE` agrees with `≤` on `Lex (Fin n → Nat)`. -/
-theorem lexFinNatLE_iff_le {n : Nat} (a b : Lex (Fin n → Nat)) :
-    lexFinNatLE n a b ↔ a ≤ b := by
-  rw [show a ≤ b ↔ ¬ (b < a) from not_lt.symm]
-  exact lexFinNatLE_iff_not_lt n a b
 
 /-- Lexicographic `≤` means that there is no uncompensated inversion, so `toLex A ≤ toLex B` holds
 iff every coordinate where `A` strictly exceeds `B` is preceded in index order by one where `A` is
@@ -486,17 +332,14 @@ theorem lex_le_iff_forall {α : Type*} [LinearOrder α] {m : ℕ} (A B : Fin m �
     obtain ⟨p', hp'lt, hp'⟩ := hY i hi
     exact absurd (hpre p' hp'lt).symm (ne_of_lt hp')
 
-/-- Decidable `≤` on `Lex (Fin n → Nat)`. The `LinearOrder` from `Pi.Lex`
-    is noncomputable, but this instance provides decidable comparison via
-    the recursive `lexFinNatLE`, making downstream `by decide` work. -/
-instance instDecidableLexFinNatProfileLE {n : Nat} (a b : Lex (Fin n → Nat)) :
-    Decidable (a ≤ b) :=
-  decidable_of_iff (lexFinNatLE n a b) (lexFinNatLE_iff_le a b)
+/-- `≤` on `Lex (Fin n → ℕ)` is decided by materializing both profiles once and comparing the
+lists, a single structural pass that `by decide` evaluates quickly; the `LinearOrder` of `Pi.Lex`
+carries only a classical instance. -/
+instance instDecidableLELexFinNat {n : ℕ} : DecidableLE (Lex (Fin n → ℕ)) := fun a b ↦
+  decidable_of_iff _ (lexLE_ofFn (ofLex a) (ofLex b))
 
-/-- Decidable `<` on `Lex (Fin n → Nat)`. -/
-instance instDecidableLexFinNatProfileLT {n : Nat} (a b : Lex (Fin n → Nat)) :
-    Decidable (a < b) :=
-  decidable_of_iff (¬ b ≤ a) (@not_le _ _ b a)
+instance instDecidableLTLexFinNat {n : ℕ} : DecidableLT (Lex (Fin n → ℕ)) := fun a b ↦
+  decidable_of_iff (¬ b ≤ a) not_le
 
 /-- Lexicographic order is decided at the first differing coordinate, so `A ≤ B` iff `A` is smaller
 at the least index where they differ, when one exists. -/
@@ -684,21 +527,6 @@ theorem LexMinProblem.lexMins_nonempty (t : LexMinProblem C n) : t.lexMins.Nonem
 theorem LexMinProblem.lexMins_subset (t : LexMinProblem C n) (c : C) :
     c ∈ t.lexMins → c ∈ t.candidates :=
   fun hc ↦ ((t.mem_lexMins_iff c).mp hc).1
-
--- ============================================================================
--- § 14a: Computable Finset Predicates
--- ============================================================================
-
-/-- Check a Bool predicate for all elements of a finset. It is computable through
-`Finset.decidableBAll`, which avoids the noncomputable `Finset.toList`. -/
-def Finset.checkAll {α : Type} [DecidableEq α]
-    (s : Finset α) (p : α → Bool) : Bool :=
-  decide (∀ c ∈ s, p c = true)
-
-/-- Check a Bool predicate for some element of a Finset. -/
-def Finset.checkAny {α : Type} [DecidableEq α]
-    (s : Finset α) (p : α → Bool) : Bool :=
-  decide (∃ c ∈ s, p c = true)
 
 -- ============================================================================
 -- § 15: Component lemma on `Lex (Fin n → Nat)`
