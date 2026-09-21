@@ -1,0 +1,2457 @@
+[
+ {
+  "id": "levin2026_9",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(9)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "As I was closing the refrigerator, the back door pushed open.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "push"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_10a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(10a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The dogs pushed the door.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "push"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_10b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(10b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The door pushed.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "push"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_11a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(11a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "… the door punched open and two more men leaped into the room.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "punch"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_11b_tr",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(11b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The two men punched the door.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "punch"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_11b_intr",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(11b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The door punched.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "punch"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_12a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(12a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "I grinned at her reference to her son as the front door thumped closed behind her …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "thump"
+   ],
+   [
+    "adjective",
+    "closed"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_12b_tr",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(12b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "She thumped the door closed.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "thump"
+   ],
+   [
+    "adjective",
+    "closed"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_12b_intr",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(12b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The door thumped.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "thump"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_13a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(13a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The cork pulled free with a satisfying pop.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_13b_tr",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(13b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The sommelier pulled the cork.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_13b_intr",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(13b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The cork pulled.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_14a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(14a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The cold snap froze the lake.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "freeze"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_14b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(14b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The lake froze.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "freeze"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_15a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(15a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The cold snap froze the lake solid.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "freeze"
+   ],
+   [
+    "adjective",
+    "solid"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_15b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(15b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The lake froze solid.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "freeze"
+   ],
+   [
+    "adjective",
+    "solid"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_16a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(16a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Pam scrubbed the tub.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrub"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_16b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(16b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The tub scrubbed.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrub"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_16c",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(16c)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Pam scrubbed the tub clean.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrub"
+   ],
+   [
+    "adjective",
+    "clean"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_16d",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(16d)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The tub scrubbed clean.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrub"
+   ],
+   [
+    "adjective",
+    "clean"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_19",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(19)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "… he pushed the silent wooden door open with one hand …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "push"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_21",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(21)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "… Nuttall finally pulled the cork free with a stick he found on the beach.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_23",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(23)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "… I grabbed a hammer and gave the valve-stem a solid smack. The valve slammed shut …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "slam"
+   ],
+   [
+    "adjective",
+    "shut"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_24",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(24)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "… she … smacked the valve of the pressure cooker closed with a spoon when it whistled.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "smack"
+   ],
+   [
+    "adjective",
+    "closed"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_33",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(33)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "He stopped next to the front stoop and waited. The door flung open immediately.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "fling"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_34",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(34)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The front door yanked open wider.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "yank"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_35",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(35)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The plane's door scraped open and wind rushed in.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrape"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_36a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(36a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "We can't cut the pillow open.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cut"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_36b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(36b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The pillow cut open.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cut"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_37b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(37b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The pillow sewed shut.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "sew"
+   ],
+   [
+    "adjective",
+    "shut"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_38",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(38)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "A musty scent rose from the plants as their roots pulled free.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_39",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(39)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "This time, with a protesting squeal, the door scraped free of its frame.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrape"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_41",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(41)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "But the tractor finally bucked as the prongs pulled free and the window frame collapsed …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_42",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(42)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "He thrashed free of twisted sheets and dragged himself to his feet …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "thrash"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "animate"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_43",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(43)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "He kicked free of the safety belt and out of the plane …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "kick"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "animate"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_44a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(44a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Carefully, she brushed the picture free of shards with a paper towel.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "brush"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_44b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(44b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The picture brushed free of shards.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "brush"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_45a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(45a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "She was wiping the mirror free of steam …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "wipe"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_45b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(45b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The mirror wiped free of steam.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "wipe"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_46",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(46)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The gridded sheep fencing … wrenched loose from the posts and followed on either side of the machine …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "wrench"
+   ],
+   [
+    "adjective",
+    "loose"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_47",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(47)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "\"Let's go,\" he said, and pulled loose from my grip.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "loose"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "animate"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_48",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(48)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The poster board smacked flat against my windshield …",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "smack"
+   ],
+   [
+    "adjective",
+    "flat"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_50a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(50a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "She snipped off the end of the cotton and patted the mend flat.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pat"
+   ],
+   [
+    "adjective",
+    "flat"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_50b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(50b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The mend patted flat.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pat"
+   ],
+   [
+    "adjective",
+    "flat"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_51a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(51a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "I struggled with the window but it was painted shut.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "paint"
+   ],
+   [
+    "adjective",
+    "shut"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested; passive of the transitive resultative",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_51b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(51b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The window painted (shut).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "paint"
+   ],
+   [
+    "adjective",
+    "shut"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_52b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(52b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The windows wired (shut).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "wire"
+   ],
+   [
+    "adjective",
+    "shut"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_53a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(53a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "She pulled on her parka and gloves and went out to shovel her car free.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "shovel"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_53b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(53b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Her car shovelled (free).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "shovel"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_54b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(54b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "One of the clasps levered (free).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "lever"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_55b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(55b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The beans nudged (loose).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "nudge"
+   ],
+   [
+    "adjective",
+    "loose"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_56b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(56b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "His hair oiled (flat).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "oil"
+   ],
+   [
+    "adjective",
+    "flat"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_57b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(57b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "My scalp yanked bald.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "yank"
+   ],
+   [
+    "adjective",
+    "bald"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_58b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(58b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The skin of her temples and cheeks pulled firm.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "firm"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_59b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(59b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The ground scraped smooth and clean.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrape"
+   ],
+   [
+    "adjective",
+    "smooth"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_60b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(60b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "Frank punched senseless.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "punch"
+   ],
+   [
+    "adjective",
+    "senseless"
+   ],
+   [
+    "sense",
+    "other"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_70",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(70)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The door pushed open farther and a man I'd never seen before came walking into my room uninvited.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "push"
+   ],
+   [
+    "adjective",
+    "open"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_74",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(74)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "… I asked my father to nail it [=the root cellar door] shut.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "nail"
+   ],
+   [
+    "adjective",
+    "shut"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "transitive"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_75",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(75)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "My father positioned the nails, gave several hard raps of the hammer, and the root cellar door nailed shut.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "nail"
+   ],
+   [
+    "adjective",
+    "shut"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "manipulated"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_77",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(77)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "After the snow stopped, she got to work with the shovel and before she knew it her car shoveled free.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "shovel"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "manipulated"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_78",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(78)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "'That's what it was like. As though if you got too close you couldn't pull free again.'",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "animate"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_79",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(79)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "But with a sucking sound the tractor pulled free of the mud and reengaged its drive.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "pull"
+   ],
+   [
+    "adjective",
+    "free"
+   ],
+   [
+    "sense",
+    "spatial"
+   ],
+   [
+    "frame",
+    "intransitive"
+   ],
+   [
+    "theme",
+    "machine"
+   ]
+  ],
+  "comment": "attested",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_84a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(84a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The tennis ball slammed into the net.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "slam"
+   ],
+   [
+    "frame",
+    "directed motion"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_84b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(84b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The chair scraped across the floor.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "scrape"
+   ],
+   [
+    "frame",
+    "directed motion"
+   ],
+   [
+    "theme",
+    "projectile"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_85a",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(85a)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The run-away horse banged into the fence.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "bang"
+   ],
+   [
+    "frame",
+    "directed motion"
+   ],
+   [
+    "theme",
+    "animate"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_85b",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(85b)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The storm swept through the valley.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "sweep"
+   ],
+   [
+    "frame",
+    "directed motion"
+   ],
+   [
+    "theme",
+    "natural force"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ },
+ {
+  "id": "levin2026_85c",
+  "source": {
+   "bibkey": "levin-2026",
+   "paperLabel": "(85c)"
+  },
+  "reportedIn": null,
+  "language": "stan1293",
+  "primaryText": "The truck smacked into the retaining wall.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "smack"
+   ],
+   [
+    "frame",
+    "directed motion"
+   ],
+   [
+    "theme",
+    "machine"
+   ]
+  ],
+  "comment": "",
+  "metaLanguage": "stan1293"
+ }
+]
