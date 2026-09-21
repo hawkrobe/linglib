@@ -94,6 +94,38 @@ open scoped DPL
 @[simp] theorem eval_equal (t₁ t₂ : L.Term V) :
     (t₁ ≐ t₂).eval M = test {g | t₁.realize g = t₂.realize g} := rfl
 
+/-- An existential closure runs its scope from an assignment that differs from the input at most
+on the closed variables. -/
+theorem mem_eval_exs {xs : List V} {g h : V → M} :
+    g ~[(exs xs φ).eval M] h ↔ ∃ k, (∀ y ∉ xs, k y = g y) ∧ k ~[φ.eval M] h := by
+  induction xs generalizing g with
+  | nil => exact ⟨fun hgh ↦ ⟨g, fun _ _ ↦ rfl, hgh⟩,
+      fun ⟨k, hk, hkh⟩ ↦ (funext fun y ↦ hk y List.not_mem_nil : k = g) ▸ hkh⟩
+  | cons x xs ih =>
+    rw [exs_cons, eval_ex, mem_dexists]
+    constructor
+    · rintro ⟨e, he⟩
+      obtain ⟨k, hk, hkh⟩ := ih.mp he
+      refine ⟨k, fun y hy ↦ ?_, hkh⟩
+      have hyx : y ≠ x := fun h ↦ hy (by simp [h])
+      rw [hk y fun h ↦ hy (List.mem_cons_of_mem _ h), Function.update_of_ne hyx]
+    · rintro ⟨k, hk, hkh⟩
+      refine ⟨k x, ih.mpr ⟨k, fun y hy ↦ ?_, hkh⟩⟩
+      obtain rfl | hyx := eq_or_ne y x
+      · rw [Function.update_self]
+      · rw [Function.update_of_ne hyx, hk y (by simp [hyx, hy])]
+
+/-- A conjunction of tests is the test of their conditions together. -/
+theorem eval_conjs_map {α : Type*} (t : α → Formula L V) (C : α → Set (V → M)) (as : List α)
+    (h : ∀ a ∈ as, (t a).eval M = test (C a)) :
+    (conjs (as.map t)).eval M = test {f | ∀ a ∈ as, f ∈ C a} := by
+  induction as with
+  | nil => simp
+  | cons a as ih =>
+    rw [List.map_cons, conjs_cons, eval_conj, h a List.mem_cons_self,
+      ih fun b hb ↦ h b (List.mem_cons_of_mem _ hb), test_comp_test]
+    exact congrArg test (Set.ext fun f ↦ by simp)
+
 variable {φ} in
 /-- A formula with no active quantifier variable is a test, since atoms, negations,
 disjunctions, implications and universals are and conjunction preserves it. -/
