@@ -1,7 +1,7 @@
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Events.Closure
 import Linglib.Data.Examples.Grano2024
-import Linglib.Fragments.Greek.StandardModern.Complementizers
+import Linglib.Fragments.Greek.StandardModern.Verbs
 import Linglib.Fragments.Portuguese.Verbs
 import Linglib.Fragments.Romance.Italian.Verbs
 import Linglib.Fragments.Romance.Spanish.Verbs
@@ -270,10 +270,10 @@ def verbOf : Glottocode → Class → Option Verb
   | "ital1282", .hope => some Italian.Verbs.sperare.toVerb
   | "ital1282", .intend => some Italian.Verbs.intendere.toVerb
   | "ital1282", .causative => some Italian.Verbs.fare.toVerb
-  | "mode1248", .want => some Greek.StandardModern.Complementizers.thelo
-  | "mode1248", .hope => some Greek.StandardModern.Complementizers.elpizo
-  | "mode1248", .intend => some Greek.StandardModern.Complementizers.protitheme
-  | "mode1248", .causative => some Greek.StandardModern.Complementizers.vazo
+  | "mode1248", .want => some Greek.StandardModern.Verbs.thelo
+  | "mode1248", .hope => some Greek.StandardModern.Verbs.elpizo
+  | "mode1248", .intend => some Greek.StandardModern.Verbs.protitheme
+  | "mode1248", .causative => some Greek.StandardModern.Verbs.vazo
   | "roma1327", .want => some Romanian.Verbs.a_vrea
   | "roma1327", .hope => some Romanian.Verbs.a_spera
   | "roma1327", .intend => some Romanian.Verbs.a_intentiona

@@ -1,4 +1,5 @@
 import Linglib.Fragments.Greek.StandardModern.Complementizers
+import Linglib.Fragments.Greek.StandardModern.Verbs
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Composition.Tree
@@ -45,7 +46,7 @@ argument against uninterpretable features are not formalized.
 
 namespace Roussou2010
 
-open Greek.StandardModern.Complementizers Presupposition Data.Examples
+open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs Presupposition Data.Examples
 open Semantics.Composition.Tree
 
 /-! ### The lexical specification -/
