@@ -1,4 +1,6 @@
-import Linglib.Semantics.Aspect.Stratified
+import Linglib.Semantics.Mereology
+import Linglib.Semantics.Events.Basic
+import Linglib.Semantics.Aspect.Viewpoint
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Verbs
 import Linglib.Studies.Krifka1998
@@ -11,9 +13,11 @@ predicative distributivity, atelicity and pseudopartitive measurement under one 
 stratified reference: a predicate applies to an event exactly when that event divides
 exhaustively into parts the predicate also applies to, along some dimension. The dimension is what
 varies — thematic roles for distributivity, runtime for the *for*-adverbial, measure for the
-pseudopartitive — and the substrate carries the property once (`Aspect.StratifiedReference`).
+pseudopartitive — and the property is defined once (`StratifiedReference`), with the three
+specializations as instances (`DistributiveReference`, `SubintervalReference`,
+`MeasurementReference`).
 
-Two things are done here against that substrate. Lexical cumulativity, which the book assumes
+Two things are done here with that property. Lexical cumulativity, which the book assumes
 throughout, entails Krifka's `CUM`; and atelicity in the runtime dimension is the existence of a
 Schwarzschild cover into proper-subinterval parts, which is the book's own theorem relating
 algebraic closure to covers. The per-verb distributivity facts — *see* distributing on both roles,
@@ -34,6 +38,11 @@ but violates the presupposition at the halfway legs (`pushCarts_stratified`,
 
 ## Main definitions
 
+* `StratifiedReference` — a predicate's event divides into parts the predicate applies to, whose
+  images along a dimension stand in a granularity relation to the event's
+* `DistributiveReference`, `SubintervalReference`, `MeasurementReference` — the dimension is a
+  thematic role with atomic granularity, the runtime with proper subintervals, a measure with
+  smaller values
 * `Verb.StratifiesOver` — a verb's denotation has stratified distributive reference along a role
 * `LexicallyCumulative` — a predicate is a fixed point of algebraic closure
 * `ChampollionPostulates` — the per-verb distributivity postulates over Fragment verbs
@@ -49,6 +58,12 @@ but violates the presupposition at the halfway legs (`pushCarts_stratified`,
 
 ## Implementation notes
 
+* The granularity is a binary relation between the image of a part and the image of the whole,
+  where the book has a unary predicate built from the whole, so that the three specializations
+  are instances of one definition.
+* Stratified reference along the runtime neither entails nor follows from Krifka's `CUM`: the
+  book takes every verb to be cumulative, telic ones included, and a predicate of events of
+  bounded length has stratified reference over dense time without being closed under sums.
 * The runtime dimension of chapter 6 is any monotone map into a part order of times, so the
   stratified reference in play is the generic `StratifiedReference τ (· < ·)` rather than the
   interval-runtime `SubintervalReference`; runtimes of back-and-forth events are discontinuous
@@ -62,9 +77,345 @@ but violates the presupposition at the halfway legs (`pushCarts_stratified`,
 * [champollion-2017]
 -/
 
+namespace Champollion2017
+
+open _root_.Mereology Aspect
+
+/-! ### Stratified reference ([champollion-2017] eq. 16/17) -/
+
+/-- Stratified reference is the core unified property of
+    [champollion-2017] eq. (16), with the binary-granularity
+    convention from eq. (17)'s γ-helper inlined.
+
+    `StratifiedReference d γ P x` holds iff `x` can be decomposed into `P`-parts `y`
+    whose `d`-images stand in relation `γ` to `d x`.
+
+    - `d : α → β` — the *dimension* (thematic role θ, runtime τ, measure μ, ...)
+    - `γ : β → β → Prop` — the *granularity* relating inner (`d y`) to outer
+      (`d x`). Uncurried form of Champollion's eq. (17) γ-helper
+      `γ(M, x) := λd. d < M(x)`.
+    - `P : α → Prop` — the predicate under scrutiny ("the Share")
+    - `x : α` — the entity being decomposed
+
+    `StratifiedReference d γ P x = *{y : P(y) ∧ γ (d y) (d x)}(x)`. -/
+def StratifiedReference {α β : Type*} [SemilatticeSup α]
+    (d : α → β) (γ : β → β → Prop) (P : α → Prop) (x : α) : Prop :=
+  AlgClosure (fun y ↦ P y ∧ γ (d y) (d x)) x
+
+/-! ### Universal stratified reference -/
+
+/-- `P` has universal stratified reference along `d` at granularity `γ` when every `P`-entity
+    has stratified reference. -/
+def StratifiedReferenceUniv {α β : Type*} [SemilatticeSup α]
+    (d : α → β) (γ : β → β → Prop) (P : α → Prop) : Prop :=
+  ∀ x, P x → StratifiedReference d γ P x
+
+/-! ### Atomic granularity (shared γ) -/
+
+/-- Atomic granularity for dimensions where `[PartialOrder β]` is
+    available: the inner d-image is an `Atom` in β. Used by
+    `DistributiveReference` (dimension = θ thematic role; entities have a
+    partial-order instance via the entity lattice).
+
+    For dimensions without a `PartialOrder` instance — notably the
+    runtime dimension (`NonemptyInterval T`) used by stativity — atomicity
+    is expressed dimension-natively (e.g., `NonemptyInterval.IsPoint` for
+    `NonemptyInterval T`). The unification is at the `StratifiedReference`
+    parameter-space level: both express "γ = inner is atomic in the
+    dimension's natural sense" at different concrete instantiations. -/
+def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
+  fun inner _outer ↦ Atom inner
+
+/-! ### Stratified Distributive StratifiedReference ([champollion-2017] eq. 24) -/
+
+/-- Stratified distributive reference is stratified reference whose dimension is a thematic
+    role θ and whose granularity is `Atom` on the inner image, the outer being unused since
+    atomicity is an absolute property ([champollion-2017] eq. (24)). It captures
+    distributivity, as "The boys each saw a movie" distributes over atomic agents. -/
+def DistributiveReference {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+    (θ : α → β) (P : α → Prop) (x : α) : Prop :=
+  StratifiedReference θ AtomicGranularity P x
+
+/-- `P` has universal distributive reference when every `P`-entity distributes along θ. -/
+def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+    (θ : α → β) (P : α → Prop) : Prop :=
+  ∀ x, P x → DistributiveReference θ P x
+
+/-! ### Relational distributive reference (neo-Davidsonian roles)
+
+Champollion's `DistributiveReference` takes a *functional* thematic role
+`θ : α → Entity` (the unique role-filler). linglib's neo-Davidsonian roles
+are *relational* — `ArgumentStructure.ThematicRel = Entity → Event → Prop`,
+`Agent(a, e)` — with thematic uniqueness available as
+`Mereology.UP`. `RelationalDistributiveReference` is the relational
+form, so the distributivity property composes directly with a
+`ThematicFrame` / `Verb.denote` without picking a role function. It
+coincides with the functional form on a role's graph
+(`relationalDistributiveReference_graph`). -/
+
+/-- Relational stratified distributive reference takes the role to be a
+    neo-Davidsonian relation `R : Entity → α → Prop`. A stratum `y` counts
+    iff it has an atomic `R`-filler. Under thematic uniqueness
+    (`Mereology.UP R`) that filler is unique, recovering "the
+    `R`-filler of `y` is atomic". -/
+def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity]
+    [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=
+  AlgClosure (fun y ↦ P y ∧ ∃ a, R a y ∧ Atom a) x
+
+/-- `P` has universal relational distributive reference when every `P`-element distributes
+    along `R`. -/
+def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity]
+    [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) : Prop :=
+  ∀ x, P x → RelationalDistributiveReference R P x
+
+/-- Relational distributive reference is monotone in the predicate. -/
+theorem relationalDistributiveReference_mono {Entity α : Type*}
+    [PartialOrder Entity] [SemilatticeSup α]
+    {R : Entity → α → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
+    ∀ x, RelationalDistributiveReference R P x →
+      RelationalDistributiveReference R Q x := by
+  intro x hx
+  exact algClosure_mono (fun y ⟨hp, ha⟩ ↦ ⟨h y hp, ha⟩) x hx
+
+/-- Relational distributive reference along a functional role's graph
+    coincides with the functional `DistributiveReference` — the bridge
+    justifying the relational form as the faithful generalization of
+    [champollion-2017]'s distributive reference. -/
+theorem relationalDistributiveReference_graph {Entity α : Type*}
+    [PartialOrder Entity] [SemilatticeSup α]
+    {θ : α → Entity} {P : α → Prop} {x : α} :
+    RelationalDistributiveReference (fun a y ↦ θ y = a) P x ↔
+      DistributiveReference θ P x := by
+  unfold RelationalDistributiveReference DistributiveReference StratifiedReference
+    AtomicGranularity
+  simp only [exists_eq_left']
+
+/-! ### Stratified Subinterval StratifiedReference ([champollion-2017] eq. 38) -/
+
+/-- Proper-subinterval granularity: inner runtime is a proper subinterval
+    of outer runtime. The binary `γ` for subinterval reference. -/
+def SubintervalGranularity {T : Type*} [LinearOrder T]
+    (inner outer : NonemptyInterval T) : Prop :=
+  inner < outer
+
+/-- Stratified subinterval reference is stratified reference whose dimension is the runtime τ
+    and whose granularity is proper subinterval, so `SubintervalReference P e` holds iff `e` can
+    be built from `P`-parts with runtimes properly included in `τ e` ([champollion-2017]
+    eq. (38)). It captures atelicity, the predicates compatible with *for*-adverbials having
+    subinterval reference. -/
+def SubintervalReference {T : Type*} [LinearOrder T]
+    [SemilatticeSup (Event T)]
+    (P : Event T → Prop) (e : Event T) : Prop :=
+  StratifiedReference (fun e' : Event T ↦ e'.runtime) SubintervalGranularity P e
+
+/-- `P` has universal subinterval reference when every `P`-event has subinterval reference. -/
+def SubintervalReferenceUniv {T : Type*} [LinearOrder T]
+    [SemilatticeSup (Event T)]
+    (P : Event T → Prop) : Prop :=
+  ∀ e, P e → SubintervalReference P e
+
+/-! ### Stratified Measurement StratifiedReference -/
+
+/-! **`MeasurementReference`** is [champollion-2017]'s *stratified
+    measurement reference* (his named property and abbreviation): Def 61
+    in the Ch 4 §4.6 unification, with final universal/restricted forms
+    Defs 52–53 in Ch 7 §7.4, written as `SR_{μ, λd.d < μ(x)}` (*thirty
+    liters of water*, *five feet of snow*, *two degrees Celsius of global
+    warming*).
+
+    The strict-less-than granularity is Champollion's faithful translation
+    of [schwarzschild-2006]'s monotonic measure-function predicate
+    (Ch 7 eq. 8: `μ` is monotonic iff `a < b → μ(a) < μ(b)`), with the
+    extensive/intensive measure-function distinction ([krifka-1998])
+    reduced to whether the resulting measurement-reference presupposition
+    is satisfiable on the given substance noun.
+-/
+
+/-- Stratified measurement reference is stratified reference whose dimension is a measure
+    function μ and whose granularity is strict less-than on the scale, so
+    `MeasurementReference μ P x` holds iff `x` can be decomposed into `P`-parts with strictly
+    smaller μ-values. -/
+def MeasurementReference {α β : Type*} [SemilatticeSup α] [Preorder β]
+    (μ : α → β) (P : α → Prop) (x : α) : Prop :=
+  StratifiedReference μ (· < ·) P x
+
+/-- `P` has universal measurement reference when every `P`-entity has measurement reference
+    along μ. -/
+def MeasurementReferenceUniv {α β : Type*} [SemilatticeSup α] [Preorder β]
+    (μ : α → β) (P : α → Prop) : Prop :=
+  ∀ x, P x → MeasurementReference μ P x
+
+/-! ### Distributivity Constraint -/
+
+/-- [champollion-2017] Ch 4 §4.6 **Distributivity Constraint**
+    (restated in Ch 7 §7.4 for the measurement chapter):
+    a distributive construction with Share `S`, Map `M`, granularity `γ`
+    describing entity `x` is acceptable iff `SR_{M,γ}(S)(x)`. The same
+    constraint underlies adverbial-*each*, *for*-adverbials, and
+    pseudopartitives — they differ only in how `M`, `γ`, and `S` are set. -/
+abbrev DistributivityConstraint {α β : Type*} [SemilatticeSup α]
+    (Map : α → β) (gran : β → β → Prop) (Share : α → Prop) (x : α) : Prop :=
+  StratifiedReference Map gran Share x
+
+/-! ### Construction Instances -/
+
+/-- "each" distributes over atomic θ-fillers.
+    Map = θ (thematic role), granularity = Atom (inner only). -/
+abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
+    (θ : α → β) (Share : α → Prop) (x : α) : Prop :=
+  DistributiveReference θ Share x
+
+/-- "for"-adverbials require subinterval reference: the predicate must
+    have stratified subinterval reference (atelicity).
+    Map = τ, granularity = proper subinterval. -/
+abbrev forConstr {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    (Share : Event T → Prop) (e : Event T) : Prop :=
+  SubintervalReference Share e
+
+/-! ### Key Theorems -/
+
+/-- `StratifiedReferenceUniv` entails `StratifiedReference` for any specific element. -/
+theorem stratifiedReferenceUniv_entails_restricted {α β : Type*} [SemilatticeSup α]
+    {d : α → β} {γ : β → β → Prop} {P : α → Prop}
+    (h : StratifiedReferenceUniv d γ P) {x : α} (hx : P x) : StratifiedReference d γ P x :=
+  h x hx
+
+/-- Predicates have stratified reference for trivial granularity, since every `P x` is its own
+    base-case stratum when γ is vacuously true. -/
+theorem stratifiedReference_trivial_granularity {α β : Type*} [SemilatticeSup α]
+    {d : α → β} {P : α → Prop} :
+    StratifiedReferenceUniv d (fun _ _ ↦ True) P := by
+  intro x hx
+  exact AlgClosure.base ⟨hx, trivial⟩
+
+/-- Distributive reference is monotone in the predicate. -/
+theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
+    [PartialOrder β]
+    {θ : α → β} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
+    ∀ x, DistributiveReference θ P x → DistributiveReference θ Q x := by
+  intro x hx
+  exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
+
+/-- Stratified reference is monotone in the predicate, dimension-
+    polymorphically. Generalizes `distributiveReference_mono` to any
+    dimension `d` and granularity `γ`. -/
+theorem stratifiedReference_mono {α β : Type*} [SemilatticeSup α]
+    {d : α → β} {γ : β → β → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
+    ∀ x, StratifiedReference d γ P x → StratifiedReference d γ Q x := by
+  intro x hx
+  exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
+
+/-- **Dimension-polymorphic substrate witness.** Stratified reference with
+    reflexive granularity is satisfied by every `P`-element via the base
+    case. Quantifies over any `d : α → β` (no sum homomorphism needed for
+    this direction, since the witness is structural).
+
+    The companion direction — closure under sums via a `SupHom` — is
+    `stratifiedReference_join` below; together they establish that stratified
+    reference composes faithfully with the trace-function abstraction. -/
+theorem stratifiedReference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
+    {d : α → β} {γ : β → β → Prop} (hRefl : ∀ b, γ b b)
+    {P : α → Prop} {x : α} (hx : P x) : StratifiedReference d γ P x :=
+  AlgClosure.base ⟨hx, hRefl (d x)⟩
+
+/-- Stratified reference is closed under join when (i) the dimension is a
+    sum-homomorphism and (ii) the granularity is monotone in the outer
+    position w.r.t. `≤` on β. The substrate validation that the
+    trace-function abstraction (`d : SupHom α β`, applicable uniformly to
+    τ, σ, agentOf, patientOf, themeOf) composes correctly with stratified
+    reference.
+
+    The `SupHom` structure ensures `d (x ⊔ y) = d x ⊔ d y`; the
+    monotonicity assumption on γ then carries the stratification witnesses
+    for `x` and `y` over to a witness for `x ⊔ y`. -/
+theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (d : SupHom α β)
+    {γ : β → β → Prop}
+    (hMono : ∀ a b₁ b₂, γ a b₁ → b₁ ≤ b₂ → γ a b₂)
+    {P : α → Prop} {x y : α}
+    (hx : StratifiedReference d γ P x) (hy : StratifiedReference d γ P y) :
+    StratifiedReference d γ P (x ⊔ y) := by
+  unfold StratifiedReference at hx hy ⊢
+  -- The closure structure already gives closure under sum (algClosure_cum);
+  -- we just weaken the granularity witness via monotonicity to compare
+  -- against the joined outer dimension.
+  have hxy : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) (x ⊔ y) := by
+    have hx' : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) x := by
+      exact algClosure_mono
+        (fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_left⟩) x hx
+    have hy' : AlgClosure (fun z ↦ P z ∧ γ (d z) (d x ⊔ d y)) y := by
+      exact algClosure_mono
+        (fun z ⟨hp, hg⟩ ↦ ⟨hp, hMono _ _ _ hg le_sup_right⟩) y hy
+    exact AlgClosure.sum hx' hy'
+  rw [map_sup]
+  exact hxy
+
+/-! ### Aspect Bridge (subinterval reference ↔ atelicity) -/
+
+/-- for-adverbials require subinterval reference (Champollion Ch 5 §5.4).
+    "John ran for an hour" is felicitous because "run" has it.
+    "* John arrived for an hour" is infelicitous because "arrive" lacks it. -/
+theorem forAdverbial_requires_subintervalReference
+    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    {P : Event T → Prop}
+    (h_for_ok : SubintervalReferenceUniv P) :
+    ∀ e, P e → SubintervalReference P e :=
+  h_for_ok
+
+/-- QUA and subinterval reference are directly incompatible, in that if P(e) and
+    `SubintervalReference P e` hold, then P cannot be quantized. The
+    AlgClosure decomposition yields a base element a with P(a) and
+    a.runtime ⊂ e.runtime. Since a ≤ e (from the join structure) and
+    a ≠ e (proper subinterval is irreflexive), we get a < e, contradicting
+    QUA.
+
+    Direct, not routed through CUM: the would-be route
+    `SubintervalReferenceUniv → CUM → ¬QUA` fails at the first step
+    (`SubintervalReferenceUniv → CUM` is false in general; counterexample:
+    `P := λe. e.runtime.length ≤ 1` over dense time). See module docstring
+    "Relation to Krifka's CUM/QUA". -/
+theorem qua_incompatible_with_subintervalReference
+    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    {P : Event T → Prop}
+    (hQua : QUA P)
+    {e : Event T} (he : P e) (hSub : SubintervalReference P e) :
+    False := by
+  obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSub
+  have hne : a ≠ e := by
+    intro heq; rw [heq] at hGran
+    exact lt_irrefl _ hGran
+  exact hQua hPa he hne hle
+
+/-! ### for-Adverbial Compatibility -/
+
+/-- The "for"-adverbial adds a duration constraint on the event runtime
+    and requires the predicate to have subinterval reference
+    ([champollion-2017]'s for-adverbial entry, eq. (72), restated for
+    *for an hour* as eq. (21); eq. (39) is the constraint on its Share).
+    "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SubintervalReference V e. -/
+def forAdverbialMeaning {T : Type*} [LinearOrder T]
+    [SemilatticeSup (Event T)]
+    (V : Event T → Prop) (duration : NonemptyInterval T) (e : Event T) : Prop :=
+  V e ∧ e.runtime = duration ∧ SubintervalReference V e
+
+/-- "in"-adverbials are incompatible with subinterval reference (they
+    require telicity). "V in δ" requires QUA, which is incompatible with
+    subinterval reference. Any P-event with subinterval reference has a
+    strict P-part, contradicting QUA. -/
+theorem in_adverbial_incompatible_with_subintervalReference
+    {T : Type*} [LinearOrder T] [SemilatticeSup (Event T)]
+    {P : Event T → Prop}
+    (hQua : QUA P)
+    {e₁ e₂ : Event T} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
+    ¬ SubintervalReferenceUniv P := by
+  intro hSub
+  exact qua_incompatible_with_subintervalReference hQua he₁ (hSub e₁ he₁)
+
+end Champollion2017
+
 namespace Verb
 
-open _root_.Aspect
+open _root_.Aspect Champollion2017
 
 /-! ### Verb distributivity
 
