@@ -36,8 +36,11 @@ the uses whose functions lie in the region the book draws for it.
 * `IndefiniteType.requires_iff`: a requirement is the disjunction of the uses of the profile.
 * `forall_renders_imp_requires_iff`: a use entails a requirement exactly when the profile
   lists it.
-* `IndefiniteType.ordConnected_requires`, `IndefiniteType.not_ordConnected_skPlusNS`: the
-  attested requirements are convex and the unattested one is not.
+* `forall_requires_imp_requires_iff`: semantic weakening is inclusion of profiles.
+* `IndefiniteType.ordConnected_requires_iff`: the attested requirements are convex and the
+  unattested one is not.
+* `contiguous_profile_iff`, `sample_instantiates_attested`: the convex types are the connected
+  regions of the map, so no series of the sample instantiates the unattested type.
 
 ## TODO
 
@@ -205,6 +208,16 @@ theorem forall_renders_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) :
   obtain ⟨u', hu', hT'⟩ := IndefiniteType.requires_iff.1 (h T hT)
   exact Use.renders_unique hT hT' ▸ hu'
 
+/-- Semantic weakening is inclusion of profiles: one requirement entails another exactly when
+every use of the first type is a use of the second. -/
+theorem forall_requires_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) {t t' : IndefiniteType} :
+    (∀ T : Finset (V → E), t.Requires T v x → t'.Requires T v x) ↔ t.profile ⊆ t'.profile := by
+  simp only [IndefiniteType.requires_iff]
+  refine ⟨fun h u hu ↦ ?_, fun h T ⟨u, hu, hT⟩ ↦ ⟨u, h hu, hT⟩⟩
+  obtain ⟨T, hT⟩ := u.exists_team_renders (E := E) hvx
+  obtain ⟨u', hu', hT'⟩ := h T ⟨u, hu, hT⟩
+  exact Use.renders_unique hT hT' ▸ hu'
+
 /-! ### Convexity -/
 
 /-- The attested requirements are convex: a single atom is closed under subteams or under
@@ -236,6 +249,11 @@ theorem IndefiniteType.not_ordConnected_skPlusNS [Nontrivial E] (hvx : v ≠ x) 
   obtain ⟨u, hu, hT⟩ := requires_iff.1 hmid
   exact absurd (Use.renders_unique (renders_unknown hab) hT ▸ hu) (by decide)
 
+/-- Convexity separates the attested types from the unattested one. -/
+theorem IndefiniteType.ordConnected_requires_iff [Nontrivial E] (hvx : v ≠ x) :
+    {T : Finset (V → E) | t.Requires T v x}.OrdConnected ↔ t ≠ .skPlusNS :=
+  ⟨by rintro h rfl; exact not_ordConnected_skPlusNS hvx h, fun ht ↦ ordConnected_requires ht v x⟩
+
 end Teams
 
 /-! ### The types on the map -/
@@ -254,6 +272,33 @@ def Instantiates (s : Series) (t : IndefiniteType) : Prop := uses s.functions = 
 
 instance (s : Series) (t : IndefiniteType) : Decidable (Instantiates s t) :=
   inferInstanceAs (Decidable (uses s.functions = t.profile))
+
+/-- The unattested profile skips the specific unknown function, which lies between the two it
+covers, so no connected region of the map covers exactly its uses. -/
+theorem uses_ne_skPlusNS_profile {s : Finset HaspelmathFunction} (h : Contiguous s) :
+    uses s ≠ IndefiniteType.skPlusNS.profile := fun he ↦ by
+  have hk : Use.specificKnown ∈ uses s := he ▸ by decide
+  have hn : Use.nonSpecific ∈ uses s := he ▸ by decide
+  have hu : Use.specificUnknown ∈ uses s :=
+    mem_uses.2 (Haspelmath1997.specificUnknown_mem_of_irrealis_mem h (mem_uses.1 hk)
+      (mem_uses.1 hn))
+  exact absurd (he ▸ hu) (by decide)
+
+/-- The map orders the uses as the meaning space does: a type's uses form a connected region of
+the map exactly when the type is not the unattested one, which is when its requirement is
+convex. -/
+theorem contiguous_profile_iff {t : IndefiniteType} :
+    Contiguous (t.profile.image Use.haspelmath) ↔ t ≠ .skPlusNS := by
+  cases t <;> decide
+
+/-- The unattested type is unattested in the sample: every series covering one of the three
+uses instantiates an attested type, because it covers a connected region. -/
+theorem sample_instantiates_attested :
+    ∀ p ∈ Haspelmath1997.sample, ∀ s ∈ p, (uses s.functions).Nonempty →
+      ∃ t, t ≠ .skPlusNS ∧ Instantiates s t := fun p hp s hs hne ↦
+  let ⟨t, ht⟩ := IndefiniteType.exists_profile_eq hne
+  ⟨t, fun h ↦ uses_ne_skPlusNS_profile (Haspelmath1997.sample_contiguous p hp s hs) (h ▸ ht.symm),
+    ht.symm⟩
 
 /-- The paper's examples of the six attested types on the map: Italian *qualche-* is unmarked,
 Georgian *-γac* specific, Russian *-nibud'* non-specific, German *irgend-* epistemic, Russian
