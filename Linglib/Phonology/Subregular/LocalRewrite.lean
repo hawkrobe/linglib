@@ -49,6 +49,8 @@ constraint-based frameworks such as `Phonology/OptimalityTheory/`).
 * `matchRightContext_take`, `matchLeftContext_rtake`, `Effect.apply_rtake`,
   `Effect.apply_append` — contexts and effects read bounded windows, so a verdict
   factors through `leftReach` symbols to the left and `rightReach` to the right.
+* `Rule.length_apply`, `length_derive` — a rule that does not delete, and a cascade of such
+  rules, preserve the length of the word.
 * `Rule.isLeftInputStrictlyLocal` — a rule reading nothing to its right is
   `(leftReach + 1)`-Left-ISL.
 * `Rule.isLeftSubsequential` — over a finite segment alphabet every rule is
@@ -301,6 +303,45 @@ theorem Rule.verdict_append (r : Rule) (w : List Segment) (s : Segment) (d e : L
     matchRightContext_append_of_le _ _
       ((le_max_left _ _ : r.rightContext.length ≤ r.rightReach).trans h),
     Effect.apply_append _ _ _ _ _ ((le_max_right _ _ : r.effect.rightReach ≤ r.rightReach).trans h)]
+
+/-! ### Length
+
+A rule whose effect is not deletion rewrites each segment to one segment. -/
+
+/-- An effect other than deletion yields a segment. -/
+theorem Effect.isSome_apply {e : Effect} (h : e ≠ .delete) (w : List Segment) (s : Segment)
+    (d : List Segment) : (e.apply w s d).isSome := by
+  cases e <;> first | rfl | exact absurd rfl h
+
+theorem Rule.length_verdict {r : Rule} (h : r.effect ≠ .delete) (w : List Segment) (s : Segment)
+    (d : List Segment) : (r.verdict w s d).length = 1 := by
+  rw [Rule.verdict]
+  split
+  · obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp (Effect.isSome_apply h w s d)
+    rw [ht]; rfl
+  · rfl
+
+private theorem Rule.length_apply_go {r : Rule} (h : r.effect ≠ .delete)
+    (left right : List Segment) : (Rule.apply.go r left right).length = right.length := by
+  induction right generalizing left with
+  | nil => rfl
+  | cons s right ih =>
+    rw [Rule.apply_go_cons, List.length_append, Rule.length_verdict h, ih, List.length_cons,
+      Nat.add_comm]
+
+/-- A rule that does not delete preserves the length of the word. -/
+theorem Rule.length_apply {r : Rule} (h : r.effect ≠ .delete) (input : List Segment) :
+    (r.apply input).length = input.length :=
+  Rule.length_apply_go h [] input
+
+/-- A cascade of rules that do not delete preserves the length of the word. -/
+theorem length_derive {rules : List Rule} (h : ∀ r ∈ rules, r.effect ≠ .delete)
+    (input : List Segment) : (derive rules input).length = input.length := by
+  induction rules generalizing input with
+  | nil => rfl
+  | cons r rules ih =>
+    rw [derive, List.foldl_cons, ← derive, ih fun r' hr' ↦ h r' (List.mem_cons_of_mem _ hr'),
+      Rule.length_apply (h r List.mem_cons_self)]
 
 /-! ### The bounded-window scan -/
 

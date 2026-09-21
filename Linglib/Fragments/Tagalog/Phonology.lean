@@ -1,56 +1,48 @@
 import Linglib.Data.PHOIBLE.Inventories.Tagalog
 import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Segmental.FeatureClass
-import Linglib.Phonology.Subregular.LocalRewrite
+import Linglib.Phonology.NasalSubstitution
 
 /-!
-# Tagalog nasal substitution
+# Tagalog phonology
 
-Tagalog has a process by which a prefix-final nasal and a following stem-initial obstruent
-coalesce into a nasal at the obstruent's place: *maŋ-* with *bigáj* 'give' gives *mamigáj* 'to
-distribute', and /p b/ yield /m/, /t d/ yield /n/ and /k g/ yield /ŋ/. It is written here as
-two ordered rules, the assimilation of a nasal to the place of a following obstruent, a process
-of its own in Hayes's textbook, and the deletion of an obstruent after a nasal; the
-assimilation copies the place class. Whether a given prefix and stem undergo the process is
-variable, from nearly always for /p/ to about half the time for /g/ in Zuraw's dictionary
-counts, so *paŋ-* with *tabój* 'goad' keeps its cluster in *pantabój*. The rules give the
-substituted form; the variation is the matter of the studies of Zuraw, of Zuraw and Hayes and
-of Magri.
+This file defines the segments of Tagalog and the two outcomes of a prefix that ends in a nasal,
+such as *maŋ-* and *paŋ-*, before a stem.
 
-The phonemes are the ones the examples need, and each takes its feature values from its glyph
-in the PHOIBLE chart. There the nasal of a place has exactly the place features of the stops
-of that place, so copying the place class onto /ŋ/ gives the chart's own /m/, /n/ or /ŋ/.
+The nasal is a velar /ŋ/. Before a nasal, a glide or *h* it is unchanged, as in *paŋmarká*, and
+before another consonant it takes that consonant's place, as in *pantabój* and *panlabás*.
+Before an obstruent there is a second outcome, nasal substitution, in which the nasal and the
+obstruent surface as one nasal at the obstruent's place, as in *mamigáj* from *bigáj*. Which
+stems substitute is lexical and variable, which is the matter of the studies of Zuraw, of Zuraw
+and Hayes and of Magri.
 
 ## Main definitions
 
-* `Tagalog.a`, `Tagalog.p` and the like: the phonemes of the examples, as segments of their
-  chart entries.
-* `Tagalog.inventory`: the set of them.
-* `Tagalog.placeAssimilation`, `Tagalog.obstruentDeletion`, `Tagalog.nasalSubstitution`: the
-  two rules and their sequence.
+* `consonants`, `vowels`: the phonemes of Zuraw's inventory.
+* `assimilate`: a nasal takes the place of a following non-nasal consonant.
+* `cluster`, `substituted`: a prefix in `ŋ` attached to a stem, with assimilation alone and
+  with substitution of the stem-initial segment.
 
 ## Main results
 
-* `Tagalog.exists_mem_tgl`: each phoneme is the segment of one in PHOIBLE's Tagalog
-  inventory.
-* `Tagalog.mamigaj`: *maŋ-* with *bigáj* derives *mamigáj*, and the bare stem is unchanged.
-* `Tagalog.coalescence`: each stop coalesces with a preceding nasal into the nasal of its
-  place.
+* `exists_mem_tgl`: the phonemes are those of PHOIBLE's Tagalog inventory.
+* `substitute_eq`: each obstruent substitutes to the nasal of its place, and the glottal stop
+  to the velar nasal.
+* `cluster_of_not_trigger`: the prefix nasal is unchanged before a nasal, a glide or *h*.
 
 ## References
 
-* [hayes-2009]
-* [magri-2025]
-* [zuraw-2010]
+* [K. Zuraw, *A model of lexical variation and the grammar with application to Tagalog nasal
+  substitution* (2010)][zuraw-2010]
 * [zuraw-hayes-2017]
-* [moran-mccloy-2019]
+* [magri-2025]
+* [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
 -/
 
-open Phonology Subregular.LocalRewrite Data.PHOIBLE
+open Phonology Data.PHOIBLE
 
 namespace Tagalog
 
-/-! ### Phonemes -/
+/-! ### Segments -/
 
 /-- The voiceless bilabial stop /p/. -/
 def p : Segment := .ofChart .«p»
@@ -61,6 +53,9 @@ def t : Segment := .ofChart .«t»
 /-- The voiceless velar stop /k/. -/
 def k : Segment := .ofChart .«k»
 
+/-- The glottal stop /ʔ/. -/
+def «ʔ» : Segment := .ofChart .«ʔ»
+
 /-- The voiced bilabial stop /b/. -/
 def b : Segment := .ofChart .«b»
 
@@ -69,6 +64,12 @@ def d : Segment := .ofChart .«d»
 
 /-- The voiced velar stop /g/, the IPA glyph `ɡ` in the chart. -/
 def g : Segment := .ofChart .«ɡ»
+
+/-- The voiceless alveolar fricative /s/. -/
+def s : Segment := .ofChart .«s»
+
+/-- The glottal fricative /h/. -/
+def h : Segment := .ofChart .«h»
 
 /-- The bilabial nasal /m/. -/
 def m : Segment := .ofChart .«m»
@@ -79,53 +80,116 @@ def n : Segment := .ofChart .«n»
 /-- The velar nasal /ŋ/. -/
 def ŋ : Segment := .ofChart .«ŋ»
 
-/-- The low vowel /a/. -/
-def a : Segment := .ofChart .«a»
+/-- The lateral /l/. -/
+def l : Segment := .ofChart .«l»
 
-/-- The high front vowel /i/. -/
-def i : Segment := .ofChart .«i»
+/-- The rhotic /r/. -/
+def r : Segment := .ofChart .«r»
+
+/-- The labial-velar glide /w/. -/
+def w : Segment := .ofChart .«w»
 
 /-- The palatal glide /j/. -/
 def j : Segment := .ofChart .«j»
 
-/-- The phonemes of the examples are the six oral stops, the nasals of their places, two
-vowels and the palatal glide, and they are pairwise distinct. -/
-def inventory : Finset Segment := ⟨↑[p, t, k, b, d, g, m, n, ŋ, a, i, j], by decide⟩
+/-- The high front vowel /i/. -/
+def i : Segment := .ofChart .«i»
+
+/-- The mid front vowel /e/. -/
+def e : Segment := .ofChart .«e»
+
+/-- The low vowel /a/. -/
+def a : Segment := .ofChart .«a»
+
+/-- The mid back vowel /o/. -/
+def o : Segment := .ofChart .«o»
+
+/-- The high back vowel /u/. -/
+def u : Segment := .ofChart .«u»
+
+/-- The consonants, pairwise distinct. -/
+def consonants : Finset Segment :=
+  ⟨↑[p, t, k, «ʔ», b, d, g, s, h, m, n, ŋ, l, r, w, j], by decide⟩
+
+/-- The vowels, pairwise distinct. -/
+def vowels : Finset Segment := ⟨↑[i, e, a, o, u], by decide⟩
 
 /-- Each phoneme is the segment of a phoneme of PHOIBLE's Tagalog inventory. -/
 theorem exists_mem_tgl :
-    ∀ x ∈ inventory, ∃ y ∈ Inventories.Tagalog.tgl.phonemes, x = .ofChart y.features := by
+    ∀ x ∈ consonants ∪ vowels,
+      ∃ y ∈ Inventories.Tagalog.tgl.phonemes, x = .ofChart y.features := by
   decide
 
-/-! ### The rules -/
+/-! ### The prefix nasal -/
 
-/-- A nasal takes the place of a following obstruent. -/
-def placeAssimilation : Rule where
-  name := "nasal place assimilation"
-  target := Segment.ofSpecs [(.nasal, true)]
-  effect := .copyRight FeatureClass.place
-  rightContext := [.seg (Segment.ofSpecs [(.consonantal, true), (.sonorant, false)])]
+/-- The consonants that a preceding nasal assimilates to, which are those that are not nasals.
+The glides and `h` are not consonantal. -/
+def trigger : Segment := Segment.ofSpecs [(.consonantal, true), (.nasal, false)]
 
-/-- An obstruent deletes after a nasal. -/
-def obstruentDeletion : Rule where
-  name := "post-nasal obstruent deletion"
-  target := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
-  effect := .delete
-  leftContext := [.seg (Segment.ofSpecs [(.nasal, true)])]
+/-- The obstruents, which can substitute. -/
+def obstruent : Segment := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
 
-/-- Nasal substitution is place assimilation feeding obstruent deletion. -/
-def nasalSubstitution : List Rule := [placeAssimilation, obstruentDeletion]
+/-- `assimilate w` is the word `w` with each nasal assimilated to a following non-nasal
+consonant. -/
+def assimilate : List Segment → List Segment := NasalSubstitution.assimilate trigger ŋ
 
-/-- *maŋ-* with *bigáj* derives *mamigáj*; the bare stem is unchanged. -/
-theorem mamigaj :
-    derive nasalSubstitution [m, a, ŋ, b, i, g, a, j] = [m, a, m, i, g, a, j] ∧
-      derive nasalSubstitution [b, i, g, a, j] = [b, i, g, a, j] := by
+/-- `substitute x` is the nasal that the prefix nasal and a stem-initial `x` surface as under
+substitution. -/
+def substitute : Segment → List Segment := NasalSubstitution.substitute trigger ŋ
+
+/-- `cluster pre stem` attaches the prefix that consists of `pre` and the nasal to `stem`, with
+assimilation of the nasal to the stem-initial segment alone. -/
+def cluster (pre : List Segment) : List Segment → List Segment
+  | [] => pre ++ [ŋ]
+  | x :: rest => pre ++ assimilate [ŋ, x] ++ rest
+
+/-- `substituted pre stem` attaches the prefix that consists of `pre` and the nasal to `stem`,
+with substitution of the stem-initial segment. -/
+def substituted (pre : List Segment) : List Segment → List Segment
+  | [] => pre ++ [ŋ]
+  | x :: rest => pre ++ substitute x ++ rest
+
+/-- Each obstruent substitutes to the nasal of its place, and the glottal stop, which has no
+place, to the velar nasal. -/
+theorem substitute_eq :
+    substitute p = [m] ∧ substitute b = [m] ∧ substitute t = [n] ∧ substitute d = [n] ∧
+      substitute s = [n] ∧ substitute k = [ŋ] ∧ substitute g = [ŋ] ∧ substitute «ʔ» = [ŋ] := by
   decide
 
-/-- Each stop coalesces with a preceding nasal into the nasal of its place. -/
-theorem coalescence :
-    ∀ x ∈ [(p, m), (b, m), (t, n), (d, n), (k, ŋ), (g, ŋ)],
-      derive nasalSubstitution [ŋ, x.1] = [x.2] := by
+/-- The prefix nasal is unchanged before a nasal, a glide, `h` or a vowel. -/
+theorem cluster_of_not_trigger :
+    ∀ x ∈ consonants ∪ vowels, ¬ trigger ≤ x → cluster [] [x] = [ŋ, x] := by
+  decide
+
+/-- The prefix nasal is a phoneme before every consonant, the nasal of the consonant's place
+before an oral consonant and the velar nasal otherwise. -/
+theorem cluster_head_mem :
+    ∀ x ∈ consonants, ∀ N ∈ (cluster [] [x]).head?, N ∈ ({m, n, ŋ} : Finset Segment) := by
+  decide
+
+/-! ### Examples -/
+
+/-- *mamigáj* 'to distribute' from *bigáj*, with substitution. -/
+theorem mamigaj : substituted [m, a] [b, i, g, a, j] = [m, a, m, i, g, a, j] := by decide
+
+/-- *pantabój* 'to goad' from *tabój*, with assimilation alone. -/
+theorem pantaboj : cluster [p, a] [t, a, b, o, j] = [p, a, n, t, a, b, o, j] := by decide
+
+/-- *pansúlat* 'writing instrument' from *súlat*, with an alveolar nasal before `s`. -/
+theorem pansulat : cluster [p, a] [s, u, l, a, t] = [p, a, n, s, u, l, a, t] := by decide
+
+/-- *panlabás* 'external' from *labás*, with assimilation to the lateral. -/
+theorem panlabas : cluster [p, a] [l, a, b, a, s] = [p, a, n, l, a, b, a, s] := by decide
+
+/-- *maŋulól* 'to fool someone' from *ʔulól*, with substitution of the glottal stop. -/
+theorem mangulol : substituted [m, a] [«ʔ», u, l, o, l] = [m, a, ŋ, u, l, o, l] := by decide
+
+/-- *mapaŋamkám* 'rapacious' from *kamkám*. Substitution takes the stem-initial `k` and leaves
+the cluster inside the stem, which is not homorganic, so that assimilation is confined to the
+prefix as well. -/
+theorem mapangamkam :
+    substituted [m, a, p, a] [k, a, m, k, a, m] = [m, a, p, a, ŋ, a, m, k, a, m] ∧
+      assimilate [k, a, m, k, a, m] ≠ [k, a, m, k, a, m] := by
   decide
 
 end Tagalog

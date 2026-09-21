@@ -1,6 +1,7 @@
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Core.Optimization.PermSubsetCombinatorics
+import Linglib.Fragments.Tagalog.Phonology
 
 /-!
 # Zuraw (2010): A Model of Lexical Variation and the Grammar
@@ -62,6 +63,30 @@ inductive SubSt
 
 /-- A candidate is a stem-initial stop paired with a substitution decision. -/
 abbrev NSCand := StemC × SubSt
+
+/-- The stem-initial stop as a segment of `Fragments/Tagalog/Phonology.lean`. -/
+def StemC.segment : StemC → Phonology.Segment
+  | .p => Tagalog.p | .t => Tagalog.t | .k => Tagalog.k
+  | .b => Tagalog.b | .d => Tagalog.d | .g => Tagalog.g
+
+/-- The stem classes that the constraints below list are natural classes: the stems of *NC are
+the voiceless ones, those of *[ŋ the dorsal ones, and those of *[n the ones that are not
+labial. -/
+theorem mem_iff_segment (c : StemC) :
+    (c ∈ [StemC.p, .t, .k] ↔ Phonology.Segment.ofSpecs [(.voice, false)] ≤ c.segment) ∧
+      (c ∈ [StemC.k, .g] ↔ Phonology.Segment.ofSpecs [(.dorsal, true)] ≤ c.segment) ∧
+      (c ∈ [StemC.t, .d, .k, .g] ↔ Phonology.Segment.ofSpecs [(.labial, false)] ≤ c.segment) := by
+  cases c <;> decide
+
+/-- The nasal of the stop's place. -/
+def StemC.nasal : StemC → Phonology.Segment
+  | .p | .b => Tagalog.m
+  | .t | .d => Tagalog.n
+  | .k | .g => Tagalog.ŋ
+
+/-- Coalescence gives the nasal of the stop's place, by the fragment's substitution. -/
+theorem substitute_segment (c : StemC) : Tagalog.substitute c.segment = [c.nasal] := by
+  cases c <;> decide
 
 /-! ### The six constraints -/
 
