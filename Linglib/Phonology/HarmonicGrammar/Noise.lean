@@ -46,7 +46,7 @@ noise variance σ_d depends on the violation profile.
 namespace HarmonicGrammar
 
 
-open Core Real Constraints
+open Core Real Constraints ProbabilityTheory
 
 variable {C : Type*} {n : Nat}
 

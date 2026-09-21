@@ -1,4 +1,6 @@
-import Linglib.Core.Probability.Gaussian
+module
+
+public import Linglib.Core.Probability.Distributions.Gaussian
 
 /-!
 # Binary Gaussian random utility model (probit choice)
@@ -7,7 +9,8 @@ The closed-form binary choice probability of a Gaussian random utility model:
 when two alternatives' utilities differ by `Δ` and the *difference* of their
 i.i.d. Gaussian perturbations has standard deviation `σ`, the probability of
 choosing the first is `Φ(Δ / σ)`, where `Φ` is the standard normal CDF
-(`Core.normalCDF`). Equivalently it is `P(X > 0)` for `X ~ N(Δ, σ²)`.
+(`ProbabilityTheory.normalCDF`). Equivalently it is `P(X > 0)` for `X ~ N(Δ, σ²)`
+(`gaussianReal_real_Ioi_zero`).
 
 This is the **probit** choice rule — the Gaussian sibling of the **logit**
 (softmax) choice rule that arises from Gumbel noise (`rumMaxProb_gumbel_eq_softmax`
@@ -20,7 +23,7 @@ the other; each applies this one fact about the normal CDF.
 
 `[UPSTREAM]`: Mathlib has the Gaussian *measure* (`gaussianReal`) and a *generic*
 CDF (`ProbabilityTheory.cdf`), but no standard-normal CDF `Φ` (supplied by
-`Core.normalCDF`), no error function, and no random-utility / choice layer (this
+`ProbabilityTheory.normalCDF`), no error function, and no random-utility / choice layer (this
 file). The grounding chain `gaussianChoiceProb → normalCDF → cdf (gaussianReal 0 1)`
 bottoms out in Mathlib's measure-theoretic Gaussian.
 
@@ -31,9 +34,11 @@ bottoms out in Mathlib's measure-theoretic Gaussian.
 * `gaussianChoiceProb_strictMono` — strictly increasing in the utility gap (for `σ > 0`).
 -/
 
+@[expose] public section
+
 namespace Core
 
-open Real
+open Real MeasureTheory ProbabilityTheory
 
 variable {Δ σ : ℝ}
 
@@ -44,8 +49,16 @@ deviation of the Gaussian noise on their difference. Equivalently `P(X > 0)` for
 noncomputable def gaussianChoiceProb (Δ σ : ℝ) : ℝ :=
   normalCDF (Δ / σ)
 
+/-- The probit choice probability is the mass a Gaussian with mean `Δ` and standard deviation
+`σ` gives to the positive half-line. -/
+theorem gaussianReal_real_Ioi_zero (Δ : ℝ) (hσ : 0 < σ) :
+    (gaussianReal Δ (.mk (σ ^ 2) (sq_nonneg σ))).real (Set.Ioi 0) = gaussianChoiceProb Δ σ := by
+  have hv : NNReal.mk (σ ^ 2) (sq_nonneg σ) ≠ 0 := by simp [← NNReal.coe_eq_zero, hσ.ne']
+  simp only [gaussianReal_real_Ioi Δ hv, NNReal.coe_mk, sqrt_sq hσ.le, sub_zero,
+    gaussianChoiceProb]
+
 @[simp]
-theorem gaussianChoiceProb_zero (σ : ℝ) : gaussianChoiceProb 0 σ = 1 / 2 := by
+theorem gaussianChoiceProb_zero (σ : ℝ) : gaussianChoiceProb 0 σ = 2⁻¹ := by
   simp only [gaussianChoiceProb, zero_div, normalCDF_zero]
 
 /-- The probit choice probability is strictly positive. -/
@@ -62,21 +75,19 @@ theorem gaussianChoiceProb_complement (Δ σ : ℝ) :
   simp only [gaussianChoiceProb, neg_div, normalCDF_neg]; ring
 
 /-- A positive utility gap is chosen more often than chance (for `σ > 0`). -/
-theorem half_lt_gaussianChoiceProb (hΔ : 0 < Δ) (hσ : 0 < σ) :
-    1 / 2 < gaussianChoiceProb Δ σ :=
-  normalCDF_pos_gt_half (div_pos hΔ hσ)
+theorem inv_two_lt_gaussianChoiceProb (hΔ : 0 < Δ) (hσ : 0 < σ) :
+    2⁻¹ < gaussianChoiceProb Δ σ :=
+  inv_two_lt_normalCDF_iff.2 (div_pos hΔ hσ)
 
 /-- A negative utility gap is chosen less often than chance (for `σ > 0`). -/
-theorem gaussianChoiceProb_lt_half (hΔ : Δ < 0) (hσ : 0 < σ) :
-    gaussianChoiceProb Δ σ < 1 / 2 :=
-  normalCDF_neg_lt_half (div_neg_of_neg_of_pos hΔ hσ)
+theorem gaussianChoiceProb_lt_inv_two (hΔ : Δ < 0) (hσ : 0 < σ) :
+    gaussianChoiceProb Δ σ < 2⁻¹ :=
+  normalCDF_lt_inv_two_iff.2 (div_neg_of_neg_of_pos hΔ hσ)
 
 /-- The choice probability is strictly increasing in the utility gap (for `σ > 0`). -/
 theorem gaussianChoiceProb_strictMono (hσ : 0 < σ) :
-    StrictMono (fun Δ => gaussianChoiceProb Δ σ) := by
-  intro a b h
-  simp only [gaussianChoiceProb]
-  exact normalCDF_strictMono (div_lt_div_of_pos_right h hσ)
+    StrictMono (fun Δ ↦ gaussianChoiceProb Δ σ) :=
+  fun _ _ h ↦ normalCDF_strictMono (div_lt_div_of_pos_right h hσ)
 
 /-! ### The n-ary max-probability integral -/
 

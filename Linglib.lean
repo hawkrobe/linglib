@@ -270,7 +270,6 @@ import Linglib.Core.Probability.Decision.ExperimentDesign
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.Distributions.Bernoulli
 import Linglib.Core.Probability.Finite
-import Linglib.Core.Probability.Gaussian
 import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Gumbel
 import Linglib.Core.Probability.Kernel.Composition.Lemmas

@@ -30,7 +30,8 @@ import sys
 from pathlib import Path
 
 
-IMPORT_RE = re.compile(r'^\s*import\s+(Linglib(?:\.[A-Za-z0-9_]+)+)\s*$')
+IMPORT_RE = re.compile(
+    r'^\s*(?:(?:public|private)\s+)?(?:meta\s+)?import\s+(?:all\s+)?(Linglib(?:\.[A-Za-z0-9_]+)+)\s*$')
 
 
 def tracked_lean_files() -> set[str]:

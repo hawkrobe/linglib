@@ -206,20 +206,20 @@ theorem hz_identity_concrete (w : Fin 6 → ℚ) :
 consistently, since the normal distribution function is strictly monotone. -/
 theorem nhg_consistent_ordering {X : Type} (d : X → ℝ) (σ : ℝ) (hσ : 0 < σ) (sq : Square X)
     (hcld : ConstantLogitDiff d sq) (hne : d sq.tl ≠ d sq.bl) :
-    ConsistentOrdering ⟨Core.normalCDF (d sq.tl / σ), Core.normalCDF (d sq.tr / σ),
-      Core.normalCDF (d sq.bl / σ), Core.normalCDF (d sq.br / σ)⟩ :=
-  constantLogitDiff_mono_consistent d (λ x => Core.normalCDF (x / σ))
-    (Core.normalCDF_strictMono.comp λ _ _ h => (div_lt_div_iff_of_pos_right hσ).mpr h)
+    ConsistentOrdering ⟨ProbabilityTheory.normalCDF (d sq.tl / σ), ProbabilityTheory.normalCDF (d sq.tr / σ),
+      ProbabilityTheory.normalCDF (d sq.bl / σ), ProbabilityTheory.normalCDF (d sq.br / σ)⟩ :=
+  constantLogitDiff_mono_consistent d (λ x => ProbabilityTheory.normalCDF (x / σ))
+    (ProbabilityTheory.normalCDF_strictMono.comp λ _ _ h => (div_lt_div_iff_of_pos_right hσ).mpr h)
     sq hcld hne
 
 /-- For any weighting and noise, Noisy Harmonic Grammar orders the Tagalog square consistently
 whenever the two prefixes differ on /b/. -/
 theorem nhg_tagalog_consistent (w : Fin 6 → ℝ) (σ : ℝ) (hσ : 0 < σ)
     (hne : (∑ k : Fin 6, w k * deltaR k .mang_b) ≠ (∑ k : Fin 6, w k * deltaR k .pang_b)) :
-    ConsistentOrdering ⟨Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .mang_b) / σ),
-      Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .mang_k) / σ),
-      Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .pang_b) / σ),
-      Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .pang_k) / σ)⟩ :=
+    ConsistentOrdering ⟨ProbabilityTheory.normalCDF ((∑ k : Fin 6, w k * deltaR k .mang_b) / σ),
+      ProbabilityTheory.normalCDF ((∑ k : Fin 6, w k * deltaR k .mang_k) / σ),
+      ProbabilityTheory.normalCDF ((∑ k : Fin 6, w k * deltaR k .pang_b) / σ),
+      ProbabilityTheory.normalCDF ((∑ k : Fin 6, w k * deltaR k .pang_k) / σ)⟩ :=
   nhg_consistent_ordering (λ x => ∑ k : Fin 6, w k * deltaR k x) σ hσ nasalSubSquare
     (maxent_predicts_hz_tagalog w) hne
 
