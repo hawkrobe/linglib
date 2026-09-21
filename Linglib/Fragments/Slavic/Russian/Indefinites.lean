@@ -6,12 +6,12 @@ import Linglib.Syntax.Category.Pronoun.Indefinite
 Russian builds its indefinite series on the interrogative pronouns *kto* 'who' and *čto*
 'what'. Three of them divide the specific functions: *koe-kto*, with the prefix *koe-*, for a
 referent the speaker has in mind ("Koe-kto prišël" 'someone, I know who, came'); *kto-to*, with
-the suffix *-to*, for one the speaker presupposes but cannot identify ("Kto-to prišël" 'someone
-came'); and *kto-nibud'*, with *-nibud'*, for irrealis non-specific reference, in questions and
-in conditionals ("Kupi čto-nibud'" 'buy something, anything'). The *-libo* series shares the
-functions of *-nibud'* and replaces it under indirect negation and in comparatives, where *kto
-by to ni bylo* also occurs; *nikto* is confined to direct negation and *kto ugodno* to free
-choice.
+the suffix *-to*, mainly for one the speaker presupposes but cannot identify ("Kto-to prišël"
+'someone came'), though not excluded from non-specific uses; and *kto-nibud'*, with *-nibud'*,
+for irrealis non-specific reference, in questions and in conditionals ("Kupi čto-nibud'" 'buy
+something, anything'). The *-libo* series shares the functions of *-nibud'* and replaces it
+under indirect negation and in comparatives, where *kto by to ni bylo* also occurs; *nikto* is
+confined to direct negation and *kto ugodno* to free choice.
 
 ## References
 
@@ -28,8 +28,8 @@ def koeEntry : IndefinitePronoun where
   ontology := .person
   basis := .interrogative
 
-/-- *Kto-to*: the suffix *-to* on the interrogative, for a referent the speaker presupposes but
-cannot identify. -/
+/-- *Kto-to*: the suffix *-to* on the interrogative, mainly for a referent the speaker
+presupposes but cannot identify. -/
 def toEntry : IndefinitePronoun where
   form := "kto-to"
   ontology := .person

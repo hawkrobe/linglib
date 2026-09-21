@@ -70,6 +70,9 @@ sharing the `paperLabel`, when the variants differ in what the paper classifies;
 contrast the paper does not classify in `alternatives`. A feature a sentence bears twice (two
 indefinite series in one clause) is two entries under the same key, not a slash-joined value.
 A judgment that holds only in a scenario records the scenario in `context`.
+Transcribe from page images, not a PDF's text layer: keep the source's morpheme hyphens and
+diacritics, and where the source has an evident misprint give the normal form and record what
+the source prints in `comment`.
 
 ## Leipzig glossing conventions
 

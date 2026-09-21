@@ -143,15 +143,14 @@ the regions [haspelmath-1997] draws. -/
 theorem paradigms_realize_types :
     ∀ w ∈ witnesses, ∃ s ∈ w.1, s.pronoun = w.2.1 ∧ Instantiates s w.2.2 := by decide
 
-/-- Russian *-to* is the epistemic type, but the region drawn for it covers only the
-specific-unknown function: *-nibud'* is the non-specific form of the same paradigm and takes
-that function from it. Coverage is the restriction net of paradigmatic competition, which is why
-the surface classification of *-to* is narrower than its type; the book's own example of
-*kogo-to* under *xočet* 'wants' finds the non-specific reading possible beside the preferred
-*-nibud'*. -/
+/-- Russian *-to* is the epistemic type on the region [haspelmath-1997] draws for it, which
+covers the specific-unknown and the non-specific function, while the nanosyntactic lexicon
+leaves it the specific-unknown layer alone: *-nibud'* is the non-specific form of the same
+paradigm and takes that layer by the Elsewhere Principle. What a form may express and what it
+spells out under paradigmatic competition come apart. -/
 theorem to_is_epistemic_under_competition :
-    ∃ s ∈ russian, s.pronoun = Russian.Indefinites.toEntry ∧
-      ConsistentWith s .epistemic ∧ ¬ Instantiates s .epistemic := by decide
+    (∃ s ∈ russian, s.pronoun = Russian.Indefinites.toEntry ∧ Instantiates s .epistemic) ∧
+      spellout (lexicon russian) 0 = some "kto-nibud'" := by decide
 
 /-- German *irgend-* instantiates the change from a non-specific form to an epistemic one, and its
 epistemic restriction is the one the modal-indefinite literature attributes to it. -/
