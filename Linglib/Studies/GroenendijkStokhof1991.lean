@@ -1,5 +1,5 @@
 import Linglib.Logic.CylindricAlgebra
-import Linglib.Semantics.Dynamic.DPL.Semantics
+import Linglib.Semantics.Dynamic.DPL.Context
 
 /-!
 # Groenendijk and Stokhof (1991): Dynamic Predicate Logic
@@ -42,9 +42,10 @@ satisfaction set are the substrate's `isTest_test`, `IsTest.comp`, and `IsTest.c
 that closure and negation are idempotent on tests is `dom_test`. The paper lists idempotency
 of disjunction as unconditional, but a disjunction is a test by Definition 2, so `φ ∨ φ` is the
 closure of `φ` (`disj_self`) and the law holds exactly of tests. Fact 5, that a condition is a
-test, is the substrate's `DPL.Formula.isTest_eval`; the converse half of Fact 6, that a test is a
-condition or a contradiction, fails, `x = y ∧ ∃x[x = y]` being a test in every structure with an
-active quantifier (`isTest_eval_equal_conj_ex_equal`).
+test, is the substrate's `DPL.Formula.isTest_eval`. Fact 6, that the tests are the conditions
+and the contradictions, holds up to equivalence, a test being equivalent to the condition `¬¬φ`
+(`neg_neg_eq_self_iff_isTest`), and not of the syntactic class itself: `x = y ∧ ∃x[x = y]` is a
+test in every structure and has an active quantifier (`isTest_eval_equal_conj_ex_equal`).
 
 ## References
 
@@ -53,10 +54,10 @@ active quantifier (`isTest_eval_equal_conj_ex_equal`).
 
 ## TODO
 
-The laws with side conditions on active quantifiers and free variables, Facts 8, 9, and 13 to
-16, the leftward scope extension, and the normal binding form of section 4.1 with Facts 17 to
-24 are to be stated on the formulas of `DPL/Syntax.lean`, through `Formula.fv`, `Formula.aqv`
-and `Formula.IsScopeBound`.
+The remaining laws of section 3.4 with side conditions (the leftward scope extension,
+commutativity and idempotency of conjunction, contraposition, distribution) and the normal
+binding form of section 4.1 with Facts 17 to 24 are to be stated on the formulas of
+`DPL/Syntax.lean`, through `Formula.fv`, `Formula.aqv` and `Formula.IsScopeBound`.
 -/
 
 namespace GroenendijkStokhof1991
@@ -452,6 +453,15 @@ theorem not_entails_comp_exists [Nontrivial E] :
 
 end Assignments
 
+/-- Definition 21's entailment fixing the variables in `X` holds when every output of the premiss
+has an output of the conclusion that agrees with it on `X`. -/
+def EntailsOn {V E : Type*} (X : Finset V) (D₁ D₂ : Update (V → E)) : Prop :=
+  ∀ g ∈ D₁.cod, ∃ h, g ~[D₂] h ∧ Set.EqOn h g ↑X
+
+theorem EntailsOn.entails {V E : Type*} {X : Finset V} {D₁ D₂ : Update (V → E)}
+    (h : EntailsOn X D₁ D₂) : Entails D₁ D₂ :=
+  fun g hg ↦ let ⟨k, hk, _⟩ := h g hg; ⟨k, hk⟩
+
 /-! ### The laws on formulas
 
 The formulas of `DPL/Syntax.lean` are interpreted by `DPL.Formula.eval` in the update algebra, so
@@ -488,6 +498,67 @@ theorem eval_ex_conj : ((∃[x] φ) ⋏ ψ).eval M = (∃[x] (φ ⋏ ψ)).eval M
 
 theorem eval_ex_imp : ((∃[x] φ) ⟿ ψ).eval M = (∀[x] (φ ⟿ ψ)).eval M :=
   donkey_equivalence x _ _
+
+/-! #### Free variables, active quantifiers, and entailment
+
+Facts 8 and 9 are the two halves of the typing of a formula by its context
+(`DPL.Formula.hasContext_eval`): truth depends only on the free variables, and only the active
+quantifier variables change. With them the properties entailment lacks in general are restored
+under conditions on the two sets. -/
+
+variable {M φ ψ χ} {g h : V → M}
+
+/-- Fact 8: the truth of a formula depends only on its free variables. -/
+theorem dependsOn_dom_eval : DependsOn (· ∈ (φ.eval M).dom) (↑φ.fv : Set V) := by
+  rw [← context_I]
+  exact (φ.hasContext_eval M).dependsOn_dom
+
+/-- Fact 9: a formula changes the values of its active quantifier variables only. -/
+theorem eqOn_of_eval (hgh : g ~[φ.eval M] h) : Set.EqOn g h (↑φ.aqv : Set V)ᶜ := by
+  rw [← context_B]
+  exact (φ.hasContext_eval M).blocks hgh
+
+/-- A formula none of whose active quantifier variables is free in another preserves the truth
+of the other from its inputs to its outputs. -/
+theorem mem_dom_eval_iff (hd : Disjoint φ.aqv ψ.fv) (hgh : g ~[φ.eval M] h) :
+    g ∈ (ψ.eval M).dom ↔ h ∈ (ψ.eval M).dom :=
+  (φ.hasContext_eval M).mem_dom_iff (ψ.hasContext_eval M) (by rwa [context_B, context_I]) hgh
+
+/-- Fact 13: s-entailment and entailment coincide when the premiss binds nothing in the
+conclusion. -/
+theorem sEntails_iff_entails (hd : Disjoint φ.aqv ψ.fv) :
+    SEntails (φ.eval M) (ψ.eval M) ↔ Entails (φ.eval M) (ψ.eval M) :=
+  ⟨fun hs _ ⟨_, hgh⟩ ↦ (mem_dom_eval_iff hd hgh).mp (hs ⟨_, hgh⟩),
+    fun he _ ⟨_, hgh⟩ ↦ (mem_dom_eval_iff hd hgh).mpr (he ⟨_, hgh⟩)⟩
+
+/-- Fact 14: meaning inclusion gives entailment when the premiss binds nothing in the
+conclusion. -/
+theorem entails_of_subset (hd : Disjoint φ.aqv ψ.fv) (hsub : φ.eval M ⊆ ψ.eval M) :
+    Entails (φ.eval M) (ψ.eval M) :=
+  (sEntails_iff_entails hd).mp (SEntails.of_subset hsub)
+
+/-- Fact 15: a formula that binds none of its own free variables entails itself. -/
+theorem entails_self (hd : Disjoint φ.aqv φ.fv) : Entails (φ.eval M) (φ.eval M) :=
+  entails_of_subset hd subset_rfl
+
+/-- A conjunction entails a second conjunct that binds none of its own free variables. -/
+theorem entails_conj_right (hd : Disjoint ψ.aqv ψ.fv) :
+    Entails ((φ ⋏ ψ).eval M) (ψ.eval M) := by
+  rintro _ ⟨_, _, _, hkh⟩
+  exact (mem_dom_eval_iff hd hkh).mp ⟨_, hkh⟩
+
+/-- Fact 16: entailment is transitive when the first step fixes the variables the middle
+formula binds in the conclusion. -/
+theorem EntailsOn.trans (h₁ : EntailsOn (ψ.aqv ∩ χ.fv) (φ.eval M) (ψ.eval M))
+    (h₂ : Entails (ψ.eval M) (χ.eval M)) : Entails (φ.eval M) (χ.eval M) := by
+  intro g hg
+  obtain ⟨k, hgk, hX⟩ := h₁ g hg
+  refine (dependsOn_dom_eval (φ := χ) fun v hv ↦ ?_).to_iff.mp (h₂ ⟨g, hgk⟩)
+  by_cases hv' : v ∈ ψ.aqv
+  · exact hX (by simp [hv', Finset.mem_coe.mp hv])
+  · exact (eqOn_of_eval hgk (by simpa using hv')).symm
+
+variable (M φ ψ χ)
 
 /-! #### Binding beyond scope
 
@@ -546,8 +617,9 @@ theorem isScopeBound_ex_conj_atom_of_ne (hxy : x ≠ y) :
     ((∃[y] (atom P y)) ⋏ atom Q x).IsScopeBound := by
   simp [IsScopeBound, aqv, fv, hxy.symm]
 
-/-- A test need not be a condition. `x = y ∧ ∃x[x = y]` resets `x` to the value it had, so it
-is a test in every structure, and it has an active quantifier and is no contradiction. -/
+/-- A test need not be a condition syntactically. `x = y ∧ ∃x[x = y]` resets `x` to the value it
+had, so it is a test in every structure, while having an active quantifier and being no
+contradiction; it is equivalent to the condition `x = y`. -/
 theorem isTest_eval_equal_conj_ex_equal (hxy : x ≠ y) :
     IsTest (((.var x ≐ .var y) ⋏ ∃[x] (.var x ≐ .var y) : Formula L V).eval M) := by
   rintro ⟨g, h⟩ ⟨_, ⟨rfl, hg⟩, hex⟩
