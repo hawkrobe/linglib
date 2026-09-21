@@ -1321,14 +1321,12 @@ import Linglib.Semantics.Degree.Delineation
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Semantics.Degree.Granularity
 import Linglib.Semantics.Degree.Hom
-import Linglib.Semantics.Degree.Intensification
 import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Degree.Measure.Dimension
 import Linglib.Semantics.Degree.Measure.Dimensioned
 import Linglib.Semantics.Degree.Measure.Quantity
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.MeasurePhrase
-import Linglib.Semantics.Degree.Noun
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Dynamic.CDRT
