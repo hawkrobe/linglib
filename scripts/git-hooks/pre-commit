@@ -1,0 +1,18 @@
+#!/bin/bash
+# Pre-commit hook: ratchet for the module-system migration. A newly added Lean
+# file whose imports are all modules must be a module itself; modified files in
+# that position get a note. See scripts/check_module_frontier.py.
+#
+# Override with `git commit --no-verify`.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT="$REPO_ROOT/scripts/check_module_frontier.py"
+
+# Branches cut before the script landed have nothing to check.
+[ -f "$SCRIPT" ] || exit 0
+
+if ! python3 "$SCRIPT" --staged; then
+    echo "" >&2
+    echo "Commit blocked. Override with: git commit --no-verify" >&2
+    exit 1
+fi

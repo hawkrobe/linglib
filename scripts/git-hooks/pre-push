@@ -1,0 +1,21 @@
+#!/bin/bash
+# Pre-push hook: catch import statements that reference untracked Lean files,
+# the pattern that builds clean locally but breaks CI on a fresh checkout.
+#
+# Override with `git push --no-verify` if you really need to push past this.
+
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT="$REPO_ROOT/scripts/check_orphan_imports.py"
+
+if [ ! -x "$SCRIPT" ]; then
+    echo "warning: $SCRIPT missing or not executable; skipping orphan-import check" >&2
+    exit 0
+fi
+
+if ! python3 "$SCRIPT"; then
+    echo "" >&2
+    echo "Push blocked. Re-run after fixing, or override with: git push --no-verify" >&2
+    exit 1
+fi
