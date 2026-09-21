@@ -1,5 +1,6 @@
 import Linglib.Logic.Assignment
 import Linglib.Semantics.Dynamic.Update
+import Mathlib.Data.Set.Function
 
 /-!
 # Compositional DRT — registers, drefs, and boxes
@@ -82,9 +83,32 @@ def randomAssign (r : R) : Update S :=
 def dexists (r : R) (D : Update S) : Update S :=
   seq (randomAssign r) D
 
-/-- Universal condition: `∀r(D) = ¬∃r(¬D)`. -/
+/-- Universal condition: `∀r(D)` holds iff `D` has an output from every
+`r`-variant — [groenendijk-stokhof-1991]'s clause for the universal. -/
 def dforall (r : R) (D : Update S) : Condition S :=
-  neg (dexists r (test (neg D)))
+  impl (randomAssign r) D
+
+end Update
+
+namespace Update
+
+variable {V E : Type*} [DecidableEq V] {g h : V → E} {x : V}
+
+@[simp] theorem _root_.DynamicSemantics.RegisterStructure.extend_eq_update (e : E) :
+    RegisterStructure.extend g x e = Function.update g x e := rfl
+
+@[simp] theorem _root_.DynamicSemantics.RegisterStructure.val_apply :
+    RegisterStructure.val x g = g x := rfl
+
+/-- At the canonical register structure, random assignment is
+`Function.update` at an arbitrary value. -/
+theorem randomAssign_apply : randomAssign x g h ↔ ∃ e, h = Function.update g x e := Iff.rfl
+
+/-- At the canonical register structure, random assignment at `x` is
+agreement off `x`. -/
+theorem randomAssign_iff_eqOn : randomAssign x g h ↔ Set.EqOn g h {x}ᶜ :=
+  ⟨by rintro ⟨e, rfl⟩ v hv; exact (Function.update_of_ne hv e g).symm,
+    fun hk => ⟨h x, (Function.update_eq_iff.mpr ⟨rfl, fun _ hv => hk hv⟩).symm⟩⟩
 
 end Update
 

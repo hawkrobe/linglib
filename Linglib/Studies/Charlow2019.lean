@@ -1,8 +1,7 @@
-import Linglib.Semantics.Dynamic.DPL
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Dynamic.ICDRT.Defs
-import Linglib.Logic.CylindricAlgebra
+import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
 # Charlow 2019: where is the destructive update problem?
@@ -17,8 +16,7 @@ the other direction does not — which is exactly where the state's extra struct
 
 ## Main definitions
 
-* `trueAt`, `staticExists`, `dynamicExists` — truth of a program, and the static and dynamic
-  existentials
+* `staticExists`, `dynamicExists` — the static and dynamic existentials
 * `reachable` — assignment reachability, a preorder that is not antisymmetric
 * `liftPW`, `lowerPW` — Charlow's ↑ and its inverse at a world
 * `anaphoricallyDistributive` — distributivity over the partition by assignment
@@ -30,7 +28,8 @@ the other direction does not — which is exactly where the state's extra struct
 * `dynamic_changes_assignment`, `static_is_test` — while differing on the output assignment
 * `lowerPW_liftPW`, `liftPW_injective`, `liftPW_preserves_distributive`, `liftPW_lowerPW_not_id` —
   what the lift keeps and what the state adds
-* `trueAt_staticExists_iff_cyl` — the static existential is cylindrification
+* `closure_staticExists`, `closure_dynamicExists` — both existentials are true where the
+  cylindrification of the body is
 
 ## References
 
@@ -39,103 +38,81 @@ the other direction does not — which is exactly where the state's extra struct
 
 namespace Charlow2019
 
-open DPL
-open DynamicSemantics
+open DynamicSemantics DynamicSemantics.Update CylindricAlgebra
 open DynamicSemantics.CCP (IsDistributive)
 open DynamicSemantics.ICDRT
-
-/-- Truth at an assignment: K True at g ⟺ ∃h. K g h (Charlow's (7)). -/
-def trueAt {E : Type*} (K : DPL.Rel E) (g : Assignment E) : Prop :=
-  ∃ h, K g h
-
-/-- `DPL.Rel.exists_`'s inline pointwise update equals `Function.update`. -/
-private theorem update_eq_ite {E : Type*} (g : Assignment E) (x : Nat) (d : E) :
-    (fun n => if n = x then d else g n) = Function.update g x d := by
-  funext n; simp [Function.update_apply]
 
 /-- Destructive update preserves truth conditions (§4). -/
 theorem destructive_preserves_truth {E : Type*}
     (P Q : E → Prop) (g : Assignment E) :
-    trueAt (DPL.Rel.conj
-      (DPL.Rel.exists_ 6 (DPL.Rel.atom (λ g' => P (g' 6))))
-      (DPL.Rel.exists_ 6 (DPL.Rel.atom (λ g' => Q (g' 6)))))
-    g ↔ (∃ x, P x) ∧ (∃ y, Q y) := by
-  simp only [trueAt, DPL.Rel.conj, DPL.Rel.exists_, DPL.Rel.atom]
+    closure (seq (dexists 6 (test fun g' ↦ P (g' 6))) (dexists 6 (test fun g' ↦ Q (g' 6)))) g ↔
+      (∃ x, P x) ∧ (∃ y, Q y) := by
   constructor
-  · rintro ⟨h, k, ⟨d₁, hk, hP⟩, d₂, hh, hQ⟩
-    subst hk; subst hh
+  · rintro ⟨_, _, ⟨_, ⟨d₁, rfl⟩, rfl, hP⟩, _, ⟨d₂, rfl⟩, rfl, hQ⟩
     exact ⟨⟨d₁, by simpa using hP⟩, ⟨d₂, by simpa using hQ⟩⟩
   · rintro ⟨⟨x, hPx⟩, ⟨y, hQy⟩⟩
-    exact ⟨Function.update (Function.update g 6 x) 6 y, Function.update g 6 x,
-      ⟨x, update_eq_ite g 6 x, by simpa⟩,
-      y, update_eq_ite (Function.update g 6 x) 6 y, by simpa⟩
+    exact ⟨_, _, ⟨_, ⟨x, rfl⟩, rfl, by simpa⟩, _, ⟨y, rfl⟩, rfl, by simpa⟩
 
 /-- Static ↑: evaluates truth, discards modified assignment (Table 1, row 1). -/
-def staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPL.Rel E :=
-  DPL.Rel.atom (λ g => ∃ d : E, body (Function.update g x d))
+def staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : Update (Assignment E) :=
+  test (cyl x body)
 
 /-- Dynamic ↑: retains modified assignment (Table 1, row 2). -/
-def dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPL.Rel E :=
-  DPL.Rel.exists_ x (DPL.Rel.atom (λ g => body g))
+def dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : Update (Assignment E) :=
+  dexists x (test body)
 
 /-- Static existential is a test: output = input. -/
-theorem static_is_test {E : Type*} (x : Nat) (body : Assignment E → Prop)
-    (g h : Assignment E) :
-    staticExists x body g h → g = h := by
-  intro ⟨heq, _⟩; exact heq
+theorem static_is_test {E : Type*} (x : Nat) (body : Assignment E → Prop) :
+    (staticExists x body).IsTest :=
+  isTest_test _
 
 /-- Dynamic existential can change the assignment. -/
 theorem dynamic_changes_assignment {E : Type*} [Nontrivial E] :
     ∃ (x : Nat) (body : Assignment E → Prop) (g h : Assignment E),
       dynamicExists x body g h ∧ g ≠ h := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨0, λ _ => True, λ _ => e₁, Function.update (λ _ => e₁) 0 e₂, ?_⟩
-  constructor
-  · exact ⟨e₂, update_eq_ite _ 0 e₂, trivial⟩
-  · intro heq; exact hne (congr_fun heq 0 |>.symm ▸ by simp)
+  refine ⟨0, fun _ ↦ True, fun _ ↦ e₁, Function.update (fun _ ↦ e₁) 0 e₂,
+    ⟨_, ⟨e₂, rfl⟩, rfl, trivial⟩, fun heq ↦ hne ?_⟩
+  simpa using congr_fun heq 0
+
+/-- The static existential is true where the cylindrification of its body along `x` is. -/
+theorem closure_staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) :
+    closure (staticExists x body) = cyl x body :=
+  closure_test _
+
+/-- The dynamic existential is true where the cylindrification of its body along `x` is. -/
+theorem closure_dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) :
+    closure (dynamicExists x body) = cyl x body := by
+  rw [dynamicExists, GroenendijkStokhof1991.closure_dexists_eq_cyl, closure_test]
 
 /-- Static and dynamic agree on truth conditions (§4, §7). -/
-theorem static_dynamic_same_truth {E : Type*}
-    (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
-    trueAt (staticExists x body) g ↔ trueAt (dynamicExists x body) g := by
-  simp only [trueAt, staticExists, dynamicExists, DPL.Rel.atom, DPL.Rel.exists_]
-  constructor
-  · rintro ⟨h, heq, d, hbody⟩
-    subst heq
-    exact ⟨Function.update g x d, d, update_eq_ite g x d,
-      (update_eq_ite g x d).symm ▸ hbody⟩
-  · rintro ⟨_, d, _, hbody⟩
-    exact ⟨g, rfl, d, update_eq_ite g x d ▸ hbody⟩
+theorem static_dynamic_same_truth {E : Type*} (x : Nat) (body : Assignment E → Prop) :
+    closure (staticExists x body) = closure (dynamicExists x body) := by
+  rw [closure_staticExists, closure_dynamicExists]
 
 /-- Reachable: h is reachable from g via some DPL formula (Charlow's (24)). -/
 def reachable {E : Type*} (g h : Assignment E) : Prop :=
-  ∃ φ : DPL.Rel E, φ g h
+  ∃ φ : Update (Assignment E), φ g h
 
 /-- Reachability is reflexive. -/
 theorem reachable_refl {E : Type*} (g : Assignment E) : reachable g g :=
-  ⟨DPL.Rel.atom (λ _ => True), rfl, trivial⟩
+  ⟨test fun _ ↦ True, rfl, trivial⟩
 
 /-- Reachability is transitive (via dynamic conjunction). -/
 theorem reachable_trans {E : Type*} {g h k : Assignment E}
     (hgh : reachable g h) (hhk : reachable h k) : reachable g k := by
   obtain ⟨φ, hφ⟩ := hgh
   obtain ⟨ψ, hψ⟩ := hhk
-  exact ⟨DPL.Rel.conj φ ψ, h, hφ, hψ⟩
+  exact ⟨seq φ ψ, h, hφ, hψ⟩
 
 /-- Antisymmetry fails: distinct assignments can be mutually reachable (§8). -/
 theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
     ∃ (g h : Assignment E), g ≠ h ∧ reachable g h ∧ reachable h g := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  let g : Assignment E := λ _ => e₁
-  let h : Assignment E := Function.update g 0 e₂
-  refine ⟨g, h, ?_, ?_, ?_⟩
-  · intro heq; exact hne (by simpa [g, h] using congr_fun heq 0)
-  · exact ⟨DPL.Rel.exists_ 0 (DPL.Rel.atom (λ g' => g' 0 = e₂)),
-           e₂, update_eq_ite g 0 e₂, by simp⟩
-  · refine ⟨DPL.Rel.exists_ 0 (DPL.Rel.atom (λ g' => g' 0 = e₁)),
-            e₁, ?_, by simp⟩
-    funext n
-    by_cases hn : n = 0 <;> simp [hn, g, h]
+  refine ⟨fun _ ↦ e₁, Function.update (fun _ ↦ e₁) 0 e₂,
+    fun heq ↦ hne (by simpa using congr_fun heq 0),
+    ⟨dexists 0 (test fun g' ↦ g' 0 = e₂), _, ⟨e₂, rfl⟩, rfl, by simp⟩,
+    ⟨dexists 0 (test fun g' ↦ g' 0 = e₁), _, ⟨e₁, by simp⟩, rfl, rfl⟩⟩
 
 /-- Charlow's context type: a set of world-assignment pairs. -/
 abbrev State (W E : Type*) := Set (W × Assignment E)
@@ -416,26 +393,5 @@ empty-set falsifier makes downstream lookup empty. -/
 
 The static and the dynamic existential have the same truth conditions, the cylindrification of
 the body along the bound variable. -/
-
-section Cylindrification
-
-open CylindricAlgebra
-open DPL
-
-/-- The static existential is true at `g` iff the cylindrification of its body along `x` is. -/
-theorem trueAt_staticExists_iff_cyl {E : Type*}
-    (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
-    trueAt (staticExists x body) g ↔ cyl x body g := by
-  simp only [trueAt, staticExists, DPL.Rel.atom, cyl_apply]
-  exact ⟨fun ⟨_, rfl, d, hb⟩ => ⟨d, hb⟩, fun ⟨d, hb⟩ => ⟨g, rfl, d, hb⟩⟩
-
-/-- The dynamic existential is true at `g` iff the cylindrification of its body along `x` is. -/
-theorem trueAt_dynamicExists_iff_cyl {E : Type*}
-    (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
-    trueAt (dynamicExists x body) g ↔ cyl x body g := by
-  rw [← static_dynamic_same_truth]
-  exact trueAt_staticExists_iff_cyl x body g
-
-end Cylindrification
 
 end Charlow2019

@@ -1,4 +1,3 @@
-import Linglib.Semantics.Dynamic.DPL
 import Linglib.Logic.Bilateral.Defs
 import Linglib.Studies.GroenendijkStokhof1991
 
@@ -35,6 +34,8 @@ a dynamic tautology, and the canonical lift.
 -/
 
 namespace Charlow2025
+
+open DynamicSemantics
 
 /-! ### Substrates, lifts and interpretations (Definitions 3 and 4) -/
 
@@ -270,21 +271,21 @@ section DPL
 
 variable {E : Type*}
 
-instance : Substrate (DPL.Rel E) where
-  conj := DPL.Rel.conj
-  neg := DPL.Rel.neg
+instance : Substrate (Update (Assignment E)) where
+  conj := Update.seq
+  neg φ := Update.test (Update.neg φ)
 
 /-- Program disjunction on DPL relations, the union of the outputs. -/
-def programDisj (φ ψ : DPL.Rel E) : DPL.Rel E := λ g h => φ g h ∨ ψ g h
+def programDisj (φ ψ : Update (Assignment E)) : Update (Assignment E) := λ g h => φ g h ∨ ψ g h
 
-instance : ProgramDisj (DPL.Rel E) where
+instance : ProgramDisj (Update (Assignment E)) where
   pdisj := programDisj
 
-instance : Truth (DPL.Rel E) (ℕ → E) where
-  truth := DPL.Rel.trueAt
+instance : Truth (Update (Assignment E)) (ℕ → E) where
+  truth := Update.closure
   restrict m p := λ g h => p g ∧ m g h
 
-private theorem rel_ext {φ ψ : DPL.Rel E} (h : ∀ g k, φ g k ↔ ψ g k) : φ = ψ :=
+private theorem rel_ext {φ ψ : Update (Assignment E)} (h : ∀ g k, φ g k ↔ ψ g k) : φ = ψ :=
   funext λ g => funext λ k => propext (h g k)
 
 end DPL
@@ -343,36 +344,40 @@ variable {E : Type*}
 
 /-- Emb over DPL: conjoining the static closure with the dynamic tautology reconstitutes the
 update. -/
-theorem down_up (m : DPL.Rel E) : Lift.down (Lift.up (Δ := Decomposed (DPL.Rel E)) m) = m :=
+theorem down_up (m : Update (Assignment E)) :
+    Lift.down (Lift.up (Δ := Decomposed (Update (Assignment E))) m) = m :=
   rel_ext λ g h => by
     constructor
     · rintro ⟨k, ⟨rfl, hnn⟩, hm | ⟨rfl, hno⟩⟩
       · exact hm
       · exact absurd ⟨g, rfl, hno⟩ hnn
-    · exact λ hm => ⟨g, ⟨rfl, λ ⟨_, _, hno⟩ => hno ⟨h, hm⟩⟩, .inl hm⟩
+    · exact λ hm => ⟨g, ⟨rfl, λ ⟨_, e, hno⟩ => hno ⟨h, e ▸ hm⟩⟩, .inl hm⟩
 
 /-- Neg over DPL. -/
-theorem down_neg_up (m : DPL.Rel E) :
-    Lift.down (Lift.neg (Lift.up (Δ := Decomposed (DPL.Rel E)) m)) = DPL.Rel.neg m :=
+theorem down_neg_up (m : Update (Assignment E)) :
+    Lift.down (Lift.neg (Lift.up (Δ := Decomposed (Update (Assignment E))) m)) =
+      Update.test (Update.neg m) :=
   rel_ext λ g h => by
     constructor
     · rintro ⟨k, ⟨rfl, h3⟩, hm | hneg⟩
-      · exact absurd ⟨g, rfl, λ ⟨_, _, hno⟩ => hno ⟨h, hm⟩⟩ h3
+      · exact absurd ⟨g, rfl, λ ⟨_, e, hno⟩ => hno ⟨h, e ▸ hm⟩⟩ h3
       · exact hneg
     · rintro ⟨rfl, hno⟩
-      exact ⟨g, ⟨rfl, λ ⟨_, _, hnn⟩ => hnn ⟨g, rfl, hno⟩⟩, .inr ⟨rfl, hno⟩⟩
+      exact ⟨g, ⟨rfl, λ ⟨_, e, hnn⟩ => hnn ⟨_, rfl, e ▸ hno⟩⟩, .inr ⟨rfl, hno⟩⟩
 
 /-- The hiccup with Inv: on the whole carrier the lifted negation is not an involution, since a
 bare existential is no test and its double negation is not itself. -/
-theorem not_neg_neg [Nontrivial E] : ∃ M : Decomposed (DPL.Rel E), Lift.neg (Lift.neg M) ≠ M := by
+theorem not_neg_neg [Nontrivial E] :
+    ∃ M : Decomposed (Update (Assignment E)), Lift.neg (Lift.neg M) ≠ M := by
   obtain ⟨x, φ, h⟩ := GroenendijkStokhof1991.dne_fails_anaphora (E := E)
-  exact ⟨⟨DPL.Rel.exists_ x φ, DPL.Rel.exists_ x φ⟩, λ e => h (congrArg atIssue e)⟩
+  exact ⟨⟨Update.dexists x φ, Update.dexists x φ⟩, λ e => h (congrArg atIssue e)⟩
 
 /-- On the image of the lifted interpretation the at-issue coordinate is a negation, hence
 static. -/
-theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → DPL.Rel E) (ie : ℕ → DPL.Rel E)
-    (φ : Formula Atom) :
-    ∃ X, (liftInterp (Δ := Decomposed (DPL.Rel E)) ia ie φ).atIssue = DPL.Rel.neg X := by
+theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → Update (Assignment E))
+    (ie : ℕ → Update (Assignment E)) (φ : Formula Atom) :
+    ∃ X, (liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ).atIssue =
+      Update.test (Update.neg X) := by
   induction φ with
   | atom a => exact ⟨_, rfl⟩
   | exi n => exact ⟨_, rfl⟩
@@ -381,17 +386,18 @@ theorem exists_atIssue_eq_neg {Atom : Type*} (ia : Atom → DPL.Rel E) (ie : ℕ
 
 /-- Inv on the image: the lifted negation is an involution on every lifted meaning, a static
 at-issue coordinate being restored by its double negation. -/
-theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → DPL.Rel E) (ie : ℕ → DPL.Rel E)
-    (φ : Formula Atom) :
-    Lift.neg (Lift.neg (liftInterp (Δ := Decomposed (DPL.Rel E)) ia ie φ)) =
+theorem neg_neg_liftInterp {Atom : Type*} (ia : Atom → Update (Assignment E))
+    (ie : ℕ → Update (Assignment E)) (φ : Formula Atom) :
+    Lift.neg (Lift.neg (liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ)) =
       liftInterp ia ie φ := by
   obtain ⟨X, hX⟩ := exists_atIssue_eq_neg ia ie φ
-  generalize liftInterp (Δ := Decomposed (DPL.Rel E)) ia ie φ = M at hX ⊢
+  generalize liftInterp (Δ := Decomposed (Update (Assignment E))) ia ie φ = M at hX ⊢
   cases M with
   | mk t n =>
     simp only at hX
     subst hX
-    show Decomposed.mk (DPL.Rel.neg (DPL.Rel.neg (DPL.Rel.neg X))) n = _
+    show Decomposed.mk
+      (Update.test (Update.neg (Update.test (Update.neg (Update.test (Update.neg X)))))) n = _
     rw [(GroenendijkStokhof1991.neg_neg_eq_self_iff_isTest _).2 λ _ _ h => h.1]
 
 end Decomposed
@@ -417,7 +423,7 @@ instance : Lift δ (Staged δ i) where
 variable {E : Type*}
 
 /-- Over DPL the staged lift obeys all three laws. -/
-instance : LawfulLift (DPL.Rel E) (Staged (DPL.Rel E) (ℕ → E)) where
+instance : LawfulLift (Update (Assignment E)) (Staged (Update (Assignment E)) (ℕ → E)) where
   down_up m := rel_ext λ g h => by
     constructor
     · rintro ⟨⟨j, hj⟩, hm | ⟨rfl, hno⟩⟩
