@@ -30,7 +30,7 @@ the other direction does not — which is exactly where the state's extra struct
 * `dynamic_changes_assignment`, `static_is_test` — while differing on the output assignment
 * `lowerPW_liftPW`, `liftPW_injective`, `liftPW_preserves_distributive`, `liftPW_lowerPW_not_id` —
   what the lift keeps and what the state adds
-* `charlow_static_eq_cylindrify` — the static existential is cylindrification
+* `trueAt_staticExists_iff_cyl` — the static existential is cylindrification
 
 ## References
 
@@ -412,40 +412,30 @@ The same anaphora-under-negation phenomenon ("There isn't a bathroom.
 negative antecedent yields an empty alternative set, which by the
 empty-set falsifier makes downstream lookup empty. -/
 
--- ════════════════════════════════════════════════════════════════
--- § Cylindric algebra bridges
--- ════════════════════════════════════════════════════════════════
---
--- Charlow's `staticExists` / `dynamicExists` predicates have an
--- algebraic interpretation: both reduce to `cylindrify` from
--- `CylindricAlgebra`. These bridges previously lived in
--- `Linglib/Logic/CylindricAlgebra/DynamicSemantics.lean`, but a Core
--- file importing from Studies inverted the substrate→Studies dependency arrow.
--- They live here now: a Studies file importing the Core substrate it
--- depends on is layering-legal.
+/-! ### Truth conditions as cylindrification
 
-section CylindricAlgebraBridges
+The static and the dynamic existential have the same truth conditions, the cylindrification of
+the body along the bound variable. -/
+
+section Cylindrification
 
 open CylindricAlgebra
 open DPL
 
-/-- Static existential truth = cylindrification.
-
-Charlow's `staticExists x body` tests whether `∃ d, body(g[x↦d])`,
-which is exactly `cylindrify x body`. -/
-theorem charlow_static_eq_cylindrify {E : Type*}
+/-- The static existential is true at `g` iff the cylindrification of its body along `x` is. -/
+theorem trueAt_staticExists_iff_cyl {E : Type*}
     (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
-    trueAt (staticExists x body) g ↔ cylindrify x body g := by
-  simp only [trueAt, staticExists, DPL.Rel.atom, cylindrify]
+    trueAt (staticExists x body) g ↔ cyl x body g := by
+  simp only [trueAt, staticExists, DPL.Rel.atom, cyl_apply]
   exact ⟨fun ⟨_, rfl, d, hb⟩ => ⟨d, hb⟩, fun ⟨d, hb⟩ => ⟨g, rfl, d, hb⟩⟩
 
-/-- Dynamic existential truth = cylindrification (same truth conditions). -/
-theorem charlow_dynamic_eq_cylindrify {E : Type*}
+/-- The dynamic existential is true at `g` iff the cylindrification of its body along `x` is. -/
+theorem trueAt_dynamicExists_iff_cyl {E : Type*}
     (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
-    trueAt (dynamicExists x body) g ↔ cylindrify x body g := by
+    trueAt (dynamicExists x body) g ↔ cyl x body g := by
   rw [← static_dynamic_same_truth]
-  exact charlow_static_eq_cylindrify x body g
+  exact trueAt_staticExists_iff_cyl x body g
 
-end CylindricAlgebraBridges
+end Cylindrification
 
 end Charlow2019

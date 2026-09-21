@@ -305,24 +305,21 @@ section CylindricAlgebra
 open CylindricAlgebra
 open CDRT
 
-/-- Discourse referent introduction under closure = cylindrification.
-
-`closure(new n * φ) = cₙ(closure(φ))`: introducing dref `n`
-then continuing with `φ` equals cylindrifying `φ` at `n`. -/
-theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
-    closure (DProp.new n * φ) =
-    cylindrify n (closure φ) := by
-  ext g; simp only [closure, cylindrify]
+/-- Introducing the discourse referent `n` and continuing with `φ` has as its closure the
+cylindrification of the closure of `φ` along `n`. -/
+theorem closure_new_mul_eq_cyl {E : Type*} (n : Nat) (φ : DProp E) :
+    closure (DProp.new n * φ) = cyl n (closure φ) := by
+  ext g; simp only [closure, cyl_apply]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
     exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩
   · rintro ⟨e, o, hφ⟩
     exact ⟨o, _, ⟨e, rfl⟩, by convert hφ using 2; simp [Function.update_apply]⟩
 
-/-- CDRT equality condition on drefs = diagonal element. -/
-theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :
-    Condition.eq (dref i : Dref (State E) E) (dref j) = @diagonal E i j := by
-  ext g; simp only [Condition.eq, dref, diagonal]
+/-- The equality condition on two discourse referents is the diagonal element. -/
+theorem eq_dref_eq_diag {E : Type*} (i j : Nat) :
+    Condition.eq (dref i : Dref (State E) E) (dref j) = diag i j := by
+  ext g; simp only [Condition.eq, dref, diag_apply]
 
 end CylindricAlgebra
 

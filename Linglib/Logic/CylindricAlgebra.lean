@@ -1,414 +1,309 @@
-import Linglib.Logic.Assignment
-import Mathlib.Order.BooleanAlgebra.Defs
+import Mathlib.Logic.Function.DependsOn
+import Mathlib.Order.BooleanAlgebra.Basic
+import Mathlib.Order.Closure
 
 /-!
-# Cylindric Algebras: Algebraic Foundation for Variable-Binding Semantics
-[henkin-monk-tarski-1971]
+# Cylindric algebras
 
-Cylindric algebras, introduced by Tarski and systematically developed
-in [henkin-monk-tarski-1971], provide the algebraic foundation for
-first-order predicate logic with equality. A cylindric algebra of
-dimension α is a Boolean algebra enriched with *cylindrification*
-operators `cκ` (existential quantification over coordinate κ) and
-*diagonal elements* `dκl` (equality between coordinates κ and l),
-satisfying axioms (C₀)–(C₇).
+This file defines cylindric algebras. A cylindric algebra of dimension `ι` is a Boolean algebra
+with a *cylindrification* `cyl i` for each `i : ι` and a *diagonal element* `diag i j` for each
+pair of indices. Cylindrification is the algebraic form of existential quantification over the
+`i`-th variable and the diagonal is the algebraic form of the equation between the `i`-th and
+`j`-th variables, so cylindric algebras stand to first-order logic with equality as Boolean
+algebras stand to propositional logic.
 
-Every framework in this library that binds variables — whether over
-entities, times, situations, or discourse referents — operates on
-assignments `ℕ → D` and therefore lives inside the same cylindric set
-algebra of dimension ω. The two primitive operations, cylindrification
-(`∃d. φ(g[n↦d])`) and diagonal (`g(n) = g(m)`), recur across the
-entire codebase under different names. This module provides the single
-algebraic source.
+Predicates on assignments `ι → E` form a cylindric algebra, where `cyl i p` holds of `g` when `p`
+holds of some `i`-variant of `g` and `diag i j` holds of `g` when `g i = g j`. The existential
+quantifiers and identity conditions of the assignment-based dynamic systems are these operations.
 
-## Connections across the library
+## Main definitions
 
-### Proved bridges
+* `CylindricAlgebra ι A`: the cylindrifications and diagonal elements on a Boolean algebra `A`.
+* `CylindricAlgebra.cylClosure`: cylindrification as a closure operator.
+* `CylindricAlgebra.dimSet`: the dimension set of an element, the indices it depends on.
+* `CylindricAlgebra.subst`: substitution of the `j`-th variable for the `i`-th.
 
-Paper-anchored study files prove algebraic identities (not analogies) between
-framework-specific operations and cylindric ops.
+## Main results
 
-| Framework | Operation | = Cylindric | Bridge |
-|---|---|---|---|
-| CDRT ([muskens-1996]) | `closure (new n * φ)` | `cylindrify n (closure φ)` | `Studies/Muskens1996.lean` |
-| CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `Studies/Muskens1996.lean` |
-| Charlow ([charlow-2019]) | `staticExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
-| Charlow | `dynamicExists x body` | `cylindrify x body` | `Studies/Charlow2019.lean` |
-| DPL ([groenendijk-stokhof-1991]) | `closure (DPL.Rel.exists_ x φ)` | `cylindrify x (closure φ)` | `Studies/GroenendijkStokhof1991.lean` |
-| DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `Studies/GroenendijkStokhof1991.lean` |
+* `CylindricAlgebra.disjoint_cyl_comm`: cylindrification is conjugate to itself.
+* `CylindricAlgebra.cyl_sup`: cylindrification distributes over joins.
+* `CylindricAlgebra.subst_compl`, `CylindricAlgebra.subst_sup`, `CylindricAlgebra.subst_inf`:
+  substitution is a Boolean endomorphism.
+* `CylindricAlgebra.diag_comm`: diagonal elements are symmetric.
+* `CylindricAlgebra.subst_apply`: on predicates, substitution evaluates the predicate at the
+  assignment updated at `i` with the value at `j`.
+* `CylindricAlgebra.dimSet_subset_of_dependsOn`: a predicate that depends only on the variables
+  in `s` has its dimension set inside `s`.
 
-### Unproved connections (same algebra, bridges not yet formalized)
+## Implementation notes
 
-These frameworks use `Function.update` internally, so their
-quantificational operations are instances of cylindrification by the
-same argument — the bridge theorems just haven't been written yet.
+`CylindricAlgebra ι A` is a mixin over `[BooleanAlgebra A]` rather than an extension of it, as
+`Module R M` is over `[AddCommMonoid M]`: the dimension `ι` could not be inferred from a parent
+projection to `BooleanAlgebra A`.
 
-| Framework | Its existential | Cylindric reading |
-|---|---|---|
-| ~~DPL ([groenendijk-stokhof-1991])~~ | moved to Proved bridges | see `DynamicSemantics.lean` |
-| PLA ([dekker-2012]) | `exists_ i φ` | `cylindrify i (⟦φ⟧)` |
-| DynamicGQ ([chierchia-1995b]) | `{p \| ∃ x, P x ∧ p.2 = q.2.update v x}` | `cylindrify v P` |
-| Bilateral Update ([aloni-2022]) | `exists_ x domain φ` | `cylindrify x (domain ∩ φ)` |
-| PIP ([keshet-abney-2024]) | `exists_ v domain body` | `cylindrify v (domain ∩ body)` |
-| File Change ([heim-1982]) | indefinite extends Dom, widens Sat | `cylindrify n (⟦φ⟧)` |
-| Kamp & Reyle Update ([kamp-reyle-1993]) | `box [n] [conds]` | `cylindrify n (interp conds)` |
-| IntensionalCDRT ([hofmann-2025]) | intensional `new n * φ` | `cylindrify n (closure φ)` |
+The concrete algebra is carried by predicates `(ι → E) → Prop` with the pointwise Boolean algebra
+rather than by `Set (ι → E)`, because the conditions of the dynamic systems are predicates on
+assignments.
 
-### Same algebra, different base type
+## References
 
-These frameworks instantiate `Assignment D` at a non-entity domain.
-The cylindric axioms (C1–C7) hold for any `D`; only the base type differs.
-
-| Framework | Domain `D` | Its binder | Cylindric reading |
-|---|---|---|---|
-| [partee-1973] tense | `Time` | `λt. φ(g[n↦t])` | `cylindrify n φ` over temporal assignments |
-| [percus-2000] situations | `Situation` | `λs. φ(g[n↦s])` | `cylindrify n φ` over situation assignments |
-| [heim-kratzer-1998] | `Entity` | `λx. φ(g[n↦x])` | `cylindrify n φ` over entity assignments |
-| [abusch-1997] tense | `Time` | temporal `Function.update` | `cylindrify n φ` over temporal assignments |
-
-### Structural parallels (not assignment-based)
-
-These are not instances of assignment cylindrification but share the same
-algebraic shape. Formalizing these would require showing they satisfy C0–C7
-over a different carrier.
-
-| Framework | Analogue of cylindrify | Notes |
-|---|---|---|
-| Team Semantics | `{s[x↦d] \| s ∈ T, d ∈ D}` | Powerset lifting of cylindrify |
-| Update Semantics ([veltman-1996]) | state elimination | Weaker — no diagonal |
-| Continuation semantics | `shift`/`reset` scope | Different algebraic structure |
-
-## Structure
-
-- §1: Abstract cylindric algebra class (HMT Def 1.1.1)
-- §2: Support and cylindrification on assignments
-- §3: Cylindric algebra axioms C1–C4 for the assignment algebra
-- §4: Diagonal elements on assignments
-- §5: Axioms C5–C7 for the assignment algebra
-- §6: Substitution via cylindrification + diagonal (HMT §1.5)
-- §7: Derived theorems (HMT §1.2)
+* [henkin-monk-tarski-1971]
 -/
-
-namespace CylindricAlgebra
 
 open Function
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Abstract Cylindric Algebra (HMT Def 1.1.1)
--- ════════════════════════════════════════════════════════════════
+/-- The cylindrifications `cyl i` and diagonal elements `diag i j` of a cylindric algebra of
+dimension `ι` on the Boolean algebra `A`, with the seven axioms of [henkin-monk-tarski-1971]. -/
+class CylindricAlgebra (ι : Type*) (A : Type*) [BooleanAlgebra A] where
+  /-- Cylindrification along the index `i`. -/
+  cyl : ι → A → A
+  /-- The diagonal element of the indices `i` and `j`. -/
+  diag : ι → ι → A
+  cyl_bot (i : ι) : cyl i ⊥ = ⊥
+  le_cyl (i : ι) (x : A) : x ≤ cyl i x
+  cyl_inf_cyl (i : ι) (x y : A) : cyl i (x ⊓ cyl i y) = cyl i x ⊓ cyl i y
+  cyl_comm (i j : ι) (x : A) : cyl i (cyl j x) = cyl j (cyl i x)
+  diag_self (i : ι) : diag i i = ⊤
+  cyl_diag_inf_diag {i j k : ι} (hij : i ≠ j) (hik : i ≠ k) :
+    cyl i (diag j i ⊓ diag i k) = diag j k
+  disjoint_cyl_diag_inf {i j : ι} (hij : i ≠ j) (x : A) :
+    Disjoint (cyl i (diag i j ⊓ x)) (cyl i (diag i j ⊓ xᶜ))
 
-/-- A cylindric algebra of dimension α ([henkin-monk-tarski-1971],
-Def 1.1.1).
+namespace CylindricAlgebra
 
-An algebraic structure `𝔄 = ⟨A, +, ·, -, 0, 1, cκ, dκl⟩` where
-`⟨A, +, ·, -, 0, 1⟩` is a Boolean algebra (axiom C₀) and the
-cylindrifications `cκ` and diagonal elements `dκl` satisfy axioms
-(C₁)–(C₇). -/
-class CylAlg (α : Type*) (A : Type*) [BooleanAlgebra A] where
-  /-- Cylindrification at coordinate κ. -/
-  cyl : α → A → A
-  /-- Diagonal element for coordinates κ, l. -/
-  diag : α → α → A
-  cyl_bot : ∀ κ : α, cyl κ ⊥ = ⊥
-  le_cyl : ∀ (κ : α) (x : A), x ≤ cyl κ x
-  cyl_inf_cyl : ∀ (κ : α) (x y : A), cyl κ (x ⊓ cyl κ y) = cyl κ x ⊓ cyl κ y
-  cyl_comm : ∀ (κ l : α) (x : A), cyl κ (cyl l x) = cyl l (cyl κ x)
-  diag_refl : ∀ κ : α, diag κ κ = ⊤
-  diag_cyl : ∀ (κ l m : α), κ ≠ l → κ ≠ m →
-    diag l m = cyl κ (diag l κ ⊓ diag κ m)
-  cyl_diag_compl : ∀ (κ l : α) (x : A), κ ≠ l →
-    cyl κ (diag κ l ⊓ x) ⊓ cyl κ (diag κ l ⊓ xᶜ) = ⊥
+variable {ι A : Type*} [BooleanAlgebra A] [CylindricAlgebra ι A] {i j k : ι} {x y : A}
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Support and Cylindrification on Assignments
--- ════════════════════════════════════════════════════════════════
+attribute [simp] cyl_bot le_cyl diag_self
 
-section AssignmentAlgebra
+/-! ### Cylindrification -/
 
-variable {E : Type*}
+@[simp]
+theorem cyl_top : cyl i (⊤ : A) = ⊤ :=
+  top_unique (le_cyl i ⊤)
 
-/-- A predicate on assignments is *invariant on* `B` if it only
-depends on the values of registers in `B`: assignments that agree
-on `B` satisfy `p` identically. -/
-def invariantOn (p : Assignment E → Prop) (B : List Nat) : Prop :=
-  ∀ g₁ g₂, (∀ n ∈ B, g₁ n = g₂ n) → (p g₁ ↔ p g₂)
+@[simp]
+theorem cyl_cyl : cyl i (cyl i x) = cyl i x := by
+  simpa using cyl_inf_cyl i ⊤ x
 
-/-- Cylindrification at register `n`: existentially quantify over
-the value at slot `n`, leaving all other slots fixed.
+theorem cyl_mono : Monotone (cyl i : A → A) := fun x y h ↦ by
+  have := cyl_inf_cyl i x y
+  rw [inf_eq_left.2 (h.trans (le_cyl i y))] at this
+  exact inf_eq_left.1 this.symm
 
-In cylindric algebra notation, `cₙ(p)(g) = ∃e. p(g[n↦e])`. -/
-def cylindrify (n : Nat) (p : Assignment E → Prop) : Assignment E → Prop :=
-  fun g => ∃ e, p (update g n e)
+@[gcongr]
+theorem cyl_le_cyl (h : x ≤ y) : cyl i x ≤ cyl i y :=
+  cyl_mono h
 
-/-- A predicate is *cylindrification-closed* at register `n` if
-abstracting over `n` doesn't change the predicate: `cₙ(p) = p`.
-This means `p` doesn't depend on register `n`. -/
-def cylClosed (n : Nat) (p : Assignment E → Prop) : Prop :=
-  cylindrify n p = p
+/-- Cylindrification along `i` as a closure operator. Its closed elements are the elements that
+do not depend on the `i`-th variable. -/
+def cylClosure (i : ι) : ClosureOperator A :=
+  .mk' (cyl i) cyl_mono (le_cyl i) fun _ ↦ cyl_cyl.le
 
-/-- If `p` is invariant on `B` and `n ∉ B`, then `p` is
-cylindrification-closed at `n`. Invariance on `B` implies
-`p` doesn't depend on any register outside `B`. -/
-theorem cylClosed_of_invariantOn {p : Assignment E → Prop} {B : List Nat} {n : Nat}
-    (hinv : invariantOn p B) (hn : n ∉ B) : cylClosed n p := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨e, he⟩
-    exact (hinv (update g n e) g (fun m hm =>
-      update_of_ne (show m ≠ n from fun h => hn (h ▸ hm)) e g)).mp he
-  · intro hg
-    exact ⟨g n, (hinv g (update g n (g n)) (fun m hm =>
-      (update_of_ne (show m ≠ n from fun h => hn (h ▸ hm)) (g n) g).symm)).mp hg⟩
+@[simp]
+theorem cylClosure_apply : cylClosure i x = cyl i x :=
+  rfl
 
-/-- `invariantOn p []` is equivalent to `WeakestPrecondition.isProper`:
-the predicate takes the same value everywhere. -/
-theorem invariantOn_nil_iff {p : Assignment E → Prop} :
-    invariantOn p [] ↔ ∀ g₁ g₂, p g₁ ↔ p g₂ :=
-  ⟨fun h g₁ g₂ => h g₁ g₂ (fun _ h => nomatch h),
-   fun h g₁ g₂ _ => h g₁ g₂⟩
+@[simp]
+theorem cyl_eq_bot : cyl i x = ⊥ ↔ x = ⊥ :=
+  ⟨fun h ↦ le_bot_iff.1 (h ▸ le_cyl i x), by rintro rfl; exact cyl_bot i⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Cylindric Algebra Axioms C1–C4
--- ════════════════════════════════════════════════════════════════
+theorem cyl_cyl_inf (i : ι) (x y : A) : cyl i (cyl i x ⊓ y) = cyl i x ⊓ cyl i y := by
+  rw [inf_comm, cyl_inf_cyl, inf_comm]
 
-/-! We verify that `cylindrify` on `Assignment E → Prop` satisfies the
-cylindric set algebra axioms ([henkin-monk-tarski-1971], §1.1).
-Together with the Boolean algebra structure on `Assignment E → Prop`,
-this establishes that predicates on assignments form an
-`ω`-dimensional cylindric set algebra with base `E`. -/
+/-- The complement of a cylinder is a cylinder. -/
+@[simp]
+theorem cyl_compl_cyl : cyl i (cyl i x)ᶜ = (cyl i x)ᶜ := by
+  refine (le_cyl ..).antisymm' ?_
+  rw [le_compl_iff_disjoint_right, disjoint_iff, ← cyl_inf_cyl, compl_inf_eq_bot, cyl_bot]
 
-/-- **C1**: Cylindrification preserves the empty set. `cₙ(⊥) = ⊥`. -/
-theorem cylindrify_bot (n : Nat) :
-    cylindrify n (fun _ : Assignment E => False) = fun _ => False := by
-  ext g; simp [cylindrify]
+/-- Cylindrification is conjugate to itself. -/
+theorem disjoint_cyl_comm : Disjoint (cyl i x) y ↔ Disjoint x (cyl i y) := by
+  have key {x y : A} (h : Disjoint (cyl i x) y) : Disjoint x (cyl i y) := by
+    have : cyl i (y ⊓ cyl i x) = ⊥ := by rw [inf_comm, h.eq_bot, cyl_bot]
+    rw [cyl_inf_cyl] at this
+    exact (disjoint_iff.2 this).symm.mono_left (le_cyl i x)
+  exact ⟨key, fun h ↦ (key h.symm).symm⟩
 
-/-- **C2**: Every element is below its cylindrification. `p ≤ cₙ(p)`.
+theorem cyl_sup (i : ι) (x y : A) : cyl i (x ⊔ y) = cyl i x ⊔ cyl i y :=
+  eq_of_forall_ge_iff fun z ↦ by
+    simp only [← disjoint_compl_right_iff, disjoint_cyl_comm, disjoint_sup_left]
 
-Proof: witness the current value at register `n`. -/
-theorem le_cylindrify (n : Nat) (p : Assignment E → Prop) (g : Assignment E) :
-    p g → cylindrify n p g :=
-  fun h => ⟨g n, by rw [update_eq_self]; exact h⟩
+/-! ### Dimension sets -/
 
-/-- **C3**: Cylindrification distributes over conjunction with
-a cylindrified factor. `cₙ(p ∧ cₙ(q)) = cₙ(p) ∧ cₙ(q)`. -/
-theorem cylindrify_inter_cylindrify (n : Nat) (p q : Assignment E → Prop) :
-    cylindrify n (fun g => p g ∧ cylindrify n q g) =
-    fun g => cylindrify n p g ∧ cylindrify n q g := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨e, hp, e', hq⟩
-    exact ⟨⟨e, hp⟩, ⟨e', by rw [update_idem] at hq; exact hq⟩⟩
-  · rintro ⟨⟨e₁, hp⟩, ⟨e₂, hq⟩⟩
-    exact ⟨e₁, hp, e₂, by rw [update_idem]; exact hq⟩
+/-- The dimension set of `x` is the set of indices along which cylindrification moves `x`. For a
+formula these are its free variables. -/
+def dimSet (x : A) : Set ι :=
+  {i | cyl i x ≠ x}
 
-/-- **C4**: Cylindrifications commute. `cₙ(cₘ(p)) = cₘ(cₙ(p))`. -/
-theorem cylindrify_comm (n m : Nat) (p : Assignment E → Prop) :
-    cylindrify n (cylindrify m p) = cylindrify m (cylindrify n p) := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨e₁, e₂, hp⟩
-    by_cases h : n = m
-    · subst h; exact ⟨e₁, e₂, by rw [update_idem] at hp ⊢; exact hp⟩
-    · exact ⟨e₂, e₁, by rw [← update_comm h e₁ e₂ g]; exact hp⟩
-  · rintro ⟨e₂, e₁, hp⟩
-    by_cases h : n = m
-    · subst h; exact ⟨e₂, e₁, by rw [update_idem] at hp ⊢; exact hp⟩
-    · exact ⟨e₁, e₂, by rw [update_comm h e₁ e₂ g]; exact hp⟩
+theorem notMem_dimSet : i ∉ dimSet x ↔ cyl i x = x :=
+  not_not
 
--- ════════════════════════════════════════════════════════════════
--- § 4. Diagonal Elements on Assignments
--- ════════════════════════════════════════════════════════════════
+theorem notMem_dimSet_cyl : i ∉ dimSet (cyl i x) :=
+  notMem_dimSet.2 cyl_cyl
 
-/-- Diagonal element: the set of assignments where registers κ and l
-agree. `Dκl = {g ∈ ωU : g(κ) = g(l)}`.
+@[simp]
+theorem dimSet_compl (x : A) : dimSet xᶜ = (dimSet x : Set ι) := by
+  have key {x : A} {i : ι} (h : i ∉ dimSet x) : i ∉ dimSet xᶜ := by
+    rw [notMem_dimSet] at h ⊢
+    rw [← h, cyl_compl_cyl]
+  ext i
+  exact not_iff_not.1 ⟨fun h ↦ by simpa using key h, key⟩
 
-In DRT, this is the denotation of the identity condition `uκ is ul`.
-In predicate logic, it corresponds to the equation `vκ = vl`. -/
-def diagonal (κ l : Nat) : Assignment E → Prop :=
-  fun g => g κ = g l
+theorem dimSet_inf_subset (x y : A) : (dimSet (x ⊓ y) : Set ι) ⊆ dimSet x ∪ dimSet y := by
+  intro i
+  contrapose!
+  simp only [Set.mem_union, not_or, notMem_dimSet]
+  rintro ⟨hx, hy⟩
+  rw [← hy, cyl_inf_cyl, hx]
 
--- ════════════════════════════════════════════════════════════════
--- § 5. Axioms C5–C7
--- ════════════════════════════════════════════════════════════════
+theorem dimSet_sup_subset (x y : A) : (dimSet (x ⊔ y) : Set ι) ⊆ dimSet x ∪ dimSet y := by
+  intro i
+  contrapose!
+  simp only [Set.mem_union, not_or, notMem_dimSet]
+  rintro ⟨hx, hy⟩
+  rw [cyl_sup, hx, hy]
 
-/-- **C₅**: Every assignment agrees with itself at any register.
-`Dκκ = ωU`. -/
-theorem diagonal_refl (κ : Nat) :
-    @diagonal E κ κ = (fun _ => True) := by
-  ext; simp [diagonal]
+theorem dimSet_cyl_subset (i : ι) (x : A) : dimSet (cyl i x) ⊆ dimSet x \ {i} := by
+  intro j hj
+  refine ⟨fun h ↦ hj ?_, fun h ↦ hj (h ▸ cyl_cyl)⟩
+  rw [cyl_comm, h]
 
-/-- **C₆**: Diagonal composition via cylindrification.
+/-! ### Diagonal elements and substitution -/
 
-If κ ≠ l and κ ≠ m, then `Dlm = Cκ(Dlκ ∩ Dκm)`: two registers agree
-iff there exists a witness value at a third register matching both.
-This is the algebraic expression of transitivity of equality. -/
-theorem diagonal_cyl (κ l m : Nat) (hκl : κ ≠ l) (hκm : κ ≠ m) :
-    @diagonal E l m = cylindrify κ
-      (fun (g : Assignment E) => diagonal l κ g ∧ diagonal κ m g) := by
-  ext g; constructor
-  · intro (h : g l = g m)
-    show ∃ e, (update g κ e) l = (update g κ e) κ ∧
-              (update g κ e) κ = (update g κ e) m
-    refine ⟨g l, ?_, ?_⟩
-    · rw [update_of_ne (Ne.symm hκl), update_self]
-    · rw [update_self, update_of_ne (Ne.symm hκm)]; exact h
-  · rintro ⟨e, h₁, h₂⟩
-    have hl : (update g κ e) l = g l := update_of_ne (Ne.symm hκl) e g
-    have hm : (update g κ e) m = g m := update_of_ne (Ne.symm hκm) e g
-    calc g l = (update g κ e) l := hl.symm
-      _ = (update g κ e) κ := h₁
-      _ = (update g κ e) m := h₂
-      _ = g m := hm
+theorem cyl_diag (h : i ≠ j) : cyl i (diag i j : A) = ⊤ :=
+  top_unique <| by
+    rw [← diag_self (A := A) j, ← cyl_diag_inf_diag h h]
+    exact cyl_mono inf_le_right
 
-/-- **C₇**: Substitution is functional.
+theorem dimSet_diag_subset (i j : ι) : dimSet (diag i j : A) ⊆ {i, j} := by
+  intro k
+  contrapose!
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or, notMem_dimSet]
+  rintro ⟨hi, hj⟩
+  rw [← cyl_diag_inf_diag hi hj, cyl_cyl]
 
-If κ ≠ l, then `Cκ(Dκl ∩ X) ∩ Cκ(Dκl ∩ Xᶜ) = ∅`. Both witnesses
-must equal `g l`, so both conjuncts operate on the same updated
-assignment, contradicting `p` and `¬p`. -/
-theorem cyl_diag_compl (κ l : Nat) (p : Assignment E → Prop) (hκl : κ ≠ l) :
-    (fun g => cylindrify κ (fun g' => @diagonal E κ l g' ∧ p g') g ∧
-             cylindrify κ (fun g' => @diagonal E κ l g' ∧ ¬p g') g) =
-    (fun _ : Assignment E => False) := by
-  ext g; constructor
-  · rintro ⟨⟨e₁, hd₁, hp₁⟩, ⟨e₂, hd₂, hp₂⟩⟩
-    simp only [diagonal] at hd₁ hd₂
-    have he₁ : e₁ = g l := by
-      have h1 : (update g κ e₁) κ = e₁ := update_self κ e₁ g
-      have h2 : (update g κ e₁) l = g l := update_of_ne (Ne.symm hκl) e₁ g
-      rw [h1, h2] at hd₁; exact hd₁
-    have he₂ : e₂ = g l := by
-      have h1 : (update g κ e₂) κ = e₂ := update_self κ e₂ g
-      have h2 : (update g κ e₂) l = g l := update_of_ne (Ne.symm hκl) e₂ g
-      rw [h1, h2] at hd₂; exact hd₂
-    subst he₁; subst he₂
-    exact hp₂ hp₁
-  · exact False.elim
+section Subst
 
--- ════════════════════════════════════════════════════════════════
--- § 6. Substitution (HMT §1.5)
--- ════════════════════════════════════════════════════════════════
+variable [DecidableEq ι]
 
-/-- Algebraic substitution: replace coordinate κ with the value at l.
+/-- Substitution of the `j`-th variable for the `i`-th: constrain the two to agree, then forget
+the `i`-th. Substituting a variable for itself does nothing. -/
+def subst (i j : ι) (x : A) : A :=
+  if i = j then x else cyl i (diag i j ⊓ x)
 
-`σ^κ_l(x) = cκ(dκl · x)` ([henkin-monk-tarski-1971], §1.5).
-The substitution first constrains register κ to equal register l
-(via the diagonal `dκl`), then existentially abstracts over the old
-value at κ (via cylindrification `cκ`).
+@[simp]
+theorem subst_self (i : ι) (x : A) : subst i i x = x := by
+  simp [subst]
 
-In DRT, this is anaphora resolution: "uκ refers to whatever ul
-refers to." -/
-def substitute (κ l : Nat) (p : Assignment E → Prop) : Assignment E → Prop :=
-  cylindrify κ (fun g => @diagonal E κ l g ∧ p g)
+theorem subst_of_ne (h : i ≠ j) (x : A) : subst i j x = cyl i (diag i j ⊓ x) := by
+  simp [subst, h]
 
-/-- Direct (semantic) substitution: evaluate `p` with register κ
-reading from register l. -/
-def directSubst (κ l : Nat) (p : Assignment E → Prop) : Assignment E → Prop :=
-  fun g => p (update g κ (g l))
+theorem subst_sup (i j : ι) (x y : A) : subst i j (x ⊔ y) = subst i j x ⊔ subst i j y := by
+  obtain rfl | h := eq_or_ne i j
+  · simp
+  · simp only [subst_of_ne h, inf_sup_left, cyl_sup]
 
-/-- Algebraic substitution equals direct substitution (HMT §1.5).
+/-- Substitution commutes with complement. Off the diagonal, this is the content of the seventh
+cylindric axiom. -/
+theorem subst_compl (i j : ι) (x : A) : subst i j xᶜ = (subst i j x)ᶜ := by
+  obtain rfl | h := eq_or_ne i j
+  · simp
+  · simp only [subst_of_ne h]
+    refine (IsCompl.compl_eq ⟨disjoint_cyl_diag_inf h x, codisjoint_iff.2 ?_⟩).symm
+    rw [← cyl_sup, ← inf_sup_left, sup_compl_eq_top, inf_top_eq, cyl_diag h]
 
-The cylindric algebra expression `cκ(dκl · x)` computes the same
-predicate as directly evaluating `x` with register κ replaced by
-the value at register l.
+theorem subst_inf (i j : ι) (x y : A) : subst i j (x ⊓ y) = subst i j x ⊓ subst i j y := by
+  rw [← compl_inj_iff, ← subst_compl, compl_inf, subst_sup, subst_compl, subst_compl, compl_inf]
 
-For DRT: resolving an anaphoric link `uκ = ul` (diagonal) followed
-by dref closure (cylindrification) gives the same result as directly
-reading register l in place of register κ. -/
-theorem substitute_eq_directSubst (κ l : Nat) (p : Assignment E → Prop)
-    (h : κ ≠ l) : substitute κ l p = directSubst κ l p := by
-  ext g; simp only [substitute, directSubst, cylindrify, diagonal]; constructor
-  · rintro ⟨e, hd, hp⟩
-    have heq : e = g l := by
-      have h1 := update_self κ e g
-      have h2 := update_of_ne (Ne.symm h : l ≠ κ) e g
-      rw [h1, h2] at hd; exact hd
-    subst heq; exact hp
-  · intro hp
-    exact ⟨g l, by simp [update_of_ne (Ne.symm h : l ≠ κ) (g l) g], hp⟩
+@[simp]
+theorem subst_top (i j : ι) : subst i j (⊤ : A) = ⊤ := by
+  obtain rfl | h := eq_or_ne i j
+  · simp
+  · rw [subst_of_ne h, inf_top_eq, cyl_diag h]
 
-/-- Self-substitution is cylindrification. `σ^κ_κ(x) = cκ(x)`. -/
-theorem substitute_self (κ : Nat) (p : Assignment E → Prop) :
-    substitute κ κ p = cylindrify κ p := by
-  ext g; simp only [substitute, cylindrify]; constructor
-  · rintro ⟨e, _, hp⟩; exact ⟨e, hp⟩
-  · rintro ⟨e, hp⟩; exact ⟨e, by simp [diagonal], hp⟩
+@[simp]
+theorem subst_bot (i j : ι) : subst i j (⊥ : A) = ⊥ := by
+  rw [← compl_top, subst_compl, subst_top]
 
-/-- Substitution preserves invariance: if `p` doesn't depend on
-register κ, then substituting at κ doesn't change the predicate. -/
-theorem substitute_invariant (κ l : Nat) (p : Assignment E → Prop)
-    (h : κ ≠ l) (hinv : cylClosed κ p) :
-    substitute κ l p = p := by
-  rw [substitute_eq_directSubst κ l p h]
-  have hcyl : cylindrify κ p = p := hinv
-  ext g; simp only [directSubst]; constructor
-  · intro hp
-    have : cylindrify κ p g := ⟨g l, hp⟩
-    rwa [hcyl] at this
-  · intro hp
-    -- From p g, derive cylindrify κ p g
-    have hcg : cylindrify κ p g := le_cylindrify κ p g hp
-    -- cylindrify κ p (update g κ (g l)) ↔ p (update g κ (g l)) by cylClosed
-    -- cylindrify κ p (update g κ (g l)) = ∃ e, p (update (update g κ (g l)) κ e)
-    -- = ∃ e, p (update g κ e)  (by update_idem)
-    -- = cylindrify κ p g
-    suffices cylindrify κ p (update g κ (g l)) from (congr_fun hcyl _).mp this
-    simp only [cylindrify]
-    obtain ⟨e, he⟩ := hcg
-    exact ⟨e, by rwa [update_idem]⟩
+/-- Substitution for a variable that `x` does not depend on leaves `x` unchanged. -/
+theorem subst_eq_self (h : i ∉ dimSet x) (j : ι) : subst i j x = x := by
+  obtain rfl | hij := eq_or_ne i j
+  · simp
+  · rw [notMem_dimSet] at h
+    rw [subst_of_ne hij, ← h, cyl_inf_cyl, cyl_diag hij, top_inf_eq]
 
--- ════════════════════════════════════════════════════════════════
--- § 7. Derived Cylindric Algebra Theorems (HMT §1.2)
--- ════════════════════════════════════════════════════════════════
+end Subst
 
-/-- HMT Theorem 1.2.1: `cκ(x) = 0 iff x = 0`. -/
-theorem cylindrify_eq_bot_iff (κ : Nat) (p : Assignment E → Prop) :
-    cylindrify κ p = (fun _ => False) ↔ p = (fun _ => False) := by
-  constructor
-  · intro h
-    ext g; constructor
-    · intro hp
-      have : cylindrify κ p g := le_cylindrify κ p g hp
-      rw [h] at this; exact this
-    · exact False.elim
-  · intro h; rw [h]; exact cylindrify_bot κ
+theorem diag_comm (i j : ι) : (diag i j : A) = diag j i := by
+  classical
+  have key {i j : ι} (h : i ≠ j) : (diag i j : A) ≤ diag j i := by
+    have : subst i j (diag j i : A)ᶜ = ⊥ := by
+      rw [subst_compl, subst_of_ne h, inf_comm, cyl_diag_inf_diag h h, diag_self, compl_top]
+    rw [subst_of_ne h, cyl_eq_bot] at this
+    exact disjoint_compl_right_iff.1 (disjoint_iff.2 this)
+  obtain rfl | h := eq_or_ne i j
+  · rfl
+  · exact (key h).antisymm (key h.symm)
 
-/-- HMT Theorem 1.2.2: `cκ(1) = 1`. -/
-theorem cylindrify_top [Nonempty E] (κ : Nat) :
-    cylindrify κ (fun _ : Assignment E => True) = (fun _ => True) := by
-  ext g; simp only [cylindrify]; constructor
-  · intro _; trivial
-  · intro _; exact ⟨Classical.arbitrary E, trivial⟩
+/-! ### The cylindric algebra of predicates on assignments -/
 
-/-- HMT Theorem 1.2.3: `cκ(cκ(x)) = cκ(x)`. Cylindrification is
-idempotent. -/
-theorem cylindrify_idem (κ : Nat) (p : Assignment E → Prop) :
-    cylindrify κ (cylindrify κ p) = cylindrify κ p := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨_, e₂, hp⟩
-    exact ⟨e₂, by rwa [update_idem] at hp⟩
-  · rintro ⟨e, hp⟩
-    exact ⟨g κ, e, by rwa [update_idem]⟩
+section Pi
 
-/-- HMT Corollary 1.2.4: `cylClosed κ p ↔ p = cκ(q)` for some q. -/
-theorem cylClosed_iff_range (κ : Nat) (p : Assignment E → Prop) :
-    cylClosed κ p ↔ ∃ q, p = cylindrify κ q := by
-  constructor
-  · intro h; exact ⟨p, h.symm⟩
-  · rintro ⟨q, rfl⟩
-    show cylindrify κ (cylindrify κ q) = cylindrify κ q
-    exact cylindrify_idem κ q
+variable {E : Type*} [DecidableEq ι] {p : (ι → E) → Prop} {g : ι → E}
 
-/-- HMT Theorem 1.2.6(ii): Cylindrification distributes over join.
-`cκ(x + y) = cκ(x) + cκ(y)`. -/
-theorem cylindrify_or (κ : Nat) (p q : Assignment E → Prop) :
-    cylindrify κ (fun g => p g ∨ q g) =
-    (fun g => cylindrify κ p g ∨ cylindrify κ q g) := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨e, h⟩
-    cases h with
-    | inl hp => exact Or.inl ⟨e, hp⟩
-    | inr hq => exact Or.inr ⟨e, hq⟩
-  · rintro (⟨e, hp⟩ | ⟨e, hq⟩)
-    · exact ⟨e, Or.inl hp⟩
-    · exact ⟨e, Or.inr hq⟩
+/-- Predicates on assignments form a cylindric algebra, in which `cyl i p` holds of `g` when `p`
+holds of some `i`-variant of `g`, and `diag i j` holds of `g` when `g i = g j`. -/
+instance : CylindricAlgebra ι ((ι → E) → Prop) where
+  cyl i p g := ∃ e, p (update g i e)
+  diag i j g := g i = g j
+  cyl_bot i := by ext g; simp
+  le_cyl i p g hg := ⟨g i, by rwa [update_eq_self]⟩
+  cyl_inf_cyl i p q := by ext g; simp [update_idem]
+  cyl_comm i j p := by
+    ext g
+    obtain rfl | h := eq_or_ne i j
+    · rfl
+    · simp only [update_comm h]
+      exact exists_comm
+  diag_self i := by ext g; simp
+  cyl_diag_inf_diag {i j k} hij hik := by
+    ext g
+    simp [update_of_ne hij.symm, update_of_ne hik.symm, eq_comm]
+  disjoint_cyl_diag_inf {i j} hij p := by
+    rw [disjoint_iff]
+    ext g
+    simp only [Pi.inf_apply, Pi.compl_apply, update_self, update_of_ne hij.symm, inf_Prop_eq,
+      compl_iff_not, Pi.bot_apply, Prop.bot_eq_false, iff_false]
+    rintro ⟨⟨e, rfl, hp⟩, e', rfl, hp'⟩
+    exact hp' hp
 
-end AssignmentAlgebra
+@[simp]
+theorem cyl_apply : cyl i p g ↔ ∃ e, p (update g i e) :=
+  Iff.rfl
+
+@[simp]
+theorem diag_apply : (diag i j : (ι → E) → Prop) g ↔ g i = g j :=
+  Iff.rfl
+
+/-- Substituting the `j`-th variable for the `i`-th evaluates the predicate at the assignment
+whose `i`-th value is overwritten by its `j`-th value. -/
+theorem subst_apply : subst i j p g ↔ p (update g i (g j)) := by
+  obtain rfl | h := eq_or_ne i j
+  · simp
+  · simp [subst_of_ne h, update_of_ne h.symm]
+
+/-- A predicate that depends only on the variables in `s` is fixed by cylindrification along
+every index outside `s`. -/
+theorem dimSet_subset_of_dependsOn {s : Set ι} (hp : DependsOn p s) : dimSet p ⊆ s := by
+  intro i
+  contrapose!
+  intro hi
+  rw [notMem_dimSet]
+  ext g
+  have (e : E) : p (update g i e) ↔ p g :=
+    (hp fun k hk ↦ update_of_ne (ne_of_mem_of_not_mem hk hi) ..).to_iff
+  exact ⟨fun ⟨e, h⟩ ↦ (this e).1 h, fun h ↦ ⟨g i, (this _).2 h⟩⟩
+
+end Pi
 
 end CylindricAlgebra
