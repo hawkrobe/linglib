@@ -63,12 +63,13 @@ open Core Real Constraints HarmonicGrammar Data.Examples ProbabilityTheory
 
 variable {C : Type*} [Fintype C] [Nonempty C] {n : ℕ}
 
-/-- MaxEnt is the Gumbel random utility model (§4): the probability of the highest harmony under
-i.i.d. Gumbel noise is the softmax of (4), by Lemma 1 of [mcfadden-1974]. -/
+/-- MaxEnt is the Gumbel random utility model (§4): when the candidates' harmonies are perturbed by
+independent standard Gumbel noise, the probability that `c` has the highest perturbed harmony is the
+softmax of (4), by Lemma 1 of [mcfadden-1974]. -/
 theorem maxent_eq_gumbelRUM [DecidableEq C] (con : CON C n) (w : Fin n → ℝ) (c : C) :
-    rumMaxProb (gumbelPDFReal 0 1) (λ x => ProbabilityTheory.cdf (gumbelMeasure 0 1) x)
-      (harmonyScore con w) c = softmax (harmonyScore con w) c := by
-  rw [rumMaxProb_gumbel_eq_softmax _ one_pos c]
+    rumChoiceProb (fun c' ↦ gumbelMeasure (harmonyScore con w c') 1) c =
+      ENNReal.ofReal (softmax (harmonyScore con w) c) := by
+  rw [rumChoiceProb_gumbelMeasure _ one_pos c]
   norm_num [one_smul]
 
 /-- (10): between two candidates, the MaxEnt logit of the first is the harmony difference. -/

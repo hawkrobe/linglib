@@ -59,7 +59,7 @@ These apply the separability results (independence → HZ, rescaling) to any
 namespace HarmonicGrammar
 
 
-open Core Real Finset Constraints
+open Real Finset Constraints
 
 /-! ### The 2×2 Square of Underlying Forms (§2.4) -/
 

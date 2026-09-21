@@ -27,7 +27,7 @@ The noise distribution determines the choice rule. Three classical results:
 | Normal(0, σ²)      | probit (Φ-based)    | binary case via Thurstone V  |
 
 The Gumbel ↔ softmax equivalence is McFadden's theorem (proved as
-`rumMaxProb_gumbel_eq_softmax` in `Core.Probability.Choice.GumbelLuce`). The Gaussian
+`rumChoiceProb_gumbelMeasure` in `Core.Probability.Choice.GumbelLuce`). The Gaussian
 binary case is Thurstone Case V ([thurstone-1927]); the n-ary
 Gaussian case requires multivariate normal integration and is not yet
 implemented as a `Decoder`.
@@ -103,7 +103,7 @@ theorem dirac_eq_argmaxDecoder {Cand : Type*} :
 
 /-- Lemma 1 of [mcfadden-1974] at the decoder level: the Gumbel(0, 1/α) kernel's
     decoder is exactly `softmaxDecoder α`. By definition; the underlying
-    RUM-to-softmax identity is `rumMaxProb_gumbel_eq_softmax` in
+    RUM-to-softmax identity is `rumChoiceProb_gumbelMeasure` in
     `Core.Probability.Choice.GumbelLuce`. -/
 theorem gumbel_eq_softmaxDecoder {Cand : Type*} (α : ℝ) :
     (NoiseKernel.gumbel α).toDecoder = (softmaxDecoder α : Decoder Cand ℝ) := rfl

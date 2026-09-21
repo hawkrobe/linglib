@@ -1,6 +1,6 @@
 import Linglib.Core.Probability.Choice.RationalAction
 import Linglib.Core.Probability.Distributions.Gaussian
-import Linglib.Core.Probability.RandomUtility
+import Linglib.Core.Probability.Choice.RandomUtility
 import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import Mathlib.Order.BooleanAlgebra.Basic
 
@@ -580,7 +580,7 @@ end PowerLawWeber
 
 section Thurstone
 
-open Real MeasureTheory BigOperators Set
+open Real MeasureTheory ProbabilityTheory BigOperators Set
 
 /-! ### §2.D: Discriminal processes (pp. 54–58) -/
 
@@ -609,6 +609,14 @@ variable {Stimulus : Type*}
 noncomputable def ThurstoneCaseV.choiceProb (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) : ℝ :=
   gaussianChoiceProb (m.scale a - m.scale b) (m.sigma * Real.sqrt 2)
+
+/-- The Case V choice probability is derived and not stipulated: when the discriminal processes of
+    `a` and `b` are independent Gaussians with means `u(a)`, `u(b)` and common variance `σ²`, the
+    probability that the process of `a` exceeds that of `b` is `choiceProb a b`. -/
+theorem ThurstoneCaseV.rumChoiceProb_eq (m : ThurstoneCaseV Stimulus) (a b : Stimulus) :
+    rumChoiceProb (fun j ↦ gaussianReal (![m.scale a, m.scale b] j)
+      (.mk (m.sigma ^ 2) (sq_nonneg _))) 0 = ENNReal.ofReal (m.choiceProb a b) :=
+  rumChoiceProb_gaussianReal_sq _ m.sigma_pos
 
 /-- When `u(a) = u(b)`, the choice probability is `1/2` (indifference). -/
 theorem ThurstoneCaseV.choiceProb_eq (m : ThurstoneCaseV Stimulus)
