@@ -46,10 +46,10 @@ cannot exist without the lumping API; conversely, the API earns its
 keep by enabling this operator.
 
 This is also the **fourth** counterfactual operator in linglib,
-joining `universalCounterfactual` (Lewis/Stalnaker minimal-change),
-`selectionalCounterfactual` (Stalnaker selection + supervaluation),
-and `homogeneityCounterfactual` (von Fintel/Križ presupposition) — all
-in `Semantics/Conditionals/Counterfactual.lean`. Unlike those
+joining `closestImp` (Lewis/Stalnaker minimal-change, in
+`Semantics/Conditionals/Basic.lean`), `selectionalCounterfactual`
+(Stalnaker selection + supervaluation), and `homogeneityCounterfactual`
+(von Fintel/Križ presupposition), in `Semantics/Conditionals/Counterfactual.lean`. Unlike those
 three, the lumping CF does NOT use `SimilarityOrdering` /
 `closestWorlds`; it works directly on premise sets.
 

@@ -48,7 +48,7 @@ type rather than generated from syntactic substitution sources.
 
 namespace Santorio2018
 
-open Conditional (SimilarityOrdering)
+open Conditional (SimilarityOrdering closestImp)
 open Conditional.Counterfactual
 
 variable {W : Type*} [DecidableEq W] [Fintype W]
@@ -80,8 +80,8 @@ def conjunctiveClosure (σ : List (Finset W)) : Finset W := σ.foldr (· ∩ ·)
 /-- The truthmakers of `S` relative to `alts`: the conjunctive closures of the minimal stable
 subsets of `alts` that entail `S` — the denotation of the *if*-clause. -/
 def truthmakers (alts : List (Finset W)) (S : Finset W) : List (Finset W) :=
-  ((alts.sublists.filter λ σ => decide (MinimalStable alts σ)).map conjunctiveClosure).filter
-    λ p => decide (p ⊆ S)
+  ((alts.sublists.filter fun σ ↦ decide (MinimalStable alts σ)).map conjunctiveClosure).filter
+    fun p ↦ decide (p ⊆ S)
 
 theorem subset_of_mem_truthmakers {alts : List (Finset W)} {S p : Finset W}
     (h : p ∈ truthmakers alts S) : p ⊆ S := by
@@ -89,14 +89,14 @@ theorem subset_of_mem_truthmakers {alts : List (Finset W)} {S p : Finset W}
 
 /-- The disjunctive closure of the truthmakers is at most the antecedent. -/
 theorem disjunctiveClosure_truthmakers_subset (alts : List (Finset W)) (S : Finset W) :
-    disjunctiveClosure (truthmakers alts S) ⊆ S := λ _ hx =>
+    disjunctiveClosure (truthmakers alts S) ⊆ S := fun _ hx ↦
   let ⟨_, hp, hxp⟩ := (mem_disjunctiveClosure _).1 hx
   subset_of_mem_truthmakers hp hxp
 
 /-! ### Conditionals as descriptions (§6) -/
 
-variable (sim : SimilarityOrdering W) (alts : List (Finset W)) (S : Finset W) (C : W → Prop)
-  [DecidablePred C] (w : W)
+variable (sim : SimilarityOrdering W) (alts : List (Finset W)) (S : Finset W) (C : Set W)
+  [DecidablePred (· ∈ C)] (w : W)
 
 /-- `[if φ] DIST_π [would ψ]`: the counterfactual holds of every truthmaker of `φ`. -/
 def distributiveConditional : Prop := Distributive sim (truthmakers alts S) C w
@@ -180,8 +180,8 @@ section Spain
 
 open McKayVanInwagen1977 (SpainWorld spainSim foughtAxis foughtAllies)
 
-abbrev axis : Finset SpainWorld := Finset.univ.filter foughtAxis
-abbrev allies : Finset SpainWorld := Finset.univ.filter foughtAllies
+abbrev axis : Finset SpainWorld := Finset.univ.filter (· ∈ foughtAxis)
+abbrev allies : Finset SpainWorld := Finset.univ.filter (· ∈ foughtAllies)
 
 /-- The alternatives to *Spain fought with the Axis or the Allies*. -/
 def spainAlts : List (Finset SpainWorld) := [axis ∪ allies, axis, allies, axis ∩ allies]
@@ -191,7 +191,7 @@ world. Strengthening the antecedent to *the Allies* makes it false — Anteceden
 Strengthening fails. -/
 theorem spain_collective :
     collectiveConditional spainSim spainAlts (axis ∪ allies) foughtAxis .actual ∧
-      ¬ universalCounterfactual spainSim (· ∈ allies) foughtAxis .actual := by
+      .actual ∉ closestImp spainSim ↑allies foughtAxis := by
   decide
 
 /-- Distributively, (8) is false: the Allies truthmaker's counterfactual fails, so
@@ -212,7 +212,7 @@ end Spain
 /-- Closeness for the party: the Anna-only world is closest to the actual world, then the
 world where both came, then Otto's. -/
 def partySim : SimilarityOrdering Party := .ofBool
-  (λ _ w₁ w₂ => w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
+  (fun _ w₁ w₂ ↦ w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
     (w₁ == .both && w₂ == .ottoOnly))
   (by decide) (by decide)
 
@@ -225,8 +225,8 @@ denoting `{Anna came}` and `{Anna came, Otto and Anna came}` the distributive pa
 (57) true and (58) false. -/
 theorem substitution_fails :
     anna = anna ∪ (otto ∩ anna) ∧
-      Distributive partySim [anna] (· ∈ partyFun) .neither ∧
-      ¬ Distributive partySim [anna, otto ∩ anna] (· ∈ partyFun) .neither := by
+      Distributive partySim [anna] ↑partyFun .neither ∧
+      ¬ Distributive partySim [anna, otto ∩ anna] ↑partyFun .neither := by
   decide
 
 end Santorio2018

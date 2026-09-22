@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.Psych
 import Linglib.Core.Order.Interval
 import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Conditionals.Counterfactual
+import Linglib.Semantics.Conditionals.Basic
 
 /-!
 # Psych Verb Causal Links
@@ -23,7 +23,7 @@ differ along three dimensions:
 
 The first three properties are formalized using existing Linglib types:
 `Event.Kind`, `Interval.Precedes` and `Disjoint`.
-The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
+The fourth uses the conditional of the closest worlds, `Conditional.closestImp`.
 
 ## Key results
 
@@ -37,8 +37,7 @@ The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 namespace Causation.PsychLink
 
 open Causation.Psych (CausalSource)
-open Conditional (SimilarityOrdering)
-open Conditional.Counterfactual (universalCounterfactual)
+open Conditional (SimilarityOrdering closestImp)
 
 /-! ### PsychCausalLink -/
 
@@ -89,7 +88,7 @@ def maintenanceLink (T : Type*) [LinearOrder T] : PsychCausalLink T :=
   { causeSort := .state
     effectSort := .state
     involvesTransition := false
-    temporalConstraint := λ s t => ¬ Disjoint s t }
+    temporalConstraint := fun s t ↦ ¬ Disjoint s t }
 
 /-! ### CausalSource → PsychCausalLink -/
 
@@ -109,14 +108,14 @@ theorem maintenance_temporal_symmetric {T : Type*} [LinearOrder T]
     (s t : Interval T)
     (h : (maintenanceLink T).temporalConstraint s t) :
     (maintenanceLink T).temporalConstraint t s :=
-  λ hd => h hd.symm
+  fun hd ↦ h hd.symm
 
 /-- Eventive causation is temporally irreflexive: no eventuality
     can precede itself. -/
 theorem eventive_temporal_irrefl {T : Type*} [LinearOrder T]
     (i : NonemptyInterval T) :
     ¬ (eventiveLink T).temporalConstraint ↑i ↑i :=
-  λ h => NonemptyInterval.precedes_irrefl i (Interval.precedes_coe_coe.1 h)
+  fun h ↦ NonemptyInterval.precedes_irrefl i (Interval.precedes_coe_coe.1 h)
 
 /-- Precedence and overlap are mutually exclusive: if cause precedes
     effect, they cannot overlap. This is the structural basis for the
@@ -126,7 +125,7 @@ theorem precedes_excludes_overlap {T : Type*} [LinearOrder T]
     (i₁ i₂ : NonemptyInterval T)
     (h : (eventiveLink T).temporalConstraint ↑i₁ ↑i₂) :
     ¬ (maintenanceLink T).temporalConstraint ↑i₁ ↑i₂ :=
-  λ hn => NonemptyInterval.precedes_not_overlaps (Interval.precedes_coe_coe.1 h)
+  fun hn ↦ NonemptyInterval.precedes_not_overlaps (Interval.precedes_coe_coe.1 h)
     (Interval.not_disjoint_coe_coe.1 hn)
 
 /-! ### Event Sort Properties -/
@@ -167,19 +166,9 @@ theorem flavors_differ_on_all_dimensions {T : Type*} [LinearOrder T] :
     This characterizes maintenance causation ([kim-2024] property (c)):
     "The problem concerns John" — in the closest worlds where John
     no longer has the mental representation, the concern ceases. -/
-def counterfactuallyDependent {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Prop)
-    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) : Prop :=
-  universalCounterfactual sim
-    (fun w => ¬ causeProp w) (fun w => ¬ effectProp w) w
-
-instance counterfactuallyDependent_decidable {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Prop)
-    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) :
-    Decidable (counterfactuallyDependent sim causeProp effectProp w) :=
-  inferInstanceAs (Decidable (universalCounterfactual _ _ _ _))
+def counterfactuallyDependent {W : Type*} (sim : SimilarityOrdering W) (cause effect : Set W) :
+    Set W :=
+  closestImp sim causeᶜ effectᶜ
 
 /-- Counterfactual persistence: in the closest worlds where the cause
     doesn't hold, the effect STILL holds.
@@ -189,42 +178,17 @@ instance counterfactuallyDependent_decidable {W : Type*} [DecidableEq W] [Fintyp
     This characterizes eventive causation: "The noise frightened John" —
     even if the noise hadn't occurred (in the closest worlds), the
     frightened state, once established by BECOME, persists independently. -/
-def counterfactuallyPersistent {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Prop)
-    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) : Prop :=
-  universalCounterfactual sim
-    (fun w => ¬ causeProp w) effectProp w
+def counterfactuallyPersistent {W : Type*} (sim : SimilarityOrdering W) (cause effect : Set W) :
+    Set W :=
+  closestImp sim causeᶜ effect
 
-instance counterfactuallyPersistent_decidable {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Prop)
-    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) :
-    Decidable (counterfactuallyPersistent sim causeProp effectProp w) :=
-  inferInstanceAs (Decidable (universalCounterfactual _ _ _ _))
-
-/-- Counterfactual dependence and persistence are mutually exclusive
-    when the set of closest ¬cause worlds is non-empty.
-
-    If all closest ¬cause worlds satisfy ¬effect (dependence), then
-    at least one closest world falsifies effect, so persistence fails.
-
-    Proved by extracting a witness from the non-empty closest-world
-    list and showing it satisfies `¬ effectProp w` (from dependence)
-    and `effectProp w` (from persistence), a contradiction. -/
-theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Prop)
-    [DecidablePred causeProp] [DecidablePred effectProp] (w : W)
-    (hDep : counterfactuallyDependent sim causeProp effectProp w)
-    (hNonempty : (sim.closestWorlds w
-      (Finset.univ.filter (fun w => ¬ causeProp w))).Nonempty) :
-    ¬ counterfactuallyPersistent sim causeProp effectProp w := by
-  simp only [counterfactuallyDependent, universalCounterfactual] at hDep
-  simp only [counterfactuallyPersistent, universalCounterfactual]
-  intro hall
-  obtain ⟨x, hx⟩ := hNonempty
-  exact (hDep x hx) (hall x hx)
+/-- Counterfactual dependence and persistence are mutually exclusive when some closest ¬cause
+    world exists: it would have to both lack and have the effect. -/
+theorem dependent_excludes_persistent {W : Type*} (sim : SimilarityOrdering W)
+    {cause effect : Set W} {w : W} (hDep : w ∈ counterfactuallyDependent sim cause effect)
+    (hNonempty : (sim.closest w causeᶜ).Nonempty) :
+    w ∉ counterfactuallyPersistent sim cause effect :=
+  fun hall ↦ hNonempty.elim fun _ hx ↦ hDep hx (hall hx)
 
 /-! ### [kim-2024]: Three Properties of Maintenance -/
 
@@ -246,7 +210,7 @@ theorem maintenance_three_properties {T : Type*} [LinearOrder T] :
     (maintenanceLink T).causeSort = .state ∧
     (maintenanceLink T).effectSort = .state ∧
     -- (b) Temporal contemporaneity (overlaps, not precedes)
-    (maintenanceLink T).temporalConstraint = (λ s t => ¬ Disjoint s t) ∧
+    (maintenanceLink T).temporalConstraint = (fun s t ↦ ¬ Disjoint s t) ∧
     -- (c) No transition (no BECOME)
     (maintenanceLink T).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩

@@ -49,30 +49,32 @@ open Conditional Conditional.Counterfactual McKayVanInwagen1977
   Data.Examples
 
 variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
-  (S : List (Finset W)) (C : W → Prop) [DecidablePred C] (w : W)
+  (S : List (Finset W)) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
 
 /-! ### Conditionals as correlatives (§2) -/
 
 /-- *Might* in the consequent (70)–(71) under the universal *if*-clause (25): the closest
 worlds of every alternative are compatible with the consequent. -/
-def DistributiveMight : Prop := ∀ A ∈ S, lewisMight sim (· ∈ A) C w
+def DistributiveMight : Prop := ∀ A ∈ S, w ∈ might (closestImp sim) ↑A C
 
 instance : Decidable (DistributiveMight sim S C w) :=
-  inferInstanceAs (Decidable (∀ A ∈ S, lewisMight sim (· ∈ A) C w))
+  inferInstanceAs (Decidable (∀ A ∈ S, w ∈ might (closestImp sim) ↑A C))
 
+omit [DecidableEq W] [Fintype W] [DecidablePred (· ∈ C)] in
 /-- Simplification (27): the disjunctive counterfactual entails each disjunct's. -/
 theorem simplification {A B : Finset W} (h : Distributive sim [A, B] C w) :
-    universalCounterfactual sim (· ∈ A) C w ∧ universalCounterfactual sim (· ∈ B) C w :=
+    w ∈ closestImp sim ↑A C ∧ w ∈ closestImp sim ↑B C :=
   ⟨h A (by simp), h B (by simp)⟩
 
+omit [DecidableEq W] [Fintype W] [DecidablePred (· ∈ C)] in
 /-- Simplification for *might* (54), the extension of §3.3. -/
 theorem simplification_might {A B : Finset W} (h : DistributiveMight sim [A, B] C w) :
-    lewisMight sim (· ∈ A) C w ∧ lewisMight sim (· ∈ B) C w :=
+    w ∈ might (closestImp sim) ↑A C ∧ w ∈ might (closestImp sim) ↑B C :=
   ⟨h A (by simp), h B (by simp)⟩
 
 /-- The good-weather and cold-sun worlds of the bumper-crop model. -/
-abbrev goodWeatherW : Finset CropWorld := Finset.univ.filter goodWeather
-abbrev sunColdW : Finset CropWorld := Finset.univ.filter sunCold
+abbrev goodWeatherW : Finset CropWorld := Finset.univ.filter (· ∈ goodWeather)
+abbrev sunColdW : Finset CropWorld := Finset.univ.filter (· ∈ sunCold)
 
 /-- Boolean *or* (6) hands the modal the union, and (1) comes out true (Fig. 1). -/
 theorem bumperCrop_boolean : would cropSim [goodWeatherW, sunColdW] bumperCrop .actual := by
@@ -88,7 +90,7 @@ theorem bumperCrop_alternatives :
 /-- A sum analysis falsifies a disjunctive counterfactual only when every disjunct's
 counterfactual fails. -/
 theorem homogeneity_ne_false {A : Finset W} (hA : A ∈ S)
-    (h : universalCounterfactual sim (· ∈ A) C w) : homogeneity sim S C w ≠ .false :=
+    (h : w ∈ closestImp sim ↑A C) : homogeneity sim S C w ≠ .false :=
   fun hf => ((homogeneity_eq_false_iff sim S C w).1 hf).2 A hA h
 
 /-- (29)–(31): Spain joining Germany is closer than Spain joining the U.S., and Hitler is
@@ -104,16 +106,14 @@ def hitlerSim : SimilarityOrdering HitlerWorld := .ofRank fun _ => HitlerWorld.r
 abbrev joinedGermany : Finset HitlerWorld := {.germany}
 abbrev joinedUS : Finset HitlerWorld := {.us}
 
-def pleased (w : HitlerWorld) : Prop := w = .germany
-
-instance : DecidablePred pleased := fun w => inferInstanceAs (Decidable (w = .germany))
+abbrev pleased : Set HitlerWorld := {.germany}
 
 /-- Under the universal quantifier (29) is true, with (30a) true and (30b) false as (31)
 continues; under a sum with homogeneity (33) it is a gap. -/
 theorem hitler_negation :
     ¬ Distributive hitlerSim [joinedGermany, joinedUS] pleased .actual ∧
-      universalCounterfactual hitlerSim (· ∈ joinedGermany) pleased .actual ∧
-      ¬ universalCounterfactual hitlerSim (· ∈ joinedUS) pleased .actual ∧
+      .actual ∈ closestImp hitlerSim ↑joinedGermany pleased ∧
+      .actual ∉ closestImp hitlerSim ↑joinedUS pleased ∧
       homogeneity hitlerSim [joinedGermany, joinedUS] pleased .actual = .indet := by decide
 
 /-! ### Downward entailingness (§3) -/
@@ -186,23 +186,21 @@ def forkSim : SimilarityOrdering ForkWorld := .ofRank fun _ => ForkWorld.rank
 abbrev hasBook : Finset ForkWorld := {.book, .bookBent}
 abbrev newborn : Finset ForkWorld := {.baby}
 
-def bent (w : ForkWorld) : Prop := w = .bookBent
-
-instance : DecidablePred bent := fun w => inferInstanceAs (Decidable (w = .bookBent))
+abbrev bent : Set ForkWorld := {.bookBent}
 
 /-- Under (52)–(53) the closest worlds of the union are magic-book worlds, one of which bends
 the fork, so (51) is true; under the correlative analysis it is false, since (58a) is true
 but (58b) is not. -/
 theorem fork :
-    lewisMight forkSim (· ∈ disjunctiveClosure [hasBook, newborn]) bent .actual ∧
+    .actual ∈ might (closestImp forkSim) ↑(disjunctiveClosure [hasBook, newborn]) bent ∧
       ¬ DistributiveMight forkSim [hasBook, newborn] bent .actual ∧
-      lewisMight forkSim (· ∈ hasBook) bent .actual ∧
-      ¬ lewisMight forkSim (· ∈ newborn) bent .actual := by decide
+      .actual ∈ might (closestImp forkSim) ↑hasBook bent ∧
+      .actual ∉ might (closestImp forkSim) ↑newborn bent := by decide
 
 /-- (57)–(58): the strict dual *might*, with every world accessible, is true of the
 disjunction but not of the newborn disjunct. -/
 theorem strictMight_not_simplifying :
-    (∃ w, w ∈ hasBook ∪ newborn ∧ bent w) ∧ ¬ ∃ w, w ∈ newborn ∧ bent w := by decide
+    (∃ w, w ∈ hasBook ∪ newborn ∧ w ∈ bent) ∧ ¬ ∃ w, w ∈ newborn ∧ w ∈ bent := by decide
 
 /-! ### An implicature? (§4) -/
 
@@ -223,36 +221,35 @@ abbrev belief : Finset BeliefWorld := {.w₃, .w₄}
 abbrev bookB : Finset BeliefWorld := {.book₃, .book₄}
 abbrev babyB : Finset BeliefWorld := {.baby₃, .baby₄}
 
-def bentB (w : BeliefWorld) : Prop := w = .book₃ ∨ w = .baby₄
-
-instance : DecidablePred bentB := fun w => inferInstanceAs (Decidable (w = .book₃ ∨ w = .baby₄))
+abbrev bentB : Set BeliefWorld := {.book₃, .baby₄}
 
 /-- Manner (75)–(76) is satisfied — (73) holds throughout the belief state and neither (74a)
 nor (74b) does — yet the two simplifications hold together nowhere in it, so (77) is not
 predicted deviant. -/
 theorem manner_insufficient :
-    (∀ w ∈ belief, lewisMight beliefSim (· ∈ disjunctiveClosure [bookB, babyB]) bentB w) ∧
-      (∃ w ∈ belief, ¬ lewisMight beliefSim (· ∈ bookB) bentB w) ∧
-      (∃ w ∈ belief, ¬ lewisMight beliefSim (· ∈ babyB) bentB w) ∧
+    (∀ w ∈ belief, w ∈ might (closestImp beliefSim) ↑(disjunctiveClosure [bookB, babyB]) bentB) ∧
+      (∃ w ∈ belief, w ∉ might (closestImp beliefSim) ↑bookB bentB) ∧
+      (∃ w ∈ belief, w ∉ might (closestImp beliefSim) ↑babyB bentB) ∧
       ∀ w ∈ belief, ¬ DistributiveMight beliefSim [bookB, babyB] bentB w := by decide
 
 /-! ### The visibility of the disjuncts (§5.2) -/
 
+omit [Fintype W] in
 /-- Nute's recipe (80): when the consequent is one of two incompatible disjuncts, the
 analysis makes the counterfactual true only if the other disjunct is impossible. -/
 theorem distributive_pair_disjoint_iff {A B : Finset W} (h : Disjoint A B) :
-    Distributive sim [A, B] (· ∈ A) w ↔ B = ∅ := by
-  refine ⟨fun hd => ?_, fun hB => ?_⟩
+    Distributive sim [A, B] ↑A w ↔ B = ∅ := by
+  refine ⟨fun hd ↦ ?_, fun hB ↦ ?_⟩
   · by_contra hne
-    obtain ⟨b, hb⟩ := sim.closestWorlds_nonempty w (Finset.nonempty_iff_ne_empty.2 hne)
-    have hbA : b ∈ A := hd B (by simp) b (by simpa [universalCounterfactual] using hb)
-    exact Finset.disjoint_left.1 h hbA (sim.closestWorlds_subset w B hb)
+    obtain ⟨b, hb⟩ := sim.closest_nonempty w B.finite_toSet
+      (Finset.coe_nonempty.2 (Finset.nonempty_iff_ne_empty.2 hne))
+    exact Finset.disjoint_left.1 h (hd B (by simp) hb) (sim.closest_subset w _ hb)
   · subst hB
-    intro X hX w' hw'
+    intro X hX
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hX
     rcases hX with rfl | rfl
-    · simpa using sim.closestWorlds_subset w _ hw'
-    · simp at hw'
+    · exact (sim.closest_subset w _).trans le_rfl
+    · simp
 
 /-- (80): more defense spending is closer than more education spending. -/
 inductive BudgetWorld | actual | defense | education
@@ -269,8 +266,8 @@ abbrev education : Finset BudgetWorld := {.education}
 /-- (80) is a contradiction under the analysis and true once Existential Closure (82)
 returns the Boolean antecedent. -/
 theorem budget :
-    (∀ w, ¬ Distributive budgetSim [defense, education] (· ∈ defense) w) ∧
-      would budgetSim [defense, education] (· ∈ defense) .actual :=
+    (∀ w, ¬ Distributive budgetSim [defense, education] ↑defense w) ∧
+      would budgetSim [defense, education] ↑defense .actual :=
   ⟨fun w h => by simpa using (distributive_pair_disjoint_iff budgetSim w (by decide)).1 h,
     by decide⟩
 
@@ -312,7 +309,7 @@ def predicted (row : LinguisticExample) : Option Bool :=
     hitlerAlts a >>= fun S => verdict hitlerSim S pleased .actual m neg
   | some "fork", some a, some m => forkAlts a >>= fun S => verdict forkSim S bent .actual m neg
   | some "budget", some "defense or education", some "would" =>
-    some (decide (would budgetSim [defense, education] (· ∈ defense) .actual))
+    some (decide (would budgetSim [defense, education] ↑defense .actual))
   | _, _, _ => none
 
 /-- Every row with a stated verdict that the models cover carries the predicted one. -/

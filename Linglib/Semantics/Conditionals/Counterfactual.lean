@@ -8,526 +8,192 @@ import Linglib.Core.Data.Trivalent
 import Linglib.Logic.Duality
 
 /-!
-# Counterfactual Conditionals: Three Theories
+# Counterfactual conditionals: three theories
 
-[ramotowska-marty-romoli-santorio-2025] [lewis-1973]
+[ramotowska-marty-romoli-santorio-2025] compare three theories of counterfactuals, all stated
+over the closest antecedent-worlds of a similarity ordering:
 
-Formalization of three competing theories of counterfactual conditionals.
+1. The universal theory ([lewis-1973], [kratzer-2012]): *if p, would q* is true iff every
+   closest `p`-world is a `q`-world, the conditional `closestImp` of `Conditionals/Basic.lean`.
+2. The selectional theory ([stalnaker-1968], with [stalnaker-1981]'s supervaluation over ties):
+   a selection function picks one closest `p`-world (`selectionalCounterfactual`), true when
+   every closest `p`-world is a `q`-world, false when none is, indeterminate otherwise.
+3. The homogeneity theory ([von-fintel-1997], [kriz-2015]): the universal assertion with the
+   presupposition that the closest `p`-worlds agree on `q` (`homogeneityCounterfactual`).
 
-## The Three Theories
+The three agree whenever the closest antecedent-worlds agree on the consequent; their
+predictions under quantifiers are derived in `Studies/RamotowskaEtAl2025.lean`.
 
-1. Universal Theory ([lewis-1973]/Kratzer): Universal quantification
-   over closest A-worlds.
-   - ⦃A □→ B⦄_w = ∀w' ∈ closest(w, A). B(w')
+## References
 
-2. Selectional Theory (Stalnaker): Selection function + supervaluation.
-   - ⦃A □→ B⦄_w = B(s(w, A)) for all legitimate selection functions s
-   - Indeterminate when s₁(w,A) ∈ B but s₂(w,A) ∉ B
-
-3. Homogeneity Theory (von Fintel, Križ): Universal + homogeneity
-   presupposition.
-   - Presupposes: all closest A-worlds agree on B
-   - Asserts: they all satisfy B (given the presupposition)
-
-The theories' predictions for counterfactuals embedded under quantifiers are derived in
-`Studies/RamotowskaEtAl2025.lean`.
+* [ramotowska-marty-romoli-santorio-2025]
+* [lewis-1973]
+* [kratzer-2012]
+* [stalnaker-1968]
+* [stalnaker-1981]
+* [von-fintel-1997]
+* [kriz-2015]
+* [fine-1975]
 -/
 
 namespace Conditional.Counterfactual
 
-open Reference
+section Theories
 
-open _root_.Conditional
-open Trivalent (ProjectionType dist)
+variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (p q r : Set W)
+  [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] [DecidablePred (· ∈ r)] (w : W)
 
-open _root_.Conditional (SimilarityOrdering)
+/-! ## The selectional theory -/
 
-/-!
-## Universal Theory
-[ramotowska-marty-romoli-santorio-2025]
-
-The standard possible-worlds analysis: counterfactuals universally quantify
-over the closest antecedent-worlds.
-
-"If A were, B would" is true at w iff every closest A-world satisfies B.
-
-This predicts:
-- "Every student would pass if they studied" is FALSE if even ONE closest
-  study-world for some student doesn't have them passing
--/
-
-/--
-Universal counterfactual semantics ([lewis-1973]/Kratzer).
-
-True at w iff all closest A-worlds satisfy B.
--/
-def universalCounterfactual {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) : Prop :=
-  ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w'
-
-instance universalCounterfactual_decidable {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) :
-    Decidable (universalCounterfactual sim A B w) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-section Antecedent
-
-variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) {A B C : W → Prop}
-  [DecidablePred A] [DecidablePred B] [DecidablePred C] {w : W}
-
-theorem universalCounterfactual_congr (h : ∀ v, A v ↔ B v) :
-    universalCounterfactual sim A C w ↔ universalCounterfactual sim B C w := by
-  unfold universalCounterfactual
-  rw [Finset.filter_congr (λ v _ => h v)]
-
-/-- A counterfactual whose antecedent entails its consequent holds everywhere. -/
-theorem universalCounterfactual_of_imp (h : ∀ v, A v → B v) :
-    universalCounterfactual sim A B w := by
-  intro v hv
-  simp only [SimilarityOrdering.closestWorlds, Finset.mem_filter, Finset.mem_univ, true_and] at hv
-  exact h v hv.1
-
-/-- A counterfactual holds of a disjunctive antecedent when it holds of each disjunct. -/
-theorem universalCounterfactual_or_of (hA : universalCounterfactual sim A C w)
-    (hB : universalCounterfactual sim B C w) :
-    universalCounterfactual sim (λ v => A v ∨ B v) C w := by
-  intro v hv
-  simp only [universalCounterfactual, SimilarityOrdering.closestWorlds, Finset.mem_filter,
-    Finset.mem_univ, true_and] at hv hA hB
-  rcases hv.1 with h | h
-  · exact hA v ⟨h, λ u hu => hv.2 u (Or.inl hu)⟩
-  · exact hB v ⟨h, λ u hu => hv.2 u (Or.inr hu)⟩
-
-/-- Under a total similarity ordering, a counterfactual with a disjunctive antecedent entails
-one of its simplifications. -/
-theorem universalCounterfactual_or (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (h : universalCounterfactual sim (λ v => A v ∨ B v) C w) :
-    universalCounterfactual sim A C w ∨ universalCounterfactual sim B C w := by
-  by_contra hn
-  simp only [universalCounterfactual, SimilarityOrdering.closestWorlds, Finset.mem_filter,
-    Finset.mem_univ, true_and] at h hn
-  push Not at hn
-  obtain ⟨⟨x, ⟨hxA, hx⟩, hxC⟩, ⟨y, ⟨hyB, hy⟩, hyC⟩⟩ := hn
-  have hx' : ¬ ∀ u, (A u ∨ B u) → sim.closer w x u ∨ ¬ sim.closer w u x :=
-    λ hx' => hxC (h x ⟨Or.inl hxA, hx'⟩)
-  have hy' : ¬ ∀ u, (A u ∨ B u) → sim.closer w y u ∨ ¬ sim.closer w u y :=
-    λ hy' => hyC (h y ⟨Or.inr hyB, hy'⟩)
-  push Not at hx' hy'
-  obtain ⟨z, hz, hxz, hzx⟩ := hx'
-  obtain ⟨z', hz', hyz', hz'y⟩ := hy'
-  have hzB : B z := hz.resolve_left λ hzA => (hx z hzA).elim hxz (λ h => h hzx)
-  have hz'A : A z' := hz'.resolve_right λ hz'B => (hy z' hz'B).elim hyz' (λ h => h hz'y)
-  have hyz : sim.closer w y z := (hy z hzB).elim id λ hn => (htot w y z).resolve_right hn
-  have hxz' : sim.closer w x z' := (hx z' hz'A).elim id λ hn => (htot w x z').resolve_right hn
-  exact hxz (sim.closer_trans w x z' z hxz' (sim.closer_trans w z' y z hz'y hyz))
-
-end Antecedent
-
-/-!
-## Selectional Theory
-
-Stalnaker's approach with supervaluation over ties:
-1. A selection function picks THE closest antecedent-world
-2. When multiple worlds are equally close (ties), supervaluate over all choices
-
-Three-valued semantics:
-- True: B holds at s(w, A) for all legitimate selection functions s
-- False: B fails at s(w, A) for all legitimate selection functions s
-- Indeterminate: B holds for some s but not others
-
-This predicts:
-- "Every student would pass if they studied" is INDETERMINATE when
-  some students' closest study-worlds have passing, others don't
--/
-
--- Three-valued truth from Trivalent.Trivalent
-
-/--
-Selectional counterfactual semantics (Stalnaker + supervaluation).
-
-Returns a three-valued truth value based on agreement across selection functions.
--/
-def selectionalCounterfactual {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) : Trivalent :=
-  if ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A),
-    B w' then .true
-  else if ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A),
-    ¬ B w' then .false
+/-- Selectional counterfactual semantics ([stalnaker-1981]'s supervaluation over the
+selection functions the similarity ordering allows): true when every closest `p`-world is a
+`q`-world, false when every one is a `qᶜ`-world, indeterminate otherwise. -/
+def selectionalCounterfactual : Trivalent :=
+  if w ∈ closestImp sim p q then .true
+  else if w ∈ closestImp sim p qᶜ then .false
   else .indet
 
-/-- **`selectionalCounterfactual` IS Fine super-truth** (`Trivalent.dist`)
-    on the Finset of closest worlds with the consequent as Boolean predicate.
+variable {sim p q w}
 
-    Bridge documenting the equivalence — keeps the bespoke 3-way if-chain
-    body for proof-script compatibility (cem_selectional and many Stalnaker1981
-    consumers case-split on the structure) while making the
-    canonical-classifier connection explicit. -/
-theorem selectionalCounterfactual_eq_dist {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) :
-    selectionalCounterfactual sim A B w =
-    Trivalent.dist (sim.closestWorlds w (Finset.univ.filter A)) B := by
+theorem selectionalCounterfactual_eq_true_iff :
+    selectionalCounterfactual sim p q w = .true ↔ w ∈ closestImp sim p q := by
+  unfold selectionalCounterfactual; split_ifs <;> simp_all
+
+/-- The selectional counterfactual is Fine super-truth (`Trivalent.dist`) over the closest
+worlds. -/
+theorem selectionalCounterfactual_eq_dist :
+    selectionalCounterfactual sim p q w =
+      Trivalent.dist (sim.closestWorlds w (Finset.univ.filter (· ∈ p))) (· ∈ q) := by
   unfold selectionalCounterfactual Trivalent.dist
-  set s := sim.closestWorlds w (Finset.univ.filter A)
-  by_cases h_all : ∀ w' ∈ s, B w'
-  · rw [ite_eq_left h_all, ite_eq_left h_all]
-  · rw [ite_eq_right h_all, ite_eq_right h_all]
-    by_cases h_some : ∃ w' ∈ s, B w'
-    · rw [ite_eq_left h_some]
-      have hnaf : ¬ ∀ w' ∈ s, ¬ B w' := by
-        obtain ⟨w', hw', hB⟩ := h_some
-        intro hf; exact hf w' hw' hB
-      rw [ite_eq_right hnaf]
-    · rw [ite_eq_right h_some]
-      have haf : ∀ w' ∈ s, ¬ B w' := by
-        intro w' hw' hB; exact h_some ⟨w', hw', hB⟩
-      rw [ite_eq_left haf]
+  simp only [mem_closestImp_iff_closestWorlds, Set.mem_compl_iff]
+  split_ifs with h₁ h₂ h₃ <;> try rfl
+  all_goals first | exact absurd h₂ (by simpa using h₃) | simp_all
 
-/--
-Conditional Excluded Middle (CEM) holds for selectional semantics.
+variable (sim p q w)
 
-(A □→ B) ∨ (A □→ ¬B) is always true or gap, never false.
-
-Proof sketch:
-1. Empty closest: both vacuously true → or = true
-2. All B: φ = true → or = true
-3. All ¬B: ψ = true → or = true
-4. Mixed: both gap → or = gap
--/
-theorem cem_selectional {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) :
-    let φ := selectionalCounterfactual sim A B w
-    let ψ := selectionalCounterfactual sim A (¬ B ·) w
-    φ ⊔ ψ ≠ .false := by
-  simp only [selectionalCounterfactual]
-  set cl := sim.closestWorlds w (Finset.univ.filter A)
+/-- Conditional Excluded Middle for the selectional theory: *if p, q* or *if p, not q* is never
+false. -/
+theorem cem_selectional :
+    selectionalCounterfactual sim p q w ⊔ selectionalCounterfactual sim p qᶜ w ≠ .false := by
+  simp only [selectionalCounterfactual, compl_compl]
   split_ifs <;> simp_all (config := { decide := true })
 
-/-!
-## Homogeneity Theory
-
-Universal quantification PLUS a homogeneity presupposition:
-- Presupposes: all closest A-worlds agree on B (all true or all false)
-- Asserts: they all satisfy B (given the presupposition)
-
-When the presupposition fails (mixed closest worlds), the sentence is
-neither true nor false (presupposition failure).
-
-This predicts:
-- "Every student would pass if they studied" has PRESUPPOSITION FAILURE
-  when students' closest study-worlds are mixed on passing
--/
+/-! ## The homogeneity theory -/
 
 /-- Presupposition status. -/
 inductive PresupStatus where
-  | satisfied  -- Presupposition holds
-  | failed     -- Presupposition fails
+  | satisfied
+  | failed
   deriving Repr, DecidableEq
 
 /-- Result of evaluating a sentence with presuppositions. -/
 structure PresupResult where
   presupposition : PresupStatus
-  assertion : Option Bool  -- None if presupposition fails
+  assertion : Option Bool
   deriving Repr, DecidableEq
 
-/--
-Homogeneity counterfactual semantics.
+/-- Homogeneity counterfactual semantics: the universal assertion, presupposing that the closest
+`p`-worlds agree on `q`. -/
+def homogeneityCounterfactual : PresupResult :=
+  if w ∈ closestImp sim p q then ⟨.satisfied, some true⟩
+  else if w ∈ closestImp sim p qᶜ then ⟨.satisfied, some false⟩
+  else ⟨.failed, none⟩
 
-Presupposes that all closest A-worlds agree on B.
--/
-def homogeneityCounterfactual {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) : PresupResult :=
-  if ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w' then
-    { presupposition := .satisfied, assertion := some true }
-  else if ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), ¬ B w' then
-    { presupposition := .satisfied, assertion := some false }
-  else
-    { presupposition := .failed, assertion := none }
+/-- Homogeneity for `q` is homogeneity for `qᶜ`. -/
+theorem presup_preserved_homogeneity
+    (h : (homogeneityCounterfactual sim p q w).presupposition = .satisfied) :
+    (homogeneityCounterfactual sim p qᶜ w).presupposition = .satisfied := by
+  simp only [homogeneityCounterfactual, compl_compl] at *
+  split_ifs at h ⊢ <;> rfl
 
-/--
-Presupposition Preservation for homogeneity semantics.
-
-If the presupposition is satisfied for (A □→ B), it's also satisfied for (A □→ ¬B).
-This is because homogeneity for B (all true or all false) implies homogeneity for ¬B.
--/
-theorem presup_preserved_homogeneity {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W)
-    (h : (homogeneityCounterfactual sim A B w).presupposition = .satisfied) :
-    (homogeneityCounterfactual sim A (¬ B ·) w).presupposition = .satisfied := by
-  simp only [homogeneityCounterfactual] at *
-  split_ifs at h ⊢ with h1 h2 h3 h4
-  all_goals (first | rfl | simp_all)
-
-/--
-Negation Swap holds for homogeneity semantics in the non-vacuous case.
-
-When closest worlds are non-empty and presupposition is satisfied:
-  assertion(A □→ B).map (¬·) = assertion(A □→ ¬B)
--/
-theorem negation_swap_homogeneity_nonvacuous {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W)
-    (h_presup : (homogeneityCounterfactual sim A B w).presupposition = .satisfied)
-    (h_nonvac : (sim.closestWorlds w
-      (Finset.univ.filter A)).Nonempty) :
-    (homogeneityCounterfactual sim A B w).assertion.map (!·) =
-    (homogeneityCounterfactual sim A (¬ B ·) w).assertion := by
-  simp only [homogeneityCounterfactual] at *
-  split_ifs at h_presup ⊢ <;> simp_all
-  -- Remaining cases: h_nonvac contradicts ∀ w', w' ∉ closestWorlds
-  all_goals (obtain ⟨w', hw'⟩ := h_nonvac; simp_all)
-
-/-!
-## Grounding Selection Functions in Causal Models
-
-The selection function s(w, A) can be grounded via causal intervention:
-
-s(w, A) = the world that results from intervening to make A true at w
-
-This connects to [nadathur-lauer-2020]: `developDet M (s.extend A true)`
-gives the counterfactual A-world (or, Pearl-style, `(M.intervene A true).developDet s`).
-Counterfactual dependence (necessity) corresponds to selection-based conditionals.
-
-The intervention-based counterfactual primitive lives in
-`Core/Causal/V2/SEM/Counterfactual.lean` as `causallySufficient` (which
-is exactly "extending with antecedent then developing produces consequent").
-The full formalization of [lewis-1973-causation]'s causal dependence
-appears as a paper-replication study under `Studies/Lewis1973.lean`.
--/
+/-- Negation swaps the assertion when some closest `p`-world exists and the presupposition holds. -/
+theorem negation_swap_homogeneity_nonvacuous
+    (h_presup : (homogeneityCounterfactual sim p q w).presupposition = .satisfied)
+    (h_nonvac : (sim.closest w p).Nonempty) :
+    (homogeneityCounterfactual sim p q w).assertion.map (!·) =
+      (homogeneityCounterfactual sim p qᶜ w).assertion := by
+  obtain ⟨v, hv⟩ := h_nonvac
+  simp only [homogeneityCounterfactual, compl_compl] at *
+  split_ifs at h_presup ⊢ with h₁ h₂ h₃ <;> first | rfl | simp_all
+  exact absurd (h₁ hv) (h₂ hv)
 
 -- ════════════════════════════════════════════════════
 -- Bridge: Selectional Semantics as Supervaluation
 -- ════════════════════════════════════════════════════
 
-/-! The selectional counterfactual is literally supervaluation
-    ([fine-1975]) over closest worlds. Each closest world is a
-    specification point — a legitimate resolution of the selection-function
-    tie. When all closest worlds agree on B, the counterfactual is definite;
-    when they disagree, it is indefinite.
-
-    Both `selectionalCounterfactual` and `superTrue` are `Trivalent.dist`
-    over the same finite set. -/
+/-! The selectional counterfactual is supervaluation ([fine-1975]) over the closest worlds:
+each closest world is a specification point, a legitimate resolution of the selection
+function's tie. -/
 
 open Semantics.Supervaluation (SpecSpace superTrue)
 
-/-- **Selectional counterfactual = supervaluation over closest worlds.**
-    When the closest-worlds set is non-empty, the selectional semantics
-    equals `superTrue B` over the closest worlds as a specification space.
-
-    This makes explicit that Stalnaker's "supervaluate over ties" IS
-    Fine's supervaluation with `Spec = W` and `admissible = closest(w, A)`;
-    `superTrue` is `Trivalent.dist` on the admissible set, so this is
-    `selectionalCounterfactual_eq_dist`. -/
-theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W)
-    (hne : (sim.closestWorlds w
-      (Finset.univ.filter A)).Nonempty) :
-    selectionalCounterfactual sim A B w =
-    superTrue B ⟨sim.closestWorlds w (Finset.univ.filter A), hne⟩ :=
-  selectionalCounterfactual_eq_dist sim A B w
+/-- Selectional counterfactual = supervaluation over the closest worlds. -/
+theorem selectional_as_supervaluation
+    (hne : (sim.closestWorlds w (Finset.univ.filter (· ∈ p))).Nonempty) :
+    selectionalCounterfactual sim p q w =
+      superTrue (· ∈ q) ⟨sim.closestWorlds w (Finset.univ.filter (· ∈ p)), hne⟩ :=
+  selectionalCounterfactual_eq_dist
 
 -- ════════════════════════════════════════════════════
 -- Might Counterfactuals: Lewis vs Stalnaker
 -- ════════════════════════════════════════════════════
 
 /-!
-## `Might` Counterfactuals
-[stalnaker-1981]
+## *Might* counterfactuals
 
-The Lewis–Stalnaker debate turns on the analysis of *might* counterfactuals.
-
-**Lewis's definition**: "if A, might B" =_df ¬(A □→ ¬B). On this view,
-`might` is an idiom — the negation of the corresponding `would not`.
-
-**Stalnaker's objection**: Under CEM, Lewis's definition makes "if A,
-might B" equivalent to "if A, would B" — collapsing the might/would
-distinction. Stalnaker treats `might` as a genuine possibility operator
-that takes scope *over* the conditional: ◇(A □→ B).
-
-The three-valued selectional semantics naturally distinguishes them:
-- `would`: TRUE iff all closest A-worlds satisfy B
-- `might`: TRUE iff some closest A-world satisfies B (= NOT all satisfy ¬B)
+[lewis-1973] defines *if p, might q* as *not (if p, would not q)* (`might`). Together with
+Conditional Excluded Middle that definition makes *might* equivalent to *would*
+(`mem_might_closestImp_iff_of_cem`), which Lewis counts against a semantics validating it;
+[stalnaker-1981] rejects the definition instead, reading *might* as a possibility operator over
+the whole conditional, true when the selectional conditional is not determinately false
+(`selectionalMight`).
 -/
 
-/-- **Lewis's `might` counterfactual**: ¬(A □→ ¬B).
+/-- The selectional *might*: the selectional counterfactual is not determinately false. -/
+def selectionalMight : Prop := selectionalCounterfactual sim p q w ≠ .false
 
-Defined as the negation of the universal counterfactual with negated
-consequent: "it is not the case that if A were, B would not be." -/
-def lewisMight {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) : Prop :=
-  ¬ universalCounterfactual sim A (¬ B ·) w
+instance : Decidable (selectionalMight sim p q w) := inferInstanceAs (Decidable (_ ≠ _))
 
-instance lewisMight_decidable {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) :
-    Decidable (lewisMight sim A B w) :=
-  inferInstanceAs (Decidable (¬ _))
-
-/-- **Selectional `might` counterfactual**: true on at least one
-precisification.
-
-"If A, might B" is true iff the selectional counterfactual is not
-determinately false — i.e., at least one legitimate selection function
-picks a B-world. This is the existential dual of the universal `would`.
-
-Derived from `selectionalCounterfactual` rather than inlining
-`closestWorlds`, making the supervaluation connection structural. -/
-def selectionalMight {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) : Prop :=
-  selectionalCounterfactual sim A B w ≠ .false
-
-instance selectionalMight_decidable {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W) :
-    Decidable (selectionalMight sim A B w) :=
-  inferInstanceAs (Decidable (_ ≠ _))
-
-/-- **CEM collapses Lewis's `might` into `would`.**
-
-When the closest-worlds set is a singleton (uniqueness holds), Lewis's
-`might` = ¬(all closest satisfy ¬B) = some closest satisfies B =
-all closest satisfy B = `would`. The uniqueness assumption makes
-¬∀¬ equivalent to ∀.
-
-This is the problematic consequence that [stalnaker-1981] argues against:
-"if A, might B" should be weaker than "if A, would B", but under
-uniqueness they collapse. -/
-theorem lewis_might_eq_would_singleton {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W)
-    (h_singleton : (sim.closestWorlds w
-      (Finset.univ.filter A)).card = 1) :
-    lewisMight sim A B w ↔ universalCounterfactual sim A B w := by
-  unfold lewisMight universalCounterfactual
-  obtain ⟨w', hw'⟩ := Finset.card_eq_one.mp h_singleton
-  -- ∀ in a singleton reduces to a single check
-  rw [hw']
-  simp only [Finset.mem_singleton, forall_eq, not_not]
-
-/-- **CEM implies Lewis's might = would** (the general collapse).
-
-[stalnaker-1981]'s central observation: if CEM holds for the
-universal theory at a world (which it does whenever closest worlds
-are a singleton, but also in other cases), then Lewis's definition
-of `might` as ¬(would ¬B) collapses into `would`. -/
-theorem lewis_might_eq_would_cem {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B : W → Prop)
-    [DecidablePred A] [DecidablePred B] (w : W)
-    (h_nonempty : (sim.closestWorlds w
-      (Finset.univ.filter A)).Nonempty)
-    (h_cem : universalCounterfactual sim A B w ∨
-             universalCounterfactual sim A (¬ B ·) w) :
-    lewisMight sim A B w ↔ universalCounterfactual sim A B w := by
-  unfold lewisMight universalCounterfactual at *
-  rcases h_cem with h | h
-  · -- all B true → ¬(all ¬B true), and we already have all B true
-    refine ⟨fun _ => h, fun _ hNB => ?_⟩
-    obtain ⟨w', hw'⟩ := h_nonempty
-    exact (hNB w' hw') (h w' hw')
-  · -- all ¬B true → both sides false (via cl nonempty)
-    refine ⟨fun hMight => absurd h hMight, fun hAllB => ?_⟩
-    obtain ⟨w', hw'⟩ := h_nonempty
-    exact absurd (hAllB w' hw') (h w' hw')
-
-/-- **Selectional `might` is genuinely weaker than `would`.**
-
-There exist worlds where `might B` holds but `would B` does not:
-when the closest-worlds set is mixed (some satisfy B, some don't),
-the existential `might` is true but the universal `would` is indeterminate. -/
+/-- The selectional *might* is weaker than *would*: with mixed closest worlds, *might* holds while
+*would* is indeterminate. -/
 theorem selectional_might_weaker :
-    ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-      (sim : SimilarityOrdering W)
-      (A B : W → Prop) (_ : DecidablePred A) (_ : DecidablePred B) (w : W),
-      selectionalMight sim A B w ∧
-      selectionalCounterfactual sim A B w = .indet := by
-  refine ⟨Fin 3, inferInstance, inferInstance,
-    .ofBool (λ _ w₁ w₂ => w₁ == w₂) (by decide) (by decide),
-    λ w => w = 1 ∨ w = 2,     -- A: both w1 and w2
-    λ w => w = 1,             -- B: only w1
-    inferInstance, inferInstance,
-    0,                        -- actual world
-    ?_, ?_⟩ <;> decide
+    ∃ (sim : SimilarityOrdering (Fin 3)) (p q : Set (Fin 3)) (_ : DecidablePred (· ∈ p))
+      (_ : DecidablePred (· ∈ q)) (w : Fin 3),
+      selectionalMight sim p q w ∧ selectionalCounterfactual sim p q w = .indet :=
+  ⟨.ofBool (fun _ a b ↦ a == b) (by decide) (by decide), {1, 2}, {1}, inferInstance,
+    inferInstance, 0, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- Distribution Principle
 -- ════════════════════════════════════════════════════
 
 /-!
-## Distribution Principle
+## Distribution
 [stalnaker-1981]
 
-On Lewis's analysis, conditional antecedents act like necessity operators,
-quantifying universally over closest A-worlds. The distribution principle
-
-    (A □→ (B ∨ C)) ⊃ ((A □→ B) ∨ (A □→ C))
-
-fails for universal semantics (∀ distributes over ∧ but not ∨) but holds
-trivially for selectional semantics (one world, so B∨C at that world
-means B or C at that world).
+The distribution principle `(p □→ q ∪ r) ⊃ ((p □→ q) ∨ (p □→ r))` fails for the universal
+theory, which quantifies over every closest world, but holds for the selectional theory when
+there is at most one closest world.
 -/
 
-/-- **Distribution holds for selectional semantics.**
+/-- Distribution holds for the selectional theory with at most one closest world. -/
+theorem distribution_selectional (h_unique : (sim.closest w p).Subsingleton)
+    (h : selectionalCounterfactual sim p (q ∪ r) w = .true) :
+    selectionalCounterfactual sim p q w = .true ∨ selectionalCounterfactual sim p r w = .true := by
+  simp only [selectionalCounterfactual_eq_true_iff, mem_closestImp] at h ⊢
+  rcases h_unique.eq_empty_or_singleton with h0 | ⟨v, hv⟩
+  · simp [h0]
+  · simpa only [hv, Set.singleton_subset_iff, Set.mem_union] using h
 
-If the selected A-world satisfies B ∨ C, then either it satisfies B
-(so A □→ B) or it satisfies C (so A □→ C). -/
-theorem distribution_selectional {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W) (A B C : W → Prop)
-    [DecidablePred A] [DecidablePred B] [DecidablePred C] (w : W)
-    (_h_unique : (sim.closestWorlds w
-      (Finset.univ.filter A)).card ≤ 1)
-    (h : selectionalCounterfactual sim A (λ w => B w ∨ C w) w = .true) :
-    selectionalCounterfactual sim A B w = .true ∨
-    selectionalCounterfactual sim A C w = .true := by
-  set cl := sim.closestWorlds w _ with hcl
-  unfold selectionalCounterfactual at h
-  simp only [← hcl] at h
-  by_cases hall : ∀ w' ∈ cl, B w' ∨ C w'
-  · by_cases hempty : cl = ∅
-    · -- vacuously true for both B and C
-      left; unfold selectionalCounterfactual; simp [← hcl, hempty]
-    · have hcard : cl.card = 1 := by
-        have := Finset.card_pos.mpr (Finset.nonempty_of_ne_empty hempty)
-        omega
-      obtain ⟨w', hw'⟩ := Finset.card_eq_one.mp hcard
-      have hbc := hall w' (by simp [hw'])
-      rcases hbc with hb | hc
-      · left; unfold selectionalCounterfactual
-        rw [← hcl, hw']
-        simp only [Finset.mem_singleton, forall_eq, hb, ite_eq_left]
-      · right; unfold selectionalCounterfactual
-        rw [← hcl, hw']
-        simp only [Finset.mem_singleton, forall_eq, hc, ite_eq_left]
-  · exfalso; simp only [ite_eq_right hall] at h; split_ifs at h
-
-/-- **Distribution fails for universal semantics.**
-
-Counterexample: two closest A-worlds, one satisfying B (not C),
-the other satisfying C (not B). Then A □→ (B∨C) is true (both
-satisfy B∨C) but neither A □→ B nor A □→ C is true. -/
+/-- Distribution fails for the universal theory: two closest `p`-worlds, one a `q`-world and
+the other an `r`-world. -/
 theorem distribution_fails_universal :
-    ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-      (sim : SimilarityOrdering W)
-      (A B C : W → Prop) (_ : DecidablePred A) (_ : DecidablePred B)
-      (_ : DecidablePred C) (w : W),
-      universalCounterfactual sim A (λ w => B w ∨ C w) w ∧
-      ¬ universalCounterfactual sim A B w ∧
-      ¬ universalCounterfactual sim A C w := by
-  refine ⟨Fin 3, inferInstance, inferInstance,
-    .ofBool (λ _ w₁ w₂ => w₁ == w₂) (by decide) (by decide),
-    λ w => w = 1 ∨ w = 2,    -- A: both w1 and w2
-    λ w => w = 1,            -- B: only w1
-    λ w => w = 2,            -- C: only w2
-    inferInstance, inferInstance, inferInstance,
-    0, ?_, ?_, ?_⟩ <;> decide
+    ∃ (sim : SimilarityOrdering (Fin 3)) (p q r : Set (Fin 3)) (w : Fin 3),
+      w ∈ closestImp sim p (q ∪ r) ∧ w ∉ closestImp sim p q ∧ w ∉ closestImp sim p r :=
+  ⟨.ofBool (fun _ a b ↦ a == b) (by decide) (by decide), {1, 2}, {1}, {2}, 0, by decide,
+    by decide, by decide⟩
+
+end Theories
 
 -- ════════════════════════════════════════════════════
 -- Single-Selection-Function Variant (Stalnaker 1968)
@@ -573,28 +239,15 @@ instance stalnakerCounterfactual_decidable {W : Type*} (s : Conditional.Selectio
     `Trivalent.ofBool`. The supervaluation gap arises only with ties; once
     ties are resolved by the selection function, both analyses coincide. -/
 theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype W]
-    (s : Conditional.SelectionFunction W) (sim : SimilarityOrdering W)
-    (A B : W → Prop) [DecidablePred A] [DecidablePred B] (w : W)
-    (h_singleton : sim.closestWorlds w (Finset.univ.filter A)
-                   = {s.sel w {w' | A w'}}) :
-    selectionalCounterfactual sim A B w =
-    Trivalent.ofBool (decide (stalnakerCounterfactual s A B w)) := by
-  unfold selectionalCounterfactual stalnakerCounterfactual
-    Conditional.selectionConditional
-  rw [h_singleton]
-  by_cases hB : B (s.sel w {w' | A w'})
-  · -- Both sides equal .true
-    have h1 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
-      intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
-    rw [ite_eq_left h1]
-    simp only [hB, decide_true, Trivalent.ofBool]
-  · -- Both sides equal .false
-    have h1 : ¬ (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
-      intro h; exact hB (h _ (Finset.mem_singleton.mpr rfl))
-    have h2 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), ¬ B w') := by
-      intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
-    rw [ite_eq_right h1, ite_eq_left h2]
-    simp only [hB, decide_false, Trivalent.ofBool]
+    (s : Conditional.SelectionFunction W) (sim : SimilarityOrdering W) (p q : Set W)
+    [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] (w : W)
+    (h_singleton : sim.closest w p = {s.sel w p}) :
+    selectionalCounterfactual sim p q w =
+      Trivalent.ofBool (decide (stalnakerCounterfactual s (· ∈ p) (· ∈ q) w)) := by
+  unfold selectionalCounterfactual stalnakerCounterfactual Conditional.selectionConditional
+  by_cases hq : s.sel w p ∈ q
+  · simp [h_singleton, hq, Trivalent.ofBool]
+  · simp [h_singleton, hq, Trivalent.ofBool]
 
 /-! ## Bridge: Stalnaker counterfactual = will-conditional over the universe
 
@@ -666,18 +319,14 @@ theorem stalnakerCounterfactual_eq_wouldConditional_universe
     selection-function over `Set` — collapse to the same content. -/
 theorem selectional_eq_wouldConditional_singleton_universe
     {W : Type*} [DecidableEq W] [Fintype W]
-    (s : Conditional.SelectionFunction W) (sim : SimilarityOrdering W)
-    (A B : W → Prop) [DecidablePred A] [DecidablePred B] (w : W)
-    (h_singleton : sim.closestWorlds w (Finset.univ.filter A)
-                   = {s.sel w {w' | A w'}}) :
-    selectionalCounterfactual sim A B w = .true ↔
-    Conditional.WillConditional.wouldConditional
-      s A B Set.univ w := by
-  rw [stalnaker_eq_selectional_singleton s sim A B w h_singleton]
-  rw [← stalnakerCounterfactual_eq_wouldConditional_universe s A B w]
-  by_cases h : stalnakerCounterfactual s A B w
-  · simp [Trivalent.ofBool, h]
-  · simp [Trivalent.ofBool, h]
+    (s : Conditional.SelectionFunction W) (sim : SimilarityOrdering W) (p q : Set W)
+    [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] (w : W)
+    (h_singleton : sim.closest w p = {s.sel w p}) :
+    selectionalCounterfactual sim p q w = .true ↔
+      Conditional.WillConditional.wouldConditional s (· ∈ p) (· ∈ q) Set.univ w := by
+  rw [stalnaker_eq_selectional_singleton s sim p q w h_singleton,
+    ← stalnakerCounterfactual_eq_wouldConditional_universe]
+  by_cases h : stalnakerCounterfactual s (· ∈ p) (· ∈ q) w <;> simp [Trivalent.ofBool, h]
 
 /-- A Stalnakerian selection function on `Fin 3` that prefers `1`
     whenever Centering does not force the centre. Used to witness the
@@ -715,8 +364,8 @@ private noncomputable def divergeSel : Conditional.SelectionFunction (Fin 3) :=
     A-worlds) is `false`.
 
     Construction: three worlds with everyone equally close (closer ≡
-    true), antecedent `A = {1, 2}`, consequent `B = {1}`. Lewis's
-    closestWorlds for `A` is the whole of `A = {1, 2}`, and the
+    true), antecedent `A = {1, 2}`, consequent `B = {1}`. The closest
+    `A`-worlds are the whole of `A = {1, 2}`, and the
     universal `∀ w ∈ {1, 2}. B w` fails at `w = 2`. Stalnaker's
     selection (`divergeSel`) picks `1`, where `B` holds. The same
     structural source — single-valuedness of selection vs. universal
@@ -727,15 +376,14 @@ theorem stalnaker_lewis_would_diverge :
     ∃ (sim : SimilarityOrdering (Fin 3)) (A B : Fin 3 → Prop)
       (_ : DecidablePred A) (_ : DecidablePred B) (w : Fin 3),
       stalnakerCounterfactual divergeSel A B w ∧
-      ¬ universalCounterfactual sim A B w := by
+      w ∉ closestImp sim {v | A v} {v | B v} := by
   classical
   refine ⟨.ofBool (fun _ _ _ => true) (by decide) (by decide),
           fun w => w = 1 ∨ w = 2,
           fun w => w = 1,
           inferInstance, inferInstance,
           0, ?_, ?_⟩
-  · -- Stalnaker picks `1` from `{w | A w} = {1, 2}` (since 0 ∉ S, 1 ∈ S).
-    have h0 : ¬ ((0 : Fin 3) ∈ {w : Fin 3 | w = 1 ∨ w = 2}) := by
+  · have h0 : ¬ ((0 : Fin 3) ∈ {w : Fin 3 | w = 1 ∨ w = 2}) := by
       decide
     have h1 : (1 : Fin 3) ∈ {w : Fin 3 | w = 1 ∨ w = 2} := by
       decide
@@ -744,7 +392,6 @@ theorem stalnaker_lewis_would_diverge :
       simp [h0, h1]
     show (fun w : Fin 3 => w = 1) (divergeSel.sel 0 _)
     rw [hsel]
-  · -- Universal closestWorlds = {1, 2}; the universal fails at w=2.
-    decide
+  · decide
 
 end Conditional.Counterfactual
