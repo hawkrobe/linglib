@@ -16,7 +16,7 @@ frames: *kai* 'remember' takes the controlled `ni`-clause (ex 43) or a finite
 `akɛ`-clause (ex 89a), *kɛɛ* 'say' takes `akɛ` (exx 47–49) or an
 object-controlled `ni`-clause (ex 117b). Complementizer selection is the paper's
 first non-finiteness diagnostic (§5.5.1, exx 104–108); the selection relation
-itself is `Verb.takes` over `Ga.complementizers`.
+itself is `Verb.Takes` over `Ga.complementizers`.
 
 ## Implementation notes
 

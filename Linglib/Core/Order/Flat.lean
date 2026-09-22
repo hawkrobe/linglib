@@ -31,6 +31,8 @@ The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
   `PartialOrder`, `OrderBot`, `SemilatticeInf`, `OmegaCompletePartialOrder`,
   and `PartialUnify` instances
 * `Flat.coe_le_coe`, `Flat.not_coe_le_bot` — the order, characterized
+* `Flat.coe_inf_coe`, `Flat.disjoint_coe_coe`, `Flat.not_disjoint_iff`,
+  `Flat.compat_coe_coe` — the meet, disjointness and compatibility of committed slots
 * `Flat.or` — left-biased total merge, with `le_or_left`/`or_le`
 * `Flat.ωSup_mem_range` — chains attain their supremum (the domain has height ≤ 2)
 * `Flat.ωScottContinuous_of_monotone` — monotone maps out of `Flat` are continuous
@@ -257,6 +259,35 @@ instance [DecidableEq α] : SemilatticeInf (Flat α) where
     | refl a =>
       obtain rfl : z = ↑a := by cases hxz; rfl
       simp [Flat.inf]
+
+theorem inf_def [DecidableEq α] (x y : Flat α) : x ⊓ y = if x = y then x else ⊥ := rfl
+
+@[simp] theorem coe_inf_coe [DecidableEq α] (a b : α) :
+    (a : Flat α) ⊓ b = if a = b then (a : Flat α) else ⊥ := by
+  simp [inf_def]
+
+/-- Two committed slots are disjoint exactly when they disagree. -/
+@[simp] theorem disjoint_coe_coe : Disjoint (a : Flat α) b ↔ a ≠ b := by
+  constructor
+  · rintro h rfl
+    exact coe_ne_bot (disjoint_self.1 h)
+  · rintro hab x hxa hxb
+    cases x <;> simp_all
+
+/-- Two slots overlap exactly when both commit to one value: the meet is
+their agreement. -/
+theorem not_disjoint_iff : ¬ Disjoint x y ↔ ∃ a : α, x = ↑a ∧ y = ↑a := by
+  cases x <;> cases y <;> simp [eq_comm]
+
+/-- Two committed slots are compatible exactly when they agree. -/
+@[simp] theorem compat_coe_coe : Compat (a : Flat α) b ↔ a = b :=
+  ⟨fun ⟨_, hu⟩ ↦ by
+    obtain ⟨ha, hb⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    exact coe_inj.1 ((coe_le_iff.1 ha).symm.trans (coe_le_iff.1 hb)),
+   fun h ↦ h ▸ compat_self _⟩
+
+instance [DecidableEq α] : Decidable (Disjoint x y) :=
+  decidable_of_iff _ _root_.disjoint_iff.symm
 
 /-! ### The flat domain is ω-complete
 

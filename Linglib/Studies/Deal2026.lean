@@ -143,7 +143,7 @@ def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
 Fragment: 'think' takes the relativizer *ze-* with the applicative *re-* on its tensed
 complement ([caponigro-polinsky-2011]). -/
 def adygheRelative : Cell :=
-  ⟨ClauseSpine.cP.append [.N, .D], decide (Adyghe.gwepshesa.toVerb.takes Adyghe.zeRe)⟩
+  ⟨ClauseSpine.cP.append [.N, .D], decide (Adyghe.gwepshesa.toVerb.Takes Adyghe.zeRe)⟩
 
 /-- [krapova-2010]'s double requirement, reported at footnote 22: *deto* introduces the
 complement of a predicate that is an emotive factive, a factive preferential attitude, and
@@ -241,7 +241,7 @@ theorem table80 :
     (∃ v ∈ verbs, v.toVerb.IsFactive ∧ strategy v = .relative) ∧
       (∃ v ∈ verbs, v.toVerb.IsFactive ∧ strategy v = .simplex) ∧
       (∃ v ∈ verbs, ¬ v.toVerb.IsFactive ∧ strategy v = .simplex) ∧
-      (∃ v ∈ Adyghe.verbs, v.toVerb.takes Adyghe.zeRe ∧ ¬ v.toVerb.IsFactive) := by
+      (∃ v ∈ Adyghe.verbs, v.toVerb.Takes Adyghe.zeRe ∧ ¬ v.toVerb.IsFactive) := by
   decide
 
 /-! ### The D-inflection diagnostic (21) -/

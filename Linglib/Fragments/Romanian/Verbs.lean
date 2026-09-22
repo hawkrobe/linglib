@@ -76,7 +76,7 @@ def a_face : Verb where
 
 /-- *a spera* takes both particles and *a vrea* only *să*. -/
 theorem a_spera_takes_both :
-    a_spera.takes sa ∧ a_spera.takes ca ∧ a_vrea.takes sa ∧ ¬ a_vrea.takes ca := by
+    a_spera.Takes sa ∧ a_spera.Takes ca ∧ a_vrea.Takes sa ∧ ¬ a_vrea.Takes ca := by
   decide
 
 end Romanian.Verbs
