@@ -32,7 +32,11 @@ note a), so only the English, Japanese, and Finnish heads are given as `Cause` v
 
 ## References
 
-[pylkkanen-2008], [kratzer-1996], [marantz-1993], [marantz-1997], [cuervo-2003]
+* [pylkkanen-2008]
+* [kratzer-1996]
+* [marantz-1993]
+* [marantz-1997]
+* [cuervo-2003]
 -/
 
 namespace Pylkkanen2008
@@ -44,24 +48,27 @@ variable {Entity : Type*} {T : Type*} [LinearOrder T]
 /-! ### Applicatives: high relates to the event, low to the theme -/
 
 /-- The introduction mode of each applicative head (Table 1.1, rows 1–3): a high applicative
-relates the applied argument to the event, and both low applicatives relate it to the theme,
-differing only in the direction of the transfer-of-possession relation. -/
-def introMode : ApplType → IntroMode
-  | .high => .toEvent
-  | .lowRecipient | .lowSource => .toTheme
+relates the applied argument to the event, and the low applicatives relate it to the theme,
+differing only in the relation. The affected applicative of [cuervo-2003], which relates the
+applied argument to a result state, is outside the book's inventory and has neither mode. -/
+def introMode : ApplType → Option IntroMode
+  | .high => some .toEvent
+  | .low _ => some .toTheme
+  | .affected => none
 
-theorem introMode_eq_toEvent_iff (a : ApplType) : introMode a = .toEvent ↔ a = .high := by
+theorem introMode_eq_toEvent_iff (a : ApplType) : introMode a = some .toEvent ↔ a = .high := by
   cases a <;> simp [introMode]
 
 /-- Table 2.1, test 1: an applicative attaches to an unergative exactly when it is high. -/
 theorem licenses_unergative_iff (a : ApplType) (body : Event T → Prop) :
-    (introMode a).Licenses (VerbDenot.unergative (Entity := Entity) body) ↔ a = .high := by
-  rw [IntroMode.licenses_unergative_iff, introMode_eq_toEvent_iff]
+    (∃ m ∈ introMode a, m.Licenses (VerbDenot.unergative (Entity := Entity) body)) ↔
+      a = .high := by
+  cases a <;> simp [introMode, IntroMode.licenses_unergative_iff]
 
 /-- Table 2.1, test 2: an applicative attaches to a static verb exactly when it is high. -/
 theorem licenses_kimian_iff (a : ApplType) (rel : Entity → Entity → Prop) :
-    (introMode a).Licenses (VerbDenot.kimianStative (T := T) rel) ↔ a = .high := by
-  rw [IntroMode.licenses_kimian_iff, introMode_eq_toEvent_iff]
+    (∃ m ∈ introMode a, m.Licenses (VerbDenot.kimianStative (T := T) rel)) ↔ a = .high := by
+  cases a <;> simp [introMode, IntroMode.licenses_kimian_iff]
 
 /-- The applicative constructions the book analyzes, with the heads it assigns them
 (Table 1.1, together with the Korean and Albanian applicatives of Chapter 2). -/
@@ -83,8 +90,9 @@ inductive Construction where
 def Construction.head : Construction → ApplType
   | .chagaBenefactive | .lugandaBenefactive | .vendaBenefactive | .albanianBenefactive
   | .japaneseGaplessAdversity => .high
-  | .englishDOC | .japaneseDOC | .koreanDOC => .lowRecipient
-  | .hebrewPossessorDative | .japaneseAdversityCausative | .japaneseGappedAdversity => .lowSource
+  | .englishDOC | .japaneseDOC | .koreanDOC => .low .recipient
+  | .hebrewPossessorDative | .japaneseAdversityCausative | .japaneseGappedAdversity =>
+    .low .source
 
 /-- Table 2.1: each of the six languages with the construction tested, its unergative test, and
 its static-verb test. -/
@@ -104,18 +112,19 @@ theorem table21_tests :
 /-- Table 2.5: the gapless Japanese adversity passive, a high applicative, attaches to
 unergatives, while the gapped one, a low source applicative, requires a theme. -/
 theorem adversity_passives (body : Event T → Prop) :
-    (introMode Construction.japaneseGaplessAdversity.head).Licenses
-        (VerbDenot.unergative (Entity := Entity) body) ∧
-      ¬ (introMode Construction.japaneseGappedAdversity.head).Licenses
-        (VerbDenot.unergative (Entity := Entity) body) := by
-  simp [licenses_unergative_iff, Construction.head]
+    (∃ m ∈ introMode Construction.japaneseGaplessAdversity.head,
+        m.Licenses (VerbDenot.unergative (Entity := Entity) body)) ∧
+      ¬ ∃ m ∈ introMode Construction.japaneseGappedAdversity.head,
+        m.Licenses (VerbDenot.unergative (Entity := Entity) body) :=
+  ⟨(licenses_unergative_iff _ body).2 rfl,
+    fun h ↦ absurd ((licenses_unergative_iff _ body).1 h) (by decide)⟩
 
 /-- The transitivity restriction on Hebrew possessor datives (Table 2.2) follows from their
 low source analysis. -/
 theorem possessor_dative_transitivity (body : Event T → Prop) :
-    ¬ (introMode Construction.hebrewPossessorDative.head).Licenses
-      (VerbDenot.unergative (Entity := Entity) body) := by
-  simp [licenses_unergative_iff, Construction.head]
+    ¬ ∃ m ∈ introMode Construction.hebrewPossessorDative.head,
+      m.Licenses (VerbDenot.unergative (Entity := Entity) body) :=
+  fun h ↦ absurd ((licenses_unergative_iff _ body).1 h) (by decide)
 
 /-! ### Voice bundling: Cause introduces a causing event, not a causer -/
 

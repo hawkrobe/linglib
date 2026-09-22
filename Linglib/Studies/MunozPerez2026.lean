@@ -1,5 +1,6 @@
 import Linglib.Data.Examples.MunozPerez2026
 import Linglib.Syntax.Agreement.PersonCaseConstraint
+import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.LittleV
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Person.Features
@@ -27,8 +28,9 @@ head, they do not differ in meaning.
 
 ## Main declarations
 
-* `Clause`, `marked`, `unmarked`: a clause by its Voice head, its verbal heads and the bundle of
-  its applicative head; the clauses of marked and unmarked anticausatives.
+* `Clause`, `Clause.site`, `marked`, `unmarked`: a clause by its Voice head, its verbal heads
+  and the bundle of its applicative head, with the site of that head; the clauses of marked and
+  unmarked anticausatives.
 * `IsFissionApplicable`, `applExponents`: the fission rule and the exponents it gives the
   applicative head.
 * `Converges`: the two PF conditions on the clitics of a clause.
@@ -52,11 +54,13 @@ head, they do not differ in meaning.
 
 The verbal heads of a marked anticausative are a change and a result state and those of an
 unmarked one a change alone, after the structures the paper adopts from [cuervo-2003]; the
-context of the fission rule, the change head over the state head, is `LittleV.Inchoative`. The
-paper leaves the structure of unmarked anticausatives open; all that matters here is that they
-lack the result state and a Voice head that asks for a marker. The optionality of the marker in
-the syntax, which the paper derives from a principle that lets an unchecked feature fail, is
-built into `markers`.
+applicative head merges as low as the structure allows, taking the result state as its complement
+where there is one, [cuervo-2003]'s affected applicative, and the theme otherwise (`Clause.site`);
+the context of the fission rule, the change head over the applicative over the state head, is
+that the site is affected. The paper leaves the structure of unmarked anticausatives open; all
+that matters here is that they lack the result state and a Voice head that asks for a marker.
+The optionality of the marker in the syntax, which the paper derives from a principle that lets
+an unchecked feature fail, is built into `markers`.
 The clauses given to *quejarse* and to impersonal *dar* say only that they are not inchoative.
 
 ## TODO
@@ -87,6 +91,12 @@ structure Clause where
   /-- The bundle of the high applicative head, if the clause has an affected dative. -/
   appl : Option Category
 
+/-- The site of the applicative head: it takes the result state as its complement where there is
+one, the affected applicative of [cuervo-2003] the paper adopts for marked anticausatives, and
+the theme otherwise, as under an unmarked anticausative, which lacks the state. -/
+def Clause.site (k : Clause) : ApplSite :=
+  ⟨k.heads.takeWhile (· != .vBE), k.heads.dropWhile (· != .vBE)⟩
+
 /-- A marked anticausative is a change and its result state under a Voice head that introduces
 no argument and asks for a specifier. -/
 def marked (a : Option Category) : Clause := ⟨Minimalist.Voice.anticausative, [.vGO, .vBE], a⟩
@@ -94,6 +104,12 @@ def marked (a : Option Category) : Clause := ⟨Minimalist.Voice.anticausative, 
 /-- An unmarked anticausative is a change alone, under a Voice head that asks for nothing. -/
 def unmarked (a : Option Category) : Clause :=
   ⟨{ flavor := .nonThematic, hasD := false }, [.vGO], a⟩
+
+/-- The applicative of a marked anticausative is affected, between the change and the state; that
+of an unmarked one is low, the rule's context failing. -/
+theorem site_marked_unmarked (a : Option Category) :
+    (marked a).site.Affected ∧ (unmarked a).site.Low := by
+  simp [marked, unmarked, Clause.site, ApplSite.Affected, ApplSite.Low]
 
 /-- The Voice head of an anticausative has no meaning, marked or not, so the clitics that spell
 a clause out cannot change what it means. -/
@@ -122,14 +138,14 @@ def datives : Category → Finset String :=
   PersonalPronoun.paradigm (Spanish.Clitics.dative.erase Spanish.Clitics.se_dat)
 
 /-- The exponents of the applicative head. It is pronounced as a dative clitic of its category,
-and when the clause is inchoative and the head is [+PART, +SING] it may instead split into that
-clitic and the inflectionless dative *le*. -/
+and when the head sits between the change and the result state and is [+PART, +SING] it may
+instead split into that clitic and the inflectionless dative *le*. -/
 def applExponents (k : Clause) : Finset (List String) :=
   match k.appl with
   | none => {[]}
   | some c =>
     (datives c).image ([·]) ∪
-      if LittleV.Inchoative k.heads ∧ IsFissionApplicable c then
+      if k.site.Affected ∧ IsFissionApplicable c then
         (datives c).image ([·, Spanish.Clitics.le.form])
       else ∅
 
