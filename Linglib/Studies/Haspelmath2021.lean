@@ -86,9 +86,7 @@ universals exclude.
 
 namespace Haspelmath2021
 
-open Discourse
-open Reference (Definiteness)
-open Reference.Prominence (AnimacyLevel)
+open Discourse Reference Reference.Prominence
 
 /-! ### Referential prominence scales (8)
 
