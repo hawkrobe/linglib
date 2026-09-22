@@ -23,6 +23,8 @@ notation); consequence follows linglib's list-based `MixedConsequence` rather th
 ## Main results
 
 - `Formula.realize_neg` — the K3/LP duality: negation swaps the standards.
+- `Formula.realize_ofBool` — on a Boolean model both standards are classical truth
+  (`Formula.evalBool`).
 - `k3_no_tautologies`, `lp_all_satisfiable` — the all-`indet` model gives K3 no
   tautologies and LP no unsatisfiable formulas ([cobreros-etal-2012], Theorem 2).
 - `lp_no_explosion` — LP is paraconsistent: `{φ ∧ ¬φ} ⊭ ψ`.
@@ -64,6 +66,28 @@ def eval (M : Model Atom) : Formula Atom → Trivalent
 @[simp] theorem eval_conj (M : Model Atom) (φ ψ : Formula Atom) :
     eval M (.conj φ ψ) = eval M φ ⊓ eval M ψ := rfl
 
+/-- Classical evaluation on a Boolean valuation. -/
+def evalBool (v : Atom → Bool) : Formula Atom → Bool
+  | .atom a => v a
+  | .neg φ => !evalBool v φ
+  | .conj φ ψ => evalBool v φ && evalBool v ψ
+
+@[simp] theorem evalBool_atom (v : Atom → Bool) (a : Atom) : evalBool v (.atom a) = v a := rfl
+
+@[simp] theorem evalBool_neg (v : Atom → Bool) (φ : Formula Atom) :
+    evalBool v (.neg φ) = !evalBool v φ := rfl
+
+@[simp] theorem evalBool_conj (v : Atom → Bool) (φ ψ : Formula Atom) :
+    evalBool v (.conj φ ψ) = (evalBool v φ && evalBool v ψ) := rfl
+
+/-- On a Boolean model the strong Kleene tables are the classical ones. -/
+theorem eval_ofBool (v : Atom → Bool) (φ : Formula Atom) :
+    eval (Trivalent.ofBool ∘ v) φ = Trivalent.ofBool (evalBool v φ) := by
+  induction φ with
+  | atom a => rfl
+  | neg φ ih => simp [ih, Trivalent.neg_ofBool]
+  | conj φ ψ ihφ ihψ => simp [ihφ, ihψ]
+
 /-- Realization at a designation standard: the evaluation clears the threshold.
 `Realize M .k3` is strong Kleene satisfaction, `Realize M .lp` Priest's LP. -/
 def Realize (M : Model Atom) (d : Trivalent.Designation) (φ : Formula Atom) : Prop :=
@@ -79,6 +103,11 @@ def Realize (M : Model Atom) (d : Trivalent.Designation) (φ : Formula Atom) : P
     (M ⊨[d] Formula.neg φ) ↔ ¬(M ⊨[d.dual] φ) := by
   have h := Trivalent.designated_neg_iff d.dual (eval M φ)
   rwa [Trivalent.Designation.dual_dual] at h
+
+/-- On a Boolean model every standard is classical truth. -/
+theorem realize_ofBool (v : Atom → Bool) (d : Trivalent.Designation) (φ : Formula Atom) :
+    (Trivalent.ofBool ∘ v ⊨[d] φ) ↔ evalBool v φ = Bool.true := by
+  rw [Realize, eval_ofBool, Trivalent.designated_ofBool]
 
 /-- Realization distributes over conjunction at either standard. -/
 @[simp] theorem realize_conj (M : Model Atom) (d : Trivalent.Designation)
