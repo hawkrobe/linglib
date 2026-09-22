@@ -24,7 +24,8 @@ below every frame instantiating it.
 * `ArgumentFrame.Position.Kind`, `Position.kind`, `IsNominal`, `IsAdpositional`,
   `IsClausal`, `IsExpressed` — the category of a position
 * `ArgumentFrame.Position.Axis`, `Axes`, `Position.axes` — the axes a position
-  records, as a bundle of partial values in the flat order
+  records, as a bundle of partial values in the flat order; `Position.reality?`
+  is the [noonan-2007] realis/irrealis status a clausal position selects
 * `ArgumentFrame` — external argument and complements, with the refinement order
 * `ArgumentFrame.Slot`, `ArgumentFrame.get?`, `ArgumentFrame.slots`, `ArgumentFrame.coreSlots`,
   `ArgumentFrame.valency`, `ArgumentFrame.IsTransitive`, `ArgumentFrame.codingRole` — the
@@ -83,8 +84,8 @@ namespace ArgumentFrame
 
 /-- One argument position of a frame: nominal; adpositional, recording the
     relation and the adposition selected; clausal, recording the
-    [noonan-2007] coding, illocutionary force and subject requirement
-    selected; implicit, an unexpressed argument with its interpretation;
+    [noonan-2007] coding, illocutionary force, reality status and subject
+    requirement selected; implicit, an unexpressed argument with its interpretation;
     or expletive. Every axis is optional, `none` = unselective. -/
 inductive Position where
   | nominal
@@ -93,6 +94,7 @@ inductive Position where
   | clausal (coding : Option Complement.Coding := none)
       (force : Option Mood.Illocutionary := none)
       (embeddedSubject : Option Clause.EmbeddedSubject := none)
+      (reality : Option RealityStatus := none)
   | implicit (interp : Option ImplicitInterp := none)
   | expletive
   deriving DecidableEq, Repr
@@ -104,17 +106,24 @@ def adposition (p : Adposition) : Position := .adpositional (some p.relation) (s
 
 /-- The position's recorded [noonan-2007] coding, if clausal. -/
 def coding? : Position → Option Complement.Coding
-  | clausal c _ _ => c
+  | clausal c _ _ _ => c
   | _ => none
 
 /-- The position's recorded force, if clausal. -/
 def force? : Position → Option Mood.Illocutionary
-  | clausal _ f _ => f
+  | clausal _ f _ _ => f
   | _ => none
 
 /-- The position's recorded subject requirement, if clausal. -/
 def embeddedSubject? : Position → Option Clause.EmbeddedSubject
-  | clausal _ _ e => e
+  | clausal _ _ e _ => e
+  | _ => none
+
+/-- The position's recorded [noonan-2007] reality status, if clausal: the
+    realis/irrealis split an irrealis typer such as Gã *ni* selects on across
+    the infinitive and subjunctive codings. -/
+def reality? : Position → Option RealityStatus
+  | clausal _ _ _ r => r
   | _ => none
 
 /-- The position's recorded relation, if adpositional. -/
@@ -171,10 +180,11 @@ instance : DecidablePred IsFinite := fun p ↦ inferInstanceAs (Decidable (∃ c
 /-! ### Axes and the refinement order -/
 
 /-- The selectional axes a position records. A clausal position and a
-    clause-typer share `coding` and `force` (`Complementizer.axes`). -/
+    clause-typer share `coding`, `force` and `reality` (`Complementizer.axes`). -/
 inductive Axis where
   | coding
   | force
+  | reality
   | embeddedSubject
   | relation
   | adposition
@@ -185,6 +195,7 @@ inductive Axis where
 def Axis.Val : Axis → Type
   | coding => Complement.Coding
   | force => Mood.Illocutionary
+  | reality => RealityStatus
   | embeddedSubject => Clause.EmbeddedSubject
   | relation => Adposition.RelationType
   | adposition => Adposition
@@ -193,6 +204,7 @@ def Axis.Val : Axis → Type
 instance : ∀ a : Axis, DecidableEq a.Val
   | .coding => inferInstanceAs (DecidableEq Complement.Coding)
   | .force => inferInstanceAs (DecidableEq Mood.Illocutionary)
+  | .reality => inferInstanceAs (DecidableEq RealityStatus)
   | .embeddedSubject => inferInstanceAs (DecidableEq Clause.EmbeddedSubject)
   | .relation => inferInstanceAs (DecidableEq Adposition.RelationType)
   | .adposition => inferInstanceAs (DecidableEq Adposition)
@@ -206,6 +218,7 @@ abbrev Axes := ∀ a : Axis, Flat a.Val
 def axes (p : Position) : Axes
   | .coding => p.coding?
   | .force => p.force?
+  | .reality => p.reality?
   | .embeddedSubject => p.embeddedSubject?
   | .relation => p.relation?
   | .adposition => p.adposition?
@@ -217,12 +230,14 @@ theorem eq_of_kind_eq_of_axes_eq {p q : Position} (hk : p.kind = q.kind)
   have h := fun a ↦ congrFun ha a
   have hc := h .coding
   have hf := h .force
+  have hr := h .reality
   have he := h .embeddedSubject
   have hr := h .relation
   have hp := h .adposition
   have hi := h .interp
   cases p <;> cases q <;>
-    simp_all [kind, axes, coding?, force?, embeddedSubject?, relation?, adposition?, interp?]
+    simp_all [kind, axes, coding?, force?, reality?, embeddedSubject?, relation?, adposition?,
+      interp?]
 
 /-- Refinement: `p ≤ q` when the two positions are of one kind and every
     axis `p` records, `q` records with the same value. -/

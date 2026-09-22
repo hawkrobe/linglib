@@ -112,11 +112,12 @@ def nye : Verb where
   implicative := some .positive
 
 /-- *kplɛnɔ* 'agree' — subject control; the `ni`-frame requires the irrealis
-    marker (exx 52, 89c, 109, 122a). Alternates into `akɛ` with a subjunctive
-    complement, 'agree that' (ex 105: *Osa kplɛnɔ ni/akɛ Taki á-tsɛ́ Momo*). -/
+    marker (exx 52, 89c, 109, 122a). Alternates into the subjunctive frame with
+    a lexical subject, 'agree that', under `ni` or `akɛ` (ex 105: *Osa kplɛnɔ
+    ni/akɛ Taki á-tsɛ́ Momo*). -/
 def kpleno : Verb where
   form := "kplɛnɔ"
-  frames := [niFrame, akeFrame]
+  frames := [niFrame, subjunctiveFrame]
   readings := [niReading .subjectControl]
 
 /-- *kpaŋ* 'plan, decide' — subject control; only `ni` introduces the complement

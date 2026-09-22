@@ -32,8 +32,8 @@ def positionCat : ArgumentFrame.Position → Option Cat
   | .nominal => some .D
   | .clausal (some c) _ _ =>
     some (if c.IsFinite then .C else if c = .infinitive then .T else .V)
-  | .clausal none (some .interrogative) _ => some .C
-  | .clausal none _ _ => some .D
+  | .clausal none (some .interrogative) _ _ => some .C
+  | .clausal none _ _ _ => some .D
   | _ => none
 
 /-- Map a verb's citation frame to its selectional stack: each c-selected argument is one

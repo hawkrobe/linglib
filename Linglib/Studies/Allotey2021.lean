@@ -29,7 +29,9 @@ profile of a clause type is [landau-2013]'s signature as the rows attest it
 `ni`-clause, so it is obligatory control, while the finite `akɛ`-clause attests
 free reference. Complementizer selection is `Verb.Takes` over the Fragment's
 frames; every finiteness diagnostic is a row theorem conditioned on the
-complementizer's finiteness alone, the paper's convergence argument; Table 4 is
+complementizer's finiteness alone, the paper's convergence argument; the
+subjunctive of ex 105, which `ni` and `akɛ` both head, is the frame that fixes
+`ni` as a reality-status typer rather than a coding typer; Table 4 is
 the exponents the rows show in each irrealis context, and the tone-hosting
 requirement then derives the overt pronoun from the minimal-pronoun inventory.
 
@@ -129,6 +131,17 @@ def allowsProDrop : Bool := decide (pronominalSubjects ≠ .obligatoryPronounsIn
 theorem frame_takes_iff (c d : EmbeddedClauseType) :
     c.frame.Takes d.complementizer ↔ c = d := by
   cases c <;> cases d <;> decide
+
+/-- The subjunctive of ex 105 takes `ni` and `akɛ` and not `kɛji`: `ni` by its
+    irrealis reality status, `akɛ` by its declarative force. -/
+theorem subjunctiveFrame_takes_iff :
+    ∀ z ∈ complementizers, subjunctiveFrame.Takes z ↔ z ≠ keji := by
+  decide
+
+/-- The controlled clause takes `ni` alone: no finite typer records the
+    irrealis reality status. -/
+theorem niFrame_takes_iff : ∀ z ∈ complementizers, niFrame.Takes z ↔ z = ni := by
+  decide
 
 /-- A verb takes `ni` exactly when some frame of it is controlled. -/
 theorem takes_ni_iff_control :

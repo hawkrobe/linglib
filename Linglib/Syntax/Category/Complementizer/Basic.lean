@@ -69,6 +69,10 @@ structure Complementizer where
   coding : Option Complement.Coding := none
   /-- Illocutionary force of the clause this morpheme types. -/
   force : Option Mood.Illocutionary := none
+  /-- [noonan-2007] reality status of the clause this morpheme types: the axis an
+  irrealis typer selects on when it spans the infinitive and subjunctive codings,
+  as Gã *ni* does. -/
+  reality : Option RealityStatus := none
   /-- Verb form derived on the host (UD). -/
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/
