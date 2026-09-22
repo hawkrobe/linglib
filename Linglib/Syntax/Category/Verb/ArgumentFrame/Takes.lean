@@ -12,11 +12,13 @@ clause-typer each record a bundle of partial axis values
 typer when the two bundles are consistent (`Compat`) and overlap
 (`¬ Disjoint`): some axis both commit to, with one value. One relation,
 lifted twice: a frame or verb takes a typer when some complement or frame
-does. All decidable. A typer records only the [noonan-2007] coding and
-the illocutionary force, so the relation lives on those two axes
-(`takes_iff_coding_force`): matching needs positive evidence on one of
-them, a non-clausal position takes nothing, and the subject-requirement
-axis is position-side and never matched.
+does. All decidable. A typer records only the [noonan-2007] coding, the
+illocutionary force and the reality status, so the relation lives on those
+three axes (`takes_iff_typer_axes`): matching needs positive evidence on one
+of them, a non-clausal position takes nothing, and the subject-requirement
+axis is position-side and never matched. The reality axis is what lets one
+typer span two codings: Gã *ni* records only `irrealis` and is taken by the
+controlled infinitival and the subjunctive frame alike.
 
 ## Main definitions
 
@@ -30,10 +32,10 @@ axis is position-side and never matched.
 ## Main results
 
 - `ArgumentFrame.Position.takes_iff` — the relation axis by axis
-- `ArgumentFrame.Position.takes_iff_coding_force` — the relation on the two
+- `ArgumentFrame.Position.takes_iff_typer_axes` — the relation on the three
   axes a typer records
 - `Complementizer.compat_axes_iff`, `Complementizer.disjoint_axes_iff` — a bundle
-  meets a typer's on the coding and force axes alone
+  meets a typer's on the coding, force and reality axes alone
 - `ArgumentFrame.Position.typedBy_takes_iff`, `ArgumentFrame.typedBy_takes_iff` —
   the position or frame one typer types takes another exactly when the two
   bundles are consistent and overlap; `typedBy_takes_self_iff` for the typer
@@ -61,30 +63,37 @@ Consistency checks against Fragment data live in Studies
 - [noonan-2007]
 -/
 
-/-- The axes a clause-typer records: its coding and force; the other
-    axes are a complement position's alone. -/
+/-- The axes a clause-typer records: its coding, force and reality status;
+    the other axes are a complement position's alone. -/
 def Complementizer.axes (z : Complementizer) : ArgumentFrame.Position.Axes
   | .coding => z.coding
   | .force => z.force
+  | .reality => z.reality
   | .embeddedSubject | .relation | .adposition | .interp => ⊥
 
 namespace Complementizer
 
 variable {z : Complementizer} {f : ArgumentFrame.Position.Axes}
 
-/-- A bundle is consistent with a typer's exactly on the coding and force axes. -/
+/-- A bundle is consistent with a typer's exactly on the coding, force and
+    reality axes. -/
 theorem compat_axes_iff (f : ArgumentFrame.Position.Axes) :
-    Compat f z.axes ↔ Compat (f .coding) z.coding ∧ Compat (f .force) z.force := by
+    Compat f z.axes ↔
+      Compat (f .coding) z.coding ∧ Compat (f .force) z.force ∧
+        Compat (f .reality) z.reality := by
   rw [compat_pi_iff]
-  exact ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨hc, hf⟩ a ↦ by
-    cases a <;> first | exact hc | exact hf | exact compat_bot _⟩
+  exact ⟨fun h ↦ ⟨h _, h _, h _⟩, fun ⟨hc, hf, hr⟩ a ↦ by
+    cases a <;> first | exact hc | exact hf | exact hr | exact compat_bot _⟩
 
-/-- A bundle is disjoint from a typer's exactly on the coding and force axes. -/
+/-- A bundle is disjoint from a typer's exactly on the coding, force and
+    reality axes. -/
 theorem disjoint_axes_iff (f : ArgumentFrame.Position.Axes) :
-    Disjoint f z.axes ↔ Disjoint (f .coding) z.coding ∧ Disjoint (f .force) z.force := by
+    Disjoint f z.axes ↔
+      Disjoint (f .coding) z.coding ∧ Disjoint (f .force) z.force ∧
+        Disjoint (f .reality) z.reality := by
   rw [Pi.disjoint_iff]
-  exact ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨hc, hf⟩ a ↦ by
-    cases a <;> first | exact hc | exact hf | exact disjoint_bot_right⟩
+  exact ⟨fun h ↦ ⟨h _, h _, h _⟩, fun ⟨hc, hf, hr⟩ a ↦ by
+    cases a <;> first | exact hc | exact hf | exact hr | exact disjoint_bot_right⟩
 
 end Complementizer
 
@@ -92,16 +101,18 @@ namespace ArgumentFrame.Position
 
 variable {p q : Position} {z z' : Complementizer} {s : Option Clause.EmbeddedSubject}
 
-/-- The clausal position `z` types: `z`'s coding and force, with the subject
-    requirement `s` the selecting predicate adds. -/
+/-- The clausal position `z` types: `z`'s coding, force and reality status,
+    with the subject requirement `s` the selecting predicate adds. -/
 def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : Position :=
-  .clausal z.coding z.force s
+  .clausal z.coding z.force s z.reality
 
 @[simp] theorem kind_typedBy : (typedBy z s).kind = .clausal := rfl
 
 @[simp] theorem coding?_typedBy : (typedBy z s).coding? = z.coding := rfl
 
 @[simp] theorem force?_typedBy : (typedBy z s).force? = z.force := rfl
+
+@[simp] theorem reality?_typedBy : (typedBy z s).reality? = z.reality := rfl
 
 @[simp] theorem embeddedSubject?_typedBy : (typedBy z s).embeddedSubject? = s := rfl
 
@@ -126,14 +137,16 @@ theorem takes_iff :
 
 instance : Decidable (p.Takes z) := decidable_of_iff _ takes_iff.symm
 
-/-- The relation on the two axes a typer records: coding and force
+/-- The relation on the three axes a typer records: coding, force and reality
     consistent, one of them overlapping. -/
-theorem takes_iff_coding_force :
+theorem takes_iff_typer_axes :
     p.Takes z ↔
-      (Compat (p.axes .coding) z.coding ∧ Compat (p.axes .force) z.force) ∧
-        (¬ Disjoint (p.axes .coding) z.coding ∨ ¬ Disjoint (p.axes .force) z.force) :=
+      (Compat (p.axes .coding) z.coding ∧ Compat (p.axes .force) z.force ∧
+          Compat (p.axes .reality) z.reality) ∧
+        (¬ Disjoint (p.axes .coding) z.coding ∨ ¬ Disjoint (p.axes .force) z.force ∨
+          ¬ Disjoint (p.axes .reality) z.reality) :=
   and_congr (Complementizer.compat_axes_iff _)
-    ((Complementizer.disjoint_axes_iff _).not.trans not_and_or)
+    ((Complementizer.disjoint_axes_iff _).not.trans (not_and_or.trans (or_congr_right not_and_or)))
 
 /-- The position `z` types takes `z'` exactly when the two typers' bundles are
     consistent and overlap; the subject requirement plays no part. -/
@@ -148,19 +161,19 @@ theorem typedBy_takes_iff :
 theorem typedBy_takes_self_iff : (typedBy z s).Takes z ↔ z.axes ≠ ⊥ :=
   typedBy_takes_iff.trans ((and_iff_right (compat_self _)).trans disjoint_self.not)
 
-/-- A position recording neither shared axis takes nothing. -/
-theorem not_takes_of_blank_left (hc : p.coding? = none) (hf : p.force? = none) :
-    ¬ p.Takes z := by
-  simp [takes_iff_coding_force, axes, hc, hf, Flat.none_eq_bot]
+/-- A position recording no shared axis takes nothing. -/
+theorem not_takes_of_blank_left (hc : p.coding? = none) (hf : p.force? = none)
+    (hr : p.reality? = none) : ¬ p.Takes z := by
+  simp [takes_iff_typer_axes, axes, hc, hf, hr, Flat.none_eq_bot]
 
-/-- A typer recording neither axis takes nothing. -/
-theorem not_takes_of_blank_right (hc : z.coding = none) (hf : z.force = none) :
-    ¬ p.Takes z := by
-  simp [takes_iff_coding_force, hc, hf, Flat.none_eq_bot]
+/-- A typer recording no axis takes nothing. -/
+theorem not_takes_of_blank_right (hc : z.coding = none) (hf : z.force = none)
+    (hr : z.reality = none) : ¬ p.Takes z := by
+  simp [takes_iff_typer_axes, hc, hf, hr, Flat.none_eq_bot]
 
 /-- A non-clausal position takes nothing: it records no axis a typer does. -/
 theorem not_takes_of_not_isClausal (h : ¬ p.IsClausal) : ¬ p.Takes z := by
-  cases p <;> first | exact absurd rfl h | exact not_takes_of_blank_left rfl rfl
+  cases p <;> first | exact absurd rfl h | exact not_takes_of_blank_left rfl rfl rfl
 
 /-- A position taking a typer is clausal. -/
 theorem Takes.isClausal (h : p.Takes z) : p.IsClausal :=
@@ -207,7 +220,7 @@ theorem Takes.hasClausal (h : fr.Takes z) : fr.HasClausal :=
 theorem not_takes_smallClause (z : Complementizer) : ¬ smallClause.Takes z := by
   rintro ⟨p, hp, ht⟩
   rw [List.mem_singleton.1 hp] at ht
-  exact Position.not_takes_of_blank_left rfl rfl ht
+  exact Position.not_takes_of_blank_left rfl rfl rfl ht
 
 /-- An indicative typer with declarative or unrecorded force takes the
     finite-clause frame. -/
@@ -215,8 +228,8 @@ theorem finiteClause_takes (hc : z.coding = some .indicative)
     (hf : z.force = none ∨ z.force = some .declarative) : finiteClause.Takes z := by
   refine ⟨_, List.mem_singleton_self _, ?_⟩
   rcases hf with hf | hf <;>
-    simp [Position.takes_iff_coding_force, Position.axes, Position.coding?, Position.force?, hc,
-      hf, Flat.none_eq_bot, Flat.some_eq_coe, compat_bot]
+    simp [Position.takes_iff_typer_axes, Position.axes, Position.coding?, Position.force?,
+      Position.reality?, hc, hf, Flat.none_eq_bot, Flat.some_eq_coe, compat_bot, bot_compat]
 
 /-! ### The frame a typer types -/
 
