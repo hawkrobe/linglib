@@ -3,6 +3,7 @@ import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Geometry
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Studies.CoonKeine2021
+import Linglib.Syntax.Clause.Scenario
 import Linglib.Data.Examples.Deal2024
 
 /-!
@@ -24,7 +25,10 @@ against the descriptive statements (2), you-first and A-descending. A probe that
 indirect object first yields the reverse PCC of section 6.2. The clitic combinations of French,
 Bulgarian, Italian, Spanish, Shapsug Adyghe and Slovenian are rows, and on the six cells the
 four varieties coincide with the P-Constraint grammars of [pancheva-zubizarreta-2018] and the
-gluttony probes of [coon-keine-2021], the competitors of section 7.
+gluttony probes of [coon-keine-2021], the competitors of section 7. The two descending
+statements are the same condition on the IO–DO scenario under two person rankings, that it be
+downstream (`strictlyDescending_iff_downstream`, `aDescending_iff_downstream`), the reading
+under which [haspelmath-2021]'s scenario universal covers the person-case constraint.
 
 ## Implementation notes
 
@@ -37,6 +41,7 @@ its six cells; the mechanism's verdicts on reflexive combinations are not stated
 ## References
 
 * [deal-2024]
+* [haspelmath-2021]
 * [pancheva-zubizarreta-2018]
 * [coon-keine-2021]
 -/
@@ -220,6 +225,19 @@ instance : (t : PCCType) → (io do_ : Person) → Decidable (t.Licit io do_)
   | .youFirst, _, _ => inferInstanceAs (Decidable (_ = _))
   | .aDescending, _, _ => inferInstanceAs (Decidable (_ < _))
   | .none, _, _ => inferInstanceAs (Decidable True)
+
+/-- The strictly descending PCC holds of an IO–DO combination exactly when the scenario is
+downstream on 1 > 2 > 3. -/
+theorem strictlyDescending_iff_downstream (io do_ : Person) :
+    PCCType.Licit .strictlyDescending io do_ ↔
+      (Clause.Scenario.mk io do_).kindBy Person.prominence = .downstream :=
+  (Clause.Scenario.kindBy_eq_downstream_iff (s := ⟨io, do_⟩) _).symm
+
+/-- The A-descending PCC holds exactly when the scenario is downstream on 2 > 1 > 3. -/
+theorem aDescending_iff_downstream (io do_ : Person) :
+    PCCType.Licit .aDescending io do_ ↔
+      (Clause.Scenario.mk io do_).kindBy addresseeRank = .downstream :=
+  (Clause.Scenario.kindBy_eq_downstream_iff (s := ⟨io, do_⟩) _).symm
 
 def PCCType.all : List PCCType :=
   [.strong, .weak, .meFirst, .strictlyDescending, .youFirst, .aDescending, .none]

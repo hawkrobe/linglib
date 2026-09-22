@@ -1,12 +1,12 @@
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Order.Atoms
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.Examples.Haspelmath2021
 import Linglib.Discourse.Givenness
 import Linglib.Semantics.Reference.Definiteness
 import Linglib.Semantics.Reference.Prominence
+import Linglib.Studies.BejarRezac2009
 import Linglib.Syntax.Clause.ArgumentRole
+import Linglib.Syntax.Clause.Scenario
 import Linglib.Syntax.Person.Basic
 
 /-!
@@ -15,8 +15,9 @@ import Linglib.Syntax.Person.Basic
 This file formalizes the role-reference association universal of [haspelmath-2021]
 (Universal 1, (5)): deviations from the usual associations of role rank and referential
 prominence are coded by longer grammatical forms. `RoleReferenceUniversal` states it for
-any usualness relation on situations; `MoreUsualFor` (the single-argument tendencies (9))
-and `Scenario.MoreUsual` (the scenario tendencies (10), (11)) instantiate it as the
+any usualness relation on situations; `ArgumentRole.MoreUsualFor` (the single-argument
+tendencies (9)) and `Scenario.MoreUsual` (the scenario tendencies (10), (11), over
+`Clause.Scenario`) instantiate it as the
 single-argument flagging universal `SingleArgumentUniversal` (Universal 3, whose role
 instances are Universals 4, 6, 7 and 8) and the scenario universal `ScenarioUniversal`
 (Universal 5, which yields the person-role universal 9b, the relative scenario universal
@@ -51,8 +52,6 @@ universals exclude.
   and Makassarese (56) itself; the index-based person-role constraint 9a (41) is omitted.
 * `BinaryGivenness` is read as the discourse-given ~ discourse-new scale of (8b), which the
   paper also calls topicality; Persian's topical indefinite P (19c) counts as given.
-* The kind of a scenario is the three-way comparison of its arguments' prominence,
-  `compare` read into the paper's labels by `Scenario.Kind.ofOrdering`.
 * Coding length is an `ℕ` count of special coding elements in the cited systems; the
   universals are stated over any preorder, and Universal 12 is Universal 5 read with the
   usage rate of the longer alternant as the coding.
@@ -82,6 +81,7 @@ universals exclude.
 
 * [haspelmath-2021]
 * [haspelmath-2021b]
+* [bejar-rezac-2009]
 -/
 
 namespace Haspelmath2021
@@ -236,104 +236,11 @@ instance : LinearOrder NominalType := LinearOrder.lift' NominalType.rank (by dec
 
 /-! ### Scenarios (10), (11) -/
 
-/-- A scenario (fn. 10): the prominence values of the two arguments of a monotransitive
-or ditransitive construction. The paper writes `X > Y` for `⟨X, Y⟩`. -/
-structure Scenario (α : Type*) where
-  /-- The prominence of the higher-ranked argument, A or R. -/
-  high : α
-  /-- The prominence of the lower-ranked argument, P or T. -/
-  low : α
-  deriving DecidableEq, Fintype
-
-namespace Scenario
-
-/-- The kinds of scenario of (11), in order of usualness. -/
-inductive Kind where
-  | upstream
-  | balanced
-  | downstream
-  deriving DecidableEq, Fintype, Repr
-
-namespace Kind
-
-/-- Usualness of a kind: downstream scenarios are the most usual, upstream the least. -/
-def usualness : Kind → ℕ
-  | .upstream => 0
-  | .balanced => 1
-  | .downstream => 2
-
-instance : LinearOrder Kind := LinearOrder.lift' usualness (by decide)
-
-instance : Nontrivial Kind := ⟨⟨.upstream, .downstream, by decide⟩⟩
-
-/-- `⊥ = upstream`, `⊤ = downstream`. -/
-instance : BoundedOrder Kind where
-  top := .downstream
-  le_top := by decide
-  bot := .upstream
-  bot_le := by decide
-
-theorem le_balanced_iff {k : Kind} : k ≤ .balanced ↔ k ≠ .downstream := by decide +revert
-
-theorem balanced_le_iff {k : Kind} : .balanced ≤ k ↔ k ≠ .upstream := by decide +revert
-
-/-- The kind of a scenario from the comparison of its higher-ranked argument's prominence
-with its lower-ranked one's. -/
-def ofOrdering : Ordering → Kind
-  | .lt => .upstream
-  | .eq => .balanced
-  | .gt => .downstream
-
-@[simp] theorem ofOrdering_eq_upstream {o : Ordering} : ofOrdering o = .upstream ↔ o = .lt := by
-  cases o <;> decide
-
-@[simp] theorem ofOrdering_eq_balanced {o : Ordering} : ofOrdering o = .balanced ↔ o = .eq := by
-  cases o <;> decide
-
-@[simp] theorem ofOrdering_eq_downstream {o : Ordering} :
-    ofOrdering o = .downstream ↔ o = .gt := by
-  cases o <;> decide
-
-end Kind
-
-variable {α : Type*} [LinearOrder α]
-
-/-- (11): a scenario is downstream when the higher-ranked argument is the more
-prominent, upstream when it is the less prominent, and balanced otherwise. -/
-def kind (s : Scenario α) : Kind := .ofOrdering (compare s.high s.low)
-
-theorem kind_eq_downstream_iff {s : Scenario α} : s.kind = .downstream ↔ s.low < s.high := by
-  rw [kind, Kind.ofOrdering_eq_downstream, compare_gt_iff_gt]
-
-theorem kind_eq_upstream_iff {s : Scenario α} : s.kind = .upstream ↔ s.high < s.low := by
-  rw [kind, Kind.ofOrdering_eq_upstream, compare_lt_iff_lt]
-
-theorem kind_eq_balanced_iff {s : Scenario α} : s.kind = .balanced ↔ s.high = s.low := by
-  rw [kind, Kind.ofOrdering_eq_balanced, compare_eq_iff_eq]
-
-/-- On a binary scale the downstream scenario is `⟨⊤, ⊥⟩` alone. -/
-theorem kind_eq_downstream_iff_eq [BoundedOrder α] [IsSimpleOrder α] {s : Scenario α} :
-    s.kind = .downstream ↔ s = ⟨⊤, ⊥⟩ := by
-  obtain ⟨h, l⟩ := s
-  rw [kind_eq_downstream_iff]
-  rcases eq_bot_or_eq_top h with rfl | rfl <;> rcases eq_bot_or_eq_top l with rfl | rfl <;> simp
-
-/-- A scenario whose higher-ranked argument is `⊥` or whose lower-ranked one is `⊤` is at most
-balanced, and one whose higher-ranked argument is `⊤` or whose lower-ranked one is `⊥` at least
-balanced, so the first is never the more usual. -/
-theorem not_kind_lt_kind [BoundedOrder α] {s t : Scenario α} (hs : s.high = ⊥ ∨ s.low = ⊤)
-    (ht : t.high = ⊤ ∨ t.low = ⊥) : ¬ t.kind < s.kind := by
-  refine not_lt.2 <|
-    (Kind.le_balanced_iff.2 fun h ↦ ?_).trans (Kind.balanced_le_iff.2 fun h ↦ ?_)
-  · rw [kind_eq_downstream_iff] at h
-    exact hs.elim (fun e ↦ not_lt_bot (e ▸ h)) fun e ↦ not_top_lt (e ▸ h)
-  · rw [kind_eq_upstream_iff] at h
-    exact ht.elim (fun e ↦ not_top_lt (e ▸ h)) fun e ↦ not_lt_bot (e ▸ h)
+open Clause (Scenario)
 
 /-- (11): `s` is a more usual scenario than `t`. -/
-def MoreUsual (s t : Scenario α) : Prop := t.kind < s.kind
-
-end Scenario
+def Scenario.MoreUsual {α : Type*} [LinearOrder α] (s t : Scenario α) : Prop :=
+  t.kind < s.kind
 
 /-! ### Universal 1 and its instances -/
 
@@ -370,22 +277,14 @@ theorem roleReferenceUniversal_of_formFrequency {r : S → S → Prop} {freq : S
 
 variable {α : Type*} [LinearOrder α]
 
-/-- (9): prominence `x` is a more usual association for role `r` than `y`: A and R tend to
-be prominent, P and T non-prominent. S has no usual association, so nothing is more usual
-for it and the universals below are vacuous for S. -/
-def MoreUsualFor (r : ArgumentRole) (x y : α) : Prop :=
-  (r.IsHighDefault ∧ y < x) ∨ (r.IsLowDefault ∧ x < y)
-
-instance (r : ArgumentRole) (x y : α) : Decidable (MoreUsualFor r x y) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
 /-- (13) Universal 3, the single-argument flagging universal, for a split on role `r`
-coded by `c`. -/
+coded by `c`: Universal 1 for the role's usual associations `ArgumentRole.MoreUsualFor`
+of (9), which are vacuous for S. -/
 def SingleArgumentUniversal (r : ArgumentRole) (c : α → L) : Prop :=
-  RoleReferenceUniversal (MoreUsualFor r) c
+  RoleReferenceUniversal r.MoreUsualFor c
 
 instance (r : ArgumentRole) (c : α → L)
-    [i : Decidable (∀ x y, MoreUsualFor r x y → c x ≤ c y)] :
+    [i : Decidable (∀ x y, r.MoreUsualFor x y → c x ≤ c y)] :
     Decidable (SingleArgumentUniversal r c) := i
 
 /-- (21) Universal 6 and (26) Universal 7: for A and R, Universal 3 says the coding is
@@ -537,23 +436,8 @@ def minimalCoding (short : Scenario α → Prop) [DecidablePred short] (s : Scen
 
 /-! #### Cutoff splits
 
-The cited splits are cutoffs on a scale: the special coding on the values from `x` up
-(`atLeast x`), as P and T splits have it, or on the values below `x` (`below x`), as A and R
-splits have it. A scenario split is a cutoff on one argument's prominence or on the kind. -/
-
-/-- The split that codes the values from `x` up specially. -/
-def atLeast (x y : α) : ℕ := if x ≤ y then 1 else 0
-
-/-- The split that codes the values below `x` specially. -/
-def below (x y : α) : ℕ := if y < x then 1 else 0
-
-theorem atLeast_monotone (x : α) : Monotone (atLeast x) := fun _ _ h ↦ by
-  unfold atLeast
-  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h₁.trans h) h₂
-
-theorem below_antitone (x : α) : Antitone (below x) := fun _ _ h ↦ by
-  unfold below
-  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h.trans_lt h₁) h₂
+The cited splits are cutoffs on a scale (`atLeast x`, `below x`); a scenario split is a
+cutoff on one argument's prominence or on the kind. -/
 
 /-- Universals 4 and 8: a P or T split from a cutoff up obeys Universal 3. -/
 theorem singleArgumentUniversal_atLeast {r : ArgumentRole} (h : r.IsLowDefault) (x : α) :
@@ -764,6 +648,16 @@ def awtuwP : Scenario AnimacyLevel → ℕ := below .downstream ∘ Scenario.kin
 /-- (49): Baule flags T with the serial verb `fà` unless R outranks T on the scale of
 (49a). -/
 def bauleT : Scenario NominalType → ℕ := below .downstream ∘ Scenario.kind
+
+/-- (47) against [bejar-rezac-2009]'s Table 11: Kashmiri's dative P is the R-Case of their
+attested cells, which their `repair_iff_inverse` places exactly at the inverse contexts of
+cyclic Agree, so the relative split and the failed EA licensing pick out the same
+scenarios. -/
+theorem kashmiriP_eq_kashmiriRCase :
+    ∀ c ∈ BejarRezac2009.attestedCells,
+      kashmiriP ((Scenario.mk c.1 c.2).map PersonRank.ofPerson) = 1 ↔
+        BejarRezac2009.kashmiriRCase c = true := by
+  decide
 
 /-- §8: the relative scenario splits are relative and obey Universal 10. -/
 theorem universal10_relative :

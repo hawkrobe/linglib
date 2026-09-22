@@ -12,7 +12,8 @@ so the label set lives with the clause vocabulary; `Clause.Arguments.codingRole`
 classifies clause tokens and `Verb.codingRole` the citation clause.
 `ArgumentRole.core` is the monotransitive core that alignment partitions
 quantify over; `IsHighDefault`/`IsLowDefault` classify the roles by their
-usual referential prominence (the role-reference association).
+usual referential prominence (the role-reference association), and
+`MoreUsualFor` orders a scale's values by how usual they are for a role.
 
 Distinct from the semantic tier (`ArgumentStructure.ThetaRole`, the Dowty
 proto-role profiles): S/A/P/R/T are construction-relative coding slots —
@@ -75,3 +76,14 @@ theorem ArgumentRole.IsHighDefault.not_isLowDefault {r : ArgumentRole} (h : r.Is
 theorem ArgumentRole.IsLowDefault.not_isHighDefault {r : ArgumentRole} (h : r.IsLowDefault) :
     ¬ r.IsHighDefault := by
   rcases h with rfl | rfl <;> decide
+
+/-- Prominence `x` is a more usual association for role `r` than `y`
+    ([haspelmath-2021]'s (9)): A and R tend to be prominent, P and T
+    non-prominent. S has no usual association, so nothing is more usual for
+    it. -/
+def ArgumentRole.MoreUsualFor {α : Type*} [LT α] (r : ArgumentRole) (x y : α) : Prop :=
+  (r.IsHighDefault ∧ y < x) ∨ (r.IsLowDefault ∧ x < y)
+
+instance {α : Type*} [LT α] [DecidableLT α] (r : ArgumentRole) (x y : α) :
+    Decidable (r.MoreUsualFor x y) :=
+  inferInstanceAs (Decidable (_ ∨ _))
