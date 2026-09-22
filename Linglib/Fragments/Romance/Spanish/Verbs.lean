@@ -15,6 +15,9 @@ The verbs with a lexical reciprocal entry beside their transitive use are those 
 appendix. They are ordinary verb entries here, and `Spanish.Reciprocals.lexicalReciprocals`
 records which of them are lexical reciprocals.
 
+The verbs of the dative survey are those whose dative arguments Cuervo classifies, with the
+frames the survey uses.
+
 The attitude and causative verbs record the mood of the finite complement each selects in an
 affirmative declarative clause, the data of Grano's survey of mood choice; a subjunctive licensed
 by matrix negation or a question is not a frame of the verb.
@@ -29,6 +32,7 @@ by matrix negation or a question is not a frame of the verb.
 * [A. A. Spalek and L. McNally, *The anatomy of a verb* (2026)][spalek-mcnally-2026]
 * [T. Grano, *Intention Reports and Eventuality Abstraction in a Theory of Mood Choice*
   (2024)][grano-2024]
+* [M. C. Cuervo, *Datives at Large* (2003)][cuervo-2003]
 -/
 
 namespace Spanish.Verbs
@@ -189,6 +193,12 @@ def empeorar : SpanishVerbEntry :=
     anticausativeMarking := .unmarked,
     causativeAlternation := true }
 
+/-- *quemar* 'burn', with a marked intransitive *quemarse*. -/
+def quemar : SpanishVerbEntry :=
+  { form := "quemar", frames := [ArgumentFrame.np],
+    anticausativeMarking := .marked,
+    causativeAlternation := true }
+
 /-- *crecer* "grow" — internally caused COS verb. No CAUSE in LSR.
     Rejects *por sí solo*. [koontz-garboden-2009] ex. 65c. -/
 def crecer : SpanishVerbEntry :=
@@ -199,7 +209,73 @@ def crecer : SpanishVerbEntry :=
 /-- The verbs of the fragment. -/
 def allVerbs : List SpanishVerbEntry :=
   [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar,
-    asesinar, cortar, ahogar, empeorar, crecer]
+    asesinar, cortar, ahogar, empeorar, crecer, quemar]
+
+/-! ### Verbs of the dative survey
+
+The verbs whose dative arguments [cuervo-2003] surveys, by the frames they show there:
+transitive activities, unaccusatives of movement, happening and existence, a dative-experiencer
+psych verb and two unergatives, one of which also takes an object. -/
+
+/-- *mandar* 'send' — transitive, directional towards a recipient. -/
+def mandar : Verb where
+  form := "mandar"
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
+
+/-- *preparar* 'fix, prepare' — transitive verb of creation. -/
+def preparar : Verb where
+  form := "preparar"
+  frames := [ArgumentFrame.np]
+
+/-- *sacar* 'take away' — transitive, directional away from a source. -/
+def sacar : Verb where
+  form := "sacar"
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
+
+/-- *lavar* 'wash' — transitive activity, non-directional. -/
+def lavar : Verb where
+  form := "lavar"
+  frames := [ArgumentFrame.np]
+
+/-- *admirar* 'admire' — transitive stative. -/
+def admirar : Verb where
+  form := "admirar"
+  frames := [ArgumentFrame.np]
+
+/-- *llegar* 'arrive' — unaccusative verb of movement. -/
+def llegar : Verb where
+  form := "llegar"
+  frames := [ArgumentFrame.unaccusative]
+
+/-- *salir* 'come out' — unaccusative verb of movement. -/
+def salir : Verb where
+  form := "salir"
+  frames := [ArgumentFrame.unaccusative]
+
+/-- *suceder* 'happen' — unaccusative verb of happening. -/
+def suceder : Verb where
+  form := "suceder"
+  frames := [ArgumentFrame.unaccusative]
+
+/-- *sobrar* 'be left over, be extra' — unaccusative existential. -/
+def sobrar : Verb where
+  form := "sobrar"
+  frames := [ArgumentFrame.unaccusative]
+
+/-- *gustar* 'appeal to, be liked by' — unaccusative psych verb whose experiencer is dative. -/
+def gustar : Verb where
+  form := "gustar"
+  frames := [ArgumentFrame.unaccusative]
+
+/-- *caminar* 'walk' — unergative. -/
+def caminar : Verb where
+  form := "caminar"
+  frames := [ArgumentFrame.intransitive]
+
+/-- *correr* 'run' — unergative, also transitive with an object naming the race run. -/
+def correr : Verb where
+  form := "correr"
+  frames := [ArgumentFrame.intransitive, ArgumentFrame.np]
 
 /-! ### Verbs with a lexical reciprocal entry -/
 
