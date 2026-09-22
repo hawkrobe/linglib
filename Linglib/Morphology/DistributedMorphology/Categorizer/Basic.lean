@@ -1,5 +1,6 @@
 import Linglib.Core.Data.UnorderedTree.Leaves
 import Linglib.Morphology.DistributedMorphology.Root
+import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Voice
 

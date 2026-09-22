@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.Verbal.SmallClause
+import Linglib.Syntax.Minimalist.FunctionalSequence
 
 /-!
 # den Dikken (1995): Particles
@@ -30,9 +30,9 @@ construction, (60); the same holds of its extraposition, (69).
 
 The derivational calculus is stated over the Case-licensing strategy and the parameters the
 chapter's principles read: the particle's complement, an object or a small clause whose
-predicate has one of the substrate's `SCPredCategory`s, with the infinitival marker counted
-prepositional, (58); whether the object is a weak pronoun; and whether the particle carries a
-bare modifier such as *right*. Word order is the placement of the particle that the strategy
+predicate heads one of the four lexical categories, a `Minimalist.CatFamily`, with the
+infinitival marker counted prepositional, (58); whether the object is a weak pronoun; and
+whether the particle carries a bare modifier such as *right*. Word order is the placement of the particle that the strategy
 yields. Government, barriers and L-marking enter through the principles (59), (163) and (169)
 they motivate rather than through a representation of the trees, which the chapter also leaves
 to a neutral label, (44). The arguments for the small-clause constituency of particle and object
@@ -54,13 +54,13 @@ namespace Dendikken1995
 open Minimalist
 
 /-- The particle's complement: the object of a simplex construction, §2.4, or the small clause
-SC2 of a complex one, (43), with a predicate of the given category; the infinitival marker
-*to* counts as prepositional, (58). -/
+SC2 of a complex one, (43), with a predicate headed by the given lexical category; the
+infinitival marker *to* counts as prepositional, (58). -/
 inductive Complement
   /-- The object NP of a simplex particle construction. -/
   | np
   /-- The inner small clause of a complex particle construction. -/
-  | sc (pred : SCPredCategory)
+  | sc (pred : CatFamily)
   deriving DecidableEq
 
 /-- (59a–c): particles are non-lexical prepositions and do not L-mark their complements, so a
@@ -68,7 +68,7 @@ small clause complement is a barrier unless its head is categorially non-distinc
 particle. -/
 def Complement.IsBarrier : Complement → Prop
   | .np => False
-  | .sc c => c ≠ .P
+  | .sc c => c ≠ .adpositional
 
 instance : DecidablePred Complement.IsBarrier := λ k => by
   cases k <;> unfold Complement.IsBarrier <;> infer_instance
@@ -135,8 +135,9 @@ end Licensing
 
 /-- (49)–(53): nominal and adjectival complex particle constructions have the outer order
 only, prepositional and infinitival ones both, and none the clause-final order. -/
-theorem complex_paradigm (c : SCPredCategory) :
-    Derivable (.sc c) False False .outer ∧ (Derivable (.sc c) False False .inner ↔ c = .P) ∧
+theorem complex_paradigm (c : CatFamily) :
+    Derivable (.sc c) False False .outer ∧
+      (Derivable (.sc c) False False .inner ↔ c = .adpositional) ∧
       ¬ Derivable (.sc c) False False .final :=
   ⟨derivable_outer _ _ _, by rw [derivable_inner_iff]; simp [Complement.IsBarrier],
     not_derivable_final _ _ _⟩
@@ -153,7 +154,7 @@ theorem weak_pronoun_outer_only :
 /-- (161) and (162): the ban on weak pronouns carries over to the inner order of prepositional
 and infinitival complex constructions, where it is the same reanalysis that licenses the
 in-situ NP. -/
-theorem weak_pronoun_complex : ¬ Derivable (.sc .P) True False .inner :=
+theorem weak_pronoun_complex : ¬ Derivable (.sc .adpositional) True False .inner :=
   λ h => ((derivable_inner_iff _ _ _).1 h).2.1 trivial
 
 /-- (167): *look the information right up* is derivable and *look right up the information*
@@ -186,7 +187,8 @@ is derivable and renders the predicate of SC2 extractable, (62a) and (64a), and 
 placement does not, (62b) and (64b); extraposition of the predicate patterns the same way,
 (69). -/
 theorem predicateExtractable_iff_inner :
-    (∃ s, Licensed (.sc .P) False False s ∧ s.placement = .inner ∧ PredicateExtractable s) ∧
+    (∃ s, Licensed (.sc .adpositional) False False s ∧ s.placement = .inner ∧
+      PredicateExtractable s) ∧
       ∀ s, s.placement = .outer → ¬ PredicateExtractable s :=
   ⟨⟨.reanalysis, by simp [Licensed, Complement.IsBarrier], rfl, trivial⟩,
     λ s hs => by cases s <;> simp_all [Strategy.placement, PredicateExtractable]⟩

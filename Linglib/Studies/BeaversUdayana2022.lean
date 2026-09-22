@@ -375,8 +375,8 @@ def berParams : Params := ⟨none, none⟩
 
 /-- *ber-* is compatible with every voice of the typology, and *meN-* and *di-* with each other
 are not. -/
-theorem berParams_isCompatibleWith (f : Flavor) :
-    berParams.isCompatibleWith f.toParams ∧ ¬ meNParams.isCompatibleWith diParams := by
+theorem berParams_compatible (f : Flavor) :
+    berParams.Compatible f.toParams ∧ ¬ meNParams.Compatible diParams := by
   cases f <;> decide
 
 end BeaversUdayana2022
