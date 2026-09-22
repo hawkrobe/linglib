@@ -30,6 +30,11 @@ against the transparent syntax–semantics mapping.
   with the sample verbs' sorts in `lexicon`.
 * `licensedIn`: incorporation licensing by clause position (§3.1).
 
+## Main results
+
+* `takes_oti_iff_takes_pu`, `sort_separates_what_frames_do_not`: the reversal of selection on
+  the shared relation — frames (`Verb.Takes`) cannot separate *oti* from *pu*, the sort does.
+
 ## References
 
 * [angelopoulos-2026]
@@ -37,6 +42,7 @@ against the transparent syntax–semantics mapping.
 * [bondarenko-2022] — content and situation; the transparent mapping contested in §7.3
 * [elliott-2020-embedding] — explanans by Predicate Modification
 * [hale-keyser-1993] — incorporation into lexical heads
+* [noonan-2007] — the complement coding the typers share
 * [roussou-2010] — *oti* and *pu* as distinct lexical items
 -/
 
@@ -125,6 +131,28 @@ theorem rows_stativity :
       ∀ c ∈ ((r.feature? "complementizer").bind Complementizer.ofString?).toList,
         (r.judgment = .acceptable ↔ c = oti) := by
   decide +kernel
+
+/-! ### Selection by frame against selection by sort
+
+The reversal of selection, rendered on the shared relation: *oti* and *pu* record the same
+[noonan-2007] coding and force, so a verb's frames (`Verb.Takes`) cannot separate them, while
+the sort of the verbalized noun (`Predicted`) does. -/
+
+/-- *oti* and *pu* record the same axes. -/
+theorem oti_axes_eq_pu_axes : oti.axes = pu.axes := by
+  funext a; cases a <;> rfl
+
+/-- Frame-based selection sees no *oti*–*pu* split: a verb takes either typer or neither. -/
+theorem takes_oti_iff_takes_pu (v : Verb) : v.Takes oti ↔ v.Takes pu := by
+  simp only [Verb.Takes, ArgumentFrame.Takes, ArgumentFrame.Position.Takes, oti_axes_eq_pu_axes]
+
+/-- Every sample verb with a finite frame takes both, and the sort separates them: *leo* 'say'
+is predicted with *oti* alone, *metaniono* 'regret' with *pu* alone. -/
+theorem sort_separates_what_frames_do_not :
+    leo.Takes oti ∧ leo.Takes pu ∧ metaniono.Takes oti ∧ metaniono.Takes pu ∧
+      Predicted leo .content oti ∧ ¬ Predicted leo .content pu ∧
+      Predicted metaniono .situation pu ∧ ¬ Predicted metaniono .situation oti := by
+  decide
 
 /-! ### Incorporation licensing and the argument asymmetry (§3.1) -/
 
