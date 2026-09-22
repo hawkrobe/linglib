@@ -23,6 +23,8 @@ The Universal Dependencies case tags are the corpus vocabulary, reached through
 * `Case`: the comparative case values.
 * `Case.Marker`: a case marker, its form and the cases it realizes, with `Case.Marker.inventory`
   the cases a set of markers realizes.
+* `Case.Labelled`: a case of a language under its comparative label, with the case functions it
+  expresses, for a language whose cases go by label rather than by form.
 
 ## References
 
@@ -108,5 +110,32 @@ structure Marker where
 
 /-- The cases a set of markers realizes. -/
 def Marker.inventory (ms : Finset Marker) : Finset Case := ms.biUnion (·.cases)
+
+/-! ### Labelled cases -/
+
+/-- A case of a language under its comparative label, with the case functions it expresses. The
+label is one of the functions, by convention the highest, and a case of few functions and a case
+of many may carry the same label. -/
+structure Labelled where
+  /-- The comparative label. -/
+  label : Case
+  /-- The case functions the case expresses. -/
+  functions : Finset Case
+  /-- The case expresses the function it is labelled for. -/
+  label_mem : label ∈ functions
+  deriving DecidableEq
+
+namespace Labelled
+
+/-- A case with the one function it is labelled for. -/
+@[simps]
+def single (c : Case) : Labelled := ⟨c, {c}, Finset.mem_singleton_self c⟩
+
+/-- The labels of a set of cases are among the functions the cases express. -/
+theorem image_label_subset_biUnion_functions (cs : Finset Labelled) :
+    cs.image label ⊆ cs.biUnion functions :=
+  Finset.image_subset_iff.2 fun c hc ↦ Finset.mem_biUnion.2 ⟨c, hc, c.label_mem⟩
+
+end Labelled
 
 end Case

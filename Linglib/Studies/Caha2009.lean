@@ -5,7 +5,7 @@ import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.German.Case
-import Linglib.Fragments.Greek.Case
+import Linglib.Fragments.Greek.StandardModern.Case
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Icelandic.Case
@@ -131,7 +131,7 @@ Bulgarian and Macedonian having lost noun case entirely. -/
 /-- The conforming Fragment case inventories. -/
 def conformers : List (Finset Case) :=
   [ -- non-Slavic
-    German.Case.inventory, Greek.Case.inventory, Hindi.Case.inventory,
+    German.Case.inventory, Greek.StandardModern.Case.inventory, Hindi.Case.inventory,
     Icelandic.Case.inventory, Japanese.Case.inventory, Korean.Case.inventory,
     Latin.Case.inventory, Mongolian.Case.inventory, SwissGerman.Case.inventory,
     Tamil.Case.inventory, Telugu.Case.inventory, Turkish.Case.inventory,
