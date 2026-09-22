@@ -181,8 +181,9 @@ inductive Axis where
   | interp
   deriving DecidableEq, Fintype, Repr
 
-/-- The value type of an axis. -/
-def Axis.Val : Axis → Type
+/-- The value type of an axis. An `abbrev`, so `Flat (Axis.Val a)` unfolds to the
+    concrete slot type and the `Flat` API applies at each axis. -/
+abbrev Axis.Val : Axis → Type
   | coding => Complement.Coding
   | force => Mood.Illocutionary
   | embeddedSubject => Clause.EmbeddedSubject
