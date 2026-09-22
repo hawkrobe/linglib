@@ -191,9 +191,9 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
   have hI : I.Nonempty := Finset.card_pos.1 (by omega)
   rcases hmI.lt_or_eq with hmI | rfl
   swap
-  · have hsat : ∃ w, disj I p w :=
+  · have hsat : (disj I p).Nonempty :=
       hall.imp λ w hw => mem_subDisj.2 (hI.imp λ i hi => ⟨hi, hw i hi⟩)
-    rw [subDisjsOfCard_card, exhIEII_singleton (disj I p) hsat]
+    rw [subDisjsOfCard_card, exhIEII_singleton hsat]
     ext w
     constructor
     · intro h
