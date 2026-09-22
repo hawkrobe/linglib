@@ -233,15 +233,6 @@ theorem not_isInnocentlyExcludable_of_cell_witness {target : Set World}
     ¬ IsInnocentlyExcludable ALT φ target :=
   fun h_ie => hwitness.2.1 target h_ie htarget
 
-/-- With the prejacent as its only alternative, exhaustification is vacuous. -/
-theorem exhIEII_singleton (hsat : ∃ w, φ w) : exhIEII {φ} φ = φ := by
-  ext w
-  refine ⟨λ h => h.1, λ hw => ⟨hw, λ q hq => absurd hq ?_, λ r hr => ?_⟩⟩
-  · rw [Set.mem_singleton_iff.1 hq.1]
-    exact not_isInnocentlyExcludable_of_phi_subset (Set.finite_singleton _) hsat le_rfl
-  · rw [Set.mem_singleton_iff.1 hr.1]; exact hw
-
-
 /-! ### Cells from a characterization of innocent exclusion -/
 
 /-- With the innocently excludable alternatives characterized, the cell denies them and asserts
@@ -329,6 +320,21 @@ theorem exhIEII_eq_diff_of_forall_subset {d : Set World} (hd : d ∈ ALT)
   · subst hqd
     exact ⟨λ h => absurd h hwd, λ h => absurd h hw₀d⟩
   · exact ⟨λ _ => hA q hq hqd hw₀, λ _ => hA q hq hqd hw⟩
+
+/-- When every alternative is entailed by the prejacent, exhaustification is vacuous. -/
+theorem exhIEII_eq_self_of_forall_subset (hA : ∀ q ∈ ALT, φ ⊆ q) (hsat : φ.Nonempty) :
+    exhIEII ALT φ = φ := by
+  obtain ⟨w₀, hw₀⟩ := hsat
+  have hM : IsMinimalCover ALT φ {w₀} :=
+    ⟨by simpa, fun w hw ↦ ⟨w₀, rfl, fun q hq _ ↦ hA q hq hw⟩, by simp⟩
+  rw [hM.exhIEII_eq ⟨w₀, hw₀, by simp⟩]
+  ext w
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left]
+  exact ⟨And.left, fun hw ↦ ⟨hw, fun q hq ↦ iff_of_true (hA q hq hw) (hA q hq hw₀)⟩⟩
+
+/-- With the prejacent as its only alternative, exhaustification is vacuous. -/
+theorem exhIEII_singleton (hsat : φ.Nonempty) : exhIEII {φ} φ = φ :=
+  exhIEII_eq_self_of_forall_subset (by simp) hsat
 
 end MinimalCover
 
