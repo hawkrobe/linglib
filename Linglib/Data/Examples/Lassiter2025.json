@@ -12,7 +12,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
+      ["antecedent_given", "false"],
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
@@ -31,7 +31,7 @@
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"],
       ["polarity_item", "ppi"]
@@ -50,7 +50,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
@@ -68,7 +68,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
@@ -86,7 +86,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "PC"],
       ["diagnostic", "discourse_anchoring"]
     ],
@@ -104,7 +104,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "PC"],
       ["diagnostic", "given_that_paraphrase"]
     ],
@@ -126,7 +126,6 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "PC"],
       ["diagnostic", "marker"],
       ["marker", "nara"]
@@ -149,7 +148,6 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "blocked"],
       ["diagnostic", "marker"],
       ["marker", "ra"]
@@ -172,7 +170,6 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "PC"],
       ["diagnostic", "marker"],
       ["marker", "wenn"]
@@ -195,7 +192,6 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "blocked"],
       ["diagnostic", "marker"],
       ["marker", "falls"]
@@ -214,10 +210,11 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "PC"],
       ["diagnostic", "polarity"],
-      ["polarity_item", "ppi"]
+      ["polarity_item", "ppi"],
+      ["item", "rather"],
+      ["item_position", "embedded_consequent"]
     ],
     "comment": "PPI in the consequent of the embedded conditional is fine — most naturally read as an echoic PC."
   },
@@ -233,10 +230,11 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "blocked"],
       ["diagnostic", "polarity"],
-      ["polarity_item", "npi"]
+      ["polarity_item", "npi"],
+      ["item", "lift a finger"],
+      ["item_position", "embedded_consequent"]
     ],
     "comment": "NPI in the consequent of the embedded conditional is quite odd — it attempts to echo (31), which is unacceptable on its own."
   },
@@ -252,10 +250,11 @@
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "blocked"],
       ["diagnostic", "polarity"],
-      ["polarity_item", "npi"]
+      ["polarity_item", "npi"],
+      ["item", "lift a finger"],
+      ["item_position", "consequent"]
     ],
     "comment": "NPI in the consequent of a simple conditional is unlicensed; the echo target of (30)."
   },
@@ -271,10 +270,11 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "PC"],
       ["diagnostic", "polarity"],
-      ["polarity_item", "npi"]
+      ["polarity_item", "npi"],
+      ["item", "lift a finger"],
+      ["item_position", "embedded_antecedent"]
     ],
     "comment": "NPI acceptable in the antecedent of the embedded conditional, which can echo an HC with an NPI in its own antecedent (32a)."
   },
@@ -290,9 +290,10 @@
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "blocked"],
-      ["diagnostic", "coordination"]
+      ["diagnostic", "coordination"],
+      ["coordinated_antecedent_given", "false"]
     ],
     "comment": "Coordinated antecedents cannot mix PC and HC interpretations (Haegeman & Schönenberger 2023: p.284ff.)."
   },
@@ -308,9 +309,10 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "PC"],
-      ["diagnostic", "coordination"]
+      ["diagnostic", "coordination"],
+      ["coordinated_antecedent_given", "true"]
     ],
     "comment": "Conjoined-antecedent LNC is acceptable when both conjuncts can be PCs in context."
   },
@@ -326,9 +328,10 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "blocked"],
-      ["diagnostic", "coordination"]
+      ["diagnostic", "coordination"],
+      ["coordinated_antecedent_given", "false"]
     ],
     "comment": "Same LNC degraded ('??') when the context favors an HC reading of the simple conjunct."
   },
@@ -344,9 +347,9 @@
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "HC"],
-      ["diagnostic", "only_inversion"]
+      ["diagnostic", "only_inversion"],
+      ["only_inversion", "true"]
     ],
     "comment": "HCs allow subject-aux inversion triggered by initial 'only' (Haegeman & Schönenberger 2023: p.288)."
   },
@@ -362,9 +365,10 @@
     "paperFeatures": [
       ["is_lnc", "false"],
       ["content", "bare"],
-      ["has_context", "true"],
+      ["antecedent_given", "true"],
       ["interpretation", "blocked"],
-      ["diagnostic", "only_inversion"]
+      ["diagnostic", "only_inversion"],
+      ["only_inversion", "true"]
     ],
     "comment": "The context forces a PC reading; 'only' + inversion removes the PC interpretation and the HC reading is nonsensical."
   },
@@ -380,11 +384,11 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "PC"],
-      ["diagnostic", "only_inversion"]
+      ["diagnostic", "only_inversion"],
+      ["only_inversion", "false"]
     ],
-    "comment": "Plain LNC counterpart of (38b)."
+    "comment": "Plain LNC counterpart of (38b). Given without a context; the paper reads it as a premise conditional, the baseline for (38b)."
   },
   {
     "id": "lass2025_ex38b",
@@ -398,9 +402,9 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "blocked"],
-      ["diagnostic", "only_inversion"]
+      ["diagnostic", "only_inversion"],
+      ["only_inversion", "true"]
     ],
     "comment": "LNCs are unacceptable with initial 'only' and inversion, as predicted if they are PC-only."
   },
@@ -416,9 +420,9 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "bare"],
-      ["has_context", "false"],
       ["interpretation", "blocked"],
-      ["diagnostic", "only_inversion"]
+      ["diagnostic", "only_inversion"],
+      ["only_inversion", "true"]
     ],
     "comment": "Second only-inversion LNC; the plain counterpart (39a) is acceptable."
   },
@@ -434,7 +438,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "quantAdv"],
-      ["has_context", "true"],
+      ["antecedent_given", "false"],
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
@@ -452,7 +456,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "modal"],
-      ["has_context", "true"],
+      ["antecedent_given", "false"],
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
@@ -470,7 +474,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "generic"],
-      ["has_context", "false"],
+      ["antecedent_given", "false"],
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
@@ -488,7 +492,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "modal"],
-      ["has_context", "false"],
+      ["antecedent_given", "false"],
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
@@ -506,7 +510,7 @@
     "paperFeatures": [
       ["is_lnc", "true"],
       ["content", "generic"],
-      ["has_context", "false"],
+      ["antecedent_given", "false"],
       ["interpretation", "HC"],
       ["diagnostic", "content_exception"]
     ],
