@@ -8,6 +8,7 @@ import Linglib.Studies.BejarRezac2009
 import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Clause.Scenario
 import Linglib.Syntax.Person.Basic
+import Linglib.Syntax.Person.Class
 
 /-!
 # Haspelmath (2021): Role-reference associations and the explanation of argument coding splits
@@ -90,42 +91,15 @@ open Discourse Reference Reference.Prominence
 
 /-! ### Referential prominence scales (8)
 
-Each scale is a linear order whose greater element is the more prominent. The definiteness
-scale of (8b) without its optional specific-indefinite level is `Reference.Definiteness`,
-with Eastern Khanty's specific P (37) read at the definite end, and the givenness scale is
+Each scale is a linear order whose greater element is the more prominent. The person scale
+of (8a), locuphoric above aliophoric, is `Person.Class`; the definiteness scale of (8b)
+without its optional specific-indefinite level is `Reference.Definiteness`, with Eastern
+Khanty's specific P (37) read at the definite end; and the givenness scale is
 `BinaryGivenness`. -/
 
-/-- The person scale of (8a): locuphoric (first and second person) above aliophoric
-(third person). -/
-inductive PersonClass where
-  | aliophoric
-  | locuphoric
-  deriving DecidableEq, Fintype, Repr
-
-namespace PersonClass
-
-/-- Rank on the person scale. -/
-def rank : PersonClass → ℕ
-  | .aliophoric => 0
-  | .locuphoric => 1
-
-instance : LinearOrder PersonClass := LinearOrder.lift' rank (by decide)
-
-/-- `⊥ = aliophoric`, `⊤ = locuphoric`. -/
-instance : BoundedOrder PersonClass where
-  top := .locuphoric
-  le_top := by decide
-  bot := .aliophoric
-  bot_le := by decide
-
-instance : IsSimpleOrder PersonClass where
-  exists_pair_ne := ⟨.aliophoric, .locuphoric, by decide⟩
-  eq_bot_or_eq_top := by decide
-
-end PersonClass
 
 /-- The ternary person scale of (47a), first > second > third: the ranks of
-`Person.prominence`, read off by `ofPerson`; `PersonClass` is its coarsening at the
+`Person.prominence`, read off by `ofPerson`; `Person.Class` is its coarsening at the
 locuphoric cut. -/
 inductive PersonRank where
   | third
@@ -252,6 +226,9 @@ variable {S L F : Type*} [Preorder L] [Preorder F]
 usual situation is never coded longer. -/
 def RoleReferenceUniversal (r : S → S → Prop) (c : S → L) : Prop :=
   ∀ ⦃s t⦄, r s t → c s ≤ c t
+
+instance (r : S → S → Prop) (c : S → L) [i : Decidable (∀ s t, r s t → c s ≤ c t)] :
+    Decidable (RoleReferenceUniversal r c) := i
 
 /-- Universal 1 for a usualness relation holds for every relation it contains. -/
 theorem RoleReferenceUniversal.mono {r r' : S → S → Prop} {c : S → L} (hr : r ≤ r')
@@ -388,11 +365,11 @@ instance (c : Scenario α → L) [i : Decidable (∀ s t, s.kind = t.kind → c 
 
 /-- (42) Universal 9b, the ditransitive person-role universal: the scenario with a
 locuphoric R and an aliophoric T is coded no longer than any other. -/
-def PersonRoleUniversal (c : Scenario PersonClass → L) : Prop :=
-  ∀ s, c ⟨.locuphoric, .aliophoric⟩ ≤ c s
+def PersonRoleUniversal (c : Scenario Person.Class → L) : Prop :=
+  ∀ s, c ⟨.participant, .nonParticipant⟩ ≤ c s
 
 /-- §7.1: Universal 9b is a special case of Universal 5. -/
-theorem personRoleUniversal_of_scenarioUniversal {c : Scenario PersonClass → L}
+theorem personRoleUniversal_of_scenarioUniversal {c : Scenario Person.Class → L}
     (h : ScenarioUniversal c) : PersonRoleUniversal c :=
   h.top_bot_le
 
@@ -474,14 +451,14 @@ def sardinianP : AnimacyLevel → ℕ := atLeast .human
 def persianP : BinaryGivenness → ℕ := atLeast .given
 
 /-- (20): Abruzzese flags a locuphoric P with `a`. -/
-def abruzzeseP : PersonClass → ℕ := atLeast .locuphoric
+def abruzzeseP : Person.Class → ℕ := atLeast .participant
 
 /-- §4.1.3: English distinguishes P from A only on person forms (*he* ~ *him*), a split in
 indexes rather than flags, which fn. 12 allows may have a different explanation. -/
 def englishP : Nominality → ℕ := atLeast .personForm
 
 /-- (22): Godoberi has an ergative form only for aliophoric A; Kham (1) is alike. -/
-def godoberiA : PersonClass → ℕ := below .locuphoric
+def godoberiA : Person.Class → ℕ := below .participant
 
 /-- (23): Warrgamay flags a full-nominal A with the ergative. -/
 def warrgamayA : Nominality → ℕ := below .personForm
@@ -495,7 +472,7 @@ def tibetanA : FocusStatus → ℕ := below .background
 /-- (28): French dative clitics are longer than accusative ones only for aliophoric R
 (`lui` ~ `le`, `leur` ~ `les`); they are person indexes, so fn. 17 keeps the case outside
 split flagging proper. -/
-def frenchR : PersonClass → ℕ := below .locuphoric
+def frenchR : Person.Class → ℕ := below .participant
 
 /-- (29): Telkepe Neo-Aramaic flags a full-nominal R with `ta`. -/
 def neoAramaicR : Nominality → ℕ := below .personForm
@@ -513,7 +490,7 @@ def eweT : Nominality → ℕ := atLeast .personForm
 def akanT : Definiteness → ℕ := atLeast .definite
 
 /-- (34): Georgian requires the reinforced form (`šeni tavi`) for a locuphoric T. -/
-def georgianT : PersonClass → ℕ := atLeast .locuphoric
+def georgianT : Person.Class → ℕ := atLeast .participant
 
 /-- §4.1: the split P flagging systems obey Universal 4. -/
 theorem universal4_splitP :
@@ -549,14 +526,14 @@ theorem universal8_splitT :
 
 /-- (35): Kolyma Yukaghir flags P with the accusative when A is aliophoric; Teop's object
 marker `ben-` (3) is alike. -/
-def yukaghirP : Scenario PersonClass → ℕ := below .locuphoric ∘ Scenario.high
+def yukaghirP : Scenario Person.Class → ℕ := below .participant ∘ Scenario.high
 
 /-- §6.1: Yurok flags P with the accusative when A is aliophoric and P locuphoric. -/
-def yurokP (s : Scenario PersonClass) : ℕ :=
-  if s.high = .aliophoric ∧ s.low = .locuphoric then 1 else 0
+def yurokP (s : Scenario Person.Class) : ℕ :=
+  if s.high = .nonParticipant ∧ s.low = .participant then 1 else 0
 
 /-- (36): Sahaptin flags A with the ergative when P is locuphoric. -/
-def sahaptinA : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def sahaptinA : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (37): Eastern Khanty flags A with the ergative when P is specific. -/
 def khantyA : Scenario Definiteness → ℕ := atLeast .definite ∘ Scenario.low
@@ -566,10 +543,10 @@ subsumes the human P of §4.1.1. -/
 def spanishP : Scenario AnimacyLevel → ℕ := below .downstream ∘ Scenario.kind
 
 /-- (39): Bulgarian flags R with `na` when T is a locuphoric clitic. -/
-def bulgarianR : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def bulgarianR : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (40): Shambala flags R with `kwa` when T is locuphoric. -/
-def shambalaR : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def shambalaR : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (4): English requires `to` on R in the N > pers scenario. -/
 def englishR (s : Scenario Nominality) : ℕ := if s = ⟨.fullNominal, .personForm⟩ then 1 else 0
@@ -580,7 +557,7 @@ def americanEnglishR : Scenario Nominality → ℕ := atLeast .personForm ∘ Sc
 
 /-- (45): Modern Greek has the T proclitic in downstream and aliophoric balanced scenarios
 and the independent pronoun otherwise, so whenever T is locuphoric. -/
-def greekT : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def greekT : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (46): Icelandic flags R with `fyrir` when T is animate. -/
 def icelandicR : Scenario Animacy → ℕ := atLeast .animate ∘ Scenario.low
@@ -677,7 +654,7 @@ theorem yukaghir_not_relative : ¬ Relative yukaghirP := by decide
 /-! ### Verbal voice coding (§9) -/
 
 /-- (55): Itonama's inverse prefix `k'i-` appears in upstream scenarios. -/
-def itonamaV : Scenario PersonClass → ℕ := below .balanced ∘ Scenario.kind
+def itonamaV : Scenario Person.Class → ℕ := below .balanced ∘ Scenario.kind
 
 /-- (55): Itonama obeys the inverse universal. -/
 theorem universal11_itonama : InverseUniversal itonamaV :=
@@ -818,9 +795,9 @@ instance (rs : List LinguisticExample) (s? : LinguisticExample → Option (Scena
   unfold ReproducesAlternation; infer_instance
 
 /-- The person tags of the rows, as the binary scale. -/
-def PersonClass.table : List (String × PersonClass) :=
-  [("locuphoric", .locuphoric), ("aliophoric", .aliophoric),
-    ("1", .locuphoric), ("2", .locuphoric), ("3", .aliophoric)]
+def Person.Class.table : List (String × Person.Class) :=
+  [("locuphoric", .participant), ("aliophoric", .nonParticipant),
+    ("1", .participant), ("2", .participant), ("3", .nonParticipant)]
 
 /-- The person tags of the rows, as the ternary scale. -/
 def PersonRank.table : List (String × PersonRank) := [("1", .first), ("2", .second), ("3", .third)]
@@ -859,8 +836,8 @@ theorem rows_splitP_splitA :
       Reproduces (rows "nuor1238" "P" "animacy") (prominence? AnimacyLevel.table) sardinianP ∧
       Reproduces (rows "panj1256" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows "west2369" "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
-      Reproduces (rows "neap1235" "P" "person") (prominence? PersonClass.table) abruzzeseP ∧
-      Reproduces (rows "taka1261" "A" "person") (prominence? PersonClass.table) godoberiA ∧
+      Reproduces (rows "neap1235" "P" "person") (prominence? Person.Class.table) abruzzeseP ∧
+      Reproduces (rows "taka1261" "A" "person") (prominence? Person.Class.table) godoberiA ∧
       Reproduces (rows "warr1255" "A" "nominality") (prominence? Nominality.table) warrgamayA ∧
       Reproduces (rows "mang1381" "A" "animacy") (prominence? Animacy.table) mangarrayiA ∧
       Reproduces (rows "cent2346" "A" "focus") (prominence? FocusStatus.table) tibetanA := by
@@ -874,7 +851,7 @@ theorem rows_splitR_splitT :
       Reproduces (rows "nucl1347" "R" "definiteness") (prominence? Definiteness.table) wolofR ∧
       Reproduces (rows "ewee1241" "T" "nominality") (prominence? Nominality.table) eweT ∧
       Reproduces (rows "akan1250" "T" "definiteness") (prominence? Definiteness.table) akanT ∧
-      Reproduces (rows "nucl1302" "T" "person") (prominence? PersonClass.table) georgianT ∧
+      Reproduces (rows "nucl1302" "T" "person") (prominence? Person.Class.table) georgianT ∧
       Reproduces (rows "maka1311" "T" "definiteness") (prominence? Definiteness.table) makassarV ∧
       Reproduces (rows "maka1311" "T" "nominality") (prominence? Nominality.table)
         makassarVNominality := by
@@ -884,23 +861,23 @@ theorem rows_splitR_splitT :
 the Teop rows those of the Yukaghir rule, and the rows of (43) and (44) are the American
 varieties'. -/
 theorem rows_scenario :
-    Reproduces (rows "teop1238" "P" "person") (scenario? PersonClass.table) yukaghirP ∧
-      Reproduces (rows "sout2750" "P" "person") (scenario? PersonClass.table) yukaghirP ∧
-      Reproduces (rows "saha1240" "A" "person") (scenario? PersonClass.table) sahaptinA ∧
+    Reproduces (rows "teop1238" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
+      Reproduces (rows "sout2750" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
+      Reproduces (rows "saha1240" "A" "person") (scenario? Person.Class.table) sahaptinA ∧
       Reproduces (rows "east2774" "A" "definiteness") (scenario? Definiteness.table) khantyA ∧
       Reproduces (rows "stan1288" "P" "animacy") (scenario? AnimacyLevel.table) spanishP ∧
-      Reproduces (rows "bulg1262" "R" "person") (scenario? PersonClass.table) bulgarianR ∧
-      Reproduces (rows "sham1280" "R" "person") (scenario? PersonClass.table) shambalaR ∧
+      Reproduces (rows "bulg1262" "R" "person") (scenario? Person.Class.table) bulgarianR ∧
+      Reproduces (rows "sham1280" "R" "person") (scenario? Person.Class.table) shambalaR ∧
       Reproduces ((rows "stan1293" "R" "nominality").filter (·.feature? "variety" = none))
         (scenario? Nominality.table) englishR ∧
       Reproduces ((rows "stan1293" "R" "nominality").filter
           (·.feature? "variety" = some "American"))
         (scenario? Nominality.table) americanEnglishR ∧
-      Reproduces (rows "mode1248" "T" "person") (scenario? PersonClass.table) greekT ∧
+      Reproduces (rows "mode1248" "T" "person") (scenario? Person.Class.table) greekT ∧
       Reproduces (rows "icel1247" "R" "animacy") (scenario? Animacy.table) icelandicR ∧
       Reproduces (rows "kash1277" "P" "person") (scenario? PersonRank.table) kashmiriP ∧
       Reproduces (rows "baou1238" "T" "nominal type") (scenario? NominalType.table) bauleT ∧
-      Reproduces (rows "iton1250" "verb" "person") (scenario? PersonClass.table) itonamaV := by
+      Reproduces (rows "iton1250" "verb" "person") (scenario? Person.Class.table) itonamaV := by
   decide
 
 /-- §10.2, (4): the splitting alternations reproduce the paper's examples. -/

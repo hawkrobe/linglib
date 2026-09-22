@@ -3,7 +3,9 @@ import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Geometry
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Studies.CoonKeine2021
+import Linglib.Studies.Haspelmath2021
 import Linglib.Syntax.Clause.Scenario
+import Linglib.Syntax.Person.Class
 import Linglib.Data.Examples.Deal2024
 
 /-!
@@ -25,10 +27,17 @@ against the descriptive statements (2), you-first and A-descending. A probe that
 indirect object first yields the reverse PCC of section 6.2. The clitic combinations of French,
 Bulgarian, Italian, Spanish, Shapsug Adyghe and Slovenian are rows, and on the six cells the
 four varieties coincide with the P-Constraint grammars of [pancheva-zubizarreta-2018] and the
-gluttony probes of [coon-keine-2021], the competitors of section 7. The two descending
-statements are the same condition on the IO–DO scenario under two person rankings, that it be
-downstream (`strictlyDescending_iff_downstream`, `aDescending_iff_downstream`), the reading
-under which [haspelmath-2021]'s scenario universal covers the person-case constraint.
+gluttony probes of [coon-keine-2021], the competitors of section 7. The cells of table (1)
+are scenarios (`Clause.Scenario`), and read as an argument coding, the clitic cluster where
+licit and the longer repair where not (`PCCType.coding`), each variety is checked against
+[haspelmath-2021]'s scenario universal, which section 7.1 there claims the person-case
+constraint instantiates: under 1 > 2 > 3 the strong, weak, me-first and strictly descending
+varieties obey it and the addressee-first ones do not, under 2 > 1 > 3 the reverse
+(`universal5_prominence`, `universal5_addressee`); every variety allows the participant-over-
+third cells, the person-role universal 9b (`participant_third_licit`); the strong variety is
+Modern Greek's T coding (`strong_iff_greekT`), and the two descending statements are the
+condition that the scenario be downstream under their rankings
+(`strictlyDescending_iff_downstream`, `aDescending_iff_downstream`).
 
 ## Implementation notes
 
@@ -181,10 +190,12 @@ def aDescending : Grammar := ⟨some .addr, {.part}⟩
 
 /-! ### The typology -/
 
-/-- The six cells of table (1). -/
-def cells : List (Person × Person) :=
-  [(.first, .third), (.first, .second), (.second, .first), (.second, .third), (.third, .first),
-    (.third, .second)]
+open Clause (Scenario)
+
+/-- The six cells of table (1), the IO–DO combinations as scenarios. -/
+def cells : List (Scenario Person) :=
+  [⟨.first, .third⟩, ⟨.first, .second⟩, ⟨.second, .first⟩, ⟨.second, .third⟩,
+    ⟨.third, .first⟩, ⟨.third, .second⟩]
 
 /-- The rank of a person on the hierarchy 2 > 1 > 3 of the A-descending PCC. -/
 def addresseeRank : Person → ℕ
@@ -201,7 +212,7 @@ inductive PCCType where
   | youFirst
   | aDescending
   | none
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The descriptive statements, (2) and section 6.1: the direct object must be third person;
 if there is a third person, the direct object must be third person; if there is a first person,
@@ -239,12 +250,55 @@ theorem aDescending_iff_downstream (io do_ : Person) :
       (Clause.Scenario.mk io do_).kindBy addresseeRank = .downstream :=
   (Clause.Scenario.kindBy_eq_downstream_iff (s := ⟨io, do_⟩) _).symm
 
+/-- A variety as an argument coding: the clitic cluster where the combination is licit, the
+longer repair where it is not. -/
+def PCCType.coding (t : PCCType) (s : Scenario Person) : ℕ :=
+  if t.Licit s.high s.low then 0 else 1
+
+/-- Usualness on the cells of table (1) under a person ranking: a cell is the more usual when its
+kind is the higher. -/
+def MoreUsualOn (rank : Person → ℕ) (s t : Scenario Person) : Prop :=
+  s ∈ cells ∧ t ∈ cells ∧ t.kindBy rank < s.kindBy rank
+
+instance (rank : Person → ℕ) (s t : Scenario Person) : Decidable (MoreUsualOn rank s t) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- Section 7.1 of [haspelmath-2021] on table (1): under the person scale 1 > 2 > 3, a variety
+never bans a more usual combination while allowing a less usual one exactly when it is the
+strong, weak, me-first or strictly descending PCC. The addressee-first varieties ban the
+downstream `1 > 2`. -/
+theorem universal5_prominence (t : PCCType) :
+    Haspelmath2021.RoleReferenceUniversal (MoreUsualOn Person.prominence) t.coding ↔
+      t ∈ [PCCType.strong, .weak, .meFirst, .strictlyDescending, .none] := by
+  revert t; decide
+
+/-- Under the ranking 2 > 1 > 3 it is the strong, weak, you-first and A-descending varieties
+that obey the scenario universal; me-first and strictly descending ban the then-downstream
+`2 > 1`. -/
+theorem universal5_addressee (t : PCCType) :
+    Haspelmath2021.RoleReferenceUniversal (MoreUsualOn addresseeRank) t.coding ↔
+      t ∈ [PCCType.strong, .weak, .youFirst, .aDescending, .none] := by
+  revert t; decide
+
+/-- The person-role universal 9b of [haspelmath-2021]: every variety allows a participant IO
+with a third-person DO, the `⟨⊤, ⊥⟩` of the binary person scale. -/
+theorem participant_third_licit (t : PCCType) (io : Person) (h : io.IsSAP) :
+    t.Licit io .third := by
+  revert h; cases t <;> cases io <;> decide
+
+/-- The strong PCC is Modern Greek's T coding in [haspelmath-2021]'s (45): the clitic is
+available exactly where the DO is aliophoric. -/
+theorem strong_iff_greekT (io do_ : Person) :
+    PCCType.Licit .strong io do_ ↔
+      Haspelmath2021.greekT ((Scenario.mk io do_).map Person.toClass) = 0 := by
+  revert io do_; decide
+
 def PCCType.all : List PCCType :=
   [.strong, .weak, .meFirst, .strictlyDescending, .youFirst, .aDescending, .none]
 
 /-- The variety a grammar derives: the one whose statement it matches on the six cells. -/
 def Grammar.pattern (g : Grammar) : Option PCCType :=
-  PCCType.all.find? λ t => decide (∀ c ∈ cells, Licit g c.1 c.2 ↔ t.Licit c.1 c.2)
+  PCCType.all.find? λ t => decide (∀ c ∈ cells, Licit g c.high c.low ↔ t.Licit c.high c.low)
 
 /-- Table (57), the typology by satisfaction condition and dynamic interaction features, with
 table (53) as its rows and columns without [ADDR]; a probe satisfied by [φ] Agrees with the
@@ -294,10 +348,11 @@ theorem sd_off_diagonal_iff_outranks (io do_ : Person)
 [pancheva-zubizarreta-2018], strictly descending with ultra-strong. -/
 theorem agrees_with_pConstraint :
     ∀ c ∈ cells,
-      (Licit strong c.1 c.2 ↔ PCC.IsLicit PCC.strongGrammar c.1 c.2) ∧
-        (Licit weak c.1 c.2 ↔ PCC.IsLicit PCC.weakGrammar c.1 c.2) ∧
-        (Licit meFirst c.1 c.2 ↔ PCC.IsLicit PCC.meFirstGrammar c.1 c.2) ∧
-        (Licit strictlyDescending c.1 c.2 ↔ PCC.IsLicit PCC.ultraStrongGrammar c.1 c.2) := by
+      (Licit strong c.high c.low ↔ PCC.IsLicit PCC.strongGrammar c.high c.low) ∧
+        (Licit weak c.high c.low ↔ PCC.IsLicit PCC.weakGrammar c.high c.low) ∧
+        (Licit meFirst c.high c.low ↔ PCC.IsLicit PCC.meFirstGrammar c.high c.low) ∧
+        (Licit strictlyDescending c.high c.low ↔
+          PCC.IsLicit PCC.ultraStrongGrammar c.high c.low) := by
   decide
 
 /-- On the six cells the four varieties coincide with the gluttony probes of
@@ -305,12 +360,14 @@ theorem agrees_with_pConstraint :
 lines there. -/
 theorem agrees_with_gluttony :
     ∀ c ∈ cells,
-      (Licit strong c.1 c.2 ↔ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe true c.1 c.2) ∧
-        (Licit weak c.1 c.2 ↔ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false c.1 c.2) ∧
-        (Licit meFirst c.1 c.2 ↔
-          ¬ CoonKeine2021.PCCViolation CoonKeine2021.meFirstProbe false c.1 c.2) ∧
-        (Licit strictlyDescending c.1 c.2 ↔
-          ¬ CoonKeine2021.PCCViolation CoonKeine2021.ultrastrongProbe false c.1 c.2) := by
+      (Licit strong c.high c.low ↔
+          ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe true c.high c.low) ∧
+        (Licit weak c.high c.low ↔
+          ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false c.high c.low) ∧
+        (Licit meFirst c.high c.low ↔
+          ¬ CoonKeine2021.PCCViolation CoonKeine2021.meFirstProbe false c.high c.low) ∧
+        (Licit strictlyDescending c.high c.low ↔
+          ¬ CoonKeine2021.PCCViolation CoonKeine2021.ultrastrongProbe false c.high c.low) := by
   decide
 
 /-! ### The rows -/
