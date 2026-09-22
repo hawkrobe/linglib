@@ -127,7 +127,8 @@ instance : IsSimpleOrder PersonClass where
 end PersonClass
 
 /-- The ternary person scale of (47a), first > second > third: the ranks of
-`Person.prominence`, read off by `ofPerson`. -/
+`Person.prominence`, read off by `ofPerson`; `PersonClass` is its coarsening at the
+locuphoric cut. -/
 inductive PersonRank where
   | third
   | second
@@ -153,13 +154,6 @@ def ofPerson (p : Person) : PersonRank :=
   | _ => .first
 
 theorem rank_ofPerson (p : Person) : (ofPerson p).rank = p.prominence := by cases p <;> rfl
-
-/-- The binary person scale coarsens the ternary one at the locuphoric cut. -/
-def toClass : PersonRank → PersonClass
-  | .third => .aliophoric
-  | .second | .first => .locuphoric
-
-theorem toClass_monotone : Monotone toClass := by decide
 
 end PersonRank
 
@@ -324,13 +318,6 @@ theorem kind_eq_downstream_iff_eq [BoundedOrder α] [IsSimpleOrder α] {s : Scen
     s.kind = .downstream ↔ s = ⟨⊤, ⊥⟩ := by
   obtain ⟨h, l⟩ := s
   rw [kind_eq_downstream_iff]
-  rcases eq_bot_or_eq_top h with rfl | rfl <;> rcases eq_bot_or_eq_top l with rfl | rfl <;> simp
-
-/-- On a binary scale the upstream scenario is `⟨⊥, ⊤⟩` alone. -/
-theorem kind_eq_upstream_iff_eq [BoundedOrder α] [IsSimpleOrder α] {s : Scenario α} :
-    s.kind = .upstream ↔ s = ⟨⊥, ⊤⟩ := by
-  obtain ⟨h, l⟩ := s
-  rw [kind_eq_upstream_iff]
   rcases eq_bot_or_eq_top h with rfl | rfl <;> rcases eq_bot_or_eq_top l with rfl | rfl <;> simp
 
 /-- A scenario whose higher-ranked argument is `⊥` or whose lower-ranked one is `⊤` is at most
@@ -595,14 +582,11 @@ end Universals
 
 /-! ### Single-argument splits (§4, §5) -/
 
-/-- (2): Sakha flags a definite P with the accusative. -/
+/-- (2): Sakha flags a definite P with the accusative; Punjabi's `nũũ` (18) is alike. -/
 def sakhaP : Definiteness → ℕ := atLeast .definite
 
 /-- (17): Nuorese Sardinian flags a human P with `a`. -/
 def sardinianP : AnimacyLevel → ℕ := atLeast .human
-
-/-- (18): Punjabi flags a definite P with `nũũ`. -/
-def punjabiP : Definiteness → ℕ := atLeast .definite
 
 /-- (19): Persian flags a topical P with `-râ`. -/
 def persianP : BinaryGivenness → ℕ := atLeast .given
@@ -614,10 +598,7 @@ def abruzzeseP : PersonClass → ℕ := atLeast .locuphoric
 indexes rather than flags, which fn. 12 allows may have a different explanation. -/
 def englishP : Nominality → ℕ := atLeast .personForm
 
-/-- (1): Kham flags an aliophoric A with the ergative. -/
-def khamA : PersonClass → ℕ := below .locuphoric
-
-/-- (22): Godoberi has an ergative form only for aliophoric A. -/
+/-- (22): Godoberi has an ergative form only for aliophoric A; Kham (1) is alike. -/
 def godoberiA : PersonClass → ℕ := below .locuphoric
 
 /-- (23): Warrgamay flags a full-nominal A with the ergative. -/
@@ -655,20 +636,18 @@ def georgianT : PersonClass → ℕ := atLeast .locuphoric
 /-- §4.1: the split P flagging systems obey Universal 4. -/
 theorem universal4_splitP :
     SingleArgumentUniversal .P sakhaP ∧ SingleArgumentUniversal .P sardinianP ∧
-      SingleArgumentUniversal .P punjabiP ∧ SingleArgumentUniversal .P persianP ∧
-      SingleArgumentUniversal .P abruzzeseP ∧ SingleArgumentUniversal .P englishP :=
+      SingleArgumentUniversal .P persianP ∧ SingleArgumentUniversal .P abruzzeseP ∧
+      SingleArgumentUniversal .P englishP :=
   ⟨singleArgumentUniversal_atLeast (.inl rfl) _, singleArgumentUniversal_atLeast (.inl rfl) _,
     singleArgumentUniversal_atLeast (.inl rfl) _, singleArgumentUniversal_atLeast (.inl rfl) _,
-    singleArgumentUniversal_atLeast (.inl rfl) _, singleArgumentUniversal_atLeast (.inl rfl) _⟩
+    singleArgumentUniversal_atLeast (.inl rfl) _⟩
 
 /-- §4.2: the split A flagging systems obey Universal 6. -/
 theorem universal6_splitA :
-    SingleArgumentUniversal .A khamA ∧ SingleArgumentUniversal .A godoberiA ∧
-      SingleArgumentUniversal .A warrgamayA ∧ SingleArgumentUniversal .A mangarrayiA ∧
-      SingleArgumentUniversal .A tibetanA :=
+    SingleArgumentUniversal .A godoberiA ∧ SingleArgumentUniversal .A warrgamayA ∧
+      SingleArgumentUniversal .A mangarrayiA ∧ SingleArgumentUniversal .A tibetanA :=
   ⟨singleArgumentUniversal_below (.inl rfl) _, singleArgumentUniversal_below (.inl rfl) _,
-    singleArgumentUniversal_below (.inl rfl) _, singleArgumentUniversal_below (.inl rfl) _,
-    singleArgumentUniversal_below (.inl rfl) _⟩
+    singleArgumentUniversal_below (.inl rfl) _, singleArgumentUniversal_below (.inl rfl) _⟩
 
 /-- §5.1: the split R flagging systems obey Universal 7. -/
 theorem universal7_splitR :
@@ -686,10 +665,8 @@ theorem universal8_splitT :
 
 /-! ### Scenario splits (§6, §7) -/
 
-/-- (3): Teop flags P with the object marker `ben-` when A is aliophoric. -/
-def teopP : Scenario PersonClass → ℕ := below .locuphoric ∘ Scenario.high
-
-/-- (35): Kolyma Yukaghir flags P with the accusative when A is aliophoric. -/
+/-- (35): Kolyma Yukaghir flags P with the accusative when A is aliophoric; Teop's object
+marker `ben-` (3) is alike. -/
 def yukaghirP : Scenario PersonClass → ℕ := below .locuphoric ∘ Scenario.high
 
 /-- §6.1: Yurok flags P with the accusative when A is aliophoric and P locuphoric. -/
@@ -729,10 +706,9 @@ def icelandicR : Scenario Animacy → ℕ := atLeast .animate ∘ Scenario.low
 /-- §6: the monotransitive scenario splits obey Universal 5; the monadic ones by fn. 18 on
 a binary scale, Spanish as a relative split, the dyadic Yurok by inspection. -/
 theorem universal5_monotransitive :
-    ScenarioUniversal teopP ∧ ScenarioUniversal yukaghirP ∧ ScenarioUniversal yurokP ∧
+    ScenarioUniversal yukaghirP ∧ ScenarioUniversal yurokP ∧
       ScenarioUniversal sahaptinA ∧ ScenarioUniversal khantyA ∧ ScenarioUniversal spanishP :=
-  ⟨scenarioUniversal_comp_high (below_antitone _),
-    scenarioUniversal_comp_high (below_antitone _), by decide,
+  ⟨scenarioUniversal_comp_high (below_antitone _), by decide,
     scenarioUniversal_comp_low (atLeast_monotone _),
     scenarioUniversal_comp_low (atLeast_monotone _),
     scenarioUniversal_comp_kind (below_antitone _)⟩
@@ -984,14 +960,15 @@ def FocusStatus.table : List (String × FocusStatus) :=
 def NominalType.table : List (String × NominalType) :=
   [("pers", .pronoun), ("prop", .properName), ("common", .commonNoun)]
 
-/-- §4.1, §4.2: the single-argument P and A splits reproduce the paper's examples. -/
+/-- §4.1, §4.2: the single-argument P and A splits reproduce the paper's examples, the
+Punjabi and Kham rows those of the Sakha and Godoberi rules they share. -/
 theorem rows_splitP_splitA :
     Reproduces (rows "yaku1245" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows "nuor1238" "P" "animacy") (prominence? AnimacyLevel.table) sardinianP ∧
-      Reproduces (rows "panj1256" "P" "definiteness") (prominence? Definiteness.table) punjabiP ∧
+      Reproduces (rows "panj1256" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows "west2369" "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
       Reproduces (rows "neap1235" "P" "person") (prominence? PersonClass.table) abruzzeseP ∧
-      Reproduces (rows "taka1261" "A" "person") (prominence? PersonClass.table) khamA ∧
+      Reproduces (rows "taka1261" "A" "person") (prominence? PersonClass.table) godoberiA ∧
       Reproduces (rows "warr1255" "A" "nominality") (prominence? Nominality.table) warrgamayA ∧
       Reproduces (rows "mang1381" "A" "animacy") (prominence? Animacy.table) mangarrayiA ∧
       Reproduces (rows "cent2346" "A" "focus") (prominence? FocusStatus.table) tibetanA := by
@@ -1012,9 +989,10 @@ theorem rows_splitR_splitT :
   decide
 
 /-- §6, §7, §9: the scenario splits and Itonama's inverse reproduce the paper's examples;
-the rows of (43) and (44) are the American varieties'. -/
+the Teop rows those of the Yukaghir rule, and the rows of (43) and (44) are the American
+varieties'. -/
 theorem rows_scenario :
-    Reproduces (rows "teop1238" "P" "person") (scenario? PersonClass.table) teopP ∧
+    Reproduces (rows "teop1238" "P" "person") (scenario? PersonClass.table) yukaghirP ∧
       Reproduces (rows "sout2750" "P" "person") (scenario? PersonClass.table) yukaghirP ∧
       Reproduces (rows "saha1240" "A" "person") (scenario? PersonClass.table) sahaptinA ∧
       Reproduces (rows "east2774" "A" "definiteness") (scenario? Definiteness.table) khantyA ∧
