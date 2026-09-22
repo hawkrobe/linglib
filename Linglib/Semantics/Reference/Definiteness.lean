@@ -1,5 +1,9 @@
 module
 
+public import Mathlib.Order.Atoms
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Definiteness
 
@@ -14,7 +18,7 @@ here; which cell a language's determiner inventory falls in is derived in
 
 ## Main definitions
 
-* `Reference.Definiteness`: definite or indefinite.
+* `Reference.Definiteness`: definite or indefinite, as a two-element bounded linear order.
 * `Reference.Description.Strength`, `Reference.Description.Kind`: the strength of a definite
   article and the kind of a description, with `Strength.toKind` and `Kind.strength`.
 * `Reference.DefiniteUse`, `Reference.Bridging`: the uses of a definite and the bridging
@@ -25,6 +29,7 @@ here; which cell a language's determiner inventory falls in is derived in
 
 ## References
 
+* [aissen-2003]
 * [schwarz-2009]
 * [schwarz-2013]
 * [hawkins-1978]
@@ -43,7 +48,31 @@ introduces a new one ([heim-1982]). -/
 inductive Definiteness where
   | indefinite
   | definite
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
+
+namespace Definiteness
+
+/-- The rank on the definiteness scale, higher for definite. -/
+def rank : Definiteness → ℕ
+  | .indefinite => 0
+  | .definite   => 1
+
+/-- `indefinite < definite`: the definiteness scale of differential argument marking in its
+binary form ([aissen-2003]). -/
+instance : LinearOrder Definiteness := LinearOrder.lift' rank (by decide)
+
+/-- `⊥ = indefinite`, `⊤ = definite`. -/
+instance : BoundedOrder Definiteness where
+  top := .definite
+  le_top := by decide
+  bot := .indefinite
+  bot_le := by decide
+
+instance : IsSimpleOrder Definiteness where
+  exists_pair_ne := ⟨.indefinite, .definite, by decide⟩
+  eq_bot_or_eq_top := by decide
+
+end Definiteness
 
 namespace Description
 

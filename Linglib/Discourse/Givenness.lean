@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Order.Atoms
 public import Mathlib.Order.Basic
 public import Mathlib.Tactic.DeriveFintype
 
@@ -21,7 +22,7 @@ the identifiability boundary ([lambrecht-1994]), *given* against *new* (`BinaryG
 ## Main definitions
 
 * `Discourse.GivennessStatus`: the six-tier hierarchy, as a linear order.
-* `Discourse.BinaryGivenness`: given or new, as a linear order.
+* `Discourse.BinaryGivenness`: given or new, as a two-element bounded linear order.
 * `Discourse.GivennessStatus.toBinary`: the identifiability coarsening, monotone.
 
 ## Implementation notes
@@ -98,6 +99,17 @@ def rank : BinaryGivenness → ℕ
 
 /-- `new < given`. -/
 instance : LinearOrder BinaryGivenness := LinearOrder.lift' rank (by decide)
+
+/-- `⊥ = new`, `⊤ = given`. -/
+instance : BoundedOrder BinaryGivenness where
+  top := .given
+  le_top := by decide
+  bot := .new
+  bot_le := by decide
+
+instance : IsSimpleOrder BinaryGivenness where
+  exists_pair_ne := ⟨.new, .given, by decide⟩
+  eq_bot_or_eq_top := by decide
 
 end BinaryGivenness
 
