@@ -3,14 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Fragments.Ga.Basic
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+import Linglib.Fragments.Ga.Clause
 
 /-!
 # Gã complement-taking verbs
 
 This file records the Gã verbs of [allotey-2021] that embed clauses, as `Verb`
-entries whose frames are the clause frames of `Fragments/Ga/Basic` and whose
+entries whose frames are the clause frames of `Fragments/Ga/Clause` and whose
 `ni`-frame reading carries the control relation. Several verbs alternate between
 frames: *kai* 'remember' takes the controlled `ni`-clause (ex 43) or a finite
 `akɛ`-clause (ex 89a), *kɛɛ* 'say' takes `akɛ` (exx 47–49) or an
@@ -24,7 +23,7 @@ Karttunen implicativity (`Verb.implicative`) is recorded where it is textbook
 ([karttunen-1971]); the paper uses it for the contrast of ex 89, where the
 irrealis marker is absent exactly under the implicatives, but does not classify
 the verbs itself. Vendler class stays unset, the convention for clause-embedding
-verbs. Identifiers are ASCII (see `Fragments/Ga/Basic`); the IPA orthography is
+verbs. Identifiers are ASCII (see `Fragments/Ga/Clause`); the IPA orthography is
 in `form`.
 
 ## References
@@ -45,7 +44,7 @@ def niReading (c : ControlType) (size : Option Clause.Size := none) : Verb.Readi
   { frame := niFrame, control := some c, size }
 
 /-- The reading of a finite `akɛ`-frame: a proposition. -/
-def akeReading : Verb.Reading := { frame := ArgumentFrame.finiteClause, size := some .proposition }
+def akeReading : Verb.Reading := { frame := akeFrame, size := some .proposition }
 
 /-! ### Subject control -/
 
@@ -98,8 +97,8 @@ def miamihie : Verb where
     keeps it (ex 117a). -/
 def kai : Verb where
   form := "kai"
-  frames := [niFrame, ArgumentFrame.finiteClause]
-  readings := [niReading .subjectControl]
+  frames := [niFrame, akeFrame]
+  readings := [niReading .subjectControl, akeReading]
   implicative := some .positive
 
 /-- *nyɛ* 'manage' — subject control; `ni` optionally overt (ex 39: 'The children
@@ -117,7 +116,7 @@ def nye : Verb where
     complement, 'agree that' (ex 105: *Osa kplɛnɔ ni/akɛ Taki á-tsɛ́ Momo*). -/
 def kpleno : Verb where
   form := "kplɛnɔ"
-  frames := [niFrame, ArgumentFrame.finiteClause]
+  frames := [niFrame, akeFrame]
   readings := [niReading .subjectControl]
 
 /-- *kpaŋ* 'plan, decide' — subject control; only `ni` introduces the complement
@@ -141,7 +140,7 @@ def kpagbe : Verb where
     subject (ex 112: 'Aku thought to buy a book'). -/
 def dweng : Verb where
   form := "dwɛŋ"
-  frames := [ArgumentFrame.finiteClause, niFrame]
+  frames := [akeFrame, niFrame]
   readings := [akeReading, niReading .subjectControl]
   attitude := some (.doxastic .nonVeridical)
 
@@ -189,7 +188,7 @@ def bi : Verb where
     ni é he noko-noko* 'John didn't tell Mary to buy anything'). -/
 def kee : Verb where
   form := "kɛɛ"
-  frames := [ArgumentFrame.finiteClause, niFrame]
+  frames := [akeFrame, niFrame]
   readings := [akeReading, niReading .objectControl]
   speechActVerb := true
 

@@ -21,6 +21,8 @@ axis is position-side and never matched.
 ## Main definitions
 
 - `Complementizer.axes` — the typer's bundle
+- `ArgumentFrame.Position.typedBy`, `ArgumentFrame.typedBy` — the clausal position
+  and the frame a typer types, given the subject requirement the predicate adds
 - `ArgumentFrame.Position.Takes`, `ArgumentFrame.Takes`, `Verb.Takes` — the
   relation and its lifts
 - `Verb.typers` — the typers of a verb within an inventory
@@ -30,6 +32,12 @@ axis is position-side and never matched.
 - `ArgumentFrame.Position.takes_iff` — the relation axis by axis
 - `ArgumentFrame.Position.takes_iff_coding_force` — the relation on the two
   axes a typer records
+- `Complementizer.compat_axes_iff`, `Complementizer.disjoint_axes_iff` — a bundle
+  meets a typer's on the coding and force axes alone
+- `ArgumentFrame.Position.typedBy_takes_iff`, `ArgumentFrame.typedBy_takes_iff` —
+  the position or frame one typer types takes another exactly when the two
+  bundles are consistent and overlap; `typedBy_takes_self_iff` for the typer
+  itself
 - `ArgumentFrame.Position.not_takes_of_blank_left`,
   `ArgumentFrame.Position.not_takes_of_blank_right`,
   `ArgumentFrame.Position.not_takes_of_not_isClausal` — matching needs
@@ -60,9 +68,48 @@ def Complementizer.axes (z : Complementizer) : ArgumentFrame.Position.Axes
   | .force => z.force
   | .embeddedSubject | .relation | .adposition | .interp => ⊥
 
+namespace Complementizer
+
+variable {z : Complementizer} {f : ArgumentFrame.Position.Axes}
+
+/-- A bundle is consistent with a typer's exactly on the coding and force axes. -/
+theorem compat_axes_iff (f : ArgumentFrame.Position.Axes) :
+    Compat f z.axes ↔ Compat (f .coding) z.coding ∧ Compat (f .force) z.force := by
+  rw [compat_pi_iff]
+  exact ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨hc, hf⟩ a ↦ by
+    cases a <;> first | exact hc | exact hf | exact compat_bot _⟩
+
+/-- A bundle is disjoint from a typer's exactly on the coding and force axes. -/
+theorem disjoint_axes_iff (f : ArgumentFrame.Position.Axes) :
+    Disjoint f z.axes ↔ Disjoint (f .coding) z.coding ∧ Disjoint (f .force) z.force := by
+  rw [Pi.disjoint_iff]
+  exact ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨hc, hf⟩ a ↦ by
+    cases a <;> first | exact hc | exact hf | exact disjoint_bot_right⟩
+
+end Complementizer
+
 namespace ArgumentFrame.Position
 
-variable {p q : Position} {z : Complementizer}
+variable {p q : Position} {z z' : Complementizer} {s : Option Clause.EmbeddedSubject}
+
+/-- The clausal position `z` types: `z`'s coding and force, with the subject
+    requirement `s` the selecting predicate adds. -/
+def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : Position :=
+  .clausal z.coding z.force s
+
+@[simp] theorem kind_typedBy : (typedBy z s).kind = .clausal := rfl
+
+@[simp] theorem coding?_typedBy : (typedBy z s).coding? = z.coding := rfl
+
+@[simp] theorem force?_typedBy : (typedBy z s).force? = z.force := rfl
+
+@[simp] theorem embeddedSubject?_typedBy : (typedBy z s).embeddedSubject? = s := rfl
+
+@[simp] theorem relation?_typedBy : (typedBy z s).relation? = none := rfl
+
+@[simp] theorem adposition?_typedBy : (typedBy z s).adposition? = none := rfl
+
+@[simp] theorem interp?_typedBy : (typedBy z s).interp? = none := rfl
 
 /-- The position takes clause-typer `z`: the two bundles are consistent and
     overlap, some axis committed on both sides to one value. Matching needs
@@ -83,19 +130,23 @@ instance : Decidable (p.Takes z) := decidable_of_iff _ takes_iff.symm
     consistent, one of them overlapping. -/
 theorem takes_iff_coding_force :
     p.Takes z ↔
-      (Compat (p.axes .coding) (z.axes .coding) ∧ Compat (p.axes .force) (z.axes .force)) ∧
-        (¬ Disjoint (p.axes .coding) (z.axes .coding) ∨
-          ¬ Disjoint (p.axes .force) (z.axes .force)) := by
-  rw [takes_iff]
-  constructor
-  · rintro ⟨hc, a, ha⟩
-    refine ⟨⟨hc .coding, hc .force⟩, ?_⟩
-    cases a <;> simp_all [Complementizer.axes]
-  · rintro ⟨⟨hc, hf⟩, h⟩
-    refine ⟨fun a ↦ ?_, ?_⟩
-    · cases a <;> first | exact hc | exact hf | exact compat_bot _
-    · rcases h with h | h
-      exacts [⟨.coding, h⟩, ⟨.force, h⟩]
+      (Compat (p.axes .coding) z.coding ∧ Compat (p.axes .force) z.force) ∧
+        (¬ Disjoint (p.axes .coding) z.coding ∨ ¬ Disjoint (p.axes .force) z.force) :=
+  and_congr (Complementizer.compat_axes_iff _)
+    ((Complementizer.disjoint_axes_iff _).not.trans not_and_or)
+
+/-- The position `z` types takes `z'` exactly when the two typers' bundles are
+    consistent and overlap; the subject requirement plays no part. -/
+theorem typedBy_takes_iff :
+    (typedBy z s).Takes z' ↔ Compat z.axes z'.axes ∧ ¬ Disjoint z.axes z'.axes := by
+  rw [Takes, Complementizer.compat_axes_iff, Complementizer.disjoint_axes_iff,
+    Complementizer.compat_axes_iff z.axes, Complementizer.disjoint_axes_iff z.axes]
+  exact Iff.rfl
+
+/-- The position `z` types takes `z` itself exactly when `z` records something;
+    the `←` direction is `takes_of_le`. -/
+theorem typedBy_takes_self_iff : (typedBy z s).Takes z ↔ z.axes ≠ ⊥ :=
+  typedBy_takes_iff.trans ((and_iff_right (compat_self _)).trans disjoint_self.not)
 
 /-- A position recording neither shared axis takes nothing. -/
 theorem not_takes_of_blank_left (hc : p.coding? = none) (hf : p.force? = none) :
@@ -105,7 +156,7 @@ theorem not_takes_of_blank_left (hc : p.coding? = none) (hf : p.force? = none) :
 /-- A typer recording neither axis takes nothing. -/
 theorem not_takes_of_blank_right (hc : z.coding = none) (hf : z.force = none) :
     ¬ p.Takes z := by
-  simp [takes_iff_coding_force, Complementizer.axes, hc, hf, Flat.none_eq_bot]
+  simp [takes_iff_coding_force, hc, hf, Flat.none_eq_bot]
 
 /-- A non-clausal position takes nothing: it records no axis a typer does. -/
 theorem not_takes_of_not_isClausal (h : ¬ p.IsClausal) : ¬ p.Takes z := by
@@ -136,7 +187,7 @@ end ArgumentFrame.Position
 
 namespace ArgumentFrame
 
-variable {fr fr' : ArgumentFrame} {z : Complementizer}
+variable {fr fr' : ArgumentFrame} {z z' : Complementizer} {s : Option Clause.EmbeddedSubject}
 
 /-- The frame takes `z`: some complement does. -/
 def Takes (fr : ArgumentFrame) (z : Complementizer) : Prop :=
@@ -164,8 +215,29 @@ theorem finiteClause_takes (hc : z.coding = some .indicative)
     (hf : z.force = none ∨ z.force = some .declarative) : finiteClause.Takes z := by
   refine ⟨_, List.mem_singleton_self _, ?_⟩
   rcases hf with hf | hf <;>
-    simp [Position.takes_iff_coding_force, Position.axes, Position.coding?, Position.force?,
-      Complementizer.axes, hc, hf, Flat.none_eq_bot, Flat.some_eq_coe, compat_bot]
+    simp [Position.takes_iff_coding_force, Position.axes, Position.coding?, Position.force?, hc,
+      hf, Flat.none_eq_bot, Flat.some_eq_coe, compat_bot]
+
+/-! ### The frame a typer types -/
+
+/-- The frame whose one complement is the clause `z` types, with the subject
+    requirement `s`: the frame a fragment derives from its complementizer
+    entry rather than retyping the typer's axes. -/
+def typedBy (z : Complementizer) (s : Option Clause.EmbeddedSubject := none) : ArgumentFrame :=
+  ⟨some .nominal, [.typedBy z s]⟩
+
+@[simp] theorem complements_typedBy : (typedBy z s).complements = [.typedBy z s] := rfl
+
+/-- The frame `z` types takes `z'` exactly when the two typers' bundles are
+    consistent and overlap. -/
+theorem typedBy_takes_iff :
+    (typedBy z s).Takes z' ↔ Compat z.axes z'.axes ∧ ¬ Disjoint z.axes z'.axes := by
+  simp only [Takes, complements_typedBy, List.mem_singleton, exists_eq_left,
+    Position.typedBy_takes_iff]
+
+/-- The frame `z` types takes `z` exactly when `z` records something. -/
+theorem typedBy_takes_self_iff : (typedBy z s).Takes z ↔ z.axes ≠ ⊥ :=
+  typedBy_takes_iff.trans ((and_iff_right (compat_self _)).trans disjoint_self.not)
 
 end ArgumentFrame
 

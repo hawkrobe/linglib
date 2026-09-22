@@ -1,5 +1,7 @@
+import Linglib.Fragments.Ga.Pronouns
 import Linglib.Fragments.Ga.Verbs
 import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Data.WALS.Features.F101A
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Control.Head
 import Linglib.Studies.Landau2013
@@ -15,7 +17,11 @@ lexical subject is ungrammatical, and the proclitic shows the whole OC signature
 subjunctive — it bars tense and aspect, focus fronting and free reference,
 licenses NPIs across its boundary, negates preverbally, and carries the irrealis
 marker only as a high tone on its subject (Table 4). The pronoun is overt
-because that tone needs a segmental host.
+because that tone needs a segmental host. The subject markers are pronouns,
+not agreement: the verb is invariant across subjects (§4.4) and a marker
+cannot double a lexical subject (§6.1), against the affixal analysis of
+[campbell-2017] that [wals-2013]'s 101A coding of Gã follows; Gã is therefore a
+non-pro-drop language (§2.1).
 
 Everything is read off the paper's example rows and the Fragment. The control
 profile of a clause type is [landau-2013]'s signature as the rows attest it
@@ -29,7 +35,11 @@ requirement then derives the overt pronoun from the minimal-pronoun inventory.
 
 ## Implementation notes
 
-The bound-variable row of Table 2 rests on the *de se* example (53); the paper
+The paper's pro-drop status is its own reading of its 101A cell, obligatory
+subject pronouns (§4.2), and is stated here rather than in the Fragment because
+[wals-2013] codes the same markers as affixes; `wals_codes_affixes` records
+the discrepancy and `no_agreement_rows` the paper's evidence against it. The
+bound-variable row of Table 2 rests on the *de se* example (53); the paper
 has no *only* test, so `Control.Diagnostic.strictUnderOnly` is never attested
 and the bound-variable clause of the signature holds unrefuted rather than
 tested. The paper tests reference only in the `ni`- and `akɛ`-clauses, so the
@@ -38,6 +48,7 @@ comparison with [landau-2004]'s scale is stated for those two.
 ## References
 
 * [allotey-2021]
+* [campbell-2017]
 * [landau-2013]
 * [landau-2004]
 * [szabolcsi-2009]
@@ -46,13 +57,14 @@ comparison with [landau-2004]'s scale is stated for those two.
 * [karttunen-1971]
 * [noonan-2007]
 * [rizzi-1997]
+* [wals-2013]
 * [wurmbrand-lohninger-2023]
 * [wurmbrand-2024]
 -/
 
 namespace Allotey2021
 
-open Minimalist.MinimalPronoun Control Ga Data.Examples
+open Minimalist.MinimalPronoun Control Ga Ga.Pronouns Data.Examples
 
 /-! ### Pronouns (Table 3) -/
 
@@ -62,10 +74,53 @@ theorem objective_form_iff (p : Person) (n : Number) :
       n = .singular ∧ (p = .second ∨ p = .third) := by
   cases p <;> cases n <;> decide
 
-/-- No dedicated possessive form: the possessive column of Table 3 is the
-    elsewhere form. -/
-theorem no_possessive_form : ∀ q ∈ pronouns, q.case_ ≠ some .gen := by
-  decide
+/-- The paradigm distinguishes case in the second and third person singular
+    alone: every other referential category has one form for all three
+    columns of Table 3. -/
+theorem card_paradigm (c : Person.Category) :
+    (paradigm c).card = if c = .addressee ∨ c = .other then 2 else 1 := by
+  cases c <;> decide +kernel
+
+/-- Every referential category has a form: the one form of first person
+    plural *wɔ* covers clusivity and the number of others alike. -/
+theorem paradigm_nonempty (c : Person.Category) : (paradigm c).Nonempty := by
+  cases c <;> decide +kernel
+
+/-- Each cell of Table 3 has one subject form. -/
+theorem card_subjectForms :
+    ∀ q ∈ pronouns, ∀ p ∈ q.person, ∀ n ∈ q.number, (subjectForms p n).card = 1 := by
+  decide +kernel
+
+/-! ### Subject pronouns are not agreement (§4.4, §6.1) -/
+
+/-- The verb of exx 79–81 is the one form *tee* 'went' whatever the person of
+    its subject: Gã marks no subject agreement on the verb. -/
+theorem no_agreement_rows :
+    (∀ row ∈ Examples.all, row.feature? "diagnostic" = some "agreement" →
+      (row.feature? "person").isSome → ("tee", "went") ∈ row.glossedTokens) ∧
+      ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all,
+        r₁.feature? "diagnostic" = some "agreement" ∧
+        r₂.feature? "diagnostic" = some "agreement" ∧
+        r₁.feature? "person" ≠ r₂.feature? "person" := by
+  decide +kernel
+
+/-- The paper's cell of [wals-2013]'s 101A: subject pronouns are obligatory
+    and object pronouns omissible (§4.2). -/
+def pronominalSubjects : Data.WALS.F101A.ExpressionOfPronominalSubjects :=
+  .obligatoryPronounsInSubjectPosition
+
+/-- [wals-2013] codes the same markers as subject affixes on the verb, not
+    `pronominalSubjects`: the analysis of [campbell-2017], against which an
+    affix would co-occur with a lexical subject (ex 123) and could not be
+    separated from its verb by negation (ex 125). -/
+theorem wals_codes_affixes :
+    (Data.WALS.F101A.lookupISO "gaa").map (·.value) = some .subjectAffixesOnVerb := by
+  decide +kernel
+
+/-- Whether Gã allows a null pronominal subject: the paper's reading of its
+    cell, that a language whose subject pronouns are obligatory drops none
+    (§2.1). -/
+def allowsProDrop : Bool := decide (pronominalSubjects ≠ .obligatoryPronounsInSubjectPosition)
 
 /-! ### Complementizer selection (§5.5.1) -/
 
@@ -249,8 +304,8 @@ theorem deSe_witness :
 /-- The controlled form φ-covaries with its controller (exx 37–39), unlike
     [satik-2019]'s form-invariant Ewe *yè*. -/
 theorem controlled_form_covaries :
-    subjectProclitic? .second .singular ≠ subjectProclitic? .second .plural := by
-  decide
+    subjectForms .second .singular ≠ subjectForms .second .plural := by
+  decide +kernel
 
 /-- The control diagnostic a row attests when acceptable: a non-c-commanding or
     long-distance antecedent by the paper's coindexation, a free reading of the
@@ -412,11 +467,7 @@ theorem null_pro_impossible (inv : MinPronInventory PronForm) (h : inv.controlFo
 /-- The Gã inventory meets the tone-hosting requirement. -/
 theorem ga_hostsControlTone : HostsControlTone gaInventory := fun _ h => nomatch h
 
-/-- Controlled subjects surface as overt proclitics. -/
+/-- Controlled subjects surface as overt pronouns. -/
 theorem ga_overt_pro : gaInventory.controlForm = .pronoun := rfl
-
-/-- Overt PRO and no *pro*-drop: Gã instantiates the implicational universal. -/
-theorem ga_satisfies_universal :
-    gaInventory.OvertPROUniversal Ga.allowsProDrop := λ _ ↦ rfl
 
 end Allotey2021

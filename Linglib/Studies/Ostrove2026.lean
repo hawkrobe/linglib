@@ -46,6 +46,7 @@ prose only.
 * [safir-2014]
 * [polinsky-potsdam-2006]
 * [allotey-2021]
+* [wals-2013]
 * [sulemana-2021]
 * [black-1994]
 * [dechaine-manfredi-1994]
@@ -106,7 +107,7 @@ clitic position. -/
 def ex86Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
 
 /-- The attested occupants of the two positions. -/
-def ex86Occupant : Fin 2 → Ex86Item := λ p => if p = 0 then .quantifierDP else .pronoun
+def ex86Occupant : Fin 2 → Ex86Item := fun p ↦ if p = 0 then .quantifierDP else .pronoun
 
 /-- Exempt anaphors reject quantified antecedents (78) yet are available in untensed
 subjunctives under quantified controllers (86), (87), so the embedded position holds a
@@ -188,18 +189,30 @@ theorem smpm_controlled_must_be_clitic :
 inventory of [allotey-2021], and the same pro-drop status. -/
 theorem ga_patterns_with_smpm :
     Allotey2021.gaInventory.controlForm = smpmInventory.controlForm ∧
-      Ga.allowsProDrop = allowsProDrop :=
+      Allotey2021.allowsProDrop = allowsProDrop :=
   ⟨rfl, rfl⟩
 
 /-! ### The implicational universal (54) -/
 
 /-- SMPM instantiates the universal: overt PRO and no pro-drop. -/
 theorem smpm_satisfies_universal : smpmInventory.OvertPROUniversal allowsProDrop :=
-  λ _ => rfl
+  fun _ ↦ rfl
 
 /-- English satisfies it vacuously, whatever its pro-drop status, since its PRO is null. -/
 theorem english_satisfies_universal (proDrop : Bool) :
     englishInventory.OvertPROUniversal proDrop :=
   MinPronInventory.overtPROUniversal_of_controlForm_eq_null rfl proDrop
+
+/-- Gã instantiates it: overt PRO and no pro-drop ([allotey-2021]). -/
+theorem ga_satisfies_universal :
+    Allotey2021.gaInventory.OvertPROUniversal Allotey2021.allowsProDrop :=
+  MinPronInventory.overtPROUniversal_of_not_proDrop _
+
+/-- The universal has bite for Gã: with overt PRO it fails the moment Gã counts as pro-drop, so
+its Gã instance rests on [allotey-2021]'s analysis of the subject markers as obligatory pronouns
+rather than the affixes of [wals-2013]'s 101A coding (`Allotey2021.wals_codes_affixes`). -/
+theorem ga_violates_universal_of_proDrop : ¬ Allotey2021.gaInventory.OvertPROUniversal true :=
+  fun h ↦ PronForm.noConfusion (Allotey2021.ga_overt_pro.symm.trans
+    (MinPronInventory.controlForm_eq_null_of_overtPROUniversal h))
 
 end Ostrove2026
