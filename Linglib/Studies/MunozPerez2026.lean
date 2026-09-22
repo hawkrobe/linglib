@@ -1,5 +1,6 @@
 import Linglib.Data.Examples.MunozPerez2026
 import Linglib.Syntax.Agreement.PersonCaseConstraint
+import Linglib.Syntax.Minimalist.Verbal.LittleV
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Person.Features
 import Linglib.Fragments.Romance.Spanish.Clitics
@@ -26,8 +27,8 @@ head, they do not differ in meaning.
 
 ## Main declarations
 
-* `Clause`, `marked`, `unmarked`: a clause by its Voice head, the verbal heads of its root and
-  the bundle of its applicative head; the clauses of marked and unmarked anticausatives.
+* `Clause`, `marked`, `unmarked`: a clause by its Voice head, its verbal heads and the bundle of
+  its applicative head; the clauses of marked and unmarked anticausatives.
 * `IsFissionApplicable`, `applExponents`: the fission rule and the exponents it gives the
   applicative head.
 * `Converges`: the two PF conditions on the clitics of a clause.
@@ -49,18 +50,19 @@ head, they do not differ in meaning.
 
 ## Implementation notes
 
-The root of a marked anticausative is a change and a result state and that of an unmarked one a
-change alone, after the structures the paper adopts from [cuervo-2003]. The paper leaves the
-structure of unmarked anticausatives open; all that matters here is that they lack the result
-state and a Voice head that asks for a marker. The optionality of the marker in the syntax, which
-the paper derives from a principle that lets an unchecked feature fail, is built into `markers`.
+The verbal heads of a marked anticausative are a change and a result state and those of an
+unmarked one a change alone, after the structures the paper adopts from [cuervo-2003]; the
+context of the fission rule, the change head over the state head, is `LittleV.Inchoative`. The
+paper leaves the structure of unmarked anticausatives open; all that matters here is that they
+lack the result state and a Voice head that asks for a marker. The optionality of the marker in
+the syntax, which the paper derives from a principle that lets an unchecked feature fail, is
+built into `markers`.
 The clauses given to *quejarse* and to impersonal *dar* say only that they are not inchoative.
 
 ## TODO
 
-The context of the fission rule is adjacency of the change head and the state head, and
-`Minimalist.isInchoative` checks only that both are present. The paper's comparison with the
-two-flavour Voice of [martin-schaefer-kastner-2025] is not formalized.
+The paper's comparison with the two-flavour Voice of [martin-schaefer-kastner-2025] is not
+formalized.
 
 ## References
 
@@ -80,13 +82,10 @@ open Data.Examples Minimalist Person Spanish.Verbs
 structure Clause where
   /-- The Voice head. -/
   voice : Minimalist.Voice.Head
-  /-- The verbal heads below Voice. -/
-  root : List VerbHead
+  /-- The verbal heads below Voice, highest first. -/
+  heads : List LittleV
   /-- The bundle of the high applicative head, if the clause has an affected dative. -/
   appl : Option Category
-
-/-- The verbal heads of the clause, with the activity a thematic Voice head adds. -/
-def Clause.heads (k : Clause) : List VerbHead := Minimalist.Voice.buildDecomposition k.voice k.root
 
 /-- A marked anticausative is a change and its result state under a Voice head that introduces
 no argument and asks for a specifier. -/
@@ -130,7 +129,7 @@ def applExponents (k : Clause) : Finset (List String) :=
   | none => {[]}
   | some c =>
     (datives c).image ([·]) ∪
-      if isInchoative k.heads = true ∧ IsFissionApplicable c then
+      if LittleV.Inchoative k.heads ∧ IsFissionApplicable c then
         (datives c).image ([·, Spanish.Clitics.le.form])
       else ∅
 
@@ -267,7 +266,7 @@ theorem anticausative_rows : ∀ e ∈ Examples.all,
 impersonal *dar* is an activity under an impersonal Voice head. -/
 def otherClause? (e : LinguisticExample) : Option Clause :=
   (appl? e).bind fun a ↦ e.parse? "construction"
-    [("inherent", ⟨Minimalist.Voice.agentive, [], a⟩),
+    [("inherent", ⟨Minimalist.Voice.agentive, [.vDO], a⟩),
       ("impersonal", ⟨Minimalist.Voice.impersonal, [.vDO], a⟩)]
 
 /-- Where *se* has another source and the clause is not inchoative, the applicative head has its

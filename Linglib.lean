@@ -2451,9 +2451,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 import Linglib.Syntax.Minimalist.Theta.Basic
 import Linglib.Syntax.Minimalist.Theta.Realize
 import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Syntax.Minimalist.Verbal.Aspect
-import Linglib.Syntax.Minimalist.Verbal.Decomposition
-import Linglib.Syntax.Minimalist.Verbal.SmallClause
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Workspace.Basic
 import Linglib.Syntax.Minimalist.Workspace.TraceMeasures

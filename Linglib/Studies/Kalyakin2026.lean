@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Semantics.Root.Defs
+import Linglib.Syntax.Minimalist.Verbal.LittleV
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
@@ -58,89 +59,35 @@ theorem vpEllipsis_more_restrictive :
     ¬ vpEllipsis.Tolerates .transitivity ∧
     vStrandingVPE.Tolerates .transitivity := by decide
 
-/-! ### Causative Alternation Under vVPE -/
+/-! ### The causative alternation under vVPE (§5)
 
-/-- A datum for ellipsis under argument structure alternation. -/
-structure AlternationDatum where
-  /-- Description -/
-  description : String
-  /-- Voice flavor of the antecedent -/
-  antecedentVoice : Flavor
-  /-- Voice flavor of the ellipsis site -/
-  targetVoice : Flavor
-  /-- Root event structure (shared between antecedent and target) -/
-  rootStructure : List VerbHead
-  /-- Is the alternation grammatical under the given ellipsis type? -/
-  grammatical : Bool
-  deriving Repr
+The two alternants of a change-of-state root differ in the light verb alone, `[vDO, vBE]`
+against `[vGO, vBE]` in [cuervo-2003]'s calculus, and share the VP below it. vVPE strands the
+light verb and elides its complement, so the shared VP satisfies identity and the alternation is
+tolerated; English VP-ellipsis deletes the vP, where v_trans ≠ v_unacc fails identity
+([merchant-2013]). -/
 
-/-- Inchoative antecedent → causative target (OK under vVPE).
-    "The door opened. Then someone made it [open]."
-    Voice: nonThematic → agentive; root: [vGO, vBE] shared. -/
-def inchoativeToCausative : AlternationDatum :=
-  { description := "Inchoative → causative under vVPE (Muira Dargwa)"
-    antecedentVoice := .nonThematic
-    targetVoice := .agentive
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    grammatical := true }
+/-- The causative alternant of a change-of-state root: a state under `vDO`. -/
+def causative : List LittleV := [.vDO, .vBE]
 
-/-- Causative antecedent → inchoative target (OK under vVPE).
-    "Someone opened the door, and then it [opened] by itself."
-    Voice: agentive → nonThematic; root: [vGO, vBE] shared. -/
-def causativeToInchoative : AlternationDatum :=
-  { description := "Causative → inchoative under vVPE (Muira Dargwa)"
-    antecedentVoice := .agentive
-    targetVoice := .nonThematic
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    grammatical := true }
+/-- The inchoative alternant: the same state under `vGO`. -/
+def inchoative : List LittleV := [.vGO, .vBE]
 
-/-- Same alternation is blocked in English VPE ([merchant-2013]):
-    v_trans ≠ v_unacc inside the deletion domain. -/
-def englishAlternationBlocked : AlternationDatum :=
-  { description := "Causative alternation blocked under English VPE"
-    antecedentVoice := .nonThematic
-    targetVoice := .agentive
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    grammatical := false }
+/-- The alternants differ in the light verb and share its complement, the VP. -/
+theorem alternants_share_vp :
+    LittleV.Causative causative ∧ LittleV.Inchoative inchoative ∧
+      causative.tail = inchoative.tail ∧ causative ≠ inchoative := by
+  decide
 
-/-! ### Structural Verification -/
-
-/-- The shared root structure [vCAUSE, vGO, vBE] yields different decompositions
-    under different Voice flavors — this is the causative alternation
-    from Voice.lean. -/
-theorem alternation_same_root :
-    buildDecomposition agentive [.vCAUSE, .vGO, .vBE] = [.vDO, .vCAUSE, .vGO, .vBE] ∧
-    buildDecomposition anticausative [.vCAUSE, .vGO, .vBE] = [.vCAUSE, .vGO, .vBE] := by
-  constructor <;> rfl
-
-/-- The causative alternation is tolerated under vVPE because
-    transitivity mismatches are allowed. -/
+/-- The causative alternation is tolerated under vVPE because transitivity mismatches are
+    allowed. -/
 theorem causative_alternation_ok_under_vVPE :
     vStrandingVPE.Tolerates .transitivity := by decide
 
-/-- The causative alternation is blocked under English VPE because
-    transitivity mismatches are blocked. -/
+/-- The causative alternation is blocked under English VPE because transitivity mismatches are
+    blocked. -/
 theorem causative_alternation_blocked_english :
     ¬ vpEllipsis.Tolerates .transitivity := by decide
-
-/-- The same root structure is used in both alternants — the complement
-    of v (= VP) is identical. This is why vVPE succeeds: it only
-    requires identity of the VP, which contains the shared root. -/
-theorem shared_vp_core :
-    let root := [VerbHead.vCAUSE, VerbHead.vGO, VerbHead.vBE]
-    buildDecomposition agentive root ≠ buildDecomposition anticausative root ∧
-    root = root := by
-  constructor
-  · intro h; cases h
-  · rfl
-
-/-- Each row's grammaticality is as `Ellipsis.Tolerates` predicts for the ellipsis and the
-    mismatch dimension, the judgment recorded in the row and the prediction read off the spine. -/
-theorem alternation_predicted_by_merchant :
-    (inchoativeToCausative.grammatical = true ↔ vStrandingVPE.Tolerates .transitivity) ∧
-    (causativeToInchoative.grammatical = true ↔ vStrandingVPE.Tolerates .transitivity) ∧
-    (englishAlternationBlocked.grammatical = true ↔
-      vpEllipsis.Tolerates .transitivity) := by decide
 
 /-! ### Antipassive Blocking -/
 
@@ -176,31 +123,13 @@ theorem vVPE_below_vpEllipsis :
 
 /-! ### End-to-End Argumentation Chain -/
 
-/-- End-to-end chain: Voice severing ([kratzer-1996]) →
-    Merchant's deletion domain ([merchant-2013]) →
-    Kalyakin's empirical finding ([kalyakin-2026]).
-
-    Step 1 (Voice.lean): The root `[vCAUSE, vGO, vBE]` yields a causative
-    decomposition `[vDO, vCAUSE, vGO, vBE]` under agentive Voice but an
-    inchoative `[vCAUSE, vGO, vBE]` under nonThematic Voice. The full
-    decompositions differ,
-    but the root (= VP content) is shared.
-
-    Step 2 (Ellipsis.lean): Under vVPE ([E] on v), the deletion domain
-    is VP. Transitivity (determined by v) is external to VP, so
-    transitivity mismatches are tolerated.
-
-    Step 3 (this file): The datum — inchoative→causative alternation under
-    vVPE is grammatical — matches the prediction. -/
+/-- End-to-end chain: the alternants share their VP under distinct light verbs ([cuervo-2003]),
+    vVPE with [E] on v elides the VP alone ([merchant-2013]), so the alternation is tolerated
+    under vVPE ([kalyakin-2026]). -/
 theorem end_to_end_causative_chain :
-    -- Step 1: Voice determines causativity (Kratzer/Cuervo)
-    isCausative (buildDecomposition agentive [.vCAUSE, .vGO, .vBE]) = true ∧
-    isInchoative (buildDecomposition anticausative [.vCAUSE, .vGO, .vBE]) = true ∧
-    -- Step 2: vVPE tolerates the transitivity difference (Merchant)
-    vStrandingVPE.Tolerates .transitivity ∧
-    -- Step 3: Alternation under vVPE is grammatical (Kalyakin)
-    inchoativeToCausative.grammatical = true :=
-  ⟨rfl, rfl, by decide, rfl⟩
+    causative.tail = inchoative.tail ∧ causative ≠ inchoative ∧
+      vStrandingVPE.Deletes (rootSite .complement) ∧ vStrandingVPE.Tolerates .transitivity := by
+  decide
 
 /-- Merchant's theory also predicts that sluicing, with [E] on C, blocks voice mismatches, since
     Voice is inside TP, the deletion domain of sluicing. The Santa Cruz sluicing data set

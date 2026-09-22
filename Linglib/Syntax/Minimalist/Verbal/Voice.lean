@@ -1,14 +1,10 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.Reciprocal
 
 /-!
-# Voice Head Flavors
-[chomsky-2001] [coon-2019] [cuervo-2003] [harley-2014] [kratzer-1996]
-[legate-2003] [martin-schaefer-kastner-2025] [schaefer-2008] [siloni-2012]
-[wood-2015]
+# Voice heads
 
 Voice heads introduce (or fail to introduce) external arguments
 ([kratzer-1996]).
@@ -21,18 +17,39 @@ Voice heads introduce (or fail to introduce) external arguments
 * `Head` — a flavor plus featural and per-construction properties, with the
   predicate API `IsPhasal`/`AssignsTheta`/`HasSemantics`/`IntroducesExternal`/
   `ExternalImplicit`.
-* `buildDecomposition` — the Voice–VerbHead bridge: Voice contributes vDO
-  when it assigns θ; CAUSE belongs to the root ([cuervo-2003],
-  [pylkkanen-2008]).
 * `Params` + `Flavor.toParams` — the ±D/±λx parametric decomposition
   ([alexiadou-schaefer-2015]); `ProjectionLocus` — which projection an
   exponent spells out.
 
 ## Implementation notes
 
-[wood-2015] uses a single v head whose interpretation introduces CAUSE; the
-multi-headed decomposition here follows [cuervo-2003] and captures the same
-Voice–CAUSE independence. See `Wood2015` for the Icelandic -st apparatus.
+Voice is severed from the event structure below it: the v heads are
+`Minimalist.LittleV`, whose [cuervo-2003] calculus locates the causative
+alternation in the choice of v, not of Voice, and admits Voice only over
+`vDO`. Programs that locate the alternation in Voice ([wood-2015]'s single
+allosemic v, [alexiadou-schaefer-2015]) state their claim about `Flavor`
+alone. See `Wood2015` for the Icelandic -st apparatus.
+
+## References
+
+* [alexiadou-schaefer-2015]
+* [beavers-udayana-2022]
+* [chomsky-2001]
+* [collins-2005]
+* [coon-mateo-pedro-preminger-2014]
+* [creissels-2024]
+* [cuervo-2003]
+* [erlewine-sommerlot-2025]
+* [kratzer-1996]
+* [legate-2003]
+* [martin-schaefer-kastner-2025]
+* [munoz-perez-2026]
+* [schaefer-2008]
+* [schaefer-2017]
+* [scott-2023]
+* [siloni-2012]
+* [wood-2015]
+* [wood-marantz-2017]
 -/
 
 open ArgumentStructure
@@ -100,7 +117,7 @@ def Flavor.thetaRole : Flavor → Option ThetaRole
 
 /-- Default phasehood ([collins-2005]/[chomsky-2001] baseline):
     θ-assigning, specifier-projecting Voice is phasal — tethered to the
-    parameter grid by `defaultPhasal_eq_baselinePhasal`, with antipassive
+    parameter grid by `defaultPhasal_iff_baselinePhasal`, with antipassive
     the machine-checked exception (`antipassive_anomaly`);
     per-construction divergences go via `Head.phaseOverride`. -/
 def Flavor.defaultPhasal : Flavor → Bool
@@ -288,73 +305,6 @@ theorem reciprocal_assigns_theta : reciprocal.AssignsTheta := by decide
 /-- Experiencer Voice assigns a θ-role ([wood-2015]). -/
 theorem experiencer_assigns_theta : experiencer.AssignsTheta := by decide
 
-/-! ### Voice–VerbHead bridge ([kratzer-1996] in [cuervo-2003] terms) -/
-
-/-- The full verbal decomposition: Voice prepends vDO when it assigns θ;
-    the root supplies the lower structure, including vCAUSE for
-    change-of-state roots ([wood-2015], [pylkkanen-2008]). -/
-def buildDecomposition (voice : Head) (rootStructure : List VerbHead) :
-    List VerbHead :=
-  if voice.AssignsTheta then .vDO :: rootStructure
-  else rootStructure
-
-/-- θ-assigning Voice prepends vDO to the root structure. -/
-theorem theta_voice_prepends_vDO (v : Head) (root : List VerbHead)
-    (h : v.AssignsTheta) :
-    buildDecomposition v root = .vDO :: root := by
-  simp [buildDecomposition, h]
-
-/-- Non-θ Voice leaves the root structure unchanged. -/
-theorem no_theta_passthrough (v : Head) (root : List VerbHead)
-    (h : ¬ v.AssignsTheta) :
-    buildDecomposition v root = root := by
-  simp [buildDecomposition, h]
-
-/-- Causative pattern: agentive Voice + [vCAUSE, vGO, vBE] is causative. -/
-theorem agent_plus_change_is_causative :
-    isCausative (buildDecomposition agentive [.vCAUSE, .vGO, .vBE]) = true := by
-  decide
-
-/-- Inchoative pattern: non-thematic Voice + [vCAUSE, vGO, vBE] stays
-    inchoative. -/
-theorem nonthematic_plus_change_is_inchoative :
-    isInchoative (buildDecomposition anticausative [.vCAUSE, .vGO, .vBE]) = true := by
-  decide
-
-/-- Activity pattern: agentive Voice + [] yields an activity. -/
-theorem agent_plus_nothing_is_activity :
-    isActivity (buildDecomposition agentive []) = true := by
-  decide
-
-/-- State pattern: non-thematic Voice + [vBE] yields a state. -/
-theorem nonthematic_plus_state_is_state :
-    isState (buildDecomposition anticausative [.vBE]) = true := by
-  decide
-
-/-- The causative alternation: [vCAUSE, vGO, vBE] is causative under
-    agentive Voice, inchoative under non-thematic Voice — only vDO
-    differs. -/
-theorem causative_alternation :
-    isCausative (buildDecomposition agentive [.vCAUSE, .vGO, .vBE]) = true ∧
-    isInchoative (buildDecomposition anticausative [.vCAUSE, .vGO, .vBE]) = true := by
-  decide
-
-/-- Voice determines causativity: over the root structure
-    [vCAUSE, vGO, vBE], the result is causative iff Voice assigns θ. -/
-theorem voice_determines_causativity (v : Head) :
-    isCausative (buildDecomposition v [.vCAUSE, .vGO, .vBE]) = true ↔
-    v.AssignsTheta := by
-  cases v with | mk flavor _ _ _ _ =>
-  cases flavor <;>
-    simp [buildDecomposition, isCausative, Head.AssignsTheta, Flavor.thetaRole]
-
-/-- CAUSE is present in both causative and anticausative decompositions —
-    the independence claim: CAUSE is part of the root, not Voice. -/
-theorem cause_independent_of_voice :
-    hasCause (buildDecomposition agentive [.vCAUSE, .vGO, .vBE]) = true ∧
-    hasCause (buildDecomposition anticausative [.vCAUSE, .vGO, .vBE]) = true := by
-  decide
-
 /-! ### Feature dissociation ([collins-2005] §4) -/
 
 /-- In active, v (= agentive Voice) assigns θ AND controls Case-checking. -/
@@ -371,12 +321,6 @@ theorem passive_theta_case_dissociated :
 theorem utah_active_passive :
     agentive.HasD ∧ passive.HasD := by decide
 
-/-- Passive Voice does not prepend vDO: no θ, so `buildDecomposition`
-    passes the root structure through unchanged. -/
-theorem passive_no_vDO (root : List VerbHead) :
-    buildDecomposition passive root = root := by
-  simp [buildDecomposition, passive_no_theta]
-
 /-! ### Voice–phase bridge -/
 
 /-- Agentive Voice corresponds to traditional v* (phase head); both
@@ -384,16 +328,12 @@ theorem passive_no_vDO (root : List VerbHead) :
 theorem agentive_voice_is_phase_head :
     agentive.IsPhasal ∧ causer.IsPhasal := by decide
 
-/-- Non-thematic and expletive Voice are NOT phase heads. -/
+/-- Non-thematic and expletive Voice are NOT phase heads. Phasehood does not track
+    θ-assignment in general: [erlewine-sommerlot-2025] treats every Malayic Voice, passive
+    included, as a phase head, and antipassive assigns θ yet defaults to non-phasal
+    (`antipassive_anomaly`); `Head.phaseOverride` records such divergences. -/
 theorem nonthematic_voice_not_phase_head :
     ¬ anticausative.IsPhasal ∧ ¬ middle.IsPhasal := by decide
-
--- Voice phasehood does NOT track θ-assignment in general.
--- [erlewine-sommerlot-2025] (Malayic) treats every Voice — including passive
--- and bare passive — as a phase head, and the antipassive flavor assigns θ
--- yet defaults to non-phasal (`antipassive_anomaly`). The `phaseOverride`
--- field is the per-construction locus where further divergences are made
--- explicit.
 
 /-! ### Parametric decomposition ([alexiadou-schaefer-2015], [schaefer-2017]) -/
 
@@ -494,27 +434,19 @@ instance (v : Head) : Decidable v.ExternalImplicit := inferInstanceAs (Decidable
 
 /-- Baseline phasehood in the parameter grid: a θ-marked specifier
     ([+D, +λx arg]) makes a phase ([collins-2005]/[chomsky-2001]). -/
-def Params.baselinePhasal (p : Params) : Bool :=
-  p.selectsSpecifier == some true &&
-    p.extArgSemantics == some .thematicArgument
+def Params.BaselinePhasal (p : Params) : Prop :=
+  p.selectsSpecifier = some true ∧ p.extArgSemantics = some .thematicArgument
 
-/-- Compatible iff agreeing on all specified dimensions. -/
-def Params.isCompatibleWith (p q : Params) : Bool :=
-  (p.selectsSpecifier.isNone || q.selectsSpecifier.isNone ||
-   p.selectsSpecifier == q.selectsSpecifier) &&
-  (p.extArgSemantics.isNone || q.extArgSemantics.isNone ||
-   p.extArgSemantics == q.extArgSemantics)
+instance : DecidablePred Params.BaselinePhasal := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Is this parameter setting fully specified? -/
-def Params.isFullySpecified (p : Params) : Bool :=
-  p.selectsSpecifier.isSome && p.extArgSemantics.isSome
+/-- Compatible: agreeing on every dimension both specify. -/
+def Params.Compatible (p q : Params) : Prop :=
+  (∀ s ∈ p.selectsSpecifier, ∀ t ∈ q.selectsSpecifier, s = t) ∧
+    ∀ s ∈ p.extArgSemantics, ∀ t ∈ q.extArgSemantics, s = t
+
+instance : DecidableRel Params.Compatible := fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Parametric bridge theorems -/
-
-/-- All named flavors produce fully specified params. -/
-theorem flavor_params_fully_specified (f : Flavor) :
-    f.toParams.isFullySpecified = true := by
-  cases f <;> rfl
 
 /-- Semantic external-argument presence per flavor: the θ-assigning
     flavors plus impersonal. -/
@@ -527,10 +459,9 @@ theorem flavor_params_theta_consistent (f : Flavor) :
 
 /-- `defaultPhasal` agrees with the parametric baseline everywhere except
     antipassive. -/
-theorem defaultPhasal_eq_baselinePhasal (f : Flavor)
-    (h : f ≠ .antipassive) :
-    f.defaultPhasal = f.toParams.baselinePhasal := by
-  cases f <;> simp_all <;> rfl
+theorem defaultPhasal_iff_baselinePhasal (f : Flavor) (h : f ≠ .antipassive) :
+    f.defaultPhasal = true ↔ f.toParams.BaselinePhasal := by
+  cases f <;> simp_all <;> decide
 
 /-- The antipassive anomaly, machine-checked: antipassive occupies a
     phasal cell of the grid ([+D, +λx arg]) yet is non-phasal by default —
@@ -540,7 +471,7 @@ theorem defaultPhasal_eq_baselinePhasal (f : Flavor)
     derivable from the voice either. -/
 theorem antipassive_anomaly :
     Flavor.antipassive.defaultPhasal = false ∧
-    Flavor.antipassive.toParams.baselinePhasal = true := ⟨rfl, rfl⟩
+    Flavor.antipassive.toParams.BaselinePhasal := by decide
 
 /-- Grid consistency: a flavor θ-marks its specifier iff its cell is
     [+λx arg]. -/
@@ -549,20 +480,14 @@ theorem thetaRole_isSome_iff (f : Flavor) :
       f.toParams.extArgSemantics = some .thematicArgument := by
   cases f <;> simp [Flavor.thetaRole, Flavor.toParams]
 
-/-- Compatibility is reflexive. -/
-theorem params_compatible_refl (p : Params) :
-    p.isCompatibleWith p = true := by
-  cases p with | mk s e =>
-  cases s with
-  | none => cases e with | none => rfl | some e => cases e <;> rfl
-  | some s => cases s <;> (cases e with | none => rfl | some e => cases e <;> rfl)
+theorem Params.Compatible.refl (p : Params) : p.Compatible p :=
+  ⟨fun _ hs _ ht => Option.mem_unique hs ht, fun _ hs _ ht => Option.mem_unique hs ht⟩
 
 /-- A fully underspecified Params is compatible with every named flavor —
     the key property for Indonesian *ber-* ([beavers-udayana-2022]). -/
 theorem underspecified_compatible_with_all (f : Flavor) :
-    let ber : Params := { selectsSpecifier := none, extArgSemantics := none }
-    ber.isCompatibleWith f.toParams = true := by
-  cases f <;> rfl
+    Params.Compatible ⟨none, none⟩ f.toParams := by
+  cases f <;> decide
 
 /-! ### Projection locus -/
 

@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.FunctionalSequence
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
@@ -33,7 +32,7 @@ read off the category of the Merge complement through the head function
 ## References
 
 * [pylkkanen-2008]
-* [cuervo-2003]
+* [schaefer-2008]
 * [wood-2015]
 -/
 
