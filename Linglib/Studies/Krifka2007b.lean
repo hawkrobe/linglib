@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Antonymy
-import Linglib.Pragmatics.Superoptimal
+import Linglib.Pragmatics.Bidirectional
 
 /-!
 # Krifka (2007): Negated Antonyms: Creating and Filling the Gap
@@ -45,7 +45,7 @@ the same evaluation over the quadruplet's forms and regions yields Krifka's assi
 
 namespace Krifka2007b
 
-open Degree Pragmatics.Bidirectional
+open Degree BidirectionalOT
 
 variable {D : Type*} [LinearOrder D]
 

@@ -1,4 +1,4 @@
-import Linglib.Pragmatics.Superoptimal
+import Linglib.Pragmatics.Bidirectional
 import Linglib.Semantics.Root.Defs
 import Linglib.Fragments.English.Verbs
 
@@ -37,7 +37,7 @@ rather than through an event predicate.
 * `CauseConcepts` — production and dependence over a domain of causal relata, with the
   postulates that production entails dependence and that only physical relata produce.
 * `Reading`, `Reading.holds` — the two readings of CAUSE and their truth conditions.
-* `Form`, `profile` — the competition between the lexical causative, periphrastic *cause* and
+* `Form`, `tableau` — the competition between the lexical causative, periphrastic *cause* and
   the anticausative with a causer phrase, as a bidirectional optimality tableau.
 * `Sample` — the thirty-seven verbs of the survey, `Sample.entry` their fragment entries, and
   the columns `alternating`, `thick`, `strongResultative`, `resultless`, `omissionSubject`.
@@ -75,7 +75,7 @@ non-alternating, against the fragment, which gives it an unaccusative frame.
 
 namespace MartinRoseNichols2025
 
-open Pragmatics.Bidirectional
+open BidirectionalOT Core.Optimization.Evaluation
 
 /-! ### Two concepts of causation -/
 
@@ -126,10 +126,17 @@ inductive Form where
   | anticausative
   deriving DecidableEq, Fintype, Repr
 
-/-- The constraint profile of a form and reading. The periphrastic form is marked, and when
-the verb's manner information promotes production, the dependence reading is marked. -/
-def profile (promotes : Bool) (p : Form × Reading) : List ℕ :=
-  [if p.1 = .periphrastic then 1 else 0, if promotes ∧ p.2 = .dependence then 1 else 0]
+/-- The markedness constraint: the periphrastic form is marked. -/
+def markedness (p : Form × Reading) : ℕ := if p.1 = .periphrastic then 1 else 0
+
+/-- The production constraint: when the verb's manner information promotes production, the
+dependence reading is marked. -/
+def production (promotes : Bool) (p : Form × Reading) : ℕ :=
+  if promotes ∧ p.2 = .dependence then 1 else 0
+
+/-- The tableau of a form and reading under `markedness ≫ production`. -/
+def tableau (promotes : Bool) : Form × Reading → LexNatList :=
+  profile [markedness, production promotes]
 
 /-- The transitive forms expressing a causal relation between a subject and an object. -/
 def transitivePairs : Finset (Form × Reading) :=
@@ -143,36 +150,36 @@ def anticausativePairs : Finset (Form × Reading) :=
 /-- The production constraint. When a thick causative in its physical sense promotes
 production, the lexical form takes it and periphrastic *cause* is left with dependence. -/
 theorem production_constraint :
-    superoptimal transitivePairs (profile true) =
+    superoptimal transitivePairs (tableau true) =
       {(.lexical, .production), (.periphrastic, .dependence)} := by
   decide
 
 /-- Under the production constraint the lexical form has only the production reading. -/
 theorem reading_eq_production_of_lexical :
-    ∀ r, (Form.lexical, r) ∈ superoptimal transitivePairs (profile true) → r = .production := by
+    ∀ r, (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true) → r = .production := by
   decide
 
 /-- Under the production constraint periphrastic *cause* has only the dependence reading. -/
 theorem reading_eq_dependence_of_periphrastic :
-    ∀ r, (Form.periphrastic, r) ∈ superoptimal transitivePairs (profile true) →
+    ∀ r, (Form.periphrastic, r) ∈ superoptimal transitivePairs (tableau true) →
       r = .dependence := by
   decide
 
 /-- Where nothing promotes production, in the abstract sense or with a thin verb, the lexical
 form keeps the dependence reading. -/
 theorem lexical_dependence_of_not_promoted :
-    (Form.lexical, Reading.dependence) ∈ superoptimal transitivePairs (profile false) := by
+    (Form.lexical, Reading.dependence) ∈ superoptimal transitivePairs (tableau false) := by
   decide
 
 /-- The anticausative with a causer phrase has both readings. -/
 theorem anticausative_readings :
-    superoptimal anticausativePairs (profile false) = anticausativePairs := by
+    superoptimal anticausativePairs (tableau false) = anticausativePairs := by
   decide
 
 /-- Under the production constraint a subject with abstract reference falsifies the lexical
 causative. -/
 theorem not_holds_of_not_physical {r : Reading}
-    (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (profile true))
+    (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true))
     (h : ¬C.Physical s) : ¬r.holds C s o := by
   obtain rfl := reading_eq_production_of_lexical r hr
   exact C.not_produces_of_not_physical h
@@ -201,13 +208,13 @@ theorem sunburn_sun : Reading.production.holds sunburn .sun .skin := ⟨rfl, rfl
 /-- *The lack of sunscreen burned her skin* fails under every reading the production constraint
 leaves the lexical form. -/
 theorem sunburn_lexical (r : Reading)
-    (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (profile true)) :
+    (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true)) :
     ¬r.holds sunburn .lackOfSunscreen .skin :=
   not_holds_of_not_physical sunburn hr fun h ↦ h rfl
 
 /-- *The lack of sunscreen caused her skin to burn* holds under the reading left to *cause*. -/
 theorem sunburn_periphrastic (r : Reading)
-    (hr : (Form.periphrastic, r) ∈ superoptimal transitivePairs (profile true)) :
+    (hr : (Form.periphrastic, r) ∈ superoptimal transitivePairs (tableau true)) :
     r.holds sunburn .lackOfSunscreen .skin := by
   obtain rfl := reading_eq_dependence_of_periphrastic r hr
   exact ⟨.inr rfl, rfl⟩

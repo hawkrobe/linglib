@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Pragmatics.Superoptimal
+import Linglib.Pragmatics.Bidirectional
 
 /-!
 # de Hoop and Malchukov (2008): Case-marking strategies
@@ -31,7 +31,7 @@ and the antipassive the subject the unmarked argument.
 A form is `Option C` over the language's overt cases, `none` the absence of case; the
 asymmetrical games have one overt case, and the symmetrical game omits the caseless form
 since the Case Filter outranks ECONOMY there. Superoptimality is the computable
-`Pragmatics.Bidirectional.superoptimal`, and each tableau is one `decide`.
+`BidirectionalOT.superoptimal`, and each tableau is one `decide`.
 
 ## TODO
 
@@ -50,7 +50,7 @@ blocking relation gives, the first person marked and the intermediate types case
 
 namespace DeHoopMalchukov2008
 
-open Pragmatics.Bidirectional Constraints
+open BidirectionalOT Constraints
 
 /-! ### Strength and position -/
 
