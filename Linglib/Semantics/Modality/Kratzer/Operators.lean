@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Logic.Modal.Basic
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Kratzer's modal operators
@@ -27,6 +29,9 @@ necessity, and slight possibility, is not formalized.
 * [kratzer-1981]
 * [kratzer-2012]
 -/
+
+@[expose] public section
+
 
 namespace Modality.Kratzer
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
-import Linglib.Core.Order.Minimals
-import Mathlib.Order.Preorder.Finite
+module
+
+public import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
+public import Linglib.Core.Order.Minimals
+public import Mathlib.Order.Preorder.Finite
 
 /-!
 # Kratzer's ordering of worlds
@@ -32,6 +34,9 @@ verifies the whole ordering source, the best worlds are exactly those that do
 * [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
 * [A. Kratzer, *Modals and Conditionals* (2012)][kratzer-2012]
 -/
+
+@[expose] public section
+
 
 namespace Modality.Kratzer
 

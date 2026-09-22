@@ -1,5 +1,7 @@
-import Mathlib.Order.OmegaCompletePartialOrder
-import Linglib.Core.Order.PartialUnify
+module
+
+public import Mathlib.Order.OmegaCompletePartialOrder
+public import Linglib.Core.Order.PartialUnify
 
 /-!
 # The flat order
@@ -63,6 +65,9 @@ The free-domain universal property is now `liftEquiv` (with its enabling lemma
   maps. Connects this substrate to the trivalence/presupposition layer.
 * An inductive `Flat.LT` in the `WithBot.LT` mold, for upstreaming.
 -/
+
+@[expose] public section
+
 
 /-- `Flat α` is `Option α` carrying the flat information order: `⊥` below
 everything, distinct values incomparable. A `def`, not an `abbrev`, so the
@@ -304,10 +309,11 @@ open Classical
 /-- The supremum of a chain in the flat order: the committed value if the chain
 ever leaves `⊥`, and `⊥` otherwise. The implementation behind the `ωSup`
 projection (cf. `Prod.ωSupImpl`); state results about `ωSup`. -/
-private noncomputable def ωSupImpl (c : Chain (Flat α)) : Flat α :=
+noncomputable def ωSupImpl (c : Chain (Flat α)) : Flat α :=
   if h : ∃ i, c i ≠ ⊥ then c (Nat.find h) else ⊥
 
-private theorem ωSupImpl_isLUB (c : Chain (Flat α)) :
+/-- `ωSupImpl` is the least upper bound of the chain. -/
+theorem ωSupImpl_isLUB (c : Chain (Flat α)) :
     IsLUB (Set.range c) (ωSupImpl c) := by
   constructor
   · rintro _ ⟨j, rfl⟩
@@ -364,10 +370,11 @@ theorem ωScottContinuous_of_monotone {D : Type*} [OmegaCompletePartialOrder D]
     exact hu ⟨k, rfl⟩
 
 /-- The extension of `g : α → D` to the flat domain by `⊥ ↦ ⊥`. -/
-private def liftFun {D : Type*} [Bot D] (g : α → D) : Flat α → D :=
+def liftFun {D : Type*} [Bot D] (g : α → D) : Flat α → D :=
   recBotCoe ⊥ g
 
-private theorem liftFun_monotone {D : Type*} [Preorder D] [OrderBot D]
+/-- `liftFun g` is monotone into any order with a bottom. -/
+theorem liftFun_monotone {D : Type*} [Preorder D] [OrderBot D]
     (g : α → D) : Monotone (liftFun g) := by
   intro x y hxy
   cases hxy with

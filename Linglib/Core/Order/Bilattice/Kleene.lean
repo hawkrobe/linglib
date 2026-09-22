@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.Trivalent
-import Linglib.Core.Order.Flat
+module
+
+public import Linglib.Core.Data.Trivalent
+public import Linglib.Core.Order.Flat
 
 /-!
 # The knowledge order: `Flat Bool` and the Kleene bilattice
@@ -21,6 +23,9 @@ Kleene is not (`meetWeak_not_truthMono`).
 (`PartialUnify`) is the *gullibility* `⊕`, partial because three values lack the `⊤`
 ("both") of a full four-valued bilattice — so `Trivalent` is the *consistent fragment*
 of that bilattice. -/
+
+@[expose] public section
+
 
 namespace Trivalent
 

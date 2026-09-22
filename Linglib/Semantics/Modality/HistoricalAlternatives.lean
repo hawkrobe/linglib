@@ -1,7 +1,9 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.Defs.LinearOrder
-import Linglib.Semantics.Reference.Context.Index
-import Linglib.Logic.Temporal.Basic
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.Defs.LinearOrder
+public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Logic.Temporal.Basic
 
 /-!
 # Historical Alternatives
@@ -39,6 +41,9 @@ perfectly match it in matters of particular fact up to that time
 * `settled_iff_determined` : Condoravdi's `settled` = object-logic historical determinacy
   (`N P ∨ N ¬P`) — settled-*whether* (bilateral), the analogue of `oSettled`, not `IsInevitable`.
 -/
+
+@[expose] public section
+
 
 open Reference
 

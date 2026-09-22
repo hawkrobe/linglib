@@ -1,4 +1,6 @@
-import Linglib.Semantics.Conditionals.Stalnaker
+module
+
+public import Linglib.Semantics.Conditionals.Stalnaker
 
 /-!
 # Stalnaker (1975): Indicative Conditionals
@@ -47,6 +49,9 @@ carries the paper's account of the mood distinction.
 * [grice-1975]
 * [anderson-1951]
 -/
+
+@[expose] public section
+
 
 namespace Stalnaker1975
 

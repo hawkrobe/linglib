@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Order.Flat
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Order.Flat
 
 /-!
 # Universal Dependencies: morphological features
@@ -13,6 +15,9 @@ inventory exists.
 
 Official site: <https://universaldependencies.org/>
 -/
+
+@[expose] public section
+
 
 namespace UD
 

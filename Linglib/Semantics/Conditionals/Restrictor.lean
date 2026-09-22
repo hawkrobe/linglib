@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Conditionals.Basic
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Conditionals.Basic
 
 /-!
 # Restrictor Theory of Conditionals
@@ -27,6 +29,9 @@ necessity (∀w' ∈ Best(f+α, ∅, w). β(w')) equals the strict conditional
 (∀w' ∈ ∩f(w). α(w') → β(w')) from `Conditionals/Basic.lean`.
 
 -/
+
+@[expose] public section
+
 
 namespace Conditional.Restrictor
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Conditionals.Counterfactual
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual
 
 /-!
 # Stalnaker (1981): A Defense of Conditional Excluded Middle
@@ -50,6 +52,9 @@ affirming a *might*, and the Kennedy example are not formalized.
 * [quine-1950]
 * [van-fraassen-1966]
 -/
+
+@[expose] public section
+
 
 namespace Stalnaker1981
 

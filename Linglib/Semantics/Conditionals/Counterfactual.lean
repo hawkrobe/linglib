@@ -1,11 +1,13 @@
-import Mathlib.Data.Finset.Card
-import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Conditionals.WillConditional
-import Linglib.Semantics.Modality.Selectional
-import Linglib.Semantics.Supervaluation
-import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Core.Data.Trivalent
-import Linglib.Logic.Duality
+module
+
+public import Mathlib.Data.Finset.Card
+public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Semantics.Conditionals.WillConditional
+public import Linglib.Semantics.Modality.Selectional
+public import Linglib.Semantics.Supervaluation
+public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Duality
 
 /-!
 # Counterfactual conditionals: three theories
@@ -35,6 +37,9 @@ predictions under quantifiers are derived in `Studies/RamotowskaEtAl2025.lean`.
 * [kriz-2015]
 * [fine-1975]
 -/
+
+@[expose] public section
+
 
 namespace Conditional.Counterfactual
 
@@ -334,7 +339,7 @@ theorem selectional_eq_wouldConditional_singleton_universe
 
     `selFn w S` returns `w` if `w ∈ S` (Centering); otherwise returns
     `1` if `1 ∈ S`; otherwise picks the unique non-`w` element. -/
-private noncomputable def divergeSel : Conditional.SelectionFunction (Fin 3) :=
+noncomputable def divergeSel : Conditional.SelectionFunction (Fin 3) :=
   open Classical in
   { sel := fun w S => if w ∈ S then w
                       else if (1 : Fin 3) ∈ S then 1

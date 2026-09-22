@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Basic
-import Linglib.Semantics.Conditionals.SimilarityOrdering
+module
+
+public import Mathlib.Data.Set.Basic
+public import Linglib.Semantics.Conditionals.SimilarityOrdering
 
 /-!
 # Conditional operators
@@ -56,6 +58,9 @@ lives in `Conditionals/Restrictor.lean`, which bridges to `strictImp` via
 * [mizuno-2024]
 * [grusdt-lassiter-franke-2022]
 -/
+
+@[expose] public section
+
 
 namespace Conditional
 

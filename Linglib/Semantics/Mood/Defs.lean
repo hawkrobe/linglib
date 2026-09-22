@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Discourse.Role
-import Linglib.Data.UD.Features
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Discourse.Role
+public import Linglib.Data.UD.Features
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Mood Categories
@@ -28,6 +30,9 @@ enums, their pairing `ClauseType`, and the bridge from the UD `Mood` feature.
   coordinate of the mood state each category operates on.
 * `UD.Mood.toClauseType` — corpus bridge.
 -/
+
+@[expose] public section
+
 
 namespace Mood
 

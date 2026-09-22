@@ -1,5 +1,7 @@
-import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Logic.Duality
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual
+public import Linglib.Logic.Duality
 
 /-!
 # Counterfactuals over sets of antecedent propositions
@@ -16,6 +18,9 @@ counterfactual on the disjunction and does not. `homogeneity` is the all-or-noth
 otherwise — the presupposition of `DIST_π` and the trivalent conditional of
 [cariani-goldstein-2020].
 -/
+
+@[expose] public section
+
 
 namespace Conditional.Counterfactual
 

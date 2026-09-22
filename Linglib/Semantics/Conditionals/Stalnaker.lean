@@ -1,8 +1,10 @@
-import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Conditionals.SimilarityOrdering
-import Linglib.Discourse.CommonGround
+module
+
+public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Semantics.Conditionals.SimilarityOrdering
+public import Linglib.Discourse.CommonGround
 
 /-!
 # Stalnaker selection-function counterfactuals
@@ -55,6 +57,9 @@ was inaccurate per [stalnaker-1975] §IV. We now derive the
 equivalence within an appropriate context (the
 `*_eq_material_within_context` theorems below) rather than stipulate it.
 -/
+
+@[expose] public section
+
 
 namespace Conditional
 
