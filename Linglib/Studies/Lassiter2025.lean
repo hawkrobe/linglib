@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Lassiter2025
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Studies.Israel2001
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.German.Conditionals
 
@@ -22,8 +22,9 @@ improve once the embedded conditional has been asserted. Japanese *-ra* and Germ
 restricted to hypothetical conditionals, cannot head a bare left-nested conditional, whereas
 *nara* and *wenn* can (`heads_bare_iff`). The clauses of the embedded conditional take their
 entailment direction from the main antecedent's (`Position.polarity`), so a bare left-nested
-conditional hosts positive polarity items and rejects negative ones in the embedded consequent
-and licenses negative ones in the embedded antecedent (`bare_embedded_consequent`,
+conditional hosts positive polarity items and rejects negative ones, the minimizer *lift a
+finger* among them ([israel-2001]), in the embedded consequent and hosts them in the embedded
+antecedent (`bare_embedded_consequent`,
 `bare_embedded_antecedent`), the reverse of what a hypothetical reading would give
 (`polarity_diagnostic`). Coordinated antecedents share a reading
 ([haegeman-schonenberger-2023]), so a bare left-nested conditional coordinates only with a
@@ -34,6 +35,11 @@ model, `interpretation_rows` the reading the paper attributes to it.
 
 ## Implementation notes
 
+Polarity items are sorted by [israel-2001]'s scalar context types rather than by the Zwarts
+strength of `Polarity.LicensingContext.licenses`. The strength table rates a conditional
+antecedent weakly downward entailing and *lift a finger* as needing an anti-additive licensor,
+so it would exclude the minimizer from hypothetical antecedents, against [iatridou-1991]'s (27a)
+and the paper's (32); on the scalar account a minimizer needs only a scale-reversing context.
 The paper's rows carry their features as strings, so `shape`, `markerOf`, `itemOf`, and
 `positionOf` are adapters from `paperFeatures` into the typed model and the fragments' entries;
 `adapters_total` checks that every marker and item named in a row resolves, so the row
@@ -48,6 +54,7 @@ which the paper offers as a direction rather than a result, are not modelled.
 * [gibbard-1981]
 * [iatridou-1991]
 * [haegeman-schonenberger-2023]
+* [israel-2001]
 -/
 
 namespace Lassiter2025
@@ -161,8 +168,12 @@ theorem heads_bare_iff (m : Marker) :
 
 /-! ### Polarity items, section 2.3
 
-The embedded conditional sits in the main antecedent, so each of its clauses composes its own
-entailment direction with the main antecedent's. -/
+HCs take negative polarity items in their antecedents and not positive ones, and PCs the
+reverse ([iatridou-1991]). [israel-2001] derives the two classes: an item is sensitive to
+scale-reversing or scale-preserving contexts (`Israel2001.Item.contextType`), and the
+downward-entailing positions are the reversing ones. The embedded conditional sits in the main
+antecedent, so each of its clauses composes its own entailment direction with the main
+antecedent's. -/
 
 /-- A clause of the main conditional, or of the embedded conditional in its antecedent. -/
 inductive Position
@@ -177,11 +188,17 @@ def Position.polarity (ct : Reading) : Position → ContextPolarity
   | .main c => ct.clausePolarity c
   | .embedded c => (ct.clausePolarity .antecedent).compose (Reading.hypothetical.clausePolarity c)
 
-/-- The item `e` is admitted at `pos` under the reading `ct`. -/
-def admits (ct : Reading) (pos : Position) (e : Item) : Prop := Admits (pos.polarity ct) e
+/-- The scalar context a position provides: downward-entailing positions reverse the scale. -/
+def Position.contextType (ct : Reading) (pos : Position) : Israel2001.ContextType :=
+  if pos.polarity ct = .downward then .reversing else .preserving
+
+/-- The item `e` is admitted at `pos` under the reading `ct` when the position provides the
+context it is sensitive to. -/
+def admits (ct : Reading) (pos : Position) (e : Item) : Prop :=
+  Israel2001.Item.contextType e = some (pos.contextType ct)
 
 instance (ct : Reading) (pos : Position) (e : Item) : Decidable (admits ct pos e) :=
-  inferInstanceAs (Decidable (Admits _ _))
+  inferInstanceAs (Decidable (_ = _))
 
 /-- The embedded consequent takes the main antecedent's direction. -/
 theorem polarity_embedded_consequent (ct : Reading) :
@@ -193,22 +210,23 @@ theorem polarity_embedded_antecedent :
     (Position.embedded .antecedent).polarity .premise = .downward ∧
       (Position.embedded .antecedent).polarity .hypothetical = .upward := ⟨rfl, rfl⟩
 
-/-- In the consequent of its embedded conditional, a bare left-nested conditional hosts exactly
-the positive polarity items: *rather pleased* in (29), not *lifted a finger* in (30). -/
+/-- In the consequent of its embedded conditional, a bare left-nested conditional hosts items
+sensitive to preserving contexts, *rather pleased* in (29), and not the minimizer *lifted a
+finger* of (30). -/
 theorem bare_embedded_consequent (e : Item) :
-    Acceptable (.nested .bare) (admits · (.embedded .consequent) e) ↔ e.isPPI :=
+    Acceptable (.nested .bare) (admits · (.embedded .consequent) e) ↔
+      Israel2001.Item.contextType e = some .preserving :=
   acceptable_bare_iff _
 
-/-- In the antecedent of its embedded conditional, a bare left-nested conditional licenses what
-a hypothetical antecedent licenses: *lifted a finger* in (32b). -/
+/-- In the antecedent of its embedded conditional, a bare left-nested conditional hosts items
+sensitive to reversing contexts: *lifted a finger* in (32b). -/
 theorem bare_embedded_antecedent (e : Item) :
     Acceptable (.nested .bare) (admits · (.embedded .antecedent) e) ↔
-      LicensingContext.conditionalAntecedent.licenses e :=
+      Israel2001.Item.contextType e = some .reversing :=
   acceptable_bare_iff _
 
-/-- The diagnostic's force: on a hypothetical reading the embedded consequent would be a
-hypothetical antecedent for polarity, licensing *lifted a finger* and rejecting *rather*, the
-reverse of (29) and (30). -/
+/-- The diagnostic's force: on a hypothetical reading the embedded consequent would reverse the
+scale, admitting *lifted a finger* and rejecting *rather*, the reverse of (29) and (30). -/
 theorem polarity_diagnostic :
     admits .hypothetical (.embedded .consequent) English.PolarityItems.liftAFinger ∧
       ¬ admits .hypothetical (.embedded .consequent) English.PolarityItems.rather := by

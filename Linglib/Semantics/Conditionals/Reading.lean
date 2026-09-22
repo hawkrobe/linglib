@@ -5,7 +5,6 @@ import Linglib.Discourse.Commitment.Table
 import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Denotation
-import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Presupposition.Context
 
 /-!
@@ -13,8 +12,7 @@ import Linglib.Semantics.Presupposition.Context
 
 This file defines the two readings of a conditional, hypothetical and premise, with the
 denotation of *if p, q* under each, the felicity condition each places on the antecedent, the
-entailment direction of each clause and the polarity items it admits, and the markers that
-lexicalize the distinction.
+entailment direction of each clause, and the markers that lexicalize the distinction.
 
 A conditional is read as *hypothetical* when its antecedent is supposed and left open, and as
 a *premise* conditional when the antecedent echoes prior discourse and is treated as
@@ -22,10 +20,9 @@ established ([iatridou-1991], [haegeman-2003]). On the hypothetical reading *if 
 the conditional proposition of whatever operator the theory supplies; on the premise reading
 it asserts *q* with *p* presupposed, the *given that* paraphrase. The two agree wherever the
 antecedent holds and differ in what they make of the antecedent: the hypothetical reading puts
-it in a downward-entailing position, the conditional-antecedent licensing context, and admits
-the negative polarity items that context licenses, whereas the premise reading puts it in an
-upward-entailing one, licenses none, and admits positive polarity items instead; the consequent
-is upward entailing on either reading. A premise conditional is felicitous once its antecedent
+it in a downward-entailing position and the premise reading in an upward-entailing one, the
+source of their opposite polarity-item profiles ([iatridou-1991]); the consequent is upward
+entailing on either reading. A premise conditional is felicitous once its antecedent
 has been committed to or is common ground, which is where its presupposition is satisfied, and
 a hypothetical one while the antecedent's polar question is open. Languages may lexicalize the
 split: Japanese *-ra* and German *falls* mark only hypothetical conditionals, *nara* and *wenn*
@@ -40,7 +37,6 @@ mark either ([lassiter-2025]).
   to a commitment Table; `felicitous_iff_of_mem_commonGround` and
   `felicitous_iff_of_not_decidedBy` read the reading off the antecedent's discourse status.
 * `Clause`, `Reading.clausePolarity`: the entailment direction of each clause under a reading.
-* `Admits`: the polarity items a clause of a conditional admits, by its entailment direction.
 * `Marker`: a conditional marker with the readings it can mark; per-language entries live in
   `Fragments/{Language}/Conditional.lean`.
 
@@ -53,7 +49,7 @@ mark either ([lassiter-2025]).
 
 namespace Conditional
 
-open Commitment NaturalLogic Polarity Presupposition Semantics
+open Commitment NaturalLogic Presupposition Semantics
 
 /-- The readings of a conditional: the antecedent is supposed and left open, or echoes prior
 discourse and is treated as established. -/
@@ -185,17 +181,6 @@ def clausePolarity : Reading → Clause → ContextPolarity
   | _, _ => .upward
 
 end Reading
-
-/-- The polarity items a clause of a conditional admits, by its entailment direction: a
-downward-entailing clause is the conditional-antecedent licensing context and admits what it
-licenses, whereas a clause that is not, presuppositional like *since* or asserted, licenses
-nothing and hosts positive polarity items ([iatridou-1991]). -/
-def Admits : ContextPolarity → Item → Prop
-  | .downward, e => LicensingContext.conditionalAntecedent.licenses e
-  | _, e => e.isPPI
-
-instance (pol : ContextPolarity) (e : Item) : Decidable (Admits pol e) := by
-  cases pol <;> unfold Admits <;> infer_instance
 
 end Conditional
 

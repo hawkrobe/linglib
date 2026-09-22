@@ -4,8 +4,8 @@ import Linglib.Semantics.Polarity.Licensing
 # English Polarity-Sensitive Items
 
 English polarity items, typed by `Polarity.Item`: weak NPIs
-(*any*, *ever*, *at all*, the minimizers *lift a finger* and *budge an
-inch*), strong NPIs (*in years*, *either*), free-relative FCIs (*whatever*, *whoever*), maximizer NPIs
+(*any*, *ever*, *at all*), strong NPIs (*lift a finger*, *in years*,
+*either*), free-relative FCIs (*whatever*, *whoever*), maximizer NPIs
 (*wild horses*, *all the tea in China*), and PPIs both plain (*some*,
 *already*, *somewhat*) and idiomatic (*at the drop of a hat*, *for a
 pittance*). Entries carry licensing parameters, attested contexts, and
@@ -16,8 +16,6 @@ propositional role live with their consuming study in
 ## References
 
 * [israel-1996]
-* [iatridou-1991]
-* [lassiter-2025]
 * [gajewski-2011], p. 120
 * [rullmann-2003]
 -/
@@ -97,28 +95,25 @@ def whatsoever : Item :=
   , baseForce := .manner
   , licensingContexts := [.negation, .nobody] }
 
-/-- *lift a finger* — idiomatic minimizer, licensed in the antecedent of a hypothetical
-conditional ([iatridou-1991] (27a), [lassiter-2025] (32)) as under negation. -/
+/-! ### Strong NPIs -/
+
+/-- *lift a finger* — idiomatic minimizer, anti-additive licensor. -/
 def liftAFinger : Item :=
   { form := "lift a finger"
-  , licensor := some .weak
+  , licensor := some .antiAdditive
   , baseForce := .degree
-  , licensingContexts :=
-      [.negation, .nobody, .withoutClause, .conditionalAntecedent, .question]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := some .strengthening
   , morphology := .idiomatic }
 
-/-- *budge an inch* — idiomatic minimizer, licensed like *lift a finger*. -/
+/-- *budge an inch* — idiomatic minimizer, anti-additive licensor. -/
 def budgeAnInch : Item :=
   { form := "budge an inch"
-  , licensor := some .weak
+  , licensor := some .antiAdditive
   , baseForce := .degree
-  , licensingContexts :=
-      [.negation, .nobody, .withoutClause, .conditionalAntecedent, .question]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := some .strengthening
   , morphology := .idiomatic }
-
-/-! ### Strong NPIs -/
 
 /-- *in years* — temporal strong NPI. -/
 def inYears : Item :=
@@ -314,11 +309,11 @@ def forASong : Item :=
 
 /-- The weak NPIs. -/
 def weakNPIs : List Item :=
-  [any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever, liftAFinger, budgeAnInch]
+  [any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever]
 
 /-- The strong NPIs. -/
 def strongNPIs : List Item :=
-  [inYears, until_]
+  [liftAFinger, budgeAnInch, inYears, until_]
 
 /-- The maximizer NPIs. -/
 def invertedNPIs : List Item :=
