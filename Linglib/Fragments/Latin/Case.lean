@@ -1,5 +1,6 @@
-import Mathlib.Data.Fintype.Basic
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Latin case
@@ -20,46 +21,38 @@ of an inflectional case system.
 * [blake-1994]
 -/
 
+@[expose] public section
+
 namespace Latin.Case
 
-/-- The six cases of the traditional description, in the order of the school paradigms. -/
-inductive Value where
-  | nom
-  | voc
-  | acc
-  | gen
-  | dat
-  | abl
-  deriving DecidableEq, Repr, Fintype
+/-- The nominative. -/
+def nom : Case.Labelled := .single .nom
 
-/-- The comparative label of each case. -/
-def Value.toLabel : Value → Case
-  | .nom => .nom
-  | .voc => .voc
-  | .acc => .acc
-  | .gen => .gen
-  | .dat => .dat
-  | .abl => .abl
+/-- The vocative. -/
+def voc : Case.Labelled := .single .voc
 
-/-- The comparative case functions a case expresses. The ablative expresses location and
-instrument beside source, and the accusative the goal of motion beside the direct object. -/
-def Value.functions : Value → Finset Case
-  | .abl => {.abl, .loc, .inst}
-  | .acc => {.acc, .all}
-  | v => {v.toLabel}
+/-- The accusative, which expresses the goal of motion as well as the direct object. -/
+def acc : Case.Labelled := ⟨.acc, {.acc, .all}, by decide⟩
 
-/-- The Latin cases under their comparative labels. -/
-def inventory : Finset Case := Finset.univ.image Value.toLabel
+/-- The genitive. -/
+def gen : Case.Labelled := .single .gen
 
-/-- Every case function some Latin case expresses. -/
-def functions : Finset Case := Finset.univ.biUnion Value.functions
+/-- The dative. -/
+def dat : Case.Labelled := .single .dat
 
-theorem toLabel_injective : Function.Injective Value.toLabel := by decide
+/-- The ablative, which expresses location and instrument as well as source. -/
+def abl : Case.Labelled := ⟨.abl, {.abl, .loc, .inst}, by decide⟩
 
-/-- Every case expresses the function it is labelled for. -/
-theorem toLabel_mem_functions (v : Value) : v.toLabel ∈ v.functions := by
-  cases v <;> decide
+/-- The six cases, in the order of the school paradigms. -/
+def cases : Finset Case.Labelled := {nom, voc, acc, gen, dat, abl}
 
-theorem inventory_subset_functions : inventory ⊆ functions := by decide
+/-- The cases under their labels. -/
+def inventory : Finset Case := cases.image (·.label)
+
+/-- Every function some case expresses. -/
+def functions : Finset Case := cases.biUnion (·.functions)
+
+theorem inventory_subset_functions : inventory ⊆ functions :=
+  Case.Labelled.image_label_subset_biUnion_functions cases
 
 end Latin.Case
