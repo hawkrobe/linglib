@@ -238,13 +238,13 @@ expresses location and instrument, so that the Greek dative is the more comprehe
 dative. -/
 theorem latin_abl_functions_ancient_greek :
     .abl ∉ Greek.Ancient.Case.inventory ∧
-      Latin.Case.Value.functions .abl ⊆
+      Latin.Case.abl.functions ⊆
         Greek.Ancient.Case.gen.functions ∪ Greek.Ancient.Case.dat.functions := by
   decide
 
 /-- The Greek dative is a more comprehensive case than the Latin dative. -/
 theorem latin_dat_functions_ssubset_ancient_greek :
-    Latin.Case.Value.functions .dat ⊂ Greek.Ancient.Case.dat.functions := by decide
+    Latin.Case.dat.functions ⊂ Greek.Ancient.Case.dat.functions := by decide
 
 /-! ### The other case inventories of the fragments -/
 
