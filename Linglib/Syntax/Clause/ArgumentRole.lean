@@ -67,3 +67,11 @@ def ArgumentRole.IsLowDefault (r : ArgumentRole) : Prop := r = .P ∨ r = .T
 
 instance (r : ArgumentRole) : Decidable r.IsLowDefault :=
   inferInstanceAs (Decidable (_ ∨ _))
+
+theorem ArgumentRole.IsHighDefault.not_isLowDefault {r : ArgumentRole} (h : r.IsHighDefault) :
+    ¬ r.IsLowDefault := by
+  rcases h with rfl | rfl <;> decide
+
+theorem ArgumentRole.IsLowDefault.not_isHighDefault {r : ArgumentRole} (h : r.IsLowDefault) :
+    ¬ r.IsHighDefault := by
+  rcases h with rfl | rfl <;> decide

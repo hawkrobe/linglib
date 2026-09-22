@@ -414,7 +414,7 @@
       ],
       [
         "coding",
-        "special"
+        "zero"
       ]
     ],
     "comment": "Only the prepositional dative is possible.",
@@ -498,7 +498,7 @@
       ],
       [
         "prominence",
-        "nonhuman"
+        "animate"
       ],
       [
         "coding",
@@ -854,7 +854,7 @@
       ],
       [
         "coding",
-        "zero"
+        "special"
       ]
     ],
     "comment": "The preposition a is impossible on an aliophoric P.",
@@ -2625,6 +2625,10 @@
         "downstream"
       ],
       [
+        "variety",
+        "American"
+      ],
+      [
         "coding",
         "zero"
       ]
@@ -2671,6 +2675,10 @@
       [
         "kind",
         "balanced"
+      ],
+      [
+        "variety",
+        "American"
       ],
       [
         "coding",
@@ -2726,8 +2734,12 @@
         "balanced"
       ],
       [
+        "variety",
+        "American"
+      ],
+      [
         "coding",
-        "special"
+        "zero"
       ]
     ],
     "comment": "Unacceptable in the American varieties.",
@@ -2779,8 +2791,12 @@
         "upstream"
       ],
       [
+        "variety",
+        "American"
+      ],
+      [
         "coding",
-        "special"
+        "zero"
       ]
     ],
     "comment": "Unacceptable in all varieties.",
