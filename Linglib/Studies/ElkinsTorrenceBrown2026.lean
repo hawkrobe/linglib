@@ -346,7 +346,7 @@ theorem kiche_mem_realize_iff (c : Mayan.VerbClass) (s : Mayan.ExtractionSite) :
 /-- Voice⁰ of the analysis is an [Ā]-bearing head with an unvalued [oblique] probe that Agree with
 the mover values, (45a). -/
 def voice : Voice.Head :=
-  { flavor := .agentive, hasD := true, features := .ofGramFeatures [.unvalued (.oblique false)] }
+  { Voice.agentive with features := .ofGramFeatures [.unvalued (.oblique false)] }
 
 /-- The vocabulary item (46a) realizes the valued [obl] on Voice⁰ or Dir⁰. -/
 def eqYa : VocabularyItem GramFeature String :=

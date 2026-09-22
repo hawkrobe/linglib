@@ -103,7 +103,7 @@ def marked (a : Option Category) : Clause := ⟨Minimalist.Voice.anticausative, 
 
 /-- An unmarked anticausative is a change alone, under a Voice head that asks for nothing. -/
 def unmarked (a : Option Category) : Clause :=
-  ⟨{ flavor := .nonThematic, hasD := false }, [.vGO], a⟩
+  ⟨Minimalist.Voice.middle, [.vGO], a⟩
 
 /-- The applicative of a marked anticausative is affected, between the change and the state; that
 of an unmarked one is low, the rule's context failing. -/
@@ -114,7 +114,7 @@ theorem site_marked_unmarked (a : Option Category) :
 /-- The Voice head of an anticausative has no meaning, marked or not, so the clitics that spell
 a clause out cannot change what it means. -/
 theorem not_hasSemantics (a : Option Category) :
-    ¬ (marked a).voice.HasSemantics ∧ ¬ (unmarked a).voice.HasSemantics := by
+    ¬ (marked a).voice.IsThematic ∧ ¬ (unmarked a).voice.IsThematic := by
   simp only [marked, unmarked]; decide
 
 /-! ### The fission rule -/
@@ -159,7 +159,7 @@ instance : DecidablePred IsReflexiveForm := fun _ ↦ inferInstanceAs (Decidable
 
 /-- A Voice head must be marked at PF when it introduces no argument and asks for a
 specifier. -/
-def RequiresMarker (v : Minimalist.Voice.Head) : Prop := v.flavor = .nonThematic ∧ v.HasD
+def RequiresMarker (v : Minimalist.Voice.Head) : Prop := ¬ v.IsThematic ∧ v.HasD
 
 instance : DecidablePred RequiresMarker := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 

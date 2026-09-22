@@ -159,12 +159,19 @@ def person (p : Person) : GramFeature := .valued (.phi (.person p))
 Perf bears `[∗Infl:perf∗]` and `[∗π:_∗]`, ordered as in (7) or (22). v first runs its own
 cycle over the object ((9), (16)); Perf then probes the vP, T the PerfP (11). -/
 
+/-- The paper's two Voice heads: Voice_imp of the impersonal *si* (§3.4.4) and Voice_pass
+(fn. 18), both `Minimalist.Voice.passive`'s cell, an implicit external argument. -/
+inductive VoiceHead where
+  | impersonal
+  | passive
+  deriving DecidableEq, Repr
+
 /-- A clause of §3.4: v's class (`TransitivityClass`; an unergative verb is transitive
 with a covert cognate object bearing default features, fn. 10) under no Voice head, or
 under Voice_imp (§3.4.4) or Voice_pass (fn. 18). -/
 structure Clause where
   verb : TransitivityClass
-  voice : Option Voice.Flavor := none
+  voice : Option VoiceHead := none
   deriving DecidableEq, Repr
 
 /-- The heads before Agree, with subject person `p`: Perf `[∗Infl:perf∗], [∗π:_∗]`; T
@@ -273,7 +280,7 @@ theorem standardItalian_aux (c : TransitivityClass) (p : Person) :
 /-- (5d), fn. 18: under Voice_imp or Voice_pass the auxiliary is BE whatever the verb —
 Perf's π-probe, nested under Infl-Agree with Voice, meets an unvalued or absent person
 feature. -/
-theorem standardItalian_voice (c : TransitivityClass) (f : Voice.Flavor)
+theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
     (hf : f = .impersonal ∨ f = .passive) (p : Person) :
     standardItalianAux (derive standardItalian ⟨c, some f⟩ p) = .be := by
   rcases hf with rfl | rfl <;> (revert c p; decide)

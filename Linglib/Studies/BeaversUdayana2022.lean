@@ -46,7 +46,7 @@ gives the four middles of the paper.
 
 namespace BeaversUdayana2022
 
-open Minimalist.Voice (Params Flavor)
+open Minimalist.Voice (Params Head agentive passive underspecified_compatible_with_all)
 
 /-! ### The middles -/
 
@@ -365,18 +365,18 @@ theorem ber_relationalNoun {E : Type} (π : E → E → Prop) (possessum possess
 /-! ### The voice typology of Alexiadou and Schäfer (§7.3) -/
 
 /-- *meN-* corresponds to the thematic active voice. -/
-def meNParams : Params := Flavor.agentive.toParams
+def meNParams : Params := agentive.params
 
 /-- *di-* corresponds to the passive. -/
-def diParams : Params := Flavor.passive.toParams
+def diParams : Params := passive.params
 
 /-- *ber-* fixes neither whether a specifier is selected nor whether an agent is introduced. -/
 def berParams : Params := ⟨none, none⟩
 
 /-- *ber-* is compatible with every voice of the typology, and *meN-* and *di-* with each other
 are not. -/
-theorem berParams_compatible (f : Flavor) :
-    berParams.Compatible f.toParams ∧ ¬ meNParams.Compatible diParams := by
-  cases f <;> decide
+theorem berParams_compatible (v : Head) :
+    berParams.Compatible v.params ∧ ¬ meNParams.Compatible diParams :=
+  ⟨underspecified_compatible_with_all v, by decide⟩
 
 end BeaversUdayana2022

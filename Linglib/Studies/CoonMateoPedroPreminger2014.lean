@@ -122,7 +122,7 @@ is *-i*. -/
 def voiceAF : Head := { agentive with phaseOverride := some false, checksCase := true }
 
 /-- The antipassive Voice (59): the patient is oblique and v intransitive. -/
-def voiceAP : Head := { flavor := .antipassive, hasD := true }
+def voiceAP : Head := antipassive
 
 /-- The verb phrase of a clause: an intransitive with the marker series of its sole argument,
 or a transitive with its Voice and its object. -/

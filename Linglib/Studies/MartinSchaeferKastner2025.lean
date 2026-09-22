@@ -101,6 +101,19 @@ inductive Form where
   | se
   deriving DecidableEq
 
+/-- The paper's two flavours of Voice for a French anticausative: the non-thematic Voice of the
+marked anticausative, `Minimalist.Voice.anticausative`, and the reflexive Voice,
+`Minimalist.Voice.reflexive`. -/
+inductive Flavor where
+  | nonThematic
+  | reflexive
+  deriving DecidableEq, Repr
+
+/-- The substrate head each flavour is. -/
+def Flavor.head : Flavor → Head
+  | .nonThematic => Minimalist.Voice.anticausative
+  | .reflexive => Minimalist.Voice.reflexive
+
 /-- The voice flavours a form admits: the bare form only the non-thematic anticausative, the
 *se* form the reflexive as well, the syncretism of [schaefer-2008] and
 [koontz-garboden-2009]. -/
