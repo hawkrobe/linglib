@@ -733,7 +733,6 @@ import Linglib.Fragments.Finnish.PolarityItems
 import Linglib.Fragments.Finnish.Possession
 import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.Finnish.TemporalConnectives
-import Linglib.Fragments.Ga.Basic
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Evidentiality
