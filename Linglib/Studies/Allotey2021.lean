@@ -21,7 +21,7 @@ Everything is read off the paper's example rows and the Fragment. The control
 profile of a clause type is [landau-2013]'s signature as the rows attest it
 (`Control.ofAttested`): no row attests a criterial configuration of the
 `ni`-clause, so it is obligatory control, while the finite `akɛ`-clause attests
-free reference. Complementizer selection is `Verb.takes` over the Fragment's
+free reference. Complementizer selection is `Verb.Takes` over the Fragment's
 frames; every finiteness diagnostic is a row theorem conditioned on the
 complementizer's finiteness alone, the paper's convergence argument; Table 4 is
 the exponents the rows show in each irrealis context, and the tone-hosting
@@ -77,7 +77,7 @@ theorem frame_takes_iff (c d : EmbeddedClauseType) :
 
 /-- A verb takes `ni` exactly when some frame of it is controlled. -/
 theorem takes_ni_iff_control :
-    ∀ v ∈ verbs, v.takes ni ↔ ∃ r ∈ v.readings, r.control.isSome := by
+    ∀ v ∈ verbs, v.Takes ni ↔ ∃ r ∈ v.readings, r.control.isSome := by
   decide
 
 /-- [wurmbrand-lohninger-2023]'s hierarchy at Gã's granularity: a proposition
@@ -155,7 +155,7 @@ theorem lexical_subject_rows :
 theorem c_selection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "cSelection" →
       ∀ v ∈ verbOf row, ∀ c ∈ clauseTypeOf row,
-        (row.judgment = .acceptable ↔ v.takes c.complementizer) := by
+        (row.judgment = .acceptable ↔ v.Takes c.complementizer) := by
   decide +kernel
 
 /-- Overt tense or aspect in the complement is grammatical exactly in the finite

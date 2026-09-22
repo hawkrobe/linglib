@@ -51,7 +51,7 @@ cross-categorial ([noonan-2007]'s CTPs include adjectives and nouns),
 so `ArgumentFrame` is not under `Verb`. Frame-conditioned readings (attitude,
 opacity, control) live on `Verb.Reading`
 (`Syntax/Category/Verb/Defs.lean`); the selection relation between
-frames and clause-typers (`Verb.takes`) in
+frames and clause-typers (`Verb.Takes`) in
 `Syntax/Category/Verb/ArgumentFrame/Takes.lean`. [deal-2026]'s CP-external
 shell inventory lives with its consumer in `Studies/Deal2026.lean`.
 

@@ -54,7 +54,7 @@ def Selects (v : Washo.Verb) : Prop := ¬ v.toVerb.IsIntransitive
 instance : DecidablePred Selects := fun v ↦ inferInstanceAs (Decidable (¬ v.toVerb.IsIntransitive))
 
 /-- A predicate selects iff it takes the nominalizer as clause-typer. -/
-theorem selects_iff_takes_ge : ∀ v ∈ verbs, Selects v ↔ v.toVerb.takes ge := by
+theorem selects_iff_takes_ge : ∀ v ∈ verbs, Selects v ↔ v.toVerb.Takes ge := by
   decide
 
 /-- The spine of a nominalized complement, a CP under a silent D (3). -/
