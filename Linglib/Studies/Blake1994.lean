@@ -4,7 +4,8 @@ import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.German.Case
-import Linglib.Fragments.Greek.Case
+import Linglib.Fragments.Greek.Ancient.Case
+import Linglib.Fragments.Greek.StandardModern.Case
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Icelandic.Case
@@ -54,6 +55,9 @@ functions the Latin cases express fill it.
   and his two gapped systems each miss one position.
 * `gaps_latin_inventory`, `conforms_latin_functions`: the Latin labels skip the locative and the
   Latin functions do not.
+* `latin_abl_functions_ancient_greek`, `latin_dat_functions_ssubset_ancient_greek`: Greek has no
+  ablative, its genitive and dative expressing the functions of the Latin one, and its dative is
+  the more comprehensive case.
 * `gaps_finnish`, `gaps_hungarian`, `gaps_dargwa`: the gaps among the fragment inventories.
 
 ## Implementation notes
@@ -190,10 +194,10 @@ source and goal as well as location. -/
 def tarascan : Finset Case := {.nom, .acc, .gen, .loc, .inst, .com}
 
 /-- The systems Blake cites for the successive stages of the hierarchy, with the four cases of
-Ancient Greek, German and Icelandic, the six of the Slavonic languages and of Turkish, the seven of
-Classical Armenian and the eight of Tamil. -/
+Ancient Greek (beside its vocative), German and Icelandic, the six of the Slavonic languages and of
+Turkish, the seven of Classical Armenian and the eight of Tamil. -/
 def systems : List (Finset Case) :=
-  [Greek.Case.classicalInventory, German.Case.inventory, Icelandic.Case.inventory,
+  [Greek.Ancient.Case.inventory, German.Case.inventory, Icelandic.Case.inventory,
     Polish.Case.inventory, Czech.Case.inventory, Slovak.Case.inventory, Serbian.Case.inventory,
     Turkish.Case.inventory, classicalArmenian, Tamil.Case.inventory]
 
@@ -223,11 +227,30 @@ theorem gaps_latin_inventory_subset :
     gaps Latin.Case.inventory ⊆ positions Latin.Case.functions \ positions Latin.Case.inventory :=
   gaps_subset_of_conforms Latin.Case.inventory_subset_functions conforms_latin_functions
 
+/-! ### Ancient Greek
+
+Blake sets the Ancient Greek dative beside the Latin one to show that cases are compared by the
+functions they cover and not by their labels. Greek has no ablative, and the functions of the
+Latin ablative fall to the Greek genitive, which expresses source, and to the Greek dative, which
+expresses location and instrument, so that the Greek dative is the more comprehensive case. -/
+
+/-- Greek has no ablative, and the functions of the Latin ablative fall to its genitive and
+dative. -/
+theorem latin_abl_functions_ancient_greek :
+    .abl ∉ Greek.Ancient.Case.inventory ∧
+      Latin.Case.Value.functions .abl ⊆
+        Greek.Ancient.Case.gen.functions ∪ Greek.Ancient.Case.dat.functions := by
+  decide
+
+/-- The Greek dative is a more comprehensive case than the Latin dative. -/
+theorem latin_dat_functions_ssubset_ancient_greek :
+    Latin.Case.Value.functions .dat ⊂ Greek.Ancient.Case.dat.functions := by decide
+
 /-! ### The other case inventories of the fragments -/
 
 /-- Modern Greek, Hindi, Japanese, Korean and Telugu conform. -/
 theorem fragments_conform :
-    ∀ inv ∈ [Greek.Case.inventory, Hindi.Case.inventory, Japanese.Case.inventory,
+    ∀ inv ∈ [Greek.StandardModern.Case.inventory, Hindi.Case.inventory, Japanese.Case.inventory,
       Korean.Case.inventory, Telugu.Case.inventory], Conforms inv := by
   decide
 
