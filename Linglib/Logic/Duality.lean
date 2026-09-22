@@ -1,5 +1,7 @@
-import Linglib.Core.Data.Trivalent
-import Mathlib.Data.Finset.Lattice.Fold
+module
+
+public import Linglib.Core.Data.Trivalent
+public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Aggregation of `Trivalent` Lists by Projection Type
@@ -21,6 +23,8 @@ The `Prop`-valued counterparts of `existsAny`/`forallAll` are just `∃`/`∀`
 from Lean core. De Morgan duality uses `not_forall`/`not_exists` from
 Mathlib.
 -/
+
+@[expose] public section
 
 namespace Trivalent
 
@@ -423,3 +427,5 @@ theorem dist_not_of_nonempty {α : Type*} (s : Finset α) (P : α → Prop) [Dec
 -/
 
 end Trivalent
+
+end
