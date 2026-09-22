@@ -63,14 +63,24 @@ def ofBool (f : W → W → W → Bool)
   closer_trans := htrans
   decClose w₀ w₁ w₂ := inferInstanceAs (Decidable (f w₀ w₁ w₂ = true))
 
-/-- The ordering by a distance `d w₀ w` from each center `w₀`. -/
-def ofRank (d : W → W → ℕ) : SimilarityOrdering W where
+/-- The ordering by a distance `d w₀ w` from each center `w₀`, valued in any preorder. -/
+def ofRank {α : Type*} [Preorder α] [DecidableLE α] (d : W → W → α) : SimilarityOrdering W where
   closer w₀ w₁ w₂ := d w₀ w₁ ≤ d w₀ w₂
   closer_refl _ _ := le_rfl
   closer_trans _ _ _ _ := le_trans
   decClose _ _ _ := inferInstance
 
-/-! ## Centering -/
+
+/-! ## Totality and centering -/
+
+/-- A **total** similarity ordering: any two worlds are comparable from every center, the
+strong connectedness [lewis-1973] §2.3 requires of comparative similarity. -/
+def Total (sim : SimilarityOrdering W) : Prop :=
+  ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁
+
+/-- The ordering by a distance valued in a linear order is total. -/
+theorem total_ofRank {α : Type*} [LinearOrder α] (d : W → W → α) : (ofRank d).Total :=
+  fun _ _ _ ↦ le_total _ _
 
 /-- A **strongly centered** similarity ordering: every world is strictly
     closest to itself ([lewis-1973]'s centering axiom). -/
@@ -131,9 +141,45 @@ preorder centered at `w₀`. `closestWorlds` is the `Finset` form. -/
 def closest (sim : SimilarityOrdering W) (w₀ : W) (s : Set W) : Set W :=
   {w ∈ s | ∀ w' ∈ s, sim.closer w₀ w w' ∨ ¬ sim.closer w₀ w' w}
 
+variable {sim w₀} {s t : Set W} {v : W}
+
+theorem mem_closest :
+    v ∈ sim.closest w₀ s ↔ v ∈ s ∧ ∀ u ∈ s, sim.closer w₀ v u ∨ ¬ sim.closer w₀ u v := Iff.rfl
+
 theorem closest_subset (sim : SimilarityOrdering W) (w₀ : W) (s : Set W) :
     sim.closest w₀ s ⊆ s :=
   Set.sep_subset _ _
+
+@[simp] theorem closest_empty : sim.closest w₀ ∅ = ∅ :=
+  Set.subset_empty_iff.1 (sim.closest_subset w₀ ∅)
+
+/-- A closest `t`-world that lies in a subset `s` of `t` is a closest `s`-world. -/
+theorem mem_closest_of_subset (hst : s ⊆ t) (hv : v ∈ sim.closest w₀ t) (hvs : v ∈ s) :
+    v ∈ sim.closest w₀ s :=
+  ⟨hvs, fun u hu ↦ hv.2 u (hst hu)⟩
+
+/-- A closest world of a union is a closest world of one of its parts. -/
+theorem closest_union_subset : sim.closest w₀ (s ∪ t) ⊆ sim.closest w₀ s ∪ sim.closest w₀ t :=
+  fun _ hv ↦ hv.1.imp (mem_closest_of_subset Set.subset_union_left hv)
+    (mem_closest_of_subset Set.subset_union_right hv)
+
+/-- Under strong centering, a world is its own unique closest world in any set containing it. -/
+theorem closest_eq_singleton_of_mem (hc : sim.isCentered) (hv : v ∈ s) :
+    sim.closest v s = {v} := by
+  have hvv : v ∈ sim.closest v s := ⟨hv, fun x _ ↦ .inl <| by
+    rcases eq_or_ne v x with rfl | hne
+    exacts [sim.closer_refl v v, (hc v x hne).1]⟩
+  ext u
+  refine ⟨fun hu ↦ ?_, fun hu ↦ (Set.mem_singleton_iff.1 hu).symm ▸ hvv⟩
+  by_contra hne
+  obtain ⟨hvu, hnuv⟩ := hc v u (Ne.symm hne)
+  exact (hu.2 v hv).elim hnuv (· hvu)
+
+/-- Under a total ordering the closest worlds are the least ones. -/
+theorem mem_closest_iff_of_total (htot : sim.Total) :
+    v ∈ sim.closest w₀ s ↔ v ∈ s ∧ ∀ u ∈ s, sim.closer w₀ v u :=
+  and_congr_right fun _ ↦ forall₂_congr fun u _ ↦
+    ⟨fun h ↦ h.elim id fun h ↦ (htot w₀ v u).resolve_right h, .inl⟩
 
 @[simp, norm_cast]
 theorem coe_closestWorlds [DecidableEq W] (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) :
@@ -156,15 +202,6 @@ instance [Fintype W] (sim : SimilarityOrdering W) (w₀ : W) (s : Set W)
     (Decidable (w ∈ s ∧ ∀ w' ∈ s, sim.closer w₀ w w' ∨ ¬ sim.closer w₀ w' w))
 
 end SimilarityOrdering
-
-/-! ## Selection-function bridge primitives -/
-
-/-- **Candidate selection set**: the worlds in `A ∩ domain` that are minimal
-    at `w` under the similarity ordering. -/
-def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
-    (domain : Set W) (w : W) (A : Set W) : Set W :=
-  let pWorlds := A ∩ domain
-  { w' ∈ pWorlds | ∀ w'' ∈ pWorlds, sim.closer w w' w'' }
 
 /-- **Comparative-closeness notation** ([lewis-1973]): `w₁ ≤[sim, w₀] w₂`
     reads "`w₁` is at least as similar to `w₀` as `w₂` is". -/

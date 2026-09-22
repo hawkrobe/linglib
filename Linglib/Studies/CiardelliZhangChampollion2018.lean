@@ -17,12 +17,14 @@ closest A-down world (§1.2), and the argument extends to [kratzer-1981]'s premi
 (§6.3). The paper's positive proposal, a background semantics with the inquisitive lifting of
 disjunction (§3.2, §4), is not represented.
 
-The four worlds, the wiring law and the five clauses are `World`, `lightOn` and the predicates
-`aDn` to `lightOff`, with `aOrBdn_eq_notBothUp` the De Morgan identity; under the Hamming
-similarity `hammingSim` the substrate's `universalCounterfactual` makes all four counterfactuals
-true at the actual world, and `selectionalCounterfactual` and `homogeneityCounterfactual` make
-the falsified one true as well. `closestWorlds_predicate_forces_notBothUp` is the §1.2 argument
-for any similarity ordering and consequent, with the three operators' versions as corollaries.
+The four worlds, the wiring law and the five clauses are `World`, `lightOn` and the
+propositions `aDn` to `lightOff`, with `aOrBdn_eq_notBothUp` the De Morgan identity; under the
+Hamming similarity `hammingSim` the conditional of the closest worlds, `Conditional.closestImp`,
+makes all four counterfactuals true at the actual world, and `selectionalCounterfactual` and
+`homogeneityCounterfactual` make the falsified one true as well. `minimal_change_forces_notBothUp`
+is the §1.2 argument for any similarity ordering and consequent: a closest world of a union is a
+closest world of one of its parts (`SimilarityOrdering.closest_union_subset`); the three
+operators' versions are corollaries.
 The Table 3 counts are the rationals `trueRate_*`, `table3_pattern` the majority pattern the
 paper reads off them and `deMorgan_antecedents_diverge` the divergence of the equivalent pair.
 
@@ -35,9 +37,9 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 
 namespace CiardelliZhangChampollion2018
 
-open Conditional (SimilarityOrdering)
+open Conditional (SimilarityOrdering closestImp mem_closestImp_union)
 open Conditional.Counterfactual
-  (universalCounterfactual selectionalCounterfactual homogeneityCounterfactual
+  (selectionalCounterfactual selectionalCounterfactual_eq_true_iff homogeneityCounterfactual
    PresupStatus PresupResult)
 
 /-! ### The switches scenario (Fig. 1) -/
@@ -48,42 +50,28 @@ inductive World where
   deriving Repr, DecidableEq, Fintype
 
 /-- Switch A is up. -/
-def aUp : World → Prop | .uu | .ud => True | .du | .dd => False
+abbrev aUp : Set World := {.uu, .ud}
 /-- Switch B is up. -/
-def bUp : World → Prop | .uu | .du => True | .ud | .dd => False
+abbrev bUp : Set World := {.uu, .du}
 
 /-- The wiring: the light is on iff the switches are in the same position. -/
-def lightOn : World → Prop | .uu | .dd => True | .ud | .du => False
+abbrev lightOn : Set World := {.uu, .dd}
 
 /-- *Switch A is down.* -/
-def aDn (w : World) : Prop := ¬ aUp w
+abbrev aDn : Set World := aUpᶜ
 /-- *Switch B is down.* -/
-def bDn (w : World) : Prop := ¬ bUp w
+abbrev bDn : Set World := bUpᶜ
 /-- *Switch A is down or switch B is down.* -/
-def aOrBdn (w : World) : Prop := aDn w ∨ bDn w
+abbrev aOrBdn : Set World := aDn ∪ bDn
 /-- *Switches A and B are not both up.* -/
-def notBothUp (w : World) : Prop := ¬ (aUp w ∧ bUp w)
+abbrev notBothUp : Set World := (aUp ∩ bUp)ᶜ
 /-- *The light is off.* -/
-def lightOff (w : World) : Prop := ¬ lightOn w
-
-instance : DecidablePred aUp := fun w => by cases w <;> simp only [aUp] <;> infer_instance
-instance : DecidablePred bUp := fun w => by cases w <;> simp only [bUp] <;> infer_instance
-instance : DecidablePred lightOn := fun w => by cases w <;> simp only [lightOn] <;> infer_instance
-instance : DecidablePred aDn := fun _ => inferInstanceAs (Decidable (¬ _))
-instance : DecidablePred bDn := fun _ => inferInstanceAs (Decidable (¬ _))
-instance : DecidablePred aOrBdn := fun _ => inferInstanceAs (Decidable (_ ∨ _))
-instance : DecidablePred notBothUp := fun _ => inferInstanceAs (Decidable (¬ _))
-instance : DecidablePred lightOff := fun _ => inferInstanceAs (Decidable (¬ _))
+abbrev lightOff : Set World := lightOnᶜ
 
 /-! ### De Morgan equivalence -/
 
-theorem aOrBdn_iff_notBothUp (w : World) : aOrBdn w ↔ notBothUp w := by
-  cases w <;> decide
-
 /-- The two antecedents have the same truth conditions. -/
-theorem aOrBdn_eq_notBothUp : aOrBdn = notBothUp := by
-  funext w
-  exact propext (aOrBdn_iff_notBothUp w)
+theorem aOrBdn_eq_notBothUp : aOrBdn = notBothUp := (Set.compl_inter aUp bUp).symm
 
 /-! ### Predictions under Hamming similarity -/
 
@@ -105,22 +93,22 @@ def hammingSim : SimilarityOrdering World where
 /-- *If A were down, the light would be off* is true at the actual world: the closest A-down
 world is `du`. -/
 theorem aDn_off_at_uu :
-    universalCounterfactual hammingSim aDn lightOff .uu := by decide
+    .uu ∈ closestImp hammingSim aDn lightOff := by decide
 
 /-- *If B were down, the light would be off* is true at the actual world. -/
 theorem bDn_off_at_uu :
-    universalCounterfactual hammingSim bDn lightOff .uu := by decide
+    .uu ∈ closestImp hammingSim bDn lightOff := by decide
 
 /-- *If A or B were down, the light would be off* is true at the actual world: the closest
 worlds are `ud` and `du`. -/
 theorem aOrBdn_off_at_uu :
-    universalCounterfactual hammingSim aOrBdn lightOff .uu := by decide
+    .uu ∈ closestImp hammingSim aOrBdn lightOff := by decide
 
 /-- *If A and B were not both up, the light would be off* is predicted true at the actual world,
 the antecedent being equivalent to the disjunction; participants judged it true only by a
 minority (Table 3). -/
 theorem notBothUp_off_at_uu :
-    universalCounterfactual hammingSim notBothUp lightOff .uu := by decide
+    .uu ∈ closestImp hammingSim notBothUp lightOff := by decide
 
 /-- The selectional counterfactual makes the same prediction. -/
 theorem selectional_notBothUp_off_at_uu :
@@ -136,82 +124,29 @@ theorem homogeneity_notBothUp_off_at_uu :
 
 /-! ### Minimal change forces the equivalence (§1.2) -/
 
-/-- For any similarity ordering and consequent `B`, if every closest A-down world and every
-closest B-down world is `B`, so is every closest not-both-up world: such a world is A-down or
-B-down, and then a closest world of that antecedent
-(`SimilarityOrdering.mem_closestWorlds_of_subset`). -/
-theorem closestWorlds_predicate_forces_notBothUp
-    (sim : SimilarityOrdering World) (w₀ : World)
-    (B : World → Prop) [DecidablePred B]
-    (h_a : ∀ w' ∈ sim.closestWorlds w₀ (Finset.univ.filter aDn), B w')
-    (h_b : ∀ w' ∈ sim.closestWorlds w₀ (Finset.univ.filter bDn), B w') :
-    ∀ w' ∈ sim.closestWorlds w₀ (Finset.univ.filter notBothUp), B w' := by
-  intro w hw
-  have hwNAB : notBothUp w := (Finset.mem_filter.mp
-    ((SimilarityOrdering.mem_closestWorlds _ _ _ _).mp hw).1).2
-  have h_aDn_sub : Finset.univ.filter aDn ⊆ Finset.univ.filter notBothUp := by
-    intro x hx
-    rw [Finset.mem_filter] at hx ⊢
-    exact ⟨hx.1, fun ⟨hA, _⟩ => hx.2 hA⟩
-  have h_bDn_sub : Finset.univ.filter bDn ⊆ Finset.univ.filter notBothUp := by
-    intro x hx
-    rw [Finset.mem_filter] at hx ⊢
-    exact ⟨hx.1, fun ⟨_, hB⟩ => hx.2 hB⟩
-  by_cases hwA : aDn w
-  · exact h_a w (sim.mem_closestWorlds_of_subset h_aDn_sub hw
-      (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwA⟩))
-  · have hwB : bDn w := fun hbU =>
-      hwNAB ⟨by by_contra hnA; exact hwA hnA, hbU⟩
-    exact h_b w (sim.mem_closestWorlds_of_subset h_bDn_sub hw
-      (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwB⟩))
+/-- For any similarity ordering and consequent, if the A-down and the B-down counterfactuals
+are true, so is the not-both-up one: a closest not-both-up world is a closest A-down or a closest
+B-down world. -/
+theorem minimal_change_forces_notBothUp (sim : SimilarityOrdering World) (w₀ : World)
+    {C : Set World} (h_a : w₀ ∈ closestImp sim aDn C) (h_b : w₀ ∈ closestImp sim bDn C) :
+    w₀ ∈ closestImp sim notBothUp C :=
+  aOrBdn_eq_notBothUp ▸ mem_closestImp_union h_a h_b
 
-/-- The universal counterfactual is the quantifier over closest worlds. -/
-theorem minimal_change_forces_notBothUp_off
-    (sim : SimilarityOrdering World) (w₀ : World)
-    (h_a : universalCounterfactual sim aDn lightOff w₀)
-    (h_b : universalCounterfactual sim bDn lightOff w₀) :
-    universalCounterfactual sim notBothUp lightOff w₀ :=
-  closestWorlds_predicate_forces_notBothUp sim w₀ lightOff h_a h_b
-
-private theorem selectional_eq_true_iff
-    (sim : SimilarityOrdering World) (A B : World → Prop)
-    [DecidablePred A] [DecidablePred B] (w : World) :
-    selectionalCounterfactual sim A B w = .true ↔
-      ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w' := by
-  unfold selectionalCounterfactual
-  constructor
-  · intro heq
-    by_contra h_neg
-    rw [ite_eq_right h_neg] at heq
-    split_ifs at heq
-  · intro h
-    rw [ite_eq_left h]
-
-private theorem homogeneity_eq_true_iff
-    (sim : SimilarityOrdering World) (A B : World → Prop)
-    [DecidablePred A] [DecidablePred B] (w : World) :
-    homogeneityCounterfactual sim A B w =
-        { presupposition := .satisfied, assertion := some true } ↔
-      ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w' := by
+private theorem homogeneity_eq_true_iff (sim : SimilarityOrdering World) (A C : Set World)
+    [DecidablePred (· ∈ A)] [DecidablePred (· ∈ C)] (w : World) :
+    homogeneityCounterfactual sim A C w =
+        { presupposition := .satisfied, assertion := some true } ↔ w ∈ closestImp sim A C := by
   unfold homogeneityCounterfactual
-  constructor
-  · intro heq
-    by_contra h_neg
-    rw [ite_eq_right h_neg] at heq
-    split_ifs at heq <;> injection heq with h1 h2 <;> cases h2
-  · intro h
-    rw [ite_eq_left h]
+  split_ifs <;> simp_all
 
 /-- The selectional counterfactual's true verdict is the same quantifier. -/
 theorem selectional_minimal_change_forces_notBothUp_off
     (sim : SimilarityOrdering World) (w₀ : World)
     (h_a : selectionalCounterfactual sim aDn lightOff w₀ = .true)
     (h_b : selectionalCounterfactual sim bDn lightOff w₀ = .true) :
-    selectionalCounterfactual sim notBothUp lightOff w₀ = .true :=
-  (selectional_eq_true_iff sim notBothUp lightOff w₀).mpr
-    (closestWorlds_predicate_forces_notBothUp sim w₀ lightOff
-      ((selectional_eq_true_iff sim aDn lightOff w₀).mp h_a)
-      ((selectional_eq_true_iff sim bDn lightOff w₀).mp h_b))
+    selectionalCounterfactual sim notBothUp lightOff w₀ = .true := by
+  rw [selectionalCounterfactual_eq_true_iff] at *
+  exact minimal_change_forces_notBothUp sim w₀ h_a h_b
 
 /-- The homogeneity counterfactual's true verdict, with its presupposition satisfied, is the
 same quantifier. -/
@@ -222,11 +157,9 @@ theorem homogeneity_minimal_change_forces_notBothUp_off
     (h_b : homogeneityCounterfactual sim bDn lightOff w₀ =
       { presupposition := .satisfied, assertion := some true }) :
     homogeneityCounterfactual sim notBothUp lightOff w₀ =
-      { presupposition := .satisfied, assertion := some true } :=
-  (homogeneity_eq_true_iff sim notBothUp lightOff w₀).mpr
-    (closestWorlds_predicate_forces_notBothUp sim w₀ lightOff
-      ((homogeneity_eq_true_iff sim aDn lightOff w₀).mp h_a)
-      ((homogeneity_eq_true_iff sim bDn lightOff w₀).mp h_b))
+      { presupposition := .satisfied, assertion := some true } := by
+  rw [homogeneity_eq_true_iff] at *
+  exact minimal_change_forces_notBothUp sim w₀ h_a h_b
 
 /-! ### The main experiment (Table 3) -/
 

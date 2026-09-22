@@ -1,6 +1,4 @@
 import Linglib.Semantics.Conditionals.Counterfactual
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.Linarith
 
 /-!
 # Stalnaker (1981): A Defense of Conditional Excluded Middle
@@ -24,10 +22,11 @@ indeterminacy rather than ambiguity explains why no particular woman would have 
 (`court_no_particular_woman`).
 
 The limit assumption cannot be neutralized in the same way, and dropping it has bizarre
-consequences: for a line a little less than an inch long, Lewis's analysis makes *if the line
-had been more than one inch long, it would not have been x inches long* true for every length
-x, so that there is no length the line might have had, and the consequence condition fails
-(`lewisWould_longer_ne`, `not_lewisMight_longer_eq`, `not_consequence_lewisWould`). Finally,
+consequences: for [lewis-1973]'s line a little less than an inch long, Lewis's analysis makes
+*if the line had been more than one inch long, it would not have been x inches long* true for
+every length x, so that there is no length the line might have had, and the consequence
+condition fails. Nothing turns on lengths: the same holds of any antecedent without closest
+worlds (`lewisWould_ne`, `not_lewisMight_eq`, `not_consequence_lewisWould`). Finally,
 Lewis's *might* as the dual of *would* collapses into *would* under conditional excluded
 middle; reading *might* instead as a possibility operator over the whole conditional keeps
 Lewis's formulation, *if A, might B* true exactly when *if A, would not-B* is not true, for a
@@ -38,8 +37,9 @@ indeterminacy (`might_would_asymmetry`).
 
 The conditional logic of the first section is abstract: a conditional operator on
 propositions with right weakening, agglomeration and a valid tautological consequent, the
-finite form of the consequence condition. Lewis's truth condition without the limit assumption
-is stated on lengths ordered by similarity to the actual length. The selection-similarity
+finite form of the consequence condition. The limit assumption is stated for an arbitrary
+similarity ordering and antecedent without closest worlds, the situation of the line example,
+rather than on a model of lengths. The selection-similarity
 correspondence of the paper's opening, the Moore-paradoxical status of denying a *would* while
 affirming a *might*, and the Kennedy example are not formalized.
 
@@ -53,7 +53,7 @@ affirming a *might*, and the Kennedy example are not formalized.
 
 namespace Stalnaker1981
 
-open Conditional (SimilarityOrdering selectionConditional)
+open Conditional
 open Conditional.Counterfactual
 
 /-! ### Conditional excluded middle and distribution -/
@@ -88,7 +88,7 @@ theorem cem_iff_distribution (h : ConsequenceCondition cond) :
       · exact absurd hxB hx
       · exact hxC
   · intro hdist A B
-    refine Set.eq_univ_of_forall λ w => hdist A B Bᶜ ?_
+    refine Set.eq_univ_of_forall fun w ↦ hdist A B Bᶜ ?_
     rw [Set.union_compl_self, h.taut]
     trivial
 
@@ -102,13 +102,13 @@ variable {W : Type*} (s : Conditional.SelectionFunction W)
 
 /-- A determinate selection function validates conditional excluded middle. -/
 theorem selection_cem (A B : W → Prop) (w : W) :
-    selectionConditional s A B w ∨ selectionConditional s A (λ v => ¬ B v) w :=
+    selectionConditional s A B w ∨ selectionConditional s A (fun v ↦ ¬ B v) w :=
   Classical.em _
 
 /-- Under selection, a quantifier inside the consequent and one outside the conditional
 coincide: there is no scope ambiguity. -/
 theorem selection_scope {ι : Type*} (A : W → Prop) (F : ι → W → Prop) (w : W) :
-    selectionConditional s A (λ v => ∃ x, F x v) w ↔ ∃ x, selectionConditional s A (F x) w :=
+    selectionConditional s A (fun v ↦ ∃ x, F x v) w ↔ ∃ x, selectionConditional s A (F x) w :=
   Iff.rfl
 
 end Selection
@@ -126,33 +126,20 @@ inductive BVWorld
 /-- The similarity ordering: the actual world is closest to itself, and the two compatriot
 worlds tie. -/
 def bvSim : SimilarityOrdering BVWorld := .ofBool
-  (λ | .actual, .actual, _ => true
-     | .actual, .bothItalian, .bothFrench => true
-     | .actual, .bothFrench, .bothItalian => true
-     | _, w₁, w₂ => w₁ == w₂)
+  (fun | .actual, .actual, _ => true
+       | .actual, .bothItalian, .bothFrench => true
+       | .actual, .bothFrench, .bothItalian => true
+       | _, w₁, w₂ => w₁ == w₂)
   (by decide) (by decide)
 
 /-- Bizet and Verdi are compatriots. -/
-def compatriots : BVWorld → Prop
-  | .bothItalian | .bothFrench => True
-  | .actual => False
-
-instance : DecidablePred compatriots := λ w => by cases w <;> unfold compatriots <;> infer_instance
+abbrev compatriots : Set BVWorld := {.bothItalian, .bothFrench}
 
 /-- Bizet is Italian. -/
-def bizetItalian : BVWorld → Prop
-  | .bothItalian => True
-  | _ => False
-
-instance : DecidablePred bizetItalian := λ w => by
-  cases w <;> unfold bizetItalian <;> infer_instance
+abbrev bizetItalian : Set BVWorld := {.bothItalian}
 
 /-- Verdi is French. -/
-def verdiFrench : BVWorld → Prop
-  | .bothFrench => True
-  | _ => False
-
-instance : DecidablePred verdiFrench := λ w => by cases w <;> unfold verdiFrench <;> infer_instance
+abbrev verdiFrench : Set BVWorld := {.bothFrench}
 
 /-- *If Bizet and Verdi had been compatriots, Bizet would have been Italian* is neither true
 nor false: the closest compatriot worlds disagree. -/
@@ -168,29 +155,29 @@ theorem verdi_french_indet :
 the conditional and its opposite is not false. -/
 theorem bizet_verdi_cem :
     selectionalCounterfactual bvSim compatriots bizetItalian .actual ⊔
-      selectionalCounterfactual bvSim compatriots (λ w => ¬ bizetItalian w) .actual ≠ .false :=
+      selectionalCounterfactual bvSim compatriots bizetItalianᶜ .actual ≠ .false :=
   cem_selectional bvSim compatriots bizetItalian .actual
 
 /-- On the universal analysis both counterfactuals are false, and excluded middle fails. -/
 theorem bizet_cem_fails_universal :
-    ¬ universalCounterfactual bvSim compatriots bizetItalian .actual ∧
-    ¬ universalCounterfactual bvSim compatriots (λ w => ¬ bizetItalian w) .actual :=
+    .actual ∉ closestImp bvSim compatriots bizetItalian ∧
+    .actual ∉ closestImp bvSim compatriots bizetItalianᶜ :=
   ⟨by decide, by decide⟩
 
 /-- Quine's inference: *if they had been compatriots, Bizet would have been Italian or Verdi
 French* is true on the universal analysis, but neither disjunct's conditional is, so
 distribution fails. -/
 theorem distribution_fails_bizetverdi :
-    universalCounterfactual bvSim compatriots (λ w => bizetItalian w ∨ verdiFrench w) .actual ∧
-    ¬ universalCounterfactual bvSim compatriots bizetItalian .actual ∧
-    ¬ universalCounterfactual bvSim compatriots verdiFrench .actual :=
+    .actual ∈ closestImp bvSim compatriots (bizetItalian ∪ verdiFrench) ∧
+    .actual ∉ closestImp bvSim compatriots bizetItalian ∧
+    .actual ∉ closestImp bvSim compatriots verdiFrench :=
   ⟨by decide, by decide, by decide⟩
 
 /-- Under supervaluation the disjunctive conditional is true while each disjunct's conditional
 is indeterminate: distribution holds on every completion but not on the supervaluation, whose
 closest worlds are not unique. -/
 theorem distribution_needs_uniqueness :
-    selectionalCounterfactual bvSim compatriots (λ w => bizetItalian w ∨ verdiFrench w) .actual
+    selectionalCounterfactual bvSim compatriots (bizetItalian ∪ verdiFrench) .actual
       = .true ∧
     selectionalCounterfactual bvSim compatriots bizetItalian .actual = .indet ∧
     selectionalCounterfactual bvSim compatriots verdiFrench .actual = .indet :=
@@ -210,18 +197,14 @@ inductive CourtWorld
 
 /-- The similarity ordering: the two vacancy worlds tie. -/
 def courtSim : SimilarityOrdering CourtWorld := .ofBool
-  (λ | .actual, .actual, _ => true
-     | .actual, .w1, .w2 => true
-     | .actual, .w2, .w1 => true
-     | _, w₁, w₂ => w₁ == w₂)
+  (fun | .actual, .actual, _ => true
+       | .actual, .w1, .w2 => true
+       | .actual, .w2, .w1 => true
+       | _, w₁, w₂ => w₁ == w₂)
   (by decide) (by decide)
 
 /-- A vacancy occurs. -/
-def vacancy : CourtWorld → Prop
-  | .actual => False
-  | _ => True
-
-instance : DecidablePred vacancy := λ w => by cases w <;> unfold vacancy <;> infer_instance
+abbrev vacancy : Set CourtWorld := {.w1, .w2}
 
 /-- The women who might be appointed. -/
 inductive Woman
@@ -229,30 +212,29 @@ inductive Woman
   deriving DecidableEq, Fintype
 
 /-- Woman `a` is appointed in the first vacancy world, woman `b` in the second. -/
-def appointed : Woman → CourtWorld → Prop
-  | .a, .w1 => True
-  | .b, .w2 => True
-  | _, _ => False
+def appointed : Woman → Set CourtWorld
+  | .a => {.w1}
+  | .b => {.w2}
 
-instance (x : Woman) : DecidablePred (appointed x) := λ w => by
-  cases x <;> cases w <;> unfold appointed <;> infer_instance
+instance (x : Woman) : DecidablePred (· ∈ appointed x) := fun w ↦ by
+  cases x <;> exact inferInstanceAs (Decidable (w = _))
 
-instance : DecidablePred (λ w => ∃ x, appointed x w) := λ w =>
-  Fintype.decidableExistsFintype (p := λ x => appointed x w)
+instance : DecidablePred (· ∈ ⋃ x, appointed x) := fun w ↦
+  decidable_of_iff (∃ x, w ∈ appointed x) Set.mem_iUnion.symm
 
 /-- On the universal analysis the narrow scope, *he would have appointed some woman*, is true
 while the wide scope, *some woman is such that he would have appointed her*, is false: a
 scope ambiguity Lewis's analysis predicts and speakers do not perceive. -/
 theorem court_scope_universal :
-    universalCounterfactual courtSim vacancy (λ w => ∃ x, appointed x w) .actual ∧
-    ¬ ∃ x, universalCounterfactual courtSim vacancy (appointed x) .actual :=
+    .actual ∈ closestImp courtSim vacancy (⋃ x, appointed x) ∧
+    ¬ ∃ x, .actual ∈ closestImp courtSim vacancy (appointed x) :=
   ⟨by decide, by decide⟩
 
 /-- Under supervaluation the narrow scope is true while each woman's conditional is
 indeterminate: there is no particular woman he would have appointed, by underdetermination
 rather than ambiguity. -/
 theorem court_no_particular_woman :
-    selectionalCounterfactual courtSim vacancy (λ w => ∃ x, appointed x w) .actual = .true ∧
+    selectionalCounterfactual courtSim vacancy (⋃ x, appointed x) .actual = .true ∧
     ∀ x, selectionalCounterfactual courtSim vacancy (appointed x) .actual = .indet :=
   ⟨by decide, by decide⟩
 
@@ -262,48 +244,29 @@ end Court
 
 section Limit
 
-/-- Lewis's truth condition without the limit assumption, for a line that is actually less than
-an inch long, on lengths ordered by closeness to the actual length: some antecedent-length
-verifies the consequent and so does every antecedent-length at least as close. -/
-def lewisWould (A B : Set ℚ) : Prop := ∃ j ∈ A, j ∈ B ∧ ∀ k ∈ A, k ≤ j → k ∈ B
+variable {W : Type*} {sim : SimilarityOrdering W} {A : Set W} {w : W}
 
-/-- Lewis's *might*: the dual of *would*. -/
-def lewisMight (A B : Set ℚ) : Prop := ¬ lewisWould A Bᶜ
+/-- Where an antecedent has no closest worlds, as for [lewis-1973]'s line more than an inch
+long, *if A, it would not be x* is true on Lewis's analysis for every world `x`: below any
+antecedent-world there is a closer one. -/
+theorem lewisWould_ne (h : sim.closest w A = ∅) (x : W) : w ∈ variablyStrictImp sim A {x}ᶜ :=
+  mem_variablyStrictImp_compl_singleton h x
 
-/-- The line is more than one inch long. -/
-def longer : Set ℚ := {ℓ | 1 < ℓ}
+/-- So there is no world the antecedent might have been, on Lewis's *might*. -/
+theorem not_lewisMight_eq (h : sim.closest w A = ∅) (x : W) :
+    w ∉ might (variablyStrictImp sim) A {x} :=
+  notMem_might_variablyStrictImp_singleton h x
 
-/-- For every length, *if the line had been more than one inch long, it would not have been
-that long* is true: below any length over an inch there is a closer one. -/
-theorem lewisWould_longer_ne (x : ℚ) : lewisWould longer {ℓ | ℓ ≠ x} := by
-  by_cases hx : 1 < x
-  · refine ⟨(1 + x) / 2, by show 1 < (1 + x) / 2; linarith, ?_, λ k hk hkj hkx => ?_⟩
-    · show (1 + x) / 2 ≠ x
-      intro h; linarith
-    · have : 1 < k := hk
-      rw [hkx] at hkj
-      linarith
-  · refine ⟨2, by show (1 : ℚ) < 2; norm_num, ?_, λ k hk _ hkx => ?_⟩
-    · show (2 : ℚ) ≠ x
-      intro h; exact hx (by rw [← h]; norm_num)
-    · have : 1 < k := hk
-      rw [hkx] at this
-      exact hx this
-
-/-- So there is no length the line might have had, on Lewis's *might*. -/
-theorem not_lewisMight_longer_eq (x : ℚ) : ¬ lewisMight longer {x} := λ h =>
-  h (by simpa [Set.compl_def] using lewisWould_longer_ne x)
-
-/-- Without the limit assumption the consequence condition fails: the consequents
-*not x inches long*, over all lengths over an inch, jointly entail *at most an inch long*, each
-conditional is true, and the conditional with the entailed consequent is false. -/
-theorem not_consequence_lewisWould :
-    (⋂ x ∈ longer, {ℓ : ℚ | ℓ ≠ x}) ⊆ longerᶜ ∧
-    (∀ x ∈ longer, lewisWould longer {ℓ | ℓ ≠ x}) ∧ ¬ lewisWould longer longerᶜ := by
-  refine ⟨λ ℓ hℓ hℓA => ?_, λ x _ => lewisWould_longer_ne x, ?_⟩
-  · exact (Set.mem_iInter₂.1 hℓ ℓ hℓA) rfl
-  · rintro ⟨j, hj, hjc, -⟩
-    exact hjc hj
+/-- Without the limit assumption the consequence condition fails: the consequents *not x*,
+over all antecedent-worlds `x`, jointly entail *not A*, each conditional is true, and for a
+possible antecedent the conditional with the entailed consequent is false. -/
+theorem not_consequence_lewisWould (h : sim.closest w A = ∅) (hA : A.Nonempty) :
+    (⋂ x ∈ A, ({x}ᶜ : Set W)) ⊆ Aᶜ ∧ (∀ x ∈ A, w ∈ variablyStrictImp sim A {x}ᶜ) ∧
+      w ∉ variablyStrictImp sim A Aᶜ := by
+  refine ⟨fun v hv hvA ↦ Set.mem_iInter₂.1 hv v hvA rfl, fun x _ ↦ lewisWould_ne h x, ?_⟩
+  rintro (hA' | ⟨v, hv, hvc⟩)
+  · exact hA.ne_empty hA'
+  · exact hvc v hv (sim.closer_refl w v) hv
 
 end Limit
 
@@ -311,16 +274,18 @@ end Limit
 
 section Might
 
-variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (A B : W → Prop)
-  [DecidablePred A] [DecidablePred B] (w : W)
+variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (A B : Set W)
+  [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] (w : W)
 
 /-- *Might* as a possibility operator over the conditional keeps Lewis's formulation: *if A,
 might B* is true exactly when *if A, would not-B* is not true. -/
-theorem selectionalMight_iff (h : (sim.closestWorlds w (Finset.univ.filter A)).Nonempty) :
-    selectionalMight sim A B w ↔ selectionalCounterfactual sim A (λ v => ¬ B v) w ≠ .true := by
-  obtain ⟨w₀, hw₀⟩ := h
+theorem selectionalMight_iff (h : (sim.closest w A).Nonempty) :
+    selectionalMight sim A B w ↔ selectionalCounterfactual sim A Bᶜ w ≠ .true := by
+  obtain ⟨v, hv⟩ := h
   unfold selectionalMight selectionalCounterfactual
-  split_ifs <;> simp_all
+  simp only [compl_compl]
+  split_ifs with h₁ h₂ h₃ <;> simp_all
+  exact h₂ hv (h₁ hv)
 
 /-- In the Bizet–Verdi example both *might* conditionals are true while both *would*
 conditionals are indeterminate: *might* and *would* part, as they cannot on Lewis's dual

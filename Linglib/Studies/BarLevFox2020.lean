@@ -69,37 +69,37 @@ permitting each but not both, `◇(a ∨ b)` strengthens to `◇a ∧ ◇b ∧ �
 theorem freeChoice :
     exhIEII (fcAlts R a b) (poss R (a ∪ b)) = (poss R a ∩ poss R b) \ poss R (a ∩ b) := by
   rw [fcAlts, exhIEII_pair poss_union.le
-    (h₁.imp λ _ h => ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
-      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').2))⟩)
-    (h₂.imp λ _ h => ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
-      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').1))⟩)
-    (h.imp λ _ h => ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩),
-    Set.inter_assoc, Set.inter_eq_right.2 λ _ h => poss_mono Set.subset_union_left h.1]
+    (h₁.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').2))⟩)
+    (h₂.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').1))⟩)
+    (h.imp fun _ h ↦ ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩),
+    Set.inter_assoc, Set.inter_eq_right.2 fun _ h ↦ poss_mono Set.subset_union_left h.1]
 
 /-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
 alternatives. -/
 theorem II_fcAlts : II (fcAlts R a b) (poss R (a ∪ b)) = {poss R (a ∪ b), poss R a, poss R b} :=
   II_pair poss_union.le
-    (h₁.imp λ _ h => ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
-      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').2))⟩)
-    (h₂.imp λ _ h => ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
-      λ h' => h.2 (h'.elim id (λ h' => (poss_inter_subset h').1))⟩)
-    (h.imp λ _ h => ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩)
+    (h₁.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_left h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').2))⟩)
+    (h₂.imp fun _ h ↦ ⟨⟨poss_mono Set.subset_union_right h.1, h.1⟩,
+      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (poss_inter_subset h').1))⟩)
+    (h.imp fun _ h ↦ ⟨⟨⟨poss_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩)
 
 omit h₁ h₂ h in
 /-- Without the modal the conjunctive alternative is the conjunction of the disjunct
 alternatives: exhaustification denies it and includes neither disjunct. -/
 theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
     exhIEII {a ∪ b, a, b, a ∩ b} (a ∪ b) = (a ∪ b) \ (a ∩ b) :=
-  exhIEII_pair_inter le_rfl (h₁.imp λ _ h => ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
-    (h₂.imp λ _ h => ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
+  exhIEII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
+    (h₂.imp fun _ h ↦ ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
 omit h₁ h₂ h in
 /-- The cell of simple disjunction is contradictory, so cell identification does not apply. -/
 theorem simpleDisjunction_cell (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
     cell {a ∪ b, a, b, a ∩ b} (a ∪ b) = ∅ :=
-  cell_pair_inter le_rfl (h₁.imp λ _ h => ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
-    (h₂.imp λ _ h => ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
+  cell_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
+    (h₂.imp fun _ h ↦ ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
 end FreeChoice
 
@@ -117,7 +117,7 @@ theorem only_presup {R : W → W → Prop} {a b : Set W} (h₁ : ∃ w ∈ poss 
     (w : W) : (only (fcAlts R a b) (poss R (a ∪ b))).presup w ↔ w ∈ poss R a ∩ poss R b := by
   simp only [only, II_fcAlts h₁ h₂ h, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
     forall_eq]
-  exact ⟨λ h => ⟨h.2.1, h.2.2⟩, λ h => ⟨poss_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
+  exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨poss_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
 /-! ### Simplification of disjunctive antecedents -/
 
@@ -125,18 +125,13 @@ section Simplification
 
 open Conditional Conditional.Counterfactual
 
-variable [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (p q r : W → Prop)
-  [DecidablePred p] [DecidablePred q] [DecidablePred r]
-
-/-- The variably strict conditional as a proposition. -/
-abbrev conditional (A B : W → Prop) [DecidablePred A] [DecidablePred B] : Set W :=
-  {w | universalCounterfactual sim A B w}
+variable (sim : SimilarityOrdering W) (p q r : Set W)
 
 /-- The alternatives of `(p ∨ q) → r`: the antecedent's disjunction replaced by its disjuncts
 and their conjunction. -/
 def sdaAlts : Set (Set W) :=
-  {conditional sim (λ v => p v ∨ q v) r, conditional sim p r, conditional sim q r,
-    conditional sim (λ v => p v ∧ q v) r}
+  {closestImp sim (p ∪ q) r, closestImp sim p r, closestImp sim q r,
+    closestImp sim (p ∩ q) r}
 
 variable {sim p q r}
 
@@ -144,74 +139,75 @@ variable {sim p q r}
 where only the first simplification holds, one where only the second does, and one where both
 hold but the conjunctive one fails, `(p ∨ q) → r` strengthens to
 `(p → r) ∧ (q → r) ∧ ¬((p ∧ q) → r)`. -/
-theorem sda (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (h₁ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r,
-      w ∉ conditional sim q r ∪ conditional sim (λ v => p v ∧ q v) r)
-    (h₂ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r,
-      w ∉ conditional sim p r ∪ conditional sim (λ v => p v ∧ q v) r)
-    (h : ∃ w ∈ conditional sim p r ∩ conditional sim q r,
-      w ∉ conditional sim (λ v => p v ∧ q v) r) :
-    exhIEII (sdaAlts sim p q r) (conditional sim (λ v => p v ∨ q v) r) =
-      (conditional sim p r ∩ conditional sim q r) \ conditional sim (λ v => p v ∧ q v) r := by
-  have hsub : conditional sim p r ∩ conditional sim q r ⊆ conditional sim (λ v => p v ∨ q v) r :=
-    λ _ h => universalCounterfactual_or_of sim h.1 h.2
-  have hcov : conditional sim (λ v => p v ∨ q v) r ⊆ conditional sim p r ∪ conditional sim q r :=
-    λ _ h => universalCounterfactual_or sim htot h
+theorem sda (htot : sim.Total)
+    (h₁ : ∃ w ∈ closestImp sim (p ∪ q) r,
+      w ∉ closestImp sim q r ∪ closestImp sim (p ∩ q) r)
+    (h₂ : ∃ w ∈ closestImp sim (p ∪ q) r,
+      w ∉ closestImp sim p r ∪ closestImp sim (p ∩ q) r)
+    (h : ∃ w ∈ closestImp sim p r ∩ closestImp sim q r,
+      w ∉ closestImp sim (p ∩ q) r) :
+    exhIEII (sdaAlts sim p q r) (closestImp sim (p ∪ q) r) =
+      (closestImp sim p r ∩ closestImp sim q r) \ closestImp sim (p ∩ q) r := by
+  have hsub : closestImp sim p r ∩ closestImp sim q r ⊆ closestImp sim (p ∪ q) r :=
+    fun _ h ↦ mem_closestImp_union h.1 h.2
+  have hcov : closestImp sim (p ∪ q) r ⊆ closestImp sim p r ∪ closestImp sim q r :=
+    fun _ h ↦ mem_closestImp_or_of_mem_union htot h
   rw [sdaAlts, exhIEII_pair hcov
-    (h₁.imp λ w h => ⟨⟨h.1, (hcov h.1).resolve_right λ h' => h.2 (Or.inl h')⟩, h.2⟩)
-    (h₂.imp λ w h => ⟨⟨h.1, (hcov h.1).resolve_left λ h' => h.2 (Or.inl h')⟩, h.2⟩)
-    (h.imp λ w h => ⟨⟨⟨hsub h.1, h.1.1⟩, h.1.2⟩, h.2⟩), Set.inter_assoc, Set.inter_eq_right.2 hsub]
+    (h₁.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_right fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
+    (h₂.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_left fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
+    (h.imp fun w h ↦ ⟨⟨⟨hsub h.1, h.1.1⟩, h.1.2⟩, h.2⟩), Set.inter_assoc, Set.inter_eq_right.2 hsub]
 
 /-- Simplification fails when the consequent is one of the disjuncts (71): the other
 simplification is the only contingent alternative, so it is excluded. -/
 theorem sda_consequent_disjunct
-    (h : ∃ w ∈ conditional sim (λ v => p v ∨ q v) p, w ∉ conditional sim q p) :
-    exhIEII (sdaAlts sim p q p) (conditional sim (λ v => p v ∨ q v) p) =
-      conditional sim (λ v => p v ∨ q v) p \ conditional sim q p := by
-  refine exhIEII_eq_diff_of_forall_subset (by simp [sdaAlts]) (λ x hx hne => ?_) h
+    (h : ∃ w ∈ closestImp sim (p ∪ q) p, w ∉ closestImp sim q p) :
+    exhIEII (sdaAlts sim p q p) (closestImp sim (p ∪ q) p) =
+      closestImp sim (p ∪ q) p \ closestImp sim q p := by
+  refine exhIEII_eq_diff_of_forall_subset (by simp [sdaAlts]) (fun x hx hne ↦ ?_) h
   simp only [sdaAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
   rcases hx with rfl | rfl | rfl | rfl
   · exact le_rfl
-  · exact λ _ _ => universalCounterfactual_of_imp sim λ _ h => h
+  · exact fun _ _ ↦ by rw [closestImp_eq_univ_of_subset le_rfl]; trivial
   · exact absurd rfl hne
-  · exact λ _ _ => universalCounterfactual_of_imp sim λ _ h => h.1
+  · exact fun _ _ ↦ by rw [closestImp_eq_univ_of_subset Set.inter_subset_left]; trivial
 
 variable (sim p q r) in
 /-- The alternatives of `(Exh(p ∨ q) ∨ (p ∧ q)) → r`, the *or both* antecedent parsed with an
 embedded exhaustifier by Hurford's constraint (80): the antecedent's three cells. -/
 def orBothAlts : Set (Set W) :=
-  {conditional sim (λ v => p v ∨ q v) r, conditional sim (λ v => p v ∧ ¬ q v) r,
-    conditional sim (λ v => q v ∧ ¬ p v) r, conditional sim (λ v => p v ∧ q v) r}
+  {closestImp sim (p ∪ q) r, closestImp sim (p \ q) r,
+    closestImp sim (q \ p) r, closestImp sim (p ∩ q) r}
 
 /-- With the antecedent's cells as alternatives nothing is excludable and, given a world
 verifying each cell's conditional alone and one verifying all three, everything is included:
 `(p ∨ q) → r` asserts the conjunctive conditional it denied under `sdaAlts` (82). -/
-theorem orBoth (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (h₁ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => p v ∧ ¬ q v) r,
-      w ∉ conditional sim (λ v => q v ∧ ¬ p v) r ∪ conditional sim (λ v => p v ∧ q v) r)
-    (h₂ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => q v ∧ ¬ p v) r,
-      w ∉ conditional sim (λ v => p v ∧ ¬ q v) r ∪ conditional sim (λ v => p v ∧ q v) r)
-    (h₃ : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => p v ∧ q v) r,
-      w ∉ conditional sim (λ v => p v ∧ ¬ q v) r ∪ conditional sim (λ v => q v ∧ ¬ p v) r)
-    (h : ∃ w ∈ conditional sim (λ v => p v ∨ q v) r, w ∈ conditional sim (λ v => p v ∧ ¬ q v) r ∧
-      w ∈ conditional sim (λ v => q v ∧ ¬ p v) r ∧ w ∈ conditional sim (λ v => p v ∧ q v) r) :
-    exhIEII (orBothAlts sim p q r) (conditional sim (λ v => p v ∨ q v) r) =
-      conditional sim (λ v => p v ∨ q v) r ∩ conditional sim (λ v => p v ∧ ¬ q v) r ∩
-        conditional sim (λ v => q v ∧ ¬ p v) r ∩ conditional sim (λ v => p v ∧ q v) r := by
-  have hcov : conditional sim (λ v => p v ∨ q v) r ⊆
-      ⋃ i, ![conditional sim (λ v => p v ∧ ¬ q v) r, conditional sim (λ v => q v ∧ ¬ p v) r,
-        conditional sim (λ v => p v ∧ q v) r] i := by
+theorem orBoth (htot : sim.Total)
+    (h₁ : ∃ w ∈ closestImp sim (p ∪ q) r ∩ closestImp sim (p \ q) r,
+      w ∉ closestImp sim (q \ p) r ∪ closestImp sim (p ∩ q) r)
+    (h₂ : ∃ w ∈ closestImp sim (p ∪ q) r ∩ closestImp sim (q \ p) r,
+      w ∉ closestImp sim (p \ q) r ∪ closestImp sim (p ∩ q) r)
+    (h₃ : ∃ w ∈ closestImp sim (p ∪ q) r ∩ closestImp sim (p ∩ q) r,
+      w ∉ closestImp sim (p \ q) r ∪ closestImp sim (q \ p) r)
+    (h : ∃ w ∈ closestImp sim (p ∪ q) r, w ∈ closestImp sim (p \ q) r ∧
+      w ∈ closestImp sim (q \ p) r ∧ w ∈ closestImp sim (p ∩ q) r) :
+    exhIEII (orBothAlts sim p q r) (closestImp sim (p ∪ q) r) =
+      closestImp sim (p ∪ q) r ∩ closestImp sim (p \ q) r ∩
+        closestImp sim (q \ p) r ∩ closestImp sim (p ∩ q) r := by
+  have hcov : closestImp sim (p ∪ q) r ⊆
+      ⋃ i, ![closestImp sim (p \ q) r, closestImp sim (q \ p) r,
+        closestImp sim (p ∩ q) r] i := by
     intro w hw
-    have hw' := (universalCounterfactual_congr sim (B := λ v => (p v ∧ ¬ q v) ∨
-      ((q v ∧ ¬ p v) ∨ (p v ∧ q v))) (λ v => by tauto)).1 hw
-    rcases universalCounterfactual_or sim htot hw' with h | h
+    have hpq : p ∪ q = p \ q ∪ (q \ p ∪ p ∩ q) := by
+      ext x; by_cases hp : x ∈ p <;> by_cases hq : x ∈ q <;> simp [hp, hq]
+    rw [hpq] at hw
+    rcases mem_closestImp_or_of_mem_union htot hw with h | h
     · exact Set.mem_iUnion.2 ⟨0, h⟩
-    rcases universalCounterfactual_or sim htot h with h | h
+    rcases mem_closestImp_or_of_mem_union htot h with h | h
     · exact Set.mem_iUnion.2 ⟨1, h⟩
     · exact Set.mem_iUnion.2 ⟨2, h⟩
-  have hA : orBothAlts sim p q r = insert (conditional sim (λ v => p v ∨ q v) r)
-      (Set.range ![conditional sim (λ v => p v ∧ ¬ q v) r, conditional sim (λ v => q v ∧ ¬ p v) r,
-        conditional sim (λ v => p v ∧ q v) r]) := by
+  have hA : orBothAlts sim p q r = insert (closestImp sim (p ∪ q) r)
+      (Set.range ![closestImp sim (p \ q) r, closestImp sim (q \ p) r,
+        closestImp sim (p ∩ q) r]) := by
     simp only [orBothAlts, Matrix.range_cons, Matrix.range_empty, Set.singleton_union,
       Set.union_empty]
   rw [hA, exhIEII_insert_range hcov ?_ ?_]
@@ -219,22 +215,22 @@ theorem orBoth (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.clo
     simp [Set.mem_iInter, Fin.forall_fin_succ, and_assoc]
   · intro i
     fin_cases i
-    · exact h₁.imp λ w h => ⟨h.1, λ j hj hw => by
+    · exact h₁.imp fun w h ↦ ⟨h.1, fun j hj hw ↦ by
         fin_cases j
         · exact hj rfl
         · exact h.2 (Or.inl hw)
         · exact h.2 (Or.inr hw)⟩
-    · exact h₂.imp λ w h => ⟨h.1, λ j hj hw => by
+    · exact h₂.imp fun w h ↦ ⟨h.1, fun j hj hw ↦ by
         fin_cases j
         · exact h.2 (Or.inl hw)
         · exact hj rfl
         · exact h.2 (Or.inr hw)⟩
-    · exact h₃.imp λ w h => ⟨h.1, λ j hj hw => by
+    · exact h₃.imp fun w h ↦ ⟨h.1, fun j hj hw ↦ by
         fin_cases j
         · exact h.2 (Or.inl hw)
         · exact h.2 (Or.inr hw)
         · exact hj rfl⟩
-  · exact h.imp λ w h => ⟨h.1, λ i => by fin_cases i <;> simp [h.2.1, h.2.2.1, h.2.2.2]⟩
+  · exact h.imp fun w h ↦ ⟨h.1, fun i ↦ by fin_cases i <;> simp [h.2.1, h.2.2.1, h.2.2.2]⟩
 
 end Simplification
 
@@ -261,24 +257,19 @@ def rank (w₀ w : Switch) : ℕ :=
 /-- The similarity ordering by `rank`. -/
 def sim : SimilarityOrdering Switch := .ofRank rank
 
-theorem sim_total (w₀ w₁ w₂ : Switch) : sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁ :=
-  le_total _ _
+theorem sim_total : sim.Total := SimilarityOrdering.total_ofRank rank
 
 /-- Switch A is down. -/
-def down₁ (w : Switch) : Prop := w.up₁ = false
+abbrev down₁ : Set Switch := {w | w.up₁ = false}
 
 /-- Switch B is down. -/
-def down₂ (w : Switch) : Prop := w.up₂ = false
+abbrev down₂ : Set Switch := {w | w.up₂ = false}
 
 /-- The light is off. -/
-def off (w : Switch) : Prop := w.light w.up₁ w.up₂ = false
-
-instance : DecidablePred down₁ := λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred down₂ := λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred off := λ _ => inferInstanceAs (Decidable (_ = _))
+abbrev off : Set Switch := {w | w.light w.up₁ w.up₂ = false}
 
 /-- Both switches up, and the light on exactly when the switches agree. -/
-def actual : Switch := ⟨true, true, λ x y => x == y⟩
+def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
 
 open Conditional.Counterfactual
 
@@ -286,19 +277,19 @@ open Conditional.Counterfactual
 its strengthening asserts both simplifications and denies the conjunctive one. -/
 theorem sda_actual :
     actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
-      (conditional sim (λ v => down₁ v ∨ down₂ v) off) := by
-  rw [sda sim_total ⟨⟨false, true, λ x y => !x && !y⟩, by decide⟩
-    ⟨⟨true, false, λ x y => !x && !y⟩, by decide⟩ ⟨actual, by decide⟩]
+      (closestImp sim (down₁ ∪ down₂) off) := by
+  rw [sda sim_total ⟨⟨false, true, fun x y ↦ !x && !y⟩, by decide⟩
+    ⟨⟨true, false, fun x y ↦ !x && !y⟩, by decide⟩ ⟨actual, by decide⟩]
   decide
 
 /-- *If switch A or switch B or both were down, the light would be off* (78) is false in the
 scenario: its strengthening asserts the conjunctive conditional. -/
 theorem orBoth_actual :
     actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
-      (conditional sim (λ v => down₁ v ∨ down₂ v) off) := by
-  rw [orBoth sim_total ⟨⟨false, true, λ x y => x || !y⟩, by decide⟩
-    ⟨⟨true, false, λ x y => y || !x⟩, by decide⟩ ⟨⟨false, false, λ x y => x || y⟩, by decide⟩
-    ⟨⟨true, true, λ x y => x && y⟩, by decide⟩]
+      (closestImp sim (down₁ ∪ down₂) off) := by
+  rw [orBoth sim_total ⟨⟨false, true, fun x y ↦ x || !y⟩, by decide⟩
+    ⟨⟨true, false, fun x y ↦ y || !x⟩, by decide⟩ ⟨⟨false, false, fun x y ↦ x || y⟩, by decide⟩
+    ⟨⟨true, true, fun x y ↦ x && y⟩, by decide⟩]
   decide
 
 end Switch
@@ -334,40 +325,40 @@ theorem universalFreeChoice (hB : ∀ x, B x ⊆ P x ∩ Q x)
     · rintro ⟨⟨⟨⟨⟨⟨-, hP⟩, hQ⟩, -⟩, -⟩, -⟩, -, hB'⟩
       exact ⟨⟨hP, hQ⟩, hB'⟩
     · rintro ⟨⟨hP, hQ⟩, hB'⟩
-      exact ⟨⟨⟨⟨⟨⟨λ x => Or.inl (hP x), hP⟩, hQ⟩, ⟨x₀, Or.inl (hP x₀)⟩⟩, ⟨x₀, hP x₀⟩⟩,
-        ⟨x₀, hQ x₀⟩⟩, λ hx => hB' x₀ (hx x₀), hB'⟩
+      exact ⟨⟨⟨⟨⟨⟨fun x ↦ Or.inl (hP x), hP⟩, hQ⟩, ⟨x₀, Or.inl (hP x₀)⟩⟩, ⟨x₀, hP x₀⟩⟩,
+        ⟨x₀, hQ x₀⟩⟩, fun hx ↦ hB' x₀ (hx x₀), hB'⟩
   · intro w hw
     simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union] at hw ⊢
     by_cases hq : ∀ x, w ∉ Q x
-    · exact Or.inl ⟨λ x => (hw x).resolve_right (hq x), ⟨x₀, hw x₀⟩,
+    · exact Or.inl ⟨fun x ↦ (hw x).resolve_right (hq x), ⟨x₀, hw x₀⟩,
         ⟨x₀, (hw x₀).resolve_right (hq x₀)⟩⟩
     push Not at hq
     obtain ⟨y, hy⟩ := hq
     by_cases hp : ∀ x, w ∉ P x
-    · exact Or.inr (Or.inl ⟨λ x => (hw x).resolve_left (hp x), ⟨x₀, hw x₀⟩, ⟨y, hy⟩⟩)
+    · exact Or.inr (Or.inl ⟨fun x ↦ (hw x).resolve_left (hp x), ⟨x₀, hw x₀⟩, ⟨y, hy⟩⟩)
     push Not at hp
     obtain ⟨z, hz⟩ := hp
     exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, hz⟩, ⟨y, hy⟩⟩)
   · obtain ⟨w, hP, hQ⟩ := h₁
     refine ⟨w, ?_⟩
     simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
-    exact ⟨λ x => Or.inl (hP x), hP, ⟨x₀, Or.inl (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
-      ⟨x₀, λ h => hQ x₀ (hB x₀ h).2⟩, hQ, λ x h => hQ x (hB x h).2⟩
+    exact ⟨fun x ↦ Or.inl (hP x), hP, ⟨x₀, Or.inl (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
+      ⟨x₀, fun h ↦ hQ x₀ (hB x₀ h).2⟩, hQ, fun x h ↦ hQ x (hB x h).2⟩
   · obtain ⟨w, hQ, hP⟩ := h₂
     refine ⟨w, ?_⟩
     simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
-    exact ⟨λ x => Or.inr (hQ x), hQ, ⟨x₀, Or.inr (hQ x₀)⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hP x₀⟩,
-      ⟨x₀, λ h => hP x₀ (hB x₀ h).1⟩, hP, λ x h => hP x (hB x h).1⟩
+    exact ⟨fun x ↦ Or.inr (hQ x), hQ, ⟨x₀, Or.inr (hQ x₀)⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hP x₀⟩,
+      ⟨x₀, fun h ↦ hP x₀ (hB x₀ h).1⟩, hP, fun x h ↦ hP x (hB x h).1⟩
   · obtain ⟨w, hPQ, ⟨y, hy⟩, ⟨z, hz⟩⟩ := h₃
     refine ⟨w, ?_⟩
     simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
-    refine ⟨λ x => by by_cases h : w ∈ P x; exacts [Or.inl h, Or.inr (not_not.1 (mt (hPQ x).2 h))],
+    refine ⟨fun x ↦ by by_cases h : w ∈ P x; exacts [Or.inl h, Or.inr (not_not.1 (mt (hPQ x).2 h))],
       ⟨y, Or.inl hy⟩, ⟨y, hy⟩, ⟨z, hz⟩, ⟨z, (hPQ z).not.2 (not_not.2 hz)⟩, ⟨y, (hPQ y).1 hy⟩,
-      ⟨y, λ h => (hPQ y).1 hy (hB y h).2⟩, λ x h => (hPQ x).1 (hB x h).1 (hB x h).2⟩
+      ⟨y, fun h ↦ (hPQ y).1 hy (hB y h).2⟩, fun x h ↦ (hPQ x).1 (hB x h).1 (hB x h).2⟩
   · obtain ⟨w, hP, hQ, hB'⟩ := h
     refine ⟨w, ?_⟩
     simp only [Set.mem_iInter, Set.mem_iUnion, Set.mem_union, not_forall, not_exists]
-    exact ⟨λ x => Or.inl (hP x), hP, hQ, ⟨x₀, Or.inl (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
+    exact ⟨fun x ↦ Or.inl (hP x), hP, hQ, ⟨x₀, Or.inl (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
       ⟨x₀, hB' x₀⟩, hB'⟩
 
 section Negative
@@ -397,9 +388,9 @@ theorem negativeUniversalFreeChoice
       ((⋃ x, nec R (p x))ᶜ ∩ (⋃ x, nec R (q x))ᶜ) ∩ ⋂ x, nec R (p x ∪ q x) := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
   have hpq : ∀ {w : W} {x : D}, w ∉ nec R (p x) → w ∉ nec R (p x ∩ q x) :=
-    λ h h' => h λ v hv => (h' v hv).1
+    fun h h' ↦ h fun v hv ↦ (h' v hv).1
   have hqp : ∀ {w : W} {x : D}, w ∉ nec R (q x) → w ∉ nec R (p x ∩ q x) :=
-    λ h h' => h λ v hv => (h' v hv).2
+    fun h h' ↦ h fun v hv ↦ (h' v hv).2
   rw [negativeUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_compl_iff,
@@ -408,7 +399,7 @@ theorem negativeUniversalFreeChoice
     · rintro ⟨⟨⟨⟨⟨⟨-, hP⟩, hQ⟩, -⟩, -⟩, -⟩, -, hPQ⟩
       exact ⟨⟨hP, hQ⟩, hPQ⟩
     · rintro ⟨⟨hP, hQ⟩, hPQ⟩
-      exact ⟨⟨⟨⟨⟨⟨λ x => hpq (hP x), hP⟩, hQ⟩, ⟨x₀, hpq (hP x₀)⟩⟩, ⟨x₀, hP x₀⟩⟩, ⟨x₀, hQ x₀⟩⟩,
+      exact ⟨⟨⟨⟨⟨⟨fun x ↦ hpq (hP x), hP⟩, hQ⟩, ⟨x₀, hpq (hP x₀)⟩⟩, ⟨x₀, hP x₀⟩⟩, ⟨x₀, hQ x₀⟩⟩,
         ⟨x₀, hPQ x₀⟩, hPQ⟩
   · intro w hw
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall] at hw ⊢
@@ -420,20 +411,20 @@ theorem negativeUniversalFreeChoice
     · exact Or.inr (Or.inl ⟨hq, ⟨x₀, hw x₀⟩, ⟨x₀, hq x₀⟩⟩)
     push Not at hq
     obtain ⟨z, hz⟩ := hq
-    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, λ h => hw z λ v hv => ⟨h v hv, hz v hv⟩⟩,
-      ⟨y, λ h => hw y λ v hv => ⟨hy v hv, h v hv⟩⟩⟩)
+    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, fun h ↦ hw z fun v hv ↦ ⟨h v hv, hz v hv⟩⟩,
+      ⟨y, fun h ↦ hw y fun v hv ↦ ⟨hy v hv, h v hv⟩⟩⟩)
   · obtain ⟨w, hP, hQ⟩ := h₁
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
-    exact ⟨λ x => hpq (hP x), hP, ⟨x₀, hpq (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
+    exact ⟨fun x ↦ hpq (hP x), hP, ⟨x₀, hpq (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩,
       ⟨x₀, nec_mono Set.subset_union_right (hQ x₀)⟩, hQ,
-      λ x => nec_mono Set.subset_union_right (hQ x)⟩
+      fun x ↦ nec_mono Set.subset_union_right (hQ x)⟩
   · obtain ⟨w, hQ, hP⟩ := h₂
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
-    exact ⟨λ x => hqp (hQ x), hQ, ⟨x₀, hqp (hQ x₀)⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hP x₀⟩,
+    exact ⟨fun x ↦ hqp (hQ x), hQ, ⟨x₀, hqp (hQ x₀)⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hP x₀⟩,
       ⟨x₀, nec_mono Set.subset_union_left (hP x₀)⟩, hP,
-      λ x => nec_mono Set.subset_union_left (hP x)⟩
+      fun x ↦ nec_mono Set.subset_union_left (hP x)⟩
   · obtain ⟨w, hPQ, hB, ⟨y, hy⟩, ⟨z, hz⟩, ⟨y', hy'⟩, ⟨z', hz'⟩⟩ := h₃
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
@@ -441,7 +432,7 @@ theorem negativeUniversalFreeChoice
   · obtain ⟨w, hP, hQ, hPQ⟩ := h
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]
-    exact ⟨λ x => hpq (hP x), hP, hQ, ⟨x₀, hpq (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hPQ x₀⟩,
+    exact ⟨fun x ↦ hpq (hP x), hP, hQ, ⟨x₀, hpq (hP x₀)⟩, ⟨x₀, hP x₀⟩, ⟨x₀, hQ x₀⟩, ⟨x₀, hPQ x₀⟩,
       hPQ⟩
 
 end Negative
@@ -470,54 +461,54 @@ theorem freeChoiceOverUniversal
       (poss R (⋂ x, p x) ∩ poss R (⋂ x, q x)) \ poss R (⋃ x, p x ∩ q x) := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
   have hφ : poss R (⋂ x, p x) ⊆ poss R (⋂ x, p x ∪ q x) :=
-    poss_mono (Set.iInter_mono λ x => Set.subset_union_left)
+    poss_mono (Set.iInter_mono fun x ↦ Set.subset_union_left)
   have hφ' : poss R (⋂ x, q x) ⊆ poss R (⋂ x, p x ∪ q x) :=
-    poss_mono (Set.iInter_mono λ x => Set.subset_union_right)
+    poss_mono (Set.iInter_mono fun x ↦ Set.subset_union_right)
   have he : poss R (⋂ x, p x) ⊆ poss R (⋃ x, p x ∪ q x) :=
-    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Or.inl (Set.mem_iInter.1 h x₀)⟩
+    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Or.inl (Set.mem_iInter.1 h x₀)⟩
   have he₁ : poss R (⋂ x, p x) ⊆ poss R (⋃ x, p x) :=
-    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
   have he₂ : poss R (⋂ x, q x) ⊆ poss R (⋃ x, q x) :=
-    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
   have hsb : poss R (⋂ x, p x ∩ q x) ⊆ poss R (⋃ x, p x ∩ q x) :=
-    poss_mono λ w h => Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
+    poss_mono fun w h ↦ Set.mem_iUnion.2 ⟨x₀, Set.mem_iInter.1 h x₀⟩
   have hbp : poss R (⋃ x, p x ∩ q x) ⊆ poss R (⋃ x, p x) :=
-    poss_mono (Set.iUnion_mono λ x => Set.inter_subset_left)
+    poss_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_left)
   have hbq : poss R (⋃ x, p x ∩ q x) ⊆ poss R (⋃ x, q x) :=
-    poss_mono (Set.iUnion_mono λ x => Set.inter_subset_right)
+    poss_mono (Set.iUnion_mono fun x ↦ Set.inter_subset_right)
   rw [overUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, not_or]
-    exact ⟨λ h => ⟨⟨h.1.1.1.1.1.2, h.1.1.1.1.2⟩, h.2.2⟩,
-      λ h => ⟨⟨⟨⟨⟨⟨hφ h.1.1, h.1.1⟩, h.1.2⟩, he h.1.1⟩, he₁ h.1.1⟩, he₂ h.1.2⟩,
-        λ h' => h.2 (hsb h'), h.2⟩⟩
+    exact ⟨fun h ↦ ⟨⟨h.1.1.1.1.1.2, h.1.1.1.1.2⟩, h.2.2⟩,
+      fun h ↦ ⟨⟨⟨⟨⟨⟨hφ h.1.1, h.1.1⟩, h.1.2⟩, he h.1.1⟩, he₁ h.1.1⟩, he₂ h.1.2⟩,
+        fun h' ↦ h.2 (hsb h'), h.2⟩⟩
   · rintro w ⟨v, hv, hvpq⟩
-    have hvpq' := λ x => Set.mem_iInter.1 hvpq x
+    have hvpq' := fun x ↦ Set.mem_iInter.1 hvpq x
     by_cases hq : ∀ x, v ∉ q x
-    · exact Or.inl ⟨⟨v, hv, Set.mem_iInter.2 λ x => (hvpq' x).resolve_right (hq x)⟩,
+    · exact Or.inl ⟨⟨v, hv, Set.mem_iInter.2 fun x ↦ (hvpq' x).resolve_right (hq x)⟩,
         ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩,
         ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, (hvpq' x₀).resolve_right (hq x₀)⟩⟩⟩
     push Not at hq
     obtain ⟨y, hy⟩ := hq
     by_cases hp : ∀ x, v ∉ p x
-    · exact Or.inr (Or.inl ⟨⟨v, hv, Set.mem_iInter.2 λ x => (hvpq' x).resolve_left (hp x)⟩,
+    · exact Or.inr (Or.inl ⟨⟨v, hv, Set.mem_iInter.2 fun x ↦ (hvpq' x).resolve_left (hp x)⟩,
         ⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩, ⟨v, hv, Set.mem_iUnion.2 ⟨y, hy⟩⟩⟩)
     push Not at hp
     obtain ⟨z, hz⟩ := hp
     exact Or.inr (Or.inr ⟨⟨v, hv, Set.mem_iUnion.2 ⟨x₀, hvpq' x₀⟩⟩,
       ⟨v, hv, Set.mem_iUnion.2 ⟨z, hz⟩⟩, ⟨v, hv, Set.mem_iUnion.2 ⟨y, hy⟩⟩⟩)
   · obtain ⟨w, hP, hQ⟩ := h₁
-    exact ⟨w, hφ hP, hP, he hP, he₁ hP, λ h => hQ (he₂ h), λ h => hQ (hbq (hsb h)), hQ,
-      λ h => hQ (hbq h)⟩
+    exact ⟨w, hφ hP, hP, he hP, he₁ hP, fun h ↦ hQ (he₂ h), fun h ↦ hQ (hbq (hsb h)), hQ,
+      fun h ↦ hQ (hbq h)⟩
   · obtain ⟨w, hQ, hP⟩ := h₂
-    exact ⟨w, hφ' hQ, hQ, poss_mono (Set.iUnion_mono λ x => Set.subset_union_right) (he₂ hQ),
-      he₂ hQ, λ h => hP (he₁ h), λ h => hP (hbp (hsb h)), hP, λ h => hP (hbp h)⟩
+    exact ⟨w, hφ' hQ, hQ, poss_mono (Set.iUnion_mono fun x ↦ Set.subset_union_right) (he₂ hQ),
+      he₂ hQ, fun h ↦ hP (he₁ h), fun h ↦ hP (hbp (hsb h)), hP, fun h ↦ hP (hbp h)⟩
   · obtain ⟨w, ⟨⟨hPQ, hP⟩, hQ⟩, hn⟩ := h₃
     simp only [Set.mem_union, not_or] at hn
-    exact ⟨w, hPQ, poss_mono (Set.iUnion_mono λ x => Set.subset_union_left) hP, hP, hQ, hn.1.1,
-      hn.1.2, λ h => hn.2 (hsb h), hn.2⟩
+    exact ⟨w, hPQ, poss_mono (Set.iUnion_mono fun x ↦ Set.subset_union_left) hP, hP, hQ, hn.1.1,
+      hn.1.2, fun h ↦ hn.2 (hsb h), hn.2⟩
   · obtain ⟨w, ⟨hP, hQ⟩, hB⟩ := h
-    exact ⟨w, hφ hP, hP, hQ, he hP, he₁ hP, he₂ hQ, λ h => hB (hsb h), hB⟩
+    exact ⟨w, hφ hP, hP, hQ, he hP, he₁ hP, he₂ hQ, fun h ↦ hB (hsb h), hB⟩
 
 end OverUniversal
 
@@ -591,9 +582,9 @@ theorem simplificationMost
   rw [mostAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_ofPred_eq, not_or]
-    exact ⟨λ h => ⟨⟨⟨h.1.1.1.1.1.1, h.1.1.1.1.1.2⟩, h.1.1.1.1.2⟩, h.2.2⟩,
-      λ h => ⟨⟨⟨⟨⟨⟨h.1.1.1, h.1.1.2⟩, h.1.2⟩, h.1.1.1.overlaps⟩, h.1.1.2.overlaps⟩,
-        h.1.2.overlaps⟩, λ h' => h.2 h'.overlaps, h.2⟩⟩
+    exact ⟨fun h ↦ ⟨⟨⟨h.1.1.1.1.1.1, h.1.1.1.1.1.2⟩, h.1.1.1.1.2⟩, h.2.2⟩,
+      fun h ↦ ⟨⟨⟨⟨⟨⟨h.1.1.1, h.1.1.2⟩, h.1.2⟩, h.1.1.1.overlaps⟩, h.1.1.2.overlaps⟩,
+        h.1.2.overlaps⟩, fun h' ↦ h.2 h'.overlaps, h.2⟩⟩
   · intro w hw
     simp only [Set.mem_ofPred_eq] at hw ⊢
     rcases overlaps_union_iff.1 hw.overlaps with hP | hQ
@@ -604,15 +595,15 @@ theorem simplificationMost
       · exact Or.inr (Or.inr ⟨hw.overlaps, hP, hQ⟩)
       · exact Or.inr (Or.inl ⟨hw.of_union_right hP, hw.overlaps, hQ⟩)
   · obtain ⟨w, hPQ, hP, hQ⟩ := h₁
-    exact ⟨w, hPQ, hP, hPQ.overlaps, hP.overlaps, λ h => hQ h.overlaps,
-      λ h => hQ h.overlaps.of_inter_right, hQ, λ h => hQ h.of_inter_right⟩
+    exact ⟨w, hPQ, hP, hPQ.overlaps, hP.overlaps, fun h ↦ hQ h.overlaps,
+      fun h ↦ hQ h.overlaps.of_inter_right, hQ, fun h ↦ hQ h.of_inter_right⟩
   · obtain ⟨w, hPQ, hQ, hP⟩ := h₂
-    exact ⟨w, hPQ, hQ, hPQ.overlaps, hQ.overlaps, λ h => hP h.overlaps,
-      λ h => hP h.overlaps.of_inter_left, hP, λ h => hP h.of_inter_left⟩
+    exact ⟨w, hPQ, hQ, hPQ.overlaps, hQ.overlaps, fun h ↦ hP h.overlaps,
+      fun h ↦ hP h.overlaps.of_inter_left, hP, fun h ↦ hP h.of_inter_left⟩
   · obtain ⟨w, hPQ, hP, hQ, hP', hQ', hB⟩ := h₃
-    exact ⟨w, hPQ, hPQ.overlaps, hP', hQ', hP, hQ, λ h => hB h.overlaps, hB⟩
+    exact ⟨w, hPQ, hPQ.overlaps, hP', hQ', hP, hQ, fun h ↦ hB h.overlaps, hB⟩
   · obtain ⟨w, hPQ, hP, hQ, hB⟩ := h
-    exact ⟨w, hPQ, hP, hQ, hPQ.overlaps, hP.overlaps, hQ.overlaps, λ h => hB h.overlaps, hB⟩
+    exact ⟨w, hPQ, hP, hQ, hPQ.overlaps, hP.overlaps, hQ.overlaps, fun h ↦ hB h.overlaps, hB⟩
 
 end Most
 
