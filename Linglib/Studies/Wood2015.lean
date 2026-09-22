@@ -1,5 +1,6 @@
 import Linglib.Morphology.DistributedMorphology.Locality
 import Linglib.Syntax.Minimalist.Verbal.Applicative
+import Linglib.Syntax.Minimalist.Verbal.LittleV
 import Linglib.Data.Examples.Wood2015
 
 /-!
@@ -12,11 +13,15 @@ no case requirement, so in SpecVoiceP and SpecpP but not in SpecApplP, which dem
 nor in a direct object position (`Position.AdmitsSt`). A θ-role introduced by a head is
 saturated by a DP in its specifier or passed up to the next argument-introducing head; with
 *-st* in its specifier a head passes its role up, and since Voice is the highest such head, a
-Voice with *-st* in its specifier must be expletive (`expletive_of_st`), and an agentive vP
-like *murder* has no *-st* anticausative (`no_st_of_agentive`). An anticausative arises in two
-ways, specifierless Voice or Voice with a D feature checked by *-st* (`anticausative_iff`); with
-agentive Voice, *-st* can only sit lower, in SpecpP, where p's figure role passes up to the
-DP in SpecVoiceP, the figure reflexive (`st_specP_of_agentive`).
+Voice with *-st* in its specifier must be expletive (`VoiceP.expletive_of_st`), and an agentive
+vP like *murder* has no *-st* anticausative (`VoiceP.no_st_of_thematic`). An anticausative
+arises in two ways, specifierless Voice or Voice with a D feature checked by *-st*
+(`VoiceP.anticausative_iff`), the expletive non-active and expletive active cells of the
+substrate's typology (`VoiceP.cell_of_anticausative`); with thematic Voice, *-st* can only sit
+lower, in SpecpP, where p's figure role passes up to the DP in SpecVoiceP, the figure reflexive
+(`st_specP_of_thematic`). The alternation therefore lives in Voice over a fixed verb, where
+[cuervo-2003] puts it in v with no Voice in the inchoative (`alternation_in_voice`,
+`alternation_in_v`).
 
 The morphology follows from locality: *-ka* spells out v in the context of listed roots and
 *-na* spells out specifierless Voice in the context of listed roots, which requires Voice to
@@ -28,13 +33,15 @@ be adjacent to the root at spell-out, so v must be zero (`na_only_if_v_zero`). H
 
 The word is a `Spine` over the heads v and Voice with v the only cyclic head, and the
 allomorphy domain is the substrate's `SeesRoot`, adjacency across phonologically null heads.
-The lists of roots for *-ka* and *-na* are parameters, and the interpretation of Voice as
-agentive or expletive is taken as a property of the vP. The reciprocal, denominal, modal
-passive and *láta* constructions of the book's sixth chapter are recorded in the examples.
+The lists of roots for *-ka* and *-na* are parameters. Voice is a cell of `Minimalist.Voice`,
+thematic when the vP is agentive, and its D feature is read from the cell. The reciprocal,
+denominal, modal passive and *láta* constructions of the book's sixth chapter are recorded in
+the examples.
 
 ## References
 
 * [wood-2015]
+* [cuervo-2003]
 * [embick-2010]
 * [schaefer-2008]
 * [wood-marantz-2017]
@@ -90,55 +97,72 @@ inductive Occupant where
   | none
   deriving DecidableEq, Repr
 
-/-- A VoiceP: whether the vP is agentive, in which case Voice introduces the agent role, and
-what occupies its specifier. -/
+/-- A VoiceP: its head, a cell of the substrate's typology, thematic when the vP is agentive and
+Voice introduces the agent role, and what occupies its specifier. -/
 structure VoiceP where
-  agentive : Bool
+  head : Voice.Head
   spec : Occupant
   deriving DecidableEq, Repr
 
-/-- A role introduced by the highest argument-introducing head must be saturated by a DP in
-its specifier: the agent role of an agentive Voice has nowhere to be passed up to. -/
-def VoiceP.Interpretable (V : VoiceP) : Prop := V.agentive = true → V.spec = .dp
+namespace VoiceP
 
-instance : DecidablePred VoiceP.Interpretable := λ _ => inferInstanceAs (Decidable (_ → _))
+variable (V : VoiceP)
+
+/-- The specifier is empty exactly when the head has no D feature: Voice{D} against
+Voice{∅}. -/
+def Coherent : Prop := V.spec = .none ↔ ¬ V.head.HasD
+
+/-- A role introduced by the highest argument-introducing head must be saturated by a DP in
+its specifier: the agent role of a thematic Voice has nowhere to be passed up to. -/
+def Interpretable : Prop := V.head.IsThematic → V.spec = .dp
 
 /-- Voice is expletive when it introduces no role. -/
-def VoiceP.Expletive (V : VoiceP) : Prop := V.agentive = false
-
-instance : DecidablePred VoiceP.Expletive := λ _ => inferInstanceAs (Decidable (_ = _))
-
-/-- With *-st* in its specifier, Voice must be expletive. -/
-theorem expletive_of_st {V : VoiceP} (h : V.Interpretable) (hs : V.spec = .st) :
-    V.Expletive := by
-  cases V; simp_all [VoiceP.Interpretable, VoiceP.Expletive]
-
-/-- Specifierless Voice is expletive. -/
-theorem expletive_of_none {V : VoiceP} (h : V.Interpretable) (hs : V.spec = .none) :
-    V.Expletive := by
-  cases V; simp_all [VoiceP.Interpretable, VoiceP.Expletive]
-
-/-- An agentive vP, like *murder*, has no *-st* anticausative. -/
-theorem no_st_of_agentive {V : VoiceP} (h : V.Interpretable) (ha : V.agentive = true) :
-    V.spec ≠ .st := by
-  rw [h ha]; decide
+def Expletive : Prop := ¬ V.head.IsThematic
 
 /-- An anticausative projects no DP external argument. -/
-def VoiceP.Anticausative (V : VoiceP) : Prop := V.spec ≠ .dp
+def Anticausative : Prop := V.spec ≠ .dp
+
+instance : Decidable V.Coherent := inferInstanceAs (Decidable (_ ↔ _))
+instance : Decidable V.Interpretable := inferInstanceAs (Decidable (_ → _))
+instance : Decidable V.Expletive := inferInstanceAs (Decidable (¬ _))
+instance : Decidable V.Anticausative := inferInstanceAs (Decidable (_ ≠ _))
+
+variable {V}
+
+/-- With *-st* in its specifier, Voice must be expletive. -/
+theorem expletive_of_st (h : V.Interpretable) (hs : V.spec = .st) : V.Expletive :=
+  fun ht ↦ by simp [h ht] at hs
+
+/-- Specifierless Voice is expletive. -/
+theorem expletive_of_none (h : V.Interpretable) (hs : V.spec = .none) : V.Expletive :=
+  fun ht ↦ by simp [h ht] at hs
+
+/-- An agentive vP, like *murder*, has no *-st* anticausative. -/
+theorem no_st_of_thematic (h : V.Interpretable) (ht : V.head.IsThematic) : V.spec ≠ .st := by
+  rw [h ht]; decide
 
 /-- The two ways of forming an anticausative: specifierless Voice, or Voice whose D feature
 is checked by *-st*. -/
-theorem anticausative_iff (V : VoiceP) :
-    V.Anticausative ↔ V.spec = .none ∨ V.spec = .st := by
-  cases V with
-  | mk a s => cases s <;> simp [VoiceP.Anticausative]
+theorem anticausative_iff : V.Anticausative ↔ V.spec = .none ∨ V.spec = .st := by
+  cases hs : V.spec <;> simp [Anticausative, hs]
 
 /-- Either way, Voice is expletive: the VoiceP denotes what the vP denotes. -/
-theorem expletive_of_anticausative {V : VoiceP} (h : V.Interpretable) (ha : V.Anticausative) :
-    V.Expletive := by
-  cases V with
-  | mk a s => cases a <;> cases s <;> simp_all [VoiceP.Interpretable, VoiceP.Expletive,
-      VoiceP.Anticausative]
+theorem expletive_of_anticausative (h : V.Interpretable) (ha : V.Anticausative) :
+    V.Expletive :=
+  fun ht ↦ ha (h ht)
+
+/-- An *-st* anticausative is the substrate's expletive active cell, `Voice.anticausative`, and
+a specifierless one its expletive non-active cell, `Voice.middle`: Voice{D} and Voice{∅}. -/
+theorem cell_of_anticausative (h : V.Interpretable) (hc : V.Coherent) :
+    (V.spec = .st → V.head.params = Voice.anticausative.params) ∧
+      (V.spec = .none → V.head.params = Voice.middle.params) := by
+  revert h hc
+  rcases V with ⟨⟨t, d, i, o, q, c, f⟩, s⟩
+  cases s <;> cases t <;> cases d <;>
+    simp [Interpretable, Coherent, Voice.Head.IsThematic, Voice.Head.HasD, Voice.Head.params,
+      Voice.anticausative, Voice.middle]
+
+end VoiceP
 
 /-- A clause where *-st* merges: its VoiceP and the position *-st* occupies. -/
 structure StClause where
@@ -148,12 +172,34 @@ structure StClause where
   /-- *-st* is in SpecVoiceP exactly when it is Voice's specifier. -/
   site_voice : site = .specVoice ↔ voice.spec = .st
 
-/-- Under agentive Voice, *-st* merges in SpecpP: the figure reflexive. -/
-theorem st_specP_of_agentive (C : StClause) (h : C.voice.Interpretable)
-    (ha : C.voice.agentive = true) : C.site = .specP := by
+/-- Under thematic Voice, *-st* merges in SpecpP: the figure reflexive. -/
+theorem st_specP_of_thematic (C : StClause) (h : C.voice.Interpretable)
+    (ht : C.voice.head.IsThematic) : C.site = .specP := by
   rcases (admitsSt_iff C.site).mp C.siteAdmits with hv | hp
-  · exact absurd (C.site_voice.mp hv) (no_st_of_agentive h ha)
+  · exact absurd (C.site_voice.mp hv) (VoiceP.no_st_of_thematic h ht)
   · exact hp
+
+/-! ### Where the alternation lives, against [cuervo-2003]
+
+For Wood the two alternants of *opna* share the verb, root and v, and differ in Voice alone,
+thematic against expletive; for [cuervo-2003] they differ in v, `vDO` against `vGO` over the
+same state, and the inchoative has no Voice to vary. The two accounts are incompatible on the
+locus of the alternation, and the substrate lets each be stated. -/
+
+/-- Wood: the active and the *-st* anticausative are one verb under two Voice heads, the
+thematic active cell and the expletive active cell. -/
+theorem alternation_in_voice :
+    Voice.agentive.IsThematic ∧ ¬ Voice.anticausative.IsThematic ∧
+      Voice.agentive.HasD ∧ Voice.anticausative.HasD := by
+  decide
+
+/-- Cuervo: the causative and the inchoative differ in the head over the state, and the
+inchoative admits no Voice at all. -/
+theorem alternation_in_v :
+    LittleV.Causative [.vDO, .vBE] ∧ LittleV.Inchoative [.vGO, .vBE] ∧
+      [LittleV.vDO, .vBE].tail = [LittleV.vGO, .vBE].tail ∧
+      LittleV.LicensesVoice [.vDO, .vBE] ∧ ¬ LittleV.LicensesVoice [.vGO, .vBE] := by
+  decide
 
 /-! ### The exponents of v and Voice -/
 
