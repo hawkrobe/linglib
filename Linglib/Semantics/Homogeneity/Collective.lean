@@ -23,7 +23,8 @@ distributive predicates this reduces to supervaluation over atoms
 
 namespace Homogeneity
 
-open Semantics.Supervaluation (superTrue)
+open Semantics.Supervaluation (superTrue superTrue_true_iff superTrue_false_iff
+  superTrue_indet_iff)
 
 variable {Atom : Type*} [DecidableEq Atom]
 
@@ -67,27 +68,17 @@ theorem generalisedTruthValue_distributive_reduction
     (hdomain : ∀ x ∈ a, {x} ∈ domain) :
     generalisedTruthValue (fun s => ∀ x ∈ s, pred x) domain a =
     superTrue pred ⟨a, hne⟩ := by
-  unfold generalisedTruthValue superTrue
-  by_cases hall : ∀ x ∈ a, pred x
-  · rw [ite_eq_left hall, ite_eq_left hall]
-  · rw [ite_eq_right hall, ite_eq_right hall]
-    by_cases hnone : ∀ x ∈ a, ¬ pred x
-    · have hNoWitness : ¬ ∃ b ∈ domain, overlaps a b ∧ ∀ x ∈ b, pred x := by
-        rintro ⟨b, _, hov, hPb⟩
-        obtain ⟨y, hy⟩ := Finset.not_disjoint_iff_nonempty_inter.mp hov
-        rw [Finset.mem_inter] at hy
-        exact hnone y hy.1 (hPb y hy.2)
-      rw [ite_eq_right hNoWitness, ite_eq_left hnone]
-    · push Not at hnone
-      obtain ⟨x, hxa, hpx⟩ := hnone
-      have hOv : overlaps a {x} := by
-        unfold overlaps
-        rw [Finset.disjoint_singleton_right]
-        exact fun h => h hxa
-      have hWitness : ∃ b ∈ domain, overlaps a b ∧ ∀ y ∈ b, pred y :=
-        ⟨{x}, hdomain x hxa, hOv,
-          fun y hy => by rw [Finset.mem_singleton.mp hy]; exact hpx⟩
-      rw [ite_eq_left hWitness, ite_eq_right]
-      intro hf; exact hf x hxa hpx
+  rcases h : superTrue pred ⟨a, hne⟩ with _ | _ | _
+  · exact generalisedTruthValue_eq_true _ _ _ ((superTrue_true_iff _ _).1 h)
+  · have hnone := (superTrue_false_iff _ _).1 h
+    obtain ⟨x, hx⟩ := hne
+    rw [generalisedTruthValue, ite_eq_right (fun hall => hnone x hx (hall x hx)), ite_eq_right]
+    rintro ⟨b, _, hov, hPb⟩
+    obtain ⟨y, hya, hyb⟩ := Finset.not_disjoint_iff.1 hov
+    exact hnone y hya (hPb y hyb)
+  · obtain ⟨⟨x, hxa, hpx⟩, y, hya, hpy⟩ := (superTrue_indet_iff _ _).1 h
+    rw [generalisedTruthValue, ite_eq_right (fun hall => hpy (hall y hya)), ite_eq_left]
+    exact ⟨{x}, hdomain x hxa, Finset.not_disjoint_iff.2 ⟨x, hxa, Finset.mem_singleton_self x⟩,
+      fun z hz => Finset.mem_singleton.1 hz ▸ hpx⟩
 
 end Homogeneity

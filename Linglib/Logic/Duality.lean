@@ -358,7 +358,7 @@ theorem dist_not_of_nonempty {α : Type*} (s : Finset α) (P : α → Prop) [Dec
     dist (∅ : Finset α) P = .true := by simp [dist]
 
 /-- `dist` on a singleton: `.true` if `P a` holds, `.false` otherwise. -/
-@[simp] theorem dist_singleton {α : Type*} [DecidableEq α] (a : α)
+@[simp] theorem dist_singleton {α : Type*} (a : α)
     (P : α → Prop) [DecidablePred P] :
     dist ({a} : Finset α) P = if P a then .true else .false := by
   simp only [dist, Finset.mem_singleton, forall_eq, exists_eq_left]
@@ -405,7 +405,7 @@ theorem dist_not_of_nonempty {α : Type*} (s : Finset α) (P : α → Prop) [Dec
     | Theory                 | Index I              | ∃-projection       | ∀-projection    | Mathlib hook                           |
     |------------------------|----------------------|--------------------|-----------------|----------------------------------------|
     | [klein-1980]      | comparison class C   | comparative (more) | at-least-as     | `measureDelineation_mono_in_class`     |
-    | [fine-1975]       | precisification      | sub-truth          | super-truth     | `Preorder SpecSpace`, stability        |
+    | [fine-1975]       | precisification      | sub-truth          | super-truth     | `PartialOrder SpecSpace`, `toFlat_superTrue_mono` |
     | [caie-2023]       | comp. context        | disjunctive update | —               | `disjunctiveUpdate_mono_interp`        |
     | [kratzer-1981]    | accessible world     | ◇ (possibility)    | □ (necessity)   | `GaloisConnection` (Proposition.lean)  |
     | [kamp-1975]       | completion           | strict comparative | at-least-as     | `Antitone` in S (via `kampPreorder`)   |
