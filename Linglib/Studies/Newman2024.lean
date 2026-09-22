@@ -606,12 +606,12 @@ theorem passive_lacks_D : passiveV.features.hasD = false := rfl
 /-- Voice's hasD (PF subcategorization) and assignsTheta (θ-role
     assignment) do NOT always coincide — confirming that these are
     distinct features. The CMH's [·D·] corresponds to assignsTheta,
-    not to hasD. Anticausative and passive Voice have hasD = true
-    (anticausative for SE marking, passive for *by*-phrase licensing)
-    but assignsTheta = false (no θ-role). -/
+    not to hasD. Anticausative Voice has hasD = true (for SE marking)
+    but assigns no θ-role, and the passive is thematic without a
+    specifier. -/
 theorem voice_hasD_ne_assignsTheta :
     Minimalist.Voice.anticausative.HasD ∧ ¬ Minimalist.Voice.anticausative.AssignsTheta ∧
-    Minimalist.Voice.passive.HasD ∧ ¬ Minimalist.Voice.passive.AssignsTheta := by decide
+    Minimalist.Voice.passive.IsThematic ∧ ¬ Minimalist.Voice.passive.HasD := by decide
 
 -- Newman adopts [preminger-2014]'s obligatory-no-crash model for
 -- Merge features: [·D·], [·X·], [·V·] can go unchecked without

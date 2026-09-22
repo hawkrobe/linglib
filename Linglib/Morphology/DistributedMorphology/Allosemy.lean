@@ -64,7 +64,7 @@ conditioning of v.
 namespace DistributedMorphology.Allosemy
 
 open DistributedMorphology (Categorizer Categorizer.Head)
-open Minimalist.Voice (Flavor Head)
+open Minimalist.Voice (Head)
 
 /-! ### The alloseme carrier
 
@@ -305,20 +305,19 @@ example : Voice.Alloseme.fromComplement [.stative] = .holder := by decide
 /-- Neither condition met selects the elsewhere expletive. -/
 example : Voice.Alloseme.fromComplement [] = .expletive := by decide
 
-/-- Bridge to the syntactic `Flavor` inventory. Syntactically all four
-    allosemes realize the same Voice with a DP specifier; the θ-role
-    distinction is resolved at LF. The map picks the
-    flavor matching each alloseme's syntactic behavior. -/
-def Voice.Alloseme.toFlavor : Voice.Alloseme → Flavor
-  | .agent    => .agentive
-  | .holder   => .experiencer
-  | .engineer => .agentive
-  | .expletive => .expletive
+/-- Bridge to the syntactic Voice heads. Syntactically all four allosemes realize an
+    active Voice with a DP specifier; the θ-role distinction is resolved at LF. The
+    map picks the head matching each alloseme's syntactic behavior. -/
+def Voice.Alloseme.toHead : Voice.Alloseme → Head
+  | .agent    => Minimalist.Voice.agentive
+  | .holder   => Minimalist.Voice.experiencer
+  | .engineer => Minimalist.Voice.agentive
+  | .expletive => Minimalist.Voice.anticausative
 
 /-- The bridge respects θ-assignment: an alloseme assigns a thematic
-role iff its syntactic flavor does. -/
+    role iff its syntactic head does. -/
 theorem Voice.theta_consistent (a : Voice.Alloseme) :
-    a.AssignsTheta ↔ Head.AssignsTheta { flavor := a.toFlavor, hasD := true } := by
+    a.AssignsTheta ↔ a.toHead.AssignsTheta := by
   revert a; decide
 
 /-! ### Nominalization readings -/

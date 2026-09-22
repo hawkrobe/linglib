@@ -43,8 +43,8 @@ def pseudogapping : Ellipsis := ⟨.T⟩
 /-- A voice mismatch datum across an ellipsis boundary. -/
 structure VoiceMismatchDatum where
   description : String
-  antecedentVoice : Flavor
-  targetVoice : Flavor
+  antecedentVoice : Head
+  targetVoice : Head
   ellipsisType : Ellipsis
   grammatical : Bool
   language : String := "English"
@@ -57,14 +57,14 @@ structure VoiceMismatchDatum where
      that it should be ⟨removed⟩." -/
 def ex1a : VoiceMismatchDatum :=
   { description := "Active → passive under VPE"
-    antecedentVoice := .agentive, targetVoice := .passive
+    antecedentVoice := agentive, targetVoice := passive
     ellipsisType := vpEllipsis, grammatical := true }
 
 /-- (2a) Passive → active under VPE.
     "The system can be used by anyone who wants to ⟨use it⟩." -/
 def ex2a : VoiceMismatchDatum :=
   { description := "Passive → active under VPE"
-    antecedentVoice := .passive, targetVoice := .agentive
+    antecedentVoice := passive, targetVoice := agentive
     ellipsisType := vpEllipsis, grammatical := true }
 
 -- § 2.2 Sluicing: voice mismatches blocked (§1.2, exx. 5–7, 25)
@@ -72,19 +72,19 @@ def ex2a : VoiceMismatchDatum :=
 /-- (5) "*Joe was murdered, but we don't know who." -/
 def ex5 : VoiceMismatchDatum :=
   { description := "Sluicing: pass → act blocked"
-    antecedentVoice := .passive, targetVoice := .agentive
+    antecedentVoice := passive, targetVoice := agentive
     ellipsisType := sluicing, grammatical := false }
 
 /-- (6a) German: "*Erika hat jemanden ermordet, aber sie wissen nicht, wer." -/
 def ex6a : VoiceMismatchDatum :=
   { description := "German sluicing: act → pass blocked"
-    antecedentVoice := .agentive, targetVoice := .passive
+    antecedentVoice := agentive, targetVoice := passive
     ellipsisType := sluicing, grammatical := false, language := "German" }
 
 /-- (25a) Greek: "*O Jannis skotose kapjon, ala δen kserume pjos." -/
 def ex25a : VoiceMismatchDatum :=
   { description := "Greek sluicing: act → pass blocked (synthetic)"
-    antecedentVoice := .agentive, targetVoice := .passive
+    antecedentVoice := agentive, targetVoice := passive
     ellipsisType := sluicing, grammatical := false, language := "Greek" }
 
 -- § 2.3 Fragment answers (§1.2, ex. 9)
@@ -92,7 +92,7 @@ def ex25a : VoiceMismatchDatum :=
 /-- (9a) German: "Wer hat den Jungen untersucht? — *Von einer Psychologin." -/
 def ex9a : VoiceMismatchDatum :=
   { description := "Fragment: act → pass blocked"
-    antecedentVoice := .agentive, targetVoice := .passive
+    antecedentVoice := agentive, targetVoice := passive
     ellipsisType := fragmentAnswers, grammatical := false, language := "German" }
 
 -- § 2.4 Gapping (§1.2, ex. 10)
@@ -100,7 +100,7 @@ def ex9a : VoiceMismatchDatum :=
 /-- (10a) "*Some bring roses and lilies by others." -/
 def ex10a : VoiceMismatchDatum :=
   { description := "Gapping: act → pass blocked"
-    antecedentVoice := .agentive, targetVoice := .passive
+    antecedentVoice := agentive, targetVoice := passive
     ellipsisType := gapping, grammatical := false }
 
 -- § 2.5 Stripping (§1.2, ex. 11)
@@ -108,7 +108,7 @@ def ex10a : VoiceMismatchDatum :=
 /-- (11a) "*MAX brought the roses, not by AMY!" -/
 def ex11a : VoiceMismatchDatum :=
   { description := "Stripping: act → pass blocked"
-    antecedentVoice := .agentive, targetVoice := .passive
+    antecedentVoice := agentive, targetVoice := passive
     ellipsisType := stripping, grammatical := false }
 
 /-- The VP-ellipsis rows are as `Ellipsis.Tolerates` predicts. -/
@@ -259,7 +259,7 @@ theorem voice_between_boundaries :
     Merchant's deletion domain theory ([merchant-2013]) →
     voice mismatch asymmetry.
 
-    Step 1 (Voice.lean): Active and passive are distinct Voice flavors;
+    Step 1 (Voice.lean): Active and passive are distinct Voice heads;
     Voice is an independent head above vP.
 
     Step 2 (Ellipsis.lean): VPE's [E] sits on Voice, deleting vP.
@@ -269,7 +269,7 @@ theorem voice_between_boundaries :
     are both grammatical, as `Ellipsis.Tolerates` predicts. -/
 theorem end_to_end_voice_chain :
     -- Step 1: Active and passive are distinct Voice flavors
-    Flavor.agentive ≠ Flavor.passive ∧
+    agentive ≠ passive ∧
     -- Step 2: Voice is external to VPE's deletion domain
     vpEllipsis.Tolerates .voice ∧
     -- Step 3: Empirical data matches

@@ -1,34 +1,54 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Semantics.ArgumentStructure.ThetaRole
-import Linglib.Syntax.Voice.Basic
-import Linglib.Syntax.Reciprocal
 
 /-!
 # Voice heads
 
-Voice heads introduce (or fail to introduce) external arguments
-([kratzer-1996]).
+Voice introduces, or fails to introduce, the external argument of the verbal phrase it takes
+([kratzer-1996]). A head is a cell of the typology of [alexiadou-schaefer-2015]
+after [schaefer-2008]: thematic Voice introduces an external-argument variable with an
+instruction for interpreting it, as an agent, a causer or a holder, and expletive Voice
+introduces nothing; active Voice bears a D-feature and projects a specifier, non-active Voice
+does not, its variable, if any, existentially bound and implicit. The four cells are the
+active and non-active thematic heads, the transitive and the passive, and the active and
+non-active expletive heads, the *se*-marked anticausative and the non-active middle. Beyond its
+cell a head may bind the internal argument to the external one, reflexively or reciprocally
+([siloni-2012], [martin-schaefer-kastner-2025]), or demote it to an oblique, the antipassive
+([scott-2023]); may check Case ([collins-2005]) and carry Agree features; and may override its
+phasehood per construction.
+
+Every property consumers read is derived from the cell: `Head.IsThematic`, `Head.AssignsTheta`,
+`Head.ExternalImplicit`, `Head.IsPhasal`, and the underspecified cell `Head.params` that
+[beavers-udayana-2022]'s Indonesian *ber-* leaves open.
 
 ## Main definitions
 
-* `Flavor` — the guise typology (after [schaefer-2008]), with projections
-  onto neighboring substrates: `voice` (the [creissels-2024] voice
-  it realizes), `thetaRole`, `defaultPhasal`, `recipFormation` ([siloni-2012]).
-* `Head` — a flavor plus featural and per-construction properties, with the
-  predicate API `IsPhasal`/`AssignsTheta`/`HasSemantics`/`IntroducesExternal`/
-  `ExternalImplicit`.
-* `Params` + `Flavor.toParams` — the ±D/±λx parametric decomposition
-  ([alexiadou-schaefer-2015]); `ProjectionLocus` — which projection an
-  exponent spells out.
+* `Instruction`, `Operation`, `Head`: the thematic instruction, the valency operation and the
+  head.
+* `Head.IsThematic`, `Head.HasD`, `Head.ExternalImplicit`, `Head.AssignsTheta`, `Head.IsPhasal`,
+  `Head.ChecksCase`, `Head.DCoherent`: the predicate API.
+* `agentive`, `causer`, `experiencer`, `anticausative`, `middle`, `passive`, `impersonal`,
+  `reflexive`, `reciprocal`, `antipassive`: the named cells.
+* `Params`, `Head.params`, `Params.Compatible`: the ±D/±λx cell with either coordinate left
+  open.
+
+## Main results
+
+* `Head.AssignsTheta.isThematic`, `Head.IsPhasal.assignsTheta`: θ-assignment entails a thematic
+  head; default phasehood entails θ-assignment.
+* `canonical_dCoherent`: every named cell realizes its variable in its specifier exactly when it
+  has one.
+* `antipassive_not_phasal`: the antipassive is thematic and active yet not a phase.
+* `Params.Compatible.refl`, `underspecified_compatible_with_all`.
 
 ## Implementation notes
 
-Voice is severed from the event structure below it: the v heads are
-`Minimalist.LittleV`, whose [cuervo-2003] calculus locates the causative
-alternation in the choice of v, not of Voice, and admits Voice only over
-`vDO`. Programs that locate the alternation in Voice ([wood-2015]'s single
-allosemic v, [alexiadou-schaefer-2015]) state their claim about `Flavor`
-alone. See `Wood2015` for the Icelandic -st apparatus.
+The passive is the thematic non-active cell, its agent implicit, with the Finnish impersonal in
+the same cell; [collins-2005]'s passive Voice, which assigns no θ-role and checks Case, is that
+paper's analysis, statable here as an expletive active head with `checksCase`. The default
+phasehood is that of [chomsky-2001]'s v*, a θ-assigning active head, with the antipassive
+excepted because it detransitivizes; [erlewine-sommerlot-2025] treats every Malayic Voice as a
+phase, which `phaseOverride` records. [cuervo-2003]'s inchoatives have no Voice at all, and the
+event structure below Voice is `Minimalist.LittleV`.
 
 ## References
 
@@ -37,11 +57,9 @@ alone. See `Wood2015` for the Icelandic -st apparatus.
 * [chomsky-2001]
 * [collins-2005]
 * [coon-mateo-pedro-preminger-2014]
-* [creissels-2024]
 * [cuervo-2003]
 * [erlewine-sommerlot-2025]
 * [kratzer-1996]
-* [legate-2003]
 * [martin-schaefer-kastner-2025]
 * [munoz-perez-2026]
 * [schaefer-2008]
@@ -49,464 +67,202 @@ alone. See `Wood2015` for the Icelandic -st apparatus.
 * [scott-2023]
 * [siloni-2012]
 * [wood-2015]
-* [wood-marantz-2017]
 -/
 
-open ArgumentStructure
+namespace Minimalist.Voice
 
-namespace Minimalist
-namespace Voice
+/-! ### The cell -/
 
-/-! ### Flavors -/
-
-/-- Typology of Voice head flavors (after [schaefer-2008]). -/
-inductive Flavor where
-  /-- Introduces an agent external argument ([kratzer-1996] Voice_AG). -/
-  | agentive
-  /-- Introduces a causer ([schaefer-2008] Voice_CAUSE). -/
+/-- The instruction a thematic Voice head gives for interpreting its external-argument
+variable ([alexiadou-schaefer-2015]). -/
+inductive Instruction where
+  | agent
   | causer
-  /-- Semantically vacuous, no θ-role, [D] for PF marking (Romance
-      anticausative SE; [munoz-perez-2026]). -/
-  | nonThematic
-  /-- No specifier, no semantics (dispositional middles). -/
-  | expletive
-  /-- Demotes the agent to an implicit generic human (Finnish "passive"). -/
-  | impersonal
-  /-- Checks Case but does not assign θ ([collins-2005]: *by* heads VoiceP). -/
-  | passive
-  /-- Introduces an agent with absolutive (not ergative) case; demotes the
-      object to oblique ([scott-2023]). -/
-  | antipassive
-  /-- [+θ, +D]: agent binds the internal argument (Romance *se*;
-      [martin-schaefer-kastner-2025]). -/
-  | reflexive
-  /-- [+θ, +D]: agent in the mutual relation with the internal argument —
-      [siloni-2012]'s syntactic reciprocalization (Romance/Slavic
-      reciprocal *se*). -/
-  | reciprocal
-  /-- [+θ, +D]: introduces an experiencer external argument
-      (psych causatives). -/
-  | experiencer
+  | holder
   deriving DecidableEq, Repr
 
-/-! ### Flavor projections -/
+/-- What a head does to the internal argument beyond introducing an external one: binds it to
+the external argument reflexively or reciprocally ([siloni-2012]), or demotes it to an oblique
+([scott-2023]). -/
+inductive Operation where
+  | reflexive
+  | reciprocal
+  | antipassive
+  deriving DecidableEq, Repr
 
-/-- The [creissels-2024] voice each flavor realizes; `none` when the coding frame is
-    untouched or the effect is not a valency operation. -/
-def Flavor.voice : Flavor → Option _root_.Voice
-  | .causer      => some .causative
-  | .nonThematic => some .anticausative
-  | .impersonal  => some .impersonalPassive
-  | .passive     => some .passive
-  | .antipassive => some .antipassive
-  | .reflexive   => some .reflexive
-  | .reciprocal  => some .reciprocal
-  | .agentive | .expletive | .experiencer => none
-
-/-- The external θ-role a flavor assigns ([kratzer-1996] severing).
-    `ThetaRole` has no dedicated causer, so causer Voice maps to
-    `stimulus`, its closest interface role. -/
-def Flavor.thetaRole : Flavor → Option ThetaRole
-  | .agentive     => some .agent
-  | .causer       => some .stimulus
-  | .antipassive  => some .agent        -- agent present, with ABS case
-  | .reflexive    => some .agent        -- binds the internal argument
-  | .reciprocal   => some .agent        -- in the mutual relation ([siloni-2012])
-  | .experiencer  => some .experiencer  -- subject-experiencer ([wood-2015])
-  | .nonThematic | .expletive | .impersonal | .passive => none
-
-/-- Default phasehood ([collins-2005]/[chomsky-2001] baseline):
-    θ-assigning, specifier-projecting Voice is phasal — tethered to the
-    parameter grid by `defaultPhasal_iff_baselinePhasal`, with antipassive
-    the machine-checked exception (`antipassive_anomaly`);
-    per-construction divergences go via `Head.phaseOverride`. -/
-def Flavor.defaultPhasal : Flavor → Bool
-  | .agentive | .causer | .reflexive | .reciprocal | .experiencer => true
-  | .nonThematic | .expletive | .impersonal | .passive | .antipassive => false
-
-/-- The [siloni-2012] formation locus a flavor realizes: reciprocal Voice
-    IS syntactic reciprocalization; no flavor realizes lexical formation. -/
-def Flavor.recipFormation : Flavor → Option _root_.Reciprocal.Formation
-  | .reciprocal => some .syntactic
-  | _ => none
-
-/-! ### The Voice head -/
-
-/-- A Voice head: a flavor plus featural and per-construction properties. -/
+/-- A Voice head: its cell in the thematic/expletive × active/non-active typology, whether its
+variable is implicit, its valency operation, and its per-construction properties. -/
 structure Head where
-  /-- The flavor determining argument introduction and semantics. -/
-  flavor : Flavor
-  /-- [D] subcategorization feature: requires a specifier at PF. -/
+  /-- λx: the external-argument variable and its instruction; `none` for expletive Voice. -/
+  thematic : Option Instruction
+  /-- D: the head projects a specifier. -/
   hasD : Bool
-  /-- Per-construction override of `flavor.defaultPhasal` — the locus for
-      per-paper divergence ([erlewine-sommerlot-2025] Malayic passive,
-      [coon-mateo-pedro-preminger-2014] Q'anjob'al Agent Focus). -/
+  /-- The variable is existentially bound rather than saturated by a specifier DP. -/
+  implicit : Bool := false
+  /-- The operation on the internal argument, if any. -/
+  operation : Option Operation := none
+  /-- Per-construction override of the default phasehood ([erlewine-sommerlot-2025],
+      [coon-mateo-pedro-preminger-2014]). -/
   phaseOverride : Option Bool := none
-  /-- Case-checking ([collins-2005] p. 96 feature dissociation: passive
-      Voice/*by* checks Case). Default false. -/
+  /-- Checks Case ([collins-2005]). -/
   checksCase : Bool := false
-  /-- Agree-relevant features (e.g., [uOblique] for Mam *=(y)a'*).
-      Default empty. -/
+  /-- Agree-relevant features (e.g. [uOblique] for Mam *=(y)a'*). -/
   features : FeatureBundle := ⊥
   deriving DecidableEq, Repr
 
-/-! ### Predicate API
+namespace Head
 
-Prop predicates with `Decidable` instances; the data fields `hasD` and
-`checksCase` are exposed in Prop form by `HasD` and `ChecksCase`. -/
+variable (v : Head)
 
-/-- Phasal: the per-construction override if present, else the flavor
-    default. -/
-def Head.IsPhasal (v : Head) : Prop :=
-  v.phaseOverride.getD v.flavor.defaultPhasal = true
+/-! ### Predicate API -/
 
-instance (v : Head) : Decidable v.IsPhasal :=
-  inferInstanceAs (Decidable (v.phaseOverride.getD v.flavor.defaultPhasal = true))
+/-- Thematic: introduces an external-argument variable, and so has semantics. -/
+def IsThematic : Prop := v.thematic.isSome = true
 
-/-- Assigns a θ-role to its specifier (`flavor.thetaRole.isSome`).
-    Narrower than `Params.assignsTheta?`, which also counts impersonal
-    Voice's ∃-bound implicit agent. -/
-def Head.AssignsTheta (v : Head) : Prop :=
-  v.flavor.thetaRole.isSome = true
+/-- Projects a specifier. -/
+def HasD : Prop := v.hasD = true
 
-instance (v : Head) : Decidable v.AssignsTheta :=
-  inferInstanceAs (Decidable (_ = true))
+/-- The external argument is existentially bound. -/
+def ExternalImplicit : Prop := v.implicit = true
 
-/-- Characterization: exactly the agentive, causer, antipassive,
-    reflexive, reciprocal, and experiencer flavors assign θ. -/
-theorem Head.assignsTheta_iff (v : Head) :
-    v.AssignsTheta ↔
-      v.flavor = .agentive ∨ v.flavor = .causer ∨ v.flavor = .antipassive ∨
-      v.flavor = .reflexive ∨ v.flavor = .reciprocal ∨
-      v.flavor = .experiencer := by
-  cases hv : v.flavor <;> simp [Head.AssignsTheta, Flavor.thetaRole, hv]
+/-- Assigns a θ-role to a DP in its specifier: thematic, with its variable not implicit. -/
+def AssignsTheta : Prop := v.IsThematic ∧ ¬ v.ExternalImplicit
 
-/-- Has semantic content — everything except `nonThematic` (purely PF)
-    and `expletive` (vacuous middle). -/
-def Head.HasSemantics (v : Head) : Prop :=
-  v.flavor ≠ .nonThematic ∧ v.flavor ≠ .expletive
+/-- Checks Case. -/
+def ChecksCase : Prop := v.checksCase = true
 
-instance (v : Head) : Decidable v.HasSemantics := by
-  unfold Head.HasSemantics; infer_instance
+/-- The default phasehood: [chomsky-2001]'s v*, a θ-assigning active head, except that the
+antipassive, which detransitivizes, is no phase. -/
+def defaultPhasal : Bool :=
+  v.thematic.isSome && !v.implicit && v.hasD && v.operation != some .antipassive
 
-/-- θ-assignment entails semantic content. The converse fails — passive
-    Voice has semantics without θ (`passive_has_semantics`,
-    `passive_no_theta`). -/
-theorem Head.AssignsTheta.hasSemantics {v : Head} (h : v.AssignsTheta) :
-    v.HasSemantics := by
-  cases hv : v.flavor <;>
-    simp_all [Head.AssignsTheta, Head.HasSemantics, Flavor.thetaRole]
+/-- Phasal: the per-construction override if present, else the default. -/
+def IsPhasal : Prop := v.phaseOverride.getD v.defaultPhasal = true
 
-/-- Subcategorizes for a specifier (Prop form of `hasD`). -/
-def Head.HasD (v : Head) : Prop := v.hasD = true
+/-- A thematic head's variable is implicit exactly when the head projects no specifier, as in
+[alexiadou-schaefer-2015]'s grid; a head may diverge, and stating the divergence
+makes it explicit. -/
+def DCoherent : Prop := v.IsThematic → v.implicit = !v.hasD
 
-instance (v : Head) : Decidable v.HasD :=
-  inferInstanceAs (Decidable (v.hasD = true))
+instance : Decidable v.IsThematic := inferInstanceAs (Decidable (_ = _))
+instance : Decidable v.HasD := inferInstanceAs (Decidable (_ = _))
+instance : Decidable v.ExternalImplicit := inferInstanceAs (Decidable (_ = _))
+instance : Decidable v.AssignsTheta := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable v.ChecksCase := inferInstanceAs (Decidable (_ = _))
+instance : Decidable v.IsPhasal := inferInstanceAs (Decidable (_ = _))
+instance : Decidable v.DCoherent := inferInstanceAs (Decidable (_ → _))
 
-/-- Checks Case (Prop form of `checksCase`). -/
-def Head.ChecksCase (v : Head) : Prop := v.checksCase = true
+theorem AssignsTheta.isThematic {v : Head} (h : v.AssignsTheta) : v.IsThematic := h.1
 
-instance (v : Head) : Decidable v.ChecksCase :=
-  inferInstanceAs (Decidable (v.checksCase = true))
+/-- A head phasal by default assigns a θ-role. -/
+theorem IsPhasal.assignsTheta {v : Head} (ho : v.phaseOverride = none) (h : v.IsPhasal) :
+    v.AssignsTheta := by
+  simp only [IsPhasal, ho, Option.getD_none, defaultPhasal, Bool.and_eq_true,
+    Bool.not_eq_eq_eq_not, Bool.not_true] at h
+  exact ⟨h.1.1.1, by simp [ExternalImplicit, h.1.1.2]⟩
 
-/-! ### Canonical heads -/
+end Head
 
-/-- Agentive Voice (transitive/unergative): introduces an agent, phasal. -/
-def agentive : Head :=
-  { flavor := .agentive, hasD := true }
+/-! ### The underspecified cell -/
 
-/-- Causer Voice: introduces a causer, phasal. -/
-def causer : Head :=
-  { flavor := .causer, hasD := true }
-
-/-- Non-thematic Voice (anticausative): no θ-role, [D] for PF marking. -/
-def anticausative : Head :=
-  { flavor := .nonThematic, hasD := true }
-
-/-- Expletive Voice (middle): no specifier, no semantics. -/
-def middle : Head :=
-  { flavor := .expletive, hasD := false }
-
-/-- Impersonal Voice (Finnish "passive"): ∃-closes the agent; no θ-marked
-    specifier. -/
-def impersonal : Head :=
-  { flavor := .impersonal, hasD := false }
-
-/-- Passive Voice: *by* checks Case without assigning θ ([collins-2005];
-    v assigns the external θ-role in Spec,vP), and is non-phasal — which
-    keeps PartP accessible for smuggling. Contested by [legate-2003]. -/
-def passive : Head :=
-  { flavor := .passive, hasD := true, checksCase := true }
-
-/-- Reflexive Voice: agent coreferent with the internal argument (Romance
-    *se*, [martin-schaefer-kastner-2025]). [wood-2015]'s Icelandic *-st*
-    is a SpecpP clitic, not an exponent of this head. -/
-def reflexive : Head :=
-  { flavor := .reflexive, hasD := true }
-
-/-- Reciprocal Voice: agent in the mutual relation with the internal
-    argument — [siloni-2012]'s syntactic reciprocalization (Romance/Slavic
-    reciprocal *se*), twin of `reflexive`. Lexicon-formed reciprocal verbs
-    enter the syntax already symmetric and are not exponents of this head. -/
-def reciprocal : Head :=
-  { flavor := .reciprocal, hasD := true }
-
-/-- Experiencer Voice: experiencer external argument in Spec,VoiceP.
-    Distinct from [wood-2015]'s Icelandic dative-subject experiencers,
-    where Voice is non-thematic and the experiencer an applied dative. -/
-def experiencer : Head :=
-  { flavor := .experiencer, hasD := true }
-
-/-! ### Verification theorems -/
-
-/-- Agentive Voice assigns a θ-role. -/
-theorem agentive_assigns_theta : agentive.AssignsTheta := by decide
-
-/-- Non-thematic Voice does NOT assign a θ-role ([munoz-perez-2026]). -/
-theorem nonThematic_no_theta : ¬ anticausative.AssignsTheta := by decide
-
-/-- Non-thematic Voice has no semantic contribution — the core claim of
-    [munoz-perez-2026]: SE is a PF phenomenon. -/
-theorem nonThematic_no_semantics : ¬ anticausative.HasSemantics := by decide
-
-/-- Agentive Voice is a phase head (v* = Voice_AG). -/
-theorem agentive_is_phase : agentive.IsPhasal := by decide
-
-/-- Non-thematic Voice is NOT a phase head. -/
-theorem anticausative_not_phase : ¬ anticausative.IsPhasal := by decide
-
-/-- Impersonal Voice does NOT assign a θ-role (the agent is existentially
-    closed, not projected to a specifier). -/
-theorem impersonal_no_theta : ¬ impersonal.AssignsTheta := by decide
-
-/-- Impersonal Voice HAS semantics: existential closure over the agent,
-    unlike vacuous non-thematic Voice. -/
-theorem impersonal_has_semantics : impersonal.HasSemantics := by decide
-
-/-- Passive Voice does NOT assign a θ-role (v does). -/
-theorem passive_no_theta : ¬ passive.AssignsTheta := by decide
-
-/-- Passive Voice is NOT a phase head. -/
-theorem passive_not_phase : ¬ passive.IsPhasal := by decide
-
-/-- Passive Voice HAS semantic content (*by* mediates Case-checking). -/
-theorem passive_has_semantics : passive.HasSemantics := by decide
-
-/-- Passive Voice checks Case ([collins-2005], p. 96). -/
-theorem passive_checks_case : passive.ChecksCase := by decide
-
-/-- Reflexive Voice assigns a θ-role ([wood-2015]). -/
-theorem reflexive_assigns_theta : reflexive.AssignsTheta := by decide
-
-/-- Reciprocal Voice assigns a θ-role ([siloni-2012]: parasitic assignment
-    gives the subject both roles). -/
-theorem reciprocal_assigns_theta : reciprocal.AssignsTheta := by decide
-
-/-- Experiencer Voice assigns a θ-role ([wood-2015]). -/
-theorem experiencer_assigns_theta : experiencer.AssignsTheta := by decide
-
-/-! ### Feature dissociation ([collins-2005] §4) -/
-
-/-- In active, v (= agentive Voice) assigns θ AND controls Case-checking. -/
-theorem active_theta_and_case_unified :
-    agentive.AssignsTheta ∧ ¬ agentive.ChecksCase := by decide
-
-/-- Passive dissociates them: Voice does NOT assign θ (v does), but Voice
-    DOES check Case. -/
-theorem passive_theta_case_dissociated :
-    ¬ passive.AssignsTheta ∧ passive.ChecksCase := by decide
-
-/-- UTAH: the external-argument position is present in both active and
-    passive. -/
-theorem utah_active_passive :
-    agentive.HasD ∧ passive.HasD := by decide
-
-/-! ### Voice–phase bridge -/
-
-/-- Agentive Voice corresponds to traditional v* (phase head); both
-    agentive and causer Voice are phasal. -/
-theorem agentive_voice_is_phase_head :
-    agentive.IsPhasal ∧ causer.IsPhasal := by decide
-
-/-- Non-thematic and expletive Voice are NOT phase heads. Phasehood does not track
-    θ-assignment in general: [erlewine-sommerlot-2025] treats every Malayic Voice, passive
-    included, as a phase head, and antipassive assigns θ yet defaults to non-phasal
-    (`antipassive_anomaly`); `Head.phaseOverride` records such divergences. -/
-theorem nonthematic_voice_not_phase_head :
-    ¬ anticausative.IsPhasal ∧ ¬ middle.IsPhasal := by decide
-
-/-! ### Parametric decomposition ([alexiadou-schaefer-2015], [schaefer-2017]) -/
-
-/-- How Voice introduces an external argument semantically: [+λx]
-    λ-abstraction (`thematicArgument`), [+∃x] existential binding
-    (`thematicExistential`, [schaefer-2017] medio-passive), or none
-    (`expletive`). -/
-inductive ExternalArgSemantics where
-  | thematicArgument
-  | thematicExistential
-  | expletive
-  deriving DecidableEq, Repr
-
-/-- The ±D/±λx decomposition ([alexiadou-schaefer-2015],
-    [schaefer-2017]); `none` = underspecified (Indonesian *ber-* is
-    ⟨none, none⟩, [beavers-udayana-2022]). -/
+/-- The ±D/±λx cell with either coordinate left open ([alexiadou-schaefer-2015],
+[schaefer-2017]): `none` is underspecified, as Indonesian *ber-* is on both
+([beavers-udayana-2022]). -/
 structure Params where
-  /-- Does Voice select a syntactic specifier (DP)? `some true` = [+D],
-      `some false` = [−D], `none` = underspecified. -/
-  selectsSpecifier : Option Bool
-  /-- Does Voice introduce semantic agentivity/causation?
-      `none` = underspecified. -/
-  extArgSemantics : Option ExternalArgSemantics
+  /-- Does the head project a specifier? -/
+  hasD : Option Bool
+  /-- Does the head introduce an external-argument variable? -/
+  thematic : Option Bool
   deriving DecidableEq, Repr
 
-/-- Map each named flavor to its cell in the ±D/±λx parameter space.
+/-- The cell of a head, fully specified. -/
+def Head.params (v : Head) : Params := ⟨some v.hasD, some v.thematic.isSome⟩
 
-    | Flavor | ±D | ±λx | Example |
-    |--------|----|-----|---------|
-    | agentive | +D | +λx (arg) | English active |
-    | causer | +D | +λx (arg) | Psych causative |
-    | antipassive | +D | +λx (arg) | Mayan antipassive |
-    | reflexive | +D | +λx (arg) | Icelandic -st reflexive |
-    | reciprocal | +D | +λx (arg) | Romance reciprocal se |
-    | experiencer | +D | +λx (arg) | Icelandic subject-exp -st |
-    | nonThematic | +D | −λx | Romance anticausative SE |
-    | expletive | −D | −λx | English dispositional middle |
-    | impersonal | −D | +∃x | Finnish impersonal |
-    | passive | +D | −λx | English passive (*by*) |
-
-    `nonThematic` and `passive` occupy the same cell [+D, −λx]; they
-    differ in Case-checking (`Head.checksCase`), a property of the full
-    `Head`, not of the parametric decomposition. -/
-def Flavor.toParams : Flavor → Params
-  | .agentive     => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .causer       => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .antipassive  => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .reflexive    => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .reciprocal   => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .experiencer  => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .nonThematic  => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
-  | .expletive    => { selectsSpecifier := some false, extArgSemantics := some .expletive }
-  | .impersonal   => { selectsSpecifier := some false, extArgSemantics := some .thematicExistential }
-  | .passive      => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
-
-/-- The parametric decomposition of a Head, derived from its flavor. -/
-def Head.params (v : Head) : Params := v.flavor.toParams
-
-/-- [D]-coherence: the PF [D] feature matches the flavor's specifier
-    selection. All canonical heads satisfy it
-    (`canonical_heads_dCoherent`); a head may diverge — e.g. a
-    `.nonThematic` head without SE-type PF marking — and stating the
-    divergence makes it explicit rather than a silent encoding choice. -/
-def Head.DCoherent (v : Head) : Prop :=
-  (v.params.selectsSpecifier == some true) = v.hasD
-
-instance (v : Head) : Decidable v.DCoherent :=
-  inferInstanceAs (Decidable (_ = _))
-
-/-- Every canonical head keeps `hasD` in sync with its flavor's
-    specifier selection. -/
-theorem canonical_heads_dCoherent :
-    agentive.DCoherent ∧ causer.DCoherent ∧ anticausative.DCoherent ∧
-    middle.DCoherent ∧ impersonal.DCoherent ∧ passive.DCoherent ∧
-    reflexive.DCoherent ∧ reciprocal.DCoherent ∧ experiencer.DCoherent := by
-  decide
-
-/-- Semantic external-argument presence; `none` when underspecified.
-    Broader than `Head.AssignsTheta` — impersonal's ∃-bound agent counts. -/
-def Params.assignsTheta? (p : Params) : Option Bool :=
-  match p.extArgSemantics with
-  | some .thematicArgument    => some true
-  | some .thematicExistential => some true
-  | some .expletive           => some false
-  | none                      => none
-
-/-- Introduces an external argument, overt or existentially bound: the Prop form of
-    `Params.assignsTheta?`, broader than `AssignsTheta`. -/
-def Head.IntroducesExternal (v : Head) : Prop := v.params.assignsTheta? = some true
-
-instance (v : Head) : Decidable v.IntroducesExternal := inferInstanceAs (Decidable (_ = _))
-
-/-- Introduces its external argument as an implicit, existentially bound one ([+∃x]). -/
-def Head.ExternalImplicit (v : Head) : Prop :=
-  v.params.extArgSemantics = some .thematicExistential
-
-instance (v : Head) : Decidable v.ExternalImplicit := inferInstanceAs (Decidable (_ = _))
-
-/-- Baseline phasehood in the parameter grid: a θ-marked specifier
-    ([+D, +λx arg]) makes a phase ([collins-2005]/[chomsky-2001]). -/
-def Params.BaselinePhasal (p : Params) : Prop :=
-  p.selectsSpecifier = some true ∧ p.extArgSemantics = some .thematicArgument
-
-instance : DecidablePred Params.BaselinePhasal := fun _ => inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Compatible: agreeing on every dimension both specify. -/
+/-- Compatible: agreeing on every coordinate both specify. -/
 def Params.Compatible (p q : Params) : Prop :=
-  (∀ s ∈ p.selectsSpecifier, ∀ t ∈ q.selectsSpecifier, s = t) ∧
-    ∀ s ∈ p.extArgSemantics, ∀ t ∈ q.extArgSemantics, s = t
+  (∀ s ∈ p.hasD, ∀ t ∈ q.hasD, s = t) ∧ ∀ s ∈ p.thematic, ∀ t ∈ q.thematic, s = t
 
-instance : DecidableRel Params.Compatible := fun _ _ => inferInstanceAs (Decidable (_ ∧ _))
-
-/-! ### Parametric bridge theorems -/
-
-/-- Semantic external-argument presence per flavor: the θ-assigning
-    flavors plus impersonal. -/
-theorem flavor_params_theta_consistent (f : Flavor) :
-    f.toParams.assignsTheta? = some (match f with
-      | .agentive | .causer | .antipassive | .reflexive | .reciprocal
-      | .experiencer | .impersonal => true
-      | .nonThematic | .expletive | .passive => false) := by
-  cases f <;> rfl
-
-/-- `defaultPhasal` agrees with the parametric baseline everywhere except
-    antipassive. -/
-theorem defaultPhasal_iff_baselinePhasal (f : Flavor) (h : f ≠ .antipassive) :
-    f.defaultPhasal = true ↔ f.toParams.BaselinePhasal := by
-  cases f <;> simp_all <;> decide
-
-/-- The antipassive anomaly, machine-checked: antipassive occupies a
-    phasal cell of the grid ([+D, +λx arg]) yet is non-phasal by default —
-    phasehood tracks v* transitivity ([chomsky-2001]), and antipassive
-    detransitivizes (its `voice` has an intransitive derived
-    frame), though reflexive and reciprocal show the residue is not fully
-    derivable from the voice either. -/
-theorem antipassive_anomaly :
-    Flavor.antipassive.defaultPhasal = false ∧
-    Flavor.antipassive.toParams.BaselinePhasal := by decide
-
-/-- Grid consistency: a flavor θ-marks its specifier iff its cell is
-    [+λx arg]. -/
-theorem thetaRole_isSome_iff (f : Flavor) :
-    f.thetaRole.isSome = true ↔
-      f.toParams.extArgSemantics = some .thematicArgument := by
-  cases f <;> simp [Flavor.thetaRole, Flavor.toParams]
+instance : DecidableRel Params.Compatible := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 theorem Params.Compatible.refl (p : Params) : p.Compatible p :=
-  ⟨fun _ hs _ ht => Option.mem_unique hs ht, fun _ hs _ ht => Option.mem_unique hs ht⟩
+  ⟨fun _ hs _ ht ↦ Option.mem_unique hs ht, fun _ hs _ ht ↦ Option.mem_unique hs ht⟩
 
-/-- A fully underspecified Params is compatible with every named flavor —
-    the key property for Indonesian *ber-* ([beavers-udayana-2022]). -/
-theorem underspecified_compatible_with_all (f : Flavor) :
-    Params.Compatible ⟨none, none⟩ f.toParams := by
-  cases f <;> decide
+/-- A cell open on both coordinates is compatible with every head. -/
+theorem underspecified_compatible_with_all (v : Head) :
+    Params.Compatible ⟨none, none⟩ v.params :=
+  ⟨fun _ h ↦ by simp at h, fun _ h ↦ by simp at h⟩
 
-/-! ### Projection locus -/
+/-! ### The named cells -/
 
-/-- The projection a non-active exponent (Romance *se*, Icelandic *-st*,
-    Hebrew *hit-*) spells out: Voice_{D}, Voice_{∅}
-    ([alexiadou-schaefer-2015], [wood-marantz-2017]), or v itself
-    ([wood-2015] on Icelandic *-ka*). Complement of `Params`, which
-    parameterizes the head's own settings. -/
-inductive ProjectionLocus where
-  /-- Voice carrying a [D] feature; projects a specifier
-      ([wood-2015] Voice_{D}). -/
-  | voiceD
-  /-- Specifierless Voice; no [D] feature ([wood-2015] Voice_{∅}). -/
-  | voiceBare
-  /-- Underspecified: compatible with either `voiceD` or `voiceBare`. -/
-  | voiceDOrBare
-  /-- Exponent of v, not Voice (e.g., Icelandic *-ka* per [wood-2015]). -/
-  | vHead
-  deriving DecidableEq, Repr
+/-- Thematic active Voice introducing an agent: the transitive and unergative head, v*. -/
+def agentive : Head := { thematic := some .agent, hasD := true }
 
-end Voice
-end Minimalist
+/-- Thematic active Voice introducing a causer. -/
+def causer : Head := { thematic := some .causer, hasD := true }
+
+/-- Thematic active Voice introducing a holder: the experiencer subject of a psych causative. -/
+def experiencer : Head := { thematic := some .holder, hasD := true }
+
+/-- Expletive active Voice: no variable, a specifier for a marker such as Romance *se*, the
+marked anticausative ([munoz-perez-2026]). -/
+def anticausative : Head := { thematic := none, hasD := true }
+
+/-- Expletive non-active Voice: no variable, no specifier, the dispositional middle. -/
+def middle : Head := { thematic := none, hasD := false }
+
+/-- Thematic non-active Voice: an agent existentially bound and implicit, the passive. -/
+def passive : Head := { thematic := some .agent, hasD := false, implicit := true }
+
+/-- The Finnish impersonal, the same cell as the passive: an implicit generic agent. -/
+def impersonal : Head := passive
+
+/-- Agentive Voice binding the internal argument to the agent: Romance reflexive *se*
+([martin-schaefer-kastner-2025]). [wood-2015]'s Icelandic *-st* is a SpecpP clitic, not an
+exponent of this head. -/
+def reflexive : Head := { agentive with operation := some .reflexive }
+
+/-- Agentive Voice putting the agent in the mutual relation with the internal argument:
+[siloni-2012]'s syntactic reciprocalization. Lexically reciprocal verbs enter the syntax
+symmetric and are not exponents of this head. -/
+def reciprocal : Head := { agentive with operation := some .reciprocal }
+
+/-- Agentive Voice demoting the object to an oblique, with absolutive on the agent
+([scott-2023]). -/
+def antipassive : Head := { agentive with operation := some .antipassive }
+
+/-! ### Verification -/
+
+/-- The θ-assigning heads are the thematic active ones; the anticausative, the middle and the
+passive assign none. -/
+theorem assignsTheta_cells :
+    agentive.AssignsTheta ∧ causer.AssignsTheta ∧ experiencer.AssignsTheta ∧
+      reflexive.AssignsTheta ∧ reciprocal.AssignsTheta ∧ antipassive.AssignsTheta ∧
+      ¬ anticausative.AssignsTheta ∧ ¬ middle.AssignsTheta ∧ ¬ passive.AssignsTheta := by
+  decide
+
+/-- The passive is thematic with an implicit agent; the anticausative is expletive with a
+specifier, the core claim of [munoz-perez-2026] that *se* is a PF phenomenon. -/
+theorem passive_anticausative :
+    passive.IsThematic ∧ passive.ExternalImplicit ∧ ¬ anticausative.IsThematic ∧
+      anticausative.HasD := by
+  decide
+
+/-- Every named thematic cell keeps its variable implicit exactly when it lacks a specifier. -/
+theorem canonical_dCoherent :
+    agentive.DCoherent ∧ causer.DCoherent ∧ experiencer.DCoherent ∧
+      anticausative.DCoherent ∧ middle.DCoherent ∧ passive.DCoherent ∧ reflexive.DCoherent ∧
+      reciprocal.DCoherent ∧ antipassive.DCoherent := by
+  decide
+
+/-- Agentive and causer Voice are phase heads, v*; the anticausative, the middle and the passive
+are not. -/
+theorem phasal_cells :
+    agentive.IsPhasal ∧ causer.IsPhasal ∧ ¬ anticausative.IsPhasal ∧ ¬ middle.IsPhasal ∧
+      ¬ passive.IsPhasal := by
+  decide
+
+/-- The antipassive anomaly: a thematic active head that is no phase, phasehood tracking v*
+transitivity ([chomsky-2001]) and the antipassive detransitivizing. -/
+theorem antipassive_not_phasal : antipassive.AssignsTheta ∧ ¬ antipassive.IsPhasal := by decide
+
+end Minimalist.Voice

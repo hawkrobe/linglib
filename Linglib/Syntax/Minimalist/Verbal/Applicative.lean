@@ -194,7 +194,8 @@ theorem mem_all_iff {l : List LittleV} {s : ApplSite} : s ∈ all l ↔ s.heads 
     obtain ⟨i, -, rfl⟩ := List.mem_map.1 h
     exact List.take_append_drop i l
   · rintro rfl
-    exact List.mem_map.2 ⟨s.above.length, List.mem_range.2 (by simp [heads]), by simp [heads]⟩
+    exact List.mem_map.2 ⟨s.above.length, List.mem_range.2 (by simp [heads]; omega),
+      by simp [heads]⟩
 
 end ApplSite
 
@@ -225,10 +226,11 @@ def applLowPossessor : ApplHead := { applType := .low .possessor }
 
 /-! ### Voice–applicative licensing ([pylkkanen-2008], [schaefer-2008]) -/
 
-/-- `appl.Licensed voice` holds when `voice` supplies the event semantics a high applicative,
-the complement of Voice, requires; a low or an affected applicative requires nothing of Voice. -/
+/-- `appl.Licensed voice` holds when `voice` is thematic and so supplies the event semantics a high
+applicative, the complement of Voice, requires; a low or an affected applicative requires
+nothing of Voice. -/
 def ApplHead.Licensed (appl : ApplHead) (voice : Voice.Head) : Prop :=
-  appl.applType = .high → voice.HasSemantics
+  appl.applType = .high → voice.IsThematic
 
 instance (appl : ApplHead) (voice : Voice.Head) : Decidable (appl.Licensed voice) :=
   inferInstanceAs (Decidable (_ → _))
@@ -245,7 +247,7 @@ theorem affected_licensed_with_any : applAffected.Licensed v := fun h ↦ absurd
 
 /-- θ-assigning Voice licenses high applicatives (θ-assignment entails event semantics). -/
 theorem high_licensed_of_assignsTheta (h : v.AssignsTheta) : applHigh.Licensed v :=
-  fun _ ↦ h.hasSemantics
+  fun _ ↦ h.isThematic
 
 /-- High Appl is blocked with middle Voice, which has no event semantics, while a possessive
 dative survives there ([pylkkanen-2008]). -/

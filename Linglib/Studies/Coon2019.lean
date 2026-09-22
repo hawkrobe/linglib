@@ -97,11 +97,11 @@ recorded as Case checking; -ch merges an implicit, existentially bound agent in 
 (64), the impersonal cell with a specifier; -j and the null intransitive head introduce no
 external argument and project no specifier, (68), the expletive cell. -/
 def V.head : V → Head
-  | .transitive => { flavor := .agentive, hasD := true, checksCase := true }
-  | .intransitive => { flavor := .expletive, hasD := false }
-  | .w => { flavor := .agentive, hasD := true }
-  | .ch => { flavor := .impersonal, hasD := true }
-  | .j => { flavor := .expletive, hasD := false }
+  | .transitive => { Minimalist.Voice.agentive with checksCase := true }
+  | .intransitive => Minimalist.Voice.middle
+  | .w => Minimalist.Voice.agentive
+  | .ch => { Minimalist.Voice.passive with hasD := true }
+  | .j => Minimalist.Voice.middle
 
 /-- The two agent-introducing heads differ in inherent ergative case alone, footnote 10. -/
 theorem w_head_eq : V.w.head = { V.transitive.head with checksCase := false } := rfl
@@ -115,7 +115,7 @@ theorem dCoherent : (∀ v : V, v ≠ .ch → v.head.DCoherent) ∧ ¬ V.ch.head
 null intransitive head introduces an external argument, -ch alone an implicit one, the
 transitive head alone assigns inherent ergative case, recorded as Case checking. -/
 theorem head_table :
-    (∀ v : V, v.head.IntroducesExternal ↔ v ≠ .intransitive ∧ v ≠ .j) ∧
+    (∀ v : V, v.head.IsThematic ↔ v ≠ .intransitive ∧ v ≠ .j) ∧
       (∀ v : V, v.head.ExternalImplicit ↔ v = .ch) ∧
       ∀ v : V, v.head.ChecksCase ↔ v = .transitive := by
   refine ⟨?_, ?_, ?_⟩ <;> intro v <;> cases v <;> decide
@@ -149,7 +149,7 @@ specifier when it assigns inherent ergative, finite Infl⁰ cases a DP the head 
 bare NP, an implicit argument and an absent one need no case. -/
 def licenser (v : V) (i : Internal) : ArgPosition → Licenser
   | .external =>
-    if v.head.IntroducesExternal ∧ ¬ v.head.ExternalImplicit then
+    if v.head.IsThematic ∧ ¬ v.head.ExternalImplicit then
       (if v.head.ChecksCase then .voice else .infl) else .unlicensed
   | .internal => if i = .dp then .infl else .unlicensed
 
@@ -314,7 +314,7 @@ def V.obliqueReading (v : V) : ObliqueReading :=
 admits them and reads its oblique as the agent, (62) and (63); -j rejects them and reads its
 oblique as a cause, (65) and (67). -/
 theorem passive_contrast :
-    V.ch.head.IntroducesExternal ∧ ¬ V.j.head.IntroducesExternal ∧
+    V.ch.head.IsThematic ∧ ¬ V.j.head.IsThematic ∧
       V.obliqueReading .ch = .agent ∧ V.obliqueReading .j = .cause := by
   decide
 
@@ -401,7 +401,7 @@ def diagnosticHead (row : LinguisticExample) : Option V := do
 with an agent. -/
 theorem diagnostic_rows : ∀ row ∈ Examples.all,
     row.feature? "construction" = some "diagnostic" →
-    ∃ v ∈ diagnosticHead row, (row.judgment ≠ .ungrammatical ↔ v.head.IntroducesExternal) := by
+    ∃ v ∈ diagnosticHead row, (row.judgment ≠ .ungrammatical ↔ v.head.IsThematic) := by
   decide
 
 /-- The head and the recorded reading of an oblique row. -/
