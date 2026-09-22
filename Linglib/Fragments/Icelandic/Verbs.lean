@@ -54,11 +54,9 @@ Consensus lexical data for Icelandic verbs participating in the
 entry carries only the surface forms and a Boolean for whether an
 active variant exists — every other piece of information about each
 verb (the *-st* classification, the anticausative-marking morpheme,
-the [cuervo-2003]-style root decomposition, the
-possessive-dative diagnostic) is paper-specific apparatus and lives
-in `Wood2015`, where it can
-participate in further analysis without polluting the Fragment
-schema.
+the Voice cell) is paper-specific apparatus and lives in `Wood2015`,
+where it can participate in further analysis without polluting the
+Fragment schema.
 
 
 Note on classification: in [wood-2015]'s analysis *-st* (historically
