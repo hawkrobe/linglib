@@ -1,7 +1,10 @@
-import Linglib.Data.Examples.Just2024
-import Linglib.Syntax.Clause.ArgumentRole
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Data.Examples.Just2024
+import Linglib.Semantics.Reference.Prominence
+import Linglib.Syntax.Clause.ArgumentRole
+import Linglib.Syntax.Clause.Scenario
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Just (2024): A structural and functional comparison of differential A and P indexing
@@ -13,7 +16,8 @@ level of referential prominence ([haspelmath-2021]), whatever its role. The two 
 mirror images because the roles differ in default prominence: A referents are typically
 prominent, so a non-prominent or focused A loses an otherwise present index, while P referents
 typically are not, so a topical, definite, or animate P gains one. The principle is
-`Indexed`, prominence at or above the threshold, and `deviation_coding` derives the mirror
+`Indexed`, prominence at or above the threshold, whose coding length is the cutoff split
+`Reference.Prominence.atLeast`, and `deviation_coding` derives the mirror
 image and its consequence for coding asymmetries: a referent that deviates from its role's
 default receives longer coding exactly when the default is unindexed, so the generalization
 of [haspelmath-2021] that deviations from role-reference associations are coded by longer
@@ -23,10 +27,10 @@ deviating configuration loses the index. The examples of the paper's survey are 
 referent has the prominence the language demands, for A and P alike.
 
 Co-argument sensitivity is the paper's other case: in Reyesano which of A and P is indexed
-depends on the persons of both, its table being rows, and `no_ranking_fits` shows that no
-ranking of the persons predicts the table by indexing the higher-ranked argument, as the
-paper argues after [witzlack-makarevich-etal-2016] that hierarchies are not needed to
-describe such systems.
+depends on the persons of both, its table being rows of `Clause.Scenario Person`, and
+`no_ranking_fits` shows that no ranking of the persons predicts the table by indexing the
+argument the scenario's kind under that ranking favours, as the paper argues after
+[witzlack-makarevich-etal-2016] that hierarchies are not needed to describe such systems.
 
 ## Implementation notes
 
@@ -45,7 +49,9 @@ describe such systems.
 
 namespace Just2024
 
+open Clause (Scenario)
 open Data.Examples
+open Reference.Prominence (atLeast)
 
 /-! ### Indexing and referential prominence -/
 
@@ -58,9 +64,6 @@ threshold. -/
 def Indexed (p : Prominence) : Prop := θ ≤ p
 
 instance (p : Prominence) : Decidable (Indexed θ p) := inferInstanceAs (Decidable (θ ≤ p))
-
-/-- The coding a referent receives: the index or nothing. -/
-def coding (p : Prominence) : ℕ := if θ ≤ p then 1 else 0
 
 variable {ρ : Type*} (dflt : ρ → Prominence)
 
@@ -76,36 +79,34 @@ its role's default exactly when the default is unindexed. Differential P indexin
 default below the threshold, codes the deviation by adding an index; differential A
 indexing, with a default above it, codes the deviation by dropping one. -/
 theorem deviation_coding {r : ρ} {p : Prominence} (h : Deviates θ dflt r p) :
-    coding θ (dflt r) < coding θ p ↔ ¬ Indexed θ (dflt r) := by
+    atLeast θ (dflt r) < atLeast θ p ↔ ¬ Indexed θ (dflt r) := by
   by_cases hd : θ ≤ dflt r
-  · have hp : ¬ θ ≤ p := λ hp => h.1 hp hd
-    simp only [coding, ite_eq_left hd, ite_eq_right hp]
-    exact ⟨λ h => absurd h (by omega), λ h => absurd hd h⟩
+  · have hp : ¬ θ ≤ p := fun hp ↦ h.1 hp hd
+    simp only [atLeast, ite_eq_left hd, ite_eq_right hp]
+    exact ⟨fun h ↦ absurd h (by omega), fun h ↦ absurd hd h⟩
   · have hp : θ ≤ p := h.2 hd
-    simp only [coding, ite_eq_right hd, ite_eq_left hp]
-    exact ⟨λ _ => hd, λ _ => Nat.zero_lt_one⟩
+    simp only [atLeast, ite_eq_right hd, ite_eq_left hp]
+    exact ⟨fun _ ↦ hd, fun _ ↦ Nat.zero_lt_one⟩
 
 /-- The deviating referent of a role indexed by default is coded shorter. -/
 theorem deviation_shorter {r : ρ} {p : Prominence} (h : Deviates θ dflt r p)
-    (hr : Indexed θ (dflt r)) : coding θ p < coding θ (dflt r) := by
-  have hp : ¬ θ ≤ p := λ hp => h.1 hp hr
+    (hr : Indexed θ (dflt r)) : atLeast θ p < atLeast θ (dflt r) := by
+  have hp : ¬ θ ≤ p := fun hp ↦ h.1 hp hr
   have hr' : θ ≤ dflt r := hr
-  simp only [coding, ite_eq_right hp, ite_eq_left hr']
+  simp only [atLeast, ite_eq_right hp, ite_eq_left hr']
   exact Nat.zero_lt_one
 
 end Principle
 
 /-- The default prominence of the transitive roles, the role-reference associations of
 [haspelmath-2021]: A above the threshold, P below it. -/
-def transitiveDefault : ArgumentRole → Bool
-  | .A => true
-  | _ => false
+def transitiveDefault (r : ArgumentRole) : Bool := decide r.IsHighDefault
 
 /-- A non-prominent A and a prominent P both deviate from their defaults; the A is coded
 shorter than a default A and the P longer than a default P. -/
 theorem transitive_mirror :
-    coding true false < coding true (transitiveDefault .A) ∧
-      coding true (transitiveDefault .P) < coding true true :=
+    atLeast true false < atLeast true (transitiveDefault .A) ∧
+      atLeast true (transitiveDefault .P) < atLeast true true :=
   ⟨deviation_shorter true transitiveDefault (r := .A) (p := false) (by decide) (by decide),
     (deviation_coding true transitiveDefault (r := .P) (p := true) (by decide)).2 (by decide)⟩
 
@@ -168,13 +169,6 @@ theorem both_roles_both_ways :
 
 /-! ### Co-argument sensitivity: Reyesano -/
 
-/-- The persons of the two arguments. -/
-inductive Person where
-  | first
-  | second
-  | third
-  deriving DecidableEq, Repr, Fintype
-
 /-- The arguments indexed in a scenario. -/
 inductive IndexedArgs where
   | a
@@ -182,30 +176,35 @@ inductive IndexedArgs where
   | both
   deriving DecidableEq, Repr
 
-/-- A scenario of the paper's table: the persons of A and P and the arguments indexed. -/
-def scenario (r : LinguisticExample) : Option (Person × Person × IndexedArgs) := do
+/-- A scenario of the paper's table, the persons of A and P, with the arguments indexed. -/
+def scenario (r : LinguisticExample) : Option (Scenario Person × IndexedArgs) := do
   let persons := [("1", Person.first), ("2", .second), ("3", .third)]
   let a ← r.parse? "aPerson" persons
   let p ← r.parse? "pPerson" persons
   let ix ← r.parse? "indexed" [("A", IndexedArgs.a), ("P", .p), ("AP", .both)]
-  pure (a, p, ix)
+  pure (⟨a, p⟩, ix)
 
 /-- The Reyesano table. -/
-def reyesano : List (Person × Person × IndexedArgs) := Examples.all.filterMap scenario
+def reyesano : List (Scenario Person × IndexedArgs) := Examples.all.filterMap scenario
 
-/-- Indexing by a ranking of persons: the higher-ranked argument, both when tied. -/
-def byRanking (rank : Person → Fin 3) (a p : Person) : IndexedArgs :=
-  if rank a < rank p then .p else if rank p < rank a then .a else .both
+/-- Indexing by a ranking of persons: the higher-ranked argument, the A in a downstream
+scenario and the P in an upstream one, both when balanced. -/
+def byRanking (rank : Person → Fin 3) (s : Scenario Person) : IndexedArgs :=
+  match s.kindBy rank with
+  | .downstream => .a
+  | .upstream => .p
+  | .balanced => .both
 
 /-- Whether an A of a given person is indexed depends on the person of its co-argument. -/
 theorem coargument_sensitive :
-    ∃ s ∈ reyesano, ∃ s' ∈ reyesano, s.1 = s'.1 ∧ s.2.2 ≠ s'.2.2 := by
+    ∃ s ∈ reyesano, ∃ s' ∈ reyesano, s.1.high = s'.1.high ∧ s.2 ≠ s'.2 := by
   decide +kernel
 
-/-- No ranking of the persons predicts the table by indexing the higher-ranked argument: a
-first-person A outranks a third-person P, but a third-person A ties with a first-person P. -/
+/-- No ranking of the tripartition predicts the table by indexing the higher-ranked
+argument: a first-person A outranks a third-person P, but a third-person A ties with a
+first-person P. -/
 theorem no_ranking_fits :
-    ¬ ∃ rank : Person → Fin 3, ∀ s ∈ reyesano, s.2.2 = byRanking rank s.1 s.2.1 := by
+    ¬ ∃ rank : Person → Fin 3, ∀ s ∈ reyesano, s.2 = byRanking rank s.1 := by
   decide +kernel
 
 end Just2024

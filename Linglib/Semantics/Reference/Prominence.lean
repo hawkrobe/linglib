@@ -21,6 +21,8 @@ scales.
 * `AnimacyLevel`, `DefinitenessLevel`: the animacy and definiteness scales, as linear orders.
 * `AnimacyRank`: the fine-grained hierarchy for plural marking, with the coarsening
   `AnimacyRank.toAnimacyLevel`.
+* `atLeast`, `below`: the coding lengths of a cutoff split on a scale, the special coding on
+  the values from a cutoff up, as P and T splits have it, or below it, as A and R splits do.
 * `MarkingPattern`: which cells of the grid of animacy and definiteness are marked, with the
   `MonotoneP` staircase, the cutoff constructors, and `monotoneP_iff_isUpperSet`.
 
@@ -155,6 +157,30 @@ instance : LinearOrder DefinitenessLevel :=
 /-- All definiteness levels, most prominent first. -/
 def DefinitenessLevel.all : List DefinitenessLevel :=
   [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
+
+/-! ### Cutoff splits -/
+
+section Cutoff
+
+variable {α : Type*} [LinearOrder α]
+
+/-- The split that codes the values from `x` up specially: `1` at and above the cutoff,
+`0` below it. -/
+def atLeast (x y : α) : ℕ := if x ≤ y then 1 else 0
+
+/-- The split that codes the values below `x` specially: `1` below the cutoff, `0` at and
+above it. -/
+def below (x y : α) : ℕ := if y < x then 1 else 0
+
+theorem atLeast_monotone (x : α) : Monotone (atLeast x) := fun _ _ h ↦ by
+  unfold atLeast
+  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h₁.trans h) h₂
+
+theorem below_antitone (x : α) : Antitone (below x) := fun _ _ h ↦ by
+  unfold below
+  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h.trans_lt h₁) h₂
+
+end Cutoff
 
 /-! ### Differential marking patterns -/
 

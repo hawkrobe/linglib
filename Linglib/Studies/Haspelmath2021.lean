@@ -1,13 +1,14 @@
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Order.Atoms
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.Examples.Haspelmath2021
 import Linglib.Discourse.Givenness
 import Linglib.Semantics.Reference.Definiteness
 import Linglib.Semantics.Reference.Prominence
+import Linglib.Studies.BejarRezac2009
 import Linglib.Syntax.Clause.ArgumentRole
+import Linglib.Syntax.Clause.Scenario
 import Linglib.Syntax.Person.Basic
+import Linglib.Syntax.Person.Class
 
 /-!
 # Haspelmath (2021): Role-reference associations and the explanation of argument coding splits
@@ -15,8 +16,9 @@ import Linglib.Syntax.Person.Basic
 This file formalizes the role-reference association universal of [haspelmath-2021]
 (Universal 1, (5)): deviations from the usual associations of role rank and referential
 prominence are coded by longer grammatical forms. `RoleReferenceUniversal` states it for
-any usualness relation on situations; `MoreUsualFor` (the single-argument tendencies (9))
-and `Scenario.MoreUsual` (the scenario tendencies (10), (11)) instantiate it as the
+any usualness relation on situations; `ArgumentRole.MoreUsualFor` (the single-argument
+tendencies (9)) and `Scenario.MoreUsual` (the scenario tendencies (10), (11), over
+`Clause.Scenario`) instantiate it as the
 single-argument flagging universal `SingleArgumentUniversal` (Universal 3, whose role
 instances are Universals 4, 6, 7 and 8) and the scenario universal `ScenarioUniversal`
 (Universal 5, which yields the person-role universal 9b, the relative scenario universal
@@ -51,8 +53,6 @@ universals exclude.
   and Makassarese (56) itself; the index-based person-role constraint 9a (41) is omitted.
 * `BinaryGivenness` is read as the discourse-given ~ discourse-new scale of (8b), which the
   paper also calls topicality; Persian's topical indefinite P (19c) counts as given.
-* The kind of a scenario is the three-way comparison of its arguments' prominence,
-  `compare` read into the paper's labels by `Scenario.Kind.ofOrdering`.
 * Coding length is an `ℕ` count of special coding elements in the cited systems; the
   universals are stated over any preorder, and Universal 12 is Universal 5 read with the
   usage rate of the longer alternant as the coding.
@@ -82,6 +82,7 @@ universals exclude.
 
 * [haspelmath-2021]
 * [haspelmath-2021b]
+* [bejar-rezac-2009]
 -/
 
 namespace Haspelmath2021
@@ -90,42 +91,15 @@ open Discourse Reference Reference.Prominence
 
 /-! ### Referential prominence scales (8)
 
-Each scale is a linear order whose greater element is the more prominent. The definiteness
-scale of (8b) without its optional specific-indefinite level is `Reference.Definiteness`,
-with Eastern Khanty's specific P (37) read at the definite end, and the givenness scale is
+Each scale is a linear order whose greater element is the more prominent. The person scale
+of (8a), locuphoric above aliophoric, is `Person.Class`; the definiteness scale of (8b)
+without its optional specific-indefinite level is `Reference.Definiteness`, with Eastern
+Khanty's specific P (37) read at the definite end; and the givenness scale is
 `BinaryGivenness`. -/
 
-/-- The person scale of (8a): locuphoric (first and second person) above aliophoric
-(third person). -/
-inductive PersonClass where
-  | aliophoric
-  | locuphoric
-  deriving DecidableEq, Fintype, Repr
-
-namespace PersonClass
-
-/-- Rank on the person scale. -/
-def rank : PersonClass → ℕ
-  | .aliophoric => 0
-  | .locuphoric => 1
-
-instance : LinearOrder PersonClass := LinearOrder.lift' rank (by decide)
-
-/-- `⊥ = aliophoric`, `⊤ = locuphoric`. -/
-instance : BoundedOrder PersonClass where
-  top := .locuphoric
-  le_top := by decide
-  bot := .aliophoric
-  bot_le := by decide
-
-instance : IsSimpleOrder PersonClass where
-  exists_pair_ne := ⟨.aliophoric, .locuphoric, by decide⟩
-  eq_bot_or_eq_top := by decide
-
-end PersonClass
 
 /-- The ternary person scale of (47a), first > second > third: the ranks of
-`Person.prominence`, read off by `ofPerson`; `PersonClass` is its coarsening at the
+`Person.prominence`, read off by `ofPerson`; `Person.Class` is its coarsening at the
 locuphoric cut. -/
 inductive PersonRank where
   | third
@@ -236,104 +210,11 @@ instance : LinearOrder NominalType := LinearOrder.lift' NominalType.rank (by dec
 
 /-! ### Scenarios (10), (11) -/
 
-/-- A scenario (fn. 10): the prominence values of the two arguments of a monotransitive
-or ditransitive construction. The paper writes `X > Y` for `⟨X, Y⟩`. -/
-structure Scenario (α : Type*) where
-  /-- The prominence of the higher-ranked argument, A or R. -/
-  high : α
-  /-- The prominence of the lower-ranked argument, P or T. -/
-  low : α
-  deriving DecidableEq, Fintype
-
-namespace Scenario
-
-/-- The kinds of scenario of (11), in order of usualness. -/
-inductive Kind where
-  | upstream
-  | balanced
-  | downstream
-  deriving DecidableEq, Fintype, Repr
-
-namespace Kind
-
-/-- Usualness of a kind: downstream scenarios are the most usual, upstream the least. -/
-def usualness : Kind → ℕ
-  | .upstream => 0
-  | .balanced => 1
-  | .downstream => 2
-
-instance : LinearOrder Kind := LinearOrder.lift' usualness (by decide)
-
-instance : Nontrivial Kind := ⟨⟨.upstream, .downstream, by decide⟩⟩
-
-/-- `⊥ = upstream`, `⊤ = downstream`. -/
-instance : BoundedOrder Kind where
-  top := .downstream
-  le_top := by decide
-  bot := .upstream
-  bot_le := by decide
-
-theorem le_balanced_iff {k : Kind} : k ≤ .balanced ↔ k ≠ .downstream := by decide +revert
-
-theorem balanced_le_iff {k : Kind} : .balanced ≤ k ↔ k ≠ .upstream := by decide +revert
-
-/-- The kind of a scenario from the comparison of its higher-ranked argument's prominence
-with its lower-ranked one's. -/
-def ofOrdering : Ordering → Kind
-  | .lt => .upstream
-  | .eq => .balanced
-  | .gt => .downstream
-
-@[simp] theorem ofOrdering_eq_upstream {o : Ordering} : ofOrdering o = .upstream ↔ o = .lt := by
-  cases o <;> decide
-
-@[simp] theorem ofOrdering_eq_balanced {o : Ordering} : ofOrdering o = .balanced ↔ o = .eq := by
-  cases o <;> decide
-
-@[simp] theorem ofOrdering_eq_downstream {o : Ordering} :
-    ofOrdering o = .downstream ↔ o = .gt := by
-  cases o <;> decide
-
-end Kind
-
-variable {α : Type*} [LinearOrder α]
-
-/-- (11): a scenario is downstream when the higher-ranked argument is the more
-prominent, upstream when it is the less prominent, and balanced otherwise. -/
-def kind (s : Scenario α) : Kind := .ofOrdering (compare s.high s.low)
-
-theorem kind_eq_downstream_iff {s : Scenario α} : s.kind = .downstream ↔ s.low < s.high := by
-  rw [kind, Kind.ofOrdering_eq_downstream, compare_gt_iff_gt]
-
-theorem kind_eq_upstream_iff {s : Scenario α} : s.kind = .upstream ↔ s.high < s.low := by
-  rw [kind, Kind.ofOrdering_eq_upstream, compare_lt_iff_lt]
-
-theorem kind_eq_balanced_iff {s : Scenario α} : s.kind = .balanced ↔ s.high = s.low := by
-  rw [kind, Kind.ofOrdering_eq_balanced, compare_eq_iff_eq]
-
-/-- On a binary scale the downstream scenario is `⟨⊤, ⊥⟩` alone. -/
-theorem kind_eq_downstream_iff_eq [BoundedOrder α] [IsSimpleOrder α] {s : Scenario α} :
-    s.kind = .downstream ↔ s = ⟨⊤, ⊥⟩ := by
-  obtain ⟨h, l⟩ := s
-  rw [kind_eq_downstream_iff]
-  rcases eq_bot_or_eq_top h with rfl | rfl <;> rcases eq_bot_or_eq_top l with rfl | rfl <;> simp
-
-/-- A scenario whose higher-ranked argument is `⊥` or whose lower-ranked one is `⊤` is at most
-balanced, and one whose higher-ranked argument is `⊤` or whose lower-ranked one is `⊥` at least
-balanced, so the first is never the more usual. -/
-theorem not_kind_lt_kind [BoundedOrder α] {s t : Scenario α} (hs : s.high = ⊥ ∨ s.low = ⊤)
-    (ht : t.high = ⊤ ∨ t.low = ⊥) : ¬ t.kind < s.kind := by
-  refine not_lt.2 <|
-    (Kind.le_balanced_iff.2 fun h ↦ ?_).trans (Kind.balanced_le_iff.2 fun h ↦ ?_)
-  · rw [kind_eq_downstream_iff] at h
-    exact hs.elim (fun e ↦ not_lt_bot (e ▸ h)) fun e ↦ not_top_lt (e ▸ h)
-  · rw [kind_eq_upstream_iff] at h
-    exact ht.elim (fun e ↦ not_top_lt (e ▸ h)) fun e ↦ not_lt_bot (e ▸ h)
+open Clause (Scenario)
 
 /-- (11): `s` is a more usual scenario than `t`. -/
-def MoreUsual (s t : Scenario α) : Prop := t.kind < s.kind
-
-end Scenario
+def Scenario.MoreUsual {α : Type*} [LinearOrder α] (s t : Scenario α) : Prop :=
+  t.kind < s.kind
 
 /-! ### Universal 1 and its instances -/
 
@@ -345,6 +226,9 @@ variable {S L F : Type*} [Preorder L] [Preorder F]
 usual situation is never coded longer. -/
 def RoleReferenceUniversal (r : S → S → Prop) (c : S → L) : Prop :=
   ∀ ⦃s t⦄, r s t → c s ≤ c t
+
+instance (r : S → S → Prop) (c : S → L) [i : Decidable (∀ s t, r s t → c s ≤ c t)] :
+    Decidable (RoleReferenceUniversal r c) := i
 
 /-- Universal 1 for a usualness relation holds for every relation it contains. -/
 theorem RoleReferenceUniversal.mono {r r' : S → S → Prop} {c : S → L} (hr : r ≤ r')
@@ -370,22 +254,14 @@ theorem roleReferenceUniversal_of_formFrequency {r : S → S → Prop} {freq : S
 
 variable {α : Type*} [LinearOrder α]
 
-/-- (9): prominence `x` is a more usual association for role `r` than `y`: A and R tend to
-be prominent, P and T non-prominent. S has no usual association, so nothing is more usual
-for it and the universals below are vacuous for S. -/
-def MoreUsualFor (r : ArgumentRole) (x y : α) : Prop :=
-  (r.IsHighDefault ∧ y < x) ∨ (r.IsLowDefault ∧ x < y)
-
-instance (r : ArgumentRole) (x y : α) : Decidable (MoreUsualFor r x y) :=
-  inferInstanceAs (Decidable (_ ∨ _))
-
 /-- (13) Universal 3, the single-argument flagging universal, for a split on role `r`
-coded by `c`. -/
+coded by `c`: Universal 1 for the role's usual associations `ArgumentRole.MoreUsualFor`
+of (9), which are vacuous for S. -/
 def SingleArgumentUniversal (r : ArgumentRole) (c : α → L) : Prop :=
-  RoleReferenceUniversal (MoreUsualFor r) c
+  RoleReferenceUniversal r.MoreUsualFor c
 
 instance (r : ArgumentRole) (c : α → L)
-    [i : Decidable (∀ x y, MoreUsualFor r x y → c x ≤ c y)] :
+    [i : Decidable (∀ x y, r.MoreUsualFor x y → c x ≤ c y)] :
     Decidable (SingleArgumentUniversal r c) := i
 
 /-- (21) Universal 6 and (26) Universal 7: for A and R, Universal 3 says the coding is
@@ -489,11 +365,11 @@ instance (c : Scenario α → L) [i : Decidable (∀ s t, s.kind = t.kind → c 
 
 /-- (42) Universal 9b, the ditransitive person-role universal: the scenario with a
 locuphoric R and an aliophoric T is coded no longer than any other. -/
-def PersonRoleUniversal (c : Scenario PersonClass → L) : Prop :=
-  ∀ s, c ⟨.locuphoric, .aliophoric⟩ ≤ c s
+def PersonRoleUniversal (c : Scenario Person.Class → L) : Prop :=
+  ∀ s, c ⟨.participant, .nonParticipant⟩ ≤ c s
 
 /-- §7.1: Universal 9b is a special case of Universal 5. -/
-theorem personRoleUniversal_of_scenarioUniversal {c : Scenario PersonClass → L}
+theorem personRoleUniversal_of_scenarioUniversal {c : Scenario Person.Class → L}
     (h : ScenarioUniversal c) : PersonRoleUniversal c :=
   h.top_bot_le
 
@@ -537,23 +413,8 @@ def minimalCoding (short : Scenario α → Prop) [DecidablePred short] (s : Scen
 
 /-! #### Cutoff splits
 
-The cited splits are cutoffs on a scale: the special coding on the values from `x` up
-(`atLeast x`), as P and T splits have it, or on the values below `x` (`below x`), as A and R
-splits have it. A scenario split is a cutoff on one argument's prominence or on the kind. -/
-
-/-- The split that codes the values from `x` up specially. -/
-def atLeast (x y : α) : ℕ := if x ≤ y then 1 else 0
-
-/-- The split that codes the values below `x` specially. -/
-def below (x y : α) : ℕ := if y < x then 1 else 0
-
-theorem atLeast_monotone (x : α) : Monotone (atLeast x) := fun _ _ h ↦ by
-  unfold atLeast
-  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h₁.trans h) h₂
-
-theorem below_antitone (x : α) : Antitone (below x) := fun _ _ h ↦ by
-  unfold below
-  split_ifs with h₁ h₂ <;> first | rfl | omega | exact absurd (h.trans_lt h₁) h₂
+The cited splits are cutoffs on a scale (`atLeast x`, `below x`); a scenario split is a
+cutoff on one argument's prominence or on the kind. -/
 
 /-- Universals 4 and 8: a P or T split from a cutoff up obeys Universal 3. -/
 theorem singleArgumentUniversal_atLeast {r : ArgumentRole} (h : r.IsLowDefault) (x : α) :
@@ -590,14 +451,14 @@ def sardinianP : AnimacyLevel → ℕ := atLeast .human
 def persianP : BinaryGivenness → ℕ := atLeast .given
 
 /-- (20): Abruzzese flags a locuphoric P with `a`. -/
-def abruzzeseP : PersonClass → ℕ := atLeast .locuphoric
+def abruzzeseP : Person.Class → ℕ := atLeast .participant
 
 /-- §4.1.3: English distinguishes P from A only on person forms (*he* ~ *him*), a split in
 indexes rather than flags, which fn. 12 allows may have a different explanation. -/
 def englishP : Nominality → ℕ := atLeast .personForm
 
 /-- (22): Godoberi has an ergative form only for aliophoric A; Kham (1) is alike. -/
-def godoberiA : PersonClass → ℕ := below .locuphoric
+def godoberiA : Person.Class → ℕ := below .participant
 
 /-- (23): Warrgamay flags a full-nominal A with the ergative. -/
 def warrgamayA : Nominality → ℕ := below .personForm
@@ -611,7 +472,7 @@ def tibetanA : FocusStatus → ℕ := below .background
 /-- (28): French dative clitics are longer than accusative ones only for aliophoric R
 (`lui` ~ `le`, `leur` ~ `les`); they are person indexes, so fn. 17 keeps the case outside
 split flagging proper. -/
-def frenchR : PersonClass → ℕ := below .locuphoric
+def frenchR : Person.Class → ℕ := below .participant
 
 /-- (29): Telkepe Neo-Aramaic flags a full-nominal R with `ta`. -/
 def neoAramaicR : Nominality → ℕ := below .personForm
@@ -629,7 +490,7 @@ def eweT : Nominality → ℕ := atLeast .personForm
 def akanT : Definiteness → ℕ := atLeast .definite
 
 /-- (34): Georgian requires the reinforced form (`šeni tavi`) for a locuphoric T. -/
-def georgianT : PersonClass → ℕ := atLeast .locuphoric
+def georgianT : Person.Class → ℕ := atLeast .participant
 
 /-- §4.1: the split P flagging systems obey Universal 4. -/
 theorem universal4_splitP :
@@ -665,14 +526,14 @@ theorem universal8_splitT :
 
 /-- (35): Kolyma Yukaghir flags P with the accusative when A is aliophoric; Teop's object
 marker `ben-` (3) is alike. -/
-def yukaghirP : Scenario PersonClass → ℕ := below .locuphoric ∘ Scenario.high
+def yukaghirP : Scenario Person.Class → ℕ := below .participant ∘ Scenario.high
 
 /-- §6.1: Yurok flags P with the accusative when A is aliophoric and P locuphoric. -/
-def yurokP (s : Scenario PersonClass) : ℕ :=
-  if s.high = .aliophoric ∧ s.low = .locuphoric then 1 else 0
+def yurokP (s : Scenario Person.Class) : ℕ :=
+  if s.high = .nonParticipant ∧ s.low = .participant then 1 else 0
 
 /-- (36): Sahaptin flags A with the ergative when P is locuphoric. -/
-def sahaptinA : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def sahaptinA : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (37): Eastern Khanty flags A with the ergative when P is specific. -/
 def khantyA : Scenario Definiteness → ℕ := atLeast .definite ∘ Scenario.low
@@ -682,10 +543,10 @@ subsumes the human P of §4.1.1. -/
 def spanishP : Scenario AnimacyLevel → ℕ := below .downstream ∘ Scenario.kind
 
 /-- (39): Bulgarian flags R with `na` when T is a locuphoric clitic. -/
-def bulgarianR : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def bulgarianR : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (40): Shambala flags R with `kwa` when T is locuphoric. -/
-def shambalaR : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def shambalaR : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (4): English requires `to` on R in the N > pers scenario. -/
 def englishR (s : Scenario Nominality) : ℕ := if s = ⟨.fullNominal, .personForm⟩ then 1 else 0
@@ -696,7 +557,7 @@ def americanEnglishR : Scenario Nominality → ℕ := atLeast .personForm ∘ Sc
 
 /-- (45): Modern Greek has the T proclitic in downstream and aliophoric balanced scenarios
 and the independent pronoun otherwise, so whenever T is locuphoric. -/
-def greekT : Scenario PersonClass → ℕ := atLeast .locuphoric ∘ Scenario.low
+def greekT : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.low
 
 /-- (46): Icelandic flags R with `fyrir` when T is animate. -/
 def icelandicR : Scenario Animacy → ℕ := atLeast .animate ∘ Scenario.low
@@ -765,6 +626,16 @@ def awtuwP : Scenario AnimacyLevel → ℕ := below .downstream ∘ Scenario.kin
 (49a). -/
 def bauleT : Scenario NominalType → ℕ := below .downstream ∘ Scenario.kind
 
+/-- (47) against [bejar-rezac-2009]'s Table 11: Kashmiri's dative P is the R-Case of their
+attested cells, which their `repair_iff_inverse` places exactly at the inverse contexts of
+cyclic Agree, so the relative split and the failed EA licensing pick out the same
+scenarios. -/
+theorem kashmiriP_eq_kashmiriRCase :
+    ∀ c ∈ BejarRezac2009.attestedCells,
+      kashmiriP ((Scenario.mk c.1 c.2).map PersonRank.ofPerson) = 1 ↔
+        BejarRezac2009.kashmiriRCase c = true := by
+  decide
+
 /-- §8: the relative scenario splits are relative and obey Universal 10. -/
 theorem universal10_relative :
     (Relative kashmiriP ∧ ScenarioUniversal kashmiriP) ∧
@@ -783,7 +654,7 @@ theorem yukaghir_not_relative : ¬ Relative yukaghirP := by decide
 /-! ### Verbal voice coding (§9) -/
 
 /-- (55): Itonama's inverse prefix `k'i-` appears in upstream scenarios. -/
-def itonamaV : Scenario PersonClass → ℕ := below .balanced ∘ Scenario.kind
+def itonamaV : Scenario Person.Class → ℕ := below .balanced ∘ Scenario.kind
 
 /-- (55): Itonama obeys the inverse universal. -/
 theorem universal11_itonama : InverseUniversal itonamaV :=
@@ -924,9 +795,9 @@ instance (rs : List LinguisticExample) (s? : LinguisticExample → Option (Scena
   unfold ReproducesAlternation; infer_instance
 
 /-- The person tags of the rows, as the binary scale. -/
-def PersonClass.table : List (String × PersonClass) :=
-  [("locuphoric", .locuphoric), ("aliophoric", .aliophoric),
-    ("1", .locuphoric), ("2", .locuphoric), ("3", .aliophoric)]
+def Person.Class.table : List (String × Person.Class) :=
+  [("locuphoric", .participant), ("aliophoric", .nonParticipant),
+    ("1", .participant), ("2", .participant), ("3", .nonParticipant)]
 
 /-- The person tags of the rows, as the ternary scale. -/
 def PersonRank.table : List (String × PersonRank) := [("1", .first), ("2", .second), ("3", .third)]
@@ -965,8 +836,8 @@ theorem rows_splitP_splitA :
       Reproduces (rows "nuor1238" "P" "animacy") (prominence? AnimacyLevel.table) sardinianP ∧
       Reproduces (rows "panj1256" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows "west2369" "P" "givenness") (prominence? BinaryGivenness.table) persianP ∧
-      Reproduces (rows "neap1235" "P" "person") (prominence? PersonClass.table) abruzzeseP ∧
-      Reproduces (rows "taka1261" "A" "person") (prominence? PersonClass.table) godoberiA ∧
+      Reproduces (rows "neap1235" "P" "person") (prominence? Person.Class.table) abruzzeseP ∧
+      Reproduces (rows "taka1261" "A" "person") (prominence? Person.Class.table) godoberiA ∧
       Reproduces (rows "warr1255" "A" "nominality") (prominence? Nominality.table) warrgamayA ∧
       Reproduces (rows "mang1381" "A" "animacy") (prominence? Animacy.table) mangarrayiA ∧
       Reproduces (rows "cent2346" "A" "focus") (prominence? FocusStatus.table) tibetanA := by
@@ -980,7 +851,7 @@ theorem rows_splitR_splitT :
       Reproduces (rows "nucl1347" "R" "definiteness") (prominence? Definiteness.table) wolofR ∧
       Reproduces (rows "ewee1241" "T" "nominality") (prominence? Nominality.table) eweT ∧
       Reproduces (rows "akan1250" "T" "definiteness") (prominence? Definiteness.table) akanT ∧
-      Reproduces (rows "nucl1302" "T" "person") (prominence? PersonClass.table) georgianT ∧
+      Reproduces (rows "nucl1302" "T" "person") (prominence? Person.Class.table) georgianT ∧
       Reproduces (rows "maka1311" "T" "definiteness") (prominence? Definiteness.table) makassarV ∧
       Reproduces (rows "maka1311" "T" "nominality") (prominence? Nominality.table)
         makassarVNominality := by
@@ -990,23 +861,23 @@ theorem rows_splitR_splitT :
 the Teop rows those of the Yukaghir rule, and the rows of (43) and (44) are the American
 varieties'. -/
 theorem rows_scenario :
-    Reproduces (rows "teop1238" "P" "person") (scenario? PersonClass.table) yukaghirP ∧
-      Reproduces (rows "sout2750" "P" "person") (scenario? PersonClass.table) yukaghirP ∧
-      Reproduces (rows "saha1240" "A" "person") (scenario? PersonClass.table) sahaptinA ∧
+    Reproduces (rows "teop1238" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
+      Reproduces (rows "sout2750" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
+      Reproduces (rows "saha1240" "A" "person") (scenario? Person.Class.table) sahaptinA ∧
       Reproduces (rows "east2774" "A" "definiteness") (scenario? Definiteness.table) khantyA ∧
       Reproduces (rows "stan1288" "P" "animacy") (scenario? AnimacyLevel.table) spanishP ∧
-      Reproduces (rows "bulg1262" "R" "person") (scenario? PersonClass.table) bulgarianR ∧
-      Reproduces (rows "sham1280" "R" "person") (scenario? PersonClass.table) shambalaR ∧
+      Reproduces (rows "bulg1262" "R" "person") (scenario? Person.Class.table) bulgarianR ∧
+      Reproduces (rows "sham1280" "R" "person") (scenario? Person.Class.table) shambalaR ∧
       Reproduces ((rows "stan1293" "R" "nominality").filter (·.feature? "variety" = none))
         (scenario? Nominality.table) englishR ∧
       Reproduces ((rows "stan1293" "R" "nominality").filter
           (·.feature? "variety" = some "American"))
         (scenario? Nominality.table) americanEnglishR ∧
-      Reproduces (rows "mode1248" "T" "person") (scenario? PersonClass.table) greekT ∧
+      Reproduces (rows "mode1248" "T" "person") (scenario? Person.Class.table) greekT ∧
       Reproduces (rows "icel1247" "R" "animacy") (scenario? Animacy.table) icelandicR ∧
       Reproduces (rows "kash1277" "P" "person") (scenario? PersonRank.table) kashmiriP ∧
       Reproduces (rows "baou1238" "T" "nominal type") (scenario? NominalType.table) bauleT ∧
-      Reproduces (rows "iton1250" "verb" "person") (scenario? PersonClass.table) itonamaV := by
+      Reproduces (rows "iton1250" "verb" "person") (scenario? Person.Class.table) itonamaV := by
   decide
 
 /-- §10.2, (4): the splitting alternations reproduce the paper's examples. -/
