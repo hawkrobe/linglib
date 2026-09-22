@@ -123,9 +123,8 @@ theorem allPlural_exceptions_unmentionable (q : Setoid W) (w : W) (a : Atom)
     supervaluation over atoms ([fine-1975]). -/
 theorem barePlural_eq_superTrue (hne : x.Nonempty) (w : W) :
     barePlural P x w =
-    Semantics.Supervaluation.superTrue (fun a => P a w) ⟨x, hne⟩ := by
-  simp only [barePlural]
-  rw [Semantics.Supervaluation.superTrue_eq_dist]
+    Semantics.Supervaluation.superTrue (fun a => P a w) ⟨x, hne⟩ :=
+  rfl
 
 /-- An *all*-sentence is never indefinite. -/
 theorem allPlural_ne_indet (w : W) : allPlural P x w ≠ .indet := by

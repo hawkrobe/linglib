@@ -311,9 +311,8 @@ appears as a paper-replication study under `Studies/Lewis1973.lean`.
     tie. When all closest worlds agree on B, the counterfactual is definite;
     when they disagree, it is indefinite.
 
-    Now that both `selectionalCounterfactual` and `superTrue` use `Finset`,
-    the connection is immediate — they are the same `∀/∃` structure over
-    the same finite set. -/
+    Both `selectionalCounterfactual` and `superTrue` are `Trivalent.dist`
+    over the same finite set. -/
 
 open Semantics.Supervaluation (SpecSpace superTrue)
 
@@ -322,24 +321,17 @@ open Semantics.Supervaluation (SpecSpace superTrue)
     equals `superTrue B` over the closest worlds as a specification space.
 
     This makes explicit that Stalnaker's "supervaluate over ties" IS
-    Fine's supervaluation with `Spec = W` and `admissible = closest(w, A)`.
-    Now that `superTrue` takes `Prop`-valued evaluators directly (post
-    Bool→Prop substrate migration), the bridge is `Iff.rfl`-thin on the
-    underlying `∀` / `∃` checks. -/
+    Fine's supervaluation with `Spec = W` and `admissible = closest(w, A)`;
+    `superTrue` is `Trivalent.dist` on the admissible set, so this is
+    `selectionalCounterfactual_eq_dist`. -/
 theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W) (A B : W → Prop)
     [DecidablePred A] [DecidablePred B] (w : W)
     (hne : (sim.closestWorlds w
       (Finset.univ.filter A)).Nonempty) :
     selectionalCounterfactual sim A B w =
-    superTrue B ⟨sim.closestWorlds w (Finset.univ.filter A), hne⟩ := by
-  unfold selectionalCounterfactual superTrue
-  by_cases hT : ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w'
-  · rw [ite_eq_left hT, ite_eq_left hT]
-  · rw [ite_eq_right hT, ite_eq_right hT]
-    by_cases hF : ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), ¬ B w'
-    · rw [ite_eq_left hF, ite_eq_left hF]
-    · rw [ite_eq_right hF, ite_eq_right hF]
+    superTrue B ⟨sim.closestWorlds w (Finset.univ.filter A), hne⟩ :=
+  selectionalCounterfactual_eq_dist sim A B w
 
 -- ════════════════════════════════════════════════════
 -- Might Counterfactuals: Lewis vs Stalnaker

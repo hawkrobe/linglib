@@ -28,15 +28,18 @@ Stability and Resolution is the super-truth account (`Account.eq_superTruth_of_r
 so is one satisfying Fidelity, Stability and the A-clauses — Resolution for atoms, the classical
 clauses for negation, and for conjunction the truth clause with the falsity clause that redeems
 its pledge (`Account.eq_superTruth_of_aClauses`). §4 draws the logic: validity and consequence
-are classical (`Semantics.Supervaluation.superValid_iff_classical`), the law of excluded middle
+are classical, since a classical model is a degenerate specification space
+(`superValid_iff_classical`, `superConsequence_iff_classical`), the law of excluded middle
 holds where bivalence fails (`herbert_lem`, `herbert_indet`), and the sorites' tolerance premise
 is false because a hair-splitting number exists in every complete specification
 (`tolerance_superFalse`). §5 adds the definitely-operator: `I A := ¬DA ∧ ¬D¬A`
 (`Semantics.Supervaluation.indefinite`), `D` an S5 modality over the complete specifications
-(`definitely_definitely_iff`, `not_definitely_definitely`), consequence as validity of `DA ⊃ B`
-(`superConsequence_iff_definitely_imp`), and, for higher-order vagueness, truth relative to
-boundaries — nested admissible spaces — under a reflexive accessibility whose logic is T
-(`Boundary.R_refl`, `Boundary.definitely_self`).
+(`definitely_imp_valid`, `definitely_definitely_iff`, `not_definitely_definitely`), the failure
+of the Deduction Theorem, `DA` a consequence of `A` while `A ⊃ DA` is indefinite where `A` is
+(`superTrue_definitely_of_superTrue`, `superTrue_imp_definitely_of_indet`), consequence as validity of
+`DA ⊃ B` (`superConsequence_iff_definitely_imp`), and, for higher-order vagueness, truth
+relative to boundaries — nested admissible spaces — under a reflexive accessibility whose logic
+is T (`Boundary.R_refl`, `Boundary.definitely_self`).
 
 ## Implementation notes
 
@@ -442,7 +445,33 @@ theorem Account.eq_superTruth_of_aClauses (hF : V.Faithful (classical val)) (hS 
 
 end AClauses
 
-/-! ### The logic of vagueness (§4): *bald* -/
+/-! ### The logic of vagueness (§4) -/
+
+section Logic
+
+variable {Spec : Type*} (A B : Spec → Prop) [DecidablePred A] [DecidablePred B]
+
+/-- Validity: super-truth in every specification space. -/
+def SuperValid : Prop := ∀ S : SpecSpace Spec, superTrue A S = .true
+
+/-- Consequence: `B` is super-true in every specification space in which `A` is. -/
+def SuperConsequence : Prop :=
+  ∀ S : SpecSpace Spec, superTrue A S = .true → superTrue B S = .true
+
+/-- Validity is classical: a classically valid sentence is true at every complete
+specification of every space, and a classical model is a degenerate space. -/
+theorem superValid_iff_classical : SuperValid A ↔ ∀ s, A s :=
+  ⟨λ h s => by simpa using h (.singleton s), λ h S => (superTrue_true_iff A S).2 λ s _ => h s⟩
+
+/-- Consequence is classical, by the same argument. -/
+theorem superConsequence_iff_classical : SuperConsequence A B ↔ ∀ s, A s → B s := by
+  refine ⟨λ h s hA => by simpa using h (.singleton s) (by simp [hA]), λ h S hA => ?_⟩
+  rw [superTrue_true_iff] at hA ⊢
+  exact λ s hs => h s (hA s hs)
+
+end Logic
+
+/-! ### *bald* -/
 
 /-- The admissible thresholds for *bald*: a man is bald with fewer than `θ` hairs, and the
 borderline cases are those with 40 to 60 hairs (§5). -/
@@ -465,12 +494,12 @@ theorem herbert_indet : superTrue (bald 50) baldness = .indet :=
 /-- The law of excluded middle holds of Herbert though bivalence fails: *Herbert is bald or not
 bald* is true while neither disjunct is. -/
 theorem herbert_lem : superTrue (λ θ => bald 50 θ ∨ ¬ bald 50 θ) baldness = .true :=
-  excludedMiddle_superTrue _ _
+  (superTrue_true_iff _ _).2 λ _ _ => Decidable.em _
 
 /-- The internal penumbral connection: if Herbert is to be bald, so is the man with fewer
 hairs. -/
-theorem bald_superConsequence {m n : ℕ} (h : m ≤ n) : superConsequence (bald n) (bald m) :=
-  classical_implies_superConsequence _ _ λ _ hn => lt_of_le_of_lt h hn
+theorem bald_superConsequence {m n : ℕ} (h : m ≤ n) : SuperConsequence (bald n) (bald m) :=
+  (superConsequence_iff_classical _ _).2 λ _ hn => lt_of_le_of_lt h hn
 
 /-- The sorites: its first premise is true, its tolerance premise false — a hair-splitting
 number exists in every complete and admissible specification — and its conclusion false. -/
@@ -498,22 +527,49 @@ section Definitely
 
 variable {Spec : Type*} (A : Spec → Prop) [DecidablePred A] (S : SpecSpace Spec)
 
+/-- Axiom T: `DA ⊃ A` is valid. -/
+theorem definitely_imp_valid : superTrue (λ s => ¬ definitely A S ∨ A s) S = .true :=
+  (superTrue_true_iff _ _).2 λ s hs => (Decidable.em (definitely A S)).symm.imp_right (· s hs)
+
+omit [DecidablePred A] in
 /-- Axiom 4: `DA` and `DDA` coincide. -/
 theorem definitely_definitely_iff :
     definitely (λ _ => definitely A S) S ↔ definitely A S :=
   ⟨λ h => let ⟨s, hs⟩ := S.nonempty; h s hs, λ h _ _ => h⟩
 
+omit [DecidablePred A] in
 /-- Axiom 5: what is not definite is definitely not definite. -/
 theorem not_definitely_definitely (h : ¬ definitely A S) :
     definitely (λ _ => ¬ definitely A S) S :=
   λ _ _ => h
 
+/-- `DA` is a consequence of `A`: to assert `A` is to assert `DA`. -/
+theorem superTrue_definitely_of_superTrue (h : superTrue A S = .true) :
+    superTrue (λ _ => definitely A S) S = .true :=
+  (superTrue_true_iff _ _).2 λ _ _ => (definitely_iff A S).2 h
+
+/-- Yet `A ⊃ DA` is not valid: where `A` is indefinite, `DA` fails and `A ⊃ DA` inherits the
+indefiniteness of `¬A`. -/
+theorem superTrue_imp_definitely_of_indet (h : superTrue A S = .indet) :
+    superTrue (λ s => ¬ A s ∨ definitely A S) S = .indet := by
+  have hD : ¬ definitely A S := λ hD => by simp [(definitely_iff A S).1 hD] at h
+  simp only [hD, or_false]
+  rw [superTrue_not, h]
+  rfl
+
+/-- So *if Herbert is bald, he is definitely bald* is not true, and the Deduction Theorem
+fails. -/
+theorem herbert_not_imp_definitely :
+    superTrue (λ θ => ¬ bald 50 θ ∨ definitely (bald 50) baldness) baldness ≠ .true := by
+  rw [superTrue_imp_definitely_of_indet _ _ herbert_indet]
+  decide
+
 /-- `B` is a consequence of `A` iff `DA ⊃ B` is valid (§5): the relation between consequence and
 validity once the Deduction Theorem fails. -/
 theorem superConsequence_iff_definitely_imp {B : Spec → Prop} [DecidablePred B] :
-    superConsequence A B ↔
+    SuperConsequence A B ↔
       ∀ S : SpecSpace Spec, superTrue (λ s => ¬ definitely A S ∨ B s) S = .true := by
-  simp only [superConsequence, superTrue_true_iff]
+  simp only [SuperConsequence, superTrue_true_iff]
   refine ⟨λ h S s hs => ?_, λ h S hA s hs => (h S s hs).resolve_left (not_not.2 hA)⟩
   by_cases hA : definitely A S
   · exact .inr (h S hA s hs)
