@@ -250,7 +250,7 @@ theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ 
   obtain ⟨hb, hd⟩ := PartialUnify.mem_upperBounds_pair.mp hu
   exact Compat.of_le (h₁.trans hb) (h₂.trans hd)
 
-theorem compat_self [Preorder α] (a : α) : Compat a a :=
+@[simp] theorem compat_self [Preorder α] (a : α) : Compat a a :=
   Compat.of_le le_rfl le_rfl
 
 /-- Compatibility on a Pi type is pointwise. -/
@@ -259,10 +259,10 @@ theorem compat_pi_iff {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g
   simp only [Compat, bddAbove_pi, Set.image_pair]
 
 /-- `⊥` is a wildcard: compatible with everything. -/
-theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a :=
+@[simp] theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a :=
   Compat.of_le bot_le le_rfl
 
-theorem compat_bot [Preorder α] [OrderBot α] (a : α) : Compat a (⊥ : α) :=
+@[simp] theorem compat_bot [Preorder α] [OrderBot α] (a : α) : Compat a (⊥ : α) :=
   Compat.of_le le_rfl bot_le
 
 /-- Where every element other than `⊥` is maximal, two elements are incompatible exactly

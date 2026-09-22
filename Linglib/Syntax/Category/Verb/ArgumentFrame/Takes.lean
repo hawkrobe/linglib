@@ -165,7 +165,7 @@ theorem finiteClause_takes (hc : z.coding = some .indicative)
   refine ⟨_, List.mem_singleton_self _, ?_⟩
   rcases hf with hf | hf <;>
     simp [Position.takes_iff_coding_force, Position.axes, Position.coding?, Position.force?,
-      Complementizer.axes, hc, hf, Flat.none_eq_bot, Flat.some_eq_coe, compat_bot]
+      Complementizer.axes, hc, hf, Flat.none_eq_bot, Flat.some_eq_coe]
 
 end ArgumentFrame
 
