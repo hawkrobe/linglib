@@ -1,6 +1,5 @@
 import Linglib.Data.Examples.Cuervo2003
-import Linglib.Syntax.Minimalist.Verbal.LittleV
-import Linglib.Syntax.Minimalist.Defs
+import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Fragments.Romance.Spanish.Verbs
 import Linglib.Fragments.English.Verbs
 
@@ -10,7 +9,8 @@ import Linglib.Fragments.English.Verbs
 This file formalizes the central claim of [cuervo-2003]: dative arguments have structural
 meanings. A dative is licensed by an applicative head, and what it means is read off where that
 head merges in the event structure, the chain of [cuervo-2003]'s flavors of v
-(`Minimalist.LittleV`). Table (28) distinguishes three positions. Below every verbal head, the
+(`Minimalist.LittleV`); the site is `Minimalist.ApplSite`. Table (28) distinguishes three
+positions. Below every verbal head, the
 applicative takes the theme DP as its complement and relates the dative to an individual, as a
 recipient, a source or a possessor according to the verb and to pragmatics: the low applicative,
 the double object construction of Chapter 2. Between two heads, it takes the lower vP, a result
@@ -19,7 +19,7 @@ participates in two events, external to the state and internal to the change or 
 affected applicative of Chapter 3, the addition to Pylkkänen's typology. Above every head, it
 takes the whole vP and relates the dative to the event: the high applicative of Chapter 4, an
 experiencer over a state or a change and a benefactive or malefactive, the ethical dative, over an
-activity. Every cell of table (40) is a value of `Site.meaning`.
+activity. Every cell of table (40) is a value of `meaning`.
 
 Three restrictions turn the geometry into predictions. A low applicative needs the theme as the
 complement of the root, which it is in a simple structure whose root licenses an object, but not
@@ -37,17 +37,13 @@ specifier, so an unergative takes a dative clitic and no dative DP (§4.3.2).
 
 ## Main definitions
 
-* `Site`, `Site.Low`, `Site.Affected`, `Site.High`, `Site.complement`, `Site.selector`: the merge
-  site of an applicative and the three types of table (28).
-* `Meaning`, `LowRelation`, `Site.meaning`: table (40).
+* `Meaning`, `meaning`: table (40), the meaning of a dative at a `Minimalist.ApplSite`.
 * `Predicate`, `Predicate.ThemeIsRootComplement`: a verb's use with its event structure.
 * `Inventory`, `spanish`, `english`, `Inventory.Licenses`, `meanings`: which datives a language's
   applicative heads license and what they mean.
 
 ## Main results
 
-* `Site.Affected.biEventive`, `Site.Affected.selector_dynamic`, `Site.not_affected_of_state`: an
-  affected dative needs two events and a dynamic head above it, so none is applied under a state.
 * `not_licenses_low_of_biEventive`, `english_not_licenses_of_biEventive`,
   `english_not_licenses_change`: no double object construction with a complex structure; no
   dative at all in English causatives, inchoatives and simple verbs of change.
@@ -58,8 +54,9 @@ specifier, so an unergative takes a dative clitic and no dative DP (§4.3.2).
 
 ## Implementation notes
 
-The site is the pair of the heads above and below the applicative, so the three types are the
-three ways of cutting a nonempty list. Dative case, clitic doubling and the movement of the
+The merge site of the applicative and the three types of table (28) are the substrate's
+`Minimalist.ApplSite`, a cut of the little-v chain; the empty affected-under-state cell of table
+(40) is its `ApplSite.not_affected_of_state`. Dative case, clitic doubling and the movement of the
 dative to the subject position of unaccusatives (§2.0.5, §3.2.2.1) are not represented, nor are
 the sub-types of low applicative beyond the relation read, the resultatives and particles of
 §3.3, or the defective applicatives of other languages. The low relation is the verb's, as the
@@ -77,109 +74,12 @@ namespace Cuervo2003
 
 open Minimalist Data.Examples
 
-/-! ### The merge site of an applicative -/
-
-/-- The site of an applicative head in an event structure: the verbal heads above ApplP and the
-heads of its complement, highest first. -/
-structure Site where
-  above : List LittleV
-  below : List LittleV
-  deriving DecidableEq, Repr
-
-namespace Site
-
-variable (s : Site)
-
-/-- The event structure the applicative sits in. -/
-def heads : List LittleV := s.above ++ s.below
-
-/-- A low applicative: Appl takes the theme DP as its complement, below every verbal head, and
-ApplP is the complement of the root. -/
-def Low : Prop := s.below = []
-
-/-- A high applicative: ApplP is the complement of no verbal head, Voice or Tense taking it. -/
-def High : Prop := s.above = []
-
-/-- An affected applicative: Appl takes a vP as its complement and ApplP is the complement of the
-verbal head above, so the dative participates in two events. -/
-def Affected : Prop := s.above ≠ [] ∧ s.below ≠ []
-
-instance : DecidablePred Low := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred High := fun _ ↦ inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred Affected := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The category of Appl's complement, the theme DP of a low applicative and a vP otherwise
-(table (28)). -/
-def complement : Cat := if s.below = [] then .D else .v
-
-/-- The verbal head ApplP is the complement of: the lowest head above it, whose root takes
-ApplP when the applicative is low; none when it is high. -/
-def selector : Option LittleV := s.above.getLast?
-
-theorem complement_eq_D_iff : s.complement = .D ↔ s.Low := by
-  simp [complement, Low]
-
-theorem selector_eq_none_iff : s.selector = none ↔ s.High := by
-  simp [selector, High]
-
-/-- The three types of table (28) partition the sites in a nonempty structure. -/
-theorem low_or_affected_or_high (h : s.heads ≠ []) : s.Low ∨ s.Affected ∨ s.High := by
-  by_cases hb : s.below = [] <;> by_cases ha : s.above = [] <;>
-    simp_all [heads, Low, Affected, High]
-
-theorem Affected.not_low (h : s.Affected) : ¬ s.Low := h.2
-
-theorem Affected.not_high (h : s.Affected) : ¬ s.High := h.1
-
-/-- An affected dative requires two events. -/
-theorem Affected.biEventive (h : s.Affected) : LittleV.BiEventive s.heads := by
-  obtain ⟨ha, hb⟩ := h
-  unfold LittleV.BiEventive heads
-  rw [List.length_append]
-  have := List.length_pos_iff.2 ha
-  have := List.length_pos_iff.2 hb
-  omega
-
-/-- The head an affected applicative is the complement of is dynamic: it embeds the state below
-the applicative. -/
-theorem Affected.selector_dynamic (hw : LittleV.IsWellFormed s.heads) (h : s.Affected) :
-    ∀ v ∈ s.selector, v.Dynamic := by
-  intro v hv
-  obtain ⟨ha, hb⟩ := h
-  rw [selector, Option.mem_def, List.getLast?_eq_some_iff] at hv
-  obtain ⟨l, hl⟩ := hv
-  obtain ⟨w, t, hb'⟩ := List.exists_cons_of_ne_nil hb
-  refine LittleV.Embeds.dynamic (w := w) (List.isChain_pair.1 (hw.2.infix ⟨l, t, ?_⟩))
-  simp [heads, hl, hb']
-
-/-- No affected dative is applied under a state, the empty cell of table (40). -/
-theorem not_affected_of_state (hw : LittleV.IsWellFormed s.heads)
-    (h : s.selector = some .vBE) :
-    ¬ s.Affected :=
-  fun ha ↦ (ha.selector_dynamic s hw _ h) rfl
-
-end Site
-
-/-- The sites of an applicative in the structure `l`: every cut of the list. -/
-def sites (l : List LittleV) : List Site :=
-  (List.range (l.length + 1)).map fun i ↦ ⟨l.take i, l.drop i⟩
-
-theorem mem_sites_iff {l : List LittleV} {s : Site} : s ∈ sites l ↔ s.heads = l := by
-  constructor
-  · intro h
-    obtain ⟨i, -, rfl⟩ := List.mem_map.1 h
-    exact List.take_append_drop i l
-  · rintro rfl
-    exact List.mem_map.2 ⟨s.above.length, List.mem_range.2 (by simp [Site.heads]),
-      by simp [Site.heads]⟩
-
 /-! ### Meanings (table (40)) -/
 
 /-- The meanings a dative argument can have. -/
 inductive Meaning where
-  | recipient
-  | source
-  | possessor
+  /-- Related to the theme as a recipient, a source or a possessor. -/
+  | low (relation : LowRelation)
   | affected
   /-- The experiencer of a state or of a change; over a change, also the person unintentionally
   responsible for it (§4.2.3). -/
@@ -188,26 +88,12 @@ inductive Meaning where
   | ethical
   deriving DecidableEq, Repr
 
-/-- The relation a low applicative expresses between the dative and the theme: the dynamic
-transfer to a recipient or from a source of [pylkkanen-2008], or the static possession of
-Chapter 2's low applicative AT. -/
-inductive LowRelation where
-  | to
-  | from
-  | at
-  deriving DecidableEq, Repr
-
-def LowRelation.meaning : LowRelation → Meaning
-  | .to => .recipient
-  | .from => .source
-  | .at => .possessor
-
 /-- The meaning of a dative at a site, given the low relation the verb supplies: an individual
 related to the theme when low, affected when between two events, and over the whole event the
 experiencer of a state or change or the ethical dative of an activity. -/
-def Site.meaning (s : Site) (r : LowRelation) : Meaning :=
+def meaning (s : ApplSite) (r : LowRelation) : Meaning :=
   match s.above, s.below with
-  | _, [] => r.meaning
+  | _, [] => .low r
   | [], v :: _ => if v = .vDO then .ethical else .experiencer
   | _ :: _, _ :: _ => .affected
 
@@ -221,7 +107,7 @@ structure Predicate where
   frame : ArgumentFrame
   heads : List LittleV
   predicational : Bool := false
-  relation : LowRelation := .to
+  relation : LowRelation := .recipient
 
 namespace Predicate
 
@@ -240,79 +126,81 @@ end Predicate
 section Spanish
 
 /-- *mandar* 'send', a directional activity: the low applicative TO, (29a). -/
-def mandar : Predicate := ⟨Spanish.Verbs.mandar, .np, [.vDO], false, .to⟩
+def mandar : Predicate := ⟨Spanish.Verbs.mandar, .np, [.vDO], false, .recipient⟩
 
 /-- *preparar* 'fix', a verb of creation: the low applicative TO, (30). -/
-def preparar : Predicate := ⟨Spanish.Verbs.preparar, .np, [.vDO], false, .to⟩
+def preparar : Predicate := ⟨Spanish.Verbs.preparar, .np, [.vDO], false, .recipient⟩
 
 /-- *sacar* 'take away', directional away: the low applicative FROM, (31). -/
-def sacar : Predicate := ⟨Spanish.Verbs.sacar, .np, [.vDO], false, .from⟩
+def sacar : Predicate := ⟨Spanish.Verbs.sacar, .np, [.vDO], false, .source⟩
 
 /-- *lavar* 'wash', a non-directional activity: the low applicative AT, (32). -/
-def lavar : Predicate := ⟨Spanish.Verbs.lavar, .np, [.vDO], false, .at⟩
+def lavar : Predicate := ⟨Spanish.Verbs.lavar, .np, [.vDO], false, .possessor⟩
 
 /-- *admirar* 'admire', a transitive state (fn. 4 of Chapter 1): the low applicative AT, (33). -/
-def admirar : Predicate := ⟨Spanish.Verbs.admirar, .np, [.vBE], false, .at⟩
+def admirar : Predicate := ⟨Spanish.Verbs.admirar, .np, [.vBE], false, .possessor⟩
 
 /-- *llegar* 'arrive', a simple verb of movement: the low applicative TO, (34). -/
-def llegar : Predicate := ⟨Spanish.Verbs.llegar, .unaccusative, [.vGO], false, .to⟩
+def llegar : Predicate := ⟨Spanish.Verbs.llegar, .unaccusative, [.vGO], false, .recipient⟩
 
 /-- *salir* 'come out', a simple verb of movement whose dative is the inalienable location of
 the theme, (54a). -/
-def salir : Predicate := ⟨Spanish.Verbs.salir, .unaccusative, [.vGO], false, .at⟩
+def salir : Predicate := ⟨Spanish.Verbs.salir, .unaccusative, [.vGO], false, .possessor⟩
 
 /-- *suceder* 'happen', a simple verb of happening, (49). -/
-def suceder : Predicate := ⟨Spanish.Verbs.suceder, .unaccusative, [.vGO], false, .at⟩
+def suceder : Predicate := ⟨Spanish.Verbs.suceder, .unaccusative, [.vGO], false, .possessor⟩
 
 /-- *sobrar* 'be extra', an existential state whose theme is the complement of the root, (38). -/
-def sobrar : Predicate := ⟨Spanish.Verbs.sobrar, .unaccusative, [.vBE], false, .at⟩
+def sobrar : Predicate := ⟨Spanish.Verbs.sobrar, .unaccusative, [.vBE], false, .possessor⟩
 
 /-- *gustar* 'appeal to', a predicational state whose theme is the specifier of vBE, (37). -/
-def gustar : Predicate := ⟨Spanish.Verbs.gustar, .unaccusative, [.vBE], true, .at⟩
+def gustar : Predicate := ⟨Spanish.Verbs.gustar, .unaccusative, [.vBE], true, .possessor⟩
 
 /-- *romper* 'break' as a causative, (35). -/
-def romperCausative : Predicate := ⟨Spanish.Verbs.romper.toVerb, .np, [.vDO, .vBE], false, .at⟩
+def romperCausative : Predicate :=
+  ⟨Spanish.Verbs.romper.toVerb, .np, [.vDO, .vBE], false, .possessor⟩
 
 /-- *romperse* 'break' as an inchoative, (36), (60). -/
 def romperInchoative : Predicate :=
-  ⟨Spanish.Verbs.romper.toVerb, .unaccusative, [.vGO, .vBE], false, .at⟩
+  ⟨Spanish.Verbs.romper.toVerb, .unaccusative, [.vGO, .vBE], false, .possessor⟩
 
 /-- *abrir* 'open' as a causative, (90a). -/
-def abrirCausative : Predicate := ⟨Spanish.Verbs.abrir.toVerb, .np, [.vDO, .vBE], false, .at⟩
+def abrirCausative : Predicate :=
+  ⟨Spanish.Verbs.abrir.toVerb, .np, [.vDO, .vBE], false, .possessor⟩
 
 /-- *abrirse* 'open' as an inchoative, (90b). -/
 def abrirInchoative : Predicate :=
-  ⟨Spanish.Verbs.abrir.toVerb, .unaccusative, [.vGO, .vBE], false, .at⟩
+  ⟨Spanish.Verbs.abrir.toVerb, .unaccusative, [.vGO, .vBE], false, .possessor⟩
 
 /-- *quemarse* 'burn' as an inchoative, (55). -/
 def quemarInchoative : Predicate :=
-  ⟨Spanish.Verbs.quemar.toVerb, .unaccusative, [.vGO, .vBE], false, .at⟩
+  ⟨Spanish.Verbs.quemar.toVerb, .unaccusative, [.vGO, .vBE], false, .possessor⟩
 
 /-- *caminar* 'walk', an unergative, (39a), (78). -/
-def caminar : Predicate := ⟨Spanish.Verbs.caminar, .intransitive, [.vDO], false, .at⟩
+def caminar : Predicate := ⟨Spanish.Verbs.caminar, .intransitive, [.vDO], false, .possessor⟩
 
 /-- *correr* 'run' as an unergative, (66). -/
-def correr : Predicate := ⟨Spanish.Verbs.correr, .intransitive, [.vDO], false, .at⟩
+def correr : Predicate := ⟨Spanish.Verbs.correr, .intransitive, [.vDO], false, .possessor⟩
 
 /-- *correr una carrera* 'run a race', the transitive use, (67a). -/
-def correrTransitive : Predicate := ⟨Spanish.Verbs.correr, .np, [.vDO], false, .at⟩
+def correrTransitive : Predicate := ⟨Spanish.Verbs.correr, .np, [.vDO], false, .possessor⟩
 
 end Spanish
 
 section English
 
 /-- *pass* as a transitive activity, (85a'). -/
-def pass : Predicate := ⟨English.pass.toVerb, .np, [.vDO], false, .to⟩
+def pass : Predicate := ⟨English.pass.toVerb, .np, [.vDO], false, .recipient⟩
 
 /-- Causative *open*, (88). -/
-def openCausative : Predicate := ⟨English.open_.toVerb, .np, [.vDO, .vBE], false, .to⟩
+def openCausative : Predicate := ⟨English.open_.toVerb, .np, [.vDO, .vBE], false, .recipient⟩
 
 /-- Inchoative *open*, (89a). -/
 def openInchoative : Predicate :=
-  ⟨English.open_.toVerb, .unaccusative, [.vGO, .vBE], false, .to⟩
+  ⟨English.open_.toVerb, .unaccusative, [.vGO, .vBE], false, .recipient⟩
 
 /-- *arrive*, a simple verb of movement, (92b). -/
-def arrive : Predicate := ⟨English.arrive.toVerb, .unaccusative, [.vGO], false, .to⟩
+def arrive : Predicate := ⟨English.arrive.toVerb, .unaccusative, [.vGO], false, .recipient⟩
 
 end English
 
@@ -335,12 +223,12 @@ structure Inventory where
 def spanish : Inventory := ⟨true, true, fun _ _ ↦ true, false⟩
 
 /-- English has the low applicative TO under activities and nothing else. -/
-def english : Inventory := ⟨false, false, fun r v ↦ r = .to && v = .vDO, true⟩
+def english : Inventory := ⟨false, false, fun r v ↦ r = .recipient && v = .vDO, true⟩
 
 /-- A dative argument as the applicative licenses it: its site, whether it is animate and whether
 it is a full DP rather than a clitic alone. -/
 structure Dative where
-  site : Site
+  site : ApplSite
   animate : Bool
   fullDP : Bool
   deriving DecidableEq, Repr
@@ -350,7 +238,7 @@ predicate's structure; a low applicative needs the theme as the root's complemen
 of the language for that relation and structure; an affected one needs the affected head; a high
 one needs a high head, an animate dative and, over an activity with a full DP, a specifier. -/
 def Inventory.Licenses (i : Inventory) (p : Predicate) (d : Dative) : Prop :=
-  d.site ∈ sites p.heads ∧
+  d.site ∈ ApplSite.all p.heads ∧
     (d.site.Low →
       p.ThemeIsRootComplement ∧ ∀ v ∈ p.heads.getLast?, i.low p.relation v = true) ∧
     (d.site.Affected → i.affected = true) ∧
@@ -364,8 +252,8 @@ instance (i : Inventory) (p : Predicate) (d : Dative) : Decidable (i.Licenses p 
 /-- The meanings of a dative of the given animacy and form with `p` in the language `i`: those of
 its licensed sites. -/
 def meanings (i : Inventory) (p : Predicate) (animate fullDP : Bool) : List Meaning :=
-  ((sites p.heads).filter fun s ↦ i.Licenses p ⟨s, animate, fullDP⟩).map
-    (·.meaning p.relation)
+  ((ApplSite.all p.heads).filter fun s ↦ i.Licenses p ⟨s, animate, fullDP⟩).map
+    (meaning · p.relation)
 
 /-! ### The double object construction and Baker's gap (§3.1, §3.2.3) -/
 
@@ -379,7 +267,7 @@ applicative has only high datives there. -/
 theorem licenses_of_biEventive {i : Inventory} {p : Predicate} {d : Dative}
     (hc : LittleV.BiEventive p.heads) (h : i.Licenses p d) : d.site.Affected ∨ d.site.High := by
   have hne : d.site.heads ≠ [] := by
-    rw [mem_sites_iff.1 h.1]; exact fun e ↦ by simp [LittleV.BiEventive, e] at hc
+    rw [ApplSite.mem_all_iff.1 h.1]; exact fun e ↦ by simp [LittleV.BiEventive, e] at hc
   rcases d.site.low_or_affected_or_high hne with hl | ha | hh
   · exact absurd h (not_licenses_low_of_biEventive hc hl)
   · exact .inl ha
@@ -399,7 +287,8 @@ applicative being confined to activities, (92). -/
 theorem english_not_licenses_change {p : Predicate} {d : Dative} (hp : p.heads = [.vGO]) :
     ¬ english.Licenses p d := by
   intro h
-  rcases d.site.low_or_affected_or_high (by rw [mem_sites_iff.1 h.1, hp]; simp) with hl | ha | hh
+  rcases d.site.low_or_affected_or_high (by rw [ApplSite.mem_all_iff.1 h.1, hp]; simp) with
+    hl | ha | hh
   · have := (h.2.1 hl).2 .vGO (by simp [hp])
     revert this; cases p.relation <;> decide
   · exact absurd (h.2.2.1 ha) (by decide)
@@ -418,8 +307,9 @@ theorem unergative_clitic_only {p : Predicate} (hp : p.heads = [.vDO])
     (ho : ¬ p.frame.HasNominal) (d : Dative) :
     spanish.Licenses p d ↔ d = ⟨⟨[], [.vDO]⟩, true, false⟩ := by
   obtain ⟨⟨a, b⟩, an, dp⟩ := d
-  simp only [Inventory.Licenses, mem_sites_iff, Site.heads, hp, spanish, Site.Low, Site.High,
-    Site.Affected, Predicate.ThemeIsRootComplement, ho, Dative.mk.injEq, Site.mk.injEq]
+  simp only [Inventory.Licenses, ApplSite.mem_all_iff, ApplSite.heads, hp, spanish, ApplSite.Low,
+    ApplSite.High, ApplSite.Affected, Predicate.ThemeIsRootComplement, ho, Dative.mk.injEq,
+    ApplSite.mk.injEq]
   rcases a with _ | ⟨v, a⟩ <;> rcases b with _ | ⟨w, b⟩ <;> simp
 
 /-- With an object the same verb takes a low dative DP, (67a). -/
@@ -435,15 +325,17 @@ theorem inchoative_meanings {p : Predicate} (hp : p.heads = [.vGO, .vBE]) (dp : 
     meanings spanish p true dp = [.experiencer, .affected] ∧
       meanings spanish p false dp = [.affected] := by
   cases dp <;>
-    simp [meanings, hp, sites, List.range_succ, Inventory.Licenses, spanish, LittleV.BiEventive,
-      Predicate.ThemeIsRootComplement, Site.Low, Site.High, Site.Affected, Site.meaning]
+    simp [meanings, hp, ApplSite.all, List.range_succ, Inventory.Licenses, spanish,
+      LittleV.BiEventive, Predicate.ThemeIsRootComplement, ApplSite.Low, ApplSite.High,
+      ApplSite.Affected, meaning]
 
 /-- A dative with a causative is affected alone: the high applicative over an activity licenses
 no full DP, (35), (90a). -/
 theorem causative_meanings {p : Predicate} (hp : p.heads = [.vDO, .vBE]) :
     meanings spanish p true true = [.affected] := by
-  simp [meanings, hp, sites, List.range_succ, Inventory.Licenses, spanish, LittleV.BiEventive,
-    Predicate.ThemeIsRootComplement, Site.Low, Site.High, Site.Affected, Site.meaning]
+  simp [meanings, hp, ApplSite.all, List.range_succ, Inventory.Licenses, spanish,
+    LittleV.BiEventive, Predicate.ThemeIsRootComplement, ApplSite.Low, ApplSite.High,
+    ApplSite.Affected, meaning]
 
 /-! ### The rows -/
 
@@ -466,7 +358,7 @@ def inventory? (e : LinguisticExample) : Option Inventory :=
 /-- The meaning an example reports for its dative. -/
 def meaning? (e : LinguisticExample) : Option Meaning :=
   e.parse? "meaning"
-    [("recipient", .recipient), ("source", .source), ("possessor", .possessor),
+    [("recipient", .low .recipient), ("source", .low .source), ("possessor", .low .possessor),
       ("affected", .affected), ("experiencer", .experiencer), ("ethical", .ethical)]
 
 /-- The meanings the model gives an example's dative. -/

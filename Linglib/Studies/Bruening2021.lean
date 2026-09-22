@@ -202,20 +202,20 @@ disagreements with them Lean-checkable. -/
 
 Both analyses agree that the first object of English DOC is in an
 Appl-projection above V (not selected by V). Pylkkänen's `english_appl`
-commits English DOC to `.lowRecipient` (`Pylkkanen2008.Construction.head`); this
+commits English DOC to `.low .recipient` (`Pylkkanen2008.Construction.head`); this
 classification correctly predicts the structural facts about c-command,
 binding, and quantifier scope.
 
 They diverge on what licenses *implicit* first objects. Bruening's
 ApplPass derivation predicts implicit first objects are *uniformly
-definite* (G2 above). Pylkkänen's `.lowRecipient` classification alone
+definite* (G2 above). Pylkkänen's `.low .recipient` classification alone
 does not entail this — it requires Bruening's additional Pass/ApplPass
 machinery, which has no substrate analogue (see G2 ANALOGUE note).
 
 Bruening explicitly *rejects* Pylkkänen 2008's analysis as a "variety of
 small clause analysis" (fn. 10 p. 1042). -/
 theorem bruening_vs_pylkkanen_low_recipient :
-    Pylkkanen2008.Construction.englishDOC.head = Minimalist.ApplType.lowRecipient
+    Pylkkanen2008.Construction.englishDOC.head = .low .recipient
     ∧ docOnlyVerbs.all (fun vp => implicitGoal vp != some .indef) = true := by
   refine ⟨rfl, ?_⟩; decide
 
