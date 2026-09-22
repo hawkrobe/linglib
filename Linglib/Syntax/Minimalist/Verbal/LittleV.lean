@@ -34,7 +34,7 @@ Only a `vDO`-headed structure combines with Voice and so licenses an external ar
 
 The head-driven rivals, [pylkkanen-2008]'s Cause head and the v_CAUSE that
 [alexiadou-anagnostopoulou-schaefer-2006] and [wood-2015] keep in both alternants so that Voice
-alone distinguishes them, are not encodable here: every `Causative` is `Complex`, and the
+alone distinguishes them, are not encodable here: every `Causative` is `BiEventive`, and the
 alternation changes the higher head rather than Voice (`Causative.not_inchoative`). A study of
 those programs states its claims about `Minimalist.Voice` directly.
 
@@ -110,15 +110,15 @@ def Change (l : List LittleV) : Prop := l = [.vGO]
 /-- A simple state, existential or predicational: `vBE` alone. -/
 def State (l : List LittleV) : Prop := l = [.vBE]
 
-/-- A complex event, consisting of at least two sub-events. -/
-def Complex (l : List LittleV) : Prop := 2 ≤ l.length
+/-- A complex, bi-eventive event: at least two sub-events. -/
+def BiEventive (l : List LittleV) : Prop := 2 ≤ l.length
 
 /-- A causative: an event or result embedded under `vDO`; the causative reading is the
     interpretation of this configuration, not of a CAUSE head. -/
-def Causative (l : List LittleV) : Prop := l.head? = some .vDO ∧ Complex l
+def Causative (l : List LittleV) : Prop := l.head? = some .vDO ∧ BiEventive l
 
 /-- An inchoative: a result embedded under `vGO`. -/
-def Inchoative (l : List LittleV) : Prop := l.head? = some .vGO ∧ Complex l
+def Inchoative (l : List LittleV) : Prop := l.head? = some .vGO ∧ BiEventive l
 
 /-- Combines with Voice, and so licenses an external argument: `vDO`-headed structures only,
     predicates of change and states being unaccusative. -/
@@ -127,14 +127,14 @@ def LicensesVoice (l : List LittleV) : Prop := l.head? = some .vDO
 instance : DecidablePred Activity := fun _ => inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred Change := fun _ => inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred State := fun _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred Complex := fun _ => inferInstanceAs (Decidable (_ ≤ _))
+instance : DecidablePred BiEventive := fun _ => inferInstanceAs (Decidable (_ ≤ _))
 instance : DecidablePred Causative := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred Inchoative := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred LicensesVoice := fun _ => inferInstanceAs (Decidable (_ = _))
 
-theorem Causative.complex (h : Causative l) : Complex l := h.2
+theorem Causative.biEventive (h : Causative l) : BiEventive l := h.2
 
-theorem Inchoative.complex (h : Inchoative l) : Complex l := h.2
+theorem Inchoative.biEventive (h : Inchoative l) : BiEventive l := h.2
 
 theorem Causative.licensesVoice (h : Causative l) : LicensesVoice l := h.1
 
@@ -158,7 +158,7 @@ theorem Inchoative.eq_of_isWellFormed (hi : Inchoative l) (hw : IsWellFormed l) 
   obtain ⟨hd, hl⟩ := hi
   rcases l with _ | ⟨v, _ | ⟨w, _ | ⟨u, t⟩⟩⟩
   · simp at hd
-  · simp [Complex] at hl
+  · simp [BiEventive] at hl
   · obtain rfl := Option.some.inj hd
     obtain rfl := vGO_embeds_iff.1 (List.isChain_pair.1 hw.2)
     rfl
@@ -191,8 +191,8 @@ theorem possible_combinations :
 /-- The combinations the footnote to (17) excludes: nothing under `vBE`, nothing dynamic under
     `vGO`. -/
 theorem impossible_combinations :
-    ¬ IsWellFormed [.vBE, .vDO] ∧ ¬ IsWellFormed [.vBE, .vGO] ∧ ¬ IsWellFormed [.vGO, .vGO] ∧
-      ¬ IsWellFormed [.vGO, .vDO] := by
+    ¬ IsWellFormed [.vBE, .vDO] ∧ ¬ IsWellFormed [.vBE, .vGO] ∧
+      ¬ IsWellFormed [.vGO, .vGO] ∧ ¬ IsWellFormed [.vGO, .vDO] := by
   decide
 
 end LittleV
