@@ -109,11 +109,12 @@ def Quant.aggregate (q : Quant) (vs : List Trivalent) : Trivalent :=
   | .some => Trivalent.aggregate .disjunctive vs
   | .notAll => Trivalent.aggregate .disjunctive (vs.map Trivalent.neg)
 
-variable {W ι : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
-  (A : Set W) [DecidablePred (· ∈ A)] (w : W) (D : Finset ι) (B : ι → Set W)
+variable {W ι : Type*} [Fintype W] (ord : W → Preorder W)
+  [∀ w, DecidableRel (ord w).le] (A : Set W) [DecidablePred (· ∈ A)] (w : W) (D : Finset ι)
+  (B : ι → Set W)
 
 /-- The closest antecedent worlds to the world of evaluation. -/
-abbrev closest : Finset W := sim.closestWorlds w (Finset.univ.filter (· ∈ A))
+abbrev closest : Finset W := ((ord w).minimals A).toFinset
 
 /-! ### Mixed scenarios -/
 
@@ -122,11 +123,11 @@ winner and a loser among them, and every player wins in some closest world and l
 another. -/
 structure Mixed : Prop where
   nonempty : D.Nonempty
-  worlds : ∀ w' ∈ closest sim A w, (∃ d ∈ D, w' ∈ B d) ∧ ∃ d ∈ D, w' ∉ B d
-  players : ∀ d ∈ D, (∃ w' ∈ closest sim A w, w' ∈ B d) ∧ ∃ w' ∈ closest sim A w, w' ∉ B d
+  worlds : ∀ w' ∈ closest ord A w, (∃ d ∈ D, w' ∈ B d) ∧ ∃ d ∈ D, w' ∉ B d
+  players : ∀ d ∈ D, (∃ w' ∈ closest ord A w, w' ∈ B d) ∧ ∃ w' ∈ closest ord A w, w' ∉ B d
 
 /-- Some closest antecedent world exists. -/
-theorem Mixed.closest_nonempty (h : Mixed sim A w D B) : (closest sim A w).Nonempty :=
+theorem Mixed.closest_nonempty (h : Mixed ord A w D B) : (closest ord A w).Nonempty :=
   let ⟨d, hd⟩ := h.nonempty
   let ⟨⟨w₁, hw₁, _⟩, _⟩ := h.players d hd
   ⟨w₁, hw₁⟩
@@ -136,43 +137,43 @@ theorem Mixed.closest_nonempty (h : Mixed sim A w D B) : (closest sim A w).Nonem
 variable [∀ d, DecidablePred (· ∈ B d)]
 
 /-- The universal theory (2): the quantifier over the players' universal counterfactuals. -/
-def universal (q : Quant) : Prop := q.eval D fun d ↦ w ∈ closestImp sim A (B d)
+def universal (q : Quant) : Prop := q.eval D fun d ↦ w ∈ closestImp ord A (B d)
 
 /-- The selectional theory (5): the quantified sentence evaluated at the selected world and
 supervaluated over the candidate selections, the closest antecedent worlds. -/
 def selectional (q : Quant) : Trivalent :=
-  Trivalent.dist (closest sim A w) fun w' ↦ q.eval D fun d ↦ w' ∈ B d
+  Trivalent.dist (closest ord A w) fun w' ↦ q.eval D fun d ↦ w' ∈ B d
 
 /-- The homogeneity theory (6): each player's counterfactual carries its third status into
 composition, and the quantifier projects it. -/
 noncomputable def homogeneity (q : Quant) : Trivalent :=
-  q.aggregate (D.toList.map fun d ↦ (homogeneityCounterfactual sim A (B d)).eval w)
+  q.aggregate (D.toList.map fun d ↦ (homogeneityCounterfactual ord A (B d)).eval w)
 
 /-- The implicature theory (§8): the basic existential meaning (23) and its exhaustified
 universal strengthening (24), the latter computed in the upward-entailing scope of *some* and
 the former in the downward-entailing scope of *not all*. -/
 def implicature (q : Quant) : Prop :=
   match q with
-  | .all => ∀ d ∈ D, w ∈ closestImp sim A (B d)
-  | .none => ∀ d ∈ D, w ∉ might (closestImp sim) A (B d)
-  | .some => ∃ d ∈ D, w ∈ closestImp sim A (B d)
-  | .notAll => ∃ d ∈ D, w ∉ might (closestImp sim) A (B d)
+  | .all => ∀ d ∈ D, w ∈ closestImp ord A (B d)
+  | .none => ∀ d ∈ D, w ∉ might (closestImp ord) A (B d)
+  | .some => ∃ d ∈ D, w ∈ closestImp ord A (B d)
+  | .notAll => ∃ d ∈ D, w ∉ might (closestImp ord) A (B d)
 
-variable {sim A w D B}
+variable {ord A w D B}
 
 /-! ### Predictions in mixed scenarios -/
 
 /-- Table 1, the unembedded case: a player's counterfactual is false on the universal theory,
 indeterminate on the selectional theory, and undefined on the homogeneity theory. -/
-theorem unembedded (h : Mixed sim A w D B) {d : ι} (hd : d ∈ D) :
-    w ∉ closestImp sim A (B d) ∧
-      selectionalCounterfactual sim A (B d) w = .indet ∧
-      ¬ (homogeneityCounterfactual sim A (B d)).presup w := by
+theorem unembedded (h : Mixed ord A w D B) {d : ι} (hd : d ∈ D) :
+    w ∉ closestImp ord A (B d) ∧
+      selectionalCounterfactual ord A (B d) w = .indet ∧
+      ¬ (homogeneityCounterfactual ord A (B d)).presup w := by
   obtain ⟨⟨w₁, hw₁, hB₁⟩, ⟨w₂, hw₂, hB₂⟩⟩ := h.players d hd
-  have hnot : w ∉ closestImp sim A (B d) := fun hall ↦
-    hB₂ (mem_closestImp_iff_closestWorlds.1 hall w₂ hw₂)
-  have hnot' : w ∉ closestImp sim A (B d)ᶜ := fun hnone ↦
-    mem_closestImp_iff_closestWorlds.1 hnone w₁ hw₁ hB₁
+  have hnot : w ∉ closestImp ord A (B d) := fun hall ↦
+    hB₂ (hall (Set.mem_toFinset.1 hw₂))
+  have hnot' : w ∉ closestImp ord A (B d)ᶜ := fun hnone ↦
+    hnone (Set.mem_toFinset.1 hw₁) hB₁
   refine ⟨hnot, ?_, ?_⟩
   · unfold selectionalCounterfactual
     rw [ite_eq_right hnot, ite_eq_right hnot']
@@ -180,9 +181,9 @@ theorem unembedded (h : Mixed sim A w D B) {d : ι} (hd : d ∈ D) :
 
 /-- The universal theory turns on polarity: since every player's counterfactual is false, the
 positive sentences are false and the negative ones true. -/
-theorem universal_polarity (h : Mixed sim A w D B) (q : Quant) :
-    universal sim A w D B q ↔ ¬ q.IsPositive := by
-  have hfalse : ∀ d ∈ D, w ∉ closestImp sim A (B d) :=
+theorem universal_polarity (h : Mixed ord A w D B) (q : Quant) :
+    universal ord A w D B q ↔ ¬ q.IsPositive := by
+  have hfalse : ∀ d ∈ D, w ∉ closestImp ord A (B d) :=
     fun d hd ↦ (unembedded h hd).1
   cases q
   · simp only [universal, Quant.eval, Quant.IsPositive, not_true_eq_false, iff_false]
@@ -197,8 +198,8 @@ theorem universal_polarity (h : Mixed sim A w D B) (q : Quant) :
 /-- Table 3, the selectional row: the quantified sentence is determinately false for the
 universal quantifiers and determinately true for the existential ones, whatever the polarity,
 because every selected world has a winner and a loser. -/
-theorem selectional_force (h : Mixed sim A w D B) (q : Quant) :
-    selectional sim A w D B q = q.force.verdict := by
+theorem selectional_force (h : Mixed ord A w D B) (q : Quant) :
+    selectional ord A w D B q = q.force.verdict := by
   cases q
   · exact (Trivalent.dist_eq_false_iff _ _).2 ⟨h.closest_nonempty, fun w' hw' hall ↦
       let ⟨d, hd, hB⟩ := (h.worlds w' hw').2; hB (hall d hd)⟩
@@ -209,17 +210,17 @@ theorem selectional_force (h : Mixed sim A w D B) (q : Quant) :
 
 /-- No selectional value is a gap: there is nothing for a question under discussion to
 resolve. -/
-theorem selectional_determinate (h : Mixed sim A w D B) (q : Quant) :
-    selectional sim A w D B q ≠ .indet := by
+theorem selectional_determinate (h : Mixed ord A w D B) (q : Quant) :
+    selectional ord A w D B q ≠ .indet := by
   rw [selectional_force h]
   cases q <;> simp [Quant.force, Force.verdict]
 
 /-- Every player's counterfactual is undefined, so the quantified sentence is undefined under
 either projection algorithm, for every quantifier: the homogeneity theory leaves the sentences
 to pragmatics. -/
-theorem homogeneity_undefined (h : Mixed sim A w D B) (q : Quant) :
-    homogeneity sim A w D B q = .indet := by
-  have hl : D.toList.map (fun d ↦ (homogeneityCounterfactual sim A (B d)).eval w)
+theorem homogeneity_undefined (h : Mixed ord A w D B) (q : Quant) :
+    homogeneity ord A w D B q = .indet := by
+  have hl : D.toList.map (fun d ↦ (homogeneityCounterfactual ord A (B d)).eval w)
       = List.replicate D.card .indet := by
     rw [List.eq_replicate_iff]
     refine ⟨by simp, fun v hv ↦ ?_⟩
@@ -232,23 +233,23 @@ theorem homogeneity_undefined (h : Mixed sim A w D B) (q : Quant) :
 
 /-- (25): with the implicature computed in its scope, *some* says that some player was
 guaranteed to win, false in the scenario. -/
-theorem implicature_some (h : Mixed sim A w D B) : ¬ implicature sim A w D B .some :=
+theorem implicature_some (h : Mixed ord A w D B) : ¬ implicature ord A w D B .some :=
   fun ⟨_, hd, hc⟩ ↦ (unembedded h hd).1 hc
 
 omit [∀ d, DecidablePred (· ∈ B d)] in
 /-- (26): with the basic existential meaning in its scope, *not all* says that some player
 could not have won, false in the scenario. -/
-theorem implicature_notAll (h : Mixed sim A w D B) : ¬ implicature sim A w D B .notAll :=
+theorem implicature_notAll (h : Mixed ord A w D B) : ¬ implicature ord A w D B .notAll :=
   fun ⟨d, hd, hc⟩ ↦ hc fun hall ↦
-    let ⟨w₁, hw₁, hB₁⟩ := (h.players d hd).1
-    mem_closestImp_iff_closestWorlds.1 hall w₁ hw₁ hB₁
+    let ⟨_, hw₁, hB₁⟩ := (h.players d hd).1
+    hall (Set.mem_toFinset.1 hw₁) hB₁
 
 /-- The dissociation of Experiment 2: at a world where some but not all of the players won, the
 plural definite *the players won* has a gap, while the quantified counterfactuals of the same
 scenario have none. -/
-theorem dissociation (h : Mixed sim A w D B) {v : W}
+theorem dissociation (h : Mixed ord A w D B) {v : W}
     (hv : (∃ d ∈ D, v ∈ B d) ∧ ∃ d ∈ D, v ∉ B d) (q : Quant) :
-    Trivalent.dist D (v ∈ B ·) = .indet ∧ selectional sim A w D B q ≠ .indet :=
+    Trivalent.dist D (v ∈ B ·) = .indet ∧ selectional ord A w D B q ≠ .indet :=
   ⟨(Trivalent.dist_eq_indet_iff D (v ∈ B ·)).2 hv, selectional_determinate h q⟩
 
 

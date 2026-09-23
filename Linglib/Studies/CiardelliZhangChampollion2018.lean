@@ -25,7 +25,7 @@ Hamming similarity `hammingSim` the conditional of the closest worlds, `Conditio
 makes all four counterfactuals true at the actual world, and `selectionalCounterfactual` and
 `homogeneityCounterfactual` make the falsified one true as well. `minimal_change_forces_notBothUp`
 is the §1.2 argument for any similarity ordering and consequent: a closest world of a union is a
-closest world of one of its parts (`SimilarityOrdering.closest_union_subset`); the three
+closest world of one of its parts (`Preorder.minimals_union_subset`); the three
 operators' versions are corollaries.
 The Table 3 counts are the rationals `trueRate_*`, `table3_pattern` the majority pattern the
 paper reads off them and `deMorgan_antecedents_diverge` the divergence of the equivalent pair.
@@ -42,7 +42,7 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 
 namespace CiardelliZhangChampollion2018
 
-open Conditional (SimilarityOrdering closestImp mem_closestImp_union)
+open Conditional (closestImp mem_closestImp_union)
 open Conditional.Counterfactual
   (selectionalCounterfactual selectionalCounterfactual_eq_true_iff homogeneityCounterfactual
    eval_homogeneityCounterfactual)
@@ -89,11 +89,7 @@ def hamming : World → World → Nat
   | .ud, .du | .du, .ud => 2
 
 /-- Similarity by Hamming distance, one natural ordering on the scenario. -/
-def hammingSim : SimilarityOrdering World where
-  closer w₀ w₁ w₂ := hamming w₀ w₁ ≤ hamming w₀ w₂
-  closer_refl _ _ := Nat.le_refl _
-  closer_trans _ _ _ _ h₁ h₂ := h₁.trans h₂
-  decClose _ _ _ := Nat.decLe _ _
+abbrev hammingSim (w₀ : World) : Preorder World := Preorder.lift (hamming w₀)
 
 /-- *If A were down, the light would be off* is true at the actual world: the closest A-down
 world is `du`. -/
@@ -132,29 +128,29 @@ theorem homogeneity_notBothUp_off_at_uu :
 /-- For any similarity ordering and consequent, if the A-down and the B-down counterfactuals
 are true, so is the not-both-up one: a closest not-both-up world is a closest A-down or a closest
 B-down world. -/
-theorem minimal_change_forces_notBothUp (sim : SimilarityOrdering World) (w₀ : World)
-    {C : Set World} (h_a : w₀ ∈ closestImp sim aDn C) (h_b : w₀ ∈ closestImp sim bDn C) :
-    w₀ ∈ closestImp sim notBothUp C :=
+theorem minimal_change_forces_notBothUp (ord : World → Preorder World) (w₀ : World)
+    {C : Set World} (h_a : w₀ ∈ closestImp ord aDn C) (h_b : w₀ ∈ closestImp ord bDn C) :
+    w₀ ∈ closestImp ord notBothUp C :=
   aOrBdn_eq_notBothUp ▸ mem_closestImp_union h_a h_b
 
 /-- The selectional counterfactual's true verdict is the same quantifier. -/
 theorem selectional_minimal_change_forces_notBothUp_off
-    (sim : SimilarityOrdering World) (w₀ : World)
-    (h_a : selectionalCounterfactual sim aDn lightOff w₀ = .true)
-    (h_b : selectionalCounterfactual sim bDn lightOff w₀ = .true) :
-    selectionalCounterfactual sim notBothUp lightOff w₀ = .true := by
+    (ord : World → Preorder World) [∀ w, DecidableRel (ord w).le] (w₀ : World)
+    (h_a : selectionalCounterfactual ord aDn lightOff w₀ = .true)
+    (h_b : selectionalCounterfactual ord bDn lightOff w₀ = .true) :
+    selectionalCounterfactual ord notBothUp lightOff w₀ = .true := by
   rw [selectionalCounterfactual_eq_true_iff] at *
-  exact minimal_change_forces_notBothUp sim w₀ h_a h_b
+  exact minimal_change_forces_notBothUp ord w₀ h_a h_b
 
 /-- The homogeneity counterfactual's true verdict, with its presupposition satisfied, is the
 same quantifier. -/
 theorem homogeneity_minimal_change_forces_notBothUp_off
-    (sim : SimilarityOrdering World) (w₀ : World)
-    (h_a : (homogeneityCounterfactual sim aDn lightOff).eval w₀ = .true)
-    (h_b : (homogeneityCounterfactual sim bDn lightOff).eval w₀ = .true) :
-    (homogeneityCounterfactual sim notBothUp lightOff).eval w₀ = .true := by
+    (ord : World → Preorder World) [∀ w, DecidableRel (ord w).le] (w₀ : World)
+    (h_a : (homogeneityCounterfactual ord aDn lightOff).eval w₀ = .true)
+    (h_b : (homogeneityCounterfactual ord bDn lightOff).eval w₀ = .true) :
+    (homogeneityCounterfactual ord notBothUp lightOff).eval w₀ = .true := by
   simp only [eval_homogeneityCounterfactual] at *
-  exact selectional_minimal_change_forces_notBothUp_off sim w₀ h_a h_b
+  exact selectional_minimal_change_forces_notBothUp_off ord w₀ h_a h_b
 
 /-! ### The main experiment (Table 3) -/
 

@@ -48,7 +48,7 @@ type rather than generated from syntactic substitution sources.
 
 namespace Santorio2018
 
-open Conditional (SimilarityOrdering closestImp)
+open Conditional (closestImp)
 open Conditional.Counterfactual
 
 variable {W : Type*} [DecidableEq W] [Fintype W]
@@ -95,25 +95,25 @@ theorem disjunctiveClosure_truthmakers_subset (alts : List (Finset W)) (S : Fins
 
 /-! ### Conditionals as descriptions (§6) -/
 
-variable (sim : SimilarityOrdering W) (alts : List (Finset W)) (S : Finset W) (C : Set W)
-  [DecidablePred (· ∈ C)] (w : W)
+variable (ord : W → Preorder W) [∀ w, DecidableRel (ord w).le] (alts : List (Finset W))
+  (S : Finset W) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
 
 /-- `[if φ] DIST_π [would ψ]`: the counterfactual holds of every truthmaker of `φ`. -/
-def distributiveConditional : Prop := Distributive sim (truthmakers alts S) C w
+def distributiveConditional : Prop := Distributive ord (truthmakers alts S) C w
 
 /-- The homogeneity presupposition of `DIST_π`: every truthmaker's counterfactual holds, or
 none does. -/
-def homogeneityPresup : Trivalent := homogeneity sim (truthmakers alts S) C w
+def homogeneityPresup : Trivalent := homogeneity ord (truthmakers alts S) C w
 
 /-- `[if φ] would ψ` without `DIST_π`: the modal extracts the disjunctive closure of the
 truthmakers. -/
-def collectiveConditional : Prop := would sim (truthmakers alts S) C w
+def collectiveConditional : Prop := would ord (truthmakers alts S) C w
 
-instance : Decidable (distributiveConditional sim alts S C w) :=
-  inferInstanceAs (Decidable (Distributive sim (truthmakers alts S) C w))
+instance : Decidable (distributiveConditional ord alts S C w) :=
+  inferInstanceAs (Decidable (Distributive ord (truthmakers alts S) C w))
 
-instance : Decidable (collectiveConditional sim alts S C w) :=
-  inferInstanceAs (Decidable (would sim (truthmakers alts S) C w))
+instance : Decidable (collectiveConditional ord alts S C w) :=
+  inferInstanceAs (Decidable (would ord (truthmakers alts S) C w))
 
 /-! ### Otto and Anna (44) -/
 
@@ -211,9 +211,9 @@ end Spain
 
 /-- Closeness for the party: the Anna-only world is closest to the actual world, then the
 world where both came, then Otto's. -/
-def partySim : SimilarityOrdering Party := .ofBool
-  (fun _ w₁ w₂ ↦ w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
-    (w₁ == .both && w₂ == .ottoOnly))
+abbrev partySim (_ : Party) : Preorder Party := Preorder.ofLE
+  (fun w₁ w₂ ↦ (w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
+    (w₁ == .both && w₂ == .ottoOnly)) = true)
   (by decide) (by decide)
 
 /-- *The party was fun*: only when Anna came alone. -/

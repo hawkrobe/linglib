@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Basic
-public import Linglib.Semantics.Conditionals.SimilarityOrdering
+public import Linglib.Core.Order.Minimals
 
 /-!
 # Conditional operators
@@ -16,8 +16,9 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
 
 * `ofDomain`: the conditional quantifying over a domain of antecedent-worlds.
 * `materialImp`, `strictImp`: the material and strict conditionals.
-* `variablyStrictImp`: Lewis's variably strict conditional over a similarity ordering.
-* `closestImp`: the conditional of the closest antecedent-worlds.
+* `variablyStrictImp`: Lewis's variably strict conditional over a family of preorders.
+* `IsCentered`: strong centering of a family of preorders.
+* `closestImp`: the conditional of the minimal antecedent-worlds.
 * `might`: the *might* counterfactual of a *would* conditional.
 
 ## Main results
@@ -196,9 +197,13 @@ antecedent-world at least as close to `w` as `v` (`variablyStrictImp`). Under th
 Assumption, that closest antecedent-worlds exist whenever antecedent-worlds do, §1.4
 simplifies the clause to the consequent holding at every closest antecedent-world
 (`closestImp`); the two coincide on total orderings wherever the Limit Assumption holds
-(`closestImp_eq_variablyStrictImp`), in particular for finite antecedents. `closestImp` is
-also meaningful on a similarity preorder that is not total, where the closest worlds are the
-minimal ones. `might` is §1.5's *might* counterfactual, the dual of a *would* conditional. -/
+(`closestImp_eq_variablyStrictImp`), in particular for finite antecedents.
+
+The operators take any family `ord : W → Preorder W` of preorders indexed by the evaluation
+world, the closest antecedent-worlds being the minimal ones (`Preorder.minimals`). Lewis reads
+the family as comparative similarity and requires it to be total and strongly centered
+(`IsCentered`); `closestImp` is also meaningful on preorders that are not total. `might` is
+§1.5's *might* counterfactual, the dual of a *would* conditional. -/
 
 /-- The *might* counterfactual of a *would* conditional `op`, *not (if p, would not q)*
 ([lewis-1973] §1.5). -/
@@ -212,140 +217,163 @@ instance {op : Set W → Set W → Set W} [Decidable (w ∈ op p qᶜ)] : Decida
 
 section VariablyStrict
 
-variable {sim : SimilarityOrdering W} {r : Set W}
+variable {ord : W → Preorder W} {r : Set W}
+
+/-- A family of preorders is strongly centered when every world is strictly below every other
+world in its own preorder, [lewis-1973]'s requirement that each world be closer to itself than
+any other world is. -/
+def IsCentered (ord : W → Preorder W) : Prop := ∀ w w' : W, w ≠ w' → (ord w).lt w w'
+
+/-- Under strong centering every world is at least as close to itself as any world is. -/
+theorem IsCentered.le (hc : IsCentered ord) (w w' : W) : (ord w).le w w' := by
+  let := ord w
+  rcases eq_or_ne w w' with rfl | h
+  exacts [le_rfl, (hc w w' h).le]
+
+/-- Under strong centering no other world is as close to a world as the world itself. -/
+theorem IsCentered.not_le (hc : IsCentered ord) {w w' : W} (h : w ≠ w') : ¬ (ord w).le w' w :=
+  let := ord w
+  (hc w w' h).not_ge
+
+/-- Under strong centering a world is its own unique closest world in any set containing it. -/
+theorem IsCentered.minimals_eq_singleton (hc : IsCentered ord) (hw : w ∈ p) :
+    (ord w).minimals p = {w} := by
+  refine Set.eq_singleton_iff_unique_mem.2 ⟨⟨hw, fun u _ _ ↦ hc.le w u⟩, fun u hu ↦ ?_⟩
+  by_contra hne
+  exact hc.not_le (Ne.symm hne) (hu.2 hw (hc.le w u))
+
 
 /-- The variably strict conditional of [lewis-1973] §2.3 for a universal system, one in which
 every world is accessible. It is vacuously true without antecedent-worlds, and otherwise true
 when the consequent holds at every antecedent-world at least as close as some antecedent-world. -/
-def variablyStrictImp (sim : SimilarityOrdering W) (p q : Set W) : Set W :=
-  {w | p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, sim.closer w u v → u ∈ q}
+def variablyStrictImp (ord : W → Preorder W) (p q : Set W) : Set W :=
+  {w | p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, (ord w).le u v → u ∈ q}
 
 @[simp]
 theorem mem_variablyStrictImp :
-    w ∈ variablyStrictImp sim p q ↔ p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, sim.closer w u v → u ∈ q :=
+    w ∈ variablyStrictImp ord p q ↔ p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, (ord w).le u v → u ∈ q :=
   Iff.rfl
 
 /-- The conditional of the closest antecedent-worlds, true when the consequent holds at every
 closest antecedent-world. It is [lewis-1973]'s simplification of the variably strict
 conditional under the Limit Assumption (§1.4). -/
-def closestImp (sim : SimilarityOrdering W) (p q : Set W) : Set W :=
-  ofDomain sim.closest p q
+def closestImp (ord : W → Preorder W) (p q : Set W) : Set W :=
+  ofDomain (fun w ↦ (ord w).minimals) p q
 
 @[simp]
-theorem mem_closestImp : w ∈ closestImp sim p q ↔ sim.closest w p ⊆ q := Iff.rfl
+theorem mem_closestImp : w ∈ closestImp ord p q ↔ (ord w).minimals p ⊆ q := Iff.rfl
 
-theorem mem_closestImp_iff_closestWorlds [Fintype W] [DecidableEq W] [DecidablePred (· ∈ p)] :
-    w ∈ closestImp sim p q ↔ ∀ v ∈ sim.closestWorlds w (Finset.univ.filter (· ∈ p)), v ∈ q := by
-  have hp : (↑(Finset.univ.filter (· ∈ p)) : Set W) = p := by ext; simp
-  have h := sim.coe_closestWorlds w (Finset.univ.filter (· ∈ p))
-  rw [hp] at h
-  rw [mem_closestImp, ← h]
-  exact ⟨fun h v hv ↦ h (Finset.mem_coe.2 hv), fun h v hv ↦ h v (Finset.mem_coe.1 hv)⟩
+/-- Membership in `closestImp` over a finite type, decided by filtering the antecedent-worlds once
+rather than quantifying over every world. -/
+theorem mem_closestImp_iff_forall_filter [Fintype W] [DecidablePred (· ∈ p)] :
+    w ∈ closestImp ord p q ↔ ∀ v ∈ Finset.univ.filter (· ∈ p),
+      (∀ u ∈ Finset.univ.filter (· ∈ p), (ord w).le u v → (ord w).le v u) → v ∈ q := by
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  exact ⟨fun h v hv hmin ↦ h ⟨hv, fun u hu ↦ hmin u hu⟩, fun h v hv ↦ h v hv.1 fun u hu ↦ hv.2 hu⟩
 
-instance [Fintype W] [DecidableEq W] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
-    Decidable (w ∈ closestImp sim p q) :=
-  decidable_of_iff _ mem_closestImp_iff_closestWorlds.symm
+instance [Fintype W] [DecidableRel (ord w).le] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
+    Decidable (w ∈ closestImp ord p q) :=
+  decidable_of_iff _ mem_closestImp_iff_forall_filter.symm
 
 /-- On a total ordering the variably strict conditional entails the conditional of the closest
 antecedent-worlds. -/
-theorem variablyStrictImp_subset_closestImp (htot : sim.Total) :
-    variablyStrictImp sim p q ⊆ closestImp sim p q := by
+theorem variablyStrictImp_subset_closestImp (htot : ∀ w, Std.Total (ord w).le) :
+    variablyStrictImp ord p q ⊆ closestImp ord p q := by
   rintro w (rfl | ⟨v, hv, h⟩) u hu
   · exact absurd hu.1 id
-  · exact h u hu.1 (((SimilarityOrdering.mem_closest_iff_of_total htot).1 hu).2 v hv)
+  · exact h u hu.1 (((Preorder.mem_minimals_iff_forall_le (htot _)).1 hu).2 v hv)
 
 /-- On a total ordering satisfying the Limit Assumption for `p`, the two conditionals coincide
 ([lewis-1973] §1.4). -/
-theorem closestImp_eq_variablyStrictImp (htot : sim.Total)
-    (hlim : ∀ w, p.Nonempty → (sim.closest w p).Nonempty) :
-    closestImp sim p q = variablyStrictImp sim p q := by
+theorem closestImp_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le)
+    (hlim : ∀ w, p.Nonempty → ((ord w).minimals p).Nonempty) :
+    closestImp ord p q = variablyStrictImp ord p q := by
   refine subset_antisymm (fun w hw ↦ ?_) (variablyStrictImp_subset_closestImp htot)
   rcases p.eq_empty_or_nonempty with hp | hp
   · exact .inl hp
   obtain ⟨v, hv⟩ := hlim w hp
-  rw [SimilarityOrdering.mem_closest_iff_of_total htot] at hv
+  rw [Preorder.mem_minimals_iff_forall_le (htot _)] at hv
   refine .inr ⟨v, hv.1, fun u hu huv ↦ hw ?_⟩
-  exact (SimilarityOrdering.mem_closest_iff_of_total htot).2
-    ⟨hu, fun x hx ↦ sim.closer_trans w u v x huv (hv.2 x hx)⟩
+  exact (Preorder.mem_minimals_iff_forall_le (htot _)).2
+    ⟨hu, fun x hx ↦ (ord w).le_trans u v x huv (hv.2 x hx)⟩
 
 /-- On a total ordering the two conditionals coincide for a finite antecedent, which satisfies
 the Limit Assumption. -/
-theorem closestImp_eq_variablyStrictImp_of_finite (htot : sim.Total) (hp : p.Finite) :
-    closestImp sim p q = variablyStrictImp sim p q :=
-  closestImp_eq_variablyStrictImp htot fun w ↦ sim.closest_nonempty w hp
+theorem closestImp_eq_variablyStrictImp_of_finite (htot : ∀ w, Std.Total (ord w).le)
+    (hp : p.Finite) :
+    closestImp ord p q = variablyStrictImp ord p q :=
+  closestImp_eq_variablyStrictImp htot fun w ↦ (ord w).minimals_nonempty_of_finite hp
 
 /-- Without closest antecedent-worlds the conditional of the closest worlds is vacuously true. -/
-theorem mem_closestImp_of_closest_eq_empty (h : sim.closest w p = ∅) :
-    w ∈ closestImp sim p q :=
+theorem mem_closestImp_of_closest_eq_empty (h : (ord w).minimals p = ∅) :
+    w ∈ closestImp ord p q :=
   (mem_closestImp.2 (h ▸ Set.empty_subset q))
 
 /-- Where an antecedent has no closest worlds, as for [lewis-1973]'s line more than an inch long,
 *if p, it would not be v* is true for every world `v`, since every antecedent-world has a
 strictly closer one. -/
-theorem mem_variablyStrictImp_compl_singleton (h : sim.closest w p = ∅) (v : W) :
-    w ∈ variablyStrictImp sim p {v}ᶜ := by
+theorem mem_variablyStrictImp_compl_singleton (h : (ord w).minimals p = ∅) (v : W) :
+    w ∈ variablyStrictImp ord p {v}ᶜ := by
   rcases p.eq_empty_or_nonempty with hp | ⟨u, hu⟩
   · exact .inl hp
   by_cases hv : v ∈ p
-  · have hvc : v ∉ sim.closest w p := h ▸ Set.notMem_empty v
-    simp only [SimilarityOrdering.mem_closest, hv, true_and, not_forall, not_or, not_not] at hvc
-    obtain ⟨x, hx, hvx, hxv⟩ := hvc
+  · have hvc : v ∉ (ord w).minimals p := h ▸ Set.notMem_empty v
+    simp only [Preorder.mem_minimals_iff, hv, true_and, not_forall] at hvc
+    obtain ⟨x, hx, -, hvx⟩ := hvc
     exact .inr ⟨x, hx, fun y _ hyx hyv ↦ hvx (hyv ▸ hyx)⟩
   · exact .inr ⟨u, hu, fun y hy _ hyv ↦ hv (hyv ▸ hy)⟩
 
 /-- So no world is one that `p` might have been, [stalnaker-1981]'s objection to [lewis-1973]
 without the Limit Assumption. -/
-theorem notMem_might_variablyStrictImp_singleton (h : sim.closest w p = ∅) (v : W) :
-    w ∉ might (variablyStrictImp sim) p {v} :=
+theorem notMem_might_variablyStrictImp_singleton (h : (ord w).minimals p = ∅) (v : W) :
+    w ∉ might (variablyStrictImp ord) p {v} :=
   fun hm ↦ hm (mem_variablyStrictImp_compl_singleton h v)
 
 /-- Under strong centering the conditional of the closest worlds entails the material
 conditional. -/
-theorem closestImp_subset_materialImp (hc : sim.isCentered) :
-    closestImp sim p q ⊆ materialImp p q :=
-  fun _ h hp ↦ h ((SimilarityOrdering.closest_eq_singleton_of_mem hc hp).symm ▸ rfl)
+theorem closestImp_subset_materialImp (hc : IsCentered ord) :
+    closestImp ord p q ⊆ materialImp p q :=
+  ofDomain_subset_materialImp fun w hw ↦ ⟨hw, fun u _ _ ↦ hc.le w u⟩
 
-theorem variablyStrictImp_subset_materialImp (hc : sim.isCentered) :
-    variablyStrictImp sim p q ⊆ materialImp p q := by
+theorem variablyStrictImp_subset_materialImp (hc : IsCentered ord) :
+    variablyStrictImp ord p q ⊆ materialImp p q := by
   rintro w (rfl | ⟨v, _, h⟩) hp
-  · exact absurd hp id
-  · rcases eq_or_ne w v with rfl | hne
-    · exact h w hp (sim.closer_refl w w)
-    · exact h w hp (hc w v hne).1
+  exacts [absurd hp id, h w hp (hc.le w v)]
 
-theorem closestImp_eq_univ_of_subset (h : p ⊆ q) : closestImp sim p q = Set.univ :=
-  Set.eq_univ_of_forall fun _ ↦ (sim.closest_subset _ p).trans h
+theorem closestImp_eq_univ_of_subset (h : p ⊆ q) : closestImp ord p q = Set.univ :=
+  Set.eq_univ_of_forall fun _ ↦ (Preorder.minimals_subset _ p).trans h
 
 /-- A conditional holding of each of two antecedents holds of their disjunction. -/
-theorem mem_closestImp_union (hp : w ∈ closestImp sim p r) (hq : w ∈ closestImp sim q r) :
-    w ∈ closestImp sim (p ∪ q) r :=
-  fun _ hu ↦ (SimilarityOrdering.closest_union_subset hu).elim (hp ·) (hq ·)
+theorem mem_closestImp_union (hp : w ∈ closestImp ord p r) (hq : w ∈ closestImp ord q r) :
+    w ∈ closestImp ord (p ∪ q) r :=
+  fun _ hu ↦ (Preorder.minimals_union_subset hu).elim (hp ·) (hq ·)
 
 /-- On a total ordering, a conditional with a disjunctive antecedent entails the conditional of
 one of the disjuncts. -/
-theorem mem_closestImp_or_of_mem_union (htot : sim.Total) (h : w ∈ closestImp sim (p ∪ q) r) :
-    w ∈ closestImp sim p r ∨ w ∈ closestImp sim q r := by
+theorem mem_closestImp_or_of_mem_union (htot : ∀ w, Std.Total (ord w).le)
+    (h : w ∈ closestImp ord (p ∪ q) r) :
+    w ∈ closestImp ord p r ∨ w ∈ closestImp ord q r := by
   by_contra hn
   simp only [not_or, mem_closestImp, Set.not_subset] at hn
   obtain ⟨⟨x, hx, hxr⟩, ⟨y, hy, hyr⟩⟩ := hn
-  rw [SimilarityOrdering.mem_closest_iff_of_total htot] at hx hy
-  rcases htot w x y with hxy | hyx
-  · refine hxr (h ((SimilarityOrdering.mem_closest_iff_of_total htot).2 ⟨.inl hx.1, ?_⟩))
-    exact fun u hu ↦ hu.elim (hx.2 u) fun hu ↦ sim.closer_trans w x y u hxy (hy.2 u hu)
-  · refine hyr (h ((SimilarityOrdering.mem_closest_iff_of_total htot).2 ⟨.inr hy.1, ?_⟩))
-    exact fun u hu ↦ hu.elim (fun hu ↦ sim.closer_trans w y x u hyx (hx.2 u hu)) (hy.2 u)
+  rw [Preorder.mem_minimals_iff_forall_le (htot _)] at hx hy
+  rcases (htot w).total x y with hxy | hyx
+  · refine hxr (h ((Preorder.mem_minimals_iff_forall_le (htot _)).2 ⟨.inl hx.1, ?_⟩))
+    exact fun u hu ↦ hu.elim (hx.2 u) fun hu ↦ (ord w).le_trans x y u hxy (hy.2 u hu)
+  · refine hyr (h ((Preorder.mem_minimals_iff_forall_le (htot _)).2 ⟨.inr hy.1, ?_⟩))
+    exact fun u hu ↦ hu.elim (fun hu ↦ (ord w).le_trans y x u hyx (hx.2 u hu)) (hy.2 u)
 
 /-- With a unique closest antecedent-world, Lewis's *might* coincides with *would*. -/
-theorem mem_might_closestImp_iff_of_closest_eq_singleton {v : W} (h : sim.closest w p = {v}) :
-    w ∈ might (closestImp sim) p q ↔ w ∈ closestImp sim p q := by
+theorem mem_might_closestImp_iff_of_closest_eq_singleton {v : W} (h : (ord w).minimals p = {v}) :
+    w ∈ might (closestImp ord) p q ↔ w ∈ closestImp ord p q := by
   simp [h]
 
 /-- When the antecedent has closest worlds and Conditional Excluded Middle holds, Lewis's *might*
 coincides with *would*, [lewis-1973]'s objection to a semantics validating it as
 [stalnaker-1981] reports it. -/
-theorem mem_might_closestImp_iff_of_cem (h_nonempty : (sim.closest w p).Nonempty)
-    (h_cem : w ∈ closestImp sim p q ∨ w ∈ closestImp sim p qᶜ) :
-    w ∈ might (closestImp sim) p q ↔ w ∈ closestImp sim p q := by
+theorem mem_might_closestImp_iff_of_cem (h_nonempty : ((ord w).minimals p).Nonempty)
+    (h_cem : w ∈ closestImp ord p q ∨ w ∈ closestImp ord p qᶜ) :
+    w ∈ might (closestImp ord) p q ↔ w ∈ closestImp ord p q := by
   obtain ⟨v, hv⟩ := h_nonempty
   rcases h_cem with h | h
   · exact ⟨fun _ ↦ h, fun _ hn ↦ hn hv (h hv)⟩

@@ -48,28 +48,28 @@ namespace AlonsoOvalle2009
 open Conditional Conditional.Counterfactual McKayVanInwagen1977
   Data.Examples
 
-variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
-  (S : List (Finset W)) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
+variable {W : Type*} [DecidableEq W] [Fintype W] (ord : W → Preorder W)
+  [∀ w, DecidableRel (ord w).le] (S : List (Finset W)) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
 
 /-! ### Conditionals as correlatives (§2) -/
 
 /-- *Might* in the consequent (70)–(71) under the universal *if*-clause (25): the closest
 worlds of every alternative are compatible with the consequent. -/
-def DistributiveMight : Prop := ∀ A ∈ S, w ∈ might (closestImp sim) ↑A C
+def DistributiveMight : Prop := ∀ A ∈ S, w ∈ might (closestImp ord) ↑A C
 
-instance : Decidable (DistributiveMight sim S C w) :=
-  inferInstanceAs (Decidable (∀ A ∈ S, w ∈ might (closestImp sim) ↑A C))
+instance : Decidable (DistributiveMight ord S C w) :=
+  inferInstanceAs (Decidable (∀ A ∈ S, w ∈ might (closestImp ord) ↑A C))
 
-omit [DecidableEq W] [Fintype W] [DecidablePred (· ∈ C)] in
+omit [DecidableEq W] [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] in
 /-- Simplification (27): the disjunctive counterfactual entails each disjunct's. -/
-theorem simplification {A B : Finset W} (h : Distributive sim [A, B] C w) :
-    w ∈ closestImp sim ↑A C ∧ w ∈ closestImp sim ↑B C :=
+theorem simplification {A B : Finset W} (h : Distributive ord [A, B] C w) :
+    w ∈ closestImp ord ↑A C ∧ w ∈ closestImp ord ↑B C :=
   ⟨h A (by simp), h B (by simp)⟩
 
-omit [DecidableEq W] [Fintype W] [DecidablePred (· ∈ C)] in
+omit [DecidableEq W] [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] in
 /-- Simplification for *might* (54), the extension of §3.3. -/
-theorem simplification_might {A B : Finset W} (h : DistributiveMight sim [A, B] C w) :
-    w ∈ might (closestImp sim) ↑A C ∧ w ∈ might (closestImp sim) ↑B C :=
+theorem simplification_might {A B : Finset W} (h : DistributiveMight ord [A, B] C w) :
+    w ∈ might (closestImp ord) ↑A C ∧ w ∈ might (closestImp ord) ↑B C :=
   ⟨h A (by simp), h B (by simp)⟩
 
 /-- The good-weather and cold-sun worlds of the bumper-crop model. -/
@@ -90,8 +90,8 @@ theorem bumperCrop_alternatives :
 /-- A sum analysis falsifies a disjunctive counterfactual only when every disjunct's
 counterfactual fails. -/
 theorem homogeneity_ne_false {A : Finset W} (hA : A ∈ S)
-    (h : w ∈ closestImp sim ↑A C) : homogeneity sim S C w ≠ .false :=
-  fun hf => ((homogeneity_eq_false_iff sim S C w).1 hf).2 A hA h
+    (h : w ∈ closestImp ord ↑A C) : homogeneity ord S C w ≠ .false :=
+  fun hf => ((homogeneity_eq_false_iff ord S C w).1 hf).2 A hA h
 
 /-- (29)–(31): Spain joining Germany is closer than Spain joining the U.S., and Hitler is
 pleased only in the former. -/
@@ -101,7 +101,7 @@ inductive HitlerWorld | actual | germany | us
 def HitlerWorld.rank : HitlerWorld → ℕ
   | .actual => 0 | .germany => 1 | .us => 2
 
-def hitlerSim : SimilarityOrdering HitlerWorld := .ofRank fun _ => HitlerWorld.rank
+abbrev hitlerSim (_ : HitlerWorld) : Preorder HitlerWorld := Preorder.lift HitlerWorld.rank
 
 abbrev joinedGermany : Finset HitlerWorld := {.germany}
 abbrev joinedUS : Finset HitlerWorld := {.us}
@@ -144,7 +144,7 @@ end Strict
 /-- Accommodation (44): the modal horizon `f` grows by every world at least as close as the
 closest antecedent worlds. -/
 def expand (f : W → Finset W) (φ : Finset W) (w : W) : Finset W :=
-  f w ∪ Finset.univ.filter fun w' => ∀ w'' ∈ φ, sim.closer w w' w''
+  f w ∪ Finset.univ.filter fun w' => ∀ w'' ∈ φ, (ord w).le w' w''
 
 /-- The counterfactual on a horizon (45): every antecedent world in the horizon is a
 consequent world. -/
@@ -181,7 +181,7 @@ inductive ForkWorld | actual | book | bookBent | baby
 def ForkWorld.rank : ForkWorld → ℕ
   | .actual => 0 | .book | .bookBent => 1 | .baby => 2
 
-def forkSim : SimilarityOrdering ForkWorld := .ofRank fun _ => ForkWorld.rank
+abbrev forkSim (_ : ForkWorld) : Preorder ForkWorld := Preorder.lift ForkWorld.rank
 
 abbrev hasBook : Finset ForkWorld := {.book, .bookBent}
 abbrev newborn : Finset ForkWorld := {.baby}
@@ -215,7 +215,7 @@ def BeliefWorld.rank : BeliefWorld → BeliefWorld → ℕ
   | .w₃, .book₃ | .w₃, .baby₃ | .w₄, .book₄ | .w₄, .baby₄ => 1
   | _, _ => 2
 
-def beliefSim : SimilarityOrdering BeliefWorld := .ofRank BeliefWorld.rank
+abbrev beliefSim (w₀ : BeliefWorld) : Preorder BeliefWorld := Preorder.lift (BeliefWorld.rank w₀)
 
 abbrev belief : Finset BeliefWorld := {.w₃, .w₄}
 abbrev bookB : Finset BeliefWorld := {.book₃, .book₄}
@@ -234,21 +234,21 @@ theorem manner_insufficient :
 
 /-! ### The visibility of the disjuncts (§5.2) -/
 
-omit [Fintype W] in
+omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- Nute's recipe (80): when the consequent is one of two incompatible disjuncts, the
 analysis makes the counterfactual true only if the other disjunct is impossible. -/
 theorem distributive_pair_disjoint_iff {A B : Finset W} (h : Disjoint A B) :
-    Distributive sim [A, B] ↑A w ↔ B = ∅ := by
+    Distributive ord [A, B] ↑A w ↔ B = ∅ := by
   refine ⟨fun hd ↦ ?_, fun hB ↦ ?_⟩
   · by_contra hne
-    obtain ⟨b, hb⟩ := sim.closest_nonempty w B.finite_toSet
+    obtain ⟨b, hb⟩ := (ord w).minimals_nonempty_of_finite B.finite_toSet
       (Finset.coe_nonempty.2 (Finset.nonempty_iff_ne_empty.2 hne))
-    exact Finset.disjoint_left.1 h (hd B (by simp) hb) (sim.closest_subset w _ hb)
+    exact Finset.disjoint_left.1 h (hd B (by simp) hb) (Preorder.minimals_subset _ _ hb)
   · subst hB
     intro X hX
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hX
     rcases hX with rfl | rfl
-    · exact (sim.closest_subset w _).trans le_rfl
+    · exact Preorder.minimals_subset _ _
     · simp
 
 /-- (80): more defense spending is closer than more education spending. -/
@@ -258,7 +258,7 @@ inductive BudgetWorld | actual | defense | education
 def BudgetWorld.rank : BudgetWorld → ℕ
   | .actual => 0 | .defense => 1 | .education => 2
 
-def budgetSim : SimilarityOrdering BudgetWorld := .ofRank fun _ => BudgetWorld.rank
+abbrev budgetSim (_ : BudgetWorld) : Preorder BudgetWorld := Preorder.lift BudgetWorld.rank
 
 abbrev defense : Finset BudgetWorld := {.defense}
 abbrev education : Finset BudgetWorld := {.education}
@@ -294,8 +294,8 @@ def forkAlts : String → Option (List (Finset ForkWorld))
 
 /-- The verdict of the analysis for a *would* or *might* consequent, possibly negated. -/
 def verdict : String → Bool → Option Bool
-  | "would", neg => some (decide (Distributive sim S C w) != neg)
-  | "might", neg => some (decide (DistributiveMight sim S C w) != neg)
+  | "would", neg => some (decide (Distributive ord S C w) != neg)
+  | "might", neg => some (decide (DistributiveMight ord S C w) != neg)
   | _, _ => none
 
 /-- A row's predicted verdict from its `scenario`, `antecedent`, `modal`, and `polarity`

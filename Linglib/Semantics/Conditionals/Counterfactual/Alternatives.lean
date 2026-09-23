@@ -32,8 +32,8 @@ counterfactual holds, false when none does, and indeterminate otherwise.
 
 namespace Conditional.Counterfactual
 
-variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
-  (S : List (Finset W)) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
+variable {W : Type*} [DecidableEq W] [Fintype W] (ord : W → Preorder W)
+  [∀ w, DecidableRel (ord w).le] (S : List (Finset W)) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
 
 /-- The union of the propositions in `S`. -/
 def disjunctiveClosure : Finset W := S.foldr (· ∪ ·) ∅
@@ -49,25 +49,25 @@ omit [Fintype W] in
 
 /-- The counterfactual over `S` quantifies over the closest worlds of the union of its
 propositions. -/
-def would : Prop := w ∈ closestImp sim ↑(disjunctiveClosure S) C
+def would : Prop := w ∈ closestImp ord ↑(disjunctiveClosure S) C
 
 /-- The distributive reading, on which the counterfactual holds of each proposition in `S`. -/
-def Distributive : Prop := ∀ A ∈ S, w ∈ closestImp sim ↑A C
+def Distributive : Prop := ∀ A ∈ S, w ∈ closestImp ord ↑A C
 
 /-- The all-or-nothing verdict over `S`. -/
 def homogeneity : Trivalent :=
-  Trivalent.distList S fun A ↦ w ∈ closestImp sim ↑A C
+  Trivalent.distList S fun A ↦ w ∈ closestImp ord ↑A C
 
-instance : Decidable (would sim S C w) :=
-  inferInstanceAs (Decidable (w ∈ closestImp sim _ C))
+instance : Decidable (would ord S C w) :=
+  inferInstanceAs (Decidable (w ∈ closestImp ord _ C))
 
-instance : Decidable (Distributive sim S C w) :=
-  inferInstanceAs (Decidable (∀ A ∈ S, w ∈ closestImp sim ↑A C))
+instance : Decidable (Distributive ord S C w) :=
+  inferInstanceAs (Decidable (∀ A ∈ S, w ∈ closestImp ord ↑A C))
 
 theorem distributive_iff_homogeneity_eq_true :
-    Distributive sim S C w ↔ homogeneity sim S C w = .true := by
+    Distributive ord S C w ↔ homogeneity ord S C w = .true := by
   unfold homogeneity Trivalent.distList
-  by_cases h : ∀ A ∈ S, w ∈ closestImp sim ↑A C
+  by_cases h : ∀ A ∈ S, w ∈ closestImp ord ↑A C
   · rw [ite_eq_left h]; exact ⟨fun _ ↦ rfl, fun _ ↦ h⟩
   · rw [ite_eq_right h]
     refine ⟨fun h' ↦ (h h').elim, fun h' ↦ ?_⟩
@@ -75,12 +75,12 @@ theorem distributive_iff_homogeneity_eq_true :
 
 /-- The verdict is false iff `S` is nonempty and no proposition's counterfactual holds. -/
 theorem homogeneity_eq_false_iff :
-    homogeneity sim S C w = .false ↔ S ≠ [] ∧ ∀ A ∈ S, w ∉ closestImp sim ↑A C :=
+    homogeneity ord S C w = .false ↔ S ≠ [] ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
   Trivalent.distList_eq_false_iff _ _
 
-omit [Fintype W] [DecidablePred (· ∈ C)] in
+omit [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] in
 /-- On a single proposition the counterfactual quantifies over its closest worlds. -/
-theorem would_singleton (A : Finset W) : would sim [A] C w ↔ w ∈ closestImp sim ↑A C := by
+theorem would_singleton (A : Finset W) : would ord [A] C w ↔ w ∈ closestImp ord ↑A C := by
   simp only [would, disjunctiveClosure, List.foldr, Finset.union_empty]
 
 end Conditional.Counterfactual

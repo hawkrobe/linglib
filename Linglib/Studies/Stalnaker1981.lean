@@ -128,14 +128,17 @@ inductive BVWorld
   | actual | bothItalian | bothFrench
   deriving Repr, DecidableEq, Fintype
 
-/-- The similarity ordering: the actual world is closest to itself, and the two compatriot
-worlds tie. -/
-def bvSim : SimilarityOrdering BVWorld := .ofBool
-  (fun | .actual, .actual, _ => true
-       | .actual, .bothItalian, .bothFrench => true
-       | .actual, .bothFrench, .bothItalian => true
-       | _, w₁, w₂ => w₁ == w₂)
-  (by decide) (by decide)
+/-- Similarity to `w₀`: the actual world is closest to itself, and the two compatriot worlds
+tie. -/
+def bvCloser : BVWorld → BVWorld → BVWorld → Bool
+  | .actual, .actual, _ => true
+  | .actual, .bothItalian, .bothFrench => true
+  | .actual, .bothFrench, .bothItalian => true
+  | _, w₁, w₂ => w₁ == w₂
+
+/-- The similarity preorders of `bvCloser`. -/
+abbrev bvSim (w₀ : BVWorld) : Preorder BVWorld :=
+  Preorder.ofLE (bvCloser w₀ · · = true) (by revert w₀; decide) (by revert w₀; decide)
 
 /-- Bizet and Verdi are compatriots. -/
 abbrev compatriots : Set BVWorld := {.bothItalian, .bothFrench}
@@ -200,13 +203,16 @@ inductive CourtWorld
   | actual | w1 | w2
   deriving Repr, DecidableEq, Fintype
 
-/-- The similarity ordering: the two vacancy worlds tie. -/
-def courtSim : SimilarityOrdering CourtWorld := .ofBool
-  (fun | .actual, .actual, _ => true
-       | .actual, .w1, .w2 => true
-       | .actual, .w2, .w1 => true
-       | _, w₁, w₂ => w₁ == w₂)
-  (by decide) (by decide)
+/-- Similarity to `w₀`: the two vacancy worlds tie. -/
+def courtCloser : CourtWorld → CourtWorld → CourtWorld → Bool
+  | .actual, .actual, _ => true
+  | .actual, .w1, .w2 => true
+  | .actual, .w2, .w1 => true
+  | _, w₁, w₂ => w₁ == w₂
+
+/-- The similarity preorders of `courtCloser`. -/
+abbrev courtSim (w₀ : CourtWorld) : Preorder CourtWorld :=
+  Preorder.ofLE (courtCloser w₀ · · = true) (by revert w₀; decide) (by revert w₀; decide)
 
 /-- A vacancy occurs. -/
 abbrev vacancy : Set CourtWorld := {.w1, .w2}
@@ -249,29 +255,29 @@ end Court
 
 section Limit
 
-variable {W : Type*} {sim : SimilarityOrdering W} {A : Set W} {w : W}
+variable {W : Type*} {ord : W → Preorder W} {A : Set W} {w : W}
 
 /-- Where an antecedent has no closest worlds, as for [lewis-1973]'s line more than an inch
 long, *if A, it would not be x* is true on Lewis's analysis for every world `x`: below any
 antecedent-world there is a closer one. -/
-theorem lewisWould_ne (h : sim.closest w A = ∅) (x : W) : w ∈ variablyStrictImp sim A {x}ᶜ :=
+theorem lewisWould_ne (h : (ord w).minimals A = ∅) (x : W) : w ∈ variablyStrictImp ord A {x}ᶜ :=
   mem_variablyStrictImp_compl_singleton h x
 
 /-- So there is no world the antecedent might have been, on Lewis's *might*. -/
-theorem not_lewisMight_eq (h : sim.closest w A = ∅) (x : W) :
-    w ∉ might (variablyStrictImp sim) A {x} :=
+theorem not_lewisMight_eq (h : (ord w).minimals A = ∅) (x : W) :
+    w ∉ might (variablyStrictImp ord) A {x} :=
   notMem_might_variablyStrictImp_singleton h x
 
 /-- Without the limit assumption the consequence condition fails: the consequents *not x*,
 over all antecedent-worlds `x`, jointly entail *not A*, each conditional is true, and for a
 possible antecedent the conditional with the entailed consequent is false. -/
-theorem not_consequence_lewisWould (h : sim.closest w A = ∅) (hA : A.Nonempty) :
-    (⋂ x ∈ A, ({x}ᶜ : Set W)) ⊆ Aᶜ ∧ (∀ x ∈ A, w ∈ variablyStrictImp sim A {x}ᶜ) ∧
-      w ∉ variablyStrictImp sim A Aᶜ := by
+theorem not_consequence_lewisWould (h : (ord w).minimals A = ∅) (hA : A.Nonempty) :
+    (⋂ x ∈ A, ({x}ᶜ : Set W)) ⊆ Aᶜ ∧ (∀ x ∈ A, w ∈ variablyStrictImp ord A {x}ᶜ) ∧
+      w ∉ variablyStrictImp ord A Aᶜ := by
   refine ⟨fun v hv hvA ↦ Set.mem_iInter₂.1 hv v hvA rfl, fun x _ ↦ lewisWould_ne h x, ?_⟩
   rintro (hA' | ⟨v, hv, hvc⟩)
   · exact hA.ne_empty hA'
-  · exact hvc v hv (sim.closer_refl w v) hv
+  · exact hvc v hv ((ord w).le_refl v) hv
 
 end Limit
 
@@ -279,13 +285,13 @@ end Limit
 
 section Might
 
-variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (A B : Set W)
+variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (ord w).le] (A B : Set W)
   [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] (w : W)
 
 /-- *Might* as a possibility operator over the conditional keeps Lewis's formulation: *if A,
 might B* is true exactly when *if A, would not-B* is not true. -/
-theorem selectionalMight_iff (h : (sim.closest w A).Nonempty) :
-    selectionalMight sim A B w ↔ selectionalCounterfactual sim A Bᶜ w ≠ .true := by
+theorem selectionalMight_iff (h : ((ord w).minimals A).Nonempty) :
+    selectionalMight ord A B w ↔ selectionalCounterfactual ord A Bᶜ w ≠ .true := by
   obtain ⟨v, hv⟩ := h
   unfold selectionalMight selectionalCounterfactual
   simp only [compl_compl]

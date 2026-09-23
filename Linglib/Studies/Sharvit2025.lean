@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Trivalent
-import Linglib.Semantics.Conditionals.SimilarityOrdering
+import Linglib.Core.Order.Minimals
 import Linglib.Data.Examples.Sharvit2025
 
 /-!
@@ -56,7 +56,7 @@ if-over-∃ reading, the asymmetry of the responses (33) (`forallOverIf_imp_ifOv
 
 namespace Sharvit2025
 
-open Presupposition PartialProp Conditional
+open Presupposition PartialProp
 
 variable {W E : Type*}
 
@@ -83,7 +83,7 @@ theorem orKPSymmetric_comm (p q : PartialProp W) (w : W) :
 
 /-! ### Karttunen's conditional presupposition and the closest-worlds one -/
 
-variable (EP : Set W) (sim : SimilarityOrdering W)
+variable (EP : Set W) (sim : W → Preorder W)
 
 /-- The K/P conditional (100): defined when the antecedent is, presupposing the consequent's
 definedness at the evaluation world if the antecedent is true there; it asserts that every
@@ -100,10 +100,10 @@ theorem ifKP_presup_of_not_assertion {p : PartialProp W} (q : PartialProp W) {w 
 
 /-- CLOS (120): the closest worlds to `w`, under the similarity ordering the context supplies,
 among the `Y`-worlds of the epistemic state. -/
-def clos (w : W) (Y : Set W) : Set W := sim.closest w (Y ∩ EP)
+def clos (w : W) (Y : Set W) : Set W := (sim w).minimals (Y ∩ EP)
 
 theorem clos_subset (w : W) (Y : Set W) : clos EP sim w Y ⊆ Y :=
-  (sim.closest_subset w _).trans Set.inter_subset_left
+  (Preorder.minimals_subset _ _).trans Set.inter_subset_left
 
 /-- The K/P* conditional (119): defined when the antecedent is and the consequent is defined at
 the closest antecedent-worlds, asserting that those are consequent-worlds. -/

@@ -125,32 +125,32 @@ section Simplification
 
 open Conditional Conditional.Counterfactual
 
-variable (sim : SimilarityOrdering W) (p q r : Set W)
+variable (ord : W → Preorder W) (p q r : Set W)
 
 /-- The alternatives of `(p ∨ q) → r`: the antecedent's disjunction replaced by its disjuncts
 and their conjunction. -/
 def sdaAlts : Set (Set W) :=
-  {closestImp sim (p ∪ q) r, closestImp sim p r, closestImp sim q r,
-    closestImp sim (p ∩ q) r}
+  {closestImp ord (p ∪ q) r, closestImp ord p r, closestImp ord q r,
+    closestImp ord (p ∩ q) r}
 
-variable {sim p q r}
+variable {ord p q r}
 
-/-- Simplification of disjunctive antecedents: over a total similarity ordering, given a world
+/-- Simplification of disjunctive antecedents: over total similarity preorders, given a world
 where only the first simplification holds, one where only the second does, and one where both
 hold but the conjunctive one fails, `(p ∨ q) → r` strengthens to
 `(p → r) ∧ (q → r) ∧ ¬((p ∧ q) → r)`. -/
-theorem sda (htot : sim.Total)
-    (h₁ : ∃ w ∈ closestImp sim (p ∪ q) r,
-      w ∉ closestImp sim q r ∪ closestImp sim (p ∩ q) r)
-    (h₂ : ∃ w ∈ closestImp sim (p ∪ q) r,
-      w ∉ closestImp sim p r ∪ closestImp sim (p ∩ q) r)
-    (h : ∃ w ∈ closestImp sim p r ∩ closestImp sim q r,
-      w ∉ closestImp sim (p ∩ q) r) :
-    exhIEII (sdaAlts sim p q r) (closestImp sim (p ∪ q) r) =
-      (closestImp sim p r ∩ closestImp sim q r) \ closestImp sim (p ∩ q) r := by
-  have hsub : closestImp sim p r ∩ closestImp sim q r ⊆ closestImp sim (p ∪ q) r :=
+theorem sda (htot : ∀ w, Std.Total (ord w).le)
+    (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r,
+      w ∉ closestImp ord q r ∪ closestImp ord (p ∩ q) r)
+    (h₂ : ∃ w ∈ closestImp ord (p ∪ q) r,
+      w ∉ closestImp ord p r ∪ closestImp ord (p ∩ q) r)
+    (h : ∃ w ∈ closestImp ord p r ∩ closestImp ord q r,
+      w ∉ closestImp ord (p ∩ q) r) :
+    exhIEII (sdaAlts ord p q r) (closestImp ord (p ∪ q) r) =
+      (closestImp ord p r ∩ closestImp ord q r) \ closestImp ord (p ∩ q) r := by
+  have hsub : closestImp ord p r ∩ closestImp ord q r ⊆ closestImp ord (p ∪ q) r :=
     fun _ h ↦ mem_closestImp_union h.1 h.2
-  have hcov : closestImp sim (p ∪ q) r ⊆ closestImp sim p r ∪ closestImp sim q r :=
+  have hcov : closestImp ord (p ∪ q) r ⊆ closestImp ord p r ∪ closestImp ord q r :=
     fun _ h ↦ mem_closestImp_or_of_mem_union htot h
   rw [sdaAlts, exhIEII_pair hcov
     (h₁.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_right fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
@@ -160,9 +160,9 @@ theorem sda (htot : sim.Total)
 /-- Simplification fails when the consequent is one of the disjuncts (71): the other
 simplification is the only contingent alternative, so it is excluded. -/
 theorem sda_consequent_disjunct
-    (h : ∃ w ∈ closestImp sim (p ∪ q) p, w ∉ closestImp sim q p) :
-    exhIEII (sdaAlts sim p q p) (closestImp sim (p ∪ q) p) =
-      closestImp sim (p ∪ q) p \ closestImp sim q p := by
+    (h : ∃ w ∈ closestImp ord (p ∪ q) p, w ∉ closestImp ord q p) :
+    exhIEII (sdaAlts ord p q p) (closestImp ord (p ∪ q) p) =
+      closestImp ord (p ∪ q) p \ closestImp ord q p := by
   refine exhIEII_eq_diff_of_forall_subset (by simp [sdaAlts]) (fun x hx hne ↦ ?_) h
   simp only [sdaAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
   rcases hx with rfl | rfl | rfl | rfl
@@ -171,31 +171,31 @@ theorem sda_consequent_disjunct
   · exact absurd rfl hne
   · exact fun _ _ ↦ by rw [closestImp_eq_univ_of_subset Set.inter_subset_left]; trivial
 
-variable (sim p q r) in
+variable (ord p q r) in
 /-- The alternatives of `(Exh(p ∨ q) ∨ (p ∧ q)) → r`, the *or both* antecedent parsed with an
 embedded exhaustifier by Hurford's constraint (80): the antecedent's three cells. -/
 def orBothAlts : Set (Set W) :=
-  {closestImp sim (p ∪ q) r, closestImp sim (p \ q) r,
-    closestImp sim (q \ p) r, closestImp sim (p ∩ q) r}
+  {closestImp ord (p ∪ q) r, closestImp ord (p \ q) r,
+    closestImp ord (q \ p) r, closestImp ord (p ∩ q) r}
 
 /-- With the antecedent's cells as alternatives nothing is excludable and, given a world
 verifying each cell's conditional alone and one verifying all three, everything is included:
 `(p ∨ q) → r` asserts the conjunctive conditional it denied under `sdaAlts` (82). -/
-theorem orBoth (htot : sim.Total)
-    (h₁ : ∃ w ∈ closestImp sim (p ∪ q) r ∩ closestImp sim (p \ q) r,
-      w ∉ closestImp sim (q \ p) r ∪ closestImp sim (p ∩ q) r)
-    (h₂ : ∃ w ∈ closestImp sim (p ∪ q) r ∩ closestImp sim (q \ p) r,
-      w ∉ closestImp sim (p \ q) r ∪ closestImp sim (p ∩ q) r)
-    (h₃ : ∃ w ∈ closestImp sim (p ∪ q) r ∩ closestImp sim (p ∩ q) r,
-      w ∉ closestImp sim (p \ q) r ∪ closestImp sim (q \ p) r)
-    (h : ∃ w ∈ closestImp sim (p ∪ q) r, w ∈ closestImp sim (p \ q) r ∧
-      w ∈ closestImp sim (q \ p) r ∧ w ∈ closestImp sim (p ∩ q) r) :
-    exhIEII (orBothAlts sim p q r) (closestImp sim (p ∪ q) r) =
-      closestImp sim (p ∪ q) r ∩ closestImp sim (p \ q) r ∩
-        closestImp sim (q \ p) r ∩ closestImp sim (p ∩ q) r := by
-  have hcov : closestImp sim (p ∪ q) r ⊆
-      ⋃ i, ![closestImp sim (p \ q) r, closestImp sim (q \ p) r,
-        closestImp sim (p ∩ q) r] i := by
+theorem orBoth (htot : ∀ w, Std.Total (ord w).le)
+    (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r ∩ closestImp ord (p \ q) r,
+      w ∉ closestImp ord (q \ p) r ∪ closestImp ord (p ∩ q) r)
+    (h₂ : ∃ w ∈ closestImp ord (p ∪ q) r ∩ closestImp ord (q \ p) r,
+      w ∉ closestImp ord (p \ q) r ∪ closestImp ord (p ∩ q) r)
+    (h₃ : ∃ w ∈ closestImp ord (p ∪ q) r ∩ closestImp ord (p ∩ q) r,
+      w ∉ closestImp ord (p \ q) r ∪ closestImp ord (q \ p) r)
+    (h : ∃ w ∈ closestImp ord (p ∪ q) r, w ∈ closestImp ord (p \ q) r ∧
+      w ∈ closestImp ord (q \ p) r ∧ w ∈ closestImp ord (p ∩ q) r) :
+    exhIEII (orBothAlts ord p q r) (closestImp ord (p ∪ q) r) =
+      closestImp ord (p ∪ q) r ∩ closestImp ord (p \ q) r ∩
+        closestImp ord (q \ p) r ∩ closestImp ord (p ∩ q) r := by
+  have hcov : closestImp ord (p ∪ q) r ⊆
+      ⋃ i, ![closestImp ord (p \ q) r, closestImp ord (q \ p) r,
+        closestImp ord (p ∩ q) r] i := by
     intro w hw
     have hpq : p ∪ q = p \ q ∪ (q \ p ∪ p ∩ q) := by
       ext x; by_cases hp : x ∈ p <;> by_cases hq : x ∈ q <;> simp [hp, hq]
@@ -205,9 +205,9 @@ theorem orBoth (htot : sim.Total)
     rcases mem_closestImp_or_of_mem_union htot h with h | h
     · exact Set.mem_iUnion.2 ⟨1, h⟩
     · exact Set.mem_iUnion.2 ⟨2, h⟩
-  have hA : orBothAlts sim p q r = insert (closestImp sim (p ∪ q) r)
-      (Set.range ![closestImp sim (p \ q) r, closestImp sim (q \ p) r,
-        closestImp sim (p ∩ q) r]) := by
+  have hA : orBothAlts ord p q r = insert (closestImp ord (p ∪ q) r)
+      (Set.range ![closestImp ord (p \ q) r, closestImp ord (q \ p) r,
+        closestImp ord (p ∩ q) r]) := by
     simp only [orBothAlts, Matrix.range_cons, Matrix.range_empty, Set.singleton_union,
       Set.union_empty]
   rw [hA, exhIEII_insert_range hcov ?_ ?_]
@@ -254,10 +254,10 @@ def rank (w₀ w : Switch) : ℕ :=
   (if w.light = w₀.light then 0 else 4) + (if w.up₁ = w₀.up₁ then 0 else 1) +
     (if w.up₂ = w₀.up₂ then 0 else 1)
 
-/-- The similarity ordering by `rank`. -/
-def sim : SimilarityOrdering Switch := .ofRank rank
+/-- Similarity to `w₀`, ordered by `rank`. -/
+abbrev sim (w₀ : Switch) : Preorder Switch := Preorder.lift (rank w₀)
 
-theorem sim_total : sim.Total := SimilarityOrdering.total_ofRank rank
+theorem sim_total (w₀ : Switch) : Std.Total (sim w₀).le := Preorder.total_lift (rank w₀)
 
 /-- Switch A is down. -/
 abbrev down₁ : Set Switch := {w | w.up₁ = false}

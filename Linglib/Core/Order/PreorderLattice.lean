@@ -86,6 +86,10 @@ instance : CompleteLattice (Preorder α) :=
 
 @[simp] theorem bot_le_iff {a b : α} : (⊥ : Preorder α).le a b ↔ a = b := Iff.rfl
 
+instance : DecidableRel (⊤ : Preorder α).le := fun _ _ ↦ isTrue trivial
+
+instance [DecidableEq α] : DecidableRel (⊥ : Preorder α).le := fun a b ↦ decEq a b
+
 theorem inf_le_iff {p q : Preorder α} {a b : α} :
     (p ⊓ q).le a b ↔ p.le a b ∧ q.le a b := Iff.rfl
 
