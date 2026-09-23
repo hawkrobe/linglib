@@ -40,11 +40,7 @@ def graph : CausalGraph V := ⟨λ
   | .doorOpens => {.handle, .lock, .circuit, .electricity}
   | _ => ∅⟩
 
-def rank : CausalGraph.Ranking graph :=
-  ⟨λ | .circuit => 1 | .doorOpens => 2 | _ => 0,
-    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
-
-instance : CausalGraph.IsDAG graph := rank.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- The structural entailments G, H and I: the circuit closes when the button is pressed, and
 the door opens manually (handle on, lock off) or automatically (circuit and power on, lock
@@ -86,29 +82,27 @@ def bothWorld := valuation
 /-- The lock was disengaged first, the handle turned last. -/
 def time : V → ℕ | .lock => 0 | .handle => 2 | _ => 1
 
-theorem rank_lt : ∀ v, rank v < 3 := by decide
+theorem manual_minimal : IsMinimalSufficientSet model manual .doorOpens true := by
+  decide +kernel
 
-theorem manual_minimal : IsMinimalSufficientSet model manual .doorOpens true :=
-  (isMinimalSufficientSet_iff_fuel model 3 rank rank_lt _ _ _).2 (by decide +kernel)
-
-theorem automatic_minimal : IsMinimalSufficientSet model automatic .doorOpens true :=
-  (isMinimalSufficientSet_iff_fuel model 3 rank rank_lt _ _ _).2 (by decide +kernel)
+theorem automatic_minimal : IsMinimalSufficientSet model automatic .doorOpens true := by
+  decide +kernel
 
 /-- *John opened the door*, *John caused the door to open*: the handle is the final condition
 of the only completed set. -/
-theorem handle_selectsFinal : SelectsFinal model handleWorld time .handle .doorOpens true :=
-  (selectsFinal_iff_fuel model 3 rank rank_lt _ _ _ _ _).2 (by decide +kernel)
+theorem handle_selectsFinal : SelectsFinal model handleWorld time .handle .doorOpens true := by
+  decide +kernel
 
 theorem handle_selectsMember : SelectsMember model handleWorld .handle .doorOpens true :=
   handle_selectsFinal.selectsMember
 
 /-- The converse of Fodor's entailment fails: the unlocked lock is a condition *cause* may
 select but not the final one. -/
-theorem lock_selectsMember : SelectsMember model handleWorld .lock .doorOpens true :=
-  (selectsMember_iff_fuel model 3 rank rank_lt _ _ _ _).2 (by decide +kernel)
+theorem lock_selectsMember : SelectsMember model handleWorld .lock .doorOpens true := by
+  decide +kernel
 
-theorem lock_not_selectsFinal : ¬ SelectsFinal model handleWorld time .lock .doorOpens true :=
-  λ h => absurd ((selectsFinal_iff_fuel model 3 rank rank_lt _ _ _ _ _).1 h) (by decide +kernel)
+theorem lock_not_selectsFinal : ¬ SelectsFinal model handleWorld time .lock .doorOpens true := by
+  decide +kernel
 
 /-- With both sets completed, neither construction can select the handle. -/
 theorem overdetermined : ¬ SelectsMember model bothWorld .handle .doorOpens true :=

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.SEM.Entailment
 
 /-!
 # Sloman, Barbey and Hotaling (2009): A Causal Model Theory of Cause, Enable, and Prevent
@@ -119,21 +119,9 @@ def oneLink : CausalGraph V := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A}⟩
 /-- The two-link model: B's parents are A and the accessory X. -/
 def twoLink : CausalGraph V := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A, .X}⟩
 
-def depth : V → ℕ := λ | .A => 0 | .X => 0 | .B => 1
+instance : CausalGraph.IsDAG oneLink := .of_irrefl (by decide)
 
-private lemma oneLink_depth_lt : ∀ {u v : V}, u ∈ oneLink.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private lemma twoLink_depth_lt : ∀ {u v : V}, u ∈ twoLink.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def oneLinkRanking : CausalGraph.Ranking oneLink := ⟨depth, oneLink_depth_lt⟩
-
-private def twoLinkRanking : CausalGraph.Ranking twoLink := ⟨depth, twoLink_depth_lt⟩
-
-instance : CausalGraph.IsDAG oneLink := oneLinkRanking.isDAG
-
-instance : CausalGraph.IsDAG twoLink := twoLinkRanking.isDAG
+instance : CausalGraph.IsDAG twoLink := .of_irrefl (by decide)
 
 /-- A one-link model with the given equation at B. -/
 def oneLinkModel (f : Bool → Bool) : BoolSEM V :=
@@ -172,22 +160,12 @@ abbrev preventsAnd : BoolSEM V := twoLinkModel (λ a x => !a && x)
 /-- (4c) *A prevents B* with an accessory: `B := ¬(A ∧ X)`. -/
 abbrev preventsNand : BoolSEM V := twoLinkModel (λ a x => !(a && x))
 
-private lemma oneLink_entails_iff (f : Bool → Bool) {s : Valuation (λ _ : V => Bool)} {v : V}
-    {x : Bool} : causallyEntails (oneLinkModel f) s v x ↔
-      developDetVtxFuel (oneLinkModel f) s 2 v = some x :=
-  causallyEntails_iff_fuel _ oneLinkRanking (by cases v <;> decide +revert) s x
-
-private lemma twoLink_entails_iff (f : Bool → Bool → Bool) {s : Valuation (λ _ : V => Bool)}
-    {v : V} {x : Bool} : causallyEntails (twoLinkModel f) s v x ↔
-      developDetVtxFuel (twoLinkModel f) s 2 v = some x :=
-  causallyEntails_iff_fuel _ twoLinkRanking (by cases v <;> decide +revert) s x
-
 /-- The accessory present. -/
 def accessory : Valuation (λ _ : V => Bool) := Valuation.empty.extend .X true
 
 /-- *A causes B* holds of (2), and the model realizes `B := A`. -/
 theorem causes_Causes : Causes causes .A .B ∧ EqCauses causes Valuation.empty .A .B :=
-  ⟨by decide, λ v => (oneLink_entails_iff id).mpr (by cases v <;> decide)⟩
+  ⟨by decide, fun v ↦ by cases v <;> decide⟩
 
 /-- Experiments 2 and 3: from *A causes B* and A, B follows with no accessory settled. -/
 theorem causes_entails : causallyEntails causes (Valuation.empty.extend .A true) .B true :=
@@ -212,30 +190,30 @@ theorem enables_Enables : Enables enables .A .B := by
 /-- Experiments 1 and 3: from *A enables B* and A alone, B does not follow, the accessory being
 unknown. -/
 theorem enables_not_entails : ¬ causallyEntails enables (Valuation.empty.extend .A true) .B true :=
-  (twoLink_entails_iff (· && ·)).not.mpr (by decide)
+  by decide
 
 /-- With the accessory present, B follows from A. -/
 theorem enables_entails_of_accessory :
     causallyEntails enables (accessory.extend .A true) .B true :=
-  (twoLink_entails_iff (· && ·)).mpr (by decide)
+  by decide
 
 /-- (4a) prevents: turning A on entails B off. -/
 theorem prevents_Prevents :
     Prevents prevents Valuation.empty .A .B ∧ EqPrevents prevents Valuation.empty .A .B :=
-  ⟨⟨by decide, (oneLink_entails_iff (!·)).mpr (by decide)⟩,
-    λ v => (oneLink_entails_iff (!·)).mpr (by cases v <;> decide)⟩
+  ⟨⟨by decide, by decide⟩,
+    fun v ↦ by cases v <;> decide⟩
 
 /-- (4b) and (4c) prevent when the accessory is present, and (4b) does so as the equation
 `B := ¬A` on that background. -/
 theorem preventsAnd_Prevents :
     Prevents preventsAnd accessory .A .B ∧ EqPrevents preventsAnd accessory .A .B :=
-  ⟨⟨by decide, (twoLink_entails_iff (λ a x => !a && x)).mpr (by decide)⟩,
-    λ v => (twoLink_entails_iff (λ a x => !a && x)).mpr (by cases v <;> decide)⟩
+  ⟨⟨by decide, by decide⟩,
+    fun v ↦ by cases v <;> decide⟩
 
 theorem preventsNand_Prevents :
     Prevents preventsNand accessory .A .B ∧ EqPrevents preventsNand accessory .A .B :=
-  ⟨⟨by decide, (twoLink_entails_iff (λ a x => !(a && x))).mpr (by decide)⟩,
-    λ v => (twoLink_entails_iff (λ a x => !(a && x))).mpr (by cases v <;> decide)⟩
+  ⟨⟨by decide, by decide⟩,
+    fun v ↦ by cases v <;> decide⟩
 
 /-! ### Two-premise arguments, section 4.1
 
@@ -254,23 +232,9 @@ def chainOne : CausalGraph W := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A} | .C 
 /-- The graph of a two-premise argument whose first premise has an accessory. -/
 def chainTwo : CausalGraph W := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A, .X} | .C => {.B}⟩
 
-def chainDepth : W → ℕ := λ | .A => 0 | .X => 0 | .B => 1 | .C => 2
+instance : CausalGraph.IsDAG chainOne := .of_irrefl (by decide)
 
-private lemma chainOne_depth_lt :
-    ∀ {u v : W}, u ∈ chainOne.parents v → chainDepth u < chainDepth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private lemma chainTwo_depth_lt :
-    ∀ {u v : W}, u ∈ chainTwo.parents v → chainDepth u < chainDepth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def chainOneRanking : CausalGraph.Ranking chainOne := ⟨chainDepth, chainOne_depth_lt⟩
-
-private def chainTwoRanking : CausalGraph.Ranking chainTwo := ⟨chainDepth, chainTwo_depth_lt⟩
-
-instance : CausalGraph.IsDAG chainOne := chainOneRanking.isDAG
-
-instance : CausalGraph.IsDAG chainTwo := chainTwoRanking.isDAG
+instance : CausalGraph.IsDAG chainTwo := .of_irrefl (by decide)
 
 /-- The composition of a first premise `B := f A` with a second premise `C := g B`. -/
 def composeOne (f g : Bool → Bool) : BoolSEM W :=
@@ -296,31 +260,21 @@ instance (f g : Bool → Bool) : CausalGraph.IsDAG (composeOne f g).graph :=
 instance (f : Bool → Bool → Bool) (g : Bool → Bool) : CausalGraph.IsDAG (composeTwo f g).graph :=
   inferInstanceAs (CausalGraph.IsDAG chainTwo)
 
-private lemma composeOne_entails_iff (f g : Bool → Bool) {s : Valuation (λ _ : W => Bool)}
-    {v : W} {x : Bool} :
-    causallyEntails (composeOne f g) s v x ↔ developDetVtxFuel (composeOne f g) s 3 v = some x :=
-  causallyEntails_iff_fuel _ chainOneRanking (by cases v <;> decide +revert) s x
-
-private lemma composeTwo_entails_iff (f : Bool → Bool → Bool) (g : Bool → Bool)
-    {s : Valuation (λ _ : W => Bool)} {v : W} {x : Bool} :
-    causallyEntails (composeTwo f g) s v x ↔ developDetVtxFuel (composeTwo f g) s 3 v = some x :=
-  causallyEntails_iff_fuel _ chainTwoRanking (by cases v <;> decide +revert) s x
-
 /-- The first premise's accessory present. -/
 def chainAccessory : Valuation (λ _ : W => Bool) := Valuation.empty.extend .X true
 
 /-- (5) and (6): *A causes B*, *B causes C* compose to `C := A`, the conclusion *A causes C*. -/
 theorem causesCauses_causes : EqCauses (composeOne id id) Valuation.empty .A .C :=
-  λ v => (composeOne_entails_iff id id).mpr (by cases v <;> decide)
+  fun v ↦ by cases v <;> decide
 
 /-- *A allows B*, *B prevents C*, or equally *not B causes C*, compose to `C := ¬(A ∧ X)`, the
 accessory form (4c) of *prevents*: with the accessory present, A prevents C. -/
 theorem allowsPrevents_prevents : EqPrevents (composeTwo (· && ·) (!·)) chainAccessory .A .C :=
-  λ v => (composeTwo_entails_iff (· && ·) (!·)).mpr (by cases v <;> decide)
+  fun v ↦ by cases v <;> decide
 
 /-- *A prevents B*, *B prevents C* compose to `C := A`, the conclusion *A causes C*. -/
 theorem preventsPrevents_causes : EqCauses (composeOne (!·) (!·)) Valuation.empty .A .C :=
-  λ v => (composeOne_entails_iff (!·) (!·)).mpr (by cases v <;> decide)
+  fun v ↦ by cases v <;> decide
 
 /-! ### A three-premise argument, section 4.2 -/
 
@@ -331,14 +285,7 @@ inductive U
 
 def line : CausalGraph U := ⟨λ | .A => ∅ | .B => {.A} | .C => {.B} | .D => {.C}⟩
 
-def lineDepth : U → ℕ := λ | .A => 0 | .B => 1 | .C => 2 | .D => 3
-
-private lemma line_depth_lt : ∀ {u v : U}, u ∈ line.parents v → lineDepth u < lineDepth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def lineRanking : CausalGraph.Ranking line := ⟨lineDepth, line_depth_lt⟩
-
-instance : CausalGraph.IsDAG line := lineRanking.isDAG
+instance : CausalGraph.IsDAG line := .of_irrefl (by decide)
 
 /-- *A causes B*, *B causes not C*, *C causes not D*: `B := A`, `C := ¬B`, `D := ¬C`. -/
 def threePremise : BoolSEM U :=
@@ -353,7 +300,6 @@ instance : CausalGraph.IsDAG threePremise.graph := inferInstanceAs (CausalGraph.
 
 /-- The three premises compose to `D := A`, the conclusion *A causes D*. -/
 theorem threePremise_causes : EqCauses threePremise Valuation.empty .A .D :=
-  λ v => (causallyEntails_iff_fuel _ lineRanking (n := 4) (by decide +revert) _ _).mpr
-    (by cases v <;> decide)
+  fun v ↦ by cases v <;> decide
 
 end SlomanBarbeyHotaling2009

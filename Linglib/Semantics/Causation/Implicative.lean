@@ -4,7 +4,7 @@ public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Semantics.ArgumentStructure.MeaningComponents
-public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.SEM.Entailment
 
 /-!
 # Implicative Verbs ([nadathur-2023-implicatives])
@@ -86,14 +86,14 @@ def manageSem {V : Type*} {α : V → Type*}
   SEM.causallyNecessary.precondition M background prerequisite xP complement xC ∧
   SEM.causallyEntails M (background.extend prerequisite xP) complement xC
 
-noncomputable instance {V : Type*} {α : V → Type*}
+instance {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (prerequisite : V) (xP : α prerequisite)
     (complement : V) (xC : α complement) :
     Decidable (manageSem M background prerequisite xP complement xC) :=
-  Classical.dec _
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- V2 fail-sem: prerequisite-as-`xP` is NOT causally sufficient for
     complement-as-`xC`.
@@ -362,7 +362,7 @@ open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- V2 dispatch: map an `Implicative` polarity to its V2 polymorphic
     semantic function. -/
-noncomputable def toSemantics {V : Type*} {α : V → Type*}
+def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] :
     Implicative → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop

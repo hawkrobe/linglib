@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.SEM.Entailment
 
 /-!
 # Causal sufficiency: the semantics of *make*
@@ -41,11 +41,12 @@ def makeSem {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
   ¬ SEM.causallyEntails M background effect xE ∧
   SEM.causallyEntails M (background.extend cause xC) effect xE
 
-noncomputable instance {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
+instance {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
     [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
-    Decidable (makeSem M background cause xC effect xE) := Classical.dec _
+    Decidable (makeSem M background cause xC effect xE) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end Causation.Sufficiency

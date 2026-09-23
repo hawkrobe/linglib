@@ -24,7 +24,7 @@ open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 /-- *prevent*: setting the preventer to `xPrev` does not suffice for `effect = xE`, and some
 other value of the preventer does. -/
-noncomputable def preventSem {V : Type*} {α : V → Type*}
+def preventSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (bg : Valuation α)
@@ -34,11 +34,12 @@ noncomputable def preventSem {V : Type*} {α : V → Type*}
   ∃ xPrev_alt : α preventer, xPrev_alt ≠ xPrev ∧
     SEM.causallySufficient M bg preventer xPrev_alt effect xE
 
-noncomputable instance {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
+instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (bg : Valuation α) (preventer : V) (xP : α preventer)
     (effect : V) (xE : α effect) :
-    Decidable (preventSem M bg preventer xP effect xE) := Classical.dec _
+    Decidable (preventSem M bg preventer xP effect xE) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end Causation.Prevention

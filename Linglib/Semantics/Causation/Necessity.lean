@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.SEM.Entailment
 
 /-!
 # Causal necessity: the semantics of *cause*
@@ -30,12 +30,13 @@ variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableVa
 
 /-- *cause*: setting the cause to `xC` causally entails the effect `xE`, and the cause is
 causally necessary for the effect (Definition 10b). -/
-noncomputable def causeSem (background : Valuation α)
+def causeSem (background : Valuation α)
     (cause : V) (xC : α cause) (effect : V) (xE : α effect) : Prop :=
   SEM.causallyEntails M (background.extend cause xC) effect xE ∧
   SEM.causallyNecessary M background cause xC effect xE
 
-noncomputable instance (bg : Valuation α) (cause : V) (xC : α cause) (effect : V)
-    (xE : α effect) : Decidable (causeSem M bg cause xC effect xE) := Classical.dec _
+instance (bg : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
+    Decidable (causeSem M bg cause xC effect xE) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end Causation.Necessity

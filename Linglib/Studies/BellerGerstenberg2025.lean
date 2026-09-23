@@ -308,11 +308,7 @@ def launch : BoolSEM Var :=
       | .cause => const (G := launchGraph) false
       | .effect => fun ρ ↦ ρ ⟨.cause, by simp [launchGraph]⟩ }
 
-/-- The ranking certificate of `launchGraph`. -/
-def launchRanking : CausalGraph.Ranking launchGraph :=
-  ⟨fun | .cause => 0 | .effect => 1, fun {u v} h => by revert h; cases u <;> cases v <;> decide⟩
-
-instance : CausalGraph.IsDAG launchGraph := launchRanking.isDAG
+instance : CausalGraph.IsDAG launchGraph := .of_irrefl (by decide)
 
 noncomputable instance : CausalGraph.IsDAG launch.graph :=
   inferInstanceAs (CausalGraph.IsDAG launchGraph)
@@ -322,32 +318,19 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 /-- The aspect profile of `cause → effect` in a deterministic model: `W` is whether-causation
 (1) at the observed valuation, `H` is a direct law, and `S` is sufficient-causation (3),
 whether-causation at the valuation with the alternative causes removed. -/
-noncomputable def CausalWorld.ofModel (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+def CausalWorld.ofModel (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     (observed alternativesRemoved : Valuation fun _ : V => Bool)
     (cause effect : V) : CausalWorld :=
   { whether := decide (WhetherCause M observed cause false effect true)
     how := decide (BoolSEM.hasDirectLaw M cause effect)
     sufficient := decide (WhetherCause M alternativesRemoved cause false effect true) }
 
-set_option maxRecDepth 100000 in
 /-- Michottean launching computes the profile of the first scenario: with no alternative
 causes, sufficient-causation reduces to whether-causation. -/
 theorem launch_ofModel :
     CausalWorld.ofModel launch Valuation.empty Valuation.empty .cause .effect =
       Scenario.s1.aspects := by
-  have hW : WhetherCause launch Valuation.empty .cause false .effect true := by
-    rw [WhetherCause, counterfactual, developDet_hasValue_iff]
-    intro h
-    have hfalse := developDetVtx_eq_of_developDetVtx?_eq_some (M := launch)
-      (s := cfSeed launch Valuation.empty .cause false) (v := .effect) (x := false) (by
-        rw [cfSeed_empty, ← developDetVtxFuel_eq_developDetVtx? launch launchRanking _
-          (show launchRanking .effect < 2 by decide)]
-        decide)
-    exact Bool.noConfusion (hfalse.symm.trans h)
-  have hDir : BoolSEM.hasDirectLaw launch .cause .effect := by decide
-  unfold CausalWorld.ofModel
-  rw [decide_eq_true hW, decide_eq_true hDir]
-  rfl
+  decide
 
 end Structural
 

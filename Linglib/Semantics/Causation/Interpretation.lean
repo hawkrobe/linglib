@@ -69,7 +69,7 @@ def selectionMode : Causative → CCSelectionMode
 
 /-- Force-dynamic dispatch: map a causative classification to its V2
     polymorphic semantic function. -/
-noncomputable def toSemantics {V : Type*} {α : V → Type*}
+def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] :
     Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop

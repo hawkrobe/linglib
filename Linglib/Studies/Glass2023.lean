@@ -152,16 +152,7 @@ inductive V
 
 def graph : CausalGraph V := ⟨λ | .S1 => ∅ | .S2 => ∅ | .L => {.S1, .S2}⟩
 
-def depth : V → ℕ := λ | .S1 => 0 | .S2 => 0 | .L => 1
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h
-  revert h
-  cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- The light is on exactly when both switches are. -/
 def light : BoolSEM V :=

@@ -18,14 +18,13 @@ garbling are unresolved (`nrv_necessary_not_sufficient_for_com_and_spy`).
 
 ## Implementation notes
 
-The theorems are stated over the strict development of the paper's definitions, and the
-concrete claims are discharged through the fuel bridge to the finite valuation space with
-the model's depth function as rank certificate.
+The theorems are stated over the strict development of the paper's definitions and decided
+over the finite model, the supersituation quantifiers ranging over the finite valuation space.
 
 ## TODO
 
-The necessity presuppositions are decided by brute force over the valuation space under
-raised recursion and heartbeat limits; a structural proof through the parent equations
+The necessity presuppositions are decided by brute force over the valuation space under a
+raised recursion limit; a structural proof through the parent equations
 would remove them. The *manage* examples need set-valued prerequisites, one of them the
 conjunction of courage, a listener, and an ungarbled message, while the substrate's
 sufficiency semantics takes a single prerequisite vertex.
@@ -61,17 +60,7 @@ def graph : CausalGraph V := ⟨λ
   | .COM => {.MSG, .LST, .BRK}
   | .SPY => {.SEC, .COM}⟩
 
-/-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := λ
-  | .INT => 0 | .NRV => 0 | .LST => 0 | .BRK => 0
-  | .SEC => 1 | .MSG => 1 | .COM => 2 | .SPY => 3
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- Dreyfus SEM, with the negative `¬BRK` precondition encoded directly in
     the COM mechanism. -/
@@ -104,34 +93,19 @@ theorem dare_semantics_via_manageSem :
     ImplicativeClass.dare.prerequisite = some Prerequisite.courage :=
   ⟨rfl, rfl⟩
 
-private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
-    SEM.causallyEntails dreyfusSEM s v x ↔
-      developDetVtxFuel dreyfusSEM s 4 v = some x :=
-  SEM.causallyEntails_iff_fuel dreyfusSEM ranking (by cases v <;> decide) s x
-
-private lemma necessary_iff {s : Valuation (λ _ : V => Bool)} {c e : V} :
-    Implicative.necessityPresup dreyfusSEM s c true e true ↔
-      SEM.causallyNecessaryFuel dreyfusSEM 4 s c true e true :=
-  SEM.causallyNecessary_iff_fuel dreyfusSEM ranking
-    (by intro v; cases v <;> decide) s c true e true
-
 /-- Sufficiency presupposition (32iii) for (34a): NRV is causally
     sufficient (Def 10a) for MSG — neither fact is entailed by the
     background, and adding NRV = 1 causally entails MSG = 1. -/
 theorem nrv_sufficient_for_msg :
-    manageSem dreyfusSEM dreyfusBg .NRV true .MSG true :=
-  ⟨⟨λ h => absurd (entails_iff.mp h) (by decide),
-    λ h => absurd (entails_iff.mp h) (by decide)⟩,
-   entails_iff.mpr (by decide)⟩
+    manageSem dreyfusSEM dreyfusBg .NRV true .MSG true := by
+  decide
 
 set_option maxRecDepth 400000 in
-set_option maxHeartbeats 2000000 in
 /-- Necessity presupposition (32i) for (34a): NRV is causally necessary
-    (Def 10b) for MSG. Decided through the fuel bridge: the
-    supersituation quantifiers range over the finite valuation space. -/
+    (Def 10b) for MSG. -/
 theorem nrv_necessary_for_msg :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .MSG true :=
-  necessary_iff.mpr (by decide)
+    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .MSG true := by
+  decide +kernel
 
 /-- (34a) *Dreyfus dared to send a message to the Germans* — felicitous:
     "NRV is the only undetermined condition for the truth of MSG: it is
@@ -148,35 +122,31 @@ theorem dare_felicitous_for_msg :
     unsettled while LST and BRK are unresolved in the background. -/
 theorem dare_infelicitous_for_com :
     failSem dreyfusSEM dreyfusBg .NRV true .COM true := by
-  rintro ⟨-, hb⟩
-  exact absurd (entails_iff.mp hb) (by decide)
+  decide
 
 /-- (34d) *?/# Dreyfus dared to spy for the Germans* — infelicitous: NRV
     is not causally sufficient for SPY (its conditions LST, BRK, COM are
     all undetermined). -/
 theorem dare_infelicitous_for_spy :
     failSem dreyfusSEM dreyfusBg .NRV true .SPY true := by
-  rintro ⟨-, hb⟩
-  exact absurd (entails_iff.mp hb) (by decide)
+  decide
 
 set_option maxRecDepth 400000 in
-set_option maxHeartbeats 2000000 in
 /-- (34c), necessity half: "⟨NRV,1⟩ is causally necessary but not
     sufficient for COM" — achievability settles the exogenous LST = 1,
     BRK = 0; every consistent path to COM = 1 runs through NRV = 1. Was
     unprovable under the eager-default dynamics (achievability could
     never resolve an exogenous unknown). -/
 theorem nrv_necessary_for_com :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .COM true :=
-  necessary_iff.mpr (by decide)
+    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .COM true := by
+  decide +kernel
 
 set_option maxRecDepth 400000 in
-set_option maxHeartbeats 2000000 in
 /-- (34d), necessity half: NRV is causally necessary but not sufficient
     for SPY ("BRK, LST, COM ∈ Anc(SPY) are all undetermined"). -/
 theorem nrv_necessary_for_spy :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true :=
-  necessary_iff.mpr (by decide)
+    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true := by
+  decide +kernel
 
 /-- (34c)/(34d) complete profiles: NRV is causally **necessary but not
     sufficient** for COM and for SPY — the paper's exact §6.1.1 verdicts,
