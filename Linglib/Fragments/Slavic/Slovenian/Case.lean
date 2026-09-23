@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Slovene Case Inventory
@@ -13,6 +15,8 @@ restriction Priestly notes for INST is Slovene-specific within Slavic
 directory name `Slovenian` is historical; Priestly's chapter title is
 "Slovene".
 -/
+
+@[expose] public section
 
 namespace Slovenian.Case
 

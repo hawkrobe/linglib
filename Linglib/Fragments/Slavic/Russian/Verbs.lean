@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Category.Verb.Stem
+module
+
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Category.Verb.Stem
 
 /-!
 # Russian Verbal Lexicon
@@ -12,6 +14,8 @@ stems carry citation form, aspect, and gloss. Analytical classification
 Transliteration follows [svenonius-2004] (*j* for palatalization, as in
 *brositj*).
 -/
+
+@[expose] public section
 
 namespace Russian.Verbs
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Imbabura Quechua negation
@@ -14,6 +16,8 @@ without *mana* is a question. The examples are those of [miestamo-2005], from Co
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation
 

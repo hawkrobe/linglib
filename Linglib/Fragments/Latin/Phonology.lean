@@ -1,4 +1,6 @@
-import Linglib.Phonology.Segmental.PHOIBLE
+module
+
+public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Latin phonemes
@@ -42,6 +44,8 @@ glide [w], [−consonantal], which is what lets Belth's tier projection of *pluv
 * [hayes-2009]
 * [moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Data.PHOIBLE
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Data.Examples.Gasparri2025
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Data.Examples.Gasparri2025
 
 /-!
 # Gasparri (2025): Bare Singular Names and Genericity
@@ -34,6 +36,8 @@ a referentialist needs must introduce the naming predicate itself.
 * [fara-2015]
 * [delgado-2024]
 -/
+
+@[expose] public section
 
 namespace Gasparri2025
 

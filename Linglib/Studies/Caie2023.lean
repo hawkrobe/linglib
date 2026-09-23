@@ -1,4 +1,6 @@
-import Linglib.Discourse.CommonGround
+module
+
+public import Linglib.Discourse.CommonGround
 
 /-!
 # Caie 2023: disjunctive context updating
@@ -46,6 +48,8 @@ there.
 * [barker-2002-vagueness]
 * [barker-2013]
 -/
+
+@[expose] public section
 
 namespace Caie2023
 

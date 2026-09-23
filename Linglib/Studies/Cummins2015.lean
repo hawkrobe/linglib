@@ -1,8 +1,10 @@
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Semantics.Quantification.Numerals.Roundness
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fintype.Perm
-import Mathlib.Data.Nat.Dist
+module
+
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.Perm
+public import Mathlib.Data.Nat.Dist
 
 /-!
 # Constraints on numerical expressions
@@ -50,6 +52,8 @@ priming for arbitrary numerals.
 * [C. Cummins, U. Sauerland, S. Solt, *Granularity and scalar implicature in numerical
   expressions* (2012)][cummins-sauerland-solt-2012]
 -/
+
+@[expose] public section
 
 namespace Cummins2015
 

@@ -1,7 +1,9 @@
-import Linglib.Phonology.Tone.Grammatical
-import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.OptimalityTheory.Cophonology
-import Linglib.Phonology.Subregular.TierProjection
+module
+
+public import Linglib.Phonology.Tone.Grammatical
+public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Cophonology
+public import Linglib.Phonology.Subregular.TierProjection
 
 /-!
 # Rolle (2018): Grammatical tone: typology and theory
@@ -47,6 +49,8 @@ case studies and the treatment of apparent outward dominance are not formalized.
 * [R. S. Kayne, *The antisymmetry of syntax* (1994)][kayne-1994]
 -/
 
+@[expose] public section
+
 namespace Rolle2018
 
 open Tone Constraints OptimalityTheory
@@ -64,12 +68,12 @@ inductive Position
 
 namespace Position
 
-private def toFin : Position → Fin 3
+def toFin : Position → Fin 3
   | .complement => 0
   | .head => 1
   | .spec => 2
 
-private theorem toFin_injective : Function.Injective toFin := by
+theorem toFin_injective : Function.Injective toFin := by
   intro a b h; cases a <;> cases b <;> simp_all [toFin]
 
 noncomputable instance : LinearOrder Position := LinearOrder.lift' toFin toFin_injective

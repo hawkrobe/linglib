@@ -1,8 +1,10 @@
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Genericity.Basic
-import Linglib.Semantics.Aspect.Viewpoint
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Modality.Kratzer.Ordering
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Genericity.Basic
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Modality.Kratzer.Ordering
 
 /-!
 # Boneh and Doron 2013: Hab and Gen in the expression of habituality
@@ -50,6 +52,8 @@ and [pancheva-2003]'s final-subinterval perfect.
   closure, modal base, imperfective, and final-subinterval substrate.
 * [del-prete-2013] — the same volume's Italian Same-Object Effect.
 -/
+
+@[expose] public section
 
 namespace BonehDoron2013
 

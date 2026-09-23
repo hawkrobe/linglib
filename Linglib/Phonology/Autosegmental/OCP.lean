@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.FreeMonoid.Destutter
-import Linglib.Phonology.OCP
-import Linglib.Phonology.Autosegmental.Realization
-import Linglib.Phonology.Autosegmental.Junction
+module
+
+public import Linglib.Core.Algebra.FreeMonoid.Destutter
+public import Linglib.Phonology.OCP
+public import Linglib.Phonology.Autosegmental.Realization
+public import Linglib.Phonology.Autosegmental.Junction
 
 /-!
 # OCP-merging collapse of autosegmental representations
@@ -56,6 +58,8 @@ in turn the boundary-length lemma `List.IsChain.length_destutter_ne_append`). It
   reflector (a morphism can split a geminate), so the OCP quotient lives on the object monoid,
   not the category — the precise sense in which OCP and NCC differ.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

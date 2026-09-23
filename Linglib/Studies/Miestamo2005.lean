@@ -1,17 +1,19 @@
-import Linglib.Data.WALS.Features.F113A
-import Linglib.Fragments.Finnish.Negation
-import Linglib.Fragments.Japanese.Negation
-import Linglib.Fragments.Turkish.Negation
-import Linglib.Fragments.Burmese.Negation
-import Linglib.Fragments.Mandarin.Negation
-import Linglib.Fragments.English.Negation
-import Linglib.Fragments.Maori.Negation
-import Linglib.Fragments.Hixkaryana.Negation
-import Linglib.Fragments.German.Negation
-import Linglib.Fragments.Romance.Italian.Negation
-import Linglib.Fragments.Romance.French.Negation
-import Linglib.Fragments.Slavic.Russian.Negation
-import Linglib.Fragments.Romance.Spanish.Negation
+module
+
+public import Linglib.Data.WALS.Features.F113A
+public import Linglib.Fragments.Finnish.Negation
+public import Linglib.Fragments.Japanese.Negation
+public import Linglib.Fragments.Turkish.Negation
+public import Linglib.Fragments.Burmese.Negation
+public import Linglib.Fragments.Mandarin.Negation
+public import Linglib.Fragments.English.Negation
+public import Linglib.Fragments.Maori.Negation
+public import Linglib.Fragments.Hixkaryana.Negation
+public import Linglib.Fragments.German.Negation
+public import Linglib.Fragments.Romance.Italian.Negation
+public import Linglib.Fragments.Romance.French.Negation
+public import Linglib.Fragments.Slavic.Russian.Negation
+public import Linglib.Fragments.Romance.Spanish.Negation
 
 /-!
 # Miestamo (2005): Standard Negation
@@ -52,6 +54,8 @@ representative sample and its frequency tables are not represented.
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 namespace Miestamo2005
 

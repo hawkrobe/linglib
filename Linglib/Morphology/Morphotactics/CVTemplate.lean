@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Root.Consonantal
-import Linglib.Phonology.Autosegmental.NonCrossing
+module
+
+public import Linglib.Morphology.Root.Consonantal
+public import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
 # CV templates and template association
@@ -41,6 +43,8 @@ the representations they manipulate.
   list-level representation here interprets into
   `Phonology/Autosegmental/NonCrossing.lean` rather than duplicating it.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

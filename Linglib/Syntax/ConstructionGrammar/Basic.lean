@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.UD.UPOS
-import Mathlib.Data.List.Dedup
+module
+
+public import Linglib.Data.UD.UPOS
+public import Mathlib.Data.List.Dedup
 
 /-!
 # Constructions and the constructicon
@@ -24,6 +26,8 @@ opening a category, or admitting any phrase, with a construction's
   form–meaning pairings
 * `InheritanceLink`, `Constructicon`: the network
 -/
+
+@[expose] public section
 
 namespace ConstructionGrammar
 

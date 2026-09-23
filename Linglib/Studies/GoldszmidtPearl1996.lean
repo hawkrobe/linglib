@@ -1,7 +1,9 @@
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Finset.Max
-import Mathlib.Order.Bounds.Basic
-import Linglib.Logic.RankingFunction
+module
+
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Order.Bounds.Basic
+public import Linglib.Logic.RankingFunction
 
 /-!
 # Goldszmidt and Pearl (1996): Qualitative Probabilities for Default Reasoning, Belief Revision, and Causal Modeling
@@ -48,6 +50,8 @@ revision, and causal networks are not formalized; Spohn's conditioning lives in 
 * [E. W. Adams, *The Logic of Conditionals: An Application of Probability to Deductive Logic*
   (1975)][adams-1975]
 -/
+
+@[expose] public section
 
 namespace GoldszmidtPearl1996
 

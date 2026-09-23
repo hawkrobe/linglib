@@ -1,6 +1,8 @@
-import Linglib.Semantics.Plurality.Individuation
-import Linglib.Semantics.Reference.Prominence
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Linglib.Semantics.Plurality.Individuation
+public import Linglib.Semantics.Reference.Prominence
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Grimm (2018): Grammatical Number and the Scale of Individuation
@@ -39,6 +41,8 @@ animacy–individuation lattice, an [aissen-2003] product, and the connected reg
 * [aissen-2003]
 * [haspelmath-2005]
 -/
+
+@[expose] public section
 
 namespace Grimm2018
 

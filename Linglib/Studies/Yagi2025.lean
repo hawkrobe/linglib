@@ -1,9 +1,11 @@
-import Mathlib.Tactic.FinCases
-import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.Presupposition.Trivalent
-import Linglib.Logic.Trivalent.Prop3
-import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
-import Linglib.Data.Examples.Yagi2025
+module
+
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Data.Fintype.Basic
+public import Linglib.Semantics.Presupposition.Trivalent
+public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
+public import Linglib.Data.Examples.Yagi2025
 
 /-!
 # Yagi (2025): Conflicting Presuppositions in Disjunction
@@ -52,6 +54,8 @@ licensing constraint on the operator is not modelled.
 * [schlenker-2009]
 * [zimmermann-2000]
 -/
+
+@[expose] public section
 
 namespace Yagi2025
 

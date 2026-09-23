@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.Phase.Domain
+module
+
+public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Phase.Domain
 
 /-!
 # Zeijlstra (2012): There Is Only One Way to Agree
@@ -36,6 +38,8 @@ clause boundary (`sot_licit`) while Negative Concord does not (`nc_across_cp_ill
 * [chomsky-2000]
 * [chomsky-2001]
 -/
+
+@[expose] public section
 
 namespace Zeijlstra2012
 
@@ -80,28 +84,28 @@ instance {uF : SyntacticObject → Prop} [DecidablePred uF] (root probe goal : S
 /-! ### Sequence of Tense -/
 
 /-- The abstract past operator carrying `[iPAST]`. -/
-private def opPast : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "Op[PAST]", 1⟩
-private def john : PlanarSyntacticObject := .leaf ⟨.simple .D [] "John", 2⟩
+def opPast : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "Op[PAST]", 1⟩
+def john : PlanarSyntacticObject := .leaf ⟨.simple .D [] "John", 2⟩
 /-- The matrix verb, with its own vacuous `[uPAST]`. -/
-private def said : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "said", 3⟩
+def said : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "said", 3⟩
 /-- The embedding complementizer, carrying `[uT]`. -/
-private def thatC : PlanarSyntacticObject := .leaf ⟨.simple .C [.V] "that", 4⟩
-private def mary : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Mary", 5⟩
+def thatC : PlanarSyntacticObject := .leaf ⟨.simple .C [.V] "that", 4⟩
+def mary : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Mary", 5⟩
 /-- The subordinate verb, with `[uPAST]`. -/
-private def was : PlanarSyntacticObject := .leaf ⟨.simple .V [.A] "was", 6⟩
-private def ill : PlanarSyntacticObject := .leaf ⟨.simple .A [] "ill", 7⟩
+def was : PlanarSyntacticObject := .leaf ⟨.simple .V [.A] "was", 6⟩
+def ill : PlanarSyntacticObject := .leaf ⟨.simple .A [] "ill", 7⟩
 
 /-- *John said Mary was ill*, with the past operator above both verbs. -/
-private def sot : PlanarSyntacticObject :=
+def sot : PlanarSyntacticObject :=
   {john, {opPast, {said, {thatC, {mary, {was, ill}}}}}}
 
 /-- The bearers of `[iPAST]`. -/
-private def iPast (s : SyntacticObject) : Prop := s = opPast
+def iPast (s : SyntacticObject) : Prop := s = opPast
 
 private instance : DecidablePred iPast := λ s => inferInstanceAs (Decidable (s = _))
 
 /-- The bearers of `[uPAST]` or `[uT]`: both finite verbs and the complementizer. -/
-private def uPast (s : SyntacticObject) : Prop := s = said ∨ s = was ∨ s = thatC
+def uPast (s : SyntacticObject) : Prop := s = said ∨ s = was ∨ s = thatC
 
 private instance : DecidablePred uPast := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
@@ -120,35 +124,35 @@ theorem sot_licit :
 
 /-! ### Negative Concord -/
 
-private def gianni : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Gianni", 11⟩
+def gianni : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Gianni", 11⟩
 /-- The negative marker carrying `[iNEG]`. -/
-private def non : PlanarSyntacticObject := .leaf ⟨.simple .Neg [.T] "non", 12⟩
-private def ha : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 13⟩
-private def detto : PlanarSyntacticObject := .leaf ⟨.simple .V [.D] "detto", 14⟩
-private def dettoC : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "detto", 15⟩
-private def niente : PlanarSyntacticObject := .leaf ⟨.simple .D [.P] "niente", 16⟩
-private def a : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "a", 17⟩
-private def nessuno : PlanarSyntacticObject := .leaf ⟨.simple .D [] "nessuno", 18⟩
+def non : PlanarSyntacticObject := .leaf ⟨.simple .Neg [.T] "non", 12⟩
+def ha : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 13⟩
+def detto : PlanarSyntacticObject := .leaf ⟨.simple .V [.D] "detto", 14⟩
+def dettoC : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "detto", 15⟩
+def niente : PlanarSyntacticObject := .leaf ⟨.simple .D [.P] "niente", 16⟩
+def a : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "a", 17⟩
+def nessuno : PlanarSyntacticObject := .leaf ⟨.simple .D [] "nessuno", 18⟩
 /-- The embedding complementizer, without any negative feature. -/
-private def che : PlanarSyntacticObject := .leaf ⟨.simple .C [.T] "che", 19⟩
-private def ha₂ : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 20⟩
-private def telefonato : PlanarSyntacticObject := .leaf ⟨.simple .V [.P] "telefonato", 21⟩
+def che : PlanarSyntacticObject := .leaf ⟨.simple .C [.T] "che", 19⟩
+def ha₂ : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 20⟩
+def telefonato : PlanarSyntacticObject := .leaf ⟨.simple .V [.P] "telefonato", 21⟩
 
 /-- *Gianni non ha detto niente a nessuno*: two n-words under one negative marker. -/
-private def ncClausemate : PlanarSyntacticObject :=
+def ncClausemate : PlanarSyntacticObject :=
   {gianni, {non, {ha, {detto, {niente, {a, nessuno}}}}}}
 
 /-- *Gianni non ha detto che ha telefonato a nessuno*: the n-word inside an embedded clause. -/
-private def ncAcrossCP : PlanarSyntacticObject :=
+def ncAcrossCP : PlanarSyntacticObject :=
   {gianni, {non, {ha, {dettoC, {che, {ha₂, {telefonato, {a, nessuno}}}}}}}}
 
 /-- The bearers of `[iNEG]`. -/
-private def iNeg (s : SyntacticObject) : Prop := s = non
+def iNeg (s : SyntacticObject) : Prop := s = non
 
 private instance : DecidablePred iNeg := λ s => inferInstanceAs (Decidable (s = _))
 
 /-- The bearers of `[uNEG]`, the n-words. -/
-private def uNeg (s : SyntacticObject) : Prop := s = niente ∨ s = nessuno
+def uNeg (s : SyntacticObject) : Prop := s = niente ∨ s = nessuno
 
 private instance : DecidablePred uNeg := λ _ => inferInstanceAs (Decidable (_ ∨ _))
 

@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.TierStrictlyLocal
-import Linglib.Core.Data.List.Factors
-import Linglib.Core.Data.List.Chain
+module
+
+public import Linglib.Phonology.Subregular.TierStrictlyLocal
+public import Linglib.Core.Data.List.Factors
+public import Linglib.Core.Data.List.Chain
 
 /-!
 # Forbidden-pair TSL_2 grammars
@@ -34,6 +36,8 @@ over a syllable alphabet) and \*Coda (SL_1, via `mkForbidSingletonOnTier`).
 Similarity-graded [hansson-2010] and interval-conditioned (ITSL) harmony, and
 cross-tier dependencies (MTSL), also fall outside this single-tier constructor.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

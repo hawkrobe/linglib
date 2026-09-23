@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Hausa coordinators
@@ -16,6 +18,8 @@ coordinator, citing Schwartz's data.
 * [haspelmath-2007]
 * [schwartz-1989]
 -/
+
+@[expose] public section
 
 namespace Hausa
 

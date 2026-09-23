@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Floating
-import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Constraints.Defs
+module
+
+public import Linglib.Phonology.Autosegmental.Floating
+public import Linglib.Phonology.Tone.Basic
+public import Linglib.Phonology.Constraints.Defs
 
 /-!
 # Tonal constraints
@@ -47,6 +49,8 @@ canonical lexicographic profile order recovers the directional EVAL exactly
 floating tone but diverge as the set grows — a single count cannot tell "delete
 leftmost" from "delete rightmost" ([mcpherson-lamont-2026]'s eq. (62) divergent tie).
 -/
+
+@[expose] public section
 
 namespace Tone
 

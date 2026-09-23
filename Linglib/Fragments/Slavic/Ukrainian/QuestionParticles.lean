@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Ukrainian Question Particles
@@ -15,6 +17,8 @@ assignments live in `Simik2024`.
 - Cross-Slavic RAZVE family: xiba is the Ukrainian cognate of Russian
   razve
 -/
+
+@[expose] public section
 
 namespace Ukrainian.QuestionParticles
 

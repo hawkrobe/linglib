@@ -1,6 +1,8 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Core.Data.Trivalent
-import Linglib.Data.Examples.TieuEtAl2020
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Core.Data.Trivalent
+public import Linglib.Data.Examples.TieuEtAl2020
 
 /-!
 # Tieu, Bill, Romoli and Crain (2020): Testing Theories of Plural Meanings
@@ -51,6 +53,8 @@ are the rows of `Data.Examples.TieuEtAl2020`.
 * [kriz-2015]
 * [fox-2007]
 -/
+
+@[expose] public section
 
 namespace TieuEtAl2020
 

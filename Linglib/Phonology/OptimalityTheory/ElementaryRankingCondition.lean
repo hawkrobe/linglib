@@ -1,8 +1,10 @@
-import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Mathlib.GroupTheory.Perm.Basic
-import Mathlib.Basic.Sign.Basic
-import Mathlib.Data.Fintype.Perm
+module
+
+public import Linglib.Phonology.Constraints.Profile
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Mathlib.GroupTheory.Perm.Basic
+public import Mathlib.Basic.Sign.Basic
+public import Mathlib.Data.Fintype.Perm
 
 /-!
 # Elementary ranking conditions
@@ -29,6 +31,8 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
 * `simpleERC` — a single-`W`/single-`L` ERC, one Hasse edge `i ≫ j`
   ([merchant-riggle-2016]).
 -/
+
+@[expose] public section
 
 open Core.Optimization.Evaluation
 

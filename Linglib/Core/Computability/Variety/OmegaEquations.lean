@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.Group.IdempotentPower
-import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.Variety.Equations
-import Linglib.Core.Computability.Definite
-import Mathlib.Data.Fintype.Pigeonhole
-import Mathlib.SetTheory.Cardinal.Finite
+module
+
+public import Linglib.Core.Algebra.Group.IdempotentPower
+public import Linglib.Core.Computability.SyntacticMonoid
+public import Linglib.Core.Computability.Variety.Equations
+public import Linglib.Core.Computability.Definite
+public import Mathlib.Data.Fintype.Pigeonhole
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Omega-power equations for the varieties `𝒟`, `𝒦`, `𝒩`, `ℒℐ`
@@ -98,6 +100,8 @@ fork that substrate here; consume it from mathlib when it merges.
   generalized-definite hierarchy).
 * [mcnaughton-papert-1971] (variety theory of finite monoids).
 -/
+
+@[expose] public section
 
 
 namespace Language

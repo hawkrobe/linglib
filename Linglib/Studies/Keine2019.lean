@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.Clause.Spine
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Syntax.Minimalist.Clause.Spine
 
 /-!
 # Keine (2019): Selective Opacity
@@ -36,6 +38,8 @@ be vP.
 
 * [keine-2019]
 -/
+
+@[expose] public section
 
 namespace Keine2019
 

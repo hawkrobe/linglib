@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.ErlewineSommerlot2025
-import Linglib.Syntax.Minimalist.Linearization.Cyclic
+module
+
+public import Linglib.Data.Examples.ErlewineSommerlot2025
+public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 
 /-!
 # Erlewine and Sommerlot (2025): Voice and Extraction in Malayic
@@ -51,6 +53,8 @@ Kuching Malay's *N-* on v does not (§5.2); and the polite and familiar register
 * [embick-noyer-2001]
 * [jeoung-2017]
 -/
+
+@[expose] public section
 
 namespace ErlewineSommerlot2025
 

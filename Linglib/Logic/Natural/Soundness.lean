@@ -1,6 +1,8 @@
-import Linglib.Logic.Natural.Basic
-import Linglib.Logic.Natural.Additivity
-import Mathlib.Order.GaloisConnection.Basic
+module
+
+public import Linglib.Logic.Natural.Basic
+public import Linglib.Logic.Natural.Additivity
+public import Mathlib.Order.GaloisConnection.Basic
 
 /-!
 # Soundness of the projectivity calculus
@@ -44,6 +46,8 @@ holds unconditionally: every function realizes the no-property row.
 
 * [icard-2012] — Definitions 1.2 and 2.3, Lemmas 1.6 and 2.5.
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 

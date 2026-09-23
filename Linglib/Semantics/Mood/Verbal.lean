@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
-import Linglib.Semantics.Mood.State
-import Linglib.Semantics.Mood.Defs
+module
+
+public import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
+public import Linglib.Semantics.Mood.State
+public import Linglib.Semantics.Mood.Defs
 
 /-!
 # Verbal mood as component selection
@@ -46,6 +48,8 @@ is restricted to declarative complementation.
 * [J. Groenendijk and M. Stokhof, *Studies on the Semantics of Questions and the Pragmatics of
   Answers* (1984)][groenendijk-stokhof-1984]
 -/
+
+@[expose] public section
 
 namespace Mood
 

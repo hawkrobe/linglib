@@ -1,8 +1,10 @@
-import Linglib.Logic.Team.BSML.Properties
-import Linglib.Logic.Team.BSML.Bisimulation
-import Linglib.Logic.Bilateral.Defs
-import Linglib.Logic.Team.Closure
-import Linglib.Studies.Aloni2022
+module
+
+public import Linglib.Logic.Team.BSML.Properties
+public import Linglib.Logic.Team.BSML.Bisimulation
+public import Linglib.Logic.Bilateral.Defs
+public import Linglib.Logic.Team.Closure
+public import Linglib.Studies.Aloni2022
 
 /-!
 # Aloni, Anttila and Yang (2024): state-based modal logics for free choice
@@ -35,6 +37,8 @@ lives in `Logic/Team/BSML/NaturalDeduction`.
 * [aloni-2022]
 * [anttila-2025]
 -/
+
+@[expose] public section
 
 namespace AloniAnttilaYang2024
 

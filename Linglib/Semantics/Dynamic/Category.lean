@@ -1,8 +1,10 @@
-import Linglib.Semantics.Dynamic.Transition
-import Mathlib.CategoryTheory.Category.Preorder
-import Mathlib.CategoryTheory.Elements
-import Mathlib.CategoryTheory.Types.Basic
-import Mathlib.Data.Set.Functor
+module
+
+public import Linglib.Semantics.Dynamic.Transition
+public import Mathlib.CategoryTheory.Category.Preorder
+public import Mathlib.CategoryTheory.Elements
+public import Mathlib.CategoryTheory.Types.Basic
+public import Mathlib.Data.Set.Functor
 
 /-!
 # The category of contexts
@@ -46,6 +48,8 @@ at `∅` is [veltman-1996]'s update semantics.
 - [lawvere-1969], [jacobs-1999]
 - [groenendijk-stokhof-1991], [muskens-1996]
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

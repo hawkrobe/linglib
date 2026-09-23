@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Numerals.Roundness
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Woodin, Winter, Littlemore, Perlman & Grieve (2024): Large-Scale Patterns of Number Use
@@ -32,6 +34,8 @@ the study reports as hypotheses.
 * [jansen-pollmann-2001]
 * [sigurd-1988]
 -/
+
+@[expose] public section
 
 namespace WoodinEtAl2024
 

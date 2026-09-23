@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Dependent
-import Linglib.Data.Examples.Baker2015
+module
+
+public import Linglib.Syntax.Case.Dependent
+public import Linglib.Data.Examples.Baker2015
 
 /-!
 # Baker 2015: dependent case
@@ -29,6 +31,8 @@ how the unmarked case is realized.
 * [marantz-1991] — the disjunctive hierarchy and dependent case
 * [baker-vinokurova-2010] — the c-command formulation
 -/
+
+@[expose] public section
 
 namespace Baker2015
 

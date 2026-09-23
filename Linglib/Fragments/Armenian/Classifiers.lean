@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Western Armenian classifiers
@@ -14,6 +16,8 @@ obligatory classifier the language arguably has no classifier system in Aikhenva
 * [bale-khanjian-2014], (10) and fn. 3
 * [bale-khanjian-2008]
 -/
+
+@[expose] public section
 /-! ### Typological parameters -/
 
 namespace Armenian

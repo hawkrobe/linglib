@@ -1,10 +1,12 @@
-import Mathlib.Order.Defs.Unbundled
-import Mathlib.Order.Preorder.Chain
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Data.Rat.Defs
-import Linglib.Semantics.Attitudes.Basic
-import Linglib.Semantics.Attitudes.Distributivity
-import Linglib.Core.Order.Minimals
+module
+
+public import Mathlib.Order.Defs.Unbundled
+public import Mathlib.Order.Preorder.Chain
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Rat.Defs
+public import Linglib.Semantics.Attitudes.Basic
+public import Linglib.Semantics.Attitudes.Distributivity
+public import Linglib.Core.Order.Minimals
 
 /-!
 # Preference in attitude semantics
@@ -61,6 +63,8 @@ refinement of *hope* and *fear* due to Anand and Hacquard is in
 * [P. D. Elliott, N. Klinedinst, Y. Sudo and W. Uegaki, *Predicates of Relevance and Theories of
   Question Embedding* (2017)][elliott-etal-2017]
 -/
+
+@[expose] public section
 
 variable {W : Type*}
 

@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Logic.Function.Basic
-import Linglib.Logic.PIP.Syntax
+module
+
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Logic.Function.Basic
+public import Linglib.Logic.PIP.Syntax
 
 /-!
 # Semantics of PIP
@@ -42,6 +44,8 @@ relation to a point: an atom for a term, nothing for a formula.
 * [keshet-abney-2024]
 * [abney-keshet-2025]
 -/
+
+@[expose] public section
 
 namespace PIP
 

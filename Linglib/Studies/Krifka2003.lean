@@ -1,6 +1,8 @@
-import Linglib.Semantics.Genericity.Kind
-import Mathlib.Data.Set.Card
-import Mathlib.Order.SupClosed
+module
+
+public import Linglib.Semantics.Genericity.Kind
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.SupClosed
 
 /-!
 # Krifka (2003): Bare NPs: Kind-referring, Indefinites, Both, or Neither?
@@ -42,6 +44,8 @@ confined to them.
 * [partee-1987] — the type shifts ∃, ι and BE
 * [krifka-1989] — count nouns as measure functions
 -/
+
+@[expose] public section
 
 namespace Krifka2003
 

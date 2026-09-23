@@ -1,8 +1,10 @@
-import Linglib.Semantics.Quantification.Lattice
-import Linglib.Semantics.Quantification.Counting
-import Mathlib.SetTheory.Cardinal.Finite
-import Mathlib.Order.Atoms
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Semantics.Quantification.Lattice
+public import Linglib.Semantics.Quantification.Counting
+public import Mathlib.SetTheory.Cardinal.Finite
+public import Mathlib.Order.Atoms
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Keenan and Stavi (1986): A Semantic Characterization of Natural Language Determiners
@@ -38,6 +40,8 @@ are not formalized.
 
 * [keenan-stavi-1986]
 -/
+
+@[expose] public section
 
 namespace KeenanStavi1986
 
@@ -317,7 +321,7 @@ theorem not_cardinal_noBut : ¬ Cardinal (noBut (0 : Fin 2)) := by
   rw [noBut, inf_idem] at key
   exact absurd ((congrFun key 1).mp rfl) (by decide)
 
-private theorem exists_ofSize [Fintype α] (k : Fin (Fintype.card α + 1)) :
+theorem exists_ofSize [Fintype α] (k : Fin (Fintype.card α + 1)) :
     ∃ t ⊆ (Finset.univ : Finset α), t.card = k :=
   Finset.exists_subset_card_eq ((Nat.lt_succ_iff.mp k.2).trans_eq Finset.card_univ.symm)
 

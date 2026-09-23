@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
+module
+
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Newman (2024): When Arguments Merge
@@ -33,6 +35,8 @@ namespace; the case-phrase detector inspects syntactic objects of the Minimalist
 * [paille-2020]
 * [preminger-2014]
 -/
+
+@[expose] public section
 
 namespace Minimalist.CMH
 
@@ -231,7 +235,7 @@ structure PendingOp where
     bleeds another operation.
 
     Returns `true` if `chosen` is a valid choice under Weak Economy. -/
-private def weakEconomyValidAux (chosen : PendingOp) (chosenIdx : Nat)
+def weakEconomyValidAux (chosen : PendingOp) (chosenIdx : Nat)
     (ops : List PendingOp) (i : Nat) : Bool :=
   match ops with
   | [] => true
@@ -656,18 +660,18 @@ theorem impersonal_passive_converges : passiveV.features.hasD = false := rfl
 -- definitionally.
 
 /-- A phonologically-marked lexical-leaf token. -/
-private def tok (cat : Cat) (phon : String) (id : Nat) : LIToken :=
+def tok (cat : Cat) (phon : String) (id : Nat) : LIToken :=
   ⟨.simple cat [] (phonForm := phon), id⟩
 
 -- Low-XP ditransitive: V: [·D·][·X·], v: [·D·][·V·]
 -- Structure: [vP agent [v' v [VP DO [V' V XP]]]]
 -- VP is complement of v because v lacks [·X·].
 
-private def v₁ : LIToken := tok .v "v" 10
-private def V₁ : LIToken := tok .V "V" 11
-private def agent₁ : LIToken := tok .D "agent" 12
-private def DO₁ : LIToken := tok .D "DO" 13
-private def XP₁ : LIToken := tok .P "to-Mary" 14
+def v₁ : LIToken := tok .v "v" 10
+def V₁ : LIToken := tok .V "V" 11
+def agent₁ : LIToken := tok .D "agent" 12
+def DO₁ : LIToken := tok .D "DO" 13
+def XP₁ : LIToken := tok .P "to-Mary" 14
 
 def lowXPTree : PlanarSyntacticObject :=
    (agent₁ * (v₁ * (DO₁ * (V₁ * XP₁))))
@@ -677,11 +681,11 @@ def lowXPTree : PlanarSyntacticObject :=
 -- VP is specifier of v because v bears [·X·].
 -- Agent tucks in below VP (Generalized Tucking In).
 
-private def v₂ : LIToken := tok .v "v" 20
-private def V₂ : LIToken := tok .V "V" 21
-private def agent₂ : LIToken := tok .D "agent" 22
-private def DO₂ : LIToken := tok .D "DO" 23
-private def IO₂ : LIToken := tok .D "IO" 24
+def v₂ : LIToken := tok .v "v" 20
+def V₂ : LIToken := tok .V "V" 21
+def agent₂ : LIToken := tok .D "agent" 22
+def DO₂ : LIToken := tok .D "DO" 23
+def IO₂ : LIToken := tok .D "IO" 24
 
 def docTree : PlanarSyntacticObject :=
    ((V₂ * DO₂) * (agent₂ * (v₂ * IO₂)))

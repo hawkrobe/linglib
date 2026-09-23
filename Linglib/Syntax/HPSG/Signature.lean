@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.List.Pairwise
-import Mathlib.Order.Max
-import Linglib.Core.Relation.ReflTransGen
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.List.Pairwise
+public import Mathlib.Order.Max
+public import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # RSRL signatures
@@ -46,6 +48,8 @@ of the edges, so transitivity never has to be checked by enumeration.
 * [richter-2024]
 * [pollard-sag-1994]
 -/
+
+@[expose] public section
 
 namespace HPSG.RSRL
 

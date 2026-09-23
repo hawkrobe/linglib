@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Presupposition.Basic
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Izvorski (1997): The Present Perfect as an Epistemic Modal
@@ -36,6 +38,8 @@ past the evidential meaning is no implicature (`bestWorlds_subset_accessible`).
 * [R. Izvorski, *The Present Perfect as an Epistemic Modal* (1997)][izvorski-1997]
 * [A. Kratzer, *Modality* (1991)][kratzer-1991]
 -/
+
+@[expose] public section
 
 namespace Izvorski1997
 

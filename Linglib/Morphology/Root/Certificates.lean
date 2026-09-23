@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Realization
-import Linglib.Morphology.Root.Basic
-import Mathlib.Data.Finset.Union
-import Mathlib.Data.Finset.Dedup
+module
+
+public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Root.Basic
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Data.Finset.Dedup
 
 /-!
 # Root certificates: roothood as a role
@@ -58,6 +60,8 @@ root-*question* layer over `Realization`, co-equal with `Paradigm/`,
   `isFunctionalInventory_iff_no_lexicalWork` — the l/f-morpheme divide.
 * `IsCrossCategorial` — categorial freedom.
 -/
+
+@[expose] public section
 
 namespace Morphology.Root
 

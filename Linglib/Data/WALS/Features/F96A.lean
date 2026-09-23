@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 96A: Relationship between the Order of Object and Verb and the Order of Relative Clause and Noun
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 96, 879 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F96A
 
@@ -26,7 +30,8 @@ inductive RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfRelativeClauseA
   | other
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfRelativeClauseAndNoun) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfRelativeClauseAndNoun) :=
   [ { walsCode := "xoo", iso := "nmn", value := .voAndNrel }
   , { walsCode := "ani", iso := "hnh", value := .other }
   , { walsCode := "huc", iso := "huc", value := .voAndNrel }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVe
   , { walsCode := "mrq", iso := "", value := .voAndNrel }
   ]
 
-private def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfRelativeClauseAndNoun) :=
+/-- Rows 501 to 879 of `allData`. -/
+def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfRelativeClauseAndNoun) :=
   [ { walsCode := "mrt", iso := "vma", value := .other }
   , { walsCode := "mru", iso := "mhx", value := .ovAndReln }
   , { walsCode := "mas", iso := "mcn", value := .voAndNrel }

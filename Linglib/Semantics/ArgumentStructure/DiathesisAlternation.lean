@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!
 # Diathesis alternations
@@ -18,6 +20,8 @@ whose standing against Part II is stated in `LevinClass/Properties.lean`.
 
 * [levin-1993]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

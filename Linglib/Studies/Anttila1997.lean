@@ -1,8 +1,10 @@
-import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-import Linglib.Data.Examples.Anttila1997
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Zify
+module
+
+public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+public import Linglib.Data.Examples.Anttila1997
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Tactic.Zify
 
 /-!
 # Anttila 1997: deriving variation from grammar
@@ -37,6 +39,8 @@ Item and page numbers follow the ROA-63 manuscript.
 * [tesar-smolensky-1995] — stratified domination hierarchies
 * [kiparsky-1993b] — partial ranking as a source of quantitative predictions
 -/
+
+@[expose] public section
 
 namespace Anttila1997
 

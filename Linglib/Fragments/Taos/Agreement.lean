@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Features
+module
+
+public import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Taos Verbal Agreement Fragment
@@ -34,6 +36,8 @@ Number features are `[±atomic]` and `[±minimal]`
 (Following [middleton-2026] fn. 4, `[−atomic]` is used in place of
 A&N's `[−singular]` for direct compatibility with [harbour-2014].)
 -/
+
+@[expose] public section
 
 namespace Taos.Agreement
 

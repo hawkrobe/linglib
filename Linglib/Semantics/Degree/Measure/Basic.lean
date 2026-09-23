@@ -1,5 +1,7 @@
-import Mathlib.Basic.Real.Basic
-import Linglib.Semantics.Mereology
+module
+
+public import Mathlib.Basic.Real.Basic
+public import Linglib.Semantics.Mereology
 
 /-!
 # Admissible measures and dimensional restriction
@@ -16,6 +18,8 @@ order-theoretic content of dimension availability.
   (`linearOrder_dimensionallyRestricted` /
   `prod_not_dimensionallyRestricted`).
 -/
+
+@[expose] public section
 
 namespace Degree
 

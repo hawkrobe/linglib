@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.BeliefEmbedding
-import Linglib.Data.Examples.TonhauserEtAl2013
+module
+
+public import Linglib.Semantics.Presupposition.BeliefEmbedding
+public import Linglib.Data.Examples.TonhauserEtAl2013
 
 /-!
 # Tonhauser, Beaver, Roberts and Simons (2013): Toward a Taxonomy of Projective Content
@@ -53,6 +55,8 @@ reported in prose. The examples are the rows of `Data.Examples.TonhauserEtAl2013
 * [simons-tonhauser-beaver-roberts-2010]
 * [matthewson-2004]
 -/
+
+@[expose] public section
 
 namespace TonhauserEtAl2013
 

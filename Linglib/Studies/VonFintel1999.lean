@@ -1,7 +1,9 @@
-import Linglib.Logic.Natural.Strawson.Basic
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Conditionals.Restrictor
-import Linglib.Data.Examples.VonFintel1999
+module
+
+public import Linglib.Logic.Natural.Strawson.Basic
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Conditionals.Restrictor
+public import Linglib.Data.Examples.VonFintel1999
 
 /-!
 # von Fintel (1999): NPI Licensing, Strawson Entailment, and Context Dependency
@@ -39,6 +41,8 @@ restricts a definite description (`not_isStrawsonDE_theSuperlativeExceeds`).
 * [kratzer-1986]
 * [von-fintel-2000]
 -/
+
+@[expose] public section
 
 namespace VonFintel1999
 

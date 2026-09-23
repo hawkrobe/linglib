@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Ronai2024
-import Linglib.Studies.ChemlaSpector2011
+module
+
+public import Linglib.Data.Examples.Ronai2024
+public import Linglib.Studies.ChemlaSpector2011
 
 /-!
 # Ronai (2024): Embedded scalar diversity
@@ -54,6 +56,8 @@ those sentences need.
 * [bergen-levy-goodman-2016]
 * [sun-tian-breheny-2018]
 -/
+
+@[expose] public section
 
 namespace Ronai2024
 

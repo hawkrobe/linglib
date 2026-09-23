@@ -1,9 +1,11 @@
-import Linglib.Semantics.Dynamic.Possibility
-import Mathlib.Algebra.Group.Defs
-import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
-import Mathlib.Order.Antisymmetrization
-import Mathlib.Order.UpperLower.CompleteLattice
-import Mathlib.Order.Hom.Basic
+module
+
+public import Linglib.Semantics.Dynamic.Possibility
+public import Mathlib.Algebra.Group.Defs
+public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Order.UpperLower.CompleteLattice
+public import Mathlib.Order.Hom.Basic
 
 /-!
 # Information states
@@ -34,6 +36,8 @@ kernel is antisymmetric, `State` is a `Preorder` only.
   [groenendijk-stokhof-veltman-1996]
 - [visser-vermeulen-1996] (monoidal processing); [heim-1982]
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

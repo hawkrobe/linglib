@@ -1,6 +1,8 @@
-import Mathlib.Data.PFun
-import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Presupposition.Context
+module
+
+public import Mathlib.Data.PFun
+public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Semantics.Presupposition.Context
 
 /-!
 # Partial Context Change Potentials
@@ -56,6 +58,8 @@ dynamic conjunction, conditional, and disjunction
 - [beaver-2001], [veltman-1996], [groenendijk-stokhof-1990]
 - [moggi-1991], [shan-2001], [haug-2014]
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

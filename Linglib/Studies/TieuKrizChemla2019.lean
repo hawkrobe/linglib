@@ -1,8 +1,10 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Semantics.Homogeneity.Plural
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Data.Examples.TieuKrizChemla2019
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Homogeneity.Plural
+public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Data.Examples.TieuKrizChemla2019
 
 /-!
 # Tieu, Križ and Chemla (2019): Children's Acquisition of Homogeneity in Plural Definite Descriptions
@@ -68,6 +70,8 @@ responses that contradict the definitions beside it, which are followed here.
 * [karmiloff-smith-1979]
 * [caponigro-etal-2012]
 -/
+
+@[expose] public section
 
 namespace TieuKrizChemla2019
 

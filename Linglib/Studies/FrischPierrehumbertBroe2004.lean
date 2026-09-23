@@ -1,7 +1,9 @@
-import Mathlib.Tactic.Linarith
-import Linglib.Fragments.Arabic.ModernStandard.Phonology
-import Linglib.Studies.Broe1993
-import Linglib.Data.Examples.FrischPierrehumbertBroe2004
+module
+
+public import Mathlib.Tactic.Linarith
+public import Linglib.Fragments.Arabic.ModernStandard.Phonology
+public import Linglib.Studies.Broe1993
+public import Linglib.Data.Examples.FrischPierrehumbertBroe2004
 
 /-!
 # Frisch, Pierrehumbert and Broe (2004): Similarity Avoidance and the OCP
@@ -46,6 +48,8 @@ natural-classes model explains more of the variance than the categorical one (Ta
 * [padgett-1995]
 * [cowan-1979]
 -/
+
+@[expose] public section
 
 namespace FrischPierrehumbertBroe2004
 
@@ -144,7 +148,7 @@ structure Row where
   similarity : ℕ
   deriving DecidableEq
 
-private def consonants : List (String × Consonant) := [("d", .d), ("t", .t), ("s", .s), ("g", .jim)]
+def consonants : List (String × Consonant) := [("d", .d), ("t", .t), ("s", .s), ("g", .jim)]
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let c₁ ← ex.parse? "c1" consonants

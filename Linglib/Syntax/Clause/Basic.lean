@@ -1,6 +1,8 @@
-import Linglib.Syntax.Case.Basic
-import Mathlib.Order.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Clause-token axes
@@ -18,6 +20,8 @@ complementation and particle APIs.
   structure it needs, [wurmbrand-lohninger-2023]'s implicational
   complementation hierarchy
 -/
+
+@[expose] public section
 
 namespace Clause
 

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Prosody.Word
+module
+
+public import Linglib.Phonology.Prosody.Word
 
 /-!
 # Phrase-level prosodic structure
@@ -18,6 +20,8 @@ reads ([buring-2016]). `phrases` reads the φ-constituents off an
 utterance; φ-edges are what demarcative focus reflexes
 (`Reflex.boundary`) realize.
 -/
+
+@[expose] public section
 
 namespace Prosody
 

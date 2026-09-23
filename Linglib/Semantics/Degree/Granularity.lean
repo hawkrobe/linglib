@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Basic
-import Mathlib.Data.Finset.Max
-import Linglib.Core.Algebra.Order.ToIntervalMod
-import Mathlib.Algebra.Order.Group.Defs
-import Linglib.Semantics.Questions.Partition.Basic
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Data.Finset.Max
+public import Linglib.Core.Algebra.Order.ToIntervalMod
+public import Mathlib.Algebra.Order.Group.Defs
+public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
 # Scale granularity
@@ -28,6 +30,8 @@ widths of [deo-thomas-2025].
 * [krifka-2007]
 * [deo-thomas-2025]
 -/
+
+@[expose] public section
 
 namespace Degree.Granularity
 

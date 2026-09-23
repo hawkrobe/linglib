@@ -1,5 +1,7 @@
-import Linglib.Discourse.Commitment.Basic
-import Linglib.Discourse.Role
+module
+
+public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Discourse.Role
 
 /-!
 # Rising and falling declaratives
@@ -35,6 +37,8 @@ self-generated, the `Commitment.Source` coordinate.
   (2001)][gunlogson-2001]
 * [C. Gunlogson, *A Question of Commitment* (2008)][gunlogson-2008]
 -/
+
+@[expose] public section
 
 namespace Commitment
 

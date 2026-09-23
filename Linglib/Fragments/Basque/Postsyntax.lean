@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Features
+module
+
+public import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Basque Auxiliary Postsyntactic Inventory [arregi-nevins-2012] [middleton-2026]
@@ -35,6 +37,8 @@ live in `Studies/Middleton2026.lean`.
 * The complementizer is dropped from the witness phrase: it is not
   referenced by either rule, and including it would add noise.
 -/
+
+@[expose] public section
 
 namespace Basque.Postsyntax
 

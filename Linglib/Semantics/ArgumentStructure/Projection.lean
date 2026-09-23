@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.ArgumentStructure.ParticipantType
+module
+
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Semantics.ArgumentStructure.ParticipantType
 
 /-!
 # The Dowty→Grimm projection ([grimm-2011] §2.1)
@@ -17,6 +19,8 @@ lattice order plus independent existence (`pAgentDominates_iff`), and the
 Argument Selection Principle as lattice dominance
 (`outranks_of_lattice_dominance`).
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

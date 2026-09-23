@@ -1,5 +1,7 @@
-import Linglib.Fragments.Bantu.Params
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Linglib.Fragments.Bantu.Params
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Shona noun classes
@@ -13,6 +15,8 @@ system as a classifier device.
 
 * [carstens-2026]
 -/
+
+@[expose] public section
 
 namespace Shona
 

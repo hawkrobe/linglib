@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 57A: Position of Pronominal Possessive Affixes
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 57, 902 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F57A
 
@@ -24,7 +28,8 @@ inductive PositionOfPronominalPossessiveAffixes where
   | noPossessiveAffixes
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PositionOfPronominalPossessiveAffixes) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PositionOfPronominalPossessiveAffixes) :=
   [ { walsCode := "aar", iso := "aiw", value := .noPossessiveAffixes }
   , { walsCode := "abi", iso := "axb", value := .prefixesAndSuffixes }
   , { walsCode := "abk", iso := "abk", value := .possessivePrefixes }
@@ -527,7 +532,8 @@ private def allData_0 : List (Datapoint PositionOfPronominalPossessiveAffixes) :
   , { walsCode := "mdo", iso := "gmm", value := .noPossessiveAffixes }
   ]
 
-private def allData_1 : List (Datapoint PositionOfPronominalPossessiveAffixes) :=
+/-- Rows 501 to 902 of `allData`. -/
+def allData_1 : List (Datapoint PositionOfPronominalPossessiveAffixes) :=
   [ { walsCode := "mee", iso := "mym", value := .possessiveSuffixes }
   , { walsCode := "mei", iso := "mni", value := .possessivePrefixes }
   , { walsCode := "mek", iso := "skf", value := .possessivePrefixes }

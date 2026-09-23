@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Data.Generalizations.HomogeneityGap
-import Linglib.Semantics.Exhaustification.Finite
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Data.Generalizations.HomogeneityGap
+public import Linglib.Semantics.Exhaustification.Finite
 
 /-!
 # Magri (2014): An Account for the Homogeneity Effect Triggered by Plural Definites and Conjunction
@@ -45,6 +47,8 @@ indefinite triggers its implicature is described in prose.
 * [fox-2007]
 * [gajewski-2005]
 -/
+
+@[expose] public section
 
 namespace Magri2014
 
@@ -509,15 +513,15 @@ inductive Sat where | none | one | all
   deriving Repr, DecidableEq, Fintype
 
 /-- SOME meaning: at least one satisfies. -/
-private def bSome : Sat → Bool | .one | .all => true | _ => false
+def bSome : Sat → Bool | .one | .all => true | _ => false
 /-- ALL meaning: all satisfy. -/
-private def bAll : Sat → Bool | .all => true | _ => false
+def bAll : Sat → Bool | .all => true | _ => false
 
 /-- THE's alternative list: only SOME is a Horn-mate (not ALL). -/
-private def theAlts : List (Sat → Bool) := [bSome]
+def theAlts : List (Sat → Bool) := [bSome]
 
 /-- SOME's alternative list: both THE (= SOME) and ALL are Horn-mates. -/
-private def someAlts : List (Sat → Bool) := [bSome, bAll]
+def someAlts : List (Sat → Bool) := [bSome, bAll]
 
 /-- Inner EXH(THE) = SOME: THE has no excludable alternatives because
     its only Horn-mate (SOME) is equivalent, not strictly stronger.
@@ -546,15 +550,15 @@ theorem fox_inner_exh_some :
   decide
 
 /-- Inner results as named functions for the outer level. -/
-private def innerThe : Sat → Bool :=
+def innerThe : Sat → Bool :=
   λ w => decide (w ∈ innocent.exh (altsFromPreds theAlts) (predToFinset bSome))
-private def innerSome : Sat → Bool :=
+def innerSome : Sat → Bool :=
   λ w => decide (w ∈ innocent.exh (altsFromPreds someAlts) (predToFinset bSome))
 
 /-- Outer-level alternative list for THE: [EXH(THE), EXH(SOME)].
     EXH(SOME) = SOME ∧ ¬ALL is strictly stronger than EXH(THE) = SOME,
     and SOME is a Horn-mate of THE, so it becomes excludable. -/
-private def outerAltsForThe : List (Sat → Bool) := [innerThe, innerSome]
+def outerAltsForThe : List (Sat → Bool) := [innerThe, innerSome]
 
 /-- **Bridge theorem**: Fox's exhaustification applied twice with the correct
     Horn-mate-restricted alternative sets yields the universal reading,
@@ -693,16 +697,16 @@ def cAnd : ConjW → Bool | .both => true | _ => false
 -- RIGHT's alts: {AND_F, AND_unF, OR, LEFT}
 
 /-- AND_unF's alternatives: {AND_F, LEFT, RIGHT}. OR is NOT included. -/
-private def andUnFAlts : List (ConjW → Bool) := [cAnd, cLeft, cRight]
+def andUnFAlts : List (ConjW → Bool) := [cAnd, cLeft, cRight]
 /-- AND_F's alternatives: {AND_unF, OR, LEFT, RIGHT}. -/
-private def andFAlts : List (ConjW → Bool) := [cAnd, cOr, cLeft, cRight]
+def andFAlts : List (ConjW → Bool) := [cAnd, cOr, cLeft, cRight]
 /-- LEFT's alternatives: {AND_F, AND_unF, OR, RIGHT}.
     AND_F and AND_unF have the same denotation (`cAnd`), so the two
     copies are semantically redundant but reflect the paper's (69b). -/
-private def leftAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cRight]
+def leftAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cRight]
 /-- RIGHT's alternatives: {AND_F, AND_unF, OR, LEFT}.
     Same note: two `cAnd` copies for AND_F / AND_unF. -/
-private def rightAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cLeft]
+def rightAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cLeft]
 
 -- Inner EXH for each item (with their own alternative lists)
 
@@ -755,17 +759,17 @@ theorem exh_right :
 
 def nAnd : ConjW → Bool := λ w => !cAnd w
 def nOr : ConjW → Bool := λ w => !cOr w
-private def nLeft : ConjW → Bool := λ w => !cLeft w
-private def nRight : ConjW → Bool := λ w => !cRight w
+def nLeft : ConjW → Bool := λ w => !cLeft w
+def nRight : ConjW → Bool := λ w => !cRight w
 
 /-- not·AND_unF's alternatives: {not·AND_F, not·LEFT, not·RIGHT}. -/
-private def nAndUnFAlts : List (ConjW → Bool) := [nAnd, nLeft, nRight]
+def nAndUnFAlts : List (ConjW → Bool) := [nAnd, nLeft, nRight]
 /-- not·AND_F's alternatives: {not·AND_unF, not·OR, not·LEFT, not·RIGHT}. -/
-private def nAndFAlts : List (ConjW → Bool) := [nAnd, nOr, nLeft, nRight]
+def nAndFAlts : List (ConjW → Bool) := [nAnd, nOr, nLeft, nRight]
 /-- not·LEFT's alternatives: {not·AND_F, not·AND_unF, not·OR, not·RIGHT}. -/
-private def nLeftAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nRight]
+def nLeftAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nRight]
 /-- not·RIGHT's alternatives: {not·AND_F, not·AND_unF, not·OR, not·LEFT}. -/
-private def nRightAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nLeft]
+def nRightAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nLeft]
 
 /-- (71b) EXH(not·AND_unF) = not·AND (vacuous inner EXH).
     Neither not·LEFT nor not·RIGHT is IE: excluding one forces including
@@ -958,7 +962,7 @@ judgments unfocused conjunction shares with plural definites
 section ConjunctionBridge
 
 /-- The gap scenario for conjunction: one conjunct true, the other false. -/
-private def conjGapWorlds : List ConjW := [.onlyA]
+def conjGapWorlds : List ConjW := [.onlyA]
 
 /-- In the gap, positive conjunction (AND) is false. -/
 theorem conj_gap_positive_false :

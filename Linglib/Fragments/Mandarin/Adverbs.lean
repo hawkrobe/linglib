@@ -1,4 +1,6 @@
-import Linglib.Semantics.Presupposition.TriggerTypology
+module
+
+public import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # Mandarin adverbs
@@ -25,6 +27,8 @@ is false, where *yě* requires one that is true. The description follows Li and 
 * [li-thompson-1981]
 * [wang-2025]
 -/
+
+@[expose] public section
 
 namespace Mandarin.Adverbs
 

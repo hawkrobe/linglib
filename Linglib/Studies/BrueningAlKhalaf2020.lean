@@ -1,6 +1,8 @@
-import Linglib.Syntax.WordOrder
-import Linglib.Syntax.Tree.Cat
-import Mathlib.Data.Finset.Basic
+module
+
+public import Linglib.Syntax.WordOrder
+public import Linglib.Syntax.Tree.Cat
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Bruening and Al Khalaf 2020: category mismatches in coordination
@@ -44,6 +46,8 @@ first when the coordination precedes its verb — are the linear ones.
 * [sag-etal-1985]
 * [zhang-2010]
 -/
+
+@[expose] public section
 namespace BrueningAlKhalaf2020
 
 open Syntax (Cat)

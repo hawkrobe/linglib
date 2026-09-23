@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Lhasa Tibetan evidentiality
@@ -31,6 +33,8 @@ Neither is in the inventory.
 * [tournadre-lapolla-2014]
 * [zeisler-2024]
 -/
+
+@[expose] public section
 
 namespace LhasaTibetan.Evidentiality
 

@@ -1,7 +1,9 @@
-import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-import Linglib.Phonology.HarmonicGrammar.Expressivity
-import Linglib.Phonology.Constraints.Harmony
-import Linglib.Core.Optimization.System
+module
+
+public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+public import Linglib.Phonology.HarmonicGrammar.Expressivity
+public import Linglib.Phonology.Constraints.Harmony
+public import Linglib.Core.Optimization.System
 
 /-!
 # Coetzee and Pater (2011): the place of variation in phonological theory
@@ -68,6 +70,8 @@ tables (14), (21), (23) and (32) are Praat simulations and are not formalized.
 * [S. Kawahara, *A Faithfulness Ranking Projected from a Perceptibility Scale: The Case of
   [+voice] in Japanese* (2006)][kawahara-2006]
 -/
+
+@[expose] public section
 
 namespace CoetzeePater2011
 

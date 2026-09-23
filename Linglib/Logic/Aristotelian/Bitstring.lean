@@ -1,8 +1,10 @@
-import Linglib.Core.Order.Aristotelian
-import Linglib.Logic.Aristotelian.Partition
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Order
-import Mathlib.Order.BooleanSubalgebra
+module
+
+public import Linglib.Core.Order.Aristotelian
+public import Linglib.Logic.Aristotelian.Partition
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Order
+public import Mathlib.Order.BooleanSubalgebra
 
 /-!
 # Bitstring semantics for logical fragments
@@ -31,6 +33,8 @@ world-enumeration declarations — which also require `[Fintype W]` — live in
 finite Boolean algebras (`CompleteAtomicBooleanAlgebra.toSetOfIsAtom`); the
 bitstring isomorphism is its explicit `Fin n`-indexed form.
 -/
+
+@[expose] public section
 
 namespace Aristotelian
 

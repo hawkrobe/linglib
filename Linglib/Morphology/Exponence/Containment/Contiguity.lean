@@ -1,5 +1,7 @@
-import Linglib.Morphology.Exponence.Containment.Selection
-import Linglib.Morphology.Paradigm.Contiguity
+module
+
+public import Linglib.Morphology.Exponence.Containment.Selection
+public import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Containment hierarchies: contiguity and the suppletion generalizations
@@ -22,6 +24,8 @@ DM-specific refinements — the terminal-adjacent plateau, *AAB exclusion
 * `realize_const_of_terminal_adjacent`, `realize_const_of_grounded`,
   `exists_portmanteau_of_ne` — the plateau, *AAB, and portmanteau prediction
 -/
+
+@[expose] public section
 
 namespace Morphology.Containment
 

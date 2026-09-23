@@ -1,10 +1,12 @@
-import Linglib.Semantics.Exhaustification.Disjunctive
-import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Semantics.Presupposition.Defs
-import Linglib.Logic.Modal.Basic
-import Linglib.Data.Examples.BarLevFox2020
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Semantics.Exhaustification.Disjunctive
+public import Linglib.Semantics.Conditionals.Counterfactual
+public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Data.Examples.BarLevFox2020
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Bar-Lev and Fox 2020: Free choice, simplification, and Innocent Inclusion
@@ -41,6 +43,8 @@ excluded into included.
 * [ciardelli-zhang-champollion-2018]
 * [chierchia-fox-spector-2012]
 -/
+
+@[expose] public section
 
 namespace BarLevFox2020
 

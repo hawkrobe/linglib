@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.Forms.Audring2019
-import Linglib.Morphology.ConstructionMorphology.Schema
-import Linglib.Core.Relation.FactorsThroughOn
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Data.Forms.Audring2019
+public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Audring (2019): Mothers or sisters? The encoding of morphological knowledge
@@ -44,6 +46,8 @@ do not, and cannot state the pairing they do.
 * [audring-2019]
 * [booij-2019]
 -/
+
+@[expose] public section
 
 namespace Audring2019
 

@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Bilattice.Basic
-import Linglib.Core.Data.Trivalent
+module
+
+public import Linglib.Core.Order.Bilattice.Basic
+public import Linglib.Core.Data.Trivalent
 
 /-!
 # Fitting (2021): The strict/tolerant idea and bilattices
@@ -38,6 +40,8 @@ from `FOUR` (Examples 8.10.2–8.10.5).
 * [belnap-1977]
 * [priest-1979]
 -/
+
+@[expose] public section
 
 open Bilattice Product
 

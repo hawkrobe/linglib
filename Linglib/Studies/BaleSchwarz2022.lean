@@ -1,7 +1,9 @@
-import Linglib.Semantics.Degree.Measure.Quantity
-import Linglib.Semantics.Presupposition.Defs
-import Linglib.Fragments.English.MeasurePhrases
-import Linglib.Data.Examples.BaleSchwarz2022
+module
+
+public import Linglib.Semantics.Degree.Measure.Quantity
+public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Fragments.English.MeasurePhrases
+public import Linglib.Data.Examples.BaleSchwarz2022
 
 /-!
 # Bale and Schwarz 2022: measurements from *per* without complex dimensions
@@ -34,6 +36,8 @@ fragment.
 * [nakanishi-2007]
 * [schwarzschild-2006]
 -/
+
+@[expose] public section
 
 namespace BaleSchwarz2022
 

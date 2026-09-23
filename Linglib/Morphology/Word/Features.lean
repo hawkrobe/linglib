@@ -1,9 +1,11 @@
-import Linglib.Core.Order.Bundle
-import Linglib.Data.UD.Features
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Core.Order.Bundle
+public import Linglib.Data.UD.Features
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # Token features
@@ -29,6 +31,8 @@ the matter of `Morphology/Word/UD.lean`.
 * [de-marneffe-zeman-2021]
 * [shieber-1986]
 -/
+
+@[expose] public section
 
 namespace Morphology
 

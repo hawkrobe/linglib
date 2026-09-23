@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+public import Linglib.Syntax.Negation
 
 /-!
 # Japanese negation
@@ -25,6 +27,8 @@ The examples are those of [miestamo-2005], from Hinds's grammar.
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation
 

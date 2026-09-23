@@ -1,4 +1,6 @@
-import Linglib.Semantics.Presupposition.Defs
+module
+
+public import Linglib.Semantics.Presupposition.Defs
 
 /-!
 # Quantified presupposition projection
@@ -17,6 +19,8 @@ delimit when each reading surfaces.
   projection theory pick one explicitly.
 * `negExistsPartial` — negated existential, universal projection.
 -/
+
+@[expose] public section
 
 namespace Presupposition
 

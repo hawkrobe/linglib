@@ -1,4 +1,6 @@
-import Linglib.Semantics.Reference.Context.Tower
+module
+
+public import Linglib.Semantics.Reference.Context.Tower
 
 /-!
 # Iconological Semantics
@@ -21,6 +23,8 @@ extension.
 - `ClassifierPred E P` — a classifier predicate with logical + iconic content
 - `dynamicProjection` — evaluate projection from a dynamic viewpoint at (w, t)
 -/
+
+@[expose] public section
 
 namespace Semantics.Iconic
 

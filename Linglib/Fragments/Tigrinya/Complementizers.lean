@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Tigrinya Complementizers
@@ -24,6 +26,8 @@ morphs.
 * [cacchioli-2026], chs. 2–4, Table 6.1
 * [cacchioli-2023]
 -/
+
+@[expose] public section
 
 namespace Tigrinya.Complementizers
 

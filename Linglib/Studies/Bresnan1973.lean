@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Bresnan1973
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Adjectives
+module
+
+public import Linglib.Data.Examples.Bresnan1973
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.English.Adjectives
 
 /-!
 # Bresnan (1973): Syntax of the comparative clause construction in English
@@ -35,6 +37,8 @@ the ambiguities of 1.8 beyond the homophony of *more* are not formalized.
 * [bresnan-1973]
 * [ross-1967]
 -/
+
+@[expose] public section
 
 namespace Bresnan1973
 
@@ -275,7 +279,7 @@ instance : DecidablePred ContractionLicit := λ _ => by unfold ContractionLicit;
 
 /-! ### The rows -/
 
-private def particleOf : String → Option Particle
+def particleOf : String → Option Particle
   | "as" => some .as_
   | "too" => some .too
   | "that" => some .that_
@@ -284,12 +288,12 @@ private def particleOf : String → Option Particle
   | "no" => some .no_
   | _ => none
 
-private def cliticOf : String → Option Clitic
+def cliticOf : String → Option Clitic
   | "er" => some .er
   | "est" => some .est
   | _ => none
 
-private def qOf : String → Option Q
+def qOf : String → Option Q
   | "much" => some .much
   | "many" => some .many
   | "little" => some .little
@@ -297,7 +301,7 @@ private def qOf : String → Option Q
   | "enough" => some .enough
   | _ => none
 
-private def positionOf : String → Option Position
+def positionOf : String → Option Position
   | "adjective" => some .adjective
   | "noun" => some .noun
   | "quantifier" => some .quantifier
@@ -306,14 +310,14 @@ private def positionOf : String → Option Position
   | "term" => some .term
   | _ => none
 
-private def catOf : String → Option Cat
+def catOf : String → Option Cat
   | "qp" => some .qp
   | "ap" => some .ap
   | "np" => some .np
   | _ => none
 
 open English.Adjectives in
-private def adjectiveOf : String → Option Degree.GradableAdjective
+def adjectiveOf : String → Option Degree.GradableAdjective
   | "tall" => some tall
   | "short" => some short
   | "high" => some high
@@ -321,7 +325,7 @@ private def adjectiveOf : String → Option Degree.GradableAdjective
   | _ => none
 
 open English.Nouns in
-private def nounOf : String → Option English.Nouns.Noun
+def nounOf : String → Option English.Nouns.Noun
   | "man" => some man
   | "father" => some father
   | "mother" => some mother

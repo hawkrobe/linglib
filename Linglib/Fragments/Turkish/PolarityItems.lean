@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Turkish Polarity-Sensitive Items
@@ -11,6 +13,8 @@ Turkish indefinite pronoun polarity items, typed by the categories from
 - **hiç kimse**: Emphatic negative indefinite (direct negation)
 - **herhangi biri**: Free choice item
 -/
+
+@[expose] public section
 
 namespace Turkish.PolarityItems
 

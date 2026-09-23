@@ -1,6 +1,8 @@
-import Mathlib.ModelTheory.Satisfiability
-import Linglib.Logic.Modal.FirstOrder.Correspondence
-import Linglib.Logic.Team.QBSML.Properties
+module
+
+public import Mathlib.ModelTheory.Satisfiability
+public import Linglib.Logic.Modal.FirstOrder.Correspondence
+public import Linglib.Logic.Team.QBSML.Properties
 
 /-!
 # Classical model theory for the NE-free fragment of QBSML
@@ -14,6 +16,8 @@ closed translation as a sentence and conversely
 and mathlib's first-order compactness transfers to finite team
 satisfiability (`support_compactness`).
 -/
+
+@[expose] public section
 
 universe u v
 

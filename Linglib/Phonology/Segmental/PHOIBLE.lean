@@ -1,5 +1,7 @@
-import Linglib.Data.PHOIBLE.Chart
-import Linglib.Phonology.Segmental.Basic
+module
+
+public import Linglib.Data.PHOIBLE.Chart
+public import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Segments from PHOIBLE feature matrices
@@ -48,6 +50,8 @@ absence of a [back] value.
 * [moran-mccloy-2019]
 * [hayes-2009]
 -/
+
+@[expose] public section
 
 namespace Phonology.Feature
 

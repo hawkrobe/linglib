@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Computability.Language
-import Linglib.Phonology.Subregular.Boundary
-import Linglib.Core.Data.List.Factors
+module
+
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Computability.Language
+public import Linglib.Phonology.Subregular.Boundary
+public import Linglib.Core.Data.List.Factors
 
 /-!
 # Strictly local languages (SL_k)
@@ -34,6 +36,8 @@ permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies
   split into the two members' shared parts, and conversely the canonical grammar of
   licensed factors regenerates the language by stitching a member window-by-window.
 -/
+
+@[expose] public section
 
 variable {α : Type*}
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Italian plurals in *-a*
@@ -12,6 +14,8 @@ regular plurals in *-i* and *-e* that keep the singular's gender.
 
 * [adamson-2024]
 -/
+
+@[expose] public section
 
 namespace Italian.NumberGender
 

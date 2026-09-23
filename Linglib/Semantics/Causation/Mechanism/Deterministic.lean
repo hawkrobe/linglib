@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.Mechanism.Defs
+module
+
+public import Linglib.Semantics.Causation.Mechanism.Defs
 
 /-!
 # Mechanism.deterministic: Deterministic-as-Dirac Constructor
@@ -8,6 +10,8 @@ is built as a Dirac PMF — the exact mathlib pattern from
 `Mathlib/Probability/Kernel/Basic.lean` where
 `Kernel.deterministic (f) := dirac ∘ f`.
 -/
+
+@[expose] public section
 
 namespace Causation.Mechanism
 

@@ -1,7 +1,9 @@
-import Mathlib.Data.Sigma.Order
-import Linglib.Semantics.Degree.Hom
-import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Data.Examples.Cresswell1976
+module
+
+public import Mathlib.Data.Sigma.Order
+public import Linglib.Semantics.Degree.Hom
+public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Data.Examples.Cresswell1976
 
 /-!
 # The semantics of degree
@@ -31,6 +33,8 @@ through a Stalnaker selection function.
 * [M. J. Cresswell, *The semantics of degree* (1976)][cresswell-1976]
 * [R. C. Stalnaker, *A theory of conditionals* (1968)][stalnaker-1968]
 -/
+
+@[expose] public section
 
 namespace Cresswell1976
 

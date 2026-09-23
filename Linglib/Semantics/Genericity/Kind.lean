@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Semantics.Mereology
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Semantics.Mereology
 
 /-!
 # Kinds
@@ -35,6 +37,8 @@ closure over its instances, locally, so a bare plural has no scope.
 * [moroney-2021]
 * [guerrini-2026]
 -/
+
+@[expose] public section
 
 namespace Genericity
 

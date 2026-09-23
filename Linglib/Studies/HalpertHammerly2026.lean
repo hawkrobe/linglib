@@ -1,10 +1,12 @@
-import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Syntax.Person.Features
-import Linglib.Fragments.Xhosa.Nouns
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Data.Examples.HalpertHammerly2026
-import Mathlib.Order.Interval.Set.LinearOrder
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Linglib.Core.Order.UpperLower.Finset
+public import Linglib.Syntax.Person.Features
+public import Linglib.Fragments.Xhosa.Nouns
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Data.Examples.HalpertHammerly2026
+public import Mathlib.Order.Interval.Set.LinearOrder
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Halpert and Hammerly (2026): Reconciling Animacy and Noun Class in Bantu
@@ -55,6 +57,8 @@ recorded as data only, since the paper assigns its resolution to a separate mech
 * [carstens-2026]
 * [kramer-2015]
 -/
+
+@[expose] public section
 
 namespace HalpertHammerly2026
 

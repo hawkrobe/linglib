@@ -3,12 +3,16 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.PreLie.Insert
-import Linglib.Core.Data.UnorderedTree.Basic
-import Mathlib.Data.Multiset.Basic
-import Mathlib.Data.Multiset.MapFold
-import Mathlib.Data.Multiset.ZeroCons
-import Mathlib.Tactic.Abel
+module
+
+public import Linglib.Core.Algebra.RootedTree.PreLie.Insert
+public import Linglib.Core.Data.UnorderedTree.Basic
+public import Mathlib.Data.Multiset.Basic
+public import Mathlib.Data.Multiset.MapFold
+public import Mathlib.Data.Multiset.ZeroCons
+public import Mathlib.Tactic.Abel
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

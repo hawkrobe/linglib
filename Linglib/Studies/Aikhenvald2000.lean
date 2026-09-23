@@ -1,10 +1,12 @@
-import Linglib.Fragments.Romance.French.Nouns
-import Linglib.Fragments.Romance.Italian.NumberGender
-import Linglib.Fragments.Mandarin.Classifiers
-import Linglib.Fragments.Japanese.Classifiers
-import Linglib.Fragments.Xhosa.Basic
-import Linglib.Fragments.Shona.Basic
-import Linglib.Fragments.Swahili.Basic
+module
+
+public import Linglib.Fragments.Romance.French.Nouns
+public import Linglib.Fragments.Romance.Italian.NumberGender
+public import Linglib.Fragments.Mandarin.Classifiers
+public import Linglib.Fragments.Japanese.Classifiers
+public import Linglib.Fragments.Xhosa.Basic
+public import Linglib.Fragments.Shona.Basic
+public import Linglib.Fragments.Swahili.Basic
 
 /-!
 # A typology of noun categorization devices
@@ -45,6 +47,8 @@ bare nouns, is not classified as a classifier language by the book and is left t
 * [li-thompson-1981]
 * [downing-1996]
 -/
+
+@[expose] public section
 
 namespace Aikhenvald2000
 

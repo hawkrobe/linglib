@@ -5,9 +5,11 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.Variety.SemigroupLangs`.
 -/
-import Linglib.Core.Algebra.Semigroup.Pseudovariety
-import Linglib.Core.Computability.SyntacticSemigroup
-import Linglib.Core.GroupTheory.Congruence.Hom
+module
+
+public import Linglib.Core.Algebra.Semigroup.Pseudovariety
+public import Linglib.Core.Computability.SyntacticSemigroup
+public import Linglib.Core.GroupTheory.Congruence.Hom
 
 /-!
 # The language-side operator of a semigroup pseudovariety
@@ -33,6 +35,8 @@ they have no image under the monoid-side operator.
 
 Together these are the four conditions of [eilenberg-1976] VII, Theorem 3.2.
 -/
+
+@[expose] public section
 
 universe u
 

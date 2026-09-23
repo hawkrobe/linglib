@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Hewett2026
-import Linglib.Syntax.Minimalist.Defs
-import Linglib.Syntax.Minimalist.Features
-import Mathlib.Logic.Function.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Data.Examples.Hewett2026
+public import Linglib.Syntax.Minimalist.Defs
+public import Linglib.Syntax.Minimalist.Features
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Hewett (2026): Verbal templates can influence l-selection in Semitic
@@ -45,6 +47,8 @@ attested preposition once the categorizing head and then the template have activ
 * [merchant-2015]
 * [preminger-2014]
 -/
+
+@[expose] public section
 
 namespace Hewett2026
 

@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Lattice.Bounded
-import Linglib.Semantics.Modality.Basic
-import Linglib.Data.Examples.Geurts2005
+module
+
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Data.Examples.Geurts2005
 
 /-!
 # Geurts (2005): Entertaining Alternatives: Disjunctions as Modals
@@ -40,6 +42,8 @@ later paper that draws it, `Studies/Yagi2025.lean`.
 * [woods-1997]
 * [johnson-laird-savary-1999]
 -/
+
+@[expose] public section
 
 namespace Geurts2005
 
@@ -265,7 +269,7 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq
 
-private def forces : List (String × ModalForce) := [("may", .possibility), ("must", .necessity)]
+def forces : List (String × ModalForce) := [("may", .possibility), ("must", .necessity)]
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let force₁ ← ex.parse? "force1" forces

@@ -1,4 +1,6 @@
-import Linglib.Logic.Team.Closure
+module
+
+public import Linglib.Logic.Team.Closure
 
 /-!
 # Definability and expressive completeness for team-semantic logics
@@ -54,6 +56,8 @@ This file is phase 1 of the team-semantics family roadmap; see
 `Logic/Modal/README.md`. The closure predicates it packages come from
 `Team/Closure.lean` (themselves mathlib `Order/` predicates).
 -/
+
+@[expose] public section
 
 namespace Team
 

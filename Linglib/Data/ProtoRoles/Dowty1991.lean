@@ -1,4 +1,6 @@
-import Linglib.Data.ProtoRoles.Schema
+module
+
+public import Linglib.Data.ProtoRoles.Schema
 
 /-!
 # Dowty1991 — proto-role attribution data (generated)
@@ -10,6 +12,8 @@ re-run the generator. The 58 per-argument entailment attributions
 the paper states explicitly, with locators; fields the paper is silent or
 hedged about are `none`.
 -/
+
+@[expose] public section
 
 namespace Dowty1991
 

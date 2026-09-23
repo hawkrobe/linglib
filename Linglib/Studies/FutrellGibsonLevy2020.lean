@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.Entropy
-import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
-import Linglib.Processing.Memory.LossyContext
+module
+
+public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
+public import Linglib.Processing.Memory.LossyContext
 
 /-!
 # Futrell, Gibson and Levy (2020): Lossy-Context Surprisal
@@ -41,6 +43,8 @@ lossless case and certain erasure recovers the unigram prior.
 
 * [futrell-gibson-levy-2020]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory InformationTheory Processing.LossyContext
 open scoped ProbabilityTheory unitInterval

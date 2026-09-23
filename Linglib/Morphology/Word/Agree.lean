@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Agreement.Phi
-import Linglib.Morphology.Word.Basic
+module
+
+public import Linglib.Syntax.Agreement.Phi
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # φ-agreement between word tokens
@@ -13,6 +15,8 @@ import Linglib.Morphology.Word.Basic
 bundles are compatible, an unspecified dimension acting as a wildcard. The relation is
 reflexive and symmetric but not transitive; `HasPhi.Agree` is its generic form.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

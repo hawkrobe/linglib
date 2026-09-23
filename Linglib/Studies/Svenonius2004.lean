@@ -1,9 +1,11 @@
-import Mathlib.Tactic.FinCases
-import Linglib.Data.Examples.Svenonius2004
-import Linglib.Fragments.Slavic.Russian.Verbs
-import Linglib.Fragments.Slavic.Polish.Verbs
-import Linglib.Fragments.Slavic.Bulgarian.Verbs
-import Linglib.Morphology.Word.Tree
+module
+
+public import Mathlib.Tactic.FinCases
+public import Linglib.Data.Examples.Svenonius2004
+public import Linglib.Fragments.Slavic.Russian.Verbs
+public import Linglib.Fragments.Slavic.Polish.Verbs
+public import Linglib.Fragments.Slavic.Bulgarian.Verbs
+public import Linglib.Morphology.Word.Tree
 
 /-!
 # Svenonius (2004): Slavic Prefixes Inside and Outside VP
@@ -45,6 +47,8 @@ mismatches among the diagnostics.
 * [dendikken-1995]
 * [romanova-2004]
 -/
+
+@[expose] public section
 
 namespace Svenonius2004
 

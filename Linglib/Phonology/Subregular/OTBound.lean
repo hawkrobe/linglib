@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.ForbidPairs
-import Linglib.Core.Computability.NonRegular.AnBn
+module
+
+public import Linglib.Phonology.Subregular.ForbidPairs
+public import Linglib.Core.Computability.NonRegular.AnBn
 
 /-!
 # OT–Subregular Bridge: Bound and Counterexample
@@ -45,6 +47,8 @@ positive bridges show *which* constraint constructors land inside
 TSL_2; this file shows *that* the OT vocabulary is broader than the
 subregular hierarchy.
 -/
+
+@[expose] public section
 
 -- ============================================================================
 -- § 1. (Constraint zero-set API moved to Phonology/Constraint/OT/Basic.lean

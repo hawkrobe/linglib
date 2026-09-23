@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 143F: Postverbal Negative Morphemes
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 143, 1325 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F143F
 
@@ -24,7 +28,8 @@ inductive PostverbalNegativeMorphemes where
   | none
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PostverbalNegativeMorphemes) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "ani", iso := "hnh", value := .vneg }
   , { walsCode := "xam", iso := "xam", value := .none }
   , { walsCode := "huc", iso := "huc", value := .none }
@@ -527,7 +532,8 @@ private def allData_0 : List (Datapoint PostverbalNegativeMorphemes) :=
   , { walsCode := "kas", iso := "kas", value := .vNeg }
   ]
 
-private def allData_1 : List (Datapoint PostverbalNegativeMorphemes) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "ksn", iso := "cog", value := .none }
   , { walsCode := "ktc", iso := "xtc", value := .none }
   , { walsCode := "kti", iso := "kts", value := .vneg }
@@ -1030,7 +1036,8 @@ private def allData_1 : List (Datapoint PostverbalNegativeMorphemes) :=
   , { walsCode := "rot", iso := "rtm", value := .vneg }
   ]
 
-private def allData_2 : List (Datapoint PostverbalNegativeMorphemes) :=
+/-- Rows 1001 to 1325 of `allData`. -/
+def allData_2 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "rov", iso := "rug", value := .none }
   , { walsCode := "ruk", iso := "dru", value := .none }
   , { walsCode := "cos", iso := "", value := .none }

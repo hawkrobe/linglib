@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Latin coordinators
@@ -24,6 +26,8 @@ for 'neither … nor'; and the adversative coordinator is *sed*.
 * [haspelmath-2007]
 * [mitrovic-sauerland-2016]
 -/
+
+@[expose] public section
 
 namespace Latin.Coordination
 

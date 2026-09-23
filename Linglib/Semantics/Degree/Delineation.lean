@@ -1,4 +1,6 @@
-import Linglib.Semantics.Supervaluation
+module
+
+public import Linglib.Semantics.Supervaluation
 
 /-!
 # Klein's delineation semantics
@@ -39,6 +41,8 @@ between them and the strict-separation theorem are in `Degree/Hom.lean`.
 * `monotone_comparative_superTrue`, `comparative_prevents_superTrue` —
   the [fine-1975] duality: comparison classes are specification points.
 -/
+
+@[expose] public section
 
 namespace Degree.Delineation
 

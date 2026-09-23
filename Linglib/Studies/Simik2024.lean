@@ -1,18 +1,20 @@
-import Linglib.Semantics.Questions.Bias
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Semantics.Presupposition.Defs
-import Linglib.Discourse.CommonGround
-import Linglib.Logic.Modal.Defs
-import Linglib.Fragments.Slavic.Russian.QuestionParticles
-import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
-import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
-import Linglib.Fragments.Slavic.Polish.QuestionParticles
-import Linglib.Fragments.Slavic.Slovenian.QuestionParticles
-import Linglib.Fragments.Slavic.Serbian.QuestionParticles
-import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
-import Linglib.Fragments.Slavic.Czech.Particles
-import Linglib.Data.Examples.Simik2024
+module
+
+public import Linglib.Semantics.Questions.Bias
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Discourse.CommonGround
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Fragments.Slavic.Russian.QuestionParticles
+public import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
+public import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
+public import Linglib.Fragments.Slavic.Polish.QuestionParticles
+public import Linglib.Fragments.Slavic.Slovenian.QuestionParticles
+public import Linglib.Fragments.Slavic.Serbian.QuestionParticles
+public import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
+public import Linglib.Fragments.Slavic.Czech.Particles
+public import Linglib.Data.Examples.Simik2024
 
 /-!
 # Šimík (2024): Polar question semantics and bias: Lessons from Slavic/Czech
@@ -57,6 +59,8 @@ normalized `strategy` and `polarity` features. The kin of *razve* across Slavic 
 * [todorovic-2023], [stankova-2023], [esipova-romero-2023]
 * [hamblin-1973b], [karttunen-1977], [dayal-1996]
 -/
+
+@[expose] public section
 
 namespace Simik2024
 

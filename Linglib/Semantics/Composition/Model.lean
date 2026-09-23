@@ -1,5 +1,7 @@
-import Linglib.Semantics.Composition.Tree
-import Mathlib.ModelTheory.Basic
+module
+
+public import Linglib.Semantics.Composition.Tree
+public import Mathlib.ModelTheory.Basic
 
 /-!
 # Model-theoretic semantics for type-driven composition
@@ -39,6 +41,8 @@ equational_theories' term-level `Magma.FOStructure`). The cost is explicit insta
 defeq `abbrev`s, and one `@[simp]` `funMap`/`RelMap` lemma per symbol — see
 `Fragments/English/Toy.lean`.
 -/
+
+@[expose] public section
 
 open FirstOrder Language
 open Semantics.Composition

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Semantic universals for modal meanings
@@ -39,6 +41,8 @@ over flavors, or a variable-force modal of one flavor, varies on a single axis b
 * [kratzer-1981]
 * [chemla-buccola-dautriche-2019]
 -/
+
+@[expose] public section
 
 namespace Modality
 

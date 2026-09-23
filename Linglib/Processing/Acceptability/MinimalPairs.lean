@@ -1,7 +1,11 @@
-import Linglib.Data.Examples.Judgment
-import Linglib.Semantics.Mood.Defs
-import Linglib.Syntax.Clause.Basic
-import Linglib.Morphology.Word.Basic
+module
+
+public import Linglib.Data.Examples.Judgment
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Syntax.Clause.Basic
+public import Linglib.Morphology.Word.Basic
+
+@[expose] public section
 
 open Morphology (Word)
 

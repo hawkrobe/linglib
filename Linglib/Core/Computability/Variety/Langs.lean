@@ -8,8 +8,10 @@ directory (mathlib has no variety theory; `TuringMachine/`, `AkraBazzi/` are the
 topic-subdirectory precedent), over `Mathlib.Algebra.Group.Pseudovariety` as the
 monoid-side substrate.
 -/
-import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Algebra.Group.Pseudovariety
+module
+
+public import Linglib.Core.Computability.SyntacticMonoid
+public import Linglib.Core.Algebra.Group.Pseudovariety
 
 /-!
 # The language-side operator of a pseudovariety
@@ -33,6 +35,8 @@ fields of `V`.
 * `langs_compl` / `langs_inf` / `langs_sup` / `langs_univ` / `langs_bot`: boolean closure.
 * `langs_comap`: closure under inverse homomorphism.
 -/
+
+@[expose] public section
 
 universe u
 

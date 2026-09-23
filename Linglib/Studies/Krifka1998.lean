@@ -1,4 +1,6 @@
-import Linglib.Semantics.Aspect.Telicity
+module
+
+public import Linglib.Semantics.Aspect.Telicity
 
 /-!
 # Krifka (1998): The Origins of Telicity
@@ -44,6 +46,8 @@ paper are checked against the adjacency condition on a finite model (`Movement`)
 
 * [krifka-1998]
 -/
+
+@[expose] public section
 
 namespace Krifka1998
 

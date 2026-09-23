@@ -1,11 +1,13 @@
-import Mathlib.Order.Antisymmetrization
-import Mathlib.Data.Fintype.Card
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.GCongr
-import Mathlib.Order.Interval.Finset.Fin
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Degree.Delineation
-import Linglib.Semantics.Degree.Measure.Dimensioned
+module
+
+public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Tactic.GCongr
+public import Mathlib.Order.Interval.Finset.Fin
+public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Semantics.Degree.Measure.Dimensioned
 
 /-!
 # Morphisms between gradability representations
@@ -51,6 +53,8 @@ no degree function induces (`delineation_strictly_more_general`,
 10. **degree_delineation_strict_weak_order**: degree orderings are strict weak orders
 11. **very_degree_chain**: Klein's `very` = two-step degree chain
 -/
+
+@[expose] public section
 
 namespace Degree
 
@@ -100,9 +104,9 @@ theorem monotone_excludes_nonlinear {Entity : Type*}
     The construction: j is "clever" in C when m is absent (math
     criterion dominates), m is "clever" when j is absent (social
     criterion dominates). In {j, m}, criteria conflict. -/
-private inductive NL2 | j | m
+inductive NL2 | j | m
 
-private def nlDel : ComparisonClass NL2 → NL2 → Prop
+def nlDel : ComparisonClass NL2 → NL2 → Prop
   | C, .j => NL2.m ∉ C
   | C, .m => NL2.j ∉ C
 

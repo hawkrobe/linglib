@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Tamil noun gender
@@ -14,6 +16,8 @@ rational genders share one form against the neuter ([asher-1985]; [corbett-1991]
 * [R. E. Asher, *Tamil* (1985)][asher-1985]
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
 -/
+
+@[expose] public section
 
 namespace Tamil.Gender
 

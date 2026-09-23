@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 5A: Voicing and Gaps in Plosive Systems
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 5, 567 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F5A
 
@@ -26,7 +30,8 @@ inductive VoicingAndGapsInPlosiveSystems where
   | bothMissing
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
   [ { walsCode := "xoo", iso := "nmn", value := .noneMissingInPTKBDG }
   , { walsCode := "ani", iso := "hnh", value := .noneMissingInPTKBDG }
   , { walsCode := "abi", iso := "axb", value := .other }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
   , { walsCode := "tru", iso := "tpy", value := .other }
   ]
 
-private def allData_1 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
+/-- Rows 501 to 567 of `allData`. -/
+def allData_1 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
   [ { walsCode := "tsi", iso := "tsi", value := .noneMissingInPTKBDG }
   , { walsCode := "tso", iso := "tsu", value := .other }
   , { walsCode := "ttu", iso := "bbl", value := .other }

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.DRS.Indexed
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Indexed
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Kamp, van Genabith and Reyle (2011): Discourse Representation Theory
@@ -19,6 +21,8 @@ referents supplied by the context.
 
 * [kamp-vangenabith-reyle-2011]
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language DRT
 open DynamicSemantics (Possibility State)

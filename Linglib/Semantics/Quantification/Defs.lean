@@ -1,10 +1,12 @@
-import Mathlib.Order.Lattice
-import Mathlib.Order.Monotone.Defs
-import Mathlib.Order.Sublattice
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Data.Fintype.Defs
-import Linglib.Logic.Natural.Basic
-import Linglib.Core.Data.Trivalent
+module
+
+public import Mathlib.Order.Lattice
+public import Mathlib.Order.Monotone.Defs
+public import Mathlib.Order.Sublattice
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Data.Fintype.Defs
+public import Linglib.Logic.Natural.Basic
+public import Linglib.Core.Data.Trivalent
 
 /-!
 # Generalized Quantifier Definitions
@@ -31,6 +33,8 @@ API of the type ⟨1⟩ quantifier `NP`.
 - **§2 Operations**: duality, Boolean algebra, type shifts
 - **§3 Mathlib bridge**: connection to `Monotone`/`Antitone`
 -/
+
+@[expose] public section
 
 namespace Quantifier
 

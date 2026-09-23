@@ -1,9 +1,11 @@
-import Linglib.Core.LinearAlgebra.Matrix.Symmetric
-import Linglib.Processing.DiscriminativeLexicon.Coding
-import Linglib.Processing.DiscriminativeLexicon.Training
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.LinearAlgebra.Matrix.Notation
-import Mathlib.LinearAlgebra.Matrix.ToLin
+module
+
+public import Linglib.Core.LinearAlgebra.Matrix.Symmetric
+public import Linglib.Processing.DiscriminativeLexicon.Coding
+public import Linglib.Processing.DiscriminativeLexicon.Training
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.LinearAlgebra.Matrix.Notation
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
 # Gahl and Baayen (2024): Time and Thyme Again
@@ -40,6 +42,8 @@ rows as the paper observes.
 * [baayen-2019]
 * [heitmeier-chuang-axen-baayen-2024]
 -/
+
+@[expose] public section
 
 namespace GahlBaayen2024
 

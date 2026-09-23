@@ -1,5 +1,7 @@
-import Linglib.Logic.Bilateral.Defs
-import Linglib.Semantics.Questions.Basic
+module
+
+public import Linglib.Logic.Bilateral.Defs
+public import Linglib.Semantics.Questions.Basic
 
 /-!
 # Booth 2022: bilateral inquisitive minimal-cover semantics for necessity
@@ -55,6 +57,8 @@ a formula syntax, which is deferred.
 * [ciardelli-groenendijk-roelofsen-2018] — the pure-inquisitive rival,
   without bilateral negation.
 -/
+
+@[expose] public section
 
 namespace Booth2022
 

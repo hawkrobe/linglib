@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Logophoric
+module
+
+public import Linglib.Syntax.Category.Pronoun.Logophoric
 
 /-!
 # Ewe pronouns
@@ -15,6 +17,8 @@ pronouns proper are source-oriented, since their complementizer derives from 'sa
 * [H. Pearson, *The interpretation of the logophoric pronoun in Ewe* (2015)][pearson-2015]
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
+
+@[expose] public section
 
 namespace Ewe.Pronouns
 

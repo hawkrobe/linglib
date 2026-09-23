@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `CoppockWechsler2018` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/CoppockWechsler2018.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace CoppockWechsler2018.Examples`.
 -/
+
+@[expose] public section
 
 namespace CoppockWechsler2018.Examples
 

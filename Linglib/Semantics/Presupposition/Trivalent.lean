@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.Basic
-import Mathlib.Data.Finset.Basic
+module
+
+public import Linglib.Semantics.Presupposition.Basic
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Rival trivalent connective families
@@ -28,6 +30,8 @@ conditional assertion ([belnap-1970]), and the symmetric K&P disjunction
   would collapse `xor`, `andBelnap`, `orBelnap` into
   one definition each, with one bridge theorem instead of eight.
 -/
+
+@[expose] public section
 
 namespace Presupposition
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 81A: Order of Subject, Object and Verb
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 81, 1376 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F81A
 
@@ -30,7 +34,8 @@ inductive BasicWordOrder where
   | noDominantOrder
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint BasicWordOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint BasicWordOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .svo }
   , { walsCode := "ani", iso := "hnh", value := .noDominantOrder }
   , { walsCode := "xam", iso := "xam", value := .svo }
@@ -533,7 +538,8 @@ private def allData_0 : List (Datapoint BasicWordOrder) :=
   , { walsCode := "kma", iso := "kay", value := .sov }
   ]
 
-private def allData_1 : List (Datapoint BasicWordOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint BasicWordOrder) :=
   [ { walsCode := "kmz", iso := "kms", value := .sov }
   , { walsCode := "kms", iso := "xas", value := .sov }
   , { walsCode := "kba", iso := "kam", value := .svo }
@@ -1036,7 +1042,8 @@ private def allData_1 : List (Datapoint BasicWordOrder) :=
   , { walsCode := "psw", iso := "psw", value := .svo }
   ]
 
-private def allData_2 : List (Datapoint BasicWordOrder) :=
+/-- Rows 1001 to 1376 of `allData`. -/
+def allData_2 : List (Datapoint BasicWordOrder) :=
   [ { walsCode := "por", iso := "por", value := .svo }
   , { walsCode := "pra", iso := "prn", value := .sov }
   , { walsCode := "pul", iso := "puw", value := .svo }

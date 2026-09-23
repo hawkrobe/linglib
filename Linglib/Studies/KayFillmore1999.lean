@@ -1,5 +1,7 @@
-import Linglib.Syntax.ConstructionGrammar.Idiom
-import Linglib.Syntax.ConstructionGrammar.Licensing
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Idiom
+public import Linglib.Syntax.ConstructionGrammar.Licensing
 
 /-!
 # Kay and Fillmore (1999): The What's X Doing Y? Construction
@@ -32,6 +34,8 @@ paper's unification grammar is recorded in prose only.
 * [kay-fillmore-1999]
 * [fillmore-kay-oconnor-1988]
 -/
+
+@[expose] public section
 
 namespace KayFillmore1999
 

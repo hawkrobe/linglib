@@ -1,5 +1,7 @@
-import Linglib.Syntax.Number.Basic
-import Linglib.Semantics.Plurality.NumberFeatures
+module
+
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Semantics.Plurality.NumberFeatures
 
 /-!
 # Number resolution
@@ -23,6 +25,8 @@ language has."
 Consumers: `Studies/Corbett2000.lean` states the book's resolution data over its language
 systems.
 -/
+
+@[expose] public section
 
 namespace Number
 

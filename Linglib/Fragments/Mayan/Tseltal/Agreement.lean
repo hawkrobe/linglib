@@ -1,7 +1,9 @@
-import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Phonology.Segmental.Defs
-import Linglib.Syntax.Reflex
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Linglib.Fragments.Mayan.Tseltalan
+public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Syntax.Reflex
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Tseltal Agreement Fragment
@@ -40,6 +42,8 @@ indicates A, Set B indicates S and P alike.
 * [kaufman-norman-1984]
 * [polian-2013]
 -/
+
+@[expose] public section
 
 
 namespace Tseltal

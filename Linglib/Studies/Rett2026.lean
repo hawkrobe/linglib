@@ -1,7 +1,9 @@
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Studies.Rett2020a
-import Linglib.Studies.Heinamaki1974
-import Linglib.Data.Examples.Rett2026
+module
+
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Studies.Rett2020a
+public import Linglib.Studies.Heinamaki1974
+public import Linglib.Data.Examples.Rett2026
 
 /-!
 # Rett (2026): Semantic ambivalence and expletive negation
@@ -43,6 +45,8 @@ in the paper without a proposal formalized here.
   gradable predicates* (2005)][kennedy-mcnally-2005]
 * [O. Heinämäki, *Semantics of English temporal connectives* (1974)][heinamaki-1974]
 -/
+
+@[expose] public section
 
 namespace Rett2026
 

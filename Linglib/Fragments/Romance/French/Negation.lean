@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # French negation
@@ -15,6 +17,8 @@ its own, without *pas*, *ne* occurs expletively under *avoir peur* 'fear', *avan
 * [miestamo-2005]
 * [jin-koenig-2021]
 -/
+
+@[expose] public section
 
 open Negation Morphology
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # West Greenlandic Evidentiality
@@ -7,6 +9,8 @@ import Linglib.Semantics.Evidential.Defs
 Inferential mood via verbal suffix; no dedicated direct-evidence marker.
 WALS and Aikhenvald agree.
 -/
+
+@[expose] public section
 
 namespace WestGreenlandic.Evidentiality
 

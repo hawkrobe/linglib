@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Presupposition.Iterative
+module
+
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Presupposition.Iterative
 
 /-!
 # Phasal verbs
@@ -38,6 +40,8 @@ state (`denote_continuation`).
 * [dowty-1979]
 * [von-stechow-1996]
 -/
+
+@[expose] public section
 
 namespace Aspect
 

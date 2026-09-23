@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Semantics.Alternatives.Symmetric
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Semantics.Alternatives.Symmetric
 
 /-!
 # Breheny, Klinedinst, Romoli and Sudo 2018: the symmetry problem
@@ -49,6 +51,8 @@ right ones derive the observed implicature.
 * [fox-2007] — innocent exclusion.
 -/
 
+@[expose] public section
+
 namespace BrehenyEtAl2018
 
 open Exhaustification (innocent predToFinset altsFromPreds)
@@ -80,15 +84,15 @@ inductive HWWorld where
   deriving Repr, DecidableEq, Fintype
 
 /-- ¬all = "didn't do all the homework" = {none, someNotAll}. -/
-private def notAll : HWWorld → Bool
+def notAll : HWWorld → Bool
   | .none_ | .someNotAll => true | .all_ => false
 
 /-- ¬any = "didn't do any" = {none}. Stronger than ¬all. -/
-private def notAny : HWWorld → Bool
+def notAny : HWWorld → Bool
   | .none_ => true | _ => false
 
 /-- some = "did some" = {someNotAll, all}. Independent of ¬all. -/
-private def didSome : HWWorld → Bool
+def didSome : HWWorld → Bool
   | .someNotAll | .all_ => true | .none_ => false
 
 /-- With the symmetric alternative "some" present (as the structural
@@ -161,16 +165,16 @@ inductive GlassWorld where
   | empty_ | mid | full_
   deriving Repr, DecidableEq, Fintype
 
-private def isFull : GlassWorld → Bool
+def isFull : GlassWorld → Bool
   | .full_ => true | _ => false
 
-private def isEmpty : GlassWorld → Bool
+def isEmpty : GlassWorld → Bool
   | .empty_ => true | _ => false
 
-private def notFull : GlassWorld → Bool
+def notFull : GlassWorld → Bool
   | .empty_ | .mid => true | .full_ => false
 
-private def notEmpty : GlassWorld → Bool
+def notEmpty : GlassWorld → Bool
   | .mid | .full_ => true | .empty_ => false
 
 -- ── Full alternative set (no AC) ─────────────────────────────
@@ -259,13 +263,13 @@ inductive ActivityWorld where
 private def actDomain : List ActivityWorld :=
   [.ranOnly, .ranAndSmoked, .neither]
 
-private def ran : ActivityWorld → Bool
+def ran : ActivityWorld → Bool
   | .ranOnly | .ranAndSmoked => true | .neither => false
 
-private def smoked : ActivityWorld → Bool
+def smoked : ActivityWorld → Bool
   | .ranAndSmoked => true | _ => false
 
-private def ranAndNotSmoked : ActivityWorld → Bool
+def ranAndNotSmoked : ActivityWorld → Bool
   | .ranOnly => true | _ => false
 
 /-- "smoked" and "ran ∧ ¬smoked" are symmetric alternatives of "ran":
@@ -326,13 +330,13 @@ inductive DeonticWorld where
 private def deonticDomain : List DeonticWorld :=
   [.forbidden, .optional_, .required_]
 
-private def isPermitted : DeonticWorld → Bool
+def isPermitted : DeonticWorld → Bool
   | .optional_ | .required_ => true | .forbidden => false
 
-private def isRequired : DeonticWorld → Bool
+def isRequired : DeonticWorld → Bool
   | .required_ => true | _ => false
 
-private def isOptional : DeonticWorld → Bool
+def isOptional : DeonticWorld → Bool
   | .optional_ => true | _ => false
 
 /-- "required" and "optional" partition "permitted"'s denotation —

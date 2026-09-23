@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # Serbian temporal connectives
@@ -12,6 +14,8 @@ event the host precedes, the imperfective its onset and the perfective its culmi
 
 * [rett-2020a]
 -/
+
+@[expose] public section
 
 namespace Serbian.TemporalConnectives
 

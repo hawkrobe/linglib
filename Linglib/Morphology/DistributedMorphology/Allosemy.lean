@@ -1,10 +1,12 @@
-import Mathlib.Algebra.Group.WithOne.Defs
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.Realization
-import Linglib.Semantics.Root.Kinds
-import Linglib.Syntax.Minimalist.Verbal.Voice
+module
+
+public import Mathlib.Algebra.Group.WithOne.Defs
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.Exponence.Select
+public import Linglib.Morphology.Realization
+public import Linglib.Semantics.Root.Kinds
+public import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Allosemy
@@ -60,6 +62,8 @@ conditioning of v.
 * [L. J. Adamson, *Gender assignment is local*][adamson-2024]
 * [J. Beavers et al., *States and changes of state*][beavers-etal-2021]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology.Allosemy
 

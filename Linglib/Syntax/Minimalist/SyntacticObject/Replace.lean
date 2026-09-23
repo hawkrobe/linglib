@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.UnorderedTree.Replace
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
+module
+
+public import Linglib.Core.Data.UnorderedTree.Replace
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Substitution on syntactic objects
@@ -22,6 +24,8 @@ reduce by `replace_self`, `replace_merge_of_ne`, and the leaf lemmas.
 
 * `Minimalist.SyntacticObject.replace`
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

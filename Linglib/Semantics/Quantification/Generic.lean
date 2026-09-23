@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.Counting
+module
+
+public import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Generic quantifiers as generalized-quantifier schemas
@@ -53,6 +55,8 @@ decidable cardinality example rather than a `Proportional` counterexample.
 * [B. Nickel, *Generics and the Ways of Normality* (2009)][nickel-2009]
 * [S.-J. Leslie, *Generics: Cognition and Acquisition* (2008)][leslie-2008]
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

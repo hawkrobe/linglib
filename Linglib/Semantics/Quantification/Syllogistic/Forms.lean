@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Syllogistic.Defs
-import Linglib.Semantics.Quantification.NP
+module
+
+public import Linglib.Semantics.Quantification.Syllogistic.Defs
+public import Linglib.Semantics.Quantification.NP
 
 /-!
 # Syllogistic forms: modern (FOL) reading
@@ -34,6 +36,8 @@ The `Aristotelian` Square (with full `SquareRelations`) lives in `Square.lean`
 as a sortal restriction to states with non-empty restrictor — see that file
 for the full opposition diagram in the Demey–Smessaert sense.
 -/
+
+@[expose] public section
 
 namespace Quantifier.Syllogistic
 

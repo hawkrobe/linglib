@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Function
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Paradigm.Function
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Bonami and Stump 2016: Paradigm Function Morphology
@@ -35,6 +37,8 @@ ablaut alternants enter as basic stems, as in the chapter.
 * [bonami-stump-2016]
 * [stump-2001]
 -/
+
+@[expose] public section
 
 namespace BonamiStump2016
 

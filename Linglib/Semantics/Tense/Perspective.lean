@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.Tense.Defs
+module
+
+public import Linglib.Core.Order.Interval
+public import Linglib.Semantics.Tense.Defs
 
 /-!
 # Perspectival tense
@@ -43,6 +45,8 @@ clash with the present is the ⌈then⌉-present puzzle.
 * [tsilia-zhao-2026]
 * [zhao-2025]
 -/
+
+@[expose] public section
 
 namespace Tense
 

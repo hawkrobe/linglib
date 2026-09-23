@@ -1,8 +1,10 @@
-import Linglib.Semantics.Causation.Strength
-import Linglib.Semantics.Plurality.Basic
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Ring
+module
+
+public import Linglib.Semantics.Causation.Strength
+public import Linglib.Semantics.Plurality.Basic
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Ring
 
 /-!
 # Konuk, Quillien and Mascarenhas (2026): Plural Causes
@@ -43,6 +45,8 @@ round the representation negates as homogeneously as the facts allow (`triple_ne
 * [icard-et-al-2017]
 * [kriz-spector-2021]
 -/
+
+@[expose] public section
 
 namespace KonukEtAl2026
 

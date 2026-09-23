@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.Defs
-import Mathlib.Order.Max
+module
+
+public import Linglib.Semantics.Presupposition.Defs
+public import Mathlib.Order.Max
 
 /-!
 # Repetitive *again*
@@ -36,6 +38,8 @@ about an earlier one (`prior`), which the phasal verbs *stop*, *start* and *cont
 * [von-stechow-1996]
 * [beavers-koontz-garboden-2020]
 -/
+
+@[expose] public section
 
 namespace Presupposition
 

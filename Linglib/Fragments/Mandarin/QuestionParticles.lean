@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Mandarin question particles
@@ -25,6 +27,8 @@ evidential felicity conditions live with their analysis.
 * [xu-2012]
 * [zheng-2025]
 -/
+
+@[expose] public section
 
 namespace Mandarin.QuestionParticles
 

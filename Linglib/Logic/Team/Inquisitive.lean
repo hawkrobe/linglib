@@ -1,6 +1,8 @@
-import Linglib.Logic.Team.Kripke
-import Linglib.Logic.Team.Definability
-import Linglib.Semantics.Questions.Basic
+module
+
+public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Team.Definability
+public import Linglib.Semantics.Questions.Basic
 
 /-!
 # Inquisitive modal logic
@@ -57,6 +59,8 @@ places InqML with dependence logic in the downward-closed, empty-team cell of
   (2018)][ciardelli-groenendijk-roelofsen-2018]
 * [A. Anttila, *Expressive completeness in team semantics* (2025)][anttila-2025]
 -/
+
+@[expose] public section
 
 namespace ModalLogic.Inquisitive
 
@@ -141,7 +145,7 @@ def IsClassical : Formula Atom → Prop
 
 end Formula
 
-private theorem isLowerSet_image_coe [Fintype W] {S : Set (Finset W)} (hS : IsLowerSet S) :
+theorem isLowerSet_image_coe [Fintype W] {S : Set (Finset W)} (hS : IsLowerSet S) :
     IsLowerSet ((fun t : Finset W => (↑t : Set W)) '' S) := by
   rintro a b hba ⟨t, ht, rfl⟩
   exact ⟨(Set.toFinite b).toFinset,

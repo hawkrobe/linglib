@@ -1,6 +1,8 @@
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.Reference.Context.Index
-import Linglib.Semantics.Tense.Embedding
+module
+
+public import Linglib.Core.Order.Interval
+public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Tense.Embedding
 
 /-!
 # Heim (1994): Comments on Abusch's Theory of Tense
@@ -38,6 +40,8 @@ Licensing Condition `TLC` with the definition (67) of "in the domain of" license
 * [heim-1994-comments]
 * [abusch-1997]
 -/
+
+@[expose] public section
 
 namespace Heim1994a
 

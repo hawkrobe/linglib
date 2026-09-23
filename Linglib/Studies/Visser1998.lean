@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.DPL.Context
-import Mathlib.Data.Set.Piecewise
+module
+
+public import Linglib.Semantics.Dynamic.DPL.Context
+public import Mathlib.Data.Set.Piecewise
 
 /-!
 # Visser (1998): Contexts in Dynamic Predicate Logic
@@ -36,6 +38,8 @@ relations, as in the paper, by generation from conditions and resets under compo
 * [visser-1998]
 * [groenendijk-stokhof-1991]
 -/
+
+@[expose] public section
 
 namespace Visser1998
 

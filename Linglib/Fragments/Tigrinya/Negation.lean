@@ -1,5 +1,7 @@
-import Linglib.Syntax.Negation
-import Linglib.Morphology.Morph
+module
+
+public import Linglib.Syntax.Negation
+public import Linglib.Morphology.Morph
 
 /-!
 # Tigrinya Negation
@@ -17,6 +19,8 @@ do not read').
 * [cacchioli-2026], ch. 5
 * [dryer-haspelmath-2013], ch. 112A, 143A, 144A
 -/
+
+@[expose] public section
 
 open Morphology Negation
 

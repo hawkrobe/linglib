@@ -1,6 +1,8 @@
-import Linglib.Morphology.Realization
-import Mathlib.Data.Finset.Prod
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Morphology.Realization
+public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Paradigm linkage: content paradigms, form paradigms, and correspondence
@@ -61,6 +63,8 @@ PRAMEN, whose two stems differ in class but not in form.
 * `Linkage.realize_eq_of_corr_eq`, `realize_eq_of_corr_eq_lexeme` — shared
   correspondents force shared realizations, within and across lexemes
 -/
+
+@[expose] public section
 
 namespace Morphology
 

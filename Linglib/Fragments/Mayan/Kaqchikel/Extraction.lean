@@ -1,6 +1,8 @@
-import Linglib.Syntax.Reflex
-import Linglib.Fragments.Mayan.Extraction
-import Linglib.Fragments.Mayan.Verb
+module
+
+public import Linglib.Syntax.Reflex
+public import Linglib.Fragments.Mayan.Extraction
+public import Linglib.Fragments.Mayan.Verb
 
 /-!
 # Kaqchikel Extraction Morphology (Agent Focus)
@@ -44,6 +46,8 @@ analyses live in `Studies/Erlewine2016.lean` and
 * [heaton-deen-ogrady-2016]
 * [mendes-ranero-2021]
 -/
+
+@[expose] public section
 
 
 namespace Kaqchikel

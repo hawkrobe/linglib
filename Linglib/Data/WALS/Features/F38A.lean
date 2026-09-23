@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 38A: Indefinite Articles
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 38, 534 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F38A
 
@@ -26,7 +30,8 @@ inductive IndefiniteArticleType where
   | noDefiniteOrIndefiniteArticle
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint IndefiniteArticleType) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint IndefiniteArticleType) :=
   [ { walsCode := "aar", iso := "aiw", value := .noIndefiniteButDefiniteArticle }
   , { walsCode := "abk", iso := "abk", value := .indefiniteWordSameAsOne }
   , { walsCode := "abu", iso := "kgr", value := .indefiniteWordDistinctFromOne }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint IndefiniteArticleType) :=
   , { walsCode := "url", iso := "urk", value := .noIndefiniteButDefiniteArticle }
   ]
 
-private def allData_1 : List (Datapoint IndefiniteArticleType) :=
+/-- Rows 501 to 534 of `allData`. -/
+def allData_1 : List (Datapoint IndefiniteArticleType) :=
   [ { walsCode := "urd", iso := "urd", value := .noDefiniteOrIndefiniteArticle }
   , { walsCode := "urk", iso := "urb", value := .noDefiniteOrIndefiniteArticle }
   , { walsCode := "vai", iso := "vai", value := .noIndefiniteButDefiniteArticle }

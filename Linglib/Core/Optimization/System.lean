@@ -1,4 +1,6 @@
-import Linglib.Core.Optimization.Decoder
+module
+
+public import Linglib.Core.Optimization.Decoder
 
 /-!
 # Scored choice systems
@@ -27,6 +29,8 @@ Domain-specific instantiations (lex-min on integer cost vectors,
 weighted-sum scoring, softmax over weighted sums, ...) live in the
 consuming layer.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

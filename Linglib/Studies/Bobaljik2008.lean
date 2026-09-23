@@ -1,6 +1,8 @@
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Syntax.Case.Dependent
-import Linglib.Fragments.Hindi.Case
+module
+
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Syntax.Case.Dependent
+public import Linglib.Fragments.Hindi.Case
 
 /-!
 # Bobaljik (2008): Where's Phi? Agreement as a Postsyntactic Operation
@@ -45,6 +47,8 @@ agreement with a functional head, which those rules also provide for, counts as 
 * [bobaljik-2008]
 * [marantz-1991]
 -/
+
+@[expose] public section
 
 namespace Bobaljik2008
 

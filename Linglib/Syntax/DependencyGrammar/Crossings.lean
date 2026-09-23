@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.DependencyGrammar.Projectivity
-import Linglib.Syntax.DependencyGrammar.Length
-import Linglib.Core.Combinatorics.Enumerative.PermutationPattern
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Core.Combinatorics.Enumerative.PermutationPattern
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Crossings under random linearization
@@ -41,6 +43,8 @@ the expected-crossings identity (eq. 13)
 relationships in syntactic dependencies, reduces the disjoint-pair count
 to the link count and the degree second moment
 -/
+
+@[expose] public section
 
 namespace DependencyGrammar
 

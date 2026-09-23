@@ -1,4 +1,6 @@
-import Linglib.Data.Complementation.Noonan2007
+module
+
+public import Linglib.Data.Complementation.Noonan2007
 
 /-!
 # Noonan (2007): Complementation
@@ -30,6 +32,8 @@ states no such generalization and the theorem was dropped.
 
 * [noonan-2007]
 -/
+
+@[expose] public section
 
 namespace Noonan2007
 

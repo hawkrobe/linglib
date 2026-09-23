@@ -1,8 +1,10 @@
-import Linglib.Core.Data.Fin.VecNotation
-import Linglib.Core.Data.Set.Image
-import Linglib.Logic.PIP.Felicity
-import Linglib.Logic.PIP.Intensional
-import Linglib.Data.Examples.AbneyKeshet2025
+module
+
+public import Linglib.Core.Data.Fin.VecNotation
+public import Linglib.Core.Data.Set.Image
+public import Linglib.Logic.PIP.Felicity
+public import Linglib.Logic.PIP.Intensional
+public import Linglib.Data.Examples.AbneyKeshet2025
 
 /-!
 # Abney & Keshet (2025): Plural Intensional Presuppositional semantics
@@ -43,6 +45,8 @@ negation as summation over worlds the two readings come apart, and the double ne
 * [keshet-2018]
 * [roberts-1987]
 -/
+
+@[expose] public section
 
 namespace AbneyKeshet2025
 

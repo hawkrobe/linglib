@@ -1,4 +1,6 @@
-import Linglib.Data.WordOrder.Schema
+module
+
+public import Linglib.Data.WordOrder.Schema
 
 /-!
 # Greenberg1963 — word order sample (generated)
@@ -11,6 +13,8 @@ re-run the generator.
 Appendix I's 30-language sample with the per-language properties of the text and footnotes, and
 Appendix II's 24 order types with the languages listed as attesting them.
 -/
+
+@[expose] public section
 
 namespace Data.WordOrder.Greenberg1963
 

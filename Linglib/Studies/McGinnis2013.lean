@@ -1,7 +1,9 @@
-import Linglib.Syntax.Agreement.Geometry
-import Linglib.Morphology.DistributedMorphology.Fission
-import Linglib.Data.Examples.McGinnis2013
-import Mathlib.Data.Prod.Lex
+module
+
+public import Linglib.Syntax.Agreement.Geometry
+public import Linglib.Morphology.DistributedMorphology.Fission
+public import Linglib.Data.Examples.McGinnis2013
+public import Mathlib.Data.Prod.Lex
 
 /-!
 # McGinnis (2013): Agree and Fission in Georgian Plurals
@@ -29,6 +31,8 @@ grammatical exactly when the prefix and suffixes are what the analysis inserts
 * [bejar-2003]
 * [anderson-1984]
 -/
+
+@[expose] public section
 
 namespace McGinnis2013
 

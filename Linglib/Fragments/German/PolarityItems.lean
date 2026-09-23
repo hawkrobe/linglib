@@ -1,5 +1,7 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Fragments.German.TemporalConnectives
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.German.TemporalConnectives
 
 /-!
 # German Polarity-Sensitive Items
@@ -13,6 +15,8 @@ indefinite ([haspelmath-1997] A.1) — neither is a polarity item, so
 neither has an entry here. *erst* 'only then' is the positive polarity
 punctual *until*, the twin of Finnish *vasta* ([karttunen-1974]).
 -/
+
+@[expose] public section
 
 namespace German.PolarityItems
 

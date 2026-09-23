@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.FreeMonoid.Basic
-import Mathlib.CategoryTheory.Monoidal.Skeleton
-import Linglib.Phonology.Autosegmental.NormalForm
+module
+
+public import Mathlib.Algebra.FreeMonoid.Basic
+public import Mathlib.CategoryTheory.Monoidal.Skeleton
+public import Linglib.Phonology.Autosegmental.NormalForm
 
 /-!
 # Realization of strings as representations
@@ -30,6 +32,8 @@ arcs and is too coarse to preserve tier words.
   compositional — each link lives inside one symbol's primitive at that symbol's tier
   offsets (`AR.tierOffset`).
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Context.Shifts
+module
+
+public import Linglib.Semantics.Reference.Context.Tower
+public import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
 # Exclusion features and X/O-marking strategies
@@ -42,6 +44,8 @@ morphology (X-marking) or some other strategy (O-marking, e.g., the
 Japanese Historical Present of [mizuno-2024]) to grammatically
 distinguish live from non-live possibilities.
 -/
+
+@[expose] public section
 
 namespace Modality.Exclusion
 

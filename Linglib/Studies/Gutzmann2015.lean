@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Gutzmann2015
-import Linglib.Fragments.German.Particles
+module
+
+public import Linglib.Data.Examples.Gutzmann2015
+public import Linglib.Fragments.German.Particles
 
 /-!
 # Gutzmann (2015): Use-Conditional Meaning
@@ -45,6 +47,8 @@ logic, so their use conditions are derived and the restriction is left to the ro
 * [potts-2005]
 * [kaplan-1999]
 -/
+
+@[expose] public section
 
 namespace Gutzmann2015
 

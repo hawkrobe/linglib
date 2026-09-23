@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Mauritian Creole determiner inventory
@@ -12,6 +14,8 @@ covarying (donkey) uses; uniqueness definites are bare nominals.
 * [schwarz-2013], §4.1.2
 * [wespel-2008]
 -/
+
+@[expose] public section
 
 namespace MauritianCreole.Determiners
 

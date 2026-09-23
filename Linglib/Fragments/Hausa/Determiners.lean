@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Hausa determiner inventory
@@ -37,6 +39,8 @@ abstracts over this productivity rather than enumerating each surface form.
 * [jaggar-2001], §9.5, §12.3
 * [newman-2000], §17.5, §20, §21
 -/
+
+@[expose] public section
 
 namespace Hausa.Determiners
 

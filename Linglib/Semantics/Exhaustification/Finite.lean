@@ -1,7 +1,9 @@
-import Linglib.Semantics.Exhaustification.InnocentInclusion
-import Linglib.Semantics.Exhaustification.Excluder
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Finset.Lattice.Fold
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentInclusion
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Exhaustification over finite world types
@@ -22,6 +24,8 @@ symmetric alternative before exclusion strengthens the result.
 * [chierchia-2013]
 * [fox-katzir-2011]
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

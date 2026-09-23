@@ -1,9 +1,11 @@
-import Linglib.Data.Examples.Enguehard2024
-import Linglib.Semantics.Presupposition.Basic
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Order.Monotone.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Data.Examples.Enguehard2024
+public import Linglib.Semantics.Presupposition.Basic
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Order.Monotone.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Enguehard (2024): What Number Marking on Indefinites Means
@@ -60,6 +62,8 @@ chance of ineffability by a best guess from the distribution of witnesses.
 * [sudo-2012]
 * [sudo-2023]
 -/
+
+@[expose] public section
 
 namespace Enguehard2024
 

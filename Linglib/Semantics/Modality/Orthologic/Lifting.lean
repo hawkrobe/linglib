@@ -1,6 +1,8 @@
-import Linglib.Semantics.Modality.Orthologic.Modal
-import Linglib.Semantics.Modality.Orthologic.RegularProp
-import Mathlib.Order.BooleanAlgebra.Basic
+module
+
+public import Linglib.Semantics.Modality.Orthologic.Modal
+public import Linglib.Semantics.Modality.Orthologic.RegularProp
+public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
 # The epistemic frame of a Boolean algebra
@@ -22,6 +24,8 @@ complements, and the diamond of a nontrivial embedded proposition does not colla
 
 * [holliday-mandelkern-2024]
 -/
+
+@[expose] public section
 
 namespace Orthologic
 

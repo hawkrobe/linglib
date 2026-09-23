@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Denotation
 
 /-!
 # Mandarin determiners
@@ -34,6 +36,8 @@ dōu zuò báirìmèng* 'all poets daydream', and one with *hěnduō* admits it.
 * [jenks-2018]
 * [moroney-2021]
 -/
+
+@[expose] public section
 
 namespace Mandarin.Determiners
 

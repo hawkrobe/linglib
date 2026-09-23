@@ -1,10 +1,12 @@
-import Linglib.Semantics.Modality.Basic
-import Linglib.Data.Examples.Matthewson2013
-import Linglib.Fragments.Gitksan.Modals
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Fragments.Statimcets.Modals
-import Linglib.Fragments.Javanese.Modals
-import Linglib.Studies.Condoravdi2002
+module
+
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Data.Examples.Matthewson2013
+public import Linglib.Fragments.Gitksan.Modals
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Fragments.Statimcets.Modals
+public import Linglib.Fragments.Javanese.Modals
+public import Linglib.Studies.Condoravdi2002
 
 /-!
 # Matthewson (2013): Gitksan Modals
@@ -43,6 +45,8 @@ its obligatory *dim* keeping it out of the perfective configuration of [hacquard
 * [hacquard-2006]
 * [rullmann-matthewson-davis-2008]
 -/
+
+@[expose] public section
 
 namespace Matthewson2013
 
@@ -116,7 +120,7 @@ instance (m : ModalItem) (o : TemporalOrientation) : Decidable (RequiresDim m o)
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The modal a row names. -/
-private def modalOf : String → Option ModalItem
+def modalOf : String → Option ModalItem
   | "ima('a)" => some imaa
   | "gat" => some gat
   | "da'akhlxw" => some daakhlxw
@@ -125,14 +129,14 @@ private def modalOf : String → Option ModalItem
   | _ => none
 
 /-- The orientation a row records. -/
-private def orientationOf : String → Option TemporalOrientation
+def orientationOf : String → Option TemporalOrientation
   | "past" => some .past
   | "present" => some .present
   | "future" => some .future
   | _ => none
 
 /-- The perspective a row records. -/
-private def perspectiveOf : String → Option TemporalPerspective
+def perspectiveOf : String → Option TemporalPerspective
   | "past" => some .past
   | "present" => some .present
   | _ => none

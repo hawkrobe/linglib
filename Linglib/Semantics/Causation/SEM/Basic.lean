@@ -1,8 +1,10 @@
-import Linglib.Semantics.Causation.SEM.Defs
-import Linglib.Semantics.Causation.SEM.Deterministic
-import Linglib.Semantics.Causation.Mechanism.Deterministic
-import Mathlib.Logic.Function.Iterate
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
+module
+
+public import Linglib.Semantics.Causation.SEM.Defs
+public import Linglib.Semantics.Causation.SEM.Deterministic
+public import Linglib.Semantics.Causation.Mechanism.Deterministic
+public import Mathlib.Logic.Function.Iterate
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
 # SEM: Forward Propagation, Intervention, Fixpoint
@@ -41,6 +43,8 @@ kernel evaluation supply explicit data and use the `.eval`-style
 computable variants. Structural simp lemmas let proofs unfold via
 rewriting rather than runtime evaluation.
 -/
+
+@[expose] public section
 
 namespace Causation.SEM
 

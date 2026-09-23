@@ -1,8 +1,10 @@
-import Linglib.Logic.Duality
-import Linglib.Semantics.Homogeneity.Usable
-import Linglib.Semantics.Quantification.Witness
-import Linglib.Data.Generalizations.HomogeneityGap
-import Linglib.Data.Examples.AghaJeretic2022
+module
+
+public import Linglib.Logic.Duality
+public import Linglib.Semantics.Homogeneity.Usable
+public import Linglib.Semantics.Quantification.Witness
+public import Linglib.Data.Generalizations.HomogeneityGap
+public import Linglib.Data.Examples.AghaJeretic2022
 
 /-!
 # Weak necessity modals as homogeneous pluralities of worlds
@@ -49,6 +51,8 @@ without a formal counterpart here.
 * [barwise-cooper-1981]
 * [schlenker-2004a]
 -/
+
+@[expose] public section
 
 namespace AghaJeretic2022
 

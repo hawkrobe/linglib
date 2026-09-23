@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # German evidentiality
@@ -12,6 +14,8 @@ German has no grammatical evidentials: the reportative use of the present condit
 * [aikhenvald-2004], §4.8
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace German.Evidentiality
 

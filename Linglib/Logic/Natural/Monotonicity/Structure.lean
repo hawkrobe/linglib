@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Natural.Monotonicity.Defs
-import Mathlib.CategoryTheory.ConcreteCategory.Bundled
-import Mathlib.Order.Hom.Basic
+module
+
+public import Linglib.Logic.Natural.Monotonicity.Defs
+public import Mathlib.CategoryTheory.ConcreteCategory.Bundled
+public import Mathlib.Order.Hom.Basic
 
 /-!
 # Domains for the monotonicity calculus
@@ -29,6 +31,8 @@ order-preserving coercion, functorial in `≤`.
 
 * [icard-moss-tune-2017] — Definitions 3.5–3.6.
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 

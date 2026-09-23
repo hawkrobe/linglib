@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Japanese numeral classifiers
@@ -32,6 +34,8 @@ numeral series are not recorded.
 * [downing-1996]
 * [sudo-2016]
 -/
+
+@[expose] public section
 
 namespace Japanese
 

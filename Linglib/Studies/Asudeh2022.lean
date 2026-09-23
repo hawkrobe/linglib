@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.Examples.Asudeh2022
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Asudeh2022
 
 /-!
 # Asudeh 2022: Glue Semantics
@@ -34,6 +36,8 @@ without quantifier raising or type shifting.
 * [kaplan-bresnan-1982] — Completeness and Coherence
 * [heim-kratzer-1998] — the interpretive rival
 -/
+
+@[expose] public section
 
 namespace Asudeh2022
 

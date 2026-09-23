@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # English coordinators
@@ -19,6 +21,8 @@ plain coordinator: *both … and*, *either … or*, *neither … nor*.
 
 * [haspelmath-2007]
 -/
+
+@[expose] public section
 
 namespace English.Coordination
 

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Attitudes.Desire.Preferential
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Discourse.Commitment.Preferential
-import Linglib.Data.Examples.CondoravdiLauer2012
+module
+
+public import Linglib.Semantics.Attitudes.Desire.Preferential
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Discourse.Commitment.Preferential
+public import Linglib.Data.Examples.CondoravdiLauer2012
 
 /-!
 # Condoravdi and Lauer 2012: imperatives as preferential commitments
@@ -53,6 +55,8 @@ adviser's structures.
 * [M. Kaufmann, *Interpreting Imperatives* (2012)][kaufmann-2012]
 * [P. Portner, *Imperatives and modals* (2007)][portner-2007]
 -/
+
+@[expose] public section
 
 namespace CondoravdiLauer2012
 

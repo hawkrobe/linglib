@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.QF
-import Linglib.Core.Data.List.DependsOn
-import Mathlib.Data.Finset.Basic
+module
+
+public import Linglib.Phonology.Subregular.QF
+public import Linglib.Core.Data.List.DependsOn
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Boolean Monadic Recursive Schemes
@@ -41,6 +43,8 @@ by `eval_iff_evalFuel`.
   program evaluated at `i` reads only positions `≤ i`, so equal-length words agreeing
   there evaluate identically (dually for forward).
 -/
+
+@[expose] public section
 
 namespace Subregular.BMRS
 

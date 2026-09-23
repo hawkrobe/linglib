@@ -1,7 +1,9 @@
-import Linglib.Logic.Team.Kripke
-import Linglib.Logic.Team.Algebra
-import Linglib.Logic.Team.Closure
-import Linglib.Logic.Team.Definability
+module
+
+public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Team.Closure
+public import Linglib.Logic.Team.Definability
 
 /-!
 # Modal Inclusion Logic (MIL)
@@ -88,6 +90,8 @@ MIL would lose union closure. We follow the paper in using lax.
 * Bisim invariance for MIL — same shape as BSML's; AHY 2024 §3.1 uses
   this for the expressive completeness proof.
 -/
+
+@[expose] public section
 
 namespace ModalLogic.Inclusion
 

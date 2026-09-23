@@ -1,7 +1,9 @@
-import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Data.UD.UPOS
-import Linglib.Morphology.Word.Basic
-import Linglib.Data.Examples.OsborneLi2023
+module
+
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Data.UD.UPOS
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Data.Examples.OsborneLi2023
 
 /-!
 # Osborne and Li (2023): Coordination and Referential Dependencies
@@ -36,6 +38,8 @@ respondent counts and mean scores.
 
 * [osborne-li-2023]
 -/
+
+@[expose] public section
 
 namespace OsborneLi2023
 

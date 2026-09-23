@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.Blok2015
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Order.UpperLower.Basic
-import Mathlib.Data.Set.Lattice.Image
+module
+
+public import Linglib.Data.Examples.Blok2015
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Data.Set.Lattice.Image
 
 /-!
 # Blok (2015): The semantics and pragmatics of directional numeral modifiers
@@ -43,6 +45,8 @@ not modelled. The bottom of the scale is `1` in the rows, the whole numbers.
 * [B. Schwarz, B. Buccola and M. Hamilton, *Two types of class B numeral modifiers: A reply to
   Nouwen 2010* (2012)][schwarz-buccola-hamilton-2012]
 -/
+
+@[expose] public section
 
 namespace Blok2015
 

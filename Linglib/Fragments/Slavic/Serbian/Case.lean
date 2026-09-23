@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Serbo-Croat Case Inventory
@@ -11,6 +13,8 @@ the shared 6-case core; `Slavic.Case.fullInventory`
 carries the +VOC form. The directory name `Serbian` is historical;
 Browne's chapter covers the unified Serbo-Croat standard.
 -/
+
+@[expose] public section
 
 namespace Serbian.Case
 

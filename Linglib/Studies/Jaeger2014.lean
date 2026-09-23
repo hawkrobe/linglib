@@ -1,15 +1,17 @@
-import Mathlib.Basic.Real.Basic
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Geometry.Convex.ConvexSpace.Defs
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Pigeonhole
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Linglib.Core.Order.Argmax
-import Linglib.Data.Examples.Jaeger2014
+module
+
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Geometry.Convex.ConvexSpace.Defs
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Pigeonhole
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+public import Linglib.Core.Order.Argmax
+public import Linglib.Data.Examples.Jaeger2014
 
 /-!
 # Jäger (2014): Rationalizable Signaling
@@ -49,6 +51,8 @@ Section 7, it is not credible.
 * [jaeger-ebert-2009]
 * [franke-2011]
 -/
+
+@[expose] public section
 
 namespace Jaeger2014
 

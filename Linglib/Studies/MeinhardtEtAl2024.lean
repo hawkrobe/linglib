@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Mealy
-import Linglib.Phonology.Subregular.ISL
-import Linglib.Phonology.Subregular.OSL
-import Linglib.Core.Computability.Subsequential
-import Linglib.Phonology.Subregular.Dependence
-import Linglib.Core.Computability.Bimachine
+module
+
+public import Linglib.Core.Computability.Mealy
+public import Linglib.Phonology.Subregular.ISL
+public import Linglib.Phonology.Subregular.OSL
+public import Linglib.Core.Computability.Subsequential
+public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Core.Computability.Bimachine
 
 /-!
 # Meinhardt, Mai, Baković and McCollum (2024): Weak Determinism and ATR Harmony
@@ -41,6 +43,8 @@ glide effects, and the Turkana half of the paper are not represented.
 * [chandlee-eyraud-heinz-2015]
 * [wilson-2006]
 -/
+
+@[expose] public section
 
 namespace MeinhardtEtAl2024
 

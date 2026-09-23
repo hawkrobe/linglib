@@ -1,5 +1,7 @@
-import Linglib.Semantics.Degree.Aggregation
-import Linglib.Data.Examples.Tham2025
+module
+
+public import Linglib.Semantics.Degree.Aggregation
+public import Linglib.Data.Examples.Tham2025
 
 /-!
 # Tham (2025): Multidimensionality and the Scalar Components of Physical Disturbance Predicates
@@ -58,6 +60,8 @@ that the difference degree is the reason, are not formalized. The examples are t
 * [kennedy-mcnally-2005]
 * [ruiz-faroldi-2022]
 -/
+
+@[expose] public section
 
 namespace Tham2025
 

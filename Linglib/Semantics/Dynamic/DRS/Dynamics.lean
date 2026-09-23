@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.DRS.Verification
-import Linglib.Semantics.Dynamic.DRS.Reduction
-import Linglib.Semantics.Dynamic.Update
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Verification
+public import Linglib.Semantics.Dynamic.DRS.Reduction
+public import Linglib.Semantics.Dynamic.Update
 
 /-!
 # The box relation: dynamic face of DRS verification
@@ -37,6 +39,8 @@ connective algebra shared across the dynamic-semantics spine.
   operation names (`neg`, `impl`, `disj`); verification uses the field's own
   verb, and the first-order reduction speaks mathlib's `Formula.Realize`.
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language
 open DynamicSemantics (Update)

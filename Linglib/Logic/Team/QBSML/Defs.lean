@@ -1,11 +1,13 @@
-import Mathlib.Data.Finset.Union
-import Mathlib.Data.Fintype.Basic
-import Linglib.Logic.Assignment
-import Linglib.Logic.Modal.FirstOrder.Semantics
-import Linglib.Core.ModelTheory.LanguageMap
-import Linglib.Logic.Modal.FirstOrder.Semantics
-import Linglib.Logic.Team.Algebra
-import Linglib.Logic.Bilateral.Defs
+module
+
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Data.Fintype.Basic
+public import Linglib.Logic.Assignment
+public import Linglib.Logic.Modal.FirstOrder.Semantics
+public import Linglib.Core.ModelTheory.LanguageMap
+public import Linglib.Logic.Modal.FirstOrder.Semantics
+public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Bilateral.Defs
 
 /-!
 # Quantified bilateral state-based modal logic (QBSML)
@@ -40,6 +42,8 @@ by state non-emptiness.
   domain is not enforced at the type level; the state operations
   preserve it.
 -/
+
+@[expose] public section
 
 namespace QBSML
 

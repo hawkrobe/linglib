@@ -1,4 +1,6 @@
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+module
+
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Fusion
@@ -27,6 +29,8 @@ only the condition under which the two terminals fuse.
   inflection*][halle-marantz-1993]
 * [L. Kalin, B. Bjorkman et al.][kalin-bjorkman-etal-2026] §4.4
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

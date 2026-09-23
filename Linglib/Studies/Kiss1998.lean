@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Interval.Set.Basic
-import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Exhaustification.Excluder
+module
+
+public import Mathlib.Order.Interval.Set.Basic
+public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Exhaustification.Excluder
 
 /-!
 # É. Kiss (1998): Identificational Focus versus Information Focus
@@ -48,6 +50,8 @@ identification, the paper's (18) (`disjoint_exh_additive`, `additive_exh_of_notM
 * [kiss-1998]
 * [chierchia-2006]
 -/
+
+@[expose] public section
 
 namespace Kiss1998
 

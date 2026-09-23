@@ -1,7 +1,9 @@
-import Linglib.Semantics.Dynamic.ICDRT.Defs
-import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.Lookup
-import Mathlib.Data.Set.Basic
+module
+
+public import Linglib.Semantics.Dynamic.ICDRT.Defs
+public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Semantics.Dynamic.Lookup
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Intensional CDRT
@@ -37,6 +39,8 @@ dynamic negation that inspects whole states.
 - `veridicalIndiv`, `counterfactualIndiv`, `hypotheticalIndiv`,
   `counterfactualProp`, `accessible`, `subsetReq`: the veridicality typology.
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics.ICDRT
 

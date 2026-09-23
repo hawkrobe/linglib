@@ -1,7 +1,9 @@
-import Linglib.Semantics.Tense.Licensing
-import Linglib.Semantics.Attitudes.Acquaintance
-import Mathlib.Order.Interval.Set.OrdConnected
-import Linglib.Data.Examples.Abusch1997
+module
+
+public import Linglib.Semantics.Tense.Licensing
+public import Linglib.Semantics.Attitudes.Acquaintance
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Linglib.Data.Examples.Abusch1997
 
 /-!
 # Sequence of tense and temporal de re
@@ -38,6 +40,8 @@ double access one (`doubleAccess_of_counterpart`).
 * [partee-1973]
 * [ogihara-1989]
 -/
+
+@[expose] public section
 
 namespace Abusch1997
 

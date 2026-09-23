@@ -1,5 +1,7 @@
-import Linglib.Semantics.Events.Phase
-import Linglib.Semantics.Polarity.Sentence
+module
+
+public import Linglib.Semantics.Events.Phase
+public import Linglib.Semantics.Polarity.Sentence
 
 /-!
 # The aboutness account of projection
@@ -25,6 +27,8 @@ The paper's verb-class instances (CoS predicates, factives, selectional
 restrictions), aspectual classification, and suppression conditions live in
 `Studies/RobertsSimons2024.lean`.
 -/
+
+@[expose] public section
 
 namespace Presupposition.Aboutness
 

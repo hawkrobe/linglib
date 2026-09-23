@@ -1,4 +1,6 @@
-import Linglib.Phonology.Constraints.Defs
+module
+
+public import Linglib.Phonology.Constraints.Defs
 
 /-!
 # Stratal Optimality Theory
@@ -23,6 +25,8 @@ cross-stratal vocabulary over such orders.
 * `Outranks` — pairwise domination in one order.
 * `Reranked` — the reversal of a pairwise domination between two strata.
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory.Stratal
 

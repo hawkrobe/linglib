@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.GroupWithZero.Defs
-import Linglib.Syntax.Minimalist.SyntacticObject.Lift
+module
+
+public import Mathlib.Algebra.GroupWithZero.Defs
+public import Linglib.Syntax.Minimalist.SyntacticObject.Lift
 
 /-!
 # Selection-driven heads on the `SyntacticObject` carrier
@@ -48,6 +50,8 @@ There is no `One`, since two saturated states multiply to `0`, and no associativ
 structure is `CommMagma` + `MulZeroClass` only. A trace leaf gets the saturated value
 `.of (mkTraceToken 0) []`; `selCheck` reads only the token's category and `outerSel`.
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

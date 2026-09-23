@@ -1,8 +1,10 @@
-import Linglib.Syntax.WordOrder
-import Linglib.Studies.BrueningAlKhalaf2020
-import Linglib.Data.Examples.Schwarzer2026
-import Linglib.Data.Experiments.Schwarzer2026
-import Mathlib.Algebra.Order.Field.Rat
+module
+
+public import Linglib.Syntax.WordOrder
+public import Linglib.Studies.BrueningAlKhalaf2020
+public import Linglib.Data.Examples.Schwarzer2026
+public import Linglib.Data.Experiments.Schwarzer2026
+public import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Schwarzer (2026): The law and order of selection-violating coordination
@@ -50,6 +52,8 @@ indirectly.
 * [kim-lu-2024]
 * [sag-etal-1985]
 -/
+
+@[expose] public section
 
 namespace Schwarzer2026
 

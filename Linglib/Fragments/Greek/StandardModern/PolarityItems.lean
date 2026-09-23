@@ -1,5 +1,7 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 
 /-!
 # Greek polarity items
@@ -14,6 +16,8 @@ a rhetorical question ([giannakidou-2002], the paper's (36)–(42)).
 * [giannakidou-2002]
 * [giannakidou-1998]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.PolarityItems
 

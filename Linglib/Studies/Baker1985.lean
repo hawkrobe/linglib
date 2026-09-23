@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Baker1985
-import Linglib.Morphology.Morphotactics.MirrorPrinciple
+module
+
+public import Linglib.Data.Examples.Baker1985
+public import Linglib.Morphology.Morphotactics.MirrorPrinciple
 
 /-!
 # Baker 1985: the Mirror Principle
@@ -40,6 +42,8 @@ combinations do not occur.
 * [comrie-1982], [kisseberth-abasheikh-1977], [kimenyi-1980] — Huichol, Chi-Mwi:ni,
   Kinyarwanda
 -/
+
+@[expose] public section
 
 namespace Baker1985
 

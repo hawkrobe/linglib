@@ -1,5 +1,7 @@
-import Linglib.Phonology.Prosody.Word
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Phonology.Prosody.Word
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Itô and Mester (2009): The Extended Prosodic Word
@@ -29,6 +31,8 @@ evidence of Section 3 supports for English and German, selects the recursive wor
 * [selkirk-1996]
 * [mccarthy-prince-1993]
 -/
+
+@[expose] public section
 
 namespace ItoMester2009
 

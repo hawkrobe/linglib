@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.DecisionTheoretic.Basic
-import Linglib.Pragmatics.DecisionTheoretic.ScalarImplicature
-import Linglib.Semantics.Presupposition.Basic
+module
+
+public import Linglib.Pragmatics.DecisionTheoretic.Basic
+public import Linglib.Pragmatics.DecisionTheoretic.ScalarImplicature
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Decision-Theoretic Semantics: "Also" ([merin-1999-relevance] §5.2–5.4)
@@ -26,6 +28,8 @@ becoming presupposed.
 - **Fact 17** (`presuppositional_independence_additivity`): presupposition
   implies multiplicativity of the Bayes factor without CIP
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

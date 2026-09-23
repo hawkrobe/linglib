@@ -1,7 +1,9 @@
-import Linglib.Core.Data.RoseTree.Basic
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Entailment
-import Linglib.Semantics.Questions.Resolution
+module
+
+public import Linglib.Core.Data.RoseTree.Basic
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Entailment
+public import Linglib.Semantics.Questions.Resolution
 
 /-!
 # Questions under discussion: stack and strategy
@@ -69,6 +71,8 @@ consumed by the discourse *only* definedness condition in their (16);
 that the set really holds subquestions of the QUD is the caller's
 obligation.
 -/
+
+@[expose] public section
 
 namespace Discourse
 

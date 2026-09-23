@@ -1,3 +1,5 @@
+module
+
 /-!
 # WALS Language Metadata
 
@@ -6,6 +8,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 2660 languages referenced across generated features.
 -/
+
+@[expose] public section
 
 namespace Data.WALS
 
@@ -18,7 +22,8 @@ structure Language where
   genus : String
   deriving DecidableEq, Repr
 
-private def languages_0 : List Language :=
+/-- Languages 1 to 500 of `languages`. -/
+def languages_0 : List Language :=
   [ { walsCode := "xun", name := "!Xun (Ekoka)", iso := "knw", family := "Kxa", genus := "Ju-Kung" }
   , { walsCode := "xoo", name := "!Xóõ", iso := "nmn", family := "Tu", genus := "Tu" }
   , { walsCode := "arx", name := "'Are'are", iso := "alu", family := "Austronesian", genus := "Oceanic" }
@@ -521,7 +526,8 @@ private def languages_0 : List Language :=
   , { walsCode := "chj", name := "Chuj", iso := "cac", family := "Mayan", genus := "Mayan" }
   ]
 
-private def languages_1 : List Language :=
+/-- Languages 501 to 1000 of `languages`. -/
+def languages_1 : List Language :=
   [ { walsCode := "chk", name := "Chukchi", iso := "ckt", family := "Chukotko-Kamchatkan", genus := "Northern Chukotko-Kamchatkan" }
   , { walsCode := "cly", name := "Chulym", iso := "clw", family := "Altaic", genus := "Turkic" }
   , { walsCode := "cba", name := "Chumash (Barbareño)", iso := "boi", family := "Chumash", genus := "Chumash" }
@@ -1024,7 +1030,8 @@ private def languages_1 : List Language :=
   , { walsCode := "kai", name := "Kaian", iso := "kct", family := "Ramu-Lower Sepik", genus := "Lower Ramu" }
   ]
 
-private def languages_2 : List Language :=
+/-- Languages 1001 to 1500 of `languages`. -/
+def languages_2 : List Language :=
   [ { walsCode := "kli", name := "Kaili", iso := "lew", family := "Austronesian", genus := "Celebic" }
   , { walsCode := "kng", name := "Kaingang", iso := "kgp", family := "Macro-Ge", genus := "Je Meridional" }
   , { walsCode := "krr", name := "Kairiru", iso := "kxa", family := "Austronesian", genus := "Oceanic" }
@@ -1527,7 +1534,8 @@ private def languages_2 : List Language :=
   , { walsCode := "mbb", name := "Mbabaram", iso := "vmb", family := "Pama-Nyungan", genus := "Northern Pama-Nyungan" }
   ]
 
-private def languages_3 : List Language :=
+/-- Languages 1501 to 2000 of `languages`. -/
+def languages_3 : List Language :=
   [ { walsCode := "mhu", name := "Mbalanhu", iso := "lnb", family := "Niger-Congo", genus := "Bantu" }
   , { walsCode := "mbr", name := "Mbara", iso := "mpk", family := "Afro-Asiatic", genus := "Biu-Mandara" }
   , { walsCode := "mby", name := "Mbay", iso := "myb", family := "Central Sudanic", genus := "Bongo-Bagirmi" }
@@ -2030,7 +2038,8 @@ private def languages_3 : List Language :=
   , { walsCode := "rik", name := "Rikbaktsa", iso := "rkb", family := "Macro-Ge", genus := "Rikbaktsa" }
   ]
 
-private def languages_4 : List Language :=
+/-- Languages 2001 to 2500 of `languages`. -/
+def languages_4 : List Language :=
   [ { walsCode := "rim", name := "Rimi", iso := "rim", family := "Niger-Congo", genus := "Bantu" }
   , { walsCode := "rit", name := "Ritharngu", iso := "rit", family := "Pama-Nyungan", genus := "Western Pama-Nyungan" }
   , { walsCode := "rgn", name := "Roglai (Northern)", iso := "rog", family := "Austronesian", genus := "Malayo-Sumbawan" }
@@ -2533,7 +2542,8 @@ private def languages_4 : List Language :=
   , { walsCode := "wrg", name := "Warrgamay", iso := "wgy", family := "Pama-Nyungan", genus := "Northern Pama-Nyungan" }
   ]
 
-private def languages_5 : List Language :=
+/-- Languages 2501 to 2660 of `languages`. -/
+def languages_5 : List Language :=
   [ { walsCode := "wrb", name := "Warrnambool", iso := "gjm", family := "Pama-Nyungan", genus := "Southeastern Pama-Nyungan" }
   , { walsCode := "wgu", name := "Warrongo", iso := "wrg", family := "Pama-Nyungan", genus := "Northern Pama-Nyungan" }
   , { walsCode := "wrw", name := "Warrwa", iso := "wwr", family := "Nyulnyulan", genus := "Nyulnyulan" }

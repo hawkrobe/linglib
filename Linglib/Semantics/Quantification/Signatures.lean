@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Logic.Natural.Soundness
+module
+
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Natural.Soundness
 
 /-!
 # Signature profiles of generalized quantifiers
@@ -28,6 +30,8 @@ theorems), `LeftAntiAdditive`/`RightAntiAdditive`
 * `every_sem_soundFor`, `no_sem_soundFor` — certified determiner
   profiles.
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

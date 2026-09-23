@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Japanese relative clauses
@@ -15,6 +17,8 @@ retained, and only when the relativized position is a genitive. The data are
 * [keenan-comrie-1977]
 * [keenan-comrie-1979]
 -/
+
+@[expose] public section
 
 namespace Japanese
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Fragments.Icelandic.TemporalConnectives
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.Icelandic.TemporalConnectives
 
 /-!
 # Icelandic polarity items
@@ -12,6 +14,8 @@ Gunnar Hansson).
 
 * [giannakidou-2002]
 -/
+
+@[expose] public section
 
 namespace Icelandic.PolarityItems
 

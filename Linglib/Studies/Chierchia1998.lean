@@ -1,17 +1,19 @@
-import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Fragments.Romance.Italian.NumberGender
-import Linglib.Fragments.Mandarin.Classifiers
-import Linglib.Fragments.Japanese.Classifiers
-import Linglib.Fragments.Romance.French.Nouns
-import Linglib.Fragments.Romance.French.Determiners
-import Linglib.Fragments.Mandarin.Nouns
-import Linglib.Fragments.Mandarin.Determiners
-import Linglib.Fragments.Japanese.Nouns
-import Linglib.Fragments.Japanese.Determiners
-import Linglib.Fragments.Romance.Italian.Nouns
-import Linglib.Fragments.Romance.Italian.Determiners
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Determiners
+module
+
+public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Fragments.Romance.Italian.NumberGender
+public import Linglib.Fragments.Mandarin.Classifiers
+public import Linglib.Fragments.Japanese.Classifiers
+public import Linglib.Fragments.Romance.French.Nouns
+public import Linglib.Fragments.Romance.French.Determiners
+public import Linglib.Fragments.Mandarin.Nouns
+public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Fragments.Japanese.Nouns
+public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Fragments.Romance.Italian.Nouns
+public import Linglib.Fragments.Romance.Italian.Determiners
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.English.Determiners
 
 /-!
 # Chierchia (1998): Reference to kinds across languages
@@ -46,6 +48,8 @@ classifier accounts dispute it there rather than in the Fragments.
 
 * [chierchia-1998]
 -/
+
+@[expose] public section
 
 namespace Chierchia1998
 

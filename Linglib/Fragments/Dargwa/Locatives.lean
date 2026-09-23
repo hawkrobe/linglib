@@ -1,4 +1,6 @@
-import Linglib.Fragments.Dargwa.Case
+module
+
+public import Linglib.Fragments.Dargwa.Case
 
 /-!
 # Dargwa (Tanti) Locative System [sumbatova-2021]
@@ -15,6 +17,8 @@ four directions (UP, DOWN, HITHER, THITHER).
 
 This yields a large paradigm, though not all cells are filled.
 -/
+
+@[expose] public section
 
 namespace Dargwa.Locatives
 

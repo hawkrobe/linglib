@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Singleton
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Fragments.HindiUrdu.Particles
+module
+
+public import Linglib.Semantics.Questions.Singleton
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Fragments.HindiUrdu.Particles
 
 /-!
 # Bhatt and Dayal 2020: the polar question particle kya:
@@ -40,6 +42,8 @@ clause-final *kya:*, whose sister is the whole clause, is excluded there.
 * [roelofsen-farkas-2015]: the highlighted proposition of a polar question.
 * [xu-2012], [xu-2017]: the Mandarin *nandao* analysis the account draws on.
 -/
+
+@[expose] public section
 
 namespace BhattDayal2020
 

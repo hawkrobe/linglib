@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 37A: Definite Articles
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 37, 620 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F37A
 
@@ -26,7 +30,8 @@ inductive DefiniteArticleType where
   | noDefiniteOrIndefiniteArticle
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint DefiniteArticleType) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint DefiniteArticleType) :=
   [ { walsCode := "aar", iso := "aiw", value := .definiteAffix }
   , { walsCode := "abk", iso := "abk", value := .definiteWordDistinctFromDemonstrative }
   , { walsCode := "abu", iso := "kgr", value := .demonstrativeWordUsedAsDefiniteArticle }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint DefiniteArticleType) :=
   , { walsCode := "srn", iso := "srq", value := .noDefiniteOrIndefiniteArticle }
   ]
 
-private def allData_1 : List (Datapoint DefiniteArticleType) :=
+/-- Rows 501 to 620 of `allData`. -/
+def allData_1 : List (Datapoint DefiniteArticleType) :=
   [ { walsCode := "sro", iso := "ssd", value := .noDefiniteOrIndefiniteArticle }
   , { walsCode := "ssa", iso := "sil", value := .definiteAffix }
   , { walsCode := "sis", iso := "baa", value := .definiteWordDistinctFromDemonstrative }

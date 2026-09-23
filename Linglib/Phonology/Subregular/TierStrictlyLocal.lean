@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.StrictlyLocal
-import Linglib.Phonology.Subregular.Aperiodicity
-import Linglib.Phonology.Subregular.TierProjection
-import Mathlib.Data.List.Basic
-import Mathlib.Computability.Language
-import Linglib.Core.Data.List.Factors
+module
+
+public import Linglib.Phonology.Subregular.StrictlyLocal
+public import Linglib.Phonology.Subregular.Aperiodicity
+public import Linglib.Phonology.Subregular.TierProjection
+public import Mathlib.Data.List.Basic
+public import Mathlib.Computability.Language
+public import Linglib.Core.Data.List.Factors
 
 /-!
 # Tier-based strictly local languages (TSL_k)
@@ -31,6 +33,8 @@ tier-adjacent factors while arbitrary off-tier material may intervene.
 * `Language.IsStrictlyLocal.toIsTierStrictlyLocal`: `SL_k ⊆ TSL_k`, via the
   universal tier (projection is the identity).
 -/
+
+@[expose] public section
 
 variable {α : Type*}
 

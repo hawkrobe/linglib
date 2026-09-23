@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `AlonsoOvalleMenendezBenito2010` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/AlonsoOvalleMenendezBenito2010.json` 
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace AlonsoOvalleMenendezBenito2010.Examples`.
 -/
+
+@[expose] public section
 
 namespace AlonsoOvalleMenendezBenito2010.Examples
 

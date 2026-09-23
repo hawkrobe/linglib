@@ -1,7 +1,9 @@
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Semantics.Degree.Scale
-import Linglib.Semantics.Degree.Antonymy
-import Linglib.Syntax.Category.Adjective.Basic
+module
+
+public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.Scale
+public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
 # Gradable adjectives
@@ -23,6 +25,8 @@ The antonym pair's polarity, relation and two-threshold model live in
 The intersective/subsective/privative classification lives in
 `Semantics/Modification/Classification.lean`.
 -/
+
+@[expose] public section
 
 namespace Degree
 

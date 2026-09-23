@@ -1,15 +1,17 @@
-import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.Assignment
-import Linglib.Fragments.English.Toy
-import Linglib.Semantics.Composition.Reduction
-import Linglib.Semantics.Composition.Partial
-import Linglib.Semantics.Composition.Lexicon
-import Linglib.Semantics.Quantification.NP
-import Linglib.Semantics.Quantification.Polyadic
-import Linglib.Semantics.Quantification.Terminal
-import Linglib.Fragments.English.Determiners
-import Linglib.Data.Examples.HeimKratzer1998
+module
+
+public import Linglib.Syntax.Tree.Cat
+public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Fragments.English.Toy
+public import Linglib.Semantics.Composition.Reduction
+public import Linglib.Semantics.Composition.Partial
+public import Linglib.Semantics.Composition.Lexicon
+public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Polyadic
+public import Linglib.Semantics.Quantification.Terminal
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Data.Examples.HeimKratzer1998
 
 /-!
 # Heim and Kratzer (1998): Semantics in Generative Grammar
@@ -50,6 +52,8 @@ carries UD categories that the engine ignores.
 
 * [heim-kratzer-1998]
 -/
+
+@[expose] public section
 
 namespace HeimKratzer1998
 

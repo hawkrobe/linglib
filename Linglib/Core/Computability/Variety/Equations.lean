@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Logic.Function.Basic
-import Linglib.Core.Algebra.Group.Idempotent
-import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.Computability.Definite
-import Linglib.Core.Data.List.DropRight
+module
+
+public import Mathlib.Logic.Function.Basic
+public import Linglib.Core.Algebra.Group.Idempotent
+public import Linglib.Core.Computability.SyntacticMonoid
+public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Data.List.DropRight
 
 /-!
 # Equational characterizations of the definite subregular classes
@@ -41,6 +43,8 @@ monoid elements: the latter is strictly weaker, ignoring `L`-trivial letters (e.
 syntactic *semigroup* (no empty word); we keep mathlib's `Con (FreeMonoid α)` monoid
 and recover the characterization through this letter-sequence quantification.
 -/
+
+@[expose] public section
 
 
 namespace Language

@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.Forms.Booij2019
-import Linglib.Morphology.ConstructionMorphology.Schema
-import Linglib.Morphology.Morphotactics.CVTemplate
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Data.Forms.Booij2019
+public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Booij (2019): The role of schemas in Construction Morphology
@@ -40,6 +42,8 @@ an adjective with the comparative template over the same three consonants
 * [booij-2019]
 * [mccarthy-1981]
 -/
+
+@[expose] public section
 
 namespace Booij2019
 

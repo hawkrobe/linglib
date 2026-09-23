@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
-import Linglib.Semantics.Plurality.Cumulativity
+module
+
+public import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
+public import Linglib.Semantics.Plurality.Cumulativity
 
 /-!
 # PPCDRT — Cumulativity Bridge
@@ -19,6 +21,8 @@ bridge theorem, under finiteness assumptions on the value-sets, establishes
 the structural identity that `Plurality/Reciprocal/Scope.lean`
 docstring asserted as prose.
 -/
+
+@[expose] public section
 
 namespace PPCDRT
 

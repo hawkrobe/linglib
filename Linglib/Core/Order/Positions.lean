@@ -1,4 +1,6 @@
-import Linglib.Core.Order.Branching
+module
+
+public import Linglib.Core.Order.Branching
 
 /-!
 # Positions of a Tree: the Inherited Order Stack
@@ -22,6 +24,8 @@ carrier's positions; covering in it is covering in `TreePath`
 (`Positions.covBy_iff`), so the daughters of a position are its valid
 daughters.
 -/
+
+@[expose] public section
 
 namespace Core.Order
 

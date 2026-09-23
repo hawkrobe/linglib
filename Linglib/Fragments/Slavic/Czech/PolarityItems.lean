@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Czech polarity items
@@ -19,6 +21,8 @@ polar questions ([stankova-2025], [stankova-2026]). The *ne-* prefix lives in th
 * [stankova-2025]
 * [stankova-2026]
 -/
+
+@[expose] public section
 
 namespace Czech.PolarityItems
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Indefinite
+module
+
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # English indefinite pronouns
@@ -15,6 +17,8 @@ conditionals (*Did you see someone?*, *Did you see anyone?*).
 
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace English.Indefinites
 

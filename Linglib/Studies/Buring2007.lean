@@ -1,5 +1,7 @@
-import Linglib.Logic.Modal.Basic
-import Linglib.Semantics.Degree.Basic
+module
+
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Degree.Basic
 
 /-!
 # Büring 2007: cross-polar nomalies
@@ -51,6 +53,8 @@ the accessible worlds agree on the standard's degree.
 * [schwarzschild-wilkinson-2002]
 * [takahashi-fox-2005]
 -/
+
+@[expose] public section
 
 namespace Buring2007
 

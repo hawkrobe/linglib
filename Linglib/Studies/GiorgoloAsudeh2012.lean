@@ -1,4 +1,6 @@
-import Linglib.Semantics.Composition.Writer
+module
+
+public import Linglib.Semantics.Composition.Writer
 
 /-!
 # Giorgolo and Asudeh (2012): ⟨M, η, ⋆⟩ Monads for Conventional Implicatures
@@ -41,6 +43,8 @@ multidimensionality, while the relative clause never reaches the at-issue value
 * [anderbois-brasoveanu-henderson-2010]
 * [barker-bernardi-shan-2010]
 -/
+
+@[expose] public section
 
 namespace GiorgoloAsudeh2012
 

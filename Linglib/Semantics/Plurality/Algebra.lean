@@ -1,4 +1,6 @@
-import Linglib.Semantics.Mereology
+module
+
+public import Linglib.Semantics.Mereology
 
 /-!
 # Link's algebra of plurals
@@ -54,6 +56,8 @@ its singleton and sum is union, is the `Finset α` instance of the last section.
 * [R. Schwarzschild, *Pluralities* (1996)][schwarzschild-1996]
 * [W. Sternefeld, *Reciprocity and cumulative predication* (1998)][sternefeld-1998]
 -/
+
+@[expose] public section
 
 namespace Plurality.Algebra
 

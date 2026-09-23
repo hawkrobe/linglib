@@ -1,10 +1,12 @@
-import Mathlib.Data.Finset.Image
-import Mathlib.Data.Finset.Sort
-import Mathlib.Data.List.Chain
-import Mathlib.Order.Hom.Basic
-import Mathlib.Order.Hom.Set
-import Mathlib.Data.Fintype.Card
-import Linglib.Phonology.Constraints.Defs
+module
+
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Data.List.Chain
+public import Mathlib.Order.Hom.Basic
+public import Mathlib.Order.Hom.Set
+public import Mathlib.Data.Fintype.Card
+public import Linglib.Phonology.Constraints.Defs
 
 /-!
 # Correspondence Theory
@@ -50,6 +52,8 @@ relations: [dolatian-heinz-2020]).
 * `Correspondence.diagram_isSymmetric` — a diagonal diagram over a symmetric role
   predicate is symmetric.
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 

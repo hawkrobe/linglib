@@ -1,10 +1,12 @@
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.Examples.Just2024
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Syntax.Clause.Scenario
-import Linglib.Syntax.Person.Basic
+module
+
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Just2024
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Clause.Scenario
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # Just (2024): A structural and functional comparison of differential A and P indexing
@@ -46,6 +48,8 @@ argument the scenario's kind under that ranking favours, as the paper argues aft
 * [haspelmath-2021]
 * [witzlack-makarevich-etal-2016]
 -/
+
+@[expose] public section
 
 namespace Just2024
 

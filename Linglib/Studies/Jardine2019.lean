@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.Language
-import Linglib.Phonology.Autosegmental.OCP
-import Linglib.Phonology.Subregular.ContainsFactor
-import Linglib.Phonology.Tone.Basic
-import Linglib.Data.Examples.Jardine2019
+module
+
+public import Mathlib.Computability.Language
+public import Linglib.Phonology.Autosegmental.OCP
+public import Linglib.Phonology.Subregular.ContainsFactor
+public import Linglib.Phonology.Tone.Basic
+public import Linglib.Data.Examples.Jardine2019
 
 /-!
 # Jardine (2019): the expressivity of autosegmental grammars
@@ -43,6 +45,8 @@ projection ([schutzenberger-1965], [mcnaughton-papert-1971], `isStarFree_free_re
 * [schutzenberger-1965]
 * [mcnaughton-papert-1971]
 -/
+
+@[expose] public section
 
 namespace Jardine2019
 

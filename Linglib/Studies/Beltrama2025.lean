@@ -1,6 +1,8 @@
-import Mathlib.Order.Bounds.Basic
-import Mathlib.Order.CompleteLattice.Basic
-import Linglib.Semantics.Degree.Adjective
+module
+
+public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Order.CompleteLattice.Basic
+public import Linglib.Semantics.Degree.Adjective
 
 /-!
 # Beltrama (2025): Evaluation, thresholds, and practical commitments
@@ -36,6 +38,8 @@ derivation are recorded in the example rows only.
 * [nadathur-2023]
 * [kagan-alexeyenko-2011]
 -/
+
+@[expose] public section
 
 namespace Beltrama2025
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 81B: Languages with two Dominant Orders of Subject, Object, and Verb
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 81, 67 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F81B
 

@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Case.Alignment
-import Linglib.Fragments.Hindi.Case
-import Linglib.Data.Examples.Dixon1994
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Case.Alignment
+public import Linglib.Fragments.Hindi.Case
+public import Linglib.Data.Examples.Dixon1994
 
 /-!
 # Dixon (1994): Ergativity
@@ -53,6 +55,8 @@ pivots of §6.2.4.
 * [silverstein-1976]
 * [comrie-1978]
 -/
+
+@[expose] public section
 
 namespace Dixon1994
 

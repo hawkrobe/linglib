@@ -1,6 +1,8 @@
-import Linglib.Studies.LiuRotter2025
-import Linglib.Data.Examples.RotterLiu2025
-import Mathlib.Tactic.Ring
+module
+
+public import Linglib.Studies.LiuRotter2025
+public import Linglib.Data.Examples.RotterLiu2025
+public import Mathlib.Tactic.Ring
 
 /-!
 # Rotter and Liu (2025): A Register Approach to Modal (Non-)Concord in English
@@ -38,6 +40,8 @@ effect is modelled as one additive shift on both cells of a pair.
 * [zeijlstra-2007]
 * [giannakidou-mari-2018]
 -/
+
+@[expose] public section
 
 namespace RotterLiu2025
 

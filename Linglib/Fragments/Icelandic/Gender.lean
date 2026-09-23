@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Icelandic nouns by gender and humanness
@@ -10,6 +12,8 @@ and whether they denote humans, including the fixed-gender neuter *skáld* 'poet
 
 * [adamson-anagnostopoulou-2025]
 -/
+
+@[expose] public section
 
 namespace Icelandic.Gender
 

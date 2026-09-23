@@ -1,5 +1,7 @@
-import Linglib.Semantics.Aspect.Telicity
-import Mathlib.Order.WellFounded
+module
+
+public import Linglib.Semantics.Aspect.Telicity
+public import Mathlib.Order.WellFounded
 
 /-!
 # Krifka (1989): Nominal Reference, Temporal Constitution and Quantification in Event Semantics
@@ -43,6 +45,8 @@ sections on negation (§6) and quantification (§7) are prose.
 * [link-1983] — the lattice-theoretic mereology
 * [krifka-1998] — the later development of the transfer properties
 -/
+
+@[expose] public section
 
 namespace Krifka1989
 

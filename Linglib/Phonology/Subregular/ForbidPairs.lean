@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.Subregular.ForbiddenPairs
+module
+
+public import Linglib.Phonology.Constraints.Basic
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.Subregular.ForbiddenPairs
 
 /-!
 # Bridge: Forbidden-Pair Markedness ↔ TSL_2
@@ -29,6 +31,8 @@ corollary.
   characterize. It lives here, not in `Constraints/Defs.lean`, so the
   framework-neutral constraint vocabulary stays free of `Computability`.
 -/
+
+@[expose] public section
 
 namespace Constraints
 

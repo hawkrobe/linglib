@@ -1,7 +1,9 @@
-import Linglib.Semantics.Questions.Closure
-import Linglib.Semantics.Exhaustification.InnocentInclusion
-import Linglib.Studies.Fox2007
-import Linglib.Data.Examples.Fox2018
+module
+
+public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Exhaustification.InnocentInclusion
+public import Linglib.Studies.Fox2007
+public import Linglib.Data.Examples.Fox2018
 
 /-!
 # Fox (2018): Partition by Exhaustification
@@ -37,6 +39,8 @@ on the distribution of mention-some enter only through the rows on singular wh-p
 * [fox-hackl-2006]
 * [heim-1994]
 -/
+
+@[expose] public section
 
 namespace Fox2018
 

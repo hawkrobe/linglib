@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.NP
-import Linglib.Semantics.Reference.Iota
-import Mathlib.Data.Finset.Lattice.Fold
+module
+
+public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Reference.Iota
+public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Partee (1987): Noun Phrase Interpretation and Type-shifting Principles
@@ -41,6 +43,8 @@ formalized.
 * [chierchia-1984]
 * [keenan-faltz-1985]
 -/
+
+@[expose] public section
 
 namespace Partee1987
 

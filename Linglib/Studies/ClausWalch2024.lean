@@ -1,6 +1,8 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
-import Linglib.Fragments.English.NumeralModifiers
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Tactic.NormNum
+public import Linglib.Fragments.English.NumeralModifiers
 
 /-!
 # Claus & Walch 2024: Numeral modification and framing effects
@@ -49,6 +51,8 @@ construction, superlative against directional.
 * [D. Blok, *The semantics and pragmatics of directional numeral
   modifiers* (2015)][blok-2015]
 -/
+
+@[expose] public section
 
 namespace ClausWalch2024
 

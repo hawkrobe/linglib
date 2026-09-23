@@ -1,5 +1,7 @@
-import Linglib.Morphology.DistributedMorphology.ComplexHead
-import Linglib.Data.Examples.Bobaljik2000
+module
+
+public import Linglib.Morphology.DistributedMorphology.ComplexHead
+public import Linglib.Data.Examples.Bobaljik2000
 
 /-! # Bobaljik 2000: the ins and outs of contextual allomorphy
 
@@ -33,6 +35,8 @@ cyclicity forces to be inwards.
 
 [bobaljik-2000], [halle-marantz-1993].
 -/
+
+@[expose] public section
 
 namespace Bobaljik2000
 

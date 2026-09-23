@@ -1,4 +1,6 @@
-import Linglib.Discourse.Commitment.Table
+module
+
+public import Linglib.Discourse.Commitment.Table
 
 /-!
 # Faller (2019): The Discourse Commitments of Illocutionary Reportatives
@@ -61,6 +63,8 @@ dependently (`present_reportative_dependent`).
 * [gunlogson-2008]
 * [walker-1996]
 -/
+
+@[expose] public section
 
 namespace Faller2019
 

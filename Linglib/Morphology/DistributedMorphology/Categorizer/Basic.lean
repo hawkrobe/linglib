@@ -1,8 +1,10 @@
-import Linglib.Core.Data.UnorderedTree.Leaves
-import Linglib.Morphology.DistributedMorphology.Root
-import Linglib.Syntax.Minimalist.Defs
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Verbal.Voice
+module
+
+public import Linglib.Core.Data.UnorderedTree.Leaves
+public import Linglib.Morphology.DistributedMorphology.Root
+public import Linglib.Syntax.Minimalist.Defs
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Categorization
@@ -45,6 +47,8 @@ and layered derivation are facts about leaves rather than stipulations.
 * [A. Marantz, *Locality domains for contextual allomorphy across the
   interfaces*][marantz-2013]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

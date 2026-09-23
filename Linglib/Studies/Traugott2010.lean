@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Order.Cover
-import Linglib.Data.Examples.Traugott2010
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Order.Cover
+public import Linglib.Data.Examples.Traugott2010
 
 /-!
 # Traugott (2010): (Inter)subjectivity and (Inter)subjectification: A Reassessment
@@ -32,6 +34,8 @@ alone shows all three of the expansions that Himmelmann makes criterial for gram
 * [traugott-dasher-2002]
 * [himmelmann-2004]
 -/
+
+@[expose] public section
 
 namespace Traugott2010
 

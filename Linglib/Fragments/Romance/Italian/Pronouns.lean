@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Category.Pronoun.Reflexive
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
 # Italian pronouns
@@ -32,6 +34,8 @@ cluster and bears word stress.
 * [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
   Three Classes of Pronouns* (1999)][cardinaletti-starke-1999]
 -/
+
+@[expose] public section
 
 namespace Italian.Pronouns
 

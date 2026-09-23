@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Particle.Basic
-import Linglib.Fragments.German.ClauseTypes
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Fragments.German.ClauseTypes
 
 /-!
 # German Particles
@@ -15,6 +17,8 @@ profile in `SeeligerRepp2018`. Response uses of *ja*/*doch* live in
 Table 6.1's undifferentiated interrogative column is recorded on both
 interrogative cells.
 -/
+
+@[expose] public section
 
 namespace German.Particles
 

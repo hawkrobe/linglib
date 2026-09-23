@@ -1,4 +1,8 @@
-import Linglib.Semantics.Quantification.Defs
+module
+
+public import Linglib.Semantics.Quantification.Defs
+public meta import Linglib.Logic.Natural.Basic
+public meta import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Generalized Quantifier Properties — Theorems
@@ -8,6 +12,8 @@ Theorems about GQ properties: duality, conservativity/symmetry/strength,
 left monotonicity and smoothness, Boolean closure, type ⟨1⟩ theorems,
 van Benthem characterization, and entailment-signature bridge.
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Nat.Notation
-import Linglib.Semantics.Causation.Psych
+module
+
+public import Mathlib.Data.Nat.Notation
+public import Linglib.Semantics.Causation.Psych
 
 /-!
 # Pesetsky (1995): Zero Syntax
@@ -37,6 +39,8 @@ the fifth chapter, and the account of heavy shift of the seventh are not formali
 * [pesetsky-1995]
 * [belletti-rizzi-1988]
 -/
+
+@[expose] public section
 
 namespace Pesetsky1995
 

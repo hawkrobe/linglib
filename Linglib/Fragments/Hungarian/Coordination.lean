@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Hungarian coordinators
@@ -22,6 +24,8 @@ adversative coordinator is *de* 'but'. The emphatic conjunction is *mind … min
 * [mitrovic-sauerland-2016]
 * [haspelmath-2007]
 -/
+
+@[expose] public section
 
 namespace Hungarian.Coordination
 

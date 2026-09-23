@@ -1,4 +1,6 @@
-import Linglib.Studies.GroenendijkStokhof1991
+module
+
+public import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
 # Charlow (2019): Where is the destructive update problem?
@@ -58,6 +60,8 @@ assignments. Descent needs an order on assignments, which total assignments do n
 * [charlow-2019]
 * [groenendijk-stokhof-1991]
 -/
+
+@[expose] public section
 
 namespace Charlow2019
 

@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Studies.KrizChemla2015
-import Linglib.Data.Examples.AugurzkyEtAl2023
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Studies.KrizChemla2015
+public import Linglib.Data.Examples.AugurzkyEtAl2023
 
 /-!
 # Augurzky et al. 2023: plural definites in context
@@ -37,6 +39,8 @@ is therefore challenged by one negative quantifier.
 * [magri-2014], [bar-lev-2021] — the implicature approach
 * [kriz-2016], [kriz-spector-2021] — the non-implicature approach
 -/
+
+@[expose] public section
 
 namespace AugurzkyEtAl2023
 

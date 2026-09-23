@@ -1,7 +1,9 @@
-import Linglib.Logic.Assignment
-import Linglib.Logic.CylindricAlgebra
-import Linglib.Semantics.Dynamic.Update
-import Mathlib.Data.Set.Function
+module
+
+public import Linglib.Logic.Assignment
+public import Linglib.Logic.CylindricAlgebra
+public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Data.Set.Function
 
 /-!
 # Compositional DRT — registers, drefs, and boxes
@@ -38,6 +40,8 @@ The compositional fragment (T₀ translations, generalized coordination,
 the paper's derivations) and the weakest-precondition calculus live in
 `Studies/Muskens1996.lean`.
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

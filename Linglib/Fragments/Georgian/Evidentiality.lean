@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Georgian evidentiality
@@ -14,6 +16,8 @@ evidentiality proper. WALS codes the language as having direct and indirect evid
 * [aikhenvald-2004], §2.1.2, §4.2
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace Georgian.Evidentiality
 

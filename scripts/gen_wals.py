@@ -22,6 +22,8 @@ import json
 import re
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
 from collections import defaultdict
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -565,7 +567,7 @@ def generate_feature(feature_id, cfg, langs):
     # Module docstring
     lines.append(f'/-!')
     lines.append(f'# WALS Feature {feature_id}: {cfg["name"]}')
-    lines.append(f'@cite{{{cfg["author"]}}}')
+    lines.append(f'[{cfg["author"]}]')
     lines.append(f'')
     lines.append(f'Auto-generated from WALS v2020.4 CLDF data.')
     lines.append(f'**Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py {feature_id}`.')
@@ -604,7 +606,8 @@ def generate_feature(feature_id, cfg, langs):
         n_chunks = (len(entries) + CHUNK - 1) // CHUNK
         for ci in range(n_chunks):
             chunk = entries[ci * CHUNK : (ci + 1) * CHUNK]
-            lines.append(f'private def allData_{ci} : List ({dp_type}) :=')
+            lines.append(f'/-- Rows {ci * CHUNK + 1} to {ci * CHUNK + len(chunk)} of `allData`. -/')
+            lines.append(f'def allData_{ci} : List ({dp_type}) :=')
             for i, entry in enumerate(chunk):
                 lang = langs.get(entry["language_id"], {})
                 iso = lang.get("iso", "")
@@ -683,7 +686,8 @@ def generate_languages(langs, used_ids):
         chunks.append(chunk)
 
     for ci, chunk in enumerate(chunks):
-        lines.append(f'private def languages_{ci} : List Language :=')
+        lines.append(f'/-- Languages {ci * CHUNK + 1} to {ci * CHUNK + len(chunk)} of `languages`. -/')
+        lines.append(f'def languages_{ci} : List Language :=')
         for i, (lid, lang) in enumerate(chunk):
             name = lean_safe_string(lang["name"])
             iso = lang["iso"]
@@ -794,7 +798,7 @@ def main():
     for fid in feature_ids:
         cfg = resolved[fid]
         print(f"Generating {fid}: {cfg['name']}...")
-        content = generate_feature(fid, cfg, langs)
+        content = as_module_if_possible(generate_feature(fid, cfg, langs))
 
         # Collect used language IDs
         entries = load_values(fid)
@@ -811,7 +815,7 @@ def main():
     # and silently drop ~3500 entries that downstream files depend on.
     if not args:
         print("Generating Languages.lean...")
-        content = generate_languages(langs, used_language_ids)
+        content = as_module_if_possible(generate_languages(langs, used_language_ids))
         out_path = OUT / "Languages.lean"
         out_path.write_text(content, encoding="utf-8")
         print(f"  → {out_path.relative_to(ROOT)} ({len(used_language_ids)} languages)")

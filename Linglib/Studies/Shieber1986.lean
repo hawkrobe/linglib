@@ -1,4 +1,6 @@
-import Linglib.Morphology.Word.Features
+module
+
+public import Linglib.Morphology.Word.Features
 
 /-!
 # Shieber (1986): An Introduction to Unification-Based Approaches to Grammar
@@ -30,6 +32,8 @@ the most specific structure subsumed by both inputs, is total, the meet.
 * [shieber-1986]
 * [carpenter-1992]
 -/
+
+@[expose] public section
 
 namespace Shieber1986
 

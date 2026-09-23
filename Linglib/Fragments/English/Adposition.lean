@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Adposition.Basic
+module
+
+public import Linglib.Syntax.Category.Adposition.Basic
 
 /-!
 # English adpositions
@@ -18,6 +20,8 @@ agent-marking of passive *by* is a study-level refinement.
 
 * [dowty-1979]
 -/
+
+@[expose] public section
 
 namespace English
 

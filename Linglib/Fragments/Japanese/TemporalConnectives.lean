@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # Japanese temporal connectives
@@ -13,6 +15,8 @@ the asymmetry that [arregui-kusumoto-1998] and [ogihara-steinert-threlkeld-2024]
 * [arregui-kusumoto-1998]
 * [ogihara-steinert-threlkeld-2024]
 -/
+
+@[expose] public section
 
 namespace Japanese.TemporalConnectives
 

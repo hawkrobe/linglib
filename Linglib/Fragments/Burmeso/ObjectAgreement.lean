@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Burmeso object agreement
@@ -11,6 +13,8 @@ after Donohue's description as tabulated in [ackerman-malouf-2013].
 
 * [ackerman-malouf-2013]
 -/
+
+@[expose] public section
 
 namespace Burmeso.ObjectAgreement
 

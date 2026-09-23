@@ -1,5 +1,7 @@
-import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Data.Examples.Judgment
+module
+
+public import Linglib.Semantics.Tense.Reichenbach
+public import Linglib.Data.Examples.Judgment
 
 /-!
 # Lakoff (1970): Tense and Its Relation to Participants
@@ -30,6 +32,8 @@ under sequence of tense, (11b).
 * [lakoff-1970]
 * [reichenbach-1947]
 -/
+
+@[expose] public section
 
 namespace Lakoff1970
 
@@ -125,7 +129,7 @@ def will : TenseForm := ⟨⟦future⟧, .synthetic⟩
 def usedTo : TenseForm := ⟨⟦past⟧, .periphrastic⟩
 
 /-- A frame at speech time zero with the event at `e`. -/
-private def frame (e : ℤ) (Salient : Prop) [Decidable Salient] : Perspective ℤ :=
+def frame (e : ℤ) (Salient : Prop) [Decidable Salient] : Perspective ℤ :=
   { speechTime := 0, perspectiveTime := 0, referenceTime := e, eventTime := e
     Salient, Novel := False }
 

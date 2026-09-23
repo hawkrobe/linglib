@@ -1,7 +1,9 @@
-import Linglib.Processing.DiscriminativeLexicon.Defs
-import Linglib.Phonology.Subregular.Boundary
-import Linglib.Core.Data.List.Factors
-import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+module
+
+public import Linglib.Processing.DiscriminativeLexicon.Defs
+public import Linglib.Phonology.Subregular.Boundary
+public import Linglib.Core.Data.List.Factors
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
 /-!
 # Form and meaning coding for the discriminative lexicon
@@ -33,6 +35,8 @@ proportional analogy (`Studies/HeitmeierChuangBaayen2026`).
 * [M. Heitmeier, Y.-Y. Chuang and R. H. Baayen, *The Discriminative Lexicon*
   (2026)][heitmeier-chuang-baayen-2026]
 -/
+
+@[expose] public section
 
 namespace DiscriminativeLexicon
 

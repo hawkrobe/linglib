@@ -1,9 +1,11 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Syntax.Person.Category
-import Linglib.Fragments.Romance.Spanish.Clitics
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Syntax.Person.Category
+public import Linglib.Fragments.Romance.Spanish.Clitics
 
 /-!
 # Charnavel and Mateu 2015: the clitic logophoric restriction
@@ -43,6 +45,8 @@ attitude holder is the one licit pair.
 * [sells-1987]
 * [kuno-1987]
 -/
+
+@[expose] public section
 
 namespace CharnavelMateu2015
 

@@ -1,6 +1,8 @@
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Data.Examples.RoseWalker2004
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Data.Examples.RoseWalker2004
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Rose & Walker (2004): A Typology of Consonant Agreement as Correspondence
@@ -45,6 +47,8 @@ example numbers of the rows are those of the manuscript [rose-walker-2001].
 * [mccarthy-prince-1995]
 * [prince-smolensky-1993]
 -/
+
+@[expose] public section
 
 namespace RoseWalker2004
 

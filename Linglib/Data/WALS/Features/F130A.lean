@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 130A: Finger and Hand
@@ -10,6 +12,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 Chapter 130, 593 languages.
 -/
 
+@[expose] public section
+
 namespace Data.WALS.F130A
 
 /-- WALS 130A values. -/
@@ -20,7 +24,8 @@ inductive FingerAndHand where
   | different
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint FingerAndHand) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint FingerAndHand) :=
   [ { walsCode := "xoo", iso := "nmn", value := .different }
   , { walsCode := "arx", iso := "alu", value := .different }
   , { walsCode := "abw", iso := "abe", value := .different }
@@ -523,7 +528,8 @@ private def allData_0 : List (Datapoint FingerAndHand) :=
   , { walsCode := "tlf", iso := "tlf", value := .different }
   ]
 
-private def allData_1 : List (Datapoint FingerAndHand) :=
+/-- Rows 501 to 593 of `allData`. -/
+def allData_1 : List (Datapoint FingerAndHand) :=
   [ { walsCode := "trb", iso := "tfr", value := .different }
   , { walsCode := "tsj", iso := "tew", value := .different }
   , { walsCode := "tha", iso := "tha", value := .different }

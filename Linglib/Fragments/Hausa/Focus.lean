@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Fragments.Hausa.TAM
-import Linglib.Fragments.Hausa.Tone
-import Linglib.Semantics.Focus.Marking
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Linglib.Fragments.Hausa.TAM
+public import Linglib.Fragments.Hausa.Tone
+public import Linglib.Semantics.Focus.Marking
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Hausa focus and the stabilizer nē/cē
@@ -45,6 +47,8 @@ configuration showing the predicate has bite. `mkInSitu`/`mkExSitu` are
 ergonomic constructors; the ex-situ one takes the licensing obligation as
 an argument.
 -/
+
+@[expose] public section
 
 namespace Hausa
 

@@ -1,4 +1,6 @@
-import Linglib.Logic.Team.BSML.Defs
+module
+
+public import Linglib.Logic.Team.BSML.Defs
 
 /-!
 # BSML pragmatic enrichment
@@ -21,6 +23,8 @@ positive formulas with BSML*, the variant excluding `∅` from the states
 * `consequencePlus`, `bsmlStar_iff_bsmlPlus`, `negativeFC_star` — BSML⁺
   consequence, Fact 13, and the BSML* half of Fact 14.
 -/
+
+@[expose] public section
 
 namespace BSML
 

@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Gibbs
+module
+
+public import Linglib.Pragmatics.RSA.Gibbs
 
 /-!
 # Frank and Goodman (2012): Predicting Pragmatic Reasoning in Language Games
@@ -38,6 +40,8 @@ model's predictions.
 
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal Topology

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Counting
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finset.Powerset
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Powerset
 
 /-!
 # Witness-set quantification
@@ -67,6 +69,8 @@ refset/compset/maxset framework).
   provide (`WitnessCondition.anaphora`); `Studies.Cooper2023` checks it
   against the book's examples.
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

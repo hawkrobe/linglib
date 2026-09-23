@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Yoruba Relativization Fragment
@@ -32,6 +34,8 @@ the genitive relativization channel is widely available.
 Data from [awobuluyi-1978] §6.18–6.24, §3.15 + [keenan-comrie-1979]
 ex. 125–128.
 -/
+
+@[expose] public section
 
 namespace Yoruba
 

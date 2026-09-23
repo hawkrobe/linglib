@@ -1,6 +1,8 @@
-import Linglib.Semantics.Presupposition.Aboutness
-import Linglib.Semantics.Aspect.Phasal
-import Linglib.Semantics.Questions.Resolution
+module
+
+public import Linglib.Semantics.Presupposition.Aboutness
+public import Linglib.Semantics.Aspect.Phasal
+public import Linglib.Semantics.Questions.Resolution
 
 /-!
 # Roberts and Simons (2024): Preconditions and projection
@@ -45,6 +47,8 @@ reference-time account of the *know* and *discover* contrast.
 * [A. Warstadt, *Presupposition triggering reflects pragmatic reasoning about utterance
   utility* (2022)][warstadt-2022]
 -/
+
+@[expose] public section
 
 namespace RobertsSimons2024
 

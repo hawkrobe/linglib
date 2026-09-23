@@ -1,4 +1,6 @@
-import Linglib.Studies.Imanishi2014
+module
+
+public import Linglib.Studies.Imanishi2014
 
 /-!
 # Imanishi (2020): Parameterizing Split Ergativity in Mayan
@@ -41,6 +43,8 @@ shows that the progressive derivations assign the dissertation's Cases.
 * [coon-mateo-pedro-preminger-2014]
 * [alexiadou-2001]
 -/
+
+@[expose] public section
 
 namespace Imanishi2020
 

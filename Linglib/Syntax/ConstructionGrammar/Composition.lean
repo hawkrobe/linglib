@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.ConstructionGrammar.Licensing
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Licensing
 
 /-!
 # Construction-relative composition
@@ -25,6 +27,8 @@ structure in which it is embedded.
 * `Constructicon.interps`: all readings of a token, through the licensing
   recognizer
 -/
+
+@[expose] public section
 
 namespace ConstructionGrammar
 

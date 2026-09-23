@@ -1,10 +1,12 @@
-import Mathlib.Data.Part
-import Mathlib.Basic.Nontrivial.Defs
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Logic.Trivalent.Prop3
-import Linglib.Semantics.Reference.Iota
-import Linglib.Semantics.Dynamic.Partial
-import Linglib.Data.Examples.CoppockBeaver2015
+module
+
+public import Mathlib.Data.Part
+public import Mathlib.Basic.Nontrivial.Defs
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Dynamic.Partial
+public import Linglib.Data.Examples.CoppockBeaver2015
 
 /-!
 # Coppock and Beaver's definiteness and determinacy
@@ -85,6 +87,8 @@ the paper reports are the rows of `Data/Examples/CoppockBeaver2015.json`.
 * [C. Vikner, P. A. Jensen, *A semantic analysis of the English genitive*
   (2002)][vikner-jensen-2002]
 -/
+
+@[expose] public section
 
 namespace CoppockBeaver2015
 

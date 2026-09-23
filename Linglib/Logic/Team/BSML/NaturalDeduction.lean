@@ -1,4 +1,6 @@
-import Linglib.Logic.Team.BSML.Properties
+module
+
+public import Linglib.Logic.Team.BSML.Properties
 
 /-!
 # Natural deduction for BSML, and its soundness
@@ -45,6 +47,8 @@ exactly the NE-free fragment.
 * `□Mon` is finitary via a `List` of discharged premises, matching the
   paper's n-ary rule without needing `DecidableEq` on formulas.
 -/
+
+@[expose] public section
 
 namespace BSML
 

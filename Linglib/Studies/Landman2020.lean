@@ -1,6 +1,8 @@
-import Mathlib.Order.CompleteBooleanAlgebra
-import Mathlib.Data.Set.Card
-import Linglib.Semantics.Mereology
+module
+
+public import Mathlib.Order.CompleteBooleanAlgebra
+public import Mathlib.Data.Set.Card
+public import Linglib.Semantics.Mereology
 
 /-!
 # Landman (2020): Iceberg Semantics for Mass Nouns and Count Nouns
@@ -34,6 +36,8 @@ substitutes for the base-atomicity of [landman-2011] and [landman-2016].
 * [landman-2020]
 * [landman-2011], [landman-2016], [sutton-filip-2021]
 -/
+
+@[expose] public section
 
 namespace Landman2020
 

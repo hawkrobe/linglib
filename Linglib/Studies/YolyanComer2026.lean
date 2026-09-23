@@ -1,6 +1,8 @@
-import Mathlib.Order.FixedPoints
-import Mathlib.Tactic.IntervalCases
-import Linglib.Phonology.Subregular.BMRS
+module
+
+public import Mathlib.Order.FixedPoints
+public import Mathlib.Tactic.IntervalCases
+public import Linglib.Phonology.Subregular.BMRS
 
 /-!
 # Yolyan and Comer (2026): Phonological Processes as Modal Transductions
@@ -50,6 +52,8 @@ the rule-head hypothesis discharged by computation.
 * [kozen-1983]
 * [osborn-1966]
 -/
+
+@[expose] public section
 
 namespace YolyanComer2026
 
@@ -210,7 +214,7 @@ def Sat (i : ℕ) : Prop := i ∈ χ.sem w χ.out
 end System
 
 /-- The single BMRS index variable. -/
-private abbrev x : Term := .var
+abbrev x : Term := .var
 
 /-! ### Segments and feature classes -/
 

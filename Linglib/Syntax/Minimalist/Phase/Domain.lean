@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Phase theory on the `SyntacticObject` carrier
@@ -32,6 +34,8 @@ c-command domain**, `{T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}} = accessibleTerms.filt
 (leaf ℓ))` — the standard "complement domain = head's c-command domain" falling
 out of the formalization.
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

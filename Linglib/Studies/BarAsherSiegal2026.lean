@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.CCSelection
+module
+
+public import Linglib.Semantics.Causation.CCSelection
 
 /-!
 # Bar-Asher Siegal 2026: causation and causal relations
@@ -21,6 +23,8 @@ two sufficient sets are completed at once neither construction applies.
 * [baglini-bar-asher-siegal-2025]
 * [fodor-1970]
 -/
+
+@[expose] public section
 
 namespace BarAsherSiegal2026
 

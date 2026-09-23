@@ -1,6 +1,8 @@
-import Mathlib.Tactic.FinCases
-import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.Hiatus
+module
+
+public import Mathlib.Tactic.FinCases
+public import Linglib.Phonology.Constraints.Profile
+public import Linglib.Phonology.Hiatus
 
 /-!
 # Steriade (1997): Lexical Conservatism
@@ -51,6 +53,8 @@ not reproduced. The lapse constraint is the paper's three-stressless-syllable ve
 * [mccarthy-prince-1995]
 * [prince-1983]
 -/
+
+@[expose] public section
 
 namespace Steriade1997
 

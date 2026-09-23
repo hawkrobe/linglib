@@ -1,4 +1,6 @@
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Mandarin aspect markers
@@ -17,6 +19,8 @@ share one meaning is the dissertation's analysis and lives in `Studies/Zhao2025.
 
 * [zhao-2025]
 -/
+
+@[expose] public section
 
 namespace Mandarin.Aspect
 

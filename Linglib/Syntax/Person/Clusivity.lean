@@ -1,6 +1,8 @@
-import Linglib.Core.Data.Setoid.Basic
-import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Syntax.Person.Category
+module
+
+public import Linglib.Core.Data.Setoid.Basic
+public import Linglib.Core.Order.UpperLower.Finset
+public import Linglib.Syntax.Person.Category
 
 /-!
 # Marking types of the first person complex
@@ -39,6 +41,8 @@ first-person non-singular, not `noWe`.
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 * [M. Cysouw, *Inclusive/Exclusive Distinction in Independent Pronouns* (2013)][cysouw-2013]
 -/
+
+@[expose] public section
 
 namespace Person
 

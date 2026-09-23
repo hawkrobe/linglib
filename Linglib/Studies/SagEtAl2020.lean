@@ -1,4 +1,6 @@
-import Linglib.Syntax.HPSG.Construction
+module
+
+public import Linglib.Syntax.HPSG.Construction
 
 /-!
 # Sag et al. (2020): Lessons from the English Auxiliary System
@@ -30,6 +32,8 @@ constructions and contraction, are not formalized.
 * [sag-2010]
 * [ginzburg-sag-2000]
 -/
+
+@[expose] public section
 
 namespace SagEtAl2020
 

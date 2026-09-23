@@ -1,6 +1,8 @@
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Mathlib.Order.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Affectedness
@@ -50,6 +52,8 @@ three `EntailmentProfile` projections
 from the surface (`MeaningComponents.changeOfState`) and root
 (`Root.Kind.result`) change-of-state notions ([beavers-koontz-garboden-2020]).
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

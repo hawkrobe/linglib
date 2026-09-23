@@ -1,9 +1,11 @@
-import Linglib.Core.Computability.Definite
-import Linglib.Core.Data.List.Sublist
-import Linglib.Phonology.Subregular.Multitier
-import Linglib.Phonology.Subregular.ForbiddenPairs
-import Linglib.Phonology.Subregular.Sibilant
-import Linglib.Phonology.Subregular.Agree
+module
+
+public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Data.List.Sublist
+public import Linglib.Phonology.Subregular.Multitier
+public import Linglib.Phonology.Subregular.ForbiddenPairs
+public import Linglib.Phonology.Subregular.Sibilant
+public import Linglib.Phonology.Subregular.Agree
 
 /-!
 # Lambert (2026): Multitier phonotactics with logic and algebra
@@ -49,6 +51,8 @@ formalized.
 * [heinz-2010], [sapir-hoijer-1967], [cook-1978], [mayer-major-2018]
 * [hyman-katamba-2010], [ding-2006], [donohue-1997], [odden-1984], [jardine-2020]
 -/
+
+@[expose] public section
 
 namespace Lambert2026
 

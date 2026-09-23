@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Spanish negation
@@ -12,6 +14,8 @@ and a postverbal one requires it; the n-words are entered in
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation Morphology
 

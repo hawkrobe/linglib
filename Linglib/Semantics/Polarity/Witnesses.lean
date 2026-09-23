@@ -1,11 +1,13 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Polarity.Strength
-import Linglib.Logic.Natural.Soundness
-import Linglib.Logic.Natural.Strawson.Soundness
-import Linglib.Logic.Natural.Additivity
-import Linglib.Semantics.Quantification.Signatures
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Semantics.Quantification.Counting
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.Polarity.Strength
+public import Linglib.Logic.Natural.Soundness
+public import Linglib.Logic.Natural.Strawson.Soundness
+public import Linglib.Logic.Natural.Additivity
+public import Linglib.Semantics.Quantification.Signatures
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Model witnesses for the licensing-context table
@@ -33,6 +35,8 @@ Each witness carries a `strength` certificate for its classical row
 witnessed presupposition-free row, strength-matched licensing means the
 operator really holds the strength the item requires.
 -/
+
+@[expose] public section
 
 namespace Polarity
 
@@ -64,7 +68,7 @@ structure ContextWitness (c : LicensingContext) where
     ∀ σ ∈ c.properties.classicalSignature, ∀ s ∈ σ.toDEStrength,
       s.HoldsFor f
 
-private theorem soundFor_of_mem_some {W : Type*} {β : Type*} [Lattice β]
+theorem soundFor_of_mem_some {W : Type*} {β : Type*} [Lattice β]
     [BoundedOrder β] {f : Set W → β} {σ₀ : Signature}
     (hf : Signature.SoundFor σ₀ f) :
     ∀ σ ∈ (some σ₀ : Option Signature), Signature.SoundFor σ f := by
@@ -73,14 +77,14 @@ private theorem soundFor_of_mem_some {W : Type*} {β : Type*} [Lattice β]
   injection hσ with h
   exact h ▸ hf
 
-private theorem soundFor_of_mem_none {W : Type*} {β : Type*} [Lattice β]
+theorem soundFor_of_mem_none {W : Type*} {β : Type*} [Lattice β]
     [BoundedOrder β] {f : Set W → β} :
     ∀ σ ∈ (none : Option Signature), Signature.SoundFor σ f := by
   intro σ hσ
   rw [Option.mem_def] at hσ
   exact absurd hσ (by simp)
 
-private theorem strength_of_mem_some {W : Type*} {β : Type*} [Lattice β]
+theorem strength_of_mem_some {W : Type*} {β : Type*} [Lattice β]
     {f : Set W → β} {σ₀ : Signature} {s₀ : DEStrength}
     (hσ : σ₀.toDEStrength = some s₀) (hf : s₀.HoldsFor f) :
     ∀ σ ∈ (some σ₀ : Option Signature), ∀ s ∈ σ.toDEStrength,
@@ -93,7 +97,7 @@ private theorem strength_of_mem_some {W : Type*} {β : Type*} [Lattice β]
   injection hs with h'
   exact h' ▸ hf
 
-private theorem strength_of_mem_none {W : Type*} {β : Type*} [Lattice β]
+theorem strength_of_mem_none {W : Type*} {β : Type*} [Lattice β]
     {f : Set W → β} :
     ∀ σ ∈ (none : Option Signature), ∀ s ∈ σ.toDEStrength,
       s.HoldsFor f := by
@@ -213,7 +217,7 @@ def negationWitness : ContextWitness .negation where
   strength := strength_of_mem_some (s₀ := .antiMorphic) (by decide)
     isAntiMorphic_compl
 
-private theorem everyRestrictor_soundFor :
+theorem everyRestrictor_soundFor :
     Signature.SoundFor .antiAdd
       (fun R => every_sem (α := Bool) R (fun _ => False)) :=
   soundFor_antiAdd
@@ -232,7 +236,7 @@ noncomputable def universalRestrictorWitness :
   strength := strength_of_mem_some (s₀ := .antiAdditive) (by decide)
     ((leftAntiAdditive_iff_isAntiAdditive _).mp every_laa _)
 
-private theorem noScope_soundFor :
+theorem noScope_soundFor :
     Signature.SoundFor .antiAdd
       (fun S => no_sem (α := Bool) (fun _ => True) S) :=
   soundFor_antiAdd
@@ -248,10 +252,10 @@ noncomputable def nobodyWitness : ContextWitness .nobody where
   strength := strength_of_mem_some (s₀ := .antiAdditive) (by decide)
     ((rightAntiAdditive_iff_isAntiAdditive _).mp no_raa _)
 
-private noncomputable def fewScope : Set Bool → Prop :=
+noncomputable def fewScope : Set Bool → Prop :=
   few_sem (α := Bool) (fun _ => True)
 
-private theorem fewScope_soundFor : Signature.SoundFor .anti fewScope :=
+theorem fewScope_soundFor : Signature.SoundFor .anti fewScope :=
   soundFor_anti_iff.mpr ((scopeDownMono_iff_antitone _).mp few_scope_down _)
 
 /-- *Few*: the scope section of `few_sem` is antitone (weak DE — and not
@@ -264,7 +268,7 @@ noncomputable def fewWitness : ContextWitness .few where
   strength := strength_of_mem_some (s₀ := .weak) (by decide)
     (soundFor_anti_iff.mp fewScope_soundFor)
 
-private theorem atMost_soundFor :
+theorem atMost_soundFor :
     Signature.SoundFor .anti atMost2_student :=
   soundFor_anti_iff.mpr atMost_antitone_scope
 
@@ -278,7 +282,7 @@ def atMostWitness : ContextWitness .atMost where
   strength := strength_of_mem_some (s₀ := .weak) (by decide)
     atMost_antitone_scope
 
-private theorem condAntecedent_soundFor :
+theorem condAntecedent_soundFor :
     Signature.SoundFor .anti
       (fun α : Set (Fin 4) => Conditional.strictImp (fun _ : Fin 4 => Set.univ) α ∅) :=
   soundFor_anti_iff.mpr fun _ _ h => Conditional.strictImp_anti_left h

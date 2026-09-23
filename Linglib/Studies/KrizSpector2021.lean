@@ -1,8 +1,10 @@
-import Linglib.Semantics.Homogeneity.Plural
-import Linglib.Semantics.Plurality.Basic
-import Linglib.Semantics.Homogeneity.Collective
-import Mathlib.Data.Finset.Interval
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Linglib.Semantics.Homogeneity.Plural
+public import Linglib.Semantics.Plurality.Basic
+public import Linglib.Semantics.Homogeneity.Collective
+public import Mathlib.Data.Finset.Interval
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Križ and Spector (2021): Interpreting Plural Predication
@@ -68,6 +70,8 @@ gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 * [krifka-1996]
 * [malamud-2012]
 -/
+
+@[expose] public section
 
 namespace KrizSpector2021
 

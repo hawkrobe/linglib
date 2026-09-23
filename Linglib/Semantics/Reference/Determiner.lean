@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Description
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Possession.Basic
+module
+
+public import Linglib.Semantics.Reference.Description
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Possession.Basic
 
 /-!
 # The denotation of a determiner
@@ -51,6 +53,8 @@ Context is the entity assignment `Assignment E` and the world coordinate is the 
 situation `W`, exactly as for `PersonalPronoun.denote`. `Quantifier` (a generalized
 quantifier, not an individual denotation — it has no `Nominal`) remains deferred.
 -/
+
+@[expose] public section
 
 namespace Reference
 

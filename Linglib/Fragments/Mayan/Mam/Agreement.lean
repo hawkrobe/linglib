@@ -1,10 +1,12 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Phonology.Segmental.Defs
-import Linglib.Fragments.Mayan.Mam.Pronouns
-import Linglib.Fragments.Mayan.Agreement
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Fragments.Mayan.Mam.Pronouns
+public import Linglib.Fragments.Mayan.Agreement
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # Mam Agreement Fragment
@@ -30,6 +32,8 @@ in every aspect (`Mam.assignCase`). Person-number cells are the canonical φ-cel
 pronoun lexicon and its feature values live in `Fragments/Mayan/Mam/Pronouns.lean`, and the
 derivation of the paradigms from a Vocabulary in `Studies/Scott2023.lean`.
 -/
+
+@[expose] public section
 
 namespace Mam
 

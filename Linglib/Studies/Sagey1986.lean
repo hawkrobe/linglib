@@ -1,11 +1,13 @@
-import Linglib.Core.Data.Fintype.Order
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Fintype.EquivFin
-import Linglib.Phonology.FeatureGeometry
-import Linglib.Phonology.Segmental.FeatureClass
-import Linglib.Phonology.Autosegmental.NonCrossing
-import Linglib.Core.Order.Interval
-import Mathlib.Data.Set.Pairwise.Basic
+module
+
+public import Linglib.Core.Data.Fintype.Order
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.EquivFin
+public import Linglib.Phonology.FeatureGeometry
+public import Linglib.Phonology.Segmental.FeatureClass
+public import Linglib.Phonology.Autosegmental.NonCrossing
+public import Linglib.Core.Order.Interval
+public import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
 # Sagey (1986): The Representation of Features and Relations in Non-Linear Phonology
@@ -48,6 +50,8 @@ features that motivates the pointer is.
 * [goldsmith-1976]
 * [clements-1985]
 -/
+
+@[expose] public section
 
 namespace Sagey1986
 
@@ -271,7 +275,7 @@ theorem canonical_diagonal_valid (n : ℕ) : (TierRealization.canonical.assoc n 
 
 end Association
 
-private def assoc (ts tf ms mf : ℤ) (ht : ts ≤ tf := by omega) (hm : ms ≤ mf := by omega) :
+def assoc (ts tf ms mf : ℤ) (ht : ts ≤ tf := by omega) (hm : ms ≤ mf := by omega) :
     Association ℤ :=
   ⟨⟨⟨ts, tf⟩, ht⟩, ⟨⟨ms, mf⟩, hm⟩⟩
 

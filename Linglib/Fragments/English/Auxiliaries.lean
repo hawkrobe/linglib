@@ -1,12 +1,16 @@
-import Linglib.Data.UD.UPOS
-import Linglib.Data.UD.Features
-import Linglib.Syntax.Category.Auxiliary.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Person.Category
-import Linglib.Semantics.Modality.Basic
-import Linglib.Pragmatics.SocialMeaning.Register
-import Linglib.Morphology.Word.Basic
+module
+
+public import Linglib.Data.UD.UPOS
+public import Linglib.Data.UD.Features
+public import Linglib.Syntax.Category.Auxiliary.Basic
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Category
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Morphology.Word.Basic
+
+@[expose] public section
 
 open Morphology (Word Features)
 
@@ -41,13 +45,13 @@ open Modality (ForceFlavor ModalForce ModalFlavor)
 /-- Agreement features of a finite auxiliary. "Past" modals (*could*,
 *would*) carry `Past` as a morphological feature even where they are
 semantically non-past. -/
-private def agr (person : Option Person := none) (number : Option Number := none)
+def agr (person : Option Person := none) (number : Option Number := none)
     (tense : Option UD.Tense := none) : Features :=
   Features.of (verbForm := some .Fin) (person := person) (number := number) (tense := tense)
 
 /-- The contracted negative of an auxiliary: the same entry with the
 contracted form and `Polarity=Neg`. -/
-private def contract (a : Auxiliary) (form : String) : Auxiliary :=
+def contract (a : Auxiliary) (form : String) : Auxiliary :=
   { a with form := form, features := Bundle.set .polarity .Neg a.features }
 
 /-! ### Modals -/

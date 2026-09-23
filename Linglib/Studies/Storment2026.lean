@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Storment2026
-import Linglib.Syntax.Minimalist.Features
+module
+
+public import Linglib.Data.Examples.Storment2026
+public import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Storment (2026): Quotative Inversion as Smuggling
@@ -31,6 +33,8 @@ in a family of inverse voice constructions (§4.3, `InverseVoiceKind`).
 * [roberts-2010]
 * [storment-2025]
 -/
+
+@[expose] public section
 
 namespace Storment2026
 

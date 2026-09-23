@@ -1,7 +1,9 @@
-import Linglib.Core.Algebra.Order.Interval.Set.Instances
-import Linglib.Data.Examples.TonhauserBeaverDegen2018
-import Linglib.Data.Examples.SolstadBott2024
-import Mathlib.Tactic.Linarith
+module
+
+public import Linglib.Core.Algebra.Order.Interval.Set.Instances
+public import Linglib.Data.Examples.TonhauserBeaverDegen2018
+public import Linglib.Data.Examples.SolstadBott2024
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Generalizations.Projectivity — cross-paper data pool
@@ -37,6 +39,8 @@ The means are continuous (proportions in `[0, 1]`), so an account is *run* over
 normalises both to at-issueness (the accounts' input). Import rule (Core + Data
 only): accounts and divergence theorems live in the consuming study files.
 -/
+
+@[expose] public section
 
 namespace Generalizations.Projectivity
 

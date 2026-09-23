@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Reference.Rigidity
-import Mathlib.Data.Set.Function
+module
+
+public import Linglib.Semantics.Reference.Rigidity
+public import Mathlib.Data.Set.Function
 
 /-!
 # Conceptual covers
@@ -31,6 +33,8 @@ index (`Cover.names_acquainted`).
 * [abusch-1997]
 * [dekker-2012]
 -/
+
+@[expose] public section
 
 namespace Reference
 

@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Embick2010
-import Linglib.Morphology.DistributedMorphology.Locality
+module
+
+public import Linglib.Data.Examples.Embick2010
+public import Linglib.Morphology.DistributedMorphology.Locality
 
 /-!
 # Embick (2010): Localism versus Globalism in Morphology and Phonology
@@ -36,6 +38,8 @@ two cycles down (§3.2.2).
 * [halle-marantz-1993]
 * [kratzer-1996]
 -/
+
+@[expose] public section
 
 namespace Embick2010
 

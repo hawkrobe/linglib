@@ -1,6 +1,8 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Source
-import Linglib.Syntax.Case.Alignment
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Source
+public import Linglib.Syntax.Case.Alignment
 
 /-!
 # Dependent case
@@ -45,6 +47,8 @@ Labels are inert; `getCaseOf` and `getMechanismOf` look them up.
 * [marantz-1991]
 * [baker-2015]
 -/
+
+@[expose] public section
 
 namespace Case
 

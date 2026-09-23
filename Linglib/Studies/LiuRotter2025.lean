@@ -1,8 +1,10 @@
-import Linglib.Semantics.Modality.Basic
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Fragments.English.Adverbs
-import Linglib.Data.Examples.LiuRotter2025
-import Mathlib.Basic.Sign.Defs
+module
+
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Fragments.English.Adverbs
+public import Linglib.Data.Examples.LiuRotter2025
+public import Mathlib.Basic.Sign.Defs
 
 /-!
 # Liu and Rotter (2025): Linguistic and Social Meaning Match
@@ -35,6 +37,8 @@ off the English auxiliary fragment.
 * [zeijlstra-2007]
 * [giannakidou-mari-2018]
 -/
+
+@[expose] public section
 
 namespace LiuRotter2025
 

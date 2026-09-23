@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+module
+
+public import Linglib.Syntax.Minimalist.Phase.Basic
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # Olivier (2026): Agree in Restructuring
@@ -28,6 +30,8 @@ and the restructuring one `Restructuring.matrixAux`.
 * [olivier-2025b] — person-identity auxiliary selection (§6.2)
 * [ouali-2008] — the KEEP and SHARE transfers
 -/
+
+@[expose] public section
 
 namespace Olivier2026
 

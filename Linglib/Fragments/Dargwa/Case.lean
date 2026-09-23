@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Alignment
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Alignment
 /-!
 # Dargwa (Tanti) Case Inventory [sumbatova-2021]
 
@@ -22,6 +24,8 @@ unmarked (absolutive). There is no split conditioning.
 The rich locative system (8 localizations × 4 orientations × 4 directions)
 is in `Dargwa/Locatives.lean`.
 -/
+
+@[expose] public section
 
 namespace Dargwa.Case
 

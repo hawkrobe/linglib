@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Defs
-import Linglib.Semantics.Quantification.Properties
-import Linglib.Core.Order.Aristotelian
+module
+
+public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Core.Order.Aristotelian
 
 /-!
 # Concrete propositional generalized quantifiers
@@ -16,6 +18,8 @@ their proofs live in `Quantification/Counting.lean`.
 * `SatisfiesUniversals` — B&C universals: conservativity + monotonicity in scope.
 * Conservativity/monotonicity/symmetry/intersectivity/duality/etc. proofs.
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Fintype.Prod
-import Linglib.Semantics.Modality.Kratzer.Operators
+module
+
+public import Mathlib.Data.Fintype.Prod
+public import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Kratzer (2012): Modals and Conditionals
@@ -33,6 +35,8 @@ status, since the model has no other individuals.
 * [rullmann-matthewson-davis-2008] — the St'át'imcets reportative the chapter contrasts with
   German *sollen*
 -/
+
+@[expose] public section
 
 namespace Kratzer2012
 

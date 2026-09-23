@@ -1,4 +1,6 @@
-import Linglib.Phonology.OptimalityTheory.Antimatroid
+module
+
+public import Linglib.Phonology.OptimalityTheory.Antimatroid
 
 /-!
 # OT grammars: the leg-set / ERC-set / antimatroid hub
@@ -63,6 +65,8 @@ full complete lattice lives on the closed sets, not on `Grammar`.
 * [prince-2002]
 * [prince-smolensky-1993]
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 

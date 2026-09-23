@@ -1,7 +1,9 @@
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Syntax.Agreement.Bundle
-import Linglib.Syntax.Agreement.Hierarchy
-import Linglib.Data.Examples.WechslerZlatic2000
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Agreement.Hierarchy
+public import Linglib.Data.Examples.WechslerZlatic2000
 
 /-!
 # Wechsler & Zlatić (2000): A Theory of Agreement and Its Application to Serbo-Croatian
@@ -41,6 +43,8 @@ agreement, coordination resolution and the HPSG spell-out function are not forma
 * [corbett-1998]
 * [pollard-sag-1994]
 -/
+
+@[expose] public section
 
 namespace WechslerZlatic2000
 
@@ -257,14 +261,14 @@ open Agreement (Bundle)
 
 /-- The bundle of an NP-internal target: its case, and its concord number and gender where it
 is marked for them. -/
-private def concordBundle (c : Case) (n : Flat Number) (g : Flat Gender) : Bundle
+def concordBundle (c : Case) (n : Flat Number) (g : Flat Gender) : Bundle
   | .case => c
   | .number => n
   | .gender => g
   | _ => ⊥
 
 /-- The bundle of an index-reading target, a pronoun or a finite verb. -/
-private def indexBundle (p : Person) (n : Number) (g : Gender) : Bundle
+def indexBundle (p : Person) (n : Number) (g : Gender) : Bundle
   | .person => p
   | .number => n
   | .gender => g

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.DRS.Box
-import Mathlib.Logic.Relation
-import Mathlib.ModelTheory.Basic
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Box
+public import Mathlib.Logic.Relation
+public import Mathlib.ModelTheory.Basic
 
 /-!
 # Discourse representation structures
@@ -44,6 +46,8 @@ the structural theory is in `DRS/Basic.lean`.
   (`Embedding.verifies_perm`, `DRS/Verification.lean`).
 * `DRT` is the owning namespace, on the `FirstOrder.Language` pattern.
 -/
+
+@[expose] public section
 
 open FirstOrder
 

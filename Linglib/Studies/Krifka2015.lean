@@ -1,6 +1,8 @@
-import Linglib.Discourse.Commitment.Space
-import Linglib.Discourse.Commitment.Table
-import Linglib.Semantics.Questions.Bias
+module
+
+public import Linglib.Discourse.Commitment.Space
+public import Linglib.Discourse.Commitment.Table
+public import Linglib.Semantics.Questions.Bias
 
 /-!
 # Krifka (2015): Bias in Commitment Space Semantics
@@ -38,6 +40,8 @@ the negation (`reverseTag`, (45)).
 * [farkas-bruce-2010] — the Table and the rejection operator
 * [buring-gunlogson-2000] — contextual evidence and the three question forms
 -/
+
+@[expose] public section
 
 namespace Krifka2015
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Korean evidentiality
@@ -16,6 +18,8 @@ evidence is in `Studies/Cumming2026.lean`.
 * [lee-2011]
 * [cumming-2026]
 -/
+
+@[expose] public section
 
 namespace Korean.Evidentiality
 

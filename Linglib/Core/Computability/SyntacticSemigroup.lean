@@ -5,10 +5,12 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.SyntacticSemigroup`.
 -/
-import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
-import Linglib.Core.Algebra.Group.WithOne
-import Linglib.Core.Computability.SyntacticMonoid
-import Linglib.Core.GroupTheory.Congruence.Hom
+module
+
+public import Linglib.Core.Algebra.FreeMonoid.FreeSemigroup
+public import Linglib.Core.Algebra.Group.WithOne
+public import Linglib.Core.Computability.SyntacticMonoid
+public import Linglib.Core.GroupTheory.Congruence.Hom
 
 /-!
 # The syntactic semigroup of a language
@@ -55,6 +57,8 @@ pointwise by `recognizesSemigroup_iff`.
 * [eilenberg-1976]
 * [pin-mfa]
 -/
+
+@[expose] public section
 
 namespace Language
 

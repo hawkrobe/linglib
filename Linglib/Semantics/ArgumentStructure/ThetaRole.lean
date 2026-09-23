@@ -1,4 +1,6 @@
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+module
+
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 
 /-!
 # Theta roles as proto-role clusters
@@ -35,6 +37,8 @@ Dowty's role hierarchies follow from the selection principle over these profiles
 * [dowty-1991]
 * [levin-rappaport-hovav-2005]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

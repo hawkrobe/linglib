@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Numerals.Basic
-import Mathlib.Order.Interval.Set.Defs
+module
+
+public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Mathlib.Order.Interval.Set.Defs
 
 /-!
 # Spector (2013): Bare Numerals and Scalar Implicatures
@@ -58,6 +60,8 @@ reviews are not formalized.
 * [geurts-2006]
 * [chierchia-fox-spector-2012]
 -/
+
+@[expose] public section
 
 namespace Spector2013
 

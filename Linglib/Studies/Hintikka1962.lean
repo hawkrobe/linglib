@@ -1,5 +1,7 @@
-import Linglib.Logic.Modal.Basic
-import Mathlib.Data.Set.Basic
+module
+
+public import Linglib.Logic.Modal.Basic
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Hintikka (1962): Knowledge and Belief
@@ -37,6 +39,8 @@ doxastic counterpart in Section 5.10, close the file.
 
 * [hintikka-1962]
 -/
+
+@[expose] public section
 
 namespace Hintikka1962
 

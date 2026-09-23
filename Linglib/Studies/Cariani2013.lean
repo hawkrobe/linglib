@@ -1,8 +1,10 @@
-import Linglib.Semantics.Questions.Partition.Basic
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Order.Preorder.Finite
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Order.Preorder.Finite
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Cariani (2013): 'Ought' and resolution semantics
@@ -49,6 +51,8 @@ of the finest resolution with a benchmark every option meets (`ought_bot_iff`).
 * [jackson-pargetter-1986]
 * [kratzer-1981]
 -/
+
+@[expose] public section
 
 namespace Cariani2013
 

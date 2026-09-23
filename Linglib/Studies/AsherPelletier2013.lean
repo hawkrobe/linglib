@@ -1,6 +1,8 @@
-import Linglib.Studies.Cohen1999
-import Linglib.Data.Examples.AsherPelletier2013
-import Mathlib.Probability.ConditionalProbability
+module
+
+public import Linglib.Studies.Cohen1999
+public import Linglib.Data.Examples.AsherPelletier2013
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Asher & Pelletier 2013: generics as modal quantifiers
@@ -40,6 +42,8 @@ Item numbers follow the 2012 preprint.
 * [leslie-2008] — the counterexamples
 * [lewis-1976], [milne-2003] — the triviality argument
 -/
+
+@[expose] public section
 
 namespace AsherPelletier2013
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Correspondence
-import Linglib.Data.Examples.Jardine2016b
+module
+
+public import Linglib.Phonology.Autosegmental.Correspondence
+public import Linglib.Data.Examples.Jardine2016b
 
 /-!
 # Jardine (2016): intervocalic voicing as a local string relation
@@ -34,6 +36,8 @@ to the reader fails: no subgraph of (7.22) mentions a `b` beside the target, so 
 
 * [jardine-2016b]
 -/
+
+@[expose] public section
 
 namespace Jardine2016b
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Perspective
+module
+
+public import Linglib.Semantics.Tense.Perspective
 
 /-!
 # Russian temporal deictic adverbs
@@ -12,6 +14,8 @@ Russian locates a time relative to the deictic centre with the adverbs *togda* '
 
 * [tsilia-zhao-2026]
 -/
+
+@[expose] public section
 
 namespace Russian.TemporalDeictic
 

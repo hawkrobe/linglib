@@ -1,6 +1,8 @@
-import Linglib.Fragments.Latin.Case
-import Linglib.Fragments.Latin.Gender
-import Linglib.Morphology.Paradigm.Basic
+module
+
+public import Linglib.Fragments.Latin.Case
+public import Linglib.Fragments.Latin.Gender
+public import Linglib.Morphology.Paradigm.Basic
 
 /-!
 # Latin noun declension
@@ -35,6 +37,8 @@ The genders of the four nouns whose columns the table leaves unlabelled are the 
 
 * [blake-1994]
 -/
+
+@[expose] public section
 
 namespace Latin.Declension
 

@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Georgian (kat, ID 5)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 35 phonemes. PHOIBLE inventory ID 5, Glottocode `nucl1302`.
 Source: PHOIBLE donor `spa`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Georgian
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Shan Numeral Classifier Lexicon
@@ -35,6 +37,8 @@ numeral classifiers derived from nominal elements (*tǒ* 'body'), required unifo
 and extending to quantifiers, demonstratives and relative clauses, with a generic classifier and
 no co-occurrence with plural marking.
 -/
+
+@[expose] public section
 
 namespace Shan.Classifiers
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Japanese case markers
@@ -27,6 +29,8 @@ lexemes refine the single *ni* entry, the matter of `Studies/SadakaneKoizumi1995
 * [sadakane-koizumi-1995]
 * [tsujimura-2014]
 -/
+
+@[expose] public section
 
 namespace Japanese.Case
 

@@ -1,4 +1,6 @@
-import Linglib.Morphology.Root.Consonantal
+module
+
+public import Linglib.Morphology.Root.Consonantal
 
 /-!
 # Amharic consonantal roots
@@ -15,6 +17,8 @@ follow [faust-2026]; [broselow-1984] analyses `wd` as √wdd and `fdj` as biradi
 * [broselow-1984]
 * [leslau-1995]
 -/
+
+@[expose] public section
 
 namespace Amharic
 

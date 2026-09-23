@@ -1,9 +1,11 @@
-import Linglib.Syntax.Minimalist.VerbSecond
-import Linglib.Fragments.Norwegian.V2
-import Linglib.Fragments.English.V2
-import Linglib.Fragments.German.V2
-import Linglib.Fragments.Danish.V2
-import Linglib.Data.Examples.Westergaard2009
+module
+
+public import Linglib.Syntax.Minimalist.VerbSecond
+public import Linglib.Fragments.Norwegian.V2
+public import Linglib.Fragments.English.V2
+public import Linglib.Fragments.German.V2
+public import Linglib.Fragments.Danish.V2
+public import Linglib.Data.Examples.Westergaard2009
 
 /-!
 # Westergaard (2009): The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy
@@ -33,6 +35,8 @@ acquisition chapters are not formalized.
 * [westergaard-2009]
 * [rizzi-1997]
 -/
+
+@[expose] public section
 
 namespace Westergaard2009
 

@@ -1,7 +1,9 @@
-import Linglib.Phonology.Prosody.Grid
-import Mathlib.Data.List.TakeWhile
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Phonology.Prosody.Grid
+public import Mathlib.Data.List.TakeWhile
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The incoherent stress of Kuikuro
@@ -47,6 +49,8 @@ foot/word carries `isHead := true`.
   violable-constraint machinery.
 * [gordon-2016] — incoherent stress; [hyman-2006] — culminativity.
 -/
+
+@[expose] public section
 
 namespace BeckerEtAl2025
 

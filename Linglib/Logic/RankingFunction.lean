@@ -1,5 +1,7 @@
-import Linglib.Logic.Nonmonotonic.Preferential
-import Mathlib.Data.ENat.Lattice
+module
+
+public import Linglib.Logic.Nonmonotonic.Preferential
+public import Mathlib.Data.ENat.Lattice
 
 /-!
 # Ranking functions
@@ -59,6 +61,8 @@ commutes.
   (1997)][darwiche-pearl-1997]
 * [J. Y. Halpern, *Reasoning about Uncertainty* (2003)][halpern-2003]
 -/
+
+@[expose] public section
 
 /-- A ranking function is a grading of disbelief in worlds under which some world has grade
 `0`. -/

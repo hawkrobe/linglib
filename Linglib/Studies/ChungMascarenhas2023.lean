@@ -1,5 +1,7 @@
-import Mathlib.Probability.UniformOn
-import Linglib.Data.Examples.ChungMascarenhas2023
+module
+
+public import Mathlib.Probability.UniformOn
+public import Linglib.Data.Examples.ChungMascarenhas2023
 
 /-!
 # Chung and Mascarenhas 2023: Modality, expected utility, and hypothesis testing
@@ -41,6 +43,8 @@ no joint distribution.
   Probability Judgment* (1983)][tversky-kahneman-1983]
 * [D. Kahneman and A. Tversky, *On the psychology of prediction* (1973)][kahneman-tversky-1973]
 -/
+
+@[expose] public section
 
 namespace ChungMascarenhas2023
 

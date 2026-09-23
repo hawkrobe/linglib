@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Minimalist.Defs
+module
+
+public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Minimalist.Defs
 
 /-!
 # Dependent case by phase
@@ -34,6 +36,8 @@ probes present with the domain each agrees into.
 * [baker-2015]
 * [chomsky-2000], [chomsky-2001]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

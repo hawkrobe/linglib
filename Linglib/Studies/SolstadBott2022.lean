@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Discourse.Coherence
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Discourse.Coherence
 
 /-!
 # Solstad & Bott (2022): On the Nature of Implicit Causality and Consequentiality
@@ -57,6 +59,8 @@ Agent-patient verbs take the manner-contact grid `mannerContact`.
 * [dowty-1991]
 * [kehler-2002]
 -/
+
+@[expose] public section
 
 namespace SolstadBott2022
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Attitudes.Preference
-import Linglib.Data.Examples.UegakiSudo2019
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Semantics.Attitudes.Preference
+public import Linglib.Data.Examples.UegakiSudo2019
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Uegaki and Sudo (2019): The *hope*-wh Puzzle
@@ -42,6 +44,8 @@ rows of `Data.Examples.UegakiSudo2019`.
 * [gajewski-2002]
 * [anand-hacquard-2013]
 -/
+
+@[expose] public section
 
 namespace UegakiSudo2019
 

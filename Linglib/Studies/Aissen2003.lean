@@ -1,6 +1,8 @@
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Phonology.Constraints.Basic
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Aissen 2003: Differential Object Marking
@@ -41,6 +43,8 @@ Boersma's sense) are noted in docstrings but not represented.
 - `two_dimensional_systems` — Hindi and both stages of Spanish need both
   scales.
 -/
+
+@[expose] public section
 
 namespace Aissen2003
 

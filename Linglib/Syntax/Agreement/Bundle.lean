@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Order.PartialUnify
-import Linglib.Morphology.Word.Features
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Order.PartialUnify
+public import Linglib.Morphology.Word.Features
 
 /-!
 # Feature bundles
@@ -27,6 +29,8 @@ restriction of its features to the agreement dimensions, `Agreement.Bundle.ofFea
 * [corbett-1998] — the three indisputable agreement features and the two contested ones
 * [norris-2019] — the dimensions of the concord survey
 -/
+
+@[expose] public section
 
 namespace Agreement
 

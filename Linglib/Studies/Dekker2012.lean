@@ -1,8 +1,10 @@
-import Linglib.Semantics.Dynamic.Update
-import Mathlib.Data.Stream.Init
-import Mathlib.Data.List.Basic
-import Mathlib.Logic.Function.Basic
-import Mathlib.Tactic.TypeStar
+module
+
+public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Data.Stream.Init
+public import Mathlib.Data.List.Basic
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Dekker (2012): Dynamic Semantics
@@ -58,6 +60,8 @@ needs; the end-of-sequence case `j = 0` is unaffected.
 * [heim-1982]
 * [stalnaker-1978]
 -/
+
+@[expose] public section
 
 namespace Dekker2012
 

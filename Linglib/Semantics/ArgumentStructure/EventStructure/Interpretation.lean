@@ -1,4 +1,6 @@
-import Linglib.Semantics.Root.Kinds
+module
+
+public import Linglib.Semantics.Root.Kinds
 
 /-!
 # Interpretations of the event-structure primitives
@@ -43,6 +45,8 @@ structure, with the postulates as sentences, is not yet defined.
 
 * [beavers-koontz-garboden-2020]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure.EventStructure
 

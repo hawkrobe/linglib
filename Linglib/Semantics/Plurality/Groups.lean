@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Grade
-import Mathlib.Logic.Equiv.Finset
-import Linglib.Semantics.Mereology
+module
+
+public import Mathlib.Data.Finset.Grade
+public import Mathlib.Logic.Equiv.Finset
+public import Linglib.Semantics.Mereology
 
 /-!
 # Group formation
@@ -29,6 +31,8 @@ symmetric verb's atomic event dissolves into the sum of its directional sub-even
 * [F. Landman, *Events and plurality* (2000)][landman-2000]
 * [T. Siloni, *Reciprocal verbs and symmetry* (2012)][siloni-2012]
 -/
+
+@[expose] public section
 
 namespace Plurality
 

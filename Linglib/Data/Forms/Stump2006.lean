@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `Stump2006` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/Stump2006.json` by
 generator. Consumers import this module; declarations live in
 `namespace Stump2006.Forms`.
 -/
+
+@[expose] public section
 
 namespace Stump2006.Forms
 

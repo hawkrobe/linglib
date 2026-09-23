@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Reference.Character
-import Linglib.Semantics.Reference.Context.Shifts
+module
+
+public import Linglib.Semantics.Reference.Character
+public import Linglib.Semantics.Reference.Context.Shifts
 
 /-!
 # Kaplan's theory of indexicality
@@ -42,6 +44,8 @@ nevins-2004], which makes the holder the agent, is one whenever the holder is no
 * [schlenker-2003]
 * [anand-nevins-2004]
 -/
+
+@[expose] public section
 
 namespace Reference
 

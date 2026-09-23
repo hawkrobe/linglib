@@ -1,8 +1,10 @@
-import Linglib.Core.Order.LeftLinear
-import Linglib.Semantics.Tense.Defs
-import Mathlib.Order.Zorn
-import Mathlib.Order.Directed
-import Mathlib.Order.Preorder.Finite
+module
+
+public import Linglib.Core.Order.LeftLinear
+public import Linglib.Semantics.Tense.Defs
+public import Mathlib.Order.Zorn
+public import Mathlib.Order.Directed
+public import Mathlib.Order.Preorder.Finite
 
 /-!
 # Branching time
@@ -40,6 +42,8 @@ future; only the moment is, which is why settledness carries the felicity facts.
 * [prior-1967]
 * [rumberg-lauer-2023]
 -/
+
+@[expose] public section
 
 namespace BranchingTime
 

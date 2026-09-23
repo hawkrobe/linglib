@@ -1,5 +1,7 @@
-import Linglib.Morphology.DistributedMorphology.Basic
-import Linglib.Morphology.Exponence.Select
+module
+
+public import Linglib.Morphology.DistributedMorphology.Basic
+public import Linglib.Morphology.Exponence.Select
 
 /-!
 # Vocabulary insertion
@@ -31,6 +33,8 @@ terminals. This file specializes the shared exponence engine
   inflection*][halle-marantz-1993]
 * [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

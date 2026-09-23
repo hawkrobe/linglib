@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # Greek temporal connectives
@@ -16,6 +18,8 @@ in its study.
 * [giannakidou-2002]
 * [karttunen-1974]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.TemporalConnectives
 

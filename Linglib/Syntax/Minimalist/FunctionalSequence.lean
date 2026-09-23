@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Defs
-import Mathlib.Order.RelClasses
+module
+
+public import Linglib.Syntax.Minimalist.Defs
+public import Mathlib.Order.RelClasses
 
 /-!
 # The functional sequence
@@ -47,6 +49,8 @@ following Chomsky's `[−V, −N]`, whereas Grimshaw places P in the nominal ext
 * [egressy-2026]
 * [dendikken-2010]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Basic
-import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.Resolution
-import Linglib.Logic.Modal.Basic
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Answerhood operators on Hamblin sets
@@ -57,6 +59,8 @@ of [dayal-2016] needs Hamblin sets whose members entail one another, which
 * [fox-2018]
 * [xiang-2022]
 -/
+
+@[expose] public section
 
 namespace Question
 

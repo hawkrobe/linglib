@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 11A: Front Rounded Vowels
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 11, 562 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F11A
 
@@ -24,7 +28,8 @@ inductive FrontRoundedVowels where
   | midOnly
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint FrontRoundedVowels) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint FrontRoundedVowels) :=
   [ { walsCode := "xoo", iso := "nmn", value := .none }
   , { walsCode := "ani", iso := "hnh", value := .none }
   , { walsCode := "abi", iso := "axb", value := .none }
@@ -527,7 +532,8 @@ private def allData_0 : List (Datapoint FrontRoundedVowels) :=
   , { walsCode := "tuk", iso := "", value := .none }
   ]
 
-private def allData_1 : List (Datapoint FrontRoundedVowels) :=
+/-- Rows 501 to 562 of `allData`. -/
+def allData_1 : List (Datapoint FrontRoundedVowels) :=
   [ { walsCode := "tul", iso := "tcy", value := .none }
   , { walsCode := "tun", iso := "tun", value := .none }
   , { walsCode := "tur", iso := "tur", value := .highAndMid }

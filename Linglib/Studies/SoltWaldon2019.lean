@@ -1,7 +1,9 @@
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Degree.Comparison
-import Mathlib.Order.Interval.Set.LinearOrder
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Degree.Comparison
+public import Mathlib.Order.Interval.Set.LinearOrder
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Solt & Waldon (2019): Numerals under Negation
@@ -56,6 +58,8 @@ for reasons beyond convexity, which the paper leaves open.
 * [gardenfors-2004]
 * [kennedy-2015]
 -/
+
+@[expose] public section
 
 namespace SoltWaldon2019
 

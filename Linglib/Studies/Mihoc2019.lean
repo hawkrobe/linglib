@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Degree.Comparison
-import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Exhaustification.Chain
-import Linglib.Semantics.Exhaustification.PreExhaustified
-import Linglib.Discourse.CommonGround
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Linglib.Semantics.Exhaustification.Chain
+public import Linglib.Semantics.Exhaustification.PreExhaustified
+public import Linglib.Discourse.CommonGround
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Mihoc (2019): Decomposing Logic
@@ -53,6 +55,8 @@ and the exhaustifiers through `Semantics/Exhaustification`.
 * [sauerland-stateva-2011]
 * [krifka-2007]
 -/
+
+@[expose] public section
 
 namespace Mihoc2019
 

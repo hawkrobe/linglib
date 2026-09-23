@@ -1,11 +1,13 @@
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.ArgumentStructure.Affectedness
-import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Data.Examples.Levin1993
-import Linglib.Data.Examples.Beavers2010
-import Mathlib.Order.Cover
+module
+
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Semantics.ArgumentStructure.Affectedness
+public import Linglib.Semantics.ArgumentStructure.Projection
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+public import Linglib.Data.Examples.Levin1993
+public import Linglib.Data.Examples.Beavers2010
+public import Mathlib.Order.Cover
 
 /-!
 # Beavers (2010): The Structure of Lexical Meaning
@@ -42,6 +44,8 @@ stairs* (85), prospective possession for the dative (90).
 * [levin-1993]: English Verb Classes and Alternations.
 * [grimm-2011]: The bounds of subjecthood: Evidence from instruments.
 -/
+
+@[expose] public section
 
 namespace Beavers2010
 

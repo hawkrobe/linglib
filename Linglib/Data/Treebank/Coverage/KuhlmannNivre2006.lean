@@ -1,4 +1,6 @@
-import Linglib.Data.Treebank.Coverage.Schema
+module
+
+public import Linglib.Data.Treebank.Coverage.Schema
 
 /-!
 # KuhlmannNivre2006 — treebank coverage (generated)
@@ -15,6 +17,8 @@ number that are projective, planar, and well-nested. The table's percentages and
 over the non-projective trees only are derived from these counts in
 Studies/KuhlmannNivre2006.lean.
 -/
+
+@[expose] public section
 
 namespace Data.Treebank.Coverage.KuhlmannNivre2006
 

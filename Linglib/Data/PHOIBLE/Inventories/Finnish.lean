@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Finnish (fin, ID 2535)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 23 phonemes. PHOIBLE inventory ID 2535, Glottocode `finn1318`.
 Source: PHOIBLE donor `ea`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Finnish
 

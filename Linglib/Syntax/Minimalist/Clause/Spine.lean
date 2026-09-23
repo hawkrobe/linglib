@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.Clause.Size
-import Mathlib.Data.Finset.Dedup
-import Mathlib.Data.List.Chain
-import Mathlib.Data.List.DropRight
+module
+
+public import Linglib.Syntax.Minimalist.Clause.Size
+public import Mathlib.Data.Finset.Dedup
+public import Mathlib.Data.List.Chain
+public import Mathlib.Data.List.DropRight
 
 /-!
 # Clause spines
@@ -44,6 +46,8 @@ are incomparable.
 * [keine-2020]
 * [deal-2026]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

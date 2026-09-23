@@ -1,5 +1,7 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Fragments.Dutch.TemporalConnectives
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.Dutch.TemporalConnectives
 
 /-!
 # Dutch polarity items
@@ -13,6 +15,8 @@ paper's (47); [karttunen-1974] on the parallel German *erst*).
 * [giannakidou-2002]
 * [karttunen-1974]
 -/
+
+@[expose] public section
 
 namespace Dutch.PolarityItems
 

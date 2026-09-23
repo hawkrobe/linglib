@@ -1,9 +1,11 @@
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Linglib.Core.Optimization.System
-import Linglib.Core.Probability.SoftmaxTheory
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.Segmental.Defs
-import Linglib.Data.Examples.HayesWilson2008
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Linglib.Core.Optimization.System
+public import Linglib.Core.Probability.SoftmaxTheory
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Data.Examples.HayesWilson2008
 
 /-!
 # Hayes and Wilson (2008): A Maximum Entropy Model of Phonotactics and Phonotactic Learning
@@ -48,6 +50,8 @@ correlation of 0.946 and Table 5 stay in prose.
 * [clements-keyser-1983]
 * [goldwater-johnson-2003]
 -/
+
+@[expose] public section
 
 namespace HayesWilson2008
 
@@ -378,7 +382,7 @@ theorem zh_gang : h [zh] = 597 ∧ viol 1 [zh] = 1 ∧ viol 15 [zh] = 1 := by de
 theorem thw_gang : h [th, w] = 390 ∧ viol 17 [th, w] = 1 ∧ viol 20 [th, w] = 1 := by decide
 
 /-- A decimal numeral. -/
-private def digits (cs : List Char) : Option ℕ :=
+def digits (cs : List Char) : Option ℕ :=
   if cs ≠ [] ∧ cs.all Char.isDigit then
     some (cs.foldl (λ n c => 10 * n + (c.toNat - '0'.toNat)) 0)
   else none

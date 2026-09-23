@@ -1,6 +1,8 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Semantics.Exhaustification.InnocentInclusion
+module
+
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Exhaustification.InnocentInclusion
 
 /-!
 # Presuppositional exhaustification
@@ -20,6 +22,8 @@ alternatives the presupposition is the negated excludable alternatives alone, (1
 * [bassi-delpinal-sauerland-2021]
 * [bar-lev-fox-2020]
 -/
+
+@[expose] public section
 
 namespace Exhaustification.Presuppositional
 

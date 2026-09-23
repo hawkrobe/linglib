@@ -1,8 +1,10 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.Probe.Run
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Probe.Run
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # Nested Agree and apparent minimality violations: [amato-2025]
@@ -31,6 +33,8 @@ Hindi-Urdu (38)–(40). Out of scope: Merge and binding inside v's cycle (the SC
 ordering of (16)–(17) enters as v's input), participle agreement (§4.3.2), and
 the Appendix's comparison with MME, Multitasking and ECoMPS.
 -/
+
+@[expose] public section
 
 namespace Amato2025
 

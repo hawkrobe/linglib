@@ -1,8 +1,10 @@
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Tactic.Positivity
-import Linglib.Data.Examples.AlbrightHayes2003
-import Linglib.Fragments.English.Phonology
-import Linglib.Phonology.Segmental.NaturalClass
+module
+
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Tactic.Positivity
+public import Linglib.Data.Examples.AlbrightHayes2003
+public import Linglib.Fragments.English.Phonology
+public import Linglib.Phonology.Segmental.NaturalClass
 
 /-!
 # Albright and Hayes (2003): Rules vs. analogy in English past tenses
@@ -48,6 +50,8 @@ discount, and the analogical model itself are not modelled.
 * [nosofsky-1990]
 * [broe-1993]
 -/
+
+@[expose] public section
 
 namespace AlbrightHayes2003
 

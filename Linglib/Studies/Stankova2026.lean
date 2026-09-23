@@ -1,10 +1,12 @@
-import Linglib.Syntax.Category.Particle.Basic
-import Linglib.Fragments.Slavic.Czech.Particles
-import Linglib.Studies.StankovaSimik2025
-import Linglib.Studies.Simik2024
-import Linglib.Semantics.Questions.Bias
-import Linglib.Data.Examples.Stankova2026
-import Linglib.Data.Examples.StankovaSimik2025
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Fragments.Slavic.Czech.Particles
+public import Linglib.Studies.StankovaSimik2025
+public import Linglib.Studies.Simik2024
+public import Linglib.Semantics.Questions.Bias
+public import Linglib.Data.Examples.Stankova2026
+public import Linglib.Data.Examples.StankovaSimik2025
 
 /-!
 # Czech three-way negation in polar questions (Staňková 2026)
@@ -44,6 +46,8 @@ like inner negation but non-propositional like FALSUM.
 * [stankova-2026], [stankova-2025], [stankova-2023], [zeijlstra-2004],
   [romero-2024], [simik-2024], [gartner-gyuris-2017].
 -/
+
+@[expose] public section
 
 namespace Stankova2026
 

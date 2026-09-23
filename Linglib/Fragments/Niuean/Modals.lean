@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Niuean Modal Inventory
@@ -50,14 +52,16 @@ broader cross-linguistic tendency for force distinctions to be encoded
 in the root/circumstantial domain.
 -/
 
+@[expose] public section
+
 namespace Niuean
 
 open Modality (ForceFlavor ForceAnalysis ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
 

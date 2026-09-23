@@ -1,9 +1,11 @@
-import Mathlib.Data.Fintype.Lattice
-import Mathlib.Order.Interval.Set.LinearOrder
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Logic.Natural.Additivity
+module
+
+public import Mathlib.Data.Fintype.Lattice
+public import Mathlib.Order.Interval.Set.LinearOrder
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Semantics.Degree.Basic
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Natural.Additivity
 
 /-!
 # Degree quantifiers
@@ -46,6 +48,8 @@ comparative `maxComparative` compares a matrix witness with its maximum.
 * [bhatt-pancheva-2004]
 * [heim-1999]
 -/
+
+@[expose] public section
 
 namespace Degree
 

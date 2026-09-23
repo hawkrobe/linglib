@@ -1,6 +1,8 @@
-import Linglib.Core.Probability.Choice.RationalAction
-import Linglib.Core.Probability.SoftmaxTheory
-import Mathlib.Analysis.SpecificLimits.Basic
+module
+
+public import Linglib.Core.Probability.Choice.RationalAction
+public import Linglib.Core.Probability.SoftmaxTheory
+public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Learning Models
@@ -39,6 +41,8 @@ The Luce linear model and `Core.RescorlaWagner`'s total strength obey the same
 affine recurrence `xₙ₊₁ = r·xₙ + (1-r)·c`; their closed forms and convergence
 proofs share one geometric-series argument.
 -/
+
+@[expose] public section
 
 namespace Core
 

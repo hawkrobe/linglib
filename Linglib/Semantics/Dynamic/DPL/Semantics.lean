@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.CDRT
-import Linglib.Semantics.Dynamic.DPL.Syntax
-import Mathlib.ModelTheory.Semantics
+module
+
+public import Linglib.Semantics.Dynamic.CDRT
+public import Linglib.Semantics.Dynamic.DPL.Syntax
+public import Mathlib.ModelTheory.Semantics
 
 /-!
 # The interpretations of dynamic predicate logic
@@ -35,6 +37,8 @@ quantifier variable.
 * [groenendijk-stokhof-1991]
 * [henkin-monk-tarski-1971]
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language DynamicSemantics DynamicSemantics.Update SetRel
   CylindricAlgebra

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Composition.Lexicon
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Lexicon
 
 /-!
 # Covert Operators: Montague-Typed Constructors
@@ -32,6 +34,8 @@ def myLex : Lexicon E W := fun s => match s with
   | _      => none
 ```
 -/
+
+@[expose] public section
 
 namespace Quantifier.Covert
 

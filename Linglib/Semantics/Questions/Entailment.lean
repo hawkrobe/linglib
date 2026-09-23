@@ -1,5 +1,7 @@
-import Linglib.Semantics.Questions.Hamblin
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Question entailment through alternatives
@@ -24,6 +26,8 @@ without them a question may have no alternatives at all.
 * [groenendijk-stokhof-1984]
 * [roberts-2012]
 -/
+
+@[expose] public section
 
 namespace Question
 

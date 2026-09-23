@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.FunctionalSequence
+module
+
+public import Linglib.Syntax.Minimalist.FunctionalSequence
 
 /-!
 # Complement sizes
@@ -28,6 +30,8 @@ negation for instance, are then equivalent but not equal, so the order is a preo
 * [wurmbrand-2014]
 * [grimshaw-2005]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

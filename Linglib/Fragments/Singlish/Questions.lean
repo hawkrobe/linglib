@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Insert
-import Linglib.Syntax.Category.WhModifier
-import Linglib.Syntax.Category.Particle.Basic
-import Linglib.Syntax.Question
+module
+
+public import Mathlib.Data.Finset.Insert
+public import Linglib.Syntax.Category.WhModifier
+public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Question
 
 /-!
 # Singlish questions
@@ -22,6 +24,8 @@ island-sensitive; an in-situ wh-phrase is bound unselectively and never moves
 * [sato-ngui-2017]
 * [chan-shen-2026]
 -/
+
+@[expose] public section
 
 namespace Singlish.Questions
 

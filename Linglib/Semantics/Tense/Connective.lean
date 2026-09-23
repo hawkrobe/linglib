@@ -1,4 +1,6 @@
-import Linglib.Semantics.Mood.Defs
+module
+
+public import Linglib.Semantics.Mood.Defs
 
 /-!
 # Temporal connectives
@@ -30,6 +32,8 @@ only which relation a word lexicalizes.
 * [beaver-condoravdi-2003]
 * [rett-2020a]
 -/
+
+@[expose] public section
 
 namespace Tense
 

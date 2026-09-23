@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Portuguese modal verbs
@@ -11,6 +13,8 @@ past imperfect, which carries the same force ([ferreira-2023]).
 
 * [ferreira-2023]
 -/
+
+@[expose] public section
 
 namespace Portuguese
 

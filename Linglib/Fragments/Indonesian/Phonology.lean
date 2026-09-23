@@ -1,6 +1,8 @@
-import Linglib.Data.PHOIBLE.Inventories.Indonesian
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.NasalSubstitution
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Indonesian
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.NasalSubstitution
 
 /-!
 # Indonesian phonology
@@ -49,6 +51,8 @@ not defined.
   not)* (2001)][pater-2001]
 * [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Data.PHOIBLE
 

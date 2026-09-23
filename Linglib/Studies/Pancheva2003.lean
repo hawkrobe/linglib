@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Aspect.Viewpoint
-import Linglib.Data.Examples.Pancheva2003
+module
+
+public import Linglib.Data.Examples.Schema
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Data.Examples.Pancheva2003
 
 /-!
 # Pancheva (2003): Aspectual Makeup of Perfect Participles and the Interpretations of the Perfect
@@ -32,6 +34,8 @@ perfect over the bounded viewpoint alone.
 * [pancheva-2003]
 * [iatridou-anagnostopoulou-izvorski-2001]
 -/
+
+@[expose] public section
 
 namespace Pancheva2003
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.VerbSecond
+module
+
+public import Linglib.Syntax.Minimalist.VerbSecond
 
 /-!
 # Norwegian verb second
@@ -13,6 +15,8 @@ wh-questions, the mirror image of English on the declarative and wh-question hea
 
 * [westergaard-2009]
 -/
+
+@[expose] public section
 
 namespace Norwegian
 

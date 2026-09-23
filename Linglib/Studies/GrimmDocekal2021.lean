@@ -1,8 +1,10 @@
-import Mathlib.Logic.Relation
-import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Plurality.Groups
-import Linglib.Data.Examples.GrimmDocekal2021
+module
+
+public import Mathlib.Logic.Relation
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Plurality.Groups
+public import Linglib.Data.Examples.GrimmDocekal2021
 
 /-!
 # Grimm and Dočekal (2021): Counting Aggregates, Groups and Kinds
@@ -45,6 +47,8 @@ lexical data for the Czech Fragment and is not retyped here.
 Table 1's derived aggregates belong in `Fragments/Slavic/Czech/`; [krifka-1995b]'s kind and
 object unit operators of section 4 are not formalized.
 -/
+
+@[expose] public section
 
 namespace GrimmDocekal2021
 

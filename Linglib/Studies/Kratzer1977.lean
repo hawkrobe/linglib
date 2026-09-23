@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.Premise
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Premise
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Kratzer (1977): What 'must' and 'can' must and can mean
@@ -31,6 +33,8 @@ them.
 * [kratzer-1977]
 * [kratzer-2012] — Chapter 1, the revised version of the paper
 -/
+
+@[expose] public section
 
 namespace Kratzer1977
 

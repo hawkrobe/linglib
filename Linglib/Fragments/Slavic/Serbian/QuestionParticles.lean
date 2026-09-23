@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Serbian question particles
@@ -18,6 +20,8 @@ chapter leaves open. Bias profiles of the strategies live in `Simik2024`.
 * [browne-1993], §4.2
 * [simik-2024], §4.1, §4.2.4
 -/
+
+@[expose] public section
 
 namespace Serbian.QuestionParticles
 

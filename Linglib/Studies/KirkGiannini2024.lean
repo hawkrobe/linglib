@@ -1,7 +1,9 @@
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Logic.Modal.Defs
-import Linglib.Semantics.Conditionals.SelectionFunction
-import Mathlib.Logic.Function.Basic
+module
+
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Kirk-Giannini 2024: Covert mixed quotation
@@ -42,6 +44,8 @@ licenses.
   terms* (2013)][plunkett-sundell-2013]
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
 -/
+
+@[expose] public section
 
 namespace KirkGiannini2024
 

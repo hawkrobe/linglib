@@ -1,7 +1,9 @@
-import Mathlib.Data.Set.Functor
-import Linglib.Studies.Charlow2018
-import Linglib.Semantics.Composition.Cont
-import Linglib.Semantics.Quantification.NP
+module
+
+public import Mathlib.Data.Set.Functor
+public import Linglib.Studies.Charlow2018
+public import Linglib.Semantics.Composition.Cont
+public import Linglib.Semantics.Quantification.NP
 
 /-!
 # Charlow 2020: the scope of alternatives
@@ -64,6 +66,8 @@ The same `η`/`≫=` structure with a different carrier:
 * [charlow-2018]
 * [grove-2022]
 -/
+
+@[expose] public section
 
 namespace Charlow2020
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Homogeneity.Plural
+module
+
+public import Linglib.Semantics.Homogeneity.Plural
 
 /-!
 # Križ (2016): Homogeneity, Non-Maximality, and All
@@ -35,6 +37,8 @@ issue.
 * [lasersohn-1999], [kroch-1974] — pragmatic halos and the unmentionability of exceptions
 * [szabolcsi-haddican-2004], [magri-2014] — the homogeneity of conjunctions
 -/
+
+@[expose] public section
 
 namespace Kriz2016
 

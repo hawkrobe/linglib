@@ -1,5 +1,7 @@
-import Linglib.Fragments.Tigrinya.Complementizers
-import Linglib.Data.Examples.Cacchioli2026
+module
+
+public import Linglib.Fragments.Tigrinya.Complementizers
+public import Linglib.Data.Examples.Cacchioli2026
 
 /-!
 # Cacchioli 2026: the clausal prefixes of Tigrinya
@@ -38,6 +40,8 @@ thesis's own examples, and both are attested on each side, so neither check is v
 * [cacchioli-2026]
 * [cacchioli-2023]
 -/
+
+@[expose] public section
 namespace Cacchioli2026
 
 open Data.Examples Tigrinya.Complementizers
@@ -72,7 +76,7 @@ theorem kemzi_and_ki_iff (c : VerbClass) :
   cases c <;> decide
 
 /-- The thesis's verb-class labels. -/
-private def parseVerbClass : String → Option VerbClass
+def parseVerbClass : String → Option VerbClass
   | "factive" => some .factive
   | "cognitive_non_factive" => some .cognitiveNonFactive
   | "fiction" => some .fiction
@@ -87,7 +91,7 @@ private def parseVerbClass : String → Option VerbClass
   | _ => none
 
 /-- The thesis's clause-typer labels. -/
-private def parseTyper : String → Option Complementizer
+def parseTyper : String → Option Complementizer
   | "kemzi" => some kemzi
   | "ki" => some ki
   | "ilu" => some ilu
@@ -100,7 +104,7 @@ structure SelectionDatum where
   deriving DecidableEq, Repr
 
 /-- The selection pairing an example records, where it records one. -/
-private def selectionDatum (e : LinguisticExample) : Option SelectionDatum := do
+def selectionDatum (e : LinguisticExample) : Option SelectionDatum := do
   let c ← parseVerbClass (← e.paperFeatures.lookup "verb_class")
   let t ← parseTyper (← e.paperFeatures.lookup "typer")
   some ⟨c, t⟩
@@ -135,7 +139,7 @@ instance : DecidablePred HasPolP
   | .relative | .seem | .conditional | .complement | .subjunctive | .purpose => isFalse id
 
 /-- The thesis's clause-type labels. -/
-private def parseClauseKind : String → Option ClauseKind
+def parseClauseKind : String → Option ClauseKind
   | "root" => some .root
   | "ilu" => some .ilu
   | "future" => some .future
@@ -148,7 +152,7 @@ private def parseClauseKind : String → Option ClauseKind
   | _ => none
 
 /-- Whether an example is coded as carrying the negative suffix. -/
-private def parseSuffix : String → Option Bool
+def parseSuffix : String → Option Bool
   | "present" => some true
   | "absent" => some false
   | _ => none
@@ -160,7 +164,7 @@ structure NegationDatum where
   deriving DecidableEq, Repr
 
 /-- The negated clause an example records, where it records one. -/
-private def negationDatum (e : LinguisticExample) : Option NegationDatum := do
+def negationDatum (e : LinguisticExample) : Option NegationDatum := do
   let c ← parseClauseKind (← e.paperFeatures.lookup "clause")
   let s ← parseSuffix (← e.paperFeatures.lookup "neg_suffix")
   some ⟨c, s⟩

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # English Polarity-Sensitive Items
@@ -19,6 +21,8 @@ propositional role live with their consuming study in
 * [gajewski-2011], p. 120
 * [rullmann-2003]
 -/
+
+@[expose] public section
 
 namespace English.PolarityItems
 

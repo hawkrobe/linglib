@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Attitudes.Basic
+module
+
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Attitudes.Basic
 
 /-!
 # Doxastic attitude semantics
@@ -35,6 +37,8 @@ gap ([roberts-ozyildiz-2025]) in `Studies/RobertsOzyildiz2025.lean`;
 embedded scalar implicature ([goodman-stuhlmuller-2013]) in
 `Studies/GoodmanStuhlmuller2013.lean`.
 -/
+
+@[expose] public section
 
 namespace Doxastic
 

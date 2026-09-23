@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.CoppockWechsler2018
-import Linglib.Discourse.Commitment.Table
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Reference.Kaplan
-import Linglib.Studies.Pearson2015
+module
+
+public import Linglib.Data.Examples.CoppockWechsler2018
+public import Linglib.Discourse.Commitment.Table
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Reference.Kaplan
+public import Linglib.Studies.Pearson2015
 
 /-!
 # Coppock & Wechsler (2018): The Proper Treatment of Egophoricity in Kathmandu Newari
@@ -40,6 +42,8 @@ derives where the egophoric form is excluded, not where it is required.
 * [farkas-bruce-2010]
 * [pearson-2015]
 -/
+
+@[expose] public section
 
 namespace CoppockWechsler2018
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 98A: Alignment of Case Marking of Full Noun Phrases
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 98, 190 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F98A
 

@@ -1,7 +1,9 @@
-import Linglib.Phonology.Hiatus
-import Linglib.Data.Hiatus.Casali1997
-import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Phonology.Hiatus
+public import Linglib.Data.Hiatus.Casali1997
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Casali (1997): Vowel Elision in Hiatus Contexts: Which Vowel Goes?
@@ -45,6 +47,8 @@ report is one the analysis allows (`survey_allowed`), and none is reported where
 * [casali-1997]
 * [mccarthy-prince-1995]
 -/
+
+@[expose] public section
 
 namespace Casali1997
 

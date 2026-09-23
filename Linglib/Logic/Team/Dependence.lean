@@ -1,9 +1,11 @@
-import Linglib.Logic.Team.Kripke
-import Linglib.Logic.Team.Bisimulation
-import Linglib.Logic.Bilateral.Defs
-import Linglib.Logic.Team.Algebra
-import Linglib.Logic.Team.Closure
-import Linglib.Logic.Team.Definability
+module
+
+public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Team.Bisimulation
+public import Linglib.Logic.Bilateral.Defs
+public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Team.Closure
+public import Linglib.Logic.Team.Definability
 
 /-!
 # Modal Dependence Logic (MDL)
@@ -114,6 +116,8 @@ infrastructure but differ in atom flavor:
 * Modal independence logic (Grädel and Väänänen's independence atoms) —
   sibling at `Logic/Modal/Independence.lean`.
 -/
+
+@[expose] public section
 
 namespace ModalLogic.Dependence
 

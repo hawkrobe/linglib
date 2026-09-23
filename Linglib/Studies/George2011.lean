@@ -1,6 +1,8 @@
-import Mathlib.Data.Fin.VecNotation
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Data.Examples.George2011
+module
+
+public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Data.Examples.George2011
 
 /-!
 # George (2011): Question Embedding and the Semantics of Answers
@@ -50,6 +52,8 @@ defeats it (`knowsQ_not_reducible`), whereas the existential rule makes any pred
 * [lahiri-2002]
 * [sharvit-2002]
 -/
+
+@[expose] public section
 
 namespace George2011
 

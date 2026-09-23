@@ -1,5 +1,7 @@
-import Linglib.Morphology.DistributedMorphology.Spellout
-import Linglib.Data.Examples.HalleMarantz1993
+module
+
+public import Linglib.Morphology.DistributedMorphology.Spellout
+public import Linglib.Data.Examples.HalleMarantz1993
 
 /-!
 # Halle and Marantz (1993): Distributed Morphology and the Pieces of Inflection
@@ -29,6 +31,8 @@ system (10) and is outside this file.
 
 * [halle-marantz-1993]
 -/
+
+@[expose] public section
 
 namespace HalleMarantz1993
 

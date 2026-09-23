@@ -1,7 +1,9 @@
-import Linglib.Semantics.Possession.Quantifier
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Data.Examples.Barker1995
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.Possession.Quantifier
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Data.Examples.Barker1995
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Barker (1995): Possessive Descriptions
@@ -31,6 +33,8 @@ the book's resolution of the perspective paradox.
 
 * [barker-1995]: Possessive Descriptions. CSLI Publications.
 -/
+
+@[expose] public section
 
 namespace Barker1995
 

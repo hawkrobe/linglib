@@ -1,14 +1,18 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.Forms.Stojkovic2026
-import Linglib.Phonology.Hiatus
-import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Forms.Stojkovic2026
+public import Linglib.Phonology.Hiatus
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Stojković (2026): Same Form, Different Grammars: The Slavic [ov]~[u] Alternation
 
 This file formalizes Stojković's account of the Slavic verbalizer, the suffix of verbs derived
 from nouns and adjectives. The suffix is [u] before the theme /-je-/ and a vowel followed by
+
+@[expose] public section
 [v] before the theme /-a-/, where the languages fall into three groups: [ov] throughout, [ov]
 alternating with [ev] after a palatal, and [uv] throughout.
 

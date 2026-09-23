@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Slovenian Question Particles
@@ -12,6 +14,8 @@ which the quiz scenario excludes. Bias profiles live in `Simik2024`.
 
 - `Simik2024.slovenian` (`Studies/Simik2024`): PQ strategy profile
 -/
+
+@[expose] public section
 
 namespace Slovenian.QuestionParticles
 

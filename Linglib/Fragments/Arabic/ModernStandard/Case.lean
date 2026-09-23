@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Modern Standard Arabic Case Inventory
@@ -24,6 +26,8 @@ The MSA case system is largely absent from spoken Arabics (Ryding
 This file is therefore MSA-specific; if an Egyptian-Arabic Case
 fragment is added later it should expose `inventory := ∅`.
 -/
+
+@[expose] public section
 
 namespace Arabic.ModernStandard.Case
 

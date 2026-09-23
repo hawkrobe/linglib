@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.UnorderedTree.DecEq
-import Linglib.Core.Data.UnorderedTree.Basic
+module
+
+public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
 # Substitution of subtrees
@@ -20,6 +22,8 @@ constructor `UnorderedTree.node`; concrete cases reduce by `replace_leaf`, `repl
 
 * `UnorderedTree.replace`
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

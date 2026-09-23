@@ -1,5 +1,7 @@
-import Linglib.Discourse.Commitment.Space
-import Linglib.Semantics.Degree.Comparison
+module
+
+public import Linglib.Discourse.Commitment.Space
+public import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Cohen and Krifka 2014: superlative quantifiers and meta-speech acts
@@ -60,6 +62,8 @@ account of why superlative quantifiers resist downward-entailing contexts (§5.2
 * [E. Keenan and J. Stavi, *A Semantic Characterization of Natural Language Determiners*
   (1986)][keenan-stavi-1986]
 -/
+
+@[expose] public section
 
 namespace CohenKrifka2014
 

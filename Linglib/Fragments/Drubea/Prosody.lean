@@ -1,4 +1,6 @@
-import Linglib.Phonology.Tone.Basic
+module
+
+public import Linglib.Phonology.Tone.Basic
 
 
 /-!
@@ -16,6 +18,8 @@ RBU. There are no tone features.
 Data from [lionnet-2025], building on [rivierre-1973] and
 [shintani-paita-1990b].
 -/
+
+@[expose] public section
 
 namespace Drubea.Prosody
 

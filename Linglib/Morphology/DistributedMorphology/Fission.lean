@@ -1,4 +1,6 @@
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+module
+
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Fission
@@ -42,6 +44,8 @@ arguments' shared features are discharged one at a time.
 * [A. González Poot and M. McGinnis, *Local versus long-distance Fission in
   Distributed Morphology*][gonzalez-poot-mcginnis-2006]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

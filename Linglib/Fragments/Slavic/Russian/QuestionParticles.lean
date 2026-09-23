@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Russian question particles
@@ -11,6 +13,8 @@ rhetorically, [esipova-romero-2023]). The clause-initial mirative
 *razve* is restricted to matrix polar questions ([simik-2024] §4.2.4);
 *neuželi* is its VERUM-only sibling.
 -/
+
+@[expose] public section
 
 namespace Russian.QuestionParticles
 

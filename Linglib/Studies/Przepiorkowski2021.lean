@@ -1,6 +1,8 @@
-import Linglib.Syntax.HPSG.Subinterpretation
-import Linglib.Syntax.HPSG.Binding
-import Linglib.Syntax.HPSG.Construction
+module
+
+public import Linglib.Syntax.HPSG.Subinterpretation
+public import Linglib.Syntax.HPSG.Binding
+public import Linglib.Syntax.HPSG.Construction
 
 /-!
 # Przepiórkowski (2021): Three improvements to the HPSG model theory
@@ -37,6 +39,8 @@ of unlike categories, is not formalized.
 * [przepiorkowski-2021]
 * [richter-2024]
 -/
+
+@[expose] public section
 
 namespace Przepiorkowski2021
 

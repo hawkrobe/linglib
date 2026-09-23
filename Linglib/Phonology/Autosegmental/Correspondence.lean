@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Junction
+module
+
+public import Linglib.Phonology.Autosegmental.Junction
 
 /-!
 # Phonological transformations as correspondence-graph relations
@@ -42,6 +44,8 @@ with an empty input tier and no links.
   correspondence relation on their positions; banned-subgraph tests between such graphs
   decide.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 namespace Correspondence

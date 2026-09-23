@@ -1,8 +1,10 @@
-import Mathlib.Order.Interval.Set.OrdConnected
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Semantics.Plurality.NumberFeatures
-import Linglib.Syntax.Minimalist.Phi.Recursion
+module
+
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Semantics.Plurality.NumberFeatures
+public import Linglib.Syntax.Minimalist.Phi.Recursion
 
 /-!
 # Harbour (2014): Paucity, Abundance, and the Theory of Number
@@ -41,6 +43,8 @@ were verified against the publication.
 * [grimm-2018]
 * [corbett-2000]
 -/
+
+@[expose] public section
 
 namespace Harbour2014
 

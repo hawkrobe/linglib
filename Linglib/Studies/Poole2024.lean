@@ -1,6 +1,8 @@
-import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Data.Examples.Poole2024
+module
+
+public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Data.Examples.Poole2024
 
 /-!
 # Poole (2024): Dependent-case assignment could be Agree
@@ -47,6 +49,8 @@ formalized.
 * [rackowski-richards-2005]
 * [bejar-rezac-2009]
 -/
+
+@[expose] public section
 
 namespace Poole2024
 

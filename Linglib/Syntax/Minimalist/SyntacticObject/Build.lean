@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Basic
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 
 /-!
 # Building and reading syntactic objects
@@ -19,6 +21,8 @@ leaves, bare or indexed.
 * `Minimalist.SyntacticObject.mkLeaf`, `mkLeafPhon`: lexical leaves from features.
 * `Minimalist.SyntacticObject.getLIToken`, `isTrace`, `leafCount`, `nodeCount`, `IsLeaf`.
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

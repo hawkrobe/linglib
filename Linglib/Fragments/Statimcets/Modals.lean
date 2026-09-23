@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Basic
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory
@@ -22,15 +24,17 @@ inferential evidence, *ku7* a report, and *lákw7a* sensory non-visual evidence,
 | lákw7a    | clitic      | epistemic      | poss + nec       | sensory, non-visual |
 -/
 
+@[expose] public section
+
 namespace Statimcets
 
 open Modality (ForceFlavor ForceAnalysis ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
 

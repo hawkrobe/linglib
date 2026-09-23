@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Iota
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Quantification.NP
-import Mathlib.Data.Fintype.EquivFin
+module
+
+public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Quantification.NP
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Bylinina and Nouwen (2020): Numeral semantics
@@ -50,6 +52,8 @@ atoms to exist, which the survey's unbounded domain supplies and a finite one do
 * [kennedy-2015]
 * [partee-1987]
 -/
+
+@[expose] public section
 namespace BylininaNouwen2020
 
 open Reference Degree Quantifier Quantifier.GQ Quantifier.NP Set

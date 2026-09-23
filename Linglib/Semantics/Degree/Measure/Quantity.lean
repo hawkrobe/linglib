@@ -1,6 +1,8 @@
-import Mathlib.Algebra.Group.Prod
-import Mathlib.Algebra.GroupWithZero.Basic
-import Linglib.Semantics.Degree.Measure.Dimensioned
+module
+
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Algebra.GroupWithZero.Basic
+public import Linglib.Semantics.Degree.Measure.Dimensioned
 
 /-!
 # The quantity calculus
@@ -23,6 +25,8 @@ pure number.
 * [de-boer-1995]
 * [coppock-2021]
 -/
+
+@[expose] public section
 
 namespace Degree
 

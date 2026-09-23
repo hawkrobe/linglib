@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.BSML.Defs
-import Linglib.Logic.Modal.Basic
+module
+
+public import Linglib.Logic.Team.BSML.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # BSML–CML Bridge
@@ -22,6 +24,8 @@ formulas: ∨ is pointwise (not split), ◇ is existential over accessible
 worlds, □ is universal. For NE-free formulas, this agrees with BSML's
 team semantics restricted to singleton teams.
 -/
+
+@[expose] public section
 
 namespace BSML
 

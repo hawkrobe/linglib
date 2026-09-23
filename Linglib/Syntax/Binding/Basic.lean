@@ -1,6 +1,10 @@
-import Linglib.Data.UD.UPOS
-import Linglib.Syntax.Binding.CoreferenceStatus
-import Linglib.Morphology.Word.Agree
+module
+
+public import Linglib.Data.UD.UPOS
+public import Linglib.Syntax.Binding.CoreferenceStatus
+public import Linglib.Morphology.Word.Agree
+
+@[expose] public section
 
 open Morphology (Word)
 

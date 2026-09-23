@@ -1,10 +1,12 @@
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Ring
-import Linglib.Syntax.DependencyGrammar.Length
-import Linglib.Syntax.DependencyGrammar.Dominance
-import Linglib.Morphology.Word.Basic
+module
+
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.DependencyGrammar.Dominance
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Fedzechkina, Chu and Jaeger (2018): Human information processing shapes language change
@@ -50,6 +52,8 @@ flexible order, and fixed order returns the input length.
 * [gildea-temperley-2010]
 * [arnold-wasow-losongco-ginstrom-2000]
 -/
+
+@[expose] public section
 
 namespace FedzechkinaChuJaeger2018
 

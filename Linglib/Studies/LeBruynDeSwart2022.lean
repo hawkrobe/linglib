@@ -1,5 +1,7 @@
-import Linglib.Semantics.Genericity.Kind
-import Linglib.Data.Examples.LeBruynDeSwart2022
+module
+
+public import Linglib.Semantics.Genericity.Kind
+public import Linglib.Data.Examples.LeBruynDeSwart2022
 
 /-!
 # Le Bruyn and de Swart (2022): Exceptional Wide Scope of Bare Nominals
@@ -34,6 +36,8 @@ attested examples are rows of `Data/Examples/LeBruynDeSwart2022.json`.
 * [chierchia-1998]
 * [krifka-2003]
 -/
+
+@[expose] public section
 
 namespace LeBruynDeSwart2022
 

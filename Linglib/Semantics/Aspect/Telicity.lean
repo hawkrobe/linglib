@@ -1,5 +1,7 @@
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.Mereology.Relation
+module
+
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Mereology.Relation
 
 /-!
 # Telicity
@@ -51,6 +53,8 @@ precede each other, a consequence of the event axioms, enters as `NoPartPrecedes
 * [krifka-1989]
 * [krifka-1998]
 -/
+
+@[expose] public section
 
 namespace Aspect
 

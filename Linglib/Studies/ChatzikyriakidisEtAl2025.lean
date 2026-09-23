@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Schema
-import Mathlib.Logic.Equiv.Defs
+module
+
+public import Linglib.Data.Examples.Schema
+public import Mathlib.Logic.Equiv.Defs
 
 /-!
 # Chatzikyriakidis, Cooper, Gregoromichelaki and Sutton 2025: intentional identity in TTR
@@ -37,6 +39,8 @@ referent rather than merely of type; that needs dependent record substrate.
 * [ranta-1994]
 * [cooper-2023]
 -/
+
+@[expose] public section
 
 namespace ChatzikyriakidisEtAl2025
 

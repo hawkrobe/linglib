@@ -1,6 +1,8 @@
-import Linglib.Syntax.Clause.Relative
-import Linglib.Fragments.English.Relativization
-import Linglib.Fragments.Hebrew.Relativization
+module
+
+public import Linglib.Syntax.Clause.Relative
+public import Linglib.Fragments.English.Relativization
+public import Linglib.Fragments.Hebrew.Relativization
 
 /-!
 # Cinque 2020: The Syntax of Relative Clauses
@@ -37,6 +39,8 @@ are approximated in the substrate's inventory of NP_rel types.
 * [G. Cinque, *The Syntax of Relative Clauses: A Unified Analysis* (2020)][cinque-2020]
 * [R. S. Kayne, *The Antisymmetry of Syntax* (1994)][kayne-1994]
 -/
+
+@[expose] public section
 
 namespace Cinque2020
 

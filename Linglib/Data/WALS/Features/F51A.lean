@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 51A: Position of Case Affixes
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 51, 1031 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F51A
 
@@ -34,7 +38,8 @@ inductive CaseAffixPosition where
   | noCaseAffixesOrAdpositionalClitics
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint CaseAffixPosition) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint CaseAffixPosition) :=
   [ { walsCode := "aar", iso := "aiw", value := .caseSuffixes }
   , { walsCode := "abi", iso := "axb", value := .noCaseAffixesOrAdpositionalClitics }
   , { walsCode := "abk", iso := "abk", value := .noCaseAffixesOrAdpositionalClitics }
@@ -537,7 +542,8 @@ private def allData_0 : List (Datapoint CaseAffixPosition) :=
   , { walsCode := "lnd", iso := "liy", value := .noCaseAffixesOrAdpositionalClitics }
   ]
 
-private def allData_1 : List (Datapoint CaseAffixPosition) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint CaseAffixPosition) :=
   [ { walsCode := "lis", iso := "lis", value := .noCaseAffixesOrAdpositionalClitics }
   , { walsCode := "lit", iso := "lit", value := .caseSuffixes }
   , { walsCode := "lgt", iso := "log", value := .noCaseAffixesOrAdpositionalClitics }
@@ -1040,7 +1046,8 @@ private def allData_1 : List (Datapoint CaseAffixPosition) :=
   , { walsCode := "yaq", iso := "yaq", value := .caseSuffixes }
   ]
 
-private def allData_2 : List (Datapoint CaseAffixPosition) :=
+/-- Rows 1001 to 1031 of `allData`. -/
+def allData_2 : List (Datapoint CaseAffixPosition) :=
   [ { walsCode := "yar", iso := "yrb", value := .caseSuffixes }
   , { walsCode := "ywl", iso := "yok", value := .caseSuffixes }
   , { walsCode := "ywr", iso := "ywr", value := .inpositionalClitics }

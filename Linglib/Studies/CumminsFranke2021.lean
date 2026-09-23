@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.DecisionTheoretic.Basic
-import Linglib.Core.MeasureTheory.Measure.Prod
-import Mathlib.Probability.Distributions.Bernoulli
+module
+
+public import Linglib.Pragmatics.DecisionTheoretic.Basic
+public import Linglib.Core.MeasureTheory.Measure.Prod
+public import Mathlib.Probability.Distributions.Bernoulli
 
 /-!
 # Rational interpretation of numerical quantity
@@ -39,6 +41,8 @@ and its corpus study are not formalized.
 * [A. Merin, *Information, Relevance, and Social Decisionmaking: Some Principles and Results
   of Decision-Theoretic Semantics* (1999)][merin-1999-relevance]
 -/
+
+@[expose] public section
 
 namespace CumminsFranke2021
 

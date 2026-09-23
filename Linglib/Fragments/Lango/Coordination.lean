@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Lango coordinators
@@ -17,6 +19,8 @@ comitative-derived coordinator.
 * [haspelmath-2007]
 * [noonan-1992]
 -/
+
+@[expose] public section
 
 namespace Lango.Coordination
 

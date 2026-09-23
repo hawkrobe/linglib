@@ -1,6 +1,8 @@
-import Mathlib.Order.Lattice
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Mathlib.Order.Lattice
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Persistence levels ([grimm-2011] §2.2, Fig. 2)
@@ -13,6 +15,8 @@ valid combinations, ordered by feature inclusion: a lattice with a creation
 branch (`exPersEnd`) and an affectedness branch
 (`exPersBeginning ≤ quPersBeginning`) rejoining at `totalPersistence`.
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 
@@ -67,7 +71,7 @@ def PersistenceLevel.quPersE : PersistenceLevel → Bool
   | _ => false
 
 /-- Subset inclusion ordering on persistence features. -/
-private def PersistenceLevel.leBool (a b : PersistenceLevel) : Bool :=
+def PersistenceLevel.leBool (a b : PersistenceLevel) : Bool :=
   (!a.exPersB || b.exPersB) && (!a.exPersE || b.exPersE) &&
   (!a.quPersB || b.quPersB) && (!a.quPersE || b.quPersE)
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 2A: Vowel Quality Inventories
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 2, 564 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F2A
 
@@ -22,7 +26,8 @@ inductive VowelQualityInventories where
   | large
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint VowelQualityInventories) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint VowelQualityInventories) :=
   [ { walsCode := "xoo", iso := "nmn", value := .average }
   , { walsCode := "ani", iso := "hnh", value := .average }
   , { walsCode := "abi", iso := "axb", value := .average }
@@ -525,7 +530,8 @@ private def allData_0 : List (Datapoint VowelQualityInventories) :=
   , { walsCode := "ttu", iso := "bbl", value := .average }
   ]
 
-private def allData_1 : List (Datapoint VowelQualityInventories) :=
+/-- Rows 501 to 564 of `allData`. -/
+def allData_1 : List (Datapoint VowelQualityInventories) :=
   [ { walsCode := "tug", iso := "thv", value := .large }
   , { walsCode := "tuk", iso := "", value := .average }
   , { walsCode := "tul", iso := "tcy", value := .large }

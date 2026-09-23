@@ -1,10 +1,12 @@
-import Linglib.Core.Order.Bundle
-import Linglib.Pragmatics.SocialMeaning.Honorific
-import Linglib.Syntax.Case.Basic
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Minimalist.FeatureSlot
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Core.Order.Bundle
+public import Linglib.Pragmatics.SocialMeaning.Honorific
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Minimalist.FeatureSlot
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # Feature Infrastructure for Minimalist Agree
@@ -48,6 +50,8 @@ Use `.person .third` and `.number .sg` as conventional placeholders
 for probes.
 
 -/
+
+@[expose] public section
 
 
 namespace Minimalist

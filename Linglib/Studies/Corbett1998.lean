@@ -1,15 +1,17 @@
-import Mathlib.Data.Fintype.Card
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Agreement.Bundle
-import Linglib.Fragments.Slavic.Russian.Agreement
-import Linglib.Fragments.Slavic.Russian.Gender
-import Linglib.Fragments.Somali.Gender
-import Linglib.Fragments.Latin.Gender
-import Linglib.Fragments.Chichewa.Gender
-import Linglib.Fragments.CoastalMarind.Gender
-import Linglib.Syntax.Agreement.Classes
-import Linglib.Syntax.Agreement.Resolution
-import Linglib.Data.Examples.Corbett1998
+module
+
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Fragments.Slavic.Russian.Agreement
+public import Linglib.Fragments.Slavic.Russian.Gender
+public import Linglib.Fragments.Somali.Gender
+public import Linglib.Fragments.Latin.Gender
+public import Linglib.Fragments.Chichewa.Gender
+public import Linglib.Fragments.CoastalMarind.Gender
+public import Linglib.Syntax.Agreement.Classes
+public import Linglib.Syntax.Agreement.Resolution
+public import Linglib.Data.Examples.Corbett1998
 
 /-!
 # Corbett's morphology of agreement
@@ -67,6 +69,8 @@ rather than the resolved one. The chapter's examples are the rows of
 * [J. H. Greenberg, *Some universals of grammar* (1963)][greenberg-1963]
 * [G. G. Corbett, A. D. Mtenje, *Gender agreement in Chichewa* (1987)][corbett-mtenje-1987]
 -/
+
+@[expose] public section
 
 namespace Corbett1998
 

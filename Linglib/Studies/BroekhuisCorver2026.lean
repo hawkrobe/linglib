@@ -1,5 +1,7 @@
-import Linglib.Fragments.Dutch.Adpositions
-import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+module
+
+public import Linglib.Fragments.Dutch.Adpositions
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # Broekhuis and Corver 2026: Dutch adpositions
@@ -44,6 +46,8 @@ R-pronominalization.
 * [broekhuis-corver-2026a]
 * [sorace-2000]
 -/
+
+@[expose] public section
 
 namespace BroekhuisCorver2026
 

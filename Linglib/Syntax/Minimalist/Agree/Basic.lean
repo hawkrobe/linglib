@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
+module
+
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Agree: closest goals, horizons, and valuation
@@ -35,6 +37,8 @@ goals (`isClosestGoalIn_of_search_eq_some`).
 * [keine-2019]
 * [aissen-polian-2025]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

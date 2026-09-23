@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Japanese (jpn, ID 197)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 40 phonemes. PHOIBLE inventory ID 197, Glottocode `nucl1643`.
 Source: PHOIBLE donor `spa`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Japanese
 

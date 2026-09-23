@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Cantonese determiner inventory
@@ -15,6 +17,8 @@ ambiguous definite parallel to English *the*.
 * [cheng-sybesma-1999]
 * [jenks-2018], §6
 -/
+
+@[expose] public section
 
 namespace Cantonese.Determiners
 

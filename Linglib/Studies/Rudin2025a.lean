@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Kratzer.Ordering
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Ordering
 
 /-!
 # Rudin (2025): Asserting epistemic modals
@@ -46,6 +48,8 @@ steps are needed, and both are formalized.
 * [J. Khoo, *Modal Disagreements* (2015)][khoo-2015]
 * [S. Yalcin, *Epistemic Modals* (2007)][yalcin-2007]
 -/
+
+@[expose] public section
 
 namespace Rudin2025a
 

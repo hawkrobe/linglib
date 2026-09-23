@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Image
-import Linglib.Semantics.Reference.Definiteness
-import Linglib.Semantics.Reference.Deixis
-import Linglib.Syntax.Number.Basic
-import Linglib.Morphology.Word.Basic
+module
+
+public import Mathlib.Data.Finset.Image
+public import Linglib.Semantics.Reference.Definiteness
+public import Linglib.Semantics.Reference.Deixis
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Determiners
@@ -51,6 +53,8 @@ context selects is pragmatics ([jenks-2018]).
 * [moroney-2021]
 * [jenks-2018]
 -/
+
+@[expose] public section
 
 open Reference
 

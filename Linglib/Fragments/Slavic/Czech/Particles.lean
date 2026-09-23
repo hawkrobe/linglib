@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Czech Particles
@@ -8,6 +10,8 @@ Czech discourse particles of polar questions as `Particle` values.
 The negation-position diagnostics and Table 1 licensing live in
 `Stankova2026`; the bias experiments in `StankovaSimik2025`.
 -/
+
+@[expose] public section
 
 namespace Czech.Particles
 

@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Morphology.Word.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Adposition: the function-marking relator
@@ -33,6 +35,8 @@ refines `Case` without being `Case`.
 * `Adposition.isIntransitive` / `isComplex` / `isAmbipositional`
 * `Adposition.toWord` — the entry as a UD `ADP` word
 -/
+
+@[expose] public section
 
 namespace Adposition
 

@@ -1,6 +1,8 @@
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Clause.Relative
-import Linglib.Fragments.Swahili.Basic
+module
+
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Clause.Relative
+public import Linglib.Fragments.Swahili.Basic
 
 /-!
 # Swahili Relativization Fragment
@@ -56,6 +58,8 @@ number features defined in sibling Swahili Fragment files. This follows
 the mathlib convention of prefix-disambiguating small support types
 rather than nesting them under a sub-namespace.
 -/
+
+@[expose] public section
 
 namespace Swahili
 

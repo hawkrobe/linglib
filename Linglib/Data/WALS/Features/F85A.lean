@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 85A: Order of Adposition and Noun Phrase
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 85, 1184 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F85A
 
@@ -26,7 +30,8 @@ inductive AdpositionNPOrder where
   | noAdpositions
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint AdpositionNPOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint AdpositionNPOrder) :=
   [ { walsCode := "huc", iso := "huc", value := .noDominantOrder }
   , { walsCode := "aar", iso := "aiw", value := .postpositions }
   , { walsCode := "aba", iso := "aau", value := .postpositions }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint AdpositionNPOrder) :=
   , { walsCode := "kga", iso := "zga", value := .prepositions }
   ]
 
-private def allData_1 : List (Datapoint AdpositionNPOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint AdpositionNPOrder) :=
   [ { walsCode := "knn", iso := "kfk", value := .postpositions }
   , { walsCode := "kin", iso := "kin", value := .prepositions }
   , { walsCode := "kio", iso := "kio", value := .noAdpositions }
@@ -1032,7 +1038,8 @@ private def allData_1 : List (Datapoint AdpositionNPOrder) :=
   , { walsCode := "tbx", iso := "skj", value := .postpositions }
   ]
 
-private def allData_2 : List (Datapoint AdpositionNPOrder) :=
+/-- Rows 1001 to 1184 of `allData`. -/
+def allData_2 : List (Datapoint AdpositionNPOrder) :=
   [ { walsCode := "tpt", iso := "tpj", value := .prepositions }
   , { walsCode := "tce", iso := "tar", value := .postpositions }
   , { walsCode := "twe", iso := "tac", value := .noDominantOrder }

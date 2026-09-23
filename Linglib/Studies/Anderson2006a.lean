@@ -1,8 +1,10 @@
-import Linglib.Syntax.Category.Auxiliary.Constructions
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Syntax.Negation
-import Linglib.Data.Examples.Anderson2006a
-import Mathlib.Data.Finset.Basic
+module
+
+public import Linglib.Syntax.Category.Auxiliary.Constructions
+public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+public import Linglib.Syntax.Negation
+public import Linglib.Data.Examples.Anderson2006a
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Anderson 2006: auxiliary verb constructions
@@ -28,6 +30,8 @@ by the inflectional-head criterion.
 * [anderson-2006a]
 * [bybee-1985] — the category inventory
 -/
+
+@[expose] public section
 
 namespace Anderson2006a
 

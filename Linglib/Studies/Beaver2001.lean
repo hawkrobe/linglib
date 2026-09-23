@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.Partial
-import Linglib.Semantics.Presupposition.Trivalent
-import Linglib.Data.Examples.Beaver2001
+module
+
+public import Linglib.Semantics.Dynamic.Partial
+public import Linglib.Semantics.Presupposition.Trivalent
+public import Linglib.Data.Examples.Beaver2001
 
 /-!
 # Beaver (2001): Presupposition and Assertion in Dynamic Semantics
@@ -42,6 +44,8 @@ outside the propositional fragment.
 * [peters-1979]: A truth-conditional formulation of Karttunen's account of
   presupposition. *Synthese* 40.
 -/
+
+@[expose] public section
 
 namespace Beaver2001
 

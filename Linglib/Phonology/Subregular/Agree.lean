@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.StrictlyPiecewise
-import Linglib.Phonology.Subregular.ForbidPairs
-import Linglib.Phonology.Subregular.TierProjection
+module
+
+public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Linglib.Phonology.Subregular.ForbidPairs
+public import Linglib.Phonology.Subregular.TierProjection
 
 /-!
 # AGREE ↔ TSL_2 — the inequality instance (dual of OCP)
@@ -37,6 +39,8 @@ Unlike the OCP, AGREE is *also* strictly piecewise: `StrictlyPiecewiseGrammar.ag
 `TierStrictlyLocalGrammar.agree_language_eq_sp` show the tier projection is dispensable
 here, because equality is transitive.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

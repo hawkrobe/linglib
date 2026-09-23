@@ -1,5 +1,7 @@
-import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Gender assignment systems
@@ -42,6 +44,8 @@ functions to an optional gender, so their order of application is fixed by const
 * [dahl-2000] — the animacy refinement of the semantic core
 * [kramer-2015] — the semantic core generalization restated
 -/
+
+@[expose] public section
 
 namespace Gender
 

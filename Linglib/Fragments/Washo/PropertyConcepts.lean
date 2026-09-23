@@ -1,4 +1,6 @@
-import Linglib.Semantics.Root.PropertyConcept
+module
+
+public import Linglib.Semantics.Root.PropertyConcept
 
 /-!
 # Washo property concepts
@@ -21,6 +23,8 @@ central vowel, *’* glottalization, and capital *L* and *M* voiceless sonorants
 * [bochnak-2013]
 * [bochnak-rhomieux-2013]
 -/
+
+@[expose] public section
 
 namespace Washo
 

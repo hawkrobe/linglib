@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Chichewa noun gender
@@ -21,6 +23,8 @@ entries are the plural nouns the sources cite.
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
 * [G. G. Corbett, *Morphology and agreement* (1998)][corbett-1998]
 -/
+
+@[expose] public section
 
 namespace Chichewa.Gender
 

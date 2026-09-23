@@ -1,5 +1,7 @@
-import Mathlib.Order.Concept
-import Linglib.Core.Order.Ortholattice
+module
+
+public import Mathlib.Order.Concept
+public import Linglib.Core.Order.Ortholattice
 
 /-!
 # The ortholattice of a symmetric, irreflexive relation
@@ -34,6 +36,8 @@ that stack lives downstream (Core cannot import the semantics layer).
   complete ortholattice is isomorphic to `Orthoframe.Regular` of its canonical
   orthoframe on a join-dense set, with `a ⊥ b ↔ a ≤ bᶜ`.
 -/
+
+@[expose] public section
 
 open Order Set
 

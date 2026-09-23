@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Logic.Assignment
-import Linglib.Data.Examples.Schlenker2004a
+module
+
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Logic.Assignment
+public import Linglib.Data.Examples.Schlenker2004a
 
 /-!
 # Schlenker (2004a): Context of Thought and Context of Utterance
@@ -50,6 +52,8 @@ context improper (`not_proper_of_defined_lamPres`).
 * [banfield-1982]
 * [kaplan-1989]
 -/
+
+@[expose] public section
 
 namespace Schlenker2004a
 

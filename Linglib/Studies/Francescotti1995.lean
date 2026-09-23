@@ -1,5 +1,7 @@
-import Linglib.Semantics.Focus.Particles
-import Linglib.Data.Examples.Francescotti1995
+module
+
+public import Linglib.Semantics.Focus.Particles
+public import Linglib.Data.Examples.Francescotti1995
 
 /-!
 # Francescotti (1995): Even: The Conventional Implicature Approach Reconsidered
@@ -30,6 +32,8 @@ and how many there are.
 * [kay-1990]
 * [lycan-1991]
 -/
+
+@[expose] public section
 
 namespace Francescotti1995
 

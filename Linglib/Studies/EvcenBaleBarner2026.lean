@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.EvcenBaleBarner2026
-import Linglib.Studies.VonFintel2001
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Data.Examples.EvcenBaleBarner2026
+public import Linglib.Studies.VonFintel2001
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Evcen, Bale and Barner (2026): Conditional Inference and Access to Alternatives
@@ -61,6 +63,8 @@ leaves open which other button fails, while participants answered *No* about a s
 * [bale-etal-2025]
 * [bergen-grodner-2012]
 -/
+
+@[expose] public section
 
 namespace EvcenBaleBarner2026
 

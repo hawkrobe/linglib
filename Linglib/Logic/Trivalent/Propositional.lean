@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.Trivalent
-import Linglib.Logic.Consequence
+module
+
+public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Consequence
 
 /-!
 # Trivalent propositional logic
@@ -33,6 +35,8 @@ notation); consequence follows linglib's list-based `MixedConsequence` rather th
 
 [kleene-1952] [cobreros-etal-2012]
 -/
+
+@[expose] public section
 
 namespace Trivalent
 

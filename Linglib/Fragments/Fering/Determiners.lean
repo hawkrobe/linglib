@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Fering determiner inventory
@@ -13,6 +15,8 @@ article marking anaphoric reference, including covarying (donkey) uses.
 * [ebert-1971]
 * [schwarz-2013], §3 and §5.2
 -/
+
+@[expose] public section
 
 namespace Fering.Determiners
 

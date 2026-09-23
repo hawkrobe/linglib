@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # French Polarity-Sensitive Items
@@ -28,6 +30,8 @@ anti-additive licensing at this grain — while *jamais* keeps the weak-NPI
 distribution of its ever face (questions). A typed model of the
 bipartite *ne* dependency would live in the substrate, not per-Fragment.
 -/
+
+@[expose] public section
 
 namespace French.PolarityItems
 

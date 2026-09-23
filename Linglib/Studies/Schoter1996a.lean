@@ -1,4 +1,6 @@
-import Linglib.Core.Order.Bilattice.Basic
+module
+
+public import Linglib.Core.Order.Bilattice.Basic
 
 /-!
 # Schöter (1996a): The Computational Application of Bilattice Logic to Natural Reasoning
@@ -25,6 +27,8 @@ epistemic-state machinery that `Studies/Schoter1996b` leaves unformalized.
 * [burton-roberts-1989]
 * [fitting-1994]
 -/
+
+@[expose] public section
 
 open Bilattice
 open Bilattice.Evidential (guard)

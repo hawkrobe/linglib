@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.NP
+module
+
+public import Linglib.Semantics.Quantification.NP
 
 /-!
 # Quantifier domain restriction
@@ -18,6 +20,8 @@ conservative ([barwise-cooper-1981]), `conservative_domain_restricted`.
 * [J. Barwise, R. Cooper, *Generalized quantifiers and natural language*
   (1981)][barwise-cooper-1981]
 -/
+
+@[expose] public section
 
 namespace Quantifier.DomainRestriction
 

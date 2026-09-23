@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # German relative clauses
@@ -16,6 +18,8 @@ data are [keenan-comrie-1977]'s.
 * [keenan-comrie-1977]
 * [keenan-comrie-1979]
 -/
+
+@[expose] public section
 
 namespace German
 

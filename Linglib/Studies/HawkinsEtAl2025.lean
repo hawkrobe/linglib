@@ -1,8 +1,10 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Probability.Choice.RationalAction
-import Linglib.Core.Probability.Decision.ExperimentDesign
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Probability.Choice.RationalAction
+public import Linglib.Core.Probability.Decision.ExperimentDesign
 
 /-!
 # Hawkins, Tsvilodub, Bergey, Goodman and Franke (2025): Relevant answers to polar questions
@@ -49,6 +51,8 @@ exhaustive list is dispreferred after a question about a card the questioner hol
 * [hawkins-etal-2025]
 * [lindley-1956]
 -/
+
+@[expose] public section
 
 namespace HawkinsEtAl2025
 

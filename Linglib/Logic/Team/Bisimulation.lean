@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.Kripke
-import Linglib.Logic.Team.Algebra
+module
+
+public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Team.Algebra
 
 /-!
 # Bisimulation for modal team logics
@@ -25,6 +27,8 @@ these carrier lemmas.
 * [vaananen-2008] — modal dependence logic, the (T8)/(T9) modal clauses
 * [anttila-2025] — nonemptiness in team semantics
 -/
+
+@[expose] public section
 
 namespace ModalLogic
 

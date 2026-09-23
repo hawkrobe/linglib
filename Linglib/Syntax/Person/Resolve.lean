@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Discourse.Role
-import Linglib.Syntax.Person.Basic
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Discourse.Role
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # Person — resolution
@@ -33,6 +35,8 @@ union of two participant sets is the resolution of their persons
 (`ofParticipants_union`), [dalrymple-kaplan-2000]'s person resolution
 by marker-set union.
 -/
+
+@[expose] public section
 
 namespace Person
 

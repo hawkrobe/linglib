@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Probability.Distributions.Bernoulli
-import Linglib.Semantics.Attitudes.Factivity
-import Linglib.Data.Examples.GroveWhite2025
+module
+
+public import Linglib.Core.Probability.Distributions.Bernoulli
+public import Linglib.Semantics.Attitudes.Factivity
+public import Linglib.Data.Examples.GroveWhite2025
 
 /-!
 # Grove and White (2025): Factivity, Presupposition Projection, and Discrete Knowledge
@@ -44,6 +46,8 @@ of the intended answer. The paper's illustrative sentences are rows of
 * [grove-white-2025]
 * [degen-tonhauser-2021]
 -/
+
+@[expose] public section
 
 open MeasureTheory Measure ProbabilityTheory Factivity unitInterval
 

@@ -1,6 +1,8 @@
-import Linglib.Core.Order.Bilattice.Basic
-import Mathlib.Order.Fin.Basic
-import Mathlib.Data.Bool.Basic
+module
+
+public import Linglib.Core.Order.Bilattice.Basic
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Data.Bool.Basic
 
 /-!
 # Schöter (1996b): Evidential Bilattice Logic and Lexical Inference
@@ -36,6 +38,8 @@ evidential weighting that keeps only the dominant evidence are value-level conne
 * [ginsberg-1988]
 * [belnap-1977]
 -/
+
+@[expose] public section
 
 open Bilattice
 

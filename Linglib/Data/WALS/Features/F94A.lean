@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 94A: Order of Adverbial Subordinator and Clause
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 94, 659 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F94A
 
@@ -26,7 +30,8 @@ inductive OrderOfAdverbialSubordinatorAndClause where
   | mixed
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :=
   [ { walsCode := "ani", iso := "hnh", value := .initialSubordinatorWord }
   , { walsCode := "abi", iso := "axb", value := .initialSubordinatorWord }
   , { walsCode := "abk", iso := "abk", value := .subordinatingSuffix }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :
   , { walsCode := "san", iso := "sag", value := .initialSubordinatorWord }
   ]
 
-private def allData_1 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :=
+/-- Rows 501 to 659 of `allData`. -/
+def allData_1 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :=
   [ { walsCode := "snm", iso := "xsu", value := .finalSubordinatorWord }
   , { walsCode := "src", iso := "srs", value := .mixed }
   , { walsCode := "srd", iso := "sro", value := .initialSubordinatorWord }

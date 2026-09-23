@@ -1,5 +1,7 @@
-import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Transderivational identity: [benua-1997]
@@ -32,6 +34,8 @@ morphology invokes (§4.6.3). Out of scope: English affix classes (Ch. 5), the
 guttural CODACOND (§4.3.3), opacity (§4.4.3), and the serial alternatives (§3.5,
 §4.7), which the paper rejects as over-generating rather than reconstructs.
 -/
+
+@[expose] public section
 
 namespace Benua1997
 

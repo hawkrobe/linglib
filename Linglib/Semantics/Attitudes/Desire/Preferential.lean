@@ -1,4 +1,6 @@
-import Linglib.Semantics.Attitudes.Preference
+module
+
+public import Linglib.Semantics.Attitudes.Preference
 
 /-!
 # Effective-preference desire semantics
@@ -14,6 +16,8 @@ preference satisfied *only if* `φ` holds (`WantNecessary`, their Quine–Hintik
 which is upward entailing. Blocking of simultaneous `want φ` and `want ¬φ` over a
 consistent background is `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`.
 -/
+
+@[expose] public section
 
 namespace Desire.Preferential
 

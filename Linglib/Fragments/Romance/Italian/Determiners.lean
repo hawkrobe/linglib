@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Denotation
 
 /-!
 # Italian determiners
@@ -21,6 +23,8 @@ over the [schwarz-2009] use types, the indefinite is *un*, *uno*, *una*, and the
 * [chierchia-1998]
 -/
 
+@[expose] public section
+
 namespace Italian.Determiners
 
 /-! ## Articles
@@ -31,12 +35,12 @@ covering the [schwarz-2009] use types; the indefinite *un*, *uno*, *una*; and th
 plurals. -/
 
 /-- The definite article with the given form. -/
-private def definite (form : String) : Article :=
+def definite (form : String) : Article :=
   { form, definiteness := .definite, exponent := .dedicatedMorpheme
     uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- The indefinite article with the given form. -/
-private def indefinite (form : String) : Article :=
+def indefinite (form : String) : Article :=
   { form, definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
 def il : Article := definite "il"

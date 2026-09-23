@@ -1,8 +1,10 @@
-import Linglib.Semantics.Modality.Orthologic.Lifting
-import Linglib.Semantics.Modality.Orthologic.RegularProp
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Modality.Orthologic.Lifting
+public import Linglib.Semantics.Modality.Orthologic.RegularProp
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Holliday and Mandelkern (2024): The orthologic of epistemic modals
@@ -39,6 +41,8 @@ one.
 
 * [holliday-mandelkern-2024]
 -/
+
+@[expose] public section
 
 namespace HollidayMandelkern2024
 

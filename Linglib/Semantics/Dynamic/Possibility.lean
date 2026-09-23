@@ -1,8 +1,10 @@
-import Linglib.Core.Data.Part
-import Linglib.Semantics.Reference.Context.Index
-import Linglib.Core.Order.PartialUnify
-import Mathlib.Data.PFun
-import Mathlib.Logic.Function.Basic
+module
+
+public import Linglib.Core.Data.Part
+public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Core.Order.PartialUnify
+public import Mathlib.Data.PFun
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # Possibilities
@@ -19,6 +21,8 @@ each stratum as world–assignment pairs.
 - [kamp-vangenabith-reyle-2011], Def. 0.22
 - [heim-1982]
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

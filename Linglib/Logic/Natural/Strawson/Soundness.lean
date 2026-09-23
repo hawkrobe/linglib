@@ -1,5 +1,7 @@
-import Linglib.Logic.Natural.Soundness
-import Linglib.Logic.Natural.Strawson.Basic
+module
+
+public import Linglib.Logic.Natural.Soundness
+public import Linglib.Logic.Natural.Strawson.Basic
 
 /-!
 # Strawson-relativized soundness
@@ -38,6 +40,8 @@ here; its home is a bridge to `Semantics/Presupposition/`.
 * [von-fintel-1999] — the Strawson move.
 * [gajewski-2011] — the symmetric definedness gate.
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 

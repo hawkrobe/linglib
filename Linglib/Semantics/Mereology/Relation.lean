@@ -1,5 +1,7 @@
-import Mathlib.Logic.Relator
-import Linglib.Semantics.Mereology
+module
+
+public import Mathlib.Logic.Relator
+public import Linglib.Semantics.Mereology
 
 /-!
 # Mereology of relations
@@ -41,6 +43,8 @@ transported.
 
 * [krifka-1989], [krifka-1998]
 -/
+
+@[expose] public section
 
 namespace Mereology
 

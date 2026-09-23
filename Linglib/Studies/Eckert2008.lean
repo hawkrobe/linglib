@@ -1,9 +1,11 @@
-import Linglib.Core.Relation.ReflTransGen
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Order.Closure
-import Mathlib.Order.Iterate
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Order.Closure
+public import Mathlib.Order.Iterate
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Eckert (2008): Variation and the indexical field
@@ -45,6 +47,8 @@ measurements and the (DH) discussion are not represented.
 * [eckert-2000]
 * [zhang-2005]
 -/
+
+@[expose] public section
 
 namespace Eckert2008
 

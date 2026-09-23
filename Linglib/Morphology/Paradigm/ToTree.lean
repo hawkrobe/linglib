@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Word.Tree
-import Linglib.Morphology.Paradigm.Function
+module
+
+public import Linglib.Morphology.Word.Tree
+public import Linglib.Morphology.Paradigm.Function
 
 /-!
 # The paradigm function into word trees
@@ -26,6 +28,8 @@ vocabulary emits a kind-coherent tree.
   `isKindCoherent_paradigmFunction_tree` — linearization, stem, and coherence
   of the tree-valued run
 -/
+
+@[expose] public section
 
 namespace Morphology.PFM
 

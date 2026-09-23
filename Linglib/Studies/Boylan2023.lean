@@ -1,8 +1,10 @@
-import Mathlib.Order.Partition.Finpartition
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Modality.Kratzer.Operators
+module
+
+public import Mathlib.Order.Partition.Finpartition
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Boylan (2023): Putting oughts together
@@ -38,6 +40,8 @@ worst outcome and asks the two questions of §8.2.
 * [von-fintel-2012]
 * [horty-2012]
 -/
+
+@[expose] public section
 
 namespace Boylan2023
 

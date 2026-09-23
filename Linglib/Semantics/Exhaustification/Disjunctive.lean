@@ -1,5 +1,7 @@
-import Linglib.Semantics.Exhaustification.InnocentInclusion
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentInclusion
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Exhaustifying a disjunction whose alternatives are its sub-disjunctions
@@ -20,6 +22,8 @@ non-maximal readings.
 * [bar-lev-2021]
 * [bar-lev-fox-2020]
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

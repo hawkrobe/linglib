@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.KalinBjorkmanEtAl2026
-import Linglib.Studies.ZwickyPullum1983
+module
+
+public import Linglib.Data.Examples.KalinBjorkmanEtAl2026
+public import Linglib.Studies.ZwickyPullum1983
 
 /-!
 # Kalin et al. (2026): The Morphology/Syntax Interface
@@ -40,6 +42,8 @@ treats morphological gaps natively (`no_theory_handles_gaps`).
 * [stump-2001]
 * [halle-marantz-1993]
 -/
+
+@[expose] public section
 
 namespace KalinBjorkmanEtAl2026
 
@@ -219,17 +223,17 @@ structure WordhoodRow where
   cell : WordhoodClass
   deriving DecidableEq
 
-private def msOf : String → Option MSBoundness
+def msOf : String → Option MSBoundness
   | "free" => some .free
   | "bound" => some .bound
   | _ => none
 
-private def pOf : String → Option PBoundness
+def pOf : String → Option PBoundness
   | "free" => some .free
   | "bound" => some .bound
   | _ => none
 
-private def cellOf : String → Option WordhoodClass
+def cellOf : String → Option WordhoodClass
   | "canonicalWord" => some .canonicalWord
   | "simpleClitic" => some .simpleClitic
   | "nonCoheringAffix" => some .nonCoheringAffix

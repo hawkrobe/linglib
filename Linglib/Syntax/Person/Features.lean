@@ -1,5 +1,7 @@
-import Linglib.Syntax.Person.Category
-import Linglib.Core.Order.UpperLower.Finset
+module
+
+public import Linglib.Syntax.Person.Category
+public import Linglib.Core.Order.UpperLower.Finset
 
 /-!
 # Bivalent person features
@@ -32,6 +34,8 @@ referential categories decompose, and both decompositions underdetermine clusivi
 * [D. Harbour, *Impossible Persons* (2016)][harbour-2016]
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
+
+@[expose] public section
 
 namespace Person
 

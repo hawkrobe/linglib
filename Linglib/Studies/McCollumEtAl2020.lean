@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.Dependence
-import Linglib.Core.Computability.Bimachine
+module
+
+public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Core.Computability.Bimachine
 
 /-!
 # McCollum, Baković, Mai and Meinhardt (2020): Unbounded Circumambient Patterns
@@ -29,6 +31,8 @@ substrate's dependence and machine-level classification (`tutrugbu_requiresBothS
 * [wilson-2006]
 * [walker-2010]
 -/
+
+@[expose] public section
 
 namespace McCollumEtAl2020
 

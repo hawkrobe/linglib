@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Pi
-import Linglib.Core.Computability.Bimachine
-import Linglib.Core.Computability.Subsequential
+module
+
+public import Mathlib.Data.Fintype.Pi
+public import Linglib.Core.Computability.Bimachine
+public import Linglib.Core.Computability.Subsequential
 
 /-!
 # Elgot–Mezei composition
@@ -39,6 +41,8 @@ at all.
 * The letter-to-letter refinement: `Mealy` after `Mealy` gives a length-preserving
   bimachine (`IsLengthPreservingBimachineComputable`).
 -/
+
+@[expose] public section
 
 variable {α β γ σ₁ σ₂ : Type*}
 

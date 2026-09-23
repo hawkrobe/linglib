@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.VerbSecond
+module
+
+public import Linglib.Syntax.Minimalist.VerbSecond
 
 /-!
 # English verb second
@@ -14,6 +16,8 @@ could he come*.
 * [westergaard-2009]
 * [henry-1995]
 -/
+
+@[expose] public section
 
 namespace English
 

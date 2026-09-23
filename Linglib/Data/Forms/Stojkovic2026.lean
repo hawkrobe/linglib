@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `Stojkovic2026` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/Stojkovic2026.json` by
 generator. Consumers import this module; declarations live in
 `namespace Stojkovic2026.Forms`.
 -/
+
+@[expose] public section
 
 namespace Stojkovic2026.Forms
 

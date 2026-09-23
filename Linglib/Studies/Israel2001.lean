@@ -1,5 +1,7 @@
-import Linglib.Fragments.English.PolarityItems
-import Mathlib.Order.Monotone.Basic
+module
+
+public import Linglib.Fragments.English.PolarityItems
+public import Mathlib.Order.Monotone.Basic
 
 /-!
 # Israel (2001): Minimizers, Maximizers and the Rhetoric of Scalar Reasoning
@@ -41,6 +43,8 @@ perceptual-ability scale.
 * [fauconnier-1975]
 * [ladusaw-1979]
 -/
+
+@[expose] public section
 
 namespace Israel2001
 

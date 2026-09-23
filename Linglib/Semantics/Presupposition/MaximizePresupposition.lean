@@ -1,8 +1,10 @@
-import Linglib.Syntax.Agreement.ContainmentPair
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Alternatives.Competition
+module
+
+public import Linglib.Syntax.Agreement.ContainmentPair
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Semantics.Presupposition.PhiFeatures
+public import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Maximize Presupposition
@@ -40,6 +42,8 @@ of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wa
 * [singh-2011]
 * [wang-2025]
 -/
+
+@[expose] public section
 
 namespace Presupposition.MaximizePresupposition
 

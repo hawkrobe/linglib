@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Marking
+module
+
+public import Linglib.Semantics.Polarity.Marking
 
 /-!
 # Italian Polarity-Marking Strategies
@@ -64,6 +66,8 @@ the strategy taxonomy, and the explicit endorsement of Matić & Nikolaeva's
 "salient polarity" framework — lives in
 `Studies/GarassinoJacob2018.lean`.
 -/
+
+@[expose] public section
 
 namespace Italian.PolarityMarking
 

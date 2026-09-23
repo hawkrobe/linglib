@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Grove2022
-import Mathlib.Data.Option.Basic
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Linglib.Data.Examples.Grove2022
+public import Mathlib.Data.Option.Basic
+public import Mathlib.Tactic.SplitIfs
 
 /-!
 # Grove (2022): Presupposition Projection as a Scope Phenomenon
@@ -46,6 +48,8 @@ instance for the reader transformer. The paper's judged sentences are rows of
 The syntax of roll-up pied-piping in Figures 2 and 6 and the sketched *also* of (29) are not
 represented; the readings are the meanings the derivations deliver.
 -/
+
+@[expose] public section
 
 namespace Grove2022
 

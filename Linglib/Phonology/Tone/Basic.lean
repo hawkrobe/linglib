@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Logic.Equiv.Defs
-import Linglib.Core.Order.Bundle
+module
+
+public import Mathlib.Logic.Equiv.Defs
+public import Linglib.Core.Order.Bundle
 
 /-!
 # Tonal root nodes and subtonal features
@@ -26,6 +28,8 @@ shifts; the terracing reading of `[raised]` is `Tone.Register`.
 * `TBUKind`, `WordProsody`, `IsRegisterOnly` — the tone-bearing unit, [hyman-2006]'s two
   word-prosodic dimensions, and [lionnet-2025]'s register-only inventories.
 -/
+
+@[expose] public section
 
 namespace Tone
 

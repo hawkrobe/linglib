@@ -1,8 +1,10 @@
-import Linglib.Syntax.DependencyGrammar.Projectivity
-import Linglib.Morphology.Word.Basic
-import Linglib.Data.Treebank.Coverage.Kuhlmann2013
-import Mathlib.Algebra.Order.Round
-import Mathlib.Data.Rat.Floor
+module
+
+public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Data.Treebank.Coverage.Kuhlmann2013
+public import Mathlib.Algebra.Order.Round
+public import Mathlib.Data.Rat.Floor
 
 /-!
 # Kuhlmann (2013): Mildly Non-Projective Dependency Grammar
@@ -42,6 +44,8 @@ canonical grammars, the parsing algorithm, and the NP-hardness result are not fo
   `ruleLoss_projective`.
 * The paper gives Turkish's well-nested rule-loss reduction as 92.65%; the rows give 92.64%.
 -/
+
+@[expose] public section
 
 namespace Kuhlmann2013
 
@@ -147,7 +151,7 @@ theorem dutchCrossSerial_isWellNested :
 /-! ### Figures 10 and 11: block-degree and well-nestedness -/
 
 /-- An unlabelled position. -/
-private def dot : Word := Word.mk' "•" .X
+def dot : Word := Word.mk' "•" .X
 
 /-- Figure 10, `D₁`: the yield of node 2 falls into the blocks {2, 3} and {6}. -/
 def fig10D1 : Graph 6 :=

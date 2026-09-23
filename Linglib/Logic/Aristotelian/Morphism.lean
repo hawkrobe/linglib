@@ -1,5 +1,7 @@
-import Linglib.Logic.Aristotelian.Diagram
-import Mathlib.Order.BooleanSubalgebra
+module
+
+public import Linglib.Logic.Aristotelian.Diagram
+public import Mathlib.Order.BooleanSubalgebra
 
 /-!
 # Isomorphisms of Aristotelian diagrams
@@ -16,6 +18,8 @@ conversely (the Keynes–Johnson octagons of [demey-smessaert-2024] witness the 
 * `AristotelianIso` — a relation-matrix-preserving corner bijection, with `refl`/`symm`/`trans`.
 * `BooleanIso`, `BooleanIso.toAristotelianIso` — the stronger notion and the nesting.
 -/
+
+@[expose] public section
 
 namespace BooleanSubalgebra
 variable {β : Type*} [BooleanAlgebra β] {L : BooleanSubalgebra β} {a b : L}

@@ -1,19 +1,21 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Coordinator
-import Linglib.Fragments.English.Coordination
-import Linglib.Fragments.Finnish.Coordination
-import Linglib.Fragments.German.Coordination
-import Linglib.Fragments.Hausa.Coordination
-import Linglib.Fragments.Hungarian.Coordination
-import Linglib.Fragments.Irish.Coordination
-import Linglib.Fragments.Kannada.Coordination
-import Linglib.Fragments.Korean.Coordination
-import Linglib.Fragments.Lango.Coordination
-import Linglib.Fragments.Latin.Coordination
-import Linglib.Fragments.Tibetic.Classical.Coordination
-import Linglib.Fragments.Turkish.Coordination
-import Linglib.Fragments.Yoruba.Coordination
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Fragments.English.Coordination
+public import Linglib.Fragments.Finnish.Coordination
+public import Linglib.Fragments.German.Coordination
+public import Linglib.Fragments.Hausa.Coordination
+public import Linglib.Fragments.Hungarian.Coordination
+public import Linglib.Fragments.Irish.Coordination
+public import Linglib.Fragments.Kannada.Coordination
+public import Linglib.Fragments.Korean.Coordination
+public import Linglib.Fragments.Lango.Coordination
+public import Linglib.Fragments.Latin.Coordination
+public import Linglib.Fragments.Tibetic.Classical.Coordination
+public import Linglib.Fragments.Turkish.Coordination
+public import Linglib.Fragments.Yoruba.Coordination
 
 /-!
 # Haspelmath (2007): Coordination
@@ -55,6 +57,8 @@ the postpositive bisyndetic pattern beside the two source patterns.
 * [haspelmath-2007]
 * [stassen-2000]
 -/
+
+@[expose] public section
 
 namespace Haspelmath2007
 
@@ -160,7 +164,7 @@ structure Attestation where
   deriving Repr
 
 /-- A conjunctive coordinator with no Fragment entry. -/
-private def co (form : String) (kind : Morphology.Morph.Kind) : Coordinator :=
+def co (form : String) (kind : Morphology.Morph.Kind) : Coordinator :=
   { form, gloss := "and", role := .conjunctive, kind }
 
 /-- The constructions of (5), (6), (12), (20)–(37), (59), (77)–(79) and (85). -/
@@ -270,7 +274,7 @@ def CorrelativeShape.classify (c : Coordinator.Correlative) : CorrelativeShape :
   else .allDifferent
 
 /-- A disjunctive coordinator with no Fragment entry. -/
-private def dis (form : String) : Coordinator :=
+def dis (form : String) : Coordinator :=
   { form, gloss := "or", role := .disjunctive, kind := .free }
 
 /-- The rows of (45), each with its language and the letter the chapter files it under. -/

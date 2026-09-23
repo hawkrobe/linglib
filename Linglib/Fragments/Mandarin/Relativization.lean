@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Mandarin relative clauses
@@ -16,6 +18,8 @@ Chinese (spoken Pekingese).
 * [keenan-comrie-1977]
 * [keenan-comrie-1979]
 -/
+
+@[expose] public section
 
 namespace Mandarin
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RotaBaxter
-import Mathlib.RingTheory.LaurentSeries
+module
+
+public import Linglib.Core.Algebra.RotaBaxter
+public import Mathlib.RingTheory.LaurentSeries
 
 /-!
 # The polar-part Rota–Baxter operator on Laurent series  `[UPSTREAM]`
@@ -46,14 +48,16 @@ maps.
 [marcolli-chomsky-berwick-2025] (Prop. 3.5.2, eq. (3.5.4))
 -/
 
+@[expose] public section
+
 namespace LaurentSeries
 
 variable {k A : Type*} [CommRing k] [CommRing A] [Algebra k A]
 
 /-- The coefficient function of the polar part: keep the strictly-negative degrees. -/
-private def polarCoeff (s : LaurentSeries A) : ℤ → A := fun i => if i < 0 then s.coeff i else 0
+def polarCoeff (s : LaurentSeries A) : ℤ → A := fun i => if i < 0 then s.coeff i else 0
 
-private theorem polarCoeff_support_subset (s : LaurentSeries A) :
+theorem polarCoeff_support_subset (s : LaurentSeries A) :
     Function.support (polarCoeff s) ⊆ Function.support s.coeff := fun i hi => by
   simp only [polarCoeff, Function.mem_support] at hi ⊢
   exact fun h => hi (by simp [h])

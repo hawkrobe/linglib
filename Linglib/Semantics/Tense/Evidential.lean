@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Reichenbach
+module
+
+public import Linglib.Semantics.Tense.Reichenbach
 
 /-!
 # Tense and evidence
@@ -29,6 +31,8 @@ future tense to downstream evidence.
 * [M. Huijsmans, *Timing of evidence and epistemic modal claims* (2025)][huijsmans-2025]
 * [H. Reichenbach, *Elements of symbolic logic* (1947)][reichenbach-1947]
 -/
+
+@[expose] public section
 
 namespace Tense.Evidential
 

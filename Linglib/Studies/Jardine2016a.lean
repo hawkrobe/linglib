@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.ElgotMezei
-import Linglib.Data.Examples.Jardine2016a
-import Linglib.Phonology.Tone.Plateauing
+module
+
+public import Linglib.Core.Computability.ElgotMezei
+public import Linglib.Data.Examples.Jardine2016a
+public import Linglib.Phonology.Tone.Plateauing
 
 /-!
 # Jardine (2016): Computationally, tone is different
@@ -44,6 +46,8 @@ output is one H linked to the plateau, Section 4.4.
 * [elgot-mezei-1965]
 * [meinhardt-mai-bakovic-mccollum-2024]
 -/
+
+@[expose] public section
 
 namespace Jardine2016a
 

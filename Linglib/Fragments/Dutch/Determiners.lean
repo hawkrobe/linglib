@@ -1,5 +1,7 @@
-import Linglib.Fragments.Dutch.Gender
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Fragments.Dutch.Gender
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Dutch determiners
@@ -38,6 +40,8 @@ German, are not `DefiniteUse` cells and so go unrecorded.
 * [moroney-2021]
 * [schmuck-2020]
 -/
+
+@[expose] public section
 
 namespace Dutch.Determiners
 

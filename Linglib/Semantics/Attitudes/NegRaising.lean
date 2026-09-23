@@ -1,6 +1,8 @@
-import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Logic.Aristotelian.Square
-import Linglib.Semantics.Homogeneity.Decided
+module
+
+public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Semantics.Homogeneity.Decided
 
 /-!
 # Neg-raising as O→E pragmatic strengthening
@@ -23,6 +25,8 @@ for a veridical predicate, ¬know(p) includes the case that p is
 false, so strengthening to know(¬p) would smuggle in a factual claim
 (`negRaisingAvailable`).
 -/
+
+@[expose] public section
 
 namespace NegRaising
 

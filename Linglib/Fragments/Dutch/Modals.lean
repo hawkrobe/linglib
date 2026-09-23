@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Dutch Modal Inventory
@@ -10,16 +12,18 @@ Dutch has one non-IFF modal: zou/zouden...kunnen expresses
 {(nec,e),(poss,e),(poss,c)} which is not Cartesian-closed.
 -/
 
+@[expose] public section
+
 namespace Dutch
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 def zal : ModalItem := { form := "zal", meaning := {ne} }
 def moetMoeten : ModalItem := { form := "moet/moeten", meaning := {ne, nd, nc} }

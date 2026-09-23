@@ -1,5 +1,7 @@
-import Linglib.Semantics.Truthmaker.Inexact
-import Linglib.Semantics.Truthmaker.Closure
+module
+
+public import Linglib.Semantics.Truthmaker.Inexact
+public import Linglib.Semantics.Truthmaker.Closure
 
 /-! # Analytic Entailment and Consequence Relations [jago-2026]
 
@@ -45,6 +47,8 @@ distinguishes hyperintensional content (witness: the headline theorem
 which `BoxAt` cannot.
 
 -/
+
+@[expose] public section
 
 namespace Truthmaker
 

@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.BSML.Defs
-import Linglib.Logic.Team.Bisimulation
+module
+
+public import Linglib.Logic.Team.BSML.Defs
+public import Linglib.Logic.Team.Bisimulation
 
 /-!
 # Bisimulation invariance for BSML
@@ -38,6 +40,8 @@ disj-support).
   Deferred — Theorem 3.8 alone is enough for the soundness half of the
   expressive-completeness theorem in `BSML/ExpressiveCompleteness.lean`.
 -/
+
+@[expose] public section
 
 namespace BSML
 

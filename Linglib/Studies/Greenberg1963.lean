@@ -1,4 +1,6 @@
-import Linglib.Data.WordOrder.Greenberg1963
+module
+
+public import Linglib.Data.WordOrder.Greenberg1963
 
 /-!
 # Greenberg (1963): Some Universals of Grammar
@@ -39,6 +41,8 @@ genitive, and `universal_23` states the version the data support.
 Universals 6 to 8, 11, 13 to 15, 19, 20, 25, and 26 and the morphological universals 28 to 45
 concern properties the appendices and footnotes do not record per language.
 -/
+
+@[expose] public section
 
 namespace Greenberg1963
 

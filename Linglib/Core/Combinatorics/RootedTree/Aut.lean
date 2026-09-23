@@ -3,14 +3,18 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.Multiset.Antidiagonal
-import Linglib.Core.Data.UnorderedTree.DecEq
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
-import Mathlib.Data.Multiset.Antidiagonal
-import Mathlib.Data.Nat.Choose.Basic
-import Mathlib.Data.Nat.Factorial.Basic
-import Mathlib.Tactic.Ring
+module
+
+public import Linglib.Core.Data.Multiset.Antidiagonal
+public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
+public import Mathlib.Data.Multiset.Antidiagonal
+public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Data.Nat.Factorial.Basic
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

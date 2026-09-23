@@ -1,6 +1,8 @@
-import Linglib.Semantics.Possession.Relationalizer
-import Linglib.Semantics.Possession.Defs
-import Linglib.Semantics.Quantification.Defs
+module
+
+public import Linglib.Semantics.Possession.Relationalizer
+public import Linglib.Semantics.Possession.Defs
+public import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Possessive descriptions
@@ -24,6 +26,8 @@ determinate reading is one mode of quantification among those the quantifier lay
 * [barker-1995], [barker-2011]
 * [peters-westerstahl-2006], [coppock-beaver-2015]
 -/
+
+@[expose] public section
 
 namespace Possession
 

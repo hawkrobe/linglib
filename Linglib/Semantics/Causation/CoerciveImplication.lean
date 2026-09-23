@@ -1,5 +1,7 @@
-import Linglib.Semantics.Causation.Sufficiency
-import Linglib.Semantics.Causation.Necessity
+module
+
+public import Linglib.Semantics.Causation.Sufficiency
+public import Linglib.Semantics.Causation.Necessity
 
 /-!
 # Coercive Implication ([nadathur-lauer-2020])
@@ -12,6 +14,8 @@ The legacy `CausalDynamics`-based `CoerciveContext` + Kim/Sandy
 examples were deleted in Phase D-H. The polymorphic V2
 `hasCoerciveImplication` is promoted to canonical here.
 -/
+
+@[expose] public section
 
 namespace Causation.CoerciveImplication
 

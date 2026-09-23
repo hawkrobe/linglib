@@ -1,9 +1,11 @@
-import Linglib.Core.Data.Trivalent
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Data.Examples.Schema
-import Linglib.Data.Examples.KrizChemla2015
-import Linglib.Data.Examples.AghaJeretic2022
-import Linglib.Data.Examples.Kriz2015
+module
+
+public import Linglib.Core.Data.Trivalent
+public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.KrizChemla2015
+public import Linglib.Data.Examples.AghaJeretic2022
+public import Linglib.Data.Examples.Kriz2015
 
 /-!
 # Generalizations.HomogeneityGap — cross-paper data pool
@@ -39,6 +41,8 @@ restricted by `source.bibkey` to the papers available at each study's
 publication date. Divergence theorems between rival accounts likewise
 live in the comparing paper's study file, not here.
 -/
+
+@[expose] public section
 
 namespace Generalizations.HomogeneityGap
 

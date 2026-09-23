@@ -1,6 +1,8 @@
-import Linglib.Semantics.Causation.Sufficiency
-import Linglib.Semantics.Causation.Necessity
-import Linglib.Semantics.Causation.SEM.Forced
+module
+
+public import Linglib.Semantics.Causation.Sufficiency
+public import Linglib.Semantics.Causation.Necessity
+public import Linglib.Semantics.Causation.SEM.Forced
 
 /-!
 # Causative construction selection
@@ -21,6 +23,8 @@ test `completesForEffect`.
 * [baglini-bar-asher-siegal-2025]
 * [bar-asher-siegal-2026]
 -/
+
+@[expose] public section
 
 namespace Causation.CCSelection
 

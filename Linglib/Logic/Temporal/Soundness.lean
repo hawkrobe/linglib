@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Temporal.Basic
+module
+
+public import Linglib.Logic.Temporal.Basic
 
 /-!
 # T × W tense-modal logic: the `TW` calculus and soundness
@@ -23,6 +25,8 @@ truth depends only on the valuation of the atoms it mentions.
 * `TWFrame.sat_iff_of_agree` — the coincidence lemma.
 * `soundness` — `Provable a → Valid a`.
 -/
+
+@[expose] public section
 
 namespace Temporal
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Dynamic.State
+module
+
+public import Linglib.Semantics.Dynamic.State
 
 /-!
 # Transitions between context fibers
@@ -29,6 +31,8 @@ cited there).
 * `Transition.IsExtension` — Def. 27(ii): established referents persist.
 * `Transition.randomAssign` — the generating arrow `X ⟶ insert x X`.
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

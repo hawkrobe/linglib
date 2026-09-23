@@ -1,6 +1,8 @@
-import Linglib.Semantics.Aspect.SubintervalProperty
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Data.Part
+module
+
+public import Linglib.Semantics.Aspect.SubintervalProperty
+public import Mathlib.Algebra.Order.Interval.Basic
+public import Mathlib.Data.Part
 
 /-!
 # Zhao (2025): Cross-Linguistic and Cross-Domain Temporal Expressions
@@ -52,6 +54,8 @@ activities.
 * [bennett-partee-1972]
 * [tsilia-zhao-2026]
 -/
+
+@[expose] public section
 
 namespace Zhao2025
 

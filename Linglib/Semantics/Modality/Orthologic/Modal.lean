@@ -1,6 +1,8 @@
-import Linglib.Semantics.Modality.Orthologic.Frames
-import Linglib.Logic.Modal.Basic
-import Mathlib.Data.Fintype.Pi
+module
+
+public import Linglib.Semantics.Modality.Orthologic.Frames
+public import Linglib.Logic.Modal.Basic
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # Modal Compatibility Frames
@@ -36,6 +38,8 @@ pseudocomplementation on it live in `Studies/HollidayMandelkern2024.lean`.
 Decidability of `access` is *not* bundled — provide a `DecidableRel`
 instance separately (mirrors the `CompatFrame` convention).
 -/
+
+@[expose] public section
 
 namespace Orthologic
 

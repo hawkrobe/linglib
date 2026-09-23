@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Set.Lattice.Image
-import Mathlib.Order.Minimal
-import Mathlib.Order.Preorder.Chain
-import Linglib.Semantics.Focus.Control
+module
+
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Order.Minimal
+public import Mathlib.Order.Preorder.Chain
+public import Linglib.Semantics.Focus.Control
 
 /-!
 # Unalternative Semantics
@@ -37,6 +39,8 @@ families of propositions, the focus values [rooth-1992]'s squiggle consumes —
 the metrical structure derives the focus value that F-marking
 stipulates (`Antecedent.Admits.of_licensed`).
 -/
+
+@[expose] public section
 
 namespace Focus
 

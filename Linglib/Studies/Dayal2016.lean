@@ -1,10 +1,12 @@
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Order.Atoms
-import Mathlib.Data.Set.Lattice.Order
-import Linglib.Data.Examples.Dayal2016
-import Linglib.Syntax.Number.Basic
-import Linglib.Logic.Modal.Defs
-import Linglib.Semantics.Questions.Exhaustivity
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.Atoms
+public import Mathlib.Data.Set.Lattice.Order
+public import Linglib.Data.Examples.Dayal2016
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
 # Dayal (2016): Questions
@@ -66,6 +68,8 @@ comparisons, and check the chapter's judgments.
 * [G. Link, *The logical analysis of plurals and mass terms* (1983)][link-1983]
 * [J. Hintikka, *Knowledge and belief* (1962)][hintikka-1962]
 -/
+
+@[expose] public section
 
 namespace Dayal2016
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Rat.Defs
-import Linglib.Semantics.Quantification.Counting
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Traditional Generic Semantics (GEN Operator)
@@ -56,6 +58,8 @@ restrict the interpretation index, not the world index. See
 See `Studies/TesslerGoodman2019.lean` for the RSA account.
 
 -/
+
+@[expose] public section
 
 namespace Genericity
 

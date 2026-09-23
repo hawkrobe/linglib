@@ -1,4 +1,6 @@
-import Linglib.Phonology.Tone.Basic
+module
+
+public import Linglib.Phonology.Tone.Basic
 
 /-!
 # Numèè Prosodic Fragment
@@ -29,6 +31,8 @@ boundary phenomenon's eligibility conditions reference syllable weight
 (light CV vs CVV) and the immediately preceding syllable's register
 status — neither expressible in a flat `List TRN`.
 -/
+
+@[expose] public section
 
 namespace Numee.Prosody
 

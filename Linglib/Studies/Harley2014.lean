@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Morphology.DistributedMorphology.Allosemy
-import Linglib.Morphology.Root.Certificates
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Clause.Arguments
-import Linglib.Studies.Bobaljik2008
+module
+
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Morphology.Root.Certificates
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Clause.Arguments
+public import Linglib.Studies.Bobaljik2008
 
 /-!
 # Harley (2014): On the identity of roots
@@ -42,6 +44,8 @@ of `Data/Examples/Harley2014.json`.
 * [harley-2014]
 * [bobaljik-2008]
 -/
+
+@[expose] public section
 
 namespace Harley2014
 

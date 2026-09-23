@@ -1,9 +1,11 @@
-import Linglib.Core.Data.UnorderedTree.Leaves
-import Mathlib.Logic.Relation
-import Linglib.Core.Data.UnorderedTree.FilterMap
-import Linglib.Core.Data.UnorderedTree.DecEq
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Lattice.Basic
+module
+
+public import Linglib.Core.Data.UnorderedTree.Leaves
+public import Mathlib.Logic.Relation
+public import Linglib.Core.Data.UnorderedTree.FilterMap
+public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Lattice.Basic
 
 /-!
 # Senturia and Marcolli (2025): The Algebraic Structure of Morphosyntax
@@ -58,6 +60,8 @@ between the syntactic and morphosyntactic algebras over the Merge operad (Theore
 * [marcolli-chomsky-berwick-2025]
 * [hewett-2023]
 -/
+
+@[expose] public section
 
 namespace SenturiaMarcolli2025
 
@@ -316,11 +320,11 @@ occupies a leaf on each side, so the composite has strictly more leaves.
 The witness is [senturia-marcolli-2025] Example 5.7: `[φ, α, β, γ]` with
 kept sets `[φ, γ]` and `[φ, α, β]`. -/
 
-private inductive Feat where
+inductive Feat where
   | phi | alpha | beta | gamma
   deriving DecidableEq, Repr
 
-private def exTree : RoseTree (Feat ⊕ Unit) :=
+def exTree : RoseTree (Feat ⊕ Unit) :=
   .node (.inr ()) [.node (.inr ()) [.node (.inl .phi) [], .node (.inl .alpha) []],
     .node (.inr ()) [.node (.inl .beta) [], .node (.inl .gamma) []]]
 

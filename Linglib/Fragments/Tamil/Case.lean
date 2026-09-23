@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Tamil Case Inventory
@@ -13,6 +15,8 @@ both functions), a pattern documented cross-linguistically ([blake-1994];
 WALS Ch. 52).
 
 -/
+
+@[expose] public section
 
 namespace Tamil.Case
 

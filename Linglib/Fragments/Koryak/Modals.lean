@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Koryak Modal Inventory
@@ -21,12 +23,14 @@ We encode the 3×3-projected meaning here. The full doxastic/assertive
 distinction requires a finer-grained flavor type than `ModalFlavor`.
 -/
 
+@[expose] public section
+
 namespace Koryak
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
 
 /-- *ivək* — variable-force attitude verb.
     Doxastic: 'believe' (necessity) / 'allow for the possibility that' (possibility).

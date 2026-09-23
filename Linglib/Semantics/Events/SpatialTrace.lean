@@ -1,5 +1,7 @@
-import Linglib.Semantics.Events.CEM
-import Linglib.Semantics.Events.Path
+module
+
+public import Linglib.Semantics.Events.CEM
+public import Linglib.Semantics.Events.Path
 
 /-!
 # Spatial trace function σ
@@ -20,6 +22,8 @@ homomorphism and injectivity — are stated at use sites.
 * `Trace.unbounded_path_atelic`: CUM path predicates pull back through a
   sum-homomorphic σ — *walk towards the store* is atelic.
 -/
+
+@[expose] public section
 
 open Mereology
 

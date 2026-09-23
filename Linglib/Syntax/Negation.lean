@@ -1,7 +1,9 @@
-import Linglib.Data.WALS.Features.F112A
-import Linglib.Data.WALS.Features.F114A
-import Linglib.Syntax.Category.Auxiliary.Constructions
-import Linglib.Morphology.Morph
+module
+
+public import Linglib.Data.WALS.Features.F112A
+public import Linglib.Data.WALS.Features.F114A
+public import Linglib.Syntax.Category.Auxiliary.Constructions
+public import Linglib.Morphology.Morph
 
 /-!
 # Standard negation
@@ -48,6 +50,8 @@ marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 * [anderson-2006a], §1.7.2
 * [jin-koenig-2021]
 -/
+
+@[expose] public section
 
 namespace Negation
 

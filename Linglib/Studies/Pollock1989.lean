@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Pollock1989
-import Mathlib.Order.Basic
+module
+
+public import Linglib.Data.Examples.Pollock1989
+public import Mathlib.Order.Basic
 
 /-!
 # Pollock (1989): Verb Movement, Universal Grammar, and the Structure of IP
@@ -37,6 +39,8 @@ gerunds, and the ECP account of why *not* alone blocks affix lowering are not fo
 
 * [pollock-1989]
 -/
+
+@[expose] public section
 
 namespace Pollock1989
 

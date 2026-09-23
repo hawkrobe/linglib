@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Mandarin Polarity-Sensitive Items
@@ -23,6 +25,8 @@ entry lists those contexts.
 * [li-1992]
 * [li-thompson-1981], pp. 528–530
 -/
+
+@[expose] public section
 
 namespace Mandarin.PolarityItems
 

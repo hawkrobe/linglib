@@ -1,4 +1,6 @@
-import Linglib.Semantics.Conditionals.Reading
+module
+
+public import Linglib.Semantics.Conditionals.Reading
 
 /-!
 # Mandarin conditional markers
@@ -11,6 +13,8 @@ reading; the O-marking and X-marking of a Mandarin conditional is carried by per
 
 * [mizuno-2024]
 -/
+
+@[expose] public section
 
 namespace Mandarin.Conditionals
 

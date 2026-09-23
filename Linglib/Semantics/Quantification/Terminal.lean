@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Quantification.NP
-import Linglib.Semantics.Composition.Ty
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Composition.Ty
 
 /-!
 # Determiner readings as composition terminals
@@ -25,6 +27,8 @@ word's available readings, and the string lexicon shrinks to the words no carrie
 * [heim-kratzer-1998]
 * [barwise-cooper-1981]
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

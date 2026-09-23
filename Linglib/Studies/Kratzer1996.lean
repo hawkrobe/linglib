@@ -1,7 +1,9 @@
-import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
-import Linglib.Syntax.Minimalist.Verbal.Voice
+module
+
+public import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Kratzer (1996): Severing the External Argument from its Verb
@@ -27,6 +29,8 @@ structural claim is its c-command relations.
 * [kratzer-1996]
 * [marantz-1984] — the asymmetry between internal and external arguments the paper builds on
 -/
+
+@[expose] public section
 
 namespace Kratzer1996
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Partition.Inquisitive
-import Linglib.Semantics.Presupposition.Defs
-import Linglib.Data.Examples.DeoThomas2025
+module
+
+public import Linglib.Semantics.Questions.Partition.Inquisitive
+public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Data.Examples.DeoThomas2025
 
 /-!
 # Deo and Thomas (2025): Addressing the widest answerable question
@@ -61,6 +63,8 @@ causal structure, nor the Focus Principle, (21).
 * [wiegand-2018]
 * [warstadt-2020]
 -/
+
+@[expose] public section
 
 namespace DeoThomas2025
 

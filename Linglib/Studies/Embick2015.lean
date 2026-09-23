@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Embick2015
-import Linglib.Fragments.Korean.Phonology
-import Linglib.Morphology.DistributedMorphology.ComplexHead
+module
+
+public import Linglib.Data.Examples.Embick2015
+public import Linglib.Fragments.Korean.Phonology
+public import Linglib.Morphology.DistributedMorphology.ComplexHead
 
 /-!
 # Embick (2015): The Morpheme: A Theoretical Introduction
@@ -45,6 +47,8 @@ may see the phonological features of a realized exponent.
 * [bobaljik-2000]
 * [carstairs-1987]
 -/
+
+@[expose] public section
 
 namespace Embick2015
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Counting
-import Mathlib.Order.Bounds.Basic
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Mathlib.Order.Bounds.Basic
 
 /-!
 # Exceptive quantifiers
@@ -34,6 +36,8 @@ generalization.
 * [von-fintel-1993]
 * [peters-westerstahl-2006]
 -/
+
+@[expose] public section
 
 namespace Quantifier.Exceptive
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Causal Sufficiency
@@ -19,6 +21,8 @@ inevitable once the cause is in place.
 V2 `SEM V α` substrate. Bool models pass `xC = xE = true` at the call
 site; multi-valued models supply genuine values.
 -/
+
+@[expose] public section
 
 namespace Causation.Sufficiency
 

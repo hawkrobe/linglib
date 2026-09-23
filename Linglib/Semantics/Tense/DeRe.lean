@@ -1,6 +1,8 @@
-import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Tense.Embedding
+module
+
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Semantics.Tense.Embedding
 
 /-!
 # Centered-world temporal de re
@@ -27,6 +29,8 @@ the Abusch-canonical case) and metaphysical ([klecha-2016] DOX via
 `HistoricalAlternatives.actualHistoryBase`) modal bases are call-site
 instantiations (`doxasticAlternatives`, `metaphysicalAlternatives`).
 -/
+
+@[expose] public section
 
 namespace Tense.DeRe
 

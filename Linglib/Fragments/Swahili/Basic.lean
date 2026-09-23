@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Swahili noun classes
@@ -15,6 +17,8 @@ the form of the resumptive pronoun.
 * [carstens-1991]
 * [scott-2021]
 -/
+
+@[expose] public section
 
 namespace Swahili
 

@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
-import Linglib.Studies.McKayVanInwagen1977
-import Linglib.Data.Examples.AlonsoOvalle2009
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
+public import Linglib.Studies.McKayVanInwagen1977
+public import Linglib.Data.Examples.AlonsoOvalle2009
 
 /-!
 # Alonso-Ovalle (2009): counterfactuals, correlatives, and disjunction
@@ -42,6 +44,8 @@ The paper's verdicts are checked in `rows_agree`.
 * [bennett-2003]
 * [lewis-1977]
 -/
+
+@[expose] public section
 
 namespace AlonsoOvalle2009
 

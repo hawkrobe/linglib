@@ -1,6 +1,8 @@
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Fragments.Xhosa.Basic
+module
+
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Fragments.Xhosa.Basic
 
 /-!
 # Xhosa nouns
@@ -19,6 +21,8 @@ class 1, from which they differ only in the nominal prefix.
 * [mletshe-2019]
 * [halpert-hammerly-2026]
 -/
+
+@[expose] public section
 
 namespace Xhosa
 

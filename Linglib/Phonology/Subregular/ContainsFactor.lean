@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.StarFree
-import Linglib.Phonology.Subregular.Aperiodicity
+module
+
+public import Linglib.Core.Computability.StarFree
+public import Linglib.Phonology.Subregular.Aperiodicity
 
 /-!
 # Containing (and avoiding) a fixed factor is star-free
@@ -30,6 +32,8 @@ Star-free = `FO[<]`-definable = counter-free ([schutzenberger-1965] [mcnaughton-
 * `Language.isStarFree_containsFactor`: `{x | c <:+: x}` is star-free, `α` arbitrary.
 * `Language.isStarFree_avoidsFactor`: `{x | ¬ c <:+: x}` is star-free, `α` arbitrary.
 -/
+
+@[expose] public section
 
 
 namespace Language.ContainsFactor

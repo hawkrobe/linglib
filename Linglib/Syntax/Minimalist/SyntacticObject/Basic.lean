@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Linglib.Core.Data.UnorderedTree.DecEq
-import Linglib.Syntax.Minimalist.Defs
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Linglib.Syntax.Minimalist.Defs
 
 /-!
 # Syntactic objects
@@ -40,6 +42,8 @@ the vocabulary the two carriers share, `leaf`, `trace`, `traceOf` and `merge`.
 * [marcolli-chomsky-berwick-2025], §1.1 (Definition 1.1.1, §1.1.3), §1.2 (Definitions 1.2.1,
   1.2.6) and §1.12
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

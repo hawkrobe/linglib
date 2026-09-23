@@ -1,4 +1,6 @@
-import Linglib.Semantics.Degree.Measure.Quantity
+module
+
+public import Linglib.Semantics.Degree.Measure.Quantity
 
 /-!
 # English measure phrases
@@ -14,6 +16,8 @@ dimension's reference unit, so that `kilogram.quantity = pure 1000 * gram.quanti
 * [scontras-2014]
 * [bale-schwarz-2022]
 -/
+
+@[expose] public section
 
 namespace English.MeasurePhrases
 

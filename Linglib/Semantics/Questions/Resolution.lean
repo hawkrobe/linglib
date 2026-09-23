@@ -1,5 +1,7 @@
-import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.Hamblin
+module
+
+public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # Answerhood predicates on questions
@@ -36,6 +38,8 @@ answers everything, as in [roberts-2012].
 * [roberts-2012]
 * [theiler-etal-2018]
 -/
+
+@[expose] public section
 
 namespace Question
 

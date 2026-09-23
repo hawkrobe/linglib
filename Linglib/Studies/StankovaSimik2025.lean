@@ -1,8 +1,10 @@
-import Linglib.Fragments.Slavic.Czech.Particles
-import Linglib.Fragments.Slavic.Czech.PolarityItems
-import Linglib.Semantics.Questions.Bias
-import Linglib.Logic.Modal.Defs
-import Linglib.Studies.Simik2024
+module
+
+public import Linglib.Fragments.Slavic.Czech.Particles
+public import Linglib.Fragments.Slavic.Czech.PolarityItems
+public import Linglib.Semantics.Questions.Bias
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Studies.Simik2024
 
 /-!
 # Staňková and Šimík (2025): Negation in Czech Polar Questions
@@ -50,6 +52,8 @@ main effect of context for *copak* questions; these results are stated in prose 
 * [nekula-1996]
 * [simik-2024]
 -/
+
+@[expose] public section
 
 namespace StankovaSimik2025
 

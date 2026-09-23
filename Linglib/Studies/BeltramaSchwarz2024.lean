@@ -1,12 +1,14 @@
-import Linglib.Semantics.Quantification.Numerals.Roundness
-import Linglib.Semantics.Quantification.Numerals.Precision
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Pragmatics.SocialMeaning.Dimension
-import Linglib.Pragmatics.SocialMeaning.Persona
-import Linglib.Studies.BeltramaSoltBurnett2023
-import Linglib.Data.Examples.BeltramaSchwarz2024
-import Mathlib.Basic.Sign.Defs
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Semantics.Quantification.Numerals.Precision
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
+public import Linglib.Pragmatics.SocialMeaning.Dimension
+public import Linglib.Pragmatics.SocialMeaning.Persona
+public import Linglib.Studies.BeltramaSoltBurnett2023
+public import Linglib.Data.Examples.BeltramaSchwarz2024
+public import Mathlib.Basic.Sign.Defs
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Social stereotypes and imprecision resolution
@@ -54,6 +56,8 @@ stimulus and observed directions are the rows of `Data.Examples.BeltramaSchwarz2
 * [donofrio-2018] — the persona-label paradigm; [fricker-2007] — testimonial injustice;
   [krifka-2007] — round-number imprecision.
 -/
+
+@[expose] public section
 
 namespace BeltramaSchwarz2024
 
@@ -321,13 +325,13 @@ private theorem predictedShift_eq_ite (c : PersonaCondition) (t : TaskType) :
 def observedDirection (s : String) : SignType :=
   if s == "higher" then 1 else if s == "lower" then -1 else 0
 
-private def parsePersona : String → Option PersonaCondition
+def parsePersona : String → Option PersonaCondition
   | "nerdy"     => some (some .nerdy)
   | "chill"     => some (some .chill)
   | "noPersona" => some none
   | _           => none
 
-private def parseTask : String → Option TaskType
+def parseTask : String → Option TaskType
   | "coveredScreen"      => some .coveredScreen
   | "truthValueJudgment" => some .truthValueJudgment
   | _                    => none

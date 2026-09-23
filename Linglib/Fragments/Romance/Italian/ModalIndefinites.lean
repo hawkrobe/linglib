@@ -1,10 +1,14 @@
-import Linglib.Syntax.Category.Determiner.ModalIndefinite
+module
+
+public import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
 # Italian modal indefinites
 
 Lexical entry for *un qualsiasi* ([chierchia-2013]).
 -/
+
+@[expose] public section
 
 namespace Italian.ModalIndefinites
 

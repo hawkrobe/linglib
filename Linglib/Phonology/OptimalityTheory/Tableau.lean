@@ -1,9 +1,11 @@
-import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.OptimalityTheory.Ranking
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.Constraints.Profile
-import Mathlib.GroupTheory.Perm.Basic
-import Mathlib.Data.List.Permutation
+module
+
+public import Linglib.Core.Optimization.Evaluation
+public import Linglib.Phonology.OptimalityTheory.Ranking
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.Constraints.Profile
+public import Mathlib.GroupTheory.Perm.Basic
+public import Mathlib.Data.List.Permutation
 
 /-!
 # Tableaux
@@ -49,6 +51,8 @@ computation.
 * `Tableau.ofRanking_optimal_zero_first` — a satisfiable top constraint forces all
   winners to satisfy it.
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 

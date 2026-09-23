@@ -1,6 +1,8 @@
-import Linglib.Semantics.Reference.Description
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.German.Determiners
+module
+
+public import Linglib.Semantics.Reference.Description
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.German.Determiners
 
 /-!
 # Schwarz (2009): Two Types of Definites in Natural Language
@@ -27,6 +29,8 @@ antecedent (`weak_article_fails_on_multi`, `strong_article_picks_indexed_anteced
 * [coppock-beaver-2015]
 * [patel-grosz-grosz-2017]
 -/
+
+@[expose] public section
 
 namespace Schwarz2009
 

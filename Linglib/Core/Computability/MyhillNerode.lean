@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Set.Finite.Basic
-import Mathlib.Data.Set.Finite.Range
-import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.Bimachine
+module
+
+public import Mathlib.Data.Set.Finite.Basic
+public import Mathlib.Data.Set.Finite.Range
+public import Linglib.Core.Computability.Mealy
+public import Linglib.Core.Computability.Bimachine
 
 /-!
 # Myhill–Nerode theorems for transducers
@@ -45,6 +47,8 @@ bimachine of [reutenauer-schutzenberger-1991], surveyed in [filiot-reynier-2016]
 [UPSTREAM] candidate: `Mathlib.Computability.MyhillNerode` (as transducer sections of
 the existing file, with `residual` beside `Language.leftQuotient`).
 -/
+
+@[expose] public section
 
 variable {α β : Type*} (f : List α → List β)
 

@@ -1,8 +1,10 @@
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Set.Finite.Range
-import Mathlib.SetTheory.Cardinal.Finite
-import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Set.Finite.Range
+public import Mathlib.SetTheory.Cardinal.Finite
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Agreement classes and target genders
@@ -58,6 +60,8 @@ German, or neither determines the other, as in Romanian or Lak.
   singular
 * [corbett-1998] — polarity
 -/
+
+@[expose] public section
 
 namespace Gender
 

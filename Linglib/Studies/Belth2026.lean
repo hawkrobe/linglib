@@ -1,9 +1,11 @@
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Linglib.Phonology.Harmony.System
-import Linglib.Fragments.Finnish.Phonology
-import Linglib.Fragments.Turkish.Phonology
-import Linglib.Studies.Yang2016
-import Linglib.Data.Examples.Belth2026
+module
+
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Linglib.Phonology.Harmony.System
+public import Linglib.Fragments.Finnish.Phonology
+public import Linglib.Fragments.Turkish.Phonology
+public import Linglib.Studies.Yang2016
+public import Linglib.Data.Examples.Belth2026
 
 /-!
 # Belth (2026): A Learning-Based Account of Phonological Tiers
@@ -47,6 +49,8 @@ the paper does not print, so the learned rules (40) and (44) are not run here.
 * [yang-2016]
 * [goksel-kerslake-2005]
 -/
+
+@[expose] public section
 
 namespace Belth2026
 

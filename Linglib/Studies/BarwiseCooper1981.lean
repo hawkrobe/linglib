@@ -1,12 +1,14 @@
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Quantification.Properties
-import Linglib.Semantics.Quantification.Lindstrom
-import Linglib.Fragments.English.Determiners
-import Linglib.Semantics.Composition.Reduction
-import Linglib.Data.Examples.BarwiseCooper1981
-import Mathlib.Data.Finset.Fin
-import Mathlib.Data.Set.Card
-import Mathlib.Order.Interval.Finset.Nat
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Semantics.Quantification.Lindstrom
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Semantics.Composition.Reduction
+public import Linglib.Data.Examples.BarwiseCooper1981
+public import Mathlib.Data.Finset.Fin
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # Barwise and Cooper 1981: generalized quantifiers and natural language
@@ -48,6 +50,8 @@ their own §4.8 discussion of *many* and *few* already marks as unstable. Partia
 * [milsark-1977]
 * [mostowski-1957]
 -/
+
+@[expose] public section
 
 open Quantifier Quantifier.GQ Quantifier.NP
 

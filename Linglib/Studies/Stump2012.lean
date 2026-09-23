@@ -1,8 +1,10 @@
-import Linglib.Data.Forms.Stump2012
-import Linglib.Morphology.Paradigm.Linkage
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Sum
+module
+
+public import Linglib.Data.Forms.Stump2012
+public import Linglib.Morphology.Paradigm.Linkage
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sum
 
 /-!
 # Stump (2012): The Formal and Functional Architecture of Inflectional Morphology
@@ -48,6 +50,8 @@ described only in the docstring of the virtual form cell.
 * [stump-2012-mmm8]
 * [hippisley-2010]
 -/
+
+@[expose] public section
 
 namespace Stump2012
 

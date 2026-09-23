@@ -1,6 +1,8 @@
-import Linglib.Data.PHOIBLE.Inventories.Tagalog
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.NasalSubstitution
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Tagalog
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.NasalSubstitution
 
 /-!
 # Tagalog phonology
@@ -37,6 +39,8 @@ and Hayes and of Magri.
 * [magri-2025]
 * [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Data.PHOIBLE
 

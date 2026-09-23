@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Minimalist.Defs
-import Linglib.Syntax.Minimalist.Verbal.LittleV
-import Linglib.Syntax.Minimalist.Verbal.Voice
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Minimalist.Defs
+public import Linglib.Syntax.Minimalist.Verbal.LittleV
+public import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Applicative heads
@@ -54,6 +56,8 @@ heads cannot state, and `Studies/Cuervo2003` states her licensing over sites ins
 * [schaefer-2008]
 * [wood-2015]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

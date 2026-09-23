@@ -1,9 +1,11 @@
-import Linglib.Fragments.English.TemporalDeictic
-import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
-import Linglib.Fragments.Hebrew.TemporalDeictic
-import Linglib.Fragments.Japanese.TemporalDeictic
-import Linglib.Fragments.Slavic.Russian.TemporalDeictic
-import Linglib.Data.Examples.TsiliaZhao2026
+module
+
+public import Linglib.Fragments.English.TemporalDeictic
+public import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
+public import Linglib.Fragments.Hebrew.TemporalDeictic
+public import Linglib.Fragments.Japanese.TemporalDeictic
+public import Linglib.Fragments.Slavic.Russian.TemporalDeictic
+public import Linglib.Data.Examples.TsiliaZhao2026
 
 /-!
 # Tsilia and Zhao (2026): Tense and Perspective: A Solution to the ⌈then⌉-Present Puzzle
@@ -64,6 +66,8 @@ not state.
 * [abusch-1988]
 * [heim-1992]
 -/
+
+@[expose] public section
 
 namespace TsiliaZhao2026
 

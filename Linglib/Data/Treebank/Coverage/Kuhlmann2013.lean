@@ -1,4 +1,6 @@
-import Linglib.Data.Treebank.Coverage.Schema
+module
+
+public import Linglib.Data.Treebank.Coverage.Schema
 
 /-!
 # Kuhlmann2013 — treebank coverage (generated)
@@ -15,6 +17,8 @@ records the losses the paper prints, and the generated rows carry the covered co
 rule total is printed as 5,839, which does not agree with the paper's stated 0.74% rule loss at
 fan-out 1 (411 rules); the printed value is kept.
 -/
+
+@[expose] public section
 
 namespace Data.Treebank.Coverage.Kuhlmann2013
 

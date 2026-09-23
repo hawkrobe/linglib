@@ -1,8 +1,10 @@
-import Linglib.Morphology.Paradigm.Analogy
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
+
+public import Linglib.Morphology.Paradigm.Analogy
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Paradigm complexity: implicative structure and entropy over cells
@@ -46,6 +48,8 @@ classes.
 * [bonami-beniamine-2016]
 * [carstairs-mccarthy-2010]
 -/
+
+@[expose] public section
 
 namespace Morphology
 

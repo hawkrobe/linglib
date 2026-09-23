@@ -1,9 +1,11 @@
-import Linglib.Core.Data.Fintype.Order
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Fintype.EquivFin
-import Linglib.Phonology.FeatureGeometry
-import Linglib.Phonology.Segmental.FeatureClass
-import Linglib.Data.Examples.HalleVauxWolfe2000
+module
+
+public import Linglib.Core.Data.Fintype.Order
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.EquivFin
+public import Linglib.Phonology.FeatureGeometry
+public import Linglib.Phonology.Segmental.FeatureClass
+public import Linglib.Data.Examples.HalleVauxWolfe2000
 
 /-!
 # Halle, Vaux, and Wolfe (2000): On Feature Spreading and the Representation of Place of Articulation
@@ -54,6 +56,8 @@ tongue-root features are [ATR] and [RTR] and Hayes's [tense] is not identified w
 * [hayes-2009]
 * [sagey-1986]
 -/
+
+@[expose] public section
 
 namespace HalleVauxWolfe2000
 

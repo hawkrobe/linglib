@@ -1,17 +1,19 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Inv
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Evidential.Basic
-import Linglib.Fragments.Turkish.Evidentiality
-import Linglib.Fragments.Abkhaz.Evidentiality
-import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
-import Linglib.Fragments.Quechua.Evidentiality
-import Linglib.Fragments.Tuyuca.Evidentiality
-import Linglib.Fragments.Tariana.Evidentiality
-import Linglib.Fragments.Kashaya.Evidentiality
-import Linglib.Fragments.Romance.French.Evidentiality
-import Linglib.Fragments.Japanese.Evidentiality
-import Linglib.Data.Examples.Aikhenvald2004
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Inv
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Evidential.Basic
+public import Linglib.Fragments.Turkish.Evidentiality
+public import Linglib.Fragments.Abkhaz.Evidentiality
+public import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
+public import Linglib.Fragments.Quechua.Evidentiality
+public import Linglib.Fragments.Tuyuca.Evidentiality
+public import Linglib.Fragments.Tariana.Evidentiality
+public import Linglib.Fragments.Kashaya.Evidentiality
+public import Linglib.Fragments.Romance.French.Evidentiality
+public import Linglib.Fragments.Japanese.Evidentiality
+public import Linglib.Data.Examples.Aikhenvald2004
 
 /-!
 # Aikhenvald (2004): Evidentiality
@@ -46,6 +48,8 @@ fits no kind.
 * [oswalt-1986]
 * [willett-1988]
 -/
+
+@[expose] public section
 
 namespace Aikhenvald2004
 

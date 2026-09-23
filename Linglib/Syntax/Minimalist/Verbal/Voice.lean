@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Features
+module
+
+public import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Voice heads
@@ -68,6 +70,8 @@ event structure below Voice is `Minimalist.LittleV`.
 * [siloni-2012]
 * [wood-2015]
 -/
+
+@[expose] public section
 
 namespace Minimalist.Voice
 

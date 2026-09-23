@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Minimalist.Case.Dependent
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Minimalist.Case.Dependent
 
 /-!
 # Yakut (Sakha) case
@@ -12,6 +14,8 @@ homophonous with the nominative except after a third-person possessive suffix.
 
 * [baker-vinokurova-2010]
 -/
+
+@[expose] public section
 
 namespace Yakut.Case
 

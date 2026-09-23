@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.HPSG.Description
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Syntax.HPSG.Description
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The construct hierarchy of Sign-Based Construction Grammar in RSRL
@@ -79,6 +81,8 @@ filler-gap clauses is derived in `Studies/Sag2010`.
 * [richter-2000]
 * [richter-2024]
 -/
+
+@[expose] public section
 
 namespace HPSG.Construction
 

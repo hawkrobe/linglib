@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Context.Shifts
-import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Reference.Kaplan
+module
+
+public import Linglib.Semantics.Reference.Context.Tower
+public import Linglib.Semantics.Reference.Context.Shifts
+public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Semantics.Reference.Kaplan
 
 /-!
 # Schlenker (2003): A Plea for Monsters
@@ -44,6 +46,8 @@ defined.
 * [kaplan-1989]
 * [hintikka-1962]
 -/
+
+@[expose] public section
 
 namespace Schlenker2003
 

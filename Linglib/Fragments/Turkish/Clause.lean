@@ -1,9 +1,11 @@
-import Mathlib.Data.Finset.Union
-import Linglib.Data.UD.Features
-import Linglib.Morphology.Morph
-import Linglib.Fragments.Turkish.Morphotactics
-import Linglib.Fragments.Turkish.Negation
-import Linglib.Syntax.Clause.Chaining
+module
+
+public import Mathlib.Data.Finset.Union
+public import Linglib.Data.UD.Features
+public import Linglib.Morphology.Morph
+public import Linglib.Fragments.Turkish.Morphotactics
+public import Linglib.Fragments.Turkish.Negation
+public import Linglib.Syntax.Clause.Chaining
 
 /-!
 # Turkish converbs
@@ -28,6 +30,8 @@ doubled verb: *-(A/I)r … -mAz* 'as soon as' and *-(y)A … -(y)A*, continuous 
 
 * [goksel-kerslake-2005]
 -/
+
+@[expose] public section
 
 namespace Turkish
 

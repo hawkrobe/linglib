@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Subsingleton
-import Linglib.Semantics.Quantification.Basic
+module
+
+public import Mathlib.Data.Set.Subsingleton
+public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # The Russellian iota
@@ -34,6 +36,8 @@ applied to the scope (`the_sem_iff_russellIota`, `the_sem_iff_THE`).
 * [coppock-beaver-2015]
 * [partee-1987]
 -/
+
+@[expose] public section
 
 variable {α : Type*} {p : α → Prop}
 

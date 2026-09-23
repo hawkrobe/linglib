@@ -1,5 +1,7 @@
-import Linglib.Syntax.Person.Category
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Linglib.Syntax.Person.Category
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Hausa TAM and the Person-Aspect-Complex (PAC) — mathlib-style
@@ -42,6 +44,8 @@ file is free to construct a deliberately ill-formed PAC and prove it
 ill-formed (see `Focus.lean`'s `exSitu_with_genCmp`, which is exactly
 that pattern).
 -/
+
+@[expose] public section
 
 namespace Hausa
 

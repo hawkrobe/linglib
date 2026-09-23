@@ -1,5 +1,7 @@
-import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Logic.Trivalent.Prop3
+module
+
+public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Logic.Trivalent.Prop3
 
 /-!
 # Trivalent exhaustification
@@ -23,6 +25,8 @@ and both `false` and `indet` to `false`.
 * [spector-sudo-2017]
 * [fox-2007]
 -/
+
+@[expose] public section
 
 namespace Exhaustification.Trivalent
 

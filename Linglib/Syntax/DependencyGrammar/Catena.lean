@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.DependencyGrammar.Dominance
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+module
+
+public import Linglib.Syntax.DependencyGrammar.Dominance
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
 # Catenae
@@ -13,6 +15,8 @@ This file defines a catena: a word or combination of words connected in
 the undirected presentation of a dependency tree. 
 
 -/
+
+@[expose] public section
 
 namespace DependencyGrammar
 

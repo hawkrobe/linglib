@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Hausa Gender Fragment
@@ -54,6 +56,8 @@ The cross-framework theorems live in `Studies/Kramer2020.lean`.
 Spanish/Russian/German Fragment Gender files still bake in DM `Categorizer.Head`
 fields; Hausa is the pilot for theory-neutral Fragment-layer encoding.
 -/
+
+@[expose] public section
 
 namespace Hausa
 

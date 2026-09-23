@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Harmony.Basic
-import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.SearchCopy
+module
+
+public import Linglib.Phonology.Harmony.Basic
+public import Linglib.Phonology.Segmental.Basic
+public import Linglib.Phonology.SearchCopy
 
 /-!
 # Harmony systems
@@ -63,6 +65,8 @@ enough: Uyghur backness harmony is not TSL ([mayer-major-2018]).
 * [rose-walker-2004]
 * [mayer-major-2018]
 -/
+
+@[expose] public section
 
 namespace Phonology.Harmony
 

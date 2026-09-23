@@ -1,4 +1,6 @@
-import Linglib.Studies.McCarthy2005
+module
+
+public import Linglib.Studies.McCarthy2005
 
 /-!
 # Marco and Rasin (2026): Optimal Paradigms
@@ -30,6 +32,8 @@ file and are UNVERIFIED.
 * [mccarthy-2005]
 * [bobaljik-2008]
 -/
+
+@[expose] public section
 
 namespace MarcoRasin2026
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Linearization.Replay
+module
+
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 
 /-!
 # Cinque 2005: Deriving Greenberg's Universal 20 and its exceptions
@@ -36,6 +38,8 @@ The demonstrative is `Cat.Dem`.
 * [J. A. Hawkins, *Word Order Universals* (1983)][hawkins-1983]
 * [R. S. Kayne, *The Antisymmetry of Syntax* (1994)][kayne-1994]
 -/
+
+@[expose] public section
 
 namespace Cinque2005
 
@@ -96,24 +100,24 @@ inductive Marked
   | withoutPiedPiping | pictureOfWho | partialMovement
   deriving DecidableEq, Repr
 
-private def tokN : LIToken := ⟨.simple .N [], 1⟩
-private def tokA : LIToken := ⟨.simple .A [], 2⟩
-private def tokNum : LIToken := ⟨.simple .Num [], 3⟩
-private def tokDem : LIToken := ⟨.simple .Dem [], 4⟩
+def tokN : LIToken := ⟨.simple .N [], 1⟩
+def tokA : LIToken := ⟨.simple .A [], 2⟩
+def tokNum : LIToken := ⟨.simple .Num [], 3⟩
+def tokDem : LIToken := ⟨.simple .Dem [], 4⟩
 
 /-- The tree contains the overt noun; a trace does not count (7b-vi). -/
-private def hasN : RoseTree SyntacticObject.Vertex → Bool
+def hasN : RoseTree SyntacticObject.Vertex → Bool
   | .node (.inl t) _ => t == tokN
   | .node (.inr none) [l, r] => hasN l || hasN r
   | .node (.inr _) _ => false
 
 /-- The noun is the tree's specifier, `[NP [XP]]` (fn. 21). -/
-private def specHasN : RoseTree SyntacticObject.Vertex → Bool
+def specHasN : RoseTree SyntacticObject.Vertex → Bool
   | .node (.inl t) _ => t == tokN
   | .node (.inr none) [l, _] => hasN l
   | .node (.inr _) _ => false
 
-private def subtrees : RoseTree SyntacticObject.Vertex → List (RoseTree SyntacticObject.Vertex)
+def subtrees : RoseTree SyntacticObject.Vertex → List (RoseTree SyntacticObject.Vertex)
   | t@(.node _ []) => [t]
   | t@(.node _ [l, r]) => t :: (subtrees l ++ subtrees r)
   | t@(.node _ _) => [t]
@@ -121,7 +125,7 @@ private def subtrees : RoseTree SyntacticObject.Vertex → List (RoseTree Syntac
 /-- The marked option used by raising `s` past a modifier whose complement is `c`: the whole
 complement pied-pipes, of the whose-picture type when the noun is its specifier and of the
 picture-of-who type otherwise, and a proper part strands the rest. -/
-private def markOf (c s : RoseTree SyntacticObject.Vertex) : Option Marked :=
+def markOf (c s : RoseTree SyntacticObject.Vertex) : Option Marked :=
   if s == c then (if specHasN s then none else some .pictureOfWho) else some .withoutPiedPiping
 
 /-- A stage of the enumeration: the derivation, its ordered form, the marked options of its raises
@@ -134,7 +138,7 @@ structure Stage where
 
 /-- Merge the modifier `m` above the current object, then optionally raise a subtree containing
 the overt noun to the left edge. -/
-private def step (m : LIToken) (st : Stage) : List Stage :=
+def step (m : LIToken) (st : Stage) : List Stage :=
   let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.em .left (leaf m)]⟩
   let p := m * st.planar
   ⟨d, p, st.marks, st.raises⟩ ::

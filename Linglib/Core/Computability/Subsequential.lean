@@ -5,15 +5,17 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.Subsequential`.
 -/
-import Mathlib.Computability.NFA
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Core.Computability.Mealy
-import Linglib.Core.Computability.ScanDirection
-import Linglib.Core.Data.Fintype.List
-import Linglib.Core.Data.Fintype.Transfer
-import Linglib.Core.Data.List.DropRight
-import Linglib.Core.Data.List.DependsOn
+module
+
+public import Mathlib.Computability.NFA
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Linglib.Core.Computability.Mealy
+public import Linglib.Core.Computability.ScanDirection
+public import Linglib.Core.Data.Fintype.List
+public import Linglib.Core.Data.Fintype.Transfer
+public import Linglib.Core.Data.List.DropRight
+public import Linglib.Core.Data.List.DependsOn
 
 /-!
 # Subsequential functions and finite-state transducers
@@ -86,6 +88,8 @@ the underlying `Mealy` machine. There are two disjoint sets of simp lemmas, one 
 * [sakarovitch-2009]
 * [filiot-reynier-2016]
 -/
+
+@[expose] public section
 
 variable {σ α β : Type*}
 

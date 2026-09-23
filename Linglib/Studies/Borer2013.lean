@@ -1,5 +1,7 @@
-import Linglib.Morphology.Realization
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Realization
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Borer 2013: categorizing roots and the adjective asymmetry
@@ -35,6 +37,8 @@ nothing about their adjectival behaviour predicts which, the verbal uses must be
 
 * [borer-2013]
 -/
+
+@[expose] public section
 
 namespace Borer2013
 

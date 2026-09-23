@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Embick2021
-import Linglib.Morphology.DistributedMorphology.Locality
+module
+
+public import Linglib.Data.Examples.Embick2021
+public import Linglib.Morphology.DistributedMorphology.Locality
 
 /-!
 # Embick (2021): The Motivation for Roots in Distributed Morphology
@@ -35,6 +37,8 @@ are both words, the word cannot be the domain; the domains are the cycles.
 * [embick-marantz-2008]
 * [embick-2010]
 -/
+
+@[expose] public section
 
 namespace Embick2021
 

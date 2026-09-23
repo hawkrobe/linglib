@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.BSML.Properties
-import Linglib.Logic.Team.BSML.Characteristic
+module
+
+public import Linglib.Logic.Team.BSML.Properties
+public import Linglib.Logic.Team.BSML.Characteristic
 
 /-!
 # Expressive completeness for BSML
@@ -36,6 +38,8 @@ The theorem splits into two halves:
 * `expressiveCompleteness_converse` — the converse.
 * `expressivelyComplete` — the headline equality.
 -/
+
+@[expose] public section
 
 namespace BSML
 

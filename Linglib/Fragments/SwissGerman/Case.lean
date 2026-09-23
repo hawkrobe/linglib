@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 /-!
 # Swiss German Case and Verb Subcategorization [shieber-1985]
 
@@ -15,6 +17,8 @@ This case-verb pairing is what makes Swiss German cross-serial dependencies
 produce the pattern a^m b^n c^m d^n (DAT-NPs, ACC-NPs, DAT-Vs, ACC-Vs),
 which is not context-free.
 -/
+
+@[expose] public section
 
 namespace SwissGerman.Case
 

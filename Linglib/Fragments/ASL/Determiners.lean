@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Denotation
 
 /-!
 # ASL quantifier signs
@@ -19,6 +21,8 @@ classified in the study, not here.
 * [K. Davidson and D. Gagne, *"More is up" for domain restriction in ASL*
   (2022)][davidson-gagne-2022]
 -/
+
+@[expose] public section
 
 namespace ASL.Determiners
 

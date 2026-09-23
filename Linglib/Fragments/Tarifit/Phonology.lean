@@ -1,4 +1,6 @@
-import Linglib.Phonology.Segmental.PHOIBLE
+module
+
+public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Tarifit phones
@@ -30,6 +32,8 @@ fricative. PHOIBLE has no Tarifit inventory.
 * [parker-2002]
 * [moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Data.PHOIBLE
 

@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Processing.Expectation.PrefixProbability
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.MeasureTheory.Measure.Real
+module
+
+public import Linglib.Processing.Expectation.PrefixProbability
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # Hale (2001): A Probabilistic Earley Parser as a Psycholinguistic Model
@@ -41,6 +43,8 @@ stated for any probability measure over structures with string yields.
 * [stolcke-1995]
 * [levy-2008]
 -/
+
+@[expose] public section
 
 namespace Hale2001
 

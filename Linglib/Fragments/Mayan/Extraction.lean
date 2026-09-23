@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Mayan extraction morphology
@@ -27,6 +29,8 @@ extraction from each site licenses.
 * [polian-2017]
 * [stiebels-2006]
 -/
+
+@[expose] public section
 
 namespace Mayan
 

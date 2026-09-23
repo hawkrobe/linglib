@@ -13,9 +13,11 @@ Authors: Robert Hawkins
 * [J. Chandlee and J. Heinz, *Strict Locality and Phonological Maps* (2018)][chandlee-heinz-2018]
 * [M. Mohri, *Finite-State Transducers in Language and Speech Processing* (1997)][mohri-1997]
 -/
-import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Subregular.ISL
-import Mathlib.Data.Finset.Piecewise
+module
+
+public import Linglib.Phonology.Segmental.Basic
+public import Linglib.Phonology.Subregular.ISL
+public import Mathlib.Data.Finset.Piecewise
 
 /-!
 # Local phonological rewrite rules
@@ -78,6 +80,8 @@ larger Output Strictly Local class (`Subregular.OSLRule`).
   which is why `Rule.isLeftInputStrictlyLocal` assumes no right reach and
   `Rule.isLeftSubsequential` is what survives without it.
 -/
+
+@[expose] public section
 
 namespace Subregular.LocalRewrite
 

@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.QBSML.Enrichment
-import Linglib.Logic.Team.QBSML.Properties
+module
+
+public import Linglib.Logic.Team.QBSML.Enrichment
+public import Linglib.Logic.Team.QBSML.Properties
 
 /-!
 # QBSML free-choice facts
@@ -57,6 +59,8 @@ s ≠ ∅ and M, s ⫤ [Pa ∨ Pb]⁺" — frame conditions on `R` are not invok
 Facts 7 and the quantified composite hold with the *derived* `□` even though
 its enrichment differs from the paper's primitive `[□φ]⁺ = □[φ]⁺ ∧ NE`.
 -/
+
+@[expose] public section
 
 namespace QBSML
 

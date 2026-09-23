@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Floating
+module
+
+public import Linglib.Phonology.Autosegmental.Floating
 
 /-!
 # Lexical melodies
@@ -42,6 +44,8 @@ Consistency of Exponence, that GEN never alters morphemic affiliation, holds by 
 * [bye-svenonius-2012]
 * [zimmermann-2024]
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

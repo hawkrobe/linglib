@@ -1,7 +1,9 @@
-import Linglib.Semantics.Dynamic.DRS.Presheaf
-import Mathlib.CategoryTheory.Sites.IsSheafFor
-import Mathlib.Data.Finset.Union
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Presheaf
+public import Mathlib.CategoryTheory.Sites.IsSheafFor
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Gluing basic DRSs
@@ -36,6 +38,8 @@ unification of referents.
 * [abramsky-sadrzadeh-2014]
 * [mac-lane-moerdijk-1992]
 -/
+
+@[expose] public section
 
 open CategoryTheory FirstOrder
 

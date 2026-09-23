@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # Finnish temporal connectives
@@ -16,6 +18,8 @@ sample, has both polarities of the punctual one: the negated *ennen kuin*, whose
 * [heinamaki-1974]
 * [karttunen-1974]
 -/
+
+@[expose] public section
 
 namespace Finnish.TemporalConnectives
 

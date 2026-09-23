@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Case assignment provenance — the neutral source ontology
@@ -22,6 +24,8 @@ ergative, is "structural" is a contested claim about its *source*
 ([woolford-2006]), which different accounts answer differently — so it is
 not a property of the `Case` value.
 -/
+
+@[expose] public section
 
 namespace Case
 

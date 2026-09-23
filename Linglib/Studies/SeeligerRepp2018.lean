@@ -1,9 +1,11 @@
-import Linglib.Semantics.Questions.Bias
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Semantics.Questions.QParticleLayer
-import Linglib.Fragments.Swedish.QuestionParticles
-import Linglib.Fragments.German.Particles
-import Linglib.Fragments.German.PolarityMarking
+module
+
+public import Linglib.Semantics.Questions.Bias
+public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Questions.QParticleLayer
+public import Linglib.Fragments.Swedish.QuestionParticles
+public import Linglib.Fragments.German.Particles
+public import Linglib.Fragments.German.PolarityMarking
 
 /-!
 # Seeliger & Repp (2018): Biased Declarative Questions
@@ -91,6 +93,8 @@ with low negation). Supports fronted-negation + *väl* marking NRQs.
 - `Semantics/Questions/Answering.lean` — polar answer typology
   (Holmberg 2016).
 -/
+
+@[expose] public section
 
 namespace SeeligerRepp2018
 

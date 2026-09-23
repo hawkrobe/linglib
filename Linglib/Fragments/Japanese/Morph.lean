@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Morphology.Morphotactics.Template
+module
+
+public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+public import Linglib.Morphology.Morphotactics.Template
 
 /-!
 # Japanese Verb Suffix Template
@@ -22,6 +24,8 @@ not in the slot data; `verbAffixTemplate` is the derived image.
 | 6 | negation | -na |
 | 7 | tense | -ta (past), -yoo (future) |
 -/
+
+@[expose] public section
 
 namespace Japanese
 

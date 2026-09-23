@@ -1,6 +1,8 @@
-import Linglib.Semantics.Presupposition.Trivalent
-import Linglib.Core.Order.Minimals
-import Linglib.Data.Examples.Sharvit2025
+module
+
+public import Linglib.Semantics.Presupposition.Trivalent
+public import Linglib.Core.Order.Minimals
+public import Linglib.Data.Examples.Sharvit2025
 
 /-!
 # Sharvit (2025): Rooth-Partee Conditionals and the Symmetry of Disjunction
@@ -53,6 +55,8 @@ if-over-∃ reading, the asymmetry of the responses (33) (`forallOverIf_imp_ifOv
 * [karttunen-peters-1979]
 * [heim-1992]
 -/
+
+@[expose] public section
 
 namespace Sharvit2025
 

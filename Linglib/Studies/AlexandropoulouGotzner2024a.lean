@@ -1,6 +1,8 @@
-import Linglib.Studies.Krifka2007b
-import Linglib.Fragments.English.Adjectives
-import Linglib.Data.Examples.AlexandropoulouGotzner2024a
+module
+
+public import Linglib.Studies.Krifka2007b
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Data.Examples.AlexandropoulouGotzner2024a
 
 /-!
 # Alexandropoulou and Gotzner (2024a): relative and absolute adjectives under negation
@@ -29,6 +31,8 @@ variants, and leave Horn's strong-adjective prediction unsupported.
 * [krifka-2007b]
 * [ruytenbeek-etal-2017]
 -/
+
+@[expose] public section
 
 namespace AlexandropoulouGotzner2024a
 

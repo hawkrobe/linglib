@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.DRS.Basic
-import Mathlib.Data.Finset.Piecewise
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Basic
+public import Mathlib.Data.Finset.Piecewise
 
 /-!
 # Verifying embeddings for DRSs
@@ -38,6 +40,8 @@ the first-order translation's realization (`DRS/Reduction.lean`).
   characterizations (`verifies_neg`, …) are equation-lemma rewrites rather
   than `Iff.rfl`.
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language
 

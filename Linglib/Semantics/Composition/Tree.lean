@@ -1,8 +1,10 @@
-import Linglib.Syntax.Tree.Basic
-import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Composition.Assignment
-import Linglib.Semantics.Composition.Lexicon
-import Linglib.Semantics.Modification.Basic
+module
+
+public import Linglib.Syntax.Tree.Basic
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Semantics.Composition.Lexicon
+public import Linglib.Semantics.Modification.Basic
 
 /-!
 # Type-driven interpretation
@@ -55,6 +57,8 @@ on the assignment. The category parameter of a tree is ignored, composition bein
 * [kratzer-1996]
 * [bumford-charlow-2024]
 -/
+
+@[expose] public section
 
 namespace Semantics.Composition.Tree
 

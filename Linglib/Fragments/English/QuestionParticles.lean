@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # English Question Particles
@@ -7,6 +9,8 @@ import Linglib.Syntax.Category.Particle.Basic
 Lexical entry for the English MQP-like adverb *quick/quickly* as a
 `Particle` value with an embedding-distribution facet.
 -/
+
+@[expose] public section
 
 namespace English.QuestionParticles
 

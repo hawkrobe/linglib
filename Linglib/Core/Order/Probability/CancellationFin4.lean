@@ -1,9 +1,11 @@
-import Linglib.Core.Order.Probability.Scott
-import Linglib.Core.Order.Caratheodory
-import Linglib.Core.Order.SignVectors
-import Mathlib.Data.List.Perm.Basic
-import Mathlib.Tactic.Tauto
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Core.Order.Probability.Scott
+public import Linglib.Core.Order.Caratheodory
+public import Linglib.Core.Order.SignVectors
+public import Mathlib.Data.List.Perm.Basic
+public import Mathlib.Tactic.Tauto
+public import Mathlib.Tactic.FinCases
 
 /-! # Cancellation for `Fin 4`: the structural merge-reduction proof
 
@@ -28,6 +30,8 @@ discharged through the sign-vector core via `v1_tailored`.  The comparison
 vector calculus (`cmpVec`, `mergeCmp`, `cvSumList`) and the merge recursion
 itself are private plumbing; only the theorems above are exported.
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 
@@ -617,7 +621,7 @@ for `Fin 3` then *follows from* cancellation — replacing the former
 measure-by-measure case analysis. -/
 
 /-- Restriction of a `Fin 4` proposition to the first three worlds. -/
-private def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈ A}
+def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈ A}
 
 /-- Lexicographic extension: the new world `Fin.last 3` dominates; ties break
     by the restriction. -/

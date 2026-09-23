@@ -1,9 +1,11 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Logic.Team.Algebra
-import Linglib.Logic.Bilateral.Defs
-import Linglib.Logic.Team.Kripke
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Bilateral.Defs
+public import Linglib.Logic.Team.Kripke
 
 /-!
 # Bilateral state-based modal logic: core definitions
@@ -54,6 +56,8 @@ reduces to `eval M true φ t` by two negation clauses. Models are the shared
 `ModalLogic.KripkeModel` carrier; teams are `Finset W`; `eval` is `Prop`-valued
 with a `Decidable` instance, so concrete claims close by `decide`.
 -/
+
+@[expose] public section
 
 namespace BSML
 

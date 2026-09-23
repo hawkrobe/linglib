@@ -1,7 +1,9 @@
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Syntax.Minimalist.Clause.Size
-import Linglib.Data.Examples.Wurmbrand2014
+module
+
+public import Linglib.Core.Order.Interval
+public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Data.Examples.Wurmbrand2014
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives
@@ -44,6 +46,8 @@ lexical requirement.
 * [wurmbrand-2001]
 * [landau-2000]
 -/
+
+@[expose] public section
 
 namespace Wurmbrand2014
 

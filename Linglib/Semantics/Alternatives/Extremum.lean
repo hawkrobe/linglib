@@ -1,6 +1,8 @@
-import Mathlib.Order.Bounds.Image
-import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Exhaustification.Chain
+module
+
+public import Mathlib.Order.Bounds.Image
+public import Linglib.Semantics.Degree.Predicate
+public import Linglib.Semantics.Exhaustification.Chain
 
 /-!
 # Maximally informative alternatives
@@ -36,6 +38,8 @@ by `Antitone.map_isGreatest`.
 * [V. Rouillard, *Maximal informativity accounts for the distribution of temporal
   in-adverbials* (2026)][rouillard-2026]
 -/
+
+@[expose] public section
 
 namespace Alternatives
 

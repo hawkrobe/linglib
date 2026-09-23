@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Discourse.CommonGround
+module
+
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Discourse.CommonGround
 
 /-!
 # Presupposition–Context Bridge
@@ -23,6 +25,8 @@ accommodation, and conceivability.
 presupposition is *conceivable* in the common ground iff there exists some
 world in the context set satisfying it.
 -/
+
+@[expose] public section
 
 namespace Presupposition.Context
 

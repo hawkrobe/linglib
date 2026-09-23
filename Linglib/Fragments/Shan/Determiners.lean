@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Shan determiner inventory
@@ -11,6 +13,8 @@ contexts, so bare nouns express both unique and anaphoric definiteness.
 
 * [moroney-2021]
 -/
+
+@[expose] public section
 
 namespace Shan.Determiners
 

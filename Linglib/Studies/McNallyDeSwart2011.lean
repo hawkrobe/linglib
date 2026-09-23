@@ -1,5 +1,7 @@
-import Linglib.Semantics.Genericity.Subkinds
-import Linglib.Fragments.Dutch.Adjectives
+module
+
+public import Linglib.Semantics.Genericity.Subkinds
+public import Linglib.Fragments.Dutch.Adjectives
 
 /-!
 # McNally and de Swart (2011): Inflection and Derivation
@@ -43,6 +45,8 @@ this file and are UNVERIFIED.
 * [chierchia-1984]
 * [carlson-1977]
 -/
+
+@[expose] public section
 
 namespace McNallyDeSwart2011
 

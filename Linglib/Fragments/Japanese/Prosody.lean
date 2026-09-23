@@ -1,4 +1,6 @@
-import Linglib.Phonology.Prosody.Intonation
+module
+
+public import Linglib.Phonology.Prosody.Intonation
 
 /-!
 # Japanese prosody
@@ -20,6 +22,8 @@ Pierrehumbert.
 * [beckman-pierrehumbert-1986]
 * [kawahara-2015]
 -/
+
+@[expose] public section
 
 namespace Japanese.Prosody
 

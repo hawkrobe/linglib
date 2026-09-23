@@ -1,10 +1,12 @@
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Order.BooleanSubalgebra
-import Mathlib.Order.Hom.CompleteLattice
-import Linglib.Logic.Modal.Defs
-import Linglib.Logic.Trivalent.Prop3
-import Linglib.Data.Examples.Coppock2018
+module
+
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Order.BooleanSubalgebra
+public import Mathlib.Order.Hom.CompleteLattice
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Data.Examples.Coppock2018
 
 /-!
 # Coppock's outlook-based semantics
@@ -85,6 +87,8 @@ conditions on the three verbs are checked.
   Contingency* (2022)][kennedy-willer-2022]
 * [P. Anand, N. Korotkova, *How to Theorize about Subjective Language* (2022)][anand-korotkova-2022]
 -/
+
+@[expose] public section
 
 namespace Coppock2018
 

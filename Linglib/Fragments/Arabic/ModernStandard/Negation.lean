@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Modern Standard Arabic negation
@@ -26,6 +28,8 @@ coding is recorded here.
   *lan* §37.2.3); jussive §35.1, subjunctive §34.2.
 * [benmamoun-2000] ch. 6.
 -/
+
+@[expose] public section
 
 open Negation
 

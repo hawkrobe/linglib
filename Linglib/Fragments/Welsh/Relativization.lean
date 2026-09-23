@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Welsh relative clauses
@@ -15,6 +17,8 @@ book in which I read the story', with the pronoun in *ynddo* 'in it'. The data a
 
 * [keenan-comrie-1977]
 -/
+
+@[expose] public section
 
 namespace Welsh
 

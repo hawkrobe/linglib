@@ -1,10 +1,13 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-import Mathlib.RingTheory.Polynomial.Pochhammer
-import Mathlib.Basic.Real.Basic
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Algebra.BigOperators.Field
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.RingTheory.Polynomial.Pochhammer
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 
 /-!
 # Pólya urn (per-sequence likelihood)
@@ -89,6 +92,8 @@ for such a bridge) is also deferred.
 - Ferguson, T. S. (1973). "A Bayesian analysis of some nonparametric
   problems". *The Annals of Statistics* 1(2): 209–230.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Dynamic.PPCDRT.Defs
+module
+
+public import Linglib.Semantics.Dynamic.PPCDRT.Defs
 
 /-!
 # PPCDRT — Anaphoric Relations
@@ -41,6 +43,8 @@ defined here; the §6.1/§6.2/§6.3 applications (the SMH contrast, the
 multi-reciprocal pairwise prediction, the Tracy/Matty/Chris case) live in
 `Studies/HaugDalrymple2020.lean`.
 -/
+
+@[expose] public section
 
 namespace PPCDRT
 

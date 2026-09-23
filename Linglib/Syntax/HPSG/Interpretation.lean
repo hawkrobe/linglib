@@ -1,6 +1,8 @@
-import Linglib.Syntax.HPSG.Signature
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Syntax.HPSG.Signature
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # RSRL interpretations
@@ -51,6 +53,8 @@ entity. That restriction is not imposed.
 * [richter-2024]
 * [carpenter-1992]
 -/
+
+@[expose] public section
 
 namespace HPSG.RSRL
 

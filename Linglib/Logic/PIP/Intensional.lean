@@ -1,4 +1,6 @@
-import Linglib.Logic.PIP.Semantics
+module
+
+public import Linglib.Logic.PIP.Semantics
 
 /-!
 # Intensional models of PIP
@@ -35,6 +37,8 @@ and inclusion, reduce to relations between those sets through the injectivity of
 * [keshet-abney-2024]
 * [abney-keshet-2025]
 -/
+
+@[expose] public section
 
 namespace PIP
 

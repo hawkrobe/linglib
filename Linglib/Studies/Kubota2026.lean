@@ -1,8 +1,10 @@
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Semantics.Modality.Basic
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Data.Examples.Kubota2026
+module
+
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Data.Examples.Kubota2026
 
 /-!
 # Kubota (2026): Outlook Management
@@ -54,6 +56,8 @@ chapter's ability modals.
 * [portner-2009]
 * [farkas-bruce-2010]
 -/
+
+@[expose] public section
 
 namespace Kubota2026
 

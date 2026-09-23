@@ -1,5 +1,7 @@
-import Linglib.Core.InformationTheory.Entropy
-import Linglib.Studies.Aikhenvald2000
+module
+
+public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Studies.Aikhenvald2000
 
 /-!
 # Prasertsom, Smith and Culbertson (2026): Domain-General Categorisation Explains Constrained Cross-Linguistic Variation in Noun Classification
@@ -41,6 +43,8 @@ predictive-animacy ones through `mirror_images`.
 * [prasertsom-smith-culbertson-2026]
 * [aikhenvald-2000]
 -/
+
+@[expose] public section
 
 open InformationTheory MeasureTheory ProbabilityTheory Real
 open scoped ProbabilityTheory

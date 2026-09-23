@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Turkish (tur, ID 2217)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 36 phonemes. PHOIBLE inventory ID 2217, Glottocode `nucl1301`.
 Source: PHOIBLE donor `ph`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Turkish
 

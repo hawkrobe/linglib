@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Reference.Character
-import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Reference.Iota
+module
+
+public import Linglib.Semantics.Reference.Character
+public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # Donnellan (1966): Reference and Definite Descriptions
@@ -32,6 +34,8 @@ decided here: the file gives Donnellan's truth conditions for each use.
 * [kripke-1977]
 * [russell-1905]
 -/
+
+@[expose] public section
 
 namespace Donnellan1966
 

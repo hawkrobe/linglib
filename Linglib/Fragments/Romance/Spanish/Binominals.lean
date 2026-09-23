@@ -1,4 +1,6 @@
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+module
+
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 
 /-!
 # Spanish binominal nouns
@@ -15,6 +17,8 @@ referent of the second.
 * [saab-2026]
 * [kramer-2015]
 -/
+
+@[expose] public section
 
 namespace Spanish.Binominals
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Perspective
+module
+
+public import Linglib.Semantics.Tense.Perspective
 
 /-!
 # Greek temporal deictic adverbs
@@ -12,6 +14,8 @@ anaphoric expression *ekino ton kero* 'at that time'. The examples are those of
 
 * [tsilia-zhao-2026]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.TemporalDeictic
 

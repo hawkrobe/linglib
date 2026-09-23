@@ -1,12 +1,14 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.ModelTheory.LanguageMap
-import Linglib.Core.ModelTheory.Semantics
-import Mathlib.Order.Antisymmetrization
-import Mathlib.Order.Defs.Unbundled
-import Linglib.Logic.ComparativeProbability.WorldOrdering
-import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.Delineation
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.ModelTheory.LanguageMap
+public import Linglib.Core.ModelTheory.Semantics
+public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Order.Defs.Unbundled
+public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Semantics.Degree.Basic
+public import Linglib.Semantics.Degree.Delineation
 
 /-!
 # Rudolph and Kocurek (2024): Metalinguistic Gradability
@@ -53,6 +55,8 @@ transitivity.
 * [J. Y. Halpern, *Reasoning about Uncertainty* (2003)][halpern-2003]
 * [S. Yalcin, *Epistemic Modals* (2007)][yalcin-2007]
 -/
+
+@[expose] public section
 
 namespace RudolphKocurek2024
 

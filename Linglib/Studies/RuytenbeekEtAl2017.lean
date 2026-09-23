@@ -1,8 +1,10 @@
-import Linglib.Discourse.SpeechAct
-import Linglib.Semantics.Mood.SpeechEvent
-import Linglib.Fragments.Romance.French.Modals
-import Linglib.Data.Examples.RuytenbeekEtAl2017
-import Linglib.Data.Experiments.RuytenbeekEtAl2017
+module
+
+public import Linglib.Discourse.SpeechAct
+public import Linglib.Semantics.Mood.SpeechEvent
+public import Linglib.Fragments.Romance.French.Modals
+public import Linglib.Data.Examples.RuytenbeekEtAl2017
+public import Linglib.Data.Experiments.RuytenbeekEtAl2017
 
 /-!
 # Ruytenbeek et al. (2017): Indirect request processing, sentence types and illocutionary forces
@@ -42,6 +44,8 @@ possible*, which it attributes to the permission reading of *pouvoir*, is not de
 * [sadock-zwicky-1985]
 * [talmy-2000]
 -/
+
+@[expose] public section
 
 namespace RuytenbeekEtAl2017
 

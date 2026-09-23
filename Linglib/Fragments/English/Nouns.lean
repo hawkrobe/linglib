@@ -1,8 +1,10 @@
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Semantics.Plurality.MassCount
-import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Morphology.Word.Basic
-import Linglib.Fragments.English.Inflection
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Semantics.Plurality.MassCount
+public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Fragments.English.Inflection
 
 /-!
 # English nouns
@@ -27,6 +29,8 @@ and bare mass nouns are arguments and a bare singular count noun is not
 * [chierchia-1998]
 * [krifka-2026]
 -/
+
+@[expose] public section
 
 namespace English.Nouns
 
@@ -120,7 +124,7 @@ def tea : Noun := .mass "tea"
 /-! ### Proper names -/
 
 /-- A name glossed by itself. -/
-private def name (form : String) (gender : Option Gender := none) : ProperName :=
+def name (form : String) (gender : Option Gender := none) : ProperName :=
   { form, gloss := form, gender }
 
 def john : ProperName := name "John" (some .masculine)

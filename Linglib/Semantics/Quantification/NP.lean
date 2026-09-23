@@ -1,10 +1,12 @@
-import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Composition.Cont
-import Linglib.Semantics.Composition.Combinator
-import Mathlib.Order.Hom.BoundedLattice
-import Mathlib.Order.GaloisConnection.Defs
+module
+
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Composition.Cont
+public import Linglib.Semantics.Composition.Combinator
+public import Mathlib.Order.Hom.BoundedLattice
+public import Mathlib.Order.GaloisConnection.Defs
 
 /-!
 # Type ⟨1⟩ quantifiers
@@ -27,6 +29,8 @@ partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas.
 * [barker-2002]
 * [heim-kratzer-1998]
 -/
+
+@[expose] public section
 
 namespace Quantifier.NP
 
@@ -142,8 +146,8 @@ theorem BE_A_id (domain : List E) (P : E → Prop)
   · rintro ⟨z, _, hPz, hzx⟩; cases hzx; exact hPz
   · intro hPx; exact ⟨x, hcomplete x, hPx, rfl⟩
 
-private def twoDomain : List Bool := [true, false]
-private def twoEvery : (Bool → Prop) → Prop := fun P => ∀ x ∈ twoDomain, P x
+def twoDomain : List Bool := [true, false]
+def twoEvery : (Bool → Prop) → Prop := fun P => ∀ x ∈ twoDomain, P x
 
 /-- For non-principal quantifiers the round trip changes truth conditions:
     `every(⊤)` is true but `A(BE(every))(⊤)` is not, since `BE(every)` asks

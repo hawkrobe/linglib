@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Schema
-import Linglib.Data.UD.Features
+module
+
+public import Linglib.Data.Examples.Schema
+public import Linglib.Data.UD.Features
 
 /-!
 # Embedding environments
@@ -17,6 +19,8 @@ features.
 * [tonhauser-beaver-roberts-simons-2013]
 * [matthewson-2004]
 -/
+
+@[expose] public section
 
 namespace Presupposition
 

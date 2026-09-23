@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 89A: Order of Numeral and Noun
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 89, 1154 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F89A
 
@@ -24,7 +28,8 @@ inductive NumeralNounOrder where
   | numeralOnlyModifiesVerb
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint NumeralNounOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "ani", iso := "hnh", value := .numeralNoun }
   , { walsCode := "xam", iso := "xam", value := .nounNumeral }
   , { walsCode := "huc", iso := "huc", value := .nounNumeral }
@@ -527,7 +532,8 @@ private def allData_0 : List (Datapoint NumeralNounOrder) :=
   , { walsCode := "krn", iso := "kqz", value := .numeralNoun }
   ]
 
-private def allData_1 : List (Datapoint NumeralNounOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "kor", iso := "kor", value := .numeralNoun }
   , { walsCode := "kje", iso := "coe", value := .nounNumeral }
   , { walsCode := "kku", iso := "kfq", value := .numeralNoun }
@@ -1030,7 +1036,8 @@ private def allData_1 : List (Datapoint NumeralNounOrder) :=
   , { walsCode := "ter", iso := "ttr", value := .nounNumeral }
   ]
 
-private def allData_2 : List (Datapoint NumeralNounOrder) :=
+/-- Rows 1001 to 1154 of `allData`. -/
+def allData_2 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "trb", iso := "tfr", value := .nounNumeral }
   , { walsCode := "tes", iso := "teo", value := .nounNumeral }
   , { walsCode := "tet", iso := "tll", value := .nounNumeral }

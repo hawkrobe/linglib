@@ -1,8 +1,10 @@
-import Linglib.Phonology.Subregular.Sibilant
-import Linglib.Phonology.Subregular.Agree
-import Linglib.Phonology.Subregular.Multitier
-import Linglib.Phonology.Harmony.System
-import Linglib.Data.Examples.Hansson2010
+module
+
+public import Linglib.Phonology.Subregular.Sibilant
+public import Linglib.Phonology.Subregular.Agree
+public import Linglib.Phonology.Subregular.Multitier
+public import Linglib.Phonology.Harmony.System
+public import Linglib.Data.Examples.Hansson2010
 
 /-!
 # Hansson (2010): Consonant Harmony: Long-Distance Interaction in Phonology
@@ -41,6 +43,8 @@ typological survey (chapter 2), and its speech-error account (chapter 6) are not
 * [mcdonough-1991]
 * [sapir-hoijer-1967]
 -/
+
+@[expose] public section
 
 namespace Hansson2010
 

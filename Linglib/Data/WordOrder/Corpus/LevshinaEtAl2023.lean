@@ -1,4 +1,6 @@
-import Linglib.Data.WordOrder.Corpus.Schema
+module
+
+public import Linglib.Data.WordOrder.Corpus.Schema
 
 /-!
 # LevshinaEtAl2023 — corpus word-order data (generated)
@@ -13,6 +15,8 @@ The OSF datasets of the paper's corpus illustrations: the subject–object order
 (Dataset3.txt), and the annotated Russian clauses of the register case study in section 4.1.3
 (Dataset6.txt).
 -/
+
+@[expose] public section
 
 namespace Data.WordOrder.Corpus.LevshinaEtAl2023
 

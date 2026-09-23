@@ -1,6 +1,8 @@
-import Mathlib.ModelTheory.Semantics
-import Linglib.Core.ModelTheory.StructureFamily
-import Linglib.Logic.Modal.FirstOrder.Syntax
+module
+
+public import Mathlib.ModelTheory.Semantics
+public import Linglib.Core.ModelTheory.StructureFamily
+public import Linglib.Logic.Modal.FirstOrder.Syntax
 
 /-!
 # Constant-domain Kripke semantics
@@ -35,6 +37,8 @@ Kripke satisfaction `K, w ⊨_v φ`.
 * [fitting-mendelsohn-2023] — constant-domain models, world-relative
   interpretation, the Barcan formulas
 -/
+
+@[expose] public section
 
 namespace FirstOrder.Language
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 83A: Order of Object and Verb
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 83, 1518 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F83A
 
@@ -22,7 +26,8 @@ inductive ObjectVerbOrder where
   | noDominantOrder
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint ObjectVerbOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .vo }
   , { walsCode := "ani", iso := "hnh", value := .noDominantOrder }
   , { walsCode := "xam", iso := "xam", value := .vo }
@@ -525,7 +530,8 @@ private def allData_0 : List (Datapoint ObjectVerbOrder) :=
   , { walsCode := "ifm", iso := "ifm", value := .vo }
   ]
 
-private def allData_1 : List (Datapoint ObjectVerbOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "igb", iso := "ibo", value := .vo }
   , { walsCode := "ige", iso := "ige", value := .vo }
   , { walsCode := "ign", iso := "ign", value := .vo }
@@ -1028,7 +1034,8 @@ private def allData_1 : List (Datapoint ObjectVerbOrder) :=
   , { walsCode := "nbe", iso := "ngc", value := .vo }
   ]
 
-private def allData_2 : List (Datapoint ObjectVerbOrder) :=
+/-- Rows 1001 to 1500 of `allData`. -/
+def allData_2 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "ngo", iso := "ngo", value := .vo }
   , { walsCode := "ngu", iso := "llp", value := .vo }
   , { walsCode := "nbr", iso := "gym", value := .ov }
@@ -1531,7 +1538,8 @@ private def allData_2 : List (Datapoint ObjectVerbOrder) :=
   , { walsCode := "zan", iso := "zne", value := .vo }
   ]
 
-private def allData_3 : List (Datapoint ObjectVerbOrder) :=
+/-- Rows 1501 to 1518 of `allData`. -/
+def allData_3 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "zpr", iso := "zro", value := .vo }
   , { walsCode := "zai", iso := "zai", value := .vo }
   , { walsCode := "zap", iso := "zaw", value := .vo }

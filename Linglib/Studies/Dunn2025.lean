@@ -1,6 +1,8 @@
-import Linglib.Syntax.ConstructionGrammar.Basic
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Basic
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 
 /-!
 # Dunn (2025): Syntactic Variation from Individuals to Populations
@@ -41,6 +43,8 @@ represented.
 * [dunn-2025]
 * [goldberg-2006]
 -/
+
+@[expose] public section
 
 namespace Dunn2025
 

@@ -1,4 +1,6 @@
-import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
+module
+
+public import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
 
 /-!
 # The finite-rank Ehrenfeucht–Fraïssé back-and-forth relation
@@ -29,6 +31,8 @@ Construction: Libkin, *Elements of Finite Model Theory*, Thm 3.18; Hodges,
   rank-`≤ k` formulas.
 * `FirstOrder.Language.nEquiv_of_backForth` — back-and-forth on the empty tuples ⟹ `≡ₖ`.
 -/
+
+@[expose] public section
 
 universe u v w
 

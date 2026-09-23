@@ -5,11 +5,13 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.Pseudovariety`.
 -/
-import Linglib.Core.Algebra.Group.Aperiodic
-import Linglib.Core.Algebra.Group.Subquotient
-import Mathlib.Algebra.Group.Prod
-import Mathlib.Algebra.Group.PUnit
-import Mathlib.Basic.Finite.Defs
+module
+
+public import Linglib.Core.Algebra.Group.Aperiodic
+public import Linglib.Core.Algebra.Group.Subquotient
+public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Algebra.Group.PUnit
+public import Mathlib.Basic.Finite.Defs
 
 /-!
 # Pseudovarieties of finite monoids
@@ -37,6 +39,8 @@ Like mathlib's `MorphismProperty`, a `Pseudovariety` is relative to a *fixed* un
 fields cannot be universe-polymorphic); concrete pseudovarieties such as `aperiodicVariety` are
 universe-polymorphic `def`s producing one `Pseudovariety.{u}` per `u`, so nothing is lost in use.
 -/
+
+@[expose] public section
 
 universe u
 

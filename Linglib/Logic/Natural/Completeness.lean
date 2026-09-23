@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Natural.Soundness
-import Mathlib.Data.Finset.BooleanAlgebra
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Order.Bounds.Basic
+module
+
+public import Linglib.Logic.Natural.Soundness
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Order.Bounds.Basic
 
 /-!
 # Completeness of the projectivity calculus
@@ -63,6 +65,8 @@ names, each tight for its own row.
 * [maccartney-manning-2009] — §2's sixteen-class partition, following
   Sánchez Valencia.
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 

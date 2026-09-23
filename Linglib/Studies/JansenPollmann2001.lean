@@ -3,15 +3,17 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.Examples.JansenPollmann2001
-import Linglib.Semantics.Quantification.Numerals.Roundness
-import Linglib.Syntax.Category.Numeral.Composition
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum.GCD
+module
+
+public import Linglib.Data.Examples.JansenPollmann2001
+public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Syntax.Category.Numeral.Composition
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.NormNum.GCD
 
 /-!
 # Jansen and Pollmann (2001): On round numbers
@@ -50,6 +52,8 @@ frequency on magnitude and the four properties stays in prose.
 * [woodin-etal-2024]
 * [hurford-1975]
 -/
+
+@[expose] public section
 
 namespace JansenPollmann2001
 

@@ -1,6 +1,8 @@
-import Linglib.Phonology.HarmonicGrammar.Expressivity
-import Linglib.Core.Probability.SoftmaxTheory
-import Linglib.Data.Examples.GoldwaterJohnson2003
+module
+
+public import Linglib.Phonology.HarmonicGrammar.Expressivity
+public import Linglib.Core.Probability.SoftmaxTheory
+public import Linglib.Data.Examples.GoldwaterJohnson2003
 
 /-!
 # Goldwater and Johnson (2003): Learning OT Constraint Rankings Using a Maximum Entropy Model
@@ -36,6 +38,8 @@ the comparison with [boersma-1997]'s Gradual Learning Algorithm.
 * [johnson-2002]
 * [smolensky-legendre-2006]
 -/
+
+@[expose] public section
 
 namespace GoldwaterJohnson2003
 
@@ -175,10 +179,10 @@ theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := by
 /-! ### Tables 2 and 3: Finnish genitive plurals -/
 
 /-- The digits of a feature string as violation counts, one per constraint. -/
-private def digits (s : String) : List ℕ := s.toList.map λ c => c.toNat - '0'.toNat
+def digits (s : String) : List ℕ := s.toList.map λ c => c.toNat - '0'.toNat
 
 /-- A violation vector over [boersma-hayes-2001]'s eleven constraints. -/
-private def vec (l : List ℕ) : Fin 11 → ℕ := λ j => l.getD j 0
+def vec (l : List ℕ) : Fin 11 → ℕ := λ j => l.getD j 0
 
 /-- A stem class: the violation vectors of the winning and the losing genitive plural. -/
 structure Row where

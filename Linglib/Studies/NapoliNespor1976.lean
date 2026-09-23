@@ -1,6 +1,8 @@
-import Linglib.Fragments.Romance.Italian.PolarityItems
-import Linglib.Semantics.Mood.Defs
-import Linglib.Data.Examples.Judgment
+module
+
+public import Linglib.Fragments.Romance.Italian.PolarityItems
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Data.Examples.Judgment
 
 /-!
 # Napoli & Nespor (1976): Negatives in Comparatives
@@ -40,6 +42,8 @@ comparative or an explicit degree modifier, demands precise knowledge of the deg
 The paradigm's moves are typed from the paper's descriptions of its dialogues; the
 dialogues themselves are not yet rows of `Data/Examples/NapoliNespor1976.json`.
 -/
+
+@[expose] public section
 
 namespace NapoliNespor1976
 

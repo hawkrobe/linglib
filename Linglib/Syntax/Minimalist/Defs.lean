@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Multiset.Basic
-import Linglib.Data.UD.UPOS
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Multiset.Basic
+public import Linglib.Data.UD.UPOS
 
 /-!
 # The lexical alphabet of syntactic objects
@@ -26,6 +28,8 @@ Dependencies part-of-speech tags into `Cat`.
 * [marcolli-chomsky-berwick-2025], §1.1 (Definition 1.1.1) and §1.13 (Lemma 1.13.5)
 * [chomsky-2013]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

@@ -1,5 +1,7 @@
-import Linglib.Morphology.Word.Features
-import Linglib.Syntax.Agreement.Bundle
+module
+
+public import Linglib.Morphology.Word.Features
+public import Linglib.Syntax.Agreement.Bundle
 
 /-!
 # Universal Dependencies annotation of tokens
@@ -30,6 +32,8 @@ features, and an annotation ingests as an agreement bundle.
 
 * [de-marneffe-zeman-2021]
 -/
+
+@[expose] public section
 
 /-! ### Person -/
 

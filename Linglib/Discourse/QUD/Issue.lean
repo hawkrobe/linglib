@@ -1,5 +1,7 @@
-import Linglib.Discourse.CommonGround
-import Linglib.Semantics.Questions.Basic
+module
+
+public import Linglib.Discourse.CommonGround
+public import Linglib.Semantics.Questions.Basic
 
 /-!
 # Issue extraction
@@ -20,6 +22,8 @@ see the Krifka monopolar/bipolar contrast in
 * `Discourse.HasIssue` — extraction of the current issue from a
   discourse state.
 -/
+
+@[expose] public section
 
 namespace Discourse
 

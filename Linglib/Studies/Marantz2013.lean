@@ -1,5 +1,7 @@
-import Linglib.Morphology.DistributedMorphology.Locality
-import Linglib.Data.Examples.Marantz2013
+module
+
+public import Linglib.Morphology.DistributedMorphology.Locality
+public import Linglib.Data.Examples.Marantz2013
 
 /-!
 # Marantz (2013): Locality Domains for Contextual Allomorphy Across the Interfaces
@@ -29,6 +31,8 @@ The words are the rows of `Data/Examples/Marantz2013`, the examples of (1) to (3
 
 * [marantz-2013]
 -/
+
+@[expose] public section
 
 namespace Marantz2013
 

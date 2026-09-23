@@ -1,9 +1,11 @@
-import Linglib.Core.ModelTheory.Semantics
-import Linglib.Semantics.Dynamic.DPL.Semantics
-import Mathlib.Data.Finset.Piecewise
-import Mathlib.Data.Set.Function
-import Mathlib.Logic.Function.DependsOn
-import Mathlib.Tactic.Tauto
+module
+
+public import Linglib.Core.ModelTheory.Semantics
+public import Linglib.Semantics.Dynamic.DPL.Semantics
+public import Mathlib.Data.Finset.Piecewise
+public import Mathlib.Data.Set.Function
+public import Mathlib.Logic.Function.DependsOn
+public import Mathlib.Tactic.Tauto
 
 /-!
 # Contexts for dynamic predicate logic
@@ -52,6 +54,8 @@ interpretation has, `x ≐ x` reading `x` and denoting the identity.
 * [visser-1998]
 * [groenendijk-stokhof-1991]
 -/
+
+@[expose] public section
 
 open DynamicSemantics DynamicSemantics.Update SetRel
 

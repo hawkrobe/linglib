@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Semantics.Reference.Rigidity
-import Mathlib.Algebra.Group.Action.End
-import Mathlib.Algebra.BigOperators.Group.List.Basic
+module
+
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Reference.Rigidity
+public import Mathlib.Algebra.Group.Action.End
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
 
 /-!
 # Context towers
@@ -34,6 +36,8 @@ pattern is (`AccessPattern.stable_origin`).
 * [abusch-1997]
 * [cumming-2026]
 -/
+
+@[expose] public section
 
 namespace Reference
 

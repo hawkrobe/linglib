@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Spanish Noun Gender
@@ -40,6 +42,8 @@ silla/casa/puerta/ventana, zapato/coche/árbol/cielo/vaso, ángel*) are
 extrapolations from Kramer's framework, anchored on the
 textbook-consensus genders documented in [butt-benjamin-2019].
 -/
+
+@[expose] public section
 
 namespace Spanish.Gender
 

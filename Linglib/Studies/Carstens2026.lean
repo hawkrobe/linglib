@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Carstens2026
-import Linglib.Fragments.Xhosa.Nouns
-import Linglib.Fragments.Shona.Nouns
-import Linglib.Syntax.Minimalist.Agree.Coordination
-import Linglib.Studies.TaraldsenEtAl2018
+module
+
+public import Linglib.Data.Examples.Carstens2026
+public import Linglib.Fragments.Xhosa.Nouns
+public import Linglib.Fragments.Shona.Nouns
+public import Linglib.Syntax.Minimalist.Agree.Coordination
+public import Linglib.Studies.TaraldsenEtAl2018
 
 /-!
 # Carstens (2026): The grammar of gender
@@ -42,6 +44,8 @@ in §8 is stated in prose only.
 * [taraldsen-et-al-2018]
 * [halpert-hammerly-2026]
 -/
+
+@[expose] public section
 
 namespace Carstens2026
 
@@ -233,14 +237,14 @@ abbrev ShonaValues (a b : Nominal Shona.Gender) (c : Shona.NounClass) : Prop :=
 /-! ### The rows -/
 
 /-- The values of a feature key, in order. -/
-private def features (e : LinguisticExample) (key : String) : List String :=
+def features (e : LinguisticExample) (key : String) : List String :=
   (e.paperFeatures.filter (·.1 = key)).map (·.2)
 
 /-- The rows of one language. -/
 def rows (glottocode : String) : List LinguisticExample :=
   Examples.all.filter (·.language = glottocode)
 
-private def xhosaClassOf : String → Option Xhosa.NounClass
+def xhosaClassOf : String → Option Xhosa.NounClass
   | "2" => some .cl2
   | "4" => some .cl4
   | "6" => some .cl6
@@ -248,7 +252,7 @@ private def xhosaClassOf : String → Option Xhosa.NounClass
   | "10" => some .cl10
   | _ => none
 
-private def shonaClassOf : String → Option Shona.NounClass
+def shonaClassOf : String → Option Shona.NounClass
   | "2" => some .cl2
   | "4" => some .cl4
   | "6" => some .cl6

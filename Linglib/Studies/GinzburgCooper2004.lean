@@ -1,5 +1,7 @@
-import Linglib.Discourse.Gameboard.Defs
-import Linglib.Data.Examples.GinzburgCooper2004
+module
+
+public import Linglib.Discourse.Gameboard.Defs
+public import Linglib.Data.Examples.GinzburgCooper2004
 
 /-!
 # Ginzburg and Cooper (2004): Clarification, Ellipsis, and the Nature of Contextual Updates in Dialogue
@@ -48,6 +50,8 @@ the participants share the sub-utterance's content, the constituent reading does
 * [purver-ginzburg-2004]
 * [ginzburg-2012]
 -/
+
+@[expose] public section
 
 namespace GinzburgCooper2004
 

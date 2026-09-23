@@ -1,4 +1,8 @@
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Complementizer.Basic
+
+@[expose] public section
 
 open Morphology (Word)
 

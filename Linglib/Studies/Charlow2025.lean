@@ -1,5 +1,7 @@
-import Linglib.Logic.Bilateral.Defs
-import Linglib.Studies.GroenendijkStokhof1991
+module
+
+public import Linglib.Logic.Bilateral.Defs
+public import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
 # Charlow (2025): Staged updates
@@ -32,6 +34,8 @@ a dynamic tautology, and the canonical lift.
 * [krahmer-muskens-1995]
 * [gotham-2019-ac22]
 -/
+
+@[expose] public section
 
 namespace Charlow2025
 

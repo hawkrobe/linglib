@@ -1,5 +1,7 @@
-import Mathlib.Algebra.Order.Ring.Rat
-import Linglib.Studies.DaleReiter1995
+module
+
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Linglib.Studies.DaleReiter1995
 
 /-!
 # Westerbeek, Koolen & Maes (2015): Stored Object Knowledge and the Production of Referring Expressions
@@ -31,6 +33,8 @@ coefficients are reported in the paper and not formalized.
 * [dale-reiter-1995]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 namespace WesterbeekKoolenMaes2015
 

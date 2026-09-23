@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Irish coordinators
@@ -24,6 +26,8 @@ Irish.
 
 * [haspelmath-2007]
 -/
+
+@[expose] public section
 
 namespace Irish.Coordination
 

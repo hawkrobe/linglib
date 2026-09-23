@@ -1,8 +1,10 @@
-import Linglib.Core.Data.Fin.VecNotation
-import Linglib.Core.Data.Set.Image
-import Linglib.Logic.PIP.Felicity
-import Linglib.Logic.PIP.Intensional
-import Linglib.Data.Examples.KeshetAbney2024
+module
+
+public import Linglib.Core.Data.Fin.VecNotation
+public import Linglib.Core.Data.Set.Image
+public import Linglib.Logic.PIP.Felicity
+public import Linglib.Logic.PIP.Intensional
+public import Linglib.Data.Examples.KeshetAbney2024
 
 /-!
 # Keshet and Abney (2024): Intensional Anaphora
@@ -37,6 +39,8 @@ of a `Scenario` (accessibility, antecedent description, continuation) and its PI
 * [stone-1999]
 * [brasoveanu-2010]
 -/
+
+@[expose] public section
 
 namespace KeshetAbney2024
 

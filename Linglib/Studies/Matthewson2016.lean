@@ -1,12 +1,14 @@
-import Linglib.Semantics.Modality.Universals
-import Linglib.Semantics.Evidential.Defs
-import Linglib.Data.Examples.Matthewson2016
-import Linglib.Fragments.Gitksan.Modals
-import Linglib.Fragments.Statimcets.Modals
-import Linglib.Fragments.NezPerce.Modals
-import Linglib.Fragments.Niuean.Modals
-import Linglib.Studies.Condoravdi2002
-import Linglib.Studies.Matthewson2013
+module
+
+public import Linglib.Semantics.Modality.Universals
+public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Data.Examples.Matthewson2016
+public import Linglib.Fragments.Gitksan.Modals
+public import Linglib.Fragments.Statimcets.Modals
+public import Linglib.Fragments.NezPerce.Modals
+public import Linglib.Fragments.Niuean.Modals
+public import Linglib.Studies.Condoravdi2002
+public import Linglib.Studies.Matthewson2013
 
 /-!
 # Matthewson (2016): Modality
@@ -46,6 +48,8 @@ holds of the four inventories.
 * [vander-klok-2013b]
 * [condoravdi-2002]
 -/
+
+@[expose] public section
 
 namespace Matthewson2016
 
@@ -123,7 +127,7 @@ theorem statimcets_full_split :
   decide
 
 /-- The modal a deniability row names. -/
-private def modalOf : String → Option ModalItem
+def modalOf : String → Option ModalItem
   | "k'a" => some kaInfer
   | "lákw7a" => some lakw7a
   | _ => none
@@ -202,7 +206,7 @@ theorem oqa_rows :
 /-! ### Modal–temporal interaction (§18.4.3) -/
 
 /-- The orientation a row records. -/
-private def orientationOf : String → Option TemporalOrientation
+def orientationOf : String → Option TemporalOrientation
   | "past" => some .past
   | "present" => some .present
   | "future" => some .future

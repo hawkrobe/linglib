@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Degree.Hom
-import Linglib.Data.Examples.Bale2008
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Degree.Hom
+public import Linglib.Data.Examples.Bale2008
 
 /-!
 # Bale 2008: a universal scale of comparison
@@ -48,6 +50,8 @@ than he is wide yet not taller for a man than he is wide for a man.
 * [bartsch-vennemann-1972] — comparisons of deviation
 * [fox-hackl-2006] — density of the universal scale
 -/
+
+@[expose] public section
 
 namespace Bale2008
 

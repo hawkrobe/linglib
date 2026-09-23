@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.OCP
+module
+
+public import Linglib.Phonology.OCP
 
 /-!
 # Consonantal roots
@@ -31,6 +33,8 @@ root with its category-stamped derivatives; `Semantics.Root`
 (`Semantics/Root/`) is the *lexical-semantic* root. No identification
 between them is substrate — homs live in the studies that assert them.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

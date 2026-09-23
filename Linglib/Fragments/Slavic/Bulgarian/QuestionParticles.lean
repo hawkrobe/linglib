@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Bulgarian Question Particles
@@ -15,6 +17,8 @@ left-peripheral layer assignments live in `Simik2024`.
 - Cross-Slavic RAZVE family: nima is the Bulgarian member
 - Dukova-Zheleva: nima expresses incredulity/surprise
 -/
+
+@[expose] public section
 
 namespace Bulgarian.QuestionParticles
 

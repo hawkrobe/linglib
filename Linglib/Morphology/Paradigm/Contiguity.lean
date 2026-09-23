@@ -1,9 +1,11 @@
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Tactic.FinCases
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Order.Interval.Finset.Fin
-import Mathlib.Order.Interval.Set.OrdConnected
-import Mathlib.Data.Finset.Image
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Data.Finset.Image
 
 /-!
 # Paradigm contiguity: the *ABA generalization
@@ -51,6 +53,8 @@ containment hierarchies) live in
 * [graf-2019]
 * [bobaljik-sauerland-2018]
 -/
+
+@[expose] public section
 
 namespace Morphology
 

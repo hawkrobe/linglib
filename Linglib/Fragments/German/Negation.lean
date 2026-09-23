@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # German negation
@@ -12,6 +14,8 @@ changes, in any person or tense. The examples are those of [miestamo-2005].
 * [miestamo-2005]
 -/
 
+@[expose] public section
+
 open Negation Morphology
 
 namespace German.Negation
@@ -19,7 +23,7 @@ namespace German.Negation
 /-- *nicht*, the standard negator. -/
 def nicht : Marker := { pieces := [[.free "nicht"]] }
 
-private def words (ws : List String) : List Morph := ws.map .free
+def words (ws : List String) : List Morph := ws.map .free
 
 /-- The first person singular present and past of *singen* 'sing'. -/
 def pairs : List Pair :=

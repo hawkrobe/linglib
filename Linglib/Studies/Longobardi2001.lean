@@ -1,8 +1,10 @@
-import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Fragments.Romance.Italian.Nouns
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.Greek.StandardModern.Nouns
-import Linglib.Data.Examples.Longobardi2001
+module
+
+public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Fragments.Romance.Italian.Nouns
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.Greek.StandardModern.Nouns
+public import Linglib.Data.Examples.Longobardi2001
 
 /-!
 # Longobardi (2001): How Comparative Is Semantics?
@@ -49,6 +51,8 @@ the paper's marginal readings as available.
 * [carlson-1977]
 * [gerstner-krifka-1987]
 -/
+
+@[expose] public section
 
 namespace Longobardi2001
 

@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Category.Verb.Stem
+module
+
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Category.Verb.Stem
 
 /-!
 # Bulgarian Verbal Lexicon
@@ -11,6 +13,8 @@ dictionary-consensus ones; the paper's reclassification of the simplex
 imperfectives as aspectless homogeneous verbs, like the classification
 of prefix occurrences, lives in `Studies/Istratkova2004.lean`.
 -/
+
+@[expose] public section
 
 namespace Bulgarian.Verbs
 

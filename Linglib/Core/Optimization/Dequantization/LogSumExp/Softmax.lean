@@ -1,6 +1,8 @@
-import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
-import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
-import Linglib.Core.Optimization.Decoder
+module
+
+public import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
+public import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
+public import Linglib.Core.Optimization.Decoder
 
 /-!
 # Softmax as `lse`-Renormalised Exponential
@@ -31,6 +33,8 @@ limit: the softmax decoder is "`exp` of the gap between this
 candidate's score and the lse-summary score," and the gap closes exactly
 on the maximizers when the warped semiring is dequantized.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

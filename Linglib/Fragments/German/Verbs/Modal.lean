@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Basic
-import Linglib.Syntax.Category.Auxiliary.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Syntax.Category.Auxiliary.Basic
 
 /-!
 # German modal verbs
@@ -15,6 +17,8 @@ the morphological criterion of [steinert-threlkeld-imel-guo-2023].
 * [kratzer-1981]
 * [steinert-threlkeld-imel-guo-2023]
 -/
+
+@[expose] public section
 
 namespace German.Verbs.Modal
 

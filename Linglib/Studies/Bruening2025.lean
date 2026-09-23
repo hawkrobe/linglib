@@ -1,4 +1,6 @@
-import Linglib.Studies.BrueningAlKhalaf2020
+module
+
+public import Linglib.Studies.BrueningAlKhalaf2020
 
 /-!
 # Bruening 2025: selectional violations in coordination
@@ -39,6 +41,8 @@ complement's semantics to its category can reproduce their distribution.
 * [bruening-alkhalaf-2020]
 * [pollard-sag-1987]
 -/
+
+@[expose] public section
 
 namespace Bruening2025
 

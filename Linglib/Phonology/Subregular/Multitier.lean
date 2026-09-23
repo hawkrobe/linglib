@@ -3,13 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.TierStrictlyLocal
-import Linglib.Phonology.Subregular.StrictlyPiecewise
-import Linglib.Core.Computability.PiecewiseTestable
-import Linglib.Core.Computability.Definite
-import Mathlib.Computability.Language
-import Mathlib.Order.BooleanSubalgebra
-import Linglib.Core.Data.List.Factors
+module
+
+public import Linglib.Phonology.Subregular.TierStrictlyLocal
+public import Linglib.Phonology.Subregular.StrictlyPiecewise
+public import Linglib.Core.Computability.PiecewiseTestable
+public import Linglib.Core.Computability.Definite
+public import Mathlib.Computability.Language
+public import Mathlib.Order.BooleanSubalgebra
+public import Linglib.Core.Data.List.Factors
 
 /-!
 # Multitier extensions of subregular classes
@@ -42,6 +44,8 @@ tier projection.
 `∃ T, ∃ _ : DecidablePred T, …` witness; the `Prop`-with-`[DecidablePred]` form used by
 `tierProject`/`TierStrictlyLocalGrammar` converts via `T x ↔ tier x = true`.
 -/
+
+@[expose] public section
 
 namespace Language
 

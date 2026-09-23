@@ -1,6 +1,8 @@
-import Linglib.Morphology.Realization
-import Linglib.Morphology.Paradigm.Analogy
-import Linglib.Processing.DiscriminativeLexicon.Coding
+module
+
+public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Paradigm.Analogy
+public import Linglib.Processing.DiscriminativeLexicon.Coding
 
 /-!
 # The discriminative lexicon as a realization
@@ -38,6 +40,8 @@ it need not be.
 * [M. Heitmeier, Y.-Y. Chuang and R. H. Baayen, *The Discriminative Lexicon*
   (2026)][heitmeier-chuang-baayen-2026]
 -/
+
+@[expose] public section
 
 namespace DiscriminativeLexicon.Linear
 

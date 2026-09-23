@@ -1,5 +1,7 @@
-import Linglib.Semantics.Degree.Adjective
-import Linglib.Data.Examples.Sassoon2013
+module
+
+public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Data.Examples.Sassoon2013
 
 /-!
 # Sassoon (2013): A Typology of Multidimensional Adjectives
@@ -39,6 +41,8 @@ normalized conjunctivity and between totality and conjunctivity are not formaliz
 * [heim-2006]
 * [buring-2007]
 -/
+
+@[expose] public section
 
 namespace Sassoon2013
 
@@ -94,7 +98,7 @@ theorem antonyms_negate :
 /-! ### Standard type -/
 
 /-- The paper's standard types by the inference tests, as positive standards. -/
-private def standards : List (String × PositiveStandard) :=
+def standards : List (String × PositiveStandard) :=
   [("total", .maxEndpoint), ("partial", .minEndpoint), ("relative", .contextual)]
 
 /-- No total adjective is disjunctive, as the standard-type hypothesis predicts. -/

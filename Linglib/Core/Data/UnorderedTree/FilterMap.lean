@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.FilterMap
-import Linglib.Core.Data.UnorderedTree.Basic
+module
+
+public import Linglib.Core.Data.RoseTree.FilterMap
+public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
 # Partial label maps on unordered trees
@@ -18,18 +20,20 @@ collapses under `UnorderedTree.mk`. So `RoseTree.filterMap` descends to the quot
 * `UnorderedTree.filterMap`: the descent through the `Perm` quotient.
 -/
 
+@[expose] public section
+
 variable {α β : Type*}
 
 /-- The Perm-invariant filterMap-then-mk composition, lifted through the
     quotient by `UnorderedTree.filterMap`. -/
-private def filterMapQuotient (f : α → Option β) (t : RoseTree α) :
+def filterMapQuotient (f : α → Option β) (t : RoseTree α) :
     Option (UnorderedTree β) :=
   (RoseTree.filterMap f t).map UnorderedTree.mk
 
 mutual
 
 /-- **Perm invariance** of the filterMap-then-mk composition. -/
-private theorem filterMapQuotient_perm (f : α → Option β) :
+theorem filterMapQuotient_perm (f : α → Option β) :
     ∀ {t t' : RoseTree α}, RoseTree.Perm t t' →
       filterMapQuotient f t = filterMapQuotient f t'
   | _, _, @RoseTree.Perm.node _ a cs ds h => by

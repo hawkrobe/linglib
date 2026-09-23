@@ -1,6 +1,8 @@
-import Linglib.Semantics.ArgumentStructure.Affectedness
-import Linglib.Semantics.Events.Basic
-import Mathlib.Order.Defs.LinearOrder
+module
+
+public import Linglib.Semantics.ArgumentStructure.Affectedness
+public import Linglib.Semantics.Events.Basic
+public import Mathlib.Order.Defs.LinearOrder
 
 /-!
 # Measure Functions, Difference Functions, and Measure of Change
@@ -58,6 +60,8 @@ quantify over the scale's maximum (or its absence).
 5. Identity / monotonicity theorems
 
 -/
+
+@[expose] public section
 
 namespace Degree
 

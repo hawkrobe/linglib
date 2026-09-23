@@ -1,6 +1,8 @@
-import Linglib.Studies.Heinamaki1974
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Data.Examples.Karttunen1974
+module
+
+public import Linglib.Studies.Heinamaki1974
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Data.Examples.Karttunen1974
 
 /-!
 # Karttunen (1974): Until
@@ -32,6 +34,8 @@ for point events the two logical forms coincide given the presupposition
 * [karttunen-1974]
 * [anscombe-1964], [heinamaki-1974]
 -/
+
+@[expose] public section
 
 namespace Karttunen1974
 

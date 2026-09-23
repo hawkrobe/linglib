@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Order.Nat
-import Linglib.Core.Order.Bundle
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Order.Nat
+public import Linglib.Core.Order.Bundle
 
 /-!
 # Segmental representation: definitions
@@ -36,6 +38,8 @@ scales. The theorems about them live in `Phonology/Segmental/Basic.lean`.
 * [sen-2015]
 * [afkir-zellou-2025]
 -/
+
+@[expose] public section
 
 namespace Phonology
 

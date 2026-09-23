@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.KampanarouAlexiadou2026
+module
+
+public import Linglib.Data.Examples.KampanarouAlexiadou2026
 
 /-!
 # Kampanarou and Alexiadou (2026): Genitive Alternation in Possessives and Beyond
@@ -42,6 +44,8 @@ its footnote 14 offers no account.
 * [alexiadou-2003], [grimshaw-1990], [horrocks-stavrou-1987]
 * [michelioudakis-chatzikyriakidis-spathas-2024]
 -/
+
+@[expose] public section
 
 namespace KampanarouAlexiadou2026
 
@@ -112,11 +116,11 @@ structure Row where
   possessor : Possessor
   judgment : Judgment
 
-private def relationOf : List (String × Relation) :=
+def relationOf : List (String × Relation) :=
   [("partWhole", .partWhole), ("source", .source), ("kinship", .kinship),
     ("ownership", .ownership), ("association", .association)]
 
-private def formOf : List (String × Form) :=
+def formOf : List (String × Form) :=
   [("common", .common), ("pronoun", .pronoun), ("properName", .properName)]
 
 /-- A row of the `possessive` group, from the paper's features. -/
@@ -176,7 +180,7 @@ inductive Marking
   | genitive | apo
   deriving DecidableEq, Repr
 
-private def markingOf : List (String × Marking) := [("genitive", .genitive), ("apo", .apo)]
+def markingOf : List (String × Marking) := [("genitive", .genitive), ("apo", .apo)]
 
 /-- A recursive possessive, (25) to (27): the inner possessor, closest to the head, and the outer
 one it embeds. -/
@@ -263,7 +267,7 @@ structure DerivedRow where
   nominal : Nominal
   judgment : Judgment
 
-private def varietyOf : List (String × Variety) := [("smg", .smg), ("grevena", .grevena)]
+def varietyOf : List (String × Variety) := [("smg", .smg), ("grevena", .grevena)]
 
 /-- A row of the `derived` group. -/
 def DerivedRow.ofExample (e : LinguisticExample) : Option DerivedRow := do

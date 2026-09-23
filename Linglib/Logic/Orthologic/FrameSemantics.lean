@@ -1,5 +1,7 @@
-import Linglib.Logic.Orthologic
-import Linglib.Core.Order.Orthoframe.Representation
+module
+
+public import Linglib.Logic.Orthologic
+public import Linglib.Core.Order.Orthoframe.Representation
 
 /-!
 # Frame semantics and completeness for orthologic
@@ -21,6 +23,8 @@ ortholattices.
 * `Support`, `support_setOf_eq_extent` — the support relation and the bridge.
 * `frame_sound`, `frame_complete`, `derivable_iff_frameConsequence` — Theorem 4.19.
 -/
+
+@[expose] public section
 
 open Order Set Orthoframe
 

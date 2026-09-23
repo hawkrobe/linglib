@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Quantification.Numerals.Roundness
-import Linglib.Core.Algebra.Order.ToIntervalMod
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Core.Algebra.Order.ToIntervalMod
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Pragmatic halo and precision modes
@@ -28,6 +30,8 @@ pragmatic halo, [krifka-2007]'s approximate interpretation.
   ([woodin-etal-2024]'s corpus finding); the magnitude constants and the
   score threshold are stipulations of this formalisation.
 -/
+
+@[expose] public section
 
 namespace Numerals.Precision
 

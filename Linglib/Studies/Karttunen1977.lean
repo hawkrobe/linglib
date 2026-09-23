@@ -1,5 +1,7 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Exhaustivity
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
 # Karttunen (1977): Syntax and Semantics of Questions
@@ -39,6 +41,8 @@ ambiguities of its later sections.
 * [karttunen-1977]
 * [hamblin-1973b], [karttunen-peters-1976]
 -/
+
+@[expose] public section
 
 open Question
 

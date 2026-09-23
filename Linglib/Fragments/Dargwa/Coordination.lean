@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Tanti Dargwa coordinators
@@ -18,6 +20,8 @@ word *ja* before each alternative, which with negation gives 'neither … nor', 
 
 * [sumbatova-2021]
 -/
+
+@[expose] public section
 
 namespace Dargwa.Coordination
 

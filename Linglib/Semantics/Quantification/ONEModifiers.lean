@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.UnifiedUniversal
+module
+
+public import Linglib.Semantics.Quantification.UnifiedUniversal
 
 /-!
 # ONE Modifiers for Distributive Universal Quantifiers
@@ -19,6 +21,8 @@ Non-distributive [−dist] forms like *all* are bare Q_∀ with no ONE.
 The ONE_AT atomicity presupposition explains why *each ten minutes*
 is ungrammatical: intervals are not atoms, so ONE_AT fails.
 -/
+
+@[expose] public section
 
 namespace Quantifier.ONEModifiers
 

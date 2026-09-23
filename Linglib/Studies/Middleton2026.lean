@@ -1,8 +1,10 @@
-import Linglib.Morphology.DistributedMorphology.Impoverishment
-import Linglib.Morphology.DistributedMorphology.Spellout
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Fragments.Taos.Agreement
-import Linglib.Fragments.Basque.Postsyntax
+module
+
+public import Linglib.Morphology.DistributedMorphology.Impoverishment
+public import Linglib.Morphology.DistributedMorphology.Spellout
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Fragments.Taos.Agreement
+public import Linglib.Fragments.Basque.Postsyntax
 
 /-!
 # Middleton (2026): Ordering of Impoverishment Rules in Taos and Basque
@@ -39,6 +41,8 @@ of this file and are UNVERIFIED.
 * [halle-marantz-1993]
 * [harbour-2014]
 -/
+
+@[expose] public section
 
 namespace Middleton2026
 

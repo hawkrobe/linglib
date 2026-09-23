@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Exceptive
-import Linglib.Data.Examples.VonFintel1993
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Semantics.Quantification.Exceptive
+public import Linglib.Data.Examples.VonFintel1993
+public import Mathlib.Tactic.FinCases
 
 /-!
 # von Fintel (1993): Exceptive Constructions
@@ -41,6 +43,8 @@ questions of §1.7 are not formalized.
 * [keenan-stavi-1986]
 * [hoeksema-1987]
 -/
+
+@[expose] public section
 
 namespace VonFintel1993
 

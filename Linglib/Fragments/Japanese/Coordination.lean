@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Japanese coordinators
@@ -23,6 +25,8 @@ their decomposition of conjunction; the indeterminate quantifiers built on *mo* 
 * [mitrovic-sauerland-2016]
 * [stassen-2000]
 -/
+
+@[expose] public section
 
 namespace Japanese.Coordination
 

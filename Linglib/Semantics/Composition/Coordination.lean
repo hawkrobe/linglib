@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Coordinator
-import Linglib.Semantics.Composition.Tree
+module
+
+public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Semantics.Composition.Tree
 
 /-!
 # Coordination in the composition engine
@@ -14,6 +16,8 @@ through the Coordinator API.
 API surface: it dispatches on the sisters' type at runtime through
 `Ty.Domain.booleanAlgebra?` and applies `Coordinator.op` in the algebra found.
 -/
+
+@[expose] public section
 
 namespace Semantics.Composition.Tree
 

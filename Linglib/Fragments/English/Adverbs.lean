@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Basic
-import Linglib.Semantics.Quantification.Lexicon
+module
+
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # English adverbs
@@ -20,6 +22,8 @@ studies that treat them ([liu-rotter-2025], [percus-2000]).
 * [liu-rotter-2025]
 -/
 
+@[expose] public section
+
 namespace English.Adverbs
 
 /-! ### Modal adverbs -/
@@ -28,11 +32,11 @@ section ModalAdverbs
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 def certainly : ModalItem := { form := "certainly", meaning := {ne}, register := .formal }
 def definitely : ModalItem := { form := "definitely", meaning := {ne, nd} }

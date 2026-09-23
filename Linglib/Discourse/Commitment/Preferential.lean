@@ -1,5 +1,7 @@
-import Linglib.Discourse.Commitment.Basic
-import Linglib.Semantics.Attitudes.Desire.Preferential
+module
+
+public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Semantics.Attitudes.Desire.Preferential
 
 /-!
 # Preferential commitments and effective preferences
@@ -19,6 +21,8 @@ force-augmenting particle from contexts in which the preference it expresses is 
 * [condoravdi-lauer-2012]
 * [deo-2025-bara]
 -/
+
+@[expose] public section
 
 namespace Commitment
 

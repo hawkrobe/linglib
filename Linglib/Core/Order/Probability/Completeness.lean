@@ -1,6 +1,8 @@
-import Linglib.Core.Order.Probability.Representability
-import Linglib.Core.Order.Probability.CancellationFin4
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Linglib.Core.Order.Probability.Representability
+public import Linglib.Core.Order.Probability.CancellationFin4
+public import Mathlib.Tactic.IntervalCases
 
 /-! # KPS representation and completeness theorems
 
@@ -18,6 +20,8 @@ The top-level representation results ([kraft-pratt-seidenberg-1959]; [van-der-ho
 
 `[UPSTREAM]` candidate (see the note in `Defs.lean`).
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

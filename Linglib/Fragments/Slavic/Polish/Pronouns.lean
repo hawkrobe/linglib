@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Polish interrogative pronouns
@@ -11,6 +13,8 @@ accusative, and *co* serves as both nominative and accusative.
 * [M. Dalrymple and R. M. Kaplan, *Feature indeterminacy and feature resolution*
   (2000)][dalrymple-kaplan-2000]
 -/
+
+@[expose] public section
 
 namespace Polish.Pronouns
 

@@ -1,7 +1,9 @@
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-import Linglib.Core.Optimization.PermSubsetCombinatorics
-import Linglib.Fragments.Tagalog.Phonology
+module
+
+public import Linglib.Phonology.Constraints.Basic
+public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+public import Linglib.Core.Optimization.PermSubsetCombinatorics
+public import Linglib.Fragments.Tagalog.Phonology
 
 /-!
 # Zuraw (2010): A Model of Lexical Variation and the Grammar
@@ -42,6 +44,8 @@ every stop substitutes, the paper's pattern (j) (`pattern_j_witness`).
 * [newman-1984]
 * [blust-2004]
 -/
+
+@[expose] public section
 
 namespace Zuraw2010
 

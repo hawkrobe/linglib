@@ -1,4 +1,6 @@
-import Linglib.Studies.Anscombe1964
+module
+
+public import Linglib.Studies.Anscombe1964
 
 /-!
 # Heinämäki (1974): Semantics of English Temporal Connectives
@@ -20,6 +22,8 @@ given the clause they quantify over, and are not symmetric (`while_not_symm`).
 * [heinamaki-1974]
 * [anscombe-1964]
 -/
+
+@[expose] public section
 
 namespace Heinamaki1974
 

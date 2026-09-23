@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Bybee 1985: relevance and lexical strength
@@ -49,6 +51,8 @@ where its token frequency is high, and the Strong Verbs that regularized are the
 * [perkins-1980]
 * [sweet-1882]
 -/
+
+@[expose] public section
 
 namespace Bybee1985
 

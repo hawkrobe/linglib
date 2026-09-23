@@ -1,5 +1,7 @@
-import Linglib.Fragments.Japanese.Nouns
-import Linglib.Data.Examples.Downing1996
+module
+
+public import Linglib.Fragments.Japanese.Nouns
+public import Linglib.Data.Examples.Downing1996
 
 /-!
 # Downing (1996): Numeral Classifier Systems: The Case of Japanese
@@ -63,6 +65,8 @@ analyses of Chapter 4 or the history of Chapter 2.
 * [smith-stark-1974]
 * [martin-1975]
 -/
+
+@[expose] public section
 
 namespace Downing1996
 

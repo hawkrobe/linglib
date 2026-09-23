@@ -1,7 +1,9 @@
-import Linglib.Morphology.DistributedMorphology.Fission
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Person.Features
-import Linglib.Data.Examples.GonzalezPootMcGinnis2006
+module
+
+public import Linglib.Morphology.DistributedMorphology.Fission
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Person.Features
+public import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 
 /-!
 # González Poot and McGinnis (2006): Local versus Long-Distance Fission in Distributed Morphology
@@ -41,6 +43,8 @@ a row's overt suffixes.
 * [halle-marantz-1993]
 * [harley-ritter-2002]
 -/
+
+@[expose] public section
 
 namespace GonzalezPootMcGinnis2006
 

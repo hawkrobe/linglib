@@ -1,9 +1,11 @@
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Discourse.Givenness
-import Linglib.Data.Examples.ArnoldEtAl2000
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Ring
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Discourse.Givenness
+public import Linglib.Data.Examples.ArnoldEtAl2000
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Tactic.Ring
 
 /-!
 # Arnold, Wasow, Losongco & Ginstrom 2000: heaviness vs. newness
@@ -42,6 +44,8 @@ size in the data and is not represented.
 * [behaghel-1909] — the law of growing constituents
 * [prince-1992] — discourse-given, inferable, and new
 -/
+
+@[expose] public section
 
 namespace ArnoldEtAl2000
 

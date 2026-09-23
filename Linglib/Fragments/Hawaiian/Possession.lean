@@ -1,7 +1,9 @@
-import Linglib.Semantics.Possession.Defs
-import Linglib.Data.WALS.Features.F58A
-import Linglib.Data.WALS.Features.F59A
-import Linglib.Data.WALS.Features.F117A
+module
+
+public import Linglib.Semantics.Possession.Defs
+public import Linglib.Data.WALS.Features.F58A
+public import Linglib.Data.WALS.Features.F59A
+public import Linglib.Data.WALS.Features.F117A
 
 /-!
 # Hawaiian possession
@@ -34,6 +36,8 @@ marking.
 Hawaiian is absent from the WALS possession chapters; the four codings below fill its cells from
 the grammars above.
 -/
+
+@[expose] public section
 
 namespace Hawaiian.Possession
 

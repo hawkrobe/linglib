@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.SocialMeaning.Dimension
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
+module
+
+public import Linglib.Pragmatics.SocialMeaning.Dimension
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
 
 /-!
 # Personae and grounded fields
@@ -36,6 +38,8 @@ polarity is the sign of the association.
 * [burnett-2019]
 * [eckert-2008]
 -/
+
+@[expose] public section
 
 namespace SocialMeaning
 

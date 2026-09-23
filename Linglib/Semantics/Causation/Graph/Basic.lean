@@ -1,7 +1,9 @@
-import Linglib.Semantics.Causation.Graph.Defs
-import Linglib.Core.Relation.ReflTransGen
-import Mathlib.Order.RelClasses
-import Mathlib.Logic.Relation
+module
+
+public import Linglib.Semantics.Causation.Graph.Defs
+public import Linglib.Core.Relation.ReflTransGen
+public import Mathlib.Order.RelClasses
+public import Mathlib.Logic.Relation
 
 /-!
 # CausalGraph: Acyclicity, Ancestor Relation
@@ -20,6 +22,8 @@ below children) and its strict-successor refinement `TimeIndex` (parents
 immediately precede children, the time-indexed causal models of
 [cao-white-lassiter-2025]); `IsDAG.of_depth` passes the loose form.
 -/
+
+@[expose] public section
 
 namespace Causation.CausalGraph
 

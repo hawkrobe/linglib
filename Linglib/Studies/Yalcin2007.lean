@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Insert
-import Linglib.Data.Examples.Yalcin2007
+module
+
+public import Mathlib.Data.Set.Insert
+public import Linglib.Data.Examples.Yalcin2007
 
 /-!
 # Yalcin (2007): Epistemic Modals
@@ -45,6 +47,8 @@ information parameter in the paper's seventh section is not modelled.
 * [veltman-1996]
 * [stephenson-2007]
 -/
+
+@[expose] public section
 
 namespace Yalcin2007
 

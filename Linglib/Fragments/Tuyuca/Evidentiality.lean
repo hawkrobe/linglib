@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Tuyuca evidentiality
@@ -15,6 +17,8 @@ and indirect evidentials.
 * [barnes-1984]
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace Tuyuca.Evidentiality
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Czech negation
@@ -14,6 +16,8 @@ in the sibling `PolarityItems.lean`.
 * [miestamo-2005]
 * [haspelmath-2013]
 -/
+
+@[expose] public section
 
 open Negation
 

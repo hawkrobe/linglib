@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 33A: Coding of Nominal Plurality
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 33, 1066 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F33A
 
@@ -34,7 +38,8 @@ inductive PluralityCoding where
   | noPlural
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PluralityCoding) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PluralityCoding) :=
   [ { walsCode := "xoo", iso := "nmn", value := .pluralSuffix }
   , { walsCode := "aar", iso := "aiw", value := .noPlural }
   , { walsCode := "abi", iso := "axb", value := .pluralSuffix }
@@ -537,7 +542,8 @@ private def allData_0 : List (Datapoint PluralityCoding) :=
   , { walsCode := "lmb", iso := "lam", value := .pluralPrefix }
   ]
 
-private def allData_1 : List (Datapoint PluralityCoding) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint PluralityCoding) :=
   [ { walsCode := "lmu", iso := "lmu", value := .pluralWord }
   , { walsCode := "lan", iso := "laj", value := .pluralSuffix }
   , { walsCode := "lao", iso := "lao", value := .noPlural }
@@ -1040,7 +1046,8 @@ private def allData_1 : List (Datapoint PluralityCoding) :=
   , { walsCode := "vnm", iso := "vnm", value := .pluralWord }
   ]
 
-private def allData_2 : List (Datapoint PluralityCoding) :=
+/-- Rows 1001 to 1066 of `allData`. -/
+def allData_2 : List (Datapoint PluralityCoding) :=
   [ { walsCode := "wah", iso := "", value := .noPlural }
   , { walsCode := "wak", iso := "wbl", value := .pluralSuffix }
   , { walsCode := "wal", iso := "van", value := .pluralSuffix }

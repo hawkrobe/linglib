@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Gã personal pronouns
@@ -34,6 +36,8 @@ orthography lives in `form`.
 * [allotey-2021]
 * [campbell-2017]
 -/
+
+@[expose] public section
 
 namespace Ga.Pronouns
 

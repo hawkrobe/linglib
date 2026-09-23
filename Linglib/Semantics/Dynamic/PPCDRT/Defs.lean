@@ -1,5 +1,7 @@
-import Linglib.Logic.Assignment
-import Mathlib.Data.Set.Basic
+module
+
+public import Linglib.Logic.Assignment
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Plural Partial Compositional DRT — Definitions
@@ -30,6 +32,8 @@ them into PPCDRT. Initial linglib consumer:
 `Semantics/Dynamic/ICDRT/Defs.lean` (ICDRT substrate, also single
 current consumer).
 -/
+
+@[expose] public section
 
 namespace PPCDRT
 

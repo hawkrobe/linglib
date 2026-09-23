@@ -1,6 +1,8 @@
-import Linglib.Morphology.Paradigm.Basic
-import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Syntax.Category.Pronoun.Basic
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Reflexive pronouns
@@ -24,6 +26,8 @@ where no role is recorded.
 * [N. Chomsky, *Lectures on Government and Binding* (1981)][chomsky-1981]
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
+
+@[expose] public section
 
 /-- A reflexive pronoun: the general `Pronoun` with the least perspectival role an antecedent
 outside the local domain must fill, `none` when the form is only locally bound or no role is

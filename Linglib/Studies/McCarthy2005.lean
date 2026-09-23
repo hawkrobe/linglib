@@ -1,6 +1,8 @@
-import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Studies.Benua1997
+module
+
+public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Studies.Benua1997
 
 /-!
 # McCarthy (2005): Optimal Paradigms
@@ -25,6 +27,8 @@ the paper's ranking.
 * [mccarthy-2005]
 * [benua-1997]
 -/
+
+@[expose] public section
 
 namespace McCarthy2005
 

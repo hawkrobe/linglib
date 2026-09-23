@@ -1,5 +1,7 @@
-import Mathlib.Order.MinMax
-import Linglib.Data.Examples.GilesEtAl2026
+module
+
+public import Mathlib.Order.MinMax
+public import Linglib.Data.Examples.GilesEtAl2026
 
 /-!
 # Giles, Rubio-Fernandez and Mollica (2026): Search Efficiency Drives Reference Production Across Modalities, But Colour Is Special
@@ -49,6 +51,8 @@ in the second, where attentional guidance, production effort and term frequency 
 * [degen-etal-2020]
 * [wolfe-horowitz-2017]
 -/
+
+@[expose] public section
 
 namespace GilesEtAl2026
 
@@ -207,7 +211,7 @@ structure Row where
   ci : ℤ × ℤ
   deriving DecidableEq
 
-private def discriminability : List (String × Discriminability) := [("low", .low), ("high", .high)]
+def discriminability : List (String × Discriminability) := [("low", .low), ("high", .high)]
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let experiment ← ex.nat? "experiment"

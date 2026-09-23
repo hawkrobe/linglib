@@ -1,6 +1,8 @@
-import Linglib.Syntax.CCG.Grammar
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.List.Basic
+module
+
+public import Linglib.Syntax.CCG.Grammar
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.List.Basic
 
 /-!
 # Kuhlmann, Koller and Satta (2015): Lexicalization and Generative Power in CCG
@@ -45,6 +47,8 @@ its atoms. The lexical entry for `c` is `C\A`, the direction the paper's derivat
 * [weir-joshi-1988]
 * [schiffer-maletti-2021]
 -/
+
+@[expose] public section
 
 namespace KuhlmannKollerSatta2015
 

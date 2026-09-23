@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `Schlenker2004a` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/Schlenker2004a.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace Schlenker2004a.Examples`.
 -/
+
+@[expose] public section
 
 namespace Schlenker2004a.Examples
 

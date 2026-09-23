@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Cassubian Case Inventory
@@ -20,6 +22,8 @@ complement of the copula" confirms the cross-Slavic generalization
 that bare predicative INST survives — Slovene/Sorbian are the marked
 outliers in losing it.
 -/
+
+@[expose] public section
 
 namespace Cassubian.Case
 

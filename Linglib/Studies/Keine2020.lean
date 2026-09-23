@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.Clause.Spine
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Syntax.Minimalist.Clause.Spine
 
 /-!
 # Keine (2020): Probes and Their Horizons
@@ -36,6 +38,8 @@ facts the tables record.
 * [bobaljik-wurmbrand-2005]
 * [polinsky-potsdam-2001]
 -/
+
+@[expose] public section
 
 namespace Keine2020
 

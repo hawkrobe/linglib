@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Segmental.Basic
+module
+
+public import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Yoruba vowels
@@ -21,6 +23,8 @@ are not represented.
 * `Yoruba.Vowel.atr`: the ±ATR split, read off the segment.
 -/
 
+@[expose] public section
+
 namespace Yoruba
 
 open Phonology
@@ -31,7 +35,7 @@ inductive Vowel where
   deriving DecidableEq, Repr, Fintype
 
 /-- A vowel of the given height and backness, rounded or not, with its [ATR] value. -/
-private def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
+def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
     Segment :=
   ((Segment.vowel ht bk).setFeature .round round).setFeature .atr atr
 

@@ -1,5 +1,7 @@
-import Linglib.Core.Order.TreePath
-import Mathlib.Algebra.Free
+module
+
+public import Linglib.Core.Order.TreePath
+public import Mathlib.Algebra.Free
 
 /-!
 # `Branching`: the rose-tree interface
@@ -21,6 +23,8 @@ No well-foundedness is required: the path machinery recurses on the
 *path* (a structurally decreasing `List ℕ`), not on `T`, so the class is
 law-free on the carrier and carriers of infinite depth are admissible.
 -/
+
+@[expose] public section
 
 namespace Core.Order
 

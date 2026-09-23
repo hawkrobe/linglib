@@ -1,6 +1,8 @@
-import Linglib.Syntax.DependencyGrammar.Projectivity
-import Linglib.Syntax.DependencyGrammar.Length
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.DependencyGrammar.Length
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # de Marneffe and Nivre (2019): Dependency grammar
@@ -42,6 +44,8 @@ formalized.
 * [gibson-1998]
 * [tesniere-1959]
 -/
+
+@[expose] public section
 
 namespace DeMarneffeNivre2019
 

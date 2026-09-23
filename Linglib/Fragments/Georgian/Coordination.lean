@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Georgian coordinators
@@ -20,6 +22,8 @@ children. Disjunction is *an* 'or' and the adversative coordinator is *magram* '
 * [bill-etal-2025]
 * [mitrovic-2021]
 -/
+
+@[expose] public section
 
 namespace Georgian.Coordination
 

@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Fragments.Japanese.Classifiers
-import Linglib.Semantics.Genericity.NominalMappingParameter
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Fragments.Japanese.Classifiers
+public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Japanese nouns
@@ -16,6 +18,8 @@ classifiers are `Japanese.Classifier`.
 * [chierchia-1998]
 * [downing-1996]
 -/
+
+@[expose] public section
 
 namespace Japanese.Nouns
 
@@ -71,7 +75,7 @@ structure ProperName extends _root_.ProperName where
   deriving DecidableEq, Repr
 
 /-- A personal name glossed by its romanization. -/
-private def name (form romaji : String) (gender : Option Gender := none) : ProperName :=
+def name (form romaji : String) (gender : Option Gender := none) : ProperName :=
   { form, gloss := romaji, romaji, gender }
 
 def taro : ProperName := name "太郎" "Tarō" (some .masculine)

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.ArgumentStructure.Valency
+module
+
+public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.Valency
 
 /-!
 # Salience classes
@@ -27,6 +29,8 @@ instantiation with attested derivations is `Studies/Lucy1994.lean`.
 * `SalienceClass.ofKinds_close` — closure invariance on cause-free
   signatures
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

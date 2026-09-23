@@ -1,17 +1,19 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Order.Antichain
-import Mathlib.Data.SetLike.Basic
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.CompleteBooleanAlgebra
-import Mathlib.Order.CompleteLattice.Basic
-import Mathlib.Order.Hom.BoundedLattice
-import Mathlib.Order.Lattice
-import Mathlib.Order.Preorder.Finite
-import Mathlib.Order.Closure
-import Mathlib.Order.GaloisConnection.Basic
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Semantics.Questions.Support
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Order.Antichain
+public import Mathlib.Data.SetLike.Basic
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.CompleteBooleanAlgebra
+public import Mathlib.Order.CompleteLattice.Basic
+public import Mathlib.Order.Hom.BoundedLattice
+public import Mathlib.Order.Lattice
+public import Mathlib.Order.Preorder.Finite
+public import Mathlib.Order.Closure
+public import Mathlib.Order.GaloisConnection.Basic
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Semantics.Questions.Support
 
 /-!
 # Question — core type, lattice, Heyting derivatives
@@ -74,6 +76,8 @@ constraint (`contains_empty`) is essential to inquisitive semantics
 and is lost in `LowerSet`. We use `SetLike` instead, which gives the
 membership/coercion API without forcing `LowerSet`'s `⊥`.
 -/
+
+@[expose] public section
 
 universe u
 
@@ -416,7 +420,7 @@ needs only the two inequalities `inf_sSup ≤ iSup_inf` and
 `iInf_sup ≤ sup_sInf`. -/
 
 /-- Frame inequality: `P ⊓ sSup S ≤ ⨆ R ∈ S, P ⊓ R`. -/
-private theorem inf_sSup_le_iSup_inf_aux (P : Question W)
+theorem inf_sSup_le_iSup_inf_aux (P : Question W)
     (S : Set (Question W)) :
     P ⊓ sSup S ≤ ⨆ R ∈ S, P ⊓ R := by
   intro q hq
@@ -431,7 +435,7 @@ private theorem inf_sSup_le_iSup_inf_aux (P : Question W)
     exact (le_iSup₂ (f := fun R (_ : R ∈ S) => P ⊓ R) R hRS) hPR
 
 /-- Coframe inequality: `⨅ R ∈ S, P ⊔ R ≤ P ⊔ sInf S`. -/
-private theorem iInf_sup_le_sup_sInf_aux (P : Question W)
+theorem iInf_sup_le_sup_sInf_aux (P : Question W)
     (S : Set (Question W)) :
     ⨅ R ∈ S, P ⊔ R ≤ P ⊔ sInf S := by
   intro q hq

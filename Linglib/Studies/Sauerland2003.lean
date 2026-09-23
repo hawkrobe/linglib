@@ -1,7 +1,9 @@
-import Linglib.Semantics.Plurality.Algebra
-import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Presupposition.MaximizePresupposition
+module
+
+public import Linglib.Semantics.Plurality.Algebra
+public import Linglib.Semantics.Presupposition.PhiFeatures
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Presupposition.MaximizePresupposition
 
 /-!
 # Sauerland (2003): a new semantics for number
@@ -36,6 +38,8 @@ the unmarked values, plural and third person (`politeness_unmarked`).
 * [sauerland-2003]
 * [heim-1991], [link-1987]
 -/
+
+@[expose] public section
 
 namespace Sauerland2003
 

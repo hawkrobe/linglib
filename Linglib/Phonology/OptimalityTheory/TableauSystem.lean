@@ -1,6 +1,8 @@
-import Linglib.Core.Optimization.Evaluation
-import Linglib.Core.Optimization.System
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Core.Optimization.Evaluation
+public import Linglib.Core.Optimization.System
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Tableaux as Constraint Systems
@@ -29,6 +31,8 @@ A study can keep its `Tableau`/`optimal` formulation and state the same predicti
 
 No study consumes this file yet.
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 

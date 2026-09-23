@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
-import Linglib.Processing.Expectation.InformationValue
+module
+
+public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
+public import Linglib.Processing.Expectation.InformationValue
 
 /-!
 # Giulianelli, Wallbridge, Cotterell and Fernández (2026): Incremental Alternative Sampling as a Lens into the Temporal and Representational Resolution of Linguistic Prediction
@@ -43,6 +45,8 @@ the substrate (`iiv_zero`).
 * [giulianelli-opedal-cotterell-2024]
 * [levy-2008]
 -/
+
+@[expose] public section
 
 open Finset InformationTheory MeasureTheory ProbabilityTheory Processing.PredictiveUncertainty
 

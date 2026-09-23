@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.BooleanAlgebra
-import Linglib.Semantics.Denotation
-import Linglib.Syntax.Category.Verb.Tense
-import Mathlib.Order.Defs.LinearOrder
+module
+
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Linglib.Semantics.Denotation
+public import Linglib.Syntax.Category.Verb.Tense
+public import Mathlib.Order.Defs.LinearOrder
 
 /-!
 # Grammatical tense
@@ -36,6 +38,8 @@ past and the future are each idempotent and compose with one another to the unco
 * [kiparsky-2002]
 * [klecha-2016]
 -/
+
+@[expose] public section
 
 /-- The orderings of `a` to `c` compatible with an ordering of `a` to `b` and one of `b` to `c`
 in a linear order. -/

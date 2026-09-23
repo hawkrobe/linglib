@@ -1,7 +1,9 @@
-import Linglib.Semantics.Denotation
-import Linglib.Semantics.Quantification.Numerals.Basic
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # English numeral modifiers
@@ -64,6 +66,8 @@ to the study of that paper.
   "Between" and the Gricean Maxims* (2023)][egre-etal-2023]
 * [D. Penka, *"Almost there": The meaning of almost* (2006)][penka-2006]
 -/
+
+@[expose] public section
 
 namespace English.NumeralModifiers
 

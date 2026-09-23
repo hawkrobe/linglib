@@ -1,8 +1,10 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.Degree.PropertyDomain
-import Linglib.Semantics.Degree.Measure.Dimension
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Degree.PropertyDomain
+public import Linglib.Semantics.Degree.Measure.Dimension
 
 /-!
 # Scalar dimensions
@@ -25,6 +27,8 @@ The degree-theoretic apparatus over these dimensions (degree carriers,
 telicity defaults, endpoint licensing) is in
 `Semantics/Degree/Gradability/Dimension.lean`.
 -/
+
+@[expose] public section
 
 namespace Degree
 

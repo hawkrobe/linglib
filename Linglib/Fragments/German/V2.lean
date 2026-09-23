@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.VerbSecond
+module
+
+public import Linglib.Syntax.Minimalist.VerbSecond
 
 /-!
 # German verb second
@@ -21,6 +23,8 @@ see `Studies/HarizanovGribanova2019.lean`.
 * [harizanov-gribanova-2019]
 * [haider-2010]
 -/
+
+@[expose] public section
 
 namespace German
 

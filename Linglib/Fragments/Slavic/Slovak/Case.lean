@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Slovak Case Inventory
@@ -15,6 +17,8 @@ Slovak thus patterns with Russian, Slovene, and Belarusian as 6-case
 without productive VOC. `inventory` aliases the shared
 `Slavic.Case.coreInventory`.
 -/
+
+@[expose] public section
 
 namespace Slovak.Case
 

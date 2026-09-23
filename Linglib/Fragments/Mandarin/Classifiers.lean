@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Mandarin Chinese Classifier Lexicon
@@ -30,6 +32,8 @@ demonstratives, chosen on semantic grounds with a lexical residue that must be m
 *ge* as the general classifier; the semantic parameters and the general classifier are read off
 the inventory.
 -/
+
+@[expose] public section
 
 namespace Mandarin.Classifiers
 

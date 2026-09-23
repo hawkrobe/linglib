@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 10A: Vowel Nasalization
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 10, 244 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F10A
 

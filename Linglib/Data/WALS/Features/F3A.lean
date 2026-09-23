@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 3A: Consonant-Vowel Ratio
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 3, 564 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F3A
 
@@ -26,7 +30,8 @@ inductive ConsonantVowelRatio where
   | high
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint ConsonantVowelRatio) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint ConsonantVowelRatio) :=
   [ { walsCode := "xoo", iso := "nmn", value := .high }
   , { walsCode := "ani", iso := "hnh", value := .high }
   , { walsCode := "abi", iso := "axb", value := .average }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint ConsonantVowelRatio) :=
   , { walsCode := "ttu", iso := "bbl", value := .high }
   ]
 
-private def allData_1 : List (Datapoint ConsonantVowelRatio) :=
+/-- Rows 501 to 564 of `allData`. -/
+def allData_1 : List (Datapoint ConsonantVowelRatio) :=
   [ { walsCode := "tug", iso := "thv", value := .average }
   , { walsCode := "tuk", iso := "", value := .average }
   , { walsCode := "tul", iso := "tcy", value := .average }

@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Bayso noun number
@@ -18,6 +20,8 @@ plural nouns the masculine one ([hayward-1979]; [corbett-hayward-1987]; [corbett
 * [G. G. Corbett, R. J. Hayward, *Gender and number in Bayso* (1987)][corbett-hayward-1987]
 * [G. G. Corbett, *Number* (2000)][corbett-2000]
 -/
+
+@[expose] public section
 
 namespace Bayso
 

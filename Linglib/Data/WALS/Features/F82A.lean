@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 82A: Order of Subject and Verb
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 82, 1496 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F82A
 
@@ -22,7 +26,8 @@ inductive SubjectVerbOrder where
   | noDominantOrder
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint SubjectVerbOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint SubjectVerbOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .sv }
   , { walsCode := "ani", iso := "hnh", value := .sv }
   , { walsCode := "xam", iso := "xam", value := .sv }
@@ -525,7 +530,8 @@ private def allData_0 : List (Datapoint SubjectVerbOrder) :=
   , { walsCode := "iqu", iso := "iqu", value := .sv }
   ]
 
-private def allData_1 : List (Datapoint SubjectVerbOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint SubjectVerbOrder) :=
   [ { walsCode := "irx", iso := "irn", value := .sv }
   , { walsCode := "irq", iso := "irk", value := .sv }
   , { walsCode := "irr", iso := "irh", value := .sv }
@@ -1028,7 +1034,8 @@ private def allData_1 : List (Datapoint SubjectVerbOrder) :=
   , { walsCode := "nse", iso := "nse", value := .sv }
   ]
 
-private def allData_2 : List (Datapoint SubjectVerbOrder) :=
+/-- Rows 1001 to 1496 of `allData`. -/
+def allData_2 : List (Datapoint SubjectVerbOrder) :=
   [ { walsCode := "nto", iso := "nto", value := .sv }
   , { walsCode := "nua", iso := "nxl", value := .sv }
   , { walsCode := "nbd", iso := "dgl", value := .sv }

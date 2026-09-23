@@ -1,5 +1,7 @@
-import Linglib.Semantics.Degree.Antonymy
-import Linglib.Pragmatics.Bidirectional
+module
+
+public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Pragmatics.Bidirectional
 
 /-!
 # Krifka (2007): Negated Antonyms: Creating and Filling the Gap
@@ -42,6 +44,8 @@ the same evaluation over the quadruplet's forms and regions yields Krifka's assi
 * [blutner-2000] — weak bidirectional optimality
 * [mccawley-1978] — *kill* and *cause to die*
 -/
+
+@[expose] public section
 
 namespace Krifka2007b
 

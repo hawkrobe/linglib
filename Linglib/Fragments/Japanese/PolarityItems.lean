@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Japanese Polarity-Sensitive Items
@@ -12,6 +14,8 @@ Japanese builds polarity items from wh-indeterminates + particles
 - **dare-mo** (with clausemate negation): wh + mo → 'nobody'
 - **dare-demo**: wh + demo → FCI (anyone/whoever)
 -/
+
+@[expose] public section
 
 namespace Japanese.PolarityItems
 

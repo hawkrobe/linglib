@@ -1,7 +1,9 @@
-import Linglib.Logic.Modal.Epistemic
-import Linglib.Core.Probability.Kernel.OfWeights
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.Order.FixedPoints
+module
+
+public import Linglib.Logic.Modal.Epistemic
+public import Linglib.Core.Probability.Kernel.OfWeights
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Order.FixedPoints
 
 /-!
 # Fagin and Halpern (1994): Reasoning about Knowledge and Probability
@@ -59,6 +61,8 @@ paper's `C_G^{1/2} p` is empty (`fig1_commonProb`).
 * [fagin-halpern-1994]
 * [fagin-halpern-moses-vardi-1995]
 -/
+
+@[expose] public section
 
 namespace FaginHalpern1994
 
@@ -301,7 +305,7 @@ def fig1Weight (i : Fin 2) (s : Fin 4) (t : Fin 4) : ℕ :=
 /-- `p` of Figure 1, true at `s₂` and `s₃`. -/
 def fig1P : Set (Fin 4) := {t | t = 1 ∨ t = 2}
 
-private theorem fig1Weight_pos : ∀ i s, 0 < ∑ t, fig1Weight i s t := by decide
+theorem fig1Weight_pos : ∀ i s, 0 < ∑ t, fig1Weight i s t := by decide
 
 private theorem fig1Weight_eq_zero :
     ∀ i s t, fig1Cell i s ≠ fig1Cell i t → fig1Weight i s t = 0 := by

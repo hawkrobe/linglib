@@ -1,5 +1,7 @@
-import Linglib.Semantics.Plurality.MassCount
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Semantics.Plurality.MassCount
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # The Nominal Mapping Parameter
@@ -35,6 +37,8 @@ articles admits bare plurals and bare mass nouns but no bare singular count noun
 * [dayal-2004]
 * [moroney-2021]
 -/
+
+@[expose] public section
 
 namespace Genericity
 

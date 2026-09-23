@@ -1,4 +1,6 @@
-import Linglib.Semantics.Presupposition.TriggerTypology
+module
+
+public import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # Cantonese *again*-elements
@@ -17,6 +19,8 @@ analysis of Liu and Yip and live in `Studies/LiuYip2026.lean`.
 * [liu-yip-2026]
 * [lee-yip-to-appear]
 -/
+
+@[expose] public section
 
 namespace Cantonese.Particles
 

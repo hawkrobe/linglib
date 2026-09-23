@@ -1,5 +1,7 @@
-import Linglib.Semantics.Alternatives.Structural
-import Linglib.Semantics.Alternatives.Competition
+module
+
+public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Katzir (2007): Structurally-Defined Alternatives
@@ -38,6 +40,8 @@ and the symmetric alternative places the conjunction of quantifiers at the deter
 * [katzir-2007]
 * [sauerland-2004], [kroch-1972]
 -/
+
+@[expose] public section
 
 open Syntax Alternatives
 

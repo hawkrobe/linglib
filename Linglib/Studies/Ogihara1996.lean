@@ -1,6 +1,8 @@
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Data.Examples.Schema
-import Linglib.Data.Examples.Ogihara1996
+module
+
+public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Ogihara1996
 
 /-!
 # Ogihara (1996): Tense, Attitudes, and Scope
@@ -34,6 +36,8 @@ carry both the morphological tense and the divergent event location.
 * [kratzer-1998]
 * [klecha-2016]
 -/
+
+@[expose] public section
 
 namespace Ogihara1996
 

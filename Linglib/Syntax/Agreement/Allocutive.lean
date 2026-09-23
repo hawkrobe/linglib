@@ -1,7 +1,9 @@
-import Linglib.Pragmatics.SocialMeaning.Honorific
-import Linglib.Pragmatics.SocialMeaning.Register
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Number.Basic
+module
+
+public import Linglib.Pragmatics.SocialMeaning.Honorific
+public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Number.Basic
 
 /-!
 # Allocutive markers
@@ -18,6 +20,8 @@ discourse, which is the marker's register.
 
 * [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
+
+@[expose] public section
 
 /-- An allocutive marker is a form with the features of the addressee it encodes. -/
 structure AllocutiveMarker where

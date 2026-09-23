@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # German determiner inventory
@@ -15,6 +17,8 @@ possessives complete the inventory.
 * [schwarz-2013], §3
 * [moroney-2021]
 -/
+
+@[expose] public section
 
 namespace German.Determiners
 

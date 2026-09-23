@@ -1,4 +1,6 @@
-import Linglib.Semantics.Composition.Ty
+module
+
+public import Linglib.Semantics.Composition.Ty
 
 /-!
 # Lexicons
@@ -20,6 +22,8 @@ items at `M = Writer P`, and the default `M := Id` is the pure [heim-kratzer-199
 * [heim-kratzer-1998]
 * [bumford-charlow-2024]
 -/
+
+@[expose] public section
 
 namespace Semantics.Montague
 

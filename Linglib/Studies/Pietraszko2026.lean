@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Defs
+module
+
+public import Linglib.Syntax.Minimalist.Defs
 
 /-!
 # Pietraszko (2026): In Defense of the Clause-Internal Phase
@@ -48,6 +50,8 @@ objects.
 * [zeller-2015]
 * [henderson-2006]
 -/
+
+@[expose] public section
 
 namespace Pietraszko2026
 

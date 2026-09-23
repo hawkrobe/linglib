@@ -1,8 +1,10 @@
-import Linglib.Semantics.Reference.Prominence
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Linglib.Semantics.Reference.Prominence
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Valency
@@ -35,6 +37,8 @@ alignment typology needs S as its own comparative concept.
 * `Valency.IsRootValency`, `IsVoiceValency`, `IsTransitive`
 * `Valency.label` — valencies to comparative core-term labels
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Studies.Kripke1980
-import Linglib.Semantics.Quantification.Defs
+module
+
+public import Linglib.Studies.Kripke1980
+public import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Almog (2014): Referential Mechanics
@@ -40,6 +42,8 @@ from its semantics, so nothing would be proved about it.
 * [kripke-1980]
 * [donnellan-1966]
 -/
+
+@[expose] public section
 
 namespace Almog2014
 

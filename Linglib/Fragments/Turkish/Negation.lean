@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Turkish negation
@@ -18,6 +20,8 @@ pair; the glide of *gel-me-yecek* is phonological.
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation Morphology
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # Icelandic temporal connectives
@@ -13,6 +15,8 @@ punctual *until* that needs the negation *ekki*.
 * [giannakidou-2002]
 * [karttunen-1974]
 -/
+
+@[expose] public section
 
 namespace Icelandic.TemporalConnectives
 

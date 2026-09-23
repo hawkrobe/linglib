@@ -1,7 +1,9 @@
-import Linglib.Semantics.Attitudes.Desire.Preferential
-import Linglib.Semantics.Conditionals.Restrictor
-import Linglib.Data.Examples.CondoravdiLauer2016
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Semantics.Attitudes.Desire.Preferential
+public import Linglib.Semantics.Conditionals.Restrictor
+public import Linglib.Data.Examples.CondoravdiLauer2016
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Condoravdi and Lauer 2016: anankastic conditionals are just conditionals
@@ -68,6 +70,8 @@ double-modal readings of (81) to (83) is not modelled.
 * [A. Kratzer, *The notional category of modality* (1981)][kratzer-1981]
 -/
 
+@[expose] public section
+
 namespace CondoravdiLauer2016
 
 open Desire.Preferential Modality.Kratzer Conditional.Restrictor Data.Examples
@@ -131,7 +135,7 @@ theorem no_third_effective {r : Set W} (hC : (P a w).Consistent (B w)) (hp : Wan
 
 /-- Three unranked preferences over three worlds, pairwise compatible but jointly
 inconsistent. -/
-private def threeWay : PreferenceStructure (Fin 3) :=
+def threeWay : PreferenceStructure (Fin 3) :=
   PreferenceStructure.discrete {{w | w ≠ 2}, {w | w ≠ 0}, {w | w ≠ 1}}
 
 /-- Footnote 29: consistency (66) is stronger than pairwise compatibility, which is what the
@@ -400,7 +404,7 @@ inductive Implication
   deriving DecidableEq
 
 /-- The implications a purpose or conditional row may record. -/
-private def implications : List (String × Implication) :=
+def implications : List (String × Implication) :=
   [("means", .means), ("precondition", .precondition), ("strengthenedGoal", .strengthenedGoal),
     ("consequence", .consequence), ("specialization", .specialization), ("none", .none)]
 

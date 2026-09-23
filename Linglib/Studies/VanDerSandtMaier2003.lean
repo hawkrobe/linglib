@@ -1,7 +1,9 @@
-import Linglib.Semantics.Presupposition.ContentLayer
-import Linglib.Data.Examples.VanDerSandtMaier2003
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Order.Disjoint
+module
+
+public import Linglib.Semantics.Presupposition.ContentLayer
+public import Linglib.Data.Examples.VanDerSandtMaier2003
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Order.Disjoint
 
 /-!
 # van der Sandt and Maier (2003): Denials in Discourse
@@ -49,6 +51,8 @@ the rows of `Data.Examples.VanDerSandtMaier2003`.
 * [strawson-1952]
 * [kamp-reyle-1993]
 -/
+
+@[expose] public section
 
 namespace VanDerSandtMaier2003
 

@@ -1,6 +1,8 @@
-import Linglib.Logic.BeliefRevision.Iterated
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Logic.BeliefRevision.Iterated
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Darwiche and Pearl (1997): On the Logic of Iterated Belief Revision
@@ -45,6 +47,8 @@ examples and appendix tables are checked against them.
 * [M. Goldszmidt and J. Pearl, *Qualitative probabilities for default reasoning, belief
   revision, and causal modeling* (1996)][goldszmidt-pearl-1996]
 -/
+
+@[expose] public section
 
 namespace DarwichePearl1997
 

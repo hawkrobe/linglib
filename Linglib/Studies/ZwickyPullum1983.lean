@@ -1,7 +1,9 @@
-import Linglib.Morphology.Morph
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Logic.Modal.Basic
-import Mathlib.Data.Fin.Basic
+module
+
+public import Linglib.Morphology.Morph
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Logic.Modal.Basic
+public import Mathlib.Data.Fin.Basic
 
 /-!
 # Zwicky and Pullum (1983): Cliticization vs. Inflection: English n't
@@ -36,6 +38,8 @@ scopings are separated on a Kripke model (`neg_over_poss_ne_poss_over_neg`,
 
 * [zwicky-pullum-1983]
 -/
+
+@[expose] public section
 
 namespace Morphology.Diagnostics
 

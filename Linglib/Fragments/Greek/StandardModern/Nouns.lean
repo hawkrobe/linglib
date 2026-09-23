@@ -1,4 +1,6 @@
-import Linglib.Semantics.Genericity.NominalMappingParameter
+module
+
+public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Greek nominal parameters
@@ -13,6 +15,8 @@ D by raising and takes the definite article instead (`Studies/Longobardi2001.lea
 
 * [chierchia-1998]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.Nouns
 

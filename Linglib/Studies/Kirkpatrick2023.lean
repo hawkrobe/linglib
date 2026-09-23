@@ -1,4 +1,6 @@
-import Linglib.Studies.Veltman1996
+module
+
+public import Linglib.Studies.Veltman1996
 
 /-!
 # Kirkpatrick (2023): The Dynamics of Generics
@@ -35,6 +37,8 @@ insensitive to their order, so his theory predicts the reverse sequence consiste
 * [veltman-1996]
 * [cohen-1999a]
 -/
+
+@[expose] public section
 
 namespace Kirkpatrick2023
 

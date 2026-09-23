@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.DRS.Basic
-import Linglib.Semantics.Dynamic.DRS.Dynamics
-import Linglib.Semantics.Dynamic.Transition
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Basic
+public import Linglib.Semantics.Dynamic.DRS.Dynamics
+public import Linglib.Semantics.Dynamic.Transition
 
 /-!
 # Indexed relational semantics of DRSs
@@ -34,6 +36,8 @@ to the spine, where the action equation is an instance of functoriality
 * `DRS.trueRel_iff_toRelAt`: on reuse-free DRSs the flat and indexed
   semantics have the same truth conditions.
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language
 open DynamicSemantics (Possibility State Transition)

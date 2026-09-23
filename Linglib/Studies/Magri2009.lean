@@ -1,8 +1,10 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Semantics.Genericity.SortedOntology
-import Linglib.Data.Examples.CohenErteschikShir2002
-import Linglib.Fragments.German.BarePluralWordOrder
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Semantics.Genericity.SortedOntology
+public import Linglib.Data.Examples.CohenErteschikShir2002
+public import Linglib.Fragments.German.BarePluralWordOrder
 
 /-!
 # Magri (2009): A Theory of Individual-Level Predicates Based on Blind Mandatory Scalar Implicatures
@@ -35,6 +37,8 @@ exhaustification of the same abbreviation elsewhere in the library.
 * [fox-2007]
 * [carlson-1977]
 -/
+
+@[expose] public section
 
 namespace Magri2009
 

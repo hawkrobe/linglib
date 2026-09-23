@@ -1,9 +1,11 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.FinCases
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Reference.Iota
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.FinCases
+public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # Beck, Oda and Sugisaki 2004: comparison in Japanese without degree abstraction
@@ -55,6 +57,8 @@ Example numbers follow the journal article; the examples are typed in
 * [kennedy-1997]: the comparative combining directly with the adjective.
 * [ishii-1991], [snyder-wexler-das-1995]: the acceptability and subcomparative data.
 -/
+
+@[expose] public section
 
 namespace BeckOdaSugisaki2004
 

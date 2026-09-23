@@ -1,6 +1,8 @@
-import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.Paradigm.DomainContiguity
-import Mathlib.Logic.Relation
+module
+
+public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.Paradigm.DomainContiguity
+public import Mathlib.Logic.Relation
 
 /-!
 # Synthetic and analytic realization: Merger over a containment hierarchy
@@ -43,6 +45,8 @@ refinements of [moskal-2015] and [smith-moskal-xu-kang-bobaljik-2019].
   `min_lt_wordTop_of_realizeIn_ne` (RSG), `isContiguous_realizeIn`,
   `Synthesis.domainPartition`
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

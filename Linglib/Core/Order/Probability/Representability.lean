@@ -1,11 +1,13 @@
-import Linglib.Core.Order.Probability.Basic
-import Linglib.Core.Order.Probability.Content
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.Tauto
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Algebra.BigOperators.Fin
+module
+
+public import Linglib.Core.Order.Probability.Basic
+public import Linglib.Core.Order.Probability.Content
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.Tauto
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Representability of qualitative probability orders
@@ -32,6 +34,8 @@ cardinality (**Theorem 8b**).
    (`representable_fin3`, `representable_fin4`).
 -/
 
+@[expose] public section
+
 namespace ComparativeProbability
 
 /-- A qualitative probability order is **representable** when some finitely
@@ -42,7 +46,7 @@ def Representable {W : Type*} (sys : QualitativeProbability (Set W)) : Prop :=
 -- ── KPS Counterexample Infrastructure ──────────────
 
 /-- Convert a Finset (Fin 5) to a bitmask index. -/
-private def finsetIdx (s : Finset (Fin 5)) : ℕ :=
+def finsetIdx (s : Finset (Fin 5)) : ℕ :=
   s.sum (λ i => 2 ^ i.val)
 
 /-- The KPS rank table: maps bitmask index to rank (0–31).
@@ -50,7 +54,7 @@ private def finsetIdx (s : Finset (Fin 5)) : ℕ :=
     Elements: p=0, q=1, r=2, s=3, t=4.
     ∅ < q < r < s < qr < qs < p < pq < rs < t < qrs < rp < ps < tq < qrp < rt
     and complements in reverse (by supplementation, from axiom A). -/
-private def kpsRankNat (idx : ℕ) : ℕ :=
+def kpsRankNat (idx : ℕ) : ℕ :=
   match idx with
   |  0 =>  0 |  1 =>  6 |  2 =>  1 |  3 =>  7
   |  4 =>  2 |  5 => 11 |  6 =>  4 |  7 => 14
@@ -63,10 +67,10 @@ private def kpsRankNat (idx : ℕ) : ℕ :=
   |  _ =>  0
 
 /-- KPS rank of a finset. -/
-private def kpsRank (s : Finset (Fin 5)) : ℕ :=
+def kpsRank (s : Finset (Fin 5)) : ℕ :=
   kpsRankNat (finsetIdx s)
 
-private theorem kps_mono_finset :
+theorem kps_mono_finset :
     ∀ (a b : Finset (Fin 5)), a ⊆ b → kpsRank b ≥ kpsRank a := by
   decide
 
@@ -79,8 +83,8 @@ section KPSSystem
 
 attribute [local instance] Classical.propDecidable
 
-private noncomputable def kpsRankSet (A : Set (Fin 5)) : ℕ := kpsRank A.toFinset
-private noncomputable def kpsLe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≤ kpsRankSet B
+noncomputable def kpsRankSet (A : Set (Fin 5)) : ℕ := kpsRank A.toFinset
+noncomputable def kpsLe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≤ kpsRankSet B
 
 noncomputable def kpsSystem : QualitativeProbability (Set (Fin 5)) where
   le := kpsLe

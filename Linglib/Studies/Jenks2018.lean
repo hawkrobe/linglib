@@ -1,10 +1,12 @@
-import Linglib.Data.Examples.Jenks2018
-import Linglib.Semantics.Reference.Description
-import Linglib.Semantics.Genericity.MeaningPreservation
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.Mandarin.Determiners
-import Linglib.Fragments.Cantonese.Determiners
-import Linglib.Fragments.German.Determiners
+module
+
+public import Linglib.Data.Examples.Jenks2018
+public import Linglib.Semantics.Reference.Description
+public import Linglib.Semantics.Genericity.MeaningPreservation
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Fragments.Cantonese.Determiners
+public import Linglib.Fragments.German.Determiners
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
@@ -42,6 +44,8 @@ fragments derive, marked-unique being the unattested fourth (`table2`).
 * [schwarz-2013]
 * [chierchia-1998]
 -/
+
+@[expose] public section
 
 namespace Jenks2018
 
@@ -145,7 +149,7 @@ structure Row where
   bare : Option Bool
   marked : Option Bool
 
-private def envOf : String → Option Environment
+def envOf : String → Option Environment
   | "largerSituation" => some .largerSituation
   | "immediateSituation" => some .immediateSituation
   | "partWholeBridging" => some .partWholeBridging
@@ -154,7 +158,7 @@ private def envOf : String → Option Environment
   | "donkey" => some .donkey
   | _ => none
 
-private def topicOf : String → Option Topic
+def topicOf : String → Option Topic
   | "none" => some .none
   | "continuing" => some .continuing
   | "new" => some .new

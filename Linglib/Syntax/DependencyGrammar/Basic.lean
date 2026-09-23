@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Combinatorics.Digraph.Basic
-import Mathlib.Combinatorics.Digraph.Orientation
-import Mathlib.Combinatorics.SimpleGraph.Basic
-import Linglib.Data.UD.DepRel
-import Linglib.Morphology.Word.Basic
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Combinatorics.Digraph.Basic
+public import Mathlib.Combinatorics.Digraph.Orientation
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Linglib.Data.UD.DepRel
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Dependency graphs
@@ -53,6 +55,8 @@ source of the root convention
 [de-marneffe-nivre-2019] — Dependency grammar, on UD's enhanced
 representation
 -/
+
+@[expose] public section
 
 open Morphology (Word)
 

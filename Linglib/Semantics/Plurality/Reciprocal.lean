@@ -1,6 +1,8 @@
-import Mathlib.Logic.Relation
-import Mathlib.Order.Partition.Finpartition
-import Linglib.Semantics.Plurality.Cumulativity
+module
+
+public import Mathlib.Logic.Relation
+public import Mathlib.Order.Partition.Finpartition
+public import Linglib.Semantics.Plurality.Cumulativity
 
 /-!
 # Reciprocal predicates
@@ -57,6 +59,8 @@ scheme is a hypothesis of the entailments rather than a conjunct of the definiti
 * [A. Majid, N. Evans, A. Gaby and S. C. Levinson, *The semantics of reciprocal constructions
   across languages: An extensional approach* (2011)][majid-et-al-2011]
 -/
+
+@[expose] public section
 
 namespace Reciprocal
 

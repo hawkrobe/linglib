@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Linearization.Chain
+module
+
+public import Linglib.Syntax.Minimalist.Linearization.Chain
 
 /-!
 # Citko and Gračanin-Yuksek (2025): Economy in PF reduction
@@ -36,6 +38,8 @@ the costs the winners beat.
 * [Z. Belk, A. Neeleman and J. Philip, *What divides, and what unites, right-node raising*
   (2023)][belk-neeleman-philip-2023]
 -/
+
+@[expose] public section
 
 namespace CitkoGracaninYuksek2025
 

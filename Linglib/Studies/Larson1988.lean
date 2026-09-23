@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.Linearization.Replay
-import Linglib.Semantics.ArgumentStructure.ThetaRole
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Semantics.ArgumentStructure.ThetaRole
 
 /-!
 # Larson (1988): On the Double Object Construction
@@ -40,6 +42,8 @@ verb's indirect object.
 * [barss-lasnik-1986]
 -/
 
+@[expose] public section
+
 open ArgumentStructure
 
 namespace Larson1988
@@ -60,16 +64,16 @@ def DP_ball   := mkLeafPhon .D []    "the ball" 311
 
 /-! The planar tokens of the result trees on which c-command is decided. -/
 
-private def tok_send   : LIToken := ⟨.simple .V [.D] (phonForm := "send"), 300⟩
-private def tok_to     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 301⟩
-private def tok_john   : LIToken := ⟨.simple .D [] (phonForm := "John"), 302⟩
-private def tok_mary   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 303⟩
-private def tok_letter : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 304⟩
-private def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 310⟩
-private def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
+def tok_send   : LIToken := ⟨.simple .V [.D] (phonForm := "send"), 300⟩
+def tok_to     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 301⟩
+def tok_john   : LIToken := ⟨.simple .D [] (phonForm := "John"), 302⟩
+def tok_mary   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 303⟩
+def tok_letter : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 304⟩
+def tok_kick   : LIToken := ⟨.simple .V [.D] (phonForm := "kicked"), 310⟩
+def tok_ball   : LIToken := ⟨.simple .D [] (phonForm := "the ball"), 311⟩
 
 /-- The constituent *to Mary*. -/
-private def ppToMaryP : PlanarSyntacticObject := tok_to * tok_mary
+def ppToMaryP : PlanarSyntacticObject := tok_to * tok_mary
 
 /-! ### The oblique dative
 
@@ -205,10 +209,10 @@ def DP_mary2   := mkLeafPhon .D []    "Mary"     321
 def DP_letter2 := mkLeafPhon .D []    "a letter" 322
 def P_to2      := mkLeafPhon .P [.D]  "to"       323
 
-private def tok_sent    : LIToken := ⟨.simple .V [.D] (phonForm := "was-sent"), 320⟩
-private def tok_mary2   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 321⟩
-private def tok_letter2 : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 322⟩
-private def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323⟩
+def tok_sent    : LIToken := ⟨.simple .V [.D] (phonForm := "was-sent"), 320⟩
+def tok_mary2   : LIToken := ⟨.simple .D [] (phonForm := "Mary"), 321⟩
+def tok_letter2 : LIToken := ⟨.simple .D [] (phonForm := "a letter"), 322⟩
+def tok_to2     : LIToken := ⟨.simple .P [.D] (phonForm := "to"), 323⟩
 
 def indirectPassive : Derivation :=
   { initial := V_sent

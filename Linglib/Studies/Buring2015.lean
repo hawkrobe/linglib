@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Focus.Unalternatives
+module
+
+public import Linglib.Semantics.Focus.Unalternatives
 
 /-!
 # Unalternative Semantics: the prosodic origin
@@ -25,6 +27,8 @@ ordering breakfast"; reversal licenses exactly what the default bans. The rules 
 `Semantics/Focus/Unalternatives.lean`, shared with the
 morphosyntactic extension of [assmann-etal-2023].
 -/
+
+@[expose] public section
 
 namespace Buring2015
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Degree.Adjective
+module
+
+public import Linglib.Semantics.Degree.Adjective
 
 /-!
 # English adjectives
@@ -21,6 +23,8 @@ pair's `pos` and `neg`.
 * [rappaport-hovav-2014]
 * [rotstein-winter-2004]
 -/
+
+@[expose] public section
 
 namespace English.Adjectives
 

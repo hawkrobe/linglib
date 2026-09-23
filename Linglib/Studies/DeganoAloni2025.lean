@@ -1,7 +1,9 @@
-import Linglib.Logic.Team.Atoms
-import Linglib.Studies.Haspelmath1997
-import Mathlib.Basic.Nontrivial.Defs
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Linglib.Logic.Team.Atoms
+public import Linglib.Studies.Haspelmath1997
+public import Mathlib.Basic.Nontrivial.Defs
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Degano and Aloni (2025): How to be (non-)specific?
@@ -52,6 +54,8 @@ indefinites and treats epistemic indefinites at length; neither is formalized he
 * [degano-aloni-2025]
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace DeganoAloni2025
 

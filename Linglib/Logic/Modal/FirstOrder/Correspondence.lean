@@ -1,4 +1,6 @@
-import Linglib.Logic.Modal.FirstOrder.Semantics
+module
+
+public import Linglib.Logic.Modal.FirstOrder.Semantics
 
 /-!
 # The correspondence language and the standard translation
@@ -29,6 +31,8 @@ satisfaction preservation.
 
 * [blackburn-derijke-venema-2001] — the standard translation
 -/
+
+@[expose] public section
 
 namespace FirstOrder.Language
 

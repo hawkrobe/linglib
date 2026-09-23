@@ -1,7 +1,9 @@
-import Linglib.Fragments.English.NumeralModifiers
-import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Pragmatics.NeoGricean.Basic
+module
+
+public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Semantics.Quantification.Numerals.Basic
+public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Pragmatics.NeoGricean.Basic
 
 /-!
 # Kennedy (2015): A "de-Fregean" Semantics (and Neo-Gricean Pragmatics) for Modified and Unmodified Numerals
@@ -47,6 +49,8 @@ interactions of Class B modifiers with root modals (Section 4.2) are not formali
 * [sauerland-2004]
 * [nouwen-2010]
 -/
+
+@[expose] public section
 
 namespace Kennedy2015
 

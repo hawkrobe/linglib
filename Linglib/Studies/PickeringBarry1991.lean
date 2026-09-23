@@ -1,6 +1,8 @@
-import Linglib.Core.Order.Interval
-import Linglib.Syntax.CCG.Derivation
-import Linglib.Data.Examples.PickeringBarry1991
+module
+
+public import Linglib.Core.Order.Interval
+public import Linglib.Syntax.CCG.Derivation
+public import Linglib.Data.Examples.PickeringBarry1991
 
 /-!
 # Pickering and Barry (1991): Sentence Processing without Empty Categories
@@ -41,6 +43,8 @@ derivations and the discussion of incremental interpretation are not formalized.
 * [pickering-barry-1991]
 * [van-benthem-1986]
 -/
+
+@[expose] public section
 
 namespace PickeringBarry1991
 

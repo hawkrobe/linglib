@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Turkish evidentiality
@@ -13,6 +15,8 @@ non-firsthand is fused with tense and the copula.
 * [aikhenvald-2004], §2.1
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace Turkish.Evidentiality
 

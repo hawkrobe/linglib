@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.List.TakeDrop
-import Linglib.Phonology.Subregular.Dependence
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.List.TakeDrop
+public import Linglib.Phonology.Subregular.Dependence
 
 /-!
 # Tonal surfacing processes
@@ -25,6 +27,8 @@ marked tone is faithful — an underlying marked tone always surfaces (`surfaces
 and the two written values are distinct (`hi_ne_lo`), which makes the pointwise
 characterizations (`map_getElem?_hi_iff`, `map_getElem?_lo_iff`) read the map exactly.
 -/
+
+@[expose] public section
 
 namespace Tone
 

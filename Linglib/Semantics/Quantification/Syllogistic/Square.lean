@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Syllogistic.Forms
-import Linglib.Logic.Aristotelian.Diagram
+module
+
+public import Linglib.Semantics.Quantification.Syllogistic.Forms
+public import Linglib.Logic.Aristotelian.Diagram
 
 /-!
 # AIEO Square as a Diagram instance
@@ -34,6 +36,8 @@ modern (FOL) reading and are recorded as theorems (`aieoSquare_AO_contradictory`
 existential import (`∃R`); the sortal-restricted Aristotelian variant where the full
 Square holds is the natural follow-up (TODO).
 -/
+
+@[expose] public section
 
 namespace Quantifier.Syllogistic
 

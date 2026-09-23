@@ -1,5 +1,7 @@
-import Linglib.Studies.KonnellyCowper2020
-import Linglib.Data.Examples.Arnold2026
+module
+
+public import Linglib.Studies.KonnellyCowper2020
+public import Linglib.Data.Examples.Arnold2026
 
 /-!
 # Arnold 2026: two kinds of singular *they*
@@ -27,6 +29,8 @@ it is unconstrained, whichever kind is intended.
 * [konnelly-cowper-2020] — the three-stage grammatical account
 * [balhorn-2004] — the history of underspecified *they*
 -/
+
+@[expose] public section
 
 namespace Arnold2026
 

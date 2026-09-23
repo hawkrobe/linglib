@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 88A: Order of Demonstrative and Noun
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 88, 1225 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F88A
 
@@ -28,7 +32,8 @@ inductive DemonstrativeNounOrder where
   | mixed
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint DemonstrativeNounOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint DemonstrativeNounOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .nounDemonstrative }
   , { walsCode := "ani", iso := "hnh", value := .demonstrativeNoun }
   , { walsCode := "xam", iso := "xam", value := .demonstrativeNoun }
@@ -531,7 +536,8 @@ private def allData_0 : List (Datapoint DemonstrativeNounOrder) :=
   , { walsCode := "kmh", iso := "kjl", value := .demonstrativeNoun }
   ]
 
-private def allData_1 : List (Datapoint DemonstrativeNounOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint DemonstrativeNounOrder) :=
   [ { walsCode := "khd", iso := "khg", value := .nounDemonstrative }
   , { walsCode := "knz", iso := "khg", value := .nounDemonstrative }
   , { walsCode := "kty", iso := "kca", value := .demonstrativeNoun }
@@ -1034,7 +1040,8 @@ private def allData_1 : List (Datapoint DemonstrativeNounOrder) :=
   , { walsCode := "sti", iso := "", value := .nounDemonstrative }
   ]
 
-private def allData_2 : List (Datapoint DemonstrativeNounOrder) :=
+/-- Rows 1001 to 1225 of `allData`. -/
+def allData_2 : List (Datapoint DemonstrativeNounOrder) :=
   [ { walsCode := "sud", iso := "tgo", value := .nounDemonstrative }
   , { walsCode := "sue", iso := "sue", value := .nounDemonstrative }
   , { walsCode := "suk", iso := "sui", value := .demonstrativeNoun }

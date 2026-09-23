@@ -1,7 +1,9 @@
-import Linglib.Morphology.Root.Basic
-import Linglib.Data.Forms.Qin2025
-import Mathlib.Data.Nat.Choose.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Root.Basic
+public import Linglib.Data.Forms.Qin2025
+public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Qin (2025): Canonical and Non-Canonical Roots: The Diversity of Roots in Mandarin Chinese
@@ -41,6 +43,8 @@ as well.
 * [qin-2025]
 * [bloomfield-1933]
 -/
+
+@[expose] public section
 
 namespace Qin2025
 

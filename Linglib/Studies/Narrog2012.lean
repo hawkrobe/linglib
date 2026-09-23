@@ -1,4 +1,6 @@
-import Linglib.Studies.Narrog2010
+module
+
+public import Linglib.Studies.Narrog2010
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
@@ -38,6 +40,8 @@ whether the speculative category on the level of volitive mood counts as modalit
 * [narrog-2009a]
 * [cinque-1999]
 -/
+
+@[expose] public section
 
 namespace Narrog2012
 

@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.InformationTheory.ChannelCapacity
+module
+
+public import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 
 /-!
 # Zaslavsky et al. (2019): Color Naming Reflects Both Perceptual Structure and Communicative Need
@@ -39,6 +41,8 @@ inferred from the World Color Survey averages the per-language capacity-achievin
 * [shannon-1948]
 * [zaslavsky-kemp-regier-tishby-2018]
 -/
+
+@[expose] public section
 
 namespace ZaslavskyEtAl2019
 

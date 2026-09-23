@@ -1,5 +1,7 @@
-import Linglib.Phonology.Subregular.Transduction
-import Linglib.Phonology.Subregular.ISL
+module
+
+public import Linglib.Phonology.Subregular.Transduction
+public import Linglib.Phonology.Subregular.ISL
 
 /-!
 # The locality bridge: left-local ⟹ input strictly local
@@ -20,6 +22,8 @@ transduction's output.
 * `Transduction.leftLocal_isLeftISL`: a `LeftLocal r` transduction is
   `(r+1)`-Left-Input-Strictly-Local.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

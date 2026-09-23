@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Italian Polarity-Sensitive Items
@@ -14,6 +16,8 @@ Italian lexicalizes the NPI/FCI distinction that English *any* collapses:
 - **qualsiasi/qualunque**: Pure universal FCIs (FC only, positive polarity)
 - **un N qualsiasi**: Existential FCIs (FC under modals)
 -/
+
+@[expose] public section
 
 namespace Italian.PolarityItems
 

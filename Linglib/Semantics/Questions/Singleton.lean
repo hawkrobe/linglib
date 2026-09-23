@@ -1,4 +1,6 @@
-import Linglib.Semantics.Questions.Hamblin
+module
+
+public import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # Question — singleton-alternative predicate
@@ -30,6 +32,8 @@ Particle-specific bindings (kya:, nandao) live in their respective study
 files (`Studies/`) and use `IsSingleton` /
 `SingletonQuestion` directly.
 -/
+
+@[expose] public section
 
 
 namespace Question

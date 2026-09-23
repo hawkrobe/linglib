@@ -1,4 +1,6 @@
-import Linglib.Semantics.Genericity.SortedOntology
+module
+
+public import Linglib.Semantics.Genericity.SortedOntology
 
 /-!
 # German Bare Plural Word Order
@@ -31,6 +33,8 @@ strengthening is vacuous.
 - `Data/Examples/CohenErteschikShir2002.json`: English BPS reading data
 - `Magri2009`: BH+MH mechanism
 -/
+
+@[expose] public section
 
 namespace German.BarePluralWordOrder
 

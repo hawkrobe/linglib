@@ -1,5 +1,7 @@
-import Linglib.Semantics.Homogeneity.Defs
-import Linglib.Semantics.Questions.Partition.Basic
+module
+
+public import Linglib.Semantics.Homogeneity.Defs
+public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
 # Pragmatic usability of trivalent propositions
@@ -26,6 +28,8 @@ proposition (`Setoid.Decides`).
 * [kriz-2016]
 * [kriz-spector-2021]
 -/
+
+@[expose] public section
 
 namespace Homogeneity
 

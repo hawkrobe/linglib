@@ -1,7 +1,9 @@
-import Linglib.Semantics.Quantification.Witness
-import Linglib.Semantics.Quantification.NP
-import Linglib.Semantics.Quantification.NumberTree
-import Mathlib.Data.Finset.Powerset
+module
+
+public import Linglib.Semantics.Quantification.Witness
+public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.NumberTree
+public import Mathlib.Data.Finset.Powerset
 
 /-!
 # Lücking and Ginzburg (2022): Referential Transparency as the Proper Treatment for Quantification
@@ -38,6 +40,8 @@ clarification-request diagnostics, and the type-theoretic encoding are not repre
 * [barwise-cooper-1981]
 * [van-benthem-1984]
 -/
+
+@[expose] public section
 
 namespace LuckingGinzburg2022
 

@@ -1,11 +1,13 @@
-import Linglib.Core.Analysis.LeastSquares
-import Linglib.Core.LinearAlgebra.AffineSpace.Centroid
-import Linglib.Processing.DiscriminativeLexicon.Measures
-import Mathlib.Analysis.InnerProductSpace.Adjoint
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.LinearAlgebra.Matrix.DotProduct
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-import Mathlib.LinearAlgebra.Matrix.ToLin
+module
+
+public import Linglib.Core.Analysis.LeastSquares
+public import Linglib.Core.LinearAlgebra.AffineSpace.Centroid
+public import Linglib.Processing.DiscriminativeLexicon.Measures
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.LinearAlgebra.Matrix.DotProduct
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
 # Training a discriminative lexicon
@@ -66,6 +68,8 @@ endstate learning on the `√Q`-premultiplied experience.
 * [Y. Lu, Y.-Y. Chuang and R. H. Baayen, *The realization of tones in spontaneous spoken
   Taiwan Mandarin* (2026)][lu-chuang-baayen-2026]
 -/
+
+@[expose] public section
 
 namespace DiscriminativeLexicon
 

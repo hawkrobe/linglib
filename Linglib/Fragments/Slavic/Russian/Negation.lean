@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Russian negation
@@ -13,6 +15,8 @@ that of [miestamo-2005].
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation Morphology
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Data.Examples.FoxSpector2018
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Data.Examples.FoxSpector2018
 
 /-!
 # Fox and Spector (2018): Economy and Embedded Exhaustification
@@ -37,6 +39,8 @@ disjunctions by the paper's own classification of each sentence.
 * [schlenker-2008]
 * [chierchia-2004]
 -/
+
+@[expose] public section
 
 namespace FoxSpector2018
 

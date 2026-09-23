@@ -1,4 +1,6 @@
-import Linglib.Data.Generalizations.HomogeneityProjection
+module
+
+public import Linglib.Data.Generalizations.HomogeneityProjection
 
 /-!
 # Križ and Chemla (2015): Two Methods to Find Truth-Value Gaps
@@ -60,6 +62,8 @@ definite contains a variable bound by the quantifier ([steedman-2012]).
 * [steedman-2012]
 * [augurzky-etal-2023]
 -/
+
+@[expose] public section
 
 namespace KrizChemla2015
 

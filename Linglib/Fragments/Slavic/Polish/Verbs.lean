@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Category.Verb.Stem
+module
+
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Category.Verb.Stem
 
 /-!
 # Polish Verbal Lexicon
@@ -13,6 +15,8 @@ as does the assignment of stems to verbalizer classes. Aspect values are
 the dictionary-consensus ones: simplex stems are imperfective except the
 semelfactives.
 -/
+
+@[expose] public section
 
 namespace Polish.Verbs
 

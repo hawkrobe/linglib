@@ -1,4 +1,6 @@
-import Linglib.Semantics.Mereology
+module
+
+public import Linglib.Semantics.Mereology
 
 /-!
 # Del Prete (2013): Imperfectivity and habituality in Italian
@@ -59,6 +61,8 @@ identifies the parts of two such events at the reference situation, so the samen
 * [boneh-doron-2013]
 * [deo-2009]
 -/
+
+@[expose] public section
 
 namespace DelPrete2013
 

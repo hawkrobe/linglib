@@ -1,5 +1,7 @@
-import Linglib.Semantics.Composition.Assignment
-import Linglib.Semantics.Modification.Basic
+module
+
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Semantics.Modification.Basic
 
 /-!
 # Relative-clause denotation
@@ -32,6 +34,8 @@ Only the restrictive (intersective) denotation is provided; the non-restrictive
 (appositive) denotation is a distinct, non-intersective mechanism and is deferred
 until a study reifies it.
 -/
+
+@[expose] public section
 
 namespace RelativeClause
 

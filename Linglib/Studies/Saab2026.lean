@@ -1,7 +1,9 @@
-import Linglib.Fragments.Romance.Spanish.Binominals
-import Linglib.Syntax.Number.Basic
-import Linglib.Data.Examples.Saab2026
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Fragments.Romance.Spanish.Binominals
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Data.Examples.Saab2026
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Saab (2026): NP-Ellipsis Patterns in Spanish Binominals
@@ -42,6 +44,8 @@ proposition types are not formalized.
 * [merchant-2001]
 * [hankamer-sag-1976]
 -/
+
+@[expose] public section
 
 namespace Saab2026
 
@@ -158,7 +162,7 @@ theorem elidable_first_iff_singular (b : BinominalType) (r : Reading) (hb : b �
 def binominalType? (x : LinguisticExample) : Option BinominalType :=
   (x.feature? "noun").bind fun f ↦ (lookup f).map (·.binominalType)
 
-private def readings : List (String × Reading) :=
+def readings : List (String × Reading) :=
   [("quantificational", .quantificational), ("descriptive", .descriptive)]
 
 /-- The structure the paper assigns to a row follows from its first noun's type and, for a
@@ -167,9 +171,9 @@ def structure? (x : LinguisticExample) : Option Structure :=
   (binominalType? x).map fun b ↦
     structureOf b ((x.parse? "reading" readings).getD .quantificational)
 
-private def nominals : List (String × Nominal) := [("first", .first), ("coda", .coda)]
+def nominals : List (String × Nominal) := [("first", .first), ("coda", .coda)]
 
-private def numbers : List (String × Number) := [("singular", .singular), ("plural", .plural)]
+def numbers : List (String × Number) := [("singular", .singular), ("plural", .plural)]
 
 /-- The ellipsis reading of a row is acceptable when the reading's judgment, or the row's if
 none is recorded for the reading, is acceptable. -/

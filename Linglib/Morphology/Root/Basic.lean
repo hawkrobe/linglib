@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Morph
-import Mathlib.Data.List.Infix
+module
+
+public import Linglib.Morphology.Morph
+public import Mathlib.Data.List.Infix
 
 /-!
 # Roots
@@ -26,6 +28,8 @@ free form as a proper part. The definition is deliberately inclusive
 * `Morph.IsCoreIn` — the root property: occurrence in a primary word.
 * `Morph.IsTypicalAffixIn` — occurrence in secondary words only.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

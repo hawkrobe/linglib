@@ -1,7 +1,9 @@
-import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Tone.Grammatical
-import Linglib.Phonology.Autosegmental.Melody
-import Linglib.Morphology.Word.Tree
+module
+
+public import Linglib.Phonology.Tone.Basic
+public import Linglib.Phonology.Tone.Grammatical
+public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Morphology.Word.Tree
 
 /-!
 # Poko Tonal Fragment
@@ -28,6 +30,8 @@ a fuller fragment when a second Poko paper arrives.
   the unlinked element).
 * `Poko.Form` — autosegmental forms (`Form Syll TRN Morph`).
 -/
+
+@[expose] public section
 
 namespace Poko
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Mathlib.Order.WithBot
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Mathlib.Order.WithBot
 
 /-!
 # Spector (2016): Comparing Exhaustivity Operators
@@ -41,6 +43,8 @@ substrate's compatible sets carry separately.
 * [sauerland-2004]
 * [schwarz-2013]
 -/
+
+@[expose] public section
 
 namespace Spector2016
 

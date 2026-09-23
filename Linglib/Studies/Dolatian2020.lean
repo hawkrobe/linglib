@@ -1,5 +1,7 @@
-import Linglib.Phonology.Subregular.Transduction
-import Linglib.Data.Examples.Dolatian2020
+module
+
+public import Linglib.Phonology.Subregular.Transduction
+public import Linglib.Data.Examples.Dolatian2020
 
 /-!
 # Dolatian (2020): Computational locality of cyclic phonology in Armenian
@@ -55,6 +57,8 @@ symbol, `dhr` gives schwa where the dissertation deletes, as in *jergír* ~ *jer
 * [chandlee-2014]
 -/
 
+@[expose] public section
+
 namespace Dolatian2020
 
 open Subregular
@@ -91,16 +95,16 @@ def stress (w : List Seg) : Option ℕ := (w.findIdxs (decide <| Seg.Full ·)).g
 
 /-! ### Reduction as a quantifier-free transduction, (46) and §6.6.1 -/
 
-private def x : Term := .var
+def x : Term := .var
 
 /-- The guard that a term reads a nucleus not carrying the destressing mark. -/
-private def nucleusAt (t : Term) : QF (Seg × Bool) :=
+def nucleusAt (t : Term) : QF (Seg × Bool) :=
   .disj (.label (.h, false) t) (.disj (.label (.v, false) t)
     (.disj (.label (.uj, false) t) (.label (.schwa, false) t)))
 
 /-- The context in which deletion leaves a syllabifiable cluster, (46): a nucleus and a single
 consonant before the target and a single consonant and a nucleus after it. -/
-private def deletable : QF (Seg × Bool) :=
+def deletable : QF (Seg × Bool) :=
   .conj (nucleusAt x.pred.pred) (.conj (.label (.c, false) x.pred)
     (.conj (.label (.c, false) x.succ) (nucleusAt x.succ.succ)))
 

@@ -1,6 +1,8 @@
-import Linglib.Morphology.DistributedMorphology.Defs
-import Linglib.Morphology.Exponence.Select
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Morphology.DistributedMorphology.Defs
+public import Linglib.Morphology.Exponence.Select
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Vocabulary items as exponence rules
@@ -11,6 +13,8 @@ site is included in the neighborhood, and its specificity — the
 number of positioned features it mentions — is strictly antitone in the
 engine's order, so score selection is Elsewhere selection.
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology.VocabularyItem
 

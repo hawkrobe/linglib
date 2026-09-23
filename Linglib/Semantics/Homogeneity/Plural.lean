@@ -1,6 +1,8 @@
-import Linglib.Semantics.Homogeneity.Usable
-import Linglib.Logic.Duality
-import Linglib.Semantics.Supervaluation
+module
+
+public import Linglib.Semantics.Homogeneity.Usable
+public import Linglib.Logic.Duality
+public import Linglib.Semantics.Supervaluation
 
 /-!
 # Homogeneity: the plural instantiation
@@ -29,6 +31,8 @@ Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
 
 * [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
 -/
+
+@[expose] public section
 
 namespace Homogeneity
 

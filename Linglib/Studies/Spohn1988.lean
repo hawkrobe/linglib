@@ -1,5 +1,8 @@
-import Linglib.Logic.RankingFunction
-import Linglib.Semantics.Questions.Partition.Basic
+module
+
+public import Linglib.Logic.RankingFunction
+public import Mathlib.Data.Nat.Cast.Order.Basic
+public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
 # Spohn (1988): Ordinal Conditional Functions: A Dynamic Theory of Epistemic States
@@ -40,6 +43,8 @@ homomorphism of Section 7 are not formalized.
 * [spohn-1988]
 * [goldszmidt-pearl-1996]
 -/
+
+@[expose] public section
 
 namespace Spohn1988
 

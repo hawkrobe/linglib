@@ -1,9 +1,11 @@
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Questions.Bias
-import Linglib.Data.Examples.GartnerGyuris2017
+module
+
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Questions.Bias
+public import Linglib.Data.Examples.GartnerGyuris2017
 
 /-!
 # Gärtner and Gyuris (2017): On Delimiting the Space of Bias Profiles for Polar Interrogatives
@@ -43,6 +45,8 @@ ones; the paper's Czech and Romero comparisons belong to the later papers' studi
 * [ladd-1981]
 * [buring-gunlogson-2000]
 -/
+
+@[expose] public section
 
 namespace GartnerGyuris2017
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Number.Basic
-import Linglib.Semantics.Mereology
+module
+
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Semantics.Mereology
 
 /-!
 # Number values as lattice regions
@@ -43,6 +45,8 @@ pragmatic and not encoded.
 * [link-1983]
 * [corbett-2000], ch. 7–8
 -/
+
+@[expose] public section
 
 namespace Number
 

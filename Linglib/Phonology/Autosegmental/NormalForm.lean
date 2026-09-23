@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Basic.Finite.Sigma
-import Mathlib.Basic.Finite.Sum
-import Mathlib.Data.Fintype.Sort
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Logic.Equiv.Fin.Basic
-import Linglib.Phonology.Autosegmental.AR
+module
+
+public import Mathlib.Basic.Finite.Sigma
+public import Mathlib.Basic.Finite.Sum
+public import Mathlib.Data.Fintype.Sort
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Logic.Equiv.Fin.Basic
+public import Linglib.Phonology.Autosegmental.AR
 
 /-!
 # Normal forms of autosegmental representations
@@ -38,6 +40,8 @@ definitional: `normalize` pulls the graph back along the enumeration equivalence
   shifts links blockwise.
 * `AR.isoOfReaderEq`: `(tierWord, link)` is a complete isomorphism invariant.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

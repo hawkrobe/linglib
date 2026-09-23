@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Segmental.Defs
+module
+
+public import Linglib.Phonology.Segmental.Defs
 
 /-!
 # Basic theory of segments
@@ -42,6 +44,8 @@ sonority rise between two classes, and the Parker sonority ranking.
 * [carpenter-1992]
 * [parker-2002]
 -/
+
+@[expose] public section
 
 namespace Phonology
 

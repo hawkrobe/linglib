@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Causal Necessity
@@ -27,6 +29,8 @@ The legacy `CausalDynamics`-based `causeSem`/`isINUSCause`/
 `actuallyCaused` were deleted in Phase D-H. The polymorphic V2 versions
 are promoted to canonical here.
 -/
+
+@[expose] public section
 
 namespace Causation.Necessity
 

@@ -1,11 +1,13 @@
-import Mathlib.Data.Set.Lattice.Image
-import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Alternatives.Structural
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Fragments.Turkish.QuestionParticles
-import Linglib.Data.Examples.TurkHirsch2026
+module
+
+public import Mathlib.Data.Set.Lattice.Image
+public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Fragments.Turkish.QuestionParticles
+public import Linglib.Data.Examples.TurkHirsch2026
 
 /-!
 # Türk and Hirsch (2026): Constraining Alternatives in Turkish Polar Questions
@@ -61,6 +63,8 @@ rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch202
 * [kamali-krifka-2020]
 * [hirsch-schwarz-2025]
 -/
+
+@[expose] public section
 
 namespace TurkHirsch2026
 

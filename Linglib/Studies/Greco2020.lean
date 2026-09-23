@@ -1,6 +1,8 @@
-import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Semantics.Polarity.ExpletiveNegation
-import Linglib.Data.Examples.Greco2020
+module
+
+public import Linglib.Syntax.Minimalist.Phase.Basic
+public import Linglib.Semantics.Polarity.ExpletiveNegation
+public import Linglib.Data.Examples.Greco2020
 
 /-!
 # Greco (2020): On the Syntax of Surprise Negation Sentences
@@ -40,6 +42,8 @@ constituent.
 * [rizzi-1997]
 * [chomsky-2001]
 -/
+
+@[expose] public section
 
 namespace Greco2020
 

@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `Arad2005` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/Arad2005.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace Arad2005.Examples`.
 -/
+
+@[expose] public section
 
 namespace Arad2005.Examples
 

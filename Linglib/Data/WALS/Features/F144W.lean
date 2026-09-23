@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 144W: Verb-Initial with Negative that is Immediately Postverbal or between Subject and Object
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 144, 151 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F144W
 

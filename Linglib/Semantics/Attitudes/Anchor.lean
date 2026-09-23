@@ -1,4 +1,6 @@
-import Linglib.Logic.Modal.Defs
+module
+
+public import Linglib.Logic.Modal.Defs
 
 /-!
 # Clauses as predicates of anchors
@@ -28,6 +30,8 @@ requires every accessible index to be a projection index
 a special case of the anchor architecture whenever the projection is
 surjective.
 -/
+
+@[expose] public section
 
 /-- An anchor sort: individuals from which a propositional domain is
     projected. `proj x` is the projection of the anchor `x` — CONT for

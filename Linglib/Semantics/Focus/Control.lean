@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Alternatives.Basic
+module
+
+public import Linglib.Semantics.Alternatives.Basic
 
 /-!
 # Focus antecedents
@@ -31,6 +33,8 @@ Payloads are flat Hamblin sets, `Set (Set W)`, keeping antecedents over finite m
 `decide`-friendly; a `Question` supplies one through `Question.alt`. The `assertion` payload
 is a raw prior proposition; the `HasAssertion` hookup (a correction/denial move) is deferred.
 -/
+
+@[expose] public section
 
 namespace Focus
 

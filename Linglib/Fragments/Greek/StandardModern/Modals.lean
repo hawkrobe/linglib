@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Modern Greek Modal Inventory
@@ -10,16 +12,18 @@ Greek has non-IFF modals: Prepei and Mporei express non-rectangular
 subsets of the meaning space.
 -/
 
+@[expose] public section
+
 namespace Greek.StandardModern
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-- NOT IFF: forces={nec,poss}, flavors={e,d,c} but missing (poss,d) and (poss,c). -/
 def prepei : ModalItem := { form := "Prepei", meaning := {ne, pe, nd, nc} }

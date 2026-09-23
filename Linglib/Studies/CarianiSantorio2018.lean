@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Modality.Selectional
-import Linglib.Semantics.Conditionals.WillConditional
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Core.Probability.UniformOn
-import Linglib.Core.Probability.ConditionalProbability
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Modality.Selectional
+public import Linglib.Semantics.Conditionals.WillConditional
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Core.Probability.ConditionalProbability
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Cariani and Santorio 2018: will done better
@@ -51,6 +53,8 @@ conditional probability values outnumber unconditional ones.
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
 * [A. Hajek, *Probabilities of Conditionals — Revisited* (1989)][hajek-1989]
 -/
+
+@[expose] public section
 
 namespace CarianiSantorio2018
 

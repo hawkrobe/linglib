@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 144B: Position of negative words relative to beginning and end of clause and with respect to adjacency to verb
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 144, 609 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F144B
 
@@ -28,7 +32,8 @@ inductive PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespect
   | endNotImmedPostverbal
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb) :=
   [ { walsCode := "ani", iso := "hnh", value := .immedPostverbal }
   , { walsCode := "huc", iso := "huc", value := .immedPreverbal }
   , { walsCode := "aba", iso := "aau", value := .immedPostverbal }
@@ -531,7 +536,8 @@ private def allData_0 : List (Datapoint PositionOfNegativeWordsRelativeToBeginni
   , { walsCode := "spa", iso := "spa", value := .immedPreverbal }
   ]
 
-private def allData_1 : List (Datapoint PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb) :=
+/-- Rows 501 to 609 of `allData`. -/
+def allData_1 : List (Datapoint PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb) :=
   [ { walsCode := "squ", iso := "squ", value := .immedPreverbal }
   , { walsCode := "sre", iso := "kpm", value := .immedPreverbal }
   , { walsCode := "sti", iso := "", value := .immedPreverbal }

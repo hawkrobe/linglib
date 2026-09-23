@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Compositional
+module
+
+public import Linglib.Semantics.Tense.Compositional
 
 /-!
 # Ogihara (1989): Temporal Reference in English and Japanese
@@ -18,6 +20,8 @@ of the predicate at it (`referential_past_decomposition`).
 * [prior-1967]
 * [partee-1973]
 -/
+
+@[expose] public section
 
 open Tense
 

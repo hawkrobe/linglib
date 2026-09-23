@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 76A: Overlap between Situational and Epistemic Modal Marking
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 76, 207 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F76A
 

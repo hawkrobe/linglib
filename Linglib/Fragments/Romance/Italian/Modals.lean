@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Italian modal verbs
@@ -14,6 +16,8 @@ corresponding necessities, with the context of use settling the reading. French 
 * [hacquard-2006]
 * [hacquard-2010]
 -/
+
+@[expose] public section
 
 namespace Italian
 

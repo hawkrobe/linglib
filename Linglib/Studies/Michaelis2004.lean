@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.ConstructionGrammar.Composition
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Composition
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Michaelis (2004): Type Shifting in Construction Grammar
@@ -30,6 +32,8 @@ earlier version of this file and are UNVERIFIED.
 
 * [michaelis-2004]
 -/
+
+@[expose] public section
 
 namespace Michaelis2004
 

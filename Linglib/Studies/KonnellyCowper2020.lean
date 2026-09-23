@@ -1,5 +1,7 @@
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+module
+
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Konnelly and Cowper (2020): Gender Diversity and Morphosyntax
@@ -37,6 +39,8 @@ number contrast excludes it here (`bjorkman_overgenerates`, `women_not_she`).
 * [bjorkman-2017]
 * [wiltschko-2008]
 -/
+
+@[expose] public section
 
 namespace KonnellyCowper2020
 

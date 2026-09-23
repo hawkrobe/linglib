@@ -1,5 +1,7 @@
-import Linglib.Syntax.Anaphora.Diagnostic
-import Linglib.Data.Examples.Landau2026
+module
+
+public import Linglib.Syntax.Anaphora.Diagnostic
+public import Linglib.Data.Examples.Landau2026
 
 /-!
 # Landau (2026): Silent Resumption: A New Test for Ellipsis
@@ -29,6 +31,8 @@ acceptability of the resumptive-binding sentence.
 * [landau-2026]
 * [hankamer-sag-1976], [chomsky-1982], [merchant-2001]
 -/
+
+@[expose] public section
 
 namespace Landau2026
 
@@ -166,10 +170,10 @@ row's EIR-relevant classification by projection: `domain`/`depth`/extraction fro
 `paperFeatures`, and grammaticality straight off the example's `judgment` —
 passing EIR *is* the resumptive-binding sentence being acceptable. -/
 
-private def parseDomain : String → NullDomain
+def parseDomain : String → NullDomain
   | "DP" => .DP | "PP" => .PP | "VP" => .VP | _ => .nP
 
-private def parseDepth : String → Depth
+def parseDepth : String → Depth
   | "surface" => .surface | _ => .deep
 
 /-- The null-element domain of an EIR example (from `paperFeatures`). -/

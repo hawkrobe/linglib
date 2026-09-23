@@ -1,6 +1,8 @@
-import Linglib.Syntax.Negation
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Number.Basic
+module
+
+public import Linglib.Syntax.Negation
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Number.Basic
 
 /-!
 # Finnish negation
@@ -15,6 +17,8 @@ The examples are those of [miestamo-2005].
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation Morphology
 

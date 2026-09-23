@@ -1,5 +1,7 @@
-import Linglib.Semantics.Truthmaker.Basic
-import Linglib.Core.Order.UpperLower.Closure
+module
+
+public import Linglib.Semantics.Truthmaker.Basic
+public import Linglib.Core.Order.UpperLower.Closure
 
 /-! # Closure Conditions on Truthmaker Propositions [jago-2026]
 
@@ -33,6 +35,8 @@ text is "closed under nonempty fusion" of arbitrary subsets. Over a
 witnesses; for infinitary closure use `LowerSet`-style packaging.
 
 -/
+
+@[expose] public section
 
 namespace Truthmaker
 

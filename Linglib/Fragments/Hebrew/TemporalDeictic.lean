@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Perspective
+module
+
+public import Linglib.Semantics.Tense.Perspective
 
 /-!
 # Hebrew temporal deictic adverbs
@@ -10,6 +12,8 @@ time away from the deictic centre. The examples are those of [tsilia-zhao-2026].
 
 * [tsilia-zhao-2026]
 -/
+
+@[expose] public section
 
 namespace Hebrew.TemporalDeictic
 

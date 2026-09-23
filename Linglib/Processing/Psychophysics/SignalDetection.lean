@@ -1,5 +1,7 @@
-import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Core.Probability.Distributions.Gaussian
+module
+
+public import Linglib.Core.Probability.Choice.GumbelLuce
+public import Linglib.Core.Probability.Distributions.Gaussian
 
 /-!
 # Signal detection theory
@@ -68,6 +70,8 @@ continuous observation.
   (2005)][macmillan-creelman-2005]
 * [D. McFadden, *Conditional logit analysis of qualitative choice behavior* (1974)][mcfadden-1974]
 -/
+
+@[expose] public section
 
 namespace Core
 

@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Tagalog (tgl, ID 1666)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 24 phonemes. PHOIBLE inventory ID 1666, Glottocode `taga1270`.
 Source: PHOIBLE donor `ph`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Tagalog
 

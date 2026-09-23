@@ -1,7 +1,9 @@
-import Linglib.Fragments.Dutch.Determiners
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Semantics.Plurality.MassCount
-import Linglib.Semantics.Genericity.NominalMappingParameter
+module
+
+public import Linglib.Fragments.Dutch.Determiners
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Semantics.Plurality.MassCount
+public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Dutch nouns
@@ -21,6 +23,8 @@ of [le-bruyn-de-swart-2022]'s scrambling data.
 * [chierchia-1998]
 * [le-bruyn-de-swart-2022]
 -/
+
+@[expose] public section
 
 namespace Dutch.Nouns
 
@@ -68,7 +72,7 @@ def meel : Noun := { form := "meel", gloss := "flour", gender := .neuter, counta
 /-! ### Proper names -/
 
 /-- A personal name with its natural gender. -/
-private def name (form : String) (gender : Gender) : ProperName :=
+def name (form : String) (gender : Gender) : ProperName :=
   { form, gloss := form, gender := some gender }
 
 def helen : ProperName := name "Helen" .feminine

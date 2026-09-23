@@ -1,4 +1,6 @@
-import Linglib.Semantics.Questions.Bias
+module
+
+public import Linglib.Semantics.Questions.Bias
 
 /-!
 # Büring and Gunlogson 2000: aren't positive and negative polar questions the same?
@@ -35,6 +37,8 @@ inner-negation NPQ, `HiNQ` its outer-negation NPQ.
 * [ladd-1981]
 * [hamblin-1973b]
 -/
+
+@[expose] public section
 
 namespace BuringGunlogson2000
 

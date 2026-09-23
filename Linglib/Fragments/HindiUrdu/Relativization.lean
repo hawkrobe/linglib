@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Hindi-Urdu relative clauses
@@ -16,6 +18,8 @@ and objects of comparison are treated as obliques governed by postpositions. The
 * [keenan-comrie-1977]
 * [keenan-comrie-1979]
 -/
+
+@[expose] public section
 
 namespace HindiUrdu
 

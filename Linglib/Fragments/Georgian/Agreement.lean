@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Case.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Georgian case marking and verbal agreement
@@ -53,6 +55,8 @@ stative verbs, which pattern with the intransitives.
 * [hewitt-1995]
 * [harris-1981]
 -/
+
+@[expose] public section
 
 namespace Georgian
 

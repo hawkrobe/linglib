@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 86A: Order of Genitive and Noun
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 86, 1249 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F86A
 
@@ -22,7 +26,8 @@ inductive GenitiveNounOrder where
   | noDominantOrder
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint GenitiveNounOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint GenitiveNounOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .genitiveNoun }
   , { walsCode := "ani", iso := "hnh", value := .genitiveNoun }
   , { walsCode := "xam", iso := "xam", value := .genitiveNoun }
@@ -525,7 +530,8 @@ private def allData_0 : List (Datapoint GenitiveNounOrder) :=
   , { walsCode := "khi", iso := "kjj", value := .genitiveNoun }
   ]
 
-private def allData_1 : List (Datapoint GenitiveNounOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint GenitiveNounOrder) :=
   [ { walsCode := "khm", iso := "khm", value := .nounGenitive }
   , { walsCode := "kmu", iso := "kjg", value := .nounGenitive }
   , { walsCode := "khw", iso := "khw", value := .genitiveNoun }
@@ -1028,7 +1034,8 @@ private def allData_1 : List (Datapoint GenitiveNounOrder) :=
   , { walsCode := "qum", iso := "qum", value := .nounGenitive }
   ]
 
-private def allData_2 : List (Datapoint GenitiveNounOrder) :=
+/-- Rows 1001 to 1249 of `allData`. -/
+def allData_2 : List (Datapoint GenitiveNounOrder) :=
   [ { walsCode := "srn", iso := "srq", value := .genitiveNoun }
   , { walsCode := "sro", iso := "ssd", value := .genitiveNoun }
   , { walsCode := "sis", iso := "baa", value := .nounGenitive }

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Presupposition.Context
+module
+
+public import Linglib.Semantics.Presupposition.Context
 
 /-!
 # Belief Embedding and Local Contexts
@@ -20,6 +22,8 @@ the attitude holder).
   the opaque/transparent projection modes of
   [delpinal-bassi-sauerland-2024] §3.2.
 -/
+
+@[expose] public section
 
 namespace Presupposition.BeliefEmbedding
 

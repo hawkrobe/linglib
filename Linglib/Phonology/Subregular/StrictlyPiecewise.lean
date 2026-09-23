@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.ShuffleIdeal
-import Linglib.Core.Computability.PiecewiseTestable
+module
+
+public import Linglib.Core.Computability.ShuffleIdeal
+public import Linglib.Core.Computability.PiecewiseTestable
 
 /-!
 # Strictly piecewise languages (SP_k)
@@ -44,6 +46,8 @@ primitive. Unlike SL no boundary augmentation is needed, since subsequences are 
 position; the "≤ k" (rather than "exactly k") bound is instead what keeps words shorter than
 `k` distinguishable, matching `subseqSet`.
 -/
+
+@[expose] public section
 
 open List
 

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Quantification.Exceptive
-import Linglib.Studies.BarwiseCooper1981
-import Linglib.Data.Examples.Gajewski2002
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Semantics.Quantification.Exceptive
+public import Linglib.Studies.BarwiseCooper1981
+public import Linglib.Data.Examples.Gajewski2002
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Gajewski (2002): On Analyticity in Natural Language
@@ -50,6 +52,8 @@ principle predicts each (`rows_predicted`).
 * [milsark-1977]
 * [van-benthem-1989]
 -/
+
+@[expose] public section
 
 namespace Gajewski2002
 

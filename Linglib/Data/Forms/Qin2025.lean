@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `Qin2025` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/Qin2025.json` by
 generator. Consumers import this module; declarations live in
 `namespace Qin2025.Forms`.
 -/
+
+@[expose] public section
 
 namespace Qin2025.Forms
 

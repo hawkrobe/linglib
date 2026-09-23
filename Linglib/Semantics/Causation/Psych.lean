@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.Chain
+module
+
+public import Linglib.Semantics.Causation.Chain
 
 /-!
 # Psych Verb Causation ([kim-2024] UPH)
@@ -27,6 +29,8 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 - T/SM restriction: Cause occupies onset, SM wants onset → conflict
 
 -/
+
+@[expose] public section
 
 namespace Causation.Psych
 

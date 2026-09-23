@@ -1,9 +1,11 @@
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Degree.MeasurePhrase
-import Linglib.Semantics.Degree.Delineation
-import Linglib.Data.Examples.VonStechow1984
-import Mathlib.Tactic.Linarith
+module
+
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Semantics.Degree.Basic
+public import Linglib.Semantics.Degree.MeasurePhrase
+public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Data.Examples.VonStechow1984
+public import Mathlib.Tactic.Linarith
 
 /-!
 # von Stechow (1984): Comparing Semantic Theories of Comparison
@@ -37,6 +39,8 @@ paper's examples are the rows of `Data.Examples.VonStechow1984`.
 * [russell-1905]
 * [klein-1980]
 -/
+
+@[expose] public section
 
 namespace VonStechow1984
 

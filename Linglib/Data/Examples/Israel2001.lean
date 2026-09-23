@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `Israel2001` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/Israel2001.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace Israel2001.Examples`.
 -/
+
+@[expose] public section
 
 namespace Israel2001.Examples
 

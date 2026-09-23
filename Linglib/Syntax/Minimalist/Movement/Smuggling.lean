@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Movement.Reconstruction
+module
+
+public import Linglib.Syntax.Minimalist.Movement.Reconstruction
 
 /-!
 # Smuggling
@@ -17,6 +19,8 @@ of their complement is a question each account answers for itself, and none is f
 
 * [C. Collins, *A Smuggling Approach to the Passive in English* (2005)][collins-2005]
 -/
+
+@[expose] public section
 
 namespace Minimalist.SyntacticObject.Derivation
 

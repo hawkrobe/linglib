@@ -1,4 +1,6 @@
-import Linglib.Morphology.Morph
+module
+
+public import Linglib.Morphology.Morph
 
 /-!
 # Tangale focus morphology
@@ -12,6 +14,8 @@ and does not occur with every verb.
 
 * [hartmann-zimmermann-2004]
 -/
+
+@[expose] public section
 
 namespace Tangale
 

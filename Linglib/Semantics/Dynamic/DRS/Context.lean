@@ -1,9 +1,11 @@
-import Linglib.Semantics.Dynamic.DRS.Basic
-import Mathlib.CategoryTheory.Category.Basic
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Sets
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Basic
+public import Mathlib.CategoryTheory.Category.Basic
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Data.Fintype.Sets
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Contexts, renamings, and literals
@@ -36,6 +38,8 @@ whose morphisms are DRSs composed by merge: `Ctx` grows a context by introducing
 * [abramsky-sadrzadeh-2014]
 * [kamp-reyle-1993]
 -/
+
+@[expose] public section
 
 open CategoryTheory FirstOrder
 

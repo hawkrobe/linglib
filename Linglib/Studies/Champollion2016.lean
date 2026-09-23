@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Coordinator
-import Linglib.Semantics.Quantification.Defs
-import Linglib.Semantics.Plurality.Algebra
+module
+
+public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Plurality.Algebra
 
 /-!
 # Champollion 2016: noun coordination and the intersective theory of conjunction
@@ -42,6 +44,8 @@ intersective entry correctly makes it false.
 * [link-1983]
 * [link-1987]
 -/
+
+@[expose] public section
 
 namespace Champollion2016
 

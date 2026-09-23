@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Chiquihuitlán Mazatec verb inflection
@@ -13,6 +15,8 @@ each with unit weight.
 
 * [ackerman-malouf-2013]
 -/
+
+@[expose] public section
 
 namespace Mazatec.Verbs
 

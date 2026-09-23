@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Korean modals
@@ -13,16 +15,18 @@ coh-*, and the possibility expressions *ci(-to) molun-*, *swu(-to) iss-* and *-t
 * [qing-uegaki-2025]
 -/
 
+@[expose] public section
+
 namespace Korean
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 def napo : ModalItem := { form := "-napo-", meaning := {ne} }
 def keyss : ModalItem := { form := "-keyss-", meaning := {ne} }

@@ -1,4 +1,6 @@
-import Linglib.Studies.ZurawHayes2017
+module
+
+public import Linglib.Studies.ZurawHayes2017
 
 /-!
 # Magri (2025): Constraint Interaction in Probabilistic Phonology
@@ -32,6 +34,8 @@ formalized.
 * [zuraw-hayes-2017]
 * [hayes-2022]
 -/
+
+@[expose] public section
 
 namespace Magri2025
 

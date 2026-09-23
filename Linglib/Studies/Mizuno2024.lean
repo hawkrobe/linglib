@@ -1,10 +1,12 @@
-import Linglib.Semantics.Modality.Exclusion
-import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Fragments.English.Conditionals
-import Linglib.Fragments.Japanese.Conditionals
-import Linglib.Fragments.Mandarin.Conditionals
-import Linglib.Data.Examples.Mizuno2024
+module
+
+public import Linglib.Semantics.Modality.Exclusion
+public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Fragments.English.Conditionals
+public import Linglib.Fragments.Japanese.Conditionals
+public import Linglib.Fragments.Mandarin.Conditionals
+public import Linglib.Data.Examples.Mizuno2024
 
 /-!
 # Mizuno (2024): Strategies for Anderson Conditionals
@@ -42,6 +44,8 @@ the paper's single consultant.
 * [mackay-2019]
 * [condoravdi-2002]
 -/
+
+@[expose] public section
 
 namespace Mizuno2024
 

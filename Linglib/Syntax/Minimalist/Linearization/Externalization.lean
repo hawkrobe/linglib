@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
 # Externalization on the `SyntacticObject` carrier
@@ -57,6 +59,8 @@ Only the two harmonic sections are realized: uniform head-side placement is righ
 for head–complement structure but does not model specifier placement (that needs the
 `headSide : Cat → ConventionDir` refinement noted at `ConventionDir`).
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

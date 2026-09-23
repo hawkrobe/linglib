@@ -1,4 +1,6 @@
-import Linglib.Logic.Assignment
+module
+
+public import Linglib.Logic.Assignment
 
 /-!
 # Fibered variable lookup
@@ -17,6 +19,8 @@ and accessibility predicates are each family's own commitments and live in
 the family's file; the comparisons live in the studies that draw them
 (`Studies/Hofmann2025.lean`).
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

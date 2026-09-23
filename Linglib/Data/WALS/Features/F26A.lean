@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 26A: Prefixing vs. Suffixing in Inflectional Morphology
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 26, 969 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F26A
 
@@ -28,7 +32,8 @@ inductive PrefixSuffixPreference where
   | strongPrefixing
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PrefixSuffixPreference) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PrefixSuffixPreference) :=
   [ { walsCode := "aar", iso := "aiw", value := .stronglySuffixing }
   , { walsCode := "abi", iso := "axb", value := .stronglySuffixing }
   , { walsCode := "abk", iso := "abk", value := .equalPrefixingAndSuffixing }
@@ -531,7 +536,8 @@ private def allData_0 : List (Datapoint PrefixSuffixPreference) :=
   , { walsCode := "mkj", iso := "mkz", value := .littleAffixation }
   ]
 
-private def allData_1 : List (Datapoint PrefixSuffixPreference) :=
+/-- Rows 501 to 969 of `allData`. -/
+def allData_1 : List (Datapoint PrefixSuffixPreference) :=
   [ { walsCode := "mal", iso := "plt", value := .littleAffixation }
   , { walsCode := "mlg", iso := "", value := .stronglySuffixing }
   , { walsCode := "mam", iso := "mam", value := .weaklyPrefixing }

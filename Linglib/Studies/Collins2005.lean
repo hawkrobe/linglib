@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Collins2005
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.Movement.Freezing
-import Linglib.Syntax.Minimalist.Movement.Remnant
-import Linglib.Syntax.Minimalist.Movement.Smuggling
+module
+
+public import Linglib.Data.Examples.Collins2005
+public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Movement.Freezing
+public import Linglib.Syntax.Minimalist.Movement.Remnant
+public import Linglib.Syntax.Minimalist.Movement.Smuggling
 
 /-!
 # Collins 2005: a smuggling approach to the passive in English
@@ -75,6 +77,8 @@ and `active_shares_vP` is the θ-uniformity the analysis was built for.
 * [J. Sabel, *Restrukturierung und Lokalität* (1996)][sabel-1996]
 -/
 
+@[expose] public section
+
 namespace Collins2005
 
 open Minimalist SyntacticObject
@@ -106,23 +110,23 @@ structure Clause where
   extra : Option LIToken
 
 /-- The participle head, silent, over the VP. -/
-private def part₀ : LIToken := ⟨.simple .Asp [.V], 5⟩
+def part₀ : LIToken := ⟨.simple .Asp [.V], 5⟩
 
 /-- The light verb, over PartP and the external argument. -/
-private def v₀ : LIToken := ⟨.simple .v [.Asp, .D], 6⟩
+def v₀ : LIToken := ⟨.simple .v [.Asp, .D], 6⟩
 
 /-- Voice, *by*, which takes a vP (§4). -/
-private def by₀ : LIToken := ⟨.simple .Voice [.v] (phonForm := "by"), 7⟩
+def by₀ : LIToken := ⟨.simple .Voice [.v] (phonForm := "by"), 7⟩
 
 /-- The host X of an evacuated PP, (58): a second participial layer over PartP that takes the
 PP, so that v selects the same category with or without evacuation. -/
-private def x₀ : LIToken := ⟨.simple .Asp [.Asp, .P], 8⟩
+def x₀ : LIToken := ⟨.simple .Asp [.Asp, .P], 8⟩
 
 /-- Infl. -/
-private def infl₀ : LIToken := ⟨.simple .T [], 9⟩
+def infl₀ : LIToken := ⟨.simple .T [], 9⟩
 
 /-- The auxiliary *have* of the active perfect (26). -/
-private def has₀ : LIToken := ⟨.simple .V [] (phonForm := "has"), 10⟩
+def has₀ : LIToken := ⟨.simple .V [] (phonForm := "has"), 10⟩
 
 namespace Clause
 
@@ -296,7 +300,7 @@ theorem by_selects_vP :
 
 /-! ### The rows -/
 
-private def bools : List (String × Bool) := [("true", true), ("false", false)]
+def bools : List (String × Bool) := [("true", true), ("false", false)]
 
 /-- The clause a row records. -/
 def Clause.ofRow (row : LinguisticExample) : Option Clause := do

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # German Case Inventory [blake-1994]
@@ -13,6 +15,8 @@ German has extensive syncretism, especially in the definite article:
 - DAT/GEN syncretism: rare but occurs in some dialects
 
 -/
+
+@[expose] public section
 
 namespace German.Case
 

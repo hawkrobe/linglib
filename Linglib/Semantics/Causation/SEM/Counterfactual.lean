@@ -1,7 +1,9 @@
-import Linglib.Core.Probability.Finite
-import Linglib.Semantics.Causation.SEM.Basic
-import Linglib.Semantics.Causation.SEM.Bool
-import Linglib.Semantics.Causation.SEM.Deterministic
+module
+
+public import Linglib.Core.Probability.Finite
+public import Linglib.Semantics.Causation.SEM.Basic
+public import Linglib.Semantics.Causation.SEM.Bool
+public import Linglib.Semantics.Causation.SEM.Deterministic
 
 /-!
 # SEM: Causal Counterfactual Predicates
@@ -49,6 +51,8 @@ quantifiers, which range over the finite valuation space. Study idiom:
 with `entails_iff` a one-line per-model instantiation of
 `causallyEntails_iff_fuel`.
 -/
+
+@[expose] public section
 
 namespace Causation.SEM
 

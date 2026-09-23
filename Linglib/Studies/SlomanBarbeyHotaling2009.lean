@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Sloman, Barbey and Hotaling (2009): A Causal Model Theory of Cause, Enable, and Prevent
@@ -45,6 +47,8 @@ works out come out as the equations it names: *causes* then *causes* is `C := A`
 * [sloman-barbey-hotaling-2009]
 * [pearl-2000]
 -/
+
+@[expose] public section
 
 namespace SlomanBarbeyHotaling2009
 

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Basic
-import Linglib.Core.Computability.Bimachine
-import Linglib.Core.Computability.Subsequential
-import Linglib.Core.Data.List.DependsOn
+module
+
+public import Mathlib.Data.List.Basic
+public import Linglib.Core.Computability.Bimachine
+public import Linglib.Core.Computability.Subsequential
+public import Linglib.Core.Data.List.DependsOn
 
 /-!
 # Side dependence for string functions
@@ -66,6 +68,8 @@ target has only finitely many positions to its left.
 The predicates place no in-range guard on target coordinates: for length-preserving
 maps an out-of-range coordinate is `none` on both sides of any perturbation.
 -/
+
+@[expose] public section
 
 open Set
 

@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `BeltramaSchwarz2024` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/BeltramaSchwarz2024.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace BeltramaSchwarz2024.Examples`.
 -/
+
+@[expose] public section
 
 namespace BeltramaSchwarz2024.Examples
 

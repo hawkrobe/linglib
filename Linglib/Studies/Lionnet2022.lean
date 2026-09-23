@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.OCP
-import Linglib.Phonology.Autosegmental.NormalForm
-import Linglib.Fragments.Laal.Prosody
+module
+
+public import Linglib.Phonology.Tone.Basic
+public import Linglib.Phonology.OCP
+public import Linglib.Phonology.Autosegmental.NormalForm
+public import Linglib.Fragments.Laal.Prosody
 
 /-!
 # Lionnet (2022): The Features and Geometry of Tone in Laal
@@ -41,6 +43,8 @@ deletion processes of the paper's §6, its vowel harmony, and the alternative an
 * [snider-2020]
 * [chandlee-jardine-2019]
 -/
+
+@[expose] public section
 
 namespace Lionnet2022
 

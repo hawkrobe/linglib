@@ -1,10 +1,12 @@
-import Mathlib.Order.Basic
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Order.Max
-import Mathlib.Logic.Function.Const
-import Mathlib.Tactic.NormNum
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Semantics.Degree.Comparison
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Order.Max
+public import Mathlib.Logic.Function.Const
+public import Mathlib.Tactic.NormNum
+public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Degree predicates + monotonicity
@@ -25,6 +27,8 @@ there is no separate named family. `c.over μ n` is a `Set W`; `w ∈ c.over μ 
 c.rel (μ w) n` (`Comparison.mem_over`), and `c.rel` unfolds to the order
 relation per case.
 -/
+
+@[expose] public section
 
 namespace Degree
 

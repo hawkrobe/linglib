@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # English temporal connectives
@@ -14,6 +16,8 @@ one, and the punctual use is the polarity item `English.PolarityItems.until_`.
 * [heinamaki-1974]
 * [karttunen-1974]
 -/
+
+@[expose] public section
 
 namespace English.TemporalConnectives
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # English evidentiality
@@ -11,6 +13,8 @@ English has no grammatical evidentials: information source is conveyed lexically
 * [aikhenvald-2004]
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace English.Evidentiality
 

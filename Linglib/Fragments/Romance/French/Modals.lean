@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # French modal verbs
@@ -19,6 +21,8 @@ same range as *pouvoir* and *devoir*.
 * [ruytenbeek-etal-2017]
 * [agha-jeretic-2022]
 -/
+
+@[expose] public section
 
 namespace French
 

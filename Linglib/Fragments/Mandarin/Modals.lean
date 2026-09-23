@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Mandarin Modal Inventory
@@ -9,16 +11,18 @@ Modal expressions from Mandarin (Sino-Tibetan), based on
 Mandarin has many modals, extensive synonymy, but all satisfy IFF.
 -/
 
+@[expose] public section
+
 namespace Mandarin
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 def yiding : ModalItem := { form := "yīdìng", meaning := {ne} }
 def biran : ModalItem := { form := "bìrán", meaning := {ne} }

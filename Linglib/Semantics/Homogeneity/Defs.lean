@@ -1,4 +1,6 @@
-import Linglib.Logic.Trivalent.Prop3
+module
+
+public import Linglib.Logic.Trivalent.Prop3
 
 /-!
 # Homogeneity
@@ -20,6 +22,8 @@ gap into the negative extension; the pragmatics of the gap lives in
 * [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
 * [M. Križ, *Aspects of Homogeneity in the Semantics of Natural Language*][kriz-2015]
 -/
+
+@[expose] public section
 
 namespace Homogeneity
 

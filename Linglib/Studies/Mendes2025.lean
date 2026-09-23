@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.CDRT
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Tense.Defs
+module
+
+public import Linglib.Semantics.Dynamic.CDRT
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Semantics.Tense.Defs
 
 /-!
 # Mendes (2025): Indefiniteness in future reference
@@ -32,6 +34,8 @@ table of main-clause tenses off the entries.
 * [mendes-2025]
 * [muskens-1996]
 -/
+
+@[expose] public section
 
 namespace Mendes2025
 

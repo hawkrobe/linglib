@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.BhattTakahashi2011
-import Linglib.Studies.Lechner2004
-import Linglib.Syntax.Minimalist.Movement.HeimKennedy
-import Linglib.Syntax.Tree.Basic
-import Linglib.Syntax.Command
+module
+
+public import Linglib.Data.Examples.BhattTakahashi2011
+public import Linglib.Studies.Lechner2004
+public import Linglib.Syntax.Minimalist.Movement.HeimKennedy
+public import Linglib.Syntax.Tree.Basic
+public import Linglib.Syntax.Command
 
 /-!
 # Bhatt and Takahashi (2011): Reduced and unreduced phrasal comparatives
@@ -36,6 +38,8 @@ stated.
 * [lechner-2001]
 * [merchant-2009]
 -/
+
+@[expose] public section
 
 namespace BhattTakahashi2011
 

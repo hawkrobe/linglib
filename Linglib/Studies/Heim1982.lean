@@ -1,6 +1,8 @@
-import Mathlib.Data.Fin.VecNotation
-import Linglib.Semantics.Dynamic.FileChange
-import Linglib.Data.Examples.Heim1982
+module
+
+public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Semantics.Dynamic.FileChange
+public import Linglib.Data.Examples.Heim1982
 
 /-!
 # Heim (1982): The Semantics of Definite and Indefinite Noun Phrases
@@ -36,6 +38,8 @@ initial file. Examples are numbered as in the dissertation, by chapter and secti
 
 * [heim-1982]
 -/
+
+@[expose] public section
 
 namespace Heim1982
 

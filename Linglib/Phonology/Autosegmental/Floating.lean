@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
-import Linglib.Phonology.Autosegmental.NonCrossing
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fin.Embedding
+module
+
+public import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
+public import Linglib.Phonology.Autosegmental.NonCrossing
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fin.Embedding
 
 /-!
 # Floating autosegmental forms
@@ -71,6 +73,8 @@ the surface are `List.finRange` filters, which reduce under kernel `decide`, bec
 * [zimmermann-2017]
 * [jardine-heinz-2015]
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Anderson2006b
-import Mathlib.Data.Finset.Insert
+module
+
+public import Linglib.Data.Examples.Anderson2006b
+public import Mathlib.Data.Finset.Insert
 
 /-!
 # Anderson (2006): Modern grammars of case, chapter 6
@@ -31,6 +33,8 @@ and that the hierarchy selects the recorded subject of each of the book's exampl
 
 * [anderson-2006b]
 -/
+
+@[expose] public section
 
 namespace Anderson2006b
 

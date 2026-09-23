@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Marking
+module
+
+public import Linglib.Semantics.Polarity.Marking
 
 /-!
 # English Polarity-Marking Strategies
@@ -32,6 +34,8 @@ German Verum focus.
 - Prosodic: pitch accent falls on *do*
 - Strategy: `.verumFocus` — targets the assertion level, like German VF
 -/
+
+@[expose] public section
 
 namespace English.PolarityMarking
 

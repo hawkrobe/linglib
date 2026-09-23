@@ -1,9 +1,11 @@
-import Mathlib.Order.WithBot
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.UD.UPOS
-import Linglib.Morphology.ConstructionMorphology.Schema
-import Linglib.Morphology.Root.Basic
-import Linglib.Morphology.Root.Consonantal
+module
+
+public import Mathlib.Order.WithBot
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.UD.UPOS
+public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Morphology.Root.Basic
+public import Linglib.Morphology.Root.Consonantal
 
 /-!
 # Haspelmath (2025): Roots and root classes in comparative grammar
@@ -40,6 +42,8 @@ description over shared variables read through two subscriptings,
 * [haspelmath-2025b]
 * [jackendoff-audring-2020]
 -/
+
+@[expose] public section
 
 namespace Haspelmath2025b
 

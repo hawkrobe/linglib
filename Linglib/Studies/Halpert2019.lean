@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Probe.Basic
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
 # Halpert (2019): Raising, Unphased
@@ -34,6 +36,8 @@ of English.
 * [deal-2015a-nels]
 * [rackowski-richards-2005]
 -/
+
+@[expose] public section
 
 namespace Halpert2019
 

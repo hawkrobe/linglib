@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Phonology.Harmony.Basic
-import Linglib.Data.Examples.AksenovaEtAl2024
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Phonology.Harmony.Basic
+public import Linglib.Data.Examples.AksenovaEtAl2024
 
 /-!
 # Aksënova, Rawski, Graf & Heinz 2024: the computational power of harmonic forms
@@ -26,6 +28,8 @@ is asymmetric (`buryat_not_symmetric`), and Yakut's is left open. `tierRelation`
 
 * [aksenova-rawski-graf-heinz-2024]
 -/
+
+@[expose] public section
 
 namespace AksenovaEtAl2024
 

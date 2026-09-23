@@ -1,6 +1,8 @@
-import Linglib.Core.Data.Fin.VecNotation
-import Linglib.Core.ModelTheory.Lindstrom
-import Linglib.Semantics.Quantification.Basic
+module
+
+public import Linglib.Core.Data.Fin.VecNotation
+public import Linglib.Core.ModelTheory.Lindstrom
+public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Realizing Lindström quantifiers as GQ denotations
@@ -60,6 +62,8 @@ linguistic realization functor on top of it.
 Appendix-C Fraïssé argument predates this substrate); that copy will be deduped against
 this one in a follow-up.
 -/
+
+@[expose] public section
 
 universe u v
 

@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Polish Case Inventory
@@ -11,6 +13,8 @@ growing tendency for NOM to substitute for VOC with bare personal
 names. `inventory` aliases the shared 6-case core;
 `Slavic.Case.fullInventory` carries the +VOC form.
 -/
+
+@[expose] public section
 
 namespace Polish.Case
 

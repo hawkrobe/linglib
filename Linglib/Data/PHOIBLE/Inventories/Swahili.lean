@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Swahili (swh, ID 145)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 36 phonemes. PHOIBLE inventory ID 145, Glottocode `swah1253`.
 Source: PHOIBLE donor `spa`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Swahili
 

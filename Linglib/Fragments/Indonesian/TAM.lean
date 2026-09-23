@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Pragmatics.SocialMeaning.Register
-import Linglib.Syntax.Category.Auxiliary.Basic
+module
+
+public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Category.Auxiliary.Basic
 
 /-!
 # Indonesian temporal markers
@@ -21,6 +23,8 @@ a modal (§2.153), and *belum* 'not yet', listed with the negatives and
 analysed as negation plus *sudah* (§2.156). WALS codings for Indonesian live
 in `Data.WALS.Features` (iso `ind`), not here.
 -/
+
+@[expose] public section
 
 namespace Indonesian
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Basic
-import Linglib.Core.Data.RoseTree.Get
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Linglib.Core.Data.RoseTree.Get
 
 /-!
 # Constituency trees
@@ -41,6 +43,8 @@ the instance is built by mutual recursion with the daughter list.
 * [katzir-2007]
 * [barker-pullum-1990]
 -/
+
+@[expose] public section
 
 namespace Syntax
 

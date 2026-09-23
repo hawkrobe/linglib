@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.DependencyGrammar.Dominance
-import Mathlib.Order.Interval.Set.OrdConnected
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.List.Sort
+module
+
+public import Linglib.Syntax.DependencyGrammar.Dominance
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Data.List.Sort
 
 /-!
 # Projectivity and its relaxations
@@ -55,6 +57,8 @@ Grammar planarity notion
 [de-marneffe-nivre-2019] — Dependency grammar, source of the arc form of
 projectivity
 -/
+
+@[expose] public section
 
 namespace DependencyGrammar
 

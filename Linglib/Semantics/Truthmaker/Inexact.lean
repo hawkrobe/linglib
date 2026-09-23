@@ -1,4 +1,6 @@
-import Linglib.Semantics.Truthmaker.Basic
+module
+
+public import Linglib.Semantics.Truthmaker.Basic
 
 /-! # Inexact Truthmaking and Entailment [jago-2026]
 
@@ -29,6 +31,8 @@ correspondence is documented as an external claim, not verified
 inside linglib.
 
 -/
+
+@[expose] public section
 
 namespace Truthmaker
 

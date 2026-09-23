@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Exhaustivity
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Order.CompleteLattice.Finset
+module
+
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.CompleteLattice.Finset
 
 /-!
 # Hamblin sets closed under conjunction or disjunction
@@ -18,6 +20,8 @@ true there, and both induce the same strong answers.
 * [fox-2007]
 * [fox-2018]
 -/
+
+@[expose] public section
 
 namespace Question
 

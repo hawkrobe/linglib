@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Tariana evidentiality
@@ -13,6 +15,8 @@ evidentials.
 * [aikhenvald-2004], §2.4
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace Tariana.Evidentiality
 

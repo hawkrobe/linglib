@@ -1,7 +1,9 @@
-import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Data.Examples.Alderete2001
+module
+
+public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Data.Examples.Alderete2001
 
 /-!
 # Alderete 2001: dominance effects as transderivational anti-faithfulness
@@ -28,6 +30,8 @@ paper's tableaux: `luo_exchange` (11), `dominant_accented` (21), `recessive` (22
 * [benua-1997]
 * [mccarthy-prince-1995]
 -/
+
+@[expose] public section
 
 namespace Alderete2001
 

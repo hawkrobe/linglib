@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Minimalist.Case.Dependent
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Minimalist.Case.Dependent
 
 /-!
 # Mongolian case
@@ -15,6 +17,8 @@ postpositions express.
 * [gong-2022]
 * [baker-vinokurova-2010]
 -/
+
+@[expose] public section
 
 namespace Mongolian.Case
 

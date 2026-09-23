@@ -1,6 +1,8 @@
-import Linglib.Semantics.Degree.Aggregation
-import Linglib.Data.Examples.WaldonEtAl2023
-import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+module
+
+public import Linglib.Semantics.Degree.Aggregation
+public import Linglib.Data.Examples.WaldonEtAl2023
+public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 /-!
 # Waldon, Condoravdi, Levin & Degen (2023): On the Context Dependence of Artifact Noun Interpretation
@@ -37,6 +39,8 @@ The paper's examples are the rows of `Data.Examples.WaldonEtAl2023`.
 * [kennedy-2007]
 * [lassiter-goodman-2017]
 -/
+
+@[expose] public section
 
 open Degree.Aggregation MeasureTheory
 open scoped ENNReal

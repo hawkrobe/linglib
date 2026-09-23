@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Modern Greek determiners
@@ -12,15 +14,17 @@ covering the [schwarz-2009] use types, and the indefinite *enas*, *mia*, *ena*.
 * [schwarz-2009]
 -/
 
+@[expose] public section
+
 namespace Greek.StandardModern.Determiners
 
 /-- The definite article with the given form. -/
-private def definite (form : String) : Article :=
+def definite (form : String) : Article :=
   { form, definiteness := .definite, exponent := .dedicatedMorpheme
     uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- The indefinite article with the given form. -/
-private def indefinite (form : String) : Article :=
+def indefinite (form : String) : Article :=
   { form, definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
 /-- *o* — the masculine singular definite article. -/

@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Perm
-import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Mathlib.Algebra.Order.Group.Multiset
-import Mathlib.Algebra.Order.BigOperators.Group.List
-import Mathlib.Algebra.Order.Group.Nat
+module
+
+public import Linglib.Core.Data.RoseTree.Perm
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Mathlib.Algebra.Order.Group.Multiset
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+public import Mathlib.Algebra.Order.Group.Nat
 
 /-!
 # Leaf projections of a rose tree
@@ -31,6 +33,8 @@ on `leaves`, their depth-weighted count is the sum of `Prod.snd` over the filter
 * `RoseTree.leavesWithDepth_perm`, `RoseTree.leaves_perm`: both projections are
   `Perm`-invariant.
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

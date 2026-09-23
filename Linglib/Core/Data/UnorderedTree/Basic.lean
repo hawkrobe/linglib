@@ -1,12 +1,14 @@
-import Linglib.Core.Data.RoseTree.Basic
-import Linglib.Core.Data.Multiset.Rel
-import Linglib.Core.Data.RoseTree.Perm
-import Mathlib.Data.List.Perm.Basic
-import Mathlib.Data.List.Forall2
-import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Mathlib.Algebra.Group.Nat.Defs
-import Mathlib.Data.Multiset.Basic
-import Mathlib.Data.Multiset.MapFold
+module
+
+public import Linglib.Core.Data.RoseTree.Basic
+public import Linglib.Core.Data.Multiset.Rel
+public import Linglib.Core.Data.RoseTree.Perm
+public import Mathlib.Data.List.Perm.Basic
+public import Mathlib.Data.List.Forall2
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Mathlib.Algebra.Group.Nat.Defs
+public import Mathlib.Data.Multiset.Basic
+public import Mathlib.Data.Multiset.MapFold
 
 /-!
 # Unordered rooted trees
@@ -34,6 +36,8 @@ on `Multiset` children, under which the grafting `B⁺` of a multiset of trees i
   (2025)][marcolli-chomsky-berwick-2025]
 * [L. Foissy, *An introduction to Hopf algebras of trees*][foissy-introduction-hopf-algebras-trees]
 -/
+
+@[expose] public section
 
 open RoseTree
 

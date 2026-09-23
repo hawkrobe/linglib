@@ -1,8 +1,10 @@
-import Linglib.Syntax.Minimalist.Geometry
-import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Syntax.Minimalist.Probe.Phi
-import Linglib.Syntax.Minimalist.Probe.Run
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Syntax.Minimalist.Geometry
+public import Linglib.Syntax.Minimalist.Phi.Geometry
+public import Linglib.Syntax.Minimalist.Probe.Phi
+public import Linglib.Syntax.Minimalist.Probe.Run
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Cyclic Agree over articulated person probes
@@ -54,6 +56,8 @@ and satisfied by its innermost one, whose run copies exactly the segments of the
 * [harley-ritter-2002]
 * [coon-keine-2021]
 -/
+
+@[expose] public section
 
 namespace Minimalist.CyclicAgree
 

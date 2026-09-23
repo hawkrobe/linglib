@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Degree.Granularity
+module
+
+public import Linglib.Semantics.Degree.Granularity
 
 /-!
 # Sauerland & Stateva (2011): Two Types of Vagueness
@@ -36,6 +38,8 @@ them; the granularity intervals are those of `Semantics/Degree/Granularity`.
 * [krifka-2007]
 * [lasersohn-1999]
 -/
+
+@[expose] public section
 
 namespace SauerlandStateva2011
 

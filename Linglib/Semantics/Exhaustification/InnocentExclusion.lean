@@ -1,6 +1,8 @@
-import Linglib.Semantics.Exhaustification.Alternatives
-import Linglib.Semantics.Exhaustification.Excluder
-import Mathlib.Data.Set.Finite.Powerset
+module
+
+public import Linglib.Semantics.Exhaustification.Alternatives
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Mathlib.Data.Set.Finite.Powerset
 
 /-!
 # Innocent exclusion
@@ -25,6 +27,8 @@ exclusion (`exhIE_eq_exh`).
 * [fox-2007]
 * [spector-2016]
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

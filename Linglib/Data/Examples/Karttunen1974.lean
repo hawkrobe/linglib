@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `Karttunen1974` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/Karttunen1974.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace Karttunen1974.Examples`.
 -/
+
+@[expose] public section
 
 namespace Karttunen1974.Examples
 

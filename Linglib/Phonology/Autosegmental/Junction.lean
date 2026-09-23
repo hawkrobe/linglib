@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Factors
-import Linglib.Phonology.Autosegmental.Realization
+module
+
+public import Linglib.Phonology.Autosegmental.Factors
+public import Linglib.Phonology.Autosegmental.Realization
 
 /-!
 # Local autosegmental configurations
@@ -48,6 +50,8 @@ becomes primary and the five kits derive from its (the
   `AR.tierLength_junction_true`, …) and links (`AR.link_junction`) — which the builders
   inherit as transparent aliases; per-builder planarity (`AR.isPlanar_single`, …).
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

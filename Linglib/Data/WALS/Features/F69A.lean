@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 69A: Position of Tense-Aspect Affixes
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 69, 1131 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F69A
 
@@ -26,7 +30,8 @@ inductive TenseAspectAffixPosition where
   | noTenseAspectInflection
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint TenseAspectAffixPosition) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "ani", iso := "hnh", value := .tenseAspectSuffixes }
   , { walsCode := "aar", iso := "aiw", value := .tenseAspectSuffixes }
   , { walsCode := "abi", iso := "axb", value := .tenseAspectSuffixes }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint TenseAspectAffixPosition) :=
   , { walsCode := "kro", iso := "kgo", value := .mixedType }
   ]
 
-private def allData_1 : List (Datapoint TenseAspectAffixPosition) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "knc", iso := "uwa", value := .tenseAspectSuffixes }
   , { walsCode := "kya", iso := "gvn", value := .tenseAspectSuffixes }
   , { walsCode := "kmn", iso := "kue", value := .tenseAspectSuffixes }
@@ -1032,7 +1038,8 @@ private def allData_1 : List (Datapoint TenseAspectAffixPosition) :=
   , { walsCode := "tgl", iso := "tsj", value := .tenseAspectSuffixes }
   ]
 
-private def allData_2 : List (Datapoint TenseAspectAffixPosition) :=
+/-- Rows 1001 to 1131 of `allData`. -/
+def allData_2 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "tsi", iso := "tsi", value := .noTenseAspectInflection }
   , { walsCode := "ttu", iso := "bbl", value := .tenseAspectSuffixes }
   , { walsCode := "tgh", iso := "thv", value := .tenseAspectPrefixes }

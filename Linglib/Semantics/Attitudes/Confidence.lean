@@ -1,5 +1,7 @@
-import Linglib.Semantics.Degree.Measure.Basic
-import Linglib.Semantics.Degree.Quantifier
+module
+
+public import Linglib.Semantics.Degree.Measure.Basic
+public import Linglib.Semantics.Degree.Quantifier
 
 /-!
 # Confidence and certainty as gradable attitudes
@@ -48,6 +50,8 @@ It does NOT validate:
 - Connectedness (CSW are agnostic, §4.6 discussion of (58))
 
 -/
+
+@[expose] public section
 
 namespace Confidence
 

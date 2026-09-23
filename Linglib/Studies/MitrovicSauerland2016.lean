@@ -1,11 +1,13 @@
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Syntax.Category.Coordinator
-import Linglib.Fragments.English.Coordination
-import Linglib.Fragments.Japanese.Determiners
-import Linglib.Fragments.Hungarian.Coordination
-import Linglib.Fragments.Georgian.Coordination
-import Linglib.Fragments.Latin.Coordination
-import Linglib.Fragments.Korean.Coordination
+module
+
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Fragments.English.Coordination
+public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Fragments.Hungarian.Coordination
+public import Linglib.Fragments.Georgian.Coordination
+public import Linglib.Fragments.Latin.Coordination
+public import Linglib.Fragments.Korean.Coordination
 
 /-!
 # Mitrović and Sauerland (2016): Two Conjunctions Are Better Than One
@@ -45,6 +47,8 @@ with distinct nominal and verbal conjunctions is not formalized.
 * [mitrovic-sauerland-2014]
 * [mitrovic-2021]
 -/
+
+@[expose] public section
 
 namespace MitrovicSauerland2016
 

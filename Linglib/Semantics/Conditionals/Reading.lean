@@ -1,11 +1,13 @@
-import Mathlib.Data.Finset.Insert
-import Mathlib.Order.Monotone.Defs
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Discourse.Commitment.Table
-import Linglib.Logic.Natural.Basic
-import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Denotation
-import Linglib.Semantics.Presupposition.Context
+module
+
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Order.Monotone.Defs
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Discourse.Commitment.Table
+public import Linglib.Logic.Natural.Basic
+public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Presupposition.Context
 
 /-!
 # Readings of a conditional
@@ -34,6 +36,8 @@ the split, as Japanese *-ra* and German *falls* mark only hypothetical condition
 * [L. Haegeman, *Conditional clauses: External and internal syntax* (2003)][haegeman-2003]
 * [D. Lassiter, *Sorting Out Left-Nested Conditionals* (2025)][lassiter-2025]
 -/
+
+@[expose] public section
 
 namespace Conditional
 

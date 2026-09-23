@@ -1,6 +1,8 @@
-import Linglib.Semantics.Tense.Evidential
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Data.Examples.Cumming2026
+module
+
+public import Linglib.Semantics.Tense.Evidential
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Data.Examples.Cumming2026
 
 /-!
 # Cumming (2026): Tense and evidence
@@ -51,6 +53,8 @@ events exempt.
 * [L. Matthewson, *Evidence type, evidence location, evidence strength*
   (2020)][matthewson-2020]
 -/
+
+@[expose] public section
 
 namespace Cumming2026
 

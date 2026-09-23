@@ -1,9 +1,11 @@
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Mathlib.Data.Fin.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Mathlib.Data.Fin.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Probability-Ordering Bridge — [kratzer-2012]
@@ -27,6 +29,8 @@ maximal probability.
 UNVERIFIED reference: Kratzer (2012) Modals and Conditionals, OUP — chapter
 and section number not checked against the original.
 -/
+
+@[expose] public section
 
 namespace Modality.ProbabilityOrdering
 

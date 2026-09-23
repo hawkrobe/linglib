@@ -7,11 +7,13 @@ Authors: Robert Hawkins
 `Mathlib.Computability.MyhillNerode`'s residual program to the two-sided
 congruence.
 -/
-import Mathlib.Computability.MyhillNerode
-import Mathlib.Data.Set.Finite.Range
-import Linglib.Core.Computability.TransitionMonoid
-import Linglib.Core.GroupTheory.Congruence.Hom
-import Linglib.Core.Algebra.Group.Subquotient
+module
+
+public import Mathlib.Computability.MyhillNerode
+public import Mathlib.Data.Set.Finite.Range
+public import Linglib.Core.Computability.TransitionMonoid
+public import Linglib.Core.GroupTheory.Congruence.Hom
+public import Linglib.Core.Algebra.Group.Subquotient
 
 /-!
 # The syntactic monoid of a language
@@ -46,6 +48,8 @@ monoid structure rather than a bare set of states.
 
 * [pin-mfa]
 -/
+
+@[expose] public section
 
 namespace Language
 

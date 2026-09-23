@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 111A: Nonperiphrastic Causative Constructions
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 111, 310 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F111A
 

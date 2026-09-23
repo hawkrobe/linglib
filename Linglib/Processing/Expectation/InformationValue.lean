@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.Surprisal
-import Linglib.Processing.Expectation.Defs
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.Probability.Kernel.Defs
+module
+
+public import Linglib.Core.InformationTheory.Surprisal
+public import Linglib.Processing.Expectation.Defs
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.Probability.Kernel.Defs
 
 /-!
 # Generalised surprisal
@@ -36,6 +38,8 @@ family.
 * [giulianelli-etal-2026]
 * [levy-2008]
 -/
+
+@[expose] public section
 
 namespace Processing.PredictiveUncertainty
 

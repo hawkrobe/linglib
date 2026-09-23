@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Focus.Unalternatives
-import Linglib.Studies.HartmannZimmermann2004
-import Linglib.Data.Examples.AssmannEtAl2023
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Focus.Unalternatives
+public import Linglib.Studies.HartmannZimmermann2004
+public import Linglib.Data.Examples.AssmannEtAl2023
 
 /-!
 # Assmann, Büring, Jordanoska & Prüller 2023: morphosyntactic focus marking
@@ -39,6 +41,8 @@ marked.
 * [hartmann-zimmermann-2004] — the Tangale reflex analysis
 * [schwarzschild-1999], [selkirk-1995] — projection and AvoidF
 -/
+
+@[expose] public section
 
 namespace AssmannEtAl2023
 

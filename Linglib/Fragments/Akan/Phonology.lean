@@ -1,6 +1,8 @@
-import Linglib.Data.PHOIBLE.Inventories.Akan
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Segmental.FeatureClass
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Akan
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Segmental.FeatureClass
 
 /-!
 # Akan segments
@@ -46,6 +48,8 @@ corono-dorsal analysis adds.
 * [hayes-2009]
 * [moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Data.PHOIBLE
 

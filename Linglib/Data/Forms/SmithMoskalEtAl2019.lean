@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `SmithMoskalEtAl2019` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/SmithMoskalEtAl2019.json` by
 generator. Consumers import this module; declarations live in
 `namespace SmithMoskalEtAl2019.Forms`.
 -/
+
+@[expose] public section
 
 namespace SmithMoskalEtAl2019.Forms
 

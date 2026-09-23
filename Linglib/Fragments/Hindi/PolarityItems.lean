@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Hindi Polarity-Sensitive Items
@@ -13,6 +15,8 @@ free-choice in generics and possibility modals but not necessity modals
 indefinite + negation route. Attested contexts follow [lahiri-1998]
 §4–5; cf. [haspelmath-1997] on the *koii* series.
 -/
+
+@[expose] public section
 
 namespace Hindi.PolarityItems
 

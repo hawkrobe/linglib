@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 92A: Position of Polar Question Particles
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 92, 884 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F92A
 
@@ -28,7 +32,8 @@ inductive PositionOfPolarQuestionParticles where
   | noQuestionParticle
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PositionOfPolarQuestionParticles) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PositionOfPolarQuestionParticles) :=
   [ { walsCode := "xoo", iso := "nmn", value := .initial }
   , { walsCode := "ani", iso := "hnh", value := .final }
   , { walsCode := "aar", iso := "aiw", value := .noQuestionParticle }
@@ -531,7 +536,8 @@ private def allData_0 : List (Datapoint PositionOfPolarQuestionParticles) :=
   , { walsCode := "mbm", iso := "mdd", value := .final }
   ]
 
-private def allData_1 : List (Datapoint PositionOfPolarQuestionParticles) :=
+/-- Rows 501 to 884 of `allData`. -/
+def allData_1 : List (Datapoint PositionOfPolarQuestionParticles) :=
   [ { walsCode := "mee", iso := "mym", value := .final }
   , { walsCode := "meh", iso := "gdq", value := .noQuestionParticle }
   , { walsCode := "mei", iso := "mni", value := .final }

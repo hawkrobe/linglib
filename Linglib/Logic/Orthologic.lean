@@ -1,5 +1,7 @@
-import Mathlib.Order.Antisymmetrization
-import Linglib.Core.Order.Ortholattice
+module
+
+public import Mathlib.Order.Antisymmetrization
+public import Linglib.Core.Order.Ortholattice
 
 /-!
 # Orthologic: syntax, proof system, and algebraic completeness
@@ -28,6 +30,8 @@ the provability preorder; mathlib documents `Antisymmetrization` as the free
 functor `Preord → PartOrd`, so the quotient and its `PartialOrder` come for free.
 This file adds the `OrthocomplementedLattice` structure and completeness.
 -/
+
+@[expose] public section
 
 namespace Orthologic
 

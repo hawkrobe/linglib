@@ -1,8 +1,10 @@
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Alternatives.Structural
-import Linglib.Data.Examples.BaleKhanjian2014
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Tree.Cat
+public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Data.Examples.BaleKhanjian2014
 
 /-!
 # Bale & Khanjian 2014: syntactic complexity and competition in Western Armenian
@@ -53,6 +55,8 @@ definite singular.
 * [link-1983] — the supremum operator
 * [sauerland-2003], [krifka-1989], [spector-2007] — number competition
 -/
+
+@[expose] public section
 
 namespace BaleKhanjian2014
 

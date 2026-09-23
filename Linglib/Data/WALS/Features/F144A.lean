@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 144A: Position of Negative Word With Respect to Subject, Object, and Verb
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 144, 1190 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F144A
 
@@ -58,7 +62,8 @@ inductive PositionOfNegativeWordWithRespectToSubjectObjectAndVerb where
   | other
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "ani", iso := "hnh", value := .other }
   , { walsCode := "xam", iso := "xam", value := .other }
   , { walsCode := "huc", iso := "huc", value := .snegvo }
@@ -561,7 +566,8 @@ private def allData_0 : List (Datapoint PositionOfNegativeWordWithRespectToSubje
   , { walsCode := "kol", iso := "kfb", value := .moreThanOnePosition }
   ]
 
-private def allData_1 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "kmb", iso := "", value := .optdoubleneg }
   , { walsCode := "xbi", iso := "xbi", value := .snegvo }
   , { walsCode := "kzy", iso := "kpv", value := .snegvo }
@@ -1064,7 +1070,8 @@ private def allData_1 : List (Datapoint PositionOfNegativeWordWithRespectToSubje
   , { walsCode := "tma", iso := "tma", value := .morphneg }
   ]
 
-private def allData_2 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
+/-- Rows 1001 to 1190 of `allData`. -/
+def allData_2 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "tmm", iso := "mla", value := .snegvo }
   , { walsCode := "tam", iso := "taj", value := .sonegv }
   , { walsCode := "tsk", iso := "taq", value := .optdoubleneg }

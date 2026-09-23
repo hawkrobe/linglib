@@ -1,6 +1,8 @@
-import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Semantics.Tense.Embedding
-import Mathlib.Order.Interval.Set.OrdConnected
+module
+
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Semantics.Tense.Embedding
+public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # Schlenker (2004b): Sequence Phenomena and Double Access Readings Generalized
@@ -47,6 +49,8 @@ actual world as well as the world of the thought act (`doubleAccess_of_ulc`,
 * [heim-1994]
 * [kamp-rohrer-1983]
 -/
+
+@[expose] public section
 
 namespace Schlenker2004b
 

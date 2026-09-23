@@ -1,6 +1,8 @@
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.ArgumentStructure.ThematicRole
-import Linglib.Semantics.Mereology
+module
+
+public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.ArgumentStructure.ThematicRole
+public import Linglib.Semantics.Mereology
 
 /-!
 # Pasternak (2019): A Lot of Hatred and a Ton of Desire
@@ -44,6 +46,8 @@ formalized.
 * [schwarzschild-2006]
 * [wellwood-2015]
 -/
+
+@[expose] public section
 
 namespace Pasternak2019
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Degree.Delineation
+module
+
+public import Linglib.Semantics.Degree.Delineation
 
 /-!
 # Bochnak 2015: the Degree Semantics Parameter and Washo
@@ -59,6 +61,8 @@ alternative ([van-rooij-2011a]).
 * [fara-2000] — the Similarity Constraint, with [klein-1980].
 * [van-rooij-2011a] — semi-orders and the margin of error.
 -/
+
+@[expose] public section
 
 namespace Bochnak2015
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Person.Category
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Person.Category
 
 /-!
 # Tagalog pronouns
@@ -35,6 +37,8 @@ of the first-person singular *ng* form and the second-person singular *ang* form
 * [kroeger-1991-thesis]
 * [schachter-otanes-1972]
 -/
+
+@[expose] public section
 
 namespace Tagalog
 

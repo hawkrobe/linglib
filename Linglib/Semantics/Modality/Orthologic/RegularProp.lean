@@ -1,7 +1,9 @@
-import Linglib.Semantics.Modality.Orthologic.Frames
-import Linglib.Core.Order.Ortholattice
-import Linglib.Core.Order.Orthoframe
-import Mathlib.Data.SetLike.Basic
+module
+
+public import Linglib.Semantics.Modality.Orthologic.Frames
+public import Linglib.Core.Order.Ortholattice
+public import Linglib.Core.Order.Orthoframe
+public import Mathlib.Data.SetLike.Basic
 
 /-!
 # Regular Propositions of a Compatibility Frame
@@ -23,6 +25,8 @@ constructor `CompatFrame.regOf` building a `Regular` element from a regularity p
 * `CompatFrame.toOrthoframe`, `CompatFrame.Regular`, `CompatFrame.regOf`.
 * `isRegular_iff_isExtent` — `IsRegular F` is `IsExtent` of the orthogonality relation.
 -/
+
+@[expose] public section
 
 namespace Orthologic
 

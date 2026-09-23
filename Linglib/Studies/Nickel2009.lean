@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Quantification.Generic
-import Linglib.Studies.Cohen1999
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.Generic
+public import Linglib.Studies.Cohen1999
 
 /-!
 # Nickel (2009): Generics and the Ways of Normality
@@ -30,6 +32,8 @@ over one shared toy model, with the habitats as the alternative set.
 * [nickel-2009]
 * [cohen-1999a]
 -/
+
+@[expose] public section
 
 namespace Nickel2009
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Antiexhaustive Operator O⁻ [chierchia-2006]
@@ -31,6 +33,8 @@ An alternative domain must contain a possible witness, (61b): without that
 restriction the empty subdomain would be an alternative, its existential the
 empty proposition, and `O⁻` contradictory everywhere.
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

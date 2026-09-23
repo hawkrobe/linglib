@@ -1,10 +1,12 @@
-import Mathlib.Data.Set.Insert
-import Linglib.Semantics.Presupposition.ContentLayer
-import Linglib.Semantics.Questions.Highlighting
-import Linglib.Semantics.Evidential.Defs
-import Linglib.Discourse.Role
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Studies.Faller2019
+module
+
+public import Mathlib.Data.Set.Insert
+public import Linglib.Semantics.Presupposition.ContentLayer
+public import Linglib.Semantics.Questions.Highlighting
+public import Linglib.Semantics.Evidential.Defs
+public import Linglib.Discourse.Role
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Studies.Faller2019
 
 /-!
 # Martínez Vera (2026): Verum, Contrast and Evidentiality in Saraguro Kichwa
@@ -35,6 +37,8 @@ original fieldwork with six speakers following [matthewson-2004].
 * [romero-han-2004]
 * [matthewson-2004]
 -/
+
+@[expose] public section
 
 namespace MartinezVera2026
 

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Logic.Relation
-import Linglib.Core.Data.UnorderedTree.Count
-import Linglib.Core.Data.UnorderedTree.Subtree
-import Linglib.Syntax.Minimalist.SyntacticObject.Basic
+module
+
+public import Mathlib.Logic.Relation
+public import Linglib.Core.Data.UnorderedTree.Count
+public import Linglib.Core.Data.UnorderedTree.Subtree
+public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 
 /-!
 # Terms, containment, and c-command
@@ -53,6 +55,8 @@ daughters of `merge x x` are not sisters.
 * [marcolli-chomsky-berwick-2025], Definition 1.2.2
 * [reinhart-1976]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

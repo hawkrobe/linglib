@@ -3,14 +3,16 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.PUnit
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.List.Basic
-import Mathlib.Data.Set.Finite.List
-import Linglib.Core.Computability.TransitionMonoid
-import Linglib.Core.Computability.StarFree
-import Linglib.Phonology.Subregular.StrictlyLocal
-import Linglib.Phonology.Subregular.StrictlyPiecewise
+module
+
+public import Mathlib.Algebra.Group.PUnit
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.List.Basic
+public import Mathlib.Data.Set.Finite.List
+public import Linglib.Core.Computability.TransitionMonoid
+public import Linglib.Core.Computability.StarFree
+public import Linglib.Phonology.Subregular.StrictlyLocal
+public import Linglib.Phonology.Subregular.StrictlyPiecewise
 
 /-!
 # The subregular hierarchy is star-free (aperiodicity)
@@ -53,6 +55,8 @@ walled off in its own namespace — `StrictlyLocalGrammar` and `StrictlyPiecewis
 colliding names
 become distinct full names.
 -/
+
+@[expose] public section
 
 open List
 

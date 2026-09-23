@@ -1,5 +1,7 @@
-import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Tone.Grammatical
+module
+
+public import Linglib.Phonology.Tone.Basic
+public import Linglib.Phonology.Tone.Grammatical
 
 /-!
 # Mwaghavul
@@ -19,6 +21,8 @@ the base. Data from [akinbo-fwangwar-2026] (7)–(10) and [fwangwar-2018].
 * `deriveVerb` / `derivePluractional` / `intensity` — the singular verb, the pluractional
   verb, and tone-preserving reduplication.
 -/
+
+@[expose] public section
 
 namespace Mwaghavul
 

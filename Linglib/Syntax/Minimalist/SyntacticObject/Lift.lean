@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Algebra.Group.Hom.Defs
-import Mathlib.Data.List.Perm.Basic
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
+module
+
+public import Mathlib.Algebra.Group.Hom.Defs
+public import Mathlib.Data.List.Perm.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # The universal property of the syntactic-object carrier
@@ -33,6 +35,8 @@ lexical-leaf value and a trace value, and inherit `Perm`-invariance from
   `SyntacticObject` agreeing on lexical and trace leaves are equal.
 * `Minimalist.SyntacticObject.liftN_merge`: the magma law on the unordered carrier.
 -/
+
+@[expose] public section
 
 namespace Minimalist.SyntacticObject
 

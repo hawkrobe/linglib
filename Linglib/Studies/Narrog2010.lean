@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Narrog (2010): (Inter)subjectification in the Domain of Modality and Mood
@@ -47,6 +49,8 @@ flavor, which `IsVolitive` treats as non-volitive.
 * [narrog-2010]
 * [bybee-perkins-pagliuca-1994]
 -/
+
+@[expose] public section
 
 namespace Narrog2010
 

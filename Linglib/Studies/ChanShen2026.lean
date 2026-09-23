@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.ChanShen2026
-import Linglib.Fragments.Mandarin.Questions
-import Linglib.Fragments.Singlish.Questions
+module
+
+public import Linglib.Data.Examples.ChanShen2026
+public import Linglib.Fragments.Mandarin.Questions
+public import Linglib.Fragments.Singlish.Questions
 
 /-!
 # Chan and Shen (2026): Conditions on *wh-the-hell* licensing
@@ -43,6 +45,8 @@ partial-movement order. The paper's Table 5 is the three accounts against the da
 * [huang-ochi-2004]
 * [sprouse-et-al-2012]
 -/
+
+@[expose] public section
 
 namespace ChanShen2026
 
