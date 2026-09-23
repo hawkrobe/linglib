@@ -2,7 +2,6 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.Projection
 import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.Examples.Levin1993
 import Linglib.Data.Examples.Beavers2010
 import Mathlib.Order.Cover
@@ -47,7 +46,6 @@ namespace Beavers2010
 
 open ArgumentStructure
 open ArgumentStructure (AffectednessDegree profileToDegree)
-open ArgumentStructure (DiathesisAlternation)
 
 /-! ### L-thematic roles as entailment sets ((65)–(67)) -/
 
@@ -170,13 +168,22 @@ theorem MAP.oblique_le {d o : AffectednessDegree} (h : MAP d o) : o ≤ d :=
 
 /-! ### The attested contrasts (Tables 3–4, (75)) -/
 
+/-- The alternation a contrast instantiates, in the paper's grouping: the conative
+alternation, or a locative alternation in the paper's broad sense, which takes in the
+spray/load alternation of *load* and the with/against alternation of *cut* and *hit* alike
+([levin-1993] §1.3, §2.3.1, §2.8). -/
+inductive AlternationType where
+  | conative
+  | locative
+  deriving DecidableEq, Repr
+
 /-- An alternation contrast: a verb with the affectedness degrees of its
 alternating participant as direct object and as oblique. -/
 structure AlternationContrast where
   /-- The verb. -/
   verb : String
   /-- The alternation it instantiates. -/
-  alternationType : DiathesisAlternation
+  alternationType : AlternationType
   /-- Degree in direct realization. -/
   directDegree : AffectednessDegree
   /-- Degree in oblique realization. -/

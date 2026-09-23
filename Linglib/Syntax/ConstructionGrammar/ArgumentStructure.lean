@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Data.UD.UPOS
 
@@ -332,7 +332,7 @@ def composedMeaning (verbMC : MeaningComponents) (cxn : Construction MeaningComp
 /-- Whether an alternation is predicted for a verb *in a construction*.
     Generalizes `MeaningComponents.predictedAlternation` to construction contexts. -/
 def predictedAlternationInConstruction (verbMC : MeaningComponents)
-    (cxn : Construction MeaningComponents) (alt : DiathesisAlternation) : Bool :=
+    (cxn : Construction MeaningComponents) (alt : LevinProperty) : Bool :=
   (composedMeaning verbMC cxn).predictedAlternation alt
 
 /-! ### Core theorems: constructions that don't augment -/
