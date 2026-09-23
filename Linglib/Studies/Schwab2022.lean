@@ -1,4 +1,6 @@
 import Linglib.Data.Examples.Schwab2022
+import Linglib.Data.Experiments.Schwab2022
+import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.SetNotation
 import Mathlib.Data.Set.Lattice.Bounded
 
@@ -11,7 +13,11 @@ attenuating NPI *so recht* 'really' in a 2 × 3 design crossing the item with th
 negative quantifier: in the matrix clause, where it licenses the item, inside a relative clause,
 where it cannot, or absent (`Data/Examples/Schwab2022`). Only *jemals* is illusorily licensed by
 the relative-clause quantifier, an asymmetry that the cue-based retrieval, quantifier-scope and
-pragmatic-rescuing accounts of the illusion do not foresee.
+pragmatic-rescuing accounts of the illusion do not foresee: the paper reads its Bayes factors
+(`Data.Experiments.Schwab2022`) as evidence for the *jemals* illusion in both experiments and for
+the *so recht* illusion in neither (`illusion_attested`), and for the difference between the two
+in the second experiment only (`interaction_attested_iff`). Its readings rank the Bayes factors
+consistently (`verdictRank_monotone`).
 
 The account builds on the scalar theories of polarity sensitivity of [krifka-1995a],
 [kadmon-landman-1993], [chierchia-2006] and [israel-1996]. A strengthening item is assertable
@@ -38,9 +44,11 @@ scale, so the strengthening mechanism accepts it and the attenuating one rejects
   it (`Informative`), the paper's `c + p + p' ≠ c + p`. Alternatives are an arbitrary set of
   propositions, so the lexical scales are hypotheses on it: the specific times of an
   existential and the lower degrees of a degree modifier.
-* The experimental results are recorded in the example rows' comments (posterior estimates and
-  Bayes factors); the parser's activation story that selects the relative-clause proposition
-  is not modeled, only what each mechanism returns once it is selected.
+* The Bayes factors and the paper's readings of them are `Data.Experiments.Schwab2022`; an
+  effect counts as attested when the paper reads its Bayes factor as at least moderate evidence
+  for it, since the paper states no threshold. The posterior estimates are not recorded. The
+  parser's activation story that selects the relative-clause proposition is not modeled, only
+  what each mechanism returns once it is selected.
 
 ## References
 
@@ -87,7 +95,7 @@ update: the licensed case of a strengthening item. -/
 theorem scalAssert_eq_of_isStrongest (h : IsStrongest c p alts) : scalAssert c p alts = c ∩ p := by
   ext w
   simp only [scalAssert, Set.mem_ofPred_eq, Set.mem_inter_iff]
-  exact ⟨λ ⟨hc, hp, _⟩ => ⟨hc, hp⟩, λ ⟨hc, hp⟩ => ⟨hc, hp, λ ⟨p', hp', _, hi⟩ => hi (h p' hp')⟩⟩
+  exact ⟨fun ⟨hc, hp, _⟩ ↦ ⟨hc, hp⟩, fun ⟨hc, hp⟩ ↦ ⟨hc, hp, fun ⟨p', hp', _, hi⟩ ↦ hi (h p' hp')⟩⟩
 
 /-- An assertion stronger than all its alternatives fails the attenuating condition
 outright. -/
@@ -95,7 +103,7 @@ theorem attenAssert_eq_empty_of_isStrongest (h : IsStrongest c p alts) :
     attenAssert c p alts = ∅ := by
   ext w
   simp only [attenAssert, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-  exact λ ⟨_, _, p', hp', _, hi⟩ => hi (h p' hp')
+  exact fun ⟨_, _, p', hp', _, hi⟩ ↦ hi (h p' hp')
 
 /-- When every context world of the assertion falls under some informative alternative, scalar
 assertion is contradictory: the unlicensed case of a strengthening item. -/
@@ -103,7 +111,7 @@ theorem scalAssert_eq_empty_of_cover
     (h : ∀ w ∈ c ∩ p, ∃ p' ∈ alts, w ∈ p' ∧ Informative c p p') : scalAssert c p alts = ∅ := by
   ext w
   simp only [scalAssert, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-  exact λ ⟨hc, hp, hn⟩ => hn (h w ⟨hc, hp⟩)
+  exact fun ⟨hc, hp, hn⟩ ↦ hn (h w ⟨hc, hp⟩)
 
 /-- One compatible informative alternative licenses an attenuating item: the condition is the
 plain update. -/
@@ -111,7 +119,7 @@ theorem attenAssert_eq_of_exists (h : ∃ p' ∈ alts, (c ∩ p').Nonempty ∧ I
     attenAssert c p alts = c ∩ p := by
   ext w
   simp only [attenAssert, Set.mem_ofPred_eq, Set.mem_inter_iff]
-  exact ⟨λ ⟨hc, hp, _⟩ => ⟨hc, hp⟩, λ ⟨hc, hp⟩ => ⟨hc, hp, h⟩⟩
+  exact ⟨fun ⟨hc, hp, _⟩ ↦ ⟨hc, hp⟩, fun ⟨hc, hp⟩ ↦ ⟨hc, hp, h⟩⟩
 
 /-! ### The lexical scales (4) -/
 
@@ -141,14 +149,14 @@ theorem scalAssert_not_ever (c : Set W) :
 it, so scalar assertion is contradictory and the item unlicensed. -/
 theorem scalAssert_ever_eq_empty (c : Set W) (hinf : ∀ t, Informative c (ever at') (at' t)) :
     scalAssert c (ever at') (everAlts at') = ∅ :=
-  scalAssert_eq_empty_of_cover λ _ ⟨_, hw⟩ =>
+  scalAssert_eq_empty_of_cover fun _ ⟨_, hw⟩ ↦
     let ⟨t, ht⟩ := Set.mem_iUnion.1 hw
     ⟨_, ⟨t, rfl⟩, ht, hinf t⟩
 
 /-- The degree reaches `d`. -/
 def atLeast (d : D) : Set W := {w | d ≤ μ w}
 
-theorem atLeast_antitone : Antitone (atLeast μ) := λ _ _ h _ hw => h.trans hw
+theorem atLeast_antitone : Antitone (atLeast μ) := fun _ _ h _ hw ↦ h.trans hw
 
 /-- The alternatives of an attenuating degree modifier at `d` are the lower degrees
 ([israel-1996]). -/
@@ -179,5 +187,45 @@ the plain update while the attenuating one rejects it, whatever the main clause.
 theorem illusion_asymmetry (hq : IsStrongest c q alts) :
     scalAssert c q alts = c ∩ q ∧ attenAssert c q alts = ∅ :=
   ⟨scalAssert_eq_of_isStrongest hq, attenAssert_eq_empty_of_isStrongest hq⟩
+
+/-! ### The experiments -/
+
+open Data.Experiments.Schwab2022 (Experiment Effect Verdict bayesFactors)
+
+/-- The paper's readings of a Bayes factor, ranked from the strongest evidence for the null to
+the strongest for the effect. -/
+def verdictRank : Verdict → ℕ
+  | .moderateForNull => 0
+  | .slightlyForNull => 1
+  | .inconclusive => 2
+  | .moderateForEffect => 3
+  | .veryStrongForEffect => 4
+
+/-- The paper's readings are monotone in the Bayes factor: a larger BF10 is never read as weaker
+evidence for its effect. -/
+theorem verdictRank_monotone : ∀ e₁ f₁ e₂ f₂,
+    (bayesFactors e₁ f₁).bf10.toRat < (bayesFactors e₂ f₂).bf10.toRat →
+      verdictRank (bayesFactors e₁ f₁).verdict ≤ verdictRank (bayesFactors e₂ f₂).verdict := by
+  decide +kernel
+
+/-- An effect is attested in an experiment when the paper reads its Bayes factor as at least
+moderate evidence for it. -/
+def Attested (e : Experiment) (f : Effect) : Prop :=
+  verdictRank .moderateForEffect ≤ verdictRank (bayesFactors e f).verdict
+
+instance (e : Experiment) (f : Effect) : Decidable (Attested e f) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+/-- The asymmetry `illusion_asymmetry` derives: the strengthening *jemals* is illusorily licensed
+in both experiments, the attenuating *so recht* in neither. -/
+theorem illusion_attested (e : Experiment) :
+    Attested e .illusionJemals ∧ ¬Attested e .illusionSoRecht := by
+  cases e <;> decide
+
+/-- The difference between the two illusions is attested in the second experiment only, whose
+object-extracted relative clauses and faster presentation the paper introduced after the first
+was inconclusive. -/
+theorem interaction_attested_iff (e : Experiment) : Attested e .interaction ↔ e = .exp2 := by
+  cases e <;> decide
 
 end Schwab2022

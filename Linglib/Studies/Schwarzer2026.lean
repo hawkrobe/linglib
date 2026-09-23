@@ -1,6 +1,8 @@
 import Linglib.Syntax.WordOrder
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Data.Examples.Schwarzer2026
+import Linglib.Data.Experiments.Schwarzer2026
+import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Schwarzer (2026): The law and order of selection-violating coordination
@@ -20,11 +22,16 @@ predict a clause-first order in the embedded case, where [bruening-alkhalaf-2020
 `predictOrder` gives the two accounts opposite verdicts (`accounts_diverge_embedded`).
 
 Experiment 1 confirms that German allows the construction with verbs that reject a bare
-*dass*-clause (`Data/Examples/Schwarzer2026`, (11) and (12)); Experiment 2's forced choice finds
-the noun phrase first in twenty-three of thirty choices in both positions. A noun-phrase-first
-preference in the embedded position refutes the closeness prediction (`closeness_refuted`), while
-the structural prediction is position-invariant (`structural_position_invariant`); the squib
-notes that the latter is thereby supported only indirectly.
+*dass*-clause (`Data/Examples/Schwarzer2026`, (11) and (12)): selection raises the ratings of both
+complements, and a coordination loses less than a bare clause where the verb does not select one
+(`selection_raises`, `selection_interaction`). Experiment 2's forced choice finds the noun phrase
+first in twenty-three of thirty choices in both positions (`Data.Experiments.Schwarzer2026`), so
+the preferred order is the noun phrase first in both (`preferred_eq`). A noun-phrase-first
+preference in the embedded position refutes the closeness prediction (`closeness_refuted`), and
+the choices supply it (`choices_refute_closeness`), while the structural prediction is
+position-invariant (`structural_position_invariant`) and matches the choices in both positions
+(`choices_match_structural`); the squib notes that the latter is thereby supported only
+indirectly.
 
 ## Implementation notes
 
@@ -32,8 +39,9 @@ notes that the latter is thereby supported only indirectly.
   clause-final position of an embedded clause and in second position of a root declarative.
   The predicates of the experiments are recorded with their clausal frames in
   `Fragments/German/Verbs`.
-* The experiments' scores are recorded in the example rows' comments; the mixed model and the
-  logistic regression are not formalized.
+* The descriptive statistics of Experiment 1 and the choices of Experiment 2 are
+  `Data.Experiments.Schwarzer2026`; the mixed model and the logistic regression are not
+  formalized, and the preferred order is read off the counts as the order chosen more often.
 
 ## References
 
@@ -46,6 +54,7 @@ notes that the latter is thereby supported only indirectly.
 namespace Schwarzer2026
 
 open WordOrder BrueningAlKhalaf2020
+open Data.Experiments.Schwarzer2026 (Complement Selection Position choices ratings)
 
 /-- The position of a coordinated complement relative to the finite verb in a German root
 declarative: the verb in second position precedes its complements, the configuration of (17). -/
@@ -83,5 +92,44 @@ theorem closeness_refuted {observed : HeadDirection → ConjunctOrder}
       temporalOrder embeddedPosition ≠ observed embeddedPosition := by
   rw [h]
   exact ⟨by decide, by decide⟩
+
+/-! ### The experiments -/
+
+/-- Selection raises the mean rating of both complements. -/
+theorem selection_raises (c : Complement) :
+    (ratings c .no).meanZ.toRat < (ratings c .yes).meanZ.toRat := by
+  cases c <;> decide +kernel
+
+/-- The interaction of Experiment 1: a coordination gains less from selection than a bare
+*dass*-clause, so after a verb that does not select a clause it is rated above the bare clause. -/
+theorem selection_interaction :
+    (ratings .coord .yes).meanZ.toRat - (ratings .coord .no).meanZ.toRat <
+      (ratings .dass .yes).meanZ.toRat - (ratings .dass .no).meanZ.toRat ∧
+    (ratings .dass .no).meanZ.toRat < (ratings .coord .no).meanZ.toRat := by
+  decide +kernel
+
+/-- The head direction of a position of Experiment 2. -/
+def direction : Position → HeadDirection
+  | .preverbal => embeddedPosition
+  | .postverbal => rootPosition
+
+/-- The order chosen more often in a position of Experiment 2. -/
+def preferred (p : Position) : ConjunctOrder :=
+  if (choices p .cpFirst).count < (choices p .dpFirst).count then .dpFirst else .cpFirst
+
+/-- The noun phrase first is preferred in both positions. -/
+theorem preferred_eq (p : Position) : preferred p = .dpFirst := by
+  cases p <;> decide
+
+/-- Experiment 2 refutes the linear and temporal closeness accounts. -/
+theorem choices_refute_closeness :
+    predictOrder .linear embeddedPosition ≠ preferred .preverbal ∧
+      temporalOrder embeddedPosition ≠ preferred .preverbal :=
+  closeness_refuted (observed := fun _ ↦ preferred .preverbal) (preferred_eq _)
+
+/-- The structural prediction matches the preferred order in both positions. -/
+theorem choices_match_structural (p : Position) :
+    predictOrder .structural (direction p) = preferred p := by
+  rw [structural_position_invariant, preferred_eq]
 
 end Schwarzer2026

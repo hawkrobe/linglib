@@ -26,8 +26,8 @@ def ex7a_jemals : LinguisticExample :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "subject"), ("illusion", "inconclusive")]
-    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause. Experiment 1 Bayes factor for an illusion: 9.65 (moderate evidence for an illusion)."
+    paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "subject")]
+    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -80,8 +80,8 @@ def ex7a_sorecht : LinguisticExample :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "subject"), ("illusion", "inconclusive")]
-    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause. Experiment 1 Bayes factor for an illusion: 0.43 (slightly favouring no illusion)."
+    paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "subject")]
+    comment := "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -134,8 +134,8 @@ def ex8a_jemals : LinguisticExample :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "object"), ("illusion", "attested")]
-    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause. Experiment 2 Bayes factor for an illusion: 987.4 (very strong evidence for an illusion; posterior estimate 0.58, CrI [0.28, 0.89])."
+    paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "object")]
+    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -188,8 +188,8 @@ def ex8a_sorecht : LinguisticExample :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "object"), ("illusion", "absent")]
-    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause. Experiment 2 Bayes factor for an illusion: 0.33 (moderate evidence for no illusion; posterior estimate -0.09, CrI [-0.37, 0.20])."
+    paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "object")]
+    comment := "Illusory licensing condition: negative quantifier inside the object-extracted relative clause."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 

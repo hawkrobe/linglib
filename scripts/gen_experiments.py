@@ -15,7 +15,9 @@ A JSON file has four parts:
 * `tables`: one per printed table, emitted as a structure and a list of rows in the
   paper's order. A table has a `name`, a `structure` name, a `doc`, a `locator`, a
   `verified` status (`page-image`, `text-layer` or `unverified`), its `columns`
-  and its `rows`. A row may carry a `note`, emitted as a comment.
+  and its `rows`. A row may carry a `note`, emitted as a comment. A table with a
+  `key`, a list of enum columns whose every combination of levels has exactly one
+  row, is emitted as a total function from the key to the other columns.
 
 Column types form a closed vocabulary:
 
@@ -171,7 +173,7 @@ def wrap_field(f: str, end: str, indent: str = "     ") -> list:
 
 
 def doc(text: str, indent: str = "") -> str:
-    body = textwrap.fill(text, 100 - len(indent) - 4, subsequent_indent=indent)
+    body = textwrap.fill(text, 100 - len(indent) - 7, subsequent_indent=indent)
     return f"{indent}/-- {body} -/"
 
 
@@ -200,8 +202,16 @@ def render_table(tb: dict, types: Types, where: str) -> str:
     cols = [(c["name"], parse_type(c["type"], types, f"{where}.columns[{i}]"), c["doc"])
             for i, c in enumerate(tb["columns"])]
     names = [n for n, _, _ in cols]
+    key = tb.get("key", [])
+    for k in key:
+        t = next((t for n, t, _ in cols if n == k), None)
+        if t is None or t[0] != "enum":
+            fatal(where, f"key column {k!r} is not a declared enum column")
+    fields = [(n, t, d) for n, t, d in cols if n not in key]
+    if not fields:
+        fatal(where, "a table needs a column besides its key")
     struct = [doc(f"A row of {tb['locator']}: {tb['doc']}"), f"structure {tb['structure']} where"]
-    for n, t, d in cols:
+    for n, t, d in fields:
         struct += [doc(d, "  "), f"  {n} : {lean_type(t)}"]
     struct.append("  deriving DecidableEq, Repr")
     rows = []
@@ -211,9 +221,12 @@ def render_table(tb: dict, types: Types, where: str) -> str:
         missing = set(names) - set(r)
         if extra or missing:
             fatal(w, f"columns missing {sorted(missing)}, undeclared {sorted(extra)}")
-        rows.append(([value_lit(r[n], t, types, f"{w}.{n}") for n, t, _ in cols], r.get("note")))
+        rows.append(([value_lit(r[n], t, types, f"{w}.{n}") for n, t, _ in fields], r.get("note"),
+                     tuple(r[k] for k in key)))
+    if key:
+        return "\n".join(struct) + "\n\n" + render_keyed(tb, key, cols, rows, types, status, where)
     body = []
-    for i, (fields, note) in enumerate(rows):
+    for i, (fields, note, _) in enumerate(rows):
         lead = "  [" if i == 0 else "   "
         sep = "," if i < len(rows) - 1 else "]"
         comment = f"  -- {note}" if note else ""
@@ -228,6 +241,38 @@ def render_table(tb: dict, types: Types, where: str) -> str:
     defn = [doc(f"The {len(rows)} rows of {tb['locator']}, in the paper's order; {status}."),
             f"def {tb['name']} : List {tb['structure']} :=", *body]
     return "\n".join(struct) + "\n\n" + "\n".join(defn)
+
+
+def render_keyed(tb: dict, key: list, cols: list, rows: list, types: Types, status: str,
+                 where: str) -> str:
+    """A table keyed by enum columns, as a total function by exhaustive `match`."""
+    ktypes = [next(t[1] for n, t, _ in cols if n == k) for k in key]
+    seen = {}
+    for i, (_, _, kv) in enumerate(rows):
+        if kv in seen:
+            fatal(f"{where}.rows[{i}]", f"key {list(kv)} repeats row {seen[kv]}")
+        seen[kv] = i
+    cells = [()]
+    for ty in ktypes:
+        cells = [c + (lab,) for c in cells for lab in types.levels[ty]]
+    missing = [list(c) for c in cells if c not in seen]
+    if missing:
+        fatal(where, f"keys {missing} have no row")
+    arms = []
+    for fields, note, kv in rows:
+        pat = ", ".join(types.level(ty, lab, where) for ty, lab in zip(ktypes, kv))
+        comment = f"  -- {note}" if note else ""
+        line = f"  | {pat} => ⟨{', '.join(fields)}⟩"
+        if len(line) + len(comment) <= 100:
+            arms.append(line + comment)
+        else:
+            arms.append(f"  | {pat} =>{comment}")
+            arms.append(f"    ⟨{fields[0]}," if len(fields) > 1 else f"    ⟨{fields[0]}⟩")
+            for j, f in enumerate(fields[1:], 1):
+                arms += wrap_field(f, "," if j < len(fields) - 1 else "⟩")
+    sig = " → ".join(ktypes + [tb["structure"]])
+    return "\n".join([doc(f"The cells of {tb['locator']}, by {' and '.join(key)}; {status}."),
+                      f"def {tb['name']} : {sig}", *arms])
 
 
 def bibkeys() -> set:
