@@ -12,15 +12,16 @@ values pragmatically entail one another;
 a polarity item encodes a quantity relative to the scalar norm and a rhetorical force, emphatic
 when the proposition it expresses entails the norm's and attenuating when it is entailed by it
 (`Emphatic`, `Attenuating`). Scale preserving contexts are the strictly monotone maps on
-propositions and scale reversing ones the strictly antitone maps, and the direction of the
-expressed propositional function decides which quantities are emphatic (`emphatic_iff_of_strictMono`
-and its dual). The four cells of Figure 1 follow: emphatic items with low values and attenuating
+propositions and scale reversing ones the strictly antitone maps, the positive and negative
+directions of `Polarity.StrictDirected`, and the direction of the expressed propositional
+function decides which quantities are emphatic (`felicitous_iff_of_strictDirected`). The four cells of Figure 1 follow: emphatic items with low values and attenuating
 items with high values need reversing contexts, the negative polarity items, the other two cells
 preserving contexts. The inverted items of Section 3, maximizing NPIs like *wild horses* and
 minimizing PPIs like *for peanuts*, follow from the thematic logic of Section 4: a propositional
 role either impedes the eventuality, so that the function is antitone in quantity, or
-facilitates it, so that it is monotone (`Role`), and composing role with context gives the
-licensing context of any item (`licensingContext`, `felicitous_iff`). The pecuniary paradox
+facilitates it, so that it is monotone (`Role`). Directions compose as polarities multiply, so
+that the licensing context of any item is the product of the signs of its force, quantity and
+role (`licensingContext`, `felicitous_iff`). The pecuniary paradox
 dissolves because a resource is impeding and a reward facilitating, and the ambiguous
 superlatives of Section 6 are the same composition with an existential and a
 perceptual-ability scale.
@@ -59,6 +60,11 @@ inductive Force
   | attenuating
   deriving DecidableEq
 
+/-- The sign of a force: emphatic items are negative, attenuating ones positive. -/
+def Force.sign : Force → Polarity
+  | .emphatic => .negative
+  | .attenuating => .positive
+
 /-- The force of a fragment entry, from its scalar direction. -/
 def Force.ofDirection : ScalarDirection → Option Force
   | .strengthening => some .emphatic
@@ -70,6 +76,11 @@ inductive Quantity
   | small
   | large
   deriving DecidableEq
+
+/-- The sign of a quantity relative to the norm: small is negative, large positive. -/
+def Quantity.sign : Quantity → Polarity
+  | .small => .negative
+  | .large => .positive
 
 /-- A quantity `x` stands to the norm `n` as the item's quantity says. -/
 def Quantity.Rel : Quantity → α → α → Prop
@@ -84,23 +95,12 @@ inductive Role
   | facilitating
   deriving DecidableEq
 
-/-- The propositional function of a role: strictly antitone in quantity for an impeding role,
-so that bigger values entail smaller ones, strictly monotone for a facilitating one. -/
-def Role.Directed : Role → (α → Set W) → Prop
-  | .impeding, P => StrictAnti P
-  | .facilitating, P => StrictMono P
-
-/-- A context is scale preserving when it keeps the entailments of the model and scale
-reversing when it reverses them (Section 1). -/
-inductive ContextType
-  | preserving
-  | reversing
-  deriving DecidableEq
-
-/-- The maps on propositions of each context type. -/
-def ContextType.Directed : ContextType → (Set W → Set W) → Prop
-  | .preserving, f => StrictMono f
-  | .reversing, f => StrictAnti f
+/-- The direction of the propositional function of a role: strictly antitone in quantity for an
+impeding role, so that bigger values entail smaller ones, strictly monotone for a facilitating
+one. -/
+def Role.sign : Role → Polarity
+  | .impeding => .negative
+  | .facilitating => .positive
 
 /-- The proposition expressed with quantity `x` is emphatic when it pragmatically entails the
 proposition at the norm. -/
@@ -153,12 +153,12 @@ theorem felicitous_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) (d : Forc
     simp only [reduceCtorEq, false_iff, not_lt]
     exact ⟨le_of_lt, λ h => lt_of_le_of_ne h hx⟩
 
-/-- The context type in which an item of a given force, quantity and role is felicitous, the
-scalar logic of Sections 1 and 4: emphatic small items in impeding roles and emphatic large
-items in facilitating roles are NPIs, needing scale reversal, as are attenuating items of the
-opposite quantities; the remaining cells are PPIs. -/
-def licensingContext (d : Force) (q : Quantity) (r : Role) : ContextType :=
-  if (d = .emphatic) = ((q = .small) = (r = .impeding)) then .reversing else .preserving
+/-- The direction of the context in which an item of a given force, quantity and role is
+felicitous, scale preserving (positive) or scale reversing (negative), the scalar logic of
+Sections 1 and 4: the product of the three signs. Emphatic small items in impeding roles and
+emphatic large items in facilitating roles are NPIs, needing scale reversal, as are attenuating
+items of the opposite quantities; the remaining cells are PPIs. -/
+def licensingContext (d : Force) (q : Quantity) (r : Role) : Polarity := d.sign * q.sign * r.sign
 
 /-- A quantity standing to the norm as the item says is below it exactly for a small item. -/
 theorem Quantity.lt_iff_of_rel {q : Quantity} (hq : q.Rel x n) : x < n ↔ q = .small := by
@@ -172,24 +172,27 @@ theorem Quantity.gt_iff_of_rel {q : Quantity} (hq : q.Rel x n) : n < x ↔ q = .
   · exact iff_of_false (lt_asymm hq) (by decide)
   · exact iff_of_true hq rfl
 
-/-- Figures 1 and 3: an item is felicitous exactly in contexts of its licensing type, for any
-scalar model of its role and any quantity standing to the norm as the item says. -/
-theorem felicitous_iff {P : α → Set W} {f : Set W → Set W} {r : Role} {c : ContextType}
-    {d : Force} {q : Quantity} (hr : r.Directed P) (hc : c.Directed f) (hq : q.Rel x n) :
-    Felicitous d (f ∘ P) n x ↔ c = licensingContext d q r := by
+/-- An item is felicitous exactly when its force has the sign of the direction of the expressed
+function times that of its quantity. -/
+theorem felicitous_iff_of_strictDirected {δ : Polarity} {q : Quantity} (h : δ.StrictDirected Q)
+    (hq : q.Rel x n) (d : Force) : Felicitous d Q n x ↔ d.sign = δ * q.sign := by
   have hx : x ≠ n := by
     cases q
     · exact ne_of_lt (hq : x < n)
     · exact (ne_of_lt (hq : n < x)).symm
-  cases r <;> cases c <;> simp only [Role.Directed, ContextType.Directed] at hr hc
-  · rw [felicitous_iff_of_strictAnti (hc.comp_strictAnti hr) hx, Quantity.gt_iff_of_rel hq]
+  cases δ
+  · rw [felicitous_iff_of_strictMono h hx, Quantity.lt_iff_of_rel hq]
     cases d <;> cases q <;> decide
-  · rw [felicitous_iff_of_strictMono (hc.comp hr) hx, Quantity.lt_iff_of_rel hq]
+  · rw [felicitous_iff_of_strictAnti h hx, Quantity.gt_iff_of_rel hq]
     cases d <;> cases q <;> decide
-  · rw [felicitous_iff_of_strictMono (hc.comp hr) hx, Quantity.lt_iff_of_rel hq]
-    cases d <;> cases q <;> decide
-  · rw [felicitous_iff_of_strictAnti (hc.comp_strictMono hr) hx, Quantity.gt_iff_of_rel hq]
-    cases d <;> cases q <;> decide
+
+/-- Figures 1 and 3: an item is felicitous exactly in contexts of its licensing direction, for
+any scalar model of its role and any quantity standing to the norm as the item says. -/
+theorem felicitous_iff {P : α → Set W} {f : Set W → Set W} {r : Role} {c : Polarity}
+    {d : Force} {q : Quantity} (hr : r.sign.StrictDirected P) (hc : c.StrictDirected f)
+    (hq : q.Rel x n) : Felicitous d (f ∘ P) n x ↔ c = licensingContext d q r := by
+  rw [felicitous_iff_of_strictDirected (hc.comp hr) hq, licensingContext]
+  cases c <;> cases d <;> cases q <;> cases r <;> decide
 
 /-- The pecuniary paradox, (15) and (16): the same small amount is emphatic under negation as a
 resource, *a red cent*, and not as a reward, *for peanuts*, which is emphatic in the affirmative
@@ -231,9 +234,10 @@ def classified : List Classified :=
    ⟨atTheDropOfAHat, .small, .facilitating⟩, ⟨inAJiffy, .small, .facilitating⟩,
    ⟨forAPittance, .small, .facilitating⟩, ⟨forASong, .small, .facilitating⟩]
 
-/-- The context type the fragment records an item as sensitive to. -/
-def Item.contextType (e : Item) : Option ContextType :=
-  if e.ppi then some .preserving else if e.licensor.isSome then some .reversing else none
+/-- The direction of the context the fragment records an item as sensitive to: preserving for a
+PPI, reversing for an NPI. -/
+def Item.contextType (e : Item) : Option Polarity :=
+  if e.ppi then some .positive else if e.licensor.isSome then some .negative else none
 
 /-- Every classified item's derived licensing context is the one the fragment records. -/
 theorem classified_licensingContext :
