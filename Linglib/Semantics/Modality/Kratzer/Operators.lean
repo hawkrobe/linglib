@@ -14,8 +14,10 @@ relations the two backgrounds induce: simple necessity quantifies over the acces
 accessible world to see, at least as good, a witness below which only `p`-worlds occur
 (`humanNecessity`), and it is universal quantification over the best worlds exactly under the
 Limit Assumption (`humanNecessity_iff_necessity`). The modal axioms follow from the frame
-conditions the backgrounds impose (`duality`, `K_axiom`, `totally_realistic_gives_T`), and a
-conditional antecedent restricts the modal base (`restrictedBase`).
+conditions the backgrounds impose (`duality`, `K_axiom`, `totally_realistic_gives_T`), a
+realistic base being exactly one over which simple necessity is veridical
+(`isRealistic_iff_simpleNecessity_le_id`), and a conditional antecedent restricts the modal base
+(`restrictedBase`).
 
 ## Implementation notes
 
@@ -212,6 +214,16 @@ theorem realistic_gives_reflexive_access (f : ModalBase W)
 theorem realistic_is_serial (f : ModalBase W) (hReal : isRealistic f) :
     IsSerial (kratzerR f) :=
   ⟨fun w => ⟨w, (realistic_refl f hReal).refl w⟩⟩
+
+/-- A modal base is realistic exactly when its accessibility relation is reflexive. -/
+theorem isRealistic_iff_refl {f : ModalBase W} : isRealistic f ↔ Std.Refl (kratzerR f) :=
+  ⟨realistic_refl f, fun h w => h.refl w⟩
+
+/-- A modal base is realistic exactly when simple necessity over it is veridical, what must be
+the case being the case: **T** defines realism. -/
+theorem isRealistic_iff_simpleNecessity_le_id {f : ModalBase W} :
+    isRealistic f ↔ simpleNecessity f ≤ id :=
+  isRealistic_iff_refl.trans box_T_iff.symm
 
 /-- Under the empty modal base, every world is accessible. -/
 theorem kratzerR_emptyBackground (w w' : W) :

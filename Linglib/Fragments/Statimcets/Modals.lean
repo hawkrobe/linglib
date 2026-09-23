@@ -28,7 +28,7 @@ inferential evidence, *ku7* a report, and *lákw7a* sensory non-visual evidence,
 
 namespace Statimcets
 
-open Modality (ForceFlavor ForceAnalysis ModalItem)
+open Modality (ForceFlavor ModalItem)
 
 abbrev ne : ForceFlavor := (.necessity, .epistemic)
 abbrev pe : ForceFlavor := (.possibility, .epistemic)
@@ -64,24 +64,11 @@ def lakw7a : ModalItem := { form := "lákw7a", meaning := {pe, ne} }
 
 def modals : List ModalItem := [ka, kaCircumfix, kaInfer, ku7, lakw7a]
 
-/-! ## Force analysis -/
-
-/-- =ka and the evidential clitics are variable-force; ka-...-a is fixed possibility. -/
-def forceAnalysis : ModalItem → ForceAnalysis
-  | ⟨"ka-...-a", _, _⟩ => .fixed .possibility
-  | _ => .variableForce
-
-/-! ## Information source and deniability -/
+/-! ## Information source -/
 
 /-- The information source an evidential modal requires; `none` for the non-evidentials. -/
 def source (m : ModalItem) : Option Evidential.EvidenceType :=
   if m = kaInfer then some .inferring else if m = ku7 then some .reported
   else if m = lakw7a then some .attested else none
-
-/-- A modal is deniable when it is compatible with the speaker's disbelief of the prejacent,
-which holds of *lákw7a* alone ([matthewson-2016] (25)–(28)). -/
-def Deniable (m : ModalItem) : Prop := m = lakw7a
-
-instance : DecidablePred Deniable := λ _ => inferInstanceAs (Decidable (_ = _))
 
 end Statimcets
