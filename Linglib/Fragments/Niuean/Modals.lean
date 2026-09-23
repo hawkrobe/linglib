@@ -56,7 +56,7 @@ in the root/circumstantial domain.
 
 namespace Niuean
 
-open Modality (ForceFlavor ForceAnalysis ModalItem)
+open Modality (ForceFlavor ModalItem)
 
 abbrev ne : ForceFlavor := (.necessity, .epistemic)
 abbrev pe : ForceFlavor := (.possibility, .epistemic)
@@ -79,15 +79,5 @@ def maeke : ModalItem := { form := "maeke", meaning := {pc} }
 def lata : ModalItem := { form := "lata", meaning := {nc} }
 
 def modals : List ModalItem := [liga, maeke, lata]
-
-/-! ## Force analysis -/
-
-/-- Force analysis for each Niuean modal.
-    liga is variable-force; maeke and lata are fixed. -/
-def forceAnalysis : ModalItem → ForceAnalysis
-  | ⟨"liga", _, _⟩ => .variableForce
-  | ⟨"maeke", _, _⟩ => .fixed .possibility
-  | ⟨"lata", _, _⟩ => .fixed .necessity
-  | _ => .fixed .possibility
 
 end Niuean

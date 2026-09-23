@@ -33,6 +33,8 @@ over flavors, or a variable-force modal of one flavor, varies on a single axis b
   `Modality.ForceFlavorIndependent.pathConnected`: the three properties in order of
   strength.
 * `Modality.forceFlavorIndependent_product`: a product meaning satisfies the universal.
+* `Modality.ModalItem.singleAxis_meaning_iff`: an item varies on a single axis when it does not
+  vary in both force and flavor.
 
 ## References
 
@@ -108,6 +110,13 @@ theorem ForceFlavorIndependent.pathConnected (h : ForceFlavorIndependent m) : Pa
 
 theorem ForceFlavorIndependent.singleton (x : ForceFlavor) : ForceFlavorIndependent {x} := by
   simp [ForceFlavorIndependent]
+
+/-- A modal item varies on a single axis exactly when it does not vary in both force and
+flavor. -/
+theorem ModalItem.singleAxis_meaning_iff {i : ModalItem} :
+    SingleAxis i.meaning ↔ ¬ (i.VariesForce ∧ i.VariesFlavor) := by
+  unfold SingleAxis ModalItem.VariesForce ModalItem.VariesFlavor ModalItem.forces ModalItem.flavors
+  omega
 
 /-! ### Kratzer modals
 

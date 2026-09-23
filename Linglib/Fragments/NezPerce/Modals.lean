@@ -15,21 +15,20 @@ readings, but [deal-2011] argues it is semantically a pure
 possibility modal whose apparent necessity readings arise from the
 absence of a contrasting necessity modal.
 
-## Key data ([deal-2011] pp. 574)
+## Key data ([deal-2011] (51)–(52), p. 574; [matthewson-2016] (39)–(40))
 
-(39) *hi-wqii-cix-∅ 'iléxni hipt ke yox hi-pá-ap-o'qa*
-     'They are throwing away a lot of food that they could eat.'
-     / 'They are throwing away a lot of food that they should eat.'
+(51) *hi-wqíi-cix-∅ 'iléx̂ni hipt ke yox̂ hi-pá-ap-o'qa*
+     a. 'They are throwing away a lot of food that they could eat.'
+     b. 'They are throwing away a lot of food that they should eat.'
 
-(40) *hi-wqii-cix-∅ 'óykala hipt ke yox hi-pá-ap-o'qa*
-     'They are throwing away all the food that they could eat.'
-     (i) ✓ 'They are throwing away all their food. They are eating all
-         their food.'
-     (ii) # 'They are throwing away all the food they should eat
-          (but keeping some junk food).'
+(52) *hi-wqíi-cix-∅ 'óykala hipt ke yox̂ hi-pá-ap-o'qa*
+     a. 'They are throwing away all the food that they could eat. They are
+        throwing away all their food.'
+     b. # 'They are throwing away all the food that they should eat (but
+        keeping some junk food).'
 
-In downward-entailing environments (40), *o'qa* behaves only as a
-possibility modal — the negated-necessity reading is unavailable.
+In downward-entailing environments such as the restriction of 'óykala 'all' in (52), *o'qa*
+behaves only as a possibility modal — the necessity translation is unavailable.
 This parallels how English *some* fails to implicate *not all* under
 downward-entailing operators.
 
@@ -46,29 +45,17 @@ like with *some* but no *all* or *every*.
 
 namespace NezPerce
 
-open Modality (ForceFlavor ForceAnalysis ModalItem)
+open Modality (ForceFlavor ModalItem)
 
 abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
 
-/-- Circumstantial possibility modal, pragmatically strengthened in
-    non-downward-entailing contexts due to absence of a necessity dual.
-    [deal-2011]: pure possibility semantics (∃-quantifier over
-    circumstantially accessible worlds). Apparent necessity readings
-    are scalar: no ∀-competitor triggers the 'not all' implicature. -/
+/-- Circumstantial possibility modal without a necessity dual. [deal-2011]: a pure possibility
+    modal (∃ over circumstantially accessible worlds) outside any Horn scale, so no scalar
+    implicature keeps it out of necessity contexts in upward-entailing environments. -/
 def oqa : ModalItem := { form := "o'qa", meaning := {pc} }
 
 def modals : List ModalItem := [oqa]
-
-/-! ## Force analysis -/
-
-/-- Force analysis: o'qa is a strengthened possibility modal — base
-    semantics is ◇, but absence of a dual ∀-modal allows pragmatic
-    necessity readings in non-downward-entailing contexts.
-    [matthewson-2016] §18.3.2. -/
-def forceAnalysis : ModalItem → ForceAnalysis
-  | ⟨"o'qa", _, _⟩ => .strengthened .possibility
-  | _ => .strengthened .possibility
 
 end NezPerce

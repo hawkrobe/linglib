@@ -46,11 +46,8 @@ abbrev pb : ForceFlavor := (.possibility, .bouletic)
     [matthewson-2016] §18.3.2: not specialized for a particular force. -/
 def imaa : ModalItem := { form := "ima('a)", meaning := {pe, ne} }
 
-/-- Variable-force reportative epistemic modal.
-    Distinguished from ima('a) by information source: gat requires
-    reportative evidence. Under [kratzer-2012]'s reclassification,
-    gat is **content-evidential** (the speaker can disbelieve the report),
-    while ima('a) is **factual-evidential**. -/
+/-- Variable-force reportative epistemic modal, distinguished from ima('a) by information
+    source: gat requires reportative evidence ([peterson-2010]). -/
 def gat : ModalItem := { form := "gat", meaning := {pe, ne} }
 
 /-- General circumstantial possibility: pure circumstantial, ability,
@@ -86,13 +83,5 @@ def sgi : ModalItem := { form := "sgi", meaning := {wnd, wnc} }
 
 def modals : List ModalItem :=
   [imaa, gat, daakhlxw, anookxw, sgi]
-
-/-! ## The two domains -/
-
-/-- Epistemic modals. -/
-def epistemicModals : List ModalItem := [imaa, gat]
-
-/-- Circumstantial modals. -/
-def circumstantialModals : List ModalItem := [daakhlxw, anookxw, sgi]
 
 end Gitksan

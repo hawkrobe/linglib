@@ -38,6 +38,7 @@ modal claim in time.
 * [matthewson-2013]
 * [matthewson-2016]
 * [deal-2011]
+* [peterson-2010]
 * [condoravdi-2002]
 -/
 
@@ -165,9 +166,10 @@ end ModalItem
 Three mechanisms give a modal its force, which a set of force-flavor pairs conflates: a fixed
 lexical force, as with English *must* and *can*; variable force, compatibility with necessity
 and possibility contexts alike without ambiguity, as with Gitksan *ima('a)* and *gat*
-([matthewson-2013]); and a fixed base force strengthened pragmatically in the absence of a
-contrasting dual, as with Nez Perce *o'qa* ([deal-2011]), a possibility modal read as necessity
-because no necessity modal competes with it. -/
+([matthewson-2013]); and a base force strengthened by restricting the modal's domain, as
+[peterson-2010] analyses *ima('a)*, a possibility modal strengthened by an ordering source. A
+fixed force can itself pass for variable: Nez Perce *o'qa* is a possibility modal without a
+necessity dual, so no scalar implicature keeps it out of necessity contexts ([deal-2011]). -/
 
 /-- How a modal comes by its force. -/
 inductive ForceAnalysis where
@@ -175,20 +177,6 @@ inductive ForceAnalysis where
   | variableForce
   | strengthened (base : ModalForce)
   deriving DecidableEq, Repr
-
-/-- A modal admits a necessity reading, semantically or pragmatically, unless it is fixed for
-possibility. -/
-def ForceAnalysis.AdmitsNecessity (a : ForceAnalysis) : Prop := a ≠ .fixed .possibility
-
-instance : DecidablePred ForceAnalysis.AdmitsNecessity := λ _ => inferInstanceAs (Decidable (_ ≠ _))
-
-/-- A modal admits a possibility reading when its force is possibility, variable, or
-strengthened from possibility. -/
-def ForceAnalysis.AdmitsPossibility (a : ForceAnalysis) : Prop :=
-  a = .fixed .possibility ∨ a = .variableForce ∨ a = .strengthened .possibility
-
-instance : DecidablePred ForceAnalysis.AdmitsPossibility :=
-  λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A force analysis is consistent with a meaning when the forces the meaning attests are the
 one the analysis fixes or strengthens, or two for a variable-force analysis. -/

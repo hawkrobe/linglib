@@ -30,9 +30,10 @@ its obligatory *dim* keeping it out of the perfective configuration of [hacquard
 
 ## Implementation notes
 
-* The paper is agnostic between [peterson-2010]'s variable-force analysis of *ima('a)* and
-  [deal-2011]'s strengthened possibility, the negation diagnostic (30) not separating them;
-  the force analysis recorded is Fig. 1's.
+* The paper is agnostic between [peterson-2010]'s analysis of *ima('a)* as a possibility modal
+  strengthened by an ordering source and a possibility modal without a scale, as [deal-2011]
+  analyses Nez Perce *o'qa*, the negation diagnostic (30) not separating them; the force
+  analysis recorded is Fig. 1's.
 * The pure circumstantial and teleological readings of *da'akhlxw* and *sgi* are one
   circumstantial flavour in the library.
 
@@ -66,7 +67,7 @@ theorem forceAnalysis_consistent :
 
 /-- Gitksan has no strong circumstantial necessity modal. -/
 theorem no_strong_circumstantial_necessity :
-    ∀ m ∈ circumstantialModals, ∀ ff ∈ m.meaning, ff.force ≠ .necessity := by
+    ∀ m ∈ modals, m.Circumstantial → ∀ ff ∈ m.meaning, ff.force ≠ .necessity := by
   decide
 
 /-- (95)–(96): the sneeze case, pure circumstantial strong necessity, takes the plain future
