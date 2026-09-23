@@ -14,7 +14,7 @@ indefinite ([haspelmath-1997] A.1) — neither is a polarity item, so
 neither has an entry here. *erst* 'only then' is the positive polarity
 punctual *until*, the twin of Finnish *vasta* ([karttunen-1974]). The
 modal *brauchen* 'need' with a *zu*-infinitive is an anti-additive NPI
-([buring-gunlogson-2000]).
+([buring-gunlogson-2000], [schaebbicke-seeliger-repp-2021]).
 
 ## References
 
@@ -22,6 +22,8 @@ modal *brauchen* 'need' with a *zu*-infinitive is an anti-additive NPI
 * [chierchia-2006]
 * [karttunen-1974]
 * [buring-gunlogson-2000]
+* [schaebbicke-seeliger-repp-2021]
+* [van-rooy-2003-npi]
 -/
 
 @[expose] public section
@@ -45,12 +47,14 @@ def irgendein : PolarityItem :=
 /-! ### NPI -/
 
 /-- *brauchen* 'need' with a *zu*-infinitive: out in a plain declarative and in a positive polar
-question, licensed by *niemand* and by *kein* ([buring-gunlogson-2000] (15), (16)). Questions
-license exactly the weak NPIs and *niemand* supplies anti-additive strength, so the entry is
-anti-additive. -/
+question, licensed by *niemand* and by *kein* ([buring-gunlogson-2000] (15), (16)). The rating
+study of [schaebbicke-seeliger-repp-2021] (Fig. 2) agrees, and finds it intermediate under the
+merely downward-entailing *kaum*: median 4 of 7, between 5.5 under *kein* and 1.5 in a positive
+question. The library's table has questions license every weak NPI ([van-rooy-2003-npi]), so
+the entry is anti-additive; the classification that study tests reserves questions for superweak
+NPIs, and there the *kaum* rating leaves weak open. -/
 def brauchen : PolarityItem :=
   { form := "brauchen"
-  -- UNVERIFIED: whether merely downward-entailing licensors (*wenige*, *kaum*) license it.
   , licensor := some .antiAdditive
   , baseForce := .modal
   , licensingContexts := [.nobody] }
