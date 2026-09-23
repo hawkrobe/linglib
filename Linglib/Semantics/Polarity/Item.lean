@@ -13,7 +13,7 @@ public import Linglib.Semantics.Polarity.Strength
 [ladusaw-1979] [zwarts-1998] [haspelmath-1997] [lahiri-1998]
 [israel-1996] [israel-2001] [israel-2011] [chierchia-2006]
 
-`Polarity.Item`, the lexical record for polarity-sensitive items, with its
+`PolarityItem`, the lexical record for polarity-sensitive items, with its
 licensing parameters instantiated directly: `licensor` is the minimum
 Zwarts strength an environment must supply (`none` = not
 strength-licensed), `freeChoice` marks licensing by the generic-indefinite
@@ -35,15 +35,15 @@ role lives with that paper in `Studies/Israel2001.lean`.
 
 ## Main declarations
 
-* `Item` — the polarity-item record.
-* `Item.isNPI`, `Item.isFCI`, `Item.isPPI` — derived class labels.
+* `PolarityItem` — the polarity-item record.
+* `PolarityItem.isNPI`, `PolarityItem.isFCI`, `PolarityItem.isPPI` — derived class labels.
 * `ScalarDirection` — strengthening vs attenuating rhetorical force.
 * `NPIMorphology`, `AlternativeType` — composition typology.
 -/
 
 @[expose] public section
 
-namespace Polarity
+namespace PolarityItem
 
 /-! ### Scalar direction -/
 
@@ -103,7 +103,7 @@ inductive AlternativeType where
     module header. `licensingContexts` is the attested distribution the
     keystone (`LicensingContext.licenses`) checks the parameters
     against. -/
-structure Item where
+structure _root_.PolarityItem where
   /-- Surface form -/
   form : String
   /-- Base quantificational/semantic force -/
@@ -129,13 +129,13 @@ structure Item where
 /-! ### Derived class labels -/
 
 /-- An NPI is an item with a strength requirement. -/
-abbrev Item.isNPI (e : Item) : Prop := e.licensor.isSome
+abbrev isNPI (e : PolarityItem) : Prop := e.licensor.isSome
 
 /-- A free choice item is one licensed by the generic-indefinite
     mechanism (dual NPI/FCIs like *any* also carry a `licensor`). -/
-abbrev Item.isFCI (e : Item) : Prop := e.freeChoice = true
+abbrev isFCI (e : PolarityItem) : Prop := e.freeChoice = true
 
 /-- A positive polarity item. -/
-abbrev Item.isPPI (e : Item) : Prop := e.ppi = true
+abbrev isPPI (e : PolarityItem) : Prop := e.ppi = true
 
-end Polarity
+end PolarityItem

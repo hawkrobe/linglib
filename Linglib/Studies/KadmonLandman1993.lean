@@ -55,7 +55,7 @@ precisification space the two truth notions are [fine-1975]'s super-truth and bo
 
 namespace KadmonLandman1993
 
-open NaturalLogic Polarity Ladusaw1979 Semantics.Supervaluation Data.Examples
+open NaturalLogic PolarityItem Ladusaw1979 Semantics.Supervaluation Data.Examples
 
 /-! ### The strengthening condition
 
@@ -102,7 +102,7 @@ theorem ue_widening_weakens {World Entity : Type*} {C : Set World → Set World}
 /-! ### Licensing contexts and entailment signatures
 
 Each context's entailment signature and licensing mechanism are projected
-from the canonical `Polarity.LicensingContext.properties` table, so
+from the canonical `PolarityItem.LicensingContext.properties` table, so
 this file's classification cannot drift from the substrate's. -/
 
 /-- A licensing context's entailment signature in [icard-2012]'s lattice —

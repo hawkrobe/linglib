@@ -49,7 +49,7 @@ perceptual-ability scale.
 
 namespace Israel2001
 
-open Polarity English.PolarityItems
+open PolarityItem English.PolarityItems
 
 variable {α W : Type*} [LinearOrder α]
 
@@ -218,7 +218,7 @@ theorem superlative_ambiguity {exist ability : α → Set W} {f : Set W → Set 
 
 /-- A fragment entry with the paper's classification by quantity and role. -/
 structure Classified where
-  item : Item
+  item : PolarityItem
   quantity : Quantity
   role : Role
 
@@ -236,13 +236,13 @@ def classified : List Classified :=
 
 /-- The direction of the context the fragment records an item as sensitive to: preserving for a
 PPI, reversing for an NPI. -/
-def Item.contextType (e : Item) : Option Polarity :=
+def PolarityItem.contextType (e : PolarityItem) : Option Polarity :=
   if e.ppi then some .positive else if e.licensor.isSome then some .negative else none
 
 /-- Every classified item's derived licensing context is the one the fragment records. -/
 theorem classified_licensingContext :
     ∀ c ∈ classified, ∀ d, c.item.scalarDirection.bind Force.ofDirection = some d →
-      Item.contextType c.item = some (licensingContext d c.quantity c.role) := by
+      PolarityItem.contextType c.item = some (licensingContext d c.quantity c.role) := by
   decide
 
 end Israel2001

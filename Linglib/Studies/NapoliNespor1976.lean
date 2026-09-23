@@ -48,7 +48,7 @@ dialogues themselves are not yet rows of `Data/Examples/NapoliNespor1976.json`.
 
 namespace NapoliNespor1976
 
-open Italian.PolarityItems Polarity Mood Data.Examples
+open Italian.PolarityItems PolarityItem Mood Data.Examples
 
 /-! ### The licensing condition -/
 
@@ -228,7 +228,7 @@ def neancheConjunctionAdmissible (m : Move) : Prop :=
 
 /-- A weak NPI is admissible in a *non₂*-comparative iff its registry lists the clausal
 comparative slot and the move licenses *non₂*. -/
-def weakNPIAdmissible (m : Move) (npi : Item) : Prop :=
+def weakNPIAdmissible (m : Move) (npi : PolarityItem) : Prop :=
   m.Licensed ∧ .clausalComparative ∈ npi.licensingContexts
 
 /-- *Neanche*-conjunction is admissible in the chess dialogue. -/

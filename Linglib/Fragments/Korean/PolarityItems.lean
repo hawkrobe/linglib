@@ -27,10 +27,10 @@ the adversative mood of the copula and also means 'or', is the free-choice item 
 
 namespace Korean.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-- Bare *nwukwu* 'who', an indefinite in questions and conditionals. -/
-def nwukwu : Item :=
+def nwukwu : PolarityItem :=
   { form := "nwukwu (누구)"
   , licensor := some .weak
   , baseForce := .existential
@@ -39,7 +39,7 @@ def nwukwu : Item :=
 
 /-- *nwukwu-to* 'nobody' under clausemate negation, the interrogative with the additive
 particle. -/
-def nwukwuTo : Item :=
+def nwukwuTo : PolarityItem :=
   { form := "nwukwu-to (누구도, neg)"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -49,7 +49,7 @@ def nwukwuTo : Item :=
 
 /-- *nwukwu-na* 'anyone', the free-choice item; *-na* is not an additive particle, so the
 morphology is plain. -/
-def nwukwuNa : Item :=
+def nwukwuNa : PolarityItem :=
   { form := "nwukwu-na (누구나)"
   , freeChoice := true
   , baseForce := .existential

@@ -42,7 +42,7 @@ converse of the generalization is not stated.
 
 namespace Ladusaw1979
 
-open Polarity Quantifier Quantifier.GQ
+open PolarityItem Quantifier Quantifier.GQ
 open Semantics.Montague (ToyEntity)
 
 /-- An environment is downward entailing when its recorded entailment signature reverses
@@ -65,7 +65,7 @@ theorem cited_environments_de (c : LicensingContext)
 theorem question_not_de : ¬ IsDownwardEntailing .question := by decide
 
 /-- The generalization: a downward-entailing environment licenses the weak polarity items. -/
-theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing c) (e : Item)
+theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing c) (e : PolarityItem)
     (he : e.licensor = some .weak) : c.licenses e := by
   cases c <;> first
     | exact absurd hc (by decide)

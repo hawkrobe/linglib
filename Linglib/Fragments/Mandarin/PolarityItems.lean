@@ -5,7 +5,7 @@ public import Linglib.Semantics.Polarity.Licensing
 /-!
 # Mandarin Polarity-Sensitive Items
 
-Mandarin indefinite polarity items, typed by `Polarity.Item`.
+Mandarin indefinite polarity items, typed by `PolarityItem`.
 The system has three layers: the bare interrogatives (*shéi* 谁 'who',
 *shénme* 什么 'what') serve as indefinites in all non-specific
 non-emphatic functions — seven of the nine implicational-map functions,
@@ -30,7 +30,7 @@ entry lists those contexts.
 
 namespace Mandarin.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### Bare interrogatives -/
 
@@ -40,7 +40,7 @@ open Polarity
     (A266) and the free-choice span, but direct negation is omitted:
     *?Tā bù xǐhuan shéi* is degraded where *shénme* is perfect (A267,
     [li-1992] p. 150) — that slot belongs to the emphatic series. -/
-def shei : Item :=
+def shei : PolarityItem :=
   { form := "shéi (谁, non-interrog.)"
   , licensor := some .weak
   , freeChoice := true
@@ -55,7 +55,7 @@ def shei : Item :=
     shénme* 'He does not like anything' (A267); irrealis imperative *Chī
     diǎn shénme zài zǒu ba!* 'Please eat a little something before you
     leave' (A264, [li-1992] p. 152); conditional (A266). -/
-def shenme : Item :=
+def shenme : PolarityItem :=
   { form := "shénme (什么, non-interrog.)"
   , licensor := some .weak
   , freeChoice := true
@@ -76,7 +76,7 @@ def shenme : Item :=
     without negation is 'everyone', and [haspelmath-1997] (p. 309) leaves
     open whether the negated uses are indefinites or wide-scope
     universals. -/
-def sheiDou : Item :=
+def sheiDou : PolarityItem :=
   { form := "shéi dōu/yě (谁都/谁也, neg)"
   , licensor := some .antiMorphic
   , baseForce := .universal
@@ -90,11 +90,11 @@ def sheiDou : Item :=
     *dōu*: free choice under modals (*Rènhé shíhou nǐ dōu kěyǐ lái* 'You
     can come anytime', A270), comparatives (A271, a *bǐ* NP-comparative,
     listed under `clausalComparative` per the covert-clausal routing convention
-    of `Polarity.LicensingContext`), and direct negation (A272); the
+    of `PolarityItem.LicensingContext`), and direct negation (A272); the
     superordinate-negation use (A273) has no matching context row.
     Etymologically *rèn* 'allow; appoint' + old interrogative *hé* 'what'
     ([haspelmath-1997] A.36.2). -/
-def renhe : Item :=
+def renhe : PolarityItem :=
   { form := "rènhé (任何)"
   , licensor := some .weak
   , freeChoice := true

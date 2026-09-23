@@ -18,11 +18,11 @@ choice (A278). A dual NPI/FCI on the indefinite-plus-even pattern of
 
 namespace Quechua.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-- *pi-pis* — wh + 'also/even': dual NPI/FCI covering the map's whole
     non-specific span (A.37). -/
-def piPis : Item :=
+def piPis : PolarityItem :=
   { form := "pi-pis"
   , licensor := some .weak
   , freeChoice := true

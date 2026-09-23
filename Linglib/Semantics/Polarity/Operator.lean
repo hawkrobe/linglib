@@ -3,8 +3,7 @@ module
 /-!
 # Polarity Operators
 
-(A separate system from the `Polarity.Item` licensing API — the two share
-only the `Polarity` namespace.)
+(A separate system from the `PolarityItem` licensing API.)
 [laka-1990] [turk-hirsch-2026]
 
 The two semantic operators that polarity heads spell out, as bare functions

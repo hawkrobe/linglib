@@ -37,19 +37,19 @@ affirmative particles like Dutch *wel* and from Verum focus.
 
 namespace French.PolarityMarking
 
-open Polarity.Marking (Entry Strategy Env)
+open PolarityMarker (Strategy Env)
 
 /-- *si* — French polarity-reversing affirmative particle.
     Assigns [+Pol] while contradicting a negative assertion or question.
     Clause-initial or standalone; not sentence-internal.
     Correction-only: requires a negative context to reverse. -/
-abbrev si : Entry where
+abbrev si : PolarityMarker where
   label := "si"
   form := some "si"
   environments := {.correction}
   strategy := .polarityReversal
 
-def allPolarityMarkings : List Entry := [si]
+def allPolarityMarkings : List PolarityMarker := [si]
 
 -- Per-entry verification theorems
 theorem si_form : si.form = some "si" := rfl

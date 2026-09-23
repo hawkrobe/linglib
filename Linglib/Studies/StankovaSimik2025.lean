@@ -101,17 +101,17 @@ inductive Indefinite
   deriving DecidableEq, Repr, Fintype
 
 /-- The lexical entry realizing each indefinite. -/
-def Indefinite.entry : Indefinite → Polarity.Item
+def Indefinite.entry : Indefinite → PolarityItem
   | .nci => Czech.PolarityItems.zadny
   | .ppi => Czech.PolarityItems.nejaky
 
 /-- A polarity item is licensed at a reading of negation when a positive polarity item
 falls under FALSUM and a negative one under the canonical operator (the paper's (11) and
 (12)). -/
-def LicensedAt (e : Polarity.Item) (n : Negation) : Prop :=
+def LicensedAt (e : PolarityItem) (n : Negation) : Prop :=
   (e.isPPI → n = .outer) ∧ (e.isNPI → n = .inner)
 
-instance (e : Polarity.Item) (n : Negation) : Decidable (LicensedAt e n) := by
+instance (e : PolarityItem) (n : Negation) : Decidable (LicensedAt e n) := by
   unfold LicensedAt; infer_instance
 
 /-- The two indefinites split the readings: the polarity item is licensed exactly where the

@@ -188,7 +188,7 @@ def Connective.entry : Connective → Tense.Connective
 
 /-- The polarity item a connective is or doubles as: the Greek, Icelandic and Dutch punctual
 *until* words, and English *until* in its eventive use. -/
-def Connective.polarityItem : Connective → Option Polarity.Item
+def Connective.polarityItem : Connective → Option PolarityItem
   | .until => some English.PolarityItems.until_
   | .paraMonon => some Greek.StandardModern.PolarityItems.paraMonon
   | .fyrrEn => some Icelandic.PolarityItems.fyrrEn

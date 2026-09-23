@@ -33,7 +33,7 @@ the chain (`HoldsFor.of_le`).
 
 @[expose] public section
 
-namespace Polarity
+namespace PolarityItem
 
 open NaturalLogic
 
@@ -108,13 +108,13 @@ example : DEStrength.weak.HoldsFor (compl : Set Bool → Set Bool) :=
   DEStrength.HoldsFor.of_le (s₂ := .antiMorphic) (by decide)
     isAntiMorphic_compl
 
-end Polarity
+end PolarityItem
 
 /-! ### Signature → strength bridge maps -/
 
 namespace NaturalLogic.Signature
 
-open Polarity
+open PolarityItem
 
 /-- The DE strength a signature realizes, derived from `project`: a
     signature is DE iff it reverses forward entailment; within the DE
@@ -152,7 +152,7 @@ end NaturalLogic.Signature
 
 namespace NaturalLogic
 
-open Polarity
+open PolarityItem
 
 /-- Any DE-side signature licenses weak NPIs ([ladusaw-1980]): a
     signature whose context polarity is downward carries a DE

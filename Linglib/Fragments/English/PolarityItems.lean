@@ -5,7 +5,7 @@ public import Linglib.Semantics.Polarity.Licensing
 /-!
 # English Polarity-Sensitive Items
 
-English polarity items, typed by `Polarity.Item`: weak NPIs
+English polarity items, typed by `PolarityItem`: weak NPIs
 (*any*, *ever*, *at all*), strong NPIs (*lift a finger*, *in years*,
 *either*), free-relative FCIs (*whatever*, *whoever*), maximizer NPIs
 (*wild horses*, *all the tea in China*), and PPIs both plain (*some*,
@@ -26,13 +26,13 @@ propositional role live with their consuming study in
 
 namespace English.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### Weak NPIs -/
 
 /-- *any* — the prototypical dual NPI/FCI, with domain alternatives
     ([chierchia-2006]). -/
-def any : Item :=
+def any : PolarityItem :=
   { form := "any"
   , licensor := some .weak
   , freeChoice := true
@@ -45,7 +45,7 @@ def any : Item :=
   , alternativeType := .domain }
 
 /-- *ever* — temporal NPI with domain alternatives ([chierchia-2006]). -/
-def ever : Item :=
+def ever : PolarityItem :=
   { form := "ever"
   , licensor := some .weak
   , baseForce := .temporal
@@ -56,21 +56,21 @@ def ever : Item :=
   , alternativeType := .domain }
 
 /-- *yet* — temporal NPI. -/
-def yet : Item :=
+def yet : PolarityItem :=
   { form := "yet"
   , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation, .question] }
 
 /-- *anymore* — temporal NPI. -/
-def anymore : Item :=
+def anymore : PolarityItem :=
   { form := "anymore"
   , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts := [.negation] }
 
 /-- *at all* — degree NPI. -/
-def atAll : Item :=
+def atAll : PolarityItem :=
   { form := "at all"
   , licensor := some .weak
   , baseForce := .degree
@@ -79,21 +79,21 @@ def atAll : Item :=
   , scalarDirection := some .strengthening }
 
 /-- *in the least* — degree NPI. -/
-def inTheLeast : Item :=
+def inTheLeast : PolarityItem :=
   { form := "in the least"
   , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation, .question] }
 
 /-- *a single* — emphatic existential NPI. -/
-def aSingle : Item :=
+def aSingle : PolarityItem :=
   { form := "a single"
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause] }
 
 /-- *whatsoever* — emphatic post-nominal NPI. -/
-def whatsoever : Item :=
+def whatsoever : PolarityItem :=
   { form := "whatsoever"
   , licensor := some .weak
   , baseForce := .manner
@@ -102,7 +102,7 @@ def whatsoever : Item :=
 /-! ### Strong NPIs -/
 
 /-- *lift a finger* — idiomatic minimizer, anti-additive licensor. -/
-def liftAFinger : Item :=
+def liftAFinger : PolarityItem :=
   { form := "lift a finger"
   , licensor := some .antiAdditive
   , baseForce := .degree
@@ -111,7 +111,7 @@ def liftAFinger : Item :=
   , morphology := .idiomatic }
 
 /-- *budge an inch* — idiomatic minimizer, anti-additive licensor. -/
-def budgeAnInch : Item :=
+def budgeAnInch : PolarityItem :=
   { form := "budge an inch"
   , licensor := some .antiAdditive
   , baseForce := .degree
@@ -120,14 +120,14 @@ def budgeAnInch : Item :=
   , morphology := .idiomatic }
 
 /-- *in years* — temporal strong NPI. -/
-def inYears : Item :=
+def inYears : PolarityItem :=
   { form := "in years"
   , licensor := some .antiAdditive
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody] }
 
 /-- *until* — temporal strong NPI (in some analyses). -/
-def until_ : Item :=
+def until_ : PolarityItem :=
   { form := "until"
   , licensor := some .antiAdditive
   , baseForce := .temporal
@@ -137,7 +137,7 @@ def until_ : Item :=
     ungrammatical under Strawson-DE operators (*Only John likes
     pancakes, either*) despite [von-fintel-1999] having shown those
     contexts Strawson-DE ([gajewski-2011] p. 120). -/
-def either_npi : Item :=
+def either_npi : PolarityItem :=
   { form := "either"
   , licensor := some .antiAdditive
   , baseForce := .additive
@@ -146,7 +146,7 @@ def either_npi : Item :=
 /-! ### Free choice items -/
 
 /-- *whatever* — free-relative FCI. -/
-def whatever : Item :=
+def whatever : PolarityItem :=
   { form := "whatever"
   , freeChoice := true
   , baseForce := .existential
@@ -154,7 +154,7 @@ def whatever : Item :=
       [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative] }
 
 /-- *whoever* — free-relative FCI. -/
-def whoever : Item :=
+def whoever : PolarityItem :=
   { form := "whoever"
   , freeChoice := true
   , baseForce := .existential
@@ -162,7 +162,7 @@ def whoever : Item :=
       [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative] }
 
 /-- *whichever* — free-relative FCI. -/
-def whichever : Item :=
+def whichever : PolarityItem :=
   { form := "whichever"
   , freeChoice := true
   , baseForce := .existential
@@ -173,7 +173,7 @@ def whichever : Item :=
 
 /-- *some* (stressed) — PPI reading; attenuating (weaker than
     *many*/*all*). -/
-def some_ppi : Item :=
+def some_ppi : PolarityItem :=
   { form := "some (stressed)"
   , ppi := true
   , baseForce := .existential
@@ -181,21 +181,21 @@ def some_ppi : Item :=
   , scalarDirection := some .attenuating }
 
 /-- *already* — temporal PPI. -/
-def already : Item :=
+def already : PolarityItem :=
   { form := "already"
   , ppi := true
   , baseForce := .temporal
   , licensingContexts := [] }
 
 /-- *too* — additive PPI, the positive counterpart of *either* ([ladd-1981]). -/
-def too : Item :=
+def too : PolarityItem :=
   { form := "too"
   , ppi := true
   , baseForce := .additive
   , licensingContexts := [] }
 
 /-- *somewhat* — degree PPI; attenuating (weaker than *very*). -/
-def somewhat : Item :=
+def somewhat : PolarityItem :=
   { form := "somewhat"
   , ppi := true
   , baseForce := .degree
@@ -203,7 +203,7 @@ def somewhat : Item :=
   , scalarDirection := some .attenuating }
 
 /-- *rather* — degree PPI; attenuating (weaker than *very*). -/
-def rather : Item :=
+def rather : PolarityItem :=
   { form := "rather"
   , ppi := true
   , baseForce := .degree
@@ -211,7 +211,7 @@ def rather : Item :=
   , scalarDirection := some .attenuating }
 
 /-- *tons of* — emphatic PPI: *She has tons of friends.* -/
-def tonsOf : Item :=
+def tonsOf : PolarityItem :=
   { form := "tons of"
   , ppi := true
   , baseForce := .degree
@@ -219,7 +219,7 @@ def tonsOf : Item :=
   , scalarDirection := some .strengthening }
 
 /-- *utterly* — emphatic PPI: *I was utterly depressed.* -/
-def utterly : Item :=
+def utterly : PolarityItem :=
   { form := "utterly"
   , ppi := true
   , baseForce := .degree
@@ -230,7 +230,7 @@ def utterly : Item :=
 
 /-- *wild horses* — idiomatic maximizer NPI: *Wild horses couldn't keep
     me away.* -/
-def wildHorses : Item :=
+def wildHorses : PolarityItem :=
   { form := "wild horses"
   , licensor := some .weak
   , baseForce := .existential
@@ -240,7 +240,7 @@ def wildHorses : Item :=
 
 /-- *all the tea in China* — idiomatic maximizer NPI: *I wouldn't do it
     for all the tea in China.* -/
-def allTheTeaInChina : Item :=
+def allTheTeaInChina : PolarityItem :=
   { form := "all the tea in China"
   , licensor := some .weak
   , baseForce := .degree
@@ -250,7 +250,7 @@ def allTheTeaInChina : Item :=
 
 /-- *a ten-foot pole* — idiomatic maximizer NPI: *I wouldn't touch it
     with a ten-foot pole.* -/
-def aTenFootPole : Item :=
+def aTenFootPole : PolarityItem :=
   { form := "a ten-foot pole"
   , licensor := some .weak
   , baseForce := .existential
@@ -260,7 +260,7 @@ def aTenFootPole : Item :=
 
 /-- *in a million years* — idiomatic maximizer NPI: *I wouldn't marry
     that woman in a million years.* -/
-def inAMillionYears : Item :=
+def inAMillionYears : PolarityItem :=
   { form := "in a million years"
   , licensor := some .weak
   , baseForce := .temporal
@@ -272,7 +272,7 @@ def inAMillionYears : Item :=
 
 /-- *at the drop of a hat* — idiomatic minimizer PPI: *He'd quit at the
     drop of a hat.* -/
-def atTheDropOfAHat : Item :=
+def atTheDropOfAHat : PolarityItem :=
   { form := "at the drop of a hat"
   , ppi := true
   , baseForce := .degree
@@ -281,7 +281,7 @@ def atTheDropOfAHat : Item :=
   , morphology := .idiomatic }
 
 /-- *in a jiffy* — idiomatic minimizer PPI: *We'll be back in a jiffy.* -/
-def inAJiffy : Item :=
+def inAJiffy : PolarityItem :=
   { form := "in a jiffy"
   , ppi := true
   , baseForce := .temporal
@@ -291,7 +291,7 @@ def inAJiffy : Item :=
 
 /-- *for a pittance* — idiomatic minimizer PPI: *He got Madonna to play
     for peanuts.* -/
-def forAPittance : Item :=
+def forAPittance : PolarityItem :=
   { form := "for a pittance"
   , ppi := true
   , baseForce := .degree
@@ -301,7 +301,7 @@ def forAPittance : Item :=
 
 /-- *for a song* — idiomatic minimizer PPI: *He bought that painting for
     a song.* -/
-def forASong : Item :=
+def forASong : PolarityItem :=
   { form := "for a song"
   , ppi := true
   , baseForce := .degree
@@ -312,43 +312,43 @@ def forASong : Item :=
 /-! ### Lexicon access -/
 
 /-- The weak NPIs. -/
-def weakNPIs : List Item :=
+def weakNPIs : List PolarityItem :=
   [any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever]
 
 /-- The strong NPIs. -/
-def strongNPIs : List Item :=
+def strongNPIs : List PolarityItem :=
   [liftAFinger, budgeAnInch, inYears, until_]
 
 /-- The maximizer NPIs. -/
-def invertedNPIs : List Item :=
+def invertedNPIs : List PolarityItem :=
   [wildHorses, allTheTeaInChina, aTenFootPole, inAMillionYears]
 
 /-- All NPIs (weak + strong + maximizer). -/
-def allNPIs : List Item := weakNPIs ++ strongNPIs ++ invertedNPIs
+def allNPIs : List PolarityItem := weakNPIs ++ strongNPIs ++ invertedNPIs
 
 /-- The FCIs. -/
-def allFCIs : List Item :=
+def allFCIs : List PolarityItem :=
   [any, whatever, whoever, whichever]
 
 /-- The plain PPIs. -/
-def canonicalPPIs : List Item :=
+def canonicalPPIs : List PolarityItem :=
   [some_ppi, already, too, somewhat, rather, tonsOf, utterly]
 
 /-- The minimizer PPIs. -/
-def invertedPPIs : List Item :=
+def invertedPPIs : List PolarityItem :=
   [atTheDropOfAHat, inAJiffy, forAPittance, forASong]
 
 /-- All PPIs. -/
-def allPPIs : List Item :=
+def allPPIs : List PolarityItem :=
   canonicalPPIs ++ invertedPPIs
 
 /-- The full lexicon. -/
-def allPolarityItems : List Item :=
+def allPolarityItems : List PolarityItem :=
   weakNPIs ++ strongNPIs ++ invertedNPIs ++
   [whatever, whoever, whichever] ++ allPPIs
 
 /-- Lookup by form. -/
-def lookup (form : String) : Option Item :=
+def lookup (form : String) : Option PolarityItem :=
   allPolarityItems.find? λ p => p.form == form
 
 /-! ### Verification -/

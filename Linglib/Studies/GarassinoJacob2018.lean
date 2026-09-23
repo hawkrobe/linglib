@@ -170,7 +170,7 @@ inductive Relation
 
 /-- The environment a polarity-focus utterance occupies: correction after a negative antecedent,
 contrast otherwise. -/
-def Antecedent.env : Antecedent → Polarity.Marking.Env
+def Antecedent.env : Antecedent → PolarityMarker.Env
   | .explicitNegation | .inferredNegation => .correction
   | _ => .contrast
 

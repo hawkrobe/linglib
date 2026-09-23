@@ -20,12 +20,12 @@ punctual *until*, the twin of Finnish *vasta* ([karttunen-1974]).
 
 namespace German.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-- *irgendein/irgendwer* — [chierchia-2006]'s EFCI class: existential FCI
     with NPI uses (questions, conditionals) and FCI uses (modals,
     imperatives); *irgend-* marks domain widening. -/
-def irgendein : Item :=
+def irgendein : PolarityItem :=
   { form := "irgendein/irgendwer"
   , licensor := some .weak
   , freeChoice := true
@@ -38,7 +38,7 @@ def irgendein : Item :=
 
 /-- *erst* 'only then', the punctual *until* of a positive clause ([karttunen-1974], the paper's
 (38)). Its connective entry is `German.TemporalConnectives.erst`. -/
-def erst : Item :=
+def erst : PolarityItem :=
   { form := TemporalConnectives.erst.form
   , ppi := true
   , baseForce := .temporal

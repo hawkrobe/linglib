@@ -28,7 +28,7 @@ existential construction); the carrier bundling these with a form is `Indefinite
   functions, with their embedding `toFunction` in the map and the ones a region covers,
   `specificityFunctions`.
 * `Indefinite.npiRegion`: the functions of the map in which negative polarity items occur.
-* `Polarity.LicensingContext.haspelmathFunction`: the function a licensing environment realizes.
+* `PolarityItem.LicensingContext.haspelmathFunction`: the function a licensing environment realizes.
 * `Indefinite.OntologicalCategory`, `Indefinite.MorphologicalBasis`: the two further dimensions
   of a series.
 
@@ -173,8 +173,8 @@ and free-relative rows realize free choice, their polarity-relevant use, althoug
 environments host plain irrealis uses of other indefinites; both comparatives realize the
 standard of comparison, although the phrasal comparative licenses no polarity item
 ([hoeksema-1983]). -/
-def _root_.Polarity.LicensingContext.haspelmathFunction :
-    Polarity.LicensingContext → Option HaspelmathFunction
+def _root_.PolarityItem.LicensingContext.haspelmathFunction :
+    PolarityItem.LicensingContext → Option HaspelmathFunction
   | .negation => some .directNeg
   | .withoutClause | .doubtVerb | .denyVerb => some .indirectNeg
   | .question => some .question

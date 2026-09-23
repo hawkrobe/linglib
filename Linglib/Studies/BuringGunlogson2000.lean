@@ -22,7 +22,7 @@ sign of `p` it supports, and reading it relative to `¬p` negates it.
 ## Main definitions
 
 * `E`, `Felicitous` — the proto-condition and the felicity condition of each question type
-* `Determiner`, `PolarityItem`, `Question` — the morphosyntactic probes and a probed question
+* `Determiner`, `ProbeItem`, `Question` — the morphosyntactic probes and a probed question
 
 ## Main results
 
@@ -147,37 +147,36 @@ determiners that fail in declaratives are the outer-negation ones. -/
 theorem outer_is_interrogative_only (d : Determiner) : d.scope = .outer ↔ ¬ d.declarativeOK := by
   cases d <;> decide
 
-/-- A polarity item is negative or positive. -/
-inductive Polarity | npi | ppi
-  deriving DecidableEq
-
 /-- The polarity items that probe the distinction: English *either* and *too*, German *brauchen*. -/
-inductive PolarityItem | either | too | brauchen
+inductive ProbeItem | either | too | brauchen
   deriving DecidableEq
 
-def PolarityItem.polarity : PolarityItem → Polarity
-  | .either | .brauchen => .npi
-  | .too => .ppi
+/-- The polarity of a probe item: negative for the NPIs *either* and *brauchen*, positive for the
+PPI *too*. -/
+def ProbeItem.polarity : ProbeItem → Polarity
+  | .either | .brauchen => .negative
+  | .too => .positive
 
 /-- A negative polarity item must sit under the negation, so it forces the inner construal; a
 positive polarity item must escape it, so it forces the outer one. -/
-def Polarity.scope : Polarity → Scope
-  | .npi => .inner
-  | .ppi => .outer
+def ProbeItem.scope (pi : ProbeItem) : Scope :=
+  match pi.polarity with
+  | .negative => .inner
+  | .positive => .outer
 
 /-- A polar question as its two probes: a negative determiner and, optionally, a polarity item. -/
 structure Question where
   determiner : Determiner
-  item : Option PolarityItem
+  item : Option ProbeItem
 
 /-- The probes agree on where the negation sits. -/
 def Question.WellFormed (q : Question) : Prop :=
-  ∀ pi ∈ q.item, pi.polarity.scope = q.determiner.scope
+  ∀ pi ∈ q.item, pi.scope = q.determiner.scope
 
 instance : ∀ q : Question, Decidable q.WellFormed
   | ⟨_, none⟩ => isTrue (by simp [Question.WellFormed])
   | ⟨d, some pi⟩ =>
-    decidable_of_iff (pi.polarity.scope = d.scope) (by simp [Question.WellFormed])
+    decidable_of_iff (pi.scope = d.scope) (by simp [Question.WellFormed])
 
 /-- The question type a well-formed question realizes: inner negation is an inner-negation NPQ,
 outer negation an outer-negation one. -/
@@ -205,8 +204,8 @@ theorem brauchen_takes_kein_not_nichtEin :
 
 /-- In a well-formed question the polarity item classifies the question exactly as the determiner
 does, so either probe alone settles the reading. -/
-theorem wellFormed_iff_determiner_form (d : Determiner) (pi : PolarityItem) :
-    (Question.mk d (some pi)).WellFormed ↔ pi.polarity.scope.form = d.scope.form := by
+theorem wellFormed_iff_determiner_form (d : Determiner) (pi : ProbeItem) :
+    (Question.mk d (some pi)).WellFormed ↔ pi.scope.form = d.scope.form := by
   cases d <;> cases pi <;> decide
 
 end BuringGunlogson2000

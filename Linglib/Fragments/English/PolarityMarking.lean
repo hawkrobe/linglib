@@ -39,7 +39,7 @@ German Verum focus.
 
 namespace English.PolarityMarking
 
-open Polarity.Marking (Entry Strategy Env)
+open PolarityMarker (Strategy Env)
 
 /-- Emphatic *do* (Verum-focus use) — English polarity-marking strategy.
     Pitch accent on auxiliary *do* in an affirmative sentence contradicting
@@ -47,13 +47,13 @@ open Polarity.Marking (Entry Strategy Env)
     Available in both contrast and correction contexts.
     [wilder-2013]: VF-*do* targets the assertion operator,
     like German Verum focus. -/
-abbrev emphaticDo : Entry where
+abbrev emphaticDo : PolarityMarker where
   label := "emphatic do"
   prosodicTarget := some "auxiliary do"
   environments := {.sentenceInternal, .contrast, .correction}
   strategy := .verumFocus
 
-def allPolarityMarkings : List Entry := [emphaticDo]
+def allPolarityMarkings : List PolarityMarker := [emphaticDo]
 
 -- Per-entry verification theorems
 theorem emphaticDo_no_form : emphaticDo.form = none := rfl

@@ -17,13 +17,13 @@ Hungarian indefinite pronoun polarity items, typed by the categories from
 
 namespace Hungarian.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### NPI -/
 
 /-- *senki* — strict-NC n-word, direct negation only ([haspelmath-1997]
     A.26): co-occurs with *nem/sem*, 'senki sem jött' (nobody came). -/
-def senki : Item :=
+def senki : PolarityItem :=
   { form := "senki"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -34,7 +34,7 @@ def senki : Item :=
 
 /-- *akárki / bárki* — Free choice items.
     'Anyone at all': 'akárki megteheti' (anyone can do it). -/
-def akarki : Item :=
+def akarki : PolarityItem :=
   { form := "akárki / bárki"
   , freeChoice := true
   , baseForce := .existential

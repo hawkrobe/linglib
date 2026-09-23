@@ -21,14 +21,14 @@ Italian lexicalizes the NPI/FCI distinction that English *any* collapses:
 
 namespace Italian.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### Pure NPIs -/
 
 /-- *nessuno/nessuna* — N-word, pure NPI.
     Requires negative concord (postverbal: *non* ... *nessuno*).
     Base existential force; negative force from concord, not lexical. -/
-def nessuno : Item :=
+def nessuno : PolarityItem :=
   { form := "nessuno/nessuna"
   , licensor := some .weak
   , baseForce := .existential
@@ -38,7 +38,7 @@ def nessuno : Item :=
   , alternativeType := .domain }
 
 /-- *niente/nulla* — N-word for non-human, pure NPI. -/
-def niente : Item :=
+def niente : PolarityItem :=
   { form := "niente/nulla"
   , licensor := some .weak
   , baseForce := .existential
@@ -47,7 +47,7 @@ def niente : Item :=
 
 /-- *mai* — Temporal pure NPI (= English *ever*).
     Disallows FC use (contrast with English *any*). -/
-def mai : Item :=
+def mai : PolarityItem :=
   { form := "mai"
   , licensor := some .weak
   , baseForce := .temporal
@@ -59,7 +59,7 @@ def mai : Item :=
 /-- *alcuno* — Pure NPI (formal register).
     Listed in [chierchia-2006] table (76)/(94) alongside *mai* and *ever*.
     Restricted distribution: negation + formal contexts. -/
-def alcuno : Item :=
+def alcuno : PolarityItem :=
   { form := "alcuno"
   , licensor := some .weak
   , baseForce := .existential
@@ -68,7 +68,7 @@ def alcuno : Item :=
 
 /-- *neanche/nemmeno/neppure* — Additive focus NPI (*not even*).
     Three near-synonymous register variants. -/
-def neanche : Item :=
+def neanche : PolarityItem :=
   { form := "neanche/nemmeno/neppure"
   , licensor := some .weak
   , baseForce := .degree
@@ -84,7 +84,7 @@ def neanche : Item :=
     into a focus particle in northern Italian especially. Distinct from
     additive *neanche* (which adds a discourse-given alternative) — *mica*
     contradicts an inferred prior expectation. -/
-def mica : Item :=
+def mica : PolarityItem :=
   { form := "mica"
   , licensor := some .weak
   , baseForce := .degree
@@ -100,7 +100,7 @@ def mica : Item :=
     subjunctive co-occurrence and *neanche*-conjunction. Treated by N&N as
     a diagnostic for underlying negation in the comparative clause: where
     *pur* surfaces, *non₂* is licensed too. -/
-def pur : Item :=
+def pur : PolarityItem :=
   { form := "pur"
   , licensor := some .weak
   , baseForce := .degree
@@ -118,7 +118,7 @@ def pur : Item :=
     distributional fact is therefore *orthogonal* to NPI licensing.
     Bottom-line: *affatto* is licensed by negation in general but blocked
     by the imprecise condition that bias-conditioned negation requires. -/
-def affatto : Item :=
+def affatto : PolarityItem :=
   { form := "affatto"
   , licensor := some .weak
   , baseForce := .degree
@@ -148,7 +148,7 @@ theorem affatto_not_licensed_in_comparative :
     Universal force in positive/modal contexts.
     Under negation: only rhetorical ¬∀ reading ("not just any").
     Does NOT have NPI use (unlike English *any*). -/
-def qualsiasi : Item :=
+def qualsiasi : PolarityItem :=
   { form := "qualsiasi"
   , freeChoice := true
   , baseForce := .existential
@@ -157,7 +157,7 @@ def qualsiasi : Item :=
   , alternativeType := .domain }
 
 /-- *qualunque* — Pure universal FCI (post-nominal only). -/
-def qualunque : Item :=
+def qualunque : PolarityItem :=
   { form := "qualunque"
   , freeChoice := true
   , baseForce := .existential
@@ -170,7 +170,7 @@ def qualunque : Item :=
 /-- *un N qualsiasi* — Existential FCI.
     Both domain and scalar alternatives active.
     Requires modal context; ungrammatical in plain episodic. -/
-def uno_qualsiasi : Item :=
+def uno_qualsiasi : PolarityItem :=
   { form := "un N qualsiasi"
   , freeChoice := true
   , baseForce := .existential
@@ -183,7 +183,7 @@ def uno_qualsiasi : Item :=
     every polarity item this fragment defines. Every
     `Fragments/{Lang}/PolarityItems.lean` exposes `def items` of this type
     (see the operator/lexical-reactive split in `Core/Lexical/NegMarker.lean`). -/
-def items : List Item :=
+def items : List PolarityItem :=
   [nessuno, niente, mai, alcuno, neanche, mica, pur, affatto,
    qualsiasi, qualunque, uno_qualsiasi]
 

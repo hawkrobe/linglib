@@ -29,7 +29,7 @@ combination, not a single lexical entry.
 
 namespace Finnish.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### NPI -/
 
@@ -41,7 +41,7 @@ open Polarity
     `morphology := .indefPlusEven`. In direct negation, co-occurs with the
     appropriate person/number form of the negation verb *ei*: 'ei kukaan
     tullut' (nobody came). -/
-def kukaan : Item :=
+def kukaan : PolarityItem :=
   { form := "kukaan"
   , licensor := some .weak
   , baseForce := .existential
@@ -59,7 +59,7 @@ def kukaan : Item :=
     [haspelmath-1997] A.27 lists this as the *-hyvänsä*-series, used
     mainly in the free-choice function and predicted by his implicational map
     to extend to comparative. Not covered in [karlsson-2017]. -/
-def kukaTahansa : Item :=
+def kukaTahansa : PolarityItem :=
   { form := "kuka tahansa"
   , freeChoice := true
   , baseForce := .existential
@@ -71,7 +71,7 @@ def kukaTahansa : Item :=
 /-- *vasta* 'only then', the punctual *until* of a positive clause, the twin of German *erst* and
 the positive counterpart of the negated *ennen kuin* ([karttunen-1974], the paper's (39)). Its
 connective entry is `Finnish.TemporalConnectives.vasta`. -/
-def vasta : Item :=
+def vasta : PolarityItem :=
   { form := TemporalConnectives.vasta.form
   , ppi := true
   , baseForce := .temporal
@@ -80,7 +80,7 @@ def vasta : Item :=
 /-! ### Joint -/
 
 /-- All Finnish polarity-sensitive entries declared in this Fragment. -/
-def items : List Item := [kukaan, kukaTahansa, vasta]
+def items : List PolarityItem := [kukaan, kukaTahansa, vasta]
 
 /-! ### Verification -/
 

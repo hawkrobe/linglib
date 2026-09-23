@@ -38,7 +38,7 @@ model, `interpretation_rows` the reading the paper attributes to it.
 ## Implementation notes
 
 Polarity items are sorted by [israel-2001]'s scalar context types rather than by the Zwarts
-strength of `Polarity.LicensingContext.licenses`. The strength table rates a conditional
+strength of `PolarityItem.LicensingContext.licenses`. The strength table rates a conditional
 antecedent weakly downward entailing and *lift a finger* as needing an anti-additive licensor,
 so it would exclude the minimizer from hypothetical antecedents, against [iatridou-1991]'s (27a)
 and the paper's (32); on the scalar account a minimizer needs only a scale-reversing context.
@@ -63,7 +63,7 @@ which the paper offers as a direction rather than a result, are not modelled.
 
 namespace Lassiter2025
 
-open Conditional Data.Examples NaturalLogic Polarity
+open Conditional Data.Examples NaturalLogic PolarityItem
 
 /-- The content of an embedded conditional. -/
 inductive Content
@@ -174,7 +174,7 @@ theorem heads_bare_iff (m : Marker) :
 
 HCs take negative polarity items in their antecedents and not positive ones, and PCs the
 reverse ([iatridou-1991]). [israel-2001] derives the two classes: an item is sensitive to
-scale-reversing or scale-preserving contexts (`Israel2001.Item.contextType`), and the
+scale-reversing or scale-preserving contexts (`Israel2001.PolarityItem.contextType`), and the
 downward-entailing positions are the reversing ones. The embedded conditional sits in the main
 antecedent, so each of its clauses composes its own entailment direction with the main
 antecedent's. -/
@@ -198,10 +198,10 @@ def Position.contextType (ct : Reading) (pos : Position) : Polarity :=
 
 /-- The item `e` is admitted at `pos` under the reading `ct` when the position provides the
 context it is sensitive to. -/
-def admits (ct : Reading) (pos : Position) (e : Item) : Prop :=
-  Israel2001.Item.contextType e = some (pos.contextType ct)
+def admits (ct : Reading) (pos : Position) (e : PolarityItem) : Prop :=
+  Israel2001.PolarityItem.contextType e = some (pos.contextType ct)
 
-instance (ct : Reading) (pos : Position) (e : Item) : Decidable (admits ct pos e) :=
+instance (ct : Reading) (pos : Position) (e : PolarityItem) : Decidable (admits ct pos e) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The embedded consequent takes the main antecedent's direction. -/
@@ -217,16 +217,16 @@ theorem polarity_embedded_antecedent :
 /-- In the consequent of its embedded conditional, a bare left-nested conditional hosts items
 sensitive to preserving contexts, *rather pleased* in (29), and not the minimizer *lifted a
 finger* of (30). -/
-theorem bare_embedded_consequent (e : Item) :
+theorem bare_embedded_consequent (e : PolarityItem) :
     Acceptable (.nested .bare) (admits · (.embedded .consequent) e) ↔
-      Israel2001.Item.contextType e = some .positive :=
+      Israel2001.PolarityItem.contextType e = some .positive :=
   acceptable_bare_iff _
 
 /-- In the antecedent of its embedded conditional, a bare left-nested conditional hosts items
 sensitive to reversing contexts: *lifted a finger* in (32b). -/
-theorem bare_embedded_antecedent (e : Item) :
+theorem bare_embedded_antecedent (e : PolarityItem) :
     Acceptable (.nested .bare) (admits · (.embedded .antecedent) e) ↔
-      Israel2001.Item.contextType e = some .negative :=
+      Israel2001.PolarityItem.contextType e = some .negative :=
   acceptable_bare_iff _
 
 /-- The diagnostic's force: on a hypothetical reading the embedded consequent would reverse the
@@ -259,7 +259,7 @@ def markerOf (row : LinguisticExample) : Option Marker :=
   | _ => none
 
 /-- The fragment entry for the row's polarity item. -/
-def itemOf (row : LinguisticExample) : Option Item :=
+def itemOf (row : LinguisticExample) : Option PolarityItem :=
   (row.feature? "item").bind English.PolarityItems.lookup
 
 /-- The position of the row's polarity item. -/

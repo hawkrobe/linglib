@@ -20,11 +20,11 @@ indefinite + negation route. Attested contexts follow [lahiri-1998]
 
 namespace Hindi.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-- *koii nahiiN* — negative indefinite, koii + negation:
 'koii nahiiN aayaa' (nobody came). -/
-def koiiNahiin : Item :=
+def koiiNahiin : PolarityItem :=
   { form := "koii nahiiN"
   , licensor := some .weak
   , baseForce := .existential
@@ -37,7 +37,7 @@ def koiiNahiin : Item :=
 alternatives ([lahiri-1998] (6), (10)–(12), (29), (31b), (32), (34) for
 the DE uses; (35), (36b), (39b) for free choice; necessity modals are
 out, (36d)). -/
-def koiiBhii : Item :=
+def koiiBhii : PolarityItem :=
   { form := "koii bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -52,7 +52,7 @@ def koiiBhii : Item :=
 /-- *ek bhii* 'even one' — dual NPI/FCI with cardinality alternatives;
 degraded in imperatives ([lahiri-1998] (7), (10d), (11a), (29a), (29f),
 (34b), (35d), (36a); imperative (40b)). -/
-def ekBhii : Item :=
+def ekBhii : PolarityItem :=
   { form := "ek bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -65,7 +65,7 @@ def ekBhii : Item :=
 
 /-- *kuch bhii* 'anything, any (mass)' ([lahiri-1998] (8), (10f), (34c),
 (35c), (39a)). -/
-def kuchBhii : Item :=
+def kuchBhii : PolarityItem :=
   { form := "kuch bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -78,7 +78,7 @@ def kuchBhii : Item :=
 /-- *zaraa bhii* 'even a little' — measure (cardinality) alternatives;
 degraded in imperatives ([lahiri-1998] (9), (10e), §4.5, (34d), (35e);
 imperative (40a)). -/
-def zaraaBhii : Item :=
+def zaraaBhii : PolarityItem :=
   { form := "zaraa bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -89,7 +89,7 @@ def zaraaBhii : Item :=
   , alternativeType := .cardinality }
 
 /-- *kabhii bhii* 'ever, anytime' ([lahiri-1998] (36c)). -/
-def kabhiiBhii : Item :=
+def kabhiiBhii : PolarityItem :=
   { form := "kabhii bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -99,7 +99,7 @@ def kabhiiBhii : Item :=
   , alternativeType := .contextualProperty }
 
 /-- The *bhii*-compound entries. -/
-def bhiiItems : List Item := [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii]
+def bhiiItems : List PolarityItem := [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii]
 
 /-- Every attested context of every entry is predicted licensed. -/
 theorem hindi_licensing_sound :

@@ -151,10 +151,10 @@ instance : DecidablePred Form.Negated := λ f => by
 
 /-- A polarity item is licensed in a form iff a positive item finds the clause unnegated and
 a negative one finds it negated. -/
-def Licensed (e : Polarity.Item) (f : Form) : Prop :=
+def Licensed (e : PolarityItem) (f : Form) : Prop :=
   (e.isPPI → ¬ f.Negated) ∧ (e.isNPI → f.Negated)
 
-instance (e : Polarity.Item) (f : Form) : Decidable (Licensed e f) := by
+instance (e : PolarityItem) (f : Form) : Decidable (Licensed e f) := by
   unfold Licensed; infer_instance
 
 /-! ### The paper's examples -/
@@ -165,7 +165,7 @@ structure Datum where
   pqForm : Option PQForm
   bias : Option SignType
   form : Option Form
-  item : Option Polarity.Item
+  item : Option PolarityItem
   judgment : Data.Examples.Judgment
 
 /-- An example read into its datum. -/

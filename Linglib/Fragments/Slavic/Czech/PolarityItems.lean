@@ -5,7 +5,7 @@ public import Linglib.Semantics.Polarity.Licensing
 /-!
 # Czech polarity items
 
-Czech indefinites come in two polarity-sensitive series, typed by `Polarity.Item`. The
+Czech indefinites come in two polarity-sensitive series, typed by `PolarityItem`. The
 *ni-* series (*nikdo*, *nic*, *nikdy*, *nikam*) and the determiner *žádný* are strict
 negative concord items: each obligatorily co-occurs with the *ne-* prefixed verb whatever
 its position, *Nikdo nepřišel* 'Nobody NEG.came', *Neviděl nikoho* 'NEG.saw nobody',
@@ -26,12 +26,12 @@ polar questions ([stankova-2025], [stankova-2026]). The *ne-* prefix lives in th
 
 namespace Czech.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### The *ni-* series -/
 
 /-- *nikdo* 'nobody', the human concord item. -/
-def nikdo : Item :=
+def nikdo : PolarityItem :=
   { form := "nikdo"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -40,7 +40,7 @@ def nikdo : Item :=
   , morphology := .indefPlusNeg }
 
 /-- *nic* 'nothing', the non-human concord item. -/
-def nic : Item :=
+def nic : PolarityItem :=
   { form := "nic"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -49,7 +49,7 @@ def nic : Item :=
   , morphology := .indefPlusNeg }
 
 /-- *nikdy* 'never', the temporal concord item. -/
-def nikdy : Item :=
+def nikdy : PolarityItem :=
   { form := "nikdy"
   , licensor := some .antiMorphic
   , baseForce := .temporal
@@ -58,7 +58,7 @@ def nikdy : Item :=
   , morphology := .indefPlusNeg }
 
 /-- *nikam* 'nowhere (to)', the directional concord item. -/
-def nikam : Item :=
+def nikam : PolarityItem :=
   { form := "nikam"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -68,7 +68,7 @@ def nikam : Item :=
 
 /-- *žádný* 'no', the determiner concord item, licensed by inner negation alone in polar
     questions ([stankova-2026]). -/
-def zadny : Item :=
+def zadny : PolarityItem :=
   { form := "žádný"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -76,13 +76,13 @@ def zadny : Item :=
   , scalarDirection := some .strengthening }
 
 /-- The strict concord items. -/
-def niSeries : List Item := [nikdo, nic, nikdy, nikam, zadny]
+def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]
 
 /-! ### The *ně-* series -/
 
 /-- *nějaký* 'some', the determiner positive polarity item, admitted by outer and medial
     negation in polar questions ([stankova-2025], [stankova-2026]). -/
-def nejaky : Item :=
+def nejaky : PolarityItem :=
   { form := "nějaký"
   , ppi := true
   , baseForce := .existential
@@ -90,14 +90,14 @@ def nejaky : Item :=
 
 /-- *někdo* 'someone', the human positive polarity item, which replaces *nikdo* under the
     non-propositional negation of a fear-predicate complement ([stankova-2025]). -/
-def nekdo : Item :=
+def nekdo : PolarityItem :=
   { form := "někdo"
   , ppi := true
   , baseForce := .existential
   , licensingContexts := [] }
 
 /-- The positive polarity items. -/
-def neSeries : List Item := [nejaky, nekdo]
+def neSeries : List PolarityItem := [nejaky, nekdo]
 
 /-! ### Verification -/
 
