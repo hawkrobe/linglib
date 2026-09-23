@@ -103,8 +103,8 @@ inductive Answer where
 (section 5.1, p. 112; checked against the PDF text layer only.) -/
 def raters : ℕ := 12
 
-/-- A row of Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L: a stimulus clip, with the letters of
-its name and the predictors Table 4 marks present. -/
+/-- A row of Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L: a stimulus clip, with the letters
+of its name and the predictors Table 4 marks present. -/
 structure Clip where
   /-- The clip number, in the first presentation order. -/
   number : ℕ
@@ -118,8 +118,8 @@ structure Clip where
   present : List Predictor
   deriving DecidableEq, Repr
 
-/-- The 43 rows of Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L, in the paper's order; checked
-against the page images. -/
+/-- The 43 rows of Tables 3 and 4 (pp. 45-47, 51-52) and Appendix L, in the paper's order;
+checked against the page images. -/
 def clips : List Clip :=
   [⟨1, .h, .o, none, [.ihcr, .inanCEAF, .psychImpHCEAF]⟩,  -- HO6_paper
    ⟨2, .h, .c, none, [.ihcr, .contrHCEAF]⟩,  -- HC1_leave
@@ -165,8 +165,8 @@ def clips : List Clip :=
    ⟨42, .h, .m, none, [.ihcr, .physImpHCEAF]⟩,  -- HM2_strongman
    ⟨43, .u, .u, none, [.ahcr, .psychImpHCEAF]⟩]  -- UU1_yawn
 
-/-- A row of Table 18 (pp. 143-144): a leaf of a response type's conditional inference tree. Table
-18 prints the response types LEX-ERG and MCV as LEX_ERG and MCV_U. -/
+/-- A row of Table 18 (pp. 143-144): a leaf of a response type's conditional inference tree.
+Table 18 prints the response types LEX-ERG and MCV as LEX_ERG and MCV_U. -/
 structure Leaf where
   /-- The response type whose tree the leaf belongs to. -/
   responseType : ResponseType
@@ -233,8 +233,8 @@ def summary : List SummaryRow :=
    ⟨.ncrA, some [(.inanCEAF, .minus), (.nfcr, .plus)], ⟨951, 1⟩⟩,
    ⟨.nca, some [(.inanCEAF, .minus), (.nfcr, .minus)], ⟨938, 1⟩⟩]
 
-/-- A row of Table 25 (pp. 218-219): a response type's prototype in the acceptability study and its
-preferences in the production study. -/
+/-- A row of Table 25 (pp. 218-219): a response type's prototype in the acceptability study and
+its preferences in the production study. -/
 structure ComparisonRow where
   /-- The response type. -/
   responseType : ResponseType

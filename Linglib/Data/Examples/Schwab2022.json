@@ -20,10 +20,9 @@
       ["npi", "jemals"],
       ["npiType", "strengthening"],
       ["negation", "rc"],
-      ["extraction", "subject"],
-      ["illusion", "inconclusive"]
+      ["extraction", "subject"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause. Experiment 1 Bayes factor for an illusion: 9.65 (moderate evidence for an illusion).",
+    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -102,10 +101,9 @@
       ["npi", "so recht"],
       ["npiType", "attenuating"],
       ["negation", "rc"],
-      ["extraction", "subject"],
-      ["illusion", "inconclusive"]
+      ["extraction", "subject"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause. Experiment 1 Bayes factor for an illusion: 0.43 (slightly favouring no illusion).",
+    "comment": "Illusory licensing condition: negative quantifier inside the subject-extracted relative clause.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -184,10 +182,9 @@
       ["npi", "jemals"],
       ["npiType", "strengthening"],
       ["negation", "rc"],
-      ["extraction", "object"],
-      ["illusion", "attested"]
+      ["extraction", "object"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause. Experiment 2 Bayes factor for an illusion: 987.4 (very strong evidence for an illusion; posterior estimate 0.58, CrI [0.28, 0.89]).",
+    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -266,10 +263,9 @@
       ["npi", "so recht"],
       ["npiType", "attenuating"],
       ["negation", "rc"],
-      ["extraction", "object"],
-      ["illusion", "absent"]
+      ["extraction", "object"]
     ],
-    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause. Experiment 2 Bayes factor for an illusion: 0.33 (moderate evidence for no illusion; posterior estimate -0.09, CrI [-0.37, 0.20]).",
+    "comment": "Illusory licensing condition: negative quantifier inside the object-extracted relative clause.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },

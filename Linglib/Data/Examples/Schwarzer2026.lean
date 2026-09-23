@@ -27,7 +27,7 @@ def ex11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "dass"), ("position", "postverbal")]
-    comment := "Bare dass-clause with a non-CP-selecting verb: mean z-score -0.526 (SD 0.669, median -0.684), table (14)."
+    comment := "Bare dass-clause with a non-CP-selecting verb."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -45,7 +45,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")]
-    comment := "DP-CP coordination with a non-CP-selecting verb: mean z-score -0.253 (SD 0.735, median -0.244), rated like the marked-but-grammatical filler group C; the coordination improves over the bare clause by more than the selected contexts predict (interaction β = 0.28, t = 2.8)."
+    comment := "DP-CP coordination with a non-CP-selecting verb, rated like the marked-but-grammatical filler group C; the coordination improves over the bare clause by more than the selected contexts predict."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -63,7 +63,7 @@ def ex12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "veranlassen"), ("selectsCP", "yes"), ("complement", "dass"), ("position", "postverbal")]
-    comment := "Bare dass-clause with a CP-selecting verb: mean z-score 0.891 (SD 0.631, median 1.08)."
+    comment := "Bare dass-clause with a CP-selecting verb."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -81,7 +81,7 @@ def ex12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "veranlassen"), ("selectsCP", "yes"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")]
-    comment := "DP-CP coordination with a CP-selecting verb: mean z-score 0.369 (SD 0.723, median 0.495)."
+    comment := "DP-CP coordination with a CP-selecting verb."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -99,7 +99,7 @@ def ex16a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "dpFirst")]
-    comment := "Preverbal coordination, DP first: chosen over (16b) 23 times out of 30 in the forced choice (probability of DP-first 0.76, logit difference to the ungrammatical controls 0.894, SE 0.327)."
+    comment := "Preverbal coordination, DP first: chosen over (16b) more often in the forced choice."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -117,7 +117,7 @@ def ex16b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "cpFirst")]
-    comment := "Preverbal coordination, CP first: chosen 7 times out of 30, the order the linear and temporal closeness accounts predict to be preferred."
+    comment := "Preverbal coordination, CP first: the order the linear and temporal closeness accounts predict to be preferred."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -135,7 +135,7 @@ def ex17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")]
-    comment := "Postverbal coordination, DP first: chosen 23 times out of 30, the same distribution as in preverbal position."
+    comment := "Postverbal coordination, DP first: chosen as often as in preverbal position."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -153,7 +153,7 @@ def ex17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "cpFirst")]
-    comment := "Postverbal coordination, CP first: chosen 7 times out of 30."
+    comment := "Postverbal coordination, CP first."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
