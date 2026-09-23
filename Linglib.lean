@@ -1277,8 +1277,6 @@ import Linglib.Semantics.Composition.Writer
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
-import Linglib.Semantics.Conditionals.Counterfactual.Lumping
-import Linglib.Semantics.Conditionals.PremiseSemantic
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Conditionals.SimilarityOrdering
