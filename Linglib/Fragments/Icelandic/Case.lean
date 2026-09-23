@@ -5,8 +5,7 @@ import Linglib.Syntax.Case.Basic
 
 Icelandic has **4 morphological cases**: NOM, ACC, DAT, GEN.
 
-Case frames, quirky subjects, verb data, and agreement are in
-`Icelandic/Verbs.lean`.
+The case arrays of verbs are in `Icelandic/Verbs.lean`.
 -/
 
 namespace Icelandic.Case
