@@ -1,4 +1,5 @@
 import Linglib.Data.Examples.RosaArnold2017
+import Linglib.Data.Experiments.RosaArnold2017
 import Linglib.Fragments.English.Pronouns
 import Linglib.Morphology.Word.Agree
 import Mathlib.Tactic.DeriveFintype
@@ -21,11 +22,11 @@ the design, the paper's regression with its two main effects: `topical_iff` stat
 topicality account as the vanishing of the thematic effect, and `source_subject_gt_goal_iff`
 shows that a subject source pronominalized above a nonsubject goal, the earlier finding taken as
 evidence against predictability, is consistent with a positive thematic effect whenever the
-subject effect exceeds it. The rows carry the pronoun rates of the three experiments and the
-rating study; `topical_not_fits` reads the Experiment 1 contrast at fixed grammatical role and
-`goal_expected` the rating study. The effect sizes, the marginal amplification of the goal
-effect under Occasion and Result continuations in Experiment 2, and the shorter latencies for
-goal continuations stay in prose.
+subject effect exceeds it. The pronoun rates of the three experiments and the rating study are
+`Data.Experiments.RosaArnold2017`; `topical_not_fits` reads the Experiment 1 contrast at fixed
+grammatical role and `goal_expected` the rating study. The effect sizes, the marginal
+amplification of the goal effect under Occasion and Result continuations in Experiment 2, and
+the shorter latencies for goal continuations stay in prose.
 
 ## Implementation notes
 
@@ -44,27 +45,14 @@ goal continuations stay in prose.
 
 namespace RosaArnold2017
 
-open Data.Examples Morphology
+open Morphology
+open Data.Experiments.RosaArnold2017 (Experiment Role Gram rates goalNextMention
+  subjectNextMention)
 
 /-! ### The design -/
 
-/-- The thematic role of the continued character in the transfer event. -/
-inductive Role where
-  | goal
-  | source
-  deriving DecidableEq, Repr, Fintype
-
-/-- The grammatical role of the continued character in the prompt sentence. -/
-inductive Gram where
-  | subject
-  | nonsubject
-  deriving DecidableEq, Repr, Fintype
-
 /-- Whether the two characters share a gender, so that a pronoun is ambiguous between them. -/
-inductive Gender where
-  | same
-  | different
-  deriving DecidableEq, Repr, Fintype
+abbrev Gender := Data.Experiments.RosaArnold2017.Gender
 
 /-- A cell of the design. -/
 structure Cell where
@@ -135,40 +123,12 @@ def Model.Fits (M : Model) (r : Cell → ℕ) : Prop :=
 
 /-! ### The findings -/
 
-/-- The three experiments: in-person event retelling, sentence completion over the story
-materials, and sentence completion with disconnected items. -/
-inductive Experiment where
-  | retelling
-  | completion
-  | renamed
-  deriving DecidableEq, Repr
-
-/-- The experiment and the cell of the design a row records, read from its features. -/
-def Cell.of? (e : LinguisticExample) : Option (Experiment × Cell) := do
-  let experiment ← e.parse? "experiment"
-    [("retelling", .retelling), ("completion", .completion), ("renamed", .renamed)]
-  let role ← e.parse? "role" [("goal", .goal), ("source", .source)]
-  let gram ← e.parse? "gram" [("subject", .subject), ("nonsubject", .nonsubject)]
-  let gender ← e.parse? "gender" [("same", .same), ("different", .different)]
-  pure (experiment, ⟨role, gram, gender⟩)
-
-/-- Every row recording a pronoun rate is read as a cell of an experiment. -/
-theorem cell_of_isSome :
-    ∀ e ∈ Examples.all, (e.feature? "pronouns").isSome → (Cell.of? e).isSome := by
-  decide
-
 /-- The rate of pronoun production in a cell of an experiment (Tables 1, 4, 7), in percent. -/
-def rate (x : Experiment) (c : Cell) : ℕ :=
-  ((Examples.all.filter (Cell.of? · = some (x, c))).filterMap (·.nat? "pronouns")).headD 0
-
-/-- The rating study: the percentage of raters choosing the character named by `column`, the
-goal or the subject, as the one more likely to be talked about next. -/
-def nextMention (column : String) : ℕ :=
-  ((Examples.all.find? (·.feature? "study" = some "rating")).bind (·.nat? column)).getD 0
+def rate (x : Experiment) (c : Cell) : ℕ := (rates x c.gender c.gram c.role).pronouns
 
 /-- Goals are expected as the next mention above sources, and above subjects. -/
-theorem goal_expected : 50 < nextMention "goal" ∧ nextMention "subject" < nextMention "goal" := by
-  decide +kernel
+theorem goal_expected : 50 < goalNextMention ∧ subjectNextMention < goalNextMention := by
+  decide
 
 /-- Experiment 1 at fixed grammatical role refutes the topicality account: goals in subject
 position are pronominalized above sources in subject position, which no model without a
