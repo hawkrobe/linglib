@@ -195,7 +195,8 @@ def come : Verb where
   vendlerClass := some .achievement
   levinClasses := {LevinClass.appear, .inherentlyDirectedMotion}
 
-/-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
+/-- "go" — Levin 51.1 inherently directed motion, suppletive in the past; not the stative
+    path use of the meander verbs (47.7: *the road goes through the valley*). -/
 def go : Verb where
   form := "go"
   form3sg := "goes"
@@ -206,6 +207,7 @@ def go : Verb where
   passivizable := false
   vendlerClass := some .achievement
   levinClasses := {LevinClass.inherentlyDirectedMotion}
+  levinExcluded := {LevinClass.meander}
 
 /-- "eat" — transitive, implicit object is indefinite ("Have you eaten?") -/
 def eat : Verb where
@@ -1189,12 +1191,16 @@ def slow : Verb := .mkRegular {
   vendlerClass := some .activity
   scaleDimension := some .speed } (levinClasses := {LevinClass.otherChangeOfState})
 
-/-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*). -/
+/-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*); not the body-part use of
+    the crane verbs (40.3.2: *turn one's head*) or of the hurt verbs (40.8.3: *turn one's
+    ankle*), the stative path use of the meander verbs (47.7: *the road turns*), or the manner
+    of motion of the roll verbs (51.3.1: *the wheel turned*). -/
 def turn : Verb := .mkRegular {
   form := "turn"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.into)]
   vendlerClass := some .accomplishment } (levinClasses := {LevinClass.turn})
+    (levinExcluded := {LevinClass.crane, .hurt, .meander, .roll})
 
 /-- "wake up" — the particle verb of awakening; Levin lists *waken* but not *wake*. -/
 def wakeUp : Verb where
