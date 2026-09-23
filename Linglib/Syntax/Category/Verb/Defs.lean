@@ -11,7 +11,6 @@ public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Logic.Natural.Basic
 public import Linglib.Semantics.Aspect.Phasal
-public import Linglib.Semantics.Causation.Implicative
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
 public import Linglib.Semantics.Degree.Scale
 public import Linglib.Semantics.Degree.Antonymy

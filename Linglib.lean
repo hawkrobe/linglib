@@ -1236,7 +1236,6 @@ import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Causation.CauserSort
-import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Semantics.Causation.Graph.Basic
 import Linglib.Semantics.Causation.Graph.Defs
 import Linglib.Semantics.Causation.Implicative
@@ -1253,7 +1252,6 @@ import Linglib.Semantics.Causation.SEM.Counterfactual
 import Linglib.Semantics.Causation.SEM.Defs
 import Linglib.Semantics.Causation.SEM.Deterministic
 import Linglib.Semantics.Causation.SEM.Forced
-import Linglib.Semantics.Causation.Strength
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Valuation
 import Linglib.Semantics.Causation.VerbClass

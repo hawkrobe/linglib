@@ -167,7 +167,7 @@ def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
 /-! ### Computational specialization: developDetOn (explicit list) -/
 
 /-! The canonical `developDet` (per-vertex, via `WellFounded.fix` on `IsDAG`) lives in
-    `PerVertex.lean`. Below is the **computational specialization**:
+    `SEM/Deterministic.lean`. Below is the **computational specialization**:
     `developDetOn M vs n s` iterates `stepOnceDetOn` `n` times over an
     explicit vertex list `vs`. Computable; reducible structurally for
     kernel-verifiable proofs on concrete SEMs.
@@ -179,7 +179,7 @@ def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
     `stepOnceDet` (the Fintype-based wrapper) is kept here as an internal
     helper for the PMF stack's `stepOnce_eq_pure_of_deterministic` bridge —
     see below. It's not part of the public API; consumers use either
-    `developDetOn` (computational) or `developDet` (canonical, in PerVertex.lean). -/
+    `developDetOn` (computational) or `developDet` (canonical, in `SEM/Deterministic.lean`). -/
 
 /-- One forward-development sweep using the Fintype enumeration of `V`.
     Internal helper for `stepOnce_eq_pure_of_deterministic`; not a public
@@ -220,9 +220,7 @@ theorem developDetOn_succ [DecidableEq V] [DecidableValuation α]
     consumers prove `(M.developDet s).hasValue v x` by computing the
     matching `developDetOn` claim with `decide`, then applying the bridge.
 
-    The reverse direction (completeness) requires proving that
-    `Fintype.card V` iterations always reach all reachable values —
-    deferred (would need induction on topological depth).
+    The reverse direction, completeness, is `developDetOn_hasValue_developDetVtx` below.
 
     **Mathlib analogue**: `Multiset.sum_toList`, `Filter.tendsto_atTop_iff`
     — bridges between an abstract canonical form and its computational
@@ -332,9 +330,7 @@ private lemma isConsistentDev_developDetOn [DecidableEq V] [DecidableValuation �
     computing the corresponding `developDetOn` form with `decide` and
     lifting via this bridge.
 
-    The reverse direction (completeness — every vertex eventually
-    determined) requires substrate work on topological depth and is
-    deferred. -/
+    The converse is `developDetOn_hasValue_developDetVtx`. -/
 theorem developDetVtx_of_developDetOn_hasValue [DecidableEq V] [DecidableValuation α]
     {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     {s : Valuation α} {vs : List V} {n : ℕ} {v : V} {x : α v}

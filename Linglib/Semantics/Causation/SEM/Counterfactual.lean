@@ -11,9 +11,6 @@ public import Linglib.Semantics.Causation.SEM.Deterministic
 Polymorphic counterfactual predicates over a `SEM V α`, plus `BoolSEM`-flavored
 aliases for legacy SBH-style binary semantics.
 
-- **`developsToValue M s v x`**: after developing `s`, vertex `v` has value `x`.
-  Replaces the old `developsToTrue` (Bool-specialized) with a polymorphic version.
-
 - **`causallySufficient M s cause xC effect xE`**: extending `s` with `xC` at
   `cause` then eager-totally developing produces `xE` at `effect` — the bare
   sufficiency clause over `developDetVtx`, kept for consumers that want plain
@@ -61,31 +58,14 @@ variable [Fintype V] [DecidableEq V] [DecidableValuation α]
 
 /-! ### Polymorphic counterfactual predicates -/
 
-/-- After developing the SEM against `s`, vertex `v` has the value `x`.
-
-    Polymorphic generalization of the old `developsToTrue` (which fixed
-    `α := fun _ => Bool` and `x := true`). -/
-def developsToValue (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) (v : V) (x : α v) : Prop :=
-  (M.developDet s).hasValue v x
-
-noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) (v : V) (x : α v) :
-    Decidable (developsToValue M s v x) :=
-  Classical.dec _
-
-/-- **Causal sufficiency**: forcing `cause` to `xC` makes `effect` developDet to `xE`.
-
-    Polymorphic generalization of [nadathur-lauer-2020] Definition 23's
-    sufficiency clause (the development of `s + (cause = xC)` fixes the
-    effect); Def 23's non-inevitability precondition (clause a) is not
-    yet represented — see the module TODO.
-    The Bool case (`BoolSEM.causallySufficient`) recovers the legacy semantics
-    "`cause = true` produces `effect = true`". -/
+/-- **Causal sufficiency**: setting `cause` to `xC` makes the eager-total development give
+`effect` the value `xE`. This is the bare sufficiency clause of [nadathur-lauer-2020]'s
+Definition 23; `Sufficiency.makeSem` states the whole definition, with its non-inevitability
+clause, over the strict development. -/
 def causallySufficient (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause)
     (effect : V) (xE : α effect) : Prop :=
-  developsToValue M (s.extend cause xC) effect xE
+  (M.developDet (s.extend cause xC)).hasValue effect xE
 
 noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
@@ -94,20 +74,13 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 
 /-! ### Basic API lemmas (polymorphic) -/
 
-omit [Fintype V] [DecidableEq V] [DecidableValuation α] in
-/-- `developsToValue` unfolds to `(developDet M s).hasValue v x`. -/
-theorem developsToValue_iff (M : SEM V α)
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) (v : V) (x : α v) :
-    developsToValue M s v x ↔ (M.developDet s).hasValue v x := Iff.rfl
-
 omit [Fintype V] [DecidableValuation α] in
-/-- `causallySufficient` unfolds to `developsToValue` of the extended valuation. -/
+/-- `causallySufficient` unfolds to the development of the extended valuation. -/
 theorem causallySufficient_iff (M : SEM V α)
     [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     causallySufficient M s cause xC effect xE ↔
-      developsToValue M (s.extend cause xC) effect xE := Iff.rfl
+      (M.developDet (s.extend cause xC)).hasValue effect xE := Iff.rfl
 
 /-- **Interventionist manipulation** (Woodward's criterion): cause's value
     affects effect's value under `developDet`. Defined via `extend` rather
@@ -312,7 +285,7 @@ namespace Causation.BoolSEM
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 open Causation (SEM Valuation BoolSEM)
-open Causation.SEM (developsToValue causallySufficient)
+open Causation.SEM (causallySufficient)
 
 /-- `BoolSEM`-flavored `causallySufficient`: setting `cause = true` develops
     `effect = true`. Matches old `Causation.causallySufficient` semantics. -/
@@ -409,7 +382,7 @@ variable {V : Type*} {α : V → Type*}
     T_D fixed point relative to `s` assigns `x` to `v` ("s ⊨_D ⟨v, x⟩").
     Stated over the partial `developDetVtx?` — an undetermined exogenous
     vertex entails nothing, and an inner vertex entails nothing while any
-    parent is u-valued. Contrast the eager-total `developsToValue` above. -/
+    parent is u-valued. Contrast the eager-total `causallySufficient` above. -/
 def causallyEntails [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
     [IsDeterministic M] (s : Valuation α) (v : V) (x : α v) : Prop :=
   developDetVtx? M s v = some x

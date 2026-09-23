@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Causation.Necessity
 public import Linglib.Semantics.Causation.Sufficiency
+public import Linglib.Semantics.Causation.Implicative
 public import Linglib.Studies.Karttunen1971a
 public import Linglib.Fragments.English.Verbs
 public import Linglib.Semantics.Causation.Interpretation

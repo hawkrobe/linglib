@@ -3,24 +3,17 @@ module
 public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
-# Prevention Semantics
-[sloman-barbey-hotaling-2009]
+# Prevention: the semantics of *prevent*
 
-`preventSem` formalizes the SEM semantics of "prevent": the preventer
-blocks an effect that would otherwise occur. Behavioral, not structural:
-setting `preventer := xPrev` blocks `effect = xE`, AND there exists some
-alternative preventer value that would have allowed `effect = xE` to
-develop.
+`preventSem` states the behavioural reading of *prevent* after
+[sloman-barbey-hotaling-2009]: setting the preventer to `xPrev` does not suffice for the effect,
+while some other value of the preventer does. With Bool models and `xPrev = true`, the only
+alternative is `false`. The predicate takes the same arguments as the other causative
+semantics, so `Causative.toSemantics` dispatches uniformly.
 
-Bool models recover the standard "false vs true" flip via the
-`∃ xPrev_alt ≠ xPrev` clause (with `xPrev = true`, the only alternative
-is `false`).
+## References
 
-The legacy structural `preventSem` over `CausalDynamics` (which
-introspected an inhibitory law's structure rather than checking
-behavior) was deleted in Phase D-H. The behavioral V2 form here is
-arity-uniform with `causallySufficient`/`causeSem` so `Causative.toSemantics`
-dispatches uniformly across all five force-dynamic variants.
+* [sloman-barbey-hotaling-2009]
 -/
 
 @[expose] public section
@@ -29,10 +22,8 @@ namespace Causation.Prevention
 
 open Causation (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 prevention semantics: preventer-as-`xPrev` blocks effect-from-
-    being-`xE`, AND there exists some alternative preventer value that
-    would have allowed `effect = xE` to develop. Polymorphic over
-    value types. -/
+/-- *prevent*: setting the preventer to `xPrev` does not suffice for `effect = xE`, and some
+other value of the preventer does. -/
 noncomputable def preventSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
