@@ -105,7 +105,7 @@
       ]
     },
     {
-      "name": "Directive",
+      "name": "Directiveness",
       "doc": "How often a construction received directive interpretations, in the paper's words.",
       "levels": [
         {
@@ -337,7 +337,7 @@
         },
         {
           "name": "directive",
-          "type": "Directive",
+          "type": "Directiveness",
           "doc": "How often it was interpreted as a directive."
         },
         {

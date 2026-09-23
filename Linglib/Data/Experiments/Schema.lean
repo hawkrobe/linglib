@@ -36,6 +36,10 @@ namespace Decimal
 /-- The printed value. -/
 def toRat (d : Decimal) : ℚ := d.mantissa / 10 ^ d.exponent
 
+/-- The printed value in hundredths, exact when at most two places are printed: a proportion
+printed to two places, in percent. -/
+def hundredths (d : Decimal) : ℤ := d.mantissa * 100 / 10 ^ d.exponent
+
 /-- The printed value is the percentage `100 * k / n` rounded to the printed places: the two
 differ by at most half a unit in the last printed place. -/
 def RoundsPercent (d : Decimal) (k n : ℕ) : Prop :=

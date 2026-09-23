@@ -22,7 +22,9 @@ manipulation are printed in the text, not in a table.
 
 @[expose] public section
 
-namespace Data.Experiments.KehlerRohde2013
+namespace KehlerRohde2013
+
+open Data.Experiments
 
 /-- The aspect of the context sentence, (7) against (8). -/
 inductive Aspect where
@@ -240,4 +242,4 @@ def subjectBiases : Voice → SubjectBias
   | .active => ⟨⟨81, 2⟩, ⟨74, 2⟩⟩
   | .passive => ⟨⟨59, 2⟩, ⟨60, 2⟩⟩
 
-end Data.Experiments.KehlerRohde2013
+end KehlerRohde2013

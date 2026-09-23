@@ -23,7 +23,7 @@ topicality account as the vanishing of the thematic effect, and `source_subject_
 shows that a subject source pronominalized above a nonsubject goal, the earlier finding taken as
 evidence against predictability, is consistent with a positive thematic effect whenever the
 subject effect exceeds it. The pronoun rates of the three experiments and the rating study are
-`Data.Experiments.RosaArnold2017`; `topical_not_fits` reads the Experiment 1 contrast at fixed
+`Data/Experiments/RosaArnold2017`; `topical_not_fits` reads the Experiment 1 contrast at fixed
 grammatical role and `goal_expected` the rating study. The effect sizes, the marginal
 amplification of the goal effect under Occasion and Result continuations in Experiment 2, and
 the shorter latencies for goal continuations stay in prose.
@@ -46,13 +46,8 @@ the shorter latencies for goal continuations stay in prose.
 namespace RosaArnold2017
 
 open Morphology
-open Data.Experiments.RosaArnold2017 (Experiment Role Gram rates goalNextMention
-  subjectNextMention)
 
 /-! ### The design -/
-
-/-- Whether the two characters share a gender, so that a pronoun is ambiguous between them. -/
-abbrev Gender := Data.Experiments.RosaArnold2017.Gender
 
 /-- A cell of the design. -/
 structure Cell where

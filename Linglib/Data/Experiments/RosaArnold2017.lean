@@ -21,7 +21,9 @@ the authors' accepted manuscript.
 
 @[expose] public section
 
-namespace Data.Experiments.RosaArnold2017
+namespace RosaArnold2017
+
+open Data.Experiments
 
 /-- The three production experiments. -/
 inductive Experiment where
@@ -121,4 +123,4 @@ def overall : Experiment → Role → Overall
   | .renamed, .goal => ⟨none⟩
   | .renamed, .source => ⟨none⟩
 
-end Data.Experiments.RosaArnold2017
+end RosaArnold2017

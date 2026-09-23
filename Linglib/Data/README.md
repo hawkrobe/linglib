@@ -67,9 +67,11 @@ bound, well-nestedness, planarity, or a conjunction), at the precision the paper
 The results a paper prints for its experiments, one table per printed table: the stimulus
 inventory with its coding, the design constants, and the statistics (shares of ceiling ratings,
 counts, means) at the precision the paper prints them, as `Decimal`s that keep the printed
-digits. A paper's coding labels (its factors, predictors, response types) are generated enums; a
-study maps them into its theory types by total functions and defines there what it concludes
-from the numbers (a prototype, a preference, a significant difference). Each table records its
+digits. A paper's coding labels (its factors, predictors, response types) are generated enums,
+declared with the tables in `namespace <Paper>` beside the paper's study, which reads them and
+extends them without opening anything; the study maps them into its theory types by total
+functions and defines there what it concludes from the numbers (a prototype, a preference, a
+significant difference). Each table records its
 locator and whether it was checked against the page images, and a row may carry a note on how
 it departs from the print.
 

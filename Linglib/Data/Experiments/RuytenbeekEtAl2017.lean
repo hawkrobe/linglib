@@ -27,7 +27,9 @@ manuscript does not contain. Page numbers are those of the authors' manuscript.
 
 @[expose] public section
 
-namespace Data.Experiments.RuytenbeekEtAl2017
+namespace RuytenbeekEtAl2017
+
+open Data.Experiments
 
 /-- The two experiments. -/
 inductive Study where
@@ -74,7 +76,7 @@ inductive Response where
   deriving DecidableEq, Repr, Fintype
 
 /-- How often a construction received directive interpretations, in the paper's words. -/
-inductive Directive where
+inductive Directiveness where
   /-- almost only: almost only directive interpretations -/
   | almostOnly
   /-- sometimes: directive interpretations beside dominant or many non-directive ones -/
@@ -149,7 +151,7 @@ structure Interpretation where
   /-- The construction. -/
   construction : Construction
   /-- How often it was interpreted as a directive. -/
-  directive : Directive
+  directive : Directiveness
   /-- Whether its directive interpretations showed activity toward answering: fixations on the
   answer buttons or longer response times than the imperative; none when it had none. -/
   answerActivity : Option Answer
@@ -174,4 +176,4 @@ def interpretations : List Interpretation :=
    ⟨.two, .itIsPossible, .sometimes, some .no⟩,
    ⟨.two, .controlDeclarative, .never, none⟩]  -- the control statement, from the design
 
-end Data.Experiments.RuytenbeekEtAl2017
+end RuytenbeekEtAl2017

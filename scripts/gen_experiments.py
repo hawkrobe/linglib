@@ -3,7 +3,8 @@
 
 A paper's experimental results are canonical JSON at
 `Linglib/Data/Experiments/<Paper>.json`; this emits the typed Lean module
-`Linglib/Data/Experiments/<Paper>.lean` (namespace `Data.Experiments.<Paper>`).
+`Linglib/Data/Experiments/<Paper>.lean`, in `namespace <Paper>` beside the paper's study, so
+that the study reads the tables and extends the paper's types without opening anything.
 The generated Lean is never hand-edited: edit the JSON and re-run.
 
 A JSON file has four parts:
@@ -329,11 +330,13 @@ public import Linglib.Data.Experiments.Schema
 
 @[expose] public section
 
-namespace Data.Experiments.{paper}
+namespace {paper}
+
+open Data.Experiments
 
 {body}
 
-end Data.Experiments.{paper}
+end {paper}
 """
 
 

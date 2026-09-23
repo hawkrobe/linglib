@@ -26,7 +26,7 @@ above its prior, the overlaid subject bias (`posterior_gt_iff`); and raising a r
 next-mention probability raises the expectation of the relations that favor it
 (`relationExpectation_sub`).
 
-The paper's passage-completion results (Tables 1–10, `Data.Experiments.KehlerRohde2013`) then
+The paper's passage-completion results (Tables 1–10, `Data/Experiments/KehlerRohde2013`) then
 instantiate the model. The instruction manipulation's mixtures computed from Tables 3 and 4 fall
 on the sides of chance Table 5 observes (`instruction_mixtures`); the pronoun prompt raises
 subject mentions and shifts the continuations toward the Source-biased relations (Table 6); the
@@ -39,10 +39,10 @@ non-subjects, a gradient the backward-looking center of a grammatical-role Cente
 
 ## Implementation notes
 
-The tables are `Data.Experiments.KehlerRohde2013`, whose proportions are printed to two places
-and read here in percent (`percent`); computed quantities are compared through their integer
-numerators. The mixtures (9) range over the five relations the paper codes, whose frequencies
-fall short of one by the continuations coded otherwise.
+The tables are `Data/Experiments/KehlerRohde2013`, whose proportions are printed to two places
+and read here in percent (`Decimal.hundredths`); computed quantities are compared through their
+integer numerators. The mixtures (9) range over the five relations the paper codes, whose
+frequencies fall short of one by the continuations coded otherwise.
 
 ## References
 
@@ -108,15 +108,6 @@ end Model
 
 /-! ### The data -/
 
-open Data.Experiments (Decimal)
-open Data.Experiments.KehlerRohde2013
-
-/-- The voice of the context sentence of the voice manipulation. -/
-abbrev Voice := Data.Experiments.KehlerRohde2013.Voice
-
-/-- A proportion the paper prints to two places, in percent. -/
-def percent (d : Decimal) : ℕ := (d.mantissa * 100 / 10 ^ d.exponent).toNat
-
 /-- The voice as UD codes it. -/
 def Voice.toUD : Voice → UD.Voice
   | .active => .Act
@@ -134,7 +125,7 @@ private theorem sum_position (f : Position → ℚ) : ∑ p, f p = f .subject + 
 /-! ### Coherence-conditioned biases (Tables 1–5) -/
 
 /-- Table 1: the Source interpretation rate by aspect. -/
-def aspectSource (a : Aspect) : ℕ := percent (sourceByAspect a).sourceInterpretation
+def aspectSource (a : Aspect) : ℕ := (sourceByAspect a).sourceInterpretation.hundredths.toNat
 
 /-- The event-structure hypothesis: the imperfective keeps the Source central, the perfective
 focuses the end state, so the imperfective draws more Source interpretations. -/
@@ -142,10 +133,11 @@ theorem imperfective_more_source : aspectSource .perfective < aspectSource .impe
   decide
 
 /-- Table 2: the frequency of a relation in the perfective continuations. -/
-def perfectiveFrequency (c : Relation) : ℕ := percent (relationsPerfective c).frequency
+def perfectiveFrequency (c : Relation) : ℕ := (relationsPerfective c).frequency.hundredths.toNat
 
 /-- Table 2: the Source bias of a relation in the perfective continuations. -/
-def perfectiveSourceGiven (c : Relation) : ℕ := percent (relationsPerfective c).biasToSource
+def perfectiveSourceGiven (c : Relation) : ℕ :=
+  (relationsPerfective c).biasToSource.hundredths.toNat
 
 private theorem mixture_div (p b : Relation → ℕ) :
     mixture (fun c ↦ (p c : ℚ) / 100) (fun c ↦ (b c : ℚ) / 100) =
@@ -170,10 +162,10 @@ theorem perfective_mixture_masks_biases :
 
 /-- Table 3: the frequency of a relation under an instruction. -/
 def frequency (i : Instruction) (c : Relation) : ℕ :=
-  percent (relationsByInstruction c i).frequency
+  (relationsByInstruction c i).frequency.hundredths.toNat
 
 /-- Table 4: the Source bias of a relation in the instruction experiment. -/
-def sourceGiven (c : Relation) : ℕ := percent (biasesByRelation c).instructionManipulation
+def sourceGiven (c : Relation) : ℕ := (biasesByRelation c).instructionManipulation.hundredths.toNat
 
 /-- Table 4 repeats the biases of Table 2 as those of the original experiment. -/
 theorem biasesByRelation_original (c : Relation) :
@@ -181,7 +173,8 @@ theorem biasesByRelation_original (c : Relation) :
   cases c <;> rfl
 
 /-- Table 5: the observed Source interpretation rate under an instruction. -/
-def observedSource (i : Instruction) : ℕ := percent (sourceByInstruction i).sourceInterpretation
+def observedSource (i : Instruction) : ℕ :=
+  (sourceByInstruction i).sourceInterpretation.hundredths.toNat
 
 /-- (9) on Tables 3 and 4: the next-mention probability of the Source under an instruction. -/
 def predictedSource (i : Instruction) : ℚ :=
@@ -202,7 +195,8 @@ theorem instruction_mixtures :
 /-! ### Bidirectionality (Table 6) -/
 
 /-- Table 6: the frequency of a relation by prompt type. -/
-def promptFrequency (p : Prompt) (c : Relation) : ℕ := percent (relationsByPrompt c p).frequency
+def promptFrequency (p : Prompt) (c : Relation) : ℕ :=
+  (relationsByPrompt c p).frequency.hundredths.toNat
 
 /-- The share of first mentions to the Goal by prompt type, in percent. -/
 def goalMention (p : Prompt) : ℕ := (goalFirstMentions p).percent
@@ -221,16 +215,17 @@ theorem prompt_shifts_relations :
 /-! ### The voice manipulation (Tables 7–10) -/
 
 /-- Table 7: the rate of next mention of the causally implicated referent by voice and prompt. -/
-def causalMention (v : Voice) (p : Prompt) : ℕ := percent (causalMentions v p).proportion
+def causalMention (v : Voice) (p : Prompt) : ℕ := (causalMentions v p).proportion.hundredths.toNat
 
 /-- Table 8: the rate of Explanation continuations by voice and prompt. -/
-def explanationRate (v : Voice) (p : Prompt) : ℕ := percent (explanations v p).proportion
+def explanationRate (v : Voice) (p : Prompt) : ℕ := (explanations v p).proportion.hundredths.toNat
 
 /-- Table 9: the pronominalization rate of a position by voice, without a pronoun prompt. -/
-def pronominalized (v : Voice) (pos : Position) : ℕ := percent (pronominalizations v pos).proportion
+def pronominalized (v : Voice) (pos : Position) : ℕ :=
+  (pronominalizations v pos).proportion.hundredths.toNat
 
 /-- Table 10: the observed bias of the pronoun toward the subject by voice. -/
-def actualSubject (v : Voice) : ℕ := percent (subjectBiases v).actual
+def actualSubject (v : Voice) : ℕ := (subjectBiases v).actual.hundredths.toNat
 
 /-- Table 7 without a pronoun prompt as the next-mention rate of the subject: the causally
 implicated referent is the subject of the active and the by-phrase of the passive. -/
@@ -350,8 +345,8 @@ def pronounRate (v : Voice) : GrammaticalRole → ℕ
 /-- Production tracks topichood: across the voices and roles of Table 9 a higher topichood level
 is pronominalized at a higher rate, the passive subject above the active subject above the
 non-subjects, so not all grammatical subjects are equal. -/
-theorem pronounRate_strictMono : ∀ v v' r r', topichood (Voice.toUD v) r <
-    topichood (Voice.toUD v') r' → pronounRate v r < pronounRate v' r' := by
+theorem pronounRate_strictMono : ∀ (v v' : Voice) r r',
+    topichood v.toUD r < topichood v'.toUD r' → pronounRate v r < pronounRate v' r' := by
   decide
 
 /-- Production is not expectancy: without a pronoun prompt the passive's by-phrase referent is

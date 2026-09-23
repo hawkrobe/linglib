@@ -26,7 +26,7 @@ readings secondary (`literalist_refuted`).
 ## Implementation notes
 
 The corpus counts, the response-time estimates and the paper's findings on each construction's
-interpretations are `Data.Experiments.RuytenbeekEtAl2017`; the stimulus sentences are
+interpretations are `Data/Experiments/RuytenbeekEtAl2017`; the stimulus sentences are
 `Data/Examples/RuytenbeekEtAl2017.json`. A construction is directive when it received directive
 interpretations at all, and unactivated when the paper reports no fixations on the answer buttons
 and response times equal to the imperative's for those interpretations; the regression
@@ -46,16 +46,11 @@ possible*, which it attributes to the permission reading of *pouvoir*, is not de
 namespace RuytenbeekEtAl2017
 
 open Discourse.SpeechAct French
-open Data.Experiments.RuytenbeekEtAl2017 (Study Form Response Directive Answer corpus responseTimes
-  interpretations Interpretation)
 open Modality
 open Mood (Illocutionary)
 open Mood.Illocutionary (primaryFlavor)
 
 /-! ### Constructions and forces -/
-
-/-- The constructions of the two experiments. -/
-abbrev Construction := Data.Experiments.RuytenbeekEtAl2017.Construction
 
 /-- The morphosyntactic mood of a construction. -/
 def Construction.mood : Construction → Illocutionary

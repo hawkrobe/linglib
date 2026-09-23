@@ -16,7 +16,7 @@ readily yet not judged false, a dissociation the control assertion lacks
 
 ## Implementation notes
 
-The cell means and standard deviations of footnote 13 are `Data.Experiments.Khoo2015`, which
+The cell means and standard deviations of footnote 13 are `Data/Experiments/Khoo2015`, which
 the released survey reproduces; "readily" and "not" are read against the scale's midpoint. The
 paper's account of the observation is not formalized.
 
@@ -26,8 +26,6 @@ paper's account of the observation is not formalized.
 -/
 
 namespace Khoo2015
-
-open Data.Experiments.Khoo2015 (Sentence Response midpoint ratings)
 
 /-- The mean rating of a vignette under a question. -/
 def mean (s : Sentence) (r : Response) : ℚ := (ratings s r).mean.toRat
