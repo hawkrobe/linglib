@@ -30,13 +30,9 @@
       [
         "following",
         "disyllable"
-      ],
-      [
-        "pSchwa",
-        "9"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   },
   {
     "id": "flemming2021_ctx2",
@@ -69,13 +65,9 @@
       [
         "following",
         "monosyllable"
-      ],
-      [
-        "pSchwa",
-        "12"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   },
   {
     "id": "flemming2021_ctx3",
@@ -108,13 +100,9 @@
       [
         "following",
         "disyllable"
-      ],
-      [
-        "pSchwa",
-        "68"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   },
   {
     "id": "flemming2021_ctx4",
@@ -147,13 +135,9 @@
       [
         "following",
         "monosyllable"
-      ],
-      [
-        "pSchwa",
-        "83"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   },
   {
     "id": "flemming2021_ctx5",
@@ -186,13 +170,9 @@
       [
         "following",
         "disyllable"
-      ],
-      [
-        "pSchwa",
-        "56"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   },
   {
     "id": "flemming2021_ctx6",
@@ -225,13 +205,9 @@
       [
         "following",
         "monosyllable"
-      ],
-      [
-        "pSchwa",
-        "65"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   },
   {
     "id": "flemming2021_ctx7",
@@ -264,13 +240,9 @@
       [
         "following",
         "disyllable"
-      ],
-      [
-        "pSchwa",
-        "91"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   },
   {
     "id": "flemming2021_ctx8",
@@ -303,12 +275,8 @@
       [
         "following",
         "monosyllable"
-      ],
-      [
-        "pSchwa",
-        "94"
       ]
     ],
-    "comment": "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    "comment": ""
   }
 ]

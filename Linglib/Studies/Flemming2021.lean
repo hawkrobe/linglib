@@ -5,6 +5,7 @@ import Mathlib.Tactic.FieldSimp
 import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Data.Examples.Flemming2021
+import Linglib.Data.Experiments.Flemming2021
 
 /-!
 # Flemming (2021): Comparing MaxEnt and Noisy Harmonic Grammar
@@ -39,9 +40,9 @@ equal-harmony candidates by their noise covariance (§9).
 * The fitted weights of Tables 1 and 4 and the deviances of §8 are estimation results and are
   not formalized; the predictions are stated for arbitrary weights with the sign hypotheses the
   fits satisfy. Censored NHG (§7.3) has no closed form and is not formalized.
-* The observed rates are hundredths in `Data/Examples/Flemming2021.json`, read by `pObs`; the
-  interaction is stated on odds ratios, the exponential of the logit differences MaxEnt predicts
-  equal.
+* The observed and fitted rates and the deviances of Table 2 are `Data/Experiments/Flemming2021`;
+  `pObs` reads the observed rates in hundredths, and the interaction is stated on odds ratios, the
+  exponential of the logit differences MaxEnt predicts equal.
 
 ## References
 
@@ -57,7 +58,7 @@ equal-harmony candidates by their noise covariance (§9).
 
 namespace Flemming2021
 
-open Core Real Constraints HarmonicGrammar Data.Examples ProbabilityTheory
+open Core Real Constraints HarmonicGrammar ProbabilityTheory
 
 /-! ### Stochastic Harmonic Grammars as random utility models (§§4–5) -/
 
@@ -122,24 +123,6 @@ theorem nhgProbitChange_strictAnti (Δh : ℝ) {σ σ' : ℝ} (hσ : 0 < σ) (h�
   linarith
 
 /-! ### French schwa (§6): the contexts of (19) and the constraints of (20)–(23) -/
-
-/-- Whether the schwa site is clitic-final, with an underlying schwa, or word-final, with none. -/
-inductive Underlying where
-  | schwa
-  | zero
-  deriving DecidableEq, Repr, Fintype
-
-/-- Whether one or two consonants precede the schwa site. -/
-inductive Onset where
-  | c
-  | cc
-  deriving DecidableEq, Repr, Fintype
-
-/-- Whether the following word is a stressed monosyllable (`–ś`) or a disyllable (`–sś`). -/
-inductive Following where
-  | monosyllable
-  | disyllable
-  deriving DecidableEq, Repr, Fintype
 
 /-- A context of (19). -/
 structure Context where
@@ -316,34 +299,9 @@ theorem probit_gain_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) (
 
 /-! ### The observed rates (Table 2) and the revised constraint set (§8.3) -/
 
-/-- A context with the observed probability of pronouncing the schwa, in hundredths. -/
-structure Row where
-  ctx : Context
-  pSchwa : ℕ
-  deriving DecidableEq, Repr
-
-def underlyingTable : List (String × Underlying) := [("schwa", .schwa), ("zero", .zero)]
-
-def onsetTable : List (String × Onset) := [("C", .c), ("CC", .cc)]
-
-def followingTable : List (String × Following) :=
-  [("monosyllable", .monosyllable), ("disyllable", .disyllable)]
-
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
-  let u ← ex.parse? "underlying" underlyingTable
-  let o ← ex.parse? "onset" onsetTable
-  let f ← ex.parse? "following" followingTable
-  let p ← ex.nat? "pSchwa"
-  pure ⟨⟨u, o, f⟩, p⟩
-
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
-
-def rows : List Row := Examples.all.filterMap Row.ofExample
-
 /-- The observed rate of a context, in hundredths. -/
-def pObs (x : Context) : ℕ := ((rows.find? (·.ctx = x)).map Row.pSchwa).getD 0
-
-theorem rows_cover : ∀ u o f, (rows.find? (·.ctx = ⟨u, o, f⟩)).isSome := by decide
+def pObs (x : Context) : ℕ :=
+  (schwaRates x.underlying x.onset x.following).observed.hundredths.toNat
 
 /-- The schwa is pronounced more often before a monosyllable in every pair, as every model with a
 positive \*Clash weight predicts. -/
@@ -365,13 +323,16 @@ Smith & Pater's constraints predicts equal odds ratios (`logit_onset`); this is 
 interaction that motivates \*CCC/iP. -/
 theorem onset_effect_larger_for_words : ∀ f,
     odds ⟨.schwa, .cc, f⟩ / odds ⟨.schwa, .c, f⟩ < odds ⟨.zero, .cc, f⟩ / odds ⟨.zero, .c, f⟩ := by
-  have h : ∀ u o f, pObs ⟨u, o, f⟩ = match u, o, f with
-      | .zero, .c, .disyllable => 9 | .zero, .c, .monosyllable => 12
-      | .zero, .cc, .disyllable => 68 | .zero, .cc, .monosyllable => 83
-      | .schwa, .c, .disyllable => 56 | .schwa, .c, .monosyllable => 65
-      | .schwa, .cc, .disyllable => 91 | .schwa, .cc, .monosyllable => 94 := by decide
   intro f
-  cases f <;> simp only [odds, h] <;> norm_num
+  cases f <;> simp only [odds, pObs] <;> decide +kernel
+
+/-- The fits of Table 2: censored NHG fits best and MaxEnt next, normal MaxEnt worse, and NHG
+worst. -/
+theorem deviance_order :
+    (deviances .censoredNhg).deviance.toRat < (deviances .maxEnt).deviance.toRat ∧
+      (deviances .maxEnt).deviance.toRat < (deviances .normalMaxEnt).deviance.toRat ∧
+      (deviances .normalMaxEnt).deviance.toRat < (deviances .nhg).deviance.toRat := by
+  decide +kernel
 
 /-- \*CCC/iP (§8.3): a three-consonant cluster within one intermediate phrase, which the
 schwaless candidate forms after two consonants only in the word-final items. -/

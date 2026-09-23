@@ -26,8 +26,8 @@ def ctx1 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "disyllable"), ("pSchwa", "9")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "disyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -44,8 +44,8 @@ def ctx2 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "monosyllable"), ("pSchwa", "12")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "monosyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -62,8 +62,8 @@ def ctx3 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "disyllable"), ("pSchwa", "68")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "disyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -80,8 +80,8 @@ def ctx4 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "monosyllable"), ("pSchwa", "83")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "monosyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -98,8 +98,8 @@ def ctx5 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "disyllable"), ("pSchwa", "56")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "disyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -116,8 +116,8 @@ def ctx6 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "monosyllable"), ("pSchwa", "65")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "monosyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -134,8 +134,8 @@ def ctx7 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "disyllable"), ("pSchwa", "91")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "disyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -152,8 +152,8 @@ def ctx8 : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "monosyllable"), ("pSchwa", "94")]
-    comment := "Observed probability of pronouncing the parenthesized schwa, in hundredths."
+    paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "monosyllable")]
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
