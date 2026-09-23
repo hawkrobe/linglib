@@ -26,8 +26,8 @@ shared across focus, biased polar questions, and verum strategies.
   "contextually entails an answer".
 - `Highlighted` — the conjunction `salient ∧ addresses-QUD`. This is
   exactly the [martinez-vera-2026] (38) presupposition.
-- [roelofsen-farkas-2015] polarity particles `agree`/`reverse`
-  with a `commitment` projection.
+The commitment of a polarity-particle response to a highlighted proposition `p`
+([roelofsen-farkas-2015]) is its relative polarity, a `Polarity`, acting on `p`: `s • p`.
 
 Consumers (verum studies, biased polar question studies, evidential
 discourse studies) import this file rather than re-stipulating the
@@ -42,13 +42,21 @@ migrated:
 * `Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
   [roelofsen-farkas-2015] terminology but is a different abstraction
   (property of a `Question`, not a discourse context).
-* `Semantics/Questions/Bias.lean` — `OriginalBias` /
-  `ContextualEvidence` cover adjacent ground (prior-discourse bias) with
-  a different shape; bridge not yet written.
+* `Semantics/Questions/Bias.lean` — the contextual evidence and prior
+  belief a question is sensitive to cover adjacent ground (prior-discourse
+  bias) with a different shape; bridge not yet written.
 
 Migration to consume `Highlighting.HighlightingContext` is queued for
 follow-up work; landing the substrate first lets the new MartinezVera2026
 study consume it without forcing an immediate four-file refactor.
+
+## References
+
+* [krifka-2017]
+* [martinez-vera-2026]
+* [roelofsen-farkas-2015]
+* [roelofsen-vangool-2010]
+* [simons-tonhauser-beaver-roberts-2010]
 -/
 
 @[expose] public section
@@ -115,42 +123,5 @@ def addSalient (c : HighlightingContext W) (p : Set W) : HighlightingContext W :
 
 @[simp] theorem qud_singleton (p : Set W) :
     (singleton p : HighlightingContext W).qud = Question.ofSet p := rfl
-
-/-! ### [roelofsen-farkas-2015]: polarity particles -/
-
-/-- [roelofsen-farkas-2015]'s polarity-particle response slot.
-
-    `agree` (English `yes`, German `ja`, Romance `sí/oui`) confirms the
-    highlighted proposition; `reverse` (English `no`, German `nein`,
-    Romance `no/non`) commits to its (set-theoretic) complement.
-
-    The two-cell taxonomy is the cross-linguistic minimum; English/German
-    elaborate it with intonation, Polish/Czech and Mandarin add further
-    morphology — extensions live in study files, not here. -/
-inductive ResponseParticle where
-  | agree
-  | reverse
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The proposition committed to by a polarity-particle response, given a
-    highlighted proposition `p`. `agree` projects to `p`; `reverse`
-    projects to `pᶜ` (set-theoretic complement). -/
-def ResponseParticle.commitment (r : ResponseParticle) (p : Set W) : Set W :=
-  match r with
-  | .agree   => p
-  | .reverse => pᶜ
-
-@[simp] theorem ResponseParticle.commitment_agree (p : Set W) :
-    ResponseParticle.commitment .agree p = p := rfl
-
-@[simp] theorem ResponseParticle.commitment_reverse (p : Set W) :
-    ResponseParticle.commitment .reverse p = pᶜ := rfl
-
-/-- The two response particles disagree on every world: `agree` commits to
-    `p`, `reverse` commits to `pᶜ`, and these partition `Set.univ`. -/
-theorem ResponseParticle.commitment_inter_eq_empty (p : Set W) :
-    ResponseParticle.commitment .agree p ∩
-      ResponseParticle.commitment .reverse p = ∅ := by
-  simp
 
 end Semantics.Highlighting

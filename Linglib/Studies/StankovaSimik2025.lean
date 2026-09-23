@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.Slavic.Czech.Particles
 public import Linglib.Fragments.Slavic.Czech.PolarityItems
-public import Linglib.Semantics.Questions.Bias
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Studies.Simik2024
 
@@ -48,7 +47,7 @@ main effect of context for *copak* questions; these results are stated in prose 
 * [repp-2013]
 * [zeijlstra-2004]
 * [sudo-2013]
-* [gartner-gyuris-2017]
+* [buring-gunlogson-2000]
 * [nekula-1996]
 * [simik-2024]
 -/
@@ -126,71 +125,72 @@ theorem licensedAt_ppi_iff_not_nci (n : Negation) :
 /-- The contextual evidence a reading of negation requires: the canonical operator
 negative evidence, as in the evidentially biased contexts of [gunlogson-2002] and
 [sudo-2013]; FALSUM, conveying epistemic rather than evidential bias, nothing. -/
-def readingEvidenceOK : Negation → ContextualEvidence → Prop
-  | .inner, ctx => ctx = .againstP
+def readingEvidenceOK : Negation → Option Polarity → Prop
+  | .inner, ctx => ctx = some .negative
   | .outer, _ => True
 
-instance (n : Negation) (ctx : ContextualEvidence) : Decidable (readingEvidenceOK n ctx) := by
+instance (n : Negation) (ctx : Option Polarity) : Decidable (readingEvidenceOK n ctx) := by
   cases n <;> unfold readingEvidenceOK <;> infer_instance
 
 /-- Declarative word order requires contextual evidence ([gunlogson-2002]); interrogative
 word order requires none. -/
-def wordOrderEvidenceOK : VerbPosition → ContextualEvidence → Prop
+def wordOrderEvidenceOK : VerbPosition → Option Polarity → Prop
   | .v1, _ => True
-  | .nonV1, ctx => ctx ≠ .neutral
+  | .nonV1, ctx => ctx ≠ none
 
-instance (wp : VerbPosition) (ctx : ContextualEvidence) :
+instance (wp : VerbPosition) (ctx : Option Polarity) :
     Decidable (wordOrderEvidenceOK wp ctx) := by
   cases wp <;> unfold wordOrderEvidenceOK <;> infer_instance
 
 /-- A negative polar question with an indefinite is felicitous in a context when some reading
 available at its verb position licenses the indefinite and admits the context's evidence, and
 the word order admits the evidence. -/
-def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) : Prop :=
+def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : Option Polarity) : Prop :=
   (∃ n ∈ wp.availableReadings, LicensedAt ind.entry n ∧ readingEvidenceOK n ctx) ∧
     wordOrderEvidenceOK wp ctx
 
-instance (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) :
+instance (wp : VerbPosition) (ind : Indefinite) (ctx : Option Polarity) :
     Decidable (Felicitous wp ind ctx) := by
   unfold Felicitous; infer_instance
 
 /-- In interrogative questions the positive polarity item is felicitous in every context:
 FALSUM licenses it and is indifferent to evidence. -/
-theorem v1_ppi_any_context (ctx : ContextualEvidence) : Felicitous .v1 .ppi ctx := by
-  cases ctx <;> decide
+theorem v1_ppi_any_context (ctx : Option Polarity) : Felicitous .v1 .ppi ctx := by
+  decide +revert
 
 /-- In interrogative questions the negative concord item is never felicitous: the
 clause-initial verb is out of reach of the canonical operator. -/
-theorem v1_nci_never (ctx : ContextualEvidence) : ¬ Felicitous .v1 .nci ctx := by
-  cases ctx <;> decide
+theorem v1_nci_never (ctx : Option Polarity) : ¬ Felicitous .v1 .nci ctx := by
+  decide +revert
 
 /-- Interrogative questions are indifferent to the context. -/
-theorem v1_context_invariant (ind : Indefinite) (ctx ctx' : ContextualEvidence) :
+theorem v1_context_invariant (ind : Indefinite) (ctx ctx' : Option Polarity) :
     Felicitous .v1 ind ctx ↔ Felicitous .v1 ind ctx' := by
-  cases ind <;> cases ctx <;> cases ctx' <;> decide
+  decide +revert
 
 /-- A declarative question with the concord item is felicitous exactly under negative
 evidence: inner negation requires it. -/
-theorem nonV1_nci_iff (ctx : ContextualEvidence) :
-    Felicitous .nonV1 .nci ctx ↔ ctx = .againstP := by
-  cases ctx <;> decide
+theorem nonV1_nci_iff (ctx : Option Polarity) :
+    Felicitous .nonV1 .nci ctx ↔ ctx = some .negative := by
+  decide +revert
 
 /-- A declarative question with the polarity item is felicitous exactly under some evidence:
 FALSUM licenses the verb in situ, and the word order needs evidence. -/
-theorem nonV1_ppi_iff (ctx : ContextualEvidence) :
-    Felicitous .nonV1 .ppi ctx ↔ ctx ≠ .neutral := by
-  cases ctx <;> decide
+theorem nonV1_ppi_iff (ctx : Option Polarity) :
+    Felicitous .nonV1 .ppi ctx ↔ ctx ≠ none := by
+  decide +revert
 
 /-- Declarative questions are infelicitous without contextual evidence. -/
-theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind .neutral := by
+theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind none := by
   cases ind <;> decide
 
 /-- Czech FALSUM is broader than English high negation: an interrogative question with the
-polarity item is felicitous under positive evidence (the paper's (14)), which the English
-form excludes ([gartner-gyuris-2017]). -/
+polarity item is felicitous under positive evidence (the paper's (14)), which the evidence
+condition of [buring-gunlogson-2000] on English outer negation excludes. -/
 theorem falsum_broader_than_english_hiNQ :
-    evidenceBiasOK .HiNQ .forP = false ∧ Felicitous .v1 .ppi .forP :=
-  ⟨rfl, v1_ppi_any_context .forP⟩
+    ¬ BuringGunlogson2000.Felicitous .HiNQ (some .positive) ∧
+      Felicitous .v1 .ppi (some .positive) :=
+  ⟨by decide, v1_ppi_any_context _⟩
 
 /-! ### The particles -/
 
@@ -210,26 +210,26 @@ theorem nahodou_ppi (wp : VerbPosition) :
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's
 polarity. -/
-def CopakLicensed (pol : Polarity) (ctx : ContextualEvidence) : Prop := ctx = evidence pol
+def CopakLicensed (pol : Polarity) (ctx : Option Polarity) : Prop := ctx = evidence pol
 
-instance (pol : Polarity) (ctx : ContextualEvidence) : Decidable (CopakLicensed pol ctx) := by
+instance (pol : Polarity) (ctx : Option Polarity) : Decidable (CopakLicensed pol ctx) := by
   unfold CopakLicensed; infer_instance
 
 /-- *Copak* is infelicitous without contextual evidence. -/
-theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol .neutral := by
+theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol none := by
   cases pol <;> decide
 
 /-- *Copak* marks a conflict: the prior belief it conveys opposes the evidence it requires. -/
 theorem copak_prior_ne_evidence (pol : Polarity) :
-    (prior pol = .forP ↔ evidence pol = .againstP) ∧
-      (prior pol = .againstP ↔ evidence pol = .forP) := by
+    (prior pol = some .positive ↔ evidence pol = some .negative) ∧
+      (prior pol = some .negative ↔ evidence pol = some .positive) := by
   cases pol <;> decide
 
 /-- The two particles part on context: *náhodou* is licensed by FALSUM whatever the
 evidence, *copak* only under evidence. -/
-theorem nahodou_copak_opposite (ctx : ContextualEvidence) :
-    NahodouLicensed .negative .outer ∧ (CopakLicensed .negative ctx → ctx ≠ .neutral) := by
-  cases ctx <;> decide
+theorem nahodou_copak_opposite (ctx : Option Polarity) :
+    NahodouLicensed .negative .outer ∧ (CopakLicensed .negative ctx → ctx ≠ none) := by
+  decide +revert
 
 /-- Semantic classification of the Czech polar-question particles: the paper's two, and the
 three of [stankova-2026]. -/

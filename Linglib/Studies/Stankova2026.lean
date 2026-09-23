@@ -274,31 +274,6 @@ theorem czech_refines_loNQ :
 theorem only_outer_requires_focus (p : Position) : p.RequiresFocus → p = .outer := by
   cases p <;> simp [Position.RequiresFocus]
 
-/-- Czech outer negation is a HiNQ with mandatory original bias for p,
-matching [romero-2024]'s Table 1. -/
-theorem czech_outer_matches_romero_hiNQ_bias :
-    Position.outer.toPQForm = .HiNQ ∧
-    originalBiasOK .HiNQ .forP = true ∧
-    originalBiasOK .HiNQ .neutral = false := ⟨rfl, rfl, rfl⟩
-
-/-- Czech low negation is a LoNQ compatible with neutral original bias,
-matching [romero-2024]'s Table 1. -/
-theorem czech_low_neg_matches_romero_loNQ_bias :
-    Position.inner.toPQForm = .LoNQ ∧
-    originalBiasOK .LoNQ .neutral = true := ⟨rfl, rfl⟩
-
-/-- Czech inner negation requires contextual evidence against p,
-matching [romero-2024]'s Table 2 for LoNQs. -/
-theorem czech_inner_matches_romero_evidence_bias :
-    Position.inner.toPQForm = .LoNQ ∧
-    evidenceBiasOK .LoNQ .againstP = true := ⟨rfl, rfl⟩
-
-/-- Czech outer negation (HiNQ) is compatible with evidence against p
-(contradiction scenarios). -/
-theorem czech_outer_matches_romero_evidence :
-    Position.outer.toPQForm = .HiNQ ∧
-    evidenceBiasOK .HiNQ .againstP = true := ⟨rfl, rfl⟩
-
 /-! ### Verb position and context sensitivity
 
 The verb-position API (`availableReadings`, `defaultReading`) is
@@ -339,8 +314,8 @@ theorem examples_match_table1 :
 /-- [stankova-2025]'s positive-evidence stimulus ((14): V1 negative PQ
 after evidence for p) with the bias-profile cell it occupies. -/
 def biasCheckedExamples :
-    List (LinguisticExample × ContextualEvidence × OriginalBias × CzechPQForm) :=
-  [ (StankovaSimik2025.Examples.ex14, .forP, .neutral, .interNPQ) ]
+    List (LinguisticExample × Option Polarity × Option Polarity × CzechPQForm) :=
+  [ (StankovaSimik2025.Examples.ex14, some .positive, none, .interNPQ) ]
 
 /-- The bias profile predicts the positive-evidence stimulus — the form
 is felicitous iff it appears in its evidence × original-bias cell. -/

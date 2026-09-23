@@ -30,8 +30,8 @@ question with preposed negation and of every VERUM form is the one the model imp
 ## Implementation notes
 
 Speaker belief is the epistemic proposition of the states settling a proposition,
-`Set.Iic`. Question forms and biases are the substrate's `Question.PQForm` and
-`Question.OriginalBias`, preposed negation being the high-negation form. The Principle of
+`Set.Iic`. Question forms are the substrate's `Question.PQForm`, preposed negation being the
+high-negation form, and a bias is the polarity of the proposition the speaker's belief supports. The Principle of
 Economy that makes VERUM questions biased is stated in the paper in prose and is not
 formalized.
 
@@ -48,7 +48,7 @@ formalized.
 namespace RomeroHan2004
 
 open ModalLogic (box)
-open Question (polar polar_compl PQForm OriginalBias)
+open Question (polar polar_compl PQForm)
 open Set (Iic)
 open Data.Examples
 
@@ -125,14 +125,13 @@ def speakerBelief (f : Form) : Set (Set W) :=
 
 /-- The bias each form implicates: belief in the proposition for the preposed-negation
 readings (81), (82) and focused *NOT* (117), belief in its negation for *really* (110). -/
-def Form.implicature : Form → OriginalBias
-  | .pi | .ni | .notFocus => .forP
-  | .really => .againstP
+def Form.implicature : Form → Polarity
+  | .pi | .ni | .notFocus => .positive
+  | .really => .negative
 
-/-- The implicated belief settles the proposition or its negation according to the form's
-implicature; the partition shared by the positive reading and *really* cannot fix it. -/
-theorem speakerBelief_eq (f : Form) :
-    speakerBelief p f = if f.implicature = .forP then Iic p else Iic pᶜ := by
+/-- The implicated belief settles the proposition under the polarity of the form's implicature;
+the partition shared by the positive reading and *really* cannot fix it. -/
+theorem speakerBelief_eq (f : Form) : speakerBelief p f = Iic (f.implicature • p) := by
   cases f <;> simp [speakerBelief, Form.Doubt, Form.implicature, prejacent]
 
 /-! ### Polarity items
@@ -164,7 +163,7 @@ instance (e : Polarity.Item) (f : Form) : Decidable (Licensed e f) := by
 form and its polarity item, each when the paper gives one, and its judgment. -/
 structure Datum where
   pqForm : Option PQForm
-  bias : Option OriginalBias
+  bias : Option (Option Polarity)
   form : Option Form
   item : Option Polarity.Item
   judgment : Data.Examples.Judgment
@@ -173,8 +172,8 @@ structure Datum where
 def datum (e : LinguisticExample) : Datum where
   pqForm := e.parse? "negation"
     [("preposed", PQForm.HiNQ), ("nonPreposed", .LoNQ), ("none", .PosQ)]
-  bias := e.parse? "bias" [("positive", OriginalBias.forP), ("negative", .againstP),
-    ("none", .neutral)]
+  bias := e.parse? "bias" [("positive", some .positive), ("negative", some .negative),
+    ("none", none)]
   form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),
     ("notFocus", .notFocus)]
   item := e.parse? "item"
@@ -194,12 +193,12 @@ theorem licensed_iff_acceptable :
 (14) to (18), and non-preposed negation none. -/
 theorem bias_of_pqForm :
     ∀ d ∈ data, ∀ pq ∈ d.pqForm.toList, ∀ b ∈ d.bias.toList,
-      (pq = .HiNQ → b = .forP) ∧ (pq = .LoNQ → b = .neutral) := by
+      (pq = .HiNQ → b = some .positive) ∧ (pq = .LoNQ → b = none) := by
   decide
 
 /-- The bias reported for a VERUM form is the belief the model implicates. -/
 theorem bias_of_form :
-    ∀ d ∈ data, ∀ f ∈ d.form.toList, ∀ b ∈ d.bias.toList, b = f.implicature := by
+    ∀ d ∈ data, ∀ f ∈ d.form.toList, ∀ b ∈ d.bias.toList, b = some f.implicature := by
   decide
 
 end RomeroHan2004
