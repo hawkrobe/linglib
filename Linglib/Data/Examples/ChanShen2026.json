@@ -58,7 +58,8 @@
     "paperFeatures": [
       ["condition", "WhHell-Long"],
       ["modifier", "theHell"],
-      ["strategy", "full"]
+      ["strategy", "full"],
+      ["interveners", "0"]
     ],
     "comment": "Attested in Singlish before the experiment; also (3a) and (6b)."
   },
@@ -89,7 +90,8 @@
     "paperFeatures": [
       ["condition", "WhHell-Situ"],
       ["modifier", "theHell"],
-      ["strategy", "inSitu"]
+      ["strategy", "inSitu"],
+      ["interveners", "0"]
     ],
     "comment": "The in-situ comparison shows a superadditive interaction of WhType and Strategy; also (3c)."
   },
@@ -120,7 +122,8 @@
     "paperFeatures": [
       ["condition", "WhHell-Partial"],
       ["modifier", "theHell"],
-      ["strategy", "partial"]
+      ["strategy", "partial"],
+      ["interveners", "0"]
     ],
     "comment": "The costs of the-hell and of partial movement are additive: no interaction of WhType and Strategy; also (3b)."
   },
@@ -229,7 +232,8 @@
     "judgment": "acceptable",
     "paperFeatures": [
       ["modifier", "daodi"],
-      ["strategy", "inSitu"]
+      ["strategy", "inSitu"],
+      ["interveners", "0"]
     ],
     "comment": "Daodi and the in-situ wh-phrase it modifies are discontinuous.",
     "lgrConformance": "WORD_ALIGNED"
@@ -261,7 +265,8 @@
     "paperFeatures": [
       ["modifier", "theHell"],
       ["strategy", "inSitu"],
-      ["role", "subject"]
+      ["role", "subject"],
+      ["interveners", "0"]
     ],
     "comment": "No wh-phrase could intervene between the question operator and a subject; judgments from seven speakers."
   },
