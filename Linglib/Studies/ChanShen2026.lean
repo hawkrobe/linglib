@@ -113,9 +113,10 @@ def mechanismOf (e : LinguisticExample) : Option WhInterpMechanism :=
   | some "inSitu" => some .unselectiveBinding
   | _ => none
 
-/-- A row's host. -/
-def hostOf (e : LinguisticExample) : Option Host :=
-  (mechanismOf e).map λ m => ⟨m, (e.nat? "interveners").getD 0⟩
+/-- A row's host: its strategy and the number of wh-phrases between the question operator and
+the modifier, both of which the row records. -/
+def hostOf (e : LinguisticExample) : Option Host := do
+  pure ⟨← mechanismOf e, ← e.nat? "interveners"⟩
 
 /-- A row's modifier. -/
 def modifierOf (e : LinguisticExample) : Option WhModifier :=
@@ -123,6 +124,11 @@ def modifierOf (e : LinguisticExample) : Option WhModifier :=
   | some "theHell" => some theHell
   | some "daodi" => some Mandarin.Questions.daodi
   | _ => none
+
+/-- Every row with a modifier records its host, so the statements over `hostOf` below range over
+all of them. -/
+theorem hostOf_isSome : ∀ e ∈ Examples.all, (modifierOf e).isSome → (hostOf e).isSome := by
+  decide
 
 /-- Extraction from a complex NP fails exactly under an island-sensitive mechanism: the covert
 step of partial movement crosses the island, unselective binding does not ((11), (15), Malay
