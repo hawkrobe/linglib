@@ -568,9 +568,9 @@ namespace KarttunenCells
 
 open Karttunen1971a (Schema)
 
-/-- Derive the Karttunen `Schema` cell from an `Implicative` polarity
+/-- Derive the Karttunen `Schema` cell from an implicative verb's polarity
     (two-way cell: complement entailment under both polarities). -/
-def karttunenOfImplicative (b : Implicative) : Schema := ⟨.necessaryAndSufficient, b⟩
+def karttunenOfImplicative (b : Polarity) : Schema := ⟨.necessaryAndSufficient, b⟩
 
 /-- Map modern `Causative` to the Karttunen cell that matches the
     builder's **entailment pattern** (Karttunen's original criterion).

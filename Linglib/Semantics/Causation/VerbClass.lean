@@ -3,9 +3,10 @@ module
 /-!
 # Causative and implicative verb features
 
-This file defines two classifications carried by verb lexical entries:
-`Causative`, the force-dynamic mechanism a causative verb lexicalizes, and
-`Implicative`, the polarity of an implicative verb's complement entailment.
+This file defines `Causative`, the force-dynamic mechanism a causative verb lexicalizes. The
+other classification a verb entry carries, the polarity of an implicative verb's complement
+entailment, is a `Polarity`: positive implicatives (*manage*, *remember*) entail their
+complement, negative ones (*fail*, *forget*) its negation.
 
 ## References
 
@@ -50,13 +51,3 @@ instance : DecidablePred AssertsSufficiency := fun b => by
 
 end Causative
 
-/-! ### Implicative polarity -/
-
-/-- Polarity for implicative verbs: positive implicatives entail their
-complement, negative implicatives entail its negation. -/
-inductive Implicative where
-  /-- The verb entails its complement (*manage*, *remember*). -/
-  | positive
-  /-- The verb entails the negation of its complement (*fail*, *forget*). -/
-  | negative
-  deriving DecidableEq, Repr

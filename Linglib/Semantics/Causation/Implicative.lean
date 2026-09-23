@@ -5,6 +5,7 @@ public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Semantics.ArgumentStructure.MeaningComponents
 public import Linglib.Semantics.Causation.SEM.Entailment
+public import Linglib.Semantics.Polarity.Basic
 
 /-!
 # Implicative Verbs ([nadathur-2023-implicatives])
@@ -267,7 +268,7 @@ inductive Directionality where
 /-- The full lexical signature of an implicative verb ([nadathur-2023-implicatives]). -/
 structure ImplicativeClass where
   /-- Positive (manage, force) or negative (fail, prevent) polarity -/
-  polarity : Implicative
+  polarity : Polarity
   /-- One-way (ability) or two-way (manage) entailment -/
   directionality : Directionality
   /-- Does aspect govern the actuality inference? -/
@@ -360,12 +361,12 @@ namespace Implicative
 
 open Causation (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 dispatch: map an `Implicative` polarity to its V2 polymorphic
+/-- V2 dispatch: map an implicative verb's polarity to its V2 polymorphic
     semantic function. -/
 def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] :
-    Implicative → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop
+    Polarity → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop
   | .positive => Implicative.manageSem M
   | .negative => Implicative.failSem M
 
