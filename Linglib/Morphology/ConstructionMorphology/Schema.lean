@@ -49,6 +49,8 @@ variables (`Schema.instantiates_iff_instantiation_of_forall_isMax`).
 * `Schema.InstantiatesAt`, `Schema.instantiatesAt_iff`: instantiation at positions through a
   subscripting, as instantiation of the pulled-back description together with agreement at
   coindexed positions.
+* `Schema.generalityOrder`: a family of schemas with distinct descriptions ordered by
+  generality, the hierarchy along which its members inherit by default.
 * `Schema.productive`, `Schema.Relates`, `Schema.Generates`, `Schema.IsProductive`: the schema
   with every variable open, the two roles of a schema, and productivity;
   `Schema.generates_iff_mem_pi`: what a schema generates is the product of its slotwise
@@ -139,6 +141,16 @@ theorem instantiates_iff_of_unify_eq_some [Fintype V] [PartialUnify α] {u : Sch
   rfl
 
 end PartialOrder
+
+/-! ### The generality order of a family -/
+
+/-- The generality order of a family of schemas with distinct descriptions: `i ≤ j` when the
+description of `j` lies below that of `i`, so that `j` is at least as general. The schemas of a
+hierarchical lexicon inherit defeasible properties by default inheritance along this order. -/
+abbrev generalityOrder {ι : Type*} [PartialOrder α] (family : ι → Schema V α)
+    (hinj : Function.Injective fun i ↦ (family i).body) : PartialOrder ι :=
+  PartialOrder.lift (fun i ↦ OrderDual.toDual (family i).body)
+    (OrderDual.toDual.injective.comp hinj)
 
 /-! ### Positions and coindexation -/
 

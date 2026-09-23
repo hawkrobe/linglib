@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Data.Fintype.Defs
 public import Mathlib.Order.Basic
+public import Mathlib.Order.Bounds.Defs
 
 /-!
 # Decidable order predicates on finite types
@@ -14,7 +15,8 @@ public import Mathlib.Order.Basic
 The pointwise order on `∀ i, α i` is decidable when the index type is finite and each
 coordinate order is (mathlib's `DecidableLE (∀ a, β a)` instance in `Data/Fintype/Defs`); the
 strict order follows as for any preorder with a decidable `≤`, as `Finsupp.decidableLT` does.
-Minimality and maximality of an element are decidable on a finite type with a decidable `≤`.
+Minimality and maximality of an element, minimality in a decidable predicate, and being the
+least element of a decidable set are decidable on a finite type with a decidable `≤`.
 
 `[UPSTREAM]` candidate for `Mathlib/Data/Fintype/Defs.lean`, beside the `DecidableLE` instance.
 -/
@@ -30,6 +32,12 @@ instance decidableIsMin (a : α) : Decidable (IsMin a) :=
 
 instance decidableIsMax (a : α) : Decidable (IsMax a) :=
   decidable_of_iff (∀ b, a ≤ b → b ≤ a) ⟨fun h _ hb ↦ h _ hb, fun h _ hb ↦ h hb⟩
+
+instance decidableMinimal {P : α → Prop} [DecidablePred P] (a : α) : Decidable (Minimal P a) :=
+  decidable_of_iff (P a ∧ ∀ b, P b → b ≤ a → a ≤ b) Iff.rfl
+
+instance decidableIsLeast {s : Set α} [DecidablePred (· ∈ s)] (a : α) : Decidable (IsLeast s a) :=
+  decidable_of_iff (a ∈ s ∧ ∀ b ∈ s, a ≤ b) Iff.rfl
 
 end Fintype
 

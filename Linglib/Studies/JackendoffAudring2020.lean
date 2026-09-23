@@ -1,7 +1,8 @@
 import Linglib.Data.Examples.JackendoffAudring2020
 import Linglib.Data.Forms.JackendoffAudring2020
 import Linglib.Morphology.ConstructionMorphology.Schema
-import Linglib.Morphology.ConstructionMorphology.Inheritance
+import Linglib.Logic.Nonmonotonic.Inheritance
+import Linglib.Core.Relation.ReflTransGen
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
 import Linglib.Core.Order.Flat
@@ -148,11 +149,17 @@ inductive Animal
   deriving DecidableEq, Fintype
 
 /-- The taxonomy: birds and fish are animals, canaries and ostriches are birds. -/
-def animalHierarchy : Hierarchy Animal :=
-  .ofDepth
-    (λ | .animal => none | .bird => some .animal | .fish => some .animal
-       | .canary => some .bird | .ostrich => some .bird)
-    (λ | .animal => 0 | .bird => 1 | .fish => 1 | .canary => 2 | .ostrich => 2) (by decide)
+def Animal.parents : Animal → List Animal
+  | .animal => []
+  | .bird | .fish => [.animal]
+  | .canary | .ostrich => [.bird]
+
+instance : PartialOrder Animal :=
+  partialOrderOfCovers (fun a b : Animal ↦ b ∈ a.parents)
+    (fun | .animal => 0 | .bird | .fish => 1 | .canary | .ostrich => 2) (by decide)
+
+instance : DecidableLE Animal :=
+  decidableLEOfCovers (covers := fun a b : Animal ↦ b ∈ a.parents) [.animal, .bird] (by decide)
 
 /-- Flight as a local specification: birds fly, the ostrich overrides. -/
 def flies : Animal → Option Bool
@@ -162,10 +169,10 @@ def flies : Animal → Option Bool
 
 /-- The ostrich's override and the canary's inheritance compute as intended. -/
 theorem ostrich_overrides :
-    animalHierarchy.value flies .ostrich = some false ∧
-      animalHierarchy.value flies .canary = some true :=
-  ⟨animalHierarchy.value_eq_of_att rfl,
-    by rw [animalHierarchy.value_eq_parent rfl]; exact animalHierarchy.value_eq_of_att rfl⟩
+    DefaultInheritance.inherited flies .ostrich = {false} ∧
+      DefaultInheritance.inherited flies .canary = {true} :=
+  ⟨DefaultInheritance.inherited_eq_singleton_of_eq_some rfl,
+    DefaultInheritance.inherited_eq_singleton_of_isLeast (m := .bird) (by decide) rfl⟩
 
 /-! ### Sister words -/
 
@@ -247,9 +254,9 @@ inductive Pair
 
 /-- Objection 10: the phonology demands that *assassinate* inherit from *assassin* and the
 semantics that *assassin* inherit from *assassinate*; no acyclic hierarchy holds both. -/
-theorem assassin_cycle (h : Hierarchy Pair) (hphon : h.parent .assassinate = some .assassin)
-    (hsem : h.parent .assassin = some .assassinate) : False :=
-  h.parent_asymm hphon hsem
+theorem assassin_cycle [PartialOrder Pair] (hphon : Pair.assassinate < .assassin)
+    (hsem : Pair.assassin < .assassinate) : False :=
+  hphon.asymm hsem
 
 /-! ### Sister schemas -/
 

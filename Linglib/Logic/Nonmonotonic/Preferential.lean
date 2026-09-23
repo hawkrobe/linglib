@@ -11,8 +11,10 @@ proves that the consequence relation of a well-founded preorder on worlds is pre
 that it is rational when the preorder is also total.
 
 A nonmonotonic consequence relation `φ |~ ψ` reads "if `φ`, normally `ψ`". Kraus, Lehmann and
-Magidor call such a relation *preferential* when it satisfies reflexivity, right weakening, And,
-Or and cautious monotonicity. They show that the preferential relations are exactly those
+Magidor call such a relation *preferential* when it satisfies reflexivity, left logical
+equivalence, right weakening, cut, cautious monotonicity and Or. `IsPreferential` takes And in
+place of cut: And is derivable in their system, and cut from the fields of `IsPreferential`
+(`IsPreferential.cut`). They show that the preferential relations are exactly those
 defined by a preferential model, a set of states labelled by worlds and ordered by a strict
 partial order that satisfies a smoothness condition, where `φ |~ ψ` holds when the minimal
 `φ`-states satisfy `ψ`. Lehmann and Magidor call a preferential relation *rational* when it also
@@ -51,6 +53,7 @@ models whose states are the worlds themselves.
   Cumulative Logics* (1990)][kraus-magidor-1990]
 * [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
   (1992)][lehmann-magidor-1992]
+* [C. Strasser and G. A. Antonelli, *Non-monotonic Logic* (2024)][strasser-antonelli-2024]
 -/
 
 @[expose] public section

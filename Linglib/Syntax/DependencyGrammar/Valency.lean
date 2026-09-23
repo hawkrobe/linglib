@@ -10,14 +10,16 @@ import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 # Valency frames
 
 This file defines valency frames over dependency graphs: slot data,
-standard frame schemas for the basic valences, the map from a verb's
-lexical `ArgumentFrame` into them, and satisfaction of a frame by a
-position's dependents.
+standard frame schemas for the basic valences, the valency of a verb's
+lexical `ArgumentFrame`, read off the coding roles of its core
+arguments, and satisfaction of a frame by a position's dependents.
 
 ## Main definitions
 
 * `Valency` is a word's valency as a list of slots: relation, side of
   the head, optionality.
+* `Valency.ofFrame` is the valency of an argument frame, a slot for each
+  core argument by its coding role.
 * `Frames n` is the per-position valency table.
 * `Graph.SatisfiesFrames` is frame satisfaction: every filler on its
   slot's side of the head, required slots filled, and no unlicensed core
@@ -79,7 +81,7 @@ abbrev Frames (n : ℕ) := Fin n → Option Valency
 
 /-- A sparse frame table: positions not listed carry no frame. -/
 def Frames.ofList {n : ℕ} (l : List (Fin n × Valency)) : Frames n :=
-  λ i => (l.find? (·.1 == i)).map (·.2)
+  fun i ↦ (l.find? (·.1 == i)).map (·.2)
 
 /-! ### Standard schemas -/
 
@@ -96,14 +98,29 @@ def Valency.ditransitive : Valency :=
 /-- Passive transitive: subject left (was patient), optional by-phrase right. -/
 def Valency.passiveTransitive : Valency := [⟨.nsubj, .left, true⟩, ⟨.obl, .right, false⟩]
 
-/-- A verb's argument frame as a standard valency. Returns `none` for
-    frames without a standard schema: clause-embedding frames take
-    xcomp/ccomp, not obj, and the NP + PP frame has no fixture here. -/
-def Valency.ofFrame : ArgumentFrame → Option Valency
-  | ⟨_, []⟩ => some .intransitive
-  | ⟨_, [.nominal]⟩ => some .transitive
-  | ⟨_, [.nominal, .nominal]⟩ => some .ditransitive
-  | _ => none
+/-! ### Valency of an argument frame -/
+
+/-- The required slot of a core argument by its coding role: S and A are the subject, to the
+left of the head; P and T the object and R the indirect object, to its right. -/
+def Valency.Slot.ofRole : ArgumentRole → Valency.Slot
+  | .S | .A => ⟨.nsubj, .left, true⟩
+  | .P | .T => ⟨.obj, .right, true⟩
+  | .R => ⟨.iobj, .right, true⟩
+
+/-- The valency of an argument frame: a slot for each core argument, by its coding role.
+Clausal and adpositional complements have none, since UD's clausal relations and obliques are
+not core arguments and `Graph.SatisfiesFrames` leaves them unconstrained. -/
+def Valency.ofFrame (fr : ArgumentFrame) : Valency :=
+  fr.coreSlots.filterMap fun s ↦ (fr.codingRole s).map .ofRole
+
+theorem Valency.ofFrame_intransitive : ofFrame .intransitive = .intransitive := rfl
+
+/-- The sole argument of an unaccusative frame is its subject. -/
+theorem Valency.ofFrame_unaccusative : ofFrame .unaccusative = .intransitive := rfl
+
+theorem Valency.ofFrame_np : ofFrame .np = .transitive := rfl
+
+theorem Valency.ofFrame_np_np : ofFrame .np_np = .ditransitive := rfl
 
 /-! ### Argument-frame satisfaction -/
 

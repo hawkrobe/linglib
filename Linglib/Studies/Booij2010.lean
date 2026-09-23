@@ -8,7 +8,8 @@ import Linglib.Morphology.ConstructionMorphology.Schema
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.FinCases
-import Linglib.Morphology.ConstructionMorphology.Inheritance
+import Linglib.Logic.Nonmonotonic.Inheritance
+import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.Order.Flat
 
 /-!
@@ -29,7 +30,7 @@ unification (`on-` prefixation composed with `V-baar`).
   `-ness` schema ([booij-2010-compass]'s worked example)
 * `carlessness_generates`, `awareness_related` — the schema's two roles on one
   lexicon: coining the paper's novel noun, relating its stored one
-* `compoundHierarchy_parent`, `compound_right_headed`, `compound_inheritance` — the
+* `covBy_compound`, `compound_right_headed`, `compound_inheritance` — the
   compound hierarchy derived from its schemas: right-headedness is the shared
   coindexation, inherited without a Right-hand Head Rule, while the AN subschema
   overrides the recursive-modifier default
@@ -42,7 +43,7 @@ unification (`on-` prefixation composed with `V-baar`).
 
 namespace Booij2010
 
-open ConstructionMorphology
+open ConstructionMorphology DefaultInheritance
 
 /-! ### The deadjectival `-ness` schema
 
@@ -115,11 +116,11 @@ shares the head's category, right-headedness. -/
 def compoundSub : Fin 3 → CompoundVar := ![.x, .y, .y]
 
 /-- The general compound schema `(6)`: both categories open. -/
-def compoundSchema : Schema CompoundVar (Flat String) := ⟨λ _ => ⊥, {.x, .y}⟩
+def compoundSchema : Schema CompoundVar (Flat String) := ⟨fun _ ↦ ⊥, {.x, .y}⟩
 
 /-- A subschema of `(7)`: the modifier's category pinned to `x`, the head's to N. -/
 def compoundSubschema (x : String) : Schema CompoundVar (Flat String) :=
-  ⟨λ | .x => ↑x | .y => ↑"N", ∅⟩
+  ⟨fun | .x => ↑x | .y => ↑"N", ∅⟩
 
 /-- The compound schema and its four subcases. -/
 inductive CompoundNode | compound | nn | vn | an | pn
@@ -133,16 +134,20 @@ def compoundFamily : CompoundNode → Schema CompoundVar (Flat String)
   | .an => compoundSubschema "A"
   | .pn => compoundSubschema "P"
 
-/-- The hierarchical constructicon of English compounds, derived from the schemas. -/
-def compoundHierarchy : Hierarchy CompoundNode := .ofFamily compoundFamily (by decide)
+/-- The hierarchical constructicon of English compounds, ordered by the generality of the
+schemas. -/
+instance : PartialOrder CompoundNode := Schema.generalityOrder compoundFamily (by decide)
 
-/-- Each subschema's parent is the general schema. -/
-theorem compoundHierarchy_parent (n : CompoundNode) (hn : n ≠ .compound) :
-    compoundHierarchy.parent n = some .compound := by
-  unfold compoundHierarchy
-  rw [Hierarchy.ofFamily_parent_eq_some_iff]
-  revert n
-  decide
+instance : DecidableLE CompoundNode := fun a b ↦
+  inferInstanceAs (Decidable ((compoundFamily b).body ≤ (compoundFamily a).body))
+
+instance : DecidableLT CompoundNode := decidableLTOfDecidableLE
+
+/-- The general schema is each subschema's nearest more general schema. -/
+theorem covBy_compound (n : CompoundNode) (hn : n ≠ .compound) : n ⋖ .compound := by
+  have h : ∀ n : CompoundNode, n ≠ .compound →
+      n < .compound ∧ ∀ c, n < c → ¬ c < .compound := by decide
+  exact ⟨(h n hn).1, fun c ↦ (h n hn).2 c⟩
 
 /-- Right-headedness is inherited by every subschema without a rule: in any instance of any
 schema of the family through the subscripting of `(6)`, the whole's category is the head's. -/
@@ -160,12 +165,9 @@ def recursiveModifier : CompoundNode → Option Bool
 /-- The AN subschema overrides the default recursive-modifier option, which the NN subschema
 inherits: an NN modifier may be a compound, an AN modifier may not. -/
 theorem compound_inheritance :
-    compoundHierarchy.value recursiveModifier .nn = some true ∧
-    compoundHierarchy.value recursiveModifier .an = some false :=
-  ⟨by
-    rw [compoundHierarchy.value_eq_parent rfl, compoundHierarchy_parent .nn (by decide)]
-    exact compoundHierarchy.value_eq_of_att rfl,
-   compoundHierarchy.value_eq_of_att rfl⟩
+    inherited recursiveModifier .nn = {true} ∧ inherited recursiveModifier .an = {false} :=
+  ⟨inherited_eq_singleton_of_isLeast (m := .compound) (by decide) rfl,
+    inherited_eq_singleton_of_eq_some rfl⟩
 
 /-! ### Default inheritance and override: `werkbaar`
 
@@ -180,12 +182,14 @@ schema node and the `werkbaar` leaf. -/
 inductive BaarNode | baarSchema | werkbaar
   deriving DecidableEq, Fintype
 
-def baarParent : BaarNode → Option BaarNode
-  | .baarSchema => none
-  | .werkbaar => some .baarSchema
+/-- `werkbaar` is an instance of the `-baar` schema. -/
+def BaarNode.parents : BaarNode → List BaarNode
+  | .baarSchema => []
+  | .werkbaar => [.baarSchema]
 
-def baarHierarchy : Hierarchy BaarNode :=
-  .ofDepth baarParent (fun n => match n with | .baarSchema => 0 | .werkbaar => 1) (by decide)
+instance : PartialOrder BaarNode :=
+  partialOrderOfCovers (fun a b : BaarNode ↦ b ∈ a.parents)
+    (fun | .baarSchema => 0 | .werkbaar => 1) (by decide)
 
 /-- Transitivity of the base verb. -/
 inductive Transitivity | trans | intrans
@@ -200,9 +204,9 @@ def baseTransitivity : BaarNode → Option Transitivity
 /-- The default-override flagship: `werkbaar` overrides the inherited transitivity
 specification, while the schema keeps its default. -/
 theorem werkbaar_overrides :
-    baarHierarchy.value baseTransitivity .werkbaar = some .intrans ∧
-    baarHierarchy.value baseTransitivity .baarSchema = some .trans :=
-  ⟨baarHierarchy.value_eq_of_att rfl, baarHierarchy.value_eq_of_att rfl⟩
+    inherited baseTransitivity .werkbaar = {.intrans} ∧
+      inherited baseTransitivity .baarSchema = {.trans} :=
+  ⟨inherited_eq_singleton_of_eq_some rfl, inherited_eq_singleton_of_eq_some rfl⟩
 
 /-! ### Schema unification: `on-` composed with `V-baar`
 
