@@ -52,7 +52,7 @@ open Causation Causation.SEM Causation.Mechanism
 
 section General
 
-variable {V : Type*} (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+variable {V : Type*} (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
 
 /-! ### Local and global necessity and sufficiency -/
 
@@ -164,19 +164,14 @@ private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
 instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- The light is on exactly when both switches are. -/
-noncomputable def light : BoolSEM V :=
+def light : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .S1 => const (G := graph) false
       | .S2 => const (G := graph) false
-      | .L => deterministic (λ ρ => ρ ⟨.S1, by simp [graph]⟩ && ρ ⟨.S2, by simp [graph]⟩) }
+      | .L => fun ρ ↦ ρ ⟨.S1, by simp [graph]⟩ && ρ ⟨.S2, by simp [graph]⟩ }
 
 instance : CausalGraph.IsDAG light.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic light where
-  mech_det v := match v with
-    | .S1 | .S2 => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .L => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 /-- The light develops as the conjunction of the developed switches. -/
 theorem developDetVtx_L {bg : Valuation (λ _ : V => Bool)} (h : bg.get .L = none) :
@@ -195,7 +190,7 @@ theorem s1_on_globallyNecessary : GloballyNecessary light .S1 true .L true :=
   s1_off_globallySufficient
 
 /-- The background with switch 1 on and switch 2 off. -/
-noncomputable def s1OnS2Off : Valuation (λ _ : V => Bool) :=
+def s1OnS2Off : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .S1 true |>.extend .S2 false
 
 /-- Switch 1 being on is not globally sufficient for the light to be on. -/
@@ -227,7 +222,7 @@ theorem not_s1_on_causes_on_uncertain :
   λ h => s1_on_not_globallySufficient ((cause_extend_empty_iff (by decide)).1 h)
 
 /-- The background with both switches on. -/
-noncomputable def bothOn : Valuation (λ _ : V => Bool) :=
+def bothOn : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .S1 true |>.extend .S2 true
 
 theorem bothOn_S1 : bothOn.hasValue .S1 true := by

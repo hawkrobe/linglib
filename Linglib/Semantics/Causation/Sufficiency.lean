@@ -35,7 +35,7 @@ open Causation (SEM CausalGraph Valuation DecidableValuation)
     available as `SEM.causallySufficient`. -/
 def makeSem {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
     [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (cause : V) (xC : α cause) (effect : V) (xE : α effect) : Prop :=
   ¬ SEM.causallyEntails M background effect xE ∧
@@ -43,7 +43,7 @@ def makeSem {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
 
 noncomputable instance {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
     [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (makeSem M background cause xC effect xE) := Classical.dec _

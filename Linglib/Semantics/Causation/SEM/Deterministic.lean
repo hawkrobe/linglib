@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Causation.SEM.Defs
-public import Linglib.Semantics.Causation.Mechanism.Deterministic
+public import Linglib.Semantics.Causation.Mechanism.Defs
 
 /-!
 # SEM: development of deterministic acyclic models
@@ -55,26 +55,20 @@ variable {V : Type*} {α : V → Type*}
     constant mechanisms). The whole-valuation wrapper `developDet`
     therefore returns `some` everywhere. -/
 noncomputable def developDetVtx (M : SEM V α) [hDag : CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M]
     (s : Valuation α) : (v : V) → α v :=
   hDag.fix (C := fun v => α v) (fun v rec =>
     match s.get v with
     | some x => x
     | none =>
-      Mechanism.IsDeterministic.toFun (M.mech v)
+      (M.mech v)
         (fun u : M.graph.parents v =>
           rec u.val (Relation.TransGen.single u.property)))
 
 /-- **Canonical forward development** of a deterministic acyclic SEM
     against a partial valuation, returning a `Valuation α`. Wraps
-    `developDetVtx` with `some` at every vertex. Total under
-    `IsDAG + IsDeterministic`.
-
-    Replaces the old `Basic.lean` `developDet` (Fintype-based,
-    iteration-based, noncomputable, opaque). Same call-site shape
-    (`(M.developDet s).hasValue v x`); cleanly reducible internals. -/
+    `developDetVtx` with `some` at every vertex. Total under `IsDAG`. -/
 noncomputable def developDet (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation α) : Valuation α :=
+    (s : Valuation α) : Valuation α :=
   fun v => some (developDetVtx M s v)
 
 /-! ### Structural unfolding lemmas -/
@@ -82,44 +76,44 @@ noncomputable def developDet (M : SEM V α) [CausalGraph.IsDAG M.graph]
 /-- Step lemma: one layer of `WellFounded.fix_eq` unfolding. Use with
     `rw` to open `developDetVtx M s v` in proofs. -/
 theorem developDetVtx_unfold (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation α) (v : V) :
+    (s : Valuation α) (v : V) :
     developDetVtx M s v =
       match s.get v with
       | some x => x
       | none =>
-        Mechanism.IsDeterministic.toFun (M.mech v)
+        (M.mech v)
           (fun u : M.graph.parents v => developDetVtx M s u.val) := by
   rw [developDetVtx, WellFounded.fix_eq]
 
 /-- When `v` is already determined in `s`, development is the value. -/
 theorem developDetVtx_extended (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation α) (v : V) (x : α v)
+    (s : Valuation α) (v : V) (x : α v)
     (h : s.get v = some x) : developDetVtx M s v = x := by
   rw [developDetVtx_unfold, h]
 
 /-- When `v` is undetermined in `s`, development applies the mechanism
     to the recursively-developed parent values. -/
 theorem developDetVtx_undet (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation α) (v : V)
+    (s : Valuation α) (v : V)
     (h : s.get v = none) :
     developDetVtx M s v =
-      Mechanism.IsDeterministic.toFun (M.mech v)
+      (M.mech v)
         (fun u : M.graph.parents v => developDetVtx M s u.val) := by
   rw [developDetVtx_unfold, h]
 
 /-- `developDet M s` always returns `some` at every vertex. -/
 @[simp] theorem developDet_isSome (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation α) (v : V) :
+    (s : Valuation α) (v : V) :
     (M.developDet s v).isSome := rfl
 
 /-- `developDet` is `some ∘ developDetVtx`. -/
 theorem developDet_apply (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation α) (v : V) :
+    (s : Valuation α) (v : V) :
     M.developDet s v = some (developDetVtx M s v) := rfl
 
 /-- `(M.developDet s).hasValue v x ↔ developDetVtx M s v = x`. -/
 theorem developDet_hasValue_iff (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation α) (v : V) (x : α v) :
+    (s : Valuation α) (v : V) (x : α v) :
     (M.developDet s).hasValue v x ↔ developDetVtx M s v = x :=
   Option.some_inj
 
@@ -131,16 +125,16 @@ theorem developDet_hasValue_iff (M : SEM V α) [CausalGraph.IsDAG M.graph]
     inner variable while any parent is u-valued. `developDetVtx?` is its
     fixed point: `some x` is the paper's "s causally entails ⟨v, x⟩";
     `none` means v stays u-valued. Contrast `developDetVtx` above, which
-    eagerly fires `const` mechanisms at exogenous vertices — adequate for
-    the PMF stack (where root mechanisms are genuine priors) but
-    unfaithful to the deterministic causal-entailment predicates. -/
+    eagerly fires `const` mechanisms at exogenous vertices — adequate when
+    each root's equation is its default value, but unfaithful to the
+    causal-entailment predicates. -/
 
 /-- **Partial per-vertex development**: the strict T_D fixed point.
     Determined vertices keep their value; undetermined exogenous
     (parentless) vertices stay `none`; an undetermined inner vertex
     resolves iff every parent resolves. -/
 noncomputable def developDetVtx? (M : SEM V α) [hDag : CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] [DecidableEq V] (s : Valuation α) :
+    [DecidableEq V] (s : Valuation α) :
     (v : V) → Option (α v) :=
   hDag.fix (C := fun v => Option (α v)) (fun v rec =>
     match s.get v with
@@ -149,13 +143,13 @@ noncomputable def developDetVtx? (M : SEM V α) [hDag : CausalGraph.IsDAG M.grap
       if M.graph.parents v = ∅ then none
       else if hAll : ∀ u : M.graph.parents v,
           (rec u.val (Relation.TransGen.single u.property)).isSome then
-        some (Mechanism.IsDeterministic.toFun (M.mech v)
+        some ((M.mech v)
           (fun u => (rec u.val (Relation.TransGen.single u.property)).get (hAll u)))
       else none)
 
 section PartialDevelopment
 
-variable (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+variable (M : SEM V α) [CausalGraph.IsDAG M.graph]
   [DecidableEq V]
 
 /-- Step lemma: one layer of `WellFounded.fix_eq` unfolding for the
@@ -168,7 +162,7 @@ theorem developDetVtx?_unfold (s : Valuation α) (v : V) :
         if M.graph.parents v = ∅ then none
         else if hAll : ∀ u : M.graph.parents v,
             (developDetVtx? M s u.val).isSome then
-          some (Mechanism.IsDeterministic.toFun (M.mech v)
+          some ((M.mech v)
             (fun u => (developDetVtx? M s u.val).get (hAll u)))
         else none := by
   rw [developDetVtx?, WellFounded.fix_eq]
@@ -193,7 +187,7 @@ theorem developDetVtx?_inner {s : Valuation α} {v : V}
     (ρ : ∀ u : M.graph.parents v, α u.val)
     (hρ : ∀ u : M.graph.parents v, developDetVtx? M s u.val = some (ρ u)) :
     developDetVtx? M s v =
-      some (Mechanism.IsDeterministic.toFun (M.mech v) ρ) := by
+      some (M.mech v ρ) := by
   rw [developDetVtx?_unfold]
   simp only [h]
   have hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome :=
@@ -249,7 +243,7 @@ end PartialDevelopment
     recursion on fuel, so concrete claims reduce in the kernel and
     `decide` works. `developDetVtxFuel_eq_developDetVtx?` connects it to
     the canonical fixed point once the fuel exceeds the vertex's rank. -/
-def developDetVtxFuel (M : SEM V α) [SEM.IsDeterministic M] [DecidableEq V]
+def developDetVtxFuel (M : SEM V α) [DecidableEq V]
     (s : Valuation α) : ℕ → (v : V) → Option (α v)
   | 0, v => s.get v
   | n + 1, v =>
@@ -259,13 +253,13 @@ def developDetVtxFuel (M : SEM V α) [SEM.IsDeterministic M] [DecidableEq V]
       if M.graph.parents v = ∅ then none
       else if hAll : ∀ u : M.graph.parents v,
           (developDetVtxFuel M s n u.val).isSome then
-        some (Mechanism.IsDeterministic.toFun (M.mech v)
+        some ((M.mech v)
           (fun u => (developDetVtxFuel M s n u.val).get (hAll u)))
       else none
 
 section FuelBridge
 
-variable (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+variable (M : SEM V α) [CausalGraph.IsDAG M.graph]
   [DecidableEq V]
 
 /-- **Fuel bridge**: with fuel exceeding any rank function that strictly
@@ -288,7 +282,7 @@ theorem developDetVtxFuel_eq_developDetVtx?
         if M.graph.parents v = ∅ then none
         else if hAll : ∀ u : M.graph.parents v,
             (developDetVtxFuel M s n u.val).isSome then
-          some (Mechanism.IsDeterministic.toFun (M.mech v)
+          some ((M.mech v)
             (fun u => (developDetVtxFuel M s n u.val).get (hAll u)))
         else none) = _
     cases hsv : s.get v with

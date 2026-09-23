@@ -41,7 +41,7 @@ open Causation Causation.Mechanism Causation.SEM
 /-- The but-for counterfactual: had the cause not occurred, the effect would not have
 occurred, as an intervention setting the cause to `false` in the deterministic development. -/
 noncomputable def lewisButFor {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W) [SEM.IsDeterministic M]
+    (M : BoolSEM W)
     (vs : List W) (bg : Valuation (λ _ : W => Bool))
     (cause effect : W) : Prop :=
   ¬ (developDetOn M vs 1 (bg.extend cause false)).hasValue effect true
@@ -49,7 +49,7 @@ noncomputable def lewisButFor {W : Type*} [Fintype W] [DecidableEq W]
 /-- Causal dependence (p. 562): both events occur, and the effect would not have
 occurred without the cause. -/
 noncomputable def lewisDependence {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W) [SEM.IsDeterministic M]
+    (M : BoolSEM W)
     (vs : List W) (bg : Valuation (λ _ : W => Bool))
     (cause effect : W) : Prop :=
   (developDetOn M vs 1 bg).hasValue cause true ∧
@@ -58,14 +58,14 @@ noncomputable def lewisDependence {W : Type*} [Fintype W] [DecidableEq W]
 
 /-- Causation: the ancestral of causal dependence (p. 563). -/
 def lewisCausation {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W) [SEM.IsDeterministic M]
+    (M : BoolSEM W)
     (vs : List W) (bg : Valuation (λ _ : W => Bool))
     (cause effect : W) : Prop :=
   Relation.TransGen (lewisDependence M vs bg) cause effect
 
 /-- Causal dependence is causation through a chain of one step. -/
 theorem dependence_implies_causation {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W) [SEM.IsDeterministic M]
+    (M : BoolSEM W)
     (vs : List W) (bg : Valuation _) (cause effect : W)
     (h : lewisDependence M vs bg cause effect) :
     lewisCausation M vs bg cause effect :=
@@ -80,16 +80,11 @@ def varList : List V := [.a, .b]
 
 def graph : CausalGraph V := ⟨λ | .a => ∅ | .b => {.a}⟩
 
-noncomputable def sem : BoolSEM V :=
+def sem : BoolSEM V :=
   { graph := graph
     mech := λ v => match v with
       | .a => const (G := graph) false
-      | .b => deterministic (λ ρ => ρ ⟨.a, by simp [graph]⟩) }
-
-noncomputable instance : SEM.IsDeterministic sem where
-  mech_det v := match v with
-    | .a => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .b => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+      | .b => fun ρ ↦ ρ ⟨.a, by simp [graph]⟩ }
 
 def bg : Valuation (λ _ : V => Bool) := Valuation.empty.extend .a true
 
@@ -117,17 +112,12 @@ def varList : List V := [.a, .b, .c]
 
 def graph : CausalGraph V := ⟨λ | .a => ∅ | .b => {.a} | .c => {.b}⟩
 
-noncomputable def sem : BoolSEM V :=
+def sem : BoolSEM V :=
   { graph := graph
     mech := λ v => match v with
       | .a => const (G := graph) false
-      | .b => deterministic (λ ρ => ρ ⟨.a, by simp [graph]⟩)
-      | .c => deterministic (λ ρ => ρ ⟨.b, by simp [graph]⟩) }
-
-noncomputable instance : SEM.IsDeterministic sem where
-  mech_det v := match v with
-    | .a => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .b | .c => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+      | .b => fun ρ ↦ ρ ⟨.a, by simp [graph]⟩
+      | .c => fun ρ ↦ ρ ⟨.b, by simp [graph]⟩ }
 
 def bg : Valuation (λ _ : V => Bool) := Valuation.empty.extend .a true
 
@@ -168,17 +158,12 @@ def varList : List V := [.pressure, .barometer, .storm]
 def graph : CausalGraph V :=
   ⟨λ | .pressure => ∅ | .barometer => {.pressure} | .storm => {.pressure}⟩
 
-noncomputable def sem : BoolSEM V :=
+def sem : BoolSEM V :=
   { graph := graph
     mech := λ v => match v with
       | .pressure => const (G := graph) false
-      | .barometer => deterministic (λ ρ => ρ ⟨.pressure, by simp [graph]⟩)
-      | .storm => deterministic (λ ρ => ρ ⟨.pressure, by simp [graph]⟩) }
-
-noncomputable instance : SEM.IsDeterministic sem where
-  mech_det v := match v with
-    | .pressure => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .barometer | .storm => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+      | .barometer => fun ρ ↦ ρ ⟨.pressure, by simp [graph]⟩
+      | .storm => fun ρ ↦ ρ ⟨.pressure, by simp [graph]⟩ }
 
 def bg : Valuation (λ _ : V => Bool) := Valuation.empty.extend .pressure true
 
@@ -223,18 +208,13 @@ def varList : List V := [.a, .b, .e]
 
 def graph : CausalGraph V := ⟨λ | .a => ∅ | .b => ∅ | .e => {.a, .b}⟩
 
-noncomputable def sem : BoolSEM V :=
+def sem : BoolSEM V :=
   { graph := graph
     mech := λ v => match v with
       | .a => const (G := graph) false
       | .b => const (G := graph) false
-      | .e => deterministic (λ ρ =>
-          ρ ⟨.a, by simp [graph]⟩ || ρ ⟨.b, by simp [graph]⟩) }
-
-noncomputable instance : SEM.IsDeterministic sem where
-  mech_det v := match v with
-    | .a | .b => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .e => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+      | .e => fun ρ ↦
+          ρ ⟨.a, by simp [graph]⟩ || ρ ⟨.b, by simp [graph]⟩ }
 
 /-- Both causes present. -/
 def bg : Valuation (λ _ : V => Bool) :=

@@ -26,7 +26,7 @@ namespace Causation.Necessity
 open Causation (SEM CausalGraph Valuation DecidableValuation)
 
 variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
-  [∀ v, Fintype (α v)] (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+  [∀ v, Fintype (α v)] (M : SEM V α) [CausalGraph.IsDAG M.graph]
 
 /-- *cause*: setting the cause to `xC` causally entails the effect `xE`, and the cause is
 causally necessary for the effect (Definition 10b). -/

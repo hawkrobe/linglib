@@ -81,33 +81,28 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Fire dynamics: G := D (inflammability tracks drought); F := G ∧ P ∧ L
     (fire ignites only when grass inflammable, power on, line touching). -/
-noncomputable def fireSEM : BoolSEM V :=
+def fireSEM : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .P => const (G := graph) false
       | .D => const (G := graph) false
       | .L => const (G := graph) false
-      | .G => deterministic (λ ρ => ρ ⟨.D, by simp [graph]⟩)
-      | .F => deterministic (λ ρ =>
+      | .G => fun ρ ↦ ρ ⟨.D, by simp [graph]⟩
+      | .F => fun ρ ↦
           ρ ⟨.G, by simp [graph]⟩ &&
           ρ ⟨.P, by simp [graph]⟩ &&
-          ρ ⟨.L, by simp [graph]⟩) }
+          ρ ⟨.L, by simp [graph]⟩ }
 
 instance : CausalGraph.IsDAG fireSEM.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic fireSEM where
-  mech_det v := match v with
-    | .P | .D | .L => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .G | .F => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 /-- Background s_b: drought conditions and inflammable grass observed,
     line condition unknown. (Per N&L p. 19, footnote 21: realistic
     epistemic ignorance about whether the line was already down.) -/
-noncomputable def s_b : Valuation (λ _ : V => Bool) :=
+def s_b : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .D true |>.extend .G true
 
 /-- Extended background s_b1: the line is also known to be down. -/
-noncomputable def s_b1 : Valuation (λ _ : V => Bool) := s_b.extend .L true
+def s_b1 : Valuation (λ _ : V => Bool) := s_b.extend .L true
 
 private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
     SEM.causallyEntails fireSEM s v x ↔
@@ -161,29 +156,24 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
     creates the "sufficient but unnecessary" structure for T: T=1 forces
     Bs=1 (sufficient via Bk), but Rn=1 alone also forces Bs=1 (so T not
     necessary). -/
-noncomputable def busSEM : BoolSEM V :=
+def busSEM : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .Vis => const (G := graph) false
       | .Tr => const (G := graph) false
       | .Rn => const (G := graph) false
-      | .Bk => deterministic (λ ρ =>
+      | .Bk => fun ρ ↦
           ρ ⟨.Vis, by simp [graph]⟩ &&
-          ρ ⟨.Tr, by simp [graph]⟩)
-      | .Bs => deterministic (λ ρ =>
+          ρ ⟨.Tr, by simp [graph]⟩
+      | .Bs => fun ρ ↦
           ρ ⟨.Rn, by simp [graph]⟩ ||
-          ρ ⟨.Bk, by simp [graph]⟩) }
+          ρ ⟨.Bk, by simp [graph]⟩ }
 
 instance : CausalGraph.IsDAG busSEM.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
-noncomputable instance : SEM.IsDeterministic busSEM where
-  mech_det v := match v with
-    | .Vis | .Tr | .Rn => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .Bk | .Bs => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
 /-- Background s_b: Ava visiting, rain forecast. Training status Tr is the
     purported cause of bus-taking (via bike taken). -/
-noncomputable def s_b : Valuation (λ _ : V => Bool) :=
+def s_b : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .Vis true |>.extend .Rn true
 
 private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
@@ -245,22 +235,17 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Lighthouse dynamics: L := Q ∧ S (collapse requires both
     earthquake-induced foundation damage AND extreme storms). -/
-noncomputable def lighthouseSEM : BoolSEM V :=
+def lighthouseSEM : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .Q => const (G := graph) false
       | .S => const (G := graph) false
-      | .L => deterministic (λ ρ =>
+      | .L => fun ρ ↦
           ρ ⟨.Q, by simp [graph]⟩ &&
-          ρ ⟨.S, by simp [graph]⟩) }
+          ρ ⟨.S, by simp [graph]⟩ }
 
 instance : CausalGraph.IsDAG lighthouseSEM.graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic lighthouseSEM where
-  mech_det v := match v with
-    | .Q | .S => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .L => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 /-- Temporal index: per-vertex timestamp. Q happens at time 1, S at 2,
     L at 3. -/
@@ -354,7 +339,7 @@ def IntentionMap (V : Type*) := V → Option V
     sufficiency check; `(bg.remove cause).get wE ≠ none` is the
     determined-ness check. -/
 def volitionalActionConstraint {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     (intentions : IntentionMap V) (bg : Valuation (λ _ : V => Bool))
     (cause effect : V) : Prop :=
   ∀ wE, intentions effect = some wE →
@@ -389,26 +374,21 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Permission dynamics (Fig 5): D := W_D ∧ G. Both desire AND
     permission needed for dancing. -/
-noncomputable def permissionSEM : BoolSEM V :=
+def permissionSEM : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .WD => const (G := graph) false
       | .G => const (G := graph) false
-      | .D => deterministic (λ ρ =>
+      | .D => fun ρ ↦
           ρ ⟨.WD, by simp [graph]⟩ &&
-          ρ ⟨.G, by simp [graph]⟩) }
+          ρ ⟨.G, by simp [graph]⟩ }
 
 instance : CausalGraph.IsDAG permissionSEM.graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
 
-noncomputable instance : SEM.IsDeterministic permissionSEM where
-  mech_det v := match v with
-    | .WD | .G => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .D => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
 /-- Background: children eager to dance (W_D := true). Cause is G
     (Gurung's permission); effect is D (dancing). -/
-noncomputable def bg : Valuation (λ _ : V => Bool) :=
+def bg : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .WD true
 
 /-- Intention map: dancing's intention vertex is W_D. -/
@@ -488,22 +468,17 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Command dynamics (Fig 6): D := W_D ∨ G. Either authority alone OR
     independent desire suffices for dancing. -/
-noncomputable def commandSEM : BoolSEM V :=
+def commandSEM : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .WD => const (G := graph) false
       | .G => const (G := graph) false
-      | .D => deterministic (λ ρ =>
+      | .D => fun ρ ↦
           ρ ⟨.WD, by simp [graph]⟩ ||
-          ρ ⟨.G, by simp [graph]⟩) }
+          ρ ⟨.G, by simp [graph]⟩ }
 
 instance : CausalGraph.IsDAG commandSEM.graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic commandSEM where
-  mech_det v := match v with
-    | .WD | .G => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .D => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 def intentions : IntentionMap V := λ
   | .D => some .WD
@@ -515,11 +490,11 @@ private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} 
   SEM.causallyEntails_iff_fuel commandSEM ranking (by cases v <;> decide) s x
 
 /-- (41) context: the children are independently eager (W_D = 1). -/
-noncomputable def bgEager : Valuation (λ _ : V => Bool) :=
+def bgEager : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .WD true
 
 /-- (42) context: the children are reluctant (W_D = 0). -/
-noncomputable def bgReluctant : Valuation (λ _ : V => Bool) :=
+def bgReluctant : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .WD false
 
 /-- (41) Bare sufficiency in the eager context: with W_D = 1 fixed,
@@ -586,20 +561,15 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Persuasion dynamics (Fig 7): W_D := G (Gurung's action shapes
     desires); D := W_D (children dance iff they want to). -/
-noncomputable def persuasionSEM : BoolSEM V :=
+def persuasionSEM : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .G => const (G := graph) false
-      | .WD => deterministic (λ ρ => ρ ⟨.G, by simp [graph]⟩)
-      | .D => deterministic (λ ρ => ρ ⟨.WD, by simp [graph]⟩) }
+      | .WD => fun ρ ↦ ρ ⟨.G, by simp [graph]⟩
+      | .D => fun ρ ↦ ρ ⟨.WD, by simp [graph]⟩ }
 
 instance : CausalGraph.IsDAG persuasionSEM.graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic persuasionSEM where
-  mech_det v := match v with
-    | .G => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .WD | .D => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 def intentions : IntentionMap V := λ
   | .D => some .WD
@@ -799,7 +769,7 @@ Each statement is parameterized by an arbitrary deterministic acyclic SEM `M`;
 
 variable {V : Type*} {α : V → Type*}
   [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-  (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+  (M : SEM V α) [CausalGraph.IsDAG M.graph]
 
 /-- "make" → `Sufficiency.makeSem` (polymorphic). -/
 theorem make_semantics :

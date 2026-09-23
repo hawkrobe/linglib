@@ -183,7 +183,7 @@ end
     background valuation `u ω`, gives the action vertex the value `a′` and satisfies the goal:
     the paper's `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
 noncomputable def modelIntention {V : Type*} {α : V → Type*} {Ω : Type*} [MeasurableSpace Ω]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (μ : MeasureTheory.Measure Ω) (u : Ω → Valuation α) (ctx : Valuation α)
     (act : V) [Fintype (α act)] (goal : Set (Valuation α)) (w : α act → ℝ≥0)
     (a : α act) : ℝ≥0∞ :=
@@ -200,7 +200,6 @@ counterfactual degenerates to the bare interventional development of `cause := t
 
 section
 variable {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-  [IsDeterministic M]
 
 /-- The {0,1} indicator of categorical causal sufficiency
     (`causallySufficient`). -/
@@ -245,7 +244,7 @@ could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), 
 assert causal sufficiency ([nadathur-lauer-2020]). -/
 theorem make_semantics_eq_force
     {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
-    [∀ v, Fintype (α v)] (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] :
+    [∀ v, Fintype (α v)] (M : SEM V α) [CausalGraph.IsDAG M.graph] :
     Causative.toSemantics M .make = Causative.toSemantics M .force := rfl
 
 /-- The paper's (8) separates them anyway: in one frame with a could-have-done-otherwise
@@ -278,18 +277,13 @@ inductive V | cause | noise | effect
 def graph : CausalGraph V := ⟨fun | .effect => {.cause, .noise} | _ => ∅⟩
 
 /-- The effect holds when the cause and the noise both do. -/
-noncomputable def model : BoolSEM V :=
+def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .cause => const (G := graph) false
       | .noise => const (G := graph) false
       | .effect =>
-        deterministic fun ρ => ρ ⟨.cause, by simp [graph]⟩ && ρ ⟨.noise, by simp [graph]⟩ }
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det
-    | .cause | .noise => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .effect => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+        fun ρ ↦ ρ ⟨.cause, by simp [graph]⟩ && ρ ⟨.noise, by simp [graph]⟩ }
 
 /-- The graph is time-indexed in the sense of the paper's definition 1, with `cause` and `noise`
 at step 0 and `effect` at step 1. -/

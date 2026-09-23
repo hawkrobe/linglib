@@ -57,7 +57,6 @@ open Causation Causation.SEM Causation.Mechanism
 section General
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-  [SEM.IsDeterministic M]
 
 /-- *A causes B*: the discourse model has a link from A to B (section 3, Figure 3b). -/
 def Causes (a b : V) : Prop := BoolSEM.hasDirectLaw M a b
@@ -137,20 +136,20 @@ instance : CausalGraph.IsDAG oneLink := oneLinkRanking.isDAG
 instance : CausalGraph.IsDAG twoLink := twoLinkRanking.isDAG
 
 /-- A one-link model with the given equation at B. -/
-noncomputable def oneLinkModel (f : Bool → Bool) : BoolSEM V :=
+def oneLinkModel (f : Bool → Bool) : BoolSEM V :=
   { graph := oneLink
-    mech := λ
+    mech := fun
       | .A => const (G := oneLink) false
       | .X => const (G := oneLink) false
-      | .B => deterministic (λ ρ => f (ρ ⟨.A, by decide⟩)) }
+      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩) }
 
 /-- A two-link model with the given equation at B over A and X. -/
-noncomputable def twoLinkModel (f : Bool → Bool → Bool) : BoolSEM V :=
+def twoLinkModel (f : Bool → Bool → Bool) : BoolSEM V :=
   { graph := twoLink
-    mech := λ
+    mech := fun
       | .A => const (G := twoLink) false
       | .X => const (G := twoLink) false
-      | .B => deterministic (λ ρ => f (ρ ⟨.A, by decide⟩) (ρ ⟨.X, by decide⟩)) }
+      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩) (ρ ⟨.X, by decide⟩) }
 
 instance (f : Bool → Bool) : CausalGraph.IsDAG (oneLinkModel f).graph :=
   inferInstanceAs (CausalGraph.IsDAG oneLink)
@@ -158,30 +157,20 @@ instance (f : Bool → Bool) : CausalGraph.IsDAG (oneLinkModel f).graph :=
 instance (f : Bool → Bool → Bool) : CausalGraph.IsDAG (twoLinkModel f).graph :=
   inferInstanceAs (CausalGraph.IsDAG twoLink)
 
-instance (f : Bool → Bool) : SEM.IsDeterministic (oneLinkModel f) where
-  mech_det v := match v with
-    | .A | .X => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .B => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-instance (f : Bool → Bool → Bool) : SEM.IsDeterministic (twoLinkModel f) where
-  mech_det v := match v with
-    | .A | .X => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .B => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
 /-- (2) *A causes B*: `B := A`. -/
-noncomputable abbrev causes : BoolSEM V := oneLinkModel id
+abbrev causes : BoolSEM V := oneLinkModel id
 
 /-- (3) *A enables B*: `B := A ∧ X`. -/
-noncomputable abbrev enables : BoolSEM V := twoLinkModel (· && ·)
+abbrev enables : BoolSEM V := twoLinkModel (· && ·)
 
 /-- (4a) *A prevents B* with no accessory: `B := ¬A`. -/
-noncomputable abbrev prevents : BoolSEM V := oneLinkModel (!·)
+abbrev prevents : BoolSEM V := oneLinkModel (!·)
 
 /-- (4b) *A prevents B* with an accessory: `B := ¬A ∧ X`. -/
-noncomputable abbrev preventsAnd : BoolSEM V := twoLinkModel (λ a x => !a && x)
+abbrev preventsAnd : BoolSEM V := twoLinkModel (λ a x => !a && x)
 
 /-- (4c) *A prevents B* with an accessory: `B := ¬(A ∧ X)`. -/
-noncomputable abbrev preventsNand : BoolSEM V := twoLinkModel (λ a x => !(a && x))
+abbrev preventsNand : BoolSEM V := twoLinkModel (λ a x => !(a && x))
 
 private lemma oneLink_entails_iff (f : Bool → Bool) {s : Valuation (λ _ : V => Bool)} {v : V}
     {x : Bool} : causallyEntails (oneLinkModel f) s v x ↔
@@ -284,38 +273,28 @@ instance : CausalGraph.IsDAG chainOne := chainOneRanking.isDAG
 instance : CausalGraph.IsDAG chainTwo := chainTwoRanking.isDAG
 
 /-- The composition of a first premise `B := f A` with a second premise `C := g B`. -/
-noncomputable def composeOne (f g : Bool → Bool) : BoolSEM W :=
+def composeOne (f g : Bool → Bool) : BoolSEM W :=
   { graph := chainOne
-    mech := λ
+    mech := fun
       | .A => const (G := chainOne) false
       | .X => const (G := chainOne) false
-      | .B => deterministic (λ ρ => f (ρ ⟨.A, by decide⟩))
-      | .C => deterministic (λ ρ => g (ρ ⟨.B, by decide⟩)) }
+      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩)
+      | .C => fun ρ ↦ g (ρ ⟨.B, by decide⟩) }
 
 /-- The composition of a first premise `B := f A X` with a second premise `C := g B`. -/
-noncomputable def composeTwo (f : Bool → Bool → Bool) (g : Bool → Bool) : BoolSEM W :=
+def composeTwo (f : Bool → Bool → Bool) (g : Bool → Bool) : BoolSEM W :=
   { graph := chainTwo
-    mech := λ
+    mech := fun
       | .A => const (G := chainTwo) false
       | .X => const (G := chainTwo) false
-      | .B => deterministic (λ ρ => f (ρ ⟨.A, by decide⟩) (ρ ⟨.X, by decide⟩))
-      | .C => deterministic (λ ρ => g (ρ ⟨.B, by decide⟩)) }
+      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩) (ρ ⟨.X, by decide⟩)
+      | .C => fun ρ ↦ g (ρ ⟨.B, by decide⟩) }
 
 instance (f g : Bool → Bool) : CausalGraph.IsDAG (composeOne f g).graph :=
   inferInstanceAs (CausalGraph.IsDAG chainOne)
 
 instance (f : Bool → Bool → Bool) (g : Bool → Bool) : CausalGraph.IsDAG (composeTwo f g).graph :=
   inferInstanceAs (CausalGraph.IsDAG chainTwo)
-
-instance (f g : Bool → Bool) : SEM.IsDeterministic (composeOne f g) where
-  mech_det v := match v with
-    | .A | .X => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .B | .C => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-instance (f : Bool → Bool → Bool) (g : Bool → Bool) : SEM.IsDeterministic (composeTwo f g) where
-  mech_det v := match v with
-    | .A | .X => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .B | .C => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 private lemma composeOne_entails_iff (f g : Bool → Bool) {s : Valuation (λ _ : W => Bool)}
     {v : W} {x : Bool} :
@@ -362,20 +341,15 @@ private def lineRanking : CausalGraph.Ranking line := ⟨lineDepth, line_depth_l
 instance : CausalGraph.IsDAG line := lineRanking.isDAG
 
 /-- *A causes B*, *B causes not C*, *C causes not D*: `B := A`, `C := ¬B`, `D := ¬C`. -/
-noncomputable def threePremise : BoolSEM U :=
+def threePremise : BoolSEM U :=
   { graph := line
-    mech := λ
+    mech := fun
       | .A => const (G := line) false
-      | .B => deterministic (λ ρ => ρ ⟨.A, by decide⟩)
-      | .C => deterministic (λ ρ => !ρ ⟨.B, by decide⟩)
-      | .D => deterministic (λ ρ => !ρ ⟨.C, by decide⟩) }
+      | .B => fun ρ ↦ ρ ⟨.A, by decide⟩
+      | .C => fun ρ ↦ !ρ ⟨.B, by decide⟩
+      | .D => fun ρ ↦ !ρ ⟨.C, by decide⟩ }
 
 instance : CausalGraph.IsDAG threePremise.graph := inferInstanceAs (CausalGraph.IsDAG line)
-
-instance : SEM.IsDeterministic threePremise where
-  mech_det v := match v with
-    | .A => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .B | .C | .D => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 /-- The three premises compose to `D := A`, the conclusion *A causes D*. -/
 theorem threePremise_causes : EqCauses threePremise Valuation.empty .A .D :=

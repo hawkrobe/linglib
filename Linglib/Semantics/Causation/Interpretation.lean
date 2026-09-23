@@ -71,7 +71,7 @@ def selectionMode : Causative → CCSelectionMode
     polymorphic semantic function. -/
 noncomputable def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] :
     Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop
   | .cause => Causation.Necessity.causeSem M
   | .make => Causation.Sufficiency.makeSem M
@@ -83,7 +83,7 @@ noncomputable def toSemantics {V : Type*} {α : V → Type*}
 `AssertsSufficiency` classification tracks the force-dynamic dispatch. -/
 theorem AssertsSufficiency.toSemantics_eq {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     {b : Causative} (h : b.AssertsSufficiency) :
     b.toSemantics M = Causation.Sufficiency.makeSem M := by
   rcases h with rfl | rfl | rfl <;> rfl
