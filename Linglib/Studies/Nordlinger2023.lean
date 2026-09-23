@@ -106,11 +106,12 @@ reflexive-identical postfix *-sja* (ex. 31) is the inventory's second marker. Sw
 *-an-* with a single subject NP (ex. 12). Hungarian: verbal affix *-óz-* (ex. 19, 30). French: the
 clitic *se* is not a reciprocal object (ex. 28, 35), so the slot is empty; bipartite *l'un l'autre*
 is the second marker. Greek: nonactive morphology (ex. 27a). Mandarin: compound *dǎ-lái-dǎ-qù* with
-a single subject NP (ex. 13). Wambaya: the RR morpheme in the object position of the auxiliary's
-pronominal complex (ex. 11), the bound-pronominal slot that defines the argument strategies (ex. 18b
-for Warlpiri). Icelandic: bipartite *hvort annað*, the accusative on *annað* showing the clause
-transitive (ex. 17a). Chicheŵa: verbal affix *-an-* (ex. 20). Czech: the clitic *se* (ex. 29), as in
-French. Warlpiri: the object bound pronoun and the ergative subject both keep the clause transitive
+a single subject NP (ex. 13). Wambaya: the RR clitic in the object position of the auxiliary
+(ex. 11), which the review groups with the argument strategies (§3.1), though its subject is glossed
+nominative, and [evans-et-al-2007] show the clitic valency-reducing rather than an object pronoun.
+Icelandic: bipartite *hvort annað*, the accusative on *annað* showing the clause transitive
+(ex. 17a). Chicheŵa: verbal affix *-an-* (ex. 20). Czech: the clitic *se* (ex. 29), as in French.
+Warlpiri: the object bound pronoun and the ergative subject both keep the clause transitive
 (ex. 18b). Kuuk Thaayorre: the object NP is obligatorily absent yet the subject keeps ergative case
 (ex. 25). Dalabon: the verb takes the intransitive subject pronominal series yet incorporates the
 patient's body part as in the transitive clause (ex. 26). Tonga: both reciprocants are argument NPs
@@ -126,7 +127,9 @@ def Language.construction : Language → Construction
       { marker := Greek.StandardModern.Reciprocals.nonactive
       , valency := objectSlot .monovalent }
   | .mandarin => { marker := Mandarin.Reciprocals.compound, valency := objectSlot .monovalent }
-  | .wambaya => { marker := Wambaya.Reciprocals.rr, valency := objectSlot .bivalent }
+  | .wambaya =>
+      { marker := Wambaya.Reciprocals.rr
+      , valency := fun | .subjectCase => some .monovalent | _ => none }
   | .icelandic => { marker := Icelandic.Reciprocals.hvorAnnad, valency := objectSlot .bivalent }
   | .chichewa => { marker := Chichewa.Reciprocals.anSuffix, valency := objectSlot .monovalent }
   | .czech => { marker := Czech.Reciprocals.se, valency := objectSlot .monovalent }

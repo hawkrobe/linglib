@@ -7,22 +7,21 @@ open Morphology (Word)
 /-!
 # Wambaya reciprocals
 
-Wambaya marks reciprocity with the bound morpheme *-ngg-* (glossed RR) in the auxiliary's pronominal
-complex, a bound reciprocal pronoun ([evans-2008]) that serves both the reciprocal and the reflexive
-function: *Alag-bulu wurlu-ngg-a nyurrunyurru* 'The two children are chasing each other'
-([nordlinger-2023] ex. 11, from [nordlinger-1998]).
-
-## TODO
-
-The subject's case under reciprocalization is unrecorded: ex. 11 glosses the dual subject as
-nominative, while the ergative subject that keeps a reciprocal clause transitive is shown for
-Warlpiri (ex. 18b).
+Wambaya marks reflexivity and reciprocity with the clitic *-ngg-* (glossed RR) in the object
+position of the second-position auxiliary: *Alag-bulu wurlu-ngg-a nyurrunyurru* 'The two children
+are chasing each other' ([nordlinger-2023] ex. 11, from [nordlinger-1998]). Though it looks like a
+reflexive/reciprocal object pronoun such as Warlpiri *-nyanu*, the clause is intransitive
+([evans-et-al-2007]): the subject noun phrase is nominative rather than ergative (their (27)), a
+controlled complement takes the subject-control form (29), and *-ngg-* also occurs with
+semi-transitive verbs, whose objects the auxiliary never cross-references (30). It is a
+valency-reducing marker of the predicate, not an argument.
 
 ## References
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 * [R. Nordlinger, *A grammar of Wambaya, Northern Territory (Australia)* (1998)][nordlinger-1998]
-* [N. Evans, *Reciprocal Constructions: Towards a Structural Typology* (2008)][evans-2008]
+* [N. Evans, A. Gaby and R. Nordlinger, *Valency Mismatches and the Coding of Reciprocity in
+  Australian Languages* (2007)][evans-et-al-2007]
 -/
 
 namespace Wambaya.Reciprocals
@@ -35,12 +34,10 @@ def rrMorpheme : Word :=
   { form :="-ngg-", cat := .PART }
 
 open Reciprocal in
-/-- The RR morpheme as a typological marker: a bound reciprocal pronoun
-    serving both reciprocal and reflexive functions (form derived from
-    `rrMorpheme`). -/
+/-- The RR clitic as a reciprocal marker, reflexive as well; it marks the predicate rather than
+    filling the object slot ([evans-et-al-2007]). -/
 def rr : Marker :=
-  { form := rrMorpheme.form, strategy := .boundPronoun
-  , readings := {.reciprocal, .reflexive} }
+  { form := rrMorpheme.form, strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
 
 open Reciprocal in
 /-- Marker inventory. -/
