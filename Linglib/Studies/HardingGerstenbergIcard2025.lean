@@ -91,7 +91,7 @@ instance : IsFiniteKernel (speaker β cost π R) :=
   inferInstanceAs (IsFiniteKernel (speakerOfScore _))
 
 instance [Nonempty M] : IsMarkovKernel (speaker β cost π R) :=
-  isMarkovKernel_speakerOfScore (λ _ => ⟨Classical.arbitrary M, EReal.coe_ne_bot _⟩)
+  isMarkovKernel_speakerOfScore (fun _ ↦ ⟨Classical.arbitrary M, EReal.coe_ne_bot _⟩)
     (λ _ _ => EReal.coe_ne_top _)
 
 variable {β} {m m' : M} {a a' : A} {w : W}
@@ -101,7 +101,7 @@ theorem speaker_real_lt_iff :
     (speaker β cost π R w).real {m} < (speaker β cost π R w).real {m'} ↔
       β * actionUtility π R m w - cost m < β * actionUtility π R m' w - cost m' := by
   rw [speaker, speakerOfScore_real_singleton_lt_iff (score := speakerScore β cost π R) (w := w)
-    (λ _ => EReal.coe_ne_top _) ⟨m, EReal.coe_ne_bot _⟩, speakerScore, speakerScore,
+    (fun _ ↦ EReal.coe_ne_top _) ⟨m, EReal.coe_ne_bot _⟩, speakerScore, speakerScore,
     EReal.coe_lt_coe_iff]
 
 /-- With two messages, the speaker's share of one is the logistic function of the scaled
@@ -110,7 +110,7 @@ theorem speaker_real_of_pair (hmm' : m ≠ m') (hall : ∀ c, c = m ∨ c = m') 
     (speaker β cost π R w).real {m} =
       Real.sigmoid (β * (actionUtility π R m w - actionUtility π R m' w) - (cost m - cost m')) := by
   rw [speaker, speakerOfScore_real_singleton_of_pair (score := speakerScore β cost π R) (w := w)
-    hmm' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (λ _ => EReal.coe_ne_top _) (λ c _ => hall c),
+    hmm' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _) (λ c _ => hall c),
     speakerScore, speakerScore, EReal.toReal_coe, EReal.toReal_coe]
   ring_nf
 
@@ -127,7 +127,7 @@ variable {V Ctx : Type*} [Fintype V] [DecidableEq V] [Fintype Ctx]
 /-- The reward of intervening on `X` in a model (Definition 2): the probability over contexts
 that some intervention on `X` changes FACT. -/
 noncomputable def manipulationReward (P : Ctx → ℝ) (ctx : Ctx → Valuation (λ _ : V => Bool))
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] (X fact : V) : ℝ :=
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] (X fact : V) : ℝ :=
   ∑ u, P u * (haveI := Classical.dec (BoolSEM.manipulates M (ctx u) X fact)
     if BoolSEM.manipulates M (ctx u) X fact then 1 else 0)
 
@@ -142,7 +142,7 @@ at some witness valuation the cause is but-for the effect
 (`CCSelection.completesForEffect`), [halpern-pearl-2005]'s definition without the contingency
 clause the paper leaves to any extant account. -/
 def actualCause {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V)
-    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] (u : Valuation (λ _ : V => Bool))
+    [CausalGraph.IsDAG M.graph] (u : Valuation (λ _ : V => Bool))
     (cause effect : V) : Prop :=
   u.hasValue cause true ∧ (M.developDet u).hasValue effect true ∧
     ∃ s' : Valuation (λ _ : V => Bool),
@@ -164,30 +164,20 @@ def graphT : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T}⟩
 def graphConj : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T, .B}⟩
 
 /-- The model in which tardiness alone causes crossness. -/
-noncomputable def semT : BoolSEM V :=
+def semT : BoolSEM V :=
   { graph := graphT
     mech := λ v => match v with
       | .T => const (G := graphT) false
       | .B => const (G := graphT) false
-      | .C => deterministic (λ ρ => ρ ⟨.T, by simp [graphT]⟩) }
+      | .C => fun ρ ↦ ρ ⟨.T, by simp [graphT]⟩ }
 
 /-- The conjunctive model, in which both are needed. -/
-noncomputable def semConj : BoolSEM V :=
+def semConj : BoolSEM V :=
   { graph := graphConj
     mech := λ v => match v with
       | .T => const (G := graphConj) false
       | .B => const (G := graphConj) false
-      | .C => deterministic (λ ρ => ρ ⟨.T, by simp [graphConj]⟩ && ρ ⟨.B, by simp [graphConj]⟩) }
-
-noncomputable instance : SEM.IsDeterministic semT where
-  mech_det v := match v with
-    | .T | .B => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .C => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-noncomputable instance : SEM.IsDeterministic semConj where
-  mech_det v := match v with
-    | .T | .B => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .C => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+      | .C => fun ρ ↦ ρ ⟨.T, by simp [graphConj]⟩ && ρ ⟨.B, by simp [graphConj]⟩ }
 
 instance : CausalGraph.IsDAG semT.graph :=
   CausalGraph.IsDAG.of_depth _ (λ | .T => 0 | .B => 0 | .C => 1) <| by
@@ -245,7 +235,7 @@ def reward : Act → World → ℝ := λ a w => if a = w then 1 else -1
 noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
 
 /-- The prior as a listener who has heard nothing. -/
-noncomputable abbrev prior : Kernel Msg World := uniformListener λ _ => Finset.univ
+noncomputable abbrev prior : Kernel Msg World := uniformListener fun _ ↦ Finset.univ
 
 /-- The uniform prior over the worlds. -/
 noncomputable abbrev μ : Measure World := uniformOn Set.univ
@@ -306,17 +296,17 @@ theorem half_lt_sigmoid (hβ : 0 < βL) : 1 / 2 < Real.sigmoid (2 * βL) := by
 
 /-- The speaker cites the birthday exactly in the conjunctive world (equal costs). -/
 theorem speaker_cites_B_iff (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
-    (speaker βS (λ _ => c) (policy βL L0 reward) reward 0).real {1} <
-        (speaker βS (λ _ => c) (policy βL L0 reward) reward 0).real {0} ∧
-      (speaker βS (λ _ => c) (policy βL L0 reward) reward 1).real {0} <
-        (speaker βS (λ _ => c) (policy βL L0 reward) reward 1).real {1} := by
+    (speaker βS (fun _ ↦ c) (policy βL L0 reward) reward 0).real {1} <
+        (speaker βS (fun _ ↦ c) (policy βL L0 reward) reward 0).real {0} ∧
+      (speaker βS (fun _ ↦ c) (policy βL L0 reward) reward 1).real {0} <
+        (speaker βS (fun _ ↦ c) (policy βL L0 reward) reward 1).real {1} := by
   obtain ⟨h00, h01, h10, h11⟩ := utility_L0 (βL := βL)
   have hs := half_lt_sigmoid hβL
   constructor
-  · rw [speaker_real_lt_iff reward (λ _ => c) (policy βL L0 reward) (w := 0) (m := 1) (m' := 0),
+  · rw [speaker_real_lt_iff reward (fun _ ↦ c) (policy βL L0 reward) (w := 0) (m := 1) (m' := 0),
       h00, h10]
     nlinarith
-  · rw [speaker_real_lt_iff reward (λ _ => c) (policy βL L0 reward) (w := 1) (m := 0) (m' := 1),
+  · rw [speaker_real_lt_iff reward (fun _ ↦ c) (policy βL L0 reward) (w := 1) (m := 0) (m' := 1),
       h01, h11]
     nlinarith
 
@@ -327,7 +317,7 @@ theorem μ_singleton (w : World) : μ {w} ≠ 0 ∧ μ.real {w} = 1 / 2 := by
 
 /-- The speaker of Example 3 at equal costs `c`. -/
 noncomputable def S (βL βS c : ℝ) : Kernel World Msg :=
-  speaker βS (λ _ => c) (policy βL L0 reward) reward
+  speaker βS (fun _ ↦ c) (policy βL L0 reward) reward
 
 instance (βL βS c : ℝ) : IsFiniteKernel (S βL βS c) :=
   inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
@@ -337,8 +327,8 @@ instance (βL βS c : ℝ) : IsMarkovKernel (S βL βS c) :=
 
 theorem S_apply_ne_zero (βL βS c : ℝ) (w : World) (m : Msg) : S βL βS c w {m} ≠ 0 :=
   speakerOfScore_apply_singleton_ne_zero
-    (score := speakerScore βS (λ _ => c) (policy βL L0 reward) reward) (EReal.coe_ne_bot _)
-    (λ _ => EReal.coe_ne_top _)
+    (score := speakerScore βS (fun _ ↦ c) (policy βL L0 reward) reward) (EReal.coe_ne_bot _)
+    (fun _ ↦ EReal.coe_ne_top _)
 
 theorem comp_S_ne_zero (βL βS c : ℝ) : (S βL βS c ∘ₘ μ) {0} ≠ 0 := by
   rw [Measure.comp_apply_singleton]
@@ -352,8 +342,8 @@ theorem S_real_lt (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
   obtain ⟨h00, h01, h10, h11⟩ := utility_L0 (βL := βL)
   have hs := half_lt_sigmoid hβL
   unfold S
-  rw [speaker_real_of_pair reward (λ _ => c) (policy βL L0 reward) (w := 1) (m := 0) (m' := 1)
-    (by decide) (by decide), speaker_real_of_pair reward (λ _ => c) (policy βL L0 reward)
+  rw [speaker_real_of_pair reward (fun _ ↦ c) (policy βL L0 reward) (w := 1) (m := 0) (m' := 1)
+    (by decide) (by decide), speaker_real_of_pair reward (fun _ ↦ c) (policy βL L0 reward)
     (w := 0) (m := 0) (m' := 1) (by decide) (by decide), h00, h01, h10, h11]
   exact Real.sigmoid_lt (by nlinarith)
 

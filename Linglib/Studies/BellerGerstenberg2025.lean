@@ -77,7 +77,7 @@ inductive CausalExpression
 
 instance : Nonempty CausalExpression := ⟨.caused⟩
 instance : MeasurableSpace CausalExpression := ⊤
-instance : DiscreteMeasurableSpace CausalExpression := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace CausalExpression := ⟨fun _ ↦ trivial⟩
 
 /-- An aspect profile: whether-causation `W` (1), how-causation `H` (2), and
 sufficient-causation `S` (3), at Boolean values. -/
@@ -149,7 +149,7 @@ inductive Scenario
 
 instance : Nonempty Scenario := ⟨.s1⟩
 instance : MeasurableSpace Scenario := ⊤
-instance : DiscreteMeasurableSpace Scenario := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Scenario := ⟨fun _ ↦ trivial⟩
 
 /-- The aspect values of the sample scenarios (Table 1a). -/
 def Scenario.aspects : Scenario → CausalWorld
@@ -302,16 +302,11 @@ def launchGraph : CausalGraph Var :=
   ⟨fun | .cause => ∅ | .effect => {.cause}⟩
 
 /-- The launching model: the outcome takes the candidate cause's value. -/
-noncomputable def launch : BoolSEM Var :=
+def launch : BoolSEM Var :=
   { graph := launchGraph
     mech := fun v => match v with
       | .cause => const (G := launchGraph) false
-      | .effect => deterministic (fun ρ => ρ ⟨.cause, by simp [launchGraph]⟩) }
-
-noncomputable instance : SEM.IsDeterministic launch where
-  mech_det v := match v with
-    | .cause => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .effect => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+      | .effect => fun ρ ↦ ρ ⟨.cause, by simp [launchGraph]⟩ }
 
 /-- The ranking certificate of `launchGraph`. -/
 def launchRanking : CausalGraph.Ranking launchGraph :=
@@ -328,7 +323,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 (1) at the observed valuation, `H` is a direct law, and `S` is sufficient-causation (3),
 whether-causation at the valuation with the alternative causes removed. -/
 noncomputable def CausalWorld.ofModel (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (observed alternativesRemoved : Valuation fun _ : V => Bool)
+    (observed alternativesRemoved : Valuation fun _ : V => Bool)
     (cause effect : V) : CausalWorld :=
   { whether := decide (WhetherCause M observed cause false effect true)
     how := decide (BoolSEM.hasDirectLaw M cause effect)

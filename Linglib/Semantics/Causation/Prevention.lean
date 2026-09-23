@@ -26,7 +26,7 @@ open Causation (SEM CausalGraph Valuation DecidableValuation)
 other value of the preventer does. -/
 noncomputable def preventSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (bg : Valuation α)
     (preventer : V) (xPrev : α preventer)
     (effect : V) (xE : α effect) : Prop :=
@@ -36,7 +36,7 @@ noncomputable def preventSem {V : Type*} {α : V → Type*}
 
 noncomputable instance {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (bg : Valuation α) (preventer : V) (xP : α preventer)
     (effect : V) (xE : α effect) :
     Decidable (preventSem M bg preventer xP effect xE) := Classical.dec _

@@ -79,7 +79,7 @@ def Prerequisite.isSpecific : Prerequisite → Bool
     types. -/
 def manageSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (prerequisite : V) (xP : α prerequisite)
     (complement : V) (xC : α complement) : Prop :=
@@ -88,7 +88,7 @@ def manageSem {V : Type*} {α : V → Type*}
 
 noncomputable instance {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (prerequisite : V) (xP : α prerequisite)
     (complement : V) (xC : α complement) :
@@ -105,7 +105,7 @@ noncomputable instance {V : Type*} {α : V → Type*}
     `.negative` dispatch below inherits the same caveat. -/
 abbrev failSem {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (prerequisite : V) (xP : α prerequisite)
     (complement : V) (xC : α complement) : Prop :=
@@ -115,7 +115,7 @@ abbrev failSem {V : Type*} {α : V → Type*}
     necessary (Nadathur 2023 Def 10b) for complement-as-`xC`. -/
 abbrev necessityPresup {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (prerequisite : V) (xP : α prerequisite)
     (complement : V) (xC : α complement) : Prop :=
@@ -147,7 +147,7 @@ section CharacteristicEntailments
 
 variable {V : Type*} {α : V → Type*}
   [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-  (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+  (M : SEM V α) [CausalGraph.IsDAG M.graph]
 
 omit [∀ v, Fintype (α v)] in
 /-- **Fact B, positive half**: a positive two-way implicative claim
@@ -364,7 +364,7 @@ open Causation (SEM CausalGraph Valuation DecidableValuation)
     semantic function. -/
 noncomputable def toSemantics {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] :
     Implicative → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop
   | .positive => Implicative.manageSem M
   | .negative => Implicative.failSem M

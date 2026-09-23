@@ -49,24 +49,17 @@ instance : CausalGraph.IsDAG graph := rank.isDAG
 /-- The structural entailments G, H and I: the circuit closes when the button is pressed, and
 the door opens manually (handle on, lock off) or automatically (circuit and power on, lock
 off). -/
-noncomputable def model : BoolSEM V where
+def model : BoolSEM V where
   graph := graph
   mech
-    | .circuit => deterministic λ ρ => ρ ⟨.button, by simp [graph]⟩
-    | .doorOpens => deterministic λ ρ =>
+    | .circuit => fun ρ ↦ ρ ⟨.button, by simp [graph]⟩
+    | .doorOpens => fun ρ ↦
         let h := ρ ⟨.handle, by simp [graph]⟩
         let l := ρ ⟨.lock, by simp [graph]⟩
         let c := ρ ⟨.circuit, by simp [graph]⟩
         let e := ρ ⟨.electricity, by simp [graph]⟩
         (h && !l) || (c && e && !l)
     | _ => const (G := graph) false
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det
-    | .circuit => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .doorOpens => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .handle | .lock | .button | .electricity =>
-        inferInstanceAs (Mechanism.IsDeterministic (const _))
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 

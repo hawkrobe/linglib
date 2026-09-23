@@ -41,7 +41,7 @@ inductive CCSelectionMode where
     Bool models pass `xC = xE = true`, `xC_alt = false`. -/
 noncomputable def completesForEffect {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (background : Valuation α)
     (cause : V) (xC xC_alt : α cause) (effect : V) (xE : α effect) : Prop :=
   SEM.causallySufficient M background cause xC effect xE ∧
@@ -49,7 +49,7 @@ noncomputable def completesForEffect {V : Type*} {α : V → Type*}
 
 noncomputable instance {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (bg : Valuation α) (cause : V) (xC xC_alt : α cause)
     (effect : V) (xE : α effect) :
     Decidable (completesForEffect M bg cause xC xC_alt effect xE) := Classical.dec _
@@ -59,7 +59,6 @@ noncomputable instance {V : Type*} {α : V → Type*}
     cause-off develops it false). The computations close by `decide`. -/
 theorem completesForEffect_of_developDetOn {V : Type*} [Fintype V] [DecidableEq V]
     {M : Causation.BoolSEM V} [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M]
     {bg : Valuation (fun _ : V => Bool)} {c e : V} (vs : List V) (n : ℕ)
     (h1 : (SEM.developDetOn M vs n (bg.extend c true)).hasValue e true)
     (h2 : (SEM.developDetOn M vs n (bg.extend c false)).hasValue e false) :
@@ -74,7 +73,6 @@ theorem completesForEffect_of_developDetOn {V : Type*} [Fintype V] [DecidableEq 
     development reaches the effect `false`, so no completion. -/
 theorem not_completesForEffect_of_developDetOn {V : Type*} [Fintype V] [DecidableEq V]
     {M : Causation.BoolSEM V} [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M]
     {bg : Valuation (fun _ : V => Bool)} {c e : V} (vs : List V) (n : ℕ)
     (h1 : (SEM.developDetOn M vs n (bg.extend c true)).hasValue e false) :
     ¬ completesForEffect M bg c true false e true := by
@@ -88,7 +86,7 @@ theorem not_completesForEffect_of_developDetOn {V : Type*} [Fintype V] [Decidabl
 
 section SufficientSets
 
-variable {V : Type*} {α : V → Type*} [DecidableEq V] (M : SEM V α) [SEM.IsDeterministic M]
+variable {V : Type*} {α : V → Type*} [DecidableEq V] (M : SEM V α)
   {effect : V} {xE : α effect}
 
 /-- A sufficient set for `effect = xE`: a situation not settling the effect that forces it. -/
@@ -145,7 +143,7 @@ end SufficientSets
 
 section Fuel
 
-variable {V : Type*} {α : V → Type*} [DecidableEq V] (M : SEM V α) [SEM.IsDeterministic M] (n : ℕ)
+variable {V : Type*} {α : V → Type*} [DecidableEq V] (M : SEM V α) (n : ℕ)
 
 /-- `IsMinimalSufficientSet` with forcing replaced by its fuel form. -/
 def IsMinimalSufficientSetFuel (S : Valuation α) (effect : V) (xE : α effect) : Prop :=

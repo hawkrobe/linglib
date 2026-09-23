@@ -1240,7 +1240,6 @@ import Linglib.Semantics.Causation.Graph.Defs
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.Mechanism.Defs
-import Linglib.Semantics.Causation.Mechanism.Deterministic
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Causation.Prevention

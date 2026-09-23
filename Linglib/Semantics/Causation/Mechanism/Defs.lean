@@ -2,33 +2,23 @@ module
 
 public import Linglib.Semantics.Causation.Graph.Defs
 public import Linglib.Semantics.Causation.Valuation
-public import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
-# Mechanism: PMF-Valued Structural Equation per Vertex
+# Mechanisms: structural equations
 
-A `Mechanism G α v` is the structural equation at vertex `v`: it takes
-a value assignment to `v`'s parents and returns a `PMF (α v)` — a
-probability distribution over possible values of `v`.
+A `Mechanism G α v` is the structural equation at vertex `v` of the causal graph `G`: the value
+of `v` as a function of the values of its parents, as in Pearl's structural models. Equations
+are deterministic. Uncertainty is a probability on the background, not a property of the
+equations (`SEM.probSufficiency`).
 
-This single type unifies deterministic and stochastic mechanisms via the
-mathlib `Kernel.deterministic := dirac ∘ f` pattern (see
-`Mathlib/Probability/Kernel/Basic.lean`):
-- Deterministic mechanism = PMF.pure-valued (Dirac delta) — see
-  `Mechanism/Deterministic.lean`
-- Stochastic mechanism = arbitrary PMF-valued `run`
+## Main definitions
 
-A computable `DetSEM` structure (bare per-vertex functions, Dirac
-embedding) was considered and declined (2026-06 audit): kernel reduction
-already routes through `IsDeterministic.toFun` without touching `PMF`,
-and the fuel mirror (`SEM.developDetVtxFuel`) provides the computable
-evaluation path, so the refactor buys no proof power for its migration
-cost. The `noncomputable` markers on concrete study SEMs are the
-accepted residue.
+* `Mechanism`: the structural equation at a vertex
+* `Mechanism.const`: the constant equation, an exogenous default or an intervention
 
-`IsDeterministic` is a `Prop` mixin class that consumers can require
-when they need to extract the deterministic function (mirroring
-`IsMarkovKernel` in `Mathlib/Probability/Kernel/Defs.lean`).
+## References
+
+* [pearl-2000]
 -/
 
 @[expose] public section
@@ -37,30 +27,20 @@ namespace Causation
 
 variable {V : Type*}
 
-/-- A causal mechanism for vertex `v` in graph `G`: takes a value
-    assignment to `v`'s parents and returns a distribution over `α v`.
-    PMF-valued so deterministic and stochastic mechanisms share one type
-    (deterministic = Dirac PMF). -/
-structure Mechanism (G : CausalGraph V) (α : V → Type*) (v : V) where
-  /-- The structural function: parent assignment ↦ distribution over v's value. -/
-  run : (∀ u : G.parents v, α u.val) → PMF (α v)
+/-- The structural equation at `v`: the value of `v` as a function of its parents' values. -/
+abbrev Mechanism (G : CausalGraph V) (α : V → Type*) (v : V) :=
+  (∀ u : G.parents v, α u.val) → α v
 
 namespace Mechanism
 
-variable {α : V → Type*} {G : CausalGraph V} {v : V}
+variable {G : CausalGraph V} {α : V → Type*} {v : V}
 
-/-- A mechanism is **deterministic** when it carries an explicit total
-    function over parents whose lifting via `PMF.pure` agrees with `run`.
+/-- The constant equation, which ignores the parents: an exogenous vertex's default value, or
+the equation an intervention `do(v := x)` installs. -/
+def const (x : α v) : Mechanism G α v := fun _ ↦ x
 
-    Data-carrying class (not `Prop`) so consumers can extract `toFun`
-    computably. Compare mathlib `Module R M` (data-carrying) vs
-    `IsMarkovKernel` (`Prop`); we choose data-carrying because the
-    underlying function is uniquely determined and useful in proofs. -/
-class IsDeterministic (m : Mechanism G α v) where
-  /-- The deterministic function over parent assignments. -/
-  toFun : (∀ u : G.parents v, α u.val) → α v
-  /-- The mechanism's `run` is the Dirac of `toFun`. -/
-  run_eq : ∀ ρ, m.run ρ = PMF.pure (toFun ρ)
+@[simp] theorem const_apply (x : α v) (ρ : ∀ u : G.parents v, α u.val) :
+    (const (G := G) x) ρ = x := rfl
 
 end Mechanism
 

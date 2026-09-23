@@ -75,24 +75,18 @@ instance : CausalGraph.IsDAG graph := rank.isDAG
 /-- The normative model of belief formation: an indicator exists when its fact holds,
 acquaintance is the existence of the indicator together with experience of it, and belief
 follows acquaintance. -/
-noncomputable def beliefModel : BoolSEM V where
+def beliefModel : BoolSEM V where
   graph := graph
   mech
-    | .indicP => deterministic λ ρ => ρ ⟨.p, by simp [graph]⟩
-    | .acqP => deterministic λ ρ =>
+    | .indicP => fun ρ ↦ ρ ⟨.p, by simp [graph]⟩
+    | .acqP => fun ρ ↦
         ρ ⟨.indicP, by simp [graph]⟩ && ρ ⟨.expP, by simp [graph]⟩
-    | .beliefP => deterministic λ ρ => ρ ⟨.acqP, by simp [graph]⟩
-    | .indicNotP => deterministic λ ρ => ρ ⟨.notP, by simp [graph]⟩
-    | .acqNotP => deterministic λ ρ =>
+    | .beliefP => fun ρ ↦ ρ ⟨.acqP, by simp [graph]⟩
+    | .indicNotP => fun ρ ↦ ρ ⟨.notP, by simp [graph]⟩
+    | .acqNotP => fun ρ ↦
         ρ ⟨.indicNotP, by simp [graph]⟩ && ρ ⟨.expNotP, by simp [graph]⟩
-    | .beliefNotP => deterministic λ ρ => ρ ⟨.acqNotP, by simp [graph]⟩
+    | .beliefNotP => fun ρ ↦ ρ ⟨.acqNotP, by simp [graph]⟩
     | _ => const (G := graph) false
-
-noncomputable instance : SEM.IsDeterministic beliefModel where
-  mech_det
-    | .indicP | .acqP | .beliefP | .indicNotP | .acqNotP | .beliefNotP =>
-        inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .p | .expP | .notP | .expNotP => inferInstanceAs (Mechanism.IsDeterministic (const _))
 
 instance : CausalGraph.IsDAG beliefModel.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -133,7 +127,7 @@ def SatisfiesPLC : Profile → Prop
 /-- The attestation table follows from the constraint: a profile is attested iff it
 satisfies the constraint where the constraint applies. -/
 theorem attested_iff : ∀ pr : Profile, pr.Attested ↔ SatisfiesPLC pr
-  | .factive => ⟨λ _ => know_plc, λ _ => trivial⟩
+  | .factive => ⟨fun _ ↦ know_plc, fun _ ↦ trivial⟩
   | .strongContrafactive => ⟨False.elim, λ h => contra_plc h⟩
   | .nonfactive | .weakContrafactive => Iff.rfl
 
@@ -160,19 +154,14 @@ instance : CausalGraph.IsDAG wijsmakenGraph := wijsmakenRank.isDAG
 
 /-- The model of *wijsmaken*, and the model with the eventive node cut, on which the belief
 no longer depends on anything. -/
-noncomputable def wijsmaken (eventive : Bool) : BoolSEM W where
+def wijsmaken (eventive : Bool) : BoolSEM W where
   graph := wijsmakenGraph
   mech
-    | .fool => deterministic λ ρ =>
+    | .fool => fun ρ ↦
         ρ ⟨.notRich, by simp [wijsmakenGraph]⟩ &&
           ρ ⟨.notBeliefPrior, by simp [wijsmakenGraph]⟩
-    | .beliefRich => deterministic λ ρ => eventive && ρ ⟨.fool, by simp [wijsmakenGraph]⟩
+    | .beliefRich => fun ρ ↦ eventive && ρ ⟨.fool, by simp [wijsmakenGraph]⟩
     | _ => const (G := wijsmakenGraph) false
-
-noncomputable instance (eventive : Bool) : SEM.IsDeterministic (wijsmaken eventive) where
-  mech_det
-    | .fool | .beliefRich => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .notRich | .notBeliefPrior => inferInstanceAs (Mechanism.IsDeterministic (const _))
 
 instance (eventive : Bool) : CausalGraph.IsDAG (wijsmaken eventive).graph :=
   inferInstanceAs (CausalGraph.IsDAG wijsmakenGraph)
@@ -212,18 +201,13 @@ def hallucinateRank : CausalGraph.Ranking hallucinateGraph :=
 instance : CausalGraph.IsDAG hallucinateGraph := hallucinateRank.isDAG
 
 /-- The model of *hallucinate*, and the model with the distortion cut. -/
-noncomputable def hallucinate (eventive : Bool) : BoolSEM H where
+def hallucinate (eventive : Bool) : BoolSEM H where
   graph := hallucinateGraph
   mech
-    | .distortion => deterministic λ ρ => ρ ⟨.notLoves, by simp [hallucinateGraph]⟩
-    | .beliefLoves => deterministic λ ρ =>
+    | .distortion => fun ρ ↦ ρ ⟨.notLoves, by simp [hallucinateGraph]⟩
+    | .beliefLoves => fun ρ ↦
         eventive && ρ ⟨.distortion, by simp [hallucinateGraph]⟩
     | .notLoves => const (G := hallucinateGraph) false
-
-noncomputable instance (eventive : Bool) : SEM.IsDeterministic (hallucinate eventive) where
-  mech_det
-    | .distortion | .beliefLoves => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-    | .notLoves => inferInstanceAs (Mechanism.IsDeterministic (const _))
 
 instance (eventive : Bool) : CausalGraph.IsDAG (hallucinate eventive).graph :=
   inferInstanceAs (CausalGraph.IsDAG hallucinateGraph)

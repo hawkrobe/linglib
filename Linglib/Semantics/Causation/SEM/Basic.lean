@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Causation.SEM.Defs
 public import Linglib.Semantics.Causation.SEM.Deterministic
-public import Linglib.Semantics.Causation.Mechanism.Deterministic
+public import Linglib.Semantics.Causation.Mechanism.Defs
 public import Mathlib.Logic.Function.Iterate
 
 /-!
@@ -47,9 +47,9 @@ variable {V : Type*} {α : V → Type*}
 /-! ### Intervention (Pearl do(v := x)) -/
 
 /-- **Pearl's `do(v := x)` intervention**: replace the mechanism for `v`
-    with the constant Dirac-PMF mechanism returning `x`. Other vertices'
+    with the constant mechanism returning `x`. Other vertices'
     mechanisms are unchanged. -/
-noncomputable def intervene [DecidableEq V] (M : SEM V α) (v : V) (x : α v) : SEM V α :=
+def intervene [DecidableEq V] (M : SEM V α) (v : V) (x : α v) : SEM V α :=
   { graph := M.graph
     mech  := fun w =>
       if h : w = v then h ▸ Mechanism.const (G := M.graph) x else M.mech w }
@@ -57,7 +57,7 @@ noncomputable def intervene [DecidableEq V] (M : SEM V α) (v : V) (x : α v) : 
 @[simp] theorem intervene_graph [DecidableEq V] (M : SEM V α) (v : V) (x : α v) :
     (M.intervene v x).graph = M.graph := rfl
 
-/-- The intervened vertex's mechanism becomes a constant Dirac. -/
+/-- The intervened vertex's mechanism becomes constant. -/
 @[simp] theorem intervene_mech_self [DecidableEq V] (M : SEM V α) (v : V) (x : α v) :
     (M.intervene v x).mech v = Mechanism.const (G := M.graph) x := by
   simp [intervene]
@@ -72,18 +72,6 @@ noncomputable def intervene [DecidableEq V] (M : SEM V α) (v : V) (x : α v) : 
 instance [DecidableEq V] (M : SEM V α) [h : CausalGraph.IsDAG M.graph]
     (v : V) (x : α v) : CausalGraph.IsDAG (M.intervene v x).graph := by
   rw [intervene_graph]; exact h
-
-/-- An intervention preserves the `IsDeterministic` mixin: the
-    intervened vertex becomes a `Mechanism.const` (a Dirac), and other
-    vertices' mechanisms are unchanged. -/
-noncomputable instance [DecidableEq V] (M : SEM V α) [IsDeterministic M]
-    (v : V) (x : α v) : IsDeterministic (M.intervene v x) where
-  mech_det w := by
-    by_cases h : w = v
-    · subst h; simp [intervene]
-      exact inferInstanceAs (Mechanism.IsDeterministic (Mechanism.const _))
-    · simp [intervene, h]
-      exact IsDeterministic.mech_det w
 
 /-! ### Forward propagation: ready, parentAssignment -/
 
@@ -109,26 +97,26 @@ def parentAssignment (M : SEM V α) (s : Valuation α) (v : V)
     `_skip_not_ready`) so consumers can unfold via `simp` rather than
     relying on `decide` reducing through opaque definitions. -/
 def singleStepAtDet [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) (v : V) : Valuation α :=
+    (M : SEM V α) (s : Valuation α) (v : V) : Valuation α :=
   if (s.get v).isNone then
     if hR : ready M s v then
       s.extend v
-        (Mechanism.IsDeterministic.toFun (M.mech v) (parentAssignment M s v hR))
+        (M.mech v (parentAssignment M s v hR))
     else s
   else s
 
 /-- Structural unfolding: when `v` is undetermined and ready, the step
     extends the valuation with the mechanism's value at `v`. -/
 theorem singleStepAtDet_extend [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) (v : V)
+    (M : SEM V α) (s : Valuation α) (v : V)
     (hUndet : (s.get v).isNone) (hR : ready M s v) :
     singleStepAtDet M s v =
-      s.extend v (Mechanism.IsDeterministic.toFun (M.mech v) (parentAssignment M s v hR)) := by
+      s.extend v (M.mech v (parentAssignment M s v hR)) := by
   simp [singleStepAtDet, hUndet, hR]
 
 /-- Structural unfolding: a determined vertex is skipped. -/
 @[simp] theorem singleStepAtDet_skip_determined [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) (v : V)
+    (M : SEM V α) (s : Valuation α) (v : V)
     (hDet : (s.get v).isSome) :
     singleStepAtDet M s v = s := by
   simp [singleStepAtDet, Option.isNone_iff_eq_none, Option.eq_none_iff_forall_ne_some,
@@ -136,7 +124,7 @@ theorem singleStepAtDet_extend [DecidableEq V] [DecidableValuation α]
 
 /-- Structural unfolding: an unready vertex is skipped. -/
 theorem singleStepAtDet_skip_not_ready [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) (v : V)
+    (M : SEM V α) (s : Valuation α) (v : V)
     (hNR : ¬ ready M s v) :
     singleStepAtDet M s v = s := by
   unfold singleStepAtDet
@@ -147,15 +135,15 @@ theorem singleStepAtDet_skip_not_ready [DecidableEq V] [DecidableValuation α]
 /-- One forward-development sweep over an explicit vertex list.
     Computable. Each fold step is `singleStepAtDet`. -/
 def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (vs : List V) (s : Valuation α) : Valuation α :=
+    (M : SEM V α) (vs : List V) (s : Valuation α) : Valuation α :=
   vs.foldl (singleStepAtDet M) s
 
 @[simp] theorem stepOnceDetOn_nil [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) :
+    (M : SEM V α) (s : Valuation α) :
     stepOnceDetOn M [] s = s := rfl
 
 @[simp] theorem stepOnceDetOn_cons [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (v : V) (vs : List V) (s : Valuation α) :
+    (M : SEM V α) (v : V) (vs : List V) (s : Valuation α) :
     stepOnceDetOn M (v :: vs) s = stepOnceDetOn M vs (singleStepAtDet M s v) := rfl
 
 /-! ### Computational specialization: developDetOn (explicit list) -/
@@ -177,16 +165,16 @@ def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
     `Fintype.card V` iterations always suffice to reach the fixpoint
     (each effective iteration determines ≥1 more vertex). -/
 def developDetOn [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (vs : List V) (n : ℕ) (s : Valuation α) :
+    (M : SEM V α) (vs : List V) (n : ℕ) (s : Valuation α) :
     Valuation α :=
   (stepOnceDetOn M vs)^[n] s
 
 @[simp] theorem developDetOn_zero [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (vs : List V) (s : Valuation α) :
+    (M : SEM V α) (vs : List V) (s : Valuation α) :
     developDetOn M vs 0 s = s := rfl
 
 theorem developDetOn_succ [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (vs : List V) (n : ℕ) (s : Valuation α) :
+    (M : SEM V α) (vs : List V) (n : ℕ) (s : Valuation α) :
     developDetOn M vs (n + 1) s = developDetOn M vs n (stepOnceDetOn M vs s) := by
   simp [developDetOn, Function.iterate_succ_apply]
 
@@ -211,20 +199,20 @@ theorem developDetOn_succ [DecidableEq V] [DecidableValuation α]
     every value of which agrees with the canonical `developDetVtx M s`.
     Used as the load-bearing invariant on `developDetOn` iteration. -/
 private def isConsistentDev [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s s' : Valuation α) : Prop :=
   s ≤ s' ∧ ∀ v x, s'.get v = some x → developDetVtx M s v = x
 
 /-- The starting valuation is consistent with itself. -/
 private lemma isConsistentDev_self [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) : isConsistentDev M s s := by
   refine ⟨le_rfl, fun v x h => ?_⟩
   exact developDetVtx_extended M s v x h
 
 /-- One step of `singleStepAtDet` preserves the consistency invariant. -/
 private lemma isConsistentDev_singleStepAtDet [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     {s s' : Valuation α} (h : isConsistentDev M s s') (v : V) :
     isConsistentDev M s (singleStepAtDet M s' v) := by
   obtain ⟨hLe, hCons⟩ := h
@@ -246,9 +234,9 @@ private lemma isConsistentDev_singleStepAtDet [DecidableEq V] [DecidableValuatio
           exact absurd h1 (by simp)
       -- Compute the new value
       let newVal : α v :=
-        Mechanism.IsDeterministic.toFun (M.mech v) (parentAssignment M s' v hReady)
+        M.mech v (parentAssignment M s' v hReady)
       have hNewVal : newVal = developDetVtx M s v := by
-        show Mechanism.IsDeterministic.toFun (M.mech v) (parentAssignment M s' v hReady) =
+        show M.mech v (parentAssignment M s' v hReady) =
              developDetVtx M s v
         rw [developDetVtx_undet M s v hsv]
         congr 1
@@ -283,7 +271,7 @@ private lemma isConsistentDev_singleStepAtDet [DecidableEq V] [DecidableValuatio
 
 /-- One sweep of `stepOnceDetOn` preserves the consistency invariant. -/
 private lemma isConsistentDev_stepOnceDetOn [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     {s s' : Valuation α} (h : isConsistentDev M s s') (vs : List V) :
     isConsistentDev M s (stepOnceDetOn M vs s') := by
   unfold stepOnceDetOn
@@ -295,7 +283,7 @@ private lemma isConsistentDev_stepOnceDetOn [DecidableEq V] [DecidableValuation 
 
 /-- Iteration of `developDetOn` preserves the consistency invariant. -/
 private lemma isConsistentDev_developDetOn [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (vs : List V) (n : ℕ) :
     isConsistentDev M s (developDetOn M vs n s) := by
   induction n with
@@ -314,7 +302,7 @@ private lemma isConsistentDev_developDetOn [DecidableEq V] [DecidableValuation �
 
     The converse is `developDetOn_hasValue_developDetVtx`. -/
 theorem developDetVtx_of_developDetOn_hasValue [DecidableEq V] [DecidableValuation α]
-    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph]
     {s : Valuation α} {vs : List V} {n : ℕ} {v : V} {x : α v}
     (h : (developDetOn M vs n s).hasValue v x) :
     developDetVtx M s v = x :=
@@ -323,7 +311,7 @@ theorem developDetVtx_of_developDetOn_hasValue [DecidableEq V] [DecidableValuati
 /-- **`Valuation`-form bridge**: if iteration's hasValue claim holds, so
     does the canonical `developDet`'s. -/
 theorem developDet_hasValue_of_developDetOn_hasValue [DecidableEq V] [DecidableValuation α]
-    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph]
     {s : Valuation α} {vs : List V} {n : ℕ} {v : V} {x : α v}
     (h : (developDetOn M vs n s).hasValue v x) :
     (M.developDet s).hasValue v x := by
@@ -333,7 +321,7 @@ theorem developDet_hasValue_of_developDetOn_hasValue [DecidableEq V] [DecidableV
 /-! ### Bridge: developDet ↦ developDetOn (completeness) -/
 
 /-! Completeness counterpart to the soundness bridge above. For a
-    `Fintype V + IsDAG + IsDeterministic` SEM, `Fintype.card V`
+    `Fintype V + IsDAG` SEM, `Fintype.card V`
     iterations of `stepOnceDetOn` over any vertex list covering all of
     `V` produce the canonical answer at every vertex.
 
@@ -349,7 +337,7 @@ theorem developDet_hasValue_of_developDetOn_hasValue [DecidableEq V] [DecidableV
 section Completeness
 
 variable [DecidableEq V] [DecidableValuation α]
-variable (M : SEM V α) [IsDeterministic M]
+variable (M : SEM V α)
 
 /-- `singleStepAtDet` only extends the valuation. -/
 private lemma singleStepAtDet_le (s : Valuation α) (v : V) :
@@ -387,7 +375,7 @@ private lemma developDetOn_le (s : Valuation α) (vs : List V) (n : ℕ) :
     rw [developDetOn_succ]
     exact (stepOnceDetOn_le M s vs).trans (ih (stepOnceDetOn M vs s))
 
-omit [DecidableEq V] [DecidableValuation α] [IsDeterministic M] in
+omit [DecidableEq V] [DecidableValuation α] in
 /-- `ready` is monotone in the valuation: extending a valuation only
     determines more parents, preserving readiness. -/
 private lemma ready_mono {s s' : Valuation α} (hLe : s ≤ s') (v : V)
@@ -452,7 +440,7 @@ private lemma stepOnceDetOn_isSome_of_mem_undet_ready
           · rw [singleStepAtDet_skip_not_ready M s w hwReady]; exact hN
       · exact ready_mono M (singleStepAtDet_le M s w) v hR
 
-omit [DecidableEq V] [DecidableValuation α] [IsDeterministic M] in
+omit [DecidableEq V] [DecidableValuation α] in
 /-- For an `IsDAG`, any nonempty set of undetermined vertices contains a
     member whose strict ancestors are all determined — hence ready.
 
@@ -475,13 +463,12 @@ private lemma exists_undet_ready [hDag : CausalGraph.IsDAG M.graph]
   have hAnc : M.graph.IsStrictAncestor u a := Relation.TransGen.single hu
   exact ha_min u huS hAnc
 
-omit [IsDeterministic M] in
 /-- Count of undetermined vertices. Strictly decreases when any vertex
     becomes determined. -/
 private def undetCount [Fintype V] (s : Valuation α) : ℕ :=
   (Finset.univ.filter (fun v => (s.get v).isNone = true)).card
 
-omit [DecidableValuation α] [IsDeterministic M] in
+omit [DecidableValuation α] in
 /-- Pointwise progress at any vertex strictly decreases `undetCount`. -/
 private lemma undetCount_lt_of_progress [Fintype V]
     {s s' : Valuation α} (hLe : s ≤ s') (v : V)
@@ -569,8 +556,8 @@ private lemma developDetOn_isSome_of_card_le [Fintype V]
 
 end Completeness
 
-/-- **Headline completeness theorem**: under `Fintype V`, `IsDAG`, and
-    `IsDeterministic`, the iteration form `developDetOn` reaches the
+/-- **Headline completeness theorem**: under `Fintype V` and `IsDAG`,
+    the iteration form `developDetOn` reaches the
     canonical `developDetVtx` value at every vertex, given a covering
     list and at least `Fintype.card V` iterations.
 
@@ -578,7 +565,7 @@ end Completeness
     by `Fintype.card V` since `undetCount s ≤ Fintype.card V`) with
     soundness (`developDetVtx_of_developDetOn_hasValue`). -/
 theorem developDetOn_hasValue_developDetVtx [DecidableEq V] [DecidableValuation α] [Fintype V]
-    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph]
     {s : Valuation α} {vs : List V} (hCovers : ∀ v : V, v ∈ vs)
     {n : ℕ} (hN : Fintype.card V ≤ n) (v : V) :
     (developDetOn M vs n s).hasValue v (developDetVtx M s v) := by
@@ -594,12 +581,12 @@ theorem developDetOn_hasValue_developDetVtx [DecidableEq V] [DecidableValuation 
   rw [Valuation.hasValue] at hVal
   rw [Valuation.hasValue, hVal, hCanon]
 
-/-- **Iff form of the bridge**: under `IsDAG + IsDeterministic + Fintype`
+/-- **Iff form of the bridge**: under `IsDAG + Fintype`
     with sufficient iterations, `developDetOn` membership and
     `developDetVtx` equality coincide. Soundness gives `→`; completeness
     gives `←` via the headline theorem. -/
 theorem developDetOn_hasValue_iff [DecidableEq V] [DecidableValuation α] [Fintype V]
-    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph]
     {s : Valuation α} {vs : List V} (hCovers : ∀ v : V, v ∈ vs)
     {n : ℕ} (hN : Fintype.card V ≤ n) (v : V) (x : α v) :
     (developDetOn M vs n s).hasValue v x ↔ developDetVtx M s v = x := by
@@ -609,44 +596,15 @@ theorem developDetOn_hasValue_iff [DecidableEq V] [DecidableValuation α] [Finty
 
 /-- **Consumer Iff**: `developDet` (canonical, opaque) and `developDetOn`
     (computational, decide-friendly) agree as `hasValue` predicates under
-    `IsDAG + IsDeterministic + Fintype + sufficient iterations`. The
+    `IsDAG + Fintype + sufficient iterations`. The
     `decide`-shaped form for `(M.developDet s).hasValue v x` proofs. -/
 theorem developDet_hasValue_iff_developDetOn_hasValue
     [DecidableEq V] [DecidableValuation α] [Fintype V]
-    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph]
     {s : Valuation α} {vs : List V} (hCovers : ∀ v : V, v ∈ vs)
     {n : ℕ} (hN : Fintype.card V ≤ n) (v : V) (x : α v) :
     (M.developDet s).hasValue v x ↔ (developDetOn M vs n s).hasValue v x := by
   rw [developDet_hasValue_iff, developDetOn_hasValue_iff hCovers hN]
-
--- Helper: PMF.pure injectivity. Two Diracs agree iff their points agree.
-private theorem PMF.pure_inj {β : Type*} {a b : β}
-    (h : PMF.pure a = PMF.pure b) : a = b := by
-  by_contra hne
-  have h1 : PMF.pure a b = 0 := PMF.pure_apply_of_ne _ _ (Ne.symm hne)
-  have h2 : PMF.pure a b = 1 := h ▸ PMF.pure_apply_self b
-  exact one_ne_zero (h1 ▸ h2).symm
-
--- Helper: `IsDeterministic.toFun` is determined by the mechanism (not the
--- typeclass instance). Routes through `run_eq` + `PMF.pure_inj`, bypassing
--- the dependent-typeclass motive issues that block direct `rw [m₁ = m₂]`.
--- Both instance arguments are explicit so callers can pin them when
--- automatic resolution doesn't unify the underlying mechanism term.
-private theorem Mechanism.toFun_eq_of_mech_eq
-    {V : Type*} {α : V → Type*} {G : CausalGraph V} {v : V}
-    {m m' : Mechanism G α v}
-    (im : Mechanism.IsDeterministic m) (im' : Mechanism.IsDeterministic m')
-    (h : m = m') (ρ : ∀ u : G.parents v, α u.val) :
-    @Mechanism.IsDeterministic.toFun _ _ _ _ _ im ρ
-      = @Mechanism.IsDeterministic.toFun _ _ _ _ _ im' ρ := by
-  have e1 : m.run ρ = PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im ρ) :=
-    im.run_eq ρ
-  have e2 : m'.run ρ = PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im' ρ) :=
-    im'.run_eq ρ
-  have : PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im ρ)
-       = PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im' ρ) := by
-    rw [← e1, ← e2, h]
-  exact PMF.pure_inj this
 
 /-- **Intervention-as-Extend bridge**: for an acyclic deterministic SEM
     with `cause` undetermined in `s`, Pearl-intervening to set
@@ -660,16 +618,10 @@ private theorem Mechanism.toFun_eq_of_mech_eq
     produce `xC` (LHS via the constant intervention mechanism; RHS via
     `developDetVtx_extended` short-circuit on the extended valuation);
     off-cause both sides reduce to the same mechanism applied to
-    recursively-equal parent values via the IH.
-
-    The dependent-typeclass equality (`toFun ((M.intervene cause xC).mech w)
-    ρ = toFun (M'.mech w) ρ` for `M' = M.intervene cause xC` or `M`) is
-    discharged via the `Mechanism.toFun_eq_of_mech_eq` helper above,
-    which routes through `run_eq` to bypass motive-not-type-correct
-    issues that block direct rewriting of the mechanism. -/
+    recursively-equal parent values via the IH. -/
 theorem developDet_intervene_eq_developDet_extend
     [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [hDag : CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [hDag : CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause)
     (h : s.get cause = none) :
     (M.intervene cause xC).developDet s = M.developDet (s.extend cause xC) := by
@@ -684,27 +636,14 @@ theorem developDet_intervene_eq_developDet_extend
     by_cases hwc : w = cause
     · subst hwc
       simp only [h, Valuation.extend_get_same]
-      -- Goal: toFun ((M.intervene w xC).mech w) (...) = xC
-      -- Resolve via helper: pin both instances explicitly to bypass synth issues.
-      rw [Mechanism.toFun_eq_of_mech_eq
-            (IsDeterministic.mech_det (M := M.intervene w xC) w)
-            (inferInstanceAs (Mechanism.IsDeterministic
-              (Mechanism.const (G := M.graph) xC)))
-            (intervene_mech_self M w xC)]
+      rw [intervene_mech_self]
       rfl
-    · have hExt : (s.extend cause xC).get w = s.get w :=
-        Valuation.extend_get_ne hwc
-      rw [hExt]
-      cases hsw : s.get w with
+    · rw [Valuation.extend_get_ne hwc]
+      cases s.get w with
       | some y => rfl
       | none =>
-        -- Reduce the match-on-none on both sides
-        show Mechanism.IsDeterministic.toFun ((M.intervene cause xC).mech w) _
-          = Mechanism.IsDeterministic.toFun (M.mech w) _
-        rw [Mechanism.toFun_eq_of_mech_eq
-              (IsDeterministic.mech_det (M := M.intervene cause xC) w)
-              (IsDeterministic.mech_det (M := M) w)
-              (intervene_mech_other M xC hwc)]
+        simp only
+        rw [intervene_mech_other M xC hwc]
         congr 1
         funext u
         exact ih u.val (Relation.TransGen.single u.property)

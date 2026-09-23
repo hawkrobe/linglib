@@ -75,27 +75,20 @@ instance : CausalGraph.IsDAG graph := ranking.isDAG
 
 /-- Dreyfus SEM, with the negative `¬BRK` precondition encoded directly in
     the COM mechanism. -/
-noncomputable def dreyfusSEM : BoolSEM V :=
+def dreyfusSEM : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .INT | .NRV | .LST | .BRK => const (G := graph) false
-      | .SEC => deterministic (λ ρ => ρ ⟨.INT, by decide⟩)
-      | .MSG => deterministic (λ ρ =>
-          ρ ⟨.INT, by decide⟩ && ρ ⟨.NRV, by decide⟩)
-      | .COM => deterministic (λ ρ =>
-          ρ ⟨.MSG, by decide⟩ && ρ ⟨.LST, by decide⟩ && !ρ ⟨.BRK, by decide⟩)
-      | .SPY => deterministic (λ ρ =>
-          ρ ⟨.SEC, by decide⟩ && ρ ⟨.COM, by decide⟩) }
+      | .SEC => fun ρ ↦ ρ ⟨.INT, by decide⟩
+      | .MSG => fun ρ ↦
+          ρ ⟨.INT, by decide⟩ && ρ ⟨.NRV, by decide⟩
+      | .COM => fun ρ ↦
+          ρ ⟨.MSG, by decide⟩ && ρ ⟨.LST, by decide⟩ && !ρ ⟨.BRK, by decide⟩
+      | .SPY => fun ρ ↦
+          ρ ⟨.SEC, by decide⟩ && ρ ⟨.COM, by decide⟩ }
 
 instance : CausalGraph.IsDAG dreyfusSEM.graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
-
-instance : SEM.IsDeterministic dreyfusSEM where
-  mech_det v := match v with
-    | .INT | .NRV | .LST | .BRK =>
-        inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .SEC | .MSG | .COM | .SPY =>
-        inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 /-- Background: Dreyfus intends to spy and has already collected secrets
     (INT = SEC = 1); NRV, LST, BRK are unresolved. -/
@@ -257,7 +250,7 @@ every consistent completion the prerequisite is realized iff the complement is �
 presupposition `Schema.manage` carries, with causal entailment as the condition. -/
 theorem schema_manage_presup {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
     (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
     (hsuf : manageSem M background p xP c xC)

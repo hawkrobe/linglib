@@ -36,7 +36,7 @@ aliases for legacy SBH-style binary semantics.
   background outcomes.
 
 `BoolSEM`-namespace aliases specialize the polymorphic predicates to
-`α := fun _ => Bool` with `xC = true`, `xE = true` (legacy SBH semantics).
+`α := fun _ ↦ Bool` with `xC = true`, `xE = true` (legacy SBH semantics).
 
 ## Computability
 
@@ -79,12 +79,12 @@ variable [Fintype V] [DecidableEq V] [DecidableValuation α]
 `effect` the value `xE`. This is the bare sufficiency clause of [nadathur-lauer-2020]'s
 Definition 23; `Sufficiency.makeSem` states the whole definition, with its non-inevitability
 clause, over the strict development. -/
-def causallySufficient (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+def causallySufficient (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause)
     (effect : V) (xE : α effect) : Prop :=
   (M.developDet (s.extend cause xC)).hasValue effect xE
 
-noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallySufficient M s cause xC effect xE) :=
   Classical.dec _
@@ -94,22 +94,21 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 omit [Fintype V] [DecidableValuation α] in
 /-- `causallySufficient` unfolds to the development of the extended valuation. -/
 theorem causallySufficient_iff (M : SEM V α)
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     causallySufficient M s cause xC effect xE ↔
       (M.developDet (s.extend cause xC)).hasValue effect xE := Iff.rfl
 
 /-- **Interventionist manipulation** (Woodward's criterion): cause's value
     affects effect's value under `developDet`. Defined via `extend` rather
-    than `intervene` because for deterministic acyclic SEMs they agree
-    and `extend` doesn't require re-establishing `IsDeterministic` on the
-    intervened SEM. -/
-def manipulates (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    than `intervene`: on an undetermined cause they agree
+    (`developDet_intervene_eq_developDet_extend`). -/
+def manipulates (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC1 xC2 : α cause) (effect : V) : Prop :=
   (M.developDet (s.extend cause xC1)).get effect ≠
   (M.developDet (s.extend cause xC2)).get effect
 
-noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC1 xC2 : α cause) (effect : V) :
     Decidable (manipulates M s cause xC1 xC2 effect) :=
   Classical.dec _
@@ -149,7 +148,7 @@ theorem cfSeed_empty (M : SEM V α) (antecedent : V) (xAnt : α antecedent) :
 
 omit [DecidableValuation α] in
 /-- The counterfactual outcome: the development of the counterfactual seed. -/
-noncomputable def counterfactual (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable def counterfactual (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) : Valuation α :=
   M.developDet (cfSeed M observed antecedent xAnt)
 
@@ -158,13 +157,13 @@ omit [DecidableValuation α] in
 W (their equation 1): had the antecedent been `xAlt`, the effect would not have had its actual
 value `xE`. Their sufficient-causation S (equation 3) is whether-causation evaluated at the
 valuation with the alternative causes removed. -/
-def WhetherCause (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+def WhetherCause (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (antecedent : V) (xAlt : α antecedent)
     (effect : V) (xE : α effect) : Prop :=
   ¬ (counterfactual M observed antecedent xAlt).hasValue effect xE
 
 omit [DecidableValuation α] in
-noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (observed : Valuation α) (antecedent : V) (xAlt : α antecedent) (effect : V) (xE : α effect) :
     Decidable (WhetherCause M observed antecedent xAlt effect xE) :=
   Classical.dec _
@@ -177,7 +176,7 @@ counterfactual seed leaves open; observed vertices causally independent of the c
 rather than resampled, the oxygen-versus-match contrast [pearl-2019] uses to motivate the
 measure. -/
 noncomputable def probSufficiency {Ω : Type*} [MeasurableSpace Ω] (M : SEM V α)
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M] (μ : MeasureTheory.Measure Ω)
+    [CausalGraph.IsDAG M.graph] (μ : MeasureTheory.Measure Ω)
     (u : Ω → Valuation α) (observed : Valuation α) (cause : V) (xC : α cause)
     (effect : V) (xE : α effect) : ENNReal :=
   μ {ω | (M.developDet ((cfSeed M observed cause xC).or (u ω))).hasValue effect xE}
@@ -185,7 +184,7 @@ noncomputable def probSufficiency {Ω : Type*} [MeasurableSpace Ω] (M : SEM V �
 /-- With a certain background the probability of sufficiency is the {0,1} indicator of the
 counterfactual outcome. -/
 theorem probSufficiency_dirac {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (ω : Ω)
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] (ω : Ω)
     (u : Ω → Valuation α) (observed : Valuation α) (cause : V) (xC : α cause)
     (effect : V) (xE : α effect) :
     probSufficiency M (MeasureTheory.Measure.dirac ω) u observed cause xC effect xE =
@@ -208,19 +207,19 @@ open Causation.SEM (causallySufficient)
 /-- `BoolSEM`-flavored `causallySufficient`: setting `cause = true` develops
     `effect = true`. Matches old `Causation.causallySufficient` semantics. -/
 abbrev causallySufficient (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
+    (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.causallySufficient M s cause true effect true
 
 /-- `BoolSEM`-flavored `manipulates`: cause's value (true vs false) flips
     effect's value under `developDet`. -/
 abbrev manipulates (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
+    (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.manipulates M s cause true false effect
 
 /-- `BoolSEM`-flavored `probSufficiency`: the probability that intervening `cause := true`
     yields `effect = true`. -/
 noncomputable abbrev probSufficiency {Ω : Type*} [MeasurableSpace Ω] (M : BoolSEM V)
-    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] (μ : MeasureTheory.Measure Ω)
+    [CausalGraph.IsDAG M.graph] (μ : MeasureTheory.Measure Ω)
     (u : Ω → Valuation (fun _ : V => Bool)) (s : Valuation (fun _ : V => Bool))
     (cause effect : V) : ENNReal :=
   SEM.probSufficiency M μ u s cause true effect true
@@ -256,7 +255,7 @@ omit [Fintype V] in
     `exact manipulates_of_developDetOn_ne M (vs := …) (n := …) true false (by decide) (by decide) (by decide)`
     without `(by decide)` running into metavariable inference issues. -/
 theorem manipulates_of_developDetOn_ne (M : BoolSEM V)
-    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    [CausalGraph.IsDAG M.graph]
     {s : Valuation (fun _ : V => Bool)} (vs : List V) (n : ℕ)
     {cause effect : V} (y1 y2 : Bool)
     (h1 : (SEM.developDetOn M vs n (s.extend cause true)).hasValue effect y1)
@@ -279,7 +278,7 @@ omit [Fintype V] in
     `exact not_manipulates_of_developDetOn_eq M (vs := …) (n := …) true (by decide) (by decide)`
     without metavariable issues. -/
 theorem not_manipulates_of_developDetOn_eq (M : BoolSEM V)
-    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    [CausalGraph.IsDAG M.graph]
     {s : Valuation (fun _ : V => Bool)} (vs : List V) (n : ℕ)
     {cause effect : V} (y : Bool)
     (h1 : (SEM.developDetOn M vs n (s.extend cause true)).hasValue effect y)
@@ -304,18 +303,18 @@ variable {V : Type*} {α : V → Type*}
     vertex entails nothing, and an inner vertex entails nothing while any
     parent is u-valued. Contrast the eager-total `causallySufficient` above. -/
 def causallyEntails [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M] (s : Valuation α) (v : V) (x : α v) : Prop :=
+    (s : Valuation α) (v : V) (x : α v) : Prop :=
   developDetVtx? M s v = some x
 
 noncomputable instance [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M] (s : Valuation α) (v : V) (x : α v) :
+    (s : Valuation α) (v : V) (x : α v) :
     Decidable (causallyEntails M s v x) := Classical.dec _
 
 /-- Transfer a fuel-mirror computation to `causallyEntails` (both
     polarities, via the fuel bridge). The study idiom for concrete claims:
     `(causallyEntails_iff_fuel M rank @hrank hn s v x).mpr (by decide)`. -/
 theorem causallyEntails_iff_fuel [DecidableEq V] (M : SEM V α)
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    [CausalGraph.IsDAG M.graph]
     (r : CausalGraph.Ranking M.graph)
     {n : ℕ} {v : V} (hn : r v < n) (s : Valuation α) (x : α v) :
     causallyEntails M s v x ↔ developDetVtxFuel M s n v = some x := by
@@ -326,7 +325,7 @@ theorem causallyEntails_iff_fuel [DecidableEq V] (M : SEM V α)
     development refines the total one wherever it resolves. -/
 theorem causallySufficient_of_causallyEntails [Fintype V] [DecidableEq V]
     [DecidableValuation α] {M : SEM V α} [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M] {s : Valuation α} {cause : V} {xC : α cause}
+    {s : Valuation α} {cause : V} {xC : α cause}
     {effect : V} {xE : α effect}
     (h : causallyEntails M (s.extend cause xC) effect xE) :
     causallySufficient M s cause xC effect xE :=
@@ -335,7 +334,7 @@ theorem causallySufficient_of_causallyEntails [Fintype V] [DecidableEq V]
 
 /-- Causal entailment is functional: a vertex entails at most one value. -/
 theorem causallyEntails_unique [DecidableEq V] {M : SEM V α}
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M] {s : Valuation α}
+    [CausalGraph.IsDAG M.graph] {s : Valuation α}
     {v : V} {x y : α v}
     (hx : causallyEntails M s v x) (hy : causallyEntails M s v y) : x = y :=
   Option.some.inj ((hx.symm.trans hy))
@@ -347,19 +346,19 @@ theorem causallyEntails_unique [DecidableEq V] {M : SEM V α}
     restriction is automatic here, since `developDetVtx?` is `none` at
     undetermined exogenous vertices. -/
 def isConsistentSuper [DecidableEq V] [DecidableValuation α] (M : SEM V α)
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    [CausalGraph.IsDAG M.graph]
     (base s' : Valuation α) : Prop :=
   base ≤ s' ∧
   ∀ (x : V) (xv : α x), base.get x = none → s'.get x = some xv →
     ∀ yv : α x, yv ≠ xv → ¬ causallyEntails M base x yv
 
 noncomputable instance [DecidableEq V] [DecidableValuation α] (M : SEM V α)
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M] (base s' : Valuation α) :
+    [CausalGraph.IsDAG M.graph] (base s' : Valuation α) :
     Decidable (isConsistentSuper M base s') := Classical.dec _
 
 /-- Every valuation is a consistent supersituation of itself. -/
 theorem isConsistentSuper_self [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) : isConsistentSuper M s s :=
   ⟨le_rfl, fun _ _ hn hs => by simp [hn] at hs⟩
 
@@ -368,7 +367,7 @@ theorem isConsistentSuper_self [DecidableEq V] [DecidableValuation α]
     supersituations — whatever `s` causally entails, any Def-9b-consistent
     extension of `s` still causally entails. -/
 theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
-    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph]
     {s s' : Valuation α} (hcons : isConsistentSuper M s s')
     {v : V} {x : α v} (h : causallyEntails M s v x) :
     causallyEntails M s' v x := by
@@ -453,7 +452,7 @@ theorem IsExogenousSettlement.of_extend [DecidableEq V] [DecidableValuation α]
     fixed vertex is parentless and undetermined in `base`, so `base`
     causally entails nothing about it. -/
 theorem IsExogenousSettlement.isConsistentSuper [DecidableEq V] [DecidableValuation α]
-    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph]
     {base s' : Valuation α} (h : IsExogenousSettlement M base s') :
     isConsistentSuper M base s' := by
   refine ⟨h.1, fun x xv hn hs yv _ hent => ?_⟩
@@ -468,13 +467,11 @@ namespace causallyNecessary
     fact nor the effect fact. Shared by Def 10a (sufficiency, see
     `Implicative.manageSem`) and Def 10b (necessity, below). -/
 def precondition [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
   ¬ causallyEntails M s cause xC ∧ ¬ causallyEntails M s effect xE
 
 noncomputable instance [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (precondition M s cause xC effect xE) := Classical.dec _
 
@@ -484,14 +481,14 @@ noncomputable instance [DecidableEq V] (M : SEM V α) [CausalGraph.IsDAG M.graph
     (see `IsExogenousSettlement`); Def 9b consistency is then automatic
     (`IsExogenousSettlement.isConsistentSuper`). -/
 def achievable [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
   ∃ s' : Valuation α, IsExogenousSettlement M (s.extend cause xC) s' ∧
     s'.get effect = none ∧ causallyEntails M s' effect xE
 
 noncomputable instance [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (achievable M s cause xC effect xE) := Classical.dec _
 
@@ -502,14 +499,14 @@ noncomputable instance [DecidableEq V] [DecidableValuation α]
     through the cause. The paper's exclusion `s' ⊭ ⟨X,x⟩` is the
     *developed* entailment, not the syntactic `s'.get cause ≠ some xC`. -/
 def noAlternative [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
   ∀ s' : Valuation α, IsExogenousSettlement M s s' → s'.get effect = none →
     causallyEntails M s' effect xE → causallyEntails M s' cause xC
 
 noncomputable instance [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (noAlternative M s cause xC effect xE) := Classical.dec _
 
@@ -528,7 +525,7 @@ end causallyNecessary
     `IsExogenousSettlement` for why the literal Def 9b/10b quantification
     is unfaithful to the paper's own verdicts. -/
 def causallyNecessary [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
   causallyNecessary.precondition M s cause xC effect xE ∧
@@ -536,7 +533,7 @@ def causallyNecessary [DecidableEq V] [DecidableValuation α]
   causallyNecessary.noAlternative M s cause xC effect xE
 
 noncomputable instance [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallyNecessary M s cause xC effect xE) := Classical.dec _
 
@@ -548,7 +545,7 @@ noncomputable instance [DecidableEq V] [DecidableValuation α]
     Pi-`Fintype` of valuations). Connected to the canonical predicate by
     `causallyNecessary_iff_fuel`. -/
 def causallyNecessaryFuel [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (n : ℕ)
+    (M : SEM V α) (n : ℕ)
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
   (¬ developDetVtxFuel M s n cause = some xC ∧
@@ -560,7 +557,7 @@ def causallyNecessaryFuel [Fintype V] [DecidableEq V] [DecidableValuation α]
     developDetVtxFuel M s' n cause = some xC)
 
 instance [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [IsDeterministic M] (n : ℕ)
+    (M : SEM V α) (n : ℕ)
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallyNecessaryFuel M n s cause xC effect xE) := by
   letI := Valuation.fintype (α := α)
@@ -571,7 +568,7 @@ instance [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α
     exceeds a rank function for the graph. Study idiom:
     `(causallyNecessary_iff_fuel M rank @hrank hn s …).mpr (by decide)`. -/
 theorem causallyNecessary_iff_fuel [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
     (r : CausalGraph.Ranking M.graph)
     {n : ℕ} (hn : ∀ v : V, r v < n)
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
@@ -586,9 +583,9 @@ theorem causallyNecessary_iff_fuel [Fintype V] [DecidableEq V] [DecidableValuati
   exact and_congr
     (and_congr (not_congr (hpt s cause xC)) (not_congr (hpt s effect xE)))
     (and_congr
-      (exists_congr fun s' => and_congr_right fun _ =>
-        and_congr_right fun _ => hpt s' effect xE)
-      (forall_congr' fun s' => imp_congr_right fun _ => imp_congr_right fun _ =>
+      (exists_congr fun s' => and_congr_right fun _ ↦
+        and_congr_right fun _ ↦ hpt s' effect xE)
+      (forall_congr' fun s' => imp_congr_right fun _ ↦ imp_congr_right fun _ ↦
         imp_congr (hpt s' effect xE) (hpt s' cause xC)))
 
 end Causation.SEM
@@ -602,12 +599,12 @@ open Causation (SEM Valuation BoolSEM)
 /-- `BoolSEM`-flavored `causallyNecessary`: setting `cause = true` is
     necessary (Def 10b) for `effect = true`. -/
 abbrev causallyNecessary (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool))
+    (s : Valuation (fun _ : V => Bool))
     (cause effect : V) : Prop :=
   SEM.causallyNecessary M s cause true effect true
 
 noncomputable instance (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation _) (cause effect : V) :
+    (s : Valuation _) (cause effect : V) :
     Decidable (causallyNecessary M s cause effect) := Classical.dec _
 
 end Causation.BoolSEM

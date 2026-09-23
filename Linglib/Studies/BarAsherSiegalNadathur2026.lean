@@ -73,13 +73,13 @@ abbrev Situation (V : Type*) := Valuation (fun _ : V => Bool)
 
 section Model
 
-variable {V : Type*} (M : BoolSEM V) [SEM.IsDeterministic M]
+variable {V : Type*} (M : BoolSEM V)
 
 /-- The equation for `v` gives `b` under `s`: every completion of the values `s` assigns to
 `v`'s parents yields `b`. -/
 def Determines (s : Situation V) (v : V) (b : Bool) : Prop :=
   ∀ σ : M.graph.parents v → Bool, (∀ u c, s u.val = some c → σ u = c) →
-    Mechanism.IsDeterministic.toFun (M.mech v) σ = b
+    M.mech v σ = b
 
 /-- Causal consistency (29): every settled dependent variable carries the value its equation
 gives. -/

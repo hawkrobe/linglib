@@ -23,7 +23,7 @@ settled, so whatever it settles is forced.
 
 namespace Causation.SEM
 
-variable {V : Type*} {α : V → Type*} (M : SEM V α) [IsDeterministic M] (s : Valuation α)
+variable {V : Type*} {α : V → Type*} (M : SEM V α) (s : Valuation α)
 
 /-- `v` is forced to `x` within `n` steps: settled by `s`, or, for an inner vertex, every
 completion of its parents' values forced within `n - 1` steps yields `x`. -/
@@ -32,7 +32,7 @@ def ForcedFuel : ℕ → (v : V) → α v → Prop
   | n + 1, v, x => s.get v = some x ∨ s.get v = none ∧ M.graph.parents v ≠ ∅ ∧
       ∀ σ : ∀ u : M.graph.parents v, α u.val,
         (∀ u y, ForcedFuel n u.val y → σ u = y) →
-          Mechanism.IsDeterministic.toFun (M.mech v) σ = x
+          (M.mech v) σ = x
 
 /-- `v` is forced to `x`: within some number of steps. -/
 def Forced (v : V) (x : α v) : Prop := ∃ n, ForcedFuel M s n v x
@@ -79,7 +79,7 @@ theorem forcedFuel_iff_of_lt (r : CausalGraph.Ranking M.graph) {v : V} {n : ℕ}
     · obtain rfl : n = r v := by omega
       exact Iff.rfl
     simp only [ForcedFuel]
-    refine or_congr_right (and_congr_right λ _ => and_congr_right λ _ =>
+    refine or_congr_right (and_congr_right fun _ ↦ and_congr_right fun _ ↦
       forall_congr' λ σ => imp_congr_left (forall_congr' λ u => forall_congr' λ y => ?_))
     have hu : r u.val < r v := r.map_rel u.property
     rw [ih n (by omega) (by omega), ih (r v) (by omega) (by omega)]
