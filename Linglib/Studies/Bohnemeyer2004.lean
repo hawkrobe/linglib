@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 public import Linglib.Fragments.Hindi.Case
 public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.Causation.Graph.Basic
 public import Linglib.Studies.Lucy1994
 public import Linglib.Syntax.Voice.Basic
 
@@ -29,8 +30,9 @@ recorded here.
 
 ## Main definitions
 
-* `Subevent`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic hierarchy of (31) as the
-  causal order of subevents, the linking-by-viewpoint rule of (32), and the linking of (33)
+* `Subevent`, `Subevent.causalGraph`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic
+  hierarchy of (31) as causal precedence along the CAUSE edge, the linking-by-viewpoint rule of
+  (32), and the linking of (33)
 * `applicativeLinking`, `causativeLinking`, `verbLinking`, `addedTermRole` — the two
   transitivizations as `Voice`s, and the role their added participant takes
 * `TransitivizerSuffix`, `transitivizerSuffix` — the overt suffix, kept apart from the linking
@@ -74,10 +76,17 @@ inductive Subevent where
   | caused
   deriving DecidableEq, Fintype, Repr
 
-/-- Subevents in causal order, the causing subevent first. The thematic hierarchy (31) ranks the
-participant of a causing subevent above the participant of the subevent it causes, so a
-participant of `a` outranks a participant of `b` exactly when `a < b`. -/
-instance : LinearOrder Subevent := .lift' Subevent.ctorIdx (by decide)
+/-- The causal edge of (31): the causing subevent causes the caused subevent. -/
+def Subevent.causalGraph : Causation.CausalGraph Subevent where
+  parents
+    | .causing => ∅
+    | .caused => {.causing}
+
+/-- Subevents in order of causal precedence, the causing subevent first. The thematic hierarchy
+(31) ranks the participant of a causing subevent above the participant of the subevent it causes,
+so a participant of `a` outranks a participant of `b` exactly when `a < b`. -/
+instance : LinearOrder Subevent :=
+  Subevent.causalGraph.linearOrder (.of_depth _ Subevent.ctorIdx (by decide)) (by decide)
 
 instance : BoundedOrder Subevent where
   bot := .causing

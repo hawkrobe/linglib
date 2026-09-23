@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Causation.Graph.Basic
 public import Linglib.Studies.Pesetsky1995
 
 /-!
@@ -31,7 +32,8 @@ The thesis reads three properties off where the Cause sits on this chain.
   the chain the predicate denotes (`OnsetCondition`). The thesis motivates it on causatives in
   general: events integrated into one predicate coincide, so a causal *by*-phrase is controlled
   by the Cause (`OnsetCondition.eq`), and an event downstream of the onset cannot be integrated
-  (`not_onsetCondition_of_lt`). On the eventive reading the subject matter lies downstream of the
+  (`not_onsetCondition_of_lt`), as in *\*John killed the water deer by the poacher shooting them*
+  (`not_onsetCondition_shooting`). On the eventive reading the subject matter lies downstream of the
   percept, so a Subject Matter cannot join the Cause (`tsm_restriction`), while it heads the chain
   of a predicate without a Cause (`subjectMatter_onset_without_cause`). The T/SM restriction thus
   follows without a ban of its own, and the thesis rules out a Target alongside a Cause just as
@@ -40,7 +42,8 @@ The thesis reads three properties off where the Cause sits on this chain.
 ## Implementation notes
 
 The Onset Condition is stated for any causal chain, a set of events partially ordered by causal
-precedence, whose onset is its least event, `IsLeast`. The chain of an emotion is
+precedence, whose onset is its least event, `IsLeast`. Each chain of the thesis is drawn as a
+causal graph, `Causation.CausalGraph`, and ordered by ancestry in it. The chain of an emotion is
 `EmotionChain`, and the chain a Class II predicate denotes is the final segment `Set.Ici` from
 the member its Cause refers to. The thesis finds no reliable diagnostic that tells Target from
 Subject Matter and calls every object of emotion a Subject Matter, so both of [pesetsky-1995]'s
@@ -84,18 +87,49 @@ the Cause, *John killed Mary by PRO poisoning her*, (323). -/
 theorem OnsetCondition.eq (h : OnsetCondition s e) (h' : OnsetCondition s e') : e = e' :=
   IsLeast.unique h h'
 
-/-- An event downstream of the onset cannot be integrated into the predicate, *\*John killed the
-water deer by the poacher shooting them*, (314a). -/
+/-- An event downstream of the onset cannot be integrated into the predicate. -/
 theorem not_onsetCondition_of_lt (h : OnsetCondition s e) (hlt : e < e') : ¬ OnsetCondition s e' :=
   fun h' ↦ (h.eq h' ▸ hlt).false
 
 end Onset
 
+/-! ### A killing, (312)–(314) -/
+
+/-- The events of (312): John hires a poacher, the poacher shoots the water deer, and the deer
+die. -/
+inductive KillingEvent where
+  | hiring
+  | shooting
+  | dying
+  deriving DecidableEq, Fintype, Repr
+
+/-- The causal chain of (312): the hiring causes the shooting, which causes the dying. -/
+def KillingEvent.causalGraph : Causation.CausalGraph KillingEvent where
+  parents
+    | .hiring => ∅
+    | .shooting => {.hiring}
+    | .dying => {.shooting}
+
+/-- The events in order of causal precedence. -/
+instance : LinearOrder KillingEvent :=
+  KillingEvent.causalGraph.linearOrder (.of_depth _ KillingEvent.ctorIdx (by decide)) (by decide)
+
+/-- (313): *John killed the water deer by hiring a poacher*. The hiring, in which John takes
+part, is the onset of the chain the sentence denotes, so a *by*-phrase naming it is
+integrated. -/
+theorem onsetCondition_hiring : OnsetCondition (Set.univ : Set KillingEvent) .hiring :=
+  isLeast_univ_iff.2 fun e ↦ by cases e <;> decide
+
+/-- (314a): *\*John killed the water deer by the poacher shooting them*. The shooting lies
+downstream of the hiring, so a *by*-phrase naming it cannot be integrated. -/
+theorem not_onsetCondition_shooting : ¬ OnsetCondition (Set.univ : Set KillingEvent) .shooting :=
+  not_onsetCondition_of_lt onsetCondition_hiring (by decide)
+
 /-! ### The causal chain of an emotion -/
 
-/-- The causal chain along which an emotion arises, (185): a percept, the subject matter that the
-Experiencer's evaluation of the percept yields, and the emotion that the Experiencer's attention
-to the subject matter gives rise to. -/
+/-- The members of the causal chain along which an emotion arises, (185): a percept, the subject
+matter that the Experiencer's evaluation of the percept yields, and the emotion that the
+Experiencer's attention to the subject matter gives rise to. -/
 inductive EmotionChain where
   /-- The percept, a mind-external stimulus. -/
   | percept
@@ -109,8 +143,17 @@ variable {c : EmotionChain}
 
 namespace EmotionChain
 
+/-- The arrows of (185): the Experiencer's evaluation of the percept yields the subject matter,
+and the Experiencer's attention to the subject matter gives rise to the emotion. -/
+def causalGraph : Causation.CausalGraph EmotionChain where
+  parents
+    | .percept => ∅
+    | .subjectMatter => {.percept}
+    | .emotion => {.subjectMatter}
+
 /-- The members of the chain in order of causal precedence. -/
-instance : LinearOrder EmotionChain := .lift' EmotionChain.ctorIdx (by decide)
+instance : LinearOrder EmotionChain :=
+  causalGraph.linearOrder (.of_depth _ EmotionChain.ctorIdx (by decide)) (by decide)
 
 /-- A reading is eventive when the chain from the member its Cause refers to contains the
 Experiencer's evaluation of a percept. The evaluation brings a new subject matter into being and
