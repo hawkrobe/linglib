@@ -3,6 +3,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Verbs
 import Linglib.Syntax.DependencyGrammar.Projectivity
+import Linglib.Syntax.DependencyGrammar.Valency
 import Linglib.Logic.Nonmonotonic.Inheritance
 import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Tactic.DeriveFintype
@@ -43,7 +44,8 @@ complement (57) (`orderedByPositionalHeads_whatHeBoughtCostLots`).
 
 * An analysis covers the words its diagram annotates, so (51) and (52) omit *I don't*.
 * The dependencies are the diagrams' labels: subject, object, complement, the complement of a
-  raising verb labelled xc in (9), and extractee. Subjects and extractees stand before their
+  raising verb labelled xc in (9), and extractee. Each fixes the side of its head its dependent
+  stands on, a `DependencyGrammar.Dir` (`Rel.dir`): subjects and extractees stand before their
   landmarks and the others after them, and an extracted object stands where the extractee does.
 * The landmark rules are a default-inheritance network over the concepts *parent* and
   *subordinate parent*, whose exemplars are the pairs of a word and a position
@@ -84,13 +86,11 @@ inductive Rel where
   | extractee
   deriving DecidableEq, Fintype, Repr
 
-/-- The dependents that stand before their landmarks: subjects and extractees. -/
-def Rel.Precedes : Rel → Prop
-  | .subj | .extractee => True
-  | _ => False
-
-instance : DecidablePred Rel.Precedes := fun r ↦ by
-  cases r <;> unfold Rel.Precedes <;> infer_instance
+/-- The side of its head a dependent stands on: subjects and extractees before it, the others
+after it. -/
+def Rel.dir : Rel → Dir
+  | .subj | .extractee => .left
+  | .obj | .comp | .xcomp => .right
 
 /-- A Word Grammar analysis: the words in their order, the typed dependencies, each from a head
 to a dependent, and the root. Several dependencies may link one pair, and two words may depend
@@ -249,10 +249,12 @@ def parentGraph : Graph n where
   label p w := if A.Parent p w then some .dep else none
   root := A.root
 
-/-- Every word stands on its side of its landmark: before it as the landmark's subject or
-extractee, after it otherwise. -/
+/-- Every word stands on the side of its landmark that its dependency on the landmark fixes, the
+extractee's side when it is extracted from the landmark, which overrides the side of its other
+dependency there. -/
 def RespectsLandmarks : Prop :=
-  ∀ w p, A.IsLandmark w p → if ∃ r, A.Dep p w r ∧ r.Precedes then w < p else p < w
+  ∀ w p, A.IsLandmark w p →
+    ∃ r, A.Dep p w r ∧ r.dir.Admits p w ∧ (A.Dep p w .extractee → r = .extractee)
 
 /-- Extraction by landmark, the 2007 theory: the head a word is extracted from is its
 landmark. -/
@@ -262,8 +264,9 @@ def ExtractionByLandmark : Prop := ∀ h w, A.Dep h w .extractee → A.IsLandmar
 it is extracted from. -/
 def PositionalHead (w h : Fin n) : Prop := A.Dep h w .extractee
 
-/-- Every extracted word precedes its positional head. -/
-def RespectsPositionalHeads : Prop := ∀ w h, A.PositionalHead w h → w < h
+/-- Every extracted word stands on the extractee's side of its positional head, before it. -/
+def RespectsPositionalHeads : Prop :=
+  ∀ w h, A.PositionalHead w h → Rel.extractee.dir.Admits h w
 
 instance (w h : Fin n) : Decidable (A.PositionalHead w h) :=
   inferInstanceAs (Decidable (A.Dep _ _ _))
@@ -319,9 +322,8 @@ head it is extracted from when that head is its landmark. -/
 theorem OrderedByLandmarks.orderedByPositionalHeads (hO : A.OrderedByLandmarks) :
     A.OrderedByPositionalHeads := by
   refine ⟨hO.1, hO.2.1, hO.2.2.1, fun w h hex ↦ ?_⟩
-  have := hO.2.2.1 w h (hO.2.2.2 h w hex)
-  split_ifs at this with hc
-  exacts [this, absurd ⟨.extractee, hex, trivial⟩ hc]
+  obtain ⟨r, -, hr, hx⟩ := hO.2.2.1 w h (hO.2.2.2 h w hex)
+  exact hx hex ▸ hr
 
 end Analysis
 
