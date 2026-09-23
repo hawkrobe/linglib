@@ -61,9 +61,7 @@ def ozSuffix : Marker :=
   { form := "-óz-", strategy := .verbalAffix }
 
 open Reciprocal in
-/-- Marker inventory, primary strategy first: *-óz-* plus the reciprocal
-    pronoun *egymás*. -/
-def markers : List Marker :=
-  [ozSuffix, egymas.toMarker]
+/-- Marker inventory: *-óz-* plus the reciprocal pronoun *egymás*. -/
+def markers : Finset Marker := {ozSuffix, egymas.toMarker}
 
 end Hungarian.Reciprocals

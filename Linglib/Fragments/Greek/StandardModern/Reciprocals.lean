@@ -1,19 +1,21 @@
 import Linglib.Syntax.Reciprocal
 
 /-!
-# Modern Greek Reciprocal Fragment
-[nordlinger-2023] [siloni-2008]
+# Modern Greek reciprocals
 
-Modern Greek marks reciprocity with nonactive voice morphology (verbal
-affix strategy, monovalent). The same morphology is used for reflexives,
-passives, and middles — WALS Ch 106 classifies Greek as "mixed."
+Modern Greek marks reciprocity with nonactive verbal morphology, which also expresses
+reflexives, passives and middles, and with the periphrastic *o enas ton allon* 'the one the
+other'. Nonactive reciprocal verbs form discontinuous reciprocals with *me* 'with' (*O Giannis
+filithike me ti Maria* 'John and Maria kissed each other', [nordlinger-2023] exx. 27b, 36, from
+[dimitriadis-2008]), which on [siloni-2008]'s analysis marks lexical formation. With a
+reflexive and a non-reflexive marker, Greek is the mixed type of [maslova-nedjalkov-2013].
 
-CAN form discontinuous reciprocals with "me" ('with'):
-"O Giannis filithike me ti Maria" ('John kissed with Maria')
-[nordlinger-2023] ex. 27b, 36.
+## References
 
-Greek allows discontinuous reciprocals ([nordlinger-2023] ex. 27b),
-which per Siloni's analysis implies lexical formation (Dimitriadis 2004, 2008).
+* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [T. Siloni, *The Syntax of Reciprocal Verbs: An Overview* (2008)][siloni-2008]
+* [A. Dimitriadis, *Irreducible Symmetry in Reciprocal Constructions* (2008)][dimitriadis-2008]
+* [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
 
 namespace Greek.StandardModern.Reciprocals
@@ -29,7 +31,12 @@ def nonactive : Marker :=
 def oEnasTonAllon : Marker :=
   { form := "o enas ton allon", strategy := .bipartiteNP }
 
-/-- Marker inventory, primary strategy first. -/
-def markers : List Marker := [nonactive, oEnasTonAllon]
+/-- Marker inventory. -/
+def markers : Finset Marker := {nonactive, oEnasTonAllon}
+
+/-- The inventory computes the WALS value of Greek ([maslova-nedjalkov-2013]). -/
+theorem ofInventory_markers_eq_wals :
+    some (ofInventory markers) = (Data.WALS.F106A.lookupISO "ell").map (·.value) := by
+  decide +kernel
 
 end Greek.StandardModern.Reciprocals

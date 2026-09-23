@@ -1,19 +1,19 @@
-import Linglib.Syntax.Category.Pronoun.Personal
+import Linglib.Syntax.Category.Pronoun.Reflexive
 import Linglib.Syntax.Reciprocal
 
 /-!
-# Russian Reciprocal Fragment
-[nordlinger-2023] [konig-kokutani-2006]
+# Russian reciprocals
 
-Russian uses the bipartite NP "drug druga" (друг друга, 'other other-ACC'),
-grouped with English *each other* as the bipartite quantifier strategy in
-[nordlinger-2023] §3.1 (ex. 9). It occupies the object position and
-preserves transitivity, and is formally distinct from the reflexive
-"sebja" (себя). The first element "drug" stays uninflected (nominative)
-while "druga" takes the case assigned by the verb.
+Russian marks reciprocity with the bipartite *drug druga* 'other other-ACC', the bipartite
+quantifier strategy of English *each other* ([nordlinger-2023] ex. 9): it fills the object
+position, its second part taking the case the verb assigns while the first stays nominative. The
+verbal postfix *-sja* also forms reciprocal verbs (ex. 31) and is shared with the reflexive, so
+Russian is the mixed type of [maslova-nedjalkov-2013].
 
-The verbal postfix "-sja" (-ся) additionally carries reflexive-identical
-reciprocal uses (monovalent; [nordlinger-2023] ex. 31).
+## References
+
+* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
 
 namespace Russian.Reciprocals
@@ -32,16 +32,16 @@ def sja : Marker :=
   { form := "-sja", script := some "-ся", strategy := .verbalAffix
   , readings := {.reciprocal, .reflexive} }
 
-/-- себя *sebja* — reflexive pronoun (for contrast). -/
-def sebja : PersonalPronoun :=
-  { form := "sebja", script := some "себя"
-  , person := some .third }
+/-- себя *sebja* — the reflexive pronoun (for contrast), one form for every person and
+    number. -/
+def sebja : ReflexivePronoun := { form := "sebja", script := some "себя" }
 
-/-- Russian reciprocal is formally distinct from reflexive. -/
-theorem recip_distinct_from_reflexive :
-    drugDruga.form ≠ sebja.form := by decide
+/-- Marker inventory. -/
+def markers : Finset Marker := {drugDruga, sja}
 
-/-- Marker inventory, primary strategy first. -/
-def markers : List Marker := [drugDruga, sja]
+/-- The inventory computes the WALS value of Russian ([maslova-nedjalkov-2013]). -/
+theorem ofInventory_markers_eq_wals :
+    some (ofInventory markers) = (Data.WALS.F106A.lookupISO "rus").map (·.value) := by
+  decide +kernel
 
 end Russian.Reciprocals

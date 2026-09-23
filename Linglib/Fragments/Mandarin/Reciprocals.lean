@@ -59,6 +59,6 @@ def compound : Marker :=
   , strategy := .compoundVerb }
 
 /-- Marker inventory. -/
-def markers : List Marker := [compound]
+def markers : Finset Marker := {compound}
 
 end Mandarin.Reciprocals

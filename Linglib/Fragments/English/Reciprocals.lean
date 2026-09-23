@@ -16,6 +16,7 @@ strategy has no exponent, so the verb entries carry it and it does not feed
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 * [T. Siloni, *Reciprocal Verbs and Symmetry* (2012)][siloni-2012]
+* [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
 
 namespace English.Reciprocals
@@ -34,6 +35,11 @@ def lexicalReciprocals : List English.Verb :=
   [English.meet]
 
 /-- The reciprocal marker inventory. -/
-def markers : List Marker := [eachOther, oneAnother]
+def markers : Finset Marker := {eachOther, oneAnother}
+
+/-- The inventory computes the WALS value of English ([maslova-nedjalkov-2013]). -/
+theorem ofInventory_markers_eq_wals :
+    some (ofInventory markers) = (Data.WALS.F106A.lookupISO "eng").map (·.value) := by
+  decide +kernel
 
 end English.Reciprocals

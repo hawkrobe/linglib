@@ -22,18 +22,20 @@ def seClitic : Marker :=
   { form := "se", strategy := .recipClitic
   , readings := {.reciprocal, .reflexive} }
 
-/-- um o outro — periphrastic bipartite reciprocal (attested in [palmieri-2024] ch. 2 (se-omission licensor in finite clauses)). -/
+/-- um o outro — periphrastic bipartite reciprocal, attested in [palmieri-2024] ch. 2 as a
+    licensor of *se*-omission in finite clauses. -/
 def bipartite : Marker :=
   { form := "um o outro", strategy := .bipartiteNP }
 
-/-- Marker inventory, primary strategy first. -/
-def markers : List Marker := [seClitic, bipartite]
+/-- Marker inventory. -/
+def markers : Finset Marker := {seClitic, bipartite}
 
 /-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
     Appendix A), referenced as ordinary verb entries — the lexical
     strategy marks predicates, not forms. The transitive alternate is
     the entry itself (homophonous in Romance). -/
 def lexicalReciprocals : List Verb :=
-  [Verbs.abracar, Verbs.beijar, Verbs.casar, Verbs.consultar, Verbs.cumprimentar, Verbs.encontrar, Verbs.namorar]
+  [Verbs.abracar, Verbs.beijar, Verbs.casar, Verbs.consultar, Verbs.cumprimentar,
+    Verbs.encontrar, Verbs.namorar]
 
 end BrazilianPortuguese.Reciprocals

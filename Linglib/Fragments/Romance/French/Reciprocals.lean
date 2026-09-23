@@ -2,20 +2,20 @@ import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Reciprocal
 
 /-!
-# French Reciprocal Fragment
-[nordlinger-2023] [siloni-2008]
+# French reciprocals
 
-French has two reciprocal strategies:
+French marks reciprocity with the clitic *se*, shared with the reflexive, and with the bipartite
+*l'un l'autre* 'the one the other', which fills an argument position, keeps the clause bivalent
+and often accompanies *se* to disambiguate it. Reciprocal verbs with *se* are formed in the
+syntax ([siloni-2008]), so they have no discontinuous counterpart with *avec* 'with'
+([nordlinger-2023] ex. 39). With a reflexive and a non-reflexive marker, French is the mixed
+type of [maslova-nedjalkov-2013].
 
-1. **"se"** — reflexive clitic, also used for reciprocal (monovalent).
-   Syntactically formed per [siloni-2008]: CANNOT form discontinuous
-   reciprocals ([nordlinger-2023] ex. 39).
+## References
 
-2. **"l'un l'autre"** — bipartite NP (bivalent, literally 'the one the other').
-   Preserves transitivity. Often co-occurs with "se" for disambiguation.
-
-The identity of "se" in reflexive and reciprocal uses is captured by
-WALS Ch 106 classifying French as "mixed."
+* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [T. Siloni, *The Syntax of Reciprocal Verbs: An Overview* (2008)][siloni-2008]
+* [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
 
 namespace French.Reciprocals
@@ -31,11 +31,12 @@ def se : Marker :=
 def lunLautre : Marker :=
   { form := "l'un l'autre", strategy := .bipartiteNP }
 
-/-- The bipartite NP form is distinct from the clitic. -/
-theorem bipartite_distinct_from_clitic :
-    lunLautre.form ≠ se.form := by decide
+/-- Marker inventory. -/
+def markers : Finset Marker := {se, lunLautre}
 
-/-- Marker inventory, primary strategy first. -/
-def markers : List Marker := [se, lunLautre]
+/-- The inventory computes the WALS value of French ([maslova-nedjalkov-2013]). -/
+theorem ofInventory_markers_eq_wals :
+    some (ofInventory markers) = (Data.WALS.F106A.lookupISO "fra").map (·.value) := by
+  decide +kernel
 
 end French.Reciprocals

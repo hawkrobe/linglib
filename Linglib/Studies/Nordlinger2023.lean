@@ -4,7 +4,6 @@ import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Fragments.English.Reciprocals
 import Linglib.Fragments.Chichewa.Reciprocals
 import Linglib.Fragments.Romance.French.Reciprocals
-import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.Greek.StandardModern.Reciprocals
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Icelandic.Reciprocals
@@ -73,7 +72,7 @@ open Reciprocal
 
 /-- The languages whose reciprocal constructions the review describes. -/
 inductive Language where
-  | english | russian | swahili | hungarian | french | greek | german | mandarin
+  | english | russian | swahili | hungarian | french | greek | mandarin
   | wambaya | icelandic | chichewa | czech | warlpiri | kuukThaayorre | dalabon | tonga
   deriving DecidableEq, Fintype
 
@@ -100,24 +99,22 @@ private def objectSlot (v : Valency) : Indicator → Option Valency
 
 /-- The reciprocal construction the review describes for each language.
 
-English: bipartite NP *each other* in the object position (ex. 1b), distinct from the
-reflexive; the lexical reciprocals (*quarrel*, *meet*, ex. 7) are verb entries, not a marker.
-Russian: bipartite *drug druga* 'other other-ACC' (ex. 9), the accusative showing the object
-slot filled; the reflexive-identical postfix *-sja* (ex. 31) is the inventory's second marker.
-Swahili: verbal affix *-an-* with a single subject NP (ex. 12). Hungarian: verbal affix
-*-óz-* (ex. 19, 30). French: the clitic *se* is not a reciprocal object (ex. 28, 35), so the
-slot is empty; bipartite *l'un l'autre* is the second marker. Greek: nonactive morphology
-(ex. 27a). German: *einander* in the object position, beside reflexive *sich*. Mandarin:
-compound *dǎ-lái-dǎ-qù* with a single subject NP (ex. 13). Wambaya: the RR morpheme in the
-object position of the auxiliary's pronominal complex (ex. 11), the bound-pronominal slot
-that defines the argument strategies (ex. 18b for Warlpiri). Icelandic: bipartite *hvort
-annað*, the accusative on *annað* showing the clause transitive (ex. 17a). Chicheŵa: verbal
-affix *-an-* (ex. 20). Czech: the clitic *se* (ex. 29), as in French. Warlpiri: the object
-bound pronoun and the ergative subject both keep the clause transitive (ex. 18b). Kuuk
-Thaayorre: the object NP is obligatorily absent yet the subject keeps ergative case (ex. 25).
-Dalabon: the verb takes the intransitive subject pronominal series yet incorporates the
-patient's body part as in the transitive clause (ex. 26). Tonga: both reciprocants are
-argument NPs of the verb-marked reciprocal (ex. 21). -/
+English: bipartite NP *each other* in the object position (ex. 1b), distinct from the reflexive; the
+lexical reciprocals (*quarrel*, *meet*, ex. 7) are verb entries, not a marker. Russian: bipartite
+*drug druga* 'other other-ACC' (ex. 9), the accusative showing the object slot filled; the
+reflexive-identical postfix *-sja* (ex. 31) is the inventory's second marker. Swahili: verbal affix
+*-an-* with a single subject NP (ex. 12). Hungarian: verbal affix *-óz-* (ex. 19, 30). French: the
+clitic *se* is not a reciprocal object (ex. 28, 35), so the slot is empty; bipartite *l'un l'autre*
+is the second marker. Greek: nonactive morphology (ex. 27a). Mandarin: compound *dǎ-lái-dǎ-qù* with
+a single subject NP (ex. 13). Wambaya: the RR morpheme in the object position of the auxiliary's
+pronominal complex (ex. 11), the bound-pronominal slot that defines the argument strategies (ex. 18b
+for Warlpiri). Icelandic: bipartite *hvort annað*, the accusative on *annað* showing the clause
+transitive (ex. 17a). Chicheŵa: verbal affix *-an-* (ex. 20). Czech: the clitic *se* (ex. 29), as in
+French. Warlpiri: the object bound pronoun and the ergative subject both keep the clause transitive
+(ex. 18b). Kuuk Thaayorre: the object NP is obligatorily absent yet the subject keeps ergative case
+(ex. 25). Dalabon: the verb takes the intransitive subject pronominal series yet incorporates the
+patient's body part as in the transitive clause (ex. 26). Tonga: both reciprocants are argument NPs
+of the verb-marked reciprocal (ex. 21). -/
 def Language.construction : Language → Construction
   | .english => { marker := English.Reciprocals.eachOther, valency := objectSlot .bivalent }
   | .russian => { marker := Russian.Reciprocals.drugDruga, valency := objectSlot .bivalent }
@@ -128,7 +125,6 @@ def Language.construction : Language → Construction
   | .greek =>
       { marker := Greek.StandardModern.Reciprocals.nonactive
       , valency := objectSlot .monovalent }
-  | .german => { marker := German.Reciprocals.einander, valency := objectSlot .bivalent }
   | .mandarin => { marker := Mandarin.Reciprocals.compound, valency := objectSlot .monovalent }
   | .wambaya => { marker := Wambaya.Reciprocals.rr, valency := objectSlot .bivalent }
   | .icelandic => { marker := Icelandic.Reciprocals.hvorAnnad, valency := objectSlot .bivalent }
@@ -268,9 +264,9 @@ def ReciprocityType.Realizes {A : Type*} [DecidableEq A] :
 
 /-! ### Polysemous markers beyond the sample
 
-Reflexive polysemy is carried by the markers above (French
-*se*, German *sich*, Wambaya *-ngg-*, Russian *-sja*). The review's further
-polysemy types are attested by markers outside the 12-language sample. -/
+Reflexive polysemy is carried by the markers above glossed RR (French *se*, Wambaya *-ngg-*,
+Warlpiri *-nyanu*, Dalabon *-rr*). The review's further polysemy types are attested by markers
+of languages outside `Language`. -/
 
 /-- Yakut *-üs*: reciprocal + collective/sociative — *ölör-üs* 'kill
     each other' or 'kill somebody together' ([nordlinger-2023] ex. 49,

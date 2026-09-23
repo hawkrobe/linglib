@@ -22,6 +22,6 @@ def anSuffix : Marker :=
   { form := "-an-", strategy := .verbalAffix }
 
 /-- Marker inventory. -/
-def markers : List Marker := [anSuffix]
+def markers : Finset Marker := {anSuffix}
 
 end Chichewa.Reciprocals
