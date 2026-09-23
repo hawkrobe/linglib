@@ -10,7 +10,7 @@ import Mathlib.Tactic.DeriveFintype
 The verb classes of [levin-1993] Part II as an enumeration, one constructor per class
 with a member list, with the section number and title of its entry. The classes' property tables are in `LevinClass/Properties.lean`, their member lists in
 `LevinClass/Members.lean`, their root entailments in `LevinTheory.lean`, and the
-`levinClasses` field of a `Verb` entry carries the classes listing it.
+`levinClasses` field of an `English.Verb` entry carries the classes listing it.
 
 ## References
 
