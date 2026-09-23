@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.Atoms
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Syntax.Person.Basic
 
 /-!
@@ -17,6 +18,8 @@ above aliophoric in his terms, the cut the person-case constraint's strong varie
 * `Person.Class`: `nonParticipant < participant`, a two-element bounded linear order.
 * `Person.toClass`: the class of a person, `participant` exactly when it `IsSAP`, and
   `toClass_mono` for its agreement with `prominence`.
+* `Person.kindBy_toClass_eq_downstream_iff`: a scenario is downstream on the binary scale
+  exactly when its higher-ranked argument alone is a speech-act participant.
 
 ## References
 
@@ -71,5 +74,13 @@ def toClass (p : Person) : Class := if p.IsSAP then .participant else .nonPartic
 theorem toClass_mono {p q : Person} (h : p.prominence ≤ q.prominence) :
     p.toClass ≤ q.toClass := by
   revert h; cases p <;> cases q <;> decide
+
+/-- A scenario is downstream on the binary person scale exactly when its higher-ranked argument
+alone is a speech-act participant. -/
+theorem kindBy_toClass_eq_downstream_iff {s : Clause.Scenario Person} :
+    s.kindBy toClass = .downstream ↔ s.high.IsSAP ∧ ¬ s.low.IsSAP := by
+  rw [Clause.Scenario.kindBy_eq_kind_map, Clause.Scenario.kind_eq_downstream_iff_eq]
+  simp only [Clause.Scenario.map, Clause.Scenario.mk.injEq]
+  exact and_congr toClass_eq_participant_iff toClass_eq_nonParticipant_iff
 
 end Person

@@ -1,258 +1,217 @@
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Data.UD.Features
+import Linglib.Morphology.Morph
+import Linglib.Syntax.Agreement.Paradigm
+import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Person.Basic
+import Linglib.Syntax.Person.Class
 
 /-!
-# Dargwa (Tanti) Agreement [sumbatova-2021]
+# Tanti Dargwa agreement
 
-Dargwa is among the few Nakh-Dagestanian languages with both **gender
-agreement** and **person agreement** ([sumbatova-2021] §4.5.8, §4.7.6).
+This file defines the gender and person agreement of Tanti Dargwa as Sumbatova describes it.
+Dargwa is among the few Nakh-Dagestanian languages with both. There are three genders,
+masculine for men, feminine for women and neuter for animals and things, and the gender marker
+a target shows distinguishes them only in the singular. In the plural it distinguishes humans
+from non-humans, and humans again by whether they include the speaker or the addressee, which
+is why [sumbatova-2021] counts three different plural genders. Gender agreement is controlled by
+the absolutive argument, by the predicate in a copular clause with two absolutives, and in Tanti
+a copula or essive in a transitive clause may agree with the ergative or dative instead.
 
-## Gender Agreement
+Person agreement has three sets of markers and leaves the third person unmarked. In the clitic
+and optative sets the second person singular stands against the first person and the second
+person plural, the configuration [sumbatova-2021] calls the Dargic type after the literary Dargi
+paradigm of [cysouw-2003]. A transitive verb agrees in person with the speech-act participant
+when only one of its arguments is one, and otherwise with the absolutive P. The thematic suffix
+of a transitive verb is *-i* when A outranks P on the person hierarchy 1, 2 > 3 and *-u*
+otherwise, so it marks exactly the clauses in which the verb agrees with A.
 
-Three genders in the singular (masculine, feminine, neuter) and three
-in the plural (1st/2nd person, human, non-human). Gender is almost
-entirely semantic: masculine = male humans, feminine = female humans,
-neuter = everything else. Gender agreement targets include verb roots,
-preverbs, copulas, and some adjective roots.
+## Main declarations
 
-Gender agreement is controlled by the **absolutive argument** in clauses.
-In copular clauses with two absolutives, the predicate controls agreement.
+* `Dargwa.Gender.Value`: the three controller genders, with the singular and plural markers
+  `Value.sgMarker` and `Value.plMarker`.
+* `Dargwa.PersonSet`: the clitic, irrealis and optative sets of person markers.
+* `Dargwa.personController`, `Dargwa.thematic`: the person agreement controller and the
+  thematic suffix of a transitive clause.
 
-## Person Agreement ("Dargic Type")
+## Main results
 
-Person agreement follows the hierarchy **1, 2 > 3** and
-**absolutive > ergative**. The agreement paradigm configuration is the
-"Dargic type" ([cysouw-2003]): a typologically rare opposition of
-2SG versus {1SG, 1PL, 2PL}, where the 3rd person is usually unmarked.
+* `Dargwa.Gender.Value.sgMarker_injective`, `Dargwa.Gender.Value.plMarker_masc_eq_fem`: the
+  singular markers distinguish the three genders; the plural ones do not.
+* `Dargwa.PersonSet.realize_eq_nil_iff`: in every set, a cell is unmarked exactly when it is not
+  a speech-act participant's.
+* `Dargwa.isDargic_clitic`, `Dargwa.isDargic_optative`, `Dargwa.not_isDargic_irrealis`: the
+  clitic and optative sets have the Dargic configuration, the irrealis set does not.
+* `Dargwa.thematic_eq_i_iff`: the thematic suffix is *-i* exactly when A controls person
+  agreement.
 
-Three person-marker sets distribute across TAM paradigms:
-1. **Clitic set**: present, preterite, perfect, propositive
-2. **Irrealis set**: past habitual, future, conditional
-3. **Optative set**: optative
+## Implementation notes
 
-The 2SG marker is identical across the clitic set (*=de*) and past
-tense (*=de*), creating a homophony that is typologically unusual.
+* A transitive clause is a `Clause.Scenario` of the persons of A and P. The thematic suffix is
+  read off its kind on the binary scale `Person.Class`, as [sumbatova-2021] states it; the
+  controller is the two-hierarchy rule as she states it.
+* The masculine marker ‹w› is dropped or realized *-j* in some positions. Some nouns for liquids
+  and granular substances take plural agreement, and a few nouns contain a gender marker of
+  their own, which follows the referent's or the possessor's gender.
+* Tanti has no clusivity, so the paradigms range over `Agreement.Bundle.pnCells`.
+
+## References
+
+* [N. Sumbatova, *Dargwa* (2021)][sumbatova-2021]
+* [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
 
+namespace Dargwa
 
-namespace Dargwa.Agreement
+open Agreement Clause Morphology
 
+/-! ### Gender -/
 
--- ============================================================================
--- § 1: Gender System
--- ============================================================================
+namespace Gender
 
-/-- Singular gender values. -/
-inductive SgGender where
-  | masculine   -- w- (or ∅, realized as -j after vowels)
-  | feminine    -- r-
-  | neuter      -- b- (non-human, inanimate)
-  deriving DecidableEq, Repr
+/-- A controller gender is one of the three classes into which the nouns fall. -/
+inductive Value where
+  /-- Men. -/
+  | masc
+  /-- Women. -/
+  | fem
+  /-- Animals and inanimates. -/
+  | neut
+  deriving DecidableEq, Repr, Fintype
 
-/-- Plural gender values. These differ from singular genders. -/
-inductive PlGender where
-  | sapHuman    -- d-: 1st/2nd person NPs
-  | human       -- b-: 3rd person human plurals
-  | nonHuman    -- d-: non-human plurals
-  deriving DecidableEq, Repr
+/-- Each gender bears the comparative label of the referents it is assigned to. -/
+def Value.toLabel : Value → _root_.Gender
+  | .masc => .masculine
+  | .fem => .feminine
+  | .neut => .neuter
 
-/-- Bridge to cross-linguistic surface gender. -/
-def SgGender.toGender : SgGender → Gender
-  | .masculine => .masculine
-  | .feminine  => .feminine
-  | .neuter    => .neuter
+/-- A gender marker is cited without its position, since a target takes it as a prefix, a suffix
+or an infix. -/
+inductive Marker where
+  | w
+  | r
+  | b
+  | d
+  deriving DecidableEq, Repr, Fintype
 
-/-- Gender agreement prefix on the verb stem.
-    The prefix immediately precedes the root in simplex verbs and
-    attaches to the light verb, preverb, or lexical stem in complex verbs
-    ([sumbatova-2021] §4.5.2.3, Table 4.12). -/
-def sgGenderPrefix : SgGender → String
-  | .masculine => "w-"
-  | .feminine  => "r-"
-  | .neuter    => "b-"
+/-- A singular controller of each gender takes its own marker. -/
+def Value.sgMarker : Value → Marker
+  | .masc => .w
+  | .fem => .r
+  | .neut => .b
 
-def plGenderPrefix : PlGender → String
-  | .sapHuman => "d-"
-  | .human    => "b-"
-  | .nonHuman => "d-"
+/-- A plural controller takes ‹d› when it is non-human or includes the speaker or the addressee,
+and ‹b› when it is human and does not. -/
+def Value.plMarker : Value → Person.Class → Marker
+  | .neut, _ => .d
+  | _, .participant => .d
+  | _, .nonParticipant => .b
 
-/-- Gender assignment is semantically transparent: masculine = male
-    humans, feminine = female humans, neuter = everything else
-    ([sumbatova-2021] §4.4.1). A small set of nouns have a
-    *variable* gender morpheme determined by the referent's actual
-    gender (if human) or the possessor's gender: e.g., *w-eˁ.ʔ*
-    'proprietor (M)' / *r-eˁ.ʔ* 'proprietor (F)'. -/
-theorem gender_semantically_transparent : True := trivial
+/-- The singular markers distinguish the three genders. -/
+theorem Value.sgMarker_injective : Function.Injective Value.sgMarker := by decide
 
--- ============================================================================
--- § 2: Person Agreement
--- ============================================================================
+/-- The plural markers do not distinguish men from women. -/
+theorem Value.plMarker_masc_eq_fem : Value.masc.plMarker = Value.fem.plMarker := by
+  funext c; cases c <;> rfl
 
-/-- The three person-marker paradigm sets. -/
-inductive MarkerSet where
-  | clitic    -- present, preterite, perfect, propositive
-  | irrealis  -- past habitual, future, conditional
-  | optative  -- optative
-  deriving DecidableEq, Repr
+theorem Value.plMarker_eq_d_iff {g : Value} {c : Person.Class} :
+    g.plMarker c = .d ↔ g = .neut ∨ c = .participant := by
+  cases g <;> cases c <;> decide
 
-/-- Person clitic/suffix forms (Table 4.20, 4.21 of [sumbatova-2021]).
-    Returns `none` when the person is unmarked.
+end Gender
 
-    **Clitic set** ("Dargic type"): =da covers 1SG, 1PL, and 2PL
-    (ex. 34a: "I, we, you(PL) am, are doing"); =de is 2SG only.
-    Table 4.21 confirms: "person clitics: 2SG =de, 1SG/PL, 2PL =da". -/
-def personMarker : MarkerSet → Person → UD.Number → Option String
-  -- Clitic set: =da for {1SG, 1PL, 2PL}, =de for {2SG}, none for {3}
-  -- (clusivity-marked firsts pattern with first; impersonal unmarked)
-  | _,         .zero,   _   => none
-  | .clitic,   .first,  _ | .clitic, .firstInclusive, _
-  | .clitic,   .firstExclusive, _ => some "=da"
-  | .clitic,   .second, .Sing => some "=de"
-  | .clitic,   .second, _   => some "=da"    -- 2PL patterns with 1st person
-  | .clitic,   .third,  _   => none          -- 3rd unmarked
-  -- Irrealis set
-  | .irrealis, .first,  .Sing | .irrealis, .firstInclusive, .Sing
-  | .irrealis, .firstExclusive, .Sing => some "-d"
-  | .irrealis, .first,  _ | .irrealis, .firstInclusive, _
-  | .irrealis, .firstExclusive, _ => some "-haˁ"   -- (> -he)
-  | .irrealis, .second, .Sing => some "-t:"    -- (> -t)
-  | .irrealis, .second, _   => some "-t:-a"
-  | .irrealis, .third,  _   => none
-  -- Optative set
-  | .optative, .first,  _ | .optative, .firstInclusive, _
-  | .optative, .firstExclusive, _ => some "-a"
-  | .optative, .second, .Sing => some "-e"
-  | .optative, .second, _   => some "-a"     -- + -ja allocutive
-  | .optative, .third,  _   => none
+/-! ### Person markers -/
 
-/-- 3rd person is unmarked in all paradigm sets. -/
-theorem third_unmarked :
-    personMarker .clitic   .third .Sing = none ∧
-    personMarker .clitic   .third .Plur = none ∧
-    personMarker .irrealis .third .Sing = none ∧
-    personMarker .irrealis .third .Plur = none ∧
-    personMarker .optative .third .Sing = none ∧
-    personMarker .optative .third .Plur = none := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- The person markers fall into three sets. The clitic set appears in the present, preterite,
+perfect, present resultative and propositive, the irrealis set in the past habitual, future and
+conditional, and the optative set in the optative. -/
+inductive PersonSet where
+  | clitic
+  | irrealis
+  | optative
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- § 3: Agreement Control
--- ============================================================================
+/-- Each set is a paradigm over the person–number cells. The irrealis first person plural
+*-ʜaˁ* reduces to *-ʜe*, the second person *-t:* to *-t*, and the optative second person plural
+*-a* also appears as *-a-ja*. -/
+def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
+  | .clitic =>
+    [(.pn .first .singular, [.encl "da"]), (.pn .second .singular, [.encl "de"]),
+     (.pn .third .singular, []), (.pn .first .plural, [.encl "da"]),
+     (.pn .second .plural, [.encl "da"]), (.pn .third .plural, [])]
+  | .irrealis =>
+    [(.pn .first .singular, [.suff "d"]), (.pn .second .singular, [.suff "t:"]),
+     (.pn .third .singular, []), (.pn .first .plural, [.suff "ʜaˁ"]),
+     (.pn .second .plural, [.suff "t:", .suff "a"]), (.pn .third .plural, [])]
+  | .optative =>
+    [(.pn .first .singular, [.suff "a"]), (.pn .second .singular, [.suff "e"]),
+     (.pn .third .singular, []), (.pn .first .plural, [.suff "a"]),
+     (.pn .second .plural, [.suff "a"]), (.pn .third .plural, [])]
 
-/-- Gender agreement controller: the absolutive argument.
-    In intransitive clauses: S (always absolutive).
-    In transitive clauses: P (absolutive), not A (ergative).
-    In copular clauses with two absolutives: the predicate. -/
-inductive GenderController where
-  | absolutive     -- default: the absolutive NP
-  | predicate      -- copular clause: predicate NP
-  | ergOrDat       -- Tanti allows ergative/dative control optionally
-  deriving DecidableEq, Repr
-
-/-- Person agreement hierarchy: person (1, 2 > 3) and case
-    (absolutive > ergative).
-
-    If one core argument is a SAP and the other is not, the verb
-    agrees with the SAP regardless of case. If both are SAPs,
-    agreement is with the absolutive. -/
-def personAgreementController (aPerson pPerson : Person) : Person :=
-  match aPerson, pPerson with
-  | .first,  .third  => .first     -- SAP wins
-  | .second, .third  => .second    -- SAP wins
-  | .third,  .first  => .first     -- SAP wins
-  | .third,  .second => .second    -- SAP wins
-  | _,       p       => p          -- both SAP → absolutive (P) wins
-
--- ============================================================================
--- § 4: Thematic Suffixes (Table 4.10 of [sumbatova-2021])
--- ============================================================================
-
-/-- Thematic suffix for transitive verbs, determined by the person features
-    of A and P arguments (Table 4.10, §4.5.2.5 of [sumbatova-2021]).
-
-    *-i* when A is SAP (1st/2nd) and P is 3rd — the configuration where
-    A outranks P in the person hierarchy (1, 2 > 3).
-    *-u* otherwise (both SAP, or A is 3rd). -/
-def thematicSuffix (aPerson pPerson : Person) : String :=
-  if decide aPerson.IsSAP && !decide pPerson.IsSAP then "-i" else "-u"
-
-/-- Intransitive thematic suffix: *-u* for SAP subjects,
-    *-ar* / *-an* for 3rd person subjects. -/
-def intransitiveThematicSuffix (sPerson : Person) : String :=
-  if decide sPerson.IsSAP then "-u" else "-ar"
-
-/-- The thematic suffix *-i* marks the same configuration that the
-    person agreement hierarchy resolves to the A-argument: SAP acting
-    on 3rd person. The suffix is a morphological reflex of hierarchy. -/
-theorem thematic_i_iff_sap_on_third :
-    thematicSuffix .first .third = "-i" ∧
-    thematicSuffix .second .third = "-i" ∧
-    thematicSuffix .third .third = "-u" ∧
-    thematicSuffix .first .second = "-u" ∧
-    thematicSuffix .third .first = "-u" := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- When thematic suffix is *-i* (A = SAP, P = 3), person agreement
-    controller selects A — the same argument that triggers *-i*.
-    When thematic suffix is *-u* (A = 3, P = SAP), person agreement
-    controller selects P. The suffix and the agreement controller
-    always pick the highest-ranked argument. -/
-theorem thematic_suffix_tracks_controller :
-    -- -i cases: controller picks A (= SAP), suffix marks SAP > 3
-    personAgreementController .first .third = .first ∧
-    thematicSuffix .first .third = "-i" ∧
-    personAgreementController .second .third = .second ∧
-    thematicSuffix .second .third = "-i" ∧
-    -- -u cases: controller picks P (= SAP), suffix marks non-dominant A
-    personAgreementController .third .first = .first ∧
-    thematicSuffix .third .first = "-u" ∧
-    personAgreementController .third .second = .second ∧
-    thematicSuffix .third .second = "-u" :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 5: Verification
--- ============================================================================
-
-/-- "Dargic type" ([cysouw-2003]): in the clitic set, 1SG, 1PL,
-    and 2PL all receive the same marker (=da), while 2SG alone gets a
-    distinct marker (=de). This is the typologically rare opposition
-    described in the abstract: "2SG versus {1SG, 1PL, 2PL}". -/
-theorem dargic_type_clitic :
-    personMarker .clitic .first .Sing = personMarker .clitic .first .Plur ∧
-    personMarker .clitic .first .Plur = personMarker .clitic .second .Plur ∧
-    personMarker .clitic .second .Sing ≠ personMarker .clitic .first .Sing := by
-  refine ⟨rfl, rfl, ?_⟩; decide
-
-/-- SAP always wins over 3rd person. -/
-theorem sap_wins :
-    personAgreementController .first .third = .first ∧
-    personAgreementController .third .first = .first ∧
-    personAgreementController .second .third = .second ∧
-    personAgreementController .third .second = .second := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- When both arguments are SAPs, the absolutive (P) controls. -/
-theorem both_sap_absolutive_wins :
-    personAgreementController .first .second = .second ∧
-    personAgreementController .second .first = .first := ⟨rfl, rfl⟩
-
-/-- The "SAP wins" rule directly reflects the person prominence hierarchy:
-    SAP (1st/2nd) > 3rd. This is the same hierarchy formalized in
-    `Person`. -/
-theorem sap_hierarchy_from_prominence :
-    Person.first.IsSAP ∧ Person.second.IsSAP ∧ ¬Person.third.IsSAP := by
+/-- In every set, a cell is unmarked exactly when it is not a speech-act participant's. -/
+theorem PersonSet.realize_eq_nil_iff :
+    ∀ s : PersonSet, ∀ c ∈ Bundle.pnCells, s.paradigm.realize c = some [] ↔ ¬ c.IsSAP := by
   decide
 
-/-- Masculine and feminine prefixes are distinct. -/
-theorem gender_prefixes_distinct :
-    sgGenderPrefix .masculine ≠ sgGenderPrefix .feminine ∧
-    sgGenderPrefix .masculine ≠ sgGenderPrefix .neuter ∧
-    sgGenderPrefix .feminine ≠ sgGenderPrefix .neuter := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- The past tense clitic bears no person. -/
+def pastClitic : Morph := .encl "de"
 
-/-- Plural SAP-human and non-human prefixes are homophonous (both d-).
-    This is a typologically notable syncretism. -/
-theorem plural_syncretism :
-    plGenderPrefix .sapHuman = plGenderPrefix .nonHuman := rfl
+/-- The second person singular clitic is the past tense clitic. -/
+theorem clitic_second_singular :
+    PersonSet.clitic.paradigm.realize (.pn .second .singular) = some [pastClitic] := rfl
 
-end Dargwa.Agreement
+/-- A paradigm has the Dargic configuration when two speech-act participant cells share a
+marker exactly when both or neither is the second person singular. -/
+def IsDargic (p : Paradigm (List Morph)) : Prop :=
+  ∀ c ∈ Bundle.pnCells, ∀ c' ∈ Bundle.pnCells, c.IsSAP → c'.IsSAP →
+    (p.realize c = p.realize c' ↔ (c = .pn .second .singular ↔ c' = .pn .second .singular))
+
+instance (p : Paradigm (List Morph)) : Decidable (IsDargic p) := by
+  unfold IsDargic; infer_instance
+
+theorem isDargic_clitic : IsDargic PersonSet.clitic.paradigm := by decide
+
+theorem isDargic_optative : IsDargic PersonSet.optative.paradigm := by decide
+
+/-- The irrealis set has a first person plural marker of its own. -/
+theorem not_isDargic_irrealis : ¬ IsDargic PersonSet.irrealis.paradigm := by decide
+
+/-! ### Transitive clauses -/
+
+/-- The argument a transitive verb agrees with in person, by the hierarchies 1, 2 > 3 and
+absolutive > ergative: A when it alone is a speech-act participant, otherwise the absolutive P. -/
+def personController (s : Scenario Person) : ArgumentRole :=
+  if s.high.IsSAP ∧ ¬ s.low.IsSAP then .A else .P
+
+/-- The thematic suffix of a transitive verb is *-i* when A is higher than P on the person
+hierarchy 1, 2 > 3, and *-u* when the two are equal or P is higher. -/
+def thematic (s : Scenario Person) : Morph :=
+  if s.kindBy Person.toClass = .downstream then .suff "i" else .suff "u"
+
+/-- An intransitive verb takes the thematic suffix *-u* with a speech-act participant, and *-ar*
+or *-an* otherwise. -/
+def intransitiveThematic (p : Person) : List Morph :=
+  if p.IsSAP then [.suff "u"] else [.suff "ar", .suff "an"]
+
+/-- The thematic suffix is *-i* exactly when A controls person agreement. -/
+theorem thematic_eq_i_iff (s : Scenario Person) :
+    thematic s = .suff "i" ↔ personController s = .A := by
+  simp only [thematic, personController, Person.kindBy_toClass_eq_downstream_iff]
+  split_ifs <;> decide
+
+/-- A transitive verb whose A and P are the given person–number cells takes the clitic of the
+cell that controls it. -/
+def transitiveClitic (a p : Person × Number) : Option (List Morph) :=
+  let c := if personController ⟨a.1, p.1⟩ = .A then a else p
+  PersonSet.clitic.paradigm.realize (.pn c.1 c.2)
+
+/-- 'I caught you' *=de*, 'you caught me' *=da*, 'I caught him' *=da*, 'you caught him' *=de*
+and 'Rasul caught you' *=de*: the verb agrees with the absolutive when both arguments are
+speech-act participants and with the participant when one is. -/
+theorem transitiveClitic_caught :
+    transitiveClitic (.first, .singular) (.second, .singular) = some [.encl "de"] ∧
+    transitiveClitic (.second, .singular) (.first, .singular) = some [.encl "da"] ∧
+    transitiveClitic (.first, .singular) (.third, .singular) = some [.encl "da"] ∧
+    transitiveClitic (.second, .singular) (.third, .singular) = some [.encl "de"] ∧
+    transitiveClitic (.third, .singular) (.second, .singular) = some [.encl "de"] := by
+  decide
+
+end Dargwa
