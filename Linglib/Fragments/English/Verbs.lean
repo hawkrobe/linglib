@@ -157,6 +157,13 @@ def run : Verb where
   } }
   levinClasses := {LevinClass.meander, .prepare, .run, .swarm}
 
+/-- "dance" — intransitive activity -/
+def dance : Verb := .mkRegular {
+  form := "dance"
+  frames := [ArgumentFrame.intransitive]
+  passivizable := false
+  vendlerClass := some .activity }
+
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
   form := "arrive"
