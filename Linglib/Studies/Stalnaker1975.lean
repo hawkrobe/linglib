@@ -8,7 +8,7 @@ public import Linglib.Semantics.Conditionals.Stalnaker
 This file formalizes [stalnaker-1975]'s account of the direct argument, *either the butler or
 the gardener did it, so if the butler didn't, the gardener did*. The indicative conditional
 has the selection-function truth condition of [stalnaker-1968], and entails the material
-conditional without being entailed by it (`selectionConditional_imp_material`,
+conditional without being entailed by it (`Conditional.selectionConditional_subset_materialImp`,
 `not_entails_direct`). What makes the argument compelling is pragmatic: in a context, an
 indicative conditional's selection function keeps to the context set whenever the antecedent
 is compatible with it, and a disjunction is appropriately asserted only where each disjunct
@@ -61,69 +61,51 @@ open Conditional
 
 section Context
 
-variable {W : Type*} (s : SelectionFunction W) {C : Set W} {p q r : W → Prop}
-
-/-- The conditional entails the material conditional: at a world where the antecedent holds
-the selected world is the world itself. -/
-theorem selectionConditional_imp_material {w : W} (h : selectionConditional s p q w) (hp : p w) :
-    q w := by
-  unfold selectionConditional at h
-  rwa [s.centering w {w' | p w'} hp] at h
-
-/-- Weakening the consequent preserves the conditional. -/
-theorem selectionConditional_mono (hqr : ∀ w, q w → r w) {w : W}
-    (h : selectionConditional s p q w) : selectionConditional s p r w :=
-  hqr _ h
+variable {W : Type*} (s : SelectionFunction W) {C p q r : Set W}
 
 /-- A proposition accepted in a context is accepted under any antecedent compatible with the
 context, once the selection function obeys the pragmatic constraint. -/
-theorem selectionConditional_of_accepted (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, p w)
-    (hq : ∀ w ∈ C, q w) : ∀ w ∈ C, selectionConditional s p q w := λ w hw =>
-  selectionConditional_eq_material_within_context s C p q w hw
-    (hp.imp λ _ hv => ⟨hv.2, hv.1⟩) hC λ w' hw' _ => hq w' hw'
+theorem selectionConditional_of_accepted (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, w ∈ p)
+    (hq : ∀ w ∈ C, w ∈ q) : ∀ w ∈ C, w ∈ selectionConditional s p q := fun _ hw ↦
+  mem_selectionConditional_of_forall_mem s hw (hp.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC
+    fun w' hw' _ ↦ hq w' hw'
 
 /-- The direct argument is reasonable: in a context accepting the disjunction where the
 negated first disjunct is open, the indicative conditional is accepted. -/
-theorem direct_argument (hC : pragmaticConstraint s C) (hopen : ∃ w ∈ C, ¬ p w)
-    (hdisj : ∀ w ∈ C, p w ∨ q w) : ∀ w ∈ C, selectionConditional s (λ w => ¬ p w) q w :=
-  λ w hw => selectionConditional_eq_material_within_context s C _ q w hw
-    (hopen.imp λ _ hv => ⟨hv.2, hv.1⟩) hC λ w' hw' hnp => (hdisj w' hw').resolve_left hnp
+theorem direct_argument (hC : pragmaticConstraint s C) (hopen : ∃ w ∈ C, w ∉ p)
+    (hdisj : ∀ w ∈ C, w ∈ p ∨ w ∈ q) : ∀ w ∈ C, w ∈ selectionConditional s pᶜ q := fun _ hw ↦
+  mem_selectionConditional_of_forall_mem s hw (hopen.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC
+    fun w' hw' hnp ↦ (hdisj w' hw').resolve_left hnp
 
 /-- In a context compatible with the antecedent, the indicative and the material conditional
 are accepted together. -/
-theorem accepted_iff_material (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, p w) :
-    (∀ w ∈ C, selectionConditional s p q w) ↔ ∀ w ∈ C, p w → q w :=
-  ⟨λ h w hw hpw => selectionConditional_imp_material s (h w hw) hpw,
-    λ h w hw => selectionConditional_eq_material_within_context s C p q w hw
-      (hp.imp λ _ hv => ⟨hv.2, hv.1⟩) hC h⟩
+theorem accepted_iff_material (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, w ∈ p) :
+    (∀ w ∈ C, w ∈ selectionConditional s p q) ↔ ∀ w ∈ C, w ∈ p → w ∈ q :=
+  ⟨fun h w hw ↦ selectionConditional_subset_materialImp s (h w hw), fun h _ hw ↦
+    mem_selectionConditional_of_forall_mem s hw (hp.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC h⟩
 
 /-- Contraposition is reasonable for indicatives: when the conditional is accepted and the
 negated consequent is open, the contrapositive is accepted. -/
-theorem contraposition (hC : pragmaticConstraint s C) (hq : ∃ w ∈ C, ¬ q w)
-    (h : ∀ w ∈ C, selectionConditional s p q w) :
-    ∀ w ∈ C, selectionConditional s (λ w => ¬ q w) (λ w => ¬ p w) w := by
+theorem contraposition (hC : pragmaticConstraint s C) (hq : ∃ w ∈ C, w ∉ q)
+    (h : ∀ w ∈ C, w ∈ selectionConditional s p q) :
+    ∀ w ∈ C, w ∈ selectionConditional s qᶜ pᶜ := by
   intro w hw
-  have hsel : s.sel w {w' | ¬ q w'} ∈ C := hC w _ hw (hq.imp λ _ hv => ⟨hv.2, hv.1⟩)
-  have hnq : ¬ q (s.sel w {w' | ¬ q w'}) := s.inclusion w _ (hq.imp λ _ hv => hv.2)
-  exact λ hp => hnq (selectionConditional_imp_material s (h _ hsel) hp)
+  have hne : (qᶜ).Nonempty := hq.imp fun _ hv ↦ hv.2
+  rw [mem_selectionConditional_of_nonempty s hne]
+  have hsel : s.sel w qᶜ ∈ C := hC w _ hw (hq.imp fun _ hv ↦ ⟨hv.2, hv.1⟩)
+  exact fun hp ↦ s.inclusion w qᶜ hne (selectionConditional_subset_materialImp s (h _ hsel) hp)
 
 /-- The hypothetical syllogism is reasonable for indicatives: when both conditionals are
 accepted and the first antecedent is open, the chained conditional is accepted. -/
-theorem hypothetical_syllogism (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, p w)
-    (h₁ : ∀ w ∈ C, selectionConditional s p q w) (h₂ : ∀ w ∈ C, selectionConditional s q r w) :
-    ∀ w ∈ C, selectionConditional s p r w := by
+theorem hypothetical_syllogism (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, w ∈ p)
+    (h₁ : ∀ w ∈ C, w ∈ selectionConditional s p q) (h₂ : ∀ w ∈ C, w ∈ selectionConditional s q r) :
+    ∀ w ∈ C, w ∈ selectionConditional s p r := by
   intro w hw
-  have hsel : s.sel w {w' | p w'} ∈ C := hC w _ hw (hp.imp λ _ hv => ⟨hv.2, hv.1⟩)
-  have hpsel : p (s.sel w {w' | p w'}) := s.inclusion w _ (hp.imp λ _ hv => hv.2)
-  show r (s.sel w {w' | p w'})
-  exact selectionConditional_imp_material s (p := q) (q := r) (h₂ _ hsel)
-    (selectionConditional_imp_material s (p := p) (q := q) (h₁ _ hsel) hpsel)
-
-/-- A counterfactual antecedent, one incompatible with the context, selects outside the
-context set: the conditional must be subjunctive. -/
-theorem sel_notMem_of_incompatible (hp : ∀ w ∈ C, ¬ p w) (hne : ∃ w, p w) (w : W) :
-    s.sel w {w' | p w'} ∉ C :=
-  λ hmem => hp _ hmem (s.inclusion w _ hne)
+  have hne : p.Nonempty := hp.imp fun _ hv ↦ hv.2
+  rw [mem_selectionConditional_of_nonempty s hne]
+  have hsel : s.sel w p ∈ C := hC w _ hw (hp.imp fun _ hv ↦ ⟨hv.2, hv.1⟩)
+  exact selectionConditional_subset_materialImp s (h₂ _ hsel)
+    (selectionConditional_subset_materialImp s (h₁ _ hsel) (s.inclusion w p hne))
 
 end Context
 
@@ -152,7 +134,7 @@ namespace PragmaticInterpretation
 variable {L W K : Type*} (I : PragmaticInterpretation L W K)
 
 /-- The context after asserting a sequence of sentences. -/
-def changeSeq (σ : List L) (k : K) : K := σ.foldl (λ k P => I.change P k) k
+def changeSeq (σ : List L) (k : K) : K := σ.foldl (fun k P ↦ I.change P k) k
 
 /-- Sequential appropriateness: each sentence is appropriate in the context the preceding
 ones produce. -/
@@ -176,15 +158,15 @@ theorem changeSeq_singleton (P : L) (k : K) : I.changeSeq [P] k = I.change P k :
 
 /-- An entailment of a rigid conclusion is a reasonable inference. -/
 theorem Reasonable.of_entails {P Q : L} (hQ : I.Rigid Q) (h : I.Entails P Q) :
-    I.Reasonable [P] Q := λ k _ => by
+    I.Reasonable [P] Q := fun k _ ↦ by
   rw [changeSeq_singleton, I.contextSet_change, hQ (I.change P k) k]
-  exact λ _ hw => h _ hw.2
+  exact fun _ hw ↦ h _ hw.2
 
 /-- Constructive dilemma for entailment: with disjunction interpreted as union, entailments
 from the disjuncts yield an entailment from the disjunction. -/
 theorem Entails.or {P₁ P₂ Q₁ Q₂ P Q : L} (hP : ∀ k, I.prop P k = I.prop P₁ k ∪ I.prop P₂ k)
     (hQ : ∀ k, I.prop Q k = I.prop Q₁ k ∪ I.prop Q₂ k) (h₁ : I.Entails P₁ Q₁)
-    (h₂ : I.Entails P₂ Q₂) : I.Entails P Q := λ k => by
+    (h₂ : I.Entails P₂ Q₂) : I.Entails P Q := fun k ↦ by
   rw [hP, hQ]
   exact Set.union_subset_union (h₁ k) (h₂ k)
 
@@ -261,9 +243,9 @@ def EntailsInL (W : Type*) (P Q : Sentence Atom) : Prop :=
 
 /-- The indicative conditional entails the material conditional in the language. -/
 theorem ifThen_entails_material (P Q : Sentence Atom) :
-    EntailsInL W (.ifThen P Q) (.or (.not P) Q) := λ V k w h => by
+    EntailsInL W (.ifThen P Q) (.or (.not P) Q) := fun V k w h ↦ by
   by_cases hp : w ∈ P.prop V k
-  · exact Or.inr (selectionConditional_imp_material k.sel h hp)
+  · exact Or.inr (selectionConditional_subset_materialImp k.sel h hp)
   · exact Or.inl hp
 
 /-- The direct argument is reasonable in the language: wherever a disjunction of atoms is
@@ -275,7 +257,7 @@ theorem direct_argument_reasonable (a b : Atom) :
   refine direct_argument (Context.sel _) (Context.constraint _) ?_ ?_
   · obtain ⟨w, hw, hb, ha⟩ := hopen
     exact ⟨w, ⟨hw, Or.inr hb⟩, ha⟩
-  · exact λ w hw => hw.2
+  · exact fun w hw ↦ hw.2
 
 /-! ### The direct argument is not an entailment -/
 
@@ -320,15 +302,15 @@ theorem not_entails_direct :
     ¬ EntailsInL Suspect (.or (.atom Culprit.butler) (.atom .gardener))
       (.ifThen (.not (.atom .butler)) (.atom .gardener)) := by
   intro h
-  have := h culpritOf ⟨Set.univ, someoneElseFirst, λ _ _ _ _ => trivial⟩
+  have := h culpritOf ⟨Set.univ, someoneElseFirst, fun _ _ _ _ ↦ trivial⟩
     (show Suspect.butler ∈ (interp culpritOf).prop (.or (.atom .butler) (.atom .gardener)) _ from
       Or.inl rfl)
-  change ({Suspect.gardener} : Set Suspect)
-    (someoneElseFirst.sel .butler {w' | ({Suspect.butler} : Set Suspect)ᶜ w'}) at this
-  have h1 : Suspect.butler ∉ ({w' | ({Suspect.butler} : Set Suspect)ᶜ w'} : Set Suspect) :=
-    λ h => h rfl
-  have h2 : Suspect.someoneElse ∈ ({w' | ({Suspect.butler} : Set Suspect)ᶜ w'} : Set Suspect) :=
-    λ h => Suspect.noConfusion h
+  change Suspect.butler ∈ selectionConditional someoneElseFirst {Suspect.butler}ᶜ {.gardener}
+    at this
+  have h1 : Suspect.butler ∉ ({Suspect.butler}ᶜ : Set Suspect) := fun h ↦ h rfl
+  have h2 : Suspect.someoneElse ∈ ({Suspect.butler}ᶜ : Set Suspect) :=
+    fun h ↦ Suspect.noConfusion h
+  rw [mem_selectionConditional_of_nonempty _ ⟨_, h2⟩] at this
   simp only [someoneElseFirst, ite_eq_right h1, ite_eq_left h2] at this
   exact (by decide : Suspect.someoneElse ≠ .gardener) this
 
@@ -371,7 +353,7 @@ noncomputable def survivalFirst : SelectionFunction Outcome where
   centering w A hw := by simp [hw]
 
 /-- The null context of the fatalist, with a selection function reaching first for survival. -/
-noncomputable def fateCtx : Context Outcome := ⟨Set.univ, survivalFirst, λ _ _ _ _ => trivial⟩
+noncomputable def fateCtx : Context Outcome := ⟨Set.univ, survivalFirst, fun _ _ _ _ ↦ trivial⟩
 
 /-- *I will be killed.* -/
 def killed : Sentence Fate := .atom .killed
@@ -400,33 +382,34 @@ theorem fatalism :
   refine ⟨?_, ?_, ?_, ?_⟩
   · show (Set.univ ∩ (fateOf .killed ∩ ((fateOf .killed)ᶜ)ᶜ)).Nonempty ∧
       (Set.univ ∩ ((fateOf .killed)ᶜ ∩ (fateOf .killed)ᶜ)).Nonempty
-    exact ⟨⟨(true, true), trivial, rfl, λ h => h rfl⟩,
+    exact ⟨⟨(true, true), trivial, rfl, fun h ↦ h rfl⟩,
       ⟨(false, true), trivial, Bool.false_ne_true, Bool.false_ne_true⟩⟩
   · have h1 := selectionConditional_of_accepted (survivalFirst.restrict (Set.univ ∩ fateOf .killed))
       (pragmaticConstraint_restrict _ _) (p := fateOf .precautions) (q := fateOf .killed)
-      ⟨(true, true), ⟨trivial, rfl⟩, rfl⟩ λ _ hw => hw.2
-    exact λ w hw => h1 w hw
+      ⟨(true, true), ⟨trivial, rfl⟩, rfl⟩ fun _ hw ↦ hw.2
+    exact fun w hw ↦ h1 w hw
   · have h2 := selectionConditional_of_accepted
       (survivalFirst.restrict (Set.univ ∩ (fateOf .killed)ᶜ)) (pragmaticConstraint_restrict _ _)
       (p := (fateOf .precautions)ᶜ) (q := (fateOf .killed)ᶜ)
-      ⟨(false, false), ⟨trivial, Bool.false_ne_true⟩, Bool.false_ne_true⟩ λ _ hw => hw.2
-    exact λ w hw => h2 w hw
+      ⟨(false, false), ⟨trivial, Bool.false_ne_true⟩, Bool.false_ne_true⟩ fun _ hw ↦ hw.2
+    exact fun w hw ↦ h2 w hw
   · intro h
     have hw := h (show (true, false) ∈ (fateCtx.update
       ((Sentence.or killed (.not killed)).prop fateOf fateCtx)).set from ⟨trivial, Or.inl rfl⟩)
     rcases hw with hw | hw
-    · change fateOf .killed ((survivalFirst.restrict _).sel (true, false) _) at hw
-      rw [SelectionFunction.restrict_sel_of_mem] at hw
-      · simp [survivalFirst, fateOf, Sentence.prop, fateCtx, Context.update, precautions,
-          killed] at hw
-        have n1 : ¬ ({w : Outcome | w.2 = true} (true, false)) := Bool.false_ne_true
-        have p2 : {w : Outcome | w.2 = true} (false, true) := rfl
-        simp only [ite_eq_right n1, ite_eq_left p2] at hw
-        exact Bool.false_ne_true hw
+    · change (true, false) ∈ selectionConditional (survivalFirst.restrict _)
+        (fateOf .precautions) (fateOf .killed) at hw
+      rw [mem_selectionConditional_of_nonempty _
+        (⟨(true, true), rfl⟩ : (fateOf .precautions).Nonempty),
+        SelectionFunction.restrict_sel_of_mem] at hw
+      · simp [survivalFirst, fateOf, Sentence.prop, fateCtx, killed] at hw
       · exact ⟨trivial, Or.inl rfl⟩
       · exact ⟨(false, true), rfl, trivial, Or.inr Bool.false_ne_true⟩
-    · change (fateOf .killed)ᶜ ((survivalFirst.restrict _).sel (true, false) _) at hw
-      rw [SelectionFunction.centering] at hw
+    · change (true, false) ∈ selectionConditional (survivalFirst.restrict _)
+        (fateOf .precautions)ᶜ (fateOf .killed)ᶜ at hw
+      rw [mem_selectionConditional_of_nonempty _
+        (⟨(false, false), Bool.false_ne_true⟩ : (fateOf .precautions)ᶜ.Nonempty),
+        SelectionFunction.centering] at hw
       · exact hw rfl
       · exact Bool.false_ne_true
 

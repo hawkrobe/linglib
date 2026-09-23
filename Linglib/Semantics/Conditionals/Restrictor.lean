@@ -182,4 +182,12 @@ theorem conditionalNecessity_iff_mem_strictImp
     w ∈ strictImp (accessibleWorlds f) {w' | α w'} {w' | β w'} :=
   (restrictor_eq_strict f α β w).trans mem_strictImp_forall.symm
 
+/-- Kratzer's conditional necessity is the conditional over the best worlds of the modal base
+restricted by the antecedent. -/
+theorem conditionalNecessity_iff_mem_ofDomain (f : ModalBase W) (g : OrderingSource W)
+    (α β : W → Prop) (w : W) :
+    conditionalNecessity f g α β w ↔
+      w ∈ ofDomain (fun w p ↦ bestWorlds (restrictedBase f (· ∈ p)) g w) {v | α v} {v | β v} :=
+  necessity_iff_all _ _ _ _
+
 end Conditional.Restrictor
