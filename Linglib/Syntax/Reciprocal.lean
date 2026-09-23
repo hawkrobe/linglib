@@ -45,7 +45,15 @@ at c-structure ([hurst-2012]), splits levels rather than indicators and is not
 representable here. A bound reciprocal pronoun
 (Wambaya *-ngg-*) fills an argument slot and is an argument strategy; the clitic
 of a syntactically formed reciprocal verb (French *se*) is not an object
-([siloni-2012]) and marks the predicate, as does the weak German *sich*.
+([siloni-2012]) and marks the predicate, as does German clitic *sich*, the only *sich* with a
+reciprocal reading ([gast-haas-2008]).
+
+## TODO
+
+`Strategy` omits the conjunct and modifier strategies of [evans-2008] (§3.3, §3.4). A reciprocal
+adverb shows no link to the predicate and does not distribute like an argument, so it has no
+`CodingSite`; in European languages it mostly disambiguates a polysemous clitic, as Spanish
+*se … mutuamente* and German *sich gegenseitig* do.
 
 ## References
 
@@ -56,6 +64,7 @@ of a syntactically formed reciprocal verb (French *se*) is not an object
 * [evans-2008]
 * [siloni-2008]
 * [siloni-2012]
+* [gast-haas-2008]
 * [reinhart-siloni-2005]
 * [creissels-2024]
 * [evans-et-al-2007]
@@ -75,8 +84,8 @@ inductive Strategy where
   /-- Bound reciprocal pronoun in the object slot of the pronominal complex
       (Wambaya *-ngg-*, Warlpiri *-nyanu*; [evans-2008]). -/
   | boundPronoun
-  /-- Clitic of a syntactically formed reciprocal verb (French *se*, Czech *se*), or the
-      phonologically weak pronoun that marks one (German *sich*) ([siloni-2012]). -/
+  /-- Clitic of a syntactically formed reciprocal verb: French and Czech *se* ([siloni-2012]),
+      German clitic *sich* ([gast-haas-2008]). -/
   | recipClitic
   /-- Verbal affix (Swahili *-an-*, Hungarian *-óz-*). -/
   | verbalAffix
@@ -88,7 +97,9 @@ inductive Strategy where
   | compoundVerb
   deriving DecidableEq, Repr
 
-/-- Where a strategy codes reciprocity: [evans-2008]'s three-way split. -/
+/-- Where a strategy codes reciprocity: an argument position or the predicate, the argument- and
+predicate-marking strategies of a single clause in [evans-2008] (§3.1, §3.2), or a fused
+multipredicate structure (§4.3). -/
 inductive CodingSite where
   /-- A nonsubject argument position, as an NP or a bound pronominal. -/
   | argument

@@ -36,6 +36,9 @@ no dative.
 * [L. J. Adamson and S. Zompì, *Polite pronouns and the PCC* (2025)][adamson-zompi-2025]
 * [M. Dalrymple and R. M. Kaplan, *Feature indeterminacy and feature resolution*
   (2000)][dalrymple-kaplan-2000]
+* [N. Evans, *Reciprocal Constructions: Towards a Structural Typology* (2008)][evans-2008]
+* [V. Gast and F. Haas, *On Reciprocal and Reflexive Uses of Anaphors in German and Other European
+  Languages* (2008)][gast-haas-2008]
 -/
 
 namespace German.Pronouns
@@ -103,10 +106,15 @@ theorem sie_formal_referential : sie_formal.referential = du.referential ∪ ihr
 /-! ### Reflexive and reciprocal pronouns -/
 
 /-- The third person reflexive *sich*, one form for both numbers and for the accusative and the
-dative. The first and second persons use their personal forms as reflexives. -/
+dative; the first and second persons use their personal forms as reflexives. This is the
+pronominal *sich* of [gast-haas-2008], a noun phrase that is only reflexive; the clitic *sich* of
+reciprocal and middle verbs is a marker in `German.Reciprocals`. -/
 def sich : ReflexivePronoun := { form := "sich", person := some .third }
 
-/-- The reciprocal *einander* 'each other', invariant for person, number and case. -/
+/-- The reciprocal *einander* 'each other', invariant for person, number and case. It fuses *ein*
+'one' and *ander* 'other' ([gast-haas-2008]) into a single word that also compounds with a
+preposition (*an-einander*, *miteinander*), the kind of fused bipartite form that [evans-2008]
+classes with the reciprocal pronouns. -/
 def einander : ReciprocalPronoun := { form := "einander" }
 
 /-! ### Interrogative pronouns

@@ -8,9 +8,9 @@ open Morphology (Word)
 # Wambaya reciprocals
 
 Wambaya marks reciprocity with the bound morpheme *-ngg-* (glossed RR) in the auxiliary's pronominal
-complex, a bound reciprocal pronoun ([evans-2008]) that serves both the reciprocal and the reflexive
-function: *Alag-bulu wurlu-ngg-a nyurrunyurru* 'The two children are chasing each other'
-([nordlinger-2023] ex. 11, from [nordlinger-1998]).
+complex, a bound reciprocal pronoun in the sense of [evans-2008] that serves both the reciprocal and
+the reflexive function: *Alag-bulu wurlu-ngg-a nyurrunyurru* 'The two children are chasing each
+other' ([nordlinger-2023] ex. 11, from [nordlinger-1998]).
 
 ## TODO
 
