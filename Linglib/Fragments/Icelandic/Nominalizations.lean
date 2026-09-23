@@ -1,225 +1,99 @@
-import Linglib.Morphology.DistributedMorphology.Allosemy
-import Linglib.Fragments.Icelandic.Verbs
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+module
+
+public import Linglib.Morphology.Morph
 
 /-!
-# Icelandic Nominalization Fragment
-[wood-2023] [wood-2015]
+# Icelandic deverbal nominals
 
-Icelandic deverbal nominalizations built with the suffixes -un, -an,
--ing, -sla, and -naður. [wood-2023] Ch. 3 establishes that -un
-is the most productive nominalizer, and that nominalizations can
-receive CEN (Complex Event Nominal), SEN (Simple Event Nominal),
-or RN (Result/Referring Nominal) readings depending on the allosemes
-of v and n in the structure [nP n [vP v √ROOT]].
+Deverbal nouns of Icelandic, each segmented into its morphs: an optional prefixed preposition,
+the root, an optional overt verbalizer, and a nominalizing suffix. The nominalizers are many
+(*-un*, *-ing*, *-sla*, *-stur*, *-n*, *-ð*, and others); the verbalizers *-k* (the *-ka* of
+*seinka* 'delay') and *-er* (the *-era* of loanword verbs) appear before the nominalizer, while
+the final *-a* of the verb is absent from the noun. Some prepositions that a verb takes as a
+separate word are prefixed to its noun: *gera við* 'repair', *við-ger-ð*.
 
-This fragment provides lexical entries for key Icelandic nominalizations,
-connecting them to the -st verb data in `Verbs.lean`.
+## Implementation notes
+
+Morphs are given in their surface forms, as segmented in [wood-2023]: the roots of *söfn-un*,
+*vönt-un*, *við-vör-un* and *um-önn-un* show the regular u-umlaut of *safna*, *vanta*, *vara*
+and *annast*.
+
+## References
+
+* [wood-2023]
 -/
+
+@[expose] public section
 
 namespace Icelandic.Nominalizations
 
-open DistributedMorphology.Allosemy
-open Icelandic.Verbs
+open Morphology (Morph)
 
--- ============================================================================
--- § 1: Nominalizing Suffixes ([wood-2023] Ch. 3)
--- ============================================================================
-
-/-- Icelandic nominalizing suffixes. All spell out n in different
-    morphological contexts — they are NOT different functional heads
-    ([wood-2023] Ch. 2 (2.1), Ch. 3).
-
-    The book lists: -un, -ing, -sla, -stur, -a, -n, -Ø, -ð, plus
-    others (-aður, -ning). This fragment covers the most common ones. -/
-inductive NomSuffix where
-  | un     -- most productive: söfn-un 'collection', opn-un 'opening'
-  | ing    -- borrowed/Latinate pattern: birting 'publication'
-  | sla    -- restricted: ræk-sla 'cultivation'
-  | stur   -- restricted: þvo-ttur, les-tur
-  | adur   -- restricted: skil-naður (stem -n- + -aður)
+/-- A deverbal noun, segmented. -/
+structure Nominal where
+  /-- A preposition prefixed to the noun. -/
+  preposition : Option String := none
+  /-- The root. -/
+  root : String
+  /-- An overt verbalizer between the root and the nominalizer. -/
+  verbalizer : Option String := none
+  /-- The nominalizing suffix. -/
+  nominalizer : String
   deriving DecidableEq, Repr
 
-/-- PF realization of the suffix. -/
-def NomSuffix.form : NomSuffix → String
-  | .un    => "-un"
-  | .ing   => "-ing"
-  | .sla   => "-sla"
-  | .stur  => "-stur"
-  | .adur  => "-aður"
+/-- The morphs of a nominal in linear order. -/
+def Nominal.morphs (w : Nominal) : List Morph :=
+  (w.preposition.map .pref).toList ++
+    .root w.root :: (w.verbalizer.map .suff).toList ++ [.suff w.nominalizer]
 
--- ============================================================================
--- § 2: Nominalization Entry Structure
--- ============================================================================
+/-- *opn-un* 'opening', from *opna* 'open' ([wood-2023], (2.94)). -/
+def opnun : Nominal := { root := "opn", nominalizer := "un" }
 
-/-- An Icelandic deverbal nominalization entry. -/
-structure IcelandicNom where
-  /-- The nominal form. -/
-  nomForm : String
-  /-- The base verb (active form). -/
-  baseVerb : String
-  /-- English gloss. -/
-  gloss : String
-  /-- Nominalizing suffix. -/
-  suffix : NomSuffix
-  /-- Available readings for this nominal. -/
-  availableReadings : List NominalizationReading
-  /-- Corresponding -st verb entry, if one exists. -/
-  stVerb : Option IcelandicStVerb := none
-  /-- Does P-prefixing apply? (Ch. 4) -/
-  hasPPrefix : Bool := false
-  /-- The prefixed preposition, if any. -/
-  prefixedP : Option String := none
-  deriving Repr, BEq
+/-- *söfn-un* 'collection', from *safna* 'collect' ([wood-2023], (2.28)). -/
+def sofnun : Nominal := { root := "söfn", nominalizer := "un" }
 
--- ============================================================================
--- § 3: Nominalization Data ([wood-2023])
--- ============================================================================
+/-- *vönt-un* 'need', from *vanta* 'need' ([wood-2023], (3.39)). -/
+def vontun : Nominal := { root := "vönt", nominalizer := "un" }
 
-/-- *opnun* 'opening' — from *opna* 'open' ([wood-2023] Ch. 3, Ch. 5).
-    CEN: *opnun dyranna tók langan tíma* 'the opening of the door took a long time'
-    RN: *opnunin var þöng* 'the opening was narrow' -/
-def opnun : IcelandicNom :=
-  { nomForm := "opnun"
-    baseVerb := "opna"
-    gloss := "opening"
-    suffix := .un
-    availableReadings := [.complexEvent, .simpleEntity]
-    stVerb := some opnast }
+/-- *misheyr-n* 'mishearing', from *misheyrast* 'mishear' ([wood-2023], (3.41)). -/
+def misheyrn : Nominal := { root := "misheyr", nominalizer := "n" }
 
-/-- *söfnun* 'collection' — from *safna* 'collect' ([wood-2023] Ch. 5).
-    CEN: *söfnun á sýnum* 'collecting of samples'
-    The running example in Ch. 5 for argument structure in CENs. -/
-def sofnun : IcelandicNom :=
-  { nomForm := "söfnun"
-    baseVerb := "safna"
-    gloss := "collection"
-    suffix := .un
-    availableReadings := [.complexEvent, .simpleEntity] }
+/-- *sein-k-un* 'delay', from *seinka* 'delay' ([wood-2023], (2.3)). -/
+def seinkun : Nominal := { root := "sein", verbalizer := some "k", nominalizer := "un" }
 
-/-- *þvottur* 'washing' — from *þvo* 'wash' ([wood-2023] Ch. 6).
-    CEN: *þvo-ttur Guðrúnar á fötunum* 'Guðrún's washing of the clothes'
-    SEN: *Þvo-ttur-inn tók langan tíma* 'The washing took a long time'
-    RN: *Þvo-ttur-inn á að fara í vélina* 'The laundry should go in the machine'
-    Key example: all three readings available. -/
-def pvottur : IcelandicNom :=
-  { nomForm := "þvottur"
-    baseVerb := "þvo"
-    gloss := "washing/laundry"
-    suffix := .stur  -- irregular form -ttur, same n head
-    availableReadings := [.complexEvent, .simpleEvent, .simpleEntity] }
+/-- *not-k-un* 'use', from *nota* 'use', which has no verbalizer ([wood-2023], (5.37)). -/
+def notkun : Nominal := { root := "not", verbalizer := some "k", nominalizer := "un" }
 
-/-- *misheyrn* 'mishearing' — from *misheyrast* 'mishear' ([wood-2023] Ch. 5).
-    Subject-experiencer -st verb; nominalization retains experiencer
-    semantics via Poss head. -/
-def misheyrn : IcelandicNom :=
-  { nomForm := "misheyrn"
-    baseVerb := "misheyrast"
-    gloss := "mishearing"
-    suffix := .un
-    availableReadings := [.complexEvent] }
+/-- *analýs-er-ing* 'analysis', from *analýsera* 'analyze' ([wood-2023], (2.7)). -/
+def analysering : Nominal := { root := "analýs", verbalizer := some "er", nominalizer := "ing" }
 
-/-- *vöntun* 'need/want' — from *vanta* 'need' ([wood-2023] Ch. 5).
-    Ambiguous between target and experiencer interpretations:
-    *vöntun góðs starfsfólks* can mean 'need for good employees' (target)
-    or 'the company's need' (experiencer). -/
-def vontun : IcelandicNom :=
-  { nomForm := "vöntun"
-    baseVerb := "vanta"
-    gloss := "need"
-    suffix := .un
-    availableReadings := [.complexEvent, .simpleEvent] }
+/-- *prent-un* 'printing', from *prenta* 'print' ([wood-2023], (6.48)). -/
+def prentun : Nominal := { root := "prent", nominalizer := "un" }
 
-/-- *viðvörun* 'warning' — from *viðvara* 'warn' ([wood-2023] Ch. 6).
-    CEN: *viðvörun Guðrúnar á hættunni* 'Guðrún's warning of the danger'
-    SEN/State: *Viðvörunin stóð í mörg ár* 'The warning stood for many years'
-    Simple entity: *Ég snerti viðvörunina* 'I touched the warning' -/
-def vidvorun : IcelandicNom :=
-  { nomForm := "viðvörun"
-    baseVerb := "viðvara"
-    gloss := "warning"
-    suffix := .un
-    availableReadings := [.complexEvent, .simpleEvent, .simpleState, .simpleEntity] }
+/-- *þvo-ttur* 'washing, laundry', from *þvo* 'wash' ([wood-2023], (6.26), (6.27)). -/
+def pvottur : Nominal := { root := "þvo", nominalizer := "ttur" }
 
-/-- *notkun* 'use' — from *nota* 'use' ([wood-2023] Ch. 5).
-    CEN reading; the verbalizer -ka appears in the nominal but not
-    in the verb (*nota* vs *not-k-un*). -/
-def notkun : IcelandicNom :=
-  { nomForm := "notkun"
-    baseVerb := "nota"
-    gloss := "use"
-    suffix := .un
-    availableReadings := [.complexEvent] }
+/-- *við-vör-un* 'warning', from *vara við* 'warn' ([wood-2023], (4.12a)). -/
+def vidvorun : Nominal := { preposition := some "við", root := "vör", nominalizer := "un" }
 
-/-- *aðdáun* 'admiration' — from *dást að* 'admire' ([wood-2023] Ch. 6).
-    P-prefixing: *að* 'to' must be prefixed to the noun.
-    CEN: *Aðdáun Guðrúnar á Maríu* 'Guðrún's admiration of María'
-    SEN/State: *Aðdáunin stóð í mörg ár* 'The admiration lasted for many years'
-    No concrete entity reading (6.13c is unacceptable). -/
-def addaun : IcelandicNom :=
-  { nomForm := "aðdáun"
-    baseVerb := "dást að"
-    gloss := "admiration"
-    suffix := .un
-    availableReadings := [.complexEvent, .simpleEvent, .simpleState]
-    hasPPrefix := true
-    prefixedP := some "að" }
+/-- *að-dá-un* 'admiration', from *dást að* 'admire', whose preposition cannot be prefixed to
+the verb ([wood-2023], (4.48)). -/
+def addaun : Nominal := { preposition := some "að", root := "dá", nominalizer := "un" }
 
-/-- *viðgerð* 'repair' — from *gera við* 'fix/repair' ([wood-2023] Ch. 4).
-    P-prefixing pattern 2: *við* conditions root meaning and must be
-    prefixed, but cannot be doubled as complement. -/
-def vidgerd : IcelandicNom :=
-  { nomForm := "viðgerð"
-    baseVerb := "gera við"
-    gloss := "repair"
-    suffix := .stur  -- irregular form -ð, same n head
-    availableReadings := [.complexEvent, .simpleEntity]
-    hasPPrefix := true
-    prefixedP := some "við" }
+/-- *við-ger-ð* 'repair', from *gera við* 'repair' ([wood-2023], (4.42)). -/
+def vidgerd : Nominal := { preposition := some "við", root := "ger", nominalizer := "ð" }
 
-/-- *umönnun* 'taking care of' — from *annast um* ([wood-2023] Ch. 4).
-    P-prefixing pattern 2. -/
-def umonnun : IcelandicNom :=
-  { nomForm := "umönnun"
-    baseVerb := "annast um"
-    gloss := "taking care of"
-    suffix := .un
-    availableReadings := [.complexEvent]
-    hasPPrefix := true
-    prefixedP := some "um" }
+/-- *um-önn-un* 'care', from *annast um* 'take care of' ([wood-2023], (4.49)). -/
+def umonnun : Nominal := { preposition := some "um", root := "önn", nominalizer := "un" }
 
-/-- All nominalization entries. -/
-def allNoms : List IcelandicNom :=
-  [opnun, sofnun, pvottur, misheyrn, vontun, vidvorun, notkun,
-   addaun, vidgerd, umonnun]
-
--- ============================================================================
--- § 4: Verification Theorems
--- ============================================================================
-
-/-- -un is the most common suffix in the fragment. -/
-theorem un_most_common :
-    (allNoms.filter (fun n => n.suffix == .un)).length ≥
-    (allNoms.filter (fun n => n.suffix != .un)).length := by decide
-
-/-- All nominalizations have at least one available reading. -/
-theorem all_have_readings :
-    allNoms.all (fun n => !n.availableReadings.isEmpty) = true := by decide
-
-/-- *opnun* connects to the -st verb *opnast*. -/
-theorem opnun_from_opnast :
-    opnun.stVerb = some opnast := rfl
-
-/-- *opnun* and *opnast* share the same base verb. -/
-theorem opnun_opnast_same_base :
-    opnun.baseVerb = (opnast.activeForm.getD "") := rfl
-
-/-- P-prefixed nominalizations have a prefixed preposition. -/
-theorem pprefixed_have_p :
-    (allNoms.filter (·.hasPPrefix)).all
-      (fun n => n.prefixedP.isSome) = true := by decide
-
-/-- *þvottur* has all three basic readings (CEN, SEN, RN). -/
-theorem pvottur_three_readings :
-    pvottur.availableReadings.length = 3 := rfl
+/-- The nominals of the fragment. -/
+def all : List Nominal :=
+  [opnun, sofnun, vontun, misheyrn, seinkun, notkun, analysering, prentun, pvottur, vidvorun,
+    addaun, vidgerd, umonnun]
 
 end Icelandic.Nominalizations

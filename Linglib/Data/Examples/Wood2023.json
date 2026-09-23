@@ -511,5 +511,55 @@
     "comment": "",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
+    },
+  {
+    "id": "wood2023_22",
+    "source": {"bibkey": "wood-2023", "paperLabel": "(6.13c)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Guðrún snerti að-dá-un-ina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Guðrún", "Guðrún"], ["snerti", "touched"], ["að-dá-un-ina", "to-admire-NMLZ-the.ACC"]
+    ],
+    "translation": "Guðrún touched the admiration.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {"name": "simple entity", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["nominal", "að-dá-un"],
+      ["reading", "RN"]
+    ],
+    "comment": "The book also gives the verb rétti mér 'handed me'. Aðdáun has no concrete entity reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2023_23",
+    "source": {"bibkey": "wood-2023", "paperLabel": "(6.14d)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Ég snerti við-vör-un-ina.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ég", "I"], ["snerti", "touched"], ["við-vör-un-ina", "with-warn-NMLZ-the"]
+    ],
+    "translation": "I touched the warning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simple entity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["nominal", "við-vör-un"],
+      ["reading", "RN"]
+    ],
+    "comment": "Viðvörun, with the same nominalizer as aðdáun, has a concrete entity reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
