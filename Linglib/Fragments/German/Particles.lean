@@ -97,8 +97,7 @@ def halt : Particle where
 
 /-- *doch* — contradiction/insistence particle. Uniquely among common
 MPs, licensed in both declaratives and imperatives. Distinct from the
-polarity-reversal response *doch* (`PolarityMarking.lean`; the ambiguity
-is formalized in `SeeligerRepp2018.doch_dual_role`). -/
+polarity-reversal response *doch* (`PolarityMarking.lean`). -/
 def doch : Particle where
   form := "doch"
   position := some .clauseMedial
@@ -113,18 +112,14 @@ def doch : Particle where
     | .subordinated => some .excluded
     | _ => none
 
-/-- *doch wohl* — non-compositional marker of rejecting questions
-([seeliger-repp-2018]): declarative-syntax polar questions (recorded
-under `polarInterrogative` following the source schema's
-question-function reading), not assertions and not wh-questions. The
-PRQ/NRQ bias profile lives in `SeeligerRepp2018`. -/
+/-- *doch wohl* — the particle combination that marks a matrix declarative as a rejecting
+question, non-compositionally ([seeliger-repp-2018]). That the declarative is a question and not
+an assertion is a matter of speech act, not of clause type, analysed in `SeeligerRepp2018`. -/
 def dochWohl : Particle where
   form := "doch wohl"
   position := some .clauseMedial
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
+  distribution := fun c e ↦ match c, e with
+    | .declarative, .matrix => some .optional
     | _, _ => none
 
 /-- The modal-particle inventory ([gutzmann-2015] Table 6.1). -/

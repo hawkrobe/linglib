@@ -8,6 +8,7 @@ public import Linglib.Core.Order.Interval
 public import Linglib.Core.Order.IntervalContent
 public import Linglib.Semantics.Alternatives.Extremum
 public import Linglib.Semantics.Aspect.SubintervalProperty
+public import Linglib.Semantics.Polarity.Basic
 
 /-!
 # Rouillard 2026: temporal *in*-adverbials and maximal informativity
@@ -331,10 +332,6 @@ theorem uPerfGTIA_eq {P : W → Event T → Prop} {s : T} {n m : α} (hn : 0 < n
   rw [hj.2]
   exact (Ioo_subset_Ioo_left (le_def.1 hj.1).1).trans hei
 
-/-- The rows and columns of Table 1. -/
-inductive Polarity | pos | neg
-  deriving DecidableEq
-
 /-- Event-level or gap-level adverbial. -/
 inductive Adverbial | event | gap
   deriving DecidableEq
@@ -350,12 +347,11 @@ def positiveReading (P : W → Event T → Prop) (s : T) : Adverbial → Viewpoi
   | .gap, .pfv => gTIA μ P s
   | .gap, .impv => uPerfGTIA μ P s
 
-/-- A cell of Table 1, over the positive numerals. -/
+/-- A cell of Table 1, over the positive numerals: the positive reading under the row's
+polarity. -/
 def reading (P : W → Event T → Prop) (s : T) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (n : {n : α // 0 < n}) : Set W :=
-  match pol with
-  | .pos => positiveReading μ P s a v n
-  | .neg => (positiveReading μ P s a v n)ᶜ
+  pol • positiveReading μ P s a v n
 
 private instance [NoMaxOrder α] : Nontrivial {n : α // 0 < n} :=
   let ⟨n, hn⟩ := exists_gt (0 : α)
@@ -367,7 +363,7 @@ cells and the imperfective G-TIA cell by information collapse, the positive perf
 by density, and negation preserves collapse. -/
 theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → Event T → Prop} {s : T}
     (hP : HasSubintervalProperty P) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
-    (h : (pol, a, v) ≠ (.neg, .gap, .pfv)) : ¬ IsMIPLicensed (reading μ P s pol a v) := by
+    (h : (pol, a, v) ≠ (.negative, .gap, .pfv)) : ¬ IsMIPLicensed (reading μ P s pol a v) := by
   have hconst : ∀ a v, (a, v) ≠ (.gap, .pfv) → ∀ n m : {n : α // 0 < n},
       positiveReading μ P s a v n = positiveReading μ P s a v m := by
     rintro a v h ⟨n, hn⟩ ⟨m, hm⟩
@@ -386,14 +382,14 @@ theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → Event T →
       exact hmn.not_ge (hlb (a := ⟨m, hm⟩) hw)
     · exact not_isMIPLicensed_of_forall_eq (hconst .gap .impv (by decide))
   · refine not_isMIPLicensed_of_forall_eq fun n m => congrArg compl (hconst a v ?_ n m)
-    exact fun hav => h (congrArg (Prod.mk Polarity.neg) hav)
+    exact fun hav => h (congrArg (Prod.mk Polarity.negative) hav)
 
 /-- Table 1's survivor: negated G-TIA under perfective aspect, licensed where worlds separate
 gap lengths and some world's last event abuts the span. -/
 theorem table1_survivor {P : W → Event T → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
     {w : W} {l₀ : T} (hall : ∀ e, P w e → e.τ.fst ≤ l₀)
     (hwit : ∃ e, P w e ∧ e.τ.fst = l₀ ∧ e.τ.snd < s) :
-    IsMIPLicensed (reading μ P s .neg .gap .pfv) := by
+    IsMIPLicensed (reading μ P s .negative .gap .pfv) := by
   obtain ⟨e₀, he₀, hfst, hsnd⟩ := hwit
   have hl : l₀ < s := hfst ▸ e₀.τ.fst_le_snd.trans_lt hsnd
   refine isMIPLicensed_of_isGreatest (w := w) (fun n m hnm => hφ (Subtype.coe_lt_coe.2 hnm))

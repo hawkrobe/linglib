@@ -1,8 +1,7 @@
 module
 
-public import Mathlib.Algebra.Ring.Int.Units
-public import Mathlib.Algebra.GroupWithZero.Units.Fintype
 public import Mathlib.Algebra.Group.Action.Defs
+public import Linglib.Semantics.Polarity.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Order.Aristotelian
 public import Linglib.Semantics.Degree.Boundedness
@@ -13,10 +12,10 @@ public import Mathlib.Order.Interval.Set.Disjoint
 
 This file defines the vocabulary of an antonym pair of gradable adjectives, *tall* and *short*
 or *happy* and *unhappy*. The two members measure on the same degrees under inverse orderings
-([kennedy-2007] (60) and fn. 29, [kennedy-mcnally-2005] fn. 7): `Degree.Polarity` is which
-member an adjective is, as a sign in `ℤˣ`, `positive` for the unmarked member (*tall*) and
-`negative` for the inverted one (*short*). Inverting twice restores the ordering, so
-`negative * p` is the polarity of the antonym of a `p` adjective, and the sign acts on scale
+([kennedy-2007] (60) and fn. 29, [kennedy-mcnally-2005] fn. 7): an adjective's `Polarity` is
+which member it is, `positive` for the member measuring in the scale's increasing direction
+(*tall*) and `negative` for the inverted one (*short*). Inverting twice restores the ordering,
+so `negative * p` is the polarity of the antonym of a `p` adjective, and polarity acts on scale
 boundedness through the order dual. `Degree.AntonymRelation` is the opposition between the
 members' positive forms, contradictory (*clean* and *dirty*) or contrary (*tall* and *short*,
 which leave a gap), a cell of the Aristotelian square ([cruse-1986], [horn-1989]).
@@ -30,8 +29,7 @@ keeps them apart ([krifka-2007b]).
 
 ## Main definitions
 
-* `Polarity`, the sign group `ℤˣ`, with the members `Polarity.positive` and `Polarity.negative`
-  and its action `p • b` on `Boundedness`.
+* The action `p • b` of `Polarity` on `Boundedness`, the negative polarity by the order dual.
 * `AntonymRelation`, contradictory or contrary, embedded in `Aristotelian.OppositionRel`.
 * `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
 * `AntonymForm` with `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot` and
@@ -64,58 +62,17 @@ namespace Degree
 
 /-! ### Polarity -/
 
-/-- Which member of an antonym pair an adjective is, as a sign: `positive` measures in the
-unmarked direction (*tall*, *hot*), `negative` in the inverted one (*short*, *cold*). -/
-abbrev Polarity := ℤˣ
-
-namespace Polarity
-
-/-- The member of an antonym pair measuring in the scale's increasing direction (*tall*, *hot*);
-markedness is a separate matter, since equipollent pairs like *hot*/*cold* have no unmarked
-member. -/
-def positive : Polarity := 1
-
-/-- The member of an antonym pair measuring on the dual scale (*short*, *cold*). -/
-def negative : Polarity := -1
-
-theorem positive_eq_one : positive = 1 := rfl
-
-theorem negative_eq_neg_one : negative = -1 := rfl
-
-@[simp] theorem negative_ne_positive : negative ≠ positive := by decide
-
-@[simp] theorem positive_ne_negative : positive ≠ negative := by decide
-
-theorem eq_positive_or_eq_negative (p : Polarity) : p = positive ∨ p = negative :=
-  Int.units_eq_one_or p
-
-@[simp] theorem positive_mul (p : Polarity) : positive * p = p := one_mul p
-
-@[simp] theorem mul_positive (p : Polarity) : p * positive = p := mul_one p
-
-/-- Two inversions restore the ordering: the antonym of *short* is *tall*, and *less short than*
-is *taller than*. Sentential negation is not a polarity: *not short* is the contradictory of
-*short* and does not entail *tall* (`AntonymForm.strengthenedDenot`). -/
-@[simp] theorem negative_mul_negative : negative * negative = positive := by decide
-
-@[simp] theorem mul_self (p : Polarity) : p * p = positive := by
-  rcases eq_positive_or_eq_negative p with rfl | rfl <;> decide
-
-@[simp] theorem inv_eq_self (p : Polarity) : p⁻¹ = p := by
-  rcases eq_positive_or_eq_negative p with rfl | rfl <;> decide
-
-@[simp] theorem positive_smul {M : Type*} [MulAction Polarity M] (x : M) : positive • x = x :=
-  one_smul _ x
-
-end Polarity
-
-/-- The negative member of an antonym pair measures on the dual scale. -/
+/-- The negative member of an antonym pair measures on the dual scale; two inversions restore the
+ordering, so the antonym of *short* is *tall*. Markedness is a separate matter, since equipollent
+pairs like *hot* and *cold* have no unmarked member. Sentential negation acts on the adjective's
+denotation by complement instead, so *not short* is the contradictory of *short* and does not
+entail *tall* (`AntonymForm.strengthenedDenot`). -/
 instance : MulAction Polarity Boundedness where
-  smul p b := if p = .positive then b else b.dual
+  smul
+    | .positive, b => b
+    | .negative, b => b.dual
   one_smul _ := rfl
-  mul_smul p q b := by
-    rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;>
-      rcases Polarity.eq_positive_or_eq_negative q with rfl | rfl <;> simp [HSMul.hSMul, SMul.smul]
+  mul_smul p q b := by cases p <;> cases q <;> simp [HSMul.hSMul, SMul.smul]
 
 @[simp] theorem Boundedness.negative_smul (b : Boundedness) : Polarity.negative • b = b.dual :=
   rfl
@@ -204,11 +161,11 @@ theorem flip_involutive : Function.Involutive flip := fun f ↦ by cases f <;> r
 
 /-- The sign acts on the quadruplet by exchanging its poles. -/
 instance : MulAction Polarity AntonymForm where
-  smul p f := if p = .positive then f else f.flip
+  smul
+    | .positive, f => f
+    | .negative, f => f.flip
   one_smul _ := rfl
-  mul_smul p q f := by
-    rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;>
-      rcases Polarity.eq_positive_or_eq_negative q with rfl | rfl <;> simp [HSMul.hSMul, SMul.smul]
+  mul_smul p q f := by cases p <;> cases q <;> simp [HSMul.hSMul, SMul.smul]
 
 @[simp] theorem negative_smul (f : AntonymForm) : Polarity.negative • f = f.flip := rfl
 

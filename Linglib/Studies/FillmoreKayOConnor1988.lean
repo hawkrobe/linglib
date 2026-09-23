@@ -6,7 +6,7 @@ public import Mathlib.Order.Max
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.ConstructionGrammar.Idiom
-public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.FillmoreKayOConnor1988
 
 /-!
@@ -140,14 +140,14 @@ theorem isScalarModel_mem : IsScalarModel λ (d : D) (s : LowerSet D) => d ∈ s
 
 /-- F′ of (24), the semantic operator derived from the trigger F: negation under negative polarity,
 identity under positive. -/
-def force : SentencePolarity → (S → Prop) → S → Prop
+def force : Polarity → (S → Prop) → S → Prop
   | .negative, p => (¬ p ·)
   | .positive, p => p
 
 /-- The conditions of §2.3.2 on a *let alone* sentence with foci `a` and `b`: F′(X A Y) and
 F′(X B Y) are propositions of one scalar model and one polarity, and the full clause F′(X A Y) is
 the more informative (A5). -/
-def Felicitous (P : D → S → Prop) (pol : SentencePolarity) (a b : D) : Prop :=
+def Felicitous (P : D → S → Prop) (pol : Polarity) (a b : D) : Prop :=
   force pol (P a) < force pol (P b)
 
 /-- Under negation the full clause is the stronger exactly when A is the lower point: *he didn't
@@ -232,7 +232,7 @@ variable {D : Type} {S : Type*} [PartialOrder D]
 two foci and the paper's judgment. -/
 structure Row (D : Type) where
   conj : Conjunction
-  pol : SentencePolarity
+  pol : Polarity
   a : D
   b : D
   judgment : Judgment
@@ -267,7 +267,7 @@ def conjunctionTable : List (String × Conjunction) :=
   [("letAlone", .letAlone), ("muchLess", .muchLess), ("notToMention", .notToMention),
     ("inFact", .inFact), ("ifNot", .ifNot)]
 
-def polarityTable : List (String × SentencePolarity) := [("negative", .negative), ("positive", .positive)]
+def polarityTable : List (String × Polarity) := [("negative", .negative), ("positive", .positive)]
 
 /-- A row from an example, given a reading of its foci as points. -/
 def Row.ofExample (foci? : LinguisticExample → Option (D × D)) (ex : LinguisticExample) :

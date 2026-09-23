@@ -84,7 +84,7 @@ theorem alt_questionSet (q : PolP) {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Se
 /-- An answer does not assert but chooses between the two alternatives of the question
 (Section 5.1): whatever polarity it gives the positive alternative yields one of them. -/
 theorem smul_mem_alt (q : PolP) {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
-    (s : SentencePolarity) : s • p ∈ alt (questionSet q p) := by
+    (s : Polarity) : s • p ∈ alt (questionSet q p) := by
   rw [alt_questionSet q hne hnu]
   cases s <;> simp
 
@@ -234,7 +234,7 @@ def negationTable : List (String × PolP) :=
     ("high", negHigh)]
 
 /-- The alternatives an example confirms, as polarities relative to the positive alternative. -/
-def polarityTable : List (String × SentencePolarity) := [("p", .positive), ("not p", .negative)]
+def polarityTable : List (String × Polarity) := [("p", .positive), ("not p", .negative)]
 
 /-- An example of a single particle answering a question whose PolP the example fixes. -/
 structure Row where
@@ -243,7 +243,7 @@ structure Row where
   /-- The answer. -/
   particle : AnswerParticle
   /-- The alternative the answer confirms or is intended to confirm, if the example says. -/
-  target : Option SentencePolarity
+  target : Option Polarity
   /-- The judgment of the answer. -/
   judgment : Judgment
   deriving DecidableEq, Repr

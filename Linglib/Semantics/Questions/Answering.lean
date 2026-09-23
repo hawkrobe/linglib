@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Basic
 
 /-!
 # Answering yes–no questions
@@ -13,7 +13,7 @@ feature of a polarity-reversing particle such as Swedish *jo*, which eliminates 
 the answer. A `PolP` records where the question's negation sits relative to the polarity head,
 and `PolP.answer` computes the polarity of the alternative the answer confirms, relative to the
 question's positive alternative, or `none` for an ill-formed answer; the action of
-`SentencePolarity` on propositions turns that polarity into the alternative itself.
+`Polarity` on propositions turns that polarity into the alternative itself.
 
 A negation out of the polarity head's reach, such as a low, VP-internal one, leaves the particle
 to value the head, and the value composes with the negation: an affirmative particle confirms
@@ -61,7 +61,7 @@ structure AnswerParticle where
   /-- Citation form. -/
   form : String
   /-- The value assigned to [±Pol]. -/
-  assigns : SentencePolarity
+  assigns : Polarity
   /-- Whether the particle carries REV. -/
   reverses : Bool := false
   deriving DecidableEq, Repr
@@ -102,7 +102,7 @@ instance : Decidable q.NegationInside := inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The polarity of the question's primary alternative relative to its positive alternative:
 negative when the negation is inside the PolP. -/
-def polarity : SentencePolarity := if q.NegationInside then .negative else .positive
+def polarity : Polarity := if q.NegationInside then .negative else .positive
 
 /-- The negation values the polarity head: a middle negation not screened off by an adverb. -/
 def ValuedByNegation : Prop := q.negation = some .middle ∧ q.intervener = false
@@ -114,7 +114,7 @@ alternative, or `none` when the answer is ill formed. A reversing particle elimi
 negation inside the PolP and values the head, and is ill formed without one. Otherwise, if the
 negation values the head, a negative particle agrees with it and an affirmative one clashes with
 it; if not, the particle values the head, composing with a negation inside the PolP. -/
-def answer (a : AnswerParticle) : Option SentencePolarity :=
+def answer (a : AnswerParticle) : Option Polarity :=
   if a.reverses then
     if q.NegationInside then some a.assigns else none
   else if q.ValuedByNegation then

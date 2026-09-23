@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Homogeneity.Plural
-public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.TieuKrizChemla2019
 
 /-!
@@ -118,7 +118,7 @@ inductive Reading where
 /-- The value of the definite sentence at a polarity under a reading. Negation is Kleene
 negation except where the universal outscopes it; the scope-ambiguous reading supervaluates
 over the two scopes. -/
-def Reading.value : Reading → SentencePolarity → Trivalent.Prop3 (Finset Atom)
+def Reading.value : Reading → Polarity → Trivalent.Prop3 (Finset Atom)
   | .existential, .positive => λ w => .ofProp (∃ a ∈ x, a ∈ w)
   | .existential, .negative => λ w => (Trivalent.ofProp (∃ a ∈ x, a ∈ w)).neg
   | .homogeneous, .positive => barePlural (λ a w => a ∈ w) x

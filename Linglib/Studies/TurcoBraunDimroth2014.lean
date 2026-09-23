@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Polarity.Marking
-public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.Dutch.Particles
 public import Linglib.Fragments.German.PolarityMarking
 public import Linglib.Data.Examples.TurcoBraunDimroth2014
@@ -74,7 +74,7 @@ inductive PolarityOperator where
   deriving DecidableEq, Repr
 
 /-- The polarity a polarity operator expresses. -/
-def PolarityOperator.value : PolarityOperator → SentencePolarity
+def PolarityOperator.value : PolarityOperator → Polarity
   | .negation => .negative
   | .affirmation | .unmarked => .positive
 
@@ -92,13 +92,10 @@ variable {S W : Type*}
 namespace Sentence
 
 /-- The polarity of a sentence, the value of its polarity operator. -/
-def pol (s : Sentence S W) : SentencePolarity := s.polarityOp.value
+def pol (s : Sentence S W) : Polarity := s.polarityOp.value
 
 /-- The proposition a sentence asserts. -/
-def denotation (s : Sentence S W) : Set W :=
-  match s.pol with
-  | .positive => s.property s.situation
-  | .negative => (s.property s.situation)ᶜ
+def denotation (s : Sentence S W) : Set W := s.pol • s.property s.situation
 
 /-- Accenting the assertion operator leaves the truth conditions unchanged. -/
 theorem denotation_verumFocus (s : Sentence S W) (b : Bool) :
@@ -160,7 +157,8 @@ topic situation entails its holding of the first. -/
 theorem Switch.disjoint_iff {a b : Sentence S W} (h : Switch a b) :
     Disjoint a.denotation b.denotation ↔ b.property b.situation ⊆ a.property a.situation := by
   obtain ⟨hP, ha, hb⟩ := h
-  simp only [Sentence.denotation, ha, hb, hP, Set.disjoint_compl_left_iff_subset]
+  simp only [Sentence.denotation, ha, hb, hP, Polarity.negative_smul_set, Polarity.positive_smul,
+    Set.disjoint_compl_left_iff_subset]
 
 /-- The claims of a correction exclude each other. -/
 theorem IsCorrection.disjoint {a b : Sentence S W} (h : IsCorrection a b) :

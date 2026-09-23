@@ -59,7 +59,6 @@ the accessible worlds agree on the standard's degree.
 namespace Buring2007
 
 open ModalLogic
-open Degree (Polarity)
 
 /-! ### The comparative and the degree negation -/
 

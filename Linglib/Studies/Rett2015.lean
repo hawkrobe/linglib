@@ -41,7 +41,6 @@ so their rows of `IsPolarInvariant` are the book's classification.
 
 namespace Rett2015
 
-open Degree (Polarity)
 open Degree
 open English.Adjectives
 
@@ -90,17 +89,17 @@ instance (c : Construction) (p : Polarity) : Decidable (Evaluative c p) :=
 in a polar-invariant construction. -/
 theorem implicature_eq_manner_iff (c : Construction) (p : Polarity) :
     implicature c p = some .manner ↔ IsPolarInvariant c ∧ IsMarked p := by
-  cases c <;> rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> decide
+  cases c <;> cases p <;> decide
 
 /-- Quantity-derived evaluativity is the positive construction's alone. -/
 theorem implicature_eq_quantity_iff (c : Construction) (p : Polarity) :
     implicature c p = some .quantity ↔ c = .positive := by
-  cases c <;> rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> decide
+  cases c <;> cases p <;> decide
 
 /-- Evaluativity is the positive construction or the Marked Meaning Principle. -/
 theorem evaluative_iff (c : Construction) (p : Polarity) :
     Evaluative c p ↔ c = .positive ∨ (IsPolarInvariant c ∧ IsMarked p) := by
-  cases c <;> rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> decide
+  cases c <;> cases p <;> decide
 
 /-! ### The book's contrasts
 

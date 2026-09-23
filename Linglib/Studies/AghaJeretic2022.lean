@@ -227,14 +227,14 @@ def scenarioDomain : GapScenario → Finset Bool
   | .gap => {true, false}
 
 /-- The plural semantics' value at a cell: negative polarity predicates the negated prejacent. -/
-def shouldPredict (pol : SentencePolarity) (s : GapScenario) : Trivalent :=
+def shouldPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
   match pol with
   | .positive => should (fun _ => scenarioDomain s) (· = true) true
   | .negative => should (fun _ => scenarioDomain s) (· = false) true
 
 /-- Domain restriction's value at a cell: universal quantification, negated by Strong Kleene
 negation. -/
-def domainRestrictionPredict (pol : SentencePolarity) (s : GapScenario) : Trivalent :=
+def domainRestrictionPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
   match pol with
   | .positive => must (fun _ => scenarioDomain s) (· = true) true
   | .negative => (must (fun _ => scenarioDomain s) (· = true) true).neg

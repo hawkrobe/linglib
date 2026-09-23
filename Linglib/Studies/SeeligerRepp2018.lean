@@ -1,626 +1,260 @@
 module
 
-public import Linglib.Semantics.Questions.Bias
-public import Linglib.Semantics.Polarity.Sentence
-public import Linglib.Semantics.Questions.QParticleLayer
-public import Linglib.Fragments.Swedish.Particles
-public import Linglib.Fragments.German.Particles
-public import Linglib.Fragments.German.PolarityMarking
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Fintype.Option
+public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Data.Examples.SeeligerRepp2018
 
 /-!
-# Seeliger & Repp (2018): Biased Declarative Questions
-[seeliger-repp-2018] [sudo-2013]
+# Seeliger & Repp (2018): Biased declarative questions in Swedish and German
 
-Biased declarative questions in Swedish and German: negation meets modal
-particles (*väl* and *doch wohl*).
+[seeliger-repp-2018] distinguish two kinds of question with declarative syntax. A declarative
+question such as *Peter is coming?* requires contextual evidence for the proposition the
+declarative denotes and a speaker who had not assumed it; a rejecting question such as *Surely
+Peter is coming?*, German *Peter kommt doch wohl?*, Swedish *Men Peter kommer väl?*, requires
+evidence against it and a speaker who had assumed it. The profiles are stated in the
+two-dimensional bias scheme of [sudo-2013], evidential and epistemic, which the paper extends with
+'minus' values for epistemic bias (Section 2). A bias value is the set of contexts it is
+compatible with, a context being the polarity of the proposition the evidence supports or the
+speaker assumed, if any: [+s] is `plus s`, [−s] its complement `minus s`.
 
-## Key Contributions
+Table 1's four types follow from the polarity of the declarative (`table1`): a declarative
+question of polarity `s` has evidential bias [+s] and epistemic bias [−s] (`declarative`), and the
+preliminary REJECTQ operator (17), λq: [¬q]^evid & [q]^epist. {q, ¬q}, gives a rejecting question
+[+(¬s)] and [+s] (`rejectQ`). A rejecting question is therefore used in a proper subset of the
+situations of the declarative question of the opposite polarity, the observation of p. 138
+(`felicity_rejectQ_ssubset`). The revised operator (40), with the illocutionary modifier VERUM
+or FALSUM, derives the positive rejecting question (`rejectQIM_verum`) but not the negative one:
+FALSUM requires only that the evidence not support ¬p and that the speaker not have been
+committed to p, which admits neutral evidence and no prior assumption, situations Table 1 excludes
+(`felicity_rejectQ_ssubset_rejectQIM_falsum`).
 
-1. Distinguishes **declarative questions** (DQs) from **rejecting questions**
-   (RQs) — both have declarative syntax but differ in bias profile.
-2. Applies [sudo-2013]'s two-dimensional bias scheme (evidential ×
-   epistemic) to classify four question types: PDQ, NDQ, PRQ, NRQ.
-3. Shows that the negation in negative RQs is **non-propositional** — it
-   denotes the illocutionary modifier FALSUM, not propositional negation.
-4. Proposes REJECTQ as the illocutionary operator for RQs.
+Swedish marks a rejecting question with at least one morpho-syntactic cue (p. 157): a negative one
+with fronted negation or *väl*, a positive one with *men* 'but' and *väl*, or with clause-initial
+*visst* or *nog* when the evidence is direct. `SwedishCues.MarksRQ` states the generalization and
+`marking_iff` checks it against the examples of Sections 3 and 5.3.
 
-## Bias Profiles ([sudo-2013])
+## Implementation notes
 
-Every declarative question type carries a *bias profile*: a pair of
-evidential and epistemic bias values. Evidential bias concerns contextual
-evidence; epistemic bias concerns the speaker's prior assumptions.
+* The question REJECTQ forms from a declarative of polarity `s` with prejacent `p` is the polar
+  question on `s • p`, which is the polar question on `p` (`Question.polar_smul`). The
+  commitment-modified propositions IM(q) of (40) are not modelled, only the presuppositions.
+* The declarative polarity is Table 1's simplified 'Declarative denotes' column: the paper argues
+  in Section 6.1 that the negation of a negative rejecting question is FALSUM, not propositional
+  negation.
 
-[sudo-2013] proposes three "plus" values for bias: [+positive],
-[+negative], [neutral]. Evidential bias can also take "minus" values
-([-positive], [-negative]). [seeliger-repp-2018] extend this by
-allowing minus values for epistemic bias as well, capturing that DQ
-speakers merely *didn't assume* the proposition (rather than assuming
-the opposite).
+## TODO
 
-## Four Question Types ([seeliger-repp-2018], Table 1)
+* The acceptability experiment of Section 5.4 (Table 2), the German rejections of Section 4.2
+  that show *doch wohl* to be non-compositional, and the polarity-item diagnostics of Section 6.1
+  are not yet encoded.
+* The comparison with the monopolar declarative questions of [krifka-2015] (footnote 17), which
+  predict the rows of declarative but not of rejecting questions.
 
-| Type | Denotes | Evidential | Epistemic | Example |
-|------|---------|-----------|-----------|---------|
-| PDQ  | p       | +positive | -positive | Peter is coming? |
-| NDQ  | not-p   | +negative | -negative | Peter isn't coming? |
-| PRQ  | p       | +negative | +positive | Surely Peter is coming? |
-| NRQ  | not-p   | +positive | +negative | Surely Peter isn't coming? |
+## References
 
-DQs and RQs differ in that RQs are "more biased": the speaker had a
-specific prior assumption (epistemic bias is [+positive] or [+negative]),
-and the contextual evidence *conflicts* with that assumption.
-
-## REJECTQ Operator ([seeliger-repp-2018] §6.2, eq. 40)
-
-REJECTQ takes a proposition q and an illocutionary modifier IM (FALSUM
-or VERUM):
-
-  ⟦REJECTQ⟧ = λqλIM: [IM(¬q)]^evid & [IM(q)]^epist. {IM(q), ¬IM(q)}
-
-The two presuppositions:
-1. **Evidential**: [IM(¬q)]^evid — IM-determined commitment to ¬q on
-   evidential basis
-2. **Epistemic**: [IM(q)]^epist — IM-determined commitment to q on
-   epistemic basis
-
-The at-issue content is the question {IM(q), ¬IM(q)}. FALSUM = zero
-commitment (used in NRQs); VERUM = full commitment (used in PRQs).
-
-## Cross-Linguistic Findings
-
-**German**: RQs obligatorily contain *doch wohl* — the combination is
-non-compositional. *doch wohl* enters syntactic Agree with REJECTQ at
-ForceP. Without *doch wohl*, a German declarative cannot be a RQ.
-
-**Swedish**: RQs are marked by fronted negation, the modal particle
-*väl*, or both. Unlike German, Swedish has multiple formal strategies
-for marking RQs. *väl* in positive declaratives creates PDQs; combined
-with negation, creates NRQs.
-
-## Experimental Evidence
-
-[seeliger-repp-2018] §5.4: acceptability judgment study (24 native
-Swedish speakers) testing negative declaratives with fronted vs. low
-negation, with and without *väl*, in NRQ contexts. Main effect of MODAL
-PARTICLE (*väl* raises acceptability); interaction (effect only reliable
-with low negation). Supports fronted-negation + *väl* marking NRQs.
-
-## Related Work
-
-- `Semantics/Questions/Bias.lean` — the form and bias vocabulary. The
-  bridge maps Sudo's bias values to Romero's coarser three-valued scheme.
-- `Studies/RomeroHan2004.lean` — VERUM semantics with modal frames.
-- `Semantics/Questions/Answering.lean` — polar answer typology
-  (Holmberg 2016).
+* [seeliger-repp-2018]
+* [sudo-2013]
+* [krifka-2015]
 -/
 
 @[expose] public section
 
 namespace SeeligerRepp2018
 
+/-! ### Bias values (Section 2) -/
 
--- ════════════════════════════════════════════════════════════════
--- § 1. Bias values ([sudo-2013], extended by [seeliger-repp-2018])
--- ════════════════════════════════════════════════════════════════
+/-- A context for one bias dimension, (3) and (4): the polarity of the proposition of the
+question denotation {p, ¬p} that the contextual evidence supports or the speaker assumed, `none`
+for neither. -/
+abbrev Context := Option Polarity
 
-/-- Bias value for a single dimension (evidential or epistemic).
+/-- A bias value: the contexts it is compatible with. -/
+abbrev BiasValue := Finset Context
 
-    [sudo-2013]'s system distinguishes "plus" values (positive bias
-    for p or not-p), "neutral" (no bias), and "minus" values (incompatibility
-    with a given bias direction).
+/-- [+s]: compatible only with evidence for, or an assumption of, the `s` proposition. -/
+def plus (s : Polarity) : BiasValue := {some s}
 
-    [sudo-2013] originally restricted minus values to evidential bias.
-    [seeliger-repp-2018] extend the system by allowing minus values
-    for epistemic bias as well — needed to capture the DQ pattern where
-    the speaker merely *didn't assume* the proposition ([-positive]) rather
-    than actively assuming the opposite ([+negative]). -/
-inductive BiasValue where
-  /-- [+positive]: bias for p -/
-  | plusPos
-  /-- [+negative]: bias for not-p -/
-  | plusNeg
-  /-- [neutral]: no bias -/
-  | neutral
-  /-- [-positive]: incompatible with bias for p -/
-  | minusPos
-  /-- [-negative]: incompatible with bias for not-p -/
-  | minusNeg
-  deriving DecidableEq, Repr
+/-- [−s]: incompatible with evidence for, or an assumption of, the `s` proposition. -/
+def minus (s : Polarity) : BiasValue := (plus s)ᶜ
 
-/-- A bias profile bundles evidential and epistemic bias values. -/
-structure BiasProfile where
-  /-- Evidential bias: what the contextual evidence supports -/
+/-- [neutral]: compatible only with neither. -/
+def neutral : BiasValue := {none}
+
+/-- A bias profile: the evidential and the epistemic bias values. -/
+structure Profile where
+  /-- The contextual evidence the question is compatible with. -/
   evidential : BiasValue
-  /-- Epistemic bias: what the speaker previously assumed -/
+  /-- The prior assumptions of the speaker the question is compatible with. -/
   epistemic : BiasValue
+  deriving DecidableEq
+
+/-- The situations a profile admits: pairs of contextual evidence and prior assumption. -/
+def Profile.felicity (b : Profile) : Finset (Context × Context) := b.evidential ×ˢ b.epistemic
+
+/-! ### Declarative and rejecting questions (Sections 2, 3 and 4.3) -/
+
+/-- A declarative question of polarity `s`: evidence for the proposition the declarative denotes,
+and a speaker who had not assumed it (Section 2). -/
+def declarative (s : Polarity) : Profile := ⟨plus s, minus s⟩
+
+/-- The preliminary REJECTQ (17), λq: [¬q]^evid & [q]^epist. {q, ¬q}, on the proposition of a
+declarative of polarity `s`: evidence for the opposite proposition, and a speaker who had
+assumed it. -/
+def rejectQ (s : Polarity) : Profile := ⟨plus (.negative * s), plus s⟩
+
+/-- A rejecting question is used in a proper subset of the situations of the declarative question
+of the opposite polarity (p. 138): the negative one within the positive declarative question's,
+the positive one within the negative declarative question's. -/
+theorem felicity_rejectQ_ssubset (s : Polarity) :
+    (rejectQ s).felicity ⊂ (declarative (.negative * s)).felicity := by
+  cases s <;> decide
+
+/-! ### The illocutionary modifiers (Section 6.2) -/
+
+/-- The illocutionary modifiers of (40): VERUM, a high degree of commitment, and FALSUM, a zero
+degree. -/
+inductive Modifier where
+  | verum
+  | falsum
   deriving DecidableEq, Repr
 
-/-- Whether a bias value is a "plus" value (active bias) or not.
-    RQs require plus values in both dimensions; DQs have a minus
-    value in the epistemic dimension. -/
-def BiasValue.IsPlus (b : BiasValue) : Prop :=
-  b = .plusPos ∨ b = .plusNeg
+/-- The contexts in which a basis gives the modifier's degree of commitment to the `s`
+proposition: VERUM needs the basis to support it, FALSUM that it not support it. -/
+def Modifier.bias : Modifier → Polarity → BiasValue
+  | .verum, s => plus s
+  | .falsum, s => minus s
 
-instance : DecidablePred BiasValue.IsPlus :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+/-- The revised REJECTQ (40), λqλIM: [IM(¬q)]^evid & [IM(q)]^epist. {IM(q), ¬IM(q)}, with `q` the
+non-negative proposition, as in (41): the positive rejecting question has VERUM, the negative one
+FALSUM. -/
+def rejectQIM (m : Modifier) : Profile := ⟨m.bias .negative, m.bias .positive⟩
 
-/-- Whether a bias value targets p (positive polarity) or not-p. -/
-def BiasValue.targetsPositive : BiasValue → Option Bool
-  | .plusPos  => some true
-  | .plusNeg  => some false
-  | .minusPos => some true   -- incompatibility also has a target
-  | .minusNeg => some false
-  | .neutral  => none
+/-- With VERUM, (40) agrees with (17) on the positive rejecting question. -/
+theorem rejectQIM_verum : rejectQIM .verum = rejectQ .positive := rfl
 
--- ════════════════════════════════════════════════════════════════
--- § 2. Declarative question types ([seeliger-repp-2018], Table 1)
--- ════════════════════════════════════════════════════════════════
+/-- With FALSUM, (40) is strictly weaker than (17) and Table 1 on the negative rejecting question:
+it admits neutral evidence without a prior assumption. -/
+theorem felicity_rejectQ_ssubset_rejectQIM_falsum :
+    (rejectQ .negative).felicity ⊂ (rejectQIM .falsum).felicity ∧
+      (none, none) ∈ (rejectQIM .falsum).felicity := by
+  decide
 
-/-- The four types of questions with declarative syntax. -/
-inductive DeclQuestionType where
-  /-- Positive declarative question: "Peter is coming?" -/
-  | PDQ
-  /-- Negative declarative question: "Peter isn't coming?" -/
-  | NDQ
-  /-- Positive rejecting question: "Surely Peter is coming?" -/
-  | PRQ
-  /-- Negative rejecting question: "Surely Peter isn't coming?" -/
-  | NRQ
-  deriving DecidableEq, Repr
+/-! ### Table 1 -/
 
-/-- The two classes: declarative questions vs. rejecting questions.
+open Data.Examples
 
-    DQs are less biased (speaker is "prejudiced" but not committed);
-    RQs are more biased (speaker had a specific prior assumption that
-    conflicts with contextual evidence). -/
-inductive DeclQuestionClass where
-  /-- Simple declarative question — speaker seeks confirmation -/
+/-- The two kinds of question with declarative syntax. -/
+inductive Kind where
   | declarative
-  /-- Rejecting question — speaker rejects what s/he sees -/
   | rejecting
   deriving DecidableEq, Repr
 
-/-- Classify each type into its class. -/
-def DeclQuestionType.questionClass : DeclQuestionType → DeclQuestionClass
-  | .PDQ => .declarative
-  | .NDQ => .declarative
-  | .PRQ => .rejecting
-  | .NRQ => .rejecting
+/-- The profile of a question of the given kind and polarity. -/
+def Kind.profile : Kind → Polarity → Profile
+  | .declarative => SeeligerRepp2018.declarative
+  | .rejecting => rejectQ
 
-/-- What a declarative of this type denotes (positive = p, negative = not-p). -/
-def DeclQuestionType.declPolarity : DeclQuestionType → SentencePolarity
-  | .PDQ => .positive
-  | .NDQ => .negative
-  | .PRQ => .positive
-  | .NRQ => .negative
+/-- The four types of Table 1, with their kind and the polarity of the declarative. -/
+def typeTable : List (String × Kind × Polarity) :=
+  [("PDQ", .declarative, .positive), ("NDQ", .declarative, .negative),
+    ("PRQ", .rejecting, .positive), ("NRQ", .rejecting, .negative)]
 
--- ════════════════════════════════════════════════════════════════
--- § 3. Illocutionary modifier ([seeliger-repp-2018] §6.2)
--- ════════════════════════════════════════════════════════════════
+/-- The bias values of the annotation. -/
+def biasTable : List (String × BiasValue) :=
+  [("+positive", plus .positive), ("+negative", plus .negative),
+    ("-positive", minus .positive), ("-negative", minus .negative), ("neutral", neutral)]
 
-/-- The illocutionary modifier (IM) that occupies the ForceP specifier
-    position in rejecting questions.
+/-- An example of Table 1: the kind and polarity of the question, and the profile the example
+records. -/
+structure Row where
+  /-- Declarative or rejecting. -/
+  kind : Kind
+  /-- The polarity of the declarative. -/
+  polarity : Polarity
+  /-- The recorded bias profile. -/
+  profile : Profile
+  deriving DecidableEq
 
-    [seeliger-repp-2018] §6.2: FALSUM and VERUM are epistemic
-    speech-act level operators. Their structural position is:
+/-- The row of an example annotated with a type and a bias profile. -/
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let (k, s) ← ex.parse? "type" typeTable
+  let ev ← ex.parse? "evidential" biasTable
+  let ep ← ex.parse? "epistemic" biasTable
+  pure ⟨k, s, ⟨ev, ep⟩⟩
 
-      [ForceP FALSUM/VERUM [Force' REJECTQ [TP ...]]]
+/-- The examples (5) to (8) of Table 1. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
-    FALSUM signals zero commitment to the proposition (the speaker is
-    essentially not committed to adding q to the CommonGround). Used in NRQs.
-    VERUM signals full commitment (the speaker is sure q should be in
-    the CommonGround). Used in PRQs. In PRQs, Swedish *visst*/*nog* or an
-    evidential version of VERUM may appear.
+/-- The rows cover the four types in English, German and Swedish, with (8c′). -/
+theorem rows_length : rows.length = 13 := by decide
 
-    These correspond to the operators defined in
-    `Semantics/Questions/Bias.lean`. -/
-inductive IllocutionaryModifier where
-  /-- FALSUM: zero commitment to q (non-propositional negation).
-      [repp-2013]: speaker is not committed to q at issue. -/
-  | falsum
-  /-- VERUM: full commitment to q (q should be in the CommonGround).
-      [romero-han-2004]: for-sure-CommonGround that q should be added. -/
-  | verum
+/-- Table 1: every example has the profile of its kind and polarity. -/
+theorem table1 : ∀ r ∈ rows, r.profile = r.kind.profile r.polarity := by decide +kernel
+
+/-! ### Marking rejecting questions in Swedish (Sections 3, 5.3 and 6) -/
+
+/-- The morpho-syntactic cues of a Swedish declarative that bear on a rejecting reading, and
+whether the contextual evidence is direct. *Väl* is `Swedish.Particles.val`. -/
+structure SwedishCues where
+  /-- The negation is fronted. -/
+  fronted : Bool
+  /-- Clause-medial *väl*. -/
+  val : Bool
+  /-- Clause-initial *men* 'but'. -/
+  men : Bool
+  /-- Clause-initial *visst* or *nog*. -/
+  initial : Bool
+  /-- The contextual evidence is direct. -/
+  direct : Bool
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════════════════
--- § 4. REJECTQ operator (eq. 40)
--- ════════════════════════════════════════════════════════════════
-
-/-- REJECTQ — the illocutionary operator for rejecting questions.
-
-    [seeliger-repp-2018] eq. 40:
-      ⟦REJECTQ⟧ = λqλIM: [IM(¬q)]^evid & [IM(q)]^epist. {IM(q), ¬IM(q)}
-
-    REJECTQ takes a proposition q and an illocutionary modifier IM.
-    In German, IM is determined by syntactic Agree with *doch wohl*.
-    In Swedish, it is determined by the presence of FALSUM (fronted
-    negation) or VERUM (modal particles like *visst*/*nog*). -/
-structure RejectQ where
-  /-- The illocutionary modifier (FALSUM or VERUM) -/
-  modifier : IllocutionaryModifier
-  /-- Evidential presupposition: [IM(¬q)]^evid — on an evidential basis,
-      the IM-determined degree of commitment to ¬q holds. -/
-  evidentialPresupposition : Bool
-  /-- Epistemic presupposition: [IM(q)]^epist — on an epistemic basis,
-      the IM-determined degree of commitment to q holds. -/
-  epistemicPresupposition : Bool
-  deriving DecidableEq, Repr
-
-/-- Construct a well-formed REJECTQ with both presuppositions satisfied. -/
-def mkRejectQ (im : IllocutionaryModifier) : RejectQ :=
-  { modifier := im
-  , evidentialPresupposition := true
-  , epistemicPresupposition := true }
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Deriving RQ bias profiles from REJECTQ
--- ════════════════════════════════════════════════════════════════
-
-/-- Derive the evidential bias from the IM choice in REJECTQ.
-
-    The evidential presupposition is [IM(¬q)]^evid:
-    - IM = VERUM: evidence strongly supports ¬q → evidential [+negative]
-      (VERUM(¬q) = full commitment to ¬q on evidential basis)
-    - IM = FALSUM: evidence yields zero commitment to ¬q → evidential [+positive]
-      (FALSUM(¬q) = not committed to ¬q → by contrast, evidence for q) -/
-def IllocutionaryModifier.evidentialBias : IllocutionaryModifier → BiasValue
-  | .verum  => .plusNeg  -- strong evidence for ¬q
-  | .falsum => .plusPos  -- evidence supports q (not ¬q)
-
-/-- Derive the epistemic bias from the IM choice in REJECTQ.
-
-    The epistemic presupposition is [IM(q)]^epist:
-    - IM = VERUM: speaker is epistemically sure q should be in CommonGround
-      → epistemic [+positive] (speaker assumed q)
-    - IM = FALSUM: speaker has zero epistemic commitment to q
-      → epistemic [+negative] (by pragmatic strengthening in the
-      RQ context, zero commitment to q implies belief in ¬q) -/
-def IllocutionaryModifier.epistemicBias : IllocutionaryModifier → BiasValue
-  | .verum  => .plusPos  -- speaker assumed q
-  | .falsum => .plusNeg  -- speaker assumed ¬q
-
-/-- The bias profile derived from REJECTQ's presuppositions. -/
-def rejectQBiasProfile (im : IllocutionaryModifier) : BiasProfile :=
-  { evidential := im.evidentialBias
-  , epistemic := im.epistemicBias }
-
--- ════════════════════════════════════════════════════════════════
--- § 6. Bias profiles for all types ([seeliger-repp-2018], Table 1)
--- ════════════════════════════════════════════════════════════════
-
-/-- DQ bias profiles are observational — DQs are not marked by REJECTQ,
-    so their profiles don't derive from the IM parameter. Instead, DQs
-    require contextual evidence matching the declarative polarity, and
-    the speaker must not have already assumed the declarative's content.
-
-    [seeliger-repp-2018]: "DQs pattern with each other" (p. 136). -/
-def dqBiasProfile (pol : SentencePolarity) : BiasProfile :=
-  match pol with
-  | .positive => { evidential := .plusPos, epistemic := .minusPos }
-  | .negative => { evidential := .plusNeg, epistemic := .minusNeg }
-
-/-- The bias profile for each declarative question type.
-
-    DQ profiles are from `dqBiasProfile` (evidence-based);
-    RQ profiles are from `rejectQBiasProfile` (REJECTQ-derived). -/
-def DeclQuestionType.biasProfile : DeclQuestionType → BiasProfile
-  | .PDQ => dqBiasProfile .positive
-  | .NDQ => dqBiasProfile .negative
-  | .PRQ => rejectQBiasProfile .verum
-  | .NRQ => rejectQBiasProfile .falsum
-
--- ════════════════════════════════════════════════════════════════
--- § 7. Verification theorems for the typology
--- ════════════════════════════════════════════════════════════════
-
--- Per-type bias profile verification (Table 1)
-theorem pdq_profile : DeclQuestionType.PDQ.biasProfile =
-    { evidential := .plusPos, epistemic := .minusPos } := rfl
-theorem ndq_profile : DeclQuestionType.NDQ.biasProfile =
-    { evidential := .plusNeg, epistemic := .minusNeg } := rfl
-theorem prq_profile : DeclQuestionType.PRQ.biasProfile =
-    { evidential := .plusNeg, epistemic := .plusPos } := rfl
-theorem nrq_profile : DeclQuestionType.NRQ.biasProfile =
-    { evidential := .plusPos, epistemic := .plusNeg } := rfl
-
--- Class membership
-theorem pdq_is_declarative : DeclQuestionType.PDQ.questionClass = .declarative := rfl
-theorem ndq_is_declarative : DeclQuestionType.NDQ.questionClass = .declarative := rfl
-theorem prq_is_rejecting : DeclQuestionType.PRQ.questionClass = .rejecting := rfl
-theorem nrq_is_rejecting : DeclQuestionType.NRQ.questionClass = .rejecting := rfl
-
--- Declarative polarity
-theorem pdq_positive : DeclQuestionType.PDQ.declPolarity = .positive := rfl
-theorem ndq_negative : DeclQuestionType.NDQ.declPolarity = .negative := rfl
-theorem prq_positive : DeclQuestionType.PRQ.declPolarity = .positive := rfl
-theorem nrq_negative : DeclQuestionType.NRQ.declPolarity = .negative := rfl
-
-/-- DQs and RQs are distinct classes. -/
-theorem dq_rq_different_classes :
-    DeclQuestionType.PDQ.questionClass ≠ DeclQuestionType.PRQ.questionClass := by decide
-
-/-- RQ bias profiles are fully derived from the IM choice —
-    they come out of `rejectQBiasProfile`, not independent stipulation. -/
-theorem prq_derived_from_verum :
-    DeclQuestionType.PRQ.biasProfile = rejectQBiasProfile .verum := rfl
-
-theorem nrq_derived_from_falsum :
-    DeclQuestionType.NRQ.biasProfile = rejectQBiasProfile .falsum := rfl
-
-/-- RQs have conflicting biases: evidential and epistemic target
-    opposite polarities. This is what makes them "rejecting" — the
-    speaker sees evidence against what s/he believed.
-
-    Follows from the REJECTQ structure: IM(¬q) and IM(q) target
-    opposite polarities by construction. -/
-theorem rq_biases_conflict :
-    (DeclQuestionType.PRQ.biasProfile.evidential = .plusNeg ∧
-     DeclQuestionType.PRQ.biasProfile.epistemic = .plusPos) ∧
-    (DeclQuestionType.NRQ.biasProfile.evidential = .plusPos ∧
-     DeclQuestionType.NRQ.biasProfile.epistemic = .plusNeg) := ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
-
-/-- DQs have compatible biases: evidential matches declarative polarity,
-    epistemic is merely "minus" (speaker didn't assume, rather than
-    actively assuming the opposite). -/
-theorem dq_biases_compatible :
-    (DeclQuestionType.PDQ.biasProfile.evidential = .plusPos ∧
-     DeclQuestionType.PDQ.biasProfile.epistemic = .minusPos) ∧
-    (DeclQuestionType.NDQ.biasProfile.evidential = .plusNeg ∧
-     DeclQuestionType.NDQ.biasProfile.epistemic = .minusNeg) := ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
-
-/-- RQ epistemic bias is always "plus" (active commitment);
-    DQ epistemic bias is always "minus" (non-commitment).
-    This is the defining difference between the two classes. -/
-theorem rq_epistemic_is_plus :
-    DeclQuestionType.PRQ.biasProfile.epistemic.IsPlus ∧
-    DeclQuestionType.NRQ.biasProfile.epistemic.IsPlus := ⟨by decide, by decide⟩
-
-theorem dq_epistemic_is_not_plus :
-    ¬ DeclQuestionType.PDQ.biasProfile.epistemic.IsPlus ∧
-    ¬ DeclQuestionType.NDQ.biasProfile.epistemic.IsPlus := ⟨by decide, by decide⟩
-
-/-- NRQ is a subset of PDQ contexts: both require +positive evidential
-    bias, but NRQs additionally require the speaker to have assumed ¬p
-    ([seeliger-repp-2018] p. 138: "a NRQ is used in a subset of
-    the situations where a PDQ can be used"). -/
-theorem nrq_subset_of_pdq :
-    DeclQuestionType.PDQ.biasProfile.evidential =
-    DeclQuestionType.NRQ.biasProfile.evidential ∧
-    DeclQuestionType.PDQ.biasProfile.epistemic ≠
-    DeclQuestionType.NRQ.biasProfile.epistemic := ⟨rfl, by decide⟩
-
-/-- PRQ is a subset of NDQ contexts: both require +negative evidential
-    bias, but PRQs additionally require the speaker to have assumed p. -/
-theorem prq_subset_of_ndq :
-    DeclQuestionType.NDQ.biasProfile.evidential =
-    DeclQuestionType.PRQ.biasProfile.evidential ∧
-    DeclQuestionType.NDQ.biasProfile.epistemic ≠
-    DeclQuestionType.PRQ.biasProfile.epistemic := ⟨rfl, by decide⟩
-
--- REJECTQ verification
-theorem rejectQ_verum_evidential :
-    (mkRejectQ .verum).evidentialPresupposition = true := rfl
-theorem rejectQ_verum_epistemic :
-    (mkRejectQ .verum).epistemicPresupposition = true := rfl
-theorem rejectQ_falsum_modifier :
-    (mkRejectQ .falsum).modifier = .falsum := rfl
-
-/-- VERUM and FALSUM produce opposite evidential biases — they
-    interpret the evidence in opposite directions. -/
-theorem verum_falsum_opposite_evidential :
-    IllocutionaryModifier.verum.evidentialBias ≠
-    IllocutionaryModifier.falsum.evidentialBias := by decide
-
-/-- VERUM and FALSUM produce opposite epistemic biases. -/
-theorem verum_falsum_opposite_epistemic :
-    IllocutionaryModifier.verum.epistemicBias ≠
-    IllocutionaryModifier.falsum.epistemicBias := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 8. Bridge to Romero's Bias ([romero-2024])
--- ════════════════════════════════════════════════════════════════
-
-/-- Map Sudo's evidential bias values to Romero's contextual evidence.
-
-    The [+positive]/[+negative] values map directly. [neutral] maps to
-    neutral. The "minus" values have no direct Romero counterpart — they
-    encode incompatibility constraints rather than positive evidence. -/
-def evidentialToContextualEvidence : BiasValue → Option Question.ContextualEvidence
-  | .plusPos  => some .forP
-  | .plusNeg  => some .againstP
-  | .neutral  => some .neutral
-  | .minusPos => none  -- no Romero counterpart
-  | .minusNeg => none
-
-/-- Map Sudo's epistemic bias values to Romero's original speaker bias.
-
-    [+positive] maps to forP (speaker expected p). [+negative] maps to
-    againstP. [neutral] maps to neutral. The "minus" values are not
-    directly representable in Romero's three-valued system. -/
-def epistemicToOriginalBias : BiasValue → Option Question.OriginalBias
-  | .plusPos  => some .forP
-  | .plusNeg  => some .againstP
-  | .neutral  => some .neutral
-  | .minusPos => none  -- Seeliger & Repp extension, no Romero counterpart
-  | .minusNeg => none
-
-/-- NRQ evidential bias maps to Romero's "evidence for p" — the same
-    contextual evidence configuration that licenses HiNQs. -/
-theorem nrq_evidential_maps_to_forP :
-    evidentialToContextualEvidence DeclQuestionType.NRQ.biasProfile.evidential =
-    some .forP := rfl
-
-/-- NRQ epistemic bias maps to Romero's "original bias against p". -/
-theorem nrq_epistemic_maps_to_againstP :
-    epistemicToOriginalBias DeclQuestionType.NRQ.biasProfile.epistemic =
-    some .againstP := rfl
-
-/-- PRQ epistemic bias maps to Romero's "original bias for p". -/
-theorem prq_epistemic_maps_to_forP :
-    epistemicToOriginalBias DeclQuestionType.PRQ.biasProfile.epistemic =
-    some .forP := rfl
-
-/-- All RQ bias values have Romero counterparts (they are all "plus"
-    values). DQ epistemic "minus" values do not — this is precisely
-    where Sudo's system extends Romero's. -/
-theorem rq_values_have_romero_counterparts :
-    (evidentialToContextualEvidence DeclQuestionType.PRQ.biasProfile.evidential).isSome = true ∧
-    (epistemicToOriginalBias DeclQuestionType.PRQ.biasProfile.epistemic).isSome = true ∧
-    (evidentialToContextualEvidence DeclQuestionType.NRQ.biasProfile.evidential).isSome = true ∧
-    (epistemicToOriginalBias DeclQuestionType.NRQ.biasProfile.epistemic).isSome = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-theorem dq_epistemic_lacks_romero_counterpart :
-    (epistemicToOriginalBias DeclQuestionType.PDQ.biasProfile.epistemic).isNone = true ∧
-    (epistemicToOriginalBias DeclQuestionType.NDQ.biasProfile.epistemic).isNone = true :=
-  ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 9. Swedish *väl* marks DQs, not assertions
--- ════════════════════════════════════════════════════════════════
-
-open Swedish.Particles (val)
-open German.Particles
-open German.PolarityMarking (dochPreUtterance)
-open Polarity.Marking (Env)
-
-/-- Swedish *väl* is question-inducing — declaratives with *väl* are
-    questions, not assertions ([seeliger-repp-2018] §5.2). Derived from
-    the fragment's distribution facet. -/
-theorem val_creates_questions :
-    ¬ Swedish.Particles.val.LicensedIn .declarative := by decide
-
-/-- S&R's bias classification of *väl* (formerly fragment fields; a
-    particle's bias requirement is the analysis, so it lives here):
-    felicitous only in contexts with contextual evidence for the
-    proposition, matching the evidential bias of PDQs and NRQs. -/
-def valContextualEvidence : Option Question.ContextualEvidence :=
-  some .forP
-
-/-- S&R's classification, epistemic dimension: *väl* signals epistemic
-    *uncertainty* — the speaker suspects p but is not certain,
-    corresponding to the [-positive] epistemic bias of PDQs — so it
-    imposes no original-bias requirement (contrast `dochWohlOriginalBias`). -/
-def valOriginalBias : Option Question.OriginalBias := none
-
--- ════════════════════════════════════════════════════════════════
--- § 10. German *doch wohl* marks RQs via REJECTQ
--- ════════════════════════════════════════════════════════════════
-
-/-- S&R's bias classification of *doch wohl*: both dimensions active —
-    contextual evidence for p (prototypical NRQ reading) and prior
-    speaker bias against p — consistent with RQs having both evidential
-    and epistemic presuppositions in the REJECTQ definition (eq. 40).
-    Shares its evidential value with `valContextualEvidence`; the
-    epistemic dimension is where German is stricter than Swedish. -/
-def dochWohlContextualEvidence : Option Question.ContextualEvidence :=
-  some .forP
-
-/-- See `dochWohlContextualEvidence`: prior speaker bias against p. -/
-def dochWohlOriginalBias : Option Question.OriginalBias :=
-  some .againstP
-
-/-- *doch wohl* is not usable in assertions — it marks questions.
-    Derived from the fragment's distribution facet. -/
-theorem dochWohl_not_assertion :
-    ¬ German.Particles.dochWohl.LicensedIn .declarative := by decide
-
-/-- The derived RQ property behind `dochWohlOriginalBias`: both DQ types
-    *doch wohl* can mark have active ("plus") epistemic bias — the
-    theory-level theorem `rq_epistemic_is_plus` in fragment-free form. -/
-theorem rq_bias_dimensions_active :
-    DeclQuestionType.PRQ.biasProfile.epistemic.IsPlus ∧
-    DeclQuestionType.NRQ.biasProfile.epistemic.IsPlus := ⟨by decide, by decide⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 11. Cross-linguistic comparison
--- ════════════════════════════════════════════════════════════════
-
-/-- Both Swedish *väl* and German *doch wohl* require evidential bias
-    (`valContextualEvidence` = `dochWohlContextualEvidence` = `some .forP`),
-    reflecting the shared property that both languages require contextual
-    evidence for DQs/RQs. Where they differ is the epistemic dimension:
-    *doch wohl* marks RQs (prior commitment against p,
-    `dochWohlOriginalBias`), *väl* marks DQs (uncertainty, no
-    original-bias requirement, `valOriginalBias`) — German is stricter.
-    German *denn* differs from both: it imposes no bias requirement at
-    all; its felicity condition is the highlighting/precondition relation
-    (see `Theiler2021`). -/
-theorem both_require_evidential :
-    valContextualEvidence = dochWohlContextualEvidence := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 12. Non-compositional *doch wohl* and the dual role of *doch*
--- ════════════════════════════════════════════════════════════════
-
-/-- *doch wohl* is a two-particle complex with conventionalized meaning.
-    [seeliger-repp-2018] §4.2: the combination does not receive
-    a compositional interpretation. If it were compositional, *doch wohl*
-    should have a reading combining conflict (doch) + reportativity (wohl),
-    but this reading is unavailable in RQs. -/
-theorem dochWohl_is_complex :
-    German.Particles.dochWohl.form = "doch wohl" := rfl
-
-/-- The *doch* in *doch wohl* has a different meaning from polarity-
-    reversal *doch* (as in `German.PolarityMarking.dochPreUtterance`).
-    In RQs, *doch* has a "conflict" meaning — it signals surprise or
-    realization — rather than the "reminding" function of assertive *doch*. -/
-theorem dochWohl_is_question_marker :
-    ¬ German.Particles.dochWohl.LicensedIn .declarative := by decide
-
-/-- German *doch* is formally ambiguous between two distinct roles:
-    1. **Polarity-reversal *doch***: pre-utterance correction particle
-       that contradicts a negative antecedent ([holmberg-2016])
-    2. **RQ-marking *doch***: part of the *doch wohl* complex that
-       enters Agree with REJECTQ at ForceP ([seeliger-repp-2018])
-
-    The two share the surface form "doch" but differ in:
-    - Syntactic position: polarity *doch* is pre-utterance;
-      RQ *doch wohl* is in the middle field
-    - Function: polarity *doch* reverses polarity;
-      RQ *doch* signals conflict between evidence and prior belief
-    - Obligatoriness: polarity *doch* is optional (Verum focus available);
-      RQ *doch wohl* is obligatory for German RQs -/
-theorem doch_dual_role :
-    -- The polarity *doch* is a correction particle (not sentence-internal)
-    dochPreUtterance.strategy = .polarityReversal ∧
-    Env.correction ∈ dochPreUtterance.environments ∧
-    Env.sentenceInternal ∉ dochPreUtterance.environments ∧
-    -- The RQ *doch wohl* is a question marker (not usable in assertions)
-    ¬ dochWohl.LicensedIn .declarative := ⟨rfl, by decide, by decide, by decide⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 13. Romero-bridge applied to the Swedish/German data
--- ════════════════════════════════════════════════════════════════
-
-/-- RQ bias values all have Romero counterparts (they are all "plus" values);
-    DQ epistemic "minus" values do not — this is precisely where [sudo-2013]'s
-    system (as extended by [seeliger-repp-2018]) goes beyond [romero-2024]. -/
-theorem rq_vs_dq_romero_coverage :
-    (evidentialToContextualEvidence DeclQuestionType.PRQ.biasProfile.evidential).isSome = true ∧
-    (epistemicToOriginalBias DeclQuestionType.PRQ.biasProfile.epistemic).isSome = true ∧
-    (epistemicToOriginalBias DeclQuestionType.PDQ.biasProfile.epistemic).isNone = true := ⟨rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 14. Left-peripheral layer assignments ([dayal-2025] cartography)
--- ════════════════════════════════════════════════════════════════
-
-open Question (QParticleLayer)
-
-/-- Layer assignments for the question-inducing modal particles
-    discussed by [seeliger-repp-2018], placed in the
-    [dayal-2025] cartography `[SAP [PerspP [CP ...]]]`. The `_`
-    argument is unused: the layer is a theoretical overlay on the
-    fragment particle, not a computed property of its lexical fields. -/
-def val_layer      (_ : Particle) : QParticleLayer := .perspP
-def dochWohl_layer (_ : Particle) : QParticleLayer := .perspP
-
-/-- Both modal-particle complexes that mark RQs/DQs in this study sit
-    at PerspP — the layer for biased, matrix-only question particles. -/
-theorem rq_markers_are_PerspP :
-    val_layer Swedish.Particles.val = .perspP ∧
-    dochWohl_layer German.Particles.dochWohl = .perspP :=
-  ⟨rfl, rfl⟩
+/-- The generalization of p. 157: a negative rejecting question needs fronted negation or *väl*;
+a positive one *men* with *väl*, or clause-initial *visst* or *nog* when the evidence is
+direct. -/
+def SwedishCues.MarksRQ (c : SwedishCues) : Polarity → Prop
+  | .negative => c.fronted = true ∨ c.val = true
+  | .positive => (c.men = true ∧ c.val = true) ∨ (c.initial = true ∧ c.direct = true)
+
+instance (c : SwedishCues) (s : Polarity) : Decidable (c.MarksRQ s) := by
+  cases s <;> unfold SwedishCues.MarksRQ <;> infer_instance
+
+/-- An example of a Swedish declarative in the context of a rejecting question. -/
+structure MarkingRow where
+  /-- The polarity of the rejecting question. -/
+  polarity : Polarity
+  /-- The cues of the declarative. -/
+  cues : SwedishCues
+  /-- Whether the declarative can be the rejecting question. -/
+  judgment : Judgment
+  deriving DecidableEq
+
+/-- Presence of a cue in the annotation. -/
+def yesNo : List (String × Bool) := [("yes", true), ("no", false)]
+
+/-- The marking row of an example annotated with its cues. -/
+def MarkingRow.ofExample (ex : LinguisticExample) : Option MarkingRow := do
+  let (k, s) ← ex.parse? "type" typeTable
+  guard (k = .rejecting)
+  let fronted ← ex.parse? "negation" [("fronted", true), ("low", false), ("none", false)]
+  let val ← ex.parse? "väl" yesNo
+  let men ← ex.parse? "men" yesNo
+  let initial ← ex.parse? "visst/nog" yesNo
+  let direct ← ex.parse? "evidence" [("direct", true), ("indirect", false)]
+  pure ⟨s, ⟨fronted, val, men, initial, direct⟩, ex.judgment⟩
+
+/-- The Swedish examples (7c), (8c), (8c′), (23) and (24). -/
+def markingRows : List MarkingRow := Examples.all.filterMap MarkingRow.ofExample
+
+/-- The rows cover the three Swedish rejecting questions of (7) and (8) and the eight of (23)
+and (24). -/
+theorem markingRows_length : markingRows.length = 11 := by decide
+
+/-- The generalization predicts every judgment: an example is acceptable as a rejecting question
+just when it carries the cues. -/
+theorem marking_iff :
+    ∀ r ∈ markingRows, (r.judgment = .acceptable ↔ r.cues.MarksRQ r.polarity) := by
+  decide
 
 end SeeligerRepp2018

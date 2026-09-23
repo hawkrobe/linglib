@@ -133,7 +133,7 @@ structure Aspect where
   scaleDimension : Option Degree.ScalarDimension := none
   /-- The pole of the dimension towards which a degree achievement measures change, negative
       for *dry*, a decrease in wetness. -/
-  scalePolarity : Degree.Polarity := .positive
+  scalePolarity : Polarity := .positive
   /-- The [krifka-1998] incrementality class of the theme relation, `none` for intransitives
       and clause-embedding verbs. -/
   incrementality : Option Incrementality := none

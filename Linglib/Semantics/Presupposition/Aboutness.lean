@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Events.Phase
-public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Basic
 
 /-!
 # The aboutness account of projection
@@ -41,7 +41,7 @@ structure EventSentence (W : Type*) where
   /-- The event type this sentence is about -/
   eventType : EventPhase W
   /-- The polarity of the claim -/
-  polarity : SentencePolarity
+  polarity : Polarity
 
 /-- The aboutness of a sentence: the event type it refers to, independent
     of polarity. -/

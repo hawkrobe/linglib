@@ -1,0 +1,1310 @@
+[
+  {
+    "id": "seeligerrepp2018_en_pdq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Peter is coming?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "type",
+        "PDQ"
+      ],
+      [
+        "declarative",
+        "p"
+      ],
+      [
+        "evidential",
+        "+positive"
+      ],
+      [
+        "epistemic",
+        "-positive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_de_pdq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Peter kommt?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "kommt",
+        "comes"
+      ]
+    ],
+    "translation": "Peter is coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "type",
+        "PDQ"
+      ],
+      [
+        "declarative",
+        "p"
+      ],
+      [
+        "evidential",
+        "+positive"
+      ],
+      [
+        "epistemic",
+        "-positive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_pdq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(5c)"
+    },
+    "language": "swed1254",
+    "primaryText": "Peter kommer?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "kommer",
+        "comes"
+      ]
+    ],
+    "translation": "Peter is coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "type",
+        "PDQ"
+      ],
+      [
+        "declarative",
+        "p"
+      ],
+      [
+        "evidential",
+        "+positive"
+      ],
+      [
+        "epistemic",
+        "-positive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_en_ndq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(6a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Peter isn't coming?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "type",
+        "NDQ"
+      ],
+      [
+        "declarative",
+        "not p"
+      ],
+      [
+        "evidential",
+        "+negative"
+      ],
+      [
+        "epistemic",
+        "-negative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_de_ndq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Peter kommt nicht?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "kommt",
+        "comes"
+      ],
+      [
+        "nicht",
+        "not"
+      ]
+    ],
+    "translation": "Peter isn't coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "type",
+        "NDQ"
+      ],
+      [
+        "declarative",
+        "not p"
+      ],
+      [
+        "evidential",
+        "+negative"
+      ],
+      [
+        "epistemic",
+        "-negative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_ndq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(6c)"
+    },
+    "language": "swed1254",
+    "primaryText": "Peter kommer inte?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "kommer",
+        "comes"
+      ],
+      [
+        "inte",
+        "not"
+      ]
+    ],
+    "translation": "Peter isn't coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ],
+      [
+        "type",
+        "NDQ"
+      ],
+      [
+        "declarative",
+        "not p"
+      ],
+      [
+        "evidential",
+        "+negative"
+      ],
+      [
+        "epistemic",
+        "-negative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_en_nrq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(7a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Surely Peter isn't coming?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "NRQ"
+      ],
+      [
+        "declarative",
+        "not p"
+      ],
+      [
+        "evidential",
+        "+positive"
+      ],
+      [
+        "epistemic",
+        "+negative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_de_nrq_doch_wohl",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(7b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Peter kommt doch wohl nicht?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "kommt",
+        "comes"
+      ],
+      [
+        "doch",
+        "mp"
+      ],
+      [
+        "wohl",
+        "mp"
+      ],
+      [
+        "nicht",
+        "not"
+      ]
+    ],
+    "translation": "Surely Peter isn't coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "NRQ"
+      ],
+      [
+        "declarative",
+        "not p"
+      ],
+      [
+        "evidential",
+        "+positive"
+      ],
+      [
+        "epistemic",
+        "+negative"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_nrq_fronted_negation",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(7c)"
+    },
+    "language": "swed1254",
+    "primaryText": "Inte kommer Peter?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Inte",
+        "not"
+      ],
+      [
+        "kommer",
+        "comes"
+      ],
+      [
+        "Peter",
+        "Peter"
+      ]
+    ],
+    "translation": "Surely Peter isn't coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees Peter's name on the list.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "NRQ"
+      ],
+      [
+        "declarative",
+        "not p"
+      ],
+      [
+        "evidential",
+        "+positive"
+      ],
+      [
+        "epistemic",
+        "+negative"
+      ],
+      [
+        "negation",
+        "fronted"
+      ],
+      [
+        "väl",
+        "no"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "direct"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_en_prq",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(8a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Surely Peter is coming?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "declarative",
+        "p"
+      ],
+      [
+        "evidential",
+        "+negative"
+      ],
+      [
+        "epistemic",
+        "+positive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_de_prq_doch_wohl",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(8b)"
+    },
+    "language": "stan1295",
+    "primaryText": "Peter kommt doch wohl?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "kommt",
+        "comes"
+      ],
+      [
+        "doch",
+        "mp"
+      ],
+      [
+        "wohl",
+        "mp"
+      ]
+    ],
+    "translation": "Surely Peter is coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "declarative",
+        "p"
+      ],
+      [
+        "evidential",
+        "+negative"
+      ],
+      [
+        "epistemic",
+        "+positive"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_prq_men_val",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(8c)"
+    },
+    "language": "swed1254",
+    "primaryText": "Men Peter kommer väl?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Men",
+        "but"
+      ],
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "kommer",
+        "comes"
+      ],
+      [
+        "väl",
+        "mp"
+      ]
+    ],
+    "translation": "Surely Peter is coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "declarative",
+        "p"
+      ],
+      [
+        "evidential",
+        "+negative"
+      ],
+      [
+        "epistemic",
+        "+positive"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "väl",
+        "yes"
+      ],
+      [
+        "men",
+        "yes"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "direct"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_prq_visst",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(8c′)"
+    },
+    "language": "swed1254",
+    "primaryText": "Visst kommer Peter?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Visst",
+        "mp"
+      ],
+      [
+        "kommer",
+        "comes"
+      ],
+      [
+        "Peter",
+        "Peter"
+      ]
+    ],
+    "translation": "Surely Peter is coming?",
+    "context": "Paul and Maria are looking at a list of guests for tonight's dinner party. Maria sees that Peter's name on the list is crossed out.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Nog kommer Peter?",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "declarative",
+        "p"
+      ],
+      [
+        "evidential",
+        "+negative"
+      ],
+      [
+        "epistemic",
+        "+positive"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "väl",
+        "no"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "yes"
+      ],
+      [
+        "evidence",
+        "direct"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_23a",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(23a)"
+    },
+    "language": "swed1254",
+    "primaryText": "Noah är till sjöss?",
+    "discourseSegments": [
+      "Noah is coming to the party tomorrow.",
+      "Noah är till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is at sea?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "väl",
+        "no"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_23b",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(23b)"
+    },
+    "language": "swed1254",
+    "primaryText": "Men Noah är väl till sjöss?",
+    "discourseSegments": [
+      "Noah is coming to the party tomorrow.",
+      "Men Noah är väl till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Men",
+        "but"
+      ],
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "väl",
+        "mp"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is at sea?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "väl",
+        "yes"
+      ],
+      [
+        "men",
+        "yes"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_23c",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(23c)"
+    },
+    "language": "swed1254",
+    "primaryText": "Visst är Noah till sjöss?",
+    "discourseSegments": [
+      "Noah is coming to the party tomorrow.",
+      "Visst är Noah till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Visst",
+        "mp"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is at sea?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {
+        "form": "Nog är Noah till sjöss?",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "väl",
+        "no"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "yes"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_23d",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(23d)"
+    },
+    "language": "swed1254",
+    "primaryText": "Visst är väl Noah till sjöss?",
+    "discourseSegments": [
+      "Noah is coming to the party tomorrow.",
+      "Visst är väl Noah till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Visst",
+        "mp"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "väl",
+        "mp"
+      ],
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is at sea?",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {
+        "form": "Nog är väl Noah till sjöss?",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "PRQ"
+      ],
+      [
+        "negation",
+        "none"
+      ],
+      [
+        "väl",
+        "yes"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "yes"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_24a",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(24a)"
+    },
+    "language": "swed1254",
+    "primaryText": "Noah är inte till sjöss?",
+    "discourseSegments": [
+      "Noah is not coming to the party tomorrow.",
+      "Noah är inte till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "inte",
+        "not"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is not at sea?",
+    "context": "Whenever Noah is on shore leave, he always visits every party.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "NRQ"
+      ],
+      [
+        "negation",
+        "low"
+      ],
+      [
+        "väl",
+        "no"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_24b",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(24b)"
+    },
+    "language": "swed1254",
+    "primaryText": "Noah är väl inte till sjöss?",
+    "discourseSegments": [
+      "Noah is not coming to the party tomorrow.",
+      "Noah är väl inte till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "väl",
+        "mp"
+      ],
+      [
+        "inte",
+        "not"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is not at sea?",
+    "context": "Whenever Noah is on shore leave, he always visits every party.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "NRQ"
+      ],
+      [
+        "negation",
+        "low"
+      ],
+      [
+        "väl",
+        "yes"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_24c",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(24c)"
+    },
+    "language": "swed1254",
+    "primaryText": "Inte är Noah till sjöss?",
+    "discourseSegments": [
+      "Noah is not coming to the party tomorrow.",
+      "Inte är Noah till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Inte",
+        "not"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is not at sea?",
+    "context": "Whenever Noah is on shore leave, he always visits every party.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "NRQ"
+      ],
+      [
+        "negation",
+        "fronted"
+      ],
+      [
+        "väl",
+        "no"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "seeligerrepp2018_sv_24d",
+    "source": {
+      "bibkey": "seeliger-repp-2018",
+      "paperLabel": "(24d)"
+    },
+    "language": "swed1254",
+    "primaryText": "Inte är väl Noah till sjöss?",
+    "discourseSegments": [
+      "Noah is not coming to the party tomorrow.",
+      "Inte är väl Noah till sjöss?"
+    ],
+    "glossedTokens": [
+      [
+        "Inte",
+        "not"
+      ],
+      [
+        "är",
+        "is"
+      ],
+      [
+        "väl",
+        "mp"
+      ],
+      [
+        "Noah",
+        "Noah"
+      ],
+      [
+        "till",
+        "to"
+      ],
+      [
+        "sjöss",
+        "sea"
+      ]
+    ],
+    "translation": "Surely Noah is not at sea?",
+    "context": "Whenever Noah is on shore leave, he always visits every party.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.3"
+      ],
+      [
+        "type",
+        "NRQ"
+      ],
+      [
+        "negation",
+        "fronted"
+      ],
+      [
+        "väl",
+        "yes"
+      ],
+      [
+        "men",
+        "no"
+      ],
+      [
+        "visst/nog",
+        "no"
+      ],
+      [
+        "evidence",
+        "indirect"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  }
+]
