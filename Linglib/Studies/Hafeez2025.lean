@@ -30,7 +30,9 @@ verbs with the direct causative *-aa* count as lexical), the adverbial ADV (two 
   under exactly one leaf.
 * `summary_iff_prototype`: the prototypes summarized in Tables 19 and 25 denote the tree leaves,
   LEX-ERG's only on scenes the clips can stage (`Scene.Stageable`), since its summary drops the
-  leaf's [-Mediation] (`lexErg_summary_not_prototype`).
+  leaf's [-Mediation] (`lexErg_summary_not_prototype`). ADV is the exception: Table 18 prints the
+  signs of its tree's InanCEAF split reversed, and the summaries copy the misprint, so they
+  name the complement of the prototype (`adv_summary_iff_not_prototype`).
 * The agentivity reading of the prototypes in the chapter's conclusion (`lexErg_full`,
   `ncrA_nonagentive`, …) follows from the prototypes and the agentivity degrees of the
   participants.
@@ -42,6 +44,13 @@ verbs with the direct causative *-aa* count as lexical), the adverbial ADV (two 
   compactness generalization demands (`lexErg_mcv_comrieMonotone`).
 
 ## Implementation notes
+
+A scene follows the clip-name code of Appendix L, which reproduces the response counts of
+Table 18's leaves; the predictor table as printed (Table 4) instead codes clips 11 and 21 with an
+inanimate second participant, clip 22 without one, and clip 1 as psychologically impacted.
+The ADV tree is transcribed with the InanCEAF signs of section 5.3.5, which puts the 90.8% peak
+on [-InanCEAF]; with the signs as Table 18 prints them, its 336-response leaf would be the 15
+clips with an inanimate second participant, 180 responses.
 
 The second participant is one variable with four values, so a scene type such as
 [-ContrHCEAF, +InanCEAF] and its shorter form [+InanCEAF] are equivalent, which is how Table 18's
@@ -221,7 +230,7 @@ def tree : ResponseType → Tree
   | .mcv =>
       node (pos mediation) (node (neg ihcr) leaf (node (pos contr) leaf leaf))
         (node (pos contr) leaf leaf)
-  | .adv => node (neg inan) (node (pos ihcr) leaf leaf) leaf
+  | .adv => node (pos inan) (node (pos ihcr) leaf leaf) leaf
   | .nca => node (neg inan) (node (neg nfcr) leaf leaf) leaf
   | .ncrA => node (pos inan) (node (neg ihcr) leaf leaf) (node (pos nfcr) leaf leaf)
 
@@ -287,15 +296,20 @@ theorem exists_stageable_prototypical (r : ResponseType) (hr : r ≠ .lexDat) :
   cases r <;> first | exact absurd rfl hr | decide
 
 /-- The summary tables print the tree leaves: on the scenes the clips can stage, each summary
-prototype holds of exactly the scenes of its leaf. -/
-theorem summary_iff_prototype (r : ResponseType) (s : Scene) (hs : s.Stageable) :
-    (∃ t ∈ r.summary, t.Holds s) ↔ r.Prototypical s := by
-  revert s; cases r <;> decide
-
-/-- Apart from LEX-ERG, the summaries agree with the leaves on every scene. -/
-theorem summary_iff_prototype_of_ne (r : ResponseType) (hr : r ≠ .lexErg) (s : Scene) :
+prototype but ADV's holds of exactly the scenes of its leaf. -/
+theorem summary_iff_prototype (r : ResponseType) (hr : r ≠ .adv) (s : Scene) (hs : s.Stageable) :
     (∃ t ∈ r.summary, t.Holds s) ↔ r.Prototypical s := by
   revert s; cases r <;> first | exact absurd rfl hr | decide
+
+/-- Apart from LEX-ERG and ADV, the summaries agree with the leaves on every scene. -/
+theorem summary_iff_prototype_of_ne (r : ResponseType) (hr₁ : r ≠ .lexErg) (hr₂ : r ≠ .adv)
+    (s : Scene) : (∃ t ∈ r.summary, t.Holds s) ↔ r.Prototypical s := by
+  revert s; cases r <;> first | exact absurd rfl hr₁ | exact absurd rfl hr₂ | decide
+
+/-- ADV's printed prototype [+InanCEAF] is the complement of its peak leaf [-InanCEAF]. -/
+theorem adv_summary_iff_not_prototype (s : Scene) :
+    (∃ t ∈ adv.summary, t.Holds s) ↔ ¬adv.Prototypical s := by
+  revert s; decide
 
 /-- LEX-ERG's summary [+IHCr, +InanCEAF] drops its leaf's [-Mediation]: it also holds of a
 mediated scene with an inanimate second participant, which the clips never stage. -/
