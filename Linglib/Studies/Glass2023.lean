@@ -1,5 +1,7 @@
-import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Studies.NadathurLauer2020
+module
+
+public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Studies.NadathurLauer2020
 
 /-!
 # Glass (2023): Using the Anna Karenina Principle to explain why *cause* favors negative-sentiment complements
@@ -41,6 +43,8 @@ states of knowledge when E is bad. Glass's *cause* asserts only local sufficienc
 * [halpern-pearl-2005]
 * [mackie-1965]
 -/
+
+@[expose] public section
 
 namespace Glass2023
 

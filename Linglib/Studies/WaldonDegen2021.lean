@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Pragmatics.RSA.Incremental
-import Linglib.Data.Examples.WaldonDegen2021
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.RSA.Incremental
+public import Linglib.Data.Examples.WaldonDegen2021
 
 /-!
 # Waldon & Degen (2021): Modeling Cross-Linguistic Production of Referring Expressions
@@ -44,6 +46,8 @@ paper's simulations and not proved. The paper's Spanish examples are the rows of
 * [degen-etal-2020]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

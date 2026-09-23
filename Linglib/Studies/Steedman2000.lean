@@ -1,11 +1,13 @@
-import Linglib.Data.Examples.Steedman2000
-import Linglib.Fragments.English.Toy
-import Linglib.Fragments.English.Coordination
-import Linglib.Syntax.CCG.Derivation
-import Linglib.Syntax.CCG.Grammar
-import Linglib.Syntax.CCG.Interface
-import Linglib.Syntax.CCG.Intonation
-import Linglib.Studies.BeckmanPierrehumbert1986
+module
+
+public import Linglib.Data.Examples.Steedman2000
+public import Linglib.Fragments.English.Toy
+public import Linglib.Fragments.English.Coordination
+public import Linglib.Syntax.CCG.Derivation
+public import Linglib.Syntax.CCG.Grammar
+public import Linglib.Syntax.CCG.Interface
+public import Linglib.Syntax.CCG.Intonation
+public import Linglib.Studies.BeckmanPierrehumbert1986
 
 /-!
 # Steedman (2000): The Syntactic Process
@@ -69,6 +71,8 @@ supplies (`ipToTune`).
 * [partee-rooth-1983]
 * [beckman-pierrehumbert-1986]
 -/
+
+@[expose] public section
 
 namespace Steedman2000
 
@@ -179,7 +183,7 @@ theorem nonConstituentCoord_eq_spelledOut :
 
 /-- A lexicon in which sentence `p` is true and `q` false, with the English coordinators
 interpreted by the Boolean operation of their role. -/
-private def pqLex : SemLexicon Unit Unit := fun w c ↦
+def pqLex : SemLexicon Unit Unit := fun w c ↦
   match w, c with
   | "p", .atom .S => some True
   | "q", .atom .S => some False
@@ -191,8 +195,8 @@ private def pqLex : SemLexicon Unit Unit := fun w c ↦
         fun q p ↦ Coordinator.op English.Coordination.or_.role p q)
   | _, _ => none
 
-private def dp : Derivation Atom S := .lex "p" S
-private def dq : Derivation Atom S := .lex "q" S
+def dp : Derivation Atom S := .lex "p" S
+def dq : Derivation Atom S := .lex "q" S
 
 /-- Which coordinator a derivation uses is part of its truth conditions: with a true and a
 false conjunct, `and` and `or` differ. -/

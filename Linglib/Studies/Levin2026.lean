@@ -1,9 +1,11 @@
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.ArgumentStructure.LevinClass.Members
-import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Fragments.English.Adjectives
-import Linglib.Data.Examples.Levin2026
+module
+
+public import Linglib.Core.Order.Interval
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
+public import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Data.Examples.Levin2026
 
 /-!
 # Levin (2026): The door pushed open
@@ -48,6 +50,8 @@ kind of the subject is recorded for the rows whose subject the paper discusses.
 * [levin-1993]
 * [goldberg-1995]
 -/
+
+@[expose] public section
 
 namespace Levin2026
 

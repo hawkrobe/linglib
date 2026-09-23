@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.SocialMeaning.Game
-import Linglib.Studies.Eckert2008
-import Linglib.Studies.Labov2012
+module
+
+public import Linglib.Pragmatics.SocialMeaning.Game
+public import Linglib.Studies.Eckert2008
+public import Linglib.Studies.Labov2012
 
 /-!
 # Burnett (2019): Signalling games, sociolinguistic variation and the construction of style
@@ -40,6 +42,8 @@ the personae and the marginal rate of a variant, is not represented.
 * [lewis-1969]
 * [podesva-reynolds-callier-baptiste-2015]
 -/
+
+@[expose] public section
 
 namespace Burnett2019
 

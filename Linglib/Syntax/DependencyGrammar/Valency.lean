@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
+module
+
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 /-!
 # Valency frames
@@ -39,6 +41,8 @@ notion
 [hudson-2010] — An introduction to Word Grammar
 [osborne-2019] — A dependency grammar of English
 -/
+
+@[expose] public section
 
 namespace DependencyGrammar
 
@@ -146,16 +150,16 @@ instance (g : Graph n) (v : Fin n) (val : Valency) :
     nominal core only — UD's clausal core relations (csubj, ccomp, xcomp)
     are licensed by clause-embedding frames, which `Valency.ofFrame`
     does not schematize. -/
-private def coreArgRels : List UD.DepRel := [.nsubj, .obj, .iobj]
+def coreArgRels : List UD.DepRel := [.nsubj, .obj, .iobj]
 
 /-- Every core-argument dependent of `v` is licensed by a slot of `val` —
     the closed-world half of valency checking (`SatisfiesValency` only
     checks that required slots are filled). -/
-private def CoreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
+def CoreArgsLicensed (g : Graph n) (v : Fin n) (val : Valency) : Prop :=
   ∀ w ∈ g.children v, ∀ r ∈ g.label v w,
     r ∈ coreArgRels → ∃ slot ∈ val, slot.depType = r
 
-private instance (g : Graph n) (v : Fin n) (val : Valency) :
+instance (g : Graph n) (v : Fin n) (val : Valency) :
     Decidable (CoreArgsLicensed g v val) :=
   Finset.decidableDforallFinset
 

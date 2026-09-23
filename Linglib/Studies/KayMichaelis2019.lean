@@ -1,6 +1,8 @@
-import Linglib.Syntax.ConstructionGrammar.Composition
-import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Studies.FillmoreKayOConnor1988
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Composition
+public import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+public import Linglib.Studies.FillmoreKayOConnor1988
 
 /-!
 # Kay and Michaelis (2019): Constructional Meaning and Compositionality
@@ -25,6 +27,8 @@ motion, *let alone* and the incredulity response.
 * [kay-michaelis-2019]
 * [fillmore-kay-oconnor-1988]
 -/
+
+@[expose] public section
 
 namespace KayMichaelis2019
 

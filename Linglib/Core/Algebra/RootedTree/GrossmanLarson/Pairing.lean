@@ -3,11 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
-import Mathlib.LinearAlgebra.TensorProduct.Basis
-import Mathlib.RingTheory.TensorProduct.Basic
-import Linglib.Core.Combinatorics.RootedTree.Aut
-import Mathlib.Tactic.Ring
+module
+
+public import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Basic
+public import Mathlib.LinearAlgebra.TensorProduct.Basis
+public import Mathlib.RingTheory.TensorProduct.Basic
+public import Linglib.Core.Combinatorics.RootedTree.Aut
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 
@@ -53,7 +57,7 @@ omit [DecidableEq α] in
 /-- Finsupp-level symmetry-weighted pairing on the bare forest basis. The
     public `pairing` is this transported through the Connes-Kreimer
     structure's `toFinsuppAlgEquiv`. -/
-private noncomputable def pairingAux :
+noncomputable def pairingAux :
     (Forest (UnorderedTree α) →₀ R) →ₗ[R] (Forest (UnorderedTree α) →₀ R) →ₗ[R] R :=
   Finsupp.lift _ R (Forest (UnorderedTree α)) (fun F =>
     Finsupp.lift R R (Forest (UnorderedTree α)) (fun G =>

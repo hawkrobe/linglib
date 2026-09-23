@@ -1,7 +1,9 @@
-import Linglib.Core.Optimization.Linearization
-import Linglib.Fragments.Turkish.Anaphors
-import Linglib.Data.Examples.BakayEtAl2026
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Core.Optimization.Linearization
+public import Linglib.Fragments.Turkish.Anaphors
+public import Linglib.Data.Examples.BakayEtAl2026
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Bakay, Akkuş & Dillon 2026: hierarchical relations in antecedent retrieval
@@ -40,6 +42,8 @@ distractors, which the paper finds limited and inconsistent.
 * [reinhart-1976], [barker-pullum-1990] — c-command on tree addresses
 * [pollard-sag-1994] — the coargumenthood alternative
 -/
+
+@[expose] public section
 
 namespace BakayEtAl2026
 

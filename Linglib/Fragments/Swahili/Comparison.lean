@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Swahili comparative data
@@ -9,6 +11,8 @@ standard as its object; the verbal variant *X anazidi Y* '-zidi exceed' is
 also available. The adjective carries no degree marking; superlative via
 exceeding a universal standard.
 -/
+
+@[expose] public section
 
 namespace Swahili.Comparison
 

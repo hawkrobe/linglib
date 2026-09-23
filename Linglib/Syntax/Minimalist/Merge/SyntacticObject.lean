@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.Merge.Internal
-import Linglib.Syntax.Minimalist.Workspace.Basic
+module
+
+public import Linglib.Syntax.Minimalist.Merge.Internal
+public import Linglib.Syntax.Minimalist.Workspace.Basic
 
 /-!
 # Merge on the syntactic-object carrier
@@ -25,6 +27,8 @@ the unique Δ^ρ cut extracting the mover.
 
 * [marcolli-chomsky-berwick-2025], §1.4 (Lemma 1.4.1, Proposition 1.4.2)
 -/
+
+@[expose] public section
 
 namespace Minimalist.SyntacticObject
 

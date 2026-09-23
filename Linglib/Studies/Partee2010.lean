@@ -1,8 +1,10 @@
-import Linglib.Semantics.Modification.Classification
-import Linglib.Semantics.Modification.Coercion
-import Linglib.Studies.Kamp1975
-import Linglib.Data.Examples.Schema
-import Linglib.Data.Examples.Partee2010
+module
+
+public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Coercion
+public import Linglib.Studies.Kamp1975
+public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.Partee2010
 
 /-!
 # Partee (2010): Privative Adjectives: Subsective plus Coercion
@@ -31,6 +33,8 @@ of `Data/Examples/Partee2010`, and Kamp's paradigm adjectives come from the Kamp
 * [kamp-partee-1995]
 * [nowak-2000]
 -/
+
+@[expose] public section
 
 namespace Partee2010
 

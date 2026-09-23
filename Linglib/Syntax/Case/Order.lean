@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Order.Interval.Finset.Fin
-import Linglib.Core.Order.PartialRank
-import Linglib.Syntax.Case.Basic
-import Linglib.Semantics.Denotation
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Order.Interval.Finset.Fin
+public import Linglib.Core.Order.PartialRank
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Semantics.Denotation
 /-!
 # Containment orders on Case
 [caha-2009] [pantcheva-2011] [mcfadden-2018]
@@ -38,6 +40,8 @@ orders are opt-in commitments, never global instances on the inventory.
 Declarations live in the root `Case` namespace (the namespace follows the
 subject; the file stays in `Syntax/Case/` as nanosyntactic substrate).
 -/
+
+@[expose] public section
 
 namespace Case
 

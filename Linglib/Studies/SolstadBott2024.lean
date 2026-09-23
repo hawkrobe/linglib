@@ -1,6 +1,8 @@
-import Linglib.Semantics.Presupposition.Context
-import Linglib.Studies.SolstadBott2022
-import Linglib.Fragments.German.Verbs
+module
+
+public import Linglib.Semantics.Presupposition.Context
+public import Linglib.Studies.SolstadBott2022
+public import Linglib.Fragments.German.Verbs
 
 /-!
 # Solstad & Bott (2024): Cataphoric Resolution of Projective Content
@@ -64,6 +66,8 @@ placed in the taxonomy of [tonhauser-beaver-roberts-simons-2013] here.
 * [schlenker-2009]
 * [heim-1983]
 -/
+
+@[expose] public section
 
 namespace SolstadBott2024
 

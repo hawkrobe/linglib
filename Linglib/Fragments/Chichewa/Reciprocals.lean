@@ -1,4 +1,6 @@
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # Chicheŵa Reciprocal Fragment
@@ -13,6 +15,8 @@ Example: [nordlinger-2023] ex. 20 (citing Dalrymple et al. 1994).
 
 The reciprocal affix is distinct from the reflexive prefix "dzi-".
 -/
+
+@[expose] public section
 
 namespace Chichewa.Reciprocals
 

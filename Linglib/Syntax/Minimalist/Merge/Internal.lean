@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Merge.External
+module
+
+public import Linglib.Syntax.Minimalist.Merge.External
 
 /-!
 # Internal Merge as a composition of Merges
@@ -26,6 +28,8 @@ Merge as a composition, not a stand-alone Merge. The carrier-level form on `Synt
 
 * [marcolli-chomsky-berwick-2025], §1.4 (Proposition 1.4.2)
 -/
+
+@[expose] public section
 
 namespace Minimalist.Merge
 

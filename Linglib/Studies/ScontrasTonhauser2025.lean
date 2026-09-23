@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.RSA.QUD
-import Linglib.Semantics.Attitudes.Factivity
-import Linglib.Core.Probability.Kernel.Posterior
+module
+
+public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Semantics.Attitudes.Factivity
+public import Linglib.Core.Probability.Kernel.Posterior
 
 /-!
 # Scontras and Tonhauser (2025): Projection without Lexically-Specified Presupposition
@@ -59,6 +61,8 @@ and are not restated.
 * [kao-etal-2014-hyperbole]
 * [degen-tonhauser-2021]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA Factivity
 open scoped ENNReal

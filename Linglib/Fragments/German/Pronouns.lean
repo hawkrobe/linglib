@@ -1,7 +1,9 @@
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Category.Pronoun.Reciprocal
-import Linglib.Syntax.Category.Pronoun.Reflexive
-import Linglib.Fragments.German.Case
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Reciprocal
+public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Fragments.German.Case
 
 /-!
 # German pronouns
@@ -40,6 +42,8 @@ no dative.
 * [V. Gast and F. Haas, *On Reciprocal and Reflexive Uses of Anaphors in German and Other European
   Languages* (2008)][gast-haas-2008]
 -/
+
+@[expose] public section
 
 namespace German.Pronouns
 

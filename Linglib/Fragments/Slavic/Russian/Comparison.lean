@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Russian comparative data
@@ -9,6 +11,8 @@ standard (WALS Ch 121A: particle, [stassen-2013]); a bare genitive standard
 source for its Stassen classification. Degree is marked by the bound affix
 *-ee* ~ *-ej*; the superlative is morphological.
 -/
+
+@[expose] public section
 
 namespace Russian.Comparison
 

@@ -1,19 +1,21 @@
-import Linglib.Data.Examples.DalrympleKaplan2000
-import Linglib.Syntax.Person.Resolve
-import Linglib.Fragments.Chichewa.Gender
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.German.Pronouns
-import Linglib.Fragments.German.Verbs
-import Linglib.Fragments.Slavic.Polish.Pronouns
-import Linglib.Fragments.Xhosa.Basic
-import Linglib.Morphology.Paradigm.Morphome
-import Linglib.Studies.Shieber1986
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Order.Bounds.Basic
+module
+
+public import Linglib.Data.Examples.DalrympleKaplan2000
+public import Linglib.Syntax.Person.Resolve
+public import Linglib.Fragments.Chichewa.Gender
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.German.Pronouns
+public import Linglib.Fragments.German.Verbs
+public import Linglib.Fragments.Slavic.Polish.Pronouns
+public import Linglib.Fragments.Xhosa.Basic
+public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Studies.Shieber1986
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Order.Bounds.Basic
 
 /-!
 # Dalrymple and Kaplan, feature indeterminacy and feature resolution (2000)
@@ -91,6 +93,8 @@ conjunction's marker. Each construction is then checked against the paper's judg
 * [R. Noyer, *Features, positions, and affixes in autonomous morphological structure*
   (1992)][noyer-1992]
 -/
+
+@[expose] public section
 
 namespace DalrympleKaplan2000
 

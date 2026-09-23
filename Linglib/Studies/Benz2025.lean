@@ -1,8 +1,10 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Morphology.DistributedMorphology.Allosemy
-import Linglib.Data.Examples.Benz2025
-import Linglib.Fragments.German.Verbs
-import Linglib.Semantics.ArgumentStructure.Unaccusativity
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Data.Examples.Benz2025
+public import Linglib.Fragments.German.Verbs
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 
 /-!
 # Benz (2025): Structure and interpretation across categories
@@ -37,6 +39,8 @@ Ch. 5, with the base verbs read from the German fragment.
 * [williams-2015]
 * [creemers-2020]
 -/
+
+@[expose] public section
 
 namespace Benz2025
 

@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.QUD
+module
+
+public import Linglib.Pragmatics.RSA.QUD
 
 /-!
 # Kao and Goodman (2015): Let's Talk (Ironically) About the Weather
@@ -33,6 +35,8 @@ Experiment 2 are not stated.
 * [kao-goodman-2015]
 * [kao-etal-2014-hyperbole]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

@@ -1,6 +1,8 @@
-import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
-import Mathlib.Order.OrderDual
+module
+
+public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+public import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
+public import Mathlib.Order.OrderDual
 
 /-!
 # Minimal Yield
@@ -39,6 +41,8 @@ forms.
 * [marcolli-chomsky-berwick-2025], §1.6.1–1.6.2 (Definition 1.6.1, Lemma 1.6.3,
   Propositions 1.6.4 and 1.6.8)
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

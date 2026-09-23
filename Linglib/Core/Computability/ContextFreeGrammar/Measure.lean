@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
-import Linglib.Core.Probability.BranchingProcess.GaltonWatson
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
+public import Linglib.Core.Probability.BranchingProcess.GaltonWatson
 
 /-!
 # The derivation measure of a probabilistic context-free grammar
@@ -39,6 +41,8 @@ produces a finite derivation from every symbol.
 * [chi-1999]
 * [kozen-1981]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RoseTree
 open scoped ENNReal

@@ -3,11 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.BigOperators.Multiset
-import Linglib.Core.Combinatorics.RootedTree.DoubleCut
-import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
-import Mathlib.RingTheory.Bialgebra.Basic
+module
+
+public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Combinatorics.RootedTree.DoubleCut
+public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
+public import Mathlib.RingTheory.Bialgebra.Basic
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

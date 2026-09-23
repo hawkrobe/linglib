@@ -1,7 +1,9 @@
-import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
-import Linglib.Fragments.Romance.Spanish.Verbs
+module
+
+public import Linglib.Semantics.Events.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
 # Koontz-Garboden (2009): Anticausativization
@@ -51,6 +53,8 @@ tabulates is a typological argument left in prose.
 * [dowty-1991] — proto-role entailments
 * [haspelmath-1990] — the reflexive/anticausative syncretism
 -/
+
+@[expose] public section
 
 namespace KoontzGarboden2009
 
@@ -167,7 +171,7 @@ def breakingByBoth : ArgumentStructure.EventStructure.Interpretation Participant
   breaking fun _ ↦ True
 
 /-- An event of the models. -/
-private def e₀ : Event ℤ := ⟨⟨(0, 0), le_rfl⟩, .action⟩
+def e₀ : Event ℤ := ⟨⟨(0, 0), le_rfl⟩, .action⟩
 
 /-- The causative does not entail the derived inchoative. With Juan the only effector, *Juan
 rompió el vaso* holds and *el vaso se rompió* fails. -/

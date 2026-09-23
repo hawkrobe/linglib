@@ -1,11 +1,13 @@
-import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Syntax.Person.Resolve
-import Linglib.Fragments.Romance.Italian.Pronouns
-import Linglib.Fragments.Romance.Spanish.Pronouns
-import Linglib.Fragments.German.Pronouns
-import Linglib.Studies.Deal2024
-import Linglib.Studies.CoonKeine2021
-import Linglib.Data.Examples.AdamsonZompi2025
+module
+
+public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Person.Resolve
+public import Linglib.Fragments.Romance.Italian.Pronouns
+public import Linglib.Fragments.Romance.Spanish.Pronouns
+public import Linglib.Fragments.German.Pronouns
+public import Linglib.Studies.Deal2024
+public import Linglib.Studies.CoonKeine2021
+public import Linglib.Data.Examples.AdamsonZompi2025
 
 /-!
 # Polite pronouns and the person-case constraint
@@ -58,6 +60,8 @@ recruitment are discussed by the paper without a formal counterpart here.
 * [adamson-anagnostopoulou-2025]
 * [postal-1989]
 -/
+
+@[expose] public section
 
 namespace AdamsonZompi2025
 

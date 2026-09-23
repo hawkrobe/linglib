@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+module
+
+public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
 # Gã complementizers and embedded clause types
@@ -34,6 +36,8 @@ letters (`ake`, `keji`) and the orthography lives in the morphs.
 * [noonan-2007]
 * [pollock-1989]
 -/
+
+@[expose] public section
 
 namespace Ga
 

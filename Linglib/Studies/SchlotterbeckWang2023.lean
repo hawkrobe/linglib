@@ -1,6 +1,8 @@
-import Linglib.Core.Probability.ConditionalProbability
-import Linglib.Pragmatics.RSA.Incremental
-import Linglib.Pragmatics.RSA.Uniform
+module
+
+public import Linglib.Core.Probability.ConditionalProbability
+public import Linglib.Pragmatics.RSA.Incremental
+public import Linglib.Pragmatics.RSA.Uniform
 
 /-!
 # Schlotterbeck & Wang (2023): An incremental RSA model for adjective ordering preferences
@@ -48,6 +50,8 @@ orders once meanings depend on the comparison class (`l0_big_blue_ne`).
 * [scontras-degen-goodman-2017]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

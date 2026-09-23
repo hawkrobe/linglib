@@ -1,5 +1,7 @@
-import Linglib.Fragments.English.Pronouns
-import Linglib.Data.Examples.DechaineWiltschko2002
+module
+
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Data.Examples.DechaineWiltschko2002
 
 /-!
 # Déchaine and Wiltschko (2002): Decomposing Pronouns
@@ -20,6 +22,8 @@ Fragment's person features, and the determiner and bound-variable data are rows.
 
 * [dechaine-wiltschko-2002]
 -/
+
+@[expose] public section
 
 namespace DechaineWiltschko2002
 
@@ -114,7 +118,7 @@ def dialectB (p : PersonalPronoun) : Category :=
 
 /-- The category of a row's proform: the English pronouns' from the Fragment, dialect B's
 *them* reanalyzed, and *one* and Japanese *kare* the NPs of sections 3.1 and 2.3. -/
-private def categoryOf (e : LinguisticExample) : Option Category :=
+def categoryOf (e : LinguisticExample) : Option Category :=
   match e.feature? "pronoun", e.feature? "dialect" with
   | some "we", _ => some (english English.Pronouns.we)
   | some "us", _ => some (english English.Pronouns.us)

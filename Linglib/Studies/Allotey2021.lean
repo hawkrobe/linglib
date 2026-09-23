@@ -1,11 +1,13 @@
-import Linglib.Fragments.Ga.Pronouns
-import Linglib.Fragments.Ga.Verbs
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Data.WALS.Features.F101A
-import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Syntax.Control.Head
-import Linglib.Studies.Landau2013
-import Linglib.Data.Examples.Allotey2021
+module
+
+public import Linglib.Fragments.Ga.Pronouns
+public import Linglib.Fragments.Ga.Verbs
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Data.WALS.Features.F101A
+public import Linglib.Syntax.Minimalist.MinimalPronoun
+public import Linglib.Syntax.Control.Head
+public import Linglib.Studies.Landau2013
+public import Linglib.Data.Examples.Allotey2021
 
 /-!
 # Allotey (2021): overt pronouns of infinitival predicates of Gã
@@ -61,6 +63,8 @@ comparison with [landau-2004]'s scale is stated for those two.
 * [wurmbrand-lohninger-2023]
 * [wurmbrand-2024]
 -/
+
+@[expose] public section
 
 namespace Allotey2021
 

@@ -1,4 +1,6 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Tree
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree
 
 /-!
 # Bresnan, Kaplan, Peters and Zaenen 1982: cross-serial dependencies in Dutch
@@ -39,6 +41,8 @@ conditions on f-structures, and functional control derives the cross-serial asso
 * [evers-1975]
 * [gazdar-pullum-1982]
 -/
+
+@[expose] public section
 
 namespace BresnanEtAl1982
 

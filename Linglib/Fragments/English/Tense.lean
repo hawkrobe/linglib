@@ -1,5 +1,7 @@
-import Linglib.Fragments.English.Verbs
-import Linglib.Syntax.Category.Verb.Tense
+module
+
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Syntax.Category.Verb.Tense
 
 /-!
 # English tense forms
@@ -33,6 +35,8 @@ lexical verb or *be*, and *be* governing a lexical verb only.
 
 * [huddleston-pullum-2002]
 -/
+
+@[expose] public section
 
 namespace English
 

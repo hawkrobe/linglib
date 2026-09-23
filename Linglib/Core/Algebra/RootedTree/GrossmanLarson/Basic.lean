@@ -3,19 +3,24 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
-import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
-import Linglib.Core.Data.UnorderedTree.DecEq
-import Mathlib.Algebra.BigOperators.Ring.Multiset
-import Mathlib.Data.Multiset.AddSub
-import Mathlib.Data.Multiset.Bind
-import Mathlib.Data.Multiset.MapFold
-import Mathlib.Data.Multiset.Powerset
-import Mathlib.Data.Multiset.ZeroCons
-import Mathlib.LinearAlgebra.BilinearMap
-import Mathlib.LinearAlgebra.Finsupp.LinearCombination
+module
+
+public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+public import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
+public import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
+public import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
+public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Mathlib.Algebra.BigOperators.Ring.Multiset
+public import Mathlib.Data.Multiset.AddSub
+public import Mathlib.Data.Multiset.Bind
+public import Mathlib.Data.Multiset.MapFold
+public import Mathlib.Data.Multiset.OrderedMonoid
+public import Mathlib.Data.Multiset.Powerset
+public import Mathlib.Data.Multiset.ZeroCons
+public import Mathlib.LinearAlgebra.BilinearMap
+public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 
@@ -182,7 +187,7 @@ structure's `toFinsuppAlgEquiv` (the sanctioned escape hatch to the bare
 `Finsupp.linearCombination` on the `def`-synonym carrier. -/
 
 /-- `R`-linear extension of a basis function to `GrossmanLarson R α`. -/
-private noncomputable def basisLift {M : Type*} [AddCommMonoid M] [Module R M]
+noncomputable def basisLift {M : Type*} [AddCommMonoid M] [Module R M]
     (f : Forest (UnorderedTree α) → M) : GrossmanLarson R α →ₗ[R] M :=
   (Finsupp.linearCombination R f).comp
     ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
@@ -370,7 +375,7 @@ noncomputable def insertionBasis (F_basis G_basis : Forest (UnorderedTree α)) :
     fun F' => of' (R := R) F').sum
 
 /-- Internal: `insertionBasis`-bundled-as-LinearMap-in-F. -/
-private noncomputable def insertionBasisLin (G_basis : Forest (UnorderedTree α)) :
+noncomputable def insertionBasisLin (G_basis : Forest (UnorderedTree α)) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   basisLift (fun F_basis => insertionBasis (R := R) F_basis G_basis)
 
@@ -431,7 +436,7 @@ private theorem productForest_zero_left (G : Forest (UnorderedTree α)) :
 /-- F-additivity. Each powerset summand is additive in F via bilinearity
     of `insertion`, then `unop`/`op` (identity coercions) and right
     distributivity in `ConnesKreimer`. -/
-private theorem productForest_add_left
+theorem productForest_add_left
     (F₁ F₂ : GrossmanLarson R α) (G : Forest (UnorderedTree α)) :
     productForest (F₁ + F₂) G = productForest F₁ G + productForest F₂ G := by
   show ((G.powerset.map fun G₁ =>
@@ -461,7 +466,7 @@ private theorem productForest_add_left
 /-- F-scalar-compatibility. Each powerset summand is scalar-compatible
     in F via bilinearity of `insertion`, then `unop`/`op` (identity
     coercions) and `smul_mul_assoc` in `ConnesKreimer`. -/
-private theorem productForest_smul_left
+theorem productForest_smul_left
     (c : R) (F : GrossmanLarson R α) (G : Forest (UnorderedTree α)) :
     productForest (c • F) G = c • productForest F G := by
   show ((G.powerset.map fun G₁ =>
@@ -487,7 +492,7 @@ private theorem productForest_smul_left
   rfl
 
 /-- Internal: `productForest`-bundled-as-LinearMap-in-F. -/
-private noncomputable def productForestLin (G : Forest (UnorderedTree α)) :
+noncomputable def productForestLin (G : Forest (UnorderedTree α)) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α where
   toFun F := productForest F G
   map_add' F₁ F₂ := productForest_add_left F₁ F₂ G

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Indonesian clause embedding
@@ -10,6 +12,8 @@ The complement-taking verbs and subordinators of [arka-2013]'s finiteness paradi
 whose subject is controlled, coded as reduced in [noonan-2007]'s terms; *tahu* 'know' takes a
 *bahwa* clause. *bahwa* 'that' and *agar* 'so that' type full clauses with their own subjects.
 -/
+
+@[expose] public section
 
 namespace Indonesian.Complementation
 

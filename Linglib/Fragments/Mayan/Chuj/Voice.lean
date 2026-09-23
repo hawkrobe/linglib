@@ -1,4 +1,6 @@
-import Linglib.Syntax.Voice.Basic
+module
+
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Chuj voice
@@ -34,6 +36,8 @@ vocabulary having no expressed non-argument.
 
 * [coon-2019]
 -/
+
+@[expose] public section
 
 namespace Chuj
 

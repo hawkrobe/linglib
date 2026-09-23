@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Pragmatics.SocialMeaning.Persona
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.SocialMeaning.Persona
 
 /-!
 # Social meaning games
@@ -38,6 +40,8 @@ formalization of social meaning as reasoning.
 * [burnett-2026]
 * [henderson-mccready-2024]
 -/
+
+@[expose] public section
 
 namespace SocialMeaning
 

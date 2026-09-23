@@ -1,7 +1,13 @@
-import Linglib.Core.LinearAlgebra.LinearIndependent
-import Linglib.Fragments.English.Verbs
-import Linglib.Processing.DiscriminativeLexicon.Realization
-import Linglib.Processing.DiscriminativeLexicon.Training
+module
+
+public import Linglib.Core.LinearAlgebra.LinearIndependent
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Processing.DiscriminativeLexicon.Realization
+public import Linglib.Processing.DiscriminativeLexicon.Training
+import all Init.Data.String.Pattern.Basic  -- for unfolding `String.Slice.Pattern.Internal.memcmpSlice`
+import all Init.Data.String.Pattern.String  -- for unfolding `String.Slice.Pattern.BackwardSliceSearcher.endsWith`, `String.Slice.Pattern.BackwardSliceSearcher.skipSuffix?`
+import all Init.Data.String.Slice  -- for unfolding `String.Slice.endsWith`
+import all Init.Data.String.TakeDrop  -- for unfolding `String.endsWith`
 
 /-!
 # Heitmeier, Chuang and Baayen (2026): The Discriminative Lexicon
@@ -42,6 +48,8 @@ the English fragment.
 
 * [heitmeier-chuang-baayen-2026]
 -/
+
+@[expose] public section
 
 namespace HeitmeierChuangBaayen2026
 

@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Probability.Kernel.Posterior
-import Mathlib.Analysis.Complex.ExponentialBounds
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Qing and Franke (2015): Variations on a Bayesian Theme
@@ -42,6 +44,8 @@ formalized.
 * [qing-franke-2015]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA Real
 open scoped ENNReal

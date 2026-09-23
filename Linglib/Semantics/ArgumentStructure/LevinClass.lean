@@ -1,8 +1,10 @@
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.Events.Path
-import Linglib.Semantics.Aspect.Defs
-import Mathlib.Data.Finset.Fold
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Semantics.Events.Path
+public import Linglib.Semantics.Aspect.Defs
+public import Mathlib.Data.Finset.Fold
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The verb classes of Levin 1993
@@ -16,6 +18,8 @@ with a member list, with the page's section number and title. The classes' prope
 
 * [levin-1993]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 
@@ -928,18 +932,18 @@ def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
 
 /-- Agreement between two votes on a profile: `none` abstains, `some none` records a
 disagreement. -/
-private def agree :
+def agree :
     Option (Option EntailmentProfile) → Option (Option EntailmentProfile) →
       Option (Option EntailmentProfile)
   | none, b => b
   | a, none => a
   | some x, some y => if x = y then some x else some none
 
-private instance : Std.Commutative agree :=
+instance : Std.Commutative agree :=
   ⟨fun a b ↦ by
     rcases a with _ | a <;> rcases b with _ | b <;> simp [agree]; split_ifs <;> simp_all⟩
 
-private instance : Std.Associative agree :=
+instance : Std.Associative agree :=
   ⟨fun a b c ↦ by
     rcases a with _ | a <;> rcases b with _ | b <;> rcases c with _ | c <;> simp [agree] <;>
       split_ifs <;> simp_all⟩

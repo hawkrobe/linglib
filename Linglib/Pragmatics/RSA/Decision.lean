@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Analysis.SpecialFunctions.Softmax
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # The decision-theoretic listener
@@ -36,6 +38,8 @@ utility of [harding-gerstenberg-icard-2025]; the action-oriented speakers of
 * [van-rooy-2003]
 * [qing-franke-2015]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

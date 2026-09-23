@@ -1,6 +1,8 @@
-import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Romance.Italian.Pronouns
-import Linglib.Fragments.Romance.Italian.Verbs
+module
+
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Fragments.Romance.Italian.Pronouns
+public import Linglib.Fragments.Romance.Italian.Verbs
 
 /-!
 # Italian reciprocals
@@ -26,6 +28,8 @@ it does not replace *si* but is added to it: *Si amano l'un l'altro* beside \**A
 * [E. Maslova, *Reflexive Encoding of Reciprocity: Cross-Linguistic and Language-Internal
   Variation* (2008)][maslova-2008]
 -/
+
+@[expose] public section
 
 namespace Italian.Reciprocals
 

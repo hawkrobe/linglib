@@ -1,9 +1,11 @@
-import Linglib.Semantics.Causation.Necessity
-import Linglib.Semantics.Causation.Sufficiency
-import Linglib.Studies.Karttunen1971a
-import Linglib.Fragments.English.Verbs
-import Linglib.Semantics.Causation.Interpretation
-import Linglib.Semantics.Causation.Verb
+module
+
+public import Linglib.Semantics.Causation.Necessity
+public import Linglib.Semantics.Causation.Sufficiency
+public import Linglib.Studies.Karttunen1971a
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Semantics.Causation.Interpretation
+public import Linglib.Semantics.Causation.Verb
 
 /-!
 # Nadathur and Lauer (2020): Causal Necessity, Causal Sufficiency, and Causative Verbs
@@ -45,6 +47,8 @@ parent equations would remove it.
 * [nadathur-2023-implicatives]
 * [karttunen-1971]
 -/
+
+@[expose] public section
 
 namespace NadathurLauer2020
 

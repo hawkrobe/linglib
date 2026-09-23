@@ -1,9 +1,13 @@
-import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
-import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.UnorderedTree.Basic
-import Mathlib.LinearAlgebra.TensorProduct.Basic
-import Mathlib.RingTheory.Bialgebra.Basic
-import Mathlib.RingTheory.TensorProduct.Maps
+module
+
+public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
+public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Core.Data.UnorderedTree.Basic
+public import Mathlib.LinearAlgebra.TensorProduct.Basic
+public import Mathlib.RingTheory.Bialgebra.Basic
+public import Mathlib.RingTheory.TensorProduct.Maps
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

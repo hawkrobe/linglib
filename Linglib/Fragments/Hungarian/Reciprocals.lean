@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Reciprocal
-import Linglib.Syntax.Category.Pronoun.Reciprocal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Syntax.Category.Pronoun.Reciprocal
 
 /-!
 # Hungarian Reciprocal Fragment
@@ -22,6 +24,8 @@ with the reflexive *maga*, which has the full paradigm
 The antecedent constructions in which *egymás* tolerates a singular antecedent are the
 rows of `Data/Examples/Rakosi2019.json`, studied in `Studies/Rakosi2019.lean`.
 -/
+
+@[expose] public section
 
 
 namespace Hungarian.Reciprocals

@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Data.UD.UPOS
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Basic
+public import Linglib.Syntax.ConstructionGrammar.Inheritance
+public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Data.UD.UPOS
 
 /-!
 # Argument structure in Construction Grammar
@@ -32,6 +34,8 @@ and inheritance links.
 * `composedMeaning`, `predictedAlternationInConstruction`:
   verb–construction fusion
 -/
+
+@[expose] public section
 
 namespace ConstructionGrammar
 
@@ -447,7 +451,7 @@ but no CoS or causation. In the resultative, they acquire both — unlocking
 causativeInchoative, middle, instrumentSubject, and resultative. -/
 
 /-- The components of a manner-of-motion verb: motion and a lexicalized manner. -/
-private def mannerOfMotion : MeaningComponents := ⟨false, false, true, false, false, true⟩
+def mannerOfMotion : MeaningComponents := ⟨false, false, true, false, false, true⟩
 
 /-- Manner-of-motion verbs alone: no CI, no middle, no instrumentSubject. -/
 theorem mannerOfMotion_blocked_alone :

@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Fragments.Kawapanan.Shawi.Basic
-import Linglib.Studies.Deal2024
-import Linglib.Syntax.Case.Dependent
+module
+
+public import Linglib.Fragments.Kawapanan.Shawi.Basic
+public import Linglib.Studies.Deal2024
+public import Linglib.Syntax.Case.Dependent
 
 /-!
 # Dependent case by Agree: ergative in Shawi
@@ -71,6 +73,8 @@ its probe, and so global case splits range over the hierarchy effects of agreeme
 * [maslova-2003]
 * [van-urk-2015]
 -/
+
+@[expose] public section
 
 namespace ClemDeal2024
 

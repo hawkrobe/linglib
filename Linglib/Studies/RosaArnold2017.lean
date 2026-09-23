@@ -1,9 +1,11 @@
-import Linglib.Data.Examples.RosaArnold2017
-import Linglib.Data.Experiments.RosaArnold2017
-import Linglib.Fragments.English.Pronouns
-import Linglib.Morphology.Word.Agree
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.Linarith
+module
+
+public import Linglib.Data.Examples.RosaArnold2017
+public import Linglib.Data.Experiments.RosaArnold2017
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Morphology.Word.Agree
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Rosa and Arnold (2017): Predictability affects production
@@ -42,6 +44,8 @@ the shorter latencies for goal continuations stay in prose.
 * [kehler-rohde-2013]
 * [fukumura-van-gompel-2010]
 -/
+
+@[expose] public section
 
 namespace RosaArnold2017
 

@@ -1,7 +1,9 @@
-import Linglib.Fragments.Indonesian.Verbs
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Studies.BeaversZubair2013
-import Linglib.Data.Examples.BeaversUdayana2022
+module
+
+public import Linglib.Fragments.Indonesian.Verbs
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Studies.BeaversZubair2013
+public import Linglib.Data.Examples.BeaversUdayana2022
 
 /-!
 # Beavers & Udayana (2022): Middle voice as generalized argument suppression
@@ -43,6 +45,8 @@ gives the four middles of the paper.
 * [beavers-zubair-2013]
 * [alexiadou-schaefer-2015]
 -/
+
+@[expose] public section
 
 namespace BeaversUdayana2022
 

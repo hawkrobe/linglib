@@ -1,6 +1,8 @@
-import Linglib.Syntax.Reflex
-import Linglib.Fragments.Mayan.Extraction
-import Linglib.Fragments.Mayan.Mam.Voice
+module
+
+public import Linglib.Syntax.Reflex
+public import Linglib.Fragments.Mayan.Extraction
+public import Linglib.Fragments.Mayan.Mam.Voice
 
 /-!
 # Mam extraction marking
@@ -41,6 +43,8 @@ The distribution of the enclitic across clause sizes and movement paths is forma
 * [england-1989]
 * [england-2017]
 -/
+
+@[expose] public section
 
 namespace Mam.Extraction
 

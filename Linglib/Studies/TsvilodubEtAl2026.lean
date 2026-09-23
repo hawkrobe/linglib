@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Probability.Decision.Basic
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.Decision.Basic
 
 /-!
 # Tsvilodub, Mulligan, Snider, Hawkins and Franke (2026): Act or Clarify? Modeling Sensitivity to Uncertainty and Cost in Communication
@@ -48,6 +50,8 @@ over all responses, is a model-fitting result and is not formalized.
 * [van-rooy-2003]
 * [hawkins-etal-2025]
 -/
+
+@[expose] public section
 
 namespace TsvilodubEtAl2026
 

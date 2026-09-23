@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Basic
+module
+
+public import Linglib.Pragmatics.RSA.Basic
 
 /-!
 # Sikos, Venhuizen, Drenhaus and Crocker (2021): Reevaluating Pragmatic Reasoning in Language Games
@@ -41,6 +43,8 @@ reverses RSA's pragmatic component in the reducible conditions (§7.2).
 * [sikos-etal-2021]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

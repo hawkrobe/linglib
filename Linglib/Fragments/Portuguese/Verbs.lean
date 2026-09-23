@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Portuguese verbs
@@ -12,6 +14,8 @@ affirmative declarative clause, the Portuguese data of [grano-2024]'s survey of 
 
 * [grano-2024]
 -/
+
+@[expose] public section
 
 namespace Portuguese.Verbs
 

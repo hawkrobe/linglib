@@ -1,5 +1,7 @@
-import Linglib.Studies.Glass2025
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Linglib.Studies.Glass2025
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Roberts and Özyıldız (2025): A causal explanation for the contrafactive gap
@@ -35,6 +37,8 @@ over the choice of proposition and attitude holder, and the model is that templa
 * [L. Glass, *Attested versus unattested contrafactive belief verbs* (2025)][glass-2025]
 * [J. Pearl, *Causality: models, reasoning, and inference* (2009)][pearl-2000]
 -/
+
+@[expose] public section
 
 namespace RobertsOzyildiz2025
 

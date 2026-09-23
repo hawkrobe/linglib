@@ -1,12 +1,14 @@
-import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Syntax.Minimalist.Geometry
-import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Studies.CoonKeine2021
-import Linglib.Studies.Haspelmath2021
-import Linglib.Syntax.Clause.Scenario
-import Linglib.Syntax.Person.Class
-import Linglib.Data.Examples.Deal2024
+module
+
+public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Syntax.Minimalist.Geometry
+public import Linglib.Syntax.Minimalist.Phi.Geometry
+public import Linglib.Studies.CoonKeine2021
+public import Linglib.Studies.Haspelmath2021
+public import Linglib.Syntax.Clause.Scenario
+public import Linglib.Syntax.Person.Class
+public import Linglib.Data.Examples.Deal2024
 
 /-!
 # Deal (2024): Interaction, Satisfaction, and the PCC
@@ -54,6 +56,8 @@ its six cells; the mechanism's verdicts on reflexive combinations are not stated
 * [pancheva-zubizarreta-2018]
 * [coon-keine-2021]
 -/
+
+@[expose] public section
 
 namespace Deal2024
 
@@ -372,7 +376,7 @@ theorem agrees_with_gluttony :
 
 /-! ### The rows -/
 
-private def personOf (e : LinguisticExample) (key : String) : Option Person :=
+def personOf (e : LinguisticExample) (key : String) : Option Person :=
   match e.feature? key with
   | some "1" => some .first
   | some "2" => some .second
@@ -380,7 +384,7 @@ private def personOf (e : LinguisticExample) (key : String) : Option Person :=
   | _ => none
 
 /-- The grammars a row's language has: Slovenian speakers have a strong or a weak PCC. -/
-private def grammarsOf (e : LinguisticExample) : List Grammar :=
+def grammarsOf (e : LinguisticExample) : List Grammar :=
   match e.feature? "pattern" with
   | some "strong" => [strong]
   | some "weak" => [weak]

@@ -1,11 +1,13 @@
-import Linglib.Data.Examples.JinKoenig2021
-import Linglib.Semantics.Polarity.ExpletiveNegation
-import Linglib.Studies.Karttunen1974
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Degree.Basic
-import Linglib.Semantics.Conditionals.Basic
-import Linglib.Fragments.English.Verbs
-import Linglib.Semantics.Attitudes.Verb
+module
+
+public import Linglib.Data.Examples.JinKoenig2021
+public import Linglib.Semantics.Polarity.ExpletiveNegation
+public import Linglib.Studies.Karttunen1974
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Degree.Basic
+public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Jin and Koenig (2021): A Cross-Linguistic Study of Expletive Negation
@@ -45,6 +47,8 @@ reports the Januubi prohibitive *laa*, without an example.
 * [heim-1992]
 * [dell-1986]
 -/
+
+@[expose] public section
 
 namespace JinKoenig2021
 
@@ -174,7 +178,7 @@ structure Row where
   entrenched : Option Bool
   deriving DecidableEq
 
-private def languageOf : String → Option Language
+def languageOf : String → Option Language
   | "stan1293" => some .english
   | "stan1290" => some .french
   | "" => some .januubi
@@ -182,7 +186,7 @@ private def languageOf : String → Option Language
   | "zarm1239" => some .zarmaSonrai
   | _ => none
 
-private def conceptOf : String → Option ENConcept
+def conceptOf : String → Option ENConcept
   | "fear" => some .fear
   | "avoid" => some .avoid
   | "regret" => some .regret
@@ -200,7 +204,7 @@ private def conceptOf : String → Option ENConcept
   | "tooTo" => some .tooTo
   | _ => none
 
-private def kindOf : String → Option NegatorKind
+def kindOf : String → Option NegatorKind
   | "standard" => some .standard
   | "dedicated" => some .dedicated
   | "imperative" => some .imperative

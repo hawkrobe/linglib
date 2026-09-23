@@ -1,24 +1,26 @@
-import Mathlib.Data.Finset.Option
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Syntax.Case.Order
-import Linglib.Fragments.Dargwa.Case
-import Linglib.Fragments.Finnish.Case
-import Linglib.Fragments.German.Case
-import Linglib.Fragments.Greek.Ancient.Case
-import Linglib.Fragments.Greek.StandardModern.Case
-import Linglib.Fragments.Hindi.Case
-import Linglib.Fragments.Hungarian.Case
-import Linglib.Fragments.Icelandic.Case
-import Linglib.Fragments.Japanese.Case
-import Linglib.Fragments.Korean.Case
-import Linglib.Fragments.Latin.Case
-import Linglib.Fragments.Slavic.Czech.Case
-import Linglib.Fragments.Slavic.Polish.Case
-import Linglib.Fragments.Slavic.Serbian.Case
-import Linglib.Fragments.Slavic.Slovak.Case
-import Linglib.Fragments.Tamil.Case
-import Linglib.Fragments.Telugu.Case
-import Linglib.Fragments.Turkish.Case
+module
+
+public import Mathlib.Data.Finset.Option
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Syntax.Case.Order
+public import Linglib.Fragments.Dargwa.Case
+public import Linglib.Fragments.Finnish.Case
+public import Linglib.Fragments.German.Case
+public import Linglib.Fragments.Greek.Ancient.Case
+public import Linglib.Fragments.Greek.StandardModern.Case
+public import Linglib.Fragments.Hindi.Case
+public import Linglib.Fragments.Hungarian.Case
+public import Linglib.Fragments.Icelandic.Case
+public import Linglib.Fragments.Japanese.Case
+public import Linglib.Fragments.Korean.Case
+public import Linglib.Fragments.Latin.Case
+public import Linglib.Fragments.Slavic.Czech.Case
+public import Linglib.Fragments.Slavic.Polish.Case
+public import Linglib.Fragments.Slavic.Serbian.Case
+public import Linglib.Fragments.Slavic.Slovak.Case
+public import Linglib.Fragments.Tamil.Case
+public import Linglib.Fragments.Telugu.Case
+public import Linglib.Fragments.Turkish.Case
 
 /-!
 # Blake (1994): Case
@@ -71,6 +73,8 @@ purposive not being a `Case` value. The text was checked in the second edition (
 * [blake-1994]
 * [blake-2001]
 -/
+
+@[expose] public section
 
 namespace Blake1994
 

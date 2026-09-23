@@ -1,7 +1,9 @@
-import Linglib.Semantics.Quantification.Syllogistic.Forms
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.InformationTheory.KullbackLeibler.Finite
-import Linglib.Core.InformationTheory.Entropy
+module
+
+public import Linglib.Semantics.Quantification.Syllogistic.Forms
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
+public import Linglib.Core.InformationTheory.Entropy
 
 /-!
 # Tessler, Tenenbaum and Goodman (2022): Logic, Probability, and Pragmatics in Syllogistic Reasoning
@@ -53,6 +55,8 @@ comparison with mReasoner and the Probability Heuristics Model are not formalize
 * [chater-oaksford-1999]
 * [degen-etal-2020]
 -/
+
+@[expose] public section
 
 namespace TesslerTenenbaumGoodman2022
 

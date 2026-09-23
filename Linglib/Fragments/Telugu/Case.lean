@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Order
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Order
 
 /-!
 # Telugu Case Inventory
@@ -18,6 +20,8 @@ hierarchy ([caha-2009]), where all nonnominative cases include
 the ACC feature in their syntactic representation; see
 `Studies/Aitha2026.lean` for the analysis of Telugu stem allomorphy.
 -/
+
+@[expose] public section
 
 namespace Telugu.Case
 

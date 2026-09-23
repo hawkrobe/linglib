@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Order
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Order
 /-!
 # Hungarian Case Inventory [kenesei-vago-fenyvesi-1998] [rounds-2001] [caha-2008]
 
@@ -63,6 +65,8 @@ broad case-functions that participate in Blake's hierarchy:
   express.
 
 -/
+
+@[expose] public section
 
 namespace Hungarian.Case
 

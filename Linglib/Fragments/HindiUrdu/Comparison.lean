@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Hindi-Urdu comparative data
@@ -8,6 +10,8 @@ Hindi-Urdu compares with *X Y se (zyaadaa) Adj hai*: the ablative postposition
 the free degree word *zyaadaa* 'more' is optional. Superlative via comparative
 with a universal standard (*sab se* 'than all').
 -/
+
+@[expose] public section
 
 namespace HindiUrdu.Comparison
 

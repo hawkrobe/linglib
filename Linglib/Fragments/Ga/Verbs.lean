@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Fragments.Ga.Clause
+module
+
+public import Linglib.Fragments.Ga.Clause
 
 /-!
 # Gã complement-taking verbs
@@ -34,6 +36,8 @@ in `form`.
 * [wurmbrand-lohninger-2023]
 * [wurmbrand-2024]
 -/
+
+@[expose] public section
 
 namespace Ga
 

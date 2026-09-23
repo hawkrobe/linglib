@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Adjective.Basic
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Adjective.Basic
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Clause-embedding adjectives
@@ -18,6 +20,8 @@ these predicates as *be* + adjective (`ClauseEmbeddingAdjective.toVerb`
 in `Fragments/English/Verbs/Copular.lean`), Mandarin and Japanese
 without a copula.
 -/
+
+@[expose] public section
 
 open NaturalLogic (Signature)
 

@@ -3,10 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Tone.Register
-import Linglib.Fragments.Drubea.Prosody
-import Linglib.Fragments.Numee.Prosody
-import Linglib.Studies.Hyman2006
+module
+
+public import Linglib.Phonology.Tone.Register
+public import Linglib.Fragments.Drubea.Prosody
+public import Linglib.Fragments.Numee.Prosody
+public import Linglib.Studies.Hyman2006
+import all Init.Data.List.Scan.Basic  -- for unfolding `List.scanl`
 
 /-!
 # Lionnet (2025): Tonal Languages Without Tone
@@ -36,6 +39,8 @@ rejects as less parsimonious, is prose and is not represented.
 * [leben-2018]
 * [hyman-2006]
 -/
+
+@[expose] public section
 
 namespace Lionnet2025
 

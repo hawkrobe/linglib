@@ -1,13 +1,15 @@
-import Linglib.Core.Combinatorics.SetFamily.FourFunctions
-import Linglib.Core.Order.Hom.Order
-import Linglib.Core.Probability.Kernel.OfWeights
-import Linglib.Core.Probability.Kernel.Posterior
-import Linglib.Core.Probability.UniformOn
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Data.Fin.Tuple.Basic
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Order.UpperLower.Basic
+module
+
+public import Linglib.Core.Combinatorics.SetFamily.FourFunctions
+public import Linglib.Core.Order.Hom.Order
+public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Linglib.Core.Probability.UniformOn
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Data.Fin.Tuple.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Barnett, Griffiths and Hawkins (2022): A pragmatic account of the weak evidence effect
@@ -45,6 +47,8 @@ the `β = 0` column of the simulation, are ratios of multiset counts.
 
 * [barnett-griffiths-hawkins-2022]
 -/
+
+@[expose] public section
 
 open Finset Matrix MeasureTheory ProbabilityTheory
 open scoped ENNReal
@@ -152,10 +156,10 @@ theorem sortedFrom_cons {lo a : Fin 9} {x : Fin n → Fin 9} :
       · simpa using Fin.monotone_iff_le_succ.1 hm j
 
 /-- Prepending a stick. -/
-private def consEmb (a : Fin 9) : (Fin n → Fin 9) ↪ (Fin (n + 1) → Fin 9) :=
+def consEmb (a : Fin 9) : (Fin n → Fin 9) ↪ (Fin (n + 1) → Fin 9) :=
   ⟨vecCons a, λ _ _ h => by simpa using congrArg vecTail h⟩
 
-private theorem pairwiseDisjoint_map_consEmb (s : Set (Fin 9))
+theorem pairwiseDisjoint_map_consEmb (s : Set (Fin 9))
     (S : Fin 9 → Finset (Fin n → Fin 9)) :
     s.PairwiseDisjoint λ a => (S a).map (consEmb a) := λ a _ b _ hab =>
   disjoint_left.2 λ x hx hx' => hab (by

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Causation.VerbClass
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Fragments.English.Verbs
+module
+
+public import Linglib.Semantics.Causation.VerbClass
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Fragments.English.Verbs
 
 /-!
 # Karttunen (1971): Implicative Verbs
@@ -26,6 +28,8 @@ one-way cells and the non-implicatives leave the other direction open.
 
 * [karttunen-1971]
 -/
+
+@[expose] public section
 
 namespace Karttunen1971a
 

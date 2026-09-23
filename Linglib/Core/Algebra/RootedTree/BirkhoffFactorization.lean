@@ -3,11 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.HopfAlgebra
-import Linglib.Core.Algebra.RotaBaxter
-import Mathlib.RingTheory.Coalgebra.Convolution
-import Mathlib.RingTheory.Bialgebra.Convolution
-import Mathlib.RingTheory.HopfAlgebra.Convolution
+module
+
+public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
+public import Linglib.Core.Algebra.RotaBaxter
+public import Mathlib.RingTheory.Coalgebra.Convolution
+public import Mathlib.RingTheory.Bialgebra.Convolution
+public import Mathlib.RingTheory.HopfAlgebra.Convolution
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

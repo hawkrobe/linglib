@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+module
+
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # The property tables of the Levin classes
@@ -30,6 +32,8 @@ variant, has both entries, so `Participates` and `Stars` are not disjoint.
 
 * [levin-1993]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

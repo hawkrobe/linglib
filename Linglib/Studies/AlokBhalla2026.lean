@@ -1,9 +1,13 @@
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Fragments.Basque.Pronouns
-import Linglib.Fragments.Magahi.Pronouns
-import Linglib.Fragments.Tamil.Pronouns
-import Linglib.Fragments.Romance.Galician.Pronouns
-import Linglib.Data.Examples.AlokBhalla2026
+module
+
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Fragments.Basque.Pronouns
+public import Linglib.Fragments.Magahi.Pronouns
+public import Linglib.Fragments.Tamil.Pronouns
+public import Linglib.Fragments.Romance.Galician.Pronouns
+public import Linglib.Data.Examples.AlokBhalla2026
+import all Init.Data.String.Modify  -- for unfolding `String.map`
+import all Init.Data.String.Termination  -- for unfolding `String.Pos.remainingBytes`
 
 /-!
 # Alok and Bhalla (2026): allocutivity and the syntax of honorifics
@@ -35,6 +39,8 @@ Hindi rows check the plural-agreement route to subject honorification.
 * [dayal-2025]
 * [wang-r-2023]
 -/
+
+@[expose] public section
 
 namespace AlokBhalla2026
 

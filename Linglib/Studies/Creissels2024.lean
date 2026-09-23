@@ -1,11 +1,13 @@
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Rat.Defs
-import Mathlib.Logic.Equiv.Basic
-import Mathlib.Logic.Relation
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Voice.System
-import Linglib.Data.Examples.Creissels2024
+module
+
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Logic.Equiv.Basic
+public import Mathlib.Logic.Relation
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Voice.System
+public import Linglib.Data.Examples.Creissels2024
 
 /-!
 # Creissels's typology of transitivity, valency and voice
@@ -88,6 +90,8 @@ P-coding, which split-S languages violate. The book's examples are the rows of
 * [D. Creissels, *Transitivity, Valency, and Voice* (2024)][creissels-2024]
 * [N. N. Bahrt, *Voice Syncretism* (2021)][bahrt-2021]
 -/
+
+@[expose] public section
 
 namespace Creissels2024
 

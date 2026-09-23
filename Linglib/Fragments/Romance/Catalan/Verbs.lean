@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Catalan verbs
@@ -10,6 +12,8 @@ reading emerges without *se* in the language's Table 2.2 environments.
 Membership in `Catalan.Reciprocals.lexicalReciprocals` carries the
 reciprocal marking; the entries here are ordinary verb entries.
 -/
+
+@[expose] public section
 
 namespace Catalan.Verbs
 

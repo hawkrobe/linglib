@@ -1,8 +1,10 @@
-import Linglib.Pragmatics.RSA.QUD
-import Linglib.Semantics.Quantification.NumberTree
-import Linglib.Semantics.Degree.Comparison
-import Linglib.Core.Probability.Distributions.Binomial
-import Linglib.Core.Probability.Kernel.Posterior
+module
+
+public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Core.Probability.Distributions.Binomial
+public import Linglib.Core.Probability.Kernel.Posterior
 
 /-!
 # Scontras and Pearl (2021): When Pragmatics Matters More for Truth-Value Judgments
@@ -82,6 +84,8 @@ judgment is a production decision.
 * [goodman-frank-2016]
 * [van-benthem-1984]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA Quantifier
 open scoped ENNReal unitInterval Fin.NatCast

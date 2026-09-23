@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Pronoun.Reflexive
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # Russian reciprocals
@@ -13,6 +15,8 @@ postfix *-sja* also forms reciprocal verbs (ex. 31) and is shared with the refle
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 -/
+
+@[expose] public section
 
 namespace Russian.Reciprocals
 

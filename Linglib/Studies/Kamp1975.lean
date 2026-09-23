@@ -1,9 +1,11 @@
-import Linglib.Semantics.Modification.Classification
-import Linglib.Core.Data.Trivalent
-import Mathlib.Data.Set.Basic
-import Mathlib.Algebra.Order.Ring.Rat
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Linglib.Logic.Modal.Extensional
+module
+
+public import Linglib.Semantics.Modification.Classification
+public import Linglib.Core.Data.Trivalent
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Linglib.Logic.Modal.Extensional
 
 /-!
 # Kamp (1975): Two theories about adjectives
@@ -43,6 +45,8 @@ contradictions.
 * [klein-1980]
 * [partee-2010]
 -/
+
+@[expose] public section
 
 namespace Kamp1975
 
@@ -177,11 +181,11 @@ verdict (`kampMeasureLe_total`). Kamp's own scenario is asymmetric
 wrongly makes Smith cleverer); this symmetric toy witnesses the
 incomparability and the forced verdict, not that specific outcome. -/
 
-private inductive Crit | problemSolving | quickWit deriving DecidableEq
+inductive Crit | problemSolving | quickWit deriving DecidableEq
 
-private inductive P2 | smith | jones deriving DecidableEq
+inductive P2 | smith | jones deriving DecidableEq
 
-private def cleverExt : Crit → P2 → Prop
+def cleverExt : Crit → P2 → Prop
   | .problemSolving, .smith => True
   | .quickWit,       .jones => True
   | _,               _      => False

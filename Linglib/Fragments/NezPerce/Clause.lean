@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Data.UD.Features
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Data.UD.Features
 
 /-!
 # Nez Perce clausal embedding
@@ -25,6 +27,8 @@ of `Data/Examples/Deal2026.json`, and the relative-embedding analysis is
 * [deal-2016a]
 * [noonan-2007]
 -/
+
+@[expose] public section
 
 namespace NezPerce
 

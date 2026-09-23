@@ -1,16 +1,18 @@
-import Linglib.Fragments.Adyghe.Clause
-import Linglib.Fragments.Bulgarian.Clause
-import Linglib.Fragments.Ndebele.Clause
-import Linglib.Fragments.NezPerce.Clause
-import Linglib.Data.Examples.Deal2026
-import Linglib.Data.Examples.Krapova2010
-import Linglib.Studies.BochnakHanink2021
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
-import Linglib.Semantics.Presupposition.Environment
-import Linglib.Studies.Karttunen1971b
-import Linglib.Syntax.Minimalist.Clause.Spine
-import Linglib.Semantics.Presupposition.Verb
-import Linglib.Semantics.Attitudes.Verb
+module
+
+public import Linglib.Fragments.Adyghe.Clause
+public import Linglib.Fragments.Bulgarian.Clause
+public import Linglib.Fragments.Ndebele.Clause
+public import Linglib.Fragments.NezPerce.Clause
+public import Linglib.Data.Examples.Deal2026
+public import Linglib.Data.Examples.Krapova2010
+public import Linglib.Studies.BochnakHanink2021
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Semantics.Presupposition.Environment
+public import Linglib.Studies.Karttunen1971b
+public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Deal (2026): Clausal complementation as relativization, revisited
@@ -70,6 +72,8 @@ against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
 * [karttunen-1971b]
 * [tonhauser-beaver-roberts-simons-2013]
 -/
+
+@[expose] public section
 
 namespace Deal2026
 

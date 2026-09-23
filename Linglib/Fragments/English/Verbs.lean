@@ -1,11 +1,15 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Voice.Basic
-import Linglib.Semantics.ArgumentStructure.LevinClass.Members
-import Linglib.Syntax.Clause.Complementation
-import Linglib.Morphology.Word.Basic
-import Linglib.Fragments.English.Inflection
-import Linglib.Fragments.English.Adposition
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Voice.Basic
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
+public import Linglib.Syntax.Clause.Complementation
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Fragments.English.Inflection
+public import Linglib.Fragments.English.Adposition
+
+@[expose] public section
 
 open Morphology (Word Features)
 

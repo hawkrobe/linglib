@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # French comparative data
@@ -8,6 +10,8 @@ standard (WALS Ch 121A: particle, [stassen-2013]) and the free word *plus*
 marks degree; the superlative is the definite article plus the comparative
 (*le plus grand*).
 -/
+
+@[expose] public section
 
 namespace French.Comparison
 

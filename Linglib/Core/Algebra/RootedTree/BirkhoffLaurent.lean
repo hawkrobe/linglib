@@ -3,8 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
-import Linglib.Core.Algebra.RotaBaxterLaurent
+module
+
+public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
+public import Linglib.Core.Algebra.RotaBaxterLaurent
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

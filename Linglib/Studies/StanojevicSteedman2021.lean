@@ -1,9 +1,14 @@
-import Mathlib.Combinatorics.Enumerative.Schroder
-import Mathlib.Data.List.Permutation
-import Mathlib.Tactic.NormNum
-import Linglib.Core.Data.Nat.ToString
-import Linglib.Syntax.CCG.Grammar
-import Linglib.Studies.Cinque2005
+module
+
+public import Mathlib.Combinatorics.Enumerative.Schroder
+public import Mathlib.Data.List.Permutation
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Algebra.Order.Interval.Finset.SuccPred
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Nat.SuccPred
+public import Linglib.Core.Data.Nat.ToString
+public import Linglib.Syntax.CCG.Grammar
+public import Linglib.Studies.Cinque2005
 
 /-!
 # Stanojević and Steedman (2021): Formal Basis of a Language Universal
@@ -55,6 +60,8 @@ a permutation from a derived string.
 * [nchare-2012]
 * [abels-2016]
 -/
+
+@[expose] public section
 
 namespace StanojevicSteedman2021
 

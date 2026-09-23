@@ -1,11 +1,13 @@
-import Linglib.Syntax.Reciprocal
-import Linglib.Studies.Siloni2012
-import Linglib.Studies.Winter2018
-import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
-import Linglib.Fragments.Romance.Catalan.Reciprocals
-import Linglib.Fragments.Romance.Italian.Reciprocals
-import Linglib.Fragments.Romance.Spanish.Reciprocals
-import Linglib.Fragments.Swahili.Reciprocals
+module
+
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Studies.Siloni2012
+public import Linglib.Studies.Winter2018
+public import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
+public import Linglib.Fragments.Romance.Catalan.Reciprocals
+public import Linglib.Fragments.Romance.Italian.Reciprocals
+public import Linglib.Fragments.Romance.Spanish.Reciprocals
+public import Linglib.Fragments.Swahili.Reciprocals
 
 /-!
 # Palmieri (2024): Lexical and Grammatical Reciprocity
@@ -49,6 +51,8 @@ chapters and the questionnaires are not otherwise formalized.
 * [winter-2018]
 * [kemmer-1993]
 -/
+
+@[expose] public section
 
 namespace Palmieri2024
 

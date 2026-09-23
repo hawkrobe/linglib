@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Semantics.ArgumentStructure.ThetaRole
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Semantics.ArgumentStructure.ThetaRole
 
 /-!
 # Verb arguments
@@ -19,6 +21,8 @@ frame), never a stored feature.
 * [dowty-1991]
 * [haspelmath-2021]
 -/
+
+@[expose] public section
 
 open ArgumentStructure
 

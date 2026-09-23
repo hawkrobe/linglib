@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.QUD
+module
+
+public import Linglib.Pragmatics.RSA.QUD
 
 /-!
 # Kao, Bergen and Goodman (2014): Formalizing the Pragmatics of Metaphor Understanding
@@ -33,6 +35,8 @@ elicited priors of thirty-two animals, not printed in the paper, and are not sta
 
 * [kao-etal-2014-metaphor]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

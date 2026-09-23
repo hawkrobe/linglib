@@ -1,8 +1,12 @@
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
-import Linglib.Core.Combinatorics.RootedTree.Conservation
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Mathlib.RingTheory.HopfAlgebra.TensorProduct
-import Mathlib.RingTheory.Coalgebra.Convolution
+module
+
+public import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
+public import Linglib.Core.Combinatorics.RootedTree.Conservation
+public import Mathlib.RingTheory.HopfAlgebra.Basic
+public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
+public import Mathlib.RingTheory.Coalgebra.Convolution
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 
@@ -677,7 +681,7 @@ private theorem antipodeAlgHomN_axiom_at_of' (F : Forest (UnorderedTree α)) :
   rw [comulAlgHomN_apply_of']
   exact antipodeAlgHomN_axiom_forest F
 
-private theorem antipode_rTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
+theorem antipode_rTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
     (Algebra.TensorProduct.lift (antipodeAlgHomN (R := R))
       (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (fun _ _ => Commute.all _ _)).comp
@@ -796,7 +800,7 @@ private theorem antipodeAlgHomN_axiom_at_of'_lTensor
   rw [antipodeAlgHomN_eq_antipodeRightAlgHomN]
   exact antipodeRightAlgHomN_axiom_at_of' F
 
-private theorem antipode_lTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
+theorem antipode_lTensor_axiom [DecidableEq α] [CharZero R] [NoZeroDivisors R] :
     (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
       (antipodeAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)).comp

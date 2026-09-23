@@ -1,7 +1,9 @@
-import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
-import Linglib.Core.Computability.NonContextFree.AmBnCmDn
-import Linglib.Fragments.SwissGerman.Case
-import Linglib.Data.Examples.Shieber1985
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
+public import Linglib.Core.Computability.NonContextFree.AmBnCmDn
+public import Linglib.Fragments.SwissGerman.Case
+public import Linglib.Data.Examples.Shieber1985
 
 /-!
 # Shieber (1985): Evidence Against the Context-Freeness of Natural Language
@@ -48,6 +50,8 @@ case-matched clause in cross-serial order is in the language (`tokens_mem_swissG
 * [bresnan-etal-1982]
 * [gazdar-pullum-1982]
 -/
+
+@[expose] public section
 
 namespace Shieber1985
 

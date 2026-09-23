@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Control.Basic
-import Linglib.Semantics.Composition.Ty
-import Linglib.Studies.Landau2015
+module
+
+public import Linglib.Syntax.Control.Basic
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Studies.Landau2015
 
 /-!
 # Landau (2024): Control
@@ -45,6 +47,8 @@ being validated on the English inventory rather than derived.
 * [postal-1970]
 * [grano-2015]
 -/
+
+@[expose] public section
 
 namespace Landau2024
 

@@ -1,8 +1,10 @@
-import Linglib.Core.MeasureTheory.Measure.Prod
-import Linglib.Core.Probability.Moments.Covariance
-import Linglib.Core.Probability.UniformOn
-import Mathlib.Probability.Kernel.Posterior
-import Mathlib.MeasureTheory.Measure.Real
+module
+
+public import Linglib.Core.MeasureTheory.Measure.Prod
+public import Linglib.Core.Probability.Moments.Covariance
+public import Linglib.Core.Probability.UniformOn
+public import Mathlib.Probability.Kernel.Posterior
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # Exact Bayes for the posterior kernel at atoms
@@ -29,6 +31,8 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
   `posterior_uniformOn_univ_real_finset` — Bayes against the uniform prior, the prior
   cancelling.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

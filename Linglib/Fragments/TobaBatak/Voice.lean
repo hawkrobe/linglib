@@ -1,4 +1,6 @@
-import Linglib.Syntax.Voice.System
+module
+
+public import Linglib.Syntax.Voice.System
 
 /-!
 # Toba Batak voice
@@ -31,6 +33,8 @@ support them, live in the studies that propose them.
 * [cole-hermon-2008]
 * [erlewine-2018]
 -/
+
+@[expose] public section
 
 namespace TobaBatak
 

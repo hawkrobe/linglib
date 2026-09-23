@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Turkish Comparative Construction [stassen-1985]
@@ -18,6 +20,8 @@ The optional adverb *daha* ('more') may intensify but is not required. No
 superlative strategy is recorded: the free superlative word *en* fits none of
 `SuperlativeStrategy`'s cases.
 -/
+
+@[expose] public section
 
 namespace Turkish.Comparison
 

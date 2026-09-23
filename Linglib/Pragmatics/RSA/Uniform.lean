@@ -1,7 +1,9 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Pragmatics.RSA.Profile
-import Linglib.Core.Probability.UniformOn
-import Linglib.Semantics.Reference.Distinguishing
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.RSA.Profile
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Semantics.Reference.Distinguishing
 
 /-!
 # The uniform-prior RSA model
@@ -30,6 +32,8 @@ inequalities (`Multiset.divPowSum`).
 * `RSA.uniformJointListener_fst_real_lt_of_divPowSum`,
   `RSA.uniformJointListener_snd_real_lt_of_divPowSum` — the evaluation register.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

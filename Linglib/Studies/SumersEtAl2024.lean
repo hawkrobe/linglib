@@ -1,7 +1,9 @@
-import Linglib.Pragmatics.RSA.Decision
-import Linglib.Pragmatics.RSA.Uniform
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+
+public import Linglib.Pragmatics.RSA.Decision
+public import Linglib.Pragmatics.RSA.Uniform
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Sumers, Ho, Griffiths, and Hawkins (2024): Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility
@@ -78,6 +80,8 @@ not formalized.
 * [van-der-henst-etal-2002]
 * [qing-franke-2015]
 -/
+
+@[expose] public section
 
 namespace SumersEtAl2024
 

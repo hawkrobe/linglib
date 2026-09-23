@@ -1,14 +1,16 @@
-import Mathlib.Order.Monotone.Defs
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.Examples.Haspelmath2021
-import Linglib.Discourse.Givenness
-import Linglib.Semantics.Reference.Definiteness
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Studies.BejarRezac2009
-import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Syntax.Clause.Scenario
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Person.Class
+module
+
+public import Mathlib.Order.Monotone.Defs
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Haspelmath2021
+public import Linglib.Discourse.Givenness
+public import Linglib.Semantics.Reference.Definiteness
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Studies.BejarRezac2009
+public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Clause.Scenario
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Class
 
 /-!
 # Haspelmath (2021): Role-reference associations and the explanation of argument coding splits
@@ -84,6 +86,8 @@ universals exclude.
 * [haspelmath-2021b]
 * [bejar-rezac-2009]
 -/
+
+@[expose] public section
 
 namespace Haspelmath2021
 
@@ -757,7 +761,7 @@ def prominence? (table : List (String × α)) (e : LinguisticExample) : Option �
   e.parse? "prominence" table
 
 /-- The two sides of `X > Y`, by a structural scan so that `decide` can evaluate it. -/
-private def splitGt : List Char → Option (List Char × List Char)
+def splitGt : List Char → Option (List Char × List Char)
   | [] => none
   | ' ' :: '>' :: ' ' :: rest => some ([], rest)
   | c :: rest => (splitGt rest).map fun p ↦ (c :: p.1, p.2)

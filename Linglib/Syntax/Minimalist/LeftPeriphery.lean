@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.QParticleLayer
-import Linglib.Fragments.English.Verbs
-import Linglib.Semantics.Presupposition.Verb
+module
+
+public import Linglib.Semantics.Questions.QParticleLayer
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Semantics.Presupposition.Verb
 
 /-!
 # The interrogative left periphery
@@ -20,6 +22,8 @@ ignorance open, PerspP.
 * [dayal-2025]
 * [mccloskey-2006]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

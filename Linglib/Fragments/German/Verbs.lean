@@ -1,8 +1,10 @@
-import Linglib.Semantics.Presupposition.Verb
-import Linglib.Semantics.Root.Kinds
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Semantics.Root.Kinds
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # German verbs
@@ -29,6 +31,8 @@ The present indicative of *kaufen* 'buy' by person and number, `kaufen`, is the 
 [dalrymple-kaplan-2000]: the first and third plural share *kaufen*, the second plural and the
 third singular share *kauft*.
 -/
+
+@[expose] public section
 
 namespace German.Verbs
 

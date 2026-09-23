@@ -1,7 +1,9 @@
-import Linglib.Syntax.Agreement.Allocutive
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Category.Pronoun.Reciprocal
-import Linglib.Syntax.Category.Pronoun.Reflexive
+module
+
+public import Linglib.Syntax.Agreement.Allocutive
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Reciprocal
+public import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
 # Japanese pronouns and the addressee-honorific marker
@@ -19,6 +21,8 @@ complementizer when embedded ([alok-bhalla-2026] (14)–(15), (33)).
 * [E. Ochs, *Indexing Gender* (1992)][ochs-1992]
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
+
+@[expose] public section
 
 namespace Japanese.Pronouns
 

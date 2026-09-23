@@ -1,5 +1,7 @@
-import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Swahili.Verbs
+module
+
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Fragments.Swahili.Verbs
 
 /-!
 # Swahili reciprocals
@@ -17,6 +19,8 @@ forms the discontinuous reciprocal (exx. 37, 40). The suffix is distinct from th
 * [G. Palmieri, *Lexical and Grammatical Reciprocity: Perspectives from Romance, Bantu and
   Beyond* (2024)][palmieri-2024]
 -/
+
+@[expose] public section
 
 namespace Swahili.Reciprocals
 

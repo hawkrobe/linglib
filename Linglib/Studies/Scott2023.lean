@@ -1,8 +1,11 @@
-import Linglib.Fragments.Mayan.Mam.Agreement
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Morphology.DistributedMorphology.Impoverishment
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Data.Examples.Scott2023
+module
+
+public import Linglib.Fragments.Mayan.Mam.Agreement
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Morphology.DistributedMorphology.Impoverishment
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Data.Examples.Scott2023
+import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
 # Scott (2023): Pronouns and Agreement in San Juan Atitán Mam
@@ -53,6 +56,8 @@ dissertation's judgments (`Data/Examples/Scott2023`) instantiate the derivation
 * [harbour-2016]
 * [noyer-1992]
 -/
+
+@[expose] public section
 
 open Mam DistributedMorphology Minimalist Morphology Data.Examples
 

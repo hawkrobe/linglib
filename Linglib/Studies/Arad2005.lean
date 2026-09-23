@@ -1,10 +1,13 @@
-import Linglib.Morphology.Realization
-import Linglib.Morphology.Morphotactics.CVTemplate
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Fragments.Hebrew.ConsonantalRoots
-import Linglib.Data.Examples.Arad2005
-import Mathlib.Data.List.Destutter
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Fragments.Hebrew.ConsonantalRoots
+public import Linglib.Data.Examples.Arad2005
+public import Mathlib.Data.List.Destutter
+public import Mathlib.Tactic.DeriveFintype
+import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
 # Arad 2005: roots and patterns in Hebrew
@@ -36,6 +39,8 @@ into the binyan, where a root-derived verb associates bare consonants to the tem
 * [mccarthy-1981] — root-to-template association
 * [bat-el-1994] — stem modification and cluster transfer
 -/
+
+@[expose] public section
 
 namespace Arad2005
 

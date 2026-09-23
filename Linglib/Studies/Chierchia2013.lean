@@ -1,10 +1,12 @@
-import Linglib.Logic.Natural.Soundness
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Exhaustification.Antiexhaustive
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Fragments.English.PolarityItems
-import Linglib.Fragments.Romance.Italian.PolarityItems
-import Linglib.Data.Examples.Chierchia2013
+module
+
+public import Linglib.Logic.Natural.Soundness
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.Exhaustification.Antiexhaustive
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.Romance.Italian.PolarityItems
+public import Linglib.Data.Examples.Chierchia2013
 
 /-!
 # Chierchia (2013): Logic in Grammar
@@ -30,6 +32,8 @@ from the licensing keystone applied to the Fragment entries.
 * [chierchia-2013]
 * [ladusaw-1979]
 -/
+
+@[expose] public section
 
 namespace Chierchia2013
 
@@ -176,7 +180,7 @@ theorem licenses_any_not_ever_iff (c : LicensingContext) :
 
 /-! ### The rows -/
 
-private def Position.ofKey : String → Option Position
+def Position.ofKey : String → Option Position
   | "matrix" => some .matrix
   | "conditionalConsequent" => some .conditionalConsequent
   | "everyScope" => some .everyScope
@@ -190,7 +194,7 @@ private def Position.ofKey : String → Option Position
   | "imperative" => some (.licensing .imperative)
   | _ => none
 
-private def item : String → Option Item
+def item : String → Option Item
   | "any" => some English.PolarityItems.any
   | "ever" => some English.PolarityItems.ever
   | "alcuno" => some Italian.PolarityItems.alcuno

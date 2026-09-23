@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.QUD
-import Linglib.Data.Examples.Warstadt2022
+module
+
+public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Data.Examples.Warstadt2022
 
 /-!
 # Warstadt (2022): Presupposition Triggering Reflects Pragmatic Reasoning About Utterance Utility
@@ -42,6 +44,8 @@ family-genus-species listener of Figure 3 is not formalized.
 * [frank-goodman-2012]
 * [stalnaker-1978]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

@@ -1,6 +1,12 @@
-import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Data.Examples.AnandNevins2004
-import Mathlib.Data.List.Basic
+module
+
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Data.Examples.AnandNevins2004
+public import Mathlib.Data.List.Basic
+import all Init.Data.String.Pattern.Basic  -- for unfolding `String.Slice.Pattern.Internal.memcmpSlice`
+import all Init.Data.String.Pattern.String  -- for unfolding `String.Slice.Pattern.ForwardSliceSearcher.skipPrefix?`, `String.Slice.Pattern.ForwardSliceSearcher.startsWith`
+import all Init.Data.String.Slice  -- for unfolding `String.Slice.startsWith`
+import all Init.Data.String.TakeDrop  -- for unfolding `String.startsWith`
 
 /-!
 # Anand & Nevins 2004: shifty operators in changing contexts
@@ -31,6 +37,8 @@ pair verbs with operator options.
 * [schlenker-2003] — the lexical-underspecification rival and the Amharic data
 * [stalnaker-1978] — `Op.all` as the diagonal operator
 -/
+
+@[expose] public section
 
 namespace AnandNevins2004
 

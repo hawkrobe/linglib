@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.Bidirectional
-import Linglib.Semantics.Root.Defs
-import Linglib.Fragments.English.Verbs
+module
+
+public import Linglib.Pragmatics.Bidirectional
+public import Linglib.Semantics.Root.Defs
+public import Linglib.Fragments.English.Verbs
 
 /-!
 # Martin, Rose and Nichols (2025): Burning facts: thick and thin causatives
@@ -72,6 +74,8 @@ non-alternating, against the fragment, which gives it an unaccusative frame.
 * [wolff-2003] — the directness constraint, as the paper quotes it.
 * [blutner-2000], [horn-1984] — weak bidirectional optimality and the division of labour.
 -/
+
+@[expose] public section
 
 namespace MartinRoseNichols2025
 

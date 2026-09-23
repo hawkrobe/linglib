@@ -1,10 +1,12 @@
-import Linglib.Semantics.Degree.Scale
-import Linglib.Semantics.Degree.Measure.Temporal
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Adjectives
-import Mathlib.Order.Max
-import Mathlib.Order.Bounds.Basic
+module
+
+public import Linglib.Semantics.Degree.Scale
+public import Linglib.Semantics.Degree.Measure.Temporal
+public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Adjectives
+public import Mathlib.Order.Max
+public import Mathlib.Order.Bounds.Basic
 
 /-!
 # Kennedy and Levin (2008): Measure of Change
@@ -44,6 +46,8 @@ boundedness is `Degree.Boundedness`. The measure-phrase and degree-modifier comp
 * [hay-kennedy-levin-1999]
 * [kennedy-2007]
 -/
+
+@[expose] public section
 
 namespace KennedyLevin2008
 

@@ -1,12 +1,14 @@
-import Linglib.Logic.Modal.Basic
-import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Events.Closure
-import Linglib.Data.Examples.Grano2024
-import Linglib.Fragments.Greek.StandardModern.Verbs
-import Linglib.Fragments.Portuguese.Verbs
-import Linglib.Fragments.Romance.Italian.Verbs
-import Linglib.Fragments.Romance.Spanish.Verbs
-import Linglib.Fragments.Romanian.Verbs
+module
+
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Semantics.Events.Closure
+public import Linglib.Data.Examples.Grano2024
+public import Linglib.Fragments.Greek.StandardModern.Verbs
+public import Linglib.Fragments.Portuguese.Verbs
+public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Fragments.Romanian.Verbs
 
 /-!
 # Grano (2024): Intention Reports and Eventuality Abstraction in a Theory of Mood Choice
@@ -60,6 +62,8 @@ non-control complements under 'intend' altogether are recorded as rows without a
 * [heim-1992]
 * [higginbotham-1983]
 -/
+
+@[expose] public section
 
 namespace Grano2024
 

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
-import Linglib.Core.Algebra.RotaBaxterLaurent
-import Linglib.Core.Algebra.RootedTree.HopfAlgebra
-import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
+module
+
+public import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
+public import Linglib.Core.Algebra.RotaBaxterLaurent
+public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
+public import Linglib.Core.Algebra.RootedTree.BirkhoffLaurent
 
 /-!
 # Minimal Yield in the Laurent-series ring
@@ -47,6 +49,8 @@ transformations, as `ψt` does, the polar part is the sum over the divergent one
 * [marcolli-chomsky-berwick-2025], §3.5.2 (Propositions 3.5.2, 3.5.3, 3.5.6, Corollary 3.5.4,
   Lemma 3.5.5)
 -/
+
+@[expose] public section
 
 namespace Minimalist.MinimalYield
 

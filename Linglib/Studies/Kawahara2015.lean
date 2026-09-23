@@ -1,8 +1,11 @@
-import Linglib.Phonology.Prosody.Syllable
-import Mathlib.Data.List.ReduceOption
-import Mathlib.Data.Nat.PSub
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Fragments.Japanese.Prosody
+module
+
+public import Linglib.Phonology.Prosody.Syllable
+public import Mathlib.Data.List.ReduceOption
+public import Mathlib.Data.Nat.PSub
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Fragments.Japanese.Prosody
+import all Init.Data.List.Scan.Basic  -- for unfolding `List.scanl`
 
 /-!
 # Kawahara (2015): The Phonology of Japanese Accent
@@ -22,6 +25,8 @@ lives in `Fragments/Japanese/Prosody.lean`.
 * [kawahara-2015]
 * [mccawley-1968], [hayes-1995], [prince-smolensky-1993], [kubozono-2006]
 -/
+
+@[expose] public section
 
 namespace Kawahara2015
 

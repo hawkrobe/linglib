@@ -3,12 +3,16 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.BigOperators.Multiset
-import Linglib.Core.Data.Multiset.FilterMap
-import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
-import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
-import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
-import Linglib.Core.Data.UnorderedTree.FilterMap
+module
+
+public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Data.Multiset.FilterMap
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
+public import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
+public import Linglib.Core.Data.UnorderedTree.FilterMap
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

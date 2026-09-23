@@ -1,8 +1,10 @@
-import Mathlib.Data.Set.Subsingleton
-import Linglib.Semantics.ArgumentStructure.Affectedness
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.ThematicRole
-import Linglib.Semantics.Events.Basic
+module
+
+public import Mathlib.Data.Set.Subsingleton
+public import Linglib.Semantics.ArgumentStructure.Affectedness
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.ArgumentStructure.ThematicRole
+public import Linglib.Semantics.Events.Basic
 
 /-!
 # Bhadra 2024: verb roots encode outcomes
@@ -53,6 +55,8 @@ carriers for distinct objects.
 * [beavers-2011]: the affectedness hierarchy and the potential-for-change class.
 * [dowty-1991]: the *un-*/*re-* split in verb meaning.
 -/
+
+@[expose] public section
 
 namespace Bhadra2024
 
@@ -232,12 +236,12 @@ theorem not_reSem_of_outcome_not_threshold (k : StateFunction Entity State T)
 section Examples
 
 /-- The base event. -/
-private def ev₁ : Event ℤ where
+def ev₁ : Event ℤ where
   runtime := ⟨⟨0, 5⟩, by omega⟩
   sort := .action
 
 /-- The prefixed event. -/
-private def ev₂ : Event ℤ where
+def ev₂ : Event ℤ where
   runtime := ⟨⟨10, 15⟩, by omega⟩
   sort := .action
 
@@ -245,19 +249,19 @@ private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂
   show (5 : ℤ) < 10; omega
 
 /-- The base predicate of every worked root: it holds of the scenario's two events. -/
-private def acts : EventRel ℤ Unit := fun e _ => e = ev₁ ∨ e = ev₂
+def acts : EventRel ℤ Unit := fun e _ => e = ev₁ ∨ e = ev₂
 
 private theorem acts_ev₁ : acts ev₁ () := Or.inl rfl
 private theorem acts_ev₂ : acts ev₂ () := Or.inr rfl
 
 /-- A root whose action carries the object from `start` to `result` at the base event and
 again at the prefixed event, both acting on the same object. -/
-private def twice {State : Type*} (start result : State) : StateFunction Unit State ℤ :=
+def twice {State : Type*} (start result : State) : StateFunction Unit State ℤ :=
   fun t _ => if t ≤ 0 then start else result
 
 /-- A root whose action carries the object from `start` to `result` at the base event and
 back to `start` at the prefixed event. -/
-private def andBack {State : Type*} (start result : State) : StateFunction Unit State ℤ :=
+def andBack {State : Type*} (start result : State) : StateFunction Unit State ℤ :=
   fun t _ => if t ≤ 0 then start else if t ≤ 10 then result else start
 
 /-- States of a parchment under folding (54). -/

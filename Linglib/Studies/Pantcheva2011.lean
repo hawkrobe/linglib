@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Contiguity
-import Linglib.Syntax.Case.Order
+module
+
+public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Syntax.Case.Order
 
 /-!
 # Pantcheva (2011): Decomposing Path
@@ -34,6 +36,8 @@ are its corollaries. The attested lexicalization patterns of §9.3.1 are describ
 * [bobaljik-2012]
 * [caha-2009]
 -/
+
+@[expose] public section
 
 namespace Pantcheva2011
 

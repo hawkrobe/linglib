@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Insert
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Voice.Basic
+module
+
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Reciprocal constructions: morphosyntactic typology
@@ -71,6 +73,8 @@ adverb shows no link to the predicate and does not distribute like an argument, 
 * [maslova-2008]
 * [hurst-2012]
 -/
+
+@[expose] public section
 
 namespace Reciprocal
 

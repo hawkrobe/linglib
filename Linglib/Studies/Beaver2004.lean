@@ -1,9 +1,12 @@
-import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.GrammaticalRole
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Data.Examples.Beaver2004
+module
+
+public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Data.Examples.Beaver2004
+import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Beaver (2004): The Optimization of Discourse Anaphora
@@ -42,6 +45,8 @@ filters out.
 * [poesio-stevenson-eugenio-hitzeman-2004]: Centering: a parametric theory and
   its instantiations.
 -/
+
+@[expose] public section
 
 namespace Beaver2004
 

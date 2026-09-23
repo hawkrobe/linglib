@@ -1,4 +1,6 @@
-import Linglib.Syntax.Voice.Basic
+module
+
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Japanese voice
@@ -26,6 +28,8 @@ subject taking *ni* only; the substitution of *niyotte* is Jo and Seo's test for
 * [jo-seo-2023]
 * [ozaki-2026]
 -/
+
+@[expose] public section
 
 namespace Japanese
 

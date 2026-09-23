@@ -1,6 +1,10 @@
-import Linglib.Data.UD.UPOS
-import Linglib.Morphology.Word.Basic
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Data.UD.UPOS
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Syntax.Reciprocal
+
+@[expose] public section
 
 open Morphology (Word Features)
 

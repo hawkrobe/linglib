@@ -1,11 +1,14 @@
-import Mathlib.Data.Fin.VecNotation
-import Linglib.Data.Examples.ColeHermon2008
-import Linglib.Fragments.TobaBatak.Voice
-import Linglib.Semantics.ArgumentStructure.ThetaRole
-import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Syntax.Minimalist.Movement.Freezing
-import Linglib.Syntax.Minimalist.Movement.Reconstruction
-import Linglib.Syntax.Minimalist.Movement.Remnant
+module
+
+public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Data.Examples.ColeHermon2008
+public import Linglib.Fragments.TobaBatak.Voice
+public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.Valency
+public import Linglib.Syntax.Minimalist.Movement.Freezing
+public import Linglib.Syntax.Minimalist.Movement.Reconstruction
+public import Linglib.Syntax.Minimalist.Movement.Remnant
+import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
 # Cole and Hermon 2008: VP raising in a VOS language
@@ -88,6 +91,8 @@ contrast.
 * [C. Collins, *A Smuggling Approach to the Passive in English* (2005)][collins-2005]
 -/
 
+@[expose] public section
+
 open ArgumentStructure
 
 namespace ColeHermon2008
@@ -126,10 +131,10 @@ structure Clause where
   goal : Option LIToken
 
 /-- The silent light verb. -/
-private def v₀ : LIToken := ⟨.simple .v [], 6⟩
+def v₀ : LIToken := ⟨.simple .v [], 6⟩
 
 /-- The `i`-th functional head F, for `i ≥ 1`. -/
-private def F (i : ℕ) : LIToken := ⟨.simple .T [], 6 + i⟩
+def F (i : ℕ) : LIToken := ⟨.simple .T [], 6 + i⟩
 
 /-- The side at which each of the five base Merges attaches its item. -/
 abbrev Sides := Fin 5 → Side
@@ -309,17 +314,17 @@ def Clause.derivation (c : Clause) : OrderHypothesis → WordOrder → Derivatio
 
 /-- The value of a row's feature, read through a table; `List.lookup` keeps key and value in
 one universe. -/
-private def voices : List (String × Voice) :=
+def voices : List (String × Voice) :=
   [("active", TobaBatak.actorVoice), ("passive", TobaBatak.objectVoice)]
-private def orders : List (String × WordOrder) := [("VOS", .vos), ("SVO", .svo)]
-private def args : List (String × Arg) :=
+def orders : List (String × WordOrder) := [("VOS", .vos), ("SVO", .svo)]
+def args : List (String × Arg) :=
   [("agent", .core .external), ("patient", .core .internal), ("goal", .goal)]
 
 /-- Toba Batak's Glottocode. -/
-private def tobaBatak : Data.Examples.Glottocode := "bata1289"
+def tobaBatak : Data.Examples.Glottocode := "bata1289"
 
 /-- English's Glottocode. -/
-private def english : Data.Examples.Glottocode := "stan1293"
+def english : Data.Examples.Glottocode := "stan1293"
 
 /-! ### Extraction (§3.2, §4, §5) -/
 
@@ -501,9 +506,9 @@ theorem surface_sides (σ : Sides) :
 
 /-! ### English passives (§7) -/
 
-private def wasInjured : LIToken := ⟨.simple .V [] (phonForm := "was injured"), 21⟩
-private def theBoy : LIToken := ⟨.simple .N [] (phonForm := "the boy"), 22⟩
-private def byHimself : LIToken := ⟨.simple .P [] (phonForm := "by himself"), 23⟩
+def wasInjured : LIToken := ⟨.simple .V [] (phonForm := "was injured"), 21⟩
+def theBoy : LIToken := ⟨.simple .N [] (phonForm := "the boy"), 22⟩
+def byHimself : LIToken := ⟨.simple .P [] (phonForm := "by himself"), 23⟩
 
 /-- The English passive (97)–(98) of (95): the patient as [larson-1988]'s specifier of VP, the
 agent an adjunct, a *by*-phrase leaf below it, and no argument in Spec,vP, since the passive

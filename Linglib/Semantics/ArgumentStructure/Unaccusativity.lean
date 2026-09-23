@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Unaccusativity
@@ -17,6 +19,8 @@ the entry's voice where one is recorded, and otherwise off its frames.
 
 * [kratzer-1996]
 -/
+
+@[expose] public section
 
 /-- The verb is unaccusative when its voice, if recorded, introduces no external argument, and
 otherwise when some frame of its has none, its sole argument being the underlying object. -/

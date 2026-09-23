@@ -1,8 +1,10 @@
-import Linglib.Syntax.Minimalist.Ellipsis
-import Linglib.Semantics.Root.Defs
-import Linglib.Syntax.Minimalist.Verbal.LittleV
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Dargwa.ComplexPredicates
+module
+
+public import Linglib.Syntax.Minimalist.Ellipsis
+public import Linglib.Semantics.Root.Defs
+public import Linglib.Syntax.Minimalist.Verbal.LittleV
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
 # Kalyakin (2026): VP ellipsis and argument structure alternations in Muira Dargwa
@@ -29,6 +31,8 @@ finds that Persian, unlike Muira Dargwa, respects Goldberg's Verbal Identity Req
 * [cuervo-2003]
 * [anand-hardt-mccloskey-2021]
 -/
+
+@[expose] public section
 
 namespace Kalyakin2026
 

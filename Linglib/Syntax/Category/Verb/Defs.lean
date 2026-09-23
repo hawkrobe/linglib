@@ -1,21 +1,23 @@
-import Linglib.Syntax.Clause.Complementation
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Presupposition.TriggerTypology
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.Attitudes.Basic
-import Linglib.Semantics.Causation.VerbClass
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Logic.Natural.Basic
-import Linglib.Semantics.Aspect.Phasal
-import Linglib.Semantics.Causation.Implicative
-import Linglib.Semantics.ArgumentStructure.ThetaRole
-import Linglib.Semantics.Causation.Psych
-import Linglib.Semantics.Degree.Scale
-import Linglib.Semantics.Degree.Antonymy
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.Root.Defs
+module
+
+public import Linglib.Syntax.Clause.Complementation
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Presupposition.TriggerTypology
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Attitudes.Basic
+public import Linglib.Semantics.Causation.VerbClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Logic.Natural.Basic
+public import Linglib.Semantics.Aspect.Phasal
+public import Linglib.Semantics.Causation.Implicative
+public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.Causation.Psych
+public import Linglib.Semantics.Degree.Scale
+public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Semantics.Root.Defs
 
 /-! # Verb entry — core type
 
@@ -47,6 +49,8 @@ these fields in `Syntax/Category/Verb/Basic.lean`.
 * [rappaport-hovav-levin-1998]
 * [solstad-bott-2024]
 -/
+
+@[expose] public section
 
 open Aspect ArgumentStructure Presupposition
 open NaturalLogic (Signature)

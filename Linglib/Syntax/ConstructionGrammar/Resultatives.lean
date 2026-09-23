@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.ThetaRole
-import Linglib.Semantics.Degree.Boundedness
+module
+
+public import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.Degree.Boundedness
 
 /-!
 # The resultative construction family
@@ -35,6 +37,8 @@ and its argument roles fuse with the verb's under a semantic coherence principle
 * [kennedy-2007] — scale structure and the boundedness of the result phrase.
 * [mueller-2013] — the constructional network.
 -/
+
+@[expose] public section
 
 namespace ConstructionGrammar.Resultatives
 

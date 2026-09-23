@@ -1,12 +1,14 @@
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Fragments.English.Adposition
-import Linglib.Syntax.DependencyGrammar.Valency
-import Linglib.Syntax.Voice.Basic
-import Linglib.Syntax.DependencyGrammar.Catena
-import Linglib.Syntax.DependencyGrammar.Basic
+module
+
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Fragments.English.Adposition
+public import Linglib.Syntax.DependencyGrammar.Valency
+public import Linglib.Syntax.Voice.Basic
+public import Linglib.Syntax.DependencyGrammar.Catena
+public import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # Osborne (2019): A Dependency Grammar of English
@@ -42,6 +44,8 @@ function-word-headed trees mark it with ↑ as a dependent of the finite auxilia
 * [tesniere-1959]
 -/
 
+@[expose] public section
+
 namespace Osborne2019
 
 open DependencyGrammar
@@ -49,27 +53,27 @@ open Morphology (Word)
 
 /-! ### Words from the Fragment lexicon -/
 
-private abbrev john := English.Nouns.john.toWord
-private abbrev mary := English.Nouns.mary.toWord
-private abbrev ball := English.Nouns.ball.toWordSg
-private abbrev book := English.Nouns.book.toWordSg
-private abbrev pizza := English.Nouns.pizza.toWordSg
-private abbrev the_ := English.Determiners.the.toWord
-private abbrev was_ := English.Auxiliaries.was.toWord
-private abbrev by_ := English.Adpositions.by_.toWord
-private abbrev to_ := English.Adpositions.to_.toWord
-private abbrev sleeps := English.sleep.toWord .thirdSg
-private abbrev devours := English.devour.toWord .thirdSg
-private abbrev gives := English.give.toWord .thirdSg
+abbrev john := English.Nouns.john.toWord
+abbrev mary := English.Nouns.mary.toWord
+abbrev ball := English.Nouns.ball.toWordSg
+abbrev book := English.Nouns.book.toWordSg
+abbrev pizza := English.Nouns.pizza.toWordSg
+abbrev the_ := English.Determiners.the.toWord
+abbrev was_ := English.Auxiliaries.was.toWord
+abbrev by_ := English.Adpositions.by_.toWord
+abbrev to_ := English.Adpositions.to_.toWord
+abbrev sleeps := English.sleep.toWord .thirdSg
+abbrev devours := English.devour.toWord .thirdSg
+abbrev gives := English.give.toWord .thirdSg
 private abbrev kicked := English.kick.toWord .past
-private abbrev kickedPass := English.kick.passiveParticiple
-private abbrev givenPass := English.give.passiveParticiple
-private abbrev a_ := English.Determiners.a.toWord
-private abbrev manages := English.manage.toWord .thirdSg
-private abbrev persuaded := English.persuade.toWord .past
-private abbrev seems := English.seem.toWord .thirdSg
-private abbrev sleep_ := English.sleep.toWord .base
-private abbrev run_ := English.run.toWord .base
+abbrev kickedPass := English.kick.passiveParticiple
+abbrev givenPass := English.give.passiveParticiple
+abbrev a_ := English.Determiners.a.toWord
+abbrev manages := English.manage.toWord .thirdSg
+abbrev persuaded := English.persuade.toWord .past
+abbrev seems := English.seem.toWord .thirdSg
+abbrev sleep_ := English.sleep.toWord .base
+abbrev run_ := English.run.toWord .base
 
 /-! ### Valency frames from the Fragment (sixth chapter) -/
 

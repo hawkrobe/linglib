@@ -1,11 +1,14 @@
-import Linglib.Data.Examples.MunozPerez2026
-import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Syntax.Minimalist.Verbal.LittleV
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Person.Features
-import Linglib.Fragments.Romance.Spanish.Clitics
-import Linglib.Fragments.Romance.Spanish.Verbs
+module
+
+public import Linglib.Data.Examples.MunozPerez2026
+public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Minimalist.Verbal.Applicative
+public import Linglib.Syntax.Minimalist.Verbal.LittleV
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Syntax.Person.Features
+public import Linglib.Fragments.Romance.Spanish.Clitics
+public import Linglib.Fragments.Romance.Spanish.Verbs
+import all Init.Data.String.Defs  -- for unfolding `String.intercalate`
 
 /-!
 # Muñoz Pérez (2026): Stylistic Applicatives
@@ -75,6 +78,8 @@ formalized.
 * [C. Muñoz Pérez, *Stylistic applicatives: A lens into the nature of anticausative SE*
   (2026)][munoz-perez-2026]
 -/
+
+@[expose] public section
 
 namespace MunozPerez2026
 

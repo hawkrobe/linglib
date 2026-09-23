@@ -1,6 +1,8 @@
-import Linglib.Fragments.English.Verbs
-import Linglib.Studies.Larson1988
-import Linglib.Studies.Pylkkanen2008
+module
+
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Studies.Larson1988
+public import Linglib.Studies.Pylkkanen2008
 
 /-!
 # Bruening 2021: implicit arguments in English double object constructions
@@ -54,6 +56,8 @@ Of the roughly 43 verbs of (56), the 32 whose Fragment encoding is unambiguous a
 * [pylkkanen-2008]
 * [pesetsky-1995]
 -/
+
+@[expose] public section
 
 namespace Bruening2021
 

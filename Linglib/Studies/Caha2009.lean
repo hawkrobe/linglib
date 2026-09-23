@@ -1,34 +1,36 @@
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Syntax.Case.Basic
-import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Syntax.Case.Order
-import Linglib.Fragments.Dargwa.Case
-import Linglib.Fragments.Finnish.Case
-import Linglib.Fragments.German.Case
-import Linglib.Fragments.Greek.StandardModern.Case
-import Linglib.Fragments.Hindi.Case
-import Linglib.Fragments.Hungarian.Case
-import Linglib.Fragments.Icelandic.Case
-import Linglib.Fragments.Japanese.Case
-import Linglib.Fragments.Korean.Case
-import Linglib.Fragments.Latin.Case
-import Linglib.Fragments.Mongolian.Case
-import Linglib.Fragments.Slavic.Belarusian.Case
-import Linglib.Fragments.Slavic.Case
-import Linglib.Fragments.Slavic.Cassubian.Case
-import Linglib.Fragments.Slavic.Czech.Case
-import Linglib.Fragments.Slavic.Polish.Case
-import Linglib.Fragments.Slavic.Russian.Case
-import Linglib.Fragments.Slavic.Serbian.Case
-import Linglib.Fragments.Slavic.Slovak.Case
-import Linglib.Fragments.Slavic.Slovenian.Case
-import Linglib.Fragments.Slavic.Sorbian.Case
-import Linglib.Fragments.Slavic.Ukrainian.Case
-import Linglib.Fragments.SwissGerman.Case
-import Linglib.Fragments.Tamil.Case
-import Linglib.Fragments.Telugu.Case
-import Linglib.Fragments.Turkish.Case
-import Linglib.Fragments.Yakut.Case
+module
+
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Syntax.Case.Order
+public import Linglib.Fragments.Dargwa.Case
+public import Linglib.Fragments.Finnish.Case
+public import Linglib.Fragments.German.Case
+public import Linglib.Fragments.Greek.StandardModern.Case
+public import Linglib.Fragments.Hindi.Case
+public import Linglib.Fragments.Hungarian.Case
+public import Linglib.Fragments.Icelandic.Case
+public import Linglib.Fragments.Japanese.Case
+public import Linglib.Fragments.Korean.Case
+public import Linglib.Fragments.Latin.Case
+public import Linglib.Fragments.Mongolian.Case
+public import Linglib.Fragments.Slavic.Belarusian.Case
+public import Linglib.Fragments.Slavic.Case
+public import Linglib.Fragments.Slavic.Cassubian.Case
+public import Linglib.Fragments.Slavic.Czech.Case
+public import Linglib.Fragments.Slavic.Polish.Case
+public import Linglib.Fragments.Slavic.Russian.Case
+public import Linglib.Fragments.Slavic.Serbian.Case
+public import Linglib.Fragments.Slavic.Slovak.Case
+public import Linglib.Fragments.Slavic.Slovenian.Case
+public import Linglib.Fragments.Slavic.Sorbian.Case
+public import Linglib.Fragments.Slavic.Ukrainian.Case
+public import Linglib.Fragments.SwissGerman.Case
+public import Linglib.Fragments.Tamil.Case
+public import Linglib.Fragments.Telugu.Case
+public import Linglib.Fragments.Turkish.Case
+public import Linglib.Fragments.Yakut.Case
 
 /-!
 # Caha 2009: the nanosyntax of case
@@ -76,6 +78,8 @@ phonological conflation or accidental homophony.
 * [blake-1994]
 * [pantcheva-2011]
 -/
+
+@[expose] public section
 namespace Caha2009
 
 open scoped Case.Caha

@@ -1,9 +1,11 @@
-import Linglib.Core.InformationTheory.Hellinger
-import Linglib.Core.Probability.Kernel.OfWeights
-import Linglib.Core.Probability.Kernel.Posterior
-import Linglib.Data.Examples.HerbstrittFranke2019
-import Linglib.Pragmatics.RSA.Basic
-import Mathlib.InformationTheory.KullbackLeibler.Basic
+module
+
+public import Linglib.Core.InformationTheory.Hellinger
+public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Linglib.Data.Examples.HerbstrittFranke2019
+public import Linglib.Pragmatics.RSA.Basic
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
 
 /-!
 # Herbstritt and Franke (2019): Complex probability expressions and higher-order uncertainty
@@ -51,6 +53,8 @@ and with complete access an outer modifier below one is vacuous.
 * [frank-goodman-2012]
 * [zeijlstra-2007]
 -/
+
+@[expose] public section
 
 namespace HerbstrittFranke2019
 

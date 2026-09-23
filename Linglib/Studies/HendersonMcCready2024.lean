@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.SocialMeaning.Game
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Pragmatics.SocialMeaning.Game
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Henderson and McCready (2024): Signaling without Saying
@@ -42,6 +44,8 @@ Chapter 5 are not represented.
 * [burnett-2019]
 * [henderson-mccready-2018]
 -/
+
+@[expose] public section
 
 namespace HendersonMcCready2024
 

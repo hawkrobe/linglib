@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Korean complementizers and clause-embedding verbs
@@ -16,6 +18,8 @@ matter of `Studies/Bondarenko2022.lean`.
 * [bogal-allbritten-moulton-2018]
 * [bondarenko-2022]
 -/
+
+@[expose] public section
 
 namespace Korean.Complementizers
 

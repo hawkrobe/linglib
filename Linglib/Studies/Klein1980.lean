@@ -1,5 +1,7 @@
-import Linglib.Semantics.Degree.Delineation
-import Linglib.Studies.Kamp1975
+module
+
+public import Linglib.Semantics.Degree.Delineation
+public import Linglib.Studies.Kamp1975
 
 /-!
 # Klein (1980): A Semantics for Positive and Comparative Adjectives
@@ -34,6 +36,8 @@ completions (`kleinPreorder_eq_kampPreorder`).
 * [klein-1980]
 * [kamp-1975]
 -/
+
+@[expose] public section
 
 namespace Klein1980
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # French verbs
@@ -13,6 +15,8 @@ despite being separate words.
 (faire + infinitive = single predicate for case marking purposes)
 
 -/
+
+@[expose] public section
 
 namespace French.Verbs
 

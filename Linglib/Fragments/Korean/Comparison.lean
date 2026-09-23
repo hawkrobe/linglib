@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Korean comparison
@@ -15,6 +17,8 @@ comparative with a universal standard. Sohn writes *pota* and *te*.
 * [sohn-1994]
 * [stassen-1985]
 -/
+
+@[expose] public section
 
 namespace Korean.Comparison
 

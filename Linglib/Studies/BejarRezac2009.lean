@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.Agree.Cyclic
-import Linglib.Fragments.Basque.Agreement
-import Linglib.Fragments.Georgian.Agreement
-import Linglib.Data.Examples.BejarRezac2009
+module
+
+public import Linglib.Syntax.Minimalist.Agree.Cyclic
+public import Linglib.Fragments.Basque.Agreement
+public import Linglib.Fragments.Georgian.Agreement
+public import Linglib.Data.Examples.BejarRezac2009
 
 /-!
 # Béjar & Rezac (2009): Cyclic Agree
@@ -46,6 +48,8 @@ an added probe (Mohawk, Nishnaabemwin, Basque) or R-Case on the IA
 * [harley-ritter-2002]: Person and number in pronouns: A feature-geometric
   analysis.
 -/
+
+@[expose] public section
 
 namespace BejarRezac2009
 

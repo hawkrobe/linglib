@@ -1,13 +1,15 @@
-import Linglib.Data.WALS.Features.F106A
-import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.English.Reciprocals
-import Linglib.Fragments.German.Reciprocals
-import Linglib.Fragments.Greek.StandardModern.Reciprocals
-import Linglib.Fragments.Romance.French.Reciprocals
-import Linglib.Fragments.Romance.Spanish.Reciprocals
-import Linglib.Fragments.Slavic.Russian.Reciprocals
-import Linglib.Fragments.Swahili.Reciprocals
-import Linglib.Fragments.Wambaya.Reciprocals
+module
+
+public import Linglib.Data.WALS.Features.F106A
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Fragments.English.Reciprocals
+public import Linglib.Fragments.German.Reciprocals
+public import Linglib.Fragments.Greek.StandardModern.Reciprocals
+public import Linglib.Fragments.Romance.French.Reciprocals
+public import Linglib.Fragments.Romance.Spanish.Reciprocals
+public import Linglib.Fragments.Slavic.Russian.Reciprocals
+public import Linglib.Fragments.Swahili.Reciprocals
+public import Linglib.Fragments.Wambaya.Reciprocals
 
 /-!
 # Maslova and Nedjalkov (2013): Reciprocal Constructions
@@ -39,6 +41,8 @@ constructions; `Reciprocal.Strategy` would need to record iconicity for the valu
 
 * [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
+
+@[expose] public section
 
 namespace MaslovaNedjalkov2013
 

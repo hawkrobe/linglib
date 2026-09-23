@@ -1,9 +1,11 @@
-import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-import Linglib.Semantics.ArgumentStructure.LevinClass.Members
-import Linglib.Syntax.Voice.Basic
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Adposition
-import Linglib.Data.Examples.Levin1993
+module
+
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
+public import Linglib.Syntax.Voice.Basic
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Adposition
+public import Linglib.Data.Examples.Levin1993
 
 /-!
 # Levin (1993): English Verb Classes and Alternations
@@ -32,6 +34,8 @@ starred row denies it, and a marginal row is categorical in neither direction.
 
 * [levin-1993]
 -/
+
+@[expose] public section
 
 namespace Levin1993
 

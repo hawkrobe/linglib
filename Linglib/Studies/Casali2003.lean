@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Fragments.Akan.Phonology
-import Linglib.Fragments.Yoruba.Phonology
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Fragments.Akan.Phonology
+public import Linglib.Fragments.Yoruba.Phonology
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Casali (2003): [ATR] value asymmetries and underlying vowel inventory structure
@@ -53,6 +55,8 @@ discussion are not formalized.
 * [hayes-2009]
 -/
 
+@[expose] public section
+
 namespace Casali2003
 
 open Phonology OptimalityTheory
@@ -79,14 +83,14 @@ instance (P : Segment → Prop) [DecidablePred P] : Decidable (HasContrastAmong 
   unfold HasContrastAmong; infer_instance
 
 /-- The high vowels. -/
-private def IsHigh (v : Segment) : Prop := v.HasValue .high true
+def IsHigh (v : Segment) : Prop := v.HasValue .high true
 
-private instance : DecidablePred IsHigh := fun v ↦ inferInstanceAs (Decidable (v.HasValue _ _))
+instance : DecidablePred IsHigh := fun v ↦ inferInstanceAs (Decidable (v.HasValue _ _))
 
 /-- The mid vowels. -/
-private def IsMid (v : Segment) : Prop := v.HasValue .high false ∧ v.HasValue .low false
+def IsMid (v : Segment) : Prop := v.HasValue .high false ∧ v.HasValue .low false
 
-private instance : DecidablePred IsMid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsMid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The inventory type of `I`, when it has a tongue-root contrast at all: five-vowel systems
 fall outside the typology. -/
@@ -96,7 +100,7 @@ def inventoryType? : Option InventoryType :=
   else if HasContrastAmong I IsMid then some .fourHeightMid else none
 
 /-- A vowel of the given height and backness, rounded or not, with its [ATR] value. -/
-private def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
+def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
     Segment :=
   ((Segment.vowel ht bk).setFeature .round round).setFeature .atr atr
 

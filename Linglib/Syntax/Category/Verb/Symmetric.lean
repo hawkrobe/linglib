@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Semantics.Plurality.Groups
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Semantics.Plurality.Groups
 
 /-!
 # Symmetric verbs
@@ -17,6 +19,8 @@ Formation-locus classification of reciprocal verbs lives in
 `Verb.Reciprocal`; the symmetric entries are the lexicon-formed ones
 (`Studies/Siloni2012.lean`).
 -/
+
+@[expose] public section
 
 open Plurality
 

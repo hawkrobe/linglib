@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Italian verbs
@@ -32,6 +34,8 @@ and *intendere* are carried over from the earlier entries and are not in those s
 * [grano-2024]
 * [palmieri-2024]
 -/
+
+@[expose] public section
 
 namespace Italian.Verbs
 

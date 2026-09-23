@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Uniform
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
 
 /-!
 # Champollion, Alsop & Grosu (2019): free choice disjunction as a rational speech act
@@ -50,6 +52,8 @@ strong, so the listener assigns no mass to the states at which free choice would
 * [kratzer-shimoyama-2002]
 * [simons-2005]
 -/
+
+@[expose] public section
 
 namespace ChampollionAlsopGrosu2019
 

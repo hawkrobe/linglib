@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Adposition.Basic
-import Linglib.Syntax.Case.Order
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Syntax.Category.Adposition.Basic
+public import Linglib.Syntax.Case.Order
+public import Linglib.Semantics.Denotation
 
 /-!
 # Spatial adpositions: the cartographic refinement
@@ -28,6 +30,8 @@ containment, so `AxPart` does not instantiate the `partialOrderOfRank` gadget.
 * `Adposition.SpatialReading` — the cartographic decomposition (the plug-in type)
 * `Adposition.SpatialReading.toCase` is left to per-language Studies
 -/
+
+@[expose] public section
 
 namespace Adposition
 

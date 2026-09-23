@@ -1,15 +1,17 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Data.Fintype.Pigeonhole
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Linglib.Core.Order.Argmax
-import Linglib.Pragmatics.SignalingGame.Interpretation
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Data.Examples.Franke2011
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Data.Fintype.Pigeonhole
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Linglib.Core.Order.Argmax
+public import Linglib.Pragmatics.SignalingGame.Interpretation
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Data.Examples.Franke2011
 
 /-!
 # Franke (2011): Quantity Implicatures, Exhaustive Interpretation, and Rational Conversation
@@ -54,6 +56,8 @@ substrate of [spector-2016].
 * [fox-2007]
 * [spector-2016]
 -/
+
+@[expose] public section
 
 namespace Franke2011
 

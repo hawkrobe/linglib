@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Morphology.Morph
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Morphology.Morph
 
 /-!
 # Voice
@@ -84,6 +86,8 @@ of voices.
 * [dixon-aikhenvald-2000]
 * [song-1996]
 -/
+
+@[expose] public section
 
 namespace Voice
 

@@ -1,11 +1,13 @@
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Adposition
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Syntax.DependencyGrammar.Projectivity
-import Linglib.Syntax.DependencyGrammar.Length
+module
+
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.English.Adposition
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.DependencyGrammar.Length
 
 /-!
 # Futrell, Levy and Gibson (2020): Dependency Locality as an Explanatory Principle for Word Order
@@ -38,6 +40,8 @@ dependency lengths of Table 2 are the rows of `Data.UD.DependencyLength.FutrellE
 * [gildea-temperley-2010]
 -/
 
+@[expose] public section
+
 namespace FutrellEtAl2020
 
 open DependencyGrammar
@@ -46,11 +50,11 @@ open English.Nouns English English.Pronouns English.Determiners
   English.Adpositions English.Auxiliaries
 
 -- `this` is a Lean keyword, so the demonstrative needs a qualified alias.
-private abbrev this_ := English.Determiners.this.toWord
-private abbrev ap : Word := Word.mk' "AP" .PROPN
+abbrev this_ := English.Determiners.this.toWord
+abbrev ap : Word := Word.mk' "AP" .PROPN
 
 /-- Schematic token for the paper's abstract tree diagrams (A, B, C, …). -/
-private def tok (s : String) : Word := Word.mk' s .X
+def tok (s : String) : Word := Word.mk' s .X
 
 /-! ### Examples (3)–(4): displacement and nonprojectivity
 
@@ -206,7 +210,7 @@ def attestedOrder : Graph 6 :=
 
 /-- The position permutation taking the attested order to the paper's
     first reordering "from AP the this story comes". -/
-private def σB : Equiv.Perm (Fin 6) :=
+def σB : Equiv.Perm (Fin 6) :=
   ⟨![3, 4, 5, 0, 2, 1], ![3, 5, 4, 0, 1, 2], by decide, by decide⟩
 
 /-- (13b) the reordering, as a relabeling of the attested structure. -/

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Causation.Implicative
-import Linglib.Studies.Karttunen1971a
+module
+
+public import Linglib.Semantics.Causation.Implicative
+public import Linglib.Studies.Karttunen1971a
 
 /-!
 # Nadathur (2023): Causal Semantics for Implicative Verbs
@@ -34,6 +36,8 @@ sufficiency semantics takes a single prerequisite vertex.
 * [nadathur-2019]
 * [baglini-francez-2016]
 -/
+
+@[expose] public section
 
 namespace Nadathur2023
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Voice.Basic
+module
+
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Mam voice
@@ -37,6 +39,8 @@ the Set B marking follows from that transitivity. That Ø fills the paradigm slo
 * [england-2017]
 * [scott-2023]
 -/
+
+@[expose] public section
 
 namespace Mam
 

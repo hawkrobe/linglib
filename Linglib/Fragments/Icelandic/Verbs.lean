@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Fragments.Icelandic.Case
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Fragments.Icelandic.Case
 
 /-!
 # Icelandic verbs
@@ -35,6 +37,8 @@ The order of two objects is the one the sources gloss.
 * [wood-2015]
 * [wood-2023]
 -/
+
+@[expose] public section
 
 namespace Icelandic.Verbs
 

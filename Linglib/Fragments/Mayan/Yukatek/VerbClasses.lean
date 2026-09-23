@@ -1,8 +1,10 @@
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Fragments.Mayan.Agreement
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Alignment
+module
+
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Fragments.Mayan.Agreement
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Alignment
 /-!
 # Yukatek Maya Verb Classes and Status System
 
@@ -45,6 +47,8 @@ Status marking encodes both viewpoint aspect and modal assertiveness
 - **incompletive**: −perfective, +assertive → accusative (S = A)
 - **imperative**: directive mood
 -/
+
+@[expose] public section
 
 namespace Yukatek
 

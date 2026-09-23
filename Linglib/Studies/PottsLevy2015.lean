@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Core.Probability.Kernel.Mixture
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Core.Probability.Kernel.Mixture
 
 /-!
 # Potts and Levy (2015): Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
@@ -53,6 +55,8 @@ symbolic certificates are out of reach; the paper reports them numerically at κ
 * [potts-levy-2015]
 * [hurford-1974]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal NNReal

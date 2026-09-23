@@ -1,8 +1,10 @@
-import Linglib.Fragments.German.Verbs
-import Linglib.Syntax.Category.Verb.Tense
-import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Semantics.ArgumentStructure.Unaccusativity
-import Linglib.Pragmatics.SocialMeaning.Register
+module
+
+public import Linglib.Fragments.German.Verbs
+public import Linglib.Syntax.Category.Verb.Tense
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
+public import Linglib.Pragmatics.SocialMeaning.Register
 
 /-!
 # German tense forms
@@ -45,6 +47,8 @@ state; *bleiben* and *sein* themselves, which also take *sein*, are outside it.
 
 * [durrell-2011]
 -/
+
+@[expose] public section
 
 namespace German
 

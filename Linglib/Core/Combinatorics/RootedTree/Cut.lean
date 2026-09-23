@@ -1,9 +1,13 @@
-import Linglib.Core.Data.UnorderedTree.Basic
-import Linglib.Core.Data.UnorderedTree.Count
-import Linglib.Core.Data.UnorderedTree.DecEq
-import Mathlib.Data.Multiset.Bind
-import Linglib.Core.Data.RoseTree.Basic
-import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+module
+
+public import Linglib.Core.Data.UnorderedTree.Basic
+public import Linglib.Core.Data.UnorderedTree.Count
+public import Linglib.Core.Data.UnorderedTree.DecEq
+public import Mathlib.Data.Multiset.Bind
+public import Linglib.Core.Data.RoseTree.Basic
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 
@@ -748,14 +752,14 @@ theorem augActionN_mk (T : RoseTree α) :
 /-- Multiset.foldr combiner for `cutForestSummandsN`: combine a per-tree
     decision with the accumulated cuts of the remaining trees via the
     cartesian product and `innerCombinerProj`. -/
-private noncomputable def cutForestCombinerN (T : UnorderedTree α)
+noncomputable def cutForestCombinerN (T : UnorderedTree α)
     (acc : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))) :
     Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :=
   (augActionN T ×ˢ acc).map innerCombinerProj
 
 /-- The combiner is left-commutative — discharged by `swap_double_combinerProj`,
     the per-tree-decision swap symmetry of `innerCombinerProj`. -/
-private instance : LeftCommutative (cutForestCombinerN (α := α)) where
+instance : LeftCommutative (cutForestCombinerN (α := α)) where
   left_comm _ _ _ := swap_double_combinerProj _ _ _
 
 /-- The **forest cut summand multiset**: every per-tree decision tuple on
@@ -932,7 +936,7 @@ from `Perm.value_eq`. -/
 
 /-- Project a `cutListSummandsG` summand to nonplanar level, discarding
     the list-order of the remainder by sending to `Multiset`. -/
-private def projForestG : Multiset (RoseTree α) × List (RoseTree α) →
+def projForestG : Multiset (RoseTree α) × List (RoseTree α) →
     Multiset (UnorderedTree α) × Multiset (UnorderedTree α) :=
   fun p => (p.1.map UnorderedTree.mk, Multiset.ofList (p.2.map UnorderedTree.mk))
 

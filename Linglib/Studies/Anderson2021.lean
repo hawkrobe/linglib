@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Discourse.CommonGround.Measure
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Discourse.CommonGround.Measure
 
 /-!
 # Anderson 2021: conversation update for the Rational Speech Acts framework
@@ -29,6 +31,8 @@ favours Nancy once *they study a humanity* is in the common ground.
 * [frank-goodman-2012] — the RSA chain
 * [stalnaker-2002] — the common ground and its context set
 -/
+
+@[expose] public section
 
 namespace Anderson2021
 

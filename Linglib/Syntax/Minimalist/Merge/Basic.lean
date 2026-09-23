@@ -1,7 +1,9 @@
-import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
-import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
-import Mathlib.LinearAlgebra.TensorProduct.Basic
-import Mathlib.RingTheory.TensorProduct.Maps
+module
+
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
+public import Mathlib.LinearAlgebra.TensorProduct.Basic
+public import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
 # Merge operator on the Connes–Kreimer bialgebra of nonplanar forests
@@ -43,6 +45,8 @@ binary Δ^d `+2` is a rebinarization artifact).
 
 * [marcolli-chomsky-berwick-2025], §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4)
 -/
+
+@[expose] public section
 
 namespace Minimalist.Merge
 

@@ -1,9 +1,11 @@
-import Linglib.Studies.Rett2015
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Semantics.Degree.Defs
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Analysis.Complex.ExponentialBounds
+module
+
+public import Linglib.Studies.Rett2015
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Semantics.Degree.Defs
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Bumford and Rett 2021: rationalizing evaluativity
@@ -68,6 +70,8 @@ never weights.
 * [lassiter-goodman-2017]
 * [rett-2015]
 -/
+
+@[expose] public section
 namespace BumfordRett2021
 
 open MeasureTheory ProbabilityTheory

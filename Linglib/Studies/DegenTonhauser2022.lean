@@ -1,6 +1,8 @@
-import Linglib.Studies.DegenTonhauser2021
-import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Semantics.Presupposition.Verb
+module
+
+public import Linglib.Studies.DegenTonhauser2021
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Linglib.Semantics.Presupposition.Verb
 
 /-!
 # Degen and Tonhauser (2022): Are there factive predicates?
@@ -49,6 +51,8 @@ credible interval against the entailing controls contained zero.
 * [heim-1983]
 * [van-der-sandt-1992]
 -/
+
+@[expose] public section
 
 namespace DegenTonhauser2022
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Semantics.Root.Defs
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Semantics.Root.Defs
 
 /-! # Verb entry — lookup and root
 
@@ -16,6 +18,8 @@ causatives in `Semantics/Causation/Verb.lean`, and unaccusativity in
 * [levin-1993]
 * [dowty-1991]
 -/
+
+@[expose] public section
 
 open ArgumentStructure
 

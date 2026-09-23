@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Silence
+module
+
+public import Linglib.Pragmatics.RSA.Silence
 
 /-!
 # Rohde, Hoek, Keshev and Franke (2022): This better be interesting
@@ -33,6 +35,8 @@ parameter the paper's contexts vary. The experiments' selection rates are not re
 * [L. Bergen, R. Levy, N. D. Goodman, *Pragmatic reasoning through semantic inference*
   (2016)][bergen-levy-goodman-2016]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

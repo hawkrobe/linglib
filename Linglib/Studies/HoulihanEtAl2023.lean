@@ -1,8 +1,10 @@
-import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
-import Linglib.Core.Probability.Kernel.OfWeights
-import Linglib.Core.Probability.Kernel.Posterior
-import Mathlib.Algebra.Order.Group.PosPart
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Mathlib.Algebra.Order.Group.PosPart
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Houlihan et al. (2023): Emotion prediction as computation over a generative theory of mind
@@ -44,6 +46,8 @@ advantageous-inequity utility that cooperating would have spared.
 * [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]
 * [fehr-schmidt-1999]
 -/
+
+@[expose] public section
 
 namespace HoulihanEtAl2023
 

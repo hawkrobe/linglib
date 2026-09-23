@@ -1,6 +1,9 @@
-import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
-import Linglib.Pragmatics.RSA.NoisyChannel
-import Linglib.Data.Examples.BergenGoodman2015
+module
+
+public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+public import Linglib.Pragmatics.RSA.NoisyChannel
+public import Linglib.Data.Examples.BergenGoodman2015
+import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy  -- for unfolding `binEntropy`
 
 /-!
 # Bergen & Goodman (2015): The strategic use of noise in pragmatic reasoning
@@ -56,6 +59,8 @@ divergence utility is eq. 7.
 * [bergen-goodman-2015]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA Finset Real
 open scoped ENNReal

@@ -1,9 +1,11 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Syntax.ConstructionGrammar.Licensing
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Data.Examples.GoldbergShirtz2025
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+public import Linglib.Syntax.ConstructionGrammar.Inheritance
+public import Linglib.Syntax.ConstructionGrammar.Licensing
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Data.Examples.GoldbergShirtz2025
 
 /-!
 # Goldberg and Shirtz (2025): The English Phrase-as-Lemma Construction
@@ -42,6 +44,8 @@ that are not antecedently familiar.
 * [trips-kornfilt-2015]
 * [sag-2012]
 -/
+
+@[expose] public section
 
 namespace GoldbergShirtz2025
 

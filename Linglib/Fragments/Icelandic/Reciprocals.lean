@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Pronoun.Reflexive
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # Icelandic reciprocals
@@ -17,6 +19,8 @@ the clause stays transitive, and its two parts inflect for case independently: t
   (2021)][hurst-nordlinger-2021]
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
+
+@[expose] public section
 
 namespace Icelandic.Reciprocals
 

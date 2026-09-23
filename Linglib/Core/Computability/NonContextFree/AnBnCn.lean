@@ -1,5 +1,7 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Pumping
-import Linglib.Core.Computability.NonContextFree.BlockWitness
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Pumping
+public import Linglib.Core.Computability.NonContextFree.BlockWitness
 
 /-!
 # `{aⁿbⁿcⁿ}`: a three-symbol non-context-free witness
@@ -21,6 +23,8 @@ Independent of `AnBnCnDn` and `AmBnCmDn`: it uses its own `ThreeSymbol` alphabet
 * `anbnc_not_pumpable`: `anbnc` lacks the CFL pumping property.
 * `anbnc_not_contextFree`: `anbnc` is not context-free.
 -/
+
+@[expose] public section
 
 /-- Alphabet for `{aⁿbⁿcⁿ}`. -/
 inductive ThreeSymbol where

@@ -1,8 +1,10 @@
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Pragmatics.Implicature.SomeAll
-import Linglib.Semantics.Exhaustification.Finite
-import Mathlib.Data.List.ProdSigma
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.Implicature.SomeAll
+public import Linglib.Semantics.Exhaustification.Finite
+public import Mathlib.Data.List.ProdSigma
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Franke and Bergen (2020): Theory-Driven Statistical Modeling for Semantics and Pragmatics
@@ -57,6 +59,8 @@ rationality (`perParse_ss_prefers_o`).
 * [levinson-2000]
 * [fox-2007]
 -/
+
+@[expose] public section
 
 namespace FrankeBergen2020
 

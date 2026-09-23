@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Data.Examples.Alsop2024
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Data.Examples.Alsop2024
 
 /-!
 # Alsop (2024): the pragmatics of free choice *any*
@@ -35,6 +37,8 @@ results are not re-derived here.
 * [franke-bergen-2020]
 * [xiang-2020]
 -/
+
+@[expose] public section
 
 namespace Alsop2024
 

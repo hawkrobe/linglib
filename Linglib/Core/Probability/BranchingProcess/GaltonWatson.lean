@@ -3,13 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Encodable
-import Linglib.Core.Data.RoseTree.Get
-import Linglib.Core.MeasureTheory.Constructions.List
-import Linglib.Core.Order.IterateFixedPoint
-import Linglib.Core.Probability.Kernel.Basic
-import Linglib.Core.Probability.Kernel.Composition.Lemmas
-import Mathlib.Probability.Kernel.IonescuTulcea.Traj
+module
+
+public import Linglib.Core.Data.RoseTree.Encodable
+public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.MeasureTheory.Constructions.List
+public import Linglib.Core.Order.IterateFixedPoint
+public import Linglib.Core.Probability.Kernel.Basic
+public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 
 /-!
 # Multitype Galton–Watson processes
@@ -73,6 +75,8 @@ not proved here.
 * [neveu-1986]
 * [athreya-ney-1972]
 -/
+
+@[expose] public section
 
 open MeasureTheory OmegaCompletePartialOrder ProbabilityTheory Kernel Finset Preorder RoseTree
 open scoped ENNReal

@@ -1,10 +1,12 @@
-import Linglib.Syntax.Reciprocal
-import Linglib.Studies.HeimLasnikMay1991
-import Linglib.Syntax.Category.Verb.Reciprocal
-import Linglib.Syntax.Category.Verb.Symmetric
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Semantics.ArgumentStructure.CaseRegion
-import Linglib.Semantics.Plurality.Groups
+module
+
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Studies.HeimLasnikMay1991
+public import Linglib.Syntax.Category.Verb.Reciprocal
+public import Linglib.Syntax.Category.Verb.Symmetric
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Semantics.ArgumentStructure.CaseRegion
+public import Linglib.Semantics.Plurality.Groups
 
 /-!
 # Siloni (2012): Reciprocal Verbs and Symmetry
@@ -63,6 +65,8 @@ construction is the dyadic realization of a symmetric entry (section 7.5, `Dyadi
 * [kayne-1975]
 * [hron-2005]
 -/
+
+@[expose] public section
 
 namespace Siloni2012
 

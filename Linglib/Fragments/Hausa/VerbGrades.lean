@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Phonology.Tone.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Phonology.Tone.Basic
 
 /-!
 # Hausa Verb Grades (Parsons System) — mathlib-style
@@ -32,6 +34,8 @@ The named theorems below are **universal claims about the grade system
 or about Hausa verb lists**, not `rfl` checks on per-verb stipulations.
 Per-cell verifications appear as `example`s.
 -/
+
+@[expose] public section
 
 namespace Hausa
 

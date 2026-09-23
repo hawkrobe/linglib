@@ -1,9 +1,11 @@
-import Linglib.Syntax.Control.Defs
-import Linglib.Syntax.Control.Head
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Fragments.English.Verbs
-import Linglib.Semantics.Presupposition.Verb
-import Linglib.Semantics.Causation.Verb
+module
+
+public import Linglib.Syntax.Control.Defs
+public import Linglib.Syntax.Control.Head
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Semantics.Causation.Verb
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
@@ -38,6 +40,8 @@ predicative dependency, and its inflected-complement row is the one derived here
 * [landau-2000], [landau-2004], [landau-2013]
 * [pearson-2016], [heim-2008], [kratzer-2009], [ganenkov-2019]
 -/
+
+@[expose] public section
 
 namespace Landau2015
 

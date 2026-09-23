@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Merge.Basic
-import Linglib.Core.Combinatorics.RootedTree.Conservation
+module
+
+public import Linglib.Syntax.Minimalist.Merge.Basic
+public import Linglib.Core.Combinatorics.RootedTree.Conservation
 
 /-!
 # Minimal Search as a weighting of Merge
@@ -27,6 +29,8 @@ is annihilated.
 
 * [marcolli-chomsky-berwick-2025], §1.5 (Proposition 1.5.1)
 -/
+
+@[expose] public section
 
 namespace Minimalist.Merge
 

@@ -1,8 +1,10 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Fragments.English.Determiners
-import Linglib.Data.Examples.VanTielEtAl2021
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Probability.Kernel.Composition.Comp
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Data.Examples.VanTielEtAl2021
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Probability.Kernel.Composition.Comp
 
 /-!
 # van Tiel, Franke and Sauerland (2021): Probabilistic Pragmatics Explains Gradience and Focality in Natural Language Quantification
@@ -44,6 +46,8 @@ paper and not formalized. The examples are the rows of `Data.Examples.VanTielEtA
 * [grice-1975]
 * [sauerland-2004]
 -/
+
+@[expose] public section
 
 namespace VanTielEtAl2021
 

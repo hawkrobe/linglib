@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Mandarin verbs
@@ -23,6 +25,8 @@ isolating, so a verb carries no inflectional fields beyond the root entry.
 * [wang-2025]
 * [liu-yip-2026]
 -/
+
+@[expose] public section
 
 namespace Mandarin
 

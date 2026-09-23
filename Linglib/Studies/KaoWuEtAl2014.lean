@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.QUD
-import Linglib.Semantics.Quantification.Numerals.Precision
+module
+
+public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Semantics.Quantification.Numerals.Precision
 
 /-!
 # Kao, Wu, Bergen and Goodman (2014): Nonliteral Understanding of Number Words
@@ -36,6 +38,8 @@ precision projection composed with a relevance projection, the two affect-only g
 
 * [kao-etal-2014-hyperbole]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA Numerals.Precision
 open scoped ENNReal

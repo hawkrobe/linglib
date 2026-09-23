@@ -3,8 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
-import Linglib.Core.RingTheory.Bialgebra.Primitive
+module
+
+public import Linglib.Core.Algebra.RootedTree.Coproduct.PruningDuality
+public import Linglib.Core.RingTheory.Bialgebra.Primitive
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

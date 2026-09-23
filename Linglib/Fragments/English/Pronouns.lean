@@ -1,8 +1,10 @@
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Category.Pronoun.Demonstrative
-import Linglib.Syntax.Category.Pronoun.Interrogative
-import Linglib.Syntax.Category.Pronoun.Reciprocal
-import Linglib.Syntax.Category.Pronoun.Reflexive
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Demonstrative
+public import Linglib.Syntax.Category.Pronoun.Interrogative
+public import Linglib.Syntax.Category.Pronoun.Reciprocal
+public import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
 # English pronouns
@@ -42,6 +44,8 @@ or a manner. The demonstratives contrast a proximal with a distal form in each n
 * [J. E. Arnold, *Two kinds of singular they: A usage-based model* (2026)][arnold-2026]
 * [M. Balhorn, *The rise of epicene they* (2004)][balhorn-2004]
 -/
+
+@[expose] public section
 
 namespace English.Pronouns
 
@@ -138,7 +142,7 @@ theorem paradigm_others_subset : paradigm .others ⊆ paradigm .other := by
 /-! ### Reflexive pronouns -/
 
 /-- The reflexive of a personal pronoun, with its person, number and gender. -/
-private def reflexive (p : PersonalPronoun) (form : String) : ReflexivePronoun :=
+def reflexive (p : PersonalPronoun) (form : String) : ReflexivePronoun :=
   { form, person := p.person, number := p.number, gender := p.gender }
 
 /-- The first person singular reflexive *myself*. -/

@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.Cuervo2003
-import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Fragments.Romance.Spanish.Verbs
-import Linglib.Fragments.English.Verbs
+module
+
+public import Linglib.Data.Examples.Cuervo2003
+public import Linglib.Syntax.Minimalist.Verbal.Applicative
+public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Fragments.English.Verbs
 
 /-!
 # Cuervo (2003): Datives at Large
@@ -69,6 +71,8 @@ the paper attests its double object construction with *arrivare* alone.
 * [pylkkanen-2008]
 * [baker-1996]
 -/
+
+@[expose] public section
 
 namespace Cuervo2003
 

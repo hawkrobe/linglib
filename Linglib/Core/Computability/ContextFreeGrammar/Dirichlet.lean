@@ -1,6 +1,8 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
-import Linglib.Core.Probability.PolyaUrn
-import Mathlib.Basic.ENNReal.BigOperators
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
+public import Linglib.Core.Probability.PolyaUrn
+public import Mathlib.Basic.ENNReal.BigOperators
 
 /-!
 # Dirichlet priors on probabilistic context-free grammars
@@ -37,6 +39,8 @@ predictive rule distribution is the PCFG of normalised posterior pseudo-counts.
 * [johnson-griffiths-goldwater-2007]
 * [kurihara-sato-2006]
 -/
+
+@[expose] public section
 
 open Real ProbabilityTheory
 

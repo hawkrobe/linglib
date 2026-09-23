@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Navajo comparative data
@@ -8,6 +10,8 @@ WALS Ch 121A codes Navajo as a locational comparative ([stassen-2013]);
 predicates carry no comparative degree morphology. The standard-marking
 postposition is not recorded here.
 -/
+
+@[expose] public section
 
 namespace Navajo.Comparison
 

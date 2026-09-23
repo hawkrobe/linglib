@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Uyghur Clause-Linking Morphemes and the Say-Complex
@@ -32,6 +34,8 @@ in -(I)p marks the harmonizing high vowel. Verb entries are keyed by
 bare stem and their `form` fields carry the stem with a final hyphen
 (*de* surfaces as *dé* before the past-tense suffix, his 1).
 -/
+
+@[expose] public section
 
 namespace Uyghur
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Defs
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # Factivity and trigger status of a verb entry
@@ -17,6 +19,8 @@ implicative ([nadathur-2023-implicatives]), and a soft trigger when it is an occ
 * [nadathur-2023-implicatives]
 * [solstad-bott-2024]
 -/
+
+@[expose] public section
 
 namespace Verb
 

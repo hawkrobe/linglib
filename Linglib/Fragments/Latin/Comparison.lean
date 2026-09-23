@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Latin comparative data
@@ -10,6 +12,8 @@ Latin is uncoded in WALS Ch 121A; each construction's type is derived from
 its anatomy (`quam.type`, `ablative.type`). Degree is marked by the bound
 affix *-ior*; the superlative is morphological.
 -/
+
+@[expose] public section
 
 namespace Latin.Comparison
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Basic
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # Reciprocal pronouns
@@ -21,6 +23,8 @@ markers.
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 -/
+
+@[expose] public section
 
 /-- A reciprocal pronoun: the general `Pronoun` as the nominal exponent of reciprocity, with the
 strategy it realizes and the readings it covers. -/

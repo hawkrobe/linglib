@@ -1,4 +1,6 @@
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # Czech reciprocals
@@ -12,6 +14,8 @@ yields a monovalent predicate, and with the bipartite periphrasis *jeden druhéh
 * [nordlinger-2023]
 * [siloni-2012]
 -/
+
+@[expose] public section
 
 namespace Czech.Reciprocals
 

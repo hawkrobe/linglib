@@ -1,9 +1,11 @@
-import Linglib.Fragments.Greek.StandardModern.Complementizers
-import Linglib.Fragments.Greek.StandardModern.Verbs
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Composition.Tree
-import Linglib.Data.Examples.Roussou2010
+module
+
+public import Linglib.Fragments.Greek.StandardModern.Complementizers
+public import Linglib.Fragments.Greek.StandardModern.Verbs
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Composition.Tree
+public import Linglib.Data.Examples.Roussou2010
 
 /-!
 # Roussou (2010): Selecting complementizers
@@ -43,6 +45,8 @@ argument against uninterpretable features are not formalized.
 * [adger-quer-2001]
 * [hamblin-1973b]
 -/
+
+@[expose] public section
 
 namespace Roussou2010
 

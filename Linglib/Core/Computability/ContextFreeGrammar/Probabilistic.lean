@@ -1,8 +1,10 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Tree
-import Linglib.Core.Computability.ContextFreeGrammar.Weighted
-import Mathlib.Basic.ENNReal.Inv
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Core.Computability.ContextFreeGrammar.Weighted
+public import Mathlib.Basic.ENNReal.Inv
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 
 /-!
 # Probabilistic context-free grammars
@@ -41,6 +43,8 @@ trees; the measure it is the singleton mass of, and tightness in the sense of
 * [booth-thompson-1973]
 * [chi-1999]
 -/
+
+@[expose] public section
 
 open scoped ENNReal
 

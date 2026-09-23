@@ -1,9 +1,11 @@
-import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Fragments.Hindi.Case
-import Linglib.Semantics.Causation.Chain
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Studies.Lucy1994
-import Linglib.Syntax.Voice.Basic
+module
+
+public import Linglib.Fragments.Mayan.Yukatek.VerbClasses
+public import Linglib.Fragments.Hindi.Case
+public import Linglib.Semantics.Causation.Chain
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Studies.Lucy1994
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Bohnemeyer 2004: split intransitivity, linking, and lexical representation
@@ -56,6 +58,8 @@ recorded here.
 * [levin-hovav-1995]
 * [lucy-1994]
 -/
+
+@[expose] public section
 
 namespace Bohnemeyer2004
 

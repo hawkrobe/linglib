@@ -1,5 +1,7 @@
-import Linglib.Data.WALS.Features.F121A
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Data.WALS.Features.F121A
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Comparison: comparative-construction typology
@@ -29,6 +31,8 @@ typology, superlative strategies, and the WALS Ch 121A lookup and aggregates.
 Stassen's 1985 fine-grained adverbial typology (`ComparativeType1985`, the
 chaining universals) lives in `Studies/Stassen1985.lean` (paper-anchored).
 -/
+
+@[expose] public section
 
 /-- Case assignment to the standard NP of a comparative ([stassen-1985]
     §2.2.1): `derived` — the standard NP derives its case from the comparee
@@ -75,7 +79,7 @@ structure Comparative where
 
 namespace Comparative
 
-private abbrev ch121 := Data.WALS.F121A.allData
+abbrev ch121 := Data.WALS.F121A.allData
 
 /-! ### Classifications -/
 
@@ -161,7 +165,7 @@ theorem ch121_counts_sum :
     (ch121.filter (·.value == .exceed)).length +
     (ch121.filter (·.value == .conjoined)).length +
     (ch121.filter (·.value == .particle)).length =
-    ch121.length := by native_decide
+    ch121.length := by decide +kernel
 
 /-- Locational comparatives are the most common single type in WALS Ch 121. -/
 theorem locational_most_common :
@@ -169,7 +173,7 @@ theorem locational_most_common :
     let exc := (ch121.filter (·.value == .exceed)).length
     let con := (ch121.filter (·.value == .conjoined)).length
     let par := (ch121.filter (·.value == .particle)).length
-    loc > exc ∧ loc > con ∧ loc > par := by native_decide
+    loc > exc ∧ loc > con ∧ loc > par := by decide +kernel
 
 /-- Particle comparatives are the rarest single type in the WALS data. -/
 theorem particle_rarest :
@@ -177,12 +181,12 @@ theorem particle_rarest :
     let exc := (ch121.filter (·.value == .exceed)).length
     let con := (ch121.filter (·.value == .conjoined)).length
     let par := (ch121.filter (·.value == .particle)).length
-    par < loc ∧ par < exc ∧ par < con := by native_decide
+    par < loc ∧ par < exc ∧ par < con := by decide +kernel
 
 /-- Locational + particle together account for more than half the sample. -/
 theorem locational_and_particle_dominant :
     let loc := (ch121.filter (·.value == .locational)).length
     let par := (ch121.filter (·.value == .particle)).length
-    loc + par > ch121.length / 2 := by native_decide
+    loc + par > ch121.length / 2 := by decide +kernel
 
 end Comparative

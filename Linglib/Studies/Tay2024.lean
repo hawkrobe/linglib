@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Tay2024
-import Linglib.Fragments.Mandarin.Resultatives
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Data.Examples.Tay2024
+public import Linglib.Fragments.Mandarin.Resultatives
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Tay (2024): Resultative Expressions in Mandarin Chinese
@@ -56,6 +58,8 @@ null head ∅+C+B for adjectival X (693) are not formalized.
 
 * [tay-2024]
 -/
+
+@[expose] public section
 
 namespace Tay2024
 

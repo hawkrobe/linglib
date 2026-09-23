@@ -1,10 +1,12 @@
-import Linglib.Fragments.Mandarin.Adverbs
-import Linglib.Fragments.Mandarin.Verbs
-import Linglib.Semantics.Presupposition.Verb
-import Linglib.Semantics.Presupposition.Iterative
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Set.Lattice.Bounded
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Fragments.Mandarin.Adverbs
+public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Semantics.Presupposition.Verb
+public import Linglib.Semantics.Presupposition.Iterative
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Wang (2025): Presupposition, Competition, and Coherence
@@ -62,6 +64,8 @@ arises, Tables 4.7 and 4.9.
 * [katzir-2007]
 * [heim-1991]
 -/
+
+@[expose] public section
 
 namespace Wang2025
 

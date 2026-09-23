@@ -3,10 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Combinatorics.RootedTree.ContractUnary
-import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.UnorderedTree.Count
-import Mathlib.Algebra.Order.BigOperators.Group.Multiset
+module
+
+public import Linglib.Core.Combinatorics.RootedTree.ContractUnary
+public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Core.Data.UnorderedTree.Count
+public import Mathlib.Algebra.Order.BigOperators.Group.Multiset
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 
@@ -620,7 +624,7 @@ correction. Rebinarizing the remainder with `contractUnary` drops one vertex per
 node, which is the `+2` per cut in the edge count of a single deletion. -/
 
 /-- The vertex count contributed by an `Option`-valued deletion remainder. -/
-private def optNumNodes (o : Option (RoseTree α)) : ℕ := o.elim 0 RoseTree.numNodes
+def optNumNodes (o : Option (RoseTree α)) : ℕ := o.elim 0 RoseTree.numNodes
 
 @[simp] private theorem optNumNodes_none : optNumNodes (none : Option (RoseTree α)) = 0 := rfl
 @[simp] private theorem optNumNodes_some (t : RoseTree α) : optNumNodes (some t) = t.numNodes := rfl
