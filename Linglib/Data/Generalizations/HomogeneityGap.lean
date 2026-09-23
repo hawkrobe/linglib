@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.Trivalent
-public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.Schema
 public import Linglib.Data.Examples.KrizChemla2015
 public import Linglib.Data.Examples.AghaJeretic2022
@@ -68,7 +68,7 @@ Empirical datum lifted from a paper-anchored `LinguisticExample`:
 this `(polarity, scenario)` cell.
 -/
 structure GapDatum where
-  polarity : SentencePolarity
+  polarity : Polarity
   scenario : GapScenario
   observed : Trivalent
   source   : SourceRef
@@ -77,7 +77,7 @@ structure GapDatum where
 /-! ### `LinguisticExample` adapter -/
 
 /-- Read a `Polarity` from the `paperFeatures` `"polarity"` value. -/
-def parsePolarity : String → Option SentencePolarity
+def parsePolarity : String → Option Polarity
   | "positive" => some .positive
   | "negative" => some .negative
   | _          => none
@@ -94,7 +94,7 @@ Observed trivalent value for a baseline cell, determined by polarity:
 a positive sentence is true in ALL and false in NONE; a negative one
 the reverse.
 -/
-def baselineTruth (p : SentencePolarity) (s : GapScenario) : Trivalent :=
+def baselineTruth (p : Polarity) (s : GapScenario) : Trivalent :=
   match p, s with
   | .positive, .all => .true
   | .negative, .all => .false

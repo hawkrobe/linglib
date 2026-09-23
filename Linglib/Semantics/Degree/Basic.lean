@@ -94,33 +94,28 @@ theorem comparativeSem_eq_MAX {β : Type*} [LinearOrder β] (μ : Entity → β)
 exchanged: *A is taller than B* iff *B is shorter than A*. -/
 theorem comparativeSem_negative_mul (μ : Entity → α) (a b : Entity) (p : Polarity) :
     comparativeSem μ a b (.negative * p) ↔ comparativeSem μ b a p := by
-  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+  cases p <;> simp
 
 /-- *A is as tall as B* iff *B is as short as A*. -/
 theorem equativeSem_negative_mul (μ : Entity → α) (a b : Entity) (p : Polarity) :
     equativeSem μ a b (.negative * p) ↔ equativeSem μ b a p := by
-  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+  cases p <;> simp
 
 /-- Polarity is the order dual: inverting the ordering of the degrees inverts the polarity
 ([kennedy-2007] fn. 29). -/
 theorem comparativeSem_toDual (μ : Entity → α) (a b : Entity) (p : Polarity) :
     comparativeSem (OrderDual.toDual ∘ μ) a b p ↔ comparativeSem μ a b (.negative * p) := by
-  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+  cases p <;> simp
 
 theorem equativeSem_toDual (μ : Entity → α) (a b : Entity) (p : Polarity) :
     equativeSem (OrderDual.toDual ∘ μ) a b p ↔ equativeSem μ a b (.negative * p) := by
-  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+  cases p <;> simp
 
 end Direct
 
 /-! ### Polarity as a sign -/
 
 section Sign
-
-/-- The negative member measures the negated degree. -/
-@[simp] theorem Polarity.negative_smul {α : Type*} [AddCommGroup α] (x : α) :
-    Polarity.negative • x = -x := by
-  simp [Polarity.negative_eq_neg_one, Units.smul_def]
 
 variable {Entity α : Type*} [AddCommGroup α] [PartialOrder α] [IsOrderedAddMonoid α]
 
@@ -129,11 +124,11 @@ adjective of the signed measure `p • μ`, so the negative member measures `-μ
 negation of its antonym. -/
 theorem comparativeSem_smul (μ : Entity → α) (a b : Entity) (p : Polarity) :
     comparativeSem (p • μ) a b .positive ↔ comparativeSem μ a b p := by
-  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+  cases p <;> simp
 
 theorem equativeSem_smul (μ : Entity → α) (a b : Entity) (p : Polarity) :
     equativeSem (p • μ) a b .positive ↔ equativeSem μ a b p := by
-  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+  cases p <;> simp
 
 end Sign
 

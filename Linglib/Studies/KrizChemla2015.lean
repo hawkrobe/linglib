@@ -255,7 +255,7 @@ def scenarioCell : HomogeneityGap.GapScenario → Cell
 
 /-- Supervaluation over the unembedded grid: resolve the definite
 existentially and universally, under negation for negative polarity. -/
-def supervaluationGap (pol : SentencePolarity) (sc : HomogeneityGap.GapScenario) : Trivalent :=
+def supervaluationGap (pol : Polarity) (sc : HomogeneityGap.GapScenario) : Trivalent :=
   match pol with
   | .positive => gapValue (scenarioCell sc ≠ .empty) (scenarioCell sc = .full)
   | .negative => gapValue (scenarioCell sc = .empty) (scenarioCell sc ≠ .full)

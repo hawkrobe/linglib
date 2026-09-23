@@ -36,7 +36,7 @@ the questioner's confirmation of it settles the question (`isStable_settle_polar
 is a denial after an assertion and a reverse answer after a question
 (`inCrisis_reversing_assert`, `not_inCrisis_reversing_polarQuestion`). `rows` are the
 responding assertions of (4), (5) and (35)–(50) in English, Romanian, French and German, with
-`Row.relative` and `Row.absolute` read off the polarities of the exchange: `yes_same_or_pos`
+`Row.relative` the product of the polarities of the exchange: `yes_same_or_pos`
 and `no_reverse_or_neg` are the double duty of the English particles, `da_pos` and `nu_neg`
 the Romanian absolute particles, `ba_reverse`, `ba_denial` and `ba_not_reverse_answer_neg`
 the distribution of *ba* (only in [reverse] responses; possible in a denial; impossible in a
@@ -54,7 +54,8 @@ for the marked combination [reverse, +].
   stored, as the paper notes it can be.
 * Rows record the polarities of the initiating and responding sentences; since a responding
   assertion shares its radical with the initiating sentence, [same] is agreement of polarity
-  and [reverse] its reversal (`Reversing.iff_ne_negative`).
+  and [reverse] its reversal: the relative polarity is the product of the two polarities
+  (`Reversing.iff_mul_eq_negative`).
 
 ## TODO
 
@@ -73,7 +74,8 @@ for the marked combination [reverse, +].
 
 namespace FarkasBruce2010
 
-open Commitment Filter Data.Examples
+open Commitment hiding Polarity
+open Filter Data.Examples
 
 variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)
 
@@ -193,10 +195,10 @@ theorem isStable_settle_polarQuestion (hK : K.IsStable) :
 /-- A sentence radical with its polarity: `S` or `¬S`. -/
 structure Sentence (W : Type*) where
   radical : Set W
-  negative : Bool
+  polarity : Polarity
 
-/-- The proposition a sentence denotes. -/
-def Sentence.prop (s : Sentence W) : Set W := if s.negative then s.radicalᶜ else s.radical
+/-- The proposition a sentence denotes: its polarity acting on its radical. -/
+def Sentence.prop (s : Sentence W) : Set W := s.polarity • s.radical
 
 /-- (26): a response confirms when it commits to the proposition of the sentence on the Table. -/
 def Confirming (s t : Sentence W) : Prop := t.prop = s.prop
@@ -204,19 +206,21 @@ def Confirming (s t : Sentence W) : Prop := t.prop = s.prop
 /-- (29): a response reverses when it commits to the complement of that proposition. -/
 def Reversing (s t : Sentence W) : Prop := t.prop = s.propᶜ
 
-/-- With a shared radical, reversing is reversing the polarity. -/
-theorem Reversing.iff_ne_negative [Nonempty W] {s t : Sentence W} (h : t.radical = s.radical) :
-    Reversing s t ↔ t.negative ≠ s.negative := by
+/-- With a shared radical, a response reverses iff its polarity relative to the initiating
+sentence, the product of the two polarities, is negative: [reverse]. -/
+theorem Reversing.iff_mul_eq_negative [Nonempty W] {s t : Sentence W}
+    (h : t.radical = s.radical) : Reversing s t ↔ t.polarity * s.polarity = .negative := by
   unfold Reversing Sentence.prop
   rw [h]
-  cases s.negative <;> cases t.negative <;> simp
+  cases s.polarity <;> cases t.polarity <;> simp
 
-/-- With a shared radical, confirming is matching the polarity. -/
-theorem Confirming.iff_eq_negative [Nonempty W] {s t : Sentence W} (h : t.radical = s.radical) :
-    Confirming s t ↔ t.negative = s.negative := by
+/-- With a shared radical, a response confirms iff its relative polarity is positive:
+[same]. -/
+theorem Confirming.iff_mul_eq_positive [Nonempty W] {s t : Sentence W}
+    (h : t.radical = s.radical) : Confirming s t ↔ t.polarity * s.polarity = .positive := by
   unfold Confirming Sentence.prop
   rw [h]
-  cases s.negative <;> cases t.negative <;> simp
+  cases s.polarity <;> cases t.polarity <;> simp
 
 /-- A [reverse] response to an assertion is a denial: the conversation is in crisis. -/
 theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) (a b : Discourse.Role) :
@@ -237,18 +241,6 @@ inductive Reaction
   | question
   deriving DecidableEq, Repr
 
-/-- The relative polarity features (31). -/
-inductive Relative
-  | same
-  | reverse
-  deriving DecidableEq, Repr
-
-/-- The absolute polarity features. -/
-inductive Absolute
-  | pos
-  | neg
-  deriving DecidableEq, Repr
-
 /-- The polarity particles of the paper's examples. -/
 inductive Particle
   | yes | no | da | nu | ba | si | doch
@@ -263,25 +255,22 @@ initiating and responding sentences, the particles, and the judgment. -/
 structure Row where
   language : Language
   reaction : Reaction
-  inputNegative : Bool
-  responseNegative : Bool
+  input : Polarity
+  response : Polarity
   particles : List Particle
   judgment : Data.Examples.Judgment
   deriving DecidableEq, Repr
 
-/-- [same] or [reverse], from the polarities of the shared radical. -/
-def Row.relative (r : Row) : Relative :=
-  if r.inputNegative = r.responseNegative then .same else .reverse
-
-/-- [+] or [−]. -/
-def Row.absolute (r : Row) : Absolute := if r.responseNegative then .neg else .pos
+/-- The relative polarity (31) of the response: [same] is positive, [reverse] negative. The
+absolute polarity [+] or [−] is the response's own. -/
+def Row.relative (r : Row) : Polarity := r.response * r.input
 
 def languageTable : List (String × Language) :=
   [("stan1293", .english), ("roma1327", .romanian), ("stan1290", .french), ("stan1295", .german)]
 
 def reactionTable : List (String × Reaction) := [("assertion", .assertion), ("question", .question)]
 
-def polarityTable : List (String × Bool) := [("positive", false), ("negative", true)]
+def polarityTable : List (String × Polarity) := [("positive", .positive), ("negative", .negative)]
 
 def particleTable : List (String × Particle) :=
   [("yes", .yes), ("no", .no), ("da", .da), ("nu", .nu), ("ba", .ba), ("si", .si),
@@ -290,11 +279,11 @@ def particleTable : List (String × Particle) :=
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let language ← List.lookup ex.language languageTable
   let reaction ← ex.parse? "reaction" reactionTable
-  let inputNegative ← ex.parse? "input" polarityTable
-  let responseNegative ← ex.parse? "response" polarityTable
+  let input ← ex.parse? "input" polarityTable
+  let response ← ex.parse? "response" polarityTable
   let particle ← ex.parse? "particle" particleTable
   let particles := particle :: (ex.parse? "particle2" particleTable).toList
-  pure ⟨language, reaction, inputNegative, responseNegative, particles, ex.judgment⟩
+  pure ⟨language, reaction, input, response, particles, ex.judgment⟩
 
 theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
 
@@ -303,45 +292,45 @@ def rows : List Row := Examples.all.filterMap Row.ofExample
 /-- English *yes* marks [same] or [+]. -/
 theorem yes_same_or_pos :
     ∀ r ∈ rows, r.judgment = .acceptable → .yes ∈ r.particles →
-      r.relative = .same ∨ r.absolute = .pos := by
+      r.relative = .positive ∨ r.response = .positive := by
   decide
 
 /-- English *no* marks [reverse] or [−]. -/
 theorem no_reverse_or_neg :
     ∀ r ∈ rows, r.judgment = .acceptable → .no ∈ r.particles →
-      r.relative = .reverse ∨ r.absolute = .neg := by
+      r.relative = .negative ∨ r.response = .negative := by
   decide
 
 /-- Romanian *da* is an absolute particle: [+]. -/
-theorem da_pos : ∀ r ∈ rows, r.judgment = .acceptable → .da ∈ r.particles → r.absolute = .pos := by
+theorem da_pos : ∀ r ∈ rows, r.judgment = .acceptable → .da ∈ r.particles → r.response = .positive := by
   decide
 
 /-- Romanian *nu* is an absolute particle: [−]. -/
-theorem nu_neg : ∀ r ∈ rows, r.judgment = .acceptable → .nu ∈ r.particles → r.absolute = .neg := by
+theorem nu_neg : ∀ r ∈ rows, r.judgment = .acceptable → .nu ∈ r.particles → r.response = .negative := by
   decide
 
 /-- Romanian *ba* signals [reverse]. -/
 theorem ba_reverse :
-    ∀ r ∈ rows, r.judgment = .acceptable → .ba ∈ r.particles → r.relative = .reverse := by
+    ∀ r ∈ rows, r.judgment = .acceptable → .ba ∈ r.particles → r.relative = .negative := by
   decide
 
 /-- *ba* is possible in every denial. -/
 theorem ba_denial :
-    ∀ r ∈ rows, r.language = .romanian → r.reaction = .assertion → r.relative = .reverse →
+    ∀ r ∈ rows, r.language = .romanian → r.reaction = .assertion → r.relative = .negative →
       .ba ∈ r.particles → r.judgment = .acceptable := by
   decide
 
 /-- In a [reverse, −] answer to a question, *ba* is impossible and its absence acceptable. -/
 theorem ba_not_reverse_answer_neg :
-    ∀ r ∈ rows, r.language = .romanian → r.reaction = .question → r.relative = .reverse →
-      r.absolute = .neg → (r.judgment = .acceptable ↔ .ba ∉ r.particles) := by
+    ∀ r ∈ rows, r.language = .romanian → r.reaction = .question → r.relative = .negative →
+      r.response = .negative → (r.judgment = .acceptable ↔ .ba ∉ r.particles) := by
   decide
 
 /-- French *si* and German *doch* mark the marked combination [reverse, +], after assertions
 and questions alike. -/
 theorem si_doch_reverse_pos :
     ∀ r ∈ rows, .si ∈ r.particles ∨ .doch ∈ r.particles →
-      r.relative = .reverse ∧ r.absolute = .pos ∧ r.judgment = .acceptable := by
+      r.relative = .negative ∧ r.response = .positive ∧ r.judgment = .acceptable := by
   decide
 
 end FarkasBruce2010

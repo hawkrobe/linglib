@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Finset.Prod
 public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Pragmatics.Bidirectional
 

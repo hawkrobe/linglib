@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
-public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Semantics.Questions.QParticleLayer
 public import Linglib.Fragments.Swedish.Particles
 public import Linglib.Fragments.German.Particles
@@ -188,7 +188,7 @@ def DeclQuestionType.questionClass : DeclQuestionType → DeclQuestionClass
   | .NRQ => .rejecting
 
 /-- What a declarative of this type denotes (positive = p, negative = not-p). -/
-def DeclQuestionType.declPolarity : DeclQuestionType → SentencePolarity
+def DeclQuestionType.declPolarity : DeclQuestionType → Polarity
   | .PDQ => .positive
   | .NDQ => .negative
   | .PRQ => .positive
@@ -295,7 +295,7 @@ def rejectQBiasProfile (im : IllocutionaryModifier) : BiasProfile :=
     the speaker must not have already assumed the declarative's content.
 
     [seeliger-repp-2018]: "DQs pattern with each other" (p. 136). -/
-def dqBiasProfile (pol : SentencePolarity) : BiasProfile :=
+def dqBiasProfile (pol : Polarity) : BiasProfile :=
   match pol with
   | .positive => { evidential := .plusPos, epistemic := .minusPos }
   | .negative => { evidential := .plusNeg, epistemic := .minusNeg }

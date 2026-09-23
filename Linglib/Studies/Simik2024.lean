@@ -68,21 +68,15 @@ open Question Data.Examples
 
 /-! ### Bias and the polarity of the prejacent (§3.1) -/
 
-/-- The polarity of a polar question. -/
-inductive Polarity
-  | positive
-  | negative
-  deriving DecidableEq, Repr, Fintype
-
-/-- The contextual evidence a conflict-resolving question rests on: evidence for the
-prejacent as asked. -/
-def Polarity.evidence : Polarity → ContextualEvidence
+/-- The contextual evidence a conflict-resolving question of the given polarity rests on:
+evidence for the prejacent as asked. -/
+def evidence : Polarity → ContextualEvidence
   | .positive => .forP
   | .negative => .againstP
 
-/-- The prior epistemic bias a conflict-resolving question double-checks: against the
-prejacent as asked. -/
-def Polarity.prior : Polarity → OriginalBias
+/-- The prior epistemic bias a conflict-resolving question of the given polarity
+double-checks: against the prejacent as asked. -/
+def prior : Polarity → OriginalBias
   | .positive => .againstP
   | .negative => .forP
 
@@ -442,7 +436,7 @@ end Wonder
 /-- The bias profile of a *razve* question by form: evidence for the prejacent as asked
 against a prior for its negation (the conflict-resolving profile of §3.1). -/
 def razveProfile (f : PQForm) : ContextualEvidence × OriginalBias :=
-  ((polarityOf f).evidence, (polarityOf f).prior)
+  (evidence (polarityOf f), prior (polarityOf f))
 
 /-- The profile of *razve* negative questions is the same under inner negation (VERUM)
 and outer negation (FALSUM): negative evidence, positive prior. -/

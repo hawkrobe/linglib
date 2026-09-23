@@ -135,7 +135,7 @@ def table61 (p : Polarity) (b : Boundedness) (m : DegreeModifier) : Bool :=
 /-- Every cell of (61) is the endpoint structure of the adjective's own scale. -/
 theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : DegreeModifier) :
     table61 p b m = true ↔ Licenses m (p • b) := by
-  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> cases b <;> cases m <;> decide
+  cases p <;> cases b <;> cases m <;> decide
 
 open English.Adjectives in
 /-- The Fragment's antonym pairs fill (61): *completely full/empty*, *slightly wet* but

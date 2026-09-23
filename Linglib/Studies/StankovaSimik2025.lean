@@ -210,7 +210,7 @@ theorem nahodou_ppi (wp : VerbPosition) :
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's
 polarity. -/
-def CopakLicensed (pol : Polarity) (ctx : ContextualEvidence) : Prop := ctx = pol.evidence
+def CopakLicensed (pol : Polarity) (ctx : ContextualEvidence) : Prop := ctx = evidence pol
 
 instance (pol : Polarity) (ctx : ContextualEvidence) : Decidable (CopakLicensed pol ctx) := by
   unfold CopakLicensed; infer_instance
@@ -221,8 +221,8 @@ theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol .neutral := 
 
 /-- *Copak* marks a conflict: the prior belief it conveys opposes the evidence it requires. -/
 theorem copak_prior_ne_evidence (pol : Polarity) :
-    (pol.prior = .forP ↔ pol.evidence = .againstP) ∧
-      (pol.prior = .againstP ↔ pol.evidence = .forP) := by
+    (prior pol = .forP ↔ evidence pol = .againstP) ∧
+      (prior pol = .againstP ↔ evidence pol = .forP) := by
   cases pol <;> decide
 
 /-- The two particles part on context: *náhodou* is licensed by FALSUM whatever the

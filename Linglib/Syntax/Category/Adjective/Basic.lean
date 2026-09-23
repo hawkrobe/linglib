@@ -107,7 +107,7 @@ structure Adjective where
   /-- The direction of the ordering the adjective imposes on its `dimension`: antonyms share a
       dimension and reverse the ordering (*tall* positive, *short* negative), so the negative
       member measures on the dual scale. -/
-  polarity : Degree.Polarity := .positive
+  polarity : Polarity := .positive
   /-- Comparative/superlative morphology. -/
   comparison : Adjective.Comparison := .regular
   /-- Lexical antonym's surface form, when it has a stable one. -/
