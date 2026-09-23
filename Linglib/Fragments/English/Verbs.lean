@@ -46,7 +46,6 @@ Where the sources describe a reflex as dialect-variable or optional, the docstri
 * [grano-2024]
 * [karttunen-1971]
 * [kennedy-2007]
-* [kim-2024]
 * [klecha-2016]
 * [landau-2015]
 * [levin-1993]
@@ -1867,86 +1866,74 @@ def dread_np : Verb := .mkRegular {
 /-! [levin-1993] class 31.1 (amuse). Subject = stimulus, object = experiencer.
     NP2 (object) IC bias. -/
 
-/-- "frighten" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "frighten" — StimExp verb (stimulus subject). -/
 def frighten : Verb := .mkRegular {
   form := "frighten"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "amuse" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "amuse" — StimExp verb (stimulus subject). -/
 def amuse : Verb := .mkRegular {
   form := "amuse"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "fascinate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "fascinate" — StimExp verb (stimulus subject). -/
 def fascinate : Verb := .mkRegular {
   form := "fascinate"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "irritate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "irritate" — StimExp verb (stimulus subject). -/
 def irritate : Verb := .mkRegular {
   form := "irritate"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "annoy" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "annoy" — StimExp verb (stimulus subject). -/
 def annoy : Verb := .mkRegular {
   form := "annoy"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "bore" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "bore" — StimExp verb (stimulus subject). -/
 def bore : Verb := .mkRegular {
   form := "bore"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse, .carve, .rummage} }
 
-/-- "charm" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "charm" — StimExp verb (stimulus subject). -/
 def charm : Verb := .mkRegular {
   form := "charm"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "impress" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
+/-- "impress" — StimExp verb (stimulus subject). -/
 def impress : Verb := .mkRegular {
   form := "impress"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "concern" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
+/-- "concern" — stative Class II psych verb. -/
 def concern : Verb := .mkRegular {
   form := "concern"
   frames := [ArgumentFrame.np]
   vendlerClass := some .state
-  causalSource := some .internal
-  opaqueContext := true
   levinClasses := {LevinClass.amuse} }
 
-/-- "interest" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
+/-- "interest" — stative Class II psych verb. -/
 def interest : Verb := .mkRegular {
   form := "interest"
   frames := [ArgumentFrame.np]
   vendlerClass := some .state
-  causalSource := some .internal
-  opaqueContext := true
   levinClasses := {LevinClass.amuse} }
 
 /-- "surprise" — eventive Class II (Levin 31.1). "The news surprised John." -/
@@ -1954,7 +1941,6 @@ def surprise : Verb := .mkRegular {
   form := "surprise"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
 /-- "scare" — eventive Class II (Levin 31.1). "The noise scared John." -/
@@ -1962,7 +1948,6 @@ def scare : Verb := .mkRegular {
   form := "scare"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
 /-- "delight" — eventive Class II (Levin 31.1). "The gift delighted Mary." -/
@@ -1970,7 +1955,6 @@ def delight : Verb := .mkRegular {
   form := "delight"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse, .marvel} }
 
 /-- "embarrass" — eventive Class II (Levin 31.1). "The remark embarrassed John." -/
@@ -1978,7 +1962,6 @@ def embarrass : Verb := .mkRegular {
   form := "embarrass"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
 /-- "upset" — eventive Class II (Levin 31.1). "The news upset Mary." -/
@@ -1986,7 +1969,6 @@ def upset_psych : Verb := .mkRegular {
   form := "upset"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
 /-- "disgust" — eventive Class II (Levin 31.1). "The smell disgusted John." -/
@@ -1994,7 +1976,6 @@ def disgust : Verb := .mkRegular {
   form := "disgust"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
 /-- "shock" — eventive Class II (Levin 31.1). "The revelation shocked everyone." -/
@@ -2002,7 +1983,6 @@ def shock : Verb := .mkRegular {
   form := "shock"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
 /-- "confuse" — eventive Class II (Levin 31.1). "The instructions confused John." -/
@@ -2010,7 +1990,6 @@ def confuse : Verb := .mkRegular {
   form := "confuse"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amalgamate, .amuse} }
 
 /-- "disappoint" — eventive Class II (Levin 31.1). "The result disappointed Mary." -/
@@ -2018,56 +1997,43 @@ def disappoint : Verb := .mkRegular {
   form := "disappoint"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "worry" (eventive) — Class II, external cause. "The noise worried John."
+/-- "worry" (eventive) — Class II. "The noise worried John."
     Note: `worry` (attitude, clausal) defined separately. -/
 def worry_eventive : Verb := .mkRegular {
   form := "worry"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  causalSource := some .external
   levinClasses := {LevinClass.amuse} }
 
-/-- "worry" (stative) — Class II, internal cause. "The situation worries John."
-    [kim-2024] UPH: same theta grid as worry_eventive, different causal source. -/
+/-- "worry" (stative) — Class II. "The situation worries John." -/
 def worry_stative : Verb := .mkRegular {
   form := "worry"
   frames := [ArgumentFrame.np]
   vendlerClass := some .state
-  causalSource := some .internal
-  opaqueContext := true
   levinClasses := {LevinClass.amuse} }
 
-/-- "please" — stative Class II ([kim-2024] UPH, internal cause).
-    "The idea pleases John." Related to B&R Class III It. *piacere*. -/
+/-- "please" — stative Class II. "The idea pleases John." Related to B&R Class III It.
+    *piacere*. -/
 def please_psych : Verb := .mkRegular {
   form := "please"
   frames := [ArgumentFrame.np]
   vendlerClass := some .state
-  causalSource := some .internal
-  opaqueContext := true
   levinClasses := {LevinClass.amuse} }
 
-/-- "trouble" — stative Class II ([kim-2024] UPH, internal cause).
-    "The thought troubles John." -/
+/-- "trouble" — stative Class II. "The thought troubles John." -/
 def trouble : Verb := .mkRegular {
   form := "trouble"
   frames := [ArgumentFrame.np]
   vendlerClass := some .state
-  causalSource := some .internal
-  opaqueContext := true
   levinClasses := {LevinClass.amuse} }
 
-/-- "puzzle" — stative Class II ([kim-2024] UPH, internal cause).
-    "The problem puzzles John." -/
+/-- "puzzle" — stative Class II. "The problem puzzles John." -/
 def puzzle : Verb := .mkRegular {
   form := "puzzle"
   frames := [ArgumentFrame.np]
   vendlerClass := some .state
-  causalSource := some .internal
-  opaqueContext := true
   levinClasses := {LevinClass.amuse, .marvel} }
 
 /-! ### Agent-patient verbs ([solstad-bott-2024]) -/

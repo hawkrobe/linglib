@@ -13,7 +13,6 @@ public import Linglib.Logic.Natural.Basic
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.Causation.Implicative
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
-public import Linglib.Semantics.Causation.Psych
 public import Linglib.Semantics.Degree.Scale
 public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Semantics.ArgumentStructure.RoleList
@@ -54,7 +53,6 @@ these fields in `Syntax/Category/Verb/Basic.lean`.
 
 open Aspect ArgumentStructure Presupposition
 open NaturalLogic (Signature)
-open Causation.Psych (CausalSource)
 
 /-! ### Selectional and inflectional enums -/
 
@@ -155,16 +153,12 @@ structure Presupposition where
   projectionBehavior : Option _root_.Presupposition.ProjectionBehavior := none
   deriving Repr, BEq
 
-/-- Causal/implicative semantics: implicative polarity, causative mechanism,
-    and psych-causative source. -/
+/-- Causal/implicative semantics: implicative polarity and causative mechanism. -/
 structure Causation where
   /-- For implicative verbs: complement entailment polarity (links to compositional semantics). -/
   implicative : Option Implicative := none
   /-- For causative verbs: force-dynamic mechanism (links to compositional semantics). -/
   causative : Option Causative := none
-  /-- Source of causation for psych causatives ([kim-2024] UPH).
-      `.external` = mind-external percept, `.internal` = mind-internal representation. -/
-  causalSource : Option CausalSource := none
   deriving Repr, BEq
 
 /-- One frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3
