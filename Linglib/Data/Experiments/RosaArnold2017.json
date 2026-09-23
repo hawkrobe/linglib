@@ -1,0 +1,375 @@
+{
+  "meta": {
+    "bibkey": "rosa-arnold-2017",
+    "description": "The pronoun rates of the three production experiments, an in-person event retelling, a sentence completion over the story materials, and a sentence completion with disconnected items, by the continued character's thematic role, its grammatical role, and whether the two characters share a gender, with the next-mention rating study over the Experiment 1 stimuli. Page numbers are those of the authors' accepted manuscript."
+  },
+  "types": [
+    {
+      "name": "Experiment",
+      "doc": "The three production experiments.",
+      "levels": [
+        {
+          "name": "retelling",
+          "label": "1",
+          "doc": "in-person event retelling"
+        },
+        {
+          "name": "completion",
+          "label": "2",
+          "doc": "sentence completion over the story materials"
+        },
+        {
+          "name": "renamed",
+          "label": "3",
+          "doc": "sentence completion with disconnected items"
+        }
+      ]
+    },
+    {
+      "name": "Role",
+      "doc": "The thematic role of the continued character.",
+      "levels": [
+        {
+          "name": "goal",
+          "label": "goal",
+          "doc": "the goal of the transfer"
+        },
+        {
+          "name": "source",
+          "label": "source",
+          "doc": "the source of the transfer"
+        }
+      ]
+    },
+    {
+      "name": "Gram",
+      "doc": "The grammatical role of the continued character in the prompt sentence.",
+      "levels": [
+        {
+          "name": "subject",
+          "label": "subject",
+          "doc": "the subject"
+        },
+        {
+          "name": "nonsubject",
+          "label": "nonsubject",
+          "doc": "a nonsubject"
+        }
+      ]
+    },
+    {
+      "name": "Gender",
+      "doc": "Whether the two characters share a gender.",
+      "levels": [
+        {
+          "name": "same",
+          "label": "same-gender",
+          "doc": "the characters share a gender"
+        },
+        {
+          "name": "different",
+          "label": "different-gender",
+          "doc": "the characters differ in gender"
+        }
+      ]
+    }
+  ],
+  "constants": [
+    {
+      "name": "raters",
+      "type": "nat",
+      "value": 20,
+      "doc": "The participants of the next-mention rating study.",
+      "locator": "Rating studies, manuscript p. 20",
+      "verified": "page-image"
+    },
+    {
+      "name": "goalNextMention",
+      "type": "nat",
+      "value": 71,
+      "doc": "The percentage of choices of the goal as the character more likely to be talked about next.",
+      "locator": "Rating studies, manuscript p. 20",
+      "verified": "page-image"
+    },
+    {
+      "name": "subjectNextMention",
+      "type": "nat",
+      "value": 54,
+      "doc": "The percentage of choices of the subject as the character more likely to be talked about next.",
+      "locator": "Rating studies, manuscript p. 20",
+      "verified": "page-image"
+    }
+  ],
+  "tables": [
+    {
+      "name": "rates",
+      "structure": "Rate",
+      "doc": "the rate of pronoun production in a cell of an experiment.",
+      "locator": "Tables 1, 4 and 7 (manuscript pp. 25, 33, 38)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "gender",
+        "gram",
+        "role"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "gender",
+          "type": "Gender",
+          "doc": "Whether the characters share a gender."
+        },
+        {
+          "name": "gram",
+          "type": "Gram",
+          "doc": "The grammatical role of the continued character."
+        },
+        {
+          "name": "role",
+          "type": "Role",
+          "doc": "The thematic role of the continued character."
+        },
+        {
+          "name": "pronouns",
+          "type": "nat",
+          "doc": "The percentage of continuations with a pronoun, as printed."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "1",
+          "gender": "different-gender",
+          "gram": "subject",
+          "role": "goal",
+          "pronouns": 64
+        },
+        {
+          "experiment": "1",
+          "gender": "different-gender",
+          "gram": "subject",
+          "role": "source",
+          "pronouns": 37
+        },
+        {
+          "experiment": "1",
+          "gender": "different-gender",
+          "gram": "nonsubject",
+          "role": "goal",
+          "pronouns": 31
+        },
+        {
+          "experiment": "1",
+          "gender": "different-gender",
+          "gram": "nonsubject",
+          "role": "source",
+          "pronouns": 18
+        },
+        {
+          "experiment": "1",
+          "gender": "same-gender",
+          "gram": "subject",
+          "role": "goal",
+          "pronouns": 59
+        },
+        {
+          "experiment": "1",
+          "gender": "same-gender",
+          "gram": "subject",
+          "role": "source",
+          "pronouns": 22
+        },
+        {
+          "experiment": "1",
+          "gender": "same-gender",
+          "gram": "nonsubject",
+          "role": "goal",
+          "pronouns": 23
+        },
+        {
+          "experiment": "1",
+          "gender": "same-gender",
+          "gram": "nonsubject",
+          "role": "source",
+          "pronouns": 15
+        },
+        {
+          "experiment": "2",
+          "gender": "different-gender",
+          "gram": "subject",
+          "role": "goal",
+          "pronouns": 83
+        },
+        {
+          "experiment": "2",
+          "gender": "different-gender",
+          "gram": "subject",
+          "role": "source",
+          "pronouns": 78
+        },
+        {
+          "experiment": "2",
+          "gender": "different-gender",
+          "gram": "nonsubject",
+          "role": "goal",
+          "pronouns": 55
+        },
+        {
+          "experiment": "2",
+          "gender": "different-gender",
+          "gram": "nonsubject",
+          "role": "source",
+          "pronouns": 33
+        },
+        {
+          "experiment": "2",
+          "gender": "same-gender",
+          "gram": "subject",
+          "role": "goal",
+          "pronouns": 69
+        },
+        {
+          "experiment": "2",
+          "gender": "same-gender",
+          "gram": "subject",
+          "role": "source",
+          "pronouns": 69
+        },
+        {
+          "experiment": "2",
+          "gender": "same-gender",
+          "gram": "nonsubject",
+          "role": "goal",
+          "pronouns": 18
+        },
+        {
+          "experiment": "2",
+          "gender": "same-gender",
+          "gram": "nonsubject",
+          "role": "source",
+          "pronouns": 19
+        },
+        {
+          "experiment": "3",
+          "gender": "different-gender",
+          "gram": "subject",
+          "role": "goal",
+          "pronouns": 71
+        },
+        {
+          "experiment": "3",
+          "gender": "different-gender",
+          "gram": "subject",
+          "role": "source",
+          "pronouns": 71
+        },
+        {
+          "experiment": "3",
+          "gender": "different-gender",
+          "gram": "nonsubject",
+          "role": "goal",
+          "pronouns": 38
+        },
+        {
+          "experiment": "3",
+          "gender": "different-gender",
+          "gram": "nonsubject",
+          "role": "source",
+          "pronouns": 33
+        },
+        {
+          "experiment": "3",
+          "gender": "same-gender",
+          "gram": "subject",
+          "role": "goal",
+          "pronouns": 68
+        },
+        {
+          "experiment": "3",
+          "gender": "same-gender",
+          "gram": "subject",
+          "role": "source",
+          "pronouns": 64
+        },
+        {
+          "experiment": "3",
+          "gender": "same-gender",
+          "gram": "nonsubject",
+          "role": "goal",
+          "pronouns": 33
+        },
+        {
+          "experiment": "3",
+          "gender": "same-gender",
+          "gram": "nonsubject",
+          "role": "source",
+          "pronouns": 10
+        }
+      ]
+    },
+    {
+      "name": "overall",
+      "structure": "Overall",
+      "doc": "the overall rate of pronoun production for a thematic role.",
+      "locator": "Tables 1 and 4 (manuscript pp. 25, 33)",
+      "verified": "page-image",
+      "key": [
+        "experiment",
+        "role"
+      ],
+      "columns": [
+        {
+          "name": "experiment",
+          "type": "Experiment",
+          "doc": "The experiment."
+        },
+        {
+          "name": "role",
+          "type": "Role",
+          "doc": "The thematic role of the continued character."
+        },
+        {
+          "name": "pronouns",
+          "type": "option nat",
+          "doc": "The overall percentage; Table 7 prints none."
+        }
+      ],
+      "rows": [
+        {
+          "experiment": "1",
+          "role": "goal",
+          "pronouns": 43
+        },
+        {
+          "experiment": "1",
+          "role": "source",
+          "pronouns": 23
+        },
+        {
+          "experiment": "2",
+          "role": "goal",
+          "pronouns": 63
+        },
+        {
+          "experiment": "2",
+          "role": "source",
+          "pronouns": 51
+        },
+        {
+          "experiment": "3",
+          "role": "goal",
+          "pronouns": null
+        },
+        {
+          "experiment": "3",
+          "role": "source",
+          "pronouns": null
+        }
+      ]
+    }
+  ]
+}

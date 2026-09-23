@@ -13,8 +13,8 @@ namespace Khoo2015.Examples
 
 open Data.Examples
 
-def control_false : LinguisticExample :=
-  { id := "khoo2015_control_false"
+def control : LinguisticExample :=
+  { id := "khoo2015_control"
     source := ⟨"khoo-2015", "Section II"⟩
     reportedIn := none
     language := "stan1293"
@@ -26,31 +26,13 @@ def control_false : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("sentence", "control"), ("response", "false"), ("mean", "610"), ("sd", "135")]
-    comment := "Mean 7-point rating and standard deviation, times 100."
+    paperFeatures := []
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def control_rejection : LinguisticExample :=
-  { id := "khoo2015_control_rejection"
-    source := ⟨"khoo-2015", "Section II"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Jim is at home right now."
-    discourseSegments := []
-    glossedTokens := []
-    translation := "Jim is at home right now."
-    context := "A non-modal assertion in the control vignette; participants rated on a 7-point scale either whether what the speaker said is false or whether they would respond 'No, ...'."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("sentence", "control"), ("response", "rejection"), ("mean", "560"), ("sd", "113")]
-    comment := "Mean 7-point rating and standard deviation, times 100."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
-
-def modal_false : LinguisticExample :=
-  { id := "khoo2015_modal_false"
+def modal : LinguisticExample :=
+  { id := "khoo2015_modal"
     source := ⟨"khoo-2015", "Section II"⟩
     reportedIn := none
     language := "stan1293"
@@ -62,29 +44,11 @@ def modal_false : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("sentence", "modal"), ("response", "false"), ("mean", "242"), ("sd", "161")]
-    comment := "Mean 7-point rating and standard deviation, times 100."
+    paperFeatures := []
+    comment := ""
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def modal_rejection : LinguisticExample :=
-  { id := "khoo2015_modal_rejection"
-    source := ⟨"khoo-2015", "Section II"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Fat Tony might be dead."
-    discourseSegments := []
-    glossedTokens := []
-    translation := "Fat Tony might be dead."
-    context := "Smith, having examined evidence consistent with Fat Tony's death, asserts the epistemic might-claim; Beth knows Fat Tony is alive; participants rated on a 7-point scale either whether what Smith said is false or whether they would respond 'No, ...'."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("sentence", "modal"), ("response", "rejection"), ("mean", "503"), ("sd", "177")]
-    comment := "Mean 7-point rating and standard deviation, times 100."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
-
-def all : List LinguisticExample := [control_false, control_rejection, modal_false, modal_rejection]
+def all : List LinguisticExample := [control, modal]
 
 end Khoo2015.Examples
