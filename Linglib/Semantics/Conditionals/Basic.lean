@@ -6,61 +6,43 @@ public import Linglib.Semantics.Conditionals.SimilarityOrdering
 /-!
 # Conditional operators
 
-The basic conditional operators. A conditional operator sends an antecedent and a consequent,
-propositions as sets of worlds, to the proposition the conditional expresses; rival theories
-differ in what the operator is derived from, and comparisons and non-entailments between them
-are stated over this shared signature.
+This file defines conditional operators on propositions, taken as sets of worlds. Most theories
+of the conditional derive it from a domain of antecedent-worlds: *if p, q* is true when `q` holds
+throughout the domain that `p` picks out from the evaluation point. The theories differ in the
+domain, which is the accessible antecedent-worlds for the strict conditional and the closest
+antecedent-worlds for the variably strict conditional under the Limit Assumption.
 
 ## Main definitions
 
-- `materialImp p q`: the truth-functional conditional, `w ∈ p → w ∈ q`.
-- `strictImp access p q`: the strict conditional over an accessibility map `access : I → Set W`
-  (a modal base), `access i ∩ p ⊆ q`.
-- `variablyStrictImp sim p q`: the variably strict conditional of [lewis-1973] §2.3 over a
-  similarity ordering: vacuously true without antecedent-worlds, and otherwise true iff the
-  consequent holds at every antecedent-world at least as close as some antecedent-world.
-- `closestImp sim p q`: the consequent holds at every closest antecedent-world, the
-  simplification of §1.4 under the Limit Assumption.
-- `might op p q`: the *might* counterfactual of a *would* conditional, *not (if p, would not
-  q)*, as in [lewis-1973] §1.5.
-- `conditionalPerfection p q`: the perfected ("only if") reading, `materialImp pᶜ qᶜ`.
+* `ofDomain`: the conditional quantifying over a domain of antecedent-worlds.
+* `materialImp`, `strictImp`: the material and strict conditionals.
+* `variablyStrictImp`: Lewis's variably strict conditional over a similarity ordering.
+* `closestImp`: the conditional of the closest antecedent-worlds.
+* `might`: the *might* counterfactual of a *would* conditional.
 
 ## Main results
 
-- `strictImp_anti_left`: antecedent strengthening, valid for the strict conditional and the
-  signature property variably strict semantics rejects.
-- `mem_strictImp_of_subset` / `not_subset_of_mem_strictImp`: a strict conditional whose
-  consequent exhausts the domain is trivially true; a true non-trivial one has an antecedent
-  that excludes a live world ([stalnaker-1975], [von-fintel-1999], [mizuno-2024]).
-- `closestImp_eq_variablyStrictImp`: on a total ordering the two variably strict conditionals
-  coincide wherever closest antecedent-worlds exist, in particular for finite antecedents
-  (`closestImp_eq_variablyStrictImp_of_finite`); without them *if p, would not v* holds for every
-  world `v` (`mem_variablyStrictImp_compl_singleton`).
-- `mem_closestImp_union` / `mem_closestImp_or_of_mem_union`: a conditional holding of both
-  disjuncts holds of the disjunction, and on a total ordering conversely of one of them.
-- `strict_implies_material`, `closestImp_subset_materialImp`,
-  `variablyStrictImp_subset_materialImp`: the modal conditionals refine the material one
-  under reflexivity or centering.
-- `perfection_not_entailed` / `perfection_not_entailed_variablyStrict`: conditional perfection
-  is not entailed, even variably strictly; it is a pragmatic inference
-  ([grusdt-lassiter-franke-2022]).
-
-The Kratzer restrictor conditional (necessity over a restricted conversational background)
-lives in `Conditionals/Restrictor.lean`, which bridges to `strictImp` via
-`conditionalNecessity_iff_mem_strictImp`.
+* `closestImp_eq_variablyStrictImp`: on a total ordering the two variably strict conditionals
+  coincide wherever the Limit Assumption holds.
+* `mem_variablyStrictImp_compl_singleton`: without closest antecedent-worlds, *if p, it would not
+  be v* holds for every world `v`.
 
 ## References
 
-* [lewis-1973]
-* [stalnaker-1975]
-* [stalnaker-1981]
-* [von-fintel-1999]
-* [mizuno-2024]
-* [grusdt-lassiter-franke-2022]
-* [condoravdi-2002]
-* [kratzer-1986]
-* [lewis-1975]
-* [stalnaker-1968]
+* [D. Lewis, *Counterfactuals* (1973)][lewis-1973]
+* [D. Lewis, *Adverbs of Quantification* (1975)][lewis-1975]
+* [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
+* [R. C. Stalnaker, *Indicative conditionals* (1975)][stalnaker-1975]
+* [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
+* [A. Kratzer, *Conditionals* (1986)][kratzer-1986]
+* [C. Condoravdi, *Temporal Interpretation of Modals: Modals for the Present and for the Past*
+  (2002)][condoravdi-2002]
+* [K. von Fintel, *NPI Licensing, Strawson Entailment, and Context Dependency*
+  (1999)][von-fintel-1999]
+* [B. Grusdt, D. Lassiter and M. Franke, *Probabilistic Modeling of Rational Communication with
+  Conditionals* (2022)][grusdt-lassiter-franke-2022]
+* [T. Mizuno, *Strategies for Anderson Conditionals: Their Implications for the Typology of
+  O-Marking and X-Marking* (2024)][mizuno-2024]
 -/
 
 @[expose] public section
@@ -72,18 +54,16 @@ variable {I W : Type*} {access : I → Set W} {p p' q q' : Set W} {i : I} {w : W
 
 /-! ### Material conditional -/
 
-/-- The material conditional: true wherever the antecedent fails or the
-consequent holds (`pᶜ ∪ q`). Classical semantics keeps this literal meaning
-and derives its apparent exceptions pragmatically
+/-- The material conditional, true wherever the antecedent fails or the consequent holds.
+Classical semantics keeps this meaning and derives its apparent exceptions pragmatically
 ([grusdt-lassiter-franke-2022]). -/
 def materialImp (p q : Set W) : Set W := {w | w ∈ p → w ∈ q}
 
 @[simp]
 theorem mem_materialImp : w ∈ materialImp p q ↔ (w ∈ p → w ∈ q) := Iff.rfl
 
-/-- Contraposition, valid for the material conditional. [stalnaker-1975] (§4)
-observes that it fails for indicative conditionals under his semantics — see
-`Studies/Stalnaker1975`. -/
+/-- Contraposition is valid for the material conditional, though not for the indicative
+conditional of [stalnaker-1975]. -/
 theorem contraposition : materialImp p q ⊆ materialImp qᶜ pᶜ :=
   fun _ h hq hp ↦ hq (h hp)
 
@@ -105,8 +85,8 @@ section Domain
 
 variable {D : I → Set W → Set W} {r : Set W}
 
-/-- The conditional quantifying over the domain `D i p`: *if p, q* is true at `i` iff `q` holds
-at every world of `D i p`. -/
+/-- The conditional quantifying over the domain `D i p`, true at `i` when `q` holds at every
+world of `D i p`. -/
 def ofDomain (D : I → Set W → Set W) (p q : Set W) : Set I := {i | D i p ⊆ q}
 
 @[simp]
@@ -115,14 +95,15 @@ theorem mem_ofDomain : i ∈ ofDomain D p q ↔ D i p ⊆ q := Iff.rfl
 theorem ofDomain_mono_right (hq : q ⊆ q') : ofDomain D p q ⊆ ofDomain D p q' :=
   fun _ h ↦ h.trans hq
 
-/-- Agglomeration: a conditional holding of two consequents holds of their conjunction. -/
+/-- A conditional holds of a conjunctive consequent iff it holds of both conjuncts. -/
 theorem ofDomain_inter : ofDomain D p (q ∩ r) = ofDomain D p q ∩ ofDomain D p r :=
   Set.ext fun _ ↦ Set.subset_inter_iff
 
 theorem ofDomain_eq_univ (h : ∀ i, D i p ⊆ q) : ofDomain D p q = Set.univ :=
   Set.eq_univ_of_forall h
 
-/-- Antecedent strengthening, valid when the domain grows with the antecedent. -/
+/-- Antecedent strengthening holds when the domain of the stronger antecedent lies within the
+domain of the weaker. -/
 theorem ofDomain_anti_left (hD : ∀ i, D i p' ⊆ D i p) : ofDomain D p q ⊆ ofDomain D p' q :=
   fun i h ↦ (hD i).trans h
 
@@ -132,24 +113,26 @@ theorem mem_ofDomain_union (hD : D i (p ∪ p') ⊆ D i p ∪ D i p') (hp : i �
     (hp' : i ∈ ofDomain D p' q) : i ∈ ofDomain D (p ∪ p') q :=
   fun _ hv ↦ (hD hv).elim (hp ·) (hp' ·)
 
-/-- Distribution over a disjunctive consequent, for a domain with at most one world. -/
+/-- A conditional over a domain with at most one world distributes over a disjunctive
+consequent. -/
 theorem mem_ofDomain_or (h : (D i p).Subsingleton) (hq : i ∈ ofDomain D p (q ∪ r)) :
     i ∈ ofDomain D p q ∨ i ∈ ofDomain D p r := by
   rcases h.eq_empty_or_singleton with h0 | ⟨v, hv⟩
   · exact .inl (by simp [h0])
   · simpa only [mem_ofDomain, hv, Set.singleton_subset_iff, Set.mem_union] using hq
 
-/-- Conditional Excluded Middle, for a domain with at most one world. -/
+/-- A conditional over a domain with at most one world satisfies Conditional Excluded
+Middle. -/
 theorem mem_ofDomain_or_compl (h : (D i p).Subsingleton) :
     i ∈ ofDomain D p q ∨ i ∈ ofDomain D p qᶜ :=
   mem_ofDomain_or h (by simp)
 
-/-- Modus ponens, valid when an antecedent-world lies in its own domain. -/
+/-- Modus ponens holds when every antecedent-world lies in its own domain. -/
 theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :
     ofDomain D p q ⊆ materialImp p q :=
   fun w h hp ↦ h (hD w hp)
 
-/-- The material conditional quantifies over the evaluation world, when it is an
+/-- The material conditional quantifies over the evaluation world when it is an
 antecedent-world. -/
 theorem materialImp_eq_ofDomain : materialImp p q = ofDomain (fun w p ↦ {w} ∩ p) p q :=
   Set.ext fun _ ↦ ⟨fun h _ hv ↦
@@ -160,11 +143,9 @@ end Domain
 
 /-! ### Strict conditional -/
 
-/-- The strict conditional over an accessibility map: the consequent holds
-throughout the accessible antecedent worlds, `access i ∩ p ⊆ q`. The
-evaluation points `I` may differ from the worlds `W` quantified over — e.g. a
-historical modal base `Index W T → Set W` evaluates at world-time
-indices ([condoravdi-2002]); the classical case is `I = W`. -/
+/-- The strict conditional over an accessibility map, true at `i` when the consequent holds at
+every accessible antecedent-world. The evaluation points may differ from the worlds quantified
+over, as for a historical modal base evaluated at world-time indices ([condoravdi-2002]). -/
 def strictImp (access : I → Set W) (p q : Set W) : Set I :=
   ofDomain (fun i p ↦ access i ∩ p) p q
 
@@ -181,31 +162,27 @@ theorem strictImp_mono_right (hq : q ⊆ q') :
     strictImp access p q ⊆ strictImp access p q' :=
   ofDomain_mono_right hq
 
-/-- **Antecedent strengthening**: the strict conditional is antitone in its
-antecedent — the signature property of strict (and material) conditionals
-that variably strict semantics rejects ([lewis-1973] Sobel sequences). -/
+/-- The strict conditional is antitone in its antecedent, the antecedent strengthening that
+the variably strict conditional of [lewis-1973] rejects. -/
 theorem strictImp_anti_left (hp : p' ⊆ p) :
     strictImp access p q ⊆ strictImp access p' q :=
   ofDomain_anti_left fun _ ↦ Set.inter_subset_inter_right _ hp
 
-/-- **Triviality**: when the consequent already holds throughout the
-accessible worlds, the strict conditional holds for *any* antecedent — the
-if-clause does no work ([stalnaker-1975], [von-fintel-1999]; the
-Anderson-conditional application is [mizuno-2024] §2). -/
+/-- A strict conditional whose consequent holds throughout the accessible worlds is true for
+every antecedent ([stalnaker-1975], [von-fintel-1999], [mizuno-2024]). -/
 theorem mem_strictImp_of_subset (h : access i ⊆ q) :
     i ∈ strictImp access p q :=
   Set.inter_subset_left.trans h
 
-/-- **Informativity**: a true strict conditional whose consequent is *not*
-trivial over the accessible worlds has an antecedent that excludes at least
-one accessible world (`Set.not_subset` gives the witness form)
-([mizuno-2024] §2). -/
+/-- A true strict conditional whose consequent does not hold throughout the accessible worlds
+has an antecedent that excludes some accessible world ([mizuno-2024]). -/
 theorem not_subset_of_mem_strictImp
     (hm : i ∈ strictImp access p q) (hq : ¬ access i ⊆ q) :
     ¬ access i ⊆ p :=
   fun hp ↦ hq (fun _ hw ↦ hm ⟨hw, hp hw⟩)
 
-/-- With reflexive access, the strict conditional refines the material one. -/
+/-- With reflexive access, the strict conditional entails the material conditional at the
+evaluation world. -/
 theorem strict_implies_material {R : W → Set W} (h_refl : w ∈ R w)
     (h : w ∈ strictImp R p q) : w ∈ materialImp p q :=
   fun hp ↦ h ⟨h_refl, hp⟩
@@ -223,8 +200,8 @@ simplifies the clause to the consequent holding at every closest antecedent-worl
 also meaningful on a similarity preorder that is not total, where the closest worlds are the
 minimal ones. `might` is §1.5's *might* counterfactual, the dual of a *would* conditional. -/
 
-/-- The *might* counterfactual of a *would* conditional `op`: *if p, might q* is
-*not (if p, would not q)*, [lewis-1973] §1.5's definition. -/
+/-- The *might* counterfactual of a *would* conditional `op`, *not (if p, would not q)*
+([lewis-1973] §1.5). -/
 def might (op : Set W → Set W → Set W) (p q : Set W) : Set W := (op p qᶜ)ᶜ
 
 @[simp]
@@ -238,8 +215,8 @@ section VariablyStrict
 variable {sim : SimilarityOrdering W} {r : Set W}
 
 /-- The variably strict conditional of [lewis-1973] §2.3 for a universal system, one in which
-every world is accessible: vacuously true without antecedent-worlds, and otherwise true iff
-the consequent holds at every antecedent-world at least as close as some antecedent-world. -/
+every world is accessible. It is vacuously true without antecedent-worlds, and otherwise true
+when the consequent holds at every antecedent-world at least as close as some antecedent-world. -/
 def variablyStrictImp (sim : SimilarityOrdering W) (p q : Set W) : Set W :=
   {w | p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, sim.closer w u v → u ∈ q}
 
@@ -248,9 +225,9 @@ theorem mem_variablyStrictImp :
     w ∈ variablyStrictImp sim p q ↔ p = ∅ ∨ ∃ v ∈ p, ∀ u ∈ p, sim.closer w u v → u ∈ q :=
   Iff.rfl
 
-/-- The conditional of the closest antecedent-worlds: true iff the consequent holds at every
-antecedent-world closest to the evaluation world, [lewis-1973] §1.4's simplification of the
-variably strict conditional under the Limit Assumption. -/
+/-- The conditional of the closest antecedent-worlds, true when the consequent holds at every
+closest antecedent-world. It is [lewis-1973]'s simplification of the variably strict
+conditional under the Limit Assumption (§1.4). -/
 def closestImp (sim : SimilarityOrdering W) (p q : Set W) : Set W :=
   ofDomain sim.closest p q
 
@@ -291,20 +268,20 @@ theorem closestImp_eq_variablyStrictImp (htot : sim.Total)
   exact (SimilarityOrdering.mem_closest_iff_of_total htot).2
     ⟨hu, fun x hx ↦ sim.closer_trans w u v x huv (hv.2 x hx)⟩
 
-/-- A finite antecedent satisfies the Limit Assumption. -/
+/-- On a total ordering the two conditionals coincide for a finite antecedent, which satisfies
+the Limit Assumption. -/
 theorem closestImp_eq_variablyStrictImp_of_finite (htot : sim.Total) (hp : p.Finite) :
     closestImp sim p q = variablyStrictImp sim p q :=
   closestImp_eq_variablyStrictImp htot fun w ↦ sim.closest_nonempty w hp
 
-/-- Without closest antecedent-worlds the conditional of the closest worlds is vacuous: where
-the Limit Assumption fails it and the variably strict conditional come apart. -/
+/-- Without closest antecedent-worlds the conditional of the closest worlds is vacuously true. -/
 theorem mem_closestImp_of_closest_eq_empty (h : sim.closest w p = ∅) :
     w ∈ closestImp sim p q :=
   (mem_closestImp.2 (h ▸ Set.empty_subset q))
 
-/-- Without closest antecedent-worlds, [lewis-1973] §1.4's case of a line more than an inch
-long: for every world `v`, if `p` were the case it would not be `v`, since every
-antecedent-world has a strictly closer one. -/
+/-- Where an antecedent has no closest worlds, as for [lewis-1973]'s line more than an inch long,
+*if p, it would not be v* is true for every world `v`, since every antecedent-world has a
+strictly closer one. -/
 theorem mem_variablyStrictImp_compl_singleton (h : sim.closest w p = ∅) (v : W) :
     w ∈ variablyStrictImp sim p {v}ᶜ := by
   rcases p.eq_empty_or_nonempty with hp | ⟨u, hu⟩
@@ -316,13 +293,14 @@ theorem mem_variablyStrictImp_compl_singleton (h : sim.closest w p = ∅) (v : W
     exact .inr ⟨x, hx, fun y _ hyx hyv ↦ hvx (hyv ▸ hyx)⟩
   · exact .inr ⟨u, hu, fun y hy _ hyv ↦ hv (hyv ▸ hy)⟩
 
-/-- So there is no world that `p` might have been: [stalnaker-1981]'s objection to [lewis-1973]
+/-- So no world is one that `p` might have been, [stalnaker-1981]'s objection to [lewis-1973]
 without the Limit Assumption. -/
 theorem notMem_might_variablyStrictImp_singleton (h : sim.closest w p = ∅) (v : W) :
     w ∉ might (variablyStrictImp sim) p {v} :=
   fun hm ↦ hm (mem_variablyStrictImp_compl_singleton h v)
 
-/-- Under strong centering both conditionals refine the material one. -/
+/-- Under strong centering the conditional of the closest worlds entails the material
+conditional. -/
 theorem closestImp_subset_materialImp (hc : sim.isCentered) :
     closestImp sim p q ⊆ materialImp p q :=
   fun _ h hp ↦ h ((SimilarityOrdering.closest_eq_singleton_of_mem hc hp).symm ▸ rfl)
@@ -357,13 +335,14 @@ theorem mem_closestImp_or_of_mem_union (htot : sim.Total) (h : w ∈ closestImp 
   · refine hyr (h ((SimilarityOrdering.mem_closest_iff_of_total htot).2 ⟨.inr hy.1, ?_⟩))
     exact fun u hu ↦ hu.elim (fun hu ↦ sim.closer_trans w y x u hyx (hx.2 u hu)) (hy.2 u)
 
-/-- With a unique closest antecedent-world, Lewis's *might* collapses into *would*. -/
+/-- With a unique closest antecedent-world, Lewis's *might* coincides with *would*. -/
 theorem mem_might_closestImp_iff_of_closest_eq_singleton {v : W} (h : sim.closest w p = {v}) :
     w ∈ might (closestImp sim) p q ↔ w ∈ closestImp sim p q := by
   simp [h]
 
-/-- Conditional Excluded Middle collapses Lewis's *might* into *would*: [lewis-1973]'s objection
-to a semantics validating it, as [stalnaker-1981] states it. -/
+/-- When the antecedent has closest worlds and Conditional Excluded Middle holds, Lewis's *might*
+coincides with *would*, [lewis-1973]'s objection to a semantics validating it as
+[stalnaker-1981] reports it. -/
 theorem mem_might_closestImp_iff_of_cem (h_nonempty : (sim.closest w p).Nonempty)
     (h_cem : w ∈ closestImp sim p q ∨ w ∈ closestImp sim p qᶜ) :
     w ∈ might (closestImp sim) p q ↔ w ∈ closestImp sim p q := by
@@ -374,29 +353,5 @@ theorem mem_might_closestImp_iff_of_cem (h_nonempty : (sim.closest w p).Nonempty
 
 end VariablyStrict
 
-
-/-! ### Conditional perfection -/
-
-/-- Conditional perfection: the strengthened converse reading of a
-conditional ("if not A, not C"), as `materialImp pᶜ qᶜ`. Observed
-pragmatically but not entailed (`perfection_not_entailed`);
-[grusdt-lassiter-franke-2022] derive it as an RSA implicature. -/
-def conditionalPerfection (p q : Set W) : Set W := materialImp pᶜ qᶜ
-
-/-- Conditional perfection is not entailed: the material conditional can
-hold (vacuously, at an antecedent-false world) where its perfection fails. -/
-theorem perfection_not_entailed :
-    ∃ (W : Type) (p q : Set W) (w : W),
-      w ∈ materialImp p q ∧ w ∉ conditionalPerfection p q :=
-  ⟨Bool, {w | w = true}, Set.univ, false, fun _ ↦ trivial,
-    fun h ↦ h Bool.false_ne_true trivial⟩
-
-/-- Perfection is not entailed even variably strictly: the [lewis-1973] conditional is stronger
-than material implication, yet still does not entail the converse. -/
-theorem perfection_not_entailed_variablyStrict :
-    ∃ (W : Type) (sim : SimilarityOrdering W) (p q : Set W) (w : W),
-      w ∈ variablyStrictImp sim p q ∧ w ∉ conditionalPerfection p q :=
-  ⟨Bool, .ofRank fun _ _ ↦ (0 : ℕ), {w | w = true}, Set.univ, false,
-    .inr ⟨true, rfl, fun _ _ _ ↦ trivial⟩, fun h ↦ h Bool.false_ne_true trivial⟩
 
 end Conditional

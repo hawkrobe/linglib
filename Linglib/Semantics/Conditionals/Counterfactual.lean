@@ -8,35 +8,46 @@ public import Linglib.Semantics.Supervaluation
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Core.Data.Trivalent
 public import Linglib.Logic.Duality
+public import Linglib.Semantics.Presupposition.Defs
 
 /-!
 # Counterfactual conditionals: three theories
 
-[ramotowska-marty-romoli-santorio-2025] compare three theories of counterfactuals, all stated
-over the closest antecedent-worlds of a similarity ordering:
+This file defines three theories of counterfactuals, all stated over the closest
+antecedent-worlds of a similarity ordering. On the universal theory *if p, would q* is true when
+every closest `p`-world is a `q`-world. On the selectional theory a selection function picks one
+closest `p`-world and ties are resolved by supervaluation, so the counterfactual is true when
+every closest `p`-world is a `q`-world, false when none is, and indeterminate otherwise. On the
+homogeneity theory the universal assertion carries the presupposition that the closest
+`p`-worlds agree on `q`. The three agree whenever the closest antecedent-worlds agree on the
+consequent, and part under embedding.
 
-1. The universal theory ([lewis-1973], [kratzer-2012]): *if p, would q* is true iff every
-   closest `p`-world is a `q`-world, the conditional `closestImp` of `Conditionals/Basic.lean`.
-2. The selectional theory ([stalnaker-1968], with [stalnaker-1981]'s supervaluation over ties):
-   a selection function picks one closest `p`-world (`selectionalCounterfactual`), true when
-   every closest `p`-world is a `q`-world, false when none is, indeterminate otherwise.
-3. The homogeneity theory ([von-fintel-1997], [kriz-2015]): the universal assertion with the
-   presupposition that the closest `p`-worlds agree on `q` (`homogeneityCounterfactual`).
+## Main definitions
 
-The three agree whenever the closest antecedent-worlds agree on the consequent; their
-predictions under quantifiers are derived in `Studies/RamotowskaEtAl2025.lean`.
+* `Counterfactual.selectionalCounterfactual`: the selectional counterfactual.
+* `Counterfactual.homogeneityCounterfactual`: the homogeneity counterfactual.
+* `Counterfactual.selectionalMight`: the selectional *might*.
+
+## Main results
+
+* `Counterfactual.eval_homogeneityCounterfactual`: unembedded, the homogeneity counterfactual
+  evaluates to the selectional one.
+* `Counterfactual.selectionalCounterfactual_eq_true_iff_forall_compatible`: the selectional
+  counterfactual is the supervaluation over the completions of the ordering.
 
 ## References
 
-* [ramotowska-marty-romoli-santorio-2025]
-* [lewis-1973]
-* [kratzer-2012]
-* [stalnaker-1968]
-* [stalnaker-1981]
-* [von-fintel-1997]
-* [kriz-2015]
-* [fine-1975]
-* [cariani-santorio-2018]
+* [S. Ramotowska, P. Marty, J. Romoli and P. Santorio, *Counterfactuals and quantificational force:
+  Experimental evidence for selectional semantics* (2025)][ramotowska-marty-romoli-santorio-2025]
+* [D. Lewis, *Counterfactuals* (1973)][lewis-1973]
+* [A. Kratzer, *Modals and Conditionals* (2012)][kratzer-2012]
+* [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
+* [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
+* [K. von Fintel, *Bare Plurals, Bare Conditionals, and Only* (1997)][von-fintel-1997]
+* [M. Križ, *Aspects of Homogeneity in the Semantics of Natural Language* (2015)][kriz-2015]
+* [K. Fine, *Vagueness, Truth and Logic* (1975)][fine-1975]
+* [F. Cariani and P. Santorio, *Will done Better: Selection Semantics, Future Credence, and
+  Indeterminacy* (2018)][cariani-santorio-2018]
 -/
 
 @[expose] public section
@@ -44,16 +55,17 @@ predictions under quantifiers are derived in `Studies/RamotowskaEtAl2025.lean`.
 
 namespace Conditional.Counterfactual
 
+open Presupposition
+
 section Theories
 
 variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W) (p q r : Set W)
   [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] [DecidablePred (· ∈ r)] (w : W)
 
-/-! ## The selectional theory -/
+/-! ### The selectional theory -/
 
-/-- Selectional counterfactual semantics ([stalnaker-1981]'s supervaluation over the
-selection functions the similarity ordering allows): true when every closest `p`-world is a
-`q`-world, false when every one is a `qᶜ`-world, indeterminate otherwise. -/
+/-- The selectional counterfactual, true when every closest `p`-world is a `q`-world, false when
+every one is a `qᶜ`-world, and indeterminate otherwise. -/
 def selectionalCounterfactual : Trivalent :=
   if w ∈ closestImp sim p q then .true
   else if w ∈ closestImp sim p qᶜ then .false
@@ -70,8 +82,7 @@ theorem selectionalCounterfactual_eq_false_iff :
       w ∉ closestImp sim p q ∧ w ∈ closestImp sim p qᶜ := by
   unfold selectionalCounterfactual; split_ifs <;> simp_all
 
-/-- The selectional counterfactual is Fine super-truth (`Trivalent.dist`) over the closest
-worlds. -/
+/-- The selectional counterfactual is super-truth (`Trivalent.dist`) over the closest worlds. -/
 theorem selectionalCounterfactual_eq_dist :
     selectionalCounterfactual sim p q w =
       Trivalent.dist (sim.closestWorlds w (Finset.univ.filter (· ∈ p))) (· ∈ q) := by
@@ -82,83 +93,77 @@ theorem selectionalCounterfactual_eq_dist :
 
 variable (sim p q w)
 
-/-- Conditional Excluded Middle for the selectional theory: *if p, q* or *if p, not q* is never
-false. -/
+/-- The selectional disjunction of *if p, q* and *if p, not q* is never false. -/
 theorem cem_selectional :
     selectionalCounterfactual sim p q w ⊔ selectionalCounterfactual sim p qᶜ w ≠ .false := by
   simp only [selectionalCounterfactual, compl_compl]
   split_ifs <;> simp_all (config := { decide := true })
 
-/-! ## The homogeneity theory -/
+/-! ### The homogeneity theory
 
-/-- Presupposition status. -/
-inductive PresupStatus where
-  | satisfied
-  | failed
-  deriving Repr, DecidableEq
+The homogeneity counterfactual is a partial proposition. Unembedded, its three-valued evaluation
+is the selectional counterfactual, and the two theories part only under embedding, where
+[ramotowska-marty-romoli-santorio-2025] test them. -/
 
-/-- Result of evaluating a sentence with presuppositions. -/
-structure PresupResult where
-  presupposition : PresupStatus
-  assertion : Option Bool
-  deriving Repr, DecidableEq
+omit [DecidableEq W] [Fintype W] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] in
+/-- The homogeneity counterfactual, which asserts that every closest `p`-world is a `q`-world and
+presupposes that the closest `p`-worlds agree on `q`. -/
+def homogeneityCounterfactual : PartialProp W where
+  presup w := w ∈ closestImp sim p q ∨ w ∈ closestImp sim p qᶜ
+  assertion w := w ∈ closestImp sim p q
 
-/-- Homogeneity counterfactual semantics: the universal assertion, presupposing that the closest
-`p`-worlds agree on `q`. -/
-def homogeneityCounterfactual : PresupResult :=
-  if w ∈ closestImp sim p q then ⟨.satisfied, some true⟩
-  else if w ∈ closestImp sim p qᶜ then ⟨.satisfied, some false⟩
-  else ⟨.failed, none⟩
+omit [DecidableEq W] [Fintype W] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] in
+/-- The presupposition is symmetric in the consequent and its negation. -/
+theorem presup_homogeneityCounterfactual_compl :
+    (homogeneityCounterfactual sim p qᶜ).presup w ↔
+      (homogeneityCounterfactual sim p q).presup w := by
+  simp only [homogeneityCounterfactual, compl_compl, or_comm]
 
-/-- Homogeneity for `q` is homogeneity for `qᶜ`. -/
-theorem presup_preserved_homogeneity
-    (h : (homogeneityCounterfactual sim p q w).presupposition = .satisfied) :
-    (homogeneityCounterfactual sim p qᶜ w).presupposition = .satisfied := by
-  simp only [homogeneityCounterfactual, compl_compl] at *
-  split_ifs at h ⊢ <;> rfl
-
-/-- Negation swaps the assertion when some closest `p`-world exists and the presupposition holds. -/
-theorem negation_swap_homogeneity_nonvacuous
-    (h_presup : (homogeneityCounterfactual sim p q w).presupposition = .satisfied)
+omit [DecidableEq W] [Fintype W] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] in
+/-- Negating the consequent negates the assertion when the presupposition holds and some closest
+`p`-world exists. -/
+theorem assertion_homogeneityCounterfactual_compl
+    (h_presup : (homogeneityCounterfactual sim p q).presup w)
     (h_nonvac : (sim.closest w p).Nonempty) :
-    (homogeneityCounterfactual sim p q w).assertion.map (!·) =
-      (homogeneityCounterfactual sim p qᶜ w).assertion := by
+    (homogeneityCounterfactual sim p qᶜ).assertion w ↔
+      ¬ (homogeneityCounterfactual sim p q).assertion w := by
   obtain ⟨v, hv⟩ := h_nonvac
-  simp only [homogeneityCounterfactual, compl_compl] at *
-  split_ifs at h_presup ⊢ with h₁ h₂ h₃ <;> first | rfl | simp_all
-  exact absurd (h₁ hv) (h₂ hv)
+  refine ⟨fun hn hq ↦ hn hv (hq hv), fun hn ↦ h_presup.resolve_left hn⟩
 
-/-! The selectional counterfactual is supervaluation ([fine-1975]) over the closest worlds:
-each closest world is a specification point, a legitimate resolution of the selection
-function's tie. -/
+/-- Unembedded, the homogeneity counterfactual evaluates to the selectional counterfactual. -/
+theorem eval_homogeneityCounterfactual :
+    (homogeneityCounterfactual sim p q).eval w = selectionalCounterfactual sim p q w := by
+  by_cases h₁ : w ∈ closestImp sim p q <;> by_cases h₂ : w ∈ closestImp sim p qᶜ <;>
+    simp [PartialProp.eval, homogeneityCounterfactual, selectionalCounterfactual, h₁, h₂]
+
+/-! ### Supervaluation over the closest worlds
+
+The selectional counterfactual is supervaluation ([fine-1975]) over the closest worlds, each
+closest world being one resolution of the selection function's tie. -/
 
 open Semantics.Supervaluation (SpecSpace superTrue)
 
-/-- Selectional counterfactual = supervaluation over the closest worlds. -/
+/-- The selectional counterfactual is supervaluation over the closest worlds. -/
 theorem selectional_as_supervaluation
     (hne : (sim.closestWorlds w (Finset.univ.filter (· ∈ p))).Nonempty) :
     selectionalCounterfactual sim p q w =
       superTrue (· ∈ q) ⟨sim.closestWorlds w (Finset.univ.filter (· ∈ p)), hne⟩ :=
   selectionalCounterfactual_eq_dist
 
-/-!
-## *Might* counterfactuals
+/-! ### *Might* counterfactuals
 
-[lewis-1973] defines *if p, might q* as *not (if p, would not q)* (`might`). Together with
-Conditional Excluded Middle that definition makes *might* equivalent to *would*
-(`mem_might_closestImp_iff_of_cem`), which Lewis counts against a semantics validating it;
-[stalnaker-1981] rejects the definition instead, reading *might* as a possibility operator over
-the whole conditional, true when the selectional conditional is not determinately false
-(`selectionalMight`).
--/
+[lewis-1973] defines *if p, might q* as *not (if p, would not q)*. Together with Conditional
+Excluded Middle that definition makes *might* equivalent to *would*, which Lewis counts against a
+semantics validating it. [stalnaker-1981] rejects the definition instead, reading *might* as a
+possibility operator over the whole conditional. -/
 
-/-- The selectional *might*: the selectional counterfactual is not determinately false. -/
+/-- The selectional *might* holds when the selectional counterfactual is not false. -/
 def selectionalMight : Prop := selectionalCounterfactual sim p q w ≠ .false
 
 instance : Decidable (selectionalMight sim p q w) := inferInstanceAs (Decidable (_ ≠ _))
 
-/-- The selectional *might* is weaker than *would*: with mixed closest worlds, *might* holds while
-*would* is indeterminate. -/
+/-- The selectional *might* is weaker than *would*, since with mixed closest worlds *might*
+holds while *would* is indeterminate. -/
 theorem selectional_might_weaker :
     ∃ (sim : SimilarityOrdering (Fin 3)) (p q : Set (Fin 3)) (_ : DecidablePred (· ∈ p))
       (_ : DecidablePred (· ∈ q)) (w : Fin 3),
@@ -166,16 +171,14 @@ theorem selectional_might_weaker :
   ⟨.ofBool (fun _ a b ↦ a == b) (by decide) (by decide), {1, 2}, {1}, inferInstance,
     inferInstance, 0, by decide, by decide⟩
 
-/-!
-## Distribution
-[stalnaker-1981]
+/-! ### Distribution
 
-The distribution principle `(p □→ q ∪ r) ⊃ ((p □→ q) ∨ (p □→ r))` fails for the universal
-theory, which quantifies over every closest world, but holds for the selectional theory when
-there is at most one closest world.
--/
+Distribution of a counterfactual over a disjunctive consequent fails for the universal theory,
+which quantifies over every closest world, and holds for the selectional theory when there is at
+most one closest world ([stalnaker-1981]). -/
 
-/-- Distribution holds for the selectional theory with at most one closest world. -/
+/-- With at most one closest world, the selectional counterfactual distributes over a disjunctive
+consequent. -/
 theorem distribution_selectional (h_unique : (sim.closest w p).Subsingleton)
     (h : selectionalCounterfactual sim p (q ∪ r) w = .true) :
     selectionalCounterfactual sim p q w = .true ∨ selectionalCounterfactual sim p r w = .true := by
@@ -184,8 +187,8 @@ theorem distribution_selectional (h_unique : (sim.closest w p).Subsingleton)
   · simp [h0]
   · simpa only [hv, Set.singleton_subset_iff, Set.mem_union] using h
 
-/-- Distribution fails for the universal theory: two closest `p`-worlds, one a `q`-world and
-the other an `r`-world. -/
+/-- The conditional of the closest worlds does not distribute over a disjunctive consequent when
+one closest world is a `q`-world and another an `r`-world. -/
 theorem distribution_fails_universal :
     ∃ (sim : SimilarityOrdering (Fin 3)) (p q r : Set (Fin 3)) (w : Fin 3),
       w ∈ closestImp sim p (q ∪ r) ∧ w ∉ closestImp sim p q ∧ w ∉ closestImp sim p r :=
@@ -194,28 +197,29 @@ theorem distribution_fails_universal :
 
 end Theories
 
-/-! ## The selectional theory as supervaluation
+/-! ### The selectional theory as supervaluation
 
 [stalnaker-1981] supervaluates the [stalnaker-1968] selection conditional over the completions of
-a similarity ordering, each yielding the selection function that picks its least
-antecedent-world (`SelectionFunction.Compatible`): a conditional is true when every completion
-makes it true, false when every one makes it false, and indeterminate otherwise. For a single
-conditional on a finite, strongly centered ordering that is `selectionalCounterfactual`; the
-Kleene disjunction of `cem_selectional` is weaker than Stalnaker's claim that Conditional
-Excluded Middle is true on every completion (`cem_superTrue`). -/
+a similarity ordering. A conditional is true when every completion makes it true, false when
+every one makes it false, and indeterminate otherwise, which for a single conditional on a
+finite, strongly centered ordering is the selectional counterfactual. The disjunction that
+`cem_selectional` shows is never false is weaker than Stalnaker's claim that Conditional
+Excluded Middle is true on every completion. -/
 
 section Supervaluation
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {sim : SimilarityOrdering W} {p q : Set W}
   [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] {w : W}
 
-/-- True: every compatible selection function makes the selection conditional true. -/
+/-- The selectional counterfactual is true iff the selection conditional is true on every
+completion. -/
 theorem selectionalCounterfactual_eq_true_iff_forall_compatible (hc : sim.isCentered) :
     selectionalCounterfactual sim p q w = .true ↔
       ∀ s : SelectionFunction W, s.Compatible sim → w ∈ selectionConditional s p q :=
   selectionalCounterfactual_eq_true_iff.trans (mem_closestImp_iff_forall_compatible hc)
 
-/-- False: every compatible selection function makes the selection conditional false. -/
+/-- The selectional counterfactual is false iff the selection conditional is false on every
+completion. -/
 theorem selectionalCounterfactual_eq_false_iff_forall_compatible (hc : sim.isCentered) :
     selectionalCounterfactual sim p q w = .false ↔
       ∀ s : SelectionFunction W, s.Compatible sim → w ∉ selectionConditional s p q := by
@@ -235,8 +239,8 @@ theorem selectionalCounterfactual_eq_false_iff_forall_compatible (hc : sim.isCen
     intro hp hq
     exact h s hs ((mem_selectionConditional_of_nonempty s hp).2 hq)
 
-/-- Under [stalnaker-1981]'s uniqueness assumption, at most one closest antecedent-world, the
-supervaluation is decided by any compatible selection function: the gap arises only with ties. -/
+/-- Under the uniqueness assumption of [stalnaker-1981], at most one closest antecedent-world, any
+compatible selection function decides the selectional counterfactual. -/
 theorem selectionalCounterfactual_eq_ofBool {s : SelectionFunction W} (hs : s.Compatible sim)
     (hu : (sim.closest w p).Subsingleton) (hp : p.Nonempty) :
     selectionalCounterfactual sim p q w = Trivalent.ofBool (decide (s.sel w p ∈ q)) := by
@@ -245,13 +249,12 @@ theorem selectionalCounterfactual_eq_ofBool {s : SelectionFunction W} (hs : s.Co
 
 end Supervaluation
 
-/-! ## Bridge: the selection conditional is the *will*-conditional over the universe
+/-! ### The selection conditional as a *will*-conditional
 
-[cariani-santorio-2018] give *will* a selection-function semantics, *will*-conditionals by
-restricting its modal parameter to the antecedent, and a Stalnakerian *would* the same meaning up
-to the modal base. A selection conditional with a possible antecedent is the will-conditional
-whose parameter is the whole space; for an impossible antecedent the will-conditional is not
-vacuous, unlike [stalnaker-1968]'s. -/
+[cariani-santorio-2018] give *will* a selection-function semantics and form *will*-conditionals
+by restricting its modal parameter to the antecedent. A selection conditional with a possible
+antecedent is the *will*-conditional whose parameter is the whole space. For an impossible
+antecedent the *will*-conditional is not vacuous, unlike the selection conditional. -/
 
 /-- A selection conditional with a possible antecedent is the will-conditional over the
 universe. -/
@@ -263,9 +266,8 @@ theorem mem_selectionConditional_iff_willConditional_univ {W : Type*}
   simp [Conditional.WillConditional.willConditional, Conditional.WillConditional.restrict,
     Modality.Selectional.willSem]
 
-/-- **Selection versus supervaluation** ([lewis-1973], [stalnaker-1981]): with two antecedent-worlds
-tied for closest, a selection function compatible with the ordering makes *if p, q* true while the
-supervaluation, the conditional of the closest worlds, does not. -/
+/-- With two antecedent-worlds tied for closest, a compatible selection function makes *if p, q*
+true while the conditional of the closest worlds does not ([lewis-1973], [stalnaker-1981]). -/
 theorem stalnaker_lewis_would_diverge :
     ∃ (sim : SimilarityOrdering (Fin 3)) (s : SelectionFunction (Fin 3)), sim.isCentered ∧
       s.Compatible sim ∧ (0 : Fin 3) ∈ selectionConditional s {1, 2} {1} ∧

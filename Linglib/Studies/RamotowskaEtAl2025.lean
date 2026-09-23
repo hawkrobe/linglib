@@ -1,5 +1,7 @@
-import Linglib.Semantics.Conditionals.Counterfactual
-import Linglib.Logic.Duality
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual
+public import Linglib.Logic.Duality
 
 /-!
 # Ramotowska, Marty, Romoli, and Santorio (2025): Counterfactuals and Quantificational Force
@@ -48,6 +50,9 @@ of §5 and §6 are not restated.
 * [bassi-bar-lev-2018]
 * [barwise-cooper-1981]
 -/
+
+@[expose] public section
+
 
 open Conditional Conditional.Counterfactual
 
@@ -141,7 +146,7 @@ def selectional (q : Quant) : Trivalent :=
 /-- The homogeneity theory (6): each player's counterfactual carries its third status into
 composition, and the quantifier projects it. -/
 noncomputable def homogeneity (q : Quant) : Trivalent :=
-  q.aggregate (D.toList.map fun d ↦ selectionalCounterfactual sim A (B d) w)
+  q.aggregate (D.toList.map fun d ↦ (homogeneityCounterfactual sim A (B d)).eval w)
 
 /-- The implicature theory (§8): the basic existential meaning (23) and its exhaustified
 universal strengthening (24), the latter computed in the upward-entailing scope of *some* and
@@ -162,7 +167,7 @@ indeterminate on the selectional theory, and undefined on the homogeneity theory
 theorem unembedded (h : Mixed sim A w D B) {d : ι} (hd : d ∈ D) :
     w ∉ closestImp sim A (B d) ∧
       selectionalCounterfactual sim A (B d) w = .indet ∧
-      (homogeneityCounterfactual sim A (B d) w).presupposition = .failed := by
+      ¬ (homogeneityCounterfactual sim A (B d)).presup w := by
   obtain ⟨⟨w₁, hw₁, hB₁⟩, ⟨w₂, hw₂, hB₂⟩⟩ := h.players d hd
   have hnot : w ∉ closestImp sim A (B d) := fun hall ↦
     hB₂ (mem_closestImp_iff_closestWorlds.1 hall w₂ hw₂)
@@ -171,8 +176,7 @@ theorem unembedded (h : Mixed sim A w D B) {d : ι} (hd : d ∈ D) :
   refine ⟨hnot, ?_, ?_⟩
   · unfold selectionalCounterfactual
     rw [ite_eq_right hnot, ite_eq_right hnot']
-  · unfold homogeneityCounterfactual
-    rw [ite_eq_right hnot, ite_eq_right hnot']
+  · exact fun h ↦ h.elim hnot hnot'
 
 /-- The universal theory turns on polarity: since every player's counterfactual is false, the
 positive sentences are false and the negative ones true. -/
@@ -215,12 +219,13 @@ either projection algorithm, for every quantifier: the homogeneity theory leaves
 to pragmatics. -/
 theorem homogeneity_undefined (h : Mixed sim A w D B) (q : Quant) :
     homogeneity sim A w D B q = .indet := by
-  have hl : D.toList.map (fun d ↦ selectionalCounterfactual sim A (B d) w)
+  have hl : D.toList.map (fun d ↦ (homogeneityCounterfactual sim A (B d)).eval w)
       = List.replicate D.card .indet := by
     rw [List.eq_replicate_iff]
     refine ⟨by simp, fun v hv ↦ ?_⟩
     obtain ⟨d, hd, rfl⟩ := List.mem_map.1 hv
-    exact (unembedded h (Finset.mem_toList.1 hd)).2.1
+    exact (Presupposition.PartialProp.eval_eq_indet_iff _ _).2
+      (unembedded h (Finset.mem_toList.1 hd)).2.2
   have hpos : 0 < D.card := Finset.card_pos.2 h.nonempty
   cases q <;> simp only [homogeneity, Quant.aggregate, hl, List.map_replicate, Trivalent.neg] <;>
     exact Trivalent.aggregate_replicate_indet _ _ hpos

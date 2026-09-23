@@ -1283,7 +1283,6 @@ import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Conditionals.SimilarityOrdering
 import Linglib.Semantics.Conditionals.Stalnaker
-import Linglib.Semantics.Conditionals.Sweetser
 import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
