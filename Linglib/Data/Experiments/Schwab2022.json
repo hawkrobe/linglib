@@ -1,7 +1,13 @@
 {
   "meta": {
     "bibkey": "schwab-2022",
-    "description": "Two speeded acceptability experiments on the German NPIs jemals 'ever' and so recht 'really', each crossing the NPI with the position of a negative quantifier: in the matrix clause, inside a relative clause, or absent. For each experiment the paper reports Bayes factors, from bridge sampling, comparing a model with the NPI illusion of each NPI, or with the interaction of the two illusions, to a model without it, and reads each as evidence of a stated strength. The posterior estimates are not recorded; Experiment 1 prints the estimate of the so recht illusion with the numbers of the jemals illusion, although its posterior in Figure 2 is centred near zero."
+    "description": "Two speeded acceptability experiments on the German NPIs jemals 'ever' and so recht 'really', each crossing the NPI with the position of a negative quantifier: in the matrix clause, inside a relative clause, or absent. For each experiment the paper reports Bayes factors, from bridge sampling, comparing a model with the NPI illusion of each NPI, or with the interaction of the two illusions, to a model without it, and reads each as evidence of a stated strength. The posterior estimates are not recorded; Experiment 1 prints the estimate of the so recht illusion with the numbers of the jemals illusion, although its posterior in Figure 2 is centred near zero.",
+    "rawData": [
+      {
+        "url": "https://osf.io/s9rt8/",
+        "doc": "stimulus materials, code and data of both experiments, with supplementary materials"
+      }
+    ]
   },
   "types": [
     {
