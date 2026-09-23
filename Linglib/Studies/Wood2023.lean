@@ -1,6 +1,6 @@
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.DistributedMorphology.ComplexHead
-import Linglib.Fragments.Icelandic.Nominalizations
+import Linglib.Fragments.Icelandic.Nouns
 import Linglib.Data.Examples.Wood2023
 
 /-!
@@ -26,7 +26,7 @@ nominalizer is chosen by the verbalizer whenever that is overt, since it hides t
 the root otherwise (`Allomorphy.nominalizer_of_ne_zero`, `Allomorphy.nominalizer_of_eq_zero`),
 so that *-k* takes *-un* and *-er* takes *-ing* whatever the root; and a root that no item
 lists has no nominalization at all, the book's *borða* 'eat' (`Allomorphy.nominalizer_eq_none`).
-Every segmentation in `Fragments.Icelandic.Nominalizations` is derived this way
+Every segmentation in `Fragments.Icelandic.Nouns` is derived this way
 (`Allomorphy.fragment_realize`).
 
 Special meaning is subject to phase locality: a dependency may cross at most one categorizer
@@ -70,7 +70,7 @@ preposition and the root are read off its attachment. The event-modifier account
 
 namespace Wood2023
 
-open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nominalizations
+open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns
 open Data.Examples Wood2023.Examples
 open Morphology (Morph)
 
@@ -134,7 +134,7 @@ def realize (w : ComplexHead Feature Morph) : List Morph :=
 
 /-- Every nominal of the fragment is the root's spell-out, with its preposition prefixed. -/
 theorem fragment_realize :
-    ∀ w ∈ Icelandic.Nominalizations.all,
+    ∀ w ∈ Icelandic.Nouns.deverbals,
       (w.preposition.map Morph.pref).toList ++ realize (word w.root none) = w.morphs := by
   decide
 
@@ -504,7 +504,7 @@ theorem rows_licensed :
 /-! ### Allosemy conditioned by the root -/
 
 /-- The judgments of the rows on a nominal of the fragment under a reading. -/
-def judgments (w : Nominal) (reading : String) : List Judgment :=
+def judgments (w : Deverbal) (reading : String) : List Judgment :=
   (Examples.all.filter fun ex ↦
     ex.feature? "nominal" = some (Morph.surface w.morphs) ∧
       ex.feature? "reading" = some reading).map (·.judgment)
