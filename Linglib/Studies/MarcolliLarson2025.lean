@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Theta.Basic
-import Linglib.Syntax.Minimalist.Theta.Realize
+module
+
+public import Linglib.Syntax.Minimalist.Theta.Basic
+public import Linglib.Syntax.Minimalist.Theta.Realize
 
 /-!
 # Marcolli and Larson (2025): Theta Theory, Operads and Coloring
@@ -24,6 +26,8 @@ the standard rule set and added by the *se* marking (`parasiticGen_notMem`,
 * [marcolli-chomsky-berwick-2025]
 * [siloni-2012]
 -/
+
+@[expose] public section
 
 open ArgumentStructure
 

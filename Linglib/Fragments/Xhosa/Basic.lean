@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Fragments.Bantu.Params
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Fragments.Bantu.Params
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Xhosa noun classes
@@ -16,6 +18,8 @@ device.
 * [carstens-2026]
 * [taraldsen-et-al-2018]
 -/
+
+@[expose] public section
 
 namespace Xhosa
 

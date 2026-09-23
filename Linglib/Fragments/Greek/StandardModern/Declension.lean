@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Modern Greek nominal declensions
@@ -12,6 +14,8 @@ aside), as a weighted paradigm system with uniform class weights.
 
 * [ackerman-malouf-2013]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.Declension
 

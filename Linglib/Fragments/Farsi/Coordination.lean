@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Persian coordinators
@@ -16,6 +18,8 @@ each coordinand, gives 'both … and'.
 
 The entries have not been checked against a grammar of Persian.
 -/
+
+@[expose] public section
 
 namespace Farsi.Coordination
 

@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.HofmeisterSag2010
-import Linglib.Processing.Cost.Profile
+module
+
+public import Linglib.Data.Examples.HofmeisterSag2010
+public import Linglib.Processing.Cost.Profile
 
 /-!
 # Hofmeister and Sag (2010): Cognitive Constraints and Island Effects
@@ -35,6 +37,8 @@ after the embedded verb.
 * [deane-1991]
 * [sprouse-2007]
 -/
+
+@[expose] public section
 
 namespace HofmeisterSag2010
 

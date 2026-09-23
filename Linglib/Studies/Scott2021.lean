@@ -1,8 +1,10 @@
-import Linglib.Syntax.Tree.Basic
-import Linglib.Fragments.Swahili.Relativization
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Data.Examples.Scott2021
+module
+
+public import Linglib.Syntax.Tree.Basic
+public import Linglib.Fragments.Swahili.Relativization
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Data.Examples.Scott2021
 
 /-!
 # Scott (2021): Two Types of Resumptive Pronouns in Swahili
@@ -40,6 +42,8 @@ speaker of Table 4 a personless parasitic pronoun needs a personless true gap (`
 * [scott-2021]
 * [landau-2006]
 -/
+
+@[expose] public section
 
 namespace Scott2021
 
@@ -126,7 +130,7 @@ def deleteLayer (c : DPCat) : Tree DPCat String → Tree DPCat String
   | .node k children => .node k (deleteLayerAll c children)
   | other => other
 
-private def deleteLayerAll (c : DPCat) : List (Tree DPCat String) → List (Tree DPCat String)
+def deleteLayerAll (c : DPCat) : List (Tree DPCat String) → List (Tree DPCat String)
   | [] => []
   | t :: ts => if t.cat = c then deleteLayerAll c ts else deleteLayer c t :: deleteLayerAll c ts
 end

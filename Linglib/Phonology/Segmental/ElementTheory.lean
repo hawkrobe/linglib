@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Lattice.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Order.Basic
-import Mathlib.Logic.Equiv.Defs
-import Linglib.Core.Order.Flat
+module
+
+public import Mathlib.Data.Finset.Lattice.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Order.Basic
+public import Mathlib.Logic.Equiv.Defs
+public import Linglib.Core.Order.Flat
 
 /-!
 # Element Theory
@@ -46,6 +48,8 @@ frication/voicelessness/high tone.
 * [kaye-lowenstamm-vergnaud-1985]
 * [cavirani-vandenwyngaerd-2026]
 -/
+
+@[expose] public section
 
 namespace ElementTheory
 

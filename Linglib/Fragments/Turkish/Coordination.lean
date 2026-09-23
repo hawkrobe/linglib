@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Turkish coordinators
@@ -18,6 +20,8 @@ particle 'also, too'.
 * [haspelmath-2007]
 * [kornfilt-1997]
 -/
+
+@[expose] public section
 
 namespace Turkish.Coordination
 

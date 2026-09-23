@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `Jardine2016b` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/Jardine2016b.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace Jardine2016b.Examples`.
 -/
+
+@[expose] public section
 
 namespace Jardine2016b.Examples
 

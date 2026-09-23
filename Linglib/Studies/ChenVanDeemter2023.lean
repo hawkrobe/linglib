@@ -1,4 +1,6 @@
-import Linglib.Studies.DaleReiter1995
+module
+
+public import Linglib.Studies.DaleReiter1995
 
 /-!
 # Chen and van Deemter (2023): Varieties of Specification
@@ -35,6 +37,8 @@ running scene are classified.
 * [chen-van-deemter-2023]
 * [dale-reiter-1995]
 -/
+
+@[expose] public section
 
 namespace ChenVanDeemter2023
 

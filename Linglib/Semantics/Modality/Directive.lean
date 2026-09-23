@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Kratzer.Flavor
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Directive Modality: Strong and Weak Necessity
@@ -40,6 +42,8 @@ Weak necessity adds a secondary ordering source via `combineOrdering`.
 The `DeonticStrength` structure pairs primary and secondary norms,
 bridging to `DeonticFlavor`.
 -/
+
+@[expose] public section
 
 namespace Modality.Directive
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.Update
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # ICDRT discourse referents
@@ -19,6 +21,8 @@ veridicality typology — lives in `ICDRT/Basic.lean`; the paper-specific
 apparatus in `Studies/Hofmann2025.lean`. (The concept drefs of
 [krifka-2026] live with their consumer in `Studies/Krifka2026.lean`.)
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics.ICDRT
 

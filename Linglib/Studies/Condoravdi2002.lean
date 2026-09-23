@@ -1,8 +1,10 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.Examples.Condoravdi2002
-import Linglib.Semantics.Aspect.Instantiation
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Condoravdi2002
+public import Linglib.Semantics.Aspect.Instantiation
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Condoravdi 2002: Temporal Interpretation of Modals
@@ -52,6 +54,8 @@ paper's examples as rows.
 * [S. Löbner, *German schon, erst, noch: An Integrated Analysis* (1989)][lobner-1989]
 * [R. Thomason, *Combinations of Tense and Modality* (1984)][thomason-1984]
 -/
+
+@[expose] public section
 
 namespace Condoravdi2002
 
@@ -409,7 +413,7 @@ theorem zones_iff : ∀ s : Scope, ∀ z : Zone, z ∈ s.zones ↔ s.Sat z := by
 
 /-! ### The rows -/
 
-private def scopes : List (String × Scope) :=
+def scopes : List (String × Scope) :=
   [("modal", .modal), ("modalPerf", .modalPerf), ("perfModal", .perfModal)]
 
 /-- An adverbial row: the scoping, the sort of the predicate, and the zone of the frame

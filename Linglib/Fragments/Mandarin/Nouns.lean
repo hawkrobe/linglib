@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Fragments.Mandarin.Classifiers
-import Linglib.Semantics.Genericity.NominalMappingParameter
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Fragments.Mandarin.Classifiers
+public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Mandarin nouns
@@ -15,6 +17,8 @@ every bare noun is an argument; counting goes through a classifier
 
 * [chierchia-1998]
 -/
+
+@[expose] public section
 
 namespace Mandarin.Nouns
 
@@ -70,7 +74,7 @@ structure ProperName extends _root_.ProperName where
   deriving DecidableEq, Repr
 
 /-- A personal name glossed by its pinyin. -/
-private def name (form pinyin : String) : ProperName := { form, gloss := pinyin, pinyin }
+def name (form pinyin : String) : ProperName := { form, gloss := pinyin, pinyin }
 
 def zhangsan : ProperName := name "张三" "Zhāng Sān"
 def lisi : ProperName := name "李四" "Lǐ Sì"

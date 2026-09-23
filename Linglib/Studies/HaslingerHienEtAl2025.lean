@@ -1,8 +1,10 @@
-import Linglib.Semantics.Quantification.UnifiedUniversal
-import Linglib.Semantics.Quantification.ONEModifiers
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Fragments.German.Distributives
-import Linglib.Fragments.English.Determiners
+module
+
+public import Linglib.Semantics.Quantification.UnifiedUniversal
+public import Linglib.Semantics.Quantification.ONEModifiers
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Fragments.German.Distributives
+public import Linglib.Fragments.English.Determiners
 
 /-!
 # Haslinger, Hien, Rosina, Schmitt and Wurm (2025): A unified semantics for universal quantifiers
@@ -40,6 +42,8 @@ maximality; this one separates it from number.
 * [fassi-fehri-2020]
 * [link-1987]
 -/
+
+@[expose] public section
 
 namespace HaslingerHienEtAl2025
 

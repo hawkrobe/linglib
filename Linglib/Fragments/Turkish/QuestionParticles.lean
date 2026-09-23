@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Operator
+module
+
+public import Linglib.Semantics.Polarity.Operator
 
 /-!
 # Turkish question particles
@@ -15,6 +17,8 @@ studies that adopt them.
 * [atlamaz-2023]
 * [turk-hirsch-2026]
 -/
+
+@[expose] public section
 
 namespace Turkish.QuestionParticles
 

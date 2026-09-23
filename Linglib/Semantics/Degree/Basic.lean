@@ -1,9 +1,11 @@
-import Mathlib.Order.Interval.Set.LinearOrder
-import Mathlib.Order.Bounds.Basic
-import Mathlib.Algebra.Order.Module.Defs
-import Linglib.Semantics.Degree.Comparison
-import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Antonymy
+module
+
+public import Mathlib.Order.Interval.Set.LinearOrder
+public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Algebra.Order.Module.Defs
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Degree.Defs
+public import Linglib.Semantics.Degree.Antonymy
 
 /-!
 # Degree comparison: the point-standard core
@@ -30,6 +32,8 @@ S-comparative of [hoeksema-1983] is `Comparison.gt.overSet μ`, whose properties
   biconditional derived from extent complementarity, and cross-polar anomaly
   as unsatisfiable extent inclusion ([kennedy-1999]).
 -/
+
+@[expose] public section
 
 namespace Degree
 

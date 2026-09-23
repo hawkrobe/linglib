@@ -1,6 +1,8 @@
-import Linglib.Core.Probability.Gumbel
-import Linglib.Core.Probability.Choice.RandomUtility
-import Linglib.Core.Probability.Choice.RationalAction
+module
+
+public import Linglib.Core.Probability.Gumbel
+public import Linglib.Core.Probability.Choice.RandomUtility
+public import Linglib.Core.Probability.Choice.RationalAction
 
 /-!
 # Gumbel–Luce equivalence [mcfadden-1974]
@@ -38,6 +40,8 @@ gives it the random-utility reading.
   equation from the softmax form and translation completeness is not
   formalized here.
 -/
+
+@[expose] public section
 
 namespace Core
 

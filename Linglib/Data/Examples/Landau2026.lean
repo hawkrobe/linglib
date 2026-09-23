@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `Landau2026` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/Landau2026.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace Landau2026.Examples`.
 -/
+
+@[expose] public section
 
 namespace Landau2026.Examples
 

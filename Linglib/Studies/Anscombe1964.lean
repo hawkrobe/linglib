@@ -1,5 +1,7 @@
-import Mathlib.Order.Interval.Set.OrdConnected
-import Linglib.Semantics.Tense.RunTimes
+module
+
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Linglib.Semantics.Tense.RunTimes
 
 /-!
 # Anscombe 1964: before and after
@@ -21,6 +23,8 @@ repetition is `Set.OrdConnected` and an instantaneous event has a singleton trac
 
 * [anscombe-1964]
 -/
+
+@[expose] public section
 
 namespace Anscombe1964
 

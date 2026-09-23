@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 129A: Hand and Arm
@@ -10,6 +12,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 Chapter 129, 617 languages.
 -/
 
+@[expose] public section
+
 namespace Data.WALS.F129A
 
 /-- WALS 129A values. -/
@@ -20,7 +24,8 @@ inductive HandAndArm where
   | different
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint HandAndArm) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint HandAndArm) :=
   [ { walsCode := "xoo", iso := "nmn", value := .identical }
   , { walsCode := "arx", iso := "alu", value := .identical }
   , { walsCode := "abw", iso := "abe", value := .different }
@@ -523,7 +528,8 @@ private def allData_0 : List (Datapoint HandAndArm) :=
   , { walsCode := "spo", iso := "spo", value := .different }
   ]
 
-private def allData_1 : List (Datapoint HandAndArm) :=
+/-- Rows 501 to 617 of `allData`. -/
+def allData_1 : List (Datapoint HandAndArm) :=
   [ { walsCode := "squ", iso := "squ", value := .identical }
   , { walsCode := "sus", iso := "sus", value := .identical }
   , { walsCode := "sva", iso := "sva", value := .different }

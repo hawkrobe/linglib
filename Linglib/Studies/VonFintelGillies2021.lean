@@ -1,5 +1,7 @@
-import Linglib.Studies.VonFintelGillies2010
-import Linglib.Data.Examples.VonFintelGillies2021
+module
+
+public import Linglib.Studies.VonFintelGillies2010
+public import Linglib.Data.Examples.VonFintelGillies2021
 
 /-!
 # von Fintel & Gillies (2021): Still Going Strong
@@ -23,6 +25,8 @@ and (25), are the rows of `Data.Examples.VonFintelGillies2021`.
 * [von-fintel-gillies-2021]
 * [von-fintel-gillies-2010]
 -/
+
+@[expose] public section
 
 namespace VonFintelGillies2021
 

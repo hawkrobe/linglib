@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Function
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Paradigm.Function
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Stump (2016): Inflectional Paradigms
@@ -36,6 +38,8 @@ display of Grierson's paradigms, with the first person singular masculine expone
 
 * [stump-2016]
 -/
+
+@[expose] public section
 
 namespace Stump2016
 

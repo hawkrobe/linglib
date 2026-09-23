@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.FoxHackl2006
-import Linglib.Semantics.Alternatives.Extremum
-import Linglib.Logic.Modal.Defs
+module
+
+public import Linglib.Data.Examples.FoxHackl2006
+public import Linglib.Semantics.Alternatives.Extremum
+public import Linglib.Logic.Modal.Defs
 
 /-!
 # Fox and Hackl (2006): The Universal Density of Measurement
@@ -31,6 +33,8 @@ example sentences are the rows of `Examples.all`.
 * [dayal-1996]
 * [hackl-2000]
 -/
+
+@[expose] public section
 
 namespace FoxHackl2006
 

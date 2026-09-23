@@ -1,7 +1,9 @@
-import Linglib.Logic.Modal.Defs
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Quantification.Properties
-import Linglib.Data.Examples.GeurtsPouscoulous2009
+module
+
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.Properties
+public import Linglib.Data.Examples.GeurtsPouscoulous2009
 
 /-!
 # Geurts and Pouscoulous (2009): Embedded implicatures?!?
@@ -46,6 +48,8 @@ monotonicity of the five quantifiers (`rows_predicted_mainstream`).
 * [chierchia-fox-spector-2008]
 * [sauerland-2004]
 -/
+
+@[expose] public section
 
 namespace GeurtsPouscoulous2009
 

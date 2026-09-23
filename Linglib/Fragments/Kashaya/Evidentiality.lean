@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Kashaya evidentiality
@@ -19,6 +21,8 @@ omitted. WALS codes the language as having direct and indirect evidentials.
 * [oswalt-1986]
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace Kashaya.Evidentiality
 

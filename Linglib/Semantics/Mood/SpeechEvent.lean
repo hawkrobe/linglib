@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Mood.State
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Mood.State
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # The speech event and its content
@@ -43,6 +45,8 @@ so the inquisitive route induces the initial state. Binding height
 (*which* event a modal is bound by) is
 `Semantics/Modality/EventRelativity`'s territory.
 -/
+
+@[expose] public section
 
 namespace Mood
 

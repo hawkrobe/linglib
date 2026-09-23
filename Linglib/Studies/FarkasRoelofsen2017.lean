@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.FarkasRoelofsen2017
-import Linglib.Discourse.Commitment.Basic
-import Linglib.Semantics.Questions.Basic
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Data.Examples.FarkasRoelofsen2017
+public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Semantics.Questions.Basic
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Farkas and Roelofsen (2017): Division of Labor in Declaratives and Interrogatives
@@ -61,6 +63,8 @@ section on a `Situation`, and `rows_felicitous` checks it against all sixty judg
 * [gunlogson-2001]
 * [malamud-stephenson-2015]
 -/
+
+@[expose] public section
 
 namespace FarkasRoelofsen2017
 

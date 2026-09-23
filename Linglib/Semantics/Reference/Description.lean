@@ -1,8 +1,10 @@
-import Linglib.Semantics.Composition.Assignment
-import Linglib.Semantics.Reference.Deixis
-import Linglib.Semantics.Reference.Definiteness
-import Linglib.Semantics.Reference.Iota
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Semantics.Reference.Deixis
+public import Linglib.Semantics.Reference.Definiteness
+public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Denotation
 
 /-!
 # Nominal descriptions
@@ -51,6 +53,8 @@ determiner (`DemonstrativeDeterminer.denote`), not by the description.
 * [russell-1905]
 * [sharvy-1980]
 -/
+
+@[expose] public section
 
 namespace Reference
 

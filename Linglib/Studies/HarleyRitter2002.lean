@@ -1,5 +1,7 @@
-import Linglib.Syntax.Agreement.Geometry
-import Linglib.Data.Examples.HarleyRitter2002
+module
+
+public import Linglib.Syntax.Agreement.Geometry
+public import Linglib.Data.Examples.HarleyRitter2002
 
 /-!
 # Harley and Ritter (2002): Person and number in pronouns
@@ -34,6 +36,8 @@ so the Daga first singular is less marked than the first plural.
 * [greenberg-1963]
 * [plank-schellinger-1997]
 -/
+
+@[expose] public section
 
 namespace HarleyRitter2002
 

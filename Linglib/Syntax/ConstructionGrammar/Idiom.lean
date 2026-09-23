@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.ConstructionGrammar.Basic
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
 # Idiom classification
@@ -32,6 +34,8 @@ stipulated.
 The paper's fourth contrast — idioms with vs. without pragmatic point
 (§1.1.4) — is the `Construction.pragmaticPoint` field.
 -/
+
+@[expose] public section
 
 namespace ConstructionGrammar
 

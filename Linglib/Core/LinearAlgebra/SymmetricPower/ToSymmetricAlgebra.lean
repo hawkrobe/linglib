@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
-import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
-import Mathlib.Algebra.BigOperators.Group.List.Basic
-import Mathlib.Data.List.FinRange
+module
+
+public import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
+public import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Data.List.FinRange
 
 /-!
 # The natural map `Sym[R]^n M → SymmetricAlgebra R M`
@@ -36,6 +38,8 @@ Foundational step toward the graded iso
 `SymmetricAlgebra R M ≃ₐ ⨁_n Sym[R]^n M` (Q1b.0b.2, mathlib TODO).
 -/
 
+@[expose] public section
+
 namespace SymmetricPower
 
 open TensorProduct Equiv
@@ -54,7 +58,7 @@ commutativity of `SymmetricAlgebra`) and so factors through
 /-- The multilinear product `(Fin n → M) → SymmetricAlgebra R M`,
     `g ↦ ι(g 0) · ι(g 1) · ⋯ · ι(g (n-1))`. Built as the composition of
     mathlib's `MultilinearMap.mkPiAlgebraFin` with `SymmetricAlgebra.ι`. -/
-private noncomputable def productMultilinear (n : ℕ) :
+noncomputable def productMultilinear (n : ℕ) :
     MultilinearMap R (fun _ : Fin n ↦ M) (SymmetricAlgebra R M) :=
   (MultilinearMap.mkPiAlgebraFin R n (SymmetricAlgebra R M)).compLinearMap
     (fun _ => SymmetricAlgebra.ι R M)
@@ -70,7 +74,7 @@ private theorem productMultilinear_apply (n : ℕ) (g : Fin n → M) :
 /-- The product multilinear map is symmetric: permuting arguments
     leaves the product invariant (by commutativity of
     `SymmetricAlgebra`). -/
-private theorem productMultilinear_symm (n : ℕ) (σ : Perm (Fin n)) :
+theorem productMultilinear_symm (n : ℕ) (σ : Perm (Fin n)) :
     (productMultilinear (R := R) (M := M) n).domDomCongr σ =
       productMultilinear (R := R) (M := M) n := by
   ext g

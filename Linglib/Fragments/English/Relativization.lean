@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # English relative clauses
@@ -15,6 +17,8 @@ finds *the man who Mary is taller than* "rather uncomfortable". The data are
 
 * [keenan-comrie-1977]
 -/
+
+@[expose] public section
 
 namespace English
 

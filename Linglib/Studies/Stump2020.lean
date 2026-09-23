@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Function
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Paradigm.Function
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Stump (2020): Paradigm Function Morphology
@@ -27,6 +29,8 @@ to future work.
 * [stump-2020]
 * [bonami-stump-2016]
 -/
+
+@[expose] public section
 
 namespace Stump2020
 

@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Focus.Control
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Data.Examples.Grubic2015
-import Mathlib.Data.Set.Lattice.Bounded
+module
+
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Focus.Control
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Data.Examples.Grubic2015
+public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Grubic (2015): Focus and Alternative Sensitivity in Ngamo
@@ -43,6 +45,8 @@ not theorems.
 * [coppock-beaver-2014]
 * [beaver-clark-2008]
 -/
+
+@[expose] public section
 
 namespace Grubic2015
 

@@ -1,9 +1,11 @@
-import Linglib.Semantics.Dynamic.CDRT
-import Linglib.Semantics.Dynamic.Update
-import Mathlib.Control.Monad.Cont
-import Linglib.Semantics.Mereology
-import Mathlib.Control.Monad.Writer
-import Mathlib.Data.List.Sublists
+module
+
+public import Linglib.Semantics.Dynamic.CDRT
+public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Control.Monad.Cont
+public import Linglib.Semantics.Mereology
+public import Mathlib.Control.Monad.Writer
+public import Mathlib.Data.List.Sublists
 
 /-!
 # Charlow (2021): post-suppositions and semantic theory
@@ -64,6 +66,8 @@ Appendix B as a Writer monad.
 * [muskens-1996], [brasoveanu-2007] (the pointwise substrate)
 * [barker-shan-2014] (tower notation)
 -/
+
+@[expose] public section
 
 namespace Charlow2021
 

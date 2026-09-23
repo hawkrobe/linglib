@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Union
-import Linglib.Data.UD.Features
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Clause.Chaining
+module
+
+public import Mathlib.Data.Finset.Union
+public import Linglib.Data.UD.Features
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Clause.Chaining
 
 /-!
 # Korean converbs
@@ -33,6 +35,8 @@ final clause. Forms are in the Revised Romanization; Sohn writes *-ko*, *-e(se)*
 * [sohn-1999]
 * [nikl-2016]
 -/
+
+@[expose] public section
 
 namespace Korean
 

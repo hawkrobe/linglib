@@ -1,4 +1,6 @@
-import Linglib.Semantics.Aspect.Viewpoint
+module
+
+public import Linglib.Semantics.Aspect.Viewpoint
 
 /-!
 # Instantiation of sorted properties
@@ -31,6 +33,8 @@ the stative clause.
 * [H. Kamp and U. Reyle, *From Discourse to Logic* (1993)][kamp-reyle-1993]
 * [W. Klein, *Time in Language* (1994)][klein-1994]
 -/
+
+@[expose] public section
 
 namespace Aspect
 

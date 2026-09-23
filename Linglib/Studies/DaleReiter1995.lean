@@ -1,12 +1,14 @@
-import Linglib.Semantics.Degree.PropertyDomain
-import Linglib.Semantics.Reference.Distinguishing
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Sum
-import Mathlib.Data.List.MinMax
-import Mathlib.Data.Nat.Choose.Basic
-import Mathlib.Order.Interval.Finset.Nat
-import Mathlib.Order.Minimal
+module
+
+public import Linglib.Semantics.Degree.PropertyDomain
+public import Linglib.Semantics.Reference.Distinguishing
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sum
+public import Mathlib.Data.List.MinMax
+public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Order.Minimal
 
 /-!
 # Dale and Reiter, computational interpretations of the Gricean maxims (1995)
@@ -42,6 +44,8 @@ model, is a distinguishing description.
   Generation of Referring Expressions* (1995)][dale-reiter-1995]
 * [H. P. Grice, *Logic and Conversation* (1975)][grice-1975]
 -/
+
+@[expose] public section
 
 namespace DaleReiter1995
 
@@ -181,7 +185,7 @@ theorem fullBrevitySteps_values :
   decide +kernel
 
 variable (kb) in
-private def greedyAux :
+def greedyAux :
     ℕ → Finset E → List (A × V) → Description A V → Option (Description A V)
   | 0, C, _, L => if C.Nonempty then none else some L
   | n + 1, C, P, L =>

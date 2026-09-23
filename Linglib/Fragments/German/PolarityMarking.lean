@@ -1,5 +1,7 @@
-import Linglib.Semantics.Polarity.Marking
-import Linglib.Semantics.Questions.Answering
+module
+
+public import Linglib.Semantics.Polarity.Marking
+public import Linglib.Semantics.Questions.Answering
 
 /-!
 # German polarity marking
@@ -18,6 +20,8 @@ and VERUM in questions in `Question.VerumFocus`.
 * [hohle-1992]
 * [holmberg-2016]
 -/
+
+@[expose] public section
 
 namespace German.PolarityMarking
 

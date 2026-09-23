@@ -1,7 +1,9 @@
-import Linglib.Semantics.Root.Content
-import Linglib.Semantics.Root.Kinds
-import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Semantics.Composition.Ty
+module
+
+public import Linglib.Semantics.Root.Content
+public import Linglib.Semantics.Root.Kinds
+public import Linglib.Semantics.ArgumentStructure.Valency
+public import Linglib.Semantics.Composition.Ty
 
 /-!
 # Verbal roots
@@ -41,6 +43,8 @@ and whether it combines with transitive Voice.
 * [spalek-mcnally-2026], [majid-boster-bowerman-2008]: the dimensions of
   `Root.Content`.
 -/
+
+@[expose] public section
 
 namespace Semantics
 

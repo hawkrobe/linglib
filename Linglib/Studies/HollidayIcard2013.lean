@@ -1,5 +1,7 @@
-import Linglib.Logic.ComparativeProbability.Entailments
-import Linglib.Core.Order.Probability.Completeness
+module
+
+public import Linglib.Logic.ComparativeProbability.Entailments
+public import Linglib.Core.Order.Probability.Completeness
 
 /-!
 # Holliday and Icard (2013): Measure semantics and qualitative semantics for epistemic modals
@@ -52,6 +54,8 @@ from intuitive entailments.
 * [van-der-hoek-1996]
 * [kraft-pratt-seidenberg-1959]
 -/
+
+@[expose] public section
 
 namespace HollidayIcard2013
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Indefinite
-import Linglib.Syntax.Category.Pronoun.Basic
+module
+
+public import Linglib.Semantics.Quantification.Indefinite
+public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Interrogative pronouns
@@ -18,6 +20,8 @@ in the pro-forms for place, time and manner, which surface as adverbs.
 
 * [M. Haspelmath, *Indefinite Pronouns* (1997)][haspelmath-1997]
 -/
+
+@[expose] public section
 
 /-- An interrogative pronoun: the general `Pronoun` with the ontological category it asks
 about. -/

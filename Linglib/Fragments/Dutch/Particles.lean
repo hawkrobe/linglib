@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Marking
+module
+
+public import Linglib.Semantics.Polarity.Marking
 
 /-!
 # Dutch polarity particles
@@ -14,6 +16,8 @@ strategy in polarity contrast and in polarity correction, where German uses Veru
 * [sudhoff-2012]
 * [hogeweg-2009]
 -/
+
+@[expose] public section
 
 namespace Dutch.Particles
 

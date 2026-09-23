@@ -1,4 +1,6 @@
-import Linglib.Morphology.Paradigm.Contiguity
+module
+
+public import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Domain-relativized contiguity
@@ -46,6 +48,8 @@ side is `SmithMoskalEtAl2019.DomainLocal`.
 * `violatesABAWithin_iff_of_convex` — for convex partitions the check
   needs only the outer grades to share a domain
 -/
+
+@[expose] public section
 
 namespace Morphology
 

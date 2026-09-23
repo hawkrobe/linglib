@@ -1,5 +1,7 @@
-import Mathlib.Order.Antichain
-import Linglib.Semantics.Questions.Basic
+module
+
+public import Mathlib.Order.Antichain
+public import Linglib.Semantics.Questions.Basic
 
 /-!
 # Question — Hamblin constructions
@@ -22,6 +24,8 @@ rather than stipulated by a fresh `props` set with bridge theorems —
 informativity/inquisitivity facts then derive from `info_sup`,
 `info_ofSet`, and properties of the underlying `Set` operations.
 -/
+
+@[expose] public section
 
 
 namespace Question

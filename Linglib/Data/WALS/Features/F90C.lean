@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 90C: Postnominal relative clauses
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 90, 620 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F90C
 
@@ -24,7 +28,8 @@ inductive PostnominalRelativeClauses where
   | nrelOrCorrelative
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PostnominalRelativeClauses) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PostnominalRelativeClauses) :=
   [ { walsCode := "xoo", iso := "nmn", value := .nounRelativeClauseDominant }
   , { walsCode := "huc", iso := "huc", value := .nounRelativeClauseDominant }
   , { walsCode := "aar", iso := "aiw", value := .nounRelativeClauseDominant }
@@ -527,7 +532,8 @@ private def allData_0 : List (Datapoint PostnominalRelativeClauses) :=
   , { walsCode := "sht", iso := "shj", value := .nounRelativeClauseDominant }
   ]
 
-private def allData_1 : List (Datapoint PostnominalRelativeClauses) :=
+/-- Rows 501 to 620 of `allData`. -/
+def allData_1 : List (Datapoint PostnominalRelativeClauses) :=
   [ { walsCode := "shn", iso := "sna", value := .nounRelativeClauseDominant }
   , { walsCode := "sir", iso := "sjr", value := .nounRelativeClauseDominant }
   , { walsCode := "skr", iso := "tty", value := .nounRelativeClauseDominant }

@@ -1,6 +1,8 @@
-import Linglib.Phonology.Segmental.Basic
-import Linglib.Fragments.Latin.Phonology
-import Mathlib.Order.Basic
+module
+
+public import Linglib.Phonology.Segmental.Basic
+public import Linglib.Fragments.Latin.Phonology
+public import Mathlib.Order.Basic
 
 /-!
 # Sen (2015): Syllable and Segment in Latin
@@ -35,6 +37,8 @@ through the underspecified segment, in the sense of [keating-1988].
 * [sen-2015]
 * [keating-1988]
 -/
+
+@[expose] public section
 
 namespace Sen2015
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 95A: Relationship between the Order of Object and Verb and the Order of Adposition and Noun Phrase
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 95, 1142 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F95A
 
@@ -26,7 +30,8 @@ inductive RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNo
   | other
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
   [ { walsCode := "ani", iso := "hnh", value := .other }
   , { walsCode := "huc", iso := "huc", value := .other }
   , { walsCode := "aar", iso := "aiw", value := .ovAndPostpositions }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVe
   , { walsCode := "kmo", iso := "kpx", value := .ovAndPostpositions }
   ]
 
-private def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
   [ { walsCode := "kok", iso := "trp", value := .ovAndPostpositions }
   , { walsCode := "kkt", iso := "kkk", value := .voAndPrepositions }
   , { walsCode := "kol", iso := "kfb", value := .ovAndPostpositions }
@@ -1032,7 +1038,8 @@ private def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVe
   , { walsCode := "tig", iso := "tir", value := .ovAndPrepositions }
   ]
 
-private def allData_2 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
+/-- Rows 1001 to 1142 of `allData`. -/
+def allData_2 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
   [ { walsCode := "tgr", iso := "tig", value := .ovAndPrepositions }
   , { walsCode := "tja", iso := "dih", value := .ovAndPostpositions }
   , { walsCode := "tik", iso := "tik", value := .other }

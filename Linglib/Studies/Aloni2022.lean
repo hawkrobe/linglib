@@ -1,6 +1,8 @@
-import Linglib.Logic.Team.BSML.Enrichment
-import Linglib.Logic.Team.BSML.ClassicalValidities
-import Linglib.Logic.Team.BSML.Scenarios
+module
+
+public import Linglib.Logic.Team.BSML.Enrichment
+public import Linglib.Logic.Team.BSML.ClassicalValidities
+public import Linglib.Logic.Team.BSML.Scenarios
 
 /-!
 # Free choice from neglect-zero: the BSML facts of [aloni-2022]
@@ -24,6 +26,8 @@ Fact 14 in `Logic/Team/BSML/Enrichment.lean`, Facts 6–8 in
 first-order extension (§6.2, see [aloni-vanormondt-2023]) and the BSML◇
 conjecture of §7 beyond its countermodel (63b).
 -/
+
+@[expose] public section
 
 namespace Aloni2022
 

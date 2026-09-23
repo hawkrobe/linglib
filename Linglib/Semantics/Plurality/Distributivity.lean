@@ -1,5 +1,7 @@
-import Linglib.Semantics.Plurality.Basic
-import Linglib.Semantics.Plurality.Algebra
+module
+
+public import Linglib.Semantics.Plurality.Basic
+public import Linglib.Semantics.Plurality.Algebra
 
 /-!
 # Tolerant distributivity
@@ -32,6 +34,8 @@ tolerance agrees.
 * [haslinger-etal-2025]
 * [link-1983]
 -/
+
+@[expose] public section
 
 namespace Plurality.Distributivity
 

@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Union
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Clause.Chaining
+module
+
+public import Mathlib.Data.Finset.Union
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Clause.Chaining
 
 /-!
 # Nungon medial clauses
@@ -43,6 +45,8 @@ The clause-chaining typology over these forms is in `Studies/SarvasyAikhenvald20
 * [sarvasy-2015]
 * [sarvasy-aikhenvald-2025]
 -/
+
+@[expose] public section
 
 namespace Nungon
 

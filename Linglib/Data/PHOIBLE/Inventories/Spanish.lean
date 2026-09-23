@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Spanish (spa, ID 164)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 25 phonemes. PHOIBLE inventory ID 164, Glottocode `stan1288`.
 Source: PHOIBLE donor `spa`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Spanish
 

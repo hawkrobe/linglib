@@ -1,4 +1,6 @@
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Cantonese aspect markers
@@ -17,6 +19,8 @@ is entered with the other *again*-elements in `Fragments/Cantonese/Particles.lea
 * [cheung-1972]
 * [cheung-2007]
 -/
+
+@[expose] public section
 
 namespace Cantonese.Aspect
 

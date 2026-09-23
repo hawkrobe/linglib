@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.RonderosEtAl2024
-import Linglib.Processing.VisualWorld
-import Linglib.Semantics.Degree.Adjective
-import Mathlib.Data.Finset.Basic
+module
+
+public import Linglib.Data.Examples.RonderosEtAl2024
+public import Linglib.Processing.VisualWorld
+public import Linglib.Semantics.Degree.Adjective
+public import Mathlib.Data.Finset.Basic
 
 /-!
 # Ronderos et al. (2024): Factors affecting contrastive inferences
@@ -49,6 +51,8 @@ findings.
 * [aparicio-xiang-kennedy-2015]
 * [kennedy-2007]
 -/
+
+@[expose] public section
 
 namespace RonderosEtAl2024
 

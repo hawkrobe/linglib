@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Probability.PolyaUrn
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
-import Mathlib.MeasureTheory.Measure.Real
+module
+
+public import Linglib.Core.Probability.PolyaUrn
+public import Mathlib.Data.Nat.Choose.Multinomial
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # Pólya-urn laws: the sequence law and the Dirichlet–multinomial distribution
@@ -33,6 +35,8 @@ count vector `x` with `∑ i, x i = N` has mass `Nat.multinomial univ x * seqPro
 Split from `PolyaUrn.lean` so that consumers of `seqProb` alone (`DirichletPCFG` and the
 adaptor and fragment grammars of `ODonnell2015`) do not import measure theory.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Nat

@@ -1,8 +1,10 @@
-import Mathlib.Logic.Relation
-import Mathlib.Order.Antisymmetrization
-import Mathlib.Data.Finset.Basic
-import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Alternatives.Basic
+module
+
+public import Mathlib.Logic.Relation
+public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Data.Finset.Basic
+public import Linglib.Syntax.Tree.Cat
+public import Linglib.Semantics.Alternatives.Basic
 
 /-!
 # Structural alternatives
@@ -58,6 +60,8 @@ the operations into the body of a binder, which the paper's trees lack.
 * [fox-katzir-2011]
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 -/
+
+@[expose] public section
 
 namespace Alternatives
 

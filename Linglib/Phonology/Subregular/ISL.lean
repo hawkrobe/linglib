@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Basic
-import Linglib.Core.Data.Fintype.List
-import Linglib.Core.Data.List.DropRight
-import Linglib.Core.Computability.Subsequential
+module
+
+public import Mathlib.Data.List.Basic
+public import Linglib.Core.Data.Fintype.List
+public import Linglib.Core.Data.List.DropRight
+public import Linglib.Core.Computability.Subsequential
 
 /-!
 # Input Strictly Local (ISL) Functions
@@ -45,6 +47,8 @@ The witness style `IsX k f := ∃ r : XRule k α β, r.apply = f` mirrors
 `windowOutput` is unconstrained at the type level; `applyAux` truncates the
 threaded window to length `k - 1`.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

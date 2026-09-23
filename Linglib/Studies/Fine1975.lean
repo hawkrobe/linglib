@@ -1,9 +1,11 @@
-import Mathlib.Order.Max
-import Mathlib.Order.Interval.Finset.Nat
-import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.Supervaluation
-import Linglib.Logic.Trivalent.Propositional
-import Linglib.Core.Order.Bilattice.Kleene
+module
+
+public import Mathlib.Order.Max
+public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Data.Fintype.Basic
+public import Linglib.Semantics.Supervaluation
+public import Linglib.Logic.Trivalent.Propositional
+public import Linglib.Core.Order.Bilattice.Kleene
 
 /-!
 # Fine (1975): Vagueness, truth and logic
@@ -78,6 +80,8 @@ options; Fine's note added in proof credits the same account of vagueness to [ka
 * [kamp-1975]
 * [lewis-1970]
 -/
+
+@[expose] public section
 
 namespace Fine1975
 

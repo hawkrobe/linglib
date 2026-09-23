@@ -1,5 +1,7 @@
-import Linglib.Core.Optimization.Evaluation
-import Linglib.Phonology.Constraints.Defs
+module
+
+public import Linglib.Core.Optimization.Evaluation
+public import Linglib.Phonology.Constraints.Defs
 
 /-!
 # Violation Profiles
@@ -18,6 +20,8 @@ comparison) and Harmonic Grammar (weighted aggregation, `[riggle-2009b]`).
 * `ViolationProfile.zero_le` — the zero profile is the bottom element.
 * `ViolationProfile.le_apply_zero` — first-component extraction from `≤`.
 -/
+
+@[expose] public section
 
 namespace Constraints
 

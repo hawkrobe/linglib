@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Computability.DFA
-import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Data.List.Basic
-import Mathlib.Logic.Equiv.Defs
-import Linglib.Core.Data.Fintype.Transfer
-import Linglib.Core.Data.List.DependsOn
+module
+
+public import Mathlib.Computability.DFA
+public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Data.List.Basic
+public import Mathlib.Logic.Equiv.Defs
+public import Linglib.Core.Data.Fintype.Transfer
+public import Linglib.Core.Data.List.DependsOn
 
 /-!
 # Mealy machines
@@ -69,6 +71,8 @@ residuals is in `Core/Computability/MyhillNerode.lean`.
   to left quotients of the graph, so this would derive `isMealyComputable_iff_residual`
   from the language Myhill–Nerode theorem.
 -/
+
+@[expose] public section
 
 variable {σ α β : Type*}
 

@@ -1,8 +1,10 @@
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Semantics.Attitudes.EpistemicThreshold
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Linarith
-import Linglib.Data.Examples.YingEtAl2025
+module
+
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Semantics.Attitudes.EpistemicThreshold
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Linarith
+public import Linglib.Data.Examples.YingEtAl2025
 
 /-!
 # Ying, Zhi-Xuan, Wong, Mansinghka & Tenenbaum (2025): Understanding Epistemic Language
@@ -39,6 +41,8 @@ theorems are stated for any thresholds satisfying the ordering.
 * [lassiter-goodman-2017]
 * [hintikka-1962]
 -/
+
+@[expose] public section
 
 namespace YingEtAl2025
 

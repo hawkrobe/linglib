@@ -1,7 +1,9 @@
-import Linglib.Semantics.Causation.SEM.Bool
-import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Reference.Context.Index
-import Mathlib.Logic.Relation
+module
+
+public import Linglib.Semantics.Causation.SEM.Bool
+public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Reference.Context.Index
+public import Mathlib.Logic.Relation
 
 /-!
 # Lewis (1973): Causation
@@ -28,6 +30,8 @@ treatment of preemption is not represented.
 
 * [lewis-1973-causation]
 -/
+
+@[expose] public section
 
 namespace Lewis1973
 

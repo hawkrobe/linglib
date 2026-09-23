@@ -1,4 +1,6 @@
-import Linglib.Semantics.Truthmaker.Basic
+module
+
+public import Linglib.Semantics.Truthmaker.Basic
 
 /-!
 # Bondarenko and Elliott (2026): Monotonicity via mereology in the semantics of attitude reports
@@ -36,6 +38,8 @@ a philosopher* a conjunctive part — is `not_isContentPart_disjunction`.
 * [cheng-1973]
 * [sharvit-2024]
 -/
+
+@[expose] public section
 
 namespace BondarenkoElliott2026
 

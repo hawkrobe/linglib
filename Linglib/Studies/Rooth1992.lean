@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.Rooth1992
-import Linglib.Pragmatics.NeoGricean.Basic
-import Linglib.Semantics.Focus.Control
-import Linglib.Semantics.Exhaustification.Excluder
+module
+
+public import Linglib.Data.Examples.Rooth1992
+public import Linglib.Pragmatics.NeoGricean.Basic
+public import Linglib.Semantics.Focus.Control
+public import Linglib.Semantics.Exhaustification.Excluder
 
 /-!
 # Rooth (1992): A theory of focus interpretation
@@ -41,6 +43,8 @@ antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
 * [hamblin-1973b]
 * [sauerland-2004]
 -/
+
+@[expose] public section
 
 namespace Rooth1992
 

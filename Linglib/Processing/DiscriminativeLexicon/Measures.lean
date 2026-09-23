@@ -1,6 +1,8 @@
-import Linglib.Processing.DiscriminativeLexicon.Defs
-import Mathlib.LinearAlgebra.Matrix.SesquilinearForm
-import Mathlib.LinearAlgebra.Matrix.ToLin
+module
+
+public import Linglib.Processing.DiscriminativeLexicon.Defs
+public import Mathlib.LinearAlgebra.Matrix.SesquilinearForm
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
 # Semantic support in the discriminative lexicon
@@ -35,6 +37,8 @@ off single coordinates of `ĉ`, the support for one cue, and sum them over a wor
 * [M. Heitmeier, Y.-Y. Chuang and R. H. Baayen, *The Discriminative Lexicon*
   (2026)][heitmeier-chuang-baayen-2026]
 -/
+
+@[expose] public section
 
 namespace DiscriminativeLexicon.Linear
 

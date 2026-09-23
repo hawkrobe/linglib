@@ -1,6 +1,8 @@
-import Linglib.Fragments.Hausa.Determiners
-import Linglib.Semantics.Quantification.Basic
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Fragments.Hausa.Determiners
+public import Linglib.Semantics.Quantification.Basic
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Zimmermann (2008): Quantification in Hausa
@@ -39,6 +41,8 @@ universal under either negation, (91) (`neg_duk_iff`).
 * [newman-2000]
 * [jaggar-2001]
 -/
+
+@[expose] public section
 
 namespace Zimmermann2008
 

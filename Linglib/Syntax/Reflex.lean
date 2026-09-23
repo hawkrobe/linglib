@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Basic
-import Linglib.Morphology.Morph
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Linglib.Morphology.Morph
 
 /-!
 # Overt reflexes of a designated constituent
@@ -68,6 +70,8 @@ a target is `Finset.Nonempty` of its reflex set.
 * [hartmann-zimmermann-2007]
 * [mccloskey-2002]
 -/
+
+@[expose] public section
 
 /-- The channel of a reflex: the literature's phonological vs morphological vs syntactic
 reflex cut, individuating the reflexes of one process by the module whose output carries the

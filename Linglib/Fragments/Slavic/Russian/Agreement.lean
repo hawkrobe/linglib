@@ -1,6 +1,8 @@
-import Linglib.Syntax.Agreement.Bundle
-import Linglib.Syntax.Agreement.Hierarchy
-import Linglib.Fragments.Slavic.Russian.Gender
+module
+
+public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Syntax.Agreement.Hierarchy
+public import Linglib.Fragments.Slavic.Russian.Gender
 
 /-!
 # Russian agreement targets
@@ -27,6 +29,8 @@ theorems read the inflection off the paradigms of `Fragments/Slavic/Russian/Gend
 * [wade-2020] — the adjective and the verb
 * [corbett-1998] — Russian as the running example
 -/
+
+@[expose] public section
 
 namespace Russian.Agreement
 

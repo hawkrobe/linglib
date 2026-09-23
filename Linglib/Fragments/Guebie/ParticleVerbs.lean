@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Fragments.Guebie.Phonology
+module
+
+public import Linglib.Fragments.Guebie.Phonology
 
 /-!
 # Guébie particle verbs
@@ -22,6 +24,8 @@ same phase, and carries its lexical value otherwise.
   (11)–(12) /jɔkʊ/+/ni/ 'see' pair; `harmonizedParticleATR` is the SAuxOV
   surface value.
 -/
+
+@[expose] public section
 
 namespace Guebie
 

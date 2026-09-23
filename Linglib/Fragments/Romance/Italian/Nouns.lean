@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Semantics.Plurality.MassCount
-import Linglib.Semantics.Genericity.NominalMappingParameter
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Semantics.Plurality.MassCount
+public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Italian nouns
@@ -17,6 +19,8 @@ plural denotes a kind and the bare plural, where licensed, a property
 
 * [chierchia-1998]
 -/
+
+@[expose] public section
 
 namespace Italian.Nouns
 
@@ -61,7 +65,7 @@ def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, co
 /-! ### Proper names -/
 
 /-- A personal name with its natural gender. -/
-private def name (form : String) (gender : Gender) : ProperName :=
+def name (form : String) (gender : Gender) : ProperName :=
   { form, gloss := form, gender := some gender }
 
 def paolo : ProperName := name "Paolo" .masculine

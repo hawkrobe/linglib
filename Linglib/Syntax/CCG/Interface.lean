@@ -1,7 +1,9 @@
-import Linglib.Syntax.CCG.Derivation
-import Linglib.Semantics.Composition.Ty
-import Linglib.Syntax.Category.Coordinator
-import Linglib.Semantics.Composition.Combinator
+module
+
+public import Linglib.Syntax.CCG.Derivation
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Semantics.Composition.Combinator
 
 /-!
 # CCG Syntax-Semantics Interface
@@ -34,6 +36,8 @@ category — so soundness of the interface is a typing fact rather than a theore
 Worked toy-fragment derivations and the non-constituent-coordination semantics
 theorems live in `Studies/Steedman2000.lean`.
 -/
+
+@[expose] public section
 
 namespace CCG
 

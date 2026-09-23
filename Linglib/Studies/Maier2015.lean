@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.DRS.Basic
-import Linglib.Data.Examples.Maier2015
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Basic
+public import Linglib.Data.Examples.Maier2015
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Maier (2015): Parasitic Attitudes
@@ -40,6 +42,8 @@ earlier version of this file and are UNVERIFIED.
 * [karttunen-1973]
 * [van-der-sandt-1992]
 -/
+
+@[expose] public section
 
 open FirstOrder DRT
 

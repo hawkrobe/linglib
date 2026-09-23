@@ -1,7 +1,9 @@
-import Linglib.Logic.Natural.Additivity
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Degree.Quantifier
+module
+
+public import Linglib.Logic.Natural.Additivity
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Semantics.Degree.Quantifier
 
 /-!
 # Strawson entailment
@@ -50,6 +52,8 @@ case.
 * [kratzer-1986]
 * [gajewski-2011]
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 

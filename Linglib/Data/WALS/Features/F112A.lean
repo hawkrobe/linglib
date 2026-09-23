@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 112A: Negative Morphemes
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 112, 1157 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F112A
 
@@ -28,7 +32,8 @@ inductive NegativeMorphemeType where
   | doubleNegation
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint NegativeMorphemeType) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "ani", iso := "hnh", value := .negativeParticle }
   , { walsCode := "xam", iso := "xam", value := .negativeParticle }
   , { walsCode := "aar", iso := "aiw", value := .negativeAffix }
@@ -531,7 +536,8 @@ private def allData_0 : List (Datapoint NegativeMorphemeType) :=
   , { walsCode := "knc", iso := "uwa", value := .negativeParticle }
   ]
 
-private def allData_1 : List (Datapoint NegativeMorphemeType) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "klg", iso := "kle", value := .negativeAffix }
   , { walsCode := "kmn", iso := "kue", value := .negativeAffix }
   , { walsCode := "kum", iso := "kfy", value := .negativeParticle }
@@ -1034,7 +1040,8 @@ private def allData_1 : List (Datapoint NegativeMorphemeType) :=
   , { walsCode := "thu", iso := "tdh", value := .doubleNegation }
   ]
 
-private def allData_2 : List (Datapoint NegativeMorphemeType) :=
+/-- Rows 1001 to 1157 of `allData`. -/
+def allData_2 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "tdr", iso := "bod", value := .negativeAffix }
   , { walsCode := "tmo", iso := "bod", value := .negativeParticle }
   , { walsCode := "tis", iso := "bod", value := .negativeAffix }

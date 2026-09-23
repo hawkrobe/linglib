@@ -1,7 +1,9 @@
-import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Studies.Condoravdi2002
-import Linglib.Fragments.Romance.Italian.Modals
-import Linglib.Data.Examples.Hacquard2006
+module
+
+public import Linglib.Semantics.Modality.EventRelativity
+public import Linglib.Studies.Condoravdi2002
+public import Linglib.Fragments.Romance.Italian.Modals
+public import Linglib.Data.Examples.Hacquard2006
 
 /-!
 # Hacquard (2006): Aspects of Modality
@@ -45,6 +47,8 @@ the interaction with negation (84) are not formalized.
 * [bhatt-1999]
 * [condoravdi-2002]
 -/
+
+@[expose] public section
 
 namespace Hacquard2006
 

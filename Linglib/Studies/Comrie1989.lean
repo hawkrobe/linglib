@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Card
-import Linglib.Data.Examples.Comrie1989
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Semantics.Causation.Morphological
+module
+
+public import Mathlib.Data.Finset.Card
+public import Linglib.Data.Examples.Comrie1989
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Semantics.Causation.Morphological
 
 /-!
 # Comrie 1989: Language Universals and Linguistic Typology
@@ -84,6 +86,8 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 * [M. Silverstein, *Hierarchy of Features and Ergativity* (1976)][silverstein-1976]
 * [R. M. W. Dixon, *The Dyirbal Language of North Queensland* (1972)][dixon-1972]
 -/
+
+@[expose] public section
 
 namespace Comrie1989
 

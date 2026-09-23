@@ -1,5 +1,7 @@
-import Linglib.Semantics.Aspect.Viewpoint
-import Linglib.Studies.IatridouEtAl2001
+module
+
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Studies.IatridouEtAl2001
 
 /-!
 # Iatridou and Zeijlstra (2021): The Complex Beauty of Boundary Adverbials
@@ -37,6 +39,8 @@ negated claim survives.
 * [iatridou-anagnostopoulou-izvorski-2001]
 * [chierchia-2013]
 -/
+
+@[expose] public section
 
 namespace IatridouZeijlstra2021
 

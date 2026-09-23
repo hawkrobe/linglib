@@ -1,8 +1,10 @@
-import Linglib.Semantics.Mereology
-import Linglib.Logic.Bilateral.Defs
-import Mathlib.Order.UpperLower.Basic
-import Mathlib.Order.UpperLower.Closure
-import Mathlib.Order.UpperLower.CompleteLattice
+module
+
+public import Linglib.Semantics.Mereology
+public import Linglib.Logic.Bilateral.Defs
+public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Order.UpperLower.Closure
+public import Mathlib.Order.UpperLower.CompleteLattice
 
 /-! # Truthmaker Semantics [fine-2017] [bondarenko-elliott-2026] [jago-2026]
 
@@ -79,6 +81,8 @@ the verification/falsification level:
   `UNVERIFIED` since the manuscript has not been cross-checked.
 
 -/
+
+@[expose] public section
 
 namespace Truthmaker
 
@@ -521,7 +525,7 @@ end SubjectMatter
 -- ════════════════════════════════════════════════════
 
 /-- Auxiliary 2-element carrier for the headline-theorem witness. -/
-private inductive TwoAtom where
+inductive TwoAtom where
   | a
   | b
   deriving DecidableEq

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Data.Examples.Winter2018
+module
+
+public import Linglib.Semantics.Plurality.Reciprocal
+public import Linglib.Data.Examples.Winter2018
 
 /-!
 # Winter (2018): Symmetric Predicates and the Semantics of Reciprocal Alternations
@@ -40,6 +42,8 @@ reciprocals from transitives are not formalized.
 * [dimitriadis-2008]
 * [siloni-2012]
 -/
+
+@[expose] public section
 
 namespace Winter2018
 

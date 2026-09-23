@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Indefinite
+module
+
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Yakut (Sakha) indefinite pronouns
@@ -15,6 +17,8 @@ sentences alike, under negation, in comparatives and for free choice; and the ge
 * [haspelmath-1997]
 * [stachowski-menz-1998]
 -/
+
+@[expose] public section
 
 namespace Yakut.Indefinites
 

@@ -1,7 +1,9 @@
-import Linglib.Logic.Nonmonotonic.Inheritance
-import Linglib.Core.Relation.ReflTransGen
-import Mathlib.Logic.Relation
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Logic.Nonmonotonic.Inheritance
+public import Linglib.Core.Relation.ReflTransGen
+public import Mathlib.Logic.Relation
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Hudson (2010): An Introduction to Word Grammar
@@ -50,6 +52,8 @@ syntactic pattern of raising: an auxiliary's subject is also its valent's subjec
 
 * [hudson-2010]
 -/
+
+@[expose] public section
 
 namespace Hudson2010
 

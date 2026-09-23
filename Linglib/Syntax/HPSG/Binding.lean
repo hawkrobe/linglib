@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.HPSG.Description
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Syntax.HPSG.Description
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # HPSG binding theory in RSRL
@@ -38,6 +40,8 @@ interprets local o-command directly.
 * [richter-2000]
 * [muller-2024-binding]
 -/
+
+@[expose] public section
 
 namespace HPSG.RSRL.Binding
 

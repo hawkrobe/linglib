@@ -1,5 +1,7 @@
-import Linglib.Semantics.Conditionals.Reading
-import Linglib.Semantics.Modality.Exclusion
+module
+
+public import Linglib.Semantics.Conditionals.Reading
+public import Linglib.Semantics.Modality.Exclusion
 
 /-!
 # Japanese conditional markers
@@ -17,6 +19,8 @@ rather than by the marker ([mizuno-2024]).
 * [ogihara-2014]
 * [mizuno-kaufmann-2019]
 -/
+
+@[expose] public section
 
 namespace Japanese.Conditionals
 

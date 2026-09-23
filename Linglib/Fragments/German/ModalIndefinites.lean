@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.ModalIndefinite
+module
+
+public import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
 # German modal indefinites
@@ -6,6 +8,8 @@ import Linglib.Syntax.Category.Determiner.ModalIndefinite
 Lexical entry for *irgendein*, the prototypical domain-widening indefinite
 ([kratzer-shimoyama-2002]).
 -/
+
+@[expose] public section
 
 namespace German.ModalIndefinites
 

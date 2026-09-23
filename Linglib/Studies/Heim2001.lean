@@ -1,6 +1,8 @@
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Quantification.Counting
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Quantification.Counting
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Heim (2001): Degree Operators and Scope
@@ -34,6 +36,8 @@ the maximum redefined as the greatest lower bound of the false degrees collapses
 * [von-stechow-1984]
 * [heim-1999]
 -/
+
+@[expose] public section
 
 namespace Heim2001
 

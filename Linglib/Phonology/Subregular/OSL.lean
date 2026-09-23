@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.ISL
-import Linglib.Core.Computability.Subsequential
+module
+
+public import Linglib.Phonology.Subregular.ISL
+public import Linglib.Core.Computability.Subsequential
 
 /-!
 # Output Strictly Local (OSL) Functions
@@ -44,6 +46,8 @@ OSL window is over **already-emitted output** — each step truncates
 symbols before recursing. The `k` parameter is a type-level annotation;
 window-length truncation in `applyAux` is what enforces it semantically.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

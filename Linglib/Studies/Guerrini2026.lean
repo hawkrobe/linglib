@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Guerrini2026
-import Linglib.Logic.Modal.Defs
-import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Semantics.Plurality.Basic
-import Linglib.Semantics.Plurality.Cumulativity
+module
+
+public import Linglib.Data.Examples.Guerrini2026
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Semantics.Plurality.Basic
+public import Linglib.Semantics.Plurality.Cumulativity
 
 /-!
 # Guerrini (2026): Distributive Kind Predication
@@ -43,6 +45,8 @@ formalized, since they need a trivalent `Gen` and a mood licensing substrate.
 * [chierchia-1998]
 * [beck-sauerland-2000]
 -/
+
+@[expose] public section
 
 namespace Guerrini2026
 

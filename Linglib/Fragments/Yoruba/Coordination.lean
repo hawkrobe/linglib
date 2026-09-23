@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Yoruba coordinators
@@ -17,6 +19,8 @@ Haspelmath cites from Rowlands.
 * [haspelmath-2007]
 * [rowlands-1969]
 -/
+
+@[expose] public section
 
 namespace Yoruba.Coordination
 

@@ -1,10 +1,12 @@
-import Linglib.Semantics.Degree.Measure.Basic
-import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.ArgumentStructure.ThematicRole
-import Linglib.Data.Examples.Wellwood2015
-import Linglib.Studies.Bresnan1973
+module
+
+public import Linglib.Semantics.Degree.Measure.Basic
+public import Linglib.Semantics.Composition.Tree
+public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.ArgumentStructure.ThematicRole
+public import Linglib.Data.Examples.Wellwood2015
+public import Linglib.Studies.Bresnan1973
 
 /-!
 # Wellwood (2015): On the Semantics of Comparison Across Categories
@@ -48,6 +50,8 @@ scalar-change discussions of the paper's objections section are not formalized.
 * [schwarzschild-2006]
 * [von-stechow-1984]
 -/
+
+@[expose] public section
 
 namespace Wellwood2015
 

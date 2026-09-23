@@ -1,5 +1,7 @@
-import Linglib.Data.UD.UPOS
-import Linglib.Syntax.Minimalist.FunctionalSequence
+module
+
+public import Linglib.Data.UD.UPOS
+public import Linglib.Syntax.Minimalist.FunctionalSequence
 
 /-!
 # Panagiotidis (2015): Categorial Features
@@ -33,6 +35,8 @@ data from the book.
 * [chomsky-1970]
 * [marantz-1997]
 -/
+
+@[expose] public section
 
 namespace Panagiotidis2015
 

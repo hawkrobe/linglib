@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.Defs
-import Mathlib.Order.Antisymmetrization
+module
+
+public import Linglib.Semantics.Presupposition.Defs
+public import Mathlib.Order.Antisymmetrization
 
 /-!
 # Canonical operations on partial propositions
@@ -37,6 +39,8 @@ to the representation type — see `Trivalent.GapPolicy`. Connectives are
 paired with `eval_*` bridge theorems mapping each to the corresponding
 `Trivalent` operator on the evaluation.
 -/
+
+@[expose] public section
 
 namespace Presupposition
 

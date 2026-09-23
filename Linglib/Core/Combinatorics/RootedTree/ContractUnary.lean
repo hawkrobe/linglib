@@ -3,7 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.UnorderedTree.Basic
+module
+
+public import Linglib.Core.Data.UnorderedTree.Basic
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 
@@ -39,7 +43,7 @@ variable {α : Type*} (a : α) (c d : RoseTree α) (cs : List (RoseTree α))
 
 /-- Rebuild a node from already-contracted children: a lone child replaces the node,
     otherwise the node is kept. -/
-private def contractCombine : List (RoseTree α) → RoseTree α
+def contractCombine : List (RoseTree α) → RoseTree α
   | [c] => c
   | cs  => node a cs
 

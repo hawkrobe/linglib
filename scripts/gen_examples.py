@@ -63,6 +63,8 @@ import json
 import re
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
@@ -343,13 +345,13 @@ def ensure_import(file_path: Path, module: str) -> bool:
     """Insert `import <module>` after the file's last import line if
     absent. Returns True if the file changed."""
     body = file_path.read_text(encoding="utf-8")
-    stmt = f"import {module}"
-    if re.search(rf"^{re.escape(stmt)}\s*$", body, flags=re.M):
+    if re.search(rf"^(?:public )?import {re.escape(module)}\s*$", body, flags=re.M):
         return False
+    stmt = import_stmt(body, module)
     lines = body.splitlines(keepends=True)
     last_import = None
     for i, line in enumerate(lines):
-        if line.startswith("import "):
+        if line.startswith(("import ", "public import ")):
             last_import = i
     if last_import is None:
         lines.insert(0, stmt + "\n")
@@ -384,7 +386,7 @@ def process(author_year: str, check: bool) -> bool:
         sys.exit(1)
 
     try:
-        module_text = emit_module(author_year, examples)
+        module_text = as_module_if_possible(emit_module(author_year, examples))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)

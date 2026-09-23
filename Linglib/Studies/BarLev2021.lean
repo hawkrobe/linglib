@@ -1,8 +1,10 @@
-import Linglib.Semantics.Exhaustification.Disjunctive
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Homogeneity.Plural
-import Linglib.Data.Generalizations.HomogeneityGap
-import Linglib.Data.Examples.BarLev2021
+module
+
+public import Linglib.Semantics.Exhaustification.Disjunctive
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Homogeneity.Plural
+public import Linglib.Data.Generalizations.HomogeneityGap
+public import Linglib.Data.Examples.BarLev2021
 
 /-!
 # Bar-Lev 2021: an implicature account of homogeneity and non-maximality
@@ -55,6 +57,8 @@ fixing the partition removes the gap is carried by `reading_80` and `reading_81`
 * [kriz-spector-2021]
 * [tieu-kriz-chemla-2019]
 -/
+
+@[expose] public section
 
 namespace BarLev2021
 

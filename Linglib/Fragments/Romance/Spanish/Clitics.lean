@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Category.Pronoun.Reflexive
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
 # Spanish object clitics
@@ -28,6 +30,8 @@ Moreira Rodríguez's reference grammar.
 * [J. Butt, C. Benjamin and A. Moreira Rodríguez, *A New Reference Grammar of Modern Spanish*
   (2019)][butt-benjamin-2019]
 -/
+
+@[expose] public section
 
 namespace Spanish.Clitics
 

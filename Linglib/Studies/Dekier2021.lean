@@ -1,6 +1,8 @@
-import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Studies.Haspelmath1997
-import Linglib.Data.Examples.Dekier2021
+module
+
+public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Studies.Haspelmath1997
+public import Linglib.Data.Examples.Dekier2021
 
 /-!
 # Dekier (2021): Morphosyntax of specific and non-specific indefinite markers
@@ -42,6 +44,8 @@ prefixes and suffixes in §4.2 are not modelled.
 * [starke-2009]
 * [caha-2009]
 -/
+
+@[expose] public section
 
 namespace Dekier2021
 
@@ -143,7 +147,7 @@ theorem interrogative_subset :
 /-! ### The sample -/
 
 /-- A row's markers over the three layers, a gap read as `none`. -/
-private def rowPattern (e : LinguisticExample) : Paradigm 3 (Option String) :=
+def rowPattern (e : LinguisticExample) : Paradigm 3 (Option String) :=
   ![e.feature? "nonSpecific", e.feature? "specificUnknown", e.feature? "specificKnown"]
 
 /-- Table 7: every paradigm of the sample is contiguous, so none is ABA. -/

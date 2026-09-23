@@ -1,9 +1,11 @@
-import Linglib.Semantics.Modality.Directive
-import Linglib.Semantics.Homogeneity.Decided
-import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Data.Examples.Rubinstein2014
-import Linglib.Data.Examples.AghaJeretic2026
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.Modality.Directive
+public import Linglib.Semantics.Homogeneity.Decided
+public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Data.Examples.Rubinstein2014
+public import Linglib.Data.Examples.AghaJeretic2026
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Modal force and its realization across languages
@@ -49,6 +51,8 @@ without a formal counterpart here.
 * [bar-lev-fox-2020]
 * [vander-klok-hohaus-2020]
 -/
+
+@[expose] public section
 
 namespace AghaJeretic2026
 

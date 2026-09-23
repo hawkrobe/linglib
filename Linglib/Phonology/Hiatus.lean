@@ -1,5 +1,7 @@
-import Linglib.Phonology.Segmental.Defs
-import Mathlib.Data.List.Chain
+module
+
+public import Linglib.Phonology.Segmental.Defs
+public import Mathlib.Data.List.Chain
 
 /-!
 # Vowel hiatus
@@ -49,6 +51,8 @@ quality and syllabification of the two vowels and no study yet consumes them.
 * [casali-1997]
 * [casali-2011]
 -/
+
+@[expose] public section
 
 namespace Phonology.Hiatus
 

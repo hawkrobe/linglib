@@ -1,8 +1,10 @@
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Person.Class
+module
+
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Person.Class
 
 /-!
 # Tanti Dargwa agreement
@@ -58,6 +60,8 @@ otherwise, so it marks exactly the clauses in which the verb agrees with A.
 * [N. Sumbatova, *Dargwa* (2021)][sumbatova-2021]
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
+
+@[expose] public section
 
 namespace Dargwa
 

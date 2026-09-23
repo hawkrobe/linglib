@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Marathi utterance-final particles
@@ -14,6 +16,8 @@ polar interrogatives ([deo-2025-bara] §1); its commitment semantics is the subj
 * [deo-2025-bara]
 * [deo-2023]
 -/
+
+@[expose] public section
 
 namespace Marathi.Particles
 

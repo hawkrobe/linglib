@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Orthoframe
-import Mathlib.Order.Irreducible
+module
+
+public import Linglib.Core.Order.Orthoframe
+public import Mathlib.Order.Irreducible
 
 /-!
 # Representation of ortholattices by orthoframes
@@ -25,6 +27,8 @@ order-reflecting), and — for a `CompleteOrthocomplementedLattice` — the
 Corollary 4.14 (`representationFinite`) specialises the isomorphism to a
 well-founded (e.g. finite) ortholattice, taking `V` to be the join-irreducibles.
 -/
+
+@[expose] public section
 
 open Order Set
 

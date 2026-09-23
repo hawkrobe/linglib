@@ -1,5 +1,7 @@
-import Linglib.Studies.Rett2020a
-import Linglib.Data.Examples.AlstottAravind2026
+module
+
+public import Linglib.Studies.Rett2020a
+public import Linglib.Data.Examples.AlstottAravind2026
 
 /-!
 # Alstott & Aravind (2026): aspectual coercion in *before*- and *after*-clauses
@@ -42,6 +44,8 @@ to pragmatic as against semantic coercion.
 * [brennan-pylkkanen-2010]
 * [dell-1983]
 -/
+
+@[expose] public section
 
 namespace AlstottAravind2026
 

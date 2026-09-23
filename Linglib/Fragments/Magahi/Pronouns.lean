@@ -1,5 +1,7 @@
-import Linglib.Syntax.Agreement.Allocutive
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Agreement.Allocutive
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Magahi pronouns and allocutive markers
@@ -15,6 +17,8 @@ from the finiteness phrase and occurs in every finite embedded clause.
 
 * [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
+
+@[expose] public section
 
 namespace Magahi.Pronouns
 

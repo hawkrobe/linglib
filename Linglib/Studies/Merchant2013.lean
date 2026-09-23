@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Ellipsis
-import Linglib.Syntax.Minimalist.Verbal.Voice
+module
+
+public import Linglib.Syntax.Minimalist.Ellipsis
+public import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
 # Merchant (2013): Voice and Ellipsis
@@ -20,6 +22,8 @@ survives VP-ellipsis follows from the adjunction site of restitutive *again*.
 * [merchant-2004]
 * [kratzer-1996]
 -/
+
+@[expose] public section
 
 namespace Merchant2013
 

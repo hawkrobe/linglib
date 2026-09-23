@@ -1,4 +1,6 @@
-import Linglib.Data.Generalizations.Projectivity
+module
+
+public import Linglib.Data.Generalizations.Projectivity
 
 /-!
 # Tonhauser, Beaver and Degen (2018): How Projective Is Projective Content? Gradience in Projectivity and At-Issueness
@@ -51,6 +53,8 @@ paper leaves open whether at-issueness causes projection.
 * [potts-2005]
 * [solstad-bott-2024]
 -/
+
+@[expose] public section
 
 namespace TonhauserBeaverDegen2018
 

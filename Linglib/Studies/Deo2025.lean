@@ -1,7 +1,9 @@
-import Linglib.Discourse.Commitment.Preferential
-import Linglib.Discourse.Role
-import Linglib.Fragments.Marathi.Particles
-import Linglib.Data.Examples.Deo2025
+module
+
+public import Linglib.Discourse.Commitment.Preferential
+public import Linglib.Discourse.Role
+public import Linglib.Fragments.Marathi.Particles
+public import Linglib.Data.Examples.Deo2025
 
 /-!
 # Deo (2025): Take on this commitment: the particle *bərə* in Marathi
@@ -61,6 +63,8 @@ compound *bərə ka*, §4, are outside the paper's analysis.
 * [farkas-bruce-2010]
 * [rudin-2018]
 -/
+
+@[expose] public section
 
 namespace Deo2025
 

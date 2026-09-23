@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.LateMerger
-import Linglib.Fragments.Mongolian.Case
-import Linglib.Fragments.Yakut.Case
-import Linglib.Data.Examples.Gong2022
+module
+
+public import Linglib.Syntax.Minimalist.LateMerger
+public import Linglib.Fragments.Mongolian.Case
+public import Linglib.Fragments.Yakut.Case
+public import Linglib.Data.Examples.Gong2022
 
 /-!
 # Gong (2022): Case in Wholesale Late Merger: Evidence from Mongolian Scrambling
@@ -43,6 +45,8 @@ competitor.
 * [frank-lee-rambow-1996]
 * [lebeaux-1988]
 -/
+
+@[expose] public section
 
 namespace Gong2022
 

@@ -1,6 +1,11 @@
-import Linglib.Semantics.Genericity.Kind
-import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Semantics.Plurality.MassCount
+module
+
+public import Linglib.Semantics.Genericity.Kind
+public import Linglib.Semantics.Genericity.NominalMappingParameter
+public meta import Linglib.Semantics.Genericity.NominalMappingParameter
+public import Linglib.Semantics.Plurality.MassCount
+
+@[expose] public section
 /-
 # Kind Reference and Number Marking
 

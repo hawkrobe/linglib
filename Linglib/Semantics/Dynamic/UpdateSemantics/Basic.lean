@@ -1,4 +1,6 @@
-import Linglib.Semantics.Dynamic.Update
+module
+
+public import Linglib.Semantics.Dynamic.Update
 
 /-!
 # Update Semantics
@@ -13,6 +15,8 @@ In Update Semantics:
 ⟦φ⟧ : State → State where State = Set World
 
 -/
+
+@[expose] public section
 
 namespace UpdateSemantics
 

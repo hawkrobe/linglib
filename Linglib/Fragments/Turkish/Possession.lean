@@ -1,4 +1,6 @@
-import Linglib.Syntax.Number.Basic
+module
+
+public import Linglib.Syntax.Number.Basic
 
 /-!
 # Turkish Possessive Constructions
@@ -21,6 +23,8 @@ existential predicate.
 - `Bende kitap var.` 'I have a book.' (at-me book existent; Location variant)
 - `Kitab-ım var.` 'I have a book.' (book-POSS.1SG existent; Genitive)
 -/
+
+@[expose] public section
 
 namespace Turkish.Possession
 

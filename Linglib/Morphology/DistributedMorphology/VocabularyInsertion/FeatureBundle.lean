@@ -1,6 +1,8 @@
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+module
+
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Vocabulary insertion over Minimalist bundles
@@ -15,6 +17,8 @@ Items on `GramFeature`s, and a vocabulary is built from a paradigm's cells.
 * `Agreement.Bundle.toPhiFeatures`, `Minimalist.vocabularyOfCells` — a
   vocabulary from paradigm cells.
 -/
+
+@[expose] public section
 
 /-- The φ-feature list of a person-number cell, in the shape
 `Minimalist.vocabularyOfCells` consumes. -/

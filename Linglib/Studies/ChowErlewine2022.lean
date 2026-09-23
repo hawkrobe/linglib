@@ -1,8 +1,10 @@
-import Linglib.Semantics.Exhaustification.Trivalent
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Fintype.Sigma
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Exhaustification.Trivalent
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Chow and Erlewine (2022): Restrictions on the position of exh
@@ -44,6 +46,8 @@ section 2.4 replicate the *also* pattern and are not modeled separately.
 * [chierchia-2013]
 * [meyer-2013]
 -/
+
+@[expose] public section
 
 namespace ChowErlewine2022
 

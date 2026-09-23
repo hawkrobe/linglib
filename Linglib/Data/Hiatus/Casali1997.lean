@@ -1,4 +1,6 @@
-import Linglib.Data.Hiatus.Schema
+module
+
+public import Linglib.Data.Hiatus.Schema
 
 /-!
 # Casali1997 — hiatus resolution sample (generated)
@@ -13,6 +15,8 @@ elides: the first vowel between two lexical words, the second vowel before a fun
 first vowel after a prefix of at least a consonant and a vowel, and either vowel between a root and
 a suffix. A language the paper introduces with 'possibly' is tentative.
 -/
+
+@[expose] public section
 
 namespace Data.Hiatus.Casali1997
 

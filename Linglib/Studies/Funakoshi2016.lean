@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Ellipsis
-import Linglib.Data.Examples.Funakoshi2016
+module
+
+public import Linglib.Syntax.Minimalist.Ellipsis
+public import Linglib.Data.Examples.Funakoshi2016
 
 /-!
 # Funakoshi (2016): Verb-Stranding Verb Phrase Ellipsis in Japanese
@@ -37,6 +39,8 @@ rows are the paper's ellipsis clauses under the null adjunct reading (`rows_pred
 * [funakoshi-2016]
 * [merchant-2001]
 -/
+
+@[expose] public section
 
 namespace Funakoshi2016
 

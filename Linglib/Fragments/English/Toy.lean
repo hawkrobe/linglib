@@ -1,6 +1,8 @@
-import Linglib.Semantics.Composition.Model
-import Linglib.Semantics.Composition.Reduction
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Semantics.Composition.Model
+public import Linglib.Semantics.Composition.Reduction
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Toy English fragment
@@ -19,6 +21,8 @@ Lives in `Fragments/` so substrate files cannot import it — worked examples
 over this fragment belong in `Studies/`. The namespace remains
 `Semantics.Montague` for continuity with the engine's `Lexicon`.
 -/
+
+@[expose] public section
 
 namespace Semantics.Montague
 

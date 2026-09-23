@@ -1,11 +1,13 @@
-import Linglib.Semantics.Quantification.Numerals.Roundness
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Semantics.Quantification.Numerals.Precision
-import Linglib.Pragmatics.SocialMeaning.Dimension
-import Linglib.Pragmatics.SocialMeaning.Persona
-import Linglib.Fragments.English.NumeralModifiers
-import Mathlib.Basic.Sign.Defs
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
+public import Linglib.Semantics.Quantification.Numerals.Precision
+public import Linglib.Pragmatics.SocialMeaning.Dimension
+public import Linglib.Pragmatics.SocialMeaning.Persona
+public import Linglib.Fragments.English.NumeralModifiers
+public import Mathlib.Basic.Sign.Defs
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Context, precision, and social perception
@@ -53,6 +55,8 @@ contrasts sharpen where precision is pragmatically idle.
 * [burnett-2019] — the Eckert–Montague lift; [krifka-2007] — round-number approximation;
   [campbell-kibler-2011] — the neutral-variant diagnostic precedent.
 -/
+
+@[expose] public section
 
 namespace BeltramaSoltBurnett2023
 

@@ -1,16 +1,18 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Finset.NAry
-import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Syntax.Person.Features
-import Linglib.Syntax.Agreement.ContainmentPair
-import Linglib.Semantics.Reference.Person
-import Linglib.Semantics.Plurality.NumberFeatures
-import Linglib.Syntax.Minimalist.Phi.Recursion
-import Linglib.Syntax.Minimalist.Phi.Lattice
-import Linglib.Studies.Corbett2000
-import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Fragments.Tamil.Pronouns
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Finset.NAry
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Agreement.ContainmentPair
+public import Linglib.Semantics.Reference.Person
+public import Linglib.Semantics.Plurality.NumberFeatures
+public import Linglib.Syntax.Minimalist.Phi.Recursion
+public import Linglib.Syntax.Minimalist.Phi.Lattice
+public import Linglib.Studies.Corbett2000
+public import Linglib.Syntax.Category.Pronoun.Basic
+public import Linglib.Fragments.Tamil.Pronouns
 
 /-!
 # Harbour (2016): Impossible Persons
@@ -49,6 +51,8 @@ substrate's `Syntax/Minimalist/Phi/Lattice.lean`.
 * [corbett-2000]
 * [cysouw-2003]
 -/
+
+@[expose] public section
 
 namespace Harbour2016
 

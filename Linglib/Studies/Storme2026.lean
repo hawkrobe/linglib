@@ -1,8 +1,10 @@
-import Linglib.Phonology.Constraints.Harmony
-import Linglib.Phonology.Hiatus
-import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
-import Linglib.Fragments.Farsi.Phonology
-import Linglib.Core.Analysis.SpecialFunctions.Softmax
+module
+
+public import Linglib.Phonology.Constraints.Harmony
+public import Linglib.Phonology.Hiatus
+public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
+public import Linglib.Fragments.Farsi.Phonology
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Storme (2026): A Method to Evaluate Systemic Constraints in Probabilistic Grammars
@@ -46,6 +48,8 @@ is not formalized.
 * [kurisu-2001]
 * [casali-2011]
 -/
+
+@[expose] public section
 
 namespace Storme2026
 

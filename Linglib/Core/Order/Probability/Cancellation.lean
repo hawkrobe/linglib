@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Probability.Representability
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Linglib.Core.Order.Probability.Representability
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Cancellation conditions
@@ -34,6 +36,8 @@ representable qualitative probability orders satisfy finite cancellation.
 [scott-1964], [kraft-pratt-seidenberg-1959], [rios-insua-1992],
 [alon-lehrer-2014], [harrison-trainor-holliday-icard-2016]
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.CategoryTheory.Monoidal.Category
-import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
-import Mathlib.CategoryTheory.Monoidal.Widesubcategory
-import Linglib.Phonology.Autosegmental.Graph
+module
+
+public import Mathlib.CategoryTheory.Monoidal.Category
+public import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
+public import Mathlib.CategoryTheory.Monoidal.Widesubcategory
+public import Linglib.Phonology.Autosegmental.Graph
 
 /-!
 # Autosegmental representations: the §4.2 axioms and their category
@@ -48,6 +50,8 @@ coordinate `IsNonCrossing` is the TODO.
   the strict tuple category; reduce `IsPlanar` on normal forms to the per-pair
   `IsNonCrossing` of the link relation.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.DRS.Dynamics
-import Linglib.Core.Data.Fin.VecNotation
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Dynamics
+public import Linglib.Core.Data.Fin.VecNotation
 
 /-!
 # Kamp and Reyle (1993): From Discourse to Logic
@@ -33,6 +35,8 @@ for them.
 * [kamp-reyle-1993]
 * [muskens-1996], [geurts-beaver-maier-2024]
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language
 

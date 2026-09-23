@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Karlsson2017
-import Linglib.Syntax.Case.Basic
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Data.Examples.Karlsson2017
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Karlsson (2017): Finnish: A Comprehensive Grammar
@@ -28,6 +30,8 @@ drops its ending rather than unifying them; `Clause` lists them likewise.
 
 * [karlsson-2017]
 -/
+
+@[expose] public section
 
 open Data.Examples Aspect
 
@@ -110,15 +114,15 @@ structure Row where
   object : Object
   case : Case
 
-private def nominalOf : List (String × Nominal) :=
+def nominalOf : List (String × Nominal) :=
   [("personalPronoun", .personalPronoun), ("plural", .plural), ("numeral", .numeral),
     ("singular", .singular)]
 
-private def clauseOf : List (String × Clause) :=
+def clauseOf : List (String × Clause) :=
   [("finite", .finite), ("imperative", .imperative), ("passive", .passive),
     ("obligation", .obligation), ("infinitival", .infinitival)]
 
-private def caseOf : List (String × Case) :=
+def caseOf : List (String × Case) :=
   [("part", .part), ("acc", .acc), ("nom", .nom), ("gen", .gen)]
 
 /-- A row from the grammar's features. -/

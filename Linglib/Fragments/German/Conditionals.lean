@@ -1,4 +1,6 @@
-import Linglib.Semantics.Conditionals.Reading
+module
+
+public import Linglib.Semantics.Conditionals.Reading
 
 /-!
 # German conditional markers
@@ -10,6 +12,8 @@ either reading; *falls* marks only hypothetical conditionals ([lassiter-2025]).
 
 * [lassiter-2025]
 -/
+
+@[expose] public section
 
 namespace German.Conditionals
 

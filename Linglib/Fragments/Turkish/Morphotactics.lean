@@ -1,7 +1,9 @@
-import Linglib.Morphology.Morphotactics.Template
-import Linglib.Phonology.Hiatus
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Fragments.Turkish.Phonology
+module
+
+public import Linglib.Morphology.Morphotactics.Template
+public import Linglib.Phonology.Hiatus
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Fragments.Turkish.Phonology
 
 /-!
 # Turkish morphotactics
@@ -68,6 +70,8 @@ examples are checked against both systems in `Studies/GokselKerslake2005.lean`.
 
 * [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
 -/
+
+@[expose] public section
 
 open Phonology
 

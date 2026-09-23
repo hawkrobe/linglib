@@ -1,6 +1,8 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Logic.Modal.Defs
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Modal.Defs
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Karttunen (1973): Presuppositions of Compound Sentences
@@ -36,6 +38,8 @@ the class are plugs (`conj_plug_plug_presup`).
 * [karttunen-1973]
 * [hintikka-1962]
 -/
+
+@[expose] public section
 
 namespace Karttunen1973
 

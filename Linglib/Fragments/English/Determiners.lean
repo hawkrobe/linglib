@@ -1,7 +1,9 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.NP
-import Linglib.Semantics.Quantification.Lexicon
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Lexicon
+public import Linglib.Semantics.Denotation
 
 /-!
 # English determiners
@@ -44,6 +46,8 @@ determiners of [van-de-pol-etal-2023] are parameterized by their threshold.
 * [schwarz-2009]
 * [moroney-2021]
 -/
+
+@[expose] public section
 
 namespace English.Determiners
 

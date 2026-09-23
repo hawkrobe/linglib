@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.EngelhardtEtAl2006
-import Linglib.Semantics.Reference.Distinguishing
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Data.Examples.EngelhardtEtAl2006
+public import Linglib.Semantics.Reference.Distinguishing
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Engelhardt et al. (2006): Do Speakers and Listeners Observe the Gricean Maxim of Quantity?
@@ -26,6 +28,8 @@ of the display.
 * [engelhardt-etal-2006]
 * [grice-1975]
 -/
+
+@[expose] public section
 
 namespace EngelhardtEtAl2006
 

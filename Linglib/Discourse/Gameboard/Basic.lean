@@ -1,7 +1,9 @@
-import Linglib.Discourse.Gameboard.Defs
-import Linglib.Discourse.QUD.Issue
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Questions.Support
+module
+
+public import Linglib.Discourse.Gameboard.Defs
+public import Linglib.Discourse.QUD.Issue
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Questions.Support
 
 /-!
 # KOS: DGB Operations
@@ -29,6 +31,8 @@ typeclass (Prop-valued, mathlib-shaped). With QUD now storing
 `InfoStruc QContent Cont` (per Ch. 6 final), the support check on
 `f ⊨ is.q` projects through the InfoStruc's question field.
 -/
+
+@[expose] public section
 
 namespace Discourse.Gameboard
 

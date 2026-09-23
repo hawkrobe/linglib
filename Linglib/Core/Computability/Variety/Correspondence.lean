@@ -5,10 +5,12 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.Variety.Correspondence`.
 -/
-import Linglib.Core.Computability.Variety.Langs
-import Mathlib.Order.GaloisConnection.Defs
-import Mathlib.Algebra.Group.Pi.Lemmas
-import Mathlib.Data.Fintype.Option
+module
+
+public import Linglib.Core.Computability.Variety.Langs
+public import Mathlib.Order.GaloisConnection.Defs
+public import Mathlib.Algebra.Group.Pi.Lemmas
+public import Mathlib.Data.Fintype.Option
 
 /-!
 # The Eilenberg correspondence as a Galois connection
@@ -57,6 +59,8 @@ upgrade the adjunction to the Eilenberg order isomorphism (`OrderIso`). A litera
 Everything lives in a single fixed universe `u`: alphabets and monoids are all `Type u`, matching the
 universe-monomorphic `Pseudovariety` of `Linglib.Core.Algebra.Group.Pseudovariety`.
 -/
+
+@[expose] public section
 
 universe u
 

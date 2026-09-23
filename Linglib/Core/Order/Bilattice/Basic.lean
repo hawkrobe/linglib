@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Bilattice.Product
-import Linglib.Core.Order.DeMorganAlgebra.Defs
+module
+
+public import Linglib.Core.Order.Bilattice.Product
+public import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
 # Evidential bilattices over a chain
@@ -25,6 +27,8 @@ is [schoter-1996b]'s 9-valued `PRESUP` (see `Studies.Schoter1996b`).
   non-glut) fragment
 * `Bilattice.FOUR := Evidential Bool` — Belnap's four-valued bilattice
 -/
+
+@[expose] public section
 
 namespace Bilattice
 

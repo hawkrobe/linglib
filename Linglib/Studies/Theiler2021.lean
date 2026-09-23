@@ -1,6 +1,8 @@
-import Linglib.Logic.Modal.Basic
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Data.Examples.Theiler2021
+module
+
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Data.Examples.Theiler2021
 
 /-!
 # Theiler (2021): Denn as a Highlighting-Sensitive Particle
@@ -56,6 +58,8 @@ The examples are the rows of `Data.Examples.Theiler2021`.
 * [csipak-zobel-2016]
 * [farkas-bruce-2010]
 -/
+
+@[expose] public section
 
 namespace Theiler2021
 

@@ -1,7 +1,9 @@
-import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.Paradigm.Linkage
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Morphology.Exponence.Select
+public import Linglib.Morphology.Paradigm.Linkage
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # The PFM1 paradigm function
@@ -66,6 +68,8 @@ decides realized **values**, not payload equality.
 * `Linkage.realize_eq_paradigmFunction` — the PFM2 realization of a linkage's
   block cascade is this paradigm function
 -/
+
+@[expose] public section
 
 namespace Morphology.PFM
 

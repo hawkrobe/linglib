@@ -1,10 +1,12 @@
-import Mathlib.Data.Finset.Card
-import Linglib.Studies.Corbett1991
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Fragments.Romance.Spanish.Gender
-import Linglib.Fragments.Slavic.Russian.Gender
-import Linglib.Fragments.Hausa.Gender
+module
+
+public import Mathlib.Data.Finset.Card
+public import Linglib.Studies.Corbett1991
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Fragments.Romance.Spanish.Gender
+public import Linglib.Fragments.Slavic.Russian.Gender
+public import Linglib.Fragments.Hausa.Gender
 
 /-!
 # Kramer (2020): Grammatical Gender: A Close Look at Gender Assignment Across Languages
@@ -38,6 +40,8 @@ hand-typed example, since the Russian Fragment records only the morphological ge
 * [harris-1991] — lexical gender assignment
 * [kramer-2015] — structural gender assignment
 -/
+
+@[expose] public section
 
 namespace Kramer2020
 

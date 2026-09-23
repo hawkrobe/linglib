@@ -1,6 +1,8 @@
-import Linglib.Data.PHOIBLE.Inventories.Hungarian
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Harmony.System
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Hungarian
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Harmony.System
 
 /-!
 # Hungarian phonology
@@ -46,6 +48,8 @@ rounding being a matter of phonetic implementation, so it departs from the chart
 * [rose-walker-2011]
 * [moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 namespace Hungarian
 

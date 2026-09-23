@@ -1,4 +1,6 @@
-import Linglib.Semantics.Plurality.Distributivity
+module
+
+public import Linglib.Semantics.Plurality.Distributivity
 
 /-!
 # English universal determiners
@@ -12,6 +14,8 @@ presupposition *each* carries, which blocks *each ten minutes* while allowing *e
 
 * [haslinger-etal-2025-nllt]
 -/
+
+@[expose] public section
 
 namespace English.Distributives
 

@@ -1,8 +1,10 @@
-import Linglib.Fragments.Akan.Determiners
-import Linglib.Fragments.Hausa.Determiners
-import Linglib.Studies.Owusu2022
-import Linglib.Studies.Zimmermann2008
-import Linglib.Logic.Modal.Extensional
+module
+
+public import Linglib.Fragments.Akan.Determiners
+public import Linglib.Fragments.Hausa.Determiners
+public import Linglib.Studies.Owusu2022
+public import Linglib.Studies.Zimmermann2008
+public import Linglib.Logic.Modal.Extensional
 
 /-!
 # Zimmermann (2026): African Lambdas I, The Nominal Domain
@@ -41,6 +43,8 @@ of the bound and free construals of the situation pronoun under an extensional o
 * [zimmermann-2008]
 * [owusu-2022]
 -/
+
+@[expose] public section
 
 open Reference
 

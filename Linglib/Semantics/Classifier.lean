@@ -1,6 +1,8 @@
-import Linglib.Semantics.Mereology
-import Linglib.Syntax.Category.Classifier.Basic
-import Linglib.Semantics.Plurality.Algebra
+module
+
+public import Linglib.Semantics.Mereology
+public import Linglib.Syntax.Category.Classifier.Basic
+public import Linglib.Semantics.Plurality.Algebra
 
 /-!
 # Classifier Semantics
@@ -47,6 +49,8 @@ This module composes existing pieces:
 - `Link1983.Materialization` — group classifier semantics
 - `Classifier.Strategy` — typological dispatch
 -/
+
+@[expose] public section
 
 namespace Semantics.Classifier
 

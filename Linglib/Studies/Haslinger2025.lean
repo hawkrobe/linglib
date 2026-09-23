@@ -1,7 +1,9 @@
-import Mathlib.Order.Basic
-import Mathlib.Tactic.FinCases
-import Linglib.Semantics.Quantification.Numerals.Precision
-import Linglib.Data.Examples.Haslinger2025
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.FinCases
+public import Linglib.Semantics.Quantification.Numerals.Precision
+public import Linglib.Data.Examples.Haslinger2025
 
 /-!
 # Haslinger (2025): Pragmatic constraints on imprecision and homogeneity
@@ -43,6 +45,8 @@ modelled.
 * [kriz-spector-2021]
 * [woodin-etal-2024]
 -/
+
+@[expose] public section
 
 namespace Haslinger2025
 

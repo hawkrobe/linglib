@@ -14,6 +14,8 @@ hand-edited — edit the JSON and re-run.
 """
 import sys, json, re
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "ProtoRoles"
@@ -74,11 +76,11 @@ end {paper}
 
 def ensure_import(file_path: Path, module: str) -> bool:
     body = file_path.read_text(encoding="utf-8")
-    stmt = f"import {module}"
-    if re.search(rf"^{re.escape(stmt)}\s*$", body, flags=re.M):
+    if re.search(rf"^(?:public )?import {re.escape(module)}\s*$", body, flags=re.M):
         return False
+    stmt = import_stmt(body, module)
     lines = body.splitlines(keepends=True)
-    last = max((i for i, l in enumerate(lines) if l.startswith("import ")), default=-1)
+    last = max((i for i, l in enumerate(lines) if l.startswith(("import ", "public import "))), default=-1)
     lines.insert(last + 1, stmt + "\n")
     file_path.write_text("".join(lines), encoding="utf-8")
     return True
@@ -90,7 +92,7 @@ def process(paper: str, check: bool) -> bool:
         sys.stderr.write(f"FATAL: JSON not found at {json_path.relative_to(ROOT)}\n")
         sys.exit(1)
     rows = json.loads(json_path.read_text(encoding="utf-8"))
-    content = render(paper, rows)
+    content = as_module_if_possible(render(paper, rows))
     out = DATA_DIR / f"{paper}.lean"
     if check:
         cur = out.read_text(encoding="utf-8") if out.exists() else ""

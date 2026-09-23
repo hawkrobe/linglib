@@ -1,7 +1,9 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Partition.Inquisitive
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Data.Examples.TheilerRoelofsenAloni2018
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Partition.Inquisitive
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Data.Examples.TheilerRoelofsenAloni2018
 
 /-!
 # Theiler, Roelofsen and Aloni (2018): A Uniform Semantics for Declarative and Interrogative Complements
@@ -58,6 +60,8 @@ cells, which is all Facts 5 and 6 use. The examples are the rows of
 * [elliott-etal-2017]
 * [ciardelli-roelofsen-2015]
 -/
+
+@[expose] public section
 
 namespace TheilerRoelofsenAloni2018
 

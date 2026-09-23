@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Constraints.Defs
+module
+
+public import Linglib.Phonology.Constraints.Defs
 
 /-!
 # Directional constraints as position-indexed blocks
@@ -43,6 +45,8 @@ multi-segment loci (the opposite-edge projection that rules out "locus folding",
 and length-changing GEN (step-relative positions, fn. 10); those are deferred until a
 consumer exercises them.
 -/
+
+@[expose] public section
 
 namespace Constraints
 

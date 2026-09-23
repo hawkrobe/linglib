@@ -1,5 +1,7 @@
-import Linglib.Morphology.Exponence.Elsewhere
-import Mathlib.Data.List.MinMax
+module
+
+public import Linglib.Morphology.Exponence.Elsewhere
+public import Mathlib.Data.List.MinMax
 
 /-!
 # Elsewhere selection
@@ -17,6 +19,8 @@ winners.
 * `selectBy_isElsewhereWinner`, `selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
 -/
+
+@[expose] public section
 
 namespace Morphology.Exponence
 

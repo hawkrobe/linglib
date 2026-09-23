@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.Entropy
-import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
-import Mathlib.Probability.Distributions.Bernoulli
+module
+
+public import Linglib.Core.InformationTheory.Entropy
+public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+public import Mathlib.Probability.Distributions.Bernoulli
 
 /-!
 # Entropy of a Bernoulli measure
@@ -15,6 +17,8 @@ entropy function `binEntropy p` of `Mathlib/Analysis/SpecialFunctions/BinaryEntr
 the monotonicity and concavity of `binEntropy` transfer to the entropy of a two-point law.
 `[UPSTREAM]` candidate for that file.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Real unitInterval
 

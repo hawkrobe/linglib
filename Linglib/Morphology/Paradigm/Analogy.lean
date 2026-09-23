@@ -1,7 +1,9 @@
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Algebra.Group.Hom.Defs
-import Mathlib.Tactic.Abel
-import Mathlib.Basic.IsEmpty.Basic
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Algebra.Group.Hom.Defs
+public import Mathlib.Tactic.Abel
+public import Mathlib.Basic.IsEmpty.Basic
 
 /-!
 # Proportional analogy
@@ -34,6 +36,8 @@ exactly (`Studies/HeitmeierChuangBaayen2026`).
 
 * [J. P. Blevins, *Word and Paradigm Morphology* (2016)][blevins-2016]
 -/
+
+@[expose] public section
 
 namespace Morphology
 

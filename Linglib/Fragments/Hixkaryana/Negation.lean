@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Hixkaryana negation
@@ -13,6 +15,8 @@ The examples are those of [miestamo-2005], from Derbyshire's grammar.
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation Morphology
 

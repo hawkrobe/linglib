@@ -1,8 +1,10 @@
-import Linglib.Studies.McCarthy1981
-import Linglib.Fragments.Hebrew.ConsonantalRoots
-import Linglib.Fragments.Amharic.ConsonantalRoots
-import Linglib.Syntax.Gender.Basic
-import Linglib.Data.Examples.Faust2026
+module
+
+public import Linglib.Studies.McCarthy1981
+public import Linglib.Fragments.Hebrew.ConsonantalRoots
+public import Linglib.Fragments.Amharic.ConsonantalRoots
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Data.Examples.Faust2026
 
 /-!
 # Faust (2026): Intrusion as template satisfaction and the QaTaT–QaTa problem in Semitic
@@ -54,6 +56,8 @@ left unexplained. The pipeline reproduces the paradigms (3), (5), (12) and the t
 * [lowenstamm-2014]
 * [goldsmith-1976]
 -/
+
+@[expose] public section
 
 namespace Faust2026
 

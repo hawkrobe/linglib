@@ -14,6 +14,8 @@ table of order types and the languages attesting each, is canonical JSON at
 """
 import sys, json, textwrap
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "WordOrder"
@@ -98,7 +100,7 @@ def generate(paper: str, check: bool) -> bool:
     src = DATA_DIR / f"{paper}.json"
     out = DATA_DIR / f"{paper}.lean"
     data = json.loads(src.read_text(encoding="utf-8"))
-    text = render(paper, data)
+    text = as_module_if_possible(render(paper, data))
     if check:
         ok = out.exists() and out.read_text(encoding="utf-8") == text
         print(f"[{'ok' if ok else 'STALE'}] {out.relative_to(ROOT)}")

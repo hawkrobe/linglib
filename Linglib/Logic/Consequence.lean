@@ -1,5 +1,7 @@
-import Mathlib.Data.List.Basic
-import Linglib.Logic.Bilateral.Classical
+module
+
+public import Mathlib.Data.List.Basic
+public import Linglib.Logic.Bilateral.Classical
 
 /-!
 # Mixed Consequence Relations
@@ -33,6 +35,8 @@ notions — not on the specific logic.
 - **Conclusion monotonicity**: weaker conclusions → more things follow
 - **Duality**: ⊨ᵐⁿ dualizes to ⊨^{d(n)d(m)} on negated formulas
 -/
+
+@[expose] public section
 
 namespace Consequence
 

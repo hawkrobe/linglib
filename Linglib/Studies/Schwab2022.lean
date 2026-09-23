@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Schwab2022
-import Linglib.Data.Experiments.Schwab2022
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Order.SetNotation
-import Mathlib.Data.Set.Lattice.Bounded
+module
+
+public import Linglib.Data.Examples.Schwab2022
+public import Linglib.Data.Experiments.Schwab2022
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Order.SetNotation
+public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Schwab (2022): Lexical variation in NPI illusions
@@ -58,6 +60,8 @@ scale, so the strengthening mechanism accepts it and the attenuating one rejects
 * [israel-1996]
 * [muller-phillips-2020]
 -/
+
+@[expose] public section
 
 namespace Schwab2022
 

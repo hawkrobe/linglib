@@ -1,5 +1,7 @@
-import Linglib.Phonology.Prosody.Mora
-import Linglib.Core.Data.RoseTree.Basic
+module
+
+public import Linglib.Phonology.Prosody.Mora
+public import Linglib.Core.Data.RoseTree.Basic
 
 /-!
 # Syllables
@@ -29,6 +31,8 @@ moraic carrier on weight; the segment string is the `yield`.
   weight-correspondence between the moraic and onset-rime theories.
 * `Syllable.Weight` — `Nat` (the mora count), with `.light`/`.heavy`/`.superheavy`.
 -/
+
+@[expose] public section
 
 namespace Prosody
 

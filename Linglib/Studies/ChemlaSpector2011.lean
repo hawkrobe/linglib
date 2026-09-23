@@ -1,9 +1,11 @@
-import Linglib.Data.Examples.ChemlaSpector2011
-import Linglib.Pragmatics.Implicature.SomeAll
-import Linglib.Pragmatics.Implicature.Diagnostics
-import Linglib.Studies.GeurtsPouscoulous2009
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Pi
+module
+
+public import Linglib.Data.Examples.ChemlaSpector2011
+public import Linglib.Pragmatics.Implicature.SomeAll
+public import Linglib.Pragmatics.Implicature.Diagnostics
+public import Linglib.Studies.GeurtsPouscoulous2009
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # Chemla and Spector (2011): Experimental evidence for embedded scalar implicatures
@@ -34,6 +36,8 @@ and Pouscoulous, and the paradigm priming of §5.5.4 from them.
 * [geurts-pouscoulous-2009]
 * [sadock-1978]
 -/
+
+@[expose] public section
 
 namespace ChemlaSpector2011
 

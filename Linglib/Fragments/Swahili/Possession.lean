@@ -1,4 +1,6 @@
-import Linglib.Fragments.Swahili.Basic
+module
+
+public import Linglib.Fragments.Swahili.Basic
 
 /-!
 # Swahili Possessive Constructions
@@ -28,6 +30,8 @@ typological codings (WALS 24A, 58A, 59A, 117A) are read from
 - `Nina kitabu.` 'I have a book.' (Companion: I-with book)
 - `Ana na watoto wawili.` 'He/she has two children.' (lit. 'is with children two')
 -/
+
+@[expose] public section
 
 namespace Swahili.Possession
 

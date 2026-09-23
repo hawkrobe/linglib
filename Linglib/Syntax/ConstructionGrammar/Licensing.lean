@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.ConstructionGrammar.Basic
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
 # Constructional licensing
@@ -28,6 +30,8 @@ and match any token. Slot constraints are enforced where they can be:
   slot/daughter matching
 - `Constructicon.Licenses`: the licensing relation, via the recognizer
 -/
+
+@[expose] public section
 
 namespace ConstructionGrammar
 

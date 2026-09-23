@@ -1,6 +1,8 @@
-import Linglib.Semantics.Conditionals.Restrictor
-import Linglib.Data.Examples.VonFintelIatridou2005
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Conditionals.Restrictor
+public import Linglib.Data.Examples.VonFintelIatridou2005
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # von Fintel & Iatridou (2005): What to Do If You Want to Go to Harlem
@@ -45,6 +47,8 @@ status of the condition open. The paper's examples are the rows of
 * [sloman-1970]
 * [nissenbaum-2005]
 -/
+
+@[expose] public section
 
 namespace VonFintelIatridou2005
 

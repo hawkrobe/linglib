@@ -1,6 +1,8 @@
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Core.Probability.Choice.RandomUtility
-import Linglib.Core.Analysis.SpecialFunctions.Softmax
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Core.Probability.Choice.RandomUtility
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Harmony under noise
@@ -42,6 +44,8 @@ violation of constraint j changes the logit by exactly −wⱼ, regardless
 of the violation profile elsewhere. NHG lacks this property because its
 noise variance σ_d depends on the violation profile.
 -/
+
+@[expose] public section
 
 namespace HarmonicGrammar
 

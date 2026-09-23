@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Gitksan Modal Inventory
@@ -22,17 +24,19 @@ Fig. 1).
 | Reportative      | gat         | gat             |
 -/
 
+@[expose] public section
+
 namespace Gitksan
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev wnd : ForceFlavor := (.weakNecessity, .deontic)
-private abbrev wnc : ForceFlavor := (.weakNecessity, .circumstantial)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
-private abbrev pb : ForceFlavor := (.possibility, .bouletic)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev wnd : ForceFlavor := (.weakNecessity, .deontic)
+abbrev wnc : ForceFlavor := (.weakNecessity, .circumstantial)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev pb : ForceFlavor := (.possibility, .bouletic)
 
 /-! ## Modal expressions -/
 

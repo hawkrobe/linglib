@@ -1,16 +1,18 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Order.UpperLower.Basic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.NormNum
-import Linglib.Syntax.Agreement.Classes
-import Linglib.Syntax.Number.Resolve
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Fragments.Bayso.Number
-import Linglib.Fragments.Teop.Nouns
-import Linglib.Studies.Corbett1991
-import Linglib.Data.Examples.Corbett2000
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.NormNum
+public import Linglib.Syntax.Agreement.Classes
+public import Linglib.Syntax.Number.Resolve
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Fragments.Bayso.Number
+public import Linglib.Fragments.Teop.Nouns
+public import Linglib.Studies.Corbett1991
+public import Linglib.Data.Examples.Corbett2000
 
 /-!
 # Corbett (2000): Number
@@ -86,6 +88,8 @@ is a category apart. The book's examples are the rows of `Data/Examples/Corbett2
 * [greenberg-1963]
 * [corbett-hayward-1987]
 -/
+
+@[expose] public section
 
 namespace Corbett2000
 

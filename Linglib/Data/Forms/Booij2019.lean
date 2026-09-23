@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `Booij2019` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/Booij2019.json` by
 generator. Consumers import this module; declarations live in
 `namespace Booij2019.Forms`.
 -/
+
+@[expose] public section
 
 namespace Booij2019.Forms
 

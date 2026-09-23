@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Semantics.Reference.Acquaintance
-import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Fragments.Ewe.Pronouns
+module
+
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Semantics.Reference.Acquaintance
+public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Fragments.Ewe.Pronouns
 
 /-!
 # Pearson (2015): The Interpretation of the Logophoric Pronoun in Ewe
@@ -48,6 +50,8 @@ in prose.
 * [lewis-1979-attitudes]
 * [kratzer-2009]
 -/
+
+@[expose] public section
 
 namespace Pearson2015
 

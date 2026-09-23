@@ -1,7 +1,9 @@
-import Linglib.Semantics.Exhaustification.Antiexhaustive
-import Linglib.Semantics.Exhaustification.PreExhaustified
-import Linglib.Logic.Modal.Basic
-import Linglib.Studies.Haspelmath1997
+module
+
+public import Linglib.Semantics.Exhaustification.Antiexhaustive
+public import Linglib.Semantics.Exhaustification.PreExhaustified
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Studies.Haspelmath1997
 
 /-!
 # Chierchia (2006): Broaden your views
@@ -54,6 +56,8 @@ are `Exhaustification.dMinAlts`, the subdomains containing a possible witness, (
 * [kratzer-shimoyama-2002]
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace Chierchia2006
 
@@ -233,10 +237,10 @@ theorem oMinus_exactlyOne_eq_empty {a b : E} (ha : a ∈ D) (hb : b ∈ D) (hab 
   exact hab ((huniq x (by simp) hPx).trans (huniq y (by simp) hPy).symm)
 
 /-- The worlds accessible from the evaluation world `0` in the model of (85). -/
-private def accessible : Fin 3 → Fin 3 → Prop := λ w v => w = 0 ∧ v ≠ 0
+def accessible : Fin 3 → Fin 3 → Prop := λ w v => w = 0 ∧ v ≠ 0
 
 /-- Doctor `d` is married exactly in world `d + 1`, the distribution of (85). -/
-private def married : Fin 2 → Set (Fin 3) := λ d w => w = d.succ
+def married : Fin 2 → Set (Fin 3) := λ d w => w = d.succ
 
 /-- The rescue by a possibility modal, (84)–(85): two doctors, each married in one accessible
 world, satisfy the modalized statement together with every modalized alternative. -/

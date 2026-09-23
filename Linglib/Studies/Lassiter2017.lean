@@ -1,4 +1,6 @@
-import Linglib.Semantics.Attitudes.Desire.ExpectedValue
+module
+
+public import Linglib.Semantics.Attitudes.Desire.ExpectedValue
 
 /-!
 # Lassiter (2017): Graded Modality
@@ -35,6 +37,8 @@ over an equiprobable domain of four worlds indexed by the truth values of `A` an
 * [cariani-2016]
 * [sloman-1970]
 -/
+
+@[expose] public section
 
 namespace Lassiter2017
 

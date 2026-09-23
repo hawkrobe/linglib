@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Remnant movement
@@ -44,6 +46,8 @@ smaller one still inside it.
 * [cole-hermon-2008]
 * [sande-clem-dabkowski-2026]
 -/
+
+@[expose] public section
 
 namespace Minimalist.SyntacticObject.Derivation
 

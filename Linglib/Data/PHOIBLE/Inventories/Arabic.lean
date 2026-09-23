@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Arabic (arb, ID 2157)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 37 phonemes. PHOIBLE inventory ID 2157, Glottocode `stan1318`.
 Source: PHOIBLE donor `ph`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Arabic
 

@@ -1,7 +1,9 @@
-import Linglib.Fragments.Japanese.Prosody
-import Linglib.Phonology.Prosody.Grid
-import Linglib.Phonology.Tone.Basic
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Fragments.Japanese.Prosody
+public import Linglib.Phonology.Prosody.Grid
+public import Linglib.Phonology.Tone.Basic
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Hyman (2006): Word-prosodic typology
@@ -39,6 +41,8 @@ Creek and Tokyo Japanese oppositely (`cuts_differ`).
 * [hyman-2006]
 * [lionnet-2025]
 -/
+
+@[expose] public section
 
 namespace Hyman2006
 

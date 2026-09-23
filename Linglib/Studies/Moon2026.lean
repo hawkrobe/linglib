@@ -1,8 +1,10 @@
-import Linglib.Semantics.Plurality.Number
-import Linglib.Semantics.Aspect.Telicity
-import Mathlib.Topology.Connected.Basic
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Semantics.Plurality.Number
+public import Linglib.Semantics.Aspect.Telicity
+public import Mathlib.Topology.Connected.Basic
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Moon (2026): countability and measured parts in mixed drink nouns
@@ -41,6 +43,8 @@ portions, and measured parts.
 * [moon-2026]
 * [borer-2005], [casati-varzi-1999], [filip-2012], [krifka-2021], [wagiel-2021]
 -/
+
+@[expose] public section
 
 namespace Moon2026
 

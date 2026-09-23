@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Zarma-Sonrai negation
@@ -14,6 +16,8 @@ for him to come'. The description follows [jin-koenig-2021], whose examples are 
 
 * [jin-koenig-2021]
 -/
+
+@[expose] public section
 
 open Negation
 

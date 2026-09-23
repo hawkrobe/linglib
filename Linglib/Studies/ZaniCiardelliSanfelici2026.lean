@@ -1,5 +1,7 @@
-import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
-import Linglib.Studies.BarLevFox2020
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
+public import Linglib.Studies.BarLevFox2020
 
 /-!
 # Zani, Ciardelli and Sanfelici (2026): Simplification of Disjunctive Antecedents
@@ -53,6 +55,8 @@ and exhaustification strengthens it to SDA (`distributive_of_exh`).
 * [bar-lev-fox-2020]
 * [tieu-kriz-chemla-2019]
 -/
+
+@[expose] public section
 
 namespace ZaniCiardelliSanfelici2026
 

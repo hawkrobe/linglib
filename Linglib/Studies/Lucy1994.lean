@@ -1,7 +1,9 @@
-import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.ArgumentStructure.SalienceClass
-import Linglib.Morphology.Exponence.Select
-import Linglib.Data.Forms.Lucy1994
+module
+
+public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.SalienceClass
+public import Linglib.Morphology.Exponence.Select
+public import Linglib.Data.Forms.Lucy1994
 
 /-!
 # Lucy (1994): The Role of Semantic Value in Lexical Comparison
@@ -42,12 +44,14 @@ with the unaccusativity tradition are described in prose.
 * [coon-2019]
 -/
 
+@[expose] public section
+
 namespace Lucy1994
 
 open Semantics ArgumentStructure Morphology Data.Forms
 
 /-- A root of the sample: a form's spelling with its entailment signature. -/
-private def ofForm (f : Form) (entailments : Finset Root.Entailment) : Root :=
+def ofForm (f : Form) (entailments : Finset Root.Entailment) : Root :=
   { name := f.form, entailments := entailments }
 
 /-! ### Agent-salient roots ((1a), p. 629) -/

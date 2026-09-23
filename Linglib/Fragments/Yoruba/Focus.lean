@@ -1,7 +1,9 @@
-import Linglib.Fragments.Yoruba.Relativization
-import Linglib.Semantics.Focus.Marking
-import Linglib.Syntax.Category.Particle.Basic
-import Linglib.Syntax.Reflex
+module
+
+public import Linglib.Fragments.Yoruba.Relativization
+public import Linglib.Semantics.Focus.Marking
+public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Syntax.Reflex
 
 /-!
 # Yoruba focus
@@ -41,6 +43,8 @@ particle. Aremu describes the standard dialect in the dissertation and Ìkálẹ
 * [aremu-2025b]
 * [awobuluyi-1978]
 -/
+
+@[expose] public section
 
 namespace Yoruba
 

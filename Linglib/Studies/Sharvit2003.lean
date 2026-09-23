@@ -1,5 +1,7 @@
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Data.Examples.Sharvit2003
+module
+
+public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Data.Examples.Sharvit2003
 
 /-!
 # Sharvit (2003): Embedded Tense and Universal Grammar
@@ -47,6 +49,8 @@ examples (1)–(6) and (12) (`nonpast_rows`).
 * [schlenker-1999]
 * [abusch-1997]
 -/
+
+@[expose] public section
 
 namespace Sharvit2003
 

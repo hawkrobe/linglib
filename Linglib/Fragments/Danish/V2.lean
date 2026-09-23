@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.VerbSecond
+module
+
+public import Linglib.Syntax.Minimalist.VerbSecond
 
 /-!
 # Danish verb second
@@ -11,6 +13,8 @@ wh-questions and yes/no-questions as in Standard Norwegian, and exclamatives bes
 
 * [westergaard-2009]
 -/
+
+@[expose] public section
 
 namespace Danish
 

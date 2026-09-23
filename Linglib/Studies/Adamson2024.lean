@@ -1,14 +1,16 @@
-import Linglib.Morphology.DistributedMorphology.NominalProjection
-import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Morphology.DistributedMorphology.Impoverishment
-import Linglib.Fragments.Teop.Nouns
-import Linglib.Fragments.Jarawara.PossessedNouns
-import Linglib.Fragments.Romance.Italian.NumberGender
-import Linglib.Fragments.Yanyuwa.Gender
-import Linglib.Fragments.CoastalMarind.Gender
-import Linglib.Semantics.Possession.Relationalizer
-import Linglib.Data.Examples.Adamson2024
+module
+
+public import Linglib.Morphology.DistributedMorphology.NominalProjection
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Morphology.DistributedMorphology.Impoverishment
+public import Linglib.Fragments.Teop.Nouns
+public import Linglib.Fragments.Jarawara.PossessedNouns
+public import Linglib.Fragments.Romance.Italian.NumberGender
+public import Linglib.Fragments.Yanyuwa.Gender
+public import Linglib.Fragments.CoastalMarind.Gender
+public import Linglib.Semantics.Possession.Relationalizer
+public import Linglib.Data.Examples.Adamson2024
 
 /-!
 # Gender assignment is local
@@ -47,6 +49,8 @@ and *nanVh* 'face' take the gender of an inalienable possessor on their agreemen
 * [dixon-2004]
 * [myler-2016]
 -/
+
+@[expose] public section
 
 namespace Adamson2024
 

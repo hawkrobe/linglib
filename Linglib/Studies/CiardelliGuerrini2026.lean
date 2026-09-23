@@ -1,7 +1,9 @@
-import Linglib.Semantics.Modality.Basic
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Logic.Modal.Basic
-import Linglib.Data.Examples.CiardelliGuerrini2026
+module
+
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Data.Examples.CiardelliGuerrini2026
 
 /-!
 # Ciardelli and Guerrini (2026): Against wide scope free choice
@@ -41,6 +43,8 @@ possible that A or it is possible that B* and conjoined *be allowed*, are not ro
 * [anand-brasoveanu-2010]
 * [alonso-ovalle-2006]
 -/
+
+@[expose] public section
 
 namespace CiardelliGuerrini2026
 
@@ -180,7 +184,7 @@ theorem need_not :
 
 /-- The modal features of a modal named in the rows: the auxiliaries' from the Fragment, and the
 interpretable feature of the non-auxiliary modals, (20). -/
-private def featuresOf : String → Finset ModalFeature
+def featuresOf : String → Finset ModalFeature
   | "may" => auxiliaryFeatures may
   | "can" => auxiliaryFeatures can
   | "must" => auxiliaryFeatures must

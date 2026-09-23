@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Italian negation
@@ -17,6 +19,8 @@ entered in `Fragments/Romance/Italian/PolarityItems.lean`. The examples are thos
 * [jin-koenig-2021]
 -/
 
+@[expose] public section
+
 open Negation Morphology
 
 namespace Italian.Negation
@@ -24,7 +28,7 @@ namespace Italian.Negation
 /-- *non*, the standard negator. -/
 def non : Marker := { pieces := [[.free "non"]] }
 
-private def words (ws : List String) : List Morph := ws.map .free
+def words (ws : List String) : List Morph := ws.map .free
 
 /-- The first person singular present and future of *cantare* 'sing'. -/
 def pairs : List Pair :=

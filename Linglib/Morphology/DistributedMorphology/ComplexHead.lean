@@ -1,5 +1,7 @@
-import Linglib.Morphology.DistributedMorphology.Locality
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+module
+
+public import Linglib.Morphology.DistributedMorphology.Locality
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Complex heads and Vocabulary Insertion from the inside out
@@ -50,6 +52,8 @@ second parameter: they persist, or the item's features are rewritten away.
 * [J. D. Bobaljik, *The ins and outs of contextual allomorphy*][bobaljik-2000]
 * [M. Halle, *Distributed Morphology: Impoverishment and Fission*][halle-1997]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

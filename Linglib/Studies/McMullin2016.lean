@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Studies.Hansson2010
+module
+
+public import Linglib.Studies.Hansson2010
 
 /-!
 # McMullin (2016): Tier-Based Locality in Long-Distance Phonotactics
@@ -32,6 +34,8 @@ consonant-harmony systems surveyed by Hansson are not formalized.
 * [mcmullin-2016]
 * [hansson-2010]
 -/
+
+@[expose] public section
 
 namespace McMullin2016
 

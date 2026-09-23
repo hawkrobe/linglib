@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Swedish Question Particles
@@ -22,6 +24,8 @@ but these are not formalized here. [seeliger-repp-2018] note that
 *visst* and *nog* have no overlap in meaning with *väl* in clause-medial
 position, and their clause-initial uses require further investigation.
 -/
+
+@[expose] public section
 
 namespace Swedish.QuestionParticles
 

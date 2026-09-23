@@ -1,6 +1,8 @@
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Phonology.Constraints.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Berent et al. (2016): The double identity of linguistic doubling
@@ -60,6 +62,8 @@ where the base and the doubled form name objects of different kinds, are not mod
 * [mccarthy-1986]
 * [mccarthy-prince-1995]
 -/
+
+@[expose] public section
 
 namespace BerentEtAl2016
 

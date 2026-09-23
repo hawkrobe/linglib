@@ -1,5 +1,7 @@
-import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Tense.Reichenbach
+module
+
+public import Linglib.Semantics.Tense.Pronoun
+public import Linglib.Semantics.Tense.Reichenbach
 
 /-!
 # Embedded tense: frames under attitude verbs
@@ -16,6 +18,8 @@ shifted/simultaneous split by a language's `SOTParameter`, and
 `upperLimitConstraint` is [abusch-1997]'s ULC in [heim-1994-comments]'s
 presuppositional construal.
 -/
+
+@[expose] public section
 
 open Tense
 

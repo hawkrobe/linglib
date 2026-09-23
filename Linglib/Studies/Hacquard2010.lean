@@ -1,6 +1,8 @@
-import Linglib.Semantics.Modality.Basic
-import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Data.Examples.Hacquard2010
+module
+
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Modality.EventRelativity
+public import Linglib.Data.Examples.Hacquard2010
 
 /-!
 # Hacquard (2010): On the Event Relativity of Modal Auxiliaries
@@ -40,6 +42,8 @@ only through the binding event; the Italian restructuring evidence belongs to [h
 * [cinque-1999]
 * [yalcin-2007]
 -/
+
+@[expose] public section
 
 namespace Hacquard2010
 

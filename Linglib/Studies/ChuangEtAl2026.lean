@@ -1,4 +1,6 @@
-import Linglib.Processing.DiscriminativeLexicon.Training
+module
+
+public import Linglib.Processing.DiscriminativeLexicon.Training
 
 /-!
 # Chuang, Bell, Tseng and Baayen 2026: Word-specific tonal realizations in Mandarin
@@ -48,6 +50,8 @@ ResLDL are not represented.
 * [J. Fon, *A preliminary construction of Taiwan Southern Min spontaneous speech corpus*
   (2004)][fon-2004]
 -/
+
+@[expose] public section
 
 namespace ChuangEtAl2026
 

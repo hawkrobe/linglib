@@ -1,7 +1,9 @@
-import Linglib.Semantics.Degree.Measure.Dimensioned
-import Linglib.Data.Examples.Scontras2014
-import Mathlib.Order.Antichain
-import Mathlib.Data.Set.Card
+module
+
+public import Linglib.Semantics.Degree.Measure.Dimensioned
+public import Linglib.Data.Examples.Scontras2014
+public import Mathlib.Order.Antichain
+public import Mathlib.Data.Set.Card
 
 /-!
 # Scontras (2014): The Semantics of Measurement
@@ -50,6 +52,8 @@ numerals count them.
 * [rothstein-2009]
 * [grimm-2012]
 -/
+
+@[expose] public section
 
 namespace Scontras2014
 

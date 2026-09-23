@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Bulgarian evidentiality
@@ -17,6 +19,8 @@ firsthand information. Koev's and Cumming's tense-evidential paradigm of the *l*
 * [koev-2017]
 * [cumming-2026]
 -/
+
+@[expose] public section
 
 namespace Bulgarian.Evidentiality
 

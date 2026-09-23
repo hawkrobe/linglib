@@ -1,5 +1,7 @@
-import Linglib.Semantics.Events.Path
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Semantics.Events.Path
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Dutch adpositions
@@ -14,6 +16,8 @@ the path each directional reading describes.
 * [broekhuis-corver-2026a]
 * [dendikken-2010]
 -/
+
+@[expose] public section
 
 namespace Dutch.Adpositions
 

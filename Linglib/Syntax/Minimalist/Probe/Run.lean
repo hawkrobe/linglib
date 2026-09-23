@@ -1,6 +1,8 @@
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Mathlib.Data.Finset.Union
-import Mathlib.Data.List.TakeWhile
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Data.List.TakeWhile
 
 /-!
 # The Agree operation as a fold over the goal sequence
@@ -41,6 +43,8 @@ valuation, is the list of interacting goals together with the satisfier.
 * [hiraiwa-2001]
 * [preminger-2014]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

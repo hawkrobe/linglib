@@ -1,10 +1,12 @@
-import Linglib.Fragments.Hausa.Focus
-import Linglib.Fragments.Hausa.TAM
-import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Focus.Control
-import Linglib.Syntax.Reflex
-import Linglib.Data.Examples.HartmannZimmermann2007
+module
+
+public import Linglib.Fragments.Hausa.Focus
+public import Linglib.Fragments.Hausa.TAM
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Focus.Control
+public import Linglib.Syntax.Reflex
+public import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!
 # Hartmann and Zimmermann (2007): In place, out of place: Focus in Hausa
@@ -52,6 +54,8 @@ prepublication manuscript of the chapter.
 * [selkirk-1995]
 * [vallduvi-vilkuna-1998]
 -/
+
+@[expose] public section
 
 namespace HartmannZimmermann2007
 
@@ -102,11 +106,11 @@ through abstraction: `PredAbs WithAlternatives = ⟨none⟩`). -/
 inductive Alt | ans | alt
 
 /-- The canonical antecedent of a use over the two-point scenario. -/
-private def ctx (u : Use) : Antecedent Alt :=
+def ctx (u : Use) : Antecedent Alt :=
   Use.model {Alt.ans} {Alt.alt} u
 
 /-- The composed answer of the two-point scenario. -/
-private def answer : WithAlternatives (Set Alt) :=
+def answer : WithAlternatives (Set Alt) :=
   pairAnswer Alt.ans Alt.alt
 
 /-- Every cell's context fully resolves against the composed answer —
@@ -125,7 +129,7 @@ ex-situ *only BOOKS* alike. -/
 
 /-- The exhaustified answer: the exclusion asserted by *only* over the
 scenario's resolved contrast set. -/
-private def exhAnswer (u : Use) : Set Alt :=
+def exhAnswer (u : Use) : Set Alt :=
   excludes (ctx u).contrastSet answer.ordinary
 
 /-- The exhaustified answer computes to the bare true answer, uniformly
@@ -154,13 +158,13 @@ theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
 Each cell's pragmatic type is *computed* from its controlling context:
 the constructors take a `Focus.Antecedent`, not a tag. -/
 
-private def mkExSituUtt (pac : PAC) (g : Gender) (sg hasStab : Bool)
+def mkExSituUtt (pac : PAC) (g : Gender) (sg hasStab : Bool)
     (h : pac.tam.HasRelativeForm → pac.mode = .relative)
     {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject) :
     FocusUtterance :=
   ⟨mkExSitu pac g sg h hasStab, ctl.use, foc⟩
 
-private def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
+def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
     {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject)
     (hasStab : Bool := false) :
     FocusUtterance :=
@@ -334,27 +338,27 @@ example : Stabilizer.nee.toneAfter .H = .L := rfl
 Each cell's tags are pinned to the `paperFeatures` of its
 `Data.Examples.HartmannZimmermann2007` row. -/
 
-private def strategyLabel : Strategy → String
+def strategyLabel : Strategy → String
   | .inSitu => "inSitu"
   | .exSitu => "exSitu"
 
-private def pragLabel : Use → String
+def pragLabel : Use → String
   | .newInfo => "newInfo"
   | .corrective => "corrective"
   | .selective => "selective"
   | .contrastive => "contrastive"
 
-private def focusedLabel : Focused → String
+def focusedLabel : Focused → String
   | .subject => "subject"
   | .nonSubject => "nonSubject"
 
-private def stabLabel (c : FocusConfig) : String :=
+def stabLabel (c : FocusConfig) : String :=
   match c.stab? with
   | some .nee => "nee"
   | some .cee => "cee"
   | none      => "none"
 
-private def cellRows :
+def cellRows :
     List (FocusUtterance × Data.Examples.LinguisticExample) :=
   [(exSitu_newInfo, Examples.ex22), (exSitu_corrective, Examples.ex24),
    (exSitu_selective, Examples.ex29), (exSitu_contrastive, Examples.ex27),

@@ -1,6 +1,8 @@
-import Linglib.Semantics.ArgumentStructure.Agentivity
-import Linglib.Semantics.ArgumentStructure.PersistenceLevel
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.ArgumentStructure.Agentivity
+public import Linglib.Semantics.ArgumentStructure.PersistenceLevel
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Participant types ([grimm-2011] §2.2, Fig. 3)
@@ -18,6 +20,8 @@ convergence point `sentientNonInstigator`. Tsunoda's transitivity hierarchy
 (§3, example 8) is `TransitivityRank`, with the canonical patient
 placement of each class (Fig. 5).
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

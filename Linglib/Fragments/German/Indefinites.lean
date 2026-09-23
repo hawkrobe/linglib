@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Indefinite
+module
+
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # German indefinite pronouns
@@ -19,6 +21,8 @@ is the matter of `German.ModalIndefinites`.
 * [haspelmath-1997]
 * [kratzer-shimoyama-2002]
 -/
+
+@[expose] public section
 
 namespace German.Indefinites
 

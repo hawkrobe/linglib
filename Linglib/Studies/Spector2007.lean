@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Partition.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finset.Insert
+module
+
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Insert
 
 /-!
 # Spector (2007): Scalar Implicatures: Exhaustivity and Gricean Reasoning
@@ -44,6 +46,8 @@ the theorem here goes through the reduction directly.
 * [groenendijk-stokhof-1984]
 * [sauerland-2004]
 -/
+
+@[expose] public section
 
 namespace Spector2007
 

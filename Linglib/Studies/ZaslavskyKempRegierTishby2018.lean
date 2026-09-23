@@ -1,6 +1,8 @@
-import Mathlib.Algebra.BigOperators.Field
-import Linglib.Pragmatics.InformationTheory.Channel
-import Linglib.Pragmatics.Efficiency
+module
+
+public import Mathlib.Algebra.BigOperators.Field
+public import Linglib.Pragmatics.InformationTheory.Channel
+public import Linglib.Pragmatics.Efficiency
 
 /-!
 # Zaslavsky, Kemp, Regier and Tishby (2018): Efficient Compression in Color Naming
@@ -40,6 +42,8 @@ divergence from the meaning (`IsIBOptimum`).
 * [tishby-pereira-bialek-1999]
 * [shannon-1948]
 -/
+
+@[expose] public section
 
 namespace ZaslavskyKempRegierTishby2018
 

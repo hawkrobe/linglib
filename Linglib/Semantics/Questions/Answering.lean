@@ -1,7 +1,9 @@
-import Linglib.Semantics.Polarity.Sentence
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.BooleanAlgebra.Set
-import Mathlib.Tactic.TypeStar
+module
+
+public import Linglib.Semantics.Polarity.Sentence
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.BooleanAlgebra.Set
+public import Mathlib.Tactic.TypeStar
 
 /-!
 # Answering System Typology
@@ -37,6 +39,8 @@ In [holmberg-2016]'s syntax, every finite clause has a polarity head
 determines whether "yes" values the variable as [+Pol] (polarity-based)
 or affirms the question's primary proposition (truth-based).
 -/
+
+@[expose] public section
 
 namespace Question
 

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Fragments.English.Toy
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Fragments.English.Toy
 
 /-!
 # Ladusaw (1979): Polarity Sensitivity as Inherent Scope Relations
@@ -35,6 +37,8 @@ converse of the generalization is not stated.
 
 * [ladusaw-1979]
 -/
+
+@[expose] public section
 
 namespace Ladusaw1979
 

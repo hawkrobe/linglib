@@ -1,4 +1,6 @@
-import Linglib.Semantics.Events.SpatialTrace
+module
+
+public import Linglib.Semantics.Events.SpatialTrace
 
 /-!
 # Zwarts (2005): Prepositional Aspect and the Algebra of Paths
@@ -38,6 +40,8 @@ and a trace homomorphism transfers closure from the phrase to the verb phrase (2
 * [zwarts-2005]
 * [krifka-1998]
 -/
+
+@[expose] public section
 
 namespace Zwarts2005
 

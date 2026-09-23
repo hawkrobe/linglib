@@ -1,5 +1,7 @@
-import Linglib.Syntax.Mereological.Basic
-import Linglib.Syntax.Mereological.AngularLocality
+module
+
+public import Linglib.Syntax.Mereological.Basic
+public import Linglib.Syntax.Mereological.AngularLocality
 
 /-!
 # Wang and Sun (2026): Detaching Mandarin Classifiers from Nouns
@@ -45,6 +47,8 @@ permits, (44a) (`topic_n_modifier_cl`), and a modifier as D's 2-part blocks, (44
 * [wang-sun-2026]
 * [adger-2025]
 -/
+
+@[expose] public section
 
 namespace WangSun2026
 

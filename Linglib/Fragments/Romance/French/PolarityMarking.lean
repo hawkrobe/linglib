@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Marking
+module
+
+public import Linglib.Semantics.Polarity.Marking
 
 /-!
 # French Polarity-Marking Strategies
@@ -30,6 +32,8 @@ polarity-reversing particles — they assign [+Pol] in contexts where
 a negative polarity is salient. This class is distinct from plain
 affirmative particles like Dutch *wel* and from Verum focus.
 -/
+
+@[expose] public section
 
 namespace French.PolarityMarking
 

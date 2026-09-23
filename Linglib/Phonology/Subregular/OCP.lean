@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.ForbidPairs
-import Linglib.Phonology.Subregular.TierProjection
-import Linglib.Phonology.OCP
-import Linglib.Phonology.Subregular.ISL
+module
+
+public import Linglib.Phonology.Subregular.ForbidPairs
+public import Linglib.Phonology.Subregular.TierProjection
+public import Linglib.Phonology.OCP
+public import Linglib.Phonology.Subregular.ISL
 
 /-!
 # OCP (Obligatory Contour Principle) ↔ TSL_2 — the identity instance
@@ -43,6 +45,8 @@ lands in the same `IsClean` set, and is itself a 2-Input-Strictly-Local map
 formalisations but the constraint and a retraction onto it, both characterising
 `OCP.IsClean`, both subregular.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

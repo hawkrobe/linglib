@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Agree.Basic
+module
+
+public import Linglib.Syntax.Minimalist.Agree.Basic
 
 /-!
 # Bruening 2001: QR obeys Superiority
@@ -26,6 +28,8 @@ can still scope over it and why a passivized double object construction is ambig
 * [larson-1988]
 * [pylkkanen-2008]
 -/
+
+@[expose] public section
 
 namespace Bruening2001
 
@@ -80,25 +84,25 @@ theorem ambiguous_of_mutual_cCommand (hx : x ∈ qs) (hy : y ∈ qs) (hne : x �
 /-! ### The double object construction -/
 
 /-- The light verb bearing the P-feature that attracts quantifiers ([kratzer-1996]'s Voice). -/
-private def v : PlanarSyntacticObject := .leaf ⟨.simple .Voice [.V] "v[P]", 400⟩
+def v : PlanarSyntacticObject := .leaf ⟨.simple .Voice [.V] "v[P]", 400⟩
 /-- The applicative head introducing the first object ([pylkkanen-2008]). -/
-private def appl : PlanarSyntacticObject := .leaf ⟨.simple .Appl [.D] "Appl", 402⟩
-private def gave : PlanarSyntacticObject := .leaf ⟨.simple .V [.Appl] "gave", 404⟩
-private def ozzy : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Ozzy", 406⟩
+def appl : PlanarSyntacticObject := .leaf ⟨.simple .Appl [.D] "Appl", 402⟩
+def gave : PlanarSyntacticObject := .leaf ⟨.simple .V [.Appl] "gave", 404⟩
+def ozzy : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Ozzy", 406⟩
 /-- The first object, the goal. -/
-private def aGirl : PlanarSyntacticObject := .leaf ⟨.simple .D [] "a girl", 407⟩
+def aGirl : PlanarSyntacticObject := .leaf ⟨.simple .D [] "a girl", 407⟩
 /-- The second object, the theme. -/
-private def everyTelescope : PlanarSyntacticObject := .leaf ⟨.simple .D [] "every telescope", 408⟩
+def everyTelescope : PlanarSyntacticObject := .leaf ⟨.simple .D [] "every telescope", 408⟩
 /-- The preposition of the locative variant. -/
-private def toP : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "to", 409⟩
+def toP : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "to", 409⟩
 
 /-- `{Ozzy, {v, {gave, {a girl, {Appl, every telescope}}}}}`. The first object is the argument of
 the applicative head, merged above the projection containing the second, so it asymmetrically
 c-commands it. -/
-private def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelescope}}}}}
+def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelescope}}}}}
 
 /-- The quantifiers competing for attraction in the double object construction. -/
-private def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
+def docQuantifiers : List SyntacticObject := [aGirl, everyTelescope]
 
 /-- The first object asymmetrically c-commands the second ([barss-lasnik-1986]). -/
 theorem doc_goal_asym_theme : asymCCommandsIn doc aGirl everyTelescope := by decide
@@ -116,14 +120,14 @@ theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide
 /-! ### The locative variant -/
 
 /-- The PP that pied-pipes the goal. -/
-private def toAGirl : PlanarSyntacticObject := {toP, aGirl}
+def toAGirl : PlanarSyntacticObject := {toP, aGirl}
 
 /-- `{Ozzy, {v, {gave, {every telescope, {to, a girl}}}}}`. The direct object and the PP are
 co-arguments of the same head, hence sisters, and c-command each other. -/
-private def locative : PlanarSyntacticObject := {ozzy, {v, {gave, {everyTelescope, toAGirl}}}}
+def locative : PlanarSyntacticObject := {ozzy, {v, {gave, {everyTelescope, toAGirl}}}}
 
 /-- The candidates in the locative, the direct object and the PP that pied-pipes the goal. -/
-private def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
+def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
 
 /-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other. -/
 theorem locative_mutual_cCommand :
@@ -146,7 +150,7 @@ theorem subject_not_attractable : ¬ Attractable doc v ozzy := by decide
 
 /-- The passive of a double object construction. With no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
-private def passive : PlanarSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}}}}
+def passive : PlanarSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}}}}
 
 /-- In the passive the derived subject is no longer attractable while the theme is, so Shortest
 imposes no order between them and the ambiguity returns: *a (different) girl was given every

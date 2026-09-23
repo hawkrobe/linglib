@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Properties
-import Mathlib.Order.BooleanSubalgebra
+module
+
+public import Linglib.Semantics.Quantification.Properties
+public import Mathlib.Order.BooleanSubalgebra
 
 /-!
 # The conservative determiners as a Boolean algebra
@@ -21,6 +23,8 @@ is conservative because conservativity is an equivalence at every restrictor and
 * [keenan-stavi-1986]
 * [elliott-2025]
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

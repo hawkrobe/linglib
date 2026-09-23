@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Particle.Basic
-import Linglib.Pragmatics.Expressives.Kind
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Pragmatics.Expressives.Kind
 
 /-!
 # Japanese particles
@@ -28,6 +30,8 @@ rest, use-conditional items whose meaning is the matter of `Studies/Kubota2026.l
 * [sauerland-yatsushiro-2017]
 * [uegaki-roelofsen-2018]
 -/
+
+@[expose] public section
 
 namespace Japanese.Particles
 

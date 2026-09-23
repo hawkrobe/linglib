@@ -1,6 +1,8 @@
-import Linglib.Logic.Team.BSML.Defs
-import Linglib.Logic.Team.Closure
-import Linglib.Logic.Team.Definability
+module
+
+public import Linglib.Logic.Team.BSML.Defs
+public import Linglib.Logic.Team.Closure
+public import Linglib.Logic.Team.Definability
 
 /-!
 # BSML formula closure properties (Anttila 2021 Proposition 2.2.8)
@@ -43,6 +45,8 @@ team-semantic logic in linglib (QBSML, inquisitive, dependence logic)
 needs the same structural argument — proving the three closure properties
 separately and composing them via `Team.isFlat_iff`.
 -/
+
+@[expose] public section
 
 namespace BSML
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Number.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Number.Basic
 
 /-!
 # Tagalog case markers
@@ -27,6 +29,8 @@ it gives an approximative reading instead, and as restricted with mass nouns.
 * [kroeger-1991-thesis]
 * [schachter-otanes-1972]
 -/
+
+@[expose] public section
 
 namespace Tagalog
 

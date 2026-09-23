@@ -1,5 +1,7 @@
-import Linglib.Discourse.Gameboard.Basic
-import Linglib.Data.Examples.Ginzburg2012
+module
+
+public import Linglib.Discourse.Gameboard.Basic
+public import Linglib.Data.Examples.Ginzburg2012
 
 /-!
 # Ginzburg (2012): The Interactive Stance
@@ -40,6 +42,8 @@ clarification request, a self-repair and a bare follow-up question, as the rules
 
 * [ginzburg-2012]
 -/
+
+@[expose] public section
 
 namespace Ginzburg2012
 

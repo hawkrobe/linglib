@@ -1,8 +1,10 @@
-import Linglib.Studies.Anscombe1964
-import Linglib.Studies.BeaverCondoravdi2003
-import Linglib.Core.Order.AllenRelation
-import Linglib.Semantics.Tense.RunTimes
-import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
+module
+
+public import Linglib.Studies.Anscombe1964
+public import Linglib.Studies.BeaverCondoravdi2003
+public import Linglib.Core.Order.AllenRelation
+public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Data.Examples.OgiharaSteinertThrelkeld2024
 
 /-!
 # Ogihara and Steinert-Threlkeld (2024): Limitations of a Modal Analysis of Before and After
@@ -45,6 +47,8 @@ are recorded in the example rows only.
 * [heinamaki-1974]
 * [landman-1992]
 -/
+
+@[expose] public section
 
 namespace OgiharaSteinertThrelkeld2024
 

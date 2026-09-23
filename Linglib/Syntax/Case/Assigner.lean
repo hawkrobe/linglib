@@ -1,6 +1,8 @@
-import Linglib.Syntax.Case.Source
-import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Case.Licensing
+module
+
+public import Linglib.Syntax.Case.Source
+public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Case.Licensing
 
 /-!
 # Case assigners — one signature for comparing rival theories
@@ -30,6 +32,8 @@ paper-anchored dependent-case ⟺ licensing DOM divergence belongs in the later 
 file (`Studies/Kalin2018.lean`); the `example`s here only validate that the harness
 is non-vacuous.
 -/
+
+@[expose] public section
 
 namespace Case
 

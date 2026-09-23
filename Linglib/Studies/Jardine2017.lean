@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Junction
-import Linglib.Phonology.Tone.Basic
+module
+
+public import Linglib.Phonology.Autosegmental.Junction
+public import Linglib.Phonology.Tone.Basic
 
 /-!
 # Jardine (2017): The local nature of tone-association patterns
@@ -32,6 +34,8 @@ follow the same schema and are not formalized.
 
 * [jardine-2017]
 -/
+
+@[expose] public section
 
 namespace Jardine2017
 

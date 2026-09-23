@@ -1,10 +1,12 @@
-import Linglib.Morphology.Exponence.Containment.Defs
-import Linglib.Morphology.Exponence.Decomposition
-import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Data.List.MinMax
-import Mathlib.Data.Finset.Max
-import Mathlib.Order.Interval.Finset.Fin
+module
+
+public import Linglib.Morphology.Exponence.Containment.Defs
+public import Linglib.Morphology.Exponence.Decomposition
+public import Linglib.Morphology.Exponence.Select
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Data.List.MinMax
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Order.Interval.Finset.Fin
 
 /-!
 # Containment hierarchies: score selection
@@ -29,6 +31,8 @@ and `minSpan` are the score aggregates the plateau theorems
   Elsewhere winners of the shared core
 * `maxThreshold`, `minSpan` — the score aggregates, with their transfer lemmas
 -/
+
+@[expose] public section
 
 namespace Morphology.Containment
 

@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Constraints.Defs
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Harmony evaluation
@@ -29,6 +31,8 @@ Evaluation and order lemmas for `Constraints.harmonyScore` and
   advantage on a positively weighted constraint strictly greater, harmony
   ([prince-smolensky-1993]).
 -/
+
+@[expose] public section
 
 namespace Constraints
 

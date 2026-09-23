@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Determiner.ModalIndefinite
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Presupposition.Defs
+module
+
+public import Linglib.Syntax.Category.Determiner.ModalIndefinite
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Presupposition.Defs
 
 /-!
 # Denotation of modal indefinites
@@ -23,6 +25,8 @@ upper bound strengthens the assertion.
 * [alonso-ovalle-menendez-benito-2018]
 * [alonso-ovalle-royer-2024]
 -/
+
+@[expose] public section
 
 namespace Modality
 

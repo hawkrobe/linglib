@@ -1,6 +1,8 @@
-import Linglib.Syntax.Agreement.Bundle
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Morphology.Word.Agree
+module
+
+public import Linglib.Syntax.Agreement.Bundle
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Morphology.Word.Agree
 
 /-!
 # Agreement paradigms
@@ -27,6 +29,8 @@ indexes a paradigm directly ([corbett-1998]).
 * [corbett-1998] — agreement paradigms and the shared feature space of pronouns and targets
 * [scott-2023] — Set A and Set B person–number inflection as descriptive tables
 -/
+
+@[expose] public section
 
 open Morphology (Word)
 

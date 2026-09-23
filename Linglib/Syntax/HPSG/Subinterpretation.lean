@@ -1,4 +1,6 @@
-import Linglib.Syntax.HPSG.Description
+module
+
+public import Linglib.Syntax.HPSG.Description
 
 /-!
 # Generated sub-interpretations
@@ -32,6 +34,8 @@ root of a rooted model of the same grammar.
 * [richter-2024]
 * [przepiorkowski-2021]
 -/
+
+@[expose] public section
 
 namespace HPSG.RSRL.Interpretation
 

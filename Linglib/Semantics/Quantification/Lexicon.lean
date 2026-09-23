@@ -1,4 +1,8 @@
-import Linglib.Morphology.Word.Basic
+module
+
+public import Linglib.Morphology.Word.Basic
+
+@[expose] public section
 
 open Morphology (Word)
 

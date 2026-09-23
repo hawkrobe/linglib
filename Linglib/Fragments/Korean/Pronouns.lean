@@ -1,5 +1,7 @@
-import Linglib.Syntax.Agreement.Allocutive
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Agreement.Allocutive
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Korean pronouns and speech-style particles
@@ -41,6 +43,8 @@ pronoun presents its own referent, so *jeo* and *jeohui* carry neither value and
 * [sohn-1994]
 * [sohn-1999]
 -/
+
+@[expose] public section
 
 namespace Korean.Pronouns
 

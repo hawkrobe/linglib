@@ -1,6 +1,8 @@
-import Linglib.Semantics.Tense.TenseAspectComposition
-import Linglib.Studies.BeaverCondoravdi2003
-import Linglib.Semantics.Tense.Embedding
+module
+
+public import Linglib.Semantics.Tense.TenseAspectComposition
+public import Linglib.Studies.BeaverCondoravdi2003
+public import Linglib.Semantics.Tense.Embedding
 
 /-!
 # [sharvit-2014]: On the universal principles of tense embedding
@@ -32,6 +34,8 @@ Spanish B — a *mixed* past/present lexical type this profile cannot represent 
 as illustrative, p. 305); and tenseless languages (`pastLexicalType = none`), outside the
 no-tenseless assumption (§6.1, p. 299).
 -/
+
+@[expose] public section
 
 namespace Sharvit2014
 

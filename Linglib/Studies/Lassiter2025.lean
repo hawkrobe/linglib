@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.Lassiter2025
-import Linglib.Studies.Israel2001
-import Linglib.Fragments.Japanese.Conditionals
-import Linglib.Fragments.German.Conditionals
+module
+
+public import Linglib.Data.Examples.Lassiter2025
+public import Linglib.Studies.Israel2001
+public import Linglib.Fragments.Japanese.Conditionals
+public import Linglib.Fragments.German.Conditionals
 
 /-!
 # Lassiter (2025): Sorting Out Left-Nested Conditionals
@@ -56,6 +58,8 @@ which the paper offers as a direction rather than a result, are not modelled.
 * [haegeman-schonenberger-2023]
 * [israel-2001]
 -/
+
+@[expose] public section
 
 namespace Lassiter2025
 

@@ -1,8 +1,10 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Lexicon
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Denotation
-import Linglib.Fragments.Japanese.Coordination
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantification.Lexicon
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Denotation
+public import Linglib.Fragments.Japanese.Coordination
 
 /-!
 # Japanese quantifiers
@@ -32,6 +34,8 @@ clausemate negation is the negative indefinite of `Fragments/Japanese/PolarityIt
 * [kratzer-shimoyama-2002]
 * [shimoyama-2006]
 -/
+
+@[expose] public section
 
 namespace Japanese.Determiners
 

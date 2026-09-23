@@ -1,4 +1,6 @@
-import Linglib.Syntax.CCG.Cat
+module
+
+public import Linglib.Syntax.CCG.Cat
 
 /-!
 # CCG derivations
@@ -29,6 +31,8 @@ not modeled.
   number of rule applications, `Derivation.HasComp` whether composition occurs, and
   `Derivation.LexIn` whether every leaf is drawn from a given lexicon.
 -/
+
+@[expose] public section
 
 namespace CCG
 

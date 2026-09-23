@@ -1,8 +1,10 @@
-import Linglib.Semantics.Modality.Exclusion
-import Linglib.Semantics.Mood.Defs
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.Image
-import Mathlib.Order.Disjoint
+module
+
+public import Linglib.Semantics.Modality.Exclusion
+public import Linglib.Semantics.Mood.Defs
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Order.Disjoint
 
 /-!
 # Iatridou (2000): The grammatical ingredients of counterfactuality
@@ -36,6 +38,8 @@ subjunctive, keeps the past indicative (`antecedent_french`).
 
 * [iatridou-2000]
 -/
+
+@[expose] public section
 
 namespace Iatridou2000
 

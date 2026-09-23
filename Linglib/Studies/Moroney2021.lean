@@ -1,14 +1,16 @@
-import Linglib.Semantics.Reference.Iota
-import Linglib.Semantics.Mereology
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Genericity.MeaningPreservation
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.German.Determiners
-import Linglib.Fragments.Mandarin.Determiners
-import Linglib.Fragments.Thai.Determiners
-import Linglib.Fragments.Shan.Determiners
-import Linglib.Fragments.Shan.Determiners
-import Linglib.Studies.Jenks2018
+module
+
+public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Mereology
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Genericity.MeaningPreservation
+public import Linglib.Fragments.English.Determiners
+public import Linglib.Fragments.German.Determiners
+public import Linglib.Fragments.Mandarin.Determiners
+public import Linglib.Fragments.Thai.Determiners
+public import Linglib.Fragments.Shan.Determiners
+public import Linglib.Fragments.Shan.Determiners
+public import Linglib.Studies.Jenks2018
 
 /-!
 # Moroney (2021): definiteness and quantification in Shan
@@ -38,6 +40,8 @@ and refers to it if it is close (`demDenotation`, her (147)–(148)).
 * [moroney-2021]
 * [deal-2017], [jenks-2018], [schwarz-2013]
 -/
+
+@[expose] public section
 
 namespace Moroney2021
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Hebrew Relativization Fragment
@@ -27,6 +29,8 @@ Swahili they are not morphologically distinct. [sichel-2014] shows:
 
 Data from [keenan-comrie-1977] Table 1 and §1.3.2.
 -/
+
+@[expose] public section
 
 namespace Hebrew
 

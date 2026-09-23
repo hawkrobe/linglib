@@ -1,6 +1,8 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Source
-import Linglib.Syntax.Case.Dependent
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Source
+public import Linglib.Syntax.Case.Dependent
 
 /-!
 # Hybrid licensing
@@ -45,6 +47,8 @@ primitive.
 * [kalin-2018]
 * [pesetsky-torrego-2007]
 -/
+
+@[expose] public section
 namespace Case.Licensing
 
 -- `Case` is qualified throughout: a different `Case` (UD.Case) is aliased at
@@ -176,7 +180,7 @@ structure LicensedResult where
     crashes as `.unlicensed`. Hoisted out of `licenseActive` as a
     private top-level def (rather than a `where` clause) so callers can
     reason about it directly in proofs. -/
-private def licenseSecondaries :
+def licenseSecondaries :
     List Licenser → List LicensedNP → List LicensedResult
   | _, [] => []
   | [], np :: rest =>

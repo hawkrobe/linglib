@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 90A: Order of Relative Clause and Noun
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 90, 824 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F90A
 
@@ -30,7 +34,8 @@ inductive RelClauseNounOrder where
   | mixed
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint RelClauseNounOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint RelClauseNounOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .nounRelativeClause }
   , { walsCode := "huc", iso := "huc", value := .nounRelativeClause }
   , { walsCode := "aar", iso := "aiw", value := .nounRelativeClause }
@@ -533,7 +538,8 @@ private def allData_0 : List (Datapoint RelClauseNounOrder) :=
   , { walsCode := "mcv", iso := "moc", value := .nounRelativeClause }
   ]
 
-private def allData_1 : List (Datapoint RelClauseNounOrder) :=
+/-- Rows 501 to 824 of `allData`. -/
+def allData_1 : List (Datapoint RelClauseNounOrder) :=
   [ { walsCode := "mof", iso := "mif", value := .nounRelativeClause }
   , { walsCode := "mok", iso := "mkj", value := .nounRelativeClause }
   , { walsCode := "mga", iso := "ndt", value := .nounRelativeClause }

@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Erlewine2016
-import Linglib.Syntax.Person.Basic
-import Linglib.Fragments.Mayan.Extraction
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Mathlib.Order.Interval.Finset.Nat
+module
+
+public import Linglib.Data.Examples.Erlewine2016
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Fragments.Mayan.Extraction
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus
@@ -56,6 +58,8 @@ cross-referencing highest and has no AF.
 * [coon-mateo-pedro-preminger-2014]
 * [prince-smolensky-1993]
 -/
+
+@[expose] public section
 
 namespace Erlewine2016
 

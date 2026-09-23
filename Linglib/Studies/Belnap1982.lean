@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Resolution
-import Linglib.Data.Examples.Belnap1982
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Data.Examples.Belnap1982
 
 /-!
 # Belnap (1982): Questions and Answers in Montague Grammar
@@ -38,6 +40,8 @@ it settles an alternative true at w.
 * [karttunen-1977]: Syntax and semantics of questions.
 * [hamblin-1973b]: Questions in Montague English.
 -/
+
+@[expose] public section
 
 namespace Belnap1982
 

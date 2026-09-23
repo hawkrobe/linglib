@@ -1,6 +1,8 @@
-import Linglib.Discourse.Givenness
-import Linglib.Semantics.Focus.Marking
-import Linglib.Semantics.Focus.ExtractionClash
+module
+
+public import Linglib.Discourse.Givenness
+public import Linglib.Semantics.Focus.Marking
+public import Linglib.Semantics.Focus.ExtractionClash
 
 /-!
 # Cartner et al. 2026: subject islands do not reduce to discourse function
@@ -44,6 +46,8 @@ predicts the same verdict in every construction and is untouched by the result, 
 * [sprouse-2007]
 * [sprouse-et-al-2012]
 -/
+
+@[expose] public section
 
 namespace CartnerEtAl2026
 

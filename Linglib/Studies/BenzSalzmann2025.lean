@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Ellipsis
+module
+
+public import Linglib.Syntax.Minimalist.Ellipsis
 
 /-!
 # Benz and Salzmann 2025: N-stranding NP-ellipsis in German
@@ -40,6 +42,8 @@ than over the `Cat` positions of the extended projection.
 * [merchant-2001]
 * [merchant-2013]
 -/
+
+@[expose] public section
 
 namespace BenzSalzmann2025
 

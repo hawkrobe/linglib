@@ -1,5 +1,7 @@
-import Linglib.Semantics.Quantification.Indefinite
-import Linglib.Syntax.Category.Pronoun.Basic
+module
+
+public import Linglib.Semantics.Quantification.Indefinite
+public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Indefinite pronouns
@@ -20,6 +22,8 @@ which also states the adjacency requirement on them.
 
 * [M. Haspelmath, *Indefinite Pronouns* (1997)][haspelmath-1997]
 -/
+
+@[expose] public section
 
 /-- An indefinite pronoun: its surface form and φ-features as a `Pronoun`, with its ontological
 category and the morphological basis of its series. -/

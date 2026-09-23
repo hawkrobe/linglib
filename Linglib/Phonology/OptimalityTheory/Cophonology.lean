@@ -1,6 +1,8 @@
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Syntax.Minimalist.Phase.Basic
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Syntax.Minimalist.Phase.Basic
 
 /-!
 # Cophonology theory
@@ -41,6 +43,8 @@ without forcing it on consumers. Consuming studies: `Studies/Rolle2018.lean`
 (per-VI, dominant grammatical tone) and `Studies/SandeClemDabkowski2026.lean` (phasal,
 Guébie discontinuous harmony).
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory.Cophonology
 

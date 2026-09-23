@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Indonesian (ind, ID 1690)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 31 phonemes. PHOIBLE inventory ID 1690, Glottocode `indo1316`.
 Source: PHOIBLE donor `ph`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Indonesian
 

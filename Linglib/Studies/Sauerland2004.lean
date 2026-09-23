@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.NeoGricean.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Pragmatics.NeoGricean.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Sauerland (2004): Scalar Implicatures in Complex Sentences
@@ -28,6 +30,8 @@ only the world in which neither holds.
 
 * [sauerland-2004]
 -/
+
+@[expose] public section
 
 namespace Sauerland2004
 

@@ -1,5 +1,7 @@
-import Linglib.Phonology.Segmental.FeatureClass
-import Linglib.Phonology.Subregular.LocalRewrite
+module
+
+public import Linglib.Phonology.Segmental.FeatureClass
+public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Nasal place assimilation and nasal substitution
@@ -42,6 +44,8 @@ a glottal stop, loses its place, which `defaultPlace` restores.
 * [K. Zuraw, *A model of lexical variation and the grammar with application to Tagalog nasal
   substitution* (2010)][zuraw-2010]
 -/
+
+@[expose] public section
 
 namespace Phonology.NasalSubstitution
 

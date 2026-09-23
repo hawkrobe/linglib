@@ -1,10 +1,12 @@
-import Linglib.Syntax.Clause.Basic
-import Linglib.Syntax.Clause.Complementation
-import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Syntax.Category.Adposition.Basic
-import Linglib.Semantics.Mood.Defs
-import Linglib.Core.Order.Flat
-import Linglib.Core.Data.List.Forall2
+module
+
+public import Linglib.Syntax.Clause.Basic
+public import Linglib.Syntax.Clause.Complementation
+public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Category.Adposition.Basic
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Core.Order.Flat
+public import Linglib.Core.Data.List.Forall2
 
 /-! # Argument frames
 
@@ -63,6 +65,8 @@ shell inventory lives with its consumer in `Studies/Deal2026.lean`.
 * [levin-1993]
 * [noonan-2007]
 -/
+
+@[expose] public section
 
 /-- The interpretation of an unexpressed argument ([fillmore-1986],
 [bruening-2021]; the understood-object alternations of [levin-1993]). -/

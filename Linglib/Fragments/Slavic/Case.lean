@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Shared Slavic Case Inventories
@@ -17,6 +19,8 @@ Per-language sources (chapters of [comrie-corbett-1993]):
 Caha-containment lemmas live in `Studies/Caha2009.lean`
 (paper-anchored, keeps this substrate file Theory-import-free).
 -/
+
+@[expose] public section
 
 namespace Slavic.Case
 

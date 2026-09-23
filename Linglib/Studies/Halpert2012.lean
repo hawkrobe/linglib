@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Probe.Basic
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Basic
 
 /-!
 # Halpert (2012): Argument Licensing and Agreement in Zulu
@@ -33,6 +35,8 @@ non-nominal is not representable here.
 * [halpert-2012]
 * [preminger-2014]
 -/
+
+@[expose] public section
 
 namespace Halpert2012
 

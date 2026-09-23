@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 99A: Alignment of Case Marking of Pronouns
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 99, 172 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F99A
 

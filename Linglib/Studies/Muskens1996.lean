@@ -1,7 +1,9 @@
-import Linglib.Logic.CylindricAlgebra
-import Linglib.Semantics.Dynamic.CDRT
-import Linglib.Semantics.Dynamic.DRS.Indexed
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Logic.CylindricAlgebra
+public import Linglib.Semantics.Dynamic.CDRT
+public import Linglib.Semantics.Dynamic.DRS.Indexed
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Muskens (1996): Combining Montague Semantics and Discourse Representation
@@ -33,6 +35,8 @@ separate formalization.
 
 * [muskens-1996]
 -/
+
+@[expose] public section
 
 namespace Muskens1996
 

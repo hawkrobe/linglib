@@ -1,5 +1,7 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Fragments.Finnish.TemporalConnectives
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.Finnish.TemporalConnectives
 
 /-!
 # Finnish Polarity-Sensitive Items
@@ -22,6 +24,8 @@ combination, not a single lexical entry.
 - **kuka tahansa**: Free choice item ('whoever / anyone at all')
 - **vasta**: the positive polarity punctual *until*, German *erst* ([karttunen-1974])
 -/
+
+@[expose] public section
 
 namespace Finnish.PolarityItems
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Javanese-Paciran Modal Inventory
@@ -7,20 +9,22 @@ Modal expressions from Javanese (Austronesian), based on
 [vander-klok-2013a].
 -/
 
+@[expose] public section
+
 namespace Javanese
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 -- Weak necessity: strong modal + NE marker ([agha-jeretic-2022] §5.2)
-private abbrev wne : ForceFlavor := (.weakNecessity, .epistemic)
-private abbrev wnd : ForceFlavor := (.weakNecessity, .deontic)
-private abbrev wnc : ForceFlavor := (.weakNecessity, .circumstantial)
+abbrev wne : ForceFlavor := (.weakNecessity, .epistemic)
+abbrev wnd : ForceFlavor := (.weakNecessity, .deontic)
+abbrev wnc : ForceFlavor := (.weakNecessity, .circumstantial)
 
 /-- Strong epistemic necessity *mesthi*. -/
 def mesthi : ModalItem := { form := "mesthi", meaning := {ne} }

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.DomainRestriction
-import Mathlib.Order.Hom.Basic
-import Linglib.Data.Examples.RitchieSchiller2024
+module
+
+public import Linglib.Semantics.Quantification.DomainRestriction
+public import Mathlib.Order.Hom.Basic
+public import Linglib.Data.Examples.RitchieSchiller2024
 
 /-!
 # Ritchie and Schiller (2024): Default domain restriction possibilities
@@ -40,6 +42,8 @@ formalized.
 * [G. Scontras, J. Degen, N. D. Goodman, *Subjectivity predicts adjective ordering
   preferences* (2017)][scontras-degen-goodman-2017]
 -/
+
+@[expose] public section
 
 namespace RitchieSchiller2024
 
@@ -90,13 +94,13 @@ inductive Heuristic where
 
 namespace Heuristic
 
-private def toFin : Heuristic → Fin 4
+def toFin : Heuristic → Fin 4
   | .manipulability => 0
   | .salience => 1
   | .availability => 2
   | .none => 3
 
-private theorem toFin_injective : Function.Injective toFin := by
+theorem toFin_injective : Function.Injective toFin := by
   intro a b h; cases a <;> cases b <;> simp_all [toFin]
 
 noncomputable instance : LinearOrder Heuristic := LinearOrder.lift' toFin toFin_injective

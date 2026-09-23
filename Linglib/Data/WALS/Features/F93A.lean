@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 93A: Position of Interrogative Phrases in Content Questions
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 93, 902 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F93A
 
@@ -22,7 +26,8 @@ inductive PositionOfInterrogativePhrasesInContentQuestions where
   | mixed
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) :=
   [ { walsCode := "xoo", iso := "nmn", value := .notInitialInterrogativePhrase }
   , { walsCode := "ani", iso := "hnh", value := .notInitialInterrogativePhrase }
   , { walsCode := "huc", iso := "huc", value := .notInitialInterrogativePhrase }
@@ -525,7 +530,8 @@ private def allData_0 : List (Datapoint PositionOfInterrogativePhrasesInContentQ
   , { walsCode := "mzh", iso := "mau", value := .initialInterrogativePhrase }
   ]
 
-private def allData_1 : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) :=
+/-- Rows 501 to 902 of `allData`. -/
+def allData_1 : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) :=
   [ { walsCode := "mba", iso := "mfc", value := .notInitialInterrogativePhrase }
   , { walsCode := "mby", iso := "myb", value := .notInitialInterrogativePhrase }
   , { walsCode := "mbi", iso := "baw", value := .notInitialInterrogativePhrase }

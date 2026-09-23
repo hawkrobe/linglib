@@ -1,13 +1,15 @@
-import Mathlib.Data.Option.NAry
-import Mathlib.Order.Nat
-import Linglib.Data.UD.UPOS
-import Linglib.Data.UD.Features
-import Linglib.Morphology.Word.Basic
-import Linglib.Syntax.Agreement.Phi
-import Linglib.Syntax.Binding.Basic
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Person.Category
+module
+
+public import Mathlib.Data.Option.NAry
+public import Mathlib.Order.Nat
+public import Linglib.Data.UD.UPOS
+public import Linglib.Data.UD.Features
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Syntax.Agreement.Phi
+public import Linglib.Syntax.Binding.Basic
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Person.Category
 
 /-!
 # Pronouns
@@ -49,6 +51,8 @@ arguments.
 * [H. Jung and K. Migdalski, *Toward a four-way pronoun hierarchy: A view from Slavic*
   (2022)][jung-migdalski-2022]
 -/
+
+@[expose] public section
 
 /-! ### Structural deficiency -/
 

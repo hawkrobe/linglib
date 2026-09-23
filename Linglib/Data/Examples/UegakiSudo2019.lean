@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `UegakiSudo2019` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/UegakiSudo2019.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace UegakiSudo2019.Examples`.
 -/
+
+@[expose] public section
 
 namespace UegakiSudo2019.Examples
 

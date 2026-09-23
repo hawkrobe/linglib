@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Rett2015
-import Linglib.Fragments.English.Adjectives
-import Linglib.Semantics.Degree.Basic
+module
+
+public import Linglib.Data.Examples.Rett2015
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Semantics.Degree.Basic
 
 /-!
 # Rett (2015): The semantics of evaluativity
@@ -34,6 +36,8 @@ so their rows of `IsPolarInvariant` are the book's classification.
 * [C. Kennedy, *Vagueness and grammar: the semantics of relative and absolute gradable
   adjectives* (2007)][kennedy-2007]
 -/
+
+@[expose] public section
 
 namespace Rett2015
 

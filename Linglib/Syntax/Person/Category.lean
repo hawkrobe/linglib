@@ -1,8 +1,10 @@
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Person.Resolve
-import Linglib.Syntax.Number.Basic
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Resolve
+public import Linglib.Syntax.Number.Basic
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Referential person categories
@@ -33,6 +35,8 @@ excludes, several speakers and an audience with no one else, are the configurati
 
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
+
+@[expose] public section
 
 namespace Person
 

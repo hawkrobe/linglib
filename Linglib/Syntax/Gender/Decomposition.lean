@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Card
-import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Mathlib.Data.Fintype.Card
+public import Linglib.Core.Order.UpperLower.Finset
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Feature decompositions of gender
@@ -42,6 +44,8 @@ pair on the pattern of the person and number presentations.
 * [sauerland-2003] — the markedness ordering the bivalent presentation reconstructs
 * [hammerly-2019]
 -/
+
+@[expose] public section
 
 namespace Gender
 

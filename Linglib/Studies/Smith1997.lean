@@ -1,5 +1,7 @@
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.Aspect.Viewpoint
+module
+
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Viewpoint
 
 /-!
 # Smith (1997): The Parameter of Aspect
@@ -36,6 +38,8 @@ does not show it (`CompletionInvisible`).
 * [smith-1997]
 * [klein-1994]
 -/
+
+@[expose] public section
 
 open Aspect
 

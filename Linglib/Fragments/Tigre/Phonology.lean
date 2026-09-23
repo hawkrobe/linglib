@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Root.Consonantal
-import Linglib.Fragments.Tigrinya.Phonology
+module
+
+public import Linglib.Morphology.Root.Consonantal
+public import Linglib.Fragments.Tigrinya.Phonology
 
 /-!
 # Tigre vowels, gutturals, and verbal roots
@@ -20,6 +22,8 @@ modifier letter as one segment.
 * [lowenstamm-prunet-1988]
 * [faust-lampitelli-2026]
 -/
+
+@[expose] public section
 
 namespace Tigre.Phonology
 

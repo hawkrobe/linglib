@@ -1,7 +1,9 @@
-import Linglib.Core.Data.Setoid.Basic
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Data.Setoid.Partition
-import Mathlib.Data.Set.Subsingleton
+module
+
+public import Linglib.Core.Data.Setoid.Basic
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Data.Set.Subsingleton
 
 /-!
 # Morphomes: syncretism classes with no natural characterization
@@ -48,6 +50,8 @@ jargon, and "metasyncretism" does not appear in the book.
 * `Morphology.IsValueConjunction` — the cells agreeing with a witness on a set of features,
   [herce-2023]'s natural class
 -/
+
+@[expose] public section
 
 namespace Morphology
 

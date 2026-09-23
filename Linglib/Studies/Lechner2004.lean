@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Judgment
+module
+
+public import Linglib.Data.Examples.Judgment
 
 /-!
 # Lechner (2004): Ellipsis in Comparatives
@@ -29,6 +31,8 @@ the coordinate-structure argument for syntactic identification of the deletion s
 * [lechner-2004]
 * [kennedy-1999]
 -/
+
+@[expose] public section
 
 namespace Lechner2004
 

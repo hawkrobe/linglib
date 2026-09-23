@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Union
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Clause.Chaining
+module
+
+public import Mathlib.Data.Finset.Union
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Clause.Chaining
 
 /-!
 # Manambu medial clauses
@@ -25,6 +27,8 @@ same-subject completive and *-n* clauses occur on their own.
 * [aikhenvald-2008]
 * [aikhenvald-2025]
 -/
+
+@[expose] public section
 
 namespace Manambu
 

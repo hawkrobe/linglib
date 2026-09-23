@@ -1,6 +1,8 @@
-import Mathlib.Data.Set.Subsingleton
-import Mathlib.Data.Set.Image
-import Linglib.Syntax.Anaphora.Basic
+module
+
+public import Mathlib.Data.Set.Subsingleton
+public import Mathlib.Data.Set.Image
+public import Linglib.Syntax.Anaphora.Basic
 
 /-!
 # Diagnostic tests
@@ -29,6 +31,8 @@ The structure is domain-general (any `Ω`, `C`); the anaphora specialisation
 Hankamer & Sag depth, and the per-test instances (EIR, extraction) live in the
 paper that draws the comparison.
 -/
+
+@[expose] public section
 
 universe u v w
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 143A: Order of Negative Morpheme and Verb
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 143, 1325 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F143A
 
@@ -50,7 +54,8 @@ inductive NegVerbOrder where
   | opttriplenegOptdoubleneg
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint NegVerbOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "ani", iso := "hnh", value := .vneg }
   , { walsCode := "xam", iso := "xam", value := .negv }
   , { walsCode := "huc", iso := "huc", value := .negv }
@@ -553,7 +558,8 @@ private def allData_0 : List (Datapoint NegVerbOrder) :=
   , { walsCode := "kas", iso := "kas", value := .vNeg }
   ]
 
-private def allData_1 : List (Datapoint NegVerbOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "ksn", iso := "cog", value := .negv }
   , { walsCode := "ktc", iso := "xtc", value := .negv }
   , { walsCode := "kti", iso := "kts", value := .vneg }
@@ -1056,7 +1062,8 @@ private def allData_1 : List (Datapoint NegVerbOrder) :=
   , { walsCode := "rot", iso := "rtm", value := .obligdoubleneg }
   ]
 
-private def allData_2 : List (Datapoint NegVerbOrder) :=
+/-- Rows 1001 to 1325 of `allData`. -/
+def allData_2 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "rov", iso := "rug", value := .negv }
   , { walsCode := "ruk", iso := "dru", value := .negv }
   , { walsCode := "cos", iso := "", value := .negv }

@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.ThetaRole
-import Linglib.Semantics.ArgumentStructure.Projection
+module
+
+public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.Projection
 
 /-!
 # Argument-structure templates
@@ -14,6 +16,8 @@ vs psych ...); the map from [levin-1993]'s class inventory onto them lives
 with the classes (`Semantics/ArgumentStructure/LevinClass.lean`), and individual verbs can
 override via explicit `subjectEntailments`/`objectEntailments` on `Verb`.
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

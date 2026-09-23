@@ -3,15 +3,17 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.KullbackLeibler.Finite
-import Linglib.Core.InformationTheory.Surprisal
-import Linglib.Core.MeasureTheory.Measure.Prod
-import Linglib.Core.Probability.ConditionalProbability
-import Linglib.Core.Probability.Kernel.Composition.Lemmas
-import Linglib.Core.Probability.UniformOn
-import Mathlib.Analysis.Convex.Jensen
-import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
-import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
+module
+
+public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
+public import Linglib.Core.InformationTheory.Surprisal
+public import Linglib.Core.MeasureTheory.Measure.Prod
+public import Linglib.Core.Probability.ConditionalProbability
+public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Linglib.Core.Probability.UniformOn
+public import Mathlib.Analysis.Convex.Jensen
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 
 /-!
 # Entropy of a measure
@@ -50,6 +52,8 @@ reduces entropy, and conditional entropy is the expected conditional surprisal.
 * [cover-thomas-2006], chapter 2.
 * The PFR project, `PFR/ForMathlib/Entropy/Measure.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Real
 open scoped ENNReal ProbabilityTheory

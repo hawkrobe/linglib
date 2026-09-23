@@ -1,6 +1,8 @@
-import Linglib.Semantics.Mereology
-import Linglib.Syntax.Minimalist.FunctionalSequence
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Semantics.Mereology
+public import Linglib.Syntax.Minimalist.FunctionalSequence
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Borer (2005): In Name Only
@@ -54,6 +56,8 @@ and the measure phrases of the later chapters are not formalized.
 * [krifka-1998]
 * [chierchia-1998]
 -/
+
+@[expose] public section
 
 namespace Borer2005
 

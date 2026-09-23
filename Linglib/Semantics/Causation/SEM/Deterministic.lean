@@ -1,5 +1,7 @@
-import Linglib.Semantics.Causation.SEM.Defs
-import Linglib.Semantics.Causation.Mechanism.Deterministic
+module
+
+public import Linglib.Semantics.Causation.SEM.Defs
+public import Linglib.Semantics.Causation.Mechanism.Deterministic
 
 /-!
 # SEM: Deterministic Specialization (canonical `developDet`)
@@ -58,6 +60,8 @@ list, for proofs over concrete SEMs. Polynomial.eval₂ analogue.
 For 5-vertex SEMs, ~5 layers of unfolding suffice. No `Fintype` reasoning;
 no opaque `Multiset.toList`.
 -/
+
+@[expose] public section
 
 namespace Causation.SEM
 

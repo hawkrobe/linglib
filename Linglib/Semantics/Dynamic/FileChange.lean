@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.Partial
-import Linglib.Semantics.Dynamic.State
+module
+
+public import Linglib.Semantics.Dynamic.Partial
+public import Linglib.Semantics.Dynamic.State
 
 /-!
 # File change semantics
@@ -57,6 +59,8 @@ negation is set difference, as in the later propositional presentation of the th
 * [heim-1982], [heim-1983], [heim-1991]
 * [kamp-vangenabith-reyle-2011]
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

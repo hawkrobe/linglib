@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
-import Linglib.Semantics.Mood.SpeechEvent
+module
+
+public import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
+public import Linglib.Semantics.Mood.SpeechEvent
 
 /-!
 # Modal anchors
@@ -23,6 +25,8 @@ conditions a modal item may impose on its anchor.
 * [alonso-ovalle-menendez-benito-2018]
 * [alonso-ovalle-royer-2024]
 -/
+
+@[expose] public section
 
 namespace Modality
 

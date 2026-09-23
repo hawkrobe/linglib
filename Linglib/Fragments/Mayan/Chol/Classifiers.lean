@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Classifier.Basic
+module
+
+public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Ch'ol Numeral Classifier Lexicon
@@ -36,6 +38,8 @@ The typological parameters follow [bale-coon-2014], [bale-et-al-2019] and
 native numerals (Spanish loan numerals reject them), with *-p'ej* as the generic default and
 attested co-occurrence with plural marking.
 -/
+
+@[expose] public section
 
 namespace Chol.Classifiers
 

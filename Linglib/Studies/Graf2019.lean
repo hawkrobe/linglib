@@ -1,8 +1,10 @@
-import Linglib.Fragments.English.Adjectives
-import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Mathlib.Tactic.TFAE
+module
+
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Mathlib.Tactic.TFAE
 
 /-!
 # Graf (2019): Monotonicity as an Effective Theory of Morphosyntactic Variation
@@ -52,6 +54,8 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 * [nevins-2007]
 * [pancheva-zubizarreta-2018]
 -/
+
+@[expose] public section
 
 namespace Graf2019
 

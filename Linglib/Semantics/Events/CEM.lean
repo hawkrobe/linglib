@@ -1,5 +1,7 @@
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Events.Basic
+module
+
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Events.Basic
 
 /-!
 # Event mereology
@@ -34,6 +36,8 @@ event-specific re-spelling.
 Generic mereological vocabulary (`CUM`, `QUA`, `Overlap`, `IsFusion`,
 `ClassicalMereology`, …) lives in `Mereology`; consumers `open Mereology`.
 -/
+
+@[expose] public section
 
 namespace Events.CEM
 

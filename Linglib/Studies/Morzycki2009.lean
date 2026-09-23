@@ -1,8 +1,10 @@
-import Mathlib.Order.Bounds.Basic
-import Mathlib.Order.Monotone.Basic
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Semantics.Degree.Comparison
+module
+
+public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Order.Monotone.Basic
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Semantics.Degree.Boundedness
+public import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Morzycki (2009): Degree Modification of Gradable Nouns
@@ -35,6 +37,8 @@ represented, and neither are the degree heads *real*, *true*, *total* and *absol
 * [morzycki-2009]
 * [kennedy-mcnally-2005]
 -/
+
+@[expose] public section
 
 namespace Morzycki2009
 

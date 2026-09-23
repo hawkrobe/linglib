@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Discourse.Commitment.Basic
-import Linglib.Data.Examples.HarrisPotts2009
+module
+
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Data.Examples.HarrisPotts2009
 
 /-!
 # Harris and Potts (2009): Perspective-shifting with appositives and expressives
@@ -39,6 +41,8 @@ reports only in aggregate.
 * [potts-2005]
 * [amaral-roberts-smith-2007]
 -/
+
+@[expose] public section
 
 namespace HarrisPotts2009
 

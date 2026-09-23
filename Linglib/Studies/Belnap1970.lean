@@ -1,9 +1,11 @@
-import Linglib.Semantics.Presupposition.Trivalent
-import Linglib.Logic.Aristotelian.Square
-import Linglib.Semantics.Quantification.NP
-import Linglib.Fragments.English.Toy
-import Linglib.Data.Examples.Belnap1970
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Semantics.Presupposition.Trivalent
+public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Semantics.Quantification.NP
+public import Linglib.Fragments.English.Toy
+public import Linglib.Data.Examples.Belnap1970
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Belnap (1970): Conditional Assertion and Restricted Quantification
@@ -41,6 +43,8 @@ assertiveness, and Barbara's major alone implies her conclusion.
 * [quine-1950]: Methods of Logic (the Quine–Rhinelander reading).
 * [strawson-1952]: Introduction to Logical Theory.
 -/
+
+@[expose] public section
 
 namespace Belnap1970
 

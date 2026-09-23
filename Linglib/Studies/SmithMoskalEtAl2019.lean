@@ -1,5 +1,7 @@
-import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Data.Forms.SmithMoskalEtAl2019
+module
+
+public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Data.Forms.SmithMoskalEtAl2019
 
 /-!
 # Smith, Moskal, Xu, Kang and Bobaljik (2019): Case and Number Suppletion in Pronouns
@@ -59,6 +61,8 @@ Section 4.3's number containment hypothesis, [±augmented] containing [±singula
 marked value of a feature visible to suppletion, is not formalized; the number hierarchy is the
 containment of section 4.1.
 -/
+
+@[expose] public section
 
 namespace SmithMoskalEtAl2019
 

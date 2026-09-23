@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Russian Case Inventory
@@ -12,6 +14,8 @@ vocative is moribund. `inventory` aliases the shared 6-case core
 at the inventory level). For [pesetsky-2013]'s POS-as-case
 reduction, see `Pesetsky2013`.
 -/
+
+@[expose] public section
 
 namespace Russian.Case
 

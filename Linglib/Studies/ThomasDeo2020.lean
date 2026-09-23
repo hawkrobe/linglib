@@ -1,6 +1,8 @@
-import Linglib.Semantics.Degree.Granularity
-import Linglib.Semantics.Exhaustification.Chain
-import Linglib.Data.Examples.ThomasDeo2020
+module
+
+public import Linglib.Semantics.Degree.Granularity
+public import Linglib.Semantics.Exhaustification.Chain
+public import Linglib.Data.Examples.ThomasDeo2020
 
 /-!
 # Thomas and Deo (2020): The Interaction of *just* with Modified Scalar Predicates
@@ -53,6 +55,8 @@ expectations of section 3.4 are not formalized. The examples are the rows of
 * [lasersohn-1999]
 * [krifka-2007]
 -/
+
+@[expose] public section
 
 namespace ThomasDeo2020
 

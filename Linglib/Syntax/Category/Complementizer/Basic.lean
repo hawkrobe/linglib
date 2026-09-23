@@ -1,9 +1,13 @@
-import Linglib.Data.UD.UPOS
-import Linglib.Data.UD.Features
-import Linglib.Semantics.Mood.Defs
-import Linglib.Syntax.Clause.Complementation
-import Linglib.Morphology.Morph
-import Linglib.Morphology.Word.Basic
+module
+
+public import Linglib.Data.UD.UPOS
+public import Linglib.Data.UD.Features
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Syntax.Clause.Complementation
+public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Word.Basic
+
+@[expose] public section
 
 open Morphology (Morph Word)
 

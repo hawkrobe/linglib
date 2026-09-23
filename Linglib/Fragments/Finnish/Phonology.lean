@@ -1,8 +1,10 @@
-import Linglib.Data.PHOIBLE.Inventories.Finnish
-import Linglib.Phonology.Segmental.NaturalClass
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Harmony.System
-import Linglib.Phonology.Subregular.LocalRewrite
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Finnish
+public import Linglib.Phonology.Segmental.NaturalClass
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Harmony.System
+public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Finnish phonology
@@ -80,6 +82,8 @@ vowel, which the rules do not yet tell from a short one.
 * [goldsmith-1976]
 * [moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 namespace Finnish
 
@@ -226,10 +230,10 @@ def ofChar : Char → Option Segment
 /-! ### Consonant gradation -/
 
 /-- A vowel, as a rule context. -/
-private def V : ContextElem := .seg (Segment.ofSpecs [(.syllabic, true)])
+def V : ContextElem := .seg (Segment.ofSpecs [(.syllabic, true)])
 
 /-- A consonant, as a rule context. -/
-private def C : ContextElem := .seg (Segment.ofSpecs [(.syllabic, false)])
+def C : ContextElem := .seg (Segment.ofSpecs [(.syllabic, false)])
 
 /-- The rules weakening `target` after `left`, before a short vowel and an ending that is one
 consonant or begins with two. -/

@@ -1,7 +1,9 @@
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Focus.Control
-import Linglib.Studies.HartmannZimmermann2007
+module
+
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Focus.Control
+public import Linglib.Studies.HartmannZimmermann2007
 
 /-!
 # Kratzer and Selkirk (2020): Deconstructing Information Structure
@@ -40,6 +42,8 @@ English (§6–§7) is prose.
 * [potts-2005] — expressive meaning
 * [hartmann-zimmermann-2007] — the Hausa data of footnote 21
 -/
+
+@[expose] public section
 
 open Pragmatics.Expressives
 

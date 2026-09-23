@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Adjective.Basic
+module
+
+public import Linglib.Syntax.Category.Adjective.Basic
 
 /-!
 # Latin Adjective Degree Forms
@@ -26,6 +28,8 @@ graded forms ([bobaljik-2012] Table 4.1), so it is ABB.
 
 * [bobaljik-2012]
 -/
+
+@[expose] public section
 
 namespace Latin.Adjectives
 

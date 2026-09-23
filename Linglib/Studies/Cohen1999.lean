@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.Counting
+module
+
+public import Linglib.Semantics.Quantification.Counting
 
 /-!
 # Cohen (1999): Think Generic!
@@ -56,6 +58,8 @@ hypothesis, and a salient cell with an empty reference class imposes no conditio
   (1988)][thomason-1988]
 * [G. N. Carlson, *Reference to Kinds in English* (1977)][carlson-1977a]
 -/
+
+@[expose] public section
 
 namespace Cohen1999
 

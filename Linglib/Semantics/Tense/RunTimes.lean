@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.Events.Basic
+module
+
+public import Linglib.Core.Order.Interval
+public import Linglib.Semantics.Events.Basic
 
 /-!
 # Run times
@@ -20,6 +22,8 @@ neo-Davidsonian event predicates. The temporal-connective analyses that
 consume this carrier live in their studies (Anscombe1964, Karttunen1974,
 BeaverCondoravdi2003, Rett2020a, …).
 -/
+
+@[expose] public section
 
 namespace Tense
 

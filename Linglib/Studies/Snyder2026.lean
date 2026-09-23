@@ -1,6 +1,8 @@
-import Linglib.Semantics.Genericity.Subkinds
-import Linglib.Data.Examples.Snyder2026
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Semantics.Genericity.Subkinds
+public import Linglib.Data.Examples.Snyder2026
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Snyder (2026): Numbers as Kinds
@@ -49,6 +51,8 @@ carries its semantic function, and every function is attested (`functions_attest
 * [partee-1987]
 * [benacerraf-1965]
 -/
+
+@[expose] public section
 
 namespace Snyder2026
 

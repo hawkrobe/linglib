@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Woolford1997
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.List.Basic
+module
+
+public import Linglib.Data.Examples.Woolford1997
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.List.Basic
 
 /-!
 # Woolford (1997): Four-Way Case Systems: Ergative, Nominative, Objective and Accusative
@@ -35,6 +37,8 @@ here. Dative is placed on goals only, as in the paper's ditransitive frames.
 * [woolford-1997]
 * [burzio-1986]
 -/
+
+@[expose] public section
 
 namespace Woolford1997
 

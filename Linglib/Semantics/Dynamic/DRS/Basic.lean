@@ -1,4 +1,6 @@
-import Linglib.Semantics.Dynamic.DRS.Defs
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Defs
 
 /-!
 # Structural operations on DRSs
@@ -25,6 +27,8 @@ prose preceding Def. 1.4.8).
 * `DRS.Accessible.exists_mem_accessibleDomain`: every computed accessibility
   verdict is realized by genuine accessibility edges.
 -/
+
+@[expose] public section
 
 open FirstOrder
 

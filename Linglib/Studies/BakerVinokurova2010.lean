@@ -1,5 +1,7 @@
-import Linglib.Fragments.Yakut.Case
-import Linglib.Data.Examples.BakerVinokurova2010
+module
+
+public import Linglib.Fragments.Yakut.Case
+public import Linglib.Data.Examples.BakerVinokurova2010
 
 /-!
 # Baker & Vinokurova 2010: two modalities of case assignment in Sakha
@@ -45,6 +47,8 @@ agreement violations, and a purely Agree-based grammar never values a dative.
 * [diesing-1992] — object shift of specific objects
 * [vinokurova-2005] — the source of much of the data
 -/
+
+@[expose] public section
 
 namespace BakerVinokurova2010
 

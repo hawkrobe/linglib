@@ -1,6 +1,8 @@
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Fragments.Greek.StandardModern.Negation
-import Linglib.Data.Examples.Tsiakmakis2025
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Fragments.Greek.StandardModern.Negation
+public import Linglib.Data.Examples.Tsiakmakis2025
 
 /-!
 # Tsiakmakis (2025): On the Non-Homogeneity of Expletive Negation in Greek and Beyond
@@ -47,6 +49,8 @@ and that conditionals and free relatives are tentative hosts. The examples are t
 * [greco-2020]
 * [espinal-1992]
 -/
+
+@[expose] public section
 
 namespace Tsiakmakis2025
 

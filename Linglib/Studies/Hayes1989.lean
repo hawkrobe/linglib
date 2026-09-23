@@ -1,10 +1,12 @@
-import Mathlib.Data.Finset.Dedup
-import Mathlib.Data.Finset.Filter
-import Mathlib.Data.Finset.Image
-import Mathlib.Data.Finset.Max
-import Mathlib.Data.Finset.SDiff
-import Mathlib.Data.Finset.Union
-import Linglib.Phonology.Autosegmental.NonCrossing
+module
+
+public import Mathlib.Data.Finset.Dedup
+public import Mathlib.Data.Finset.Filter
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Finset.SDiff
+public import Mathlib.Data.Finset.Union
+public import Linglib.Phonology.Autosegmental.NonCrossing
 
 /-!
 # Hayes (1989): Compensatory Lengthening in Moraic Phonology
@@ -47,6 +49,8 @@ restriction of (17b) and the sonority-graded Degemination (41) of Ilokano are no
 * [ito-1986]
 * [steriade-1982]
 -/
+
+@[expose] public section
 
 namespace Hayes1989
 

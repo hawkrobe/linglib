@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # Dutch temporal connectives
@@ -13,6 +15,8 @@ negation, and *pas* 'only then', the positive polarity item that takes the place
 * [giannakidou-2002]
 * [karttunen-1974]
 -/
+
+@[expose] public section
 
 namespace Dutch.TemporalConnectives
 

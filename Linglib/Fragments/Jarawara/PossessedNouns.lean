@@ -1,8 +1,10 @@
-import Linglib.Semantics.Possession.Defs
-import Linglib.Data.UD.Features
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Linglib.Semantics.Possession.Defs
+public import Linglib.Data.UD.Features
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Jarawara possessed nouns
@@ -19,6 +21,8 @@ masculine and feminine, the latter unmarked; possessed nouns are feminine, and t
 * [adamson-2024]
 * [dixon-2004]
 -/
+
+@[expose] public section
 
 namespace Jarawara
 

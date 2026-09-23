@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Persian (pes, ID 172)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 30 phonemes. PHOIBLE inventory ID 172, Glottocode `west2369`.
 Source: PHOIBLE donor `spa`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Persian
 

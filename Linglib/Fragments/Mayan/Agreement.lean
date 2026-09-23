@@ -1,9 +1,11 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Case.Alignment
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Morphology.Morph
-import Linglib.Morphology.Morphotactics.Template
-import Linglib.Data.UD.Features
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Morphotactics.Template
+public import Linglib.Data.UD.Features
 
 /-!
 # Mayan person marking
@@ -51,6 +53,8 @@ recorded beside it; quantification over the family is a study's, in
 * [kaufman-norman-1984]
 * [tada-1993]
 -/
+
+@[expose] public section
 
 namespace Mayan
 

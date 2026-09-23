@@ -1,7 +1,9 @@
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
-import Mathlib.Combinatorics.SimpleGraph.Maps
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Polarity.LicensingContext
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Polarity.LicensingContext
 
 /-!
 # The implicational map of indefinite series
@@ -42,6 +44,8 @@ the graph encoded here; see the TODO of `Studies/Haspelmath1997.lean`.
 * [hoeksema-1983]
 * [wals-2013]
 -/
+
+@[expose] public section
 
 namespace Indefinite
 

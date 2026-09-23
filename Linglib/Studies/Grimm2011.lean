@@ -1,7 +1,9 @@
-import Linglib.Semantics.ArgumentStructure.CaseRegion
-import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Studies.Dowty1991
+module
+
+public import Linglib.Semantics.ArgumentStructure.CaseRegion
+public import Linglib.Semantics.ArgumentStructure.Projection
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Studies.Dowty1991
 
 /-!
 # Grimm (2011): Semantics of Case
@@ -45,6 +47,8 @@ one that entails existence.
 * [grimm-2005]
 * [fillmore-1968]
 -/
+
+@[expose] public section
 
 namespace Grimm2011
 

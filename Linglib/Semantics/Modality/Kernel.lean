@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.Flavor
-import Linglib.Semantics.Presupposition.Basic
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Flavor
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Kernel Semantics for Epistemic Modals
@@ -34,6 +36,8 @@ this apparatus live in `Studies/Zheng2025.lean`.
 - `kernelMust_iff_simpleNecessity`, `kernelMust_iff_necessity`: the assertion
   of `kernelMust` is Kratzer necessity over the induced modal base
 -/
+
+@[expose] public section
 
 namespace Modality
 

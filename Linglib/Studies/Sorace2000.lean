@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
@@ -20,6 +22,8 @@ classification from `Semantics/Aspect/Defs.lean`.
   `changeOfState ∧ ¬volition`. TODO when EntailmentProfile-based
   unaccusativity diagnostics are wired up.
 -/
+
+@[expose] public section
 
 namespace Sorace2000
 

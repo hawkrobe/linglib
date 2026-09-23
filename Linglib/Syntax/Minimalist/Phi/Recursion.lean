@@ -1,7 +1,9 @@
-import Linglib.Semantics.Plurality.NumberFeatures
-import Linglib.Semantics.Plurality.Number
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.UpperLower.Basic
+module
+
+public import Linglib.Semantics.Plurality.NumberFeatures
+public import Linglib.Semantics.Plurality.Number
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.UpperLower.Basic
 
 /-!
 # Feature Recursion
@@ -49,6 +51,8 @@ the presupposition ordering, and the `IsLowerSet` formulation (Mathlib)
 captures all implicational universals in a single statement.
 
 -/
+
+@[expose] public section
 
 namespace Minimalist.Phi.Recursion
 

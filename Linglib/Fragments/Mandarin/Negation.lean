@@ -1,5 +1,7 @@
-import Linglib.Syntax.Negation
-import Linglib.Fragments.Mandarin.Aspect
+module
+
+public import Linglib.Syntax.Negation
+public import Linglib.Fragments.Mandarin.Aspect
 
 /-!
 # Mandarin negation
@@ -23,6 +25,8 @@ are the rows of `Data.Examples.JinKoenig2021`.
 * [zhao-2025]
 * [jin-koenig-2021]
 -/
+
+@[expose] public section
 
 open Negation
 

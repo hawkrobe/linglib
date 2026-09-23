@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Nez Perce Modal Inventory
@@ -40,11 +42,13 @@ The system parallels what English nominal quantification would look
 like with *some* but no *all* or *every*.
 -/
 
+@[expose] public section
+
 namespace NezPerce
 
 open Modality (ForceFlavor ForceAnalysis ModalItem)
 
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
 

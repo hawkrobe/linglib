@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.Khoo2015
-import Linglib.Data.Experiments.Khoo2015
-import Mathlib.Algebra.Order.Field.Rat
+module
+
+public import Linglib.Data.Examples.Khoo2015
+public import Linglib.Data.Experiments.Khoo2015
+public import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Khoo (2015): Modal Disagreements
@@ -24,6 +26,8 @@ paper's account of the observation is not formalized.
 
 * [khoo-2015]
 -/
+
+@[expose] public section
 
 namespace Khoo2015
 

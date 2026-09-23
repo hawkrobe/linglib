@@ -1,7 +1,9 @@
-import Linglib.Morphology.Exponence.Basic
-import Mathlib.Order.Antisymmetrization
-import Mathlib.Order.Preorder.Finite
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Linglib.Morphology.Exponence.Basic
+public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Order.Preorder.Finite
+public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # The Elsewhere Condition
@@ -18,6 +20,8 @@ prediction relation they induce.
 * `Realizes`: some Elsewhere winner carries the given exponent.
 * `Realizes.of_realizes`: no ABA pattern across nested contexts.
 -/
+
+@[expose] public section
 
 namespace Morphology.Exponence
 

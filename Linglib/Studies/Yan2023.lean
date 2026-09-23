@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.QBSML.FreeChoice
-import Linglib.Logic.Team.BSML.Scenarios
+module
+
+public import Linglib.Logic.Team.QBSML.FreeChoice
+public import Linglib.Logic.Team.BSML.Scenarios
 
 /-!
 # Yan (2023): Monotonicity in Intensional Contexts
@@ -50,6 +52,8 @@ under enrichment (`asher_concl_enriched`, `asher_blocked`).
 * [ross-1944]
 * [von-fintel-1999]
 -/
+
+@[expose] public section
 
 namespace Yan2023
 

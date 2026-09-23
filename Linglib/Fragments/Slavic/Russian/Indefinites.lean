@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Indefinite
+module
+
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Russian indefinite pronouns
@@ -19,6 +21,8 @@ confined to direct negation and *kto ugodno* to free choice.
 * [degano-aloni-2025]
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace Russian.Indefinites
 

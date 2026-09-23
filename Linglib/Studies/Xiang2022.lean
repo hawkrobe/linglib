@@ -1,7 +1,9 @@
-import Mathlib.Tactic.FinCases
-import Linglib.Semantics.Questions.Closure
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Data.Examples.Xiang2022
+module
+
+public import Mathlib.Tactic.FinCases
+public import Linglib.Semantics.Questions.Closure
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Data.Examples.Xiang2022
 
 /-!
 # Xiang (2022): Relativized Exhaustivity: Mention-Some and Uniqueness
@@ -43,6 +45,8 @@ anti-exhaustification analysis of disjunctive mention-all answers are not modell
 * [fox-2013]
 * [hirsch-schwarz-2020]
 -/
+
+@[expose] public section
 
 namespace Xiang2022
 

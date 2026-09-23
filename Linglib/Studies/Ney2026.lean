@@ -1,5 +1,7 @@
-import Linglib.Semantics.Reference.Character
-import Linglib.Discourse.CommonGround
+module
+
+public import Linglib.Semantics.Reference.Character
+public import Linglib.Discourse.CommonGround
 
 /-!
 # Ney (2026): Insinuative Reference and the Coordination Account
@@ -54,6 +56,8 @@ witnessed on toy operators over a small carrier.
 * [searle-1983]
 * [buring-2005]
 -/
+
+@[expose] public section
 
 namespace Ney2026
 

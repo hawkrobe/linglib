@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Korean polarity items
@@ -20,6 +22,8 @@ the adversative mood of the copula and also means 'or', is the free-choice item 
 
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace Korean.PolarityItems
 

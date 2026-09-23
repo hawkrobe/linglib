@@ -1,6 +1,8 @@
-import Linglib.Semantics.Aspect.Telicity
-import Linglib.Semantics.ArgumentStructure.Affectedness
-import Linglib.Data.Examples.Filip2012
+module
+
+public import Linglib.Semantics.Aspect.Telicity
+public import Linglib.Semantics.ArgumentStructure.Affectedness
+public import Linglib.Data.Examples.Filip2012
 
 /-!
 # Filip (2012): Lexical aspect
@@ -43,6 +45,8 @@ diagnostic data (1), (25), (26), (31), (37) are rows of `Data/Examples/Filip2012
 * [vendler-1957]
 * [dowty-1979]
 -/
+
+@[expose] public section
 
 namespace Filip2012
 

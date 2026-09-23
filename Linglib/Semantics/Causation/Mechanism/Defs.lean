@@ -1,6 +1,8 @@
-import Linglib.Semantics.Causation.Graph.Defs
-import Linglib.Semantics.Causation.Valuation
-import Mathlib.Probability.ProbabilityMassFunction.Monad
+module
+
+public import Linglib.Semantics.Causation.Graph.Defs
+public import Linglib.Semantics.Causation.Valuation
+public import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
 # Mechanism: PMF-Valued Structural Equation per Vertex
@@ -28,6 +30,8 @@ accepted residue.
 when they need to extract the deterministic function (mirroring
 `IsMarkovKernel` in `Mathlib/Probability/Kernel/Defs.lean`).
 -/
+
+@[expose] public section
 
 namespace Causation
 

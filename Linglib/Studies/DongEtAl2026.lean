@@ -1,4 +1,6 @@
-import Linglib.Core.Probability.Decision.ExperimentDesign
+module
+
+public import Linglib.Core.Probability.Decision.ExperimentDesign
 
 /-!
 # Dong et al. (2026): Value of Information: A Framework for Human–Agent Communication
@@ -39,6 +41,8 @@ Mixed-Stakes task where a correct animal guess is worth `1` and a correct diagno
 * [lindley-1956]
 * [van-rooy-2003]
 -/
+
+@[expose] public section
 
 namespace DongEtAl2026
 

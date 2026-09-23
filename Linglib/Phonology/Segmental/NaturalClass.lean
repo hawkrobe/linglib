@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Phonology.Segmental.Defs
+module
+
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Linglib.Phonology.Segmental.Defs
 
 /-!
 # Natural classes
@@ -47,6 +49,8 @@ a natural class is nonempty by definition.
 * [hayes-2009]
 * [albright-hayes-2003]
 -/
+
+@[expose] public section
 
 namespace Phonology
 

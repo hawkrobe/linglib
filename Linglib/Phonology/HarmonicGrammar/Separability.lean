@@ -1,4 +1,6 @@
-import Linglib.Phonology.HarmonicGrammar.Noise
+module
+
+public import Linglib.Phonology.HarmonicGrammar.Noise
 
 /-!
 # Separable Harmonies and HZ's Generalization [magri-2025]
@@ -55,6 +57,8 @@ theory directly:
 These apply the separability results (independence → HZ, rescaling) to any
 `(con, w)` MaxEnt grammar.
 -/
+
+@[expose] public section
 
 namespace HarmonicGrammar
 

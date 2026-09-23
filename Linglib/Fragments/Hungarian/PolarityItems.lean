@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Hungarian Polarity-Sensitive Items
@@ -10,6 +12,8 @@ Hungarian indefinite pronoun polarity items, typed by the categories from
 - **senki**: N-word, negative concord (with *sem* in direct negation)
 - **akárki / bárki**: Free choice items
 -/
+
+@[expose] public section
 
 namespace Hungarian.PolarityItems
 

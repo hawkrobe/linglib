@@ -1,7 +1,9 @@
-import Linglib.Core.Analysis.SpecialFunctions.Softmax
-import Linglib.Phonology.Constraints.Defs
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Phonology.Constraints.Defs
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Breiss, Katsuda and Kawahara 2026: modelling frequency-conditioned paradigm uniformity
@@ -53,6 +55,8 @@ whereas the fitted grammar puts the markedness weight at zero.
 * [ito-mester-2003]
 * [coetzee-kawahara-2013]
 -/
+
+@[expose] public section
 
 namespace BreissKatsudaKawahara2026
 

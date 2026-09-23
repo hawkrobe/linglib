@@ -1,8 +1,10 @@
-import Mathlib.Order.UpperLower.Closure
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.Reference.Context.Index
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.Events.Basic
+module
+
+public import Mathlib.Order.UpperLower.Closure
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Core.Order.Interval
+public import Linglib.Semantics.Events.Basic
 
 /-!
 # Viewpoint aspect
@@ -48,6 +50,8 @@ which the plain and extended-now perfects are the two instances.
 * [pancheva-2003]
 * [iatridou-anagnostopoulou-izvorski-2001]
 -/
+
+@[expose] public section
 
 namespace Aspect
 

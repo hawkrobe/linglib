@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Burmese negation
@@ -13,6 +15,8 @@ answers to all three. The examples are those of [miestamo-2005], from Cornyn's g
 
 * [miestamo-2005]
 -/
+
+@[expose] public section
 
 open Negation Morphology
 

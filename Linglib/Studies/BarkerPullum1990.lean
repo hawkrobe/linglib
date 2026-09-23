@@ -1,4 +1,6 @@
-import Linglib.Syntax.Tree.Command
+module
+
+public import Linglib.Syntax.Tree.Command
 
 /-!
 # Barker and Pullum 1990: a theory of command relations
@@ -32,6 +34,8 @@ characterization by equal command domains.
 * [klima-1964]
 * [davis-1987]
 -/
+
+@[expose] public section
 
 namespace BarkerPullum1990
 

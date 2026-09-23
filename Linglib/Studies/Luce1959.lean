@@ -1,8 +1,10 @@
-import Linglib.Core.Probability.Choice.RationalAction
-import Linglib.Core.Probability.Distributions.Gaussian
-import Linglib.Core.Probability.Choice.RandomUtility
-import Mathlib.MeasureTheory.Measure.Haar.OfBasis
-import Mathlib.Order.BooleanAlgebra.Basic
+module
+
+public import Linglib.Core.Probability.Choice.RationalAction
+public import Linglib.Core.Probability.Distributions.Gaussian
+public import Linglib.Core.Probability.Choice.RandomUtility
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
 # Luce (1959): Individual Choice Behavior
@@ -44,6 +46,8 @@ hypothesis, not a theorem, and so does `gam_of_factored`.
 * [thurstone-1927]
 * [plackett-1975]
 -/
+
+@[expose] public section
 
 namespace Luce1959
 

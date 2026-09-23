@@ -1,12 +1,14 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Semantics.Modality.ModalIndefinite
-import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
-import Linglib.Fragments.Romance.Spanish.ModalIndefinites
-import Linglib.Fragments.German.ModalIndefinites
-import Linglib.Fragments.Romance.French.ModalIndefinites
-import Linglib.Fragments.Romance.Italian.ModalIndefinites
-import Linglib.Data.Examples.AlonsoOvalleRoyer2024
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Semantics.Modality.ModalIndefinite
+public import Linglib.Fragments.Mayan.Chuj.ModalIndefinites
+public import Linglib.Fragments.Romance.Spanish.ModalIndefinites
+public import Linglib.Fragments.German.ModalIndefinites
+public import Linglib.Fragments.Romance.French.ModalIndefinites
+public import Linglib.Fragments.Romance.Italian.ModalIndefinites
+public import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 
 /-!
 # Alonso-Ovalle & Royer (2024): modal indefinites and semantic variation in Chuj
@@ -42,6 +44,8 @@ attitude the anchor can be coindexed with the external modal's (`harmonic`, (82)
 * [jayez-tovena-2006]
 * [chierchia-2013]
 -/
+
+@[expose] public section
 
 namespace AlonsoOvalleRoyer2024
 

@@ -1,9 +1,11 @@
-import Linglib.Fragments.Mwaghavul.Basic
-import Linglib.Morphology.Morph
-import Linglib.Phonology.Autosegmental.Melody
-import Linglib.Phonology.Tone.Constraints
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Data.Examples.AkinboFwangwar2026
+module
+
+public import Linglib.Fragments.Mwaghavul.Basic
+public import Linglib.Morphology.Morph
+public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Phonology.Tone.Constraints
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Data.Examples.AkinboFwangwar2026
 
 /-!
 # Akinbo & Fwangwar 2026: grammatical tone targeting ideophones
@@ -40,6 +42,8 @@ fragment's dataset (`m_verbs_uniform`, `mh_verbs_nonfinal_final`, `pluractional_
 * [dingemanse-thompson-2020]
 * [potts-2007b]
 -/
+
+@[expose] public section
 
 namespace AkinboFwangwar2026
 

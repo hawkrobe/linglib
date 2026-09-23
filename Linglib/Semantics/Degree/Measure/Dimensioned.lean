@@ -1,9 +1,11 @@
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Degree.Comparison
-import Linglib.Semantics.Degree.Measure.Basic
-import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Alternatives.Extremum
-import Linglib.Semantics.Degree.Measure.Dimension
+module
+
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Degree.Measure.Basic
+public import Linglib.Semantics.Degree.Predicate
+public import Linglib.Semantics.Alternatives.Extremum
+public import Linglib.Semantics.Degree.Measure.Dimension
 
 /-!
 # Measurement Semantics
@@ -79,6 +81,8 @@ semantic composition." The hypothesis itself is stated and applied in the
 consuming Studies file, not here.
 
 -/
+
+@[expose] public section
 
 namespace Degree
 

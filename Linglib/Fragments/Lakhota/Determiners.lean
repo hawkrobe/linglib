@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Lakhota determiner inventory
@@ -28,6 +30,8 @@ are not typed here.
 * [schwarz-2013], §4.2.1
 * [rood-taylor-1996]
 -/
+
+@[expose] public section
 
 namespace Lakhota.Determiners
 

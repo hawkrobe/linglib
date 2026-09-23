@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Morphology.Root.Consonantal
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Root.Consonantal
 
 /-!
 # Tigrinya vowels, gutturals, and verbal roots
@@ -23,6 +25,8 @@ consonants carrying their modifier letter as one segment.
 * [buckley-1994]
 * [faust-lampitelli-2026]
 -/
+
+@[expose] public section
 
 namespace Tigrinya.Phonology
 

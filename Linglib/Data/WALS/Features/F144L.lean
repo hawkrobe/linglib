@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 144L: The Position of Negative Morphemes in SOV Languages
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 144, 573 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F144L
 
@@ -62,7 +66,8 @@ inductive PositionOfNegativeMorphemesInSovLanguages where
   | svOvInitialneg
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PositionOfNegativeMorphemesInSovLanguages) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PositionOfNegativeMorphemesInSovLanguages) :=
   [ { walsCode := "aar", iso := "aiw", value := .svOvVNeg }
   , { walsCode := "aba", iso := "aau", value := .sovneg }
   , { walsCode := "abk", iso := "abk", value := .moreThanOneConstruction }
@@ -565,7 +570,8 @@ private def allData_0 : List (Datapoint PositionOfNegativeMorphemesInSovLanguage
   , { walsCode := "tod", iso := "sbu", value := .soNegV }
   ]
 
-private def allData_1 : List (Datapoint PositionOfNegativeMorphemesInSovLanguages) :=
+/-- Rows 501 to 573 of `allData`. -/
+def allData_1 : List (Datapoint PositionOfNegativeMorphemesInSovLanguages) :=
   [ { walsCode := "ton", iso := "tqw", value := .moreThanOneConstruction }
   , { walsCode := "tru", iso := "tpy", value := .moreThanOneConstruction }
   , { walsCode := "tsf", iso := "cof", value := .soVNeg }

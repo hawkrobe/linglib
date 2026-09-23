@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Modern Greek nouns by gender and humanness
@@ -11,6 +13,8 @@ whether they denote humans: conceptually gendered humans, fixed-gender humans su
 
 * [adamson-anagnostopoulou-2025]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.Gender
 

@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.DependencyGrammar.Dominance
-import Mathlib.Data.Nat.Dist
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Set.Card
-import Mathlib.Order.Interval.Finset.Fin
-import Mathlib.Order.Interval.Set.Card
+module
+
+public import Linglib.Syntax.DependencyGrammar.Dominance
+public import Mathlib.Data.Nat.Dist
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Order.Interval.Set.Card
 
 /-!
 # Dependency length
@@ -39,6 +41,8 @@ threshold
 for word order, source of the minimisation claim and the
 random-reordering baselines
 -/
+
+@[expose] public section
 
 namespace DependencyGrammar
 

@@ -1,4 +1,6 @@
-import Linglib.Phonology.Segmental.Basic
+module
+
+public import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Morae
@@ -19,6 +21,8 @@ on the preceding mora's `dominates`.
 * `Mora.of`, `Mora.attach` — the mora of one segment, and adjunction of further
   melody (a non-moraic coda) to a mora.
 -/
+
+@[expose] public section
 
 namespace Prosody
 

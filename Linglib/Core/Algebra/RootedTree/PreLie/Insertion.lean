@@ -3,13 +3,15 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.PreLie.Graft
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
-import Linglib.Core.Data.List.Perm
-import Linglib.Core.Data.List.Sublists
-import Linglib.Core.Data.Multiset.Powerset
-import Linglib.Core.Data.UnorderedTree.Basic
-import Mathlib.Data.Multiset.Bind
+module
+
+public import Linglib.Core.Algebra.RootedTree.PreLie.Graft
+public import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
+public import Linglib.Core.Data.List.Perm
+public import Linglib.Core.Data.List.Sublists
+public import Linglib.Core.Data.Multiset.Powerset
+public import Linglib.Core.Data.UnorderedTree.Basic
+public import Mathlib.Data.Multiset.Bind
 
 /-!
 # Multi-tree insertion on `RoseTree α`
@@ -38,6 +40,8 @@ assignments is commutative.
 * [foissy-typed-decorated-rooted-trees-2018]
 * [foissy-introduction-hopf-algebras-trees]
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

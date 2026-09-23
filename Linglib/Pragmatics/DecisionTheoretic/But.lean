@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.DecisionTheoretic.Basic
+module
+
+public import Linglib.Pragmatics.DecisionTheoretic.Basic
 
 /-!
 # Decision-Theoretic Semantics: "But" ([merin-1999-relevance] §4)
@@ -22,6 +24,8 @@ sets H = B, yielding unexpected-B-given-A.
 - **Theorem 10**: Negative relevance implies unexpectedness in default-but
 - **Corollary 11** (Harris universal): NNIR prevents "Qa but Qb"
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

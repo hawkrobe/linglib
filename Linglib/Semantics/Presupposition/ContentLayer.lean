@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Basic
-import Linglib.Semantics.Presupposition.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Basic
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Content layers
@@ -28,6 +30,8 @@ not-at-issue layer for analyses that only separate proffered from backgrounded c
 * [tonhauser-beaver-roberts-simons-2013]
 * [anderbois-brasoveanu-henderson-2015]
 -/
+
+@[expose] public section
 
 namespace Presupposition
 

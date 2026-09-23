@@ -1,5 +1,7 @@
-import Linglib.Core.InformationTheory.Entropy
-import Linglib.Pragmatics.InformationTheory.Channel
+module
+
+public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Pragmatics.InformationTheory.Channel
 
 /-!
 # Channel Capacity and Capacity-Achieving Priors
@@ -28,6 +30,8 @@ file is capacity-specific.
 The entropy bound is `InformationTheory.measureEntropy_le_log_card` on the
 measure with masses `q`.
 -/
+
+@[expose] public section
 
 namespace Pragmatics.InformationTheory
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Embedding
+module
+
+public import Linglib.Semantics.Tense.Embedding
 
 /-!
 # Tense licensing by transmitted temporal relations
@@ -35,6 +37,8 @@ every temporal argument by its local evaluation time.
 
 * [abusch-1997]
 -/
+
+@[expose] public section
 
 namespace Tense
 

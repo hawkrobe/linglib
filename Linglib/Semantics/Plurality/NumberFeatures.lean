@@ -1,7 +1,9 @@
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Syntax.Number.Basic
-import Linglib.Semantics.Plurality.Number
-import Linglib.Core.Order.UpperLower.Finset
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Semantics.Plurality.Number
+public import Linglib.Core.Order.UpperLower.Finset
 
 /-!
 # The feature decomposition of number
@@ -50,6 +52,8 @@ where the atoms are the singletons.
 * [link-1983]
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025], §4.2.1, §8
 -/
+
+@[expose] public section
 
 namespace Number
 

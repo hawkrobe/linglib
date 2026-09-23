@@ -1,12 +1,14 @@
-import Linglib.Semantics.Reference.Definiteness
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Fragments.German.Determiners
-import Linglib.Fragments.Fering.Determiners
-import Linglib.Fragments.Akan.Determiners
-import Linglib.Fragments.MauritianCreole.Determiners
-import Linglib.Fragments.HaitianCreole.Determiners
-import Linglib.Fragments.Lakhota.Determiners
-import Linglib.Fragments.Hausa.Determiners
+module
+
+public import Linglib.Semantics.Reference.Definiteness
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Fragments.German.Determiners
+public import Linglib.Fragments.Fering.Determiners
+public import Linglib.Fragments.Akan.Determiners
+public import Linglib.Fragments.MauritianCreole.Determiners
+public import Linglib.Fragments.HaitianCreole.Determiners
+public import Linglib.Fragments.Lakhota.Determiners
+public import Linglib.Fragments.Hausa.Determiners
 
 /-!
 # Schwarz (2013): Two Kinds of Definites Cross-linguistically
@@ -37,6 +39,8 @@ survey reports no data on the remaining languages.
 * [ingham-2003]
 * [wespel-2008]
 -/
+
+@[expose] public section
 
 namespace Schwarz2013
 

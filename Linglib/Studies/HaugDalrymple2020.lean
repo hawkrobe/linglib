@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Set.Card
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
-import Linglib.Semantics.Supervaluation
+module
+
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Set.Card
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
+public import Linglib.Semantics.Supervaluation
 
 /-!
 # Haug and Dalrymple (2020): Reciprocity: Anaphora, scope, and quantification
@@ -52,6 +54,8 @@ maximizes multiple reciprocals pairwise (§6.2).
 * [kriz-2015]
 * [champollion-bumford-henderson-2019]
 -/
+
+@[expose] public section
 
 namespace HaugDalrymple2020
 

@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.Herce2023
-import Linglib.Morphology.Paradigm.Morphome
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Data.Examples.Herce2023
+public import Linglib.Morphology.Paradigm.Morphome
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Herce (2023): The Typological Diversity of Morphomes
@@ -32,6 +34,8 @@ systematicity the definition asks for.
 * [herce-2023]
 * [aronoff-1994]
 -/
+
+@[expose] public section
 
 namespace Herce2023
 

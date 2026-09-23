@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.ArregiPietraszko2021
-import Mathlib.Data.List.Basic
+module
+
+public import Linglib.Data.Examples.ArregiPietraszko2021
+public import Mathlib.Data.List.Basic
 
 /-!
 # Arregi & Pietraszko 2021: the ups and downs of head displacement
@@ -38,6 +40,8 @@ has the Mirror-obeying bracketing its vowel coalescence requires.
 * [baker-1985] — the Mirror Principle
 * [pollock-1989] — the French/English verb-placement contrast
 -/
+
+@[expose] public section
 
 namespace ArregiPietraszko2021
 

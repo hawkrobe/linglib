@@ -1,5 +1,7 @@
-import Linglib.Logic.Natural.Completeness
-import Linglib.Semantics.Polarity.Strength
+module
+
+public import Linglib.Logic.Natural.Completeness
+public import Linglib.Semantics.Polarity.Strength
 
 /-!
 # Icard (2012): Inclusion and Exclusion in Natural Language
@@ -36,6 +38,8 @@ Zwarts's three classes of negative polarity items is `Signature.zwarts`.
 * [maccartney-manning-2009]
 * [zwarts-1998]
 -/
+
+@[expose] public section
 
 namespace Icard2012
 

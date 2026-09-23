@@ -1,10 +1,12 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Core.Probability.UniformOn
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Set.Card
-import Mathlib.Logic.Equiv.Fintype
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Core.Probability.UniformOn
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Set.Card
+public import Mathlib.Logic.Equiv.Fintype
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Denić (2023): Probabilities and logic in implicature computation
@@ -56,6 +58,8 @@ recorded in the data only.
 * [magri-2009]
 * [buccola-haida-2019]
 -/
+
+@[expose] public section
 
 namespace Denic2023
 

@@ -1,7 +1,9 @@
-import Linglib.Logic.Team.QBSML.FreeChoice
-import Linglib.Logic.Team.BSML.Scenarios
-import Linglib.Semantics.Degree.Comparison
-import Linglib.Data.Examples.AloniVanOrmondt2023
+module
+
+public import Linglib.Logic.Team.QBSML.FreeChoice
+public import Linglib.Logic.Team.BSML.Scenarios
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Data.Examples.AloniVanOrmondt2023
 
 /-!
 # Aloni and van Ormondt (2023): modified numerals and split disjunction
@@ -29,6 +31,8 @@ The example rows record the inference profile the analysis answers to.
 * [aloni-2022]
 * [chemla-2009]
 -/
+
+@[expose] public section
 
 namespace AloniVanOrmondt2023
 

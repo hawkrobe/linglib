@@ -1,6 +1,8 @@
-import Linglib.Phonology.Segmental.NaturalClass
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Subregular.LocalRewrite
+module
+
+public import Linglib.Phonology.Segmental.NaturalClass
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # English phonemes
@@ -35,6 +37,8 @@ stated. English /ɹ/ is the chart's `ɹ`, which is [−consonantal] and so a gli
 * [hayes-2009]
 * [moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Subregular.LocalRewrite Data.PHOIBLE
 

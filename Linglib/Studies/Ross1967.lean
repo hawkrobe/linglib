@@ -1,5 +1,7 @@
-import Linglib.Syntax.Tree.Cat
-import Linglib.Data.Examples.Ross1967
+module
+
+public import Linglib.Syntax.Tree.Cat
+public import Linglib.Data.Examples.Ross1967
 
 /-!
 # Ross (1967): Constraints on Variables in Syntax
@@ -37,6 +39,8 @@ and the definition of islands as the domains of chopping rules are not formalize
 
 * [ross-1967]
 -/
+
+@[expose] public section
 
 namespace Ross1967
 

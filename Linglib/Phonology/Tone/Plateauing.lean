@@ -3,15 +3,17 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Max
-import Mathlib.Order.Interval.Finset.Nat
-import Linglib.Core.Data.List.TakeDrop
-import Linglib.Phonology.Subregular.Dependence
-import Linglib.Phonology.Autosegmental.OCP
-import Linglib.Phonology.Autosegmental.Junction
-import Linglib.Phonology.Autosegmental.Hull
-import Linglib.Phonology.Tone.Basic
-import Linglib.Phonology.Tone.Surfacing
+module
+
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Order.Interval.Finset.Nat
+public import Linglib.Core.Data.List.TakeDrop
+public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Phonology.Autosegmental.OCP
+public import Linglib.Phonology.Autosegmental.Junction
+public import Linglib.Phonology.Autosegmental.Hull
+public import Linglib.Phonology.Tone.Basic
+public import Linglib.Phonology.Tone.Surfacing
 
 /-!
 # Unbounded tonal plateauing
@@ -58,6 +60,8 @@ exclusion theorems of `Studies/Jardine2016a` (bimachine rendering) and `Studies/
 * `utp.requiresBothSides` — deleting either flanking H reverts the plateau target, at
   every distance.
 -/
+
+@[expose] public section
 
 namespace Tone
 

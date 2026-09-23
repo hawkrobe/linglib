@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.BranchingTime
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Modality.BranchingTime
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Rumberg and Lauer (2023): What if, and when? Conditionals, tense, and branching time
@@ -40,6 +42,8 @@ finite models are decided through the substrate's reduction of histories to maxi
 * [schulz-2008]
 * [prior-1967]
 -/
+
+@[expose] public section
 
 namespace RumbergLauer2023
 
@@ -257,7 +261,7 @@ def time : Trains → ℕ
   | arriveTwo | late | stay => 2
   | arriveThree => 3
 
-private def leB : Trains → Trains → Bool
+def leB : Trains → Trains → Bool
   | now, _ => true
   | early, arriveTwo => true
   | wait, late | wait, arriveThree | wait, stay => true

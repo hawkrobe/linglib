@@ -1,6 +1,8 @@
-import Linglib.Discourse.Accessibility
-import Linglib.Fragments.Korean.Pronouns
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Discourse.Accessibility
+public import Linglib.Fragments.Korean.Pronouns
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Kwon and Lee (2026): Accessibility Markers in Korean
@@ -49,6 +51,8 @@ comparison studies are complements of the reported object biases where only thos
 * [kweon-2011]
 * [choe-2021]
 -/
+
+@[expose] public section
 
 namespace KwonLee2026
 

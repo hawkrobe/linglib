@@ -1,15 +1,17 @@
-import Linglib.Data.Examples.JackendoffAudring2020
-import Linglib.Data.Forms.JackendoffAudring2020
-import Linglib.Morphology.ConstructionMorphology.Schema
-import Linglib.Logic.Nonmonotonic.Inheritance
-import Linglib.Core.Relation.ReflTransGen
-import Linglib.Morphology.Paradigm.Linkage
-import Linglib.Morphology.Paradigm.Morphome
-import Linglib.Core.Order.Flat
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Data.Examples.JackendoffAudring2020
+public import Linglib.Data.Forms.JackendoffAudring2020
+public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Linglib.Logic.Nonmonotonic.Inheritance
+public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Morphology.Paradigm.Linkage
+public import Linglib.Morphology.Paradigm.Morphome
+public import Linglib.Core.Order.Flat
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Jackendoff and Audring (2020): The Texture of the Lexicon
@@ -70,6 +72,8 @@ common (`instantiates_ishSchema_iff`), and absorbs a newly encountered sister
 * [spencer-2013]
 * [albright-hayes-2003]
 -/
+
+@[expose] public section
 
 namespace JackendoffAudring2020
 

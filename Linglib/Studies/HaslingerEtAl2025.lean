@@ -1,5 +1,7 @@
-import Linglib.Fragments.German.Distributives
-import Linglib.Data.Examples.HaslingerEtAl2025
+module
+
+public import Linglib.Fragments.German.Distributives
+public import Linglib.Data.Examples.HaslingerEtAl2025
 
 /-!
 # Haslinger, Rosina, Schmitt and Wurm (2025): On the relation between distributivity and maximality
@@ -39,6 +41,8 @@ answers the explosion question.
 * [haslinger-etal-2025]
 * [kriz-spector-2021]
 -/
+
+@[expose] public section
 
 namespace HaslingerEtAl2025
 

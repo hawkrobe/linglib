@@ -1,12 +1,14 @@
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
-import Linglib.Phonology.Tone.Constraints
-import Linglib.Phonology.Tone.Grammatical
-import Linglib.Fragments.Poko.Tone
-import Linglib.Phonology.Autosegmental.Floating
-import Mathlib.Tactic.Linarith
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
+public import Linglib.Phonology.Tone.Constraints
+public import Linglib.Phonology.Tone.Grammatical
+public import Linglib.Fragments.Poko.Tone
+public import Linglib.Phonology.Autosegmental.Floating
+public import Mathlib.Tactic.Linarith
 
 /-!
 # McPherson and Lamont (2026): Poko Postlexical Tone Requires Serial, Directional Evaluation
@@ -35,6 +37,8 @@ derivations are the substrate's harmonic-serialism and tableau apparatus.
 * [lamont-2022b]
 * [pruitt-2009]
 -/
+
+@[expose] public section
 
 namespace McPhersonLamont2026
 
@@ -106,7 +110,7 @@ abbrev maxLinkMIdx   : Fin numConstraints := 3
 /-! ### Derived ERCs -/
 
 /-- ERC of a winner/loser pair via `ercOfProfiles` ([prince-2002]). -/
-private def ercFor (winner loser : Cand) : ERC numConstraints :=
+def ercFor (winner loser : Cand) : ERC numConstraints :=
   ercOfProfiles (buildViolationProfile ranking.get winner)
     (buildViolationProfile ranking.get loser)
 
@@ -176,7 +180,7 @@ theorem weighted_HG_inadequate :
 /-! ### Shared fig. 2 ranking -/
 
 /-- Non-float tail of the fig. 2 ranking, in (60) column order. -/
-private def rankingTail {u : Form} : List (Constraint (Candidate u)) :=
+def rankingTail {u : Form} : List (Constraint (Candidate u)) :=
   [ starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 

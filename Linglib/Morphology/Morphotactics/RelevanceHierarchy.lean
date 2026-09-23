@@ -1,6 +1,8 @@
-import Linglib.Syntax.Agreement.Controller
-import Mathlib.Order.Defs.PartialOrder
-import Mathlib.Data.List.Sort
+module
+
+public import Linglib.Syntax.Agreement.Controller
+public import Mathlib.Order.Defs.PartialOrder
+public import Mathlib.Data.List.Sort
 
 /-!
 # Bybee's relevance hierarchy
@@ -25,6 +27,8 @@ peripherality` and `RespectsRelevanceHierarchy` is `List.SortedLE`.
 - `MorphCategory.RelevanceLE`/`RelevanceLT`: the order, named.
 - `RespectsRelevanceHierarchy`: a slot list sorted stem-outward.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

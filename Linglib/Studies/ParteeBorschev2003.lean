@@ -1,4 +1,6 @@
-import Linglib.Semantics.Possession.Basic
+module
+
+public import Linglib.Semantics.Possession.Basic
 
 /-!
 # Partee and Borschev (2003): Genitives, Relational Nouns, and Argument-Modifier Ambiguity
@@ -33,6 +35,8 @@ discussion of the Russian genitive are not represented.
 * [partee-borschev-2003]
 * [vikner-jensen-2002]
 -/
+
+@[expose] public section
 
 namespace ParteeBorschev2003
 

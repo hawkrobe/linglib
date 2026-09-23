@@ -1,6 +1,8 @@
-import Linglib.Phonology.Autosegmental.Melody
-import Linglib.Fragments.Hungarian.Phonology
-import Linglib.Data.Forms.SiptarTorkenczy2000
+module
+
+public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Fragments.Hungarian.Phonology
+public import Linglib.Data.Forms.SiptarTorkenczy2000
 
 /-!
 # Siptár and Törkenczy (2000): The Phonology of Hungarian
@@ -47,6 +49,8 @@ by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
 * [clements-hume-1995]
 * [rose-walker-2011]
 -/
+
+@[expose] public section
 
 namespace SiptarTorkenczy2000
 

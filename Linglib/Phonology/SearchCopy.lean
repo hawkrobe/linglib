@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.List.DropRight
-import Linglib.Phonology.Subregular.OSL
+module
+
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.List.DropRight
+public import Linglib.Phonology.Subregular.OSL
 
 /-!
 # Search and copy
@@ -81,6 +83,8 @@ place beyond the procedure: icy targets, persistent search and circumambient har
 * [belth-2026]
 * [rose-walker-2011]
 -/
+
+@[expose] public section
 
 namespace Phonology
 

@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Elbourne2013
-import Linglib.Semantics.Reference.Iota
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Reference.ChoiceFunction
-import Mathlib.Order.Minimal
+module
+
+public import Linglib.Data.Examples.Elbourne2013
+public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Reference.ChoiceFunction
+public import Mathlib.Order.Minimal
 
 /-!
 # Elbourne (2013): Definite Descriptions
@@ -68,6 +70,8 @@ supplied by NP-deletion.
 * [stanley-szab-2000]
 * [geach-1962]
 -/
+
+@[expose] public section
 
 namespace Elbourne2013
 

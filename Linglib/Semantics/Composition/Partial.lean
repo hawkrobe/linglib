@@ -1,5 +1,7 @@
-import Mathlib.Data.PFun
-import Linglib.Semantics.Composition.Tree
+module
+
+public import Mathlib.Data.PFun
+public import Linglib.Semantics.Composition.Tree
 
 /-!
 # Partial interpretation
@@ -37,6 +39,8 @@ difference between the engine returning no denotation and returning an undefined
 
 * [heim-kratzer-1998]
 -/
+
+@[expose] public section
 
 namespace Semantics.Composition
 

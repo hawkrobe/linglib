@@ -1,7 +1,9 @@
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Data.Set.Lattice.Indexed
-import Linglib.Core.Order.Positions
-import Mathlib.Order.Cover
+module
+
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Data.Set.Lattice.Indexed
+public import Linglib.Core.Order.Positions
+public import Mathlib.Order.Cover
 
 /-!
 # Command relations
@@ -46,6 +48,8 @@ union, through the maximal generator of a relation.
 * [barker-pullum-1990]
 * [reinhart-1976]
 -/
+
+@[expose] public section
 
 namespace Syntax
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Morphology.DistributedMorphology.Neighborhood
+module
+
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Morphology.DistributedMorphology.Neighborhood
 
 /-!
 # Impoverishment
@@ -50,6 +52,8 @@ from fission and the coproduct (`Studies/SenturiaMarcolli2025.lean`).
 * [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
 * [G. Scott, *Pronoun reduction in Mam*][scott-2023]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

@@ -1,6 +1,8 @@
-import Linglib.Discourse.CommonGround
-import Linglib.Logic.Modal.Basic
-import Mathlib.Order.CompleteLattice.Basic
+module
+
+public import Linglib.Discourse.CommonGround
+public import Linglib.Logic.Modal.Basic
+public import Mathlib.Order.CompleteLattice.Basic
 
 /-!
 # Multi-agent epistemic logic
@@ -38,6 +40,8 @@ Belief is the same operator over a KD45 frame (`ModalLogic.IsKD45Frame`), with t
 * [hintikka-1962] — knowledge as `box`
 * [stalnaker-2002] — common ground as common knowledge
 -/
+
+@[expose] public section
 
 namespace ModalLogic.Epistemic
 

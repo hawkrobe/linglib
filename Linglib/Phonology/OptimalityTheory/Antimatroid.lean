@@ -1,7 +1,9 @@
-import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-import Linglib.Core.Combinatorics.Antimatroid
-import Mathlib.Data.Fintype.Card
-import Mathlib.Tactic.Linarith
+module
+
+public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+public import Linglib.Core.Combinatorics.Antimatroid
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Tactic.Linarith
 
 /-!
 # OT — the ERC–Antimatroid isomorphism
@@ -53,6 +55,8 @@ preserving entailment/containment, so any antimatroid result transfers to OT.
 [merchant-riggle-2016] — OT grammars, beyond partial orders:
 ERC sets and antimatroids
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 open Constraints

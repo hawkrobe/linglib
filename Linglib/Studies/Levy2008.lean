@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.InformationTheory.KullbackLeibler.Cond
-import Linglib.Core.InformationTheory.Surprisal
-import Linglib.Processing.Expectation.PrefixProbability
+module
+
+public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
+public import Linglib.Core.InformationTheory.Surprisal
+public import Linglib.Processing.Expectation.PrefixProbability
 
 /-!
 # Levy (2008): Expectation-Based Syntactic Comprehension
@@ -35,6 +37,8 @@ extra-sentential context does not change while the word is processed.
 * [levy-2008]
 * [hale-2001]
 -/
+
+@[expose] public section
 
 namespace Levy2008
 

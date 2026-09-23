@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.UD.UPOS
-import Linglib.Morphology.Word.Features
+module
+
+public import Linglib.Data.UD.UPOS
+public import Linglib.Morphology.Word.Features
 
 /-!
 # Word tokens
@@ -16,6 +18,8 @@ formed: word-internal structure is `Word/Tree.lean`, the word-forming
 correspondence `Paradigm/Linkage`. A property belongs on the token only when a
 token-level engine reads it off the token's own data.
 -/
+
+@[expose] public section
 
 namespace Morphology
 

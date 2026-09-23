@@ -1,9 +1,11 @@
-import Linglib.Syntax.DependencyGrammar.Projectivity
-import Linglib.Morphology.Word.Basic
-import Linglib.Data.Treebank.Coverage.KuhlmannNivre2006
-import Mathlib.Algebra.Order.Round
-import Mathlib.Data.Rat.Floor
-import Mathlib.Order.Interval.Finset.Fin
+module
+
+public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Data.Treebank.Coverage.KuhlmannNivre2006
+public import Mathlib.Algebra.Order.Round
+public import Mathlib.Data.Rat.Floor
+public import Mathlib.Order.Interval.Finset.Fin
 
 /-!
 # Kuhlmann & Nivre (2006): Mildly Non-Projective Dependency Structures
@@ -48,6 +50,8 @@ row, since planarity and well-nestedness each contain projectivity.
 * [kuhlmann-nivre-2006]
 * [nivre-2006]
 -/
+
+@[expose] public section
 
 namespace KuhlmannNivre2006
 
@@ -107,7 +111,7 @@ Figure 2a is planar but not projective, its root inside the gap where the substr
 its two named edges crossing. -/
 
 /-- An unlabelled position. -/
-private def dot : Word := Word.mk' "•" .X
+def dot : Word := Word.mk' "•" .X
 
 /-- Figure 2a: the yield of node 1, `{1, 3}`, skips the root. -/
 def fig2a : Graph 3 := .ofArcs [dot, dot, dot] 1 [(1, 0, .dep), (0, 2, .dep)]

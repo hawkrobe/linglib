@@ -1,5 +1,7 @@
-import Linglib.Phonology.Prosody.Word
-import Mathlib.Data.List.MinMax
+module
+
+public import Linglib.Phonology.Prosody.Word
+public import Mathlib.Data.List.MinMax
 
 /-!
 # The metrical grid
@@ -49,6 +51,8 @@ a homomorphism from the tree into the head-marked grid, built from a small algeb
   the head terminal under recursion or without Layeredness.
 -/
 
+@[expose] public section
+
 namespace Prosody
 
 /-! ## The tower carriers
@@ -83,7 +87,7 @@ abbrev MarkedGrid (α : Type*) := List (Column α)
 namespace Marks
 
 /-- Whether one row is a submask of the row below. -/
-private def rowSubmask (upper lower : List Bool) : Bool :=
+def rowSubmask (upper lower : List Bool) : Bool :=
   (upper.zip lower).all (fun p => !p.1 || p.2)
 
 /-- The Continuous Column Constraint ([prince-1983]; [hayes-1995] §3.4.2 (9)): no column has a gap.
@@ -284,7 +288,7 @@ open MarkedGrid Grid
 
 /-- One RPPR step: pair the node's label with its grid, so a parent can read the
     head flag off each child. -/
-private def projectStep (a : Constituent) (ps : List (Constituent × MarkedGrid Tree)) :
+def projectStep (a : Constituent) (ps : List (Constituent × MarkedGrid Tree)) :
     Constituent × MarkedGrid Tree :=
   (a, if a.isSyl ∧ ps = [] then cell (.node a [])
       else juxtapose (ps.map fun p => edge p.1.isHead p.2))

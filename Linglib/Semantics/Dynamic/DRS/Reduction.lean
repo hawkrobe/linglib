@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.DRS.Verification
-import Mathlib.ModelTheory.Semantics
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Verification
+public import Mathlib.ModelTheory.Semantics
 
 /-!
 # From DRT to predicate logic
@@ -19,6 +21,8 @@ closed (`closeForall`, via `Formula.iAlls`).
 * `realize_closeExists`, `realize_closeForall`: the universe-closure operators
   realize as `∃`/`∀` over embeddings extending `v` on the closed referents.
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language
 

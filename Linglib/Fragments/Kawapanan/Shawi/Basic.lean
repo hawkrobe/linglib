@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # Shawi
@@ -37,6 +39,8 @@ absent cell are both `none`.
 * [barraza-de-garcia-2005]
 * [bourdeau-2015]
 -/
+
+@[expose] public section
 
 namespace Kawapanan.Shawi
 

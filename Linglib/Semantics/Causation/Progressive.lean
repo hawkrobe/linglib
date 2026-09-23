@@ -1,6 +1,8 @@
-import Linglib.Semantics.Causation.SEM.Bool
-import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Causation.CCSelection
+module
+
+public import Linglib.Semantics.Causation.SEM.Bool
+public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.CCSelection
 
 /-!
 # Progressive Aspect and Causal Structure
@@ -31,6 +33,8 @@ checks type-level sufficiency (`BoolSEM.causallySufficient`);
 `perfectiveTrue` adds token-level but-for completion
 (`CCSelection.completesForEffect`).
 -/
+
+@[expose] public section
 
 namespace Causation.Progressive
 

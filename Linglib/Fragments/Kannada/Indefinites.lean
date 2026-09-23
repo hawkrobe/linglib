@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Indefinite
+module
+
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Kannada indefinite pronouns
@@ -15,6 +17,8 @@ referent the speaker has in mind.
 * [degano-aloni-2025]
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace Kannada.Indefinites
 

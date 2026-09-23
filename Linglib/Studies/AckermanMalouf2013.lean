@@ -1,8 +1,10 @@
-import Linglib.Morphology.Paradigm.Complexity
-import Linglib.Fragments.Greek.StandardModern.Declension
-import Linglib.Fragments.Burmeso.ObjectAgreement
-import Linglib.Fragments.Mazatec.Verbs
-import Linglib.Data.Examples.AckermanMalouf2013
+module
+
+public import Linglib.Morphology.Paradigm.Complexity
+public import Linglib.Fragments.Greek.StandardModern.Declension
+public import Linglib.Fragments.Burmeso.ObjectAgreement
+public import Linglib.Fragments.Mazatec.Verbs
+public import Linglib.Data.Examples.AckermanMalouf2013
 
 /-!
 # The low conditional entropy conjecture
@@ -37,6 +39,8 @@ class membership (`mazatec_tones_no_diagnostic_cell`).
 * [carstairs-mccarthy-2010]
 * [bonami-beniamine-2016]
 -/
+
+@[expose] public section
 
 namespace AckermanMalouf2013
 

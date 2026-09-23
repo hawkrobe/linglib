@@ -1,14 +1,16 @@
-import Linglib.Semantics.Aspect.Viewpoint
-import Linglib.Studies.Karttunen1974
-import Linglib.Fragments.English.TemporalConnectives
-import Linglib.Fragments.English.PolarityItems
-import Linglib.Fragments.Greek.StandardModern.PolarityItems
-import Linglib.Fragments.Icelandic.PolarityItems
-import Linglib.Fragments.Dutch.PolarityItems
-import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
-import Linglib.Fragments.Icelandic.TemporalConnectives
-import Linglib.Fragments.Dutch.TemporalConnectives
-import Linglib.Data.Examples.Giannakidou2002
+module
+
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Studies.Karttunen1974
+public import Linglib.Fragments.English.TemporalConnectives
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.Greek.StandardModern.PolarityItems
+public import Linglib.Fragments.Icelandic.PolarityItems
+public import Linglib.Fragments.Dutch.PolarityItems
+public import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
+public import Linglib.Fragments.Icelandic.TemporalConnectives
+public import Linglib.Fragments.Dutch.TemporalConnectives
+public import Linglib.Data.Examples.Giannakidou2002
 
 /-!
 # Giannakidou (2002): UNTIL, Aspect, and Negation
@@ -54,6 +56,8 @@ homogeneity criterion with negation playing no role (`diagnostics_predicted`).
 * [mittwoch-1977]
 * [de-swart-1996]
 -/
+
+@[expose] public section
 
 namespace Giannakidou2002
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Degree.Adjective
-import Linglib.Semantics.Degree.Basic
-import Linglib.Fragments.English.Adjectives
+module
+
+public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Semantics.Degree.Basic
+public import Linglib.Fragments.English.Adjectives
 
 /-!
 # Kennedy (2007): Vagueness and Grammar
@@ -25,6 +27,8 @@ totally closed scale admits both (67)–(68).
 * [kennedy-mcnally-2005]
 * [rotstein-winter-2004]
 -/
+
+@[expose] public section
 
 namespace Kennedy2007
 

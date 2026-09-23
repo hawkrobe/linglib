@@ -1,4 +1,6 @@
-import Linglib.Morphology.Root.Consonantal
+module
+
+public import Linglib.Morphology.Root.Consonantal
 
 /-!
 # Modern Hebrew consonantal roots
@@ -13,6 +15,8 @@ QaTaT–QaTa triplet (3) and taQTiL nouns (9), and the binyan roots of [arad-200
 * [arad-2005]
 * [mccarthy-1981]
 -/
+
+@[expose] public section
 
 namespace Hebrew
 

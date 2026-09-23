@@ -1,7 +1,9 @@
-import Linglib.Semantics.Dynamic.DRS.Context
-import Mathlib.CategoryTheory.Types.Basic
-import Mathlib.CategoryTheory.Opposites
-import Mathlib.Data.Finset.Sort
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Context
+public import Mathlib.CategoryTheory.Types.Basic
+public import Mathlib.CategoryTheory.Opposites
+public import Mathlib.Data.Finset.Sort
 
 /-!
 # The presheaf of basic DRSs
@@ -28,6 +30,8 @@ context, and restriction along a context morphism `f` is substitution-preimage,
 * [abramsky-sadrzadeh-2014]
 * [kamp-reyle-1993]
 -/
+
+@[expose] public section
 
 open CategoryTheory FirstOrder
 

@@ -1,4 +1,6 @@
-import Linglib.Phonology.OptimalityTheory.Grammar
+module
+
+public import Linglib.Phonology.OptimalityTheory.Grammar
 
 /-!
 # Merchant and Prince (2022): The Mother of All Tableaux
@@ -20,6 +22,8 @@ represented.
 * [merchant-riggle-2016]
 * [prince-smolensky-1993]
 -/
+
+@[expose] public section
 
 namespace MerchantPrince2022
 

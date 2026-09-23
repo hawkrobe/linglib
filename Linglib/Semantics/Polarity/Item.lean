@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Polarity.LicensingContext
-import Linglib.Semantics.Polarity.Strength
+module
+
+public import Linglib.Semantics.Polarity.LicensingContext
+public import Linglib.Semantics.Polarity.Strength
 
 /-!
 # Polarity items
@@ -38,6 +40,8 @@ role lives with that paper in `Studies/Israel2001.lean`.
 * `ScalarDirection` — strengthening vs attenuating rhetorical force.
 * `NPIMorphology`, `AlternativeType` — composition typology.
 -/
+
+@[expose] public section
 
 namespace Polarity
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Kannada coordinators
@@ -16,6 +18,8 @@ example Haspelmath cites from Sridhar. The same enclitic is the additive particl
 * [haspelmath-2007]
 * [sridhar-1990]
 -/
+
+@[expose] public section
 
 namespace Kannada.Coordination
 

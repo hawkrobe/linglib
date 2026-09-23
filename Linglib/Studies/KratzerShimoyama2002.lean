@@ -1,10 +1,12 @@
-import Mathlib.Data.Set.Functor
-import Mathlib.Data.Set.Lattice.Bounded
-import Linglib.Logic.Modal.Defs
-import Linglib.Fragments.Japanese.Determiners
-import Linglib.Fragments.German.ModalIndefinites
-import Linglib.Fragments.Latvian.IndeterminatePronouns
-import Linglib.Data.Examples.KratzerShimoyama2002
+module
+
+public import Mathlib.Data.Set.Functor
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Fragments.Japanese.Determiners
+public import Linglib.Fragments.German.ModalIndefinites
+public import Linglib.Fragments.Latvian.IndeterminatePronouns
+public import Linglib.Data.Examples.KratzerShimoyama2002
 
 /-!
 # Kratzer and Shimoyama (2002): Indeterminate Pronouns: The View from Japanese
@@ -43,6 +45,8 @@ follow the 2002 manuscript, whose numbering the published chapter keeps.
 * [kadmon-landman-1993] — widening for a reason
 * [beck-1996] — intervention effects
 -/
+
+@[expose] public section
 
 namespace KratzerShimoyama2002
 

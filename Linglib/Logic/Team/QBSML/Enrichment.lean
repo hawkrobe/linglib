@@ -1,4 +1,6 @@
-import Linglib.Logic.Team.QBSML.Defs
+module
+
+public import Linglib.Logic.Team.QBSML.Defs
 
 /-!
 # Pragmatic enrichment for QBSML
@@ -52,6 +54,8 @@ kept parallel rather than unified: a shared "team-semantic formula language
 with an `NE` constructor" abstraction awaits a third instance, per the family
 roadmap in `Logic/Team/Algebra.lean`.
 -/
+
+@[expose] public section
 
 namespace QBSML
 

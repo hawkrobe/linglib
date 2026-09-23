@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Sorbian Case Inventory (Upper and Lower)
@@ -23,6 +25,8 @@ lost" — the marked Slavic INST-prepositional pattern (cf. Slovene per
 Cassubian [stone-1993-cassubian] where bare predicative INST is
 robust).
 -/
+
+@[expose] public section
 
 namespace Sorbian.Case
 

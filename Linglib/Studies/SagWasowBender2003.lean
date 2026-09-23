@@ -1,6 +1,8 @@
-import Linglib.Syntax.HPSG.Binding
-import Linglib.Syntax.HPSG.Construction
-import Linglib.Data.Examples.SagWasowBender2003
+module
+
+public import Linglib.Syntax.HPSG.Binding
+public import Linglib.Syntax.HPSG.Construction
+public import Linglib.Data.Examples.SagWasowBender2003
 
 /-!
 # Sag, Wasow & Bender (2003): Syntactic Theory: A Formal Introduction
@@ -37,6 +39,8 @@ subject-extraction lexical rule and the initial symbol are not formalized.
 * [chomsky-1981]
 -/
 
+@[expose] public section
+
 namespace SagWasowBender2003
 
 open HPSG.RSRL HPSG.Construction Data.Examples
@@ -47,9 +51,9 @@ def probing (t : String) : List LinguisticExample :=
 
 /-! ### Binding theory -/
 
-private def sorts : List (String × Binding.Srt) := [("anaphor", .ana), ("pronoun", .ppro)]
+def sorts : List (String × Binding.Srt) := [("anaphor", .ana), ("pronoun", .ppro)]
 
-private def binders : List (String × Binding.Ent) :=
+def binders : List (String × Binding.Ent) :=
   [("local", .iSubj), ("nonlocal", .iObj)]
 
 /-- The rows on binding are acceptable exactly when the worked clause with a pronoun of the
@@ -102,7 +106,7 @@ inductive CoordEnt where
 
 /-- The GAP list of a conjunct is the shared one-gap list when the conjunct contains a gap, and
 the empty list otherwise. -/
-private def gapList (b : Bool) : CoordEnt := if b then .g else .nil
+def gapList (b : Bool) : CoordEnt := if b then .g else .nil
 
 /-- A coordinate construct of two clausal conjuncts, each containing a gap or not; the gap is
 one NP `loc`, shared by the conjuncts that have one, and the mother's GAP is the first
@@ -135,7 +139,7 @@ conjunct's. -/
 theorem coordConstruct_isWellTyped (g₁ g₂ : Bool) : (coordConstruct g₁ g₂).IsWellTyped := by
   cases g₁ <;> cases g₂ <;> decide
 
-private def bools : List (String × Bool) := [("true", true), ("false", false)]
+def bools : List (String × Bool) := [("true", true), ("false", false)]
 
 /-- The rows on coordination are acceptable exactly when the coordinate construct with a gap in
 the conjuncts the row records satisfies the grammar: a gap in one conjunct alone breaks the

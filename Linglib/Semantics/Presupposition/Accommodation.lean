@@ -1,4 +1,6 @@
-import Linglib.Semantics.Presupposition.Context
+module
+
+public import Linglib.Semantics.Presupposition.Context
 
 /-!
 # Accommodation
@@ -34,6 +36,8 @@ paribus — presupposition P comes into existence at t."
 - **Trapping**: bound presuppositions cannot escape their binder's scope
 - **Binding preference**: anaphoric resolution is preferred over accommodation
 -/
+
+@[expose] public section
 
 namespace Presupposition.Accommodation
 

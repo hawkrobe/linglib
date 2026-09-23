@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Finset.Card
-import Linglib.Syntax.Category.Numeral.Composition
+module
+
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Finset.Card
+public import Linglib.Syntax.Category.Numeral.Composition
 
 /-!
 # Ionin and Matushansky (2006): The Composition of Complex Cardinals
@@ -38,6 +40,8 @@ which computes the sum under the full split of (56b) (`coord_card`), while the j
 * [ionin-matushansky-2006]
 * [hurford-1975]
 -/
+
+@[expose] public section
 
 namespace IoninMatushansky2006
 

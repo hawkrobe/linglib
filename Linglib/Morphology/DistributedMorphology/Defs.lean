@@ -1,4 +1,6 @@
-import Linglib.Morphology.DistributedMorphology.Neighborhood
+module
+
+public import Linglib.Morphology.DistributedMorphology.Neighborhood
 
 /-!
 # Vocabulary items
@@ -15,6 +17,8 @@ selection-engine instance lives in `DistributedMorphology/Basic.lean`.
 * [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
   inflection*][halle-marantz-1993]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

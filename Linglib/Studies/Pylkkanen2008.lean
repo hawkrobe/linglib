@@ -1,6 +1,8 @@
-import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
-import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Data.Examples.Pylkkanen2008
+module
+
+public import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
+public import Linglib.Syntax.Minimalist.Verbal.Applicative
+public import Linglib.Data.Examples.Pylkkanen2008
 
 /-!
 # Pylkkänen (2008): Introducing Arguments
@@ -38,6 +40,8 @@ note a), so only the English, Japanese, and Finnish heads are given as `Cause` v
 * [marantz-1997]
 * [cuervo-2003]
 -/
+
+@[expose] public section
 
 namespace Pylkkanen2008
 

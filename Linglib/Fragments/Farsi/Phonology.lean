@@ -1,5 +1,7 @@
-import Linglib.Data.PHOIBLE.Inventories.Persian
-import Linglib.Phonology.Segmental.PHOIBLE
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Persian
+public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Persian phonemes
@@ -34,6 +36,8 @@ Ternes transcribe the vowel /æ/.
 * [hayes-2009]
 * [ariyaee-jurgec-2021]
 -/
+
+@[expose] public section
 
 open Phonology Data.PHOIBLE
 

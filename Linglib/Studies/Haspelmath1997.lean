@@ -3,14 +3,16 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Combinatorics.SimpleGraph.Connectivity.Connected
-import Linglib.Data.Examples.Haspelmath1997
-import Linglib.Fragments.English.Indefinites
-import Linglib.Fragments.German.Indefinites
-import Linglib.Fragments.Kannada.Indefinites
-import Linglib.Fragments.Latin.Indefinites
-import Linglib.Fragments.Slavic.Russian.Indefinites
-import Linglib.Fragments.Yakut.Indefinites
+module
+
+public import Linglib.Core.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Linglib.Data.Examples.Haspelmath1997
+public import Linglib.Fragments.English.Indefinites
+public import Linglib.Fragments.German.Indefinites
+public import Linglib.Fragments.Kannada.Indefinites
+public import Linglib.Fragments.Latin.Indefinites
+public import Linglib.Fragments.Slavic.Russian.Indefinites
+public import Linglib.Fragments.Yakut.Indefinites
 
 /-!
 # Haspelmath (1997): Indefinite Pronouns
@@ -66,6 +68,8 @@ pronouns of English, German, Kannada, Latin, Russian and Yakut are their Fragmen
 
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace Haspelmath1997
 
@@ -199,7 +203,7 @@ structure Series where
 
 /-- A series of the person category, the ontological category Appendix A tabulates first, with
 its functions in the book's digit notation. -/
-private def series (label form : String) (basis : MorphologicalBasis) (ns : List ℕ)
+def series (label form : String) (basis : MorphologicalBasis) (ns : List ℕ)
     (ontology : OntologicalCategory := .person) : Series :=
   ⟨label, { form, ontology, basis }, region ns⟩
 
@@ -386,7 +390,7 @@ def paradigm? : String → Option (List Series)
   | "swah1253" => some swahili
   | _ => none
 
-private def functionTable : List (String × HaspelmathFunction) :=
+def functionTable : List (String × HaspelmathFunction) :=
   [("specificKnown", .specificKnown), ("specificUnknown", .specificUnknown),
     ("irrealis", .irrealis), ("question", .question), ("conditional", .conditional),
     ("indirectNeg", .indirectNeg), ("directNeg", .directNeg), ("comparative", .comparative),

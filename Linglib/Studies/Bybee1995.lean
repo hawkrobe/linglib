@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.Forms.Bybee1995
-import Linglib.Morphology.ConstructionMorphology.Schema
-import Mathlib.Data.Multiset.Filter
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Data.Forms.Bybee1995
+public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Mathlib.Data.Multiset.Filter
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Bybee (1995): Regular morphology and the lexicon
@@ -44,6 +46,8 @@ their bases lack the vowel a source-oriented pairing from *string* would demand
 * [bybee-2007]
 * [bybee-moder-1983]
 -/
+
+@[expose] public section
 
 namespace Bybee1995
 

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Logic.Modal.Defs
-import Linglib.Semantics.Quantification.Basic
-import Linglib.Logic.Modal.Extensional
+module
+
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Modal.Extensional
 
 /-!
 # Choice functions
@@ -52,6 +54,8 @@ takes wide scope over negation; a situation quantifier separates them (`bound_fr
 * [elbourne-2013]
 * [zimmermann-2026]
 -/
+
+@[expose] public section
 
 namespace Reference
 

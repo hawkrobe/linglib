@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Semantics.Denotation
-import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Composition.Assignment
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Reference.Nominal
+public import Linglib.Semantics.Presupposition.PhiFeatures
+public import Linglib.Semantics.Composition.Assignment
 
 /-!
 # The denotation of a pronoun
@@ -37,6 +39,8 @@ are the gender of referents the entity domain comes equipped with (`Gendered`).
 * [buring-2012]
 * [sauerland-2003]
 -/
+
+@[expose] public section
 
 open Reference
 

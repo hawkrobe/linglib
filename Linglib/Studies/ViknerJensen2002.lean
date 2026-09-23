@@ -1,6 +1,8 @@
-import Linglib.Semantics.Possession.Quantifier
-import Linglib.Studies.Pustejovsky1995
-import Linglib.Data.Examples.ViknerJensen2002
+module
+
+public import Linglib.Semantics.Possession.Quantifier
+public import Linglib.Studies.Pustejovsky1995
+public import Linglib.Data.Examples.ViknerJensen2002
 
 /-!
 # Vikner & Jensen (2002): A Semantic Analysis of the English Genitive
@@ -46,6 +48,8 @@ formalized.
 * [partee-1997]
 * [peters-westerstahl-2006]
 -/
+
+@[expose] public section
 
 namespace ViknerJensen2002
 

@@ -1,5 +1,7 @@
-import Mathlib.Data.Finset.Card
-import Linglib.Semantics.Plurality.Reciprocal
+module
+
+public import Mathlib.Data.Finset.Card
+public import Linglib.Semantics.Plurality.Reciprocal
 
 /-!
 # Reciprocals are definites
@@ -48,6 +50,8 @@ comparison); the trivalent divergence from [sternefeld-1998] is noted at
   plural-predication substrate: `*`, covers, maximality, `**`.
 * [sternefeld-1998] — the WR-by-cumulation analysis §4 builds on and improves.
 -/
+
+@[expose] public section
 
 namespace Beck2001
 

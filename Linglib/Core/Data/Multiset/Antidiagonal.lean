@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.Multiset.Powerset
-import Mathlib.Data.Multiset.Antidiagonal
-import Linglib.Core.Data.List.Zip
+module
+
+public import Linglib.Core.Data.Multiset.Powerset
+public import Mathlib.Data.Multiset.Antidiagonal
+public import Linglib.Core.Data.List.Zip
 
 /-!
 # Counting pairs in `Multiset.antidiagonal`
@@ -27,6 +29,8 @@ multiplicities*; this file computes those multiplicities: `(u, v)` occurs
 the closed form also evaluates `Finsupp.antidiagonal'`.
 
 -/
+
+@[expose] public section
 
 namespace Multiset
 

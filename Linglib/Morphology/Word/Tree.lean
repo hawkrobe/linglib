@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Morph
+module
+
+public import Linglib.Morphology.Morph
 
 /-!
 # Word-internal structure
@@ -27,6 +29,8 @@ constituency, which applying the operations as functions would forget.
   relational notions
 * `Word.Tree.IsKindCoherent` — attachment kinds match their positions
 -/
+
+@[expose] public section
 
 namespace Morphology.Word
 

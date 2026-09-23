@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Presupposition.Defs
-import Linglib.Semantics.Exhaustification.DomainAlternatives
-import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Semantics.Exhaustification.DomainAlternatives
+public import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 
 /-!
 # Alonso-Ovalle & Menéndez-Benito (2010): modal indefinites
@@ -41,6 +43,8 @@ scenario verdicts (24)–(30) are checked in `rows_agree`.
 * [zimmermann-2000]
 * [jayez-tovena-2006]
 -/
+
+@[expose] public section
 
 namespace AlonsoOvalleMenendezBenito2010
 

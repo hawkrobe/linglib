@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Korean case markers
@@ -22,6 +24,8 @@ particles. Forms are in the Revised Romanization; Sohn writes *ka*, *(l)ul*, *uy
 
 * [sohn-1994]
 -/
+
+@[expose] public section
 
 namespace Korean.Case
 

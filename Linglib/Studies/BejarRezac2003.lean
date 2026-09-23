@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Probe.Phi
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Phi
 
 /-!
 # Béjar and Rezac 2003: person licensing and the Person Case Constraint
@@ -49,6 +51,8 @@ probe is `Probe.ofInt`, the probe gated only by the Active Goal Hypothesis.
 * [zaenen-maling-thrainsson-1985], [taraldsen-1995], [sigurdsson-1996]: the Icelandic
   dative subject and its person restriction.
 -/
+
+@[expose] public section
 
 namespace BejarRezac2003
 

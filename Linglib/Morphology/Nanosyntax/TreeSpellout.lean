@@ -1,7 +1,9 @@
-import Linglib.Core.Order.Branching
-import Linglib.Morphology.Exponence.Select
-import Linglib.Morphology.Morph
-import Mathlib.Data.List.MinMax
+module
+
+public import Linglib.Core.Order.Branching
+public import Linglib.Morphology.Exponence.Select
+public import Linglib.Morphology.Morph
+public import Mathlib.Data.List.MinMax
 
 /-!
 # Nanosyntax: Tree-Based Spellout
@@ -34,6 +36,8 @@ uses containment as the simpler equivalent formulation.
   reduces to rank comparison — tree-based spellout generalizes (not
   replaces) rank-based spellout
 -/
+
+@[expose] public section
 
 namespace Morphology.Nanosyntax
 

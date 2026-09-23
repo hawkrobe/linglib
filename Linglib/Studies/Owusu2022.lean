@@ -1,5 +1,7 @@
-import Linglib.Fragments.Akan.Determiners
-import Linglib.Semantics.Reference.ChoiceFunction
+module
+
+public import Linglib.Fragments.Akan.Determiners
+public import Linglib.Semantics.Reference.ChoiceFunction
 
 /-!
 # Owusu (2022): Cross-Categorial Definiteness/Familiarity
@@ -46,6 +48,8 @@ machinery beyond the fixed-situation fragment formalized here.
 * [schwarz-2013]
 * [arkoh-matthewson-2013]
 -/
+
+@[expose] public section
 
 open Reference
 

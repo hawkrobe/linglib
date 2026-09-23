@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 18A: Absence of Common Consonants
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 18, 567 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F18A
 
@@ -28,7 +32,8 @@ inductive AbsenceOfCommonConsonants where
   | noFricativesOrNasals
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint AbsenceOfCommonConsonants) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint AbsenceOfCommonConsonants) :=
   [ { walsCode := "xoo", iso := "nmn", value := .allPresent }
   , { walsCode := "ani", iso := "hnh", value := .allPresent }
   , { walsCode := "abi", iso := "axb", value := .allPresent }
@@ -531,7 +536,8 @@ private def allData_0 : List (Datapoint AbsenceOfCommonConsonants) :=
   , { walsCode := "tru", iso := "tpy", value := .allPresent }
   ]
 
-private def allData_1 : List (Datapoint AbsenceOfCommonConsonants) :=
+/-- Rows 501 to 567 of `allData`. -/
+def allData_1 : List (Datapoint AbsenceOfCommonConsonants) :=
   [ { walsCode := "tsi", iso := "tsi", value := .allPresent }
   , { walsCode := "tso", iso := "tsu", value := .allPresent }
   , { walsCode := "ttu", iso := "bbl", value := .allPresent }

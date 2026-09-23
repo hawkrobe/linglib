@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Geometry
+module
+
+public import Linglib.Syntax.Minimalist.Features
+public import Linglib.Syntax.Minimalist.Geometry
 
 /-!
 # Coordination resolution over a dual-feature system
@@ -29,6 +31,8 @@ default.
 * [adamson-anagnostopoulou-2025]
 * [smith-2015]
 -/
+
+@[expose] public section
 
 namespace Minimalist.Coordination
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Verb stem entries
@@ -16,6 +18,8 @@ Contrast `Semantics.Root` (the lexical-semantic root) and the full semantic
 `Verb` entry of `Syntax/Category/Verb/Defs.lean`; `Verb.Stem` carries no
 semantics beyond its gloss.
 -/
+
+@[expose] public section
 
 namespace Verb
 

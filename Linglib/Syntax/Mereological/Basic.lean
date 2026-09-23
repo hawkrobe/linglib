@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.FunctionalSequence
-import Mathlib.Data.List.Chain
+module
+
+public import Linglib.Syntax.Minimalist.FunctionalSequence
+public import Mathlib.Data.List.Chain
 
 /-!
 # Syntactic objects of mereological syntax
@@ -30,6 +32,8 @@ across positions, and hence movement and Angular Locality, need the general part
 * [grimshaw-2005]
 * [wang-sun-2026]
 -/
+
+@[expose] public section
 
 namespace MereologicalSyntax
 

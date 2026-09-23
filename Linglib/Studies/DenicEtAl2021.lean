@@ -1,6 +1,8 @@
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Fragments.English.PolarityItems
-import Mathlib.Probability.ConditionalProbability
+module
+
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.English.PolarityItems
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Denić et al. (2021): The influence of polarity items on inferential judgments
@@ -50,6 +52,8 @@ is the published article's.
 * [szabolcsi-bott-mcelree-2008]
 * [chemla-homer-rothschild-2011]
 -/
+
+@[expose] public section
 
 namespace DenicEtAl2021
 

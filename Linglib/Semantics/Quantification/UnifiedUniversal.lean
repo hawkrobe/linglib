@@ -1,4 +1,6 @@
-import Linglib.Semantics.Mereology
+module
+
+public import Linglib.Semantics.Mereology
 
 /-!
 # Unified Semantics for Universal Quantification
@@ -32,6 +34,8 @@ The connection to the standard GQ `every_sem` (in `Quantifier.lean`) and
 to the tolerance-based `distMaximal` (in `Distributivity.lean`) is
 established via bridge theorems, not by replacement.
 -/
+
+@[expose] public section
 
 namespace Quantifier.UnifiedUniversal
 

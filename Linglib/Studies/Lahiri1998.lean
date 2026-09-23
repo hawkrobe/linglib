@@ -1,6 +1,8 @@
-import Linglib.Semantics.Focus.Particles
-import Linglib.Fragments.Hindi.PolarityItems
-import Linglib.Data.Examples.Lahiri1998
+module
+
+public import Linglib.Semantics.Focus.Particles
+public import Linglib.Fragments.Hindi.PolarityItems
+public import Linglib.Data.Examples.Lahiri1998
 
 /-!
 # Lahiri (1998): Focus and negative polarity in Hindi
@@ -42,6 +44,8 @@ and *kisiike* are *koii*'s.
 * [karttunen-peters-1979]
 * [kadmon-landman-1993]
 -/
+
+@[expose] public section
 
 namespace Lahiri1998
 

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Melody
-import Linglib.Morphology.Word.Tree
+module
+
+public import Linglib.Phonology.Autosegmental.Melody
+public import Linglib.Morphology.Word.Tree
 
 /-!
 # Laoide-Kemp (2026): Strict modularity at the morphosyntax-phonology interface
@@ -46,6 +48,8 @@ Model Figure 2, the *r*- against *fr*-initial contrast, once a government substr
 * [bermudez-otero-2012], [lowenstamm-1996], [gussmann-1986], [ni-chiosain-1991],
   [scheer-1998]
 -/
+
+@[expose] public section
 
 namespace LaoideKemp2026
 
@@ -100,13 +104,13 @@ exponent bearing the floating `(d)`, and the past-tense impersonal exponent bear
 CV unit (§6.2). -/
 
 /-- The verb-stem morpheme (a free word), keyed by orthographic form. -/
-private def mStem (s : String) : Morph := .root s
+def mStem (s : String) : Morph := .root s
 
 /-- The historic-tense exponent, bearing `(d)` and `{L}`. -/
-private def mHist : Morph := .pref "d'"
+def mHist : Morph := .pref "d'"
 
 /-- The past-tense impersonal exponent (§6.2). -/
-private def mImpers : Morph := .pref ""
+def mImpers : Morph := .pref ""
 
 /-! ### Verb stems
 
@@ -116,7 +120,7 @@ surface state is the underlying one. -/
 
 /-- Build a single-morpheme verb stem from its CV skeleton, melody,
     and association lines. -/
-private def stemForm (name : String) (skeleton : List CVKind) (mel : List Segment)
+def stemForm (name : String) (skeleton : List CVKind) (mel : List Segment)
     (links : Finset (Nat × Nat)) : Form CVKind Segment Morph :=
   Form.melody (mStem name) mel skeleton links
 

@@ -1,8 +1,10 @@
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Homogeneity.Decided
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Data.Examples.Rubinstein2014
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Homogeneity.Decided
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Data.Examples.Rubinstein2014
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Rubinstein (2014): On Necessity and Comparison
@@ -43,6 +45,8 @@ the counts of the paper's crosslinguistic survey are not formalized.
 * [K. von Fintel and S. Iatridou, *How to Say Ought in Foreign: The Composition of Weak Necessity
   Modals* (2008)][von-fintel-iatridou-2008]
 -/
+
+@[expose] public section
 
 namespace Rubinstein2014
 

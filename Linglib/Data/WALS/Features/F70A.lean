@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 70A: The Morphological Imperative
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 70, 548 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F70A
 
@@ -26,7 +30,8 @@ inductive MorphologicalImperative where
   | noSecondPersonImperatives
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint MorphologicalImperative) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint MorphologicalImperative) :=
   [ { walsCode := "abk", iso := "abk", value := .secondSingularAndSecondPlural }
   , { walsCode := "abu", iso := "kgr", value := .noSecondPersonImperatives }
   , { walsCode := "ace", iso := "ace", value := .noSecondPersonImperatives }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint MorphologicalImperative) :=
   , { walsCode := "ukr", iso := "ukr", value := .secondSingularAndSecondPlural }
   ]
 
-private def allData_1 : List (Datapoint MorphologicalImperative) :=
+/-- Rows 501 to 548 of `allData`. -/
+def allData_1 : List (Datapoint MorphologicalImperative) :=
   [ { walsCode := "uld", iso := "udl", value := .secondSingularAndSecondPlural }
   , { walsCode := "uma", iso := "ppk", value := .noSecondPersonImperatives }
   , { walsCode := "una", iso := "mtg", value := .secondSingularAndSecondPlural }

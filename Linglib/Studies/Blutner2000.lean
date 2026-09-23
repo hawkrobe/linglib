@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.Bidirectional
-import Linglib.Semantics.Presupposition.Accommodation
+module
+
+public import Linglib.Pragmatics.Bidirectional
+public import Linglib.Semantics.Presupposition.Accommodation
 
 /-!
 # Blutner (2000): Some aspects of optimality in natural language interpretation
@@ -52,6 +54,8 @@ alternative exists, Zeevat's generalization.
 * [van-der-sandt-1992], [geurts-1995] — the projection mechanism and its preferences.
 * [asher-lascarides-1998] — the car-accident blocking datum.
 -/
+
+@[expose] public section
 
 namespace Blutner2000
 

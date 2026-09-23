@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Washo Modal Inventory
@@ -14,14 +16,16 @@ Despite this, *-eʔ* satisfies the IFF universal
 Cartesian product {necessity, possibility} × {epistemic, deontic}.
 -/
 
+@[expose] public section
+
 namespace Washo
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev ne : ForceFlavor := (.necessity, .epistemic)
-private abbrev nd : ForceFlavor := (.necessity, .deontic)
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev pd : ForceFlavor := (.possibility, .deontic)
+abbrev ne : ForceFlavor := (.necessity, .epistemic)
+abbrev nd : ForceFlavor := (.necessity, .deontic)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev pd : ForceFlavor := (.possibility, .deontic)
 
 /-- *-eʔ* — variable-force, variable-flavor modal verb.
     Expresses epistemic and deontic modality with both weak and strong force.

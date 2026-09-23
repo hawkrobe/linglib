@@ -1,5 +1,7 @@
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # San Martín Peras Mixtec (SMPM) Fragment
@@ -18,6 +20,8 @@ subjects and all transitive clauses require overt objects.
 - Embedded clause typology (three-way: finite, tensed subj., untensed subj.)
 - Complement-taking predicate classification by clause type selected
 -/
+
+@[expose] public section
 
 namespace Mixtec.SMPM
 

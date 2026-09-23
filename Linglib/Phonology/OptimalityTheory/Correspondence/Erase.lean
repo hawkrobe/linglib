@@ -1,4 +1,6 @@
-import Linglib.Phonology.OptimalityTheory.Correspondence
+module
+
+public import Linglib.Phonology.OptimalityTheory.Correspondence
 
 /-!
 # Deletion and insertion of one segment
@@ -28,6 +30,8 @@ insertion violates DEP once and MAX never.
 
 * [mccarthy-prince-1995]
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory.Correspondence
 

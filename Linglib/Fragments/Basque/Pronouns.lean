@@ -1,5 +1,7 @@
-import Linglib.Syntax.Agreement.Allocutive
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Agreement.Allocutive
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Basque pronouns and allocutive markers
@@ -16,6 +18,8 @@ agreement with a second person subject.
 * [laka-1996]
 * [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
+
+@[expose] public section
 
 namespace Basque.Pronouns
 

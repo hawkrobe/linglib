@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 130B: Cultural Categories of Languages with Identity of 'Finger' and 'Hand'
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 130, 72 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F130B
 

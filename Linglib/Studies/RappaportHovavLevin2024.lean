@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.EnergySource
-import Linglib.Data.Examples.RappaportHovavLevin2024
+module
+
+public import Linglib.Semantics.ArgumentStructure.EnergySource
+public import Linglib.Data.Examples.RappaportHovavLevin2024
 
 /-!
 # Rappaport Hovav and Levin (2024): Variable agentivity: polysemy or underspecification?
@@ -49,6 +51,8 @@ accomplishment of `ArgumentStructure.EventStructure.Template`.
 * [P. Kiparsky, *Remarks on denominal verbs* (1997)][kiparsky-1997]
 * [B. Levin, *English verb classes and alternations* (1993)][levin-1993]
 -/
+
+@[expose] public section
 
 namespace RappaportHovavLevin2024
 

@@ -1,12 +1,15 @@
-import Linglib.Semantics.Modality.Universals
-import Linglib.Data.Examples.ImelGuoSteinertThrelkeld2026
-import Linglib.Fragments.Washo.Modals
-import Linglib.Fragments.Koryak.Modals
-import Linglib.Fragments.Greek.StandardModern.Modals
-import Mathlib.Algebra.BigOperators.Expect
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
+module
+
+public import Linglib.Semantics.Modality.Universals
+public import Linglib.Data.Examples.ImelGuoSteinertThrelkeld2026
+public import Linglib.Fragments.Washo.Modals
+public import Linglib.Fragments.Koryak.Modals
+public import Linglib.Fragments.Greek.StandardModern.Modals
+public import Mathlib.Algebra.BigOperators.Expect
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
 
 /-!
 # Imel, Guo and Steinert-Threlkeld (2026): An Efficient Communication Analysis of Modal Typology
@@ -53,6 +56,8 @@ without them.
 * [rullmann-matthewson-davis-2008]
 * [bochnak-2015a]
 -/
+
+@[expose] public section
 
 namespace ImelGuoSteinertThrelkeld2026
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Logophoric pronouns
@@ -20,6 +22,8 @@ is a reflexive; its role lives on `ReflexivePronoun`.
 
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
+
+@[expose] public section
 
 /-- A logophoric pronoun: a `PersonalPronoun` with the least [sells-1987] role its antecedent
 must fill. It is a pronominal, and what licenses it is the role, not a binding configuration. -/

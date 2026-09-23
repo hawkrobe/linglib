@@ -1,5 +1,7 @@
-import Linglib.Semantics.Possession.Basic
-import Linglib.Semantics.Quantification.Basic
+module
+
+public import Linglib.Semantics.Possession.Basic
+public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Possessive quantifiers
@@ -41,6 +43,8 @@ account", an existential — is the parameter the definiteness debate turns on
   treatment.
 * [barker-1995], [barker-2011], [coppock-beaver-2015].
 -/
+
+@[expose] public section
 
 namespace Possession
 

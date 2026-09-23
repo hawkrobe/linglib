@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 8A: Lateral Consonants
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 8, 567 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F8A
 
@@ -26,7 +30,8 @@ inductive LateralConsonants where
   | noLButLateralObstruents
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint LateralConsonants) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint LateralConsonants) :=
   [ { walsCode := "xoo", iso := "nmn", value := .lNoObstruentLaterals }
   , { walsCode := "ani", iso := "hnh", value := .noLaterals }
   , { walsCode := "abi", iso := "axb", value := .lNoObstruentLaterals }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint LateralConsonants) :=
   , { walsCode := "tru", iso := "tpy", value := .lAndLateralObstruent }
   ]
 
-private def allData_1 : List (Datapoint LateralConsonants) :=
+/-- Rows 501 to 567 of `allData`. -/
+def allData_1 : List (Datapoint LateralConsonants) :=
   [ { walsCode := "tsi", iso := "tsi", value := .lAndLateralObstruent }
   , { walsCode := "tso", iso := "tsu", value := .noLaterals }
   , { walsCode := "ttu", iso := "bbl", value := .lAndLateralObstruent }

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
+module
+
+public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
 # Workspaces
@@ -25,6 +27,8 @@ its identity with the algebraic Merge operator are in `Merge/SyntacticObject.lea
 
 * [marcolli-chomsky-berwick-2025], §1.2 (Definition 1.2.1)
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

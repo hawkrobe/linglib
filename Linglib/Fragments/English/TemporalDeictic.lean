@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Perspective
+module
+
+public import Linglib.Semantics.Tense.Perspective
 
 /-!
 # English temporal deictic adverbs
@@ -12,6 +14,8 @@ janitor turned off the lights. The room was empty then.* The description follows
 
 * [tsilia-zhao-2026]
 -/
+
+@[expose] public section
 
 namespace English.TemporalDeictic
 

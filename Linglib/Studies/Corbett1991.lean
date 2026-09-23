@@ -1,19 +1,21 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Agreement.Hierarchy
-import Linglib.Syntax.Agreement.Resolution
-import Linglib.Syntax.Agreement.Classes
-import Linglib.Syntax.Gender.Assignment
-import Linglib.Syntax.Number.Resolve
-import Linglib.Syntax.Person.Resolve
-import Linglib.Fragments.Tamil.Gender
-import Linglib.Fragments.Swahili.Nouns
-import Linglib.Fragments.Afar.Gender
-import Linglib.Fragments.Romanian.Gender
-import Linglib.Fragments.Slavic.Russian.Gender
-import Linglib.Fragments.Hausa.Gender
-import Linglib.Fragments.Latin.Gender
-import Linglib.Data.Examples.Corbett1991
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Agreement.Hierarchy
+public import Linglib.Syntax.Agreement.Resolution
+public import Linglib.Syntax.Agreement.Classes
+public import Linglib.Syntax.Gender.Assignment
+public import Linglib.Syntax.Number.Resolve
+public import Linglib.Syntax.Person.Resolve
+public import Linglib.Fragments.Tamil.Gender
+public import Linglib.Fragments.Swahili.Nouns
+public import Linglib.Fragments.Afar.Gender
+public import Linglib.Fragments.Romanian.Gender
+public import Linglib.Fragments.Slavic.Russian.Gender
+public import Linglib.Fragments.Hausa.Gender
+public import Linglib.Fragments.Latin.Gender
+public import Linglib.Data.Examples.Corbett1991
 
 /-!
 # Corbett (1991): Gender
@@ -98,6 +100,8 @@ never less semantic than its assignment. The judgments the book reports are the 
 * [G. R. Tucker, W. E. Lambert, A. A. Rigault, *The French Speaker's Skill with Grammatical
   Gender* (1977)][tucker-lambert-rigault-1977]
 -/
+
+@[expose] public section
 
 namespace Corbett1991
 

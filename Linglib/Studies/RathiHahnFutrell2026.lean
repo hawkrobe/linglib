@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Complexity
-import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+module
+
+public import Linglib.Morphology.Paradigm.Complexity
+public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 
 /-!
 # Rathi, Hahn, and Futrell (2026): Toward an information-theoretic model of morphological fusion based on an efficient tradeoff of memory and surprisal
@@ -49,6 +51,8 @@ entropy under an injective recoding.
   morphology of verbal agreement marking* (2020)][mansfield-stoll-bickel-2020]
 * [T. M. Cover, J. A. Thomas, *Elements of information theory* (2006)][cover-thomas-2006]
 -/
+
+@[expose] public section
 
 namespace RathiHahnFutrell2026
 

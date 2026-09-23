@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.Defs
+module
+
+public import Linglib.Semantics.Quantification.Defs
 
 /-!
 # GQ Generators: Meets and Joins of Individual Quantifiers
@@ -39,6 +41,8 @@ characterizations (`conjGQ X P ↔ ∀ x ∈ X, P x`,
 - `deMorgan_conj` / `deMorgan_disj` — De Morgan duality
 - `conjGQ_append` / `disjGQ_append` — compositionality
 -/
+
+@[expose] public section
 
 namespace Quantifier.NP
 

@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Istratkova2004
-import Linglib.Studies.Svenonius2004
+module
+
+public import Linglib.Data.Examples.Istratkova2004
+public import Linglib.Studies.Svenonius2004
 
 /-!
 # Istratkova (2004): On Multiple Prefixation in Bulgarian
@@ -35,6 +37,8 @@ outermost.
 * [istratkova-2004]
 * [svenonius-2004]
 -/
+
+@[expose] public section
 
 namespace Istratkova2004
 

@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Gunlogson2001
-import Linglib.Discourse.Commitment.Declarative
+module
+
+public import Linglib.Data.Examples.Gunlogson2001
+public import Linglib.Discourse.Commitment.Declarative
 
 /-!
 # Gunlogson (2001): True to Form: Rising and Falling Declaratives as Questions in English
@@ -40,6 +42,8 @@ says is equivalent to (67), agrees with it exactly on unresolved propositions,
 
 * [gunlogson-2001]
 -/
+
+@[expose] public section
 
 namespace Gunlogson2001
 

@@ -1,7 +1,9 @@
-import Linglib.Syntax.DependencyGrammar.Projectivity
-import Linglib.Syntax.DependencyGrammar.Length
-import Linglib.Syntax.WordOrder
-import Linglib.Morphology.Word.Basic
+module
+
+public import Linglib.Syntax.DependencyGrammar.Projectivity
+public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.WordOrder
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Gibson (2025): Syntax: A Cognitive Approach
@@ -39,6 +41,8 @@ cost more only because they keep subjects before their verbs.
 * [dryer-haspelmath-2013]
 * [temperley-2007]
 -/
+
+@[expose] public section
 
 namespace Gibson2025
 

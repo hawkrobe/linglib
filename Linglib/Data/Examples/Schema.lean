@@ -1,5 +1,7 @@
-import Mathlib.Tactic.TypeStar
-import Linglib.Data.Examples.Judgment
+module
+
+public import Mathlib.Tactic.TypeStar
+public import Linglib.Data.Examples.Judgment
 
 /-!
 # `LinguisticExample` schema
@@ -51,6 +53,8 @@ data with morpheme-aligned gloss. It does NOT yet model:
 These extensions land when a consuming study needs them; the schema can
 grow optional fields without breaking existing rows.
 -/
+
+@[expose] public section
 
 namespace Data.Examples
 
@@ -187,7 +191,7 @@ def parse? {α : Type*} (e : LinguisticExample) (key : String) (table : List (St
 
 /-- A nonempty string of decimal digits as a numeral, by a structural fold so that `decide` can
 evaluate it. -/
-private def digits? : List Char → Option Nat
+def digits? : List Char → Option Nat
   | [] => none
   | cs =>
     if cs.all Char.isDigit then some (cs.foldl (λ n c => 10 * n + (c.toNat - '0'.toNat)) 0)

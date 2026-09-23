@@ -1,5 +1,7 @@
-import Linglib.Syntax.Gender.Decomposition
-import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
+module
+
+public import Linglib.Syntax.Gender.Decomposition
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 
 /-!
 # Gender on the nominal categorizer
@@ -39,6 +41,8 @@ head inventory is `KramerN`, whose three-gender bound for one dimension is a the
 * [L. Konnelly and E. Cowper, *Gender diversity and morphosyntax*][konnelly-cowper-2020]
 * [P. W. Smith, *Feature mismatches*][smith-2015]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

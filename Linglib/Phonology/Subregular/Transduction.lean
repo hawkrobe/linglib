@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Subregular.QF
+module
+
+public import Linglib.Phonology.Subregular.QF
 
 /-!
 # Quantifier-free logical transductions
@@ -42,6 +44,8 @@ A clause is a quantifier-free guard paired with an output symbol; per copy, the 
 whose guard holds at the input position fires, and a copy with no firing clause is absent.
 `apply` is a `flatMap` over input positions then copies, so it reduces under `decide`.
 -/
+
+@[expose] public section
 
 namespace Subregular
 

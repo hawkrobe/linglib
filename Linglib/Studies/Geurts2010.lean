@@ -1,4 +1,6 @@
-import Linglib.Studies.GeurtsPouscoulous2009
+module
+
+public import Linglib.Studies.GeurtsPouscoulous2009
 
 /-!
 # Geurts (2010): Quantity Implicatures
@@ -19,6 +21,8 @@ reverses a scale, so that *not all* blocks the local inference, is the negated c
 * [geurts-2010]
 * [geurts-pouscoulous-2009]
 -/
+
+@[expose] public section
 
 namespace Geurts2010
 

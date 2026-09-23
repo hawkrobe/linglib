@@ -1,6 +1,8 @@
-import Mathlib.Order.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Centering theory: ranking by grammatical role
@@ -24,6 +26,8 @@ Grosz, and Gilliom's repeated-name penalty experiments support it.
 * [grosz-joshi-weinstein-1995]
 * [gordon-grosz-gilliom-1993]
 -/
+
+@[expose] public section
 
 namespace Discourse.Centering
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Events.Basic
+module
+
+public import Linglib.Semantics.Events.Basic
 
 /-!
 # Thematic roles
@@ -18,6 +20,8 @@ of a model.
 
 * [davidson-1967], [parsons-1990], [rudin-2025b]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

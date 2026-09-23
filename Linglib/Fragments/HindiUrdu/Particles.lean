@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Hindi-Urdu interrogative particles
@@ -27,6 +29,8 @@ licensing distributions.
 * [bhatt-dayal-2020], §2, §5
 * [dayal-2025], §1.3, ex. 70–71
 -/
+
+@[expose] public section
 
 namespace HindiUrdu.Particles
 

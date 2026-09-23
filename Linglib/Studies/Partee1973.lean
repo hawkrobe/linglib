@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Compositional
+module
+
+public import Linglib.Semantics.Tense.Compositional
 
 /-!
 # Partee (1973): Some Structural Analogies between Tenses and Pronouns in English
@@ -23,6 +25,8 @@ Montague substrate.
 * [partee-1973]
 * [prior-1967]
 -/
+
+@[expose] public section
 
 open Tense
 

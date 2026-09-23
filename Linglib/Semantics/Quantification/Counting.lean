@@ -1,9 +1,11 @@
-import Linglib.Semantics.Quantification.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Data.Finset.Card
-import Mathlib.Logic.Equiv.Basic
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Semantics.Quantification.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Logic.Equiv.Basic
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Counting generalized quantifiers
@@ -25,6 +27,8 @@ and the bridge to model-agnostic `QuantityInvariant`.
 * `Quantity` — cardinality-based isomorphism closure.
 * `Proportional` — truth-value depends only on the ratio |A∩B|/|A\B|.
 -/
+
+@[expose] public section
 
 namespace Quantifier.GQ
 

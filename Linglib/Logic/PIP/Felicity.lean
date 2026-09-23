@@ -1,4 +1,6 @@
-import Linglib.Logic.PIP.Semantics
+module
+
+public import Linglib.Logic.PIP.Semantics
 
 /-!
 # Felicity of PIP formulas
@@ -35,6 +37,8 @@ assignment.
 * [abney-keshet-2025]
 * [karttunen-1974]
 -/
+
+@[expose] public section
 
 namespace PIP
 

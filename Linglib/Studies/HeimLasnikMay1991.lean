@@ -1,6 +1,8 @@
-import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Semantics.Plurality.Algebra
-import Linglib.Data.Examples.HeimLasnikMay1991
+module
+
+public import Linglib.Semantics.Plurality.Reciprocal
+public import Linglib.Semantics.Plurality.Algebra
+public import Linglib.Data.Examples.HeimLasnikMay1991
 
 /-!
 # Heim, Lasnik and May (1991): Reciprocity and Plurality
@@ -40,6 +42,8 @@ types derived; the syntactic derivation of *each*-movement itself is not represe
 * [higginbotham-1985]
 * [dalrymple-et-al-1998]
 -/
+
+@[expose] public section
 
 namespace HeimLasnikMay1991
 

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.List.Chain
-import Mathlib.Data.List.OfFn
-import Linglib.Core.Data.List.GetElem
-import Linglib.Core.Data.List.Factors
+module
+
+public import Linglib.Core.Data.List.Chain
+public import Mathlib.Data.List.OfFn
+public import Linglib.Core.Data.List.GetElem
+public import Linglib.Core.Data.List.Factors
 
 /-!
 # Subregular Languages: Boundary Augmentation
@@ -40,6 +42,8 @@ one-fresh-symbol extension `Option α` (`none` = boundary, `some a` = original
 symbol): a single marker suffices because boundary symbols only ever occur at
 fixed positions, so the two edges are never confused.
 -/
+
+@[expose] public section
 
 variable {α : Type*}
 

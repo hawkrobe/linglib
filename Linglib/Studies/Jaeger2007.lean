@@ -1,8 +1,10 @@
-import Linglib.Data.Examples.Jaeger2007
-import Linglib.Core.Learning.Luce
-import Linglib.Studies.GoldwaterJohnson2003
-import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-import Mathlib.Basic.Sign.Basic
+module
+
+public import Linglib.Data.Examples.Jaeger2007
+public import Linglib.Core.Learning.Luce
+public import Linglib.Studies.GoldwaterJohnson2003
+public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
+public import Mathlib.Basic.Sign.Basic
 
 /-!
 # Jäger (2007): Maximum Entropy Models and Stochastic Optimality Theory
@@ -46,6 +48,8 @@ has FAITH overtake them.
 * [boersma-1998]
 * [goldwater-johnson-2003]
 -/
+
+@[expose] public section
 
 namespace Jaeger2007
 

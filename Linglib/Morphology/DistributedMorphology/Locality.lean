@@ -1,6 +1,8 @@
-import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
-import Linglib.Morphology.Word.Tree
-import Mathlib.Tactic.Abel
+module
+
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
+public import Linglib.Morphology.Word.Tree
+public import Mathlib.Tactic.Abel
 
 /-!
 # Locality domains for contextual allomorphy and allosemy
@@ -63,6 +65,8 @@ other.
   interfaces*][marantz-2013]
 * [D. Embick, *The motivation for roots in Distributed Morphology*][embick-2021]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

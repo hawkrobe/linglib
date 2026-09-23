@@ -1,4 +1,6 @@
-import Linglib.Semantics.Iconicity
+module
+
+public import Linglib.Semantics.Iconicity
 
 /-!
 # ASL Classifier Predicates
@@ -21,6 +23,8 @@ signing space is interpreted relative to a viewpoint.
 | RECTANGLE-cl | two-handed rectangle | rectangular objects |
 | CORNER-cl | two-handed L-shape | corners |
 -/
+
+@[expose] public section
 
 namespace ASL
 

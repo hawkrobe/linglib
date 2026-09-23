@@ -1,11 +1,13 @@
-import Mathlib.Data.Finset.Grade
-import Linglib.Core.Order.Valuation
-import Linglib.Semantics.Classifier
-import Linglib.Semantics.Composition.Tree
-import Linglib.Studies.Chierchia1998
-import Linglib.Studies.IoninMatushansky2006
-import Linglib.Fragments.Mayan.Chol.Classifiers
-import Linglib.Fragments.Shan.Classifiers
+module
+
+public import Mathlib.Data.Finset.Grade
+public import Linglib.Core.Order.Valuation
+public import Linglib.Semantics.Classifier
+public import Linglib.Semantics.Composition.Tree
+public import Linglib.Studies.Chierchia1998
+public import Linglib.Studies.IoninMatushansky2006
+public import Linglib.Fragments.Mayan.Chol.Classifiers
+public import Linglib.Fragments.Shan.Classifiers
 
 /-!
 # Little, Moroney and Royer (2022): Classifiers Can Be for Numerals or Nouns
@@ -44,6 +46,8 @@ rests on Vietnamese rather than Ch'ol or Shan data and is not formalized.
 * [borer-2005]
 * [krifka-1995b]
 -/
+
+@[expose] public section
 
 namespace LittleMoroneyRoyer2022
 

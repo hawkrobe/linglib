@@ -1,8 +1,10 @@
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Core.Probability.Decision.Basic
-import Mathlib.Data.Set.Card
-import Mathlib.Order.Partition.Finpartition
-import Mathlib.Tactic.FieldSimp
+module
+
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Core.Probability.Decision.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Partition.Finpartition
+public import Mathlib.Tactic.FieldSimp
 
 /-!
 # Merin (1999): Negative Attributes, Partitions, and Rational Decisions
@@ -32,6 +34,8 @@ file and are UNVERIFIED.
 * [merin-1999]
 * [johnson-1986]
 -/
+
+@[expose] public section
 
 namespace Merin1999
 

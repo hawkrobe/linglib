@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.ElliottSudo2025
-import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
-import Linglib.Studies.GroenendijkStokhof1991
+module
+
+public import Linglib.Data.Examples.ElliottSudo2025
+public import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
+public import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
 # Elliott and Sudo (2025): Free choice with anaphora
@@ -62,6 +64,8 @@ universal gives distributive inferences, both with anaphora.
 * [fox-katzir-2011]
 * [trinh-haida-2015]
 -/
+
+@[expose] public section
 
 namespace ElliottSudo2025
 

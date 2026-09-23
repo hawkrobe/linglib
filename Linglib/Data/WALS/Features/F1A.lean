@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 1A: Consonant Inventories
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 1, 563 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F1A
 
@@ -26,7 +30,8 @@ inductive ConsonantInventories where
   | large
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint ConsonantInventories) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint ConsonantInventories) :=
   [ { walsCode := "xoo", iso := "nmn", value := .large }
   , { walsCode := "ani", iso := "hnh", value := .large }
   , { walsCode := "abi", iso := "axb", value := .moderatelySmall }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint ConsonantInventories) :=
   , { walsCode := "ttu", iso := "bbl", value := .large }
   ]
 
-private def allData_1 : List (Datapoint ConsonantInventories) :=
+/-- Rows 501 to 563 of `allData`. -/
+def allData_1 : List (Datapoint ConsonantInventories) :=
   [ { walsCode := "tug", iso := "thv", value := .average }
   , { walsCode := "tuk", iso := "", value := .average }
   , { walsCode := "tul", iso := "tcy", value := .average }

@@ -1,4 +1,6 @@
-import Linglib.Syntax.WordOrder
+module
+
+public import Linglib.Syntax.WordOrder
 
 /-!
 # K'iche' word order
@@ -13,6 +15,8 @@ derivational accounts of Mayan verb-initiality.
 * [clemens-coon-2018]
 * [mondloch-2017]
 -/
+
+@[expose] public section
 
 namespace Kiche
 

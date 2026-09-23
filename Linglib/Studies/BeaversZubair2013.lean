@@ -1,6 +1,8 @@
-import Linglib.Semantics.Causation.CauserSort
-import Linglib.Syntax.Case.Basic
-import Linglib.Fragments.Sinhala.Verbs
+module
+
+public import Linglib.Semantics.Causation.CauserSort
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Fragments.Sinhala.Verbs
 
 /-!
 # Anticausatives in Sinhala
@@ -56,6 +58,8 @@ facts. The accusative-as-semantic-case analysis follows [beavers-zubair-2010].
   analyses rejected in §4.2.
 * [inman-1993], [henadeerage-2002], [gair-paolillo-1997] — the Sinhala sources.
 -/
+
+@[expose] public section
 
 namespace BeaversZubair2013
 

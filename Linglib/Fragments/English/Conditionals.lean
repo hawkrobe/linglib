@@ -1,5 +1,7 @@
-import Linglib.Semantics.Conditionals.Reading
-import Linglib.Semantics.Modality.Exclusion
+module
+
+public import Linglib.Semantics.Conditionals.Reading
+public import Linglib.Semantics.Modality.Exclusion
 
 /-!
 # English conditional markers
@@ -12,6 +14,8 @@ X-marking exponent ([iatridou-2000], [von-fintel-iatridou-2023]).
 * [iatridou-2000]
 * [von-fintel-iatridou-2023]
 -/
+
+@[expose] public section
 
 namespace English.Conditionals
 

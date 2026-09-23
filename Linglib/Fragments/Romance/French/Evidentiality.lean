@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # French evidentiality
@@ -13,6 +15,8 @@ grammatical reportative, codes the language as indirect-only.
 * [aikhenvald-2004], §4.1
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace French.Evidentiality
 

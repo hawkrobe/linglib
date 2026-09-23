@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Hindi-Urdu coordinators
@@ -16,6 +18,8 @@ coordinand gives 'both … and'.
 
 The entries have not been checked against a grammar of Hindi-Urdu.
 -/
+
+@[expose] public section
 
 namespace HindiUrdu.Coordination
 

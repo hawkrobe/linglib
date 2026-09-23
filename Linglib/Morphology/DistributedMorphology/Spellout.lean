@@ -1,5 +1,7 @@
-import Linglib.Morphology.DistributedMorphology.Fusion
-import Linglib.Morphology.DistributedMorphology.Impoverishment
+module
+
+public import Linglib.Morphology.DistributedMorphology.Fusion
+public import Linglib.Morphology.DistributedMorphology.Impoverishment
 
 /-!
 # The spell-out pipeline
@@ -51,6 +53,8 @@ fusion feeding one insertion).
 * [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
 * [D. Embick and R. Noyer, *Movement operations after syntax*][embick-noyer-2001]
 -/
+
+@[expose] public section
 
 namespace DistributedMorphology
 

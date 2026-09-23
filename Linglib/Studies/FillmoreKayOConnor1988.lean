@@ -1,11 +1,13 @@
-import Mathlib.Order.UpperLower.Principal
-import Mathlib.Order.UpperLower.CompleteLattice
-import Mathlib.Order.Max
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.ConstructionGrammar.Idiom
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Data.Examples.FillmoreKayOConnor1988
+module
+
+public import Mathlib.Order.UpperLower.Principal
+public import Mathlib.Order.UpperLower.CompleteLattice
+public import Mathlib.Order.Max
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.ConstructionGrammar.Idiom
+public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Data.Examples.FillmoreKayOConnor1988
 
 /-!
 # Fillmore, Kay & O'Connor (1988): Regularity and idiomaticity in grammatical constructions
@@ -73,6 +75,8 @@ are pragmatic, in the tradition of [fauconnier-1975] rather than the semantic sc
 * [gazdar-1979]
 * [cresswell-1976]
 -/
+
+@[expose] public section
 
 namespace FillmoreKayOConnor1988
 

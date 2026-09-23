@@ -1,7 +1,9 @@
-import Mathlib.Order.BooleanSubalgebra
-import Linglib.Semantics.Alternatives.Structural
-import Linglib.Studies.FoxKatzir2011
-import Linglib.Data.Examples.TrinhHaida2015
+module
+
+public import Mathlib.Order.BooleanSubalgebra
+public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Studies.FoxKatzir2011
+public import Linglib.Data.Examples.TrinhHaida2015
 
 /-!
 # Trinh and Haida (2015): Constraining the Derivation of Alternatives
@@ -50,6 +52,8 @@ the rows of `Data.Examples.TrinhHaida2015`.
 * [rooth-1992]
 * [kroch-1972]
 -/
+
+@[expose] public section
 
 namespace TrinhHaida2015
 

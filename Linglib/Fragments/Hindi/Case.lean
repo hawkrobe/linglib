@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Alignment
-import Linglib.Semantics.Aspect.Defs
+module
+
+public import Linglib.Syntax.Case.Alignment
+public import Linglib.Semantics.Aspect.Defs
 
 /-!
 # Hindi case
@@ -15,6 +17,8 @@ is marked at all ([blake-1994]).
 
 * [blake-1994]
 -/
+
+@[expose] public section
 
 namespace Hindi.Case
 

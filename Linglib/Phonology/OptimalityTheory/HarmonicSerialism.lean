@@ -1,9 +1,11 @@
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Mathlib.Data.Finset.Union
-import Mathlib.Dynamics.FixedPoints.Basic
-import Linglib.Core.Order.IterateFixedPoint
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.Constraints.Profile
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Dynamics.FixedPoints.Basic
+public import Linglib.Core.Order.IterateFixedPoint
 
 /-!
 # Harmonic Serialism
@@ -49,6 +51,8 @@ sister specializations of parallel OT, not nested: HS holds the ranking constant
 iterates the candidate; Stratal OT varies the ranking and chains the candidate
 (Stratal HS, combining both axes, is deferred — cf. [pruitt-2023] §2.4).
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 

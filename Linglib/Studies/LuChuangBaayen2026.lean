@@ -1,5 +1,7 @@
-import Linglib.Processing.DiscriminativeLexicon.Training
-import Linglib.Studies.ChuangEtAl2026
+module
+
+public import Linglib.Processing.DiscriminativeLexicon.Training
+public import Linglib.Studies.ChuangEtAl2026
 
 /-!
 # Lu, Chuang and Baayen (2026): The Realization of Tones in Spontaneous Spoken Taiwan Mandarin
@@ -46,6 +48,8 @@ outside the Processing scope.
   (2004)][fon-2004]
 * [Y. Xu, *Contextual tonal variations in Mandarin* (1997)][xu-1997]
 -/
+
+@[expose] public section
 
 namespace LuChuangBaayen2026
 

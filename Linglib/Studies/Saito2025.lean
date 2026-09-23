@@ -1,6 +1,8 @@
-import Linglib.Processing.DiscriminativeLexicon.Defs
-import Linglib.Processing.DiscriminativeLexicon.Normed
-import Linglib.Processing.DiscriminativeLexicon.Training
+module
+
+public import Linglib.Processing.DiscriminativeLexicon.Defs
+public import Linglib.Processing.DiscriminativeLexicon.Normed
+public import Linglib.Processing.DiscriminativeLexicon.Training
 
 /-!
 # Saito, Tomaschek & Baayen (2025): Interaction of Frequency and Inflectional Status
@@ -39,6 +41,8 @@ articulatory study are not formalized.
 * [roelofs-1997]
 * [muller-2015]
 -/
+
+@[expose] public section
 
 namespace Saito2025
 

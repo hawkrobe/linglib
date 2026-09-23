@@ -1,7 +1,9 @@
-import Linglib.Phonology.Constraints.Profile
-import Linglib.Phonology.OptimalityTheory.Ranking
-import Mathlib.Algebra.Group.Pointwise.Set.Basic
-import Mathlib.Algebra.Tropical.Basic
+module
+
+public import Linglib.Phonology.Constraints.Profile
+public import Linglib.Phonology.OptimalityTheory.Ranking
+public import Mathlib.Algebra.Group.Pointwise.Set.Basic
+public import Mathlib.Algebra.Tropical.Basic
 
 /-!
 # Riggle (2009): Violation semirings in Optimality Theory
@@ -37,6 +39,8 @@ of the H-Opt algorithm are not formalized.
 * [P. Smolensky, G. Legendre, *The harmonic mind: from neural computation to
   Optimality-Theoretic grammar* (2006)][smolensky-legendre-2006]
 -/
+
+@[expose] public section
 
 namespace Riggle2009b
 

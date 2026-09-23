@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Logic.Assignment
-import Linglib.Semantics.Reference.Context.Index
-import Linglib.Semantics.Tense.Defs
+module
+
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Tense.Defs
 
 /-!
 # Tense pronouns
@@ -17,6 +19,8 @@ index); the constraint-as-presupposition formulation
 temporal instantiation of `Assignment`; all update laws are mathlib's
 `Function.update` lemmas.
 -/
+
+@[expose] public section
 
 open Reference
 

@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Logic.Relation
-import Mathlib.Basic.Rel
-import Linglib.Semantics.Mereology
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Logic.Relation
+public import Mathlib.Basic.Rel
+public import Linglib.Semantics.Mereology
 
 /-!
 # Cumulative predication
@@ -38,6 +40,8 @@ nonempty finite sets of individuals.
   (2000)][beck-sauerland-2000]
 * [G. Link, *The logical analysis of plurals and mass terms* (1983)][link-1983]
 -/
+
+@[expose] public section
 
 namespace Plurality.Cumulativity
 

@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.BachBrownMarslenWilson1986
-import Mathlib.Algebra.BigOperators.Intervals
-import Mathlib.Data.Fin.Rev
+module
+
+public import Linglib.Data.Examples.BachBrownMarslenWilson1986
+public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Data.Fin.Rev
 
 /-!
 # Bach, Brown & Marslen-Wilson (1986): crossed vs nested dependencies
@@ -33,6 +35,8 @@ verb arrives while nested orders hold every NP until the cluster ends.
 * [evers-1975]: The transformational cycle in Dutch and German.
 * [bresnan-etal-1982]: Cross-serial dependencies in Dutch.
 -/
+
+@[expose] public section
 
 namespace BachBrownMarslenWilson1986
 

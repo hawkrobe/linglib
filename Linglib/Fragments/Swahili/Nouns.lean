@@ -1,5 +1,7 @@
-import Linglib.Fragments.Swahili.Basic
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Linglib.Fragments.Swahili.Basic
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Swahili nouns
@@ -15,6 +17,8 @@ into class 5/6 or 7/8.
 * [W. E. Welmers, *African Language Structures* (1973)][welmers-1973]
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
 -/
+
+@[expose] public section
 
 namespace Swahili
 

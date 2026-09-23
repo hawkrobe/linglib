@@ -1,5 +1,7 @@
-import Linglib.Logic.Assignment
-import Linglib.Semantics.Reference.Context.Index
+module
+
+public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Reference.Context.Index
 
 /-!
 # Percus (2000): Constraints on Some Other Variables in Syntax
@@ -37,6 +39,8 @@ Generalization X from counterfactuals (40) is not formalized.
 * [percus-2000]
 * [heim-kratzer-1998]
 -/
+
+@[expose] public section
 
 namespace Percus2000
 
@@ -161,7 +165,7 @@ instance (sc : Scenario) (p : Person) (s : Sit) : Decidable (IsCanadian sc p s) 
 /-- Mary's doxastic alternatives: the belief world. -/
 def doxMary : Sit → List Sit := λ _ => [sBelief]
 
-private def g₀ : SituationAssignment W Unit := λ _ => sActual
+def g₀ : SituationAssignment W Unit := λ _ => sActual
 
 /-- The reading of (26a) under an indexing, (28b) and (34b): at every belief alternative of
 Mary's, the brother in the world the determiner phrase's pronoun denotes is Canadian at the
@@ -224,7 +228,7 @@ def rounds (s : RSit) : List RSit := [⟨s.world, .r1⟩, ⟨s.world, .r2⟩, �
 /-- Mary's doxastic alternatives, round by round. -/
 def doxMaryR : RSit → List RSit := λ s => [⟨.belief, s.time⟩]
 
-private def g₃ : SituationAssignment W Round := λ _ => ⟨.actual, .r1⟩
+def g₃ : SituationAssignment W Round := λ _ => ⟨.actual, .r1⟩
 
 /-- The reading of (35a) under an indexing, (37b) and (38b): the determiner phrase's pronoun
 is bound by the embedded λ, and the adverb ranges over the rounds of the world its pronoun

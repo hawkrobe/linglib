@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Focus.Control
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Data.Examples.GrubicRenansDuah2019
-import Mathlib.Data.Set.Lattice.Bounded
+module
+
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Focus.Control
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Data.Examples.GrubicRenansDuah2019
+public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Grubic, Renans, and Duah (2019): Focus, Exhaustivity and Existence in Akan, Ga and Ngamo
@@ -42,6 +44,8 @@ conventional, and section 7's argument that salience is not givenness are not fo
 * [grubic-renans-duah-2019]
 * [kiss-1998]
 -/
+
+@[expose] public section
 
 namespace GrubicRenansDuah2019
 

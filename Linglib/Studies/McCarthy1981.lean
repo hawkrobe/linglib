@@ -1,6 +1,8 @@
-import Linglib.Morphology.Morphotactics.CVTemplate
-import Linglib.Morphology.Paradigm.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Morphology.Paradigm.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # McCarthy (1981): A Prosodic Theory of Nonconcatenative Morphology
@@ -35,6 +37,8 @@ version of this file and are UNVERIFIED.
 
 * [mccarthy-1981]
 -/
+
+@[expose] public section
 
 namespace McCarthy1981
 

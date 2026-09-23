@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Order.Monotone.Basic
-import Linglib.Core.Order.Prop
-import Linglib.Semantics.Reference.Iota
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Order.Monotone.Basic
+public import Linglib.Core.Order.Prop
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # Distinguishing descriptions
@@ -38,6 +40,8 @@ is the general one at a threshold.
 * [engelhardt-etal-2006]
 * [degen-etal-2020]
 -/
+
+@[expose] public section
 
 namespace Reference
 

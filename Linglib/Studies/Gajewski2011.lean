@@ -1,7 +1,9 @@
-import Linglib.Logic.Natural.Strawson.Basic
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Data.Examples.Gajewski2011
+module
+
+public import Linglib.Logic.Natural.Strawson.Basic
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Data.Examples.Gajewski2011
 
 /-!
 # Gajewski (2011): Licensing strong NPIs
@@ -43,6 +45,8 @@ entailment (`IsIntolerant`).
 * [chierchia-2006]
 * [horn-1989]
 -/
+
+@[expose] public section
 
 namespace Gajewski2011
 

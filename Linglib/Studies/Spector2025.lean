@@ -1,5 +1,7 @@
-import Linglib.Core.Data.Trivalent
-import Linglib.Logic.Assignment
+module
+
+public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Assignment
 
 /-!
 # Spector (2025): Trivalence and Transparency
@@ -60,6 +62,8 @@ simplified system are not formalized.
 * [peters-1979]
 * [beaver-krahmer-2001]
 -/
+
+@[expose] public section
 
 namespace Spector2025
 

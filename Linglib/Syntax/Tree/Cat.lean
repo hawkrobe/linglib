@@ -1,5 +1,7 @@
-import Linglib.Data.UD.UPOS
-import Linglib.Syntax.Tree.Basic
+module
+
+public import Linglib.Data.UD.UPOS
+public import Linglib.Syntax.Tree.Basic
 
 /-!
 # Default Category System (UD-grounded)
@@ -16,6 +18,8 @@ carry the UD dataset.
 
 * [de-marneffe-zeman-2021]
 -/
+
+@[expose] public section
 
 namespace Syntax
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Tense.Evidential
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Tense.Evidential
 
 /-!
 # Huijsmans (2025): Timing of evidence and epistemic modal claims
@@ -43,6 +45,8 @@ the modal-base timing licenses *will*, and the acquisition timing does not
 * [condoravdi-2002]
 * [beaver-condoravdi-2003]
 -/
+
+@[expose] public section
 
 namespace Huijsmans2025
 

@@ -1,4 +1,6 @@
-import Linglib.Studies.Yalcin2007
+module
+
+public import Linglib.Studies.Yalcin2007
 
 /-!
 # Klinedinst and Rothschild (2012): Connectives without Truth Tables
@@ -32,6 +34,8 @@ second conjunct needs worlds where the first fails is a contradiction, (68)
 * [klinedinst-rothschild-2012]
 * [yalcin-2007]
 -/
+
+@[expose] public section
 
 namespace KlinedinstRothschild2012
 

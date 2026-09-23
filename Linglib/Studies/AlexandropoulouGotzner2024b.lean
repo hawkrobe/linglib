@@ -1,5 +1,7 @@
-import Linglib.Studies.AlexandropoulouGotzner2024a
-import Linglib.Data.Examples.AlexandropoulouGotzner2024b
+module
+
+public import Linglib.Studies.AlexandropoulouGotzner2024a
+public import Linglib.Data.Examples.AlexandropoulouGotzner2024b
 
 /-!
 # Alexandropoulou and Gotzner (2024b): adjective interpretation and competition
@@ -28,6 +30,8 @@ whereas at a single threshold neither distinction exists
 * [horn-1989]
 * [kennedy-2007]
 -/
+
+@[expose] public section
 
 namespace AlexandropoulouGotzner2024b
 

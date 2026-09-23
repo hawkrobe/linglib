@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Macedonian question particles
@@ -10,6 +12,8 @@ ex. 32), or by the verb-attached *li*; the mirative *zar* of the cross-Slavic RA
 strong bias and is excluded from neutral questions ([simik-2024] §4.1,
 §4.2.4).
 -/
+
+@[expose] public section
 
 namespace Macedonian.QuestionParticles
 

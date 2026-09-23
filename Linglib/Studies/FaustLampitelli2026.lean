@@ -1,7 +1,9 @@
-import Linglib.Phonology.Segmental.ElementTheory
-import Linglib.Fragments.Tigrinya.Phonology
-import Linglib.Fragments.Tigre.Phonology
-import Linglib.Data.Examples.FaustLampitelli2026
+module
+
+public import Linglib.Phonology.Segmental.ElementTheory
+public import Linglib.Fragments.Tigrinya.Phonology
+public import Linglib.Fragments.Tigre.Phonology
+public import Linglib.Data.Examples.FaustLampitelli2026
 
 /-!
 # Faust and Lampitelli (2026): Guttural syneresis in Tigrinya and Tigre
@@ -56,6 +58,8 @@ which makes syneresis opaque in (14), (16), (37). `rows_derived` derives every a
 * [bye-2011]
 * [buckley-2000]
 -/
+
+@[expose] public section
 
 namespace FaustLampitelli2026
 

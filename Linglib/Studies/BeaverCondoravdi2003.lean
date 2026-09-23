@@ -1,7 +1,9 @@
-import Linglib.Semantics.Tense.RunTimes
-import Linglib.Studies.Anscombe1964
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Data.Examples.BeaverCondoravdi2003
+module
+
+public import Linglib.Semantics.Tense.RunTimes
+public import Linglib.Studies.Anscombe1964
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Data.Examples.BeaverCondoravdi2003
 
 /-!
 # Beaver & Condoravdi (2003): a uniform *before* and *after*
@@ -37,6 +39,8 @@ non-committal uses, sorted by the context (48).
 * [heinamaki-1974]: Semantics of English Temporal Connectives.
 * [thomason-1984]: Combinations of tense and modality.
 -/
+
+@[expose] public section
 
 namespace BeaverCondoravdi2003
 

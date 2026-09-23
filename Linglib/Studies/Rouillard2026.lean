@@ -1,11 +1,13 @@
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Algebra.Order.Ring.NNRat
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Linglib.Core.Order.Interval
-import Linglib.Core.Order.IntervalContent
-import Linglib.Semantics.Alternatives.Extremum
-import Linglib.Semantics.Aspect.SubintervalProperty
+module
+
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Algebra.Order.Ring.NNRat
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+public import Linglib.Core.Order.Interval
+public import Linglib.Core.Order.IntervalContent
+public import Linglib.Semantics.Alternatives.Extremum
+public import Linglib.Semantics.Aspect.SubintervalProperty
 
 /-!
 # Rouillard 2026: temporal *in*-adverbials and maximal informativity
@@ -31,6 +33,8 @@ intervals of a linearly ordered time `T`; maximal informativity is [fox-hackl-20
 
 * [rouillard-2026]
 -/
+
+@[expose] public section
 
 namespace Rouillard2026
 

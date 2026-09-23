@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.PreLie.Insert
+module
+
+public import Linglib.Core.Algebra.RootedTree.PreLie.Insert
 
 /-!
 # Multi-path grafting on `RoseTree α`
@@ -28,6 +30,8 @@ at the multiset level in `Insertion.lean`.
 * [foissy-typed-decorated-rooted-trees-2018]
 * [foissy-introduction-hopf-algebras-trees]
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

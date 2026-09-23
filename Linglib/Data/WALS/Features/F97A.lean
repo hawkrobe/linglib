@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 97A: Relationship between the Order of Object and Verb and the Order of Adjective and Noun
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 97, 1316 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F97A
 
@@ -26,7 +30,8 @@ inductive RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNou
   | other
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
   [ { walsCode := "xoo", iso := "nmn", value := .voAndNadj }
   , { walsCode := "ani", iso := "hnh", value := .other }
   , { walsCode := "xam", iso := "xam", value := .voAndNadj }
@@ -529,7 +534,8 @@ private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVe
   , { walsCode := "knk", iso := "kna", value := .other }
   ]
 
-private def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
   [ { walsCode := "knd", iso := "kan", value := .ovAndAdjn }
   , { walsCode := "kno", iso := "kxo", value := .ovAndNadj }
   , { walsCode := "knr", iso := "knc", value := .ovAndNadj }
@@ -1032,7 +1038,8 @@ private def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVe
   , { walsCode := "rga", iso := "rng", value := .voAndNadj }
   ]
 
-private def allData_2 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
+/-- Rows 1001 to 1316 of `allData`. -/
+def allData_2 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
   [ { walsCode := "rot", iso := "rtm", value := .voAndNadj }
   , { walsCode := "rov", iso := "rug", value := .voAndNadj }
   , { walsCode := "ruk", iso := "dru", value := .other }

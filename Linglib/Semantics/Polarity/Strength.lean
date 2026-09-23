@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Natural.Additivity
-import Linglib.Logic.Natural.Basic
+module
+
+public import Linglib.Logic.Natural.Additivity
+public import Linglib.Logic.Natural.Basic
 
 /-!
 # The Zwarts strength hierarchies
@@ -28,6 +30,8 @@ the chain (`HoldsFor.of_le`).
   `NaturalLogic.strong_npi_requires_antiadditive` — the Ladusaw/Zwarts
   licensing connections.
 -/
+
+@[expose] public section
 
 namespace Polarity
 

@@ -1,10 +1,12 @@
-import Mathlib.Order.Interval.Set.Defs
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Semantics.Plurality.NumberFeatures
-import Linglib.Syntax.Person.Features
-import Linglib.Syntax.Gender.Decomposition
+module
+
+public import Mathlib.Order.Interval.Set.Defs
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Reference.Context.Basic
+public import Linglib.Core.Order.UpperLower.Finset
+public import Linglib.Semantics.Plurality.NumberFeatures
+public import Linglib.Syntax.Person.Features
+public import Linglib.Syntax.Gender.Decomposition
 
 /-!
 # The domains of φ-features
@@ -51,6 +53,8 @@ outer set is the whole domain and the dual restricts nothing.
 * [konnelly-cowper-2020]
 * [wang-r-2023]
 -/
+
+@[expose] public section
 
 open Mereology
 

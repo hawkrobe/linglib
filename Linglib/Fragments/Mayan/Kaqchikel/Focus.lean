@@ -1,4 +1,6 @@
-import Linglib.Fragments.Mayan.Kaqchikel.Extraction
+module
+
+public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 
 /-!
 # Kaqchikel Focus Fragment
@@ -35,6 +37,8 @@ construction only, and no claim that every focus is overtly marked is made.
 * [aissen-2017]
 * [erlewine-2016]
 -/
+
+@[expose] public section
 
 namespace Kaqchikel
 

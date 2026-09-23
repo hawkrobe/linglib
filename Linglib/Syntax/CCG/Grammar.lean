@@ -1,5 +1,7 @@
-import Linglib.Syntax.CCG.Derivation
-import Mathlib.Data.Set.Defs
+module
+
+public import Linglib.Syntax.CCG.Derivation
+public import Mathlib.Data.Set.Defs
 
 /-!
 # CCG grammars and their languages
@@ -57,6 +59,8 @@ Derivability is an inductive `Prop`, mathlib's form for grammar formalisms
 `CCG.Derivation` of the interpreted theory: capacity arguments quantify over all
 derivations, and induction on `Derives` is exactly that quantification.
 -/
+
+@[expose] public section
 
 namespace CCG
 

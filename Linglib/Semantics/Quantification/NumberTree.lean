@@ -1,7 +1,9 @@
-import Linglib.Semantics.Quantification.Counting
-import Mathlib.Data.Finset.NatAntidiagonal
-import Mathlib.Algebra.BigOperators.Intervals
-import Mathlib.Tactic.Ring
+module
+
+public import Linglib.Semantics.Quantification.Counting
+public import Mathlib.Data.Finset.NatAntidiagonal
+public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Tactic.Ring
 
 /-!
 # The tree of numbers
@@ -62,6 +64,8 @@ is imposed on the quantifier and on its complement.
 * [van-benthem-1984]
 * [van-benthem-1986]
 -/
+
+@[expose] public section
 
 namespace Quantifier
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Gender.Basic
-import Linglib.Morphology.Word.Basic
+module
+
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Noun
@@ -30,6 +32,8 @@ plain name and the specializations extend it, as in mathlib.
 * `GenderedNoun.IsNaturalGender` — the gender is the referents', under a labelling of the
   carrier
 -/
+
+@[expose] public section
 
 /-- A noun entry: citation form and gloss. -/
 structure Noun where

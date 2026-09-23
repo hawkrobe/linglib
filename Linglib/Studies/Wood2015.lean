@@ -1,7 +1,9 @@
-import Linglib.Morphology.DistributedMorphology.Locality
-import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Syntax.Minimalist.Verbal.LittleV
-import Linglib.Data.Examples.Wood2015
+module
+
+public import Linglib.Morphology.DistributedMorphology.Locality
+public import Linglib.Syntax.Minimalist.Verbal.Applicative
+public import Linglib.Syntax.Minimalist.Verbal.LittleV
+public import Linglib.Data.Examples.Wood2015
 
 /-!
 # Wood (2015): Icelandic Morphosyntax and Argument Structure
@@ -46,6 +48,8 @@ the examples.
 * [schaefer-2008]
 * [wood-marantz-2017]
 -/
+
+@[expose] public section
 
 namespace Wood2015
 

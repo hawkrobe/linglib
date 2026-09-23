@@ -1,6 +1,8 @@
-import Mathlib.Order.Lattice
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
-import Linglib.Data.Examples.White2014
+module
+
+public import Mathlib.Order.Lattice
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
+public import Linglib.Data.Examples.White2014
 
 /-!
 # White (2014): Factive-Implicatives and Modalized Complements
@@ -40,6 +42,8 @@ recorded as examples only.
 * [kratzer-1996]
 * [wurmbrand-2014]
 -/
+
+@[expose] public section
 
 namespace White2014
 

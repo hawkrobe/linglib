@@ -1,9 +1,11 @@
-import Linglib.Core.Combinatorics.SimpleGraph.Prod
-import Linglib.Semantics.Modality.Universals
-import Linglib.Fragments.Washo.Modals
-import Linglib.Fragments.Koryak.Modals
-import Linglib.Fragments.Javanese.Modals
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+module
+
+public import Linglib.Core.Combinatorics.SimpleGraph.Prod
+public import Linglib.Semantics.Modality.Universals
+public import Linglib.Fragments.Washo.Modals
+public import Linglib.Fragments.Koryak.Modals
+public import Linglib.Fragments.Javanese.Modals
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
 # Steinert-Threlkeld, Imel and Guo (2023): A semantic universal for modality
@@ -40,6 +42,8 @@ teleological; the library folds teleological into circumstantial.
 * [mocnik-abramovitz-2019]
 * [vander-klok-2013a]
 -/
+
+@[expose] public section
 
 namespace SteinertThrelkeldImelGuo2023
 

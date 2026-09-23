@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Data.Examples.GroenendijkStokhof1984
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Data.Examples.GroenendijkStokhof1984
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Groenendijk and Stokhof (1984): Studies on the Semantics of Questions
@@ -42,6 +44,8 @@ mention-some, pragmatic answerhood, and the pair-list and choice readings are ro
 Chapter VI's pragmatic notion of answerhood relative to an information state, and the pair-list
 and choice readings of chapter I's (11) to (18), are not formalized.
 -/
+
+@[expose] public section
 
 namespace GroenendijkStokhof1984
 

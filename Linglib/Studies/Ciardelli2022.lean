@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.Inquisitive
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Logic.Team.Inquisitive
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Ciardelli 2022: Inquisitive Logic — questions under modalities
@@ -37,6 +39,8 @@ them.
 * [I. Ciardelli and F. Roelofsen, *Inquisitive dynamic epistemic logic*
   (2015)][ciardelli-roelofsen-2015]
 -/
+
+@[expose] public section
 
 namespace Ciardelli2022
 

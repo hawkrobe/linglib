@@ -1,6 +1,8 @@
-import Mathlib.Order.Filter.Ker
-import Mathlib.Order.Filter.Finite
-import Linglib.Discourse.CommonGround
+module
+
+public import Mathlib.Order.Filter.Ker
+public import Mathlib.Order.Filter.Finite
+public import Linglib.Discourse.CommonGround
 
 /-!
 # Commitments
@@ -44,6 +46,8 @@ onto the Stalnakerian common ground of `Discourse/CommonGround.lean` by `Commitm
   (2012)][condoravdi-lauer-2012]
 * [C. Gunlogson, *A Question of Commitment* (2008)][gunlogson-2008]
 -/
+
+@[expose] public section
 
 /-- Whether a commitment is undertaken or refused. -/
 inductive Commitment.Polarity

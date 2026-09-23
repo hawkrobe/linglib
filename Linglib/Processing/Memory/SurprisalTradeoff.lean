@@ -1,5 +1,7 @@
-import Linglib.Processing.Cost.Profile
-import Linglib.Processing.Expectation.Defs
+module
+
+public import Linglib.Processing.Cost.Profile
+public import Linglib.Processing.Expectation.Defs
 
 /-!
 # Memory-Surprisal Trade-off Framework
@@ -57,6 +59,8 @@ at which predictive information concentrates.
 - §7: Bridge to generalised surprisal
 
 -/
+
+@[expose] public section
 
 namespace Processing.MemorySurprisal
 

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Semantics.Questions.Closure
-import Linglib.Logic.Modal.Basic
-import Linglib.Data.Examples.Fox2007
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Questions.Closure
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Data.Examples.Fox2007
 
 /-!
 # Fox (2007): Free Choice and the Theory of Scalar Implicatures
@@ -36,6 +38,8 @@ theorem. Example and note numbers follow the manuscript version of the paper.
 * [simons-2005]
 * [zimmermann-2000]
 -/
+
+@[expose] public section
 
 namespace Fox2007
 

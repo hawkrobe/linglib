@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Natural.Basic
-import Linglib.Semantics.Polarity.Strength
-import Linglib.Semantics.Polarity.LicensingContext
-import Linglib.Semantics.Quantification.Indefinite
-import Linglib.Semantics.Polarity.Item
+module
+
+public import Linglib.Logic.Natural.Basic
+public import Linglib.Semantics.Polarity.Strength
+public import Linglib.Semantics.Polarity.LicensingContext
+public import Linglib.Semantics.Quantification.Indefinite
+public import Linglib.Semantics.Polarity.Item
 
 /-!
 # Polarity licensing
@@ -49,6 +51,8 @@ in "than NP" route through the clausal row ([bhatt-pancheva-2004],
 contested attribution (Zwarts 1981 / van Benthem 1986 / Sánchez Valencia
 1991; none in `references.bib`).
 -/
+
+@[expose] public section
 
 namespace Polarity
 

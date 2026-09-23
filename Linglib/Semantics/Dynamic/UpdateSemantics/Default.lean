@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Minimals
-import Linglib.Semantics.Dynamic.Update
+module
+
+public import Linglib.Core.Order.Minimals
+public import Linglib.Semantics.Dynamic.Update
 
 /-!
 # Defaults in update semantics
@@ -54,6 +56,8 @@ The restricted rules and expectation frames of the paper's section 4 live with t
   (2004)][portner-2004]
 * [P. Portner, *Mood* (2018)][portner-2018]
 -/
+
+@[expose] public section
 
 namespace UpdateSemantics.Default
 

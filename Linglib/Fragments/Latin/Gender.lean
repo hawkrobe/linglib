@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Latin noun gender
@@ -13,6 +15,8 @@ all three ([corbett-1998]).
 
 * [G. G. Corbett, *Morphology and agreement* (1998)][corbett-1998]
 -/
+
+@[expose] public section
 
 namespace Latin.Gender
 

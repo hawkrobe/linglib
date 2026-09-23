@@ -1,6 +1,8 @@
-import Linglib.Fragments.Mayan.Agreement
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Linglib.Fragments.Mayan.Agreement
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Tseltalan grammatical functions
@@ -26,6 +28,8 @@ Agreement system ([aissen-polian-2025] Table 1):
 | Set A  | A, Psr   | prefixal | prefixal         |
 | Set B  | S and O  | suffixal | prefixal/suffixal|
 -/
+
+@[expose] public section
 
 namespace Mayan.Tseltalan
 

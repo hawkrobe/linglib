@@ -1,4 +1,6 @@
-import Linglib.Logic.Assignment
+module
+
+public import Linglib.Logic.Assignment
 
 /-!
 # Mandelkern (2022): Witnesses
@@ -31,6 +33,8 @@ subordination of its §6 are not represented.
 * [schlenker-2009]
 * [stalnaker-1978]
 -/
+
+@[expose] public section
 
 namespace Mandelkern2022
 

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Junction
+module
+
+public import Linglib.Phonology.Autosegmental.Junction
 
 /-!
 # Tangale tone processes and the elision cascade
@@ -21,6 +23,8 @@ faithful at a prosodic boundary and elided–repaired phrase-medially.
 prosodic reflex of [hartmann-zimmermann-2004]'s perfective focus —
 is perceptible.
 -/
+
+@[expose] public section
 
 namespace Tangale
 

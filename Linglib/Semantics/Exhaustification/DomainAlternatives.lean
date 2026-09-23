@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Fintype.Basic
-import Linglib.Logic.Modal.Basic
+module
+
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Fintype.Basic
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # Domain alternatives of a modalized existential
@@ -30,6 +32,8 @@ Variation and negating all proper ones yields Free Choice.
 * [alonso-ovalle-menendez-benito-2010]
 * [chierchia-2013]
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

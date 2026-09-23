@@ -1,5 +1,7 @@
-import Linglib.Semantics.Tense.Reichenbach
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Tense.Reichenbach
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Declerck (1991): Tense in English
@@ -35,6 +37,8 @@ are the rows of `Data/Examples/Declerck1991.json`.
 * [declerck-1991-grammar]
 * [reichenbach-1947]
 -/
+
+@[expose] public section
 
 namespace Declerck1991
 

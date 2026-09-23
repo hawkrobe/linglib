@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Theta.Basic
-import Linglib.Syntax.Minimalist.SyntacticObject.Basic
+module
+
+public import Linglib.Syntax.Minimalist.Theta.Basic
+public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 
 /-!
 # Colored Merge and realization
@@ -28,6 +30,8 @@ site realizes to its host unchanged (`realize_node_emptyTree_right`).
   landing sites leave no mark on the realized object.
 * `realize_isSome` — a tree with a lexically anchored input realizes.
 -/
+
+@[expose] public section
 
 open ArgumentStructure
 

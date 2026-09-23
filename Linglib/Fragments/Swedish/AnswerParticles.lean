@@ -1,6 +1,8 @@
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Semantics.Polarity.Marking
-import Linglib.Semantics.Questions.Answering
+module
+
+public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Semantics.Polarity.Marking
+public import Linglib.Semantics.Questions.Answering
 
 /-!
 # Swedish Answer Particles
@@ -23,6 +25,8 @@ Swedish is polarity-based: "Dricker han inte?" → "Ja" = "He does drink."
 
 Swedish also allows verb-echo answers alongside particles (mixed strategy).
 -/
+
+@[expose] public section
 
 namespace Swedish.AnswerParticles
 

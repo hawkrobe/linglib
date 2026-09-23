@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Description
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Data.Examples.Hanink2021
-import Mathlib.Data.Prod.Lex
+module
+
+public import Linglib.Semantics.Reference.Description
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Data.Examples.Hanink2021
+public import Mathlib.Data.Prod.Lex
 
 /-!
 # Hanink (2021): DP Structure and Internally Headed Relatives in Washo
@@ -54,6 +56,8 @@ section 4.4 are recorded as data and prose only.
 * [jacobsen-1964]
 * [matthewson-2001]
 -/
+
+@[expose] public section
 
 namespace Hanink2021
 

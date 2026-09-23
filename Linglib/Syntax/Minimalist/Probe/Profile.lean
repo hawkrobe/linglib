@@ -1,6 +1,8 @@
-import Linglib.Syntax.Minimalist.Clause.Spine
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Mathlib.Order.Monotone.Defs
+module
+
+public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Mathlib.Order.Monotone.Defs
 
 /-!
 # Probe profiles
@@ -30,6 +32,8 @@ label; the tree-native counterpart of a horizon is `SyntacticObject.behindHorizo
 * [keine-2019]
 * [keine-2020]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

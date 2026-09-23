@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Item
+module
+
+public import Linglib.Semantics.Polarity.Item
 
 /-!
 # Spanish Polarity-Sensitive Items
@@ -21,6 +23,8 @@ via `licensingContexts := [.negation, ...]` — the position-dependence
 is a syntactic fact about the marker–n-word interaction, not a
 lexical-feature distinction across n-words.
 -/
+
+@[expose] public section
 
 namespace Spanish.PolarityItems
 

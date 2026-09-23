@@ -1,5 +1,7 @@
-import Linglib.Semantics.Homogeneity.Usable
-import Linglib.Semantics.Supervaluation
+module
+
+public import Linglib.Semantics.Homogeneity.Usable
+public import Linglib.Semantics.Supervaluation
 
 /-!
 # Homogeneity: the conditional instantiation
@@ -26,6 +28,8 @@ representation.
 * [K. von Fintel, *The Presupposition of Subjunctive
   Conditionals*][von-fintel-1999]
 -/
+
+@[expose] public section
 
 namespace Homogeneity
 

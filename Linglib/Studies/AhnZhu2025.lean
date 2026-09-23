@@ -1,6 +1,8 @@
-import Linglib.Semantics.Possession.Basic
-import Linglib.Studies.Jenks2018
-import Linglib.Data.Examples.AhnZhu2025
+module
+
+public import Linglib.Semantics.Possession.Basic
+public import Linglib.Studies.Jenks2018
+public import Linglib.Data.Examples.AhnZhu2025
 
 /-!
 # Bridging with Mandarin bare nouns and demonstratives
@@ -41,6 +43,8 @@ diagnostics classify the nouns (`of_iff_relational`, `de_of_relational`).
 * [bremmers-etal-2022]
 * [vikner-jensen-2002]
 -/
+
+@[expose] public section
 
 namespace AhnZhu2025
 

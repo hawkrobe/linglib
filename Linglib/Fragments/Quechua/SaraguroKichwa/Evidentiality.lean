@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Saraguro Kichwa evidentiality
@@ -14,6 +16,8 @@ varieties, is not an evidential of this variety; [martinez-vera-2026] analyzes i
 * [aikhenvald-2004]
 * [martinez-vera-2026]
 -/
+
+@[expose] public section
 
 namespace Quechua.SaraguroKichwa.Evidentiality
 

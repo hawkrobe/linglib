@@ -1,8 +1,10 @@
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Fragments.English.TemporalConnectives
-import Linglib.Fragments.Japanese.TemporalConnectives
-import Linglib.Data.Examples.ArreguiKusumoto1998
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Fragments.English.TemporalConnectives
+public import Linglib.Fragments.Japanese.TemporalConnectives
+public import Linglib.Data.Examples.ArreguiKusumoto1998
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Arregui & Kusumoto 1998: tense in temporal adjunct clauses
@@ -43,6 +45,8 @@ quantificational, bound by a covert adverb of quantification, and a past-tense o
 * [anscombe-1964], [ogihara-1995b] — the before/after veridicality contrast
 * [heim-kratzer-1998] — predicate abstraction over the trace
 -/
+
+@[expose] public section
 
 namespace ArreguiKusumoto1998
 

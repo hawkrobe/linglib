@@ -1,7 +1,9 @@
-import Linglib.Syntax.CCG.Derivation
-import Linglib.Phonology.Prosody.Intonation
-import Linglib.Core.Order.PartialUnify
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Syntax.CCG.Derivation
+public import Linglib.Phonology.Prosody.Intonation
+public import Linglib.Core.Order.PartialUnify
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # CCG Intonation and Information Structure
@@ -39,6 +41,8 @@ The prosodic vocabulary comes from `Prosody`'s autosegmental-metrical types.
 Relating these phrases to the phonology-side prosodic hierarchy
 (`Phonology/Prosody/Phrase`) is left to future study-level work.
 -/
+
+@[expose] public section
 
 namespace CCG.Intonation
 

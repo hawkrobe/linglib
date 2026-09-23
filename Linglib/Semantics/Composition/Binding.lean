@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Composition.Assignment
-import Linglib.Logic.CylindricAlgebra
+module
+
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.CylindricAlgebra
 
 /-!
 # Binding
@@ -25,6 +27,8 @@ whose `pure` and `<*>` are the constant and pointwise application; and binding a
 * [barker-shan-2014]
 * [henkin-monk-tarski-1971]
 -/
+
+@[expose] public section
 
 namespace Semantics.Composition
 

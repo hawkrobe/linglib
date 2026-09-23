@@ -1,4 +1,6 @@
-import Linglib.Studies.IppolitoKissWilliams2022
+module
+
+public import Linglib.Studies.IppolitoKissWilliams2022
 
 /-!
 # Ippolito, Kiss and Williams (2025): Discourse *only*
@@ -37,6 +39,8 @@ and interrogative cases derived in it.
 * [roberts-2012]
 * [anscombre-ducrot-1977]
 -/
+
+@[expose] public section
 
 namespace IppolitoKissWilliams2025
 

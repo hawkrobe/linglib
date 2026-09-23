@@ -1,5 +1,7 @@
-import Linglib.Logic.Team.BSML.Bridge
-import Linglib.Logic.Team.BSML.Bisimulation
+module
+
+public import Linglib.Logic.Team.BSML.Bridge
+public import Linglib.Logic.Team.BSML.Bisimulation
 
 /-!
 # Characteristic (Hintikka) formulas for BSML — foundation
@@ -38,6 +40,8 @@ standard *classical* modal Hintikka characterisation.
   union-closed normal form that discharges
   `expressiveCompleteness_converse`.
 -/
+
+@[expose] public section
 
 namespace BSML
 

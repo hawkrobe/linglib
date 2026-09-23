@@ -1,5 +1,7 @@
-import Linglib.Phonology.Tone.Grammatical
-import Linglib.Phonology.Tone.Basic
+module
+
+public import Linglib.Phonology.Tone.Grammatical
+public import Linglib.Phonology.Tone.Basic
 
 /-!
 # Hausa Tone — mathlib-style
@@ -29,6 +31,8 @@ Hausa, not a parallel hierarchy:
 Per-cell facts (e.g. *the plural template is dominant*) appear as
 `example`s — corollaries of the smart-constructor lemmas.
 -/
+
+@[expose] public section
 
 namespace Hausa
 

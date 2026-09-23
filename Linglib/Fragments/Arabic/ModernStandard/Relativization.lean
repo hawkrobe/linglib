@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Modern Standard Arabic Relativization Fragment
@@ -31,6 +33,8 @@ The data here is Modern Standard Arabic (ISO `arb`); other files in
 already mixed; a future split into `Fragments/StandardArabic/` and
 `Fragments/EgyptianArabic/` would resolve the incoherence.
 -/
+
+@[expose] public section
 
 namespace Arabic.ModernStandard
 

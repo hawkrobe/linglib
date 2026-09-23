@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Order.Flat
-import Linglib.Syntax.ConstructionGrammar.Basic
+module
+
+public import Linglib.Core.Order.Flat
+public import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
 # Constructional inheritance
@@ -32,6 +34,8 @@ legislate leaves the slot unspecified.
 - `inheritFieldUnique`, `Constructicon.derivedField`: inheritance for
   slots without decidable equality (e.g. denotations)
 -/
+
+@[expose] public section
 
 namespace ConstructionGrammar
 

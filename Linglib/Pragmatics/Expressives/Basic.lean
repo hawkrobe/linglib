@@ -1,4 +1,6 @@
-import Linglib.Semantics.Presupposition.Basic
+module
+
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Two-dimensional semantics for conventional implicatures
@@ -25,6 +27,8 @@ always takes the meet `⊓`. `TwoDimProp.ofPartialProp` bridges
 
 [potts-2005] [potts-2007b] [wang-2025] [kirk-giannini-2024]
 -/
+
+@[expose] public section
 
 namespace Pragmatics.Expressives
 

@@ -1,7 +1,9 @@
-import Linglib.Syntax.Case.Alignment
-import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Chol.Agreement
-import Linglib.Fragments.Mayan.Qanjobal.Agreement
+module
+
+public import Linglib.Syntax.Case.Alignment
+public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+public import Linglib.Fragments.Mayan.Chol.Agreement
+public import Linglib.Fragments.Mayan.Qanjobal.Agreement
 
 /-!
 # Imanishi (2014): Default Ergative
@@ -38,6 +40,8 @@ an all-ergative alignment, are underivable (`not_all_abs`, `not_all_erg`).
 * [imanishi-2014]
 * [coon-mateo-pedro-preminger-2014]
 -/
+
+@[expose] public section
 
 namespace Imanishi2014
 

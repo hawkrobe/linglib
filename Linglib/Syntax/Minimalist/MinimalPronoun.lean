@@ -1,4 +1,6 @@
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+module
+
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
 # Minimal Pronoun Theory
@@ -39,6 +41,8 @@ item inventory.
 Landau-specific theory (the Two-Tiered Theory of Control, predicate
 classification, clause classes) is in `Studies/Landau2015.lean`.
 -/
+
+@[expose] public section
 
 namespace Minimalist.MinimalPronoun
 

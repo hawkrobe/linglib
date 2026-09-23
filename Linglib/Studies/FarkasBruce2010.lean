@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.FarkasBruce2010
-import Linglib.Discourse.Commitment.Table
-import Linglib.Discourse.Role
+module
+
+public import Linglib.Data.Examples.FarkasBruce2010
+public import Linglib.Discourse.Commitment.Table
+public import Linglib.Discourse.Role
 
 /-!
 # Farkas and Bruce (2010): On Reacting to Assertions and Polar Questions
@@ -66,6 +68,8 @@ for the marked combination [reverse, +].
 * [farkas-bruce-2010]
 * [stalnaker-1978]
 -/
+
+@[expose] public section
 
 namespace FarkasBruce2010
 

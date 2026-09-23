@@ -1,6 +1,8 @@
-import Linglib.Semantics.Quantification.Defs
-import Linglib.Semantics.Plurality.Distributivity
-import Linglib.Studies.MitrovicSauerland2016
+module
+
+public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Plurality.Distributivity
+public import Linglib.Studies.MitrovicSauerland2016
 
 /-!
 # Bill, Gonzalez, Driemel, Makharoblidze and Pintér 2025: is DP conjunction always complex?
@@ -47,6 +49,8 @@ Hungarian *mu* less complex than Georgian *mu*.
 * [szabolcsi-2015], [haslinger-etal-2019]: the rival structures.
 * [clark-2017]: bound versus free morphemes in acquisition.
 -/
+
+@[expose] public section
 
 namespace BillEtAl2025
 

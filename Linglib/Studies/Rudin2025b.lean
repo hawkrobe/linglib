@@ -1,7 +1,9 @@
-import Linglib.Semantics.ArgumentStructure.ThematicRole
-import Linglib.Discourse.Commitment.Table
-import Linglib.Semantics.Mood.Defs
-import Linglib.Data.Examples.Rudin2025b
+module
+
+public import Linglib.Semantics.ArgumentStructure.ThematicRole
+public import Linglib.Discourse.Commitment.Table
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Data.Examples.Rudin2025b
 
 /-!
 # Rudin (2025): Embedded Intonation and Quotative Complements to Verbs of Speech
@@ -46,6 +48,8 @@ issue without uttering a sentence, are not represented.
 * [hacquard-2010]
 * [farkas-roelofsen-2017]
 -/
+
+@[expose] public section
 
 namespace Rudin2025b
 
@@ -289,14 +293,14 @@ theorem ask_risingDeclarative :
 
 /-! ### The paper's judgments -/
 
-private def verbs : List (String × Verb) :=
+def verbs : List (String × Verb) :=
   [("say", .say), ("assert", .assert), ("claim", .claim), ("ask", .ask), ("wonder", .wonder),
     ("yell", .yell), ("shout", .shout), ("whisper", .whisper)]
 
-private def volumes : List (String × Volume) :=
+def volumes : List (String × Volume) :=
   [("neutral", .neutral), ("loud", .loud), ("whispered", .whispered)]
 
-private def moods : List (String × Illocutionary) :=
+def moods : List (String × Illocutionary) :=
   [("declarative", .declarative), ("interrogative", .interrogative)]
 
 /-- The quoted performance of a row, its sentence read as denoting a fixed proposition. -/
@@ -320,7 +324,7 @@ def datum (x : LinguisticExample) : Option (Verb × Performance Bool) := do
 def data : List (LinguisticExample × Verb × Performance Bool) :=
   Examples.all.filterMap λ x => (datum x).map (x, ·)
 
-private def e₀ : Event ℕ := ⟨⟨⟨0, 0⟩, le_rfl⟩, .action⟩
+def e₀ : Event ℕ := ⟨⟨⟨0, 0⟩, le_rfl⟩, .action⟩
 
 /-- Each of the paper's quotative reports is judged acceptable exactly when it is satisfiable
 under the verb's meaning postulate. -/

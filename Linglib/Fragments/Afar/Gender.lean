@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Afar noun gender
@@ -16,6 +18,8 @@ signals at once ([parker-hayward-1985]; [corbett-1991]).
   (1985)][parker-hayward-1985]
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
 -/
+
+@[expose] public section
 
 namespace Afar.Gender
 

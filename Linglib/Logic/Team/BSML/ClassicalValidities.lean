@@ -1,4 +1,6 @@
-import Linglib.Logic.Team.BSML.Defs
+module
+
+public import Linglib.Logic.Team.BSML.Defs
 
 /-!
 # BSML Classical Validities
@@ -46,6 +48,8 @@ identification.
   module — they depend only on the `IsBilateral` polarity-flip structure
   (already wired via `BSML.isBilateral` in `Defs.lean`).
 -/
+
+@[expose] public section
 
 namespace BSML
 

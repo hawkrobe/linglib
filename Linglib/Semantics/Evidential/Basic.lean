@@ -1,5 +1,7 @@
-import Mathlib.Order.Partition.Finpartition
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Mathlib.Order.Partition.Finpartition
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Evidential paradigms
@@ -21,6 +23,8 @@ coverage lies within one type.
 * [aikhenvald-2004], §2.5
 * [willett-1988]
 -/
+
+@[expose] public section
 
 namespace Evidential
 

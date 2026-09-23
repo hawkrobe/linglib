@@ -1,5 +1,7 @@
-import Linglib.Semantics.Plurality.Algebra
-import Linglib.Semantics.Plurality.Reciprocal
+module
+
+public import Linglib.Semantics.Plurality.Algebra
+public import Linglib.Semantics.Plurality.Reciprocal
 
 /-!
 # Sternefeld (1998): Reciprocity and cumulative predication
@@ -35,6 +37,8 @@ jointly.
 * [link-1983]
 * [schwarzschild-1996]
 -/
+
+@[expose] public section
 
 namespace Sternefeld1998
 

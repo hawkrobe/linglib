@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Modality.Anchor
-import Linglib.Semantics.Presupposition.ContentLayer
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Modality.Anchor
+public import Linglib.Semantics.Presupposition.ContentLayer
 
 /-!
 # Modal indefinites
@@ -22,6 +24,8 @@ correlate with them.
 * [alonso-ovalle-menendez-benito-2010]
 * [kratzer-shimoyama-2002]
 -/
+
+@[expose] public section
 
 open Modality Presupposition
 

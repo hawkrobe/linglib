@@ -1,6 +1,8 @@
-import Linglib.Morphology.Exponence.Basic
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Order.Fin.Basic
+module
+
+public import Linglib.Morphology.Exponence.Basic
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.Fin.Basic
 
 /-!
 # Vocabularies over containment hierarchies: rules and specificity
@@ -24,6 +26,8 @@ containment) is nanosyntax spellout, dual à la `OrderDual`.
 * `Terminal`, `Adjacent`, `Antihomophonous`, `Grounded`, `ContextFree` —
   well-formedness conditions on vocabularies
 -/
+
+@[expose] public section
 
 namespace Morphology.Containment
 

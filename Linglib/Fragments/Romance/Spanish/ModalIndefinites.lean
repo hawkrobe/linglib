@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.ModalIndefinite
+module
+
+public import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
 # Spanish modal indefinites
@@ -8,6 +10,8 @@ implicature derived from an anti-singleton domain constraint) and *uno cualquier
 ([alonso-ovalle-menendez-benito-2018]: at-issue random choice, projected from the
 decision of a volitional event).
 -/
+
+@[expose] public section
 
 namespace Spanish.ModalIndefinites
 

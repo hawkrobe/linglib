@@ -1,4 +1,6 @@
-import Linglib.Fragments.Turkish.Case
+module
+
+public import Linglib.Fragments.Turkish.Case
 
 /-!
 # Turkish Definiteness and Specificity
@@ -28,6 +30,8 @@ definite/specific objects receive overt case, nonspecific ones do not.
 The Turkish pattern is often cited in [aissen-2003] as a paradigm
 case of specificity-driven DOM.
 -/
+
+@[expose] public section
 
 namespace Turkish.Definiteness
 

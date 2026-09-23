@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Complementation
+module
+
+public import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Complementation data schema
@@ -15,6 +17,8 @@ This is substrate: it imports `Features/Complementation.lean` only. Consumers
 * `Datum` — one CTP row: verb, CTP class, attested complement codings,
   equi-deletion, negative raising.
 -/
+
+@[expose] public section
 
 namespace Data.Complementation
 

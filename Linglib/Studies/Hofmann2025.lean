@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Hofmann2025
-import Linglib.Semantics.Dynamic.ICDRT.Basic
+module
+
+public import Linglib.Data.Examples.Hofmann2025
+public import Linglib.Semantics.Dynamic.ICDRT.Basic
 
 /-!
 # Hofmann (2025): Anaphoric Accessibility with Flat Update
@@ -46,6 +48,8 @@ updates from an initial state, with their pronouns accessible or not as the pape
 * [roberts-1989]
 * [karttunen-1976]
 -/
+
+@[expose] public section
 
 namespace Hofmann2025
 

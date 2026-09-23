@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Czech case inventory
@@ -11,6 +13,8 @@ nominative elsewhere ([short-1993-czech]).
 
 * [short-1993-czech]
 -/
+
+@[expose] public section
 
 namespace Czech.Case
 

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.UnorderedTree.Leaves
+module
+
+public import Linglib.Core.Data.UnorderedTree.Leaves
 
 /-!
 # Size measures on unordered trees and their forests
@@ -19,6 +21,8 @@ import Linglib.Core.Data.UnorderedTree.Leaves
 * `UnorderedTree.countP_leaves_le_numEdges`: counted leaves are among the non-root vertices
   whenever some vertex is uncounted.
 -/
+
+@[expose] public section
 
 namespace UnorderedTree
 

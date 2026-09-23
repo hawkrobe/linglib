@@ -1,7 +1,9 @@
-import Linglib.Semantics.Genericity.Kind
-import Linglib.Semantics.Dynamic.Update
-import Linglib.Logic.Assignment
-import Linglib.Semantics.Plurality.MassCount
+module
+
+public import Linglib.Semantics.Genericity.Kind
+public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Plurality.MassCount
 
 /-!
 # Krifka (2026): Anaphora for Concepts, Kinds, and Parts in Dynamic Interpretation
@@ -41,6 +43,8 @@ dog* is run on a two-entity model (`doesntOwnADog`).
 * [link-1983] — the maximal element and the plural closure
 * [hofmann-2025] — entity referents under negation, the neighbouring account
 -/
+
+@[expose] public section
 
 namespace Krifka2026
 

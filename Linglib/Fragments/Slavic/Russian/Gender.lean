@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Russian Noun Gender
@@ -45,6 +47,8 @@ Wade ≈ noun-declension tables; *put'* (Class III masculine, sole
 exception) verified at Wade §6397; *znamja* (-мя neuter) is the textbook
 Class III neuter group.
 -/
+
+@[expose] public section
 
 namespace Russian.Gender
 

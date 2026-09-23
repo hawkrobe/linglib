@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Reflex
-import Linglib.Fragments.Japanese.Coordination
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Reflex
+public import Linglib.Fragments.Japanese.Coordination
 
 /-!
 # Branan and Erlewine 2023: Anti-pied-piping
@@ -33,6 +35,8 @@ anti-pied-piping, stated over the host–focus containment relations of
 * The particle-phrase theory of §4 and the cross-linguistic
   appendix as `Data/Examples` rows.
 -/
+
+@[expose] public section
 
 namespace BrananErlewine2023
 

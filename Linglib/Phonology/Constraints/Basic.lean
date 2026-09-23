@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.Subregular.TierProjection
-import Linglib.Phonology.Subregular.ForbiddenPairs
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.Subregular.TierProjection
+public import Linglib.Phonology.Subregular.ForbiddenPairs
 
 /-!
 # Tier-based markedness constraint library
@@ -24,6 +26,8 @@ faithfulness ([coetzee-pater-2011]) is `Constraint.binary (fun c => deleted c �
 This file provides the **gradient, tier-projected markedness** constructors —
 OCP, AGREE, forbidden pairs/singletons — which carry genuine adjacency logic.
 -/
+
+@[expose] public section
 
 namespace Constraints
 

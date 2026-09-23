@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Kratzer.Ordering
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Ordering
 
 /-!
 # Best-worlds desire semantics
@@ -17,6 +19,8 @@ doxastic-closure problem of [villalta-2008].
 * [kratzer-1981]
 * [villalta-2008]
 -/
+
+@[expose] public section
 
 namespace Desire.BestWorlds
 

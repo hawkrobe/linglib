@@ -36,6 +36,8 @@ import csv
 import re
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
 from collections import OrderedDict
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -311,12 +313,12 @@ def main():
         sys.exit(1)
 
     if sys.argv[1:] == ["--chart", "--check"]:
-        if not CHART.exists() or CHART.read_text(encoding="utf-8") != emit_chart():
+        if not CHART.exists() or CHART.read_text(encoding="utf-8") != as_module_if_possible(emit_chart()):
             sys.exit(f"FAIL: {CHART.relative_to(ROOT)} is out of sync; run --chart")
         sys.stdout.write(f"OK: {CHART.relative_to(ROOT)} is in sync\n")
         return
     if sys.argv[1:] == ["--chart"]:
-        content = emit_chart()
+        content = as_module_if_possible(emit_chart())
         CHART.write_text(content, encoding="utf-8")
         sys.stdout.write(f"[gen] {CHART.relative_to(ROOT)} ({content.count(chr(10))} lines)\n")
         return
@@ -355,7 +357,7 @@ def main():
         module_name = lang_module_name(lang_name, iso)
 
         out_path = OUT / f"{module_name}.lean"
-        content = emit_module(iso, invs, module_name, chosen[iso])
+        content = as_module_if_possible(emit_module(iso, invs, module_name, chosen[iso]))
         out_path.write_text(content, encoding="utf-8")
         sys.stdout.write(f"[gen] {module_name}.lean ({len(invs[first_inv_id])} phonemes, ISO {iso}, InvID {first_inv_id})\n")
 

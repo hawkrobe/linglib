@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 87A: Order of Adjective and Noun
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 87, 1367 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F87A
 
@@ -24,7 +28,8 @@ inductive AdjectiveNounOrder where
   | onlyInternallyHeadedRelativeClauses
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint AdjectiveNounOrder) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint AdjectiveNounOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .nounAdjective }
   , { walsCode := "ani", iso := "hnh", value := .adjectiveNoun }
   , { walsCode := "xam", iso := "xam", value := .nounAdjective }
@@ -527,7 +532,8 @@ private def allData_0 : List (Datapoint AdjectiveNounOrder) :=
   , { walsCode := "kac", iso := "xac", value := .noDominantOrder }
   ]
 
-private def allData_1 : List (Datapoint AdjectiveNounOrder) :=
+/-- Rows 501 to 1000 of `allData`. -/
+def allData_1 : List (Datapoint AdjectiveNounOrder) :=
   [ { walsCode := "kdz", iso := "kzj", value := .nounAdjective }
   , { walsCode := "kgr", iso := "kki", value := .nounAdjective }
   , { walsCode := "kng", iso := "kgp", value := .nounAdjective }
@@ -1030,7 +1036,8 @@ private def allData_1 : List (Datapoint AdjectiveNounOrder) :=
   , { walsCode := "pba", iso := "pia", value := .adjectiveNoun }
   ]
 
-private def allData_2 : List (Datapoint AdjectiveNounOrder) :=
+/-- Rows 1001 to 1367 of `allData`. -/
+def allData_2 : List (Datapoint AdjectiveNounOrder) :=
   [ { walsCode := "pip", iso := "ppl", value := .adjectiveNoun }
   , { walsCode := "prh", iso := "myp", value := .nounAdjective }
   , { walsCode := "pir", iso := "pib", value := .nounAdjective }

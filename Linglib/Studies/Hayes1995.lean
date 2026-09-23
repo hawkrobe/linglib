@@ -1,4 +1,6 @@
-import Linglib.Phonology.Prosody.Grid
+module
+
+public import Linglib.Phonology.Prosody.Grid
 
 /-!
 # Hayes (1995): Metrical Stress Theory
@@ -26,6 +28,8 @@ would gap its grid column, which the Continuous Column Constraint of Section 3.4
 * [prince-1983]
 * [mccarthy-prince-1990]
 -/
+
+@[expose] public section
 
 namespace Hayes1995
 

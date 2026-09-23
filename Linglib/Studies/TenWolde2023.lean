@@ -1,7 +1,9 @@
-import Mathlib.Order.Interval.Set.OrdConnected
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Syntax.ConstructionGrammar.Inheritance
-import Linglib.Studies.Traugott2010
+module
+
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Syntax.ConstructionGrammar.Inheritance
+public import Linglib.Studies.Traugott2010
 
 /-!
 # ten Wolde (2023): The English Binominal Noun Phrase: A Cognitive-Functional Approach
@@ -38,6 +40,8 @@ evaluative stages is a subjectification in Traugott's sense.
 * [ten-wolde-2023]
 * [traugott-2010]
 -/
+
+@[expose] public section
 
 namespace TenWolde2023
 
@@ -299,7 +303,7 @@ def adjectivePhrase : Construction Unit :=
   ⟨"AP", [{ filler := .open_ .ADV }, { filler := .open_ .ADJ, isHead := true }], (), false⟩
 
 /-- A link between two constructions of the network. -/
-private def link (parent child : Construction Unit) (type : LinkType) (shared : String) :
+def link (parent child : Construction Unit) (type : LinkType) (shared : String) :
     InheritanceLink :=
   { parent := parent.name, child := child.name, mode := .normal, linkType := some type,
     sharedProperties := [shared] }

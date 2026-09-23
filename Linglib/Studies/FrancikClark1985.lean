@@ -1,7 +1,9 @@
-import Linglib.Discourse.SpeechAct
-import Linglib.Data.Examples.FrancikClark1985
-import Mathlib.Order.Bounds.Basic
-import Mathlib.Order.Interval.Set.Basic
+module
+
+public import Linglib.Discourse.SpeechAct
+public import Linglib.Data.Examples.FrancikClark1985
+public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Francik and Clark (1985): How to Make Requests That Overcome Obstacles to Compliance
@@ -63,6 +65,8 @@ of specificity descends the order on queries (`gradient_antitone`).
 * [searle-1969]
 * [clark-1979]
 -/
+
+@[expose] public section
 
 namespace FrancikClark1985
 
@@ -196,13 +200,13 @@ example : Pinpoints .general {.ability, .willingness} :=
 
 /-! ### The paper's data -/
 
-private def queries : List (String × Query) :=
+def queries : List (String × Query) :=
   [("direct", .direct), ("knowledge", .condition .knowledge), ("memory", .condition .memory),
    ("source", .condition .source), ("permission", .condition .permission),
    ("willingness", .condition .willingness), ("speakerMemory", .condition .speakerMemory),
    ("general", .general)]
 
-private def conditions : List (String × PreparatoryCondition) :=
+def conditions : List (String × PreparatoryCondition) :=
   [("ability", .ability), ("knowledge", .knowledge), ("memory", .memory),
    ("source", .source), ("permission", .permission), ("willingness", .willingness),
    ("speakerMemory", .speakerMemory)]

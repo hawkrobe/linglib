@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.WhModifier
+module
+
+public import Linglib.Syntax.Category.WhModifier
 
 /-!
 # Mandarin questions
@@ -13,6 +15,8 @@ and Singlish *the-hell*.
 * [chou-2012]
 * [chan-shen-2026]
 -/
+
+@[expose] public section
 
 namespace Mandarin.Questions
 

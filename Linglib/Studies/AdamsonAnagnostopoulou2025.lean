@@ -1,10 +1,12 @@
-import Linglib.Syntax.Minimalist.Agree.Coordination
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Fragments.Greek.StandardModern.Gender
-import Linglib.Fragments.Icelandic.Gender
-import Linglib.Fragments.Slavic.Serbian.Gender
-import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Syntax.Minimalist.Agree.Coordination
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Fragments.Greek.StandardModern.Gender
+public import Linglib.Fragments.Icelandic.Gender
+public import Linglib.Fragments.Slavic.Serbian.Gender
+public import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Gender features and coordination resolution
@@ -48,6 +50,8 @@ mismatch resolution (`mismatchResolution`), and Table 2 follows from the geometr
 * [bobaljik-2012]
 * [corbett-1991]
 -/
+
+@[expose] public section
 
 namespace AdamsonAnagnostopoulou2025
 

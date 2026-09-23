@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.Examples.Schema
-import Linglib.Core.Order.Flat
+module
+
+public import Linglib.Data.Examples.Schema
+public import Linglib.Core.Order.Flat
 
 /-!
 # CLDF word forms
@@ -45,6 +47,8 @@ and its reduplicant); CLDF has no standard component for these and permits custo
 * [forkel-etal-2018]
 * [forkel-etal-2024]
 -/
+
+@[expose] public section
 
 namespace Data.Forms
 

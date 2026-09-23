@@ -1,8 +1,10 @@
-import Linglib.Semantics.Degree.Comparison
-import Mathlib.Order.Fin.Basic
-import Mathlib.Order.Interval.Set.LinearOrder
-import Mathlib.Order.Monotone.Basic
-import Mathlib.Data.Fin.Rev
+module
+
+public import Linglib.Semantics.Degree.Comparison
+public import Mathlib.Order.Fin.Basic
+public import Mathlib.Order.Interval.Set.LinearOrder
+public import Mathlib.Order.Monotone.Basic
+public import Mathlib.Data.Fin.Rev
 
 /-!
 # Horn (1972): On the Semantic Properties of Logical Operators in English
@@ -40,6 +42,8 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
 
 * [horn-1972]
 -/
+
+@[expose] public section
 
 namespace Horn1972
 

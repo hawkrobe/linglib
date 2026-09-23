@@ -1,6 +1,8 @@
-import Linglib.Syntax.Tree.Basic
-import Linglib.Syntax.Command
-import Linglib.Semantics.Questions.Highlighting
+module
+
+public import Linglib.Syntax.Tree.Basic
+public import Linglib.Syntax.Command
+public import Linglib.Semantics.Questions.Highlighting
 
 /-!
 # Höhle (1992): Über Verum-Fokus im Deutschen
@@ -43,6 +45,8 @@ verbs, relative and interrogative pronouns without a particle, and verb-final ve
 
 * [hohle-1992]
 -/
+
+@[expose] public section
 
 namespace Hohle1992
 

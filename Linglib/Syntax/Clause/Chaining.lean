@@ -1,8 +1,10 @@
-import Mathlib.Data.Finset.Union
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.UD.Features
+module
+
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.UD.Features
 
 /-!
 # Clause chaining
@@ -45,6 +47,8 @@ top is the profile of a finite verb.
 * [foley-r-d-van-valin-1984]
 * [longacre-2007]
 -/
+
+@[expose] public section
 
 namespace Clause.Chaining
 

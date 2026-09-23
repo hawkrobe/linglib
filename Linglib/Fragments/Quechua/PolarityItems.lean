@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Quechua (Ancash) Polarity-Sensitive Items
@@ -11,6 +13,8 @@ discontinuous negator *mana … -tsu*, A279), comparatives (A277), and free
 choice (A278). A dual NPI/FCI on the indefinite-plus-even pattern of
 [lahiri-1998].
 -/
+
+@[expose] public section
 
 namespace Quechua.PolarityItems
 

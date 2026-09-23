@@ -1,6 +1,8 @@
-import Linglib.Phonology.Segmental.Defs
-import Linglib.Core.Data.Fintype.Sets
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Core.Data.Fintype.Sets
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Feature classes
@@ -64,6 +66,8 @@ segments close by `decide`.
   Articulation* (2000)][halle-vaux-wolfe-2000]
 * [J. Brown and J. Meyer, *Assimilation and Morpheme Boundaries in Mgira* (2024)][brown-meyer-2024]
 -/
+
+@[expose] public section
 
 namespace Phonology
 

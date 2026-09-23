@@ -1,6 +1,8 @@
-import Linglib.Morphology.Exponence.Decomposition
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Sigma
+module
+
+public import Linglib.Morphology.Exponence.Decomposition
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Sigma
 
 /-!
 # Christopoulos & Zompì 2023: Weak Case Containment
@@ -45,6 +47,8 @@ needs k₁ (fn. 25).
   Table 20 under rules (7)
 * `yiddish_stems` / `undz_needs_k1` — the fn. 25 paradigm and its k₁ argument
 -/
+
+@[expose] public section
 
 namespace ChristopoulosZompi2023
 

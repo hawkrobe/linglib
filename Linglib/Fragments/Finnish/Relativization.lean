@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Finnish relative clauses
@@ -16,6 +18,8 @@ The data are [keenan-comrie-1977]'s.
 
 * [keenan-comrie-1977]
 -/
+
+@[expose] public section
 
 namespace Finnish
 

@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 101A: Expression of Pronominal Subjects
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 101, 711 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F101A
 
@@ -28,7 +32,8 @@ inductive ExpressionOfPronominalSubjects where
   | mixed
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint ExpressionOfPronominalSubjects) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint ExpressionOfPronominalSubjects) :=
   [ { walsCode := "aar", iso := "aiw", value := .subjectAffixesOnVerb }
   , { walsCode := "abk", iso := "abk", value := .subjectAffixesOnVerb }
   , { walsCode := "abv", iso := "abz", value := .subjectPronounsInDifferentPosition }
@@ -531,7 +536,8 @@ private def allData_0 : List (Datapoint ExpressionOfPronominalSubjects) :=
   , { walsCode := "ocu", iso := "ocu", value := .subjectAffixesOnVerb }
   ]
 
-private def allData_1 : List (Datapoint ExpressionOfPronominalSubjects) :=
+/-- Rows 501 to 711 of `allData`. -/
+def allData_1 : List (Datapoint ExpressionOfPronominalSubjects) :=
   [ { walsCode := "obg", iso := "ogu", value := .subjectAffixesOnVerb }
   , { walsCode := "oji", iso := "", value := .subjectCliticsOnVariableHost }
   , { walsCode := "olo", iso := "ong", value := .subjectAffixesOnVerb }

@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Syntax.Case.Licensing
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Syntax.Minimalist.Phi.Geometry
+public import Linglib.Syntax.Case.Licensing
 
 /-!
 # φ-probes: the φ-feature specialization of `Probe`
@@ -21,6 +23,8 @@ Condition built on it.
 - `PhiGoal` — a nominal as a φ-goal: its Case-licensing state with its φ-cell.
 - `PLC` — the Person Licensing Condition over φ-bearing goal tokens.
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Exhaustification.Presuppositional
-import Linglib.Semantics.Presupposition.Context
-import Linglib.Studies.BarLevFox2020
+module
+
+public import Linglib.Semantics.Exhaustification.Presuppositional
+public import Linglib.Semantics.Presupposition.Context
+public import Linglib.Studies.BarLevFox2020
 
 /-!
 # Del Pinal, Bassi and Sauerland (2024): Free choice and presuppositional exhaustification
@@ -43,6 +45,8 @@ with the universally projected homogeneity presupposition as a premise; *exactly
 * [gotzner-romoli-santorio-2020]
 * [heim-1982]
 -/
+
+@[expose] public section
 
 namespace DelPinalBassiSauerland2024
 

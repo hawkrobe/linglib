@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.SEM.Deterministic
+module
+
+public import Linglib.Semantics.Causation.SEM.Deterministic
 
 /-!
 # Forced development
@@ -16,6 +18,8 @@ settled, so whatever it settles is forced.
 * [bar-asher-siegal-2026]
 * [baglini-bar-asher-siegal-2025]
 -/
+
+@[expose] public section
 
 namespace Causation.SEM
 

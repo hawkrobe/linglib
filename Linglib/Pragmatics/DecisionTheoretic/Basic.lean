@@ -1,12 +1,14 @@
-import Linglib.Core.Probability.ConditionalProbability
-import Linglib.Core.Probability.LikelihoodRatio
-import Linglib.Core.Probability.UniformOn
-import Linglib.Semantics.Questions.Hamblin
-import Mathlib.MeasureTheory.Measure.Count
-import Mathlib.MeasureTheory.Measure.Real
-import Mathlib.Probability.Kernel.Basic
-import Mathlib.Probability.Decision.Risk.Countable
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+
+public import Linglib.Core.Probability.ConditionalProbability
+public import Linglib.Core.Probability.LikelihoodRatio
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Semantics.Questions.Hamblin
+public import Mathlib.MeasureTheory.Measure.Count
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.Kernel.Basic
+public import Mathlib.Probability.Decision.Risk.Countable
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Decision-Theoretic Semantics: Core
@@ -55,6 +57,8 @@ issue vocabulary and the facts that genuinely concern the joint prior.
 - `relevance_count`: over a counting prior, relevance is the log ratio of
   proportions
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal symmDiff

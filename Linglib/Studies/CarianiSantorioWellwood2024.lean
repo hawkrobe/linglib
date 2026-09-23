@@ -1,6 +1,8 @@
-import Linglib.Semantics.Attitudes.Confidence
-import Linglib.Semantics.Attitudes.EpistemicThreshold
-import Linglib.Studies.Wellwood2015
+module
+
+public import Linglib.Semantics.Attitudes.Confidence
+public import Linglib.Semantics.Attitudes.EpistemicThreshold
+public import Linglib.Studies.Wellwood2015
 
 /-!
 # Cariani, Santorio and Wellwood 2024: confidence reports
@@ -40,6 +42,8 @@ linear order.
 * [wellwood-2015]
 * [tversky-kahneman-1983]
 -/
+
+@[expose] public section
 
 namespace CarianiSantorioWellwood2024
 

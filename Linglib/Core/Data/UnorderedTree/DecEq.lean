@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.Multiset.Rel
-import Linglib.Core.Data.UnorderedTree.Basic
+module
+
+public import Linglib.Core.Data.Multiset.Rel
+public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
 # Decidable equality of nonplanar rose trees
@@ -35,6 +37,8 @@ correctness from `Core/Data/Multiset/Rel.lean`.
 
 `[UPSTREAM]` candidate.
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

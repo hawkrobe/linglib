@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Modern Greek Complementizers [christidis-1982] [roussou-2010]
@@ -20,6 +22,8 @@ selection (§3.1), the content/situation typing, the attested selection
 classes, and the stativity generalizations — lives in
 `Studies/Angelopoulos2026.lean` as projections over these entries.
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.Complementizers
 

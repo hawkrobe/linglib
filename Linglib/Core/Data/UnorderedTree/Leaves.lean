@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Leaves
-import Linglib.Core.Data.UnorderedTree.Basic
+module
+
+public import Linglib.Core.Data.RoseTree.Leaves
+public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
 # Leaf projections of an unordered tree
@@ -22,6 +24,8 @@ quotient, and the leaf statistics by predicate descend with them.
 * `UnorderedTree.countP_leaves_lt_numNodes_of_not_root`: when the root fails the predicate,
   the counted leaves are among the non-root vertices.
 -/
+
+@[expose] public section
 
 namespace UnorderedTree
 

@@ -1,9 +1,11 @@
-import Linglib.Semantics.Composition.Model
-import Linglib.Core.ModelTheory.Binders
-import Linglib.Semantics.Quantification.Basic
-import Mathlib.ModelTheory.Semantics
-import Mathlib.ModelTheory.Satisfiability
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Semantics.Composition.Model
+public import Linglib.Core.ModelTheory.Binders
+public import Linglib.Semantics.Quantification.Basic
+public import Mathlib.ModelTheory.Semantics
+public import Mathlib.ModelTheory.Satisfiability
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Reduction: the FO fragment of type-driven composition
@@ -34,6 +36,8 @@ compiled fragment: its first-order undefinability is the planned
 Barwise-Cooper payoff theorem, and the principled reason `compileFO` is
 partial.
 -/
+
+@[expose] public section
 
 universe u v
 

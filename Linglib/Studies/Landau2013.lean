@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Control.Diagnostics
+module
+
+public import Linglib.Syntax.Control.Diagnostics
 
 /-!
 # Landau (2013): Control in Generative Grammar: A Research Companion
@@ -33,6 +35,8 @@ non-obligatory signature is not modelled.
 
 * [landau-2013]
 -/
+
+@[expose] public section
 
 namespace Landau2013
 

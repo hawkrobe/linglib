@@ -1,7 +1,9 @@
-import Linglib.Fragments.Akan.Phonology
-import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Fragments.Akan.Phonology
+public import Linglib.Phonology.OptimalityTheory.Correspondence
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Mathlib.Tactic.FinCases
 
 /-!
 # McCarthy and Prince (1995): Faithfulness and Reduplicative Identity
@@ -56,6 +58,8 @@ those of the Akan fragment.
 
 * [mccarthy-prince-1995]
 -/
+
+@[expose] public section
 
 namespace McCarthyPrince1995
 

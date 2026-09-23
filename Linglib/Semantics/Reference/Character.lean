@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Reference.Rigidity
+module
+
+public import Linglib.Semantics.Reference.Rigidity
 
 /-!
 # Characters
@@ -30,6 +32,8 @@ character (`Character.const`), rigid also as a function of the context in the se
 * [kaplan-1989]
 * [kripke-1980]
 -/
+
+@[expose] public section
 
 namespace Reference
 

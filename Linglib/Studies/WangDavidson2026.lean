@@ -1,7 +1,9 @@
-import Linglib.Semantics.Exhaustification.Trivalent
-import Linglib.Semantics.Dynamic.Partial
-import Linglib.Data.Examples.WangDavidson2026
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Semantics.Exhaustification.Trivalent
+public import Linglib.Semantics.Dynamic.Partial
+public import Linglib.Data.Examples.WangDavidson2026
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Wang & Davidson (2026): Presupposition Filtering in Disjunction
@@ -43,6 +45,8 @@ its stimuli are in `Data.Examples.WangDavidson2026`.
 * [rothschild-2011]
 * [spector-sudo-2017]
 -/
+
+@[expose] public section
 
 namespace WangDavidson2026
 

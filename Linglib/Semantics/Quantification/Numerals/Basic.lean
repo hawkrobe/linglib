@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Degree.Comparison
-import Linglib.Semantics.Exhaustification.Chain
+module
+
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Exhaustification.Chain
 
 /-!
 # Numeral meanings
@@ -44,6 +46,8 @@ meaning to the lower-bounded one (`Degree.typeLower_eqOver_iff`).
 * [G. Chierchia, D. Fox and B. Spector, *Scalar Implicature as a Grammatical Phenomenon*
   (2012)][chierchia-fox-spector-2012]
 -/
+
+@[expose] public section
 
 namespace Numerals
 

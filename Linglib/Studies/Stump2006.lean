@@ -1,12 +1,14 @@
-import Linglib.Data.Forms.Stump2006
-import Linglib.Morphology.Paradigm.Linkage
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Data.Finset.Lattice.Fold
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Data.Forms.Stump2006
+public import Linglib.Morphology.Paradigm.Linkage
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Stump (2006): Heteroclisis and Paradigm Linkage
@@ -57,6 +59,8 @@ consonant-stem endings involve sandhi the forms data does not segment.
 * [stump-2006]
 * [stump-2001]
 -/
+
+@[expose] public section
 
 namespace Stump2006
 

@@ -1,5 +1,7 @@
-import Linglib.Studies.BaleSchwarz2022
-import Linglib.Data.Examples.BaleSchwarz2026
+module
+
+public import Linglib.Studies.BaleSchwarz2022
+public import Linglib.Data.Examples.BaleSchwarz2026
 
 /-!
 # Bale and Schwarz 2026: natural language and external conventions, re-examining *per*
@@ -28,6 +30,8 @@ density and never a weight.
 * [coppock-2022]
 * [davidson-1979]
 -/
+
+@[expose] public section
 
 namespace BaleSchwarz2026
 

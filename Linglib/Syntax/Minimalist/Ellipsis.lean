@@ -1,6 +1,8 @@
-import Linglib.Syntax.Anaphora.Basic
-import Mathlib.Data.Nat.Basic
-import Mathlib.Order.Monotone.Defs
+module
+
+public import Linglib.Syntax.Anaphora.Basic
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Order.Monotone.Defs
 
 /-!
 # Ellipsis
@@ -53,6 +55,8 @@ Hankamer and Sag's sense, which the `Anaphor.HasDepth` instance records.
 * [liptak-saab-2014]
 * [hankamer-sag-1976]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

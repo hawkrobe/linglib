@@ -1,5 +1,7 @@
-import Linglib.Morphology.Exponence.Select
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Morphology.Exponence.Select
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Feature-decomposition exponence and the Subset Principle
@@ -28,6 +30,8 @@ decomposition `chainDecomp i = Finset.Iic i` (`Exponence/Containment/Selection.l
 * `noABA` — the order-theoretic *ABA exclusion for a cell triple whose
   decomposition nests the middle cell between the outer two
 -/
+
+@[expose] public section
 
 namespace Morphology.Decomposition
 

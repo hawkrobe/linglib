@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Alignment
@@ -48,6 +50,8 @@ alignment of a single marking.
 * [imanishi-2020]
 * [scott-2023]
 -/
+
+@[expose] public section
 
 namespace Alignment
 

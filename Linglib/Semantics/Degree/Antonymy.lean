@@ -1,10 +1,12 @@
-import Mathlib.Algebra.Ring.Int.Units
-import Mathlib.Algebra.GroupWithZero.Units.Fintype
-import Mathlib.Algebra.Group.Action.Defs
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Order.Aristotelian
-import Linglib.Semantics.Degree.Boundedness
-import Mathlib.Order.Interval.Set.Disjoint
+module
+
+public import Mathlib.Algebra.Ring.Int.Units
+public import Mathlib.Algebra.GroupWithZero.Units.Fintype
+public import Mathlib.Algebra.Group.Action.Defs
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Order.Aristotelian
+public import Linglib.Semantics.Degree.Boundedness
+public import Mathlib.Order.Interval.Set.Disjoint
 
 /-!
 # Antonymy
@@ -55,6 +57,8 @@ keeps them apart ([krifka-2007b]).
 * [krifka-2007b]
 * [tessler-franke-2019]
 -/
+
+@[expose] public section
 
 namespace Degree
 

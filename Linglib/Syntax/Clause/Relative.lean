@@ -1,7 +1,9 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Order.Interval.Finset.Defs
-import Linglib.Core.Order.OrdConnected
-import Linglib.Semantics.Reference.Definiteness
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Order.Interval.Finset.Defs
+public import Linglib.Core.Order.OrdConnected
+public import Linglib.Semantics.Reference.Definiteness
 
 /-!
 # Relative clauses: structural core
@@ -33,6 +35,8 @@ positions a marker covers are a `Finset`, since only membership matters.
 * [scott-2021]
 * [sichel-2014]
 -/
+
+@[expose] public section
 
 namespace RelativeClause
 

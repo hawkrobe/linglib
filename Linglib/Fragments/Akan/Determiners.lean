@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Akan determiner inventory
@@ -29,6 +31,8 @@ definite bare nouns; App. A on bare-noun kind/indefinite readings) —
 the `bare` constructor is shared between the two inductives to reflect
 this.
 -/
+
+@[expose] public section
 
 namespace Akan.Determiners
 

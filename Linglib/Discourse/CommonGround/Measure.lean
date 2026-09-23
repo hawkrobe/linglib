@@ -1,5 +1,7 @@
-import Linglib.Discourse.CommonGround
-import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+module
+
+public import Linglib.Discourse.CommonGround
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 
 /-!
 # The common ground of a measure
@@ -18,6 +20,8 @@ set is the set of positive-mass worlds. A graded common ground of this kind is
 * [stalnaker-2002] — the context set
 * [anderson-2021] — the common ground as a distribution over worlds
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

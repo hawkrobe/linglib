@@ -1,5 +1,7 @@
-import Linglib.Fragments.Tarifit.Phonology
-import Linglib.Morphology.Root.Consonantal
+module
+
+public import Linglib.Fragments.Tarifit.Phonology
+public import Linglib.Morphology.Root.Consonantal
 
 /-!
 # Tarifit triconsonantal roots
@@ -13,6 +15,8 @@ consonants is stated with the study. Roots are named by their imperative citatio
 
 * [afkir-zellou-2025], Tables 7 and 9
 -/
+
+@[expose] public section
 
 namespace Tarifit
 

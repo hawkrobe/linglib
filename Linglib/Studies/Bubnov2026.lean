@@ -1,6 +1,8 @@
-import Linglib.Studies.DeganoAloni2025
-import Linglib.Studies.Dekier2021
-import Linglib.Studies.Haspelmath1997
+module
+
+public import Linglib.Studies.DeganoAloni2025
+public import Linglib.Studies.Dekier2021
+public import Linglib.Studies.Haspelmath1997
 
 /-!
 # Bubnov (2026): Not all coexpressions are syncretisms
@@ -42,6 +44,8 @@ change is a weakening of a restriction, whichever direction it takes along the m
 * [haspelmath-1997]
 * [aloni-port-2015]
 -/
+
+@[expose] public section
 
 namespace Bubnov2026
 

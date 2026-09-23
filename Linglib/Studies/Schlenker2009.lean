@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.BeliefEmbedding
-import Linglib.Studies.Heim1983
+module
+
+public import Linglib.Semantics.Presupposition.BeliefEmbedding
+public import Linglib.Studies.Heim1983
 
 /-!
 # Schlenker (2009): Local Contexts
@@ -46,6 +48,8 @@ paper. Uniqueness of the bottom element is `IsLeast.unique`.
 * [beaver-2001]
 * [heim-1992]
 -/
+
+@[expose] public section
 
 namespace Schlenker2009
 

@@ -1,4 +1,6 @@
-import Linglib.Logic.ComparativeProbability.Defs
+module
+
+public import Linglib.Logic.ComparativeProbability.Defs
 
 /-!
 # Validity patterns for comparative probability
@@ -27,6 +29,8 @@ is model-specific.
 * `patternV11`, `patternV12` — from transitivity + complement reversal.
 * `patternV13` — from monotonicity + additivity.
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

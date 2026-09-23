@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Agreement.Bundle
+module
+
+public import Linglib.Syntax.Agreement.Bundle
 
 /-!
 # The φ-bundle capability
@@ -12,6 +14,8 @@ import Linglib.Syntax.Agreement.Bundle
 `HasPhi.Agree` is the induced agreement relation, compatibility of the bundles,
 an unspecified dimension acting as a wildcard.
 -/
+
+@[expose] public section
 
 /-- A φ-bearer is an expression that exposes its agreement features as a bundle. -/
 class HasPhi (α : Type*) where

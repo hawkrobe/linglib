@@ -1,5 +1,7 @@
-import Linglib.Morphology.Nanosyntax.TreeSpellout
-import Linglib.Fragments.Xhosa.Basic
+module
+
+public import Linglib.Morphology.Nanosyntax.TreeSpellout
+public import Linglib.Fragments.Xhosa.Basic
 
 /-!
 # Taraldsen, Taraldsen Medová, and Langa (2018): Class Prefixes as Specifiers in Southern Bantu
@@ -46,6 +48,8 @@ later study.
 * [bachetti-2006]
 * [carstens-2026]
 -/
+
+@[expose] public section
 
 namespace TaraldsenEtAl2018
 

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Control.Defs
+module
+
+public import Linglib.Syntax.Control.Defs
 
 /-!
 # Control: Basic Lemmas
@@ -15,6 +17,8 @@ reading to a leg of a composite dependency, the phenomenology of saturation,
 and the occupant-mismatch refutation engine of the overt-copy diagnostics
 ([polinsky-potsdam-2006]).
 -/
+
+@[expose] public section
 
 namespace Control
 

@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.EquivFin
-import Linglib.Core.Computability.Mealy
-import Linglib.Core.Data.Fintype.Transfer
+module
+
+public import Mathlib.Data.Fintype.EquivFin
+public import Linglib.Core.Computability.Mealy
+public import Linglib.Core.Data.Fintype.Transfer
 
 /-!
 # Bimachines
@@ -39,6 +41,8 @@ classical and not formalized here; `ElgotMezei.lean` proves the composition half
 
 [UPSTREAM] candidate: `Mathlib.Computability.Bimachine`.
 -/
+
+@[expose] public section
 
 variable {L R α β : Type*}
 

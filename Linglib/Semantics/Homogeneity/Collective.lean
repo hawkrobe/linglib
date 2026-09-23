@@ -1,5 +1,7 @@
-import Linglib.Semantics.Supervaluation
-import Mathlib.Data.Finset.Powerset
+module
+
+public import Linglib.Semantics.Supervaluation
+public import Mathlib.Data.Finset.Powerset
 
 /-!
 # Generalised homogeneity for collective predicates
@@ -20,6 +22,8 @@ distributive predicates this reduces to supervaluation over atoms
 
 * [M. Križ, *Homogeneity, Non-Maximality, and All*][kriz-2016]
 -/
+
+@[expose] public section
 
 namespace Homogeneity
 

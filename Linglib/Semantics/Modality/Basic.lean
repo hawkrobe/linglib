@@ -1,7 +1,9 @@
-import Linglib.Pragmatics.SocialMeaning.Register
-import Mathlib.Data.Finset.Prod
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Pragmatics.SocialMeaning.Register
+public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Modal force and flavor
@@ -38,6 +40,8 @@ modal claim in time.
 * [deal-2011]
 * [condoravdi-2002]
 -/
+
+@[expose] public section
 
 namespace Modality
 

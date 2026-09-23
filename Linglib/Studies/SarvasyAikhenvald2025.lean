@@ -1,8 +1,10 @@
-import Linglib.Syntax.Clause.Chaining
-import Linglib.Fragments.Nungon.Clause
-import Linglib.Fragments.Manambu.Clause
-import Linglib.Fragments.Korean.Clause
-import Linglib.Fragments.Turkish.Clause
+module
+
+public import Linglib.Syntax.Clause.Chaining
+public import Linglib.Fragments.Nungon.Clause
+public import Linglib.Fragments.Manambu.Clause
+public import Linglib.Fragments.Korean.Clause
+public import Linglib.Fragments.Turkish.Clause
 
 /-!
 # Sarvasy & Aikhenvald (2025): Clause Chaining in the Languages of the World
@@ -48,6 +50,8 @@ latter's switch-reference system was misrecorded as tracking several arguments.
 * [sohn-1999]
 * [goksel-kerslake-2005]
 -/
+
+@[expose] public section
 
 namespace SarvasyAikhenvald2025
 

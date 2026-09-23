@@ -1,6 +1,8 @@
-import Linglib.Semantics.Degree.Antonymy
-import Linglib.Semantics.Degree.Scale
-import Linglib.Morphology.Paradigm.Contiguity
+module
+
+public import Linglib.Semantics.Degree.Antonymy
+public import Linglib.Semantics.Degree.Scale
+public import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Adjective
@@ -32,6 +34,8 @@ This file deliberately does not depend on the Degree/Kennedy semantics.
 This is the adjectival realization of a property concept; when a verb- or
 noun-strategy fragment lands, factor a `PropertyConcept` superclass.
 -/
+
+@[expose] public section
 
 open Degree (ScalarDimension)
 

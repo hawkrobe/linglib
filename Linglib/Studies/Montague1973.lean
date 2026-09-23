@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Assignment
-import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Semantics.Quantification.Polyadic
-import Mathlib.Data.Fin.VecNotation
+module
+
+public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Semantics.Quantification.Polyadic
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Montague (1973): The Proper Treatment of Quantification in Ordinary English
@@ -38,6 +40,8 @@ Omitted: the string-level operations (gender, verb forms), tense (S17), and post
 * [montague-1973]
 * [dowty-wall-peters-1981]
 -/
+
+@[expose] public section
 
 namespace Montague1973
 

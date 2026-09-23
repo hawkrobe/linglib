@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.DecisionTheoretic.Basic
-import Linglib.Pragmatics.DecisionTheoretic.But
+module
+
+public import Linglib.Pragmatics.DecisionTheoretic.Basic
+public import Linglib.Pragmatics.DecisionTheoretic.But
 
 /-!
 # Decision-Theoretic Semantics: "Even" ([merin-1999-relevance] §5)
@@ -29,6 +31,8 @@ Merin shows that relevance subsumes all three prior analyses:
 The DTS account derives all three as special cases of "B is more relevant
 than A to the current issue."
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

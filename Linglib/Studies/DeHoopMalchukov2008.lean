@@ -1,5 +1,7 @@
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Pragmatics.Bidirectional
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Pragmatics.Bidirectional
 
 /-!
 # de Hoop and Malchukov (2008): Case-marking strategies
@@ -47,6 +49,8 @@ blocking relation gives, the first person marked and the intermediate types case
 * [blutner-2000]
 * [aissen-2003]
 -/
+
+@[expose] public section
 
 namespace DeHoopMalchukov2008
 

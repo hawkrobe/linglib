@@ -1,4 +1,6 @@
-import Linglib.Studies.Cohen1999
+module
+
+public import Linglib.Studies.Cohen1999
 
 /-!
 # Cohen (2013): No quantification without reinterpretation
@@ -66,6 +68,8 @@ derived as the absence of a true reading among the available ones.
 * [B. Taylor, *Tense and Continuity* (1977)][taylor-1977]
 * [D. R. Dowty, *Word Meaning and Montague Grammar* (1979)][dowty-1979]
 -/
+
+@[expose] public section
 
 namespace Cohen2013
 

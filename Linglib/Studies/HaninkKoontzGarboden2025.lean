@@ -1,8 +1,10 @@
-import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.Possession.Relationalizer
-import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
-import Linglib.Fragments.Washo.PropertyConcepts
-import Linglib.Data.Examples.HaninkKoontzGarboden2025
+module
+
+public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.Possession.Relationalizer
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Fragments.Washo.PropertyConcepts
+public import Linglib.Data.Examples.HaninkKoontzGarboden2025
 
 /-!
 # Hanink and Koontz-Garboden (2025): Variation in the Lexical Semantics of Property Concept Roots
@@ -46,6 +48,8 @@ paper's (43) and whose effector stands for the paper's AGENT.
 * [dixon-1982]
 * [jacobsen-1980]
 -/
+
+@[expose] public section
 
 namespace HaninkKoontzGarboden2025
 

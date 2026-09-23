@@ -1,9 +1,11 @@
-import Linglib.Discourse.QUD.Basic
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Fragments.Romance.Italian.PolarityMarking
-import Linglib.Fragments.Romance.Spanish.PolarityMarking
-import Linglib.Fragments.Romance.French.PolarityMarking
-import Linglib.Data.Examples.GarassinoJacob2018
+module
+
+public import Linglib.Discourse.QUD.Basic
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Fragments.Romance.Italian.PolarityMarking
+public import Linglib.Fragments.Romance.Spanish.PolarityMarking
+public import Linglib.Fragments.Romance.French.PolarityMarking
+public import Linglib.Data.Examples.GarassinoJacob2018
 
 /-!
 # Garassino and Jacob (2018): Polarity focus and non-canonical syntax in Italian, French and Spanish
@@ -51,6 +53,8 @@ a preceding negative turn.
 * [batllori-hernanz-2013]
 * [poletto-zanuttini-2013]
 -/
+
+@[expose] public section
 
 namespace GarassinoJacob2018
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Fragments.Shona.Basic
+module
+
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Fragments.Shona.Basic
 
 /-!
 # Shona nouns
@@ -13,6 +15,8 @@ diminutives *ka-sikana* 'small girl', *ka-mba* 'small house' are entered as noun
 
 * [carstens-2026]
 -/
+
+@[expose] public section
 
 namespace Shona
 

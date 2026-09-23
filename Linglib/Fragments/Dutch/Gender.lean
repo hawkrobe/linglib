@@ -1,4 +1,6 @@
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # Dutch gender
@@ -16,6 +18,8 @@ individuation of the referent ([kraaikamp-2012]).
 * [broekhuis-corver-2026b]
 * [kraaikamp-2012]
 -/
+
+@[expose] public section
 
 namespace Dutch.Gender
 

@@ -3,10 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Morphology.Word.Basic
-import Linglib.Semantics.Modality.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Semantics.Modality.Basic
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Basic
+
+@[expose] public section
 
 open Morphology (Word Features)
 open Modality (ForceFlavor ModalItem)

@@ -6,8 +6,10 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Computability.StarFree`, after the
 syntactic-monoid and variety substrate.
 -/
-import Mathlib.Order.CompleteLattice.Finset
-import Linglib.Core.Computability.Variety.Langs
+module
+
+public import Mathlib.Order.CompleteLattice.Finset
+public import Linglib.Core.Computability.Variety.Langs
 
 /-!
 # Star-free languages
@@ -34,6 +36,8 @@ keystone (`Monoid.Pseudovariety.langs_*`) rather than hand-written syntactic-mon
 * `Language.IsStarFree.of_recognizes`: recognized by a finite aperiodic monoid ⟹ star-free.
 * `Language.IsStarFree.comap`: closure under inverse homomorphism.
 -/
+
+@[expose] public section
 
 namespace Language
 

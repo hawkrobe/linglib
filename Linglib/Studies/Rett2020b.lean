@@ -1,5 +1,7 @@
-import Linglib.Semantics.Degree.Basic
-import Linglib.Data.Examples.Rett2020b
+module
+
+public import Linglib.Semantics.Degree.Basic
+public import Linglib.Data.Examples.Rett2020b
 
 /-!
 # Rett (2020): Separate but equal: a typology of equative constructions
@@ -35,6 +37,8 @@ leaves uncertain have no rows.
 * [J. Rett, *The semantics of evaluativity* (2015)][rett-2015]
 * [C. Kennedy, *Modes of comparison* (2007)][kennedy-2007a]
 -/
+
+@[expose] public section
 
 namespace Rett2020b
 

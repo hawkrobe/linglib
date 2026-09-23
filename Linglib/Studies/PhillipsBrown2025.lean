@@ -1,11 +1,13 @@
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Attitudes.Desire.BestWorlds
-import Linglib.Semantics.Attitudes.Desire.Conditional
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Order.OfCriteria
-import Mathlib.Order.Preorder.Finite
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Attitudes.Desire.BestWorlds
+public import Linglib.Semantics.Attitudes.Desire.Conditional
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Core.Order.OfCriteria
+public import Mathlib.Order.Preorder.Finite
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Phillips-Brown (2025): Some-Things-Considered Desire
@@ -60,6 +62,8 @@ context (`undefined_of_insensitive`), which leaves the semantics Strawson upward
 * [yalcin-2018]
 * [kratzer-1981]
 -/
+
+@[expose] public section
 
 namespace PhillipsBrown2025
 

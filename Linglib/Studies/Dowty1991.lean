@@ -1,6 +1,8 @@
-import Linglib.Semantics.ArgumentStructure.Projection
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Data.ProtoRoles.Dowty1991
+module
+
+public import Linglib.Semantics.ArgumentStructure.Projection
+public import Linglib.Semantics.ArgumentStructure.RoleList
+public import Linglib.Data.ProtoRoles.Dowty1991
 
 /-!
 # Dowty (1991): Thematic Proto-Roles and Argument Selection
@@ -49,6 +51,8 @@ material of §11 are not represented.
 * [dowty-1991]
 * [fillmore-1968]
 -/
+
+@[expose] public section
 
 namespace Dowty1991
 

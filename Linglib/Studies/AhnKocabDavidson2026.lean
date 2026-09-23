@@ -1,7 +1,9 @@
-import Linglib.Semantics.Reference.Iota
-import Linglib.Semantics.Modification.Basic
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Data.Examples.AhnKocabDavidson2026
+module
+
+public import Linglib.Semantics.Reference.Iota
+public import Linglib.Semantics.Modification.Basic
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Data.Examples.AhnKocabDavidson2026
 
 /-!
 # Ahn, Kocab & Davidson 2026: sign language loci as spatial modifiers
@@ -30,6 +32,8 @@ hypothesis over the consultant data and the experimental stimuli.
 * [grice-1975]
 * [aissen-2003]
 -/
+
+@[expose] public section
 
 namespace AhnKocabDavidson2026
 

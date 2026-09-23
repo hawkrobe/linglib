@@ -1,4 +1,6 @@
-import Linglib.Syntax.Gender.Basic
+module
+
+public import Linglib.Syntax.Gender.Basic
 
 /-!
 # German Derivational Gender: *-schaft* and related suffixes
@@ -28,6 +30,8 @@ The empirical content captured here is the **morphological override**:
 because the diminutive suffix *-chen* fixes the gender. This is
 diagnostic for any theory in which suffixes can override semantics.
 -/
+
+@[expose] public section
 
 namespace German.Gender
 

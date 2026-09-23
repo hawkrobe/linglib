@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Finnish coordinators
@@ -20,6 +22,8 @@ alternatives.
 
 * [haspelmath-2007]
 -/
+
+@[expose] public section
 
 namespace Finnish.Coordination
 

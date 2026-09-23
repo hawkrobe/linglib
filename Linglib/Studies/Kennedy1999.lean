@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Kennedy1999
+module
+
+public import Linglib.Data.Examples.Kennedy1999
 
 /-!
 # Kennedy (1999): Projecting the Adjective
@@ -27,6 +29,8 @@ against the rows.
 * [kennedy-1999]
 * [klein-1980]
 -/
+
+@[expose] public section
 
 namespace Kennedy1999
 

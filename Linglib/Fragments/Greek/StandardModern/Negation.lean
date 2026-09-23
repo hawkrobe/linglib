@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Greek negation
@@ -13,6 +15,8 @@ in that study.
 
 * [tsiakmakis-2025]
 -/
+
+@[expose] public section
 
 open Negation
 

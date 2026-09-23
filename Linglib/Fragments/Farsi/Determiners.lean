@@ -1,5 +1,7 @@
-import Linglib.Semantics.Reference.ChoiceFunction
-import Mathlib.Data.Rat.Defs
+module
+
+public import Linglib.Semantics.Reference.ChoiceFunction
+public import Mathlib.Data.Rat.Defs
 
 /-!
 # Farsi determiners and indefinites
@@ -10,6 +12,8 @@ choice items ([alonso-ovalle-moghiseh-2025a]). The plain indefinites *ye*, *čan
 *do-ta* are choice-function indefinites with an independent world variable
 ([mirrazi-2024]).
 -/
+
+@[expose] public section
 
 namespace Farsi.Determiners
 

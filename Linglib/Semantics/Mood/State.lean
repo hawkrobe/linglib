@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Setoid.Basic
-import Linglib.Discourse.QUD.Issue
-import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Questions.Partition.Inquisitive
+module
+
+public import Mathlib.Data.Setoid.Basic
+public import Linglib.Discourse.QUD.Issue
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Questions.Partition.Inquisitive
 
 /-!
 # The mood state
@@ -69,6 +71,8 @@ Phenomena that are not partitions, such as mention-some readings and intermediat
 * [N. Theiler, F. Roelofsen and M. Aloni, *A uniform semantics for declarative and interrogative
   complements* (2018)][theiler-etal-2018]
 -/
+
+@[expose] public section
 
 namespace Mood
 

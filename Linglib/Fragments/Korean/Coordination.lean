@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Korean coordinators
@@ -23,6 +25,8 @@ conjunct, as Sohn describes them. Mitrović and Sauerland take *-(i)rang* for th
 * [mitrovic-sauerland-2016]
 * [sohn-1994]
 -/
+
+@[expose] public section
 
 namespace Korean.Coordination
 

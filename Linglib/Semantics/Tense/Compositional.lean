@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Pronoun
+module
+
+public import Linglib.Semantics.Tense.Pronoun
 
 /-!
 # Compositional tense operators
@@ -13,6 +15,8 @@ not quantified over. `PAST`/`PRES`/`FUT` name the three atomic cells'
 operators; the dynamic entries of [mendes-2025] are the same cells behind
 the update spine's test, in `Studies/Mendes2025.lean`.
 -/
+
+@[expose] public section
 
 namespace Tense
 

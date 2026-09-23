@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.Linearization.Replay
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
+module
+
+public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Binding at a stage of the derivation
@@ -32,6 +34,8 @@ at some stage is monotone under extending the derivation; binding at the surface
 
 * [cole-hermon-2008]
 -/
+
+@[expose] public section
 
 namespace Minimalist.SyntacticObject.Derivation
 

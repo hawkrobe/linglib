@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 19A: Presence of Uncommon Consonants
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 19, 567 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F19A
 
@@ -30,7 +34,8 @@ inductive PresenceOfUncommonConsonants where
   | pharyngealsAndTh
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PresenceOfUncommonConsonants) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PresenceOfUncommonConsonants) :=
   [ { walsCode := "xoo", iso := "nmn", value := .clicks }
   , { walsCode := "ani", iso := "hnh", value := .clicks }
   , { walsCode := "abi", iso := "axb", value := .none }
@@ -533,7 +538,8 @@ private def allData_0 : List (Datapoint PresenceOfUncommonConsonants) :=
   , { walsCode := "tru", iso := "tpy", value := .none }
   ]
 
-private def allData_1 : List (Datapoint PresenceOfUncommonConsonants) :=
+/-- Rows 501 to 567 of `allData`. -/
+def allData_1 : List (Datapoint PresenceOfUncommonConsonants) :=
   [ { walsCode := "tsi", iso := "tsi", value := .none }
   , { walsCode := "tso", iso := "tsu", value := .none }
   , { walsCode := "ttu", iso := "bbl", value := .pharyngeals }

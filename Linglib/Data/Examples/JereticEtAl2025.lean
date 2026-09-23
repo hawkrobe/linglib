@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `JereticEtAl2025` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/JereticEtAl2025.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace JereticEtAl2025.Examples`.
 -/
+
+@[expose] public section
 
 namespace JereticEtAl2025.Examples
 

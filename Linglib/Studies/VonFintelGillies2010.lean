@@ -1,6 +1,8 @@
-import Linglib.Semantics.Modality.Kernel
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Data.Examples.VonFintelGillies2010
+module
+
+public import Linglib.Semantics.Modality.Kernel
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Data.Examples.VonFintelGillies2010
 
 /-!
 # von Fintel & Gillies (2010): Must … Stay … Strong!
@@ -33,6 +35,8 @@ are the rows of `Data.Examples.VonFintelGillies2010`.
 * [kratzer-1991]
 * [karttunen-1972]
 -/
+
+@[expose] public section
 
 namespace VonFintelGillies2010
 

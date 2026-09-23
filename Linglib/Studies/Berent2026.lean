@@ -1,6 +1,8 @@
-import Linglib.Fragments.English.Phonology
-import Linglib.Morphology.Root.Consonantal
-import Linglib.Studies.BerentEtAl2016
+module
+
+public import Linglib.Fragments.English.Phonology
+public import Linglib.Morphology.Root.Consonantal
+public import Linglib.Studies.BerentEtAl2016
 
 /-!
 # Berent (2026): Three arguments for abstraction in phonology
@@ -53,6 +55,8 @@ is built. The acoustic, articulatory and neural measures of Figure 1 are not mod
 * [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
 * [mccarthy-1986]
 -/
+
+@[expose] public section
 
 namespace Berent2026
 

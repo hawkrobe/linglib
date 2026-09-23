@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Russian Polarity-Sensitive Items
@@ -24,6 +26,8 @@ clausemate *не* is the only anti-morphic environment, so strict concord is
 characterized exactly by the licensing keystone
 (`niSeries_licensing_characterized`).
 -/
+
+@[expose] public section
 
 namespace Russian.PolarityItems
 

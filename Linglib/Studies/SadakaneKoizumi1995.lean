@@ -1,7 +1,9 @@
-import Mathlib.Data.Finset.Basic
-import Linglib.Data.Examples.Judgment
-import Linglib.Fragments.Japanese.Case
-import Linglib.Syntax.Case.Dependent
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Linglib.Data.Examples.Judgment
+public import Linglib.Fragments.Japanese.Case
+public import Linglib.Syntax.Case.Dependent
 /-!
 # Sadakane & Koizumi 1995 [sadakane-koizumi-1995] [martin-1975]
 
@@ -110,6 +112,8 @@ cannot be Lean-formalised until `Fragments/Korean/Case.lean` adopts
 Pattern B (rich marker structure); currently it's a `Finset Case`
 stipulation only. Documented here as future work.
 -/
+
+@[expose] public section
 
 namespace SadakaneKoizumi1995
 

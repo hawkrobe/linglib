@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `UchiharaMendozaRuiz2021` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/UchiharaMendozaRuiz2021.json` by
 generator. Consumers import this module; declarations live in
 `namespace UchiharaMendozaRuiz2021.Forms`.
 -/
+
+@[expose] public section
 
 namespace UchiharaMendozaRuiz2021.Forms
 

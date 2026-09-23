@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Haitian Creole determiner inventory
@@ -15,6 +17,8 @@ surface without the article.
 * [schwarz-2013], §4.3
 * [wespel-2008]
 -/
+
+@[expose] public section
 
 namespace HaitianCreole.Determiners
 

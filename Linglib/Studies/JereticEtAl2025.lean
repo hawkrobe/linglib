@@ -1,10 +1,12 @@
-import Linglib.Data.Examples.JereticEtAl2025
-import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Semantics.Alternatives.Structural
-import Linglib.Fragments.Romance.French.Determiners
-import Linglib.Fragments.English.Determiners
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Data.Examples.JereticEtAl2025
+public import Linglib.Syntax.Tree.Cat
+public import Linglib.Semantics.Presupposition.MaximizePresupposition
+public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Fragments.Romance.French.Determiners
+public import Linglib.Fragments.English.Determiners
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Jeretič et al. (2025): Core concepts and indirect alternatives
@@ -52,6 +54,8 @@ are not formalized.
 * [sauerland-2008a]
 * [sauerland-2003]
 -/
+
+@[expose] public section
 
 namespace JereticEtAl2025
 

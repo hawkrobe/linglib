@@ -1,8 +1,10 @@
-import Linglib.Semantics.Presupposition.Defs
-import Linglib.Data.Examples.AnandHacquard2013
-import Mathlib.Data.Set.Basic
-import Mathlib.Basic.Nontrivial.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Data.Examples.AnandHacquard2013
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Basic.Nontrivial.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Anand & Hacquard 2013: epistemics and attitudes
@@ -42,6 +44,8 @@ imperfect correlate.
 * [falaus-2010] — Romanian *vreun* under *want* and *hope*
 * [kratzer-2009] — the filing-cabinet scenario
 -/
+
+@[expose] public section
 
 namespace AnandHacquard2013
 

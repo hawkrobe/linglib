@@ -1,7 +1,9 @@
-import Mathlib.Order.Lattice
-import Linglib.Core.Order.Bilattice.Basic
-import Linglib.Core.Order.Bilattice.Kleene
-import Linglib.Core.Order.DeMorganAlgebra.Defs
+module
+
+public import Mathlib.Order.Lattice
+public import Linglib.Core.Order.Bilattice.Basic
+public import Linglib.Core.Order.Bilattice.Kleene
+public import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
 # Fitting (1994): Kleene's three valued logics and their children
@@ -40,6 +42,8 @@ holds in `L ⊙ L` for a linear `L` iff it holds in `FOUR` (Theorem 10.5, `equiv
 * [avron-1996]
 * [peters-1979]
 -/
+
+@[expose] public section
 
 open Bilattice Product Evidential
 

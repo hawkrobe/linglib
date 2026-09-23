@@ -1,9 +1,11 @@
-import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Syntax.Minimalist.Phi.Geometry
-import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Syntax.Person.Features
-import Linglib.Fragments.Romance.Italian.Pronouns
-import Linglib.Fragments.Romance.Spanish.Clitics
+module
+
+public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Syntax.Minimalist.Phi.Geometry
+public import Linglib.Semantics.Reference.Logophoricity
+public import Linglib.Syntax.Person.Features
+public import Linglib.Fragments.Romance.Italian.Pronouns
+public import Linglib.Fragments.Romance.Spanish.Clitics
 
 /-!
 # Pancheva and Zubizarreta (2018): The Person Case Constraint
@@ -46,6 +48,8 @@ grammar licenses the ⟨1, 1⟩ combination that the descriptive statement (14d)
 * [sells-1987]
 * [charnavel-mateu-2015]
 -/
+
+@[expose] public section
 
 namespace PanchevaZubizarreta2018
 

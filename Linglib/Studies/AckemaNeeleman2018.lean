@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.Phi.PersonSpace
-import Linglib.Morphology.Exponence.Select
-import Linglib.Syntax.Person.Features
-import Linglib.Data.Examples.AckemaNeeleman2018
+module
+
+public import Linglib.Syntax.Minimalist.Phi.PersonSpace
+public import Linglib.Morphology.Exponence.Select
+public import Linglib.Syntax.Person.Features
+public import Linglib.Data.Examples.AckemaNeeleman2018
 
 /-!
 # Features of person
@@ -36,6 +38,8 @@ mentioning two `PROX` splits the exclusive from the inclusive (`clusive_split`).
 * [harbour-2016]
 * [bobaljik-2008]
 -/
+
+@[expose] public section
 
 namespace AckemaNeeleman2018
 

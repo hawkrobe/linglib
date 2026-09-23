@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Abkhaz evidentiality
@@ -15,6 +17,8 @@ non-visual perception as well.
 * [aikhenvald-2004], §2.1
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace Abkhaz.Evidentiality
 

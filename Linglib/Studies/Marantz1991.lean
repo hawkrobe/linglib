@@ -1,7 +1,9 @@
-import Linglib.Syntax.Case.Dependent
-import Linglib.Fragments.Georgian.Agreement
-import Linglib.Fragments.Hindi.Case
-import Linglib.Data.Examples.Marantz1991
+module
+
+public import Linglib.Syntax.Case.Dependent
+public import Linglib.Fragments.Georgian.Agreement
+public import Linglib.Fragments.Hindi.Case
+public import Linglib.Data.Examples.Marantz1991
 
 /-!
 # Marantz (1991): Case and Licensing
@@ -64,6 +66,8 @@ they are in `ecm`. The third series of Georgian is outside the paper.
 
 * [marantz-1991]
 -/
+
+@[expose] public section
 
 namespace Marantz1991
 

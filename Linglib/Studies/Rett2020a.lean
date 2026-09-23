@@ -1,6 +1,8 @@
-import Linglib.Studies.Anscombe1964
-import Linglib.Semantics.Degree.Basic
-import Linglib.Data.Examples.Rett2020a
+module
+
+public import Linglib.Studies.Anscombe1964
+public import Linglib.Semantics.Degree.Basic
+public import Linglib.Data.Examples.Rett2020a
 
 /-!
 # Rett (2020): Eliminating EARLIEST: a general semantics for before and after
@@ -48,6 +50,8 @@ the paper beyond monotonicity.
 * [H. Rullmann, *Maximality in the semantics of wh-constructions* (1995)][rullmann-1995]
 * [C. Kennedy, *Projecting the adjective* (1997)][kennedy-1997]
 -/
+
+@[expose] public section
 
 namespace Rett2020a
 

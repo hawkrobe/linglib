@@ -1,9 +1,11 @@
-import Linglib.Data.Examples.DavidsonGagne2022
-import Linglib.Fragments.ASL.Determiners
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Quantification.DomainRestriction
-import Mathlib.Order.Heyting.Basic
+module
+
+public import Linglib.Data.Examples.DavidsonGagne2022
+public import Linglib.Fragments.ASL.Determiners
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Quantification.DomainRestriction
+public import Mathlib.Order.Heyting.Basic
 
 /-!
 # Davidson and Gagne (2022): "More is up" for domain restriction in ASL
@@ -51,6 +53,8 @@ realise the pronoun, and check the paper's examples.
 * [J. Stanley and Z. Gendler Szabó, *On quantifier domain restriction*
   (2000)][stanley-szab-2000]
 -/
+
+@[expose] public section
 
 namespace DavidsonGagne2022
 

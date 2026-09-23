@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Januubi Arabic negation
@@ -13,6 +15,8 @@ examples are the rows of `Data.Examples.JinKoenig2021`.
 
 * [jin-koenig-2021]
 -/
+
+@[expose] public section
 
 open Negation
 

@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.NormalForm
+module
+
+public import Linglib.Phonology.Autosegmental.NormalForm
 
 /-!
 # The association hull
@@ -26,6 +28,8 @@ representation, where the melody is a single node and the hull is planar.
 * `hull_convex` — per-node convexity: the defining property of the hull.
 * `AR.hull` — the operation on well-formed representations.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

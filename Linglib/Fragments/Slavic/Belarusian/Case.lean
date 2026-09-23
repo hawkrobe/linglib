@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Belarusian Case Inventory
@@ -16,6 +18,8 @@ without productive VOC. The directory uses the modern English
 spelling `Belarusian`; Mayo's chapter title and the original Comrie &
 Corbett 1993 volume use `Belorussian`.
 -/
+
+@[expose] public section
 
 namespace Belarusian.Case
 

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Licensing
+module
+
+public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Georgian Polarity-Sensitive Items
@@ -17,6 +19,8 @@ preverbal neg-words). Mood-conditioned variants: vera-vin (modal), nura-vin
 (prohibitive). nebismieri confirmed as FC indefinite in questions/modals.
 
 -/
+
+@[expose] public section
 
 namespace Georgian.PolarityItems
 

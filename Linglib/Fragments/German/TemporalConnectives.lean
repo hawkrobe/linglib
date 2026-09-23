@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # German temporal connectives
@@ -14,6 +16,8 @@ same way ([giannakidou-2002]).
 * [karttunen-1974]
 * [giannakidou-2002]
 -/
+
+@[expose] public section
 
 namespace German.TemporalConnectives
 

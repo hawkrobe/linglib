@@ -1,10 +1,12 @@
-import Linglib.Data.Examples.Elliott2025
-import Linglib.Semantics.Quantification.Lattice
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.Set.Card
-import Mathlib.Order.Minimal
-import Mathlib.Tactic.FinCases
+module
+
+public import Linglib.Data.Examples.Elliott2025
+public import Linglib.Semantics.Quantification.Lattice
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Minimal
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Elliott (2025): Determiners as predicates
@@ -61,6 +63,8 @@ they show no exceptional scope ([reinhart-1997], [charlow-2014]), whereas *exact
 * [reinhart-1997]
 * [charlow-2014]
 -/
+
+@[expose] public section
 
 namespace Elliott2025
 

@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Minimalist.Phi.Lattice
-import Linglib.Data.Examples.Toosarvandani2023
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Minimalist.Phi.Lattice
+public import Linglib.Data.Examples.Toosarvandani2023
 
 /-!
 # Toosarvandani (2023): The Interpretation and Grammatical Representation of Animacy
@@ -53,6 +55,8 @@ data of (77)–(81) and the English context-dependence examples of (16)–(18) a
 * [deal-2024]
 * [coon-keine-2021]
 -/
+
+@[expose] public section
 
 namespace Toosarvandani2023
 

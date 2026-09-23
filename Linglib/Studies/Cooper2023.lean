@@ -1,10 +1,12 @@
-import Mathlib.Logic.Equiv.Defs
-import Mathlib.Data.Finset.Image
-import Mathlib.Algebra.Order.GroupWithZero.Basic
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Quantification.Witness
-import Linglib.Data.Examples.Cooper2023
+module
+
+public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Algebra.Order.GroupWithZero.Basic
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Quantification.Witness
+public import Linglib.Data.Examples.Cooper2023
 
 /-!
 # Cooper's type theory with records
@@ -79,6 +81,8 @@ the substrate derives for each quantifier are checked.
 * [L. Champollion, D. Bumford, R. Henderson, *Donkeys under Discussion*
   (2019)][champollion-bumford-henderson-2019]
 -/
+
+@[expose] public section
 
 namespace Cooper2023
 

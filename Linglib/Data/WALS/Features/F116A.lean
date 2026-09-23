@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 116A: Polar Questions
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 116, 955 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F116A
 
@@ -30,7 +34,8 @@ inductive PolarQuestionType where
   | noInterrogativeDeclarativeDistinction
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint PolarQuestionType) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint PolarQuestionType) :=
   [ { walsCode := "xoo", iso := "nmn", value := .questionParticle }
   , { walsCode := "ani", iso := "hnh", value := .questionParticle }
   , { walsCode := "huc", iso := "huc", value := .questionParticle }
@@ -533,7 +538,8 @@ private def allData_0 : List (Datapoint PolarQuestionType) :=
   , { walsCode := "mam", iso := "mam", value := .questionParticle }
   ]
 
-private def allData_1 : List (Datapoint PolarQuestionType) :=
+/-- Rows 501 to 955 of `allData`. -/
+def allData_1 : List (Datapoint PolarQuestionType) :=
   [ { walsCode := "mmn", iso := "mmn", value := .questionParticle }
   , { walsCode := "mmi", iso := "mcs", value := .questionParticle }
   , { walsCode := "mmv", iso := "mdi", value := .questionParticle }

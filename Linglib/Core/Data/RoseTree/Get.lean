@@ -3,10 +3,12 @@ Copyright (c) 2026 The Linglib Authors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Linglib contributors
 -/
-import Linglib.Core.Data.RoseTree.Basic
-import Linglib.Core.Order.Branching
-import Mathlib.Algebra.Order.BigOperators.Group.List
-import Mathlib.Algebra.Order.Group.Nat
+module
+
+public import Linglib.Core.Data.RoseTree.Basic
+public import Linglib.Core.Order.Branching
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+public import Mathlib.Algebra.Order.Group.Nat
 
 /-!
 # Rose trees under Gorn addresses
@@ -28,6 +30,8 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
   (`leafList_replaceAt`) and shrinking the tree when the new subtree is smaller
   (`numNodes_replaceAt_lt`).
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

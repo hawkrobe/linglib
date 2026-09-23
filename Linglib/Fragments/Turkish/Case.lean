@@ -1,4 +1,6 @@
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Turkish Case Inventory [blake-1994]
@@ -11,6 +13,8 @@ The instrumental function is expressed by a postposition. [blake-1994] cites the
 system for the ablative stage of his hierarchy (`Studies/Blake1994.lean`).
 
 -/
+
+@[expose] public section
 
 namespace Turkish.Case
 

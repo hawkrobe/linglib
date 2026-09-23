@@ -1,6 +1,8 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import Linglib.Pragmatics.Efficiency
-import Linglib.Data.Examples.XuEtAl2024
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Linglib.Pragmatics.Efficiency
+public import Linglib.Data.Examples.XuEtAl2024
 
 /-!
 # Xu, Kemp, Frermann & Xu (2024): Word Reuse and Combination Support Efficient Communication
@@ -42,6 +44,8 @@ as examples.
 * [zaslavsky-kemp-regier-tishby-2018]
 * [regier-kemp-kay-2015]
 -/
+
+@[expose] public section
 
 namespace XuEtAl2024
 

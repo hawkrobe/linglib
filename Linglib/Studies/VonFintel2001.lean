@@ -1,6 +1,8 @@
-import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Data.Examples.VonFintel2001
+module
+
+public import Linglib.Semantics.Conditionals.Basic
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Data.Examples.VonFintel2001
 
 /-!
 # von Fintel (2001): Conditional Strengthening
@@ -44,6 +46,8 @@ Groenendijk and Stokhof are not formalized.
 * [groenendijk-stokhof-1984]
 * [matsumoto-1995]
 -/
+
+@[expose] public section
 
 namespace VonFintel2001
 

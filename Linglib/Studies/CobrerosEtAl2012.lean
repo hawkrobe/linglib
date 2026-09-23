@@ -1,5 +1,7 @@
-import Linglib.Logic.Modal.Basic
-import Linglib.Logic.Trivalent.Propositional
+module
+
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Trivalent.Propositional
 
 /-!
 # Cobreros, Égré, Ripley and van Rooij 2012: Tolerant, classical, strict
@@ -75,6 +77,8 @@ universe of `C` (`TModels`), as the paper's does; the atomic strict and tolerant
 * [S. C. Kleene, *Introduction to Metamathematics* (1952)][kleene-1952]
 -/
 
+@[expose] public section
+
 universe u
 
 namespace CobrerosEtAl2012
@@ -125,7 +129,7 @@ theorem dual_involutive : Function.Involutive dual := λ m => by cases m <;> rfl
 @[simp] theorem dual_classical : classical.dual = classical := rfl
 @[simp] theorem dual_tolerant : tolerant.dual = strict := rfl
 
-private def rank : Mode → Fin 3
+def rank : Mode → Fin 3
   | strict => 0
   | classical => 1
   | tolerant => 2

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Perspective
+module
+
+public import Linglib.Semantics.Tense.Perspective
 
 /-!
 # Japanese temporal deictic adverbs
@@ -11,6 +13,8 @@ then', not *tooji ai-mashou*. The description and examples follow [tsilia-zhao-2
 
 * [tsilia-zhao-2026]
 -/
+
+@[expose] public section
 
 namespace Japanese.TemporalDeictic
 

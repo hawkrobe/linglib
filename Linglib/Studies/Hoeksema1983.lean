@@ -1,9 +1,11 @@
-import Mathlib.Order.Hom.BoundedLattice
-import Mathlib.Order.Hom.CompleteLattice
-import Mathlib.Order.Heyting.Hom
-import Linglib.Core.Order.SetPreimage
-import Linglib.Logic.Natural.Additivity
-import Linglib.Semantics.Degree.Quantifier
+module
+
+public import Mathlib.Order.Hom.BoundedLattice
+public import Mathlib.Order.Hom.CompleteLattice
+public import Mathlib.Order.Heyting.Hom
+public import Linglib.Core.Order.SetPreimage
+public import Linglib.Logic.Natural.Additivity
+public import Linglib.Semantics.Degree.Quantifier
 
 /-!
 # Hoeksema (1983): Negative Polarity and the Comparative
@@ -31,6 +33,8 @@ environment. On a proper name and the singleton of its degree the two coincide
 * [ladusaw-1979]
 * [zwarts-1998]
 -/
+
+@[expose] public section
 
 namespace Hoeksema1983
 

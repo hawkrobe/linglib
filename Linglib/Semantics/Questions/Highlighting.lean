@@ -1,5 +1,7 @@
-import Linglib.Semantics.Questions.Basic
-import Linglib.Semantics.Questions.Hamblin
+module
+
+public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # Highlighting
@@ -48,6 +50,8 @@ Migration to consume `Highlighting.HighlightingContext` is queued for
 follow-up work; landing the substrate first lets the new MartinezVera2026
 study consume it without forcing an immediate four-file refactor.
 -/
+
+@[expose] public section
 
 namespace Semantics.Highlighting
 

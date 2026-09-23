@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.Valency
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Linglib.Semantics.ArgumentStructure.Valency
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Core arguments of a clause token
@@ -24,6 +26,8 @@ position. The filled positions are the clause's valency.
   `transitive_isTransitive` — the shapes land in the valency classes of
   [coon-2019]'s division of labor.
 -/
+
+@[expose] public section
 
 namespace Clause
 

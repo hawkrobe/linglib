@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Data.Examples.Thomas2026
-import Mathlib.Probability.ConditionalProbability
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Data.Examples.Thomas2026
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Thomas (2026): A Probabilistic, Question-Based Approach to Additivity
@@ -54,6 +56,8 @@ feature.
 * [roberts-1996]
 * [rullmann-2003]
 -/
+
+@[expose] public section
 
 namespace Thomas2026
 

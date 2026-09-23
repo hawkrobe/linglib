@@ -3,17 +3,19 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.FinCases
-import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.Prosody.Phrase
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Focus.Control
-import Linglib.Syntax.Reflex
-import Linglib.Fragments.Tangale.TAM
-import Linglib.Fragments.Tangale.Focus
-import Linglib.Fragments.Tangale.Phonology
-import Linglib.Data.Examples.HartmannZimmermann2004
+module
+
+public import Mathlib.Tactic.FinCases
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.Prosody.Phrase
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Focus.Control
+public import Linglib.Syntax.Reflex
+public import Linglib.Fragments.Tangale.TAM
+public import Linglib.Fragments.Tangale.Focus
+public import Linglib.Fragments.Tangale.Phonology
+public import Linglib.Data.Examples.HartmannZimmermann2004
 
 /-!
 # Hartmann and Zimmermann (2004): Focus strategies in Chadic
@@ -56,6 +58,8 @@ example numbers and sections were checked against the journal version of the pap
 * [truckenbrodt-1999]
 * [kidda-1985]
 -/
+
+@[expose] public section
 
 namespace HartmannZimmermann2004
 
@@ -150,18 +154,18 @@ its audibility is the blocked elision cascade
 (`prosodic_reflex_audible`). -/
 
 /-- A minimal prosodic word. -/
-private def ω : Prosody.Tree := .node .om [.node .syl []]
+def ω : Prosody.Tree := .node .om [.node .syl []]
 
 /-- V and O wrapped into one φ. -/
-private def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
+def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
 
 /-- O separated into its own φ. -/
-private def separated : Prosody.Tree :=
+def separated : Prosody.Tree :=
   .node .iota [.node .ph [ω], .node .ph [ω]]
 
 /-- The `(offset, size)` leaf-spans of the φ nodes, in left-to-right order: the offset counts
 leaves strictly to the node's left, the size its own leaves. -/
-private def phSpans : Prosody.Tree → List (ℕ × ℕ) := go 0 where
+def phSpans : Prosody.Tree → List (ℕ × ℕ) := go 0 where
   go (off : ℕ) : Prosody.Tree → List (ℕ × ℕ)
     | .node a cs =>
         (if a.isPh then [(off, RoseTree.numLeaves (.node a cs))] else []) ++ goList off cs
@@ -171,11 +175,11 @@ private def phSpans : Prosody.Tree → List (ℕ × ℕ) := go 0 where
 
 /-- ALIGN-Focus: violated when no φ-edge sits at the focus's left edge
 (leaf offset 1, the object). -/
-private def alignFocus : Constraint Prosody.Tree :=
+def alignFocus : Constraint Prosody.Tree :=
   .binary (fun t ↦ ¬ ∃ s ∈ phSpans t, s.1 = 1)
 
 /-- Phrasal economy: one violation per φ. -/
-private def starPhi : Constraint Prosody.Tree := fun t ↦ (phSpans t).length
+def starPhi : Constraint Prosody.Tree := fun t ↦ (phSpans t).length
 
 /-- Object focus: alignment dominates economy, and the separated parse
 wins — the derived φ-edge after the verb. -/
@@ -276,26 +280,26 @@ theorem vp_reading_strongest :
 `Data.Examples.HartmannZimmermann2004`; the paper's strategy label is
 read off the reflex shape. -/
 
-private def strategyLabel (c : Config) : String :=
+def strategyLabel (c : Config) : String :=
   let modalities := (realize c).image Reflex.modality
   if .displacement ∈ modalities then "postposing"
   else if .morpheme ∈ modalities then "suffixI"
   else if .boundary ∈ modalities then "boundary"
   else "unmarked"
 
-private def focusedLabel : Focused → String
+def focusedLabel : Focused → String
   | .subject => "subject"
   | .verb    => "verb"
   | .vp      => "vp"
   | .object  => "object"
 
-private def aspectLabel : Tangale.TAM → String
+def aspectLabel : Tangale.TAM → String
   | .perfective => "perfective"
   | .continuous => "progressive"
   | _           => ""
 
 /-- The paradigm cells paired with their data rows. -/
-private def configRows :
+def configRows :
     List (Config × Data.Examples.LinguisticExample) :=
   [(⟨.subject, .perfective, false⟩, Examples.ex17b),
    (⟨.vp, .perfective, false⟩, Examples.ex24b),

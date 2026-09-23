@@ -1,5 +1,7 @@
-import Linglib.Syntax.Minimalist.Linearization.Cyclic
-import Linglib.Data.Examples.FoxPesetsky2005
+module
+
+public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Data.Examples.FoxPesetsky2005
 
 /-!
 # Fox and Pesetsky (2005): Cyclic Linearization of Syntactic Structure
@@ -16,6 +18,8 @@ sentences (`Sketch.phases`) predict their judgments (`rows_predicted`).
 
 * [fox-pesetsky-2005]
 -/
+
+@[expose] public section
 
 namespace FoxPesetsky2005
 

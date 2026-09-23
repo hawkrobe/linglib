@@ -1,10 +1,12 @@
-import Linglib.Semantics.Plurality.Algebra
-import Linglib.Semantics.Presupposition.Defs
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Fragments.Japanese.Classifiers
-import Linglib.Studies.Chierchia1998
-import Mathlib.Data.Set.Card
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Semantics.Plurality.Algebra
+public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Fragments.Japanese.Classifiers
+public import Linglib.Studies.Chierchia1998
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Sudo (2016): The Semantic Role of Classifiers in Japanese
@@ -52,6 +54,8 @@ union, on which the atom count of a plurality is its cardinality (`atomCount_fin
 * [heim-kratzer-1998]
 * [krifka-2008]
 -/
+
+@[expose] public section
 
 namespace Sudo2016
 

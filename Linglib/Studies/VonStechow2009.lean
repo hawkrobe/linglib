@@ -1,6 +1,8 @@
-import Linglib.Semantics.Tense.Defs
-import Linglib.Data.Examples.VonStechow2009
-import Mathlib.Order.Bounds.Basic
+module
+
+public import Linglib.Semantics.Tense.Defs
+public import Linglib.Data.Examples.VonStechow2009
+public import Mathlib.Order.Bounds.Basic
 
 /-!
 # von Stechow (2009): Tenses in Compositional Semantics
@@ -42,6 +44,8 @@ examples are the rows of `Data.Examples.VonStechow2009`.
 * [beaver-condoravdi-2003]
 * [anscombe-1964]
 -/
+
+@[expose] public section
 
 namespace VonStechow2009
 

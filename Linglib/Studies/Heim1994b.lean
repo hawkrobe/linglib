@@ -1,6 +1,8 @@
-import Linglib.Logic.Modal.Epistemic
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Data.Examples.Heim1994b
+module
+
+public import Linglib.Logic.Modal.Epistemic
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Data.Examples.Heim1994b
 
 /-!
 # Heim (1994): Interrogative Semantics and Karttunen's Semantics for *know*
@@ -37,6 +39,8 @@ is a subset (`strongAnswer_subset_ans₂`); the ambiguity of *answer* in (17)–
 * [groenendijk-stokhof-1982]
 * [groenendijk-stokhof-1984]
 -/
+
+@[expose] public section
 
 namespace Heim1994b
 

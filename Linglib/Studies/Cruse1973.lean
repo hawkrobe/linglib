@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.EnergySource
-import Linglib.Data.Examples.Cruse1973
+module
+
+public import Linglib.Semantics.ArgumentStructure.EnergySource
+public import Linglib.Data.Examples.Cruse1973
 
 /-!
 # Some thoughts on agentivity
@@ -29,6 +31,8 @@ data, and the volitive and the effective alone each make a doer.
 * [J. M. Anderson, *The grammar of case* (1971)][anderson-1971]
 * [W. L. Chafe, *Meaning and the structure of language* (1970)][chafe-1970]
 -/
+
+@[expose] public section
 
 namespace Cruse1973
 

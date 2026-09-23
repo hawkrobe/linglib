@@ -1,11 +1,13 @@
-import Linglib.Core.Data.Fintype.Order
-import Mathlib.Data.Fintype.Card
-import Mathlib.Order.SuccPred.Basic
-import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Number.Basic
-import Mathlib.Order.Interval.Finset.Defs
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Core.Data.Fintype.Order
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Order.SuccPred.Basic
+public import Linglib.Core.Order.UpperLower.Finset
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Number.Basic
+public import Mathlib.Order.Interval.Finset.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The φ-feature geometry
@@ -49,6 +51,8 @@ the parent `Order.pred`.
 * [E. Sagey, *The representation of features and relations in non-linear
   phonology*][sagey-1986]
 -/
+
+@[expose] public section
 
 namespace Phi.Geometry
 

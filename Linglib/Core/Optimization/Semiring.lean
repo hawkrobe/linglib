@@ -1,6 +1,8 @@
-import Linglib.Core.Optimization.Decoder
-import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
-import Mathlib.Algebra.Tropical.BigOperators
+module
+
+public import Linglib.Core.Optimization.Decoder
+public import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
+public import Mathlib.Algebra.Tropical.BigOperators
 
 /-!
 # Semiring view of deterministic decoders
@@ -46,6 +48,8 @@ limit, the soft "log-sum-exp aggregator" deforms to the hard "max
 aggregator", and "this candidate's score equals the aggregate" is
 exactly the argmax condition.
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

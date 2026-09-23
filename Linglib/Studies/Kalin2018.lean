@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Kalin2018
-import Linglib.Syntax.Case.Assigner
+module
+
+public import Linglib.Data.Examples.Kalin2018
+public import Linglib.Syntax.Case.Assigner
 
 /-!
 # Kalin (2018): Licensing and Differential Object Marking
@@ -34,6 +36,8 @@ nominal is licensed exactly when it bears a case (`isLicensed_iff_assignedCase_i
 * [marantz-1991]
 * [preminger-2014]
 -/
+
+@[expose] public section
 
 namespace Kalin2018
 
@@ -81,7 +85,7 @@ structure Row where
   objectSuffix : Option Suffix
   grammatical : Bool
 
-private def suffixOf : String → Option (Option Suffix)
+def suffixOf : String → Option (Option Suffix)
   | "S" => some (some .S)
   | "L" => some (some .L)
   | "none" => some none

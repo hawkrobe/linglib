@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Reference.Character
+module
+
+public import Linglib.Semantics.Reference.Character
 
 /-!
 # Kripke (1980): Naming and Necessity
@@ -24,6 +26,8 @@ designator designates something that exists at every world (`IsStronglyRigid`).
 * [kripke-1980]
 * [kaplan-1989]
 -/
+
+@[expose] public section
 
 namespace Kripke1980
 

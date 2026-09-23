@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.ModalIndefinite
+module
+
+public import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
 # Chuj modal indefinites
@@ -10,6 +12,8 @@ argument it contributes epistemic modality only; as an internal argument or adju
 volitional predicate it contributes either epistemic or random-choice modality. The
 derivation lives in `Studies/AlonsoOvalleRoyer2024.lean`.
 -/
+
+@[expose] public section
 
 namespace Chuj.ModalIndefinites
 

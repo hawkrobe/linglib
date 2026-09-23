@@ -1,6 +1,8 @@
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Data.Examples.Jablonska2004
-import Linglib.Studies.Svenonius2004
+module
+
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Data.Examples.Jablonska2004
+public import Linglib.Studies.Svenonius2004
 
 /-!
 # Jabłońska (2004): When the Prefixes Meet the Suffixes
@@ -43,6 +45,8 @@ the starred ones excluded (`starred_not_wellFormed`).
 * [demirdache-uribe-etxebarria-2000]
 * [rothstein-2004]
 -/
+
+@[expose] public section
 
 namespace Jablonska2004
 

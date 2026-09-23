@@ -1,6 +1,8 @@
-import Mathlib.Order.Antisymmetrization
-import Linglib.Logic.RankingFunction
-import Mathlib.Order.Lattice.Nat
+module
+
+public import Mathlib.Order.Antisymmetrization
+public import Linglib.Logic.RankingFunction
+public import Mathlib.Order.Lattice.Nat
 
 /-!
 # Iterated belief revision
@@ -58,6 +60,8 @@ own orderings and meets every postulate (Theorem 5). On normalised rankings it i
 * [W. Spohn, *Ordinal Conditional Functions: A Dynamic Theory of Epistemic States*
   (1988)][spohn-1988]
 -/
+
+@[expose] public section
 
 namespace BeliefRevision
 

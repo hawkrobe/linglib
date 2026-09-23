@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # Maori negation
@@ -14,6 +16,8 @@ generally. The examples are those of [miestamo-2005], from Harlow's grammar.
 * [miestamo-2005]
 -/
 
+@[expose] public section
+
 open Negation Morphology
 
 namespace Maori.Negation
@@ -21,7 +25,7 @@ namespace Maori.Negation
 /-- The negative verb *kāore*. -/
 def kaore : Marker := { pieces := [[.free "kāore"]] }
 
-private def words (ws : List String) : List Morph := ws.map .free
+def words (ws : List String) : List Morph := ws.map .free
 
 /-- The progressive and the past of *haere* 'go'. -/
 def pairs : List Pair :=

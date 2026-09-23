@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Denotation
 
 /-!
 # French determiners
@@ -19,6 +21,8 @@ has no determiner reading. The articles *un* and *les* are `Article`s.
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 * [chemla-2007]
 -/
+
+@[expose] public section
 
 namespace French.Determiners
 

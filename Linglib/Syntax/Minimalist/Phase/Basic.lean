@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.Phase.Domain
-import Linglib.Syntax.Minimalist.Features
+module
+
+public import Linglib.Syntax.Minimalist.Phase.Domain
+public import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Phase Theory (linguistic-facing API)
@@ -34,6 +36,8 @@ off the carrier with no separate head-function field. Every phase notion delegat
 the `SyntacticObject.*` phase API, so concrete PIC checks `decide`. `isPhaseHeadOf c so` is the
 projecting head's outer category — convention-independent (the carrier is unordered).
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

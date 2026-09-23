@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Prod
-import Linglib.Syntax.Person.Basic
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Prod
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # The Person Case Constraint
@@ -27,6 +29,8 @@ formalized in their study files and compared cell-by-cell against this typology
 * [pancheva-zubizarreta-2018]: the four-parameter grammar (their (11)–(12)) formalized here
 * [bejar-rezac-2009], [coon-keine-2021], [deal-2024]: φ-Agree rivals, compared in `Studies/`
 -/
+
+@[expose] public section
 
 namespace PCC
 

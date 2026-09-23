@@ -1,7 +1,9 @@
-import Linglib.Morphology.Paradigm.Basic
-import Linglib.Pragmatics.SocialMeaning.Honorific
-import Linglib.Pragmatics.SocialMeaning.Register
-import Linglib.Syntax.Category.Pronoun.Basic
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Pragmatics.SocialMeaning.Honorific
+public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Personal pronouns
@@ -33,6 +35,8 @@ person-case constraint and resolved agreement ([adamson-zompi-2025]).
 * [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
+
+@[expose] public section
 
 /-- A personal pronoun is a `Pronoun` with its register, its honorific level and the referential
 categories it denotes. -/

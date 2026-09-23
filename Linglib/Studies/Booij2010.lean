@@ -3,14 +3,16 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.Forms.Booij2010
-import Linglib.Morphology.ConstructionMorphology.Schema
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.FinCases
-import Linglib.Logic.Nonmonotonic.Inheritance
-import Linglib.Core.Relation.ReflTransGen
-import Linglib.Core.Order.Flat
+module
+
+public import Linglib.Data.Forms.Booij2010
+public import Linglib.Morphology.ConstructionMorphology.Schema
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.FinCases
+public import Linglib.Logic.Nonmonotonic.Inheritance
+public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Core.Order.Flat
 
 /-!
 # Construction Morphology: the constructional-schema engine [booij-2010-compass]
@@ -40,6 +42,8 @@ unification (`on-` prefixation composed with `V-baar`).
   unify into `on-V-baar`, whose instances are exactly their common instances, no
   listed intermediate required
 -/
+
+@[expose] public section
 
 namespace Booij2010
 

@@ -1,5 +1,7 @@
-import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Presupposition.Basic
+module
+
+public import Linglib.Semantics.Events.Basic
+public import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Koev (2017): Evidentiality, Learning Events and Spatiotemporal Distance
@@ -32,6 +34,8 @@ whose assertion is that proposition, and negation preserves it, (78) (`toEvident
 * [koev-2017]
 * [izvorski-1997]
 -/
+
+@[expose] public section
 
 namespace Koev2017
 

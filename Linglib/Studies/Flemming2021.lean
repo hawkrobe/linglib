@@ -1,11 +1,13 @@
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Algebra.Order.Field.Rat
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.FieldSimp
-import Linglib.Phonology.HarmonicGrammar.Noise
-import Linglib.Core.Probability.Choice.GumbelLuce
-import Linglib.Data.Examples.Flemming2021
-import Linglib.Data.Experiments.Flemming2021
+module
+
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Order.Field.Rat
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.FieldSimp
+public import Linglib.Phonology.HarmonicGrammar.Noise
+public import Linglib.Core.Probability.Choice.GumbelLuce
+public import Linglib.Data.Examples.Flemming2021
+public import Linglib.Data.Experiments.Flemming2021
 
 /-!
 # Flemming (2021): Comparing MaxEnt and Noisy Harmonic Grammar
@@ -55,6 +57,8 @@ equal-harmony candidates by their noise covariance (§9).
 * [train-2009]
 * [mcfadden-1974]
 -/
+
+@[expose] public section
 
 namespace Flemming2021
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Basque relative clauses
@@ -14,6 +16,8 @@ object, and records no data for the lower positions. The data are [keenan-comrie
 
 * [keenan-comrie-1977]
 -/
+
+@[expose] public section
 
 namespace Basque
 

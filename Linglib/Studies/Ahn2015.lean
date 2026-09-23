@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Lattice.Bounded
-import Linglib.Data.Examples.Ahn2015
+module
+
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Linglib.Data.Examples.Ahn2015
 
 /-!
 # The semantics of additive *either*
@@ -36,6 +38,8 @@ negative host whose antecedent is not positive, and *too* fails only for want of
 * [chierchia-2013]
 * [sauerland-2004]
 -/
+
+@[expose] public section
 
 namespace Ahn2015
 

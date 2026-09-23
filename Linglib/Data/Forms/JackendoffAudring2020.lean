@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `JackendoffAudring2020` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/JackendoffAudring2020.json` by
 generator. Consumers import this module; declarations live in
 `namespace JackendoffAudring2020.Forms`.
 -/
+
+@[expose] public section
 
 namespace JackendoffAudring2020.Forms
 

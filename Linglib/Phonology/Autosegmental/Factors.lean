@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.List.Factors
-import Linglib.Phonology.Autosegmental.NormalForm
+module
+
+public import Linglib.Core.Data.List.Factors
+public import Linglib.Phonology.Autosegmental.NormalForm
 
 /-!
 # Factors and banned-subgraph grammars
@@ -26,6 +28,8 @@ are lists of forbidden factors.
 * `AR.factorEmbeds_iff_infix_of_link_free`: for link-free factors, embedding is
   independent per-tier infix occurrence — [jardine-2019]'s link-free fragment.
 -/
+
+@[expose] public section
 
 namespace Autosegmental
 

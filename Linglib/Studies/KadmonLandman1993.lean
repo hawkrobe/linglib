@@ -1,11 +1,13 @@
-import Linglib.Logic.Natural.Basic
-import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Polarity.Item
-import Linglib.Logic.Natural.Strawson.Basic
-import Linglib.Semantics.Supervaluation
-import Linglib.Studies.Ladusaw1979
-import Linglib.Data.Examples.KadmonLandman1993
-import Mathlib.Data.Set.Basic
+module
+
+public import Linglib.Logic.Natural.Basic
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.Polarity.Item
+public import Linglib.Logic.Natural.Strawson.Basic
+public import Linglib.Semantics.Supervaluation
+public import Linglib.Studies.Ladusaw1979
+public import Linglib.Data.Examples.KadmonLandman1993
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Kadmon and Landman (1993): Any
@@ -48,6 +50,8 @@ precisification space the two truth notions are [fine-1975]'s super-truth and bo
 * [linebarger-1987]
 * [fine-1975]
 -/
+
+@[expose] public section
 
 namespace KadmonLandman1993
 
@@ -571,7 +575,7 @@ def Row.signature (r : Row) : Signature :=
   | some c => contextSignature c
   | none => r.localSignature
 
-private def contextOf : String → Option LicensingContext
+def contextOf : String → Option LicensingContext
   | "negation" => some .negation
   | "generic" => some .generic
   | "universalRestrictor" => some .universalRestrictor
@@ -579,7 +583,7 @@ private def contextOf : String → Option LicensingContext
   | "conditionalAntecedent" => some .conditionalAntecedent
   | _ => none
 
-private def signatureOf : String → Option Signature
+def signatureOf : String → Option Signature
   | "all" => some .all
   | "mono" => some .mono
   | "anti" => some .anti

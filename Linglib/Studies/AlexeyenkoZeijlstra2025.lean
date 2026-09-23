@@ -1,7 +1,9 @@
-import Linglib.Syntax.WordOrder
-import Linglib.Studies.ZwickyPullum1983
-import Linglib.Fragments.Slavic.Russian.Agreement
-import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
+module
+
+public import Linglib.Syntax.WordOrder
+public import Linglib.Studies.ZwickyPullum1983
+public import Linglib.Fragments.Slavic.Russian.Agreement
+public import Linglib.Data.Examples.AlexeyenkoZeijlstra2025
 
 /-!
 # Alexeyenko and Zeijlstra (2025): linearization of complex modifiers
@@ -37,6 +39,8 @@ the languages and the judgments.
 * [zwicky-pullum-1983]
 -/
 
+@[expose] public section
+
 namespace AlexeyenkoZeijlstra2025
 
 open Data.Examples
@@ -51,7 +55,7 @@ structure Form where
   deriving DecidableEq
 
 /-- An adjectival target of the Russian fragment as a form. -/
-private def form (t : Russian.Agreement.Target) : Form := ⟨t.positions, t.features⟩
+def form (t : Russian.Agreement.Target) : Form := ⟨t.positions, t.features⟩
 
 /-! ### Attributivizers -/
 
@@ -115,7 +119,7 @@ def apOrders : Language → Finset HeadDirection
   | _ => {.headInitial}
 
 /-- Gender, number and case. -/
-private def φκ : Finset Agreement.Dimension := {.number, .gender, .case}
+def φκ : Finset Agreement.Dimension := {.number, .gender, .case}
 
 /-- A language's adjectival forms. Greek and Latin adjectives have one form, inflected for
 gender, number and case in both uses, and Kalaallisut's affixal number and case agreement is
@@ -273,7 +277,7 @@ def attributivizerOf (row : LinguisticExample) : Option AttrStatus :=
   | _ => none
 
 /-- Split on spaces. -/
-private def words : List Char → List (List Char)
+def words : List Char → List (List Char)
   | [] => []
   | ' ' :: cs => words cs
   | c :: cs =>

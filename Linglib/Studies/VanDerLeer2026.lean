@@ -1,5 +1,7 @@
-import Linglib.Discourse.Commitment.Space
-import Linglib.Discourse.Commitment.Frame
+module
+
+public import Linglib.Discourse.Commitment.Space
+public import Linglib.Discourse.Commitment.Frame
 
 /-!
 # van der Leer 2026: Speech Act Logic
@@ -70,6 +72,8 @@ the totality of `update`.
 * [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
   and Question Tags* (2015)][krifka-2015]
 -/
+
+@[expose] public section
 
 namespace VanDerLeer2026
 

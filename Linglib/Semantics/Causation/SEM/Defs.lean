@@ -1,6 +1,8 @@
-import Linglib.Semantics.Causation.Graph.Basic
-import Linglib.Semantics.Causation.Mechanism.Defs
-import Linglib.Semantics.Causation.Valuation
+module
+
+public import Linglib.Semantics.Causation.Graph.Basic
+public import Linglib.Semantics.Causation.Mechanism.Defs
+public import Linglib.Semantics.Causation.Valuation
 
 /-!
 # SEM: Bundled Structural Equation Model
@@ -17,6 +19,8 @@ mark properties of a structure value (`IsMarkovKernel` etc.).
 Phase A scope: structure + mixins only. Forward propagation, intervention,
 and counterfactual queries live in `SEM/Basic.lean`.
 -/
+
+@[expose] public section
 
 namespace Causation
 

@@ -1,7 +1,9 @@
-import Linglib.Syntax.Category.Pronoun.Personal
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Fragments.German.Determiners
-import Linglib.Studies.Schwarz2009
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Fragments.German.Determiners
+public import Linglib.Studies.Schwarz2009
 
 /-!
 # Patel-Grosz and Grosz (2017): Revisiting Pronominal Typology
@@ -35,6 +37,8 @@ interpretation; the gender-mismatch corpus counts are described in prose.
 * [elbourne-2005]
 * [cardinaletti-starke-1999]
 -/
+
+@[expose] public section
 
 namespace PatelGroszGrosz2017
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Coordinator
+module
+
+public import Linglib.Syntax.Category.Coordinator
 
 /-!
 # Classical Tibetan coordinators
@@ -15,6 +17,8 @@ example Haspelmath cites from Beyer; the form is a former case-marker meaning 'w
 * [haspelmath-2007]
 * [beyer-1992]
 -/
+
+@[expose] public section
 
 namespace ClassicalTibetan.Coordination
 

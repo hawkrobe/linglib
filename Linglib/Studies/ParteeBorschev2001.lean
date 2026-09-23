@@ -1,4 +1,6 @@
-import Linglib.Semantics.Possession.Basic
+module
+
+public import Linglib.Semantics.Possession.Basic
 
 /-!
 # Partee & Borschev 2001: Some puzzles of predicate possessives
@@ -34,6 +36,8 @@ possessive a modifier — and on a relational noun the two constructions come ap
 * [partee-1997]
 * [stockwell-schachter-partee-1973]
 -/
+
+@[expose] public section
 
 namespace ParteeBorschev2001
 

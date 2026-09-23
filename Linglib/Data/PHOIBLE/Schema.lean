@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Order.Bundle
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Order.Bundle
 
 /-!
 # PHOIBLE 2.0 schema
@@ -35,6 +37,8 @@ inventories.
 > http://phoible.org. DOI: 10.5281/zenodo.2626687
 
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE
 

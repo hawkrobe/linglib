@@ -1,4 +1,6 @@
-import Linglib.Semantics.Plurality.Distributivity
+module
+
+public import Linglib.Semantics.Plurality.Distributivity
 
 /-!
 # German distributive expressions
@@ -12,6 +14,8 @@ contextually tolerated subplurality and has no determiner use.
 
 * [haslinger-etal-2025]
 -/
+
+@[expose] public section
 
 namespace German.Distributives
 

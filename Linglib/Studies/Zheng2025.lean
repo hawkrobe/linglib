@@ -1,8 +1,10 @@
-import Linglib.Fragments.Mandarin.QuestionParticles
-import Linglib.Semantics.Modality.Kernel
-import Linglib.Semantics.Questions.Bias
-import Mathlib.Data.Set.Card
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Fragments.Mandarin.QuestionParticles
+public import Linglib.Semantics.Modality.Kernel
+public import Linglib.Semantics.Questions.Bias
+public import Mathlib.Data.Set.Card
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Zheng (2025): Nandao-Qs, When Surprise Sparks Inquiry
@@ -47,6 +49,8 @@ the argument of the paper's footnote on (17).
 * [xu-2012]
 * [farkas-2025]
 -/
+
+@[expose] public section
 
 namespace Zheng2025
 

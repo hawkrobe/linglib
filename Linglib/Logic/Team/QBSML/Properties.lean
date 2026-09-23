@@ -1,8 +1,10 @@
-import Mathlib.ModelTheory.Semantics
-import Linglib.Core.ModelTheory.Binders
-import Linglib.Logic.Team.QBSML.Defs
-import Linglib.Logic.Team.Closure
-import Linglib.Logic.Team.Definability
+module
+
+public import Mathlib.ModelTheory.Semantics
+public import Linglib.Core.ModelTheory.Binders
+public import Linglib.Logic.Team.QBSML.Defs
+public import Linglib.Logic.Team.Closure
+public import Linglib.Logic.Team.Definability
 
 /-!
 # QBSML formula properties
@@ -49,6 +51,8 @@ union closure holds only on the NE-free fragment, whereas BSML's is
 unconditional. The flatness corollary is unaffected: flat consumers use
 NE-free anyway.
 -/
+
+@[expose] public section
 
 namespace QBSML
 

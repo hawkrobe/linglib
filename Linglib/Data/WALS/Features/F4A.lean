@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 4A: Voicing in Plosives and Fricatives
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 4, 567 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F4A
 
@@ -24,7 +28,8 @@ inductive VoicingInPlosivesAndFricatives where
   | inBothPlosivesAndFricatives
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint VoicingInPlosivesAndFricatives) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint VoicingInPlosivesAndFricatives) :=
   [ { walsCode := "xoo", iso := "nmn", value := .inPlosivesAlone }
   , { walsCode := "ani", iso := "hnh", value := .inPlosivesAlone }
   , { walsCode := "abi", iso := "axb", value := .noVoicingContrast }
@@ -527,7 +532,8 @@ private def allData_0 : List (Datapoint VoicingInPlosivesAndFricatives) :=
   , { walsCode := "tru", iso := "tpy", value := .inPlosivesAlone }
   ]
 
-private def allData_1 : List (Datapoint VoicingInPlosivesAndFricatives) :=
+/-- Rows 501 to 567 of `allData`. -/
+def allData_1 : List (Datapoint VoicingInPlosivesAndFricatives) :=
   [ { walsCode := "tsi", iso := "tsi", value := .inPlosivesAlone }
   , { walsCode := "tso", iso := "tsu", value := .inFricativesAlone }
   , { walsCode := "ttu", iso := "bbl", value := .inBothPlosivesAndFricatives }

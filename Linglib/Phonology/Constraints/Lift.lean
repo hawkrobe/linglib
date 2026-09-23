@@ -1,6 +1,8 @@
-import Linglib.Phonology.Constraints.Defs
-import Mathlib.Data.List.ProdSigma
-import Mathlib.Algebra.BigOperators.Group.List.Defs
+module
+
+public import Linglib.Phonology.Constraints.Defs
+public import Mathlib.Data.List.ProdSigma
+public import Mathlib.Algebra.BigOperators.Group.List.Defs
 
 /-!
 # List-lift constraint constructors
@@ -22,6 +24,8 @@ paper-specific anchoring disciplines live in their study files (`Studies/`).
 * `liftPerMember` — lift a per-element cost over the members of a `List`.
 * `liftPairwise` — lift a per-ordered-pair cost over all pairs of a `List`.
 -/
+
+@[expose] public section
 
 namespace Constraints
 

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Questions.Answering
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Fragments.Swedish.AnswerParticles
-import Linglib.Fragments.German.PolarityMarking
+module
+
+public import Linglib.Semantics.Questions.Answering
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Fragments.Swedish.AnswerParticles
+public import Linglib.Fragments.German.PolarityMarking
 
 /-!
 # Holmberg (2016): The Syntax of Yes and No
@@ -37,6 +39,8 @@ answered like neutral questions (`high_answers_like_neutral`).
 
 * [holmberg-2016]
 -/
+
+@[expose] public section
 
 namespace Holmberg2016
 

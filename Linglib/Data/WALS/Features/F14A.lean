@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 14A: Fixed Stress Locations
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 14, 502 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F14A
 
@@ -30,7 +34,8 @@ inductive FixedStressLocations where
   | ultimate
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint FixedStressLocations) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint FixedStressLocations) :=
   [ { walsCode := "abk", iso := "abk", value := .noFixedStress }
   , { walsCode := "ace", iso := "ace", value := .ultimate }
   , { walsCode := "acg", iso := "aca", value := .initial }
@@ -533,7 +538,8 @@ private def allData_0 : List (Datapoint FixedStressLocations) :=
   , { walsCode := "zqc", iso := "zoc", value := .penultimate }
   ]
 
-private def allData_1 : List (Datapoint FixedStressLocations) :=
+/-- Rows 501 to 502 of `allData`. -/
+def allData_1 : List (Datapoint FixedStressLocations) :=
   [ { walsCode := "zul", iso := "zul", value := .penultimate }
   , { walsCode := "zun", iso := "zun", value := .initial }
   ]

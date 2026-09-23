@@ -1,5 +1,7 @@
-import Linglib.Studies.BarwiseCooper1981
-import Linglib.Data.Examples.PurverGinzburg2004
+module
+
+public import Linglib.Studies.BarwiseCooper1981
+public import Linglib.Data.Examples.PurverGinzburg2004
 
 /-!
 # Purver and Ginzburg (2004): Clarifying Noun Phrase Semantics
@@ -42,6 +44,8 @@ formalized.
 * [ginzburg-cooper-2004]
 * [barwise-cooper-1981]
 -/
+
+@[expose] public section
 
 namespace PurverGinzburg2004
 

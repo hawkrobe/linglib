@@ -1,8 +1,10 @@
-import Linglib.Data.PHOIBLE.Inventories.Turkish
-import Linglib.Phonology.Harmony.System
-import Linglib.Phonology.Segmental.NaturalClass
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Subregular.LocalRewrite
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Turkish
+public import Linglib.Phonology.Harmony.System
+public import Linglib.Phonology.Segmental.NaturalClass
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Turkish phonology
@@ -79,6 +81,8 @@ dental there. `K` is `k` without a value for [continuant] and not a meet, since 
 * [G. N. Clements and E. Sezer, *Vowel and consonant disharmony in Turkish*][clements-sezer-1982]
 * [S. Moran and D. McCloy, *PHOIBLE 2.0*][moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Phonology.Harmony Subregular.LocalRewrite Data.PHOIBLE
 

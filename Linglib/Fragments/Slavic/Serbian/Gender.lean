@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Bosnian/Croatian/Serbian nouns by gender and humanness
@@ -10,6 +12,8 @@ grammatical gender and whether they denote humans; neuter nouns are mass or coll
 
 * [adamson-anagnostopoulou-2025]
 -/
+
+@[expose] public section
 
 namespace Serbian.Gender
 

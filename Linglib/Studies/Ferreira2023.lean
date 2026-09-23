@@ -1,8 +1,10 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Modality.Directive
-import Linglib.Fragments.Portuguese.Modals
-import Linglib.Data.Examples.Ferreira2023
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Modality.Directive
+public import Linglib.Fragments.Portuguese.Modals
+public import Linglib.Data.Examples.Ferreira2023
 
 /-!
 # Ferreira (2023): A square of necessities
@@ -64,6 +66,8 @@ workday and not on a holiday.
 * [kratzer-1981]
 * [kratzer-2012]
 -/
+
+@[expose] public section
 
 namespace Ferreira2023
 

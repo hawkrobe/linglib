@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.DRS.Indexed
-import Linglib.Semantics.Dynamic.Category
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Indexed
+public import Linglib.Semantics.Dynamic.Category
 
 /-!
 # DRT's category of contexts
@@ -42,6 +44,8 @@ the semantic level.
   algebra and context typing)
 * [kamp-vangenabith-reyle-2011], [kamp-reyle-1993]
 -/
+
+@[expose] public section
 
 namespace DRT
 

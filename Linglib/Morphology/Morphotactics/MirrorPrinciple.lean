@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Morphology.Word.Tree
+module
+
+public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+public import Linglib.Morphology.Word.Tree
 
 /-!
 # The Mirror Principle
@@ -31,6 +33,8 @@ the affixes of each side read outward from the root in the order the rules appli
 - `MorphDomain.InScope`: the principle's scope — concatenative morphology, excluding
   cliticization and nonconcatenative processes ([baker-1985] §5).
 -/
+
+@[expose] public section
 
 namespace Morphology.MirrorPrinciple
 

@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Minimalist.SyntacticObject.Replace
-import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Minimalist.SyntacticObject.Replace
+public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
 # Derivations
@@ -41,6 +43,8 @@ the left, which changes no stage and no mover.
 * [marcolli-chomsky-berwick-2025], §1.2 (Definition 1.2.6) and §1.4 (Lemma 1.4.1,
   Proposition 1.4.2)
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

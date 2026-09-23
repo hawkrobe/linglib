@@ -1,5 +1,7 @@
-import Linglib.Morphology.Paradigm.Basic
-import Linglib.Syntax.Agreement.Paradigm
+module
+
+public import Linglib.Morphology.Paradigm.Basic
+public import Linglib.Syntax.Agreement.Paradigm
 
 /-!
 # Agreement tables as ordered-cell paradigms
@@ -15,6 +17,8 @@ latter, reading off each ordered cell's exponent.
 * `Agreement.Paradigm.toParadigm` — transport a cell-keyed table onto the
   `n`-cell ordered paradigm along an indexing `Fin n → Agreement.Bundle`
 -/
+
+@[expose] public section
 
 namespace Agreement.Paradigm
 

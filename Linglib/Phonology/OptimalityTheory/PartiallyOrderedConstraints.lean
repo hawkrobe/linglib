@@ -1,11 +1,13 @@
-import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-import Linglib.Phonology.OptimalityTheory.Antimatroid
-import Linglib.Phonology.OptimalityTheory.Grammar
-import Linglib.Core.Optimization.PermSubsetCombinatorics
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Data.Prod.Basic
-import Mathlib.Order.Extension.Linear
-import Mathlib.Order.Preorder.Finite
+module
+
+public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
+public import Linglib.Phonology.OptimalityTheory.Antimatroid
+public import Linglib.Phonology.OptimalityTheory.Grammar
+public import Linglib.Core.Optimization.PermSubsetCombinatorics
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Data.Prod.Basic
+public import Mathlib.Order.Extension.Linear
+public import Mathlib.Order.Preorder.Finite
 
 /-!
 # Partially Ordered Constraints (POC)
@@ -69,6 +71,8 @@ notation that must keep meaning `Fin n`'s positional order. This is also
 mathlib's own idiom for orders treated as data (Szpilrajn's
 `extend_partialOrder`).
 -/
+
+@[expose] public section
 
 namespace OptimalityTheory
 

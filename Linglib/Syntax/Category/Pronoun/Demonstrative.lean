@@ -1,5 +1,7 @@
-import Linglib.Semantics.Reference.Deixis
-import Linglib.Syntax.Category.Pronoun.Basic
+module
+
+public import Linglib.Semantics.Reference.Deixis
+public import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Demonstrative pronouns
@@ -22,6 +24,8 @@ pronouns built on the strong article and encode no deixis, so they are `Personal
 * [P. Patel-Grosz and P. G. Grosz, *Revisiting Pronominal Typology*
   (2017)][patel-grosz-grosz-2017]
 -/
+
+@[expose] public section
 
 /-- A demonstrative pronoun: the general `Pronoun` with the deictic contrast it encodes,
 `unspecified` for a distance-neutral form. Its meaning is the deictic

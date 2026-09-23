@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Basic
 
 /-!
 # Tlingit Modal Inventory
@@ -7,13 +9,15 @@ Modal expressions from Tlingit (Athabaskan-Eyak-Tlingit), based on
 [cable-2017].
 -/
 
+@[expose] public section
+
 namespace Tlingit
 
 open Modality (ForceFlavor ModalItem)
 
-private abbrev pe : ForceFlavor := (.possibility, .epistemic)
-private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
-private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
+abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 def gwal : ModalItem := { form := "gwal", meaning := {pe} }
 def giwe : ModalItem := { form := "giwe", meaning := {pe} }

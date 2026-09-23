@@ -1,4 +1,6 @@
-import Linglib.Fragments.Slavic.Case
+module
+
+public import Linglib.Fragments.Slavic.Case
 
 /-!
 # Ukrainian Case Inventory
@@ -11,6 +13,8 @@ productive vocative — robust in the singular (батько → батьку,
 панове/panove 'gentlemen'. `inventory` aliases the shared 6-case
 core; `Slavic.Case.fullInventory` carries the +VOC form.
 -/
+
+@[expose] public section
 
 namespace Ukrainian.Case
 

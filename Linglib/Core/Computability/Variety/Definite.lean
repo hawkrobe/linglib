@@ -5,9 +5,11 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.Variety.Definite`.
 -/
-import Linglib.Core.Computability.Definite
-import Linglib.Core.Computability.Variety.OmegaEquations
-import Linglib.Core.Computability.Variety.SemigroupLangs
+module
+
+public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Computability.Variety.OmegaEquations
+public import Linglib.Core.Computability.Variety.SemigroupLangs
 
 /-!
 # Definite languages and the pseudovarieties **D** and **K**
@@ -41,6 +43,8 @@ theorems.
   correspondences themselves — `V.langs` is exactly the definite, resp. reverse-definite,
   languages.
 -/
+
+@[expose] public section
 
 namespace Language
 

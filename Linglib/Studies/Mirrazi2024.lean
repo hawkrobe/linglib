@@ -1,5 +1,7 @@
-import Linglib.Semantics.Reference.ChoiceFunction
-import Linglib.Fragments.Farsi.Determiners
+module
+
+public import Linglib.Semantics.Reference.ChoiceFunction
+public import Linglib.Fragments.Farsi.Determiners
 
 /-!
 # Mirrazi (2024): Indefinites in Negated Intensional Contexts
@@ -29,6 +31,8 @@ enter only through that classification.
 
 * [mirrazi-2024]
 -/
+
+@[expose] public section
 
 namespace Mirrazi2024
 

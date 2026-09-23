@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `SiptarTorkenczy2000` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/SiptarTorkenczy2000.json` by
 generator. Consumers import this module; declarations live in
 `namespace SiptarTorkenczy2000.Forms`.
 -/
+
+@[expose] public section
 
 namespace SiptarTorkenczy2000.Forms
 

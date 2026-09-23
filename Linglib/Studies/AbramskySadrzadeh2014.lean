@@ -1,10 +1,12 @@
-import Linglib.Semantics.Dynamic.DRS.Gluing
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.Finsupp.Basic
-import Mathlib.Algebra.BigOperators.Finsupp.Basic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.NormNum
-import Linglib.Data.Examples.AbramskySadrzadeh2014
+module
+
+public import Linglib.Semantics.Dynamic.DRS.Gluing
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Finsupp.Basic
+public import Mathlib.Algebra.BigOperators.Finsupp.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.NormNum
+public import Linglib.Data.Examples.AbramskySadrzadeh2014
 
 /-!
 # Semantic unification as sheaf gluing
@@ -41,6 +43,8 @@ cheeky monkeys* the most likely resolution (`gluingDistribution_ripe`).
 * [kamp-reyle-1993]
 * [geach-1962]
 -/
+
+@[expose] public section
 
 namespace AbramskySadrzadeh2014
 

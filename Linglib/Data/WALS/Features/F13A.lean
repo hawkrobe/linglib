@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 13A: Tone
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 13, 527 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F13A
 
@@ -22,7 +26,8 @@ inductive Tone where
   | complexToneSystem
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint Tone) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint Tone) :=
   [ { walsCode := "xoo", iso := "nmn", value := .complexToneSystem }
   , { walsCode := "ani", iso := "hnh", value := .simpleToneSystem }
   , { walsCode := "abk", iso := "abk", value := .noTones }
@@ -525,7 +530,8 @@ private def allData_0 : List (Datapoint Tone) :=
   , { walsCode := "ygr", iso := "ygr", value := .simpleToneSystem }
   ]
 
-private def allData_1 : List (Datapoint Tone) :=
+/-- Rows 501 to 527 of `allData`. -/
+def allData_1 : List (Datapoint Tone) :=
   [ { walsCode := "yag", iso := "yad", value := .simpleToneSystem }
   , { walsCode := "ykt", iso := "sah", value := .noTones }
   , { walsCode := "yan", iso := "ynn", value := .noTones }

@@ -1,4 +1,6 @@
-import Linglib.Data.Examples.Schema
+module
+
+public import Linglib.Data.Examples.Schema
 
 /-!
 # `ArreguiKusumoto1998` — typed example data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Examples/ArreguiKusumoto1998.json` by
 the generator. Consumers (the paper's study file, test-suite hubs) import
 this module; declarations live in `namespace ArreguiKusumoto1998.Examples`.
 -/
+
+@[expose] public section
 
 namespace ArreguiKusumoto1998.Examples
 

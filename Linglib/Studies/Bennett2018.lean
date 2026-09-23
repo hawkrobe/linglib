@@ -1,5 +1,7 @@
-import Linglib.Phonology.Prosody.Word
-import Linglib.Phonology.OptimalityTheory.Tableau
+module
+
+public import Linglib.Phonology.Prosody.Word
+public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
 # Bennett 2018: recursive prosodic words in Kaqchikel
@@ -38,6 +40,8 @@ above the constraint that every prosodic word correspond to a morphological word
 * [inkelas-1990]: prosodic subcategorization.
 * [nespor-vogel-1986]: the Strict Layer Hypothesis and the Clitic Group.
 -/
+
+@[expose] public section
 
 namespace Bennett2018
 

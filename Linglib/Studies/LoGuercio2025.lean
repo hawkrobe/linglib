@@ -1,7 +1,9 @@
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Semantics.Alternatives.Structural
-import Linglib.Semantics.Alternatives.Competition
-import Linglib.Data.Examples.LoGuercio2025
+module
+
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.Alternatives.Structural
+public import Linglib.Semantics.Alternatives.Competition
+public import Linglib.Data.Examples.LoGuercio2025
 
 /-!
 # Lo Guercio (2025): Maximize Conventional Implicatures!
@@ -44,6 +46,8 @@ theorems.
 * [gutzmann-2015]
 * [kaplan-1999]
 -/
+
+@[expose] public section
 
 namespace LoGuercio2025
 

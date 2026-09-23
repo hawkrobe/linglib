@@ -1,4 +1,6 @@
-import Linglib.Phonology.Prosody.Syllable
+module
+
+public import Linglib.Phonology.Prosody.Syllable
 
 /-!
 # Metrical feet
@@ -37,6 +39,8 @@ are *functions* that recover the same head.
 * `Foot.isFoot_toProsTree` — every `Foot`'s prosodic tree is a well-formed foot tree
   (`IsFoot`): the functoriality/well-formedness bridge onto the carrier.
 -/
+
+@[expose] public section
 
 namespace Prosody
 
@@ -165,7 +169,7 @@ def headFlags (f : Foot S) : List Bool :=
   (List.finRange f.syllables.length).map (fun i => decide (i = f.head))
 
 /-- The σ-leaves' head flags read off a tree. -/
-private def childHeadFlags : Tree → List Bool
+def childHeadFlags : Tree → List Bool
   | .node _ cs => cs.map (fun | .node a _ => a.isHead)
 
 @[simp] theorem toGrid_length (f : Foot S) :

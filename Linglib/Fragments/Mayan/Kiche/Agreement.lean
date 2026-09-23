@@ -1,10 +1,12 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Phonology.Segmental.Defs
-import Linglib.Syntax.Number.Basic
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Fragments.Mayan.Agreement
-import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Semantics.Reference.Prominence
+public import Linglib.Fragments.Mayan.Agreement
+public import Linglib.Syntax.Clause.ArgumentRole
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # K'iche' Agreement Fragment
@@ -46,6 +48,8 @@ the canonical φ-cell exponent tables key on
 `Agreement.Bundle` for cross-Mayan consumption. Extraction marking (AF
 and *wi*) lives in `Kiche/Extraction.lean`.
 -/
+
+@[expose] public section
 
 
 namespace Kiche

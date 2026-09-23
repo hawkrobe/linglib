@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Korean relative clauses
@@ -15,6 +17,8 @@ be dropped: the possessive pronoun is retained, as in *chaki-ij lä-ka chongmyə
 
 * [keenan-comrie-1977]
 -/
+
+@[expose] public section
 
 namespace Korean
 

@@ -1,8 +1,10 @@
-import Mathlib.Order.Interval.Set.Basic
-import Linglib.Discourse.Commitment.Basic
-import Linglib.Semantics.Questions.Basic
-import Linglib.Discourse.QUD.Issue
-import Linglib.Discourse.Role
+module
+
+public import Mathlib.Order.Interval.Set.Basic
+public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Semantics.Questions.Basic
+public import Linglib.Discourse.QUD.Issue
+public import Linglib.Discourse.Role
 
 /-!
 # Commitment spaces
@@ -52,6 +54,8 @@ continuation's context set.
 * [T. van der Leer, *Commitments, beliefs and expectations in conversation*
   (2026)][van-der-leer-2026]
 -/
+
+@[expose] public section
 
 namespace Commitment
 

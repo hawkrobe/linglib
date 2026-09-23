@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Indefinite
+module
+
+public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Latin indefinite pronouns
@@ -16,6 +18,8 @@ interrogative is commoner than *aliquis* where it can lean on *si* or *num*.
 
 * [haspelmath-1997]
 -/
+
+@[expose] public section
 
 namespace Latin.Indefinites
 

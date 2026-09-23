@@ -1,4 +1,6 @@
-import Linglib.Discourse.CommonGround
+module
+
+public import Linglib.Discourse.CommonGround
 
 /-!
 # KOS: Type Definitions
@@ -66,6 +68,8 @@ QContent` recovers the Ch. 4 gameboard whose moves are illocutionary
 propositions).
 
 -/
+
+@[expose] public section
 
 namespace Discourse.Gameboard
 

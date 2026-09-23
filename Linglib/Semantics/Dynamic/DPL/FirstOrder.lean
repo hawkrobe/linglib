@@ -1,5 +1,7 @@
-import Linglib.Core.ModelTheory.Binders
-import Linglib.Semantics.Dynamic.DPL.Context
+module
+
+public import Linglib.Core.ModelTheory.Binders
+public import Linglib.Semantics.Dynamic.DPL.Context
 
 /-!
 # Dynamic predicate logic and first-order logic
@@ -25,6 +27,8 @@ extends predicate logic.
 
 * [groenendijk-stokhof-1991]
 -/
+
+@[expose] public section
 
 open FirstOrder FirstOrder.Language DynamicSemantics SetRel CylindricAlgebra
 

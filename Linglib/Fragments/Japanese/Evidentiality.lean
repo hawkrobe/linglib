@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Japanese evidentiality
@@ -14,6 +16,8 @@ language as indirect-only.
 * [aikhenvald-2004], §3.4
 * [de-haan-2013]
 -/
+
+@[expose] public section
 
 namespace Japanese.Evidentiality
 

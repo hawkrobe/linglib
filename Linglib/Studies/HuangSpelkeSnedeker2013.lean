@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.Implicature.SomeAll
-import Linglib.Semantics.Quantification.Numerals.Basic
+module
+
+public import Linglib.Pragmatics.Implicature.SomeAll
+public import Linglib.Semantics.Quantification.Numerals.Basic
 
 /-!
 # Huang, Spelke and Snedeker (2013): What exactly do numbers mean?
@@ -37,6 +39,8 @@ route, an implicit alternative *more than two*, does recover exactness
 * [wynn-1992]
 * [musolino-2004]
 -/
+
+@[expose] public section
 
 namespace HuangSpelkeSnedeker2013
 

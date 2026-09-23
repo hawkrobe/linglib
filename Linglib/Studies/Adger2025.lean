@@ -1,5 +1,7 @@
-import Linglib.Syntax.Mereological.AngularLocality
-import Linglib.Data.Examples.Adger2025
+module
+
+public import Linglib.Syntax.Mereological.AngularLocality
+public import Linglib.Data.Examples.Adger2025
 
 /-!
 # Mereological syntax: phrase structure, cyclicity, and islands
@@ -32,6 +34,8 @@ formalized.
 
 * [adger-2025]
 -/
+
+@[expose] public section
 
 namespace Adger2025
 

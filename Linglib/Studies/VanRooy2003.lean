@@ -1,7 +1,9 @@
-import Linglib.Core.Probability.Decision.Basic
-import Linglib.Data.Examples.VanRooy2003
-import Mathlib.Order.Partition.Finpartition
-import Mathlib.Tactic.Linarith
+module
+
+public import Linglib.Core.Probability.Decision.Basic
+public import Linglib.Data.Examples.VanRooy2003
+public import Mathlib.Order.Partition.Finpartition
+public import Mathlib.Tactic.Linarith
 
 /-!
 # van Rooy (2003): Questioning to Resolve Decision Problems
@@ -49,6 +51,8 @@ formalized. The examples are the rows of `Data.Examples.VanRooy2003`.
 * [hamblin-1973b]
 * [merin-1999-relevance]
 -/
+
+@[expose] public section
 
 namespace VanRooy2003
 

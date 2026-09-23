@@ -1,6 +1,10 @@
-import Linglib.Syntax.Clause.Basic
-import Linglib.Morphology.Word.Basic
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Syntax.Clause.Basic
+public import Linglib.Morphology.Word.Basic
+public import Mathlib.Data.Fintype.Basic
+
+@[expose] public section
 
 open Morphology (Word)
 

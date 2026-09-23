@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.MeasureTheory.Measure.GiryMonad
-import Mathlib.MeasureTheory.Measure.WithDensity
+module
+
+public import Linglib.Core.MeasureTheory.Measure.GiryMonad
+public import Mathlib.MeasureTheory.Measure.WithDensity
 
 /-!
 # Measures on lists
@@ -31,6 +33,8 @@ The discrete σ-algebra is the only reasonable choice on lists over a countable 
 which is the case of interest for derivation trees and branching processes; it is registered
 globally here as the library's convention.
 -/
+
+@[expose] public section
 
 open MeasureTheory OmegaCompletePartialOrder
 open scoped ENNReal

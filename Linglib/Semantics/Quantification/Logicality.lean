@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.Defs
+module
+
+public import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Logicality and Invariance Conditions
@@ -15,6 +17,8 @@ by strength: HOM → INJ → ISOM → EXT.
 Key result: INJ ≡ ISOM + EXT ([peters-westerstahl-2006] Ch 9 Prop 3).
 Since EXT is trivial for `GQ α`, INJ ↔ ISOM in our setting.
 -/
+
+@[expose] public section
 
 namespace Quantifier.Logicality
 

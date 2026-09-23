@@ -1,4 +1,6 @@
-import Linglib.Semantics.Exhaustification.InnocentExclusion
+module
+
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Innocent Inclusion [bar-lev-fox-2020]
@@ -24,6 +26,8 @@ satisfiable at some world), `exhIEII` collapses onto it. When inconsistent
 (the simple-disjunction case `{a∨b, a, b, a∧b}`), `exhIEII` does no
 enrichment beyond `exhIE`.
 -/
+
+@[expose] public section
 
 namespace Exhaustification
 

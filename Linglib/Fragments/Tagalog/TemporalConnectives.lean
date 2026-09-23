@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Connective
+module
+
+public import Linglib.Semantics.Tense.Connective
 
 /-!
 # Tagalog temporal connectives
@@ -13,6 +15,8 @@ neutral perfective its onset and the ability-and-involuntary-action perfective i
 * [dell-1983]
 * [rett-2020a]
 -/
+
+@[expose] public section
 
 namespace Tagalog.TemporalConnectives
 

@@ -1,6 +1,8 @@
-import Linglib.Logic.CylindricAlgebra
-import Linglib.Semantics.Dynamic.DPL.FirstOrder
-import Linglib.Semantics.Dynamic.DRS.Dynamics
+module
+
+public import Linglib.Logic.CylindricAlgebra
+public import Linglib.Semantics.Dynamic.DPL.FirstOrder
+public import Linglib.Semantics.Dynamic.DRS.Dynamics
 
 /-!
 # Groenendijk and Stokhof (1991): Dynamic Predicate Logic
@@ -68,6 +70,8 @@ commutativity and idempotency of conjunction, contraposition, distribution), Fac
 translation from predicate logic, Facts 26 and 27 on the translated conditions, and the
 translation to quantificational dynamic logic of section 4.3.
 -/
+
+@[expose] public section
 
 namespace GroenendijkStokhof1991
 
@@ -696,7 +700,7 @@ different truth conditions while the first and the third are alphabetic variants
 variable {M} (P Q : L.Relations 1) (g : V → M)
 
 /-- The atomic formula `Px`. -/
-private abbrev atom (P : L.Relations 1) (x : V) : Formula L V := rel P fun _ ↦ .var x
+abbrev atom (P : L.Relations 1) (x : V) : Formula L V := rel P fun _ ↦ .var x
 
 /-- `∃x Px ∧ Qx` is true iff some individual is both `P` and `Q`. -/
 theorem mem_dom_eval_ex_conj_atom :

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Maithili pronouns
@@ -13,6 +15,8 @@ its marker forms are not recorded here.
 
 * [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
+
+@[expose] public section
 
 namespace Maithili.Pronouns
 

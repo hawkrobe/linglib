@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Mathlib.Data.Matrix.Mul
+module
+
+public import Linglib.Pragmatics.SocialMeaning.IndexicalField
+public import Mathlib.Data.Matrix.Mul
 
 /-!
 # Ochs (1992): Indexing Gender
@@ -34,6 +36,8 @@ chapter, that the relation is temporally transcendent, is not represented.
 * [eckert-2008]
 * [west-zimmerman-1987]
 -/
+
+@[expose] public section
 
 namespace Ochs1992
 

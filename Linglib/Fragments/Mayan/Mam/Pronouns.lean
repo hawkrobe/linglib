@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # San Juan Atitán Mam Pronouns
@@ -56,6 +58,8 @@ classification, so `strength` is left unset throughout.
   (1992)][noyer-1992]
 * [D. Harbour, *Impossible Persons* (2016)][harbour-2016]
 -/
+
+@[expose] public section
 
 namespace Mam
 

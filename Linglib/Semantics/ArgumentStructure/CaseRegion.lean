@@ -1,6 +1,8 @@
-import Linglib.Semantics.ArgumentStructure.ParticipantType
-import Mathlib.Order.Interval.Set.OrdConnected
-import Linglib.Syntax.Case.Basic
+module
+
+public import Linglib.Semantics.ArgumentStructure.ParticipantType
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Case as a connected region of the agentivity lattice [grimm-2011]
@@ -16,6 +18,8 @@ is mathlib's `Set.OrdConnected`, inherited from `Set.Ici`/`Set.Icc`. The
 dative region unifies recipients, experiencers, and second arguments of
 two-place communication/service verbs (§5.1, Fig. 7).
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

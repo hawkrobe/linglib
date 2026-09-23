@@ -1,5 +1,7 @@
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Reference.Character
+module
+
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.Reference.Character
 
 /-!
 # Nominal denotations
@@ -31,6 +33,8 @@ left to the first dynamic consumer that needs it.
 * [buring-2012]
 * [heim-kratzer-1998]
 -/
+
+@[expose] public section
 
 namespace Reference
 

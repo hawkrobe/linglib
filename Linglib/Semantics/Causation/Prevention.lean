@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Prevention Semantics
@@ -20,6 +22,8 @@ behavior) was deleted in Phase D-H. The behavioral V2 form here is
 arity-uniform with `causallySufficient`/`causeSem` so `Causative.toSemantics`
 dispatches uniformly across all five force-dynamic variants.
 -/
+
+@[expose] public section
 
 namespace Causation.Prevention
 

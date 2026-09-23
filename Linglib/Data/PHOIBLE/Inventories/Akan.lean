@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: Akan (aka, ID 655)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 31 phonemes. PHOIBLE inventory ID 655, Glottocode `akan1250`.
 Source: PHOIBLE donor `aa`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Akan
 

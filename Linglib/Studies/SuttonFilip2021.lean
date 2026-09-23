@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Plurality.MassCount
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Plurality.MassCount
 
 /-!
 # Sutton and Filip (2021): The Count/Mass Distinction for Granular Nouns
@@ -58,6 +60,8 @@ classes of Table 9.1 are not formalized.
 * [landman-2016]
 * [krifka-1989]
 -/
+
+@[expose] public section
 
 namespace SuttonFilip2021
 

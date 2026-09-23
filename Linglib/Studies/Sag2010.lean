@@ -1,5 +1,7 @@
-import Linglib.Syntax.HPSG.Construction
-import Linglib.Data.Examples.Sag2010
+module
+
+public import Linglib.Syntax.HPSG.Construction
+public import Linglib.Data.Examples.Sag2010
 
 /-!
 # Sag (2010): English Filler-Gap Constructions
@@ -50,6 +52,8 @@ wh-interrogatives to processing.
 * [bouma-malouf-sag-2001]
 * [hofmeister-sag-2010]
 -/
+
+@[expose] public section
 
 namespace Sag2010
 
@@ -286,26 +290,26 @@ inductive Parameter where
   | island
   deriving DecidableEq, Repr
 
-private def parameters : List (String × Parameter) :=
+def parameters : List (String × Parameter) :=
   [("distinguished", .distinguished), ("inventory", .inventory),
     ("fillerCategory", .fillerCategory), ("headCategory", .headCategory),
     ("inversion", .inversion), ("finiteness", .finiteness),
     ("independence", .independence), ("island", .island)]
 
-private def clauses : List (String × FGClause) :=
+def clauses : List (String × FGClause) :=
   [("topicalized", .topicalized), ("whExclamative", .whExclamative),
     ("whInterrogative", .whInterrogative), ("whRelative", .whRelative), ("theClause", .theClause)]
 
-private def cats : List (String × Cat) :=
+def cats : List (String × Cat) :=
   [("NP", .NP), ("PP", .PP), ("AP", .AP), ("AdvP", .AdvP), ("VP", .VP), ("S", .S), ("CP", .CP)]
 
-private def bools : List (String × Bool) := [("true", true), ("false", false)]
+def bools : List (String × Bool) := [("true", true), ("false", false)]
 
-private def whForms : List (String × WhForm) :=
+def whForms : List (String × WhForm) :=
   [("who", .who), ("whose", .whose), ("what", .what), ("whatA", .whatA), ("which", .which),
     ("how", .how), ("when", .when), ("where", .«where»), ("why", .why)]
 
-private def whCategories : List (String × WhCategory) :=
+def whCategories : List (String × WhCategory) :=
   [("np", .np), ("det", .det), ("detSing", .detSing), ("detPl", .detPl), ("degree", .degree),
     ("advpManner", .advpManner), ("ap", .ap), ("ppTime", .ppTime), ("ppPlace", .ppPlace),
     ("ppReason", .ppReason)]

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Toba Batak relative clauses
@@ -18,6 +20,8 @@ paper's reason for stating the Hierarchy Constraints per strategy. The data are
 
 * [keenan-comrie-1977]
 -/
+
+@[expose] public section
 
 namespace TobaBatak
 

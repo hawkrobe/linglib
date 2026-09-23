@@ -1,7 +1,9 @@
-import Linglib.Syntax.Category.Noun.Basic
-import Linglib.Syntax.Category.Classifier.Basic
-import Linglib.Semantics.Plurality.MassCount
-import Linglib.Semantics.Genericity.NominalMappingParameter
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Syntax.Category.Classifier.Basic
+public import Linglib.Semantics.Plurality.MassCount
+public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # French nouns
@@ -16,6 +18,8 @@ parameters of the gender system as a classifier device follow the entries.
 
 * [chierchia-1998]
 -/
+
+@[expose] public section
 
 namespace French.Nouns
 
@@ -69,7 +73,7 @@ def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, coun
 /-! ### Proper names -/
 
 /-- A personal name with its natural gender. -/
-private def name (form : String) (gender : Gender) : ProperName :=
+def name (form : String) (gender : Gender) : ProperName :=
   { form, gloss := form, gender := some gender }
 
 def jean : ProperName := name "Jean" .masculine

@@ -1,4 +1,6 @@
-import Linglib.Semantics.Polarity.Marking
+module
+
+public import Linglib.Semantics.Polarity.Marking
 
 /-!
 # Spanish Polarity-Marking Strategies
@@ -35,6 +37,8 @@ English emphatic *do* is sentence-internal (auxiliary in I°) and targets
 the assertion level via prosodic prominence. Spanish *sí (que)* is
 clause-initial and targets polarity directly via a dedicated particle.
 -/
+
+@[expose] public section
 
 namespace Spanish.PolarityMarking
 

@@ -1,8 +1,10 @@
-import Linglib.Syntax.Minimalist.Agree.Cyclic
-import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Morphology.Exponence.Select
-import Linglib.Studies.BejarRezac2003
-import Linglib.Data.Examples.CoonKeine2021
+module
+
+public import Linglib.Syntax.Minimalist.Agree.Cyclic
+public import Linglib.Syntax.Agreement.PersonCaseConstraint
+public import Linglib.Morphology.Exponence.Select
+public import Linglib.Studies.BejarRezac2003
+public import Linglib.Data.Examples.CoonKeine2021
 
 /-!
 # Coon and Keine 2021: feature gluttony
@@ -79,6 +81,8 @@ no configuration and enter no theorem.
   (2019)][keine-wagner-coon-2019]
 * [H. Thráinsson, *Icelandic* (1994)][thrainsson-1994]
 -/
+
+@[expose] public section
 
 namespace CoonKeine2021
 
@@ -489,9 +493,9 @@ inductive Paradigm where
   | portuguesePresent
   deriving DecidableEq, Repr
 
-private def spkr : List Segment := [.pi, .participant, .speaker]
+def spkr : List Segment := [.pi, .participant, .speaker]
 
-private def addr : List Segment := [.pi, .participant, .addressee]
+def addr : List Segment := [.pi, .participant, .addressee]
 
 /-- The person items of a paradigm in the context of the number probe's value (82), undefined
 where the paper glosses no forms. -/
@@ -559,7 +563,7 @@ theorem icelandic_syncretism :
 def kicheanAgentFocus : List (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
 
 /-- Two 3rd person goals of the given numbers, the cells of (88). -/
-private def kicheanGoals (s o : Bool) : List Goal := [⟨.third, s, false⟩, ⟨.third, o, false⟩]
+def kicheanGoals (s o : Bool) : List Goal := [⟨.third, s, false⟩, ⟨.third, o, false⟩]
 
 /-- Omnivorous number (§5.2): with no singular item, a number probe gluttonous over SG > PL
 converges on the plural item, and the table of (88) follows. -/
@@ -591,10 +595,10 @@ def Config.Converges (c : Config) : Prop := c.aftermath.Converges c.probe c.goal
 instance (c : Config) : Decidable c.Converges :=
   inferInstanceAs (Decidable (Aftermath.Converges _ _ _))
 
-private def probes : List (String × Probe.Articulation) :=
+def probes : List (String × Probe.Articulation) :=
   [("weak", weakProbe), ("branching", branchingProbe), ("none", [])]
 
-private def paradigms : List (String × Paradigm) :=
+def paradigms : List (String × Paradigm) :=
   [("icelandicMediopassivePast", .icelandicMediopassivePast),
     ("icelandicLikaPast", .icelandicLikaPast),
     ("icelandicThykjaPresent", .icelandicThykjaPresent), ("germanPresent", .germanPresent),
@@ -603,7 +607,7 @@ private def paradigms : List (String × Paradigm) :=
 
 /-- The goal a row's `higher` or `lower` features describe, absent when shielded from the
 probe. -/
-private def rowGoal (row : LinguisticExample) (k : String) : Option (List Goal) := do
+def rowGoal (row : LinguisticExample) (k : String) : Option (List Goal) := do
   let p ← row.parse? k [("1", Person.first), ("2", .second), ("3", .third)]
   return if row.feature? (k ++ "Shielded") = some "yes" then []
     else [⟨p, decide (row.feature? (k ++ "Number") = some "pl"),

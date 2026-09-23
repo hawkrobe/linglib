@@ -46,6 +46,8 @@ import json
 import re
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
 
 ROOT     = Path(__file__).resolve().parent.parent
 JSON_DIR = ROOT / "Linglib" / "Data" / "Forms"
@@ -239,7 +241,7 @@ def process(author_year: str, check: bool) -> bool:
     data = load(author_year)
     json_path = JSON_DIR / f"{author_year}.json"
     try:
-        module_text = emit_module(author_year, data)
+        module_text = as_module_if_possible(emit_module(author_year, data))
     except ValueError as e:
         sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
         sys.exit(1)

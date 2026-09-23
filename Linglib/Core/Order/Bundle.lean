@@ -1,6 +1,8 @@
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Finset.Piecewise
-import Linglib.Core.Order.Flat
+module
+
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Finset.Piecewise
+public import Linglib.Core.Order.Flat
 
 /-!
 # Feature bundles
@@ -100,6 +102,8 @@ Option Bool` form), with the shared `merge`/`set`/`delete` algebra below.
 * [M. Dalrymple and R. M. Kaplan, *Feature Indeterminacy and Feature Resolution*
   (2000)][dalrymple-kaplan-2000]
 -/
+
+@[expose] public section
 
 universe u v
 

@@ -1,9 +1,11 @@
-import Linglib.Processing.Memory.SurprisalTradeoff
-import Linglib.Syntax.DependencyGrammar.Length
-import Linglib.Fragments.Japanese.Morph
-import Linglib.Fragments.Sesotho.Morph
-import Linglib.Studies.Bybee1985
-import Linglib.Data.Examples.HahnDegenFutrell2021
+module
+
+public import Linglib.Processing.Memory.SurprisalTradeoff
+public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Fragments.Japanese.Morph
+public import Linglib.Fragments.Sesotho.Morph
+public import Linglib.Studies.Bybee1985
+public import Linglib.Data.Examples.HahnDegenFutrell2021
 
 /-!
 # Hahn, Degen, and Futrell (2021): Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal
@@ -43,6 +45,8 @@ per-dependency lengths make explicit.
 * [futrell-mahowald-gibson-2015]
 -/
 
+@[expose] public section
+
 namespace HahnDegenFutrell2021
 
 open DependencyGrammar Morphology
@@ -51,7 +55,7 @@ open Morphology (Word)
 /-! ### Dependency locality, section 2.2 -/
 
 /-- (2c): the object precedes the prepositional phrase, ten arcs over eleven words. -/
-private def longObjectFirst : Graph 11 :=
+def longObjectFirst : Graph 11 :=
   .ofArcs
     [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "the" .DET,
       Word.mk' "extremely" .ADV, Word.mk' "delicious" .ADJ, Word.mk' "bright" .ADV,
@@ -61,7 +65,7 @@ private def longObjectFirst : Graph 11 :=
       (6, 5, .advmod), (7, 6, .amod), (10, 8, .case_), (10, 9, .det), (1, 10, .obl)]
 
 /-- (2d), heavy NP shift: the prepositional phrase precedes the long object. -/
-private def shifted : Graph 11 :=
+def shifted : Graph 11 :=
   .ofArcs
     [Word.mk' "Lucy" .PROPN, Word.mk' "ate" .VERB, Word.mk' "with" .ADP, Word.mk' "a" .DET,
       Word.mk' "fork" .NOUN, Word.mk' "the" .DET, Word.mk' "extremely" .ADV,

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Determiner.Basic
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # Thai determiner inventory
@@ -14,6 +16,8 @@ possession is marked with *khɔ̌ɔng*.
 * [jenks-2018]
 * [moroney-2021]
 -/
+
+@[expose] public section
 
 namespace Thai.Determiners
 

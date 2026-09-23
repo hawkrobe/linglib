@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Particle.Basic
+module
+
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Polish Question Particles
@@ -14,6 +16,8 @@ assignments live in `Simik2024`.
   (clause-initial czy obligatory) and the neutral/evidential contrast
 - Cross-Slavic RAZVE family: czyżby is the Polish member
 -/
+
+@[expose] public section
 
 namespace Polish.QuestionParticles
 

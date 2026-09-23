@@ -1,4 +1,6 @@
-import Linglib.Semantics.Aspect.Viewpoint
+module
+
+public import Linglib.Semantics.Aspect.Viewpoint
 
 /-!
 # The subinterval property
@@ -44,6 +46,8 @@ and is not modelled.
 * [bennett-partee-1972]
 * [dowty-1979]
 -/
+
+@[expose] public section
 
 namespace Aspect
 

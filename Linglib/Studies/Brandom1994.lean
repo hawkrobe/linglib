@@ -1,5 +1,7 @@
-import Linglib.Discourse.Role
-import Linglib.Discourse.CommonGround
+module
+
+public import Linglib.Discourse.Role
+public import Linglib.Discourse.CommonGround
 
 /-!
 # Brandom 1994: deontic scorekeeping
@@ -36,6 +38,8 @@ about a third party's score.
 * [brandom-1994]
 * [brandom-1983]
 -/
+
+@[expose] public section
 
 namespace Brandom1994
 

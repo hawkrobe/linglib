@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.SEM.Defs
+module
+
+public import Linglib.Semantics.Causation.SEM.Defs
 
 /-!
 # BoolSEM: Legacy Binary-Substrate Convenience Alias
@@ -8,6 +10,8 @@ work in the SBH 2009 deterministic-binary substrate (the special case
 where every vertex has value type `Bool`). Lives in its own file so the
 core `SEM/Defs.lean` stays focused on the general API.
 -/
+
+@[expose] public section
 
 namespace Causation
 

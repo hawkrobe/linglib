@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Dynamic.UpdateSemantics.Default
+module
+
+public import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 
 /-!
 # Necessity modals over expectation states
@@ -48,6 +50,8 @@ ordering of worlds here, and states built on them consume `PreferenceStructure.m
 * [C. Condoravdi and S. Lauer, *Imperatives: Meaning and Illocutionary Force*
   (2012)][condoravdi-lauer-2012]
 -/
+
+@[expose] public section
 
 namespace UpdateSemantics.Default.ExpState
 

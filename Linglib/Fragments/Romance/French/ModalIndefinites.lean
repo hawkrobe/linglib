@@ -1,10 +1,14 @@
-import Linglib.Syntax.Category.Determiner.ModalIndefinite
+module
+
+public import Linglib.Syntax.Category.Determiner.ModalIndefinite
 
 /-!
 # French modal indefinites
 
 Lexical entry for *n'importe quel* ([jayez-tovena-2006]).
 -/
+
+@[expose] public section
 
 namespace French.ModalIndefinites
 

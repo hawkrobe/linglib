@@ -1,6 +1,8 @@
-import Linglib.Discourse.Commitment.Basic
-import Linglib.Discourse.QUD.Issue
-import Linglib.Semantics.Questions.Hamblin
+module
+
+public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Discourse.QUD.Issue
+public import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # The Table
@@ -80,6 +82,8 @@ the common ground alone and moves only the projected set.
   (2001)][gunlogson-2001]
 * [L. Karttunen, *Syntax and Semantics of Questions* (1977)][karttunen-1977]
 -/
+
+@[expose] public section
 
 open Filter
 

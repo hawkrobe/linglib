@@ -1,6 +1,8 @@
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Data.Examples.AissenPolian2025
+module
+
+public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Syntax.Minimalist.Probe.Profile
+public import Linglib.Data.Examples.AissenPolian2025
 
 /-!
 # Possessor extraction and categorical subject in Tseltalan
@@ -29,6 +31,8 @@ judgment type off the same search, and the paper's examples are the rows, over w
 * [coon-baier-levin-2021]
 * [heycock-doron-2003]
 -/
+
+@[expose] public section
 
 namespace AissenPolian2025
 
@@ -72,60 +76,60 @@ theorem dProbe_sees_through (root probe target : SyntacticObject) :
 
 /-! ### The structures -/
 
-private def C₀ : PlanarSyntacticObject := .leaf ⟨.simple .C [], 1⟩
-private def T₀ : PlanarSyntacticObject := .leaf ⟨.simple .T [], 2⟩
-private def V₀ : PlanarSyntacticObject := .leaf ⟨.simple .V [], 3⟩
-private def v₀ : PlanarSyntacticObject := .leaf ⟨.simple .v [], 4⟩
-private def Appl₀ : PlanarSyntacticObject := .leaf ⟨.simple .Appl [], 5⟩
-private def P₀ : PlanarSyntacticObject := .leaf ⟨.simple .P [], 6⟩
-private def Psr : PlanarSyntacticObject := .leaf ⟨.simple .D [], 7⟩
-private def Psm : PlanarSyntacticObject := .leaf ⟨.simple .N [], 8⟩
-private def D₀ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 9⟩
-private def Agt : PlanarSyntacticObject := .leaf ⟨.simple .D [], 10⟩
-private def SubjD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 11⟩
-private def SubjN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 12⟩
-private def ThemeD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 13⟩
-private def ThemeN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 14⟩
-private def Pivot : PlanarSyntacticObject := .leaf ⟨.simple .N [], 15⟩
+def C₀ : PlanarSyntacticObject := .leaf ⟨.simple .C [], 1⟩
+def T₀ : PlanarSyntacticObject := .leaf ⟨.simple .T [], 2⟩
+def V₀ : PlanarSyntacticObject := .leaf ⟨.simple .V [], 3⟩
+def v₀ : PlanarSyntacticObject := .leaf ⟨.simple .v [], 4⟩
+def Appl₀ : PlanarSyntacticObject := .leaf ⟨.simple .Appl [], 5⟩
+def P₀ : PlanarSyntacticObject := .leaf ⟨.simple .P [], 6⟩
+def Psr : PlanarSyntacticObject := .leaf ⟨.simple .D [], 7⟩
+def Psm : PlanarSyntacticObject := .leaf ⟨.simple .N [], 8⟩
+def D₀ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 9⟩
+def Agt : PlanarSyntacticObject := .leaf ⟨.simple .D [], 10⟩
+def SubjD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 11⟩
+def SubjN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 12⟩
+def ThemeD : PlanarSyntacticObject := .leaf ⟨.simple .D [], 13⟩
+def ThemeN : PlanarSyntacticObject := .leaf ⟨.simple .N [], 14⟩
+def Pivot : PlanarSyntacticObject := .leaf ⟨.simple .N [], 15⟩
 
 /-- A non-specific possessive, `{Psr, Psm}`. -/
-private def PossP : PlanarSyntacticObject := {Psr, Psm}
+def PossP : PlanarSyntacticObject := {Psr, Psm}
 
 /-- A specific possessive, `{D⁰, PossP}`. -/
-private def DP : PlanarSyntacticObject := {D₀, PossP}
+def DP : PlanarSyntacticObject := {D₀, PossP}
 
 /-- A locative PP over a non-specific possessive, `{P, PossP}`. -/
-private def PP : PlanarSyntacticObject := {P₀, PossP}
+def PP : PlanarSyntacticObject := {P₀, PossP}
 
 /-- (9c) with a non-specific possessive S_O. -/
-private def unaccPossP : PlanarSyntacticObject := {T₀, {V₀, PossP}}
+def unaccPossP : PlanarSyntacticObject := {T₀, {V₀, PossP}}
 
 /-- (9c) with a specific possessive S_O. -/
-private def unaccDP : PlanarSyntacticObject := {T₀, {V₀, DP}}
+def unaccDP : PlanarSyntacticObject := {T₀, {V₀, DP}}
 
 /-- (9a) with a non-specific possessive O. -/
-private def transPossP : PlanarSyntacticObject := {T₀, {Agt, {v₀, {V₀, PossP}}}}
+def transPossP : PlanarSyntacticObject := {T₀, {Agt, {v₀, {V₀, PossP}}}}
 
 /-- (29) the raising applicative under T⁰. -/
-private def raisingAppl : PlanarSyntacticObject := {T₀, {Agt, {v₀, {Appl₀, {V₀, PossP}}}}}
+def raisingAppl : PlanarSyntacticObject := {T₀, {Agt, {v₀, {Appl₀, {V₀, PossP}}}}}
 
 /-- (9b) with a locative PP, for a specific or a non-specific S_A. -/
-private def unerg (subj : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def unerg (subj : PlanarSyntacticObject) : PlanarSyntacticObject :=
   {T₀, {subj, {v₀, {V₀, PP}}}}
 
 /-- (71) theme over locative, for a specific or a non-specific theme: path verbs, locative
 existentials and locative copulas. -/
-private def themeLoc (theme : PlanarSyntacticObject) : PlanarSyntacticObject :=
+def themeLoc (theme : PlanarSyntacticObject) : PlanarSyntacticObject :=
   {T₀, {V₀, {theme, PP}}}
 
 /-- (83) the experiencer PP merged above the theme. -/
-private def experiencer : PlanarSyntacticObject := {T₀, {PP, {V₀, ThemeD}}}
+def experiencer : PlanarSyntacticObject := {T₀, {PP, {V₀, ThemeD}}}
 
 /-- (40a) an existential with a bare pivot. -/
-private def existential : PlanarSyntacticObject := {T₀, {V₀, Pivot}}
+def existential : PlanarSyntacticObject := {T₀, {V₀, Pivot}}
 
 /-- The clause under C⁰. -/
-private def cp (tp : PlanarSyntacticObject) : PlanarSyntacticObject := {C₀, tp}
+def cp (tp : PlanarSyntacticObject) : PlanarSyntacticObject := {C₀, tp}
 
 /-! ### Nominal opacity -/
 

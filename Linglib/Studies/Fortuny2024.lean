@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Basic
-import Linglib.Syntax.Category.Coordinator
-import Linglib.Data.Examples.Fortuny2024
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Data.Examples.Fortuny2024
 
 /-!
 # Fortuny (2024): Deducing the Coordinand Constraint
@@ -42,6 +44,8 @@ falls under exactly one factor, as §2.3 claims.
 * [chomsky-1991]
 * [zhang-2010]
 -/
+
+@[expose] public section
 
 namespace Fortuny2024
 

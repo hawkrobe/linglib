@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.VanTielEtAl2016
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Data.Rat.Defs
+module
+
+public import Linglib.Data.Examples.VanTielEtAl2016
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Data.Rat.Defs
 
 /-!
 # van Tiel, van Miltenburg, Zevakhina and Geurts (2016): Scalar Diversity
@@ -48,6 +50,8 @@ stronger term, Appendix B, does not predict the rates either.
 * [sauerland-2004]
 * [geurts-2010]
 -/
+
+@[expose] public section
 
 namespace VanTielEtAl2016
 

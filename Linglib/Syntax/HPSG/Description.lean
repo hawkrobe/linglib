@@ -1,6 +1,8 @@
-import Linglib.Syntax.HPSG.Interpretation
-import Mathlib.Data.Finset.Image
-import Mathlib.Logic.Function.Basic
+module
+
+public import Linglib.Syntax.HPSG.Interpretation
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Logic.Function.Basic
 
 /-!
 # RSRL descriptions
@@ -50,6 +52,8 @@ immaterial by `models_iff_forall_assignment`.
 * [richter-2000]
 * [richter-2024]
 -/
+
+@[expose] public section
 
 namespace HPSG.RSRL
 

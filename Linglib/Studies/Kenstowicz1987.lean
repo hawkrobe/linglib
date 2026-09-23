@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Fragments.Tangale.Phonology
+module
+
+public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Fragments.Tangale.Phonology
 
 /-!
 # Kenstowicz (1987): The Phonology and Syntax of Wh-Expressions in Tangale
@@ -25,6 +27,8 @@ not factor it (`elision_not_factor_through_wh`).
 * [kenstowicz-1987]
 * [kidda-1985]
 -/
+
+@[expose] public section
 
 namespace Kenstowicz1987
 

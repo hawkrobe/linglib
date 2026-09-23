@@ -1,9 +1,11 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Order.BoundedOrder.Basic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Algebra.BigOperators.Group.List.Defs
-import Mathlib.Algebra.Group.Action.Defs
-import Mathlib.Data.Nat.Basic
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Order.BoundedOrder.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Algebra.BigOperators.Group.List.Defs
+public import Mathlib.Algebra.Group.Action.Defs
+public import Mathlib.Data.Nat.Basic
 
 /-!
 # The natural-logic relation algebra
@@ -55,6 +57,8 @@ relations as the nondegenerately realizable constraint conjunctions.
 * [maccartney-manning-2009] — the extended natural-logic model; its §3
   join is exact relation composition, union-valued outside the seven.
 -/
+
+@[expose] public section
 
 namespace NaturalLogic
 
@@ -363,7 +367,7 @@ Recover an entailment signature from its projection of `forward` and
 `negation`. These two probes uniquely identify each signature (up to
 •'s probe pair being `(#, #)`).
 -/
-private def fromProjectionPair : Relation → Relation → Signature
+def fromProjectionPair : Relation → Relation → Signature
   | .independent, .independent => .all
   | .forward, .independent => .mono
   | .forward, .cover       => .additive

@@ -1,6 +1,8 @@
-import Linglib.Data.Examples.AsherLascarides2003
-import Mathlib.Data.Nat.Notation
-import Mathlib.Logic.Relation
+module
+
+public import Linglib.Data.Examples.AsherLascarides2003
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Logic.Relation
 
 /-!
 # Asher & Lascarides 2003: the right frontier
@@ -27,6 +29,8 @@ related by Background, the first of those units is the one label not available.
 
 * [asher-lascarides-2003]
 -/
+
+@[expose] public section
 
 namespace AsherLascarides2003
 

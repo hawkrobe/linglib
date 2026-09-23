@@ -20,6 +20,8 @@ a count the generator subtracts from `total`. Constraints are written
 """
 import sys, json, textwrap
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "Treebank" / "Coverage"
@@ -89,7 +91,7 @@ def process(paper: str, check: bool) -> bool:
         sys.stderr.write(f"FATAL: JSON not found at {json_path.relative_to(ROOT)}\n")
         sys.exit(1)
     doc = json.loads(json_path.read_text(encoding="utf-8"))
-    content = render(paper, doc["meta"], doc["rows"])
+    content = as_module_if_possible(render(paper, doc["meta"], doc["rows"]))
     out = DATA_DIR / f"{paper}.lean"
     if check:
         cur = out.read_text(encoding="utf-8") if out.exists() else ""

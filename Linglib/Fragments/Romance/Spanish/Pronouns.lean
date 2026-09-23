@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Pronoun.Personal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Spanish Pronoun Fragment
@@ -30,6 +32,8 @@ Unlike Italian LEI, USTED can also be used in *laísta* varieties where
 * [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
 * [M. Rezac, *Phi-Features and the Modular Architecture of Language* (2011)][rezac-2011]
 -/
+
+@[expose] public section
 
 namespace Spanish.Pronouns
 

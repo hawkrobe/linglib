@@ -1,5 +1,7 @@
-import Linglib.Phonology.HarmonicGrammar.Separability
-import Linglib.Studies.Zuraw2010
+module
+
+public import Linglib.Phonology.HarmonicGrammar.Separability
+public import Linglib.Studies.Zuraw2010
 
 /-!
 # Zuraw and Hayes (2017): Intersecting Constraint Families
@@ -38,6 +40,8 @@ square onto its stem and decision (`nasSub_eq_zuraw_under_projection`), and the 
 * [pater-1999]
 * [mccarthy-prince-1995]
 -/
+
+@[expose] public section
 
 namespace ZurawHayes2017
 

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Dynamic.State
-import Linglib.Semantics.Dynamic.Update
-import Linglib.Logic.Bilateral.Defs
-import Mathlib.Algebra.Group.Defs
+module
+
+public import Linglib.Semantics.Dynamic.State
+public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Logic.Bilateral.Defs
+public import Mathlib.Algebra.Group.Defs
 
 /-!
 # Bilateral Update Semantics
@@ -59,6 +61,8 @@ lower closure — membership for points, `≤` of closures for states.
 The empirical comparison against full ICDRT is in
 `Studies/Hofmann2025.lean`; against PLA in `Studies/Dekker2012.lean`.
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

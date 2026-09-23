@@ -1,5 +1,7 @@
-import Linglib.Syntax.Tree.Command
-import Linglib.Data.Examples.Reinhart1976
+module
+
+public import Linglib.Syntax.Tree.Command
+public import Linglib.Data.Examples.Reinhart1976
 
 /-!
 # Reinhart (1976): The syntactic domain of anaphora
@@ -37,6 +39,8 @@ reflexive environments that (10) sets aside do not arise in the rows.
 * [E. S. Klima, *Negation in English* (1964)][klima-1964]
 * [N. Chomsky, *Conditions on transformations* (1973)][chomsky-1973]
 -/
+
+@[expose] public section
 
 namespace Reinhart1976
 
@@ -132,7 +136,7 @@ theorem permits10a_of_permits {R : TreePath → TreePath → Prop} {pron : List 
 /-! ### The trees -/
 
 /-- A noun phrase. -/
-private def np : Tree Cat Unit := .node .NP [.terminal .N ()]
+def np : Tree Cat Unit := .node .NP [.terminal .N ()]
 
 /-- The abstract tree (37): a cyclic node with daughters A, B and C, of which B branches into
 D and a cyclic node with daughters E and F. -/

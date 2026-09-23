@@ -1,9 +1,11 @@
-import Linglib.Data.Examples.BhattPancheva2004
-import Linglib.Studies.Heim2001
-import Linglib.Syntax.Minimalist.Movement.HeimKennedy
-import Linglib.Syntax.Tree.Basic
-import Linglib.Syntax.Command
-import Linglib.Semantics.Quantification.Defs
+module
+
+public import Linglib.Data.Examples.BhattPancheva2004
+public import Linglib.Studies.Heim2001
+public import Linglib.Syntax.Minimalist.Movement.HeimKennedy
+public import Linglib.Syntax.Tree.Basic
+public import Linglib.Syntax.Command
+public import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Bhatt and Pancheva (2004): Late Merger of Degree Clauses
@@ -48,6 +50,8 @@ the clause merges only at the DegP's ultimate scope position, (90).
 * [lebeaux-1988]
 * [kennedy-1999]
 -/
+
+@[expose] public section
 
 namespace BhattPancheva2004
 

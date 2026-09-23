@@ -1,9 +1,11 @@
-import Linglib.Semantics.Dynamic.Category
-import Linglib.Semantics.Dynamic.Update
-import Mathlib.Data.Set.Functor
-import Mathlib.CategoryTheory.Category.KleisliCat
-import Mathlib.CategoryTheory.Category.RelCat
-import Mathlib.Order.Hom.CompleteLattice
+module
+
+public import Linglib.Semantics.Dynamic.Category
+public import Linglib.Semantics.Dynamic.Update
+public import Mathlib.Data.Set.Functor
+public import Mathlib.CategoryTheory.Category.KleisliCat
+public import Mathlib.CategoryTheory.Category.RelCat
+public import Mathlib.Order.Hom.CompleteLattice
 
 /-!
 # The one-object collapse and the Kleisli reading
@@ -65,6 +67,8 @@ are unital, so the collapse lands in `RelCat` directly, with no setoid.
 - [moggi-1991], [shan-2001], [bumford-charlow-2024]
 - [muskens-1996], [groenendijk-stokhof-1991]
 -/
+
+@[expose] public section
 
 namespace DynamicSemantics
 

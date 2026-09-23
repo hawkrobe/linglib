@@ -1,8 +1,10 @@
-import Linglib.Syntax.Minimalist.Linearization.Replay
-import Linglib.Syntax.Minimalist.Economy.Basic
-import Linglib.Syntax.Question
-import Linglib.Core.Algebra.RootedTree.PreLie.Path
-import Linglib.Core.Data.RoseTree.Get
+module
+
+public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Economy.Basic
+public import Linglib.Syntax.Question
+public import Linglib.Core.Algebra.RootedTree.PreLie.Path
+public import Linglib.Core.Data.RoseTree.Get
 
 /-!
 # Chains, sharing and PF reduction on planar syntactic objects
@@ -45,6 +47,8 @@ once.
 * [J. Merchant, *The Syntax of Silence* (2001)][merchant-2001]
 * [B. Citko and M. Gračanin-Yuksek, *Economy in PF reduction* (2025)][citko-gracanin-yuksek-2025]
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

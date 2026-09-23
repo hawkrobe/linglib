@@ -1,6 +1,8 @@
-import Linglib.Phonology.Prosody.Foot
-import Linglib.Phonology.Constraints.Directional
-import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
+module
+
+public import Linglib.Phonology.Prosody.Foot
+public import Linglib.Phonology.Constraints.Directional
+public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 
 /-!
 # Lamont (2022): A Restrictive, Parsimonious Theory of Footing in Directional Harmonic Serialism
@@ -43,6 +45,8 @@ convergence checked at the last step; the factorial typology of §4 is not forma
 * [mccarthy-prince-1993], [martinez-paricio-kager-2015]
 * [street-mollinjin-1981], [hansen-hansen-1969]
 -/
+
+@[expose] public section
 
 namespace Lamont2022c
 

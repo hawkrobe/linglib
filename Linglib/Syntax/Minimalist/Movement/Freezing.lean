@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Freezing
@@ -32,6 +34,8 @@ monotone under extending the derivation and blind to the sides of External Merge
 * [ross-1967]
 * [chung-2006]
 -/
+
+@[expose] public section
 
 namespace Minimalist.SyntacticObject.Derivation
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Clause.Relative
+module
+
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Malagasy relative clauses
@@ -13,6 +15,8 @@ are [keenan-comrie-1977]'s.
 
 * [keenan-comrie-1977]
 -/
+
+@[expose] public section
 
 namespace Malagasy
 

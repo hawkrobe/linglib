@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.UnorderedTree.Basic
+module
+
+public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
 # Subtrees of nonplanar trees
@@ -21,6 +23,8 @@ the quotient because a permutation of children permutes the subtree multiset.
 * `UnorderedTree.card_subtrees`: one subtree per vertex.
 * `UnorderedTree.mem_subtrees_node_pair`: membership at a binary node.
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

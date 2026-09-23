@@ -1,15 +1,17 @@
-import Linglib.Semantics.Composition.Cont
-import Linglib.Semantics.Composition.Writer
-import Mathlib.Data.Set.Functor
-import Linglib.Semantics.Composition.Tree
-import Linglib.Studies.HeimKratzer1998
-import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Semantics.Quantification.NP
-import Linglib.Semantics.Composition.Binding
-import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Composition.Assignment
-import Linglib.Fragments.English.Toy
-import Linglib.Semantics.Composition.Lexicon
+module
+
+public import Linglib.Semantics.Composition.Cont
+public import Linglib.Semantics.Composition.Writer
+public import Mathlib.Data.Set.Functor
+public import Linglib.Semantics.Composition.Tree
+public import Linglib.Studies.HeimKratzer1998
+public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Composition.Binding
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Fragments.English.Toy
+public import Linglib.Semantics.Composition.Lexicon
 
 /-!
 # Bumford and Charlow 2024: effect-driven interpretation
@@ -59,6 +61,8 @@ pronoun's, with the Akan subject/object asymmetry as one instance.
 * [owusu-2022]
 * [potts-2005]
 -/
+
+@[expose] public section
 namespace BumfordCharlow2024
 
 open Semantics.Composition

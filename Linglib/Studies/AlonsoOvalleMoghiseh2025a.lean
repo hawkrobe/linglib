@@ -1,9 +1,11 @@
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Fintype.Prod
-import Linglib.Semantics.Exhaustification.DomainAlternatives
-import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Fintype.Prod
+public import Linglib.Semantics.Exhaustification.DomainAlternatives
+public import Linglib.Semantics.Exhaustification.Finite
+public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025a
 
 /-!
 # Alonso-Ovalle & Moghiseh (2025): existential free choice items
@@ -45,6 +47,8 @@ while the single-operator LFs (143)–(146) are too weak or too strong (`single_
 * [bar-lev-fox-2020]
 * [aloni-port-2015]
 -/
+
+@[expose] public section
 
 namespace AlonsoOvalleMoghiseh2025a
 

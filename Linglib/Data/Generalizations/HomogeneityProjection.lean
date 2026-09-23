@@ -1,7 +1,9 @@
-import Linglib.Core.Data.Trivalent
-import Linglib.Data.Examples.Schema
-import Linglib.Data.Examples.KrizChemla2015
-import Linglib.Data.Generalizations.HomogeneityGap
+module
+
+public import Linglib.Core.Data.Trivalent
+public import Linglib.Data.Examples.Schema
+public import Linglib.Data.Examples.KrizChemla2015
+public import Linglib.Data.Generalizations.HomogeneityGap
 
 /-!
 # Generalizations.HomogeneityProjection — cross-paper data pool
@@ -69,6 +71,8 @@ mapping would be wrong for at least one consumer.
   once accounts derive predictions structurally rather than dispatch on
   label (per [peters-westerstahl-2006] discipline).
 -/
+
+@[expose] public section
 
 namespace Generalizations.HomogeneityProjection
 

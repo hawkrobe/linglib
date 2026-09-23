@@ -1,8 +1,10 @@
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Semantics.Quantification.Generators
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Studies.AlonsoOvalleMenendezBenito2010
-import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Semantics.Quantification.Generators
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Studies.AlonsoOvalleMenendezBenito2010
+public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 
 /-!
 # Alonso-Ovalle & Moghiseh (2025): number marking in Farsi *what* interrogatives
@@ -41,6 +43,8 @@ removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the
 * [scontras-2022]
 * [alonso-ovalle-menendez-benito-2010]
 -/
+
+@[expose] public section
 
 namespace AlonsoOvalleMoghiseh2025b
 

@@ -1,6 +1,8 @@
-import Linglib.Logic.ComparativeProbability.Patterns
-import Linglib.Core.Order.Domination
-import Mathlib.Data.Set.Card
+module
+
+public import Linglib.Logic.ComparativeProbability.Patterns
+public import Linglib.Core.Order.Domination
+public import Mathlib.Data.Set.Card
 
 /-!
 # Epistemic Entailment Patterns ([holliday-icard-2013], Figure 1)
@@ -36,6 +38,8 @@ semantics, showing that world-ordering semantics is strictly stronger than
 intended. V11 and V13 are invalid for l-lifting (Fact 1 in the paper).
 Completeness of the l-lifting logic is due to [halpern-2003].
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

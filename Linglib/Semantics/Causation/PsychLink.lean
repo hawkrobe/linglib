@@ -1,7 +1,9 @@
-import Linglib.Semantics.Causation.Psych
-import Linglib.Core.Order.Interval
-import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Conditionals.Basic
+module
+
+public import Linglib.Semantics.Causation.Psych
+public import Linglib.Core.Order.Interval
+public import Linglib.Semantics.Events.Basic
+public import Linglib.Semantics.Conditionals.Basic
 
 /-!
 # Psych Verb Causal Links
@@ -33,6 +35,8 @@ The fourth uses the conditional of the closest worlds, `Conditional.closestImp`.
 - `CausalSource.toLink` grounds the two-constructor enum in event structure
 
 -/
+
+@[expose] public section
 
 namespace Causation.PsychLink
 

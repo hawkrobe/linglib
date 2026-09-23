@@ -1,4 +1,6 @@
-import Linglib.Semantics.Composition.Reduction
+module
+
+public import Linglib.Semantics.Composition.Reduction
 
 /-!
 # Syllogistic forms as composition-engine trees
@@ -12,6 +14,8 @@ follows through the agreement theorem. Complements `Forms.lean`'s
 Venn-state semantics (grounded in the same `every_sem`/`some_sem`/`no_sem`
 denotations via `Model.lexiconFO`).
 -/
+
+@[expose] public section
 
 namespace Quantifier.Syllogistic
 

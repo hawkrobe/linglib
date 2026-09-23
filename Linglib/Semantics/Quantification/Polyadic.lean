@@ -1,4 +1,6 @@
-import Linglib.Semantics.Quantification.Basic
+module
+
+public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Polyadic quantifiers
@@ -40,6 +42,8 @@ and `X × Y ⊆ R`; the two should be compared against the sources.
 * [peters-westerstahl-2006]
 * [hintikka-1996]
 -/
+
+@[expose] public section
 
 namespace Quantifier.Polyadic
 

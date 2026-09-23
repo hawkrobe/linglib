@@ -1,4 +1,6 @@
-import Linglib.Syntax.Negation
+module
+
+public import Linglib.Syntax.Negation
 
 /-!
 # English negation
@@ -15,6 +17,8 @@ The examples are those of [miestamo-2005].
 * [miestamo-2005]
 -/
 
+@[expose] public section
+
 open Negation Morphology
 
 namespace English.Negation
@@ -25,7 +29,7 @@ def not : Marker := { pieces := [[.free "not"]] }
 /-- *n't*, the contracted negator, an enclitic on the auxiliary. -/
 def nt : Marker := { pieces := [[.encl "n't"]] }
 
-private def words (ws : List String) : List Morph := ws.map .free
+def words (ws : List String) : List Morph := ws.map .free
 
 /-- The compound tenses, whose negative places *not* after the auxiliary. -/
 def compoundTenses : List Pair :=

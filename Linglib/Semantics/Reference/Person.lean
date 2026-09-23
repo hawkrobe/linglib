@@ -1,4 +1,6 @@
-import Linglib.Syntax.Person.Resolve
+module
+
+public import Linglib.Syntax.Person.Resolve
 
 /-!
 # Person — referent semantics for the values
@@ -24,6 +26,8 @@ The region semantics grounds the rest of the API:
   marker-set rendering is [dalrymple-kaplan-2000]'s Fula encoding
   (`Studies/DalrympleKaplan2000.lean`, `resolve_person`).
 -/
+
+@[expose] public section
 
 namespace Person
 

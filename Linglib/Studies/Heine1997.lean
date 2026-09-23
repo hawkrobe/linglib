@@ -1,9 +1,11 @@
-import Linglib.Data.Examples.Heine1997
-import Linglib.Syntax.Case.Basic
-import Linglib.Semantics.Possession.Defs
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Order.SymmDiff
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Data.Examples.Heine1997
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Semantics.Possession.Defs
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Order.SymmDiff
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Heine (1997): Possession
@@ -45,6 +47,8 @@ possession.
 * [heine-1997]
 * [heine-1993]
 -/
+
+@[expose] public section
 
 namespace Heine1997
 

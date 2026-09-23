@@ -1,6 +1,8 @@
-import Linglib.Data.PHOIBLE.Inventories.Korean
-import Linglib.Phonology.Segmental.PHOIBLE
-import Linglib.Phonology.Subregular.LocalRewrite
+module
+
+public import Linglib.Data.PHOIBLE.Inventories.Korean
+public import Linglib.Phonology.Segmental.PHOIBLE
+public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Korean stop nasalization
@@ -40,6 +42,8 @@ phonemes differ in that feature alone.
 * [hayes-2009]
 * [moran-mccloy-2019]
 -/
+
+@[expose] public section
 
 open Phonology Subregular.LocalRewrite Data.PHOIBLE
 

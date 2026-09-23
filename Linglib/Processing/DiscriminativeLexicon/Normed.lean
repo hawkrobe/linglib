@@ -1,6 +1,8 @@
-import Linglib.Processing.DiscriminativeLexicon.Defs
-import Mathlib.Topology.Algebra.Module.FiniteDimension
-import Mathlib.Analysis.Normed.Operator.NNNorm
+module
+
+public import Linglib.Processing.DiscriminativeLexicon.Defs
+public import Mathlib.Topology.Algebra.Module.FiniteDimension
+public import Mathlib.Analysis.Normed.Operator.NNNorm
 
 /-!
 # The discriminative lexicon in normed spaces
@@ -26,6 +28,8 @@ Baayen and Lu, Chuang and Baayen claim for tonal realization.
 * [Y. Lu, Y.-Y. Chuang and R. H. Baayen, *The realization of tones in spontaneous spoken
   Taiwan Mandarin* (2026)][lu-chuang-baayen-2026]
 -/
+
+@[expose] public section
 
 namespace DiscriminativeLexicon.Linear
 

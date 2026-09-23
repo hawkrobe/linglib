@@ -1,6 +1,8 @@
-import Linglib.Syntax.Minimalist.Probe.Phi
-import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Studies.BejarRezac2003
+module
+
+public import Linglib.Syntax.Minimalist.Probe.Phi
+public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+public import Linglib.Studies.BejarRezac2003
 
 /-!
 # Preminger (2014): Agreement and Its Failures
@@ -48,6 +50,8 @@ prose; the Zulu analysis is `Studies/Halpert2012.lean`.
 * [nevins-2011]
 * [halpert-2012]
 -/
+
+@[expose] public section
 
 namespace Preminger2014
 

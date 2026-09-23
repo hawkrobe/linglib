@@ -1,6 +1,8 @@
-import Linglib.Phonology.Prosody.Foot
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Core.Order.Branching
+module
+
+public import Linglib.Phonology.Prosody.Foot
+public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Core.Order.Branching
 
 /-!
 # Prosodic words (ω)
@@ -40,6 +42,8 @@ here abstract the foot level. Prominence-head marking is likewise a refinement, 
 * `noLevelRec_imp_max_eq_min` — under transitive No-Recursion at `ℓ`, the maximal and
   minimal ℓ-projections coincide (every ℓ-node is at once topmost and bottommost).
 -/
+
+@[expose] public section
 
 namespace Prosody
 
@@ -274,7 +278,7 @@ def parseInto (p : Constituent → Bool) : Constraint Tree := fun t => go false 
     | c :: cs => go under c + goList under cs
 
 /-- The σ-weight content of a foot node's direct σ-daughters. -/
-private def footContent (cs : List Tree) : List Syllable.Weight :=
+def footContent (cs : List Tree) : List Syllable.Weight :=
   cs.filterMap fun c => match c with
     | .node a [] => a.weight?
     | _ => none

@@ -1,6 +1,8 @@
-import Linglib.Syntax.Reflex
-import Linglib.Syntax.Person.Basic
-import Linglib.Fragments.Mayan.Extraction
+module
+
+public import Linglib.Syntax.Reflex
+public import Linglib.Syntax.Person.Basic
+public import Linglib.Fragments.Mayan.Extraction
 
 /-!
 # Q'anjob'al Agent Focus and extraction marking
@@ -38,6 +40,8 @@ Antipassive and which is found in the Q'anjob'alan branch alone.
 
 * [coon-mateo-pedro-preminger-2014]
 -/
+
+@[expose] public section
 
 namespace Qanjobal
 

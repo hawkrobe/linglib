@@ -1,4 +1,6 @@
-import Linglib.Data.Forms.Schema
+module
+
+public import Linglib.Data.Forms.Schema
 
 /-!
 # `Lucy1994` — CLDF form data
@@ -8,6 +10,8 @@ Auto-generated from `Linglib/Data/Forms/Lucy1994.json` by
 generator. Consumers import this module; declarations live in
 `namespace Lucy1994.Forms`.
 -/
+
+@[expose] public section
 
 namespace Lucy1994.Forms
 

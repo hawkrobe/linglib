@@ -1,5 +1,7 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Partition.Basic
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
 # Partition questions as inquisitive contents
@@ -34,6 +36,8 @@ classes of any equivalence relation.
 - `toSetoid_fromSetoid`, `fromSetoid_toSetoid` — the two round-trip
   directions of the partition–setoid correspondence.
 -/
+
+@[expose] public section
 
 
 namespace Question

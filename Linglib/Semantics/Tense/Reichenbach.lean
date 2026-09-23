@@ -1,4 +1,6 @@
-import Linglib.Semantics.Tense.Defs
+module
+
+public import Linglib.Semantics.Tense.Defs
 
 /-!
 # Reichenbach's Temporal Framework
@@ -16,6 +18,8 @@ Three (four) distinguished times:
 Tense relates R to P; Aspect relates E to R.
 
 -/
+
+@[expose] public section
 
 namespace Tense
 

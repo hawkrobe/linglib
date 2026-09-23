@@ -1,4 +1,6 @@
-import Linglib.Syntax.Number.Basic
+module
+
+public import Linglib.Syntax.Number.Basic
 
 /-!
 # Finnish Possessive Constructions
@@ -19,6 +21,8 @@ Stage III). The typological codings (WALS 24A, 58A, 59A, 117A) are read from
 - `Isällä on auto.` 'Father has a car.' (father.ADESS is car)
 - `Minulla ei ole rahaa.` 'I have no money.' (I.ADESS not be money.PART)
 -/
+
+@[expose] public section
 
 namespace Finnish.Possession
 

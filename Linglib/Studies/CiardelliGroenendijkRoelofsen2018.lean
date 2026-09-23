@@ -1,4 +1,6 @@
-import Linglib.Semantics.Questions.Basic
+module
+
+public import Linglib.Semantics.Questions.Basic
 
 /-!
 # Ciardelli, Groenendijk and Roelofsen 2018: Inquisitive Semantics
@@ -29,6 +31,8 @@ fragment of `Logic/Team/Inquisitive.lean`; Chapters 6–9 are not represented.
 * [I. Ciardelli, J. Groenendijk and F. Roelofsen, *Inquisitive Semantics*
   (2018)][ciardelli-groenendijk-roelofsen-2018]
 -/
+
+@[expose] public section
 
 namespace CiardelliGroenendijkRoelofsen2018
 

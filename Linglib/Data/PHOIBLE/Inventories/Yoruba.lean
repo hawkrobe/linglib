@@ -1,4 +1,6 @@
-import Linglib.Data.PHOIBLE.Chart
+module
+
+public import Linglib.Data.PHOIBLE.Chart
 
 /-!
 # PHOIBLE inventory: YORUBA (yor, ID 636)
@@ -10,6 +12,8 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 29 phonemes. PHOIBLE inventory ID 636, Glottocode `yoru1245`.
 Source: PHOIBLE donor `upsid`.
 -/
+
+@[expose] public section
 
 namespace Data.PHOIBLE.Inventories.Yoruba
 

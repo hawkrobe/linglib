@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 
 /-!
 # Derivation-grounded externalization
@@ -37,6 +39,8 @@ harmonic order (`Linearization/Externalization.lean`) and Fox–Pesetsky cyclic 
 
 * [marcolli-chomsky-berwick-2025], §1.12
 -/
+
+@[expose] public section
 
 namespace Minimalist
 
@@ -124,7 +128,7 @@ private theorem planarFindP?_wellFormed {p : RoseTree Vertex → Bool} {t s : Ro
 
 /-- The ordered replacement by a well-formed leaf `rep` projecting to `R` forgets to the
     structural substitution `UnorderedTree.replace target R` and stays well-formed. -/
-private theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vertex}
+theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vertex}
     {R : SyntacticObject} (hrep : wellFormed rep = true) (hmkr : UnorderedTree.mk rep = R.val)
     {t : RoseTree Vertex} (ht : wellFormed t = true) :
     UnorderedTree.mk (planarReplaceWhereP (projEqP target) rep t)

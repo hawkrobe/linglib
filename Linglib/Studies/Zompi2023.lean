@@ -1,6 +1,8 @@
-import Linglib.Studies.ChristopoulosZompi2023
-import Linglib.Core.Optimization.Evaluation
-import Mathlib.Data.Finset.Powerset
+module
+
+public import Linglib.Studies.ChristopoulosZompi2023
+public import Linglib.Core.Optimization.Evaluation
+public import Mathlib.Data.Finset.Powerset
 
 /-!
 # Zompì (2023): *ABA in Multidimensional Paradigms
@@ -53,6 +55,8 @@ subset-applicable (`depTop_eq_subsetPrinciple`).
 * [smith-moskal-xu-kang-bobaljik-2019]
 * [caha-2009]
 -/
+
+@[expose] public section
 
 namespace Zompi2023
 

@@ -1,7 +1,9 @@
-import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.DistributedMorphology.Merger
-import Linglib.Fragments.English.Adjectives
-import Linglib.Fragments.Latin.Adjectives
+module
+
+public import Linglib.Morphology.Exponence.Containment.Contiguity
+public import Linglib.Morphology.DistributedMorphology.Merger
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Fragments.Latin.Adjectives
 
 /-!
 # Universals in comparative morphology
@@ -55,6 +57,8 @@ Condition, is a sketch in the book as well. The generalizations concern
 relative superlatives only; absolute superlatives lack the comparative
 component and its structure.
 -/
+
+@[expose] public section
 
 namespace Bobaljik2012
 

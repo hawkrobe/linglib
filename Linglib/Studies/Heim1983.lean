@@ -1,6 +1,8 @@
-import Linglib.Semantics.Dynamic.FileChange
-import Linglib.Studies.Karttunen1973
-import Linglib.Data.Examples.Heim1983
+module
+
+public import Linglib.Semantics.Dynamic.FileChange
+public import Linglib.Studies.Karttunen1973
+public import Linglib.Data.Examples.Heim1983
 
 /-!
 # Heim (1983): On the Projection Problem for Presuppositions
@@ -46,6 +48,8 @@ card (`novelIn_iff_determinedBy`).
 * [gazdar-1979]
 * [lewis-1979]
 -/
+
+@[expose] public section
 
 namespace Heim1983
 

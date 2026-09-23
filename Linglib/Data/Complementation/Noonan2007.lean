@@ -1,4 +1,6 @@
-import Linglib.Data.Complementation.Schema
+module
+
+public import Linglib.Data.Complementation.Schema
 
 /-!
 # Noonan2007 — complement-taking-predicate sample (generated)
@@ -10,6 +12,8 @@ re-run the generator. The 36 CTP rows of [noonan-2007]'s 7-language
 sample: per-row CTP class, attested complement types, equi-deletion, and
 negative raising.
 -/
+
+@[expose] public section
 
 namespace Data.Complementation.Noonan2007
 

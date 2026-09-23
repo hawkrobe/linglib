@@ -1,5 +1,7 @@
-import Linglib.Syntax.Person.Features
-import Linglib.Semantics.Reference.Prominence
+module
+
+public import Linglib.Syntax.Person.Features
+public import Linglib.Semantics.Reference.Prominence
 
 /-!
 # Person Feature Geometry [harley-ritter-2002] [bejar-rezac-2003]
@@ -83,6 +85,8 @@ cascade on the φ-cell inventory
 scale ([preminger-2014] Ch. 7).
 
 -/
+
+@[expose] public section
 
 namespace Minimalist
 

@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.DecisionTheoretic.Basic
+module
+
+public import Linglib.Pragmatics.DecisionTheoretic.Basic
 
 /-!
 # Decision-Theoretic Semantics: Scalar Implicature ([merin-1999-relevance] §3)
@@ -24,6 +26,8 @@ so a speaker who says "A or B" implicates ¬(A ∧ B).
 - **Prediction 2** (`if_not_indeed_conjunction`): under CIP, conjunction
   dominates both conjuncts and disjunction
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

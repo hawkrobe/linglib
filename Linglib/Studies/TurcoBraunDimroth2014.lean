@@ -1,8 +1,10 @@
-import Linglib.Semantics.Polarity.Marking
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Fragments.Dutch.Particles
-import Linglib.Fragments.German.PolarityMarking
-import Linglib.Data.Examples.TurcoBraunDimroth2014
+module
+
+public import Linglib.Semantics.Polarity.Marking
+public import Linglib.Semantics.Polarity.Sentence
+public import Linglib.Fragments.Dutch.Particles
+public import Linglib.Fragments.German.PolarityMarking
+public import Linglib.Data.Examples.TurcoBraunDimroth2014
 
 /-!
 # Turco, Braun and Dimroth (2014): When Contrasting Polarity, the Dutch Use Particles, Germans Intonation
@@ -54,6 +56,8 @@ before the comment. The examples are the rows of `Data.Examples.TurcoBraunDimrot
 * [hogeweg-2009]
 * [dimroth-etal-2010]
 -/
+
+@[expose] public section
 
 namespace TurcoBraunDimroth2014
 

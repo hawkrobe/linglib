@@ -1,8 +1,10 @@
-import Linglib.Semantics.Attitudes.Desire.Conditional
-import Linglib.Semantics.Dynamic.Partial
-import Linglib.Semantics.Presupposition.BeliefEmbedding
-import Linglib.Logic.Modal.Epistemic
-import Mathlib.Data.Set.Lattice.Bounded
+module
+
+public import Linglib.Semantics.Attitudes.Desire.Conditional
+public import Linglib.Semantics.Dynamic.Partial
+public import Linglib.Semantics.Presupposition.BeliefEmbedding
+public import Linglib.Logic.Modal.Epistemic
+public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Heim (1992): Presupposition Projection and the Semantics of Attitude Verbs
@@ -39,6 +41,8 @@ of [asher-1987]'s Concorde case (32) and the amendment (40) blocking `want p ∧
 * [stalnaker-1968]
 * [lewis-1973]
 -/
+
+@[expose] public section
 
 namespace Heim1992
 

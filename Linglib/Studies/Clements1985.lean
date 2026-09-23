@@ -1,9 +1,11 @@
-import Linglib.Fragments.English.Phonology
-import Linglib.Core.Data.Fintype.Sets
-import Linglib.Core.Data.Fintype.Order
-import Mathlib.Data.Fintype.Card
-import Linglib.Phonology.FeatureGeometry
-import Linglib.Phonology.Subregular.LocalRewrite
+module
+
+public import Linglib.Fragments.English.Phonology
+public import Linglib.Core.Data.Fintype.Sets
+public import Linglib.Core.Data.Fintype.Order
+public import Mathlib.Data.Fintype.Card
+public import Linglib.Phonology.FeatureGeometry
+public import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
 # Clements (1985): the geometry of phonological features
@@ -92,6 +94,8 @@ the sets a rule may copy, not between formalisms.
 * [B. P. Hayes, *Introductory Phonology* (2009)][hayes-2009]
 * [N. Chomsky and M. Halle, *The Sound Pattern of English* (1968)][chomsky-halle-1968]
 -/
+
+@[expose] public section
 
 namespace Clements1985
 

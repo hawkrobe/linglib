@@ -1,8 +1,10 @@
-import Mathlib.Data.Set.Basic
-import Linglib.Logic.Modal.Defs
-import Linglib.Logic.Modal.Basic
-import Linglib.Logic.Modal.Epistemic
-import Linglib.Discourse.Commitment.Basic
+module
+
+public import Mathlib.Data.Set.Basic
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Logic.Modal.Epistemic
+public import Linglib.Discourse.Commitment.Basic
 
 /-!
 # Belief–commitment frames
@@ -45,6 +47,8 @@ into them and every proposition is `C_{a,b}`-free in the thesis's sense.
   (1962)][hintikka-1962]
 * [N. Asher and A. Lascarides, *Logics of Conversation* (2003)][asher-lascarides-2003]
 -/
+
+@[expose] public section
 
 namespace Commitment
 

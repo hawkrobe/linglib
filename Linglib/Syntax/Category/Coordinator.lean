@@ -1,6 +1,8 @@
-import Mathlib.Order.BooleanAlgebra.Basic
-import Linglib.Morphology.Morph
-import Linglib.Morphology.Word.Basic
+module
+
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Word.Basic
 
 /-!
 # Coordinators
@@ -37,6 +39,8 @@ studies.
 * [haspelmath-2007]
 * [partee-rooth-1983]
 -/
+
+@[expose] public section
 
 namespace Coordinator
 

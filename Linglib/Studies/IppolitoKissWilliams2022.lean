@@ -1,5 +1,7 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Resolution
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Resolution
 
 /-!
 # Ippolito, Kiss and Williams (2022): The Discourse Function of Adversative Conjunction
@@ -38,6 +40,8 @@ opposite answer from the salient proposition disagrees with it and licenses both
 * [gunlogson-2008]
 * [roberts-2012]
 -/
+
+@[expose] public section
 
 namespace IppolitoKissWilliams2022
 

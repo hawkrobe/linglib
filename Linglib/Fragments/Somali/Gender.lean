@@ -1,6 +1,8 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Agreement.Classes
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Agreement.Classes
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Somali noun gender
@@ -35,6 +37,8 @@ plural.
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
 * [G. G. Corbett, *Morphology and agreement* (1998)][corbett-1998]
 -/
+
+@[expose] public section
 
 namespace Somali.Gender
 

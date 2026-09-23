@@ -1,4 +1,6 @@
-import Linglib.Logic.Assignment
+module
+
+public import Linglib.Logic.Assignment
 
 /-!
 # Assignment-relative denotations
@@ -21,6 +23,8 @@ construction at an assignment of indices.
 * [I. Heim, A. Kratzer, *Semantics in Generative Grammar* (1998)][heim-kratzer-1998]
 * [S. Charlow, *A modular theory of pronouns and binding* (2018)][charlow-2018]
 -/
+
+@[expose] public section
 
 namespace Semantics.Composition
 

@@ -1,10 +1,12 @@
-import Linglib.Data.Examples.RomeroHan2004
-import Linglib.Discourse.CommonGround
-import Linglib.Fragments.English.PolarityItems
-import Linglib.Logic.Modal.Defs
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Bias
-import Mathlib.Order.Interval.Set.Defs
+module
+
+public import Linglib.Data.Examples.RomeroHan2004
+public import Linglib.Discourse.CommonGround
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Bias
+public import Mathlib.Order.Interval.Set.Defs
 
 /-!
 # Romero and Han (2004): On negative yes/no questions
@@ -40,6 +42,8 @@ formalized.
   questions* (1981)][ladd-1981]
 * [T. N. Höhle, *Über Verum-Fokus im Deutschen* (1992)][hohle-1992]
 -/
+
+@[expose] public section
 
 namespace RomeroHan2004
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
-import Linglib.Studies.McKayVanInwagen1977
-import Mathlib.Data.List.Sublists
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
+public import Linglib.Studies.McKayVanInwagen1977
+public import Mathlib.Data.List.Sublists
 
 /-!
 # Santorio (2018): Alternatives and Truthmakers in Conditional Semantics
@@ -45,6 +47,8 @@ type rather than generated from syntactic substitution sources.
 * [alonso-ovalle-2009]
 * [mckay-vaninwagen-1977]
 -/
+
+@[expose] public section
 
 namespace Santorio2018
 

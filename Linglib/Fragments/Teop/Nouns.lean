@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Teop nouns
@@ -13,6 +15,8 @@ names, kinship terms, and other socially prominent nouns.
 
 * [adamson-2024]
 -/
+
+@[expose] public section
 
 namespace Teop
 

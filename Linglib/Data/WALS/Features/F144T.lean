@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 144T: The Position of Negative Morphemes in Verb-Initial Languages
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 144, 152 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F144T
 

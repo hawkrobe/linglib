@@ -1,4 +1,6 @@
-import Linglib.Syntax.Mereological.Parthood
+module
+
+public import Linglib.Syntax.Mereological.Parthood
 
 /-!
 # Angular Locality
@@ -32,6 +34,8 @@ chain.
 
 * [adger-2025]
 -/
+
+@[expose] public section
 
 namespace MereologicalSyntax.Parthood
 

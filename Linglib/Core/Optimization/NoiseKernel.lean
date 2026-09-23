@@ -1,4 +1,6 @@
-import Linglib.Core.Optimization.Decoder
+module
+
+public import Linglib.Core.Optimization.Decoder
 
 /-!
 # Noise kernels — random utility models
@@ -51,6 +53,8 @@ deterministic argmax. This is the bridge from RUM to the algebraic
 a max-plus (or min-plus / tropical) semiring operation. The semiring
 correspondence is developed in a companion file (`Semiring.lean`).
 -/
+
+@[expose] public section
 
 namespace Core.Optimization
 

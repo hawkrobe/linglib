@@ -1,4 +1,6 @@
-import Linglib.Semantics.Evidential.Defs
+module
+
+public import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Aymara evidentiality
@@ -11,6 +13,8 @@ non-personal knowledge (inferred).
 
 * [aikhenvald-2004], §2.2
 -/
+
+@[expose] public section
 
 namespace Aymara.Evidentiality
 

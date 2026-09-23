@@ -1,9 +1,11 @@
-import Mathlib.Data.Set.Functor
-import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Composition.Assignment
-import Linglib.Logic.Assignment
-import Mathlib.Control.Monad.Cont
-import Linglib.Semantics.Composition.Binding
+module
+
+public import Mathlib.Data.Set.Functor
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Semantics.Composition.Assignment
+public import Linglib.Logic.Assignment
+public import Mathlib.Control.Monad.Cont
+public import Linglib.Semantics.Composition.Binding
 
 /-!
 # Charlow 2018: a modular theory of pronouns and binding
@@ -70,6 +72,8 @@ into being."
 * [jacobson-1999]
 * [charlow-2020]
 -/
+
+@[expose] public section
 
 namespace Charlow2018
 

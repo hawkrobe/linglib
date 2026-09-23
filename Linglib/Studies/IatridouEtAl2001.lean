@@ -1,6 +1,8 @@
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.Aspect.Viewpoint
-import Mathlib.Data.Finset.Image
+module
+
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Mathlib.Data.Finset.Image
 
 /-!
 # Iatridou et al. (2001): Observations about the form and meaning of the perfect
@@ -41,6 +43,8 @@ has no universal perfect while Bulgarian's imperfective and neutral participles 
 
 * [iatridou-anagnostopoulou-izvorski-2001]
 -/
+
+@[expose] public section
 
 namespace IatridouEtAl2001
 

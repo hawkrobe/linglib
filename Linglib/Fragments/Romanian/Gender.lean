@@ -1,5 +1,7 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Category.Noun.Basic
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Romanian noun gender
@@ -15,6 +17,8 @@ across the two numbers: *bărbat* 'man' (*-Ø*, *-i*), *fată* 'girl' (*-ă*, *-
 * [G. Mallinson, *Rumanian* (1984)][mallinson-1984]
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
 -/
+
+@[expose] public section
 
 namespace Romanian.Gender
 

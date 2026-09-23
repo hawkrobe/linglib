@@ -1,8 +1,10 @@
-import Linglib.Syntax.Agreement.ContainmentPair
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Data.Examples.Wang2023
+module
+
+public import Linglib.Syntax.Agreement.ContainmentPair
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Semantics.Presupposition.PhiFeatures
+public import Linglib.Semantics.Presupposition.MaximizePresupposition
+public import Linglib.Data.Examples.Wang2023
 
 /-!
 # Wang (2023): Honorifics without [HON]
@@ -40,6 +42,8 @@ kernel. The paper's examples are the rows of `Data.Examples.Wang2023`.
 * [harbour-2016]
 * [sauerland-2003]
 -/
+
+@[expose] public section
 
 namespace Wang2023
 

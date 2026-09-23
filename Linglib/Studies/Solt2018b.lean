@@ -1,7 +1,9 @@
-import Linglib.Semantics.Degree.Aggregation
-import Linglib.Semantics.Degree.Measure.Basic
-import Linglib.Semantics.Genericity.SortedOntology
-import Mathlib.Algebra.Order.Field.Basic
+module
+
+public import Linglib.Semantics.Degree.Aggregation
+public import Linglib.Semantics.Degree.Measure.Basic
+public import Linglib.Semantics.Genericity.SortedOntology
+public import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Solt (2018): Proportional Comparatives and Relative Scales
@@ -52,6 +54,8 @@ Solt's other 2018 paper, the multidimensionality chapter [solt-2018a], is formal
 * [carlson-1977]
 * [milsark-1977]
 -/
+
+@[expose] public section
 
 namespace Solt2018b
 

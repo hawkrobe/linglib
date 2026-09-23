@@ -1,7 +1,9 @@
-import Linglib.Phonology.Subregular.Dependence
-import Linglib.Phonology.Subregular.BMRS
-import Linglib.Phonology.Tone.Surfacing
-import Linglib.Studies.McCollumEtAl2020
+module
+
+public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Phonology.Subregular.BMRS
+public import Linglib.Phonology.Tone.Surfacing
+public import Linglib.Studies.McCollumEtAl2020
 
 /-!
 # Yolyan (2025): A Logical Characterization of Weak Determinism as Simultaneous Application
@@ -57,12 +59,14 @@ conjunctive dual ⊘ of §6.3 (Def. 6.5) expresses Sour Grapes exactly (`sourGra
 * [wilson-2003]
 -/
 
+@[expose] public section
+
 namespace Yolyan2025
 
 open Subregular Subregular.BMRS
 
 /-- The single BMRS index variable. -/
-private abbrev x : Term := .var
+abbrev x : Term := .var
 
 variable {α : Type*} [DecidableEq α]
 

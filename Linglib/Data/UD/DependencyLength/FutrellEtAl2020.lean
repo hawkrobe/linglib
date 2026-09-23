@@ -1,4 +1,6 @@
-import Linglib.Data.UD.DependencyLength.Schema
+module
+
+public import Linglib.Data.UD.DependencyLength.Schema
 
 /-!
 # FutrellEtAl2020 — dependency length by language (generated)
@@ -14,6 +16,8 @@ word at sentence lengths 10, 15 and 20, with content words heading function word
 annotation. The language codes are UD codes matching the keys of the paper's analysis pipeline
 (CLIQS, typology3.csv).
 -/
+
+@[expose] public section
 
 namespace Data.UD.DependencyLength.FutrellEtAl2020
 

@@ -1,6 +1,8 @@
-import Linglib.Core.Order.Probability.Content
-import Mathlib.Order.BooleanAlgebra.Basic
-import Mathlib.Order.Defs.Unbundled
+module
+
+public import Linglib.Core.Order.Probability.Content
+public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Order.Defs.Unbundled
 
 /-!
 # Comparative probability orders on a Boolean algebra
@@ -32,6 +34,8 @@ get bespoke classes.
   measure semantics (Theorem 6; [van-der-hoek-1996]) and strictly weaker than
   finite additivity for `|W| ≥ 5` (Theorem 8, after [kraft-pratt-seidenberg-1959]).
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

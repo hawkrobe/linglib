@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Counting
-import Linglib.Semantics.Denotation
+module
+
+public import Linglib.Syntax.Category.Determiner.Basic
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Denotation
 
 /-!
 # Czech determiner inventory
@@ -17,6 +19,8 @@ to diagnose the position of negation in polar questions.
 
 * [stankova-2025]
 -/
+
+@[expose] public section
 
 namespace Czech.Determiners
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.FunctionalSequence
+module
+
+public import Linglib.Syntax.Minimalist.FunctionalSequence
 
 /-!
 # den Dikken (1995): Particles
@@ -48,6 +50,8 @@ from [kayne-1984], (13) and (14), for the ergativity of particles from verb-part
 * [kayne-1985]
 * [johnson-1991]
 -/
+
+@[expose] public section
 
 namespace Dendikken1995
 

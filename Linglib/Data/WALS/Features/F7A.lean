@@ -1,4 +1,6 @@
-import Linglib.Data.WALS.Datapoint
+module
+
+public import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 7A: Glottalized Consonants
@@ -9,6 +11,8 @@ Auto-generated from WALS v2020.4 CLDF data.
 
 Chapter 7, 567 languages.
 -/
+
+@[expose] public section
 
 namespace Data.WALS.F7A
 
@@ -32,7 +36,8 @@ inductive GlottalizedConsonants where
   | ejectivesImplosivesAndGlottalizedResonants
   deriving DecidableEq, Repr
 
-private def allData_0 : List (Datapoint GlottalizedConsonants) :=
+/-- Rows 1 to 500 of `allData`. -/
+def allData_0 : List (Datapoint GlottalizedConsonants) :=
   [ { walsCode := "xoo", iso := "nmn", value := .ejectivesAndGlottalizedResonants }
   , { walsCode := "ani", iso := "hnh", value := .ejectivesOnly }
   , { walsCode := "abi", iso := "axb", value := .noGlottalizedConsonants }
@@ -535,7 +540,8 @@ private def allData_0 : List (Datapoint GlottalizedConsonants) :=
   , { walsCode := "tru", iso := "tpy", value := .ejectivesOnly }
   ]
 
-private def allData_1 : List (Datapoint GlottalizedConsonants) :=
+/-- Rows 501 to 567 of `allData`. -/
+def allData_1 : List (Datapoint GlottalizedConsonants) :=
   [ { walsCode := "tsi", iso := "tsi", value := .ejectivesAndGlottalizedResonants }
   , { walsCode := "tso", iso := "tsu", value := .implosivesOnly }
   , { walsCode := "ttu", iso := "bbl", value := .ejectivesOnly }

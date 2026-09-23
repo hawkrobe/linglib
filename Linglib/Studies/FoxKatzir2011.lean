@@ -1,9 +1,11 @@
-import Linglib.Semantics.Alternatives.Symmetric
-import Linglib.Studies.Katzir2007
-import Linglib.Semantics.Exhaustification.Excluder
-import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Logic.Modal.Basic
-import Linglib.Data.Examples.FoxKatzir2011
+module
+
+public import Linglib.Semantics.Alternatives.Symmetric
+public import Linglib.Studies.Katzir2007
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Logic.Modal.Basic
+public import Linglib.Data.Examples.FoxKatzir2011
 
 /-!
 # Fox and Katzir (2011): On the Characterization of Alternatives
@@ -42,6 +44,8 @@ accessibility relation, covering the modal and the quantificational cases alike.
 * [sauerland-2004]
 * [fox-2007]
 -/
+
+@[expose] public section
 
 namespace FoxKatzir2011
 

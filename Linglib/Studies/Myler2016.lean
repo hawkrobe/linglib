@@ -1,6 +1,8 @@
-import Linglib.Morphology.DistributedMorphology.Allosemy
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Data.Examples.Myler2016
+module
+
+public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Data.Examples.Myler2016
 
 /-!
 # Myler (2016): Building and Interpreting Possession Sentences
@@ -29,6 +31,8 @@ an expletive Voice at logical form while still surfacing as *have*.
 
 * [myler-2016]
 -/
+
+@[expose] public section
 
 namespace Myler2016
 

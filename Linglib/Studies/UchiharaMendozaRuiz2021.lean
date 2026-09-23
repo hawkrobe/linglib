@@ -1,6 +1,8 @@
-import Linglib.Phonology.Prosody.Foot
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Data.Forms.UchiharaMendozaRuiz2021
+module
+
+public import Linglib.Phonology.Prosody.Foot
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Data.Forms.UchiharaMendozaRuiz2021
 
 /-!
 # Uchihara and Mendoza Ruiz (2021): Minimality, Maximality and Perfect Prosodic Word in Alcozauca Mixtec
@@ -47,6 +49,8 @@ rows of `Data.Forms.UchiharaMendozaRuiz2021`.
 * [kager-2007]
 * [de-lacy-2003]
 -/
+
+@[expose] public section
 
 namespace UchiharaMendozaRuiz2021
 

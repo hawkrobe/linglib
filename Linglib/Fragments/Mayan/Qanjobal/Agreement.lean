@@ -1,7 +1,9 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Phonology.Segmental.Defs
-import Linglib.Fragments.Mayan.Agreement
-import Linglib.Syntax.Clause.ArgumentRole
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Phonology.Segmental.Defs
+public import Linglib.Fragments.Mayan.Agreement
+public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
 # Q'anjob'al Agreement and Case Fragment
@@ -54,6 +56,8 @@ auxiliaries (independent words *tyi* perfective, *mi* imperfective;
 Robertson 1992:57). `Qanjobal.assignCase` captures the alignment
 facts, not the morpheme-class difference.
 -/
+
+@[expose] public section
 
 namespace Qanjobal
 

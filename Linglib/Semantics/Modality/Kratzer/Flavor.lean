@@ -7,8 +7,12 @@ modal base and ordering source for different types of modality.
 - Kratzer, A. (1981). The Notional Category of Modality. de Gruyter. pp. 38-74.
 -/
 
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Modality.Basic
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Basic
+
+@[expose] public section
 
 namespace Modality.Kratzer
 

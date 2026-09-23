@@ -1,4 +1,6 @@
-import Linglib.Semantics.ArgumentStructure.ThematicRole
+module
+
+public import Linglib.Semantics.ArgumentStructure.ThematicRole
 
 /-!
 # Argument Introduction by Functional Heads
@@ -32,6 +34,8 @@ contextually-interpreted single argument-introducer is its `IntroMode` reading.
 * `applToEvent` / `applToTheme` — the high / low applicative denotations
 * `causeBieventive` / `causeThetaRole` — the §3.2 Cause-is-not-a-θ-role contrast
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

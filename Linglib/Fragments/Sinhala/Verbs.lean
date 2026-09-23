@@ -1,4 +1,6 @@
-import Linglib.Semantics.Causation.CauserSort
+module
+
+public import Linglib.Semantics.Causation.CauserSort
 
 /-!
 # Colloquial Sinhala verb fragment
@@ -36,6 +38,8 @@ Roots without involitive stems (*minimarann*, *kapann*) precisely
 correspond to roots whose causer sort excludes individuals — the
 predictive engine of B&Z's analysis.
 -/
+
+@[expose] public section
 
 namespace Sinhala.Verbs
 

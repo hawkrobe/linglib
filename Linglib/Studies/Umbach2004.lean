@@ -1,6 +1,8 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Resolution
-import Linglib.Data.Examples.Umbach2004
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Data.Examples.Umbach2004
 
 /-!
 # Umbach (2004): On the Notion of Contrast in Information Structure and Discourse Structure
@@ -54,6 +56,8 @@ follows the main text.
 * [horn-1969]
 * [roberts-1998]
 -/
+
+@[expose] public section
 
 namespace Umbach2004
 

@@ -1,4 +1,6 @@
-import Linglib.Phonology.Prosody.Grid
+module
+
+public import Linglib.Phonology.Prosody.Grid
 
 /-!
 # Prince (1983): Relating to the Grid
@@ -49,6 +51,8 @@ are not formalized.
 * [prince-1983]
 * [liberman-prince-1977]
 -/
+
+@[expose] public section
 
 namespace Prince1983
 

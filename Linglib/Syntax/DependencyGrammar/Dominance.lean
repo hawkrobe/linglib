@@ -3,16 +3,18 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Core.Relation.ReflTransGen
-import Linglib.Core.Data.Fintype.ExistsUnique
-import Mathlib.Logic.Relation
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Finset.Max
-import Mathlib.Order.SuccPred.Basic
-import Mathlib.Order.SuccPred.Archimedean
-import Mathlib.Order.SuccPred.Tree
-import Linglib.Core.Order.SuccPred.Tree
+module
+
+public import Linglib.Syntax.DependencyGrammar.Basic
+public import Linglib.Core.Relation.ReflTransGen
+public import Linglib.Core.Data.Fintype.ExistsUnique
+public import Mathlib.Logic.Relation
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Order.SuccPred.Basic
+public import Mathlib.Order.SuccPred.Archimedean
+public import Mathlib.Order.SuccPred.Tree
+public import Linglib.Core.Order.SuccPred.Tree
 
 /-!
 # Dominance and dependency trees
@@ -53,6 +55,8 @@ Decidability comes from `Core/Relation/ReflTransGen.lean`.
 [kuhlmann-nivre-2006] — Mildly non-projective dependency structures,
 source of the dominance and projection definitions
 -/
+
+@[expose] public section
 
 namespace DependencyGrammar
 

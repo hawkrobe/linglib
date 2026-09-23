@@ -1,5 +1,7 @@
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
-import Linglib.Morphology.Morphotactics.Template
+module
+
+public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
+public import Linglib.Morphology.Morphotactics.Template
 
 /-!
 # Sesotho Morphological Profile
@@ -16,6 +18,8 @@ causative, neuter, applicative, completive), then voice (reciprocal, passive),
 then tense (perfect `-il-`), mood (imperative/subjunctive/indicative), and a
 final interrogative/relative (nonfinite) slot.
 -/
+
+@[expose] public section
 
 namespace Sesotho
 

@@ -1,5 +1,7 @@
-import Linglib.Discourse.Givenness
-import Linglib.Semantics.Focus.Marking
+module
+
+public import Linglib.Discourse.Givenness
+public import Linglib.Semantics.Focus.Marking
 
 /-!
 # Information-structural extraction clash
@@ -9,6 +11,8 @@ domain clashes — the filler addresses the QUD while the domain is
 QUD-invisible ([erteschik-shir-1973], [abeille-et-al-2020]). Predicate
 over the marking axes `(Mark, BinaryGivenness)`.
 -/
+
+@[expose] public section
 
 namespace Focus.ExtractionClash
 

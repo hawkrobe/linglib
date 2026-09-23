@@ -1,3 +1,5 @@
+module
+
 /-!
 # English inflectional spelling
 
@@ -13,19 +15,21 @@ final silent *e* drops before a vowel-initial suffix.
 * `suffixS`, `suffixEd`, `suffixIng` — the three suffixes with their spelling adjustments
 -/
 
+@[expose] public section
+
 namespace English
 
-private def isVowel (c : Char) : Bool :=
+def isVowel (c : Char) : Bool :=
   c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
 
 /-- Whether the form ends in a consonant followed by *y*. -/
-private def endsWithConsonantY (s : String) : Bool :=
+def endsWithConsonantY (s : String) : Bool :=
   match s.toList.reverse with
   | 'y' :: c :: _ => !isVowel c
   | _ => false
 
 /-- Whether the form ends in a sibilant spelled *sh*, *ch*, *ss*, *x* or *z*. -/
-private def endsWithSibilant (s : String) : Bool :=
+def endsWithSibilant (s : String) : Bool :=
   s.endsWith "sh" || s.endsWith "ch" || s.endsWith "ss" || s.endsWith "x" || s.endsWith "z"
 
 /-- The form with *-s*: *-ies* after a consonant and *y*, *-es* after a sibilant. -/

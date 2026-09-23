@@ -1,5 +1,7 @@
-import Linglib.Semantics.Dynamic.UpdateSemantics.Default
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Linglib.Semantics.Dynamic.UpdateSemantics.Default
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Veltman (1996): Defaults in Update Semantics
@@ -46,6 +48,8 @@ Morreau in section 5 is discussed in the paper and not formalized.
   (1991)][asher-morreau-1991]
 -/
 
+@[expose] public section
+
 namespace Veltman1996
 
 open UpdateSemantics.Default
@@ -78,7 +82,7 @@ private theorem atomQ_w₂ : atomQ w₂ := trivial
 private theorem atomQ_w₃ : atomQ w₃ := trivial
 
 /-- The minimal state `0`. -/
-private def σ₀ : ExpState PQWorld := ExpState.init
+def σ₀ : ExpState PQWorld := ExpState.init
 
 /-- Rules can have exceptions, since learning `¬p` after *normally p* does not crash (3.10(i)). -/
 theorem ex310_exception : ((σ₀.promote atomP).assert (¬atomP ·)).info.Nonempty :=

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Chain
-import Linglib.Phonology.Subregular.ForbiddenPairs
+module
+
+public import Mathlib.Data.List.Chain
+public import Linglib.Phonology.Subregular.ForbiddenPairs
 
 /-!
 # Vowel harmony: pattern-level vocabulary
@@ -38,6 +40,8 @@ cannot express parasitic harmony ((8b)) or configuration-dependent blocking
 * [aksenova-rawski-graf-heinz-2024]
 * [jurgec-2011]
 -/
+
+@[expose] public section
 
 namespace Phonology.Harmony
 

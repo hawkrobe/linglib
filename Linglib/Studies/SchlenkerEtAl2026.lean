@@ -1,6 +1,8 @@
-import Linglib.Semantics.Iconicity
-import Linglib.Semantics.Reference.Context.Shifts
-import Linglib.Data.Examples.SchlenkerEtAl2026
+module
+
+public import Linglib.Semantics.Iconicity
+public import Linglib.Semantics.Reference.Context.Shifts
+public import Linglib.Data.Examples.SchlenkerEtAl2026
 
 /-!
 # Schlenker, Lamberton & Lamberton (2026): Traveling Shots in Language
@@ -45,6 +47,8 @@ restrictive theory that free variables are static, a traveling shot therefore ne
 * [schlenker-lamberton-2024]
 * [davidson-2015]
 -/
+
+@[expose] public section
 
 namespace SchlenkerEtAl2026
 

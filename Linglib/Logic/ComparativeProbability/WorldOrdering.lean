@@ -1,6 +1,8 @@
-import Linglib.Logic.ComparativeProbability.Defs
-import Linglib.Core.Order.Domination
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Linglib.Logic.ComparativeProbability.Defs
+public import Linglib.Core.Order.Domination
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # World-ordering semantics: the l-lifting as a comparative-probability model
@@ -20,6 +22,8 @@ determination by singletons.
 * `exists_dominationLift_repr`, `dominationLift_repr_iff` — the WJR
   representation and its round trip.
 -/
+
+@[expose] public section
 
 namespace ComparativeProbability
 

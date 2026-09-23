@@ -1,10 +1,12 @@
-import Linglib.Semantics.Reference.Context.Index
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Semantics.Quantification.Defs
-import Linglib.Semantics.Mood.Defs
-import Linglib.Discourse.QUD.Basic
-import Mathlib.Data.List.Lex
+module
+
+public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Mood.Defs
+public import Linglib.Discourse.QUD.Basic
+public import Mathlib.Data.List.Lex
 
 /-!
 # Roberts (2023): Imperatives in dynamic pragmatics
@@ -48,6 +50,8 @@ embedded imperatives are discussed in the paper without a proposal formalized he
 * [A. Kratzer, *The notional category of modality* (1981)][kratzer-1981]
 * [F. Veltman, *Notes on imperatives* (2018)][veltman-2018]
 -/
+
+@[expose] public section
 
 namespace Roberts2023
 

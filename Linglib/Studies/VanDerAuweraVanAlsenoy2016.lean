@@ -1,7 +1,9 @@
-import Linglib.Data.WALS.Features.F115A
-import Linglib.Data.Examples.VanDerAuweraVanAlsenoy2016
-import Mathlib.Order.Basic
-import Mathlib.Data.Fintype.Prod
+module
+
+public import Linglib.Data.WALS.Features.F115A
+public import Linglib.Data.Examples.VanDerAuweraVanAlsenoy2016
+public import Mathlib.Order.Basic
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # van der Auwera and Van Alsenoy (2016): On the Typology of Negative Concord
@@ -48,6 +50,8 @@ examples are the rows of `Data.Examples.VanDerAuweraVanAlsenoy2016`.
 * [jespersen-1917]
 * [de-swart-2010]
 -/
+
+@[expose] public section
 
 namespace VanDerAuweraVanAlsenoy2016
 
