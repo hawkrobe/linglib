@@ -34,7 +34,8 @@ facts. The accusative-as-semantic-case analysis follows [beavers-zubair-2010].
   denotations over `causerSuppress`.
 * `caseOfReading` — the §7.3 semantic-case convention: accusative signals existential
   resolution.
-* `anticausativizes` — the operator's well-formedness condition, read off the verb's
+* `Root.causerSort` — the causer sort the paper assigns each root.
+* `anticausativizes` — the operator's well-formedness condition, read off the root's
   `CauserSort`.
 
 ## Main results
@@ -123,43 +124,76 @@ theorem ibeem_incompatible_with_external {E : Type} (vp : E → E → Prop) (y :
     ¬ ((∀ x, vp x y → x = y) ∧ ∃ x, x ≠ y ∧ vp x y) :=
   fun ⟨hno, _, hne, hvp⟩ => hne (hno _ hvp)
 
+/-! ### The roots and their causer sorts -/
+
+/-- The Sinhala roots the paper analyzes. -/
+inductive Root where
+  | kada | gila | mara | minimara | kapa | vinaashKara
+  deriving DecidableEq, Fintype, Repr
+
+/-- The fragment verb of each root. -/
+def Root.verb : Root → SinhalaVerb
+  | .kada => kadann
+  | .gila => gilann
+  | .mara => marann
+  | .minimara => minimarann
+  | .kapa => kapann
+  | .vinaashKara => vinaashKarann
+
+/-- The sort each root's causer must satisfy, a point of the lattice (81), p. 40.
+    *minimara-* 'murder' selects an event causer, `[[minimara-]] = λyλv∈U_E λe[...]`
+    ((65b)), and *kapa-* 'cut' patterns with it; *kada-* 'break' selects none,
+    `[[kada-]] = λyλv∈U λe[...]` ((76)), like the other alternating roots. The eventuality
+    sort of (80) is motivated by English and German *destroy*, which do not alternate; the
+    Sinhala equivalent does (§7.4), so *vinaash-kara-* selects no sort either. -/
+def Root.causerSort : Root → CauserSort
+  | .minimara | .kapa => .event
+  | .kada | .gila | .mara | .vinaashKara => .any
+
 /-! ### The predictive engine -/
 
-/-- A verb anticausativizes iff its causer sort admits individuals — the
+/-- A root anticausativizes iff its causer sort admits individuals — the
     well-formedness condition of the suppression operator ((77)). The operator is
     partial: `CauserSort.admitsIndividual_iff` confines it to `individual` and `any`. -/
-def anticausativizes (v : SinhalaVerb) : Prop :=
-  v.causerSort.admitsIndividual
+def anticausativizes (r : Root) : Prop :=
+  r.causerSort.admitsIndividual
 
-instance (v : SinhalaVerb) : Decidable (anticausativizes v) :=
-  inferInstanceAs (Decidable v.causerSort.admitsIndividual)
+instance (r : Root) : Decidable (anticausativizes r) :=
+  inferInstanceAs (Decidable r.causerSort.admitsIndividual)
 
-/-- *kadann* 'break' anticausativizes (causer sort `any`, (76)). -/
-theorem break_anticausativizes : anticausativizes kadann := by decide
+/-- *kada-* 'break' anticausativizes (causer sort `any`, (76)). -/
+theorem break_anticausativizes : anticausativizes .kada := by decide
 
-/-- *gilann* 'drown' anticausativizes (exx. (2)–(3)). -/
-theorem drown_anticausativizes : anticausativizes gilann := by decide
+/-- *gila-* 'drown' anticausativizes (exx. (2)–(3)). -/
+theorem drown_anticausativizes : anticausativizes .gila := by decide
 
-/-- *minimarann* 'murder' does not anticausativize: its event-sort causer ((65b)) is
+/-- *minimara-* 'murder' does not anticausativize: its event-sort causer ((65b)) is
     incompatible with U_I, so `causerSuppress` cannot even be instantiated at this
-    verb. -/
-theorem murder_no_anticausative : ¬ anticausativizes minimarann := by decide
+    root. -/
+theorem murder_no_anticausative : ¬ anticausativizes .minimara := by decide
 
-/-- *kapann* 'cut' patterns with *minimarann*. -/
-theorem cut_no_anticausative : ¬ anticausativizes kapann := by decide
+/-- *kapa-* 'cut' patterns with *minimara-*. -/
+theorem cut_no_anticausative : ¬ anticausativizes .kapa := by decide
 
-/-- The volitive ((71)) admits both *minimarann* and *kadann* — their causer sorts
+/-- The volitive ((71)) admits both *minimara-* and *kada-* — their causer sorts
     include events. After suppression the surviving subject is an individual, which
     `CauserSort.not_admitsVolitive_individual` bars from the volitive: anticausatives
     are always involitive (§8). -/
 theorem volitive_admitted :
-    CauserSort.admitsVolitive minimarann.causerSort ∧
-      CauserSort.admitsVolitive kadann.causerSort := by
+    Root.minimara.causerSort.admitsVolitive ∧ Root.kada.causerSort.admitsVolitive := by
   decide
 
-/-- The operator instantiates for *kadann*: the `decide`-discharged obligation is the
+/-- The operator instantiates for *kada-*: the `decide`-discharged obligation is the
     predictive engine at work. -/
 example {E : Type} (z : E) (vp : E → Prop) : Prop :=
-  causerSuppress kadann.causerSort (by decide) z vp
+  causerSuppress Root.kada.causerSort (by decide) z vp
+
+/-- Among these roots, those with an involitive stem are exactly those that
+    anticausativize. This is a correlation in the data, not a prediction: the involitive is
+    the elsewhere form (p. 38), and experiencer verbs such as *dænenn* 'feel' and *ridenn*
+    'ache' (around (74)) take individual subjects but have no volitive stem. -/
+theorem hasInvolitive_iff_anticausativizes (r : Root) :
+    hasInvolitive r.verb ↔ anticausativizes r := by
+  cases r <;> decide
 
 end BeaversZubair2013
