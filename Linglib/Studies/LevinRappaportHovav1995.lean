@@ -224,7 +224,7 @@ def diagnosticOf (ex : LinguisticExample) : Option Bool :=
 
 /-- The class of a row's verb, by the book's section number. -/
 def classOf (ex : LinguisticExample) : Option LevinClass :=
-  (ex.feature? "class").bind fun s ↦ LevinClass.enumList.find? (·.numberString = s)
+  (ex.feature? "class").bind LevinClass.ofNumberString?
 
 /-- The construal of a row's verb: its characterization in the class with the row's
 agentivity. -/

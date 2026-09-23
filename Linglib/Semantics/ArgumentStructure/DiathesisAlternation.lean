@@ -58,7 +58,7 @@ inductive DiathesisAlternation where
   | otherCausative
   /-- §1.1.3, Substance/Source Alternation. -/
   | substanceSource
-  /-- §1.2, Unexpre ed Object Alternations. -/
+  /-- §1.2, Unexpressed Object Alternations. -/
   | unexpressedObject
   /-- §1.2.1, Unspecified Object Alternation. -/
   | unspecifiedObject
@@ -70,7 +70,7 @@ inductive DiathesisAlternation where
   | understoodReciprocalObject
   /-- §1.2.5, PRO-arb Object Alternation. -/
   | proArbObject
-  /-- §1.2.6, Characteristic      Property Alternations. -/
+  /-- §1.2.6, Characteristic Property Alternations. -/
   | characteristicProperty
   /-- §1.2.6.1, Characteristic Property of Agent Alternation. -/
   | characteristicPropertyOfAgent
@@ -316,13 +316,13 @@ def name : DiathesisAlternation → String
   | .inducedAction => "Induced Action Alternation"
   | .otherCausative => "Other Instances of Causative Alternations"
   | .substanceSource => "Substance/Source Alternation"
-  | .unexpressedObject => "Unexpre ed Object Alternations"
+  | .unexpressedObject => "Unexpressed Object Alternations"
   | .unspecifiedObject => "Unspecified Object Alternation"
   | .understoodBodyPartObject => "Understood Body-Part Object Alternation"
   | .understoodReflexiveObject => "Understood Reflexive Object Alternation"
   | .understoodReciprocalObject => "Understood Reciprocal Object Alternation"
   | .proArbObject => "PRO-arb Object Alternation"
-  | .characteristicProperty => "Characteristic      Property Alternations"
+  | .characteristicProperty => "Characteristic Property Alternations"
   | .characteristicPropertyOfAgent => "Characteristic Property of Agent Alternation"
   | .characteristicPropertyOfInstrument => "Characteristic Property of Instrument Alternation"
   | .wayObject => "Way Object Alternation"
@@ -609,13 +609,5 @@ theorem fuse_blocks_only_via_instrumentSpec (v c : MeaningComponents)
   rcases v with ⟨cos, con, mot, caus, inst, man⟩
   rcases c with ⟨cos', con', mot', caus', inst', man'⟩
   cases alt <;> simp_all [MeaningComponents.predictedAlternation, MeaningComponents.fuse]
-
-/-! ### Class profiles
-
-The alternation profile of each class as [levin-1993] Part II records it: every class page
-lists the alternations tested, an unstarred example attesting the alternation and a starred
-one denying it. Classes at a parent grain (`search`, `mannerOfMotion`, `bodyProcess`,
-`imageCreation`, `getObtain`) take the union over their subsections. Alternations a page does
-not test are in neither set. -/
 
 end ArgumentStructure

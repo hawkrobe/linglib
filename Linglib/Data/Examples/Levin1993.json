@@ -31,10 +31,6 @@
       [
         "alternation",
         "causativeInchoative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Causative (22b) / inchoative (22a). Break is a pure change-of-state verb; the causative variant adds a notion of cause."
@@ -66,10 +62,6 @@
       [
         "alternation",
         "middle"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Middle construction: verbs of causing a change of state."
@@ -101,10 +93,6 @@
       [
         "alternation",
         "conative"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Conative requires both contact and motion components; break lacks both."
@@ -141,10 +129,6 @@
       [
         "alternation",
         "bodyPartPossessorAscension"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Body-part possessor ascension requires a contact component, which break lacks."
@@ -181,10 +165,6 @@
       [
         "alternation",
         "causativeInchoative"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Blocked on the interpretation 'became cut': cut's meaning inherently involves an instrument, requiring an agent, so it is never found in the inchoative."
@@ -216,10 +196,6 @@
       [
         "alternation",
         "middle"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -251,10 +227,6 @@
       [
         "alternation",
         "conative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Conative meaning: roughly 'Margaret tried to cut the bread' (no entailment of completion)."
@@ -291,10 +263,6 @@
       [
         "alternation",
         "bodyPartPossessorAscension"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -331,10 +299,6 @@
       [
         "alternation",
         "causativeInchoative"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Hit is not a change-of-state verb, so it is not found in the causative/inchoative alternation."
@@ -366,10 +330,6 @@
       [
         "alternation",
         "middle"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "No change-of-state component. Simple 'contact through motion' sense of hit (Levin's fn. 4)."
@@ -401,10 +361,6 @@
       [
         "alternation",
         "conative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -441,10 +397,6 @@
       [
         "alternation",
         "bodyPartPossessorAscension"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -481,10 +433,6 @@
       [
         "alternation",
         "causativeInchoative"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Touch is not a change-of-state verb."
@@ -516,10 +464,6 @@
       [
         "alternation",
         "middle"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "No change-of-state component."
@@ -551,10 +495,6 @@
       [
         "alternation",
         "conative"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Touch is a pure verb of contact; the motion component required by the conative is missing."
@@ -591,10 +531,6 @@
       [
         "alternation",
         "bodyPartPossessorAscension"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -631,10 +567,6 @@
       [
         "alternation",
         "conative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Push/pull verbs (94) alternate in the conative. Corrected from the constructed 'She pushed at the door.' of the prior Lean data file to Levin's (95b)."
@@ -671,10 +603,6 @@
       [
         "alternation",
         "locative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Locative variant / with variant. Corrected from the constructed 'She sprayed ...' of the prior Lean data file."
@@ -711,10 +639,6 @@
       [
         "alternation",
         "locative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Corrected from the constructed 'She loaded hay onto the truck.' of the prior Lean data file to the §9.7 property listing."
@@ -751,10 +675,6 @@
       [
         "alternation",
         "dative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence pair is constructed; Levin's §13.1 dative example (172) uses lend ('They lent a bicycle to me / They lent me a bicycle'). Give's participation is grounded in the (115a) GIVE VERBS list."
@@ -791,10 +711,6 @@
       [
         "alternation",
         "dative"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Corrected from the constructed 'She sent a package to him.' of the prior Lean data file. Cf. the animacy restriction (117): Bill sent Tom/*London a package."
@@ -831,10 +747,6 @@
       [
         "alternation",
         "benefactive"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Carve is cross-listed 21.2/26.1; the benefactive alternation targets its BUILD VERBS use (the (120e) alternating list)."
@@ -871,10 +783,6 @@
       [
         "alternation",
         "substanceSource"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Only found with verbs of substance emission."
@@ -911,10 +819,6 @@
       [
         "alternation",
         "materialProduct"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -951,10 +855,6 @@
       [
         "alternation",
         "unspecifiedObject"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Intransitive variant understood as 'Mike ate a meal or something one typically eats.'"
@@ -991,10 +891,6 @@
       [
         "alternation",
         "unspecifiedObject"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Devour verbs require an expressed object. Corrected from the constructed '*Mike devoured.' of the prior Lean data file."
@@ -1031,10 +927,6 @@
       [
         "alternation",
         "understoodReciprocalObject"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -1071,10 +963,6 @@
       [
         "alternation",
         "thereInsertion"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Develop is listed under VERBS OF APPEARANCE in the §6.1 alternating list (320d)."
@@ -1111,10 +999,6 @@
       [
         "alternation",
         "thereInsertion"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Subject to the definiteness effect (323): *There appeared the ship on the horizon."
@@ -1151,10 +1035,6 @@
       [
         "alternation",
         "locativeInversion"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": ""
@@ -1191,10 +1071,6 @@
       [
         "alternation",
         "instrumentSubject"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Intermediary instruments can become subjects."
@@ -1231,10 +1107,6 @@
       [
         "alternation",
         "instrumentSubject"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Enabling/facilitating instruments cannot become subjects; eat only takes enabling instruments."
@@ -1271,10 +1143,6 @@
       [
         "alternation",
         "inducedAction"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Corrected from the constructed 'Bill ran the horse.' of the prior Lean data file; Levin notes the transitive variant requires an (at least understood) directional phrase."
@@ -1311,10 +1179,6 @@
       [
         "alternation",
         "inducedAction"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence pair is constructed; walk's participation is grounded in the (23) alternating list. Levin's examples (24)-(25) use jump and run with overt directional phrases."
@@ -1351,10 +1215,6 @@
       [
         "alternation",
         "inducedAction"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Corrected from the constructed '*She appeared the ghost.' of the prior Lean data file. Levin presents (8) as the absence of a causative form for appear (verbs of appearance are not change-of-state verbs, fn. 6 p. 9; cf. §48.1.1 '*The magician appeared a dove from his sleeve'); classified here under inducedAction as the causativization of an intransitive."
@@ -1391,10 +1251,6 @@
       [
         "alternation",
         "understoodBodyPartObject"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Corrected from the constructed 'Bill waved his hand.' of the prior Lean data file. Wave (hand) is a WINK VERB (§40.3.2), listed in (39a); the prior file classed it as a 40.1 body-process verb."
@@ -1431,10 +1287,6 @@
       [
         "alternation",
         "understoodReflexiveObject"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence pair is constructed; wash's participation is grounded in the (47a) DRESS VERBS list. Levin's example (48) uses dress ('Jill dressed herself hurriedly / Jill dressed hurriedly')."
@@ -1471,10 +1323,6 @@
       [
         "alternation",
         "totalTransformation"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Corrected from 'The witch turned the prince into a frog.' of the prior Lean data file to Levin's (159a/b) pair."
@@ -1506,10 +1354,6 @@
       [
         "alternation",
         "wayConstruction"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Neither this sentence nor the verb elbow appears in Levin's book; the construction is attested for unergatives and transitives ('The boy pushed his way through the crowd', (366a)). Class 51.3 follows the prior Lean data file."
@@ -1546,10 +1390,6 @@
       [
         "alternation",
         "cognateObject"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Corrected from the constructed 'She laughed a bitter laugh.' of the prior Lean data file, which also misclassed laugh as a 37.3 manner-of-speaking verb; Levin lists laugh under VERBS OF NONVERBAL EXPRESSION (§40.2; §7.1 (347a))."
@@ -1586,10 +1426,6 @@
       [
         "alternation",
         "cognateObject"
-      ],
-      [
-        "participates",
-        "marginal"
       ]
     ],
     "comment": "Levin marks both the manner-of-speaking class (349) and the cognate-object example (350b) with '?': cognate objects are marginal for this class."
@@ -1621,10 +1457,6 @@
       [
         "alternation",
         "cognateObject"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Run verbs do not take cognate objects despite having zero-related nominals (§51.3.2 comments). Replaces the prior Lean data file's co_run ('He ran a good race.', recorded as participating), which contradicts Levin."
@@ -1656,10 +1488,6 @@
       [
         "alternation",
         "directionalPhrase"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence is constructed; run's participation is grounded in the (405) list. Levin's example (406) uses tiptoe ('Audrey tiptoed / Audrey tiptoed to the door')."
@@ -1691,10 +1519,6 @@
       [
         "alternation",
         "verbalPassive"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence is constructed; Levin's §5.1 example (306) uses slice ('The mushrooms were sliced by the cook')."
@@ -1726,10 +1550,6 @@
       [
         "alternation",
         "verbalPassive"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence is constructed."
@@ -1761,10 +1581,6 @@
       [
         "alternation",
         "verbalPassive"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence is constructed."
@@ -1796,10 +1612,6 @@
       [
         "alternation",
         "verbalPassive"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence is constructed."
@@ -1836,10 +1648,6 @@
       [
         "alternation",
         "verbalPassive"
-      ],
-      [
-        "participates",
-        "false"
       ]
     ],
     "comment": "Register verbs (measure, read, register, total, weigh) resist passivization. Corrected from the constructed '*Five pounds are weighed by this box.' of the prior Lean data file."
@@ -1876,10 +1684,6 @@
       [
         "alternation",
         "prepositionalPassive"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Levin's canonical unergative prepositional passive. Corrected from the constructed 'The bed was slept in.' of the prior Lean data file, which also classed sleep as a §50 assume-position verb; Levin lists sleep under §40.4 SNOOZE VERBS."
@@ -1911,10 +1715,6 @@
       [
         "alternation",
         "prepositionalPassive"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence is constructed and not in Levin's §5.2, whose examples use sleep and appear; talk is a §37.5 TALK VERB (the prior Lean data file classed it 37.3 manner of speaking)."
@@ -1951,10 +1751,6 @@
       [
         "alternation",
         "swarm"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Locative variant / with variant. Corrected from the past-tense paraphrase of the prior Lean data file, which also classed swarm as 47.1; Levin's SWARM VERBS are §47.5.1."
@@ -1991,10 +1787,6 @@
       [
         "alternation",
         "swarm"
-      ],
-      [
-        "participates",
-        "true"
       ]
     ],
     "comment": "Sentence pair is constructed; crawl's participation in the swarm alternation is grounded in the (138f) list (the prior Lean data file classed this use as 51.3 manner of motion)."

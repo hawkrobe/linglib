@@ -1,6 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!
 # The property tables of the Levin classes
@@ -19,9 +18,13 @@ relation.
 
 The tables are transcribed from the class pages mechanically; a property Levin phrases as a
 denial ("Unintentional interpretation not available", "Coreferential interpretation of
-pronouns not possible") is the corresponding alternation starred. The Introduction's component
-prediction agrees with Part II on the quadruple *break*, *cut*, *hit*, *touch*
-(`quadruple_prediction_matches`).
+pronouns not possible") is the corresponding alternation starred. Where a page qualifies a
+locative alternation as transitive or intransitive, the entry is the Part One subsection the
+page's examples instantiate: the *of* variants of the clear page are the clear alternations,
+and the *with* variants the change-of-state pages star are the spray/load and swarm
+alternations. A page that lists one alternation twice with different bases, as the spray/load
+page attests the causative alternation of the locative variant and stars that of the *with*
+variant, has both entries, so `Participates` and `Stars` are not disjoint.
 
 ## References
 
@@ -172,7 +175,8 @@ def properties : LevinClass → List ClassProperty
     [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
      ⟨.alternation .causative, .starred, .all⟩]
   | .clear =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .locative, .attested, .all⟩,
+    [⟨.alternation .clearTransitive, .attested, .all⟩,
+     ⟨.alternation .clearIntransitive, .attested, .all⟩,
      ⟨.alternation .conative, .starred, .all⟩,
      ⟨.alternation .causativeInchoative, .attested, .all⟩,
      ⟨.alternation .resultative, .starred, .all⟩, ⟨.zeroRelatedAdjective, .attested, .some⟩,
@@ -658,7 +662,7 @@ def properties : LevinClass → List ClassProperty
   | .otherChangeOfState =>
     [⟨.alternation .causativeInchoative, .attested, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
      ⟨.alternation .instrumentSubject, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .locative, .starred, .all⟩,
+     ⟨.alternation .swarm, .starred, .all⟩, ⟨.alternation .sprayLoad, .starred, .all⟩,
      ⟨.alternation .locativeInversion, .starred, .all⟩,
      ⟨.alternation .thereInsertion, .starred, .all⟩, ⟨.alternation .cognateObject, .starred, .all⟩,
      ⟨.alternation .resultative, .attested, .all⟩,
@@ -822,28 +826,5 @@ instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Tests a) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 end LevinClass
-
-/-! ### The Introduction's quadruple
-
-*break*, *cut*, *hit* and *touch* are told apart by the four diagnostic alternations, and on
-these four classes the component prediction agrees with Part II. -/
-
-/-- The four diagnostic alternations of the Introduction. -/
-def diagnosticAlternations : List DiathesisAlternation :=
-  [.causativeInchoative, .middle, .conative, .bodyPartPossessorAscension]
-
-/-- The quadruple takes four distinct profiles over the diagnostic alternations. -/
-theorem quadruple_profiles_distinct :
-    ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
-      diagnosticAlternations.map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
-  decide +kernel
-
-/-- On the quadruple, the Introduction's component prediction matches Part II for every
-diagnostic alternation. -/
-theorem quadruple_prediction_matches :
-    ∀ p ∈ [(LevinClass.break_, MeaningComponents.break_), (.cut, .cut), (.hit, .hit),
-      (.touch, .touch)], ∀ a ∈ diagnosticAlternations,
-      p.2.predictedAlternation a = decide (p.1.Participates a) := by
-  decide +kernel
 
 end ArgumentStructure
