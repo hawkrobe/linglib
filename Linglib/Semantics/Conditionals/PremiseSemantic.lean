@@ -1,77 +1,34 @@
-import Linglib.Semantics.Conditionals.Counterfactual.Lumping
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 
 /-!
-# Kratzer 2012 Premise-Semantic Counterfactuals
+# Premise-semantic counterfactuals
 
-[kratzer-2012]
+This file defines the premise semantics for counterfactuals of [kratzer-2012] §5.4.4. A
+counterfactual is evaluated at a world against a Base Set of true propositions characterizing
+it. Its Crucial Set for an antecedent consists of the sets of Base-Set propositions that, together
+with the antecedent, are consistent and closed under lumping at the world. *If p, would q* is true
+when every member of the Crucial Set extends to one from which `q` follows, and *if p, might q*
+when some member has every extension compatible with `q`.
 
-Truth conditions for "would"- and "might"-counterfactuals from
-[kratzer-2012] §5.4.4 ("The formal definitions", p. 132–133),
-built on top of the lumping API in `Conditional.Counterfactual`.
+## Main definitions
 
-## §5.4.4 in brief
+* `PremiseSemantic.CrucialSet`: the Crucial Set of a Base Set and an antecedent.
+* `PremiseSemantic.wouldCF`, `PremiseSemantic.mightCF`: the *would* and *might* counterfactuals.
 
-A counterfactual `p □→ q` is evaluated at a world `w` against a
-*Base Set* `Fw : Set (Set S)` — a privileged collection of true
-propositions characterizing the facts of `w`. Kratzer lists five
-admissibility conditions for `Fw` (truth, persistence, cognitive
-viability, non-redundancy, completeness — pp. 132–133); we treat `Fw`
-as an input parameter here and leave admissibility checks for
-downstream consumers (cognitive viability is, in Kratzer's own words,
-"the big unknown").
+## Implementation notes
 
-Pairing a Base Set `Fw` with a proposition `p`, the **Crucial Set**
-`F_{w,p}` is the set of subsets `A ⊆ Fw ∪ {p}` satisfying:
+The Base Set is a parameter. Kratzer's admissibility conditions on it (pp. 132–133) are not
+enforced, one of them, cognitive viability, being in her words "the big unknown" (p. 133).
 
-> (i)   `A` is consistent
-> (ii)  `p ∈ A`
-> (iii) `A` is closed under lumping in `w`: for all `q ∈ A` and
->       `r ∈ Fw`, if `q` lumps `r` in `w`, then `r ∈ A`.
+## References
 
-The truth conditions are then:
-
-- **`p □→ q`** is true at `w` iff for every `A ∈ F_{w,p}` there is
-  a superset `A' ∈ F_{w,p}` such that `A'` logically implies `q`
-  (i.e., `Follows A' q` in the [kratzer-2012] §5.3.3 sense).
-- **`p ◇→ q`** is true at `w` iff there is an `A ∈ F_{w,p}` such
-  that `q` is compatible with all its supersets in `F_{w,p}`.
-
-## Architectural placement
-
-This is the **first** formal consumer of the `Lumps` API in
-`Semantics/Conditionals/Counterfactual/Lumping.lean` — closing the orphan-API problem
-flagged in earlier reviews. The crucial-set closure condition
-(condition (iii)) literally calls `Lumps q r w`, so the operator
-cannot exist without the lumping API; conversely, the API earns its
-keep by enabling this operator.
-
-This is also the **fourth** counterfactual operator in linglib,
-joining `closestImp` (Lewis/Stalnaker minimal-change, in
-`Semantics/Conditionals/Basic.lean`), `selectionalCounterfactual`
-(Stalnaker selection + supervaluation), and `homogeneityCounterfactual`
-(von Fintel/Križ presupposition), in `Semantics/Conditionals/Counterfactual.lean`. Unlike those
-three, the lumping CF does NOT use `SimilarityOrdering` /
-`closestWorlds`; it works directly on premise sets.
-
-## What this file does NOT do
-
-- **Admissibility checks for Base Sets** (§5.4.4 conditions (ii)–(v))
-  are not formalized. Cognitive Viability in particular is, per
-  [kratzer-2012] p. 133, "the big unknown" — a question for
-  empirical cognitive science, not formal semantics.
-- **Testing on the [ciardelli-zhang-champollion-2018] switches
-  scenario**: a worlds-only switches model is too coarse for
-  non-trivial lumping behaviour; the operator is genuinely tested in
-  partial-situation models where lumping closure has bite (see the
-  Paula apple-buying instantiation under [kratzer-2012] §5.4.3,
-  formalized in a sibling `Studies/` file).
-- **Predicting the falsified `¬(A ∧ B) > OFF` judgment** of
-  [ciardelli-zhang-champollion-2018] from this operator: open
-  question raised by that paper. The result that drops out of a
-  worlds-only switches lift (lumping CF predicts `¬(A ∧ B) > OFF`
-  false, but also predicts `aDn > OFF` false — a failure mode disjoint
-  from minimal-change semantics) is documented separately.
+* [A. Kratzer, *Modals and Conditionals* (2012)][kratzer-2012]
 -/
+
+@[expose] public section
+
 
 namespace Conditional.PremiseSemantic
 
@@ -80,30 +37,21 @@ open _root_.Conditional.Counterfactual (Lumps IsConsistent IsCompatible Follows
 
 variable {S : Type*} [Preorder S]
 
-/-- **Predicate version of the Crucial Set membership condition**
-    ([kratzer-2012] §5.4.4, p. 133): a subset `A` of `Fw ∪ {p}`
-    counts as a Crucial Set member at world `w` iff it contains the
-    antecedent, is consistent, and is closed under lumping in `w`.
-
-    Bundled as a `structure` (mirrors mathlib's `IsLUB`/`IsGreatest`
-    pattern) so that consumers project out clauses by name (`hA.consistent`,
-    `hA.lumping_closed`) rather than by `.2.2.1`-style chains. -/
+/-- A subset `A` of `Fw ∪ {p}` belongs to the Crucial Set at `w` when it contains the antecedent, is
+consistent, and is closed under lumping at `w` ([kratzer-2012] §5.4.4, p. 133). -/
 structure IsCrucialSet (Fw : Set (Set S)) (w : S)
     (p : Set S) (A : Set (Set S)) : Prop where
-  /-- (Carrier) `A` is a subset of `Fw ∪ {p}`. -/
+  /-- `A` is a subset of `Fw ∪ {p}`. -/
   subset_insert : A ⊆ insert p Fw
-  /-- (ii) The antecedent is in `A`. -/
+  /-- The antecedent is in `A`. -/
   antecedent_mem : p ∈ A
-  /-- (i) `A` is consistent (some world satisfies all of its members). -/
+  /-- Some world satisfies every member of `A`. -/
   consistent : IsConsistent A
-  /-- (iii) `A` is closed under lumping in `w`: every Base-Set member
-      lumped at `w` by something already in `A` must be in `A`. -/
+  /-- Every Base-Set proposition lumped at `w` by a member of `A` is in `A`. -/
   lumping_closed : ∀ q ∈ A, ∀ r ∈ Fw, Lumps q r w → r ∈ A
 
-/-- **Crucial Set** ([kratzer-2012] §5.4.4, p. 133): for any world
-    `w`, Base Set `Fw`, and antecedent `p`, the set of subsets of
-    `Fw ∪ {p}` that contain `p`, are consistent, and are closed under
-    lumping at `w`. -/
+/-- The Crucial Set of the Base Set `Fw` and the antecedent `p` at `w` ([kratzer-2012] §5.4.4,
+p. 133). -/
 def CrucialSet (Fw : Set (Set S)) (w : S) (p : Set S) :
     Set (Set (Set S)) :=
   { A | IsCrucialSet Fw w p A }
@@ -112,53 +60,38 @@ def CrucialSet (Fw : Set (Set S)) (w : S) (p : Set S) :
     {p : Set S} {A : Set (Set S)} :
     A ∈ CrucialSet Fw w p ↔ IsCrucialSet Fw w p A := Iff.rfl
 
-/-- **"Would"-counterfactual** ([kratzer-2012] §5.4.4, p. 133):
-    given world `w` and admissible Base Set `Fw`, `p □→ q` is true at
-    `w` iff for every `A` in the Crucial Set `F_{w,p}`, there exists a
-    superset `A' ∈ F_{w,p}` such that `A'` logically implies `q`.
-
-    The hypothesis `Fw` is the Base Set (assumed admissible by the
-    caller; admissibility is not checked here, see file-level docstring).
-
-    Note the quantifier alternation `∀ A ∈ F_{w,p}, ∃ A' ⊇ A`: this is
-    *not* the maximization-of-consistency pattern that
-    [ciardelli-zhang-champollion-2018] §1.2 falsifies for ordering
-    semantics — whether the lumping CF inherits the falsification on
-    the switches scenario is open. -/
+/-- The *would*-counterfactual *if p, would q* is true at `w` when every member of the Crucial Set
+has an extension in the Crucial Set from which `q` follows ([kratzer-2012] §5.4.4, p. 133). -/
 def wouldCF (Fw : Set (Set S)) (w : S) (p q : Set S) :
     Prop :=
   ∀ A ∈ CrucialSet Fw w p, ∃ A' ∈ CrucialSet Fw w p, A ⊆ A' ∧ Follows A' q
 
-/-- **"Might"-counterfactual** ([kratzer-2012] §5.4.4, p. 133):
-    `p ◇→ q` is true at `w` iff there is an `A` in `F_{w,p}` such that
-    `q` is compatible with every superset of `A` in `F_{w,p}`. -/
+/-- The *might*-counterfactual *if p, might q* is true at `w` when some member of the Crucial
+Set has every extension in the Crucial Set compatible with `q` ([kratzer-2012] §5.4.4,
+p. 133). -/
 def mightCF (Fw : Set (Set S)) (w : S) (p q : Set S) :
     Prop :=
   ∃ A ∈ CrucialSet Fw w p,
     ∀ A' ∈ CrucialSet Fw w p, A ⊆ A' → IsCompatible q A'
 
-/-! ## Basic API -/
+/-! ### Basic API -/
 
-/-- **Vacuous truth case**: if the Crucial Set is empty (e.g., the
-    antecedent is incompatible with every lumping-closed extension of
-    `Fw`), the would-counterfactual is vacuously true. -/
+/-- With an empty Crucial Set the *would*-counterfactual is vacuously true. -/
 theorem wouldCF_of_crucialSet_empty {Fw : Set (Set S)} {w : S}
     {p q : Set S} (h : CrucialSet Fw w p = ∅) :
     wouldCF Fw w p q := by
   intro A hA
   exact ((Set.mem_empty_iff_false A).mp (h ▸ hA)).elim
 
-/-- **Vacuous failure case**: if the Crucial Set is empty, the
-    might-counterfactual is vacuously false. -/
+/-- With an empty Crucial Set the *might*-counterfactual is false. -/
 theorem not_mightCF_of_crucialSet_empty {Fw : Set (Set S)}
     {w : S} {p q : Set S} (h : CrucialSet Fw w p = ∅) :
     ¬ mightCF Fw w p q := by
   rintro ⟨A, hA, _⟩
   exact (Set.mem_empty_iff_false A).mp (h ▸ hA)
 
-/-- **Might/would duality** ([kratzer-2012] p. 125): a might-counterfactual is the negation
-    of the would-counterfactual with the complementary consequent, since compatibility with a
-    premise set is the failure of the complement to follow from it. -/
+/-- *If p, might q* is the negation of *if p, would not q* ([kratzer-2012] p. 125), since
+compatibility with a premise set is the failure of the complement to follow from it. -/
 theorem mightCF_iff_not_wouldCF_compl {Fw : Set (Set S)} {w : S}
     {p q : Set S} :
     mightCF Fw w p q ↔ ¬ wouldCF Fw w p qᶜ := by

@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.Trivalent
-import Mathlib.Data.Set.Basic
+module
+
+public import Linglib.Core.Data.Trivalent
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Trivalent propositions
@@ -20,6 +22,9 @@ structure pointwise (`⊓`/`⊔` via `Pi.instLattice`).
 
 [beaver-krahmer-2001] [kriz-2016]
 -/
+
+@[expose] public section
+
 
 namespace Trivalent
 

@@ -1,6 +1,8 @@
-import Linglib.Semantics.Conditionals.Counterfactual
-import Mathlib.Tactic.NormNum
-import Mathlib.Data.Rat.Defs
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Data.Rat.Defs
 
 /-!
 # Ciardelli, Zhang and Champollion 2018: Two switches in the theory of counterfactuals
@@ -35,12 +37,15 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 * [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
 -/
 
+@[expose] public section
+
+
 namespace CiardelliZhangChampollion2018
 
 open Conditional (SimilarityOrdering closestImp mem_closestImp_union)
 open Conditional.Counterfactual
   (selectionalCounterfactual selectionalCounterfactual_eq_true_iff homogeneityCounterfactual
-   PresupStatus PresupResult)
+   eval_homogeneityCounterfactual)
 
 /-! ### The switches scenario (Fig. 1) -/
 
@@ -118,8 +123,8 @@ theorem selectional_notBothUp_off_at_uu :
 /-- The homogeneity counterfactual makes the same prediction, with its presupposition satisfied.
 -/
 theorem homogeneity_notBothUp_off_at_uu :
-    homogeneityCounterfactual hammingSim notBothUp lightOff .uu =
-      { presupposition := .satisfied, assertion := some true } := by
+    (homogeneityCounterfactual hammingSim notBothUp lightOff).eval .uu = .true := by
+  rw [eval_homogeneityCounterfactual]
   decide
 
 /-! ### Minimal change forces the equivalence (§1.2) -/
@@ -131,13 +136,6 @@ theorem minimal_change_forces_notBothUp (sim : SimilarityOrdering World) (w₀ :
     {C : Set World} (h_a : w₀ ∈ closestImp sim aDn C) (h_b : w₀ ∈ closestImp sim bDn C) :
     w₀ ∈ closestImp sim notBothUp C :=
   aOrBdn_eq_notBothUp ▸ mem_closestImp_union h_a h_b
-
-private theorem homogeneity_eq_true_iff (sim : SimilarityOrdering World) (A C : Set World)
-    [DecidablePred (· ∈ A)] [DecidablePred (· ∈ C)] (w : World) :
-    homogeneityCounterfactual sim A C w =
-        { presupposition := .satisfied, assertion := some true } ↔ w ∈ closestImp sim A C := by
-  unfold homogeneityCounterfactual
-  split_ifs <;> simp_all
 
 /-- The selectional counterfactual's true verdict is the same quantifier. -/
 theorem selectional_minimal_change_forces_notBothUp_off
@@ -152,14 +150,11 @@ theorem selectional_minimal_change_forces_notBothUp_off
 same quantifier. -/
 theorem homogeneity_minimal_change_forces_notBothUp_off
     (sim : SimilarityOrdering World) (w₀ : World)
-    (h_a : homogeneityCounterfactual sim aDn lightOff w₀ =
-      { presupposition := .satisfied, assertion := some true })
-    (h_b : homogeneityCounterfactual sim bDn lightOff w₀ =
-      { presupposition := .satisfied, assertion := some true }) :
-    homogeneityCounterfactual sim notBothUp lightOff w₀ =
-      { presupposition := .satisfied, assertion := some true } := by
-  rw [homogeneity_eq_true_iff] at *
-  exact minimal_change_forces_notBothUp sim w₀ h_a h_b
+    (h_a : (homogeneityCounterfactual sim aDn lightOff).eval w₀ = .true)
+    (h_b : (homogeneityCounterfactual sim bDn lightOff).eval w₀ = .true) :
+    (homogeneityCounterfactual sim notBothUp lightOff).eval w₀ = .true := by
+  simp only [eval_homogeneityCounterfactual] at *
+  exact selectional_minimal_change_forces_notBothUp_off sim w₀ h_a h_b
 
 /-! ### The main experiment (Table 3) -/
 

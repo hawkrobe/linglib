@@ -1,5 +1,7 @@
-import Linglib.Logic.Trivalent.Prop3
-import Mathlib.Data.Part
+module
+
+public import Linglib.Logic.Trivalent.Prop3
+public import Mathlib.Data.Part
 
 /-!
 # Partial Propositions
@@ -41,6 +43,9 @@ idiom in logic-heavy files such as `Mathlib/Order/Filter/Basic.lean`.
   `PartialProp` at the type level; unifying would let the connective zoo lift
   to arbitrary at-issue carriers.
 -/
+
+@[expose] public section
+
 
 namespace Presupposition
 

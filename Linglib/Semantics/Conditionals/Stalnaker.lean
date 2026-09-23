@@ -7,28 +7,26 @@ public import Linglib.Semantics.Conditionals.SimilarityOrdering
 public import Linglib.Discourse.CommonGround
 
 /-!
-# Stalnaker's selection-function conditionals
+# Indicative conditionals in a context
 
-This file adds to the selection conditional of `Conditionals/SelectionFunction.lean` the
-contextual machinery of [stalnaker-1975] and the passage from selection functions back to
-similarity orderings.
+This file defines the contextual constraint of [stalnaker-1975] on selection functions. The
+indicative and the subjunctive conditional share the truth condition of the selection
+conditional, and an indicative requires its selection function to stay inside the context set
+whenever the antecedent is compatible with it, a requirement the subjunctive suspends. Within a
+context meeting the constraint the indicative conditional holds wherever the material conditional
+holds throughout the context, without being identified with it.
 
-[stalnaker-1975] argues that the indicative/subjunctive distinction is pragmatic: both moods
-share the selection conditional's truth condition, and an indicative requires the selection
-function to obey the **pragmatic constraint** (`pragmaticConstraint`), staying inside the context
-set when it can, which a subjunctive suspends (`Mood.admissibleSelection`). Within a context the
-indicative then agrees with the material conditional (`mem_selectionConditional_of_forall_mem`),
-without being identified with it. `SelectionFunction.restrict` restricts a selection function to
-a context, obeying the constraint (`pragmaticConstraint_restrict`).
+## Main definitions
 
-A selection function induces a pairwise preference among worlds; when it is transitive
-(`SelectionFunction.isCoherent`) it is a similarity ordering (`coherentSelectionToSimilarity`).
+* `pragmaticConstraint`: the selection function stays in the context set when it can.
+* `SelectionFunction.restrict`: a selection function restricted to a context.
+* `Mood.admissibleSelection`: the selection functions each mood admits.
 
 ## References
 
-* [stalnaker-1968]
-* [stalnaker-1975]
-* [stalnaker-1981]
+* [R. C. Stalnaker, *Indicative conditionals* (1975)][stalnaker-1975]
+* [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
+* [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
 -/
 
 @[expose] public section
@@ -40,47 +38,19 @@ open Mood (Grammatical)
 open _root_.Conditional (SelectionFunction selectionPrefers)
 open _root_.Conditional (SimilarityOrdering)
 
-/-! ## Coherent selection ⇒ similarity ordering -/
+/-! ### The pragmatic constraint -/
 
-/-- **Coherent selection functions induce similarity orderings.**
-
-Given a coherent selection function, its pairwise preference relation
-is a valid `SimilarityOrdering`: reflexive (from `success`) and
-transitive (from coherence). -/
-def coherentSelectionToSimilarity {W : Type*} [DecidableEq W]
-    (s : SelectionFunction W)
-    (h_coherent : s.isCoherent) : SimilarityOrdering W where
-  closer w₀ w₁ w₂ := selectionPrefers s w₀ w₁ w₂
-  closer_refl w₀ w := by
-    show s.sel w₀ {w, w} = w
-    have h_eq : ({w, w} : Set W) = {w} := Set.insert_eq_of_mem (Set.mem_singleton w)
-    rw [h_eq]
-    exact Set.mem_singleton_iff.mp (s.inclusion w₀ {w} ⟨w, Set.mem_singleton w⟩)
-  closer_trans := h_coherent
-  decClose w₀ w₁ w₂ := by exact inferInstanceAs (Decidable (s.sel w₀ {w₁, w₂} = w₁))
-
-/-! ## The pragmatic constraint ([stalnaker-1975]) -/
-
-/-- **Pragmatic constraint on selection** ([stalnaker-1975] §III).
-
-If the conditional is being evaluated at a context-set world `w`, and
-some antecedent-world is also in the context set, then the selected
-world must be in the context set. Equivalently: context-set worlds are
-closer to each other than to non-context-set worlds whenever a
-context-set option is available.
-
-The central new contribution of [stalnaker-1975]: it makes
-indicative inference forms behave the way they do, without changing
-the semantic clause. -/
+/-- The pragmatic constraint of [stalnaker-1975] on a selection function relative to a context set
+`C`. At a world of `C`, an antecedent true somewhere in `C` selects a world of `C`, which
+Stalnaker glosses as the worlds of the context set being closer to each other than to any world
+outside it. -/
 def pragmaticConstraint {W : Type*} (s : SelectionFunction W)
     (C : Set W) : Prop :=
   ∀ w (A : Set W), w ∈ C → (∃ w' ∈ A, w' ∈ C) → s.sel w A ∈ C
 
 open Classical in
-/-- The restriction of a selection function to a context: at a context world, an antecedent
-compatible with the context selects among the context's antecedent-worlds; otherwise
-selection is as before. The restriction obeys the pragmatic constraint of [stalnaker-1975]
-for the context. -/
+/-- The restriction of a selection function to a context, which at a context world selects among
+the context's antecedent-worlds when there are any and otherwise selects as before. -/
 noncomputable def SelectionFunction.restrict {W : Type*} (s : SelectionFunction W)
     (C : Set W) : SelectionFunction W where
   sel w A := if w ∈ C ∧ (A ∩ C).Nonempty then s.sel w (A ∩ C) else s.sel w A
@@ -110,42 +80,19 @@ theorem pragmaticConstraint_restrict {W : Type*} (s : SelectionFunction W) (C : 
   rw [SelectionFunction.restrict_sel_of_mem s C hw hAC]
   exact (s.inclusion w (A ∩ C) hAC).2
 
-/-- **Mood-indexed admissibility on selection functions**
-([stalnaker-1975]).
-
-Stalnaker's mood distinction lives here, not in the truth-conditional
-clause:
-- `.indicative` requires the selection function to obey
-  `pragmaticConstraint` on the context — the central
-  [stalnaker-1975] contribution.
-- `.subjunctive` imposes no such constraint; the selection function
-  may reach outside the context set, which is precisely what
-  subjunctive mood signals.
-
-This makes "indicative vs subjunctive" a property of the
-*selection-function / context pairing*, not a separate semantic
-operator. -/
+/-- The selection functions a mood admits in a context ([stalnaker-1975]). The indicative requires
+the pragmatic constraint and the subjunctive suspends it, so the moods differ in the pairing of
+selection function and context rather than in the truth condition. -/
 def Mood.admissibleSelection {W : Type*} (m : Grammatical) (s : SelectionFunction W)
     (C : Set W) : Prop :=
   match m with
   | .indicative  => pragmaticConstraint s C
   | .subjunctive => True
 
-/-- Indicative admissibility unfolds to the pragmatic constraint. -/
-theorem admissibleSelection_indicative {W : Type*} (s : SelectionFunction W)
-    (C : Set W) :
-    Mood.admissibleSelection .indicative s C = pragmaticConstraint s C := rfl
-
-/-- Subjunctive admissibility imposes no constraint. -/
-theorem admissibleSelection_subjunctive {W : Type*} (s : SelectionFunction W)
-    (C : Set W) :
-    Mood.admissibleSelection .subjunctive s C = True := rfl
-
-/-- **The indicative conditional within a context** ([stalnaker-1975] §IV): at a context world,
-for an antecedent compatible with the context and a selection function obeying the pragmatic
-constraint, the selection conditional holds whenever the material conditional holds throughout
-the context. One direction of the contextually mediated equivalence Stalnaker defends in place of
-identifying the indicative with the material conditional. -/
+/-- At a context world, for an antecedent compatible with the context and a selection function
+meeting the pragmatic constraint, the selection conditional holds whenever the material
+conditional holds throughout the context. This is one direction of the contextual equivalence
+of indicative and material conditionals that [stalnaker-1975] §IV defends. -/
 theorem mem_selectionConditional_of_forall_mem {W : Type*} (s : SelectionFunction W)
     {C p q : Set W} {w : W} (hw : w ∈ C) (hopen : ∃ w' ∈ p, w' ∈ C)
     (hC : pragmaticConstraint s C) (himp : ∀ w' ∈ C, w' ∈ p → w' ∈ q) :

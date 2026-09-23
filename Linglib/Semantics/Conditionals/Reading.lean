@@ -10,49 +10,37 @@ import Linglib.Semantics.Presupposition.Context
 /-!
 # Readings of a conditional
 
-This file defines the two readings of a conditional, hypothetical and premise, with the
-denotation of *if p, q* under each, the felicity condition each places on the antecedent, the
-entailment direction of each clause, and the markers that lexicalize the distinction.
-
-A conditional is read as *hypothetical* when its antecedent is supposed and left open, and as
-a *premise* conditional when the antecedent echoes prior discourse and is treated as
-established ([iatridou-1991], [haegeman-2003]). On the hypothetical reading *if p, q* denotes
-the conditional proposition of whatever operator the theory supplies; on the premise reading
-it asserts *q* with *p* presupposed, the *given that* paraphrase. The two agree wherever the
-antecedent holds and differ in what they make of the antecedent: the hypothetical reading puts
-it in a downward-entailing position and the premise reading in an upward-entailing one, the
-source of their opposite polarity-item profiles ([iatridou-1991]); the consequent is upward
-entailing on either reading. A premise conditional is felicitous once its antecedent
-has been committed to or is common ground, which is where its presupposition is satisfied, and
-a hypothetical one while the antecedent's polar question is open. Languages may lexicalize the
-split: Japanese *-ra* and German *falls* mark only hypothetical conditionals, *nara* and *wenn*
-mark either ([lassiter-2025]).
+This file defines the two readings of a conditional. A conditional is read as *hypothetical* when
+its antecedent is supposed and left open, and as a *premise* conditional when the antecedent
+echoes prior discourse and is treated as established ([iatridou-1991], [haegeman-2003]). On the
+hypothetical reading *if p, q* denotes the conditional proposition of whatever operator the
+theory supplies, and on the premise reading it asserts *q* with *p* presupposed, the *given
+that* paraphrase. The hypothetical antecedent is downward entailing and the premise antecedent
+upward entailing, the source of their opposite polarity-item profiles. Languages may lexicalize
+the split, as Japanese *-ra* and German *falls* mark only hypothetical conditionals
+([lassiter-2025]).
 
 ## Main definitions
 
-* `Reading`: the hypothetical and premise readings.
-* `Reading.denote`: the denotation of *if p, q* under a reading, a partial proposition.
-* `Conditional`: a conditional under a reading; `⟦c⟧` is its denotation.
-* `Reading.Felicitous`: the felicity condition a reading places on the antecedent, relative
-  to a commitment Table; `felicitous_iff_of_mem_commonGround` and
-  `felicitous_iff_of_not_decidedBy` read the reading off the antecedent's discourse status.
-* `Clause`, `Reading.clausePolarity`: the entailment direction of each clause under a reading.
-* `Marker`: a conditional marker with the readings it can mark; per-language entries live in
-  `Fragments/{Language}/Conditional.lean`.
+* `Conditional.Reading`: the hypothetical and premise readings.
+* `Conditional.Reading.denote`: the denotation of *if p, q* under a reading.
+* `Conditional.Reading.Felicitous`: the discourse condition a reading places on the antecedent.
+* `Conditional.Reading.clausePolarity`: the entailment direction of each clause.
+* `Conditional.Marker`: a conditional marker with the readings it can mark.
 
 ## References
 
-* [iatridou-1991]
-* [haegeman-2003]
-* [lassiter-2025]
+* [S. Iatridou, *Topics in Conditionals* (1991)][iatridou-1991]
+* [L. Haegeman, *Conditional clauses: External and internal syntax* (2003)][haegeman-2003]
+* [D. Lassiter, *Sorting Out Left-Nested Conditionals* (2025)][lassiter-2025]
 -/
 
 namespace Conditional
 
 open Commitment NaturalLogic Presupposition Semantics
 
-/-- The readings of a conditional: the antecedent is supposed and left open, or echoes prior
-discourse and is treated as established. -/
+/-- The readings of a conditional, on which the antecedent is supposed and left open or echoes
+prior discourse and is treated as established. -/
 inductive Reading
   | hypothetical
   | premise
@@ -77,8 +65,8 @@ section Denotation
 variable {W : Type*} (cond : Set W → Set W → Set W) (p q : Set W)
 
 /-- The denotation of *if p, q* under a reading, for a conditional operator `cond` on total
-propositions: the hypothetical reading is the conditional `cond p q`, the premise reading
-asserts `q` with `p` presupposed. -/
+propositions. The hypothetical reading is `cond p q`, and the premise reading asserts `q` with
+`p` presupposed. -/
 def denote : Reading → PartialProp W
   | .hypothetical => .ofProp (· ∈ cond p q)
   | .premise => .condAssert (· ∈ p) (· ∈ q)
@@ -93,7 +81,7 @@ variable {cond p q} {w : W}
     (premise.denote cond p q).holds w ↔ w ∈ p ∧ w ∈ q := Iff.rfl
 
 /-- Where the antecedent holds, the hypothetical reading of the material conditional and the
-premise reading agree; the readings differ only off the presupposition. -/
+premise reading agree. -/
 theorem holds_denote_materialImp_iff (hw : w ∈ p) :
     (hypothetical.denote materialImp p q).holds w ↔
       (premise.denote materialImp p q).holds w := by
@@ -124,9 +112,9 @@ section Felicity
 
 variable {A W : Type*} (K : Table A W) (p : Set W)
 
-/-- A reading is felicitous for the antecedent `p` when `p` meets its discourse condition: a
-hypothetical conditional leaves `p` undecided in the common ground, a premise conditional needs
-`p` echoed, committed to by some participant or already common ground. -/
+/-- A reading is felicitous for the antecedent `p` when `p` meets its discourse condition. A
+hypothetical conditional leaves `p` undecided in the common ground, and a premise conditional
+needs `p` committed to by some participant or already in the common ground. -/
 def Felicitous : Reading → Prop
   | .hypothetical => ¬ (Question.polar p).DecidedBy K.commonGround
   | .premise => (∃ a, p ∈ K.discourseCommitments a) ∨ p ∈ K.commonGround
@@ -172,10 +160,9 @@ theorem presupSatisfied_denote_premise_of_mem_commonGround (cond : Set W → Set
 
 end Felicity
 
-/-- The entailment direction of a clause under a reading: the antecedent is downward entailing
-on the hypothetical reading (`antitone_truthSet_hypothetical`) and upward entailing on the
-premise reading (`monotone_truthSet_premise`), the consequent upward entailing on either
-(`monotone_truthSet_consequent`). -/
+/-- The entailment direction of a clause under a reading. The antecedent is downward entailing on
+the hypothetical reading and upward entailing on the premise reading, and the consequent is
+upward entailing on either. -/
 def clausePolarity : Reading → Clause → ContextPolarity
   | .hypothetical, .antecedent => .downward
   | _, _ => .upward
@@ -209,9 +196,9 @@ instance : Denotes (Conditional W cond) (PartialProp W) := ⟨denote⟩
 @[simp] theorem denote_mk (p q : Set W) (r : Reading) :
     ⟦(⟨p, q, r⟩ : Conditional W cond)⟧ = r.denote cond p q := rfl
 
-/-- A conditional marker is a form together with the readings it can mark: Japanese *-ra* and
-German *falls* mark only hypothetical conditionals, *nara*, *wenn*, and English *if* mark either
-([lassiter-2025]). Per-language entries live in `Fragments/{Language}/Conditional.lean`. -/
+/-- A conditional marker is a form together with the readings it can mark. Japanese *-ra* and German
+*falls* mark only hypothetical conditionals, and *nara*, *wenn* and English *if* mark either
+([lassiter-2025]). -/
 structure Marker where
   /-- The marker's citation form. -/
   form : String

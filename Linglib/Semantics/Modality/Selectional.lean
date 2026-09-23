@@ -23,10 +23,9 @@ selection function `s` is supplied by context and `f` is the relevant set of his
 alternatives. Cariani and Santorio argue that an adequate theory of *will* must meet three
 constraints. *Will* has modal character: it takes scope, interacts with negation and
 quantifiers, and embeds under attitudes. *Will* is scopeless: in matrix uses `will ¬A` and
-`¬ will A` are equivalent (`negation_swap`), which universal quantification over a non-trivial
-modal base cannot deliver (`universal_negation_swap_fails`). And a sincere assertion of `will A`
-is licensed by ordinary, non-extreme credence in `A` (`cognitive_role`), where a universal
-reading collapses the credence to 0 or 1.
+`¬ will A` are equivalent, which universal quantification over a non-trivial modal base cannot
+deliver. And a sincere assertion of `will A` is licensed by ordinary, non-extreme credence in
+`A`, where a universal reading collapses the credence to 0 or 1.
 
 ## Main declarations
 
@@ -84,21 +83,20 @@ instance willSem_decidable (s : SelectionFunction W) (A : W → Prop)
 /-! ### Scopelessness, CEM, and unembedded collapse -/
 
 /-- Under the selectional semantics *will* commutes with negation, `will ¬A ↔ ¬ will A` (Negation
-Swap). It derives from `Conditional.SelectionFunction.sel_neg_swap`, whose source is the
-single-valuedness of selection, since the selected world either satisfies `A` or does not. -/
+Swap), by the single-valuedness of selection: the selected world either satisfies `A` or does
+not. -/
 theorem negation_swap (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) (w : W) :
     willSem s (fun w' ↦ ¬ A w') f w ↔ ¬ willSem s A f w :=
-  s.sel_neg_swap A f w
+  Iff.rfl
 
-/-- `will A ∨ will ¬A` holds at every point of evaluation (Will Excluded Middle). It derives from
-`Conditional.SelectionFunction.sel_em`, since `s.sel w f` is a single world, on which `A` is either
-true or false. This is the selectional analogue of Conditional Excluded Middle for Stalnaker
-counterfactuals, with the same source in `sel_em`. -/
+/-- `will A ∨ will ¬A` holds at every point of evaluation (Will Excluded Middle), since the selected
+world `s.sel w f` is a single world at which `A` is either true or false. It is the selectional
+analogue of Conditional Excluded Middle for Stalnaker's conditional. -/
 theorem will_excluded_middle (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) (w : W) :
     willSem s A f w ∨ willSem s (fun w' ↦ ¬ A w') f w :=
-  s.sel_em A f w
+  em _
 
 /-- When the evaluation world is itself in the modal parameter, Centering forces the selected world
 to be `w`, so `will A` reduces to `A w`. This explains the apparent factivity of unembedded
@@ -112,11 +110,8 @@ theorem unembedded_collapse (s : SelectionFunction W) (A : W → Prop)
 
 /-! ### Content transparency
 
-The substantive transparency claim of [cariani-santorio-2018]
-§8.1 footnote 30: as a *proposition* (set of worlds), `‖will A‖` is
-not just `‖A‖` — they may diverge outside the modal parameter. But
-*restricted to the modal parameter*, they agree. This is the
-content-level fact from which the cognitive-role prediction follows. -/
+As propositions, `will A` and `A` may differ outside the modal parameter but agree on it
+([cariani-santorio-2018] §8.1), the fact from which the prediction about credence follows. -/
 
 /-- On the modal parameter `f`, `will A` and `A` have the same truth value at each world, a
 pointwise consequence of Centering (content transparency). -/
@@ -143,9 +138,8 @@ theorem will_or_eq_will_or_will_on_modalParam (s : SelectionFunction W)
   unfold willSem
   exact Iff.rfl
 
-/-- As propositions, the sets of worlds of `will A` and of `A` coincide on the modal parameter `f`.
-The cognitive-role argument hinges on this equality of truth sets restricted to `f`, and not just on
-pointwise truth, since it is what underwrites `cognitive_role`. -/
+/-- As propositions, `will A` and `A` coincide on the modal parameter `f`, the equality of truth
+sets that underwrites `cognitive_role`. -/
 theorem will_inter_modalParam_eq (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) :
     {w | willSem s A f w} ∩ f = {w | A w} ∩ f := by
@@ -168,9 +162,8 @@ theorem will_and_inter_modalParam_eq (s : SelectionFunction W)
   · exact fun ⟨⟨hA, hB⟩, hw⟩ ↦ ⟨⟨hA, hB⟩, hw⟩
   · exact fun ⟨⟨hA, hB⟩, hw⟩ ↦ ⟨⟨hA, hB⟩, hw⟩
 
-/-- On `f`, the truth set of `will (A ∨ B)` is the union of the truth sets of `will A` and `will B`.
-Selectional *will* thus distributes over disjunction at the level of sets, a substantively stronger
-claim than the universal account allows. -/
+/-- On `f`, the truth set of `will (A ∨ B)` is the union of the truth sets of `will A` and
+`will B`. -/
 theorem will_or_union_modalParam_eq (s : SelectionFunction W)
     (A B : W → Prop) (f : Set W) :
     {w | willSem s (fun w' ↦ A w' ∨ B w') f w} ∩ f =
@@ -181,23 +174,19 @@ theorem will_or_union_modalParam_eq (s : SelectionFunction W)
   · exact fun ⟨h, hw⟩ ↦ ⟨h, hw⟩
   · exact fun ⟨h, hw⟩ ↦ ⟨h, hw⟩
 
-/-! ### Validity₂ (paper §6)
+/-! ### Validity
 
-[cariani-santorio-2018] distinguish *validity₁* (truth at the
-context of utterance) from *validity₂* (truth at *every* index
-⟨w, s, g⟩). The matrix scopelessness theorems are validity₁ claims;
-the more interesting ones are validity₂. -/
+[cariani-santorio-2018] §6 distinguish validity₁, truth at the index of the context of
+utterance, from validity₂, truth at every index. -/
 
 /-- A propositional schema is valid₂ when it holds at every triple of a selection function, a modal
 parameter and a world. -/
 def Valid2 (φ : SelectionFunction W → Set W → W → Prop) : Prop :=
   ∀ s f w, φ s f w
 
-/-- A propositional schema is valid₁ at a context, with its selection function `sCtx`, modal
-parameter `fCtx` and world `wCtx` fixed by the utterance, when it holds at that index. This is the
-weaker of the two notions of validity, and postsemantic indeterminacy lives here, since a schema can
-be valid₁ at every context without being valid₂. It is reducible so that it unfolds at use sites,
-`Valid1 φ sCtx fCtx wCtx` being just `φ sCtx fCtx wCtx`. -/
+/-- A propositional schema is valid₁ at a context when it holds at the index the utterance fixes,
+its selection function `sCtx`, modal parameter `fCtx` and world `wCtx`. A schema can be valid₁
+at every context without being valid₂, and postsemantic indeterminacy lives in the gap. -/
 @[reducible] def Valid1 (φ : SelectionFunction W → Set W → W → Prop)
     (sCtx : SelectionFunction W) (fCtx : Set W) (wCtx : W) : Prop :=
   φ sCtx fCtx wCtx
@@ -255,12 +244,10 @@ theorem willHistorical_reflexive_collapse {T : Type*}
   apply unembedded_collapse
   exact hRefl ⟨w, t⟩
 
-/-! ### The universal-quantifier foil
+/-! ### The universal foil
 
-The universal-quantifier reading is what [cariani-santorio-2018]
-argue against. Section 8.1's cognitive-role argument is decisive
-because the selectional account validates `μ(‖will A‖) = μ(A)` while
-the universal account collapses credence into a 0/1 step function. -/
+[cariani-santorio-2018] argue against the reading of *will* as universal quantification over the
+modal parameter, on which credence in *will A* can only be 0 or 1 (§8.1). -/
 
 /-- On the universal reading *will A* is true at `w` iff `A` holds at every world in the modal
 parameter. The world `w` itself is not used, so universal *will* is independent of the index. -/
@@ -281,23 +268,17 @@ theorem universal_negation_swap_fails {A : W → Prop} {f : Set W} {w : W}
     fun hAll ↦ hnA2 (hAll w₂ hw₂f)
   exact hLHS_false (hiff.mpr hRHS_true)
 
-/-! ### Cognitive role (paper §8.1)
+/-! ### Cognitive role
 
-The selectional analysis predicts `μ(‖will A‖_f) = μ(‖A‖_f)` whenever
-the credence `μ` is supported on the modal parameter `f`. This
-matches the empirically attested gradedness of *will*-credences and
-distinguishes selectional from universal accounts.
-
-The single `cognitive_role` theorem subsumes the conjunction,
-disjunction, and negation variants of earlier drafts: those are just
-this theorem applied to `A ∩ B`, `A ∪ B`, and `Aᶜ` — the Bool
-connectives are encoding set algebra. -/
+The selectional analysis predicts that credence in *will A* equals credence in `A` whenever the
+credence is concentrated on the modal parameter ([cariani-santorio-2018] §8.1), which the
+universal reading cannot deliver. Conjunctive, disjunctive and negated prejacents are instances
+at `A ∩ B`, `A ∪ B` and `Aᶜ`. -/
 
 /-- Under any credence `μ` concentrated on the modal parameter `f`, the measure of `will A`, the
-worlds whose selected world is in `A`, equals the measure of `A`. Assertion of `will A` is thus
-licensed by ordinary, non-extreme credence in `A`, where the universal reading forces the
-credence to be `0` or `1`. On `f` Centering gives `s.sel w f = w`, so the two sets agree almost
-everywhere. -/
+worlds whose selected world is in `A`, equals the measure of `A`. An assertion of `will A` is
+thus licensed by ordinary credence in `A`, where the universal reading forces the credence to be
+`0` or `1`. -/
 theorem cognitive_role [MeasurableSpace W] (s : SelectionFunction W) (A f : Set W)
     (μ : MeasureTheory.Measure W) (h_supp : μ fᶜ = 0) :
     μ {w | s.sel w f ∈ A} = μ A := by
@@ -306,7 +287,7 @@ theorem cognitive_role [MeasurableSpace W] (s : SelectionFunction W) (A f : Set 
   filter_upwards [hf] with w hw
   rw [s.centering w f hw]
 
-/-! ### Multi-premise validity (paper §6)
+/-! ### Validity of arguments
 
 [cariani-santorio-2018] §6 distinguishes Validity₁ (truth at the
 context) from Validity₂ (truth at every index). Both notions extend
@@ -338,7 +319,7 @@ theorem valid2Arg_implies_valid1Arg
   h sCtx fCtx wCtx
 
 /-- Modus ponens for selectional *will* is valid₂, so from `will A ↔ will B` and `will A` one may
-conclude `will B`. It illustrates the multi-premise notion of validity. -/
+conclude `will B`. -/
 theorem valid2_will_modus_ponens (A B : W → Prop) :
     Valid2Arg (W := W)
       [fun s f w ↦ willSem s A f w ↔ willSem s B f w,
@@ -351,34 +332,11 @@ theorem valid2_will_modus_ponens (A B : W → Prop) :
     hPrem (fun s f w ↦ willSem s A f w) (by simp)
   exact hIff.mp hA
 
-/-! ### *Would* as the past-tense form of *will*
-[cariani-santorio-2018] §5.3.2
+/-! ### *Would*
 
-[cariani-santorio-2018] §5.3.2 argues that *would* is not a separate
-modal operator but the past-tense morphological form of *will*. Both
-share the same selectional truth-condition; they differ only in the
-modal parameter `f` made available by tense — present *will*
-parameterises `f` to the historical alternatives at the speech time;
-past *would* parameterises `f` to a counterfactual base, typically
-supplied by an *if*-clause.
-
-Because `wouldSem = willSem` definitionally (`wouldSem_eq_willSem`),
-every theorem about *will* — Negation Swap, Will Excluded Middle,
-unembedded collapse, the cognitive-role prediction — transfers to
-*would* by rewriting with that identity, so no separate *would*
-lemmas are stated. -/
-
-/-- Selectional *would* is definitionally `willSem`. The past-tense morphology does not change the
-semantic clause, only which modal parameter the context supplies. -/
-def wouldSem (s : SelectionFunction W) (A : W → Prop)
-    (f : Set W) (w : W) : Prop :=
-  willSem s A f w
-
-/-- *would* and *will* have the same selectional truth condition, and differ only in the modal
-parameter `f` that the tense morpheme supplies. Every theorem about *will* transfers to *would* by
-rewriting with this identity. -/
-theorem wouldSem_eq_willSem (s : SelectionFunction W) (A : W → Prop)
-    (f : Set W) (w : W) :
-    wouldSem s A f w = willSem s A f w := rfl
+[cariani-santorio-2018] note that on a Stalnakerian semantics for *would* the selectional
+analysis vindicates the morphological connection between *will* and *would*: the two have the
+same meaning up to the possibilities in the modal base, so `willSem` with a counterfactual
+parameter is *would*, and every theorem about *will* applies to it. -/
 
 end Modality.Selectional

@@ -4,30 +4,30 @@ public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Semantics.Conditionals.Basic
 
 /-!
-# Restrictor Theory of Conditionals
-[kratzer-1986] [kratzer-2012]
+# The restrictor theory of conditionals
 
-Kratzer's restrictor analysis: if-clauses restrict the modal domain rather than
-functioning as binary connectives. "If α, (must) β" is analyzed as modal
-necessity/possibility over the modal base restricted by α.
+This file defines the restrictor conditional. On the restrictor analysis an *if*-clause is not a
+connective but restricts the modal base of a possibly covert modal, so *if α, must β* is
+necessity over the modal base restricted by α and *if α, might β* possibility over it. The
+restrictor conditional quantifies over the best worlds of the restricted base, and with an empty
+ordering source it is the strict conditional.
 
-This module bridges `Conditionals/Basic.lean` and `Modality/Kratzer.lean`,
-deriving conditional truth conditions from modal restriction.
+## Main definitions
 
-## Core Thesis
+* `Restrictor.conditionalNecessity`, `Restrictor.conditionalPossibility`: *if α, must β* and
+  *if α, might β*.
 
-If-clauses are not propositional connectives. They are **restrictors** of the
-modal base. "If it rains, the streets are wet" does not express a binary
-relation between two propositions. Instead, "if it rains" restricts the
-modal base to rain-worlds, and the (possibly covert) necessity operator
-quantifies over the best of those worlds.
+## Main results
 
-## Key Result
+* `Restrictor.conditionalNecessity_iff_mem_ofDomain`: the restrictor conditional quantifies over
+  the best worlds of the restricted base.
+* `Restrictor.restrictor_eq_strict`: with an empty ordering source it is the strict conditional.
 
-`restrictor_eq_strict`: with empty ordering source, Kratzer's conditional
-necessity (∀w' ∈ Best(f+α, ∅, w). β(w')) equals the strict conditional
-(∀w' ∈ ∩f(w). α(w') → β(w')) from `Conditionals/Basic.lean`.
+## References
 
+* [D. Lewis, *Adverbs of Quantification* (1975)][lewis-1975]
+* [A. Kratzer, *Conditionals* (1986)][kratzer-1986]
+* [A. Kratzer, *Modals and Conditionals* (2012)][kratzer-2012]
 -/
 
 @[expose] public section
@@ -39,23 +39,22 @@ open Modality.Kratzer
 
 variable {W : Type*}
 
-/-! ## Core definitions -/
+/-! ### Core definitions -/
 
-/-- **If α, must β** under the restrictor analysis:
-    necessity over the α-restricted modal base. -/
+/-- *If α, must β* on the restrictor analysis, necessity over the modal base restricted by α. -/
 def conditionalNecessity (f : ModalBase W) (g : OrderingSource W)
     (α : W → Prop) (β : W → Prop) (w : W) : Prop :=
   necessity (restrictedBase f α) g β w
 
-/-- **If α, might β** under the restrictor analysis:
-    possibility over the α-restricted modal base. -/
+/-- *If α, might β* on the restrictor analysis, possibility over the modal base restricted by α. -/
 def conditionalPossibility (f : ModalBase W) (g : OrderingSource W)
     (α : W → Prop) (β : W → Prop) (w : W) : Prop :=
   possibility (restrictedBase f α) g β w
 
-/-! ## Structural lemma -/
+/-! ### Structural lemma -/
 
-/-- Restricted accessible worlds = α-worlds within the original accessible worlds. -/
+/-- The accessible worlds of the restricted base are the α-worlds among the original accessible
+worlds. -/
 theorem restricted_accessible_eq (f : ModalBase W) (α : W → Prop) (w : W) :
     accessibleWorlds (restrictedBase f α) w =
     {w' ∈ accessibleWorlds f w | α w'} := by
@@ -76,11 +75,10 @@ theorem mem_accessibleWorlds_restrictedBase {f : ModalBase W} {α : W → Prop} 
     v ∈ accessibleWorlds (restrictedBase f α) w ↔ v ∈ accessibleWorlds f w ∧ α v :=
   Set.ext_iff.1 (restricted_accessible_eq f α w) v
 
-/-! ## Main bridge theorems -/
+/-! ### Main bridge theorems -/
 
-/-- **Restrictor = Strict conditional**.
-
-    With empty ordering source, "if α, must β" equals "□_f(α → β)". -/
+/-- With an empty ordering source, *if α, must β* holds iff every accessible α-world is a
+β-world. -/
 theorem restrictor_eq_strict (f : ModalBase W) (α : W → Prop) (β : W → Prop) (w : W) :
     conditionalNecessity f emptyBackground α β w ↔
     (∀ w' ∈ accessibleWorlds f w, α w' → β w') := by
@@ -92,17 +90,9 @@ theorem restrictor_eq_strict (f : ModalBase W) (α : W → Prop) (β : W → Pro
   · intro h w' hw'
     exact h w' hw'.1 hw'.2
 
-/-! ## Properties -/
+/-! ### Properties -/
 
-/-- **Conditional duality**: "if α, must β" ↔ ¬"if α, might ¬β". -/
-theorem conditional_duality (f : ModalBase W) (g : OrderingSource W)
-    (α : W → Prop) (β : W → Prop) (w : W) :
-    conditionalNecessity f g α β w ↔
-    ¬ conditionalPossibility f g α (fun w' => ¬ β w') w :=
-  duality (restrictedBase f α) g β w
-
-/-- **Vacuous conditional**: if no accessible worlds satisfy α, conditional
-    necessity holds vacuously. -/
+/-- *If α, must β* holds vacuously when no accessible world satisfies α. -/
 theorem vacuous_conditional (f : ModalBase W) (g : OrderingSource W)
     (α : W → Prop) (β : W → Prop) (w : W)
     (h : ∀ w', w' ∈ accessibleWorlds f w → ¬ α w') :
@@ -114,8 +104,8 @@ theorem vacuous_conditional (f : ModalBase W) (g : OrderingSource W)
   rw [restricted_accessible_eq] at hRestr
   exact absurd hRestr.2 (h w' hRestr.1)
 
-/-- **Material conditional as degenerate case**: with totally realistic base
-    and empty ordering, "if α, must β" reduces to material implication. -/
+/-- With the evaluation world as its only accessible world and an empty ordering source, *if α,
+must β* is the material conditional. -/
 theorem material_from_restrictor (f : ModalBase W)
     (α : W → Prop) (β : W → Prop) (w : W)
     (hTotal : accessibleWorlds f w = {w}) :
@@ -130,8 +120,7 @@ theorem material_from_restrictor (f : ModalBase W)
     subst this
     exact h hα
 
-/-- **Restrictor monotonicity**: if α₂ entails α₁, then the α₂-restricted
-    base is contained in the α₁-restricted base. -/
+/-- Restricting by a stronger antecedent leaves fewer accessible worlds. -/
 theorem restrictor_monotone (f : ModalBase W) (α₁ α₂ : W → Prop) (w : W)
     (h : ∀ w', α₂ w' → α₁ w') :
     ∀ w', w' ∈ accessibleWorlds (restrictedBase f α₂) w →
@@ -140,11 +129,11 @@ theorem restrictor_monotone (f : ModalBase W) (α₁ α₂ : W → Prop) (w : W)
   rw [restricted_accessible_eq] at hw' ⊢
   exact ⟨hw'.1, h w' hw'.2⟩
 
-/-- **Double restriction**: restricting by α₁ then α₂ equals restricting
-    by (α₁ ∧ α₂). -/
+/-- Restricting by α₁ and then by α₂ leaves the same accessible worlds as restricting by their
+conjunction. -/
 theorem double_restriction (f : ModalBase W) (α₁ α₂ : W → Prop) (w : W) :
     accessibleWorlds (restrictedBase (restrictedBase f α₁) α₂) w =
-    accessibleWorlds (restrictedBase f (fun w' => α₁ w' ∧ α₂ w')) w := by
+    accessibleWorlds (restrictedBase f (fun w' ↦ α₁ w' ∧ α₂ w')) w := by
   ext w'
   rw [restricted_accessible_eq, restricted_accessible_eq, restricted_accessible_eq]
   constructor
@@ -152,35 +141,6 @@ theorem double_restriction (f : ModalBase W) (α₁ α₂ : W → Prop) (w : W) 
     exact ⟨hf, hα₁, hα₂⟩
   · intro ⟨hf, hα₁, hα₂⟩
     exact ⟨⟨hf, hα₁⟩, hα₂⟩
-
-/-- **Restrictor strengthening**: adding a restrictor α to a modal base
-    can only shrink (or preserve) the set of accessible worlds. -/
-theorem restrictor_strengthens (f : ModalBase W) (α : W → Prop) (w : W) :
-    ∀ w', w' ∈ accessibleWorlds (restrictedBase f α) w →
-          w' ∈ accessibleWorlds f w := by
-  intro w' hw'
-  rw [restricted_accessible_eq] at hw'
-  exact hw'.1
-
-/-- **Conditional K axiom**: conditional necessity distributes over implication. -/
-theorem conditional_K (f : ModalBase W) (g : OrderingSource W)
-    (α : W → Prop) (β γ : W → Prop) (w : W)
-    (hImpl : conditionalNecessity f g α (fun w' => β w' → γ w') w)
-    (hBeta : conditionalNecessity f g α β w) :
-    conditionalNecessity f g α γ w :=
-  K_axiom (restrictedBase f α) g β γ w hImpl hBeta
-
-/-! ## Bridge to the strict conditional -/
-
-/-- `conditionalNecessity` with empty ordering source is membership in
-    `strictImp` over the accessible worlds: Kratzer's restricted necessity
-    and the strict conditional of `Conditionals/Basic.lean` are the same
-    operation. -/
-theorem conditionalNecessity_iff_mem_strictImp
-    (f : ModalBase W) (α : W → Prop) (β : W → Prop) (w : W) :
-    conditionalNecessity f emptyBackground α β w ↔
-    w ∈ strictImp (accessibleWorlds f) {w' | α w'} {w' | β w'} :=
-  (restrictor_eq_strict f α β w).trans mem_strictImp_forall.symm
 
 /-- Kratzer's conditional necessity is the conditional over the best worlds of the modal base
 restricted by the antecedent. -/

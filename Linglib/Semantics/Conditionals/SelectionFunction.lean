@@ -8,81 +8,54 @@ public import Mathlib.Data.Fintype.Card
 /-!
 # Selection functions
 
-A **selection function** ([stalnaker-1968]) takes a world `w` and a possible proposition `A` to a
-world `s.sel w A ∈ A` (condition (1), `inclusion`), `w` itself when `A` holds there (condition
-(3), `centering`): intuitively the closest `A`-world. [cariani-santorio-2018]'s selectional
-*will* uses the same structure.
+This file defines selection functions and the selection conditional. A selection function takes
+a world and a possible proposition to a world at which the proposition holds, the world itself
+when it holds there: intuitively the closest world at which the proposition holds. The selection
+conditional *if p, q* is true when `q` holds at the world selected for `p`, and vacuously true
+when `p` is impossible. A similarity ordering with ties corresponds to the class of selection
+functions its completions determine, and for a single conditional the supervaluation over them is
+the conditional of the closest worlds.
 
-The selection conditional (`selectionConditional`) is true at `w` iff its consequent holds at the
-selected world, and vacuously true for an impossible antecedent, where [stalnaker-1968] selects
-the absurd world. It quantifies over a domain of at most one world (`SelectionFunction.domain`),
-so Conditional Excluded Middle and distribution over a disjunctive consequent hold
-(`selectionConditional_cem`, `selectionConditional_or`).
+## Main definitions
 
-[stalnaker-1981] interprets a similarity ordering with ties by supervaluation over its
-completions (`SimilarityOrdering.Completion`), each selecting its least antecedent-world
-(`SelectionFunction.Compatible`). Selection by a completion satisfies [stalnaker-1968]'s condition
-(4) (`Compatible.cso`), and every closest antecedent-world is selected by some completion
-(`SelectionFunction.exists_compatible`), so for a single conditional the supervaluation is the
-conditional of the closest worlds (`mem_closestImp_iff_forall_compatible`).
+* `SelectionFunction`: a selection function.
+* `selectionConditional`: the selection conditional.
+* `SimilarityOrdering.Completion`: a linear extension of a similarity ordering at each center.
+* `SelectionFunction.Compatible`: selection by a completion of a similarity ordering.
+
+## Main results
+
+* `SelectionFunction.Compatible.cso`: selection by a completion is coherent across antecedents.
+* `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
+  supervaluation over completions.
 
 ## References
 
-* [stalnaker-1968]
-* [stalnaker-1981]
-* [cariani-santorio-2018]
-* [stalnaker-1975]
+* [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
+* [R. C. Stalnaker, *Indicative conditionals* (1975)][stalnaker-1975]
+* [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
+* [F. Cariani and P. Santorio, *Will done Better: Selection Semantics, Future Credence, and
+  Indeterminacy* (2018)][cariani-santorio-2018]
 -/
 
 @[expose] public section
 
 namespace Conditional
 
-/-- A **selection function** on `W`: maps a world and a proposition to
-    a "selected" world, satisfying [stalnaker-1968]'s Inclusion
-    and Centering axioms. -/
+/-- A selection function ([stalnaker-1968]) takes a world and a proposition to a selected
+world, one at which the proposition holds when it is possible, and the world itself when the
+proposition holds there. -/
 structure SelectionFunction (W : Type*) where
   /-- The selection map. -/
   sel : W → Set W → W
-  /-- **Inclusion**: if `A` is non-empty, the selected world is in `A`. -/
+  /-- The world selected for a possible proposition is one at which it holds. -/
   inclusion : ∀ (w : W) (A : Set W), A.Nonempty → sel w A ∈ A
-  /-- **Centering**: if `w ∈ A`, then `sel w A = w`. -/
+  /-- A world at which the proposition holds selects itself. -/
   centering : ∀ (w : W) (A : Set W), w ∈ A → sel w A = w
 
 namespace SelectionFunction
 
 variable {W : Type*}
-
-/-- Centering specialized to a singleton: `sel w {w} = w`. -/
-theorem sel_singleton (s : SelectionFunction W) (w : W) :
-    s.sel w {w} = w :=
-  s.centering w _ rfl
-
-/-- The selected world satisfies the input proposition (Inclusion). -/
-theorem sel_mem (s : SelectionFunction W) (w : W) (A : Set W)
-    (hA : A.Nonempty) : s.sel w A ∈ A :=
-  s.inclusion w A hA
-
-/-- **Selection Excluded Middle** — the structural origin of [stalnaker-1968]'s
-    Conditional Excluded Middle and [cariani-santorio-2018]'s Will
-    Excluded Middle. Because `sel w f` is a *single* world, every
-    predicate evaluated there satisfies excluded middle. The selection
-    function reduces a quantificational question over a set to a
-    propositional question at one point. -/
-theorem sel_em (s : SelectionFunction W) (A : W → Prop) (f : Set W)
-    (w : W) :
-    A (s.sel w f) ∨ ¬ A (s.sel w f) :=
-  Classical.em _
-
-/-- **Selection Negation Swap** — negation commutes through evaluation
-    at the selected world: applying a pointwise-negated predicate to
-    `sel w f` is the same as negating the application. This is the
-    structural origin of [cariani-santorio-2018]'s Negation Swap
-    for *will*. The equivalence is `Iff.rfl` once the prejacent has
-    been reduced to a propositional question at the selected point. -/
-theorem sel_neg_swap (s : SelectionFunction W) (A : W → Prop) (f : Set W)
-    (w : W) :
-    (fun w' => ¬ A w') (s.sel w f) ↔ ¬ A (s.sel w f) := Iff.rfl
 
 end SelectionFunction
 
@@ -90,12 +63,11 @@ section SelectionConditional
 
 variable {W : Type*} (s : SelectionFunction W) {p q r : Set W} {w : W}
 
-/-- The domain of the selection conditional: the world selected for `p` at `w` when `p` is
-possible, and nothing when it is not. [stalnaker-1968] selects the absurd world, at which every
-sentence is true, only for an antecedent true at no world possible relative to the base world
-(its condition (2)), and its condition (1) forces that choice when the antecedent is impossible,
-so the conditional is vacuously true there. With every world possible relative to every other,
-as here, an antecedent is impossible exactly when it is empty. -/
+/-- The domain of the selection conditional, the world selected for `p` when `p` is possible and
+nothing otherwise. [stalnaker-1968] selects the absurd world, at which every sentence is true,
+exactly for an impossible antecedent (conditions (1) and (2)), so the conditional is vacuously
+true there. With every world possible relative to every other, an antecedent is impossible when
+it is empty. -/
 def SelectionFunction.domain (w : W) (p : Set W) : Set W := {s.sel w p} ∩ p
 
 theorem SelectionFunction.domain_eq_singleton (hp : p.Nonempty) :
@@ -105,11 +77,10 @@ theorem SelectionFunction.domain_eq_singleton (hp : p.Nonempty) :
 theorem SelectionFunction.subsingleton_domain : (s.domain w p).Subsingleton :=
   Set.subsingleton_singleton.anti Set.inter_subset_left
 
-/-- **Selection conditional** ([stalnaker-1968]): *if p, q* is true at `w` iff `q` holds at the
-world `s` selects for `p`, vacuously when `p` is impossible. The indicative refinement
-([stalnaker-1975], a pragmatic constraint on `s`) and the counterfactual reading
-([stalnaker-1981], supervaluation over the completions of a similarity ordering)
-share this clause and differ in which selection functions are admissible. -/
+/-- The selection conditional of [stalnaker-1968], true at `w` when `q` holds at the world `s`
+selects for `p` and vacuously true when `p` is impossible. The indicative reading of
+[stalnaker-1975] and the counterfactual reading of [stalnaker-1981] share this clause and differ
+in which selection functions are admissible. -/
 def selectionConditional (p q : Set W) : Set W := ofDomain s.domain p q
 
 theorem mem_selectionConditional :
@@ -122,38 +93,32 @@ theorem mem_selectionConditional_of_nonempty (hp : p.Nonempty) :
     w ∈ selectionConditional s p q ↔ s.sel w p ∈ q := by
   simp [mem_selectionConditional, hp]
 
-/-- **Conditional Excluded Middle**: a single selected world settles every consequent. -/
+/-- The selection conditional satisfies Conditional Excluded Middle, since a single selected world
+settles every consequent. -/
 theorem selectionConditional_cem :
     w ∈ selectionConditional s p q ∨ w ∈ selectionConditional s p qᶜ :=
   mem_ofDomain_or_compl s.subsingleton_domain
 
-/-- Distribution over a disjunctive consequent. -/
+/-- The selection conditional distributes over a disjunctive consequent. -/
 theorem selectionConditional_or (h : w ∈ selectionConditional s p (q ∪ r)) :
     w ∈ selectionConditional s p q ∨ w ∈ selectionConditional s p r :=
   mem_ofDomain_or s.subsingleton_domain h
 
-/-- Modus ponens: by centering, an antecedent-world selects itself. -/
+/-- The selection conditional entails the material conditional, since by centering an
+antecedent-world selects itself. -/
 theorem selectionConditional_subset_materialImp : selectionConditional s p q ⊆ materialImp p q :=
   ofDomain_subset_materialImp fun w hw ↦ ⟨(s.centering w p hw).symm, hw⟩
 
 end SelectionConditional
 
-/-- **Pairwise preference induced by a selection function.**
-
-`w₁` is preferred to `w₂` from center `w₀` iff when choosing between
-just the two of them, the selection function picks `w₁`. -/
+/-- `w₁` is preferred to `w₂` from `w₀` when the selection function picks `w₁` from `{w₁, w₂}`. -/
 def selectionPrefers {W : Type*} (s : SelectionFunction W)
     (w₀ w₁ w₂ : W) : Prop :=
   s.sel w₀ {w₁, w₂} = w₁
 
-/-- **A selection function is coherent** iff its induced pairwise
-preference is transitive. It is strictly weaker than [stalnaker-1968]'s condition (4), which
-selection by a completion of a similarity ordering satisfies (`Compatible.cso`); a selection
-function satisfying (4) determines a *well-ordering* of possible
-worlds ([stalnaker-1981]).
-
-Not all selection functions satisfying `inclusion` + `centering` are
-coherent — coherence is an additional rationality constraint. -/
+/-- A selection function is coherent when its pairwise preference is transitive. Coherence is
+weaker than [stalnaker-1968]'s condition (4), which selection by a completion satisfies and which
+makes the similarity relation a selection function induces a well ordering ([stalnaker-1981]). -/
 def SelectionFunction.isCoherent {W : Type*} (s : SelectionFunction W) : Prop :=
   ∀ w₀ w₁ w₂ w₃ : W,
     selectionPrefers s w₀ w₁ w₂ → selectionPrefers s w₀ w₂ w₃ →
@@ -163,38 +128,33 @@ def SelectionFunction.isCoherent {W : Type*} (s : SelectionFunction W) : Prop :=
 
 [stalnaker-1981] reads a similarity ordering with ties and incomparabilities as the class of its
 completions, the well orderings of the worlds that extend it, and a conditional as true when it
-is true on every completion; a selection function selects, for each center, the least
-antecedent-world of one completion (`SelectionFunction.Compatible`). Selection by a completion
-satisfies [stalnaker-1968]'s condition (4) (`Compatible.cso`), and on a finite, strongly centered
-ordering the supervaluation of a single conditional is the conditional of the closest worlds
-(`mem_closestImp_iff_forall_compatible`). -/
+is true on every completion. -/
 
 section Compatible
 
 variable {W : Type*} {sim : SimilarityOrdering W} {s : SelectionFunction W} {p q : Set W}
   {w v : W}
 
-/-- A completion of a similarity ordering: for each center, a linear order of the worlds
-extending the strict similarity order. -/
+/-- A completion of a similarity ordering assigns to each center a linear order of the worlds that
+extends the strict similarity order. -/
 structure SimilarityOrdering.Completion (sim : SimilarityOrdering W) where
   /-- The completed order at each center. -/
   le : W → W → W → Prop
   linear : ∀ w, IsLinearOrder W (le w)
   le_of_lt : ∀ w x y, sim.closer w x y → ¬ sim.closer w y x → le w x y
 
-/-- `s` is selected by the completion `c`: it selects, for each center, the least possible
-antecedent-world in `c`'s order. -/
+/-- A selection function is selected by a completion when it selects, for each center, the least
+possible antecedent-world in the completion's order. -/
 def SelectionFunction.SelectedBy (s : SelectionFunction W) (c : sim.Completion) : Prop :=
   ∀ w p, p.Nonempty → ∀ u ∈ p, c.le w (s.sel w p) u
 
-/-- A selection function compatible with a similarity ordering is selected by one of its
-completions. -/
+/-- A selection function is compatible with a similarity ordering when some completion of the
+ordering selects it. -/
 def SelectionFunction.Compatible (s : SelectionFunction W) (sim : SimilarityOrdering W) : Prop :=
   ∃ c : sim.Completion, s.SelectedBy c
 
-/-- A selection function selected by a completion satisfies [stalnaker-1968]'s condition (4):
-if each of two antecedents holds at the world selected for the other, they select the same
-world. -/
+/-- A selection function selected by a completion satisfies [stalnaker-1968]'s condition (4), that
+two antecedents each true at the world selected for the other select the same world. -/
 theorem SelectionFunction.Compatible.cso (hs : s.Compatible sim) {p p' : Set W}
     (hp : p.Nonempty) (hp' : p'.Nonempty) (h₁ : s.sel w p' ∈ p) (h₂ : s.sel w p ∈ p') :
     s.sel w p = s.sel w p' := by
@@ -241,8 +201,8 @@ private theorem isPartialOrder_strict (sim : SimilarityOrdering W) (w : W) :
     exact absurd h₃ h₂
 
 open Classical in
-/-- Any closest antecedent-world comes first in some completion: order the worlds strictly
-closer than it, then it, then the rest, each block by a linear extension of the strict order. -/
+/-- Any closest antecedent-world comes first among the antecedent-worlds in some completion, which
+orders the worlds strictly closer than it, then it, then the rest. -/
 theorem SimilarityOrdering.exists_completion (hv : v ∈ sim.closest w p) :
     ∃ c : sim.Completion, ∀ u ∈ p, c.le w v u := by
   choose L hL hext using fun w' ↦ @extend_partialOrder W _ (isPartialOrder_strict sim w')
@@ -339,9 +299,9 @@ theorem SelectionFunction.exists_compatible [Finite W] (hc : sim.isCentered)
     simp only [hp, ↓reduceDIte]
     exact antisymm (hmle w p hp v (sim.closest_subset w p hv)) (hcv _ (hm w p hp))
 
-/-- [stalnaker-1981]'s supervaluation for a single conditional: on a finite, strongly centered
-ordering, the conditional of the closest worlds holds iff the selection conditional is true on
-every completion of the ordering. -/
+/-- On a finite, strongly centered ordering, the conditional of the closest worlds holds iff the
+selection conditional is true on every completion, [stalnaker-1981]'s supervaluation for a
+single conditional. -/
 theorem mem_closestImp_iff_forall_compatible [Finite W] (hc : sim.isCentered) :
     w ∈ closestImp sim p q ↔
       ∀ s : SelectionFunction W, s.Compatible sim → w ∈ selectionConditional s p q := by
@@ -349,8 +309,8 @@ theorem mem_closestImp_iff_forall_compatible [Finite W] (hc : sim.isCentered) :
   obtain ⟨s, hs, rfl⟩ := SelectionFunction.exists_compatible hc hv
   exact (mem_selectionConditional_of_nonempty s ⟨_, sim.closest_subset w p hv⟩).1 (h s hs)
 
-/-- Conditional Excluded Middle is super-true ([stalnaker-1981]): on every completion one of the
-two conditionals holds, though under a tie neither need hold on all. -/
+/-- Conditional Excluded Middle is true on every completion ([stalnaker-1981]), though under a tie
+neither conditional need be. -/
 theorem cem_superTrue (sim : SimilarityOrdering W) (p q : Set W) (w : W) :
     ∀ s : SelectionFunction W, s.Compatible sim →
       w ∈ selectionConditional s p q ∪ selectionConditional s p qᶜ :=
