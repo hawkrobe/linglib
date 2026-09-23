@@ -1,4 +1,5 @@
 import Linglib.Core.Data.Fin.VecNotation
+import Linglib.Core.Data.Set.Image
 import Linglib.Logic.PIP.Felicity
 import Linglib.Logic.PIP.Intensional
 import Linglib.Data.Examples.KeshetAbney2024
@@ -8,7 +9,7 @@ import Linglib.Data.Examples.KeshetAbney2024
 
 This file formalizes the account of anaphora under modals of [keshet-abney-2024]: a pronoun
 presupposes that its antecedent description has a non-empty extension ((9)), and in the paper's
-logic PIP (`Logic/PIP/Basic.lean`) the antecedent description of a summation pronoun is a formula
+logic PIP (`Logic/PIP/Syntax.lean`) the antecedent description of a summation pronoun is a formula
 label, so *Andrea might be eating a cheeseburger. #It is large.* ((79)) is
 `might_w(ΣwE) ∧ E ≡ … ∧ large_w(ΣbE | single(ΣbE))`: the world variable of `E` is bound by the
 summation inside *might* at its first use and by the discourse at the pronoun, so the pronoun's
@@ -82,9 +83,9 @@ structure Scenario (W E : Type) where
 /-- The model of a scenario. -/
 def Scenario.model (S : Scenario W E) : Model Sym (Atom W E) :=
   Model.intensional fun {_} r w as => match r with
-    | .acc => ∃ u, as 0 = Sum.inl u ∧ S.acc w u
-    | .desc => ∃ e, as 0 = Sum.inr e ∧ S.desc w e
-    | .cont => ∃ e, as 0 = Sum.inr e ∧ S.cont w e
+    | .acc => as 0 ∈ Sum.inl '' {u | S.acc w u}
+    | .desc => as 0 ∈ Sum.inr '' {e | S.desc w e}
+    | .cont => as 0 ∈ Sum.inr '' {e | S.cont w e}
 
 /-! ### The discourses -/
 
@@ -174,73 +175,51 @@ theorem realize_descE :
     Model.intensional_apply₁, Matrix.cons_val_zero]
   constructor
   · rintro ⟨⟨w, hw, -, hall⟩, a, ha⟩
-    obtain ⟨e, rfl, he⟩ := hall a (by rw [ha]; exact Set.mem_singleton a)
+    obtain ⟨e, he, rfl⟩ := hall a (by rw [ha]; exact Set.mem_singleton a)
     exact ⟨w, e, hw, ha, he⟩
   · rintro ⟨w, e, hw, hb, he⟩
     exact ⟨⟨w, hw, ⟨_, by rw [hb]; exact Set.mem_singleton _⟩,
-      fun a ha => ⟨e, by rw [hb] at ha; exact ha, he⟩⟩, _, hb⟩
+      fun a ha => ⟨e, he, (by rw [hb] at ha; exact ha : a = _).symm⟩⟩, _, hb⟩
 
 /-- `ΣbE` at `w₀`: the satisfiers of the description there. -/
 theorem realize_sigmaB_descE (hw : h .w = world w₀) :
-    Term.realize S.model h (.sigma .b descE) = {a | ∃ e, a = Sum.inr e ∧ S.desc w₀ e} := by
-  rw [Term.realize_sigma_eq S.model h (B := fun X => ∃ e, X = {Sum.inr e} ∧ S.desc w₀ e)
-    fun g' hg => by
-      have hgw : g' .w = h .w := hg (by decide)
-      rw [realize_descE, hgw, hw]
-      simp only [world_inj, exists_and_left, exists_eq_left']]
-  exact Set.ext fun a => exists_mem_singleton_iff
+    Term.realize S.model h (.sigma .b descE) = Sum.inr '' {e | S.desc w₀ e} :=
+  Term.realize_sigma_eq_image S.model h fun g' hg => by
+    rw [realize_descE, hg (by decide : Var.w ∈ _), hw]
+    simp only [world_inj, exists_and_left, exists_eq_left', Set.mem_ofPred_eq]
 
 /-- `ΣwE`: the worlds with a satisfier of the description. -/
 theorem realize_sigmaW_descE :
-    Term.realize S.model h (.sigma .w descE) = {a | ∃ w e, a = Sum.inl w ∧ S.desc w e} := by
+    Term.realize S.model h (.sigma .w descE) = Sum.inl '' {w | ∃ e, S.desc w e} := by
   rw [Term.realize_sigma_world_eq S.model h (y := .b) (by decide)
     (B := fun X w => ∃ e, X = {Sum.inr e} ∧ S.desc w e)
     (fun g' _ => (realize_descE S g').trans (exists_congr fun _ => exists_and_left)) (by decide)]
-  ext a
-  simp only [Set.mem_ofPred_eq, exists_singleton_iff, exists_and_left]
+  simp
 
 /-- The modal base: the worlds accessible from the world of `w`. -/
 theorem realize_base (hw : h .w = world w₀) :
-    base.realize S.model h = {a | ∃ u, a = Sum.inl u ∧ S.acc w₀ u} := by
-  rw [base, Term.realize_sigma_eq S.model h
-    (B := fun X => X.Nonempty ∧ ∀ a ∈ X, ∃ u, a = Sum.inl u ∧ S.acc w₀ u) fun g' hg => by
-      have hgw : g' .w = h .w := hg (by decide)
-      simp only [access, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
-        Term.realize_var, Scenario.model, Model.intensional_apply₁, Matrix.cons_val_zero, hgw, hw,
-        world_inj, exists_eq_left']]
-  ext a
-  constructor
-  · rintro ⟨X, ha, -, H⟩
-    exact H a ha
-  · rintro ⟨u, rfl, hacc⟩
-    exact ⟨world u, rfl, ⟨_, rfl⟩, fun b hb => ⟨u, hb, hacc⟩⟩
+    base.realize S.model h = Sum.inl '' {u | S.acc w₀ u} :=
+  Term.realize_sigma_eq_of_distributive S.model h fun g' hg => by
+    simp only [access, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
+      Term.realize_var, Scenario.model, Model.intensional_apply₁, Matrix.cons_val_zero,
+      hg (by decide : Var.w ∈ _), hw, world_inj, exists_eq_left']
+    rfl
 
 /-- `might_w(ΣwE)` at `w₀`: some accessible world has a satisfier. -/
 theorem realize_might (hw : h .w = world w₀) :
     (Modal.apply .might base (.sigma .w descE)).Realize S.model h ↔
       ∃ u e, S.acc w₀ u ∧ S.desc u e := by
-  rw [Modal.apply, Formula.realize_some, realize_base S h hw, realize_sigmaW_descE]
-  constructor
-  · rintro ⟨_, ⟨u, rfl, hacc⟩, w', e, ⟨⟩, he⟩
-    exact ⟨u, e, hacc, he⟩
-  · rintro ⟨u, e, hacc, he⟩
-    exact ⟨_, ⟨u, rfl, hacc⟩, u, e, rfl, he⟩
+  rw [Modal.apply, Formula.realize_some, realize_base S h hw, realize_sigmaW_descE,
+    ← Set.image_inter Sum.inl_injective, Set.image_nonempty]
+  simp [Set.Nonempty]
 
 /-- `must_w(ΣwE)` at `w₀`: every accessible world has a satisfier. -/
 theorem realize_must (hw : h .w = world w₀) :
     (Modal.apply .must base (.sigma .w descE)).Realize S.model h ↔
       ∀ u, S.acc w₀ u → ∃ e, S.desc u e := by
   rw [Modal.apply, Formula.realize_subset, realize_base S h hw, realize_sigmaW_descE,
-    Set.subset_def]
-  simp only [Set.mem_ofPred_eq]
-  constructor
-  · intro H u hu
-    obtain ⟨w', e, hw', he⟩ := H _ ⟨u, rfl, hu⟩
-    cases Sum.inl.inj hw'
-    exact ⟨e, he⟩
-  · rintro H _ ⟨u, rfl, hu⟩
-    obtain ⟨e, he⟩ := H u hu
-    exact ⟨u, e, rfl, he⟩
+    Set.image_subset_image_iff Sum.inl_injective]
+  rfl
 
 theorem felicitous_modal (m : Modal) :
     (m.apply base (.sigma .w descE)).Felicitous S.model h := by
@@ -250,7 +229,8 @@ theorem felicitous_modal (m : Modal) :
 
 theorem felicitous_pronoun_iff (hw : h .w = world w₀) :
     (Term.sgPronoun .b descE).Felicitous S.model h ↔ ∃! e, S.desc w₀ e := by
-  rw [Term.felicitous_sgPronoun, realize_sigmaB_descE S h hw, exists_eq_singleton_iff]
+  rw [Term.felicitous_sgPronoun, realize_sigmaB_descE S h hw,
+    Sum.inr_injective.exists_image_eq_singleton_iff, Set.singleton_iff_unique_mem]
   exact and_iff_right (Term.felicitous_sigma_of_forall _ _ (felicitous_descE S))
 
 theorem felicitous_continuation_iff (hw : h .w = world w₀) :

@@ -31,8 +31,9 @@ relation to a point: an atom for a term, nothing for a formula.
   derived connectives.
 * `Formula.realize_exists_iff_abs_nonempty` — `∃xφ` is true iff `⋃{x : φ}` is
   nonempty, when `φ` is false of the null plurality.
-* `Term.realize_sigma_eq` — the value of a summation from a characterization
-  of its body.
+* `Term.realize_sigma_eq`, `Term.realize_sigma_eq_of_mem_locals` — the value of a
+  summation from a characterization of its body; `Term.realize_sigma_eq_image`,
+  `Term.realize_sigma_eq_of_distributive` — over singular and distributive descriptions.
 * `Expr.realize_elim` — the PIP constructs are eliminable: the translation
   preserves values and truth.
 
@@ -209,19 +210,63 @@ theorem Formula.realize_exists_iff_abs_nonempty (x : V) (φ : Formula V L P)
 
 /-- The value of a summation whose body, on the assignments agreeing outside the
 summation variable and its locals, depends on the summation variable's value
-alone: the union of the pluralities satisfying that condition. -/
+alone: the sum of the pluralities satisfying that condition. -/
 theorem Term.realize_sigma_eq {x : V} {φ : Formula V L P} {B : Set α → Prop}
     (hφ : ∀ g', Set.EqOn g' g {y | y ∉ φ.locals ∧ y ≠ x} →
       (Formula.Realize M g' φ ↔ B (g' x))) :
-    Term.realize M g (.sigma x φ) = {a | ∃ X, a ∈ X ∧ B X} := by
+    Term.realize M g (.sigma x φ) = ⋃₀ {X | B X} := by
   ext a
-  rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
+  rw [Term.mem_realize_sigma, Set.mem_sUnion]
   constructor
   · rintro ⟨g', hg, ha, hr⟩
-    exact ⟨g' x, ha, (hφ g' hg).1 hr⟩
-  · rintro ⟨X, ha, hB⟩
-    refine ⟨Function.update g x X, fun y hy => Function.update_of_ne hy.2 _ _, by simpa, ?_⟩
-    exact (hφ _ fun y hy => Function.update_of_ne hy.2 _ _).2 (by simpa)
+    exact ⟨g' x, (hφ g' hg).1 hr, ha⟩
+  · rintro ⟨X, hB, ha⟩
+    have hg : Set.EqOn (Function.update g x X) g {y | y ∉ φ.locals ∧ y ≠ x} :=
+      fun y hy => Function.update_of_ne hy.2 _ _
+    exact ⟨_, hg, by simpa, (hφ _ hg).2 (by simpa)⟩
+
+/-- The value of a summation whose body depends on the summation variable's value and on
+that of a local variable `y`: the sum of the pluralities related to some plurality, the
+local being summed away. -/
+theorem Term.realize_sigma_eq_of_mem_locals {x y : V} (hxy : y ≠ x) {φ : Formula V L P}
+    {C : Set α → Set α → Prop}
+    (hφ : ∀ g', Set.EqOn g' g {z | z ∉ φ.locals ∧ z ≠ x} →
+      (Formula.Realize M g' φ ↔ C (g' x) (g' y)))
+    (hy : y ∈ φ.locals) :
+    Term.realize M g (.sigma x φ) = ⋃₀ {X | ∃ Y, C X Y} := by
+  ext a
+  rw [Term.mem_realize_sigma, Set.mem_sUnion]
+  constructor
+  · rintro ⟨g', hg, ha, hr⟩
+    exact ⟨g' x, ⟨g' y, (hφ g' hg).1 hr⟩, ha⟩
+  · rintro ⟨X, ⟨Y, hC⟩, ha⟩
+    have hg : Set.EqOn (Function.update (Function.update g x X) y Y) g
+        {z | z ∉ φ.locals ∧ z ≠ x} := fun z hz => by
+      rw [Function.update_of_ne fun h : z = y => hz.1 (h ▸ hy), Function.update_of_ne hz.2]
+    refine ⟨_, hg, by simpa [Function.update_of_ne hxy.symm], (hφ _ hg).2 ?_⟩
+    rwa [Function.update_self, Function.update_of_ne hxy.symm, Function.update_self]
+
+/-- A summation over a singular description, true of the singletons of the images of `s`:
+the plurality of those images. -/
+theorem Term.realize_sigma_eq_image {β : Type*} {x : V} {φ : Formula V L P} {f : β → α}
+    {s : Set β}
+    (hφ : ∀ g', Set.EqOn g' g {y | y ∉ φ.locals ∧ y ≠ x} →
+      (Formula.Realize M g' φ ↔ ∃ b, g' x = {f b} ∧ b ∈ s)) :
+    Term.realize M g (.sigma x φ) = f '' s := by
+  rw [Term.realize_sigma_eq M g (B := fun X => ∃ b, X = {f b} ∧ b ∈ s) hφ]
+  ext a
+  simp [and_comm, eq_comm]
+
+/-- A summation over a distributive description, true of the nonempty pluralities within
+`s`: `s` itself. -/
+theorem Term.realize_sigma_eq_of_distributive {x : V} {φ : Formula V L P} {s : Set α}
+    (hφ : ∀ g', Set.EqOn g' g {y | y ∉ φ.locals ∧ y ≠ x} →
+      (Formula.Realize M g' φ ↔ (g' x).Nonempty ∧ g' x ⊆ s)) :
+    Term.realize M g (.sigma x φ) = s := by
+  rw [Term.realize_sigma_eq M g (B := fun X => X.Nonempty ∧ X ⊆ s) hφ]
+  ext a
+  simp only [Set.mem_sUnion, Set.mem_ofPred_eq]
+  exact ⟨fun ⟨_, ⟨_, hX⟩, ha⟩ => hX ha, fun ha => ⟨{a}, ⟨⟨a, rfl⟩, by simpa⟩, rfl⟩⟩
 
 /-! ### Eliminability -/
 
