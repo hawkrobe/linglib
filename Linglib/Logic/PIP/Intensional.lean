@@ -18,12 +18,17 @@ of their members, and it holds of nothing whose world argument is not a world.
 
 * `Model.intensional_apply₁`, `Model.intensional_apply₂` — the lifting on one
   and two arguments.
-* `Term.realize_sigma_world_eq`, `exists_mem_distributive_iff`,
-  `exists_mem_singleton_iff`, `exists_singleton_iff`, `exists_distributive_iff` — the values of
-  summations over worlds and over entities from characterizations of their
-  bodies.
-* `exists_eq_singleton_iff` — a plurality of entities is a singleton iff
-  exactly one entity satisfies its description.
+* `Term.realize_sigma_world_eq` — a summation over worlds whose body relates each
+  world to the value of a local: the plurality of the worlds so related to some
+  plurality; `Term.realize_sigma_world_eq_of_distributive` — for a body distributive
+  in that local.
+
+## Implementation notes
+
+A plurality of worlds or of entities is the image `Sum.inl '' s` or `Sum.inr '' s` of a set
+of them, so that the values of summations and the modal relations between them, overlap
+and inclusion, reduce to relations between those sets through the injectivity of
+`Sum.inl` and `Sum.inr`.
 
 ## References
 
@@ -33,9 +38,7 @@ of their members, and it holds of nothing whose world argument is not a world.
 
 namespace PIP
 
-universe u v w
-
-variable {V : Type u} {L : Type v} {P : ℕ → Type w} {α : Type*}
+variable {V L : Type*} {P : ℕ → Type*}
 
 /-- The atoms of an intensional model: worlds and entities. -/
 abbrev Atom (W E : Type*) := W ⊕ E
@@ -62,12 +65,9 @@ variable {rel : ∀ {n : ℕ}, P n → W → (Fin n → Atom W E) → Prop}
 theorem Model.intensional_apply₁ (r : P 1) (Wp X : Set (Atom W E)) :
     (Model.intensional rel).I r Wp ![X] ↔
       ∃ w, Wp = world w ∧ X.Nonempty ∧ ∀ a ∈ X, rel r w ![a] := by
-  simp only [Model.intensional, Fin.forall_fin_one, Matrix.cons_val_zero]
-  refine exists_congr fun w => and_congr_right fun _ => and_congr_right fun _ => ⟨?_, ?_⟩
-  · exact fun H a ha => H ![a] ha
-  · intro H as h
-    have := H (as 0) h
-    rwa [show ![as 0] = as from funext (Fin.forall_fin_one.2 rfl)] at this
+  simp only [Model.intensional, Fin.forall_fin_one, Fin.forall_fin_succ_pi,
+    Fin.forall_fin_zero_pi, Fin.cons_zero, Matrix.cons_val_zero]
+  rfl
 
 theorem Model.intensional_apply₂ (r : P 2) (Wp X Y : Set (Atom W E)) :
     (Model.intensional rel).I r Wp ![X, Y] ↔
@@ -76,81 +76,40 @@ theorem Model.intensional_apply₂ (r : P 2) (Wp X Y : Set (Atom W E)) :
   simp only [Model.intensional, Fin.forall_fin_two, Matrix.cons_val_zero, Matrix.cons_val_one,
     and_assoc]
   refine exists_congr fun w => and_congr_right fun _ => and_congr_right fun _ =>
-    and_congr_right fun _ => ⟨?_, ?_⟩
-  · exact fun H a ha b hb => H ![a, b] ⟨ha, hb⟩
-  · intro H as h
-    have := H (as 0) h.1 (as 1) h.2
-    rwa [show ![as 0, as 1] = as from funext (Fin.forall_fin_two.2 ⟨rfl, rfl⟩)] at this
-
-section Summation
-
-variable [DecidableEq V] (M : Model P (Atom W E)) (g : V → Set (Atom W E))
+    and_congr_right fun _ => ⟨fun H a ha b hb => H ![a, b] ⟨ha, hb⟩, fun H as h => ?_⟩
+  rw [show as = ![as 0, as 1] from funext (Fin.forall_fin_two.2 ⟨rfl, rfl⟩)]
+  exact H _ h.1 _ h.2
 
 /-- The value of a summation over a world variable whose body, on the assignments
 agreeing outside the summation variable and its locals, holds iff the variable is a
 world standing in the relation `B` to the value of the local `y`: the worlds so
 related to some plurality. -/
-theorem Term.realize_sigma_world_eq {x y : V} (hxy : y ≠ x) {φ : Formula V L P}
+theorem Term.realize_sigma_world_eq [DecidableEq V] (M : Model P (Atom W E))
+    (g : V → Set (Atom W E)) {x y : V} (hxy : y ≠ x) {φ : Formula V L P}
     {B : Set (Atom W E) → W → Prop}
     (hφ : ∀ g', Set.EqOn g' g {z | z ∉ φ.locals ∧ z ≠ x} →
       (Formula.Realize M g' φ ↔ ∃ w, g' x = world w ∧ B (g' y) w))
     (hy : y ∈ φ.locals) :
-    Term.realize M g (.sigma x φ) = {a | ∃ w, a = Sum.inl w ∧ ∃ X, B X w} := by
+    Term.realize M g (.sigma x φ) = Sum.inl '' {w | ∃ Y, B Y w} := by
+  rw [Term.realize_sigma_eq_of_mem_locals M g hxy
+    (C := fun X Y => ∃ w, X = world w ∧ B Y w) hφ hy]
   ext a
-  rw [Term.mem_realize_sigma, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨g', hg, ha, hr⟩
-    obtain ⟨w, hx, hB⟩ := (hφ g' hg).1 hr
-    rw [hx] at ha
-    exact ⟨w, ha, g' y, hB⟩
-  · rintro ⟨w, rfl, X, hB⟩
-    have hg : Set.EqOn (Function.update (Function.update g x (world w)) y X) g
-        {z | z ∉ φ.locals ∧ z ≠ x} := fun z hz => by
-      rw [Function.update_of_ne fun h : z = y => hz.1 (h ▸ hy), Function.update_of_ne hz.2]
-    refine ⟨_, hg, by simp [Function.update_of_ne hxy.symm, world], (hφ _ hg).2 ⟨w, ?_, ?_⟩⟩
-    · rw [Function.update_of_ne hxy.symm, Function.update_self]
-    · rwa [Function.update_self]
+  simp only [world, Set.mem_sUnion, Set.mem_ofPred_eq, Set.mem_image]
+  exact ⟨fun ⟨_, ⟨_, w, rfl, hB⟩, ha⟩ => ⟨w, ⟨_, hB⟩, ha.symm⟩,
+    fun ⟨w, ⟨Y, hB⟩, ha⟩ => ⟨_, ⟨Y, w, rfl, hB⟩, ha.symm⟩⟩
 
-end Summation
-
-theorem exists_mem_distributive_iff {a : Atom W E} {Q : E → Prop} :
-    (∃ X : Set (Atom W E), a ∈ X ∧ X.Nonempty ∧ ∀ b ∈ X, ∃ e, b = Sum.inr e ∧ Q e) ↔
-      ∃ e, a = Sum.inr e ∧ Q e := by
-  constructor
-  · rintro ⟨X, ha, -, H⟩
-    exact H a ha
-  · rintro ⟨e, rfl, he⟩
-    exact ⟨{Sum.inr e}, rfl, ⟨_, rfl⟩, fun b hb => ⟨e, hb, he⟩⟩
-
-theorem exists_mem_singleton_iff {a : Atom W E} {Q : E → Prop} :
-    (∃ X : Set (Atom W E), a ∈ X ∧ ∃ e, X = {Sum.inr e} ∧ Q e) ↔ ∃ e, a = Sum.inr e ∧ Q e := by
-  constructor
-  · rintro ⟨X, ha, e, rfl, he⟩
-    exact ⟨e, ha, he⟩
-  · rintro ⟨e, rfl, he⟩
-    exact ⟨{Sum.inr e}, rfl, e, rfl, he⟩
-
-theorem exists_singleton_iff {Q : E → Prop} :
-    (∃ X : Set (Atom W E), ∃ e, X = {Sum.inr e} ∧ Q e) ↔ ∃ e, Q e :=
-  ⟨fun ⟨_, e, _, he⟩ => ⟨e, he⟩, fun ⟨e, he⟩ => ⟨_, e, rfl, he⟩⟩
-
-theorem exists_distributive_iff {Q : E → Prop} :
-    (∃ X : Set (Atom W E), X.Nonempty ∧ ∀ b ∈ X, ∃ e, b = Sum.inr e ∧ Q e) ↔ ∃ e, Q e := by
-  constructor
-  · rintro ⟨X, ⟨b, hb⟩, H⟩
-    exact (H b hb).imp fun e he => he.2
-  · rintro ⟨e, he⟩
-    exact ⟨{Sum.inr e}, ⟨_, rfl⟩, fun b hb => ⟨e, hb, he⟩⟩
-
-/-- A plurality of entities is a singleton iff exactly one entity satisfies its
-description. -/
-theorem exists_eq_singleton_iff (Q : E → Prop) :
-    (∃ a : Atom W E, {x | ∃ e, x = Sum.inr e ∧ Q e} = {a}) ↔ ∃! e, Q e := by
-  simp only [Set.eq_singleton_iff_unique_mem, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨a, ⟨e, rfl, he⟩, hu⟩
-    exact ⟨e, he, fun e' he' => Sum.inr_injective (hu _ ⟨e', rfl, he'⟩)⟩
-  · rintro ⟨e, he, hu⟩
-    exact ⟨_, ⟨e, rfl, he⟩, fun x ⟨e', hx, he'⟩ => hx ▸ congrArg Sum.inr (hu e' he')⟩
+/-- A summation over worlds whose body is distributive in a local `y`, true of the nonempty
+pluralities within `s w` at each world `w`: the worlds where `s w` is nonempty. -/
+theorem Term.realize_sigma_world_eq_of_distributive [DecidableEq V] (M : Model P (Atom W E))
+    (g : V → Set (Atom W E)) {x y : V} (hxy : y ≠ x) {φ : Formula V L P}
+    {s : W → Set (Atom W E)}
+    (hφ : ∀ g', Set.EqOn g' g {z | z ∉ φ.locals ∧ z ≠ x} →
+      (Formula.Realize M g' φ ↔ ∃ w, g' x = world w ∧ (g' y).Nonempty ∧ g' y ⊆ s w))
+    (hy : y ∈ φ.locals) :
+    Term.realize M g (.sigma x φ) = Sum.inl '' {w | (s w).Nonempty} := by
+  rw [Term.realize_sigma_world_eq M g hxy (B := fun Y w => Y.Nonempty ∧ Y ⊆ s w) hφ hy]
+  congr 1
+  ext w
+  exact ⟨fun ⟨_, hY, hYs⟩ => hY.mono hYs, fun hs => ⟨_, hs, subset_rfl⟩⟩
 
 end PIP
