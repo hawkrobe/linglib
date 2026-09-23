@@ -49,7 +49,7 @@ no/notEvery asymmetry from [augurzky-etal-2023]). Extend as new
 consumers land.
 
 There is deliberately *no* projector-stipulated `monotonicity :
-EmbeddingOperator → ContextPolarity` function — the classical mapping
+EmbeddingOperator → SignType` function — the classical mapping
 (`notEvery ↦ downward` by De Morgan) disagrees with the empirical
 observation that `notEvery` patterns with `every` rather than `no` in
 QUD-manipulation acceptance ([augurzky-etal-2023]), so any single

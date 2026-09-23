@@ -188,13 +188,13 @@ inductive Position
 /-- The entailment direction of a position under a reading of the main conditional: a main
 clause has its reading's direction, and a clause of the embedded conditional, read
 hypothetically, composes its direction with the main antecedent's. -/
-def Position.polarity (ct : Reading) : Position → ContextPolarity
+def Position.polarity (ct : Reading) : Position → SignType
   | .main c => ct.clausePolarity c
   | .embedded c => ct.clausePolarity .antecedent * Reading.hypothetical.clausePolarity c
 
 /-- The scalar context a position provides: downward-entailing positions reverse the scale. -/
 def Position.contextType (ct : Reading) (pos : Position) : Polarity :=
-  if pos.polarity ct = .downward then .negative else .positive
+  if pos.polarity ct = -1 then .negative else .positive
 
 /-- The item `e` is admitted at `pos` under the reading `ct` when the position provides the
 context it is sensitive to. -/
@@ -211,8 +211,8 @@ theorem polarity_embedded_consequent (ct : Reading) :
 
 /-- The embedded antecedent reverses it. -/
 theorem polarity_embedded_antecedent :
-    (Position.embedded .antecedent).polarity .premise = .downward ∧
-      (Position.embedded .antecedent).polarity .hypothetical = .upward := ⟨rfl, rfl⟩
+    (Position.embedded .antecedent).polarity .premise = -1 ∧
+      (Position.embedded .antecedent).polarity .hypothetical = 1 := ⟨rfl, rfl⟩
 
 /-- In the consequent of its embedded conditional, a bare left-nested conditional hosts items
 sensitive to preserving contexts, *rather pleased* in (29), and not the minimizer *lifted a

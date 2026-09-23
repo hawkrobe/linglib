@@ -108,26 +108,26 @@ def Environment.signature : Environment → Signature
         LicensingContext.withoutClause.properties.strawsonSignature]
 
 /-- The polarity of a class: the doubly negative environments are upward entailing, §5. -/
-def Kind.polarity : Kind → ContextPolarity
-  | .UE | .DN => .upward
-  | .DE => .downward
-  | .NM => .nonMonotonic
+def Kind.polarity : Kind → SignType
+  | .UE | .DN => 1
+  | .DE => -1
+  | .NM => 0
 
 /-- The paper's classification is the polarity of the signatures. -/
-theorem polarity_eq (e : Environment) : e.signature.toContextPolarity = e.kind.polarity := by
+theorem polarity_eq (e : Environment) : e.signature.sign = e.kind.polarity := by
   cases e <;> decide
 
 /-- §5: a doubly negative environment is upward entailing globally, the composition of two
 downward-entailing operators, while the position of the item inside the inner operator is
 downward entailing. -/
 theorem dn_global_upward_local_downward :
-    Environment.everyNot.signature.toContextPolarity = .upward ∧
-      LicensingContext.universalRestrictor.properties.strawsonSignature.toContextPolarity =
-        .downward ∧
-      LicensingContext.negation.properties.strawsonSignature.toContextPolarity = .downward ∧
-      Environment.noWithout.signature.toContextPolarity = .upward ∧
-      LicensingContext.withoutClause.properties.strawsonSignature.toContextPolarity =
-        .downward := by
+    Environment.everyNot.signature.sign = 1 ∧
+      LicensingContext.universalRestrictor.properties.strawsonSignature.sign =
+        -1 ∧
+      LicensingContext.negation.properties.strawsonSignature.sign = -1 ∧
+      Environment.noWithout.signature.sign = 1 ∧
+      LicensingContext.withoutClause.properties.strawsonSignature.sign =
+        -1 := by
   decide
 
 /-- The two orders of a superset–subset pair of verb phrases. -/
@@ -149,8 +149,8 @@ instance (e : Environment) : DecidablePred (Valid e) := λ d => by
 environment, only the subset-to-superset one in an upward-entailing or doubly negative one,
 and neither in a non-monotone one. -/
 theorem valid_iff (e : Environment) (d : Direction) :
-    Valid e d ↔ (e.kind.polarity = .upward ∧ d = .subsetToSuperset) ∨
-      (e.kind.polarity = .downward ∧ d = .supersetToSubset) := by
+    Valid e d ↔ (e.kind.polarity = 1 ∧ d = .subsetToSuperset) ∨
+      (e.kind.polarity = -1 ∧ d = .supersetToSubset) := by
   cases e <;> cases d <;> decide
 
 /-- The tested negative polarity items, *any*, *ever* and *at all*, are licensed by the

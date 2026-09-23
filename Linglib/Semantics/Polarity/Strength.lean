@@ -158,7 +158,7 @@ open Polarity
     signature whose context polarity is downward carries a DE
     strength. -/
 theorem de_signature_licenses_weak_npi (σ : Signature) :
-    Signature.toContextPolarity σ = .downward →
+    Signature.sign σ = -1 →
     (Signature.toDEStrength σ).isSome = true := by
   cases σ <;> decide
 
@@ -168,7 +168,7 @@ theorem de_signature_licenses_weak_npi (σ : Signature) :
 theorem strong_npi_requires_antiadditive (σ : Signature) :
     Signature.toDEStrength σ = some DEStrength.antiAdditive ∨
     Signature.toDEStrength σ = some DEStrength.antiMorphic →
-    Signature.toContextPolarity σ = ContextPolarity.downward := by
+    Signature.sign σ = -1 := by
   cases σ <;> decide
 
 example : Signature.toDEStrength .antiMult = some .weak := rfl

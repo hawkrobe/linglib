@@ -16,15 +16,15 @@ two-dimensional bias scheme of [sudo-2013], evidential and epistemic, which the 
 states of evidence or belief, [+s] being `plus s` and [−s] its complement `minus s`.
 
 Table 1's four types follow from the polarity of the declarative (`table1`): a declarative
-question of polarity `s` has evidential bias [+s] and epistemic bias [−s] (`declarative`), and the
+question of polarity `s` has evidential bias [+s] and epistemic bias [−s] (`dqProfile`), and the
 preliminary REJECTQ operator (17), λq: [¬q]^evid & [q]^epist. {q, ¬q}, gives a rejecting question
 [+(¬s)] and [+s] (`rejectQ`). A rejecting question is therefore used in a proper subset of the
 situations of the declarative question of the opposite polarity, the observation of p. 138
 (`felicity_rejectQ_ssubset`). The revised operator (40), with the illocutionary modifier VERUM
-or FALSUM, derives the positive rejecting question (`rejectQIM_verum`) but not the negative one:
+or FALSUM, derives the positive rejecting question (`rejectQWith_verum`) but not the negative one:
 FALSUM requires only that the evidence not support ¬p and that the speaker not have been
 committed to p, which admits neutral evidence and no prior assumption, situations Table 1 excludes
-(`felicity_rejectQ_ssubset_rejectQIM_falsum`).
+(`felicity_rejectQ_ssubset_rejectQWith_falsum`).
 
 Swedish marks a rejecting question with at least one morpho-syntactic cue (p. 157): a negative one
 with fronted negation or *väl*, a positive one with *men* 'but' and *väl*, or with clause-initial
@@ -66,7 +66,7 @@ open Question.BiasValue (plus minus neutral)
 
 /-- A declarative question of polarity `s`: evidence for the proposition the declarative denotes,
 and a speaker who had not assumed it (Section 2). -/
-def declarative (s : Polarity) : BiasProfile := ⟨plus s, minus s⟩
+def dqProfile (s : Polarity) : BiasProfile := ⟨plus s, minus s⟩
 
 /-- The preliminary REJECTQ (17), λq: [¬q]^evid & [q]^epist. {q, ¬q}, on the proposition of a
 declarative of polarity `s`: evidence for the opposite proposition, and a speaker who had
@@ -77,7 +77,7 @@ def rejectQ (s : Polarity) : BiasProfile := ⟨plus (.negative * s), plus s⟩
 of the opposite polarity (p. 138): the negative one within the positive declarative question's,
 the positive one within the negative declarative question's. -/
 theorem felicity_rejectQ_ssubset (s : Polarity) :
-    (rejectQ s).felicity ⊂ (declarative (.negative * s)).felicity := by
+    (rejectQ s).felicity ⊂ (dqProfile (.negative * s)).felicity := by
   cases s <;> decide
 
 /-! ### The illocutionary modifiers (Section 6.2) -/
@@ -98,16 +98,16 @@ def Modifier.bias : Modifier → Polarity → BiasValue
 /-- The revised REJECTQ (40), λqλIM: [IM(¬q)]^evid & [IM(q)]^epist. {IM(q), ¬IM(q)}, with `q` the
 non-negative proposition, as in (41): the positive rejecting question has VERUM, the negative one
 FALSUM. -/
-def rejectQIM (m : Modifier) : BiasProfile := ⟨m.bias .negative, m.bias .positive⟩
+def rejectQWith (m : Modifier) : BiasProfile := ⟨m.bias .negative, m.bias .positive⟩
 
 /-- With VERUM, (40) agrees with (17) on the positive rejecting question. -/
-theorem rejectQIM_verum : rejectQIM .verum = rejectQ .positive := rfl
+theorem rejectQWith_verum : rejectQWith .verum = rejectQ .positive := rfl
 
 /-- With FALSUM, (40) is strictly weaker than (17) and Table 1 on the negative rejecting question:
 it admits neutral evidence without a prior assumption. -/
-theorem felicity_rejectQ_ssubset_rejectQIM_falsum :
-    (rejectQ .negative).felicity ⊂ (rejectQIM .falsum).felicity ∧
-      (none, none) ∈ (rejectQIM .falsum).felicity := by
+theorem felicity_rejectQ_ssubset_rejectQWith_falsum :
+    (rejectQ .negative).felicity ⊂ (rejectQWith .falsum).felicity ∧
+      (0, 0) ∈ (rejectQWith .falsum).felicity := by
   decide
 
 /-! ### Table 1 -/
@@ -122,7 +122,7 @@ inductive Kind where
 
 /-- The profile of a question of the given kind and polarity. -/
 def Kind.profile : Kind → Polarity → BiasProfile
-  | .declarative => SeeligerRepp2018.declarative
+  | .declarative => dqProfile
   | .rejecting => rejectQ
 
 /-- The four types of Table 1, with their kind and the polarity of the declarative. -/

@@ -15,10 +15,9 @@ negation, or negated in turn, and the morphosyntactic probes of [ladd-1981] — 
 ein*, *no* vs *not some*, and the polarity items they admit — classify a question independently of
 those judgements.
 
-The three question types are the substrate's `PQForm`: `PosQ` is the paper's PPQ, `LoNQ` its
-inner-negation NPQ, `HiNQ` its outer-negation NPQ. The contextual evidence of a situation is the
-polarity of `p` it supports, if any, and reading it relative to `¬p` is the action of the negative
-polarity.
+The three question types are the substrate's `PQForm`: `posQ` is the paper's PPQ, `loNQ` its
+inner-negation NPQ, `hiNQ` its outer-negation NPQ. The contextual evidence of a situation is the
+sign of `p` it supports, and reading it relative to `¬p` negates it.
 
 ## Main definitions
 
@@ -48,63 +47,63 @@ open Question
 /-! ### Compelling contextual evidence -/
 
 /-- Compelling evidence for `p`: evidence that would on its own justify the inference that `p`. -/
-def CompellingFor (ev : Option Polarity) : Prop := ev = some .positive
+def CompellingFor (ev : SignType) : Prop := ev = 1
 
 /-- Compelling evidence against `p`: compelling evidence for `¬p`, the evidence read relative to
 `¬p`. -/
-def CompellingAgainst (ev : Option Polarity) : Prop := CompellingFor (Polarity.negative • ev)
+def CompellingAgainst (ev : SignType) : Prop := CompellingFor (-ev)
 
-instance (ev : Option Polarity) : Decidable (CompellingFor ev) :=
+instance (ev : SignType) : Decidable (CompellingFor ev) :=
   inferInstanceAs (Decidable (_ = _))
 
-instance (ev : Option Polarity) : Decidable (CompellingAgainst ev) :=
+instance (ev : SignType) : Decidable (CompellingAgainst ev) :=
   inferInstanceAs (Decidable (CompellingFor _))
 
 /-! ### The evidence conditions -/
 
 /-- The proto-condition: there is no compelling contextual evidence against `p`. -/
-def E (ev : Option Polarity) : Prop := ¬ CompellingAgainst ev
+def E (ev : SignType) : Prop := ¬ CompellingAgainst ev
 
-instance (ev : Option Polarity) : Decidable (E ev) := inferInstanceAs (Decidable ¬ _)
+instance (ev : SignType) : Decidable (E ev) := inferInstanceAs (Decidable ¬ _)
 
 /-- The felicity condition of each question type, as one proto-condition applied three ways: a
 positive question imposes it on its own proposition, an outer-negation question on the negation,
 and an inner-negation question imposes its negation. -/
-def Felicitous : PQForm → Option Polarity → Prop
-  | .PosQ, ev => E ev
-  | .LoNQ, ev => ¬ E ev
-  | .HiNQ, ev => E (Polarity.negative • ev)
+def Felicitous : PQForm → SignType → Prop
+  | .posQ, ev => E ev
+  | .loNQ, ev => ¬ E ev
+  | .hiNQ, ev => E (-ev)
 
-instance : ∀ (f : PQForm) (ev : Option Polarity), Decidable (Felicitous f ev)
-  | .PosQ, ev => inferInstanceAs (Decidable (E ev))
-  | .LoNQ, ev => inferInstanceAs (Decidable ¬ E ev)
-  | .HiNQ, ev => inferInstanceAs (Decidable (E (Polarity.negative • ev)))
+instance : ∀ (f : PQForm) (ev : SignType), Decidable (Felicitous f ev)
+  | .posQ, ev => inferInstanceAs (Decidable (E ev))
+  | .loNQ, ev => inferInstanceAs (Decidable ¬ E ev)
+  | .hiNQ, ev => inferInstanceAs (Decidable (E (-ev)))
 
 /-- A positive question requires no compelling evidence against `p`. -/
-theorem posQ_condition (ev : Option Polarity) :
-    Felicitous .PosQ ev ↔ ¬ CompellingAgainst ev := Iff.rfl
+theorem posQ_condition (ev : SignType) :
+    Felicitous .posQ ev ↔ ¬ CompellingAgainst ev := Iff.rfl
 
 /-- An outer-negation question requires no compelling evidence *for* `p`. -/
-theorem hiNQ_condition (ev : Option Polarity) :
-    Felicitous .HiNQ ev ↔ ¬ CompellingFor ev := by
+theorem hiNQ_condition (ev : SignType) :
+    Felicitous .hiNQ ev ↔ ¬ CompellingFor ev := by
   decide +revert
 
 /-- An inner-negation question requires compelling evidence against `p`. -/
-theorem loNQ_condition (ev : Option Polarity) :
-    Felicitous .LoNQ ev ↔ CompellingAgainst ev := by
+theorem loNQ_condition (ev : SignType) :
+    Felicitous .loNQ ev ↔ CompellingAgainst ev := by
   decide +revert
 
 /-- A positive question is barred by compelling evidence against `p` — *Is it sunny?* asked of
 someone in a dripping raincoat. -/
-theorem posQ_infelicitous_against : ¬ Felicitous .PosQ (some .negative) := by decide
+theorem posQ_infelicitous_against : ¬ Felicitous .posQ (-1) := by decide
 
 /-- An inner-negation question is felicitous only against `p`, the neutral context included in the
 exclusion. -/
-theorem loNQ_only_against (ev : Option Polarity) : Felicitous .LoNQ ev ↔ ev = some .negative := by
+theorem loNQ_only_against (ev : SignType) : Felicitous .loNQ ev ↔ ev = -1 := by
   decide +revert
 
 /-- An outer-negation question tolerates a neutral context, unlike an inner-negation one. -/
-theorem hiNQ_neutral_loNQ_not : Felicitous .HiNQ none ∧ ¬ Felicitous .LoNQ none := by decide
+theorem hiNQ_neutral_loNQ_not : Felicitous .hiNQ 0 ∧ ¬ Felicitous .loNQ 0 := by decide
 
 /-- No two question types share a felicity profile: the predicted synonymies of a Hamblin
 denotation ([hamblin-1973b]) are not real. -/
@@ -113,8 +112,8 @@ theorem felicity_separates_forms (f g : PQForm) (h : ∀ ev, Felicitous f ev ↔
   cases f <;> cases g <;>
     first
       | rfl
-      | exact absurd (h none) (by decide)
-      | exact absurd (h (some .positive)) (by decide)
+      | exact absurd (h 0) (by decide)
+      | exact absurd (h 1) (by decide)
 
 /-! ### The morphosyntactic probes -/
 
@@ -183,8 +182,8 @@ instance : ∀ q : Question, Decidable q.WellFormed
 /-- The question type a well-formed question realizes: inner negation is an inner-negation NPQ,
 outer negation an outer-negation one. -/
 def Scope.form : Scope → PQForm
-  | .inner => .LoNQ
-  | .outer => .HiNQ
+  | .inner => .loNQ
+  | .outer => .hiNQ
 
 /-- *Is there no vegetarian restaurant either/\*too?*: the inner-negation determiner takes the
 negative polarity item and refuses the positive one. -/

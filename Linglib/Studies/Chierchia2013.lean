@@ -86,20 +86,20 @@ theorem isStrongest_inclusive {C : Set W → Set W} (hC : Antitone C) :
 
 /-- The reading Maximize Strength selects from the polarity of a position; a non-monotone
 position selects neither. -/
-def maximizeStrength : ContextPolarity → Option DisjunctionReading
-  | .upward => some .exclusive
-  | .downward => some .inclusive
-  | .nonMonotonic => none
+def maximizeStrength : SignType → Option DisjunctionReading
+  | .pos => some .exclusive
+  | .neg => some .inclusive
+  | .zero => none
 
 /-- The selection is sound: for an embedding with a signature of the position's polarity, the
 selected reading is the strongest. -/
 theorem isStrongest_maximizeStrength {φ : Signature} {C : Set W → Set W} (hφ : φ.SoundFor C) :
-    ∀ r ∈ maximizeStrength φ.toContextPolarity, IsStrongest p q C r := by
+    ∀ r ∈ maximizeStrength φ.sign, IsStrongest p q C r := by
   intro r hr
-  cases hpol : φ.toContextPolarity <;> rw [hpol] at hr <;>
+  cases hpol : φ.sign <;> rw [hpol] at hr <;>
     simp only [maximizeStrength, Option.mem_def, Option.some.injEq, reduceCtorEq] at hr
-  · exact hr ▸ isStrongest_exclusive p q (hφ.monotone hpol)
   · exact hr ▸ isStrongest_inclusive p q (hφ.antitone hpol)
+  · exact hr ▸ isStrongest_exclusive p q (hφ.monotone hpol)
 
 end MaximizeStrength
 
@@ -150,9 +150,9 @@ inductive Position where
 
 /-- The polarity of a position: the easy column is upward entailing, and a licensing context has
 the polarity of its signature. -/
-def Position.polarity : Position → ContextPolarity
-  | .licensing c => c.properties.strawsonSignature.toContextPolarity
-  | _ => .upward
+def Position.polarity : Position → SignType
+  | .licensing c => c.properties.strawsonSignature.sign
+  | _ => 1
 
 /-- A position licenses an item when it is a licensing context that licenses it. -/
 def Position.Licenses : Position → Item → Prop
@@ -167,7 +167,7 @@ instance : (pos : Position) → (e : Item) → Decidable (pos.Licenses e)
 /-- Every downward-entailing position licenses *ever*: the hard column of the readings of *or*
 is the column where the pure negative-polarity item is grammatical. -/
 theorem licenses_ever_of_downward :
-    ∀ pos : Position, pos.polarity = .downward → pos.Licenses English.PolarityItems.ever := by
+    ∀ pos : Position, pos.polarity = -1 → pos.Licenses English.PolarityItems.ever := by
   intro pos
   (cases pos <;> try (rename_i c; cases c)) <;> decide
 

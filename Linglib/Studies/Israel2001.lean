@@ -13,8 +13,8 @@ a polarity item encodes a quantity relative to the scalar norm and a rhetorical 
 when the proposition it expresses entails the norm's and attenuating when it is entailed by it
 (`Emphatic`, `Attenuating`). Scale preserving contexts are the strictly monotone maps on
 propositions and scale reversing ones the strictly antitone maps, the positive and negative
-directions of `Polarity.StrictDirected`, and the direction of the expressed propositional
-function decides which quantities are emphatic (`felicitous_iff_of_strictDirected`). The four cells of Figure 1 follow: emphatic items with low values and attenuating
+directions of `Polarity.StrictMonoBy`, and the direction of the expressed propositional
+function decides which quantities are emphatic (`felicitous_iff_of_strictMonoBy`). The four cells of Figure 1 follow: emphatic items with low values and attenuating
 items with high values need reversing contexts, the negative polarity items, the other two cells
 preserving contexts. The inverted items of Section 3, maximizing NPIs like *wild horses* and
 minimizing PPIs like *for peanuts*, follow from the thematic logic of Section 4: a propositional
@@ -174,7 +174,7 @@ theorem Quantity.gt_iff_of_rel {q : Quantity} (hq : q.Rel x n) : n < x ↔ q = .
 
 /-- An item is felicitous exactly when its force has the sign of the direction of the expressed
 function times that of its quantity. -/
-theorem felicitous_iff_of_strictDirected {δ : Polarity} {q : Quantity} (h : δ.StrictDirected Q)
+theorem felicitous_iff_of_strictMonoBy {δ : Polarity} {q : Quantity} (h : δ.StrictMonoBy Q)
     (hq : q.Rel x n) (d : Force) : Felicitous d Q n x ↔ d.sign = δ * q.sign := by
   have hx : x ≠ n := by
     cases q
@@ -189,9 +189,9 @@ theorem felicitous_iff_of_strictDirected {δ : Polarity} {q : Quantity} (h : δ.
 /-- Figures 1 and 3: an item is felicitous exactly in contexts of its licensing direction, for
 any scalar model of its role and any quantity standing to the norm as the item says. -/
 theorem felicitous_iff {P : α → Set W} {f : Set W → Set W} {r : Role} {c : Polarity}
-    {d : Force} {q : Quantity} (hr : r.sign.StrictDirected P) (hc : c.StrictDirected f)
+    {d : Force} {q : Quantity} (hr : r.sign.StrictMonoBy P) (hc : c.StrictMonoBy f)
     (hq : q.Rel x n) : Felicitous d (f ∘ P) n x ↔ c = licensingContext d q r := by
-  rw [felicitous_iff_of_strictDirected (hc.comp hr) hq, licensingContext]
+  rw [felicitous_iff_of_strictMonoBy (hc.comp hr) hq, licensingContext]
   cases c <;> cases d <;> cases q <;> cases r <;> decide
 
 /-- The pecuniary paradox, (15) and (16): the same small amount is emphatic under negation as a

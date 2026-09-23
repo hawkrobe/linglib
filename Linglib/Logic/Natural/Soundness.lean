@@ -179,13 +179,13 @@ theorem soundFor_anti_iff {f : α → β} :
 
 /-- A signature of upward polarity is sound only for monotone functions. -/
 theorem Signature.SoundFor.monotone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
-    (hσ : σ.toContextPolarity = .upward) : Monotone f := by
+    (hσ : σ.sign = 1) : Monotone f := by
   intro x y hxy
   cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
 
 /-- A signature of downward polarity is sound only for antitone functions. -/
 theorem Signature.SoundFor.antitone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
-    (hσ : σ.toContextPolarity = .downward) : Antitone f := by
+    (hσ : σ.sign = -1) : Antitone f := by
   intro x y hxy
   cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
 

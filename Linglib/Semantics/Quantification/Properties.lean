@@ -906,7 +906,7 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] 
 
 /-! ### Entailment Signature Bridge ([icard-2012]) -/
 
-open NaturalLogic (Signature ContextPolarity)
+open NaturalLogic (Signature)
 
 /--
 Map a pair of entailment signatures (restrictor, scope) to `DoubleMono`,
@@ -944,14 +944,14 @@ def notEverySignature : Signature × Signature := (.additive, .antiMult)
 #guard Signature.pairToDoubleMono noSignature.1 noSignature.2 == some .downDown
 #guard Signature.pairToDoubleMono notEverySignature.1 notEverySignature.2 == some .upDown
 
-#guard Signature.toContextPolarity everySignature.2 == .upward
-#guard Signature.toContextPolarity someSignature.2 == .upward
-#guard Signature.toContextPolarity noSignature.2 == .downward
-#guard Signature.toContextPolarity notEverySignature.2 == .downward
+#guard Signature.sign everySignature.2 == 1
+#guard Signature.sign someSignature.2 == 1
+#guard Signature.sign noSignature.2 == -1
+#guard Signature.sign notEverySignature.2 == -1
 
-#guard Signature.toContextPolarity everySignature.1 == .downward
-#guard Signature.toContextPolarity someSignature.1 == .upward
-#guard Signature.toContextPolarity noSignature.1 == .downward
-#guard Signature.toContextPolarity notEverySignature.1 == .upward
+#guard Signature.sign everySignature.1 == -1
+#guard Signature.sign someSignature.1 == 1
+#guard Signature.sign noSignature.1 == -1
+#guard Signature.sign notEverySignature.1 == 1
 
 end Quantifier.GQ

@@ -202,9 +202,12 @@ theorem bipolar_inquisitive : (C₀.bipolarQuestion .addressee raining).toIssue.
 
 /-! ### Table 1 -/
 
-/-- The worlds the contextual evidence of [buring-gunlogson-2000] leaves open: the polarity of `φ`
-it supports acting on `φ`, every world when it supports neither. -/
-def evidence (φ : Set Weather) (e : Option Polarity) : Set Weather := e.elim Set.univ (· • φ)
+/-- The worlds the contextual evidence of [buring-gunlogson-2000] leaves open, by the sign of `φ`
+it supports: `φ`, its complement, or every world. -/
+def evidence (φ : Set Weather) : SignType → Set Weather
+  | .pos => φ
+  | .neg => φᶜ
+  | .zero => Set.univ
 
 /-- A monopolar question proposing `S₂⊢φ` is licensed by evidence for `φ`. -/
 def MonopolarLicensed (E φ : Set Weather) : Prop := E ⊆ φ
@@ -219,9 +222,9 @@ def HighNegationLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ
 /-- The question without negation is licensed on either of its readings; the question with low
 negation only on the monopolar reading of `¬φ`; the question with high negation as such. -/
 def Licensed (E φ : Set Weather) : PQForm → Prop
-  | .PosQ => MonopolarLicensed E φ ∨ BipolarLicensed E φ
-  | .LoNQ => MonopolarLicensed E φᶜ
-  | .HiNQ => HighNegationLicensed E φ
+  | .posQ => MonopolarLicensed E φ ∨ BipolarLicensed E φ
+  | .loNQ => MonopolarLicensed E φᶜ
+  | .hiNQ => HighNegationLicensed E φ
 
 theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empty
 
@@ -232,19 +235,19 @@ theorem raining_ne_univ : raining ≠ Set.univ := λ h =>
 monopolar; with neutral evidence the question without negation, read bipolar, and the
 high-negation question; with evidence against `φ` both negated questions and not the question
 without negation. -/
-theorem table1 (e : Option Polarity) :
-    (Licensed (evidence raining e) raining .PosQ ↔ e ≠ some .negative) ∧
-      (Licensed (evidence raining e) raining .LoNQ ↔ e = some .negative) ∧
-      (Licensed (evidence raining e) raining .HiNQ ↔ e ≠ some .positive) := by
-  rcases e with _ | _ | _ <;> simp [Licensed, MonopolarLicensed, BipolarLicensed,
+theorem table1 (e : SignType) :
+    (Licensed (evidence raining e) raining .posQ ↔ e ≠ -1) ∧
+      (Licensed (evidence raining e) raining .loNQ ↔ e = -1) ∧
+      (Licensed (evidence raining e) raining .hiNQ ↔ e ≠ 1) := by
+  cases e <;> simp [Licensed, MonopolarLicensed, BipolarLicensed,
     HighNegationLicensed, evidence, raining_ne_empty, raining_ne_univ]
 
 /-- The licensing conditions are the evidence conditions of [buring-gunlogson-2000]. -/
-theorem licensed_iff_felicitous (f : PQForm) (e : Option Polarity) :
+theorem licensed_iff_felicitous (f : PQForm) (e : SignType) :
     Licensed (evidence raining e) raining f ↔ BuringGunlogson2000.Felicitous f e := by
-  have h : ∀ e : Option Polarity, (e ≠ some .negative ↔ BuringGunlogson2000.Felicitous .PosQ e) ∧
-      (e = some .negative ↔ BuringGunlogson2000.Felicitous .LoNQ e) ∧
-      (e ≠ some .positive ↔ BuringGunlogson2000.Felicitous .HiNQ e) := by decide
+  have h : ∀ e : SignType, (e ≠ -1 ↔ BuringGunlogson2000.Felicitous .posQ e) ∧
+      (e = -1 ↔ BuringGunlogson2000.Felicitous .loNQ e) ∧
+      (e ≠ 1 ↔ BuringGunlogson2000.Felicitous .hiNQ e) := by decide
   cases f
   exacts [(table1 e).1.trans (h e).1, (table1 e).2.1.trans (h e).2.1,
     (table1 e).2.2.trans (h e).2.2]
