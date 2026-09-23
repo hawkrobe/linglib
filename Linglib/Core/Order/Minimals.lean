@@ -59,6 +59,26 @@ theorem mem_minimals_of_subset (h : s ⊆ t) (ha : a ∈ p.minimals t) (has : a 
     a ∈ p.minimals s :=
   Minimal.mono ha (fun _ hb ↦ h hb) has
 
+/-- Two preorders that agree on a set have the same minimal elements of it. -/
+theorem minimals_congr {q : Preorder α} (h : ∀ a ∈ s, ∀ b ∈ s, p.le a b ↔ q.le a b) :
+    p.minimals s = q.minimals s :=
+  Set.ext fun a ↦
+    ⟨fun ha ↦ ⟨ha.1, fun b hb hba ↦ (h a ha.1 b hb).1 (ha.2 hb ((h b hb a ha.1).2 hba))⟩,
+      fun ha ↦ ⟨ha.1, fun b hb hba ↦ (h a ha.1 b hb).2 (ha.2 hb ((h b hb a ha.1).1 hba))⟩⟩
+
+/-- The minimal elements of a set depend only on the strict order. -/
+theorem minimals_eq_of_lt_iff {q : Preorder α} (h : ∀ a b, p.lt a b ↔ q.lt a b) :
+    p.minimals s = q.minimals s :=
+  Set.ext fun a ↦
+    ⟨fun ha ↦ ⟨ha.1, fun b hb hba ↦ by_contra fun hab ↦
+      ((p.lt_iff_le_not_ge b a).1 ((h b a).2 ((q.lt_iff_le_not_ge b a).2 ⟨hba, hab⟩))).2
+        (ha.2 hb ((p.lt_iff_le_not_ge b a).1 ((h b a).2 ((q.lt_iff_le_not_ge b a).2
+          ⟨hba, hab⟩))).1)⟩,
+      fun ha ↦ ⟨ha.1, fun b hb hba ↦ by_contra fun hab ↦
+      ((q.lt_iff_le_not_ge b a).1 ((h b a).1 ((p.lt_iff_le_not_ge b a).2 ⟨hba, hab⟩))).2
+        (ha.2 hb ((q.lt_iff_le_not_ge b a).1 ((h b a).1 ((p.lt_iff_le_not_ge b a).2
+          ⟨hba, hab⟩))).1)⟩⟩
+
 /-- Under the preorder that relates every two elements, every element of a set is minimal. -/
 @[simp] theorem minimals_top (s : Set α) : (⊤ : Preorder α).minimals s = s :=
   Set.ext fun _ ↦ ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ _ _ ↦ trivial⟩⟩
