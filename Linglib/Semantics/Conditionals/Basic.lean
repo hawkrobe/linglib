@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Basic
-public import Linglib.Core.Order.Minimals
+public import Linglib.Logic.Nonmonotonic.Preferential
 
 /-!
 # Conditional operators
@@ -28,6 +28,8 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
   coincide wherever the Limit Assumption holds.
 * `mem_variablyStrictImp_compl_singleton`: without closest antecedent-worlds, *if p, it would not
   be v* holds for every world `v`.
+* `isPreferential_closestImp`, `isRational_closestImp`: the conditional at a world satisfies
+  system P on a well-founded preorder, and rational monotonicity on a total one.
 
 ## References
 
@@ -37,6 +39,10 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
 * [R. C. Stalnaker, *Indicative conditionals* (1975)][stalnaker-1975]
 * [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
 * [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
+* [S. Kraus, D. Lehmann and M. Magidor, *Nonmonotonic Reasoning, Preferential Models and
+  Cumulative Logics* (1990)][kraus-magidor-1990]
+* [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
+  (1992)][lehmann-magidor-1992]
 * [A. Kratzer, *Conditionals* (1986)][kratzer-1986]
 * [C. Condoravdi, *Temporal Interpretation of Modals: Modals for the Present and for the Past*
   (2002)][condoravdi-2002]
@@ -417,6 +423,42 @@ theorem closestImp_eq_orderingImp {ord : W → Preorder W} :
   ext; simp
 
 end Ordering
+
+/-! ### The logic of the conditional at a world
+
+At a world `w` the conditional of the closest worlds is the consequence relation that the
+preorder `ord w` defines on propositions (`Nonmonotonic.Entails`), true when the most normal
+antecedent-worlds are consequent-worlds (`mem_closestImp_iff_entails`). When that preorder is
+well-founded, which gives the Limit Assumption, the conditional therefore satisfies the rules of
+system P ([kraus-magidor-1990]), and when it is also total, as [lewis-1973] requires, rational
+monotonicity ([lehmann-magidor-1992]). On a preorder that is not total, such as an ordering
+source can induce, rational monotonicity can fail (`exists_not_isRational_closestImp`). -/
+
+section Logic
+
+variable {ord : W → Preorder W}
+
+theorem mem_closestImp_iff_entails : w ∈ closestImp ord p q ↔ Nonmonotonic.Entails (ord w) p q :=
+  Iff.rfl
+
+/-- On a well-founded preorder the conditional at a world is preferential. -/
+theorem isPreferential_closestImp (hwf : WellFounded (ord w).lt) :
+    Nonmonotonic.IsPreferential fun p q ↦ w ∈ closestImp ord p q :=
+  Nonmonotonic.isPreferential_entails hwf
+
+/-- On a well-founded total preorder the conditional at a world is rational. -/
+theorem isRational_closestImp (hwf : WellFounded (ord w).lt) (htot : Std.Total (ord w).le) :
+    Nonmonotonic.IsRational fun p q ↦ w ∈ closestImp ord p q :=
+  Nonmonotonic.isRational_entails hwf htot
+
+/-- On a preorder that is not total the conditional need not satisfy rational monotonicity. -/
+theorem exists_not_isRational_closestImp :
+    ∃ ord : Fin 3 → Preorder (Fin 3),
+      ¬ Nonmonotonic.IsRational fun p q ↦ (0 : Fin 3) ∈ closestImp ord p q :=
+  let ⟨p, hp⟩ := Nonmonotonic.exists_not_isRational_entails
+  ⟨fun _ ↦ p, hp⟩
+
+end Logic
 
 
 end Conditional

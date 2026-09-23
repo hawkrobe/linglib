@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Minimals
-import Mathlib.Data.Fintype.Card
+module
+
+public import Linglib.Core.Order.Minimals
+public import Mathlib.Data.Fintype.Card
 
 /-!
 # Preferential and rational consequence relations
@@ -50,6 +52,9 @@ models whose states are the worlds themselves.
 * [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
   (1992)][lehmann-magidor-1992]
 -/
+
+@[expose] public section
+
 
 namespace Nonmonotonic
 
