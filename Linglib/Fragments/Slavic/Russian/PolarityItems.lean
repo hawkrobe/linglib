@@ -31,7 +31,7 @@ characterized exactly by the licensing keystone
 
 namespace Russian.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### Weak NPI (the *-либо* series) -/
 
@@ -39,7 +39,7 @@ open Polarity
     the DE functions of [haspelmath-1997]'s map: questions, conditionals,
     comparatives, and indirect (non-clausemate) negation — distinct from the
     direct-negation *ни-* series below. -/
-def ktoLibo : Item :=
+def ktoLibo : PolarityItem :=
   { form := "кто-либо (kto-libo)"
   , licensor := some .weak
   , baseForce := .existential
@@ -50,7 +50,7 @@ def ktoLibo : Item :=
 
 /-- *никто* (nikto) — strict-NC n-word ('nobody'). Direct-negation series;
     requires clausemate negation: 'nikto ne prišël' (nobody NEG came). -/
-def nikto : Item :=
+def nikto : PolarityItem :=
   { form := "никто (nikto)"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -60,7 +60,7 @@ def nikto : Item :=
 
 /-- *ничего* (nichego) — non-human strict-NC n-word ('nothing').
     'Ničego ne videl' = '(I) saw nothing'. -/
-def nichego : Item :=
+def nichego : PolarityItem :=
   { form := "ничего (nichego)"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -70,7 +70,7 @@ def nichego : Item :=
 
 /-- *никогда* (nikogda) — temporal strict-NC n-word ('never').
     'Nikogda ne prixodil' = '(He) never came'. -/
-def nikogda : Item :=
+def nikogda : PolarityItem :=
   { form := "никогда (nikogda)"
   , licensor := some .antiMorphic
   , baseForce := .temporal
@@ -82,7 +82,7 @@ def nikogda : Item :=
 
 /-- *кто угодно* (kto ugodno) — free choice item.
     Universal-like: 'anyone at all'. -/
-def ktoUgodno : Item :=
+def ktoUgodno : PolarityItem :=
   { form := "кто угодно (kto ugodno)"
   , freeChoice := true
   , baseForce := .existential
@@ -92,7 +92,7 @@ def ktoUgodno : Item :=
 
 /-- The Russian polarity-item inventory: the Fragment-side joint listing
     every polarity item this fragment defines. -/
-def items : List Item :=
+def items : List PolarityItem :=
   [ktoLibo, nikto, nichego, nikogda, ktoUgodno]
 
 /-! ### Verification -/

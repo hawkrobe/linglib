@@ -31,7 +31,7 @@ the arguments' presuppositions are satisfied.
 
 The operator instances are the semantic content of the
 `classicalSignature = none` rows of
-`Polarity.LicensingContext.properties`. Composing definedness along a
+`PolarityItem.LicensingContext.properties`. Composing definedness along a
 path is presupposition projection and is deliberately not attempted
 here; its home is a bridge to `Semantics/Presupposition/`.
 

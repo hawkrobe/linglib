@@ -38,7 +38,7 @@ operator really holds the strength the item requires.
 
 @[expose] public section
 
-namespace Polarity
+namespace PolarityItem
 
 open NaturalLogic
 open Quantifier Quantifier.GQ Quantifier.NP
@@ -398,7 +398,7 @@ theorem ContextWitness.holdsFor_of_licenses {c : LicensingContext}
     (w : ContextWitness c)
     (hcl : c.properties.classicalSignature =
       some c.properties.strawsonSignature)
-    {e : Item} (hlic : zwartsScale.licenses e c) :
+    {e : PolarityItem} (hlic : zwartsScale.licenses e c) :
     ∀ r ∈ e.licensor, r.HoldsFor w.f := by
   obtain ⟨r, hr, s, hs, hrs⟩ := hlic
   intro r' hr'
@@ -409,4 +409,4 @@ theorem ContextWitness.holdsFor_of_licenses {c : LicensingContext}
   subst h
   exact (w.strength _ (Option.mem_def.mpr hcl) s hs).of_le hrs
 
-end Polarity
+end PolarityItem

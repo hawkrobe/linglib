@@ -18,14 +18,14 @@ Turkish indefinite pronoun polarity items, typed by the categories from
 
 namespace Turkish.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### NPIs -/
 
 /-- *kimse* — Weak NPI.
     Historically 'person'; now polarity-sensitive in questions,
     conditionals, and indirect negation. -/
-def kimse : Item :=
+def kimse : PolarityItem :=
   { form := "kimse"
   , licensor := some .weak
   , baseForce := .existential
@@ -34,7 +34,7 @@ def kimse : Item :=
 
 /-- *hiç kimse* — Emphatic negative indefinite.
     *hiç* intensifier + *kimse*; direct negation only. -/
-def hicKimse : Item :=
+def hicKimse : PolarityItem :=
   { form := "hiç kimse"
   , licensor := some .antiMorphic
   , baseForce := .existential
@@ -45,7 +45,7 @@ def hicKimse : Item :=
 
 /-- *herhangi biri* — Free choice item.
     'Any person at all'. -/
-def herhangiBiri : Item :=
+def herhangiBiri : PolarityItem :=
   { form := "herhangi biri"
   , freeChoice := true
   , baseForce := .existential

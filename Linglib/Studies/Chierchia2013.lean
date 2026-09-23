@@ -37,7 +37,7 @@ from the licensing keystone applied to the Fragment entries.
 
 namespace Chierchia2013
 
-open NaturalLogic Polarity Exhaustification Data.Examples
+open NaturalLogic PolarityItem Exhaustification Data.Examples
 
 /-! ### Maximize Strength -/
 
@@ -155,11 +155,11 @@ def Position.polarity : Position → SignType
   | _ => 1
 
 /-- A position licenses an item when it is a licensing context that licenses it. -/
-def Position.Licenses : Position → Item → Prop
+def Position.Licenses : Position → PolarityItem → Prop
   | .licensing c, e => c.licenses e
   | _, _ => False
 
-instance : (pos : Position) → (e : Item) → Decidable (pos.Licenses e)
+instance : (pos : Position) → (e : PolarityItem) → Decidable (pos.Licenses e)
   | .licensing c, e => inferInstanceAs (Decidable (c.licenses e))
   | .matrix, _ | .conditionalConsequent, _ | .everyScope, _ | .positiveQuantifierScope, _ =>
     inferInstanceAs (Decidable False)
@@ -194,7 +194,7 @@ def Position.ofKey : String → Option Position
   | "imperative" => some (.licensing .imperative)
   | _ => none
 
-def item : String → Option Item
+def item : String → Option PolarityItem
   | "any" => some English.PolarityItems.any
   | "ever" => some English.PolarityItems.ever
   | "alcuno" => some Italian.PolarityItems.alcuno

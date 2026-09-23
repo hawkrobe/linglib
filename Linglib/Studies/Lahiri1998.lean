@@ -49,7 +49,7 @@ and *kisiike* are *koii*'s.
 
 namespace Lahiri1998
 
-open Focus.Particles Polarity Data.Examples Hindi.PolarityItems
+open Focus.Particles PolarityItem Data.Examples Hindi.PolarityItems
 
 /-! ### The implicature clash (§7, §8) -/
 
@@ -176,11 +176,11 @@ instance : DecidablePred Environment.Licensed
 /-- A judged example: its environment, the fragment entry of its item, and the judgment. -/
 structure Datum where
   env : Environment
-  item : Item
+  item : PolarityItem
   judgment : Judgment
 
 /-- The fragment entry of a row's item. -/
-def item? (r : LinguisticExample) : Option Item :=
+def item? (r : LinguisticExample) : Option PolarityItem :=
   r.parse? "npi" [("koii bhii", koiiBhii), ("koi bhii", koiiBhii), ("kisii-ko bhii", koiiBhii),
     ("kisii-se bhii", koiiBhii), ("kisiike bhii", koiiBhii), ("ek bhii", ekBhii),
     ("kuch bhii", kuchBhii), ("kuchh bhii", kuchBhii), ("zaraa bhii", zaraaBhii),

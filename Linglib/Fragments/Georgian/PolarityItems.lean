@@ -24,14 +24,14 @@ preverbal neg-words). Mood-conditioned variants: vera-vin (modal), nura-vin
 
 namespace Georgian.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### NPI -/
 
 /-- *aravin* (არავინ) — Negative indefinite.
     Morphologically ara- (NEG) + vin (who): 'aravin (ar) mosula' (nobody came).
     Non-strict negative concord: verbal negation *ar* is optional. -/
-def aravin : Item :=
+def aravin : PolarityItem :=
   { form := "aravin (არავინ)"
   , licensor := some .antiAdditive
   , baseForce := .existential
@@ -41,7 +41,7 @@ def aravin : Item :=
 
 /-- *nebismieri* (ნებისმიერი) — Free choice item.
     'Any / whichever': 'nebismier matarebels' (any train). -/
-def nebismieri : Item :=
+def nebismieri : PolarityItem :=
   { form := "nebismieri (ნებისმიერი)"
   , freeChoice := true
   , baseForce := .existential

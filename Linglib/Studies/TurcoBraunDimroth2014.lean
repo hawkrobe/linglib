@@ -61,7 +61,7 @@ before the comment. The examples are the rows of `Data.Examples.TurcoBraunDimrot
 
 namespace TurcoBraunDimroth2014
 
-open Polarity.Marking
+open PolarityMarker
 
 /-! ### The polarity operator and the assertion operator -/
 

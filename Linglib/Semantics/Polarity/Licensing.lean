@@ -17,7 +17,7 @@ public import Linglib.Semantics.Polarity.Item
 [van-rooy-2003-npi] [hoeksema-1983] [bhatt-pancheva-2004] [heim-2006]
 [iatridou-2000] [dayal-1996] [horn-1996] [vanderwouden-1997]
 
-The monotonicity-based licensing theory for `Polarity.Item`:
+The monotonicity-based licensing theory for `PolarityItem`:
 `LicensingContext.properties` assigns every `LicensingContext` its Strawson and
 classical entailment signatures, its [kadmon-landman-1993] licensing
 mechanism, and its citation lineage; `StrengthScale` is the polymorphic
@@ -54,7 +54,7 @@ contested attribution (Zwarts 1981 / van Benthem 1986 / Sánchez Valencia
 
 @[expose] public section
 
-namespace Polarity
+namespace PolarityItem
 
 /-! ### Licensing Mechanism (refined 5-way) -/
 
@@ -256,10 +256,10 @@ instance {α β S : Type*} [Preorder S]
   unfold StrengthScale.licenses; infer_instance
 
 /-- The canonical Zwarts scale ([ladusaw-1979], [zwarts-1998],
-[gajewski-2011]): carrier `DEStrength`, item strength from `Item.licensor`,
+[gajewski-2011]): carrier `DEStrength`, item strength from `PolarityItem.licensor`,
 context strength from the row's Strawson signature. -/
 def zwartsScale :
-    StrengthScale Item LicensingContext DEStrength where
+    StrengthScale PolarityItem LicensingContext DEStrength where
   required e := e.licensor
   supplied c := c.properties.strawsonSignature.toDEStrength
 
@@ -280,20 +280,20 @@ Dispatched on the row's `LicensingMechanism`:
 The grounded grade — deriving the signature side from the context
 witnesses of `Witnesses.lean` via the Kadmon–Landman strengthening
 chain — is planned (N1 of the NPI-API sweep). -/
-def LicensingContext.licenses (c : LicensingContext) (e : Item) : Prop :=
+def LicensingContext.licenses (c : LicensingContext) (e : PolarityItem) : Prop :=
   match c.properties.mechanism with
   | .byStrengthening | .byStrawsonDE => zwartsScale.licenses e c
   | .byGenericIndefinite => e.isFCI
   | .byEntropy => e.licensor = some .weak
   | .strengtheningFails => False
 
-instance (c : LicensingContext) (e : Item) :
+instance (c : LicensingContext) (e : PolarityItem) :
     Decidable (c.licenses e) := by
   unfold LicensingContext.licenses; split <;> infer_instance
 
 /-! ### The Haspelmath map meets the licensing table
 
-`Polarity.LicensingContext.haspelmathFunction` (in `Semantics/Quantification/Indefinite.lean`)
+`PolarityItem.LicensingContext.haspelmathFunction` (in `Semantics/Quantification/Indefinite.lean`)
 classifies each licensing environment by the [haspelmath-1997] map function it
 realizes. The theorems here ground the map's polarity regions (`Indefinite.npiRegion` and the
 free-choice function) in `LicensingContext.properties`. -/
@@ -333,4 +333,4 @@ theorem classicalSignature_eq_strawson (c : LicensingContext) :
       some c.properties.strawsonSignature := by
   cases c <;> decide
 
-end Polarity
+end PolarityItem

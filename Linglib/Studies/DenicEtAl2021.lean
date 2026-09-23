@@ -57,7 +57,7 @@ is the published article's.
 
 namespace DenicEtAl2021
 
-open NaturalLogic Polarity English.PolarityItems
+open NaturalLogic PolarityItem English.PolarityItems
 
 /-! ### Environments and their monotonicity, §3.1.2 and §5 -/
 

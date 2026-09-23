@@ -28,11 +28,11 @@ lexical-feature distinction across n-words.
 
 namespace Spanish.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-- *nadie* — N-word for human ('nobody').
     Preverbal alone: *Nadie vino*. Postverbal with *no*: *No vino nadie*. -/
-def nadie : Item :=
+def nadie : PolarityItem :=
   { form := "nadie"
   , licensor := some .weak
   , baseForce := .existential
@@ -40,7 +40,7 @@ def nadie : Item :=
   , scalarDirection := some .strengthening }
 
 /-- *nada* — N-word for non-human ('nothing'). Same distribution as *nadie*. -/
-def nada : Item :=
+def nada : PolarityItem :=
   { form := "nada"
   , licensor := some .weak
   , baseForce := .existential
@@ -48,7 +48,7 @@ def nada : Item :=
   , scalarDirection := some .strengthening }
 
 /-- *nunca* — Temporal N-word ('never'). -/
-def nunca : Item :=
+def nunca : PolarityItem :=
   { form := "nunca"
   , licensor := some .weak
   , baseForce := .temporal
@@ -56,7 +56,7 @@ def nunca : Item :=
   , scalarDirection := some .strengthening }
 
 /-- *ninguno* — N-word adjective/pronoun ('none / no'). -/
-def ninguno : Item :=
+def ninguno : PolarityItem :=
   { form := "ninguno"
   , licensor := some .weak
   , baseForce := .existential
@@ -66,7 +66,7 @@ def ninguno : Item :=
 /-- *jamás* — Temporal N-word ('never', emphatic register).
     Functional variant of *nunca*; both can co-occur (*nunca jamás*) for
     superlative emphasis. -/
-def jamas : Item :=
+def jamas : PolarityItem :=
   { form := "jamás"
   , licensor := some .weak
   , baseForce := .temporal
@@ -79,7 +79,7 @@ def jamas : Item :=
 
 /-- The Spanish polarity-item inventory: the Fragment-side joint listing
     every polarity item this fragment defines. -/
-def items : List Item :=
+def items : List PolarityItem :=
   [nadie, nada, nunca, ninguno, jamas]
 
 -- ============================================================================

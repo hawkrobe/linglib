@@ -49,7 +49,7 @@ for the documented gap.
 
 @[expose] public section
 
-namespace Polarity
+namespace PolarityItem
 
 /-- Contexts that can license polarity-sensitive items.
 
@@ -92,4 +92,4 @@ inductive LicensingContext where
   | denyVerb          -- Anti-additive attitude verbs: "She denied seeing anyone"
   deriving DecidableEq, Fintype, Repr
 
-end Polarity
+end PolarityItem

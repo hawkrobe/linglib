@@ -71,7 +71,7 @@ the strategy taxonomy, and the explicit endorsement of Matić & Nikolaeva's
 
 namespace Italian.PolarityMarking
 
-open Polarity.Marking (Entry Strategy Env)
+open PolarityMarker (Strategy Env)
 
 /-- *sì che* — Italian polarity-reversing affirmative construction.
     Cleft-like or left-peripheral PolP structure (analyses contested):
@@ -85,13 +85,13 @@ open Polarity.Marking (Entry Strategy Env)
     encoding was empirically too narrow.
     [garassino-jacob-2018]: cognate of Spanish *sí que*;
     rare in spontaneous Italian corpora but grammatically available. -/
-abbrev siChe : Entry where
+abbrev siChe : PolarityMarker where
   label := "sì che"
   form := some "sì che"
   environments := {.correction, .contrast}
   strategy := .polarityReversal
 
-def allPolarityMarkings : List Entry := [siChe]
+def allPolarityMarkings : List PolarityMarker := [siChe]
 
 -- Per-entry verification theorems
 theorem siChe_form : siChe.form = some "sì che" := rfl

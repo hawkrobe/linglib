@@ -6,10 +6,10 @@ public import Mathlib.Tactic.DeriveFintype
 # Polarity-marking strategies
 
 This file defines the typology of devices by which a language marks a switch from negative to
-positive polarity. A `Polarity.Marking.Strategy` is the form class of a device: a
+positive polarity. A `PolarityMarker.Strategy` is the form class of a device: a
 sentence-internal affirmative particle, Verum focus on the finite verb, a polarity-reversing
-particle, another device, or no marking. A `Polarity.Marking.Env` is a position or discourse
-context in which a device is available, and a `Polarity.Marking.Entry` is a language's device
+particle, another device, or no marking. A `PolarityMarker.Env` is a position or discourse
+context in which a device is available, and a `PolarityMarker` is a language's device
 with its form, its prosodic target, its environments and its strategy. Fragments for Dutch,
 German, English, Italian, Spanish and French populate the schema.
 
@@ -22,7 +22,7 @@ specific lexical or prosodic devices; the polarity-reversing class follows [holm
 polarity, and [garassino-jacob-2018] concur; the non-equivalence of the two is stated in
 `Studies/MaticNikolaeva2018.lean`. Syntactic position beyond sentence-internality is not
 encoded, so entries under one strategy may differ in it. This is a separate system from the
-`Polarity.Item` licensing API, sharing only the `Polarity` namespace.
+`PolarityItem` licensing API.
 
 ## References
 
@@ -37,7 +37,7 @@ encoded, so entries under one strategy may differ in it. This is a separate syst
 
 @[expose] public section
 
-namespace Polarity.Marking
+namespace PolarityMarker
 
 /-- How a language marks polarity switches (neg → affirm). -/
 inductive Strategy where
@@ -82,7 +82,7 @@ inductive Env where
 
     Syntactic position beyond sentence-internality is not encoded, so entries under the
     same `strategy` may differ in it. -/
-structure Entry where
+structure _root_.PolarityMarker where
   /-- Descriptive label (e.g., "wel", "Verum focus", "doch (pre-utterance)") -/
   label : String
   /-- Surface form, if the strategy is a particle -/
@@ -94,4 +94,4 @@ structure Entry where
   /-- The polarity-marking strategy category -/
   strategy : Strategy
 
-end Polarity.Marking
+end PolarityMarker

@@ -35,12 +35,12 @@ bipartite *ne* dependency would live in the substrate, not per-Fragment.
 
 namespace French.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-- *personne* — N-word for human ('nobody').
     Grammaticalized from the noun 'person'. Co-occurs with *ne* in
     formal French; stands alone in colloquial *ne*-drop registers. -/
-def personne : Item :=
+def personne : PolarityItem :=
   { form := "personne"
   , licensor := some .antiAdditive
   , baseForce := .existential
@@ -50,7 +50,7 @@ def personne : Item :=
 /-- *rien* — N-word for non-human ('nothing').
     Grammaticalized from a Latin noun 'thing'. Same distribution as
     *personne*. -/
-def rien : Item :=
+def rien : PolarityItem :=
   { form := "rien"
   , licensor := some .antiAdditive
   , baseForce := .existential
@@ -61,7 +61,7 @@ def rien : Item :=
     Grammaticalized from 'ever'. Pre-Jespersen *jamais* was a positive
     indefinite; modern *jamais* is the negative, requiring *ne*-licensing
     in formal register. -/
-def jamais : Item :=
+def jamais : PolarityItem :=
   { form := "jamais"
   , licensor := some .weak
   , baseForce := .temporal
@@ -72,7 +72,7 @@ def jamais : Item :=
     Same lexeme as positive *plus* 'more'; the negative reading requires
     co-occurrence with *ne* (or *ne*-drop register) and contextual
     triggering. -/
-def plus : Item :=
+def plus : PolarityItem :=
   { form := "plus"
   , licensor := some .weak
   , baseForce := .temporal
@@ -83,7 +83,7 @@ def plus : Item :=
 
 /-- The French polarity-item inventory: the Fragment-side joint listing
     every polarity item this fragment defines. -/
-def items : List Item :=
+def items : List PolarityItem :=
   [personne, rien, jamais, plus]
 
 /-! ### Verification -/

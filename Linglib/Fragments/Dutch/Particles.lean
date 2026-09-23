@@ -21,11 +21,11 @@ strategy in polarity contrast and in polarity correction, where German uses Veru
 
 namespace Dutch.Particles
 
-open Polarity.Marking
+open PolarityMarker
 
 /-- *wel*, the affirmative polarity particle: sentence-internal, accented, available in contrast
 and in correction. -/
-abbrev wel : Entry where
+abbrev wel : PolarityMarker where
   label := "wel"
   form := some "wel"
   prosodicTarget := some "particle"

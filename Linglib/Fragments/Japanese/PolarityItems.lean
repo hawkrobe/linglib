@@ -19,7 +19,7 @@ Japanese builds polarity items from wh-indeterminates + particles
 
 namespace Japanese.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-! ### NPI -/
 
@@ -36,7 +36,7 @@ open Polarity
     (truth-conditionally equivalent under plain clausemate negation, teased
     apart by the scope diagnostics of [shimoyama-2011]). The affirmative
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
-def dareMo : Item :=
+def dareMo : PolarityItem :=
   { form := "dare-mo (誰も, neg)"
   , licensor := some .antiMorphic
   , baseForce := .universal
@@ -50,7 +50,7 @@ def dareMo : Item :=
 /-- *dare-demo* — free choice item: *dare-demo dekiru* 'anyone can do it'.
     wh + demo (built on the additive/'even' particle *mo*); free choice and
     concessive-conditional uses ([kratzer-shimoyama-2002]). -/
-def dareDemo : Item :=
+def dareDemo : PolarityItem :=
   { form := "dare-demo (誰でも)"
   , freeChoice := true
   , baseForce := .existential

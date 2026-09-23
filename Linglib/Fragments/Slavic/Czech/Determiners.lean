@@ -12,7 +12,7 @@ obligatory exponent of any definite use. The inventory holds the demonstrative a
 quantificational determiners, the carrier `QuantityWord`, whose members project to a
 `Quantifier` record and denote the readings available for them. Among them are the concord
 item *žádný* 'no' and the positive polarity item *nějaký* 'some', whose polarity behaviour is
-recorded on their `Polarity.Item` entries in `PolarityItems.lean` and used by [stankova-2025]
+recorded on their `PolarityItem` entries in `PolarityItems.lean` and used by [stankova-2025]
 to diagnose the position of negation in polar questions.
 
 ## References

@@ -25,11 +25,11 @@ and VERUM in questions in `Question.VerumFocus`.
 
 namespace German.PolarityMarking
 
-open Polarity.Marking
+open PolarityMarker
 
 /-- Verum focus, a pitch accent on the finite verb: sentence-internal, available in contrast and
 in correction, the dominant German strategy in both. -/
-abbrev verumFocus : Entry where
+abbrev verumFocus : PolarityMarker where
   label := "Verum focus"
   prosodicTarget := some "finite verb"
   environments := {.sentenceInternal, .contrast, .correction}
@@ -37,7 +37,7 @@ abbrev verumFocus : Entry where
 
 /-- *doch* as a separate utterance preceding a Verum focus utterance: a polarity-reversing
 particle, [holmberg-2016], available in corrections only and not sentence-internal. -/
-abbrev dochPreUtterance : Entry where
+abbrev dochPreUtterance : PolarityMarker where
   label := "doch (pre-utterance)"
   form := some "doch"
   environments := {.correction}

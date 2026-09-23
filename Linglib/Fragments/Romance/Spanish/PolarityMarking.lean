@@ -42,20 +42,20 @@ clause-initial and targets polarity directly via a dedicated particle.
 
 namespace Spanish.PolarityMarking
 
-open Polarity.Marking (Entry Strategy Env)
+open PolarityMarker (Strategy Env)
 
 /-- *sí (que)* — Spanish emphatic polarity affirmation particle.
     Clause-initial EPPA. [batllori-hernanz-2013]: merges with
     ForceP; *que* is obligatory in embedded contexts. Licensed in
     both contrast and correction environments per Batllori & Hernanz
     ex. 4-5 + [garassino-jacob-2018] ex. 19. Not sentence-internal. -/
-abbrev siQue : Entry where
+abbrev siQue : PolarityMarker where
   label := "sí (que)"
   form := some "sí (que)"
   environments := {.correction, .contrast}
   strategy := .polarityReversal
 
-def allPolarityMarkings : List Entry := [siQue]
+def allPolarityMarkings : List PolarityMarker := [siQue]
 
 -- Per-entry verification theorems
 theorem siQue_form : siQue.form = some "sí (que)" := rfl

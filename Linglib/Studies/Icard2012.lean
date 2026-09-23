@@ -373,17 +373,17 @@ anti-morphic one. -/
 
 /-- The Zwarts class a downward signature licenses, `none` for an upward or unrestricted
 one. -/
-def _root_.NaturalLogic.Signature.zwarts : Signature → Option Polarity.DEStrength
+def _root_.NaturalLogic.Signature.zwarts : Signature → Option PolarityItem.DEStrength
   | .anti | .antiMult => some .weak
   | .antiAdd => some .antiAdditive
   | .antiAddMult => some .antiMorphic
   | _ => none
 
 /-- A signature licenses an item of a Zwarts class when its class is at least as strong. -/
-def Licenses (level : Polarity.DEStrength) (σ : Signature) : Prop :=
+def Licenses (level : PolarityItem.DEStrength) (σ : Signature) : Prop :=
   ∃ l, σ.zwarts = some l ∧ level ≤ l
 
-instance (level : Polarity.DEStrength) (σ : Signature) : Decidable (Licenses level σ) := by
+instance (level : PolarityItem.DEStrength) (σ : Signature) : Decidable (Licenses level σ) := by
   unfold Licenses; infer_instance
 
 /-- A downward signature licenses the weak items. -/

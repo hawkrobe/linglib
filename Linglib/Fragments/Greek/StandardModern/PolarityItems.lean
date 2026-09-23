@@ -6,7 +6,7 @@ public import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 /-!
 # Greek polarity items
 
-Polarity items of Modern Greek typed by `Polarity.Item`: *para monon*, literally 'but only', the
+Polarity items of Modern Greek typed by `PolarityItem`: *para monon*, literally 'but only', the
 punctual *until* of a negated clause and a negative polarity item in the sense of
 [giannakidou-1998], licensed by negation and *xoris* 'without' and not by *amfivalo* 'I doubt' or
 a rhetorical question ([giannakidou-2002], the paper's (36)–(42)).
@@ -21,11 +21,11 @@ a rhetorical question ([giannakidou-2002], the paper's (36)–(42)).
 
 namespace Greek.StandardModern.PolarityItems
 
-open Polarity
+open PolarityItem
 
 /-- *para monon*, the punctual *until*: licensed by negation and *xoris* 'without'. Its connective
 entry is `Greek.StandardModern.TemporalConnectives.paraMonon`. -/
-def paraMonon : Item :=
+def paraMonon : PolarityItem :=
   { form := TemporalConnectives.paraMonon.form
   , licensor := some .antiAdditive
   , baseForce := .temporal
