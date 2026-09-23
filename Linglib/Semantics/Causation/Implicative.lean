@@ -174,7 +174,7 @@ theorem no_complement_of_negative_assertion
   have hEntP : SEM.causallyEntails M s' p xP :=
     hnec.2.2 s' (hset.of_extend hexo hp) hc hent
   have hp' : s'.get p = some xP' :=
-    hset.1 p xP' (Valuation.extend_get_same _ _ _)
+    Valuation.le_def.1 hset.1 p xP' (Valuation.extend_get_same _ _ _)
   have hEntP' : SEM.causallyEntails M s' p xP' :=
     SEM.developDetVtx?_determined M hp'
   exact hne (SEM.causallyEntails_unique hEntP' hEntP)
@@ -207,6 +207,7 @@ theorem complement_iff_prerequisite
           simp at hEntP
     -- s' consistently extends background + prerequisite
     have hle : background.extend p xP ≤ s' := by
+      rw [Valuation.le_def]
       intro v x hv
       by_cases hvp : v = p
       · subst hvp
@@ -214,7 +215,7 @@ theorem complement_iff_prerequisite
         rw [Valuation.hasValue, hp']
         exact hv
       · rw [Valuation.hasValue, Valuation.extend_get_ne hvp] at hv
-        exact hset.1 v x hv
+        exact Valuation.le_def.1 hset.1 v x hv
     have hcons : SEM.isConsistentSuper M (background.extend p xP) s' := by
       refine ⟨hle, fun x xv hn hs yv _ hent => ?_⟩
       have hxp : x ≠ p := by

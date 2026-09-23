@@ -167,8 +167,7 @@ section Decidable
 
 variable [Fintype V] [DecidableValuation α] [∀ v, Fintype (α v)]
 
-instance (s₁ s₂ : Valuation α) : Decidable (s₁ ≤ s₂) :=
-  inferInstanceAs (Decidable (∀ v x, s₁.hasValue v x → s₂.hasValue v x))
+attribute [local instance] Valuation.fintype
 
 instance (S : Valuation α) (effect : V) (xE : α effect) :
     Decidable (IsMinimalSufficientSetFuel M n S effect xE) := by
