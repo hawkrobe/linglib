@@ -253,7 +253,7 @@ def safe : Set Weather := {v | ¬ v.drives}
 /-- The addressee's dependent doxastic commitments at a world: to whichever weather facts she has
 taken up. -/
 def state (v : Weather) : State Role Weather :=
-  {c | c.committer = .addressee ∧ c.polarity = .commit ∧ c.force = .doxastic ∧
+  {c | c.committer = .addressee ∧ c.stance = .commit ∧ c.force = .doxastic ∧
     c.source = .otherGenerated ∧
     ((c.content = raining ∧ v.upRain) ∨ (c.content = sunnyTomorrow ∧ v.upSunny))}
 
@@ -333,7 +333,7 @@ def taking : Set Car := {v | v.takes}
 /-- The first context: Bilal's only commitment to taking the car, when he has one, is dependent
 on Anu's proposal. -/
 def latent (v : Car) : State Role Car :=
-  {c | c.committer = .addressee ∧ c.polarity = .commit ∧ c.force = .preferential ∧
+  {c | c.committer = .addressee ∧ c.stance = .commit ∧ c.force = .preferential ∧
     c.source = .otherGenerated ∧ c.content = taking ∧ v.up}
 
 /-- The second context: Bilal has revealed his preference for taking the car. -/

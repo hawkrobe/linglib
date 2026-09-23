@@ -19,7 +19,7 @@ onto the Stalnakerian common ground of `Discourse/CommonGround.lean` by `Commitm
 
 ## Main definitions
 
-* `Commitment A W` — the atom, with `Commitment.Polarity`, `Commitment.Force`,
+* `Commitment A W` — the atom, with `Commitment.Stance`, `Commitment.Force`,
   `Commitment.Source`.
 * `Commitment.State` — a commitment state: the set of commitments accumulated so far.
 * `Commitment.contents`, `Commitment.slate`, `Commitment.contextSet` — what a state
@@ -50,8 +50,10 @@ onto the Stalnakerian common ground of `Discourse/CommonGround.lean` by `Commitm
 @[expose] public section
 
 /-- Whether a commitment is undertaken or refused. -/
-inductive Commitment.Polarity
+inductive Commitment.Stance
+  /-- The participant undertakes the commitment, [krifka-2015]'s `S⊢φ`. -/
   | commit
+  /-- The participant refuses it, `¬S⊢φ`: a denegation, not a commitment to the negation. -/
   | refuse
   deriving DecidableEq, Repr
 
@@ -72,7 +74,7 @@ inductive Commitment.Source
 structure Commitment (A W : Type*) where
   committer : A
   content : Set W
-  polarity : Commitment.Polarity := .commit
+  stance : Commitment.Stance := .commit
   force : Commitment.Force := .doxastic
   source : Commitment.Source := .selfGenerated
 
@@ -106,10 +108,10 @@ def refuse (a : A) (p : Set W) (force : Force := .doxastic) (source : Source := 
     Commitment A W :=
   ⟨a, p, .refuse, force, source⟩
 
-@[simp] theorem commit_polarity (a : A) (p : Set W) (f s) :
-    (commit a p f s).polarity = .commit := rfl
-@[simp] theorem refuse_polarity (a : A) (p : Set W) (f s) :
-    (refuse a p f s).polarity = .refuse := rfl
+@[simp] theorem commit_stance (a : A) (p : Set W) (f s) :
+    (commit a p f s).stance = .commit := rfl
+@[simp] theorem refuse_stance (a : A) (p : Set W) (f s) :
+    (refuse a p f s).stance = .refuse := rfl
 @[simp] theorem commit_content (a : A) (p : Set W) (f s) : (commit a p f s).content = p := rfl
 @[simp] theorem refuse_content (a : A) (p : Set W) (f s) : (refuse a p f s).content = p := rfl
 @[simp] theorem commit_committer (a : A) (p : Set W) (f s) : (commit a p f s).committer = a := rfl
@@ -118,7 +120,7 @@ def refuse (a : A) (p : Set W) (force : Force := .doxastic) (source : Source := 
 
 /-- The contents of the undertaken commitments in `K`. -/
 def contents : Set (Set W) :=
-  content '' {c ∈ K | c.polarity = .commit}
+  content '' {c ∈ K | c.stance = .commit}
 
 /-- The commitments of `a` in `K`. -/
 def ofCommitter (a : A) : State A W := {c ∈ K | c.committer = a}
@@ -192,7 +194,7 @@ theorem slate_mono {L : State A W} (h : K ⊆ L) : slate L ≤ slate K :=
 @[simp] theorem slate_empty : slate (∅ : State A W) = ⊤ := by
   simp [slate, generate_empty]
 
-theorem contents_insert_of_commit {c : Commitment A W} (h : c.polarity = .commit) :
+theorem contents_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
     contents (insert c K) = insert c.content (contents K) := by
   ext φ
   simp only [contents, Set.mem_image, Set.mem_ofPred_eq, Set.mem_insert_iff]
@@ -204,7 +206,7 @@ theorem contents_insert_of_commit {c : Commitment A W} (h : c.polarity = .commit
     · exact ⟨c, ⟨Or.inl rfl, h⟩, rfl⟩
     · exact ⟨d, ⟨Or.inr hd, hp⟩, rfl⟩
 
-theorem contents_insert_of_refuse {c : Commitment A W} (h : c.polarity = .refuse) :
+theorem contents_insert_of_refuse {c : Commitment A W} (h : c.stance = .refuse) :
     contents (insert c K) = contents K := by
   ext φ
   simp only [contents, Set.mem_image, Set.mem_ofPred_eq, Set.mem_insert_iff]
@@ -216,12 +218,12 @@ theorem contents_insert_of_refuse {c : Commitment A W} (h : c.polarity = .refuse
     exact ⟨d, ⟨Or.inr hd, hp⟩, rfl⟩
 
 /-- A new commitment adds its content to the slate. -/
-theorem slate_insert_of_commit {c : Commitment A W} (h : c.polarity = .commit) :
+theorem slate_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
     slate (insert c K) = slate K ⊓ 𝓟 c.content := by
   rw [slate, slate, contents_insert_of_commit h, Filter.generate_insert]
 
 /-- A new commitment intersects the context set with its content. -/
-theorem contextSet_insert_of_commit {c : Commitment A W} (h : c.polarity = .commit) :
+theorem contextSet_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
     contextSet (insert c K) = c.content ∩ contextSet K := by
   simp [contextSet, contents_insert_of_commit h]
 
@@ -235,7 +237,7 @@ theorem ofForce_insert_of_ne {c : Commitment A W} {f : Force} (h : c.force ≠ f
 
 /-- A new commitment to the attitude `f` intersects the `f`-context set with its content. -/
 theorem contextSet_ofForce_insert_of_eq_of_commit {c : Commitment A W} {f : Force}
-    (hf : c.force = f) (hp : c.polarity = .commit) :
+    (hf : c.force = f) (hp : c.stance = .commit) :
     contextSet (ofForce (insert c K) f) = c.content ∩ contextSet (ofForce K f) := by
   rw [ofForce_insert_of_eq hf, contextSet_insert_of_commit hp]
 
@@ -288,7 +290,7 @@ theorem contents_image_commit {ι : Type*} (a : A) (p : ι → Set W) (s : Set �
     exact ⟨commit a (p i), ⟨⟨i, hi, rfl⟩, rfl⟩, rfl⟩
 
 /-- A refusal leaves the context set alone. -/
-theorem contextSet_insert_of_refuse {c : Commitment A W} (h : c.polarity = .refuse) :
+theorem contextSet_insert_of_refuse {c : Commitment A W} (h : c.stance = .refuse) :
     contextSet (insert c K) = contextSet K := by
   simp [contextSet, contents_insert_of_refuse h]
 
