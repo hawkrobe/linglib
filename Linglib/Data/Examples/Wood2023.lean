@@ -391,6 +391,42 @@ def ex_21 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21]
+def ex_22 : LinguisticExample :=
+  { id := "wood2023_22"
+    source := ⟨"wood-2023", "(6.13c)"⟩
+    reportedIn := none
+    language := "icel1247"
+    primaryText := "Guðrún snerti að-dá-un-ina."
+    discourseSegments := []
+    glossedTokens := [("Guðrún", "Guðrún"), ("snerti", "touched"), ("að-dá-un-ina", "to-admire-NMLZ-the.ACC")]
+    translation := "Guðrún touched the admiration."
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := [("simple entity", .ungrammatical)]
+    paperFeatures := [("nominal", "að-dá-un"), ("reading", "RN")]
+    comment := "The book also gives the verb rétti mér 'handed me'. Aðdáun has no concrete entity reading."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_23 : LinguisticExample :=
+  { id := "wood2023_23"
+    source := ⟨"wood-2023", "(6.14d)"⟩
+    reportedIn := none
+    language := "icel1247"
+    primaryText := "Ég snerti við-vör-un-ina."
+    discourseSegments := []
+    glossedTokens := [("Ég", "I"), ("snerti", "touched"), ("við-vör-un-ina", "with-warn-NMLZ-the")]
+    translation := "I touched the warning."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("simple entity", .acceptable)]
+    paperFeatures := [("nominal", "við-vör-un"), ("reading", "RN")]
+    comment := "Viðvörun, with the same nominalizer as aðdáun, has a concrete entity reading."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23]
 
 end Wood2023.Examples
