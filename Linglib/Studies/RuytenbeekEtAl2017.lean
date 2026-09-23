@@ -2,6 +2,7 @@ import Linglib.Discourse.SpeechAct
 import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Fragments.Romance.French.Modals
 import Linglib.Data.Examples.RuytenbeekEtAl2017
+import Linglib.Data.Experiments.RuytenbeekEtAl2017
 
 /-!
 # Ruytenbeek et al. (2017): Indirect request processing, sentence types and illocutionary forces
@@ -24,12 +25,12 @@ readings secondary (`literalist_refuted`).
 
 ## Implementation notes
 
-The rows of `Data/Examples/RuytenbeekEtAl2017.json` are the paper's stimulus sentences with
-the observed response pattern of each construction, the model estimates of response times the
-paper reports, and the corpus counts for the two interrogative requests. A construction is
-directive when it received directive interpretations at all, and unactivated when the paper
-reports no fixations on the answer buttons and response times equal to the imperative's for
-those interpretations; the regression coefficients and confidence intervals stay in the data.
+The corpus counts, the response-time estimates and the paper's findings on each construction's
+interpretations are `Data.Experiments.RuytenbeekEtAl2017`; the stimulus sentences are
+`Data/Examples/RuytenbeekEtAl2017.json`. A construction is directive when it received directive
+interpretations at all, and unactivated when the paper reports no fixations on the answer buttons
+and response times equal to the imperative's for those interpretations; the regression
+coefficients stay in prose.
 The paper's ranking of directive rates, *Vous devez* above *Vous pouvez* above *Il est
 possible*, which it attributes to the permission reading of *pouvoir*, is not derived.
 
@@ -44,7 +45,9 @@ possible*, which it attributes to the permission reading of *pouvoir*, is not de
 
 namespace RuytenbeekEtAl2017
 
-open Data.Examples Discourse.SpeechAct French
+open Discourse.SpeechAct French
+open Data.Experiments.RuytenbeekEtAl2017 (Study Form Response Directive Answer corpus responseTimes
+  interpretations Interpretation)
 open Modality
 open Mood (Illocutionary)
 open Mood.Illocutionary (primaryFlavor)
@@ -52,16 +55,7 @@ open Mood.Illocutionary (primaryFlavor)
 /-! ### Constructions and forces -/
 
 /-- The constructions of the two experiments. -/
-inductive Construction where
-  | imperative
-  | controlInterrogative
-  | canYou
-  | isItPossible
-  | youMust
-  | youCan
-  | itIsPossible
-  | controlDeclarative
-  deriving DecidableEq, Repr, Fintype
+abbrev Construction := Data.Experiments.RuytenbeekEtAl2017.Construction
 
 /-- The morphosyntactic mood of a construction. -/
 def Construction.mood : Construction → Illocutionary
@@ -82,17 +76,6 @@ def Construction.queriedPrep : Construction → Option PreparatoryCondition
   | .canYou | .isItPossible => some .ability
   | _ => none
 
-/-- The construction's key in the rows. -/
-def Construction.tag : Construction → String
-  | .imperative => "imperative"
-  | .controlInterrogative => "controlInterrogative"
-  | .canYou => "canYou"
-  | .isItPossible => "isItPossible"
-  | .youMust => "youMust"
-  | .youCan => "youCan"
-  | .itIsPossible => "itIsPossible"
-  | .controlDeclarative => "controlDeclarative"
-
 /-- The major illocutionary forces. -/
 inductive Force where
   | directive
@@ -109,15 +92,16 @@ def encodedForce : Illocutionary → Option Force
 
 /-! ### The corpus and conventionalisation -/
 
-/-- The paper's corpus coding of a construction's uses, as a percentage. -/
-def corpusPct (c : Construction) (use : String) : ℕ :=
-  ((Examples.all.filter fun x ↦ x.feature? "construction" = some c.tag ∧
-      (x.feature? "corpusN").isSome).filterMap (·.nat? use)).headD 0
+/-- The interrogative request of the corpus count a construction instantiates. -/
+def Construction.form : Construction → Option Form
+  | .canYou => some .pouvezVous
+  | .isItPossible => some .estIlPossible
+  | _ => none
 
-/-- A construction is conventionalised as a request when its directive uses outnumber its
-question uses in the corpus. -/
+/-- A construction is conventionalised as a request when it is counted in the corpus and its
+directive uses outnumber its question uses there. -/
 def Conventionalised (c : Construction) : Prop :=
-  corpusPct c "questionPct" < corpusPct c "directivePct"
+  ∃ f ∈ c.form, (corpus f).genuineQuestion < (corpus f).indirectRequest
 
 instance (c : Construction) : Decidable (Conventionalised c) := by
   unfold Conventionalised; infer_instance
@@ -156,51 +140,26 @@ theorem accounts_differ (c : Construction) :
 
 /-! ### The observations -/
 
-/-- How often a construction received directive interpretations. -/
-inductive Directiveness where
-  | only
-  | dominant
-  | minority
-  | none
-  deriving DecidableEq, Repr
-
-private def constructions : List (String × Construction) :=
-  [.imperative, .controlInterrogative, .canYou, .isItPossible, .youMust, .youCan, .itIsPossible,
-    .controlDeclarative].map fun c ↦ (c.tag, c)
-
-/-- A stimulus row gives its construction and how often it was interpreted as a directive. -/
-def datum (x : LinguisticExample) : Option (Construction × Directiveness) := do
-  pure (← x.parse? "construction" constructions,
-    ← x.parse? "directive"
-      [("only", .only), ("dominant", .dominant), ("minority", .minority), ("none", .none)])
-
-/-- The stimulus rows of the two experiments. -/
-def stimuli : List (LinguisticExample × Construction × Directiveness) :=
-  Examples.all.filterMap fun x ↦ (datum x).map (x, ·)
-
 /-- The construction received directive interpretations. -/
-def Directive (p : LinguisticExample × Construction × Directiveness) : Prop := p.2.2 ≠ .none
+def Directive (r : Interpretation) : Prop := r.directive ≠ .never
 
-instance (p : LinguisticExample × Construction × Directiveness) : Decidable (Directive p) := by
-  unfold Directive; infer_instance
+instance (r : Interpretation) : Decidable (Directive r) := by unfold Directive; infer_instance
 
 /-- The directive interpretations came without activation of the encoded force, with no
 fixations on the answer buttons and response times equal to the imperative's. -/
-def Unactivated (p : LinguisticExample × Construction × Directiveness) : Prop :=
-  p.1.feature? "activation" = some "none"
+def Unactivated (r : Interpretation) : Prop := r.answerActivity = some .no
 
-instance (p : LinguisticExample × Construction × Directiveness) : Decidable (Unactivated p) := by
-  unfold Unactivated; infer_instance
+instance (r : Interpretation) : Decidable (Unactivated r) := by unfold Unactivated; infer_instance
 
 /-- Every construction that received directive interpretations received them without
 activating the force its sentence type encodes. -/
-theorem directive_unactivated : ∀ p ∈ stimuli, Directive p → Unactivated p := by
+theorem directive_unactivated : ∀ r ∈ interpretations, Directive r → Unactivated r := by
   decide +kernel
 
 /-- Non-literalism predicts primary directive readings for exactly the constructions that
 received directive interpretations. -/
 theorem nonLiteralist_predicts :
-    ∀ p ∈ stimuli, Directive p ↔ NonLiteralist.DirectivePrimary p.2.1 := by
+    ∀ r ∈ interpretations, Directive r ↔ NonLiteralist.DirectivePrimary r.construction := by
   decide +kernel
 
 /-- Literalism is refuted on both of the paper's predictions. The non-conventionalised
@@ -208,23 +167,26 @@ theorem nonLiteralist_predicts :
 declaratives, received directive interpretations without activating the question or the
 assertion, although literalism makes those readings secondary. -/
 theorem literalist_refuted :
-    ∀ p ∈ stimuli, ¬ Literalist.DirectivePrimary p.2.1 → Directive p → Unactivated p := by
+    ∀ r ∈ interpretations, ¬ Literalist.DirectivePrimary r.construction → Directive r →
+      Unactivated r := by
   decide +kernel
 
 /-- The secondary readings literalism posits are the ones the experiments found primary. -/
 theorem literalist_secondary_found :
     ∀ c, c = .isItPossible ∨ c = .youMust ∨ c = .youCan ∨ c = .itIsPossible →
-      ¬ Literalist.DirectivePrimary c ∧ ∃ p ∈ stimuli, p.2.1 = c ∧ Directive p := by
+      ¬ Literalist.DirectivePrimary c ∧
+        ∃ r ∈ interpretations, r.construction = c ∧ Directive r := by
   decide +kernel
 
-/-- The reported response time of a construction's answer responses, in milliseconds. -/
-def rtAnswer (c : Construction) : ℕ :=
-  ((Examples.all.filter fun x ↦ x.feature? "construction" = some c.tag ∧
-      x.feature? "study" = some "1").filterMap (·.nat? "rtAnswer")).headD 0
+/-- The estimated response time of a response to a construction in a study, in milliseconds,
+when the paper reports one. -/
+def rt (s : Study) (c : Construction) (r : Response) : Option ℕ :=
+  (responseTimes.find? fun x ↦ x.study = s ∧ x.construction = c ∧ x.response = r).map (·.estimate)
 
 /-- Answering the conventionalised request as a question is slower than answering a control
 question, which the paper reads as interference from its entrenched directive use. -/
-theorem canYou_question_slower : rtAnswer .controlInterrogative < rtAnswer .canYou := by
+theorem canYou_question_slower :
+    ∃ a ∈ rt .one .controlInterrogative .yes, ∃ b ∈ rt .one .canYou .yes, a < b := by
   decide +kernel
 
 end RuytenbeekEtAl2017

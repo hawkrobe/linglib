@@ -299,6 +299,12 @@ def render(paper: str, d: dict) -> str:
               for i, c in enumerate(d.get("constants", []))]
     parts += [render_table(tb, types, f"{paper}.tables[{i}]")
               for i, tb in enumerate(d.get("tables", []))]
+    first = f"Auto-generated from `Linglib/Data/Experiments/{paper}.json` by"
+    tail = "Do not edit by hand: edit the JSON and re-run the generator."
+    if len(first) + len(" `scripts/gen_experiments.py`.") <= 100:
+        auto = f"{first} `scripts/gen_experiments.py`.\n{tail}"
+    else:
+        auto = f"{first}\n`scripts/gen_experiments.py`. {tail}"
     desc = textwrap.fill(meta["description"], 100)
     if raw:
         links = "\n".join(textwrap.fill(f"* <{r['url']}>: {r['doc']}", 100, subsequent_indent="  ")
@@ -312,8 +318,7 @@ public import Linglib.Data.Experiments.Schema
 /-!
 # {paper}: experimental results (generated)
 
-Auto-generated from `Linglib/Data/Experiments/{paper}.json` by `scripts/gen_experiments.py`.
-Do not edit by hand: edit the JSON and re-run the generator.
+{auto}
 
 {desc}
 
