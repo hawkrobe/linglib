@@ -69,15 +69,7 @@ def graph : CausalGraph V := ⟨λ
   | .G => {.D}
   | .F => {.G, .P, .L}⟩
 
-/-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := λ | .P => 0 | .D => 0 | .L => 0 | .G => 1 | .F => 2
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- Fire dynamics: G := D (inflammability tracks drought); F := G ∧ P ∧ L
     (fire ignites only when grass inflammable, power on, line touching). -/
@@ -104,27 +96,21 @@ def s_b : Valuation (λ _ : V => Bool) :=
 /-- Extended background s_b1: the line is also known to be down. -/
 def s_b1 : Valuation (λ _ : V => Bool) := s_b.extend .L true
 
-private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
-    SEM.causallyEntails fireSEM s v x ↔
-      SEM.developDetVtxFuel fireSEM s 3 v = some x :=
-  SEM.causallyEntails_iff_fuel fireSEM ranking (by cases v <;> decide) s x
-
 /-- (31a) `#Restoring power made the field catch fire.` Make-side: P=true
     is NOT sufficient for F=true relative to s_b. With L undetermined,
     the fire mechanism `G ∧ P ∧ L` stays unsettled (Def 23's clause (b)
     fails). -/
 theorem make_infelicitous_for_fire :
     ¬ makeSem fireSEM s_b .P true .F true := by
-  rintro ⟨-, hb⟩
-  exact absurd (entails_iff.mp hb) (by decide)
+  decide
 
 /-- (31b, with extended background s_b1 where L is also known) `Restoring
     power caused the field to catch fire.` Both *make* and *cause* hold.
     With s_b1 fixing D=G=L=1, P=true is both sufficient and necessary
     for F=true. -/
 theorem make_felicitous_for_fire_with_known_line :
-    makeSem fireSEM s_b1 .P true .F true :=
-  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    makeSem fireSEM s_b1 .P true .F true := by
+  decide
 
 end Fire
 
@@ -140,15 +126,7 @@ def graph : CausalGraph V := ⟨λ
   | .Bk => {.Vis, .Tr}
   | .Bs => {.Rn, .Bk}⟩
 
-/-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := λ | .Vis => 0 | .Tr => 0 | .Rn => 0 | .Bk => 1 | .Bs => 2
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- Bus dynamics: Bk := Vis ∧ Tr (bike taken when Ava visits AND trains);
     Bs := Rn ∨ Bk (bus taken when rain OR bike gone). The OR for Bs
@@ -176,35 +154,22 @@ instance : CausalGraph.IsDAG busSEM.graph := inferInstanceAs (CausalGraph.IsDAG 
 def s_b : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .Vis true |>.extend .Rn true
 
-private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
-    SEM.causallyEntails busSEM s v x ↔
-      SEM.developDetVtxFuel busSEM s 3 v = some x :=
-  SEM.causallyEntails_iff_fuel busSEM ranking (by cases v <;> decide) s x
-
-private lemma necessary_iff {s : Valuation (λ _ : V => Bool)} {c e : V} :
-    BoolSEM.causallyNecessary busSEM s c e ↔
-      SEM.causallyNecessaryFuel busSEM 3 s c true e true :=
-  SEM.causallyNecessary_iff_fuel busSEM ranking
-    (by intro v; cases v <;> decide) s c true e true
-
 /-- (33a) `Ava's training made Lia take the bus to work.` Make-side:
     T=true is sufficient for B=true relative to s_b: under the strict
     dynamics Bs stays unsettled in the background (Bk waits on Tr), so
     Def 23's non-inevitability clause (a) holds, and Tr:=1 forces
     Bk:=1 forces Bs:=1 for clause (b). -/
 theorem make_felicitous_for_bus :
-    makeSem busSEM s_b .Tr true .Bs true :=
-  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    makeSem busSEM s_b .Tr true .Bs true := by
+  decide
 
-set_option maxRecDepth 4096 in
 /-- (33b) `#Ava's training caused Lia to take the bus.` Cause-side: fails
     Def 10b necessity via the **no-alternative** clause, exactly N&L's
     route: the exogenous settlement `s_b[Tr ↦ 0]` still entails Bs = 1
     (rain alone suffices via the OR mechanism) without entailing Tr = 1. -/
 theorem cause_infelicitous_for_bus :
     ¬ causeSem busSEM s_b .Tr true .Bs true := by
-  rintro ⟨-, hnec⟩
-  exact absurd (necessary_iff.mp hnec) (by decide)
+  decide +kernel
 
 end Bus
 
@@ -223,15 +188,7 @@ def graph : CausalGraph V := ⟨λ
   | .Q => ∅ | .S => ∅
   | .L => {.Q, .S}⟩
 
-/-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := λ | .Q => 0 | .S => 0 | .L => 1
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- Lighthouse dynamics: L := Q ∧ S (collapse requires both
     earthquake-induced foundation damage AND extreme storms). -/
@@ -261,17 +218,12 @@ def validBackgroundFor (idx : V → Nat) (t : Nat)
     (s : Valuation (λ _ : V => Bool)) : Prop :=
   ∀ v, (s.get v).isSome → idx v ≤ t
 
-private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
-    SEM.causallyEntails lighthouseSEM s v x ↔
-      developDetVtxFuel lighthouseSEM s 2 v = some x :=
-  SEM.causallyEntails_iff_fuel lighthouseSEM ranking (by cases v <;> decide) s x
-
 /-- (35d) `The storms made the tower collapse.` Felicitous: with
     background fixing Q=true (the earlier necessary cause), S=true
     suffices for L=true. -/
 theorem make_felicitous_for_storms :
-    makeSem lighthouseSEM (Valuation.empty.extend .Q true) .S true .L true :=
-  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    makeSem lighthouseSEM (Valuation.empty.extend .Q true) .S true .L true := by
+  decide
 
 /-- (35c) `#The earthquake made the tower collapse.` Infelicitous via
     Def 28 temporal-location constraint: the only background under which
@@ -362,15 +314,7 @@ def graph : CausalGraph V := ⟨λ
   | .WD => ∅ | .G => ∅
   | .D => {.WD, .G}⟩
 
-/-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := λ | .WD => 0 | .G => 0 | .D => 1
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- Permission dynamics (Fig 5): D := W_D ∧ G. Both desire AND
     permission needed for dancing. -/
@@ -396,15 +340,10 @@ def intentions : IntentionMap V := λ
   | .D => some .WD
   | _ => none
 
-private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
-    SEM.causallyEntails permissionSEM s v x ↔
-      developDetVtxFuel permissionSEM s 2 v = some x :=
-  SEM.causallyEntails_iff_fuel permissionSEM ranking (by cases v <;> decide) s x
-
 /-- Bare sufficiency holds: G:=true is sufficient for D=true given W_D=true. -/
 theorem permission_makeSem :
-    makeSem permissionSEM bg .G true .D true :=
-  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    makeSem permissionSEM bg .G true .D true := by
+  decide
 
 /-- (40a) `??Gurung made the children dance.` Volitional-action
     constraint VIOLATED: with W_D fixed in bg, W_D := false is sufficient
@@ -420,7 +359,7 @@ theorem permission_violates_volitional_constraint :
   · -- makeSem permissionSEM (bg + G:=true) WD false D false: with G granted,
     -- D = W_D ∧ G is settled true (so D = false is not inevitable), and
     -- revoking the desire settles D = false.
-    exact ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    decide
   · -- (bg.remove .G).get .WD ≠ none. bg fixes .WD=true; removing .G doesn't change that.
     intro hNone
     -- (bg.remove .G).get .WD: .WD ≠ .G so remove doesn't touch it; equals bg.get .WD = some true.
@@ -456,15 +395,7 @@ def graph : CausalGraph V := ⟨λ
   | .WD => ∅ | .G => ∅
   | .D => {.WD, .G}⟩
 
-/-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := λ | .WD => 0 | .G => 0 | .D => 1
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- Command dynamics (Fig 6): D := W_D ∨ G. Either authority alone OR
     independent desire suffices for dancing. -/
@@ -484,11 +415,6 @@ def intentions : IntentionMap V := λ
   | .D => some .WD
   | _ => none
 
-private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
-    SEM.causallyEntails commandSEM s v x ↔
-      developDetVtxFuel commandSEM s 2 v = some x :=
-  SEM.causallyEntails_iff_fuel commandSEM ranking (by cases v <;> decide) s x
-
 /-- (41) context: the children are independently eager (W_D = 1). -/
 def bgEager : Valuation (λ _ : V => Bool) :=
   Valuation.empty.extend .WD true
@@ -503,13 +429,13 @@ def bgReluctant : Valuation (λ _ : V => Bool) :=
     differ only in the background setting of W_D; *make* is felicitous
     in both. -/
 theorem command_makeSem_eager :
-    makeSem commandSEM bgEager .G true .D true :=
-  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    makeSem commandSEM bgEager .G true .D true := by
+  decide
 
 /-- (42) Bare sufficiency in the reluctant context (W_D = 0). -/
 theorem command_makeSem_reluctant :
-    makeSem commandSEM bgReluctant .G true .D true :=
-  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    makeSem commandSEM bgReluctant .G true .D true := by
+  decide
 
 /-- (42a) `Gurung made the children dance` (reluctant context).
     Volitional-action constraint SATISFIED: W_D := false is NOT
@@ -520,10 +446,7 @@ theorem command_satisfies_volitional_constraint :
   intro wE hWE
   -- intentions .D = some .WD; so wE = .WD.
   cases hWE
-  rintro ⟨⟨-, hb⟩, -⟩
-  -- hb : the strict development of bgReluctant + G:=1 + WD:=0 entails D = 0;
-  -- but D = W_D ∨ G = 0 ∨ 1 = 1.
-  exact absurd (entails_iff.mp hb) (by decide)
+  decide
 
 /-- (42a) Combined: the reluctant command scenario gives BOTH bare
     sufficiency AND volitional-constraint satisfaction → make-felicitous. -/
@@ -549,15 +472,7 @@ def graph : CausalGraph V := ⟨λ
   | .WD => {.G}
   | .D => {.WD}⟩
 
-/-- Depth certificate (also the rank for the fuel bridge). -/
-def depth : V → ℕ := λ | .G => 0 | .WD => 1 | .D => 2
-
-private lemma depth_lt : ∀ {u v : V}, u ∈ graph.parents v → depth u < depth v := by
-  intro u v h; revert h; cases u <;> cases v <;> decide
-
-private def ranking : CausalGraph.Ranking graph := ⟨depth, depth_lt⟩
-
-instance : CausalGraph.IsDAG graph := ranking.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- Persuasion dynamics (Fig 7): W_D := G (Gurung's action shapes
     desires); D := W_D (children dance iff they want to). -/
@@ -575,15 +490,10 @@ def intentions : IntentionMap V := λ
   | .D => some .WD
   | _ => none
 
-private lemma entails_iff {s : Valuation (λ _ : V => Bool)} {v : V} {x : Bool} :
-    SEM.causallyEntails persuasionSEM s v x ↔
-      developDetVtxFuel persuasionSEM s 3 v = some x :=
-  SEM.causallyEntails_iff_fuel persuasionSEM ranking (by cases v <;> decide) s x
-
 /-- Bare sufficiency: G:=true forces W_D=true forces D=true. -/
 theorem persuasion_makeSem :
-    makeSem persuasionSEM Valuation.empty .G true .D true :=
-  ⟨λ h => absurd (entails_iff.mp h) (by decide), entails_iff.mpr (by decide)⟩
+    makeSem persuasionSEM Valuation.empty .G true .D true := by
+  decide
 
 /-- (44a) `Gurung made the children dance (by playing their favourite song).`
     Volitional-action constraint SATISFIED: although W_D := false is

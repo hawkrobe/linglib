@@ -66,11 +66,7 @@ def graph : CausalGraph V := ⟨λ
   | .beliefNotP => {.acqNotP}
   | _ => ∅⟩
 
-def rank : CausalGraph.Ranking graph :=
-  ⟨λ | .indicP | .indicNotP => 1 | .acqP | .acqNotP => 2 | .beliefP | .beliefNotP => 3 | _ => 0,
-    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
-
-instance : CausalGraph.IsDAG graph := rank.isDAG
+instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
 
 /-- The normative model of belief formation: an indicator exists when its fact holds,
 acquaintance is the existence of the indicator together with experience of it, and belief
@@ -90,10 +86,6 @@ def beliefModel : BoolSEM V where
 
 instance : CausalGraph.IsDAG beliefModel.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
-/-- The variables in causal order. -/
-def order : List V :=
-  [.p, .notP, .expP, .expNotP, .indicP, .indicNotP, .acqP, .acqNotP, .beliefP, .beliefNotP]
-
 /-- The normative background: the agent experiences whatever indicators exist. -/
 def normative : Valuation (λ _ : V => Bool) :=
   (Valuation.empty.extend .expP true).extend .expNotP true
@@ -102,18 +94,18 @@ def normative : Valuation (λ _ : V => Bool) :=
 
 /-- *Know* satisfies the constraint: the truth of the complement manipulates belief in it,
 through the indicator and acquaintance with it. -/
-theorem know_plc : manipulates beliefModel normative .p .beliefP :=
-  manipulates_of_developDetOn_ne _ order 1 true false rfl rfl (by decide)
+theorem know_plc : manipulates beliefModel normative .p .beliefP := by
+  decide
 
 /-- The hypothetical *contra* violates the constraint: the falsity of the complement does not
 manipulate belief in it, because a fact generates indicators only for itself. -/
-theorem contra_plc : ¬ manipulates beliefModel normative .notP .beliefP :=
-  not_manipulates_of_developDetOn_eq _ order 1 false rfl rfl
+theorem contra_plc : ¬ manipulates beliefModel normative .notP .beliefP := by
+  decide
 
 /-- The template of the generalized constraint, oriented as the paper draws it: the fact does
 not manipulate belief in its negation. -/
-theorem contra_plc' : ¬ manipulates beliefModel normative .p .beliefNotP :=
-  not_manipulates_of_developDetOn_eq _ order 1 false rfl rfl
+theorem contra_plc' : ¬ manipulates beliefModel normative .p .beliefNotP := by
+  decide
 
 /-- The constraint's verdict on the profiles of [glass-2025]: for a factive and for the
 hypothetical strong contrafactive, whether the presupposed fact manipulates belief in the
@@ -146,11 +138,7 @@ def wijsmakenGraph : CausalGraph W := ⟨λ
   | .beliefRich => {.fool}
   | _ => ∅⟩
 
-def wijsmakenRank : CausalGraph.Ranking wijsmakenGraph :=
-  ⟨λ | .fool => 1 | .beliefRich => 2 | _ => 0,
-    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
-
-instance : CausalGraph.IsDAG wijsmakenGraph := wijsmakenRank.isDAG
+instance : CausalGraph.IsDAG wijsmakenGraph := .of_irrefl (by decide)
 
 /-- The model of *wijsmaken*, and the model with the eventive node cut, on which the belief
 no longer depends on anything. -/
@@ -166,21 +154,18 @@ def wijsmaken (eventive : Bool) : BoolSEM W where
 instance (eventive : Bool) : CausalGraph.IsDAG (wijsmaken eventive).graph :=
   inferInstanceAs (CausalGraph.IsDAG wijsmakenGraph)
 
-/-- The variables of *wijsmaken* in causal order. -/
-def wijsmakenOrder : List W := [.notRich, .notBeliefPrior, .fool, .beliefRich]
-
 /-- The background in which the object did not already hold the belief. -/
 def noPriorBelief : Valuation (λ _ : W => Bool) := Valuation.empty.extend .notBeliefPrior true
 
 /-- *Wijsmaken* satisfies the constraint: the complement's falsity manipulates the object's
 belief, through the act of fooling. -/
-theorem wijsmaken_plc : manipulates (wijsmaken true) noPriorBelief .notRich .beliefRich :=
-  manipulates_of_developDetOn_ne _ wijsmakenOrder 1 true false rfl rfl (by decide)
+theorem wijsmaken_plc : manipulates (wijsmaken true) noPriorBelief .notRich .beliefRich := by
+  decide
 
 /-- With the eventive node cut, the falsity presupposition is no longer upstream of the
 belief: the configuration of *contra*. -/
-theorem wijsmaken_cut : ¬ manipulates (wijsmaken false) noPriorBelief .notRich .beliefRich :=
-  not_manipulates_of_developDetOn_eq _ wijsmakenOrder 1 false rfl rfl
+theorem wijsmaken_cut : ¬ manipulates (wijsmaken false) noPriorBelief .notRich .beliefRich := by
+  decide
 
 /-- The variables of *hallucinate*: the complement's falsity, the distortion of the input,
 and the resulting belief. -/
@@ -194,11 +179,7 @@ def hallucinateGraph : CausalGraph H := ⟨λ
   | .beliefLoves => {.distortion}
   | _ => ∅⟩
 
-def hallucinateRank : CausalGraph.Ranking hallucinateGraph :=
-  ⟨λ | .distortion => 1 | .beliefLoves => 2 | _ => 0,
-    by intro u v h; revert h; cases u <;> cases v <;> decide⟩
-
-instance : CausalGraph.IsDAG hallucinateGraph := hallucinateRank.isDAG
+instance : CausalGraph.IsDAG hallucinateGraph := .of_irrefl (by decide)
 
 /-- The model of *hallucinate*, and the model with the distortion cut. -/
 def hallucinate (eventive : Bool) : BoolSEM H where
@@ -212,18 +193,15 @@ def hallucinate (eventive : Bool) : BoolSEM H where
 instance (eventive : Bool) : CausalGraph.IsDAG (hallucinate eventive).graph :=
   inferInstanceAs (CausalGraph.IsDAG hallucinateGraph)
 
-/-- The variables of *hallucinate* in causal order. -/
-def hallucinateOrder : List H := [.notLoves, .distortion, .beliefLoves]
-
 /-- *Hallucinate* satisfies the constraint through the distortion. -/
 theorem hallucinate_plc :
-    manipulates (hallucinate true) Valuation.empty .notLoves .beliefLoves :=
-  manipulates_of_developDetOn_ne _ hallucinateOrder 1 true false rfl rfl (by decide)
+    manipulates (hallucinate true) Valuation.empty .notLoves .beliefLoves := by
+  decide
 
 /-- With the distortion cut, the falsity presupposition is no longer upstream of the
 belief. -/
 theorem hallucinate_cut :
-    ¬ manipulates (hallucinate false) Valuation.empty .notLoves .beliefLoves :=
-  not_manipulates_of_developDetOn_eq _ hallucinateOrder 1 false rfl rfl
+    ¬ manipulates (hallucinate false) Valuation.empty .notLoves .beliefLoves := by
+  decide
 
 end RobertsOzyildiz2025

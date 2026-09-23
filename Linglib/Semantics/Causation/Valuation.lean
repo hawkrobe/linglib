@@ -107,6 +107,9 @@ theorem le_extend [DecidableEq V] {v : V} (x : α v) (h : s.get v = none) : s �
 
 @[simp] theorem empty_get (v : V) : (Valuation.empty (α := α)).get v = none := rfl
 
+@[simp] theorem get_or (s t : Valuation α) (v : V) : (s.or t).get v = (s.get v).or (t.get v) :=
+  rfl
+
 @[simp] theorem or_empty (s : Valuation α) : s.or empty = s := funext fun v ↦ Flat.or_bot (s v)
 
 theorem le_or (s t : Valuation α) : s ≤ s.or t := fun v ↦ Flat.le_or_left (s v) (t v)

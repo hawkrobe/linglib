@@ -4,6 +4,7 @@ public import Linglib.Semantics.Causation.Graph.Defs
 public import Linglib.Core.Relation.ReflTransGen
 public import Mathlib.Order.RelClasses
 public import Mathlib.Logic.Relation
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # CausalGraph: Acyclicity, Ancestor Relation
@@ -20,7 +21,9 @@ reflexive-transitive closures.
 Acyclicity certificates come bundled as `Ranking` (parents rank strictly
 below children) and its strict-successor refinement `TimeIndex` (parents
 immediately precede children, the time-indexed causal models of
-[cao-white-lassiter-2025]); `IsDAG.of_depth` passes the loose form.
+[cao-white-lassiter-2025]); `IsDAG.of_depth` passes the loose form. A finite graph is acyclic
+once no vertex is its own strict ancestor (`IsDAG.of_irrefl`, decidable), and is then ranked by
+counting strict ancestors (`ancestorRanking`), below the number of vertices.
 
 Ancestry in an acyclic graph is a partial order, causal precedence (`CausalGraph.partialOrder`),
 and a linear order when the graph is a single causal chain (`CausalGraph.linearOrder`). An account
@@ -105,6 +108,38 @@ def TimeIndex.toRanking {G : CausalGraph V} (ti : TimeIndex G) : Ranking G :=
 /-- A time index certifies acyclicity. -/
 theorem TimeIndex.isDAG {G : CausalGraph V} (ti : TimeIndex G) : IsDAG G :=
   ti.toRanking.isDAG
+
+/-! ### Finite acyclic graphs -/
+
+/-- A finite graph in which no vertex is its own strict ancestor is acyclic. -/
+theorem IsDAG.of_irrefl [Finite V] {G : CausalGraph V} (h : ∀ v, ¬ G.IsStrictAncestor v v) :
+    G.IsDAG :=
+  have : IsTrans V G.IsStrictAncestor := ⟨fun _ _ _ ↦ Relation.TransGen.trans⟩
+  have : Std.Irrefl G.IsStrictAncestor := ⟨h⟩
+  Finite.wellFounded_of_trans_of_irrefl _
+
+section Finite
+
+variable [Fintype V] [DecidableEq V]
+
+/-- The canonical ranking of a finite acyclic graph: a vertex's number of strict ancestors. A
+parent's strict ancestors are strict ancestors of its child, which has the parent besides. -/
+def ancestorRanking (G : CausalGraph V) [hG : G.IsDAG] : Ranking G :=
+  ⟨fun v ↦ (Finset.univ.filter (G.IsStrictAncestor · v)).card, fun {u _} h ↦
+    Finset.card_lt_card <| (Finset.ssubset_iff_of_subset fun w hw ↦ Finset.mem_filter.2
+      ⟨Finset.mem_univ w, .tail (Finset.mem_filter.1 hw).2 h⟩).2
+      ⟨u, Finset.mem_filter.2 ⟨Finset.mem_univ u, .single h⟩, fun h' ↦
+        have h' : G.IsStrictAncestor u u := (Finset.mem_filter.1 h').2
+        @WellFounded.asymmetric _ _ hG u u h' h'⟩⟩
+
+/-- The canonical ranking stays below the number of vertices, since no vertex is its own strict
+ancestor. -/
+theorem ancestorRanking_lt_card (G : CausalGraph V) [hG : G.IsDAG] (v : V) :
+    G.ancestorRanking v < Fintype.card V :=
+  Finset.card_lt_card <| Finset.filter_ssubset.2
+    ⟨v, Finset.mem_univ v, fun h ↦ @WellFounded.asymmetric _ _ hG v v h h⟩
+
+end Finite
 
 /-! ### Causal precedence -/
 

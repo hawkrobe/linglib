@@ -157,8 +157,6 @@ crossness. -/
 inductive V | T | B | C
   deriving DecidableEq, Fintype, Repr
 
-def vars : List V := [.T, .B, .C]
-
 def graphT : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T}⟩
 
 def graphConj : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T, .B}⟩
@@ -179,14 +177,9 @@ def semConj : BoolSEM V :=
       | .B => const (G := graphConj) false
       | .C => fun ρ ↦ ρ ⟨.T, by simp [graphConj]⟩ && ρ ⟨.B, by simp [graphConj]⟩ }
 
-instance : CausalGraph.IsDAG semT.graph :=
-  CausalGraph.IsDAG.of_depth _ (λ | .T => 0 | .B => 0 | .C => 1) <| by
-    intro u v h; cases v <;> simp_all [graphT, semT]
+instance : CausalGraph.IsDAG semT.graph := .of_irrefl (by decide)
 
-instance : CausalGraph.IsDAG semConj.graph :=
-  CausalGraph.IsDAG.of_depth _ (λ | .T => 0 | .B => 0 | .C => 1) <| by
-    intro u v h; cases v <;> simp_all [graphConj, semConj]
-    rcases h with rfl | rfl <;> decide
+instance : CausalGraph.IsDAG semConj.graph := .of_irrefl (by decide)
 
 /-- The context Bob knows: he was late and forgot the birthday. -/
 def context : Valuation (λ _ : V => Bool) :=
@@ -196,25 +189,24 @@ def context : Valuation (λ _ : V => Bool) :=
 interpretation sets of Example 3, derived from actual causation. -/
 theorem actualCause_T_semT : actualCause semT context .T .C := by
   refine ⟨by decide, ?_, context, ?_⟩
-  · exact SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1) (by decide)
-  · exact CCSelection.completesForEffect_of_developDetOn vars 1 (by decide) (by decide)
+  · decide
+  · decide
 
 theorem actualCause_T_semConj : actualCause semConj context .T .C := by
   refine ⟨by decide, ?_, context, ?_⟩
-  · exact SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1) (by decide)
-  · exact CCSelection.completesForEffect_of_developDetOn vars 1 (by decide) (by decide)
+  · decide
+  · decide
 
 theorem actualCause_B_semConj : actualCause semConj context .B .C := by
   refine ⟨by decide, ?_, context, ?_⟩
-  · exact SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1) (by decide)
-  · exact CCSelection.completesForEffect_of_developDetOn vars 1 (by decide) (by decide)
+  · decide
+  · decide
 
 /-- In the tardiness-only world the birthday is not but-for crossness at the actual context:
 crossness reads tardiness alone. -/
 theorem not_completesForEffect_B_semT :
-    ¬ CCSelection.completesForEffect semT context .B true false .C true :=
-  λ ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue (vs := vars) (n := 1)
-    (by decide))
+    ¬ CCSelection.completesForEffect semT context .B true false .C true := by
+  decide
 
 /-- The worlds: `0` the tardiness-only model, `1` the conjunctive model. -/
 abbrev World := Fin 2

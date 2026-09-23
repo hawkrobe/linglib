@@ -6,7 +6,7 @@ public import Mathlib.Probability.Distributions.Uniform
 public import Linglib.Core.Probability.Constructions
 public import Linglib.Data.Examples.CaoWhiteLassiter2025
 public import Linglib.Semantics.Causation.Interpretation
-public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.SEM.Entailment
 
 /-!
 # Cao, White and Lassiter 2025: graded causative verb semantics

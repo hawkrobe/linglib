@@ -9,7 +9,8 @@ Developing a partial valuation in Kleene's three-valued way. A vertex the valuat
 undetermined is forced to `x` when every completion of its parents' forced values yields `x`
 under its mechanism, so a turned handle on an unlocked door forces the door open while the
 circuit is still undetermined. `ForcedFuel M s n v x` is the `n`-step approximation and
-`Forced M s v x` its limit, which is reached at any fuel above a ranking of the graph. The
+`Forced M s v x` its limit, which is reached at any fuel above a ranking of the graph, so at
+`Fintype.card V` in a finite model, where `Forced` is decidable. The
 strict development `developDetVtxFuel` settles a vertex only once all its parents are
 settled, so whatever it settles is forced.
 
@@ -91,6 +92,15 @@ theorem forced_iff_fuel (r : CausalGraph.Ranking M.graph) {v : V} {n : ℕ} (hn 
       (forcedFuel_iff_of_lt r hn).2 ((forcedFuel_iff_of_lt r (by omega)).1 hm),
     ForcedFuel.forced⟩
 
+/-- In a finite acyclic model the limit is reached at fuel `Fintype.card V`. -/
+theorem forced_iff_forcedFuel_card [Fintype V] [DecidableEq V] [M.graph.IsDAG] {v : V}
+    {x : α v} : Forced M s v x ↔ ForcedFuel M s (Fintype.card V) v x :=
+  forced_iff_fuel M.graph.ancestorRanking (M.graph.ancestorRanking_lt_card v)
+
+instance [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)] [M.graph.IsDAG]
+    (v : V) (x : α v) : Decidable (Forced M s v x) :=
+  decidable_of_iff _ forced_iff_forcedFuel_card.symm
+
 /-- Whatever the strict development settles is forced. -/
 theorem ForcedFuel.of_developDetVtxFuel [DecidableEq V] : ∀ {n : ℕ} {v : V} {x : α v},
     developDetVtxFuel M s n v = some x → ForcedFuel M s n v x
@@ -110,5 +120,11 @@ theorem ForcedFuel.of_developDetVtxFuel [DecidableEq V] : ∀ {n : ℕ} {v : V} 
           congr 1; funext u
           exact hσ u _ (ForcedFuel.of_developDetVtxFuel (Option.some_get (hAll u)).symm)
         · simp at h
+
+/-- Whatever the strict development of a finite model settles is forced: strong Kleene
+development extends weak. -/
+theorem forced_of_developDetVtx? [Fintype V] [DecidableEq V] [M.graph.IsDAG] {v : V} {x : α v}
+    (h : developDetVtx? M s v = some x) : Forced M s v x :=
+  (ForcedFuel.of_developDetVtxFuel ((developDetVtxFuel_card M s v).trans h)).forced
 
 end Causation.SEM

@@ -22,7 +22,7 @@ symmetric overdetermination, where neither of two sufficient causes passes the b
 ## Implementation notes
 
 The counterfactual is an intervention on the deterministic development of the model
-(`developDetOn`), so the analysis is the but-for test of the substrate rather than a
+(`SEM.causallySufficient`), so the analysis is the but-for test of the substrate rather than a
 similarity ordering over worlds; the two agree on these deterministic scenarios. The paper's
 treatment of preemption is not represented.
 
@@ -36,70 +36,69 @@ treatment of preemption is not represented.
 namespace Lewis1973
 
 open Reference
-open Causation Causation.Mechanism Causation.SEM
+open Causation Causation.Mechanism
+
+section Dependence
+
+variable {W : Type*} [DecidableEq W] (M : BoolSEM W) [M.graph.IsDAG]
+  (bg : Valuation (fun _ : W ↦ Bool))
 
 /-- The but-for counterfactual: had the cause not occurred, the effect would not have
 occurred, as an intervention setting the cause to `false` in the deterministic development. -/
-noncomputable def lewisButFor {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W)
-    (vs : List W) (bg : Valuation (λ _ : W => Bool))
-    (cause effect : W) : Prop :=
-  ¬ (developDetOn M vs 1 (bg.extend cause false)).hasValue effect true
+def lewisButFor (cause effect : W) : Prop :=
+  ¬ SEM.causallySufficient M bg cause false effect true
 
 /-- Causal dependence (p. 562): both events occur, and the effect would not have
 occurred without the cause. -/
-noncomputable def lewisDependence {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W)
-    (vs : List W) (bg : Valuation (λ _ : W => Bool))
-    (cause effect : W) : Prop :=
-  (developDetOn M vs 1 bg).hasValue cause true ∧
-  (developDetOn M vs 1 bg).hasValue effect true ∧
-  lewisButFor M vs bg cause effect
+def lewisDependence (cause effect : W) : Prop :=
+  (M.developDet bg).hasValue cause true ∧ (M.developDet bg).hasValue effect true ∧
+    lewisButFor M bg cause effect
+
+instance [Fintype W] (cause effect : W) : Decidable (lewisButFor M bg cause effect) :=
+  inferInstanceAs (Decidable (¬ _))
+
+instance [Fintype W] (cause effect : W) : Decidable (lewisDependence M bg cause effect) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- Causation: the ancestral of causal dependence (p. 563). -/
-def lewisCausation {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W)
-    (vs : List W) (bg : Valuation (λ _ : W => Bool))
-    (cause effect : W) : Prop :=
-  Relation.TransGen (lewisDependence M vs bg) cause effect
+def lewisCausation (cause effect : W) : Prop :=
+  Relation.TransGen (lewisDependence M bg) cause effect
 
 /-- Causal dependence is causation through a chain of one step. -/
-theorem dependence_implies_causation {W : Type*} [Fintype W] [DecidableEq W]
-    (M : BoolSEM W)
-    (vs : List W) (bg : Valuation _) (cause effect : W)
-    (h : lewisDependence M vs bg cause effect) :
-    lewisCausation M vs bg cause effect :=
+theorem dependence_implies_causation {cause effect : W} (h : lewisDependence M bg cause effect) :
+    lewisCausation M bg cause effect :=
   Relation.TransGen.single h
+
+end Dependence
 
 namespace SimpleCause
 
 inductive V | a | b
   deriving DecidableEq, Fintype, Repr
 
-def varList : List V := [.a, .b]
-
-def graph : CausalGraph V := ⟨λ | .a => ∅ | .b => {.a}⟩
+def graph : CausalGraph V := ⟨fun | .a => ∅ | .b => {.a}⟩
 
 def sem : BoolSEM V :=
   { graph := graph
-    mech := λ v => match v with
+    mech := fun v ↦ match v with
       | .a => const (G := graph) false
       | .b => fun ρ ↦ ρ ⟨.a, by simp [graph]⟩ }
 
-def bg : Valuation (λ _ : V => Bool) := Valuation.empty.extend .a true
+instance : CausalGraph.IsDAG sem.graph := .of_irrefl (by decide)
+
+def bg : Valuation (fun _ : V ↦ Bool) := Valuation.empty.extend .a true
 
 /-- A single cause passes the but-for test. -/
-theorem simple_butfor : lewisButFor sem varList bg .a .b := by
-  unfold lewisButFor; intro h
-  exact Bool.false_ne_true (Option.some.inj h)
+theorem simple_butfor : lewisButFor sem bg .a .b := by
+  decide
 
 /-- The effect depends on its single cause. -/
-theorem simple_dependence : lewisDependence sem varList bg .a .b :=
-  ⟨by rfl, by rfl, simple_butfor⟩
+theorem simple_dependence : lewisDependence sem bg .a .b := by
+  decide
 
 /-- A single cause is a cause. -/
-theorem simple_causation : lewisCausation sem varList bg .a .b :=
-  dependence_implies_causation _ _ _ _ _ simple_dependence
+theorem simple_causation : lewisCausation sem bg .a .b :=
+  dependence_implies_causation _ _ simple_dependence
 
 end SimpleCause
 
@@ -108,36 +107,33 @@ namespace Chain
 inductive V | a | b | c
   deriving DecidableEq, Fintype, Repr
 
-def varList : List V := [.a, .b, .c]
-
-def graph : CausalGraph V := ⟨λ | .a => ∅ | .b => {.a} | .c => {.b}⟩
+def graph : CausalGraph V := ⟨fun | .a => ∅ | .b => {.a} | .c => {.b}⟩
 
 def sem : BoolSEM V :=
   { graph := graph
-    mech := λ v => match v with
+    mech := fun v ↦ match v with
       | .a => const (G := graph) false
       | .b => fun ρ ↦ ρ ⟨.a, by simp [graph]⟩
       | .c => fun ρ ↦ ρ ⟨.b, by simp [graph]⟩ }
 
-def bg : Valuation (λ _ : V => Bool) := Valuation.empty.extend .a true
+instance : CausalGraph.IsDAG sem.graph := .of_irrefl (by decide)
+
+def bg : Valuation (fun _ : V ↦ Bool) := Valuation.empty.extend .a true
 
 /-- In a chain the distal cause passes the but-for test for the final effect. -/
-theorem chain_direct_butfor : lewisButFor sem varList bg .a .c := by
-  unfold lewisButFor; intro h
-  exact Bool.false_ne_true (Option.some.inj h)
+theorem chain_direct_butfor : lewisButFor sem bg .a .c := by
+  decide
 
 /-- The middle event depends on the first. -/
-theorem chain_step_AB : lewisDependence sem varList bg .a .b :=
-  ⟨by rfl, by rfl, by unfold lewisButFor; intro h; exact Bool.false_ne_true (Option.some.inj h)⟩
+theorem chain_step_AB : lewisDependence sem bg .a .b := by
+  decide
 
 /-- The final event depends on the middle one. -/
-theorem chain_step_BC : lewisDependence sem varList bg .b .c := by
-  refine ⟨by rfl, by rfl, ?_⟩
-  unfold lewisButFor; intro h
-  exact Bool.false_ne_true (Option.some.inj h)
+theorem chain_step_BC : lewisDependence sem bg .b .c := by
+  decide
 
 /-- The first event causes the last through the chain. -/
-theorem chain_causation : lewisCausation sem varList bg .a .c :=
+theorem chain_causation : lewisCausation sem bg .a .c :=
   Relation.TransGen.trans
     (Relation.TransGen.single chain_step_AB)
     (Relation.TransGen.single chain_step_BC)
@@ -153,46 +149,38 @@ cause of the other. -/
 inductive V | pressure | barometer | storm
   deriving DecidableEq, Fintype, Repr
 
-def varList : List V := [.pressure, .barometer, .storm]
-
 def graph : CausalGraph V :=
-  ⟨λ | .pressure => ∅ | .barometer => {.pressure} | .storm => {.pressure}⟩
+  ⟨fun | .pressure => ∅ | .barometer => {.pressure} | .storm => {.pressure}⟩
 
 def sem : BoolSEM V :=
   { graph := graph
-    mech := λ v => match v with
+    mech := fun v ↦ match v with
       | .pressure => const (G := graph) false
       | .barometer => fun ρ ↦ ρ ⟨.pressure, by simp [graph]⟩
       | .storm => fun ρ ↦ ρ ⟨.pressure, by simp [graph]⟩ }
 
-def bg : Valuation (λ _ : V => Bool) := Valuation.empty.extend .pressure true
+instance : CausalGraph.IsDAG sem.graph := .of_irrefl (by decide)
+
+def bg : Valuation (fun _ : V ↦ Bool) := Valuation.empty.extend .pressure true
 
 /-- Pressure causes the barometer reading. -/
-theorem pressure_causes_barometer : lewisDependence sem varList bg .pressure .barometer := by
-  refine ⟨by rfl, by rfl, ?_⟩
-  unfold lewisButFor; intro h
-  exact Bool.false_ne_true (Option.some.inj h)
+theorem pressure_causes_barometer : lewisDependence sem bg .pressure .barometer := by
+  decide
 
 /-- Pressure causes the storm. -/
-theorem pressure_causes_storm : lewisDependence sem varList bg .pressure .storm := by
-  refine ⟨by rfl, by rfl, ?_⟩
-  unfold lewisButFor; intro h
-  exact Bool.false_ne_true (Option.some.inj h)
+theorem pressure_causes_storm : lewisDependence sem bg .pressure .storm := by
+  decide
 
 /-- The barometer does not cause the storm: intervening on the barometer leaves the
 pressure, and so the storm, in place. -/
 theorem barometer_not_causes_storm :
-    ¬ (lewisDependence sem varList bg .barometer .storm) := by
-  intro ⟨_, _, hButFor⟩
-  apply hButFor
-  rfl
+    ¬ (lewisDependence sem bg .barometer .storm) := by
+  decide
 
 /-- The storm does not cause the barometer reading. -/
 theorem storm_not_causes_barometer :
-    ¬ (lewisDependence sem varList bg .storm .barometer) := by
-  intro ⟨_, _, hButFor⟩
-  apply hButFor
-  rfl
+    ¬ (lewisDependence sem bg .storm .barometer) := by
+  decide
 
 end Epiphenomena
 
@@ -204,35 +192,35 @@ present, neither is necessary, so neither passes the but-for test. -/
 inductive V | a | b | e
   deriving DecidableEq, Fintype, Repr
 
-def varList : List V := [.a, .b, .e]
-
-def graph : CausalGraph V := ⟨λ | .a => ∅ | .b => ∅ | .e => {.a, .b}⟩
+def graph : CausalGraph V := ⟨fun | .a => ∅ | .b => ∅ | .e => {.a, .b}⟩
 
 def sem : BoolSEM V :=
   { graph := graph
-    mech := λ v => match v with
+    mech := fun v ↦ match v with
       | .a => const (G := graph) false
       | .b => const (G := graph) false
       | .e => fun ρ ↦
           ρ ⟨.a, by simp [graph]⟩ || ρ ⟨.b, by simp [graph]⟩ }
 
+instance : CausalGraph.IsDAG sem.graph := .of_irrefl (by decide)
+
 /-- Both causes present. -/
-def bg : Valuation (λ _ : V => Bool) :=
+def bg : Valuation (fun _ : V ↦ Bool) :=
   Valuation.empty.extend .a true |>.extend .b true
 
 /-- Neither overdetermining cause passes the but-for test. -/
-theorem overdetermination_no_butfor_a : ¬ lewisButFor sem varList bg .a .e := by
-  unfold lewisButFor; push Not; rfl
+theorem overdetermination_no_butfor_a : ¬ lewisButFor sem bg .a .e := by
+  decide
 
-theorem overdetermination_no_butfor_b : ¬ lewisButFor sem varList bg .b .e := by
-  unfold lewisButFor; push Not; rfl
+theorem overdetermination_no_butfor_b : ¬ lewisButFor sem bg .b .e := by
+  decide
 
 /-- Neither overdetermining cause is one the effect depends on. -/
-theorem overdetermination_no_dependence_a : ¬ lewisDependence sem varList bg .a .e := by
-  intro ⟨_, _, h⟩; exact overdetermination_no_butfor_a h
+theorem overdetermination_no_dependence_a : ¬ lewisDependence sem bg .a .e := by
+  decide
 
-theorem overdetermination_no_dependence_b : ¬ lewisDependence sem varList bg .b .e := by
-  intro ⟨_, _, h⟩; exact overdetermination_no_butfor_b h
+theorem overdetermination_no_dependence_b : ¬ lewisDependence sem bg .b .e := by
+  decide
 
 end Overdetermination
 

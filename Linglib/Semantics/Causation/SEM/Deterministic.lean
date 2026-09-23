@@ -12,23 +12,26 @@ developed through a deterministic acyclic model, by well-founded recursion on
 its equation gives to its parents' developed values. `developDet M s` is the whole valuation,
 settled everywhere. The strict development `developDetVtx?` of [schulz-2011] and
 [nadathur-2023-implicatives] leaves an undetermined exogenous vertex undetermined and resolves
-an inner vertex only once all its parents are resolved; `developDetVtxFuel` is its
-kernel-reducible mirror.
+an inner vertex only once all its parents are resolved. The eager development is the strict one
+after every silent root takes the value its equation gives it
+(`developDetVtx?_or_rootDefaults`).
+
+`developDetVtxFuel` is the kernel-reducible mirror of the strict development. Fuel above any
+ranking of the graph reaches it, so fuel `Fintype.card V` does in a finite model
+(`developDetVtxFuel_card`, through `CausalGraph.ancestorRanking`), and `developDet_eq_fuel`
+computes the eager development the same way. That is how `(M.developDet s).hasValue v x`, and
+every predicate stated through it, is decided.
 
 Uncertainty is not a property of the equations. As in Pearl's structural models it is a
 probability on the background, which `SEM.probSufficiency` takes as a measure on outcomes that
 each settle a background valuation.
 
-## Reduction
+## Implementation notes
 
-`developDetVtx M s v` reduces structurally via:
-1. `rw [developDetVtx_unfold]` (or the convenience lemmas
-   `developDetVtx_extended`/`developDetVtx_undet`) — opens one layer of
-   the `WellFounded.fix_eq` recursion.
-2. `rfl` (or `simp` when `s.get v` is determined) — closes when ground.
-
-For 5-vertex SEMs, ~5 layers of unfolding suffice. No `Fintype` reasoning;
-no opaque `Multiset.toList`.
+Proofs about arbitrary valuations open the recursion one layer at a time with
+`developDetVtx_unfold` (`developDetVtx_extended` and `developDetVtx_undet` for its two cases, and
+the `developDetVtx?_*` lemmas for the strict development); claims about a concrete model are
+decided.
 
 ## References
 
@@ -235,6 +238,33 @@ theorem developDetVtx_eq_of_developDetVtx?_eq_some
         · rw [dite_eq_right hAll] at h
           exact absurd h (by simp)
 
+/-- The value each root's equation gives it, which the eager development supplies where a
+valuation is silent. Inner vertices are left undetermined. -/
+def rootDefaults : Valuation α := fun v ↦
+  if h : M.graph.parents v = ∅ then
+    some (M.mech v fun u ↦ (Finset.notMem_empty u.1 (h ▸ u.2)).elim)
+  else none
+
+/-- **Eager development is strict development after root defaults**: the eager dynamics fires
+the equation of every root the valuation leaves silent, which the strict dynamics does once
+`rootDefaults` settles the roots. -/
+theorem developDetVtx?_or_rootDefaults (s : Valuation α) (v : V) :
+    developDetVtx? M (s.or (rootDefaults M)) v = some (developDetVtx M s v) := by
+  induction v using (inferInstance : M.graph.IsDAG).induction with
+  | _ v ih =>
+    rw [developDetVtx_unfold]
+    cases hsv : s.get v with
+    | some x => exact developDetVtx?_determined M (by simp [hsv])
+    | none =>
+      by_cases hPar : M.graph.parents v = ∅
+      · refine developDetVtx?_determined M ?_
+        rw [Valuation.get_or, hsv, Option.none_or]
+        simp only [Valuation.get, rootDefaults, hPar, dite_true]
+        exact congrArg _ (congrArg _ (funext fun u ↦ (Finset.notMem_empty u.1 (hPar ▸ u.2)).elim))
+      · refine developDetVtx?_inner M ?_ hPar _ fun u ↦ ih u.1 (.single u.2)
+        rw [Valuation.get_or, hsv, Option.none_or]
+        simp [Valuation.get, rootDefaults, hPar]
+
 end PartialDevelopment
 
 /-! ### Fuel mirror (computable, kernel-reducible) -/
@@ -306,15 +336,24 @@ theorem developDetVtxFuel_eq_developDetVtx?
             fun hA => hAll (fun u => by rw [← hpt u]; exact hA u)
           rw [dite_eq_right hAll', dite_eq_right hAll]
 
-/-- Transfer a concrete fuel computation to the canonical strict fixed
-    point. The usual study idiom:
-    `developDetVtx?_eq_of_fuel M ⟨rank, by intro u v h; revert h; decide⟩ (by omega) (by decide)`. -/
-theorem developDetVtx?_eq_of_fuel
-    (r : CausalGraph.Ranking M.graph)
-    {s : Valuation α} {n : ℕ} {v : V} {o : Option (α v)} (hn : r v < n)
-    (h : developDetVtxFuel M s n v = o) :
-    developDetVtx? M s v = o :=
-  (developDetVtxFuel_eq_developDetVtx? M r s hn).symm.trans h
+/-- Fuel `Fintype.card V` computes the strict development of a finite acyclic model. -/
+theorem developDetVtxFuel_card [Fintype V] (s : Valuation α) (v : V) :
+    developDetVtxFuel M s (Fintype.card V) v = developDetVtx? M s v :=
+  developDetVtxFuel_eq_developDetVtx? M M.graph.ancestorRanking s
+    (M.graph.ancestorRanking_lt_card v)
+
+/-- The eager development of a finite acyclic model as a fuel computation, the form in which
+predicates stated over `developDet` are decided. -/
+theorem developDet_eq_fuel [Fintype V] (s : Valuation α) :
+    M.developDet s = fun v ↦ developDetVtxFuel M (s.or (rootDefaults M)) (Fintype.card V) v :=
+  funext fun v ↦ by rw [developDetVtxFuel_card, developDetVtx?_or_rootDefaults]; rfl
+
+/-- What a finite acyclic model develops is decided by fuel, where the generic instance on
+`Valuation.hasValue` would have to reduce the well-founded recursion. -/
+instance [Fintype V] [DecidableValuation α] (s : Valuation α) (v : V) (x : α v) :
+    Decidable ((M.developDet s).hasValue v x) :=
+  decidable_of_iff (developDetVtxFuel M (s.or M.rootDefaults) (Fintype.card V) v = some x)
+    (by rw [developDet_eq_fuel]; rfl)
 
 end FuelBridge
 
