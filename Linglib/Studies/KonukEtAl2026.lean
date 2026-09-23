@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Semantics.Causation.Strength
 public import Linglib.Semantics.Plurality.Basic
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 
 /-!
@@ -12,11 +12,10 @@ public import Mathlib.Tactic.Ring
 This file formalizes [konuk-et-al-2026]'s account of plural causes in causal selection: a
 conjunction of events such as *A and B* is a candidate cause in its own right, scored by the
 counterfactual dependence of the outcome on the compound binary variable that is true when
-both hold. The Necessity–Sufficiency Model of [icard-et-al-2017], the substrate's
-`Causation.Strength.nsm`, applies to the compound with the compound's own prior, its
-necessity the probability that the outcome fails where the compound fails, and its sufficiency
-the probability that forcing the compound on restores an absent outcome
-(`Compound.score`). In Experiment 1 a player wins with two colored balls from three urns of
+both hold. The Necessity–Sufficiency Model of [icard-et-al-2017] applies to the compound with
+the compound's own prior, its necessity the probability that the outcome fails where the
+compound fails, and its sufficiency the probability that forcing the compound on restores an
+absent outcome (`Compound.score`). In Experiment 1 a player wins with two colored balls from three urns of
 probabilities 0.05, 0.5 and 0.95; with the counterfactual worlds drawn from the priors, the
 score of a pair is in closed form one minus the chance that exactly one of its urns and the
 third all come out colored (`score_pair`), so the pair of the intermediate and high urns
@@ -50,8 +49,6 @@ round the representation negates as homogeneously as the facts allow (`triple_ne
 
 namespace KonukEtAl2026
 
-open Causation.Strength
-
 variable {W : Type*} [Fintype W]
 
 /-- The mass of the worlds passing a test, under a distribution over worlds. -/
@@ -76,9 +73,10 @@ forcing the compound on produces the outcome. -/
 def sufficiency : ℚ :=
   mass p (λ w => !C.holds w && !f w && f (C.on w)) / mass p (λ w => !C.holds w && !f w)
 
-/-- The score of a compound: [icard-et-al-2017]'s model applied to the compound variable,
-its prior the mass of the worlds where it holds. -/
-def score : ℚ := nsm (mass p C.holds) (C.sufficiency p f) (C.necessity p f)
+/-- The score of a compound: [icard-et-al-2017]'s Necessity–Sufficiency Model applied to the
+compound variable, `P(C) · Suf(C) + (1 − P(C)) · Nec(C)`, its prior `P(C)` the mass of the
+worlds where it holds. -/
+def score : ℚ := mass p C.holds * C.sufficiency p f + (1 - mass p C.holds) * C.necessity p f
 
 /-- A compound is sufficient for an outcome when forcing it on produces the outcome in every
 world. -/
@@ -135,8 +133,7 @@ theorem score_pair {pA pB pC : ℚ} (hA : 0 < pA ∧ pA < 1) (hB : 0 < pB ∧ pB
     ne_of_gt (add_pos_of_pos_of_nonneg (mul_pos (sub_pos.2 hA.2) (sub_pos.2 hB.2))
       (mul_nonneg (add_nonneg (mul_nonneg hA.1.le (sub_nonneg.2 hB.2.le))
         (mul_nonneg (sub_nonneg.2 hA.2.le) hB.1.le)) (sub_nonneg.2 hC.2.le)))
-  rw [Compound.score, Compound.sufficiency, Compound.necessity, hn, hnf, hnfs, hc, nsm,
-    div_self hnf0]
+  rw [Compound.score, Compound.sufficiency, Compound.necessity, hn, hnf, hnfs, hc, div_self hnf0]
   field_simp
   ring
 

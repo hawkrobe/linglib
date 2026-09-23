@@ -4,6 +4,7 @@ public import Linglib.Fragments.English.Verbs
 public import Linglib.Fragments.English.Verbs.Copular
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
 
 /-!

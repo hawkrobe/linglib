@@ -8,6 +8,7 @@ public import Linglib.Fragments.English.Adposition
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Length
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Futrell, Levy and Gibson (2020): Dependency Locality as an Explanatory Principle for Word Order
