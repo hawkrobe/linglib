@@ -1020,7 +1020,6 @@ import Linglib.Fragments.Turkish.Possession
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Relativization
 import Linglib.Fragments.Tuyuca.Evidentiality
-import Linglib.Fragments.Urdu.CausativeSystem
 import Linglib.Fragments.Uyghur.Complementizers
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
