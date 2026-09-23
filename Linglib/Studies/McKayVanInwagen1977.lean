@@ -1,4 +1,6 @@
-import Linglib.Semantics.Conditionals.Counterfactual
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual
 
 /-!
 # McKay and van Inwagen (1977): Counterfactuals with Disjunctive Antecedents
@@ -26,6 +28,9 @@ antecedent-worlds (`holds`).
 * [mckay-vaninwagen-1977]
 * [lewis-1973]
 -/
+
+@[expose] public section
+
 
 namespace McKayVanInwagen1977
 

@@ -1,5 +1,7 @@
-import Linglib.Core.Order.Minimals
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Linglib.Core.Order.Minimals
+public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # Conditional desire semantics
@@ -19,6 +21,9 @@ desirability relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
   similar to `w'`.
 - `Want`, `Defined`, `Want.not_compl`.
 -/
+
+@[expose] public section
+
 
 namespace Desire.Conditional
 
