@@ -21,6 +21,10 @@ Acyclicity certificates come bundled as `Ranking` (parents rank strictly
 below children) and its strict-successor refinement `TimeIndex` (parents
 immediately precede children, the time-indexed causal models of
 [cao-white-lassiter-2025]); `IsDAG.of_depth` passes the loose form.
+
+Ancestry in an acyclic graph is a partial order, causal precedence (`CausalGraph.partialOrder`),
+and a linear order when the graph is a single causal chain (`CausalGraph.linearOrder`). An account
+that reads a participant's place in a causal chain orders the chain's events this way.
 -/
 
 @[expose] public section
@@ -101,5 +105,26 @@ def TimeIndex.toRanking {G : CausalGraph V} (ti : TimeIndex G) : Ranking G :=
 /-- A time index certifies acyclicity. -/
 theorem TimeIndex.isDAG {G : CausalGraph V} (ti : TimeIndex G) : IsDAG G :=
   ti.toRanking.isDAG
+
+/-! ### Causal precedence -/
+
+/-- Causal precedence: in an acyclic causal graph, ancestry is a partial order, a node preceding
+the nodes it is an ancestor of. A reducible definition, like `partialOrderOfCovers`, for a
+consumer to install as the order on its nodes. -/
+@[reducible] def partialOrder (G : CausalGraph V) (hG : G.IsDAG) : PartialOrder V where
+  le := G.IsAncestor
+  le_refl _ := Relation.ReflTransGen.refl
+  le_trans _ _ _ := Relation.ReflTransGen.trans
+  le_antisymm _ _ := Relation.ReflTransGen.antisymm_of_irrefl_transGen
+    fun a h ↦ @WellFounded.asymmetric _ _ hG a a h h
+
+/-- A causal graph whose ancestry is total, a single causal chain, is linearly ordered by causal
+precedence. -/
+@[reducible] def linearOrder [Fintype V] [DecidableEq V] (G : CausalGraph V) (hG : G.IsDAG)
+    (htotal : ∀ a b, G.IsAncestor a b ∨ G.IsAncestor b a) : LinearOrder V where
+  __ := G.partialOrder hG
+  le_total := htotal
+  toDecidableLE := IsAncestor.decidable G
+  toDecidableEq := inferInstance
 
 end Causation.CausalGraph

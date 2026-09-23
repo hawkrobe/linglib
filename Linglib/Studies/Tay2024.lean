@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Tay2024
 public import Linglib.Fragments.Mandarin.Resultatives
 public import Linglib.Studies.Kim2024
+public import Linglib.Semantics.Causation.Graph.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.NormNum
@@ -32,7 +33,9 @@ V1's event is integrated, so the factor is a participant in V1's event,
 `participant_of_nullAffixC`: no pure causers (146)–(149), while subject matters are
 participants (150)–(151). On the causal chain of *chén* 'sink' (136), *jī-chén* 'strike-sink'
 names the onset and *\*chōng-chén* 'rush-sink' an event downstream of it, (137)–(140),
-`onsetCondition_strike` and `not_onsetCondition_rush`. The rows carry the paper's reading of the
+`onsetCondition_strike` and `not_onsetCondition_rush`: on a model of (136) the first meets the
+Onset Condition and puts the Russian forces in V1's event, `ji_chen_participant`, and the second
+violates it, `not_sinkingModel_rush_onset`. The rows carry the paper's reading of the
 external argument, and a transitive compound is ungrammatical exactly where that reading is a
 pure causer, `ungrammatical_iff_pureCauser`. The macroevent must contain the two subevents
 rather than identify or nest them: in *shè-sǐ* 'shoot dead' (107) the shooting and the dying
@@ -52,6 +55,8 @@ relation and the causal chain of each macroevent, (136), are the primitives of a
 thesis takes the causal relation to be Lewis's counterfactual causation and leaves its
 characterization open. Events are partially ordered by causal precedence, the initial event of
 a chain is its least event, and the Onset Condition is [kim-2024]'s, `Kim2024.OnsetCondition`.
+The model of (136) draws the chain as a causal graph, `Causation.CausalGraph`, ordered by
+ancestry, so the macroevent, no link in the chain, is unordered with respect to its subevents.
 Temporal traces are rational intervals. The compounds are entries of
 `Fragments/Mandarin/Resultatives.lean`, which record no orientation: the apparent
 subject-oriented transitives *chī-bǎo* (3) and *qí-lèi* (330) are the hybrid resultatives of
@@ -150,30 +155,99 @@ end NullAffix
 
 /-! ### The causal chain of *chén* 'sink', (136)–(140) -/
 
-/-- The causal chain of (136), which *chén* 'sink' denotes as a whole: the Russians strike the
-cruiser with a missile, seawater rushes into it, it descends into the water, and it is below the
-surface of the sea. -/
+/-- The events of (136): the Russians strike the cruiser with a missile, seawater rushes into it,
+it descends into the water, and it is below the surface of the sea; and the macroevent of
+sinking that comprises them, which *chén* 'sink' denotes. -/
 inductive SinkingEvent
   | strike
   | rush
   | descend
   | below
+  | sink
   deriving DecidableEq, Fintype
 
-/-- The events of the chain in order of causal precedence. -/
-instance : LinearOrder SinkingEvent := .lift' SinkingEvent.ctorIdx (by decide)
+namespace SinkingEvent
+
+/-- The arrows of (136). The macroevent is no link in the chain, so it neither precedes nor
+follows its subevents. -/
+def causalGraph : Causation.CausalGraph SinkingEvent where
+  parents
+    | .rush => {strike}
+    | .descend => {rush}
+    | .below => {descend}
+    | _ => ∅
+
+/-- The events in order of causal precedence. -/
+instance : PartialOrder SinkingEvent :=
+  causalGraph.partialOrder (.of_depth _ SinkingEvent.ctorIdx (by decide))
+
+instance : DecidableLE SinkingEvent := Causation.CausalGraph.IsAncestor.decidable causalGraph
+
+/-- The causal chain the sinking comprises. -/
+def chain : Set SinkingEvent := {strike, rush, descend, below}
+
+end SinkingEvent
+
+open SinkingEvent
 
 /-- (137)–(138): in *jī-chén* 'strike-sink' V1 names the striking, the onset of the chain, so the
-Onset Condition is met, and the Russian forces, who take part in the striking, are no pure
-causer. -/
-theorem onsetCondition_strike : Kim2024.OnsetCondition (Set.univ : Set SinkingEvent) .strike :=
-  isLeast_univ_iff.2 fun e ↦ by cases e <;> decide
+Onset Condition is met. -/
+theorem onsetCondition_strike : Kim2024.OnsetCondition chain strike :=
+  ⟨by simp [chain], fun e he ↦ by rcases he with rfl | rfl | rfl | rfl <;> decide⟩
 
 /-- (139)–(140): in *\*chōng-chén* 'rush-sink' V1 would name the seawater rushing in, downstream of
-the striking, so it cannot be the integrated event, and the Russian forces, who take no part in
-it, would be a pure causer. -/
-theorem not_onsetCondition_rush : ¬ Kim2024.OnsetCondition (Set.univ : Set SinkingEvent) .rush :=
-  Kim2024.not_onsetCondition_of_lt onsetCondition_strike (by decide)
+the striking, so it cannot be the integrated event. -/
+theorem not_onsetCondition_rush : ¬ Kim2024.OnsetCondition chain rush :=
+  Kim2024.not_onsetCondition_of_lt onsetCondition_strike (lt_of_le_of_ne (by decide) (by decide))
+
+/-- The participants of (135)–(140). -/
+inductive Participant
+  | russians
+  | seawater
+  | cruiser
+  deriving DecidableEq
+
+/-- The model of (136) on which V1 names the event `v1`: the sinking contains `v1` as its causing
+event and the cruiser's being below the surface as its caused event, and its crucial
+contributory factor is the Russian forces, who take part in the striking. -/
+def sinkingModel (v1 : SinkingEvent) : Model SinkingEvent Participant where
+  cause e e₁ e₂ := e = sink ∧ e₁ = v1 ∧ e₂ = below
+  ccf e := if e = sink then some .russians else none
+  participant e p := (e, p) ∈ [(strike, .russians), (strike, .cruiser), (rush, .seawater),
+    (rush, .cruiser), (descend, .cruiser), (below, .cruiser)]
+  chain e := if e = sink then chain else ∅
+
+/-- On every model the factor takes part in the initial event of the chain, the striking. -/
+theorem sinkingModel_ccfInitial (v1 : SinkingEvent) : (sinkingModel v1).CcfInitial := by
+  intro e c e₀ hc h₀
+  obtain rfl : e = sink := by by_contra he; simp [sinkingModel, he] at hc
+  obtain rfl : c = .russians := by simpa [sinkingModel] using hc.symm
+  obtain rfl := h₀.unique onsetCondition_strike
+  simp [sinkingModel]
+
+/-- *jī-chén* satisfies the Onset Condition. -/
+theorem sinkingModel_strike_onset : (sinkingModel strike).Onset := by
+  rintro e e₁ e₂ ⟨rfl, rfl, rfl⟩
+  simpa [sinkingModel] using onsetCondition_strike
+
+/-- *\*chōng-chén* violates it. -/
+theorem not_sinkingModel_rush_onset : ¬ (sinkingModel rush).Onset := fun h ↦
+  not_onsetCondition_rush (by simpa [sinkingModel] using h sink rush below ⟨rfl, rfl, rfl⟩)
+
+/-- *jī* 'strike' and *chén* 'sink' on the events of (136). -/
+def ji (e : SinkingEvent) (xs : Fin 2 → Participant) : Prop :=
+  e = strike ∧ xs = ![.russians, .cruiser]
+
+@[inherit_doc ji]
+def chen (e : SinkingEvent) (ys : Fin 1 → Participant) : Prop := e = below ∧ ys = ![.cruiser]
+
+/-- (137) through the whole pipeline: *Éjūn jī-chén-le yī sōu xúnyángjiàn* denotes the sinking,
+and the Onset Condition puts the Russian forces in the event V1 describes. -/
+theorem ji_chen_participant :
+    ∃ e₁ xs, ji e₁ xs ∧ (sinkingModel strike).participant e₁ .russians :=
+  participant_of_nullAffixC sinkingModel_strike_onset (sinkingModel_ccfInitial strike)
+    (⟨rfl, strike, below, _, ⟨rfl, rfl, rfl⟩, ⟨rfl, rfl⟩, rfl, rfl⟩ :
+      nullAffixC (sinkingModel strike) chen ji sink .russians ![.cruiser])
 
 /-! ### The external argument in the data (chapter 3, sections 2.1–2.2) -/
 
