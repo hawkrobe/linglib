@@ -166,7 +166,7 @@ theorem material_implication {W : Type*} {f : ModalBase W} (hf : isTotallyRealis
 holds iff the antecedent logically implies the consequent. -/
 theorem strict_implication {W : Type*} (α β : W → Prop) (w : W) :
     conditionalNecessity emptyBackground emptyBackground α β w ↔ ∀ v, α v → β v := by
-  rw [restrictor_eq_strict, empty_base_universal_access]
+  rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, empty_base_universal_access]
   simp
 
 /-- Under an analysis of conditionals as modalized material implications, a necessity that

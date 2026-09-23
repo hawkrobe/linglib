@@ -68,6 +68,10 @@ theorem atLeastAsGoodAs_trans {A : List (W → Prop)} {u v w : W} (huv : u ≤[A
 /-- With an empty ordering source every world is at least as good as every other. -/
 theorem atLeastAsGoodAs_nil (w z : W) : w ≤[([] : List (W → Prop))] z := fun _ h ↦ nomatch h
 
+/-- An empty ordering source induces the preorder relating every two worlds. -/
+@[simp] theorem kratzerPreorder_nil : kratzerPreorder ([] : List (W → Prop)) = ⊤ :=
+  top_unique fun _ _ _ ↦ atLeastAsGoodAs_nil _ _
+
 /-- `w` is strictly better than `z` when it is at least as good and not conversely. -/
 def strictlyBetter (A : List (W → Prop)) (w z : W) : Prop := (kratzerPreorder A).lt w z
 
@@ -114,8 +118,8 @@ theorem bestAmong_subset (worlds : Set W) (A : List (W → Prop)) : bestAmong wo
   fun _ h ↦ h.1
 
 /-- With an empty ordering source every world of the domain is best. -/
-theorem bestAmong_nil (worlds : Set W) : bestAmong worlds [] = worlds :=
-  Set.ext fun _ ↦ ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ _ _ ↦ atLeastAsGoodAs_nil _ _⟩⟩
+theorem bestAmong_nil (worlds : Set W) : bestAmong worlds [] = worlds := by
+  simp [bestAmong]
 
 /-- A best world of a domain is best in any subdomain it belongs to, since a world unbettered among
 more competitors is unbettered among fewer. -/

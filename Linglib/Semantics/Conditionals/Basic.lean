@@ -19,6 +19,7 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
 * `variablyStrictImp`: Lewis's variably strict conditional over a family of preorders.
 * `IsCentered`: strong centering of a family of preorders.
 * `closestImp`: the conditional of the minimal antecedent-worlds.
+* `orderingImp`: the conditional over the best accessible antecedent-worlds under a preorder.
 * `might`: the *might* counterfactual of a *would* conditional.
 
 ## Main results
@@ -35,6 +36,7 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
 * [R. C. Stalnaker, *Indicative conditionals* (1975)][stalnaker-1975]
 * [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
+* [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
 * [A. Kratzer, *Conditionals* (1986)][kratzer-1986]
 * [C. Condoravdi, *Temporal Interpretation of Modals: Modals for the Present and for the Past*
   (2002)][condoravdi-2002]
@@ -380,6 +382,41 @@ theorem mem_might_closestImp_iff_of_cem (h_nonempty : ((ord w).minimals p).Nonem
   · exact ⟨fun hm ↦ absurd h hm, fun hq ↦ absurd (hq hv) (h hv)⟩
 
 end VariablyStrict
+
+/-! ### Conditionals over an accessibility relation and an ordering
+
+A modal base and an ordering source ([kratzer-1981]) give each evaluation point a set of
+accessible worlds and a preorder ranking them, and on the restrictor analysis ([lewis-1975],
+[kratzer-1986]) *if p, q* is true when `q` holds at the best accessible `p`-worlds
+(`orderingImp`). The strict conditional is the case of the preorder relating every two worlds,
+under which every accessible antecedent-world is best (`strictImp_eq_orderingImp`), and the
+conditional of the closest worlds the case in which every world is accessible
+(`closestImp_eq_orderingImp`). -/
+
+section Ordering
+
+variable {ord : I → Preorder W}
+
+/-- The conditional over the best accessible antecedent-worlds, the minimal worlds of
+`access i ∩ p` under the preorder `ord i`. -/
+def orderingImp (access : I → Set W) (ord : I → Preorder W) (p q : Set W) : Set I :=
+  ofDomain (fun i p ↦ (ord i).minimals (access i ∩ p)) p q
+
+@[simp]
+theorem mem_orderingImp :
+    i ∈ orderingImp access ord p q ↔ (ord i).minimals (access i ∩ p) ⊆ q := Iff.rfl
+
+/-- The strict conditional is the conditional over the preorder relating every two worlds. -/
+theorem strictImp_eq_orderingImp : strictImp access p q = orderingImp access (fun _ ↦ ⊤) p q := by
+  ext; simp [strictImp]
+
+/-- The conditional of the closest worlds is the conditional in which every world is
+accessible. -/
+theorem closestImp_eq_orderingImp {ord : W → Preorder W} :
+    closestImp ord p q = orderingImp (fun _ ↦ Set.univ) ord p q := by
+  ext; simp
+
+end Ordering
 
 
 end Conditional

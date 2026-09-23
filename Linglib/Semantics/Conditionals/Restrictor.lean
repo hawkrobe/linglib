@@ -9,8 +9,9 @@ public import Linglib.Semantics.Conditionals.Basic
 This file defines the restrictor conditional. On the restrictor analysis an *if*-clause is not a
 connective but restricts the modal base of a possibly covert modal, so *if α, must β* is
 necessity over the modal base restricted by α and *if α, might β* possibility over it. The
-restrictor conditional quantifies over the best worlds of the restricted base, and with an empty
-ordering source it is the strict conditional.
+restrictor conditional is the conditional over the best accessible antecedent-worlds under the
+preorders the ordering source induces (`orderingImp`), and with an empty ordering source it is
+the strict conditional.
 
 ## Main definitions
 
@@ -19,8 +20,8 @@ ordering source it is the strict conditional.
 
 ## Main results
 
-* `Restrictor.conditionalNecessity_iff_mem_ofDomain`: the restrictor conditional quantifies over
-  the best worlds of the restricted base.
+* `Restrictor.conditionalNecessity_iff_mem_orderingImp`: the restrictor conditional is the
+  conditional over the best accessible antecedent-worlds.
 * `Restrictor.restrictor_eq_strict`: with an empty ordering source it is the strict conditional.
 
 ## References
@@ -77,18 +78,23 @@ theorem mem_accessibleWorlds_restrictedBase {f : ModalBase W} {α : W → Prop} 
 
 /-! ### Main bridge theorems -/
 
-/-- With an empty ordering source, *if α, must β* holds iff every accessible α-world is a
-β-world. -/
-theorem restrictor_eq_strict (f : ModalBase W) (α : W → Prop) (β : W → Prop) (w : W) :
+/-- *If α, must β* is the conditional over the best accessible α-worlds, under the preorders the
+ordering source induces. -/
+theorem conditionalNecessity_iff_mem_orderingImp (f : ModalBase W) (g : OrderingSource W)
+    (α β : W → Prop) (w : W) :
+    conditionalNecessity f g α β w ↔
+      w ∈ orderingImp (accessibleWorlds f) (fun w ↦ kratzerPreorder (g w)) {v | α v} {v | β v} := by
+  rw [conditionalNecessity, necessity_iff_all, mem_orderingImp, bestWorlds, bestAmong,
+    restricted_accessible_eq]
+  rfl
+
+/-- With an empty ordering source, *if α, must β* is the strict conditional over the accessible
+worlds. -/
+theorem restrictor_eq_strict (f : ModalBase W) (α β : W → Prop) (w : W) :
     conditionalNecessity f emptyBackground α β w ↔
-    (∀ w' ∈ accessibleWorlds f w, α w' → β w') := by
-  unfold conditionalNecessity
-  rw [necessity_iff_all, bestWorlds_emptyBackground, restricted_accessible_eq]
-  constructor
-  · intro h w' hw' hα
-    exact h w' ⟨hw', hα⟩
-  · intro h w' hw'
-    exact h w' hw'.1 hw'.2
+      w ∈ strictImp (accessibleWorlds f) {v | α v} {v | β v} := by
+  rw [conditionalNecessity_iff_mem_orderingImp, strictImp_eq_orderingImp]
+  simp [emptyBackground]
 
 /-! ### Properties -/
 
@@ -96,29 +102,17 @@ theorem restrictor_eq_strict (f : ModalBase W) (α : W → Prop) (β : W → Pro
 theorem vacuous_conditional (f : ModalBase W) (g : OrderingSource W)
     (α : W → Prop) (β : W → Prop) (w : W)
     (h : ∀ w', w' ∈ accessibleWorlds f w → ¬ α w') :
-    conditionalNecessity f g α β w := by
-  unfold conditionalNecessity
-  rw [necessity_iff_all]
-  intro w' hw'
-  have hRestr : w' ∈ accessibleWorlds (restrictedBase f α) w := hw'.1
-  rw [restricted_accessible_eq] at hRestr
-  exact absurd hRestr.2 (h w' hRestr.1)
+    conditionalNecessity f g α β w :=
+  (conditionalNecessity_iff_mem_orderingImp f g α β w).2 fun v hv ↦ absurd hv.1.2 (h v hv.1.1)
 
 /-- With the evaluation world as its only accessible world and an empty ordering source, *if α,
 must β* is the material conditional. -/
 theorem material_from_restrictor (f : ModalBase W)
     (α : W → Prop) (β : W → Prop) (w : W)
     (hTotal : accessibleWorlds f w = {w}) :
-    conditionalNecessity f emptyBackground α β w ↔
-    (α w → β w) := by
-  rw [restrictor_eq_strict, hTotal]
-  constructor
-  · intro h hα
-    exact h w (Set.mem_singleton_iff.mpr rfl) hα
-  · intro h w' hw' hα
-    have : w' = w := Set.mem_singleton_iff.mp hw'
-    subst this
-    exact h hα
+    conditionalNecessity f emptyBackground α β w ↔ (α w → β w) := by
+  rw [restrictor_eq_strict, mem_strictImp_forall, hTotal]
+  simp
 
 /-- Restricting by a stronger antecedent leaves fewer accessible worlds. -/
 theorem restrictor_monotone (f : ModalBase W) (α₁ α₂ : W → Prop) (w : W)
@@ -141,13 +135,5 @@ theorem double_restriction (f : ModalBase W) (α₁ α₂ : W → Prop) (w : W) 
     exact ⟨hf, hα₁, hα₂⟩
   · intro ⟨hf, hα₁, hα₂⟩
     exact ⟨⟨hf, hα₁⟩, hα₂⟩
-
-/-- Kratzer's conditional necessity is the conditional over the best worlds of the modal base
-restricted by the antecedent. -/
-theorem conditionalNecessity_iff_mem_ofDomain (f : ModalBase W) (g : OrderingSource W)
-    (α β : W → Prop) (w : W) :
-    conditionalNecessity f g α β w ↔
-      w ∈ ofDomain (fun w p ↦ bestWorlds (restrictedBase f (· ∈ p)) g w) {v | α v} {v | β v} :=
-  necessity_iff_all _ _ _ _
 
 end Conditional.Restrictor
