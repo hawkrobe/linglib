@@ -1,38 +1,56 @@
 module
 
-public import Linglib.Semantics.Causation.Psych
-public import Linglib.Semantics.Causation.PsychLink
+public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Studies.Pesetsky1995
-public import Linglib.Fragments.English.Verbs
 
 /-!
 # Kim (2024): On the Argument Structure of Object Experiencer Verbs
 
 This file formalizes the Uniform Projection Hypothesis of [kim-2024] for the object-experiencer
-psych verbs, [belletti-rizzi-1988]'s Class II: every such verb projects a Cause and an
-Experiencer, and the eventive–stative split among them comes from the causal source, a
-mind-external percept (*frighten*) against a mind-internal representation (*concern*). From the
-source follow the intensionality of the subject position, the temporal relation of cause and
-state (precedence with a transition, or an overlap that maintains the state), and the subtype of
-the stimulus in [pesetsky-1995]'s terms: an external percept is a Target, an internal
-representation the Subject Matter, and since Subject Matter maps to the onset of the causal chain,
-which an overt Cause also occupies, the T/SM restriction follows from the Onset Condition. The
-English fragment's psych verbs carry their causal source, and their opacity, temporal profile and
-stimulus subtype are derived from it (`classII_consistent_all`, `internal_implies_opaque`,
-`transition_iff_external`, `internal_derives_sm`), with the two readings of *worry* differing
-only in the source (`worry_uniform_projection`).
+verbs, [belletti-rizzi-1988]'s Class II. Like causatives in general, every such verb projects just
+a Cause and an Experiencer. The standard view since [pesetsky-1995] adds a Target or Subject
+Matter as a third role. On the uniform view, the eventive–stative ambiguity that runs through the
+class does not come from the arguments projected. It comes from what the Cause refers to. An emotion
+arises along a causal chain, (185): the Experiencer evaluates a percept, the evaluation yields a
+subject matter, the Experiencer's mind-internal counterpart of the percept, and attention to the
+subject matter gives rise to the emotion. The eventive reading denotes the whole chain, its Cause
+the percept, and the stative reading the compact chain from the subject matter on, a maintenance
+relation: *The doctor's letter worried John* against *His declining health worried John*.
 
-The comparison with [pesetsky-1995]: both accounts predict that a Cause and a Subject Matter
-cannot co-occur, Pesetsky by the Head Movement Constraint on the nonaffixal *about*, Kim by the
-Onset Condition, but they diverge on a Cause with a Target, which Pesetsky's nonaffixal *at*
-blocks just the same while the Onset Condition allows it (`accounts_diverge_on_cause_target`).
+The thesis reads three properties off where the Cause sits on this chain.
+
+* A reading is eventive when its chain contains the evaluation, the change that brings a new
+  subject matter into being, which is when the Cause names the percept
+  (`EmotionChain.isEventive_iff`).
+* The subject is intensional when the Cause is mind-internal. The mind-internal causes are the
+  members of the chain past the percept, so intensionality and stativity coincide
+  (`EmotionChain.isMindInternal_iff_not_isEventive`). Chapter 4 reports this correlation as a new
+  finding.
+* The Onset Condition (316) maps every causal participant of a causal predicate to the onset of
+  the chain the predicate denotes. On the eventive reading the subject matter lies downstream of
+  the percept, so a Subject Matter cannot join the Cause (`tsm_restriction`), while it heads the
+  chain of a predicate without a Cause (`subjectMatter_onset_without_cause`). The T/SM restriction
+  thus follows without a ban of its own, and the thesis rules out a Target alongside a Cause just
+  as [pesetsky-1995] does (`tsm_restriction_agrees`).
 
 ## Implementation notes
 
-Causal source, the Onset Condition and the stimulus subtype are the substrate's
-`Causation.Psych`, the temporal profiles `Causation.PsychLink`; the fragment stores each verb's
-`causalSource` and `opaqueContext`, and consistency is the derived opacity agreeing with the
-stored one.
+The chain is `EmotionChain`, ordered by causal precedence. The chain a predicate denotes is the
+final segment `Set.Ici` from the member its Cause refers to, and mapping a participant to the
+onset is `IsLeast`. The thesis finds no reliable diagnostic that tells Target from Subject Matter
+and calls every object of emotion a Subject Matter, so both of [pesetsky-1995]'s stimulus types
+refer to the one member `EmotionChain.subjectMatter`. The agentive reading, which the thesis sets
+aside with the literature, is not represented.
+
+## TODO
+
+The maintenance relation that the stative reading denotes, (148), is not formalized: its
+maintaining eventuality is contemporaneous with the maintained state, which continues only as
+long as the maintaining eventuality does. The Onset Condition is stated here over the members of
+the chain, and on the stative reading the Cause itself refers to the subject matter. Excluding a
+Subject Matter adjunct there needs participants mapped to eventualities rather than to members of
+the chain. The thesis derives the restriction for a Cause that refers to the percept (§5.3).
 
 ## References
 
@@ -45,98 +63,91 @@ stored one.
 
 namespace Kim2024
 
-open Causation.Psych Causation.PsychLink English Pesetsky1995
+/-! ### The causal chain of an emotion -/
 
-/-! ### Class II verbs and their causal source -/
+/-- The causal chain along which an emotion arises, (185): a percept, the subject matter that the
+Experiencer's evaluation of the percept yields, and the emotion that the Experiencer's attention
+to the subject matter gives rise to. -/
+inductive EmotionChain where
+  /-- The percept, a mind-external stimulus. -/
+  | percept
+  /-- The subject matter, the Experiencer-internal counterpart of the percept. -/
+  | subjectMatter
+  /-- The Experiencer's emotional state. -/
+  | emotion
+  deriving DecidableEq, Fintype, Repr
 
-/-- A Class II entry is consistent with the hypothesis when the opacity of its subject position
-is what its causal source predicts. -/
-def classII_consistent (v : English.Verb) : Prop :=
-  v.causalSource.map subjectIntensional = some v.opaqueContext
+variable {c : EmotionChain}
 
-/-- A Class I entry has no causal source: the distinction is Class-II-specific. -/
-def classI_consistent (v : English.Verb) : Prop := v.causalSource = none
+namespace EmotionChain
 
-instance (v : English.Verb) : Decidable (classII_consistent v) :=
-  inferInstanceAs (Decidable (_ = _))
+/-- The members of the chain in order of causal precedence. -/
+instance : LinearOrder EmotionChain := .lift' EmotionChain.ctorIdx (by decide)
 
-instance (v : English.Verb) : Decidable (classI_consistent v) :=
-  inferInstanceAs (Decidable (_ = _))
+/-- A reading is eventive when the chain from the member its Cause refers to contains the
+Experiencer's evaluation of a percept. The evaluation brings a new subject matter into being and
+so changes the Experiencer's state. The chain of a stative reading starts after the evaluation,
+and the subject matter maintains the emotion as long as the Experiencer's attention dwells on
+it. -/
+def IsEventive (c : EmotionChain) : Prop := percept ∈ Set.Ici c
 
-/-- The fragment's Class II verbs: the eventive ones with an external source, the stative ones
-with an internal source, and *worry* on both readings. -/
-def classII : List English.Verb :=
-  [frighten, amuse, fascinate, irritate, annoy, bore, charm, impress, surprise, scare, delight,
-   embarrass, upset_psych, disgust, shock, confuse, disappoint, worry_eventive,
-   concern, interest, worry_stative, please_psych, trouble, puzzle]
+/-- A member of the chain is mind-internal when the Experiencer's evaluation of the percept
+produced it. Its content then reflects the Experiencer's knowledge state, which is why a Cause
+referring to it is intensional (§4.5). -/
+def IsMindInternal (c : EmotionChain) : Prop := percept < c
 
-/-- The fragment's Class I verbs. -/
-def classI : List English.Verb := [enjoy, like, love, hate, fear_np, dread_np]
+instance : DecidablePred IsEventive := fun c ↦ inferInstanceAs (Decidable (c ≤ percept))
 
-theorem classII_consistent_all : ∀ v ∈ classII, classII_consistent v := by decide
+instance : DecidablePred IsMindInternal := fun c ↦ inferInstanceAs (Decidable (percept < c))
 
-theorem classI_consistent_all : ∀ v ∈ classI, classI_consistent v := by decide
+/-- A Class II verb's Cause refers to one of the causes of the emotion, the percept or the subject
+matter, so the chain yields just the eventive and the stative reading. -/
+theorem eq_percept_or_eq_subjectMatter (h : c < emotion) : c = percept ∨ c = subjectMatter := by
+  revert c; decide
 
-/-- Opacity follows from an internal source: the subject's referent is a representation of the
-experiencer's, so co-referential terms need not substitute. -/
-theorem internal_implies_opaque {v : English.Verb} (h : classII_consistent v)
-    (hs : v.causalSource = some .internal) : v.opaqueContext = true := by
-  simpa [classII_consistent, hs, subjectIntensional] using h.symm
+/-- The eventive reading is the one whose Cause refers to the percept. -/
+theorem isEventive_iff : c.IsEventive ↔ c = percept := by
+  revert c; decide
 
-/-- Transparency follows from an external source. -/
-theorem external_implies_transparent {v : English.Verb} (h : classII_consistent v)
-    (hs : v.causalSource = some .external) : v.opaqueContext = false := by
-  simpa [classII_consistent, hs, subjectIntensional] using h.symm
+/-- Chapter 4's correlation: the subject of a Class II verb is intensional exactly when the verb
+is stative. Both properties are fixed by the member of the chain the Cause refers to. -/
+theorem isMindInternal_iff_not_isEventive : c.IsMindInternal ↔ ¬ c.IsEventive :=
+  lt_iff_not_ge
 
-/-- Uniform projection within one verb: the eventive and stative readings of *worry* share
-their arguments and differ only in causal source. -/
-theorem worry_uniform_projection :
-    worry_eventive.causalSource ≠ worry_stative.causalSource := by
-  decide
+/-- Every reading's chain contains the subject matter: on the eventive reading the percept gives
+rise to one, however fleeting, and on the stative reading it is the Cause. -/
+theorem subjectMatter_mem_Ici (h : c < emotion) : subjectMatter ∈ Set.Ici c := by
+  revert c; decide
 
-/-! ### Temporal profile and stimulus subtype -/
+end EmotionChain
 
-/-- The causal link involves a transition of the experiencer's state exactly when the source is
-external: a percept precedes the state it brings about, a representation overlaps the state it
-maintains. -/
-theorem transition_iff_external {T : Type*} [LinearOrder T] (cs : CausalSource) :
-    (CausalSource.toLink T cs).involvesTransition = true ↔ cs = .external := by
-  cases cs <;> simp [CausalSource.toLink, eventiveLink, maintenanceLink]
+open EmotionChain
 
-/-- A verb's stimulus subtype is derived from its causal source. -/
-def derivedStimulusType (v : English.Verb) : Option StimulusType :=
-  v.causalSource.map CausalSource.toStimulusType
+/-! ### The Onset Condition and the T/SM restriction -/
 
-/-- An external source makes the stimulus a Target, which does not compete with an overt
-Cause. -/
-theorem external_derives_target {v : English.Verb} (hs : v.causalSource = some .external) :
-    derivedStimulusType v = some .target ∧ StimulusType.target.conflictsWithCause = false :=
-  ⟨by simp [derivedStimulusType, hs, CausalSource.toStimulusType], rfl⟩
+/-- The T/SM restriction, (42) and (262): the Onset Condition maps a Subject Matter, like the
+Cause, to the onset of the chain the predicate denotes. On the eventive reading that onset is the
+percept, and the subject matter lies downstream of it, so the Subject Matter cannot be mapped
+there. -/
+theorem tsm_restriction (h : c.IsEventive) : ¬ IsLeast (Set.Ici c) subjectMatter := fun hl ↦
+  absurd (isLeast_Ici.unique hl ▸ h) (by decide)
 
-/-- An internal source makes the stimulus the Subject Matter, which maps to the onset of the
-causal chain and so conflicts with an overt Cause: the T/SM restriction from the Onset
-Condition. -/
-theorem internal_derives_sm {v : English.Verb} (hs : v.causalSource = some .internal) :
-    derivedStimulusType v = some .subjectMatter ∧
-      StimulusType.subjectMatter.conflictsWithCause = true ∧ onsetCondition .onset = true :=
-  ⟨by simp [derivedStimulusType, hs, CausalSource.toStimulusType], rfl, rfl⟩
+/-- A predicate without a Cause, the reduced variant of a Class II verb or the predicate embedded
+in an analytic causative, (43), denotes the chain from the subject matter on, and a Subject Matter
+satisfies the Onset Condition there. -/
+theorem subjectMatter_onset_without_cause : IsLeast (Set.Ici subjectMatter) subjectMatter :=
+  isLeast_Ici
 
 /-! ### The comparison with Pesetsky (1995) -/
 
-/-- Pesetsky's prediction is symmetric: *at* and *about* are both nonaffixal and so both block
-the incorporation of CAUS. -/
-theorem pesetsky_symmetric_blocking : headAt.affixal = false ∧ headAbout.affixal = false :=
-  ⟨rfl, rfl⟩
-
-/-- Both accounts predict a Cause with a Subject Matter ill-formed, and the data agree. -/
-theorem both_accounts_predict_cause_sm_illformed :
-    StimulusType.subjectMatter.conflictsWithCause = true ∧ headAbout.affixal = false :=
-  ⟨rfl, rfl⟩
-
-/-- The accounts diverge on a Cause with a Target: Pesetsky's nonaffixal *at* blocks it like
-*about*, while a Target maps to the terminus and the Onset Condition allows it. -/
-theorem accounts_diverge_on_cause_target :
-    headAt.affixal = false ∧ StimulusType.target.conflictsWithCause = false :=
-  ⟨rfl, rfl⟩
+/-- Both accounts rule out a Cause alongside either object of emotion, a Target as in (42a) or a
+Subject Matter as in (42c). For [pesetsky-1995] the preposition that introduces the stimulus is
+not an affix and strands the zero affix CAUS below the verb. For the thesis the object of
+emotion is the subject matter downstream of the percept that an eventive Cause refers to, so the
+Onset Condition, needed anyway for causal adjuncts, excludes it. -/
+theorem tsm_restriction_agrees (s : Pesetsky1995.StimulusType) (h : c.IsEventive) :
+    ¬ Pesetsky1995.canReachV (Pesetsky1995.stimulusCascade s).spine 1 ∧
+      ¬ IsLeast (Set.Ici c) subjectMatter :=
+  ⟨Pesetsky1995.tsm_restriction s, tsm_restriction h⟩
 
 end Kim2024

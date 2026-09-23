@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.Data.Nat.Notation
-public import Linglib.Semantics.Causation.Psych
 
 /-!
 # Pesetsky (1995): Zero Syntax
@@ -28,8 +27,7 @@ subject role each predicts (`PsychVerbClass`, `SubjectRole`).
 
 ## Implementation notes
 
-The stimulus types come from the psych-verb substrate, `Causation.Psych.StimulusType`, and
-only the prepositions of the restriction and of the double object alternation are
+Only the prepositions of the restriction and of the double object alternation are
 represented. The affixal and prepositional occurrences of CAUS of §6.3, the suppression of
 the external argument in (522), the semantics of prepositions and mediated θ-selection of
 the fifth chapter, and the account of heavy shift of the seventh are not formalized.
@@ -43,8 +41,6 @@ the fifth chapter, and the account of heavy shift of the seventh are not formali
 @[expose] public section
 
 namespace Pesetsky1995
-
-open Causation.Psych
 
 /-! ### Cascades -/
 
@@ -117,6 +113,14 @@ def headAbout : CascadeHead := ⟨true, false⟩
 def headTo : CascadeHead := ⟨true, false⟩
 
 /-! ### The Target/Subject Matter restriction (§6.2.1) -/
+
+/-- The two roles into which the book divides the object of an emotion: the Target the emotion
+is directed at, as in *angry at the government*, and the Subject Matter it is about, as in *worried
+about the television set*. -/
+inductive StimulusType where
+  | target
+  | subjectMatter
+  deriving DecidableEq, Repr
 
 /-- The preposition that introduces each stimulus type. -/
 def stimulusHead : StimulusType → CascadeHead
