@@ -2722,8 +2722,7 @@ def tap : Verb := .mkRegular {
 def flash : Verb := .mkRegular {
   form := "flash"
   frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+    ArgumentFrame.pp (some Adpositions.in_), ArgumentFrame.pp (some Adpositions.with_)]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClasses := {LevinClass.crane, .lightEmission} }
@@ -2760,8 +2759,7 @@ def drown : Verb := .mkRegular {
 def glow : Verb := .mkRegular {
   form := "glow"
   frames := [ArgumentFrame.unaccusative, ArgumentFrame.np,
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+    ArgumentFrame.pp (some Adpositions.in_), ArgumentFrame.pp (some Adpositions.with_)]
   passivizable := false
   vendlerClass := some .state
   levinClasses := {LevinClass.lightEmission} }
@@ -2770,8 +2768,7 @@ def glow : Verb := .mkRegular {
 def buzz : Verb := .mkRegular {
   form := "buzz"
   frames := [ArgumentFrame.unaccusative, ArgumentFrame.np,
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+    ArgumentFrame.pp (some Adpositions.in_), ArgumentFrame.pp (some Adpositions.with_)]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .soundEmission} }
@@ -2780,8 +2777,7 @@ def buzz : Verb := .mkRegular {
 def rumble : Verb := .mkRegular {
   form := "rumble"
   frames := [ArgumentFrame.unaccusative, ArgumentFrame.np,
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+    ArgumentFrame.pp (some Adpositions.in_), ArgumentFrame.pp (some Adpositions.with_)]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking, .soundEmission} }
@@ -2794,9 +2790,7 @@ def bleed : Verb where
   formPastPart := "bled"
   formPresPart := "bleeding"
   frames := [ArgumentFrame.unaccusative, ArgumentFrame.np,
-    ArgumentFrame.pp (some Adpositions.from_),
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+    ArgumentFrame.pp (some Adpositions.from_)]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.breathe, .cheat, .substanceEmission}

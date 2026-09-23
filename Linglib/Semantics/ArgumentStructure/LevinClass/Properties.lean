@@ -1,30 +1,30 @@
 import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.LevinProperty
 
 /-!
 # The property tables of the Levin classes
 
-The `Properties` table of every class page of [levin-1993] Part II: each property Levin
-lists, an alternation of Part One or one of the further properties the pages name (derived
-nominals, sentential complements, cognate and reaction objects, and so on), with the diacritic
-the page gives it, an asterisk for a property the class lacks and a question mark for a
-marginal one, and the scope qualifier of the entry where the page has one ("some verbs",
-"most verbs", "a few verbs"). The alternation profile of a class is read off the table:
-`LevinClass.alternations` are the alternations attested without diacritic and
-`LevinClass.starredAlternations` the starred ones, with `LevinClass.Participates` the attested
-relation.
+The `Properties` table of every class in [levin-1993] Part II: each property Levin tests the
+class for (`LevinProperty`), with the diacritic she gives it, an asterisk for a property the
+class lacks and a question mark for a marginal one, and the scope qualifier of the line where
+there is one ("some verbs", "most verbs", "a few verbs"). The profile of a class is read off
+the table: `LevinClass.Participates` holds of the properties the class attests,
+`LevinClass.Stars` of those it stars, and `LevinClass.Tests` of either.
 
 ## Implementation notes
 
-The tables are transcribed from the class pages mechanically; a property Levin phrases as a
-denial ("Unintentional interpretation not available", "Coreferential interpretation of
-pronouns not possible") is the corresponding alternation starred. Where a page qualifies a
-locative alternation as transitive or intransitive, the entry is the Part One subsection the
-page's examples instantiate: the *of* variants of the clear page are the clear alternations,
-and the *with* variants the change-of-state pages star are the spray/load and swarm
-alternations. A page that lists one alternation twice with different bases, as the spray/load
-page attests the causative alternation of the locative variant and stars that of the *with*
-variant, has both entries, so `Participates` and `Stars` are not disjoint.
+The tables are transcribed from the class entries mechanically; a property Levin phrases as
+a denial ("Unintentional interpretation not available", "Coreferential interpretation of
+pronouns not possible") is the corresponding property starred. A generic label is read at the
+grain of the Part One subsection the entry's example instantiates: "Causative Alternations",
+attested or starred, is the causative/inchoative alternation for every class, and "Locative
+Alternation" is the spray/load alternation for the putting classes, the transitive clear
+alternation for the removal and obtaining classes, the wipe alternation for the wipe classes,
+and the swarm alternation for the emission and existence classes, smell emission included by
+Levin's remark that its *of* form is the intransitive form of the alternation. The spray/load
+class has the causative alternation twice, attested for the locative variant and starred for
+the *with* variant, and those are two properties. The appear class's "many verbs" is the
+scope `most`. No class has one property with two diacritics (`attestation_unique`).
 
 ## References
 
@@ -33,83 +33,7 @@ variant, has both entries, so `Participates` and `Stars` are not disjoint.
 
 namespace ArgumentStructure
 
-/-- A property a class page of [levin-1993] Part II lists: an alternation of Part One or one
-of the further properties the pages name. -/
-inductive LevinProperty where
-  /-- An alternation or construction of Part One. -/
-  | alternation (a : DiathesisAlternation)
-  /-- Zero-related nominal. -/
-  | zeroRelatedNominal
-  /-- -er nominal. -/
-  | erNominal
-  /-- -ing nominal. -/
-  | ingNominal
-  /-- Process nominal. -/
-  | processNominal
-  /-- Result nominal. -/
-  | resultNominal
-  /-- Derived nominal with the active interpretation only. -/
-  | derivedNominalActiveOnly
-  /-- Derived nominal with the passive interpretation only. -/
-  | derivedNominalPassiveOnly
-  /-- -able adjective. -/
-  | ableAdjective
-  /-- Zero-related adjective. -/
-  | zeroRelatedAdjective
-  /-- Sentential complement. -/
-  | sententialComplement
-  /-- Sentential complement with goal object. -/
-  | sententialComplementWithGoalObject
-  /-- Sentential complement with goal to phrase. -/
-  | sententialComplementWithGoalToPhrase
-  /-- Sentential complement with optional goal object. -/
-  | sententialComplementWithOptionalGoalObject
-  /-- Sentential complement with optional goal to phrase. -/
-  | sententialComplementWithOptionalGoalToPhrase
-  /-- Sentential complement without goal phrase. -/
-  | sententialComplementWithoutGoalPhrase
-  /-- Extraposition of sentential complements. -/
-  | extraposition
-  /-- Direct speech. -/
-  | directSpeech
-  /-- Parenthetical use of the verb. -/
-  | parentheticalUse
-  /-- Infinitival copular clause. -/
-  | infinitivalCopularClause
-  /-- Measure phrase. -/
-  | measurePhrase
-  /-- Path phrase. -/
-  | pathPhrase
-  /-- Depictive phrase. -/
-  | depictivePhrase
-  /-- Substance object. -/
-  | substanceObject
-  /-- Body-part object. -/
-  | bodyPartObject
-  /-- Collective NP subject. -/
-  | collectiveNPSubject
-  /-- Impersonal passive. -/
-  | impersonalPassive
-  /-- Choice of preposition in the passive depends on the verb. -/
-  | passivePrepositionChoice
-  /-- Most verbs allow a from phrase. -/
-  | fromPhrase
-  /-- With alternates with in. -/
-  | withAlternatesWithIn
-  /-- Of alternates with out with a few verbs. -/
-  | ofAlternatesWithOut
-  /-- Unspecified object plus locative PP. -/
-  | unspecifiedObjectPlusLocativePP
-  /-- Acceptability of a coreferential interpretation of pronouns varies. -/
-  | coreferentialPronounsVary
-  deriving DecidableEq, Repr
-
-/-- The alternation a property is, if it is one. -/
-def LevinProperty.alternation? : LevinProperty → Option DiathesisAlternation
-  | .alternation a => some a
-  | _ => none
-
-/-- The diacritic a class page gives a property: none, an asterisk, or a question mark. -/
+/-- The diacritic Levin gives a property of a class: none, an asterisk, or a question mark. -/
 inductive Attestation where
   | attested | starred | marginal
   deriving DecidableEq, Repr
@@ -119,7 +43,7 @@ inductive PropertyScope where
   | all | most | some | few
   deriving DecidableEq, Repr
 
-/-- One line of a class page's property table. -/
+/-- One line of a class's property table. -/
 structure ClassProperty where
   property : LevinProperty
   attestation : Attestation := .attested
@@ -128,350 +52,350 @@ structure ClassProperty where
 
 namespace LevinClass
 
-/-- The property table of the class page, in the page's order. -/
+/-- The property table of the class, in Levin's order. -/
 def properties : LevinClass → List ClassProperty
   | .put =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .putInSpatialConfiguration =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .funnel =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .putDirection =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .dative, .starred, .all⟩,
-     ⟨.alternation .middle, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.dative, .starred, .all⟩,
+     ⟨.middle, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .pour =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .middle, .starred, .all⟩, ⟨.alternation .causative, .attested, .all⟩,
-     ⟨.alternation .boundNonreflexiveAnaphor, .attested, .all⟩,
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.middle, .starred, .all⟩, ⟨.causativeInchoative, .attested, .all⟩,
+     ⟨.boundNonreflexiveAnaphor, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .few⟩]
   | .coil =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
-     ⟨.alternation .boundNonreflexiveAnaphor, .attested, .all⟩,
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .all⟩, ⟨.middle, .attested, .all⟩,
+     ⟨.boundNonreflexiveAnaphor, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .sprayLoad =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .causative, .attested, .some⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .conative, .attested, .some⟩,
-     ⟨.alternation .boundNonreflexiveAnaphor, .attested, .some⟩,
+    [⟨.sprayLoad, .attested, .all⟩, ⟨.causativeInchoativeLocativeVariant, .attested, .some⟩,
+     ⟨.causativeInchoativeWithVariant, .starred, .all⟩, ⟨.conative, .attested, .some⟩,
+     ⟨.boundNonreflexiveAnaphor, .attested, .some⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .fill =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .locatumSubject, .attested, .all⟩, ⟨.withAlternatesWithIn, .attested, .some⟩]
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.locatumSubject, .attested, .all⟩, ⟨.withAlternatesWithIn, .attested, .some⟩]
   | .butter =>
-    [⟨.alternation .cognatePrepositionalPhrase, .attested, .all⟩,
-     ⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.cognatePrepositionalPhrase, .attested, .all⟩,
+     ⟨.sprayLoad, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .pocket =>
-    [⟨.alternation .cognatePrepositionalPhrase, .starred, .all⟩,
-     ⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.cognatePrepositionalPhrase, .starred, .all⟩,
+     ⟨.sprayLoad, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
   | .remove =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.clearTransitive, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .banish =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.clearTransitive, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .clear =>
-    [⟨.alternation .clearTransitive, .attested, .all⟩,
-     ⟨.alternation .clearIntransitive, .attested, .all⟩,
-     ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .all⟩,
-     ⟨.alternation .resultative, .starred, .all⟩, ⟨.zeroRelatedAdjective, .attested, .some⟩,
-     ⟨.alternation .adjectivalPassive, .attested, .all⟩]
+    [⟨.clearTransitive, .attested, .all⟩,
+     ⟨.clearIntransitive, .attested, .all⟩,
+     ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .all⟩,
+     ⟨.resultative, .starred, .all⟩, ⟨.zeroRelatedAdjective, .attested, .some⟩,
+     ⟨.adjectivalPassive, .attested, .all⟩]
   | .wipeManner =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .conative, .attested, .some⟩,
-     ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .unspecifiedObject, .attested, .some⟩,
+    [⟨.wipe, .attested, .all⟩, ⟨.conative, .attested, .some⟩,
+     ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.unspecifiedObject, .attested, .some⟩,
      ⟨.unspecifiedObjectPlusLocativePP, .attested, .some⟩,
-     ⟨.alternation .resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+     ⟨.resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .wipeInstrument =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .unspecifiedObject, .attested, .some⟩,
+    [⟨.wipe, .attested, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.unspecifiedObject, .attested, .some⟩,
      ⟨.unspecifiedObjectPlusLocativePP, .attested, .some⟩,
-     ⟨.alternation .resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+     ⟨.resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .steal =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .benefactive, .starred, .all⟩,
-     ⟨.alternation .conative, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.clearTransitive, .starred, .all⟩, ⟨.benefactive, .starred, .all⟩,
+     ⟨.conative, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
   | .cheat =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
+    [⟨.clearTransitive, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
      ⟨.ofAlternatesWithOut, .attested, .all⟩]
   | .pit =>
-    [⟨.alternation .cognatePrepositionalPhrase, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.cognatePrepositionalPhrase, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .debone =>
-    [⟨.alternation .cognatePrepositionalPhrase, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.cognatePrepositionalPhrase, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .mine =>
-    [⟨.alternation .cognatePrepositionalPhrase, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.cognatePrepositionalPhrase, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .send =>
-    [⟨.alternation .dative, .attested, .some⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .boundNonreflexiveAnaphor, .starred, .all⟩]
+    [⟨.dative, .attested, .some⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.boundNonreflexiveAnaphor, .starred, .all⟩]
   | .slide =>
-    [⟨.alternation .dative, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
+    [⟨.dative, .attested, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .all⟩, ⟨.middle, .attested, .all⟩,
      ⟨.coreferentialPronounsVary, .attested, .all⟩]
   | .bringTake =>
-    [⟨.alternation .dative, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .resultative, .starred, .all⟩,
-     ⟨.alternation .boundNonreflexiveAnaphor, .attested, .all⟩]
+    [⟨.dative, .attested, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.resultative, .starred, .all⟩,
+     ⟨.boundNonreflexiveAnaphor, .attested, .all⟩]
   | .carry =>
-    [⟨.alternation .dative, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
+    [⟨.dative, .attested, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
      ⟨.coreferentialPronounsVary, .attested, .all⟩]
   | .drive =>
-    [⟨.alternation .dative, .marginal, .some⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .boundNonreflexiveAnaphor, .starred, .all⟩]
+    [⟨.dative, .marginal, .some⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.boundNonreflexiveAnaphor, .starred, .all⟩]
   | .pushPull =>
-    [⟨.alternation .conative, .attested, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .wayObject, .attested, .some⟩,
-     ⟨.alternation .boundNonreflexiveAnaphor, .attested, .all⟩,
-     ⟨.alternation .resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.conative, .attested, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.wayObject, .attested, .some⟩,
+     ⟨.boundNonreflexiveAnaphor, .attested, .all⟩,
+     ⟨.resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .give =>
-    [⟨.alternation .dative, .attested, .all⟩, ⟨.alternation .fulfilling, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.dative, .attested, .all⟩, ⟨.fulfilling, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .contribute =>
-    [⟨.alternation .dative, .starred, .all⟩, ⟨.alternation .fulfilling, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.dative, .starred, .all⟩, ⟨.fulfilling, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .futureHaving =>
-    [⟨.alternation .dative, .attested, .all⟩, ⟨.alternation .fulfilling, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
-  | .fulfilling => [⟨.alternation .fulfilling, .attested, .all⟩]
-  | .equip => [⟨.alternation .fulfilling, .starred, .all⟩, ⟨.alternation .dative, .starred, .all⟩]
+    [⟨.dative, .attested, .all⟩, ⟨.fulfilling, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
+  | .fulfilling => [⟨.fulfilling, .attested, .all⟩]
+  | .equip => [⟨.fulfilling, .starred, .all⟩, ⟨.dative, .starred, .all⟩]
   | .get =>
-    [⟨.fromPhrase, .attested, .all⟩, ⟨.alternation .benefactive, .attested, .all⟩,
-     ⟨.alternation .dative, .starred, .all⟩, ⟨.alternation .locative, .starred, .all⟩,
-     ⟨.alternation .sumOfMoneySubject, .attested, .some⟩]
+    [⟨.fromPhrase, .attested, .all⟩, ⟨.benefactive, .attested, .all⟩,
+     ⟨.dative, .starred, .all⟩, ⟨.clearTransitive, .starred, .all⟩,
+     ⟨.sumOfMoneySubject, .attested, .some⟩]
   | .obtain =>
-    [⟨.fromPhrase, .attested, .all⟩, ⟨.alternation .benefactive, .starred, .all⟩,
-     ⟨.alternation .dative, .starred, .all⟩, ⟨.alternation .locative, .starred, .all⟩,
-     ⟨.alternation .sumOfMoneySubject, .attested, .few⟩]
+    [⟨.fromPhrase, .attested, .all⟩, ⟨.benefactive, .starred, .all⟩,
+     ⟨.dative, .starred, .all⟩, ⟨.clearTransitive, .starred, .all⟩,
+     ⟨.sumOfMoneySubject, .attested, .few⟩]
   | .exchange =>
-    [⟨.alternation .dative, .starred, .all⟩, ⟨.alternation .benefactive, .starred, .all⟩]
+    [⟨.dative, .starred, .all⟩, ⟨.benefactive, .starred, .all⟩]
   | .berry => []
   | .learn => []
   | .hold =>
-    [⟨.alternation .conative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .attested, .some⟩]
-  | .keep => [⟨.alternation .locative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
-  | .conceal => [⟨.alternation .locative, .starred, .all⟩]
+    [⟨.conative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.bodyPartPossessorAscension, .attested, .some⟩]
+  | .keep => [⟨.sprayLoad, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
+  | .conceal => [⟨.clearTransitive, .starred, .all⟩]
   | .throw =>
-    [⟨.alternation .directionalPhrase, .attested, .all⟩, ⟨.alternation .dative, .attested, .most⟩,
-     ⟨.alternation .withAgainst, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
+    [⟨.directionalPhrase, .attested, .all⟩, ⟨.dative, .attested, .most⟩,
+     ⟨.withAgainst, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .pelt =>
-    [⟨.alternation .directionalPhrase, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .withAgainst, .starred, .all⟩, ⟨.alternation .dative, .starred, .all⟩,
-     ⟨.alternation .middle, .starred, .all⟩]
+    [⟨.directionalPhrase, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.withAgainst, .starred, .all⟩, ⟨.dative, .starred, .all⟩,
+     ⟨.middle, .starred, .all⟩]
   | .hit =>
-    [⟨.alternation .withAgainst, .attested, .all⟩, ⟨.alternation .throughWith, .starred, .all⟩,
-     ⟨.alternation .conative, .attested, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .attested, .all⟩,
-     ⟨.alternation .togetherReciprocal, .attested, .all⟩,
-     ⟨.alternation .simpleReciprocal, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .middle, .starred, .all⟩, ⟨.alternation .instrumentSubject, .attested, .all⟩,
-     ⟨.alternation .unintentionalInterpretation, .attested, .some⟩,
-     ⟨.alternation .resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.withAgainst, .attested, .all⟩, ⟨.throughWith, .starred, .all⟩,
+     ⟨.conative, .attested, .all⟩,
+     ⟨.bodyPartPossessorAscension, .attested, .all⟩,
+     ⟨.togetherReciprocal, .attested, .all⟩,
+     ⟨.simpleReciprocal, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.middle, .starred, .all⟩, ⟨.instrumentSubject, .attested, .all⟩,
+     ⟨.unintentionalInterpretation, .attested, .some⟩,
+     ⟨.resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .swat =>
-    [⟨.alternation .withAgainst, .starred, .all⟩, ⟨.alternation .throughWith, .starred, .all⟩,
-     ⟨.alternation .conative, .attested, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .instrumentSubject, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .some⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.withAgainst, .starred, .all⟩, ⟨.throughWith, .starred, .all⟩,
+     ⟨.conative, .attested, .all⟩,
+     ⟨.bodyPartPossessorAscension, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.instrumentSubject, .starred, .all⟩,
+     ⟨.resultative, .attested, .some⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .spank =>
-    [⟨.alternation .withAgainst, .starred, .all⟩, ⟨.alternation .throughWith, .starred, .all⟩,
-     ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .attested, .some⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .instrumentSubject, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .all⟩, ⟨.ingNominal, .attested, .most⟩]
+    [⟨.withAgainst, .starred, .all⟩, ⟨.throughWith, .starred, .all⟩,
+     ⟨.conative, .starred, .all⟩,
+     ⟨.bodyPartPossessorAscension, .attested, .some⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.instrumentSubject, .starred, .all⟩,
+     ⟨.resultative, .attested, .all⟩, ⟨.ingNominal, .attested, .most⟩]
   | .nonAgentiveImpact =>
-    [⟨.alternation .simpleReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .togetherReciprocalIntransitive, .attested, .some⟩]
+    [⟨.simpleReciprocalIntransitive, .starred, .all⟩,
+     ⟨.togetherReciprocalIntransitive, .attested, .some⟩]
   | .poke =>
-    [⟨.alternation .throughWith, .attested, .all⟩, ⟨.alternation .withAgainst, .starred, .all⟩,
-     ⟨.alternation .conative, .attested, .some⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
+    [⟨.throughWith, .attested, .all⟩, ⟨.withAgainst, .starred, .all⟩,
+     ⟨.conative, .attested, .some⟩,
+     ⟨.bodyPartPossessorAscension, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .touch =>
-    [⟨.alternation .withAgainst, .starred, .all⟩, ⟨.alternation .throughWith, .starred, .all⟩,
-     ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩,
-     ⟨.alternation .unintentionalInterpretation, .starred, .all⟩,
-     ⟨.alternation .resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.withAgainst, .starred, .all⟩, ⟨.throughWith, .starred, .all⟩,
+     ⟨.conative, .starred, .all⟩,
+     ⟨.bodyPartPossessorAscension, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩,
+     ⟨.unintentionalInterpretation, .starred, .all⟩,
+     ⟨.resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .cut =>
-    [⟨.alternation .conative, .attested, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .attested, .some⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩,
-     ⟨.alternation .characteristicPropertyOfInstrument, .attested, .some⟩,
-     ⟨.alternation .unintentionalInterpretation, .attested, .some⟩,
-     ⟨.pathPhrase, .attested, .some⟩, ⟨.alternation .resultative, .attested, .all⟩,
+    [⟨.conative, .attested, .all⟩,
+     ⟨.bodyPartPossessorAscension, .attested, .some⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .attested, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩,
+     ⟨.characteristicPropertyOfInstrument, .attested, .some⟩,
+     ⟨.unintentionalInterpretation, .attested, .some⟩,
+     ⟨.pathPhrase, .attested, .some⟩, ⟨.resultative, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .most⟩]
   | .carve =>
-    [⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩,
-     ⟨.alternation .characteristicPropertyOfInstrument, .attested, .some⟩,
+    [⟨.conative, .starred, .all⟩,
+     ⟨.bodyPartPossessorAscension, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .attested, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩,
+     ⟨.characteristicPropertyOfInstrument, .attested, .some⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .mix =>
-    [⟨.alternation .simpleReciprocal, .attested, .all⟩,
-     ⟨.alternation .simpleReciprocalIntransitive, .attested, .most⟩,
-     ⟨.alternation .togetherReciprocal, .attested, .all⟩,
-     ⟨.alternation .togetherReciprocalIntransitive, .attested, .most⟩,
-     ⟨.alternation .causativeInchoative, .attested, .most⟩, ⟨.alternation .middle, .attested, .all⟩]
+    [⟨.simpleReciprocal, .attested, .all⟩,
+     ⟨.simpleReciprocalIntransitive, .attested, .most⟩,
+     ⟨.togetherReciprocal, .attested, .all⟩,
+     ⟨.togetherReciprocalIntransitive, .attested, .most⟩,
+     ⟨.causativeInchoative, .attested, .most⟩, ⟨.middle, .attested, .all⟩]
   | .amalgamate =>
-    [⟨.alternation .simpleReciprocal, .attested, .all⟩,
-     ⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .togetherReciprocal, .starred, .all⟩,
-     ⟨.alternation .togetherReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .most⟩, ⟨.alternation .middle, .attested, .all⟩]
+    [⟨.simpleReciprocal, .attested, .all⟩,
+     ⟨.simpleReciprocalIntransitive, .attested, .all⟩,
+     ⟨.togetherReciprocal, .starred, .all⟩,
+     ⟨.togetherReciprocalIntransitive, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .most⟩, ⟨.middle, .attested, .all⟩]
   | .shake =>
-    [⟨.alternation .togetherReciprocal, .attested, .all⟩,
-     ⟨.alternation .simpleReciprocal, .starred, .all⟩, ⟨.alternation .causative, .starred, .few⟩,
-     ⟨.alternation .middle, .attested, .all⟩]
+    [⟨.togetherReciprocal, .attested, .all⟩,
+     ⟨.simpleReciprocal, .starred, .all⟩, ⟨.causativeInchoative, .starred, .few⟩,
+     ⟨.middle, .attested, .all⟩]
   | .tape =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .simpleReciprocal, .starred, .all⟩,
-     ⟨.alternation .togetherReciprocal, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
-     ⟨.alternation .resultative, .attested, .all⟩,
-     ⟨.alternation .cognatePrepositionalPhrase, .attested, .all⟩,
+    [⟨.sprayLoad, .starred, .all⟩, ⟨.simpleReciprocal, .starred, .all⟩,
+     ⟨.togetherReciprocal, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .attested, .all⟩,
+     ⟨.resultative, .attested, .all⟩,
+     ⟨.cognatePrepositionalPhrase, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .cling =>
-    [⟨.alternation .simpleReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .togetherReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.simpleReciprocalIntransitive, .starred, .all⟩,
+     ⟨.togetherReciprocalIntransitive, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .separate =>
-    [⟨.alternation .simpleReciprocal, .attested, .all⟩,
-     ⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .apartReciprocal, .starred, .all⟩,
-     ⟨.alternation .apartReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .some⟩,
-     ⟨.alternation .middle, .attested, .all⟩, ⟨.alternation .locative, .starred, .all⟩]
+    [⟨.simpleReciprocal, .attested, .all⟩,
+     ⟨.simpleReciprocalIntransitive, .attested, .all⟩,
+     ⟨.apartReciprocal, .starred, .all⟩,
+     ⟨.apartReciprocalIntransitive, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .some⟩,
+     ⟨.middle, .attested, .all⟩, ⟨.clearTransitive, .starred, .all⟩]
   | .split =>
-    [⟨.alternation .simpleReciprocal, .starred, .all⟩,
-     ⟨.alternation .simpleReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .apartReciprocal, .attested, .all⟩,
-     ⟨.alternation .apartReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .most⟩, ⟨.alternation .middle, .attested, .all⟩]
+    [⟨.simpleReciprocal, .starred, .all⟩,
+     ⟨.simpleReciprocalIntransitive, .starred, .all⟩,
+     ⟨.apartReciprocal, .attested, .all⟩,
+     ⟨.apartReciprocalIntransitive, .attested, .all⟩,
+     ⟨.causativeInchoative, .attested, .most⟩, ⟨.middle, .attested, .all⟩]
   | .disassemble =>
-    [⟨.alternation .simpleReciprocal, .starred, .all⟩,
-     ⟨.alternation .apartReciprocal, .starred, .all⟩, ⟨.alternation .causative, .starred, .few⟩,
-     ⟨.alternation .middle, .attested, .all⟩]
+    [⟨.simpleReciprocal, .starred, .all⟩,
+     ⟨.apartReciprocal, .starred, .all⟩, ⟨.causativeInchoative, .starred, .few⟩,
+     ⟨.middle, .attested, .all⟩]
   | .differ =>
-    [⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .apartReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.simpleReciprocalIntransitive, .attested, .all⟩,
+     ⟨.apartReciprocalIntransitive, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .color =>
-    [⟨.alternation .resultative, .attested, .all⟩,
-     ⟨.alternation .cognatePrepositionalPhrase, .attested, .all⟩]
+    [⟨.resultative, .attested, .all⟩,
+     ⟨.cognatePrepositionalPhrase, .attested, .all⟩]
   | .imageImpression =>
-    [⟨.alternation .imageImpression, .attested, .all⟩,
-     ⟨.alternation .unspecifiedObject, .attested, .all⟩, ⟨.processNominal, .attested, .all⟩,
+    [⟨.imageImpression, .attested, .all⟩,
+     ⟨.unspecifiedObject, .attested, .all⟩, ⟨.processNominal, .attested, .all⟩,
      ⟨.resultNominal, .attested, .all⟩]
   | .scribble =>
-    [⟨.alternation .imageImpression, .starred, .all⟩,
-     ⟨.alternation .unspecifiedObject, .attested, .some⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.imageImpression, .starred, .all⟩,
+     ⟨.unspecifiedObject, .attested, .some⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .illustrate =>
-    [⟨.alternation .imageImpression, .starred, .all⟩, ⟨.processNominal, .attested, .some⟩,
+    [⟨.imageImpression, .starred, .all⟩, ⟨.processNominal, .attested, .some⟩,
      ⟨.resultNominal, .attested, .some⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .transcribe =>
-    [⟨.alternation .imageImpression, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.imageImpression, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .build =>
-    [⟨.alternation .materialProduct, .attested, .all⟩,
-     ⟨.alternation .totalTransformation, .starred, .all⟩,
-     ⟨.alternation .unspecifiedObject, .attested, .all⟩,
-     ⟨.alternation .benefactive, .attested, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .rawMaterialSubject, .attested, .some⟩,
-     ⟨.alternation .sumOfMoneySubject, .attested, .few⟩]
+    [⟨.materialProduct, .attested, .all⟩,
+     ⟨.totalTransformation, .starred, .all⟩,
+     ⟨.unspecifiedObject, .attested, .all⟩,
+     ⟨.benefactive, .attested, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.rawMaterialSubject, .attested, .some⟩,
+     ⟨.sumOfMoneySubject, .attested, .few⟩]
   | .grow =>
-    [⟨.alternation .materialProductIntransitive, .attested, .all⟩,
-     ⟨.alternation .totalTransformationIntransitive, .starred, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .all⟩]
+    [⟨.materialProductIntransitive, .attested, .all⟩,
+     ⟨.totalTransformationIntransitive, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .all⟩]
   | .prepare =>
-    [⟨.alternation .materialProduct, .starred, .all⟩, ⟨.alternation .benefactive, .attested, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.materialProduct, .starred, .all⟩, ⟨.benefactive, .attested, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩]
   | .create =>
-    [⟨.alternation .materialProduct, .starred, .all⟩, ⟨.alternation .benefactive, .starred, .most⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .rawMaterialSubject, .starred, .all⟩]
+    [⟨.materialProduct, .starred, .all⟩, ⟨.benefactive, .starred, .most⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.rawMaterialSubject, .starred, .all⟩]
   | .knead =>
-    [⟨.alternation .materialProduct, .starred, .all⟩,
-     ⟨.alternation .causativeInchoative, .attested, .some⟩,
-     ⟨.alternation .rawMaterialSubject, .starred, .all⟩,
-     ⟨.alternation .totalTransformation, .starred, .all⟩]
+    [⟨.materialProduct, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .some⟩,
+     ⟨.rawMaterialSubject, .starred, .all⟩,
+     ⟨.totalTransformation, .starred, .all⟩]
   | .turn =>
-    [⟨.alternation .totalTransformation, .attested, .all⟩,
-     ⟨.alternation .totalTransformationIntransitive, .attested, .most⟩,
-     ⟨.alternation .causativeInchoative, .attested, .most⟩,
-     ⟨.alternation .materialProduct, .starred, .all⟩,
-     ⟨.alternation .materialProductIntransitive, .starred, .all⟩]
+    [⟨.totalTransformation, .attested, .all⟩,
+     ⟨.totalTransformationIntransitive, .attested, .most⟩,
+     ⟨.causativeInchoative, .attested, .most⟩,
+     ⟨.materialProduct, .starred, .all⟩,
+     ⟨.materialProductIntransitive, .starred, .all⟩]
   | .performance =>
-    [⟨.alternation .dative, .attested, .some⟩, ⟨.alternation .benefactive, .attested, .some⟩,
-     ⟨.alternation .unspecifiedObject, .attested, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
-  | .engender => [⟨.alternation .causative, .starred, .all⟩]
+    [⟨.dative, .attested, .some⟩, ⟨.benefactive, .attested, .some⟩,
+     ⟨.unspecifiedObject, .attested, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
+  | .engender => [⟨.causativeInchoative, .starred, .all⟩]
   | .calve => []
   | .appoint =>
-    [⟨.alternation .as, .attested, .all⟩, ⟨.alternation .dative, .starred, .all⟩,
+    [⟨.as, .attested, .all⟩, ⟨.dative, .starred, .all⟩,
      ⟨.infinitivalCopularClause, .attested, .some⟩]
   | .characterize =>
-    [⟨.alternation .as, .starred, .all⟩, ⟨.infinitivalCopularClause, .attested, .few⟩]
+    [⟨.as, .starred, .all⟩, ⟨.infinitivalCopularClause, .attested, .few⟩]
   | .dub =>
-    [⟨.alternation .as, .starred, .all⟩, ⟨.alternation .dative, .starred, .all⟩,
+    [⟨.as, .starred, .all⟩, ⟨.dative, .starred, .all⟩,
      ⟨.infinitivalCopularClause, .starred, .all⟩]
   | .declare =>
-    [⟨.alternation .as, .starred, .all⟩, ⟨.alternation .dative, .starred, .all⟩,
+    [⟨.as, .starred, .all⟩, ⟨.dative, .starred, .all⟩,
      ⟨.infinitivalCopularClause, .attested, .all⟩]
   | .conjecture =>
-    [⟨.alternation .as, .starred, .all⟩, ⟨.infinitivalCopularClause, .attested, .all⟩]
+    [⟨.as, .starred, .all⟩, ⟨.infinitivalCopularClause, .attested, .all⟩]
   | .masquerade => []
-  | .orphan => [⟨.alternation .verbalPassive, .attested, .all⟩]
+  | .orphan => [⟨.verbalPassive, .attested, .all⟩]
   | .captain => []
   | .see =>
-    [⟨.alternation .middle, .starred, .all⟩, ⟨.alternation .possessorObject, .starred, .all⟩,
-     ⟨.alternation .attributeObject, .attested, .all⟩]
-  | .sight => [⟨.alternation .middle, .starred, .all⟩]
+    [⟨.middle, .starred, .all⟩, ⟨.possessorObject, .starred, .all⟩,
+     ⟨.attributeObject, .attested, .all⟩]
+  | .sight => [⟨.middle, .starred, .all⟩]
   | .peer => []
-  | .stimulusSubjectPerception => [⟨.alternation .verbalPassive, .starred, .all⟩]
+  | .stimulusSubjectPerception => [⟨.verbalPassive, .starred, .all⟩]
   | .amuse =>
-    [⟨.alternation .causative, .starred, .most⟩, ⟨.alternation .middle, .attested, .most⟩,
-     ⟨.alternation .proArbObject, .attested, .all⟩, ⟨.extraposition, .attested, .all⟩,
-     ⟨.passivePrepositionChoice, .attested, .all⟩, ⟨.alternation .resultative, .attested, .all⟩,
+    [⟨.causativeInchoative, .starred, .most⟩, ⟨.middle, .attested, .most⟩,
+     ⟨.proArbObject, .attested, .all⟩, ⟨.extraposition, .attested, .all⟩,
+     ⟨.passivePrepositionChoice, .attested, .all⟩, ⟨.resultative, .attested, .all⟩,
      ⟨.derivedNominalPassiveOnly, .attested, .all⟩, ⟨.erNominal, .attested, .some⟩,
      ⟨.ableAdjective, .attested, .some⟩]
   | .admire =>
-    [⟨.alternation .middle, .starred, .all⟩, ⟨.alternation .possessorObject, .attested, .all⟩,
-     ⟨.alternation .attributeObject, .attested, .all⟩, ⟨.alternation .as, .starred, .all⟩,
+    [⟨.middle, .starred, .all⟩, ⟨.possessorObject, .attested, .all⟩,
+     ⟨.attributeObject, .attested, .all⟩, ⟨.as, .starred, .all⟩,
      ⟨.sententialComplement, .attested, .some⟩, ⟨.extraposition, .attested, .some⟩,
      ⟨.derivedNominalActiveOnly, .attested, .all⟩, ⟨.ableAdjective, .attested, .all⟩,
      ⟨.erNominal, .attested, .all⟩]
-  | .marvel => [⟨.alternation .verbalPassive, .attested, .some⟩]
-  | .appeal => [⟨.alternation .verbalPassive, .starred, .all⟩]
+  | .marvel => [⟨.verbalPassive, .attested, .some⟩]
+  | .appeal => [⟨.verbalPassive, .starred, .all⟩]
   | .want =>
-    [⟨.alternation .possessorObject, .attested, .all⟩,
-     ⟨.alternation .attributeObject, .starred, .all⟩, ⟨.alternation .as, .starred, .all⟩,
-     ⟨.alternation .verbalPassive, .marginal, .all⟩]
-  | .long => [⟨.alternation .verbalPassive, .marginal, .all⟩]
+    [⟨.possessorObject, .attested, .all⟩,
+     ⟨.attributeObject, .starred, .all⟩, ⟨.as, .starred, .all⟩,
+     ⟨.verbalPassive, .marginal, .all⟩]
+  | .long => [⟨.verbalPassive, .marginal, .all⟩]
   | .judgment =>
-    [⟨.alternation .middle, .starred, .all⟩, ⟨.alternation .possessorObject, .attested, .all⟩,
-     ⟨.alternation .attributeObject, .starred, .all⟩, ⟨.alternation .as, .attested, .some⟩,
+    [⟨.middle, .starred, .all⟩, ⟨.possessorObject, .attested, .all⟩,
+     ⟨.attributeObject, .starred, .all⟩, ⟨.as, .attested, .some⟩,
      ⟨.processNominal, .attested, .some⟩]
   | .assessment =>
-    [⟨.alternation .possessorObject, .attested, .all⟩,
-     ⟨.alternation .attributeObject, .starred, .all⟩]
-  | .hunt => [⟨.alternation .unspecifiedObject, .attested, .all⟩]
+    [⟨.possessorObject, .attested, .all⟩,
+     ⟨.attributeObject, .starred, .all⟩]
+  | .hunt => [⟨.unspecifiedObject, .attested, .all⟩]
   | .search => []
   | .stalk => []
   | .investigate => []
@@ -479,351 +403,340 @@ def properties : LevinClass → List ClassProperty
   | .ferret => []
   | .correspond =>
     [⟨.collectiveNPSubject, .attested, .all⟩,
-     ⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .understoodReciprocalObject, .starred, .all⟩,
-     ⟨.alternation .withPrepositionDrop, .starred, .all⟩]
+     ⟨.simpleReciprocalIntransitive, .attested, .all⟩,
+     ⟨.understoodReciprocalObject, .starred, .all⟩,
+     ⟨.withPrepositionDrop, .starred, .all⟩]
   | .marry =>
-    [⟨.alternation .simpleReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .understoodReciprocalObject, .attested, .all⟩,
-     ⟨.alternation .withPrepositionDrop, .starred, .all⟩]
+    [⟨.simpleReciprocalIntransitive, .starred, .all⟩,
+     ⟨.understoodReciprocalObject, .attested, .all⟩,
+     ⟨.withPrepositionDrop, .starred, .all⟩]
   | .meet =>
-    [⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .understoodReciprocalObject, .attested, .all⟩,
-     ⟨.alternation .withPrepositionDrop, .attested, .all⟩]
-  | .transferOfMessage => [⟨.alternation .dative, .attested, .most⟩]
+    [⟨.simpleReciprocalIntransitive, .attested, .all⟩,
+     ⟨.understoodReciprocalObject, .attested, .all⟩,
+     ⟨.withPrepositionDrop, .attested, .all⟩]
+  | .transferOfMessage => [⟨.dative, .attested, .most⟩]
   | .tell =>
-    [⟨.alternation .dative, .attested, .all⟩,
+    [⟨.dative, .attested, .all⟩,
      ⟨.sententialComplementWithGoalObject, .attested, .all⟩,
      ⟨.sententialComplementWithGoalToPhrase, .starred, .all⟩,
      ⟨.sententialComplementWithoutGoalPhrase, .starred, .all⟩, ⟨.directSpeech, .attested, .all⟩,
-     ⟨.parentheticalUse, .attested, .all⟩, ⟨.alternation .verbalPassive, .attested, .all⟩,
+     ⟨.parentheticalUse, .attested, .all⟩, ⟨.verbalPassive, .attested, .all⟩,
      ⟨.impersonalPassive, .starred, .all⟩, ⟨.zeroRelatedNominal, .starred, .all⟩]
   | .mannerOfSpeaking =>
-    [⟨.alternation .dative, .starred, .all⟩,
+    [⟨.dative, .starred, .all⟩,
      ⟨.sententialComplementWithOptionalGoalToPhrase, .attested, .all⟩,
      ⟨.directSpeech, .attested, .all⟩, ⟨.parentheticalUse, .attested, .all⟩,
-     ⟨.alternation .verbalPassive, .starred, .all⟩,
-     ⟨.alternation .reactionObject, .attested, .all⟩,
-     ⟨.alternation .cognateObject, .marginal, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+     ⟨.verbalPassive, .starred, .all⟩,
+     ⟨.reactionObject, .attested, .all⟩,
+     ⟨.cognateObject, .marginal, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .instrumentOfCommunication =>
-    [⟨.alternation .dative, .attested, .all⟩,
+    [⟨.dative, .attested, .all⟩,
      ⟨.sententialComplementWithOptionalGoalObject, .attested, .all⟩,
      ⟨.sententialComplementWithOptionalGoalToPhrase, .attested, .all⟩,
      ⟨.directSpeech, .attested, .all⟩, ⟨.parentheticalUse, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .talk =>
     [⟨.sententialComplement, .starred, .all⟩,
-     ⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .togetherReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .understoodReciprocalObject, .starred, .all⟩,
-     ⟨.alternation .withPrepositionDrop, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+     ⟨.simpleReciprocalIntransitive, .attested, .all⟩,
+     ⟨.togetherReciprocalIntransitive, .attested, .all⟩,
+     ⟨.understoodReciprocalObject, .starred, .all⟩,
+     ⟨.withPrepositionDrop, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .chitchat =>
     [⟨.sententialComplement, .starred, .all⟩,
-     ⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
-     ⟨.alternation .togetherReciprocalIntransitive, .starred, .all⟩,
-     ⟨.alternation .understoodReciprocalObject, .starred, .all⟩,
-     ⟨.alternation .withPrepositionDrop, .starred, .all⟩]
-  | .say => [⟨.alternation .dative, .starred, .all⟩]
+     ⟨.simpleReciprocalIntransitive, .attested, .all⟩,
+     ⟨.togetherReciprocalIntransitive, .starred, .all⟩,
+     ⟨.understoodReciprocalObject, .starred, .all⟩,
+     ⟨.withPrepositionDrop, .starred, .all⟩]
+  | .say => [⟨.dative, .starred, .all⟩]
   | .complain =>
     [⟨.sententialComplementWithOptionalGoalToPhrase, .attested, .all⟩,
      ⟨.directSpeech, .attested, .all⟩, ⟨.parentheticalUse, .attested, .all⟩,
-     ⟨.alternation .cognateObject, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
+     ⟨.cognateObject, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
   | .advise =>
-    [⟨.alternation .proArbObject, .attested, .all⟩,
+    [⟨.proArbObject, .attested, .all⟩,
      ⟨.sententialComplementWithOptionalGoalObject, .attested, .all⟩,
      ⟨.directSpeech, .attested, .all⟩, ⟨.parentheticalUse, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .starred, .most⟩]
   | .animalSound =>
-    [⟨.alternation .directionalPhrase, .starred, .all⟩,
-     ⟨.alternation .reactionObject, .attested, .all⟩, ⟨.alternation .resultative, .attested, .all⟩]
+    [⟨.directionalPhrase, .starred, .all⟩,
+     ⟨.reactionObject, .attested, .all⟩, ⟨.resultative, .attested, .all⟩]
   | .eat =>
-    [⟨.alternation .unspecifiedObject, .attested, .all⟩, ⟨.alternation .conative, .attested, .all⟩,
-     ⟨.alternation .instrumentSubject, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.unspecifiedObject, .attested, .all⟩, ⟨.conative, .attested, .all⟩,
+     ⟨.instrumentSubject, .starred, .all⟩,
+     ⟨.resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .chew =>
-    [⟨.alternation .unspecifiedObject, .attested, .all⟩, ⟨.alternation .conative, .attested, .all⟩,
+    [⟨.unspecifiedObject, .attested, .all⟩, ⟨.conative, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .gobble =>
-    [⟨.alternation .unspecifiedObject, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
+    [⟨.unspecifiedObject, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .devour =>
-    [⟨.alternation .unspecifiedObject, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
+    [⟨.unspecifiedObject, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .starred, .all⟩]
   | .dine =>
-    [⟨.alternation .unspecifiedObject, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩]
+    [⟨.unspecifiedObject, .starred, .all⟩, ⟨.conative, .starred, .all⟩]
   | .gorge =>
-    [⟨.alternation .unspecifiedObject, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩]
-  | .feed => [⟨.alternation .dative, .attested, .all⟩]
+    [⟨.unspecifiedObject, .starred, .all⟩, ⟨.conative, .starred, .all⟩]
+  | .feed => [⟨.dative, .attested, .all⟩]
   | .hiccup =>
-    [⟨.alternation .cognateObject, .marginal, .all⟩, ⟨.alternation .resultative, .marginal, .all⟩,
+    [⟨.cognateObject, .marginal, .all⟩, ⟨.resultative, .marginal, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .breathe =>
-    [⟨.alternation .cognateObject, .attested, .few⟩, ⟨.substanceObject, .attested, .most⟩,
-     ⟨.alternation .resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
+    [⟨.cognateObject, .attested, .few⟩, ⟨.substanceObject, .attested, .most⟩,
+     ⟨.resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
   | .exhale =>
-    [⟨.alternation .cognateObject, .starred, .all⟩, ⟨.zeroRelatedNominal, .starred, .all⟩]
+    [⟨.cognateObject, .starred, .all⟩, ⟨.zeroRelatedNominal, .starred, .all⟩]
   | .nonverbalExpression =>
-    [⟨.alternation .cognateObject, .attested, .some⟩,
-     ⟨.alternation .reactionObject, .attested, .all⟩,
-     ⟨.alternation .resultative, .attested, .most⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
+    [⟨.cognateObject, .attested, .some⟩,
+     ⟨.reactionObject, .attested, .all⟩,
+     ⟨.resultative, .attested, .most⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
   | .wink =>
-    [⟨.alternation .understoodBodyPartObject, .attested, .all⟩,
-     ⟨.alternation .verbalPassive, .starred, .all⟩, ⟨.alternation .cognateObject, .starred, .all⟩,
-     ⟨.alternation .reactionObject, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.understoodBodyPartObject, .attested, .all⟩,
+     ⟨.verbalPassive, .starred, .all⟩, ⟨.cognateObject, .starred, .all⟩,
+     ⟨.reactionObject, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .crane =>
-    [⟨.alternation .understoodBodyPartObject, .attested, .all⟩,
-     ⟨.alternation .cognateObject, .starred, .all⟩, ⟨.alternation .verbalPassive, .starred, .all⟩,
+    [⟨.understoodBodyPartObject, .attested, .all⟩,
+     ⟨.cognateObject, .starred, .all⟩, ⟨.verbalPassive, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .curtsey =>
-    [⟨.alternation .cognateObject, .starred, .all⟩,
-     ⟨.alternation .reactionObject, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.cognateObject, .starred, .all⟩,
+     ⟨.reactionObject, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .snooze =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .cognateObject, .starred, .all⟩,
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.cognateObject, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .flinch =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .cognateObject, .starred, .all⟩,
-     ⟨.alternation .reactionObject, .starred, .all⟩]
-  | .bodyInternalStateOfExistence => [⟨.alternation .causative, .starred, .all⟩]
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.cognateObject, .starred, .all⟩,
+     ⟨.reactionObject, .starred, .all⟩]
+  | .bodyInternalStateOfExistence => [⟨.causativeInchoative, .starred, .all⟩]
   | .suffocate =>
-    [⟨.alternation .causative, .attested, .all⟩, ⟨.alternation .middle, .marginal, .all⟩,
-     ⟨.alternation .resultative, .attested, .some⟩]
+    [⟨.causativeInchoative, .attested, .all⟩, ⟨.middle, .marginal, .all⟩,
+     ⟨.resultative, .attested, .some⟩]
   | .pain =>
-    [⟨.alternation .cognateObject, .starred, .all⟩, ⟨.alternation .verbalPassive, .starred, .all⟩]
-  | .tingle => [⟨.alternation .cognateObject, .starred, .all⟩]
+    [⟨.cognateObject, .starred, .all⟩, ⟨.verbalPassive, .starred, .all⟩]
+  | .tingle => [⟨.cognateObject, .starred, .all⟩]
   | .hurt => []
   | .changeOfBodilyState =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .cognateObject, .starred, .all⟩]
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.cognateObject, .starred, .all⟩]
   | .dress =>
-    [⟨.alternation .causative, .attested, .all⟩,
-     ⟨.alternation .understoodReflexiveObject, .attested, .all⟩]
-  | .groom => [⟨.alternation .understoodReflexiveObject, .starred, .all⟩]
+    [⟨.causativeInchoative, .attested, .all⟩,
+     ⟨.understoodReflexiveObject, .attested, .all⟩]
+  | .groom => [⟨.understoodReflexiveObject, .starred, .all⟩]
   | .floss =>
-    [⟨.alternation .understoodReflexiveObject, .starred, .all⟩,
-     ⟨.alternation .understoodBodyPartObject, .attested, .all⟩]
+    [⟨.understoodReflexiveObject, .starred, .all⟩,
+     ⟨.understoodBodyPartObject, .attested, .all⟩]
   | .braid =>
-    [⟨.alternation .understoodBodyPartObject, .starred, .all⟩,
-     ⟨.alternation .understoodReflexiveObject, .starred, .all⟩]
-  | .simpleDressing => [⟨.alternation .understoodReflexiveObject, .starred, .all⟩]
-  | .dressingWell => [⟨.alternation .adjectivalPassive, .attested, .all⟩]
-  | .beingDressed => [⟨.alternation .understoodReflexiveObject, .starred, .all⟩]
+    [⟨.understoodBodyPartObject, .starred, .all⟩,
+     ⟨.understoodReflexiveObject, .starred, .all⟩]
+  | .simpleDressing => [⟨.understoodReflexiveObject, .starred, .all⟩]
+  | .dressingWell => [⟨.adjectivalPassive, .attested, .all⟩]
+  | .beingDressed => [⟨.understoodReflexiveObject, .starred, .all⟩]
   | .murder =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .instrumentSubject, .starred, .all⟩,
-     ⟨.alternation .resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.instrumentSubject, .starred, .all⟩,
+     ⟨.resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .poison =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .some⟩, ⟨.zeroRelatedNominal, .starred, .all⟩]
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.resultative, .attested, .some⟩, ⟨.zeroRelatedNominal, .starred, .all⟩]
   | .lightEmission =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .locativeInversion, .attested, .all⟩,
-     ⟨.alternation .thereInsertion, .attested, .all⟩, ⟨.alternation .causative, .attested, .some⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .attested, .all⟩, ⟨.erNominal, .attested, .all⟩,
+    [⟨.swarm, .attested, .all⟩, ⟨.locativeInversion, .attested, .all⟩,
+     ⟨.thereInsertion, .attested, .all⟩, ⟨.causativeInchoative, .attested, .some⟩,
+     ⟨.adjectivalPerfectParticiple, .attested, .all⟩, ⟨.erNominal, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .soundEmission =>
-    [⟨.alternation .locative, .attested, .most⟩,
-     ⟨.alternation .locativeInversion, .attested, .some⟩,
-     ⟨.alternation .thereInsertion, .attested, .some⟩, ⟨.alternation .causative, .attested, .all⟩,
-     ⟨.alternation .directionalPhrase, .attested, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .attested, .all⟩,
+    [⟨.swarm, .attested, .most⟩,
+     ⟨.locativeInversion, .attested, .some⟩,
+     ⟨.thereInsertion, .attested, .some⟩, ⟨.causativeInchoative, .attested, .all⟩,
+     ⟨.directionalPhrase, .attested, .all⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .smellEmission =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
+    [⟨.swarm, .attested, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .substanceEmission =>
-    [⟨.alternation .causative, .attested, .some⟩, ⟨.alternation .substanceSource, .attested, .all⟩,
-     ⟨.alternation .locative, .attested, .some⟩,
-     ⟨.alternation .locativeInversion, .attested, .some⟩,
-     ⟨.alternation .thereInsertion, .attested, .some⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .attested, .all⟩,
+    [⟨.causativeInchoative, .attested, .some⟩, ⟨.substanceSource, .attested, .all⟩,
+     ⟨.swarm, .attested, .some⟩,
+     ⟨.locativeInversion, .attested, .some⟩,
+     ⟨.thereInsertion, .attested, .some⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .destroy =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .middle, .starred, .all⟩,
-     ⟨.alternation .materialProduct, .starred, .all⟩,
-     ⟨.alternation .totalTransformation, .starred, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .starred, .all⟩]
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.middle, .starred, .all⟩,
+     ⟨.materialProduct, .starred, .all⟩,
+     ⟨.totalTransformation, .starred, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.resultative, .starred, .all⟩, ⟨.zeroRelatedNominal, .starred, .all⟩]
   | .break_ =>
-    [⟨.alternation .causativeInchoative, .attested, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩,
-     ⟨.alternation .withAgainst, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .starred, .all⟩,
-     ⟨.alternation .unintentionalInterpretation, .attested, .some⟩,
-     ⟨.alternation .resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
+    [⟨.causativeInchoative, .attested, .all⟩, ⟨.middle, .attested, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩,
+     ⟨.withAgainst, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.bodyPartPossessorAscension, .starred, .all⟩,
+     ⟨.unintentionalInterpretation, .attested, .some⟩,
+     ⟨.resultative, .attested, .all⟩, ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .bend =>
-    [⟨.alternation .causativeInchoative, .attested, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩,
-     ⟨.alternation .withAgainst, .starred, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .bodyPartPossessorAscension, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .some⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
+    [⟨.causativeInchoative, .attested, .all⟩, ⟨.middle, .attested, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩,
+     ⟨.withAgainst, .starred, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.bodyPartPossessorAscension, .starred, .all⟩,
+     ⟨.resultative, .attested, .some⟩, ⟨.zeroRelatedNominal, .attested, .most⟩]
   | .cooking =>
-    [⟨.alternation .causativeInchoative, .attested, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .cognateObject, .starred, .all⟩, ⟨.alternation .resultative, .attested, .all⟩,
-     ⟨.alternation .adjectivalPassive, .attested, .all⟩]
+    [⟨.causativeInchoative, .attested, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.cognateObject, .starred, .all⟩, ⟨.resultative, .attested, .all⟩,
+     ⟨.adjectivalPassive, .attested, .all⟩]
   | .otherChangeOfState =>
-    [⟨.alternation .causativeInchoative, .attested, .all⟩, ⟨.alternation .middle, .attested, .all⟩,
-     ⟨.alternation .instrumentSubject, .attested, .all⟩, ⟨.alternation .conative, .starred, .all⟩,
-     ⟨.alternation .swarm, .starred, .all⟩, ⟨.alternation .sprayLoad, .starred, .all⟩,
-     ⟨.alternation .locativeInversion, .starred, .all⟩,
-     ⟨.alternation .thereInsertion, .starred, .all⟩, ⟨.alternation .cognateObject, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .all⟩,
-     ⟨.alternation .adjectivalPassive, .attested, .all⟩]
+    [⟨.causativeInchoative, .attested, .all⟩, ⟨.middle, .attested, .all⟩,
+     ⟨.instrumentSubject, .attested, .all⟩, ⟨.conative, .starred, .all⟩,
+     ⟨.swarm, .starred, .all⟩, ⟨.sprayLoad, .starred, .all⟩,
+     ⟨.locativeInversion, .starred, .all⟩,
+     ⟨.thereInsertion, .starred, .all⟩, ⟨.cognateObject, .starred, .all⟩,
+     ⟨.resultative, .attested, .all⟩,
+     ⟨.adjectivalPassive, .attested, .all⟩]
   | .entitySpecificChangeOfState =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.alternation .cognateObject, .starred, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .attested, .some⟩]
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.cognateObject, .starred, .all⟩,
+     ⟨.adjectivalPerfectParticiple, .attested, .some⟩]
   | .calibratableChangeOfState =>
-    [⟨.alternation .causative, .attested, .all⟩, ⟨.alternation .thereInsertion, .starred, .all⟩,
-     ⟨.alternation .locativeInversion, .starred, .all⟩,
-     ⟨.alternation .cognateObject, .starred, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩]
+    [⟨.causativeInchoative, .attested, .all⟩, ⟨.thereInsertion, .starred, .all⟩,
+     ⟨.locativeInversion, .starred, .all⟩,
+     ⟨.cognateObject, .starred, .all⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩]
   | .lodge =>
-    [⟨.alternation .thereInsertion, .starred, .all⟩,
-     ⟨.alternation .locativeInversion, .starred, .all⟩, ⟨.alternation .locative, .starred, .all⟩,
-     ⟨.alternation .causative, .attested, .some⟩,
-     ⟨.alternation .adjectivalPassive, .starred, .all⟩, ⟨.erNominal, .attested, .some⟩]
+    [⟨.thereInsertion, .starred, .all⟩,
+     ⟨.locativeInversion, .starred, .all⟩, ⟨.swarm, .starred, .all⟩,
+     ⟨.causativeInchoative, .attested, .some⟩,
+     ⟨.adjectivalPassive, .starred, .all⟩, ⟨.erNominal, .attested, .some⟩]
   | .exist =>
-    [⟨.alternation .thereInsertion, .attested, .all⟩,
-     ⟨.alternation .locativeInversion, .attested, .all⟩, ⟨.alternation .locative, .starred, .all⟩,
-     ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩]
+    [⟨.thereInsertion, .attested, .all⟩,
+     ⟨.locativeInversion, .attested, .all⟩, ⟨.swarm, .starred, .all⟩,
+     ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩]
   | .entitySpecificModeOfBeing =>
-    [⟨.alternation .thereInsertion, .attested, .some⟩,
-     ⟨.alternation .locativeInversion, .attested, .some⟩,
-     ⟨.alternation .locative, .attested, .some⟩, ⟨.alternation .causative, .starred, .few⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .starred, .all⟩]
+    [⟨.thereInsertion, .attested, .some⟩,
+     ⟨.locativeInversion, .attested, .some⟩,
+     ⟨.swarm, .attested, .some⟩, ⟨.causativeInchoative, .starred, .few⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .starred, .all⟩]
   | .modeOfBeingInvolvingMotion =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .thereInsertion, .attested, .some⟩,
-     ⟨.alternation .locativeInversion, .attested, .some⟩,
-     ⟨.alternation .causative, .attested, .some⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩]
+    [⟨.swarm, .starred, .all⟩, ⟨.thereInsertion, .attested, .some⟩,
+     ⟨.locativeInversion, .attested, .some⟩,
+     ⟨.causativeInchoative, .attested, .some⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩]
   | .soundExistence =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .thereInsertion, .attested, .all⟩,
-     ⟨.alternation .locativeInversion, .attested, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .starred, .all⟩]
+    [⟨.swarm, .attested, .all⟩, ⟨.thereInsertion, .attested, .all⟩,
+     ⟨.locativeInversion, .attested, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .starred, .all⟩]
   | .swarm =>
-    [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .locativeInversion, .attested, .all⟩,
-     ⟨.alternation .thereInsertion, .attested, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.swarm, .attested, .all⟩, ⟨.locativeInversion, .attested, .all⟩,
+     ⟨.thereInsertion, .attested, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
   | .herd =>
-    [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .causative, .attested, .some⟩,
+    [⟨.swarm, .starred, .all⟩, ⟨.causativeInchoative, .attested, .some⟩,
      ⟨.zeroRelatedNominal, .attested, .some⟩]
-  | .bulge => [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
+  | .bulge => [⟨.swarm, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
   | .spatialConfiguration =>
-    [⟨.alternation .thereInsertion, .attested, .all⟩,
-     ⟨.alternation .locativeInversion, .attested, .all⟩,
-     ⟨.alternation .causative, .attested, .some⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩]
+    [⟨.thereInsertion, .attested, .all⟩,
+     ⟨.locativeInversion, .attested, .all⟩,
+     ⟨.causativeInchoative, .attested, .some⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩]
   | .meander =>
-    [⟨.alternation .locativeInversion, .attested, .all⟩,
-     ⟨.alternation .thereInsertion, .attested, .all⟩]
+    [⟨.locativeInversion, .attested, .all⟩,
+     ⟨.thereInsertion, .attested, .all⟩]
   | .contiguousLocation =>
-    [⟨.alternation .adjectivalPassive, .attested, .all⟩,
-     ⟨.alternation .understoodReciprocalObject, .attested, .some⟩]
+    [⟨.adjectivalPassive, .attested, .all⟩,
+     ⟨.understoodReciprocalObject, .attested, .some⟩]
   | .appear =>
-    [⟨.alternation .thereInsertion, .attested, .most⟩,
-     ⟨.alternation .locativeInversion, .attested, .most⟩,
-     ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .attested, .all⟩]
+    [⟨.thereInsertion, .attested, .most⟩,
+     ⟨.locativeInversion, .attested, .most⟩,
+     ⟨.causativeInchoative, .starred, .most⟩,
+     ⟨.adjectivalPerfectParticiple, .attested, .all⟩]
   | .reflexiveAppearance =>
-    [⟨.alternation .thereInsertion, .starred, .all⟩,
-     ⟨.alternation .locativeInversion, .starred, .all⟩,
-     ⟨.alternation .reflexiveOfAppearance, .attested, .all⟩]
+    [⟨.thereInsertion, .starred, .all⟩,
+     ⟨.locativeInversion, .starred, .all⟩,
+     ⟨.reflexiveOfAppearance, .attested, .all⟩]
   | .disappearance =>
-    [⟨.alternation .thereInsertion, .marginal, .all⟩,
-     ⟨.alternation .locativeInversion, .marginal, .all⟩, ⟨.alternation .causative, .starred, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .attested, .all⟩]
+    [⟨.thereInsertion, .marginal, .all⟩,
+     ⟨.locativeInversion, .marginal, .all⟩, ⟨.causativeInchoative, .starred, .all⟩,
+     ⟨.adjectivalPerfectParticiple, .attested, .all⟩]
   | .occurrence =>
-    [⟨.alternation .thereInsertion, .attested, .all⟩,
-     ⟨.alternation .locativeInversion, .attested, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.thereInsertion, .attested, .all⟩,
+     ⟨.locativeInversion, .attested, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
   | .bodyInternalMotion =>
-    [⟨.alternation .causative, .starred, .all⟩, ⟨.bodyPartObject, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .some⟩,
-     ⟨.alternation .directionalPhrase, .attested, .all⟩]
+    [⟨.causativeInchoative, .starred, .all⟩, ⟨.bodyPartObject, .starred, .all⟩,
+     ⟨.resultative, .attested, .some⟩,
+     ⟨.directionalPhrase, .attested, .all⟩]
   | .assumePosition =>
-    [⟨.alternation .thereInsertion, .starred, .all⟩,
-     ⟨.alternation .locativeInversion, .starred, .all⟩]
+    [⟨.thereInsertion, .starred, .all⟩,
+     ⟨.locativeInversion, .starred, .all⟩]
   | .inherentlyDirectedMotion =>
-    [⟨.alternation .locativePrepositionDrop, .attested, .some⟩,
-     ⟨.alternation .causative, .starred, .all⟩, ⟨.measurePhrase, .starred, .all⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .attested, .all⟩,
-     ⟨.depictivePhrase, .attested, .all⟩, ⟨.alternation .resultative, .starred, .all⟩]
-  | .leave => [⟨.alternation .adjectivalPassive, .attested, .some⟩]
+    [⟨.locativePrepositionDrop, .attested, .some⟩,
+     ⟨.causativeInchoative, .starred, .all⟩, ⟨.measurePhrase, .starred, .all⟩,
+     ⟨.adjectivalPerfectParticiple, .attested, .all⟩,
+     ⟨.depictivePhrase, .attested, .all⟩, ⟨.resultative, .starred, .all⟩]
+  | .leave => [⟨.adjectivalPassive, .attested, .some⟩]
   | .roll =>
-    [⟨.alternation .causativeInchoative, .attested, .most⟩,
-     ⟨.alternation .locativePrepositionDrop, .starred, .all⟩,
-     ⟨.alternation .resultative, .attested, .all⟩,
-     ⟨.alternation .adjectivalPassive, .attested, .all⟩]
+    [⟨.causativeInchoative, .attested, .most⟩,
+     ⟨.locativePrepositionDrop, .starred, .all⟩,
+     ⟨.resultative, .attested, .all⟩,
+     ⟨.adjectivalPassive, .attested, .all⟩]
   | .run =>
-    [⟨.alternation .inducedAction, .attested, .some⟩,
-     ⟨.alternation .locativePrepositionDrop, .attested, .some⟩,
-     ⟨.alternation .thereInsertion, .attested, .all⟩,
-     ⟨.alternation .locativeInversion, .attested, .all⟩, ⟨.measurePhrase, .attested, .some⟩,
-     ⟨.alternation .resultative, .attested, .all⟩,
-     ⟨.alternation .adjectivalPassive, .attested, .some⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩,
-     ⟨.alternation .cognateObject, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
+    [⟨.inducedAction, .attested, .some⟩,
+     ⟨.locativePrepositionDrop, .attested, .some⟩,
+     ⟨.thereInsertion, .attested, .all⟩,
+     ⟨.locativeInversion, .attested, .all⟩, ⟨.measurePhrase, .attested, .some⟩,
+     ⟨.resultative, .attested, .all⟩,
+     ⟨.adjectivalPassive, .attested, .some⟩,
+     ⟨.adjectivalPerfectParticiple, .starred, .all⟩,
+     ⟨.cognateObject, .starred, .all⟩, ⟨.zeroRelatedNominal, .attested, .some⟩]
   | .vehicleName =>
-    [⟨.alternation .inducedAction, .attested, .some⟩,
-     ⟨.alternation .locativePrepositionDrop, .attested, .some⟩,
-     ⟨.alternation .resultative, .attested, .all⟩]
+    [⟨.inducedAction, .attested, .some⟩,
+     ⟨.locativePrepositionDrop, .attested, .some⟩,
+     ⟨.resultative, .attested, .all⟩]
   | .nonVehicleName =>
-    [⟨.alternation .inducedAction, .attested, .some⟩,
-     ⟨.alternation .locativePrepositionDrop, .attested, .some⟩,
-     ⟨.alternation .resultative, .attested, .all⟩]
+    [⟨.inducedAction, .attested, .some⟩,
+     ⟨.locativePrepositionDrop, .attested, .some⟩,
+     ⟨.resultative, .attested, .all⟩]
   | .waltz =>
-    [⟨.alternation .inducedAction, .attested, .all⟩, ⟨.alternation .resultative, .attested, .all⟩,
-     ⟨.alternation .cognateObject, .attested, .all⟩]
-  | .chase => [⟨.alternation .causative, .starred, .all⟩]
-  | .accompany => [⟨.alternation .causative, .starred, .all⟩]
+    [⟨.inducedAction, .attested, .all⟩, ⟨.resultative, .attested, .all⟩,
+     ⟨.cognateObject, .attested, .all⟩]
+  | .chase => [⟨.causativeInchoative, .starred, .all⟩]
+  | .accompany => [⟨.causativeInchoative, .starred, .all⟩]
   | .avoid => []
-  | .linger => [⟨.alternation .causative, .starred, .all⟩]
-  | .rush => [⟨.alternation .causative, .attested, .all⟩]
+  | .linger => [⟨.causativeInchoative, .starred, .all⟩]
+  | .rush => [⟨.causativeInchoative, .attested, .all⟩]
   | .register =>
-    [⟨.alternation .verbalPassive, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.verbalPassive, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
   | .cost =>
-    [⟨.alternation .verbalPassive, .starred, .all⟩, ⟨.alternation .causative, .starred, .all⟩]
+    [⟨.verbalPassive, .starred, .all⟩, ⟨.causativeInchoative, .starred, .all⟩]
   | .fit => []
-  | .price => [⟨.alternation .causative, .starred, .all⟩]
-  | .bill => [⟨.alternation .dative, .starred, .all⟩, ⟨.alternation .as, .starred, .all⟩]
-  | .begin => [⟨.alternation .causative, .attested, .some⟩]
-  | .complete => [⟨.alternation .causative, .starred, .all⟩]
+  | .price => [⟨.causativeInchoative, .starred, .all⟩]
+  | .bill => [⟨.dative, .starred, .all⟩, ⟨.as, .starred, .all⟩]
+  | .begin => [⟨.causativeInchoative, .attested, .some⟩]
+  | .complete => [⟨.causativeInchoative, .starred, .all⟩]
   | .weekend => []
   | .weather => []
 
-/-- The alternations the class page lists with the given diacritic. -/
-def alternationsWith (c : LevinClass) (m : Attestation) : Finset DiathesisAlternation :=
-  (c.properties.filterMap fun p ↦
-    match p.property with
-    | .alternation a => if p.attestation = m then some a else none
-    | _ => none).toFinset
+variable (c : LevinClass) (p : LevinProperty)
 
-/-- The alternations the class page attests. -/
-def alternations (c : LevinClass) : Finset DiathesisAlternation := c.alternationsWith .attested
+/-- Some line of the class's table gives the property the diacritic `m`. -/
+def Marks (m : Attestation) : Prop :=
+  ∃ q ∈ c.properties, q.property = p ∧ q.attestation = m
 
-/-- The alternations the class page stars. -/
-def starredAlternations (c : LevinClass) : Finset DiathesisAlternation :=
-  c.alternationsWith .starred
+instance (m : Attestation) : Decidable (c.Marks p m) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _ ∧ _))
 
-/-- The class shows the alternation in [levin-1993] Part II: its page attests it, or attests
-the section grouping it, as a page attesting the causative alternations attests the
-causative/inchoative one. -/
-def Participates (c : LevinClass) (a : DiathesisAlternation) : Prop :=
-  a ∈ c.alternations ∨ ∃ p ∈ a.parent?, p ∈ c.alternations
+/-- The class shows the property in [levin-1993] Part II: its table attests it. -/
+abbrev Participates : Prop := c.Marks p .attested
 
-instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Participates a) :=
-  inferInstanceAs (Decidable (_ ∨ _))
+/-- The class lacks the property in [levin-1993] Part II: its table stars it. -/
+abbrev Stars : Prop := c.Marks p .starred
 
-/-- The class lacks the alternation in [levin-1993] Part II: its page stars it, or stars the
-section grouping it. -/
-def Stars (c : LevinClass) (a : DiathesisAlternation) : Prop :=
-  a ∈ c.starredAlternations ∨ ∃ p ∈ a.parent?, p ∈ c.starredAlternations
+/-- The class is tested for the property, attesting or starring it. -/
+def Tests : Prop := c.Participates p ∨ c.Stars p
 
-instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Stars a) :=
-  inferInstanceAs (Decidable (_ ∨ _))
+instance : Decidable (c.Tests p) := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The class page tests the alternation, attesting or starring it. -/
-def Tests (c : LevinClass) (a : DiathesisAlternation) : Prop := c.Participates a ∨ c.Stars a
-
-instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Tests a) :=
-  inferInstanceAs (Decidable (_ ∨ _))
+/-- No class has one property with two diacritics. -/
+theorem attestation_unique :
+    ∀ c : LevinClass, ∀ q ∈ c.properties, ∀ q' ∈ c.properties,
+      q.property = q'.property → q.attestation = q'.attestation := by
+  decide +kernel
 
 end LevinClass
 

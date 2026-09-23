@@ -602,7 +602,7 @@
       ],
       [
         "alternation",
-        "locative"
+        "sprayLoad"
       ]
     ],
     "comment": "Locative variant / with variant. Corrected from the constructed 'She sprayed ...' of the prior Lean data file."
@@ -638,7 +638,7 @@
       ],
       [
         "alternation",
-        "locative"
+        "sprayLoad"
       ]
     ],
     "comment": "Corrected from the constructed 'She loaded hay onto the truck.' of the prior Lean data file to the §9.7 property listing."

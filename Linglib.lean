@@ -1206,7 +1206,6 @@ import Linglib.Semantics.ArgumentStructure.Agentivity
 import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 import Linglib.Semantics.ArgumentStructure.CaseRegion
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.ArgumentStructure.EnergySource
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.EventStructure

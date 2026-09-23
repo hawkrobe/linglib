@@ -3,13 +3,13 @@ import Linglib.Semantics.ArgumentStructure.LevinClass
 /-!
 # The member lists of the Levin classes
 
-The `Class Members` list of every class page of [levin-1993] Part II, by citation form, and
+The `Class Members` list of every class of [levin-1993] Part II, by citation form, and
 the classes that list a form (`LevinClass.classesOf`), which is how an English verb entry's
 Levin classes are read.
 
 ## Implementation notes
 
-The lists are transcribed mechanically from the pages, dropping Levin's question marks on
+The lists are transcribed mechanically from the class entries, dropping Levin's question marks on
 doubtful members and her parenthetical glosses; a form she lists under several classes is a
 member of each.
 
@@ -20,7 +20,7 @@ member of each.
 
 namespace ArgumentStructure.LevinClass
 
-/-- The class page's member list. -/
+/-- The class's member list. -/
 def members : LevinClass → List String
   | .put => ["arrange", "immerse", "install", "lodge", "mount", "place", "position", "put", "set",
       "situate", "sling", "stash", "stow"]
