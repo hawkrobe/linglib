@@ -318,7 +318,7 @@ theorem isStable_settle_of_isStable (h : K.IsStable) : (K.settle p).IsStable :=
     (K.commit a p force source).discourseCommitments a = insert p (K.discourseCommitments a) := by
   rw [discourseCommitments, discourseCommitments, commitments_commit,
     ofCommitter_insert_of_eq _ _ _ (commit_committer a p force source),
-    contents_insert_of_commit (commit_polarity a p force source), commit_content]
+    contents_insert_of_commit (commit_stance a p force source), commit_content]
 
 variable {K a p} in
 theorem discourseCommitments_commit_of_ne {force source} {b : A} (h : b ≠ a) :

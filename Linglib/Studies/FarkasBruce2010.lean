@@ -74,7 +74,7 @@ for the marked combination [reverse, +].
 
 namespace FarkasBruce2010
 
-open Commitment hiding Polarity
+open Commitment
 open Filter Data.Examples
 
 variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)

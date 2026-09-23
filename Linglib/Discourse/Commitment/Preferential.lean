@@ -32,7 +32,7 @@ variable {A W : Type*} (P : A → W → PreferenceStructure W)
 
 /-- The preferential commitments in `K` are effective preferences at `w`. -/
 def Sincere (K : State A W) (w : W) : Prop :=
-  ∀ c ∈ K, c.force = .preferential → c.polarity = .commit → Want P c.committer c.content w
+  ∀ c ∈ K, c.force = .preferential → c.stance = .commit → Want P c.committer c.content w
 
 variable {P} {K L : State A W} {w : W}
 

@@ -45,7 +45,7 @@ the negation (`reverseTag`, (45)).
 
 namespace Krifka2015
 
-open Commitment hiding Polarity
+open Commitment
 open Commitment.Space
 open Question
 
