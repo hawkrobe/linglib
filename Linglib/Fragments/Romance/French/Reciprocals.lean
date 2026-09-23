@@ -5,17 +5,15 @@ import Linglib.Syntax.Reciprocal
 # French reciprocals
 
 French marks reciprocity with the clitic *se*, shared with the reflexive, and with the bipartite
-*l'un l'autre* 'the one the other', which fills an argument position, keeps the clause bivalent
-and often accompanies *se* to disambiguate it. Reciprocal verbs with *se* are formed in the
-syntax ([siloni-2008]), so they have no discontinuous counterpart with *avec* 'with'
-([nordlinger-2023] ex. 39). With a reflexive and a non-reflexive marker, French is the mixed
-type of [maslova-nedjalkov-2013].
+*l'un l'autre* 'the one the other', which fills an argument position, keeps the clause bivalent and
+often accompanies *se* to disambiguate it. Reciprocal verbs with *se* are formed in the syntax
+([siloni-2008]), so they have no discontinuous counterpart with *avec* 'with' ([nordlinger-2023] ex.
+39).
 
 ## References
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 * [T. Siloni, *The Syntax of Reciprocal Verbs: An Overview* (2008)][siloni-2008]
-* [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
 
 namespace French.Reciprocals
@@ -33,10 +31,5 @@ def lunLautre : Marker :=
 
 /-- Marker inventory. -/
 def markers : Finset Marker := {se, lunLautre}
-
-/-- The inventory computes the WALS value of French ([maslova-nedjalkov-2013]). -/
-theorem ofInventory_markers_eq_wals :
-    some (ofInventory markers) = (Data.WALS.F106A.lookupISO "fra").map (·.value) := by
-  decide +kernel
 
 end French.Reciprocals

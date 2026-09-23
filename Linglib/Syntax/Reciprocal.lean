@@ -7,7 +7,6 @@ import Mathlib.Data.Finset.Insert
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Voice.Basic
-import Linglib.Data.WALS.Features.F106A
 
 /-!
 # Reciprocal constructions: morphosyntactic typology
@@ -15,9 +14,8 @@ import Linglib.Data.WALS.Features.F106A
 Cross-linguistic vocabulary for reciprocal constructions: the marking strategy
 ([nordlinger-2023]'s synthesis of [konig-kokutani-2006], [nedjalkov-2007a], and
 [evans-2008]), the site it codes and the valency it derives, the formation locus
-of reciprocal verbs ([siloni-2008], [siloni-2012]), and the marker inventories
-from which the WALS reciprocal–reflexive value ([maslova-nedjalkov-2013]) is
-computed.
+of reciprocal verbs ([siloni-2008], [siloni-2012]), and the reciprocal markers with
+the readings they cover, from which a language's inventory is built.
 
 ## Main definitions
 
@@ -30,15 +28,6 @@ computed.
   `Construction.Mixed` is [evans-et-al-2007]'s mixed transitivity effect.
 * `Formation` — lexical vs syntactic formation of reciprocal verbs.
 * `Reading`, `Marker` — a reciprocal exponent with its polysemy.
-* `Marker.IsReflexiveReciprocal`, `Marker.IsNonreflexiveReciprocal`, `ofInventory` — the two
-  kinds of reciprocal marker of [maslova-nedjalkov-2013], and the WALS Ch 106 value of an
-  inventory, which records which kinds it has.
-
-## Main results
-
-* `ofInventory_eq_mixed_iff`, `ofInventory_eq_identicalToReflexive_iff`,
-  `ofInventory_eq_distinctFromReflexive_iff`, `ofInventory_eq_noReciprocalConstruction_iff` —
-  each WALS value characterized by the kinds of marker in the inventory.
 
 ## Implementation notes
 
@@ -58,13 +47,6 @@ representable here. A bound reciprocal pronoun
 of a syntactically formed reciprocal verb (French *se*) is not an object
 ([siloni-2012]) and marks the predicate, as does the weak German *sich*.
 
-## TODO
-
-[maslova-nedjalkov-2013] classify only the non-iconic constructions, while `ofInventory` reads
-every marker of an inventory. A compound that repeats its verb, as Mandarin *dǎ-lái-dǎ-qù*
-does, is iconic in the chapter's sense, so an inventory with only such markers is
-misclassified; `Strategy` would need to record iconicity.
-
 ## References
 
 * [nordlinger-2023]
@@ -72,7 +54,6 @@ misclassified; `Strategy` would need to record iconicity.
 * [nedjalkov-2007a]
 * [nedjalkov-2007b]
 * [evans-2008]
-* [maslova-nedjalkov-2013]
 * [siloni-2008]
 * [siloni-2012]
 * [reinhart-siloni-2005]
@@ -210,58 +191,6 @@ structure Marker where
   /-- Readings the marker covers. -/
   readings : Finset Reading := {.reciprocal}
   deriving DecidableEq
-
-namespace Marker
-
-variable (m : Marker)
-
-/-- The marker expresses both the reciprocal and the reflexive meaning: a reflexive reciprocal
-construction of [maslova-nedjalkov-2013]. -/
-def IsReflexiveReciprocal : Prop :=
-  Reading.reciprocal ∈ m.readings ∧ Reading.reflexive ∈ m.readings
-
-/-- The marker expresses the reciprocal meaning but not the reflexive one: a non-reflexive
-reciprocal construction of [maslova-nedjalkov-2013]. -/
-def IsNonreflexiveReciprocal : Prop :=
-  Reading.reciprocal ∈ m.readings ∧ Reading.reflexive ∉ m.readings
-
-instance : Decidable m.IsReflexiveReciprocal := instDecidableAnd
-instance : Decidable m.IsNonreflexiveReciprocal := instDecidableAnd
-
-end Marker
-
-open Data.WALS.F106A in
-/-- The WALS Ch 106 value of a marker inventory ([maslova-nedjalkov-2013]): a language has
-reflexive reciprocal markers, non-reflexive ones, both (the mixed type), or neither. -/
-def ofInventory (inv : Finset Marker) : ReciprocalType :=
-  if ∃ m ∈ inv, m.IsReflexiveReciprocal then
-    if ∃ m ∈ inv, m.IsNonreflexiveReciprocal then .mixed else .identicalToReflexive
-  else if ∃ m ∈ inv, m.IsNonreflexiveReciprocal then .distinctFromReflexive
-  else .noReciprocalConstruction
-
-variable {inv : Finset Marker}
-
-@[simp]
-theorem ofInventory_eq_mixed_iff : ofInventory inv = .mixed ↔
-    (∃ m ∈ inv, m.IsReflexiveReciprocal) ∧ ∃ m ∈ inv, m.IsNonreflexiveReciprocal := by
-  unfold ofInventory; split_ifs <;> simp_all
-
-@[simp]
-theorem ofInventory_eq_identicalToReflexive_iff : ofInventory inv = .identicalToReflexive ↔
-    (∃ m ∈ inv, m.IsReflexiveReciprocal) ∧ ∀ m ∈ inv, ¬ m.IsNonreflexiveReciprocal := by
-  unfold ofInventory; split_ifs <;> simp_all
-
-@[simp]
-theorem ofInventory_eq_distinctFromReflexive_iff : ofInventory inv = .distinctFromReflexive ↔
-    (∀ m ∈ inv, ¬ m.IsReflexiveReciprocal) ∧ ∃ m ∈ inv, m.IsNonreflexiveReciprocal := by
-  unfold ofInventory; split_ifs <;> simp_all
-
-/-- An inventory has no reciprocal construction when none of its markers is reciprocal. -/
-@[simp]
-theorem ofInventory_eq_noReciprocalConstruction_iff :
-    ofInventory inv = .noReciprocalConstruction ↔ ∀ m ∈ inv, Reading.reciprocal ∉ m.readings := by
-  unfold ofInventory Marker.IsReflexiveReciprocal Marker.IsNonreflexiveReciprocal
-  split_ifs <;> grind
 
 /-! ### Constructions -/
 
