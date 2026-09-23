@@ -190,7 +190,7 @@ clause has its reading's direction, and a clause of the embedded conditional, re
 hypothetically, composes its direction with the main antecedent's. -/
 def Position.polarity (ct : Reading) : Position → ContextPolarity
   | .main c => ct.clausePolarity c
-  | .embedded c => (ct.clausePolarity .antecedent).compose (Reading.hypothetical.clausePolarity c)
+  | .embedded c => ct.clausePolarity .antecedent * Reading.hypothetical.clausePolarity c
 
 /-- The scalar context a position provides: downward-entailing positions reverse the scale. -/
 def Position.contextType (ct : Reading) (pos : Position) : Israel2001.ContextType :=

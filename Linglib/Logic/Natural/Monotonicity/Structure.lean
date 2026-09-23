@@ -52,9 +52,9 @@ variable {B : Type*}
     arrows as all maps, ordered pointwise. -/
 def Dom (Db : B → Bundled.{u} Preorder) : Ty B → Bundled.{u} Preorder
   | .base b => Db b
-  | .arr σ .pos τ => .of (Dom Db σ →o Dom Db τ)
-  | .arr σ .neg τ => .of ((Dom Db σ)ᵒᵈ →o Dom Db τ)
-  | .arr σ .unmarked τ => .of (Dom Db σ → Dom Db τ)
+  | .arr σ .upward τ => .of (Dom Db σ →o Dom Db τ)
+  | .arr σ .downward τ => .of ((Dom Db σ)ᵒᵈ →o Dom Db τ)
+  | .arr σ .nonMonotonic τ => .of (Dom Db σ → Dom Db τ)
 
 variable {Db : B → Bundled.{u} Preorder}
 
@@ -66,29 +66,29 @@ def castLE : ∀ {σ τ : Ty B}, σ ≤ τ → (Dom Db σ →o Dom Db τ)
   | .base _, .base _, h => match base_le_base.mp h with | rfl => OrderHom.id
   | .base _, .arr .., h => absurd h not_base_le_arr
   | .arr .., .base _, h => absurd h not_arr_le_base
-  | .arr _ .pos _, .arr _ .neg _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr _ .neg _, .arr _ .pos _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr _ .unmarked _, .arr _ .pos _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr _ .unmarked _, .arr _ .neg _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
-  | .arr σ₁ .pos τ₁, .arr σ₂ .pos τ₂, h =>
+  | .arr _ .upward _, .arr _ .downward _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
+  | .arr _ .downward _, .arr _ .upward _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
+  | .arr _ .nonMonotonic _, .arr _ .upward _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
+  | .arr _ .nonMonotonic _, .arr _ .downward _, h => absurd (arr_le_arr.mp h).2.2 (by decide)
+  | .arr σ₁ .upward τ₁, .arr σ₂ .upward τ₂, h =>
       have h' := arr_le_arr.mp h
       { toFun := λ k => (castLE h'.2.1).comp (k.comp (castLE h'.1))
         monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .neg τ₁, .arr σ₂ .neg τ₂, h =>
+  | .arr σ₁ .downward τ₁, .arr σ₂ .downward τ₂, h =>
       have h' := arr_le_arr.mp h
       { toFun := λ k => (castLE h'.2.1).comp (k.comp (OrderHom.dual (castLE h'.1)))
         monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .pos τ₁, .arr σ₂ .unmarked τ₂, h =>
+  | .arr σ₁ .upward τ₁, .arr σ₂ .nonMonotonic τ₂, h =>
       have h' := arr_le_arr.mp h
       show (Dom Db σ₁ →o Dom Db τ₁) →o (Dom Db σ₂ → Dom Db τ₂) from
       { toFun := λ k a => castLE h'.2.1 (k (castLE h'.1 a))
         monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .neg τ₁, .arr σ₂ .unmarked τ₂, h =>
+  | .arr σ₁ .downward τ₁, .arr σ₂ .nonMonotonic τ₂, h =>
       have h' := arr_le_arr.mp h
       show ((Dom Db σ₁)ᵒᵈ →o Dom Db τ₁) →o (Dom Db σ₂ → Dom Db τ₂) from
       { toFun := λ k a => castLE h'.2.1 (k (OrderDual.toDual (castLE h'.1 a)))
         monotone' := λ _ _ hk _ => (castLE h'.2.1).monotone (hk _) }
-  | .arr σ₁ .unmarked τ₁, .arr σ₂ .unmarked τ₂, h =>
+  | .arr σ₁ .nonMonotonic τ₁, .arr σ₂ .nonMonotonic τ₂, h =>
       have h' := arr_le_arr.mp h
       show (Dom Db σ₁ → Dom Db τ₁) →o (Dom Db σ₂ → Dom Db τ₂) from
       { toFun := λ k a => castLE h'.2.1 (k (castLE h'.1 a))
@@ -103,35 +103,35 @@ variable {σ₁ σ₂ τ₁ τ₂ : Ty B}
     castLE (Db := Db) h = OrderHom.id := by
   rw [castLE]
 
-@[simp] theorem castLE_pos_pos (h : (Ty.arr σ₁ .pos τ₁ : Ty B) ≤ .arr σ₂ .pos τ₂)
+@[simp] theorem castLE_upward_upward (h : (Ty.arr σ₁ .upward τ₁ : Ty B) ≤ .arr σ₂ .upward τ₂)
     (k : Dom Db σ₁ →o Dom Db τ₁) :
     castLE h k =
       (castLE (arr_le_arr.mp h).2.1).comp (k.comp (castLE (arr_le_arr.mp h).1)) := by
   rw [castLE]; rfl
 
-@[simp] theorem castLE_neg_neg (h : (Ty.arr σ₁ .neg τ₁ : Ty B) ≤ .arr σ₂ .neg τ₂)
+@[simp] theorem castLE_downward_downward (h : (Ty.arr σ₁ .downward τ₁ : Ty B) ≤ .arr σ₂ .downward τ₂)
     (k : (Dom Db σ₁)ᵒᵈ →o Dom Db τ₁) :
     castLE h k =
       (castLE (arr_le_arr.mp h).2.1).comp
         (k.comp (OrderHom.dual (castLE (arr_le_arr.mp h).1))) := by
   rw [castLE]; rfl
 
-@[simp] theorem castLE_pos_unmarked
-    (h : (Ty.arr σ₁ .pos τ₁ : Ty B) ≤ .arr σ₂ .unmarked τ₂)
+@[simp] theorem castLE_upward_nonMonotonic
+    (h : (Ty.arr σ₁ .upward τ₁ : Ty B) ≤ .arr σ₂ .nonMonotonic τ₂)
     (k : Dom Db σ₁ →o Dom Db τ₁) (a : Dom Db σ₂) :
     (castLE h k : Dom Db σ₂ → Dom Db τ₂) a =
       castLE (arr_le_arr.mp h).2.1 (k (castLE (arr_le_arr.mp h).1 a)) := by
   rw [castLE]; rfl
 
-@[simp] theorem castLE_neg_unmarked
-    (h : (Ty.arr σ₁ .neg τ₁ : Ty B) ≤ .arr σ₂ .unmarked τ₂)
+@[simp] theorem castLE_downward_nonMonotonic
+    (h : (Ty.arr σ₁ .downward τ₁ : Ty B) ≤ .arr σ₂ .nonMonotonic τ₂)
     (k : (Dom Db σ₁)ᵒᵈ →o Dom Db τ₁) (a : Dom Db σ₂) :
     (castLE h k : Dom Db σ₂ → Dom Db τ₂) a =
       castLE (arr_le_arr.mp h).2.1 (k (OrderDual.toDual (castLE (arr_le_arr.mp h).1 a))) := by
   rw [castLE]; rfl
 
-@[simp] theorem castLE_unmarked_unmarked
-    (h : (Ty.arr σ₁ .unmarked τ₁ : Ty B) ≤ .arr σ₂ .unmarked τ₂)
+@[simp] theorem castLE_nonMonotonic_nonMonotonic
+    (h : (Ty.arr σ₁ .nonMonotonic τ₁ : Ty B) ≤ .arr σ₂ .nonMonotonic τ₂)
     (k : Dom Db σ₁ → Dom Db τ₁) (a : Dom Db σ₂) :
     (castLE h k : Dom Db σ₂ → Dom Db τ₂) a =
       castLE (arr_le_arr.mp h).2.1 (k (castLE (arr_le_arr.mp h).1 a)) := by

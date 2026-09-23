@@ -25,9 +25,10 @@ Since these are one group acting in different ways, their interaction is statabl
 antonym *short* measures on the dual scale of *tall*, while sentential negation takes the
 complement, so *not short* does not entail *tall*.
 
-Other binary oppositions called polarity are distinct types: `UD.Polarity`, a morphological
-feature of the annotation scheme, and `NaturalLogic.ContextPolarity`, the monotonicity of a
-context, which adds a non-monotone value absorbing the others.
+Two other notions called polarity are distinct types: `UD.Polarity`, a morphological feature of
+the annotation scheme, and `NaturalLogic.ContextPolarity`, the monotonicity of a context, which
+adds a non-monotone value absorbing the others and into which a polarity maps, negation being
+downward (`NaturalLogic.ContextPolarity.ofPolarity`).
 -/
 
 @[expose] public section

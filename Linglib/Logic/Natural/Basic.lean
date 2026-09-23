@@ -6,6 +6,8 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Algebra.BigOperators.Group.List.Defs
 public import Mathlib.Algebra.Group.Action.Defs
 public import Mathlib.Data.Nat.Basic
+public import Mathlib.Basic.Sign.Defs
+public import Linglib.Semantics.Polarity.Basic
 
 /-!
 # The natural-logic relation algebra
@@ -36,8 +38,11 @@ are ordered likewise by reverse inclusion of property sets; `#` and
   (`MulAction Signature Relation`).
 * `Signature.contextProjectivity`: the signature of a position, as the
   monoid product along its path.
-* `ContextPolarity`: the coarse upward/downward quotient, a monoid
-  homomorphism target (`toContextPolarity_compose`).
+* `ContextPolarity`: the coarse upward/downward quotient, a monoid with
+  zero isomorphic to the signs (`ContextPolarity.signTypeEquiv`) and the
+  target of a monoid homomorphism from the signatures
+  (`Signature.toContextPolarityHom`); a sentential `Polarity` is a context
+  polarity, negation a downward one (`ContextPolarity.ofPolarity`).
 
 ## Implementation notes
 
@@ -430,31 +435,76 @@ end Signature
 /-! ### Context polarity -/
 
 /-- Whether a context preserves or reverses entailment — the coarse
-UE/DE quotient of `Signature` (`toContextPolarity`). -/
+UE/DE quotient of `Signature` (`toContextPolarity`). Context polarities
+compose as signs do, the non-monotone polarity absorbing the others. -/
 inductive ContextPolarity where
   /-- The context preserves entailment (upward entailing). -/
   | upward
   /-- The context reverses entailment (downward entailing). -/
   | downward
-  /-- The context is neither monotone nor antitone (*exactly n*). -/
+  /-- The context is not known to be monotone or antitone: non-monotone, as under *exactly n*,
+  or unmarked. -/
   | nonMonotonic
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace ContextPolarity
 
-/--
-Compose context polarities.
+instance : One ContextPolarity where
+  one := upward
 
-This is the coarse composition table derived from the `Signature` monoid:
-UE ∘ UE = UE, DE ∘ DE = UE (double negation), UE ∘ DE = DE, DE ∘ UE = DE.
-Any composition involving `nonMonotonic` yields `nonMonotonic`.
--/
-def compose : ContextPolarity → ContextPolarity → ContextPolarity
-  | .upward, x => x
-  | x, .upward => x
-  | .downward, .downward => .upward
-  | .nonMonotonic, _ => .nonMonotonic
-  | _, .nonMonotonic => .nonMonotonic
+instance : Zero ContextPolarity where
+  zero := nonMonotonic
+
+/-- Composition of contexts: two downward contexts make an upward one (double negation), and a
+non-monotone context makes the composite non-monotone. -/
+instance : Mul ContextPolarity where
+  mul
+    | upward, c => c
+    | c, upward => c
+    | downward, downward => upward
+    | nonMonotonic, _ => nonMonotonic
+    | _, nonMonotonic => nonMonotonic
+
+instance : CommMonoidWithZero ContextPolarity where
+  mul_assoc := by decide
+  one_mul := by decide
+  mul_one := by decide
+  zero_mul := by decide
+  mul_zero := by decide
+  mul_comm := by decide
+
+@[simp] theorem one_eq_upward : (1 : ContextPolarity) = upward := rfl
+
+@[simp] theorem zero_eq_nonMonotonic : (0 : ContextPolarity) = nonMonotonic := rfl
+
+@[simp] theorem upward_mul (c : ContextPolarity) : upward * c = c := one_mul c
+
+@[simp] theorem mul_upward (c : ContextPolarity) : c * upward = c := mul_one c
+
+@[simp] theorem downward_mul_downward : downward * downward = upward := rfl
+
+/-- Context polarities are the signs: upward `1`, downward `-1`, non-monotone `0`. -/
+def signTypeEquiv : ContextPolarity ≃* SignType where
+  toFun
+    | upward => 1
+    | downward => -1
+    | nonMonotonic => 0
+  invFun
+    | .pos => upward
+    | .neg => downward
+    | .zero => nonMonotonic
+  left_inv c := by cases c <;> rfl
+  right_inv s := by cases s <;> rfl
+  map_mul' c d := by cases c <;> cases d <;> rfl
+
+/-- A sentential polarity as a context: the positive one upward, the negative one, negation,
+downward. -/
+def ofPolarity : Polarity →* ContextPolarity where
+  toFun
+    | .positive => upward
+    | .negative => downward
+  map_one' := rfl
+  map_mul' s t := by cases s <;> cases t <;> rfl
 
 end ContextPolarity
 
@@ -472,18 +522,22 @@ def toContextPolarity (φ : Signature) : ContextPolarity :=
   else if project .forward φ == .reverse then .downward
   else .nonMonotonic
 
-/--
-`toContextPolarity` is a monoid homomorphism: composing signatures then
-coarsening gives the same result as coarsening then composing polarities.
-
-This theorem connects the fine-grained `Signature` monoid to the
-coarse `ContextPolarity` composition, ensuring the two systems can never
-disagree.
--/
-theorem toContextPolarity_compose (φ ψ : Signature) :
-    toContextPolarity (φ * ψ) =
-    (toContextPolarity φ).compose (toContextPolarity ψ) := by
+/-- Composing signatures then coarsening gives the same result as coarsening then composing
+context polarities. -/
+theorem toContextPolarity_mul (φ ψ : Signature) :
+    toContextPolarity (φ * ψ) = toContextPolarity φ * toContextPolarity ψ := by
   cases φ <;> cases ψ <;> rfl
+
+/-- `toContextPolarity` as a monoid homomorphism, so that the fine-grained signature monoid and
+its coarse quotient can never disagree. -/
+def toContextPolarityHom : Signature →* ContextPolarity where
+  toFun := toContextPolarity
+  map_one' := rfl
+  map_mul' := toContextPolarity_mul
+
+/-- The anti-morphism signature of sentential negation coarsens to the negative polarity. -/
+theorem toContextPolarity_antiAddMult :
+    antiAddMult.toContextPolarity = ContextPolarity.ofPolarity .negative := rfl
 
 /-- The projectivity signature of a position, as the monoid product of
 the signatures along its path, listed root-first (outermost context
