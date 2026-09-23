@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 public import Linglib.Fragments.Hindi.Case
-public import Linglib.Semantics.Causation.Chain
 public import Linglib.Semantics.ArgumentStructure.EventStructure
 public import Linglib.Studies.Lucy1994
 public import Linglib.Syntax.Voice.Basic
@@ -30,8 +29,8 @@ recorded here.
 
 ## Main definitions
 
-* `CausalChainPosition`, `Outranks`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic
-  hierarchy of (31) and the linking-by-viewpoint rule of (32)
+* `Subevent`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic hierarchy of (31) as the
+  causal order of subevents, the linking-by-viewpoint rule of (32), and the linking of (33)
 * `applicativeLinking`, `causativeLinking`, `verbLinking`, `addedTermRole` — the two
   transitivizations as `Voice`s, and the role their added participant takes
 * `TransitivizerSuffix`, `transitivizerSuffix` — the overt suffix, kept apart from the linking
@@ -39,7 +38,7 @@ recorded here.
 
 ## Main results
 
-* `linking_derives_completive`, `linking_derives_incompletive` — the split follows from (31)+(32)
+* `linking_derives_completive`, `linking_derives_incompletive` — the split follows from (31)–(33)
 * `causation_determines_linking` against `eventType_underdetermines_linking`,
   `stemClass_underdetermines_linking`, `suffix_underdetermines_linking` — what fixes the linking
   and what does not
@@ -63,64 +62,62 @@ recorded here.
 
 namespace Bohnemeyer2004
 
-open ArgumentStructure.EventStructure Aspect Causation Mayan Voice Yukatek
+open ArgumentStructure.EventStructure Aspect Mayan Voice Yukatek
 
 /-! ### Causal chain and thematic hierarchy -/
 
-/-- Thematic hierarchy from causal-chain position (31): the participant of a causing subevent
-outranks the participant of the caused subevent for linking. -/
-def Outranks : CausalChainPosition → CausalChainPosition → Prop
-  | .onset, .terminus => True
-  | _, _ => False
+/-- The subevents of the causal chain a clause expresses: a causing subevent and the subevent it
+causes. Yukatek clauses have at most two core arguments, so two subevents suffice for the
+hierarchy (31). -/
+inductive Subevent where
+  | causing
+  | caused
+  deriving DecidableEq, Fintype, Repr
 
-/-- The core term role (31)'s hierarchy projects a causal-chain position onto: the outranking
-participant is the A of a transitive clause, the outranked one its P. -/
-def termRole : CausalChainPosition → TermRole
-  | .onset => .A
-  | .terminus => .P
+/-- Subevents in causal order, the causing subevent first. The thematic hierarchy (31) ranks the
+participant of a causing subevent above the participant of the subevent it causes, so a
+participant of `a` outranks a participant of `b` exactly when `a < b`. -/
+instance : LinearOrder Subevent := .lift' Subevent.ctorIdx (by decide)
 
-/-- The marker set a core term role takes in Yukatek: A takes set A and P set B. The sole argument
-of an intransitive takes whichever the viewpoint selects — that is the split
+instance : BoundedOrder Subevent where
+  bot := .causing
+  bot_le := by decide
+  top := .caused
+  le_top := by decide
+
+/-- The core term role of a subevent's participant, (33a–b): the highest-ranking role is the A of
+a transitive clause and the lowest-ranking role its P. -/
+def termRole : Subevent → TermRole
+  | .causing => .A
+  | .caused => .P
+
+/-- The marker set a core term role takes in Yukatek, (33): A takes set A and P set B. The sole
+argument of an intransitive takes whichever the viewpoint selects, which is the split
 (`sMarkerFromViewpoint`). -/
 def markerOf : TermRole → Option MarkerSet
   | .A => some .setA
   | .P => some .setB
   | .S | .X => none
 
-/-- The thematic hierarchy is asymmetric: no position both outranks and is outranked by the
-same position. -/
-theorem outranks_asymm {a b : CausalChainPosition} (h : Outranks a b) :
-    ¬ Outranks b a := by
-  cases a <;> cases b <;> simp_all [Outranks]
-
-/-- The marker assignment respects the hierarchy: an outranking position is realized as A and so
-takes the subject marker, the position it outranks as P and so the object marker. The split thus
-follows from (31) via the term roles rather than being stipulated per position. -/
-theorem marker_respects_outranks {a b : CausalChainPosition} (h : Outranks a b) :
+/-- The marker assignment respects the hierarchy: the participant of the earlier subevent is
+realized as A and takes set A, the participant of the later one as P and takes set B. -/
+theorem markerOf_termRole_of_lt {a b : Subevent} (h : a < b) :
     markerOf (termRole a) = some .setA ∧ markerOf (termRole b) = some .setB := by
-  cases a <;> cases b <;> simp_all [Outranks, termRole, markerOf]
+  revert a b; decide
 
 /-! ### Linking by viewpoint -/
 
-/-- §7 rule (32): viewpoint aspect selects which end of the causal chain
-    provides the linking default.
+/-- Rule (32): viewpoint aspect aligns with an end of the causal chain, and the role there sets
+the default for linking. An imperfective viewpoint aligns with the initial subevent, making the
+highest-ranking role the default, the accusative pattern. A perfective one aligns with the final
+subevent or the chain as a whole, making the lowest-ranking role the default, the ergative
+pattern. -/
+def linkingDefault {α : Type*} [LE α] [BoundedOrder α] : Perfectivity → α
+  | .imperfective => ⊥
+  | .perfective => ⊤
 
-    - Imperfective viewpoints align with the initial (causing) subevent, so the highest-ranking
-      role is the default — the accusative pattern.
-    - Perfective viewpoints align with the final (caused) subevent or the chain as a whole, so the
-      lowest-ranking role is the default — the ergative pattern. -/
-def linkingDefault : Perfectivity → CausalChainPosition
-  | .imperfective => .onset
-  | .perfective => .terminus
-
-/-- The marker the sole argument (S) of an intransitive receives, derived by
-    composing rule (32) (viewpoint → default position) with rule (31)'s
-    hierarchy projection (position → term role → marker).
-    The split *falls out* of the causal chain rather than being stipulated
-    per viewpoint.
-
-    - Onset default (imperfective): S patterns with A, taking set A.
-    - Terminus default (perfective): S patterns with U, taking set B. -/
+/-- The marker of the sole argument S of an intransitive. S is unranked, so by (33c) it follows
+the default that the viewpoint selects by (32), and takes the marker of that role. -/
 def sMarkerFromViewpoint (v : Perfectivity) : Option MarkerSet :=
   markerOf (termRole (linkingDefault v))
 
