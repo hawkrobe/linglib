@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.Romance.Italian.PolarityItems
 public import Linglib.Semantics.Mood.Defs
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.Judgment
 
 /-!
@@ -80,17 +81,11 @@ def Construction.Precise (c : Construction) : Prop := c = .equality ∨ c = .exp
 
 instance (c : Construction) : Decidable c.Precise := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The polarity of the matrix clause. -/
-inductive Matrix where
-  | affirmative
-  | negated
-  deriving DecidableEq, Repr
-
 /-- A discourse move hosting a *non₂* candidate. -/
 structure Move where
   priorBelief : PriorBelief
   force : Illocutionary
-  matrix : Matrix
+  matrix : Polarity
   construction : Construction
   deriving DecidableEq, Repr
 
@@ -98,7 +93,7 @@ structure Move where
 from the interlocutor's discourse, the move is an assertion, the matrix is affirmative, and the
 construction does not demand precision. -/
 def Move.Licensed (m : Move) : Prop :=
-  m.priorBelief = .inferred ∧ m.force = .declarative ∧ m.matrix = .affirmative ∧
+  m.priorBelief = .inferred ∧ m.force = .declarative ∧ m.matrix = .positive ∧
     ¬ m.construction.Precise
 
 instance (m : Move) : Decidable m.Licensed := inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
@@ -118,7 +113,7 @@ structure Row where
 
 /-- An assertion of *Maria è più intelligente di quanto non sia Carlo* against a prior belief of
 the given status. -/
-def assertion (b : PriorBelief) : Move := ⟨b, .declarative, .affirmative, .piu⟩
+def assertion (b : PriorBelief) : Move := ⟨b, .declarative, .positive, .piu⟩
 
 /-- Dario gives no opinion of Maria or Carlo; Paolo asserts that Maria is more intelligent. -/
 def noOpinionContext : Row := ⟨assertion .absent, .unacceptable⟩
@@ -136,33 +131,33 @@ def complaintContext : Row := ⟨assertion .inferred, .acceptable⟩
 
 /-- *È più intelligente di quanto non sia Carlo?*: the move is a question. -/
 def questionedComparative : Row :=
-  ⟨⟨.inferred, .interrogative, .affirmative, .piu⟩, .unacceptable⟩
+  ⟨⟨.inferred, .interrogative, .positive, .piu⟩, .unacceptable⟩
 
 /-- *Maria non è più intelligente di quanto non sia Carlo*: the matrix is negated. -/
 def matrixNegatedComparative : Row :=
-  ⟨⟨.inferred, .declarative, .negated, .piu⟩, .unacceptable⟩
+  ⟨⟨.inferred, .declarative, .negative, .piu⟩, .unacceptable⟩
 
 /-- *Maria è tanto intelligente quanto è Carlo*: an equality comparative demands precise
 knowledge of the compared degrees. -/
 def equalityComparative : Row :=
-  ⟨⟨.inferred, .declarative, .affirmative, .equality⟩, .unacceptable⟩
+  ⟨⟨.inferred, .declarative, .positive, .equality⟩, .unacceptable⟩
 
 /-- *Molto più intelligente*, *due metri più alta*: an explicit degree modifier demands precise
 knowledge of the gap. -/
 def precisionComparative : Row :=
-  ⟨⟨.inferred, .declarative, .affirmative, .explicitDegree⟩, .unacceptable⟩
+  ⟨⟨.inferred, .declarative, .positive, .explicitDegree⟩, .unacceptable⟩
 
 /-- *Maria è meno intelligente di quanto tu non creda*: a *meno*-comparative admits *non₂* under
 the same conditions as *più*, while a negated equality comparative, semantically close to it,
 rejects *non₂*, so the equality restriction cannot reduce to equality linking two similar things
 (contra [seuren-1969] and [antinucci-puglielli-1971]). -/
 def menoComparative : Row :=
-  ⟨⟨.inferred, .declarative, .affirmative, .meno⟩, .acceptable⟩
+  ⟨⟨.inferred, .declarative, .positive, .meno⟩, .acceptable⟩
 
 /-- *Chissà se non vale la pena di comprarlo*: an indirect question whose negated proposition the
 speaker presupposes to be contrary to expectation. -/
 def chissaSeNon : Row :=
-  ⟨⟨.inferred, .declarative, .affirmative, .indirectQuestion⟩, .acceptable⟩
+  ⟨⟨.inferred, .declarative, .positive, .indirectQuestion⟩, .acceptable⟩
 
 /-- The paper's acceptability paradigm. -/
 def paradigm : List Row :=

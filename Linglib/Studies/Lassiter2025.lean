@@ -193,8 +193,8 @@ def Position.polarity (ct : Reading) : Position → ContextPolarity
   | .embedded c => ct.clausePolarity .antecedent * Reading.hypothetical.clausePolarity c
 
 /-- The scalar context a position provides: downward-entailing positions reverse the scale. -/
-def Position.contextType (ct : Reading) (pos : Position) : Israel2001.ContextType :=
-  if pos.polarity ct = .downward then .reversing else .preserving
+def Position.contextType (ct : Reading) (pos : Position) : Polarity :=
+  if pos.polarity ct = .downward then .negative else .positive
 
 /-- The item `e` is admitted at `pos` under the reading `ct` when the position provides the
 context it is sensitive to. -/
@@ -219,14 +219,14 @@ sensitive to preserving contexts, *rather pleased* in (29), and not the minimize
 finger* of (30). -/
 theorem bare_embedded_consequent (e : Item) :
     Acceptable (.nested .bare) (admits · (.embedded .consequent) e) ↔
-      Israel2001.Item.contextType e = some .preserving :=
+      Israel2001.Item.contextType e = some .positive :=
   acceptable_bare_iff _
 
 /-- In the antecedent of its embedded conditional, a bare left-nested conditional hosts items
 sensitive to reversing contexts: *lifted a finger* in (32b). -/
 theorem bare_embedded_antecedent (e : Item) :
     Acceptable (.nested .bare) (admits · (.embedded .antecedent) e) ↔
-      Israel2001.Item.contextType e = some .reversing :=
+      Israel2001.Item.contextType e = some .negative :=
   acceptable_bare_iff _
 
 /-- The diagnostic's force: on a hypothetical reading the embedded consequent would reverse the

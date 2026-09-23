@@ -5,6 +5,7 @@ public import Mathlib.Algebra.Group.Action.Units
 public import Mathlib.Algebra.Module.NatInt
 public import Mathlib.Algebra.Ring.Int.Units
 public import Mathlib.Order.BooleanAlgebra.Set
+public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -19,7 +20,9 @@ notion of polarity in the library is an action of this one group:
 * the polarity of an antonym acts on degrees by negation (`negative • x = -x`) and on scales by
   duality (`Semantics/Degree/Antonymy`);
 * the relative polarity of a response to an antecedent, [same] or [reverse], is the product of
-  their polarities.
+  their polarities;
+* the direction of a function, strictly monotone or strictly antitone (`StrictDirected`), with
+  directions composing as polarities multiply.
 
 Since these are one group acting in different ways, their interaction is statable: the negative
 antonym *short* measures on the dual scale of *tall*, while sentential negation takes the
@@ -103,5 +106,24 @@ instance [AddCommGroup α] : MulAction Polarity α :=
 
 @[simp] theorem negative_smul [AddCommGroup α] (x : α) : negative • x = -x :=
   show ((-1 : ℤˣ) : ℤ) • x = -x by simp
+
+section Directed
+
+variable {α β γ : Type*} [Preorder α] [Preorder β] [Preorder γ]
+
+/-- A function directed by a polarity: strictly monotone under the positive polarity, strictly
+antitone under the negative one. -/
+def StrictDirected : Polarity → (α → β) → Prop
+  | positive, f => StrictMono f
+  | negative, f => StrictAnti f
+
+/-- Directions compose as polarities multiply. -/
+theorem StrictDirected.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.StrictDirected g)
+    (hf : t.StrictDirected f) : (s * t).StrictDirected (g ∘ f) := by
+  cases s <;> cases t
+  exacts [StrictMono.comp hg hf, StrictMono.comp_strictAnti hg hf,
+    StrictAnti.comp_strictMono hg hf, StrictAnti.comp hg hf]
+
+end Directed
 
 end Polarity
