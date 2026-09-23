@@ -3,42 +3,27 @@ module
 public import Linglib.Semantics.Modality.Basic
 
 /-!
-# Nez Perce Modal Inventory
+# Nez Perce modals
 
-[deal-2011] [matthewson-2016]
+The modal vocabulary of Nez Perce (Sahaptian, ISO 639-3 `nez`) as [deal-2011] §2 surveys it,
+divided into epistemic and nonepistemic expressions. The nonepistemic ones are the productive
+verbal suffix *o'qa*, with deontic, pure circumstantial and counterfactual readings; the
+participial construction in *-(n/t)e's* with a copula, expressing a circumstantial possibility
+akin to English *-able* and teleological modality; and the unproductive suffix *'ax̂*, which the
+speakers who have it judge equivalent to *o'qa*. The epistemic ones are particles, *o'qa* never
+being epistemic.
 
-Nez Perce (Sahaptian, ISO 639-3 `nez`) circumstantial modal system.
-Nez Perce is a key example of a language with **modals without duals**
-([matthewson-2016] §18.3.2): the circumstantial modal *o'qa* is
-a possibility modal that appears to have both possibility and necessity
-readings, but [deal-2011] argues it is semantically a pure
-possibility modal whose apparent necessity readings arise from the
-absence of a contrasting necessity modal.
+## Implementation notes
 
-## Key data ([deal-2011] (51)–(52), p. 574; [matthewson-2016] (39)–(40))
+* Counterfactual and teleological readings count as circumstantial, the library's flavours
+  drawing no finer line.
+* Of the epistemic particles only *pay's* and *páalwit* 'maybe' are entered. *'éete* 'surely,
+  I guess', glossed as inferential, co-occurs with *pay's* for 'maybe', and *ku'(nu) weet*
+  'dunno whether' is an ignorance marker with the yes/no particle; neither has a settled force.
 
-(51) *hi-wqíi-cix-∅ 'iléx̂ni hipt ke yox̂ hi-pá-ap-o'qa*
-     a. 'They are throwing away a lot of food that they could eat.'
-     b. 'They are throwing away a lot of food that they should eat.'
+## References
 
-(52) *hi-wqíi-cix-∅ 'óykala hipt ke yox̂ hi-pá-ap-o'qa*
-     a. 'They are throwing away all the food that they could eat. They are
-        throwing away all their food.'
-     b. # 'They are throwing away all the food that they should eat (but
-        keeping some junk food).'
-
-In downward-entailing environments such as the restriction of 'óykala 'all' in (52), *o'qa*
-behaves only as a possibility modal — the necessity translation is unavailable.
-This parallels how English *some* fails to implicate *not all* under
-downward-entailing operators.
-
-## Analysis
-
-[deal-2011]: *o'qa* is a possibility modal acceptable in
-non-downward-entailing necessity contexts because there is no
-contrasting necessity modal to induce a scalar implicature.
-The system parallels what English nominal quantification would look
-like with *some* but no *all* or *every*.
+* [deal-2011]
 -/
 
 @[expose] public section
@@ -47,15 +32,35 @@ namespace NezPerce
 
 open Modality (ForceFlavor ModalItem)
 
+abbrev pd : ForceFlavor := (.possibility, .deontic)
 abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+abbrev pe : ForceFlavor := (.possibility, .epistemic)
 
-/-! ## Modal expressions -/
+/-! ### Nonepistemic modals -/
 
-/-- Circumstantial possibility modal without a necessity dual. [deal-2011]: a pure possibility
-    modal (∃ over circumstantially accessible worlds) outside any Horn scale, so no scalar
-    implicature keeps it out of necessity contexts in upward-entailing environments. -/
-def oqa : ModalItem := { form := "o'qa", meaning := {pc} }
+/-- The suffix *o'qa* (allomorphs *yo'qa*, *no'qa*), a possibility modal read deontically, pure
+circumstantially and counterfactually, never epistemically or teleologically ([deal-2011]
+§2.2–2.6). -/
+def oqa : ModalItem := { form := "o'qa", meaning := {pd, pc} }
 
-def modals : List ModalItem := [oqa]
+/-- The participial construction, the deverbalizing suffix *-(n/t)e's* with a copula: a
+circumstantial possibility akin to English *-able*, and teleological modality, never deontic or
+counterfactual ([deal-2011] §2.6). -/
+def participialEs : ModalItem := { form := "-(n/t)e's", meaning := {pc} }
+
+/-- The suffix *'ax̂*, no longer productive, which the speakers who have it judge essentially
+equivalent to *o'qa* in meaning ([deal-2011] §2.6). -/
+def ax : ModalItem := { form := "'ax̂", meaning := oqa.meaning }
+
+/-! ### Epistemic particles -/
+
+/-- The particle *pay's* 'maybe' ([deal-2011] §2.5). -/
+def pays : ModalItem := { form := "pay's", meaning := {pe} }
+
+/-- The particle *páalwit* 'maybe, perhaps' ([deal-2011] §2.5). -/
+def paalwit : ModalItem := { form := "páalwit", meaning := {pe} }
+
+/-- The modals [deal-2011] §2 surveys. -/
+def modals : List ModalItem := [oqa, participialEs, ax, pays, paalwit]
 
 end NezPerce
