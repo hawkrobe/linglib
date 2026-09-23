@@ -16,7 +16,9 @@ ein*, *no* vs *not some*, and the polarity items they admit — classify a quest
 those judgements.
 
 The three question types are the substrate's `PQForm`: `PosQ` is the paper's PPQ, `LoNQ` its
-inner-negation NPQ, `HiNQ` its outer-negation NPQ.
+inner-negation NPQ, `HiNQ` its outer-negation NPQ. The contextual evidence of a situation is the
+polarity of `p` it supports, if any, and reading it relative to `¬p` is the action of the negative
+polarity.
 
 ## Main definitions
 
@@ -26,7 +28,6 @@ inner-negation NPQ, `HiNQ` its outer-negation NPQ.
 ## Main results
 
 * `posQ_condition`, `hiNQ_condition`, `loNQ_condition` — the three evidence conditions
-* `felicitous_iff_evidenceBiasOK` — the derived conditions are the substrate's bias table
 * `felicity_separates_forms` — no two question types share a felicity profile
 * `outer_is_interrogative_only` — only inner-negation determiners occur in declaratives
 * `wellFormed_iff_determiner_form` — the determiner and the polarity item classify a question alike
@@ -46,79 +47,64 @@ open Question
 
 /-! ### Compelling contextual evidence -/
 
-/-- The contextual evidence of a situation, read relative to `¬p` rather than `p`: evidence for `p`
-is evidence against `¬p`. -/
-def negate : ContextualEvidence → ContextualEvidence
-  | .forP => .againstP
-  | .neutral => .neutral
-  | .againstP => .forP
-
-@[simp] theorem negate_negate (ev : ContextualEvidence) : negate (negate ev) = ev := by
-  cases ev <;> rfl
-
 /-- Compelling evidence for `p`: evidence that would on its own justify the inference that `p`. -/
-def CompellingFor (ev : ContextualEvidence) : Prop := ev = .forP
+def CompellingFor (ev : Option Polarity) : Prop := ev = some .positive
 
-/-- Compelling evidence against `p`: compelling evidence for `¬p`. -/
-def CompellingAgainst (ev : ContextualEvidence) : Prop := CompellingFor (negate ev)
+/-- Compelling evidence against `p`: compelling evidence for `¬p`, the evidence read relative to
+`¬p`. -/
+def CompellingAgainst (ev : Option Polarity) : Prop := CompellingFor (Polarity.negative • ev)
 
-instance (ev : ContextualEvidence) : Decidable (CompellingFor ev) :=
+instance (ev : Option Polarity) : Decidable (CompellingFor ev) :=
   inferInstanceAs (Decidable (_ = _))
 
-instance (ev : ContextualEvidence) : Decidable (CompellingAgainst ev) :=
+instance (ev : Option Polarity) : Decidable (CompellingAgainst ev) :=
   inferInstanceAs (Decidable (CompellingFor _))
 
 /-! ### The evidence conditions -/
 
 /-- The proto-condition: there is no compelling contextual evidence against `p`. -/
-def E (ev : ContextualEvidence) : Prop := ¬ CompellingAgainst ev
+def E (ev : Option Polarity) : Prop := ¬ CompellingAgainst ev
 
-instance (ev : ContextualEvidence) : Decidable (E ev) := inferInstanceAs (Decidable ¬ _)
+instance (ev : Option Polarity) : Decidable (E ev) := inferInstanceAs (Decidable ¬ _)
 
 /-- The felicity condition of each question type, as one proto-condition applied three ways: a
 positive question imposes it on its own proposition, an outer-negation question on the negation,
 and an inner-negation question imposes its negation. -/
-def Felicitous : PQForm → ContextualEvidence → Prop
+def Felicitous : PQForm → Option Polarity → Prop
   | .PosQ, ev => E ev
   | .LoNQ, ev => ¬ E ev
-  | .HiNQ, ev => E (negate ev)
+  | .HiNQ, ev => E (Polarity.negative • ev)
 
-instance : ∀ (f : PQForm) (ev : ContextualEvidence), Decidable (Felicitous f ev)
+instance : ∀ (f : PQForm) (ev : Option Polarity), Decidable (Felicitous f ev)
   | .PosQ, ev => inferInstanceAs (Decidable (E ev))
   | .LoNQ, ev => inferInstanceAs (Decidable ¬ E ev)
-  | .HiNQ, ev => inferInstanceAs (Decidable (E (negate ev)))
+  | .HiNQ, ev => inferInstanceAs (Decidable (E (Polarity.negative • ev)))
 
 /-- A positive question requires no compelling evidence against `p`. -/
-theorem posQ_condition (ev : ContextualEvidence) :
+theorem posQ_condition (ev : Option Polarity) :
     Felicitous .PosQ ev ↔ ¬ CompellingAgainst ev := Iff.rfl
 
 /-- An outer-negation question requires no compelling evidence *for* `p`. -/
-theorem hiNQ_condition (ev : ContextualEvidence) :
+theorem hiNQ_condition (ev : Option Polarity) :
     Felicitous .HiNQ ev ↔ ¬ CompellingFor ev := by
-  cases ev <;> simp [Felicitous, E, CompellingAgainst, CompellingFor, negate]
+  decide +revert
 
 /-- An inner-negation question requires compelling evidence against `p`. -/
-theorem loNQ_condition (ev : ContextualEvidence) :
+theorem loNQ_condition (ev : Option Polarity) :
     Felicitous .LoNQ ev ↔ CompellingAgainst ev := by
-  cases ev <;> simp [Felicitous, E, CompellingAgainst, CompellingFor, negate]
-
-/-- The derived conditions are exactly the substrate's contextual-evidence bias table, so the three
-rows of that table follow from the single proto-condition instead of being stipulated. -/
-theorem felicitous_iff_evidenceBiasOK (f : PQForm) (ev : ContextualEvidence) :
-    Felicitous f ev ↔ evidenceBiasOK f ev = true := by
-  cases f <;> cases ev <;> decide
+  decide +revert
 
 /-- A positive question is barred by compelling evidence against `p` — *Is it sunny?* asked of
 someone in a dripping raincoat. -/
-theorem posQ_infelicitous_against : ¬ Felicitous .PosQ .againstP := by decide
+theorem posQ_infelicitous_against : ¬ Felicitous .PosQ (some .negative) := by decide
 
 /-- An inner-negation question is felicitous only against `p`, the neutral context included in the
 exclusion. -/
-theorem loNQ_only_against (ev : ContextualEvidence) : Felicitous .LoNQ ev ↔ ev = .againstP := by
-  cases ev <;> decide
+theorem loNQ_only_against (ev : Option Polarity) : Felicitous .LoNQ ev ↔ ev = some .negative := by
+  decide +revert
 
 /-- An outer-negation question tolerates a neutral context, unlike an inner-negation one. -/
-theorem hiNQ_neutral_loNQ_not : Felicitous .HiNQ .neutral ∧ ¬ Felicitous .LoNQ .neutral := by decide
+theorem hiNQ_neutral_loNQ_not : Felicitous .HiNQ none ∧ ¬ Felicitous .LoNQ none := by decide
 
 /-- No two question types share a felicity profile: the predicted synonymies of a Hamblin
 denotation ([hamblin-1973b]) are not real. -/
@@ -127,8 +113,8 @@ theorem felicity_separates_forms (f g : PQForm) (h : ∀ ev, Felicitous f ev ↔
   cases f <;> cases g <;>
     first
       | rfl
-      | exact absurd (h .neutral) (by decide)
-      | exact absurd (h .forP) (by decide)
+      | exact absurd (h none) (by decide)
+      | exact absurd (h (some .positive)) (by decide)
 
 /-! ### The morphosyntactic probes -/
 
@@ -223,12 +209,5 @@ does, so either probe alone settles the reading. -/
 theorem wellFormed_iff_determiner_form (d : Determiner) (pi : PolarityItem) :
     (Question.mk d (some pi)).WellFormed ↔ pi.polarity.scope.form = d.scope.form := by
   cases d <;> cases pi <;> decide
-
-/-- The two probes and the evidence conditions are independent diagnostics of the same
-distinction: the reading a well-formed question's determiner fixes is felicitous exactly where the
-corresponding evidence condition holds. -/
-theorem probed_felicity (q : Question) (ev : ContextualEvidence) :
-    Felicitous q.determiner.scope.form ev ↔ evidenceBiasOK q.determiner.scope.form ev = true :=
-  felicitous_iff_evidenceBiasOK _ _
 
 end BuringGunlogson2000

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Bias
+public import Linglib.Studies.BuringGunlogson2000
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Semantics.Presupposition.Defs
@@ -70,15 +70,11 @@ open Question Data.Examples
 
 /-- The contextual evidence a conflict-resolving question of the given polarity rests on:
 evidence for the prejacent as asked. -/
-def evidence : Polarity → ContextualEvidence
-  | .positive => .forP
-  | .negative => .againstP
+def evidence (s : Polarity) : Option Polarity := some s
 
 /-- The prior epistemic bias a conflict-resolving question of the given polarity
 double-checks: against the prejacent as asked. -/
-def prior : Polarity → OriginalBias
-  | .positive => .againstP
-  | .negative => .forP
+def prior (s : Polarity) : Option Polarity := some (.negative * s)
 
 /-- The polarity of a [romero-2024] question form. -/
 def polarityOf : PQForm → Polarity
@@ -112,59 +108,60 @@ instance : DecidablePred CzechPQForm.Declarative := fun f => by
 
 /-- Table 2: the forms natural in each cell of contextual evidence by prior epistemic
 bias, the starred DeclPPQ of the neutral cell left to `czechFelicitous`. -/
-def czechBiasProfile : ContextualEvidence → OriginalBias → Finset CzechPQForm
-  | .forP, .forP => ∅
-  | .forP, .neutral => {.declPPQ, .interNPQ}
-  | .forP, .againstP => {.declPPQ}
-  | .neutral, .forP => {.interPPQ, .interNPQ}
-  | .neutral, .neutral => {.interPPQ}
-  | .neutral, .againstP => ∅
-  | .againstP, .forP => {.declNPQ, .interNPQ}
-  | .againstP, .neutral => {.declNPQ}
-  | .againstP, .againstP => ∅
+def czechBiasProfile : Option Polarity → Option Polarity → Finset CzechPQForm
+  | some .positive, some .positive => ∅
+  | some .positive, none => {.declPPQ, .interNPQ}
+  | some .positive, some .negative => {.declPPQ}
+  | none, some .positive => {.interPPQ, .interNPQ}
+  | none, none => {.interPPQ}
+  | none, some .negative => ∅
+  | some .negative, some .positive => {.declNPQ, .interNPQ}
+  | some .negative, none => {.declNPQ}
+  | some .negative, some .negative => ∅
 
 /-- The forms felicitous in a cell, admitting the unbiased declarative of (18) when a
 contrastive topic claims the initial position. -/
-def czechFelicitous (ev : ContextualEvidence) (ob : OriginalBias) (ct : Bool) :
+def czechFelicitous (ev : Option Polarity) (ob : Option Polarity) (ct : Bool) :
     Finset CzechPQForm :=
-  if ct ∧ ev = .neutral ∧ ob = .neutral then insert .declPPQ (czechBiasProfile ev ob)
+  if ct ∧ ev = none ∧ ob = none then insert .declPPQ (czechBiasProfile ev ob)
   else czechBiasProfile ev ob
 
-variable (ev : ContextualEvidence) (ob : OriginalBias)
+variable (ev : Option Polarity) (ob : Option Polarity)
 
 /-- The default form is natural exactly without evidence and without a prior against
 the prejacent. -/
 theorem interPPQ_mem_iff :
-    .interPPQ ∈ czechBiasProfile ev ob ↔ ev = .neutral ∧ ob ≠ .againstP := by
-  cases ev <;> cases ob <;> decide
+    .interPPQ ∈ czechBiasProfile ev ob ↔ ev = none ∧ ob ≠ some .negative := by
+  decide +revert
 
 /-- DeclPPQ needs positive evidence and no prior for the prejacent. -/
 theorem declPPQ_mem_iff :
-    .declPPQ ∈ czechBiasProfile ev ob ↔ ev = .forP ∧ ob ≠ .forP := by
-  cases ev <;> cases ob <;> decide
+    .declPPQ ∈ czechBiasProfile ev ob ↔ ev = some .positive ∧ ob ≠ some .positive := by
+  decide +revert
 
 /-- DeclNPQ needs negative evidence and no prior against the prejacent. -/
 theorem declNPQ_mem_iff :
-    .declNPQ ∈ czechBiasProfile ev ob ↔ ev = .againstP ∧ ob ≠ .againstP := by
-  cases ev <;> cases ob <;> decide
+    .declNPQ ∈ czechBiasProfile ev ob ↔ ev = some .negative ∧ ob ≠ some .negative := by
+  decide +revert
 
 /-- InterNPQ conveys a prior for the prejacent, with neutral or conflicting evidence, or
 else positive evidence without a prior (the explanation-seeking (17)). -/
 theorem interNPQ_mem_iff :
     .interNPQ ∈ czechBiasProfile ev ob ↔
-      ob = .forP ∧ ev ≠ .forP ∨ ev = .forP ∧ ob = .neutral := by
-  cases ev <;> cases ob <;> decide
+      ob = some .positive ∧ ev ≠ some .positive ∨ ev = some .positive ∧ ob = none := by
+  decide +revert
 
 /-- Declarative questions are specialized for evidential bias ([gunlogson-2002]). -/
 theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.Declarative)
-    (h : f ∈ czechBiasProfile ev ob) : ev ≠ .neutral := by
-  revert hf h; cases f <;> cases ev <;> cases ob <;> decide
+    (h : f ∈ czechBiasProfile ev ob) : ev ≠ none := by
+  revert hf h; decide +revert
 
-/-- Czech high negation is broader than English: felicitous under positive evidence,
-which [romero-2024]'s table excludes. -/
+/-- Czech high negation is broader than English: felicitous under positive evidence, which the
+evidence condition of [buring-gunlogson-2000] on outer negation excludes. -/
 theorem interNPQ_broader_than_english_hiNQ :
-    .interNPQ ∈ czechBiasProfile .forP .neutral ∧ evidenceBiasOK .HiNQ .forP = false :=
-  ⟨by decide, rfl⟩
+    .interNPQ ∈ czechBiasProfile (some .positive) none ∧
+      ¬ BuringGunlogson2000.Felicitous .HiNQ (some .positive) := by
+  decide
 
 /-! ### The cleaning scenarios (11)–(18) -/
 
@@ -175,12 +172,12 @@ def form? (e : LinguisticExample) : Option CzechPQForm :=
      ("declNPQ", .declNPQ)]
 
 /-- The contextual evidence of a row's scenario. -/
-def evidence? (e : LinguisticExample) : Option ContextualEvidence :=
-  e.parse? "evidence" [("forP", .forP), ("neutral", .neutral), ("againstP", .againstP)]
+def evidence? (e : LinguisticExample) : Option (Option Polarity) :=
+  e.parse? "evidence" [("forP", some .positive), ("neutral", none), ("againstP", some .negative)]
 
 /-- The speaker's prior epistemic bias in a row's scenario. -/
-def epistemic? (e : LinguisticExample) : Option OriginalBias :=
-  e.parse? "epistemic" [("forP", .forP), ("neutral", .neutral), ("againstP", .againstP)]
+def epistemic? (e : LinguisticExample) : Option (Option Polarity) :=
+  e.parse? "epistemic" [("forP", some .positive), ("neutral", none), ("againstP", some .negative)]
 
 /-- Whether a row's scenario places a contrastive topic clause-initially. -/
 def contrastiveTopic (e : LinguisticExample) : Bool :=
@@ -339,48 +336,48 @@ def SerbianPQForm.toPQForm : SerbianPQForm → PQForm
   | .lnpq => .LoNQ
 
 /-- Table 1: the Serbian strategies natural in each cell, after [todorovic-2023]. -/
-def serbianBiasProfile : ContextualEvidence → OriginalBias → Finset SerbianPQForm
-  | .forP, .forP => ∅
-  | .forP, .neutral => {.jeLiPPQ}
-  | .forP, .againstP => ∅
-  | .neutral, .forP => {.jeLiPPQ}
-  | .neutral, .neutral => {.daLiPPQ, .jeLiPPQ}
-  | .neutral, .againstP => {.lnpq}
-  | .againstP, .forP => {.lnpq, .hnpq}
-  | .againstP, .neutral => {.lnpq}
-  | .againstP, .againstP => ∅
+def serbianBiasProfile : Option Polarity → Option Polarity → Finset SerbianPQForm
+  | some .positive, some .positive => ∅
+  | some .positive, none => {.jeLiPPQ}
+  | some .positive, some .negative => ∅
+  | none, some .positive => {.jeLiPPQ}
+  | none, none => {.daLiPPQ, .jeLiPPQ}
+  | none, some .negative => {.lnpq}
+  | some .negative, some .positive => {.lnpq, .hnpq}
+  | some .negative, none => {.lnpq}
+  | some .negative, some .negative => ∅
 
 /-- *da li* questions are limited to neutral contexts. -/
 theorem daLiPPQ_mem_iff :
-    .daLiPPQ ∈ serbianBiasProfile ev ob ↔ ev = .neutral ∧ ob = .neutral := by
-  cases ev <;> cases ob <;> decide
+    .daLiPPQ ∈ serbianBiasProfile ev ob ↔ ev = none ∧ ob = none := by
+  decide +revert
 
 /-- *je li* questions have the broader distribution. -/
 theorem jeLiPPQ_of_daLiPPQ (h : .daLiPPQ ∈ serbianBiasProfile ev ob) :
     .jeLiPPQ ∈ serbianBiasProfile ev ob := by
-  revert h; cases ev <;> cases ob <;> decide
+  revert h; decide +revert
 
 /-- Positive questions are incompatible with negative biases. -/
 theorem ppq_no_negative_bias (f : SerbianPQForm) (hf : f.toPQForm = .PosQ)
-    (h : f ∈ serbianBiasProfile ev ob) : ev ≠ .againstP ∧ ob ≠ .againstP := by
-  revert hf h; cases f <;> cases ev <;> cases ob <;> decide
+    (h : f ∈ serbianBiasProfile ev ob) : ev ≠ some .negative ∧ ob ≠ some .negative := by
+  revert hf h; decide +revert
 
 /-- High negation resolves a conflict between a prior for the prejacent and evidence
 against it, and nothing else. -/
 theorem hnpq_mem_iff :
-    .hnpq ∈ serbianBiasProfile ev ob ↔ ev = .againstP ∧ ob = .forP := by
-  cases ev <;> cases ob <;> decide
+    .hnpq ∈ serbianBiasProfile ev ob ↔ ev = some .negative ∧ ob = some .positive := by
+  decide +revert
 
 /-- Low negation has the broader distribution among negative questions. -/
 theorem lnpq_of_hnpq (h : .hnpq ∈ serbianBiasProfile ev ob) :
     .lnpq ∈ serbianBiasProfile ev ob := by
-  revert h; cases ev <;> cases ob <;> decide
+  revert h; decide +revert
 
-/-- Serbian high negation is narrower than English: the suggestion scenarios of
-[romero-2024]'s table, neutral evidence, admit no Serbian HNPQ. -/
+/-- Serbian high negation is narrower than English: neutral evidence, which the evidence
+condition of [buring-gunlogson-2000] on outer negation admits, admits no Serbian HNPQ. -/
 theorem serbian_hnpq_narrower_than_english :
-    evidenceBiasOK .HiNQ .neutral = true ∧ ∀ ob, .hnpq ∉ serbianBiasProfile .neutral ob :=
-  ⟨rfl, fun ob => by cases ob <;> decide⟩
+    BuringGunlogson2000.Felicitous .HiNQ none ∧ ∀ ob, .hnpq ∉ serbianBiasProfile none ob := by
+  decide
 
 /-- The quiz rows of (31) carry the markers of the Table 1 strategies. -/
 theorem ex31_markers :
@@ -393,7 +390,7 @@ theorem ex31_markers :
 /-- The quiz-versus-information-seeking contrast: *je li* is natural in the neutral cell
 of Table 1 yet infelicitous in the quiz (31b), where *da li* is felicitous (31a). -/
 theorem jeLi_neutral_yet_quiz_infelicitous :
-    .jeLiPPQ ∈ serbianBiasProfile .neutral .neutral ∧
+    .jeLiPPQ ∈ serbianBiasProfile none none ∧
       Examples.ex31b.judgment = .unacceptable ∧ Examples.ex31a.judgment = .acceptable := by
   decide
 
@@ -435,13 +432,14 @@ end Wonder
 
 /-- The bias profile of a *razve* question by form: evidence for the prejacent as asked
 against a prior for its negation (the conflict-resolving profile of §3.1). -/
-def razveProfile (f : PQForm) : ContextualEvidence × OriginalBias :=
+def razveProfile (f : PQForm) : Option Polarity × Option Polarity :=
   (evidence (polarityOf f), prior (polarityOf f))
 
 /-- The profile of *razve* negative questions is the same under inner negation (VERUM)
 and outer negation (FALSUM): negative evidence, positive prior. -/
 theorem razveProfile_negation_invariant :
-    razveProfile .LoNQ = razveProfile .HiNQ ∧ razveProfile .HiNQ = (.againstP, .forP) :=
+    razveProfile .LoNQ = razveProfile .HiNQ ∧
+      razveProfile .HiNQ = (some .negative, some .positive) :=
   ⟨rfl, rfl⟩
 
 /-- *Razve* is compatible with both negations ([repp-geist-2022]'s LFs (40), diagnosed

@@ -124,11 +124,10 @@ theorem nandao_distribution :
       ¬ Mandarin.QuestionParticles.nandao.LicensedIn .constituent := by
   decide
 
-/-- *Nandao* marks contextual evidence for the prejacent, the paper's evidential bias. -/
-def nandaoContextualEvidence : Option Question.ContextualEvidence := some .forP
-
-/-- *Nandao* imposes no epistemic bias: it is compatible with a neutral prior state, (3). -/
-def nandaoOriginalBias : Option Question.OriginalBias := none
+/-- The bias profile of *nandao*: it requires contextual evidence for the prejacent, the paper's
+evidential bias, and places no requirement on the prior state of the speaker, so that a neutral
+prior state is compatible with it, (3). -/
+def nandaoProfile : Question.BiasProfile := ⟨.plus .positive, Finset.univ⟩
 
 /-! ### The dripping-raincoat scenario, (2), (3) and (5) -/
 

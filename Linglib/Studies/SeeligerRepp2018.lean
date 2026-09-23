@@ -1,9 +1,6 @@
 module
 
-public import Mathlib.Data.Finset.BooleanAlgebra
-public import Mathlib.Data.Finset.Prod
-public import Mathlib.Data.Fintype.Option
-public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Questions.Bias
 public import Linglib.Data.Examples.SeeligerRepp2018
 
 /-!
@@ -15,9 +12,8 @@ declarative denotes and a speaker who had not assumed it; a rejecting question s
 Peter is coming?*, German *Peter kommt doch wohl?*, Swedish *Men Peter kommer väl?*, requires
 evidence against it and a speaker who had assumed it. The profiles are stated in the
 two-dimensional bias scheme of [sudo-2013], evidential and epistemic, which the paper extends with
-'minus' values for epistemic bias (Section 2). A bias value is the set of contexts it is
-compatible with, a context being the polarity of the proposition the evidence supports or the
-speaker assumed, if any: [+s] is `plus s`, [−s] its complement `minus s`.
+'minus' values for epistemic bias (Section 2): the substrate's `Question.BiasValue`, a set of
+states of evidence or belief, [+s] being `plus s` and [−s] its complement `minus s`.
 
 Table 1's four types follow from the polarity of the declarative (`table1`): a declarative
 question of polarity `s` has evidential bias [+s] and epistemic bias [−s] (`declarative`), and the
@@ -63,46 +59,19 @@ with fronted negation or *väl*, a positive one with *men* 'but' and *väl*, or 
 
 namespace SeeligerRepp2018
 
-/-! ### Bias values (Section 2) -/
-
-/-- A context for one bias dimension, (3) and (4): the polarity of the proposition of the
-question denotation {p, ¬p} that the contextual evidence supports or the speaker assumed, `none`
-for neither. -/
-abbrev Context := Option Polarity
-
-/-- A bias value: the contexts it is compatible with. -/
-abbrev BiasValue := Finset Context
-
-/-- [+s]: compatible only with evidence for, or an assumption of, the `s` proposition. -/
-def plus (s : Polarity) : BiasValue := {some s}
-
-/-- [−s]: incompatible with evidence for, or an assumption of, the `s` proposition. -/
-def minus (s : Polarity) : BiasValue := (plus s)ᶜ
-
-/-- [neutral]: compatible only with neither. -/
-def neutral : BiasValue := {none}
-
-/-- A bias profile: the evidential and the epistemic bias values. -/
-structure Profile where
-  /-- The contextual evidence the question is compatible with. -/
-  evidential : BiasValue
-  /-- The prior assumptions of the speaker the question is compatible with. -/
-  epistemic : BiasValue
-  deriving DecidableEq
-
-/-- The situations a profile admits: pairs of contextual evidence and prior assumption. -/
-def Profile.felicity (b : Profile) : Finset (Context × Context) := b.evidential ×ˢ b.epistemic
+open Question (BiasValue BiasProfile)
+open Question.BiasValue (plus minus neutral)
 
 /-! ### Declarative and rejecting questions (Sections 2, 3 and 4.3) -/
 
 /-- A declarative question of polarity `s`: evidence for the proposition the declarative denotes,
 and a speaker who had not assumed it (Section 2). -/
-def declarative (s : Polarity) : Profile := ⟨plus s, minus s⟩
+def declarative (s : Polarity) : BiasProfile := ⟨plus s, minus s⟩
 
 /-- The preliminary REJECTQ (17), λq: [¬q]^evid & [q]^epist. {q, ¬q}, on the proposition of a
 declarative of polarity `s`: evidence for the opposite proposition, and a speaker who had
 assumed it. -/
-def rejectQ (s : Polarity) : Profile := ⟨plus (.negative * s), plus s⟩
+def rejectQ (s : Polarity) : BiasProfile := ⟨plus (.negative * s), plus s⟩
 
 /-- A rejecting question is used in a proper subset of the situations of the declarative question
 of the opposite polarity (p. 138): the negative one within the positive declarative question's,
@@ -129,7 +98,7 @@ def Modifier.bias : Modifier → Polarity → BiasValue
 /-- The revised REJECTQ (40), λqλIM: [IM(¬q)]^evid & [IM(q)]^epist. {IM(q), ¬IM(q)}, with `q` the
 non-negative proposition, as in (41): the positive rejecting question has VERUM, the negative one
 FALSUM. -/
-def rejectQIM (m : Modifier) : Profile := ⟨m.bias .negative, m.bias .positive⟩
+def rejectQIM (m : Modifier) : BiasProfile := ⟨m.bias .negative, m.bias .positive⟩
 
 /-- With VERUM, (40) agrees with (17) on the positive rejecting question. -/
 theorem rejectQIM_verum : rejectQIM .verum = rejectQ .positive := rfl
@@ -152,7 +121,7 @@ inductive Kind where
   deriving DecidableEq, Repr
 
 /-- The profile of a question of the given kind and polarity. -/
-def Kind.profile : Kind → Polarity → Profile
+def Kind.profile : Kind → Polarity → BiasProfile
   | .declarative => SeeligerRepp2018.declarative
   | .rejecting => rejectQ
 
@@ -174,7 +143,7 @@ structure Row where
   /-- The polarity of the declarative. -/
   polarity : Polarity
   /-- The recorded bias profile. -/
-  profile : Profile
+  profile : BiasProfile
   deriving DecidableEq
 
 /-- The row of an example annotated with a type and a bias profile. -/

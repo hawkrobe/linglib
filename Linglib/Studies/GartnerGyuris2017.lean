@@ -52,14 +52,8 @@ namespace GartnerGyuris2017
 
 open Question Data.Examples
 
-/-- A bias value: evidence or expectation for p (+), against p (−), or neither (%). -/
-inductive Bias where
-  | pos
-  | neg
-  | neut
-  deriving DecidableEq, Fintype
-
-/-- A bias choice: one of the seven nonempty sets of bias values. -/
+/-- A bias choice: one of the seven nonempty sets of states of evidence or expectation, for p
+(+), against p (−), or neither (%). -/
 inductive Choice where
   | pos
   | neg
@@ -70,15 +64,23 @@ inductive Choice where
   | all
   deriving DecidableEq, Fintype
 
-/-- The values a choice admits. -/
-def Choice.toFinset : Choice → Finset Bias
-  | .pos => {.pos}
-  | .neg => {.neg}
-  | .neut => {.neut}
-  | .posNeut => {.pos, .neut}
-  | .posNeg => {.pos, .neg}
-  | .negNeut => {.neg, .neut}
+/-- The states a choice admits. -/
+def Choice.toFinset : Choice → BiasValue
+  | .pos => {some .positive}
+  | .neg => {some .negative}
+  | .neut => {none}
+  | .posNeut => {some .positive, none}
+  | .posNeg => {some .positive, some .negative}
+  | .negNeut => {some .negative, none}
   | .all => Finset.univ
+
+/-- Five of the seven choices are the bias values of [sudo-2013]: [+positive], [+negative],
+[neutral], [−negative] and [−positive]. -/
+theorem Choice.toFinset_sudo :
+    Choice.pos.toFinset = .plus .positive ∧ Choice.neg.toFinset = .plus .negative ∧
+      Choice.neut.toFinset = .neutral ∧ Choice.posNeut.toFinset = .minus .negative ∧
+      Choice.negNeut.toFinset = .minus .positive := by
+  decide
 
 theorem card_choice : Fintype.card Choice = 7 := by decide
 
@@ -242,7 +244,7 @@ theorem card_markednessCollective :
 /-- Section 2.3.2, generalized Qualitative Markedness: the neutral value belongs to the positive
 question's cells and to no negative question's cell. -/
 abbrev QualitativeMarkedness : Profile → Prop :=
-  Cellwise λ c x => (c.form = .PosQ → .neut ∈ x.toFinset) ∧ (c.form ≠ .PosQ → .neut ∉ x.toFinset)
+  Cellwise λ c x => (c.form = .PosQ → none ∈ x.toFinset) ∧ (c.form ≠ .PosQ → none ∉ x.toFinset)
 
 theorem card_qualitativeMarkedness :
     Fintype.card {p : Profile // QualitativeMarkedness p} = 1296 :=
@@ -251,7 +253,8 @@ theorem card_qualitativeMarkedness :
 /-- Section 2.4, Avoid Disagreement: no negative value for a positive question, no positive value
 for a negative one. -/
 abbrev AvoidDisagreement : Profile → Prop :=
-  Cellwise λ c x => (c.form = .PosQ → .neg ∉ x.toFinset) ∧ (c.form ≠ .PosQ → .pos ∉ x.toFinset)
+  Cellwise λ c x => (c.form = .PosQ → some .negative ∉ x.toFinset) ∧
+    (c.form ≠ .PosQ → some .positive ∉ x.toFinset)
 
 theorem card_avoidDisagreement : Fintype.card {p : Profile // AvoidDisagreement p} = 729 :=
   (card_cellwise _).trans (by decide)
@@ -259,7 +262,8 @@ theorem card_avoidDisagreement : Fintype.card {p : Profile // AvoidDisagreement 
 /-- Section 2.4, Don't Rule Out Agreement: every positive-question cell admits the positive value
 and every negative-question cell the negative one. -/
 abbrev DontRuleOutAgreement : Profile → Prop :=
-  Cellwise λ c x => (c.form = .PosQ → .pos ∈ x.toFinset) ∧ (c.form ≠ .PosQ → .neg ∈ x.toFinset)
+  Cellwise λ c x => (c.form = .PosQ → some .positive ∈ x.toFinset) ∧
+    (c.form ≠ .PosQ → some .negative ∈ x.toFinset)
 
 theorem card_dontRuleOutAgreement :
     Fintype.card {p : Profile // DontRuleOutAgreement p} = 4096 :=
@@ -420,7 +424,7 @@ structure Row where
   construction : Construction
   form : PQForm
   dimension : Dimension
-  value : Bias
+  value : Option Polarity
   judgment : Judgment
   deriving DecidableEq
 
@@ -429,7 +433,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     [("English V1", .englishV1), ("Hungarian e", .hungarianE)]
   let form ← ex.parse? "form" [("PPQ", .PosQ), ("IN-NPQ", .LoNQ), ("ON-NPQ", .HiNQ)]
   let dimension ← ex.parse? "dimension" [("evidential", .evidential), ("epistemic", .epistemic)]
-  let value ← ex.parse? "value" [("+", .pos), ("-", .neg), ("%", .neut)]
+  let value ← ex.parse? "value" [("+", some .positive), ("-", some .negative), ("%", none)]
   pure ⟨construction, form, dimension, value, ex.judgment⟩
 
 /-- The judged examples (1), (2a), (2b), (8), (9a), (9b). -/

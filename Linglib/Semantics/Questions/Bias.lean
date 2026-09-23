@@ -1,37 +1,39 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Algebra.Group.Action.Option
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Fintype.Option
+public import Linglib.Semantics.Polarity.Basic
 
 /-!
-# Polar Question Bias — vocabulary
-[romero-2024] [romero-han-2004] [ladd-1981] [buring-gunlogson-2000]
+# Polar question bias
 
-Theory-neutral vocabulary for polar question bias, shared by lexical
-fragments and the theory layer. Polar questions come in three forms — PosQ,
-LoNQ, HiNQ — sensitive to two independent bias dimensions: original speaker
-bias (the speaker's prior epistemic lean) and contextual evidence bias
-(evidence available in the current discourse).
+A polar question is sensitive to two bodies of information bearing on its prejacent `p`: the
+contextual evidence available in the discourse ([buring-gunlogson-2000]) and the prior belief of
+the speaker, original bias ([ladd-1981], [romero-han-2004]). Each supports `p`, supports `¬p`, or
+neither, so its state is an `Option Polarity`, `some .positive`, `some .negative` or `none`; the
+negative polarity exchanges support for `p` with support for `¬p` (`Polarity.negative • e`).
 
-This file carries only the directional enums and the form/bias compatibility
-tables, so that Fragment lexical entries can record which bias a particle
-*requires* without importing modal machinery; VERUM semantics with modal
-frames lives study-side (`Studies/RomeroHan2004.lean`).
+A bias value in the scheme of [sudo-2013] is the set of states a question is compatible with:
+[+s] (`BiasValue.plus`), its complement [−s] (`BiasValue.minus`) and [neutral]. A `BiasProfile`
+pairs an evidential and an epistemic value, and its `felicity` is the set of situations it admits.
+`PQForm` names the three polar-question forms.
 
-## Main definitions
+## References
 
-* `PQForm` — the three polar-question forms.
-* `OriginalBias`, `ContextualEvidence` — the two directional bias dimensions.
-* `originalBiasOK`, `evidenceBiasOK` — Romero's compatibility tables.
+* [buring-gunlogson-2000]
+* [ladd-1981]
+* [romero-han-2004]
+* [sudo-2013]
+* [romero-2024]
 -/
 
 @[expose] public section
 
 namespace Question
 
-/-- The three polar question forms ([romero-2024] §1).
-
-These forms are cross-linguistically attested and constitute the fundamental
-typology for polar question bias research. -/
+/-- The three polar question forms ([romero-2024] §1). -/
 inductive PQForm where
   /-- Positive question: [p?]. "Is Jane coming?" -/
   | PosQ
@@ -41,85 +43,34 @@ inductive PQForm where
   | HiNQ
   deriving DecidableEq, Repr, Fintype
 
-/-- Original speaker bias: belief or expectation that p is true, based on the
-speaker's epistemic state *prior to* the current situation and exchange. -/
-inductive OriginalBias where
-  /-- Speaker originally expected/believed p. -/
-  | forP
-  /-- Speaker had no prior expectation about p. -/
-  | neutral
-  /-- Speaker originally expected/believed ¬p. -/
-  | againstP
-  deriving DecidableEq, Repr
+/-- A bias value ([sudo-2013]): the states of a body of information, the polarity of the
+prejacent it supports if any, that a question is compatible with. -/
+abbrev BiasValue := Finset (Option Polarity)
 
-/-- Contextual evidence bias ([buring-gunlogson-2000]): expectation about `p`
-induced by evidence available in the current discourse situation. A felicity
-condition on rising declaratives and a bias dimension for polar questions. -/
-inductive ContextualEvidence where
-  /-- Current context provides evidence for `p`. -/
-  | forP
-  /-- No contextual evidence either way. -/
-  | neutral
-  /-- Current context provides evidence against `p`. -/
-  | againstP
-  deriving DecidableEq, Repr
+namespace BiasValue
 
-/-- Original speaker bias conditions on PQ forms ([romero-2024] Table 1).
+/-- [+s]: only a body of information supporting the `s` proposition. -/
+def plus (s : Polarity) : BiasValue := {some s}
 
-Only HiNQ *mandatorily* conveys original speaker bias for p. LoNQ can convey
-bias for p but can also be neutral. PosQ is compatible with bias for ¬p or
-neutrality but was not tested for bias for p. -/
-def originalBiasOK : PQForm → OriginalBias → Bool
-  | .PosQ, .forP     => true   -- not tested by R&H but compatible
-  | .PosQ, .neutral   => true
-  | .PosQ, .againstP  => true
-  | .LoNQ, .forP      => true
-  | .LoNQ, .neutral   => true
-  | .LoNQ, .againstP  => false -- not tested
-  | .HiNQ, .forP      => true  -- mandatory: HiNQ conveys bias for p
-  | .HiNQ, .neutral   => false -- HiNQ is infelicitous without bias
-  | .HiNQ, .againstP  => false
+/-- [−s]: any body of information not supporting the `s` proposition. -/
+def minus (s : Polarity) : BiasValue := (plus s)ᶜ
 
-/-- HiNQs mandatorily convey original speaker bias for p ([ladd-1981], [romero-han-2004]). -/
-theorem hiNQ_requires_bias_for_p :
-    originalBiasOK .HiNQ .neutral = false ∧
-    originalBiasOK .HiNQ .againstP = false ∧
-    originalBiasOK .HiNQ .forP = true := ⟨rfl, rfl, rfl⟩
+/-- [neutral]: only a body of information supporting neither. -/
+def neutral : BiasValue := {none}
 
-/-- PosQs can be used in neutral contexts. -/
-theorem posQ_neutral_ok : originalBiasOK .PosQ .neutral = true := rfl
+end BiasValue
 
-/-- LoNQs can be neutral. -/
-theorem loNQ_neutral_ok : originalBiasOK .LoNQ .neutral = true := rfl
+/-- A bias profile: the contextual evidence and the prior beliefs of the speaker a question is
+compatible with. -/
+structure BiasProfile where
+  /-- The contextual evidence the question is compatible with. -/
+  evidential : BiasValue
+  /-- The prior beliefs of the speaker the question is compatible with. -/
+  epistemic : BiasValue
+  deriving DecidableEq
 
-/-- Contextual evidence bias conditions on PQ forms ([romero-2024] Table 2,
-[buring-gunlogson-2000]).
-
-PosQ requires evidence for p (or neutral). LoNQ requires evidence against p.
-Outer-HiNQ is felicitous with neutral or against-p evidence. -/
-def evidenceBiasOK : PQForm → ContextualEvidence → Bool
-  | .PosQ, .forP      => true
-  | .PosQ, .neutral    => true
-  | .PosQ, .againstP   => false
-  | .LoNQ, .forP       => false
-  | .LoNQ, .neutral    => false
-  | .LoNQ, .againstP   => true
-  | .HiNQ, .forP       => false
-  | .HiNQ, .neutral    => true
-  | .HiNQ, .againstP   => true
-
-/-- LoNQs require contextual evidence against p ([buring-gunlogson-2000]). -/
-theorem loNQ_requires_evidence_against_p :
-    evidenceBiasOK .LoNQ .forP = false ∧
-    evidenceBiasOK .LoNQ .neutral = false ∧
-    evidenceBiasOK .LoNQ .againstP = true := ⟨rfl, rfl, rfl⟩
-
-/-- HiNQs are felicitous with evidence against p (contradiction scenarios). -/
-theorem hiNQ_evidence_against_ok :
-    evidenceBiasOK .HiNQ .againstP = true := rfl
-
-/-- HiNQs are also felicitous with neutral evidence (suggestion scenarios). -/
-theorem hiNQ_evidence_neutral_ok :
-    evidenceBiasOK .HiNQ .neutral = true := rfl
+/-- The situations a profile admits: pairs of contextual evidence and prior belief. -/
+def BiasProfile.felicity (b : BiasProfile) : Finset (Option Polarity × Option Polarity) :=
+  b.evidential ×ˢ b.epistemic
 
 end Question
