@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Tay2024
 public import Linglib.Fragments.Mandarin.Resultatives
+public import Linglib.Studies.Kim2024
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.NormNum
@@ -24,8 +25,8 @@ of the compound to those of V1, `nullAffix_of`: the external argument can be V1'
 (202)–(206), and the sole argument of an unaccusative compound can be V1's agent (219),
 which is why Mandarin has subject-oriented resultatives without a reflexive.
 
-What does constrain the external argument is the Onset Condition (141): an event integrated
-into the macroevent of a simplex causative is the initial event of its causal chain,
+What does constrain the external argument is the Onset Condition of [kim-2024], (141): an event
+integrated into the macroevent of a simplex causative is the initial event of its causal chain,
 `Model.Onset`. The factor is a participant in that initial event, `Model.CcfInitial`, and
 V1's event is integrated, so the factor is a participant in V1's event,
 `participant_of_nullAffixC`: no pure causers (146)–(149), while subject matters are
@@ -44,9 +45,10 @@ with Mandarin's *pò* (684)–(686) the witness, `po_not_alternating`.
 
 Predicates take their arguments as tuples `Fin n → D`, so a family of null affixes indexed by
 the arities of V1 and V2 is one definition. The causal relation, the factor, the participant
-relation and the initial event of a causal chain are the primitives of a `Model`; the thesis
-takes the causal relation to be Lewis's counterfactual causation and leaves its
-characterization open, and the causal chain (136) enters only through its initial event.
+relation and the causal chain of each macroevent, (136), are the primitives of a `Model`; the
+thesis takes the causal relation to be Lewis's counterfactual causation and leaves its
+characterization open. Events are partially ordered by causal precedence, the initial event of
+a chain is its least event, and the Onset Condition is [kim-2024]'s, `Kim2024.OnsetCondition`.
 Temporal traces are rational intervals. The compounds are entries of
 `Fragments/Mandarin/Resultatives.lean`, which record no orientation: the apparent
 subject-oriented transitives *chī-bǎo* (3) and *qí-lèi* (330) are the hybrid resultatives of
@@ -57,6 +59,7 @@ null head ∅+C+B for adjectival X (693) are not formalized.
 ## References
 
 * [tay-2024]
+* [kim-2024]
 -/
 
 @[expose] public section
@@ -74,13 +77,13 @@ variable {E D : Type*} {m n : ℕ}
 /-- The causal vocabulary of the null affix. `cause e e₁ e₂` says the macroevent `e` contains
 the causing event `e₁` and the caused event `e₂`; `ccf e` is the crucial contributory factor
 of `e`, the essential factor in bringing about its result, if `e` is a change with one,
-`CCF(e) = c` in (111); `participant e x` says `x` is a participant in `e`; and `initial e` is
-the initial event of the causal chain of `e` (136). -/
+`CCF(e) = c` in (111); `participant e x` says `x` is a participant in `e`; and `chain e` is the
+causal chain of events that the macroevent `e` comprises (136). -/
 structure Model (E D : Type*) where
   cause : E → E → E → Prop
   ccf : E → Option D
   participant : E → D → Prop
-  initial : E → E
+  chain : E → Set E
 
 variable (M : Model E D)
 
@@ -122,20 +125,23 @@ theorem ccf_unique {n' m' : ℕ} {R2' : E → (Fin n' → D) → Prop} {R1' : E 
 
 /-! ### The Onset Condition (chapter 3, section 2.2) -/
 
-/-- The Onset Condition (141): an event integrated into the macroevent of a simplex causative
-is the initial event of its causal chain. -/
-def Model.Onset : Prop := ∀ e e₁ e₂, M.cause e e₁ e₂ → e₁ = M.initial e
+variable [PartialOrder E]
+
+/-- The Onset Condition of [kim-2024], (141): the causing event integrated into the macroevent of
+a simplex causative is the initial event of the macroevent's causal chain. -/
+def Model.Onset : Prop := ∀ e e₁ e₂, M.cause e e₁ e₂ → Kim2024.OnsetCondition (M.chain e) e₁
 
 /-- The crucial contributory factor is essential in bringing about the result, so it is a
 participant in the initial event of the causal chain (145). -/
-def Model.CcfInitial : Prop := ∀ e c, M.ccf e = some c → M.participant (M.initial e) c
+def Model.CcfInitial : Prop :=
+  ∀ e c e₀, M.ccf e = some c → IsLeast (M.chain e) e₀ → M.participant e₀ c
 
 /-- No pure causers: the external argument of a transitive compound is a participant in the
 event described by V1, (146)–(149), as its subject matter in (150)–(151). -/
 theorem participant_of_nullAffixC (hO : M.Onset) (hI : M.CcfInitial)
     (h : nullAffixC M R2 R1 e c ys) : ∃ e₁ xs, R1 e₁ xs ∧ M.participant e₁ c :=
   let ⟨hc, e₁, e₂, xs, hcause, _, h1⟩ := h
-  ⟨e₁, xs, h1, hO e e₁ e₂ hcause ▸ hI e c hc⟩
+  ⟨e₁, xs, h1, hI e c e₁ hc (hO e e₁ e₂ hcause)⟩
 
 end NullAffix
 

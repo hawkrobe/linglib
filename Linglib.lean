@@ -1249,7 +1249,6 @@ import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Causation.Prevention
 import Linglib.Semantics.Causation.Progressive
-import Linglib.Semantics.Causation.Chain
 import Linglib.Semantics.Causation.SEM.Basic
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual

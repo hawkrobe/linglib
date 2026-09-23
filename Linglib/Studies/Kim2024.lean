@@ -28,20 +28,24 @@ The thesis reads three properties off where the Cause sits on this chain.
   (`EmotionChain.isMindInternal_iff_not_isEventive`). Chapter 4 reports this correlation as a new
   finding.
 * The Onset Condition (316) maps every causal participant of a causal predicate to the onset of
-  the chain the predicate denotes. On the eventive reading the subject matter lies downstream of
-  the percept, so a Subject Matter cannot join the Cause (`tsm_restriction`), while it heads the
-  chain of a predicate without a Cause (`subjectMatter_onset_without_cause`). The T/SM restriction
-  thus follows without a ban of its own, and the thesis rules out a Target alongside a Cause just
-  as [pesetsky-1995] does (`tsm_restriction_agrees`).
+  the chain the predicate denotes (`OnsetCondition`). The thesis motivates it on causatives in
+  general: events integrated into one predicate coincide, so a causal *by*-phrase is controlled
+  by the Cause (`OnsetCondition.eq`), and an event downstream of the onset cannot be integrated
+  (`not_onsetCondition_of_lt`). On the eventive reading the subject matter lies downstream of the
+  percept, so a Subject Matter cannot join the Cause (`tsm_restriction`), while it heads the chain
+  of a predicate without a Cause (`subjectMatter_onset_without_cause`). The T/SM restriction thus
+  follows without a ban of its own, and the thesis rules out a Target alongside a Cause just as
+  [pesetsky-1995] does (`tsm_restriction_agrees`).
 
 ## Implementation notes
 
-The chain is `EmotionChain`, ordered by causal precedence. The chain a predicate denotes is the
-final segment `Set.Ici` from the member its Cause refers to, and mapping a participant to the
-onset is `IsLeast`. The thesis finds no reliable diagnostic that tells Target from Subject Matter
-and calls every object of emotion a Subject Matter, so both of [pesetsky-1995]'s stimulus types
-refer to the one member `EmotionChain.subjectMatter`. The agentive reading, which the thesis sets
-aside with the literature, is not represented.
+The Onset Condition is stated for any causal chain, a set of events partially ordered by causal
+precedence, whose onset is its least event, `IsLeast`. The chain of an emotion is
+`EmotionChain`, and the chain a Class II predicate denotes is the final segment `Set.Ici` from
+the member its Cause refers to. The thesis finds no reliable diagnostic that tells Target from
+Subject Matter and calls every object of emotion a Subject Matter, so both of [pesetsky-1995]'s
+stimulus types refer to the one member `EmotionChain.subjectMatter`. The agentive reading, which
+the thesis sets aside with the literature, is not represented.
 
 ## TODO
 
@@ -62,6 +66,30 @@ the chain. The thesis derives the restriction for a Cause that refers to the per
 @[expose] public section
 
 namespace Kim2024
+
+/-! ### The Onset Condition -/
+
+section Onset
+
+variable {E : Type*} [PartialOrder E] {s : Set E} {e e' : E}
+
+/-- The Onset Condition (316): an event semantically integrated into a causal predicate is mapped
+to the onset of the causal chain `s` that the predicate denotes, the least event of `s` in causal
+precedence. -/
+def OnsetCondition (s : Set E) (e : E) : Prop := IsLeast s e
+
+/-- Events integrated into one causal predicate are one event, the onset of its chain. So the
+event of a causal *by*-phrase is the one the Cause takes part in, and the phrase is controlled by
+the Cause, *John killed Mary by PRO poisoning her*, (323). -/
+theorem OnsetCondition.eq (h : OnsetCondition s e) (h' : OnsetCondition s e') : e = e' :=
+  IsLeast.unique h h'
+
+/-- An event downstream of the onset cannot be integrated into the predicate, *\*John killed the
+water deer by the poacher shooting them*, (314a). -/
+theorem not_onsetCondition_of_lt (h : OnsetCondition s e) (hlt : e < e') : ¬ OnsetCondition s e' :=
+  fun h' ↦ (h.eq h' ▸ hlt).false
+
+end Onset
 
 /-! ### The causal chain of an emotion -/
 
@@ -123,19 +151,19 @@ end EmotionChain
 
 open EmotionChain
 
-/-! ### The Onset Condition and the T/SM restriction -/
+/-! ### The T/SM restriction -/
 
 /-- The T/SM restriction, (42) and (262): the Onset Condition maps a Subject Matter, like the
 Cause, to the onset of the chain the predicate denotes. On the eventive reading that onset is the
 percept, and the subject matter lies downstream of it, so the Subject Matter cannot be mapped
 there. -/
-theorem tsm_restriction (h : c.IsEventive) : ¬ IsLeast (Set.Ici c) subjectMatter := fun hl ↦
-  absurd (isLeast_Ici.unique hl ▸ h) (by decide)
+theorem tsm_restriction (h : c.IsEventive) : ¬ OnsetCondition (Set.Ici c) subjectMatter :=
+  not_onsetCondition_of_lt isLeast_Ici (h.trans_lt (by decide))
 
 /-- A predicate without a Cause, the reduced variant of a Class II verb or the predicate embedded
 in an analytic causative, (43), denotes the chain from the subject matter on, and a Subject Matter
 satisfies the Onset Condition there. -/
-theorem subjectMatter_onset_without_cause : IsLeast (Set.Ici subjectMatter) subjectMatter :=
+theorem subjectMatter_onset_without_cause : OnsetCondition (Set.Ici subjectMatter) subjectMatter :=
   isLeast_Ici
 
 /-! ### The comparison with Pesetsky (1995) -/
@@ -147,7 +175,7 @@ emotion is the subject matter downstream of the percept that an eventive Cause r
 Onset Condition, needed anyway for causal adjuncts, excludes it. -/
 theorem tsm_restriction_agrees (s : Pesetsky1995.StimulusType) (h : c.IsEventive) :
     ¬ Pesetsky1995.canReachV (Pesetsky1995.stimulusCascade s).spine 1 ∧
-      ¬ IsLeast (Set.Ici c) subjectMatter :=
+      ¬ OnsetCondition (Set.Ici c) subjectMatter :=
   ⟨Pesetsky1995.tsm_restriction s, tsm_restriction h⟩
 
 end Kim2024
