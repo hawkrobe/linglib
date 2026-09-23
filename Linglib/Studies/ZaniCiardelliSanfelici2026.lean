@@ -34,7 +34,7 @@ and exhaustification strengthens it to SDA (`distributive_of_exh`).
 
 * A proposition is more realistic than another at `w` when it has closest worlds and each of
   them is strictly closer than every closest world of the other (`MoreRealistic`); the case
-  analysis of §2 assumes a total similarity ordering.
+  analysis of §2 assumes total similarity preorders on finitely many worlds.
 * The scenario's worlds are the three possible winners, ordered by speed from the actual
   world in which the hare wins; the two orderings realize the conditions of Figure 3.
 
@@ -60,168 +60,108 @@ open Conditional Conditional.Counterfactual
 
 section Closest
 
-variable {W : Type*} [DecidableEq W] (sim : SimilarityOrdering W) (A B : Finset W) (w : W)
+variable {W : Type*} (ord : W → Preorder W) (A B : Set W) (w : W)
 
 /-! ### Realism (§2) -/
 
 /-- `A` is more realistic than `B` at `w`: `A` has closest worlds, and each of them is strictly
 closer to `w` than every closest `B`-world. -/
 def MoreRealistic : Prop :=
-  (sim.closestWorlds w A).Nonempty ∧
-    ∀ a ∈ sim.closestWorlds w A, ∀ b ∈ sim.closestWorlds w B,
-      sim.closer w a b ∧ ¬ sim.closer w b a
+  ((ord w).minimals A).Nonempty ∧ ∀ a ∈ (ord w).minimals A, ∀ b ∈ (ord w).minimals B,
+    (ord w).lt a b
 
-variable {sim A B w}
+variable {ord A B w} [Finite W]
 
-/-- Under a total ordering every world of a set is at least as far as some closest world. -/
-private theorem exists_closest_closer
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁) {S : Finset W} {x : W}
-    (hx : x ∈ S) : ∃ b ∈ sim.closestWorlds w S, sim.closer w b x := by
-  obtain ⟨b, hb⟩ := sim.closestWorlds_nonempty w ⟨x, hx⟩
-  refine ⟨b, hb, ?_⟩
-  rw [SimilarityOrdering.mem_closestWorlds] at hb
-  exact (hb.2 x hx).elim id fun h ↦ (htot w b x).resolve_right h
-
-/-- Two closest worlds of the same set are equally close under a total ordering. -/
-private theorem closer_of_mem_closest
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁) {S : Finset W} {x y : W}
-    (hx : x ∈ sim.closestWorlds w S) (hy : y ∈ sim.closestWorlds w S) : sim.closer w x y := by
-  rw [SimilarityOrdering.mem_closestWorlds] at hx hy
-  exact (hx.2 y hy.1).elim id fun h ↦ (htot w x y).resolve_right h
+/-- On finitely many worlds every world of a set is at least as far as some closest world. -/
+private theorem exists_mem_minimals_le {S : Set W} {x : W} (hx : x ∈ S) :
+    ∃ b ∈ (ord w).minimals S, (ord w).le b x :=
+  Preorder.exists_le_mem_minimals (let := ord w; wellFounded_lt) hx
 
 /-- Case 2 of §2: when `A` is more realistic than `B`, the closest worlds of the disjunction are
 the closest `A`-worlds. -/
-theorem closestWorlds_union_of_moreRealistic
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (h : MoreRealistic sim A B w) :
-    sim.closestWorlds w (A ∪ B) = sim.closestWorlds w A := by
+theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
+    (h : MoreRealistic ord A B w) : (ord w).minimals (A ∪ B) = (ord w).minimals A := by
+  let := ord w
   obtain ⟨⟨a₀, ha₀⟩, hAB⟩ := h
   ext x
-  constructor
-  · intro hx
-    have hx' := hx
-    rw [SimilarityOrdering.mem_closestWorlds, Finset.mem_union] at hx'
-    refine sim.mem_closestWorlds_of_subset Finset.subset_union_left hx (hx'.1.resolve_right ?_)
-    intro hxB
-    obtain ⟨b, hb, hbx⟩ := exists_closest_closer htot hxB
-    obtain ⟨hab, hba⟩ := hAB a₀ ha₀ b hb
-    have hxa : sim.closer w x a₀ :=
-      (hx'.2 a₀ (Finset.mem_union_left _ (sim.closestWorlds_subset w A ha₀))).elim id
-        fun hn ↦ (hn (sim.closer_trans w a₀ b x hab hbx)).elim
-    exact hba (sim.closer_trans w b x a₀ hbx hxa)
-  · intro hx
-    have hx' := hx
-    rw [SimilarityOrdering.mem_closestWorlds] at hx' ⊢
-    refine ⟨Finset.mem_union_left _ hx'.1, fun u hu ↦ Or.inl ?_⟩
-    rcases Finset.mem_union.mp hu with huA | huB
-    · exact (hx'.2 u huA).elim id fun hn ↦ (htot w x u).resolve_right hn
-    · obtain ⟨b, hb, hbu⟩ := exists_closest_closer htot huB
-      exact sim.closer_trans w x b u (hAB x hx b hb).1 hbu
+  rw [Preorder.mem_minimals_iff_forall_le (htot w), Preorder.mem_minimals_iff_forall_le (htot w)]
+  refine ⟨fun ⟨hx, hle⟩ ↦ ⟨hx.resolve_right fun hxB ↦ ?_, fun u hu ↦ hle u (.inl hu)⟩,
+    fun ⟨hx, hle⟩ ↦ ⟨.inl hx, ?_⟩⟩
+  · obtain ⟨b, hb, hbx⟩ := exists_mem_minimals_le hxB
+    exact (hAB a₀ ha₀ b hb).not_ge (hbx.trans (hle a₀ (.inl ha₀.1)))
+  · rintro u (hu | hu)
+    · exact hle u hu
+    · obtain ⟨b, hb, hbu⟩ := exists_mem_minimals_le hu
+      exact (hAB x ((Preorder.mem_minimals_iff_forall_le (htot w)).2 ⟨hx, hle⟩) b hb).le.trans hbu
 
 /-- Case 1 of §2: when neither disjunct is more realistic than the other, the closest worlds of
 the disjunction are the closest worlds of the disjuncts together. -/
-theorem closestWorlds_union_of_equallyRealistic
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (hAB : ¬ MoreRealistic sim A B w) (hBA : ¬ MoreRealistic sim B A w) :
-    sim.closestWorlds w (A ∪ B) = sim.closestWorlds w A ∪ sim.closestWorlds w B := by
-  -- a closest world of one disjunct is a closest world of the union
-  have key : ∀ {S T : Finset W}, ¬ MoreRealistic sim T S w →
-      ∀ x ∈ sim.closestWorlds w S, x ∈ sim.closestWorlds w (S ∪ T) := by
+theorem minimals_union_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
+    (hAB : ¬ MoreRealistic ord A B w) (hBA : ¬ MoreRealistic ord B A w) :
+    (ord w).minimals (A ∪ B) = (ord w).minimals A ∪ (ord w).minimals B := by
+  let := ord w
+  have key : ∀ {S T : Set W}, ¬ MoreRealistic ord T S w →
+      (ord w).minimals S ⊆ (ord w).minimals (S ∪ T) := by
     intro S T hTS x hx
-    have hx' := hx
-    rw [SimilarityOrdering.mem_closestWorlds] at hx' ⊢
-    refine ⟨Finset.mem_union_left _ hx'.1, fun u hu ↦ ?_⟩
-    rcases Finset.mem_union.mp hu with huS | huT
-    · exact hx'.2 u huS
-    · by_contra hcon
-      rw [not_or, not_not] at hcon
-      obtain ⟨b, hb, hbu⟩ := exists_closest_closer htot huT
-      have hbx : sim.closer w b x := sim.closer_trans w b u x hbu hcon.2
-      have hxb : ¬ sim.closer w x b := fun hxb ↦ hcon.1 (sim.closer_trans w x b u hxb hbu)
-      refine hTS ⟨⟨b, hb⟩, fun b' hb' a ha ↦ ⟨?_, ?_⟩⟩
-      · exact sim.closer_trans w b' x a
-          (sim.closer_trans w b' b x (closer_of_mem_closest htot hb' hb) hbx)
-          (closer_of_mem_closest htot hx ha)
-      · intro hab'
-        exact hxb (sim.closer_trans w x b' b (sim.closer_trans w x a b'
-          (closer_of_mem_closest htot hx ha) hab') (closer_of_mem_closest htot hb' hb))
-  ext x
-  constructor
-  · intro hx
-    have hx' := hx
-    rw [SimilarityOrdering.mem_closestWorlds, Finset.mem_union] at hx'
-    rcases hx'.1 with hxA | hxB
-    · exact Finset.mem_union_left _
-        (sim.mem_closestWorlds_of_subset Finset.subset_union_left hx hxA)
-    · exact Finset.mem_union_right _
-        (sim.mem_closestWorlds_of_subset Finset.subset_union_right hx hxB)
-  · intro hx
-    rcases Finset.mem_union.mp hx with hxA | hxB
-    · exact key hBA x hxA
-    · rw [Finset.union_comm]
-      exact key hAB x hxB
+    rw [Preorder.mem_minimals_iff_forall_le (htot w)] at hx ⊢
+    refine ⟨.inl hx.1, ?_⟩
+    rintro u (hu | hu)
+    · exact hx.2 u hu
+    by_contra hxu
+    have hux := (((htot w).total x u).resolve_left hxu).lt_of_not_ge hxu
+    obtain ⟨b, hb, hbu⟩ := exists_mem_minimals_le hu
+    refine hTS ⟨⟨b, hb⟩, fun b' hb' a ha ↦ ?_⟩
+    rw [Preorder.mem_minimals_iff_forall_le (htot w)] at hb hb'
+    exact (hb'.2 b hb.1).trans_lt (hbu.trans_lt (hux.trans_le (hx.2 a ha.1)))
+  refine subset_antisymm Preorder.minimals_union_subset (Set.union_subset (key hBA) ?_)
+  rw [Set.union_comm]
+  exact key hAB
 
 end Closest
 
-variable {W : Type*} [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)
-  (A B : Finset W) (C : Set W) (w : W)
+variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (ord w).le]
+  [DecidableEq W] (A B : Finset W) (C : Set W) (w : W)
 
 /-! ### The three readings (Table 2) -/
 
 /-- The disjunctive conditional reading: some simplification holds. -/
-def DCR : Prop := w ∈ closestImp sim ↑A C ∨ w ∈ closestImp sim ↑B C
+def DCR : Prop := w ∈ closestImp ord ↑A C ∨ w ∈ closestImp ord ↑B C
 
-private theorem filter_mem (S : Finset W) : Finset.univ.filter (· ∈ (S : Set W)) = S := by
-  ext
-  simp
-
-/-- A counterfactual whose antecedent is a finset, on its closest worlds. -/
-private theorem mem_closestImp_coe (S : Finset W) :
-    w ∈ closestImp sim ↑S C ↔ ∀ v ∈ sim.closestWorlds w S, v ∈ C := by
-  rw [mem_closestImp_iff_closestWorlds, filter_mem]
-
-omit [Fintype W] in
-private theorem would_eq (A B : Finset W) :
-    would sim [A, B] C w = (w ∈ closestImp sim ↑(A ∪ B) C) := by
-  simp only [would, disjunctiveClosure, List.foldr, Finset.union_empty]
-
+omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- Lewis's truth condition for the DAC quantifies over the closest worlds of the union of the
 disjuncts. -/
-theorem would_pair :
-    would sim [A, B] C w ↔ ∀ v ∈ sim.closestWorlds w (A ∪ B), v ∈ C := by
-  rw [would_eq, mem_closestImp_coe]
+theorem would_pair : would ord [A, B] C w ↔ (ord w).minimals (↑A ∪ ↑B) ⊆ C := by
+  simp only [would, disjunctiveClosure, List.foldr, Finset.union_empty, Finset.coe_union,
+    mem_closestImp]
 
-variable {sim A B w}
+variable {ord A B w}
 
+omit [∀ w, DecidableRel (ord w).le] in
 /-- When neither disjunct is more realistic, Lewis's DAC is equivalent to SDA. -/
-theorem would_iff_distributive_of_equallyRealistic
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (hAB : ¬ MoreRealistic sim A B w) (hBA : ¬ MoreRealistic sim B A w) :
-    would sim [A, B] C w ↔ Distributive sim [A, B] C w := by
-  rw [would_pair, closestWorlds_union_of_equallyRealistic htot hAB hBA, Finset.forall_mem_union]
+theorem would_iff_distributive_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
+    (hAB : ¬ MoreRealistic ord ↑A ↑B w) (hBA : ¬ MoreRealistic ord ↑B ↑A w) :
+    would ord [A, B] C w ↔ Distributive ord [A, B] C w := by
+  rw [would_pair, minimals_union_of_equallyRealistic htot hAB hBA, Set.union_subset_iff]
   simp only [Distributive, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
-    forall_eq, mem_closestImp_coe]
+    forall_eq, mem_closestImp]
 
+omit [∀ w, DecidableRel (ord w).le] in
 /-- When `A` is more realistic than `B`, Lewis's DAC is equivalent to the simplification with
 the more realistic disjunct: the asymmetric reading. -/
-theorem would_iff_of_moreRealistic
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (h : MoreRealistic sim A B w) :
-    would sim [A, B] C w ↔ w ∈ closestImp sim ↑A C := by
-  rw [would_pair, closestWorlds_union_of_moreRealistic htot h, mem_closestImp_coe]
+theorem would_iff_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
+    (h : MoreRealistic ord ↑A ↑B w) : would ord [A, B] C w ↔ w ∈ closestImp ord ↑A C := by
+  rw [would_pair, minimals_union_of_moreRealistic htot h, mem_closestImp]
 
-omit [Fintype W] in
+omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- SDA entails Lewis's DAC, and so the asymmetric reading. -/
-theorem would_of_distributive (h : Distributive sim [A, B] C w) : would sim [A, B] C w := by
-  rw [would_eq, Finset.coe_union]
-  exact mem_closestImp_union (h A (by simp)) (h B (by simp))
+theorem would_of_distributive (h : Distributive ord [A, B] C w) : would ord [A, B] C w :=
+  (would_pair ord A B C w).2 (mem_closestImp_union (h A (by simp)) (h B (by simp)))
 
-omit [Fintype W] in
+omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- Lewis's DAC, and so the asymmetric reading, entails DCR under a total ordering. -/
-theorem dcr_of_would (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (h : would sim [A, B] C w) : DCR sim A B C w := by
-  rw [would_eq, Finset.coe_union] at h
-  exact mem_closestImp_or_of_mem_union htot h
+theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : would ord [A, B] C w) :
+    DCR ord A B C w :=
+  mem_closestImp_or_of_mem_union htot ((would_pair ord A B C w).1 h)
 
 /-! ### Homogeneity and exhaustification (§2, §3) -/
 
@@ -229,7 +169,7 @@ theorem dcr_of_would (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ s
 quantification over the disjuncts: the DAC is not false. SDA is its universal resolution,
 `distributive_iff_homogeneity_eq_true`. -/
 theorem dcr_iff_homogeneity_ne_false [DecidablePred (· ∈ C)] :
-    DCR sim A B C w ↔ homogeneity sim [A, B] C w ≠ .false := by
+    DCR ord A B C w ↔ homogeneity ord [A, B] C w ≠ .false := by
   rw [Ne, homogeneity_eq_false_iff, DCR]
   constructor
   · rintro h ⟨-, hall⟩
@@ -243,25 +183,24 @@ theorem dcr_iff_homogeneity_ne_false [DecidablePred (· ∈ C)] :
     exacts [hn.1, hn.2]
 
 open BarLevFox2020 in
-omit [Fintype W] in
+omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- The literal meaning of the DAC on the exhaustification account is Lewis's. -/
-theorem literal_eq_would : closestImp sim (↑A ∪ ↑B) C = {v | would sim [A, B] C v} := by
-  ext v
-  rw [Set.mem_ofPred_eq, would_eq, Finset.coe_union]
+theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = {v | would ord [A, B] C v} :=
+  Set.ext fun v ↦ (would_pair ord A B C v).symm
 
-omit [DecidableEq W] [Fintype W] in
+omit [DecidableEq W] [Fintype W] [∀ w, DecidableRel (ord w).le] in
 open BarLevFox2020 in
 /-- Exhaustification with innocent inclusion strengthens the literal DAC to SDA, under the
 model conditions of [bar-lev-fox-2020]'s derivation. -/
 theorem distributive_of_exh
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁)
-    (h₁ : ∃ v ∈ closestImp sim (↑A ∪ ↑B) C,
-      v ∉ closestImp sim ↑B C ∪ closestImp sim (↑A ∩ ↑B) C)
-    (h₂ : ∃ v ∈ closestImp sim (↑A ∪ ↑B) C,
-      v ∉ closestImp sim ↑A C ∪ closestImp sim (↑A ∩ ↑B) C)
-    (h : ∃ v ∈ closestImp sim ↑A C ∩ closestImp sim ↑B C, v ∉ closestImp sim (↑A ∩ ↑B) C)
-    (hw : w ∈ Exhaustification.exhIEII (sdaAlts sim ↑A ↑B C) (closestImp sim (↑A ∪ ↑B) C)) :
-    Distributive sim [A, B] C w := by
+    (htot : ∀ w, Std.Total (ord w).le)
+    (h₁ : ∃ v ∈ closestImp ord (↑A ∪ ↑B) C,
+      v ∉ closestImp ord ↑B C ∪ closestImp ord (↑A ∩ ↑B) C)
+    (h₂ : ∃ v ∈ closestImp ord (↑A ∪ ↑B) C,
+      v ∉ closestImp ord ↑A C ∪ closestImp ord (↑A ∩ ↑B) C)
+    (h : ∃ v ∈ closestImp ord ↑A C ∩ closestImp ord ↑B C, v ∉ closestImp ord (↑A ∩ ↑B) C)
+    (hw : w ∈ Exhaustification.exhIEII (sdaAlts ord ↑A ↑B C) (closestImp ord (↑A ∪ ↑B) C)) :
+    Distributive ord [A, B] C w := by
   rw [sda htot h₁ h₂ h] at hw
   intro S hS
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hS
@@ -270,30 +209,23 @@ theorem distributive_of_exh
 
 /-! ### The closeness evaluation item (§4) -/
 
+omit [∀ w, DecidableRel (ord w).le] [DecidableEq W] in
 /-- Accepting *if not H, S* reveals that `S` is more realistic than any `T` disjoint from `S`
 within the `H`-free worlds: every closest `H`-free world is an `S`-world, and a closest
 `T`-world as close as a closest `S`-world would be one of them. -/
-theorem moreRealistic_of_closeness
-    (htot : ∀ w₀ w₁ w₂, sim.closer w₀ w₁ w₂ ∨ sim.closer w₀ w₂ w₁) {H S T : Finset W}
-    (hclose : w ∈ closestImp sim (↑H)ᶜ ↑S) (hS : S.Nonempty)
-    (hT : ∀ t ∈ T, t ∉ H) (hST : ∀ t ∈ T, t ∉ S) : MoreRealistic sim S T w := by
-  rw [mem_closestImp_iff_closestWorlds] at hclose
-  refine ⟨sim.closestWorlds_nonempty w hS, fun a ha b hb ↦ ?_⟩
-  have hbN : b ∈ Finset.univ.filter (· ∈ (↑H : Set W)ᶜ) := by
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Set.mem_compl_iff, Finset.mem_coe]
-    exact hT b (sim.closestWorlds_subset w T hb)
-  obtain ⟨m, hm, hmb⟩ := exists_closest_closer htot hbN
-  have hmS : m ∈ S := hclose m hm
-  have ham : sim.closer w a m := by
-    rw [SimilarityOrdering.mem_closestWorlds] at ha
-    exact (ha.2 m hmS).elim id fun hn ↦ (htot w a m).resolve_right hn
-  refine ⟨sim.closer_trans w a m b ham hmb, fun hba ↦ ?_⟩
-  have hbm : sim.closer w b m := sim.closer_trans w b a m hba ham
-  have hbN' : b ∈ sim.closestWorlds w (Finset.univ.filter (· ∈ (↑H : Set W)ᶜ)) := by
-    rw [SimilarityOrdering.mem_closestWorlds] at hm ⊢
-    refine ⟨hbN, fun u hu ↦ (hm.2 u hu).imp (sim.closer_trans w b m u hbm) ?_⟩
-    exact fun hum hub ↦ hum (sim.closer_trans w u b m hub hbm)
-  exact hST b (sim.closestWorlds_subset w T hb) (hclose b hbN')
+theorem moreRealistic_of_closeness (htot : ∀ w, Std.Total (ord w).le) {H S T : Finset W}
+    (hclose : w ∈ closestImp ord (↑H)ᶜ ↑S) (hS : S.Nonempty)
+    (hT : ∀ t ∈ T, t ∉ H) (hST : ∀ t ∈ T, t ∉ S) : MoreRealistic ord ↑S ↑T w := by
+  let := ord w
+  refine ⟨(ord w).minimals_nonempty_of_finite S.finite_toSet (Finset.coe_nonempty.2 hS),
+    fun a ha b hb ↦ ?_⟩
+  rw [Preorder.mem_minimals_iff_forall_le (htot w)] at ha hb
+  have hbH : b ∈ (↑H : Set W)ᶜ := hT b hb.1
+  obtain ⟨m, hm, hmb⟩ := exists_mem_minimals_le (ord := ord) (w := w) hbH
+  have ham := ha.2 m (hclose hm)
+  refine (ham.trans hmb).lt_of_not_ge fun hba ↦ hST b hb.1 (hclose ?_)
+  rw [Preorder.mem_minimals_iff_forall_le (htot w)] at hm ⊢
+  exact ⟨hbH, fun u hu ↦ (hba.trans ham).trans (hm.2 u hu)⟩
 
 /-! ### The race scenario and Table 3 -/
 
@@ -321,14 +253,13 @@ def Competitor.speed : Competitor → ℕ
 
 /-- Figure 3(a), the non-equally realistic condition: a faster competitor is a more realistic
 winner. -/
-def nonEqual : SimilarityOrdering Competitor := .ofRank fun _ v ↦ v.speed
+abbrev nonEqual (_ : Competitor) : Preorder Competitor := Preorder.lift Competitor.speed
 
 /-- Figure 3(b), the equally realistic condition: the squirrel and the tortoise tie. -/
-def equal : SimilarityOrdering Competitor := .ofRank fun _ v ↦ min v.speed 1
+abbrev equal (_ : Competitor) : Preorder Competitor := Preorder.lift fun v ↦ min v.speed 1
 
-theorem nonEqual_total (w₀ w₁ w₂ : Competitor) :
-    nonEqual.closer w₀ w₁ w₂ ∨ nonEqual.closer w₀ w₂ w₁ :=
-  le_total _ _
+theorem nonEqual_total (w₀ : Competitor) : Std.Total (nonEqual w₀).le :=
+  Preorder.total_lift _
 
 /-- A target item (9): *if `first` or `second` wins, it will get `prize`*. -/
 structure Item where
@@ -385,8 +316,9 @@ theorem closeness_item :
 
 /-- Accepting the closeness evaluation item makes the squirrel the more realistic winner,
 which is what licenses the asymmetric pattern of Table 3. -/
-theorem squirrel_moreRealistic : MoreRealistic nonEqual {.squirrel} {.tortoise} .hare :=
-  moreRealistic_of_closeness nonEqual_total (H := {.hare})
-    (by simpa using closeness_item.1) ⟨.squirrel, by simp⟩ (by decide) (by decide)
+theorem squirrel_moreRealistic : MoreRealistic nonEqual {.squirrel} {.tortoise} .hare := by
+  simpa using moreRealistic_of_closeness nonEqual_total (H := {.hare}) (S := {.squirrel})
+    (T := {.tortoise}) (by simpa using closeness_item.1) ⟨.squirrel, by simp⟩ (by decide)
+    (by decide)
 
 end ZaniCiardelliSanfelici2026

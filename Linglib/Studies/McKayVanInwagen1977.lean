@@ -34,9 +34,10 @@ open Conditional
 /-- On a ranking of finitely many worlds the variably strict conditional is the conditional of
 the closest antecedent-worlds. -/
 theorem holds {W : Type*} [Finite W] {α : Type*} [LinearOrder α] (d : W → W → α)
-    (p q : Set W) : variablyStrictImp (.ofRank d) p q = closestImp (.ofRank d) p q :=
-  (closestImp_eq_variablyStrictImp_of_finite (SimilarityOrdering.total_ofRank d)
-    p.toFinite).symm
+    (p q : Set W) :
+    variablyStrictImp (fun w ↦ Preorder.lift (d w)) p q =
+      closestImp (fun w ↦ Preorder.lift (d w)) p q :=
+  (closestImp_eq_variablyStrictImp_of_finite (fun w ↦ Preorder.total_lift (d w)) p.toFinite).symm
 
 /-!
 ## The Bumper Crop Argument
@@ -74,7 +75,7 @@ def cropRank : CropWorld → ℕ
   | .sunCold => 2
 
 /-- Similarity to the actual world, by rank. -/
-def cropSim : SimilarityOrdering CropWorld := .ofRank fun _ ↦ cropRank
+abbrev cropSim (_ : CropWorld) : Preorder CropWorld := Preorder.lift cropRank
 
 /-- The good-weather worlds. -/
 abbrev goodWeather : Set CropWorld := {.goodWeather}
@@ -87,14 +88,14 @@ abbrev bumperCrop : Set CropWorld := {.goodWeather}
     good-weather world. This is premise (3) of the critics' argument. -/
 theorem bumperCrop_lewis_true :
     .actual ∈ variablyStrictImp cropSim (goodWeather ∪ sunCold) bumperCrop := by
-  rw [cropSim, holds]; decide
+  rw [holds]; decide
 
 /-- The conjunction regimentation is FALSE: "if the sun grew cold, we'd have a bumper crop" is
     false. This matches the English judgment that S is false. -/
 theorem bumperCrop_conjunction_false :
     ¬ (.actual ∈ variablyStrictImp cropSim goodWeather bumperCrop ∧
        .actual ∈ variablyStrictImp cropSim sunCold bumperCrop) := by
-  rw [cropSim, holds, holds]; decide
+  rw [holds, holds]; decide
 
 /-- Lewis's disjunctive closure is true while the conjunction regimentation is false. Since
     the English sentence S is false (matching the conjunction) while S* is true (matching
@@ -138,7 +139,7 @@ def spainRank : SpainWorld → ℕ
   | .allies => 2
 
 /-- Similarity to the actual world, by rank. -/
-def spainSim : SimilarityOrdering SpainWorld := .ofRank fun _ ↦ spainRank
+abbrev spainSim (_ : SpainWorld) : Preorder SpainWorld := Preorder.lift spainRank
 
 /-- The worlds where Spain fought with the Axis. -/
 abbrev foughtAxis : Set SpainWorld := {.axis}
@@ -150,20 +151,20 @@ abbrev foughtAllies : Set SpainWorld := {.allies}
     have been the Axis" is acceptable. -/
 theorem spain_lewis_true :
     .actual ∈ variablyStrictImp spainSim (foughtAxis ∪ foughtAllies) foughtAxis := by
-  rw [spainSim, holds]; decide
+  rw [holds]; decide
 
 /-- The absurd SDA simplification: "If Spain had fought on the Allied side, Spain would have
     fought on the Axis side" is false. This is what the SDA schema would derive from
     `spain_lewis_true`. -/
 theorem allies_implies_axis_false :
     .actual ∉ variablyStrictImp spainSim foughtAllies foughtAxis := by
-  rw [spainSim, holds]; decide
+  rw [holds]; decide
 
 /-- **SDA is not a valid schema for counterfactuals.** The Spain example: (Axis ∨ Allies) > Axis
     is true, but Allies > Axis is false. -/
 theorem sda_invalid :
-    ∃ (W : Type) (sim : SimilarityOrdering W) (A B C : Set W) (w : W),
-      w ∈ variablyStrictImp sim (A ∪ B) C ∧ w ∉ variablyStrictImp sim B C :=
+    ∃ (W : Type) (ord : W → Preorder W) (A B C : Set W) (w : W),
+      w ∈ variablyStrictImp ord (A ∪ B) C ∧ w ∉ variablyStrictImp ord B C :=
   ⟨SpainWorld, spainSim, foughtAxis, foughtAllies, foughtAxis, .actual,
    spain_lewis_true, allies_implies_axis_false⟩
 

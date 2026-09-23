@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Semantics.Mood.Defs
-public import Linglib.Semantics.Conditionals.SimilarityOrdering
 public import Linglib.Discourse.CommonGround
 
 /-!
@@ -36,7 +35,6 @@ namespace Conditional
 
 open Mood (Grammatical)
 open _root_.Conditional (SelectionFunction selectionPrefers)
-open _root_.Conditional (SimilarityOrdering)
 
 /-! ### The pragmatic constraint -/
 

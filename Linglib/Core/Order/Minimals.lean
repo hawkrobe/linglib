@@ -4,6 +4,7 @@ public import Linglib.Core.Order.OfCriteria
 public import Linglib.Core.Order.PreorderLattice
 public import Mathlib.Order.Minimal
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.Order.Preorder.Finite
 
 /-!
 # Minimal elements under a preorder given as a term
@@ -24,7 +25,8 @@ definition here unfolds to `Minimal` for the membership predicate, so the lemmas
   lies above a minimal element of the set.
 * `Preorder.mem_minimals_iff_forall_le`, `Preorder.mem_minimals_pair`: under a total preorder
   the minimal elements are the least elements, and minimality in a pair is the order relation.
-* `Preorder.minimals_nonempty`: on a finite type every nonempty set has a minimal element.
+* `Preorder.minimals_nonempty`, `Preorder.minimals_nonempty_of_finite`: on a finite type, and in
+  a finite set, every nonempty set has a minimal element.
 * `Preorder.total_lift`, `Preorder.mem_minimals_lift`: the pullback of a linear order along a map
   is total, and its minimal elements are the elements of least value.
 * `Preorder.minimals_ofCriteria_eq`: under a criteria-derived preorder, when some element of
@@ -44,6 +46,13 @@ theorem mem_minimals_iff : a ∈ p.minimals s ↔ a ∈ s ∧ ∀ ⦃b⦄, b ∈
   Iff.rfl
 
 theorem minimals_subset (p : Preorder α) (s : Set α) : p.minimals s ⊆ s := fun _ h ↦ h.1
+
+@[simp] theorem minimals_empty (p : Preorder α) : p.minimals ∅ = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ h ↦ h.1
+
+/-- A minimal element of a union is a minimal element of one of its parts. -/
+theorem minimals_union_subset : p.minimals (s ∪ t) ⊆ p.minimals s ∪ p.minimals t :=
+  fun _ ha ↦ ha.1.imp (Minimal.mono ha fun _ ↦ .inl) (Minimal.mono ha fun _ ↦ .inr)
 
 /-- An element minimal in a set is minimal in any subset that contains it. -/
 theorem mem_minimals_of_subset (h : s ⊆ t) (ha : a ∈ p.minimals t) (has : a ∈ s) :
@@ -83,6 +92,12 @@ theorem minimals_nonempty [Finite α] (p : Preorder α) (hs : s.Nonempty) :
   let ⟨_, ha⟩ := hs
   let ⟨b, hb, _⟩ := exists_le_mem_minimals (p := p) (letI := p; wellFounded_lt) ha
   ⟨b, hb⟩
+
+/-- Every nonempty finite set has a minimal element. -/
+theorem minimals_nonempty_of_finite (p : Preorder α) (hfin : s.Finite) (hs : s.Nonempty) :
+    (p.minimals s).Nonempty :=
+  letI := p
+  hfin.exists_minimal hs
 
 instance [Fintype α] (p : Preorder α) [DecidableRel p.le] (s : Set α) [DecidablePred (· ∈ s)]
     (a : α) : Decidable (a ∈ p.minimals s) :=

@@ -162,10 +162,7 @@ false under the belief state `sick`, since `w2` is believed and not recovered. -
 theorem not_sick_subset_recovered : ¬ sick ⊆ recovered := λ h => @h .w2 trivial
 
 /-- Every world is equally similar to every other. -/
-def trivialSim : Conditional.SimilarityOrdering HealthWorld := by
-  refine Conditional.SimilarityOrdering.ofBool (λ _ _ _ => true) ?_ ?_
-  · intros; rfl
-  · intros; rfl
+abbrev trivialSim (_ : HealthWorld) : Preorder HealthWorld := ⊤
 
 /-- Recovered worlds are preferred to non-recovered ones, at every evaluation world. -/
 def prefRecovered : HealthWorld → HealthWorld → HealthWorld → Prop :=

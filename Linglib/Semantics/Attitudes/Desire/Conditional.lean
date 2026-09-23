@@ -1,4 +1,4 @@
-import Linglib.Semantics.Conditionals.SimilarityOrdering
+import Linglib.Core.Order.Minimals
 import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -13,7 +13,7 @@ desirability relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
 
 ## Main declarations
 
-- `Frame`: a similarity ordering together with comparative desirability at each
+- `Frame`: similarity preorders together with comparative desirability at each
   evaluation world.
 - `Frame.closest`: `Sim_w'(Bel ∩ p)`, the `p`-worlds in the belief state maximally
   similar to `w'`.
@@ -24,11 +24,11 @@ namespace Desire.Conditional
 
 variable {W : Type*}
 
-/-- A similarity ordering on worlds with comparative desirability: `pref w x y` says that
-at evaluation world `w`, `x` is more desirable than `y`. -/
+/-- Similarity preorders on worlds with comparative desirability: `pref w x y` says that at
+evaluation world `w`, `x` is more desirable than `y`. -/
 structure Frame (W : Type*) where
-  /-- The similarity ordering. -/
-  sim : Conditional.SimilarityOrdering W
+  /-- Similarity to each world. -/
+  sim : W → Preorder W
   /-- Comparative desirability at each evaluation world. -/
   pref : W → W → W → Prop
 
@@ -36,7 +36,7 @@ variable (F : Frame W) (bel : Set W) (w : W) (p : Set W)
 
 /-- `Sim_w'(Bel ∩ p)`: the belief-worlds satisfying `p` that are maximally similar to
 `w'`. -/
-def Frame.closest (w' : W) : Set W := F.sim.closest w' (bel ∩ p)
+def Frame.closest (w' : W) : Set W := (F.sim w').minimals (bel ∩ p)
 
 /-- `a wants p` at `w`: for every belief-world `w'`, every closest `p`-world to `w'` is
 more desirable than every closest `¬p`-world to `w'`. -/
@@ -48,12 +48,12 @@ def Defined : Prop := (bel ∩ p).Nonempty ∧ (bel ∩ pᶜ).Nonempty
 
 section Decidable
 
-instance [Fintype W] [DecidablePred (· ∈ bel)] [DecidablePred (· ∈ p)] (w' : W) :
-    DecidablePred (· ∈ F.closest bel p w') :=
-  inferInstanceAs (DecidablePred (· ∈ F.sim.closest w' (bel ∩ p)))
+instance [Fintype W] [∀ w, DecidableRel (F.sim w).le] [DecidablePred (· ∈ bel)]
+    [DecidablePred (· ∈ p)] (w' : W) : DecidablePred (· ∈ F.closest bel p w') :=
+  inferInstanceAs (DecidablePred (· ∈ (F.sim w').minimals (bel ∩ p)))
 
-instance [Fintype W] [DecidablePred (· ∈ bel)] [DecidablePred (· ∈ p)]
-    [∀ w, DecidableRel (F.pref w)] : Decidable (Want F bel w p) :=
+instance [Fintype W] [∀ w, DecidableRel (F.sim w).le] [DecidablePred (· ∈ bel)]
+    [DecidablePred (· ∈ p)] [∀ w, DecidableRel (F.pref w)] : Decidable (Want F bel w p) :=
   inferInstanceAs
     (Decidable (∀ w' ∈ bel, ∀ x ∈ F.closest bel p w', ∀ y ∈ F.closest bel pᶜ w', F.pref w x y))
 
@@ -70,11 +70,11 @@ theorem Want.not_compl [Finite W] [Std.Antisymm (F.pref w)] (hd : Defined bel p)
     (hp : Want F bel w p) : ¬ Want F bel w pᶜ := by
   intro hnp
   obtain ⟨⟨w', hw'⟩, hn⟩ := hd
-  obtain ⟨x, hx⟩ := F.sim.closest_nonempty w' (Set.toFinite _ : Set.Finite _) ⟨w', hw'⟩
-  obtain ⟨y, hy⟩ := F.sim.closest_nonempty w' (Set.toFinite _ : Set.Finite _) hn
+  obtain ⟨x, hx⟩ := (F.sim w').minimals_nonempty_of_finite (Set.toFinite _) ⟨w', hw'⟩
+  obtain ⟨y, hy⟩ := (F.sim w').minimals_nonempty_of_finite (Set.toFinite _) hn
   have hxy : x = y :=
     antisymm (hp w' hw'.1 x hx y hy)
       (hnp w' hw'.1 y hy x (by simpa [Frame.closest] using hx))
-  exact (F.sim.closest_subset _ _ hy).2 (hxy ▸ (F.sim.closest_subset _ _ hx).2)
+  exact (Preorder.minimals_subset _ _ hy).2 (hxy ▸ (Preorder.minimals_subset _ _ hx).2)
 
 end Desire.Conditional

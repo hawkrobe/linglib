@@ -37,7 +37,7 @@ The fourth uses the conditional of the closest worlds, `Conditional.closestImp`.
 namespace Causation.PsychLink
 
 open Causation.Psych (CausalSource)
-open Conditional (SimilarityOrdering closestImp)
+open Conditional (closestImp)
 
 /-! ### PsychCausalLink -/
 
@@ -166,9 +166,9 @@ theorem flavors_differ_on_all_dimensions {T : Type*} [LinearOrder T] :
     This characterizes maintenance causation ([kim-2024] property (c)):
     "The problem concerns John" — in the closest worlds where John
     no longer has the mental representation, the concern ceases. -/
-def counterfactuallyDependent {W : Type*} (sim : SimilarityOrdering W) (cause effect : Set W) :
+def counterfactuallyDependent {W : Type*} (ord : W → Preorder W) (cause effect : Set W) :
     Set W :=
-  closestImp sim causeᶜ effectᶜ
+  closestImp ord causeᶜ effectᶜ
 
 /-- Counterfactual persistence: in the closest worlds where the cause
     doesn't hold, the effect STILL holds.
@@ -178,16 +178,16 @@ def counterfactuallyDependent {W : Type*} (sim : SimilarityOrdering W) (cause ef
     This characterizes eventive causation: "The noise frightened John" —
     even if the noise hadn't occurred (in the closest worlds), the
     frightened state, once established by BECOME, persists independently. -/
-def counterfactuallyPersistent {W : Type*} (sim : SimilarityOrdering W) (cause effect : Set W) :
+def counterfactuallyPersistent {W : Type*} (ord : W → Preorder W) (cause effect : Set W) :
     Set W :=
-  closestImp sim causeᶜ effect
+  closestImp ord causeᶜ effect
 
 /-- Counterfactual dependence and persistence are mutually exclusive when some closest ¬cause
     world exists: it would have to both lack and have the effect. -/
-theorem dependent_excludes_persistent {W : Type*} (sim : SimilarityOrdering W)
-    {cause effect : Set W} {w : W} (hDep : w ∈ counterfactuallyDependent sim cause effect)
-    (hNonempty : (sim.closest w causeᶜ).Nonempty) :
-    w ∉ counterfactuallyPersistent sim cause effect :=
+theorem dependent_excludes_persistent {W : Type*} (ord : W → Preorder W)
+    {cause effect : Set W} {w : W} (hDep : w ∈ counterfactuallyDependent ord cause effect)
+    (hNonempty : ((ord w).minimals causeᶜ).Nonempty) :
+    w ∉ counterfactuallyPersistent ord cause effect :=
   fun hall ↦ hNonempty.elim fun _ hx ↦ hDep hx (hall hx)
 
 /-! ### [kim-2024]: Three Properties of Maintenance -/

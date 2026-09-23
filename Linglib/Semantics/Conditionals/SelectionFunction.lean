@@ -20,8 +20,8 @@ the conditional of the closest worlds.
 
 * `SelectionFunction`: a selection function.
 * `selectionConditional`: the selection conditional.
-* `SimilarityOrdering.Completion`: a linear extension of a similarity ordering at each center.
-* `SelectionFunction.Compatible`: selection by a completion of a similarity ordering.
+* `Completion`: a linear extension of a family of preorders at each center.
+* `SelectionFunction.Compatible`: selection by a completion of a family of preorders.
 
 ## Main results
 
@@ -132,30 +132,29 @@ is true on every completion. -/
 
 section Compatible
 
-variable {W : Type*} {sim : SimilarityOrdering W} {s : SelectionFunction W} {p q : Set W}
-  {w v : W}
+variable {W : Type*} {ord : W → Preorder W} {s : SelectionFunction W} {p q : Set W} {w v : W}
 
-/-- A completion of a similarity ordering assigns to each center a linear order of the worlds that
-extends the strict similarity order. -/
-structure SimilarityOrdering.Completion (sim : SimilarityOrdering W) where
+/-- A completion of a family of preorders assigns to each center a linear order of the worlds that
+extends its strict order. -/
+structure Completion (ord : W → Preorder W) where
   /-- The completed order at each center. -/
   le : W → W → W → Prop
   linear : ∀ w, IsLinearOrder W (le w)
-  le_of_lt : ∀ w x y, sim.closer w x y → ¬ sim.closer w y x → le w x y
+  le_of_lt : ∀ w x y, (ord w).lt x y → le w x y
 
 /-- A selection function is selected by a completion when it selects, for each center, the least
 possible antecedent-world in the completion's order. -/
-def SelectionFunction.SelectedBy (s : SelectionFunction W) (c : sim.Completion) : Prop :=
+def SelectionFunction.SelectedBy (s : SelectionFunction W) (c : Completion ord) : Prop :=
   ∀ w p, p.Nonempty → ∀ u ∈ p, c.le w (s.sel w p) u
 
-/-- A selection function is compatible with a similarity ordering when some completion of the
-ordering selects it. -/
-def SelectionFunction.Compatible (s : SelectionFunction W) (sim : SimilarityOrdering W) : Prop :=
-  ∃ c : sim.Completion, s.SelectedBy c
+/-- A selection function is compatible with a family of preorders when some completion of the
+family selects it. -/
+def SelectionFunction.Compatible (s : SelectionFunction W) (ord : W → Preorder W) : Prop :=
+  ∃ c : Completion ord, s.SelectedBy c
 
 /-- A selection function selected by a completion satisfies [stalnaker-1968]'s condition (4), that
 two antecedents each true at the world selected for the other select the same world. -/
-theorem SelectionFunction.Compatible.cso (hs : s.Compatible sim) {p p' : Set W}
+theorem SelectionFunction.Compatible.cso (hs : s.Compatible ord) {p p' : Set W}
     (hp : p.Nonempty) (hp' : p'.Nonempty) (h₁ : s.sel w p' ∈ p) (h₂ : s.sel w p ∈ p') :
     s.sel w p = s.sel w p' := by
   obtain ⟨c, hc⟩ := hs
@@ -163,51 +162,49 @@ theorem SelectionFunction.Compatible.cso (hs : s.Compatible sim) {p p' : Set W}
   exact antisymm (hc w p hp _ h₁) (hc w p' hp' _ h₂)
 
 /-- A compatible selection function selects a closest antecedent-world. -/
-theorem SelectionFunction.Compatible.sel_mem_closest (hs : s.Compatible sim) (hp : p.Nonempty) :
-    s.sel w p ∈ sim.closest w p := by
+theorem SelectionFunction.Compatible.sel_mem_minimals (hs : s.Compatible ord) (hp : p.Nonempty) :
+    s.sel w p ∈ (ord w).minimals p := by
   obtain ⟨c, hc⟩ := hs
   have := c.linear w
-  refine ⟨s.inclusion w p hp, fun u hu ↦ or_iff_not_imp_right.2 fun hlt ↦ ?_⟩
+  let := ord w
+  refine ⟨s.inclusion w p hp, fun u hu hus ↦ ?_⟩
   by_contra hn
-  have hlt' := c.le_of_lt w u _ (not_not.1 hlt) hn
-  have hsel := hc w p hp u hu
-  exact hn (antisymm hlt' hsel ▸ sim.closer_refl w u)
+  have hu := antisymm (c.le_of_lt w u _ (hus.lt_of_not_ge hn)) (hc w p hp u hu)
+  exact hn (hu ▸ le_rfl)
 
-theorem SelectionFunction.Compatible.domain_subset (hs : s.Compatible sim) :
-    s.domain w p ⊆ sim.closest w p := by
+theorem SelectionFunction.Compatible.domain_subset (hs : s.Compatible ord) :
+    s.domain w p ⊆ (ord w).minimals p := by
   rintro v ⟨rfl, hv⟩
-  exact hs.sel_mem_closest ⟨_, hv⟩
+  exact hs.sel_mem_minimals ⟨_, hv⟩
 
 /-- Every compatible selection function makes true what the closest worlds make true. -/
-theorem SelectionFunction.Compatible.closestImp_subset (hs : s.Compatible sim) :
-    closestImp sim p q ⊆ selectionConditional s p q :=
+theorem SelectionFunction.Compatible.closestImp_subset (hs : s.Compatible ord) :
+    closestImp ord p q ⊆ selectionConditional s p q :=
   fun _ h ↦ hs.domain_subset.trans h
 
-/-- The strict similarity order at a center, with equality, is a partial order. -/
-private theorem isPartialOrder_strict (sim : SimilarityOrdering W) (w : W) :
-    IsPartialOrder W fun x y ↦ x = y ∨ (sim.closer w x y ∧ ¬ sim.closer w y x) where
-  refl _ := .inl rfl
-  trans x y z hxy hyz := by
-    rcases hxy with rfl | ⟨h₁, h₂⟩
-    · exact hyz
-    rcases hyz with rfl | ⟨h₃, h₄⟩
-    · exact .inr ⟨h₁, h₂⟩
-    exact .inr ⟨sim.closer_trans w x y z h₁ h₃, fun h ↦ h₄ (sim.closer_trans w z x y h h₁)⟩
-  antisymm x y hxy hyx := by
-    rcases hxy with rfl | ⟨h₁, h₂⟩
-    · rfl
-    rcases hyx with rfl | ⟨h₃, -⟩
-    · rfl
-    exact absurd h₃ h₂
+/-- A strict order with equality is a partial order. -/
+private theorem isPartialOrder_eq_or_lt (P : Preorder W) :
+    IsPartialOrder W fun x y ↦ x = y ∨ P.lt x y :=
+  let := P
+  { refl := fun _ ↦ .inl rfl
+    trans := fun x y z hxy hyz ↦ by
+      rcases hxy with rfl | h₁
+      · exact hyz
+      rcases hyz with rfl | h₂
+      exacts [.inr h₁, .inr (h₁.trans h₂)]
+    antisymm := fun x y hxy hyx ↦ by
+      rcases hxy with rfl | h₁
+      · rfl
+      rcases hyx with rfl | h₂
+      exacts [rfl, absurd h₂ h₁.asymm] }
 
 open Classical in
 /-- Any closest antecedent-world comes first among the antecedent-worlds in some completion, which
 orders the worlds strictly closer than it, then it, then the rest. -/
-theorem SimilarityOrdering.exists_completion (hv : v ∈ sim.closest w p) :
-    ∃ c : sim.Completion, ∀ u ∈ p, c.le w v u := by
-  choose L hL hext using fun w' ↦ @extend_partialOrder W _ (isPartialOrder_strict sim w')
-  let key : W → ℕ := fun u ↦
-    if sim.closer w u v ∧ ¬ sim.closer w v u then 0 else if u = v then 1 else 2
+theorem exists_completion (hv : v ∈ (ord w).minimals p) :
+    ∃ c : Completion ord, ∀ u ∈ p, c.le w v u := by
+  choose L hL hext using fun w' ↦ @extend_partialOrder W _ (isPartialOrder_eq_or_lt (ord w'))
+  let key : W → ℕ := fun u ↦ if (ord w).lt u v then 0 else if u = v then 1 else 2
   let le : W → W → W → Prop := fun w' x y ↦
     if w' = w then key x < key y ∨ (key x = key y ∧ L w x y) else L w' x y
   have lin : ∀ w', IsLinearOrder W (le w') := by
@@ -238,38 +235,37 @@ theorem SimilarityOrdering.exists_completion (hv : v ∈ sim.closest w p) :
             · exact .inr (.inl h) }
     · simp only [le, hw, ↓reduceIte]
       exact hL w'
-  have hkey : ∀ x y, sim.closer w x y → ¬ sim.closer w y x → key x ≤ key y := by
-    intro x y hxy hyx
-    have h₀ : sim.closer w y v ∧ ¬ sim.closer w v y → sim.closer w x v ∧ ¬ sim.closer w v x :=
-      fun h ↦ ⟨sim.closer_trans w x y v hxy h.1, fun h' ↦ h.2 (sim.closer_trans w v x y h' hxy)⟩
-    have h₁ : y = v → sim.closer w x v ∧ ¬ sim.closer w v x := fun h ↦ h ▸ ⟨hxy, hyx⟩
+  have hkey : ∀ x y, (ord w).lt x y → key x ≤ key y := by
+    intro x y hxy
+    let := ord w
+    have h₀ : y < v → x < v := hxy.trans
+    have h₁ : y = v → x < v := fun h ↦ h ▸ hxy
     simp only [key]
     split_ifs <;> first | omega | (exfalso; tauto)
-  refine ⟨⟨le, lin, fun w' x y hxy hyx ↦ ?_⟩, fun u hu ↦ ?_⟩
+  refine ⟨⟨le, lin, fun w' x y hxy ↦ ?_⟩, fun u hu ↦ ?_⟩
   · by_cases hw : w' = w
+    · subst hw
+      simp only [le, ↓reduceIte]
+      rcases (hkey x y hxy).lt_or_eq with hk | hk
+      exacts [.inl hk, .inr ⟨hk, hext w' x y (.inr hxy)⟩]
     · simp only [le, hw, ↓reduceIte]
-      rw [hw] at hxy hyx
-      rcases (hkey x y hxy hyx).lt_or_eq with hk | hk
-      · exact .inl hk
-      · exact .inr ⟨hk, hext w x y (.inr ⟨hxy, hyx⟩)⟩
-    · simp only [le, hw, ↓reduceIte]
-      exact hext w' x y (.inr ⟨hxy, hyx⟩)
+      exact hext w' x y (.inr hxy)
   · simp only [le, ↓reduceIte]
     rcases eq_or_ne u v with rfl | huv
     · have := hL w
       exact .inr ⟨rfl, refl u⟩
     · refine .inl ?_
-      have h0 : ¬ (sim.closer w u v ∧ ¬ sim.closer w v u) := fun h ↦
-        (hv.2 u hu).elim h.2 fun h' ↦ h' h.1
-      have hv0 : ¬ (sim.closer w v v ∧ ¬ sim.closer w v v) := fun h ↦ h.2 h.1
-      simp [key, h0, hv0, huv]
+      let := ord w
+      have h0 : ¬ u < v := fun h ↦ h.not_ge (hv.2 hu h.le)
+      simp [key, h0, huv]
 
 open Classical in
-/-- On a finite, strongly centered ordering, any closest antecedent-world is selected by some
-compatible selection function. -/
-theorem SelectionFunction.exists_compatible [Finite W] (hc : sim.isCentered)
-    (hv : v ∈ sim.closest w p) : ∃ s : SelectionFunction W, s.Compatible sim ∧ s.sel w p = v := by
-  obtain ⟨c, hcv⟩ := SimilarityOrdering.exists_completion hv
+/-- On a finite, strongly centered family of preorders, any closest antecedent-world is selected
+by some compatible selection function. -/
+theorem SelectionFunction.exists_compatible [Finite W] (hc : IsCentered ord)
+    (hv : v ∈ (ord w).minimals p) :
+    ∃ s : SelectionFunction W, s.Compatible ord ∧ s.sel w p = v := by
+  obtain ⟨c, hcv⟩ := exists_completion hv
   have hleast : ∀ w' (p' : Set W), p'.Nonempty → ∃ m ∈ p', ∀ u ∈ p', c.le w' m u := by
     intro w' p' hp'
     have := c.linear w'
@@ -290,29 +286,28 @@ theorem SelectionFunction.exists_compatible [Finite W] (hc : sim.isCentered)
     simp only [hne, ↓reduceDIte]
     rcases eq_or_ne (m w' p') w' with h | h
     · exact h
-    · exact antisymm (hmle w' p' ⟨w', hw'⟩ w' hw')
-        (c.le_of_lt w' w' _ (hc w' _ h.symm).1 (hc w' _ h.symm).2)
+    · exact antisymm (hmle w' p' ⟨w', hw'⟩ w' hw') (c.le_of_lt w' w' _ (hc w' _ h.symm))
   · simpa [hp'] using hmle w' p' hp' u hu
   · have := c.linear w
-    have hp : p.Nonempty := ⟨v, sim.closest_subset w p hv⟩
+    have hp : p.Nonempty := ⟨v, hv.1⟩
     show (if h : p.Nonempty then m w p else w) = v
     simp only [hp, ↓reduceDIte]
-    exact antisymm (hmle w p hp v (sim.closest_subset w p hv)) (hcv _ (hm w p hp))
+    exact antisymm (hmle w p hp v hv.1) (hcv _ (hm w p hp))
 
-/-- On a finite, strongly centered ordering, the conditional of the closest worlds holds iff the
-selection conditional is true on every completion, [stalnaker-1981]'s supervaluation for a
-single conditional. -/
-theorem mem_closestImp_iff_forall_compatible [Finite W] (hc : sim.isCentered) :
-    w ∈ closestImp sim p q ↔
-      ∀ s : SelectionFunction W, s.Compatible sim → w ∈ selectionConditional s p q := by
+/-- On a finite, strongly centered family of preorders, the conditional of the closest worlds
+holds iff the selection conditional is true on every completion, [stalnaker-1981]'s
+supervaluation for a single conditional. -/
+theorem mem_closestImp_iff_forall_compatible [Finite W] (hc : IsCentered ord) :
+    w ∈ closestImp ord p q ↔
+      ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q := by
   refine ⟨fun h s hs ↦ hs.closestImp_subset h, fun h v hv ↦ ?_⟩
   obtain ⟨s, hs, rfl⟩ := SelectionFunction.exists_compatible hc hv
-  exact (mem_selectionConditional_of_nonempty s ⟨_, sim.closest_subset w p hv⟩).1 (h s hs)
+  exact (mem_selectionConditional_of_nonempty s ⟨_, hv.1⟩).1 (h s hs)
 
 /-- Conditional Excluded Middle is true on every completion ([stalnaker-1981]), though under a tie
 neither conditional need be. -/
-theorem cem_superTrue (sim : SimilarityOrdering W) (p q : Set W) (w : W) :
-    ∀ s : SelectionFunction W, s.Compatible sim →
+theorem cem_superTrue (ord : W → Preorder W) (p q : Set W) (w : W) :
+    ∀ s : SelectionFunction W, s.Compatible ord →
       w ∈ selectionConditional s p q ∪ selectionConditional s p qᶜ :=
   fun s _ ↦ selectionConditional_cem s
 
