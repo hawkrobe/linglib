@@ -36,17 +36,17 @@ site: argument strategies leave the base verb's frame intact, while predicate
 and multipredicate strategies realize the denucleativizing reciprocal voice
 alternation, whose derived construction is intransitive. The valency a
 construction actually shows is read off its indicators one at a time, since
-they can disagree: a Kuuk Thaayorre reciprocal keeps ergative on its subject
+they can disagree: a Kuuk Thaayorre reciprocal can keep ergative on its subject
 with no object slot, a Dalabon one takes intransitive agreement yet incorporates
 the patient ([evans-et-al-2007]). A construction records only the indicators
 a source reports, and languages may override the default throughout (Tonga:
 [maslova-2008]). Hurst's Malagasy case, bivalent at f-structure and monovalent
 at c-structure ([hurst-2012]), splits levels rather than indicators and is not
-representable here. A bound reciprocal pronoun
-(Wambaya *-ngg-*) fills an argument slot and is an argument strategy; the clitic
-of a syntactically formed reciprocal verb (French *se*) is not an object
-([siloni-2012]) and marks the predicate, as does German clitic *sich*, the only *sich* with a
-reciprocal reading ([gast-haas-2008]).
+representable here. A bound reciprocal pronoun (Warlpiri *-nyanu*) fills an argument slot and is
+an argument strategy. The clitic of a syntactically formed reciprocal verb (French *se*) is not an
+object ([siloni-2012]) and marks the predicate, as do German clitic *sich*, the only *sich* with a
+reciprocal reading ([gast-haas-2008]), and Wambaya *-ngg-*, which sits in the object position of
+the auxiliary but reduces valency ([evans-et-al-2007]).
 
 ## TODO
 
@@ -81,11 +81,12 @@ inductive Strategy where
   | bipartiteNP
   /-- Free reciprocal pronoun (Hausa *jūnan-mù*, German *einander*). -/
   | recipPronoun
-  /-- Bound reciprocal pronoun in the object slot of the pronominal complex
-      (Wambaya *-ngg-*, Warlpiri *-nyanu*; [evans-2008]). -/
+  /-- Bound reciprocal pronoun in the object slot of the pronominal complex (Warlpiri *-nyanu*;
+      [evans-2008]). -/
   | boundPronoun
-  /-- Clitic of a syntactically formed reciprocal verb: French and Czech *se* ([siloni-2012]),
-      German clitic *sich* ([gast-haas-2008]). -/
+  /-- A clitic that marks the predicate rather than filling an argument slot, though it may sit
+      where an object clitic would: French and Czech *se* ([siloni-2012]), German clitic *sich*
+      ([gast-haas-2008]), Wambaya *-ngg-* ([evans-et-al-2007]). -/
   | recipClitic
   /-- Verbal affix (Swahili *-an-*, Hungarian *-óz-*). -/
   | verbalAffix
