@@ -1193,7 +1193,6 @@ import Linglib.Processing.Expectation.Defs
 import Linglib.Processing.Expectation.InformationValue
 import Linglib.Processing.Expectation.PrefixProbability
 import Linglib.Processing.Memory.LossyContext
-import Linglib.Processing.Memory.SurprisalTradeoff
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.VisualWorld
 import Linglib.Semantics.Alternatives.Basic

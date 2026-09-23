@@ -13,22 +13,25 @@ public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.Convex.Jensen
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.Probability.IdentDistrib
 public import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 
 /-!
 # Entropy of a measure
 
-The Shannon entropy of a measure on a measurable space, following the PFR project's
-`ForMathlib` entropy: `Hm[μ] = ∑' s, negMulLog (((μ univ)⁻¹ • μ).real {s})`, normalized so
-that a finite measure has the entropy of its probability normalization. Mutual information is
-the entropy difference `Im[μ] = Hm[μ.fst] + Hm[μ.snd] - Hm[μ]`; on a finite type it is the
-real part of the Kullback–Leibler divergence of the joint from the product of its marginals,
-hence nonnegative.
+This file defines the Shannon entropy of a measure on a measurable space, following the PFR
+project's `ForMathlib` entropy, `Hm[μ] = ∑' s, negMulLog (((μ univ)⁻¹ • μ).real {s})`,
+normalized so that a finite measure has the entropy of its probability normalization. Mutual
+information is the entropy difference `Im[μ] = Hm[μ.fst] + Hm[μ.snd] - Hm[μ]`; on a finite
+type it is the real part of the Kullback–Leibler divergence of the joint from the product of its
+marginals, hence nonnegative.
 
 Random variables carry the same quantities through their laws: `H[X ; μ] = Hm[μ.map X]`,
 the conditional entropy `H[X | Y ; μ]` as the expected entropy of `X` under `Y = y`, and
 `I[X : Y ; μ]`; on finite types the chain rule `H[X, Y] = H[Y] + H[X | Y]` holds, conditioning
-reduces entropy, and conditional entropy is the expected conditional surprisal.
+reduces entropy, conditioning on a function of `Y` leaves at least the entropy that
+conditioning on `Y` does, and conditional entropy is the expected conditional surprisal.
+Entropies are invariant under injective recodings and depend only on laws.
 
 ## Main definitions
 
@@ -42,8 +45,14 @@ reduces entropy, and conditional entropy is the expected conditional surprisal.
   `measureEntropy_uniformOn`: the uniform measure attains it.
 * `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`,
   `measureMutualInfo_parallelComp_id_comp_le` (data processing).
+* `measureEntropy_map_of_injective`, `entropy_comp_of_injective`, `entropy_comm`,
+  `IdentDistrib.entropy_eq`, `IdentDistrib.condEntropy_eq`.
 * `chain_rule`, `mutualInfo_eq_entropy_sub_condEntropy`, `condEntropy_le_entropy`,
   `condEntropy_eq_sum_negLog`, `condEntropy_fst_snd`.
+* `mutualInfo_comp_le` (data processing), `condEntropy_le_condEntropy_comp`,
+  `condEntropy_of_injective`, `condEntropy_comp_self`.
+* `mutualInfo_comm`; `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent random variables;
+  `IndepFun.entropy_pair_eq_add`, `IndepFun.condEntropy_eq_entropy`.
 * `condEntropy_uniformOn_univ`: on a finite population under the uniform measure, conditional
   entropy is a formula in counts.
 
@@ -109,6 +118,22 @@ theorem measureEntropy_nonneg (μ : Measure S) : 0 ≤ Hm[μ] := by
     · exact measureReal_le_one
   · rw [measureEntropy_of_not_isFiniteMeasure hμ]
 
+/-- Entropy is invariant under an injective recoding of the outcomes. -/
+theorem measureEntropy_map_of_injective {U : Type*} [MeasurableSpace U]
+    [MeasurableSingletonClass U] {f : S → U} (hf : Measurable f) (hinj : f.Injective) :
+    Hm[μ.map f] = Hm[μ] := by
+  have hsupp : (Function.support fun u ↦ negMulLog ((((μ.map f) Set.univ)⁻¹ • μ.map f).real {u}))
+      ⊆ Set.range f := by
+    intro u hu
+    by_contra h
+    have : f ⁻¹' {u} = ∅ := Set.eq_empty_of_forall_notMem fun s hs ↦ h ⟨s, hs⟩
+    simp [measureReal_def, Measure.map_apply hf (.singleton u), this] at hu
+  rw [measureEntropy, ← hinj.tsum_eq hsupp, measureEntropy, Measure.map_apply hf .univ,
+    Set.preimage_univ]
+  congr with s
+  rw [measureReal_def, measureReal_def, Measure.smul_apply, Measure.smul_apply,
+    Measure.map_apply hf (.singleton _), ← Set.image_singleton, hinj.preimage_image]
+
 variable [MeasurableSingletonClass S]
 
 @[simp] theorem measureEntropy_dirac (x : S) : Hm[Measure.dirac x] = 0 := by
@@ -161,8 +186,8 @@ end measureEntropy
 
 section measureMutualInfo
 
-/-- Mutual information of a measure on a product: the entropies of the marginals less the
-entropy of the joint. -/
+/-- The mutual information of a measure on a product is the sum of the entropies of its
+marginals less the entropy of the joint. -/
 noncomputable def measureMutualInfo (μ : Measure (S × T)) : ℝ :=
   Hm[μ.fst] + Hm[μ.snd] - Hm[μ]
 
@@ -210,7 +235,7 @@ theorem measureMutualInfo_nonneg : 0 ≤ Im[μ] := by
   rw [measureMutualInfo_eq_toReal_klDiv]
   exact ENNReal.toReal_nonneg
 
-/-- **Data processing**: pushing the second coordinate through a Markov kernel cannot increase
+/-- **Data processing.** Pushing the second coordinate through a Markov kernel cannot increase
 mutual information. -/
 theorem measureMutualInfo_parallelComp_id_comp_le {U : Type*} [MeasurableSpace U] [Fintype U]
     [MeasurableSingletonClass U] (η : Kernel T U) [IsMarkovKernel η] :
@@ -229,7 +254,7 @@ section entropy
 
 variable {Ω : Type*} [MeasurableSpace Ω] {X : Ω → S} {Y : Ω → T}
 
-/-- Entropy of a random variable: the entropy of its law. -/
+/-- The entropy of a random variable is the entropy of its law. -/
 noncomputable def entropy (X : Ω → S) (μ : Measure Ω) : ℝ := Hm[μ.map X]
 
 @[inherit_doc entropy] scoped notation3:max "H[" X " ; " μ "]" => entropy X μ
@@ -251,8 +276,30 @@ theorem entropy_eq_sum [Fintype S] [MeasurableSingletonClass S] (hX : Measurable
   rw [entropy, measureEntropy_eq_sum]
   simp_rw [map_measureReal_apply hX (.singleton _)]
 
-/-- Conditional entropy: the expectation, under the law of `Y`, of the entropy of `X`
-conditioned on `Y = y`. -/
+/-- A random variable with at most one value has no entropy. -/
+theorem entropy_of_subsingleton [Fintype S] [MeasurableSingletonClass S] [Subsingleton S]
+    (X : Ω → S) (μ : Measure Ω) : H[X ; μ] = 0 :=
+  le_antisymm ((entropy_le_log_card X μ).trans <| log_nonpos (Nat.cast_nonneg _) <|
+    Nat.cast_le_one.mpr (Fintype.card_le_one_iff_subsingleton.mpr ‹_›)) (entropy_nonneg X μ)
+
+/-- Entropy is invariant under an injective recoding of the values. -/
+theorem entropy_comp_of_injective [MeasurableSingletonClass S] [MeasurableSingletonClass T]
+    (μ : Measure Ω) (hX : Measurable X) {f : S → T} (hf : Measurable f) (hinj : f.Injective) :
+    H[f ∘ X ; μ] = H[X ; μ] := by
+  rw [entropy_def, ← Measure.map_map hf hX, measureEntropy_map_of_injective hf hinj, entropy_def]
+
+theorem entropy_comm [MeasurableSingletonClass S] [MeasurableSingletonClass T] (μ : Measure Ω)
+    (hX : Measurable X) (hY : Measurable Y) :
+    H[fun ω ↦ (X ω, Y ω) ; μ] = H[fun ω ↦ (Y ω, X ω) ; μ] :=
+  (entropy_comp_of_injective μ (hX.prodMk hY) measurable_swap Prod.swap_injective).symm
+
+theorem _root_.ProbabilityTheory.IdentDistrib.entropy_eq {Ω' : Type*} [MeasurableSpace Ω']
+    {μ : Measure Ω} {ν : Measure Ω'} {X' : Ω' → S} (h : IdentDistrib X X' μ ν) :
+    H[X ; μ] = H[X' ; ν] := by
+  rw [entropy_def, entropy_def, h.map_eq]
+
+/-- The conditional entropy of `X` given `Y` is the expectation, under the law of `Y`, of the
+entropy of `X` conditioned on `Y = y`. -/
 noncomputable def condEntropy (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) : ℝ :=
   ∫ y, H[X ; μ[|Y ⁻¹' {y}]] ∂(μ.map Y)
 
@@ -293,7 +340,7 @@ theorem mutualInfo_nonneg (hX : Measurable X) (hY : Measurable Y) : 0 ≤ I[X : 
   rw [mutualInfo_eq_measureMutualInfo hX hY]
   exact measureMutualInfo_nonneg _
 
-/-- **Chain rule**: `H[X, Y] = H[Y] + H[X | Y]`. -/
+/-- **Chain rule.** The entropy of a pair is `H[X, Y] = H[Y] + H[X | Y]`. -/
 theorem chain_rule (hX : Measurable X) (hY : Measurable Y) :
     H[fun ω => (X ω, Y ω) ; μ] = H[Y ; μ] + H[X | Y ; μ] := by
   have hfib (x : S) (y : T) :
@@ -340,13 +387,104 @@ theorem mutualInfo_eq_entropy_sub_condEntropy (hX : Measurable X) (hY : Measurab
   rw [mutualInfo, chain_rule μ hX hY]
   ring
 
-/-- Conditioning reduces entropy: `H[X | Y] ≤ H[X]`. -/
+/-- Conditioning reduces entropy, `H[X | Y] ≤ H[X]`. -/
 theorem condEntropy_le_entropy (hX : Measurable X) (hY : Measurable Y) :
     H[X | Y ; μ] ≤ H[X ; μ] :=
   sub_nonneg.mp (mutualInfo_eq_entropy_sub_condEntropy μ hX hY ▸ mutualInfo_nonneg μ hX hY)
 
-/-- Conditional entropy is expected conditional surprisal: the mass of each joint atom at the
-surprisal of its `X`-value under `Y` at its `Y`-value. -/
+omit [Fintype S] [Fintype T] [IsProbabilityMeasure μ] in
+/-- Mutual information is symmetric. -/
+theorem mutualInfo_comm (hX : Measurable X) (hY : Measurable Y) :
+    I[X : Y ; μ] = I[Y : X ; μ] := by
+  rw [mutualInfo_def, mutualInfo_def, entropy_comm μ hX hY]
+  ring
+
+/-- Mutual information vanishes exactly on independent random variables. -/
+theorem mutualInfo_eq_zero_iff (hX : Measurable X) (hY : Measurable Y) :
+    I[X : Y ; μ] = 0 ↔ X ⟂ᵢ[μ] Y := by
+  rw [mutualInfo_eq_measureMutualInfo hX hY, measureMutualInfo_eq_toReal_klDiv,
+    ENNReal.toReal_eq_zero_iff, or_iff_left (klDiv_ne_top_iff.mpr
+      ⟨(μ.map fun ω ↦ (X ω, Y ω)).absolutelyContinuous_fst_prod_snd, .of_finite⟩),
+    klDiv_eq_zero_iff, Measure.fst_map_prodMk hX hY, Measure.snd_map_prodMk hX hY,
+    indepFun_iff_map_prod_eq_prod_map_map hX.aemeasurable hY.aemeasurable]
+
+variable {μ} in
+/-- The entropy of a pair of independent random variables is the sum of their entropies. -/
+theorem _root_.ProbabilityTheory.IndepFun.entropy_pair_eq_add (h : X ⟂ᵢ[μ] Y)
+    (hX : Measurable X) (hY : Measurable Y) :
+    H[fun ω ↦ (X ω, Y ω) ; μ] = H[X ; μ] + H[Y ; μ] := by
+  have := (mutualInfo_eq_zero_iff μ hX hY).mpr h
+  rw [mutualInfo_def] at this
+  linarith
+
+variable {μ} in
+/-- Conditioning on an independent random variable leaves entropy unchanged. -/
+theorem _root_.ProbabilityTheory.IndepFun.condEntropy_eq_entropy (h : X ⟂ᵢ[μ] Y)
+    (hX : Measurable X) (hY : Measurable Y) : H[X | Y ; μ] = H[X ; μ] := by
+  have := (mutualInfo_eq_zero_iff μ hX hY).mpr h
+  rw [mutualInfo_eq_entropy_sub_condEntropy μ hX hY] at this
+  linarith
+
+section comp
+
+variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
+
+/-- **Data processing.** A function of `Y` carries no more information about `X` than `Y`. -/
+theorem mutualInfo_comp_le (hX : Measurable X) (hY : Measurable Y) (f : T → U) :
+    I[X : f ∘ Y ; μ] ≤ I[X : Y ; μ] := by
+  have hf : Measurable f := measurable_of_finite f
+  have h := measureMutualInfo_parallelComp_id_comp_le (μ.map fun ω ↦ (X ω, Y ω))
+    (Kernel.deterministic f hf)
+  rw [Kernel.id, Kernel.deterministic_parallelComp_deterministic,
+    Measure.deterministic_comp_eq_map, Measure.map_map (by fun_prop) (hX.prodMk hY),
+    ← mutualInfo_eq_measureMutualInfo hX hY] at h
+  rwa [mutualInfo_eq_measureMutualInfo hX (hf.comp hY)]
+
+/-- Conditioning on a function of `Y` leaves at least the entropy that conditioning on `Y`
+leaves. -/
+theorem condEntropy_le_condEntropy_comp (hX : Measurable X) (hY : Measurable Y) (f : T → U) :
+    H[X | Y ; μ] ≤ H[X | f ∘ Y ; μ] := by
+  have h := mutualInfo_comp_le μ hX hY f
+  rw [mutualInfo_eq_entropy_sub_condEntropy μ hX hY,
+    mutualInfo_eq_entropy_sub_condEntropy μ hX ((measurable_of_finite f).comp hY)] at h
+  linarith
+
+/-- Recoding `X` injectively, in a way that may depend on `Y`, leaves the entropy of `X` given
+`Y` unchanged. -/
+theorem condEntropy_of_injective (hX : Measurable X) (hY : Measurable Y) (f : T → S → U)
+    (hf : ∀ t, (f t).Injective) : H[fun ω ↦ f (Y ω) (X ω) | Y ; μ] = H[X | Y ; μ] := by
+  have hfXY : Measurable fun ω ↦ f (Y ω) (X ω) :=
+    (measurable_of_finite (Function.uncurry f)).comp (hY.prodMk hX)
+  have he : (fun p : S × T ↦ (f p.2 p.1, p.2)).Injective := fun p q h ↦ by
+    simp only [Prod.mk.injEq] at h
+    exact Prod.ext (hf p.2 (h.2 ▸ h.1)) h.2
+  have h := chain_rule μ hfXY hY
+  rw [show (fun ω ↦ (f (Y ω) (X ω), Y ω)) = (fun p : S × T ↦ (f p.2 p.1, p.2)) ∘
+    fun ω ↦ (X ω, Y ω) from rfl, entropy_comp_of_injective μ (hX.prodMk hY)
+      (measurable_of_finite _) he, chain_rule μ hX hY] at h
+  linarith
+
+/-- A function of `Y` has no entropy given `Y`. -/
+theorem condEntropy_comp_self (hY : Measurable Y) (f : T → U) : H[f ∘ Y | Y ; μ] = 0 := by
+  have h := chain_rule μ ((measurable_of_finite f).comp hY) hY
+  rw [show (fun ω ↦ ((f ∘ Y) ω, Y ω)) = (fun t ↦ (f t, t)) ∘ Y from rfl,
+    entropy_comp_of_injective μ hY (measurable_of_finite _) fun _ _ h ↦ (Prod.mk.inj h).2] at h
+  linarith
+
+end comp
+
+variable {μ} in
+/-- Conditional entropy is determined by the joint law. -/
+theorem _root_.ProbabilityTheory.IdentDistrib.condEntropy_eq {Ω' : Type*} [MeasurableSpace Ω']
+    {ν : Measure Ω'} [IsProbabilityMeasure ν] {X' : Ω' → S} {Y' : Ω' → T} (hX : Measurable X)
+    (hY : Measurable Y) (hX' : Measurable X') (hY' : Measurable Y')
+    (h : IdentDistrib (fun ω ↦ (X ω, Y ω)) (fun ω ↦ (X' ω, Y' ω)) μ ν) :
+    H[X | Y ; μ] = H[X' | Y' ; ν] := by
+  have hY : H[Y ; μ] = H[Y' ; ν] := (h.comp measurable_snd).entropy_eq
+  linarith [chain_rule μ hX ‹_›, chain_rule ν hX' hY', h.entropy_eq]
+
+/-- Conditional entropy is expected conditional surprisal, each joint atom weighing the
+surprisal of its `X`-value under `Y` at its `Y`-value by its mass. -/
 theorem condEntropy_eq_sum_negLog (hX : Measurable X) (hY : Measurable Y) :
     H[X | Y ; μ] = ∑ x, ∑ y, μ.real (X ⁻¹' {x} ∩ Y ⁻¹' {y})
       * -log ((μ[|Y ⁻¹' {y}]).real (X ⁻¹' {x})) := by
@@ -403,15 +541,15 @@ theorem condEntropy_uniformOn_univ [Fintype Ω] {S T : Type*} [MeasurableSpace S
     [MeasurableSingletonClass T] [Fintype T] [DecidableEq T] (X : Ω → S) (Y : Ω → T) :
     H[X | Y ; uniformOn (Set.univ : Set Ω)]
       = ∑ y, ((Finset.univ.filter (Y · = y)).card / Fintype.card Ω : ℝ)
-          * ∑ x, negMulLog (((Finset.univ.filter λ ω => Y ω = y ∧ X ω = x).card
+          * ∑ x, negMulLog (((Finset.univ.filter fun ω ↦ Y ω = y ∧ X ω = x).card
               / (Finset.univ.filter (Y · = y)).card : ℝ)) := by
-  have hY : ∀ y, (Y ⁻¹' {y}).ncard = (Finset.univ.filter (Y · = y)).card := λ y => by
+  have hY : ∀ y, (Y ⁻¹' {y}).ncard = (Finset.univ.filter (Y · = y)).card := fun y ↦ by
     rw [← Set.ncard_coe_finset]; congr; ext; simp
   have hXY : ∀ y x, (Y ⁻¹' {y} ∩ X ⁻¹' {x}).ncard
-      = (Finset.univ.filter λ ω => Y ω = y ∧ X ω = x).card := λ y x => by
+      = (Finset.univ.filter fun ω ↦ Y ω = y ∧ X ω = x).card := fun y x ↦ by
     rw [← Set.ncard_coe_finset]; congr; ext; simp
   rw [condEntropy_eq_sum X (measurable_of_finite Y)]
-  refine Finset.sum_congr rfl λ y _ => ?_
+  refine Finset.sum_congr rfl fun y _ ↦ ?_
   rw [uniformOn_univ_cond, entropy_eq_sum (measurable_of_finite X), uniformOn_real_apply,
     Set.univ_inter, Set.ncard_univ, Nat.card_eq_fintype_card]
   simp_rw [uniformOn_real_apply, hY, hXY]
