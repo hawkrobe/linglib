@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Fintype.Option
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Semantics.Conditionals.Restrictor
-import Linglib.Semantics.Modality.Kratzer.Operators
+module
+
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Conditionals.Restrictor
+public import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Kratzer (1981): The Notional Category of Modality
@@ -60,6 +62,9 @@ paper in [kratzer-2012].
 * [kratzer-2012] — Chapter 2, the revised version of the paper
 * [lewis-1973]
 -/
+
+@[expose] public section
+
 
 namespace Kratzer1981
 
