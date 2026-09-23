@@ -4,7 +4,6 @@ public import Linglib.Semantics.Causation.SEM.Defs
 public import Linglib.Semantics.Causation.SEM.Deterministic
 public import Linglib.Semantics.Causation.Mechanism.Deterministic
 public import Mathlib.Logic.Function.Iterate
-public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
 # SEM: Forward Propagation, Intervention, Fixpoint
@@ -23,17 +22,12 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
   Computable; reduces structurally via the simp lemmas. Use this when
   consumers need `decide`-style kernel reduction on a concrete SEM.
 
-- **`stepOnceDet`** (Fintype-based): canonical name, defined as
-  `stepOnceDetOn` over `(Fintype.elems : Finset V).toList`. Noncomputable
-  because `Finset.toList` is. Use for general theorems.
-
 - **`developDetOn (vs : List V) (n : ℕ)`**: bounded iteration of
   `stepOnceDetOn`. Computable. Consumers use this with their explicit list
   + iteration count for kernel-verifiable proofs.
 
-- **`developDet`**: canonical Fintype-based wrapper. Iterates `stepOnceDet`
-  for `Fintype.card V` steps — enough to reach the fixpoint regardless
-  of vertex order. Noncomputable.
+- **`developDet`** (in `SEM/Deterministic.lean`): the canonical per-vertex
+  development, connected to `developDetOn` by the bridges below.
 
 ## Mathlib pattern
 
@@ -110,7 +104,7 @@ def parentAssignment (M : SEM V α) (s : Valuation α) (v : V)
 
 /-! ### Forward propagation: singleStepAtDet + stepOnceDetOn (computable) -/
 
-/-- Per-vertex step of `stepOnceDet`. Computable. Three structural cases
+/-- Per-vertex step of `stepOnceDetOn`. Computable. Three structural cases
     surfaced via simp lemmas (`singleStepAtDet_extend`, `_skip_determined`,
     `_skip_not_ready`) so consumers can unfold via `simp` rather than
     relying on `decide` reducing through opaque definitions. -/
@@ -174,20 +168,7 @@ def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
 
     Mathlib analogue: `Polynomial.eval` (canonical) vs `Polynomial.eval₂`
     with explicit ring hom (computational). Same mathematical object;
-    different reduction profiles.
-
-    `stepOnceDet` (the Fintype-based wrapper) is kept here as an internal
-    helper for the PMF stack's `stepOnce_eq_pure_of_deterministic` bridge —
-    see below. It's not part of the public API; consumers use either
-    `developDetOn` (computational) or `developDet` (canonical, in `SEM/Deterministic.lean`). -/
-
-/-- One forward-development sweep using the Fintype enumeration of `V`.
-    Internal helper for `stepOnce_eq_pure_of_deterministic`; not a public
-    API. Public consumers use `developDetOn` (explicit list) or
-    `developDet` (canonical per-vertex). -/
-noncomputable def stepOnceDet [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) : Valuation α :=
-  stepOnceDetOn M (Fintype.elems : Finset V).toList s
+    different reduction profiles. -/
 
 /-- **Forward-development** of a deterministic acyclic SEM against an
     explicit vertex list, with `n` iterations. Computable; consumers use
@@ -727,134 +708,5 @@ theorem developDet_intervene_eq_developDet_extend
         congr 1
         funext u
         exact ih u.val (Relation.TransGen.single u.property)
-
-/-! ### PMF-valued forward propagation (canonical) -/
-
-/-! Mathlib pattern: `develop` is PMF-valued unconditionally — the
-mathematical object that doesn't presuppose deterministic mechanisms.
-The `developDet` machinery above is the deterministic-as-Dirac
-specialization, connected to `develop` via `develop_eq_pure_of_deterministic`.
-
-This mirrors `Mathlib/Probability/Kernel/Basic.lean` where `Kernel α β`
-is always measure-valued and `Kernel.deterministic (f : α → β)` is the
-Dirac specialization. Consumers needing the deterministic function go
-through `developDet`; consumers chaining probabilistic operations go
-through `develop`. The bridge theorem connects them — no API drift. -/
-
-/-- Per-vertex probabilistic step. Samples the mechanism's output PMF,
-    extending the valuation with the sampled value. Reduces to
-    `singleStepAtDet`-via-Dirac when the mechanism `IsDeterministic`. -/
-noncomputable def singleStepAt [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) (s : Valuation α) (v : V) : PMF (Valuation α) :=
-  if (s.get v).isNone then
-    if hR : ready M s v then
-      ((M.mech v).run (parentAssignment M s v hR)).map (s.extend v ·)
-    else PMF.pure s
-  else PMF.pure s
-
-/-- Bridge: under `IsDeterministic`, the PMF step collapses to a Dirac
-    of the deterministic step. -/
-theorem singleStepAt_eq_pure_of_deterministic [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) (v : V) :
-    singleStepAt M s v = PMF.pure (singleStepAtDet M s v) := by
-  unfold singleStepAt singleStepAtDet
-  split_ifs with hN hR
-  · rw [Mechanism.IsDeterministic.run_eq, PMF.pure_map]
-  · rfl
-  · rfl
-
-/-- One PMF-valued forward sweep using the Fintype enumeration of `V`.
-    Threads `PMF.bind` through each per-vertex step. Noncomputable
-    because PMF is. -/
-noncomputable def stepOnce [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) (s : Valuation α) : PMF (Valuation α) :=
-  (Fintype.elems : Finset V).toList.foldl
-    (fun acc v => acc.bind (singleStepAt M · v))
-    (PMF.pure s)
-
-/-- Bridge: under `IsDeterministic`, `stepOnce` is the Dirac of `stepOnceDet`. -/
-theorem stepOnce_eq_pure_of_deterministic
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) :
-    stepOnce M s = PMF.pure (stepOnceDet M s) := by
-  unfold stepOnce stepOnceDet stepOnceDetOn
-  generalize (Fintype.elems : Finset V).toList = vs
-  induction vs generalizing s with
-  | nil => simp [List.foldl]
-  | cons v vs ih =>
-    simp only [List.foldl_cons]
-    have step : (PMF.pure s).bind (singleStepAt M · v) = PMF.pure (singleStepAtDet M s v) := by
-      rw [PMF.pure_bind]; exact singleStepAt_eq_pure_of_deterministic M s v
-    rw [step]
-    exact ih (singleStepAtDet M s v)
-
-/-- **Canonical PMF-valued forward-development**. Iterates `PMF.bind ·
-    stepOnce` for `Fintype.card V` rounds. Mathlib-style: PMF-valued
-    unconditionally; `IsDeterministic` consumers get back to a `Valuation α`
-    via `develop_eq_pure_of_deterministic` below. -/
-noncomputable def develop [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] (s : Valuation α) : PMF (Valuation α) :=
-  (fun p => p.bind (stepOnce M))^[Fintype.card V] (PMF.pure s)
-
-/-- **Bridge theorem** (load-bearing): under `IsDeterministic`, the
-    canonical PMF-valued `develop` collapses to the Dirac of the
-    deterministic-specialization `developDet` (per-vertex, in
-    `SEM/Deterministic.lean`).
-
-    This is the central correctness statement that lets the
-    deterministic-as-Dirac pattern work cleanly. The two definitions
-    are mathematically the same object viewed two ways:
-    - `develop` threads `PMF.bind` through the partial joint via
-      iteration over `Fintype.elems.toList`.
-    - `developDet` recurses per-vertex via `WellFounded.fix` on `IsDAG`, bottoming
-      out at roots.
-    Under `IsDeterministic`, the joint collapses to a Dirac at the
-    valuation produced by per-vertex recursion.
-
-    Proof: PMF iteration collapses to `PMF.pure ((stepOnceDet M)^[n] s)`
-    by induction on `n` (using `stepOnce_eq_pure_of_deterministic` +
-    `PMF.pure_bind`). The pointwise equality with `developDet M s`
-    follows from the completeness bridge `developDetOn_hasValue_developDetVtx`
-    over the `Fintype.elems.toList` covering with `Fintype.card V`
-    iterations: every vertex's iterated value equals
-    `some (developDetVtx M s v)`, definitionally `developDet M s v`. -/
-theorem develop_eq_pure_of_deterministic
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (s : Valuation α) :
-    develop M s = PMF.pure (developDet M s) := by
-  -- Step 1: PMF iteration collapses to the Dirac of `stepOnceDet` iteration.
-  have hIter : ∀ (n : ℕ) (s' : Valuation α),
-      (fun p => p.bind (stepOnce M))^[n] (PMF.pure s')
-        = PMF.pure ((stepOnceDet M)^[n] s') := by
-    intro n
-    induction n with
-    | zero => intro s'; rfl
-    | succ k ih =>
-      intro s'
-      rw [Function.iterate_succ_apply, PMF.pure_bind,
-          stepOnce_eq_pure_of_deterministic, ih,
-          ← Function.iterate_succ_apply]
-  -- Step 2: `Fintype.elems.toList` covers every vertex.
-  have hCovers : ∀ v : V, v ∈ (Fintype.elems : Finset V).toList := fun v => by
-    rw [Finset.mem_toList]; exact Fintype.complete v
-  -- Step 3: Reduce to pointwise equality and apply the completeness bridge.
-  unfold develop
-  rw [hIter]
-  congr 1
-  funext v
-  -- `(stepOnceDet M)^[n] s v` reduces to `developDetOn M Fintype.elems.toList n s v`
-  -- by eta on `stepOnceDet M = stepOnceDetOn M Fintype.elems.toList`; the RHS
-  -- `developDet M s v = some (developDetVtx M s v)` is definitional.
-  show developDetOn M (Fintype.elems : Finset V).toList (Fintype.card V) s v
-        = some (developDetVtx M s v)
-  exact developDetOn_hasValue_developDetVtx hCovers (le_refl _) v
-
-/-! ### Topological-order independence (deferred)
-
-`develop_perm_invariant` — different topological sorts of an acyclic
-DAG give the same PMF. Provable via `PMF.bind_comm` + a lemma showing
-`singleStepAt M s v` is a no-op (`PMF.pure s`) when `v` is not yet
-ready. Not load-bearing for current consumers; deferred until a study
-needs to reason about `develop` against a hand-picked vertex order. -/
 
 end Causation.SEM

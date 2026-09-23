@@ -19,6 +19,7 @@ Setting and clearing a vertex are `Function.update`, whose simp lemmas evaluate 
 
 * `Valuation`, `Valuation.empty`, `Valuation.hasValue`
 * `Valuation.extend`, `Valuation.remove`: setting and clearing a vertex
+* `Valuation.or`: settling what one valuation leaves open from another
 * `Valuation.le_def`: the information order, the product order on `∀ v, Flat (α v)`
 * `Valuation.fintype`: finiteness, for decision procedures that quantify over valuations
 
@@ -66,6 +67,9 @@ def extend [DecidableEq V] (s : Valuation α) (v : V) (x : α v) : Valuation α 
 def remove [DecidableEq V] (s : Valuation α) (v : V) : Valuation α :=
   Function.update s v none
 
+/-- `s.or t` settles each vertex as `s` does if `s` settles it, and as `t` does otherwise. -/
+def or (s t : Valuation α) : Valuation α := fun v ↦ (s v).or (t v)
+
 /-- Valuations over finite vertex and value types are finitely many. Not an instance: a
 `Fintype` instance on `Flat` would change how `decide` evaluates every flat-valued function, so a
 decision procedure that quantifies over valuations installs this one locally. -/
@@ -102,6 +106,10 @@ theorem le_extend [DecidableEq V] {v : V} (x : α v) (h : s.get v = none) : s �
     · rwa [hasValue, extend_get_ne hwv]
 
 @[simp] theorem empty_get (v : V) : (Valuation.empty (α := α)).get v = none := rfl
+
+@[simp] theorem or_empty (s : Valuation α) : s.or empty = s := funext fun v ↦ Flat.or_bot (s v)
+
+theorem le_or (s t : Valuation α) : s ≤ s.or t := fun v ↦ Flat.le_or_left (s v) (t v)
 
 theorem hasValue_empty_iff (v : V) (x : α v) :
     ¬ (Valuation.empty (α := α)).hasValue v x := by

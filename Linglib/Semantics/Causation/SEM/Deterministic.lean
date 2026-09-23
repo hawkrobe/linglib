@@ -4,50 +4,20 @@ public import Linglib.Semantics.Causation.SEM.Defs
 public import Linglib.Semantics.Causation.Mechanism.Deterministic
 
 /-!
-# SEM: Deterministic Specialization (canonical `developDet`)
+# SEM: development of deterministic acyclic models
 
-Per-vertex form of forward development for **deterministic** acyclic
-SEMs. The per-vertex pattern is intrinsically the deterministic
-specialization — see "Why per-vertex is deterministic-only" below.
+`developDetVtx M s v : α v` is the value of vertex `v` when the partial valuation `s` is
+developed through a deterministic acyclic model, by well-founded recursion on
+`IsStrictAncestor`: a vertex `s` settles keeps its value, and any other vertex takes the value
+its equation gives to its parents' developed values. `developDet M s` is the whole valuation,
+settled everywhere. The strict development `developDetVtx?` of [schulz-2011] and
+[nadathur-2023-implicatives] leaves an undetermined exogenous vertex undetermined and resolves
+an inner vertex only once all its parents are resolved; `developDetVtxFuel` is its
+kernel-reducible mirror.
 
-`developDetVtx M s v : α v` is the per-vertex value, defined via
-`WellFounded.fix` on `IsDAG` (recurses on `IsStrictAncestor`). The whole-valuation
-wrapper `developDet M s : Valuation α` is the **canonical public name**
-for "develop a deterministic acyclic SEM against a partial valuation."
-Returns `some` at every vertex (every vertex reaches a value via parent
-recursion bottoming out at roots).
-
-Mathlib analogue: `Mathlib/Probability/Kernel/Deterministic.lean` —
-canonical type is the general `Kernel α β` (measure-valued); the
-deterministic case is a Dirac specialization with its own constructor
-and bridge theorems. Same pattern here: canonical `develop M s : PMF
-(Valuation α)` (in `Basic.lean`) lives alongside this deterministic
-specialization, connected by `develop_eq_pure_of_deterministic`.
-
-## Why per-vertex is deterministic-only
-
-The deterministic per-vertex recursion `developDetVtx M s v = mech.toFun
-(M.mech v) (fun u => developDetVtx M s u.val)` works because each vertex
-has a unique value computable from parents.
-
-Generalizing to stochastic (return `PMF (α v)`) requires composing
-**per-parent marginals** into a **joint** parent assignment to feed to
-the mechanism. But marginals don't compose into joints via `PMF.bind`
-without independence, and parents may be correlated through shared
-ancestors. Counterexample: `A → B`, `A → C`, mechanisms `B := A`, `C :=
-A`. Per-vertex marginals: B ~ Bernoulli(0.5), C ~ Bernoulli(0.5). Naive
-PMF.bind composition: joint = uniform over (0,0)/(0,1)/(1,0)/(1,1).
-Truth: joint = (0,0) w.p. 0.5 OR (1,1) w.p. 0.5. The naive composition
-is mathematically wrong.
-
-The canonical stochastic object is the **joint** `develop M s : PMF
-(Valuation α)` (in `Basic.lean`), which threads `PMF.bind` through the
-partial joint, preserving correlations. There is no clean per-vertex
-form for stochastic SEMs without belief-propagation infrastructure.
-
-The computational specialization `developDetOn M vs n s` (in `Basic.lean`)
-is a separate axis — kernel-reducible iteration over an explicit vertex
-list, for proofs over concrete SEMs. Polynomial.eval₂ analogue.
+Uncertainty is not a property of the equations. As in Pearl's structural models it is a
+probability on the background, which `SEM.probSufficiency` takes as a measure on outcomes that
+each settle a background valuation.
 
 ## Reduction
 
@@ -59,6 +29,11 @@ list, for proofs over concrete SEMs. Polynomial.eval₂ analogue.
 
 For 5-vertex SEMs, ~5 layers of unfolding suffice. No `Fintype` reasoning;
 no opaque `Multiset.toList`.
+
+## References
+
+* [schulz-2011]
+* [nadathur-2023-implicatives]
 -/
 
 @[expose] public section

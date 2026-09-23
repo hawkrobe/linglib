@@ -42,6 +42,8 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
   than maximal graded SUF
 * `make_semantics_eq_force`, `judgment_differs_make_force` — the force-dynamic semantics does not
   distinguish the two verbs the paper's (8) separates
+* `ProbabilisticExample.probSufficiency_eq` — with an uncertain background, SUF is the
+  background's probability rather than 0 or 1
 
 ## References
 
@@ -176,23 +178,24 @@ theorem intentionDegree_eq_one_of_altCount_eq_zero
 
 end
 
-/-- The paper's INT over a `SEM` instantiates `intentionDegree` with
-    `pr a′` the probability, under the development of the context, that
-    the action vertex takes value `a′` and the goal event holds — the
-    paper's `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
-noncomputable def modelIntention {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] (ctx : Valuation α)
+/-- The paper's INT over a `SEM` instantiates `intentionDegree` with `pr a′` the probability,
+    over outcomes `ω` of the background, that the development of the context, completed by the
+    background valuation `u ω`, gives the action vertex the value `a′` and satisfies the goal:
+    the paper's `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
+noncomputable def modelIntention {V : Type*} {α : V → Type*} {Ω : Type*} [MeasurableSpace Ω]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (μ : MeasureTheory.Measure Ω) (u : Ω → Valuation α) (ctx : Valuation α)
     (act : V) [Fintype (α act)] (goal : Set (Valuation α)) (w : α act → ℝ≥0)
     (a : α act) : ℝ≥0∞ :=
   intentionDegree
-    (fun a' => (develop M ctx).probOfSet {s | s.hasValue act a' ∧ s ∈ goal}) w a
+    (fun a' => μ {ω | (M.developDet (ctx.or (u ω))).hasValue act a' ∧
+      M.developDet (ctx.or (u ω)) ∈ goal}) w a
 
 /-! ### Deterministic limit
 
-In the deterministic limit SUF collapses to a {0,1} indicator
-(`Causation.SEM.probSufficiency_eq_indicator_of_deterministic`). At the vacuous context this is
-[nadathur-lauer-2020]'s categorical causal sufficiency: with nothing observed, Pearl's
+With a certain background SUF collapses to a {0,1} indicator
+(`Causation.SEM.probSufficiency_dirac`). At the vacuous context, nothing observed and nothing
+left to the background, this is [nadathur-lauer-2020]'s categorical causal sufficiency: Pearl's
 counterfactual degenerates to the bare interventional development of `cause := true`. -/
 
 section
@@ -208,9 +211,9 @@ noncomputable def deterministicSuf (background : Valuation (fun _ : V => Bool))
 variable (c e : V)
 
 theorem probSufficiency_empty_eq_deterministicSuf :
-    BoolSEM.probSufficiency M Valuation.empty c e = deterministicSuf M Valuation.empty c e := by
-  unfold BoolSEM.probSufficiency
-  rw [probSufficiency_eq_indicator_of_deterministic, cfSeed_empty]
+    BoolSEM.probSufficiency M (MeasureTheory.Measure.dirac ()) (fun _ ↦ Valuation.empty)
+      Valuation.empty c e = deterministicSuf M Valuation.empty c e := by
+  simp only [BoolSEM.probSufficiency, probSufficiency_dirac, Valuation.or_empty, cfSeed_empty]
   unfold deterministicSuf
   congr 1
 
@@ -223,7 +226,8 @@ theorem probSufficiency_empty_eq_deterministicSuf :
     strictly stronger than maximal graded SUF. -/
 theorem probSufficiency_empty_eq_one_of_make
     (h : Causative.toSemantics M .make Valuation.empty c true e true) :
-    BoolSEM.probSufficiency M Valuation.empty c e = 1 := by
+    BoolSEM.probSufficiency M (MeasureTheory.Measure.dirac ()) (fun _ ↦ Valuation.empty)
+      Valuation.empty c e = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
   unfold deterministicSuf
   exact ite_eq_left (causallySufficient_of_causallyEntails h.2)
@@ -260,60 +264,71 @@ theorem gym_grades_stronger_verbs :
 
 /-! ### A probabilistic model
 
-A 2-vertex SEM whose `effect` mechanism is a `p`-weighted coin. `probSufficiency` is defined for
-it with no determinism hypothesis, which is what makes SUF the graded measure the paper needs
-rather than the indicator of the previous section. -/
+SUF is a probability when the background is uncertain. In a model whose `effect` holds when the
+`cause` and a background `noise` both do, and whose noise is true with probability `p`, setting
+the cause makes the effect true with probability `p`, strictly between the 0 and 1 of the
+categorical semantics. -/
 
 namespace ProbabilisticExample
 
-open scoped NNReal
-
-/-- A 2-vertex SEM with root `cause` and child `effect`. -/
-inductive V | cause | effect
+/-- The vertices: the cause, the background noise, and the effect. -/
+inductive V | cause | noise | effect
   deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨fun | .cause => ∅ | .effect => {.cause}⟩
+def graph : CausalGraph V := ⟨fun | .effect => {.cause, .noise} | _ => ∅⟩
 
-variable (p : ℝ≥0) (h : p ≤ 1)
-
-/-- The mechanism for `effect`: ignore the parent and return `true` with probability `p`. -/
-noncomputable def effectMech :
-    Mechanism graph (fun _ => Bool) .effect :=
-  ⟨fun _ => PMF.mix p h (PMF.pure false) (PMF.pure true)⟩
-
-/-- The model: a `cause` vertex fixed to `false` and an `effect` vertex given by the coin. -/
+/-- The effect holds when the cause and the noise both do. -/
 noncomputable def model : BoolSEM V :=
   { graph := graph
     mech := fun
       | .cause => const (G := graph) false
-      | .effect => effectMech p h }
+      | .noise => const (G := graph) false
+      | .effect =>
+        deterministic fun ρ => ρ ⟨.cause, by simp [graph]⟩ && ρ ⟨.noise, by simp [graph]⟩ }
 
-/-- The graph is time-indexed in the sense of the paper's definition 1, with `cause` at step 0
-and `effect` at step 1. -/
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det
+    | .cause | .noise => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .effect => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+/-- The graph is time-indexed in the sense of the paper's definition 1, with `cause` and `noise`
+at step 0 and `effect` at step 1. -/
 def timeIndex : CausalGraph.TimeIndex graph where
-  time := fun | .cause => 0 | .effect => 1
+  time := fun | .effect => 1 | _ => 0
   parent_succ := by
     intro u v h
     cases v <;> simp [graph] at h
-    subst h
-    rfl
+    rcases h with rfl | rfl <;> rfl
 
 instance : CausalGraph.IsDAG graph := timeIndex.isDAG
 
-instance : CausalGraph.IsDAG (model p h).graph :=
-  inferInstanceAs (CausalGraph.IsDAG graph)
+instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
-/-- The model is not deterministic for `p` strictly between 0 and 1, so `probSufficiency` takes
-it outside the deterministic limit — as the paper's SUF, a genuine probability, requires. -/
-theorem isEmpty_isDeterministic (h0 : p ≠ 0) (h1 : p ≠ 1) :
-    IsEmpty (SEM.IsDeterministic (model p h)) := by
-  refine ⟨fun hd => ?_⟩
-  obtain ⟨hdet⟩ := hd
-  obtain ⟨f, hf⟩ := hdet .effect
-  have hb := hf fun _ => false
-  cases hfv : f (fun _ => false) <;> rw [hfv] at hb
-  · exact h0 (by simpa [model, effectMech] using DFunLike.congr_fun hb true)
-  · exact h1 (by simpa [model, effectMech] using DFunLike.congr_fun hb true)
+/-- The background: the noise is true with probability `p`. -/
+noncomputable def background (p : ℝ≥0∞) : MeasureTheory.Measure Bool :=
+  p • MeasureTheory.Measure.dirac true + (1 - p) • MeasureTheory.Measure.dirac false
+
+/-- Each outcome of the background settles the noise. -/
+def noiseValuation (b : Bool) : Valuation (fun _ : V => Bool) :=
+  Valuation.empty.extend .noise b
+
+/-- Setting the cause, the effect holds exactly when the noise is true. -/
+theorem effect_iff (b : Bool) :
+    (model.developDet ((cfSeed model Valuation.empty .cause true).or (noiseValuation b))).hasValue
+      .effect true ↔ b = true := by
+  rw [cfSeed_empty, developDet_hasValue_iff, developDetVtx_undet _ _ _ (by cases b <;> decide)]
+  change (developDetVtx model _ .cause && developDetVtx model _ .noise) = true ↔ _
+  rw [developDetVtx_extended _ _ _ true (by cases b <;> decide),
+    developDetVtx_extended _ _ _ b (by cases b <;> decide)]
+  simp
+
+/-- SUF is the probability of the noise: graded, as the paper's measure requires. -/
+theorem probSufficiency_eq (p : ℝ≥0∞) :
+    BoolSEM.probSufficiency model (background p) noiseValuation Valuation.empty .cause .effect =
+      p := by
+  have h : {b : Bool | (model.developDet ((cfSeed model Valuation.empty .cause true).or
+      (noiseValuation b))).hasValue .effect true} = {true} := Set.ext fun b ↦ effect_iff b
+  simp [BoolSEM.probSufficiency, probSufficiency, h, background]
 
 end ProbabilisticExample
 
