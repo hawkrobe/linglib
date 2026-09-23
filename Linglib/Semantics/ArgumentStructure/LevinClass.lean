@@ -656,6 +656,10 @@ def numberString : LevinClass → String
   | .weekend => "56"
   | .weather => "57"
 
+/-- The class whose section number the book prints as `s`, the inverse of `numberString`. -/
+def ofNumberString? (s : String) : Option LevinClass :=
+  LevinClass.enumList.find? (·.numberString = s)
+
 /-- Levin's title of the class. -/
 def name : LevinClass → String
   | .put => "Put Verbs"

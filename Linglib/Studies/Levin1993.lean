@@ -13,18 +13,20 @@ alternations follows from its meaning, so verbs fall into semantically coherent 
 share an alternation profile (`ArgumentStructure.LevinClass.Participates`). The book's
 opening quadruple *break*, *cut*, *hit*, *touch* takes four distinct profiles across the
 causative/inchoative, middle, conative, and body-part possessor ascension alternations, one
-class each (`quadruple_profiles_distinct`), and every categorical alternation judgment among
-the book's examples in `Data/Examples/Levin1993.json` agrees with the profile of the verb's
-class (`participation_matches_profile`). The alternations that pair two argument frames are
-frame-pair schemas (`schema?`), and the English fragment's verbs have the frames of their
-class's attested alternations and none instantiating a starred one
-(`frames_cover_profile`, `frames_respect_starred`).
+class each (`quadruple_profiles_distinct`), and on the quadruple the Introduction's component
+prediction agrees with the class pages of Part II (`quadruple_prediction_matches`). Every
+categorical alternation judgment among the book's examples in `Data/Examples/Levin1993.json`
+agrees with the profile of the verb's class (`participation_matches_profile`). The
+alternations that pair two argument frames are frame-pair schemas (`schema?`), and every
+English fragment verb Levin lists has a class whose page its frames realize
+(`frames_realize_class`).
 
 ## Implementation notes
 
 Rows record the verb's class by the book's section number and the alternation by name;
-`classOf` and `alternationOf` read them into the substrate's enumerations. Marginal judgments
-carry no categorical participation value.
+`classOf` and `alternationOf` read them into the substrate's enumerations. A row's
+participation in its alternation is its judgment: an acceptable row attests the alternation, a
+starred row denies it, and a marginal row is categorical in neither direction.
 
 ## References
 
@@ -34,10 +36,6 @@ carry no categorical participation value.
 namespace Levin1993
 
 open Data.Examples ArgumentStructure
-
-/-- The class named by a section number of the book. -/
-def classOfString (s : String) : Option LevinClass :=
-  LevinClass.enumList.find? fun c ↦ c.numberString = s
 
 /-- The alternation named by a row's tag. -/
 def alternationOfString : String → Option DiathesisAlternation
@@ -68,28 +66,46 @@ def alternationOfString : String → Option DiathesisAlternation
   | "directionalPhrase" => some .directionalPhrase
   | _ => none
 
-/-- The class recorded on a row. -/
+/-- The class recorded on a row, by the book's section number. -/
 def classOf (e : LinguisticExample) : Option LevinClass :=
-  (e.feature? "levin_class").bind classOfString
+  (e.feature? "levin_class").bind LevinClass.ofNumberString?
 
 /-- The alternation recorded on a row. -/
 def alternationOf (e : LinguisticExample) : Option DiathesisAlternation :=
   (e.feature? "alternation").bind alternationOfString
 
-/-- The categorical participation recorded on a row, none for a marginal judgment. -/
-def observed (e : LinguisticExample) : Option Bool :=
-  match e.feature? "participates" with
-  | some "true" => some true
-  | some "false" => some false
-  | _ => none
-
 /-- Every categorical row whose alternation the class's Part II page tests agrees with the
-page: attested rows are in the class's profile and starred rows outside it. The passive, the
-*way* construction, directional phrases and the swarm alternation are presented in Part One by
-verb list and not tested on the class pages, so those rows fall outside the check. -/
+page: the row is acceptable exactly when the alternation is in the class's profile. The
+passive, the *way* construction, directional phrases and the swarm alternation are presented
+in Part One by verb list and not tested on the class pages, so those rows fall outside the
+check. -/
 theorem participation_matches_profile :
-    ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, ∀ b ∈ observed e,
-      c.Tests a → decide (c.Participates a) = b := by
+    ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, e.judgment ≠ .marginal →
+      c.Tests a → (c.Participates a ↔ e.judgment = .acceptable) := by
+  decide +kernel
+
+/-! ### The Introduction's quadruple
+
+*break*, *cut*, *hit* and *touch* are told apart by the four diagnostic alternations, and on
+these four classes the Introduction's component prediction agrees with Part II. -/
+
+/-- The four diagnostic alternations of the Introduction. -/
+def diagnosticAlternations : List DiathesisAlternation :=
+  [.causativeInchoative, .middle, .conative, .bodyPartPossessorAscension]
+
+/-- The quadruple takes pairwise distinct profiles over the diagnostic alternations, so it
+instantiates four verb classes. -/
+theorem quadruple_profiles_distinct :
+    ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
+      diagnosticAlternations.map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
+  decide +kernel
+
+/-- On the quadruple, the Introduction's component prediction matches the class pages for
+every diagnostic alternation. -/
+theorem quadruple_prediction_matches :
+    ∀ p ∈ [(LevinClass.break_, MeaningComponents.break_), (.cut, .cut), (.hit, .hit),
+      (.touch, .touch)], ∀ a ∈ diagnosticAlternations,
+      p.2.predictedAlternation a = decide (p.1.Participates a) := by
   decide +kernel
 
 /-! ### Frame-pair schemas of the alternations
@@ -143,8 +159,6 @@ def schema? : DiathesisAlternation → Option Voice
   | .instrumentSubject => some
       { source := .np_pp (some with_), target := .np,
         correspondence := [(complement 0, complement 0), (complement 1, external)] }
-  | .middle | .verbalPassive | .prepositionalPassive | .thereInsertion | .locativeInversion
-  | .cognateObject | .wayConstruction | .resultative | .directionalPhrase => none
   | _ => none
 where
   /-- The unexpressed object alternations: the object dropped with interpretation `i`. -/
@@ -165,15 +179,6 @@ theorem frames_realize_class :
       ∀ p ∈ c.properties, ∀ a ∈ p.property.alternation?, ∀ σ ∈ schema? a,
         (p.attestation = .attested → p.scope = .all → v.toVerb.Alternates σ) ∧
           (p.attestation = .starred → ¬ v.toVerb.Alternates σ) := by
-  decide +kernel
-
-/-- The book's opening quadruple: *break*, *cut*, *hit*, and *touch* take pairwise distinct
-profiles across the causative/inchoative, middle, conative, and body-part possessor ascension
-alternations, so they instantiate four verb classes. -/
-theorem quadruple_profiles_distinct :
-    ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
-      [DiathesisAlternation.causativeInchoative, .middle, .conative,
-        .bodyPartPossessorAscension].map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
   decide +kernel
 
 end Levin1993
