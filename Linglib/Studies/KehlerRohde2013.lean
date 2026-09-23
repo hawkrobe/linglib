@@ -1,4 +1,5 @@
 import Linglib.Data.Examples.KehlerRohde2013
+import Linglib.Data.Experiments.KehlerRohde2013
 import Linglib.Data.UD.UPOS
 import Linglib.Data.UD.Features
 import Linglib.Discourse.Coherence
@@ -25,23 +26,23 @@ above its prior, the overlaid subject bias (`posterior_gt_iff`); and raising a r
 next-mention probability raises the expectation of the relations that favor it
 (`relationExpectation_sub`).
 
-The paper's passage-completion results (Tables 1–10, `Data/Examples/KehlerRohde2013.json`) then
+The paper's passage-completion results (Tables 1–10, `Data.Experiments.KehlerRohde2013`) then
 instantiate the model. The instruction manipulation's mixtures computed from Tables 3 and 4 fall
 on the sides of chance Table 5 observes (`instruction_mixtures`); the pronoun prompt raises
 subject mentions and shifts the continuations toward the Source-biased relations (Table 6); the
 voice manipulation's Bayesian predictions computed from Tables 7 and 9 favor the subject in both
-voices, more in the active, as Table 10 observes (`voice_predictions`); and the pronominalization
+voices, more in the active, as Table 10 observes (`voice_predictions`), though below the
+predictions Table 10 prints (`bayesSubject_lt_predicted`); and the pronominalization
 rates of Table 9 increase with topichood, the passive subject above the active subject above the
 non-subjects, a gradient the backward-looking center of a grammatical-role Centering cannot see
 (`cb_topichood_dissociation_under_voice`).
 
 ## Implementation notes
 
-Each row of `Data/Examples/KehlerRohde2013.json` is a cell of one of the paper's tables, located
-by the table and the levels of its factors (`Cell`), and records percentages under the paper's
-column names. Rates are read with `nat?` and cast to `ℚ`; computed quantities are compared
-through their integer numerators. Relations the paper's coding does not record have no cell and
-carry no probability.
+The tables are `Data.Experiments.KehlerRohde2013`, whose proportions are printed to two places
+and read here in percent (`percent`); computed quantities are compared through their integer
+numerators. The mixtures (9) range over the five relations the paper codes, whose frequencies
+fall short of one by the continuations coded otherwise.
 
 ## References
 
@@ -53,8 +54,7 @@ carry no probability.
 
 namespace KehlerRohde2013
 
-open Discourse.Coherence Discourse.Centering Finset
-open Data.Examples (LinguisticExample)
+open Discourse.Centering Finset
 open Morphology (Word Features)
 
 /-! ### The Bayesian model -/
@@ -77,7 +77,7 @@ theorem mixture_sub [Fintype C] (p q bias : C → ℚ) :
 /-- Without relation-conditioning the mixture over a distribution is the common bias, whatever
 the expectations: a heuristic account predicts no effect of the instructions. -/
 theorem mixture_const [Fintype C] (p : C → ℚ) (hp : ∑ c, p c = 1) (b : ℚ) :
-    mixture p (λ _ => b) = b := by
+    mixture p (fun _ ↦ b) = b := by
   simp only [mixture, ← sum_mul, hp, one_mul]
 
 /-- (12): the probability of a coherence relation as the mixture over the referent mentioned
@@ -108,68 +108,19 @@ end Model
 
 /-! ### The data -/
 
-/-- The aspect of the context sentence in the aspect experiment. -/
-inductive Aspect where
-  | perfective
-  | imperfective
-  deriving DecidableEq, Repr
+open Data.Experiments (Decimal)
+open Data.Experiments.KehlerRohde2013
 
-/-- The instruction of the instruction manipulation. -/
-inductive Instruction where
-  | whatNext
-  | why
-  deriving DecidableEq, Repr
+/-- The voice of the context sentence of the voice manipulation. -/
+abbrev Voice := Data.Experiments.KehlerRohde2013.Voice
 
-/-- Whether the prompt supplies a pronoun. -/
-inductive Prompt where
-  | pronoun
-  | noPronoun
-  deriving DecidableEq, Repr
+/-- A proportion the paper prints to two places, in percent. -/
+def percent (d : Decimal) : ℕ := (d.mantissa * 100 / 10 ^ d.exponent).toNat
 
-/-- A cell of one of the paper's tables: the table and the levels of the factors locating the
-cell in it. -/
-structure Cell where
-  table : ℕ
-  aspect : Option Aspect := none
-  relation : Option Relation := none
-  instruction : Option Instruction := none
-  prompt : Option Prompt := none
-  voice : Option UD.Voice := none
-  deriving DecidableEq, Repr
-
-/-- The cell a row records, read from its features. -/
-def Cell.of? (e : LinguisticExample) : Option Cell :=
-  (e.nat? "table").map λ table =>
-    { table
-      aspect := e.parse? "aspect" [("perfective", .perfective), ("imperfective", .imperfective)]
-      relation := e.parse? "relation" [("occasion", .occasion), ("elaboration", .elaboration),
-        ("explanation", .explanation), ("violatedExpectation", .violatedExpectation),
-        ("result", .result)]
-      instruction := e.parse? "instruction" [("whatNext", .whatNext), ("why", .why)]
-      prompt := e.parse? "prompt" [("pronoun", .pronoun), ("noPronoun", .noPronoun)]
-      voice := e.parse? "voice" [("active", .Act), ("passive", .Pass)] }
-
-/-- Every factor a row names is read: no level of the paper's coding is dropped. -/
-theorem cell_of_reads_factors :
-    ∀ e ∈ Examples.all, ∀ c ∈ Cell.of? e,
-      ((e.feature? "aspect").isSome → c.aspect.isSome) ∧
-        ((e.feature? "relation").isSome → c.relation.isSome) ∧
-        ((e.feature? "instruction").isSome → c.instruction.isSome) ∧
-        ((e.feature? "prompt").isSome → c.prompt.isSome) ∧
-        ((e.feature? "voice").isSome → c.voice.isSome) := by
-  decide
-
-/-- The percentage a cell records under one of the paper's column names. -/
-def pct (c : Cell) (column : String) : ℕ :=
-  ((Examples.all.filter (Cell.of? · = some c)).filterMap (·.nat? column)).headD 0
-
-/-- A referent by its grammatical position in the context sentence: the subject (the Source of a
-Source–Goal transfer, the causally implicated referent of an active subject-biased verb) or the
-non-subject. -/
-inductive Position where
-  | subject
-  | nonSubject
-  deriving DecidableEq, Repr, Fintype
+/-- The voice as UD codes it. -/
+def Voice.toUD : Voice → UD.Voice
+  | .active => .Act
+  | .passive => .Pass
 
 /-- A function on positions by its two values. -/
 def Position.select {α : Type*} (s n : α) : Position → α
@@ -183,7 +134,7 @@ private theorem sum_position (f : Position → ℚ) : ∑ p, f p = f .subject + 
 /-! ### Coherence-conditioned biases (Tables 1–5) -/
 
 /-- Table 1: the Source interpretation rate by aspect. -/
-def aspectSource (a : Aspect) : ℕ := pct { table := 1, aspect := a } "sourceInterpretation"
+def aspectSource (a : Aspect) : ℕ := percent (sourceByAspect a).sourceInterpretation
 
 /-- The event-structure hypothesis: the imperfective keeps the Source central, the perfective
 focuses the end state, so the imperfective draws more Source interpretations. -/
@@ -191,29 +142,27 @@ theorem imperfective_more_source : aspectSource .perfective < aspectSource .impe
   decide
 
 /-- Table 2: the frequency of a relation in the perfective continuations. -/
-def perfectiveFrequency (c : Relation) : ℕ :=
-  pct { table := 2, aspect := some .perfective, relation := c } "frequency"
+def perfectiveFrequency (c : Relation) : ℕ := percent (relationsPerfective c).frequency
 
 /-- Table 2: the Source bias of a relation in the perfective continuations. -/
-def perfectiveSourceGiven (c : Relation) : ℕ :=
-  pct { table := 2, aspect := some .perfective, relation := c } "sourceGivenRelation"
+def perfectiveSourceGiven (c : Relation) : ℕ := percent (relationsPerfective c).biasToSource
 
 private theorem mixture_div (p b : Relation → ℕ) :
-    mixture (λ c => (p c : ℚ) / 100) (λ c => (b c : ℚ) / 100) =
+    mixture (fun c ↦ (p c : ℚ) / 100) (fun c ↦ (b c : ℚ) / 100) =
       ((∑ c, p c * b c : ℕ) : ℚ) / 10000 := by
   rw [eq_div_iff (by norm_num), mixture, sum_mul]
   push_cast
-  refine sum_congr rfl λ c _ => ?_
+  refine sum_congr rfl fun c _ ↦ ?_
   ring
 
-/-- The near-chance overall bias of the perfective continuations is the mixture (9) of strongly
-opposed relation-conditioned biases: Occasion, the most common relation, favors the Goal and
-Elaboration the Source. -/
+/-- The near-chance overall bias of the perfective continuations is the mixture (9), over the
+five coded relations, of strongly opposed relation-conditioned biases: Occasion, the most common
+relation, favors the Goal and Elaboration the Source. -/
 theorem perfective_mixture_masks_biases :
-    2 / 5 < mixture (λ c => (perfectiveFrequency c : ℚ) / 100)
-        (λ c => (perfectiveSourceGiven c : ℚ) / 100) ∧
-      mixture (λ c => (perfectiveFrequency c : ℚ) / 100)
-        (λ c => (perfectiveSourceGiven c : ℚ) / 100) < 3 / 5 ∧
+    2 / 5 < mixture (fun c ↦ (perfectiveFrequency c : ℚ) / 100)
+        (fun c ↦ (perfectiveSourceGiven c : ℚ) / 100) ∧
+      mixture (fun c ↦ (perfectiveFrequency c : ℚ) / 100)
+        (fun c ↦ (perfectiveSourceGiven c : ℚ) / 100) < 3 / 5 ∧
       perfectiveSourceGiven .occasion < 20 ∧ 90 < perfectiveSourceGiven .elaboration ∧
       ∀ c, perfectiveFrequency c ≤ perfectiveFrequency .occasion := by
   have h : ∑ c, perfectiveFrequency c * perfectiveSourceGiven c = 5524 := by decide
@@ -221,19 +170,22 @@ theorem perfective_mixture_masks_biases :
 
 /-- Table 3: the frequency of a relation under an instruction. -/
 def frequency (i : Instruction) (c : Relation) : ℕ :=
-  pct { table := 3, instruction := i, relation := c } "frequency"
+  percent (relationsByInstruction c i).frequency
 
 /-- Table 4: the Source bias of a relation in the instruction experiment. -/
-def sourceGiven (c : Relation) : ℕ :=
-  pct { table := 4, relation := c } "instructionManipulation"
+def sourceGiven (c : Relation) : ℕ := percent (biasesByRelation c).instructionManipulation
+
+/-- Table 4 repeats the biases of Table 2 as those of the original experiment. -/
+theorem biasesByRelation_original (c : Relation) :
+    (biasesByRelation c).original = (relationsPerfective c).biasToSource := by
+  cases c <;> rfl
 
 /-- Table 5: the observed Source interpretation rate under an instruction. -/
-def observedSource (i : Instruction) : ℕ :=
-  pct { table := 5, instruction := i } "sourceInterpretation"
+def observedSource (i : Instruction) : ℕ := percent (sourceByInstruction i).sourceInterpretation
 
 /-- (9) on Tables 3 and 4: the next-mention probability of the Source under an instruction. -/
 def predictedSource (i : Instruction) : ℚ :=
-  mixture (λ c => (frequency i c : ℚ) / 100) (λ c => (sourceGiven c : ℚ) / 100)
+  mixture (fun c ↦ (frequency i c : ℚ) / 100) (fun c ↦ (sourceGiven c : ℚ) / 100)
 
 /-- The instruction manipulation: the expectations of Table 3, with the conditional biases of
 Table 4 held fixed, put the *Why?* mixture on the Source side of chance and the *What happened
@@ -250,11 +202,10 @@ theorem instruction_mixtures :
 /-! ### Bidirectionality (Table 6) -/
 
 /-- Table 6: the frequency of a relation by prompt type. -/
-def promptFrequency (p : Prompt) (c : Relation) : ℕ :=
-  pct { table := 6, prompt := p, relation := c } "frequency"
+def promptFrequency (p : Prompt) (c : Relation) : ℕ := percent (relationsByPrompt c p).frequency
 
-/-- The share of first mentions to the Goal by prompt type. -/
-def goalMention (p : Prompt) : ℕ := pct { table := 6, prompt := p } "goalMention"
+/-- The share of first mentions to the Goal by prompt type, in percent. -/
+def goalMention (p : Prompt) : ℕ := (goalFirstMentions p).percent
 
 /-- An ambiguous pronoun is not inert: the prompt draws first mentions from the Goal to the
 Source, the overlaid subject bias, and with them the continuations move from the Goal-biased
@@ -270,38 +221,34 @@ theorem prompt_shifts_relations :
 /-! ### The voice manipulation (Tables 7–10) -/
 
 /-- Table 7: the rate of next mention of the causally implicated referent by voice and prompt. -/
-def causalMention (v : UD.Voice) (p : Prompt) : ℕ :=
-  pct { table := 7, voice := v, prompt := p } "causalMention"
+def causalMention (v : Voice) (p : Prompt) : ℕ := percent (causalMentions v p).proportion
 
 /-- Table 8: the rate of Explanation continuations by voice and prompt. -/
-def explanationRate (v : UD.Voice) (p : Prompt) : ℕ :=
-  pct { table := 8, voice := v, prompt := p } "explanation"
+def explanationRate (v : Voice) (p : Prompt) : ℕ := percent (explanations v p).proportion
 
 /-- Table 9: the pronominalization rate of a position by voice, without a pronoun prompt. -/
-def pronominalized (v : UD.Voice) : Position → ℕ
-  | .subject => pct { table := 9, voice := v } "subject"
-  | .nonSubject => pct { table := 9, voice := v } "nonSubject"
+def pronominalized (v : Voice) (pos : Position) : ℕ := percent (pronominalizations v pos).proportion
 
 /-- Table 10: the observed bias of the pronoun toward the subject by voice. -/
-def actualSubject (v : UD.Voice) : ℕ := pct { table := 10, voice := v } "actual"
+def actualSubject (v : Voice) : ℕ := percent (subjectBiases v).actual
 
 /-- Table 7 without a pronoun prompt as the next-mention rate of the subject: the causally
 implicated referent is the subject of the active and the by-phrase of the passive. -/
-def subjectMention : UD.Voice → ℕ
-  | .Pass => 100 - causalMention .Pass .noPronoun
-  | v => causalMention v .noPronoun
+def subjectMention : Voice → ℕ
+  | .active => causalMention .active .noPronoun
+  | .passive => 100 - causalMention .passive .noPronoun
 
 /-- The voice manipulation with the propositions constant: the pronoun refers to the causally
 implicated referent less once the passive moves it out of subject position (Table 7), and the
 continuations are Explanations less often (Table 8), the shift in coherence mediated by the shift
 in reference. -/
 theorem voice_shifts_interpretation_and_coherence :
-    causalMention .Pass .pronoun < causalMention .Act .pronoun ∧
-      explanationRate .Pass .pronoun < explanationRate .Act .pronoun := by
+    causalMention .passive .pronoun < causalMention .active .pronoun ∧
+      explanationRate .passive .pronoun < explanationRate .active .pronoun := by
   decide
 
 /-- (13) from Tables 7 and 9: the predicted bias of an ambiguous pronoun toward the subject. -/
-def bayesSubject (v : UD.Voice) : ℚ :=
+def bayesSubject (v : Voice) : ℚ :=
   posterior
     (Position.select ((subjectMention v : ℚ) / 100) (((100 - subjectMention v : ℕ) : ℚ) / 100))
     (Position.select ((pronominalized v .subject : ℚ) / 100)
@@ -320,45 +267,55 @@ private theorem posterior_select (s a b : ℕ) :
   simp only [posterior, sum_position, Position.select]
   rw [hden, hnum, div_div_div_cancel_right₀ (by norm_num)]
 
+private theorem bayesSubject_eq :
+    bayesSubject .active = 3658 / 4642 ∧ bayesSubject .passive = 2088 / 3836 := by
+  have hA : subjectMention .active = 59 := by decide
+  have hP : subjectMention .passive = 24 := by decide
+  have haA : pronominalized .active .subject = 62 := by decide
+  have hbA : pronominalized .active .nonSubject = 24 := by decide
+  have haP : pronominalized .passive .subject = 87 := by decide
+  have hbP : pronominalized .passive .nonSubject = 23 := by decide
+  simp only [bayesSubject, hA, hP, haA, hbA, haP, hbP]
+  rw [posterior_select, posterior_select]
+  norm_num
+
 /-- The Bayesian predictions of Table 10: from the next-mention rates without a pronoun (Table 7)
 and the pronominalization rates (Table 9), the pronoun refers to the subject in both voices and
 more strongly in the active, as the interpretations measured with the pronoun prompt show. -/
 theorem voice_predictions :
-    (1 / 2 < bayesSubject .Act ∧ 1 / 2 < bayesSubject .Pass ∧
-        bayesSubject .Pass < bayesSubject .Act) ∧
-      50 < actualSubject .Act ∧ 50 < actualSubject .Pass ∧
-        actualSubject .Pass < actualSubject .Act := by
-  have hA : subjectMention .Act = 59 := by decide
-  have hP : subjectMention .Pass = 24 := by decide
-  have haA : pronominalized .Act .subject = 62 := by decide
-  have hbA : pronominalized .Act .nonSubject = 24 := by decide
-  have haP : pronominalized .Pass .subject = 87 := by decide
-  have hbP : pronominalized .Pass .nonSubject = 23 := by decide
+    (1 / 2 < bayesSubject .active ∧ 1 / 2 < bayesSubject .passive ∧
+        bayesSubject .passive < bayesSubject .active) ∧
+      50 < actualSubject .active ∧ 50 < actualSubject .passive ∧
+        actualSubject .passive < actualSubject .active := by
+  obtain ⟨hA, hP⟩ := bayesSubject_eq
   refine ⟨?_, by decide, by decide, by decide⟩
-  simp only [bayesSubject, hA, hP, haA, hbA, haP, hbP]
-  rw [posterior_select, posterior_select]
+  rw [hA, hP]
   norm_num
+
+/-- Table 10's predictions are not the posterior of the aggregate rates of Tables 7 and 9, which
+fall below them in both voices (0.79 against 0.81 in the active, 0.54 against 0.59 in the
+passive); the paper does not say how it estimated them. -/
+theorem bayesSubject_lt_predicted (v : Voice) :
+    bayesSubject v < (subjectBiases v).predicted.toRat := by
+  obtain ⟨hA, hP⟩ := bayesSubject_eq
+  cases v
+  · rw [hA]; decide +kernel
+  · rw [hP]; decide +kernel
 
 /-- The overlaid subject bias in the voice experiment: in both voices the subject is
 pronominalized above the overall rate, so (13) puts the pronoun's bias toward it above its
 next-mention prior, as the pronoun prompt's rise in subject mentions over the no-pronoun
 condition shows for the active (Table 7). -/
 theorem overlaid_subject_bias :
-    ((subjectMention .Act : ℚ) / 100 < bayesSubject .Act ∧
-        (subjectMention .Pass : ℚ) / 100 < bayesSubject .Pass) ∧
-      causalMention .Act .noPronoun < causalMention .Act .pronoun := by
-  have hA : subjectMention .Act = 59 := by decide
-  have hP : subjectMention .Pass = 24 := by decide
-  have haA : pronominalized .Act .subject = 62 := by decide
-  have hbA : pronominalized .Act .nonSubject = 24 := by decide
-  have haP : pronominalized .Pass .subject = 87 := by decide
-  have hbP : pronominalized .Pass .nonSubject = 23 := by decide
-  refine ⟨⟨?_, ?_⟩, by decide⟩ <;>
-    simp only [bayesSubject, hA, hP, haA, hbA, haP, hbP] <;>
-    exact (posterior_gt_iff (Position.select _ _) (Position.select _ _) .subject
-      (by simp only [Position.select]; norm_num)
-      (by rw [sum_position]; simp only [Position.select]; norm_num)).mpr
-      (by rw [sum_position]; simp only [Position.select]; norm_num)
+    ((subjectMention .active : ℚ) / 100 < bayesSubject .active ∧
+        (subjectMention .passive : ℚ) / 100 < bayesSubject .passive) ∧
+      causalMention .active .noPronoun < causalMention .active .pronoun := by
+  obtain ⟨hA, hP⟩ := bayesSubject_eq
+  have hsA : subjectMention .active = 59 := by decide
+  have hsP : subjectMention .passive = 24 := by decide
+  refine ⟨⟨?_, ?_⟩, by decide⟩
+  · rw [hA, hsA]; norm_num
+  · rw [hP, hsP]; norm_num
 
 /-! ### Production tracks topichood, not expectancy -/
 
@@ -386,24 +343,23 @@ def topichood : UD.Voice → GrammaticalRole → TopichoodLevel
 
 /-- Table 9 by grammatical role: the object of the active and the by-phrase of the passive are
 the non-subjects. -/
-def pronounRate (v : UD.Voice) : GrammaticalRole → ℕ
+def pronounRate (v : Voice) : GrammaticalRole → ℕ
   | .subject => pronominalized v .subject
   | _ => pronominalized v .nonSubject
 
 /-- Production tracks topichood: across the voices and roles of Table 9 a higher topichood level
 is pronominalized at a higher rate, the passive subject above the active subject above the
 non-subjects, so not all grammatical subjects are equal. -/
-theorem pronounRate_strictMono :
-    ∀ v ∈ [UD.Voice.Act, .Pass], ∀ v' ∈ [UD.Voice.Act, .Pass], ∀ r r',
-      topichood v r < topichood v' r' → pronounRate v r < pronounRate v' r' := by
+theorem pronounRate_strictMono : ∀ v v' r r', topichood (Voice.toUD v) r <
+    topichood (Voice.toUD v') r' → pronounRate v r < pronounRate v' r' := by
   decide
 
 /-- Production is not expectancy: without a pronoun prompt the passive's by-phrase referent is
 mentioned next far more often than its subject, yet it is pronominalized far less: the rate of
 pronominalization follows topichood, not the next-mention bias. -/
 theorem production_not_expectancy :
-    subjectMention .Pass < 100 - subjectMention .Pass ∧
-      pronominalized .Pass .nonSubject < pronominalized .Pass .subject := by
+    subjectMention .passive < 100 - subjectMention .passive ∧
+      pronominalized .passive .nonSubject < pronominalized .passive .subject := by
   decide
 
 /-! ### The design premise and the Centering term
