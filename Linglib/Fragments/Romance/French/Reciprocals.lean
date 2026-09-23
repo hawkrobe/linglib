@@ -5,15 +5,20 @@ import Linglib.Syntax.Reciprocal
 # French reciprocals
 
 French marks reciprocity with the clitic *se*, shared with the reflexive, and with the bipartite
-*l'un l'autre* 'the one the other', which fills an argument position, keeps the clause bivalent and
-often accompanies *se* to disambiguate it. Reciprocal verbs with *se* are formed in the syntax
-([siloni-2008]), so they have no discontinuous counterpart with *avec* 'with' ([nordlinger-2023] ex.
-39).
+*l'un l'autre* 'the one the other'. With a direct object *l'un l'autre* cannot mark reciprocity on
+its own: *se* stays obligatory, *Jean et Marie s'aiment l'un l'autre* beside
+\**Jean et Marie aiment l'un l'autre* ([maslova-2008] (32)), and the bipartite is added to the
+*se*-reciprocal, bare where *se* suppresses an accusative and after *à* where it suppresses a
+dative ([siloni-2008] fn. 21), to rule out the reflexive reading. Reciprocal verbs with *se* are
+formed in the syntax ([siloni-2008]), so they have no discontinuous counterpart with *avec* 'with'
+([nordlinger-2023] ex. 39).
 
 ## References
 
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 * [T. Siloni, *The Syntax of Reciprocal Verbs: An Overview* (2008)][siloni-2008]
+* [E. Maslova, *Reflexive Encoding of Reciprocity: Cross-Linguistic and Language-Internal
+  Variation* (2008)][maslova-2008]
 -/
 
 namespace French.Reciprocals
@@ -25,7 +30,8 @@ def se : Marker :=
   { form := "se", strategy := .recipClitic
   , readings := {.reciprocal, .reflexive} }
 
-/-- l'un l'autre — bipartite reciprocal NP. -/
+/-- *l'un l'autre*, the bipartite reciprocal; with a direct object it accompanies *se* rather than
+    replacing it ([maslova-2008]). -/
 def lunLautre : Marker :=
   { form := "l'un l'autre", strategy := .bipartiteNP }
 
