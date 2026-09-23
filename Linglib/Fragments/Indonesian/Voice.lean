@@ -1,5 +1,7 @@
-import Linglib.Syntax.Voice.System
-import Linglib.Syntax.Person.Basic
+module
+
+public import Linglib.Syntax.Voice.System
+public import Linglib.Syntax.Person.Basic
 
 /-!
 # Indonesian voice
@@ -42,6 +44,8 @@ binary symmetrical one, or as a passive whose agent is demoted to the *oleh*-phr
 * [erlewine-levin-van-urk-2017]
 * [sneddon-1996]
 -/
+
+@[expose] public section
 
 namespace Indonesian
 

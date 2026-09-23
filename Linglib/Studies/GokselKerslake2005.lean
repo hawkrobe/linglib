@@ -1,4 +1,6 @@
-import Linglib.Fragments.Turkish.Verbs
+module
+
+public import Linglib.Fragments.Turkish.Verbs
 
 /-!
 # Göksel and Kerslake (2005): Turkish suffixation
@@ -37,6 +39,8 @@ holds because the position is not iterable.
 
 * [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
 -/
+
+@[expose] public section
 
 namespace GokselKerslake2005
 

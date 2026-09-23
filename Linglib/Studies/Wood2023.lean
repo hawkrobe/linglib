@@ -1,7 +1,10 @@
-import Linglib.Morphology.DistributedMorphology.Allosemy
-import Linglib.Morphology.DistributedMorphology.ComplexHead
-import Linglib.Fragments.Icelandic.Nouns
-import Linglib.Data.Examples.Wood2023
+module
+
+public import Linglib.Morphology.DistributedMorphology.Allosemy
+public import Linglib.Morphology.DistributedMorphology.ComplexHead
+public import Linglib.Fragments.Icelandic.Nouns
+public import Linglib.Data.Examples.Wood2023
+import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
 # Wood (2023): Icelandic Nominalizations and Allosemy
@@ -67,6 +70,8 @@ preposition and the root are read off its attachment. The event-modifier account
 * [wood-marantz-2017]
 * [myler-2016]
 -/
+
+@[expose] public section
 
 namespace Wood2023
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Japanese verbs
@@ -23,6 +25,8 @@ non-thematic.
 * [qing-uegaki-2025]
 * [song-1996]
 -/
+
+@[expose] public section
 
 namespace Japanese
 

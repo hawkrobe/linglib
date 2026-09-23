@@ -1,7 +1,9 @@
-import Linglib.Syntax.Voice.Basic
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Composition.Ty
-import Linglib.Fragments.English.Verbs
+module
+
+public import Linglib.Syntax.Voice.Basic
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Composition.Ty
+public import Linglib.Fragments.English.Verbs
 
 /-!
 # Chierchia (1984): Topics in the syntax and semantics of infinitives and gerunds
@@ -31,6 +33,8 @@ from which argument controls, and check the Fragment's control verbs against bot
 * [kratzer-1981]
 * [kratzer-1991]
 -/
+
+@[expose] public section
 
 namespace Chierchia1984
 

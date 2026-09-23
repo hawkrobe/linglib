@@ -1,8 +1,12 @@
-import Linglib.Core.Algebra.BigOperators.Multiset
-import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.UnorderedTree.Basic
-import Mathlib.RingTheory.Bialgebra.Basic
+module
+
+public import Linglib.Core.Algebra.BigOperators.Multiset
+public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Core.Data.UnorderedTree.Basic
+public import Mathlib.RingTheory.Bialgebra.Basic
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

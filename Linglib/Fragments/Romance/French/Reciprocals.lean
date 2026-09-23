@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Category.Pronoun.Basic
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # French reciprocals
@@ -20,6 +22,8 @@ formed in the syntax ([siloni-2008]), so they have no discontinuous counterpart 
 * [E. Maslova, *Reflexive Encoding of Reciprocity: Cross-Linguistic and Language-Internal
   Variation* (2008)][maslova-2008]
 -/
+
+@[expose] public section
 
 namespace French.Reciprocals
 

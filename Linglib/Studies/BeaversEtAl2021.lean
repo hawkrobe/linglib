@@ -1,6 +1,8 @@
-import Linglib.Studies.BeaversKoontzGarboden2020
-import Linglib.Data.Examples.BeaversEtAl2021
-import Mathlib.Data.Fintype.Basic
+module
+
+public import Linglib.Studies.BeaversKoontzGarboden2020
+public import Linglib.Data.Examples.BeaversEtAl2021
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Beavers et al. (2021): States and Changes of State
@@ -36,6 +38,8 @@ attested types (`Exponence.trichotomy`).
 * [arad-2005]
 * [haspelmath-1993]
 -/
+
+@[expose] public section
 
 namespace BeaversEtAl2021
 

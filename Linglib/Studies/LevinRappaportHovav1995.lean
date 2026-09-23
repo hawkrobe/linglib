@@ -1,5 +1,7 @@
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Data.Examples.LevinRappaportHovav1995
+module
+
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Data.Examples.LevinRappaportHovav1995
 
 /-!
 # Levin and Rappaport Hovav (1995): Unaccusativity
@@ -31,6 +33,8 @@ in `Data/Examples/LevinRappaportHovav1995.json` sort the verbs the same way
 * [levin-hovav-1995]
 * [levin-1993]
 -/
+
+@[expose] public section
 
 namespace LevinRappaportHovav1995
 

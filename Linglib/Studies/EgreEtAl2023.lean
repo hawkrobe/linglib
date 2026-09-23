@@ -1,8 +1,10 @@
-import Linglib.Core.InformationTheory.KullbackLeibler.Finite
-import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
-import Linglib.Pragmatics.RSA.Basic
-import Mathlib.Data.Nat.Dist
-import Mathlib.Order.Interval.Finset.Nat
+module
+
+public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
+public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+public import Linglib.Pragmatics.RSA.Basic
+public import Mathlib.Data.Nat.Dist
+public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # Égré, Spector, Mortier and Verheyen (2023): On the Optimality of Vagueness
@@ -57,6 +59,8 @@ of the posterior.
 * [lassiter-goodman-2017]
 * [goodman-stuhlmuller-2013]
 -/
+
+@[expose] public section
 
 namespace EgreEtAl2023
 

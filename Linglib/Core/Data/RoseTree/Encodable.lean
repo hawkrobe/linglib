@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.Basic
-import Linglib.Core.Data.Tree.Encodable
+module
+
+public import Linglib.Core.Data.RoseTree.Basic
+public import Linglib.Core.Data.Tree.Encodable
 
 /-!
 # Forests are binary trees
@@ -29,6 +31,8 @@ together with a binary tree, and rose trees over an encodable type are encodable
 * `BinaryTree.numNodes_ofForest`, `BinaryTree.numNodes_cons`: the correspondence preserves the
   number of nodes.
 -/
+
+@[expose] public section
 
 namespace BinaryTree
 

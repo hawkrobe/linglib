@@ -1,10 +1,12 @@
-import Linglib.Data.Examples.Cysouw2003
-import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Clusivity
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.Tagalog.Pronouns
-import Linglib.Morphology.Paradigm.Morphome
+module
+
+public import Linglib.Data.Examples.Cysouw2003
+public import Linglib.Core.Order.UpperLower.Finset
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Person.Clusivity
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Fragments.Tagalog.Pronouns
+public import Linglib.Morphology.Paradigm.Morphome
 
 /-!
 # Cysouw (2003): The paradigmatic structure of person marking
@@ -41,6 +43,8 @@ book names.
 
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
+
+@[expose] public section
 
 namespace Cysouw2003
 
@@ -424,7 +428,7 @@ abbrev syncretism (r : Row) : Structure := Morphology.syncretism r.forms
 abbrev wePattern (r : Row) : Clusivity.Pattern := r.syncretism.wePattern
 
 /-- A feature that may be absent but, when present, must parse. -/
-private def optional? {α : Type*} (e : Data.Examples.LinguisticExample) (key : String)
+def optional? {α : Type*} (e : Data.Examples.LinguisticExample) (key : String)
     (table : List (String × α)) : Option (Option α) :=
   match e.feature? key with
   | none => some none

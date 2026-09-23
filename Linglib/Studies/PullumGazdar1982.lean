@@ -1,5 +1,7 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Tree
-import Linglib.Data.Examples.PullumGazdar1982
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Linglib.Data.Examples.PullumGazdar1982
 
 /-!
 # Pullum and Gazdar (1982): Natural Languages and Context-Free Languages
@@ -37,6 +39,8 @@ Langendoen's finite state language are not formalized.
 * [huybregts-1976]
 * [bar-hillel-shamir-1960]
 -/
+
+@[expose] public section
 
 namespace PullumGazdar1982
 

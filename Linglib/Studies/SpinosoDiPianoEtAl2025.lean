@@ -1,4 +1,6 @@
-import Linglib.Studies.KaoGoodman2015
+module
+
+public import Linglib.Studies.KaoGoodman2015
 
 /-!
 # Spinoso-Di Piano, Austin, Piantanida and Cheung (2025): (RSA)²
@@ -48,6 +50,8 @@ listeners of its Section 5 are not formalized.
 * [kao-etal-2014-hyperbole]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

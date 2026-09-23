@@ -1,5 +1,7 @@
-import Linglib.Fragments.Uyghur.Complementizers
-import Linglib.Data.Examples.Major2024
+module
+
+public import Linglib.Fragments.Uyghur.Complementizers
+public import Linglib.Data.Examples.Major2024
 
 /-!
 # Major (2024): Re-analyzing *say* Complementation
@@ -26,6 +28,8 @@ The case-theoretic consequences for Sakha *dien* and the accusative subjects of
 * [bochnak-hanink-2021]
 * [baker-vinokurova-2010]
 -/
+
+@[expose] public section
 
 namespace Major2024
 

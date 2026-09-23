@@ -1,5 +1,7 @@
-import Linglib.Studies.BeaversEtAl2021
-import Linglib.Data.Examples.YuAusensiSmith2023
+module
+
+public import Linglib.Studies.BeaversEtAl2021
+public import Linglib.Data.Examples.YuAusensiSmith2023
 
 /-!
 # Yu, Ausensi & Smith (2023): States and Changes-of-State in the Semantics of Result Roots
@@ -30,6 +32,8 @@ existentially closed.
 * [yu-ausensi-smith-2023]
 * [beavers-koontz-garboden-2020]
 -/
+
+@[expose] public section
 
 namespace YuAusensiSmith2023
 

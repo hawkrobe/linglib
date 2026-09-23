@@ -1,15 +1,18 @@
-import Linglib.Data.Examples.KehlerRohde2013
-import Linglib.Data.Experiments.KehlerRohde2013
-import Linglib.Data.UD.UPOS
-import Linglib.Data.UD.Features
-import Linglib.Discourse.Coherence
-import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.GrammaticalRole
-import Linglib.Fragments.English.Pronouns
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Ring
+module
+
+public import Linglib.Data.Examples.KehlerRohde2013
+public import Linglib.Data.Experiments.KehlerRohde2013
+public import Linglib.Data.UD.UPOS
+public import Linglib.Data.UD.Features
+public import Linglib.Discourse.Coherence
+public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Fragments.English.Pronouns
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Kehler and Rohde (2013): A Probabilistic Reconciliation of Coherence-Driven and Centering-Driven Theories of Pronoun Interpretation
@@ -51,6 +54,8 @@ frequencies fall short of one by the continuations coded otherwise.
 * [grosz-joshi-weinstein-1995]
 * [davison-1984]
 -/
+
+@[expose] public section
 
 namespace KehlerRohde2013
 

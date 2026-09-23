@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.QUD
-import Linglib.Semantics.Aspect.Phasal
+module
+
+public import Linglib.Pragmatics.RSA.QUD
+public import Linglib.Semantics.Aspect.Phasal
 
 /-!
 # Qing, Goodman, and Lassiter (2016): A Rational Speech-Act Model of Projective Content
@@ -42,6 +44,8 @@ formalized.
 * [frank-goodman-2012]
 * [stalnaker-1974]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

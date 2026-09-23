@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+module
+
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
 # Romanian verbs and clause-typers
@@ -18,6 +20,8 @@ records only the coding of the clause it introduces.
 
 * [grano-2024]
 -/
+
+@[expose] public section
 
 namespace Romanian.Verbs
 
@@ -42,7 +46,7 @@ def complementizers : List Complementizer := [sa, ca]
 /-! ### Attitude and causative verbs -/
 
 /-- A finite subjunctive complement, the clause *să* introduces. -/
-private def saClause : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .subjunctive)]⟩
+def saClause : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .subjunctive)]⟩
 
 /-- *a vrea* 'want' takes a *să* clause. -/
 def a_vrea : Verb where

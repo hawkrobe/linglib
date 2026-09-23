@@ -1,7 +1,9 @@
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Fragments.English.Verbs
-import Linglib.Data.Examples.Klecha2016
+module
+
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Data.Examples.Klecha2016
 
 /-!
 # Klecha (2016): Modality and Embedded Temporal Operators
@@ -35,6 +37,8 @@ verdicts (`rows_readings`).
 * [klecha-2016]
 * [abusch-1997]
 -/
+
+@[expose] public section
 
 namespace Klecha2016
 

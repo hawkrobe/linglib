@@ -1,6 +1,8 @@
-import Linglib.Core.InformationTheory.BinaryEntropy
-import Linglib.Core.Probability.Moments.Covariance
-import Linglib.Data.WordOrder.Corpus.LevshinaEtAl2023
+module
+
+public import Linglib.Core.InformationTheory.BinaryEntropy
+public import Linglib.Core.Probability.Moments.Covariance
+public import Linglib.Data.WordOrder.Corpus.LevshinaEtAl2023
 
 /-!
 # Levshina et al. (2023): Why We Need a Gradient Approach to Word Order
@@ -36,6 +38,8 @@ probable in fiction and news (`fiction_eq_news`).
 
 * [levshina-etal-2023]
 -/
+
+@[expose] public section
 
 open Data.WordOrder.Corpus Data.WordOrder.Corpus.LevshinaEtAl2023
 open InformationTheory MeasureTheory ProbabilityTheory Real unitInterval

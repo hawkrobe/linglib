@@ -1,5 +1,7 @@
-import Linglib.Fragments.English.Pronouns
-import Linglib.Semantics.Reference.Pronoun
+module
+
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Semantics.Reference.Pronoun
 
 /-!
 # Büring (2012): Pronouns
@@ -30,6 +32,8 @@ feature rather than a feature of its own.
 * [D. Büring, *Pronouns* (2012)][buring-2012]
 * [U. Sauerland, *A new semantics for number* (2003)][sauerland-2003]
 -/
+
+@[expose] public section
 
 namespace Buring2012
 

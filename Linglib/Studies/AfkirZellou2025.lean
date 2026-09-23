@@ -1,6 +1,9 @@
-import Linglib.Fragments.Tarifit.ConsonantalRoots
-import Linglib.Morphology.Morphotactics.CVTemplate
-import Linglib.Data.Examples.AfkirZellou2025
+module
+
+public import Linglib.Fragments.Tarifit.ConsonantalRoots
+public import Linglib.Morphology.Morphotactics.CVTemplate
+public import Linglib.Data.Examples.AfkirZellou2025
+import all Init.Data.String.Defs  -- for unfolding `String.join`
 
 /-!
 # Schwa variation in Tarifit CCəC words
@@ -40,6 +43,8 @@ here.
 * [parker-2002]
 * [hall-2006]
 -/
+
+@[expose] public section
 
 namespace AfkirZellou2025
 

@@ -1,7 +1,9 @@
-import Linglib.Fragments.Washo.Clause
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
-import Linglib.Studies.Hanink2021
-import Linglib.Syntax.Minimalist.Clause.Spine
+module
+
+public import Linglib.Fragments.Washo.Clause
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Studies.Hanink2021
+public import Linglib.Syntax.Minimalist.Clause.Spine
 
 /-!
 # Bochnak & Hanink (2021): Clausal embedding in Washo: complementation vs. modification
@@ -41,6 +43,8 @@ carry different contents (`stack_eq`).
 * [kastner-2015]
 * [elliott-2016]
 -/
+
+@[expose] public section
 
 namespace BochnakHanink2021
 

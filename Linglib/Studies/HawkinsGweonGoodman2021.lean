@@ -1,6 +1,8 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Pragmatics.RSA.Basic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Pragmatics.RSA.Basic
 
 /-!
 # Hawkins, Gweon and Goodman (2021): The division of labor in communication
@@ -52,6 +54,8 @@ descriptions weakens the asymmetric speaker's relative preference.
 * [hawkins-gweon-goodman-2021]
 * [keysar-etal-2003]
 -/
+
+@[expose] public section
 
 namespace HawkinsGweonGoodman2021
 

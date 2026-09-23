@@ -1,7 +1,9 @@
-import Linglib.Syntax.Minimalist.Merge.Basic
-import Linglib.Core.Combinatorics.RootedTree.Conservation
-import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
-import Linglib.Core.Algebra.RootedTree.HopfAlgebra
+module
+
+public import Linglib.Syntax.Minimalist.Merge.Basic
+public import Linglib.Core.Combinatorics.RootedTree.Conservation
+public import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
+public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 
 /-!
 # External Merge on the algebraic carrier
@@ -31,6 +33,8 @@ forbids two crowns from reassembling `{S, S'}`. The residual case is an inductio
 
 * [marcolli-chomsky-berwick-2025], §1.4 (Lemma 1.4.1)
 -/
+
+@[expose] public section
 
 namespace Minimalist.Merge
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Hungarian verbs
@@ -28,6 +30,8 @@ cognition verbs like *gondol* 'think' embed either type. So this fragment
 records only general lexical class (perception / communication / attitude); the
 clause-type analysis lives in `Studies.Egressy2026`.
 -/
+
+@[expose] public section
 
 namespace Hungarian.Verbs
 

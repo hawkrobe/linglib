@@ -1,10 +1,12 @@
-import Mathlib.Basic.NNReal.Basic
-import Mathlib.Data.Set.Card
-import Mathlib.Probability.Distributions.Uniform
-import Linglib.Core.Probability.Constructions
-import Linglib.Data.Examples.CaoWhiteLassiter2025
-import Linglib.Semantics.Causation.Interpretation
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Mathlib.Basic.NNReal.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Probability.Distributions.Uniform
+public import Linglib.Core.Probability.Constructions
+public import Linglib.Data.Examples.CaoWhiteLassiter2025
+public import Linglib.Semantics.Causation.Interpretation
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Cao, White and Lassiter 2025: graded causative verb semantics
@@ -50,6 +52,8 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
 * [nadathur-lauer-2020]
 * [cao-geiger-kreiss-icard-gerstenberg-2023]
 -/
+
+@[expose] public section
 
 namespace CaoWhiteLassiter2025
 

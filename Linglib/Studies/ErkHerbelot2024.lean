@@ -3,11 +3,13 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Probability.DirichletMultinomial
-import Linglib.Core.Probability.Kernel.OfWeights
-import Linglib.Core.Probability.Kernel.Posterior
-import Linglib.Core.Probability.UniformOn
-import Mathlib.MeasureTheory.Constructions.Pi
+module
+
+public import Linglib.Core.Probability.DirichletMultinomial
+public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Linglib.Core.Probability.UniformOn
+public import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
 # Erk and Herbelot (2024): How to Marry a Star: Probabilistic Constraints for Meaning in Context
@@ -51,6 +53,8 @@ STAR-SUN, the conflict of Figure 6.
 
 * [erk-herbelot-2024]
 -/
+
+@[expose] public section
 
 namespace ErkHerbelot2024
 

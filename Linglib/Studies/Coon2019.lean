@@ -1,9 +1,11 @@
-import Linglib.Semantics.Root.Defs
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Mayan.Chuj.RootClasses
-import Linglib.Fragments.Mayan.Chuj.Voice
-import Linglib.Data.Examples.Coon2019
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Root.Defs
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Fragments.Mayan.Chuj.RootClasses
+public import Linglib.Fragments.Mayan.Chuj.Voice
+public import Linglib.Data.Examples.Coon2019
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Coon 2019: building verbs in Chuj
@@ -52,6 +54,8 @@ inanimate causer of (70a) and the isolated -j form (71) are recorded as data onl
   crosslinguistically* (2006)][alexiadou-anagnostopoulou-schaefer-2006]
 * [J. Wood, *Icelandic Morphosyntax and Argument Structure* (2015)][wood-2015]
 -/
+
+@[expose] public section
 
 namespace Coon2019
 
@@ -360,7 +364,7 @@ end Semantics
 def rowRoot (row : LinguisticExample) : Option ChujRoot :=
   row.feature? "rootForm" >>= λ f => allRoots.find? (·.form == f)
 
-private def heads : List (String × V) :=
+def heads : List (String × V) :=
   [("transitive", .transitive), ("intransitive", .intransitive), ("w", .w), ("ch", .ch),
     ("j", .j)]
 

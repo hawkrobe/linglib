@@ -1,5 +1,7 @@
-import Mathlib.Data.List.Sort
-import Mathlib.Order.RelClasses
+module
+
+public import Mathlib.Data.List.Sort
+public import Mathlib.Order.RelClasses
 
 /-!
 # Centering theory: centers and the pronominalization rule
@@ -40,6 +42,8 @@ let an utterance realize an entity indirectly, as in [poesio-stevenson-eugenio-h
 * [kameyama-1986]
 * [poesio-stevenson-eugenio-hitzeman-2004]
 -/
+
+@[expose] public section
 
 namespace Discourse.Centering
 
@@ -105,9 +109,9 @@ def cf : List E := u.ranked.map (·.entity)
 /-- The preferred center of `u`: its highest-ranked forward-looking center. -/
 def cp : Option E := u.cf.head?
 
-@[simp] theorem cf_mk_nil : (⟨[]⟩ : Utterance E R).cf = [] := rfl
+@[simp] theorem cf_mk_nil : (⟨[]⟩ : Utterance E R).cf = [] := by simp [cf, ranked]
 
-@[simp] theorem cp_mk_nil : (⟨[]⟩ : Utterance E R).cp = none := rfl
+@[simp] theorem cp_mk_nil : (⟨[]⟩ : Utterance E R).cp = none := by simp [cp]
 
 /-- The forward-looking centers of `u` are the entities it realizes. -/
 @[simp] theorem mem_cf : e ∈ u.cf ↔ e ∈ u := by simp [cf, mem_iff]
@@ -132,7 +136,7 @@ def cb (prev : Utterance E R) (cur : U) : Option E := prev.cf.find? (· ∈ cur)
 
 variable {prev : Utterance E R} {cur : U} {e : E}
 
-@[simp] theorem cb_mk_nil (cur : U) : cb (⟨[]⟩ : Utterance E R) cur = none := rfl
+@[simp] theorem cb_mk_nil (cur : U) : cb (⟨[]⟩ : Utterance E R) cur = none := by simp [cb]
 
 /-- The backward-looking center is a forward-looking center of the previous utterance. -/
 theorem cb_mem_cf (h : cb prev cur = some e) : e ∈ prev.cf := List.mem_of_find?_eq_some h

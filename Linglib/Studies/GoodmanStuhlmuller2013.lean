@@ -1,9 +1,11 @@
-import Linglib.Core.Probability.Kernel.OfWeights
-import Linglib.Core.Probability.Kernel.Posterior
-import Linglib.Core.Probability.UniformOn
-import Linglib.Pragmatics.RSA.Uniform
-import Mathlib.Probability.Kernel.Composition.Comp
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+module
+
+public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Pragmatics.RSA.Uniform
+public import Mathlib.Probability.Kernel.Composition.Comp
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Goodman and Stuhlmüller (2013): Knowledge and Implicature
@@ -40,6 +42,8 @@ regime of the paper's expository predictions; its fitted binomial prior and its 
 * [frank-goodman-2012]
 * [horn-1972]
 -/
+
+@[expose] public section
 
 namespace GoodmanStuhlmuller2013
 

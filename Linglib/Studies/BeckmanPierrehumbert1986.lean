@@ -1,7 +1,9 @@
-import Linglib.Phonology.Prosody.Intonation
-import Linglib.Phonology.Tone.Register
-import Linglib.Fragments.Japanese.Prosody
-import Linglib.Data.Examples.BeckmanPierrehumbert1986
+module
+
+public import Linglib.Phonology.Prosody.Intonation
+public import Linglib.Phonology.Tone.Register
+public import Linglib.Fragments.Japanese.Prosody
+public import Linglib.Data.Examples.BeckmanPierrehumbert1986
 
 /-!
 # Beckman and Pierrehumbert (1986): Intonational structure in Japanese and English
@@ -32,6 +34,8 @@ built from the prosodic fragment's word entries.
 * [beckman-pierrehumbert-1986]
 * [pierrehumbert-1980]
 -/
+
+@[expose] public section
 
 namespace BeckmanPierrehumbert1986
 

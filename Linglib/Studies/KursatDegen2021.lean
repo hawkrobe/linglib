@@ -1,5 +1,7 @@
-import Linglib.Studies.DegenEtAl2020
-import Linglib.Pragmatics.RSA.Uniform
+module
+
+public import Linglib.Studies.DegenEtAl2020
+public import Linglib.Pragmatics.RSA.Uniform
 
 /-!
 # Kursat and Degen (2021): Perceptual Difficulty and Redundant Modification
@@ -36,6 +38,8 @@ t-statistic. Where the paper reports a p-value only as a bound, `Effect.p` recor
 * [kursat-degen-2021]
 * [degen-etal-2020]
 -/
+
+@[expose] public section
 
 namespace KursatDegen2021
 

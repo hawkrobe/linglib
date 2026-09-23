@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.Egressy2026
-import Linglib.Fragments.Hungarian.Verbs
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Syntax.Minimalist.Probe.Profile
+module
+
+public import Linglib.Data.Examples.Egressy2026
+public import Linglib.Fragments.Hungarian.Verbs
+public import Linglib.Semantics.Tense.Embedding
+public import Linglib.Syntax.Minimalist.Probe.Profile
 
 /-!
 # Egressy (2026): Size-Sensitive Sequence of Tense in Hungarian
@@ -53,6 +55,8 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 * [abusch-1988]
 * [heim-1994-comments]
 -/
+
+@[expose] public section
 
 namespace Egressy2026
 

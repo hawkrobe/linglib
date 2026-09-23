@@ -1,10 +1,12 @@
-import Linglib.Syntax.Minimalist.MinimalPronoun
-import Linglib.Fragments.Mixtec.SMPM.Basic
-import Linglib.Syntax.Control.Head
-import Linglib.Syntax.Control.Basic
-import Linglib.Syntax.Control.Diagnostics
-import Linglib.Studies.Landau2013
-import Linglib.Studies.Allotey2021
+module
+
+public import Linglib.Syntax.Minimalist.MinimalPronoun
+public import Linglib.Fragments.Mixtec.SMPM.Basic
+public import Linglib.Syntax.Control.Head
+public import Linglib.Syntax.Control.Basic
+public import Linglib.Syntax.Control.Diagnostics
+public import Linglib.Studies.Landau2013
+public import Linglib.Studies.Allotey2021
 
 /-!
 # Ostrove (2026): Obligatorily Overt PRO in San Martín Peras Mixtec
@@ -51,6 +53,8 @@ prose only.
 * [black-1994]
 * [dechaine-manfredi-1994]
 -/
+
+@[expose] public section
 
 namespace Ostrove2026
 

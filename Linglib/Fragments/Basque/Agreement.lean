@@ -1,7 +1,10 @@
-import Linglib.Fragments.Basque.Pronouns
-import Linglib.Morphology.Morph
-import Linglib.Syntax.Agreement.Paradigm
-import Linglib.Syntax.Category.Verb.Tense
+module
+
+public import Linglib.Fragments.Basque.Pronouns
+public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Syntax.Category.Verb.Tense
+import all Init.Data.String.Defs  -- for unfolding `String.append`
 
 /-!
 # Basque verbal agreement
@@ -60,6 +63,8 @@ with modal markers, where the third person filler is *l-*, are not covered.
 * [laka-1996]
 -/
 
+@[expose] public section
+
 namespace Basque
 
 open Agreement Morphology
@@ -75,7 +80,7 @@ def absolutive : Paradigm (List Morph) :=
    (.pn .first .plural, [.pref "g"]), (.pn .second .plural, [.pref "z"])]
 
 /-- The suffixes of the first and second persons, which the dative and ergative slots share. -/
-private def participantSuffixes : Paradigm (List Morph) :=
+def participantSuffixes : Paradigm (List Morph) :=
   [(.pn .first .singular, [.suff "t"]), (familiar .masculine, [.suff "k"]),
    (familiar .feminine, [.suff "n"]), (.pn .first .plural, [.suff "gu"]),
    (.pn .second .plural, [.suff "zu"])]

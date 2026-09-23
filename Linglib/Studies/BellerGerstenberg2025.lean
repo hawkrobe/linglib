@@ -1,8 +1,10 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Semantics.Causation.SEM.Bool
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Semantics.Causation.SEM.Bool
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Beller and Gerstenberg 2025: causal expressions from counterfactual simulation
@@ -56,6 +58,8 @@ fitted noise, softening, and optimality parameters (θ, σ, ν, λ).
 * [frank-goodman-2012]: rational speech act pragmatics.
 * [halpern-pearl-2005]: the event-matching constraint on sufficient-causation.
 -/
+
+@[expose] public section
 
 namespace BellerGerstenberg2025
 

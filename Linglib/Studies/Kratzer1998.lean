@@ -1,9 +1,11 @@
-import Linglib.Syntax.Category.Verb.Tense
-import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Aspect.Viewpoint
-import Linglib.Fragments.English.Tense
-import Linglib.Fragments.German.Tense
-import Linglib.Data.Examples.Kratzer1998
+module
+
+public import Linglib.Syntax.Category.Verb.Tense
+public import Linglib.Semantics.Tense.Pronoun
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Fragments.English.Tense
+public import Linglib.Fragments.German.Tense
+public import Linglib.Data.Examples.Kratzer1998
 
 /-!
 # Kratzer (1998): More Structural Analogies between Pronouns and Tenses
@@ -64,6 +66,8 @@ tense forms.
 * [heim-kratzer-1998] — binder indices
 * [klein-1994] — reference time and the aspects
 -/
+
+@[expose] public section
 
 namespace Kratzer1998
 

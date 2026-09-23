@@ -1,10 +1,12 @@
-import Linglib.Fragments.Guebie.ParticleVerbs
-import Linglib.Studies.Casali2003
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Syntax.Minimalist.Linearization.Cyclic
-import Linglib.Syntax.Minimalist.Movement.Remnant
-import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
-import Linglib.Data.Examples.SandeClemDabkowski2026
+module
+
+public import Linglib.Fragments.Guebie.ParticleVerbs
+public import Linglib.Studies.Casali2003
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Syntax.Minimalist.Movement.Remnant
+public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
+public import Linglib.Data.Examples.SandeClemDabkowski2026
 
 /-!
 # Sande, Clem & Dąbkowski (2026): Discontinuous Vowel Harmony in Guébie
@@ -51,6 +53,8 @@ paper leaves open are not formalized.
 * [sy-2005]
 * [martinovic-2019]
 -/
+
+@[expose] public section
 
 namespace SandeClemDabkowski2026
 
@@ -195,13 +199,13 @@ theorem surfaceATR_eq_casali (c : ClauseConfig) (vRoot : Bool) :
 open Minimalist (SyntacticObject LIToken PlanarSyntacticObject)
 open Minimalist.SyntacticObject
 
-private def V₀ : LIToken := ⟨.simple .V [], 1⟩
-private def Part₀ : LIToken := ⟨.simple .P [], 2⟩
-private def T₀ : LIToken := ⟨.simple .T [], 3⟩
-private def C₀ : LIToken := ⟨.simple .C [], 4⟩
+def V₀ : LIToken := ⟨.simple .V [], 1⟩
+def Part₀ : LIToken := ⟨.simple .P [], 2⟩
+def T₀ : LIToken := ⟨.simple .T [], 3⟩
+def C₀ : LIToken := ⟨.simple .C [], 4⟩
 
 /-- The remnant VP: the particle over the verb's trace. -/
-private def remnantVP : PlanarSyntacticObject :=
+def remnantVP : PlanarSyntacticObject :=
   {PlanarSyntacticObject.leaf Part₀, PlanarSyntacticObject.traceOf V₀}
 
 /-- The derivation of a fronted clause: the verb merges with the particle and raises to T, and
@@ -217,16 +221,16 @@ theorem guebie_remnant_fronting :
 
 /-! ### The paper's examples -/
 
-private def orders : List (String × WordOrder) :=
+def orders : List (String × WordOrder) :=
   [("SVOPart", .SVOPart), ("SAuxOPartV", .SAuxOPartV), ("PartSVO", .PartSVO),
     ("PartSAuxOV", .PartSAuxOV)]
 
-private def verbs : List (String × Guebie.Morpheme) :=
+def verbs : List (String × Guebie.Morpheme) :=
   [("ni", Guebie.ni), ("ngwOsa", Guebie.ngwOsa)]
 
-private def atrs : List (String × Bool) := [("plus", true), ("minus", false)]
+def atrs : List (String × Bool) := [("plus", true), ("minus", false)]
 
-private def patterns : List (String × List String) :=
+def patterns : List (String × List String) :=
   [("S Aux O Part V", ["S", "Aux", "O", "Part", "V"]), ("S V O Part", ["S", "V", "O", "Part"]),
     ("Part S V O", ["Part", "S", "V", "O"]), ("Part S Aux O V", ["Part", "S", "Aux", "O", "V"]),
     ("S Part V O", ["S", "Part", "V", "O"]), ("Part V S V O", ["Part", "V", "S", "V", "O"]),

@@ -1,12 +1,14 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Order
-import Linglib.Morphology.Paradigm.Contiguity
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.OptimalityTheory.Stratal
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Phonology.Prosody.Foot
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Data.Examples.Aitha2026
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Order
+public import Linglib.Morphology.Paradigm.Contiguity
+public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.OptimalityTheory.Stratal
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Phonology.Prosody.Foot
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Linglib.Data.Examples.Aitha2026
 
 /-!
 # The nouns that say -ni
@@ -35,6 +37,8 @@ theorems are the Word-to-Phrase rerankings of (68).
 * [mcfadden-2018]
 * [kiparsky-2000]
 -/
+
+@[expose] public section
 
 namespace Aitha2026
 

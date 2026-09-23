@@ -1,9 +1,11 @@
-import Linglib.Data.Examples.Ozaki2026
-import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Japanese.Verbs
-import Linglib.Fragments.Japanese.Voice
-import Linglib.Semantics.ArgumentStructure.Unaccusativity
+module
+
+public import Linglib.Data.Examples.Ozaki2026
+public import Linglib.Syntax.Case.Dependent
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Fragments.Japanese.Verbs
+public import Linglib.Fragments.Japanese.Voice
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 
 /-!
 # Ozaki (2026): Japanese Accusative/Ablative Alternation Verbs Are Unaccusative
@@ -38,6 +40,8 @@ for both verbs and from which it derives their unaccusativity.
 * [kurafuji-1997]
 * [kratzer-1996]
 -/
+
+@[expose] public section
 
 namespace Ozaki2026
 

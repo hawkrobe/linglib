@@ -1,7 +1,9 @@
-import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
-import Linglib.Core.Probability.PitmanYor
-import Linglib.Morphology.Exponence.Select
-import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
+public import Linglib.Core.Probability.PitmanYor
+public import Linglib.Morphology.Exponence.Select
+public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 
 /-!
 # O'Donnell (2015): Productivity and Reuse in Language
@@ -33,6 +35,8 @@ book's point against the token-frequency model.
 * [kiparsky-1973]
 * [pitman-2006]
 -/
+
+@[expose] public section
 
 namespace ODonnell2015
 

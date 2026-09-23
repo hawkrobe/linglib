@@ -1,6 +1,8 @@
-import Linglib.Core.Computability.NonContextFree.BlockWitness
-import Linglib.Core.Computability.NonContextFree.AnBnCn
-import Linglib.Core.Computability.ContextFreeGrammar.Map
+module
+
+public import Linglib.Core.Computability.NonContextFree.BlockWitness
+public import Linglib.Core.Computability.NonContextFree.AnBnCn
+public import Linglib.Core.Computability.ContextFreeGrammar.Map
 
 /-!
 # `{aⁿbⁿcⁿdⁿ}`: a four-symbol non-context-free witness
@@ -31,6 +33,8 @@ alphabet, the witness-form bridge to `BlockWitness`, and the two adjacency conse
 * `stringMap_dropD_anbncndn`: `dropD` maps `anbncndn` onto `anbnc`.
 * `anbncndn_not_contextFree`: `anbncndn` is not context-free.
 -/
+
+@[expose] public section
 
 /-- Alphabet for the four-symbol counting witness languages. -/
 inductive FourSymbol where

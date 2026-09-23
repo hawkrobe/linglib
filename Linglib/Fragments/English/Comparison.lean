@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # English comparative data
@@ -8,6 +10,8 @@ particle *than* marks the standard (WALS Ch 121A: particle, [stassen-2013]),
 degree is marked by the free word *more* or the bound affix *-er*, and the
 superlative is morphological (*-est*).
 -/
+
+@[expose] public section
 
 namespace English.Comparison
 

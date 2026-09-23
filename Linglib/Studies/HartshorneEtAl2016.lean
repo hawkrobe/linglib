@@ -1,6 +1,8 @@
-import Mathlib.Data.List.MinMax
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Studies.Pesetsky1995
+module
+
+public import Mathlib.Data.List.MinMax
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Studies.Pesetsky1995
 
 /-!
 # Hartshorne et al. (2016): Psych verbs, the linking problem, and the acquisition of language
@@ -48,6 +50,8 @@ five). The paper's examples are the rows of `Data/Examples/HartshorneEtAl2016.js
 * [levin-1993]
 * [levin-rappaport-hovav-2005]
 -/
+
+@[expose] public section
 
 namespace HartshorneEtAl2016
 

@@ -1,11 +1,13 @@
-import Linglib.Semantics.Root.Defs
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.LevinTheory
-import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-import Linglib.Semantics.Presupposition.Iterative
-import Linglib.Data.Examples.BeaversKoontzGarboden2020
+module
+
+public import Linglib.Semantics.Root.Defs
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.ArgumentStructure.LevinTheory
+public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
+public import Linglib.Semantics.Presupposition.Iterative
+public import Linglib.Data.Examples.BeaversKoontzGarboden2020
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
@@ -39,6 +41,8 @@ Alternations* (`rootHypothesis_matches_profile`).
 * [rappaport-hovav-levin-2010]
 * [von-stechow-1996]
 -/
+
+@[expose] public section
 
 namespace Semantics.Root.Kinds
 

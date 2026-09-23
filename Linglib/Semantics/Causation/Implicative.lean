@@ -1,8 +1,10 @@
-import Linglib.Semantics.Attitudes.Basic
-import Linglib.Semantics.Causation.VerbClass
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
-import Linglib.Semantics.Causation.SEM.Counterfactual
+module
+
+public import Linglib.Semantics.Attitudes.Basic
+public import Linglib.Semantics.Causation.VerbClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.MeaningComponents
+public import Linglib.Semantics.Causation.SEM.Counterfactual
 
 /-!
 # Implicative Verbs ([nadathur-2023-implicatives])
@@ -37,6 +39,8 @@ were deleted in Phase D-H. The polymorphic V2 versions
 (`manageSem`, `failSem`, `necessityPresup`, `Implicative.toSemantics`
 dispatch) are promoted to canonical here.
 -/
+
+@[expose] public section
 
 namespace Implicative
 

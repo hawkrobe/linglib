@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Uniform
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
 
 /-!
 # Cohn-Gordon, Goodman and Potts 2019: incremental Rational Speech Acts
@@ -63,6 +65,8 @@ referent but the pitcher.
 * [J. C. Sedivy, *Implicature During Real Time Conversation: A View from Language
   Processing Research* (2007)][sedivy-2007]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
@@ -520,8 +524,8 @@ theorem incremental_prefers_bare_noun :
 
 /-! ### The global model on Figure 1 (§2.1, Figure 1b) -/
 
-private theorem fig1_mem_dress : [Word.dress] ∈ figureOne.utterances := by decide
-private theorem fig1_mem_redDress : [Word.red, Word.dress] ∈ figureOne.utterances := by decide
+theorem fig1_mem_dress : [Word.dress] ∈ figureOne.utterances := by decide
+theorem fig1_mem_redDress : [Word.red, Word.dress] ∈ figureOne.utterances := by decide
 
 /-- Figure 1b: the global pragmatic speaker prefers *red dress* (1/2) to bare *dress*
 (1/4) for the red dress — the preference the chain rule reverses. -/
@@ -631,8 +635,8 @@ theorem figureThree_incremental_prefers_AA :
     show ∑ r', figureThree.trueExts [Letter.B, Letter.A] r' = 2 from by decide,
     show ∑ r', figureThree.trueExts [Letter.B, Letter.B] r' = 2 from by decide]
 
-private theorem fig3_mem_AA : [Letter.A, Letter.A] ∈ figureThree.utterances := by decide
-private theorem fig3_mem_BA : [Letter.B, Letter.A] ∈ figureThree.utterances := by decide
+theorem fig3_mem_AA : [Letter.A, Letter.A] ∈ figureThree.utterances := by decide
+theorem fig3_mem_BA : [Letter.B, Letter.A] ∈ figureThree.utterances := by decide
 
 /-- Figure 3, green: the global speaker is indifferent between AA and BA for W1 — both are
 true and equally informative, so only the chain rule separates them. -/
@@ -763,8 +767,8 @@ theorem incremental_indifferent {κ : ℝ≥0∞} (hκ0 : κ ≠ 0) (hκtop : κ
       hκtop, measureReal_def, forced_stop_after_red_dress]
   norm_num
 
-private theorem mem_dress : [Word.dress, Word.stop] ∈ game.utterances := by decide
-private theorem mem_redDress : [Word.red, Word.dress, Word.stop] ∈ game.utterances := by
+theorem mem_dress : [Word.dress, Word.stop] ∈ game.utterances := by decide
+theorem mem_redDress : [Word.red, Word.dress, Word.stop] ∈ game.utterances := by
   decide
 
 /-- §3.1, English, globally: both utterances identify the red dress, so with any

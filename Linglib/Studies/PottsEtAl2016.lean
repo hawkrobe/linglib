@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Silence
+module
+
+public import Linglib.Pragmatics.RSA.Silence
 
 /-!
 # Potts, Lassiter, Levy and Frank (2016): Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty
@@ -38,6 +40,8 @@ formalized.
 * [potts-etal-2016]
 * [chemla-spector-2011]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal NNReal

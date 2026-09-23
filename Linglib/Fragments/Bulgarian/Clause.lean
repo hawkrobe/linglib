@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Bulgarian clausal embedding
@@ -28,6 +30,8 @@ analysis of *deto* and the double requirement behind its distribution are stated
 * [karttunen-1971b]
 * [noonan-2007]
 -/
+
+@[expose] public section
 
 namespace Bulgarian
 
@@ -60,7 +64,7 @@ structure Verb extends _root_.Verb where
   predicateClass : Option Complement.PredicateClass
 
 /-- The frames of an emotive factive, a finite clause or a *za* phrase (59). -/
-private def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentFrame.pp]
+def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentFrame.pp]
 
 /-- *săžaljavam* 'regret', the predicate of the projection trials (57). -/
 def sazhaljavam : Verb where

@@ -1,7 +1,10 @@
-import Mathlib.Algebra.BigOperators.Expect
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Algebra.Order.Field.Basic
-import Linglib.Core.Order.Argmax
+module
+
+public import Mathlib.Algebra.BigOperators.Expect
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Order.Field.Basic
+public import Linglib.Core.Order.Argmax
+public import Mathlib.Tactic.Positivity
 
 /-!
 # The uniform vector on a finset
@@ -25,6 +28,8 @@ connects it to `Set.indicator`, and its inner products are mathlib's
 * `sum_mul_le_of_support` — a sub-probability average of `f` supported on `s` is
   at most the maximum of `f` on `s`.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

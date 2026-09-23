@@ -1,7 +1,9 @@
-import Linglib.Semantics.Causation.Psych
-import Linglib.Semantics.Causation.PsychLink
-import Linglib.Studies.Pesetsky1995
-import Linglib.Fragments.English.Verbs
+module
+
+public import Linglib.Semantics.Causation.Psych
+public import Linglib.Semantics.Causation.PsychLink
+public import Linglib.Studies.Pesetsky1995
+public import Linglib.Fragments.English.Verbs
 
 /-!
 # Kim (2024): On the Argument Structure of Object Experiencer Verbs
@@ -38,6 +40,8 @@ stored one.
 * [belletti-rizzi-1988]
 * [pesetsky-1995]
 -/
+
+@[expose] public section
 
 namespace Kim2024
 

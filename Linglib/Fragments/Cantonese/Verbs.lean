@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Clause.Complementation
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Cantonese complement-taking verbs
@@ -17,6 +19,8 @@ live in `Studies/LiuYip2026.lean`.
 * [noonan-2007]
 * [liu-yip-2026]
 -/
+
+@[expose] public section
 
 namespace Cantonese.Verbs
 

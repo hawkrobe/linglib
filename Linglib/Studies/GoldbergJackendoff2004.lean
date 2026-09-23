@@ -1,7 +1,9 @@
-import Linglib.Syntax.ConstructionGrammar.Resultatives
-import Linglib.Syntax.Category.Verb.Argument
-import Linglib.Fragments.English.Verbs
-import Linglib.Data.Examples.GoldbergJackendoff2004
+module
+
+public import Linglib.Syntax.ConstructionGrammar.Resultatives
+public import Linglib.Syntax.Category.Verb.Argument
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Data.Examples.GoldbergJackendoff2004
 
 /-!
 # Goldberg and Jackendoff (2004): The English Resultative as a Family of Constructions
@@ -36,6 +38,8 @@ derives a label only where the citation frame carries an entailment profile.
 * [dowty-1991]
 -/
 
+@[expose] public section
+
 namespace GoldbergJackendoff2004
 
 open ConstructionGrammar.Resultatives ArgumentStructure Data.Examples
@@ -55,7 +59,7 @@ structure Row where
   judgment : Judgment
 
 /-- The paper's verbs, by citation form. -/
-private def verbs : List (String × English.Verb) :=
+def verbs : List (String × English.Verb) :=
   [("hammer", hammer), ("laugh", laugh), ("freeze", freeze), ("roll", roll), ("water", water),
    ("break", break_), ("drink", drink), ("talk", talk), ("yell", yell), ("heat", heat),
    ("weave", weave), ("float", float), ("push", push), ("cry", cry), ("bleed", bleed),

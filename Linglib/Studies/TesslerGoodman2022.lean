@@ -1,4 +1,6 @@
-import Linglib.Studies.TesslerGoodman2019
+module
+
+public import Linglib.Studies.TesslerGoodman2019
 
 /-!
 # Tessler and Goodman (2022): Warm (for Winter): Inferring Comparison Classes in Communication
@@ -47,6 +49,8 @@ with a basic-level bias or a frequency effect modulate but do not reverse.
 * [frank-goodman-2012]
 * [kennedy-2007]
 -/
+
+@[expose] public section
 
 namespace TesslerGoodman2022
 

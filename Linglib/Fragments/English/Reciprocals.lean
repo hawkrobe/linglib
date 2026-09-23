@@ -1,6 +1,8 @@
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Verbs
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # English reciprocals
@@ -16,6 +18,8 @@ has no exponent, so the verb entries carry it rather than the marker inventory.
 * [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 * [T. Siloni, *Reciprocal Verbs and Symmetry* (2012)][siloni-2012]
 -/
+
+@[expose] public section
 
 namespace English.Reciprocals
 

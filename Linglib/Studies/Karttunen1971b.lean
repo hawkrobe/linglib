@@ -1,7 +1,9 @@
-import Linglib.Fragments.English.Verbs
-import Linglib.Semantics.Presupposition.Environment
-import Linglib.Semantics.Presupposition.Basic
-import Linglib.Data.Examples.Karttunen1971b
+module
+
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Semantics.Presupposition.Environment
+public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Data.Examples.Karttunen1971b
 
 /-!
 # Karttunen (1971): Some observations on factivity
@@ -33,6 +35,8 @@ not the presupposition holds (`negExt_no_inference`).
 * [karttunen-1971b]
 * [kiparsky-kiparsky-1970]
 -/
+
+@[expose] public section
 
 namespace Karttunen1971b
 

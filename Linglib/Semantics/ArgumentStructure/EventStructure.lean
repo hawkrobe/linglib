@@ -1,8 +1,10 @@
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Semantics.Aspect.Defs
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.Root.Defs
+module
+
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.Root.Defs
 
 /-!
 # Event Structure Templates
@@ -27,6 +29,8 @@ at `Studies/RappaportHovavLevin2024.lean`.
 - `intransitiveVariant` → causative/inchoative alternation ([krejci-2012]; [rappaport-hovav-levin-1998])
 
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure.EventStructure
 

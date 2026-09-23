@@ -1,5 +1,7 @@
-import Linglib.Discourse.Centering.Basic
-import Mathlib.Data.List.Defs
+module
+
+public import Linglib.Discourse.Centering.Basic
+public import Mathlib.Data.List.Defs
 
 /-!
 # Centering theory: transitions
@@ -39,6 +41,8 @@ pointwise.
 * [grosz-joshi-weinstein-1995]
 * [poesio-stevenson-eugenio-hitzeman-2004]
 -/
+
+@[expose] public section
 
 namespace Discourse.Centering
 

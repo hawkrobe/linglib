@@ -1,4 +1,6 @@
-import Linglib.Fragments.German.Pronouns
+module
+
+public import Linglib.Fragments.German.Pronouns
 
 /-!
 # German reciprocals
@@ -19,6 +21,8 @@ allows.
   Languages* (2008)][gast-haas-2008]
 * [T. Siloni, *Reciprocal Verbs and Symmetry* (2012)][siloni-2012]
 -/
+
+@[expose] public section
 
 namespace German.Reciprocals
 

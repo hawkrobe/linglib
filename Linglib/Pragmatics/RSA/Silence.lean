@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Uniform
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
 
 /-!
 # The null message
@@ -17,6 +19,8 @@ content utterances are uniform in the null message's cost.
 
 * [bergen-levy-goodman-2016]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

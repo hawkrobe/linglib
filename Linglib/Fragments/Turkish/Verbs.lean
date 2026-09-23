@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Fragments.Turkish.Morphotactics
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Fragments.Turkish.Morphotactics
 
 /-!
 # Turkish verbs
@@ -29,6 +31,8 @@ listed.
 * [goksel-kerslake-2005]
 * [qing-uegaki-2025]
 -/
+
+@[expose] public section
 
 open Phonology
 
@@ -60,7 +64,7 @@ def inflect (v : Verb) (sfx : List (Σ σ, system.Exponent σ)) : List Segment :
 end Verb
 
 /-- The frame of a verb that takes a nominalized clause as a question. -/
-private def nominalizedQuestion : ArgumentFrame :=
+def nominalizedQuestion : ArgumentFrame :=
   ⟨some .nominal, [.clausal (coding := some .nominalized) (force := some .interrogative)]⟩
 
 /-! ### Preferential attitudes -/

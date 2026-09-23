@@ -1,9 +1,11 @@
-import Linglib.Semantics.Events.Closure
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Syntax.Minimalist.Clause.Size
-import Linglib.Fragments.Romance.Italian.Verbs
-import Linglib.Data.Examples.FuscoSgrizzi2026
-import Linglib.Studies.Grano2024
+module
+
+public import Linglib.Semantics.Events.Closure
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Fragments.Romance.Italian.Verbs
+public import Linglib.Data.Examples.FuscoSgrizzi2026
+public import Linglib.Studies.Grano2024
 
 /-!
 # Fusco and Sgrizzi (2026): Belief or Action? Semantic Ambiguity in the Italian Non-finite Domain
@@ -55,6 +57,8 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
 * [hacquard-2010]
 * [rizzi-1997]
 -/
+
+@[expose] public section
 
 namespace FuscoSgrizzi2026
 

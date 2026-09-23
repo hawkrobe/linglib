@@ -1,4 +1,6 @@
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # Modern Greek reciprocals
@@ -15,6 +17,8 @@ on [siloni-2008]'s analysis marks lexical formation.
 * [T. Siloni, *The Syntax of Reciprocal Verbs: An Overview* (2008)][siloni-2008]
 * [A. Dimitriadis, *Irreducible Symmetry in Reciprocal Constructions* (2008)][dimitriadis-2008]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.Reciprocals
 

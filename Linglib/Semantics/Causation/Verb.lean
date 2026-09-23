@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Defs
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # The causative of a verb entry
@@ -6,6 +8,8 @@ import Linglib.Syntax.Category.Verb.Defs
 A verb entry is causative when it records a causative, and asserts sufficiency when that
 causative does (`Causative.AssertsSufficiency`), as *make* does and *cause* does not.
 -/
+
+@[expose] public section
 
 namespace Verb
 

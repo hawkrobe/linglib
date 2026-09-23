@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Combinatorics.RootedTree.Conservation
+module
+
+public import Linglib.Core.Combinatorics.RootedTree.Conservation
 
 /-!
 # Trace-aware size measures of workspaces
@@ -30,6 +32,8 @@ cut.
 
 * [marcolli-chomsky-berwick-2025], §1.6.1–1.6.2 (Lemma 1.6.3)
 -/
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

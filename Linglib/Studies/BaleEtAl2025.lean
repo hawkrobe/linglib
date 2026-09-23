@@ -1,7 +1,9 @@
-import Mathlib.Data.Fintype.Powerset
-import Linglib.Pragmatics.NeoGricean.Basic
-import Linglib.Studies.GoodmanStuhlmuller2013
-import Linglib.Data.Examples.BaleEtAl2025
+module
+
+public import Mathlib.Data.Fintype.Powerset
+public import Linglib.Pragmatics.NeoGricean.Basic
+public import Linglib.Studies.GoodmanStuhlmuller2013
+public import Linglib.Data.Examples.BaleEtAl2025
 
 /-!
 # Bale, Noguchi, Rolland & Barner 2025: competence by default
@@ -46,6 +48,8 @@ ignorant speaker, and participants under cognitive load answered no to the ignor
 * [vanrooij-schulz-2004] — competence assumed whenever consistent
 * [goodman-stuhlmuller-2013] — the observation states
 -/
+
+@[expose] public section
 
 namespace BaleEtAl2025
 

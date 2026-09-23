@@ -1,5 +1,7 @@
-import Linglib.Syntax.Voice.Basic
-import Linglib.Semantics.Root.Defs
+module
+
+public import Linglib.Syntax.Voice.Basic
+public import Linglib.Semantics.Root.Defs
 
 /-!
 # Dargwa (Tanti / Muira) Complex Predicates [sumbatova-2021]
@@ -36,6 +38,8 @@ Under vVPE, the light verb (v head) survives while the nominal root
 2. Causative alternations (which differ only in Voice) are tolerated
 3. Antipassive roots (v-adjoined) cannot be elided
 -/
+
+@[expose] public section
 
 namespace Dargwa.ComplexPredicates
 

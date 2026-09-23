@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Mandarin comparative data
@@ -8,6 +10,8 @@ the standard is the object of *bǐ*, and the free degree word *gèng* 'even
 more' is available. No superlative strategy is recorded: the free superlative
 word *zuì* fits none of `SuperlativeStrategy`'s cases.
 -/
+
+@[expose] public section
 
 namespace Mandarin.Comparison
 

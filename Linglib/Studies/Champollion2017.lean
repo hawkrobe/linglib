@@ -1,9 +1,11 @@
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Events.Basic
-import Linglib.Semantics.Aspect.Viewpoint
-import Linglib.Semantics.Plurality.Algebra
-import Linglib.Fragments.English.Verbs
-import Linglib.Studies.Krifka1998
+module
+
+public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Events.Basic
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Plurality.Algebra
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Studies.Krifka1998
 
 /-!
 # Champollion 2017: distributivity as a bridge between aspect and measurement
@@ -76,6 +78,8 @@ but violates the presupposition at the halfway legs (`pushCarts_stratified`,
 
 * [champollion-2017]
 -/
+
+@[expose] public section
 
 namespace Champollion2017
 

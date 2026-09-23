@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.ContextFreeGrammar
-import Linglib.Core.Data.RoseTree.Get
-import Linglib.Core.Data.RoseTree.Encodable
-import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Nat.Find
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar
+public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Encodable
+public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Nat.Find
 
 /-!
 # Derivation trees of a context-free grammar
@@ -36,6 +38,8 @@ list of terminals at its leaves, left to right.
   nodes with the same nonterminal; together with `RoseTree.numNodes_replaceAt_lt` these are the
   ingredients of the pumping lemma.
 -/
+
+@[expose] public section
 
 namespace RoseTree
 

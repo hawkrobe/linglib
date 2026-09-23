@@ -1,6 +1,8 @@
-import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.UnorderedTree.Basic
-import Mathlib.Tactic.Abel
+module
+
+public import Linglib.Core.Combinatorics.RootedTree.Cut
+public import Linglib.Core.Data.UnorderedTree.Basic
+public import Mathlib.Tactic.Abel
 
 /-!
 # RoseTree double-cut coassociativity for Δ^c (combinatorial core of MCB 1.2.10)
@@ -27,6 +29,8 @@ descends it through `UnorderedTree.mk` to close the UnorderedTree `doubleCut_eq`
 
 `[UPSTREAM]` candidate.
 -/
+
+@[expose] public section
 
 open RoseTree UnorderedTree ConnesKreimer
 

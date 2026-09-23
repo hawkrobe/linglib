@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
-import Linglib.Fragments.Hungarian.Reciprocals
-import Linglib.Data.Examples.Rakosi2019
+module
+
+public import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
+public import Linglib.Fragments.Hungarian.Reciprocals
+public import Linglib.Data.Examples.Rakosi2019
 
 /-!
 # Rákosi (2019): Reciprocal anaphors in singular constructions in Hungarian
@@ -33,6 +35,8 @@ number feature (`egymas_no_number_feature`), the reflexive inflects (`reflexive_
 * [rakosi-2019]
 * [dalrymple-haug-2024]
 -/
+
+@[expose] public section
 
 namespace Rakosi2019
 

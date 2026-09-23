@@ -1,10 +1,13 @@
-import Linglib.Discourse.Centering.Transition
-import Linglib.Discourse.Centering.GrammaticalRole
-import Linglib.Data.Examples.PoesioEtAl2004
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.List.MinMax
-import Mathlib.Data.List.Dedup
-import Mathlib.Data.Prod.Lex
+module
+
+public import Linglib.Discourse.Centering.Transition
+public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Data.Examples.PoesioEtAl2004
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.List.MinMax
+public import Mathlib.Data.List.Dedup
+public import Mathlib.Data.Prod.Lex
+import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Poesio, Stevenson, Di Eugenio and Hitzeman (2004): Centering: A Parametric Theory and Its Instantiations
@@ -49,6 +52,8 @@ the examples are cut into utterances.
 * [brennan-friedman-pollard-1987]
 * [strube-hahn-1999]
 -/
+
+@[expose] public section
 
 namespace PoesioEtAl2004
 

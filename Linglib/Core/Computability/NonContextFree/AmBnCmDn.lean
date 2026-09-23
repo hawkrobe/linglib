@@ -1,4 +1,6 @@
-import Linglib.Core.Computability.NonContextFree.AnBnCnDn
+module
+
+public import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 
 /-!
 # `{aᵐbⁿcᵐdⁿ}`: a two-parameter four-symbol non-context-free witness
@@ -22,6 +24,8 @@ of the two diagonal equalities rather than all four — the substantive content 
 * `ambncmdn_not_pumpable`: `ambncmdn` lacks the CFL pumping property.
 * `ambncmdn_not_contextFree`: `ambncmdn` is not context-free.
 -/
+
+@[expose] public section
 
 /-- The witness word `aᵐbⁿcᵐdⁿ`. -/
 def makeString_ambncmdn (m n : ℕ) : FourString :=

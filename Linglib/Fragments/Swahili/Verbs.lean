@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Swahili verbs
@@ -11,6 +13,8 @@ habituality) and affix ordering; some bases drift semantically
 (*pambana* 'fight' < *pamba* 'decorate'), and *jibizana* has no binary
 base at all (\**jibiza*).
 -/
+
+@[expose] public section
 
 namespace Swahili.Verbs
 

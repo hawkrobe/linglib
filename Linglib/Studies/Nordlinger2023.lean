@@ -1,17 +1,19 @@
-import Linglib.Syntax.Reciprocal
-import Linglib.Studies.Siloni2012
-import Linglib.Semantics.Plurality.Reciprocal
-import Linglib.Fragments.English.Reciprocals
-import Linglib.Fragments.Chichewa.Reciprocals
-import Linglib.Fragments.Romance.French.Reciprocals
-import Linglib.Fragments.Greek.StandardModern.Reciprocals
-import Linglib.Fragments.Hungarian.Reciprocals
-import Linglib.Fragments.Icelandic.Reciprocals
-import Linglib.Fragments.Mandarin.Reciprocals
-import Linglib.Fragments.Slavic.Czech.Reciprocals
-import Linglib.Fragments.Slavic.Russian.Reciprocals
-import Linglib.Fragments.Swahili.Reciprocals
-import Linglib.Fragments.Wambaya.Reciprocals
+module
+
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Studies.Siloni2012
+public import Linglib.Semantics.Plurality.Reciprocal
+public import Linglib.Fragments.English.Reciprocals
+public import Linglib.Fragments.Chichewa.Reciprocals
+public import Linglib.Fragments.Romance.French.Reciprocals
+public import Linglib.Fragments.Greek.StandardModern.Reciprocals
+public import Linglib.Fragments.Hungarian.Reciprocals
+public import Linglib.Fragments.Icelandic.Reciprocals
+public import Linglib.Fragments.Mandarin.Reciprocals
+public import Linglib.Fragments.Slavic.Czech.Reciprocals
+public import Linglib.Fragments.Slavic.Russian.Reciprocals
+public import Linglib.Fragments.Swahili.Reciprocals
+public import Linglib.Fragments.Wambaya.Reciprocals
 
 /-!
 # Nordlinger (2023): The Typology of Reciprocal Constructions
@@ -64,6 +66,8 @@ levels rather than indicators and is not represented.
 * [majid-et-al-2011]
 -/
 
+@[expose] public section
+
 namespace Nordlinger2023
 
 open Reciprocal
@@ -93,7 +97,7 @@ def dalabonRr : Marker :=
 def tongaAn : Marker := { form := "-an", strategy := .verbalAffix }
 
 /-- A construction whose only reported indicator is the object slot. -/
-private def objectSlot (v : Valency) : Indicator → Option Valency
+def objectSlot (v : Valency) : Indicator → Option Valency
   | .objectSlot => some v
   | _ => none
 

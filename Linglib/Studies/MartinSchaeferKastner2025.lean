@@ -1,6 +1,8 @@
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Fragments.Romance.French.Verbs
+module
+
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Fragments.Romance.French.Verbs
 
 /-!
 # Martin, Schäfer and Kastner (2025): The Lexical Pragmatics of Reflexive Marking
@@ -37,6 +39,8 @@ experiments' rating means are described in the paper and not represented.
 * [schaefer-2008]
 * [koontz-garboden-2009]
 -/
+
+@[expose] public section
 
 namespace MartinSchaeferKastner2025
 

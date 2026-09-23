@@ -1,11 +1,13 @@
-import Linglib.Semantics.Attitudes.Basic
-import Linglib.Semantics.Causation.VerbClass
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
-import Linglib.Semantics.Causation.CCSelection
-import Linglib.Semantics.Causation.Sufficiency
-import Linglib.Semantics.Causation.Necessity
-import Linglib.Semantics.Causation.Prevention
+module
+
+public import Linglib.Semantics.Attitudes.Basic
+public import Linglib.Semantics.Causation.VerbClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.MeaningComponents
+public import Linglib.Semantics.Causation.CCSelection
+public import Linglib.Semantics.Causation.Sufficiency
+public import Linglib.Semantics.Causation.Necessity
+public import Linglib.Semantics.Causation.Prevention
 
 /-!
 # Causative Interpretation (force-dynamic dispatch)
@@ -39,6 +41,8 @@ This is intentional. linglib does not pretend a single canonical
 mapping exists; both dispatches coexist as named functions and the
 disagreement is theorem-provable.
 -/
+
+@[expose] public section
 
 /-! ### Methods on `Causative` -/
 

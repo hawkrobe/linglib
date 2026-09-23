@@ -1,4 +1,6 @@
-import Linglib.Fragments.Finnish.Case
+module
+
+public import Linglib.Fragments.Finnish.Case
 
 /-!
 # Finnish Infinitive System [karlsson-2017]
@@ -31,6 +33,8 @@ and nonfinite verbs — is evidence that Finnish local cases are genuine
 morphosyntactic features, not frozen adverbial suffixes.
 
 -/
+
+@[expose] public section
 
 namespace Finnish.Infinitives
 

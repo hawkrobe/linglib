@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.ContextFreeGrammar.Tree
-import Mathlib.Algebra.Order.BigOperators.Group.List
-import Mathlib.Algebra.Order.Group.Nat
-import Mathlib.Data.Finset.Lattice.Fold
+module
+
+public import Linglib.Core.Computability.ContextFreeGrammar.Tree
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+public import Mathlib.Algebra.Order.Group.Nat
+public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # The pumping lemma for context-free languages
@@ -35,6 +37,8 @@ pumps them (`RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.derives`).
 * `Language.IsContextFree.hasCFLPumpingProperty`: every context-free language has the pumping
   property.
 -/
+
+@[expose] public section
 
 open RoseTree Core.Order.Branching
 

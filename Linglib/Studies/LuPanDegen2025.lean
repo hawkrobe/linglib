@@ -1,8 +1,10 @@
-import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Focus.ExtractionClash
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Fragments.English.Verbs
-import Linglib.Data.Examples.LuPanDegen2025
+module
+
+public import Linglib.Semantics.Questions.Partition.Basic
+public import Linglib.Semantics.Focus.ExtractionClash
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Data.Examples.LuPanDegen2025
 
 /-!
 # Lu, Pan and Degen (2025): Evidence for a Discourse Account of Manner-of-Speaking Islands
@@ -47,6 +49,8 @@ manner-of-speaking complements (16).
 * [kratzer-selkirk-2020]
 * [levin-1993]
 -/
+
+@[expose] public section
 
 namespace LuPanDegen2025
 

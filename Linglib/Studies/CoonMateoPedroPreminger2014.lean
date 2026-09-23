@@ -1,18 +1,20 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Fragments.Mayan.Qanjobal.Agreement
-import Linglib.Fragments.Mayan.Qanjobal.Extraction
-import Linglib.Fragments.Mayan.Chol.Agreement
-import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Fragments.Mayan.Kaqchikel.Extraction
-import Linglib.Fragments.Mayan.Tseltal.Agreement
-import Linglib.Fragments.Mayan.Tsotsil.Agreement
-import Linglib.Fragments.Mayan.Mam.Agreement
-import Linglib.Fragments.Mayan.Mam.Extraction
-import Linglib.Fragments.Mayan.Kiche.Agreement
-import Linglib.Fragments.Mayan.Kiche.Extraction
-import Linglib.Fragments.Mayan.Yukatek.Agreement
-import Linglib.Data.Examples.CoonMateoPedroPreminger2014
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Fragments.Mayan.Qanjobal.Agreement
+public import Linglib.Fragments.Mayan.Qanjobal.Extraction
+public import Linglib.Fragments.Mayan.Chol.Agreement
+public import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
+public import Linglib.Fragments.Mayan.Tseltal.Agreement
+public import Linglib.Fragments.Mayan.Tsotsil.Agreement
+public import Linglib.Fragments.Mayan.Mam.Agreement
+public import Linglib.Fragments.Mayan.Mam.Extraction
+public import Linglib.Fragments.Mayan.Kiche.Agreement
+public import Linglib.Fragments.Mayan.Kiche.Extraction
+public import Linglib.Fragments.Mayan.Yukatek.Agreement
+public import Linglib.Data.Examples.CoonMateoPedroPreminger2014
 
 /-!
 # Coon, Mateo Pedro and Preminger 2014: case and extraction asymmetries in Mayan
@@ -85,6 +87,8 @@ are recorded as data without a configuration.
 * [L. Hou, *Agent focus in Chuj reflexive constructions* (2013)][hou-2013]
 * [N. Chomsky, *Derivation by phase* (2001)][chomsky-2001]
 -/
+
+@[expose] public section
 
 namespace CoonMateoPedroPreminger2014
 
@@ -443,13 +447,13 @@ theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) :
 
 /-! ### The paper's examples -/
 
-private def absPositions : List (String × ABSPosition) := [("high", .high), ("low", .low)]
+def absPositions : List (String × ABSPosition) := [("high", .high), ("low", .low)]
 
-private def objects : List (String × Object) :=
+def objects : List (String × Object) :=
   [("dp", .dp), ("caseless", .caseless), ("oblique", .oblique)]
 
 /-- The verb phrase a row describes. -/
-private def Predicate.ofRow (row : LinguisticExample) : Option Predicate := do
+def Predicate.ofRow (row : LinguisticExample) : Option Predicate := do
   match ← row.feature? "predicate" with
   | "intransitive" =>
       Predicate.intransitive <$> row.parse? "marking" [("abs", MarkerSet.setB), ("erg", .setA)]

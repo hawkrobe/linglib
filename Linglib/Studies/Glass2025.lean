@@ -1,9 +1,11 @@
-import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Presupposition.Context
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.Mandarin.Verbs
-import Linglib.Data.Examples.Glass2025
-import Linglib.Semantics.Attitudes.Verb
+module
+
+public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Semantics.Presupposition.Context
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Data.Examples.Glass2025
+public import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Glass (2025): Attested versus unattested contrafactive belief verbs
@@ -45,6 +47,8 @@ admitted states (`rows_admits`).
 * [brasoveanu-2009]
 * [stalnaker-1978]
 -/
+
+@[expose] public section
 
 namespace Glass2025
 

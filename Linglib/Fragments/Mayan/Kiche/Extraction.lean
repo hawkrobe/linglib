@@ -1,6 +1,8 @@
-import Linglib.Syntax.Reflex
-import Linglib.Fragments.Mayan.Extraction
-import Linglib.Fragments.Mayan.Kiche.Voice
+module
+
+public import Linglib.Syntax.Reflex
+public import Linglib.Fragments.Mayan.Extraction
+public import Linglib.Fragments.Mayan.Kiche.Voice
 
 /-!
 # K'iche' extraction marking
@@ -26,6 +28,8 @@ which they note varies by variety between datives and benefactives.
 * [mendes-ranero-2021]
 * [mondloch-2017]
 -/
+
+@[expose] public section
 
 namespace Kiche.Extraction
 

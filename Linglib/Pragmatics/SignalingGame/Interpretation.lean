@@ -1,5 +1,7 @@
-import Linglib.Core.Probability.Uniform
-import Linglib.Pragmatics.SignalingGame.Basic
+module
+
+public import Linglib.Core.Probability.Uniform
+public import Linglib.Pragmatics.SignalingGame.Basic
 
 /-!
 # Interpretation games
@@ -32,6 +34,8 @@ construction (`toSignalingGame`) rather than by a bridge theorem.
   best-response set is the argmax of his beliefs: interpretation is
   maximum-a-posteriori estimation.
 -/
+
+@[expose] public section
 
 /-- An interpretation game: a semantic `meaning` relation between messages
 and types, and a prior over types. The receiver's task is to guess the

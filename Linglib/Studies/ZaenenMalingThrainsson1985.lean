@@ -1,5 +1,7 @@
-import Linglib.Fragments.Icelandic.Verbs
-import Linglib.Data.Examples.ZaenenMalingThrainsson1985
+module
+
+public import Linglib.Fragments.Icelandic.Verbs
+public import Linglib.Data.Examples.ZaenenMalingThrainsson1985
 
 /-!
 # Zaenen, Maling and Thráinsson (1985): Case and grammatical functions
@@ -43,6 +45,8 @@ case; the paper's ditransitives never present one.
 
 * [zaenen-maling-thrainsson-1985]
 -/
+
+@[expose] public section
 
 namespace ZaenenMalingThrainsson1985
 
@@ -99,12 +103,12 @@ instance (t : List Arg) (a : Association) : Decidable (a.Valid t) :=
   inferInstanceAs (Decidable (_ ∧ ∀ p ∈ _, _ ∧ _))
 
 /-- `x` inserted at each position of a list. -/
-private def insertions (x : GF) : List GF → List (List GF)
+def insertions (x : GF) : List GF → List (List GF)
   | [] => [[x]]
   | y :: ys => (x :: y :: ys) :: (insertions x ys).map (y :: ·)
 
 /-- The permutations of a list, by structural recursion so that `decide` can run them. -/
-private def perms : List GF → List (List GF)
+def perms : List GF → List (List GF)
   | [] => [[]]
   | x :: xs => (perms xs).flatMap (insertions x)
 

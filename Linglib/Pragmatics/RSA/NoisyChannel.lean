@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Probability.Kernel.Composition.Lemmas
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 
 /-!
 # Rational speech acts over a noisy channel
@@ -30,6 +32,8 @@ operator is its noiseless counterpart.
   preference reduces to the channel-mixed listener, and to the channelled speaker.
 * `RSA.channelMix_eq_prod` — the mix over the perceptions the channel can produce.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Finset
 open scoped ENNReal

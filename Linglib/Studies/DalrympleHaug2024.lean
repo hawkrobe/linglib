@@ -1,10 +1,12 @@
-import Linglib.Data.Examples.DalrympleHaug2024
-import Linglib.Semantics.Plurality.Reciprocal.Scope
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.Hungarian.Reciprocals
-import Linglib.Data.Examples.Rakosi2019
-import Linglib.Fragments.Wan.Reciprocals
-import Linglib.Studies.Landau2015
+module
+
+public import Linglib.Data.Examples.DalrympleHaug2024
+public import Linglib.Semantics.Plurality.Reciprocal.Scope
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Fragments.Hungarian.Reciprocals
+public import Linglib.Data.Examples.Rakosi2019
+public import Linglib.Fragments.Wan.Reciprocals
+public import Linglib.Studies.Landau2015
 
 /-!
 # Dalrymple and Haug, constraints on reciprocal scope (2024)
@@ -59,6 +61,8 @@ construction, and check them against the paper's judgments.
 * [L. Champollion, *Overt distributivity in algebraic event semantics*
   (2016)][champollion-2016]
 -/
+
+@[expose] public section
 
 namespace DalrympleHaug2024
 

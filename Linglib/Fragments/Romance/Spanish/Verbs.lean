@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Spanish verbs
@@ -34,6 +36,8 @@ by matrix negation or a question is not a frame of the verb.
   (2024)][grano-2024]
 * [M. C. Cuervo, *Datives at Large* (2003)][cuervo-2003]
 -/
+
+@[expose] public section
 
 namespace Spanish.Verbs
 

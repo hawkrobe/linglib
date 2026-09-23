@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Adjective.ClauseEmbedding
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Adjective.ClauseEmbedding
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # English Copular Predicate Fragment
@@ -12,6 +14,8 @@ the copular realization ("be" + adjective) is English-specific. The
 `toVerb` helper constructs the combined form for bridge theorems
 that need a uniform `Verb` interface.
 -/
+
+@[expose] public section
 
 namespace English.Verbs.Copular
 

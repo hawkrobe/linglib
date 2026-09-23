@@ -1,5 +1,7 @@
-import Linglib.Syntax.Voice.Basic
-import Mathlib.Data.Finset.Image
+module
+
+public import Linglib.Syntax.Voice.Basic
+public import Mathlib.Data.Finset.Image
 
 /-!
 # Voice systems
@@ -45,6 +47,8 @@ fragment states them.
 * [creissels-2024]
 * [erlewine-levin-van-urk-2017]
 -/
+
+@[expose] public section
 
 namespace Voice
 

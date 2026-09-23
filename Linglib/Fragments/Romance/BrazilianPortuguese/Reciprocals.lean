@@ -1,5 +1,7 @@
-import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Romance.BrazilianPortuguese.Verbs
+module
+
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Fragments.Romance.BrazilianPortuguese.Verbs
 
 /-!
 # Brazilian Portuguese Reciprocal Fragment
@@ -12,6 +14,8 @@ reciprocal reading also emerges without *se* in language-specific
 environments ([palmieri-2024] ch. 2, Table 2.2; Appendix A carries the
 verb list formalized in `lexicalReciprocals`).
 -/
+
+@[expose] public section
 
 namespace BrazilianPortuguese.Reciprocals
 

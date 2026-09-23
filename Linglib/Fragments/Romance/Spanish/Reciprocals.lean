@@ -1,5 +1,7 @@
-import Linglib.Syntax.Reciprocal
-import Linglib.Fragments.Romance.Spanish.Verbs
+module
+
+public import Linglib.Syntax.Reciprocal
+public import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
 # Spanish reciprocals
@@ -14,6 +16,8 @@ without *se* in language-specific environments ([palmieri-2024] ch. 2, Table 2.2
 * [G. Palmieri, *Lexical and Grammatical Reciprocity: Perspectives from Romance, Bantu and
   Beyond* (2024)][palmieri-2024]
 -/
+
+@[expose] public section
 
 namespace Spanish.Reciprocals
 

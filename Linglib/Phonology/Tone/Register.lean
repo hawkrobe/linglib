@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Forall2
-import Mathlib.Logic.Function.Defs
-import Linglib.Phonology.Tone.Basic
+module
+
+public import Mathlib.Data.List.Forall2
+public import Mathlib.Logic.Function.Defs
+public import Linglib.Phonology.Tone.Basic
 
 /-!
 # Register: the terracing realization of `[raised]`
@@ -29,6 +31,8 @@ Japanese and English intonation ([beckman-pierrehumbert-1986]).
   shifts: the basis of catathesis blocking.
 -/
 
+@[expose] public section
+
 namespace Tone
 
 open Function
@@ -46,12 +50,13 @@ cumulative — the running sums of the shifts. -/
 def realizePitch (level : Int) (ts : List TRN) : List Int :=
   ((ts.map TRN.pitchEffect).scanl (· + ·) level).tail
 
-@[simp] theorem realizePitch_nil (level : Int) : realizePitch level [] = [] := rfl
+@[simp] theorem realizePitch_nil (level : Int) : realizePitch level [] = [] := by
+  simp [realizePitch, List.scanl_nil]
 
 @[simp] theorem realizePitch_cons (level : Int) (t : TRN) (rest : List TRN) :
     realizePitch level (t :: rest) =
       (level + t.pitchEffect) :: realizePitch (level + t.pitchEffect) rest := by
-  cases rest <;> simp [realizePitch, List.scanl]
+  cases rest <;> simp [realizePitch, List.scanl_cons, List.scanl_nil]
 
 @[simp] theorem length_realizePitch (level : Int) (ts : List TRN) :
     (realizePitch level ts).length = ts.length := by
@@ -77,7 +82,7 @@ theorem realizePitch_eq_pitchDeltas_shift (level : Int) (ts : List TRN) :
     simpa [pitchDeltas] using h 0 level
   intro n d
   induction ts generalizing n with
-  | nil => rfl
+  | nil => simp
   | cons t rest ih =>
     simp only [realizePitch_cons, List.map_cons]
     rw [show n + d + t.pitchEffect = n + t.pitchEffect + d by omega, ih]
@@ -90,7 +95,7 @@ theorem realizePitch_mono {ts₁ ts₂ : List TRN}
     (hts : List.Forall₂ ((· ≤ ·) on TRN.pitchEffect) ts₁ ts₂) {n m : Int} (hnm : n ≤ m) :
     List.Forall₂ (· ≤ ·) (realizePitch n ts₁) (realizePitch m ts₂) := by
   induction hts generalizing n m with
-  | nil => exact .nil
+  | nil => simp only [realizePitch_nil]; exact .nil
   | cons hhead _ ih =>
     have hstep := Int.add_le_add hnm hhead
     simp only [realizePitch_cons]

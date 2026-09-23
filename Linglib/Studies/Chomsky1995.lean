@@ -1,7 +1,10 @@
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.Linearization.Replay
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Nouns
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Nouns
+import all Init.Data.String.Defs  -- for unfolding `String.intercalate`
 
 /-!
 # Chomsky 1995: Minimalist derivations of word order
@@ -20,6 +23,8 @@ off its complement type.
 
 * [chomsky-1995]
 -/
+
+@[expose] public section
 
 namespace Chomsky1995
 

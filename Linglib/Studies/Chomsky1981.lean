@@ -1,11 +1,16 @@
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Term
-import Linglib.Syntax.Binding.Basic
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Coordination
-import Linglib.Processing.Acceptability.MinimalPairs
+module
+
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Term
+public import Linglib.Syntax.Binding.Basic
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.English.Pronouns
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Coordination
+public import Linglib.Processing.Acceptability.MinimalPairs
+import all Linglib.Syntax.Binding.Basic  -- for unfolding the `Decidable` instances built by `split`
+
+@[expose] public section
 
 open Morphology (Word)
 
@@ -57,23 +62,23 @@ open Processing.MinimalPairs
 open Minimalist SyntacticObject
 open Binding (SimpleClause Pos CommandRelation)
 
-private abbrev john := English.Nouns.john.toWord
-private abbrev mary := English.Nouns.mary.toWord
-private abbrev sam := English.Nouns.sam.toWord
-private abbrev pat := English.Nouns.pat.toWord
-private abbrev he := English.Pronouns.he.toWord
-private abbrev him := English.Pronouns.him.toWord
-private abbrev her := English.Pronouns.her.toWord
-private abbrev they := English.Pronouns.they.toWord
-private abbrev them := English.Pronouns.them.toWord
-private abbrev himself := English.Pronouns.himself.toWord
-private abbrev herself := English.Pronouns.herself.toWord
-private abbrev themselves := English.Pronouns.themselves.toWord
-private abbrev eachOther := English.Pronouns.eachOther.toWord
-private abbrev sees := English.see.toWord .thirdSg
-private abbrev see := English.see.toWord .presentPlural
-private abbrev saw := English.see.toWord .past
-private abbrev and_ := English.Coordination.and_.toWord
+abbrev john := English.Nouns.john.toWord
+abbrev mary := English.Nouns.mary.toWord
+abbrev sam := English.Nouns.sam.toWord
+abbrev pat := English.Nouns.pat.toWord
+abbrev he := English.Pronouns.he.toWord
+abbrev him := English.Pronouns.him.toWord
+abbrev her := English.Pronouns.her.toWord
+abbrev they := English.Pronouns.they.toWord
+abbrev them := English.Pronouns.them.toWord
+abbrev himself := English.Pronouns.himself.toWord
+abbrev herself := English.Pronouns.herself.toWord
+abbrev themselves := English.Pronouns.themselves.toWord
+abbrev eachOther := English.Pronouns.eachOther.toWord
+abbrev sees := English.see.toWord .thirdSg
+abbrev see := English.see.toWord .presentPlural
+abbrev saw := English.see.toWord .past
+abbrev and_ := English.Coordination.and_.toWord
 
 /-! ### Coreference / binding (relocated from Minimalist/Coreference.lean)
 
@@ -91,7 +96,7 @@ combine it with English's binding-class classifier.
 /-- Convert a word to a Minimalist lexical-item token (UPOS mapped to `Cat`,
     phonological form attached). The smart Merge `SyntacticObject.merge` is noncomputable, so
     concrete trees are built planar-first from these tokens and `decide`d over. -/
-private def wordTok (w : Word) (id : Nat) : LIToken :=
+def wordTok (w : Word) (id : Nat) : LIToken :=
   ⟨.simple (uposToCat w.cat) [] w.form, id⟩
 
 /-- Build a phrase-structure tree from a clause: transitive `{subj, {verb, obj}}`
@@ -105,10 +110,10 @@ def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
   | none => ↑(subjP * verbP)
   | some obj => ↑(subjP * (verbP * wordTok obj 2))
 
-private def subjectSO (clause : SimpleClause) : SyntacticObject :=
+def subjectSO (clause : SimpleClause) : SyntacticObject :=
   leaf (wordTok clause.subject 0)
 
-private def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
+def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
   clause.object.map fun obj => leaf (wordTok obj 2)
 
 /-- Subject c-commands object: in `{subj, {verb, obj}}`, the subject's sister
@@ -273,7 +278,7 @@ def reciprocalCoreferenceData : PhenomenonData := {
     (`Binding.grammaticalForCoreference`) applied with Minimalism's
     `CommandRelation` instance (the relocated instance above) and
     English's binding-class classifier. -/
-private abbrev grammaticalForCoreference (ws : List Word) : Prop :=
+abbrev grammaticalForCoreference (ws : List Word) : Prop :=
   Binding.grammaticalForCoreference Binding.bindingClassOf ws
 
 /-- Coverage of a `PhenomenonData` set under Minimalist binding theory.

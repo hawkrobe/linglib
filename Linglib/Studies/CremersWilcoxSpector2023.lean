@@ -1,8 +1,10 @@
-import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
-import Linglib.Core.Probability.Kernel.Mixture
-import Linglib.Core.Probability.UniformOn
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Semantics.Exhaustification.Finite
+module
+
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.Probability.Kernel.Mixture
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Semantics.Exhaustification.Finite
 
 /-!
 # Exhaustivity and anti-exhaustivity in the Rational Speech Act framework
@@ -37,6 +39,8 @@ for an arbitrary prior, rationality and costs.
 * [M. Franke, L. Bergen, *Theory-driven statistical modeling for semantics and pragmatics*
   (2020)][franke-bergen-2020]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

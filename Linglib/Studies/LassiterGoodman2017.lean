@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Basic
-import Mathlib.Probability.ConditionalProbability
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Lassiter and Goodman (2017): Adjectival Vagueness in a Bayesian Model of Interpretation
@@ -40,6 +42,8 @@ of the simulations, and the scalar-implicature warm-up of §3 are not stated.
 * [D. Lassiter and N. D. Goodman, *Adjectival Vagueness in a Bayesian Model of Interpretation*
   (2017)][lassiter-goodman-2017]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

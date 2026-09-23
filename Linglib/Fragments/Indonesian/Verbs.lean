@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Fragments.Indonesian.Phonology
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+public import Linglib.Fragments.Indonesian.Phonology
 
 /-!
 # Indonesian verbs
@@ -24,6 +26,8 @@ nasal alternation of `Indonesian.Phonology.meN`.
 * [sneddon-1996]
 * [beavers-udayana-2022]
 -/
+
+@[expose] public section
 
 open Phonology
 

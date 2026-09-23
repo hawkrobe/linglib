@@ -1,7 +1,9 @@
-import Linglib.Data.Examples.Elbourne2026
-import Linglib.Semantics.Modification.Classification
-import Mathlib.Data.Finset.Image
-import Mathlib.Data.Finset.Powerset
+module
+
+public import Linglib.Data.Examples.Elbourne2026
+public import Linglib.Semantics.Modification.Classification
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Finset.Powerset
 
 /-!
 # Elbourne (2026): Adjectives without syntactic categories
@@ -60,6 +62,8 @@ be differences of type.
 * [bolinger-1967]
 * [cresswell-1976]
 -/
+
+@[expose] public section
 
 namespace Elbourne2026
 

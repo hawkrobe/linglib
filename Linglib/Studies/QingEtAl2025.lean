@@ -1,11 +1,13 @@
-import Linglib.Studies.UegakiSudo2019
-import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.Mandarin.Verbs
-import Linglib.Fragments.Japanese.Verbs
-import Linglib.Fragments.Turkish.Verbs
-import Linglib.Fragments.Romance.Spanish.Verbs
-import Linglib.Data.Examples.QingEtAl2025
+module
+
+public import Linglib.Studies.UegakiSudo2019
+public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Fragments.Japanese.Verbs
+public import Linglib.Fragments.Turkish.Verbs
+public import Linglib.Fragments.Romance.Spanish.Verbs
+public import Linglib.Data.Examples.QingEtAl2025
 
 /-!
 # Qing et al. (2025): When Can Non-Veridical Preferential Attitude Predicates Take Questions?
@@ -67,6 +69,8 @@ constituent question, which the paper sets aside, are recorded but not predicted
 * [ozyildiz-uegaki-2024]
 * [kratzer-1981]
 -/
+
+@[expose] public section
 
 namespace QingEtAl2025
 

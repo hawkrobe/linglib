@@ -1,6 +1,8 @@
-import Linglib.Semantics.Modification.Classification
-import Linglib.Semantics.Modification.Coercion
-import Linglib.Studies.Partee2010
+module
+
+public import Linglib.Semantics.Modification.Classification
+public import Linglib.Semantics.Modification.Coercion
+public import Linglib.Studies.Partee2010
 
 /-!
 # Del Pinal (2015): Dual Content Semantics, privative adjectives, and dynamic compositionality
@@ -48,6 +50,8 @@ derives from [[fake plastic] gun] is (`fake_intersective_extension_le`).
 * [partee-2010]
 * [kamp-1975]
 -/
+
+@[expose] public section
 
 namespace DelPinal2015
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Japanese comparison
@@ -13,6 +15,8 @@ standard, *dare yori mo* 'than anyone'.
 
 * [stassen-1985]
 -/
+
+@[expose] public section
 
 namespace Japanese.Comparison
 

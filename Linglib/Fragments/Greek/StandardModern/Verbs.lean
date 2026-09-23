@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Modern Greek verbs
@@ -23,6 +25,8 @@ the attested selection classes and the stativity generalizations, lives in
 * [bondarenko-2022]
 * [landau-2010]
 -/
+
+@[expose] public section
 
 namespace Greek.StandardModern.Verbs
 

@@ -1,10 +1,12 @@
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Pragmatics.RSA.Decision
-import Linglib.Core.Probability.Kernel.Posterior
-import Linglib.Semantics.Causation.SEM.Bool
-import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Causation.CCSelection
-import Mathlib.Analysis.SpecialFunctions.Sigmoid
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Pragmatics.RSA.Decision
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Linglib.Semantics.Causation.SEM.Bool
+public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.CCSelection
+public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!
 # Harding, Gerstenberg, and Icard (2025): A Communication-First Account of Explanation
@@ -53,6 +55,8 @@ negative memberships are not derived. Priors are uniform, as in the examples.
 * [sumers-etal-2024]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 namespace HardingGerstenbergIcard2025
 

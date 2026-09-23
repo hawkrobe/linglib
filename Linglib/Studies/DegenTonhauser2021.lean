@@ -1,8 +1,10 @@
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Verbs.Copular
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.NormNum
+module
+
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Copular
+public import Mathlib.Algebra.Order.Field.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Degen and Tonhauser (2021): Prior beliefs modulate projection
@@ -40,6 +42,8 @@ winning by BIC, and Experiment 2 replicated the effect between participants.
 * [goodman-frank-2016]
 * [qing-goodman-lassiter-2016]
 -/
+
+@[expose] public section
 
 namespace DegenTonhauser2021
 

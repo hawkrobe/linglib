@@ -1,11 +1,13 @@
-import Mathlib.Order.Interval.Set.Basic
-import Mathlib.Algebra.Order.Group.Defs
-import Mathlib.Algebra.Order.Field.Rat
-import Linglib.Semantics.Degree.Measure.Temporal
-import Linglib.Semantics.Degree.Scale
-import Linglib.Fragments.English.Verbs
-import Linglib.Fragments.English.Adjectives
-import Linglib.Data.Examples.HayKennedyLevin1999
+module
+
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Algebra.Order.Group.Defs
+public import Mathlib.Algebra.Order.Field.Rat
+public import Linglib.Semantics.Degree.Measure.Temporal
+public import Linglib.Semantics.Degree.Scale
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Adjectives
+public import Linglib.Data.Examples.HayKennedyLevin1999
 
 /-!
 # Hay, Kennedy and Levin (1999): Scalar Structure Underlies Telicity in "Degree Achievements"
@@ -48,6 +50,8 @@ component of transitive degree achievements (footnote 2) are not modelled.
 * [dowty-1979]
 * [krifka-1989]
 -/
+
+@[expose] public section
 
 namespace HayKennedyLevin1999
 

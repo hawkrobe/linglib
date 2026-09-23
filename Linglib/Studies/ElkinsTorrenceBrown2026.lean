@@ -1,10 +1,12 @@
-import Linglib.Data.Examples.ElkinsTorrenceBrown2026
-import Linglib.Fragments.Mayan.Mam.Extraction
-import Linglib.Fragments.Mayan.Kiche.Extraction
-import Linglib.Syntax.Minimalist.Clause.Spine
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
+module
+
+public import Linglib.Data.Examples.ElkinsTorrenceBrown2026
+public import Linglib.Fragments.Mayan.Mam.Extraction
+public import Linglib.Fragments.Mayan.Kiche.Extraction
+public import Linglib.Syntax.Minimalist.Clause.Spine
+public import Linglib.Syntax.Minimalist.Verbal.Voice
+public import Linglib.Syntax.Minimalist.Agree.Basic
+public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
 
 /-!
 # Elkins, Torrence and Brown (2026): Wh-movement paths and adjunct extraction in Mam
@@ -65,6 +67,8 @@ in K'ichean, and temporals trigger neither.
 * [england-1989]
 * [aissen-2017b]
 -/
+
+@[expose] public section
 
 namespace ElkinsTorrenceBrown2026
 

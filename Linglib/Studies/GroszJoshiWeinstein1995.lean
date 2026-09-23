@@ -1,7 +1,10 @@
-import Linglib.Discourse.Centering.Transition
-import Linglib.Discourse.Centering.GrammaticalRole
-import Linglib.Data.Examples.GroszJoshiWeinstein1995
-import Linglib.Studies.Sidner1979
+module
+
+public import Linglib.Discourse.Centering.Transition
+public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Data.Examples.GroszJoshiWeinstein1995
+public import Linglib.Studies.Sidner1979
+import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Grosz, Joshi, and Weinstein (1995): Centering
@@ -52,6 +55,8 @@ The center of (19), realized but not directly realized, the value-free and value
 interpretations of (25) to (31), and the referential uses of (32) and (33) in section 8 need a
 realization relation richer than the substrate's list of directly realized entities.
 -/
+
+@[expose] public section
 
 namespace GroszJoshiWeinstein1995
 

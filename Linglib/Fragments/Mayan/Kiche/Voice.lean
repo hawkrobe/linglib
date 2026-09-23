@@ -1,5 +1,7 @@
-import Linglib.Syntax.Voice.Basic
-import Linglib.Fragments.Mayan.Verb
+module
+
+public import Linglib.Syntax.Voice.Basic
+public import Linglib.Fragments.Mayan.Verb
 
 /-!
 # K'iche' voice
@@ -48,6 +50,8 @@ not express.
 * [can-pixabaj-2017]
 * [mondloch-2017]
 -/
+
+@[expose] public section
 
 namespace Kiche
 

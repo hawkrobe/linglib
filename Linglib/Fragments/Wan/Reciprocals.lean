@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Pronoun.Logophoric
-import Linglib.Syntax.Category.Pronoun.Reciprocal
-import Linglib.Syntax.Category.Pronoun.Reflexive
+module
+
+public import Linglib.Syntax.Category.Pronoun.Logophoric
+public import Linglib.Syntax.Category.Pronoun.Reciprocal
+public import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
 # Wan pronouns and reciprocal
@@ -23,6 +25,8 @@ to Dalrymple and Haug, read from the printed page.
   (2012)][nikitina-2012]
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
+
+@[expose] public section
 
 namespace Wan.Reciprocals
 

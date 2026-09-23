@@ -1,10 +1,12 @@
-import Linglib.Semantics.Reference.Definiteness
-import Linglib.Fragments.English.Verbs
-import Linglib.Syntax.Minimalist.Linearization.Cyclic
-import Linglib.Syntax.Minimalist.Phase.Domain
-import Linglib.Data.Examples.ShenHuang2026
-import Linglib.Data.Examples.DaviesDubinsky2003
-import Mathlib.Data.Finset.Card
+module
+
+public import Linglib.Semantics.Reference.Definiteness
+public import Linglib.Fragments.English.Verbs
+public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Syntax.Minimalist.Phase.Domain
+public import Linglib.Data.Examples.ShenHuang2026
+public import Linglib.Data.Examples.DaviesDubinsky2003
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Shen and Huang (2026): The Role of Phases and Specificity in Definite Islands
@@ -41,6 +43,8 @@ linearization (§4.2, `binding_consistent`).
 * [li-1992]
 * [fox-pesetsky-2005]
 -/
+
+@[expose] public section
 
 namespace ShenHuang2026
 

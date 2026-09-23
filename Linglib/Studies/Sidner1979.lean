@@ -1,6 +1,9 @@
-import Mathlib.Data.List.Sort
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.Examples.Sidner1979
+module
+
+public import Mathlib.Data.List.Sort
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Sidner1979
+import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
 # Sidner (1979): Towards a Computational Theory of Definite Anaphora Comprehension
@@ -49,6 +52,8 @@ moves from the speaker to Carl to Oscar (`D9.he_jeff`).
 * [sidner-1979]
 * [sidner-1983]
 -/
+
+@[expose] public section
 
 namespace Sidner1979
 

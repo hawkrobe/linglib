@@ -1,5 +1,7 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Order
+module
+
+public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Order
 
 /-!
 # Finnish Case Inventory [blake-1994]
@@ -29,6 +31,8 @@ function, which leaves the dative position of [blake-1994]'s hierarchy unfilled
 (`Studies/Blake1994.lean`).
 
 -/
+
+@[expose] public section
 
 namespace Finnish.Case
 

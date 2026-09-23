@@ -3,9 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
-import Linglib.Syntax.Minimalist.Linearization.Externalization
-import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+module
+
+public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
+public import Linglib.Syntax.Minimalist.Linearization.Externalization
+public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
 
 /-!
 # Marcolli, Chomsky and Berwick (2025): Mathematical Structure of Syntactic Merge
@@ -34,6 +36,8 @@ version of this file and are UNVERIFIED against the published text.
 
 * [marcolli-chomsky-berwick-2025]
 -/
+
+@[expose] public section
 
 namespace MarcolliChomskyBerwick2025
 

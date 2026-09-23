@@ -65,7 +65,7 @@ def header_of(lines) -> tuple[bool, list[str]]:
             continue
         if not stripped or stripped.startswith('--'):
             continue
-        if stripped == 'module':
+        if stripped.split('--')[0].strip() == 'module':
             is_module = True
             continue
         m = IMPORT_RE.match(line)
@@ -155,7 +155,7 @@ def header_import_lines(lines: list[str]) -> list[int]:
                 break
             in_comment = '-/' not in stripped
             continue
-        if not stripped or stripped.startswith('--') or stripped == 'module':
+        if not stripped or stripped.startswith('--') or stripped.split('--')[0].strip() == 'module':
             continue
         if not PLAIN_IMPORT_RE.match(line):
             break

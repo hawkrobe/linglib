@@ -1,9 +1,11 @@
-import Linglib.Semantics.Attitudes.Basic
-import Linglib.Semantics.Causation.VerbClass
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Fragments.English.Verbs
+module
+
+public import Linglib.Semantics.Attitudes.Basic
+public import Linglib.Semantics.Causation.VerbClass
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.MeaningComponents
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Fragments.English.Verbs
 
 /-!
 # Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
@@ -30,6 +32,8 @@ discretized here into three values.
 * [levin-1993]
 * [hale-keyser-1987]
 -/
+
+@[expose] public section
 
 namespace MajidBosterBowerman2008
 
@@ -443,7 +447,7 @@ theorem cut_break_same_template :
 
 open English hiding Verb in
 /-- Extract the root profile from a Fragment verb entry. -/
-private def fragmentContent (v : English.Verb) : Root.Content :=
+def fragmentContent (v : English.Verb) : Root.Content :=
   v.rootContent
 
 open English hiding Verb

@@ -1,10 +1,12 @@
-import Linglib.Studies.Bondarenko2022
-import Linglib.Studies.Roussou2010
-import Linglib.Fragments.Greek.StandardModern.Complementizers
-import Linglib.Fragments.Greek.StandardModern.Verbs
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
-import Linglib.Semantics.Attitudes.Anchor
-import Linglib.Data.Examples.Angelopoulos2026
+module
+
+public import Linglib.Studies.Bondarenko2022
+public import Linglib.Studies.Roussou2010
+public import Linglib.Fragments.Greek.StandardModern.Complementizers
+public import Linglib.Fragments.Greek.StandardModern.Verbs
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Semantics.Attitudes.Anchor
+public import Linglib.Data.Examples.Angelopoulos2026
 
 /-!
 # Angelopoulos 2026: on clausal complementation, once more
@@ -39,6 +41,8 @@ against the transparent syntax–semantics mapping.
 * [hale-keyser-1993] — incorporation into lexical heads
 * [roussou-2010] — *oti* and *pu* as distinct lexical items
 -/
+
+@[expose] public section
 
 namespace Angelopoulos2026
 

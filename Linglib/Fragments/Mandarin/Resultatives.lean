@@ -1,5 +1,7 @@
-import Linglib.Fragments.Mandarin.Verbs
-import Linglib.Morphology.Word.Tree
+module
+
+public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Morphology.Word.Tree
 
 /-!
 # Mandarin resultative compounds
@@ -25,6 +27,8 @@ analyze. Tay's account of the compounds as words built in morphology lives in
 
 * [tay-2024]
 -/
+
+@[expose] public section
 
 namespace Mandarin
 

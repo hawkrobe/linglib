@@ -1,9 +1,11 @@
-import Linglib.Semantics.Modification.Basic
-import Linglib.Semantics.Reference.Rigidity
-import Mathlib.Order.PropInstances
-import Mathlib.Data.Set.Basic
-import Mathlib.Tactic.Common
-import Linglib.Logic.Modal.Extensional
+module
+
+public import Linglib.Semantics.Modification.Basic
+public import Linglib.Semantics.Reference.Rigidity
+public import Mathlib.Order.PropInstances
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Tactic.Common
+public import Linglib.Logic.Modal.Extensional
 
 /-!
 # Modifier-meaning classification at the intensional carrier
@@ -33,6 +35,8 @@ independence witnesses are in `Studies/Kamp1975.lean`. Whether
 theoretical claim (`Studies/Elbourne2026.lean`); the carrier is named
 for the denotation type, not the word class.
 -/
+
+@[expose] public section
 
 namespace Modification
 

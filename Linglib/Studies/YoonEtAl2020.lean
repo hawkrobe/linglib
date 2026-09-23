@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Probability.UniformOn
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.UniformOn
 
 /-!
 # Yoon, Tessler, Goodman and Frank (2020): Polite Speech Emerges From Competing Social Goals
@@ -44,6 +46,8 @@ probability at the true state is zero (`speaker_apply_eq_zero_of_meaning_eq_zero
 
 * [yoon-etal-2020]
 -/
+
+@[expose] public section
 
 namespace YoonEtAl2020
 

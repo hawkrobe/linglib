@@ -1,4 +1,6 @@
-import Linglib.Pragmatics.RSA.Basic
+module
+
+public import Linglib.Pragmatics.RSA.Basic
 
 /-!
 # QUD-projected listeners
@@ -20,6 +22,8 @@ listener unchanged (`RSA.projListener_apply_singleton_of_injective`).
 
 * [kao-etal-2014-metaphor], [kao-etal-2014-hyperbole], [kao-goodman-2015]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

@@ -1,9 +1,11 @@
-import Linglib.Semantics.Attitudes.Anchor
-import Linglib.Semantics.Truthmaker.Inexact
-import Linglib.Fragments.Buryat.Complementizers
-import Linglib.Fragments.Korean.Complementizers
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
-import Linglib.Data.Examples.Bondarenko2022
+module
+
+public import Linglib.Semantics.Attitudes.Anchor
+public import Linglib.Semantics.Truthmaker.Inexact
+public import Linglib.Fragments.Buryat.Complementizers
+public import Linglib.Fragments.Korean.Complementizers
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+public import Linglib.Data.Examples.Bondarenko2022
 
 /-!
 # [bondarenko-2022] — Anatomy of an Attitude
@@ -33,6 +35,8 @@ the thesis's own examples (`Bondarenko2022.Examples`); the per-language
 Cont/Comp head assignments are stated over the Buryat and Korean fragment
 inventories.
 -/
+
+@[expose] public section
 
 namespace Bondarenko2022
 

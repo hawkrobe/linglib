@@ -1,7 +1,9 @@
-import Linglib.Core.Probability.UniformOn
-import Linglib.Data.Examples.HeKaiserIskarous2025
-import Linglib.Pragmatics.RSA.Basic
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Data.Examples.HeKaiserIskarous2025
+public import Linglib.Pragmatics.RSA.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # He, Kaiser and Iskarous (2025): Modeling sentence polarity asymmetries
@@ -50,6 +52,8 @@ state's prior toward one half by the wonkiness.
 * [degen-etal-2020]
 * [horn-1989]
 -/
+
+@[expose] public section
 
 namespace HeKaiserIskarous2025
 

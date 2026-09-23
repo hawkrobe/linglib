@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Merge.External
+module
+
+public import Linglib.Syntax.Minimalist.Merge.External
 
 /-!
 # Sideward Merge on the algebraic carrier
@@ -35,6 +37,8 @@ For each case 2b, 3a, 3b:
 
 * [marcolli-chomsky-berwick-2025], §1.4 (Lemmas 1.4.4, 1.4.5)
 -/
+
+@[expose] public section
 
 namespace Minimalist.Merge
 

@@ -65,7 +65,10 @@ variable (r : α → Option β) [LT β]
 
 instance [DecidableRel ((· < ·) : β → β → Prop)] :
     DecidableRel (RankLT r) := fun a b ↦ by
-  unfold RankLT; split <;> infer_instance
+  unfold RankLT
+  exact match r a, r b with
+    | some x, some y => inferInstanceAs (Decidable (x < y))
+    | some _, none | none, _ => instDecidableFalse
 
 instance [DecidableEq α] [DecidableRel ((· < ·) : β → β → Prop)] :
     DecidableRel (RankLE r) := fun _ _ ↦

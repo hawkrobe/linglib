@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Syntax.Category.Complementizer.Basic
-import Mathlib.Order.PropInstances
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Syntax.Category.Complementizer.Basic
+public import Mathlib.Order.PropInstances
 
 /-!
 # Verb–complementizer selection
@@ -60,6 +62,8 @@ Consistency checks against Fragment data live in Studies
 
 - [noonan-2007]
 -/
+
+@[expose] public section
 
 /-- The axes a clause-typer records: its coding and force; the other
     axes are a complement position's alone. -/

@@ -1,7 +1,9 @@
-import Linglib.Semantics.Degree.Adjective
-import Linglib.Semantics.Degree.Aggregation
-import Linglib.Studies.Kamp1975
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Semantics.Degree.Aggregation
+public import Linglib.Studies.Kamp1975
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # D'Ambrosio and Hedden, multidimensional adjectives (2024)
@@ -43,6 +45,8 @@ comparatives.
 * [H. Kamp, *Two theories about adjectives* (1975)][kamp-1975]
 * [G. W. Sassoon, *A typology of multidimensional adjectives* (2013)][sassoon-2013]
 -/
+
+@[expose] public section
 
 namespace DAmbrosioHedden2024
 

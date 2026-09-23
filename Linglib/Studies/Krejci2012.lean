@@ -1,7 +1,9 @@
-import Linglib.Studies.KoontzGarboden2009
-import Linglib.Semantics.Presupposition.Iterative
-import Linglib.Core.Order.UpperLower.Finset
-import Mathlib.Tactic.DeriveFintype
+module
+
+public import Linglib.Studies.KoontzGarboden2009
+public import Linglib.Semantics.Presupposition.Iterative
+public import Linglib.Core.Order.UpperLower.Finset
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Krejci (2012): Causativization as Antireflexivization
@@ -45,6 +47,8 @@ checked on the report's Table 2.8.
 * [chierchia-2004]
 * [dowty-1979]
 -/
+
+@[expose] public section
 
 namespace Krejci2012
 
@@ -140,16 +144,16 @@ inductive Participant
   deriving DecidableEq
 
 /-- An event running from `s` to `t`. -/
-private def ev (s t : ℤ) (h : s ≤ t := by decide) : Event ℤ := ⟨⟨(s, t), h⟩, .action⟩
+def ev (s t : ℤ) (h : s ≤ t := by decide) : Event ℤ := ⟨⟨(s, t), h⟩, .action⟩
 
 /-- The event running from `s` to `t`. -/
-private def At (w : Event ℤ) (s t : ℤ) : Prop := w.τ.toProd = (s, t)
+def At (w : Event ℤ) (s t : ℤ) : Prop := w.τ.toProd = (s, t)
 
-private def w₀ : Event ℤ := ev 0 1
-private def e₀ : Event ℤ := ev 1 2
-private def w₁ : Event ℤ := ev 0 2
-private def w₂ : Event ℤ := ev 3 4
-private def e₁ : Event ℤ := ev 4 5
+def w₀ : Event ℤ := ev 0 1
+def e₀ : Event ℤ := ev 1 2
+def w₁ : Event ℤ := ev 0 2
+def w₂ : Event ℤ := ev 3 4
+def e₁ : Event ℤ := ev 4 5
 
 /-- The state of potential digestion holds of John. -/
 def digesting (x : Participant) (_ : Unit) : Prop := x = .john

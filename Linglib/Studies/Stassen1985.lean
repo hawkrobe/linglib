@@ -1,13 +1,15 @@
-import Linglib.Syntax.Comparative
-import Linglib.Data.UD.Features
-import Linglib.Fragments.Japanese.Comparison
-import Linglib.Fragments.Korean.Comparison
-import Linglib.Fragments.Turkish.Comparison
-import Linglib.Fragments.HindiUrdu.Comparison
-import Linglib.Fragments.Mandarin.Comparison
-import Linglib.Fragments.English.Comparison
-import Linglib.Fragments.Korean.Clause
-import Linglib.Fragments.Turkish.Clause
+module
+
+public import Linglib.Syntax.Comparative
+public import Linglib.Data.UD.Features
+public import Linglib.Fragments.Japanese.Comparison
+public import Linglib.Fragments.Korean.Comparison
+public import Linglib.Fragments.Turkish.Comparison
+public import Linglib.Fragments.HindiUrdu.Comparison
+public import Linglib.Fragments.Mandarin.Comparison
+public import Linglib.Fragments.English.Comparison
+public import Linglib.Fragments.Korean.Clause
+public import Linglib.Fragments.Turkish.Clause
 
 /-!
 # Stassen (1985): Comparison and Universal Grammar
@@ -52,6 +54,8 @@ from a negated conjunction to a comparative are described in the book and not fo
 * [stassen-1985]
 * [stassen-2013]
 -/
+
+@[expose] public section
 
 namespace Stassen1985
 

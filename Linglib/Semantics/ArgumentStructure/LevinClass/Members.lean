@@ -1,4 +1,6 @@
-import Linglib.Semantics.ArgumentStructure.LevinClass
+module
+
+public import Linglib.Semantics.ArgumentStructure.LevinClass
 
 /-!
 # The member lists of the Levin classes
@@ -17,6 +19,8 @@ member of each.
 
 * [levin-1993]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure.LevinClass
 

@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Modern Standard Arabic comparative data
@@ -8,6 +10,8 @@ marks the standard (WALS Ch 121A: locational, [stassen-2013]) and the elative
 pattern *ʔafʕal* carries the comparison, with no separate degree word.
 Superlative via the elative without a comparison standard.
 -/
+
+@[expose] public section
 
 namespace Arabic.ModernStandard.Comparison
 

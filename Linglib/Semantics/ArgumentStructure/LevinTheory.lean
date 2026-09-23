@@ -1,6 +1,8 @@
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.Root.Kinds
+module
+
+public import Linglib.Semantics.ArgumentStructure.LevinClass
+public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.Root.Kinds
 
 /-!
 # Root entailments of the Levin classes
@@ -17,6 +19,8 @@ off the signature's template.
 * [levin-1993]
 * [rappaport-hovav-levin-1998]
 -/
+
+@[expose] public section
 
 namespace ArgumentStructure
 

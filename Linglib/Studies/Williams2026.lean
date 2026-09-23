@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Studies.White2014
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Studies.White2014
 
 /-!
 # Williams 2026: The Presuppositions of *forget*
@@ -48,6 +50,8 @@ pre-existence analysis is formalized below). The Fragment split is a
 practical separation of entailment patterns.
 
 -/
+
+@[expose] public section
 
 namespace Williams2026
 

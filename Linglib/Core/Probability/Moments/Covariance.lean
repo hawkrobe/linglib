@@ -3,11 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Probability.UniformOn
-import Mathlib.Algebra.Order.Monovary
-import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.Probability.Moments.Covariance
+module
+
+public import Linglib.Core.Probability.UniformOn
+public import Mathlib.Algebra.Order.Monovary
+public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Probability.Moments.Covariance
+public import Mathlib.Tactic.Positivity
 
 /-!
 # Chebyshev's integral inequality and empirical covariance  `[UPSTREAM]`
@@ -37,6 +40,8 @@ The proof integrates `0 ≤ (X ω - X ω') * (Y ω - Y ω')`, pointwise nonnegat
 `Monovary.sub_mul_sub_nonneg`, over the product measure `μ.prod μ`, where it expands to twice
 the covariance defect. The dual follows by negating `X`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

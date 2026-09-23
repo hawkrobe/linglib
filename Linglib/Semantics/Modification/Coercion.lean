@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modification.Classification
+module
+
+public import Linglib.Semantics.Modification.Classification
 
 /-!
 # Modification-time noun coercion (NVP + HPP)
@@ -25,6 +27,8 @@ coercion (`Studies/Pustejovsky1995.lean`), NP type-shifting
 (`Semantics/Quantification/Quantifier.lean`), or the aspectual shifts of
 `Semantics/Aspect/Defs.lean`.
 -/
+
+@[expose] public section
 
 namespace Modification
 

@@ -1,5 +1,7 @@
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Fragments.English.Adjectives
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Fragments.English.Adjectives
 
 /-!
 # Nouwen (2024): The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers
@@ -58,6 +60,8 @@ is not formalized.
   (2017)][lassiter-goodman-2017]
 * [A. M. Zwicky, *Usually and Unusually* (1970)][zwicky-1970]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal

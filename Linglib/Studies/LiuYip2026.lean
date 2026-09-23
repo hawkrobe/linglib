@@ -1,11 +1,13 @@
-import Linglib.Syntax.Minimalist.FunctionalSequence
-import Linglib.Syntax.Minimalist.Clause.Size
-import Linglib.Fragments.Mandarin.Adverbs
-import Linglib.Fragments.Mandarin.Verbs
-import Linglib.Fragments.Cantonese.Aspect
-import Linglib.Fragments.Cantonese.Particles
-import Linglib.Fragments.Cantonese.Verbs
-import Linglib.Fragments.Cantonese.ResultativeComplements
+module
+
+public import Linglib.Syntax.Minimalist.FunctionalSequence
+public import Linglib.Syntax.Minimalist.Clause.Size
+public import Linglib.Fragments.Mandarin.Adverbs
+public import Linglib.Fragments.Mandarin.Verbs
+public import Linglib.Fragments.Cantonese.Aspect
+public import Linglib.Fragments.Cantonese.Particles
+public import Linglib.Fragments.Cantonese.Verbs
+public import Linglib.Fragments.Cantonese.ResultativeComplements
 
 /-!
 # Liu and Yip (2026): Again, finiteness, and split aspect in Chinese languages
@@ -78,6 +80,8 @@ Italian parallel and the crosstype ambiguity of *dasuan* 'plan' are not represen
 * [tsai-2008]
 * [sybesma-2017]
 -/
+
+@[expose] public section
 
 namespace LiuYip2026
 

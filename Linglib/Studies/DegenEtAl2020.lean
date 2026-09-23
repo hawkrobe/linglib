@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Semantics.Reference.Distinguishing
-import Mathlib.Algebra.Order.Field.Basic
+module
+
+public import Linglib.Pragmatics.RSA.Uniform
+public import Linglib.Semantics.Reference.Distinguishing
+public import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Degen, Hawkins, Graf, Kreiss and Goodman (2020): When Redundancy Is Useful
@@ -38,6 +40,8 @@ the more informative of the two about the target, typicality replacing the noise
 * [degen-etal-2020]
 * [frank-goodman-2012]
 -/
+
+@[expose] public section
 
 namespace DegenEtAl2020
 

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Buryat Complementizers and Clause-Embedding Verbs
@@ -34,6 +36,8 @@ romanizations (ɘ → e, ː → doubling, ž → zh, š → sh); `form` fields c
 the faithful transliterations, with capitals marking vowel-harmony
 archiphonemes.
 -/
+
+@[expose] public section
 
 namespace Buryat
 

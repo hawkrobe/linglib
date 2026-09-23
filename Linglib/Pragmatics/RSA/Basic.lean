@@ -1,8 +1,10 @@
-import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
-import Linglib.Core.MeasureTheory.Measure.WithDensity
-import Linglib.Core.Probability.Kernel.OfWeights
-import Linglib.Core.Probability.Kernel.Posterior
-import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
+module
+
+public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.MeasureTheory.Measure.WithDensity
+public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Kernel.Posterior
+public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
 # The Rational Speech Act pipeline on probability kernels
@@ -51,6 +53,8 @@ over them. The uniform-prior Boolean specialization with its decision procedure 
 * [M. Franke and L. Bergen, *Theory-Driven Statistical Modeling for Semantics and Pragmatics: A
   Case Study on Grammatically Generated Implicature Readings* (2020)][franke-bergen-2020]
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

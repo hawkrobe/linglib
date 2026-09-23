@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Pragmatics.RSA.Basic
-import Linglib.Core.Probability.UniformOn
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.UniformOn
 
 /-!
 # Grusdt, Lassiter, and Franke (2022): Rational Communication with Conditionals
@@ -41,6 +43,8 @@ perfection reading there is pragmatic.
 
 * [grusdt-lassiter-franke-2022]
 -/
+
+@[expose] public section
 
 namespace GrusdtLassiterFranke2022
 

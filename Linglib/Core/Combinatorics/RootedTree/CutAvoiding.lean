@@ -1,4 +1,8 @@
-import Linglib.Core.Combinatorics.RootedTree.Cut
+module
+
+public import Linglib.Core.Combinatorics.RootedTree.Cut
+
+@[expose] public section
 
 open RoseTree UnorderedTree
 

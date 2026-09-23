@@ -1,6 +1,9 @@
-import Mathlib.Logic.Function.Defs
-import Mathlib.Tactic.SplitIfs
-import Mathlib.Order.Basic
+module
+
+public import Mathlib.Logic.Function.Defs
+public import Mathlib.Tactic.SplitIfs
+public import Mathlib.Order.Basic
+import all Init.Data.Repr  -- for unfolding `Nat.digitChar`, `Nat.repr`, `Nat.toDigits`
 
 /-!
 # Injectivity of the decimal representation
@@ -14,6 +17,8 @@ through the injectivity of `Nat.toDigits 10`. `[UPSTREAM]` candidates for
 * `Nat.toDigits_ten_injective`
 * `Nat.repr_injective`
 -/
+
+@[expose] public section
 
 namespace Nat
 

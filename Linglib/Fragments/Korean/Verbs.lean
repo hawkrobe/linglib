@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Korean causative verbs
@@ -21,6 +23,8 @@ Yale forms.
 * [sohn-1994]
 * [song-1996]
 -/
+
+@[expose] public section
 
 namespace Korean
 

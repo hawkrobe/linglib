@@ -43,7 +43,10 @@ def Outranks (a b : L) (order : List L) : Prop :=
   | _, _ => False
 
 instance (a b : L) (order : List L) : Decidable (Outranks a b order) := by
-  unfold Outranks; split <;> infer_instance
+  unfold Outranks
+  exact match rank a order, rank b order with
+    | some p, some q => inferInstanceAs (Decidable (p < q))
+    | some _, none | none, _ => instDecidableFalse
 
 /-- `a` and `b` are reranked between two strata: `a ≫ b` in `r₁` and `b ≫ a` in `r₂` (e.g.
 `*DIST-0 ≫ MAX` at the Word level but `MAX ≫ *DIST-0` at the Phrase level in Telugu,

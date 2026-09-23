@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # German comparative data
@@ -13,6 +15,8 @@ and [haspelmath-2001]'s Standard Average European comparative-particle
 feature. WALS Ch 81A classifies German as lacking a dominant word order (V2
 main clauses, verb-final subordinate clauses).
 -/
+
+@[expose] public section
 
 namespace German.Comparison
 

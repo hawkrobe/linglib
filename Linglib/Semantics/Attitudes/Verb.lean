@@ -1,4 +1,6 @@
-import Linglib.Syntax.Category.Verb.Defs
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # The attitude of a verb entry
@@ -6,6 +8,8 @@ import Linglib.Syntax.Category.Verb.Defs
 The readers of a verb entry's attitude: its veridicality, whether it is doxastic or
 preferential, and the valence of a preferential attitude.
 -/
+
+@[expose] public section
 
 namespace Verb
 

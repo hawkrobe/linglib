@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Fragments.Indonesian.TAM
-import Linglib.Fragments.Indonesian.Complementation
-import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Data.Examples.Arka2013
+module
+
+public import Linglib.Fragments.Indonesian.TAM
+public import Linglib.Fragments.Indonesian.Complementation
+public import Linglib.Semantics.Tense.Reichenbach
+public import Linglib.Data.Examples.Arka2013
 
 /-!
 # Arka 2013: the typology and syntax of TAM in Indonesian
@@ -41,6 +43,8 @@ structures are equational.
 * [kibort-2009] — languages grammaticalise different E, R, S configurations
 * [sneddon-1996] — the marker inventory in the fragment
 -/
+
+@[expose] public section
 
 namespace Arka2013
 

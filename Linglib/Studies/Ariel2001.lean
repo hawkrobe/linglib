@@ -1,7 +1,9 @@
-import Linglib.Discourse.Accessibility
-import Linglib.Discourse.Givenness
-import Linglib.Discourse.Centering.Basic
-import Linglib.Data.Examples.Ariel2001
+module
+
+public import Linglib.Discourse.Accessibility
+public import Linglib.Discourse.Givenness
+public import Linglib.Discourse.Centering.Basic
+public import Linglib.Data.Examples.Ariel2001
 
 /-!
 # Ariel 2001: accessibility theory
@@ -34,6 +36,8 @@ does not predict the repeated-name penalty.
 * [gundel-hedberg-zacharski-1993] — the Givenness Hierarchy
 * [grosz-joshi-weinstein-1995] — Centering's pronoun rule
 -/
+
+@[expose] public section
 
 namespace Ariel2001
 

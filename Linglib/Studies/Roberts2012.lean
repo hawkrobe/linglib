@@ -1,12 +1,14 @@
-import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Entailment
-import Linglib.Semantics.Questions.Resolution
-import Linglib.Core.Data.Fintype.Sets
-import Linglib.Discourse.QUD.Basic
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Entailment
+public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Core.Data.Fintype.Sets
+public import Linglib.Discourse.QUD.Basic
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.IntervalCases
 
 /-!
 # Roberts (2012): Information structure in discourse
@@ -44,6 +46,8 @@ unanswerable, which the paper also retires, does not arise in the discourse.
 * [D. Büring, *On D-trees, beans, and B-accents* (2003)][buring-2003]
 -/
 
+@[expose] public section
+
 namespace Roberts2012
 
 open Question
@@ -62,15 +66,15 @@ inductive Person | hilary | robin
 inductive Food | bagels | tofu
   deriving DecidableEq, Fintype, Inhabited
 
-private theorem Person.forall_person {p : Person → Prop} :
+theorem Person.forall_person {p : Person → Prop} :
     (∀ u, p u) ↔ p .hilary ∧ p .robin :=
   ⟨λ h => ⟨h _, h _⟩, λ ⟨h1, h2⟩ u => by cases u <;> assumption⟩
 
-private theorem Food.forall_food {p : Food → Prop} :
+theorem Food.forall_food {p : Food → Prop} :
     (∀ f, p f) ↔ p .bagels ∧ p .tofu :=
   ⟨λ h => ⟨h _, h _⟩, λ ⟨h1, h2⟩ f => by cases f <;> assumption⟩
 
-private theorem iInter_food_eq {α : Type*} {X : Food → Set α} :
+theorem iInter_food_eq {α : Type*} {X : Food → Set α} :
     ⋂ f, X f = X .bagels ∩ X .tofu := by
   ext a
   simp [Food.forall_food]
@@ -83,7 +87,7 @@ world. -/
 abbrev ate (u : Person) (f : Food) : Set World := Set.Ici {(u, f)}
 
 /-- Distinct eating events are incomparable. -/
-private theorem ate_subset_ate_iff {u u' : Person} {f f' : Food} :
+theorem ate_subset_ate_iff {u u' : Person} {f f' : Food} :
     ate u f ⊆ ate u' f' ↔ u = u' ∧ f = f' := by
   simp [ate, Prod.ext_iff, eq_comm]
 
@@ -121,24 +125,24 @@ def Qn.den : Qn → Question World
 
 /-! ### Alternative enumerations -/
 
-private theorem ate_antichain (uf uf' : Person × Food)
+theorem ate_antichain (uf uf' : Person × Food)
     (h : ate uf.1 uf.2 ⊆ ate uf'.1 uf'.2) :
     ate uf.1 uf.2 = ate uf'.1 uf'.2 := by
   obtain ⟨h1, h2⟩ := ate_subset_ate_iff.mp h
   rw [h1, h2]
 
-private theorem alt_wh (u : Person) : alt (wh u) = Set.range (ate u) :=
+theorem alt_wh (u : Person) : alt (wh u) = Set.range (ate u) :=
   alt_iSup_ofSet (λ _ => Set.nonempty_Ici)
     (λ f f' h => ate_antichain (u, f) (u, f') h)
 
-private theorem alt_q_1 :
+theorem alt_q_1 :
     alt q_1 = Set.range λ uf : Person × Food => ate uf.1 uf.2 :=
   alt_iSup_ofSet (λ _ => Set.nonempty_Ici) ate_antichain
 
-private theorem mem_alt_wh (u : Person) (f : Food) : ate u f ∈ alt (wh u) := by
+theorem mem_alt_wh (u : Person) (f : Food) : ate u f ∈ alt (wh u) := by
   rw [alt_wh]; exact Set.mem_range_self f
 
-private theorem mem_alt_q1 (u : Person) (f : Food) : ate u f ∈ alt q_1 := by
+theorem mem_alt_q1 (u : Person) (f : Food) : ate u f ∈ alt q_1 := by
   rw [alt_q_1]; exact Set.mem_range_self (u, f)
 
 /-! ### Alternative inclusions
@@ -147,23 +151,23 @@ Subquestionhood in the discourse is alternative-set inclusion: each polar altern
 alternative of its wh-question, and each wh alternative is an alternative of the big
 question. -/
 
-private theorem alt_polar_subset_wh (u : Person) (f : Food) :
+theorem alt_polar_subset_wh (u : Person) (f : Food) :
     alt (polar u f) ⊆ alt (wh u) := by
   rw [alt_ofSet]
   exact Set.singleton_subset_iff.mpr (mem_alt_wh u f)
 
-private theorem alt_wh_subset_q1 (u : Person) : alt (wh u) ⊆ alt q_1 := by
+theorem alt_wh_subset_q1 (u : Person) : alt (wh u) ⊆ alt q_1 := by
   rw [alt_wh, alt_q_1]
   exact Set.range_comp_subset_range (Prod.mk u) λ uf => ate uf.1 uf.2
 
-private theorem alt_polar_subset_q1 (u : Person) (f : Food) :
+theorem alt_polar_subset_q1 (u : Person) (f : Food) :
     alt (polar u f) ⊆ alt q_1 :=
   (alt_polar_subset_wh u f).trans (alt_wh_subset_q1 u)
 
 /-! ### The complete-answer partition (4) -/
 
 /-- Deciding two propositions is lying in one of the four Boolean corners. -/
-private theorem subset_corners_iff {σ A B : Set World} :
+theorem subset_corners_iff {σ A B : Set World} :
     (σ ⊆ A ∨ σ ⊆ Aᶜ) ∧ (σ ⊆ B ∨ σ ⊆ Bᶜ) ↔
       σ ⊆ A ∩ B ∨ σ ⊆ A ∩ Bᶜ ∨ σ ⊆ Aᶜ ∩ B ∨ σ ⊆ Aᶜ ∩ Bᶜ := by
   simp only [Set.subset_inter_iff]
@@ -180,7 +184,7 @@ theorem completelyAnsweredBy_wh_iff {σ : Set World} {u : Person} :
   rw [completelyAnsweredBy_iff_of_alt_eq_range (alt_wh u), Food.forall_food]
   exact subset_corners_iff
 
-private instance (C : Finset World) (S : Set World) [DecidablePred (· ∈ S)] :
+instance (C : Finset World) (S : Set World) [DecidablePred (· ∈ S)] :
     Decidable ((C : Set World) ⊆ S) :=
   decidable_of_iff (∀ w ∈ C, w ∈ S) (by simp [Set.subset_def])
 
@@ -308,13 +312,13 @@ the answers so far entail its complete answer, so "What did Hilary eat?" leaves 
 once both its polar subquestions are answered. -/
 theorem qud_D₀ : ∀ k < 12, qud (D₀.take k) = table k := by decide
 
-private theorem wellFormed_wh (C : Set World) (u : Person) :
+theorem wellFormed_wh (C : Set World) (u : Person) :
     [wh u, q_1].Pairwise (IsSubquestionOf C) :=
   List.pairwise_cons.mpr
     ⟨List.forall_mem_singleton.mpr (isSubquestionOf_of_alt_subset C (alt_wh_subset_q1 u)),
       List.pairwise_singleton ..⟩
 
-private theorem wellFormed_polar (C : Set World) (u : Person) (f : Food) :
+theorem wellFormed_polar (C : Set World) (u : Person) (f : Food) :
     [polar u f, wh u, q_1].Pairwise (IsSubquestionOf C) :=
   List.pairwise_cons.mpr
     ⟨List.forall_mem_cons.mpr
@@ -367,7 +371,7 @@ theorem strat_eq :
 /-- A wh-question's substrategy is complete: jointly resolving its polar subquestions
 resolves it, as already resolving one does, since it is one of the wh-question's
 disjuncts. -/
-private theorem wh_complete (u : Person) :
+theorem wh_complete (u : Person) :
     Strategy.IsComplete (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) :=
   .node_pair (inf_le_left.trans (le_iSup (polar u) .bagels)) (.leaf _) (.leaf _)
 
@@ -380,14 +384,14 @@ theorem strat_complete : strat.IsComplete := by
       le_iSup (λ uf : Person × Food => polar uf.1 uf.2) (.hilary, f)))
     (wh_complete .hilary) (wh_complete .robin)
 
-private theorem values_whTree (u : Person) :
+theorem values_whTree (u : Person) :
     (RoseTree.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)] : Strategy World).values
       = [wh u, polar u .bagels, polar u .tofu] := by
   simp [RoseTree.leaf]
 
 /-- A wh-question's substrategy is well formed in every context: each polar question is a
 subquestion of the wh-question by alternative inclusion. -/
-private theorem wh_wellFormed (C : Set World) (u : Person) :
+theorem wh_wellFormed (C : Set World) (u : Person) :
     Strategy.WellFormed C (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) := by
   refine .node (λ c hc r hr => ?_) (λ c hc => ?_)
   · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc

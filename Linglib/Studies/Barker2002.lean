@@ -1,8 +1,11 @@
-import Linglib.Semantics.Composition.Cont
-import Linglib.Semantics.Reference.ChoiceFunction
-import Linglib.Data.Examples.Barker2002
-import Mathlib.Data.Fintype.Pi
-import Mathlib.Data.List.Infix
+module
+
+public import Linglib.Semantics.Composition.Cont
+public import Linglib.Semantics.Reference.ChoiceFunction
+public import Linglib.Data.Examples.Barker2002
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.List.Infix
+import all Init.Data.List.SplitOn.Basic  -- for unfolding `List.splitOn`
 
 /-!
 # Barker (2002): Continuations and the nature of quantification
@@ -45,6 +48,8 @@ truth conditions. A wide-scope *a friend* common to everyone is not among them.
 * [partee-rooth-1983]
 * [reinhart-1997]
 -/
+
+@[expose] public section
 
 namespace Barker2002
 

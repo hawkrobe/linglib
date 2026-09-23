@@ -1,6 +1,8 @@
-import Linglib.Morphology.Word.Tree
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Morphology.Word.Tree
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Washo clausal embedding
@@ -28,6 +30,8 @@ against modification is `Studies/BochnakHanink2021.lean`.
 * [noonan-2007]
 * [jacobsen-1964]
 -/
+
+@[expose] public section
 
 namespace Washo
 
@@ -68,7 +72,7 @@ def es : Morph := .suff "e:s"
 def gum : Morph := .pref "gum"
 
 /-- The citation form of a root with an affix attached on a side, read off the word tree. -/
-private def affixed (root : String) (side : Morph.Side) (afx : Morph) : String :=
+def affixed (root : String) (side : Morph.Side) (afx : Morph) : String :=
   Morph.surface ((Word.Tree.root (Morph.root root)).attach side afx).toList
 
 /-- *hamup'ay* 'forget' (1). -/

@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
 # Adyghe clausal embedding
@@ -23,6 +25,8 @@ in `Studies/Deal2026.lean`.
 * [caponigro-polinsky-2011]
 * [noonan-2007]
 -/
+
+@[expose] public section
 
 namespace Adyghe
 

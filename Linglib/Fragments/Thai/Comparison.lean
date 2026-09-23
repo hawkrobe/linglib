@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Thai comparative data
@@ -8,6 +10,8 @@ Thai compares with *X Adj kwàa Y* (WALS Ch 121A: exceed, [stassen-2013]):
 adjective carries no degree marking; superlative via exceeding a universal
 standard.
 -/
+
+@[expose] public section
 
 namespace Thai.Comparison
 

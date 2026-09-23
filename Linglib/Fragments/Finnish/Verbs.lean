@@ -1,5 +1,7 @@
-import Linglib.Syntax.Voice.Basic
-import Linglib.Semantics.Causation.Implicative
+module
+
+public import Linglib.Syntax.Voice.Basic
+public import Linglib.Semantics.Causation.Implicative
 
 /-!
 # Finnish verbs
@@ -18,6 +20,8 @@ their implicative class.
 * [karlsson-2017]
 * [nadathur-2023-implicatives]
 -/
+
+@[expose] public section
 
 namespace Finnish.Verbs
 

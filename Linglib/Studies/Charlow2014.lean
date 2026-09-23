@@ -1,8 +1,11 @@
-import Mathlib.Data.Set.Functor
-import Mathlib.Data.Set.Card
-import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Composition.Cont
-import Linglib.Data.Examples.Charlow2014
+module
+
+public import Mathlib.Data.Set.Functor
+public import Mathlib.Data.Set.Card
+public import Linglib.Semantics.Alternatives.Basic
+public import Linglib.Semantics.Composition.Cont
+public import Linglib.Data.Examples.Charlow2014
+import all Init.Control.State  -- for unfolding `StateT.orElse`
 
 /-!
 # Charlow 2014: on the semantics of exceptional scope
@@ -107,6 +110,8 @@ Identity, Reader, Set, Reader.Set, State and State.Set monads are Lean's `Id`, `
 * [kratzer-shimoyama-2002]
 * [barker-shan-2014]
 -/
+
+@[expose] public section
 
 
 attribute [local instance] Set.monad
@@ -723,10 +728,13 @@ Program disjunction is `<|>` in `StateT _ Set` (Def. 4.6, the union of outputs);
 nondeterministic programs that survive Reset, bind donkey pronouns, and, being
 polymorphic, scope over an operator that scopes over their disjuncts. -/
 
-theorem orElse_apply (m n : StateSet E α) (s : Stack E) : (m <|> n) s = m s ∪ n s := rfl
+theorem orElse_apply (m n : StateSet E α) (s : Stack E) : (m <|> n) s = m s ∪ n s := by
+  show (m s <|> n s) = _
+  exact Set.orElse_def _ _
 
 @[simp] theorem mem_orElse (m n : StateSet E α) (s : Stack E) (q : α × Stack E) :
-    q ∈ (m <|> n) s ↔ q ∈ m s ∨ q ∈ n s := Iff.rfl
+    q ∈ (m <|> n) s ↔ q ∈ m s ∨ q ∈ n s := by
+  rw [orElse_apply, Set.mem_union]
 
 theorem orElse_bind (m n : StateSet E α) (f : α → StateSet E β) :
     (m <|> n) >>= f = (m >>= f <|> n >>= f) := by

@@ -1,5 +1,7 @@
-import Linglib.Fragments.Turkish.Case
-import Linglib.Syntax.Category.Pronoun.Reciprocal
+module
+
+public import Linglib.Fragments.Turkish.Case
+public import Linglib.Syntax.Category.Pronoun.Reciprocal
 
 /-!
 # Turkish reciprocal pronouns
@@ -35,6 +37,8 @@ the reciprocal reflect retrieval and not integration at the verb. The inflected 
 * [Ö. Bakay, F. Akkuş and B. Dillon, *Hierarchical relations guide memory retrieval in sentence
   comprehension: Evidence from a local anaphor in Turkish* (2026)][bakay-etal-2026]
 -/
+
+@[expose] public section
 
 namespace Turkish.Anaphors
 

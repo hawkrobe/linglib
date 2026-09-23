@@ -1,6 +1,8 @@
-import Linglib.Pragmatics.RSA.Basic
-import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+module
+
+public import Linglib.Pragmatics.RSA.Basic
+public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 
 /-!
 # Tessler and Goodman (2019): The Language of Generalization
@@ -53,6 +55,8 @@ rationality; the paper's fitted values are not pinned.
 * [lassiter-goodman-2017]
 * [leslie-2008]
 -/
+
+@[expose] public section
 
 namespace TesslerGoodman2019
 

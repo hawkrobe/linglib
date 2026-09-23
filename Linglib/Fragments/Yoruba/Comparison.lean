@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Yoruba comparative data
@@ -7,6 +9,8 @@ Yoruba compares with *X Adj ju Y lọ* (WALS Ch 121A: exceed, [stassen-2013]):
 the exceed verb *ju … lọ* takes the standard as its object. The adjective
 carries no degree marking; superlative via exceeding a universal standard.
 -/
+
+@[expose] public section
 
 namespace Yoruba.Comparison
 

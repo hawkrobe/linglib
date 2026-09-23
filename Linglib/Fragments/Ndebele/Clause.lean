@@ -1,6 +1,8 @@
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
+module
+
+public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
 # Ndebele clausal embedding
@@ -24,6 +26,8 @@ an English artifact it flags itself.
 * [pietraszko-2019]
 * [noonan-2007]
 -/
+
+@[expose] public section
 
 namespace Ndebele
 

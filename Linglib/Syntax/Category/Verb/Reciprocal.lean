@@ -1,5 +1,7 @@
-import Linglib.Syntax.Category.Verb.Defs
-import Linglib.Syntax.Reciprocal
+module
+
+public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Syntax.Reciprocal
 
 /-!
 # Reciprocal verb entries
@@ -13,6 +15,8 @@ and its transitive alternate when the vocabulary has one — frozen entries
 the base's grid is the join of the base's two entailment profiles,
 [reinhart-siloni-2005]'s `[θᵢ · θⱼ]` role bundling.
 -/
+
+@[expose] public section
 
 open ArgumentStructure
 

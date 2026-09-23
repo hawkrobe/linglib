@@ -1,5 +1,7 @@
-import Linglib.Data.Examples.Everdell2023
-import Linglib.Studies.Krejci2012
+module
+
+public import Linglib.Data.Examples.Everdell2023
+public import Linglib.Studies.Krejci2012
 
 /-!
 # Everdell (2023): Arguments and Adjuncts in O'dam, Chapter 5
@@ -73,6 +75,8 @@ applicatives reach unergatives but not simple transitives.
 * [jerro-2017]
 * [shibatani-pardeshi-2002]
 -/
+
+@[expose] public section
 
 namespace Everdell2023
 

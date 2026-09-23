@@ -1,4 +1,6 @@
-import Linglib.Syntax.Comparative
+module
+
+public import Linglib.Syntax.Comparative
 
 /-!
 # Finnish comparative data
@@ -9,6 +11,8 @@ separative option marking the standard with the partitive instead —
 [stassen-1985] classifies Finnish as particle-primary, separative-secondary.
 Degree is marked by the bound affix *-mpi*; the superlative is morphological.
 -/
+
+@[expose] public section
 
 namespace Finnish.Comparison
 

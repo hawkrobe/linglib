@@ -1,10 +1,12 @@
-import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.Examples.Dayal2025
-import Linglib.Fragments.English.QuestionParticles
-import Linglib.Fragments.HindiUrdu.Particles
-import Linglib.Fragments.Japanese.Particles
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Syntax.Minimalist.LeftPeriphery
+module
+
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Examples.Dayal2025
+public import Linglib.Fragments.English.QuestionParticles
+public import Linglib.Fragments.HindiUrdu.Particles
+public import Linglib.Fragments.Japanese.Particles
+public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Syntax.Minimalist.LeftPeriphery
 
 /-!
 # Dayal (2025): The interrogative left periphery
@@ -62,6 +64,8 @@ lacks. Question particles sit at the layer their embedding distribution shows.
 * [X. V. Zu, *Discourse participants and the structural representation of the
   context* (2018)][zu-2018]
 -/
+
+@[expose] public section
 
 namespace Dayal2025
 

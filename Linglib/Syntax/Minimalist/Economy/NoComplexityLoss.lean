@@ -1,4 +1,6 @@
-import Linglib.Syntax.Minimalist.Merge.Internal
+module
+
+public import Linglib.Syntax.Minimalist.Merge.Internal
 
 /-!
 # No Complexity Loss
@@ -38,6 +40,8 @@ deletion quotient's weight is strictly smaller than its source.
 
 * [marcolli-chomsky-berwick-2025], §1.6.1 and §1.6.3 (Definition 1.6.2, Proposition 1.6.10)
 -/
+
+@[expose] public section
 
 namespace Minimalist
 
