@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Order.Antichain
 public import Linglib.Semantics.Questions.Basic
+public import Linglib.Semantics.Polarity.Sentence
 
 /-!
 # Question — Hamblin constructions
@@ -45,6 +46,10 @@ def polar (p : Set W) : Question W :=
 /-- A polar question does not depend on which of `p`, `pᶜ` is asked about. -/
 @[simp] theorem polar_compl (p : Set W) : polar pᶜ = polar p := by
   rw [polar, polar, compl_compl, sup_comm]
+
+/-- Nor on the polarity of the proposition asked about. -/
+@[simp] theorem polar_smul (s : SentencePolarity) (p : Set W) : polar (s • p) = polar p := by
+  cases s <;> simp
 
 /-- `polar` is, by definition, the inquisitive disjunction of the two
     declaratives. *Not* `@[simp]`: `polar p` is a meaningful surface

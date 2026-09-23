@@ -980,8 +980,6 @@ import Linglib.Fragments.Swahili.Nouns
 import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Relativization
-import Linglib.Fragments.Swedish.AnswerParticles
-import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Tagalog.Phonology
 import Linglib.Fragments.Tagalog.Pronouns

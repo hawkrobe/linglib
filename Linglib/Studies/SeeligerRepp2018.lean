@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Questions.Bias
 public import Linglib.Semantics.Polarity.Sentence
 public import Linglib.Semantics.Questions.QParticleLayer
-public import Linglib.Fragments.Swedish.QuestionParticles
+public import Linglib.Fragments.Swedish.Particles
 public import Linglib.Fragments.German.Particles
 public import Linglib.Fragments.German.PolarityMarking
 
@@ -480,7 +480,7 @@ theorem dq_epistemic_lacks_romero_counterpart :
 -- § 9. Swedish *väl* marks DQs, not assertions
 -- ════════════════════════════════════════════════════════════════
 
-open Swedish.QuestionParticles
+open Swedish.Particles (val)
 open German.Particles
 open German.PolarityMarking (dochPreUtterance)
 open Polarity.Marking (Env)
@@ -489,7 +489,7 @@ open Polarity.Marking (Env)
     questions, not assertions ([seeliger-repp-2018] §5.2). Derived from
     the fragment's distribution facet. -/
 theorem val_creates_questions :
-    ¬ Swedish.QuestionParticles.val.LicensedIn .declarative := by decide
+    ¬ Swedish.Particles.val.LicensedIn .declarative := by decide
 
 /-- S&R's bias classification of *väl* (formerly fragment fields; a
     particle's bias requirement is the analysis, so it lives here):
@@ -619,7 +619,7 @@ def dochWohl_layer (_ : Particle) : QParticleLayer := .perspP
 /-- Both modal-particle complexes that mark RQs/DQs in this study sit
     at PerspP — the layer for biased, matrix-only question particles. -/
 theorem rq_markers_are_PerspP :
-    val_layer Swedish.QuestionParticles.val = .perspP ∧
+    val_layer Swedish.Particles.val = .perspP ∧
     dochWohl_layer German.Particles.dochWohl = .perspP :=
   ⟨rfl, rfl⟩
 

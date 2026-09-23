@@ -11,7 +11,7 @@ sentence-internal affirmative particle, Verum focus on the finite verb, a polari
 particle, another device, or no marking. A `Polarity.Marking.Env` is a position or discourse
 context in which a device is available, and a `Polarity.Marking.Entry` is a language's device
 with its form, its prosodic target, its environments and its strategy. Fragments for Dutch,
-German, English, Italian, Spanish, French and Swedish populate the schema.
+German, English, Italian, Spanish and French populate the schema.
 
 ## Implementation notes
 
