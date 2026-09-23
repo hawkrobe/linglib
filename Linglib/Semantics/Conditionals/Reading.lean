@@ -167,9 +167,9 @@ end Felicity
 /-- The entailment direction of a clause under a reading. The antecedent is downward entailing on
 the hypothetical reading and upward entailing on the premise reading, and the consequent is
 upward entailing on either. -/
-def clausePolarity : Reading → Clause → ContextPolarity
-  | .hypothetical, .antecedent => .downward
-  | _, _ => .upward
+def clausePolarity : Reading → Clause → SignType
+  | .hypothetical, .antecedent => -1
+  | _, _ => 1
 
 end Reading
 

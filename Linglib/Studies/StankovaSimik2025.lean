@@ -125,71 +125,71 @@ theorem licensedAt_ppi_iff_not_nci (n : Negation) :
 /-- The contextual evidence a reading of negation requires: the canonical operator
 negative evidence, as in the evidentially biased contexts of [gunlogson-2002] and
 [sudo-2013]; FALSUM, conveying epistemic rather than evidential bias, nothing. -/
-def readingEvidenceOK : Negation → Option Polarity → Prop
-  | .inner, ctx => ctx = some .negative
+def readingEvidenceOK : Negation → SignType → Prop
+  | .inner, ctx => ctx = -1
   | .outer, _ => True
 
-instance (n : Negation) (ctx : Option Polarity) : Decidable (readingEvidenceOK n ctx) := by
+instance (n : Negation) (ctx : SignType) : Decidable (readingEvidenceOK n ctx) := by
   cases n <;> unfold readingEvidenceOK <;> infer_instance
 
 /-- Declarative word order requires contextual evidence ([gunlogson-2002]); interrogative
 word order requires none. -/
-def wordOrderEvidenceOK : VerbPosition → Option Polarity → Prop
+def wordOrderEvidenceOK : VerbPosition → SignType → Prop
   | .v1, _ => True
-  | .nonV1, ctx => ctx ≠ none
+  | .nonV1, ctx => ctx ≠ 0
 
-instance (wp : VerbPosition) (ctx : Option Polarity) :
+instance (wp : VerbPosition) (ctx : SignType) :
     Decidable (wordOrderEvidenceOK wp ctx) := by
   cases wp <;> unfold wordOrderEvidenceOK <;> infer_instance
 
 /-- A negative polar question with an indefinite is felicitous in a context when some reading
 available at its verb position licenses the indefinite and admits the context's evidence, and
 the word order admits the evidence. -/
-def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : Option Polarity) : Prop :=
+def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : SignType) : Prop :=
   (∃ n ∈ wp.availableReadings, LicensedAt ind.entry n ∧ readingEvidenceOK n ctx) ∧
     wordOrderEvidenceOK wp ctx
 
-instance (wp : VerbPosition) (ind : Indefinite) (ctx : Option Polarity) :
+instance (wp : VerbPosition) (ind : Indefinite) (ctx : SignType) :
     Decidable (Felicitous wp ind ctx) := by
   unfold Felicitous; infer_instance
 
 /-- In interrogative questions the positive polarity item is felicitous in every context:
 FALSUM licenses it and is indifferent to evidence. -/
-theorem v1_ppi_any_context (ctx : Option Polarity) : Felicitous .v1 .ppi ctx := by
+theorem v1_ppi_any_context (ctx : SignType) : Felicitous .v1 .ppi ctx := by
   decide +revert
 
 /-- In interrogative questions the negative concord item is never felicitous: the
 clause-initial verb is out of reach of the canonical operator. -/
-theorem v1_nci_never (ctx : Option Polarity) : ¬ Felicitous .v1 .nci ctx := by
+theorem v1_nci_never (ctx : SignType) : ¬ Felicitous .v1 .nci ctx := by
   decide +revert
 
 /-- Interrogative questions are indifferent to the context. -/
-theorem v1_context_invariant (ind : Indefinite) (ctx ctx' : Option Polarity) :
+theorem v1_context_invariant (ind : Indefinite) (ctx ctx' : SignType) :
     Felicitous .v1 ind ctx ↔ Felicitous .v1 ind ctx' := by
   decide +revert
 
 /-- A declarative question with the concord item is felicitous exactly under negative
 evidence: inner negation requires it. -/
-theorem nonV1_nci_iff (ctx : Option Polarity) :
-    Felicitous .nonV1 .nci ctx ↔ ctx = some .negative := by
+theorem nonV1_nci_iff (ctx : SignType) :
+    Felicitous .nonV1 .nci ctx ↔ ctx = -1 := by
   decide +revert
 
 /-- A declarative question with the polarity item is felicitous exactly under some evidence:
 FALSUM licenses the verb in situ, and the word order needs evidence. -/
-theorem nonV1_ppi_iff (ctx : Option Polarity) :
-    Felicitous .nonV1 .ppi ctx ↔ ctx ≠ none := by
+theorem nonV1_ppi_iff (ctx : SignType) :
+    Felicitous .nonV1 .ppi ctx ↔ ctx ≠ 0 := by
   decide +revert
 
 /-- Declarative questions are infelicitous without contextual evidence. -/
-theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind none := by
+theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind 0 := by
   cases ind <;> decide
 
 /-- Czech FALSUM is broader than English high negation: an interrogative question with the
 polarity item is felicitous under positive evidence (the paper's (14)), which the evidence
 condition of [buring-gunlogson-2000] on English outer negation excludes. -/
 theorem falsum_broader_than_english_hiNQ :
-    ¬ BuringGunlogson2000.Felicitous .HiNQ (some .positive) ∧
-      Felicitous .v1 .ppi (some .positive) :=
+    ¬ BuringGunlogson2000.Felicitous .hiNQ 1 ∧
+      Felicitous .v1 .ppi 1 :=
   ⟨by decide, v1_ppi_any_context _⟩
 
 /-! ### The particles -/
@@ -210,25 +210,25 @@ theorem nahodou_ppi (wp : VerbPosition) :
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's
 polarity. -/
-def CopakLicensed (pol : Polarity) (ctx : Option Polarity) : Prop := ctx = evidence pol
+def CopakLicensed (pol : Polarity) (ctx : SignType) : Prop := ctx = evidence pol
 
-instance (pol : Polarity) (ctx : Option Polarity) : Decidable (CopakLicensed pol ctx) := by
+instance (pol : Polarity) (ctx : SignType) : Decidable (CopakLicensed pol ctx) := by
   unfold CopakLicensed; infer_instance
 
 /-- *Copak* is infelicitous without contextual evidence. -/
-theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol none := by
+theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol 0 := by
   cases pol <;> decide
 
 /-- *Copak* marks a conflict: the prior belief it conveys opposes the evidence it requires. -/
 theorem copak_prior_ne_evidence (pol : Polarity) :
-    (prior pol = some .positive ↔ evidence pol = some .negative) ∧
-      (prior pol = some .negative ↔ evidence pol = some .positive) := by
+    (prior pol = 1 ↔ evidence pol = -1) ∧
+      (prior pol = -1 ↔ evidence pol = 1) := by
   cases pol <;> decide
 
 /-- The two particles part on context: *náhodou* is licensed by FALSUM whatever the
 evidence, *copak* only under evidence. -/
-theorem nahodou_copak_opposite (ctx : Option Polarity) :
-    NahodouLicensed .negative .outer ∧ (CopakLicensed .negative ctx → ctx ≠ none) := by
+theorem nahodou_copak_opposite (ctx : SignType) :
+    NahodouLicensed .negative .outer ∧ (CopakLicensed .negative ctx → ctx ≠ 0) := by
   decide +revert
 
 /-- Semantic classification of the Czech polar-question particles: the paper's two, and the

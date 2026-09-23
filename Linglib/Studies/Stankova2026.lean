@@ -230,8 +230,8 @@ which maps onto [romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
 /-- [romero-2024] PQ form of a negation position: outer is high
 negation (HiNQ), inner and medial are both low (LoNQ). -/
 def Position.toPQForm : Position → PQForm
-  | .inner | .medial => .LoNQ
-  | .outer => .HiNQ
+  | .inner | .medial => .loNQ
+  | .outer => .hiNQ
 
 /-- Only outer negation (FALSUM) is obligatorily focused
 ([stankova-2026] §3.2). -/
@@ -314,8 +314,8 @@ theorem examples_match_table1 :
 /-- [stankova-2025]'s positive-evidence stimulus ((14): V1 negative PQ
 after evidence for p) with the bias-profile cell it occupies. -/
 def biasCheckedExamples :
-    List (LinguisticExample × Option Polarity × Option Polarity × CzechPQForm) :=
-  [ (StankovaSimik2025.Examples.ex14, some .positive, none, .interNPQ) ]
+    List (LinguisticExample × SignType × SignType × CzechPQForm) :=
+  [ (StankovaSimik2025.Examples.ex14, 1, 0, .interNPQ) ]
 
 /-- The bias profile predicts the positive-evidence stimulus — the form
 is felicitous iff it appears in its evidence × original-bias cell. -/

@@ -387,7 +387,7 @@ instance (level : Polarity.DEStrength) (σ : Signature) : Decidable (Licenses le
   unfold Licenses; infer_instance
 
 /-- A downward signature licenses the weak items. -/
-theorem licenses_weak {σ : Signature} (h : σ.toContextPolarity = .downward) :
+theorem licenses_weak {σ : Signature} (h : σ.sign = -1) :
     Licenses .weak σ := by
   cases σ <;> first | decide | exact absurd h (by decide)
 

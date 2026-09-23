@@ -31,7 +31,7 @@ question with preposed negation and of every VERUM form is the one the model imp
 
 Speaker belief is the epistemic proposition of the states settling a proposition,
 `Set.Iic`. Question forms are the substrate's `Question.PQForm`, preposed negation being the
-high-negation form, and a bias is the polarity of the proposition the speaker's belief supports. The Principle of
+high-negation form, and a bias is the sign of the proposition the speaker's belief supports. The Principle of
 Economy that makes VERUM questions biased is stated in the paper in prose and is not
 formalized.
 
@@ -163,7 +163,7 @@ instance (e : Polarity.Item) (f : Form) : Decidable (Licensed e f) := by
 form and its polarity item, each when the paper gives one, and its judgment. -/
 structure Datum where
   pqForm : Option PQForm
-  bias : Option (Option Polarity)
+  bias : Option SignType
   form : Option Form
   item : Option Polarity.Item
   judgment : Data.Examples.Judgment
@@ -171,9 +171,8 @@ structure Datum where
 /-- An example read into its datum. -/
 def datum (e : LinguisticExample) : Datum where
   pqForm := e.parse? "negation"
-    [("preposed", PQForm.HiNQ), ("nonPreposed", .LoNQ), ("none", .PosQ)]
-  bias := e.parse? "bias" [("positive", some .positive), ("negative", some .negative),
-    ("none", none)]
+    [("preposed", PQForm.hiNQ), ("nonPreposed", .loNQ), ("none", .posQ)]
+  bias := e.parse? "bias" [("positive", (1 : SignType)), ("negative", -1), ("none", 0)]
   form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),
     ("notFocus", .notFocus)]
   item := e.parse? "item"
@@ -193,12 +192,12 @@ theorem licensed_iff_acceptable :
 (14) to (18), and non-preposed negation none. -/
 theorem bias_of_pqForm :
     ∀ d ∈ data, ∀ pq ∈ d.pqForm.toList, ∀ b ∈ d.bias.toList,
-      (pq = .HiNQ → b = some .positive) ∧ (pq = .LoNQ → b = none) := by
+      (pq = .hiNQ → b = 1) ∧ (pq = .loNQ → b = 0) := by
   decide
 
 /-- The bias reported for a VERUM form is the belief the model implicates. -/
 theorem bias_of_form :
-    ∀ d ∈ data, ∀ f ∈ d.form.toList, ∀ b ∈ d.bias.toList, b = some f.implicature := by
+    ∀ d ∈ data, ∀ f ∈ d.form.toList, ∀ b ∈ d.bias.toList, b = f.implicature := by
   decide
 
 end RomeroHan2004

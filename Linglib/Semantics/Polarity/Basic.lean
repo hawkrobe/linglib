@@ -4,6 +4,7 @@ public import Mathlib.Algebra.Group.Action.Hom
 public import Mathlib.Algebra.Group.Action.Units
 public import Mathlib.Algebra.Module.NatInt
 public import Mathlib.Algebra.Ring.Int.Units
+public import Mathlib.Basic.Sign.Defs
 public import Mathlib.Order.BooleanAlgebra.Set
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
@@ -21,17 +22,18 @@ notion of polarity in the library is an action of this one group:
   duality (`Semantics/Degree/Antonymy`);
 * the relative polarity of a response to an antecedent, [same] or [reverse], is the product of
   their polarities;
-* the direction of a function, strictly monotone or strictly antitone (`StrictDirected`), with
+* the direction of a function, strictly monotone or strictly antitone (`StrictMonoBy`), with
   directions composing as polarities multiply.
 
 Since these are one group acting in different ways, their interaction is statable: the negative
 antonym *short* measures on the dual scale of *tall*, while sentential negation takes the
 complement, so *not short* does not entail *tall*.
 
-Two other notions called polarity are distinct types: `UD.Polarity`, a morphological feature of
-the annotation scheme, and `NaturalLogic.ContextPolarity`, the monotonicity of a context, which
-adds a non-monotone value absorbing the others and into which a polarity maps, negation being
-downward (`NaturalLogic.ContextPolarity.ofPolarity`).
+A polarity is a sign: it coerces into `SignType` as `1` or `-1`. The three-valued sign also
+records what a polarity cannot, the absence of a direction: the monotonicity of a context,
+upward, downward or neither (`NaturalLogic.Signature.sign`), and a body of evidence or belief
+bearing on a proposition, for it, against it or neither (`Question.BiasValue`). `UD.Polarity`, a
+morphological feature of the annotation scheme, is a distinct type.
 -/
 
 @[expose] public section
@@ -73,6 +75,23 @@ instance : CommGroup Polarity where
 
 @[simp] theorem mul_positive (s : Polarity) : s * positive = s := mul_one s
 
+/-- A polarity as a sign: positive `1`, negative `-1`. -/
+@[coe] def toSignType : Polarity → SignType
+  | positive => 1
+  | negative => -1
+
+instance : Coe Polarity SignType := ⟨toSignType⟩
+
+@[simp] theorem coe_positive : ((positive : Polarity) : SignType) = 1 := rfl
+
+@[simp] theorem coe_negative : ((negative : Polarity) : SignType) = -1 := rfl
+
+@[simp] theorem coe_mul (s t : Polarity) : ((s * t : Polarity) : SignType) = s * t := by
+  cases s <;> cases t <;> rfl
+
+theorem coe_ne_zero (s : Polarity) : (s : SignType) ≠ 0 := by
+  cases s <;> decide
+
 /-- The polarities are the units of `ℤ`, `positive` being `1` and `negative` being `-1`. -/
 def unitsEquiv : Polarity ≃* ℤˣ where
   toFun
@@ -113,13 +132,13 @@ variable {α β γ : Type*} [Preorder α] [Preorder β] [Preorder γ]
 
 /-- A function directed by a polarity: strictly monotone under the positive polarity, strictly
 antitone under the negative one. -/
-def StrictDirected : Polarity → (α → β) → Prop
+def StrictMonoBy : Polarity → (α → β) → Prop
   | positive, f => StrictMono f
   | negative, f => StrictAnti f
 
 /-- Directions compose as polarities multiply. -/
-theorem StrictDirected.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.StrictDirected g)
-    (hf : t.StrictDirected f) : (s * t).StrictDirected (g ∘ f) := by
+theorem StrictMonoBy.comp {s t : Polarity} {g : β → γ} {f : α → β} (hg : s.StrictMonoBy g)
+    (hf : t.StrictMonoBy f) : (s * t).StrictMonoBy (g ∘ f) := by
   cases s <;> cases t
   exacts [StrictMono.comp hg hf, StrictMono.comp_strictAnti hg hf,
     StrictAnti.comp_strictMono hg hf, StrictAnti.comp hg hf]
