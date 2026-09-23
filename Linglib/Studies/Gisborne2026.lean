@@ -13,73 +13,55 @@ import Mathlib.Data.Fin.VecNotation
 /-!
 # Gisborne (2026): Mutual dependency, English wh-clauses and Word Grammar
 
-This file formalizes the theory of word order in Word Grammar that [gisborne-2026] revises, and
-the paper's analyses of dependent interrogatives and free relatives. A Word Grammar analysis is a
-network of typed dependencies between words, in which a word may have several parents and two
-words may depend on each other. Word order is carried by a sub-network, the landmarks, which
-must form a projective tree as Robinson's axioms require [robinson-1970]. In the theory of
-[hudson-2007] that the paper quotes, a word's parent is by default its landmark, and a parent
-subordinate to another parent of the word is not, the Subordinate Head Rule, a default overridden
-bottom-up (`Analysis.isLandmark_iff`). In the raising analysis of *they seemed to dance*, (9),
-the subject depends on all three verbs and the network is neither a tree nor projective, but the
-landmarks the rules pick out are a projective tree (`orderedByLandmarks_theySeemedToDance`).
+This file formalizes Gisborne's account of word order under mutual dependency in Word Grammar.
+Word order is fixed by landmarks, which must form a projective tree as in Robinson's axioms, and
+we compare Hudson's earlier and later theories of landmarks with Gisborne's revision, in which an
+extracted word is placed by a positional head outside the landmark tree.
 
-Mutual dependency tests the theory. Two words that were each other's landmark would each be their
-own by transitivity, so the parents cannot all be landmarks in the traditional analysis of a
-dependent interrogative with the wh word as head, (52), or in the free relatives (53) and (55)
-(`Analysis.not_isTree_parentGraph`). The Subordinate Head Rule removes the mutual landmark. But when
-a word heads the clause it is extracted from and also depends on a head outside that clause, the
-head it is extracted from is a subordinate parent of it, and the 2007 theory, which positions an
-extracted word from its landmark, has no word order for the extraction
-(`Analysis.not_orderedByLandmarks_of_extraction`). A dependent interrogative with the verb as head,
-(51), has no mutual dependency and satisfies the 2007 theory, and so does a subject free relative
-analysed without extraction, (58). For the free relative the paper revises the start-rule of
-extraction: an extracted word takes its position from its positional head, an intransitive relation
-outside the landmark tree. The revision accepts every analysis the 2007 theory accepts
-(`Analysis.OrderedByLandmarks.orderedByPositionalHeads`), and it gives the free relative (55) the
-analysis (56). There the landmarks form a projective tree and every word stands on its side of its
-landmark. The extracted *What* precedes its positional head *bought*, which follows *What* as its
-complement (57) (`orderedByPositionalHeads_whatHeBoughtCostLots`).
+## Main definitions
 
-The paper also argues against the later theory of [hudson-2018], in which the Best Landmark
-Principle chooses the landmarks, so that in a mutual dependency either word may be the landmark of
-the other (`landmarks_whatHappenedThen`). Two of its constraints, that every word but the root takes
-one of its parents as its landmark and that the landmarks form a projective tree
-(`Analysis.OrderedByChosenLandmarks`), derive Hudson's account of the contrast between (11d) and
-(11e): no choice orders *\*I wonder then what happened*
-(`not_orderedByChosenLandmarks_iWonderThenWhatHappened`). The same constraints leave no place for
-extraction in (14), since the head *what* is extracted from cannot be its landmark
-(`not_orderedByChosenLandmarks_iWonderWhatTheySaw`).
+* `Analysis n`: a Word Grammar analysis of `n` words, a network of typed dependencies in which a
+  word may have several heads and two words may depend on each other.
+* `Analysis.IsLandmark A w p`: `p` is the landmark of `w` by Hudson's 2007 rules, under which a
+  head is a landmark unless it is subordinate to another head.
+* `Analysis.Orders A L root`: the landmark relation `L` forms a projective tree from `root`, with
+  every word on its side of its landmark.
+* `Analysis.OrderedByLandmarks A`, `Analysis.OrderedByChosenLandmarks A`,
+  `Analysis.OrderedByPositionalHeads A`: `A` is ordered by the 2007 theory, by landmarks chosen as
+  in the 2018 theory, and by the revision.
+
+## Main statements
+
+* `Analysis.isLandmark_iff`: the 2007 rules, stated as default inheritance, make `p` the landmark
+  of `w` exactly when `p` is a head of `w` not subordinate to another of its heads.
+* `Analysis.not_orderedByLandmarks_of_extraction`: an analysis is not ordered by the 2007 theory
+  when a word is extracted from a head that it heads and has another head as well.
+* `Analysis.OrderedByLandmarks.orderedByPositionalHeads`: the revision orders every analysis the
+  2007 theory orders.
+* `orderedByPositionalHeads_whatHeBoughtCostLots`, `not_orderedByLandmarks_whatHeBoughtCostLots`:
+  the revision orders the free relative *What he bought cost lots*, and the 2007 theory does not.
 
 ## Implementation notes
 
-* An analysis covers the words its diagram annotates, so (51) and (52) omit *I don't*.
-* The dependencies are the diagrams' labels: subject, object, complement, the complement of a
-  raising verb labelled xc in (9), and extractee. Each fixes the side of its head its dependent
-  stands on, a `DependencyGrammar.Dir` (`Rel.dir`): subjects and extractees stand before their
-  landmarks and the others after them, and an extracted object stands where the extractee does.
-* The landmark rules are a default-inheritance network over the concepts *parent* and
-  *subordinate parent*, whose exemplars are the pairs of a word and a position
-  (`DefaultInheritance.inherited`).
-* The landmarks form a `DependencyGrammar.Graph` with an arc from each landmark to its word,
-  labelled with UD's unspecified relation `dep`. Tree-hood and projectivity are the substrate's.
-* The later theory's preference for the nearest more prominent landmark is not modelled; a
-  choice of landmarks ranges over the parents of each word, which leaves out the pied-piping
-  constructions where Hudson lets a landmark be a non-parent.
-* The tokens are the English fragment's, and the free relatives' *what* is the interrogative
-  pronoun's token; *then* is the temporal deictic adverb's form.
+* The landmark rules are a `DefaultInheritance` network over the concepts *parent* and
+  *subordinate parent*, and a landmark relation is checked for `IsTree` and `IsProjective` as a
+  `DependencyGrammar.Graph` with UD's `dep` on each arc.
+* Each dependency type fixes the side of its head that its dependent stands on (`Rel.dir`), and an
+  extractee's side overrides an object's.
+* Chosen landmarks range over each word's heads; the Best Landmark Principle's preference for the
+  nearest more prominent word is not modelled.
 
 ## TODO
 
-* The distributional arguments of Section 4, which separate free relatives from dependent
-  interrogatives (matching, agreement, pied-piping, sluicing in Farsi), are not formalized.
+* The distributional evidence that free relatives are headed by their wh word and dependent
+  interrogatives by their verb.
 
 ## References
 
-* [gisborne-2026]
-* [hudson-2007]
-* [hudson-2018]
-* [robinson-1970]
+* [N. Gisborne, *Mutual Dependency, English wh-Clauses and Word Grammar* (2026)][gisborne-2026]
+* [R. Hudson, *Language Networks: The New Word Grammar* (2007)][hudson-2007]
+* [R. Hudson, *Pied-Piping in Cognition* (2018)][hudson-2018]
+* [J. J. Robinson, *Dependency Structures and Transformational Rules* (1970)][robinson-1970]
 -/
 
 namespace Gisborne2026
