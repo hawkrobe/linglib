@@ -179,6 +179,42 @@ def ex_134 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "MORPHEME_ALIGNED" }
 
+def ex_137 : LinguisticExample :=
+  { id := "tay2024_137"
+    source := ⟨"tay-2024", "(137)"⟩
+    reportedIn := none
+    language := "mand1415"
+    primaryText := "Éjūn jī-chén-le yī sōu xúnyángjiàn."
+    discourseSegments := []
+    glossedTokens := [("Éjūn", "Russian.forces"), ("jī-chén-le", "strike-sink-PFV"), ("yī", "one"), ("sōu", "CLF"), ("xúnyángjiàn", "cruiser")]
+    translation := "A cruiser sank as a result of Russian troops striking [it]."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("externalArgument", "agent")]
+    comment := "V1 names the striking, the initial event of the causal chain (136), in which the Russian forces take part (138)."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def ex_139 : LinguisticExample :=
+  { id := "tay2024_139"
+    source := ⟨"tay-2024", "(139)"⟩
+    reportedIn := none
+    language := "mand1415"
+    primaryText := "Éjūn chōng-chén-le yī sōu xúnyángjiàn."
+    discourseSegments := []
+    glossedTokens := [("Éjūn", "Russian.forces"), ("chōng-chén-le", "rush-sink-PFV"), ("yī", "one"), ("sōu", "CLF"), ("xúnyángjiàn", "cruiser")]
+    translation := "A cruiser sank as a result of Russian troops causing [water] to enter [it]."
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("externalArgument", "pureCauser")]
+    comment := "A pure causer: V1 names the seawater rushing in, the second event of the causal chain (136), in which the Russian forces take no part (140)."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
 def ex_146 : LinguisticExample :=
   { id := "tay2024_146"
     source := ⟨"tay-2024", "(146)"⟩
@@ -449,6 +485,6 @@ def ex_668 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "MORPHEME_ALIGNED" }
 
-def all : List LinguisticExample := [ex_41, ex_42, ex_45, ex_46, ex_107, ex_131, ex_132, ex_133, ex_134, ex_146, ex_148, ex_149, ex_150, ex_151, ex_202, ex_205, ex_206, ex_216, ex_217, ex_219, ex_221, ex_224, ex_330, ex_668]
+def all : List LinguisticExample := [ex_41, ex_42, ex_45, ex_46, ex_107, ex_131, ex_132, ex_133, ex_134, ex_137, ex_139, ex_146, ex_148, ex_149, ex_150, ex_151, ex_202, ex_205, ex_206, ex_216, ex_217, ex_219, ex_221, ex_224, ex_330, ex_668]
 
 end Tay2024.Examples

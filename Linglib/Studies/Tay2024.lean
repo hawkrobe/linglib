@@ -30,11 +30,14 @@ integrated into the macroevent of a simplex causative is the initial event of it
 `Model.Onset`. The factor is a participant in that initial event, `Model.CcfInitial`, and
 V1's event is integrated, so the factor is a participant in V1's event,
 `participant_of_nullAffixC`: no pure causers (146)–(149), while subject matters are
-participants (150)–(151). The rows carry the paper's reading of the external argument, and a
-transitive compound is ungrammatical exactly where that reading is a pure causer,
-`ungrammatical_iff_pureCauser`. The macroevent must contain the two subevents rather than
-identify or nest them: in *shè-sǐ* 'shoot dead' (107) the shooting and the dying overlap at the
-moment of contact only, so their traces are neither equal nor nested, `shooting_trieventive`.
+participants (150)–(151). On the causal chain of *chén* 'sink' (136), *jī-chén* 'strike-sink'
+names the onset and *\*chōng-chén* 'rush-sink' an event downstream of it, (137)–(140),
+`onsetCondition_strike` and `not_onsetCondition_rush`. The rows carry the paper's reading of the
+external argument, and a transitive compound is ungrammatical exactly where that reading is a
+pure causer, `ungrammatical_iff_pureCauser`. The macroevent must contain the two subevents
+rather than identify or nest them: in *shè-sǐ* 'shoot dead' (107) the shooting and the dying
+overlap at the moment of contact only, so their traces are neither equal nor nested,
+`shooting_trieventive`.
 Chapter 8's typology varies whether the null head merges in morphology, whether the result X
 can be a verb, and whether a transitive resultative takes an intransitive X; the third follows
 from whether the language's change-of-state verbs alternate, since an intransitive one that
@@ -144,6 +147,33 @@ theorem participant_of_nullAffixC (hO : M.Onset) (hI : M.CcfInitial)
   ⟨e₁, xs, h1, hI e c e₁ hc (hO e e₁ e₂ hcause)⟩
 
 end NullAffix
+
+/-! ### The causal chain of *chén* 'sink', (136)–(140) -/
+
+/-- The causal chain of (136), which *chén* 'sink' denotes as a whole: the Russians strike the
+cruiser with a missile, seawater rushes into it, it descends into the water, and it is below the
+surface of the sea. -/
+inductive SinkingEvent
+  | strike
+  | rush
+  | descend
+  | below
+  deriving DecidableEq, Fintype
+
+/-- The events of the chain in order of causal precedence. -/
+instance : LinearOrder SinkingEvent := .lift' SinkingEvent.ctorIdx (by decide)
+
+/-- (137)–(138): in *jī-chén* 'strike-sink' V1 names the striking, the onset of the chain, so the
+Onset Condition is met, and the Russian forces, who take part in the striking, are no pure
+causer. -/
+theorem onsetCondition_strike : Kim2024.OnsetCondition (Set.univ : Set SinkingEvent) .strike :=
+  isLeast_univ_iff.2 fun e ↦ by cases e <;> decide
+
+/-- (139)–(140): in *\*chōng-chén* 'rush-sink' V1 would name the seawater rushing in, downstream of
+the striking, so it cannot be the integrated event, and the Russian forces, who take no part in
+it, would be a pure causer. -/
+theorem not_onsetCondition_rush : ¬ Kim2024.OnsetCondition (Set.univ : Set SinkingEvent) .rush :=
+  Kim2024.not_onsetCondition_of_lt onsetCondition_strike (by decide)
 
 /-! ### The external argument in the data (chapter 3, sections 2.1–2.2) -/
 

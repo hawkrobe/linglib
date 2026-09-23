@@ -31,7 +31,8 @@ The thesis reads three properties off where the Cause sits on this chain.
   the chain the predicate denotes (`OnsetCondition`). The thesis motivates it on causatives in
   general: events integrated into one predicate coincide, so a causal *by*-phrase is controlled
   by the Cause (`OnsetCondition.eq`), and an event downstream of the onset cannot be integrated
-  (`not_onsetCondition_of_lt`). On the eventive reading the subject matter lies downstream of the
+  (`not_onsetCondition_of_lt`), as in *\*John killed the water deer by the poacher shooting them*
+  (`not_onsetCondition_shooting`). On the eventive reading the subject matter lies downstream of the
   percept, so a Subject Matter cannot join the Cause (`tsm_restriction`), while it heads the chain
   of a predicate without a Cause (`subjectMatter_onset_without_cause`). The T/SM restriction thus
   follows without a ban of its own, and the thesis rules out a Target alongside a Cause just as
@@ -84,12 +85,35 @@ the Cause, *John killed Mary by PRO poisoning her*, (323). -/
 theorem OnsetCondition.eq (h : OnsetCondition s e) (h' : OnsetCondition s e') : e = e' :=
   IsLeast.unique h h'
 
-/-- An event downstream of the onset cannot be integrated into the predicate, *\*John killed the
-water deer by the poacher shooting them*, (314a). -/
+/-- An event downstream of the onset cannot be integrated into the predicate. -/
 theorem not_onsetCondition_of_lt (h : OnsetCondition s e) (hlt : e < e') : ¬ OnsetCondition s e' :=
   fun h' ↦ (h.eq h' ▸ hlt).false
 
 end Onset
+
+/-! ### A killing, (312)–(314) -/
+
+/-- The causal chain of (312): John hires a poacher, the poacher shoots the water deer, and the
+deer die. -/
+inductive KillingEvent where
+  | hiring
+  | shooting
+  | dying
+  deriving DecidableEq, Fintype, Repr
+
+/-- The events of the chain in order of causal precedence. -/
+instance : LinearOrder KillingEvent := .lift' KillingEvent.ctorIdx (by decide)
+
+/-- (313): *John killed the water deer by hiring a poacher*. The hiring, in which John takes
+part, is the onset of the chain the sentence denotes, so a *by*-phrase naming it is
+integrated. -/
+theorem onsetCondition_hiring : OnsetCondition (Set.univ : Set KillingEvent) .hiring :=
+  isLeast_univ_iff.2 fun e ↦ by cases e <;> decide
+
+/-- (314a): *\*John killed the water deer by the poacher shooting them*. The shooting lies
+downstream of the hiring, so a *by*-phrase naming it cannot be integrated. -/
+theorem not_onsetCondition_shooting : ¬ OnsetCondition (Set.univ : Set KillingEvent) .shooting :=
+  not_onsetCondition_of_lt onsetCondition_hiring (by decide)
 
 /-! ### The causal chain of an emotion -/
 
