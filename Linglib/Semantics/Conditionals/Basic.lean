@@ -1,5 +1,7 @@
-import Mathlib.Data.Set.Basic
-import Linglib.Semantics.Conditionals.SimilarityOrdering
+module
+
+public import Mathlib.Data.Set.Basic
+public import Linglib.Semantics.Conditionals.SimilarityOrdering
 
 /-!
 # Conditional operators
@@ -55,7 +57,14 @@ lives in `Conditionals/Restrictor.lean`, which bridges to `strictImp` via
 * [von-fintel-1999]
 * [mizuno-2024]
 * [grusdt-lassiter-franke-2022]
+* [condoravdi-2002]
+* [kratzer-1986]
+* [lewis-1975]
+* [stalnaker-1968]
 -/
+
+@[expose] public section
+
 
 namespace Conditional
 
@@ -78,6 +87,77 @@ observes that it fails for indicative conditionals under his semantics — see
 theorem contraposition : materialImp p q ⊆ materialImp qᶜ pᶜ :=
   fun _ h hq hp ↦ hq (h hp)
 
+/-! ### Conditionals over a domain
+
+A theory of the conditional picks out, for an evaluation point `i` and an antecedent `p`, a
+domain of `p`-worlds, and *if p, q* is true at `i` iff `q` holds throughout it (`ofDomain`): the
+accessible `p`-worlds for the strict conditional, the closest ones for [lewis-1973] under the
+Limit Assumption (`closestImp`), the selected one for [stalnaker-1968] (`selectionConditional`),
+the best worlds of the modal base restricted by the antecedent for the restrictor analysis
+([lewis-1975], [kratzer-1986]). Principles about a single antecedent are properties of its
+domain: consequent monotonicity and agglomeration always hold, Conditional Excluded Middle and
+distribution over a disjunctive consequent when the domain has at most one world, and modus
+ponens when an antecedent-world lies in its own domain. Principles relating antecedents, such as
+antecedent strengthening or reasoning by cases, depend on how the domain varies with the
+antecedent. -/
+
+section Domain
+
+variable {D : I → Set W → Set W} {r : Set W}
+
+/-- The conditional quantifying over the domain `D i p`: *if p, q* is true at `i` iff `q` holds
+at every world of `D i p`. -/
+def ofDomain (D : I → Set W → Set W) (p q : Set W) : Set I := {i | D i p ⊆ q}
+
+@[simp]
+theorem mem_ofDomain : i ∈ ofDomain D p q ↔ D i p ⊆ q := Iff.rfl
+
+theorem ofDomain_mono_right (hq : q ⊆ q') : ofDomain D p q ⊆ ofDomain D p q' :=
+  fun _ h ↦ h.trans hq
+
+/-- Agglomeration: a conditional holding of two consequents holds of their conjunction. -/
+theorem ofDomain_inter : ofDomain D p (q ∩ r) = ofDomain D p q ∩ ofDomain D p r :=
+  Set.ext fun _ ↦ Set.subset_inter_iff
+
+theorem ofDomain_eq_univ (h : ∀ i, D i p ⊆ q) : ofDomain D p q = Set.univ :=
+  Set.eq_univ_of_forall h
+
+/-- Antecedent strengthening, valid when the domain grows with the antecedent. -/
+theorem ofDomain_anti_left (hD : ∀ i, D i p' ⊆ D i p) : ofDomain D p q ⊆ ofDomain D p' q :=
+  fun i h ↦ (hD i).trans h
+
+/-- A conditional holding of two antecedents holds of their disjunction when the domain of the
+disjunction lies within theirs. -/
+theorem mem_ofDomain_union (hD : D i (p ∪ p') ⊆ D i p ∪ D i p') (hp : i ∈ ofDomain D p q)
+    (hp' : i ∈ ofDomain D p' q) : i ∈ ofDomain D (p ∪ p') q :=
+  fun _ hv ↦ (hD hv).elim (hp ·) (hp' ·)
+
+/-- Distribution over a disjunctive consequent, for a domain with at most one world. -/
+theorem mem_ofDomain_or (h : (D i p).Subsingleton) (hq : i ∈ ofDomain D p (q ∪ r)) :
+    i ∈ ofDomain D p q ∨ i ∈ ofDomain D p r := by
+  rcases h.eq_empty_or_singleton with h0 | ⟨v, hv⟩
+  · exact .inl (by simp [h0])
+  · simpa only [mem_ofDomain, hv, Set.singleton_subset_iff, Set.mem_union] using hq
+
+/-- Conditional Excluded Middle, for a domain with at most one world. -/
+theorem mem_ofDomain_or_compl (h : (D i p).Subsingleton) :
+    i ∈ ofDomain D p q ∨ i ∈ ofDomain D p qᶜ :=
+  mem_ofDomain_or h (by simp)
+
+/-- Modus ponens, valid when an antecedent-world lies in its own domain. -/
+theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :
+    ofDomain D p q ⊆ materialImp p q :=
+  fun w h hp ↦ h (hD w hp)
+
+/-- The material conditional quantifies over the evaluation world, when it is an
+antecedent-world. -/
+theorem materialImp_eq_ofDomain : materialImp p q = ofDomain (fun w p ↦ {w} ∩ p) p q :=
+  Set.ext fun _ ↦ ⟨fun h _ hv ↦
+      (Set.mem_singleton_iff.1 hv.1) ▸ h ((Set.mem_singleton_iff.1 hv.1) ▸ hv.2),
+    fun h hp ↦ h ⟨rfl, hp⟩⟩
+
+end Domain
+
 /-! ### Strict conditional -/
 
 /-- The strict conditional over an accessibility map: the consequent holds
@@ -86,7 +166,7 @@ evaluation points `I` may differ from the worlds `W` quantified over — e.g. a
 historical modal base `Index W T → Set W` evaluates at world-time
 indices ([condoravdi-2002]); the classical case is `I = W`. -/
 def strictImp (access : I → Set W) (p q : Set W) : Set I :=
-  {i | access i ∩ p ⊆ q}
+  ofDomain (fun i p ↦ access i ∩ p) p q
 
 @[simp]
 theorem mem_strictImp : i ∈ strictImp access p q ↔ access i ∩ p ⊆ q := Iff.rfl
@@ -99,14 +179,14 @@ theorem mem_strictImp_forall :
 /-- The strict conditional is monotone in its consequent. -/
 theorem strictImp_mono_right (hq : q ⊆ q') :
     strictImp access p q ⊆ strictImp access p q' :=
-  fun _ h ↦ h.trans hq
+  ofDomain_mono_right hq
 
 /-- **Antecedent strengthening**: the strict conditional is antitone in its
 antecedent — the signature property of strict (and material) conditionals
 that variably strict semantics rejects ([lewis-1973] Sobel sequences). -/
 theorem strictImp_anti_left (hp : p' ⊆ p) :
     strictImp access p q ⊆ strictImp access p' q :=
-  fun _ h ↦ (Set.inter_subset_inter (Set.Subset.refl _) hp).trans h
+  ofDomain_anti_left fun _ ↦ Set.inter_subset_inter_right _ hp
 
 /-- **Triviality**: when the consequent already holds throughout the
 accessible worlds, the strict conditional holds for *any* antecedent — the
@@ -172,7 +252,7 @@ theorem mem_variablyStrictImp :
 antecedent-world closest to the evaluation world, [lewis-1973] §1.4's simplification of the
 variably strict conditional under the Limit Assumption. -/
 def closestImp (sim : SimilarityOrdering W) (p q : Set W) : Set W :=
-  {w | sim.closest w p ⊆ q}
+  ofDomain sim.closest p q
 
 @[simp]
 theorem mem_closestImp : w ∈ closestImp sim p q ↔ sim.closest w p ⊆ q := Iff.rfl

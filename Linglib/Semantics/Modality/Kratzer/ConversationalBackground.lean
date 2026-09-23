@@ -1,4 +1,6 @@
-import Linglib.Semantics.Modality.Kratzer.Premise
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Premise
 
 /-!
 # Conversational Backgrounds
@@ -11,6 +13,9 @@ A conversational background maps worlds to sets of propositions. Two roles:
 - **Ordering source** (`OrderingSource`) ranks accessible worlds by how many
   ordering propositions they satisfy.
 -/
+
+@[expose] public section
+
 
 namespace Modality.Kratzer
 

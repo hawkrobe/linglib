@@ -1,5 +1,7 @@
-import Linglib.Logic.Duality
-import Linglib.Core.Order.Bilattice.Kleene
+module
+
+public import Linglib.Logic.Duality
+public import Linglib.Core.Order.Bilattice.Kleene
 
 /-!
 # Supervaluation over specification spaces
@@ -41,6 +43,9 @@ classical, that `D` is an S5 modality, and that the Deduction Theorem fails, is 
 * [fine-1975]
 * [van-fraassen-1966]
 -/
+
+@[expose] public section
+
 
 namespace Semantics.Supervaluation
 

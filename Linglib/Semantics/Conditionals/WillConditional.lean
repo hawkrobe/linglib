@@ -3,7 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Modality.Selectional
+module
+
+public import Linglib.Semantics.Modality.Selectional
 
 /-!
 # Selectional `will`-Conditionals
@@ -38,6 +40,9 @@ single-valuedness.
 - `willConditional_collapse`: when `w ∈ f` and `A w`, the conditional
   collapses to its consequent: `will B` reduces to `B w`.
 -/
+
+@[expose] public section
+
 
 namespace Conditional.WillConditional
 
@@ -195,26 +200,8 @@ def universalWillConditional (A B : W → Prop) (f : Set W) (w : W) : Prop :=
 [cariani-santorio-2018] §5.3.2 identifies *would* with the past
 tense form of *will*. The conditional analogue follows: a *would*-
 conditional is just the selectional restrictor applied to *would*,
-which by `wouldSem_eq_willSem` is identical to a *will*-conditional.
-The morphology shifts the modal parameter; the semantic clause is
-unchanged. -/
-
-/-- **Selectional `would`-conditional** [cariani-santorio-2018]
-    §5.3.2 + §5.3.1: the *would*-conditional is the selectional
-    restrictor applied to *would*, which by the morphological identity
-    `wouldSem = willSem` collapses to `willConditional`. -/
-def wouldConditional (s : SelectionFunction W) (A B : W → Prop)
-    (f : Set W) (w : W) : Prop :=
-  willConditional s A B f w
-
-/-- **Past-tense morphology = parameter shift** for conditionals:
-    *would*-conditionals and *will*-conditionals share their semantic
-    clause (the conditional analogue of `wouldSem_eq_willSem`). Tagged
-    `@[simp]` so `wouldConditional` reduces to the canonical
-    `willConditional` normal form. -/
-@[simp] theorem wouldConditional_eq_willConditional (s : SelectionFunction W)
-    (A B : W → Prop) (f : Set W) (w : W) :
-    wouldConditional s A B f w = willConditional s A B f w := rfl
+which by `wouldSem_eq_willSem` is identical to a *will*-conditional,
+`willConditional`, up to the modal parameter. -/
 
 /-! ## Modal subordination
 

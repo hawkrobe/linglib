@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Logic.Temporal.Defs
-import Linglib.Logic.Modal.Basic
+module
+
+public import Linglib.Logic.Temporal.Defs
+public import Linglib.Logic.Modal.Basic
 
 /-!
 # T × W tense-modal logic: the modal algebra of satisfaction
@@ -26,6 +28,9 @@ re-proved — `N` is S5 because `∼ₜ` is an equivalence, `box` because the un
 * `sat_box_imp_box_box`, `sat_dia_imp_box_dia` — `box` is S5.
 * `N_isIndicial` — `N` is a Kripke (indicial) modality ([gallin-1975]).
 -/
+
+@[expose] public section
+
 
 namespace Temporal.TWFrame
 

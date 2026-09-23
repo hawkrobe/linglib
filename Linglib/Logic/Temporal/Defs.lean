@@ -3,8 +3,10 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Order.Basic
-import Linglib.Logic.Modal.Defs
+module
+
+public import Mathlib.Order.Basic
+public import Linglib.Logic.Modal.Defs
 
 /-!
 # T × W tense-modal logic: frames, language, and satisfaction
@@ -21,6 +23,9 @@ worlds) on worlds sharing one time order. A `Core` restatement of the
 * `TWFrame.sat` — the satisfaction relation.
 * `OForm.M` — historical possibility `¬N¬` (the Ockhamist `◇`).
 -/
+
+@[expose] public section
+
 
 namespace Temporal
 

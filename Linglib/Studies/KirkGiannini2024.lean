@@ -67,10 +67,10 @@ namespace Model
 /-! ### Diagonalization -/
 
 /-- 𝔐's at-issue meaning `λq.⦇q⦈(w_c)(s)` as a function of the speaker `s`. -/
-def mqAtIssue (s : Speaker) : Expr → W → Prop := λ q => M.quot q wc s
+def mqAtIssue (s : Speaker) : Expr → W → Prop := fun q ↦ M.quot q wc s
 
 /-- ⦇∗⦈∗: `M.diag s q w` is the extension at `w` of `q` as uttered by `s` at `w`. -/
-def diag (s : Speaker) : Expr → W → Prop := λ q w => M.quot q w s w
+def diag (s : Speaker) : Expr → W → Prop := fun q w ↦ M.quot q w s w
 
 /-- At the world of the context diagonalization is invisible, so (Conventional Wisdom) holds
 for unembedded material. -/
@@ -94,7 +94,7 @@ theorem exists_dagger_iff :
     (∃ d : (Expr → W → Prop) → Expr → W → Prop, ∀ s, d (M.mqAtIssue wc s) = M.diag s) ↔
       FactorsThrough M.diag (M.mqAtIssue wc) := by
   rw [Function.factorsThrough_iff]
-  exact exists_congr λ d => ⟨λ h => (funext h).symm, λ h s => (congrFun h s).symm⟩
+  exact exists_congr fun d ↦ ⟨fun h ↦ (funext h).symm, fun h s ↦ (congrFun h s).symm⟩
 
 end Model
 
@@ -159,13 +159,15 @@ theorem report_mq (lex : Expr → TwoDimProp W) (F : (W → Prop) → W → Prop
 
 /-- (29) 'If Pluto were a planet, …' with †𝔐 around 'planet': the antecedent contributes the
 diagonal ⦇'planet'⦈∗(s_x), so a [stalnaker-1968] selection function takes the conditional to
-the nearest world whose conventions for 'planet', as `s_x` would use it there, include
-Pluto. -/
+the nearest world whose conventions for 'planet', as `s_x` would use it there, include Pluto,
+when there is such a world. -/
 theorem selectionConditional_daggerMQ (h : FactorsThrough M.diag (M.mqAtIssue wc))
-    (s : Conditional.SelectionFunction W) (q : Expr) (C : W → Prop) (w : W) :
-    Conditional.selectionConditional s (daggerMQ M wc sx ux q).atIssue C w ↔
-      C (s.sel w {v | M.quot q v sx v}) := by
-  rw [daggerMQ_atIssue M wc sx ux h]; rfl
+    (s : Conditional.SelectionFunction W) (q : Expr) (C : Set W) (w : W)
+    (hq : {v | M.quot q v sx v}.Nonempty) :
+    w ∈ Conditional.selectionConditional s {v | (daggerMQ M wc sx ux q).atIssue v} C ↔
+      s.sel w {v | M.quot q v sx v} ∈ C := by
+  rw [daggerMQ_atIssue M wc sx ux h]
+  exact Conditional.mem_selectionConditional_of_nonempty s hq
 
 /-! ### Metalinguistic negation and negotiation (§5–6) -/
 
@@ -200,14 +202,14 @@ is not appropriate. -/
 theorem metaNeg_correction {q q' : Expr} {w : W} (h : M.quot q wc sx = M.quot q' wc sx)
     (h₁ : (metaNeg M wc sx ux q).atIssue w) (h₂ : (mq M wc sx ux q').atIssue w) :
     ¬ □[M.appropriate] (M.utter sx ux q) w :=
-  λ hb => h₁ ⟨by simpa [h] using h₂, hb⟩
+  fun hb ↦ h₁ ⟨by simpa [h] using h₂, hb⟩
 
 /-- Whenever verbatim use of `q` is inappropriate, (3)'s form is true whatever the quoted
 clause's truth value: (37) 'She's not happy' can be said of someone ecstatic, whereas (38)
 'She's unhappy', whose negation is incorporated below the covert material, cannot. -/
 theorem metaNeg_of_not_box {q : Expr} {w : W} (hb : ¬ □[M.appropriate] (M.utter sx ux q) w) :
     (metaNeg M wc sx ux q).atIssue w :=
-  λ h => hb h.2
+  fun h ↦ hb h.2
 
 /-- (41) 'She's not not happy' with 'not happy' 𝔪-quoted says that she is happy or that
 'not happy' is inappropriate, so (42) 'She's happy' does not follow: double negation is not
@@ -242,11 +244,11 @@ def inASense (q : Expr) (w : W) : Prop := ∃ μ, inTheSenseThat M wc q μ w
 
 theorem inTheSenseThat_iff (q : Expr) (μ : W → Prop) (w : W) :
     inTheSenseThat M wc q μ w ↔ μ w ∧ ∃ s, M.quot q wc s = μ :=
-  ⟨λ ⟨s, hs, hμ⟩ => ⟨hμ ▸ hs, s, hμ⟩, λ ⟨hμ, s, hs⟩ => ⟨s, hs ▸ hμ, hs⟩⟩
+  ⟨fun ⟨s, hs, hμ⟩ ↦ ⟨hμ ▸ hs, s, hμ⟩, fun ⟨hμ, s, hs⟩ ↦ ⟨s, hs ▸ hμ, hs⟩⟩
 
 /-- (7′) is true iff some speaker's use of the sentence at `w_c` expresses a truth at `w`; the
 paper restricts the speakers quantified over to not-too-outlandish ones. -/
 theorem inASense_iff (q : Expr) (w : W) : inASense M wc q w ↔ ∃ s, M.quot q wc s w :=
-  ⟨λ ⟨_, s, hs, _⟩ => ⟨s, hs⟩, λ ⟨s, hs⟩ => ⟨_, s, hs, rfl⟩⟩
+  ⟨fun ⟨_, s, hs, _⟩ ↦ ⟨s, hs⟩, fun ⟨s, hs⟩ ↦ ⟨_, s, hs, rfl⟩⟩
 
 end KirkGiannini2024

@@ -3,10 +3,12 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Semantics.Modality.HistoricalAlternatives
-import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-import Mathlib.MeasureTheory.OuterMeasure.AE
+module
+
+public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Semantics.Modality.HistoricalAlternatives
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.OuterMeasure.AE
 
 /-!
 # Selectional semantics for *will*
@@ -48,6 +50,9 @@ reading collapses the credence to 0 or 1.
 * [C. Condoravdi, *Temporal Interpretation of Modals: Modals for the Present and for the Past*
   (2002)][condoravdi-2002]
 -/
+
+@[expose] public section
+
 
 namespace Modality.Selectional
 

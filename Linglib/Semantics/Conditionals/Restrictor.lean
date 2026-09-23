@@ -1,5 +1,7 @@
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Conditionals.Basic
+module
+
+public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Conditionals.Basic
 
 /-!
 # Restrictor Theory of Conditionals
@@ -27,6 +29,9 @@ necessity (∀w' ∈ Best(f+α, ∅, w). β(w')) equals the strict conditional
 (∀w' ∈ ∩f(w). α(w') → β(w')) from `Conditionals/Basic.lean`.
 
 -/
+
+@[expose] public section
+
 
 namespace Conditional.Restrictor
 
@@ -176,5 +181,13 @@ theorem conditionalNecessity_iff_mem_strictImp
     conditionalNecessity f emptyBackground α β w ↔
     w ∈ strictImp (accessibleWorlds f) {w' | α w'} {w' | β w'} :=
   (restrictor_eq_strict f α β w).trans mem_strictImp_forall.symm
+
+/-- Kratzer's conditional necessity is the conditional over the best worlds of the modal base
+restricted by the antecedent. -/
+theorem conditionalNecessity_iff_mem_ofDomain (f : ModalBase W) (g : OrderingSource W)
+    (α β : W → Prop) (w : W) :
+    conditionalNecessity f g α β w ↔
+      w ∈ ofDomain (fun w p ↦ bestWorlds (restrictedBase f (· ∈ p)) g w) {v | α v} {v | β v} :=
+  necessity_iff_all _ _ _ _
 
 end Conditional.Restrictor

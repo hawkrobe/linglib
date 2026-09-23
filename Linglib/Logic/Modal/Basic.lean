@@ -1,10 +1,12 @@
-import Linglib.Logic.Modal.Defs
-import Linglib.Logic.Aristotelian.Square
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.GaloisConnection.Basic
-import Mathlib.Order.Lattice
-import Mathlib.Logic.Function.Iterate
-import Mathlib.Logic.Relation
+module
+
+public import Linglib.Logic.Modal.Defs
+public import Linglib.Logic.Aristotelian.Square
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Order.GaloisConnection.Basic
+public import Mathlib.Order.Lattice
+public import Mathlib.Logic.Function.Iterate
+public import Mathlib.Logic.Relation
 
 /-!
 # Modal logic over accessibility relations
@@ -28,6 +30,9 @@ accessibility relation.
 * [dowty-wall-peters-1981] — Montague's S5 operators
 
 -/
+
+@[expose] public section
+
 
 namespace ModalLogic
 

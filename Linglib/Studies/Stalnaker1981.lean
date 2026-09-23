@@ -1,4 +1,6 @@
-import Linglib.Semantics.Conditionals.Counterfactual
+module
+
+public import Linglib.Semantics.Conditionals.Counterfactual
 
 /-!
 # Stalnaker (1981): A Defense of Conditional Excluded Middle
@@ -51,6 +53,9 @@ affirming a *might*, and the Kennedy example are not formalized.
 * [van-fraassen-1966]
 -/
 
+@[expose] public section
+
+
 namespace Stalnaker1981
 
 open Conditional
@@ -98,18 +103,18 @@ end ConditionalLogic
 
 section Selection
 
-variable {W : Type*} (s : Conditional.SelectionFunction W)
+variable {W : Type*} (s : SelectionFunction W)
 
 /-- A determinate selection function validates conditional excluded middle. -/
-theorem selection_cem (A B : W → Prop) (w : W) :
-    selectionConditional s A B w ∨ selectionConditional s A (fun v ↦ ¬ B v) w :=
-  Classical.em _
+theorem selection_cem (A B : Set W) (w : W) :
+    w ∈ selectionConditional s A B ∨ w ∈ selectionConditional s A Bᶜ :=
+  selectionConditional_cem s
 
 /-- Under selection, a quantifier inside the consequent and one outside the conditional
-coincide: there is no scope ambiguity. -/
-theorem selection_scope {ι : Type*} (A : W → Prop) (F : ι → W → Prop) (w : W) :
-    selectionConditional s A (fun v ↦ ∃ x, F x v) w ↔ ∃ x, selectionConditional s A (F x) w :=
-  Iff.rfl
+coincide for a possible antecedent: there is no scope ambiguity. -/
+theorem selection_scope {ι : Type*} {A : Set W} (hA : A.Nonempty) (F : ι → Set W) (w : W) :
+    w ∈ selectionConditional s A (⋃ x, F x) ↔ ∃ x, w ∈ selectionConditional s A (F x) := by
+  simp only [mem_selectionConditional_of_nonempty s hA, Set.mem_iUnion]
 
 end Selection
 
