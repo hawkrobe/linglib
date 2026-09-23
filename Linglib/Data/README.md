@@ -73,9 +73,16 @@ from the numbers (a prototype, a preference, a significant difference). Each tab
 locator and whether it was checked against the page images, and a row may carry a note on how
 it departs from the print.
 
+The released data behind a paper, where there is any, is linked from its JSON (`meta.rawData`)
+and the generated module's docstring, but not committed: the tables stay at the granularity the
+paper argues at. A table the authors' data reproduces is marked `raw-data`, and
+`scripts/check_experiments.py <Paper>` downloads the data and recomputes it through
+`scripts/experiments/<Paper>.py`.
+
 - **Schema**: `Linglib/Data/Experiments/Schema.lean`
 - **Generator**: `scripts/gen_experiments.py` (`--check` verifies sync; the column vocabulary is
   in its docstring)
+- **Raw-data check**: `scripts/check_experiments.py` (needs network access; run by hand)
 - **Input/Output**: `Linglib/Data/Experiments/{Paper}.json` → `{Paper}.lean`
 
 ### UD dependency length by language

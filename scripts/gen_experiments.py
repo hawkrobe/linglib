@@ -8,13 +8,15 @@ The generated Lean is never hand-edited: edit the JSON and re-run.
 
 A JSON file has four parts:
 
-* `meta`: `bibkey` (a `references.bib` key) and `description`.
+* `meta`: `bibkey` (a `references.bib` key), `description`, and `rawData`, the links to
+  the data the authors released (each a `url` and a `doc`), emitted in the module
+  docstring.
 * `types`: the paper's own coding labels, each emitted as an enum. A level has a
   Lean `name`, the `label` the paper prints, and a `doc`.
 * `constants`: design values the paper states once (`nat`, `decimal`).
 * `tables`: one per printed table, emitted as a structure and a list of rows in the
   paper's order. A table has a `name`, a `structure` name, a `doc`, a `locator`, a
-  `verified` status (`page-image`, `text-layer` or `unverified`), its `columns`
+  `verified` status (`raw-data`, `page-image`, `text-layer` or `unverified`), its `columns`
   and its `rows`. A row may carry a `note`, emitted as a comment. A table with a
   `key`, a list of enum columns whose every combination of levels has exactly one
   row, is emitted as a total function from the key to the other columns.
@@ -42,7 +44,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "Linglib" / "Data" / "Experiments"
 BIB = ROOT / "references.bib"
-VERIFIED = {"page-image": "checked against the page images",
+VERIFIED = {"raw-data": "recomputed from the authors' released data by `scripts/check_experiments.py`",
+            "page-image": "checked against the page images",
             "text-layer": "checked against the PDF text layer only",
             "unverified": "not yet checked against the source"}
 IDENT = re.compile(r"^[a-z][A-Za-z0-9]*$")
@@ -283,6 +286,13 @@ def render(paper: str, d: dict) -> str:
     meta = d["meta"]
     if meta.get("bibkey") not in bibkeys():
         fatal(f"{paper}.meta", f"bibkey {meta.get('bibkey')!r} not in references.bib")
+    raw = meta.get("rawData", [])
+    for i, r in enumerate(raw):
+        if not str(r.get("url", "")).startswith("https://") or not r.get("doc"):
+            fatal(f"{paper}.meta.rawData[{i}]", "a raw-data link needs an https url and a doc")
+    for i, tb in enumerate(d.get("tables", [])):
+        if tb.get("verified") == "raw-data" and not raw:
+            fatal(f"{paper}.tables[{i}]", "verified from raw data, but meta.rawData lists none")
     types = Types(d.get("types", []), paper)
     parts = [render_enum(t) for t in d.get("types", [])]
     parts += [render_constant(c, types, f"{paper}.constants[{i}]")
@@ -290,6 +300,10 @@ def render(paper: str, d: dict) -> str:
     parts += [render_table(tb, types, f"{paper}.tables[{i}]")
               for i, tb in enumerate(d.get("tables", []))]
     desc = textwrap.fill(meta["description"], 100)
+    if raw:
+        links = "\n".join(textwrap.fill(f"* <{r['url']}>: {r['doc']}", 100, subsequent_indent="  ")
+                          for r in raw)
+        desc += f"\n\n## Raw data\n\n{links}"
     body = "\n\n".join(parts)
     return f"""module
 

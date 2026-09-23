@@ -14,6 +14,11 @@ participant; table (14) prints the descriptive statistics of the four conditions
 forced choice between the DP-first and the CP-first order of a coordination in preverbal and in
 postverbal position.
 
+## Raw data
+
+* <https://osf.io/kznyt/>: materials, scripts, plots and trial-level data of both experiments; table
+  (14) is recomputed from data/accept.csv and the choices from data/2afc.csv
+
 ## References
 
 * [schwarzer-2026]
@@ -68,23 +73,24 @@ structure Rating where
   medianZ : Decimal
   deriving DecidableEq, Repr
 
-/-- The cells of table (14), p. 9, by complement and selection; checked against the page images. -/
+/-- The cells of table (14), p. 9, by complement and selection; recomputed from the authors'
+released data by `scripts/check_experiments.py`. -/
 def ratings : Complement → Selection → Rating
   | .coord, .no => ⟨44, ⟨-253, 3⟩, ⟨735, 3⟩, ⟨-244, 3⟩⟩
   | .coord, .yes => ⟨44, ⟨369, 3⟩, ⟨723, 3⟩, ⟨495, 3⟩⟩
   | .dass, .no => ⟨44, ⟨-526, 3⟩, ⟨669, 3⟩, ⟨-684, 3⟩⟩
   | .dass, .yes => ⟨44, ⟨891, 3⟩, ⟨631, 3⟩, ⟨108, 2⟩⟩
 
-/-- A row of Experiment 2 results, p. 13: how often an order was chosen in a position. Each of
-the 30 participants saw four test pairs; the paper does not say what the 30 choices in a
-position count. -/
+/-- A row of Experiment 2 results, p. 13: how often an order was chosen in a position. In the
+released data each of the 30 participants chose once in each position, among ten control
+pairs of each group, although the paper describes four test pairs per participant. -/
 structure Choice where
-  /-- How often the order was chosen. -/
+  /-- How many participants chose the order. -/
   count : ℕ
   deriving DecidableEq, Repr
 
-/-- The cells of Experiment 2 results, p. 13, by position and order; checked against the page
-images. -/
+/-- The cells of Experiment 2 results, p. 13, by position and order; recomputed from the authors'
+released data by `scripts/check_experiments.py`. -/
 def choices : Position → Order → Choice
   | .preverbal, .dpFirst => ⟨23⟩
   | .preverbal, .cpFirst => ⟨7⟩

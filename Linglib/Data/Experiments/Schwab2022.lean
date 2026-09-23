@@ -16,6 +16,11 @@ to a model without it, and reads each as evidence of a stated strength. The post
 not recorded; Experiment 1 prints the estimate of the so recht illusion with the numbers of the
 jemals illusion, although its posterior in Figure 2 is centred near zero.
 
+## Raw data
+
+* <https://osf.io/s9rt8/>: stimulus materials, code and data of both experiments, with supplementary
+  materials
+
 ## References
 
 * [schwab-2022]

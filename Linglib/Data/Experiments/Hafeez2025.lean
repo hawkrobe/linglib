@@ -16,6 +16,17 @@ share of ceiling ratings and its number of responses. The tables are recorded as
 the reversed InanCEAF signs of the ADV tree, the peaks of NCA and NCrA that Table 19 swaps, and the
 unattainable 0.08 of the LEX-INST tree; the studies that consume them state the discrepancies.
 
+## Raw data
+
+* <https://github.com/JuergenBohnemeyer/cal_stats>: the R analyses of the Causality Across Languages
+  project, with the project's clip coding in Non_df_input_csvs/ClipVariables.csv, which codes clips
+  11 and 21 with a human second participant and clip 22 without one, as the clip names do; the
+  rating responses are not included
+* <https://github.com/Saima-Hafeez/Agentivity-and-Causation-Hafeez-Sreeram>: the dissertation's R
+  code
+* <https://causalityacrosslanguages.wordpress.com/project-summary/field-manual-and-stimuli/>: the
+  project's field manuals and stimulus clips
+
 ## References
 
 * [hafeez-2025]
