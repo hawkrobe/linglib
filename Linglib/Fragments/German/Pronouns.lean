@@ -1,11 +1,14 @@
 import Linglib.Syntax.Category.Pronoun.Personal
+import Linglib.Syntax.Category.Pronoun.Reciprocal
+import Linglib.Syntax.Category.Pronoun.Reflexive
 import Linglib.Fragments.German.Case
 
 /-!
 # German pronouns
 
-This file defines the German personal pronouns and the case paradigms of the interrogative
-pronouns *wer* 'who' and *was* 'what', which also head free relatives.
+This file defines the German personal pronouns, the reflexive *sich* and the reciprocal
+*einander*, and the case paradigms of the interrogative pronouns *wer* 'who' and *was* 'what',
+which also head free relatives.
 
 The second person distinguishes the familiar *du* and *ihr* from the polite level, with the
 single form *Sie*. *Sie* takes the third person plural series for agreement and reflexive
@@ -17,6 +20,7 @@ no dative.
 ## Main definitions
 
 * `German.Pronouns.pronouns` — the personal pronoun inventory
+* `German.Pronouns.sich`, `German.Pronouns.einander` — the reflexive and the reciprocal pronoun
 * `German.Pronouns.wer`, `German.Pronouns.was` — the interrogative paradigms, a form for each case
 
 ## Main results
@@ -95,6 +99,15 @@ theorem addressee_polite :
 number-neutral where the familiar level distinguishes *du* from *ihr*. -/
 theorem sie_formal_referential : sie_formal.referential = du.referential ∪ ihr.referential := by
   decide
+
+/-! ### Reflexive and reciprocal pronouns -/
+
+/-- The third person reflexive *sich*, one form for both numbers and for the accusative and the
+dative. The first and second persons use their personal forms as reflexives. -/
+def sich : ReflexivePronoun := { form := "sich", person := some .third }
+
+/-- The reciprocal *einander* 'each other', invariant for person, number and case. -/
+def einander : ReciprocalPronoun := { form := "einander" }
 
 /-! ### Interrogative pronouns
 

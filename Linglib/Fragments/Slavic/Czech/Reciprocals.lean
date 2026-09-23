@@ -27,8 +27,8 @@ def se : Marker :=
 /-- *jeden druhého* 'one the-other', the bipartite periphrastic reciprocal. -/
 def jedenDruheho : Marker := { form := "jeden druhého", strategy := .bipartiteNP }
 
-/-- The reciprocal markers, primary strategy first. -/
-def markers : List Marker := [se, jedenDruheho]
+/-- The reciprocal markers. -/
+def markers : Finset Marker := {se, jedenDruheho}
 
 /-- Czech is the mixed type of [maslova-nedjalkov-2013]: one reciprocal marker is also
 reflexive, the other is not. -/

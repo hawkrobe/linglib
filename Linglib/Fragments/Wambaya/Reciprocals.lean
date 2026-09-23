@@ -5,22 +5,26 @@ import Linglib.Morphology.Word.Basic
 open Morphology (Word)
 
 /-!
-# Wambaya Reciprocal Fragment
-[nordlinger-2023]
+# Wambaya reciprocals
 
-Wambaya (Australian, Mirndi) marks reciprocity with the bound
-morpheme **-ngg-** (glossed RR = reciprocal/reflexive) in the object
-slot of the auxiliary's pronominal complex, a bound reciprocal pronoun
-([evans-2008]); the same morpheme serves both reciprocal and reflexive
-functions. Nominal subjects keep ergative marking under
-reciprocalization ([evans-et-al-2007]), so the clause stays bivalent.
+Wambaya marks reciprocity with the bound morpheme *-ngg-* (glossed RR) in the auxiliary's
+pronominal complex, a bound reciprocal pronoun ([evans-2008]) that serves both the reciprocal
+and the reflexive function: *Alag-bulu wurlu-ngg-a nyurrunyurru* 'The two children are chasing
+each other' ([nordlinger-2023] ex. 11, from [nordlinger-1998]). Its one marker being also
+reflexive, Wambaya is the identical-to-reflexive type of [maslova-nedjalkov-2013].
 
-In [nordlinger-2023] ex. 11 (citing [nordlinger-1998], p. 142):
-"Alag-bulu wurlu-**ngg**-a nyurrunyurru" = 'The two children are
-chasing each other.' Here "wurlu-ngg-a" = 3DU.SBJ-RR-NFUT
-(auxiliary with RR marker) and "nyurrunyurru" = 'chase' (coverb).
+## TODO
 
-WALS Ch 106 classifies Wambaya as "identical to reflexive."
+The subject's case under reciprocalization is unrecorded: ex. 11 glosses the dual subject as
+nominative, while the ergative subject that keeps a reciprocal clause transitive is shown for
+Warlpiri (ex. 18b).
+
+## References
+
+* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [R. Nordlinger, *A grammar of Wambaya, Northern Territory (Australia)* (1998)][nordlinger-1998]
+* [N. Evans, *Reciprocal Constructions: Towards a Structural Typology* (2008)][evans-2008]
+* [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
 
 namespace Wambaya.Reciprocals
@@ -42,6 +46,12 @@ def rr : Marker :=
 
 open Reciprocal in
 /-- Marker inventory. -/
-def markers : List Marker := [rr]
+def markers : Finset Marker := {rr}
+
+open Reciprocal in
+/-- The inventory computes the WALS value of Wambaya ([maslova-nedjalkov-2013]). -/
+theorem ofInventory_markers_eq_wals :
+    some (ofInventory markers) = (Data.WALS.F106A.lookupISO "wmb").map (·.value) := by
+  decide +kernel
 
 end Wambaya.Reciprocals

@@ -37,6 +37,6 @@ theorem recip_distinct_from_reflexive :
     hvorAnnad.form ≠ sig.form := by decide
 
 /-- Marker inventory. -/
-def markers : List Marker := [hvorAnnad]
+def markers : Finset Marker := {hvorAnnad}
 
 end Icelandic.Reciprocals

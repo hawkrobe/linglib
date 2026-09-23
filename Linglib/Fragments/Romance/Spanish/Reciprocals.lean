@@ -2,15 +2,19 @@ import Linglib.Syntax.Reciprocal
 import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
-# Spanish Reciprocal Fragment
-[palmieri-2024]
+# Spanish reciprocals
 
-Spanish encodes reciprocity with the reflexive-identical clitic *se*
-(the grammatical strategy) and the periphrastic *el uno al otro*, alongside a
-class of lexical reciprocal verbs — verbs with a transitive entry whose
-reciprocal reading also emerges without *se* in language-specific
-environments ([palmieri-2024] ch. 2, Table 2.2; Appendix A carries the
-verb list formalized in `lexicalReciprocals`).
+Spanish marks reciprocity with the clitic *se*, shared with the reflexive, and with the
+periphrastic *el uno al otro*, beside a class of lexical reciprocal verbs whose reciprocal
+reading also emerges without *se* in language-specific environments ([palmieri-2024] ch. 2,
+Table 2.2; `lexicalReciprocals` is the verb list of Appendix A). With a reflexive and a
+non-reflexive marker, Spanish is the mixed type of [maslova-nedjalkov-2013].
+
+## References
+
+* [G. Palmieri, *Lexical and Grammatical Reciprocity: Perspectives from Romance, Bantu and
+  Beyond* (2024)][palmieri-2024]
+* [E. Maslova and V. P. Nedjalkov, *Reciprocal Constructions* (2013)][maslova-nedjalkov-2013]
 -/
 
 namespace Spanish.Reciprocals
@@ -26,14 +30,20 @@ def seClitic : Marker :=
 def bipartite : Marker :=
   { form := "el uno al otro", strategy := .bipartiteNP }
 
-/-- Marker inventory, primary strategy first. -/
-def markers : List Marker := [seClitic, bipartite]
+/-- Marker inventory. -/
+def markers : Finset Marker := {seClitic, bipartite}
+
+/-- The inventory computes the WALS value of Spanish ([maslova-nedjalkov-2013]). -/
+theorem ofInventory_markers_eq_wals :
+    some (ofInventory markers) = (Data.WALS.F106A.lookupISO "spa").map (·.value) := by
+  decide +kernel
 
 /-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
     Appendix A), referenced as ordinary verb entries — the lexical
     strategy marks predicates, not forms. The transitive alternate is
     the entry itself (homophonous in Romance). -/
 def lexicalReciprocals : List Verb :=
-  [Verbs.abrazar, Verbs.acurrucar, Verbs.besar, Verbs.casar, Verbs.consultar, Verbs.cruzar, Verbs.dejar, Verbs.encontrar]
+  [Verbs.abrazar, Verbs.acurrucar, Verbs.besar, Verbs.casar, Verbs.consultar, Verbs.cruzar,
+    Verbs.dejar, Verbs.encontrar]
 
 end Spanish.Reciprocals

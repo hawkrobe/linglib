@@ -29,7 +29,7 @@ def si : Marker :=
   { form := Pronouns.si.form, strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
 
 /-- The reciprocal marker inventory. -/
-def markers : List Marker := [si]
+def markers : Finset Marker := {si}
 
 /-- The transitive verbs of Palmieri's Appendix A with a lexical reciprocal use, as verb entries,
 since the lexical strategy marks predicates rather than forms. -/

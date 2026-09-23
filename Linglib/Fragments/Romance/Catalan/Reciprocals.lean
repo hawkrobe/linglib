@@ -26,8 +26,8 @@ def seClitic : Marker :=
 def bipartite : Marker :=
   { form := "l'un a l'altre", strategy := .bipartiteNP }
 
-/-- Marker inventory, primary strategy first. -/
-def markers : List Marker := [seClitic, bipartite]
+/-- Marker inventory. -/
+def markers : Finset Marker := {seClitic, bipartite}
 
 /-- The verbs carrying lexical reciprocal entries ([palmieri-2024],
     Appendix A), referenced as ordinary verb entries — the lexical
