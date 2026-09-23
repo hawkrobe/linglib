@@ -69,6 +69,7 @@ inductive BaseForce where
   | temporal      -- time reference (ever, yet)
   | manner        -- manner/way (whatsoever)
   | additive      -- additive particle (either, also, too)
+  | modal         -- modal verb (brauchen)
   deriving DecidableEq, Repr
 
 /-- Morphological composition of a polarity-sensitive item

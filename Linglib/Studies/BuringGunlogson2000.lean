@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.German.PolarityItems
 
 /-!
 # Büring and Gunlogson 2000: aren't positive and negative polar questions the same?
@@ -22,14 +24,16 @@ sign of `p` it supports, and reading it relative to `¬p` negates it.
 ## Main definitions
 
 * `E`, `Felicitous` — the proto-condition and the felicity condition of each question type
-* `Determiner`, `ProbeItem`, `Question` — the morphosyntactic probes and a probed question
+* `Determiner`, `Question` — the morphosyntactic probes and a probed question; the polarity items
+  are the fragments' `either_npi`, `too` and `brauchen`
 
 ## Main results
 
 * `posQ_condition`, `hiNQ_condition`, `loNQ_condition` — the three evidence conditions
 * `felicity_separates_forms` — no two question types share a felicity profile
 * `outer_is_interrogative_only` — only inner-negation determiners occur in declaratives
-* `wellFormed_iff_determiner_form` — the determiner and the polarity item classify a question alike
+* `form_eq_loNQ_of_isNPI`, `form_eq_hiNQ_of_isPPI` — a polarity item forces the reading the
+  determiner gives
 
 ## References
 
@@ -43,6 +47,8 @@ sign of `p` it supports, and reading it relative to `¬p` negates it.
 namespace BuringGunlogson2000
 
 open Question
+open English.PolarityItems (either_npi too)
+open German.PolarityItems (brauchen)
 
 /-! ### Compelling contextual evidence -/
 
@@ -147,36 +153,23 @@ determiners that fail in declaratives are the outer-negation ones. -/
 theorem outer_is_interrogative_only (d : Determiner) : d.scope = .outer ↔ ¬ d.declarativeOK := by
   cases d <;> decide
 
-/-- The polarity items that probe the distinction: English *either* and *too*, German *brauchen*. -/
-inductive ProbeItem | either | too | brauchen
-  deriving DecidableEq
-
-/-- The polarity of a probe item: negative for the NPIs *either* and *brauchen*, positive for the
-PPI *too*. -/
-def ProbeItem.polarity : ProbeItem → Polarity
-  | .either | .brauchen => .negative
-  | .too => .positive
-
-/-- A negative polarity item must sit under the negation, so it forces the inner construal; a
-positive polarity item must escape it, so it forces the outer one. -/
-def ProbeItem.scope (pi : ProbeItem) : Scope :=
-  match pi.polarity with
-  | .negative => .inner
-  | .positive => .outer
-
-/-- A polar question as its two probes: a negative determiner and, optionally, a polarity item. -/
+/-- A polar question as its two probes: a negative determiner and, optionally, a polarity item,
+English *either* or *too* or German *brauchen*. -/
 structure Question where
   determiner : Determiner
-  item : Option ProbeItem
+  item : Option PolarityItem
 
-/-- The probes agree on where the negation sits. -/
+/-- The probes agree on where the negation sits: a negative polarity item must sit under it, so it
+requires the inner construal, and a positive polarity item must escape it, so it requires the outer
+one. -/
 def Question.WellFormed (q : Question) : Prop :=
-  ∀ pi ∈ q.item, pi.scope = q.determiner.scope
+  ∀ e ∈ q.item, (e.isNPI → q.determiner.scope = .inner) ∧ (e.isPPI → q.determiner.scope = .outer)
 
 instance : ∀ q : Question, Decidable q.WellFormed
   | ⟨_, none⟩ => isTrue (by simp [Question.WellFormed])
-  | ⟨d, some pi⟩ =>
-    decidable_of_iff (pi.scope = d.scope) (by simp [Question.WellFormed])
+  | ⟨d, some e⟩ =>
+    decidable_of_iff ((e.isNPI → d.scope = .inner) ∧ (e.isPPI → d.scope = .outer))
+      (by simp [Question.WellFormed])
 
 /-- The question type a well-formed question realizes: inner negation is an inner-negation NPQ,
 outer negation an outer-negation one. -/
@@ -184,28 +177,34 @@ def Scope.form : Scope → PQForm
   | .inner => .loNQ
   | .outer => .hiNQ
 
-/-- *Is there no vegetarian restaurant either/\*too?*: the inner-negation determiner takes the
-negative polarity item and refuses the positive one. -/
+/-- *Is there no vegetarian restaurant either/\*too?* (14a): the inner-negation determiner takes
+the negative polarity item and refuses the positive one. -/
 theorem no_takes_either_not_too :
-    (Question.mk .no (some .either)).WellFormed ∧ ¬ (Question.mk .no (some .too)).WellFormed := by
-  decide
+    (Question.mk .no (some either_npi)).WellFormed ∧
+      ¬ (Question.mk .no (some too)).WellFormed := by decide
 
-/-- *Isn't there some vegetarian restaurant \*either/too?*: the outer-negation determiner takes the
-positive polarity item and refuses the negative one. -/
+/-- *Isn't there some vegetarian restaurant \*either/too?* (14b): the outer-negation determiner
+takes the positive polarity item and refuses the negative one. -/
 theorem notSome_takes_too_not_either :
-    (Question.mk .notSome (some .too)).WellFormed ∧
-      ¬ (Question.mk .notSome (some .either)).WellFormed := by decide
+    (Question.mk .notSome (some too)).WellFormed ∧
+      ¬ (Question.mk .notSome (some either_npi)).WellFormed := by decide
 
-/-- *Brauchst du keine/\*nicht eine Entschuldigung mitzubringen?*: the German NPI likewise goes with
-the amalgamated determiner only. -/
+/-- *Brauchst du keine/\*nicht eine Entschuldigung mitzubringen?* (16): the German NPI likewise
+goes with the amalgamated determiner only. -/
 theorem brauchen_takes_kein_not_nichtEin :
-    (Question.mk .kein (some .brauchen)).WellFormed ∧
-      ¬ (Question.mk .nichtEin (some .brauchen)).WellFormed := by decide
+    (Question.mk .kein (some brauchen)).WellFormed ∧
+      ¬ (Question.mk .nichtEin (some brauchen)).WellFormed := by decide
 
-/-- In a well-formed question the polarity item classifies the question exactly as the determiner
-does, so either probe alone settles the reading. -/
-theorem wellFormed_iff_determiner_form (d : Determiner) (pi : ProbeItem) :
-    (Question.mk d (some pi)).WellFormed ↔ pi.scope.form = d.scope.form := by
-  cases d <;> cases pi <;> decide
+/-- A negative polarity item forces the inner-negation reading (13a): in a well-formed question
+the determiner makes it a `loNQ`. -/
+theorem form_eq_loNQ_of_isNPI {d : Determiner} {e : PolarityItem} (he : e.isNPI)
+    (h : (Question.mk d (some e)).WellFormed) : d.scope.form = .loNQ := by
+  rw [((h e rfl).1 he)]; rfl
+
+/-- A positive polarity item forces the outer-negation reading (13b): in a well-formed question
+the determiner makes it an `hiNQ`. -/
+theorem form_eq_hiNQ_of_isPPI {d : Determiner} {e : PolarityItem} (he : e.isPPI)
+    (h : (Question.mk d (some e)).WellFormed) : d.scope.form = .hiNQ := by
+  rw [((h e rfl).2 he)]; rfl
 
 end BuringGunlogson2000
