@@ -1,24 +1,26 @@
 module
 
 public import Linglib.Core.Order.Flat
-public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Logic.Function.Basic
 
 /-!
 # Valuations: partial variable assignments
 
 A `Valuation α` assigns each vertex `v` a value of type `α v` or leaves it undetermined, a
-situation in the sense of [schulz-2011]. Valuations are ordered by information: `s₁ ≤ s₂` when
-`s₂` determines, with the same value, every vertex `s₁` determines. This is the product of the
-flat orders on the value types (`Core.Order.Flat`), carried on `Option`, the flat order's
-decidable twin, so that valuations keep `DecidableEq` and constructor matching. Setting and
-clearing a vertex are `Function.update`, whose simp lemmas evaluate them.
+situation in the sense of [schulz-2011]. A valuation is a function into the flat domains of the
+value types (`Core.Order.Flat`), so it is ordered by information: `s₁ ≤ s₂` when `s₂` determines,
+with the same value, every vertex `s₁` determines. `Flat` is `Option` under another name, which
+keeps constructor matching and `DecidableEq` while keeping `Option`'s own order off valuations.
+Setting and clearing a vertex are `Function.update`, whose simp lemmas evaluate them.
 
 ## Main declarations
 
 * `Valuation`, `Valuation.empty`, `Valuation.hasValue`
 * `Valuation.extend`, `Valuation.remove`: setting and clearing a vertex
-* the information order, a `PartialOrder` with `⊥ = empty`, decidable over a finite vertex type
+* `Valuation.le_def`: the information order, the product order on `∀ v, Flat (α v)`
+* `Valuation.fintype`: finiteness, for decision procedures that quantify over valuations
 
 ## References
 
@@ -31,7 +33,7 @@ namespace Causation
 
 /-- Partial valuation: each vertex `v` has a value of type `α v` (`some x`) or is undetermined
 (`none`). -/
-abbrev Valuation {V : Type*} (α : V → Type*) := ∀ v : V, Option (α v)
+abbrev Valuation {V : Type*} (α : V → Type*) := ∀ v : V, Flat (α v)
 
 /-- Per-vertex decidable equality, the constraint the valuation API needs. -/
 abbrev DecidableValuation {V : Type*} (α : V → Type*) :=
@@ -64,25 +66,23 @@ def extend [DecidableEq V] (s : Valuation α) (v : V) (x : α v) : Valuation α 
 def remove [DecidableEq V] (s : Valuation α) (v : V) : Valuation α :=
   Function.update s v none
 
-/-- The information order: the product of the flat orders on the value types. -/
-instance : PartialOrder (Valuation α) := inferInstanceAs (PartialOrder (∀ v, Flat (α v)))
-
-instance : OrderBot (Valuation α) := inferInstanceAs (OrderBot (∀ v, Flat (α v)))
-
-instance [Fintype V] [DecidableValuation α] : DecidableLE (Valuation α) :=
-  inferInstanceAs (DecidableLE (∀ v, Flat (α v)))
+/-- Valuations over finite vertex and value types are finitely many. Not an instance: a
+`Fintype` instance on `Flat` would change how `decide` evaluates every flat-valued function, so a
+decision procedure that quantifies over valuations installs this one locally. -/
+@[reducible] def fintype [Fintype V] [DecidableEq V] [∀ v, Fintype (α v)] :
+    Fintype (Valuation α) :=
+  inferInstanceAs (Fintype (∀ v, Option (α v)))
 
 variable {s s₁ s₂ : Valuation α}
 
 /-- `s₁ ≤ s₂` when every value determined in `s₁` is determined identically in `s₂`. -/
 theorem le_def : s₁ ≤ s₂ ↔ ∀ v x, s₁.hasValue v x → s₂.hasValue v x := by
-  show (∀ v, @LE.le (Flat (α v)) _ (s₁ v) (s₂ v)) ↔ _
-  refine forall_congr' fun v ↦ ?_
+  refine Pi.le_def.trans (forall_congr' fun v ↦ ?_)
   simp only [hasValue, get]
   cases s₁ v with
-  | none => exact iff_of_true bot_le (by simp)
-  | some x =>
-    refine (Flat.coe_le_iff (a := x)).trans ⟨fun h y hy ↦ ?_, fun h ↦ h x rfl⟩
+  | bot => exact iff_of_true bot_le fun _ h ↦ by cases h
+  | coe x =>
+    refine Flat.coe_le_iff.trans ⟨fun h y hy ↦ ?_, fun h ↦ h x rfl⟩
     cases hy
     exact h
 

@@ -167,6 +167,8 @@ section Decidable
 
 variable [Fintype V] [DecidableValuation α] [∀ v, Fintype (α v)]
 
+attribute [local instance] Valuation.fintype
+
 instance (S : Valuation α) (effect : V) (xE : α effect) :
     Decidable (IsMinimalSufficientSetFuel M n S effect xE) := by
   unfold IsMinimalSufficientSetFuel; infer_instance

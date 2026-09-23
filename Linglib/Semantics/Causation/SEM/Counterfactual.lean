@@ -643,6 +643,7 @@ instance [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α
     (M : SEM V α) [IsDeterministic M] (n : ℕ)
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallyNecessaryFuel M n s cause xC effect xE) := by
+  letI := Valuation.fintype (α := α)
   unfold causallyNecessaryFuel
   infer_instance
 
