@@ -91,6 +91,7 @@ def horse : Noun := .common "horse"
 def brother : Noun := .common "brother"
 def spy : Noun := .common "spy"
 def idea : Noun := .common "idea"
+def lot : Noun := .common "lot"
 def bean : Noun := .common "bean"
 def father : Noun := { Noun.common "father" with gender := some .masculine }
 def mother : Noun := { Noun.common "mother" with gender := some .feminine }
