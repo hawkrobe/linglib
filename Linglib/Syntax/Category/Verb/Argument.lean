@@ -33,9 +33,9 @@ def coreSlots : List ArgumentFrame.Slot := (v.citationFrame?.map ArgumentFrame.c
     frame: the subject profile on the external argument, the object
     profile on the object slot (`ArgumentFrame.objectSlot?`). -/
 def entailments : ArgumentFrame.Slot → Option EntailmentProfile
-  | .external => v.subjectProfile?
+  | .external => v.subjectEntailments
   | s@(.complement _) =>
-    if v.citationFrame?.bind ArgumentFrame.objectSlot? = some s then v.objectProfile? else none
+    if v.citationFrame?.bind ArgumentFrame.objectSlot? = some s then v.objectEntailments else none
 
 /-- The derived semantic-role label of a slot: the cluster label of its
     entailment profile (`EntailmentProfile.toRole`). -/
