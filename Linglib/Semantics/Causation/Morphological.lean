@@ -1,166 +1,70 @@
-import Mathlib.Order.Nat
-import Linglib.Semantics.Causation.Psych
-import Linglib.Semantics.Causation.CoerciveImplication
-import Linglib.Semantics.ArgumentStructure.Agentivity
-import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+module
+
+public import Mathlib.Order.Basic
+public import Mathlib.Order.Monotone.Defs
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Morphological Causation: Causative Construction Typology
+# Morphological causation: compactness and directness
 
 [comrie-1989] [song-1996]
 
-Causative constructions cross-linguistically vary along two orthogonal
-axes: **morphological complexity** (compact → analytic) and **semantic
-directness** (direct → indirect mediation). [comrie-1989]'s central
-generalization: more complex morphology correlates with more indirect
-causation.
+Causative constructions vary along two scales: **morphological complexity**, from compact
+(lexical) to analytic (periphrastic), and **directness of mediation**, from a causer that brings
+about the result itself to one that acts through a causee. [comrie-1989]'s generalization is that
+within a language the more compact construction expresses the more direct causation
+(`CausativeConstruction.ComrieMonotone`). The causee of a causativized verb takes the highest
+grammatical relation its base verb leaves free (`causeeDemotion`), so the causee sinks as the
+base valency rises (`causeeDemotion_antitoneOn`).
 
-## Causer Type
+## References
 
-Causative constructions are sensitive to the causer's **intentionality**
-and ontological category. Following [hafeez-2025], we distinguish:
-- **intentional human** (IHCr): volitional, controlled action → full agentivity
-- **accidental human** (AHCr): unintentional, no control → marginal agentivity
-- **natural force** (NFCr): non-human, non-volitional → non-agentive
-
-The key dimension is intentionality, not ontological type: IHCr and AHCr
-are both human but differ in agentivity. This three-way distinction drives
-construction selection in Urdu and other languages.
-
-## Causee/Affectee Type
-
-The second participant in a causal chain (causee or affectee) varies in
-four levels of control and animacy, following [hafeez-2025]:
-- **controlling human** (ContrHCEAF): exercises control over the induced action
-- **physically impacted human** (PhysImpHCEAF): involuntarily coerced
-- **psychologically impacted human** (PsychImpHCEAF): mentally affected
-- **inanimate** (InanCEAF): no volition or sentience
-
-## Agentivity
-
-Agentivity decomposes into **intentionality × control** (following
-[van-valin-wilkins-1996]). Three degrees:
-- **full**: intentional causer (IHCr)
-- **marginal**: accidental human (AHCr) or natural force (NFCr)
-- **partial/induced**: causee exercises control under causer's influence
-
-## Bridges
-
-- `CauserType.toCausalSource` → `CausalSource` (psych causation)
-- `CauserType.toAgentivity` → `Agentivity` (agentivity lattice)
-- `CauserType.volitionality` → `Volitionality` (proto-agent volition)
-- `CauserType.agentivityDegree` → `AgentivityDegree`
-- `CausativeConstruction` bundles complexity + mediation + causer/causee
-  restrictions for cross-linguistic comparison
-- `CausativeConstruction.ComrieMonotone` formalizes the compact-diffuse correlation
+* [comrie-1989]
+* [song-1996]
 -/
+
+@[expose] public section
 
 namespace Causation.Morphological
 
-open Causation.Psych (CausalSource)
-open ArgumentStructure (Agentivity Volitionality)
-
-/-! ### Causer Type ([hafeez-2025], [comrie-1989]) -/
-
-/-- Causer type distinguished by intentionality and ontological category.
-
-    The key dimension is **intentionality**: IHCr and AHCr are both human
-    but have fundamentally different agentivity profiles. NFCr is non-human
-    and non-intentional.
-
-    This three-way distinction drives construction selection in Urdu
-    ([hafeez-2025]) and other languages. -/
-inductive CauserType where
-  | intentionalHuman  -- IHCr: volitional, controlled action
-  | accidentalHuman   -- AHCr: unintentional, no control
-  | naturalForce      -- NFCr: non-human, non-volitional
-  deriving DecidableEq, Repr
-
-/-- Causee/affectee type: four levels of control and animacy.
-
-    [hafeez-2025]'s four-way distinction captures the gradient of
-    the second participant's autonomy in a causal chain. A controlling
-    causee reduces the causer's responsibility; an inanimate affectee
-    increases it. -/
-inductive CauseeAffecteeType where
-  | controllingHuman   -- ContrHCEAF: exercises control over induced action
-  | physImpactHuman     -- PhysImpHCEAF: physically coerced, no control
-  | psychImpactHuman    -- PsychImpHCEAF: psychologically affected
-  | inanimate           -- InanCEAF: no volition
-  deriving DecidableEq, Repr
-
-/-! ### Agentivity Degree ([hafeez-2025] Ch. 7) -/
-
-/-- Degree of agentivity, decomposed from intentionality × control.
-
-    [hafeez-2025]: "an intentional causer displays full agentivity,
-    an accidental causer shows reduced or marginal agentivity, and a
-    causee/affectee who exerts control displays induced or partial
-    agentivity." -/
-inductive AgentivityDegree where
-  | full     -- intentional causer (IHCr)
-  | marginal -- accidental (AHCr) or natural force (NFCr)
-  | induced  -- causee exercises control under causer influence
-  deriving DecidableEq, Repr
-
-/-- Causer type determines causer's agentivity degree. -/
-def CauserType.agentivityDegree : CauserType → AgentivityDegree
-  | .intentionalHuman => .full
-  | .accidentalHuman  => .marginal
-  | .naturalForce     => .marginal
-
-/-- A controlling causee has partial (induced) agentivity;
-    all other causee types have no independent agentivity. -/
-def CauseeAffecteeType.hasInducedAgentivity : CauseeAffecteeType → Bool
-  | .controllingHuman => true
-  | _                 => false
-
-/-! ### Mediation ([comrie-1989], directness chapter) -/
+/-! ### Mediation -/
 
 /-- Directness of causal mediation between causer and result.
 
-    [comrie-1989]: direct causation involves no intermediary — the
-    causer brings about the result without an intervening causee
-    decision or action. Indirect causation involves a mediating causee
-    who retains some autonomy over the caused event. -/
+[comrie-1989]: direct causation involves no intermediary, the causer bringing about the result
+without an intervening causee decision or action; indirect causation involves a mediating causee
+who retains some autonomy over the caused event. -/
 inductive Mediation where
-  | direct    -- causer directly brings about result
-  | indirect  -- causer acts through intermediary/causee
-  deriving DecidableEq, Repr
+  /-- The causer brings about the result itself. -/
+  | direct
+  /-- The causer acts through an intermediary causee. -/
+  | indirect
+  deriving DecidableEq, Repr, Fintype
 
 /-- Numeric rank: direct (0) < indirect (1). -/
-def Mediation.rank : Mediation → Nat
-  | .direct   => 0
+def Mediation.rank : Mediation → ℕ
+  | .direct => 0
   | .indirect => 1
 
 /-- Direct < indirect: the directness scale. -/
 instance : LinearOrder Mediation :=
-  LinearOrder.lift' Mediation.rank (λ a b h => by cases a <;> cases b <;> simp_all [Mediation.rank])
+  LinearOrder.lift' Mediation.rank fun a b _ ↦ by cases a <;> cases b <;> simp_all [Mediation.rank]
 
-/-! ### Causative Complexity ([comrie-1989], morphological typology) -/
+/-! ### Causative complexity -/
 
-/-- Morphological complexity of a causative construction.
+/-- Morphological complexity of a causative construction, [comrie-1989]'s compact-to-analytic
+continuum:
+- **lexical**: suppletive or idiosyncratic (*kill* ~ *die*, *fell* ~ *fall*)
+- **morphological**: a productive affix (Japanese *-(s)ase*)
+- **periphrastic**: an analytic multi-word construction (English *make X do Y*)
 
-    [comrie-1989]'s compact-to-analytic continuum:
-    - **lexical**: suppletive or idiosyncratic (kill/die, fell/fall)
-    - **morphological**: productive affix (Urdu -aa, Japanese -(s)ase)
-    - **periphrastic**: analytic multi-word (English "make X do Y")
-
-    Ordered from compact to analytic.
-
-    Naming-collision note: `CausativeComplexity.lexical` (this constructor)
-    and `Studies/Song1996.CausativeMorphology.lexical`
-    share the constructor name `lexical` but encode different claims.
-    `CausativeComplexity.lexical` is a construction-level claim — "this
-    causative construction sits at the most-compact end of Comrie's
-    continuum"; Song's `CausativeMorphology.lexical` is a morpheme-shape
-    claim — "no separable causal morpheme exists". English *kill* satisfies
-    both, but the inferential content differs. The two enums are NOT
-    interconvertible; the lossy `CausativeConstructionType.toComplexity`
-    bridge in `Studies/Song1996.lean` collapses Song's
-    `compact / freeMorpheme` (e.g. French *faire-V*) into
-    `CausativeComplexity.morphological`, even though [folli-harley-2005]
-    analyse French *faire* as periphrastic. -/
+`CausativeComplexity.lexical` is a construction-level claim ("this causative sits at the compact
+end of Comrie's continuum"), while [song-1996]'s `CausativeMorphology.lexical` in
+`Studies/Song1996.lean` is a morpheme-shape claim ("no separable causal morpheme exists"). English
+*kill* satisfies both, but the two enums are not interconvertible: the bridge
+`CausativeConstructionType.toComplexity` there sends Song's `compact / freeMorpheme` (French
+*faire*-V) to `morphological`, although [folli-harley-2005] analyse French *faire* as
+periphrastic. -/
 inductive CausativeComplexity where
   | lexical
   | morphological
@@ -168,192 +72,67 @@ inductive CausativeComplexity where
   deriving DecidableEq, Repr
 
 /-- Numeric encoding: lexical (0) < morphological (1) < periphrastic (2). -/
-def CausativeComplexity.toNat : CausativeComplexity → Nat
-  | .lexical => 0 | .morphological => 1 | .periphrastic => 2
+def CausativeComplexity.toNat : CausativeComplexity → ℕ
+  | .lexical => 0
+  | .morphological => 1
+  | .periphrastic => 2
 
 instance : LinearOrder CausativeComplexity :=
-  LinearOrder.lift' CausativeComplexity.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [CausativeComplexity.toNat])
+  LinearOrder.lift' CausativeComplexity.toNat fun a b _ ↦ by
+    cases a <;> cases b <;> simp_all [CausativeComplexity.toNat]
 
-/-! ### Causative Construction -/
+/-! ### Causative constructions and Comrie's generalization -/
 
-/-- A causative construction bundles morphological complexity with
-    semantic parameters that govern its use.
-
-    Each language's causative system is a list of `CausativeConstruction`
-    values — e.g., Urdu has 7 (acceptability study), Japanese has 3. -/
+/-- A causative construction, located on the two scales. -/
 structure CausativeConstruction where
-  /-- Morphological complexity (compact → analytic) -/
+  /-- Morphological complexity (compact → analytic). -/
   complexity : CausativeComplexity
-  /-- Direct vs. indirect mediation -/
+  /-- Direct vs. indirect mediation. -/
   mediation : Mediation
-  /-- Restriction on causer type (none = unrestricted) -/
-  causerRestriction : Option CauserType
-  /-- Required causee/affectee type (none = unrestricted) -/
-  causeeRestriction : Option CauseeAffecteeType
   deriving DecidableEq, Repr
 
-/-! ### Semantic Prototype -/
+/-- **Comrie's monotonicity** ([comrie-1989]): if construction `c₁` is morphologically more
+compact than `c₂`, then `c₁` encodes at least as direct causation as `c₂`. -/
+def CausativeConstruction.ComrieMonotone (c₁ c₂ : CausativeConstruction) : Prop :=
+  c₁.complexity < c₂.complexity → c₁.mediation ≤ c₂.mediation
 
-/-- A semantic prototype specifies the combination of semantic variables
-    under which a construction receives its peak acceptability rating or
-    is preferentially produced.
-
-    -- UNVERIFIED: table number
-    [hafeez-2025]: each construction has a (possibly empty)
-    set of features that define its prototype. A prototype is "hypothesized"
-    when the acceptability peak exceeds 50% ceiling for a scene type.
-
-    Prototypes use both **positive** (e.g., [+IHCr]) and **negative**
-    (e.g., [-IHCr]) feature specifications. Both are represented as lists:
-    `presentCausers`/`absentCausers` etc. -/
-structure SemanticPrototype where
-  /-- Causer types that must be present (e.g., [+IHCr]) -/
-  presentCausers : List CauserType
-  /-- Causer types that must be absent (e.g., [-IHCr]) -/
-  absentCausers : List CauserType
-  /-- Causee/affectee types that must be present -/
-  presentCausees : List CauseeAffecteeType
-  /-- Causee/affectee types that must be absent -/
-  absentCausees : List CauseeAffecteeType
-  /-- Whether mediation is part of the prototype -/
-  requiresMediation : Option Bool
-  deriving DecidableEq, Repr
-
-/-! ### Comrie's Generalization -/
-
-/-- **Comrie's monotonicity** ([comrie-1989]): within a single
-    language, if construction A is morphologically more compact than
-    construction B, then A encodes at least as direct causation as B.
-
-    More compact morphology correlates with more direct causation:
-    compactness and directness co-vary monotonically. -/
-def CausativeConstruction.ComrieMonotone (c1 c2 : CausativeConstruction) : Prop :=
-  c1.complexity < c2.complexity → c1.mediation ≤ c2.mediation
-
-instance (c1 c2 : CausativeConstruction) : Decidable (c1.ComrieMonotone c2) :=
+instance (c₁ c₂ : CausativeConstruction) : Decidable (c₁.ComrieMonotone c₂) :=
   inferInstanceAs (Decidable (_ → _))
 
-/-! ### Causee Marking Hierarchy ([comrie-1989], Ch 8) -/
+/-! ### The causee-marking hierarchy -/
 
-/-- Grammatical relation slots available for causee assignment,
-    ordered from highest to lowest on the hierarchy.
+/-- Grammatical relations available to the causee, ordered from highest to lowest.
 
-    [comrie-1989]: when a verb is causativized, the original
-    subject (S or A) is demoted to the next available slot on the
-    grammatical relations hierarchy. The slot depends on the
-    base verb's valency — higher valency leaves fewer slots open:
-
-    - Intransitive base (valency 1): causee → direct object
-    - Transitive base (valency 2): causee → indirect object (DO occupied)
-    - Ditransitive base (valency 3): causee → oblique (DO, IO occupied)
-
-    This hierarchy is attested across typologically diverse languages:
-    Turkish, French, Dargwa, Japanese, among others. -/
+[comrie-1989]: when a verb is causativized, its original subject is demoted to the highest
+relation on the hierarchy that the base verb's arguments leave free, so an intransitive base
+yields a direct-object causee, a transitive one an indirect-object causee, and a ditransitive
+one an oblique causee. -/
 inductive CauseeSlot where
-  | directObject    -- intransitive base → causee gets DO
-  | indirectObject  -- transitive base → causee gets IO
-  | oblique         -- ditransitive base → causee gets OBL
+  | directObject
+  | indirectObject
+  | oblique
   deriving DecidableEq, Repr
 
-/-- Rank on the GR hierarchy: DO (2) > IO (1) > OBL (0). -/
-def CauseeSlot.rank : CauseeSlot → Nat
-  | .directObject   => 2
+/-- Rank on the hierarchy: DO (2) > IO (1) > OBL (0). -/
+def CauseeSlot.rank : CauseeSlot → ℕ
+  | .directObject => 2
   | .indirectObject => 1
-  | .oblique        => 0
+  | .oblique => 0
 
 /-- Oblique < indirect object < direct object: the grammatical-relations hierarchy. -/
 instance : LinearOrder CauseeSlot :=
-  LinearOrder.lift' CauseeSlot.rank
-    (λ a b h => by cases a <;> cases b <;> simp_all [CauseeSlot.rank])
+  LinearOrder.lift' CauseeSlot.rank fun a b _ ↦ by
+    cases a <;> cases b <;> simp_all [CauseeSlot.rank]
 
-/-- Predict causee slot from base verb valency.
-
-    [comrie-1989]: the causee occupies the highest available slot
-    not already filled by the base verb's arguments.
-
-    - valency 1 (intransitive): S is the sole argument → causee = DO
-    - valency 2 (transitive): S + DO filled → causee = IO
-    - valency ≥ 3 (ditransitive): S + DO + IO filled → causee = OBL -/
-def causeeDemotion : Nat → CauseeSlot
+/-- The causee's slot given the base verb's valency: the highest slot the base verb's own
+arguments leave free. -/
+def causeeDemotion : ℕ → CauseeSlot
   | 1 => .directObject
   | 2 => .indirectObject
-  | _ => .oblique  -- ditransitive or higher
+  | _ => .oblique
 
-/-- Monotonicity: higher base valency → lower causee slot.
-    Proved for the bounded range 1 ≤ v1 < v2 ≤ 3. -/
-theorem causee_demotion_monotone :
-    ∀ v1 v2 : Fin 4, v1.val ≥ 1 → v1 < v2 →
-    causeeDemotion v2.val ≤ causeeDemotion v1.val := by
-  decide
-
-/-! ### Bridges to Existing Infrastructure -/
-
-/-- All causer types are "external" in [kim-2024]'s sense.
-
-    The causer type taxonomy refines `CausalSource.external`:
-    psych verbs' internal source (mental representation) is
-    not a causer type in the morphological causation sense. -/
-def CauserType.toCausalSource : CauserType → CausalSource
-  | .intentionalHuman => .external
-  | .accidentalHuman  => .external
-  | .naturalForce     => .external
-
-/-- Intentional human causers are volitional; accidental and natural
-    force causers are not. -/
-def CauserType.volitionality : CauserType → Volitionality
-  | .intentionalHuman => .volitional
-  | .accidentalHuman  => .nonvolitional
-  | .naturalForce     => .nonvolitional
-
-/-- Intentional human causers map to the agentive pole of the lattice
-    (volition + sentience + instigation); accidental humans retain
-    sentience but lack volition; natural forces have instigation only. -/
-def CauserType.toAgentivity : CauserType → Agentivity
-  | .intentionalHuman => .mk true true true false   -- V+S+I
-  | .accidentalHuman  => .mk false true true false  -- S+I (sentient but not volitional)
-  | .naturalForce     => .mk false false true false  -- I only
-
-/-! ### Bridge Theorems -/
-
-/-- Intentional human causers have maximal agentivity among causer types. -/
-theorem intentional_max_agentivity :
-    (CauserType.toAgentivity .intentionalHuman).volition = true ∧
-    (CauserType.toAgentivity .intentionalHuman).sentience = true ∧
-    (CauserType.toAgentivity .intentionalHuman).instigation = true := ⟨rfl, rfl, rfl⟩
-
-/-- Accidental human causers retain sentience but lack volition. -/
-theorem accidental_sentient_not_volitional :
-    (CauserType.toAgentivity .accidentalHuman).sentience = true ∧
-    (CauserType.toAgentivity .accidentalHuman).volition = false := ⟨rfl, rfl⟩
-
-/-- Natural force causers have only instigation (no sentience, no volition). -/
-theorem naturalForce_instigation_only :
-    (CauserType.toAgentivity .naturalForce) = .mk false false true false := rfl
-
-/-- All causer types project to external `CausalSource`. -/
-theorem all_causers_external (ct : CauserType) :
-    ct.toCausalSource = .external := by cases ct <;> rfl
-
-/-- IHCr has full agentivity; AHCr and NFCr have marginal. -/
-theorem intentional_full_agentivity :
-    CauserType.agentivityDegree .intentionalHuman = .full := rfl
-
-theorem accidental_marginal_agentivity :
-    CauserType.agentivityDegree .accidentalHuman = .marginal := rfl
-
-theorem naturalForce_marginal_agentivity :
-    CauserType.agentivityDegree .naturalForce = .marginal := rfl
-
-/-- Controlling causees have induced agentivity;
-    all other causee types do not. -/
-theorem controlling_has_induced :
-    CauseeAffecteeType.hasInducedAgentivity .controllingHuman = true := rfl
-
-theorem inanimate_no_induced :
-    CauseeAffecteeType.hasInducedAgentivity .inanimate = false := rfl
-
-theorem physImpact_no_induced :
-    CauseeAffecteeType.hasInducedAgentivity .physImpactHuman = false := rfl
+/-- The higher the base valency, the lower the causee lands. -/
+theorem causeeDemotion_antitoneOn : AntitoneOn causeeDemotion (Set.Ici 1) := by
+  rintro (_ | _ | _ | a) ha (_ | _ | _ | b) hb hab <;> simp_all [causeeDemotion] <;> decide
 
 end Causation.Morphological

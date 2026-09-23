@@ -1,3 +1,4 @@
+import Mathlib.Data.Finset.Card
 import Linglib.Data.Examples.Comrie1989
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Semantics.Causation.Morphological
@@ -353,7 +354,7 @@ def CausativeConstruction.ofRow (row : LinguisticExample) : Option CausativeCons
   return ⟨← row.parse? "complexity"
       [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
       ("analytic", .periphrastic)],
-    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)], none, none⟩
+    ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)]⟩
 
 /-- Within a language, the more compact causative is the more appropriate to direct
 causation, Nivkh (6)–(7) and the English *broke* ~ *brought it about* pair: the substrate's
