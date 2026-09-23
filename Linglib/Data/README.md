@@ -5,6 +5,7 @@ Three sibling directories at this level:
 | Subdir | Purpose | Source format | Generated Lean |
 |---|---|---|---|
 | `Examples/` | Per-paper typed examples (`LinguisticExample` schema) | JSON, one file per paper | Inserted into study files via marker-block generator |
+| `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
 | `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
 | `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, `Languages.lean` |
@@ -60,6 +61,22 @@ bound, well-nestedness, planarity, or a conjunction), at the precision the paper
 - **Schema**: `Linglib/Data/Treebank/Coverage/Schema.lean`
 - **Generator**: `scripts/gen_treebank_coverage.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/Treebank/Coverage/{Paper}.json` → `{Paper}.lean`
+
+### Experimental results
+
+The results a paper prints for its experiments, one table per printed table: the stimulus
+inventory with its coding, the design constants, and the statistics (shares of ceiling ratings,
+counts, means) at the precision the paper prints them, as `Decimal`s that keep the printed
+digits. A paper's coding labels (its factors, predictors, response types) are generated enums; a
+study maps them into its theory types by total functions and defines there what it concludes
+from the numbers (a prototype, a preference, a significant difference). Each table records its
+locator and whether it was checked against the page images, and a row may carry a note on how
+it departs from the print.
+
+- **Schema**: `Linglib/Data/Experiments/Schema.lean`
+- **Generator**: `scripts/gen_experiments.py` (`--check` verifies sync; the column vocabulary is
+  in its docstring)
+- **Input/Output**: `Linglib/Data/Experiments/{Paper}.json` → `{Paper}.lean`
 
 ### UD dependency length by language
 
