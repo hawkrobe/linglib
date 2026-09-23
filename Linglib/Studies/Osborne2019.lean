@@ -3,8 +3,8 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Verbs
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.Adposition
-import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.DependencyGrammar.Valency
+import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.DependencyGrammar.Catena
 import Linglib.Syntax.DependencyGrammar.Basic
 
@@ -13,10 +13,12 @@ import Linglib.Syntax.DependencyGrammar.Basic
 
 This file formalizes the parts of the dependency grammar of [osborne-2019] that the English
 fragment lexicon supports. A verb's valency frame (sixth chapter) is a lexical property, read
-here off the fragment's complement type, and the passive participle's frame is not listed but
-derived by a lexical rule that removes the object slot and adds an optional *by*-phrase
-(`passive_valency`); trees over fragment words satisfy their frames, and a spurious or a
-missing object violates them. The catena (fourth chapter), any set of words connected by
+here off the coding roles of the fragment's citation frame, and the passive participle's frame
+is not listed but related to the active one by a shuffle of indices, the slot correspondence of
+the passive voice, with the demoted subject an optional *by*-phrase (`voiceValency_passive`);
+an ergative verb's intransitive use suppresses the agent instead and has no *by*-phrase
+(`voiceValency_anticausative`). Trees over fragment words satisfy their frames, and a spurious
+or a missing object violates them. The catena (fourth chapter), any set of words connected by
 dominance, is the unit that constituents do not always match: every constituent is a catena,
 a head with one of its dependents is always a catena, and it is never a constituent when the
 head has another dependent, so a verb with its subject but not its object is a catena and not
@@ -30,7 +32,9 @@ tree cannot carry without ceasing to be a tree (`hasUnrepresentedArg_enhance`,
 
 The trees are Universal Dependencies graphs over fragment words after [tesniere-1959], and
 the enhanced graph is the basic tree with the recovered subject arc added; the general lemmas
-live in the dependency-grammar substrate and are instantiated here on the fragment trees.
+live in the dependency-grammar substrate and are instantiated here on the fragment trees. The
+UD trees make the subject of a passive participle its dependent, where [osborne-2019]'s
+function-word-headed trees mark it with ↑ as a dependent of the finite auxiliary.
 
 ## References
 
@@ -40,7 +44,7 @@ live in the dependency-grammar substrate and are instantiated here on the fragme
 
 namespace Osborne2019
 
-open DependencyGrammar WordGrammar
+open DependencyGrammar
 open Morphology (Word)
 
 /-! ### Words from the Fragment lexicon -/
@@ -59,6 +63,8 @@ private abbrev devours := English.devour.toWord .thirdSg
 private abbrev gives := English.give.toWord .thirdSg
 private abbrev kicked := English.kick.toWord .past
 private abbrev kickedPass := English.kick.passiveParticiple
+private abbrev givenPass := English.give.passiveParticiple
+private abbrev a_ := English.Determiners.a.toWord
 private abbrev manages := English.manage.toWord .thirdSg
 private abbrev persuaded := English.persuade.toWord .past
 private abbrev seems := English.seem.toWord .thirdSg
@@ -67,10 +73,9 @@ private abbrev run_ := English.run.toWord .base
 
 /-! ### Valency frames from the Fragment (sixth chapter) -/
 
-/-- The frame of a tree whose verb at position `i` is the fragment entry `v`: the valency its
-citation frame determines. -/
-private def frameOf {n : ℕ} (v : English.Verb) (i : Fin n) : Frames n :=
-  .ofList [(i, (v.citationFrame?.bind Valency.ofFrame).getD [])]
+/-- The valency of the fragment entry's citation frame. -/
+private def citationValency (v : English.Verb) : Valency :=
+  (v.citationFrame?.map Valency.ofFrame).getD []
 
 def intransTree : Graph 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
 
@@ -80,9 +85,12 @@ def transTree : Graph 3 :=
 def ditransTree : Graph 4 :=
   .ofArcs [john, gives, mary, book] 1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
 
-example : intransTree.SatisfiesFrames (frameOf English.sleep 1) := by decide
-example : transTree.SatisfiesFrames (frameOf English.devour 1) := by decide
-example : ditransTree.SatisfiesFrames (frameOf English.give 1) := by decide
+example : intransTree.SatisfiesFrames (.ofList [(1, citationValency English.sleep)]) := by
+  decide
+example : transTree.SatisfiesFrames (.ofList [(1, citationValency English.devour)]) := by
+  decide
+example : ditransTree.SatisfiesFrames (.ofList [(1, citationValency English.give)]) := by
+  decide
 
 /-- *John sleeps book: an intransitive with a spurious object. -/
 def intransWithObj : Graph 3 :=
@@ -91,25 +99,45 @@ def intransWithObj : Graph 3 :=
 /-- *John devours: a transitive missing its object. -/
 def transNoObj : Graph 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
 
-example : ¬ intransWithObj.SatisfiesFrames (frameOf English.sleep 1) := by
+example : ¬ intransWithObj.SatisfiesFrames (.ofList [(1, citationValency English.sleep)]) := by
   decide
-example : ¬ transNoObj.SatisfiesFrames (frameOf English.devour 1) := by
+example : ¬ transNoObj.SatisfiesFrames (.ofList [(1, citationValency English.devour)]) := by
   decide
 
-/-! ### The passive valency is rule-derived (§6.6) -/
+/-! ### The passive frame from the active frame (§6.6)
 
-/-- The lexical entry of *kicked*, its valency from the fragment. -/
-private def lexKicked : LexEntry :=
-  { form := kicked.form, cat := .VERB, features := kicked.features
-    valency := (English.kick.citationFrame?.bind Valency.ofFrame).getD [] }
+The passive participle's frame is not listed but related to the active frame by a shuffle of
+indices, (8): the active object is the subject and the active subject the optional object of
+*by*. The shuffle is the slot correspondence of the passive voice, and the *by*-phrase
+realizes the participant it denucleativizes. The intransitive use of an ergative verb, *It
+opened*, also makes the object the subject, but it suppresses the agent, and no *by*-phrase
+expresses it. -/
 
-/-- The passive rule applies to *kicked* and yields the passive valency. -/
-theorem passive_valency :
-    passiveRule.applies lexKicked = true ∧
-      (passiveRule.transform lexKicked).valency = Valency.passiveTransitive :=
-  passiveRule_transitive lexKicked rfl (by decide) rfl
+/-- The valency of the construction a voice derives: its derived frame's valency and an
+optional *by*-phrase for each initial core term the voice denucleativizes. -/
+def voiceValency (v : Voice) : Valency :=
+  Valency.ofFrame v.target ++
+    (v.source.coreSlots.filter (v.fate · = .denucleativized)).map fun _ ↦ ⟨.obl, .right, false⟩
 
-/-- *The ball was kicked (by John)* satisfies the rule-derived valency. -/
+/-- (8a): the English passive has the subject and an optional *by*-phrase. -/
+theorem voiceValency_passive : voiceValency English.passive = Valency.passiveTransitive := by
+  decide
+
+/-- (8b): the passive of the double-object frame keeps the second object. -/
+theorem voiceValency_passive_np_np : voiceValency (Voice.passive .np_np) =
+    [⟨.nsubj, .left, true⟩, ⟨.obj, .right, true⟩, ⟨.obl, .right, false⟩] := by
+  decide
+
+/-- *Open* alternates by the anticausative, whose valency has no *by*-phrase. -/
+theorem voiceValency_anticausative : English.open_.Alternates Voice.anticausative ∧
+    voiceValency Voice.anticausative = Valency.intransitive := by
+  decide
+
+/-- The valency of the fragment entry's passive participle. -/
+private def passiveValency (v : English.Verb) : Valency :=
+  (v.citationFrame?.map fun fr ↦ voiceValency (Voice.passive fr)).getD []
+
+/-- *The ball was kicked (by John)* satisfies the participle's derived valency. -/
 def passiveTree : Graph 4 :=
   .ofArcs [the_, ball, was_, kickedPass] 3 [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass)]
 
@@ -117,12 +145,8 @@ def longPassiveTree : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obl), (5, 4, .case_)]
 
-example :
-    passiveTree.SatisfiesFrames (.ofList [(3, (passiveRule.transform lexKicked).valency)]) := by
-  decide
-example :
-    longPassiveTree.SatisfiesFrames
-      (.ofList [(3, (passiveRule.transform lexKicked).valency)]) := by
+example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.kick)]) := by decide
+example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.kick)]) := by
   decide
 
 /-- *The ball was kicked the pizza: a passive with a leftover object. -/
@@ -130,9 +154,21 @@ def passiveWithObj : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, the_, pizza] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obj), (5, 4, .det)]
 
-example :
-    ¬ passiveWithObj.SatisfiesFrames
-      (.ofList [(3, (passiveRule.transform lexKicked).valency)]) := by
+example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English.kick)]) := by
+  decide
+
+/-- *Mary was given a book*: the passive of a double-object verb keeps its second object. -/
+def ditransPassiveTree : Graph 5 :=
+  .ofArcs [mary, was_, givenPass, a_, book] 2
+    [(2, 0, .nsubj), (2, 1, .auxPass), (2, 4, .obj), (4, 3, .det)]
+
+/-- *Mary was given: the second object is missing. -/
+def ditransPassiveNoObj : Graph 3 :=
+  .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .auxPass)]
+
+example : ditransPassiveTree.SatisfiesFrames (.ofList [(2, passiveValency English.give)]) := by
+  decide
+example : ¬ ditransPassiveNoObj.SatisfiesFrames (.ofList [(2, passiveValency English.give)]) := by
   decide
 
 /-! ### Catenae against constituents (fourth chapter, §12.7)

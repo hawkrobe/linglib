@@ -2452,12 +2452,6 @@ import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Syntax.Tree.Command
-import Linglib.Syntax.WordGrammar.Inheritance.Basic
-import Linglib.Syntax.WordGrammar.Inheritance.Choice
-import Linglib.Syntax.WordGrammar.Inheritance.Default
-import Linglib.Syntax.WordGrammar.Inheritance.Order
-import Linglib.Syntax.WordGrammar.LexicalRules
-import Linglib.Syntax.WordGrammar.Network
 import Linglib.Data.Examples.Svenonius2004
 import Linglib.Data.Examples.Istratkova2004
 import Linglib.Data.Examples.Jablonska2004

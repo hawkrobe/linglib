@@ -1,21 +1,28 @@
-import Linglib.Syntax.WordGrammar.Inheritance.Choice
-import Linglib.Syntax.WordGrammar.Inheritance.Default
-import Linglib.Syntax.WordGrammar.Inheritance.Order
+import Linglib.Logic.Nonmonotonic.Inheritance
+import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Logic.Relation
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Hudson (2010): An Introduction to Word Grammar
 
-This file formalizes the worked examples of Part I of [hudson-2010] on the inheritance-network
-substrate of `WordGrammar.Inheritance`. Default inheritance is the book's engine: an exemplar
-inherits every property of the concepts above it in the isA taxonomy except those overridden
-lower down, so a penguin exemplar inherits *lays eggs* from *bird* but *doesn't fly* from
-*penguin* (Figure 2.8, `e2_flight`), and a diesel car exemplar runs on diesel rather than the
-default petrol (Figure 3.18, `e_fuel`). Multiple inheritance can leave a conflict with no
-resolution, the Nixon diamond of Figure 2.7; the substrate's search resolves it by the order
-of the isA links (`nixon_war`, `nixon_war_swapped`), and only Nixon's own choice, a copy of
-*accepts war* at his node, settles it independently of order (`nixon_resolved`). Choice sets
-prevent such conflicts from arising (`choiceSet_sex`).
+This file formalizes the worked examples of Part I of [hudson-2010] on the default-inheritance
+substrate `DefaultInheritance`. Default inheritance is the book's engine. An exemplar inherits every
+property of the concepts above it in the isA taxonomy except those overridden lower down. So a
+penguin exemplar inherits *lays eggs* from *bird* but *doesn't fly* from *penguin* (Figure 2.8,
+`inherited_flight_e2`), and a diesel car exemplar runs on diesel rather than the default petrol
+(Figure 3.18, `inherited_fuel_e`). The book's searcher climbs the taxonomy from the exemplar and
+keeps the first answer it finds (Section 2.5.3). The substrate proves that this answer is an
+inherited one for every climb that starts at the bottom
+(`DefaultInheritance.mem_inherited_of_find?_eq_some`). Multiple inheritance can leave a conflict
+with no recognized resolution, the Nixon diamond of Figure 2.7. Nixon inherits both *accepts war*
+and *rejects war* as credulous conclusions and neither as a skeptical one (`inherited_war_nixon`,
+`not_entails_war_nixon`), and the two climbs that visit his parents in opposite orders find
+different answers (`search_war_nixon`). Nixon's own choice, a copy of *accepts war* at his node,
+settles the conflict (`nixon_resolved`). Choice sets keep such conflicts from arising. No one is
+both male and female, or both adult and child, so a property attached to the members of either
+choice set is never inherited twice, although *man*, *boy*, *woman* and *girl* each inherit from two
+concepts (Figure 3.9, `subsingleton_inherited_sex`, `subsingleton_inherited_age`).
 
 Relational concepts are defined in terms of existing ones: *parent* merges *mother* and
 *father*, *grandmother* is the mother of a parent, and *ancestor* is the recursive closure of
@@ -28,9 +35,13 @@ syntactic pattern of raising: an auxiliary's subject is also its valent's subjec
 
 ## Implementation notes
 
-* Properties are `prop` links to value nodes, so that two values of one relation compete as
-  Section 3.5.3 requires; the sample networks are stated directly rather than drawn from a
-  fragment.
+* A property is an attribute, a partial map from concepts to values, and two values compete when
+  they are values of one attribute. The book's competition between links one of which isA the
+  other (Section 3.5.3) is not modelled.
+* Only exemplars inherit (Section 2.5). `DefaultInheritance.inherited` is defined at every
+  concept, and the theorems query the exemplars.
+* Each taxonomy is declared by its immediate isA links, and its order is their reflexive
+  transitive closure (`partialOrderOfCovers`).
 * The kinship system of Figure 8.16 is built from `mother` and `father` on an arbitrary type
   of people, with sex as predicates; the compositions are mathlib's `Relation.Comp` and
   `Relation.TransGen`.
@@ -42,146 +53,263 @@ syntactic pattern of raising: an auxiliary's subject is also its valent's subjec
 
 namespace Hudson2010
 
-open WordGrammar.Inheritance
+open DefaultInheritance
 
 /-! ### Default inheritance -/
 
-/-- The taxonomy of Figure 2.8: birds, the typical sparrow, the exceptional penguin, an
-exemplar of each, and the property values. -/
+/-- The concepts of Figure 2.8: birds, the typical sparrow, the exceptional penguin, and an
+exemplar of each. -/
 inductive Bird where
   | bird
   | sparrow
   | penguin
   | e1
   | e2
+  deriving DecidableEq, Fintype
+
+/-- The concepts each concept of Figure 2.8 immediately isA. -/
+def Bird.parents : Bird → List Bird
+  | .bird => []
+  | .sparrow | .penguin => [.bird]
+  | .e1 => [.sparrow]
+  | .e2 => [.penguin]
+
+/-- The depth of a concept below *bird*. -/
+def Bird.rank : Bird → ℕ
+  | .bird => 0
+  | .sparrow | .penguin => 1
+  | .e1 | .e2 => 2
+
+instance : PartialOrder Bird :=
+  partialOrderOfCovers (fun a b : Bird ↦ b ∈ a.parents) Bird.rank (by decide)
+
+instance : DecidableLE Bird :=
+  decidableLEOfCovers (covers := fun a b : Bird ↦ b ∈ a.parents) [.bird, .sparrow, .penguin]
+    (by decide)
+
+/-- How a bird moves. -/
+inductive Flight where
   | flies
   | doesntFly
+  deriving DecidableEq
+
+/-- How a bird reproduces. -/
+inductive Reproduction where
   | laysEggs
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-/-- The relations of Figure 2.8: how a bird moves and how it reproduces. -/
-inductive BirdRel where
-  | flight
-  | reproduction
-  deriving DecidableEq, Repr
+/-- Figure 2.8: birds fly, and penguins do not. -/
+def flight : Bird → Option Flight
+  | .bird => some .flies
+  | .penguin => some .doesntFly
+  | _ => none
 
-def birdNet : Network Bird BirdRel where
-  links :=
-    [ ⟨.prop, .bird, .laysEggs, some .reproduction⟩
-    , ⟨.prop, .bird, .flies, some .flight⟩
-    , ⟨.isA, .sparrow, .bird, none⟩
-    , ⟨.isA, .penguin, .bird, none⟩
-    , ⟨.prop, .penguin, .doesntFly, some .flight⟩
-    , ⟨.isA, .e1, .sparrow, none⟩
-    , ⟨.isA, .e2, .penguin, none⟩ ]
+/-- Figure 2.8: birds lay eggs. -/
+def reproduction : Bird → Option Reproduction
+  | .bird => some .laysEggs
+  | _ => none
 
-theorem e2_IsA_bird : IsA birdNet .e2 .bird := by decide
+theorem e2_le_bird : Bird.e2 ≤ .bird := by decide
 
-theorem sparrow_not_IsA_penguin : ¬ IsA birdNet .sparrow .penguin := by decide
+theorem sparrow_not_le_penguin : ¬ Bird.sparrow ≤ .penguin := by decide
 
-/-- A sparrow exemplar inherits the defaults of *bird*. -/
-theorem e1_flight : inherited birdNet .e1 .flight = [.flies] := by decide
+/-- A sparrow exemplar inherits the default of *bird*. -/
+theorem inherited_flight_e1 : inherited flight .e1 = {.flies} :=
+  inherited_eq_singleton_of_isLeast (m := .bird) (by decide) rfl
 
 /-- A penguin exemplar inherits *doesn't fly*, the lower of the competing properties
 (Section 2.5.3). -/
-theorem e2_flight : inherited birdNet .e2 .flight = [.doesntFly] := by decide
+theorem inherited_flight_e2 : inherited flight .e2 = {.doesntFly} :=
+  inherited_eq_singleton_of_isLeast (m := .penguin) (by decide) rfl
 
-/-- The override leaves the other defaults intact. -/
-theorem e2_reproduction : inherited birdNet .e2 .reproduction = [.laysEggs] := by decide
+/-- The override leaves the other defaults intact: the exceptional penguin still inherits
+what *bird* specifies about reproduction. -/
+theorem inherited_reproduction_e2 : inherited reproduction .e2 = {.laysEggs} :=
+  inherited_eq_singleton_of_isLeast (m := .bird) (by decide) rfl
 
-/-- Figure 3.18: petrol is the default car fuel and diesel the exception. -/
+/-- The concepts of Figure 3.18: cars, the exceptional diesel car, and an exemplar of each. -/
 inductive Car where
   | car
   | dieselCar
   | e
   | e'
+  deriving DecidableEq, Fintype
+
+/-- The concepts each concept of Figure 3.18 immediately isA. -/
+def Car.parents : Car → List Car
+  | .car => []
+  | .dieselCar | .e' => [.car]
+  | .e => [.dieselCar]
+
+/-- The depth of a concept below *car*. -/
+def Car.rank : Car → ℕ
+  | .car => 0
+  | .dieselCar | .e' => 1
+  | .e => 2
+
+instance : PartialOrder Car :=
+  partialOrderOfCovers (fun a b : Car ↦ b ∈ a.parents) Car.rank (by decide)
+
+instance : DecidableLE Car :=
+  decidableLEOfCovers (covers := fun a b : Car ↦ b ∈ a.parents) [.car, .dieselCar] (by decide)
+
+/-- A car's fuel. -/
+inductive Fuel where
   | petrol
   | diesel
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
-inductive CarRel where
-  | fuel
-  deriving DecidableEq, Repr
-
-def carNet : Network Car CarRel where
-  links :=
-    [ ⟨.prop, .car, .petrol, some .fuel⟩
-    , ⟨.isA, .dieselCar, .car, none⟩
-    , ⟨.prop, .dieselCar, .diesel, some .fuel⟩
-    , ⟨.isA, .e, .dieselCar, none⟩
-    , ⟨.isA, .e', .car, none⟩ ]
+/-- Figure 3.18: petrol is the default car fuel and diesel the exception. -/
+def fuel : Car → Option Fuel
+  | .car => some .petrol
+  | .dieselCar => some .diesel
+  | _ => none
 
 /-- The diesel car exemplar inherits the link to *diesel* before it reaches *petrol*. -/
-theorem e_fuel : inherited carNet .e .fuel = [.diesel] := by decide
+theorem inherited_fuel_e : inherited fuel .e = {.diesel} :=
+  inherited_eq_singleton_of_isLeast (m := .dieselCar) (by decide) rfl
 
-theorem e'_fuel : inherited carNet .e' .fuel = [.petrol] := by decide
+theorem inherited_fuel_e' : inherited fuel .e' = {.petrol} :=
+  inherited_eq_singleton_of_isLeast (m := .car) (by decide) rfl
 
-/-! ### The Nixon diamond and choice sets -/
+/-! ### The Nixon diamond -/
 
-/-- Figure 2.7: Nixon is both a Republican and a Quaker, and the two disagree about war. -/
+/-- The concepts of Figure 2.7: Nixon is both a Republican and a Quaker. -/
 inductive Person where
   | person
   | republican
   | quaker
   | nixon
-  | acceptsWar
-  | rejectsWar
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype
 
-inductive PersonRel where
-  | war
-  deriving DecidableEq, Repr
+/-- The concepts each concept of Figure 2.7 immediately isA. -/
+def Person.parents : Person → List Person
+  | .person => []
+  | .republican | .quaker => [.person]
+  | .nixon => [.republican, .quaker]
 
-def nixonNet : Network Person PersonRel where
-  links :=
-    [ ⟨.isA, .republican, .person, none⟩
-    , ⟨.isA, .quaker, .person, none⟩
-    , ⟨.prop, .republican, .acceptsWar, some .war⟩
-    , ⟨.prop, .quaker, .rejectsWar, some .war⟩
-    , ⟨.isA, .nixon, .republican, none⟩
-    , ⟨.isA, .nixon, .quaker, none⟩ ]
+/-- The depth of a concept below *person*. -/
+def Person.rank : Person → ℕ
+  | .person => 0
+  | .republican | .quaker => 1
+  | .nixon => 2
 
-/-- The same diamond with Nixon's two isA links in the other order. -/
-def nixonNetSwapped : Network Person PersonRel where
-  links :=
-    [ ⟨.isA, .republican, .person, none⟩
-    , ⟨.isA, .quaker, .person, none⟩
-    , ⟨.prop, .republican, .acceptsWar, some .war⟩
-    , ⟨.prop, .quaker, .rejectsWar, some .war⟩
-    , ⟨.isA, .nixon, .quaker, none⟩
-    , ⟨.isA, .nixon, .republican, none⟩ ]
+instance : PartialOrder Person :=
+  partialOrderOfCovers (fun a b : Person ↦ b ∈ a.parents) Person.rank (by decide)
 
-theorem nixon_IsA_republican : IsA nixonNet .nixon .republican := by decide
+instance : DecidableLE Person :=
+  decidableLEOfCovers (covers := fun a b : Person ↦ b ∈ a.parents)
+    [.person, .republican, .quaker] (by decide)
 
-theorem nixon_IsA_quaker : IsA nixonNet .nixon .quaker := by decide
+/-- A view of war. -/
+inductive Stance where
+  | accepts
+  | rejects
+  deriving DecidableEq
 
-/-- The book leaves the diamond without a recognized resolution; the substrate's search
-returns whichever parent's value it meets first, so the answer turns on the order of the
-links. -/
-theorem nixon_war : inherited nixonNet .nixon .war = [.acceptsWar] := by decide
+/-- Figure 2.7: Republicans accept war and Quakers reject it. -/
+def war : Person → Option Stance
+  | .republican => some .accepts
+  | .quaker => some .rejects
+  | _ => none
 
-theorem nixon_war_swapped : inherited nixonNetSwapped .nixon .war = [.rejectsWar] := by decide
+/-- Nixon inherits both views of war, a conflict with no recognized resolution
+(Section 2.4.2): each view is a credulous conclusion, and neither is a skeptical one. -/
+theorem inherited_war_nixon : inherited war .nixon = {.accepts, .rejects} := by
+  ext s
+  cases s <;> simp only [Set.mem_insert_iff, Set.mem_singleton_iff] <;> decide
 
-/-- Nixon's resolution (Section 2.4.2): a copy of *accepts war* at his own node wins by the
-Best Fit Principle whatever the order of the links. -/
-def nixonResolved : Network Person PersonRel where
-  links := ⟨.prop, .nixon, .acceptsWar, some .war⟩ :: nixonNetSwapped.links
+/-- Neither view of war is a skeptical conclusion: Nixon's specifiers preferentially entail
+neither. -/
+theorem not_entails_war_nixon (s : Stance) :
+    ¬ Nonmonotonic.Entails inferInstance (specifiers war .nixon) {m | war m = some s} := by
+  rw [entails_iff_inherited_subset, inherited_war_nixon]
+  cases s <;> simp
 
-theorem nixon_resolved : inherited nixonResolved .nixon .war = [.acceptsWar] :=
-  bestFit_local _ _ _ (by decide)
+/-- Climbing from Nixon through *Republican* first finds *accepts war*, and through *Quaker*
+first finds *rejects war*. Both climbs start at the bottom, so both answers are inherited. -/
+theorem search_war_nixon :
+    ([Person.nixon, .republican, .quaker, .person].find? (· ∈ specifiers war .nixon)).bind war =
+        some .accepts ∧
+      ([Person.nixon, .quaker, .republican, .person].find? (· ∈ specifiers war .nixon)).bind war =
+        some .rejects := by
+  decide
 
-/-- Figure 3.8: sex is a choice between *male* and *female*, which prevents a person from
-inheriting both. -/
-inductive Sex where
-  | sex
+/-- Nixon's resolution: a copy of *accepts war* at his own node wins (Section 2.4.2). -/
+theorem nixon_resolved :
+    inherited (Function.update war .nixon (some .accepts)) .nixon = {.accepts} :=
+  inherited_eq_singleton_of_eq_some (by simp)
+
+/-! ### Choice sets -/
+
+/-- The concepts of Figure 3.9: a person is male or female and adult or child, and *man*,
+*boy*, *woman* and *girl* are the four combinations. -/
+inductive Human where
+  | person
   | male
   | female
-  deriving DecidableEq, Repr
+  | adult
+  | child
+  | man
+  | boy
+  | woman
+  | girl
+  deriving DecidableEq, Fintype
 
-def sexNet : Network Sex Empty where
-  links := [⟨.or, .male, .sex, none⟩, ⟨.or, .female, .sex, none⟩]
+/-- The concepts each concept of Figure 3.9 immediately isA. -/
+def Human.parents : Human → List Human
+  | .person => []
+  | .male | .female | .adult | .child => [.person]
+  | .man => [.male, .adult]
+  | .boy => [.male, .child]
+  | .woman => [.female, .adult]
+  | .girl => [.female, .child]
 
-theorem choiceSet_sex : choiceSet sexNet .sex = [.male, .female] := by decide
+/-- The depth of a concept below *person*. -/
+def Human.rank : Human → ℕ
+  | .person => 0
+  | .male | .female | .adult | .child => 1
+  | .man | .boy | .woman | .girl => 2
+
+instance : PartialOrder Human :=
+  partialOrderOfCovers (fun a b : Human ↦ b ∈ a.parents) Human.rank (by decide)
+
+instance : DecidableLE Human :=
+  decidableLEOfCovers (covers := fun a b : Human ↦ b ∈ a.parents)
+    [.person, .male, .female, .adult, .child] (by decide)
+
+/-- The choice set *sex* of Figure 3.8. -/
+def sex : Set Human := {.male, .female}
+
+/-- The choice set *age* of Figure 3.9. -/
+def age : Set Human := {.adult, .child}
+
+/-- Only one member of a choice set may be chosen (Section 3.3.2): no concept isA both
+*male* and *female*. -/
+theorem pairwiseDisjoint_sex : sex.PairwiseDisjoint Set.Iic := by
+  have h : ∀ x : Human, x ≤ .male → x ≤ .female → False := by decide
+  rintro a (rfl | rfl) b (rfl | rfl) hne
+  exacts [absurd rfl hne, Set.disjoint_left.2 fun x h₁ h₂ ↦ h x h₁ h₂,
+    Set.disjoint_left.2 fun x h₁ h₂ ↦ h x h₂ h₁, absurd rfl hne]
+
+/-- No concept isA both *adult* and *child*. -/
+theorem pairwiseDisjoint_age : age.PairwiseDisjoint Set.Iic := by
+  have h : ∀ x : Human, x ≤ .adult → x ≤ .child → False := by decide
+  rintro a (rfl | rfl) b (rfl | rfl) hne
+  exacts [absurd rfl hne, Set.disjoint_left.2 fun x h₁ h₂ ↦ h x h₁ h₂,
+    Set.disjoint_left.2 fun x h₁ h₂ ↦ h x h₂ h₁, absurd rfl hne]
+
+/-- A property attached only to the members of the choice set *sex* is inherited at most once
+(Section 2.4.3). -/
+theorem subsingleton_inherited_sex {β : Type*} {att : Human → Option β}
+    (h : ∀ m, (att m).isSome → m ∈ sex) (a : Human) : (inherited att a).Subsingleton :=
+  subsingleton_inherited_of_pairwiseDisjoint (pairwiseDisjoint_sex.subset h)
+
+/-- A property attached only to the members of the choice set *age* is inherited at most
+once. -/
+theorem subsingleton_inherited_age {β : Type*} {att : Human → Option β}
+    (h : ∀ m, (att m).isSome → m ∈ age) (a : Human) : (inherited att a).Subsingleton :=
+  subsingleton_inherited_of_pairwiseDisjoint (pairwiseDisjoint_age.subset h)
 
 /-! ### Relational concepts -/
 
@@ -265,7 +393,7 @@ def Triangle (r₁ r₂ r₃ : α → α → Prop) : Prop := ∀ x y z, r₁ x y
 /-- In kinship: a person's mother is their child's grandmother. -/
 theorem triangle_grandmother (mother father : α → α → Prop) :
     Triangle (child mother father) mother (grandmother mother father) :=
-  λ x _ _ hc hm => ⟨x, hc, hm⟩
+  fun x _ _ hc hm ↦ ⟨x, hc, hm⟩
 
 variable (valent subj : α → α → Prop)
 
@@ -277,11 +405,11 @@ valent chain. -/
 def raise (v s : α) : Prop := ∃ h, subj h s ∧ Relation.ReflTransGen valent h v
 
 theorem subj_le_raise : ∀ x s, subj x s → raise valent subj x s :=
-  λ x _ h => ⟨x, h, Relation.ReflTransGen.refl⟩
+  fun x _ h ↦ ⟨x, h, Relation.ReflTransGen.refl⟩
 
 /-- The derived subjects satisfy the triangle. -/
 theorem raising_raise : Raising valent (raise valent subj) :=
-  λ _ _ _ hv ⟨h, hs, hchain⟩ => ⟨h, hs, hchain.tail hv⟩
+  fun _ _ _ hv ⟨h, hs, hchain⟩ ↦ ⟨h, hs, hchain.tail hv⟩
 
 /-- Any subject relation containing the asserted subjects and closed under the triangle
 contains the derived subjects: `raise` is the least closure. -/
