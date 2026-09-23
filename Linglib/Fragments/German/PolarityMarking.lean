@@ -45,19 +45,14 @@ abbrev dochPreUtterance : Entry where
 
 /-! ### Answer particles -/
 
-/-- *ja*, the affirmative answer particle, answering positive questions only. -/
-def jaAnswer : Question.AnswerParticle :=
-  { form := "ja", assigns := .positive, respondsTo := [.positive] }
+/-- *ja*, the affirmative answer particle. -/
+def jaAnswer : Question.AnswerParticle := { form := "ja", assigns := .positive }
 
 /-- *nein*, the negative answer particle. -/
-def nein : Question.AnswerParticle :=
-  { form := "nein", assigns := .negative, respondsTo := [.positive, .negative] }
+def nein : Question.AnswerParticle := { form := "nein", assigns := .negative }
 
 /-- *doch*, the polarity-reversing answer particle: *Kommt er nicht?* -- *Doch*, he is coming. -/
 def dochAnswer : Question.AnswerParticle :=
-  { form := "doch", assigns := .positive, respondsTo := [.negative] }
-
-/-- *doch* is a reversal particle by its profile. -/
-theorem dochAnswer_is_reversal : dochAnswer.IsReversal := by decide
+  { form := "doch", assigns := .positive, reverses := true }
 
 end German.PolarityMarking
