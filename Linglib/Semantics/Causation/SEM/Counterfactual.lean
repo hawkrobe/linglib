@@ -441,7 +441,7 @@ noncomputable instance [DecidableEq V] [DecidableValuation α] (M : SEM V α)
 theorem isConsistentSuper_self [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) : isConsistentSuper M s s :=
-  ⟨fun _ _ h => h, fun _ _ hn hs => by simp [hn] at hs⟩
+  ⟨le_rfl, fun _ _ hn hs => by simp [hn] at hs⟩
 
 /-- **Determinations cannot be undone** ([nadathur-2023-implicatives]
     Def 2 prose): causal entailment is monotone under consistent
@@ -464,7 +464,7 @@ theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
               have hw : developDetVtx? M s v = some w :=
                 developDetVtx?_determined M hsv
               have hxw : w = x := Option.some.inj (hw.symm.trans h)
-              have := hcons.1 v w hsv
+              have := Valuation.le_def.1 hcons.1 v w hsv
               rw [Valuation.hasValue, hs'v] at this
               exact (Option.some.inj this).trans hxw
           | none =>
@@ -478,7 +478,7 @@ theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
           cases hsv : s.get v with
           | none => rfl
           | some w =>
-              have := hcons.1 v w hsv
+              have := Valuation.le_def.1 hcons.1 v w hsv
               rw [Valuation.hasValue, hs'v] at this
               exact absurd this (by simp)
         rw [causallyEntails, developDetVtx?_unfold] at h
@@ -512,21 +512,6 @@ def IsExogenousSettlement [DecidableValuation α] (M : SEM V α)
     (base s' : Valuation α) : Prop :=
   base ≤ s' ∧
   ∀ v : V, base.get v = none → (s'.get v).isSome → M.graph.parents v = ∅
-
-/-- Information order, executable characterization. -/
-theorem Valuation.le_iff_forall [DecidableValuation α] {s₁ s₂ : Valuation α} :
-    s₁ ≤ s₂ ↔ ∀ v : V, (s₁.get v).isSome → s₁.get v = s₂.get v := by
-  constructor
-  · intro h v hv
-    obtain ⟨x, hx⟩ := Option.isSome_iff_exists.mp hv
-    rw [hx]; exact (h v x hx).symm
-  · intro h v x hx
-    have := h v (by rw [hx]; rfl)
-    rw [hx] at this; exact this.symm
-
-instance [DecidableEq V] [Fintype V] [DecidableValuation α] (s₁ s₂ : Valuation α) :
-    Decidable (s₁ ≤ s₂) :=
-  decidable_of_iff _ Valuation.le_iff_forall.symm
 
 instance [DecidableEq V] [Fintype V] [DecidableValuation α] (M : SEM V α)
     (base s' : Valuation α) : Decidable (IsExogenousSettlement M base s') :=

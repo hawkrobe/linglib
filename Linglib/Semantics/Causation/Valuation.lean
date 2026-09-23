@@ -1,38 +1,39 @@
 module
 
-public import Mathlib.Data.Option.Basic
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.List.Basic
+public import Linglib.Core.Order.Flat
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Logic.Function.Basic
 
 /-!
-# Valuation: Pi-Typed Partial Variable Assignment
+# Valuations: partial variable assignments
 
-Replaces the old `Situation` (which fixed `Variable → Option Bool`).
-A `Valuation α` is a Π-type partial valuation where each vertex `v`
-has its own value type `α v`. The Pi pattern follows mathlib's
-`Algebra/Group/Pi/Basic.lean` idiom for index-dependent value families.
+A `Valuation α` assigns each vertex `v` a value of type `α v` or leaves it undetermined, a
+situation in the sense of [schulz-2011]. Valuations are ordered by information: `s₁ ≤ s₂` when
+`s₂` determines, with the same value, every vertex `s₁` determines. This is the product of the
+flat orders on the value types (`Core.Order.Flat`), carried on `Option`, the flat order's
+decidable twin, so that valuations keep `DecidableEq` and constructor matching. Setting and
+clearing a vertex are `Function.update`, whose simp lemmas evaluate them.
 
-`α := fun _ => Bool` recovers the legacy binary substrate.
+## Main declarations
 
-A `DecidableValuation` aggregator typeclass bundles
-`∀ v, DecidableEq (α v)` for use throughout the API.
+* `Valuation`, `Valuation.empty`, `Valuation.hasValue`
+* `Valuation.extend`, `Valuation.remove`: setting and clearing a vertex
+* the information order, a `PartialOrder` with `⊥ = empty`, decidable over a finite vertex type
+
+## References
+
+* [schulz-2011]
 -/
 
 @[expose] public section
 
 namespace Causation
 
-/-- Partial valuation: each vertex `v` either has a value of type `α v`
-    (encoded `some x`) or is undetermined (`none`). Generalizes the old
-    `Situation` (which fixed `α := fun _ => Bool`).
-
-    Defined as an `abbrev` for Π-type rather than a `structure`, so
-    elaboration unifies `Valuation α` with `Π v, Option (α v)` directly. -/
+/-- Partial valuation: each vertex `v` has a value of type `α v` (`some x`) or is undetermined
+(`none`). -/
 abbrev Valuation {V : Type*} (α : V → Type*) := ∀ v : V, Option (α v)
 
-/-- Per-vertex decidable equality. An `abbrev` (not a `class`) so it
-    unfolds transparently to the bare `∀ v, DecidableEq (α v)` constraint
-    typeclass search expects. Avoids the bundled-class antipattern. -/
+/-- Per-vertex decidable equality, the constraint the valuation API needs. -/
 abbrev DecidableValuation {V : Type*} (α : V → Type*) :=
   ∀ v, DecidableEq (α v)
 
@@ -55,56 +56,50 @@ instance [DecidableValuation α] (s : Valuation α) (v : V) (x : α v) :
     Decidable (s.hasValue v x) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- Extend a valuation with a new assignment. Overwrites if already set. -/
-def extend [DecidableEq V] (s : Valuation α) (v : V) (x : α v) :
-    Valuation α := fun w =>
-  if h : w = v then some (h ▸ x) else s w
+/-- Set a variable to a value, overwriting any value it had. -/
+def extend [DecidableEq V] (s : Valuation α) (v : V) (x : α v) : Valuation α :=
+  Function.update s v (some x)
 
-/-- Remove a variable from the valuation (set to undetermined). -/
-def remove [DecidableEq V] (s : Valuation α) (v : V) : Valuation α := fun w =>
-  if w = v then none else s w
+/-- Leave a variable undetermined. -/
+def remove [DecidableEq V] (s : Valuation α) (v : V) : Valuation α :=
+  Function.update s v none
 
-/-- The information order: `s₁ ≤ s₂` iff every value determined in `s₁`
-    is determined identically in `s₂`. -/
-instance : PartialOrder (Valuation α) where
-  le s₁ s₂ := ∀ v x, s₁.hasValue v x → s₂.hasValue v x
-  le_refl _ _ _ h := h
-  le_trans _ _ _ h₁ h₂ v x h := h₂ v x (h₁ v x h)
-  le_antisymm s₁ s₂ h₁ h₂ := by
-    funext v
-    show s₁.get v = s₂.get v
-    cases h : s₁.get v with
-    | some x => exact (h₁ v x h).symm
-    | none =>
-        cases h' : s₂.get v with
-        | none => rfl
-        | some y =>
-            have hy : s₁.get v = some y := h₂ v y h'
-            rw [h] at hy
-            simp at hy
+/-- The information order: the product of the flat orders on the value types. -/
+instance : PartialOrder (Valuation α) := inferInstanceAs (PartialOrder (∀ v, Flat (α v)))
 
-/-- The information order unfolds to pointwise preservation of
-    determined values. -/
-theorem le_def {s₁ s₂ : Valuation α} :
-    s₁ ≤ s₂ ↔ ∀ v x, s₁.hasValue v x → s₂.hasValue v x := Iff.rfl
+instance : OrderBot (Valuation α) := inferInstanceAs (OrderBot (∀ v, Flat (α v)))
 
-@[simp] theorem extend_get_same [DecidableEq V]
-    (s : Valuation α) (v : V) (x : α v) :
-    (s.extend v x).get v = some x := by
-  simp [extend, get]
+instance [Fintype V] [DecidableValuation α] : DecidableLE (Valuation α) :=
+  inferInstanceAs (DecidableLE (∀ v, Flat (α v)))
 
-theorem extend_get_ne [DecidableEq V]
-    {s : Valuation α} {v w : V} {x : α v} (h : w ≠ v) :
-    (s.extend v x).get w = s.get w := by
-  simp [extend, get, h]
+variable {s s₁ s₂ : Valuation α}
 
-/-- Extending at an undetermined vertex only adds information. -/
-theorem le_extend [DecidableEq V] {s : Valuation α}
-    {v : V} (x : α v) (h : s.get v = none) : s ≤ s.extend v x := by
-  intro w y hw
-  by_cases hwv : w = v
-  · subst hwv; rw [Valuation.hasValue, h] at hw; exact absurd hw (by simp)
-  · rwa [Valuation.hasValue, extend_get_ne hwv]
+/-- `s₁ ≤ s₂` when every value determined in `s₁` is determined identically in `s₂`. -/
+theorem le_def : s₁ ≤ s₂ ↔ ∀ v x, s₁.hasValue v x → s₂.hasValue v x := by
+  show (∀ v, @LE.le (Flat (α v)) _ (s₁ v) (s₂ v)) ↔ _
+  refine forall_congr' fun v ↦ ?_
+  simp only [hasValue, get]
+  cases s₁ v with
+  | none => exact iff_of_true bot_le (by simp)
+  | some x =>
+    refine (Flat.coe_le_iff (a := x)).trans ⟨fun h y hy ↦ ?_, fun h ↦ h x rfl⟩
+    cases hy
+    exact h
+
+@[simp] theorem extend_get_same [DecidableEq V] (s : Valuation α) (v : V) (x : α v) :
+    (s.extend v x).get v = some x :=
+  Function.update_self ..
+
+theorem extend_get_ne [DecidableEq V] {v w : V} {x : α v} (h : w ≠ v) :
+    (s.extend v x).get w = s.get w :=
+  Function.update_of_ne h ..
+
+/-- Setting an undetermined vertex only adds information. -/
+theorem le_extend [DecidableEq V] {v : V} (x : α v) (h : s.get v = none) : s ≤ s.extend v x :=
+  le_def.2 fun w y hw ↦ by
+    by_cases hwv : w = v
+    · subst hwv; exact absurd (h.symm.trans hw) (by simp)
+    · rwa [hasValue, extend_get_ne hwv]
 
 @[simp] theorem empty_get (v : V) : (Valuation.empty (α := α)).get v = none := rfl
 

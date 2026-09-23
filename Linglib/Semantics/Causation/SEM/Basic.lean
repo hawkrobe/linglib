@@ -238,7 +238,7 @@ private def isConsistentDev [DecidableEq V] [DecidableValuation α]
 private lemma isConsistentDev_self [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) : isConsistentDev M s s := by
-  refine ⟨fun _ _ h => h, fun v x h => ?_⟩
+  refine ⟨le_rfl, fun v x h => ?_⟩
   exact developDetVtx_extended M s v x h
 
 /-- One step of `singleStepAtDet` preserves the consistency invariant. -/
@@ -260,7 +260,7 @@ private lemma isConsistentDev_singleStepAtDet [DecidableEq V] [DecidableValuatio
         cases hsv : s.get v with
         | none => rfl
         | some y =>
-          have h1 : s'.hasValue v y := hLe v y hsv
+          have h1 : s'.hasValue v y := Valuation.le_def.1 hLe v y hsv
           rw [Valuation.hasValue, hSome] at h1
           exact absurd h1 (by simp)
       -- Compute the new value
@@ -279,8 +279,9 @@ private lemma isConsistentDev_singleStepAtDet [DecidableEq V] [DecidableValuatio
         exact hCons u.val ((s'.get u.val).get hReadyU) (Option.some_get hReadyU).symm |>.symm
       refine ⟨?_, ?_⟩
       · -- s ≤ s'.extend v newVal
+        rw [Valuation.le_def]
         intro w x hwx
-        have h1 : s'.hasValue w x := hLe w x hwx
+        have h1 : s'.hasValue w x := Valuation.le_def.1 hLe w x hwx
         by_cases hwv : w = v
         · subst hwv
           rw [Valuation.hasValue, hSome] at h1
@@ -372,6 +373,7 @@ variable (M : SEM V α) [IsDeterministic M]
 /-- `singleStepAtDet` only extends the valuation. -/
 private lemma singleStepAtDet_le (s : Valuation α) (v : V) :
     s ≤ singleStepAtDet M s v := by
+  rw [Valuation.le_def]
   intro w x hwx
   by_cases hSome : (s.get v).isSome
   · rw [singleStepAtDet_skip_determined M s v hSome]; exact hwx
@@ -390,7 +392,7 @@ private lemma stepOnceDetOn_le (s : Valuation α) (vs : List V) :
     s ≤ stepOnceDetOn M vs s := by
   unfold stepOnceDetOn
   induction vs generalizing s with
-  | nil => intro w x h; exact h
+  | nil => exact le_rfl
   | cons v vs ih =>
     simp only [List.foldl_cons]
     exact (singleStepAtDet_le M s v).trans (ih (singleStepAtDet M s v))
@@ -399,7 +401,7 @@ private lemma stepOnceDetOn_le (s : Valuation α) (vs : List V) :
 private lemma developDetOn_le (s : Valuation α) (vs : List V) (n : ℕ) :
     s ≤ developDetOn M vs n s := by
   induction n generalizing s with
-  | zero => intro w x h; exact h
+  | zero => exact le_rfl
   | succ n ih =>
     rw [developDetOn_succ]
     exact (stepOnceDetOn_le M s vs).trans (ih (stepOnceDetOn M vs s))
@@ -412,7 +414,7 @@ private lemma ready_mono {s s' : Valuation α} (hLe : s ≤ s') (v : V)
   intro u hu
   have hSome : (s.get u).isSome := hR u hu
   have hVal : s.hasValue u ((s.get u).get hSome) := (Option.some_get hSome).symm
-  have hVal' : s'.hasValue u ((s.get u).get hSome) := hLe u _ hVal
+  have hVal' : s'.hasValue u ((s.get u).get hSome) := Valuation.le_def.1 hLe u _ hVal
   rw [Valuation.hasValue] at hVal'
   rw [hVal']
   rfl
@@ -449,7 +451,7 @@ private lemma stepOnceDetOn_isSome_of_mem_undet_ready
         (Option.some_get hSome).symm
       have hVal' :
           (stepOnceDetOn M vs (singleStepAtDet M s v)).hasValue v _ :=
-        stepOnceDetOn_le M (singleStepAtDet M s v) vs _ _ hVal
+        Valuation.le_def.1 (stepOnceDetOn_le M (singleStepAtDet M s v) vs) _ _ hVal
       rw [Valuation.hasValue] at hVal'
       rw [hVal']; rfl
     · -- v is later in the list; preserve undet+ready, then IH.
@@ -523,7 +525,7 @@ private lemma undetCount_lt_of_progress [Fintype V]
       | none => rfl
       | some y =>
         have h1 : s.hasValue u y := hsu
-        have h2 : s'.hasValue u y := hLe u y h1
+        have h2 : s'.hasValue u y := Valuation.le_def.1 hLe u y h1
         rw [Valuation.hasValue, hu'] at h2
         exact absurd h2 (by simp)
 
@@ -578,9 +580,9 @@ private lemma developDetOn_isSome_of_card_le [Fintype V]
       let xv : α v := (s.get v).get hSv
       have hVal : s.hasValue v xv := (Option.some_get hSv).symm
       have hValStep : (stepOnceDetOn M vs s).hasValue v xv :=
-        stepOnceDetOn_le M s vs v xv hVal
+        Valuation.le_def.1 (stepOnceDetOn_le M s vs) v xv hVal
       have hVal' : (developDetOn M vs n (stepOnceDetOn M vs s)).hasValue v xv :=
-        developDetOn_le M (stepOnceDetOn M vs s) vs n v xv hValStep
+        Valuation.le_def.1 (developDetOn_le M (stepOnceDetOn M vs s) vs n) v xv hValStep
       rw [Valuation.hasValue] at hVal'
       rw [hVal']; rfl
 
