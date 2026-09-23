@@ -155,7 +155,7 @@ structure Presupposition where
 /-- Causal/implicative semantics: implicative polarity and causative mechanism. -/
 structure Causation where
   /-- For implicative verbs: complement entailment polarity (links to compositional semantics). -/
-  implicative : Option Implicative := none
+  implicative : Option Polarity := none
   /-- For causative verbs: force-dynamic mechanism (links to compositional semantics). -/
   causative : Option Causative := none
   deriving Repr, BEq

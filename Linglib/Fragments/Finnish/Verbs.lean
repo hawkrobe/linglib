@@ -119,7 +119,7 @@ open Implicative (Directionality Prerequisite ImplicativeClass)
     implicative classification from [nadathur-2023-implicatives]. -/
 structure FinnishImplicativeVerb extends FinnishVerb where
   /-- Positive (entails complement) or negative (entails ¬complement) -/
-  implicative : Implicative
+  implicative : Polarity
   /-- One-way or two-way complement entailment -/
   directionality : Directionality
   /-- The lexically-specified prerequisite type -/

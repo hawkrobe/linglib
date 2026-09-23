@@ -80,7 +80,7 @@ presupposed to be, and whether the complement in question is `S` (*manage*) or `
 (*fail*). -/
 structure Schema where
   condition : Condition
-  polarity : Implicative
+  polarity : Polarity
   deriving DecidableEq, Repr
 
 namespace Schema
