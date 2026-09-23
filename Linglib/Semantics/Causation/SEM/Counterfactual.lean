@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Probability.Finite
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Linglib.Semantics.Causation.SEM.Basic
 public import Linglib.Semantics.Causation.SEM.Bool
 public import Linglib.Semantics.Causation.SEM.Deterministic
@@ -27,6 +27,14 @@ aliases for legacy SBH-style binary semantics.
   over exogenous settlements (see `IsExogenousSettlement` for why the literal
   quantification is unfaithful to the paper's own verdicts).
 
+- **`cfSeed`, `counterfactual`**: the rewind–revise–regenerate counterfactual of
+  [lassiter-2017-probabilistic-language].
+
+- **`WhetherCause`**: [beller-gerstenberg-2025]'s whether-causation, deterministic case.
+
+- **`probSufficiency`**: [pearl-2019]'s probability of sufficiency, over a measure on
+  background outcomes.
+
 `BoolSEM`-namespace aliases specialize the polymorphic predicates to
 `α := fun _ => Bool` with `xC = true`, `xE = true` (legacy SBH semantics).
 
@@ -47,6 +55,15 @@ quantifiers, which range over the finite valuation space. Study idiom:
 
 with `entails_iff` a one-line per-model instantiation of
 `causallyEntails_iff_fuel`.
+
+## References
+
+* [nadathur-2023-implicatives]
+* [nadathur-lauer-2020]
+* [lassiter-2017-probabilistic-language]
+* [beller-gerstenberg-2025]
+* [pearl-2019]
+* [cao-white-lassiter-2025]
 -/
 
 @[expose] public section
@@ -97,53 +114,31 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     Decidable (manipulates M s cause xC1 xC2 effect) :=
   Classical.dec _
 
-/-! ### Unified counterfactual primitive (PMF-canonical) -/
+/-! ### Counterfactuals
 
-/-! Pearl-style counterfactual simulation via Lassiter's RRR heuristic
-    ([lassiter-2017-probabilistic-language]): "Rewind to the
-    antecedent's causal layer, Revise the antecedent, selectively
-    Regenerate descendants while preserving causally-independent
-    observations." Subsumes:
-    - [lewis-1973-causation] / [nadathur-lauer-2020] deterministic
-      counterfactuals (Dirac specialization)
-    - [beller-gerstenberg-2025] W/H/S aspects (graded probability)
-    - [lassiter-2017-probabilistic-language] probabilistic counterfactuals
-      with overt probability operators
+A counterfactual is computed by the rewind–revise–regenerate procedure of
+[lassiter-2017-probabilistic-language]: the antecedent is set, its descendants are left
+undetermined to be regenerated, and the observed values of every causally independent vertex are
+kept (`cfSeed`). With deterministic equations the counterfactual outcome is the development of
+this seed (`counterfactual`). Morgenbesser's coin (bet → win ← heads, observed a losing bet on
+heads) comes out as it should: the seed keeps heads and drops win, so had the bet been placed, it
+would have won.
 
-    Key insight: under the high-stability assumption ([lucas-kemp-2015]),
-    Pearl 3-step abduction reduces to "preserve causally-independent
-    observations, regenerate descendants" — no explicit exogenous noise
-    types needed. The existing `develop` PMF naturally produces the right
-    distribution when fed the counterfactual seed valuation.
+Uncertainty about the background enters as in Pearl's structural models, as a probability on
+exogenous settings, here a measure `μ` on outcomes `ω` each of which settles a background
+valuation `u ω` that fills in what the seed leaves open (`probSufficiency`). -/
 
-    Morgenbesser's coin example (discussed in
-    [lassiter-2017-probabilistic-language]): bet → win ←
-    heads. Observed `{bet:=false, win:=false, heads:=true}`. Counterfactual
-    `bet := true`. Then `cfSeed = {bet:=true, heads:=true, win:=none}`
-    (heads is causally independent so preserved; win is descendant of bet
-    so regenerated). `develop` computes `win := bet ∧ heads = true`. The
-    counterfactual probability of winning is 1, matching Lassiter's
-    prediction (and contradicting "Rewind, Revise, Re-run" without
-    selective regeneration). -/
-
-omit [Fintype V] [DecidableValuation α] in
-/-- **Counterfactual seed** ([lassiter-2017-probabilistic-language] RRR): the partial valuation that
-    `counterfactualSimulate` feeds to `develop`. Sets `antecedent := xAnt`,
-    leaves descendants of antecedent undetermined (to be regenerated),
-    preserves `observed` values for causally-independent vertices. -/
-noncomputable def cfSeed
-    (M : SEM V α) (observed : Valuation α)
-    (antecedent : V) (xAnt : α antecedent) : Valuation α := fun v =>
+omit [DecidableValuation α] in
+/-- **Counterfactual seed** ([lassiter-2017-probabilistic-language]): `antecedent := xAnt`, the
+descendants of the antecedent undetermined, and every other vertex as observed. -/
+def cfSeed (M : SEM V α) (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
+    Valuation α := fun v =>
   if h : v = antecedent then some (h ▸ xAnt)
-  else
-    haveI : Decidable (M.graph.IsStrictAncestor antecedent v) := Classical.dec _
-    if M.graph.IsStrictAncestor antecedent v then none
-    else observed.get v
+  else if M.graph.IsStrictAncestor antecedent v then none
+  else observed.get v
 
-omit [Fintype V] [DecidableValuation α] in
-/-- At the empty context, `cfSeed` reduces to a plain `extend`: with nothing
-    observed, abduction preserves nothing and the counterfactual seed merely
-    sets the antecedent. -/
+omit [DecidableValuation α] in
+/-- With nothing observed, the counterfactual seed only sets the antecedent. -/
 theorem cfSeed_empty (M : SEM V α) (antecedent : V) (xAnt : α antecedent) :
     cfSeed M Valuation.empty antecedent xAnt =
       (Valuation.empty (α := α)).extend antecedent xAnt := by
@@ -152,129 +147,52 @@ theorem cfSeed_empty (M : SEM V α) (antecedent : V) (xAnt : α antecedent) :
   · subst h; simp [cfSeed, Valuation.extend]
   · simp [cfSeed, Valuation.extend, Valuation.empty, h]
 
-/-- **Pearl 3-step counterfactual via Lassiter RRR**, PMF-valued. Given
-    actually-observed `observed` and a counterfactual intervention
-    `antecedent := xAnt`, returns the probability distribution over
-    counterfactual valuations.
+omit [DecidableValuation α] in
+/-- The counterfactual outcome: the development of the counterfactual seed. -/
+noncomputable def counterfactual (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) : Valuation α :=
+  M.developDet (cfSeed M observed antecedent xAnt)
 
-    For deterministic SEMs, collapses to a Dirac at `developDet M (cfSeed ...)`
-    (see `counterfactualSimulate_eq_pure_of_deterministic` below).
+omit [DecidableValuation α] in
+/-- **Whether-causation** in a deterministic model, the {0,1} case of [beller-gerstenberg-2025]'s
+W (their equation 1): had the antecedent been `xAlt`, the effect would not have had its actual
+value `xE`. Their sufficient-causation S (equation 3) is whether-causation evaluated at the
+valuation with the alternative causes removed. -/
+def WhetherCause (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (observed : Valuation α) (antecedent : V) (xAlt : α antecedent)
+    (effect : V) (xE : α effect) : Prop :=
+  ¬ (counterfactual M observed antecedent xAlt).hasValue effect xE
 
-    Subsumes (with appropriate derived predicates):
-    - `whetherCause` ([beller-gerstenberg-2025] Eq 1, graded)
-    - `sufficientCause` ([beller-gerstenberg-2025] Eq 3, graded)
-    - `probSufficiency` — Pearl's probability of sufficiency ([pearl-2019]),
-      the SUF measure of [cao-white-lassiter-2025] (graded)
-    - Lassiter probabilistic counterfactuals with overt probability operators -/
-noncomputable def counterfactualSimulate
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
-    PMF (Valuation α) :=
-  develop M (cfSeed M observed antecedent xAnt)
+omit [DecidableValuation α] in
+noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (observed : Valuation α) (antecedent : V) (xAlt : α antecedent) (effect : V) (xE : α effect) :
+    Decidable (WhetherCause M observed antecedent xAlt effect xE) :=
+  Classical.dec _
 
-/-! ### Derived graded predicates (B&G 2025 W/H/S, etc.) -/
-
-/-- **Whether-causation** ([beller-gerstenberg-2025] Eq 1):
-    `W(A → e) = P(e' ≠ e | s, remove(A))`. Probability that the counterfactual
-    outcome differs from the actual outcome `xEff_actual` if the antecedent
-    were `xAnt_alt` instead of its actual value — the canonical `PMF.probOfSet`
-    of the complement event `{v | ¬ v.hasValue effect xEff_actual}` under the
-    counterfactual distribution.
-
-    For deterministic SEMs, collapses to a {0,1} indicator (see
-    `whetherCause_eq_indicator_of_deterministic`). -/
-noncomputable def whetherCause
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (observed : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
-    (effect : V) (xEff_actual : α effect) : ENNReal :=
-  (counterfactualSimulate M observed antecedent xAnt_alt).probOfSet
-    {v | ¬ v.hasValue effect xEff_actual}
-
-/-- **Sufficient-causation** ([beller-gerstenberg-2025] Eq 3):
-    `S(A → e) = P(W(A → e') | s, remove(\A))`. Probability that A would
-    have been a whether-cause if all alternative causes had been removed.
-    Definitionally `whetherCause` at the alternatives-removed background —
-    the removal operation itself is the caller's responsibility (below).
-
-    The caller supplies `alternativesRemoved : Valuation α` — the
-    supersituation of `s` where alternative causes are set to their absent
-    values. In the typical case this is `s` with the causally-independent
-    siblings of `antecedent` set to their absent values. The substrate
-    doesn't currently provide a `removeAlternatives` constructor; callers
-    build it explicitly via `s.extend altᵢ xAbsentᵢ` chains. -/
-noncomputable def sufficientCause
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (alternativesRemoved : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
-    (effect : V) (xEff_actual : α effect) : ENNReal :=
-  whetherCause M alternativesRemoved antecedent xAnt_alt effect xEff_actual
-
-omit [Fintype V] [DecidableEq V] [DecidableValuation α] in
-/-- The single-vertex marginal of a distribution over valuations: the
-    probability that vertex `v` carries value `x`. -/
-noncomputable def probOfValue (d : PMF (Valuation α)) (v : V) (x : α v) : ENNReal :=
-  d.probOfSet {s | s.hasValue v x}
-
-/-- **Probability of sufficiency** ([pearl-2019]), the SUF measure of
-    [cao-white-lassiter-2025]: the counterfactual probability that
-    intervening `cause := xC` yields `effect = xE`, evaluated against the
-    factual context `observed` — the `effect = xE` marginal of Pearl's
-    three-step abduction–action–prediction, via `counterfactualSimulate`.
-
-    Distinct from plain interventional probability `P(effect | do(cause))`:
-    causally-independent parents of `effect` recorded in `observed` are
-    *preserved* rather than re-sampled — the oxygen-vs-match contrast
-    [pearl-2019] uses to motivate the measure. -/
-noncomputable def probSufficiency
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (observed : Valuation α) (cause : V) (xC : α cause)
+omit [DecidableValuation α] in
+/-- **Probability of sufficiency** ([pearl-2019]), the SUF measure of [cao-white-lassiter-2025]:
+the probability, over outcomes `ω` of the background, that intervening `cause := xC` against the
+factual context `observed` yields `effect = xE`. The background valuation `u ω` settles what the
+counterfactual seed leaves open; observed vertices causally independent of the cause are kept
+rather than resampled, the oxygen-versus-match contrast [pearl-2019] uses to motivate the
+measure. -/
+noncomputable def probSufficiency {Ω : Type*} [MeasurableSpace Ω] (M : SEM V α)
+    [CausalGraph.IsDAG M.graph] [IsDeterministic M] (μ : MeasureTheory.Measure Ω)
+    (u : Ω → Valuation α) (observed : Valuation α) (cause : V) (xC : α cause)
     (effect : V) (xE : α effect) : ENNReal :=
-  probOfValue (counterfactualSimulate M observed cause xC) effect xE
+  μ {ω | (M.developDet ((cfSeed M observed cause xC).or (u ω))).hasValue effect xE}
 
-/-! ### Bridge theorems: deterministic collapse -/
-
-/-- Bridge: under `IsDeterministic`, `counterfactualSimulate` is the Dirac
-    of the per-vertex counterfactual valuation `developDet M (cfSeed ...)`.
-    Follows immediately from `develop_eq_pure_of_deterministic` (Basic.lean). -/
-theorem counterfactualSimulate_eq_pure_of_deterministic
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
-    counterfactualSimulate M observed antecedent xAnt =
-      PMF.pure (M.developDet (cfSeed M observed antecedent xAnt)) := by
-  unfold counterfactualSimulate
-  rw [develop_eq_pure_of_deterministic]
-
-/-- Bridge: under `IsDeterministic`, `whetherCause` is the {0,1} indicator
-    of whether the counterfactual outcome differs from `xEff_actual`. The
-    graded B&G W collapses to the discrete Lewis-style "would the effect
-    have been different?" — exactly the collapse [lassiter-2017-probabilistic-language] and [lucas-kemp-2015]
-    predict for high-stability deterministic systems. -/
-theorem whetherCause_eq_indicator_of_deterministic
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (observed : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
-    (effect : V) (xEff_actual : α effect) :
-    whetherCause M observed antecedent xAnt_alt effect xEff_actual =
-      if (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual
-        then 0 else 1 := by
-  unfold whetherCause
-  rw [counterfactualSimulate_eq_pure_of_deterministic]
-  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_ofPred_eq]
-  by_cases h : (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual <;>
-    simp [h]
-
-/-- Bridge: under `IsDeterministic`, `probSufficiency` collapses to the {0,1}
-    indicator of whether the counterfactual development hits `effect = xE` —
-    the deterministic limit in which [cao-white-lassiter-2025]'s graded SUF
-    recovers a categorical sufficiency judgment. -/
-theorem probSufficiency_eq_indicator_of_deterministic
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (observed : Valuation α) (cause : V) (xC : α cause)
+/-- With a certain background the probability of sufficiency is the {0,1} indicator of the
+counterfactual outcome. -/
+theorem probSufficiency_dirac {Ω : Type*} [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (ω : Ω)
+    (u : Ω → Valuation α) (observed : Valuation α) (cause : V) (xC : α cause)
     (effect : V) (xE : α effect) :
-    probSufficiency M observed cause xC effect xE =
-      if (M.developDet (cfSeed M observed cause xC)).hasValue effect xE then 1 else 0 := by
-  unfold probSufficiency probOfValue
-  rw [counterfactualSimulate_eq_pure_of_deterministic]
-  simp only [PMF.probOfSet, PMF.toOuterMeasure_pure_apply, Set.mem_ofPred_eq]
-  congr
+    probSufficiency M (MeasureTheory.Measure.dirac ω) u observed cause xC effect xE =
+      if (M.developDet ((cfSeed M observed cause xC).or (u ω))).hasValue effect xE then 1
+        else 0 := by
+  classical
+  simp [probSufficiency, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
 
 end Causation.SEM
 
@@ -299,11 +217,13 @@ abbrev manipulates (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.manipulates M s cause true false effect
 
-/-- `BoolSEM`-flavored `probSufficiency`: the counterfactual probability
-    that intervening `cause := true` yields `effect = true`. -/
-noncomputable abbrev probSufficiency (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    (s : Valuation (fun _ : V => Bool)) (cause effect : V) : ENNReal :=
-  SEM.probSufficiency M s cause true effect true
+/-- `BoolSEM`-flavored `probSufficiency`: the probability that intervening `cause := true`
+    yields `effect = true`. -/
+noncomputable abbrev probSufficiency {Ω : Type*} [MeasurableSpace Ω] (M : BoolSEM V)
+    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] (μ : MeasureTheory.Measure Ω)
+    (u : Ω → Valuation (fun _ : V => Bool)) (s : Valuation (fun _ : V => Bool))
+    (cause effect : V) : ENNReal :=
+  SEM.probSufficiency M μ u s cause true effect true
 
 /-- **Direct causal connection**: `cause` is a parent of `effect` in
     the SEM's graph. Pure structural predicate (no `developDet`); fully
