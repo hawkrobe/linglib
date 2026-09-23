@@ -27,10 +27,10 @@ verb), the morphological causative verb MCV (the indirect causative *-va*; verbs
 causative *-aa* count as lexical), the adverbial ADV (two clauses joined by *keyoonkeh*
 'because'), the non-sentential cause adjunct NCA (a cause NP with *=par*, *wajhan=se* or *=se*)
 and the non-sentential causer adjunct NCrA (a causer NP with *wajhan=se*). The printed tables are
-`Data.Experiments.Hafeez2025`.
+`Data/Experiments/Hafeez2025`.
 
 * **The coding.** A clip's scene is read off its name by the code of Appendix L
-  (`Scene.ofClip`), and every clip is a scene the design can stage (`clips_stageable`). The
+  (`Clip.scene`), and every clip is a scene the design can stage (`clips_stageable`). The
   predictor table as printed (Table 4) codes five clips otherwise (`table4_disagreements`), and
   it cannot be the coding the trees were fit on: three leaves hold more responses than twelve
   raters give their clips under it (`table4_exceeded`), while under the clip names no leaf does
@@ -78,7 +78,7 @@ one.
 
 namespace Hafeez2025
 
-open Causation.Morphological Data.Experiments Data.Experiments.Hafeez2025
+open Causation.Morphological Data.Experiments
 
 /-! ### Scenes -/
 
@@ -169,7 +169,7 @@ instance (s : Scene) : DecidablePred s.Fits := fun _ ↦ List.decidableBAll _ _
 /-- A clip's scene, read off its name by the code of Appendix L: the first letter is the causer,
 the second the second participant, and a third letter O an inanimate affectee behind a mediating
 causee. The code's one exception is clip 22, whose M marks an umbrella. -/
-def Scene.ofClip (c : Clip) : Scene where
+def Clip.scene (c : Clip) : Scene where
   causer := match c.causer with
     | .h => .intentionalHuman
     | .u => .accidentalHuman
@@ -182,14 +182,14 @@ def Scene.ofClip (c : Clip) : Scene where
   mediation := if c.third.isSome then .indirect else .direct
 
 /-- Every clip is a scene the design can stage. -/
-theorem clips_stageable : ∀ c ∈ clips, (Scene.ofClip c).Stageable := by decide
+theorem clips_stageable : ∀ c ∈ clips, c.scene.Stageable := by decide
 
 /-- The predictor table as printed (Table 4) disagrees with the clip names on five clips: it
 codes clips 11 and 21, where a pushed or bumped man knocks down a cup tower, with an inanimate
 second participant, the umbrella of clip 22 without one, and adds a human impact to the paper
 of clips 1 and 23. -/
 theorem table4_disagreements :
-    (clips.filter fun c ↦ ¬∀ p, p ∈ c.present ↔ (Scene.ofClip c).Is p).map (·.number) =
+    (clips.filter fun c ↦ ¬∀ p, p ∈ c.present ↔ c.scene.Is p).map (·.number) =
       [1, 11, 21, 22, 23] := by
   decide
 
@@ -264,7 +264,7 @@ theorem leaves_partition (r : ResponseType) (t : Tree) (h : tree r = some t) (s 
 /-! ### Response counts -/
 
 /-- The number of clips whose scene falls under a scene type. -/
-def clipCount (t : List (Predictor × Sign)) : ℕ := clips.countP fun c ↦ (Scene.ofClip c).Fits t
+def clipCount (t : List (Predictor × Sign)) : ℕ := clips.countP fun c ↦ c.scene.Fits t
 
 /-- Under the clip names, no leaf holds more responses than the twelve raters give its clips. -/
 theorem responses_le : ∀ l ∈ leaves, l.responses ≤ raters * clipCount (leafPath l) := by
@@ -330,7 +330,7 @@ theorem prototype_eq_none_iff (r : ResponseType) :
 /-- Every prototype holds of a clip, so the statements about prototypical scenes below are not
 vacuous. -/
 theorem exists_clip_prototypical (r : ResponseType) (hr : prototype r ≠ none) :
-    ∃ c ∈ clips, Prototypical r (Scene.ofClip c) := by
+    ∃ c ∈ clips, Prototypical r c.scene := by
   cases r <;> first | decide +kernel | exact absurd (by decide +kernel) hr
 
 /-- Table 19 prints each response type's peak, except that it swaps those of NCA and NCrA. -/
@@ -442,7 +442,7 @@ participant, and the clip of a woman startled by thunder is such a scene outside
 prototype. -/
 theorem nca_combined_not_le_prototype :
     ∀ row ∈ comparison, row.responseType = .nca → ∃ t ∈ row.combinedPreference,
-      ∃ c ∈ clips, (Scene.ofClip c).Fits t ∧ ¬Prototypical .nca (Scene.ofClip c) := by
+      ∃ c ∈ clips, c.scene.Fits t ∧ ¬Prototypical .nca c.scene := by
   decide +kernel
 
 /-! ### Compactness and directness -/

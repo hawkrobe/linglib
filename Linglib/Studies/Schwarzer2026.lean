@@ -25,7 +25,7 @@ Experiment 1 confirms that German allows the construction with verbs that reject
 *dass*-clause (`Data/Examples/Schwarzer2026`, (11) and (12)): selection raises the ratings of both
 complements, and a coordination loses less than a bare clause where the verb does not select one
 (`selection_raises`, `selection_interaction`). Experiment 2's forced choice finds the noun phrase
-first in twenty-three of thirty choices in both positions (`Data.Experiments.Schwarzer2026`), so
+first in twenty-three of thirty choices in both positions (`Data/Experiments/Schwarzer2026`), so
 the preferred order is the noun phrase first in both (`preferred_eq`). A noun-phrase-first
 preference in the embedded position refutes the closeness prediction (`closeness_refuted`), and
 the choices supply it (`choices_refute_closeness`), while the structural prediction is
@@ -40,7 +40,7 @@ indirectly.
   The predicates of the experiments are recorded with their clausal frames in
   `Fragments/German/Verbs`.
 * The descriptive statistics of Experiment 1 and the choices of Experiment 2 are
-  `Data.Experiments.Schwarzer2026`; the mixed model and the logistic regression are not
+  `Data/Experiments/Schwarzer2026`; the mixed model and the logistic regression are not
   formalized, and the preferred order is read off the counts as the order chosen more often.
 
 ## References
@@ -54,7 +54,6 @@ indirectly.
 namespace Schwarzer2026
 
 open WordOrder BrueningAlKhalaf2020
-open Data.Experiments.Schwarzer2026 (Complement Selection Position choices ratings)
 
 /-- The position of a coordinated complement relative to the finite verb in a German root
 declarative: the verb in second position precedes its complements, the configuration of (17). -/
@@ -109,7 +108,7 @@ theorem selection_interaction :
   decide +kernel
 
 /-- The head direction of a position of Experiment 2. -/
-def direction : Position → HeadDirection
+def Position.direction : Position → HeadDirection
   | .preverbal => embeddedPosition
   | .postverbal => rootPosition
 
@@ -129,7 +128,7 @@ theorem choices_refute_closeness :
 
 /-- The structural prediction matches the preferred order in both positions. -/
 theorem choices_match_structural (p : Position) :
-    predictOrder .structural (direction p) = preferred p := by
+    predictOrder .structural p.direction = preferred p := by
   rw [structural_position_invariant, preferred_eq]
 
 end Schwarzer2026

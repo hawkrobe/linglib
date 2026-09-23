@@ -26,7 +26,9 @@ postverbal position.
 
 @[expose] public section
 
-namespace Data.Experiments.Schwarzer2026
+namespace Schwarzer2026
+
+open Data.Experiments
 
 /-- The complement of Experiment 1. -/
 inductive Complement where
@@ -97,4 +99,4 @@ def choices : Position → Order → Choice
   | .postverbal, .dpFirst => ⟨23⟩
   | .postverbal, .cpFirst => ⟨7⟩
 
-end Data.Experiments.Schwarzer2026
+end Schwarzer2026

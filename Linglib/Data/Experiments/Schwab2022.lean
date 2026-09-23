@@ -28,7 +28,9 @@ jemals illusion, although its posterior in Figure 2 is centred near zero.
 
 @[expose] public section
 
-namespace Data.Experiments.Schwab2022
+namespace Schwab2022
+
+open Data.Experiments
 
 /-- The two experiments. -/
 inductive Experiment where
@@ -82,4 +84,4 @@ def bayesFactors : Experiment → Effect → BayesFactor
   | .exp2, .illusionSoRecht => ⟨⟨33, 2⟩, .moderateForNull⟩
   | .exp2, .interaction => ⟨⟨654, 2⟩, .moderateForEffect⟩
 
-end Data.Experiments.Schwab2022
+end Schwab2022

@@ -28,7 +28,9 @@ conditions, 30 within the False one) agree with.
 
 @[expose] public section
 
-namespace Data.Experiments.Khoo2015
+namespace Khoo2015
+
+open Data.Experiments
 
 /-- The vignette. -/
 inductive Sentence where
@@ -66,4 +68,4 @@ def ratings : Sentence → Response → Rating
   | .modal, .judgedFalse => ⟨⟨242, 2⟩, ⟨161, 2⟩⟩
   | .modal, .rejection => ⟨⟨503, 2⟩, ⟨177, 2⟩⟩
 
-end Data.Experiments.Khoo2015
+end Khoo2015

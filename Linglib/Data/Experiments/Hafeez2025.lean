@@ -34,7 +34,9 @@ unattainable 0.08 of the LEX-INST tree; the studies that consume them state the 
 
 @[expose] public section
 
-namespace Data.Experiments.Hafeez2025
+namespace Hafeez2025
+
+open Data.Experiments
 
 /-- The semantic predictors coded for each clip (Table 4, Appendix L). -/
 inductive Predictor where
@@ -300,4 +302,4 @@ def comparison : List ComparisonRow :=
      [[(.nfcr, .minus), (.contrHCEAF, .plus)],
       [(.inanCEAF, .plus), (.ihcr, .minus), (.ahcr, .plus)]]⟩]
 
-end Data.Experiments.Hafeez2025
+end Hafeez2025

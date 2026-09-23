@@ -3,7 +3,8 @@
 
 A paper's experimental results are canonical JSON at
 `Linglib/Data/Experiments/<Paper>.json`; this emits the typed Lean module
-`Linglib/Data/Experiments/<Paper>.lean` (namespace `Data.Experiments.<Paper>`).
+`Linglib/Data/Experiments/<Paper>.lean`, in `namespace <Paper>` beside the paper's study, so
+that the study reads the tables and extends the paper's types without opening anything.
 The generated Lean is never hand-edited: edit the JSON and re-run.
 
 A JSON file has four parts:
@@ -299,6 +300,12 @@ def render(paper: str, d: dict) -> str:
               for i, c in enumerate(d.get("constants", []))]
     parts += [render_table(tb, types, f"{paper}.tables[{i}]")
               for i, tb in enumerate(d.get("tables", []))]
+    first = f"Auto-generated from `Linglib/Data/Experiments/{paper}.json` by"
+    tail = "Do not edit by hand: edit the JSON and re-run the generator."
+    if len(first) + len(" `scripts/gen_experiments.py`.") <= 100:
+        auto = f"{first} `scripts/gen_experiments.py`.\n{tail}"
+    else:
+        auto = f"{first}\n`scripts/gen_experiments.py`. {tail}"
     desc = textwrap.fill(meta["description"], 100)
     if raw:
         links = "\n".join(textwrap.fill(f"* <{r['url']}>: {r['doc']}", 100, subsequent_indent="  ")
@@ -312,8 +319,7 @@ public import Linglib.Data.Experiments.Schema
 /-!
 # {paper}: experimental results (generated)
 
-Auto-generated from `Linglib/Data/Experiments/{paper}.json` by `scripts/gen_experiments.py`.
-Do not edit by hand: edit the JSON and re-run the generator.
+{auto}
 
 {desc}
 
@@ -324,11 +330,13 @@ Do not edit by hand: edit the JSON and re-run the generator.
 
 @[expose] public section
 
-namespace Data.Experiments.{paper}
+namespace {paper}
+
+open Data.Experiments
 
 {body}
 
-end Data.Experiments.{paper}
+end {paper}
 """
 
 
