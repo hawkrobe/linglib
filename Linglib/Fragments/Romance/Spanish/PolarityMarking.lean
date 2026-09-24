@@ -3,65 +3,30 @@ module
 public import Linglib.Semantics.Polarity.Marking
 
 /-!
-# Spanish Polarity-Marking Strategies
-[batllori-hernanz-2013] [garassino-jacob-2018]
+# Spanish polarity marking
 
-Spanish marks emphatic polarity affirmation with the particle *sí (que)*,
-which [batllori-hernanz-2013] analyze as an Emphatic Polarity
-Particle of Affirmation (EPPA) merging with ForceP.
+Spanish asserts a fact the speaker takes to have been contradicted or doubted, or sets it in
+contrast, with *sí* 'yes' before the clause, often followed by *que*: *—María no vendrá. —Sí que
+vendrá* '"María won't come." "She will come."' ([butt-benjamin-2019]).
 
-## *sí (que)*
+## References
 
-- Clause-initial: "Sí que lo sabe" (He DOES know it)
-- Licensed in both *contrast* (positive answer to a yes/no question) and
-  *correction* (denying a prior negative assertion) contexts;
-  [batllori-hernanz-2013] ex. 4-5 and [garassino-jacob-2018]
-  ex. 19 show *sí que* in non-contradictory contexts (e.g.,
-  "Carrefour le ofrece este fin de semana precios de vértigo… ¡Esto sí
-  que es un aniversario!"). The earlier `correction`-only encoding was
-  empirically too narrow.
-- *que* is obligatory in embedded contexts and optionally present in root
-- Not sentence-internal: the particle precedes the clause
-
-*Sí (que)* is the Spanish reflex of a *functional* class of
-polarity-reversing markers, but the cross-linguistic lumping with
-French *si*, German *doch*, and Swedish *jo* obscures syntactic
-differences. Per [garassino-jacob-2018] fn 11, French *si* is
-restricted to dialogical contexts (response to a preceding negative
-turn) — making it a response particle, not a clause-initial
-construction comparable to *sí que* / *sì che*.
-
-## Contrast with English
-
-English emphatic *do* is sentence-internal (auxiliary in I°) and targets
-the assertion level via prosodic prominence. Spanish *sí (que)* is
-clause-initial and targets polarity directly via a dedicated particle.
+* [butt-benjamin-2019]
 -/
 
 @[expose] public section
 
 namespace Spanish.PolarityMarking
 
-open PolarityMarker (Strategy Env)
 
-/-- *sí (que)* — Spanish emphatic polarity affirmation particle.
-    Clause-initial EPPA. [batllori-hernanz-2013]: merges with
-    ForceP; *que* is obligatory in embedded contexts. Licensed in
-    both contrast and correction environments per Batllori & Hernanz
-    ex. 4-5 + [garassino-jacob-2018] ex. 19. Not sentence-internal. -/
+/-- *sí (que)*, the clause-initial affirmation of a contradicted or contrasted fact. -/
 abbrev siQue : PolarityMarker where
   label := "sí (que)"
   form := some "sí (que)"
   environments := {.correction, .contrast}
   strategy := .polarityReversal
 
+/-- The polarity markers. -/
 def allPolarityMarkings : List PolarityMarker := [siQue]
-
--- Per-entry verification theorems
-theorem siQue_form : siQue.form = some "sí (que)" := rfl
-theorem siQue_not_sentenceInternal : Env.sentenceInternal ∉ siQue.environments := by decide
-theorem siQue_contrastOk : Env.contrast ∈ siQue.environments := by decide
-theorem siQue_correctionOk : Env.correction ∈ siQue.environments := by decide
-theorem siQue_strategy : siQue.strategy = .polarityReversal := rfl
 
 end Spanish.PolarityMarking

@@ -3,90 +3,91 @@ module
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
-# Spanish Pronoun Fragment
-[adamson-zompi-2025]
+# Spanish personal pronouns
 
-Personal pronouns (strong forms) for Spanish, including the polite
-pronoun USTED.
-
-## T/V distinction
-
-Spanish has a T/V distinction:
-- Singular: *tú* (familiar T) vs *usted* (formal V, 3sg agreement)
-- Plural: *vosotros* (familiar, Peninsular) vs *ustedes* (formal / general)
-
-## USTED and the PCC
-
-Like Italian LEI, USTED triggers 3sg verbal agreement but is interpretably
-2nd person. [rezac-2011] observes PCC effects with USTED: the
-accusative clitic *la* is grammatical in a 3>3 configuration if its
-referent is 3rd person, but ungrammatical as polite USTED (§6.1, (43)).
-
-USTED's forms are identical to the 3sg feminine series in some cases
-(like LEI), though it also has the dedicated citation form *usted*.
-Unlike Italian LEI, USTED can also be used in *laísta* varieties where
-3rd person clitics for animates are *le* (syncretic with dative).
+The subject pronouns are *yo*, *tú*, *usted*, *él* and *ella* in the singular and *nosotros*,
+*nosotras*, *vosotros*, *vosotras*, *ustedes*, *ellos* and *ellas* in the plural, with *vos* for
+*tú* in some Latin-American countries. *Tú* and *vosotros* address familiars, *usted* and
+*ustedes* others; *vosotros* is used in Spain only, and in Latin America *ustedes* is the plural of
+*tú* as well as of *usted*. Descending from *Vuestra Merced* 'Your Grace', *usted* and *ustedes*
+take third-person verb forms ([butt-benjamin-2019]). *Usted* is third person in its clitics and
+reflexives as well, *yo la respeto (a usted)* 'I respect you', and it shows a person-case effect:
+the accusative *la* of *se la presentaré a los estudiantes* 'I will introduce her to the
+students' cannot refer to the addressee ([adamson-zompi-2025], after [rezac-2011]).
 
 ## References
 
-* [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
-* [M. Rezac, *Phi-Features and the Modular Architecture of Language* (2011)][rezac-2011]
+* [adamson-zompi-2025]
+* [butt-benjamin-2019]
+* [rezac-2011]
 -/
 
 @[expose] public section
 
 namespace Spanish.Pronouns
 
-/-- *yo* — 1sg. -/
-def yo : PersonalPronoun :=
-  { form := "yo", person := some .first, number := some .singular }
+/-- *yo* 'I'. -/
+def yo : PersonalPronoun := { form := "yo", person := some .first, number := some .singular }
 
-/-- *tú* — 2sg familiar (T form). -/
+/-- *tú* 'you', familiar. -/
 def tu : PersonalPronoun :=
   { form := "tú", person := some .second, number := some .singular,
     honorific := some .nonhonorific }
 
-/-- *usted* — polite 2sg (V form, triggers 3sg agreement).
-    Agreement person is 3rd, interpretable person is 2nd. Triggers PCC
-    effects: *la* as USTED.ACC is banned in 3>USTED configurations
-    ([rezac-2011], [adamson-zompi-2025] §6.1).
-    [adamson-zompi-2025] -/
+/-- *vos* 'you', familiar, in some Latin-American countries. -/
+def vos : PersonalPronoun :=
+  { form := "vos", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
+
+/-- *usted* 'you', polite, with third-person agreement. -/
 def usted : PersonalPronoun :=
   { form := "usted", person := some .third, number := some .singular, honorific := some .honorific,
     referential := {.addressee} }
 
-/-- *él* — 3sg masculine. -/
+/-- *él* 'he, it'. -/
 def el : PersonalPronoun :=
   { form := "él", person := some .third, number := some .singular, gender := some .masculine }
 
-/-- *ella* — 3sg feminine. -/
+/-- *ella* 'she, it'. -/
 def ella : PersonalPronoun :=
   { form := "ella", person := some .third, number := some .singular, gender := some .feminine }
 
-/-- *nosotros* — 1pl. -/
+/-- *nosotros* 'we', masculine or mixed. -/
 def nosotros : PersonalPronoun :=
-  { form := "nosotros", person := some .first, number := some .plural }
+  { form := "nosotros", person := some .first, number := some .plural,
+    gender := some .masculine }
 
-/-- *vosotros* — 2pl familiar (Peninsular). -/
+/-- *nosotras* 'we', feminine. -/
+def nosotras : PersonalPronoun :=
+  { form := "nosotras", person := some .first, number := some .plural,
+    gender := some .feminine }
+
+/-- *vosotros* 'you', familiar plural, masculine or mixed, used in Spain. -/
 def vosotros : PersonalPronoun :=
   { form := "vosotros", person := some .second, number := some .plural,
-    honorific := some .nonhonorific }
+    gender := some .masculine, honorific := some .nonhonorific }
 
-/-- *ustedes* — 2pl formal / general (triggers 3pl agreement). -/
+/-- *vosotras* 'you', familiar plural, feminine, used in Spain. -/
+def vosotras : PersonalPronoun :=
+  { form := "vosotras", person := some .second, number := some .plural,
+    gender := some .feminine, honorific := some .nonhonorific }
+
+/-- *ustedes* 'you', plural with third-person agreement: polite in Spain, the only plural of
+address in Latin America. -/
 def ustedes : PersonalPronoun :=
   { form := "ustedes", person := some .third, number := some .plural, honorific := some .honorific,
     referential := {.addresseeOthers} }
 
-/-- *ellos* — 3pl masculine. -/
+/-- *ellos* 'they', masculine or mixed. -/
 def ellos : PersonalPronoun :=
   { form := "ellos", person := some .third, number := some .plural, gender := some .masculine }
 
-/-- *ellas* — 3pl feminine. -/
+/-- *ellas* 'they', feminine. -/
 def ellas : PersonalPronoun :=
   { form := "ellas", person := some .third, number := some .plural, gender := some .feminine }
 
-/-- The strong-pronoun inventory. -/
+/-- The subject pronouns. -/
 def pronouns : Finset PersonalPronoun :=
-  {yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos, ellas}
+  {yo, tu, vos, usted, el, ella, nosotros, nosotras, vosotros, vosotras, ustedes, ellos, ellas}
 
 end Spanish.Pronouns
