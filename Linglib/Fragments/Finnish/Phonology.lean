@@ -62,6 +62,8 @@ with two, and only a short vowel stands between the stop and the ending, so that
   and with [back] filled in it is /ɑ/ or /æ/.
 * `Finnish.sourceValue_back`: a back stem vowel is the source across a neutral one, and a
   stem of neutral vowels has no source.
+* `Finnish.unspecified_round_iff`, `Finnish.hasValue_syllabic_consonants`: `V` is the only
+  vowel without [round], and every consonant is [−syllabic], as vowel copy requires.
 * `Finnish.surface_suffix`: the suffix vowel after back, front and neutral stems, and `V`
   after a vowel and after the suffix vowel.
 * `Finnish.katto`: Karlsson's paradigm of *katto*, gradation in *katon*, *katolla* and
@@ -78,8 +80,9 @@ writes with place diacritics, so membership is stated for the vowels only.
 Consonant gradation belongs to the lexicon, since many words do not undergo it (*auto-ssa*
 'in the car'), so `surface` leaves it out and a stem is given in the grade its ending
 selects, as in Karlsson's segmentations *pöydä-llä* and *käde-ssä*. A search copies one
-feature, so vowel copy is four searches. `V` is the only vowel without [round], so the
-targets of each search are the vowels without it and [round] is copied last.
+feature, so vowel copy is four searches. `V` is the only vowel without [round]
+(`unspecified_round_iff`), so the targets of each search are the vowels without it and [round]
+is copied last.
 
 A rule has one right context, so each alternation is two rules, one for an ending of a
 single consonant and one for an ending that begins with two. The qualitative rules apply
@@ -238,6 +241,15 @@ def copyToV (f : Phonology.Feature) : System Segment :=
   System.mk' (feature := f)
     (IsTarget := fun s ↦ s.IsVowel ∧ s.Unspecified .round)
     (IsTransparent := fun s ↦ ¬ s.IsVowel)
+
+/-- `V` is the only vowel without [round], so the vowels copying targets are `V` alone. -/
+theorem unspecified_round_iff : ∀ x ∈ vowels ∪ {A, O, V}, x.Unspecified .round ↔ x = V := by
+  decide
+
+/-- Every consonant is [−syllabic], so it is off the tier of copying and harmony and matches
+the context `C`. -/
+theorem hasValue_syllabic_consonants : ∀ x ∈ consonants, x.HasValue .syllabic false := by
+  decide
 
 /-- Vowel copy gives `V` the quality of the nearest vowel before it, [round] last. -/
 def vowelCopy (w : List Segment) : List Segment :=

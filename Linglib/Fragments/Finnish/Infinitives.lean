@@ -23,7 +23,7 @@ of the A infinitive depends on how its stem ends. It is -dA after a long vowel o
 as in *saa-da* 'get', and -tA after `s`, as in *juos-ta* 'run'. After `l`, `n` or `r` it
 repeats that consonant, as in *tul-la* 'come', and after a short vowel or a `t` it is -A, as
 in *sano-a* 'say' and *huomat-a* 'notice'. The E infinitive changes the -A to -e, as in
-*sano-e-* and *juos-te-*.
+*sano-e-* and *juos-te-*, and a final -e of the stem to -i, as in *luki-e-ssa* 'while reading'.
 
 ## Main definitions
 
@@ -38,13 +38,13 @@ in *sano-a* 'say' and *huomat-a* 'notice'. The E infinitive changes the -A to -e
 * `Finnish.Infinitive.cases_subset_inventory`: an infinitive takes cases of the noun.
 * `Finnish.Infinitive.toCase_mem_cases_ma_iff`: of the local cases the MA infinitive takes the
   interior series and, of the exterior series, the adessive alone.
+* `Finnish.Infinitive.surface_base_e`: the E infinitive of Karlsson's stems in -e.
 
 ## Implementation notes
 
 The stems *teh-* 'do' and *näh-* 'see' take -dA, which Karlsson lists among the exceptions, and
-the E infinitive of a stem in -e changes it to -i, as in *luki-e-ssa* 'while reading'; neither
-is represented. The partitive of the MINEN infinitive is built on -mis-, as in *mene-mis-tä*,
-and a case ending after it is not derived.
+this is not represented. The partitive of the MINEN infinitive is built on -mis-, as in
+*mene-mis-tä*, and a case ending after it is not derived.
 
 ## References
 
@@ -99,12 +99,28 @@ def aEnding (w : List Segment) : List Segment :=
     else [A]
   | _ => [A]
 
+/-- The stem of the E infinitive: the infinitive stem, whose final -e changes to -i, as in
+*luki-e-* 'read' from *luke-a* (§22.3.1). -/
+def eStem (w : List Segment) : List Segment :=
+  if w.getLast? = some Finnish.e then w.dropLast ++ [i] else w
+
 /-- The stem `w` with the function ending of an infinitive, before a case ending. -/
 def base : Infinitive → List Segment → List Segment
   | .a, w => w ++ aEnding w
-  | .e, w => w ++ (aEnding w).dropLast ++ [Finnish.e]
+  | .e, w => eStem w ++ (aEnding w).dropLast ++ [Finnish.e]
   | .ma, w => w ++ [m, A]
   | .minen, w => w ++ [m, i, n, Finnish.e, n]
+
+/-- The E infinitive of *luke-a* 'read', *itke-ä* 'cry', *tunte-a* 'feel' and *koke-a*
+'experience' is built on *luki-*, *itki-*, *tunti-* and *koki-*, and that of *sano-a* 'say' on
+*sano-*. -/
+theorem surface_base_e :
+    surface (base .e [l, u, k, Finnish.e]) = [l, u, k, i, Finnish.e] ∧
+      surface (base .e [i, t, k, Finnish.e]) = [i, t, k, i, Finnish.e] ∧
+      surface (base .e [t, u, n, t, Finnish.e]) = [t, u, n, t, i, Finnish.e] ∧
+      surface (base .e [k, o, k, Finnish.e]) = [k, o, k, i, Finnish.e] ∧
+      surface (base .e [s, Finnish.a, n, o]) = [s, Finnish.a, n, o, Finnish.e] := by
+  decide
 
 end Infinitive
 
