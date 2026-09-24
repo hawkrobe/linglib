@@ -5,21 +5,23 @@ public import Linglib.Syntax.Case.Basic
 /-!
 # Japanese case markers
 
-Japanese marks the relations of a noun phrase with postpositional particles. Tsujimura divides
-them into two classes: the case particles *ga*, *o*, *no* and *ni*, which carry no meaning of
-their own, the verb fixing their role, and which casual speech drops; and the postpositions
-*de*, *e*, *to*, *kara*, *made* and *yori*, which carry a meaning and cannot be dropped. Two
-markers are polysemous: *ni* marks recipients, goals, times and the location of existence, and
-*de* the location of an action and its instrument, so *ni* and *de* share the locative and *ni*
-and *e* the allative. *Ga* is recorded as the nominative, setting aside the exhaustive-listing
-reading of Kuroda and Kuno; *no* is also a nominalizer, *to* a quotative complementizer and
-*kara* a reason conjunction, uses outside case marking. Sadakane and Koizumi's four *ni*
-lexemes refine the single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
+Japanese marks the relations of a noun phrase with particles after it. Tsujimura separates the
+case particles, the nominative *ga*, the accusative *o*, the dative *ni* and the genitive *no*,
+from the postpositions, the counterparts of English prepositions, which cannot stand on their
+own: *de* 'at', *e* 'to', *to* 'with', *made* 'until' and *kara* 'from'. The nominative and the
+accusative, unlike case endings, may be dropped in casual speech, *Tomodati(-ga) kita?* 'Has my
+friend come?', and replaced by *mo* 'also' and *sae* 'even'. Two markers are polysemous: *ni*
+marks recipients, goals, times and the location of existence, and *de* the location of an
+action and its instrument, so *ni* and *de* share the locative and *ni* and *e* the allative.
+*Ga* is recorded as the nominative, setting aside the exhaustive-listing reading of Kuroda and
+Kuno; *no* is also a nominalizer, *to* a quotative complementizer and *kara* a reason
+conjunction, uses outside case marking. Sadakane and Koizumi's four *ni* lexemes refine the
+single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
 
 ## Main definitions
 
-* `Japanese.Case.Marker`, `Japanese.Case.caseParticles`, `Japanese.Case.postpositions` —
-  the markers and Tsujimura's two classes
+* `Japanese.Case.caseParticles`, `Japanese.Case.postpositions` — Tsujimura's two classes
+* `Japanese.Case.droppable` — the markers casual speech drops
 * `Japanese.Case.inventory` — the cases the markers realize
 
 ## References
@@ -34,60 +36,57 @@ lexemes refine the single *ni* entry, the matter of `Studies/SadakaneKoizumi1995
 
 namespace Japanese.Case
 
-/-- A case-marking particle: its kana form and the cases it realizes, with its romanization. -/
-structure Marker extends _root_.Case.Marker where
-  /-- The romanization. -/
-  romaji : String
-  deriving DecidableEq
-
 /-! ### Case particles -/
 
-/-- *ga*, the nominative. -/
-def ga : Marker := { form := "が", romaji := "ga", cases := {.nom} }
+/-- *ga* が, the nominative. -/
+def ga : Case.Marker := { form := "ga", cases := {.nom} }
 
-/-- *o*, the accusative. -/
-def o : Marker := { form := "を", romaji := "o", cases := {.acc} }
+/-- *o* を, the accusative. -/
+def o : Case.Marker := { form := "o", cases := {.acc} }
 
-/-- *no*, the genitive. -/
-def no_ : Marker := { form := "の", romaji := "no", cases := {.gen} }
+/-- *no* の, the genitive. -/
+def no_ : Case.Marker := { form := "no", cases := {.gen} }
 
-/-- *ni*: the dative of recipients, the allative of goals, the temporal of times and the
+/-- *ni* に: the dative of recipients, the allative of goals, the temporal of times and the
 locative of existence. -/
-def ni : Marker := { form := "に", romaji := "ni", cases := {.dat, .loc, .all, .tem} }
+def ni : Case.Marker := { form := "ni", cases := {.dat, .loc, .all, .tem} }
 
 /-! ### Postpositions -/
 
-/-- *de*: the locative of an action's place and the instrumental. -/
-def de : Marker := { form := "で", romaji := "de", cases := {.loc, .inst} }
+/-- *de* で: the locative of an action's place and the instrumental. -/
+def de : Case.Marker := { form := "de", cases := {.loc, .inst} }
 
-/-- *e*, the allative of motion toward. -/
-def e : Marker := { form := "へ", romaji := "e", cases := {.all} }
+/-- *e* へ, the allative of motion toward. -/
+def e : Case.Marker := { form := "e", cases := {.all} }
 
-/-- *to*, the comitative. -/
-def to_ : Marker := { form := "と", romaji := "to", cases := {.com} }
+/-- *to* と, the comitative. -/
+def to_ : Case.Marker := { form := "to", cases := {.com} }
 
-/-- *kara*, the ablative of spatial and temporal sources. -/
-def kara : Marker := { form := "から", romaji := "kara", cases := {.abl} }
+/-- *kara* から, the ablative of spatial and temporal sources. -/
+def kara : Case.Marker := { form := "kara", cases := {.abl} }
 
-/-- *made*, the terminative of spatial and temporal endpoints. -/
-def made : Marker := { form := "まで", romaji := "made", cases := {.ter} }
+/-- *made* まで, the terminative of spatial and temporal endpoints. -/
+def made : Case.Marker := { form := "made", cases := {.ter} }
 
-/-- *yori*, the literary ablative, in the colloquial language the standard marker of the
-comparative (`Japanese.Comparison.yori`). -/
-def yori : Marker := { form := "より", romaji := "yori", cases := {.abl} }
+/-- *yori* より 'than', the standard marker of the comparative, recorded as an ablative with the
+separative comparative (`Japanese.Comparison.yori`). -/
+def yori : Case.Marker := { form := "yori", cases := {.abl} }
 
 /-! ### Tsujimura's classes and the inventory -/
 
-/-- The case particles, dropped in casual speech. -/
-def caseParticles : Finset Marker := {ga, o, no_, ni}
+/-- The case particles. -/
+def caseParticles : Finset Case.Marker := {ga, o, no_, ni}
 
-/-- The postpositions, which carry a meaning and are never dropped. -/
-def postpositions : Finset Marker := {de, e, to_, kara, made, yori}
+/-- The postpositions. -/
+def postpositions : Finset Case.Marker := {de, e, to_, kara, made, yori}
+
+/-- The markers casual speech drops, the nominative and the accusative. -/
+def droppable : Finset Case.Marker := {ga, o}
 
 /-- All the case markers. -/
-def caseMarkers : Finset Marker := caseParticles ∪ postpositions
+def caseMarkers : Finset Case.Marker := caseParticles ∪ postpositions
 
 /-- The cases the markers realize. -/
-def inventory : Finset Case := _root_.Case.Marker.inventory (caseMarkers.image (·.toMarker))
+def inventory : Finset Case := Case.Marker.inventory caseMarkers
 
 end Japanese.Case

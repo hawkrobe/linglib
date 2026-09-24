@@ -78,7 +78,7 @@ def determiners : Language → Determiner.Inventory
 Romance languages and English have none. -/
 def HasClassifiers : Language → Prop
   | mandarin => Mandarin.Classifiers.classifiers.Nonempty
-  | japanese => Nonempty Japanese.Classifier
+  | japanese => Japanese.Classifiers.classifiers.Nonempty
   | french | italian | english => False
 
 end Language
@@ -88,8 +88,10 @@ open Language
 /-- A [+arg, −pred] language has a generalized classifier system, and a classifier language must
 be [+arg, −pred]: the classifier languages of the sample are exactly the [+arg, −pred] ones. -/
 theorem hasClassifiers_iff : ∀ l : Language, l.HasClassifiers ↔ l.nominalMapping = .argOnly
-  | .mandarin => iff_of_true ⟨Mandarin.Classifiers.ge, by simp [Mandarin.Classifiers.classifiers]⟩ rfl
-  | .japanese => iff_of_true ⟨.tsu⟩ rfl
+  | .mandarin =>
+    iff_of_true ⟨Mandarin.Classifiers.ge, by simp [Mandarin.Classifiers.classifiers]⟩ rfl
+  | .japanese =>
+    iff_of_true ⟨Japanese.Classifiers.tsu, by simp [Japanese.Classifiers.classifiers]⟩ rfl
   | .french | .italian | .english => iff_of_false id (by decide)
 
 /-! ### The classifier-for-noun commitment

@@ -4,25 +4,23 @@ public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 public import Linglib.Morphology.Morphotactics.Template
 
 /-!
-# Japanese Verb Suffix Template
-[kaiser-yamamoto-2013]
+# Japanese verb suffix template
 
-The Japanese verb suffix template over Japanese's own slot inventory
-(`VerbSlot`), following [kaiser-yamamoto-2013] and the UD segmentation:
-seven slots, stem-outward. The comparison into [bybee-1985]'s inventory
-is the hom `VerbSlot.toMorphCategory` — the analytical commitments
-(politeness as subject agreement, desiderative as mood) live in the hom,
-not in the slot data; `verbAffixTemplate` is the derived image.
+The Japanese verb suffixes in their order from the stem outward, over Japanese's own slots
+(`VerbSlot`), following [kaiser-yamamoto-2013] and the UD segmentation: a derivational *-su*
+(*suru*), the causative *-(s)ase*, the passive and potential *-(r)are*, the desiderative
+*-ta(i)*, the polite *-mas*, the negative *-na* and the tense endings, non-past *-(r)u* and past
+*-ta*. The hortative *-(y)oo* stands where the tense endings do but is a mood ending, not a tense
+([narrog-2010b]), and is not entered. The comparison into [bybee-1985]'s inventory is the hom
+`VerbSlot.toMorphCategory`; its analytical commitments, politeness as subject agreement and the
+desiderative as mood, live in the hom rather than the slots, and `verbAffixTemplate` is the
+derived image.
 
-| Slot | VerbSlot | Morpheme |
-|------|----------|----------|
-| 1 | derivation | -su (suru) |
-| 2 | valence | -(s)ase (causative) |
-| 3 | voice | -are, -rare (passive/potential) |
-| 4 | desiderative | -ta |
-| 5 | politeness | -mas |
-| 6 | negation | -na |
-| 7 | tense | -ta (past), -yoo (future) |
+## References
+
+* [kaiser-yamamoto-2013]
+* [narrog-2010b]
+* [bybee-1985]
 -/
 
 @[expose] public section
@@ -31,16 +29,22 @@ namespace Japanese
 
 open Morphology
 
-/-- Japanese verb suffix slots, language-owned ([kaiser-yamamoto-2013],
-UD segmentation). -/
+/-- The Japanese verb suffix slots. -/
 inductive VerbSlot where
-  | derivation   -- -su (suru)
-  | valence      -- -(s)ase (causative)
-  | voice        -- -are, -rare (passive/potential)
-  | desiderative -- -ta
-  | politeness   -- -mas
-  | negation     -- -na
-  | tense        -- -ta (past), -yoo (future)
+  /-- *-su* (*suru*). -/
+  | derivation
+  /-- The causative *-(s)ase*. -/
+  | valence
+  /-- The passive and potential *-(r)are*. -/
+  | voice
+  /-- The desiderative *-ta(i)*. -/
+  | desiderative
+  /-- The polite *-mas*. -/
+  | politeness
+  /-- The negative *-na*. -/
+  | negation
+  /-- The non-past *-(r)u* and the past *-ta*. -/
+  | tense
   deriving DecidableEq, Repr
 
 /-- The verb suffix template over Japanese's own slots, stem-outward.

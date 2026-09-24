@@ -166,7 +166,8 @@ theorem predicateOf_up (atomic : Sortal W E) (n : W → ℕ) :
 end General
 
 /-- The Japanese lexicon has classifiers, as the fragment records. -/
-theorem japanese_has_classifiers : Japanese.Classifier.all ≠ [] := by decide
+theorem japanese_has_classifiers : Japanese.Classifiers.classifiers.Nonempty :=
+  ⟨Japanese.Classifiers.tsu, by simp [Japanese.Classifiers.classifiers]⟩
 
 /-- Sudo's strategy assignment for Japanese: the classifier blocks the silent ∪-operator on
 numerals. -/

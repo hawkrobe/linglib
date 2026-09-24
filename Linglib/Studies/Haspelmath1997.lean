@@ -11,6 +11,7 @@ public import Linglib.Fragments.English.Indefinites
 public import Linglib.Fragments.Georgian.Indefinites
 public import Linglib.Fragments.Hungarian.Indefinites
 public import Linglib.Fragments.German.Indefinites
+public import Linglib.Fragments.Japanese.Indefinites
 public import Linglib.Fragments.Kannada.Indefinites
 public import Linglib.Fragments.Latin.Indefinites
 public import Linglib.Fragments.Latvian.Indefinites
@@ -275,9 +276,9 @@ def latvian : List Series :=
 
 /-- The Japanese series (A.38) are *-ka* 12345, *-mo* 678 and *-demo* 9. -/
 def japanese : List Series :=
-  [ series "-ka" "dare-ka" .interrogative [1, 2, 3, 4, 5],
-    series "-mo" "dare-mo" .interrogative [6, 7, 8],
-    series "-demo" "dare-demo" .interrogative [9] ]
+  [ ⟨"-ka", Japanese.Indefinites.dareKa, region [1, 2, 3, 4, 5]⟩,
+    ⟨"-mo", Japanese.Indefinites.dareMo, region [6, 7, 8]⟩,
+    ⟨"-demo", Japanese.Indefinites.dareDemo, region [9]⟩ ]
 
 /-- The Mandarin Chinese series (A.36) are generic nouns 12, the bare interrogatives in all
 non-specific non-emphatic functions 34567 (with no data for indirect negation), *dōu*/*yě* 7,

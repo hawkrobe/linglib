@@ -5,14 +5,16 @@ public import Linglib.Syntax.Comparative
 /-!
 # Japanese comparison
 
-Japanese compares with the standard marked by the postposition *yori* 'from, than', the
-ablative of the literary language, and the adjective in its bare form: *Tarō wa Hanako yori se
-ga takai* 'Taro is taller than Hanako'. It is a separative comparative in Stassen's typology,
-its marker taken from spatial case, and the superlative is the comparative with a universal
-standard, *dare yori mo* 'than anyone'.
+Japanese marks the standard of comparison with the postposition *yori* 'than' and leaves the
+predicate without degree marking: *Taroo-wa Hanako-yori zutto haya-ku ki-ta* 'Taro came a lot
+earlier than Hanako'. The standard's case is fixed by the construction, the ablative the case
+fragment records for *yori* (`Japanese.Case.yori`), which `Studies/Stassen1985.lean` reads as
+Stassen's separative type. The superlative is formed with the adverb *itiban*
+'most', *itiban haya-ku* 'the fastest', which none of `SuperlativeStrategy`'s cases fits.
 
 ## References
 
+* [tsujimura-2014]
 * [stassen-1985]
 -/
 
@@ -22,18 +24,12 @@ namespace Japanese.Comparison
 
 open Comparative
 
-/-- The *yori*-comparative: separative (ablative) postposition-marked
-    standard, no degree morphology. -/
+/-- The *yori*-comparative: the standard marked by the postposition *yori* in the ablative, and no
+degree morphology. -/
 def yori : Comparative :=
   { standardMarker := some "yori"
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial
   , standardCase := some .abl }
-
-/-- No overt degree marking. -/
-def degreeWord : DegreeWordType := .noDegreeMarking
-
-/-- Superlative as comparative with universal standard (*dare yori mo*). -/
-def superlative : SuperlativeStrategy := .comparativeUniversal
 
 end Japanese.Comparison

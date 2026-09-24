@@ -1,18 +1,22 @@
 module
 
 public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.Japanese.Indefinites
 
 /-!
-# Japanese Polarity-Sensitive Items
-[haspelmath-1997] [kratzer-shimoyama-2002] [shimoyama-2011] [watanabe-2004]
+# Japanese polarity items
 
-Japanese indefinite pronoun polarity items, typed by the categories from
-`Polarity`.
+The polarity items among the Japanese indefinites, typed by `PolarityItem`: *dare-mo* with
+clausemate negation, a negative-concord item, and the free-choice *dare-demo*
+([kratzer-shimoyama-2002]). Their forms are those of the series of `Japanese.Indefinites`.
 
-Japanese builds polarity items from wh-indeterminates + particles
-([kratzer-shimoyama-2002]):
-- **dare-mo** (with clausemate negation): wh + mo → 'nobody'
-- **dare-demo**: wh + demo → FCI (anyone/whoever)
+## References
+
+* [haspelmath-1997]
+* [kratzer-shimoyama-2002]
+* [shimoyama-2006]
+* [shimoyama-2011]
+* [watanabe-2004]
 -/
 
 @[expose] public section
@@ -37,7 +41,7 @@ open PolarityItem
     apart by the scope diagnostics of [shimoyama-2011]). The affirmative
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
 def dareMo : PolarityItem :=
-  { form := "dare-mo (誰も, neg)"
+  { form := Indefinites.dareMo.form
   , licensor := some .antiMorphic
   , baseForce := .universal
   , licensingContexts := [.negation]
@@ -51,14 +55,14 @@ def dareMo : PolarityItem :=
     wh + demo (built on the additive/'even' particle *mo*); free choice and
     concessive-conditional uses ([kratzer-shimoyama-2002]). -/
 def dareDemo : PolarityItem :=
-  { form := "dare-demo (誰でも)"
+  { form := Indefinites.dareDemo.form
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , morphology := .indefPlusEven
   , alternativeType := .domain }
 
-/-! ### Verification -/
+/-! ### Licensing -/
 
 /-- The licensing keystone characterizes *dare-mo* exactly: as an n-word it
     requires an anti-morphic licensor, and clausal negation is the only such

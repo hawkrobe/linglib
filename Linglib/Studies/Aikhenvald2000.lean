@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Mandarin.Nouns
-public import Linglib.Fragments.Japanese.Classifiers
+public import Linglib.Studies.Downing1996
 
 /-!
 # A typology of noun categorization devices
@@ -18,21 +18,21 @@ them, with the kind of each device derived from its locus and the constituent it
 rather than stored; the book's summary claims are checked on that sample, and none is a
 universal.
 
-Agreement by a constituent outside the noun is the definitional property of a noun class
-system, a closed obligatory grammatical system (`nounClass_agreement_obligatory`), and noun
-classes are never expressed by free lexemes (`nounClass_bound`), whereas free-form numeral
-classifiers are non-agreeing (`free_numeralClassifier_no_agreement`). Every kind other than
-noun class assigns classifiers on purely semantic grounds (`classifier_assignment_semantic`).
-Both numeral-classifier systems in the sample have a general classifier, read off the fragments
-rather than coded: every Mandarin noun that takes a classifier can take *gè*, and Japanese
-*-tsu* encodes no parameter (`numeralClassifier_general`). Animacy, humanness or sex is basic
-to noun classes and numeral classifiers alike, shape is typical of numeral classifiers, and
-colour is never a basis for categorization (`animacy_basic`, `numeralClassifier_shape`,
-`colour_never`); the absence of compulsory number in numeral-classifier languages, Greenberg's
-association that the book records together with its Dravidian, Nivkh, Algonquian, Tucano,
-Arawak and Ejagham exceptions, holds in the sample (`numeralClassifier_no_obligatory_number`).
-Western Armenian, whose numerals combine with bare nouns, is not classified as a classifier
-language by the book and is left to `BaleKhanjian2014`.
+Agreement by a constituent outside the noun is the definitional property of a noun class system, a
+closed obligatory grammatical system (`nounClass_agreement_obligatory`), and noun classes are never
+expressed by free lexemes (`nounClass_bound`), whereas free-form numeral classifiers are
+non-agreeing (`free_numeralClassifier_no_agreement`). Every kind other than noun class assigns
+classifiers on purely semantic grounds (`classifier_assignment_semantic`). Both numeral-classifier
+systems in the sample have a general classifier, read off the earlier descriptions rather than
+coded: every Mandarin noun that takes a classifier can take *gè*, and the category of Japanese
+*-tsu* has no parameter in [downing-1996]'s inventory (`numeralClassifier_general`). Animacy,
+humanness or sex is basic to noun classes and numeral classifiers alike, shape is typical of numeral
+classifiers, and colour is never a basis for categorization (`animacy_basic`,
+`numeralClassifier_shape`, `colour_never`); the absence of compulsory number in numeral-classifier
+languages, Greenberg's association that the book records together with its Dravidian, Nivkh,
+Algonquian, Tucano, Arawak and Ejagham exceptions, holds in the sample
+(`numeralClassifier_no_obligatory_number`). Western Armenian, whose numerals combine with bare
+nouns, is not classified as a classifier language by the book and is left to `BaleKhanjian2014`.
 
 ## References
 
@@ -98,24 +98,25 @@ def Agreement : Language → Prop
 def Obligatory (_ : Language) : Prop := True
 
 /-- (F): the system has a functionally unmarked member or a general classifier. For the
-numeral classifiers it is read off the fragments: a Mandarin classifier every counted noun can
-take, and a Japanese classifier that encodes no parameter. The masculine gender and a default
-class are the unmarked members of the other systems. -/
+numeral classifiers it is read off the earlier descriptions: a Mandarin classifier every counted
+noun can take, and a classifier of Downing's inventory whose category has no parameter. The
+masculine gender and a default class are the unmarked members of the other systems. -/
 def HasUnmarkedMember : Language → Prop
   | mandarin => ∃ c ∈ Mandarin.Classifiers.classifiers,
       ∀ n ∈ Mandarin.Nouns.nouns, n.classifiers.Nonempty → n.Takes c
-  | japanese => ∃ c, Japanese.Classifier.IsDefault c
+  | japanese => ∃ r : Downing1996.Row, r.params = []
   | french | italian | xhosa | shona | swahili => True
 
 /-- (I): the preferred semantic parameters. Sex and animacy for the Romance genders, humanness
 and animacy for the Bantu classes; for Mandarin, the animacy of *zhī* and the shape by which
 *tiáo* extended from 'small branch' to long things in general, shape being the preferred
-parameter of numeral classifiers; for Japanese, the parameters its classifiers encode. -/
+parameter of numeral classifiers; for Japanese, the parameters of the categories of Downing's
+inventory. -/
 def semantics : Language → Finset Parameter
   | french | italian => {.sex, .animacy}
   | xhosa | shona | swahili => {.humanness, .animacy}
   | mandarin => {.animacy, .shape}
-  | japanese => Japanese.Classifier.allEncodedParams.toFinset
+  | japanese => (Finset.univ : Finset Downing1996.Row).biUnion (·.params.toFinset)
 
 /-- The language marks number obligatorily. -/
 def ObligatoryNumber : Language → Prop

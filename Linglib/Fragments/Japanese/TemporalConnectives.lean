@@ -22,10 +22,10 @@ namespace Japanese.TemporalConnectives
 
 open Tense
 
-/-- *mae* (前) 'before', with a non-past complement. -/
-def mae : Connective := { form := "前", relation := .before }
+/-- *mae* 前 'before', with a non-past complement. -/
+def mae : Connective := { form := "mae", relation := .before }
 
-/-- *ato* (後) 'after', with a past complement. -/
-def ato : Connective := { form := "後", relation := .after }
+/-- *ato* 後 'after', with a past complement. -/
+def ato : Connective := { form := "ato", relation := .after }
 
 end Japanese.TemporalConnectives
