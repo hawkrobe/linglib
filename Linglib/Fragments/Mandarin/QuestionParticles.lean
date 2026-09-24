@@ -32,16 +32,20 @@ evidential felicity conditions live with their analysis.
 
 namespace Mandarin.QuestionParticles
 
+/-- The distribution the three items share: optional in a matrix polar question, excluded from
+matrix declaratives and constituent questions; no embedded use is recorded. -/
+def polarOnly : Particle.ClauseType → Clause.EmbeddingContext → Option ParticleStatus
+  | .declarative, .matrix => some .excluded
+  | .polar, .matrix => some .optional
+  | .constituent, .matrix => some .excluded
+  | _, _ => none
+
 /-- *ma* 吗 is the neutral sentence-final polar question particle. -/
 def ma : Particle where
   form := "ma"
   script := some "吗"
   position := some .clauseFinal
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
-    | _, _ => none
+  distribution := polarOnly
 
 /-- *ba* 吧 is the confirmation-seeking question particle, distinct from
 the homophonous suggestion-softening *ba* of imperatives. -/
@@ -49,11 +53,7 @@ def ba : Particle where
   form := "ba"
   script := some "吧"
   position := some .clauseFinal
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
-    | _, _ => none
+  distribution := polarOnly
 
 /-- *nándào* 难道 is a clause-initial evidential adverb forming surprise
 polar questions. -/
@@ -61,11 +61,7 @@ def nandao : Particle where
   form := "nándào"
   script := some "难道"
   position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
-    | _, _ => none
+  distribution := polarOnly
 
 /-- All Mandarin question particles indexed in this file. -/
 def allQuestionParticles : List Particle := [ma, ba, nandao]

@@ -2,18 +2,15 @@ module
 
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Semantics.Plurality.MassCount
-public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Italian nouns
 
 The Italian noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine
-genders, with the mass/count feature and its plural; names are the root `ProperName`. Italian is
-[−arg, +pred] ([chierchia-1998]): nouns are predicates and need a determiner
-(`Italian.Determiners.inventory`) to be arguments, so no bare nominal is one; the definite
-plural denotes a kind and the bare plural, where licensed, a property
-(`Studies/Guerrini2026.lean`). The plurals in *-a* that change gender are
-`Italian.NumberGender`.
+genders, with the mass/count feature and its plural; names are the root `ProperName`. Italian nouns
+need a determiner (`Italian.Determiners.inventory`) to be arguments ([chierchia-1998]); the definite
+plural denotes a kind and the bare plural, where licensed, a property (`Studies/Guerrini2026.lean`).
+The plurals in *-a* that change gender are `Italian.NumberGender`.
 
 ## References
 
@@ -24,7 +21,6 @@ plural denotes a kind and the bare plural, where licensed, a property
 
 namespace Italian.Nouns
 
-open Genericity
 
 /-- An Italian noun: the root gendered entry with the mass/count feature and its plural. -/
 structure Noun extends GenderedNoun Gender where
@@ -70,11 +66,5 @@ def name (form : String) (gender : Gender) : ProperName :=
 
 def paolo : ProperName := name "Paolo" .masculine
 def maria : ProperName := name "Maria" .feminine
-
-/-! ### The Nominal Mapping Parameter -/
-
-/-- Italian is [−arg, +pred]: nouns are predicates and need D to be arguments
-([chierchia-1998]); its articles are `Italian.Determiners.inventory`. -/
-def nominalMapping : NominalMapping := .predOnly
 
 end Italian.Nouns

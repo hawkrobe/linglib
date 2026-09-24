@@ -12,8 +12,7 @@ flat ones, *-satsu* for bound volumes, and the general *-tsu*, which encodes not
 questionnaire gives the inventory: the twenty-seven classifiers every respondent used and six
 more that a majority used, to which the textbook counter of cupfuls *-hai* and Sudo's
 non-atomic *-kumi* 'pair' and *-daasu* 'dozen' are added, though Downing's definition sets
-groupings, measures and containers aside. The typological parameters of Aikhenvald are read off
-the inventory. Allomorphy (*ippon*, *sanbon*, *roppon*) and the native and Sino-Japanese
+groupings, measures and containers aside. Allomorphy (*ippon*, *sanbon*, *roppon*) and the native and Sino-Japanese
 numeral series are not recorded.
 
 ## Main definitions
@@ -26,6 +25,14 @@ numeral series are not recorded.
 ## Main results
 
 * `Japanese.Classifier.isDefault_iff` — *-tsu* is the one general classifier
+
+## TODO
+
+Aikhenvald, after Zubin and Shimojo, counts two residue classifiers in Japanese, *-tsu* and
+*-ko*, the second with a meaning of its own, so that a general classifier is not one that
+encodes nothing; `IsDefault` singles out *-tsu*. The inventory is a per-language enum rather than
+`Classifier` entries, and the semantic parameters of `encodes` are a coding in Aikhenvald's
+vocabulary that belongs to the studies that make it.
 
 ## References
 
@@ -192,36 +199,5 @@ def defaultClassifier? : Option Classifier := all.find? fun c ↦ decide (IsDefa
 def allEncodedParams : List Classifier.Parameter := (all.flatMap encodes).eraseDups
 
 end Classifier
-
-/-! ### Aikhenvald's parameters -/
-
-/-- Classifiers occur in the numeral phrase and characterize the head noun. -/
-def classifierLocus : Classifier.Scope := .numeralNP
-
-def classifierConstituent : Classifier.Constituent := .headNoun
-
-/-- The kind of device, read off its locus and the constituent it characterizes. -/
-abbrev classifierKind : Option Classifier.Kind :=
-  Classifier.kind classifierLocus classifierConstituent
-
-/-- Every environment the device operates in. -/
-def classifierScopes : List Classifier.Scope := [.numeralNP]
-
-/-- Classifier choice is semantic. -/
-def classifierAssignment : Classifier.Assignment := .semantic
-
-/-- Suffixes on numerals. -/
-def classifierRealizations : List Classifier.Realization := [.suffix]
-
-def classifierAgreement : Bool := false
-
-def classifierObligatory : Bool := true
-
-/-- Whether the inventory has a general classifier. -/
-def classifierDefault : Bool := Classifier.defaultClassifier?.isSome
-
-def classifierSemantics : List Classifier.Parameter := Classifier.allEncodedParams
-
-def obligatoryNumber : Bool := false
 
 end Japanese

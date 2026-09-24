@@ -6,16 +6,17 @@ public import Linglib.Syntax.Category.Verb.Basic
 # Mandarin verbs
 
 The Mandarin clause-embedding predicates the studies of Qing and Uegaki, of Glass, of Wang and
-of Liu and Yip consume: the preferential attitudes *qidai* 'look forward to', *danxin* 'worry',
-*xiwang* 'hope' and *haipa* 'fear', the doxastic *yiwei* 'think, wrongly' and *renwei*
-'think', the factives *zhidao* 'know' and *houhui* 'regret', the inchoative *kaishi* 'start',
-and the control and causative predicates *xiang* 'want', *rang* 'let', *xiangxin*
-'believe', *quan* 'urge', *bi* 'force', *dasuan* 'plan' and *shefa* 'try'. Mandarin is
-isolating, so a verb carries no inflectional fields beyond the root entry.
+of Liu and Yip consume: the preferential attitudes *qīdài* 'look forward to', *dānxīn* 'worry',
+*xīwàng* 'hope' and *hàipà* 'fear', the doxastic *yǐwéi* 'think, wrongly' and *rènwéi*
+'think', the factives *zhīdào* 'know' and *hòuhuǐ* 'regret', the inchoative *kāishǐ* 'start',
+and the control and causative predicates *xiǎng* 'want', *ràng* 'let', *xiāngxìn*
+'believe', *quàn* 'urge', *bī* 'force', *dǎsuàn* 'plan' and *shèfǎ* 'try'. Mandarin is
+isolating, so a verb carries no inflectional fields; an entry adds its characters to the root
+entry, whose form is the pinyin.
 
 ## Main definitions
 
-* `Mandarin.Verb`: a Mandarin verb, the root `Verb` with no inflectional fields.
+* `Mandarin.Verb`: a Mandarin verb, the root `Verb` with its characters.
 * `Mandarin.verbs`: the inventory of the entries.
 
 ## References
@@ -32,14 +33,17 @@ namespace Mandarin
 
 open ArgumentStructure
 
-/-- A Mandarin verb is the cross-linguistic core with no inflectional fields, Mandarin being
-isolating. -/
+/-- A Mandarin verb: the cross-linguistic core with the pinyin as citation form, plus its
+characters. Mandarin being isolating, the verb has no inflectional fields. -/
 structure Verb extends _root_.Verb where
+  /-- The characters. -/
+  hanzi : String
   deriving BEq
 
 /-- 期待 *qīdài* 'look forward to' is a positive preferential attitude that takes questions. -/
 def qidai : Verb := {
-  form := "qidai"
+  form := "qīdài"
+  hanzi := "期待"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -47,7 +51,8 @@ def qidai : Verb := {
 
 /-- 担心 *dānxīn* 'worry' is a negative preferential attitude. -/
 def danxin : Verb := {
-  form := "danxin"
+  form := "dānxīn"
+  hanzi := "担心"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -55,7 +60,8 @@ def danxin : Verb := {
 
 /-- 希望 *xīwàng* 'hope' is a positive preferential attitude that takes no questions. -/
 def xiwang : Verb := {
-  form := "xiwang"
+  form := "xīwàng"
+  hanzi := "希望"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -63,7 +69,8 @@ def xiwang : Verb := {
 
 /-- 害怕 *hàipà* 'fear' is a negative preferential attitude that takes questions. -/
 def haipa : Verb := {
-  form := "haipa"
+  form := "hàipà"
+  hanzi := "害怕"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -71,7 +78,8 @@ def haipa : Verb := {
 
 /-- 以为 *yǐwéi* 'be under the impression that' is a nonveridical doxastic attitude. -/
 def yiwei : Verb := {
-  form := "yiwei"
+  form := "yǐwéi"
+  hanzi := "以为"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -79,7 +87,8 @@ def yiwei : Verb := {
 
 /-- 认为 *rènwéi* 'think, hold the view that' is the neutral nonveridical doxastic verb. -/
 def renwei : Verb := {
-  form := "renwei"
+  form := "rènwéi"
+  hanzi := "认为"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -88,7 +97,8 @@ def renwei : Verb := {
 /-- 知道 *zhīdào* 'know', presupposing its complement and asserting belief in it; *rènwéi* is
 its non-factive counterpart. -/
 def zhidao : Verb := {
-  form := "zhidao"
+  form := "zhīdào"
+  hanzi := "知道"
   frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
   passivizable := false
   opaqueContext := true
@@ -98,7 +108,8 @@ def zhidao : Verb := {
 
 /-- 后悔 *hòuhuǐ* 'regret', the emotive factive. -/
 def houhui : Verb := {
-  form := "houhui"
+  form := "hòuhuǐ"
+  hanzi := "后悔"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -108,7 +119,8 @@ def houhui : Verb := {
 
 /-- 开始 *kāishǐ* 'start', presupposing that the action or state was not under way before. -/
 def kaishi : Verb := {
-  form := "kaishi"
+  form := "kāishǐ"
+  hanzi := "开始"
   frames := [ArgumentFrame.infinitival]
   passivizable := false
   phasal := some .inception }
@@ -121,7 +133,8 @@ dynamicity of the complements each predicate selects are the analysis of Liu and
 
 /-- 想 *xiǎng* 'want' is a desiderative verb with a nonfinite complement. -/
 def xiang : Verb := {
-  form := "xiang"
+  form := "xiǎng"
+  hanzi := "想"
   frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := true
@@ -129,14 +142,16 @@ def xiang : Verb := {
 
 /-- 让 *ràng* 'let' is a manipulative verb with a nonfinite complement. -/
 def rang : Verb := {
-  form := "rang"
+  form := "ràng"
+  hanzi := "让"
   frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := false }
 
 /-- 相信 *xiāngxìn* 'believe' is a propositional attitude verb with a finite complement. -/
 def xiangxin : Verb := {
-  form := "xiangxin"
+  form := "xiāngxìn"
+  hanzi := "相信"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -144,21 +159,24 @@ def xiangxin : Verb := {
 
 /-- 劝 *quàn* 'urge' is a manipulative verb with a nonfinite complement. -/
 def quan : Verb := {
-  form := "quan"
+  form := "quàn"
+  hanzi := "劝"
   frames := [ArgumentFrame.infinitival]
   passivizable := true
   opaqueContext := false }
 
 /-- 逼 *bī* 'force' is a manipulative verb with a nonfinite complement. -/
 def bi : Verb := {
-  form := "bi"
+  form := "bī"
+  hanzi := "逼"
   frames := [ArgumentFrame.infinitival]
   passivizable := true
   opaqueContext := false }
 
 /-- 打算 *dǎsuàn* 'plan' is a desiderative verb with a nonfinite complement. -/
 def dasuan : Verb := {
-  form := "dasuan"
+  form := "dǎsuàn"
+  hanzi := "打算"
   frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := true
@@ -166,7 +184,8 @@ def dasuan : Verb := {
 
 /-- 设法 *shèfǎ* 'try' is an achievement verb with a nonfinite complement. -/
 def shefa : Verb := {
-  form := "shefa"
+  form := "shèfǎ"
+  hanzi := "设法"
   frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := false }

@@ -1,242 +1,138 @@
 module
 
 public import Linglib.Syntax.Category.Classifier.Basic
+public import Mathlib.Data.Finset.Insert
 
 /-!
-# Mandarin Chinese Classifier Lexicon
-[li-thompson-1981] §4.2.1; [aikhenvald-2000] (typological schema)
+# Mandarin classifiers
 
-Typed classifier entries for Mandarin Chinese, replacing unstructured
-string representations with semantically annotated `Classifier` values.
+A Mandarin noun is counted, and pointed out with a demonstrative, through a classifier: *sān ge
+rén* 'three people', *zhèi zhǎn dēng* 'this lamp', *nèi liù běn shū* 'those six books'. The
+quantifiers *zhěng* 'whole', *jǐ* 'how many, a few', *mǒu yī* 'a certain' and *měi* 'every' take
+one too. The language has several dozen classifiers, and the noun chooses: each noun has its own
+classifier, which is learned with it. There is some regularity in the meanings of the nouns a
+classifier counts, as *tiáo* counts snakes, ropes, roads, rivers, tails and fish, but *tiáo*
+also counts most four-legged mammals and the news and the law, while the elongated brush-pen
+and arrow take *zhī* 枝. Some nouns take two classifiers according to their meaning: *shū*
+'book' is counted with *běn* as a thing and with *bù* as a work. *Gè* is the general classifier,
+applicable to every individual noun beside its own classifier, and many speakers now use it in
+place of the specific ones. A noun that itself denotes a measure, such as *tiān* 'day', takes
+no classifier.
 
-Mandarin has a large numeral classifier system (~100+ classifiers in common
-use). This fragment covers the classifiers attested in the noun lexicon.
-[li-thompson-1981] p. 105 points to Chao (1968) §7.9 as the canonical
-inventory survey.
+Measure words stand in the same position: standard measures such as *bàng* 'pound', aggregates such
+as *qún* 'flock', and containers such as *píng* 'bottle'. Container measures are nouns used as
+measures, an open class, and unlike a classifier, which takes no *de* before its noun, a container
+measure can always take *de*. The container measures below are examples.
 
-## Classifier selection
+## Main definitions
 
-Classifier selection in Mandarin is semantically motivated but with
-substantial lexical residue: per [li-thompson-1981] p. 112, "which
-nouns occur with which classifier must be memorized, though there is a
-slight amount of regularity with respect to the meanings of groups of
-nouns taking the same classifier." Sortal classifiers encode inherent
-properties (animacy, shape, function); the general classifier 个 serves
-as default/residue and is "gradually ... replacing the more specialized
-ones" (ibid.).
+* `Mandarin.Classifiers.classifiers` — the individual classifiers entered here.
+* `Mandarin.Classifiers.containerMeasures` — the container measures entered here.
 
+Which nouns each classifier counts is recorded on the nouns (`Mandarin.Nouns`).
 
-The typological parameters of the system follow [li-thompson-1981] §4.2.1 and
-[aikhenvald-2000]: free-morpheme numeral classifiers obligatory with numerals and
-demonstratives, chosen on semantic grounds with a lexical residue that must be memorized, with
-*ge* as the general classifier; the semantic parameters and the general classifier are read off
-the inventory.
+## References
+
+* [li-thompson-1981]
+* [chao-1968]
 -/
 
 @[expose] public section
 
 namespace Mandarin.Classifiers
 
--- ============================================================================
--- Sortal classifiers (inherent properties)
--- ============================================================================
+/-! ### Individual classifiers -/
 
-/-- 个 gè — general/default classifier. Semantically bleached; used when no
-    specific classifier applies, or as an informal substitute. -/
-def ge : Classifier :=
-  { form := "个", gloss := "general", isDefault := true }
+/-- *gè* 个, the general classifier: *sān ge rén* 'three people'. -/
+def ge : Classifier := { form := "gè", script := some "个" }
 
-/-- 只 zhī — small animals (birds, cats, dogs, insects).
-    Encodes: animacy + small size. -/
-def zhi : Classifier :=
-  { form := "只", gloss := "small.animal"
-  , semantics := [.animacy, .size] }
+/-- *wèi* 位, the polite counterpart of *gè* for persons: *xiānsheng* 'gentleman'. -/
+def wei : Classifier := { form := "wèi", script := some "位" }
 
-/-- 本 běn — bound volumes (books, magazines, notebooks).
-    Encodes: shape (flat, bound objects). -/
-def ben : Classifier :=
-  { form := "本", gloss := "bound.volume"
-  , semantics := [.shape], dimension := some .twoD }
+/-- *zhī* 只: *shǒu* 'hand', *gǒu* 'dog'. -/
+def zhi : Classifier := { form := "zhī", script := some "只" }
 
-/-- 辆 liàng — wheeled vehicles (cars, bicycles, carts).
-    Encodes: function (transport). -/
-def liang : Classifier :=
-  { form := "辆", gloss := "vehicle"
-  , semantics := [.function] }
+/-- *jiàn* 件: *yīfu* 'garment'. -/
+def jian : Classifier := { form := "jiàn", script := some "件" }
 
-/-- 朵 duǒ — flowers, clouds (small, delicate, clustered).
-    Encodes: shape (small, round/clustered). -/
-def duo : Classifier :=
-  { form := "朵", gloss := "flower/cloud"
-  , semantics := [.shape, .size] }
+/-- *duǒ* 朵: *huā* 'flower'. -/
+def duo : Classifier := { form := "duǒ", script := some "朵" }
 
-/-- 位 wèi — persons (formal/polite register).
-    Encodes: humanness + register. The `register` parameter indexes
-    formality/politeness of the speech act, not honorific status of
-    the referent. -/
-def wei : Classifier :=
-  { form := "位", gloss := "person.formal"
-  , semantics := [.humanness, .register] }
+/-- *jià* 架: *fēijī* 'airplane'. -/
+def jia : Classifier := { form := "jià", script := some "架" }
 
-/-- 条 tiáo — long, thin, flexible objects (rivers, roads, snakes, fish).
-    Encodes: shape (1D, elongated). -/
-def tiao : Classifier :=
-  { form := "条", gloss := "long.thin"
-  , semantics := [.shape], dimension := some .oneD }
+/-- *liàng* 辆: *chē* 'vehicle'. -/
+def liang : Classifier := { form := "liàng", script := some "辆" }
 
-/-- 张 zhāng — flat objects with a surface (paper, tables, beds, maps).
-    Encodes: shape (2D, flat surface). -/
-def zhang : Classifier :=
-  { form := "张", gloss := "flat.surface"
-  , semantics := [.shape], dimension := some .twoD }
+/-- *zhǎn* 盏: *dēng* 'lamp'. -/
+def zhan : Classifier := { form := "zhǎn", script := some "盏" }
 
-/-- 把 bǎ — objects with a handle (knives, chairs, umbrellas).
-    Encodes: shape (graspable handle) + function. -/
-def ba : Classifier :=
-  { form := "把", gloss := "handled"
-  , semantics := [.shape, .function] }
+/-- *pǐ* 匹: *mǎ* 'horse'. -/
+def pi : Classifier := { form := "pǐ", script := some "匹" }
 
-/-- 头 tóu — large animals (cattle, elephants, pigs).
-    Encodes: animacy + large size. -/
-def tou : Classifier :=
-  { form := "头", gloss := "large.animal"
-  , semantics := [.animacy, .size] }
+/-- *tóu* 头 'head': *niú* 'cattle'. -/
+def tou : Classifier := { form := "tóu", script := some "头" }
 
-/-- 棵 kē — plants, trees (rooted, standing).
-    Encodes: shape (upright, rooted). -/
-def ke : Classifier :=
-  { form := "棵", gloss := "plant/tree"
-  , semantics := [.shape], dimension := some .oneD }
+/-- *běn* 本 'volume': *shū* 'book' as a thing. -/
+def ben : Classifier := { form := "běn", script := some "本" }
 
--- ============================================================================
--- Inventory
--- ============================================================================
+/-- *bù* 部: *shū* 'book' as a work. -/
+def bu : Classifier := { form := "bù", script := some "部" }
 
-def sortalClassifiers : List Classifier :=
-  [ge, zhi, ben, liang, duo, wei, tiao, zhang, ba, tou, ke]
+/-- *zhāng* 张 'sheet': *chuáng* 'bed', *zhuōzi* 'table'. -/
+def zhang : Classifier := { form := "zhāng", script := some "张" }
 
-def defaultClassifier : Classifier := ge
+/-- *bǎ* 把, of things taken hold of: *dāo* 'knife'. -/
+def ba : Classifier := { form := "bǎ", script := some "把" }
 
--- ============================================================================
--- Container / Measure classifiers ([wang-sun-2026])
--- ============================================================================
+/-- *zhī* 枝 'branch': *máobǐ* 'brush-pen', *jiàn* 'arrow'. -/
+def zhiBranch : Classifier := { form := "zhī", script := some "枝" }
 
--- Container classifiers can have either sortal or mensural readings
--- depending on structural context ([wang-sun-2026] §4.3): without
--- 的 (de), the classifier denotes a concrete container (sortal reading);
--- with de, it becomes an abstract measure unit (mensural reading).
--- The `isMensural` flag indicates this dual capacity.
+/-- *kē* 棵: *cǎo* 'grass', *huā* 'flower' as a plant. -/
+def ke : Classifier := { form := "kē", script := some "棵" }
 
-/-- 杯 bēi — glasses, cups. -/
-def bei : Classifier :=
-  { form := "杯", gloss := "glass/cup"
-  , semantics := [.shape], dimension := some .threeD
-  , isMensural := true }
+/-- *tiáo* 条 'strip': *shé* 'snake', *hé* 'river', *niú* 'cow', *xīnwén* 'news'. -/
+def tiao : Classifier := { form := "tiáo", script := some "条" }
 
-/-- 瓶 píng — bottles. -/
-def ping : Classifier :=
-  { form := "瓶", gloss := "bottle"
-  , semantics := [.shape], dimension := some .threeD
-  , isMensural := true }
+/-- *dào* 道 'way, course': *hé* 'river', *cài* 'course of food'. -/
+def dao : Classifier := { form := "dào", script := some "道" }
 
-/-- 碗 wǎn — bowls. -/
-def wan : Classifier :=
-  { form := "碗", gloss := "bowl"
-  , semantics := [.shape], dimension := some .threeD
-  , isMensural := true }
+/-- *mén* 门: *dàpào* 'artillery piece'. -/
+def men : Classifier := { form := "mén", script := some "门" }
 
-/-- 箱 xiāng — boxes. -/
-def xiang : Classifier :=
-  { form := "箱", gloss := "box"
-  , semantics := [.shape], dimension := some .threeD
-  , isMensural := true }
+/-- *xiē* 些, the classifier of plurality, 'several' after *yī* 'one': *yī xiē wánjù* 'some
+toys'. -/
+def xie : Classifier := { form := "xiē", script := some "些", gloss := "PL" }
 
-def containerClassifiers : List Classifier :=
-  [bei, ping, wan, xiang]
+/-- The individual classifiers. -/
+def classifiers : Finset Classifier :=
+  {ge, wei, zhi, jian, duo, jia, liang, zhan, pi, tou, ben, bu, zhang, ba, zhiBranch, ke, tiao,
+    dao, men, xie}
 
--- ============================================================================
--- Full inventory
--- ============================================================================
+/-! ### Container measures -/
 
-def allClassifiers : List Classifier :=
-  sortalClassifiers ++ containerClassifiers
+/-- *píng* 瓶 'bottle': *yóu* 'oil', *cù* 'vinegar'. -/
+def ping : Classifier := { form := "píng", script := some "瓶", gloss := "bottle" }
 
-/-- Look up a classifier by form. -/
-def lookup (form : String) : Option Classifier :=
-  allClassifiers.find? (·.form == form)
+/-- *bēi* 杯 'glass, cup': *jiǔ* 'wine', *chá* 'tea'. -/
+def bei : Classifier := { form := "bēi", script := some "杯", gloss := "glass" }
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-- *xiāng* 箱 'box, chest': *júzi* 'orange'. -/
+def xiang : Classifier := { form := "xiāng", script := some "箱", gloss := "box" }
 
-/-- 个 is the default classifier. -/
-theorem ge_is_default : ge.isDefault = true := rfl
+/-- *hé* 盒 'small box': *táng* 'candy'. -/
+def he : Classifier := { form := "hé", script := some "盒", gloss := "box" }
 
-/-- 只 encodes animacy. -/
-theorem zhi_encodes_animacy : zhi.Encodes .animacy := by decide
+/-- *guō* 锅 'pot': *fàn* 'cooked rice'. -/
+def guo : Classifier := { form := "guō", script := some "锅", gloss := "pot" }
 
-/-- 位 encodes humanness. -/
-theorem wei_encodes_humanness : wei.Encodes .humanness := by decide
+/-- *gāng* 缸 'vat': *cù* 'vinegar'. -/
+def gang : Classifier := { form := "gāng", script := some "缸", gloss := "vat" }
 
-/-- 本 encodes shape. -/
-theorem ben_encodes_shape : ben.Encodes .shape := by decide
+/-- *wǎn* 碗 'bowl': *fàn* 'cooked rice'. -/
+def wan : Classifier := { form := "wǎn", script := some "碗", gloss := "bowl" }
 
-/-- All non-default classifiers have at least one semantic parameter. -/
-theorem specific_classifiers_have_semantics :
-    (allClassifiers.filter (!·.isDefault)).all (·.semantics.length > 0) = true := by
-  decide
-
-/-- Sortal classifiers are not mensural. -/
-theorem sortal_classifiers_not_mensural :
-    sortalClassifiers.all (!·.isMensural) = true := by decide
-
-/-- Container classifiers CAN be mensural (structure determines reading). -/
-theorem bei_is_mensural : bei.isMensural = true := rfl
-
-theorem container_classifiers_are_mensural :
-    containerClassifiers.all (·.isMensural) = true := by decide
-
-theorem container_classifiers_have_semantics :
-    containerClassifiers.all (·.semantics.length > 0) = true := by decide
-
-/-- Full inventory: 11 sortal + 4 container = 15 classifiers. -/
-theorem inventory_size : allClassifiers.length = 15 := by decide
+/-- The container measures, examples of an open class. -/
+def containerMeasures : Finset Classifier := {ping, bei, xiang, he, guo, gang, wan}
 
 end Mandarin.Classifiers
-
-/-! ### Typological parameters -/
-
-namespace Mandarin
-
-/-- Classifiers occur in the numeral phrase and characterize the head noun. -/
-def classifierLocus : Classifier.Scope := .numeralNP
-
-def classifierConstituent : Classifier.Constituent := .headNoun
-
-/-- The kind of device, read off its locus and the constituent it characterizes. -/
-abbrev classifierKind : Option Classifier.Kind :=
-  Classifier.kind classifierLocus classifierConstituent
-
-/-- Every environment the device operates in. -/
-def classifierScopes : List Classifier.Scope := [.numeralNP, .attributiveNP]
-
-/-- Semantic core with a lexical residue. -/
-def classifierAssignment : Classifier.Assignment := .semantic
-
-/-- Free morphemes. -/
-def classifierRealizations : List Classifier.Realization := [.freeForm]
-
-def classifierAgreement : Bool := false
-
-/-- Obligatory with numerals and demonstratives. -/
-def classifierObligatory : Bool := true
-
-/-- Whether the inventory has a general classifier. -/
-def classifierDefault : Bool := Classifiers.allClassifiers.any (·.isDefault)
-
-def classifierSemantics : List Classifier.Parameter :=
-  Classifier.parameters Classifiers.allClassifiers
-
-def obligatoryNumber : Bool := false
-
-end Mandarin

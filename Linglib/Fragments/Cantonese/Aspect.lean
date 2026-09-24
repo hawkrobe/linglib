@@ -24,34 +24,23 @@ is entered with the other *again*-elements in `Fragments/Cantonese/Particles.lea
 
 namespace Cantonese.Aspect
 
-/-- A Cantonese postverbal aspect suffix: its jyutping, its character, its gloss and the
-viewpoint it marks. -/
-structure Marker where
-  /-- The jyutping form with tone number. -/
-  jyutping : String
-  /-- The character. -/
-  hanzi : String
-  /-- The gloss. -/
-  gloss : String
-  /-- The viewpoint the suffix marks. -/
-  viewpoint : Aspect.ViewpointType
-  deriving Repr, DecidableEq
-
 /-- The perfective *-zo* 咗. -/
-def zo : Marker := { jyutping := "zo2", hanzi := "咗", gloss := "PFV", viewpoint := .perfective }
+def zo : Aspect.Marker :=
+  { form := "zo2", script := some "咗", gloss := "PFV", viewpoint := .perfective }
 
 /-- The experiential *-gwo* 過, an experiential perfect. -/
-def gwo : Marker := { jyutping := "gwo3", hanzi := "過", gloss := "EXP", viewpoint := .perfect }
+def gwo : Aspect.Marker :=
+  { form := "gwo3", script := some "過", gloss := "EXP", viewpoint := .perfect }
 
 /-- The progressive *-gan* 緊, an imperfective of ongoing activity. -/
-def gan : Marker :=
-  { jyutping := "gan2", hanzi := "緊", gloss := "PROG", viewpoint := .imperfective }
+def gan : Aspect.Marker :=
+  { form := "gan2", script := some "緊", gloss := "PROG", viewpoint := .imperfective }
 
 /-- The continuous *-zyu* 住, an imperfective of a maintained state or posture. -/
-def zyu : Marker :=
-  { jyutping := "zyu6", hanzi := "住", gloss := "CONT", viewpoint := .imperfective }
+def zyu : Aspect.Marker :=
+  { form := "zyu6", script := some "住", gloss := "CONT", viewpoint := .imperfective }
 
 /-- The aspect suffixes. -/
-def markers : List Marker := [zo, gwo, gan, zyu]
+def markers : List Aspect.Marker := [zo, gwo, gan, zyu]
 
 end Cantonese.Aspect

@@ -15,8 +15,9 @@ its own carrier, the gender the language's assignment rules give the noun, and w
 gender of its referents where they have one, the one facet every system with a semantic core
 reads; the facets particular rules read besides, animacy, rationality, declension class or
 accent, are the fields of the fragments' further extensions. A noun's gender is natural when
-it is the gender of its referents. The general concept takes the
-plain name and the specializations extend it, as in mathlib.
+it is the gender of its referents. A language with classifiers extends the entry with the
+classifiers the noun is counted with, in the language's carrier of classifiers. The general
+concept takes the plain name and the specializations extend it, as in mathlib.
 
 ## Implementation notes
 
@@ -31,6 +32,7 @@ plain name and the specializations extend it, as in mathlib.
   gender of its referents
 * `GenderedNoun.IsNaturalGender` — the gender is the referents', under a labelling of the
   carrier
+* `ClassifiedNoun C` — the entry with the classifiers it is counted with, over the carrier `C`
 -/
 
 @[expose] public section
@@ -75,3 +77,10 @@ def IsNaturalGender : Prop := n.naturalGender = some (label n.gender)
 instance : Decidable (n.IsNaturalGender label) := inferInstanceAs (Decidable (_ = _))
 
 end GenderedNoun
+
+/-- A noun with the classifiers it is counted with, over the carrier `C` of the language's
+classifiers; empty for a noun counted only through a measure word. -/
+structure ClassifiedNoun (C : Type*) extends Noun where
+  /-- The classifiers the noun is counted with. -/
+  classifiers : Finset C
+  deriving DecidableEq

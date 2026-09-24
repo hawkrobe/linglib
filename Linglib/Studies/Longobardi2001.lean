@@ -1,9 +1,6 @@
 module
 
-public import Linglib.Semantics.Genericity.NominalMappingParameter
-public import Linglib.Fragments.Romance.Italian.Nouns
-public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.Greek.StandardModern.Nouns
+public import Linglib.Studies.Chierchia1998
 public import Linglib.Data.Examples.Longobardi2001
 
 /-!
@@ -33,8 +30,8 @@ N-raising forces an article on every proper name, the Greek prediction (61), (65
 (`pnRequiresArticle_greek`). The rows of `Data/Examples/Longobardi2001` are the paper's
 paradigms, and the readings they record are the ones the parameter predicts
 (`readings_predicted`, `definite_generic`, `species_rows`, `greek_names`); the parameter also
-fixes the nominal mapping of [chierchia-1998] that the fragments declare
-(`toNominalMapping`, `fragment_mappings`).
+fixes the nominal mapping [chierchia-1998] gives Romance and English (`toNominalMapping`,
+`chierchia_mappings`).
 
 ## Implementation notes
 
@@ -280,10 +277,10 @@ predicates needing D for argumenthood, with weak D they may be arguments on thei
 def toNominalMapping (dp : DPParameter) : NominalMapping :=
   if dp.strongD then .predOnly else .argAndPred
 
-/-- The parameters of the three languages yield the mappings their fragments declare. -/
-theorem fragment_mappings :
-    toNominalMapping romance = Italian.Nouns.nominalMapping ∧
-      toNominalMapping english = English.Nouns.nominalMapping ∧
-      toNominalMapping greek = Greek.StandardModern.Nouns.nominalMapping := ⟨rfl, rfl, rfl⟩
+/-- The Romance and English parameters yield the mappings [chierchia-1998] gives Italian and
+English. -/
+theorem chierchia_mappings :
+    toNominalMapping romance = Chierchia1998.Language.nominalMapping .italian ∧
+      toNominalMapping english = Chierchia1998.Language.nominalMapping .english := ⟨rfl, rfl⟩
 
 end Longobardi2001

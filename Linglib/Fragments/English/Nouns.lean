@@ -2,27 +2,23 @@ module
 
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Semantics.Plurality.MassCount
-public import Linglib.Semantics.Genericity.NominalMappingParameter
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Fragments.English.Inflection
 
 /-!
 # English nouns
 
-The English noun as a lexical entry: the root `Noun` with the mass/count feature, its lexical
-gender where it has one, and its plural where that is not the regular *-s* one, which
-`Inflection.lean`'s `suffixS` supplies; names are the root `ProperName`. English nouns have
-no grammatical gender; the label recorded for *man*, *woman* and the names is the natural
-gender their pronouns agree with. English sets [chierchia-1998]'s Nominal Mapping Parameter to [+arg, +pred], so
-nouns denote kinds or predicates: with *the* and *a* blocking the covert ι and ∃, bare plurals
-and bare mass nouns are arguments and a bare singular count noun is not
-(`Studies/Chierchia1998.lean`).
+The English noun as a lexical entry: the root `Noun` with the mass/count feature, its lexical gender
+where it has one, and its plural where that is not the regular *-s* one, which `Inflection.lean`'s
+`suffixS` supplies; names are the root `ProperName`. English nouns have no grammatical gender; the
+label recorded for *man*, *woman* and the names is the natural gender their pronouns agree with.
+Bare plurals and bare mass nouns are arguments and a bare singular count noun is not, which
+[chierchia-1998] derives from the Nominal Mapping Parameter (`Studies/Chierchia1998.lean`).
 
 ## Main definitions
 
 * `Noun` — the entry, with `Noun.realize` giving its form at a number
 * `Noun.toWordSg`, `Noun.toWord` — the entry as a `Word` token
-* `nominalMapping` — the Nominal Mapping Parameter setting
 
 ## References
 
@@ -34,7 +30,6 @@ and bare mass nouns are arguments and a bare singular count noun is not
 
 namespace English.Nouns
 
-open Genericity
 open Morphology (Word Features)
 
 /-- An English noun: the root entry with the mass/count feature, its lexical gender where it
@@ -134,10 +129,5 @@ def sue : ProperName := name "Sue" (some .feminine)
 def fred : ProperName := name "Fred" (some .masculine)
 def sam : ProperName := name "Sam"
 def pat : ProperName := name "Pat"
-
-/-! ### The Nominal Mapping Parameter -/
-
-/-- English is [+arg, +pred]: nouns denote kinds or predicates ([chierchia-1998]). -/
-def nominalMapping : NominalMapping := .argAndPred
 
 end English.Nouns
