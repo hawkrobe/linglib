@@ -288,7 +288,7 @@ def turkishVerb? : String → Option Turkish.Verb
 /-- The paper's glosses segment its Turkish finite verbs into four inflections, the
 imperfective, its negative, its past, and the perfective past, the last two in the first
 person. -/
-def turkishInflections : List (List (Σ σ, Turkish.Verb.system.Exponent σ)) :=
+def turkishInflections : List (List (Σ σ, Turkish.Verb.Exponent σ)) :=
   [[⟨_, .iyor⟩], [⟨_, .negative⟩, ⟨_, .iyor⟩],
     [⟨_, .iyor⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.pn .first .singular)⟩],
     [⟨_, .di⟩, ⟨_, .person .one (.pn .first .singular)⟩]]
@@ -299,7 +299,7 @@ phonology derives its surface form, *korkmuyor* and *umuyordum* among them. -/
 theorem turkish_forms :
     ∀ r ∈ Examples.all, r.language = "nucl1301" →
       ∃ v ∈ (r.feature? "predicate").bind turkishVerb?, ∃ sfx ∈ turkishInflections,
-        Turkish.Verb.system.Licenses [] (v.suffixes sfx) ∧
+        Turkish.Verb.Licensed (v.suffixes sfx) ∧
           ∃ t ∈ r.glossedTokens, Turkish.Phonology.ofString? t.1 = some (v.inflect sfx) := by
   decide +kernel
 

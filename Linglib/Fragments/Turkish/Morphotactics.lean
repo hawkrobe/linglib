@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Morphology.Morphotactics.Template
+public import Linglib.Core.Computability.RegularExpressions
 public import Linglib.Phonology.Hiatus
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Fragments.Turkish.Phonology
@@ -18,13 +18,15 @@ markers themselves fall into five positions (§8.2.3): the possibility suffix -(
 precedes the negative (§8.2.3.1), the bound auxiliaries (2), the markers of tense, aspect and
 modality proper (3), the copular markers (4) and -DIr (5). Markers of one position cannot
 co-occur, and every finite verb but the imperative and the third-person optative carries one
-of position 3. The voice slot alone admits a sequence of suffixes, up to four (§8.2 (7),
-§8.2.1.1). The inflectional suffixes of a nominal appear in the order number, possession, case
-(§8.1).
+of position 3. The voice slot alone admits a sequence of suffixes, as the four of
+*döğ-üş-tür-t-ül-* in (7) (§8.2, §8.2.1.1). The inflectional suffixes of a nominal appear in
+the order number, possession, case (§8.1).
 
-The finite verb and the nominal are each a `Morphology.PositionClassSystem`, which consists of
-a slot inventory, its template, and the exponents of each slot. The person markers (§8.4) and
-the possessives (§8.1.2) are `Agreement.Paradigm`s.
+The finite verb and the nominal each have a slot inventory, the exponents of each slot, and a
+template, a regular expression over the slots in which every position may be skipped and the
+voice position repeated. The suffixes of a word are licensed when the list of their slots
+matches the template. The person markers (§8.4) and the possessives (§8.1.2) are
+`Agreement.Paradigm`s.
 
 Vowels do not occur next to each other in Turkish, and the grammar brackets in a suffix's
 citation form the initial segment whose presence depends on the stem (§6.1.3). The vowel of
@@ -34,9 +36,9 @@ exactly when it differs from the last segment of the stem in being a vowel.
 
 ## Main definitions
 
-* `Turkish.Verb.Slot`, `Turkish.Verb.Exponent`, `Turkish.Verb.system`: the slots, exponents
-  and position-class system of the finite verb.
-* `Turkish.Nominal.Slot`, `Turkish.Nominal.Exponent`, `Turkish.Nominal.system`: the same for
+* `Turkish.Verb.Slot`, `Turkish.Verb.Exponent`, `Turkish.Verb.template`: the slots, exponents
+  and template of the finite verb, and `Turkish.Verb.Licensed` the suffix strings it admits.
+* `Turkish.Nominal.Slot`, `Turkish.Nominal.Exponent`, `Turkish.Nominal.template`: the same for
   the nominal.
 * `Turkish.Suffix`, `Suffix.attach`: a suffix in citation form, with its bracketed initial
   segment, and its attachment to a stem.
@@ -57,14 +59,14 @@ exactly when it differs from the last segment of the stem in being a vowel.
 ## Implementation notes
 
 The clitics mI and dA, which can interrupt the inflectional string (§6.3 (5)), are Chapter 11
-material outside both systems. The markers' meanings are the matter of Chapter 21 and Appendix
+material outside both templates. The markers' meanings are the matter of Chapter 21 and Appendix
 2. There -DI marks past tense, perfective aspect and direct knowledge, -mIş marks relative past
 tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3), and the copular
 -(y)mIş marks evidential modality alone; -mIş followed by a copular marker or -DIr is perfective
 only (§8.2.3.3). The final `n` that the third-person possessives take before a case suffix
 (§6.2, §8.1.2) belongs to neither citation form and is supplied by `Nominal.forms`. Negation of
 the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see `Turkish.Negation`). The grammar's
-examples are checked against both systems in `Studies/GokselKerslake2005.lean`.
+examples are checked against both templates in `Studies/GokselKerslake2005.lean`.
 
 ## References
 
@@ -308,14 +310,17 @@ def Exponent.form : Exponent σ → Suffix
   | .person g c => (g.paradigm.realize c).getD ⟨none, []⟩
   | .dir => ⟨none, [D, I, r]⟩
 
-/-- The finite verb has its slots in the order of §8.2, and its voice slot is iterable. -/
-def system : Morphology.PositionClassSystem where
-  Slot := Slot
-  template :=
-    { suffixSlots :=
-        [.voice, .possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing] }
-  Exponent := Exponent
-  Iterable := (· = .voice)
+open RegularExpression in
+/-- The template of the finite verb: its slots in the order of §8.2, each of which a verb may
+skip, the voice slot taking any number of suffixes. -/
+def template : RegularExpression Slot :=
+  (char .voice).star *
+    sublists [.possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing]
+
+/-- A string of suffixes is licensed when its slots match the template. -/
+def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
+
+instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
 end Verb
 
@@ -385,11 +390,14 @@ def forms : List (Σ σ, Exponent σ) → List Suffix
     (if Exponent.IsThirdPossessive e ∧ ∃ e' ∈ es.head?, e'.1 = .case then
       { e.2.form with segments := e.2.form.segments ++ [n] } else e.2.form) :: forms es
 
-/-- The nominal has the slots number, possession and case, in that order (§8.1). -/
-def system : Morphology.PositionClassSystem where
-  Slot := Slot
-  template := { suffixSlots := [.number, .possession, .case] }
-  Exponent := Exponent
+/-- The template of the nominal: the slots number, possession and case, in that order, each of
+which a nominal may skip (§8.1). -/
+def template : RegularExpression Slot := .sublists [.number, .possession, .case]
+
+/-- A string of suffixes is licensed when its slots match the template. -/
+def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
+
+instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
 end Nominal
 
