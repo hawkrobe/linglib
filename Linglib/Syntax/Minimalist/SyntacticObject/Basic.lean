@@ -166,6 +166,9 @@ def trace : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inr none), by decide�
 def traceOf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inr (some tok)), rfl⟩
 
 @[simp] theorem leaf_val (tok : LIToken) : (leaf tok).val = UnorderedTree.leaf (Sum.inl tok) := rfl
+
+@[simp] theorem leaf_inj {a b : LIToken} : leaf a = leaf b ↔ a = b :=
+  ⟨fun h ↦ Sum.inl_injective (congrArg (fun s : SyntacticObject ↦ s.val.value) h), congrArg leaf⟩
 @[simp] theorem trace_val : trace.val = UnorderedTree.leaf (Sum.inr none) := rfl
 @[simp] theorem traceOf_val (tok : LIToken) :
     (traceOf tok).val = UnorderedTree.leaf (Sum.inr (some tok)) := rfl
