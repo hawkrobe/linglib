@@ -1,34 +1,40 @@
 module
 
 public import Mathlib.Data.Finset.Insert
-public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Discourse.Commitment.Table
-public import Linglib.Logic.Natural.Basic
+public import Linglib.Logic.Natural.Soundness
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Denotation
-public import Linglib.Semantics.Presupposition.Context
+public import Linglib.Semantics.Presupposition.Defs
 
 /-!
 # Readings of a conditional
 
 This file defines the two readings of a conditional. A conditional is read as *hypothetical* when
 its antecedent is supposed and left open, and as a *premise* conditional when the antecedent
-echoes prior discourse and is treated as established ([iatridou-1991], [haegeman-2003]). On the
-hypothetical reading *if p, q* denotes the conditional proposition of whatever operator the
-theory supplies, and on the premise reading it asserts *q* with *p* presupposed, the *given
-that* paraphrase. The hypothetical antecedent is downward entailing and the premise antecedent
-upward entailing, the source of their opposite polarity-item profiles. Languages may lexicalize
-the split, as Japanese *-ra* and German *falls* mark only hypothetical conditionals
-([lassiter-2025]).
+echoes prior discourse and is treated as established, the distinction of Iatridou and Haegeman.
+On the hypothetical reading *if p, q* denotes the conditional proposition of whatever operator
+the theory supplies, and on the premise reading it asserts *q* with *p* presupposed, the *given
+that* paraphrase. The two readings give the antecedent opposite entailment directions, the
+source of their opposite polarity-item profiles: for a conditional over a domain that grows with
+the antecedent, such as the material or the strict conditional, the hypothetical antecedent is
+downward entailing and every other clause upward entailing, while over the closest
+antecedent-worlds the antecedent is neither. Languages may lexicalize the split, as Japanese
+*-ra* and German *falls* mark only hypothetical conditionals.
 
 ## Main definitions
 
 * `Conditional.Reading`: the hypothetical and premise readings.
 * `Conditional.Reading.denote`: the denotation of *if p, q* under a reading.
-* `Conditional.Reading.Felicitous`: the discourse condition a reading places on the antecedent.
-* `Conditional.Reading.clausePolarity`: the entailment direction of each clause.
+* `Conditional.Reading.clauseSignature`: the projectivity signature of each clause under a
+  reading, whose sign is `Conditional.Reading.clausePolarity`.
 * `Conditional.Marker`: a conditional marker with the readings it can mark.
+
+## Main results
+
+* `Conditional.Reading.soundFor_clauseSignature`: over a monotone domain the signatures are
+  sound.
+* `Conditional.Reading.exists_not_antitone_hypothetical_closestImp`: over the closest
+  antecedent-worlds the hypothetical antecedent is not downward entailing.
 
 ## References
 
@@ -41,7 +47,7 @@ the split, as Japanese *-ra* and German *falls* mark only hypothetical condition
 
 namespace Conditional
 
-open Commitment NaturalLogic Presupposition Semantics
+open NaturalLogic Presupposition
 
 /-- The readings of a conditional, on which the antecedent is supposed and left open or echoes
 prior discourse and is treated as established. -/
@@ -91,114 +97,83 @@ theorem holds_denote_materialImp_iff (hw : w ∈ p) :
       (premise.denote materialImp p q).holds w := by
   simp [hw, mem_materialImp]
 
-/-- The hypothetical antecedent is a downward-entailing position. -/
-theorem antitone_truthSet_hypothetical (q : Set W) :
-    Antitone fun p ↦ (hypothetical.denote materialImp p q).truthSet :=
-  fun _ _ h _ hw ↦ holds_denote_hypothetical.2 fun hp ↦
-    mem_materialImp.1 (holds_denote_hypothetical.1 hw) (h hp)
+end Denotation
 
-/-- The premise antecedent is an upward-entailing position. -/
+/-! ### Entailment directions
+
+The clauses of a conditional over a domain of antecedent-worlds have the projectivity
+signatures of natural logic: the hypothetical antecedent is antitone when the domain grows with
+the antecedent, and every other clause is monotone. The material and the strict conditional
+have such domains; the conditional of the closest antecedent-worlds does not, since antecedent
+strengthening fails for it. -/
+
+section Signature
+
+variable {W : Type*} {D : W → Set W → Set W} (cond : Set W → Set W → Set W) (p q : Set W)
+
+/-- The projectivity signature of a clause under a reading is antitone for the hypothetical
+antecedent and monotone for every other clause. -/
+def clauseSignature : Reading → Clause → Signature
+  | .hypothetical, .antecedent => .anti
+  | _, _ => .mono
+
+/-- The entailment direction of a clause under a reading, the sign of its signature. -/
+def clausePolarity (ct : Reading) (c : Clause) : SignType := (clauseSignature ct c).sign
+
+/-- The function of a clause under a reading, the other clause held fixed, on truth sets. -/
+def clauseMap (ct : Reading) : Clause → Set W → Set W
+  | .antecedent => fun p' ↦ (ct.denote cond p' q).truthSet
+  | .consequent => fun q' ↦ (ct.denote cond p q').truthSet
+
+variable {cond p q}
+
+/-- The hypothetical antecedent is antitone over a domain that grows with the antecedent. -/
+theorem antitone_truthSet_hypothetical (hD : ∀ w, Monotone (D w)) (q : Set W) :
+    Antitone fun p ↦ (hypothetical.denote (ofDomain D) p q).truthSet :=
+  fun _ _ h _ hw ↦ holds_denote_hypothetical.2
+    (ofDomain_anti_left (fun i ↦ hD i h) (holds_denote_hypothetical.1 hw))
+
+/-- The premise antecedent is monotone for every operator. -/
 theorem monotone_truthSet_premise (cond : Set W → Set W → Set W) (q : Set W) :
     Monotone fun p ↦ (premise.denote cond p q).truthSet :=
   fun _ _ h _ hw ↦ ⟨h hw.1, hw.2⟩
 
-/-- The consequent is an upward-entailing position on either reading. -/
+/-- The consequent is monotone on either reading of a conditional over a domain. -/
 theorem monotone_truthSet_consequent (ct : Reading) (p : Set W) :
-    Monotone fun q ↦ (ct.denote materialImp p q).truthSet := by
+    Monotone fun q ↦ (ct.denote (ofDomain D) p q).truthSet := by
   cases ct
-  · exact fun _ _ h _ hw ↦ holds_denote_hypothetical.2 fun hp ↦
-      h (mem_materialImp.1 (holds_denote_hypothetical.1 hw) hp)
+  · exact fun _ _ h _ hw ↦
+      holds_denote_hypothetical.2 (ofDomain_mono_right h (holds_denote_hypothetical.1 hw))
   · exact fun _ _ h _ hw ↦ ⟨hw.1, h hw.2⟩
 
-end Denotation
+/-- Over a domain that grows with the antecedent, each clause's signature is sound for the
+clause's function. -/
+theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct : Reading)
+    (c : Clause) : (clauseSignature ct c).SoundFor (clauseMap (ofDomain D) p q ct c) := by
+  cases ct <;> cases c
+  · exact soundFor_anti_iff.2 (antitone_truthSet_hypothetical hD q)
+  · exact soundFor_mono_iff.2 (monotone_truthSet_consequent .hypothetical p)
+  · exact soundFor_mono_iff.2 (monotone_truthSet_premise _ q)
+  · exact soundFor_mono_iff.2 (monotone_truthSet_consequent .premise p)
 
-section Felicity
+/-- Over the closest antecedent-worlds the hypothetical antecedent is not antitone: with three
+worlds ranked `0 < 1 < 2` from `0`, *if 1 or 2, then 1* holds at `0` while *if 2, then 1* does
+not. -/
+theorem exists_not_antitone_hypothetical_closestImp :
+    ∃ (ord : Fin 3 → Preorder (Fin 3)) (q : Set (Fin 3)),
+      ¬ Antitone fun p ↦ (hypothetical.denote (closestImp ord) p q).truthSet := by
+  let ord : Fin 3 → Preorder (Fin 3) := fun _ ↦ Preorder.lift fun v : Fin 3 ↦ (v : ℕ)
+  refine ⟨ord, {1}, fun h ↦ ?_⟩
+  have h1 : (0 : Fin 3) ∈ (hypothetical.denote (closestImp ord) {1, 2} {1}).truthSet := by
+    simp only [PartialProp.mem_truthSet, holds_denote_hypothetical]
+    decide
+  have h2 := h (show ({2} : Set (Fin 3)) ⊆ {1, 2} by simp) h1
+  simp only [PartialProp.mem_truthSet, holds_denote_hypothetical] at h2
+  revert h2; decide
 
-variable {A W : Type*} (K : Table A W) (p : Set W)
-
-/-- A reading is felicitous for the antecedent `p` when `p` meets its discourse condition. A
-hypothetical conditional leaves `p` undecided in the common ground, and a premise conditional
-needs `p` committed to by some participant or already in the common ground. -/
-def Felicitous : Reading → Prop
-  | .hypothetical => ¬ (Question.polar p).DecidedBy K.commonGround
-  | .premise => (∃ a, p ∈ K.discourseCommitments a) ∨ p ∈ K.commonGround
-
-variable {K p}
-
-theorem premise_felicitous_of_mem_commonGround (h : p ∈ K.commonGround) :
-    premise.Felicitous K p := .inr h
-
-theorem premise_felicitous_of_shared [Nonempty A] (h : K.Shared p) : premise.Felicitous K p :=
-  .inl <| (‹Nonempty A›).elim fun a ↦ ⟨a, h a⟩
-
-theorem not_hypothetical_felicitous_of_mem_commonGround (h : p ∈ K.commonGround) :
-    ¬ hypothetical.Felicitous K p :=
-  fun h' ↦ h' (Question.decidedBy_polar.2 (.inl h))
-
-theorem not_premise_felicitous (h₁ : ∀ a, p ∉ K.discourseCommitments a)
-    (h₂ : ¬ (Question.polar p).DecidedBy K.commonGround) : ¬ premise.Felicitous K p :=
-  fun h ↦ h.elim (fun ⟨a, ha⟩ ↦ h₁ a ha) fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))
-
-/-- An antecedent the common ground entails is read as a premise. -/
-theorem felicitous_iff_of_mem_commonGround (h : p ∈ K.commonGround) {ct : Reading} :
-    ct.Felicitous K p ↔ ct = .premise := by
-  cases ct
-  · exact iff_of_false (not_hypothetical_felicitous_of_mem_commonGround h) (by decide)
-  · exact iff_of_true (premise_felicitous_of_mem_commonGround h) rfl
-
-/-- An antecedent nobody has committed to and whose polar question is open is read
-hypothetically. -/
-theorem felicitous_iff_of_not_decidedBy (h₁ : ∀ a, p ∉ K.discourseCommitments a)
-    (h₂ : ¬ (Question.polar p).DecidedBy K.commonGround) {ct : Reading} :
-    ct.Felicitous K p ↔ ct = .hypothetical := by
-  cases ct
-  · exact iff_of_true h₂ rfl
-  · exact iff_of_false (not_premise_felicitous h₁ h₂) (by decide)
-
-/-- In a context whose common ground entails the antecedent, the premise reading's
-presupposition is satisfied on the context set. -/
-theorem presupSatisfied_denote_premise_of_mem_commonGround (cond : Set W → Set W → Set W)
-    (q : Set W) (h : p ∈ K.commonGround) :
-    Context.presupSatisfied (HasCommonGround.contextSet K) (premise.denote cond p q) :=
-  fun _ hw ↦ Filter.mem_ker.1 hw p h
-
-end Felicity
-
-/-- The entailment direction of a clause under a reading. The antecedent is downward entailing on
-the hypothetical reading and upward entailing on the premise reading, and the consequent is
-upward entailing on either. -/
-def clausePolarity : Reading → Clause → SignType
-  | .hypothetical, .antecedent => -1
-  | _, _ => 1
+end Signature
 
 end Reading
-
-end Conditional
-
-/-- A conditional *if p, q* under a reading, interpreted by the conditional operator `cond`
-on its hypothetical reading. -/
-structure Conditional (W : Type*) (cond : Set W → Set W → Set W) where
-  /-- The antecedent proposition. -/
-  antecedent : Set W
-  /-- The consequent proposition. -/
-  consequent : Set W
-  /-- The reading the conditional is taken on. -/
-  reading : Conditional.Reading
-
-namespace Conditional
-
-open Presupposition Semantics
-
-variable {W : Type*} {cond : Set W → Set W → Set W}
-
-/-- The denotation of a conditional under its reading. -/
-def denote (c : Conditional W cond) : PartialProp W :=
-  c.reading.denote cond c.antecedent c.consequent
-
-instance : Denotes (Conditional W cond) (PartialProp W) := ⟨denote⟩
-
-@[simp] theorem denote_mk (p q : Set W) (r : Reading) :
-    ⟦(⟨p, q, r⟩ : Conditional W cond)⟧ = r.denote cond p q := rfl
 
 /-- A conditional marker is a form together with the readings it can mark. Japanese *-ra* and German
 *falls* mark only hypothetical conditionals, and *nara*, *wenn* and English *if* mark either

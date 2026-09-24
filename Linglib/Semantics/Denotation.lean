@@ -24,8 +24,7 @@ intension a `W → _`. Instance resolution requires every type parameter of `D` 
 that data, `D` quantifying over the model's types with the model's data as Reader arguments, as
 a lexical quantifier denotes a `Quantifier.GQ.Family` and an article its readings on every model;
 a tree relative to a lexicon keeps an explicit interpretation function (`Composition.Tree.interp`,
-mathlib's `Term.realize`) and gains an instance once its type is indexed by that data, as
-`Conditional.Conditional W cond` is by its operator.
+mathlib's `Term.realize`) and gains an instance once its type is indexed by that data.
 
 ## Main definitions
 

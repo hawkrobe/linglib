@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Lassiter2025
 public import Linglib.Studies.Israel2001
 public import Linglib.Fragments.Japanese.Conditionals
 public import Linglib.Fragments.German.Conditionals
+public import Linglib.Discourse.Commitment.Table
 
 /-!
 # Lassiter (2025): Sorting Out Left-Nested Conditionals
@@ -18,8 +19,9 @@ when some reading open to it meets what its context and diagnostics demand (`Acc
 for a bare left-nested conditional every diagnostic reduces to the premise reading
 (`acceptable_bare_iff`). The paper's eight diagnostics are demands on the reading. A premise
 reading needs its antecedent given in the discourse and a hypothetical one needs it open
-(`anchoring`, the substrate's `Reading.Felicitous` in the two contexts the paper uses,
-`anchoring_iff_felicitous`), so bare left-nested conditionals are odd out of the blue and
+(`anchoring`, the discourse condition `felicitous` of Iatridou and Haegeman in the two contexts
+the paper uses, `anchoring_iff_felicitous`), so bare left-nested conditionals are odd out of
+the blue and
 improve once the embedded conditional has been asserted. Japanese *-ra* and German *falls*,
 restricted to hypothetical conditionals, cannot head a bare left-nested conditional, whereas
 *nara* and *wenn* can (`heads_bare_iff`). The clauses of the embedded conditional take their
@@ -55,6 +57,7 @@ which the paper offers as a direction rather than a result, are not modelled.
 * [lassiter-2025]
 * [gibbard-1981]
 * [iatridou-1991]
+* [haegeman-2003]
 * [haegeman-schonenberger-2023]
 * [israel-2001]
 -/
@@ -73,13 +76,13 @@ inductive Content
   | generic
   deriving DecidableEq, Repr
 
-/-- A conditional's antecedent: simple, or itself a conditional with the given content. -/
+/-- A conditional's antecedent is simple or is itself a conditional with the given content. -/
 inductive Shape
   | simple
   | nested (content : Content)
   deriving DecidableEq, Repr
 
-/-- The readings open to a conditional: a bare embedded conditional leaves only the
+/-- The readings open to a conditional, where a bare embedded conditional leaves only the
 premise reading. -/
 def readings : Shape → Finset Reading
   | .nested .bare => {.premise}
@@ -114,28 +117,59 @@ discourse, and a hypothetical one needs it open. Coordinated antecedents share a
 initial *only* with subject–auxiliary inversion forces the hypothetical reading
 ([haegeman-schonenberger-2023]). -/
 
-/-- What the antecedent's discourse status demands: a given antecedent takes the premise
-reading, an open one the hypothetical reading. -/
+/-- The antecedent's discourse status demands a reading, the premise reading for a given
+antecedent and the hypothetical reading for an open one. -/
 def anchoring (given : Prop) (ct : Reading) : Prop := ct = .premise ↔ given
 
 instance (given : Prop) [Decidable given] : DecidablePred (anchoring given) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ↔ _))
 
-/-- `anchoring` is the substrate's felicity condition in the two contexts the paper uses: one
-whose common ground entails the antecedent, and one in which nobody has committed to it and
-its polar question is open. -/
-theorem anchoring_iff_felicitous {A W : Type*} {K : Commitment.Table A W} {p : Set W}
+section Felicity
+
+variable {A W : Type*} {K : Commitment.Table A W} {p : Set W}
+
+/-- A reading is felicitous for the antecedent `p` in the commitment table `K` when `p` meets its
+discourse condition ([iatridou-1991], [haegeman-2003]). A hypothetical conditional leaves `p`
+undecided in the common ground, and a premise conditional needs `p` committed to by some
+participant or already in the common ground. -/
+def felicitous (K : Commitment.Table A W) (p : Set W) : Reading → Prop
+  | .hypothetical => ¬ (Question.polar p).DecidedBy K.commonGround
+  | .premise => (∃ a, p ∈ K.discourseCommitments a) ∨ p ∈ K.commonGround
+
+/-- An antecedent the common ground entails is read as a premise. -/
+theorem felicitous_iff_of_mem_commonGround (h : p ∈ K.commonGround) {ct : Reading} :
+    felicitous K p ct ↔ ct = .premise := by
+  cases ct
+  · exact iff_of_false (fun h' ↦ h' (Question.decidedBy_polar.2 (.inl h))) (by decide)
+  · exact iff_of_true (.inr h) rfl
+
+/-- An antecedent nobody has committed to and whose polar question is open is read
+hypothetically. -/
+theorem felicitous_iff_of_not_decidedBy (h₁ : ∀ a, p ∉ K.discourseCommitments a)
+    (h₂ : ¬ (Question.polar p).DecidedBy K.commonGround) {ct : Reading} :
+    felicitous K p ct ↔ ct = .hypothetical := by
+  cases ct
+  · exact iff_of_true h₂ rfl
+  · exact iff_of_false (fun h ↦ h.elim (fun ⟨a, ha⟩ ↦ h₁ a ha)
+      fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))) (by decide)
+
+/-- `anchoring` is the felicity condition in the two contexts the paper uses: one whose common
+ground entails the antecedent, and one in which nobody has committed to it and its polar
+question is open. -/
+theorem anchoring_iff_felicitous
     (h : p ∈ K.commonGround ∨
       (∀ a, p ∉ K.discourseCommitments a) ∧ ¬ (Question.polar p).DecidedBy K.commonGround)
-    (ct : Reading) : anchoring (p ∈ K.commonGround) ct ↔ ct.Felicitous K p := by
+    (ct : Reading) : anchoring (p ∈ K.commonGround) ct ↔ felicitous K p ct := by
   rcases h with h | ⟨h₁, h₂⟩
-  · rw [Reading.felicitous_iff_of_mem_commonGround h]; simp [anchoring, h]
+  · rw [felicitous_iff_of_mem_commonGround h]; simp [anchoring, h]
   · have hp : p ∉ K.commonGround := fun hp ↦ h₂ (Question.decidedBy_polar.2 (.inl hp))
-    rw [Reading.felicitous_iff_of_not_decidedBy h₁ h₂]
+    rw [felicitous_iff_of_not_decidedBy h₁ h₂]
     cases ct <;> simp [anchoring, hp]
 
-/-- Gibbard's puzzle: a bare left-nested conditional has no reading out of the blue, (4), and
-none under *only*-inversion, which forces the hypothetical reading, (38b) and (39b). -/
+end Felicity
+
+/-- Gibbard's puzzle is that a bare left-nested conditional has no reading out of the blue, (4),
+and none under *only*-inversion, which forces the hypothetical reading, (38b) and (39b). -/
 theorem bare_not_hypothetical : ¬ Acceptable (.nested .bare) (· = .hypothetical) := by
   simp [acceptable_bare_iff]
 
@@ -144,8 +178,8 @@ been asserted, (11)–(13). -/
 theorem bare_premise : Acceptable (.nested .bare) (· = .premise) :=
   (acceptable_bare_iff _).2 rfl
 
-/-- The exception, section 3: a modal, quantificational, or generic embedded conditional admits
-the hypothetical reading, (40)–(43). -/
+/-- The exception of section 3 is that a modal, quantificational, or generic embedded
+conditional admits the hypothetical reading, (40)–(43). -/
 theorem hypothetical_of_ne_bare (c : Content) (h : c ≠ .bare) :
     Acceptable (.nested c) (· = .hypothetical) :=
   (acceptable_iff_of_ne_bare (fun h' ↦ h (Shape.nested.inj h')) _).2 ⟨_, rfl⟩
@@ -185,14 +219,14 @@ inductive Position
   | embedded (c : Clause)
   deriving DecidableEq, Repr
 
-/-- The entailment direction of a position under a reading of the main conditional: a main
+/-- The entailment direction of a position under a reading of the main conditional. A main
 clause has its reading's direction, and a clause of the embedded conditional, read
 hypothetically, composes its direction with the main antecedent's. -/
 def Position.polarity (ct : Reading) : Position → SignType
   | .main c => ct.clausePolarity c
   | .embedded c => ct.clausePolarity .antecedent * Reading.hypothetical.clausePolarity c
 
-/-- The scalar context a position provides: downward-entailing positions reverse the scale. -/
+/-- The scalar context a position provides, which downward-entailing positions reverse. -/
 def Position.contextType (ct : Reading) (pos : Position) : Polarity :=
   if pos.polarity ct = -1 then .negative else .positive
 
@@ -229,8 +263,9 @@ theorem bare_embedded_antecedent (e : PolarityItem) :
       Israel2001.PolarityItem.contextType e = some .negative :=
   acceptable_bare_iff _
 
-/-- The diagnostic's force: on a hypothetical reading the embedded consequent would reverse the
-scale, admitting *lifted a finger* and rejecting *rather*, the reverse of (29) and (30). -/
+/-- The diagnostic has force because on a hypothetical reading the embedded consequent would
+reverse the scale, admitting *lifted a finger* and rejecting *rather*, the reverse of (29) and
+(30). -/
 theorem polarity_diagnostic :
     admits .hypothetical (.embedded .consequent) English.PolarityItems.liftAFinger ∧
       ¬ admits .hypothetical (.embedded .consequent) English.PolarityItems.rather := by
@@ -278,9 +313,9 @@ def flag? (row : LinguisticExample) (key : String) : Option Bool :=
   | some "false" => some false
   | _ => none
 
-/-- What the row's diagnostics demand of the reading: its marker must mark it, its antecedent
-and any coordinated antecedent must have the discourse status the reading needs,
-*only*-inversion forces the hypothetical reading, and its polarity item must be admitted at
+/-- The row's diagnostics demand of the reading that its marker mark it, that its antecedent
+and any coordinated antecedent have the discourse status the reading needs, that
+*only*-inversion force the hypothetical reading, and that its polarity item be admitted at
 its position. -/
 def demand (row : LinguisticExample) (ct : Reading) : Prop :=
   (∀ m ∈ markerOf row, ct ∈ m.readings) ∧
@@ -299,7 +334,7 @@ theorem adapters_total :
         ((row.feature? "item").isSome → (itemOf row).isSome) := by
   decide
 
-/-- Every row is acceptable iff some reading open to its shape meets its demand: Gibbard's (4)
+/-- Every row is acceptable iff some reading open to its shape meets its demand. Gibbard's (4)
 fails out of the blue and (11)–(14) succeed once the embedded conditional has been asserted;
 *nara* and *wenn* head the bare left-nested conditionals of (18) and (23), *-ra* and *falls*
 of (19) and (24) do not; *rather* survives in the embedded consequent of (29) and *lifted a
