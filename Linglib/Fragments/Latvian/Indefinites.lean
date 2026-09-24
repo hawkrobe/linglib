@@ -13,19 +13,22 @@ co-occurs (*Viņu nekas neinteresē* 'Nothing interests him'), and the free-choi
 with *jeb* 'or' (*jebkas* 'anything'). The person row departs from the pattern:
 *neviens* 'nobody' is built on the numeral *viens* 'one' and *jebkāds* 'anybody' on the
 determiner *kāds*, which is also used bare for 'somebody'. The manner row has no member of the
-*jeb*-series.
+*jeb*-series in [haspelmath-1997]'s table, and the determiner row of the *kaut*-series has
+*kaut kurš* beside *kaut kāds* ([kalnaca-lokmane-2021], §2.4.7).
 
 ## Implementation notes
 
 Forms are orthographic: the prefixes are written together with the interrogative (*nekas*),
-*kaut* apart from it (*kaut kas*); [haspelmath-1997] hyphenates the prefixes (*ne-kas*). A
-member is its series applied to an interrogative of `Latvian.Pronouns`, which derives its form,
-category and basis. In the person row *kāds* and *jebkāds* take the person category over the
-determiner they are built on, and *neviens*, built on no interrogative, is stated whole.
+*kaut* apart from it (*kaut kas*), as [kalnaca-lokmane-2021] prescribe; [haspelmath-1997]
+hyphenates the prefixes (*ne-kas*). A member is its series applied to an interrogative of
+`Latvian.Pronouns`, which derives its form, category and basis. In the person row *kāds* and
+*jebkāds* take the person category over the determiner they are built on, and *neviens*, built
+on no interrogative, is stated whole.
 
 ## References
 
 * [haspelmath-1997]
+* [kalnaca-lokmane-2021]
 -/
 
 @[expose] public section
@@ -60,7 +63,9 @@ interrogatives ([haspelmath-1997], §7.5.2). -/
 def neviens : IndefinitePronoun :=
   { form := "neviens", ontology := .person, basis := .interrogative }
 
-/-- *jebkāds* 'anybody': the *jeb*-series on the determiner *kāds*. -/
+/-- *jebkāds* 'anybody': the *jeb*-series on the determiner *kāds*, the person member of
+[haspelmath-1997]'s table. [kalnaca-lokmane-2021] gloss *jebkāds* 'any, any kind' and
+*jebkurš* 'any, anyone'. -/
 def jebkāds : IndefinitePronoun := { jeb Pronouns.kāds with ontology := .person }
 
 /-! ### The paradigm -/
@@ -68,7 +73,7 @@ def jebkāds : IndefinitePronoun := { jeb Pronouns.kāds with ontology := .perso
 /-- The *kaut*-series, person to determiner. -/
 def kautSeries : List IndefinitePronoun :=
   [kautKas, kāds, kaut Pronouns.kasThing, kaut Pronouns.kur, kaut Pronouns.kad, kaut Pronouns.kā,
-    kaut Pronouns.kāds]
+    kaut Pronouns.kāds, kaut Pronouns.kurš]
 
 /-- The *ne*-series, person to determiner. -/
 def neSeries : List IndefinitePronoun :=
