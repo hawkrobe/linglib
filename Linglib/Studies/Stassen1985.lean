@@ -8,51 +8,64 @@ public import Linglib.Fragments.Turkish.Comparison
 public import Linglib.Fragments.HindiUrdu.Comparison
 public import Linglib.Fragments.Mandarin.Comparison
 public import Linglib.Fragments.English.Comparison
+public import Linglib.Fragments.Swahili.Comparison
 public import Linglib.Fragments.Korean.Clause
 public import Linglib.Fragments.Turkish.Clause
 
 /-!
 # Stassen (1985): Comparison and Universal Grammar
 
-This file formalizes [stassen-1985]'s typology of comparative constructions and its
-explanation by temporal chaining. A comparative construction assigns the standard NP derived
-or fixed case, and a fixed-case standard is the direct object of a verb of exceeding or an
-adverbial in a spatial case; the six types are `Type1985`, read off a construction's anatomy
-by `type1985`: separative, allative and locative for adverbial standards in ablative,
-allative and locative case, exceed for direct-object standards, and particle and conjoined
-for derived-case standards with and without a standard marker. The typology of
-[stassen-2013] collapses the three spatial types into one locational type
-(`toWALS_type1985`).
+This file formalizes Stassen's typology of comparative constructions and his explanation of it
+by temporal chaining. A comparative assigns its standard noun phrase derived case, the case of
+the comparee, or a fixed case, and a fixed-case standard is the direct object of a verb of
+exceeding or an adverbial in a separative, allative or locative case, which gives six types. A
+temporal chain is consecutive or simultaneous and is balanced, both predicates keeping their
+rank, or deranked, one predicate reduced, either only under identity of subjects or absolutely,
+and an absolutely deranked consecutive chain reduces its anterior or its posterior predicate,
+which gives the seven syntactic types of chaining. The book's thesis is that a language models
+its comparative on one of its chains, and its chaining-based universals follow from the
+modelling. Over the fragments, Japanese, Korean, Turkish and Hindi-Urdu have the separative
+comparative the book lists them under, Mandarin and Swahili the exceed one, Swahili also a
+secondary conjoined one and English the particle one, and the converbs of Korean and Turkish
+derank their chains as a separative comparative requires.
 
-Temporal chains are balanced, both predicates keeping their rank, or deranked, one predicate
-reduced, either only in same-subject chains or regardless of subject identity, and an
-absolutely deranked consecutive chain reduces its anterior or its posterior predicate; the
-chain types are `ChainType`. The book's thesis is that a language's comparative is modelled
-on its temporal chains, `Models`, and its universals relating the two typologies are the
-consequences: derived-case comparatives arise from balancing and fixed-case comparatives from
-deranking (`universal1`), exceed comparatives from conditional and adverbial comparatives
-from absolute deranking (`universal2`), the three spatial types from anterior, posterior and
-simultaneous absolute deranking (`universal3`), and conjoined comparatives from balanced
-simultaneous chains (`universal4`). Over the fragments, the balancing/deranking cut is read off the
-finiteness of a language's medial verb form (`strategy`), and
-Korean and Turkish, whose comparison and clause-chaining fragments both exist, have
-separative comparatives and deranked chains, as the thesis requires (`korean_consistent`,
-`turkish_consistent`).
+## Main definitions
+
+* `Stassen1985.Type1985`, `Stassen1985.type1985`: the six comparative types and the type of a
+  construction, read off its anatomy
+* `Stassen1985.ChainType`: the seven syntactic types of temporal chaining, with their
+  `temporality`, `strategy`, `conditionality` and `direction`
+* `Stassen1985.Models`: the chains a comparative type is modelled on
+* `Stassen1985.strategy`: the strategy a medial verb form shows
+
+## Main results
+
+* `Stassen1985.toWALS_type1985`, `caseAssignment_type1985`, `spatialCase_type1985`: the type
+  agrees with the construction's anatomy and collapses to the type of the atlas
+* `Stassen1985.universal1A` to `Stassen1985.universal4`: the chaining-based universals
+* `Stassen1985.separative_fragments`, `mandarin_exceed`, `english_particle`,
+  `swahili_double_option`: the fragments' constructions under the typology
+* `Stassen1985.korean_consistent`, `Stassen1985.turkish_consistent`: the chains a separative
+  comparative is modelled on have the strategy the converbs show
 
 ## Implementation notes
 
-The book is held only in a lending library, so its language lists and page locators were not
-checked and the study keeps only what the fragments derive; the per-language chaining
-types of the book's sample are not transcribed. The clause-chaining substrate records the
-finiteness of medial verbs but neither the same-subject conditionality of deranking nor the
-anterior/posterior orientation of the deranked predicate, so `ChainType` is not read off a
-fragment beyond its strategy. The Principle of Parallel Chaining and the diachronic pathway
-from a negated conjunction to a comparative are described in the book and not formalized.
+* The universals are stated over the modelling relation, as the book states them of a
+  language that has a comparative of the type, so each says that a chain the type is modelled
+  on has the property. The chaining data of the sample that Part Two of the book tests the
+  universals against are not transcribed, and the language types of §4.7 under the Principle
+  of Parallel Chaining and the procedure-based universals of chapter 15 are not formalized.
+* A clause-chaining fragment records the form of a medial verb but neither the conditionality
+  of its deranking nor the direction of the reduced predicate, so it yields a strategy and not
+  a chain type.
+* The mixed comparatives of §2.5, the conjoined exceed comparatives of Fulani, Acholi, Motu,
+  Tamazight and Temne, have no type here, and neither has an adverbial standard in no spatial
+  case, such as the Finnish partitive or the Swahili *kuliko* the book calls indeterminate.
 
 ## References
 
-* [stassen-1985]
-* [stassen-2013]
+* [L. Stassen, *Comparison and Universal Grammar* (1985)][stassen-1985]
+* [L. Stassen, *Comparative Constructions* (2013)][stassen-2013]
 -/
 
 @[expose] public section
@@ -63,8 +76,8 @@ open Comparative
 
 /-! ### The six comparative types -/
 
-/-- The comparative types of [stassen-1985]: the three adverbial types by the spatial case of
-the standard, the exceed type, and the two derived-case types. -/
+/-- The comparative types are the three adverbial types, by the spatial case of the
+standard, the exceed type, and the two derived-case types. -/
 inductive Type1985
   | separative
   | allative
@@ -76,14 +89,15 @@ inductive Type1985
 
 namespace Type1985
 
-/-- The type of [stassen-2013], which collapses the adverbial types into one. -/
+/-- The type of the atlas, which collapses the adverbial types into one. -/
 def toWALS : Type1985 → ComparativeType
   | .separative | .allative | .locative => .locational
   | .exceed => .exceed
   | .conjoined => .conjoined
   | .particle => .particle
 
-/-- The case assignment of a type: derived for the conjoined and particle types. -/
+/-- The case assignment of a type is derived for the conjoined and particle types and fixed
+otherwise. -/
 def caseAssignment : Type1985 → CaseAssignment
   | .conjoined | .particle => .derived
   | _ => .fixed
@@ -111,8 +125,8 @@ theorem fixedEncoding_eq_adverbial_iff :
 
 end Type1985
 
-/-- The type of a construction, read off its anatomy: `none` for an adverbial standard in a
-non-spatial case, such as the Finnish partitive. -/
+/-- The type of a construction, read off its anatomy; `none` for an adverbial standard in no
+spatial case. -/
 def type1985 (c : Comparative) : Option Type1985 :=
   match c.caseAssignment, c.fixedEncoding, c.standardCase with
   | .derived, _, _ => some (if c.standardMarker.isSome then .particle else .conjoined)
@@ -123,7 +137,7 @@ def type1985 (c : Comparative) : Option Type1985 :=
   | .fixed, _, _ => none
 
 /-- The type of a construction collapses to the type its anatomy derives in the typology of
-[stassen-2013]. -/
+the atlas. -/
 theorem toWALS_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some t) :
     t.toWALS = c.type := by
   obtain ⟨m, ca, fe, sc, _, _⟩ := c
@@ -155,63 +169,99 @@ theorem spatialCase_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = 
 
 /-! ### Temporal chaining -/
 
-/-- The strategies for encoding a temporal chain: both predicates keep their structural rank,
-or one is reduced. -/
+/-- A chain is consecutive, one event after the other, or simultaneous. -/
+inductive Temporality
+  | consecutive
+  | simultaneous
+  deriving DecidableEq, Repr, Fintype
+
+/-- A chain is balanced, both predicates keeping their structural rank, or deranked, one
+predicate reduced. -/
 inductive Strategy
   | balancing
   | deranking
   deriving DecidableEq, Repr, Fintype
 
-/-- The chain types of the book's typology of temporal chaining: balanced consecutive and
-simultaneous chains, deranking conditioned on subject identity, and absolute deranking of the
-anterior or the posterior predicate of a consecutive chain or of a simultaneous chain. -/
+/-- A deranked chain reduces a predicate only under identity of the subjects, or absolutely. -/
+inductive Conditionality
+  | conditional
+  | absolute
+  deriving DecidableEq, Repr, Fintype
+
+/-- A deranked consecutive chain reduces its anterior or its posterior predicate. -/
+inductive Direction
+  | anterior
+  | posterior
+  deriving DecidableEq, Repr, Fintype
+
+/-- The seven syntactic types of temporal chaining (§4.6). A consecutive chain is balanced,
+conditionally deranked with its posterior predicate reduced, or absolutely deranked with its
+anterior or its posterior predicate reduced, and a simultaneous chain is balanced, conditionally
+deranked or absolutely deranked. -/
 inductive ChainType
-  | balancedConsecutive
-  | balancedSimultaneous
-  | conditionallyDeranked
-  | anteriorDeranked
-  | posteriorDeranked
-  | simultaneousDeranked
+  | consecutiveBalanced
+  | consecutiveConditional
+  | consecutiveAnterior
+  | consecutivePosterior
+  | simultaneousBalanced
+  | simultaneousConditional
+  | simultaneousAbsolute
   deriving DecidableEq, Repr, Fintype
 
 namespace ChainType
 
+/-- The temporality of a chain type. -/
+def temporality : ChainType → Temporality
+  | .consecutiveBalanced | .consecutiveConditional | .consecutiveAnterior
+  | .consecutivePosterior => .consecutive
+  | .simultaneousBalanced | .simultaneousConditional | .simultaneousAbsolute => .simultaneous
+
 /-- The strategy of a chain type. -/
 def strategy : ChainType → Strategy
-  | .balancedConsecutive | .balancedSimultaneous => .balancing
+  | .consecutiveBalanced | .simultaneousBalanced => .balancing
   | _ => .deranking
 
-/-- A chain type deranks regardless of subject identity. -/
-def Absolute : ChainType → Prop
-  | .anteriorDeranked | .posteriorDeranked | .simultaneousDeranked => True
-  | _ => False
+/-- The conditionality of a deranked chain type. -/
+def conditionality : ChainType → Option Conditionality
+  | .consecutiveConditional | .simultaneousConditional => some .conditional
+  | .consecutiveAnterior | .consecutivePosterior | .simultaneousAbsolute => some .absolute
+  | .consecutiveBalanced | .simultaneousBalanced => none
 
-instance : DecidablePred Absolute := fun ct ↦ by
-  cases ct <;> simp only [Absolute] <;> infer_instance
+/-- The direction of a deranked consecutive chain type, posterior for the conditionally
+deranked one. -/
+def direction : ChainType → Option Direction
+  | .consecutiveConditional | .consecutivePosterior => some .posterior
+  | .consecutiveAnterior => some .anterior
+  | _ => none
 
-/-- A chain type is simultaneous rather than consecutive. -/
-def Simultaneous : ChainType → Prop
-  | .balancedSimultaneous | .simultaneousDeranked => True
-  | _ => False
+/-- A chain type has a conditionality exactly when it deranks. -/
+theorem conditionality_isSome_iff (ct : ChainType) :
+    ct.conditionality.isSome ↔ ct.strategy = .deranking := by
+  cases ct <;> decide
 
-instance : DecidablePred Simultaneous := fun ct ↦ by
-  cases ct <;> simp only [Simultaneous] <;> infer_instance
+/-- A chain type has a direction exactly when it is a deranked consecutive chain, since a
+simultaneous chain has no anterior or posterior predicate. -/
+theorem direction_isSome_iff (ct : ChainType) :
+    ct.direction.isSome ↔ ct.temporality = .consecutive ∧ ct.strategy = .deranking := by
+  cases ct <;> decide
 
 end ChainType
 
-/-- The book's thesis: a comparative construction is modelled on a temporal chain. Particle
-comparatives are modelled on balanced chains of either temporality, conjoined comparatives on
-balanced simultaneous chains, exceed comparatives on conditionally deranked chains, and the
-three adverbial comparatives on absolutely deranked chains with the anterior predicate, the
-posterior predicate, or the simultaneous predicate reduced. -/
+/-- The book's thesis is that a comparative is modelled on a temporal chain. A particle
+comparative is modelled on a balanced chain of either temporality, a conjoined comparative on
+the balanced simultaneous chain, an exceed comparative on a conditionally deranked chain,
+usually the simultaneous one, and the three adverbial comparatives on the absolutely deranked
+chains, the separative on the anterior consecutive, the allative on the posterior consecutive
+and the locative on the simultaneous one. -/
 inductive Models : ChainType → Type1985 → Prop
-  | particleConsecutive : Models .balancedConsecutive .particle
-  | particleSimultaneous : Models .balancedSimultaneous .particle
-  | conjoined : Models .balancedSimultaneous .conjoined
-  | exceed : Models .conditionallyDeranked .exceed
-  | separative : Models .anteriorDeranked .separative
-  | allative : Models .posteriorDeranked .allative
-  | locative : Models .simultaneousDeranked .locative
+  | particleConsecutive : Models .consecutiveBalanced .particle
+  | particleSimultaneous : Models .simultaneousBalanced .particle
+  | conjoined : Models .simultaneousBalanced .conjoined
+  | exceedConsecutive : Models .consecutiveConditional .exceed
+  | exceedSimultaneous : Models .simultaneousConditional .exceed
+  | separative : Models .consecutiveAnterior .separative
+  | allative : Models .consecutivePosterior .allative
+  | locative : Models .simultaneousAbsolute .locative
 
 instance (ct : ChainType) (t : Type1985) : Decidable (Models ct t) := by
   cases ct <;> cases t <;> first
@@ -221,59 +271,89 @@ instance (ct : ChainType) (t : Type1985) : Decidable (Models ct t) := by
 /-- Every comparative type is modelled on some chain type. -/
 theorem exists_models : ∀ t : Type1985, ∃ ct, Models ct t := by decide
 
-/-- Universal 1: a derived-case comparative is modelled on a balanced chain and a fixed-case
-comparative on a deranked one. -/
-theorem universal1 :
-    ∀ ct t, Models ct t → (t.caseAssignment = .derived ↔ ct.strategy = .balancing) := by
-  decide
+/-! ### The chaining-based universals (§5.2) -/
 
-/-- Universal 2: an exceed comparative is modelled on conditional deranking and an adverbial
-comparative on absolute deranking. -/
-theorem universal2 :
-    ∀ ct t, Models ct t →
-      (t = .exceed → ct = .conditionallyDeranked) ∧
-        (t.fixedEncoding = some .adverbial → ct.Absolute) := by
-  decide
+variable {ct : ChainType} {t : Type1985}
 
-/-- Universal 3: separative, allative and locative comparatives are modelled on absolutely
-deranked chains with, respectively, the anterior predicate, the posterior predicate and the
-simultaneous predicate reduced. -/
-theorem universal3 :
-    ∀ ct t, Models ct t →
-      (t = .separative ↔ ct = .anteriorDeranked) ∧ (t = .allative ↔ ct = .posteriorDeranked) ∧
-        (t = .locative ↔ ct = .simultaneousDeranked) := by
-  decide
+/-- Universal 1A says that a derived-case comparative is modelled on a balanced chain. -/
+theorem universal1A (h : Models ct t) (hd : t.caseAssignment = .derived) :
+    ct.strategy = .balancing := by
+  revert ct t; decide
 
-/-- Universal 4: a conjoined comparative is modelled on a balanced simultaneous chain. -/
-theorem universal4 : ∀ ct t, Models ct t → t = .conjoined → ct = .balancedSimultaneous := by
-  decide
+/-- Universal 1B says that a fixed-case comparative is modelled on a deranked chain. -/
+theorem universal1B (h : Models ct t) (hf : t.caseAssignment = .fixed) :
+    ct.strategy = .deranking := by
+  revert ct t; decide
+
+/-- Universal 2A says that an exceed comparative is modelled on a conditionally deranked
+chain. -/
+theorem universal2A (h : Models ct .exceed) : ct.conditionality = some .conditional := by
+  revert ct; decide
+
+/-- Universal 2B says that an adverbial comparative is modelled on an absolutely deranked
+chain. -/
+theorem universal2B (h : Models ct t) (ha : t.fixedEncoding = some .adverbial) :
+    ct.conditionality = some .absolute := by
+  revert ct t; decide
+
+/-- Universal 3A says that a separative comparative is modelled on the absolutely deranked
+anterior consecutive chain. -/
+theorem universal3A (h : Models ct .separative) : ct = .consecutiveAnterior := by
+  revert ct; decide
+
+/-- Universal 3B says that an allative comparative is modelled on the absolutely deranked
+posterior consecutive chain. -/
+theorem universal3B (h : Models ct .allative) : ct = .consecutivePosterior := by
+  revert ct; decide
+
+/-- Universal 3C says that a locative comparative is modelled on the absolutely deranked
+simultaneous chain. -/
+theorem universal3C (h : Models ct .locative) : ct = .simultaneousAbsolute := by
+  revert ct; decide
+
+/-- Universal 4 says that a conjoined comparative is modelled on the balanced simultaneous
+chain. -/
+theorem universal4 (h : Models ct .conjoined) : ct = .simultaneousBalanced := by
+  revert ct; decide
 
 /-! ### The fragments -/
 
-/-- The strategy a medial verb form shows, balancing when finite and deranking otherwise. -/
+/-- The strategy a medial verb form shows is balancing when the form is finite and deranking
+otherwise. -/
 def strategy : UD.VerbForm → Strategy
   | .Fin => .balancing
   | _ => .deranking
 
-/-- The separative constructions of the fragments: the ablative standards of Japanese, Korean,
-Turkish and Hindi-Urdu. -/
+/-- The ablative standards of Japanese, Korean, Turkish and Hindi-Urdu are separative
+comparatives, the type the book lists the four languages under. -/
 theorem separative_fragments :
     ∀ c ∈ [Japanese.Comparison.yori, Korean.Comparison.boda, Turkish.Comparison.dan,
       HindiUrdu.Comparison.se], type1985 c = some .separative := by
   decide
 
+/-- Mandarin has an exceed comparative, the type the book lists it under. -/
 theorem mandarin_exceed : type1985 Mandarin.Comparison.bi = some .exceed := by decide
 
+/-- English has a particle comparative, the construction of §9.4. -/
 theorem english_particle : type1985 English.Comparison.than = some .particle := by decide
 
-/-- Korean has a separative comparative and deranked chains: the chain type its comparative is
-modelled on has the strategy its clause-chaining fragment shows. -/
+/-- Swahili has a primary exceed comparative and a secondary conjoined one, the double option
+of the book's chapter 10, and its *kuliko* construction, an adverbial standard in no spatial
+case, is the indeterminate case the book calls it. -/
+theorem swahili_double_option :
+    type1985 Swahili.Comparison.kushinda = some .exceed ∧
+      type1985 Swahili.Comparison.conjoined = some .conjoined ∧
+      type1985 Swahili.Comparison.kuliko = none := by
+  decide
+
+/-- Korean has a separative comparative and deranked chains, so the chain its comparative is
+modelled on has the strategy its converbs show. -/
 theorem korean_consistent :
     ∀ ct, Models ct .separative →
       ∀ c : Korean.Converb, ct.strategy = strategy c.verbForm := by
   decide
 
-/-- Turkish likewise. -/
+/-- Turkish likewise has a separative comparative and deranked chains. -/
 theorem turkish_consistent :
     ∀ ct, Models ct .separative →
       ∀ c : Turkish.Converb, ct.strategy = strategy c.verbForm := by
