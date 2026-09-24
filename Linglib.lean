@@ -848,7 +848,6 @@ import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Latin.Gender
 import Linglib.Fragments.Latin.Indefinites
 import Linglib.Fragments.Latin.Phonology
-import Linglib.Fragments.Latvian.IndeterminatePronouns
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Malagasy.Relativization

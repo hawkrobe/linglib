@@ -5,7 +5,7 @@ public import Mathlib.Data.Set.Lattice.Bounded
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Fragments.Japanese.Determiners
 public import Linglib.Fragments.German.ModalIndefinites
-public import Linglib.Fragments.Latvian.IndeterminatePronouns
+public import Linglib.Studies.Haspelmath1997
 public import Linglib.Data.Examples.KratzerShimoyama2002
 
 /-!
@@ -41,7 +41,7 @@ follow the 2002 manuscript, whose numbering the published chapter keeps.
 
 * [kratzer-shimoyama-2002]
 * [hamblin-1973b] — alternative semantics for questions
-* [haspelmath-1997] — the Latvian paradigm
+* [haspelmath-1997] — the Latvian and Japanese series
 * [kadmon-landman-1993] — widening for a reason
 * [beck-1996] — intervention effects
 -/
@@ -252,12 +252,20 @@ theorem japanese_same_base :
       Japanese.Determiners.dare_ka.force ≠ Japanese.Determiners.dare_mo.force :=
   ⟨rfl, by decide⟩
 
-/-- The Latvian series of [haspelmath-1997] are selective: in every row the existential,
-negative, and free-choice forms differ. -/
+/-- The Latvian series are selective (§1, §9): in [haspelmath-1997]'s figure the *kaut*-series
+is existential, the *ne*-series confined to the direct scope of negation and the *jeb*-series to
+indirect negation, comparatives and free choice, so that no function of the map is served by two
+series. -/
 theorem latvian_selective :
-    ∀ e ∈ Latvian.IndeterminatePronouns.paradigm,
-      e.existential ≠ e.negPolarity ∧ e.existential ≠ e.freeChoice ∧
-        e.negPolarity ≠ e.freeChoice := by
+    Haspelmath1997.latvian.Pairwise (Disjoint ·.functions ·.functions) := by
+  decide
+
+/-- The Japanese series of [haspelmath-1997] are as disjoint as the Latvian ones, so the contrast
+the paper draws between the two systems is one of shape and not of distribution: the Latvian
+marker sits on the pronoun, while the Japanese indeterminate keeps its shape under each particle
+(`japanese_same_base`). -/
+theorem japanese_series_disjoint :
+    Haspelmath1997.japanese.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
 /-- The Beck effects (23) and their scrambled counterparts (24): a multiple question with the

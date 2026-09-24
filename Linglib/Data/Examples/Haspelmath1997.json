@@ -2709,6 +2709,589 @@
     "lgrConformance": ""
   },
   {
+    "id": "haspelmath1997_lv_A138",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A138)"
+    },
+    "language": "latv1249",
+    "primaryText": "Viņš kaut kur aizgājis.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Viņš",
+        "he"
+      ],
+      [
+        "kaut",
+        "INDEF"
+      ],
+      [
+        "kur",
+        "where"
+      ],
+      [
+        "aizgājis",
+        "left"
+      ]
+    ],
+    "translation": "He went somewhere.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "specificUnknown"
+      ],
+      [
+        "series",
+        "kaut"
+      ]
+    ],
+    "comment": "The book labels the function specific, which the figure of the language does not split; the row takes specific unknown.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A139",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A139)"
+    },
+    "language": "latv1249",
+    "primaryText": "Nopērc kaut ko.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nopērc",
+        "buy"
+      ],
+      [
+        "kaut",
+        "INDEF"
+      ],
+      [
+        "ko",
+        "what"
+      ]
+    ],
+    "translation": "Buy something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "irrealis"
+      ],
+      [
+        "series",
+        "kaut"
+      ]
+    ],
+    "comment": "An imperative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A140a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A140a)"
+    },
+    "language": "latv1249",
+    "primaryText": "Vai tu gatavojies kaut kur braukt?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vai",
+        "Q"
+      ],
+      [
+        "tu",
+        "you"
+      ],
+      [
+        "gatavojies",
+        "you:are:prepared"
+      ],
+      [
+        "kaut",
+        "INDEF"
+      ],
+      [
+        "kur",
+        "where"
+      ],
+      [
+        "braukt",
+        "to:go"
+      ]
+    ],
+    "translation": "Are you going to go anywhere?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "question"
+      ],
+      [
+        "series",
+        "kaut"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A140b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A140b)"
+    },
+    "language": "latv1249",
+    "primaryText": "Ja kāds atnāk(tu), saki, lai viņš pagaida.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ja",
+        "if"
+      ],
+      [
+        "kāds",
+        "who"
+      ],
+      [
+        "atnāk(tu)",
+        "arrives"
+      ],
+      [
+        "saki",
+        "say:IMPV"
+      ],
+      [
+        "lai",
+        "let"
+      ],
+      [
+        "viņš",
+        "he"
+      ],
+      [
+        "pagaida",
+        "wait"
+      ]
+    ],
+    "translation": "If anyone comes, say that he should wait.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "item",
+        "kāds (bare interrogative)"
+      ]
+    ],
+    "comment": "The bare interrogative kāds is used as an indefinite.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A140c_kaut",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A140c)"
+    },
+    "language": "latv1249",
+    "primaryText": "Ja kaut kur ejat, tad pasakiet man.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ja",
+        "if"
+      ],
+      [
+        "kaut",
+        "INDEF"
+      ],
+      [
+        "kur",
+        "where"
+      ],
+      [
+        "ejat",
+        "you:go"
+      ],
+      [
+        "tad",
+        "then"
+      ],
+      [
+        "pasakiet",
+        "tell:IMPV"
+      ],
+      [
+        "man",
+        "me"
+      ]
+    ],
+    "translation": "If you go anywhere, tell me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "kaut"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A140c_jeb",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A140c)"
+    },
+    "language": "latv1249",
+    "primaryText": "Ja jeb-kur ejat, tad pasakiet man.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ja",
+        "if"
+      ],
+      [
+        "jeb-kur",
+        "INDEF-where"
+      ],
+      [
+        "ejat",
+        "you:go"
+      ],
+      [
+        "tad",
+        "then"
+      ],
+      [
+        "pasakiet",
+        "tell:IMPV"
+      ],
+      [
+        "man",
+        "me"
+      ]
+    ],
+    "translation": "If you go anywhere, tell me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "conditional"
+      ],
+      [
+        "series",
+        "jeb-"
+      ]
+    ],
+    "comment": "The jeb-series is excluded from conditionals.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A141",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A141)"
+    },
+    "language": "latv1249",
+    "primaryText": "Varat nākt jeb-kurā laikā.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Varat",
+        "you:can"
+      ],
+      [
+        "nākt",
+        "to:come"
+      ],
+      [
+        "jeb-kurā",
+        "INDEF-which"
+      ],
+      [
+        "laikā",
+        "time:LOC"
+      ]
+    ],
+    "translation": "You can come at any time.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "freeChoice"
+      ],
+      [
+        "series",
+        "jeb-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A142",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A142)"
+    },
+    "language": "latv1249",
+    "primaryText": "Tas viņu iepriecināja vairāk nekā jeb-kas cits.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Tas",
+        "that"
+      ],
+      [
+        "viņu",
+        "him"
+      ],
+      [
+        "iepriecināja",
+        "delighted"
+      ],
+      [
+        "vairāk",
+        "more"
+      ],
+      [
+        "nekā",
+        "than"
+      ],
+      [
+        "jeb-kas",
+        "INDEF-what"
+      ],
+      [
+        "cits",
+        "other"
+      ]
+    ],
+    "translation": "It made him more glad than anything else.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "comparative"
+      ],
+      [
+        "series",
+        "jeb-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A143a",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A143a)"
+    },
+    "language": "latv1249",
+    "primaryText": "bez jeb-kādām pārmaiņām",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "bez",
+        "without"
+      ],
+      [
+        "jeb-kādām",
+        "INDEF-which"
+      ],
+      [
+        "pārmaiņām",
+        "changes"
+      ]
+    ],
+    "translation": "without any changes",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "series",
+        "jeb-"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A143b",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A143b)"
+    },
+    "language": "latv1249",
+    "primaryText": "Es nedomāju, ka kāds atnāks.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Es",
+        "I"
+      ],
+      [
+        "nedomāju",
+        "not.think"
+      ],
+      [
+        "ka",
+        "that"
+      ],
+      [
+        "kāds",
+        "who"
+      ],
+      [
+        "atnāks",
+        "came"
+      ]
+    ],
+    "translation": "I don't think that anybody came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "indirectNeg"
+      ],
+      [
+        "item",
+        "kāds (bare interrogative)"
+      ]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "haspelmath1997_lv_A144",
+    "source": {
+      "bibkey": "haspelmath-1997",
+      "paperLabel": "(A144)"
+    },
+    "language": "latv1249",
+    "primaryText": "Viņu ne-kas ne-interesē.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Viņu",
+        "him"
+      ],
+      [
+        "ne-kas",
+        "NEG-what"
+      ],
+      [
+        "ne-interesē",
+        "NEG-interests"
+      ]
+    ],
+    "translation": "Nothing interests him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "A.18"
+      ],
+      [
+        "function",
+        "directNeg"
+      ],
+      [
+        "series",
+        "ne-"
+      ]
+    ],
+    "comment": "The ne-series co-occurs with verbal negation.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
     "id": "haspelmath1997_hi_A167_known",
     "source": {
       "bibkey": "haspelmath-1997",
