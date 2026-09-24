@@ -18,7 +18,7 @@ against thresholds.
 A preference structure, in the sense of Condoravdi and Lauer, is a pair of a set of
 propositions and a strict partial order on them. It is the mathematical spine of their
 effective-preference framework, and is consumed by the *want* semantics in `Desire.lean` and by
-the dynamic necessity operator of `Semantics/Dynamic/UpdateSemantics/Necessity.lean`. `maxElts`
+the dynamic necessity operator of `Semantics/Dynamic/Expectation.lean`. `maxElts`
 collects the maximal elements. Relative to an information state `B`, a structure is `Consistent`
 when any subfamily of preferences jointly incompatible with `B` contains a strictly ranked pair,
 and `Realistic` when every preference is compatible with `B`, which follows from consistency

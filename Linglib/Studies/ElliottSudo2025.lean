@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.ElliottSudo2025
-public import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
+public import Linglib.Semantics.Dynamic.Bilateral
 public import Linglib.Studies.GroenendijkStokhof1991
 
 /-!

@@ -23,34 +23,37 @@ jointly entail the content of the conclusion. In general they come apart. Validi
 the premises and validity₂ is monotone on the left, while validity₁ is neither, but inserting a
 conclusion that validity₁ has drawn into the premise sequence changes nothing, which gives
 Sequential Monotony and Sequential Cut. On sets of possibilities the additive updates are the
-classical ones of `Semantics/Dynamic/Update.lean`, the static updates with a content.
+classical ones of `Semantics/Dynamic/Update.lean`, the static updates with a content, and the
+dynamic entailment that a satisfaction relation induces there is validity₂.
 
 ## Main definitions
 
-* `UpdateSemantics.Valid₁`, `UpdateSemantics.Valid₂`, `UpdateSemantics.Valid₃`: the three
+* `DynamicSemantics.Valid₁`, `DynamicSemantics.Valid₂`, `DynamicSemantics.Valid₃`: the three
   notions of validity.
-* `UpdateSemantics.IsAdditive`: the update meets its input with a fixed content.
+* `DynamicSemantics.IsAdditive`: the update meets its input with a fixed content.
 
 ## Main results
 
-* `UpdateSemantics.isAdditive_iff`: additivity is Strengthening, Monotony, Idempotence and
+* `DynamicSemantics.isAdditive_iff`: additivity is Strengthening, Monotony, Idempotence and
   Persistence together.
-* `UpdateSemantics.tfae_valid`: for additive updates the three notions of validity coincide.
-* `UpdateSemantics.Valid₁.insert_iff`: Sequential Monotony and Sequential Cut.
-* `UpdateSemantics.valid₁_append_self`: under Idempotence validity₁ is reflexive.
-* `UpdateSemantics.isFixedPt_foldl_iff`: along updates that never add possibilities, a state
+* `DynamicSemantics.tfae_valid`: for additive updates the three notions of validity coincide.
+* `DynamicSemantics.Valid₁.insert_iff`: Sequential Monotony and Sequential Cut.
+* `DynamicSemantics.valid₁_append_self`: under Idempotence validity₁ is reflexive.
+* `DynamicSemantics.isFixedPt_foldl_iff`: along updates that never add possibilities, a state
   accepts a text exactly when it accepts each of its sentences.
-* `UpdateSemantics.isAdditive_iff_isClassical`: on sets of possibilities the additive updates
-  are the classical ones.
+* `DynamicSemantics.CCP.isAdditive_iff_isClassical`: on sets of possibilities the additive
+  updates are the classical ones.
+* `DynamicSemantics.dynamicEntailsOf_iff_valid₂`: the dynamic entailment a satisfaction relation
+  induces is validity₂.
 
 ## Implementation notes
 
-States are ordered by inclusion, as for `DynamicSemantics.CCP` and
-`UpdateSemantics.Default.ExpState`: a more informed state lies lower, the minimal state is `⊤`,
-and Strengthening says that an update never adds possibilities. Veltman orients the order the other
-way, with the minimal state `0` at the bottom and the sum of two states their join, and the content
-is the same. Acceptance is `Function.IsFixedPt`. A sentence is identified with its update and a
-text with the list of its updates, applied from the left by `List.foldl`.
+States are ordered by inclusion, as for `DynamicSemantics.CCP` and `DynamicSemantics.ExpState`:
+a more informed state lies lower, the minimal state is `⊤`, and Strengthening says that an update
+never adds possibilities. Veltman orients the order the other way, with the minimal state `0` at
+the bottom and the sum of two states their join, and the content is the same. Acceptance is
+`Function.IsFixedPt`. A sentence is identified with its update and a text with the list of its
+updates, applied from the left by `List.foldl`.
 
 Read in the reversed order, the four constraints make an update a closure operator whose closed
 elements form an upper set, and `isAdditive_iff` says that such an operator is `(· ⊔ c ⊥)`.
@@ -62,7 +65,7 @@ elements form an upper set, and `isAdditive_iff` says that such an operator is `
 
 @[expose] public section
 
-namespace UpdateSemantics
+namespace DynamicSemantics
 
 open Function
 
@@ -198,20 +201,23 @@ end Additive
 
 section CCP
 
-open DynamicSemantics
-
 variable {S : Type*} {u : CCP S}
 
 /-- The static update with a content is additive. -/
-theorem isAdditive_up (c : Set S) : IsAdditive (CCP.up c) := fun s ↦ by simp [CCP.up]
+theorem CCP.isAdditive_up (c : Set S) : IsAdditive (CCP.up c) := fun s ↦ by simp [CCP.up]
 
 /-- On sets of possibilities the additive updates are the classical ones, eliminative and
 distributive. -/
-theorem isAdditive_iff_isClassical : IsAdditive u ↔ u.IsClassical := by
+theorem CCP.isAdditive_iff_isClassical : IsAdditive u ↔ u.IsClassical := by
   rw [CCP.isClassical_iff_up_down_eq]
-  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ isAdditive_up _⟩
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ CCP.isAdditive_up _⟩
   rw [show u = CCP.up (u ⊤) from funext h, CCP.down_up]
+
+/-- Dynamic entailment under a satisfaction relation is validity₂ of the induced updates. -/
+theorem dynamicEntailsOf_iff_valid₂ {φ : Type*} (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) :
+    dynamicEntailsOf sat ψ₁ ψ₂ ↔ Valid₂ [CCP.updateFromSat sat ψ₁] (CCP.updateFromSat sat ψ₂) :=
+  forall_congr' fun s ↦ support_iff_update_eq sat ψ₂ (CCP.updateFromSat sat ψ₁ s)
 
 end CCP
 
-end UpdateSemantics
+end DynamicSemantics
