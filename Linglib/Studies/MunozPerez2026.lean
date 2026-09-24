@@ -279,7 +279,7 @@ theorem anticausative_rows : ∀ e ∈ Examples.all,
     e.feature? "construction" = some "anticausative" →
     ∃ v ∈ verb? e, ∃ a ∈ appl? e, ∃ s ∈ e.feature? "cluster",
       (.marginal ≤ e.judgment ↔
-        ∃ k ∈ clauses a v.anticausativeMarking, ∃ l ∈ clusters k,
+        ∃ m ∈ v.anticausativeMarking, ∃ k ∈ clauses a m, ∃ l ∈ clusters k,
           " ".intercalate l = s) := by
   decide +kernel
 
@@ -341,7 +341,7 @@ always possible. -/
 /-- The prediction of the null-reflexive extension for a verb: if it alternates, its
 intransitive can take the clitic. -/
 def seMarkedIfAlternating (v : SpanishVerbEntry) : Prop :=
-  v.causativeAlternation = true → v.anticausativeMarking ≠ .unmarked
+  v.Alternates → v.anticausativeMarking ≠ some .unmarked
 
 /-- *mejorar* alternates and rejects the clitic, against the prediction. -/
 theorem not_seMarkedIfAlternating_mejorar : ¬ seMarkedIfAlternating mejorar := by

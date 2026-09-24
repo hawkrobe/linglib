@@ -4,51 +4,33 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
-# Spanish Noun Gender
-[butt-benjamin-2019] [kramer-2015] [kramer-2020]
-[harris-1991]
+# Spanish noun gender
 
-Spanish has two genders, masculine and feminine
-([butt-benjamin-2019] §1.1). Per [butt-benjamin-2019] §1.2,
-Group A: nouns referring to humans + a few well-known animals get
-natural gender; per §1.3, Group B (lifeless things, plants, other
-animals) get arbitrary gender. Per §1.2.11, a small set of common-gender
-nouns (e.g. *persona*, *víctima*, *ángel*) take fixed gender regardless
-of referent.
+Spanish nouns are masculine or feminine. A noun for a human being or one of a few well-known
+animals takes the gender of the referent's sex, *el hombre* 'man' and *la mujer* 'woman', in a
+special form for each sex, *el rey*, *la reina*, or with feminine *-a* for masculine *-o*, *el
+gato*, *la gata*; some such nouns have one form for either sex, *el* or *la estudiante*, and a few
+have one gender whatever the referent's sex, *la persona* 'person' and *el ángel* 'angel'. The
+gender of every other noun, for things, plants and the remaining animals, has nothing to do with
+sex and must be learned: *la mesa* 'table', *el libro* 'book'. The article and adjectives agree:
+*-o* with a masculine, *-a* with a feminine ([butt-benjamin-2019]).
 
-## Theory-neutral data layer
+## Main definitions
 
-Each entry is a `GenderedNoun` over the two controller genders: its
-`gender` is the agreement-trigger fact (verified against
-[butt-benjamin-2019] §1.2-1.3), and `naturalGender` records whether
-that gender is semantically motivated by the referent's gender.
-False for inanimates, for non-natural-gender animals (cf. §1.3.1), and
-for the §1.2.11 fixed-gender common-gender exceptions (*persona*,
-*ángel*).
+* `Spanish.Gender.Value` — the two genders, with their comparative labels
+* `Spanish.Gender.Noun`, `Spanish.Gender.allNouns` — nouns with a fixed gender
+* `Spanish.Gender.eitherGender` — nouns with one form for either sex
 
-These two fields suffice to project every entry's structural analysis
-under [kramer-2015] Ch. 6's Set-1 DM categorizer (the projection
-lives in `Studies/Kramer2020.lean`); they also support
-[harris-1991]'s lexical-rule analysis directly (Harris's [FEMALE]
-and [HUMAN] features map onto the gender and the natural-gender
-inference).
+## References
 
-## Per-entry verification
-
-Entries explicitly named in [kramer-2015]: *hombre*, *mujer*,
-*niño*, *niña*, *mesa*, *cama*, *persona*, *libro*, *soldado*,
-*estudiante*, *artista*. Other entries (*rey/reina/gato/gata,
-silla/casa/puerta/ventana, zapato/coche/árbol/cielo/vaso, ángel*) are
-extrapolations from Kramer's framework, anchored on the
-textbook-consensus genders documented in [butt-benjamin-2019].
+* [butt-benjamin-2019]
 -/
 
 @[expose] public section
 
 namespace Spanish.Gender
 
-/-- Spanish's two controller genders — the carrier
-    ([corbett-1991]; [kramer-2015]). -/
+/-- The two genders. -/
 inductive Value where
   | masc
   | fem
@@ -59,115 +41,115 @@ def Value.toLabel : Value → Gender
   | .masc => .masculine
   | .fem => .feminine
 
-/-- A Spanish noun: its gender, the agreement it takes ([butt-benjamin-2019]),
-    and the gender of its referents where it has one — none for
-    inanimates, for non-natural-gender animals, and for the §1.2.11
-    common-gender exceptions (*persona* feminine for any referent; *ángel*
-    masculine for any referent). -/
+/-- A noun with its gender and the gender of its referents where the gender is the referent's. -/
 abbrev Noun := GenderedNoun Value
 
--- ============================================================================
--- § 1: Natural-Gender Nouns (Group A, [butt-benjamin-2019] §1.2)
--- ============================================================================
+/-! ### Nouns taking the referent's gender -/
 
+/-- *hombre* 'man'. -/
 def hombre : Noun := ⟨⟨"hombre", "man"⟩, .masc, some .masculine⟩
+
+/-- *mujer* 'woman'. -/
 def mujer : Noun := ⟨⟨"mujer", "woman"⟩, .fem, some .feminine⟩
+
+/-- *niño* 'boy'. -/
 def niño : Noun := ⟨⟨"niño", "boy"⟩, .masc, some .masculine⟩
+
+/-- *niña* 'girl'. -/
 def niña : Noun := ⟨⟨"niña", "girl"⟩, .fem, some .feminine⟩
+
+/-- *rey* 'king'. -/
 def rey : Noun := ⟨⟨"rey", "king"⟩, .masc, some .masculine⟩
+
+/-- *reina* 'queen'. -/
 def reina : Noun := ⟨⟨"reina", "queen"⟩, .fem, some .feminine⟩
-def gato : Noun := ⟨⟨"gato", "cat.M"⟩, .masc, some .masculine⟩
-def gata : Noun := ⟨⟨"gata", "cat.F"⟩, .fem, some .feminine⟩
 
--- ============================================================================
--- § 2: Arbitrary Feminines (Group B, [butt-benjamin-2019] §1.3)
--- ============================================================================
+/-- *gato* 'cat', also for the species. -/
+def gato : Noun := ⟨⟨"gato", "cat"⟩, .masc, some .masculine⟩
 
-def mesa : Noun := ⟨⟨"mesa", "table"⟩, .fem, none⟩
-def silla : Noun := ⟨⟨"silla", "chair"⟩, .fem, none⟩
-def casa : Noun := ⟨⟨"casa", "house"⟩, .fem, none⟩
-def puerta : Noun := ⟨⟨"puerta", "door"⟩, .fem, none⟩
-def ventana : Noun := ⟨⟨"ventana", "window"⟩, .fem, none⟩
-def cama : Noun := ⟨⟨"cama", "bed"⟩, .fem, none⟩
-/-- *persona* 'person': common-gender noun ([butt-benjamin-2019]
-    §1.2.11) — feminine regardless of the referent's gender. The famous
-    [kramer-2015] §6.2 exception: human-denoting noun with
-    structurally arbitrary feminine gender. `naturalGender = none`
-    captures that the gender does NOT come from the referent's gender (even
-    though referent is human). -/
+/-- *gata* 'she-cat'. -/
+def gata : Noun := ⟨⟨"gata", "she-cat"⟩, .fem, some .feminine⟩
+
+/-! ### Nouns of one gender for either sex -/
+
+/-- *persona* 'person', feminine whatever the referent's sex. -/
 def persona : Noun := ⟨⟨"persona", "person"⟩, .fem, none⟩
 
--- ============================================================================
--- § 3: Default Masculines (Group B, [butt-benjamin-2019] §1.3)
--- ============================================================================
-
-def libro : Noun := ⟨⟨"libro", "book"⟩, .masc, none⟩
-def zapato : Noun := ⟨⟨"zapato", "shoe"⟩, .masc, none⟩
-def coche : Noun := ⟨⟨"coche", "car"⟩, .masc, none⟩
-def árbol : Noun := ⟨⟨"árbol", "tree"⟩, .masc, none⟩
-def cielo : Noun := ⟨⟨"cielo", "sky"⟩, .masc, none⟩
-def vaso : Noun := ⟨⟨"vaso", "glass"⟩, .masc, none⟩
-/-- *ángel* 'angel': common-gender noun ([butt-benjamin-2019]
-    §1.2.11) — masculine for any referent. Companion to *persona*: the
-    masculine fixed-gender exception. `naturalGender = none`. -/
+/-- *ángel* 'angel', masculine whatever the referent's sex. -/
 def ángel : Noun := ⟨⟨"ángel", "angel"⟩, .masc, none⟩
 
--- ============================================================================
--- § 4: Same-Root Nominals ([kramer-2020] §2.2.3)
--- ============================================================================
+/-! ### Nouns of arbitrary gender -/
 
-/-- Same-root nominals: a single root that surfaces as either masculine
-    or feminine depending on the referent's gender. Empirically polymorphic
-    in gender (one form, two genders), so a noun entry without a fixed
-    gender. The DM analysis (combination with i[+FEM] vs i[−FEM]) lives
-    in `Studies/Kramer2020.lean`. -/
-abbrev SameRootEntry := _root_.Noun
+/-- *mesa* 'table'. -/
+def mesa : Noun := ⟨⟨"mesa", "table"⟩, .fem, none⟩
 
-def soldado : SameRootEntry := ⟨"soldado", "soldier"⟩
-def estudiante : SameRootEntry := ⟨"estudiante", "student"⟩
-def artista : SameRootEntry := ⟨"artista", "artist"⟩
+/-- *silla* 'chair'. -/
+def silla : Noun := ⟨⟨"silla", "chair"⟩, .fem, none⟩
 
--- ============================================================================
--- § 5: Inventory
--- ============================================================================
+/-- *casa* 'house'. -/
+def casa : Noun := ⟨⟨"casa", "house"⟩, .fem, none⟩
 
-def naturalFemNouns : List Noun :=
-  [mujer, niña, reina, gata]
+/-- *puerta* 'door'. -/
+def puerta : Noun := ⟨⟨"puerta", "door"⟩, .fem, none⟩
 
-def naturalMascNouns : List Noun :=
-  [hombre, niño, rey, gato]
+/-- *ventana* 'window'. -/
+def ventana : Noun := ⟨⟨"ventana", "window"⟩, .fem, none⟩
 
-def arbitraryFemNouns : List Noun :=
-  [mesa, silla, casa, puerta, ventana, cama, persona]
+/-- *cama* 'bed'. -/
+def cama : Noun := ⟨⟨"cama", "bed"⟩, .fem, none⟩
 
-def defaultMascNouns : List Noun :=
-  [libro, zapato, coche, árbol, cielo, vaso, ángel]
+/-- *libro* 'book'. -/
+def libro : Noun := ⟨⟨"libro", "book"⟩, .masc, none⟩
 
+/-- *zapato* 'shoe'. -/
+def zapato : Noun := ⟨⟨"zapato", "shoe"⟩, .masc, none⟩
+
+/-- *coche* 'car'. -/
+def coche : Noun := ⟨⟨"coche", "car"⟩, .masc, none⟩
+
+/-- *árbol* 'tree'. -/
+def árbol : Noun := ⟨⟨"árbol", "tree"⟩, .masc, none⟩
+
+/-- *cielo* 'sky'. -/
+def cielo : Noun := ⟨⟨"cielo", "sky"⟩, .masc, none⟩
+
+/-- *vaso* 'glass'. -/
+def vaso : Noun := ⟨⟨"vaso", "glass"⟩, .masc, none⟩
+
+/-- The nouns with a fixed gender. -/
 def allNouns : List Noun :=
-  naturalFemNouns ++ naturalMascNouns ++ arbitraryFemNouns ++ defaultMascNouns
+  [hombre, mujer, niño, niña, rey, reina, gato, gata, persona, ángel, mesa, silla, casa, puerta,
+    ventana, cama, libro, zapato, coche, árbol, cielo, vaso]
 
-def sameRootNouns : List SameRootEntry :=
-  [soldado, estudiante, artista]
+/-! ### Nouns of either gender -/
 
--- ============================================================================
--- § 6: Concord evidence
--- ============================================================================
+/-- *soldado* 'soldier': *un soldado*, *una soldado*. -/
+def soldado : _root_.Noun := ⟨"soldado", "soldier"⟩
 
-/-- Adjectival concord exponents: the *-o* vs *-a* desinence contrast
-    ([butt-benjamin-2019]). Evidence type for `Gender.Faithful`. -/
+/-- *estudiante* 'student': *el estudiante*, *la estudiante*. -/
+def estudiante : _root_.Noun := ⟨"estudiante", "student"⟩
+
+/-- *artista* 'artist': *el artista*, *la artista*. -/
+def artista : _root_.Noun := ⟨"artista", "artist"⟩
+
+/-- The nouns with one form for either sex, masculine of a male referent and feminine of a
+female one. -/
+def eitherGender : List _root_.Noun := [soldado, estudiante, artista]
+
+/-! ### Agreement -/
+
+/-- The endings of an agreeing adjective. -/
 inductive Concord where
   | o
   | a
   deriving DecidableEq, Repr
 
-/-- Per-gender adjectival concord. -/
+/-- The ending an adjective takes in agreement with a gender. -/
 def Value.concord : Value → Concord
   | .masc => .o
-  | .fem  => .a
+  | .fem => .a
 
-/-- The carrier is faithful to the adjectival concord evidence: *-o* vs
-    *-a* distinguishes the two genders. [corbett-1991]'s
-    genders-are-agreement-classes criterion. -/
+/-- The genders are told apart by adjectival agreement. -/
 theorem faithful_concord : Function.Injective Value.concord := by decide
 
 end Spanish.Gender

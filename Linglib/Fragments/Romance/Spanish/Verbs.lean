@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Spanish verbs
@@ -9,9 +10,10 @@ Spanish verbs of change of state form their intransitive in one of two ways. Mos
 reflexive clitic, as *quebrar* 'crack' does in *el florero se quebró*; a small class takes none,
 as *mejorar* 'improve' does in *los sueldos mejoraron*. A few allow both: *hervir* 'boil' is
 usually bare and marginally takes the clitic, and the unaccusatives *caer* 'fall' and *morir*
-'die' occur with and without it. Each verb records this marking and whether it has a transitive
-causative use. The proto-role entailments of the subject are those Koontz-Garboden discusses
-for the causer, and the classification by marking follows Muñoz Pérez.
+'die' occur with and without it. Each verb records the marking of its intransitive, and whether it
+alternates is read off its frames: an alternating verb has both a transitive and an unaccusative
+frame. The proto-role entailments of the subject are those Koontz-Garboden discusses for the
+causer, and the classification by marking follows Muñoz Pérez.
 
 The verbs with a lexical reciprocal entry beside their transitive use are those of Palmieri's
 appendix. They are ordinary verb entries here, and `Spanish.Reciprocals.lexicalReciprocals`
@@ -55,105 +57,95 @@ inductive AnticausativeMarking where
   | optional
   deriving DecidableEq, Repr
 
-/-- A Spanish verb with its behaviour in the causative alternation. -/
+/-- A Spanish verb with the marking of its intransitive, `none` where it has none. -/
 structure SpanishVerbEntry extends Verb where
   /-- The marking of the intransitive. -/
-  anticausativeMarking : AnticausativeMarking
-  /-- The verb has a transitive causative use beside the intransitive. -/
-  causativeAlternation : Bool
+  anticausativeMarking : Option AnticausativeMarking
   deriving BEq
+
+/-- The verb alternates: it has a transitive causative use beside its intransitive. -/
+abbrev SpanishVerbEntry.Alternates (v : SpanishVerbEntry) : Prop :=
+  v.toVerb.Alternates Voice.anticausative
+
+/-- The subject of a verb whose causer need only cause the change, whether an agent, an
+instrument, a natural force or an event: [koontz-garboden-2009]'s EFFECTOR. -/
+def effectorSubject : EntailmentProfile := { causation := true, independentExistence := true }
 
 /-- *abrir* 'open', with a marked intransitive *abrirse*. Its causer may be an agent, an
 instrument or a natural force ([koontz-garboden-2009]). -/
 def abrir : SpanishVerbEntry :=
-  { form := "abrir", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true,
-    subjectEntailments := some ⟨false, false, true, false, true,
-                                 false, false, false, false, false⟩ }
+  { form := "abrir", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked,
+    subjectEntailments := some effectorSubject }
 
 /-- *romper* 'break', with a marked intransitive *romperse*. Its causer may be an agent, an
 instrument, a natural force or an event ([koontz-garboden-2009]). -/
 def romper : SpanishVerbEntry :=
-  { form := "romper", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true,
-    subjectEntailments := some ⟨false, false, true, false, true,
-                                 false, false, false, false, false⟩ }
+  { form := "romper", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked,
+    subjectEntailments := some effectorSubject }
 
 /-- *hundir* 'sink', with a marked intransitive *hundirse*. Its causer is unrestricted
 ([koontz-garboden-2009]). -/
 def hundir : SpanishVerbEntry :=
-  { form := "hundir", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true,
-    subjectEntailments := some ⟨false, false, true, false, true,
-                                 false, false, false, false, false⟩ }
+  { form := "hundir", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked,
+    subjectEntailments := some effectorSubject }
 
 /-- *caer* 'fall', an unaccusative that occurs with and without the clitic, *cayó* and *se cayó*
 ([munoz-perez-2026]). -/
 def caer : SpanishVerbEntry :=
   { form := "caer", frames := [ArgumentFrame.unaccusative],
-    anticausativeMarking := .optional,
-    causativeAlternation := false }
+    anticausativeMarking := some .optional, }
 
 /-- *morir* 'die', an unaccusative that occurs with and without the clitic, *murió* and
 *se murió* ([munoz-perez-2026]). -/
 def morir : SpanishVerbEntry :=
   { form := "morir", frames := [ArgumentFrame.unaccusative],
-    anticausativeMarking := .optional,
-    causativeAlternation := false }
+    anticausativeMarking := some .optional, }
 
 /-- *cerrar* 'close', with a marked intransitive *cerrarse*. -/
 def cerrar : SpanishVerbEntry :=
-  { form := "cerrar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true }
+  { form := "cerrar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked, }
 
 /-- *quebrar* 'crack', with a marked intransitive, *el florero se quebró* and never
 *el florero quebró* ([munoz-perez-2026]). -/
 def quebrar : SpanishVerbEntry :=
-  { form := "quebrar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true }
+  { form := "quebrar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked, }
 
 /-- *hervir* 'boil', whose intransitive is usually bare, *el agua hirvió*, and marginally takes
 the clitic ([munoz-perez-2026]). -/
 def hervir : SpanishVerbEntry :=
-  { form := "hervir", frames := [ArgumentFrame.np],
-    anticausativeMarking := .optional,
-    causativeAlternation := true }
+  { form := "hervir", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .optional, }
 
 /-- *olvidar* 'forget', whose intransitive *olvidarse* takes a dative experiencer,
 *se me olvidó*. -/
 def olvidar : SpanishVerbEntry :=
-  { form := "olvidar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true }
+  { form := "olvidar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked, }
 
 /-- *ocurrir* 'occur', whose marked form *ocurrirse* takes a dative experiencer,
 *se me ocurrió una idea*. -/
 def ocurrir : SpanishVerbEntry :=
   { form := "ocurrir", frames := [ArgumentFrame.unaccusative],
-    anticausativeMarking := .marked,
-    causativeAlternation := false }
+    anticausativeMarking := some .marked, }
 
 /-- *mejorar* 'improve', with a bare intransitive, *los sueldos mejoraron* and never
 *los sueldos se mejoraron* ([munoz-perez-2026]). -/
 def mejorar : SpanishVerbEntry :=
-  { form := "mejorar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .unmarked,
-    causativeAlternation := true }
+  { form := "mejorar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .unmarked, }
 
-/-- *rasgar* "tear (gash-like)" — Levin 45.1 equivalent; marked anticausative.
-    Unlike English *tear*, *rasgar* requires flimsy/insubstantial patients and
-    implies unidirectional (linear, gash-like) separation. Incompatible with
-    careful controlled action. [spalek-mcnally-2026] (§3.2). -/
+/-- *rasgar* 'tear', with a marked intransitive. Unlike English *tear* it requires a flimsy or
+insubstantial patient and a unidirectional, gash-like separation, and it is incompatible with
+careful, controlled action ([spalek-mcnally-2026] §3.2). -/
 def rasgar : SpanishVerbEntry :=
-  { form := "rasgar", frames := [ArgumentFrame.np],
+  { form := "rasgar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
     causative := some .make,
-    anticausativeMarking := .marked,
-    causativeAlternation := true,
+    anticausativeMarking := some .marked,
     root := { content := {
       force := {.low, .moderate}
       direction := {.unidirectional}
@@ -162,53 +154,46 @@ def rasgar : SpanishVerbEntry :=
       agentControl := {.incompatible, .neutral}
     } } }
 
-/-- *asesinar* "assassinate" — AGENT causer required. No anticausative.
-    Reflexivization yields reflexive reading only (*El senador se asesinó*
-    = 'The senator killed himself'). [koontz-garboden-2009] exx. 24–29. -/
+/-- *asesinar* 'assassinate', whose causer must be an agent. It has no intransitive: with the
+clitic it is only reflexive, *el senador se asesinó* 'the senator killed himself'
+([koontz-garboden-2009] exx. 24–29). -/
 def asesinar : SpanishVerbEntry :=
   { form := "asesinar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := false,
+    anticausativeMarking := none,
     subjectEntailments := some accomplishmentSubjectProfile }
 
 /-- *cortar* 'cut', which requires an agent and has no intransitive in that sense
 ([koontz-garboden-2009]). In the sense 'snap' it has the marked intransitive of
-*se cortó la correa* ([munoz-perez-2026]). -/
+*se me cortó la correa* 'the strap snapped on me' ([munoz-perez-2026]), which the marking
+records; the frames are those of 'cut'. -/
 def cortar : SpanishVerbEntry :=
   { form := "cortar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := false,
+    anticausativeMarking := some .marked,
     subjectEntailments := some accomplishmentSubjectProfile }
 
-/-- *ahogar* "drown" — EFFECTOR causer, but animate theme undergoers
-    are typical. Alternates: *ahogarse* is a derived inchoative.
-    [koontz-garboden-2009] exx. 50–52. -/
+/-- *ahogar* 'drown', with an EFFECTOR causer and typically an animate theme; *ahogarse* is its
+derived inchoative ([koontz-garboden-2009] exx. 50–52). -/
 def ahogar : SpanishVerbEntry :=
-  { form := "ahogar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true,
-    subjectEntailments := some ⟨false, false, true, false, true,
-                                 false, false, false, false, false⟩ }
+  { form := "ahogar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked,
+    subjectEntailments := some effectorSubject }
 
-/-- *empeorar* "worsen" — internally caused COS verb. No CAUSE in LSR.
-    Rejects *por sí solo*. [koontz-garboden-2009] ex. 65a. -/
+/-- *empeorar* 'worsen', an internally caused change of state with a bare intransitive, which
+rejects *por sí solo* 'by itself' ([koontz-garboden-2009] ex. 65a). -/
 def empeorar : SpanishVerbEntry :=
-  { form := "empeorar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .unmarked,
-    causativeAlternation := true }
+  { form := "empeorar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .unmarked, }
 
 /-- *quemar* 'burn', with a marked intransitive *quemarse*. -/
 def quemar : SpanishVerbEntry :=
-  { form := "quemar", frames := [ArgumentFrame.np],
-    anticausativeMarking := .marked,
-    causativeAlternation := true }
+  { form := "quemar", frames := [ArgumentFrame.np, ArgumentFrame.unaccusative],
+    anticausativeMarking := some .marked, }
 
-/-- *crecer* "grow" — internally caused COS verb. No CAUSE in LSR.
-    Rejects *por sí solo*. [koontz-garboden-2009] ex. 65c. -/
+/-- *crecer* 'grow', an internally caused change of state, which rejects *por sí solo* 'by
+itself' ([koontz-garboden-2009] ex. 65c). -/
 def crecer : SpanishVerbEntry :=
   { form := "crecer", frames := [ArgumentFrame.unaccusative],
-    anticausativeMarking := .unmarked,
-    causativeAlternation := false }
+    anticausativeMarking := some .unmarked, }
 
 /-- The verbs of the fragment. -/
 def allVerbs : List SpanishVerbEntry :=

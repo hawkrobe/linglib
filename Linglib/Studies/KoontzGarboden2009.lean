@@ -246,7 +246,7 @@ def causer (v : Verb) : Option Causer :=
 /-- Only causative verbs with underspecified causers have derived inchoatives (§3.1–§3.2):
 among the fragment's verbs that have a causer, the alternating ones are the EFFECTOR verbs. -/
 theorem alternates_iff_effector :
-    ∀ v ∈ allVerbs, ∀ c ∈ causer v.toVerb, (v.causativeAlternation = true ↔ c = .effector) := by
+    ∀ v ∈ allVerbs, ∀ c ∈ causer v.toVerb, (v.Alternates ↔ c = .effector) := by
   decide
 
 end KoontzGarboden2009
