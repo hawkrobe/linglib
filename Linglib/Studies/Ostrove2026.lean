@@ -165,39 +165,44 @@ theorem smpm_refutes_movement : ¬ IsExhaustive ex86Occupant ex86Dependency :=
 
 /-- English (94): a null item for controlled subjects, a reflexive for local binding, and the
 pronoun elsewhere. -/
-def englishInventory : MinPronInventory PronForm where
+def englishInventory : Vocabulary Form where
   items := [[.controlledSubject] ⟷ .null, [.locallyBound] ⟷ .reflexive]
   elsewhere := .pronoun
 
 /-- Haitian Creole (96): a null item for controlled subjects and no reflexive item, reflexives
 surfacing as pronouns ([dechaine-manfredi-1994]). -/
-def haitianInventory : MinPronInventory PronForm where
+def haitianInventory : Vocabulary Form where
   items := [[.controlledSubject] ⟷ .null]
   elsewhere := .pronoun
 
 /-- SMPM (98): a reflexive item, *mí* with a clitic, and no null item. -/
-def smpmInventory : MinPronInventory PronForm where
+def smpmInventory : Vocabulary Form where
   items := [[.locallyBound] ⟷ .reflexive]
   elsewhere := .pronoun
 
 /-- Quiegolani Zapotec ([black-1994]): no context-specific item at all. -/
-def quiegolaniInventory : MinPronInventory PronForm where
+def quiegolaniInventory : Vocabulary Form where
   items := []
   elsewhere := .pronoun
 
-/-- Overt PRO: the controlled subject of SMPM is the elsewhere pronoun, no item being more
-specific for that context, where English's null item yields silent PRO. -/
+/-- Overt PRO: no SMPM item is conditioned on the controlled subject, so it takes the
+elsewhere pronoun (98), where English's null item yields silent PRO (94a). -/
 theorem smpm_overt_pro :
-    smpmInventory.controlForm = .pronoun ∧ englishInventory.controlForm = .null :=
-  ⟨rfl, rfl⟩
+    smpmInventory.controlForm = smpmInventory.elsewhere ∧ englishInventory.controlForm = .null :=
+  ⟨Vocabulary.realize_eq_elsewhere (by decide), rfl⟩
+
+/-- The analysis in general form: with the pronoun as its elsewhere form, a language has silent
+PRO only through a null item for controlled subjects, which SMPM lacks. -/
+theorem smpm_no_null_item : ∀ i ∈ smpmInventory.items, i.exponent ≠ .null := by decide
 
 /-- The syncretism table (92), each row derived from its inventory: the contexts in which the
-bound form is the referential pronoun's. The four languages occupy four distinct cells. -/
+bound form is the referential pronoun's, whose own column is the elsewhere form itself. The four
+languages occupy four distinct cells. -/
 theorem syncretism_typology :
-    englishInventory.syncretic = {.boundVariable, .free} ∧
+    englishInventory.syncretic = {.boundVariable} ∧
       quiegolaniInventory.syncretic = Finset.univ ∧
-      haitianInventory.syncretic = {.locallyBound, .boundVariable, .free} ∧
-      smpmInventory.syncretic = {.controlledSubject, .boundVariable, .free} := by
+      haitianInventory.syncretic = {.locallyBound, .boundVariable} ∧
+      smpmInventory.syncretic = {.controlledSubject, .boundVariable} := by
   decide
 
 /-! ### Copy control (§5) -/
@@ -243,7 +248,7 @@ def pronominalSubjects : Data.WALS.F101A.ExpressionOfPronominalSubjects :=
 /-- A language with minimal-pronoun inventory `inv` and 101A cell `s` satisfies the
 implicational universal (54) when overt PRO implies obligatory subject pronouns, that is, no
 pro-drop. -/
-def Universal54 (inv : MinPronInventory PronForm)
+def Universal54 (inv : Vocabulary Form)
     (s : Data.WALS.F101A.ExpressionOfPronominalSubjects) : Prop :=
   inv.controlForm ≠ .null → s = .obligatoryPronounsInSubjectPosition
 

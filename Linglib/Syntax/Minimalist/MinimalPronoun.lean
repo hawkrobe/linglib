@@ -4,121 +4,146 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
-# Minimal Pronoun Theory
-[kratzer-1998] [kratzer-2009] [safir-2014] [landau-2015]
+# Minimal pronouns
 
-All instances of bound variable anaphora — reflexives, PRO, bound variable
-pronouns — are syntactically identical: bare D heads with unvalued φ-features
-("minimal pronouns"). Cross-linguistic variation in their surface form
-(null, reflexive, pronoun) reduces entirely to variation in **vocabulary items**,
-language-specific contextual allomorphs applied postsyntactically.
+A minimal pronoun is a bare D head with unvalued φ-features, `[D, uφ]`, valued by its
+antecedent. Kratzer takes reflexives, controlled PRO and bound-variable pronouns to be one such
+object, and Safir concludes that all anaphoric diversity is morphological: a language's
+vocabulary items realize the valued pronoun according to the context it is bound in, and where
+no item is conditioned on that context the elsewhere item applies, yielding the shape of the
+referential pronoun. English has a null item for controlled subjects and a reflexive item for
+local binding; a language without the null item has overt PRO.
 
-Definition (28) of [landau-2015]: X is a minimal pronoun iff X = [D,uφ].
-Within different derivations, X can become a reflexive, a bound lexical pronoun,
-a resumptive pronoun, a *pro* element, a relative pronoun, or controlled PRO.
-The choice is determined by the syntactic context and the language's vocabulary
-item inventory.
+## Main definitions
 
-## Key Definitions
+* `MinimalPronoun.Context`: the binding contexts an item can be conditioned on
+* `MinimalPronoun.Form`: the shapes a minimal pronoun takes, null, pronominal or reflexive
+* `MinimalPronoun.Vocabulary`: a language's items for minimal pronouns and its elsewhere form
+* `Vocabulary.realize`, `Vocabulary.controlForm`: the form in a context, by the Subset Principle
+* `Vocabulary.syncretic`: the contexts whose form is the referential pronoun's
 
-- `BVAContext`: The four licensing contexts for bound variable anaphora
-- `MinPronInventory`: A language's Vocabulary Items (D[uφ] → Form / context) + elsewhere default
-- `MinPronInventory.syncretic`: the contexts whose form is the elsewhere pronoun's
-- `PronForm`: Standard surface form categories (null, pronoun, reflexive)
+## Main results
 
-## Core Claims
+* `Vocabulary.some_realize`: the elsewhere form is the Subset Principle's elsewhere item
+* `Vocabulary.realize_eq_elsewhere`: a context no item applies to gets the elsewhere form
+* `Vocabulary.exists_null_item_of_controlForm_eq_null`: silent PRO needs a null item
 
-1. Minimal pronouns are D heads with unvalued φ-features (28)
-2. φ-values are transmitted from the antecedent (via Agree or variable binding)
-3. Vocabulary items map valued feature bundles to surface forms, conditioned
-   by syntactic context (locally bound, controlled subject, etc.)
-4. The **Elsewhere Condition** of [halle-marantz-1993]: if no
-   context-specific item matches, the default (pronoun) applies
-5. Cross-linguistic variation in anaphoric form is morphological, not
-   syntactic ([safir-2014]: "all anaphoric diversity is morphological").
-   The DM vocabulary-item implementation used here follows [landau-2015]
-   and [ostrove-2026]; Safir's own mechanism is morphological shape
-   conditions at Spell-Out, not Vocabulary Insertion per se.
+## Implementation notes
 
-Landau-specific theory (the Two-Tiered Theory of Control, predicate
-classification, clause classes) is in `Studies/Landau2015.lean`.
+The free, referential pronoun is not a context: it is what no context conditions, the elsewhere
+form. The elsewhere form is a field of the vocabulary rather than an item, so that every
+vocabulary realizes every context; `some_realize` identifies it with the empty-site item of
+Distributed Morphology. Safir states the variation as shape conditions at Spell-Out; the
+vocabulary-item formulation is Landau's and Ostrove's. The theory of control that consumes
+minimal pronouns, Landau's two tiers, is in `Studies/Landau2015.lean`.
+
+## References
+
+* [kratzer-1998]
+* [kratzer-2009]
+* [safir-2014]
+* [landau-2015]
+* [halle-marantz-1993]
+* [ostrove-2026]
 -/
 
 @[expose] public section
 
 namespace Minimalist.MinimalPronoun
 
-/-! ### Licensing Contexts -/
+open DistributedMorphology
 
-/-- The four syntactic contexts in which a minimal pronoun can occur.
-    Each context may trigger a different vocabulary item (surface form).
-
-    These correspond to the traditional binding domains:
-    - `controlledSubject`: PRO position (subject of controlled clause)
-    - `locallyBound`: Condition A domain (reflexives)
-    - `boundVariable`: Condition B domain (bound pronoun, non-local)
-    - `free`: Condition C / referential (unbound) -/
-inductive BVAContext where
-  /-- Subject of a controlled clause — PRO in English -/
+/-- The binding contexts a vocabulary item for minimal pronouns can be conditioned on. -/
+inductive Context where
+  /-- The subject of a controlled clause, English PRO. -/
   | controlledSubject
-  /-- Locally bound — reflexive in English (Condition A domain) -/
+  /-- Bound within its local domain, the English reflexive. -/
   | locallyBound
-  /-- Bound by a non-local c-commanding antecedent -/
+  /-- Bound from outside its local domain, a bound-variable pronoun. -/
   | boundVariable
-  /-- Free / referential (unbound) -/
-  | free
   deriving DecidableEq, Repr, Fintype
 
-/-! ### Vocabulary Items and the Elsewhere Condition -/
-
-/-- A language's inventory of Vocabulary Items for minimal pronouns: each
-    item realizes D[uφ] as a form in one `BVAContext` — D[uφ] → `form` /
-    `context` — and the `elsewhere` form applies when no item matches.
-
-    [safir-2014]: "from this single element, all anaphoric diversity
-    is morphological" -/
-structure MinPronInventory (Form : Type) where
-  /-- Context-specific Vocabulary Items. -/
-  items : List (DistributedMorphology.VocabularyItem BVAContext Form)
-  /-- Default exponence: applies when no specific item matches.
-      Crosslinguistically, this is the pronoun form ([safir-2014]). -/
-  elsewhere : Form
-
-/-- The Elsewhere Condition: the Subset Principle over the items at the
-    context, falling back to the elsewhere (default pronoun) form. -/
-def MinPronInventory.realize {Form : Type}
-    (inv : MinPronInventory Form) (ctx : BVAContext) : Form :=
-  (DistributedMorphology.subsetPrinciple inv.items [ctx]).getD inv.elsewhere
-
-/-- A language's realized form for controlled subjects specifically.
-    This is the function that distinguishes null-PRO from overt-PRO languages. -/
-def MinPronInventory.controlForm {Form : Type}
-    (inv : MinPronInventory Form) : Form :=
-  inv.realize .controlledSubject
-
-/-! ### Standard Surface Forms -/
-
-/-- Standard surface form categories for bound variable anaphora.
-
-    These are the cross-linguistically attested exponence options for
-    minimal pronouns. Each vocabulary item maps a BVA context to one
-    of these forms. -/
-inductive PronForm where
-  /-- Silent (null PRO) -/
+/-- The shapes a minimal pronoun takes. -/
+inductive Form where
+  /-- Silent, as English PRO. -/
   | null
-  /-- Overt pronoun (φ-matching clitic or full form) -/
+  /-- A pronoun, with the shape of the referential pronoun. -/
   | pronoun
-  /-- Reflexive anaphor (English *-self*, SMPM *mí* + pronoun) -/
+  /-- A reflexive anaphor, as English *himself* or San Martín Peras Mixtec *mí* with a clitic. -/
   | reflexive
   deriving DecidableEq, Repr
 
-/-! ### Syncretism with the referential pronoun -/
+/-- A language's vocabulary for minimal pronouns: the items that realize the valued pronoun in
+binding contexts, and the elsewhere form, which realizes it where no item applies. -/
+structure Vocabulary (E : Type*) where
+  /-- The items, each conditioned on binding contexts. -/
+  items : List (VocabularyItem Context E)
+  /-- The elsewhere form, the shape of the referential pronoun. -/
+  elsewhere : E
 
-/-- The contexts in which an inventory's minimal pronoun is syncretic with the referential
-pronoun are those that no context-specific item overrides, so that the elsewhere form surfaces
-([kratzer-2009], [safir-2014]). -/
-def MinPronInventory.syncretic {Form : Type} [DecidableEq Form]
-    (inv : MinPronInventory Form) : Finset BVAContext :=
-  {c | inv.realize c = inv.elsewhere}
+namespace Vocabulary
+
+variable {E : Type*} (v : Vocabulary E) {c : Context}
+
+/-- The form of the minimal pronoun in a context is the exponent of the most specific item that
+applies there, by the Subset Principle, and the elsewhere form where none does. -/
+def realize (c : Context) : E :=
+  (subsetPrinciple v.items ↑[c]).getD v.elsewhere
+
+/-- The form of a controlled subject, silent PRO or an overt pronoun. -/
+def controlForm : E := v.realize .controlledSubject
+
+/-- The contexts in which the minimal pronoun is syncretic with the referential pronoun are those
+whose form is the elsewhere form. -/
+def syncretic [DecidableEq E] : Finset Context := {c | v.realize c = v.elsewhere}
+
+variable {v}
+
+@[simp]
+theorem mem_syncretic [DecidableEq E] : c ∈ v.syncretic ↔ v.realize c = v.elsewhere := by
+  simp [syncretic]
+
+/-- The elsewhere form is the elsewhere item of the Subset Principle: realizing a context is
+selecting among the items followed by the item of empty site. -/
+theorem some_realize (c : Context) :
+    some (v.realize c) = subsetPrinciple (v.items ++ [[] ⟷ v.elsewhere]) ↑[c] := by
+  have happ : Morphology.Exponence.applicable (v.items ++ [[] ⟷ v.elsewhere])
+      (↑[c] : Neighborhood (List Context)) =
+      Morphology.Exponence.applicable v.items ↑[c] ++ [[] ⟷ v.elsewhere] := by
+    simp [Morphology.Exponence.applicable, List.filter_append, VocabularyItem.applies_iff,
+      Neighborhood.subset_def]
+  simp only [realize, subsetPrinciple, Morphology.Exponence.realize,
+    Morphology.Exponence.selectBy, happ, List.argmax_concat]
+  cases (Morphology.Exponence.applicable v.items ↑[c]).argmax VocabularyItem.specificity with
+  | none => rfl
+  | some i => simp [VocabularyItem.specificity]
+
+/-- A context that no item applies to gets the elsewhere form. -/
+theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ i.site ⊆ ↑[c]) :
+    v.realize c = v.elsewhere := by
+  have : subsetPrinciple v.items ↑[c] = none :=
+    Morphology.Exponence.realize_eq_none_iff.2 <| List.filter_eq_nil_iff.2 fun i hi ↦ by
+      simpa [VocabularyItem.applies_iff] using h i hi
+  simp [realize, this]
+
+/-- A form other than the elsewhere form is the exponent of an item that applies in the
+context. -/
+theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
+    ∃ i ∈ v.items, i.site ⊆ ↑[c] ∧ i.exponent = v.realize c := by
+  cases hs : subsetPrinciple v.items ↑[c] with
+  | none => exact absurd (by simp [realize, hs]) h
+  | some e =>
+    obtain ⟨i, hi, he, hsub⟩ := subsetPrinciple_winner_mem hs
+    exact ⟨i, hi, hsub, by simp [realize, hs, he]⟩
+
+/-- Silent PRO needs a null item: where the elsewhere form is overt, a controlled subject is
+null only through an item for that context whose exponent is null. -/
+theorem exists_null_item_of_controlForm_eq_null {v : Vocabulary Form}
+    (he : v.elsewhere ≠ .null) (h : v.controlForm = .null) :
+    ∃ i ∈ v.items, i.site ⊆ ↑[Context.controlledSubject] ∧ i.exponent = .null := by
+  obtain ⟨i, hi, hs, hx⟩ := exists_item_of_realize_ne (h ▸ he.symm : v.controlForm ≠ _)
+  exact ⟨i, hi, hs, hx.trans h⟩
+
+end Vocabulary
 
 end Minimalist.MinimalPronoun

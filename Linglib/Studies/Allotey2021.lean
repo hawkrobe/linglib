@@ -152,7 +152,7 @@ theorem control_rows :
 
 /-- Gã vocabulary items for minimal pronouns: no context-specific item, so the
     elsewhere pronoun realizes every context. -/
-def gaInventory : MinPronInventory PronForm where
+def gaInventory : Vocabulary Form where
   items := []
   elsewhere := .pronoun
 
@@ -183,7 +183,7 @@ instance (row : LinguisticExample) (r : String) (j : Judgment) : Decidable (read
   inferInstanceAs (Decidable (∃ x ∈ row.readings, _))
 
 /-- The realized form of a row's embedded subject. -/
-def formOf (row : LinguisticExample) : Option PronForm :=
+def formOf (row : LinguisticExample) : Option Form :=
   match row.feature? "embeddedSubject" with
   | some "pronoun" => some .pronoun
   | some "null" => some .null
@@ -450,16 +450,16 @@ theorem realization_exact :
 /-! ### Deriving the overt pronoun -/
 
 /-- A tonal exponent needs a segmental host; the null form has none. -/
-def HostsTone (f : PronForm) : Prop := f ≠ .null
+def HostsTone (f : Form) : Prop := f ≠ .null
 
 /-- The controlled-subject form must host the irrealis tone Table 4 places on
     the embedded-control subject. -/
-def HostsControlTone (inv : MinPronInventory PronForm) : Prop :=
+def HostsControlTone (inv : Vocabulary Form) : Prop :=
   .subjectTone ∈ realization .embeddedControl → HostsTone inv.controlForm
 
 /-- Null PRO is impossible in Gã: a null controlled-subject form cannot host
     the irrealis tone. -/
-theorem null_pro_impossible (inv : MinPronInventory PronForm) (h : inv.controlForm = .null) :
+theorem null_pro_impossible (inv : Vocabulary Form) (h : inv.controlForm = .null) :
     ¬ HostsControlTone inv := fun hc =>
   hc (realization_control ▸ Finset.mem_singleton_self _) h
 
