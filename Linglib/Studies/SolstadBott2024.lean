@@ -217,7 +217,7 @@ theorem exp3_predictions {c : Set W} {t : PartialProp W} {s : W → Prop}
 
 open German.Verbs in
 /-- The paper's occasion verbs, the fragment entries carrying the occasion sense. -/
-def occasionVerbs : List German.Verbs.Verb := allVerbs.filter (·.senseTag = .occasion)
+def occasionVerbs : List German.Verb := allVerbs.filter (·.senseTag = .occasion)
 
 open SolstadBott2022 in
 /-- Occasion verbs are the agent-evocator class: the slot argument is the object, whose

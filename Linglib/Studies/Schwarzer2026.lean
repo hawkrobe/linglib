@@ -101,16 +101,16 @@ theorem closeness_refuted {observed : HeadDirection → ConjunctOrder}
 /-! ### The predicates -/
 
 /-- The fragment entry of a predicate named in a row. -/
-def entryOf (form : String) : Option German.Verbs.Verb :=
+def entryOf (form : String) : Option German.Verb :=
   German.Verbs.allVerbs.find? (·.form = form)
 
 /-- The four predicates of Experiment 1 that select a *dass*-clause. -/
-def selecting : List German.Verbs.Verb :=
+def selecting : List German.Verb :=
   [German.Verbs.veranlassen, German.Verbs.vergessen, German.Verbs.erwarten,
     German.Verbs.beschliessen]
 
 /-- The four predicates of Experiment 1 that do not. -/
-def nonSelecting : List German.Verbs.Verb :=
+def nonSelecting : List German.Verb :=
   [German.Verbs.beenden, German.Verbs.streichen, German.Verbs.uebereilen, German.Verbs.entwickeln]
 
 /-- All eight predicates take a noun phrase, and only the selecting four a clause. -/

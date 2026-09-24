@@ -25,8 +25,8 @@ agreement.
 
 ## Main definitions
 
-* `German.Verbs.Verb`: the entry, the root `Verb` with its case array and its stem.
-* `German.Verbs.Verb.ofStem`: the entry with the forms of a stem.
+* `German.Verb`: the entry, the root `Verb` with its case array and its stem.
+* `German.Verb.ofStem`: the entry with the forms of a stem.
 * `German.Verbs.allVerbs`: the entries.
 * `German.Verbs.kaufen`: the present tense of *kaufen*.
 
@@ -41,19 +41,21 @@ agreement.
 
 @[expose] public section
 
-namespace German.Verbs
-
-open ArgumentStructure Conjugation
+namespace German
 
 /-- A German verb is the root entry with its case array and its stem. -/
 structure Verb extends _root_.Verb, _root_.Verb.CaseArray where
   /-- The stem, from which the verb conjugates. -/
-  stem : Stem
+  stem : Conjugation.Stem
   deriving BEq
 
 /-- `Verb.ofStem s` is the entry cited by the infinitive of `s`, with its forms and no further
 lexical information. -/
-def Verb.ofStem (s : Stem) : Verb := { form := s.infinitive, frames := [], stem := s }
+def Verb.ofStem (s : Conjugation.Stem) : Verb := { form := s.infinitive, frames := [], stem := s }
+
+namespace Verbs
+
+open ArgumentStructure Conjugation
 
 /-! ### Causative verbs -/
 
@@ -355,4 +357,6 @@ theorem form_eq_infinitive : ∀ v ∈ allVerbs, v.form = v.stem.infinitive := b
 /-- `kaufen` gives the present tense of *kaufen* 'buy'. -/
 def kaufen : Person × Number → Option String := weakPresent "kaufen"
 
-end German.Verbs
+end Verbs
+
+end German

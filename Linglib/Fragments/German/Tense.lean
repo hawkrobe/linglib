@@ -78,7 +78,7 @@ def PrincipalParts.perfectVerb (v : PrincipalParts) : PrincipalParts :=
   | .have => haben
 
 /-- A verb forms its perfect with *sein* when it is unaccusative, and with *haben* otherwise. -/
-def perfectAuxiliary (v : Verb) : PerfectAux := if v.IsUnaccusative then .be else .have
+def perfectAuxiliary (v : _root_.Verb) : PerfectAux := if v.IsUnaccusative then .be else .have
 
 /-- The choice agrees with the selection rule for German, under which only the unaccusatives
 among the transitivity classes select *sein*. -/
@@ -88,7 +88,7 @@ theorem germanSelection_eq_be_iff (c : TransitivityClass) :
 
 /-- The principal parts of a verb entry are its stem with the auxiliary its unaccusativity
 selects. -/
-def Verbs.Verb.principalParts (v : Verbs.Verb) : PrincipalParts :=
+def Verb.principalParts (v : Verb) : PrincipalParts :=
   ⟨v.stem, perfectAuxiliary v.toVerb⟩
 
 /-- German builds its tense forms with the past participle under the verb's perfect auxiliary and

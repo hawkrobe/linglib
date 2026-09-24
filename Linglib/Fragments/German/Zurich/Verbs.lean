@@ -24,7 +24,7 @@ leaves open.
 
 @[expose] public section
 
-namespace German.Zurich.Verbs
+namespace German.Zurich
 
 /-- A Zürich German verb is the root entry with its case array and its inflected forms. -/
 structure Verb extends _root_.Verb, _root_.Verb.CaseArray where
@@ -34,6 +34,8 @@ structure Verb extends _root_.Verb, _root_.Verb.CaseArray where
 
 /-- `v.forms` lists the citation form, then the inflected forms. -/
 def Verb.forms (v : Verb) : List String := v.form :: v.inflected
+
+namespace Verbs
 
 /-- *hälfe* 'help', finite *hälfed*, takes a dative object. -/
 def haelfe : Verb :=
@@ -48,4 +50,6 @@ def aastriiche : Verb := { form := "aastriiche", frames := [], objects := [.acc]
 /-- `verbs` lists the entries. -/
 def verbs : List Verb := [haelfe, laa, aastriiche]
 
-end German.Zurich.Verbs
+end Verbs
+
+end German.Zurich
