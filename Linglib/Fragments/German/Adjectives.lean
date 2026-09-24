@@ -69,8 +69,10 @@ def Preceding.HasEnding : Preceding → GenderNumber → Cell → Prop
   | .inflected, _, _ => True
   | .einWord, x, c => ¬ Endingless x c
 
-instance (p : Preceding) (x : GenderNumber) (c : Cell) : Decidable (p.HasEnding x c) := by
-  cases p <;> unfold Preceding.HasEnding <;> infer_instance
+instance : (p : Preceding) → (x : GenderNumber) → (c : Cell) → Decidable (p.HasEnding x c)
+  | .none, _, _ => inferInstanceAs (Decidable False)
+  | .inflected, _, _ => inferInstanceAs (Decidable True)
+  | .einWord, x, c => inferInstanceAs (Decidable (¬ Endingless x c))
 
 /-- An adjective takes the weak ending when the preceding determiner has an ending, and the strong
 ending when there is none. -/

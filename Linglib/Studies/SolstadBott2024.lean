@@ -109,9 +109,9 @@ theorem Cataphoric.addressed {d : Discourse W} {i : ℕ} {m : Set W} (h : Cataph
     Addressed d i m :=
   addressed_iff.2 (.inr h)
 
-/-- The contextual constraint a trigger imposes on its content: none, the strong contextual
-felicity of [tonhauser-beaver-roberts-simons-2013], or the weaker constraint of occasion
-verbs, met on either side of the trigger. -/
+/-- A trigger imposes on its content no contextual constraint, the strong contextual felicity of
+[tonhauser-beaver-roberts-simons-2013], or the weaker constraint of occasion verbs, which is met on
+either side of the trigger. -/
 inductive Felicity where
   | free
   | strong
@@ -148,21 +148,21 @@ theorem not_given_cataphoric (t p m : Set W) : ¬ Given [t, p] 0 m := by
 theorem cataphoric_cataphoric {p m : Set W} (t : Set W) (h : p ⊆ m) : Cataphoric [t, p] 0 m :=
   ⟨1, Nat.zero_lt_one, p, rfl, h⟩
 
-/-- The paper's refinement of m-positive contexts: a cataphoric context satisfies the weak
-constraint and not the strong one, which is where occasion verbs part from pronouns. -/
+/-- The paper refines m-positive contexts: a cataphoric context satisfies the weak constraint and
+not the strong one, which is where occasion verbs part from pronouns. -/
 theorem cataphoric_separates {p m : Set W} (t : Set W) (h : p ⊆ m) :
     Felicity.weak.Satisfied [t, p] 0 m ∧ ¬ Felicity.strong.Satisfied [t, p] 0 m :=
   ⟨(cataphoric_cataphoric t h).addressed, not_given_cataphoric t p m⟩
 
 /-! ### Filtering in conditional antecedents -/
 
-/-- Conjunction under the symmetric local contexts of [schlenker-2009]: either conjunct's
-assertion may satisfy the other's presupposition. -/
+/-- Under the symmetric local contexts of [schlenker-2009] either conjunct's assertion may
+satisfy the other's presupposition. -/
 def andSymmetric (p q : PartialProp W) : PartialProp W where
   presup := λ w => (q.assertion w → p.presup w) ∧ (p.assertion w → q.presup w)
   assertion := λ w => p.assertion w ∧ q.assertion w
 
-/-- Local accommodation: the trigger's presupposition is asserted in place of projecting. -/
+/-- Under local accommodation the trigger's presupposition is asserted in place of projecting. -/
 def localAccommodation (p : PartialProp W) : PartialProp W where
   presup := λ _ => True
   assertion := λ w => p.presup w ∧ p.assertion w
@@ -217,7 +217,7 @@ theorem exp3_predictions {c : Set W} {t : PartialProp W} {s : W → Prop}
 
 open German.Verbs in
 /-- The paper's occasion verbs, the fragment entries carrying the occasion sense. -/
-def occasionVerbs : List GermanVerbEntry := allVerbs.filter (·.senseTag = .occasion)
+def occasionVerbs : List German.Verb := allVerbs.filter (·.senseTag = .occasion)
 
 open SolstadBott2022 in
 /-- Occasion verbs are the agent-evocator class: the slot argument is the object, whose

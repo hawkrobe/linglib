@@ -49,7 +49,7 @@ open DistributedMorphology DistributedMorphology.Allosemy Data.Examples German.V
 open Aspect
 
 /-- The fragment entry of a verb form named in a row. -/
-def entryOf (form : String) : Option GermanVerbEntry := allVerbs.find? (·.form = form)
+def entryOf (form : String) : Option German.Verb := allVerbs.find? (·.form = form)
 
 /-! ## Content nominalizations (Ch. 3) -/
 
@@ -105,17 +105,17 @@ theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nomina
 
 /-! ### Alloseme selection in the nominalization structure -/
 
-/-- v's context in the nominalization structure [n [v √]]: its complement is the root,
-event-entailing or not, and it is embedded under n. -/
+/-- `vContext eventive` is v's context in the nominalization structure [n [v √]], with the root,
+event-entailing or not, as its complement and n above it. -/
 def vContext (eventive : Bool) : Neighborhood (List Feature) :=
   ⟨[], [if eventive then [.eventive] else []], [[.cat .n]]⟩
 
-/-- n's context in [n [v √]]: a verbal complement, eventive or not. -/
+/-- `nContext eventive` is n's context in [n [v √]], with a verbal complement, eventive or not. -/
 def nContext (eventive : Bool) : Neighborhood (List Feature) :=
   complement (.cat .v :: if eventive then [.eventive] else [])
 
-/-- The readings derivable in the nominalization structure: any licensed v alloseme composed
-with any licensed n alloseme. -/
+/-- `availableReadings eventive` lists the readings derivable in the nominalization structure,
+those of any licensed v alloseme composed with any licensed n alloseme. -/
 def availableReadings (eventive : Bool) : List NominalizationReading :=
   (licensed Verbalizer.vocabulary (vContext eventive)).flatMap (λ v =>
     (licensed Nominalizer.vocabulary (nContext eventive)).filterMap
@@ -160,10 +160,9 @@ the result and content readings compose to identical entity predicates
 
 variable {E S : Type*}
 
-/-- A model for nominalization denotations: eventualities embed into the
-entity domain (a nominal can describe an event as an entity), split into
-stative and dynamic, with `result` relating an entity to the eventuality
-that produced it and `hasContent` picking out the entities with
+/-- A model for nominalization denotations embeds the eventualities into the entity domain, since
+a nominal can describe an event as an entity, and splits them into stative and dynamic; `result`
+relates an entity to the eventuality that produced it, and `hasContent` picks out the entities with
 propositional content. -/
 structure NominalizationModel (E S : Type*) where
   /-- Eventualities as entities. -/
@@ -176,41 +175,39 @@ structure NominalizationModel (E S : Type*) where
   /-- The entity has propositional content (*rumor*, *idea*, *claim*). -/
   hasContent : E → Prop
 
-/-- A root's contribution to nominalization semantics: what it says of
-entities and of eventualities, and its Theme relation — which entity an
-eventuality of the root's kind is predicated of. -/
+/-- A root contributes to nominalization semantics what it says of entities and of eventualities,
+and its Theme relation, which relates an eventuality of the root's kind to the entity it is
+predicated of. -/
 structure RootMeaning (E S : Type*) where
   onEntities : E → Prop
   onEvents : S → Prop
   theme : E → S → Prop
 
-/-- What v hands to n: under the eventive alloseme, verbal event content
-together with the Theme position v introduces (§2.2); under the zero
-alloseme, the untouched root — and no argument position, since none is
-introduced by v (§3.5). -/
+/-- v hands to n verbal event content together with the Theme position it introduces under the
+eventive alloseme (§2.2), and the untouched root with no argument position under the zero
+alloseme, since v then introduces none (§3.5). -/
 inductive VerbalDenotation (E S : Type*) where
   | eventive (p : S → Prop) (theme : E → S → Prop)
   | zero (ρ : RootMeaning E S)
 
-/-- The v alloseme applied to the root. -/
+/-- `denoteV ρ a` applies the v alloseme `a` to the root `ρ`. -/
 def denoteV (ρ : RootMeaning E S) : Verbalizer.Alloseme → VerbalDenotation E S
   | .eventive => .eventive ρ.onEvents ρ.theme
   | .zero     => .zero ρ
 
-/-- A nominal denotation: the entity predicate, together with the
-internal-argument relation when the nominal retains one. The relation is
+/-- A nominal denotation is the entity predicate, together with the internal-argument relation
+when the nominal retains one. The relation is
 present exactly when v introduced the Theme position — no such position
 is part of the denotation unless v contributes it (§2.2, §3.5). -/
 structure NominalDenotation (E S : Type*) where
   /-- What the nominal describes. -/
   pred : E → Prop
-  /-- The internal-argument relation: `internalArg y x` holds when `y`
-  saturates the nominal `x`'s Theme position (*the observation of the
-  sky*). -/
+  /-- `internalArg y x` holds when `y` saturates the Theme position of the nominal `x` (*the
+  observation of the sky*). -/
   internalArg : Option (E → E → Prop) := none
 
-/-- The n alloseme applied to v's output, `none` where the combination
-is uninterpretable. The CEN describes the events the verb describes and
+/-- `denoteN m d a` applies the n alloseme `a` to v's output `d`, and is `none` where the
+combination is uninterpretable. The CEN describes the events the verb describes and
 retains the Theme position v introduced; the SEN predicates the root's
 entity content of an event-entity; the result alloseme picks out what an
 event of the root's kind produced ([wood-2023]'s denotation); the content
@@ -299,9 +296,9 @@ theorem cen_denotes_events (m : NominalizationModel E S) (ρ : RootMeaning E S)
 
 /-! ## Prefixes, particles, and resultatives (Ch. 4) -/
 
-/-- The three types of German preverbal elements: inseparable prefixes (*be-*, *ent-*, *er-*,
-*ver-*, *zer-*), separable particles (*ab-*, *an-*, *auf-*, *aus-*, *ein-*) and resultative
-secondary predicates (*platt*, *tot*, *kaputt*). -/
+/-- A German preverbal element is an inseparable prefix (*be-*, *ent-*, *er-*, *ver-*, *zer-*), a
+separable particle (*ab-*, *an-*, *auf-*, *aus-*, *ein-*) or a resultative secondary predicate
+(*platt*, *tot*, *kaputt*). -/
 inductive PreverbalElement where
   | pfx
   | prt
@@ -322,8 +319,8 @@ def PreverbalElement.synLevel : PreverbalElement → SynLevel
   | .prt => .phrase
   | .rsp => .phrase
 
-/-- Whether an element obligatorily specifies a result state: prefixes and resultatives do,
-particles have non-delimiting directional and completive readings (§4.4). -/
+/-- An element either obligatorily specifies a result state, as prefixes and resultatives do, or
+does not, as particles with their non-delimiting directional and completive readings (§4.4). -/
 inductive ResultStateSpec where
   | specifies
   | neutral
@@ -423,8 +420,9 @@ def elementOf : String → Option PreverbalElement
   | "rsp" => some .rsp
   | _ => none
 
-/-- The combination a row tests: its alternative when it gives one ((87), (88) pair a
-resultative baseline with the blocked prefixed or particle form), else the row itself. -/
+/-- `CellAcceptable e` holds when the combination the row tests is acceptable, the combination
+being the row's alternative where it gives one ((87) and (88) pair a resultative baseline with the
+blocked prefixed or particle form) and the row itself otherwise. -/
 def CellAcceptable (e : LinguisticExample) : Prop :=
   match e.alternatives with
   | [] => e.judgment = .acceptable
@@ -433,7 +431,7 @@ def CellAcceptable (e : LinguisticExample) : Prop :=
 instance (e : LinguisticExample) : Decidable (CellAcceptable e) := by
   unfold CellAcceptable; split <;> infer_instance
 
-/-- Table 3 against its examples ((81)–(84), (86)–(88)): a combination is acceptable exactly
+/-- Table 3 agrees with its examples ((81)–(84), (86)–(88)): a combination is acceptable exactly
 when both factors allow it. -/
 theorem allowed_rows :
     ∀ e ∈ Examples.all, ∀ o ∈ (e.feature? "outer").bind elementOf,
@@ -450,6 +448,11 @@ complex event's Theme to the end state. -/
 def rspRows : List LinguisticExample :=
   [Examples.ex89a, Examples.ex89b, Examples.ex115a, Examples.ex115e, Examples.ex115f]
 
+/-- Every resultative row names a means predicate with a fragment entry. -/
+theorem rsp_rows_have_entries :
+    ∀ e ∈ rspRows, ((e.feature? "m_predicate").bind entryOf).isSome := by
+  decide
+
 /-- The rows' verb-class labels follow the fragment entries of their means predicates. -/
 theorem rsp_verb_classes :
     ∀ e ∈ rspRows, ∀ v ∈ (e.feature? "m_predicate").bind entryOf,
@@ -464,8 +467,8 @@ theorem unaccusative_means :
 
 /-! ## Prefixes in nominalizations (Ch. 5) -/
 
-/-- The three German nominalization types: *-ung* suffixation, *Ge-…-e* circumfixation, and
-the nominalized infinitive. -/
+/-- German nominalizes by *-ung* suffixation, by *Ge-…-e* circumfixation, and by the nominalized
+infinitive. -/
 inductive NominalizationType where
   | ung
   | geE
@@ -500,9 +503,9 @@ instance : DecidablePred PreverbalElement.CanAttachAsHead
   | .prt => inferInstanceAs (Decidable True)
   | .rsp => inferInstanceAs (Decidable False)
 
-/-- The elements a solution accommodates: phrasal inputs admit everything, particles-as-heads
-the head-attachers, outer attachment the phrasal elements, since a prefix is a verbal head and
-cannot attach outside a noun. -/
+/-- `s.Admits pe` holds when the solution `s` accommodates the element `pe`: phrasal inputs admit
+everything, particles-as-heads the head-attachers, outer attachment the phrasal elements, since a
+prefix is a verbal head and cannot attach outside a noun. -/
 def StructureSolution.Admits : StructureSolution → PreverbalElement → Prop
   | .phrasalInput, _ => True
   | .particleAsHead, pe => pe.CanAttachAsHead
@@ -513,9 +516,9 @@ instance (s : StructureSolution) (pe : PreverbalElement) : Decidable (s.Admits p
 
 /-- *-ung* requires complex change-of-state event structure ([rossdeutscher-kamp-2010],
 endorsed at §5.3.1), the accomplishments of the fragment. -/
-def CanUngNominalize (v : GermanVerbEntry) : Prop := v.vendlerClass = some .accomplishment
+def CanUngNominalize (v : German.Verb) : Prop := v.vendlerClass = some .accomplishment
 
-instance (v : GermanVerbEntry) : Decidable (CanUngNominalize v) :=
+instance (v : German.Verb) : Decidable (CanUngNominalize v) :=
   inferInstanceAs (Decidable (_ = _))
 
 def typeOf : String → Option NominalizationType
@@ -528,8 +531,9 @@ def typeOf : String → Option NominalizationType
 def nominalizationOf (e : LinguisticExample) : Option NominalizationType :=
   (e.feature? "nominalization").bind typeOf
 
-/-- What the account predicts for a nominalization row: the type's solution accommodates the
-preverbal element, and an *-ung* form has a base with complex change-of-state structure. -/
+/-- `Predicted e` holds when the account predicts the nominalization row `e`: the type's solution
+accommodates the preverbal element, and an *-ung* form has a base with complex change-of-state
+structure. -/
 def Predicted (e : LinguisticExample) : Prop :=
   (∀ nt ∈ nominalizationOf e, ∀ pe ∈ (e.feature? "element").bind elementOf,
     nt.solution.Admits pe) ∧
@@ -537,6 +541,11 @@ def Predicted (e : LinguisticExample) : Prop :=
 
 instance (e : LinguisticExample) : Decidable (Predicted e) :=
   inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Every nominalization row names a verb with a fragment entry. -/
+theorem nominalization_rows_have_entries :
+    ∀ e ∈ Examples.all, (nominalizationOf e).isSome → ((e.feature? "verb").bind entryOf).isSome := by
+  decide
 
 /-- The Ch. 5 distribution ((193), (197), (198), (204), (212), (216), (218)): a nominalization
 is acceptable exactly when the account predicts it. -/
