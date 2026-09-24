@@ -5,6 +5,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Haspelmath2021
 public import Linglib.Discourse.Givenness
 public import Linglib.Semantics.Reference.Definiteness
+public import Linglib.Semantics.Focus.Marking
 public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Studies.BejarRezac2009
 public import Linglib.Syntax.Clause.ArgumentRole
@@ -92,14 +93,17 @@ universals exclude.
 namespace Haspelmath2021
 
 open Discourse Reference Reference.Prominence
+open Focus (Mark)
+open OrderDual (toDual)
 
 /-! ### Referential prominence scales (8)
 
 Each scale is a linear order whose greater element is the more prominent. The person scale
 of (8a), locuphoric above aliophoric, is `Person.Class`; the definiteness scale of (8b)
 without its optional specific-indefinite level is `Reference.Definiteness`, with Eastern
-Khanty's specific P (37) read at the definite end; and the givenness scale is
-`BinaryGivenness`. -/
+Khanty's specific P (37) read at the definite end; the givenness scale is `BinaryGivenness`;
+and the focus scale of (8b), background above focus, is the dual of focus marking,
+`Focus.Markᵒᵈ`, its more prominent end the unfocused one. -/
 
 
 /-- The ternary person scale of (47a), first > second > third: the ranks of
@@ -182,19 +186,6 @@ instance : BoundedOrder Animacy where
 instance : IsSimpleOrder Animacy where
   exists_pair_ne := ⟨.inanimate, .animate, by decide⟩
   eq_bot_or_eq_top := by decide
-
-/-- The focus scale of (8b): background above focus. -/
-inductive FocusStatus where
-  | focus
-  | background
-  deriving DecidableEq, Fintype, Repr
-
-/-- Rank on the focus scale. -/
-def FocusStatus.rank : FocusStatus → ℕ
-  | .focus => 0
-  | .background => 1
-
-instance : LinearOrder FocusStatus := LinearOrder.lift' FocusStatus.rank (by decide)
 
 /-- The scale of (49a) conditioning Baule's ditransitive construction: personal pronoun
 > proper name > common noun. -/
@@ -471,7 +462,7 @@ def warrgamayA : Nominality → ℕ := below .personForm
 def mangarrayiA : Animacy → ℕ := below .animate
 
 /-- (25): Central Tibetan flags a focused A with the ergative `-ki'`. -/
-def tibetanA : FocusStatus → ℕ := below .background
+def tibetanA : Markᵒᵈ → ℕ := below (toDual .nonFocused)
 
 /-- (28): French dative clitics are longer than accusative ones only for aliophoric R
 (`lui` ~ `le`, `leur` ~ `les`); they are person indexes, so fn. 17 keeps the case outside
@@ -721,7 +712,7 @@ argument that efficient coding, not ambiguity avoidance, explains the splits. -/
 
 /-- §11.3's hypothetical language: the ergative on every topical A and zero coding on a
 focused A. -/
-def antiEfficientA : FocusStatus → ℕ := atLeast .background
+def antiEfficientA : Markᵒᵈ → ℕ := atLeast (toDual .nonFocused)
 
 /-- §11.3's hypothetical language: the accusative on every indefinite P and zero coding
 on a definite P. -/
@@ -825,9 +816,10 @@ def Definiteness.table : List (String × Definiteness) :=
 /-- The givenness tags of the rows. -/
 def BinaryGivenness.table : List (String × BinaryGivenness) := [("given", .given), ("new", .new)]
 
-/-- The focus tags of the rows. -/
-def FocusStatus.table : List (String × FocusStatus) :=
-  [("background", .background), ("focus", .focus)]
+/-- The focus tags of the rows, on the focus scale of (8b): background above focus, the dual of
+the focus-marking order. -/
+def focusTable : List (String × Markᵒᵈ) :=
+  [("background", toDual .nonFocused), ("focus", toDual .focused)]
 
 /-- The nominal-type tags of the rows. -/
 def NominalType.table : List (String × NominalType) :=
@@ -844,7 +836,7 @@ theorem rows_splitP_splitA :
       Reproduces (rows "taka1261" "A" "person") (prominence? Person.Class.table) godoberiA ∧
       Reproduces (rows "warr1255" "A" "nominality") (prominence? Nominality.table) warrgamayA ∧
       Reproduces (rows "mang1381" "A" "animacy") (prominence? Animacy.table) mangarrayiA ∧
-      Reproduces (rows "cent2346" "A" "focus") (prominence? FocusStatus.table) tibetanA := by
+      Reproduces (rows "cent2346" "A" "focus") (prominence? focusTable) tibetanA := by
   decide
 
 /-- §5, §9: the single-argument R and T splits and Makassarese's verb coding reproduce the

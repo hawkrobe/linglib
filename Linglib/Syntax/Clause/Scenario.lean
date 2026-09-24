@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Sigma
-public import Mathlib.Order.Atoms
+public import Linglib.Core.Order.Atoms
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -159,8 +159,8 @@ theorem kind_eq_balanced_iff {s : Scenario α} : s.kind = .balanced ↔ s.high =
 theorem kind_eq_downstream_iff_eq [BoundedOrder α] [IsSimpleOrder α] {s : Scenario α} :
     s.kind = .downstream ↔ s = ⟨⊤, ⊥⟩ := by
   obtain ⟨h, l⟩ := s
-  rw [kind_eq_downstream_iff]
-  rcases eq_bot_or_eq_top h with rfl | rfl <;> rcases eq_bot_or_eq_top l with rfl | rfl <;> simp
+  rw [kind_eq_downstream_iff, IsSimpleOrder.lt_iff_eq_bot_and_eq_top]
+  simp [and_comm]
 
 /-- A scenario whose higher-ranked argument is `⊥` or whose lower-ranked one is `⊤` is at most
 balanced, and one whose higher-ranked argument is `⊤` or whose lower-ranked one is `⊥` at least
