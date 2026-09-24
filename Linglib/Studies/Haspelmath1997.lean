@@ -11,6 +11,7 @@ public import Linglib.Fragments.English.Indefinites
 public import Linglib.Fragments.German.Indefinites
 public import Linglib.Fragments.Kannada.Indefinites
 public import Linglib.Fragments.Latin.Indefinites
+public import Linglib.Fragments.Latvian.Indefinites
 public import Linglib.Fragments.Slavic.Russian.Indefinites
 public import Linglib.Fragments.Yakut.Indefinites
 
@@ -20,7 +21,7 @@ public import Linglib.Fragments.Yakut.Indefinites
 This file formalizes the implicational map of [haspelmath-1997] and the distributional claims
 made over it: the adjacency requirement that every indefinite series cover a connected region of
 the nine-function map, the two further principles of §4.5 restricting which connected regions
-occur, and the series of seventeen languages of the 40-language sample as Appendix A draws them.
+occur, and the series of eighteen languages of the 40-language sample as Appendix A draws them.
 
 `attestedCombinations` is Table 4.1, the combinations of functions attested in the sample;
 `Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_contiguous` shows to
@@ -31,7 +32,7 @@ neighbour; the specific-known case is the ban on the ABA syncretism
 (`specificUnknown_mem_of_irrealis_mem`). The paradigms verify the
 adjacency requirement (`sample_contiguous`) and the overlap of series that the book holds against
 contrast-based accounts of grammatical meaning (`sample_overlap`). The book's examples for
-fourteen of the languages are the rows of `Data/Examples/Haspelmath1997.json`, one row for each
+fifteen of the languages are the rows of `Data/Examples/Haspelmath1997.json`, one row for each
 variant the book prints in a line; the figures cover the acceptable rows and exclude the starred
 ones (`acceptable_covers`, `ungrammatical_excludes`).
 
@@ -56,7 +57,8 @@ functions of *-nibud'*, which is preferred there), and it fills cells the book h
 on the strength of the map (Yakut *da* and Mandarin
 bare interrogatives under indirect negation, the Swahili comparative). For those cells
 `sample_contiguous` restates the map; it tests the adjacency requirement on the others. The
-pronouns of English, German, Kannada, Latin, Russian and Yakut are their Fragments' entries.
+pronouns of English, German, Kannada, Latin, Latvian, Russian and Yakut are their Fragments'
+entries.
 
 ## TODO
 
@@ -188,7 +190,7 @@ theorem excluded_violate :
       ∀ s ∈ excludedByPrinciple2, ¬ Principle2 s := by
   decide +kernel
 
-/-! ### Seventeen languages of the 40-language sample -/
+/-! ### Eighteen languages of the 40-language sample -/
 
 /-- An indefinite series as a figure of Appendix A draws it: a pronoun of the series with the
 region of the map the figure encloses for it. -/
@@ -258,6 +260,14 @@ def kannada : List Series :=
   [ ⟨"-oo", Kannada.Indefinites.ooEntry, region [2]⟩,
     ⟨"-aadaruu", Kannada.Indefinites.aadaruuEntry, region [3, 4, 5]⟩,
     ⟨"-uu", Kannada.Indefinites.uuEntry, region [6, 7, 8, 9]⟩ ]
+
+/-- Latvian (A.18): *kaut* 12345, the figure not separating the specific functions, *ne-* 7 and
+*jeb-* 689. The bare interrogatives are also used as indefinites, *kāds* 'somebody' in
+conditionals and under indirect negation, and the figure draws no region for them. -/
+def latvian : List Series :=
+  [ ⟨"kaut", Latvian.Indefinites.kautKas, region [1, 2, 3, 4, 5]⟩,
+    ⟨"ne-", Latvian.Indefinites.neviens, region [7]⟩,
+    ⟨"jeb-", Latvian.Indefinites.jebkāds, region [6, 8, 9]⟩ ]
 
 /-- Japanese (A.38): *-ka* 12345, *-mo* 678, *-demo* 9. -/
 def japanese : List Series :=
@@ -339,9 +349,9 @@ def swahili : List Series :=
   [ series "generic noun" "mtu" .genericNoun [1, 2, 3, 4, 5, 6, 7],
     series "CL-o CL-ote" "mtu ye yote" .special [4, 5, 6, 7, 8, 9] ]
 
-/-- The seventeen languages. -/
+/-- The eighteen languages. -/
 def sample : List (List Series) :=
-  [ english, russian, german, latin, yakut, kannada, japanese, mandarin, turkish, hindi,
+  [ english, russian, german, latin, yakut, kannada, latvian, japanese, mandarin, turkish, hindi,
     italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
 /-- The adjacency requirement on the sample: every series covers a connected region. -/
@@ -353,7 +363,7 @@ theorem sample_principles :
   decide
 
 /-- In most languages several series overlap in distribution, which the book holds against
-accounts of grammatical meaning that rely on contrast: thirteen of the seventeen paradigms have
+accounts of grammatical meaning that rely on contrast: thirteen of the eighteen paradigms have
 a function expressed by more than one series. -/
 theorem sample_overlap :
     ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, italian, finnish,
@@ -376,6 +386,7 @@ example rows. -/
 def paradigm? : String → Option (List Series)
   | "stan1293" => some english
   | "russ1263" => some russian
+  | "latv1249" => some latvian
   | "stan1295" => some german
   | "nucl1643" => some japanese
   | "mand1415" => some mandarin
