@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorizationSemiring
 public import Linglib.Syntax.Minimalist.Linearization.Externalization
 public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.FormCopy
 
 /-!
 # Marcolli, Chomsky and Berwick (2025): Mathematical Structure of Syntactic Merge
@@ -27,6 +28,12 @@ character, and `headConsistency` instantiates it for the head-following characte
 whose probe reads the §1.13 selection head. The machinery is noncomputable, so these are
 specifications of consistency rather than checkers.
 
+Obligatory control (§3.8.2) is derived by External Merge alone. In *the man tried to read a
+book* both inscriptions of *the man* merge into theta positions, as repetitions of one another,
+and Form Copy restricts the object to the diagonal on which they are one
+(`theMan_mem_copyRel`), while *a book*, not structurally identical to *the man*, is no copy of it
+(`not_mem_copyRel_aBook`).
+
 ## TODO
 
 The book's section locators (§1.12.1, §1.13, §1.13.2) are transcribed from an earlier
@@ -35,6 +42,7 @@ version of this file and are UNVERIFIED against the published text.
 ## References
 
 * [marcolli-chomsky-berwick-2025]
+* [chomsky-etal-2023]
 -/
 
 @[expose] public section
@@ -203,5 +211,47 @@ theorem headConsistency_eq_convMul (Υ : LIToken → Consistency) (S : Syntactic
           (comulAlgHomN (toCK S)))
       = headConsistency Υ S :=
   featureConsistency_eq_convMul _ _ (headProbeChar_one Υ) S
+
+/-! ### Obligatory control by Form Copy (§3.8.2) -/
+
+/-- A token of the simple lexical item of category `c` selecting `sel`, pronounced `pf`. -/
+def tok (c : Cat) (sel : SelStack) (pf : String) (i : ℕ) : LIToken :=
+  ⟨.simple c sel (phonForm := pf), i⟩
+
+/-- The controller *the man*, from tokens 0 and 1. -/
+noncomputable def theMan : SyntacticObject :=
+  merge (leaf (tok .D [.N] "the" 0)) (leaf (tok .N [] "man" 1))
+
+/-- The controlled subject *the man*, from fresh tokens 4 and 5. -/
+noncomputable def theMan' : SyntacticObject :=
+  merge (leaf (tok .D [.N] "the" 4)) (leaf (tok .N [] "man" 5))
+
+/-- *a book*, the object of *read*. -/
+noncomputable def aBook : SyntacticObject :=
+  merge (leaf (tok .D [.N] "a" 7)) (leaf (tok .N [] "book" 8))
+
+/-- The syntactic object (3.8.4) of *the man tried to read a book*, built by External Merge
+alone: the controller merges into the theta position of *tried* and the controlled subject into
+that of *read*, since Internal Merge into a theta position would break the dichotomy of §3.8.1. -/
+noncomputable def triedToRead : SyntacticObject :=
+  merge theMan (merge (leaf (tok .V [.T] "tried" 2)) (merge (leaf (tok .T [.V] "to" 3))
+    (merge theMan' (merge (leaf (tok .V [.D] "read" 6)) aBook))))
+
+/-- The two inscriptions of *the man* are repetitions: structurally identical, distinct tokens. -/
+theorem theMan_isRepetition : IsRepetition theMan theMan' := by
+  refine ⟨by simp [StructurallyIdentical, theMan, theMan', tok], fun h ↦ ?_⟩
+  have : immediatelyContains theMan' (leaf (tok .D [.N] "the" 0)) := h ▸ by simp [theMan]
+  simp [theMan', tok] at this
+
+/-- Form Copy relates the controller to the controlled subject, the restriction of (3.8.4) to
+the diagonal `Diag₁,₄` of (3.8.5). -/
+theorem theMan_mem_copyRel : (theMan, theMan') ∈ triedToRead.copyRel :=
+  mk_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains]) theMan_isRepetition.1
+
+/-- *a book* is no copy of *the man*: Form Copy relates only structurally identical inscriptions. -/
+theorem not_mem_copyRel_aBook : (theMan, aBook) ∉ triedToRead.copyRel := fun h ↦ by
+  have := h.2
+  simp only [StructurallyIdentical, theMan, aBook, erase_merge, erase_leaf, tok] at this
+  exact absurd this (by decide)
 
 end MarcolliChomskyBerwick2025
