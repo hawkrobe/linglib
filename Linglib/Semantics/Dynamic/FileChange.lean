@@ -25,33 +25,34 @@ definite requires the card to be present. Sequencing is composition of partial f
 The assertive update by an atomic sentence merges the file with the sentence's proposition
 state. At the cards the file already has the merge filters the sequences, and at new cards it
 extends each sequence by every value, which is Heim's atomic rule read point by point. Every
-update only adds information, so it is inflationary in the informativeness order, and a card,
-once established, is never lost. Negation keeps the sequences that no extension carries into
-the scope's update, which traps the referents introduced inside the scope. On a uniform file
-negation is set difference, as in the later propositional presentation of the theory.
+update only adds information, so it is eliminative in the informativeness order, Heim's
+Principle (A) as `PartialUpdate.IsEliminative`, and a card, once established, is never lost.
+Negation keeps the sequences that no extension carries into the scope's update, which traps the
+referents introduced inside the scope. On a uniform file negation is set difference, as in the
+later propositional presentation of the theory.
 
 ## Main definitions
 
-* `FCP`: file change potentials, partial functions on the states of possibilities.
+* `FCP`: file change potentials, partial updates of information states.
 * `FCP.ofState`: the assertive update by a state, merging the file with it.
 * `FCP.atomVar`: the update by an atomic predicate at a card.
 * `FCP.atomW`: the update by an atomic predicate on the world alone.
 * `FCP.neg`, `FCP.cond`: negation as non-subsistence, and the conditional as `¬(φ ∧ ¬ψ)`.
 * `FCP.indef`: the indefinite, guarded by the Novelty Condition.
 * `FCP.def_`: the definite, guarded by the Familiarity Condition and its descriptive content.
-* `FCP.IsInflationary`: the updates that only add information.
 * `FCP.trueIn`: truth of a sentence with respect to a file, as consistency of the updated file.
 
 ## Main results
 
 * `FCP.ofState_mul`: updating by two states in sequence is updating by their merge.
+* `FCP.semiconj_ofState`: up to informational equivalence, assertion is additive.
 * `FCP.atomVar_eq`: the atom extends the file along its card and filters by its predicate.
 * `FCP.atomVar_eq_of_familiar`, `FCP.atomVar_eq_of_novel`: at an established card the atom
   filters, and at a new card it is random assignment followed by filtering.
 * `FCP.admits_indef`, `FCP.admits_def_`: the felicity conditions are definedness.
-* `FCP.IsInflationary.seq`, `FCP.isInflationary_neg`, `FCP.IsInflationary.indef`: inflation
-  is closed under the clauses.
-* `FCP.IsInflationary.familiar`: an established card stays established.
+* `FCP.isEliminative_ofState`, `FCP.isEliminative_neg`, `PartialUpdate.IsEliminative.indef`: every
+  clause only adds information.
+* `PartialUpdate.IsEliminative.familiar`: an established card stays established.
 * `FCP.neg_eq_partial_neg`: on a uniform file, negation is set difference.
 
 ## References
@@ -65,9 +66,9 @@ negation is set difference, as in the later propositional presentation of the th
 namespace DynamicSemantics
 
 /-- A file change potential ([heim-1982]): a partial update of referential
-information states, `CCP.Partial` at the possibility type. Partiality is
-presupposition (`CCP.Partial.admits`); Heim numbers her cards, `V := ℕ`. -/
-abbrev FCP (W V M : Type*) := CCP.Partial (Possibility W V (Part M))
+information states. Partiality is presupposition (`PartialUpdate.admits`); Heim numbers her
+cards, `V := ℕ`. -/
+abbrev FCP (W V M : Type*) := PartialUpdate (State W V M)
 
 namespace FCP
 
@@ -91,10 +92,21 @@ theorem ofState_one : ofState (1 : State W V M) = PFun.id _ := funext fun _ ↦ 
 /-- Assertive update is the regular action of the merge monoid: updating by
 `A` and then by `B` is updating by `A * B`. -/
 theorem ofState_mul : ofState (A * B) = (ofState A).seq (ofState B) :=
-  funext fun _ ↦ by simp [CCP.Partial.seq, PFun.comp_apply, mul_assoc]
+  funext fun _ ↦ by simp [PartialUpdate.seq, PFun.comp_apply, mul_assoc]
 
-/-- Principle (A) at an assertive update: merging ascends in informativeness. -/
-theorem le_ofState (h : F' ∈ ofState A F) : F ≤ F' := mem_ofState.mp h ▸ State.left_le_mul
+/-- Principle (A) at an assertive update: merging only adds information. -/
+theorem ofState_le (h : F' ∈ ofState A F) : F' ≤ F := mem_ofState.mp h ▸ State.mul_le_left
+
+/-- Up to informational equivalence, assertion is additive in the sense of
+`Semantics/Dynamic/Consequence.lean`: on the upper sets of possibilities it meets the file with
+the content of `A` (`isAdditive_inf_right`). Merging need not be literally idempotent, since two
+compatible points of a file merge into a third, so literal fixed points of assertion are finer
+than informational acceptance. -/
+theorem semiconj_ofState (A : State W V M) :
+    Function.Semiconj
+      (OrderDual.toDual ∘ upperClosure : State W V M → (UpperSet (Possibility W V (Part M)))ᵒᵈ)
+      (· * A) (· ⊓ OrderDual.toDual (upperClosure A)) :=
+  fun _ ↦ congrArg OrderDual.toDual State.upperClosure_mul
 
 /-! ### Atoms -/
 
@@ -159,7 +171,7 @@ is established and the file supports its content (the Extended
 Novelty-Familiarity-Condition), and then changes nothing. -/
 def def_ (x : V) (N : FCP W V M) : FCP W V M :=
   fun F : State W V M ↦
-    Part.assert (State.Familiar F x ∧ CCP.Partial.supports F N) fun _ ↦ Part.some F
+    Part.assert (State.Familiar F x ∧ N.supports F) fun _ ↦ Part.some F
 
 @[simp] theorem admits_neg : (neg φ).admits F ↔ φ.admits F := Iff.rfl
 
@@ -178,10 +190,10 @@ theorem indef_apply [DecidableEq V] (body : FCP W V M) (h : State.Novel F x) :
 
 /-- The Extended Familiarity Condition is definedness. -/
 theorem admits_def_ (N : FCP W V M) :
-    (def_ x N).admits F ↔ State.Familiar F x ∧ CCP.Partial.supports F N :=
+    (def_ x N).admits F ↔ State.Familiar F x ∧ N.supports F :=
   ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, trivial⟩⟩
 
-theorem def_apply (N : FCP W V M) (h : State.Familiar F x ∧ CCP.Partial.supports F N) :
+theorem def_apply (N : FCP W V M) (h : State.Familiar F x ∧ N.supports F) :
     def_ x N F = Part.some F := Part.assert_pos h
 
 /-- Negation only discards points. -/
@@ -189,54 +201,38 @@ theorem subset_of_mem_neg (h : F' ∈ neg φ F) : F' ⊆ F := by
   obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact fun _ hp ↦ hp.1
 
+/-! ### Principle (A)
+
+Every defined update only adds information: it descends in informativeness. On a uniform stratum
+this is set shrinking (`State.UniformAt.le_iff_subset`); at a novel card an update extends rather
+than shrinks. -/
+
+theorem isEliminative_ofState (A : State W V M) : (ofState A).IsEliminative :=
+  fun _ _ ↦ ofState_le
+
 theorem isEliminative_neg (φ : FCP W V M) : (neg φ).IsEliminative :=
-  fun _ _ ↦ subset_of_mem_neg
+  fun _ _ h ↦ State.le_of_subset (subset_of_mem_neg h)
 
-/-! ### Principle (A) -/
+theorem isEliminative_cond (φ ψ : FCP W V M) : (cond φ ψ).IsEliminative :=
+  isEliminative_neg _
 
-/-- Principle (A): every defined update ascends in informativeness. On a
-uniform stratum this is set shrinking (`State.UniformAt.le_iff_superset`);
-at a novel card an update extends rather than shrinks. -/
-def IsInflationary (φ : FCP W V M) : Prop := ∀ F : State W V M, ∀ F' ∈ φ F, F ≤ F'
-
-theorem isInflationary_id : IsInflationary (PFun.id _ : FCP W V M) :=
-  fun _ _ h ↦ le_of_eq (Part.mem_some_iff.mp h).symm
-
-theorem isInflationary_ofState (A : State W V M) : (ofState A).IsInflationary :=
-  fun _ _ ↦ le_ofState
-
-/-- A set-shrinking update is inflationary. -/
-theorem _root_.DynamicSemantics.CCP.Partial.IsEliminative.isInflationary
-    (h : φ.IsEliminative) : φ.IsInflationary :=
-  fun _ _ hF' ↦ State.le_of_superset (h _ _ hF')
-
-theorem IsInflationary.seq (hφ : φ.IsInflationary) (hψ : ψ.IsInflationary) :
-    IsInflationary (φ.seq ψ) := fun s s' h ↦
-  let ⟨t, ht, hs'⟩ := Part.mem_bind_iff.mp h
-  (hφ s t ht).trans (hψ t s' hs')
-
-theorem isInflationary_neg (φ : FCP W V M) : (neg φ).IsInflationary :=
-  (isEliminative_neg φ).isInflationary
-
-theorem isInflationary_cond (φ ψ : FCP W V M) : (cond φ ψ).IsInflationary :=
-  isInflationary_neg _
-
-theorem IsInflationary.indef [DecidableEq V] {body : FCP W V M} (h : body.IsInflationary)
-    (x : V) : (indef x body).IsInflationary := fun _ _ hF' ↦
+theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.indef [DecidableEq V]
+    {body : FCP W V M} (h : body.IsEliminative) (x : V) : (indef x body).IsEliminative :=
+  fun _ _ hF' ↦
   let ⟨hn, hF'⟩ := Part.mem_assert_iff.mp hF'
-  (State.le_randomAssign hn).trans (h _ _ hF')
+  (h _ _ hF').trans (State.randomAssign_le hn)
 
-theorem isInflationary_def_ (x : V) (N : FCP W V M) : (def_ x N).IsInflationary :=
-  fun _ _ hF' ↦ let ⟨_, hF'⟩ := Part.mem_assert_iff.mp hF'; le_of_eq (Part.mem_some_iff.mp hF').symm
+theorem isEliminative_def_ (x : V) (N : FCP W V M) : (def_ x N).IsEliminative :=
+  fun _ _ hF' ↦ let ⟨_, hF'⟩ := Part.mem_assert_iff.mp hF'; le_of_eq (Part.mem_some_iff.mp hF')
 
-/-- Once false, always false: an inflationary update of the absurd file is
-absurd. -/
-theorem IsInflationary.eq_empty_of_mem (h : φ.IsInflationary) (hF' : F' ∈ φ ∅) : F' = ∅ :=
-  State.eq_empty_of_top_le (h ∅ F' hF')
+/-- Once false, always false: an eliminative update of the absurd file is absurd. -/
+theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.eq_empty_of_mem
+    (h : φ.IsEliminative) (hF' : F' ∈ φ ∅) : F' = ∅ :=
+  State.eq_empty_of_le_bot (h ∅ F' hF')
 
 /-- A card, once established, stays established. -/
-theorem IsInflationary.familiar (h : φ.IsInflationary) (hx : State.Familiar F x)
-    (hF' : F' ∈ φ F) : State.Familiar F' x :=
+theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.familiar (h : φ.IsEliminative)
+    (hx : State.Familiar F x) (hF' : F' ∈ φ F) : State.Familiar F' x :=
   hx.of_le (h F F' hF')
 
 /-! ### Truth -/
@@ -252,9 +248,9 @@ theorem trueIn_admits (h : trueIn F φ) : φ.admits F :=
   Part.dom_iff_mem.mpr ⟨F', hF'⟩
 
 /-- A consistent file is true at what it supports. -/
-theorem trueIn_of_supports (hsup : CCP.Partial.supports F φ) (hcons : F.Nonempty) :
+theorem trueIn_of_supports (hsup : φ.supports F) (hcons : F.Nonempty) :
     trueIn F φ :=
-  ⟨F, CCP.Partial.supports_iff_mem.mp hsup, hcons⟩
+  ⟨F, hsup, hcons⟩
 
 /-! ### The uniform shadow -/
 

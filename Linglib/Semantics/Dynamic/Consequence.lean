@@ -208,6 +208,9 @@ theorem IsAdditive.isFixedPt_iff (hf : IsAdditive f) : IsFixedPt f σ ↔ σ ≤
 
 theorem isAdditive_id : IsAdditive (id : α → α) := fun _ ↦ inf_top_eq _ |>.symm
 
+/-- Meeting with a fixed content is additive. -/
+theorem isAdditive_inf_right (a : α) : IsAdditive (· ⊓ a) := fun _ ↦ by simp
+
 theorem IsAdditive.comp (hg : IsAdditive g) (hf : IsAdditive f) : IsAdditive (g ∘ f) := fun σ ↦ by
   show g (f σ) = σ ⊓ g (f ⊤)
   rw [hg (f σ), hf σ, hg (f ⊤), inf_assoc]

@@ -53,7 +53,7 @@ card (`novelIn_iff_determinedBy`).
 
 namespace Heim1983
 
-open DynamicSemantics CCP.Partial Presupposition
+open DynamicSemantics PartialUpdate CCP.Partial Presupposition
 
 /-! ### Admittance and presupposition (§2.1–§2.2) -/
 

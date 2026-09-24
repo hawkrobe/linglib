@@ -50,7 +50,8 @@ its stimuli are in `Data.Examples.WangDavidson2026`.
 
 namespace WangDavidson2026
 
-open Exhaustification Exhaustification.Trivalent Presupposition DynamicSemantics CCP.Partial
+open Exhaustification Exhaustification.Trivalent Presupposition DynamicSemantics PartialUpdate
+open CCP.Partial
 
 /-! ### Filtering by a trivalent connective -/
 

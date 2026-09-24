@@ -17,7 +17,7 @@ universal quantifier tests the file against its two auxiliary updates, and negat
 against one. The truth of an utterance is the truth of the resulting file, criterion (C) of
 §3.2, so Existential Closure is dispensable. The logical forms `LF` and the rules `LF.fcp`
 are stated over the substrate's file change potentials. Principle (A) holds of every rule at
-once (`fcp_isInflationary`), so an established card persists (`familiar_of_mem`) and a card a
+once (`fcp_isEliminative`), so an established card persists (`familiar_of_mem`) and a card a
 formula does not introduce stays novel (`novel_of_mem`); the claims the dissertation draws
 are proved on its own texts: felicity conditions project through the elementary steps of
 file change (`admits_pretzel`), a card introduced under `every` or `not` does not outlive
@@ -129,12 +129,12 @@ theorem admits_indef (i : ℕ) (N : M → Prop) (F : File W M) :
 entails its descriptive content. -/
 theorem admits_defNP (i : ℕ) (N : M → Prop) (F : File W M) :
     (defNP i N).fcp.admits F ↔
-      State.Familiar F i ∧ CCP.Partial.supports F (unary N i) :=
+      State.Familiar F i ∧ (unary N i).supports F :=
   FCP.admits_def_ _
 
 theorem supports_unary_true (F : File W M) {i : ℕ} (h : State.Familiar F i) :
-    CCP.Partial.supports F (unary (fun _ ↦ True) i) := by
-  rw [CCP.Partial.supports_iff_eq_some, unary_eq_atomVar, FCP.atomVar_eq_of_familiar _ h]
+    (unary (fun _ ↦ True) i).supports F := by
+  rw [PartialUpdate.supports_iff_eq_some, unary_eq_atomVar, FCP.atomVar_eq_of_familiar _ h]
   exact congrArg Part.some (Set.sep_eq_self_iff_mem_true.mpr fun p hp ↦
     let ⟨m, hm⟩ := Part.dom_iff_mem.mp (h p hp); ⟨m, hm, trivial⟩)
 
@@ -144,7 +144,7 @@ theorem fcp_pro (F : File W M) {i : ℕ} (h : State.Familiar F i) : (pro i).fcp 
 
 /-- A pronoun is defined exactly when its card is familiar. -/
 theorem admits_pro (F : File W M) (i : ℕ) : (pro i).fcp.admits F ↔ State.Familiar F i :=
-  ⟨fun ⟨h, _⟩ ↦ h.1, fun h ↦ by rw [CCP.Partial.admits, fcp_pro F h]; trivial⟩
+  ⟨fun ⟨h, _⟩ ↦ h.1, fun h ↦ by rw [PartialUpdate.admits, fcp_pro F h]; trivial⟩
 
 /-- The file change of an indefinite at a novel card: random assignment then
 filtering. -/
@@ -196,7 +196,7 @@ theorem admits_every_of_mem {φ₁ φ₂ : LF M} {F F₁ : File W M} (h : F₁ �
 theorem every_eq_cond (φ₁ φ₂ : LF M) :
     (every φ₁ φ₂).fcp = FCP.cond (W := W) φ₁.fcp φ₂.fcp := by
   funext F
-  simp only [fcp, FCP.cond, FCP.neg, CCP.Partial.seq, PFun.comp_apply, Part.map_bind,
+  simp only [fcp, FCP.cond, FCP.neg, PartialUpdate.seq, PFun.comp_apply, Part.map_bind,
     Part.map_map]
   refine congrArg (Part.bind _) (funext fun F₁ ↦
     congrArg (fun g ↦ Part.map g (φ₂.fcp F₁)) (funext fun F₂ ↦ Set.ext fun p ↦ ?_))
@@ -215,27 +215,27 @@ theorem admits_every (φ₁ φ₂ : LF M) (F : File W M) :
 
 /-! ### Principle (A) of §1.2 and the cards through the rules
 
-Every rule ascends in informativeness, so a card once established stays
+Every rule only adds information, so a card once established stays
 established; the cards a rule can add are those the logical form introduces,
 so a card it does not introduce stays novel. -/
 
-/-- Principle (A): every rule is inflationary. -/
-theorem fcp_isInflationary : ∀ φ : LF M, FCP.IsInflationary (φ.fcp : FCP W ℕ M)
-  | atom _ _ => FCP.isInflationary_ofState _
-  | indef i _ => (FCP.isInflationary_ofState _).indef i
-  | defNP i _ => FCP.isInflationary_def_ i _
-  | seq φ ψ => (fcp_isInflationary φ).seq (fcp_isInflationary ψ)
-  | every φ₁ φ₂ => by rw [every_eq_cond]; exact FCP.isInflationary_cond _ _
-  | neg _ => FCP.isInflationary_neg _
+/-- Principle (A): every rule is eliminative in the informativeness order. -/
+theorem fcp_isEliminative : ∀ φ : LF M, (φ.fcp : FCP W ℕ M).IsEliminative
+  | atom _ _ => FCP.isEliminative_ofState _
+  | indef i _ => (FCP.isEliminative_ofState _).indef i
+  | defNP i _ => FCP.isEliminative_def_ i _
+  | seq φ ψ => (fcp_isEliminative φ).seq (fcp_isEliminative ψ)
+  | every φ₁ φ₂ => by rw [every_eq_cond]; exact FCP.isEliminative_cond _ _
+  | neg _ => FCP.isEliminative_neg _
 
 /-- Once false, always false (§3.2): every update of the absurd file is absurd. -/
 theorem fcp_empty (φ : LF M) {F' : File W M} (h : F' ∈ φ.fcp ∅) : F' = ∅ :=
-  (fcp_isInflationary φ).eq_empty_of_mem h
+  (fcp_isEliminative φ).eq_empty_of_mem h
 
 /-- A card, once established, stays established. -/
 theorem familiar_of_mem {φ : LF M} {F F' : File W M} {j : ℕ} (hj : State.Familiar F j)
     (h : F' ∈ φ.fcp F) : State.Familiar F' j :=
-  (fcp_isInflationary φ).familiar hj h
+  (fcp_isEliminative φ).familiar hj h
 
 /-- An indefinite establishes its card. -/
 theorem familiar_of_mem_indef {F F' : File W M} {i : ℕ} {N : M → Prop}
