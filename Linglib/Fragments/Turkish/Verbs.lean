@@ -53,12 +53,12 @@ namespace Verb
 
 /-- `v.suffixes sfx` is the suffix string of the verb under the inflectional suffixes `sfx`,
 its voice suffixes followed by `sfx`. -/
-def suffixes (v : Verb) (sfx : List (Σ σ, system.Exponent σ)) : List (Σ σ, system.Exponent σ) :=
+def suffixes (v : Verb) (sfx : List (Σ σ, Exponent σ)) : List (Σ σ, Exponent σ) :=
   v.voice.map (⟨.voice, ·⟩) ++ sfx
 
 /-- `v.inflect sfx` is the surface form of the verb under the inflectional suffixes `sfx`,
 which with no suffixes is the stem. -/
-def inflect (v : Verb) (sfx : List (Σ σ, system.Exponent σ)) : List Segment :=
+def inflect (v : Verb) (sfx : List (Σ σ, Exponent σ)) : List Segment :=
   realize v.rootSegments ((v.suffixes sfx).map fun e ↦ Exponent.form e.2)
 
 end Verb

@@ -16,10 +16,10 @@ surface forms of the two suffix vowels. The last vowel of a disharmonic loan dec
 appear where they keep vowels and consonants apart (§6.1.3), and a stem-final `a` or `e`,
 the vowel of the negative included, is raised before -(I)yor (§8.2.3.3).
 
-The suffix order of Chapter 8 is licensing by the position-class systems of the finite verb
-and the nominal. The grammar's example words are licensed with their stacked voice suffixes,
-reversed orders are not, and the rule that markers of one position cannot co-occur (§8.2.3)
-holds because the position is not iterable.
+The suffix order of Chapter 8 is licensing by the templates of the finite verb and the nominal.
+The grammar's example words are licensed with their stacked voice suffixes, reversed orders are
+not, and the rule that markers of one position cannot co-occur (§8.2.3) holds because the
+template does not repeat the position.
 
 ## Main results
 
@@ -33,7 +33,7 @@ holds because the position is not iterable.
   negative of §8.2.2 before -(I)yor.
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
 * `finite_verb`: §8.2 (7), every slot of the finite verb.
-* `same_position_excluded`: §8.2.3 (i) from `PositionClassSystem.not_licensesIn_pair`.
+* `same_position_excluded`: §8.2.3 (i), since the template does not repeat position 3.
 
 ## References
 
@@ -244,14 +244,14 @@ theorem spelled_stems : ∀ v ∈ verbs, ofString? v.form = some (v.inflect []) 
 
 /-- *çocuk-lar-ın-a* 'to your children' has the order number, possession, case (§8.1 (1)). -/
 theorem nominal :
-    Nominal.system.Licenses []
+    Nominal.Licensed
       [⟨_, .plural⟩, ⟨_, .possessive (.pn .second .singular)⟩, ⟨_, .dative⟩] := by
   decide
 
 /-- *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur* fills every slot of the finite verb, the
 voice slot with four stacked suffixes (§8.2 (7)). -/
 theorem finite_verb :
-    Verb.system.Licenses []
+    Verb.Licensed
       [⟨_, .reciprocal⟩, ⟨_, .causative⟩, ⟨_, .causative⟩, ⟨_, .passive⟩, ⟨_, .negative⟩,
         ⟨_, .abil⟩, ⟨_, .iyor⟩, ⟨_, .evidentialCopula⟩, ⟨_, .person .two (.pn .second .plural)⟩,
         ⟨_, .dir⟩] := by
@@ -260,23 +260,24 @@ theorem finite_verb :
 /-- *Bitir-e-me-miş-tir*, *Oku-yabil-ecek-miş* and *git-ti-ydi-n* fill positions 1-3-5, 2-3-4,
 and 3-4 with a group-1 person marker (§8.2.3 (11), (12), §8.2.3.3). -/
 theorem tam_positions :
-    Verb.system.Licenses [] [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
-    Verb.system.Licenses [] [⟨_, .abil⟩, ⟨_, .acak⟩, ⟨_, .evidentialCopula⟩] ∧
-    Verb.system.Licenses []
+    Verb.Licensed [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
+    Verb.Licensed [⟨_, .abil⟩, ⟨_, .acak⟩, ⟨_, .evidentialCopula⟩] ∧
+    Verb.Licensed
       [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.pn .second .singular)⟩] := by
   decide
 
 /-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and
 the copular markers follow that marker (§8.2.3), so the reversed orders are unlicensed. -/
 theorem reversed_orders :
-    ¬ Verb.system.Licenses [] [⟨_, .negative⟩, ⟨_, .causative⟩] ∧
-    ¬ Verb.system.Licenses [] [⟨_, .di⟩, ⟨_, .negative⟩] ∧
-    ¬ Verb.system.Licenses [] [⟨_, .pastCopula⟩, ⟨_, .di⟩] := by
+    ¬ Verb.Licensed [⟨_, .negative⟩, ⟨_, .causative⟩] ∧
+    ¬ Verb.Licensed [⟨_, .di⟩, ⟨_, .negative⟩] ∧
+    ¬ Verb.Licensed [⟨_, .pastCopula⟩, ⟨_, .di⟩] := by
   decide
 
-/-- Markers of position 3 cannot co-occur, since the position is not iterable (§8.2.3 (i)). -/
+/-- Markers of position 3 cannot co-occur, since the template does not repeat the position
+(§8.2.3 (i)). -/
 theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
-    ¬ Verb.system.Licenses [] [⟨_, m₁⟩, ⟨_, m₂⟩] :=
-  fun h ↦ Verb.system.not_licensesIn_pair (by decide : Verb.Slot.tam ≠ .voice) _ m₁ m₂ h.2
+    ¬ Verb.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
+  show [Verb.Slot.tam, .tam] ∉ Verb.template.matches' by decide
 
 end GokselKerslake2005

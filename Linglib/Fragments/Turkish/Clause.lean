@@ -22,8 +22,8 @@ doubled verb: *-(A/I)r … -mAz* 'as soon as' and *-(y)A … -(y)A*, continuous 
 
 ## Implementation notes
 
-* Whether a converb takes a tense marker or the negative is read off the finite verb's slot
-  order in `Turkish.Verb.system` from the slot the converb follows.
+* Whether a converb takes a tense marker or the negative is read off the finite verb's
+  template `Turkish.Verb.template` from the slot the converb follows.
 * The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## References
@@ -103,9 +103,10 @@ def follows : Converb → Verb.Slot
   | ken | casina => .tam
   | madan => .possibility
 
-/-- An exponent of the slot may precede the converb. -/
+/-- An exponent of the slot may precede the converb: the slot is the one the converb follows,
+or the finite verb's template admits it before that one. -/
 def Admits (c : Converb) (s : Verb.Slot) : Prop :=
-  c.follows = s ∨ Verb.system.Precedes Verb.system.template.suffixSlots s c.follows
+  c.follows = s ∨ [s, c.follows] ∈ Verb.template.matches'
 
 instance (c : Converb) (s : Verb.Slot) : Decidable (c.Admits s) :=
   inferInstanceAs (Decidable (_ ∨ _))

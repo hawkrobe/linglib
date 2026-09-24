@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Data.List.Chain
 public import Mathlib.Tactic.TypeStar
 
 /-!
@@ -27,12 +26,16 @@ relevance-hierarchy vocabulary; a language-specific slot type carries
 finer position classes: the Mayan fragments' `template`s use `Mayan.VerbSlot`, with the
 prefix/suffix split encoding a morpheme's position relative to the verb stem.
 
+A word fills a template's positions in order, and the strings of slots a template admits form
+a regular language. A grammar whose positions are each filled at most once admits the sublists
+of its list of slots (`RegularExpression.sublists`), and a position admitting a sequence of
+exponents is starred, so a grammar that licenses words states its template as a
+`RegularExpression` over its slots, and the affixes of a word are licensed when the list of
+their slots matches it.
+
 ## Main definitions
 
 * `Morphology.AffixTemplate` — a word's prefix/suffix slots over an arbitrary slot type.
-* `Morphology.PositionClassSystem` — a template with the exponents of each slot, and the
-  slots that may be filled more than once; `PositionClassSystem.Licenses` is the affix
-  strings it admits.
 -/
 
 @[expose] public section
@@ -49,62 +52,5 @@ structure AffixTemplate (Slot : Type*) where
   /-- Suffix slots, ordered stem-outward (innermost suffix first). -/
   suffixSlots : List Slot := []
   deriving Repr, DecidableEq
-
-/-! ### Position-class systems -/
-
-universe u
-
-/-- A position-class system: a slot inventory ordered by an affix template, the exponents of
-each slot, and the slots that may be filled by several exponents in sequence. The exponents
-are abstract symbols, as the symbols of a `FirstOrder.Language` are; their forms are an
-interpretation supplied by the citing grammar. -/
-structure PositionClassSystem where
-  /-- The position classes. -/
-  Slot : Type u
-  [decEq : DecidableEq Slot]
-  /-- Their order. -/
-  template : AffixTemplate Slot
-  /-- The exponents of each slot. -/
-  Exponent : Slot → Type u
-  /-- The slots admitting more than one exponent in sequence. -/
-  Iterable : Slot → Prop := fun _ => False
-  [decIterable : DecidablePred Iterable]
-
-namespace PositionClassSystem
-
-attribute [instance] decEq decIterable
-
-variable (P : PositionClassSystem)
-
-/-- In the slot order `slots`, `b` may follow `a`: a later slot, or the same iterable slot. -/
-def Precedes (slots : List P.Slot) (a b : P.Slot) : Prop :=
-  slots.idxOf a < slots.idxOf b ∨ a = b ∧ P.Iterable a
-
-instance (slots : List P.Slot) : DecidableRel (P.Precedes slots) := fun _ _ =>
-  inferInstanceAs (Decidable (_ ∨ _ ∧ _))
-
-/-- The affix strings admitted in the slot order `slots`: every exponent in one of its slots,
-consecutive exponents in later or iterable slots. -/
-def LicensesIn (slots : List P.Slot) (w : List (Σ s, P.Exponent s)) : Prop :=
-  (∀ x ∈ w, x.1 ∈ slots) ∧ (w.map Sigma.fst).IsChain (P.Precedes slots)
-
-instance (slots : List P.Slot) (w : List (Σ s, P.Exponent s)) :
-    Decidable (P.LicensesIn slots w) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The words the system admits: the prefixes licensed in the prefix order and the suffixes
-in the suffix order. -/
-def Licenses (pre suf : List (Σ s, P.Exponent s)) : Prop :=
-  P.LicensesIn P.template.prefixSlots pre ∧ P.LicensesIn P.template.suffixSlots suf
-
-instance (pre suf : List (Σ s, P.Exponent s)) : Decidable (P.Licenses pre suf) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Two exponents of one slot cannot be adjacent unless the slot is iterable. -/
-theorem not_licensesIn_pair {s : P.Slot} (h : ¬ P.Iterable s) (slots : List P.Slot)
-    (e₁ e₂ : P.Exponent s) : ¬ P.LicensesIn slots [⟨s, e₁⟩, ⟨s, e₂⟩] := by
-  simp [LicensesIn, Precedes, h]
-
-end PositionClassSystem
 
 end Morphology
