@@ -27,7 +27,7 @@ def auto : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def auton : Form :=
   { id := "karlsson2017_auton"
@@ -39,7 +39,7 @@ def auton : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def hanet : Form :=
   { id := "karlsson2017_hanet"
@@ -51,7 +51,7 @@ def hanet : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "acc"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "acc"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def maitoa : Form :=
   { id := "karlsson2017_maitoa"
@@ -63,7 +63,7 @@ def maitoa : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def vetta : Form :=
   { id := "karlsson2017_vetta"
@@ -75,7 +75,7 @@ def vetta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def perhetta : Form :=
   { id := "karlsson2017_perhetta"
@@ -87,7 +87,7 @@ def perhetta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def autossa : Form :=
   { id := "karlsson2017_autossa"
@@ -99,7 +99,7 @@ def autossa : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def autosta : Form :=
   { id := "karlsson2017_autosta"
@@ -111,7 +111,7 @@ def autosta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ela"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ela"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def autoon : Form :=
   { id := "karlsson2017_autoon"
@@ -123,7 +123,7 @@ def autoon : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def maahan : Form :=
   { id := "karlsson2017_maahan"
@@ -135,7 +135,7 @@ def maahan : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def porvooseen : Form :=
   { id := "karlsson2017_porvooseen"
@@ -147,7 +147,7 @@ def porvooseen : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def poydalla : Form :=
   { id := "karlsson2017_poydalla"
@@ -159,7 +159,7 @@ def poydalla : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def poydalta : Form :=
   { id := "karlsson2017_poydalta"
@@ -171,7 +171,7 @@ def poydalta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "abl"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "abl"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def poydalle : Form :=
   { id := "karlsson2017_poydalle"
@@ -183,7 +183,7 @@ def poydalle : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "all"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "all"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def opettajana : Form :=
   { id := "karlsson2017_opettajana"
@@ -195,7 +195,7 @@ def opettajana : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ess"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ess"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def opettajaksi : Form :=
   { id := "karlsson2017_opettajaksi"
@@ -207,7 +207,7 @@ def opettajaksi : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "transl"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def vaimoineni : Form :=
   { id := "karlsson2017_vaimoineni"
@@ -219,7 +219,7 @@ def vaimoineni : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "com"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "com"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def passitta : Form :=
   { id := "karlsson2017_passitta"
@@ -231,7 +231,7 @@ def passitta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "abess"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "abess"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def jalan : Form :=
   { id := "karlsson2017_jalan"
@@ -243,7 +243,7 @@ def jalan : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "inst"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "inst"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def kirjani : Form :=
   { id := "karlsson2017_kirjani"
@@ -255,7 +255,7 @@ def kirjani : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def kirjasi : Form :=
   { id := "karlsson2017_kirjasi"
@@ -267,7 +267,7 @@ def kirjasi : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "2sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def kirjansa : Form :=
   { id := "karlsson2017_kirjansa"
@@ -279,7 +279,7 @@ def kirjansa : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def pullo : Form :=
   { id := "karlsson2017_pullo"
@@ -291,7 +291,7 @@ def pullo : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def pullossa : Form :=
   { id := "karlsson2017_pullossa"
@@ -303,7 +303,7 @@ def pullossa : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def pulloni : Form :=
   { id := "karlsson2017_pulloni"
@@ -315,7 +315,7 @@ def pulloni : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def pullostani : Form :=
   { id := "karlsson2017_pullostani"
@@ -327,7 +327,7 @@ def pullostani : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ela"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "ela"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def hyllyssa : Form :=
   { id := "karlsson2017_hyllyssa"
@@ -339,7 +339,7 @@ def hyllyssa : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def hyllylla : Form :=
   { id := "karlsson2017_hyllylla"
@@ -351,7 +351,7 @@ def hyllylla : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def hyllysi : Form :=
   { id := "karlsson2017_hyllysi"
@@ -363,7 +363,7 @@ def hyllysi : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "2sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def hyllyllesi : Form :=
   { id := "karlsson2017_hyllyllesi"
@@ -375,7 +375,7 @@ def hyllyllesi : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "all"), ("Possessor", "2sg"), ("Infinitive", "")] }
+    columns := [("Case", "all"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def taloon : Form :=
   { id := "karlsson2017_taloon"
@@ -387,7 +387,7 @@ def taloon : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def hyllynsa : Form :=
   { id := "karlsson2017_hyllynsa"
@@ -399,7 +399,7 @@ def hyllynsa : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def kadessani : Form :=
   { id := "karlsson2017_kadessani"
@@ -411,7 +411,7 @@ def kadessani : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "ine"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def kateen : Form :=
   { id := "karlsson2017_kateen"
@@ -423,7 +423,7 @@ def kateen : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def kateesi : Form :=
   { id := "karlsson2017_kateesi"
@@ -435,7 +435,7 @@ def kateesi : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", "2sg"), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def katta : Form :=
   { id := "karlsson2017_katta"
@@ -447,7 +447,7 @@ def katta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
-    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", "")] }
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def sanoa : Form :=
   { id := "karlsson2017_sanoa"
@@ -459,7 +459,7 @@ def sanoa : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "a")] }
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def syoda : Form :=
   { id := "karlsson2017_syoda"
@@ -471,7 +471,7 @@ def syoda : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "a")] }
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def juosta : Form :=
   { id := "karlsson2017_juosta"
@@ -483,7 +483,7 @@ def juosta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "a")] }
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def juostaksemme : Form :=
   { id := "karlsson2017_juostaksemme"
@@ -495,7 +495,7 @@ def juostaksemme : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "1pl"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "1pl"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def sanoessani : Form :=
   { id := "karlsson2017_sanoessani"
@@ -507,7 +507,7 @@ def sanoessani : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", "1sg"), ("Infinitive", "e")] }
+    columns := [("Case", "ine"), ("Possessor", "1sg"), ("Infinitive", "e"), ("Number", ""), ("Clitic", "")] }
 
 def syodessamme : Form :=
   { id := "karlsson2017_syodessamme"
@@ -519,7 +519,7 @@ def syodessamme : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", "1pl"), ("Infinitive", "e")] }
+    columns := [("Case", "ine"), ("Possessor", "1pl"), ("Infinitive", "e"), ("Number", ""), ("Clitic", "")] }
 
 def juosten : Form :=
   { id := "karlsson2017_juosten"
@@ -531,7 +531,7 @@ def juosten : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "inst"), ("Possessor", ""), ("Infinitive", "e")] }
+    columns := [("Case", "inst"), ("Possessor", ""), ("Infinitive", "e"), ("Number", ""), ("Clitic", "")] }
 
 def syomalla : Form :=
   { id := "karlsson2017_syomalla"
@@ -543,7 +543,7 @@ def syomalla : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def sanomatta : Form :=
   { id := "karlsson2017_sanomatta"
@@ -555,7 +555,7 @@ def sanomatta : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "abess"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "abess"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def sanomaan : Form :=
   { id := "karlsson2017_sanomaan"
@@ -567,7 +567,7 @@ def sanomaan : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def puhuaksesi : Form :=
   { id := "karlsson2017_puhuaksesi"
@@ -579,7 +579,7 @@ def puhuaksesi : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "2sg"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "2sg"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def puhumalla : Form :=
   { id := "karlsson2017_puhumalla"
@@ -591,7 +591,7 @@ def puhumalla : Form :=
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
-    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def autollani : Form :=
   { id := "karlsson2017_autollani"
@@ -603,7 +603,7 @@ def autollani : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ade"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "ade"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def autostasi : Form :=
   { id := "karlsson2017_autostasi"
@@ -615,7 +615,7 @@ def autostasi : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ela"), ("Possessor", "2sg"), ("Infinitive", "")] }
+    columns := [("Case", "ela"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def autooni : Form :=
   { id := "karlsson2017_autooni"
@@ -627,7 +627,7 @@ def autooni : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def laukkuni : Form :=
   { id := "karlsson2017_laukkuni"
@@ -639,7 +639,7 @@ def laukkuni : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "1sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def laukkusi : Form :=
   { id := "karlsson2017_laukkusi"
@@ -651,7 +651,7 @@ def laukkusi : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "2sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def laukkunsa_3sg : Form :=
   { id := "karlsson2017_laukkunsa_3sg"
@@ -663,7 +663,7 @@ def laukkunsa_3sg : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def laukkumme : Form :=
   { id := "karlsson2017_laukkumme"
@@ -675,7 +675,7 @@ def laukkumme : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "1pl"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "1pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def laukkunne : Form :=
   { id := "karlsson2017_laukkunne"
@@ -687,7 +687,7 @@ def laukkunne : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "2pl"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "2pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def laukkunsa_3pl : Form :=
   { id := "karlsson2017_laukkunsa_3pl"
@@ -699,7 +699,7 @@ def laukkunsa_3pl : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "3pl"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "3pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def taloaan : Form :=
   { id := "karlsson2017_taloaan"
@@ -711,7 +711,7 @@ def taloaan : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def vieraanaan : Form :=
   { id := "karlsson2017_vieraanaan"
@@ -723,7 +723,7 @@ def vieraanaan : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ess"), ("Possessor", "3pl"), ("Infinitive", "")] }
+    columns := [("Case", "ess"), ("Possessor", "3pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def saadakseen : Form :=
   { id := "karlsson2017_saadakseen"
@@ -735,7 +735,7 @@ def saadakseen : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "3sg"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "3sg"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def talossaan : Form :=
   { id := "karlsson2017_talossaan"
@@ -747,7 +747,7 @@ def talossaan : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", "3pl"), ("Infinitive", "")] }
+    columns := [("Case", "ine"), ("Possessor", "3pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def autollaan : Form :=
   { id := "karlsson2017_autollaan"
@@ -759,7 +759,7 @@ def autollaan : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ade"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "ade"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def isalleen : Form :=
   { id := "karlsson2017_isalleen"
@@ -771,7 +771,7 @@ def isalleen : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "all"), ("Possessor", "3pl"), ("Infinitive", "")] }
+    columns := [("Case", "all"), ("Possessor", "3pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def aidiltaan : Form :=
   { id := "karlsson2017_aidiltaan"
@@ -783,7 +783,7 @@ def aidiltaan : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "abl"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "abl"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def aitiaan : Form :=
   { id := "karlsson2017_aitiaan"
@@ -795,7 +795,7 @@ def aitiaan : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def talonsa : Form :=
   { id := "karlsson2017_talonsa"
@@ -807,7 +807,7 @@ def talonsa : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", "3pl"), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", "3pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def autonsa : Form :=
   { id := "karlsson2017_autonsa"
@@ -819,7 +819,7 @@ def autonsa : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def isaansa : Form :=
   { id := "karlsson2017_isaansa"
@@ -831,7 +831,7 @@ def isaansa : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", "3pl"), ("Infinitive", "")] }
+    columns := [("Case", "ill"), ("Possessor", "3pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def aitinsa : Form :=
   { id := "karlsson2017_aitinsa"
@@ -843,7 +843,7 @@ def aitinsa : Form :=
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
-    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", "")] }
+    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
 
 def sanoakseni : Form :=
   { id := "karlsson2017_sanoakseni"
@@ -855,7 +855,7 @@ def sanoakseni : Form :=
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "1sg"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "1sg"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def elaaksemme : Form :=
   { id := "karlsson2017_elaaksemme"
@@ -867,7 +867,7 @@ def elaaksemme : Form :=
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "1pl"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "1pl"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def tavataksesi : Form :=
   { id := "karlsson2017_tavataksesi"
@@ -879,7 +879,7 @@ def tavataksesi : Form :=
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "2sg"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "2sg"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def juodakseen : Form :=
   { id := "karlsson2017_juodakseen"
@@ -891,7 +891,7 @@ def juodakseen : Form :=
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "3sg"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "3sg"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def ollaksenne : Form :=
   { id := "karlsson2017_ollaksenne"
@@ -903,7 +903,7 @@ def ollaksenne : Form :=
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
-    columns := [("Case", "transl"), ("Possessor", "2pl"), ("Infinitive", "a")] }
+    columns := [("Case", "transl"), ("Possessor", "2pl"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "")] }
 
 def lepaamassa : Form :=
   { id := "karlsson2017_lepaamassa"
@@ -915,7 +915,7 @@ def lepaamassa : Form :=
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
-    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def lepaamaan : Form :=
   { id := "karlsson2017_lepaamaan"
@@ -927,7 +927,7 @@ def lepaamaan : Form :=
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
-    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def vetamalla : Form :=
   { id := "karlsson2017_vetamalla"
@@ -939,7 +939,7 @@ def vetamalla : Form :=
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
-    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def mainitsematta : Form :=
   { id := "karlsson2017_mainitsematta"
@@ -951,7 +951,7 @@ def mainitsematta : Form :=
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
-    columns := [("Case", "abess"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "abess"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def tekemasta : Form :=
   { id := "karlsson2017_tekemasta"
@@ -963,7 +963,7 @@ def tekemasta : Form :=
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
-    columns := [("Case", "ela"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "ela"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
 def tuleman : Form :=
   { id := "karlsson2017_tuleman"
@@ -975,9 +975,813 @@ def tuleman : Form :=
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
-    columns := [("Case", "inst"), ("Possessor", ""), ("Infinitive", "ma")] }
+    columns := [("Case", "inst"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "")] }
 
-def all : List Form := [auto, auton, hanet, maitoa, vetta, perhetta, autossa, autosta, autoon, maahan, porvooseen, poydalla, poydalta, poydalle, opettajana, opettajaksi, vaimoineni, passitta, jalan, kirjani, kirjasi, kirjansa, pullo, pullossa, pulloni, pullostani, hyllyssa, hyllylla, hyllysi, hyllyllesi, taloon, hyllynsa, kadessani, kateen, kateesi, katta, sanoa, syoda, juosta, juostaksemme, sanoessani, syodessamme, juosten, syomalla, sanomatta, sanomaan, puhuaksesi, puhumalla, autollani, autostasi, autooni, laukkuni, laukkusi, laukkunsa_3sg, laukkumme, laukkunne, laukkunsa_3pl, taloaan, vieraanaan, saadakseen, talossaan, autollaan, isalleen, aidiltaan, aitiaan, talonsa, autonsa, isaansa, aitinsa, sanoakseni, elaaksemme, tavataksesi, juodakseen, ollaksenne, lepaamassa, lepaamaan, vetamalla, mainitsematta, tekemasta, tuleman]
+def pullot : Form :=
+  { id := "karlsson2017_pullot"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pullot"
+    segments := ["pullo", "t"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", "t"), ("Clitic", "")] }
+
+def pullokin : Form :=
+  { id := "karlsson2017_pullokin"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pullokin"
+    segments := ["pullo", "kin"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "kin")] }
+
+def pulloista : Form :=
+  { id := "karlsson2017_pulloista"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pulloista"
+    segments := ["pullo", "i", "sta"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ela"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def pullossahan : Form :=
+  { id := "karlsson2017_pullossahan"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pullossahan"
+    segments := ["pullo", "ssa", "han"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "hAn")] }
+
+def pullotkin : Form :=
+  { id := "karlsson2017_pullotkin"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pullotkin"
+    segments := ["pullo", "t", "kin"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", "t"), ("Clitic", "kin")] }
+
+def pullossasiko : Form :=
+  { id := "karlsson2017_pullossasiko"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pullossasiko"
+    segments := ["pullo", "ssa", "si", "ko"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "kO")] }
+
+def pulloissamme : Form :=
+  { id := "karlsson2017_pulloissamme"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pulloissamme"
+    segments := ["pullo", "i", "ssa", "mme"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", "1pl"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def pulloistakaan : Form :=
+  { id := "karlsson2017_pulloistakaan"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pulloistakaan"
+    segments := ["pullo", "i", "sta", "kaan"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ela"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "kAAn")] }
+
+def pulloissannekin : Form :=
+  { id := "karlsson2017_pulloissannekin"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pulloissannekin"
+    segments := ["pullo", "i", "ssa", "nne", "kin"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", "2pl"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "kin")] }
+
+def hyllyltako : Form :=
+  { id := "karlsson2017_hyllyltako"
+    languageId := "finn1318"
+    parameterId := "shelf"
+    form := "hyllyltäkö"
+    segments := ["hylly", "ltä", "kö"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "abl"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "kO")] }
+
+def hyllytko : Form :=
+  { id := "karlsson2017_hyllytko"
+    languageId := "finn1318"
+    parameterId := "shelf"
+    form := "hyllytkö"
+    segments := ["hylly", "t", "kö"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", "t"), ("Clitic", "kO")] }
+
+def hyllynhan : Form :=
+  { id := "karlsson2017_hyllynhan"
+    languageId := "finn1318"
+    parameterId := "shelf"
+    form := "hyllynhän"
+    segments := ["hylly", "n", "hän"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "hAn")] }
+
+def talonsako : Form :=
+  { id := "karlsson2017_talonsako"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "talonsako"
+    segments := ["talo", "nsa", "ko"]
+    comment := "Also 'their house?'."
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "kO")] }
+
+def hyllyillamme : Form :=
+  { id := "karlsson2017_hyllyillamme"
+    languageId := "finn1318"
+    parameterId := "shelf"
+    form := "hyllyillämme"
+    segments := ["hylly", "i", "llä", "mme"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ade"), ("Possessor", "1pl"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def kasi : Form :=
+  { id := "karlsson2017_kasi"
+    languageId := "finn1318"
+    parameterId := "hand"
+    form := "käsi"
+    segments := ["käsi"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def kadet : Form :=
+  { id := "karlsson2017_kadet"
+    languageId := "finn1318"
+    parameterId := "hand"
+    form := "kädet"
+    segments := ["käde", "t"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", ""), ("Infinitive", ""), ("Number", "t"), ("Clitic", "")] }
+
+def kasissammehan : Form :=
+  { id := "karlsson2017_kasissammehan"
+    languageId := "finn1318"
+    parameterId := "hand"
+    form := "käsissämmehän"
+    segments := ["käs", "i", "ssä", "mme", "hän"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§3.1"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", "1pl"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "hAn")] }
+
+def lepaamaanko : Form :=
+  { id := "karlsson2017_lepaamaanko"
+    languageId := "finn1318"
+    parameterId := "rest"
+    form := "lepäämäänkö"
+    segments := ["lepää", "mä", "än", "kö"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§22.4.1"⟩
+    ]
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "kO")] }
+
+def vetamallakin : Form :=
+  { id := "karlsson2017_vetamallakin"
+    languageId := "finn1318"
+    parameterId := "pull"
+    form := "vetämälläkin"
+    segments := ["vetä", "mä", "llä", "kin"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§22.4.1"⟩
+    ]
+    columns := [("Case", "ade"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "kin")] }
+
+def mainitsemattakaan : Form :=
+  { id := "karlsson2017_mainitsemattakaan"
+    languageId := "finn1318"
+    parameterId := "mention"
+    form := "mainitsemattakaan"
+    segments := ["mainitse", "ma", "tta", "kaan"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§22.4.1"⟩
+    ]
+    columns := [("Case", "abess"), ("Possessor", ""), ("Infinitive", "ma"), ("Number", ""), ("Clitic", "kAAn")] }
+
+def oppiakseenhan : Form :=
+  { id := "karlsson2017_oppiakseenhan"
+    languageId := "finn1318"
+    parameterId := "learn"
+    form := "oppiakseenhan"
+    segments := ["oppi", "a", "kse", "en", "han"]
+    comment := "Also 'in order for them to learn'."
+    source := [
+      ⟨"karlsson-2017", "§22.2.2"⟩
+    ]
+    columns := [("Case", "transl"), ("Possessor", "3sg"), ("Infinitive", "a"), ("Number", ""), ("Clitic", "hAn")] }
+
+def maatamme : Form :=
+  { id := "karlsson2017_maatamme"
+    languageId := "finn1318"
+    parameterId := "country"
+    form := "maatamme"
+    segments := ["maa", "ta", "mme"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", "1pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def poikannekin : Form :=
+  { id := "karlsson2017_poikannekin"
+    languageId := "finn1318"
+    parameterId := "son"
+    form := "poikannekin"
+    segments := ["poika", "nne", "kin"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", "2pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "kin")] }
+
+def aidiltanihan : Form :=
+  { id := "karlsson2017_aidiltanihan"
+    languageId := "finn1318"
+    parameterId := "mother"
+    form := "äidiltänihän"
+    segments := ["äidi", "ltä", "ni", "hän"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "abl"), ("Possessor", "1sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "hAn")] }
+
+def isallesiko : Form :=
+  { id := "karlsson2017_isallesiko"
+    languageId := "finn1318"
+    parameterId := "father"
+    form := "isällesikö"
+    segments := ["isä", "lle", "si", "kö"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "all"), ("Possessor", "2sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "kO")] }
+
+def maahamme : Form :=
+  { id := "karlsson2017_maahamme"
+    languageId := "finn1318"
+    parameterId := "country"
+    form := "maahamme"
+    segments := ["maa", "ha", "mme"]
+    comment := "The source glosses the form 'into her/his/their country'."
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "ill"), ("Possessor", "1pl"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def perhettaan : Form :=
+  { id := "karlsson2017_perhettaan"
+    languageId := "finn1318"
+    parameterId := "family"
+    form := "perhettään"
+    segments := ["perhe", "ttä", "än"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def talojaan : Form :=
+  { id := "karlsson2017_talojaan"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "talojaan"
+    segments := ["talo", "j", "a", "an"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def renkaitaan : Form :=
+  { id := "karlsson2017_renkaitaan"
+    languageId := "finn1318"
+    parameterId := "ring"
+    form := "renkaitaan"
+    segments := ["renka", "i", "ta", "an"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def paataan : Form :=
+  { id := "karlsson2017_paataan"
+    languageId := "finn1318"
+    parameterId := "head"
+    form := "päätään"
+    segments := ["pää", "tä", "än"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def taloansa : Form :=
+  { id := "karlsson2017_taloansa"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "taloansa"
+    segments := ["talo", "a", "nsa"]
+    comment := "The archaic alternative to talo-a-an."
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def kalansa : Form :=
+  { id := "karlsson2017_kalansa"
+    languageId := "finn1318"
+    parameterId := "fish"
+    form := "kalansa"
+    segments := ["kala", "nsa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "nom"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def kalaansa_ill : Form :=
+  { id := "karlsson2017_kalaansa_ill"
+    languageId := "finn1318"
+    parameterId := "fish"
+    form := "kalaansa"
+    segments := ["kala", "a", "nsa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "ill"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def kalaansa_part : Form :=
+  { id := "karlsson2017_kalaansa_part"
+    languageId := "finn1318"
+    parameterId := "fish"
+    form := "kalaansa"
+    segments := ["kala", "a", "nsa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", ""), ("Clitic", "")] }
+
+def kaloihinsa : Form :=
+  { id := "karlsson2017_kaloihinsa"
+    languageId := "finn1318"
+    parameterId := "fish"
+    form := "kaloihinsa"
+    segments := ["kalo", "i", "hi", "nsa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "ill"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def taloissa : Form :=
+  { id := "karlsson2017_taloissa"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "taloissa"
+    segments := ["talo", "i", "ssa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def taloihin : Form :=
+  { id := "karlsson2017_taloihin"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "taloihin"
+    segments := ["talo", "i", "hin"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "ill"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def taloina : Form :=
+  { id := "karlsson2017_taloina"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "taloina"
+    segments := ["talo", "i", "na"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "ess"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def taloille : Form :=
+  { id := "karlsson2017_taloille"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "taloille"
+    segments := ["talo", "i", "lle"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "all"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def taloiksi : Form :=
+  { id := "karlsson2017_taloiksi"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "taloiksi"
+    segments := ["talo", "i", "ksi"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "transl"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def hyllyja : Form :=
+  { id := "karlsson2017_hyllyja"
+    languageId := "finn1318"
+    parameterId := "shelf"
+    form := "hyllyjä"
+    segments := ["hylly", "j", "ä"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def hyllyjen : Form :=
+  { id := "karlsson2017_hyllyjen"
+    languageId := "finn1318"
+    parameterId := "shelf"
+    form := "hyllyjen"
+    segments := ["hylly", "j", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def pulloja : Form :=
+  { id := "karlsson2017_pulloja"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pulloja"
+    segments := ["pullo", "j", "a"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def pullojen : Form :=
+  { id := "karlsson2017_pullojen"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pullojen"
+    segments := ["pullo", "j", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def tyttoja : Form :=
+  { id := "karlsson2017_tyttoja"
+    languageId := "finn1318"
+    parameterId := "girl"
+    form := "tyttöjä"
+    segments := ["tyttö", "j", "ä"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def tyttojen : Form :=
+  { id := "karlsson2017_tyttojen"
+    languageId := "finn1318"
+    parameterId := "girl"
+    form := "tyttöjen"
+    segments := ["tyttö", "j", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def pulloissa : Form :=
+  { id := "karlsson2017_pulloissa"
+    languageId := "finn1318"
+    parameterId := "bottle"
+    form := "pulloissa"
+    segments := ["pullo", "i", "ssa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def maissa : Form :=
+  { id := "karlsson2017_maissa"
+    languageId := "finn1318"
+    parameterId := "country"
+    form := "maissa"
+    segments := ["ma", "i", "ssa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def risteissa : Form :=
+  { id := "karlsson2017_risteissa"
+    languageId := "finn1318"
+    parameterId := "cross"
+    form := "risteissä"
+    segments := ["riste", "i", "ssä"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def kivissa : Form :=
+  { id := "karlsson2017_kivissa"
+    languageId := "finn1318"
+    parameterId := "stone"
+    form := "kivissä"
+    segments := ["kiv", "i", "ssä"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§5.4"⟩
+    ]
+    columns := [("Case", "ine"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def lapsia : Form :=
+  { id := "karlsson2017_lapsia"
+    languageId := "finn1318"
+    parameterId := "child"
+    form := "lapsia"
+    segments := ["laps", "i", "a"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§8.4"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def talojen : Form :=
+  { id := "karlsson2017_talojen"
+    languageId := "finn1318"
+    parameterId := "house"
+    form := "talojen"
+    segments := ["talo", "j", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def poikia : Form :=
+  { id := "karlsson2017_poikia"
+    languageId := "finn1318"
+    parameterId := "boy"
+    form := "poikia"
+    segments := ["poik", "i", "a"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def poikien : Form :=
+  { id := "karlsson2017_poikien"
+    languageId := "finn1318"
+    parameterId := "boy"
+    form := "poikien"
+    segments := ["poik", "i", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def kirjoja : Form :=
+  { id := "karlsson2017_kirjoja"
+    languageId := "finn1318"
+    parameterId := "book"
+    form := "kirjoja"
+    segments := ["kirjo", "j", "a"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def kirjojen : Form :=
+  { id := "karlsson2017_kirjojen"
+    languageId := "finn1318"
+    parameterId := "book"
+    form := "kirjojen"
+    segments := ["kirjo", "j", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def paivia : Form :=
+  { id := "karlsson2017_paivia"
+    languageId := "finn1318"
+    parameterId := "day"
+    form := "päiviä"
+    segments := ["päiv", "i", "ä"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def paivien : Form :=
+  { id := "karlsson2017_paivien"
+    languageId := "finn1318"
+    parameterId := "day"
+    form := "päivien"
+    segments := ["päiv", "i", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def kasien : Form :=
+  { id := "karlsson2017_kasien"
+    languageId := "finn1318"
+    parameterId := "hand"
+    form := "käsien"
+    segments := ["käs", "i", "en"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def maita : Form :=
+  { id := "karlsson2017_maita"
+    languageId := "finn1318"
+    parameterId := "country"
+    form := "maita"
+    segments := ["ma", "i", "ta"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def maiden : Form :=
+  { id := "karlsson2017_maiden"
+    languageId := "finn1318"
+    parameterId := "country"
+    form := "maiden"
+    segments := ["ma", "i", "den"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def maitten : Form :=
+  { id := "karlsson2017_maitten"
+    languageId := "finn1318"
+    parameterId := "country"
+    form := "maitten"
+    segments := ["ma", "i", "tten"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def teita : Form :=
+  { id := "karlsson2017_teita"
+    languageId := "finn1318"
+    parameterId := "road"
+    form := "teitä"
+    segments := ["te", "i", "tä"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "part"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def teiden : Form :=
+  { id := "karlsson2017_teiden"
+    languageId := "finn1318"
+    parameterId := "road"
+    form := "teiden"
+    segments := ["te", "i", "den"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def esteitten : Form :=
+  { id := "karlsson2017_esteitten"
+    languageId := "finn1318"
+    parameterId := "obstacle"
+    form := "esteitten"
+    segments := ["este", "i", "tten"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def valtioiden : Form :=
+  { id := "karlsson2017_valtioiden"
+    languageId := "finn1318"
+    parameterId := "state"
+    form := "valtioiden"
+    segments := ["valtio", "i", "den"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§13.1.2"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", ""), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def kalojensa : Form :=
+  { id := "karlsson2017_kalojensa"
+    languageId := "finn1318"
+    parameterId := "fish"
+    form := "kalojensa"
+    segments := ["kalo", "je", "nsa"]
+    comment := ""
+    source := [
+      ⟨"karlsson-2017", "§14.1"⟩
+    ]
+    columns := [("Case", "gen"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
+
+def all : List Form := [auto, auton, hanet, maitoa, vetta, perhetta, autossa, autosta, autoon, maahan, porvooseen, poydalla, poydalta, poydalle, opettajana, opettajaksi, vaimoineni, passitta, jalan, kirjani, kirjasi, kirjansa, pullo, pullossa, pulloni, pullostani, hyllyssa, hyllylla, hyllysi, hyllyllesi, taloon, hyllynsa, kadessani, kateen, kateesi, katta, sanoa, syoda, juosta, juostaksemme, sanoessani, syodessamme, juosten, syomalla, sanomatta, sanomaan, puhuaksesi, puhumalla, autollani, autostasi, autooni, laukkuni, laukkusi, laukkunsa_3sg, laukkumme, laukkunne, laukkunsa_3pl, taloaan, vieraanaan, saadakseen, talossaan, autollaan, isalleen, aidiltaan, aitiaan, talonsa, autonsa, isaansa, aitinsa, sanoakseni, elaaksemme, tavataksesi, juodakseen, ollaksenne, lepaamassa, lepaamaan, vetamalla, mainitsematta, tekemasta, tuleman, pullot, pullokin, pulloista, pullossahan, pullotkin, pullossasiko, pulloissamme, pulloistakaan, pulloissannekin, hyllyltako, hyllytko, hyllynhan, talonsako, hyllyillamme, kasi, kadet, kasissammehan, lepaamaanko, vetamallakin, mainitsemattakaan, oppiakseenhan, maatamme, poikannekin, aidiltanihan, isallesiko, maahamme, perhettaan, talojaan, renkaitaan, paataan, taloansa, kalansa, kalaansa_ill, kalaansa_part, kaloihinsa, taloissa, taloihin, taloina, taloille, taloiksi, hyllyja, hyllyjen, pulloja, pullojen, tyttoja, tyttojen, pulloissa, maissa, risteissa, kivissa, lapsia, talojen, poikia, poikien, kirjoja, kirjojen, paivia, paivien, kasien, maita, maiden, maitten, teita, teiden, esteitten, valtioiden, kalojensa]
 
 def parameters : List Parameter := [
   { id := "car", name := "car", description := "" },
@@ -1014,7 +1818,21 @@ def parameters : List Parameter := [
   { id := "pull", name := "pull", description := "" },
   { id := "mention", name := "mention", description := "" },
   { id := "do", name := "do", description := "" },
-  { id := "come", name := "come", description := "" }
+  { id := "come", name := "come", description := "" },
+  { id := "son", name := "son", description := "" },
+  { id := "ring", name := "ring", description := "" },
+  { id := "head", name := "head", description := "" },
+  { id := "fish", name := "fish", description := "" },
+  { id := "learn", name := "learn", description := "" },
+  { id := "girl", name := "girl", description := "" },
+  { id := "cross", name := "cross", description := "" },
+  { id := "stone", name := "stone", description := "" },
+  { id := "child", name := "child", description := "" },
+  { id := "boy", name := "boy, son", description := "" },
+  { id := "day", name := "day", description := "" },
+  { id := "road", name := "road", description := "" },
+  { id := "obstacle", name := "obstacle", description := "" },
+  { id := "state", name := "state", description := "" }
 ]
 
 def relations : List FormRelation := []
