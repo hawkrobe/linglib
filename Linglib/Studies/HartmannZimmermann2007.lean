@@ -9,7 +9,7 @@ public import Linglib.Syntax.Reflex
 public import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!
-# Hartmann and Zimmermann (2007): In place, out of place: Focus in Hausa
+# Hartmann and Zimmermann (2007): In place — out of place? Focus strategies in Hausa
 
 This file formalizes [hartmann-zimmermann-2007]'s argument that Hausa is a counterexample to two
 universalist claims: that focus is always marked, and that the position of a focus determines
