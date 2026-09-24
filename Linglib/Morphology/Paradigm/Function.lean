@@ -8,65 +8,71 @@ public import Mathlib.Data.Fintype.Basic
 /-!
 # The PFM1 paradigm function
 
-The standard Paradigm Function Morphology engine ([bonami-stump-2016]'s
-streamlined PFM1, after [stump-2001]): a paradigm function is a set of
-**realization rules** organized into ordered **blocks**. A rule
-`⟨klass, props, payload⟩` applies to a cell `⟨L, σ⟩` when the lexeme `L`
-belongs to `klass` and the property set `props` is contained in `σ`; among the
-applicable rules of a block, the narrowest wins ([kiparsky-1973]'s Elsewhere
-Condition, PFM's Pāṇinian Determinism). A single payload-polymorphic carrier
-`Rule L P F` serves all three rule types: rules of exponence and referral take
-`F := Action Z P`, rules of basic stem choice take `F := Z`; stem-choice
-conflicts are arbitrated by the same narrowness order.
+This file defines the standard Paradigm Function Morphology engine, Bonami and Stump's
+streamlined PFM1 after Stump's original engine. A paradigm function is a set of **realization
+rules** organized into ordered **blocks**. A rule `⟨klass, props, payload⟩` applies to a cell
+`⟨L, σ⟩` when the lexeme `L` belongs to `klass` and the property set `props` is contained in
+`σ`, and among the applicable rules of a block the narrowest wins, by Kiparsky's Elsewhere
+Condition (PFM's Pāṇinian Determinism). One payload-polymorphic carrier `Rule L P F` serves all
+three rule types: rules of exponence and referral take `F := Action Z P`, rules of basic stem
+choice take `F := Z`, and the same narrowness order arbitrates stem-choice conflicts.
 
-Narrowness (`Rule`'s `≤`) is [stump-2001]'s two clauses: same class with a
-larger property set, or a properly smaller class. It is **intensional** — for
-same-class rules it collapses to applicability-set inclusion (`applySet_mono`),
-but across classes a smaller class outranks a larger one whatever the property
-sets, so the order is strictly finer than the extensional
-[stump-2016]/[stump-2022] domain-subset order of `Exponence/Basic.lean`
-([stump-2020] likewise glosses "narrowest" extensionally, as the smaller
-domain of application).
+Narrowness (`Rule`'s `≤`) has the two clauses of Stump's original engine: same class with a
+larger property set, or a properly smaller class. It is intensional. For same-class rules it
+collapses to applicability-set inclusion (`applySet_mono`), but across classes a smaller class
+outranks a larger one whatever the property sets, so the order is strictly finer than the
+extensional domain-subset order of `Exponence/Basic.lean`, which Stump's later books adopt; his
+encyclopedia overview of PFM likewise glosses "narrowest" as the smaller domain of application.
 
-The **Identity Function Default** — every block has a rule leaving the stem
-unchanged — is assumed as a universal principle in PFM; here it is a definition
-(`identityDefault`) and its consequences are theorems (it is `≤`-maximal, and a
-block containing it always selects). Two implicative devices are kept distinct
-([bonami-stump-2016]): a **rule of referral** (`Action.referral`) models
-block-confined syncretism, competing inside its block; whole-word syncretism
-lives a layer up, as a many-to-one property mapping in `Linkage.pm`
-(`Linkage.realize_eq_of_corr_eq`), where [stump-2020] relocates it —
-paradigm-function-level override clauses are not modeled. Overabundance (one cell,
-several forms) is out of scope: the realized paradigm is function-valued, one
-form per cell. Morphophonological metageneralizations (the `-a`-loss and umlaut
-rules of the Icelandic fragment) are phonological substance and live in
-`Phonology/`; here stem alternants like *köll* enter as data-level stem values,
-not string operations.
+The **Identity Function Default**, a rule in every block leaving the stem unchanged, is assumed
+as a universal principle in PFM; here it is a definition (`identityDefault`) whose consequences
+are theorems (it is `≤`-maximal, and a block containing it always selects). As in Bonami and
+Stump's presentation, two implicative devices are kept distinct. A **rule of referral**
+(`Action.referral`) models block-confined syncretism and competes inside its block; whole-word
+syncretism lives a layer up, as a many-to-one property mapping in `Linkage.pm`
+(`Linkage.realized_eq_of_corr_eq`), where Stump's overview relocates it, and
+paradigm-function-level override clauses are not modeled. Overabundance (one cell, several
+forms) is out of scope, since the realized paradigm is function-valued. Morphophonological
+metageneralizations (the `-a`-loss and umlaut rules of the Icelandic fragment) are phonological
+substance and live in `Phonology/`; here stem alternants like *köll* enter as data-level stem
+values, not string operations.
 
-Because payloads are functions, `Exponence.Coherent` and `Realizes` over
-`Action Z P` are `funext` propositions rather than decidable checks; a study
-decides realized **values**, not payload equality.
+Because payloads are functions, `Exponence.Coherent` and `Realizes` over `Action Z P` are
+`funext` propositions rather than decidable checks; a study decides realized values, not
+payload equality.
 
-## Main declarations
+## Main definitions
 
-* `Action`, `Rule` — the payload (exponence or referral) and the
-  payload-polymorphic realization rule
-* `Rule`'s `Exponence.Rule` and `Preorder` instances — applicability and two-clause
-  narrowness; `Rule.applies_iff`, `Rule.le_iff`, `Rule.applySet_mono`
-* `identityDefault`, `le_identityDefault`,
-  `selectMinimal_isSome_of_mem_identityDefault` — the IFD and its consequences
-* `evalBlock`, `paradigmFunction`, `stemChoiceOf` — narrowest-rule block
-  evaluation and the block cascade
-* `evalPortmanteau`, `evalPortmanteau_eq_comp_of_not_applies` — portmanteau
-  blocks and the Function Composition Default
-* `selectMinimal_append_maximal` — appending a maximal always-applicable rule
-  is elsewhere-only: the mechanism behind `identityDefault` and the FCD
-* `functionCompositionDefault`, `le_functionCompositionDefault`,
-  `evalPortmanteau_eq_functionCompositionDefault` — the FCD as a derived
-  `≤`-maximal rule, and the stipulated portmanteau evaluation equals its
-  appended-block form
-* `Linkage.realize_eq_paradigmFunction` — the PFM2 realization of a linkage's
-  block cascade is this paradigm function
+* `Action`, `Rule`: the payload (exponence or referral) and the payload-polymorphic
+  realization rule, with its `Exponence.Rule` and two-clause narrowness `Preorder` instances.
+* `identityDefault`: the Identity Function Default.
+* `evalBlock`, `paradigmFunction`, `stemChoiceOf`: narrowest-rule block evaluation and the
+  block cascade.
+* `evalPortmanteau`, `functionCompositionDefault`: portmanteau blocks, and the Function
+  Composition Default as a derived `≤`-maximal rule.
+
+## Main results
+
+* `Rule.applies_iff`, `Rule.le_iff`, `Rule.applySet_mono`: applicability and narrowness.
+* `le_identityDefault`, `selectMinimal_isSome_of_mem_identityDefault`: the IFD is `≤`-maximal,
+  and a block containing it always selects.
+* `evalPortmanteau_eq_comp_of_not_applies`: the Function Composition Default.
+* `selectMinimal_append_maximal`: appending a maximal always-applicable rule is
+  elsewhere-only, the mechanism behind `identityDefault` and the FCD.
+* `evalPortmanteau_eq_functionCompositionDefault`: the stipulated portmanteau evaluation
+  equals its appended-block form.
+* `Linkage.realized_eq_paradigmFunction`, `Linkage.ofFun_realized_eq_paradigmFunction`: the
+  PFM2 realization of a linkage's block cascade is this paradigm function.
+
+## References
+
+* [bonami-stump-2016]
+* [kiparsky-1973]
+* [spencer-2013]
+* [stump-2001]
+* [stump-2016]
+* [stump-2020]
+* [stump-2022]
 -/
 
 @[expose] public section
@@ -77,10 +83,10 @@ open Morphology Morphology.Exponence
 
 variable {L Z P F : Type*}
 
-/-- The payload of a realization rule: a rule of **exponence** carries a form
-operation `f : P → Z → Z` that may consult the realized property set, a rule of
-**referral** carries a property-set retargeting `P → P` whose block is
-re-consulted at the retargeted cell. The property argument makes the form
+/-- The payload of a realization rule is an action. A rule of **exponence**
+carries a form operation `f : P → Z → Z` that may consult the realized property
+set, and a rule of **referral** carries a property-set retargeting `P → P` whose
+block is re-consulted at the retargeted cell. The property argument makes the form
 operation σ-sensitive, as [stump-2020]'s rule format allows (his conditional
 affixation operator for ambifixal classes consults σ), and lets the Function
 Composition Default carry a rule whose action is "evaluate two blocks at the
@@ -89,33 +95,34 @@ inductive Action (Z P : Type*)
   | expo (f : P → Z → Z)
   | referral (retarget : P → P)
 
-/-- A **property-insensitive** rule of exponence: a form operation `f : Z → Z`
-applied regardless of the property set — the special case of `Action.expo`
-before [stump-2020]'s σ-sensitive rule format, and the shape of every exponent
-in [bonami-stump-2016]'s worked fragments. -/
+/-- `Action.const f` is the property-insensitive rule of exponence that applies
+the form operation `f : Z → Z` regardless of the property set. It is the special
+case of `Action.expo` before [stump-2020]'s σ-sensitive rule format, and the
+shape of every exponent in [bonami-stump-2016]'s worked fragments. -/
 def Action.const (f : Z → Z) : Action Z P := .expo (fun _ => f)
 
-/-- A realization rule in [bonami-stump-2016]'s format `⟨klass, props, payload⟩`
-(the chapter's `n, X_C, τ → f(X)`), payload-polymorphic à la
-`Containment.SpanRule`: rules of exponence and referral instantiate
-`F := Action Z P`, rules of basic stem choice `F := Z`. `klass` is the lexeme
-class `C`, `props` the realized property set `τ`. -/
+/-- A realization rule has [bonami-stump-2016]'s format `⟨klass, props, payload⟩`
+(the chapter's `n, X_C, τ → f(X)`) and is payload-polymorphic à la
+`Containment.SpanRule`, so rules of exponence and referral instantiate
+`F := Action Z P` and rules of basic stem choice `F := Z`. `klass` is the lexeme
+class `C`, and `props` is the realized property set `τ`. -/
 structure Rule (L P F : Type*) where
-  /-- The lexeme class the rule applies in. -/
+  /-- `klass` is the lexeme class the rule applies in. -/
   klass : Finset L
-  /-- The property set the rule realizes. -/
+  /-- `props` is the property set the rule realizes. -/
   props : P
-  /-- The form operation (exponence/referral) or stem the rule supplies. -/
+  /-- `payload` is the form operation (exponence or referral) or the stem the rule
+  supplies. -/
   payload : F
 
 section Narrowness
 variable [PartialOrder P]
 
-/-- Two-clause Pāṇinian narrowness ([stump-2001]) as the carrier's order: `r` is
-at least as narrow as `s` when either they share a class and `s` realizes a
-subset of `r`'s properties, or `r`'s class is properly smaller. Intensional —
-strictly finer than applicability-set inclusion (see `Rule.applySet_mono`; the
-converse fails). -/
+/-- Rules are ordered by two-clause Pāṇinian narrowness ([stump-2001]), under
+which `r` is at least as narrow as `s` when either they share a class and `s`
+realizes a subset of `r`'s properties, or `r`'s class is properly smaller. The
+order is intensional, strictly finer than applicability-set inclusion (see
+`Rule.applySet_mono`; the converse fails). -/
 instance : Preorder (Rule L P F) where
   le r s := (r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass
   le_refl _ := Or.inl ⟨rfl, le_refl _⟩
@@ -130,8 +137,8 @@ theorem Rule.le_iff {r s : Rule L P F} :
     r ≤ s ↔ (r.klass = s.klass ∧ s.props ≤ r.props) ∨ r.klass ⊂ s.klass :=
   Iff.rfl
 
-/-- Applicability ([bonami-stump-2016]'s rule format): a rule applies to a cell
-`⟨L, σ⟩` when `L` is in its class and its property set is contained in `σ`. -/
+/-- Under [bonami-stump-2016]'s rule format, a rule applies to a cell `⟨L, σ⟩`
+when `L` is in its class and its property set is contained in `σ`. -/
 instance : Exponence.Rule (Rule L P F) (L × P) F where
   exponent := Rule.payload
   Applies r c := c.1 ∈ r.klass ∧ r.props ≤ c.2
@@ -140,11 +147,11 @@ instance : Exponence.Rule (Rule L P F) (L × P) F where
     Exponence.Applies r c ↔ c.1 ∈ r.klass ∧ r.props ≤ c.2 :=
   Iff.rfl
 
-/-- For same-class rules, narrowness is applicability-set inclusion: the narrower
-rule applies in a subset of the contexts — [stump-2001]'s two-clause narrowness
-collapsing to [stump-2016]'s single-clause domain-subset precedence. Across
-classes the order is strictly intensional (a smaller class outranks a larger one
-whatever the property sets), so a class hypothesis is required. -/
+/-- For same-class rules, narrowness implies applicability-set inclusion, so the
+narrower rule applies in a subset of the contexts, [stump-2001]'s two-clause
+narrowness falling under [stump-2016]'s single-clause domain-subset precedence.
+Across classes the order is strictly intensional (a smaller class outranks a
+larger one whatever the property sets), so a class hypothesis is required. -/
 theorem Rule.applySet_mono {r s : Rule L P F} (hk : r.klass = s.klass) (h : r ≤ s) :
     Exponence.applySet r ⊆ Exponence.applySet s := by
   rcases h with ⟨_, hp⟩ | hlt
@@ -174,10 +181,10 @@ instance : DecidableLT (Rule L P F) := fun r s =>
 section IdentityDefault
 variable [Fintype L] [OrderBot P]
 
-/-- The **Identity Function Default** ([bonami-stump-2016]): the rule applying to
-every lexeme and every property set, changing nothing. PFM assumes a rule of
-this form in every block as a universal principle; here it is a definition whose
-consequences are theorems. -/
+/-- The **Identity Function Default** ([bonami-stump-2016]) is the rule that
+applies to every lexeme and every property set and changes nothing. PFM assumes
+a rule of this form in every block as a universal principle; here it is a
+definition whose consequences are theorems. -/
 def identityDefault : Rule L P (Action Z P) where
   klass := Finset.univ
   props := ⊥
@@ -189,8 +196,8 @@ theorem identityDefault_applies (c : L × P) :
   ⟨Finset.mem_univ _, bot_le⟩
 
 omit [DecidableLE P] in
-/-- The IFD is `≤`-maximal: every rule is at least as narrow. It is a top element
-of the narrowness order without an `OrderTop` instance (which would force
+/-- The IFD is `≤`-maximal, since every rule is at least as narrow. It is a top
+element of the narrowness order without an `OrderTop` instance (which would force
 `Fintype`/`OrderBot` globally). -/
 theorem le_identityDefault (r : Rule L P (Action Z P)) :
     r ≤ identityDefault (Z := Z) (P := P) := by
@@ -210,12 +217,12 @@ end IdentityDefault
 
 /-! ### Blocks and the paradigm function -/
 
-/-- A **rule block** ([bonami-stump-2016]): rules of exponence and referral in
-paradigmatic opposition, only the narrowest applying. -/
+/-- A **rule block** ([bonami-stump-2016]) is a list of rules of exponence and
+referral in paradigmatic opposition, of which only the narrowest applies. -/
 abbrev Block (L Z P : Type*) := List (Rule L P (Action Z P))
 
-/-- The rules of exponence in a block (referral rules dropped), the target of a
-referral's re-selection. -/
+/-- `expoFragment b` keeps the rules of exponence in the block `b` and drops its
+referral rules; it is the target of a referral's re-selection. -/
 def expoFragment (b : Block L Z P) : Block L Z P :=
   b.filter (fun r => r.payload matches .expo _)
 
@@ -229,8 +236,8 @@ theorem mem_expoFragment_expo {b : Block L Z P} {r : Rule L P (Action Z P)}
   | expo f => exact ⟨f, rfl⟩
   | referral g => rw [hp] at h2; simp at h2
 
-/-- The form produced by evaluating a block at a cell: select the narrowest
-applicable rule; an exponence rule applies its form operation, a referral rule
+/-- Evaluating a block at a cell selects the narrowest applicable rule to produce
+a form. An exponence rule applies its form operation, and a referral rule
 re-selects among the block's exponence rules at the retargeted property set (one
 hop). The stem is left unchanged when nothing applies. -/
 def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
@@ -247,7 +254,7 @@ def evalBlockForm (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z :=
       | none => wσ.1
   | none => wσ.1
 
-/-- A referred cell realizes as its referent's exponence-only evaluation: when the narrowest
+/-- A referred cell realizes as its referent's exponence-only evaluation. When the narrowest
 rule at `(w, σ)` is a referral to `retarget`, evaluating the block equals evaluating its
 exponence fragment at the retargeted cell. -/
 theorem evalBlockForm_referral {Lindex : Z → L} {b : Block L Z P} {w : Z} {σ : P}
@@ -262,8 +269,8 @@ theorem evalBlockForm_referral {Lindex : Z → L} {b : Block L Z P} {w : Z} {σ 
     obtain ⟨g, hg⟩ := mem_expoFragment_expo (selectMinimal_mem hs)
     simp only [evalBlockForm, hr, hpay, hs, hg]
 
-/-- Evaluate a block at a form-state, keeping the property set ([bonami-stump-2016]'s
-rule format outputs `⟨f(W), σ⟩`). -/
+/-- `evalBlock` evaluates a block at a form-state and keeps the property set, as
+[bonami-stump-2016]'s rule format outputs `⟨f(W), σ⟩`. -/
 def evalBlock (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z × P :=
   (evalBlockForm Lindex b wσ, wσ.2)
 
@@ -271,7 +278,8 @@ def evalBlock (Lindex : Z → L) (b : Block L Z P) (wσ : Z × P) : Z × P :=
     (evalBlock Lindex b wσ).2 = wσ.2 :=
   rfl
 
-/-- Thread a form-state through a block cascade (blocks listed inner-first). -/
+/-- `blocksEval` threads a form-state through a block cascade, with the blocks
+listed inner-first. -/
 def blocksEval (Lindex : Z → L) (blocks : List (Block L Z P)) (wσ : Z × P) : Z × P :=
   blocks.foldl (fun w b => evalBlock Lindex b w) wσ
 
@@ -281,8 +289,8 @@ def blocksEval (Lindex : Z → L) (blocks : List (Block L Z P)) (wσ : Z × P) :
   | nil => rfl
   | cons b bs ih => exact (ih (evalBlock Lindex b wσ)).trans (evalBlock_snd Lindex b wσ)
 
-/-- The **paradigm function** ([bonami-stump-2016]'s (13)): basic stem choice,
-then the stipulated block cascade. `blocks` are listed inner-first, so
+/-- The **paradigm function** ([bonami-stump-2016]'s (13)) applies basic stem
+choice and then the stipulated block cascade. The `blocks` are listed inner-first, so
 `[I, II, III]` realizes `[iii : [ii : [i : Stem]]]`. `Lindex : Z → L` recovers a
 stem's covert lexemic index (fn. 7); L-index persistence holds by construction,
 since selection threads a fixed lexeme through `L × P`. -/
@@ -290,37 +298,37 @@ def paradigmFunction (Lindex : Z → L) (stemChoice : L × P → Z)
     (blocks : List (Block L Z P)) (c : L × P) : Z × P :=
   blocksEval Lindex blocks (stemChoice c, c.2)
 
-/-- Basic stem choice ([bonami-stump-2016]'s (7)) as narrowest-rule selection over
-stem-choice rules (`payload := Z`), falling back to a per-lexeme default. Rule
-conflicts (the chapter's `greip`/`grip`/`gríp`) are resolved by the same
-narrowness order. -/
+/-- `stemChoiceOf` performs basic stem choice ([bonami-stump-2016]'s (7)) as
+narrowest-rule selection over stem-choice rules (`payload := Z`), falling back to
+a per-lexeme default. Rule conflicts (the chapter's `greip`/`grip`/`gríp`) are
+resolved by the same narrowness order. -/
 def stemChoiceOf (sv : List (Rule L P Z)) (default : L → Z) : L × P → Z :=
   fun c => ((selectMinimal sv c).map Rule.payload).getD (default c.1)
 
-/-- A **portmanteau block** `[m, n]` ([bonami-stump-2016]): its rules compete
-with the composition of blocks `m` and `n`; when none applies, the **Function
+/-- The rules of a **portmanteau block** `[m, n]` ([bonami-stump-2016]) compete
+with the composition of blocks `m` and `n`, and when none applies the **Function
 Composition Default** falls back to that composition. This is the handbook's
 block-straddling device; [stump-2020] supersedes it with **rule conflation** (a
 portmanteau rule as the conflation of two rules, sitting in a single block and
-winning by ordinary narrowness), the route [stump-2022] develops — kept here as
-the faithfully pre-conflation account. -/
+winning by ordinary narrowness), the route [stump-2022] develops. It is kept here
+as the faithfully pre-conflation account. -/
 def evalPortmanteau (Lindex : Z → L) (bmn bm bn : Block L Z P) (wσ : Z × P) : Z × P :=
   if (applicable bmn (Lindex wσ.1, wσ.2)).isEmpty
   then evalBlock Lindex bm (evalBlock Lindex bn wσ)
   else evalBlock Lindex bmn wσ
 
-/-- The **Function Composition Default** ([bonami-stump-2016]): where no
-portmanteau rule applies, the portmanteau block is the composition of its
-component blocks. -/
+/-- Where no portmanteau rule applies, the portmanteau block is the composition
+of its component blocks, the **Function Composition Default**
+([bonami-stump-2016]). -/
 theorem evalPortmanteau_eq_comp_of_not_applies (Lindex : Z → L) (bmn bm bn : Block L Z P)
     (wσ : Z × P) (h : applicable bmn (Lindex wσ.1, wσ.2) = []) :
     evalPortmanteau Lindex bmn bm bn wσ = evalBlock Lindex bm (evalBlock Lindex bn wσ) := by
   simp [evalPortmanteau, h]
 
 /-- Appending a `≤`-maximal always-applicable rule to a block leaves narrowest-rule
-selection unchanged when the block already selects, and picks that rule otherwise:
-a maximal rule is preempted by any genuine competitor and fires only in the
-elsewhere. The mechanism shared by `identityDefault` and
+selection unchanged when the block already selects, and picks that rule otherwise,
+since a maximal rule is preempted by any genuine competitor and fires only in the
+elsewhere. This is the mechanism shared by `identityDefault` and
 `functionCompositionDefault`. -/
 theorem selectMinimal_append_maximal {v : List (Rule L P F)} {c : L × P}
     {top : Rule L P F} (hmax : ∀ r, r ≤ top)
@@ -348,11 +356,11 @@ theorem selectMinimal_append_maximal {v : List (Rule L P F)} {c : L × P}
 section FunctionCompositionDefault
 variable [Fintype L] [OrderBot P]
 
-/-- The **Function Composition Default** as a derived rule ([spencer-2013]): the
-rule of a portmanteau block `[m, n]` whose σ-sensitive action evaluates blocks
-`m` then `n` at the current cell. Like `identityDefault` it applies everywhere
-(`klass = univ`, `props = ⊥`) and is `≤`-maximal, so any explicit portmanteau
-rule — being narrower — preempts it by ordinary Pāṇinian narrowness. [spencer-2013]
+/-- The **Function Composition Default** as a derived rule ([spencer-2013]) is the
+rule of a portmanteau block `[m, n]` whose σ-sensitive action evaluates block `n`
+and then block `m` at the current cell. Like `identityDefault` it applies
+everywhere (`klass = univ`, `props = ⊥`) and is `≤`-maximal, so any explicit
+portmanteau rule, being narrower, preempts it by ordinary Pāṇinian narrowness. [spencer-2013]
 observes that an explicit portmanteau rule is by definition more specific than
 the FCD, so ordinary narrowness suffices to order them; this derives what
 `evalPortmanteau` stipulates, the same stipulate-to-derive upgrade
@@ -368,24 +376,24 @@ theorem functionCompositionDefault_applies (Lindex : Z → L) (bm bn : Block L Z
       (functionCompositionDefault Lindex bm bn) c :=
   ⟨Finset.mem_univ _, bot_le⟩
 
-/-- The FCD is `≤`-maximal: every rule is at least as narrow, so an explicit
-portmanteau rule always preempts it ([spencer-2013]). Same shape as
-`le_identityDefault`. -/
+/-- The FCD is `≤`-maximal, since every rule is at least as narrow, so an
+explicit portmanteau rule always preempts it ([spencer-2013]). The statement has
+the shape of `le_identityDefault`. -/
 theorem le_functionCompositionDefault (Lindex : Z → L) (bm bn : Block L Z P)
     (r : Rule L P (Action Z P)) : r ≤ functionCompositionDefault Lindex bm bn := by
   by_cases h : r.klass = Finset.univ
   · exact Or.inl ⟨h, bot_le⟩
   · exact Or.inr (Finset.ssubset_univ_iff.mpr h)
 
-/-- **FCD-as-derived-default**: for a portmanteau block `bmn` of rules of
-exponence, the stipulated `evalPortmanteau` equals the block `bmn ++ [fcd]`
-evaluated as an ordinary block. Where a portmanteau rule applies it wins by
+/-- For a portmanteau block `bmn` of rules of exponence, the stipulated
+`evalPortmanteau` equals the block `bmn ++ [fcd]` evaluated as an ordinary
+block. Where a portmanteau rule applies it wins by
 narrowness (`le_functionCompositionDefault`, via `selectMinimal_append_maximal`);
 where none does, the appended FCD fires and evaluates `bm ∘ bn` at the cell. This
 certifies the stipulated Function Composition Default as [stump-2020]'s
 single-block rule-conflation reading of [bonami-stump-2016]'s block-straddling
 device. The exponence-only hypothesis on `bmn` is what a portmanteau block *is*
-in PFM — referral, a separate syncretism device, re-selects over the block's
+in PFM, since referral, a separate syncretism device, re-selects over the block's
 `expoFragment`, which the appended (exponence-shaped) FCD would perturb. -/
 theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     (bmn bm bn : Block L Z P) (wσ : Z × P)
@@ -416,25 +424,31 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
 
 end FunctionCompositionDefault
 
-/-- With property-preserving property mapping and PFM1 basic stem choice, the
-PFM2 realization of a paradigm linkage's block cascade ([stump-2016]'s
-`PF(⟨L, σ⟩) = PF(Corr(⟨L, σ⟩))`) is this paradigm function — `Linkage.realize`'s
-form-realization hole filled true by construction. -/
-theorem Linkage.realize_eq_paradigmFunction [DecidableEq Z] (ℓ : Linkage L Z P)
-    (Lindex : Z → L) (stemChoice : L × P → Z) (blocks : List (Block L Z P))
-    (l : L) (σ : P) (h : ℓ.IsPropertyPreserving)
-    (hstem : ∀ l σ, ℓ.stems l σ = {stemChoice (l, σ)}) :
-    ℓ.realize (fun z τ => (blocksEval Lindex blocks (z, τ)).1) l σ
+/-- With property-preserving property mapping and PFM1 basic stem choice, the PFM2
+realization of a paradigm linkage's block cascade ([stump-2016]'s
+`PF(⟨L, σ⟩) = PF(Corr(⟨L, σ⟩))`) is this paradigm function. -/
+theorem _root_.Morphology.Linkage.realized_eq_paradigmFunction [DecidableEq Z]
+    (ℓ : Linkage L Z P) (Lindex : Z → L) (stemChoice : L × P → Z)
+    (blocks : List (Block L Z P)) (l : L) (σ : P) (h : ℓ.IsPropertyPreserving)
+    (hstem : ∀ l σ, ℓ.realize l σ = {stemChoice (l, σ)}) :
+    ℓ.realized (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
       = {paradigmFunction Lindex stemChoice blocks (l, σ)} := by
-  have hpm : ℓ.pm l σ = σ := h l σ
-  simp only [Linkage.realize, hpm, hstem, Finset.image_singleton,
-    Finset.singleton_product_singleton, paradigmFunction]
-  exact congrArg ({·})
-    (Prod.ext rfl (blocksEval_snd Lindex blocks (stemChoice (l, σ), σ)).symm)
+  simp [Linkage.realized, h l σ, hstem, paradigmFunction, Prod.ext_iff]
 
-/-- The paradigm function as a realization: lexemes as opaque indices,
-realized at every cell — total and univalent, PFM's stratum. `Lindex` is the
-seed of the lexeme-to-√ coarsening arrow between individuation grains. -/
+/-- The linkage of a PFM1 basic stem choice realizes its block cascade as this paradigm
+function. -/
+theorem _root_.Morphology.Linkage.ofFun_realized_eq_paradigmFunction [DecidableEq Z]
+    (Lindex : Z → L) (stemChoice : L × P → Z) (blocks : List (Block L Z P)) (l : L) (σ : P) :
+    (Linkage.ofFun (Function.curry stemChoice)).realized
+        (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
+      = {paradigmFunction Lindex stemChoice blocks (l, σ)} :=
+  Linkage.realized_eq_paradigmFunction _ Lindex stemChoice blocks l σ (fun _ _ ↦ rfl)
+    fun _ _ ↦ rfl
+
+/-- `paradigmRealization` presents the paradigm function as a realization whose
+opaque indices are lexemes, realized at every cell, total and univalent, PFM's
+stratum. `Lindex` is the seed of the lexeme-to-√ coarsening arrow between
+individuation grains. -/
 def paradigmRealization (Lindex : Z → L) (stemChoice : L × P → Z)
     (blocks : List (Block L Z P)) : Realization L P (Z × P) :=
   ⟨fun l σ => {paradigmFunction Lindex stemChoice blocks (l, σ)}⟩
@@ -456,7 +470,8 @@ end Selection
 section MapPayload
 variable {F' : Type*}
 
-/-- Relabel a rule's payload, keeping its class and property set. -/
+/-- `r.mapPayload g` relabels the payload of `r` by `g`, keeping its class and
+property set. -/
 def Rule.mapPayload (g : F → F') (r : Rule L P F) : Rule L P F' where
   klass := r.klass
   props := r.props

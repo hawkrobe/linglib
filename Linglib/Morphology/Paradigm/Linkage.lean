@@ -5,438 +5,293 @@ public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Finset.Card
 
 /-!
-# Paradigm linkage: content paradigms, form paradigms, and correspondence
+# Paradigm linkage
 
-Inflectional morphology relates three levels of representation ([stump-2012-mmm8];
-the book-length apparatus is [stump-2016]): a lexeme's **content paradigm** of
-cells `⟨L, σ⟩` pairing a lexeme with a syntacticosemantic property set, a stem's
-**form paradigm** of cells `⟨Z, τ⟩` pairing a stem with a property set it inflects
-for, and the **realized paradigm** of word forms. A content cell is realized by
-being linked to its **form correspondents**, whose realizations it shares. The
-correspondence is a finite relation in factored presentation: a stem selection
-`stems : L → P → Finset Z` and a lexeme-sensitive property mapping `pm : L → P → P`.
-Canonically the relation is the graph of `⟨l, σ⟩ ↦ ⟨root l, σ⟩` ([stump-2006]'s
-universal default rule of paradigm linkage).
+This file defines Stump's paradigm linkage, which realizes a lexeme's content cell `⟨l, σ⟩`
+through form cells `⟨z, τ⟩` of its stems. A linkage is a stem selection, a `Realization` of
+lexemes by stems, together with a lexeme-sensitive property mapping. Each deviation from
+canonical linkage negates one of its axes, after Corbett's canonical typology. Stump maintains
+that PRAMEN, whose stem is phonologically constant across two inflection classes, exhibits "a
+kind of stem suppletion", on which view heteroclisis "simply entails suppletion".
 
-Canonical linkage is the typological extreme against which deviations are
-calibrated — [corbett-2007]'s canonical-typology method, with the axes read off
-the correspondence relation's standard properties. `IsTotal`: every content cell
-has a form correspondent. `IsUnivalent`: at most one. `IsStemInvariant`: one stem
-serves all of a lexeme's cells. `IsInjective`: no two content cells share a
-correspondent. `IsPropertyPreserving`: a correspondent carries the content cell's
-own property set. Each named noncanonical phenomenon negates one axis:
-defectiveness totality ([stump-2012-mmm8] §3.1), overabundance univalence
-([thornton-2011]'s cell-mates), suppletion stem invariance (§3.4), syncretism
-injectivity (§3.2), and deponency and functor-argument reversal property
-preservation (§3.3).
+## Main definitions
 
-Stem invariance is one instance of a projection-indexed family: `InvariantAlong p`
-asks the composite `p ∘ stems` to be constant per lexeme. Instantiated at a
-consumer-supplied inflection-class projection `cls : Z → K` it yields
-**heteroclisis** — form correspondents drawn from form paradigms of two or more
-inflection classes ([stump-2006]). Because constancy transfers along any
-projection (`InvariantAlong.comp`), heteroclisis entails stem non-invariance
-(`IsHeteroclite.isSuppletive`): heteroclisis is "a kind of stem alternation" even
-when the stems are phonologically identical, [stump-2006]'s reading of Czech
-PRAMEN, whose two stems differ in class but not in form.
+* `Linkage`, `Linkage.corr`, `Linkage.realized`: the linkage, its form correspondents, and the
+  realized paradigm.
+* `Linkage.IsCanonical`, with the deviations `IsDefective`, `IsSyncretic`, `IsUnfaithful`.
+* `Linkage.IsInvariantAlong`, `Linkage.IsHeteroclite`: per-lexeme invariance and variance of
+  stems along a projection, such as their inflection class.
+* `Linkage.ofFun`, `Linkage.canonical`: the linkage of a stem-choice function.
 
-## Main declarations
+## Main results
 
-* `Linkage L Z P` — the correspondence in factored presentation: finite stem
-  selection and lexeme-sensitive property mapping
-* `Linkage.corr`, `Linkage.realize` — the form-correspondent set of a content
-  cell and the realized paradigm over it
-* `Linkage.IsTotal`, `IsUnivalent`, `IsStemInvariant`, `IsInjective`,
-  `IsPropertyPreserving` — the axes of canonical linkage; `IsCanonical` bundles
-  them; `InvariantAlong` is the projection-indexed generalization of stem
-  invariance
-* `Linkage.IsDefective`, `IsOverabundant`, `IsSuppletive`, `IsHeteroclite`,
-  `IsSyncretic`, `IsUnfaithful` — the six deviations, each an axis failure
-  (`isDefective_iff_not_isTotal`, `isOverabundant_iff_not_isUnivalent`,
-  `isSyncretic_iff_not_isInjective`, …)
-* `Linkage.IsHeteroclite.isSuppletive` — heteroclisis entails stem non-invariance
-* `Linkage.HasCellMates` — distinct realized forms at one cell; entails
-  `IsOverabundant`
-* `Linkage.IsVirtual` — a form cell no content cell corresponds to
-* `Linkage.canonical` / `canonical_isCanonical` — the total, lexeme-blind,
-  one-stem linkage, canonical on all axes
-* `Linkage.realize_eq_of_corr_eq`, `realize_eq_of_corr_eq_lexeme` — shared
-  correspondents force shared realizations, within and across lexemes
+* `Linkage.IsHeteroclite.isSuppletive`: heteroclisis entails suppletion.
+* `Linkage.realized_eq_of_corr_eq`: equal correspondent sets force equal realizations.
+
+## Implementation notes
+
+`IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
+`IsOverabundant` ([thornton-2011]'s cell-mates) are inherited from `Realization`.
+
+## References
+
+* [corbett-2007]
+* [stump-2006]
+* [stump-2012-mmm8]
+* [stump-2016]
+* [thornton-2011]
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-/-- A **paradigm linkage** ([stump-2012-mmm8]) from the vantage of a single
-lexeme: the two components of the form-correspondence relation. `stems` selects
-the finite set of stems realizing a content cell — empty at a gap in the stem
-specification, more than one at an overabundant cell; `pm` carries a content
-cell's property set to its form correspondents', and may consult the lexeme.
-Canonically `stems` is singleton-valued and constant in the property set and
-`pm` is the identity. -/
-structure Linkage (L Z P : Type*) where
-  /-- The stems realizing a content cell `⟨l, σ⟩`: empty where the stem
-  specification has a gap, non-singleton where the cell is overabundant. -/
-  stems : L → P → Finset Z
-  /-- The property mapping carrying a content cell's property set to its form
-  correspondents', consulting the lexeme for functor-argument reversal. -/
+/-- A paradigm linkage ([stump-2012-mmm8]) consists of a stem selection, the inherited
+`realize`, which gives the finite set of stems realizing each content cell `⟨l, σ⟩`, and a
+property mapping `pm`. The stem set is empty at a gap in the stem specification and has several
+members at an overabundant cell. -/
+structure Linkage (L Z P : Type*) extends Realization L P Z where
+  /-- The property mapping carries a content cell's property set to that of its form
+  correspondents, and may consult the lexeme. -/
   pm : L → P → P
 
 namespace Linkage
 
 variable {L Z P W X Y K : Type*} (ℓ : Linkage L Z P)
 
-/-- The **form correspondents** of a content cell `⟨l, σ⟩`: each selected stem
-paired with the mapped property set — empty where the stem specification has a
-gap. -/
-def corr (l : L) (σ : P) : Finset (Z × P) := ℓ.stems l σ ×ˢ {ℓ.pm l σ}
+/-- The form correspondents of a content cell `⟨l, σ⟩` pair each of its stems with the mapped
+property set `ℓ.pm l σ`. -/
+def corr (l : L) (σ : P) : Finset (Z × P) := ℓ.realize l σ ×ˢ {ℓ.pm l σ}
 
 @[simp] theorem mem_corr {l : L} {σ : P} {zτ : Z × P} :
-    zτ ∈ ℓ.corr l σ ↔ zτ.1 ∈ ℓ.stems l σ ∧ zτ.2 = ℓ.pm l σ := by
+    zτ ∈ ℓ.corr l σ ↔ zτ.1 ∈ ℓ.realize l σ ∧ zτ.2 = ℓ.pm l σ := by
   rw [corr, Finset.mem_product, Finset.mem_singleton]
 
 @[simp] theorem corr_nonempty (l : L) (σ : P) :
-    (ℓ.corr l σ).Nonempty ↔ (ℓ.stems l σ).Nonempty := by
+    (ℓ.corr l σ).Nonempty ↔ (ℓ.realize l σ).Nonempty := by
   simp [corr]
 
-@[simp] theorem card_corr (l : L) (σ : P) :
-    (ℓ.corr l σ).card = (ℓ.stems l σ).card := by
+@[simp] theorem card_corr (l : L) (σ : P) : (ℓ.corr l σ).card = (ℓ.realize l σ).card := by
   simp [corr]
 
-/-- The **realized paradigm** on content cells: a content cell realizes as its
-form correspondents do. `realizeForm` supplies the form-cell realization; the
-result is empty exactly where the correspondent set is. -/
-def realize [DecidableEq W] (realizeForm : Z → P → W) (l : L) (σ : P) :
-    Finset (W × P) :=
-  ((ℓ.stems l σ).image fun z => realizeForm z (ℓ.pm l σ)) ×ˢ {ℓ.pm l σ}
+/-- The realized paradigm of a content cell realizes each form correspondent `⟨z, τ⟩` as
+`rf z τ`, keeping the property set `τ`. -/
+def realized [DecidableEq W] (rf : Z → P → W) (l : L) (σ : P) : Finset (W × P) :=
+  ((ℓ.realize l σ).image fun z ↦ rf z (ℓ.pm l σ)) ×ˢ {ℓ.pm l σ}
 
-@[simp] theorem mem_realize [DecidableEq W] {realizeForm : Z → P → W} {l : L}
-    {σ : P} {wτ : W × P} :
-    wτ ∈ ℓ.realize realizeForm l σ ↔
-      ∃ z ∈ ℓ.stems l σ, wτ = (realizeForm z (ℓ.pm l σ), ℓ.pm l σ) := by
-  obtain ⟨w, τ⟩ := wτ
-  simp [realize, Prod.ext_iff, eq_comm (a := w), eq_comm (a := τ)]
+@[simp] theorem mem_realized [DecidableEq W] {rf : Z → P → W} {l : L} {σ : P} {wτ : W × P} :
+    wτ ∈ ℓ.realized rf l σ ↔ ∃ z ∈ ℓ.realize l σ, (rf z (ℓ.pm l σ), ℓ.pm l σ) = wτ := by
+  simp [realized, Prod.ext_iff]
 
-/-! ### The axes of canonical linkage -/
+/-! ### Canonical linkage -/
 
-/-- **Totality**: every content cell has a form correspondent. Defectiveness is
-the failure. -/
-def IsTotal : Prop := ∀ l σ, (ℓ.stems l σ).Nonempty
+/-- A linkage is stem-invariant when each lexeme draws the stems of all its cells from a single
+stem. -/
+def IsStemInvariant : Prop := ∀ l, ℓ.IsInvariant l
 
-/-- **Univalence**: every content cell has at most one form correspondent.
-Overabundance is the failure. -/
-def IsUnivalent : Prop := ∀ l σ, (ℓ.stems l σ).card ≤ 1
+/-- A linkage is injective when no two content cells of a lexeme share a form correspondent. -/
+def IsInjective : Prop := ∀ l ⦃σ₁ σ₂ : P⦄, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
 
-/-- **Invariance along a projection**: the composite `p ∘ stems` is constant on
-each lexeme's paradigm. At `p := id` this is stem invariance; at an
-inflection-class projection it is the axis heteroclisis negates. Undefined cells
-impose no constraint. -/
-def InvariantAlong (p : Z → X) : Prop :=
-  ∀ l ⦃σ₁ σ₂ : P⦄ ⦃z₁ z₂ : Z⦄,
-    z₁ ∈ ℓ.stems l σ₁ → z₂ ∈ ℓ.stems l σ₂ → p z₁ = p z₂
-
-/-- **Stem invariance**: one stem serves all of a lexeme's cells, so its
-correspondents come from a single form paradigm. Stem suppletion is the
-failure. -/
-def IsStemInvariant : Prop := ℓ.InvariantAlong id
-
-/-- **Injectivity**: no two content cells of a lexeme share a form
-correspondent. Syncretism is the failure. -/
-def IsInjective : Prop :=
-  ∀ l ⦃σ₁ σ₂ : P⦄, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
-
-/-- **Property preservation**: a form correspondent carries the content cell's
-own property set. Deponency, functor-argument reversal, and directional
-syncretism are failures. -/
+/-- A linkage is property-preserving when every form correspondent carries its content cell's
+own property set. -/
 def IsPropertyPreserving : Prop := ∀ l σ, ℓ.pm l σ = σ
 
-/-- **Canonical paradigm linkage** ([stump-2012-mmm8], axes per [corbett-2007]'s
-canonical-typology method): all five axes at once. -/
+/-- A linkage is canonical ([stump-2012-mmm8]) when it satisfies all five axes. -/
 structure IsCanonical : Prop where
+  /-- Every content cell has a form correspondent. -/
   total : ℓ.IsTotal
+  /-- No content cell has more than one form correspondent. -/
   univalent : ℓ.IsUnivalent
+  /-- Each lexeme draws on a single stem. -/
   stemInvariant : ℓ.IsStemInvariant
+  /-- No two content cells of a lexeme share a form correspondent. -/
   injective : ℓ.IsInjective
+  /-- Every form correspondent carries its content cell's own property set. -/
   propertyPreserving : ℓ.IsPropertyPreserving
 
-/-- Constancy transfers along any further projection. -/
-theorem InvariantAlong.comp {ℓ : Linkage L Z P} {p : Z → X}
-    (h : ℓ.InvariantAlong p) (q : X → Y) : ℓ.InvariantAlong (q ∘ p) :=
-  fun l _ _ _ _ h₁ h₂ => congrArg q (h l h₁ h₂)
+/-! ### Deviations from canonical linkage -/
 
-/-- A stem-invariant linkage is invariant along every projection. -/
-theorem IsStemInvariant.invariantAlong {ℓ : Linkage L Z P}
-    (h : ℓ.IsStemInvariant) (p : Z → X) : ℓ.InvariantAlong p :=
-  fun l _ _ _ _ h₁ h₂ => congrArg p (h l h₁ h₂)
+/-- A linkage is defective ([stump-2012-mmm8]) when some content cell has no stem. -/
+def IsDefective : Prop := ∃ l σ, ℓ.realize l σ = ∅
 
-/-! ### Deviations from canonical linkage
+/-- A linkage is syncretic ([stump-2012-mmm8]) when two distinct content cells of a lexeme share
+a form correspondent. -/
+def IsSyncretic : Prop := ∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
 
-Each noncanonical phenomenon negates one axis. -/
-
-/-- **Defectiveness**: some content cell lacks a form correspondent
-([stump-2012-mmm8] §3.1). Negates totality. -/
-def IsDefective : Prop := ∃ l σ, ℓ.stems l σ = ∅
-
-/-- **Overabundance**: some content cell has two or more form correspondents —
-[thornton-2011]'s cell-mates, at the level of the correspondence. Negates
-univalence. -/
-def IsOverabundant : Prop := ∃ l σ, 2 ≤ (ℓ.stems l σ).card
-
-/-- **Suppletion**: a lexeme's correspondents draw on more than one stem
-([stump-2012-mmm8] §3.4). Negates stem invariance. -/
-def IsSuppletive : Prop := ¬ ℓ.IsStemInvariant
-
-/-- **Heteroclisis**: a lexeme's correspondents draw on form paradigms of two or
-more inflection classes ([stump-2006]), the classes given by a projection
-`cls : Z → K`. Negates invariance along `cls`. -/
-def IsHeteroclite (cls : Z → K) : Prop := ¬ ℓ.InvariantAlong cls
-
-/-- **Syncretism**: two distinct content cells share a form correspondent
-([stump-2012-mmm8] §3.2). Negates injectivity. -/
-def IsSyncretic : Prop :=
-  ∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
-
-/-- **Unfaithfulness**: some content cell's form correspondents carry a
-different property set — deponency and functor-argument reversal
-([stump-2012-mmm8] §3.3). Negates property preservation. -/
+/-- A linkage is unfaithful ([stump-2012-mmm8]) when some content cell's form correspondents
+carry a different property set, as under deponency and functor-argument reversal. -/
 def IsUnfaithful : Prop := ∃ l σ, ℓ.pm l σ ≠ σ
 
-/-- Defectiveness is exactly the failure of totality. -/
-theorem isDefective_iff_not_isTotal : ℓ.IsDefective ↔ ¬ ℓ.IsTotal := by
-  simp [IsDefective, IsTotal, Finset.not_nonempty_iff_eq_empty]
+/-- A form cell is virtual ([stump-2012-mmm8]) when no content cell corresponds to it. -/
+def IsVirtual (zτ : Z × P) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
-/-- Overabundance is exactly the failure of univalence. -/
-theorem isOverabundant_iff_not_isUnivalent :
-    ℓ.IsOverabundant ↔ ¬ ℓ.IsUnivalent := by
-  simp [IsOverabundant, IsUnivalent, Nat.lt_iff_add_one_le, not_le]
+/-- Defectiveness is exactly the failure of totality. -/
+@[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective := by
+  simp [IsDefective, Realization.IsTotal, Finset.not_nonempty_iff_eq_empty]
 
 /-- Syncretism is exactly the failure of injectivity. -/
-theorem isSyncretic_iff_not_isInjective : ℓ.IsSyncretic ↔ ¬ ℓ.IsInjective := by
-  simp [IsSyncretic, IsInjective, not_forall]
+@[simp, push] theorem not_isInjective_iff : ¬ ℓ.IsInjective ↔ ℓ.IsSyncretic := by
+  simp [IsSyncretic, IsInjective]
 
 /-- Unfaithfulness is exactly the failure of property preservation. -/
-theorem isUnfaithful_iff_not_isPropertyPreserving :
-    ℓ.IsUnfaithful ↔ ¬ ℓ.IsPropertyPreserving := by
+@[simp, push] theorem not_isPropertyPreserving_iff :
+    ¬ ℓ.IsPropertyPreserving ↔ ℓ.IsUnfaithful := by
   simp [IsUnfaithful, IsPropertyPreserving]
 
-/-- Heteroclisis entails stem non-invariance: drawing on two inflection classes
-is drawing on two stems, [stump-2006]'s "a kind of stem alternation" — even when
-the stems are phonologically identical, as in Czech PRAMEN. -/
-theorem IsHeteroclite.isSuppletive {cls : Z → K} (h : ℓ.IsHeteroclite cls) :
-    ℓ.IsSuppletive :=
-  fun hinv => h (IsStemInvariant.invariantAlong hinv cls)
+/-! ### Invariance along a projection -/
 
-theorem IsCanonical.not_isDefective (h : ℓ.IsCanonical) : ¬ ℓ.IsDefective :=
-  fun hd => ℓ.isDefective_iff_not_isTotal.mp hd h.total
+/-- A lexeme is invariant along `p` when the stems of all its cells have one image under `p`;
+along `id` this is `IsInvariant`. -/
+def IsInvariantAlong (p : Z → X) (l : L) : Prop :=
+  ∀ ⦃σ σ' : P⦄, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'
 
-theorem IsCanonical.not_isOverabundant (h : ℓ.IsCanonical) :
-    ¬ ℓ.IsOverabundant :=
-  fun ho => ℓ.isOverabundant_iff_not_isUnivalent.mp ho h.univalent
+/-- A lexeme is heteroclite along a classification `cls` of stems ([stump-2006]) when two of
+its cells draw on stems of distinct classes; along `id` this is `IsSuppletive`. -/
+def IsHeteroclite (cls : Z → K) (l : L) : Prop :=
+  ∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z'
 
-theorem IsCanonical.not_isSuppletive (h : ℓ.IsCanonical) : ¬ ℓ.IsSuppletive :=
-  not_not.mpr h.stemInvariant
+variable {ℓ} {p : Z → X} {cls : Z → K} {l : L}
 
-theorem IsCanonical.not_isHeteroclite (h : ℓ.IsCanonical) (cls : Z → K) :
-    ¬ ℓ.IsHeteroclite cls :=
-  not_not.mpr (IsStemInvariant.invariantAlong h.stemInvariant cls)
+/-- Invariance along `id` is invariance. -/
+theorem isInvariantAlong_id_iff : ℓ.IsInvariantAlong id l ↔ ℓ.IsInvariant l := Iff.rfl
 
-theorem IsCanonical.not_isSyncretic (h : ℓ.IsCanonical) : ¬ ℓ.IsSyncretic :=
-  fun hs => ℓ.isSyncretic_iff_not_isInjective.mp hs h.injective
+/-- Heteroclisis along `id` is suppletion. -/
+theorem isHeteroclite_id_iff : ℓ.IsHeteroclite id l ↔ ℓ.IsSuppletive l := Iff.rfl
 
-theorem IsCanonical.not_isUnfaithful (h : ℓ.IsCanonical) : ¬ ℓ.IsUnfaithful :=
-  fun ⟨l, σ, hne⟩ => hne (h.propertyPreserving l σ)
+/-- A lexeme fails to be invariant along `p` exactly when it is heteroclite along `p`. -/
+@[simp, push] theorem not_isInvariantAlong_iff :
+    ¬ ℓ.IsInvariantAlong p l ↔ ℓ.IsHeteroclite p l := by
+  simp [IsInvariantAlong, IsHeteroclite]
 
-/-- A **virtual cell**: a form cell no content cell corresponds to
-([stump-2012-mmm8] §4). Realization rules still define a value there, which
-language change can release by suppressing a linkage override. -/
-def IsVirtual (zτ : Z × P) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
+/-- Invariance along `p` transfers to invariance along any coarsening `q ∘ p`. -/
+theorem IsInvariantAlong.comp (h : ℓ.IsInvariantAlong p l) (q : X → Y) :
+    ℓ.IsInvariantAlong (q ∘ p) l :=
+  fun _ _ z hz z' hz' ↦ congrArg q (h z hz z' hz')
+
+/-- An invariant lexeme is invariant along every projection. -/
+theorem _root_.Morphology.Realization.IsInvariant.isInvariantAlong (h : ℓ.IsInvariant l)
+    (p : Z → X) : ℓ.IsInvariantAlong p l :=
+  fun _ _ z hz z' hz' ↦ congrArg p (h z hz z' hz')
+
+/-- Heteroclisis entails suppletion, since stems of two classes are two stems. -/
+theorem IsHeteroclite.isSuppletive (h : ℓ.IsHeteroclite cls l) : ℓ.IsSuppletive l :=
+  let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
+  ⟨σ, σ', z, hz, z', hz', ne_of_apply_ne cls hne⟩
 
 /-! ### Decidability
 
-Instances by `inferInstanceAs` on the definitional unfolding, so `decide`
-reduces in the kernel. -/
+Each instance is `inferInstanceAs` on the definition's body, so that `decide` reduces in the
+kernel. The per-lexeme instances quantify over stem sets and need no `Fintype Z`. -/
 
 section Decidable
 
-variable [Fintype L] [Fintype P] [Fintype Z] [DecidableEq Z] [DecidableEq P]
+variable (ℓ) [Fintype P]
 
-instance : Decidable ℓ.IsTotal :=
-  inferInstanceAs (Decidable (∀ l σ, (ℓ.stems l σ).Nonempty))
+instance [DecidableEq X] (p : Z → X) (l : L) : Decidable (ℓ.IsInvariantAlong p l) :=
+  inferInstanceAs
+    (Decidable (∀ σ σ' : P, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'))
 
-instance : Decidable ℓ.IsUnivalent :=
-  inferInstanceAs (Decidable (∀ l σ, (ℓ.stems l σ).card ≤ 1))
+instance [DecidableEq K] (cls : Z → K) (l : L) : Decidable (ℓ.IsHeteroclite cls l) :=
+  inferInstanceAs
+    (Decidable (∃ σ σ', ∃ z ∈ ℓ.realize l σ, ∃ z' ∈ ℓ.realize l σ', cls z ≠ cls z'))
 
-instance {p : Z → X} [DecidableEq X] : Decidable (ℓ.InvariantAlong p) :=
-  inferInstanceAs (Decidable (∀ l, ∀ σ₁ σ₂ : P, ∀ z₁ z₂ : Z,
-    z₁ ∈ ℓ.stems l σ₁ → z₂ ∈ ℓ.stems l σ₂ → p z₁ = p z₂))
+variable [Fintype L]
 
-instance : Decidable ℓ.IsStemInvariant :=
-  inferInstanceAs (Decidable (ℓ.InvariantAlong id))
+instance [DecidableEq Z] : Decidable ℓ.IsStemInvariant :=
+  inferInstanceAs (Decidable (∀ l, ℓ.IsInvariant l))
 
-instance : Decidable ℓ.IsInjective :=
-  inferInstanceAs (Decidable (∀ l, ∀ σ₁ σ₂ : P,
-    σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
+instance [DecidableEq Z] [DecidableEq P] : Decidable ℓ.IsInjective :=
+  inferInstanceAs
+    (Decidable (∀ l, ∀ σ₁ σ₂ : P, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
 
-instance : Decidable ℓ.IsPropertyPreserving :=
+instance [DecidableEq P] : Decidable ℓ.IsPropertyPreserving :=
   inferInstanceAs (Decidable (∀ l σ, ℓ.pm l σ = σ))
 
-instance : Decidable ℓ.IsDefective :=
-  inferInstanceAs (Decidable (∃ l σ, ℓ.stems l σ = ∅))
+instance [DecidableEq Z] : Decidable ℓ.IsDefective :=
+  inferInstanceAs (Decidable (∃ l σ, ℓ.realize l σ = ∅))
 
-instance : Decidable ℓ.IsOverabundant :=
-  inferInstanceAs (Decidable (∃ l σ, 2 ≤ (ℓ.stems l σ).card))
+instance [DecidableEq Z] [DecidableEq P] : Decidable ℓ.IsSyncretic :=
+  inferInstanceAs
+    (Decidable (∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
 
-instance : Decidable ℓ.IsSuppletive :=
-  inferInstanceAs (Decidable (¬ ℓ.IsStemInvariant))
-
-instance {cls : Z → K} [DecidableEq K] : Decidable (ℓ.IsHeteroclite cls) :=
-  inferInstanceAs (Decidable (¬ ℓ.InvariantAlong cls))
-
-instance : Decidable ℓ.IsSyncretic :=
-  inferInstanceAs (Decidable (∃ l σ₁ σ₂,
-    σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
-
-instance : Decidable ℓ.IsUnfaithful :=
+instance [DecidableEq P] : Decidable ℓ.IsUnfaithful :=
   inferInstanceAs (Decidable (∃ l σ, ℓ.pm l σ ≠ σ))
+
+instance [DecidableEq Z] [DecidableEq P] (zτ : Z × P) : Decidable (ℓ.IsVirtual zτ) :=
+  inferInstanceAs (Decidable (∀ l σ, zτ ∉ ℓ.corr l σ))
 
 end Decidable
 
-/-! ### Realization -/
+/-! ### Realization through correspondents -/
 
-section Realize
+section Realized
 
-variable [DecidableEq W] (realizeForm : Z → P → W)
+variable (ℓ) [DecidableEq W] (rf : Z → P → W)
 
-/-- Equal correspondent sets force equal realizations ([stump-2012-mmm8] §3.2):
-the mechanism of syncretism. -/
-theorem realize_eq_of_corr_eq {l : L} {σ₁ σ₂ : P}
-    (h : ℓ.corr l σ₁ = ℓ.corr l σ₂) :
-    ℓ.realize realizeForm l σ₁ = ℓ.realize realizeForm l σ₂ := by
-  rcases (ℓ.stems l σ₁).eq_empty_or_nonempty with he | ⟨z, hz⟩
-  · have he₂ : ℓ.stems l σ₂ = ∅ := by
-      by_contra hne
-      obtain ⟨z, hz⟩ := Finset.nonempty_iff_ne_empty.mpr hne
-      have : (z, ℓ.pm l σ₂) ∈ ℓ.corr l σ₁ := h ▸ ℓ.mem_corr.mpr ⟨hz, rfl⟩
-      simp [he] at this
-    simp [realize, he, he₂]
-  · have hmem : (z, ℓ.pm l σ₁) ∈ ℓ.corr l σ₂ := h ▸ ℓ.mem_corr.mpr ⟨hz, rfl⟩
-    have hpm : ℓ.pm l σ₁ = ℓ.pm l σ₂ := (ℓ.mem_corr.mp hmem).2
-    have hstems : ℓ.stems l σ₁ = ℓ.stems l σ₂ := by
-      ext x
-      constructor <;> intro hx
-      · exact (ℓ.mem_corr.mp (h ▸ ℓ.mem_corr.mpr ⟨hx, rfl⟩ :
-          (x, ℓ.pm l σ₁) ∈ ℓ.corr l σ₂)).1
-      · exact (ℓ.mem_corr.mp (h.symm ▸ ℓ.mem_corr.mpr ⟨hx, rfl⟩ :
-          (x, ℓ.pm l σ₂) ∈ ℓ.corr l σ₁)).1
-    simp [realize, hpm, hstems]
+/-- A content cell realizes as the image of its form correspondents under `rf`. -/
+theorem realized_eq_image_corr [DecidableEq P] (l : L) (σ : P) :
+    ℓ.realized rf l σ = (ℓ.corr l σ).image fun zτ ↦ (rf zτ.1 zτ.2, zτ.2) := by
+  ext; simp
 
-/-- Correspondent sets shared across two *lexemes* force shared realizations:
-the cross-lexeme companion of `realize_eq_of_corr_eq`. This is the mechanism
-behind [jackendoff-audring-2020]'s Same Verb solution — homophones with a shared
-morphosyntactic-form pivot inflect alike, however their distinct semantics. -/
-theorem realize_eq_of_corr_eq_lexeme {l₁ l₂ : L} {σ : P}
-    (h : ℓ.corr l₁ σ = ℓ.corr l₂ σ) :
-    ℓ.realize realizeForm l₁ σ = ℓ.realize realizeForm l₂ σ := by
-  rcases (ℓ.stems l₁ σ).eq_empty_or_nonempty with he | ⟨z, hz⟩
-  · have he₂ : ℓ.stems l₂ σ = ∅ := by
-      by_contra hne
-      obtain ⟨z, hz⟩ := Finset.nonempty_iff_ne_empty.mpr hne
-      have : (z, ℓ.pm l₂ σ) ∈ ℓ.corr l₁ σ := h ▸ ℓ.mem_corr.mpr ⟨hz, rfl⟩
-      simp [he] at this
-    simp [realize, he, he₂]
-  · have hmem : (z, ℓ.pm l₁ σ) ∈ ℓ.corr l₂ σ := h ▸ ℓ.mem_corr.mpr ⟨hz, rfl⟩
-    have hpm : ℓ.pm l₁ σ = ℓ.pm l₂ σ := (ℓ.mem_corr.mp hmem).2
-    have hstems : ℓ.stems l₁ σ = ℓ.stems l₂ σ := by
-      ext x
-      constructor <;> intro hx
-      · exact (ℓ.mem_corr.mp (h ▸ ℓ.mem_corr.mpr ⟨hx, rfl⟩ :
-          (x, ℓ.pm l₁ σ) ∈ ℓ.corr l₂ σ)).1
-      · exact (ℓ.mem_corr.mp (h.symm ▸ ℓ.mem_corr.mpr ⟨hx, rfl⟩ :
-          (x, ℓ.pm l₂ σ) ∈ ℓ.corr l₁ σ)).1
-    simp [realize, hpm, hstems]
+/-- Equal correspondent sets force equal realizations, within a lexeme (the mechanism of
+syncretism) and across lexemes. -/
+theorem realized_eq_of_corr_eq {l₁ l₂ : L} {σ₁ σ₂ : P} (h : ℓ.corr l₁ σ₁ = ℓ.corr l₂ σ₂) :
+    ℓ.realized rf l₁ σ₁ = ℓ.realized rf l₂ σ₂ := by
+  classical
+  rw [realized_eq_image_corr, realized_eq_image_corr, h]
 
-/-- A shared form correspondent already forces a shared realized form, even when
-the full correspondent sets differ: the multi-valued syncretism mechanism. -/
-theorem not_disjoint_realize_of_not_disjoint_corr {l : L} {σ₁ σ₂ : P}
-    (h : ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)) :
-    ¬ Disjoint (ℓ.realize realizeForm l σ₁) (ℓ.realize realizeForm l σ₂) := by
-  obtain ⟨⟨z, τ⟩, h₁, h₂⟩ := Finset.not_disjoint_iff.mp h
-  obtain ⟨hz₁, hτ₁⟩ := ℓ.mem_corr.mp h₁
-  obtain ⟨hz₂, hτ₂⟩ := ℓ.mem_corr.mp h₂
-  exact Finset.not_disjoint_iff.mpr
-    ⟨(realizeForm z τ, τ),
-     ℓ.mem_realize.mpr ⟨z, hz₁, by rw [← hτ₁]⟩,
-     ℓ.mem_realize.mpr ⟨z, hz₂, by rw [← hτ₂]⟩⟩
+end Realized
 
-/-- **Cell-mates** ([thornton-2011]): some content cell realizes as two or more
-distinct word forms. -/
-def HasCellMates : Prop := ∃ l σ, 2 ≤ (ℓ.realize realizeForm l σ).card
+/-! ### Linkages of stem-choice functions -/
 
-/-- Realization cannot outnumber the stems that feed it. -/
-theorem card_realize_le_card_stems (l : L) (σ : P) :
-    (ℓ.realize realizeForm l σ).card ≤ (ℓ.stems l σ).card := by
-  simpa [realize] using Finset.card_image_le
+/-- The linkage of a stem choice `f` gives the content cell `⟨l, σ⟩` the single stem `f l σ`
+and preserves its property set. -/
+def ofFun (f : L → P → Z) : Linkage L Z P where
+  realize l σ := {f l σ}
+  pm _ σ := σ
 
-/-- Cell-mates certify overabundance: distinct realized forms at one cell need
-distinct form correspondents there. The converse fails — distinct correspondents
-may realize alike. -/
-theorem HasCellMates.isOverabundant (h : ℓ.HasCellMates realizeForm) :
-    ℓ.IsOverabundant := by
-  obtain ⟨l, σ, hcard⟩ := h
-  exact ⟨l, σ, hcard.trans (ℓ.card_realize_le_card_stems realizeForm l σ)⟩
+section OfFun
 
-end Realize
+variable (f : L → P → Z)
 
-/-! ### The canonical linkage -/
+@[simp] theorem ofFun_realize (l : L) (σ : P) : (ofFun f).realize l σ = {f l σ} := rfl
 
-/-- The **canonical one-stem linkage**: a total, univalent, lexeme-blind stem
-selection with the identity property mapping — the graph of [stump-2006]'s
-universal default rule of paradigm linkage. -/
-def canonical (st : L → Z) : Linkage L Z P where
-  stems := fun l _ => {st l}
-  pm := fun _ σ => σ
+@[simp] theorem ofFun_pm (l : L) (σ : P) : (ofFun f).pm l σ = σ := rfl
 
-@[simp] theorem canonical_stems (st : L → Z) (l : L) (σ : P) :
-    (canonical (P := P) st).stems l σ = {st l} := rfl
-
-@[simp] theorem canonical_pm (st : L → Z) (l : L) (σ : P) :
-    (canonical (P := P) st).pm l σ = σ := rfl
-
-@[simp] theorem canonical_corr (st : L → Z) (l : L) (σ : P) :
-    (canonical (P := P) st).corr l σ = {(st l, σ)} :=
+@[simp] theorem ofFun_corr (l : L) (σ : P) : (ofFun f).corr l σ = {(f l σ, σ)} :=
   Finset.singleton_product_singleton
 
-@[simp] theorem canonical_realize [DecidableEq W] (st : L → Z)
-    (realizeForm : Z → P → W) (l : L) (σ : P) :
-    (canonical (P := P) st).realize realizeForm l σ
-      = {(realizeForm (st l) σ, σ)} := by
-  simp [realize]
+@[simp] theorem ofFun_realized [DecidableEq W] (rf : Z → P → W) (l : L) (σ : P) :
+    (ofFun f).realized rf l σ = {(rf (f l σ) σ, σ)} := by
+  simp [realized]
 
-/-- The canonical linkage is canonical on all five axes. -/
-theorem canonical_isCanonical (st : L → Z) :
-    (canonical (P := P) st).IsCanonical where
-  total := fun l _ => ⟨st l, Finset.mem_singleton_self _⟩
-  univalent := fun _ _ => (Finset.card_singleton _).le
-  stemInvariant := fun l _ _ _ _ h₁ h₂ =>
-    (Finset.mem_singleton.mp h₁).trans (Finset.mem_singleton.mp h₂).symm
-  injective := fun l _ _ hne => by
-    simpa [canonical_corr, Finset.disjoint_singleton] using hne
-  propertyPreserving := fun _ _ => rfl
+variable {f}
 
-/-! ### The realization view -/
+@[simp] theorem ofFun_isInvariantAlong_iff :
+    (ofFun f).IsInvariantAlong p l ↔ ∀ σ σ', p (f l σ) = p (f l σ') := by
+  simp [IsInvariantAlong]
 
-/-- The stem selection as a realization: lexemes as indices, property sets
-as contexts, stems as forms. A lossless embedding — the linkage adds only
-the property mapping `pm` on top of it. -/
-def toRealization (ℓ : Linkage L Z P) : Realization L P Z := ⟨ℓ.stems⟩
+@[simp] theorem ofFun_isHeteroclite_iff :
+    (ofFun f).IsHeteroclite cls l ↔ ∃ σ σ', cls (f l σ) ≠ cls (f l σ') := by
+  simp [IsHeteroclite]
 
-@[simp] theorem toRealization_realize (ℓ : Linkage L Z P) (l : L) (σ : P) :
-    ℓ.toRealization.realize l σ = ℓ.stems l σ := rfl
+/-- The linkage of a stem choice is canonical exactly when each lexeme's stem is independent of
+the property set. -/
+theorem ofFun_isCanonical_iff : (ofFun f).IsCanonical ↔ ∀ l σ σ', f l σ = f l σ' := by
+  refine ⟨fun h l ↦ ofFun_isInvariantAlong_iff.mp (h.stemInvariant l), fun h ↦
+    ⟨fun _ _ ↦ Finset.singleton_nonempty _, fun _ _ ↦ (Finset.card_singleton _).le,
+      fun l ↦ ofFun_isInvariantAlong_iff.mpr (h l), fun l σ σ' hne ↦ ?_, fun _ _ ↦ rfl⟩⟩
+  simp [hne]
 
-/-- The linkage and its realization agree on univalence. -/
-theorem toRealization_isUnivalent_iff (ℓ : Linkage L Z P) :
-    ℓ.toRealization.IsUnivalent ↔ ℓ.IsUnivalent := Iff.rfl
+end OfFun
+
+/-- The canonical linkage of `st` gives every cell of the lexeme `l` the stem `st l`, the graph
+of the universal default rule of paradigm linkage ([stump-2006]) with `st l` the root of `l`. -/
+abbrev canonical (st : L → Z) : Linkage L Z P := ofFun fun l _ ↦ st l
+
+/-- The canonical linkage is canonical. -/
+theorem canonical_isCanonical (st : L → Z) : (canonical (P := P) st).IsCanonical :=
+  ofFun_isCanonical_iff.mpr fun _ _ _ ↦ rfl
 
 end Linkage
 
