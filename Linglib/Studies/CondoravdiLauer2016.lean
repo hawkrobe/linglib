@@ -104,7 +104,8 @@ theorem want_not_mono [Nontrivial W] :
       (Set.subset_univ _) ⟨rfl, λ _ _ h => h⟩
   exact Set.singleton_ne_univ x this.symm
 
-/-- Nor downward entailing: the single preference `Set.univ` is not a preference for `{x}`. -/
+/-- Nor is it downward entailing, since the single preference `Set.univ` is not a preference for
+`{x}`. -/
 theorem want_not_anti [Nontrivial W] :
     ¬ ∀ (P : Unit → W → PreferenceStructure W) (p q : Set W) (w : W),
       p ⊆ q → Want P () q w → Want P () p w := by
@@ -124,7 +125,7 @@ theorem want_both (p q : Set W) :
   rw [PreferenceStructure.maxElts_discrete]
   exact ⟨Or.inl rfl, Or.inr rfl⟩
 
-/-- Levinson's Paris and Rome, (56) and (58), on the effective reading, §5.2: two effective
+/-- In Levinson's Paris and Rome, (56) and (58), on the effective reading, §5.2, two effective
 preferences leave no room for a third that is incompatible with their conjunction, since the
 maximal elements of a consistent structure are jointly compatible with the agent's beliefs. -/
 theorem no_third_effective {r : Set W} (hC : (P a w).Consistent (B w)) (hp : Want P a p w)
@@ -138,7 +139,7 @@ inconsistent. -/
 def threeWay : PreferenceStructure (Fin 3) :=
   PreferenceStructure.discrete {{w | w ≠ 2}, {w | w ≠ 0}, {w | w ≠ 1}}
 
-/-- Footnote 29: consistency (66) is stronger than pairwise compatibility, which is what the
+/-- By footnote 29, consistency (66) is stronger than pairwise compatibility, which is what the
 weaker version of [condoravdi-lauer-2011] leaves. -/
 theorem threeWay_pairwise_not_consistent :
     (∀ p ∈ threeWay.prefs, ∀ q ∈ threeWay.prefs, (p ∩ q).Nonempty) ∧
@@ -159,7 +160,7 @@ effective-preference source of (88) instead varies from world to world, footnote
 theorem designatedGoal_eq {f : ModalBase W} {p : W → Prop}
     (h : ∃ v ∈ accessibleWorlds f w, p v) :
     bestWorlds f (λ _ => [p]) w = accessibleWorlds (restrictedBase f p) w := by
-  rw [restricted_accessible_eq, bestWorlds, bestAmong_eq_of_exists]
+  rw [accessibleWorlds_restrictedBase, bestWorlds, bestAmong_eq_of_exists]
   · ext u
     simp
   · obtain ⟨v, hv, hp⟩ := h
@@ -178,26 +179,27 @@ theorem single_modal_strengthening {f : ModalBase W} {g : OrderingSource W} {α 
     ∀ u ∈ bestWorlds (restrictedBase f α) g w, ¬ β u := by
   intro u hu hβ
   have hu' := mem_accessibleWorlds_restrictedBase.1 hu.1
-  exact h₂ u (mem_bestWorlds_of_subset (λ v hv => restrictor_monotone f α _ w (λ _ h => h.1) v hv)
+  exact h₂ u (mem_bestWorlds_of_subset
+    (fun v hv ↦ accessibleWorlds_restrictedBase_mono f w (fun _ h ↦ h.1) hv)
     hu (mem_accessibleWorlds_restrictedBase.2 ⟨hu'.1, hu'.2, hβ⟩)) (h₁ u hu)
 
 /-! ### The analysis -/
 
-/-- The teleological construal of the priority modal, §7.1: the prejacent holds throughout the
+/-- On the teleological construal of the priority modal, §7.1, the prejacent holds throughout the
 worlds of the modal base that best realize the agent's effective preferences at the world of
 evaluation, the ordering source `g_epA(v) = max[EP(a, v)]`. -/
 def Teleological (f : ModalBase W) (P : A → W → PreferenceStructure W) (a : A) (q : Set W)
     (v : W) : Prop :=
   (P a v).best (accessibleWorlds f v) ⊆ q
 
-/-- (88): the covert necessity over the speaker's beliefs, ordered by stereotypicality and
+/-- (88) is the covert necessity over the speaker's beliefs, ordered by stereotypicality and
 restricted by the effective preference for `p`, with the teleological modal over the historical
 alternatives in its scope. -/
 def Anankastic (f₁ : ModalBase W) (g₁ : OrderingSource W) (f₂ : ModalBase W)
     (P : A → W → PreferenceStructure W) (a : A) (p q : Set W) (w : W) : Prop :=
   conditionalNecessity f₁ g₁ (Want P a p) (Teleological f₂ P a q) w
 
-/-- (90): under consistency, an effective preference for `p` excludes one for any `q` the agent
+/-- By (90), under consistency, an effective preference for `p` excludes one for any `q` the agent
 believes incompatible with `p`. -/
 theorem want_disjoint (hC : ∀ w, (P a w).Consistent (B w)) (h : ∀ w, B w ∩ (p ∩ q) = ∅) :
     Disjoint {w | Want P a p w} {w | Want P a q w} :=
@@ -252,8 +254,8 @@ inductive Train
   | aTrain | path
   deriving DecidableEq
 
-/-- A world: the addressee's goal, the train taken, and whether the facts hold, the A train going
-to Harlem and the PATH train to Hoboken. -/
+/-- A world records the addressee's goal, the train taken, and whether the facts hold, the A
+train going to Harlem and the PATH train to Hoboken. -/
 structure World where
   /-- The addressee's effective goal. -/
   goal : Goal
@@ -282,18 +284,18 @@ def Goal.dest : Goal → Set World
   | .harlem => HobokenScenario.harlem
   | .hoboken => HobokenScenario.hoboken
 
-/-- The addressee's effective preference structure: the single preference for the goal. -/
+/-- The addressee's effective preference structure is the single preference for the goal. -/
 def ep : Unit → World → PreferenceStructure World :=
   λ _ w => PreferenceStructure.single w.goal.dest
 
-/-- The addressee's beliefs: the facts hold. -/
+/-- The addressee believes that the facts hold. -/
 def belief : World → Set World := λ _ => {v | v.facts = true}
 
-/-- The speaker's beliefs: the facts hold. -/
+/-- The speaker believes that the facts hold. -/
 def fBelS : ModalBase World := λ _ => [λ v => v.facts = true]
 
-/-- The historical alternatives before boarding: the goal and the facts are settled, the train
-is not. -/
+/-- In the historical alternatives before boarding the goal and the facts are settled and the
+train is not. -/
 def fHist : ModalBase World := λ v => [λ u => u.goal = v.goal, λ u => u.facts = v.facts]
 
 /-- The world where the facts hold and the addressee is heading for Hoboken. -/
@@ -317,7 +319,7 @@ theorem belief_inter_harlem_hoboken (v : World) : belief v ∩ (harlem ∩ hobok
   ext ⟨_, t, f⟩
   cases t <;> cases f <;> simp [belief, harlem, hoboken]
 
-/-- At the Hoboken world the addressee wants Hoboken, so by (90) not Harlem: the world is in
+/-- At the Hoboken world the addressee wants Hoboken, so by (90) not Harlem; the world is in
 the speaker's belief state and out of the antecedent's restriction of it, §7.1.1, so the
 actual preference never reaches the priority modal. -/
 theorem w₀_excluded :
@@ -369,7 +371,7 @@ theorem saebo_harlem :
     ¬ necessity fBelS (λ _ => [(· ∈ harlem), (· ∈ hoboken)]) (· ∈ aTrain) w₀ :=
   not_necessity_cons (List.mem_singleton_self _) not_harlem_of_hoboken w₀_mem_bestWorlds rfl nofun
 
-/-- On the same analysis (14) comes out true: some best world takes the PATH train. -/
+/-- On the same analysis (14) comes out true, since some best world takes the PATH train. -/
 theorem saebo_path :
     possibility fBelS (λ _ => [(· ∈ harlem), (· ∈ hoboken)]) (· ∈ path) w₀ :=
   ⟨w₀, mem_bestWorlds_cons (List.mem_singleton_self _) not_harlem_of_hoboken w₀_mem_bestWorlds
@@ -397,7 +399,7 @@ inductive Interpretation
   | anankastic | nearAnankastic | nonAnankastic
   deriving DecidableEq
 
-/-- The relation the prejacent bears to the goal, §7.1.2: a means to it, a precondition for it,
+/-- The relation the prejacent bears to the goal, §7.1.2, is a means to it, a precondition for it,
 a means to a strengthened goal, a consequence of it, a specialization of it, or none. -/
 inductive Implication
   | means | precondition | strengthenedGoal | consequence | specialization | none
@@ -430,14 +432,14 @@ def Construal.ofRow (row : LinguisticExample) : Option Construal := do
       ("nearAnankastic", .nearAnankastic), ("nonAnankastic", .nonAnankastic)],
     ← row.parse? "implication" implications⟩
 
-/-- §7.2.1: an anankastic interpretation arises only when *want* targets effective preferences
+/-- By §7.2.1, an anankastic interpretation arises only when *want* targets effective preferences
 and the modal is construed teleologically over the same agent's effective preferences, (88). -/
 theorem anankastic_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "construal" →
     ∃ c ∈ Construal.ofRow row,
       (c.interpretation = .anankastic → c.want = .effective ∧ c.modal = .teleological) := by
   decide
 
-/-- §7.1.2: with that setting fixed, anankastics and the near-anankastics of §4 differ only in
+/-- By §7.1.2, with that setting fixed, anankastics and the near-anankastics of §4 differ only in
 the implication the temporal relation of goal and prejacent invites, a means or a precondition
 for the former, a strengthened goal, a consequence or a specialization for the latter. -/
 theorem implication_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "construal" →
@@ -451,7 +453,7 @@ def WantReading.ofRow (row : LinguisticExample) : Option WantReading := do
   guard (row.feature? "construction" = some "incompatibleWants")
   row.parse? "construal" [("mere", WantReading.mere), ("effective", .effective)]
 
-/-- (52) to (55): two wants the agent knows to be incompatible are coherent on the mere-desire
+/-- In (52) to (55), two wants the agent knows to be incompatible are coherent on the mere-desire
 reading, `want_both`, and not on the effective one, since maximal elements of a consistent
 structure are jointly compatible with the agent's beliefs,
 `PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`. -/
@@ -470,7 +472,7 @@ def Mood.ofRow (row : LinguisticExample) : Option Mood := do
   guard (row.feature? "construction" = some "mood")
   row.parse? "mood" [("indicative", Mood.indicative), ("subjunctive", .subjunctive)]
 
-/-- (91) and (98): when the speaker knows the agent lacks the hypothesized preference, the
+/-- In (91) and (98), when the speaker knows the agent lacks the hypothesized preference, the
 antecedent is epistemically impossible, the conditional vacuously true, `anankastic_of_not_want`,
 and the constraint on indicatives applies, for conditionals and purpose constructions alike. -/
 theorem mood_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "mood" →
@@ -482,7 +484,7 @@ def Implication.ofRow (row : LinguisticExample) : Option Implication := do
   guard (row.feature? "construction" = some "purpose")
   row.parse? "implication" implications
 
-/-- §7.1.3: purpose constructions admit means and preconditions; teleological consequences are
+/-- By §7.1.3, purpose constructions admit means and preconditions; teleological consequences are
 excluded because the prejacent cannot be subsequent to the goal, and the infelicity with
 specializations is data the paper leaves open. -/
 theorem purpose_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "purpose" →
