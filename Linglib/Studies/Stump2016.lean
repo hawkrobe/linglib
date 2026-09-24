@@ -24,7 +24,9 @@ and III are realized through four morphomic properties, the past morphomes a to 
 property mappings that differ by one morphome (`pmII`, `pmIII`): the indefinite past of
 WUP and the recent past of WUPH share the past b form correspondent and inflect alike
 (`kashmiri_inflect_alike`), as do the remote past of WUP and the indefinite past of WUPH
-(`kashmiri_inflect_alike_pastC`). The form cells are realized by the PFM block cascade of
+(`kashmiri_inflect_alike_pastC`). Content cells carry the tenses and form cells the morphomes,
+and within one conjugation the preterites keep distinct form correspondents
+(`linkII_not_syncretic`). The form cells are realized by the PFM block cascade of
 `Morphology.Paradigm.Function`.
 
 ## Implementation notes
@@ -32,7 +34,9 @@ WUP and the recent past of WUPH share the past b form correspondent and inflect 
 The Latin cells are abstracted to voice and agreement, with the inflection-class index and
 tense, aspect and mood held constant, and no realizations are attached to the Latin
 linkages. The Kashmiri forms and their stem-plus-suffix segmentation are the book's
-display of Grierson's paradigms, with the first person singular masculine exponents only.
+display of Grierson's paradigms, with the first person singular masculine exponents only. The
+Kashmiri property mappings act property by property, which agrees with the book's mappings on
+every property set with a single tense.
 
 ## References
 
@@ -81,15 +85,15 @@ inductive LatinStem where
 /-- The deponent linkage of *cōnārī* has a single stem and the voice-flipping
 property mapping `pm2c` ([stump-2016] §12.1), which sends an active content cell
 to a passive form cell. -/
-def conariLinkage : Linkage LatinVerb LatinStem Cell where
+def conariLinkage : Linkage LatinVerb LatinStem Cell Cell where
   realize := fun _ _ ↦ {.cona}
-  pm := λ _ σ => { σ with voice := .passive }
+  pm := fun _ σ ↦ { σ with voice := .passive }
 
 /-- The regular linkage of *parāre* has a single stem and the identity property
 mapping, canonical on the voice axis ([stump-2016] §7.1). -/
-def parareLinkage : Linkage LatinVerb LatinStem Cell where
+def parareLinkage : Linkage LatinVerb LatinStem Cell Cell where
   realize := fun _ _ ↦ {.para}
-  pm := λ _ σ => σ
+  pm := fun _ σ ↦ σ
 
 /-- `conariContentCells` lists *cōnārī*'s six active content cells ([stump-2016] Table 12.2). -/
 def conariContentCells : List Cell :=
@@ -98,8 +102,8 @@ def conariContentCells : List Cell :=
 
 /-- The regular verb's linkage is canonical, property-set preserving (`pm = id`)
 and stem invariant ([stump-2016] §7.1, characteristics (2a)–(2b)). -/
-theorem parareLinkage_isCanonical : parareLinkage.IsCanonical :=
-  Linkage.canonical_isCanonical (λ _ : LatinVerb => LatinStem.para)
+theorem parareLinkage_isCanonical : parareLinkage.IsCanonical id :=
+  Linkage.canonical_isCanonical Function.injective_id fun _ : LatinVerb ↦ LatinStem.para
 
 /-- The deponent property mapping flips voice on every active cell. -/
 theorem conari_pm_flips_voice (l : LatinVerb) (σ : Cell) :
@@ -114,7 +118,7 @@ theorem conari_deviates_on_every_active_cell (l : LatinVerb) (σ : Cell)
   exact absurd this (by decide)
 
 /-- Hence the deponent linkage is not property-preserving, so not canonical. -/
-theorem conariLinkage_not_canonical : ¬ conariLinkage.IsCanonical := by
+theorem conariLinkage_not_canonical : ¬ conariLinkage.IsCanonical id := by
   rintro ⟨-, -, -, -, hpp⟩
   exact conari_deviates_on_every_active_cell .conari ⟨.s1, .active⟩ rfl (hpp _ _)
 
@@ -148,100 +152,119 @@ open Morphology.Exponence Morphology.PFM
 inductive KVerb | wup | wuph
   deriving DecidableEq, Fintype
 
-/-- `KFeat` has the content tenses (recent, indefinite, remote preterite), the morphomic
-form properties ('past a'–'past d'), and 1sg masculine agreement. -/
-inductive KFeat
+/-- The content properties of `KContent` are the recent, indefinite and remote preterites and
+1sg masculine agreement. -/
+inductive KContent
   | recentPast | indefPast | remotePast
+  | p1 | sg | masc
+  deriving DecidableEq, Fintype
+
+/-- The form properties of `KForm` are the morphomes 'past a' to 'past d' and 1sg masculine
+agreement. -/
+inductive KForm
   | pastA | pastB | pastC | pastD
   | p1 | sg | masc
   deriving DecidableEq, Fintype
 
-open KVerb KFeat
+open KVerb
 
 /-- `stemOf` gives each verb its stem. -/
 def stemOf : KVerb → String
   | wup => "wup"
   | wuph => "wuph"
 
-/-- The property mapping for Conjugation II ([stump-2016] Ch. 8) sends the recent
-past to 'past a', the indefinite past to 'past b' and the remote past to 'past c'. -/
-def pmII (σ : Finset KFeat) : Finset KFeat :=
-  if recentPast ∈ σ then insert pastA (σ.erase recentPast)
-  else if indefPast ∈ σ then insert pastB (σ.erase indefPast)
-  else if remotePast ∈ σ then insert pastC (σ.erase remotePast)
-  else σ
+/-- Conjugation II sends the recent past to 'past a', the indefinite past to 'past b' and the
+remote past to 'past c', and each agreement property to itself. -/
+def morphomeII : KContent → KForm
+  | .recentPast => .pastA | .indefPast => .pastB | .remotePast => .pastC
+  | .p1 => .p1 | .sg => .sg | .masc => .masc
 
-/-- The property mapping for Conjugation III ([stump-2016] Ch. 8) sends the recent
-past to 'past b', the indefinite past to 'past c' and the remote past to 'past d'.
-The one-morphome shift from `pmII` is what makes the two conjugations' preterites
-interleave. -/
-def pmIII (σ : Finset KFeat) : Finset KFeat :=
-  if recentPast ∈ σ then insert pastB (σ.erase recentPast)
-  else if indefPast ∈ σ then insert pastC (σ.erase indefPast)
-  else if remotePast ∈ σ then insert pastD (σ.erase remotePast)
-  else σ
+/-- Conjugation III sends the recent past to 'past b', the indefinite past to 'past c' and the
+remote past to 'past d', and each agreement property to itself. -/
+def morphomeIII : KContent → KForm
+  | .recentPast => .pastB | .indefPast => .pastC | .remotePast => .pastD
+  | .p1 => .p1 | .sg => .sg | .masc => .masc
+
+/-- The property mapping for Conjugation II ([stump-2016] Ch. 8) replaces each content property
+by its image under `morphomeII`. -/
+def pmII (σ : Finset KContent) : Finset KForm := σ.image morphomeII
+
+/-- The property mapping for Conjugation III ([stump-2016] Ch. 8) replaces each content property
+by its image under `morphomeIII`. The one-morphome shift from `pmII` is what makes the two
+conjugations' preterites interleave. -/
+def pmIII (σ : Finset KContent) : Finset KForm := σ.image morphomeIII
 
 /-- The form paradigm has a 1sg masculine exponent for each morphome, read off the
 stem+suffix segmentation (`wupus`, `wupyōs`, `wupyās`, `wuphiyās`). -/
-def formBlock : Block KVerb String (Finset KFeat) :=
-  [ ⟨Finset.univ, {pastA, p1, sg, masc}, .const (· ++ "us")⟩,
-    ⟨Finset.univ, {pastB, p1, sg, masc}, .const (· ++ "yōs")⟩,
-    ⟨Finset.univ, {pastC, p1, sg, masc}, .const (· ++ "yās")⟩,
-    ⟨Finset.univ, {pastD, p1, sg, masc}, .const (· ++ "iyās")⟩,
-    (identityDefault : PFM.Rule KVerb (Finset KFeat) (Action String (Finset KFeat))) ]
+def formBlock : Block KVerb String (Finset KForm) :=
+  [ ⟨Finset.univ, {.pastA, .p1, .sg, .masc}, .const (· ++ "us")⟩,
+    ⟨Finset.univ, {.pastB, .p1, .sg, .masc}, .const (· ++ "yōs")⟩,
+    ⟨Finset.univ, {.pastC, .p1, .sg, .masc}, .const (· ++ "yās")⟩,
+    ⟨Finset.univ, {.pastD, .p1, .sg, .masc}, .const (· ++ "iyās")⟩,
+    (identityDefault : PFM.Rule KVerb (Finset KForm) (Action String (Finset KForm))) ]
 
 /-- A form cell `⟨Z, τ⟩` realizes as the value of the PFM1 paradigm function on the
 stem `Z` at the morphomic property set `τ`. -/
-def realizeForm (z : String) (τ : Finset KFeat) : String :=
-  (paradigmFunction (λ _ => wup) (λ _ => z) [formBlock] (wup, τ)).1
+def realizeForm (z : String) (τ : Finset KForm) : String :=
+  (paradigmFunction (fun _ ↦ wup) (fun _ ↦ z) [formBlock] (wup, τ)).1
 
 /-- The Conjugation II linkage has the single stem and the property mapping `pmII`. -/
-def linkII : Linkage KVerb String (Finset KFeat) where
+def linkII : Linkage KVerb String (Finset KContent) (Finset KForm) where
   realize l _ := {stemOf l}
   pm _ := pmII
 
 /-- The Conjugation III linkage has the single stem and the property mapping `pmIII`. -/
-def linkIII : Linkage KVerb String (Finset KFeat) where
+def linkIII : Linkage KVerb String (Finset KContent) (Finset KForm) where
   realize l _ := {stemOf l}
   pm _ := pmIII
 
 /-- WUP's recent past realizes as `wupus` through 'past a'. -/
-example : linkII.realized realizeForm wup {recentPast, p1, sg, masc}
-    = {("wupus", {pastA, p1, sg, masc})} := by decide
+example : linkII.realized realizeForm wup {.recentPast, .p1, .sg, .masc}
+    = {("wupus", {.pastA, .p1, .sg, .masc})} := by decide
 
 /-- WUP's indefinite past realizes as `wupyōs` through 'past b'. -/
-example : linkII.realized realizeForm wup {indefPast, p1, sg, masc}
-    = {("wupyōs", {pastB, p1, sg, masc})} := by decide
+example : linkII.realized realizeForm wup {.indefPast, .p1, .sg, .masc}
+    = {("wupyōs", {.pastB, .p1, .sg, .masc})} := by decide
 
 /-- WUP's remote past realizes as `wupyās` through 'past c'. -/
-example : linkII.realized realizeForm wup {remotePast, p1, sg, masc}
-    = {("wupyās", {pastC, p1, sg, masc})} := by decide
+example : linkII.realized realizeForm wup {.remotePast, .p1, .sg, .masc}
+    = {("wupyās", {.pastC, .p1, .sg, .masc})} := by decide
 
 /-- WUPH's recent past realizes as `wuphyōs` through 'past b'. -/
-example : linkIII.realized realizeForm wuph {recentPast, p1, sg, masc}
-    = {("wuphyōs", {pastB, p1, sg, masc})} := by decide
+example : linkIII.realized realizeForm wuph {.recentPast, .p1, .sg, .masc}
+    = {("wuphyōs", {.pastB, .p1, .sg, .masc})} := by decide
 
 /-- WUPH's indefinite past realizes as `wuphyās` through 'past c'. -/
-example : linkIII.realized realizeForm wuph {indefPast, p1, sg, masc}
-    = {("wuphyās", {pastC, p1, sg, masc})} := by decide
+example : linkIII.realized realizeForm wuph {.indefPast, .p1, .sg, .masc}
+    = {("wuphyās", {.pastC, .p1, .sg, .masc})} := by decide
 
 /-- WUPH's remote past realizes as `wuphiyās` through 'past d'. -/
-example : linkIII.realized realizeForm wuph {remotePast, p1, sg, masc}
-    = {("wuphiyās", {pastD, p1, sg, masc})} := by decide
+example : linkIII.realized realizeForm wuph {.remotePast, .p1, .sg, .masc}
+    = {("wuphiyās", {.pastD, .p1, .sg, .masc})} := by decide
 
 /-- WUP's indefinite past and WUPH's recent past have the same form correspondent
 property set, 'past b' 1sg masculine for both, even though their tenses differ
 ([stump-2016] Ch. 8). This is why they inflect alike (`-yōs`), the content-to-form
 mismatch the paradigm-linkage model captures. -/
 theorem kashmiri_inflect_alike :
-    (linkII.corr wup {indefPast, p1, sg, masc}).image Prod.snd
-      = (linkIII.corr wuph {recentPast, p1, sg, masc}).image Prod.snd := by decide
+    (linkII.corr wup {.indefPast, .p1, .sg, .masc}).image Prod.snd
+      = (linkIII.corr wuph {.recentPast, .p1, .sg, .masc}).image Prod.snd := by decide
 
 /-- In the second interleaving, WUP's remote past and WUPH's indefinite past share
 the 'past c' correspondent and inflect alike (`-yās`). -/
 theorem kashmiri_inflect_alike_pastC :
-    (linkII.corr wup {remotePast, p1, sg, masc}).image Prod.snd
-      = (linkIII.corr wuph {indefPast, p1, sg, masc}).image Prod.snd := by decide
+    (linkII.corr wup {.remotePast, .p1, .sg, .masc}).image Prod.snd
+      = (linkIII.corr wuph {.indefPast, .p1, .sg, .masc}).image Prod.snd := by decide
+
+/-- Conjugation II sends distinct content properties to distinct form properties. -/
+theorem morphomeII_injective : Function.Injective morphomeII := by decide
+
+/-- Within Conjugation II the three preterites keep distinct form correspondents, as WUP's
+`wupus`, `wupyōs` and `wupyās` show, so the linkage is not syncretic: the shared
+correspondents of `kashmiri_inflect_alike` cross the two conjugations. -/
+theorem linkII_not_syncretic : ¬ linkII.IsSyncretic :=
+  fun h ↦ linkII.not_isInjective_iff.mpr h <|
+    Linkage.isInjective_of_injective_pm fun _ ↦ Finset.image_injective morphomeII_injective
 
 end Kashmiri
 
