@@ -27,8 +27,8 @@ illative have alternants that the shape of the stem selects: the partitive -tA a
 
 ## Implementation notes
 
-Which alternant a stem takes is not represented, and the form of an ending before a possessive
-ending is `Finnish.Possession.caseEnding`.
+Which alternant a stem takes is not represented. The endings after the plural and before a
+possessive ending are in `Finnish.Nominal`.
 
 ## References
 

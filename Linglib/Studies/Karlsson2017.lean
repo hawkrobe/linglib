@@ -2,8 +2,7 @@ module
 
 public import Linglib.Data.Examples.Karlsson2017
 public import Linglib.Data.Forms.Karlsson2017
-public import Linglib.Fragments.Finnish.Infinitives
-public import Linglib.Fragments.Finnish.Possession
+public import Linglib.Fragments.Finnish.Morphotactics
 public import Linglib.Semantics.Aspect.Defs
 
 /-!
@@ -22,13 +21,15 @@ The partitive is the stronger object case (`case_eq_part_iff`), and in an affirm
 about a definite quantity the object is partitive exactly when the action is irresultative
 (`part_iff_atelic`), the case marking of aspect the grammar describes.
 
-The word forms of the grammar's tables of endings are derived from the Finnish Fragment
-(`forms_derived`). A form is its stem followed by the function ending of an infinitive, an ending
-of its case and a possessive ending, in the archiphonemic spelling of the tables, and vowel copy
-and palatal harmony give its surface. The tables are those of the cases, the possessive endings
-and the structure of nominals and of non-finite forms (section 3), of the possessive endings
-after a case ending (section 14.1), of the A infinitive translative (section 22.2.2) and of the
-MA infinitive (section 22.4.1).
+The word forms of the grammar's tables of endings are words of the Finnish Fragment's
+morphotactics (`wellFormed_forms`) and derived by it (`forms_derived`). A form is its stem
+followed by the function ending of an infinitive, a number, a case and a possessive ending and
+a clitic, in the order of the grammar's diagrams and in the archiphonemic spelling of its
+tables, and vowel copy and palatal harmony give its surface. The tables are those of the cases,
+the possessive endings and the structure of nominals and of non-finite forms (section 3), of the
+plural (section 5.4), of the partitive and genitive plural (section 13.1.2), of the possessive
+endings after a case ending (section 14.1), of the A infinitive translative (section 22.2.2) and
+of the MA infinitive (section 22.4.1).
 
 ## Implementation notes
 
@@ -36,10 +37,9 @@ Resultative and irresultative action are read as the telic and atelic values of
 `Aspect.Telicity`. The grammar lists the constructions under which a singular total object
 drops its ending rather than unifying them; `Clause` lists them likewise.
 
-The forms of the tables are those with no plural or clitic ending, and none in which a possessive
-ending follows an alternant of the partitive or of the illative other than the first, since the
-Fragment represents neither the number and clitic endings nor the choice of alternant before a
-possessive ending.
+The forms of the tables are those whose genitive plural, if any, follows the plural -i, since
+the Fragment does not represent -ten on the consonant stem, as in *nais-ten* 'of the women'. A
+nominative form has no case ending.
 
 ## References
 
@@ -161,23 +161,29 @@ section WordStructure
 
 open Finnish Phonology Data.Forms
 
-/-- A word of the tables: its stem, the infinitive built on it, its case and its possessor. -/
+/-- A word of the tables: its stem and its endings. -/
 structure Word where
   stem : List Segment
-  infinitive : Option Infinitive
-  case : Case
-  possessor : Option Agreement.Bundle
+  endings : List (Σ σ, Nominal.Exponent σ)
 
-def caseLabels : List (String × Case) :=
-  [("nom", .nom), ("gen", .gen), ("acc", .acc), ("part", .part), ("ine", .ine), ("ela", .ela),
-    ("ill", .ill), ("ade", .ade), ("abl", .abl), ("all", .all), ("ess", .ess),
-    ("transl", .transl), ("com", .com), ("abess", .abess), ("inst", .inst)]
+/-- The case endings, the nominative having none. -/
+def caseLabels : List (String × Option Case) :=
+  [("nom", none), ("gen", some .gen), ("acc", some .acc), ("part", some .part),
+    ("ine", some .ine), ("ela", some .ela), ("ill", some .ill), ("ade", some .ade),
+    ("abl", some .abl), ("all", some .all), ("ess", some .ess), ("transl", some .transl),
+    ("com", some .com), ("abess", some .abess), ("inst", some .inst)]
 
 def possessorLabels : List (String × Agreement.Bundle) :=
   [("1sg", .pn .first .singular), ("2sg", .pn .second .singular), ("3sg", .pn .third .singular),
     ("1pl", .pn .first .plural), ("2pl", .pn .second .plural), ("3pl", .pn .third .plural)]
 
 def infinitiveLabels : List (String × Infinitive) := [("a", .a), ("e", .e), ("ma", .ma)]
+
+def numberLabels : List (String × Nominal.Exponent .number) :=
+  [("t", .nominativePlural), ("i", .plural)]
+
+def cliticLabels : List (String × Clitic) :=
+  [("kO", .kO), ("kin", .kin), ("kAAn", .kAAn), ("hAn", .hAn), ("pA", .pA)]
 
 /-- The phonemes a word writes, a capital as its small letter. -/
 def spell (w : String) : Option (List Segment) := (w.toList.map Char.toLower).mapM ofChar
@@ -192,27 +198,27 @@ def optionalColumn {α : Type} (f : Form) (key : String) (table : List (String �
 /-- A word from a form's segmentation and columns. -/
 def Word.ofForm (f : Form) : Option Word := do
   let stem ← f.segments.head?.bind spell
-  let c ← (f.column? "Case").bind (List.lookup · caseLabels)
   let inf ← optionalColumn f "Infinitive" infinitiveLabels
+  let num ← optionalColumn f "Number" numberLabels
+  let c ← (f.column? "Case").bind (List.lookup · caseLabels)
   let p ← optionalColumn f "Possessor" possessorLabels
-  some ⟨stem, inf, c, p⟩
-
-/-- The surface forms the Fragment gives a word: its stem with the function ending of its
-infinitive, followed by an ending of its case, or by its case and possessive endings. -/
-def Word.forms (w : Word) : List (List Segment) :=
-  let base := (w.infinitive.map (·.base w.stem)).getD w.stem
-  let endings := match w.possessor with
-    | some p => (Possession.inflection w.case p).toList
-    | none => Declension.endings w.case
-  endings.map fun e ↦ surface (base ++ e)
+  let k ← optionalColumn f "Clitic" cliticLabels
+  some ⟨stem, (inf.map (⟨_, .infinitive ·⟩)).toList ++ (num.map (⟨_, ·⟩)).toList ++
+    (c.map (⟨_, .case ·⟩)).toList ++ (p.map (⟨_, .possessive ·⟩)).toList ++
+    (k.map (⟨_, .clitic ·⟩)).toList⟩
 
 /-- Every form of the tables is a word. -/
 theorem isSome_ofForm : ∀ f ∈ Forms.all, (Word.ofForm f).isSome := by
   decide +kernel
 
+/-- The endings of each form make a word. -/
+theorem wellFormed_forms :
+    ∀ f ∈ Forms.all, ∀ w ∈ Word.ofForm f, Nominal.WellFormed w.endings := by
+  decide +kernel
+
 /-- The Fragment gives each form of the tables. -/
-theorem forms_derived :
-    ∀ f ∈ Forms.all, ∀ w ∈ Word.ofForm f, ∃ x ∈ spell f.form, x ∈ w.forms := by
+theorem forms_derived : ∀ f ∈ Forms.all, ∀ w ∈ Word.ofForm f,
+    ∃ x ∈ spell f.form, x ∈ Nominal.realize w.stem w.endings := by
   decide +kernel
 
 end WordStructure
