@@ -1,240 +1,408 @@
 module
 
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.NormNum
+public import Linglib.Core.Probability.Distributions.Bernoulli
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # Paape and Vasishth (2026): Context Ameliorates but Does Not Eliminate Garden-Pathing
 
-This file formalizes the latent-process model of [paape-vasishth-2026], a replication of the
-complement-clause/relative-clause study of [altmann-garnham-dennis-1992] in which referential
-context, one or two candidate referents for a definite, is crossed with disambiguation
-towards the complement clause, the relative clause, or an unambiguous relative clause
-(`Disambiguation`, `ReferentialContext`, `Condition.IsMatch`). Reading times at the
-disambiguating region are a mixture over the leaves of a multinomial processing tree: an
-inattentive reader guesses, an attentive one is garden-pathed with some probability, a
-garden-pathed reader triages or reanalyses, reanalysis is overt, a regression, or covert and
-in situ, covert reanalysis may be postponed to the spillover region, and either kind may fail
-(`Outcome`, `Params.prob`). The leaf probabilities sum to one and the marginal probabilities
-of garden-pathing, of a regression, and of acceptance are the products the tree prescribes
-(`Params.prob_sum`, `Params.mass_gardenPathed`, `Params.mass_regression`,
-`Params.accept_eq`). The reason for the mixture is that a comparison of condition means
-cannot separate an effect of context on first-pass attachment from an effect on reanalysis
-cost: two parameterizations differing in exactly those two quantities have the same mean
-reading time and different mixing proportions (`mean_not_identifiable`).
+This file formalizes the multinomial processing tree of Paape and Vasishth. A trial follows a
+route through a tree of Bernoulli decisions, and the route fixes the reading-time costs, whether
+the reader regresses, and the acceptability judgment. The paper fits the tree to a replication
+of Altmann, Garnham, and Dennis's study, which crosses referential context with complement- and
+relative-clause disambiguation. Its case for the tree is that condition means cannot tell an
+effect of context on attachment from an effect on reanalysis cost.
 
-The fitted model without triage predicts held-out data better than factorial models and than
-surprisal from four language models, and its estimates support three conclusions:
-relative-clause disambiguation is garden-pathed more often than complement-clause
-disambiguation in both contexts; a supporting context lowers the relative-clause garden-path
-rate without eliminating it, while raising the complement-clause rate; and covert reanalysis
-is costlier for the relative clause than for the complement clause and costlier under
-mismatch than under match, so context acts on attachment and on reanalysis alike.
+## Main definitions
+
+* `ReferentialContext.Supports`: a context supports an analysis when its definite refers and,
+  for a relative clause, the bare definite does not.
+* `tree`: the tree of Fig. 1, as a measure on routes.
+* `Costs.disambiguating`, `Costs.spillover`: the cost a route pays at each region.
+
+## Main results
+
+* `Condition.isMatch_iff`: the match coding of the design follows from `Supports`.
+* `tree_real_gardenPathed`, `tree_real_regresses`, `tree_real_accepts`: the tree's marginals.
+* `integral_disambiguating_tree`: the mean cost at the disambiguating region.
+* `means_not_identifiable`: halving the garden-path probability and halving the covert
+  reanalysis cost can leave every condition mean equal and the mixtures different.
 
 ## Implementation notes
 
-Parameters and costs are rational and unconstrained, since the tree's identities do not need
-them to lie in the unit interval. The posterior estimates, the Bayes factors of the factorial
-analysis, and the cross-validation ranking are reported in prose only, and the inattentive
-reader's acceptance bias is a parameter of the tree rather than the value the paper fixes
-from its earlier work.
+Which cells match is derived from when each analysis's definite refers: with two women the bare
+definite fails its uniqueness presupposition, as Altmann and Steedman argue. Costs are added
+above non-decision time. The mixture's component distributions, the predictor structure across
+conditions, and the baseline regression probability of the text are not modeled, and the
+inattentive reader's bias is a free parameter rather than the estimate from Paape and
+Vasishth's earlier model. The fitted estimates and the model comparisons are not formalized.
 
 ## References
 
 * [paape-vasishth-2026]
+* [paape-vasishth-2022]
 * [altmann-garnham-dennis-1992]
+* [altmann-steedman-1988]
 -/
 
 @[expose] public section
+
+open MeasureTheory Measure ProbabilityTheory unitInterval Reference
+open scoped NNReal
 
 namespace PaapeVasishth2026
 
 /-! ### The design -/
 
-/-- The three disambiguations of the temporarily ambiguous string, *told the woman that he'd
-risked his life for ...*. -/
+/-- The string *the woman that he'd risked his life for* is disambiguated in three ways, after a
+verb that takes a clausal complement or, in the control condition, after one that does not. -/
 inductive Disambiguation where
+  /-- *He told the woman that he'd risked his life for many people in similar fires.* -/
   | complementClause
+  /-- *He told the woman that he'd risked his life for to install a smoke detector.* -/
   | relativeClause
+  /-- *He asked the woman that he'd risked his life for to install a smoke detector ...* -/
   | unambiguousRelativeClause
   deriving DecidableEq
 
-/-- The disambiguation resolves to a relative clause. -/
+/-- A disambiguation is relative when it resolves the string to a relative clause. -/
 def Disambiguation.IsRelative : Disambiguation → Prop
   | .complementClause => False
   | .relativeClause | .unambiguousRelativeClause => True
 
-instance : DecidablePred Disambiguation.IsRelative
-  | .complementClause => .isFalse id
-  | .relativeClause | .unambiguousRelativeClause => .isTrue trivial
+/-- Besides the fireman, the discourses of Table 1 introduce the woman he rescued and either a
+man or a second woman. -/
+inductive Referent where
+  /-- The woman the fireman rescued. -/
+  | rescued
+  /-- The man of the one-woman discourse. -/
+  | man
+  /-- The second woman of the two-woman discourse. -/
+  | otherWoman
+  deriving DecidableEq, Fintype
 
-/-- Whether the discourse offers the definite one candidate referent or two. -/
+/-- A discourse introduces one woman, with a man, or two women. -/
 inductive ReferentialContext where
+  /-- *An off-duty fireman was talking to a man and a woman.* -/
   | uniqueReferent
+  /-- *An off-duty fireman was talking to two women.* -/
   | nonUniqueReferents
   deriving DecidableEq
 
-/-- A context supports the relative clause when the bare definite cannot pick out its referent
-and the complement clause when it can. -/
-def ReferentialContext.Supports : ReferentialContext → Disambiguation → Prop
-  | .nonUniqueReferents, d => d.IsRelative
-  | .uniqueReferent, d => ¬ d.IsRelative
+namespace ReferentialContext
 
-instance : ∀ (r : ReferentialContext) (d : Disambiguation), Decidable (r.Supports d)
-  | .nonUniqueReferents, d => inferInstanceAs (Decidable d.IsRelative)
-  | .uniqueReferent, d => inferInstanceAs (Decidable (¬ d.IsRelative))
+/-- `c.Woman r` holds when `r` is one of the women the context `c` introduces. -/
+def Woman : ReferentialContext → Referent → Prop
+  | .uniqueReferent, r => r = .rescued
+  | .nonUniqueReferents, r => r ≠ .man
 
-/-- A cell of the three-by-two design. -/
+/-- The restrictor of the definite is *woman* under the complement-clause analysis and *woman
+that he'd risked his life for* under a relative-clause analysis. -/
+def restrictor (c : ReferentialContext) : Disambiguation → Referent → Prop
+  | .complementClause => c.Woman
+  | .relativeClause | .unambiguousRelativeClause => fun r ↦ c.Woman r ∧ r = .rescued
+
+@[simp] theorem restrictor_complementClause (c : ReferentialContext) :
+    c.restrictor .complementClause = c.Woman := rfl
+
+/-- A context supports an analysis when the analysis's definite refers and, for a relative
+clause, the bare definite does not. -/
+def Supports (c : ReferentialContext) (d : Disambiguation) : Prop :=
+  (russellIota (c.restrictor d)).isSome ∧ (d.IsRelative → russellIota c.Woman = none)
+
+/-- *The woman* refers exactly when the context has one woman. -/
+theorem russellIota_woman_isSome_iff (c : ReferentialContext) :
+    (russellIota c.Woman).isSome ↔ c = .uniqueReferent := by
+  rw [russellIota_isSome_iff]
+  cases c <;> simp [Woman, ExistsUnique]
+  decide
+
+/-- *The woman* fails to refer exactly when the context has two women. -/
+theorem russellIota_woman_eq_none_iff (c : ReferentialContext) :
+    russellIota c.Woman = none ↔ c = .nonUniqueReferents := by
+  rw [← Option.not_isSome_iff_eq_none, russellIota_woman_isSome_iff]
+  cases c <;> simp
+
+/-- *The woman that he'd risked his life for* refers in either context. -/
+theorem russellIota_restrictor_isSome (c : ReferentialContext) {d : Disambiguation}
+    (hd : d.IsRelative) : (russellIota (c.restrictor d)).isSome := by
+  have hw : c.Woman .rescued := by cases c <;> simp [Woman]
+  rw [russellIota_isSome_iff]
+  cases d <;> simp only [Disambiguation.IsRelative] at hd <;>
+    exact ⟨.rescued, ⟨hw, rfl⟩, fun _ h ↦ h.2⟩
+
+end ReferentialContext
+
+/-- A condition is a cell of the three-by-two design. -/
 structure Condition where
+  /-- The disambiguation of the target sentence. -/
   disambiguation : Disambiguation
+  /-- The referential context of the discourse. -/
   context : ReferentialContext
   deriving DecidableEq
 
-/-- Context and disambiguation match. -/
+/-- A condition matches when its context supports its disambiguation. -/
 def Condition.IsMatch (c : Condition) : Prop := c.context.Supports c.disambiguation
 
-instance (c : Condition) : Decidable c.IsMatch :=
-  inferInstanceAs (Decidable (c.context.Supports c.disambiguation))
-
-/-- The crossover of the design: two referents support the relative clause and one the
-complement clause. -/
-theorem match_cells :
-    (⟨.relativeClause, .nonUniqueReferents⟩ : Condition).IsMatch ∧
-      ¬ (⟨.relativeClause, .uniqueReferent⟩ : Condition).IsMatch ∧
-      (⟨.complementClause, .uniqueReferent⟩ : Condition).IsMatch ∧
-      ¬ (⟨.complementClause, .nonUniqueReferents⟩ : Condition).IsMatch := by
-  decide
+/-- A condition matches exactly when its context has two women and its disambiguation is a
+relative clause, or one woman and a complement clause. -/
+theorem Condition.isMatch_iff (c : Condition) :
+    c.IsMatch ↔ (c.context = .nonUniqueReferents ↔ c.disambiguation.IsRelative) := by
+  obtain ⟨d, x⟩ := c
+  cases d <;> cases x <;> simp [Condition.IsMatch, ReferentialContext.Supports,
+    Disambiguation.IsRelative, ReferentialContext.russellIota_woman_isSome_iff,
+    ReferentialContext.russellIota_woman_eq_none_iff,
+    ReferentialContext.russellIota_restrictor_isSome]
 
 /-! ### The processing tree -/
 
-/-- The leaves of the tree: each is a path of latent decisions and determines the costs paid,
-whether a regression is observed, and the response. -/
-inductive Outcome where
-  | inattentive
-  | correctFirstPass
+/-- A garden-pathed reader reanalyzes overtly, by a regression, or covertly, either in situ at
+the disambiguating region or postponed to the spillover region. -/
+inductive Reanalysis where
+  /-- Overt reanalysis rereads earlier material. -/
+  | overt
+  /-- Covert reanalysis happens in situ at the disambiguating region. -/
+  | covertImmediate
+  /-- Covert reanalysis is postponed to the spillover region. -/
+  | covertPostponed
+  deriving DecidableEq, Fintype
+
+/-- A route runs from the root of the tree of Fig. 1 to a leaf. -/
+inductive Route where
+  /-- The reader is inattentive and guesses the judgment. -/
+  | guess (accept : Bool)
+  /-- The reader adopts the correct analysis on the first pass. -/
+  | correct
+  /-- The reader is garden-pathed and rejects the sentence without reanalysis. -/
   | triage
-  | overtSuccess
-  | overtFail
-  | covertImmediateSuccess
-  | covertImmediateFail
-  | covertPostponedSuccess
-  | covertPostponedFail
-  deriving DecidableEq
+  /-- The reader is garden-pathed and reanalyzes, succeeding or failing. -/
+  | reanalysis (kind : Reanalysis) (success : Bool)
+  deriving DecidableEq, Fintype
 
-/-- The leaves. -/
-def Outcome.all : List Outcome :=
-  [.inattentive, .correctFirstPass, .triage, .overtSuccess, .overtFail,
-    .covertImmediateSuccess, .covertImmediateFail, .covertPostponedSuccess,
-    .covertPostponedFail]
+instance : MeasurableSpace Route := ⊤
+instance : DiscreteMeasurableSpace Route := ⟨fun _ ↦ trivial⟩
 
-theorem Outcome.mem_all (o : Outcome) : o ∈ Outcome.all := by cases o <;> simp [Outcome.all]
+namespace Route
 
-/-- The trial was garden-pathed. -/
-def Outcome.IsGardenPathed (o : Outcome) : Prop := o ≠ .inattentive ∧ o ≠ .correctFirstPass
+/-- `o.GardenPathed` holds when the reader on route `o` is garden-pathed. -/
+def GardenPathed : Route → Prop
+  | .triage | .reanalysis .. => True
+  | .guess _ | .correct => False
 
-/-- The trial shows a first-pass regression: only overt reanalysis rereads earlier material. -/
-def Outcome.HasRegression (o : Outcome) : Prop := o = .overtSuccess ∨ o = .overtFail
+/-- `o.Regresses` holds when route `o` shows a first-pass regression, which in the tree only
+overt reanalysis does. -/
+def Regresses : Route → Prop
+  | .reanalysis .overt _ => True
+  | _ => False
 
-/-- The attentive reader arrives at the correct analysis. -/
-def Outcome.IsSuccess (o : Outcome) : Prop :=
-  o = .correctFirstPass ∨ o = .overtSuccess ∨ o = .covertImmediateSuccess ∨
-    o = .covertPostponedSuccess
+/-- `o.Accepts` holds when route `o` ends in acceptance of the sentence. -/
+def Accepts : Route → Prop
+  | .guess b | .reanalysis _ b => b
+  | .correct => True
+  | .triage => False
 
-instance : DecidablePred Outcome.IsGardenPathed := λ _ => inferInstanceAs (Decidable (_ ∧ _))
-instance : DecidablePred Outcome.HasRegression := λ _ => inferInstanceAs (Decidable (_ ∨ _))
-instance : DecidablePred Outcome.IsSuccess := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+end Route
 
-/-- The branching probabilities: attentive reading, garden-pathing, triage rather than
-reanalysis, covert rather than overt reanalysis, postponement of covert reanalysis, success of
-each kind of reanalysis, and the inattentive reader's bias towards acceptance. -/
+/-- The parameters of the tree are the branching probabilities of Fig. 1. -/
 structure Params where
-  attentive : ℚ
-  gardenPath : ℚ
-  triage : ℚ
-  covert : ℚ
-  postpone : ℚ
-  covertSuccess : ℚ
-  overtSuccess : ℚ
-  bias : ℚ
+  /-- The probability of attentive reading. -/
+  attentive : I
+  /-- The inattentive reader's probability of accepting. -/
+  bias : I
+  /-- The probability of garden-pathing. -/
+  gardenPath : I
+  /-- The probability of triage rather than reanalysis. -/
+  triage : I
+  /-- The probability of covert rather than overt reanalysis. -/
+  covert : I
+  /-- The probability of postponing covert reanalysis. -/
+  postpone : I
+  /-- The probability that overt reanalysis succeeds. -/
+  overtSuccess : I
+  /-- The probability that covert reanalysis succeeds. -/
+  covertSuccess : I
 
-namespace Params
+/-- A decision node draws a Bernoulli variable with success probability `p` and continues the
+route as `yes` on success and as `no` otherwise. -/
+noncomputable def node (p : I) (yes no : Measure Route) : Measure Route :=
+  Ber(true, false, p).bind fun b ↦ bif b then yes else no
+
+section Node
+
+variable (p : I) (yes no : Measure Route)
+
+theorem node_eq : node p yes no = toNNReal p • yes + toNNReal (σ p) • no :=
+  bernoulliMeasure_bind _ _ _ .of_discrete
+
+@[simp] theorem node_zero : node 0 yes no = no := by simp [node_eq]
+
+@[simp] theorem node_one : node 1 yes no = yes := by simp [node_eq]
+
+@[simp] theorem node_dirac (x y : Route) : node p (dirac x) (dirac y) = Ber(x, y, p) :=
+  node_eq ..
+
+instance [IsProbabilityMeasure yes] [IsProbabilityMeasure no] :
+    IsProbabilityMeasure (node p yes no) :=
+  ⟨by simp [node_eq]⟩
+
+theorem node_real_apply [IsFiniteMeasure yes] [IsFiniteMeasure no] (s : Set Route) :
+    (node p yes no).real s = p * yes.real s + (1 - p) * no.real s := by
+  rw [node_eq, measureReal_add_apply]
+  simp [coe_symm_eq]
+
+theorem integral_node {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [IsFiniteMeasure yes] [IsFiniteMeasure no] (f : Route → E) :
+    ∫ o, f o ∂node p yes no = (p : ℝ) • ∫ o, f o ∂yes + (1 - p : ℝ) • ∫ o, f o ∂no := by
+  rw [node_eq, integral_add_measure .of_finite .of_finite]
+  simp [NNReal.smul_def, coe_symm_eq]
+
+end Node
+
+/-- Reanalysis of kind `r` succeeds with probability `s`. -/
+noncomputable abbrev reanalyze (r : Reanalysis) (s : I) : Measure Route :=
+  Ber(.reanalysis r true, .reanalysis r false, s)
+
+/-- The tree of Fig. 1 is the distribution of routes its decision nodes generate. -/
+noncomputable def tree (p : Params) : Measure Route :=
+  node p.attentive
+    (node p.gardenPath
+      (node p.triage (dirac .triage)
+        (node p.covert
+          (node p.postpone (reanalyze .covertPostponed p.covertSuccess)
+            (reanalyze .covertImmediate p.covertSuccess))
+          (reanalyze .overt p.overtSuccess)))
+      (dirac .correct))
+    Ber(.guess true, .guess false, p.bias)
+
+instance (p : Params) : IsProbabilityMeasure (tree p) := by unfold tree; infer_instance
+
+section Marginals
 
 variable (p : Params)
 
-/-- The probability of a garden-pathed trial that is reanalysed. -/
-def reanalysed : ℚ := p.attentive * p.gardenPath * (1 - p.triage)
+/-- Garden-pathing has the probability of attentive reading times that of garden-pathing. -/
+theorem tree_real_gardenPathed :
+    (tree p).real {o | o.GardenPathed} = p.attentive * p.gardenPath := by
+  simp [tree, node_real_apply, Route.GardenPathed]
 
-/-- The probability of a leaf: the product of the branch probabilities on its path. -/
-def prob : Outcome → ℚ
-  | .inattentive => 1 - p.attentive
-  | .correctFirstPass => p.attentive * (1 - p.gardenPath)
-  | .triage => p.attentive * p.gardenPath * p.triage
-  | .overtSuccess => p.reanalysed * (1 - p.covert) * p.overtSuccess
-  | .overtFail => p.reanalysed * (1 - p.covert) * (1 - p.overtSuccess)
-  | .covertImmediateSuccess => p.reanalysed * p.covert * (1 - p.postpone) * p.covertSuccess
-  | .covertImmediateFail => p.reanalysed * p.covert * (1 - p.postpone) * (1 - p.covertSuccess)
-  | .covertPostponedSuccess => p.reanalysed * p.covert * p.postpone * p.covertSuccess
-  | .covertPostponedFail => p.reanalysed * p.covert * p.postpone * (1 - p.covertSuccess)
+/-- A regression has the probability of overt reanalysis. -/
+theorem tree_real_regresses : (tree p).real {o | o.Regresses} =
+    p.attentive * p.gardenPath * (1 - p.triage) * (1 - p.covert) := by
+  simp [tree, node_real_apply, Route.Regresses]
+  ring
 
-/-- The probability of the leaves satisfying a predicate. -/
-def mass (P : Outcome → Prop) [DecidablePred P] : ℚ :=
-  (Outcome.all.map λ o => if P o then p.prob o else 0).sum
+/-- Acceptance collects the accepting guess, the correct first pass, and the successful
+reanalyses, and its probability does not depend on postponement. -/
+theorem tree_real_accepts : (tree p).real {o | o.Accepts} =
+    (1 - p.attentive) * p.bias + p.attentive * (1 - p.gardenPath + p.gardenPath *
+      (1 - p.triage) * ((1 - p.covert) * p.overtSuccess + p.covert * p.covertSuccess)) := by
+  simp [tree, node_real_apply, Route.Accepts]
+  ring
 
-/-- The leaf probabilities sum to one. -/
-theorem prob_sum : (Outcome.all.map p.prob).sum = 1 := by
-  simp [Outcome.all, prob, reanalysed]; ring
-
-/-- The probability of garden-pathing: attentive reading times the garden-path probability. -/
-theorem mass_gardenPathed : p.mass Outcome.IsGardenPathed = p.attentive * p.gardenPath := by
-  simp [mass, Outcome.all, Outcome.IsGardenPathed, prob, reanalysed]; ring
-
-/-- The probability of a regression: reanalysis that is overt. -/
-theorem mass_regression : p.mass Outcome.HasRegression = p.reanalysed * (1 - p.covert) := by
-  simp [mass, Outcome.all, Outcome.HasRegression, prob]; ring
-
-/-- The probability of acceptance: the inattentive guess, the correct first pass, and the
-successful reanalyses, postponement being immaterial to success. -/
-def accept : ℚ := p.prob .inattentive * p.bias + p.mass Outcome.IsSuccess
-
-theorem accept_eq :
-    p.accept = (1 - p.attentive) * p.bias + p.attentive * (1 - p.gardenPath) +
-      p.reanalysed * ((1 - p.covert) * p.overtSuccess + p.covert * p.covertSuccess) := by
-  simp [accept, mass, Outcome.all, Outcome.IsSuccess, prob]; ring
-
-end Params
+end Marginals
 
 /-! ### Reading times as a mixture -/
 
-/-- The costs at the disambiguating region: attending, being garden-pathed, reanalysing in
-situ, and launching a regression; postponed covert reanalysis is paid at the spillover region
-instead. -/
+/-- The costs of Fig. 1 are reading time added above non-decision time. -/
 structure Costs where
-  attention : ℚ
-  gardenPath : ℚ
-  covert : ℚ
-  regression : ℚ
+  /-- The cost of attending. -/
+  attention : ℝ≥0
+  /-- The cost of being garden-pathed. -/
+  gardenPath : ℝ≥0
+  /-- The cost of launching a regression. -/
+  regression : ℝ≥0
+  /-- The cost of covert reanalysis. -/
+  covert : ℝ≥0
 
-/-- The cost a leaf pays at the disambiguating region, above non-decision time. -/
-def Costs.at (k : Costs) : Outcome → ℚ
-  | .inattentive => 0
-  | .correctFirstPass => k.attention
-  | .triage => k.attention + k.gardenPath
-  | .overtSuccess | .overtFail => k.attention + k.gardenPath + k.regression
-  | .covertImmediateSuccess | .covertImmediateFail => k.attention + k.gardenPath + k.covert
-  | .covertPostponedSuccess | .covertPostponedFail => k.attention + k.gardenPath
+namespace Costs
 
-/-- The mean reading time at the disambiguating region: the mixture of the leaf costs. -/
-def mean (p : Params) (k : Costs) : ℚ := (Outcome.all.map λ o => p.prob o * k.at o).sum
+variable (k : Costs)
 
-/-- A condition mean cannot tell an effect on first-pass attachment from an effect on
-reanalysis cost: two parameterizations with different garden-path probabilities and different
-covert reanalysis costs have the same mean but different mixing proportions. -/
-theorem mean_not_identifiable :
-    ∃ (p p' : Params) (k k' : Costs), p.gardenPath ≠ p'.gardenPath ∧ k.covert ≠ k'.covert ∧
-      mean p k = mean p' k' ∧
-      p.prob .covertImmediateSuccess ≠ p'.prob .covertImmediateSuccess :=
-  ⟨⟨1, 1/2, 0, 1, 0, 1, 1, 1⟩, ⟨1, 1/4, 0, 1, 0, 1, 1, 1⟩, ⟨0, 0, 400, 0⟩, ⟨0, 0, 800, 0⟩,
-    by norm_num, by norm_num, by norm_num [mean, Outcome.all, Params.prob, Params.reanalysed,
-      Costs.at], by norm_num [Params.prob, Params.reanalysed]⟩
+/-- `k.disambiguating o` is the cost route `o` pays at the disambiguating region. -/
+def disambiguating : Route → ℝ
+  | .guess _ => 0
+  | .correct => k.attention
+  | .triage | .reanalysis .covertPostponed _ => k.attention + k.gardenPath
+  | .reanalysis .overt _ => k.attention + k.gardenPath + k.regression
+  | .reanalysis .covertImmediate _ => k.attention + k.gardenPath + k.covert
+
+/-- `k.spillover o` is the cost route `o` pays at the spillover region, which only postponed
+covert reanalysis incurs. -/
+def spillover : Route → ℝ
+  | .reanalysis .covertPostponed _ => k.covert
+  | _ => 0
+
+end Costs
+
+section Means
+
+variable (p : Params) (k : Costs)
+
+/-- The mean cost at the disambiguating region adds the attention cost of attentive reading to
+the garden-path probability times the expected cost of a garden-pathed trial. -/
+theorem integral_disambiguating_tree : ∫ o, k.disambiguating o ∂tree p =
+    p.attentive * (k.attention + p.gardenPath * (k.gardenPath + (1 - p.triage) *
+      ((1 - p.covert) * k.regression + p.covert * (1 - p.postpone) * k.covert))) := by
+  simp only [tree, integral_node, integral_bernoulliMeasure, integral_dirac,
+    Costs.disambiguating, smul_eq_mul]
+  ring
+
+/-- The mean cost at the spillover region is the covert reanalysis cost on postponed trials. -/
+theorem integral_spillover_tree : ∫ o, k.spillover o ∂tree p =
+    p.attentive * p.gardenPath * (1 - p.triage) * p.covert * p.postpone * k.covert := by
+  simp only [tree, integral_node, integral_bernoulliMeasure, integral_dirac, Costs.spillover,
+    smul_eq_mul]
+  ring
+
+/-- A lower garden-path probability never raises the mean cost at the disambiguating region. -/
+theorem monotone_integral_gardenPath :
+    Monotone fun g ↦ ∫ o, k.disambiguating o ∂tree {p with gardenPath := g} := by
+  intro g g' h
+  have := nonneg p.covert
+  have := one_minus_nonneg p.triage
+  have := one_minus_nonneg p.covert
+  have := one_minus_nonneg p.postpone
+  simp only [integral_disambiguating_tree]
+  gcongr
+  unit_interval
+
+/-- A lower covert reanalysis cost never raises the mean cost at the disambiguating region. -/
+theorem monotone_integral_covert :
+    Monotone fun c ↦ ∫ o, Costs.disambiguating {k with covert := c} o ∂tree p := by
+  refine fun c c' h ↦ integral_mono .of_finite .of_finite fun o ↦ ?_
+  rcases o with _ | _ | _ | ⟨_ | _ | _, _⟩ <;> simp [Costs.disambiguating, h]
+
+end Means
+
+/-- Condition means cannot locate an effect of context. From garden-path probability `1 / 2`
+and covert reanalysis cost `800`, illustrative values, an effect on attachment that halves the
+probability and an effect on reanalysis that halves the cost leave the same mean cost at both
+regions and the same rates of regression and acceptance, but different mixtures over route
+costs, `800` on a quarter of the trials against `400` on half of them. -/
+theorem means_not_identifiable :
+    ∃ (p : Params) (k : Costs) (g : I) (c : ℝ≥0), g < p.gardenPath ∧ c < k.covert ∧
+      ∫ o, k.disambiguating o ∂tree {p with gardenPath := g} =
+        ∫ o, Costs.disambiguating {k with covert := c} o ∂tree p ∧
+      ∫ o, k.spillover o ∂tree {p with gardenPath := g} =
+        ∫ o, Costs.spillover {k with covert := c} o ∂tree p ∧
+      (tree {p with gardenPath := g}).real {o | o.Regresses} = (tree p).real {o | o.Regresses} ∧
+      (tree {p with gardenPath := g}).real {o | o.Accepts} = (tree p).real {o | o.Accepts} ∧
+      (tree {p with gardenPath := g}).map k.disambiguating ≠
+        (tree p).map (Costs.disambiguating {k with covert := c}) := by
+  refine ⟨
+    { attentive := 1, bias := 0, gardenPath := ⟨1 / 2, by norm_num⟩, triage := 0, covert := 1,
+      postpone := 0, overtSuccess := 1, covertSuccess := 1 },
+    { attention := 0, gardenPath := 0, regression := 0, covert := 800 }, ⟨1 / 4, by norm_num⟩,
+    400, Subtype.mk_lt_mk.mpr (by norm_num), by norm_num, ?_, ?_, ?_, ?_, fun h ↦ ?_⟩
+  · simp only [integral_disambiguating_tree]
+    norm_num
+  · simp only [integral_spillover_tree]
+    norm_num
+  · simp only [tree_real_regresses]
+    norm_num
+  · simp only [tree_real_accepts]
+    norm_num
+  · have := congrArg (·.real {400}) h
+    simp [tree, Costs.disambiguating] at this
 
 end PaapeVasishth2026
