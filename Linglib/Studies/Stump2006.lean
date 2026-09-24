@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Forms.Stump2006
 public import Linglib.Morphology.Paradigm.Linkage
 public import Linglib.Morphology.Exponence.Domain
-public import Linglib.Fragments.Slavic.Czech.Case
+public import Linglib.Fragments.Slavic.Czech.Nouns
 public import Linglib.Fragments.Slavic.Russian.Gender
 public import Linglib.Syntax.Number.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -16,31 +16,37 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Stump (2006): Heteroclisis and paradigm linkage
 
-This file formalizes Stump's account of heteroclisis, the property of a lexeme whose
-paradigm contains forms built on stems of two or more inflection classes. A rule of paradigm
-linkage gives a content cell of a lexeme a form correspondent built on one of the lexeme's
-stems: the universal default assigns the root, and narrower language-specific rules override
-it by Pāṇini's principle, assigning a coradical, a stem that differs from the root in form or
-in inflection class. The paper's rules (5), (14), (15), (17) and (18) realize every form of the
-Czech nouns in its Tables 1, 6 and 8, read from the forms data. The heteroclisis of Czech
-PRAMEN is morphosyntactically conditioned, its inflection class fixed by the property sets its
-cells express, whereas that of Sanskrit AHAN is morphologically conditioned, following a
-pattern of alternation among Strong, Middle and Weakest stems. Stump's Sanskrit rules of
-paradigm linkage (20a,b) "are independently motivated by the need to account for the pattern of
-stem alternation in nonheteroclite paradigms such as the masculine and neuter paradigms of
-PRATYAÑC" (p. 295): one list of rules gives the grades of PRATYAÑC's stems, which share a
-declension, and the stems of AHAN, which do not. The paper measures how closely a heteroclite
-paradigm's class boundary follows an inflectional category, and claims that the categories
-serving as absolute correlates are privileged: every rule of paradigm linkage sensitive to some
-category is sensitive to a privileged one.
+This file formalizes Stump's account of heteroclisis, the property of a lexeme whose paradigm
+contains forms built on stems of two or more inflection classes. A rule of paradigm linkage gives a
+content cell of a lexeme a form correspondent built on one of the lexeme's stems: the universal
+default assigns the root, and narrower language-specific rules override it by Pāṇini's principle,
+assigning a coradical, a stem that differs from the root in form or in inflection class. The paper's
+rules (5), (14), (15), (17) and (18), with the endings of the Czech declension fragment, after
+Short's tables and the rules of *Mluvnice češtiny*, realize every form of the Czech nouns in its
+Tables 1, 6 and 8, read from the forms data, once the masculine a-stems' nominative plural in -ové
+is read from their own class and FILOSOF's, which neither grammar gives, is supplied. The
+heteroclisis of Czech PRAMEN is morphosyntactically conditioned, its inflection class fixed by the
+property sets its cells express, whereas that of Sanskrit AHAN is morphologically conditioned,
+following a pattern of alternation among Strong, Middle and Weakest stems. Stump's Sanskrit rules of
+paradigm linkage (20a,b) "are independently motivated by the need to account for the pattern of stem
+alternation in nonheteroclite paradigms such as the masculine and neuter paradigms of PRATYAÑC"
+(p. 295): one list of rules gives the grades of PRATYAÑC's stems, which share a declension, and the
+stems of AHAN, which do not. The paper measures how closely a heteroclite paradigm's class boundary
+follows an inflectional category, and claims that the categories serving as absolute correlates are
+privileged: every rule of paradigm linkage sensitive to some category is sensitive to a privileged
+one.
 
 ## Main definitions
 
 * `attested`: the forms of a Czech cell, every matching row of the forms data.
+* `Decl.toClass`, `CzNoun.noun`: the paper's declensions as classes of Short's tables, and the
+  nouns as entries of the Czech noun fragment.
 * `Stem`, `Entry`, `inferSoftMasc`: stems individuated by lexeme and declension, lexical
-  entries, and the rule of stem inference (18).
+  entries read off the nouns, and the rule of stem inference (18).
 * `CellRule`, `rulesFor`, `stemFor`: the rules of paradigm linkage (14), (15) and (17) as
   domain rules, resolved by the Elsewhere engine with the root of rule (5) as the fallback.
+* `classNomPl`, `nomPlOverride`, `suppliedNomPl`: the masculine a-stems' nominative plural read
+  from their class, FILOSOF's, which neither grammar gives, and the two together.
 * `czRealize`, `czLinkage`: the realization of form cells and the Czech paradigm linkage.
 * `degreeNum`, `degree`: the degree of correlation of a category with a class split.
 * `IsAbsoluteCorrelate`, `IsMaximalCorrelate`, `IsCloven`, `IsFractured`,
@@ -55,6 +61,13 @@ category is sensitive to a privileged one.
 ## Main results
 
 * `realize_matches_tables`: the rules realize every attested form of the nine Czech nouns.
+* `czRealizeTable_stemFor_iff`: the fragment's endings alone miss exactly the six nominative and
+  vocative plurals of PŘEDSEDA, SLUHA and FILOSOF.
+* `predseda_eq_hrdina`, `sluha_eq_hrdina_iff`: rules (14) and (15) rebuild Short's paradigm of
+  the masculine a-stems, from which SLUHA's departs only in the locative plural.
+* `sluha_locPl`, `filolog_locPl`, `filologu_voc`: the grammars' velar forms, derived, the
+  locative plurals alike through the soft-masculine coradical and the hard-masculine stem.
+* `pramen_eq_koren_pattern`: rule (14) gives PRAMEN the classes the grammars give *kořen*.
 * `heteroclite_iff`, `segments_invariant`, `pramen_suppletive`: PRAMEN, PŘEDSEDA, SLUHA and
   FILOLOG are heteroclite on form-identical stems, and heteroclisis is suppletion.
 * `degreeNum_eq_card_iff`: a category is an absolute correlate exactly when the class split
@@ -76,21 +89,32 @@ category is sensitive to a privileged one.
 
 ## Implementation notes
 
-PŘEDSEDA's root *předseda* and coradical *předsed* share the segments *předsed*, ŽENA's endings
-being segmented after *žen-*. Endings are read off exemplars, chosen in Czech by animacy and a
-final back obstruent, as the tables juxtapose SLUHA with FILOLOG and MUŽ, and in Sanskrit by
-declension among PRATYAÑC, NĀMAN and MANAS; Czech palatalization is witnessed only for *h* and
-*g*. Rules compete by domain inclusion, the rendering of Pāṇini's principle, and selection falls
-back on the root, by (5) and (12). Gender is taken as lexical: PRATYAÑC's masculine and neuter
-are two lexemes, clause (ii) of `f₁` is vacuous, and the feminine, whose ī-stem *pratīcī*
-(n. 18) would make PRATYAÑC heteroclite, is left out, as are n. 21's stem indexing and n. 22's
-alternants. Sanskrit sandhi (*aho-bhis*, *pratyag-*) is unstated, so no forms are built. Rows
-are filtered by language.
+A Czech noun's segments are the stem of its entry in the Czech noun fragment, the citation form less
+the nominative singular ending of its class, so PŘEDSEDA's root and coradical share the segments
+*předsed*. A stem's endings are the fragment's endings of its noun in the class that the stem's
+declension is for the noun's animacy, with the velar vocative singular -u and locative plural -ích
+and the noun's lexical nominative plural, MUŽ's -i or -ové and FILOLOG's -ové, and the stem is
+inflected as the fragment inflects it, palatalized before the masculine locative plural -ích and the
+animate nominative plural -i. Where the paper and the grammars differ the paper's forms stand and
+the difference is stated: the nominative and vocative plurals in -ové of PŘEDSEDA and SLUHA,
+realized on the hard-masculine coradical, whose class gives -i, are read from their own class, and
+FILOSOF's, which neither grammar gives, is an override; Stump's hard-feminine roots for the
+masculine a-stems rebuild Short's separate *hrdina* declension; and his soft-masculine coradical of
+velar stems gives the locative plurals in -ích that *Mluvnice češtiny*'s rule gives the
+hard-masculine stem.
+Sanskrit endings are read off exemplars, chosen by declension among PRATYAÑC, NĀMAN and MANAS. Rules
+compete by domain inclusion, the rendering of Pāṇini's principle, and selection falls back on the
+root, by (5) and (12). Gender is taken as lexical: PRATYAÑC's masculine and neuter are two lexemes,
+clause (ii) of `f₁` is vacuous, and the feminine, whose ī-stem *pratīcī* (n. 18) would make PRATYAÑC
+heteroclite, is left out, as are n. 21's stem indexing and n. 22's alternants. Sanskrit sandhi
+(*aho-bhis*, *pratyag-*) is unstated, so no forms are built. Rows are filtered by language.
 
 ## References
 
 * [stump-2006]
 * [stump-2001]
+* [short-1993-czech]
+* [komarek-etal-1986]
 -/
 
 @[expose] public section
@@ -101,25 +125,9 @@ open Morphology Data.Forms Finset
 
 /-! ### Cells and the attested forms -/
 
-/-- The Czech numbers are the singular and the plural. -/
-abbrev CzNumber : Finset Number := {.singular, .plural}
-
-/-- A content cell of a Czech noun pairs a case of the Czech inventory with a number, gender
-being constant within a paradigm. -/
-abbrev CzCell : Type := Czech.Case.inventory × CzNumber
-
-/-- `CzCell.of c n` is the cell of case `c` and number `n`. -/
-def CzCell.of (c : Case) (n : Number) (hc : c ∈ Czech.Case.inventory := by decide)
-    (hn : n ∈ CzNumber := by decide) : CzCell :=
-  (⟨c, hc⟩, ⟨n, hn⟩)
-
-instance : Nonempty CzCell := ⟨.of .nom .singular⟩
-
-/-- `σ.case` is the case of the cell `σ`. -/
-def CzCell.case (σ : CzCell) : Case := σ.1.1
-
-/-- `σ.number` is the number of the cell `σ`. -/
-def CzCell.number (σ : CzCell) : Number := σ.2.1
+/-- A content cell of a Czech noun is a cell of Short's declension tables, pairing a case of the
+Czech inventory with a number, gender being constant within a paradigm. -/
+abbrev CzCell : Type := Czech.Declension.Cell
 
 /-- `caseLabels` reads the case codes of the forms data as cases. -/
 def caseLabels : List (String × Case) :=
@@ -177,6 +185,40 @@ inductive Decl
   | hardFem
   deriving DecidableEq, Fintype, Repr
 
+/-- A declension is, for animate and for inanimate stems, a declension of Short's tables, the
+soft masculine being that of *muž* or *stroj*, the hard masculine that of *chlap* or *hrad*, and
+the hard feminine that of *žena*. -/
+def Decl.toClass : Decl → Bool → Czech.Declension.Class
+  | .softMasc, true => .muz
+  | .softMasc, false => .stroj
+  | .hardMasc, true => .chlap
+  | .hardMasc, false => .hrad
+  | .hardFem, _ => .zena
+
+/-- For either animacy, distinct declensions are distinct classes of Short's. -/
+theorem Decl.toClass_injective (a : Bool) : Function.Injective (Decl.toClass · a) := by
+  cases a <;> decide
+
+/-- `Decl.ofClass k` is the declension of the root of a noun of Short's class `k`, where the
+nouns of the tables include one: the soft masculine for *muž* and *stroj*, the hard masculine
+for *chlap* and *hrad*, and the hard feminine for *žena* and for the masculine a-stems of
+*hrdina*, whose roots the paper takes to be hard-feminine. -/
+def Decl.ofClass : Czech.Declension.Class → Option Decl
+  | .muz | .stroj => some .softMasc
+  | .chlap | .hrad => some .hardMasc
+  | .zena | .hrdina => some .hardFem
+  | _ => none
+
+/-- The root declension of the class a declension is, for either animacy, is that declension. -/
+theorem Decl.ofClass_toClass (d : Decl) (a : Bool) : Decl.ofClass (d.toClass a) = some d := by
+  cases d <;> cases a <;> rfl
+
+/-- `l.noun` is the entry of `l` in the Czech noun fragment. -/
+def CzNoun.noun : CzNoun → Czech.Noun
+  | .pokoj => Czech.pokoj | .pramen => Czech.pramen | .most => Czech.most | .zena => Czech.zena
+  | .predseda => Czech.predseda | .filosof => Czech.filosof | .sluha => Czech.sluha
+  | .filolog => Czech.filolog | .muz => Czech.muz
+
 /-- A stem is individuated, as in the paper, by its lexeme and its inflection class; its form
 is the lexeme's, so two stems of one lexeme are class-distinct and form-identical. -/
 structure Stem where
@@ -201,18 +243,17 @@ structure Entry where
   pramenClass : Bool
   deriving DecidableEq, Repr
 
-/-- `entry l` is the lexical entry of `l`. PRAMEN's root is soft-masculine (p. 289), PŘEDSEDA's
-and SLUHA's are hard-feminine, and these three belong to the PRAMEN class. -/
-def entry : CzNoun → Entry
-  | .pokoj => ⟨.pokoj, ["p", "o", "k", "o", "j"], .softMasc, false, false⟩
-  | .pramen => ⟨.pramen, ["p", "r", "a", "m", "e", "n"], .softMasc, false, true⟩
-  | .most => ⟨.most, ["m", "o", "s", "t"], .hardMasc, false, false⟩
-  | .zena => ⟨.zena, ["ž", "e", "n"], .hardFem, true, false⟩
-  | .predseda => ⟨.predseda, ["p", "ř", "e", "d", "s", "e", "d"], .hardFem, true, true⟩
-  | .filosof => ⟨.filosof, ["f", "i", "l", "o", "s", "o", "f"], .hardMasc, true, false⟩
-  | .sluha => ⟨.sluha, ["s", "l", "u", "h"], .hardFem, true, true⟩
-  | .filolog => ⟨.filolog, ["f", "i", "l", "o", "l", "o", "g"], .hardMasc, true, false⟩
-  | .muz => ⟨.muz, ["m", "u", "ž"], .softMasc, true, false⟩
+/-- `entry l` is the lexical entry of `l`, read off its noun. The segments are the noun's stem,
+the root declension is that of the noun's singular class, so that PRAMEN's root is
+soft-masculine (p. 289) and PŘEDSEDA's and SLUHA's are hard-feminine, and the noun inflects as
+animate when its gender is the masculine animate. Membership in the PRAMEN class, which PRAMEN,
+PŘEDSEDA and SLUHA have, is the lexical stipulation of rule (14). -/
+def entry (l : CzNoun) : Entry where
+  lexeme := l
+  segments := l.noun.stem
+  rootDecl := (Decl.ofClass l.noun.cls).get (by cases l <;> rfl)
+  animate := decide l.noun.gender.IsAnimate
+  pramenClass := l matches .pramen | .predseda | .sluha
 
 /-- The segments of a stem are those of its lexeme's entry. -/
 def Stem.segments (z : Stem) : List String := (entry z.lexeme).segments
@@ -237,23 +278,13 @@ def Entry.InPredsedaSubclass (e : Entry) : Prop := e.pramenClass = true ∧ e.an
 instance : DecidablePred Entry.InPredsedaSubclass :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The back obstruents of Czech are *k*, *g*, *h* and *ch*. -/
-def IsBackObstruent (x : String) : Prop := x ∈ ["k", "g", "h", "ch"]
-
-instance : DecidablePred IsBackObstruent := fun x ↦ inferInstanceAs (Decidable (x ∈ _))
-
-/-- A segment list ends in a back obstruent when its last segment is one. -/
-def EndsInBackObstruent (s : List String) : Prop := ∃ x ∈ s.getLast?, IsBackObstruent x
-
-instance : DecidablePred EndsInBackObstruent :=
-  fun s ↦ inferInstanceAs (Decidable (∃ x ∈ s.getLast?, _))
-
 /-- `inferSoftMasc` is the Czech rule of stem inference (18) (p. 292), which reads "If lexeme L
 has a stem s belonging to the hard-masculine declension and s ends in a back obstruent, then L
 has s′ as its soft-masculine coradical, where s′ is like s except that it belongs to the
-soft-masculine declension." -/
+soft-masculine declension." The back obstruents are Short's velars. -/
 def inferSoftMasc (z : Stem) : Option Stem :=
-  if z.decl = .hardMasc ∧ EndsInBackObstruent z.segments then some { z with decl := .softMasc }
+  if z.decl = .hardMasc ∧ Czech.Declension.IsVelar z.segments then
+    some { z with decl := .softMasc }
   else none
 
 /-- The hard-masculine stem of a noun is its root if that is hard-masculine, and otherwise its
@@ -370,53 +401,68 @@ theorem stemFor_lexeme (l : CzNoun) (σ : CzCell) : (stemFor l σ).lexeme = l :=
 
 /-! ### Realization -/
 
-/-- Palatalization replaces a stem-final velar, *h* and *g* by *z* as Table 8's *sluzích* and
-*filolozích* witness, and *k* by *c* and *ch* by *š*, which the tables do not witness. -/
-def palatalize (s : List String) : List String :=
-  match s.getLast? with
-  | some "h" | some "g" => s.dropLast ++ ["z"]
-  | some "k" => s.dropLast ++ ["c"]
-  | some "ch" => s.dropLast ++ ["š"]
-  | _ => s
+/-- The endings of a stem at a cell are the fragment's endings of its noun in the class its
+declension is for the noun's animacy: the class's endings on the noun's stem, a velar stem of the
+hard masculines taking the vocative singular -u (Short, p. 465; *Mluvnice češtiny*, p. 292) and a
+velar stem of the hard masculines or the masculine a-stems the locative plural -ích (*Mluvnice
+češtiny*, p. 292), with the noun's lexical nominative plural. -/
+def Stem.classEndings (z : Stem) (σ : CzCell) : List (List String) :=
+  z.lexeme.noun.endingsIn (z.decl.toClass (entry z.lexeme).animate) σ
 
-/-- `exemplar d a v` is the exemplar of the declension `d` for animacy `a` and a final back
-obstruent `v`: POKOJ and MUŽ for the soft masculine, MOST, FILOSOF and FILOLOG for the hard
-masculine, and ŽENA for the hard feminine. -/
-def exemplar : Decl → Bool → Bool → CzNoun
-  | .softMasc, false, _ => .pokoj
-  | .softMasc, true, _ => .muz
-  | .hardMasc, false, _ => .most
-  | .hardMasc, true, false => .filosof
-  | .hardMasc, true, true => .filolog
-  | .hardFem, _, _ => .zena
-
-/-- Each exemplar's root inflects in the declension it exemplifies. -/
-theorem exemplar_rootDecl : ∀ d a v, (entry (exemplar d a v)).rootDecl = d := by decide
-
-/-- Wherever an exemplar inflects on its root, its root's segments begin each of its forms, so
-removing them leaves an ending. -/
-theorem exemplar_root_isPrefix : ∀ d a v σ, (stemFor (exemplar d a v) σ).IsRoot →
-    ∀ w ∈ attested (exemplar d a v) σ, (entry (exemplar d a v)).segments <+: w := by
-  decide +kernel
-
-/-- The endings of a declension at a cell are its exemplar's forms there, less the
-exemplar's root. -/
-def ending (d : Decl) (animate velar : Bool) (σ : CzCell) : Finset (List String) :=
-  (attested (exemplar d animate velar) σ).image
-    (List.drop (entry (exemplar d animate velar)).segments.length)
-
-/-- The endings of a stem at a cell are its declension's, except that the -u alternating with
--ovi is "restricted to roots belonging to the hard-masculine declension" (n. 14). -/
-def Stem.endings (z : Stem) (σ : CzCell) : Finset (List String) :=
-  let ends := ending z.decl (entry z.lexeme).animate (decide (EndsInBackObstruent z.segments)) σ
+/-- The endings of a stem at a cell in the fragment are its class endings, less the -u
+alternating with -ovi, which is "restricted to roots belonging to the hard-masculine
+declension" (n. 14). The restriction is Stump's, and the fact it derives is *Mluvnice
+češtiny*'s: "-u mají pouze jména podtypu I.A s tzv. skloňováním tvrdým" '-u is had only by the
+nouns of subtype I.A, with the so-called hard declension', and "V III. typu má D a L sg podobu
+jedinou, nevariantní, a to -ovi: předsedovi, husitovi, sluhovi, rikšovi" 'in type III the dative
+and locative singular have a single, non-variant form, -ovi' (p. 292). -/
+def Stem.tableEndings (z : Stem) (σ : CzCell) : Finset (List String) :=
+  let ends := (z.classEndings σ).toFinset
   if ¬ z.IsRoot ∧ ["o", "v", "i"] ∈ ends then ends.erase ["u"] else ends
 
-/-- The base of a stem is its segments, palatalized in the soft-masculine declension. -/
-def Stem.base (z : Stem) : List String :=
-  if z.decl = .softMasc then palatalize z.segments else z.segments
+/-- `nomVocPl` is the set of nominative and vocative plural cells. -/
+def nomVocPl : Finset CzCell := {σ | σ.number = .plural ∧ (σ.case = .nom ∨ σ.case = .voc)}
 
-/-- The form cell `⟨z, σ⟩` is realized as the base of `z` followed by each of its endings. -/
-def czRealize (z : Stem) (σ : CzCell) : Finset (List String) := (z.endings σ).image (z.base ++ ·)
+/-- The nominative and vocative plural endings of a noun of the masculine a-declension, read from
+its own class. PŘEDSEDA and SLUHA take their plural on the hard-masculine coradical, whose class
+gives *chlapi*'s -i (Short, Table 9.2), but their class gives *hrdinové* (Short, Table 9.5), and
+*Mluvnice češtiny* names the nouns in -a among those with one form, *předsed-ové* (p. 293). -/
+def classNomPl (l : CzNoun) : Option (List (List String)) :=
+  if l.noun.cls = .hrdina then some (l.noun.cls.endings (.of .nom .plural)) else none
+
+/-- The nominative and vocative plural endings of Tables 6 and 8 that neither grammar gives:
+FILOSOF's -ové. Short's tables leave out the "many formally and semantically distinctive groups
+with nominative plural in -é or -ové" without placing *filosof* in one (Short, p. 466), and
+*Mluvnice češtiny* gives no plural of *filozof*, its borrowed compounds in -ové being those in
+-graf, -fil, -fob and -nom (p. 296). -/
+def nomPlOverride : CzNoun → Option (List (List String))
+  | .filosof => some [["o", "v", "é"]]
+  | _ => none
+
+/-- The nominative and vocative plural endings the study supplies beyond the fragment's endings
+of the stem: those of the noun's own class, and otherwise the override. -/
+def suppliedNomPl (l : CzNoun) : Option (List (List String)) := (classNomPl l).or (nomPlOverride l)
+
+/-- The endings of a stem at a cell are those of the fragment, save at the nominative and
+vocative plural of a noun whose endings there the study supplies, the vocative plural being the
+nominative (Short, p. 465). -/
+def Stem.endings (z : Stem) (σ : CzCell) : Finset (List String) :=
+  if σ ∈ nomVocPl then ((suppliedNomPl z.lexeme).map List.toFinset).getD (z.tableEndings σ)
+  else z.tableEndings σ
+
+/-- A stem is inflected with an ending as the fragment inflects the noun's stem in the stem's
+class, palatalized before the masculine locative plural -ích and the animate nominative plural
+-i (*Mluvnice češtiny*, p. 279). So the soft-masculine coradical of a velar stem palatalizes
+before -ích, as Short's *geolozích* (Short, p. 462) and *sluzích* (Short, p. 467) show. -/
+def Stem.inflect (z : Stem) (σ : CzCell) (e : List String) : List String :=
+  (z.decl.toClass (entry z.lexeme).animate).inflect z.segments σ e
+
+/-- The form cell `⟨z, σ⟩` is realized as `z` inflected with each of its endings. -/
+def czRealize (z : Stem) (σ : CzCell) : Finset (List String) := (z.endings σ).image (z.inflect σ)
+
+/-- The realization by the fragment's endings alone, without the endings the study supplies. -/
+def czRealizeTable (z : Stem) (σ : CzCell) : Finset (List String) :=
+  (z.tableEndings σ).image (z.inflect σ)
 
 /-- The Czech paradigm linkage gives each content cell the stem its rules select, and
 preserves its property set. -/
@@ -426,18 +472,99 @@ def czLinkage : Linkage CzNoun Stem CzCell CzCell := Linkage.ofRules id czRules 
 theorem czRealize_stemFor : ∀ l σ, czRealize (stemFor l σ) σ = attested l σ := by
   decide +kernel
 
-/-- The rules of paradigm linkage realize every form of Tables 1, 6 and 8. -/
+/-- The rules of paradigm linkage, with the endings of the fragment and those the study supplies,
+realize every form of Tables 1, 6 and 8. -/
 theorem realize_matches_tables (l : CzNoun) (σ : CzCell) :
     czLinkage.realized czRealize l σ = {(attested l σ, σ)} :=
   (Linkage.ofFun_realized _ _ czRealize l σ).trans <|
     congrArg (fun w ↦ {(w, σ)}) (czRealize_stemFor l σ)
 
+/-- Off the nominative and vocative plural, and for a noun whose endings there the study does
+not supply, a stem is realized by the fragment's endings alone. -/
+theorem czRealizeTable_eq_czRealize {z : Stem} {σ : CzCell}
+    (h : σ ∉ nomVocPl ∨ suppliedNomPl z.lexeme = none) : czRealizeTable z σ = czRealize z σ := by
+  rcases h with h | h <;> simp [czRealizeTable, czRealize, Stem.endings, h]
+
+/-- The study supplies the nominative plural of PŘEDSEDA, SLUHA and FILOSOF alone. -/
+theorem suppliedNomPl_eq_none_iff (l : CzNoun) :
+    suppliedNomPl l = none ↔ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
+  cases l <;> decide
+
+/-- The fragment's endings alone realize the attested forms at every cell but the nominative and
+vocative plural of PŘEDSEDA, SLUHA and FILOSOF, where Tables 6 and 8 give -ové: MUŽ's and
+FILOLOG's nominative plurals are the fragment's. -/
+theorem czRealizeTable_stemFor_iff (l : CzNoun) (σ : CzCell) :
+    czRealizeTable (stemFor l σ) σ = attested l σ ↔
+      σ ∉ nomVocPl ∨ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
+  rw [← suppliedNomPl_eq_none_iff]
+  have miss : ∀ l σ, σ ∈ nomVocPl → suppliedNomPl l ≠ none →
+      czRealizeTable (stemFor l σ) σ ≠ attested l σ := by
+    decide +kernel
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · by_contra hc
+    simp only [not_or, not_not] at hc
+    exact miss l σ hc.1 hc.2 h
+  · rw [czRealizeTable_eq_czRealize (by rwa [stemFor_lexeme]), czRealize_stemFor]
+
 /-- The hard-masculine coradical of a noun of the PŘEDSEDA subclass realizes the dative and
 locative singular with -ovi alone, the prediction of n. 14 that *předsed* and *sluh* lack the
--u alternant. -/
+-u alternant. It agrees with Short's *hrdinovi* (Table 9.5) and his remark that "-ovi is
+specifically associated with animates" (Short, p. 467), and with *Mluvnice češtiny*'s single
+form *předsedovi*, *sluhovi* (p. 292). -/
 theorem coradical_no_u : ∀ l, (entry l).InPredsedaSubclass → ∀ σ ∈ datLocSg,
     czRealize ⟨l, .hardMasc⟩ σ = {(entry l).segments ++ ["o", "v", "i"]} := by
   decide
+
+/-- PŘEDSEDA's paradigm, derived by rules (14) and (15) from a hard-feminine root and a
+hard-masculine coradical, is Short's paradigm of the masculine a-stems, *hrdina* (Table 9.5),
+on its stem. -/
+theorem predseda_eq_hrdina : ∀ σ, czRealize (stemFor .predseda σ) σ =
+    ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset := by
+  decide +kernel
+
+/-- Without its own class's nominative plural, PŘEDSEDA's paradigm agrees with *hrdina*'s in
+twelve of its fourteen cells, the nominative and vocative plural of the hard-masculine coradical
+being *chlapi*'s -i (Short, Table 9.2). -/
+theorem predseda_table_eq_hrdina_iff (σ : CzCell) : czRealizeTable (stemFor .predseda σ) σ =
+    ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset ↔ σ ∉ nomVocPl := by
+  rw [← predseda_eq_hrdina, czRealize_stemFor, czRealizeTable_stemFor_iff]
+  simp
+
+/-- SLUHA's paradigm is *hrdina*'s on its stem but in the locative plural, where rules (17) and
+(18) give the palatalized *sluzích* for the table's -ech. -/
+theorem sluha_eq_hrdina_iff : ∀ σ, czRealize (stemFor .sluha σ) σ =
+    ((Czech.sluha.cls.endings σ).map (Czech.sluha.stem ++ ·)).toFinset ↔
+      σ ≠ .of .loc .plural := by
+  decide +kernel
+
+/-- Rules (17) and (18), with the second palatalization, give SLUHA's locative plural
+*sluzích*, the form both grammars give (Short, p. 467; *Mluvnice češtiny*, pp. 292, 300). The
+fragment's rule that a velar stem of the hard masculines takes -ích on the palatalized stem gives
+SLUHA's hard-masculine coradical the same form, so the form alone does not decide between Stump's
+route through the soft-masculine coradical and the grammar's rule, which differ in the class the
+cell inflects in and so in the degrees of correlation. -/
+theorem sluha_locPl : czRealize (stemFor .sluha (.of .loc .plural)) (.of .loc .plural) =
+      {Czech.Declension.segments "sluzích"} ∧
+    czRealize ⟨.sluha, .hardMasc⟩ (.of .loc .plural) = {Czech.Declension.segments "sluzích"} := by
+  decide +kernel
+
+/-- Rules (17) and (18), with the second palatalization, give FILOLOG's locative plural
+*filolozích*, as Short gives *geolozích* for *geolog* 'geologist' (Short, p. 462) and *Mluvnice
+češtiny* *filolozích* itself (p. 295). The fragment's velar rule gives FILOLOG's hard-masculine
+root the same form. -/
+theorem filolog_locPl : czRealize (stemFor .filolog (.of .loc .plural)) (.of .loc .plural) =
+      {Czech.Declension.segments "filolozích"} ∧
+    czRealize ⟨.filolog, .hardMasc⟩ (.of .loc .plural) =
+      {Czech.Declension.segments "filolozích"} := by
+  decide +kernel
+
+/-- FILOLOG's vocative singular is *filologu*, the -u of a velar hard-masculine stem
+(Short, p. 465; *Mluvnice češtiny*, p. 292), where the table's ending is *chlape*'s -e. -/
+theorem filologu_voc :
+    czRealize (stemFor .filolog (.of .voc .singular)) (.of .voc .singular) =
+        {Czech.Declension.segments "filologu"} ∧
+      Czech.Declension.Class.chlap.endings (.of .voc .singular) = [["e"]] := by
+  decide +kernel
 
 /-! ### Heteroclisis -/
 
@@ -462,6 +589,14 @@ theorem segments_invariant (l : CzNoun) : czLinkage.IsInvariantAlong Stem.segmen
 /-- PRAMEN's paradigm "exhibits a kind of stem suppletion" (pp. 282–283), since its two stems,
 though phonologically identical, are two stems. -/
 theorem pramen_suppletive : czLinkage.IsSuppletive .pramen := pramen_heteroclite.isSuppletive
+
+/-- PRAMEN's class in each cell, as rule (14) assigns it, is the class the fragment gives
+*kořen* in that cell's number, *stroj* in the singular and *hrady* in the plural (Short, p. 469),
+*Mluvnice češtiny* listing *kořen* and *pramen* together among the masculines in -en- that
+decline soft in the singular and hard in the plural (p. 310). -/
+theorem pramen_eq_koren_pattern :
+    ∀ σ, (cellClass .pramen σ).toClass (entry .pramen).animate = Czech.koren.clsAt σ.number := by
+  decide
 
 /-! ### The degree of correlation -/
 
