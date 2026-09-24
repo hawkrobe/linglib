@@ -2,325 +2,278 @@ module
 
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Semantics.Root.Defs
+public import Linglib.Fragments.Dargwa.Locatives
+public import Linglib.Fragments.Dargwa.Agreement
 
 /-!
-# Dargwa (Tanti / Muira) Complex Predicates [sumbatova-2021]
-[kalyakin-2026]
+# Tanti Dargwa complex verbs and valency alternations
 
-Complex verbs in Dargwa consist of a **light verb** (LV, = v) and a
-**lexical stem** (NV, = nominal root inside VP). The lexical stems
-are highly variable: noun stems, adjectives, numerals, verbs, or
-ideophones. Often the lexical element does not occur independently.
+This file defines the complex verbs of Tanti Dargwa and its valency alternations as Sumbatova
+describes them. A Dargwa verb is simplex, a bare root with at most a gender prefix, a preverb
+verb, or a complex verb, a lexical stem followed by a light verb with any preverbs between them.
+The stems are noun, adjective, numeral, verb or ideophone stems, some of them found only in the
+complex verb, and a few light verbs likewise occur only there. The causative *-aq* is the only
+valency-changing morphology: the causee of an intransitive base is the absolutive P of the
+derived clause, that of a transitive base an oblique in the inter-elative, a locative form
+without the direction marker every spatial elative carries. The antipassive is uncoded and
+confined to imperfective forms, and some transitive forms are P-labile, the preterite
+*če-b-asː-un* meaning 'he glued it' or 'it stuck' where the future tells the two apart by its
+thematic suffix.
 
-This is the structural basis for [kalyakin-2026]'s analysis of
-**v-stranding VP ellipsis (vVPE)** in Muira Dargwa: the light verb
-(= v) survives while its complement (= VP, containing the nominal
-root) is elided. The theoretical analysis (mismatch predictions,
-root position mapping, *again* diagnostics) lives in the study file
-`Studies/Kalyakin2026.lean`.
+## Main definitions
 
-## Light Verbs (§4.5.1 of [sumbatova-2021])
+* `Dargwa.LightVerb`, `Dargwa.lightVerbs`: the light verbs, each with the meaning of the
+  homophonous simplex verb where it has one
+* `Dargwa.ComplexVerb`: a lexical stem, as a `Semantics.Root`, with its word class, preverbs
+  and light verb
+* `Dargwa.antipassive`, `Dargwa.anticausative`, `Dargwa.causativeOfIntransitive`,
+  `Dargwa.causativeOfTransitive`, `Dargwa.alternations`: the valency alternations
+* `Dargwa.causeeForm`: the inter-elative of the causee of a transitive base
 
-The most common light verbs (ex. 31a):
-- *b-arq'*- 'do, make'
-- *b-iχ*- 'become'
-- *w-ik'*- 'speak'
+## Main results
 
-Other light verbs include *b-at*- 'leave', *b-ič*- 'fall',
-*b-ig*- 'sit down', *aq*- 'hang', *aʁ*- 'reach', *b-ač'*- 'come',
-etc. (ex. 31b).
+* `Dargwa.isCoded_iff`: the two causatives are the alternations coded on the verb
+* `Dargwa.causativeOfIntransitive_fateOfRole_S`, `Dargwa.causativeOfTransitive_valency`: the
+  causee of an intransitive base stays a core term; that of a transitive base is demoted as
+  the causer is introduced, so the valency is unchanged
+* `Dargwa.causeeForm_wellFormed`: the causee form is the directionless elative no spatial
+  form is
+* `Dargwa.labile_future_thematic`: the future forms of a P-labile verb differ in their
+  thematic suffix
 
-## Connection to vVPE ([kalyakin-2026])
+## Implementation notes
 
-Under vVPE, the light verb (v head) survives while the nominal root
-(in VP) is elided. This directly explains why:
-1. The light verb is overt in the ellipsis site
-2. Causative alternations (which differ only in Voice) are tolerated
-3. Antipassive roots (v-adjoined) cannot be elided
+* A light verb is cited by its stem without the gender prefix, `agrees` recording the roots
+  whose shape begins with the agreement slot. Sumbatova lists *aq-* both as 'hang' and among
+  the light verbs found only in complex verbs; both entries are kept.
+* The demoted causee and the antipassive patient are adpositional positions of the derived
+  frame, the frame vocabulary's oblique; the case each takes is stated with the voice.
+* The Muira Dargwa complex predicates of Kalyakin's study, with the position he assigns
+  their roots, are in `Studies/Kalyakin2026.lean`.
+
+## References
+
+* [N. Sumbatova, *Dargwa* (2021)][sumbatova-2021]
+* [D. Creissels, *Transitivity, Valency, and Voice* (2024)][creissels-2024]
 -/
 
 @[expose] public section
 
-namespace Dargwa.ComplexPredicates
+namespace Dargwa
 
-open Semantics
+open ArgumentFrame.Slot Morphology
 
--- ============================================================================
--- § 1: Light Verb Inventory
--- ============================================================================
+/-! ### Light verbs -/
 
-/-- A Dargwa light verb entry. The `genderSlot` field indicates whether
-    the light verb carries a gender agreement prefix (most do). -/
+/-- A light verb is the verbal component of a complex verb. -/
 structure LightVerb where
-  /-- Citation form (with gender prefix placeholder b-) -/
-  form : String
-  /-- English gloss -/
-  gloss : String
-  /-- Does this LV carry a gender prefix? -/
-  genderSlot : Bool
-  /-- Is this LV used only in complex predicates (not independently)? -/
-  boundToComplex : Bool := false
-  deriving Repr, BEq
+  /-- The stem, without the gender prefix. -/
+  stem : String
+  /-- Whether the root begins with the gender agreement slot. -/
+  agrees : Bool
+  /-- The meaning of the homophonous simplex verb, `none` for a light verb found only in
+  complex verbs. -/
+  heavy : Option String
+  deriving DecidableEq, Repr
 
-/-- *b-arq'-* 'do, make' — the most frequent LV. -/
-def arq : LightVerb :=
-  { form := "b-arq'-", gloss := "do, make"
-  , genderSlot := true }
+/-- *b-arq'-* 'do, make', the most common light verb. -/
+def make : LightVerb := ⟨"arq'", true, some "do, make"⟩
 
-/-- *b-iχ-* 'become' — inchoative/change-of-state LV. -/
-def ix : LightVerb :=
-  { form := "b-iχ-", gloss := "become"
-  , genderSlot := true }
+/-- *b-iχ-* 'become'. -/
+def become : LightVerb := ⟨"iχ", true, some "become"⟩
 
-/-- *w-ik'-* 'speak' — speech-act LV. -/
-def ik : LightVerb :=
-  { form := "w-ik'-", gloss := "speak"
-  , genderSlot := true }
+/-- *w-ik'-* 'speak'. -/
+def speak : LightVerb := ⟨"ik'", true, some "speak"⟩
 
 /-- *b-at-* 'leave'. -/
-def at_ : LightVerb :=
-  { form := "b-at-", gloss := "leave"
-  , genderSlot := true }
+def leave : LightVerb := ⟨"at", true, some "leave"⟩
 
 /-- *b-ič-* 'fall'. -/
-def ic : LightVerb :=
-  { form := "b-ič-", gloss := "fall"
-  , genderSlot := true }
+def fall : LightVerb := ⟨"ič", true, some "fall"⟩
+
+/-- *b-aˁq-* 'hit'. -/
+def hit : LightVerb := ⟨"aˁq", true, some "hit"⟩
+
+/-- *b-icː-* 'stand up'. -/
+def standUp : LightVerb := ⟨"icː", true, some "stand up"⟩
 
 /-- *b-ig-* 'sit down'. -/
-def ig : LightVerb :=
-  { form := "b-ig-", gloss := "sit down"
-  , genderSlot := true }
+def sitDown : LightVerb := ⟨"ig", true, some "sit down"⟩
 
-/-- *aq-* 'hang'. No gender prefix. -/
-def aq : LightVerb :=
-  { form := "aq-", gloss := "hang"
-  , genderSlot := false }
+/-- *aq-* 'hang'. -/
+def hang : LightVerb := ⟨"aq", false, some "hang"⟩
 
-/-- *aʁ-* 'reach'. No gender prefix. -/
-def ar : LightVerb :=
-  { form := "aʁ-", gloss := "reach"
-  , genderSlot := false }
+/-- *aʁ-* 'reach'. -/
+def reach : LightVerb := ⟨"aʁ", false, some "reach"⟩
 
-/-- *b-uq-* — only used within complex verbs. -/
-def uq : LightVerb :=
-  { form := "b-uq-", gloss := "LV (bound)"
-  , genderSlot := true, boundToComplex := true }
+/-- *b-ač'-* 'come'. -/
+def come : LightVerb := ⟨"ač'", true, some "come"⟩
 
-/-- *aq-* — only used within complex verbs (distinct from 'hang'). -/
-def aq_bound : LightVerb :=
-  { form := "aq-", gloss := "LV (bound)"
-  , genderSlot := false, boundToComplex := true }
+/-- *le-b-q'-* 'come (here)'. -/
+def comeHere : LightVerb := ⟨"le-q'", true, some "come (here)"⟩
 
-/-- *b-ik-* — only used within complex verbs. -/
-def ik_bound : LightVerb :=
-  { form := "b-ik-", gloss := "LV (bound)"
-  , genderSlot := true, boundToComplex := true }
+/-- *b-arʁ-* 'collect'. -/
+def collect : LightVerb := ⟨"arʁ", true, some "collect"⟩
 
-/-- *art-* — only used within complex verbs. -/
-def art : LightVerb :=
-  { form := "art-", gloss := "LV (bound)"
-  , genderSlot := false, boundToComplex := true }
+/-- *b-ixː-* 'put'. -/
+def put : LightVerb := ⟨"ixː", true, some "put"⟩
 
-def allLightVerbs : List LightVerb :=
-  [arq, ix, ik, at_, ic, ig, aq, ar, uq, aq_bound, ik_bound, art]
+/-- *it-* 'beat'. -/
+def beat : LightVerb := ⟨"it", false, some "beat"⟩
 
--- ============================================================================
--- § 2: Complex Predicate Structure
--- ============================================================================
+/-- *ag-* 'go away'. -/
+def goAway : LightVerb := ⟨"ag", false, some "go away"⟩
 
-/-- A complex predicate: lexical stem + light verb.
-    Examples from [sumbatova-2021] (32):
-    - taman 'end' (N) + b-arq' 'do' = 'finish'
-    - ħaˁdur 'ready' (ADJ) + b-arq' 'do' = 'prepare'
-    - č'u 'two' (NUM) + b-ut' 'cut' = 'divide by two' -/
-structure ComplexPredicate where
-  /-- Lexical stem (nominal root / NV) -/
-  lexicalStem : String
-  /-- Part of speech of the lexical stem -/
-  stemCategory : String
-  /-- Light verb (LV = v head) -/
+/-- *ʔ-* 'say'. -/
+def say : LightVerb := ⟨"ʔ", false, some "say"⟩
+
+/-- *b-erk'-* 'drive'. -/
+def drive : LightVerb := ⟨"erk'", true, some "drive"⟩
+
+/-- *arg-* 'sift'. -/
+def sift : LightVerb := ⟨"arg", false, some "sift"⟩
+
+/-- *b-ertː-* 'tear'. -/
+def tear : LightVerb := ⟨"ertː", true, some "tear"⟩
+
+/-- *b-aˁʜ-* 'struggle'. -/
+def struggle : LightVerb := ⟨"aˁʜ", true, some "struggle"⟩
+
+/-- *b-ut'-* 'cut', the light verb of *č'u-b-ut'-* 'divide by two'. -/
+def cut : LightVerb := ⟨"ut'", true, some "cut"⟩
+
+/-- *b-uq-*, found only in complex verbs. -/
+def uq : LightVerb := ⟨"uq", true, none⟩
+
+/-- *aq-*, found only in complex verbs. -/
+def aq : LightVerb := ⟨"aq", false, none⟩
+
+/-- *b-ikː-*, found only in complex verbs. -/
+def ikk : LightVerb := ⟨"ikː", true, none⟩
+
+/-- *art-*, found only in complex verbs. -/
+def art : LightVerb := ⟨"art", false, none⟩
+
+/-- The light verbs Sumbatova lists. -/
+def lightVerbs : Finset LightVerb :=
+  {make, become, speak, leave, fall, hit, standUp, sitDown, hang, reach, come, comeHere,
+    collect, put, beat, goAway, say, drive, sift, tear, struggle, cut, uq, aq, ikk, art}
+
+/-! ### Complex verbs -/
+
+/-- The word class of the lexical stem of a complex verb as an independent word. -/
+inductive StemClass where
+  | noun
+  | adjective
+  | numeral
+  | verb
+  | ideophone
+  deriving DecidableEq, Repr, Fintype
+
+/-- A complex verb is a lexical stem, cited as the root it contributes, followed by a light
+verb, with any preverbs between them. -/
+structure ComplexVerb where
+  /-- The lexical stem, which carries the core meaning of the complex. -/
+  root : Semantics.Root
+  /-- The word class of the stem, `none` for a stem restricted to the complex verb. -/
+  category : Option StemClass
+  /-- The preverbs between the stem and the light verb. -/
+  preverbs : List Morph := []
+  /-- The light verb. -/
   lightVerb : LightVerb
-  /-- Combined meaning -/
-  meaning : String
-  deriving Repr
+  /-- The meaning of the complex verb. -/
+  gloss : String
+  deriving DecidableEq, Repr
 
-def finish_ : ComplexPredicate :=
-  { lexicalStem := "taman", stemCategory := "noun"
-  , lightVerb := arq, meaning := "finish" }
+/-- *taman-b-arq'-* 'finish' (transitive), from *taman* 'end'. -/
+def finish : ComplexVerb :=
+  { root := { name := "taman" }, category := some .noun, lightVerb := make, gloss := "finish" }
 
-def prepare : ComplexPredicate :=
-  { lexicalStem := "ħaˁdur", stemCategory := "adjective"
-  , lightVerb := arq, meaning := "prepare" }
+/-- *ʜaˁdur-d-arq'-* 'prepare', from *ʜaˁdur-* 'ready'. -/
+def prepare : ComplexVerb :=
+  { root := { name := "ʜaˁdur" }, category := some .adjective, lightVerb := make,
+    gloss := "prepare" }
 
-def divideByTwo : ComplexPredicate :=
-  { lexicalStem := "č'u", stemCategory := "numeral"
-  , lightVerb := LightVerb.mk "b-ut'-" "cut" true false
-  , meaning := "divide by two" }
+/-- *č'u-b-ut'-* 'divide by two', from *č'u* 'two'. -/
+def divideByTwo : ComplexVerb :=
+  { root := { name := "č'u" }, category := some .numeral, lightVerb := cut,
+    gloss := "divide by two" }
 
-def cough : ComplexPredicate :=
-  { lexicalStem := "qeħ", stemCategory := "ideophone"
-  , lightVerb := ik, meaning := "cough" }
+/-- *qeʜ-w-ik'-* 'cough' (imperfective), from the ideophone *qeʜ-*. -/
+def cough : ComplexVerb :=
+  { root := { name := "qeʜ" }, category := some .ideophone, lightVerb := speak,
+    gloss := "cough" }
 
--- ============================================================================
--- § 4: Causative ([sumbatova-2021] §4.5.7)
--- ============================================================================
+/-- *w-isːe-w-ig-* 'start crying', from *w-isː-* 'cry' (imperfective). -/
+def startCrying : ComplexVerb :=
+  { root := { name := "isːe" }, category := some .verb, lightVerb := sitDown,
+    gloss := "start crying" }
 
-/-- Dargwa has a productive causative morpheme *-aq*.
-    Causatives from intransitives are transitive (causee = ABS).
-    Causatives from transitives make the causee appear in the elative case.
+/-- *tːurχ-b-arq'-* 'spin', from a stem found nowhere else. -/
+def spin : ComplexVerb :=
+  { root := { name := "tːurχ" }, category := none, lightVerb := make, gloss := "spin" }
 
-    This is the construction that undergoes alternation under vVPE
-    in [kalyakin-2026]: inchoative → causative and vice versa. -/
-structure CausativeEntry where
-  baseVerb : String
-  baseGloss : String
-  baseTransitive : Bool
-  causativeForm : String
-  causeeCase : String  -- "absolutive" or "elative"
-  deriving Repr
+/-- *t'aš-ka-b-icː-* 'stop', from a stem found nowhere else, with the preverb *ka-*
+'downward' between it and the light verb. -/
+def stop : ComplexVerb :=
+  { root := { name := "t'aš" }, category := none, preverbs := [.pref "ka"],
+    lightVerb := standUp, gloss := "stop" }
 
-/-- (65) *neš-li durħaˁ hajc:-aq-ur* 'Mother caused the boy to stand up.'
-    Base: intransitive. Causee: absolutive. -/
-def causStandUp : CausativeEntry :=
-  { baseVerb := "hajc:-", baseGloss := "stand up"
-  , baseTransitive := false
-  , causativeForm := "hajc:-aq-"
-  , causeeCase := "absolutive" }
+/-! ### Valency alternations -/
 
-/-- (66) *t:at:i-li durħaˁ-li-c:e-r qu b-urq:-aq-ub*
-    'Father called the boy to dig the garden.'
-    Base: transitive. Causee: elative. -/
-def causDig : CausativeEntry :=
-  { baseVerb := "b-urq:-", baseGloss := "dig"
-  , baseTransitive := true
-  , causativeForm := "b-urq:-aq-"
-  , causeeCase := "elative" }
-
-/-- Intransitive causatives: causee in absolutive. -/
-theorem intr_causative_abs_causee :
-    causStandUp.baseTransitive = false ∧
-    causStandUp.causeeCase = "absolutive" := ⟨rfl, rfl⟩
-
-/-- Transitive causatives: causee in elative. -/
-theorem tr_causative_elat_causee :
-    causDig.baseTransitive = true ∧
-    causDig.causeeCase = "elative" := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 5: Valency Alternations ([sumbatova-2021] §4.7.3)
--- ============================================================================
-
-/-- Dargwa antipassive (A-lability): the A-argument takes absolutive case
-    and the P-argument is demoted to ergative (a non-core ergative that
-    never controls person or gender agreement). Only available in
-    imperfective forms. Affective verbs are excluded.
-
-    The antipassive of the typology, uncoded: A is maintained as S, P is
-    denucleativized. -/
+/-- The antipassive is uncoded and confined to imperfective forms. The A is absolutive and the
+P is demoted to an ergative that controls no agreement; affective verbs have none. -/
 def antipassive : Voice := .antipassive
 
-/-- Dargwa P-lability: many transitive verbs can be used intransitively
-    without morphological marking ([sumbatova-2021] §4.7.3, ex. 87).
-    The patient is dropped; the remaining S corresponds to the initial A.
-    This is characteristic of verbs denoting situations that can occur with
-    or without an agent (break, open, fill).
+/-- P-lability is the uncoded anticausative of a transitive form, mostly of verbs of
+situations that occur with or without an agent, whose patient is then the S. -/
+def anticausative : Voice := .anticausative
 
-    The uncoded anticausative, [creissels-2024]'s P-ambitransitivity: S is the
-    initial P. -/
-def pLability : Voice := .anticausative
+/-- The causative *-aq* of an intransitive verb. The causer is the ergative A and the causee,
+the initial S, the absolutive P. -/
+def causativeOfIntransitive : Voice := Voice.causative.marked [.suff "aq"]
 
-/-- Dargwa causative (-aq) applied to intransitive bases: the causative marked by *-aq*,
-    S maintained as P and a new A, the causer, introduced. -/
-def causativeAlternation : Voice := Voice.causative.marked [.suff "aq"]
+/-- The causative *-aq* of a transitive verb. The causer is the ergative A and the causee, the
+initial A, an oblique in the inter-elative. -/
+def causativeOfTransitive : Voice :=
+  { source := .np, target := ⟨some .nominal, [.nominal, .adpositional]⟩,
+    correspondence := [(external, complement 1), (complement 0, complement 0)],
+    marker := [.suff "aq"] }
 
-/-- The antipassive is valency-decreasing (P is denucleativized). -/
-theorem antipassive_decreases : antipassive.IsValencyDecreasing := by decide
+/-- The inter-elative of the causee of a transitive base, a locative form without a direction
+marker. -/
+def causeeForm : Locatives.LocativeForm := ⟨.inter, .elative, none⟩
 
-/-- The causative is valency-increasing (new A is introduced). -/
-theorem causative_increases : causativeAlternation.IsValencyIncreasing := by decide
+/-- The valency alternations of Tanti. -/
+def alternations : Finset Voice :=
+  {antipassive, anticausative, causativeOfIntransitive, causativeOfTransitive}
 
-/-- The antipassive and causative are structural inverses: one removes
-    a core term, the other adds one. -/
-theorem antipassive_causative_inverse :
-    antipassive.IsValencyDecreasing ∧ causativeAlternation.IsValencyIncreasing := by decide
+/-- The causative is the only alternation coded on the verb. -/
+theorem isCoded_iff {v : Voice} (hv : v ∈ alternations) :
+    v.IsCoded ↔ v = causativeOfIntransitive ∨ v = causativeOfTransitive := by
+  simp only [alternations, Finset.mem_insert, Finset.mem_singleton] at hv
+  rcases hv with rfl | rfl | rfl | rfl <;> decide
 
--- ============================================================================
--- § 6: Light Verb Verification
--- ============================================================================
+/-- The causee of an intransitive base stays a core term, the P of the derived construction. -/
+theorem causativeOfIntransitive_fateOfRole_S :
+    causativeOfIntransitive.fateOfRole .S = .maintained := by decide
 
-/-- Most light verbs carry a gender prefix slot. -/
-theorem most_lvs_have_gender :
-    (allLightVerbs.filter (·.genderSlot)).length ≥
-    (allLightVerbs.filter (fun lv => !lv.genderSlot)).length := by
+/-- The causative of a transitive base introduces the causer as it demotes the causee, so the
+derived construction has the valency of the initial one. -/
+theorem causativeOfTransitive_valency :
+    causativeOfTransitive.Nucleativizes ∧
+      causativeOfTransitive.fateOfRole .A = .denucleativized ∧
+      causativeOfTransitive.target.valency = causativeOfTransitive.source.valency := by
   decide
 
-/-- Some light verbs are bound (only used in complex predicates). -/
-theorem some_lvs_bound :
-    (allLightVerbs.filter (·.boundToComplex)).length ≥ 1 := by
+/-- The causee form is an elative without a direction marker, which no spatial elative is. -/
+theorem causeeForm_wellFormed : causeeForm.wellFormed = false := rfl
+
+/-- The future forms of a P-labile verb with third-person arguments are told apart by the
+thematic suffix, *-u* for *če-b-alsː-u* '(he) will glue it' and *-ar* for *če-b-alsː-ar* 'it
+will stick'. -/
+theorem labile_future_thematic :
+    thematic ⟨.third, .third⟩ = .suff "u" ∧ .suff "ar" ∈ intransitiveThematic .third := by
   decide
 
--- ============================================================================
--- § 7: NV Root Position ([kalyakin-2026] §2.2)
--- ============================================================================
-
-/-- A complex predicate annotated with the position of its non-verbal root
-    ([kalyakin-2026] §2.2), where change-of-state roots such as *wana* 'warm' are
-    complements and manner roots such as *duc'* 'run' are adjoined. -/
-structure AnnotatedCPr where
-  lexicalStem : String
-  stemGloss : String
-  rootPosition : Root.Position
-  lightVerb : LightVerb
-  meaning : String
-  deriving Repr
-
--- § 7a: Paper examples ([kalyakin-2026])
-
-/-- *wana AGR-arq'*- 'to warm smth. up' (exx. 3, 8a, 64, 66).
-    NV *wana* 'warm' is a change-of-state root → object-adjoined. -/
-def warmUp : AnnotatedCPr :=
-  { lexicalStem := "wana", stemGloss := "warm"
-  , rootPosition := .complement, lightVerb := arq, meaning := "warm smth. up" }
-
-/-- *gap AGR-arq'*- 'to praise' (exx. 9, 17).
-    NV *gap* 'praise' is a change-of-state root → object-adjoined. -/
-def praiseCPr : AnnotatedCPr :=
-  { lexicalStem := "gap", stemGloss := "praise"
-  , rootPosition := .complement, lightVerb := arq, meaning := "praise" }
-
-/-- *hark AGR-arq'*- 'to open' (ex. 52).
-    NV *hark* 'open' is a change-of-state root → object-adjoined. -/
-def openCPr : AnnotatedCPr :=
-  { lexicalStem := "hark", stemGloss := "open"
-  , rootPosition := .complement, lightVerb := arq, meaning := "open" }
-
-/-- *parʁat AGR-arq'*- 'to calm' (exx. 36, 37, 69).
-    NV *parʁat* 'calm' is a change-of-state root → object-adjoined. -/
-def calmCPr : AnnotatedCPr :=
-  { lexicalStem := "parʁat", stemGloss := "calm"
-  , rootPosition := .complement, lightVerb := arq, meaning := "calm" }
-
-/-- *dawk AGR-irq'*- 'to repair' (exx. 84–86).
-    NV *dawk* 'repaired' is a change-of-state root → object-adjoined. -/
-def repairCPr : AnnotatedCPr :=
-  { lexicalStem := "dawk", stemGloss := "repaired"
-  , rootPosition := .complement
-  , lightVerb := { form := "w-irq'-", gloss := "make", genderSlot := true }
-  , meaning := "repair" }
-
-/-- *duc' Ø-uq-* 'to run' (ex. 58). Activity root → v-adjoined. -/
-def runCPr : AnnotatedCPr :=
-  { lexicalStem := "duc'", stemGloss := "run"
-  , rootPosition := .adjoined
-  , lightVerb := { form := "Ø-uq-", gloss := "move", genderSlot := false }
-  , meaning := "run" }
-
-/-- *taˤh Ø-uq-* 'to jump' (ex. 57). Activity root → v-adjoined. -/
-def jumpCPr : AnnotatedCPr :=
-  { lexicalStem := "taˤh", stemGloss := "jump"
-  , rootPosition := .adjoined
-  , lightVerb := { form := "Ø-uq-", gloss := "move", genderSlot := false }
-  , meaning := "jump" }
-
-end Dargwa.ComplexPredicates
+end Dargwa
