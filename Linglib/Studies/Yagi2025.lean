@@ -4,7 +4,6 @@ public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Semantics.Presupposition.Trivalent
 public import Linglib.Logic.Trivalent.Prop3
-public import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 public import Linglib.Data.Examples.Yagi2025
 
 /-!
@@ -38,7 +37,7 @@ filters the presupposition away (`exists_disjS_some_flexS_top_none`).
 
 ## Implementation notes
 
-The designated undefined state of the update semantics is `none` on `Option (State W)`, with
+The designated undefined state of the update semantics is `none` on `Option (Set W)`, with
 union and subtraction absorbing it. The meta-assertion operator is stated on partial
 propositions and agrees with the trivalent `Prop3.metaAssert` (`eval_assertMeta`). The
 licensing constraint on the operator is not modelled.
@@ -59,7 +58,7 @@ licensing constraint on the operator is not modelled.
 
 namespace Yagi2025
 
-open Presupposition Trivalent UpdateSemantics Classical
+open Presupposition Trivalent Classical
 
 variable {W : Type*}
 
@@ -125,43 +124,40 @@ theorem orSeven_presup_of_left (h : ∀ w, φ.presup w) (w : W) : (orSeven φ ψ
 
 /-! ### Update semantics with a designated undefined state -/
 
-@[simp] theorem mem_prop {p : W → Prop} {s : State W} {w : W} :
-    w ∈ Update.prop p s ↔ w ∈ s ∧ p w := Iff.rfl
-
 /-- Union with the undefined state absorbing. -/
-def unionU : Option (State W) → Option (State W) → Option (State W)
+def unionU : Option (Set W) → Option (Set W) → Option (Set W)
   | some a, some b => some (a ∪ b)
   | _, _ => none
 
-@[simp] theorem unionU_some_some (a b : State W) : unionU (some a) (some b) = some (a ∪ b) :=
+@[simp] theorem unionU_some_some (a b : Set W) : unionU (some a) (some b) = some (a ∪ b) :=
   rfl
 
-@[simp] theorem unionU_none_left (b : Option (State W)) : unionU none b = none := by
+@[simp] theorem unionU_none_left (b : Option (Set W)) : unionU none b = none := by
   cases b <;> rfl
 
-@[simp] theorem unionU_none_right (a : Option (State W)) : unionU a none = none := by
+@[simp] theorem unionU_none_right (a : Option (Set W)) : unionU a none = none := by
   cases a <;> rfl
 
 /-- Update by a partial proposition: undefined unless the presupposition holds throughout. -/
-noncomputable def updateS (φ : PartialProp W) (s : State W) : Option (State W) :=
-  if ∀ w ∈ s, φ.presup w then some (Update.prop φ.assertion s) else none
+noncomputable def updateS (φ : PartialProp W) (s : Set W) : Option (Set W) :=
+  if ∀ w ∈ s, φ.presup w then some {w ∈ s | φ.assertion w} else none
 
 /-- Negation of an update: the input minus the result. -/
-def negOf (upd : State W → Option (State W)) (s : State W) : Option (State W) :=
+def negOf (upd : Set W → Option (Set W)) (s : Set W) : Option (Set W) :=
   (upd s).map (s \ ·)
 
 /-- Disjunction: the first update, joined with the second in the negation of the first. -/
-noncomputable def disjS (φ ψ : PartialProp W) (s : State W) : Option (State W) :=
+noncomputable def disjS (φ ψ : PartialProp W) (s : Set W) : Option (Set W) :=
   unionU (updateS φ s) ((negOf (updateS φ) s).bind (updateS ψ))
 
-theorem updateS_eq_some_iff {s t : State W} :
-    updateS φ s = some t ↔ (∀ w ∈ s, φ.presup w) ∧ t = Update.prop φ.assertion s := by
+theorem updateS_eq_some_iff {s t : Set W} :
+    updateS φ s = some t ↔ (∀ w ∈ s, φ.presup w) ∧ t = {w ∈ s | φ.assertion w} := by
   unfold updateS
   split_ifs with h
   · exact ⟨λ e => ⟨h, (Option.some_inj.mp e).symm⟩, λ e => by rw [e.2]⟩
   · exact iff_of_false (by simp) (λ e => h e.1)
 
-theorem updateS_eq_none_iff {s : State W} :
+theorem updateS_eq_none_iff {s : Set W} :
     updateS φ s = none ↔ ¬ ∀ w ∈ s, φ.presup w := by
   unfold updateS
   split_ifs with h
@@ -170,18 +166,18 @@ theorem updateS_eq_none_iff {s : State W} :
 
 /-- The disjunction is defined exactly when the first presupposition holds throughout the
 input and the second holds wherever the first disjunct fails. -/
-theorem disjS_isSome_iff (s : State W) :
+theorem disjS_isSome_iff (s : Set W) :
     (disjS φ ψ s).isSome ↔
       (∀ w ∈ s, φ.presup w) ∧ ∀ w ∈ s, ¬ φ.assertion w → ψ.presup w := by
   unfold disjS negOf
   by_cases hp : ∀ w ∈ s, φ.presup w
   · rw [updateS_eq_some_iff.2 ⟨hp, rfl⟩, Option.map_some, Option.bind_some]
-    have hiff : (∀ w ∈ s \ Update.prop φ.assertion s, ψ.presup w) ↔
+    have hiff : (∀ w ∈ s \ {w ∈ s | φ.assertion w}, ψ.presup w) ↔
         ∀ w ∈ s, ¬ φ.assertion w → ψ.presup w := by
       constructor
       · intro hq w hw hφ; exact hq w ⟨hw, λ h => hφ h.2⟩
       · intro hq w hw; exact hq w hw.1 (λ h => hw.2 ⟨hw.1, h⟩)
-    by_cases hq : ∀ w ∈ s \ Update.prop φ.assertion s, ψ.presup w
+    by_cases hq : ∀ w ∈ s \ {w ∈ s | φ.assertion w}, ψ.presup w
     · rw [updateS_eq_some_iff.2 ⟨hq, rfl⟩, unionU_some_some]
       exact iff_of_true rfl ⟨hp, hiff.1 hq⟩
     · rw [updateS_eq_none_iff.2 hq, unionU_none_right]
@@ -191,7 +187,7 @@ theorem disjS_isSome_iff (s : State W) :
 
 /-- Under conflict the disjunction is defined only when the first disjunct already holds
 throughout the input, and then it returns the input: defined only if uninformative. -/
-theorem disjS_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
+theorem disjS_eq_some_iff (h : Conflict φ ψ) (s t : Set W) :
     disjS φ ψ s = some t ↔
       (∀ w ∈ s, φ.presup w) ∧ (∀ w ∈ s, φ.assertion w) ∧ t = s := by
   have hempty : updateS ψ (s \ s) = some ∅ :=
@@ -202,13 +198,13 @@ theorem disjS_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
     have hφ : ∀ w ∈ s, φ.assertion w := λ w hw =>
       by_contra λ hn => h w ⟨hs.1 w hw, hs.2 w hw hn⟩
     refine ⟨hs.1, hφ, ?_⟩
-    have hprop : Update.prop φ.assertion s = s :=
+    have hprop : {w ∈ s | φ.assertion w} = s :=
       Set.ext λ w => ⟨λ h => h.1, λ hw => ⟨hw, hφ w hw⟩⟩
     rw [disjS, negOf, updateS_eq_some_iff.2 ⟨hs.1, rfl⟩, hprop, Option.map_some,
       Option.bind_some, hempty, unionU_some_some, Set.union_empty] at ht
     exact (Option.some_inj.mp ht).symm
   · rintro ⟨hp, hφ, ht⟩
-    have hprop : Update.prop φ.assertion s = s :=
+    have hprop : {w ∈ s | φ.assertion w} = s :=
       Set.ext λ w => ⟨λ h => h.1, λ hw => ⟨hw, hφ w hw⟩⟩
     rw [disjS, negOf, updateS_eq_some_iff.2 ⟨hp, rfl⟩, hprop, Option.map_some, Option.bind_some,
       hempty, unionU_some_some, Set.union_empty, ht]
@@ -218,7 +214,7 @@ theorem disjS_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
 /-- If each disjunct's presupposition is entailed by its local context, the negation of the
 other disjunct within the global context, then under conflict every world of the global
 context makes some disjunct defined and true. -/
-theorem local_contexts_force_truth (h : Conflict φ ψ) (s : State W)
+theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
     (h₁ : ∀ w ∈ s, ¬ (φ.presup w ∧ φ.assertion w) → ψ.presup w)
     (h₂ : ∀ w ∈ s, ¬ (ψ.presup w ∧ ψ.assertion w) → φ.presup w) :
     ∀ w ∈ s, (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w) := by
@@ -272,21 +268,21 @@ theorem orStrong_assertMeta_presup_iff (w : W) :
 
 /-- The update by a disjunction whose disjuncts are evaluated in the input restricted by the
 accommodated propositions `χ` and `ω`. -/
-noncomputable def flexS (χ ω : W → Prop) (φ ψ : PartialProp W) (s : State W) :
-    Option (State W) :=
-  unionU (updateS φ (Update.prop χ s)) (updateS ψ (Update.prop ω s))
+noncomputable def flexS (χ ω : W → Prop) (φ ψ : PartialProp W) (s : Set W) :
+    Option (Set W) :=
+  unionU (updateS φ {w ∈ s | χ w}) (updateS ψ {w ∈ s | ω w})
 
 /-- The accommodated propositions split the input. -/
-def Splits (χ ω : W → Prop) (s : State W) : Prop := Update.prop χ s ∪ Update.prop ω s = s
+def Splits (χ ω : W → Prop) (s : Set W) : Prop := {w ∈ s | χ w} ∪ {w ∈ s | ω w} = s
 
-theorem splits_top (s : State W) : Splits (λ _ => True) (λ _ => True) s := by
+theorem splits_top (s : Set W) : Splits (λ _ => True) (λ _ => True) s := by
   ext w; simp
 
 /-- Each disjunct's negated rival presupposition splits any input under conflict. -/
-theorem splits_of_conflict (h : Conflict φ ψ) (s : State W) :
+theorem splits_of_conflict (h : Conflict φ ψ) (s : Set W) :
     Splits (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) s := by
   ext w
-  simp only [Set.mem_union, mem_prop]
+  simp only [Set.mem_union, Set.mem_sep_iff]
   constructor
   · rintro (⟨hw, -⟩ | ⟨hw, -⟩) <;> exact hw
   · intro hw
@@ -294,15 +290,13 @@ theorem splits_of_conflict (h : Conflict φ ψ) (s : State W) :
     · exact Or.inl ⟨hw, λ hq => h w ⟨hp, hq⟩⟩
     · exact Or.inr ⟨hw, hp⟩
 
-theorem prop_top (s : State W) : Update.prop (λ _ : W => True) s = s := by ext w; simp
-
 /-- With the default tautologies the update is defined exactly when both presuppositions
 hold throughout, and then returns the worlds verifying either assertion. -/
-theorem flexS_top_eq_some_iff (s t : State W) :
+theorem flexS_top_eq_some_iff (s t : Set W) :
     flexS (λ _ => True) (λ _ => True) φ ψ s = some t ↔
       (∀ w ∈ s, φ.presup w) ∧ (∀ w ∈ s, ψ.presup w) ∧
-        t = Update.prop φ.assertion s ∪ Update.prop ψ.assertion s := by
-  simp only [flexS, prop_top]
+        t = {w ∈ s | φ.assertion w} ∪ {w ∈ s | ψ.assertion w} := by
+  simp only [flexS, Set.sep_true]
   by_cases hp : ∀ w ∈ s, φ.presup w
   · by_cases hq : ∀ w ∈ s, ψ.presup w
     · rw [updateS_eq_some_iff.2 ⟨hp, rfl⟩, updateS_eq_some_iff.2 ⟨hq, rfl⟩, unionU_some_some]
@@ -313,7 +307,7 @@ theorem flexS_top_eq_some_iff (s t : State W) :
     exact iff_of_false (by simp) (λ e => hp e.1)
 
 /-- Under conflict the default is never defined on a nonempty input. -/
-theorem flexS_top_eq_none (h : Conflict φ ψ) {s : State W} (hs : s.Nonempty) :
+theorem flexS_top_eq_none (h : Conflict φ ψ) {s : Set W} (hs : s.Nonempty) :
     flexS (λ _ => True) (λ _ => True) φ ψ s = none := by
   obtain ⟨w, hw⟩ := hs
   cases ht : flexS (λ _ => True) (λ _ => True) φ ψ s with
@@ -325,12 +319,12 @@ theorem flexS_top_eq_none (h : Conflict φ ψ) {s : State W} (hs : s.Nonempty) :
 /-- Accommodating each disjunct's negated rival presupposition, the update is defined exactly
 when some presupposition holds at every world of the input, and returns the worlds where a
 disjunct is defined and true. -/
-theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
+theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : Set W) :
     flexS (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) φ ψ s = some t ↔
       (∀ w ∈ s, φ.presup w ∨ ψ.presup w) ∧
         t = {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
-  have key : (∀ w ∈ Update.prop (λ w => ¬ ψ.presup w) s, φ.presup w) ∧
-      (∀ w ∈ Update.prop (λ w => ¬ φ.presup w) s, ψ.presup w) ↔
+  have key : (∀ w ∈ {w ∈ s | ¬ ψ.presup w}, φ.presup w) ∧
+      (∀ w ∈ {w ∈ s | ¬ φ.presup w}, ψ.presup w) ↔
         ∀ w ∈ s, φ.presup w ∨ ψ.presup w := by
     constructor
     · rintro ⟨h₁, h₂⟩ w hw
@@ -340,14 +334,14 @@ theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
     · intro hor
       exact ⟨λ w hw => (hor w hw.1).resolve_right hw.2,
         λ w hw => (hor w hw.1).resolve_left hw.2⟩
-  have hset : ∀ (h₁ : ∀ w ∈ Update.prop (λ w => ¬ ψ.presup w) s, φ.presup w)
-      (h₂ : ∀ w ∈ Update.prop (λ w => ¬ φ.presup w) s, ψ.presup w),
-      Update.prop φ.assertion (Update.prop (λ w => ¬ ψ.presup w) s) ∪
-        Update.prop ψ.assertion (Update.prop (λ w => ¬ φ.presup w) s) =
+  have hset : ∀ (h₁ : ∀ w ∈ {w ∈ s | ¬ ψ.presup w}, φ.presup w)
+      (h₂ : ∀ w ∈ {w ∈ s | ¬ φ.presup w}, ψ.presup w),
+      {w ∈ {w ∈ s | ¬ ψ.presup w} | φ.assertion w} ∪
+        {w ∈ {w ∈ s | ¬ φ.presup w} | ψ.assertion w} =
       {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
     intro h₁ h₂
     ext w
-    simp only [Set.mem_union, mem_prop, Set.mem_ofPred_eq]
+    simp only [Set.mem_union, Set.mem_ofPred_eq]
     constructor
     · rintro (⟨⟨hw, hq⟩, hφ⟩ | ⟨⟨hw, hp⟩, hψ⟩)
       · exact ⟨hw, Or.inl ⟨h₁ w ⟨hw, hq⟩, hφ⟩⟩
@@ -356,8 +350,8 @@ theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
       · exact Or.inl ⟨⟨hw, λ hq => h w ⟨hp, hq⟩⟩, hφ⟩
       · exact Or.inr ⟨⟨hw, λ hp => h w ⟨hp, hq⟩⟩, hψ⟩
   simp only [flexS]
-  by_cases h₁ : ∀ w ∈ Update.prop (λ w => ¬ ψ.presup w) s, φ.presup w
-  · by_cases h₂ : ∀ w ∈ Update.prop (λ w => ¬ φ.presup w) s, ψ.presup w
+  by_cases h₁ : ∀ w ∈ {w ∈ s | ¬ ψ.presup w}, φ.presup w
+  · by_cases h₂ : ∀ w ∈ {w ∈ s | ¬ φ.presup w}, ψ.presup w
     · rw [updateS_eq_some_iff.2 ⟨h₁, rfl⟩, updateS_eq_some_iff.2 ⟨h₂, rfl⟩,
         unionU_some_some, hset h₁ h₂]
       exact ⟨λ e => ⟨key.1 ⟨h₁, h₂⟩, (Option.some_inj.mp e).symm⟩,
@@ -369,7 +363,7 @@ theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
 
 /-- The negation of the split update removes exactly the worlds where both disjuncts are
 false: the disjunction can be false. -/
-theorem negOf_flexS_split (h : Conflict φ ψ) {s : State W}
+theorem negOf_flexS_split (h : Conflict φ ψ) {s : Set W}
     (hs : ∀ w ∈ s, φ.presup w ∨ ψ.presup w) :
     negOf (flexS (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) φ ψ) s =
       some {w ∈ s |
@@ -382,14 +376,14 @@ theorem negOf_flexS_split (h : Conflict φ ψ) {s : State W}
 
 /-- Genuineness: each disjunct is defined and true at some world of the input that survives
 the update. -/
-def Genuine (upd : State W → Option (State W)) (φ ψ : PartialProp W) (s : State W) : Prop :=
+def Genuine (upd : Set W → Option (Set W)) (φ ψ : PartialProp W) (s : Set W) : Prop :=
   (∃ w ∈ s, φ.presup w ∧ φ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t) ∧
     (∃ w ∈ s, ψ.presup w ∧ ψ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t)
 
 /-- When the first assertion contradicts the second presupposition, the default update, where
 defined, violates genuineness: it presupposes the second presupposition throughout, which
 empties the first disjunct. -/
-theorem not_genuine_top (h : ∀ w, ¬ (φ.assertion w ∧ ψ.presup w)) {s t : State W}
+theorem not_genuine_top (h : ∀ w, ¬ (φ.assertion w ∧ ψ.presup w)) {s t : Set W}
     (ht : flexS (λ _ => True) (λ _ => True) φ ψ s = some t) :
     ¬ Genuine (flexS (λ _ => True) (λ _ => True) φ ψ) φ ψ s := by
   rintro ⟨⟨w, hw, -, hφ, -⟩, -⟩

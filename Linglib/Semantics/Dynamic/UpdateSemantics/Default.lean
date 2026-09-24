@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Minimals
-public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Semantics.Dynamic.UpdateSemantics.Validity
 
 /-!
 # Defaults in update semantics
@@ -24,9 +24,9 @@ leave the agent agnostic, and compatible ones reinforce each other. Read at the 
 discourse, assertion and promotion are the two updates of Portner's account of mood, on the
 context set and on the To-Do List.
 
-The base language of states, updates and tests is `Semantics/Dynamic/UpdateSemantics/Basic.lean`.
-The restricted rules and expectation frames of the paper's section 4 live with the paper in
-`Studies/Veltman1996.lean`.
+Acceptance, additivity and the notions of validity are in
+`Semantics/Dynamic/UpdateSemantics/Validity.lean`, and the restricted rules and expectation
+frames of the paper's section 4 live with the paper in `Studies/Veltman1996.lean`.
 
 ## Main definitions
 
@@ -48,6 +48,17 @@ The restricted rules and expectation frames of the paper's section 4 live with t
 * `conflicting_defaults_iff_agree`, `compatible_defaults_optimal`: conflicting defaults yield
   agnosticism, and compatible ones reinforce each other.
 * `promote_respects_idempotent`, `promote_comm`: promotion is idempotent and commutative.
+* `isAdditive_assert`, `isAdditive_promote`: assertion and promotion are additive.
+* `isFixedPt_presumablyTest_iff`: a state accepts *presumably φ* exactly when `φ` holds in its
+  optimal worlds.
+
+## Implementation notes
+
+Veltman's states have coherent patterns, and his update with *normally φ* crashes when no normal
+world of the pattern is a `φ`-world. Here promotion refines unconditionally and patterns need not
+be coherent, so a conflicting rule shows up as the failure of its acceptability condition rather
+than as a crash. The crashing update is the rule update of the section 4 system in
+`Studies/Veltman1996.lean`.
 
 ## References
 
@@ -154,6 +165,7 @@ theorem minimals_refine_top (φ : W → Prop) (d : Set W) (hex : ∃ w ∈ d, φ
 
 /-- An expectation state pairs the agent's information, the worlds compatible with what is
 known, with an expectation pattern on worlds. -/
+@[ext]
 structure ExpState (W : Type*) where
   /-- The worlds compatible with the agent's information. -/
   info : Set W
@@ -216,18 +228,42 @@ theorem assert_info_subset (σ : ExpState W) (φ : W → Prop) :
     (σ.assert φ).info ⊆ σ.info := fun _ hw ↦ hw.1
 
 /-! Expectation states are ordered componentwise, a more constrained state lying below a less
-constrained one, as finer setoids lie below coarser ones. Veltman orients his order the other
-way, with weaker states below stronger ones, and the content is the same. Both updates are
-deflationary, monotone and idempotent for this order, and his acceptance of `φ` in `σ`, that
+constrained one, as finer setoids lie below coarser ones, and the minimal state `init` is the
+top. Veltman orients his order the other way, with weaker states below stronger ones, and the
+content is the same. Both updates are additive, meeting the input with the update of `init`, so
+they are deflationary, monotone, idempotent and persistent, and his acceptance of `φ` in `σ`, that
 updating `σ` with `φ` returns `σ`, is the fixpoint condition `σ ≤ σ[φ]`. -/
 
-instance : Preorder (ExpState W) where
+instance : PartialOrder (ExpState W) where
   le σ τ := σ.info ⊆ τ.info ∧ σ.order ≤ τ.order
   le_refl _ := ⟨subset_rfl, le_refl _⟩
   le_trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
+  le_antisymm _ _ h₁ h₂ := ExpState.ext (h₁.1.antisymm h₂.1) (h₁.2.antisymm h₂.2)
+
+instance : SemilatticeInf (ExpState W) where
+  inf σ τ := ⟨σ.info ∩ τ.info, σ.order ⊓ τ.order⟩
+  inf_le_left _ _ := ⟨Set.inter_subset_left, inf_le_left⟩
+  inf_le_right _ _ := ⟨Set.inter_subset_right, inf_le_right⟩
+  le_inf _ _ _ h₁ h₂ := ⟨Set.subset_inter h₁.1 h₂.1, le_inf h₁.2 h₂.2⟩
+
+instance : OrderTop (ExpState W) where
+  top := init
+  le_top _ := ⟨Set.subset_univ _, le_top⟩
 
 theorem le_iff {σ τ : ExpState W} :
     σ ≤ τ ↔ σ.info ⊆ τ.info ∧ σ.order ≤ τ.order := Iff.rfl
+
+theorem top_eq_init : (⊤ : ExpState W) = init := rfl
+
+/-- Assertion is additive: asserting `φ` meets the state with the assertion of `φ` in the
+minimal state. -/
+theorem isAdditive_assert (φ : W → Prop) : IsAdditive (ExpState.assert · φ) := fun _ ↦
+  ExpState.ext (Set.ext fun _ ↦ ⟨fun ⟨hw, hφ⟩ ↦ ⟨hw, trivial, hφ⟩, fun ⟨hw, _, hφ⟩ ↦ ⟨hw, hφ⟩⟩)
+    (inf_top_eq _).symm
+
+/-- Promotion is additive, so rules are additive just like assertions of fact. -/
+theorem isAdditive_promote (φ : W → Prop) : IsAdditive (ExpState.promote · φ) := fun σ ↦
+  ExpState.ext (Set.inter_univ _).symm (congrArg (σ.order ⊓ ·) (top_inf_eq (crit φ)).symm)
 
 /-- Assertion lands below the input. -/
 theorem assert_le_self (σ : ExpState W) (φ : W → Prop) : σ.assert φ ≤ σ :=
@@ -301,6 +337,16 @@ end ExpState
 theorem presumably_isTest (φ : W → Prop) (σ : ExpState W) :
     (presumablyTest φ σ).info = σ.info ∨ (presumablyTest φ σ).info = ∅ := by
   unfold presumablyTest; split <;> simp
+
+/-- A state accepts *presumably φ* exactly when `φ` holds in every optimal world. -/
+theorem isFixedPt_presumablyTest_iff {σ : ExpState W} :
+    Function.IsFixedPt (presumablyTest φ) σ ↔ ∀ w ∈ σ.optimal, φ w := by
+  unfold Function.IsFixedPt presumablyTest
+  split_ifs with h
+  · exact iff_of_true rfl h
+  · refine iff_of_false (fun he ↦ h fun w hw ↦ ?_) h
+    rw [← he] at hw
+    exact absurd hw.1 (Set.notMem_empty w)
 
 /-- The test *might φ* either returns the state or empties the information. -/
 theorem might_isTest (φ : W → Prop) (σ : ExpState W) :
