@@ -1,29 +1,37 @@
 module
 
 public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.German.ModalIndefinites
 public import Linglib.Fragments.German.TemporalConnectives
 
 /-!
-# German Polarity-Sensitive Items
+# German polarity-sensitive items
 
-German *irgendein*, [chierchia-2006]'s existential FCI (EFCI): NPI uses in
-questions and conditionals, FCI uses under modals, with the *irgend-*
-prefix marking domain widening. The negative quantifier *niemand* negates
-rather than being licensed, and bare *wer* is a plain colloquial
-indefinite ([haspelmath-1997] A.1) — neither is a polarity item, so
-neither has an entry here. *erst* 'only then' is the positive polarity
-punctual *until*, the twin of Finnish *vasta* ([karttunen-1974]). The
-modal *brauchen* 'need' with a *zu*-infinitive is an anti-additive NPI
-([buring-gunlogson-2000], [schaebbicke-seeliger-repp-2021]).
+This file defines the German polarity-sensitive items: the indefinite *irgendein*, the modal
+*brauchen* 'need' and the punctual *erst* 'only then'. Each entry records the environments in
+which the item is attested, and the licensing theory of `Semantics/Polarity/Licensing.lean`
+predicts which environments license it.
+
+*Irgendein* is an existential indefinite with free-choice effects under modals. Kratzer and
+Shimoyama attest it under possibility and necessity modals, under negative quantifiers such as
+*niemand* 'nobody' and *auf keinen Fall* 'in no case', under *bezweifeln* 'doubt' and in an
+embedded question, and they find it ungrammatical under the inflectional negation *nicht* unless
+*irgend* is stressed. It is also fine in an episodic sentence, where it signals the speaker's
+ignorance or indifference, which is not a licensing environment. Its analysis as a modal
+indefinite is `German.ModalIndefinites.irgendein`. *Brauchen* with a *zu*-infinitive occurs only
+with a negative or with *nur* or *bloß* 'only'; Büring and Gunlogson, and Schaebbicke, Seeliger
+and Repp in a rating study, find it licensed by *niemand* and *kein* and out in a positive polar
+question. *Erst* is the positive polarity *until* of Karttunen's chart, the connective
+`German.TemporalConnectives.erst`.
 
 ## References
 
-* [haspelmath-1997]
-* [chierchia-2006]
-* [karttunen-1974]
+* [kratzer-shimoyama-2002]
+* [durrell-2011]
 * [buring-gunlogson-2000]
 * [schaebbicke-seeliger-repp-2021]
 * [van-rooy-2003-npi]
+* [karttunen-1974]
 -/
 
 @[expose] public section
@@ -32,27 +40,24 @@ namespace German.PolarityItems
 
 open PolarityItem
 
-/-- *irgendein/irgendwer* — [chierchia-2006]'s EFCI class: existential FCI
-    with NPI uses (questions, conditionals) and FCI uses (modals,
-    imperatives); *irgend-* marks domain widening. -/
+/-- *Irgendein* is an existential indefinite with free-choice effects, attested in questions, under
+*bezweifeln*, under possibility and necessity modals and under negative quantifiers. -/
 def irgendein : PolarityItem :=
-  { form := "irgendein/irgendwer"
+  { form := ModalIndefinites.irgendein.form
   , licensor := some .weak
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts :=
-      [.question, .conditionalAntecedent, .modalPossibility, .modalNecessity, .imperative]
-  , scalarDirection := some .strengthening }
+      [.question, .doubtVerb, .modalPossibility, .modalNecessity, .nobody] }
 
 /-! ### NPI -/
 
-/-- *brauchen* 'need' with a *zu*-infinitive: out in a plain declarative and in a positive polar
-question, licensed by *niemand* and by *kein* ([buring-gunlogson-2000] (15), (16)). The rating
-study of [schaebbicke-seeliger-repp-2021] (Fig. 2) agrees, and finds it intermediate under the
-merely downward-entailing *kaum*: median 4 of 7, between 5.5 under *kein* and 1.5 in a positive
-question. The library's table has questions license every weak NPI ([van-rooy-2003-npi]), so
-the entry is anti-additive; the classification that study tests reserves questions for superweak
-NPIs, and there the *kaum* rating leaves weak open. -/
+/-- *Brauchen* 'need' with a *zu*-infinitive is out in a plain declarative and in a positive polar
+question and is licensed by *niemand* and by *kein*. The rating study of Schaebbicke, Seeliger and
+Repp finds it intermediate under the merely downward-entailing *kaum*, with a median of 4 of 7
+between 5.5 under *kein* and 1.5 in a positive question. The licensing table has questions license
+every weak NPI, after van Rooy, so the entry is anti-additive; the classification the rating study
+tests reserves questions for superweak NPIs, and there the *kaum* rating leaves weak open. -/
 def brauchen : PolarityItem :=
   { form := "brauchen"
   , licensor := some .antiAdditive
@@ -61,26 +66,25 @@ def brauchen : PolarityItem :=
 
 /-! ### PPI -/
 
-/-- *erst* 'only then', the punctual *until* of a positive clause ([karttunen-1974], the paper's
-(38)). Its connective entry is `German.TemporalConnectives.erst`. -/
+/-- *Erst* 'only then' is the punctual *until* of a positive clause. -/
 def erst : PolarityItem :=
   { form := TemporalConnectives.erst.form
   , ppi := true
   , baseForce := .temporal
   , licensingContexts := [] }
 
-/-! ### Verification -/
+/-! ### Licensing -/
 
-/-- Every attested context is predicted licensed. -/
+/-- Every environment in which *irgendein* is attested licenses it. -/
 theorem irgendein_licensing_sound :
     ∀ c ∈ irgendein.licensingContexts, c.licenses irgendein := by decide
 
-/-- Every attested context is predicted licensed. -/
+/-- Every environment in which *brauchen* is attested licenses it. -/
 theorem brauchen_licensing_sound :
     ∀ c ∈ brauchen.licensingContexts, c.licenses brauchen := by decide
 
-/-- *\*Braucht sie eine Entschuldigung mitzubringen?* ([buring-gunlogson-2000] (15c)): a positive
-polar question does not license *brauchen*. -/
+/-- A positive polar question does not license *brauchen*, as in *\*Braucht sie eine
+Entschuldigung mitzubringen?* -/
 theorem not_question_licenses_brauchen : ¬ LicensingContext.question.licenses brauchen := by
   decide
 
