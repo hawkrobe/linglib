@@ -69,7 +69,7 @@ def imported_sets():
         if os.sep + "Examples" + os.sep in path:
             continue
         src = open(path, encoding="utf-8").read()
-        imps |= set(re.findall(r"^import Linglib\.Data\.Examples\.(\w+)", src, flags=re.M))
+        imps |= set(re.findall(r"^(?:public )?import Linglib\.Data\.Examples\.(\w+)", src, flags=re.M))
     return imps
 
 
@@ -89,7 +89,7 @@ def check_bibkeys(papers, imported):
 
 def check_study(path, papers):
     src = open(path, encoding="utf-8").read()
-    imps = [i for i in re.findall(r"^import Linglib\.Data\.Examples\.(\w+)", src, flags=re.M)
+    imps = [i for i in re.findall(r"^(?:public )?import Linglib\.Data\.Examples\.(\w+)", src, flags=re.M)
             if i in papers]
     if not imps:
         return []

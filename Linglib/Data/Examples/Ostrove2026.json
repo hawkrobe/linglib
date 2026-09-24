@@ -1,0 +1,1937 @@
+[
+  {
+    "id": "ostrove2026_9a_completive",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9a)"},
+    "language": "sanm1291",
+    "primaryText": "Ká'án =ì xìin Ana iin be'e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ká'án", "think:CONT"], ["=ì", "=I"], ["xìin", "buy:COMP"], ["Ana", "Ana"], ["iin", "one"],
+      ["be'e", "house"]
+    ],
+    "translation": "I think Ana bought a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ka'án"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "completive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9a_continuous",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9a)"},
+    "language": "sanm1291",
+    "primaryText": "Ká'án =ì xíin Ana iin be'e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ká'án", "think:CONT"], ["=ì", "=I"], ["xíin", "buy:CONT"], ["Ana", "Ana"], ["iin", "one"],
+      ["be'e", "house"]
+    ],
+    "translation": "I think Ana is buying a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ka'án"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "continuous"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9a_irrealis",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9a)"},
+    "language": "sanm1291",
+    "primaryText": "Ká'án =ì kwiin Ana iin be'e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ká'án", "think:CONT"], ["=ì", "=I"], ["kwiin", "buy:IRR"], ["Ana", "Ana"], ["iin", "one"],
+      ["be'e", "house"]
+    ],
+    "translation": "I think Ana will buy a house.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ka'án"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "irrealis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9b_completive",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9b)"},
+    "language": "sanm1291",
+    "primaryText": "Nì- kà'àn Maria kìxi kwé'e =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nì-", "COMP-"], ["kà'àn", "say"], ["Maria", "Maria"], ["kìxi", "sleep:COMP"],
+      ["kwé'e", "much"], ["=ñá", "=she"]
+    ],
+    "translation": "Maria said that she slept a lot.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kà'àn"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "completive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9b_continuous",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9b)"},
+    "language": "sanm1291",
+    "primaryText": "Nì- kà'àn Maria kíxi kwé'e =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nì-", "COMP-"], ["kà'àn", "say"], ["Maria", "Maria"], ["kíxi", "sleep:CONT"],
+      ["kwé'e", "much"], ["=ñá", "=she"]
+    ],
+    "translation": "Maria said that she sleeps a lot.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kà'àn"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "continuous"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9b_irrealis",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9b)"},
+    "language": "sanm1291",
+    "primaryText": "Nì- kà'àn Maria kusi kwé'e =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nì-", "COMP-"], ["kà'àn", "say"], ["Maria", "Maria"], ["kusi", "sleep:IRR"],
+      ["kwé'e", "much"], ["=ñá", "=she"]
+    ],
+    "translation": "Maria said that she will sleep a lot.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kà'àn"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "irrealis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9c_completive",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9c)"},
+    "language": "sanm1291",
+    "primaryText": "Kùsijǐ ini =rà nì- nì'ǐ =rà ña'á",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kùsijǐ", "be.happy:COMP"], ["ini", "in"], ["=rà", "=he"], ["nì-", "COMP-"],
+      ["nì'ǐ", "get"], ["=rà", "=he"], ["ña'á", "thing"]
+    ],
+    "translation": "He was happy that he got presents.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kusijǐ ini"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "completive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9c_continuous",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9c)"},
+    "language": "sanm1291",
+    "primaryText": "Kùsijǐ ini =rà nî'ǐ =rà ña'á",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kùsijǐ", "be.happy:COMP"], ["ini", "in"], ["=rà", "=he"], ["nî'ǐ", "get:CONT"],
+      ["=rà", "=he"], ["ña'á", "thing"]
+    ],
+    "translation": "He was happy that he is getting presents.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kusijǐ ini"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "continuous"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_9c_irrealis",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(9c)"},
+    "language": "sanm1291",
+    "primaryText": "Kùsijǐ ini =rà ni'ǐ =rà ña'á",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kùsijǐ", "be.happy:COMP"], ["ini", "in"], ["=rà", "=he"], ["ni'ǐ", "get:IRR"],
+      ["=rà", "=he"], ["ña'á", "thing"]
+    ],
+    "translation": "He was happy that he will get presents.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kusijǐ ini"],
+      ["clauseType", "finite"],
+      ["diagnostic", "aspect"],
+      ["aspect", "irrealis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13a_completive",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13a)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu =rà xòná =rà ña'á",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["=rà", "=he"], ["xòná", "open:COMP"], ["=rà", "he"],
+      ["ña'á", "thing"]
+    ],
+    "translation": "He hopes to open presents (lit. things).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "completive"]
+    ],
+    "comment": "The source prints the embedded subject as rà, without the clitic boundary.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13a_continuous",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13a)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu =rà xóná =rà ña'á",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["=rà", "=he"], ["xóná", "open:CONT"], ["=rà", "he"],
+      ["ña'á", "thing"]
+    ],
+    "translation": "He hopes to open presents (lit. things).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "continuous"]
+    ],
+    "comment": "The source prints the embedded subject as rà, without the clitic boundary.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13a_irrealis",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13a)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu =rà koná =rà ña'á",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["=rà", "=he"], ["koná", "open:IRR"], ["=rà", "he"],
+      ["ña'á", "thing"]
+    ],
+    "translation": "He hopes to open presents (lit. things).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "irrealis"]
+    ],
+    "comment": "The source prints the embedded subject as rà, without the clitic boundary.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13b_completive",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13b)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni =ì xòná =ì mí yùye'e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["=ì", "=I"], ["xòná", "open:COMP"], ["=ì", "=I"], ["mí", "the"],
+      ["yùye'e", "door"]
+    ],
+    "translation": "I want to open the door.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "completive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13b_continuous",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13b)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni =ì xóxá =ì mí yùye'e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["=ì", "=I"], ["xóxá", "open:CONT"], ["=ì", "=I"], ["mí", "the"],
+      ["yùye'e", "door"]
+    ],
+    "translation": "I want to open the door.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "continuous"]
+    ],
+    "comment": "As printed; (13a) has xóná for open:CONT.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13b_irrealis",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13b)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni =ì koná =ì mí yùye'e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["=ì", "=I"], ["koná", "open:IRR"], ["=ì", "=I"], ["mí", "the"],
+      ["yùye'e", "door"]
+    ],
+    "translation": "I want to open the door.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "irrealis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13c_completive",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13c)"},
+    "language": "sanm1291",
+    "primaryText": "Ntùkú Ana xìxi kwa'ǎ =ñá ntstika",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntùkú", "try:COMP"], ["Ana", "Ana"], ["xìxi", "eat:COMP"], ["kwa'ǎ", "more"],
+      ["=ñá", "=she"], ["ntstika", "banana"]
+    ],
+    "translation": "Ana tried to eat more bananas.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "completive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13c_continuous",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13c)"},
+    "language": "sanm1291",
+    "primaryText": "Ntùkú Ana xíxi kwa'ǎ =ñá ntstika",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntùkú", "try:COMP"], ["Ana", "Ana"], ["xíxi", "eat:CONT"], ["kwa'ǎ", "more"],
+      ["=ñá", "=she"], ["ntstika", "banana"]
+    ],
+    "translation": "Ana tried to eat more bananas.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "continuous"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13c_irrealis",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13c)"},
+    "language": "sanm1291",
+    "primaryText": "Ntùkú Ana kuxi kwa'ǎ =ñá ntstika",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntùkú", "try:COMP"], ["Ana", "Ana"], ["kuxi", "eat:IRR"], ["kwa'ǎ", "more"],
+      ["=ñá", "=she"], ["ntstika", "banana"]
+    ],
+    "translation": "Ana tried to eat more bananas.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "irrealis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13d_completive",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13d)"},
+    "language": "sanm1291",
+    "primaryText": "Xíniñu'u =ì xì'i kwa'ǎ =ì tskwǐì",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíniñu'u", "need:COMP"], ["=ì", "=I"], ["xì'i", "drink:COMP"], ["kwa'ǎ", "more"],
+      ["=ì", "=I"], ["tskwǐì", "water"]
+    ],
+    "translation": "I need to drink more water.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "completive"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13d_continuous",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13d)"},
+    "language": "sanm1291",
+    "primaryText": "Xíniñu'u =ì xí'ì kwa'ǎ =ì tskwǐì",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíniñu'u", "need:COMP"], ["=ì", "=I"], ["xí'ì", "drink:CONT"], ["kwa'ǎ", "more"],
+      ["=ì", "=I"], ["tskwǐì", "water"]
+    ],
+    "translation": "I need to drink more water.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "continuous"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_13d_irrealis",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(13d)"},
+    "language": "sanm1291",
+    "primaryText": "Xíniñu'u =ì ko'o kwa'ǎ =ì tskwǐì",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíniñu'u", "need:COMP"], ["=ì", "=I"], ["ko'o", "drink:IRR"], ["kwa'ǎ", "more"],
+      ["=ì", "=I"], ["tskwǐì", "water"]
+    ],
+    "translation": "I need to drink more water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "aspect"],
+      ["aspect", "irrealis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_10a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(10a)"},
+    "language": "sanm1291",
+    "primaryText": "Bitsìn kâ'àn Maria xìin =ñá iin be'e xàa koni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bitsìn", "now"], ["kâ'àn", "say:CONT"], ["Maria", "Maria"], ["xìin", "buy:COMP"],
+      ["=ñá", "=she"], ["iin", "one"], ["be'e", "house"], ["xàa", "new"], ["koni", "yesterday"]
+    ],
+    "translation": "Maria is saying (right) now that she bought a new house yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kà'àn"],
+      ["clauseType", "finite"],
+      ["diagnostic", "tense"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_10b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(10b)"},
+    "language": "sanm1291",
+    "primaryText": "Itsyààn ka'án Raúl xí'i kwé'e =rà bitsìn",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Itsyààn", "tomorrow"], ["ka'án", "think:IRR"], ["Raúl", "Raul"], ["xí'i", "drink:CONT"],
+      ["kwé'e", "a.lot"], ["=rà", "=he"], ["bitsìn", "now"]
+    ],
+    "translation": "Tomorrow Raul will think that he is drinking too much (right) now.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ka'án"],
+      ["clauseType", "finite"],
+      ["diagnostic", "tense"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_16a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(16a)"},
+    "language": "sanm1291",
+    "primaryText": "Bitsìn ntátu =ì kusi bà'a =ì itsyààn",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bitsìn", "today"], ["ntátu", "hope:CONT"], ["=ì", "=I"], ["kusi", "sleep:IRR"],
+      ["bà'a", "well"], ["=ì", "=I"], ["itsyààn", "tomorrow"]
+    ],
+    "translation": "Today I hope to sleep well tomorrow.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "tense"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_16b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(16b)"},
+    "language": "sanm1291",
+    "primaryText": "Koni kò nì- kòni Maria ku'ún =ñá tienda bitsìn",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Koni", "yesterday"], ["kò", "NEG"], ["nì-", "COMP-"], ["kòni", "want"], ["Maria", "Maria"],
+      ["ku'ún", "go:IRR"], ["=ñá", "=she"], ["tienda", "store"], ["bitsìn", "today"]
+    ],
+    "translation": "Yesterday Maria did not want to go to the store today.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "tense"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_17a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(17a)"},
+    "language": "sanm1291",
+    "primaryText": "Bitsìn nákú'ún ini Maria ku'ún =ñá tienda itsyààn",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bitsìn", "today"], ["nákú'ún", "remember:CONT"], ["ini", "in"], ["Maria", "Maria"],
+      ["ku'ún", "go:IRR"], ["=ñá", "=she"], ["tienda", "market"], ["itsyààn", "tomorrow"]
+    ],
+    "translation": "Today Maria remembers to go to the store tomorrow.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "nakú'ún ini"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "tense"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_17b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(17b)"},
+    "language": "sanm1291",
+    "primaryText": "Koni ntùkú Juân ka'ani =rà iin ntsìbá'yi itsyààn",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Koni", "yesterday"], ["ntùkú", "try:COMP"], ["Juân", "Juan"], ["ka'ani", "kill:IRR"],
+      ["=rà", "=he"], ["iin", "one"], ["ntsìbá'yi", "coyote"], ["itsyààn", "tomorrow"]
+    ],
+    "translation": "Yesterday Juan tried to kill a coyote tomorrow.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "tense"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_12a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(12a)"},
+    "language": "sanm1291",
+    "primaryText": "Káchi Raúl xí'in Pablo xìxi kwé'e =rà ndùchì koni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Káchi", "say:COMP"], ["Raúl", "Raul"], ["xí'in", "with"], ["Pablo", "Pablo"],
+      ["xìxi", "eat:COMP"], ["kwé'e", "many"], ["=rà", "=he"], ["ndùchì", "bean"],
+      ["koni", "yesterday"]
+    ],
+    "translation": "Raul told Pablo that he ate a lot of beans yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "controlled", "judgment": "acceptable"},
+      {"name": "free", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "káchi"],
+      ["clauseType", "finite"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "The embedded =rà may refer to Raul, to Pablo, or to another man.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_12b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(12b)"},
+    "language": "sanm1291",
+    "primaryText": "Kúsijǐ ini Eva kèba'a =ñá carrera",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kúsijǐ", "be.happy:CONT"], ["ini", "in"], ["Eva", "Eva"], ["kèba'a", "win:COMP"],
+      ["=ñá", "=she"], ["carrera", "race"]
+    ],
+    "translation": "Eva is happy that she won the race.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "controlled", "judgment": "acceptable"},
+      {"name": "free", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "kusijǐ ini"],
+      ["clauseType", "finite"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_18a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(18a)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni Maria kusi =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["Maria", "Maria"], ["kusi", "sleep:IRR"], ["=ñá", "=she"]
+    ],
+    "translation": "Maria wants to sleep.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "controlled", "judgment": "acceptable"},
+      {"name": "free", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_18b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(18b)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni Maria ná kusi =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["Maria", "Maria"], ["ná", "NÁ"], ["kusi", "sleep:IRR"],
+      ["=ñá", "=she"]
+    ],
+    "translation": "Maria wants her to sleep.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "controlled", "judgment": "unacceptable"},
+      {"name": "free", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "Ná forces disjoint reference. Repeated as (39a).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_18c",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(18c)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni Maria kusi =rí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["Maria", "Maria"], ["kusi", "sleep:IRR"], ["=rí", "=it.AML"]
+    ],
+    "translation": "Maria wants it (an animal) to sleep.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Kôni Maria ná kusi =rí", "judgment": "acceptable"}
+    ],
+    "readings": [
+      {"name": "free", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "Ná is optional when the embedded subject does not match the matrix subject in φ-features. Repeated as (39b).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_18d",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(18d)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni Maria kusi lěe =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["Maria", "Maria"], ["kusi", "sleep:IRR"], ["lěe", "baby"],
+      ["=ñá", "=her"]
+    ],
+    "translation": "Maria wants her baby to sleep.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Kôni Maria ná kusi lěe =ñá", "judgment": "acceptable"}
+    ],
+    "readings": [
+      {"name": "free", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "subject"],
+      ["embeddedSubject", "lexical"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_19a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(19a)"},
+    "language": "sanm1291",
+    "primaryText": "Ntùkú Maria ku'un =rà tienda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntùkú", "try:COMP"], ["Maria", "Maria"], ["ku'un", "go:IRR"], ["=rà", "=he"],
+      ["tienda", "store"]
+    ],
+    "translation": "Maria tried for him to go to the store.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Ntùkú Maria ná ku'un =rà tienda", "judgment": "ungrammatical"},
+      {"form": "Ntùkú Maria ná ku'un =ñá tienda", "judgment": "ungrammatical"}
+    ],
+    "readings": [
+      {"name": "free", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_19b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(19b)"},
+    "language": "sanm1291",
+    "primaryText": "Nàkú'ún ini Maria kata bà'a =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nàkú'ún", "remember:CONT"], ["ini", "in"], ["Maria", "Maria"], ["kata", "sing:IRR"],
+      ["bà'a", "well"], ["=rà", "=he"]
+    ],
+    "translation": "Maria remembered for him to sing well.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Nàkú'ún ini Maria ná kata bà'a =rà", "judgment": "ungrammatical"},
+      {"form": "Nàkú'ún ini Maria ná kata bà'a =ñá", "judgment": "ungrammatical"}
+    ],
+    "readings": [
+      {"name": "free", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["verb", "nakú'ún ini"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_40a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(40a)"},
+    "language": "sanm1291",
+    "primaryText": "Xíniñu'u Maria kwiin =rà iin koto xàá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíniñu'u", "need:CONT"], ["Maria", "Maria"], ["kwiin", "buy:IRR"], ["=rà", "=he"],
+      ["iin", "one"], ["koto", "shirt"], ["xàá", "new"]
+    ],
+    "translation": "Maria needs him to buy a new shirt.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Xíniñu'u Maria ná kwiin =rà iin koto xàá", "judgment": "ungrammatical"},
+      {"form": "Xíniñu'u Maria ná kwiin =ñá iin koto xàá", "judgment": "ungrammatical"}
+    ],
+    "readings": [
+      {"name": "free", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_40b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(40b)"},
+    "language": "sanm1291",
+    "primaryText": "Kìxǎ Maria kata bà'a =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kìxǎ", "start:CONT"], ["Maria", "Maria"], ["kata", "sing:IRR"], ["bà'a", "well"],
+      ["=rà", "=he"]
+    ],
+    "translation": "Maria started for him to sing well.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Kìxǎ Maria ná kata bà'a =rà", "judgment": "ungrammatical"},
+      {"form": "Kìxǎ Maria ná kata bà'a =ñá", "judgment": "ungrammatical"}
+    ],
+    "readings": [
+      {"name": "free", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["verb", "kixǎ"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "subject"]
+    ],
+    "comment": "The source prints optional ná and the alternation {=ñá, =rà}; the intended disjoint subject is out in every variant.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_41a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(41a)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu Maria bà'a ná kusi ìjǐ =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["Maria", "Maria"], ["bà'a", "well"], ["ná", "NÁ"],
+      ["kusi", "sleep:IRR"], ["ìjǐ", "husband"], ["=ñá", "=her"]
+    ],
+    "translation": "Maria hopes for her husband to sleep well.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "free", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "subject"],
+      ["embeddedSubject", "lexical"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_41b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(41b)"},
+    "language": "sanm1291",
+    "primaryText": "Xíniñu'u Maria kwiin Juân iin koto xàá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíniñu'u", "need:CONT"], ["Maria", "Maria"], ["kwiin", "buy:IRR"], ["Juân", "Juan"],
+      ["iin", "one"], ["koto", "shirt"], ["xàá", "new"]
+    ],
+    "translation": "Maria needs for Juan to buy a new shirt.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [
+      {"name": "free", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "subject"],
+      ["embeddedSubject", "lexical"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_20a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(20a)"},
+    "language": "sanm1291",
+    "primaryText": "Kwa'ǎ carro ndàtǔ'un Maria nàkatsya Pedro",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kwa'ǎ", "many"], ["carro", "car"], ["ndàtǔ'un", "talk:COMP"], ["Maria", "Maria"],
+      ["nàkatsya", "wash:COMP"], ["Pedro", "Pedro"]
+    ],
+    "translation": "Maria said that Pedro washed a lot of cars.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatǔ'un"],
+      ["clauseType", "finite"],
+      ["diagnostic", "fronting"],
+      ["fronting", "out"]
+    ],
+    "comment": "The source prints ndàtǔ'un 'talk'; (27a) lists the verb as ntatǔ'un 'chat'.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_20b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(20b)"},
+    "language": "sanm1291",
+    "primaryText": "Ni'iin =nà ká'á =rà doctor kò kú'u",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ni'iin", "no"], ["=nà", "=they"], ["ká'á", "think:CONT"], ["=rà", "=he"],
+      ["doctor", "doctor"], ["kò", "NEG"], ["kú'u", "be.sick:CONT"]
+    ],
+    "translation": "The doctor thinks no one is sick.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ka'án"],
+      ["clauseType", "finite"],
+      ["diagnostic", "fronting"],
+      ["fronting", "out"]
+    ],
+    "comment": "The source prints ká'á; (9a) has ká'án 'think:CONT'.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_21a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(21a)"},
+    "language": "sanm1291",
+    "primaryText": "Káchi Maria kòjmǐ xìta xìxi =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Káchi", "say:COMP"], ["Maria", "Maria"], ["kòjmǐ", "four"], ["xìta", "tortilla"],
+      ["xìxi", "eat:COMP"], ["=ñá", "=she"]
+    ],
+    "translation": "Maria said that she ate four tortillas.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "káchi"],
+      ["clauseType", "finite"],
+      ["diagnostic", "fronting"],
+      ["fronting", "within"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_21b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(21b)"},
+    "language": "sanm1291",
+    "primaryText": "Kúntàà ini =ì ntsikû mí tsǐnà ntá'yi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kúntàà", "believe:CONT"], ["ini", "in"], ["=ì", "=I"], ["ntsikû", "all"], ["mí", "the"],
+      ["tsǐnà", "dog"], ["ntá'yi", "cry:CONT"]
+    ],
+    "translation": "I believe that all the dogs are barking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kuntàà ini"],
+      ["clauseType", "finite"],
+      ["diagnostic", "fronting"],
+      ["fronting", "within"]
+    ],
+    "comment": "Glossed 'believe' here; (27a) lists kuntàà ini as 'wonder'.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_22a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(22a)"},
+    "language": "sanm1291",
+    "primaryText": "Ntsi'i carro ntátu Pedro nakatsya =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntsi'i", "every"], ["carro", "car"], ["ntátu", "hope:CONT"], ["Pedro", "Pedro"],
+      ["nakatsya", "wash:IRR"], ["=rà", "=he"]
+    ],
+    "translation": "Pedro hopes to wash every car.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "out"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_22b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(22b)"},
+    "language": "sanm1291",
+    "primaryText": "Kwa'ǎ yà'a í'ní chìkàà ini Juân kaxi =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kwa'ǎ", "many"], ["yà'a", "chili"], ["í'ní", "hot"], ["chìkàà", "put.in:COMP"],
+      ["ini", "in"], ["Juân", "Juan"], ["kaxi", "eat:IRR"], ["=rà", "=he"]
+    ],
+    "translation": "Juan thought to (lit. put inside him) eat many hot chilis.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "chikàà ini"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "out"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_23a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(23a)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu =rà lo'o ntsi'i ña'á koná =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["=rà", "=he"], ["lo'o", "little"], ["ntsi'i", "every"],
+      ["ña'á", "thing"], ["koná", "open:IRR"], ["=rà", "=he"]
+    ],
+    "translation": "The boy hopes to open every present.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "within"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_23b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(23b)"},
+    "language": "sanm1291",
+    "primaryText": "Chìkàà ini Juân kwa'ǎ yà'ǎ í'ní kaxi =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Chìkàà", "put.in:COMP"], ["ini", "in"], ["Juân", "Juan"], ["kwa'ǎ", "many"],
+      ["yà'ǎ", "chili"], ["í'ní", "hot"], ["kaxi", "eat:IRR"], ["=rà", "=he"]
+    ],
+    "translation": "Juan thought to eat many hot chilis.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "chikàà ini"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "within"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_24a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(24a)"},
+    "language": "sanm1291",
+    "primaryText": "Kwa'ǎ ko'ǒ nàntǒso Mateo nakatsya =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kwa'ǎ", "many"], ["ko'ǒ", "plate"], ["nàntǒso", "forget:COMP"], ["Mateo", "Mateo"],
+      ["nakatsya", "wash:IRR"], ["=rà", "=he"]
+    ],
+    "translation": "Mateo forgot to wash many plates.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "nantǒso"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "out"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_24b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(24b)"},
+    "language": "sanm1291",
+    "primaryText": "Kòjmǐ yà'ǎ ntùkú Maria kaxi =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kòjmǐ", "four"], ["yà'ǎ", "chili"], ["ntùkú", "try:COMP"], ["Maria", "Maria"],
+      ["kaxi", "eat:IRR"], ["=ñá", "=she"]
+    ],
+    "translation": "Maria tried to eat four chilis.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "out"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_25a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(25a)"},
+    "language": "sanm1291",
+    "primaryText": "Nàntǒso Mateo kwa'ǎ ko'ǒ nakatsya =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nàntǒso", "forget:COMP"], ["Mateo", "Mateo"], ["kwa'ǎ", "many"], ["ko'ǒ", "plate"],
+      ["nakatsya", "wash:IRR"], ["=rà", "=he"]
+    ],
+    "translation": "Mateo forgot to wash many plates.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "nantǒso"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "within"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_25b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(25b)"},
+    "language": "sanm1291",
+    "primaryText": "Ntùkú Maria kòjmǐ yà'ǎ kaxi =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntùkú", "try:COMP"], ["Maria", "Maria"], ["kòjmǐ", "four"], ["yà'ǎ", "chili"],
+      ["kaxi", "eat:IRR"], ["=ñá", "=she"]
+    ],
+    "translation": "Maria tried to eat four chilis.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "within"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_109",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(109)"},
+    "language": "sanm1291",
+    "primaryText": "Iin dragón kôni =rà tsyàja ka'ani =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Iin", "one"], ["dragón", "dragon"], ["kôni", "want:CONT"], ["=rà", "=he"],
+      ["tsyàja", "man"], ["ka'ani", "kill:IRR"], ["=rà", "=he"]
+    ],
+    "translation": "The man wants to kill a dragon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "fronting"],
+      ["fronting", "out"]
+    ],
+    "comment": "Footnote 8: kòni 'want' is the one exception to the ban on fronting out of a tensed subjunctive.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_30a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(30a)"},
+    "language": "sanm1291",
+    "primaryText": "Káchi Julia bà'a kwé'e xìjnǐ =ñá, sǎ =ti Mateo =ba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Káchi", "say:COMP"], ["Julia", "Julia"], ["bà'a", "good"], ["kwé'e", "very"],
+      ["xìjnǐ", "head"], ["=ñá", "=she"], ["sǎ", "so"], ["=ti", "=too"], ["Mateo", "Mateo"],
+      ["=ba", "=EMPH"]
+    ],
+    "translation": "Julia said that she is very smart, and so does Mateo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sloppy", "judgment": "acceptable"},
+      {"name": "strict", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "káchi"],
+      ["clauseType", "finite"],
+      ["diagnostic", "ellipsis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_30b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(30b)"},
+    "language": "sanm1291",
+    "primaryText": "Kà'án Juan ni'í xìnu =rà, sǎ =ti Sergio =ba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kà'án", "think:COMP"], ["Juan", "Juan"], ["ni'í", "fast"], ["xìnu", "run:COMP"],
+      ["=rà", "=he"], ["sǎ", "so"], ["=ti", "=too"], ["Sergio", "Sergio"], ["=ba", "=EMPH"]
+    ],
+    "translation": "Juan thought he ran fast, and Sergio did too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sloppy", "judgment": "acceptable"},
+      {"name": "strict", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "ka'án"],
+      ["clauseType", "finite"],
+      ["diagnostic", "ellipsis"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_32a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(32a)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni Marco keba'a =rà carrera, sǎ =ti Maria =ba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["Marco", "Marco"], ["keba'a", "win:IRR"], ["=rà", "=he"],
+      ["carrera", "race"], ["sǎ", "so"], ["=ti", "=too"], ["Maria", "Maria"], ["=ba", "=EMPH"]
+    ],
+    "translation": "Marco wants to win the race, and Maria does too.",
+    "context": "Maria is not in the race, but she wants Marco to win.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sloppy", "judgment": "acceptable"},
+      {"name": "strict", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "ellipsis"]
+    ],
+    "comment": "The context is the one given for the strict reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_32b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(32b)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu Raúl ku'ún =rà Olímpico, sǎ =ti nána =rà =ba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["Raúl", "Raul"], ["ku'ún", "go:IRR"], ["=rà", "=he"],
+      ["Olímpico", "Olympics"], ["sǎ", "so"], ["=ti", "=too"], ["nána", "mother"], ["=rà", "=his"],
+      ["=ba", "=EMPH"]
+    ],
+    "translation": "Raul hopes to go to the Olympics, and his mother does too.",
+    "context": "Raul's mother is not an athlete, but she hopes her son will go to the Olympics.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sloppy", "judgment": "acceptable"},
+      {"name": "strict", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "ellipsis"]
+    ],
+    "comment": "The context is the one given for the strict reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_33a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(33a)"},
+    "language": "sanm1291",
+    "primaryText": "Xînì Ana ixutsya =ñá, sǎ =ti Laura =ba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xînì", "know:CONT"], ["Ana", "Ana"], ["ixutsya", "swim:IRR"], ["=ñá", "=she"],
+      ["sǎ", "so"], ["=ti", "=too"], ["Laura", "Laura"], ["=ba", "=EMPH"]
+    ],
+    "translation": "Ana knows (how) to swim, and Laura does too.",
+    "context": "Laura cannot swim, but she knows that Ana can.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sloppy", "judgment": "acceptable"},
+      {"name": "strict", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "kònì"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "ellipsis"]
+    ],
+    "comment": "The context is the one given for the strict reading. Xînì is the continuous stem of kònì 'know (how to)'.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_33b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(33b)"},
+    "language": "sanm1291",
+    "primaryText": "Nàkú'ún ini Maria ku'ún =ñá tienda, sǎ =ti Juân =ba",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nàkú'ún", "remember:COMP"], ["ini", "in"], ["Maria", "Maria"], ["ku'ún", "go:IRR"],
+      ["=ñá", "=she"], ["tienda", "store"], ["sǎ", "so"], ["=ti", "=too"], ["Juân", "Juan"],
+      ["=ba", "=EMPH"]
+    ],
+    "translation": "Maria remembered to go to the store, and Juan did too.",
+    "context": "Juan did not go to the store, but he remembers Maria did.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "sloppy", "judgment": "acceptable"},
+      {"name": "strict", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["verb", "nakú'ún ini"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "ellipsis"]
+    ],
+    "comment": "The context is the one given for the strict reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_37a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(37a)"},
+    "language": "sanm1291",
+    "primaryText": "Nàntǒso =rà patrón nakitá'àn =nà kâ uxi iin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nàntǒso", "forget:COMP"], ["=rà", "=he"], ["patrón", "boss"], ["nakitá'àn", "meet:IRR"],
+      ["=nà", "=they"], ["kâ", "hour"], ["uxi", "ten"], ["iin", "one"]
+    ],
+    "translation": "The boss forgot to meet at 11 o'clock.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "nantǒso"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "partialControl"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_37b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(37b)"},
+    "language": "sanm1291",
+    "primaryText": "Xíniñu'u Maria ku'ún ntíbi =nà bìjkǒ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíniñu'u", "need:CONT"], ["Maria", "Maria"], ["ku'ún", "go:IRR"], ["ntíbi", "together"],
+      ["=nà", "=they"], ["bìjkǒ", "party"]
+    ],
+    "translation": "Maria needs to go to the party together.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "partialControl"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_43a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(43a)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni nána Julio ná keba'a =rà mí carrera",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["nána", "mother"], ["Julio", "Julio"], ["ná", "NÁ"],
+      ["keba'a", "win:IRR"], ["=rà", "=he"], ["mí", "the"], ["carrera", "race"]
+    ],
+    "translation": "Julio's mother wants him to win the race.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_43b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(43b)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu amiga ña'à Marco ná ku'u =rà mí Olimpico",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["amiga", "friend.FEM"], ["ña'à", "POSS"], ["Marco", "Marco"],
+      ["ná", "NÁ"], ["ku'u", "go:IRR"], ["=rà", "=he"], ["mí", "the"], ["Olimpico", "Olympics"]
+    ],
+    "translation": "Marco's friend hopes for him to go to the Olympics.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_44a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(44a)"},
+    "language": "sanm1291",
+    "primaryText": "Nàntǒso táta Maria ku'un =ñá tienda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nàntǒso", "forget:COMP"], ["táta", "father"], ["Maria", "Maria"], ["ku'un", "go:IRR"],
+      ["=ñá", "=she"], ["tienda", "store"]
+    ],
+    "translation": "Maria's father forgot for her to go to the store.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "nantǒso"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_44b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(44b)"},
+    "language": "sanm1291",
+    "primaryText": "Xíniñu'u nána Julio kwiin =rà iin koto xàá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíniñu'u", "need:CONT"], ["nána", "mother"], ["Julio", "Julio"], ["kwiin", "buy:IRR"],
+      ["=rà", "=he"], ["iin", "one"], ["koto", "shirt"], ["xàá", "new"]
+    ],
+    "translation": "Julio's mother needs him to buy a new shirt.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_45a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(45a)"},
+    "language": "sanm1291",
+    "primaryText": "Bìjkǒ ña'à Marco xìndatu Ana kaxi =rà yù'u =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bìjkǒ", "party"], ["ña'à", "POSS"], ["Marco", "Marco"], ["xìndatu", "hope:IMP:COMP"],
+      ["Ana", "Ana"], ["kaxi", "eat:IRR"], ["=rà", "=he"], ["yù'u", "mouth"], ["=ñá", "=her"]
+    ],
+    "translation": "At Marco's party, Ana hoped for him to kiss her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_45b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(45b)"},
+    "language": "sanm1291",
+    "primaryText": "Bìjkǒ ña'à Marco kòni Ana kaxi =rà yù'u =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bìjkǒ", "party"], ["ña'à", "POSS"], ["Marco", "Marco"], ["kòni", "want:COMP"],
+      ["Ana", "Ana"], ["kaxi", "eat:IRR"], ["=rà", "=he"], ["yù'u", "mouth"], ["=ñá", "=her"]
+    ],
+    "translation": "At Marco's party, Ana wanted for him to kiss her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_46a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(46a)"},
+    "language": "sanm1291",
+    "primaryText": "Bìjkǒ ña'à Marco xìniñu'u Ana kaxi =rà yù'u =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bìjkǒ", "party"], ["ña'à", "POSS"], ["Marco", "Marco"], ["xìniñu'u", "need:COMP"],
+      ["Ana", "Ana"], ["kaxi", "eat:IRR"], ["=rà", "=he"], ["yù'u", "mouth"], ["=ñá", "=her"]
+    ],
+    "translation": "At Marco's party, Ana needed for him to kiss her.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_46b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(46b)"},
+    "language": "sanm1291",
+    "primaryText": "Bìjkǒ ña'à Marco ntùkú Ana kaxi =rà yù'u =ñá",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bìjkǒ", "party"], ["ña'à", "POSS"], ["Marco", "Marco"], ["ntùkú", "try:COMP"],
+      ["Ana", "Ana"], ["kaxi", "eat:IRR"], ["=rà", "=he"], ["yù'u", "mouth"], ["=ñá", "=her"]
+    ],
+    "translation": "At Marco's party, Ana tried for him to kiss her.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntukú"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "cCommand"],
+      ["antecedent", "nonCCommanding"]
+    ],
+    "comment": "The antecedent is a possessor inside an adjunct.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_67a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(67a)"},
+    "language": "sanm1291",
+    "primaryText": "Saá nántǒso =ndó koná ndó'ó yùye'e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Saá", "always"], ["nántǒso", "forget:CONT"], ["=ndó", "=you.PL"], ["koná", "open:IRR"],
+      ["ndó'ó", "you"], ["yùye'e", "door"]
+    ],
+    "translation": "You always forget for YOU to open the door (not other people).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "nantǒso"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "clitic"],
+      ["embeddedSubject", "nonclitic"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_67b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(67b)"},
+    "language": "sanm1291",
+    "primaryText": "Xíni Marco ixutsya mí =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Xíni", "know:CONT"], ["Marco", "Marco"], ["ixutsya", "swim:IRR"], ["mí", "the"],
+      ["=rà", "=he"]
+    ],
+    "translation": "Marco knows how to swim.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kònì"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "clitic"],
+      ["embeddedSubject", "nonclitic"]
+    ],
+    "comment": "The subject is a clitic strengthened by the definite article.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_67c",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(67c)"},
+    "language": "sanm1291",
+    "primaryText": "Kìxǎ mí leso taxá'á rí kani",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kìxǎ", "start:COMP"], ["mí", "the"], ["leso", "rabbit"], ["taxá'á", "dance:IRR"],
+      ["rí", "it.AML"], ["kani", "there"]
+    ],
+    "translation": "The rabbit started to dance.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kixǎ"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "clitic"],
+      ["embeddedSubject", "nonclitic"]
+    ],
+    "comment": "The subject is a pronoun strengthened by a demonstrative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_68a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(68a)"},
+    "language": "sanm1291",
+    "primaryText": "Kôni Jûan keba'a mí =rà carrera",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kôni", "want:CONT"], ["Jûan", "Juan"], ["keba'a", "win:IRR"], ["mí", "the"],
+      ["=rà", "=he"], ["carrera", "race"]
+    ],
+    "translation": "Juan wants to win the race.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kòni"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "clitic"],
+      ["embeddedSubject", "nonclitic"]
+    ],
+    "comment": "The subject is a clitic strengthened by the definite article.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_68b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(68b)"},
+    "language": "sanm1291",
+    "primaryText": "Ntátu Maria ku'ún mí =ñá yòjo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ntátu", "hope:CONT"], ["Maria", "Maria"], ["ku'ún", "go:IRR"], ["mí", "the"],
+      ["=ñá", "=she"], ["yòjo", "moon"]
+    ],
+    "translation": "Maria hopes to go to the moon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ntatu"],
+      ["clauseType", "tensedSubjunctive"],
+      ["diagnostic", "clitic"],
+      ["embeddedSubject", "nonclitic"]
+    ],
+    "comment": "The subject is a clitic strengthened by the definite article.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_75a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(75a)"},
+    "language": "sanm1291",
+    "primaryText": "Tá'iin'iin tsǐnà tsìi ndò'ò mí =rí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tá'iin'iin", "each"], ["tsǐnà", "dog"], ["tsìi", "bite:COMP"], ["ndò'ò", "tail"],
+      ["mí", "the"], ["=rí", "=its"]
+    ],
+    "translation": "Each dog bit its own tail.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "exemptAnaphor"],
+      ["antecedent", "quantified"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_75b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(75b)"},
+    "language": "sanm1291",
+    "primaryText": "Ni'iin =ná bálí nǐ- xini táta mí =ná",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ni'iin", "no"], ["=ná", "=they.FEM"], ["bálí", "little.PL"], ["nǐ-", "COMP.NEG"],
+      ["xini", "see"], ["táta", "father"], ["mí", "the"], ["=ná", "=their.FEM"]
+    ],
+    "translation": "No girl saw her own father.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "exemptAnaphor"],
+      ["antecedent", "quantified"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_86a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(86a)"},
+    "language": "sanm1291",
+    "primaryText": "Tá'iin'iin tsǐnà kìxǎ tsii =rí ndò'ò mí =rí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tá'iin'iin", "each"], ["tsǐnà", "dog"], ["kìxǎ", "start:COMP"], ["tsii", "bite:IRR"],
+      ["=rí", "=it.AML"], ["ndò'ò", "tail"], ["mí", "the"], ["=rí", "=its.AML"]
+    ],
+    "translation": "Each dogs started to bite their own tails.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kixǎ"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "exemptAnaphor"],
+      ["antecedent", "quantified"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_86b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(86b)"},
+    "language": "sanm1291",
+    "primaryText": "Ni'iin =rà bálí kò xíniñu'u kònì =rà táta mí =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ni'iin", "no"], ["=rà", "=he"], ["bálí", "little.PL"], ["kò", "NEG"],
+      ["xíniñu'u", "need:CONT"], ["kònì", "see:IRR"], ["=rà", "=he"], ["táta", "father"],
+      ["mí", "the"], ["=rà", "=his"]
+    ],
+    "translation": "No boy needs to see his own father.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "exemptAnaphor"],
+      ["antecedent", "quantified"]
+    ],
+    "comment": "The source glosses 'see' as IRRR.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_87a",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(87a)"},
+    "language": "sanm1291",
+    "primaryText": "Kìxǎ iin tsǐnà tsii =rí ndò'ò mí =rí",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kìxǎ", "start:COMP"], ["iin", "one"], ["tsǐnà", "dog"], ["tsii", "bite:IRR"],
+      ["=rí", "=it.AML"], ["ndò'ò", "tail"], ["mí", "the"], ["=rí", "=its.AML"]
+    ],
+    "translation": "A dog started to bite its own tail.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "kixǎ"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "exemptAnaphor"],
+      ["antecedent", "quantified"]
+    ],
+    "comment": "The source translates 'started to bit'.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "ostrove2026_87b",
+    "source": {"bibkey": "ostrove-2026", "paperLabel": "(87b)"},
+    "language": "sanm1291",
+    "primaryText": "Kò xíniñu'u ni'iin =rà bálí kònì =rà táta mí =rà",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kò", "NEG"], ["xíniñu'u", "need:CONT"], ["ni'iin", "no"], ["=rà", "=he"],
+      ["bálí", "little.PL"], ["kònì", "see:IRR"], ["=rà", "=he"], ["táta", "father"],
+      ["mí", "the"], ["=rà", "=his"]
+    ],
+    "translation": "No boy needs to see his own father.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "xiniñu'u"],
+      ["clauseType", "untensedSubjunctive"],
+      ["diagnostic", "exemptAnaphor"],
+      ["antecedent", "quantified"]
+    ],
+    "comment": "The source glosses 'see' as IRRR.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]

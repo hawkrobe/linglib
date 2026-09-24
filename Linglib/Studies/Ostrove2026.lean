@@ -8,31 +8,34 @@ public import Linglib.Syntax.Control.Basic
 public import Linglib.Syntax.Control.Diagnostics
 public import Linglib.Studies.Landau2013
 public import Linglib.Studies.Allotey2021
+public import Linglib.Data.Examples.Ostrove2026
 
 /-!
 # Ostrove (2026): Obligatorily Overt PRO in San Martín Peras Mixtec
 
-Ostrove argues that San Martín Peras Mixtec (SMPM) has obligatory control whose controlled
-subject must be an overt clitic pronoun. Of its three embedded clause types, finite clauses,
-tensed subjunctives and untensed subjunctives, only the untensed subjunctive shows Landau's
-signature of obligatory control (`isObligatory_iff`). Exempt anaphors reject quantified
-antecedents yet occur in untensed subjunctives under quantified controllers, so the controlled
-subject is a pronoun rather than a copy left by movement (`smpm_refutes_movement`). The analysis
-is morphological: bound variables are minimal pronouns realized by vocabulary items, and SMPM
-lacks the null item that yields silent PRO elsewhere, so the elsewhere pronoun surfaces
+Ostrove argues that San Martín Peras Mixtec (SMPM) has obligatory control whose controlled subject
+must be an overt clitic pronoun. Its three embedded clause types, finite clauses, tensed
+subjunctives and untensed subjunctives, are told apart by aspect, tense and restructuring
+(`unrestrictedTAM_iff`, `independentTense_iff`, `frontingOut_iff`), and only the untensed
+subjunctive shows Landau's signature of obligatory control (`isObligatory_iff`). Exempt anaphors
+reject quantified antecedents yet occur in untensed subjunctives under quantified controllers, so
+the controlled subject is a pronoun rather than a copy left by movement (`smpm_refutes_movement`).
+The analysis is morphological: bound variables are minimal pronouns realized by vocabulary items,
+and SMPM lacks the null item that yields silent PRO elsewhere, so the elsewhere pronoun surfaces
 (`smpm_overt_pro`, `syncretism_typology`). A tentative universal closes the argument: overt PRO
 entails no pro-drop (`Universal54`).
 
 ## Implementation notes
 
-The clause type of a complement is read off the fragment's verbs (`EmbeddedClauseType.ofFrame`):
-indicative complements are finite, and irrealis ones are untensed exactly when the verb's reading
-is controlled. The properties of (26) are the paper's summary (`shows`); deriving them from
-example rows, as `Studies/Allotey2021` does for Gã, awaits a transcription of the examples.
-Landau's calculus fits the three types only if the tensed subjunctive is `[+Agr]`
-(`landau_predicts_control_iff`), which the paper does not discuss. The pro-drop status is the
-paper's own 101A cell, as WALS does not sample the language. Example numbers follow the
-manuscript version of the article.
+The properties of (26) and the control profile are read off the paper's example rows
+(`Data/Examples/Ostrove2026.json`), whose clause types agree with the fragment's verbs
+(`clauseTypeOf_mem_verbOf`). The rows bear out (26) except in its restructuring column, which
+footnote 8's exception under *kòni* 'want' breaks (`restructures_iff`). The paper's examples of
+non-exhaustive binding in tensed subjunctives are a missing cross-reference in the manuscript, so
+partial control is attested only as absent from untensed subjunctives. Landau's calculus fits the
+three types only if the tensed subjunctive is `[+Agr]` (`landau_predicts_control_iff`), which the
+paper does not discuss. The pro-drop status is the paper's own 101A cell, as WALS does not sample
+the language. Example numbers follow the manuscript version of the article.
 
 ## References
 
@@ -58,6 +61,7 @@ open Minimalist.MinimalPronoun
 open scoped DistributedMorphology
 open Control
 open Mixtec.SMPM
+open Data.Examples
 
 /-! ### The clause typology (26) -/
 
@@ -82,37 +86,129 @@ theorem control_iff_untensed : ∀ v ∈ verbs, ∀ fr ∈ v.frames,
       EmbeddedClauseType.ofFrame v fr = .untensedSubjunctive := by
   decide
 
-/-- The properties of (26), with the independent tense of (10), (16) and (17), which time
-adverbs diagnose. -/
-inductive Property where
-  | unrestrictedTAM
-  | independentTense
-  | noncoreferentSubject
-  | restructuring
-  deriving DecidableEq, Repr, Fintype
+/-! ### The rows -/
 
-/-- The properties each clause type shows, the checkmarks of (26) and the tense column.
-*Kòni* 'want' is an exception to the restructuring column, letting a quantifier front out of
-its tensed subjunctive (fn. 8). -/
-def shows : EmbeddedClauseType → Finset Property
-  | .finite => {.unrestrictedTAM, .independentTense, .noncoreferentSubject}
-  | .tensedSubjunctive => {.independentTense, .noncoreferentSubject}
-  | .untensedSubjunctive => {.restructuring}
+/-- The clause type a row's `clauseType` feature names. -/
+def clauseTypeOf (row : LinguisticExample) : Option EmbeddedClauseType :=
+  match row.feature? "clauseType" with
+  | some "finite" => some .finite
+  | some "tensedSubjunctive" => some .tensedSubjunctive
+  | some "untensedSubjunctive" => some .untensedSubjunctive
+  | _ => none
 
-/-- The properties of (26) distinguish the three clause types. -/
-theorem shows_injective : Function.Injective shows := by decide
+/-- The fragment verb a row's `verb` feature names. -/
+def verbOf (row : LinguisticExample) : Option Verb :=
+  (row.feature? "verb").bind (Verb.find? verbs ·)
 
-/-- The control signature of each clause type, from whether it admits a non-coreferent subject,
-by the derivation of `Landau2013.ofNoncoreferential`. -/
+/-- The rows agree with the predicate lists (27): each row's clause type is one its matrix verb
+takes in the fragment. -/
+theorem clauseTypeOf_mem_verbOf : ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row,
+    ∃ v ∈ verbOf row, ∃ fr ∈ v.frames, EmbeddedClauseType.ofFrame v fr = c := by
+  decide +kernel
+
+/-- A row records reading `r` with judgment `j`. -/
+def reads (row : LinguisticExample) (r : String) (j : Judgment) : Prop :=
+  ∃ x ∈ row.readings, x = (r, j)
+
+instance (row : LinguisticExample) (r : String) (j : Judgment) : Decidable (reads row r j) :=
+  inferInstanceAs (Decidable (∃ x ∈ row.readings, _))
+
+/-! ### The clause typology (26) from the rows -/
+
+/-- A clause type has unrestricted TAM when it has an acceptable row in each of the three
+aspects ((9), (13)). -/
+def UnrestrictedTAM (c : EmbeddedClauseType) : Prop :=
+  ∀ a ∈ ["completive", "continuous", "irrealis"], ∃ row ∈ Examples.all,
+    clauseTypeOf row = some c ∧ row.feature? "aspect" = some a ∧ row.judgment = .acceptable
+
+instance (c : EmbeddedClauseType) : Decidable (UnrestrictedTAM c) := by
+  unfold UnrestrictedTAM; infer_instance
+
+/-- A clause type has a tense of its own when an acceptable row gives it a time adverb the matrix
+clause does not share ((10), (16), (17)). -/
+def IndependentTense (c : EmbeddedClauseType) : Prop :=
+  ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ row.feature? "diagnostic" = some "tense" ∧
+    row.judgment = .acceptable
+
+instance (c : EmbeddedClauseType) : Decidable (IndependentTense c) := by
+  unfold IndependentTense; infer_instance
+
+/-- A clause type restructures when an acceptable row fronts a quantifier out of it into the
+matrix clause ((20), (22), (24)). -/
+def Restructures (c : EmbeddedClauseType) : Prop :=
+  ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ row.feature? "fronting" = some "out" ∧
+    row.judgment = .acceptable
+
+instance (c : EmbeddedClauseType) : Decidable (Restructures c) := by
+  unfold Restructures; infer_instance
+
+/-- The TAM column of (26): only finite clauses take every aspect. -/
+theorem unrestrictedTAM_iff (c : EmbeddedClauseType) : UnrestrictedTAM c ↔ c = .finite := by
+  cases c <;> decide +kernel
+
+/-- The tense column: only untensed subjunctives lack a tense of their own. -/
+theorem independentTense_iff (c : EmbeddedClauseType) :
+    IndependentTense c ↔ c ≠ .untensedSubjunctive := by
+  cases c <;> decide +kernel
+
+/-- The restructuring column holds of the rows except under *kòni* 'want', out of whose tensed
+subjunctive a quantifier fronts (fn. 8): the rows make tensed subjunctives restructure too. -/
+theorem restructures_iff (c : EmbeddedClauseType) : Restructures c ↔ c ≠ .finite := by
+  cases c <;> decide +kernel
+
+/-- The restructuring column with its exception: a quantifier fronts out of an embedded clause
+exactly when the clause is an untensed subjunctive or the verb is *kòni* 'want' ((20), (22),
+(24), (109)). -/
+theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = some "out" →
+    (row.judgment = .acceptable ↔
+      clauseTypeOf row = some .untensedSubjunctive ∨ row.feature? "verb" = some "kòni") := by
+  decide +kernel
+
+/-! ### Obligatory control (§4) -/
+
+/-- The control diagnostic an acceptable reading of a row attests: a free reading of the
+embedded subject, a strict reading under ellipsis, or a non-c-commanding antecedent. The paper
+tests neither long-distance antecedents nor readings under *only*. -/
+def attests (row : LinguisticExample) : Diagnostic → Prop
+  | .arbitraryControl => reads row "free" .acceptable
+  | .strictEllipsis => reads row "strict" .acceptable
+  | .nonCCommandingControl =>
+    row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
+  | .longDistanceControl | .strictUnderOnly => False
+
+instance (row : LinguisticExample) : DecidablePred (attests row) := fun d => by
+  cases d <;> unfold attests <;> infer_instance
+
+/-- The diagnostics the rows attest for a clause type. -/
+def attested (c : EmbeddedClauseType) : Set Diagnostic :=
+  {d | ∃ row ∈ Examples.all, clauseTypeOf row = some c ∧ attests row d}
+
+instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d => by
+  unfold attested; infer_instance
+
+/-- No row attests a criterial configuration of an untensed subjunctive, and every other clause
+type attests one: free subjects (12), (18), strict ellipsis (30), (32), and non-c-commanding
+antecedents (43), (45) against (19), (33), (44), (46). -/
+theorem attested_eq_empty_iff (c : EmbeddedClauseType) :
+    attested c = ∅ ↔ c = .untensedSubjunctive := by
+  rw [Set.eq_empty_iff_forall_notMem]
+  cases c <;> decide +kernel
+
+/-- The control profile of a clause type in [landau-2013]'s signature: the clauses no attested
+diagnostic refutes. -/
 def smpmProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
-  Landau2013.ofNoncoreferential (decide (.noncoreferentSubject ∈ shows c))
+  ofAttested (attested c)
 
-/-- Only untensed subjunctives are obligatory-control clauses: sloppy readings only under
-ellipsis (33), exhaustive binding (37), and a local c-commanding antecedent (40), (44); the
-other two types allow strict readings, non-exhaustive binding, and non-local antecedents. -/
+/-- Only untensed subjunctives are obligatory-control clauses. -/
 theorem isObligatory_iff (c : EmbeddedClauseType) :
     smpmProfile c = Set.univ ↔ c = .untensedSubjunctive := by
-  cases c <;> simp [smpmProfile, shows]
+  rw [smpmProfile, ofAttested_eq_univ_iff, attested_eq_empty_iff]
+
+/-- Untensed subjunctives reject partial control (37). -/
+theorem partialControl_rows : ∀ row ∈ Examples.all,
+    row.feature? "diagnostic" = some "partialControl" →
+      clauseTypeOf row = some .untensedSubjunctive ∧ row.judgment = .ungrammatical := by
+  decide +kernel
 
 /-! ### Landau's scale -/
 
@@ -125,11 +221,11 @@ def landauToSMPM : ClauseClass → EmbeddedClauseType
 
 /-- The scale position of a clause type, from its TAM and tense properties. -/
 def smpmToLandau (c : EmbeddedClauseType) : ClauseClass :=
-  .ofFiniteness (decide (.unrestrictedTAM ∈ shows c)) (decide (.independentTense ∈ shows c))
+  .ofFiniteness (decide (UnrestrictedTAM c)) (decide (IndependentTense c))
 
 /-- SMPM realizes every position of the scale, unlike Gã (`Allotey2021.ga_no_fSubjunctive`). -/
 theorem smpmToLandau_landauToSMPM (c : ClauseClass) : smpmToLandau (landauToSMPM c) = c := by
-  cases c <;> decide
+  cases c <;> decide +kernel
 
 /-- Landau's calculus predicts the control profile of every clause type exactly when the clauses
 are `[+Agr]`: at `[−Agr]` it makes the tensed subjunctive, an F-subjunctive, obligatory control,
@@ -137,9 +233,16 @@ yet its subject may be disjoint from the matrix subject (18b). -/
 theorem landau_predicts_control_iff (agr : Bool) :
     (∀ c, smpmProfile c = Set.univ ↔ (smpmToLandau c).HasOC agr) ↔ agr = true := by
   simp only [isObligatory_iff]
-  cases agr <;> decide
+  cases agr <;> decide +kernel
 
 /-! ### Against movement (§6) -/
+
+/-- An exempt anaphor with a quantified antecedent is out in a simple clause (75) and good inside
+an untensed subjunctive under a quantified controller ((86), (87)). -/
+theorem exemptAnaphor_rows : ∀ row ∈ Examples.all,
+    row.feature? "diagnostic" = some "exemptAnaphor" →
+      (row.judgment = .acceptable ↔ clauseTypeOf row = some .untensedSubjunctive) := by
+  decide +kernel
 
 /-- The occupants of the configurations (86) and (87): a quantified controller and the overt
 controlled clitic that antecedes an exempt anaphor. -/
@@ -156,8 +259,8 @@ def ex86Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
 def ex86Occupant : Fin 2 → Ex86Item := fun p ↦ if p = 0 then .quantifierDP else .pronoun
 
 /-- Exempt anaphors reject quantified antecedents (78) yet are available in untensed
-subjunctives under quantified controllers (86), (87), so the embedded position holds a
-referential pronoun and not a copy of the quantifier: the dependency is not movement. -/
+subjunctives under quantified controllers (`exemptAnaphor_rows`), so the embedded position holds
+a referential pronoun and not a copy of the quantifier: the dependency is not movement. -/
 theorem smpm_refutes_movement : ¬ IsExhaustive ex86Occupant ex86Dependency :=
   not_isExhaustive_of_mismatch (P := (· = .quantifierDP)) rfl rfl (by decide)
 
@@ -226,9 +329,15 @@ outside attitude reports, and it cannot bear focus, so the scope-sensitive alter
 null PRO is unavailable. -/
 def smpmCopyControlType : CopyControlType := .obligatoryPronominal
 
+/-- A non-clitic embedded subject, a clitic strengthened by the article or a demonstrative, is out
+exactly in untensed subjunctives ((67), (68)). -/
+theorem nonclitic_rows : ∀ row ∈ Examples.all,
+    row.feature? "embeddedSubject" = some "nonclitic" →
+      (row.judgment = .acceptable ↔ clauseTypeOf row = some .tensedSubjunctive) := by
+  decide +kernel
+
 /-- A controlled subject is of the clitic class of [cardinaletti-starke-1999], since non-clitic
-forms, strengthened *mí =rà* among them, are ungrammatical there (67); the subject of a tensed
-subjunctive may be non-clitic (68). -/
+forms are ungrammatical there (`nonclitic_rows`). -/
 def controlledSubjectStrength : Pronoun.Strength := .clitic
 
 /-- The pronouns that can be a controlled subject are exactly the clitics, none of which bears
