@@ -63,10 +63,7 @@ open Core.Order (RankLT RankLE)
     below — NOM=0, ACC=1, GEN=2, DAT=3, LOC=4, INST=none — matches
     neither verbatim; it is closer to Blake's typological hierarchy
     ([blake-1994], which Caha argues should coincide with his sequence).
-    For Slavic 6-case inventories the encoding choice is
-    verdict-equivalent; inventories with INST or COM *without* LOC may
-    diverge. For paradigm-shape work that needs Caha's actual Slavic
-    ordering, see `cahaSlavicRank` below. -/
+    Caha's own sequences are stated in `Studies/Caha2009.lean`. -/
 def containmentRank : Case → Option (Fin 5)
   | .nom => some 0
   | .acc => some 1
@@ -74,42 +71,6 @@ def containmentRank : Case → Option (Fin 5)
   | .dat => some 3
   | .loc => some 4
   | _ => none
-
-/-- Caha's Slavic-specific Case sequence ([caha-2009]; stated for
-    Russian and confirmed for Serbian): NOM – ACC – GEN – PREP/LOC –
-    DAT – INS. Differs from `containmentRank` in placing LOC between GEN
-    and DAT (not at top) and INST at the top (not off-hierarchy). Use
-    this rank for paradigm-shape contiguity claims referencing Caha's
-    Slavic data; use `containmentRank` for inventory downward-closure
-    verdicts (where the choice is Slavic-equivalent).
-
-    Codomain `Option (Fin 6)`: the six cases of the Slavic noun system
-    are all on-hierarchy in Caha's Slavic encoding (hence `Fin 6`); the
-    remaining `Case` cells, which are not part of that system, map to
-    `none`. -/
-def cahaSlavicRank : Case → Option (Fin 6)
-  | .nom  => some 0
-  | .acc  => some 1
-  | .gen  => some 2
-  | .loc  => some 3
-  | .dat  => some 4
-  | .inst => some 5
-  | _     => none
-
-/-- `cahaSlavicRank` and `containmentRank` agree on the four core cases
-    (NOM=0, ACC=1, GEN=2 in both) and disagree on LOC/DAT/INST. The
-    disagreement is deliberate: `containmentRank` is verdict-equivalent
-    on Slavic inventories for downward-closure (`RespectsCahaContainment`),
-    while `cahaSlavicRank` is needed for paradigm-shape contiguity claims
-    that respect Caha's actual Slavic sequence. -/
-theorem cahaSlavicRank_vs_containmentRank :
-    cahaSlavicRank .nom = some 0 ∧ containmentRank .nom = some 0 ∧
-    cahaSlavicRank .acc = some 1 ∧ containmentRank .acc = some 1 ∧
-    cahaSlavicRank .gen = some 2 ∧ containmentRank .gen = some 2 ∧
-    cahaSlavicRank .loc = some 3 ∧ containmentRank .loc = some 4 ∧
-    cahaSlavicRank .dat = some 4 ∧ containmentRank .dat = some 3 ∧
-    cahaSlavicRank .inst = some 5 ∧ containmentRank .inst = none := by
-  decide
 
 /-- Strict containment on Caha-rank Cases: both must have a rank, and the
     first's must be strictly smaller. False whenever either side is
