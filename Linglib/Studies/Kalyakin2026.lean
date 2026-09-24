@@ -4,7 +4,6 @@ public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Semantics.Root.Defs
 public import Linglib.Syntax.Minimalist.Verbal.LittleV
 public import Linglib.Syntax.Minimalist.Verbal.Voice
-public import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
 # Kalyakin (2026): VP ellipsis and argument structure alternations in Muira Dargwa
@@ -14,12 +13,14 @@ VP-ellipsis: the light verb survives while its complement, the VP containing the
 is elided. With [E] on v the deletion domain is smaller than that of English VP-ellipsis, so the
 causative alternation, a difference in Voice over one root, is tolerated (§5) while the root must
 still match, and both readings of *again* survive (§4.1), unlike English, where only the
-repetitive one does. Roots that impose a manner on an activity attach to v rather than to the
-direct object and so lie outside the deletion domain, and antipassives coerce a root into that
-position, which is why they resist ellipsis (§5). The NV-drop test shows that the root and the
-argument go together, so the elided constituent is the VP (§3.6). The paper's survey (§6) puts
-Persian and British *do* beside Muira Dargwa with [E] on v, and Bangla with [E] on Voice, and
-finds that Persian, unlike Muira Dargwa, respects Goldberg's Verbal Identity Requirement.
+repetitive one does. A root's position is read off its content, a state or a manner entailment in
+Beavers and Koontz-Garboden's vocabulary: a root that imposes a manner on an activity attaches
+to v rather than to the direct object and so lies outside the deletion domain, and antipassives
+coerce a root into that position, which is why they resist ellipsis (§5). The NV-drop test shows
+that the root and the argument go together, so the elided constituent is the VP (§3.6). The
+paper's survey (§6) puts Persian and British *do* beside Muira Dargwa with [E] on v, and Bangla
+with [E] on Voice, and finds that Persian, unlike Muira Dargwa, respects Goldberg's Verbal
+Identity Requirement.
 
 ## References
 
@@ -30,6 +31,7 @@ finds that Persian, unlike Muira Dargwa, respects Goldberg's Verbal Identity Req
 * [kratzer-1996]
 * [cuervo-2003]
 * [anand-hardt-mccloskey-2021]
+* [beavers-koontz-garboden-2020]
 -/
 
 @[expose] public section
@@ -42,9 +44,8 @@ open Minimalist.Ellipsis
 
 /-! ### Mismatch predictions -/
 
-/-- The spine position of a root by its position in the event structure (§2.2): a change-of-state
-root merges with the direct object, at V in v's complement, and a manner root attaches to v, at
-the VP-adjunction site outside it. -/
+/-- The spine position of a root. A change-of-state root merges with the direct object, at V in
+v's complement, and a manner root attaches to v, at the VP-adjunction site outside it (§2.2). -/
 def rootSite : Semantics.Root.Position → SpinePosition
   | .complement => .V
   | .adjoined => .vpAdjunct
@@ -57,8 +58,8 @@ theorem vVPE_mismatch_pattern :
     vStrandingVPE.Tolerates .transitivity ∧
     ¬ vStrandingVPE.Tolerates .lexical := by decide
 
-/-- English VPE has a strictly more restrictive profile than vVPE:
-    it additionally blocks transitivity mismatches. -/
+/-- English VPE has a strictly more restrictive profile than vVPE, since it also blocks
+transitivity mismatches. -/
 theorem vpEllipsis_more_restrictive :
     ¬ vpEllipsis.Tolerates .transitivity ∧
     vStrandingVPE.Tolerates .transitivity := by decide
@@ -71,10 +72,10 @@ light verb and elides its complement, so the shared VP satisfies identity and th
 tolerated; English VP-ellipsis deletes the vP, where v_trans ≠ v_unacc fails identity
 ([merchant-2013]). -/
 
-/-- The causative alternant of a change-of-state root: a state under `vDO`. -/
+/-- The causative alternant of a change-of-state root is a state under `vDO`. -/
 def causative : List LittleV := [.vDO, .vBE]
 
-/-- The inchoative alternant: the same state under `vGO`. -/
+/-- The inchoative alternant is the same state under `vGO`. -/
 def inchoative : List LittleV := [.vGO, .vBE]
 
 /-- The alternants differ in the light verb and share its complement, the VP. -/
@@ -93,7 +94,7 @@ theorem causative_alternation_ok_under_vVPE :
 theorem causative_alternation_blocked_english :
     ¬ vpEllipsis.Tolerates .transitivity := by decide
 
-/-! ### Antipassive Blocking -/
+/-! ### Antipassive blocking -/
 
 /-- Antipassive roots in Muira Dargwa are coerced to v-adjunction, outside vVPE's deletion domain,
     so they cannot be elided (§5). -/
@@ -103,11 +104,9 @@ theorem antipassive_blocks_vVPE : vStrandingVPE.Spares (rootSite .adjoined) := b
     can be elided. -/
 theorem change_of_state_allows_vVPE : vStrandingVPE.Deletes (rootSite .complement) := by decide
 
-/-! ### Cross-Linguistic Predictions -/
+/-! ### Cross-linguistic predictions -/
 
-/-- The hierarchy of mismatch tolerance across ellipsis types:
-    sluicing < English VPE < vVPE.
-    Each step down tolerates strictly more mismatches. -/
+/-- Sluicing tolerates fewer mismatches than English VPE, which tolerates fewer than vVPE. -/
 theorem mismatch_hierarchy :
     -- Sluicing: blocks both voice and transitivity
     ¬ sluicing.Tolerates .voice ∧
@@ -125,119 +124,92 @@ theorem mismatch_hierarchy :
 theorem vVPE_below_vpEllipsis :
     vStrandingVPE.ePosition < vpEllipsis.ePosition := by decide
 
-/-! ### End-to-End Argumentation Chain -/
+/-! ### The causative chain -/
 
-/-- End-to-end chain: the alternants share their VP under distinct light verbs ([cuervo-2003]),
-    vVPE with [E] on v elides the VP alone ([merchant-2013]), so the alternation is tolerated
-    under vVPE ([kalyakin-2026]). -/
+/-- The alternants share their VP under distinct light verbs ([cuervo-2003]) and vVPE with [E]
+on v elides the VP alone ([merchant-2013]), so the alternation is tolerated under vVPE. -/
 theorem end_to_end_causative_chain :
     causative.tail = inchoative.tail ∧ causative ≠ inchoative ∧
       vStrandingVPE.Deletes (rootSite .complement) ∧ vStrandingVPE.Tolerates .transitivity := by
   decide
 
-/-- Merchant's theory also predicts that sluicing, with [E] on C, blocks voice mismatches, since
-    Voice is inside TP, the deletion domain of sluicing. The Santa Cruz sluicing data set
-    ([anand-hardt-mccloskey-2021], §5.5) independently confirms this: across
-    4,700 annotated sluices, zero
-    antecedent–ellipsis site pairings exhibit active/passive voice mismatches.
-    The same theoretical apparatus that Kalyakin extends to vVPE
-    already works for sluicing. -/
+/-- Sluicing, with [E] on C, blocks voice mismatches under Merchant's theory too, since Voice
+is inside TP, its deletion domain, as the Santa Cruz sluicing data set of Anand, Hardt and
+McCloskey confirms independently. -/
 theorem sluicing_voice_blocked_convergent :
     ¬ sluicing.Tolerates .voice := by decide
 
-/-! ### Again Diagnostic -/
+/-! ### The *again* diagnostic -/
 
-/-- Under vVPE, BOTH repetitive and restitutive *again* survive.
-    This contrasts with English VPE (only repetitive survives) and
-    confirms the deletion domain is VP (complement of v), not vP.
-
-    [kalyakin-2026] §4.1 (exx. 52a–b): both repetitive and
-    restitutive ʔibrra 'again' are available under vVPE in Muira Dargwa.
-    [toosarvandani-2009] (ex. 90) independently shows both readings
-    available for Persian vVPE. -/
+/-- Under vVPE both the repetitive and the restitutive *again* survive, (52a–b), as both do
+under Persian vVPE ([toosarvandani-2009] (90)), which confirms that the deletion domain is the
+VP and not the vP. -/
 theorem vVPE_both_again :
     vStrandingVPE.Spares AgainReading.repetitive.site ∧
       vStrandingVPE.Spares AgainReading.restitutive.site := by decide
 
-/-- English VPE deletes restitutive *again*, so only the repetitive reading survives.
-    ([merchant-2013], building on Johnson 2004, von Stechow 1996). -/
+/-- English VPE deletes restitutive *again*, so only the repetitive reading survives
+([merchant-2013]). -/
 theorem vpEllipsis_only_repetitive :
     vpEllipsis.Spares AgainReading.repetitive.site ∧
       ¬ vpEllipsis.Spares AgainReading.restitutive.site := by decide
 
-/-- The *again* contrast directly distinguishes vVPE from English VPE:
-    same test, different result — proving different deletion domains. -/
+/-- The *again* test separates vVPE from English VPE, whose deletion domains differ. -/
 theorem again_distinguishes_vVPE_from_vpEllipsis :
     vStrandingVPE.Spares AgainReading.restitutive.site ∧
       ¬ vpEllipsis.Spares AgainReading.restitutive.site := by decide
 
-/-! ### Fragment Integration: NV Root Position → vVPE -/
+/-! ### The position of a root by its content (§2.2, §4.1)
 
-open Dargwa.ComplexPredicates in
+A non-verbal element is a bare root, and where it merges is fixed by its conceptual content: a
+root describing the end state of a change-of-state event merges with the direct object, one
+imposing a manner on an activity attaches to v. The roots of the paper's complex predicates carry
+the state or manner entailment Kalyakin reads off them. -/
 
-/-- Whether a CPr's non-verbal root lies in vVPE's deletion domain, at the position the fragment
-annotates. -/
-def cprInVVPEDomain (cpr : Dargwa.ComplexPredicates.AnnotatedCPr) : Prop :=
-  vStrandingVPE.Deletes (rootSite cpr.rootPosition)
+open Semantics
 
-instance (cpr : Dargwa.ComplexPredicates.AnnotatedCPr) : Decidable (cprInVVPEDomain cpr) := by
-  unfold cprInVVPEDomain; infer_instance
+/-- *wana* of *wana AGR-arq'-* 'warm up' (3), (8), (75)–(80). -/
+def wana : Root := { name := "wana", entailments := {.state "warm"} }
 
-open Dargwa.ComplexPredicates in
+/-- *hark* of *hark AGR-arq'-* 'open', which denotes the result state of being open (52). -/
+def hark : Root := { name := "hark", entailments := {.state "open"} }
 
-/-- Change-of-state NVs (complement position) are inside vVPE's
-    deletion domain: they can be elided. -/
-theorem cos_in_domain :
-    cprInVVPEDomain warmUp ∧ cprInVVPEDomain openCPr ∧
-    cprInVVPEDomain calmCPr ∧ cprInVVPEDomain praiseCPr ∧
-    cprInVVPEDomain repairCPr := by decide +kernel
+/-- *parʁat* of *parʁat AGR-arq'-* 'calm' (36), (69)–(71). -/
+def parghat : Root := { name := "parʁat", entailments := {.state "calm"} }
 
-open Dargwa.ComplexPredicates in
+/-- *dawk* of *dawk AGR-irq'-* 'repair' (84)–(86). -/
+def dawk : Root := { name := "dawk", entailments := {.state "repaired"} }
 
-/-- Manner/activity NVs (adjoined position) are outside vVPE's
-    deletion domain: they survive ellipsis. This is why antipassive
-    roots (coerced to adjunction) block vVPE. -/
-theorem manner_outside_domain :
-    ¬ cprInVVPEDomain runCPr ∧ ¬ cprInVVPEDomain jumpCPr := by decide +kernel
+/-- *taˤħ* of *taˤħ Ø-uq-* 'jump' (57). -/
+def tah : Root := { name := "taˤħ", entailments := {.manner "jump"} }
 
-/-! ### NV-Drop Test (vVPE vs Argument Ellipsis) -/
+/-- *duc'* of *duc' Ø-uq-* 'run' (58). -/
+def duc : Root := { name := "duc'", entailments := {.manner "run"} }
 
-/-- Datum for the NV-drop constituency test.
-    [kalyakin-2026] §3.6 distinguishes vVPE from argument ellipsis (AE):
-    - vVPE: NV+argument deleted together (constituent = VP)
-    - AE: argument alone deleted, NV survives
-    - *NV alone deleted, argument survives → ungrammatical
-    The ungrammaticality of NV-only deletion proves the elided
-    constituent is VP (containing both NV and argument), not just NV. -/
-structure NVDropDatum where
-  description : String
-  nvDropped : Bool
-  argDropped : Bool
-  grammatical : Bool
-  deriving Repr
+/-- *ʡimč* of *ʡimč w-ik'-* 'sneeze' (59). -/
+def imc : Root := { name := "ʡimč", entailments := {.manner "sneeze"} }
 
-/-- Dropping the NV and the argument together, which is vVPE, is grammatical. -/
-def nvArgDrop : NVDropDatum :=
-  { description := "vVPE: NV+arg elided together"
-  , nvDropped := true, argDropped := true, grammatical := true }
+/-- The position of a root by its conceptual content. A root imposing a manner on an activity
+attaches to v, one describing an end state merges with the direct object. -/
+def position (r : Root) : Root.Position :=
+  if .manner ∈ r.kinds then .adjoined else .complement
 
-/-- Dropping the argument alone, which is argument ellipsis, is grammatical. -/
-def argOnlyDrop : NVDropDatum :=
-  { description := "AE: argument elided, NV survives"
-  , nvDropped := false, argDropped := true, grammatical := true }
+/-- A root lies in vVPE's deletion domain exactly when it entails no manner. The roots merged
+with the direct object are elided with it, the v-adjoined ones never. -/
+theorem deletes_rootSite_position_iff (r : Root) :
+    vStrandingVPE.Deletes (rootSite (position r)) ↔ .manner ∉ r.kinds := by
+  unfold position
+  split_ifs with h
+  · exact iff_of_false (by decide) (not_not.2 h)
+  · exact iff_of_true (by decide) h
 
-/-- Dropping the NV alone while the argument survives is ungrammatical, which rules out NV-drop
-    as a process distinct from vVPE: the NV cannot be deleted without its complement. -/
-def nvOnlyDrop : NVDropDatum :=
-  { description := "NV-only drop: ungrammatical"
-  , nvDropped := true, argDropped := false, grammatical := false }
+/-- The change-of-state roots are elided with the object, (36a) and (52). -/
+theorem deletes_wana : vStrandingVPE.Deletes (rootSite (position wana)) :=
+  (deletes_rootSite_position_iff _).2 (by decide)
 
-/-- The NV-drop test confirms constituent deletion: NV+arg is a
-    constituent (VP), NV alone is not. -/
-theorem nv_drop_constituency :
-    nvArgDrop.grammatical = true ∧
-    argOnlyDrop.grammatical = true ∧
-    nvOnlyDrop.grammatical = false := ⟨rfl, rfl, rfl⟩
+/-- The manner roots are not, (57)–(59). -/
+theorem not_deletes_tah : ¬ vStrandingVPE.Deletes (rootSite (position tah)) :=
+  fun h ↦ (deletes_rootSite_position_iff _).1 h (by decide)
 
 /-! ### The survey of verb-stranding ellipsis (§6) -/
 
@@ -249,18 +221,18 @@ inductive Language
   | britishEnglish
   deriving DecidableEq, Repr
 
-/-- The ellipsis of each language: [E] on v in Muira Dargwa, in Persian, where both readings of
-*again* survive ((90), after Toosarvandani), and in British *do*, which tolerates voice and
-argument-structure mismatches alike ((97)–(98), after Silk); [E] on Voice in Bangla, where the
-restitutive reading is lost (94) and adjuncts are recovered (95), the light verb evacuating by
-head movement (after Haldar). -/
+/-- The ellipsis of each language. Muira Dargwa, Persian, where both readings of *again*
+survive ((90), after Toosarvandani), and British *do*, which tolerates voice and
+argument-structure mismatches alike ((97)–(98), after Silk), put [E] on v; Bangla puts it on
+Voice, where the restitutive reading is lost (94) and adjuncts are recovered (95), the light
+verb evacuating by head movement (after Haldar). -/
 def Language.ellipsis : Language → Ellipsis
   | .bangla => vpEllipsis
   | _ => vStrandingVPE
 
 /-- Whether the language respects Goldberg's Verbal Identity Requirement, identity of the light
-verbs of antecedent and target ((92)), where the paper reports it: Persian prohibits every
-light-verb mismatch (91), Muira Dargwa tolerates them (§5). -/
+verbs of antecedent and target ((92)), where the paper reports it. Persian prohibits every
+light-verb mismatch (91) and Muira Dargwa tolerates them (§5). -/
 def Language.respectsVIR? : Language → Option Bool
   | .persian => some true
   | .muiraDargwa => some false
@@ -279,8 +251,8 @@ theorem persian_stricter_than_dargwa :
       Language.muiraDargwa.respectsVIR? = some false :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Bangla's ellipsis is the larger one, and the *again* test shows it: restitutive *again* is
-deleted in Bangla but survives in Muira Dargwa. -/
+/-- Bangla's ellipsis is the larger one, and the *again* test shows it, since restitutive
+*again* is deleted in Bangla but survives in Muira Dargwa. -/
 theorem bangla_larger_domain :
     Language.muiraDargwa.ellipsis.ePosition < Language.bangla.ellipsis.ePosition ∧
       ¬ Language.bangla.ellipsis.Spares AgainReading.restitutive.site ∧
