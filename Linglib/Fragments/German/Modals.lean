@@ -35,7 +35,7 @@ not a sense of *dürfen*.
 
 @[expose] public section
 
-namespace German.Verbs.Modal
+namespace German.Modals
 
 /-- *dürfen* 'may, be allowed to' is a deontic possibility modal. -/
 def duerfen : Auxiliary where
@@ -82,4 +82,4 @@ theorem sollen_flavors_ssubset_sollte :
     sollen.toModalItem.flavors ⊂ sollte.toModalItem.flavors := by
   decide
 
-end German.Verbs.Modal
+end German.Modals
