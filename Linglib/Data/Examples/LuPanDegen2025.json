@@ -3,7 +3,7 @@
     "id": "lupandegen2025_exp1_verbfocus",
     "source": {
       "bibkey": "lu-pan-degen-2025",
-      "paperLabel": "(6a)"
+      "paperLabel": "(9a)"
     },
     "language": "stan1293",
     "primaryText": "John didn't WHISPER that Mary met with the lawyer. Then who did John whisper that Mary met with?",
@@ -13,7 +13,7 @@
     ],
     "glossedTokens": [],
     "translation": "John didn't WHISPER that Mary met with the lawyer. Then who did John whisper that Mary met with?",
-    "context": "Capitalization marks prosodic focus on the matrix verb, backgrounding the complement.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -37,7 +37,7 @@
     "id": "lupandegen2025_exp1_embeddedfocus",
     "source": {
       "bibkey": "lu-pan-degen-2025",
-      "paperLabel": "(6b)"
+      "paperLabel": "(9b)"
     },
     "language": "stan1293",
     "primaryText": "John didn't whisper that Mary met with the LAWYER. Then who did John whisper that Mary met with?",
@@ -47,7 +47,7 @@
     ],
     "glossedTokens": [],
     "translation": "John didn't whisper that Mary met with the LAWYER. Then who did John whisper that Mary met with?",
-    "context": "Capitalization marks prosodic focus on the embedded object, foregrounding the complement.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -68,10 +68,78 @@
     "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
   },
   {
+    "id": "lupandegen2025_exp2a_say_verbfocus",
+    "source": {
+      "bibkey": "lu-pan-degen-2025",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John didn't SAY that Mary met with the lawyer. Then who did John say that Mary met with?",
+    "discourseSegments": [
+      "John didn't SAY that Mary met with the lawyer.",
+      "Then who did John say that Mary met with?"
+    ],
+    "glossedTokens": [],
+    "translation": "John didn't SAY that Mary met with the lawyer. Then who did John say that Mary met with?",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "2a"
+      ],
+      [
+        "focus_condition",
+        "verbFocus"
+      ],
+      [
+        "verb_type",
+        "say"
+      ]
+    ],
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version."
+  },
+  {
+    "id": "lupandegen2025_exp2a_say_embeddedfocus",
+    "source": {
+      "bibkey": "lu-pan-degen-2025",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John didn't say that Mary met with the LAWYER. Then who did John say that Mary met with?",
+    "discourseSegments": [
+      "John didn't say that Mary met with the LAWYER.",
+      "Then who did John say that Mary met with?"
+    ],
+    "glossedTokens": [],
+    "translation": "John didn't say that Mary met with the LAWYER. Then who did John say that Mary met with?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "experiment",
+        "2a"
+      ],
+      [
+        "focus_condition",
+        "embeddedFocus"
+      ],
+      [
+        "verb_type",
+        "say"
+      ]
+    ],
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version."
+  },
+  {
     "id": "lupandegen2025_exp3a_say",
     "source": {
       "bibkey": "lu-pan-degen-2025",
-      "paperLabel": "(13a)"
+      "paperLabel": "(18a)"
     },
     "language": "stan1293",
     "primaryText": "John didn't say that Mary met with the lawyer. Then who did John say that Mary met with?",
@@ -105,7 +173,7 @@
     "id": "lupandegen2025_exp3a_sayadverb",
     "source": {
       "bibkey": "lu-pan-degen-2025",
-      "paperLabel": "(13b)"
+      "paperLabel": "(18b)"
     },
     "language": "stan1293",
     "primaryText": "John didn't say softly that Mary met with the lawyer. Then who did John say softly that Mary met with?",
@@ -139,7 +207,7 @@
     "id": "lupandegen2025_exp3b_adverbfocus",
     "source": {
       "bibkey": "lu-pan-degen-2025",
-      "paperLabel": "(14a)"
+      "paperLabel": "(20a)"
     },
     "language": "stan1293",
     "primaryText": "John didn't say SOFTLY that Mary met with the lawyer. Then who did John say softly that Mary met with?",
@@ -149,7 +217,7 @@
     ],
     "glossedTokens": [],
     "translation": "John didn't say SOFTLY that Mary met with the lawyer. Then who did John say softly that Mary met with?",
-    "context": "Capitalization marks prosodic focus on the manner adverb, backgrounding the complement.",
+    "context": "",
     "judgment": "marginal",
     "alternatives": [],
     "readings": [],
@@ -173,7 +241,7 @@
     "id": "lupandegen2025_exp3b_embeddedfocus",
     "source": {
       "bibkey": "lu-pan-degen-2025",
-      "paperLabel": "(14b)"
+      "paperLabel": "(20b)"
     },
     "language": "stan1293",
     "primaryText": "John didn't say softly that Mary met with the LAWYER. Then who did John say softly that Mary met with?",
@@ -183,7 +251,7 @@
     ],
     "glossedTokens": [],
     "translation": "John didn't say softly that Mary met with the LAWYER. Then who did John say softly that Mary met with?",
-    "context": "Capitalization marks prosodic focus on the embedded object, foregrounding the complement.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],

@@ -1341,7 +1341,6 @@ import Linglib.Semantics.Exhaustification.PreExhaustified
 import Linglib.Semantics.Exhaustification.Presuppositional
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Semantics.Focus.Control
-import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.Focus.Unalternatives

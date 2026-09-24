@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.Basic
-public import Linglib.Semantics.Focus.ExtractionClash
 public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Fragments.English.Verbs
 public import Linglib.Data.Examples.LuPanDegen2025
@@ -11,34 +10,46 @@ public import Linglib.Data.Examples.LuPanDegen2025
 
 This file formalizes the backgroundedness account of manner-of-speaking islands that
 [lu-pan-degen-2025] support in five acceptability experiments. A constituent is foregrounded
-when its alternatives are alternatives of the question under discussion, Definition 1 after
-[roberts-1996] and [roberts-2012], and backgrounded otherwise: a communication event has a
-manner and a content, and a question about the one backgrounds the other (`Foregrounded`,
-`Backgrounded`, `mannerQUD`, `contentQUD`). Extraction foregrounds the moved element, so
-extraction from a backgrounded complement is the information-structural clash of
-[erteschik-shir-1973], the substrate's `extractionISClash`. A manner-of-speaking verb carries
-a manner component, *whisper* being *say* in a whispering manner, which makes the manner
-question the default and backgrounds the complement, while the light *say* leaves its content
-foregrounded, so the complement is an island exactly when the matrix predicate carries manner
-and no focus on the embedded object overrides the default question (`Island`, `island_iff`).
-The experiments' predictions follow: focus on the embedded object ameliorates the island,
-Experiments 1, 2a and 3b (`not_island_of_focus`), a manner adverb on *say* recreates it,
-Experiment 3a (`island_adverb`), and a backgrounded complement is unaffected by matrix
-negation, the negation test (4) (`unaffectedByNegation_iff_island`). The manner component is
-read from the verb's Levin class, so the prediction follows from the lexical classification of
-`Fragments/English` (`hasManner_of_mannerOfSpeaking`, `island_whisper`, `not_island_say`), and
-the stimulus rows of `Data/Examples/LuPanDegen2025` are classified by the same rule
-(`rows_classified`).
+when its alternatives are among the answers to the question under discussion, (3), with
+alternative sets and answers after [roberts-1996] and [roberts-2012], and backgrounded otherwise
+(`Foregrounded`), which is the question deciding each of the constituent's alternatives
+(`Setoid.le_ker_iff_forall_decides`). A communication event has a manner and a content,
+and the manner question backgrounds the content (`mannerQUD`, `contentQUD`,
+`not_foregrounded_content_mannerQUD`). Movement foregrounds the moved element, so moving it out of
+a backgrounded complement is the information-structural clash of [erteschik-shir-1973]: the
+embedded object is an island exactly when the complement is backgrounded under the question under
+discussion (`Island`).
+
+Prosodic focus sets that question, focus on the matrix predicate raising the manner question and
+focus on the embedded object the content question. Without focus the predicate sets it: a
+manner-of-speaking verb carries a manner component, *whisper* being *say* in a whispering manner,
+which makes the manner question the default, while the light *say* leaves the content question
+(`activeQUD`, `island_iff`). The experiments' findings follow for each predicate: embedded focus
+removes the island of a manner-of-speaking verb, Experiment 1 (`island_whisper_iff`); focus on
+*say* creates one, Experiment 2a (`island_say_iff`); and a manner adverb makes *say* behave as a
+manner-of-speaking verb, by default in Experiment 3a and under focus in 3b
+(`island_sayAdverb_iff_island_whisper`). The manner component is read from the verb's Levin class in
+`Fragments/English` (`MatrixPredicate.hasManner_of_mannerOfSpeaking`,
+`MatrixPredicate.hasManner_say_iff`), and the stimulus rows
+of `Data/Examples/LuPanDegen2025` are classified by the same rule (`rows_classified`).
 
 ## Implementation notes
 
-The subjacency and verb-frame-frequency accounts the paper argues against are described in
-prose: prosodic focus changes neither structure nor frequency, and the *say* plus adverb
-contrast holds the verb constant. The residual difference between manner-of-speaking verbs
-and *say* under one prosody, Experiment 2a, the per-verb correlation of backgroundedness with
-acceptability, Experiment 2b, and the rating means are not represented; the paper notes that
-the account makes no prediction about the obligatory overt complementizer of
-manner-of-speaking complements (16).
+(3) asks the alternatives relative to a constituent to be among the complete answers to the
+question. Over partition questions, whose cells are the complete answers, this is rendered as
+the question settling the constituent: two events in one cell agree on it, so the question
+decides each of its alternatives. The paper takes one question to be under discussion at a time,
+which is why focus overrides the predicate's default.
+
+The negation test (7) of earlier work is not formalized: the paper counts it a test of
+projection, correlated with backgroundedness but distinct from it, and probes the embedded
+object's backgroundedness with a comprehension task instead. The subjacency and
+verb-frame-frequency accounts the paper argues against are described in prose: prosodic focus
+changes neither structure nor frequency, and the *say* plus adverb contrast holds the verb
+constant. The residual difference between manner-of-speaking verbs and *say* under one prosody
+in Experiment 2a, the default backgroundedness contrast of Experiment 2b, and the rating means
+are not represented; the paper notes that the account makes no prediction about the obligatory
+overt complementizer of manner-of-speaking complements (22).
 
 ## References
 
@@ -46,7 +57,6 @@ manner-of-speaking complements (16).
 * [roberts-1996]
 * [roberts-2012]
 * [erteschik-shir-1973]
-* [kratzer-selkirk-2020]
 * [levin-1993]
 -/
 
@@ -54,28 +64,20 @@ manner-of-speaking complements (16).
 
 namespace LuPanDegen2025
 
-open Focus Discourse Reference Focus.ExtractionClash ArgumentStructure English
+open ArgumentStructure English
 open Data.Examples
 
-/-! ### Foreground and background (Definition 1) -/
+/-! ### Foregrounding (3) -/
 
 section Foregrounding
 
 variable {M A : Type*}
 
-/-- A dimension `π` of the events is foregrounded under the question `q`: its alternatives are
-alternatives of the question, so two events in one cell agree on it. -/
+/-- A dimension `π` of the events is foregrounded under the question `q`, (3): its alternatives
+are among the answers, so two events in one cell agree on it. A dimension that is not
+foregrounded is backgrounded. -/
 def Foregrounded (q : Setoid M) (π : M → A) : Prop :=
-  ∀ e e', q e e' → π e = π e'
-
-/-- A dimension varied by `upd` is backgrounded under `q`: varying it never changes the cell. -/
-def Backgrounded (q : Setoid M) (upd : M → A → M) : Prop :=
-  ∀ e a, q e (upd e a)
-
-/-- A dimension that can be varied is not both foregrounded and backgrounded. -/
-theorem Foregrounded.not_backgrounded {q : Setoid M} {π : M → A} {upd : M → A → M}
-    (hf : Foregrounded q π) (h : ∃ e a, π (upd e a) ≠ π e) : ¬ Backgrounded q upd :=
-  λ hb => let ⟨e, a, hne⟩ := h; hne (hf _ _ (hb e a)).symm
+  q ≤ Setoid.ker π
 
 end Foregrounding
 
@@ -83,202 +85,137 @@ end Foregrounding
 
 /-- A communication event: how it was said and what was said. -/
 structure CommEvent (Manner Content : Type*) where
+  /-- How it was said. -/
   manner : Manner
+  /-- What was said. -/
   content : Content
-
-namespace CommEvent
-
-variable {Manner Content : Type*}
-
-/-- The event with another content. -/
-def withContent (e : CommEvent Manner Content) (c : Content) : CommEvent Manner Content :=
-  ⟨e.manner, c⟩
-
-/-- The event with another manner. -/
-def withManner (e : CommEvent Manner Content) (m : Manner) : CommEvent Manner Content :=
-  ⟨m, e.content⟩
-
-end CommEvent
 
 section Questions
 
 variable {Manner Content : Type*}
 
 /-- The manner question, *how did John say it?*: events in one cell share a manner. -/
-abbrev mannerQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.manner
+def mannerQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.manner
 
 /-- The content question, *what did John say?*: events in one cell share a content. -/
-abbrev contentQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.content
-
-theorem mannerQUD_r_iff (e e' : CommEvent Manner Content) :
-    mannerQUD (Manner := Manner) (Content := Content) e e' ↔ e.manner = e'.manner :=
-  Iff.rfl
-
-theorem contentQUD_r_iff (e e' : CommEvent Manner Content) :
-    contentQUD (Manner := Manner) (Content := Content) e e' ↔ e.content = e'.content :=
-  Iff.rfl
+def contentQUD : Setoid (CommEvent Manner Content) := Setoid.ker CommEvent.content
 
 /-- The manner question foregrounds the manner. -/
 theorem foregrounded_manner_mannerQUD :
     Foregrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.manner :=
-  λ _ _ h => h
-
-/-- The manner question backgrounds the content. -/
-theorem backgrounded_content_mannerQUD :
-    Backgrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.withContent :=
-  λ _ _ => rfl
+  le_rfl
 
 /-- The content question foregrounds the content. -/
 theorem foregrounded_content_contentQUD :
     Foregrounded (contentQUD (Manner := Manner) (Content := Content)) CommEvent.content :=
-  λ _ _ h => h
+  le_rfl
 
-/-- The content question backgrounds the manner. -/
-theorem backgrounded_manner_contentQUD :
-    Backgrounded (contentQUD (Manner := Manner) (Content := Content)) CommEvent.withManner :=
-  λ _ _ => rfl
-
-/-- With two contents to choose from, the manner question does not foreground the content. -/
-theorem not_foregrounded_content_mannerQUD (m : Manner) {c c' : Content} (h : c ≠ c') :
-    ¬ Foregrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.content :=
-  λ hf => hf.not_backgrounded ⟨⟨m, c⟩, c', h.symm⟩ backgrounded_content_mannerQUD
-
-/-! ### Extraction as a content question -/
-
-/-- Extraction from the complement asks after its content; the question is relevant to the
-active question only if some change of content changes the cell ([roberts-1996]). -/
-def ContentQuestionRelevant (q : Setoid (CommEvent Manner Content)) : Prop :=
-  ∃ e : CommEvent Manner Content, ∃ c, ¬ q e (e.withContent c)
-
-/-- The content question is relevant exactly when the content is not backgrounded. -/
-theorem contentQuestionRelevant_iff (q : Setoid (CommEvent Manner Content)) :
-    ContentQuestionRelevant q ↔ ¬ Backgrounded q CommEvent.withContent := by
-  simp [ContentQuestionRelevant, Backgrounded]
-
-/-- Under the manner question the content question is irrelevant: every filler gives the same
-answer. -/
-theorem not_contentQuestionRelevant_mannerQUD :
-    ¬ ContentQuestionRelevant (mannerQUD (Manner := Manner) (Content := Content)) :=
-  λ h => (contentQuestionRelevant_iff _).1 h backgrounded_content_mannerQUD
-
-/-- Under the content question it is relevant, given two contents. -/
-theorem contentQuestionRelevant_contentQUD (m : Manner) {c c' : Content} (h : c ≠ c') :
-    ContentQuestionRelevant (contentQUD (Manner := Manner) (Content := Content)) :=
-  ⟨⟨m, c⟩, c', h⟩
+/-- The manner question backgrounds the content, given two contents to choose from. -/
+theorem not_foregrounded_content_mannerQUD [Nonempty Manner] [Nontrivial Content] :
+    ¬ Foregrounded (mannerQUD (Manner := Manner) (Content := Content)) CommEvent.content := by
+  obtain ⟨m⟩ := ‹Nonempty Manner›
+  obtain ⟨c, c', h⟩ := exists_pair_ne Content
+  exact fun hf ↦ h (hf (x := ⟨m, c⟩) (y := ⟨m, c'⟩) rfl)
 
 end Questions
 
-/-! ### The default question and the island -/
+/-! ### The question under discussion and the island -/
 
 /-- The matrix predicate: a verb of the fragment, and whether a manner adverb modifies it. -/
 structure MatrixPredicate where
+  /-- The matrix verb. -/
   verb : English.Verb
+  /-- Whether a manner adverb modifies the verb. -/
   mannerAdverb : Bool
 
-/-- Whether the verb lexicalizes a manner: it is a manner-of-speaking verb of
-[levin-1993]. -/
-def MatrixPredicate.lexicalManner (p : MatrixPredicate) : Bool :=
-  decide (.mannerOfSpeaking ∈ p.verb.levinClasses)
+namespace MatrixPredicate
 
-/-- The predicate carries manner, lexically or by a manner adverb. -/
-def MatrixPredicate.HasManner (p : MatrixPredicate) : Prop :=
-  p.lexicalManner = true ∨ p.mannerAdverb = true
+/-- The predicate carries a manner component, as a manner-of-speaking verb of [levin-1993] or
+by a manner adverb. -/
+def HasManner (p : MatrixPredicate) : Prop :=
+  .mannerOfSpeaking ∈ p.verb.levinClasses ∨ p.mannerAdverb = true
 
-instance : DecidablePred MatrixPredicate.HasManner := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred HasManner := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A verb of the manner-of-speaking class carries manner however it is modified. -/
 theorem hasManner_of_mannerOfSpeaking {v : English.Verb}
-    (h : .mannerOfSpeaking ∈ v.levinClasses)
-    (b : Bool) : MatrixPredicate.HasManner ⟨v, b⟩ :=
-  Or.inl (decide_eq_true h)
+    (h : .mannerOfSpeaking ∈ v.levinClasses) (b : Bool) : HasManner ⟨v, b⟩ :=
+  .inl h
 
 /-- A verb of the *say* class carries manner only by an adverb. -/
 theorem hasManner_say_iff {v : English.Verb} (h : v.levinClasses = {.say}) (b : Bool) :
-    MatrixPredicate.HasManner ⟨v, b⟩ ↔ b = true := by
-  simp [MatrixPredicate.HasManner, MatrixPredicate.lexicalManner, h]
+    HasManner ⟨v, b⟩ ↔ b = true := by
+  simp [HasManner, h]
 
-/-- The dimension the active question addresses. -/
-inductive Dimension where
-  | manner
-  | content
+end MatrixPredicate
+
+/-- Where the context puts prosodic focus: on the matrix predicate, its verb or its manner
+adverb, on the embedded object, or nowhere. -/
+inductive FocusCondition where
+  | predicate
+  | embedded
+  | unmarked
   deriving DecidableEq
 
-/-- Focus on the embedded object makes the content question active; otherwise a predicate
-with manner makes the manner question the default, and one without leaves the content
-question. -/
-def activeDimension (p : MatrixPredicate) (embeddedFocus : Bool) : Dimension :=
-  if embeddedFocus then .content else if p.HasManner then .manner else .content
+section Island
 
-/-- The complement's status: backgrounded, the given status of [kratzer-selkirk-2020], under
-the manner question, and new under the content question. -/
-def complementStatus : Dimension → BinaryGivenness
-  | .manner => .given
-  | .content => .new
+variable (Manner Content : Type*)
 
-/-- The complement is an island: extraction, which foregrounds the moved element, clashes with
-the complement's backgrounded status. -/
-def Island (p : MatrixPredicate) (embeddedFocus : Bool) : Prop :=
-  extractionISClash .focused (complementStatus (activeDimension p embeddedFocus))
+/-- The question under discussion: focus on the predicate raises the manner question, the
+alternatives of a verb of saying being its manners, and focus on the embedded object the content
+question; without focus a predicate with a manner component raises the manner question and the
+light *say* the content question. -/
+def activeQUD (p : MatrixPredicate) : FocusCondition → Setoid (CommEvent Manner Content)
+  | .predicate => mannerQUD
+  | .embedded => contentQUD
+  | .unmarked => if p.HasManner then mannerQUD else contentQUD
 
-instance (p : MatrixPredicate) (f : Bool) : Decidable (Island p f) :=
-  inferInstanceAs (Decidable (extractionISClash _ _))
+/-- The embedded object is an island when the complement is backgrounded under the question
+under discussion: movement foregrounds the moved element, which clashes with the backgrounded
+complement it leaves ([erteschik-shir-1973]). -/
+def Island (p : MatrixPredicate) (f : FocusCondition) : Prop :=
+  ¬ Foregrounded (activeQUD Manner Content p f) CommEvent.content
 
-/-- The island arises exactly when the predicate carries manner and no focus on the embedded
-object overrides the default question. -/
-theorem island_iff (p : MatrixPredicate) (f : Bool) : Island p f ↔ p.HasManner ∧ f = false := by
-  unfold Island activeDimension
-  cases f <;> by_cases h : p.HasManner <;> simp [h, complementStatus, extractionISClash]
+variable {Manner Content}
 
-theorem island_of_hasManner {p : MatrixPredicate} (h : p.HasManner) : Island p false :=
-  (island_iff p false).2 ⟨h, rfl⟩
+/-- Focus on the embedded object foregrounds the complement whatever the predicate. -/
+theorem not_island_embedded (p : MatrixPredicate) : ¬ Island Manner Content p .embedded :=
+  fun h ↦ h le_rfl
 
-theorem not_island_of_not_hasManner {p : MatrixPredicate} (h : ¬ p.HasManner) (f : Bool) :
-    ¬ Island p f :=
-  λ hi => h ((island_iff p f).1 hi).1
+variable [Nonempty Manner] [Nontrivial Content]
 
-/-- Prosodic amelioration: focus on the embedded object removes the island whatever the
-predicate, Experiments 1, 2a and 3b. -/
-theorem not_island_of_focus (p : MatrixPredicate) : ¬ Island p true :=
-  λ h => Bool.noConfusion ((island_iff p true).1 h).2
+/-- The complement is an island exactly when the predicate is focused, or nothing is and the
+predicate carries manner. -/
+theorem island_iff (p : MatrixPredicate) (f : FocusCondition) :
+    Island Manner Content p f ↔ f = .predicate ∨ f = .unmarked ∧ p.HasManner := by
+  cases f
+  · simpa [Island, activeQUD] using not_foregrounded_content_mannerQUD
+  · simpa [Island, activeQUD] using foregrounded_content_contentQUD
+  · by_cases h : p.HasManner <;>
+      simp [Island, activeQUD, h, not_foregrounded_content_mannerQUD,
+        foregrounded_content_contentQUD]
 
-/-- A manner adverb makes any verb's complement an island, Experiment 3a. -/
-theorem island_adverb (v : English.Verb) : Island ⟨v, true⟩ false :=
-  island_of_hasManner (Or.inr rfl)
+/-- *Who did John whisper that Mary met with?* is degraded unless the embedded object is focused,
+Experiment 1. -/
+theorem island_whisper_iff (f : FocusCondition) :
+    Island Manner Content ⟨whisper, false⟩ f ↔ f ≠ .embedded := by
+  have := MatrixPredicate.hasManner_of_mannerOfSpeaking (v := whisper) (by decide) false
+  cases f <;> simp [island_iff, this]
 
-/-! ### The negation test (4) -/
+/-- *Who did John say that Mary met with?* is degraded exactly when *say* is focused,
+Experiment 2a. -/
+theorem island_say_iff (f : FocusCondition) :
+    Island Manner Content ⟨say, false⟩ f ↔ f = .predicate := by
+  have := MatrixPredicate.hasManner_say_iff (v := say) (by decide) false
+  cases f <;> simp [island_iff, this]
 
-/-- Backgrounded content is unaffected by matrix sentential negation
-([erteschik-shir-1973]). -/
-def UnaffectedByNegation : BinaryGivenness → Prop
-  | .given => True
-  | .new => False
-
-instance : DecidablePred UnaffectedByNegation := λ s => by
-  cases s <;> unfold UnaffectedByNegation <;> infer_instance
-
-/-- The negation test and islandhood coincide, both being the complement's backgrounded
-status. -/
-theorem unaffectedByNegation_iff_island (p : MatrixPredicate) (f : Bool) :
-    UnaffectedByNegation (complementStatus (activeDimension p f)) ↔ Island p f := by
-  unfold Island
-  cases h : complementStatus (activeDimension p f) <;>
-    simp [UnaffectedByNegation, extractionISClash]
-
-/-! ### The fragment's verbs -/
-
-/-- *John whispered that Mary met with the lawyer*: an island by the verb's class. -/
-theorem island_whisper : Island ⟨whisper, false⟩ false :=
-  island_of_hasManner
-    (hasManner_of_mannerOfSpeaking (by decide) false)
-
-/-- *John said that Mary met with the lawyer*: no island. -/
-theorem not_island_say (f : Bool) : ¬ Island ⟨say, false⟩ f :=
-  not_island_of_not_hasManner
-    (fun h ↦ Bool.noConfusion ((hasManner_say_iff (by decide) false).1 h)) f
-
-/-- *John said softly that Mary met with the lawyer*: an island by the adverb. -/
-theorem island_say_softly : Island ⟨say, true⟩ false :=
-  island_adverb say
+/-- A manner adverb makes *say* behave as a manner-of-speaking verb under every focus condition,
+Experiments 3a and 3b. -/
+theorem island_sayAdverb_iff_island_whisper (f : FocusCondition) :
+    Island Manner Content ⟨say, true⟩ f ↔ Island Manner Content ⟨whisper, false⟩ f := by
+  have := (MatrixPredicate.hasManner_say_iff (v := say) (by decide) true).2 rfl
+  rw [island_whisper_iff]
+  cases f <;> simp [island_iff, this]
 
 /-! ### The stimulus rows -/
 
@@ -291,17 +228,25 @@ def rowPredicate (e : LinguisticExample) : Option MatrixPredicate :=
   | some "sayAdverb" => some ⟨say, true⟩
   | _ => none
 
-/-- Whether the row's embedded object bears focus. -/
-def rowFocus (e : LinguisticExample) : Option Bool :=
+/-- The focus condition of a stimulus row. -/
+def rowFocus (e : LinguisticExample) : Option FocusCondition :=
   match e.feature? "focus_condition" with
-  | some "embeddedFocus" => some true
-  | some "verbFocus" | some "adverbFocus" | some "none" => some false
+  | some "verbFocus" | some "adverbFocus" => some .predicate
+  | some "embeddedFocus" => some .embedded
+  | some "none" => some .unmarked
   | _ => none
+
+/-- Every row has a predicate and a focus condition. -/
+theorem rows_parse : ∀ e ∈ Examples.all, (rowPredicate e).isSome ∧ (rowFocus e).isSome := by
+  decide
 
 /-- The rows' judgments follow the rule: the degraded member of each contrast is the island. -/
 theorem rows_classified :
     ∀ e ∈ Examples.all, ∀ p ∈ rowPredicate e, ∀ f ∈ rowFocus e,
-      (Island p f ↔ e.judgment = .marginal) := by
+      (Island Manner Content p f ↔ e.judgment = .marginal) := by
+  simp only [island_iff]
   decide
+
+end Island
 
 end LuPanDegen2025
