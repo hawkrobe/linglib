@@ -45,19 +45,19 @@ namespace Stump2016
 
 open Morphology
 
-/-- Voice: the axis Latin deponency crosses ([stump-2016] §12.1). -/
+/-- Voice is the axis that Latin deponency crosses ([stump-2016] §12.1). -/
 inductive Voice where
   | active
   | passive
   deriving DecidableEq, Repr
 
-/-- Person–number agreement: the six cells of the imperfective present
+/-- `Agr` lists the six person–number cells of the imperfective present
 indicative ([stump-2016] Tables 12.1–12.2). -/
 inductive Agr where
   | s1 | s2 | s3 | p1 | p2 | p3
   deriving DecidableEq, Repr
 
-/-- A morphosyntactic property set, abstracted to the voice axis and the
+/-- A cell is a morphosyntactic property set abstracted to the voice axis and the
 agreement features relevant to Latin deponency (the inflection-class index and
 tense/aspect/mood, held constant across the paradigm below, are elided). -/
 structure Cell where
@@ -65,38 +65,38 @@ structure Cell where
   voice : Voice
   deriving DecidableEq, Repr
 
-/-- The two Latin lexemes contrasted: the deponent *cōnārī* and the regular
+/-- `LatinVerb` has the two Latin lexemes contrasted, the deponent *cōnārī* and the regular
 *parāre*. -/
 inductive LatinVerb where
   | conari
   | parare
   deriving DecidableEq, Repr
 
-/-- Their stems. -/
+/-- `LatinStem` has one stem for each of the two verbs. -/
 inductive LatinStem where
   | cona
   | para
   deriving DecidableEq, Repr
 
-/-- The **deponent linkage** of *cōnārī*: a single stem and the voice-flipping
+/-- The deponent linkage of *cōnārī* has a single stem and the voice-flipping
 property mapping `pm2c` ([stump-2016] §12.1), which sends an active content cell
 to a passive form cell. -/
 def conariLinkage : Linkage LatinVerb LatinStem Cell where
-  stems := λ _ _ => {.cona}
+  realize := fun _ _ ↦ {.cona}
   pm := λ _ σ => { σ with voice := .passive }
 
-/-- The **regular linkage** of *parāre*: a single stem and the identity property
+/-- The regular linkage of *parāre* has a single stem and the identity property
 mapping, canonical on the voice axis ([stump-2016] §7.1). -/
 def parareLinkage : Linkage LatinVerb LatinStem Cell where
-  stems := λ _ _ => {.para}
+  realize := fun _ _ ↦ {.para}
   pm := λ _ σ => σ
 
-/-- *cōnārī*'s six active content cells ([stump-2016] Table 12.2). -/
+/-- `conariContentCells` lists *cōnārī*'s six active content cells ([stump-2016] Table 12.2). -/
 def conariContentCells : List Cell :=
   [⟨.s1, .active⟩, ⟨.s2, .active⟩, ⟨.s3, .active⟩,
    ⟨.p1, .active⟩, ⟨.p2, .active⟩, ⟨.p3, .active⟩]
 
-/-- The regular verb's linkage is canonical: property-set preserving (`pm = id`)
+/-- The regular verb's linkage is canonical, property-set preserving (`pm = id`)
 and stem invariant ([stump-2016] §7.1, characteristics (2a)–(2b)). -/
 theorem parareLinkage_isCanonical : parareLinkage.IsCanonical :=
   Linkage.canonical_isCanonical (λ _ : LatinVerb => LatinStem.para)
@@ -118,8 +118,8 @@ theorem conariLinkage_not_canonical : ¬ conariLinkage.IsCanonical := by
   rintro ⟨-, -, -, -, hpp⟩
   exact conari_deviates_on_every_active_cell .conari ⟨.s1, .active⟩ rfl (hpp _ _)
 
-/-- **The deponency claim**: every active content cell of *cōnārī* has a
-*passive* form correspondent — active content realized by passive morphology
+/-- Every content cell of *cōnārī*, active ones included, has a *passive* form
+correspondent, so active content is realized by passive morphology
 ([stump-2016] §12.1). -/
 theorem conari_active_realized_by_passive_form (l : LatinVerb) (σ : Cell) :
     (conariLinkage.corr l σ).image (·.2.voice) = {.passive} := by
@@ -129,9 +129,9 @@ theorem conari_active_realized_by_passive_form (l : LatinVerb) (σ : Cell) :
 theorem conari_all_cells_cross_voice :
     ∀ σ ∈ conariContentCells, conariLinkage.pm .conari σ ≠ σ := by decide
 
-/-- The crisp contrast: on the *same* active content cell, the regular verb's
-form correspondent stays active while the deponent's becomes passive — deviation
-without any difference in the content-cell space. -/
+/-- On the *same* active content cell, the regular verb's form correspondent
+stays active while the deponent's becomes passive, a deviation without any
+difference in the content-cell space. -/
 theorem depon_vs_regular (σ : Cell) (h : σ.voice = .active) :
     (parareLinkage.corr .parare σ).image (·.2.voice) = {.active} ∧
       (conariLinkage.corr .conari σ).image (·.2.voice) = {.passive} :=
@@ -143,13 +143,13 @@ section Kashmiri
 
 open Morphology.Exponence Morphology.PFM
 
-/-- The two intransitive verbs: `WUP` 'burn inside' (Conj II) and `WUPH` 'fly'
+/-- `KVerb` has the two intransitive verbs `WUP` 'burn inside' (Conj II) and `WUPH` 'fly'
 (Conj III). -/
 inductive KVerb | wup | wuph
   deriving DecidableEq, Fintype
 
-/-- Content tenses (recent, indefinite, remote preterite), morphomic form
-properties ('past a'–'past d'), and 1sg masculine agreement. -/
+/-- `KFeat` has the content tenses (recent, indefinite, remote preterite), the morphomic
+form properties ('past a'–'past d'), and 1sg masculine agreement. -/
 inductive KFeat
   | recentPast | indefPast | remotePast
   | pastA | pastB | pastC | pastD
@@ -158,29 +158,30 @@ inductive KFeat
 
 open KVerb KFeat
 
-/-- The stem of each verb. -/
+/-- `stemOf` gives each verb its stem. -/
 def stemOf : KVerb → String
   | wup => "wup"
   | wuph => "wuph"
 
-/-- **Property mapping for Conjugation II** ([stump-2016] Ch. 8): recent →
-'past a', indefinite → 'past b', remote → 'past c'. -/
+/-- The property mapping for Conjugation II ([stump-2016] Ch. 8) sends the recent
+past to 'past a', the indefinite past to 'past b' and the remote past to 'past c'. -/
 def pmII (σ : Finset KFeat) : Finset KFeat :=
   if recentPast ∈ σ then insert pastA (σ.erase recentPast)
   else if indefPast ∈ σ then insert pastB (σ.erase indefPast)
   else if remotePast ∈ σ then insert pastC (σ.erase remotePast)
   else σ
 
-/-- **Property mapping for Conjugation III** ([stump-2016] Ch. 8): recent →
-'past b', indefinite → 'past c', remote → 'past d'. The one-morphome shift from
-`pmII` is what makes the two conjugations' preterites interleave. -/
+/-- The property mapping for Conjugation III ([stump-2016] Ch. 8) sends the recent
+past to 'past b', the indefinite past to 'past c' and the remote past to 'past d'.
+The one-morphome shift from `pmII` is what makes the two conjugations' preterites
+interleave. -/
 def pmIII (σ : Finset KFeat) : Finset KFeat :=
   if recentPast ∈ σ then insert pastB (σ.erase recentPast)
   else if indefPast ∈ σ then insert pastC (σ.erase indefPast)
   else if remotePast ∈ σ then insert pastD (σ.erase remotePast)
   else σ
 
-/-- The form paradigm: 1sg masculine exponents for each morphome, read off the
+/-- The form paradigm has a 1sg masculine exponent for each morphome, read off the
 stem+suffix segmentation (`wupus`, `wupyōs`, `wupyās`, `wuphiyās`). -/
 def formBlock : Block KVerb String (Finset KFeat) :=
   [ ⟨Finset.univ, {pastA, p1, sg, masc}, .const (· ++ "us")⟩,
@@ -189,51 +190,55 @@ def formBlock : Block KVerb String (Finset KFeat) :=
     ⟨Finset.univ, {pastD, p1, sg, masc}, .const (· ++ "iyās")⟩,
     (identityDefault : PFM.Rule KVerb (Finset KFeat) (Action String (Finset KFeat))) ]
 
-/-- Realization of a form cell `⟨Z, τ⟩`: the PFM1 paradigm function on the stem
-`Z` at the morphomic property set `τ`. -/
+/-- A form cell `⟨Z, τ⟩` realizes as the value of the PFM1 paradigm function on the
+stem `Z` at the morphomic property set `τ`. -/
 def realizeForm (z : String) (τ : Finset KFeat) : String :=
   (paradigmFunction (λ _ => wup) (λ _ => z) [formBlock] (wup, τ)).1
 
-/-- Conjugation II linkage: the single stem, mapped by `pmII`. -/
-def linkII : Linkage KVerb String (Finset KFeat) := ⟨λ l _ => {stemOf l}, λ _ => pmII⟩
+/-- The Conjugation II linkage has the single stem and the property mapping `pmII`. -/
+def linkII : Linkage KVerb String (Finset KFeat) where
+  realize l _ := {stemOf l}
+  pm _ := pmII
 
-/-- Conjugation III linkage: the single stem, mapped by `pmIII`. -/
-def linkIII : Linkage KVerb String (Finset KFeat) := ⟨λ l _ => {stemOf l}, λ _ => pmIII⟩
+/-- The Conjugation III linkage has the single stem and the property mapping `pmIII`. -/
+def linkIII : Linkage KVerb String (Finset KFeat) where
+  realize l _ := {stemOf l}
+  pm _ := pmIII
 
-/-- WUP recent past ('past a'): `wupus`. -/
-example : linkII.realize realizeForm wup {recentPast, p1, sg, masc}
+/-- WUP's recent past realizes as `wupus` through 'past a'. -/
+example : linkII.realized realizeForm wup {recentPast, p1, sg, masc}
     = {("wupus", {pastA, p1, sg, masc})} := by decide
 
-/-- WUP indefinite past ('past b'): `wupyōs`. -/
-example : linkII.realize realizeForm wup {indefPast, p1, sg, masc}
+/-- WUP's indefinite past realizes as `wupyōs` through 'past b'. -/
+example : linkII.realized realizeForm wup {indefPast, p1, sg, masc}
     = {("wupyōs", {pastB, p1, sg, masc})} := by decide
 
-/-- WUP remote past ('past c'): `wupyās`. -/
-example : linkII.realize realizeForm wup {remotePast, p1, sg, masc}
+/-- WUP's remote past realizes as `wupyās` through 'past c'. -/
+example : linkII.realized realizeForm wup {remotePast, p1, sg, masc}
     = {("wupyās", {pastC, p1, sg, masc})} := by decide
 
-/-- WUPH recent past ('past b'): `wuphyōs`. -/
-example : linkIII.realize realizeForm wuph {recentPast, p1, sg, masc}
+/-- WUPH's recent past realizes as `wuphyōs` through 'past b'. -/
+example : linkIII.realized realizeForm wuph {recentPast, p1, sg, masc}
     = {("wuphyōs", {pastB, p1, sg, masc})} := by decide
 
-/-- WUPH indefinite past ('past c'): `wuphyās`. -/
-example : linkIII.realize realizeForm wuph {indefPast, p1, sg, masc}
+/-- WUPH's indefinite past realizes as `wuphyās` through 'past c'. -/
+example : linkIII.realized realizeForm wuph {indefPast, p1, sg, masc}
     = {("wuphyās", {pastC, p1, sg, masc})} := by decide
 
-/-- WUPH remote past ('past d'): `wuphiyās`. -/
-example : linkIII.realize realizeForm wuph {remotePast, p1, sg, masc}
+/-- WUPH's remote past realizes as `wuphiyās` through 'past d'. -/
+example : linkIII.realized realizeForm wuph {remotePast, p1, sg, masc}
     = {("wuphiyās", {pastD, p1, sg, masc})} := by decide
 
-/-- **The morphomic mediation** ([stump-2016] Ch. 8): WUP's indefinite past and
-WUPH's recent past have the same form correspondent property set — both 'past b',
-1sg masc — even though their tenses differ. This is why they inflect alike
-(`-yōs`), the content-to-form mismatch the paradigm-linkage model captures. -/
+/-- WUP's indefinite past and WUPH's recent past have the same form correspondent
+property set, 'past b' 1sg masculine for both, even though their tenses differ
+([stump-2016] Ch. 8). This is why they inflect alike (`-yōs`), the content-to-form
+mismatch the paradigm-linkage model captures. -/
 theorem kashmiri_inflect_alike :
     (linkII.corr wup {indefPast, p1, sg, masc}).image Prod.snd
       = (linkIII.corr wuph {recentPast, p1, sg, masc}).image Prod.snd := by decide
 
-/-- The second interleaving: WUP's remote past and WUPH's indefinite past share
-the 'past c' correspondent, inflecting alike (`-yās`). -/
+/-- In the second interleaving, WUP's remote past and WUPH's indefinite past share
+the 'past c' correspondent and inflect alike (`-yās`). -/
 theorem kashmiri_inflect_alike_pastC :
     (linkII.corr wup {remotePast, p1, sg, masc}).image Prod.snd
       = (linkIII.corr wuph {indefPast, p1, sg, masc}).image Prod.snd := by decide

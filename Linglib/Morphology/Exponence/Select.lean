@@ -6,8 +6,8 @@ public import Mathlib.Data.List.MinMax
 /-!
 # Elsewhere selection
 
-This file proves that selection by a specificity score (`selectBy`) and
-selection over the specificity preorder (`selectMinimal`) produce Elsewhere
+This file defines selection by a specificity score (`selectBy`) and over the
+specificity preorder (`selectMinimal`), and proves that both produce Elsewhere
 winners.
 
 ## Main definitions
@@ -16,8 +16,13 @@ winners.
   exponent.
 * `selectMinimal`: the first applicable rule that no applicable rule
   strictly undercuts.
+
+## Main results
+
 * `selectBy_isElsewhereWinner`, `selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
+* `selectMinimal_factorsThrough`: selection factors through any map on
+  contexts that every rule's applicability factors through.
 -/
 
 @[expose] public section
@@ -125,5 +130,17 @@ theorem selectMinimal_eq_none_iff :
     selectMinimal v c = none ↔ applicable v c = [] := by
   rw [← Option.not_isSome_iff_eq_none, selectMinimal_isSome_iff]
   simp [applicable, List.filter_eq_nil_iff]
+
+/-- Contexts with the same applicable rules select the same rule. -/
+theorem selectMinimal_congr (h : applicable v c = applicable v c') :
+    selectMinimal v c = selectMinimal v c' := by
+  rw [selectMinimal, selectMinimal, h]
+
+/-- A rule system sensitive only to what `A` sees selects the same rule in
+contexts that `A` identifies. -/
+theorem selectMinimal_factorsThrough {V : Type*} {A : Ctx → V}
+    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
+    (selectMinimal v).FactorsThrough A :=
+  fun _ _ hA ↦ selectMinimal_congr <| List.filter_congr fun r hr ↦ by simp [h r hr hA]
 
 end Morphology.Exponence

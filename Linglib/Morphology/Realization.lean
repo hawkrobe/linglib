@@ -75,12 +75,13 @@ namespace Morphology
 
 variable {R Ctx F M X : Type*}
 
-/-- Constancy of a contextual map at an index: all values, across all
-contexts, coincide. -/
+/-- `IsConstantIn g r` says all values of the contextual map `g` at the index
+`r` coincide across all contexts. -/
 def IsConstantIn (g : R → Ctx → Finset X) (r : R) : Prop :=
   ∀ ⦃c c' : Ctx⦄, ∀ x ∈ g r c, ∀ x' ∈ g r c', x = x'
 
-/-- Variance of a contextual map at an index: two distinct values arise. -/
+/-- `IsVariantIn g r` says two distinct values of the contextual map `g` arise
+at the index `r`. -/
 def IsVariantIn (g : R → Ctx → Finset X) (r : R) : Prop :=
   ∃ c c', ∃ x ∈ g r c, ∃ x' ∈ g r c', x ≠ x'
 
@@ -99,43 +100,45 @@ theorem isConstantIn_iff_subsingleton {g : R → Ctx → Finset X} {r : R} :
   · intro h c c' x hx x' hx'
     exact h ⟨c, hx⟩ ⟨c', hx'⟩
 
-/-- A **root realization**: an opaque index type realized in context. The
-fiber `realize r c` is empty where `r` is unlicensed, non-singleton at an
+/-- A root realization realizes an opaque index type in context. The fiber
+`realize r c` is empty where `r` is unlicensed and non-singleton at an
 overabundant cell. -/
 structure Realization (R Ctx F : Type*) where
-  /-- The realization of an index in a context: Vocabulary Insertion (DM),
-  the paradigm function (PFM), spellout (nanosyntax). -/
+  /-- `realize r c` is the set of forms realizing the index `r` in the context
+  `c`, computed by Vocabulary Insertion (DM), the paradigm function (PFM) or
+  spellout (nanosyntax). -/
   realize : R → Ctx → Finset F
 
 namespace Realization
 
 variable (S : Realization R Ctx F)
 
-/-- `r` is licensed in `c`: some realization exists. -/
+/-- `r` is licensed in `c` when some realization of it exists there. -/
 def IsLicensed (r : R) (c : Ctx) : Prop := (S.realize r c).Nonempty
 
 /-- `f` realizes `r` in some context. -/
 def Realizes (r : R) (f : F) : Prop := ∃ c, f ∈ S.realize r c
 
-/-- The allomorph set of a root. -/
+/-- `exponents r` is the allomorph set of the root `r`. -/
 def exponents (r : R) : Set F := {f | S.Realizes r f}
 
 @[simp] theorem mem_exponents {r : R} {f : F} :
     f ∈ S.exponents r ↔ S.Realizes r f := Iff.rfl
 
-/-- Every index is licensed everywhere — PFM's stratum. -/
+/-- `IsTotal` says every index is licensed everywhere, PFM's stratum. -/
 def IsTotal : Prop := ∀ r c, (S.realize r c).Nonempty
 
-/-- At most one form per cell — the stratum of `Option`-shaped engine
-outputs. -/
+/-- `IsUnivalent` says every cell has at most one form, the stratum of
+`Option`-shaped engine outputs. -/
 def IsUnivalent : Prop := ∀ r c, (S.realize r c).card ≤ 1
 
-/-- One form wherever licensed: the classical context-free morpheme, as the
-degenerate case. -/
+/-- `IsInvariant r` says `r` has one form wherever it is licensed, the
+classical context-free morpheme as the degenerate case. -/
 def IsInvariant (r : R) : Prop := IsConstantIn S.realize r
 
-/-- Distinct forms in distinct contexts — √GO as *go* and *went*,
-[harley-2014]'s argument that indices, not forms, individuate. -/
+/-- `IsSuppletive r` says `r` has two distinct forms, in contexts that need not
+differ, as √GO has *go* and *went*, the case behind [harley-2014]'s argument
+that indices, not forms, individuate. -/
 def IsSuppletive (r : R) : Prop := IsVariantIn S.realize r
 
 /-- A suppletive root is not invariant. -/
@@ -148,19 +151,20 @@ theorem isInvariant_iff_subsingleton_exponents {r : R} :
     S.IsInvariant r ↔ (S.exponents r).Subsingleton :=
   isConstantIn_iff_subsingleton
 
-/-- Overabundance at an index: some cell offers two forms (*dived*/*dove* in
-one cell, [thornton-2011]-style — cf. `Linkage.HasCellMates`). Cell-internal
-variance, disjoint in kind from suppletion. -/
+/-- An index is overabundant when some cell offers two forms, as *dived* and *dove*
+share one cell ([thornton-2011]'s cell-mates). This is cell-internal variance,
+disjoint in kind from suppletion. -/
 def IsOverabundant (r : R) : Prop := ∃ c, 1 < (S.realize r c).card
 
-/-- Suppletion proper: two licensed contexts realized by different fibers
-(√GO: *go*/*went*). An unlicensed cell never witnesses it. -/
+/-- `IsProperlySuppletive r` says two licensed contexts of `r` are realized by
+different fibers, as √GO is by *go* and *went*. An unlicensed cell never
+witnesses it. -/
 def IsProperlySuppletive (r : R) : Prop :=
   ∃ c c', (S.realize r c).Nonempty ∧ (S.realize r c').Nonempty ∧
     S.realize r c ≠ S.realize r c'
 
-/-- The variance decomposition: form variance at an index is overabundance
-or suppletion proper. -/
+/-- Form variance at an index decomposes into overabundance or suppletion
+proper. -/
 theorem isSuppletive_iff {r : R} :
     S.IsSuppletive r ↔ S.IsOverabundant r ∨ S.IsProperlySuppletive r := by
   constructor
@@ -179,14 +183,16 @@ theorem isSuppletive_iff {r : R} :
       · obtain ⟨y, hy, hy'⟩ := Finset.not_subset.mp hsub
         exact ⟨c, c', y, hy, x', hx', fun h => hy' (h ▸ hx')⟩
 
-/-- Contextwise identity of realization. -/
+/-- `RealizeEq r r'` says `r` and `r'` have the same realization in every
+context. -/
 def RealizeEq (r r' : R) : Prop := ∀ c, S.realize r c = S.realize r' c
 
 theorem RealizeEq.symm {r r' : R} (h : S.RealizeEq r r') :
     S.RealizeEq r' r := fun c => (h c).symm
 
-/-- Distinct indices sharing every realization (*bank₁*/*bank₂*): spellout is
-nowhere required to be injective. -/
+/-- `IsHomophonous r r'` says the distinct indices `r` and `r'` share every
+realization, as *bank₁* and *bank₂* do; spellout is nowhere required to be
+injective. -/
 def IsHomophonous (r r' : R) : Prop := r ≠ r' ∧ S.RealizeEq r r'
 
 theorem IsHomophonous.symm {r r' : R} (h : S.IsHomophonous r r') :
@@ -234,10 +240,10 @@ instance : Decidable S.IsUnivalent :=
 
 end Decidable
 
-/-- Pipeline composition — Kleisli of `Finset` over a shared context:
-realize through an intermediate inventory. Late-insertion architectures
-factor the grammar's realization as such a composite; PFM's
-stem-choice-then-blocks cascade is another. -/
+/-- The pipeline composition `S.comp T` realizes through an intermediate
+inventory, the Kleisli composition of `Finset` over a shared context.
+Late-insertion architectures factor the grammar's realization as such a
+composite; PFM's stem-choice-then-blocks cascade is another. -/
 def comp {G : Type*} [DecidableEq G] (S : Realization R Ctx F)
     (T : Realization F Ctx G) : Realization R Ctx G :=
   ⟨fun r c => (S.realize r c).biUnion (fun f => T.realize f c)⟩
@@ -255,24 +261,25 @@ section Hom
 
 variable {R₁ C₁ R₂ C₂ R₃ C₃ : Type*}
 
-/-- An index merger with spellout tracking: `onRoot` may merge indices,
-`onCtx` translates contexts and may consult the source index. The transport
-tier — for adjudicating individuation disputes use `Realization.Interpreted.Hom`, whose
-root-independent context translation blocks re-encoding the source index in
-the target context. -/
+/-- A hom is an index merger that tracks spellout, in which `onRoot` may merge
+indices and `onCtx` translates contexts and may consult the source index. It is
+the transport tier; individuation disputes are adjudicated with
+`Realization.Interpreted.Hom`, whose root-independent context translation blocks
+re-encoding the source index in the target context. -/
 structure Hom (S : Realization R₁ C₁ F) (T : Realization R₂ C₂ F) where
-  /-- The index translation; non-injectivity is individuation coarsening. -/
+  /-- `onRoot` translates indices, and its non-injectivity is individuation
+  coarsening. -/
   onRoot : R₁ → R₂
-  /-- The context translation. -/
+  /-- `onCtx` translates contexts. -/
   onCtx : R₁ → C₁ → C₂
   /-- Realization is preserved. -/
   realize_eq : ∀ r c, S.realize r c = T.realize (onRoot r) (onCtx r c)
 
-/-- The identity hom. -/
+/-- The identity hom leaves indices and contexts unchanged. -/
 def Hom.id (S : Realization R Ctx F) : Hom S S :=
   ⟨fun r => r, fun _ c => c, fun _ _ => rfl⟩
 
-/-- Homs compose: coarsenings chain (morph-level to lexeme-level to
+/-- Homs compose, so coarsenings chain (morph-level to lexeme-level to
 √-level). -/
 def Hom.comp {S₁ : Realization R₁ C₁ F} {S₂ : Realization R₂ C₂ F}
     {S₃ : Realization R₃ C₃ F} (g : Hom S₂ S₃) (f : Hom S₁ S₂) : Hom S₁ S₃ :=
@@ -288,7 +295,7 @@ theorem Hom.isLicensed {S : Realization R₁ C₁ F} {T : Realization R₂ C₂ 
   obtain ⟨f, hf⟩ := h
   exact ⟨f, φ.realize_eq r c ▸ hf⟩
 
-/-- Homs preserve realization: merging indices can only grow allomorph
+/-- Homs preserve realization, so merging indices can only grow allomorph
 sets. -/
 theorem Hom.realizes {S : Realization R₁ C₁ F} {T : Realization R₂ C₂ F}
     (φ : Hom S T) {r : R₁} {f : F} (h : S.Realizes r f) :
@@ -300,23 +307,27 @@ end Hom
 
 end Realization
 
-/-- The two-map extension ([marantz-1997]: spellout is List 2, `interp` List
-3 — allosemy, `DistributedMorphology/Allosemy.lean`). A [borer-2013]-style system stays a bare
-`System`; a lexicalist lexeme is an `Interpreted` system whose interpretation
-is `IsIntrinsic`. -/
+/-- An interpreted realization adds a contextual interpretation to a
+realization, the two-map extension of [marantz-1997], in which spellout is
+List 2 and `interp` is List 3, allosemy (`DistributedMorphology/Allosemy.lean`).
+A [borer-2013]-style system stays a bare `Realization`; a lexicalist lexeme is
+an `Interpreted` system whose interpretation is `IsIntrinsic`. -/
 structure Realization.Interpreted (R Ctx F M : Type*) extends
     Realization R Ctx F where
-  /-- Contextual interpretation: Encyclopedia access. -/
+  /-- `interp r c` is the set of readings of `r` in `c`, given by Encyclopedia
+  access. -/
   interp : R → Ctx → Finset M
 
 namespace Realization.Interpreted
 
 variable (S : Interpreted R Ctx F M)
 
-/-- One meaning in every context: the lexicalist degenerate case. -/
+/-- `IsIntrinsic r` says `r` has one meaning in every context, the lexicalist
+degenerate case. -/
 def IsIntrinsic (r : R) : Prop := IsConstantIn S.interp r
 
-/-- Context-dependent interpretation: DM allosemy, its failure. -/
+/-- `IsAllosemous r` says `r` has two distinct meanings, DM allosemy, the
+failure of intrinsic meaning. -/
 def IsAllosemous (r : R) : Prop := IsVariantIn S.interp r
 
 /-- An allosemous root has no intrinsic meaning. -/
@@ -337,14 +348,14 @@ section Hom
 
 variable {R₁ C₁ R₂ C₂ : Type*}
 
-/-- The strict tier of hom, on which individuation disputes are stated: the
-context translation is root-independent — so the target context cannot
-re-encode the source index — and interpretation is preserved alongside
+/-- A strict hom, the tier on which individuation disputes are stated,
+translates contexts independently of the root, so that the target context
+cannot re-encode the source index, and preserves interpretation alongside
 spellout. -/
 structure Hom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) where
-  /-- The index translation. -/
+  /-- `onRoot` translates indices. -/
   onRoot : R₁ → R₂
-  /-- The root-independent context translation. -/
+  /-- `onCtx` translates contexts independently of the root. -/
   onCtx : C₁ → C₂
   /-- Realization is preserved. -/
   realize_eq : ∀ r c, S.realize r c = T.realize (onRoot r) (onCtx c)
@@ -356,18 +367,18 @@ def Hom.toRealizationHom {S : Interpreted R₁ C₁ F M} {T : Interpreted R₂ C
     (φ : Hom S T) : Realization.Hom S.toRealization T.toRealization :=
   ⟨φ.onRoot, fun _ c => φ.onCtx c, φ.realize_eq⟩
 
-/-- **Merged roots agree contextwise in interpretation** — the keystone
-separating identity from accidental homophony: a strict hom identifying two
-indices forces their interpretations to coincide in every context, so
-*bank₁*/*bank₂* never merge. -/
+/-- Merged roots agree contextwise in interpretation, the keystone separating
+identity from accidental homophony. A strict hom identifying two indices forces
+their interpretations to coincide in every context, so *bank₁* and *bank₂*
+never merge. -/
 theorem Hom.interp_eq_of_onRoot_eq {S : Interpreted R₁ C₁ F M}
     {T : Interpreted R₂ C₂ F M} (φ : Hom S T) {r r' : R₁}
     (h : φ.onRoot r = φ.onRoot r') (c : C₁) :
     S.interp r c = S.interp r' c := by
   rw [φ.interp_eq r c, φ.interp_eq r' c, h]
 
-/-- The realization analog of `interp_eq_of_onRoot_eq`: merged roots agree
-contextwise in realization. Unavailable for the transport tier
+/-- Merged roots agree contextwise in realization, the realization analog of
+`interp_eq_of_onRoot_eq`. The result is unavailable for the transport tier
 `Realization.Hom`, whose index-dependent context translation can separate the
 merged roots' contexts. -/
 theorem Hom.realize_eq_of_onRoot_eq {S : Interpreted R₁ C₁ F M}
@@ -376,16 +387,16 @@ theorem Hom.realize_eq_of_onRoot_eq {S : Interpreted R₁ C₁ F M}
     S.realize r c = S.realize r' c := by
   rw [φ.realize_eq r c, φ.realize_eq r' c, h]
 
-/-- The lax tier: realization and interpretation are *included* rather than
-matched. Where a strict `Hom` merger asserts identity, a lax merger asserts
-subsumption — each source index's forms and readings are among its image's,
-as when a lexeme's listed properties are among its root's Encyclopedia entry
-([arad-2005]). Pattern-bound lexemes lax-merge into a total root without
-ever strict-merging. -/
+/-- At the lax tier, a hom *includes* realization and interpretation rather
+than matching them. Where a strict `Hom` merger asserts identity, a lax merger
+asserts subsumption, so that each source index's forms and readings are among
+its image's, as when a lexeme's listed properties are among its root's
+Encyclopedia entry ([arad-2005]). Pattern-bound lexemes lax-merge into a total
+root without ever strict-merging. -/
 structure LaxHom (S : Interpreted R₁ C₁ F M) (T : Interpreted R₂ C₂ F M) where
-  /-- The index translation. -/
+  /-- `onRoot` translates indices. -/
   onRoot : R₁ → R₂
-  /-- The root-independent context translation. -/
+  /-- `onCtx` translates contexts independently of the root. -/
   onCtx : C₁ → C₂
   /-- Realizations are included. -/
   realize_sub : ∀ r c, S.realize r c ⊆ T.realize (onRoot r) (onCtx c)
@@ -410,12 +421,12 @@ def LaxHom.comp {R₃ C₃ : Type*} {S₁ : Interpreted R₁ C₁ F M}
 
 end Hom
 
-/-- Contextwise indistinguishability of indices: equal realization and
-interpretation profiles. -/
+/-- `ProfileEq r r'` says `r` and `r'` are contextwise indistinguishable, with
+equal realization and interpretation profiles. -/
 def ProfileEq (r r' : R) : Prop :=
   (∀ c, S.realize r c = S.realize r' c) ∧ (∀ c, S.interp r c = S.interp r' c)
 
-/-- Profile equality as a setoid. -/
+/-- `profileSetoid` is profile equality as a setoid. -/
 def profileSetoid : Setoid R where
   r := S.ProfileEq
   iseqv :=
@@ -424,21 +435,22 @@ def profileSetoid : Setoid R where
      fun h h' => ⟨fun c => (h.1 c).trans (h'.1 c),
                   fun c => (h.2 c).trans (h'.2 c)⟩⟩
 
-/-- The reduced presentation: indices are realization-and-interpretation
-profiles. Every system presents its reduction; the strict hom tier is
-change of presentation, and only the lax tier merges beyond profiles. -/
+/-- The reduced presentation takes its indices to be
+realization-and-interpretation profiles. Every system presents its reduction;
+the strict hom tier is change of presentation, and only the lax tier merges
+beyond profiles. -/
 def reduce : Interpreted (Quotient S.profileSetoid) Ctx F M where
   realize := Quotient.lift S.realize (fun _ _ h => funext h.1)
   interp := Quotient.lift S.interp (fun _ _ h => funext h.2)
 
-/-- Reduction is a strict hom: passing to profiles loses nothing. -/
+/-- Reduction is a strict hom, so passing to profiles loses nothing. -/
 def reduceHom : Hom S S.reduce :=
   ⟨Quotient.mk S.profileSetoid, id, fun _ _ => rfl, fun _ _ => rfl⟩
 
-/-- Mergers along any strict hom refine profile equality: `reduce` merges
-as much as the strict tier ever can. Mergers beyond profiles — the *hammer*
-carvings, pattern-bound lexemes into an [arad-2005] root — are necessarily
-lax. -/
+/-- Mergers along any strict hom refine profile equality, so `reduce` merges
+as much as the strict tier ever can. Mergers beyond profiles, such as the
+*hammer* carvings or pattern-bound lexemes into an [arad-2005] root, are
+necessarily lax. -/
 theorem Hom.profileEq_of_onRoot_eq {R₂ C₂ : Type*}
     {T : Interpreted R₂ C₂ F M} (φ : Hom S T) {r r' : R}
     (h : φ.onRoot r = φ.onRoot r') : S.ProfileEq r r' :=

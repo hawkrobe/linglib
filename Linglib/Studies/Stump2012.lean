@@ -12,8 +12,8 @@ public import Mathlib.Data.Fintype.Sum
 This file formalizes [stump-2012-mmm8]'s architecture of inflection, in which a lexeme's
 content paradigm is linked to the form paradigms of its stems, and its account of
 noncanonical inflection as deviation from canonical paradigm linkage. Canonical linkage is
-total, stem-invariant, injective and property-preserving, the axes of the substrate's
-`Morphology.Linkage.IsCanonical`, and the Breton inflecting preposition HERVEZ is the
+total, univalent, stem-invariant, injective and property-preserving, the five axes of the
+substrate's `Morphology.Linkage.IsCanonical`, and the Breton inflecting preposition HERVEZ is the
 paper's canonical witness (`hervez_isCanonical`). Each noncanonical phenomenon deviates on
 one axis: Latin COEPISSE lacks present-system stems and is defective without being
 suppletive (`coepisse_defective_not_suppletive`), Latin BELLUM shares form correspondents
@@ -57,12 +57,13 @@ namespace Stump2012
 
 open Morphology Data.Forms
 
-/-- The attested form with the given parameter and column values, as segments. -/
+/-- `attested pid cols` is the segmentation of the first attested form with parameter `pid` and
+column values `cols`, or the empty list when there is none. -/
 def attested (pid : String) (cols : List (String × String)) : List String :=
   ((Forms.all.find? λ f => f.parameterId == pid &&
     cols.all λ c => f.column? c.1 == some c.2).map Form.segments).getD []
 
-/-- Person-number agreement, the six cells shared across the Latin verb paradigms. -/
+/-- `Agr` lists the six person-number agreement values that the Latin verb paradigms share. -/
 inductive Agr
   | s1
   | s2
@@ -72,11 +73,11 @@ inductive Agr
   | p3
   deriving DecidableEq, Fintype, Repr
 
-/-- The agreement code in the forms data. -/
+/-- `Agr.code` gives the agreement code that the forms data uses. -/
 def Agr.code : Agr → String
   | .s1 => "s1" | .s2 => "s2" | .s3 => "s3" | .p1 => "p1" | .p2 => "p2" | .p3 => "p3"
 
-/-- The Latin tense-system split: present-system versus perfect-system cells. -/
+/-- `System` splits the Latin verb cells into present-system and perfect-system cells. -/
 inductive System
   | pres
   | perf
@@ -90,21 +91,21 @@ def System.code : System → String
 
 section Breton
 
-/-- The inflecting preposition HERVEZ 'according to'. -/
+/-- `HervezLex` has the single lexeme HERVEZ 'according to', an inflecting preposition. -/
 inductive HervezLex
   | hervez
   deriving DecidableEq, Fintype, Repr
 
-/-- Its sole stem. -/
+/-- HERVEZ has a single stem. -/
 inductive HervezStem
   | hervez
   deriving DecidableEq, Fintype, Repr
 
-/-- HERVEZ's linkage: one stem, identity property mapping, the canonical pattern of the
-paper's (14). -/
+/-- HERVEZ's linkage has one stem and the identity property mapping, the canonical pattern of
+the paper's (14). -/
 def hervezLinkage : Linkage HervezLex HervezStem Agr := Linkage.canonical λ _ => .hervez
 
-/-- HERVEZ is canonical on all four axes. -/
+/-- HERVEZ is canonical on all five axes. -/
 theorem hervez_isCanonical : hervezLinkage.IsCanonical := Linkage.canonical_isCanonical _
 
 end Breton
@@ -121,7 +122,7 @@ inductive CoepStem
   | coep
   deriving DecidableEq, Fintype, Repr
 
-/-- A Latin verb content cell: a tense system and an agreement feature. -/
+/-- A Latin verb content cell pairs a tense system with an agreement feature. -/
 structure SysCell where
   sys : System
   agr : Agr
@@ -130,42 +131,44 @@ structure SysCell where
 instance : Fintype SysCell :=
   Fintype.ofEquiv (System × Agr) ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.sys, c.agr), λ _ => rfl, λ _ => rfl⟩
 
-/-- COEPISSE's linkage, the stem specification (18): `coep` on perfect-system cells, no stem
-on present-system cells. -/
+/-- COEPISSE's linkage follows the stem specification (18), which gives the perfect-system
+cells the stem `coep` and the present-system cells no stem. -/
 def coepisseLinkage : Linkage CoepLex CoepStem SysCell where
-  stems _ σ := match σ.sys with | .perf => {.coep} | .pres => ∅
+  realize _ σ := match σ.sys with | .perf => {.coep} | .pres => ∅
   pm _ σ := σ
 
-/-- The perfect endings, read off FERRE's perfect forms of (41) after its stem `tul`. -/
+/-- `perfEnding a` is the perfect ending for the agreement `a`, read off FERRE's perfect form
+of (41) after its stem `tul`. -/
 def perfEnding (a : Agr) : List String :=
   (attested "carry" [("System", "perf"), ("Agr", a.code)]).drop 3
 
-/-- The realization of a form cell of `coep`: the stem and the perfect ending. -/
+/-- A form cell of `coep` realizes as the stem followed by the perfect ending. -/
 def coepRealize : CoepStem → SysCell → List String
   | _, σ => ["c", "o", "e", "p"] ++ perfEnding σ.agr
 
-/-- COEPISSE is defective: the present-system cells lack a stem. -/
+/-- COEPISSE is defective because its present-system cells lack a stem. -/
 theorem coepisse_defective : coepisseLinkage.IsDefective := ⟨.coepisse, ⟨.pres, .s1⟩, rfl⟩
 
-/-- A present-system content cell has no realization. -/
+/-- The third singular present-system content cell has no realization. -/
 theorem coepisse_present_no_realization :
-    coepisseLinkage.realize coepRealize .coepisse ⟨.pres, .s3⟩ = ∅ := by decide
+    coepisseLinkage.realized coepRealize .coepisse ⟨.pres, .s3⟩ = ∅ := by decide
 
 /-- Every perfect-system content cell realizes through its `coep` correspondent as the
 paper's (17) lists, with FERRE's perfect endings. -/
 theorem coepisse_perfect_realized (a : Agr) :
-    coepisseLinkage.realize coepRealize .coepisse ⟨.perf, a⟩ =
+    coepisseLinkage.realized coepRealize .coepisse ⟨.perf, a⟩ =
       {(attested "begin" [("System", "perf"), ("Agr", a.code)], ⟨.perf, a⟩)} := by
   revert a; decide
 
 /-- COEPISSE keeps a single stem, so it is stem-invariant. -/
-theorem coepisse_stemInvariant : coepisseLinkage.IsStemInvariant := by
-  intro _ _ _ z₁ z₂ _ _; cases z₁; cases z₂; rfl
+theorem coepisse_stemInvariant : coepisseLinkage.IsStemInvariant := by decide
 
-/-- Defectiveness without suppletion: COEPISSE deviates on totality alone. -/
+/-- COEPISSE is defective without being suppletive, deviating on totality but not on stem
+invariance. -/
 theorem coepisse_defective_not_suppletive :
-    coepisseLinkage.IsDefective ∧ ¬ coepisseLinkage.IsSuppletive :=
-  ⟨coepisse_defective, not_not.mpr coepisse_stemInvariant⟩
+    coepisseLinkage.IsDefective ∧ ¬ coepisseLinkage.IsSuppletive .coepisse :=
+  ⟨coepisse_defective, fun h ↦
+    coepisseLinkage.not_isInvariant_of_isSuppletive h (coepisse_stemInvariant _)⟩
 
 end Coepisse
 
@@ -201,7 +204,7 @@ def Num.code : Num → String
   | .sg => "sg"
   | .pl => "pl"
 
-/-- A BELLUM content cell: a case and a number. -/
+/-- A BELLUM content cell pairs a case with a number. -/
 structure BellumCell where
   case : Case
   num : Num
@@ -210,49 +213,51 @@ structure BellumCell where
 instance : Fintype BellumCell :=
   Fintype.ofEquiv (Case × Num) ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.case, c.num), λ _ => rfl, λ _ => rfl⟩
 
-/-- The property mapping: the nominative to the accusative, the directional neuter syncretism
-of rule (24), and the ablative to the dative representing the merged dative/ablative cell
-of rule (25). -/
+/-- The property mapping sends the nominative to the accusative, the directional neuter
+syncretism of rule (24), and the ablative to the dative, which represents the merged
+dative/ablative cell of rule (25). -/
 def bellumPm (σ : BellumCell) : BellumCell :=
   match σ.case with
   | .nom => { σ with case := .acc }
   | .abl => { σ with case := .dat }
   | _ => σ
 
-/-- BELLUM's linkage: one stem, the syncretizing property mapping. -/
+/-- BELLUM's linkage has one stem and the syncretizing property mapping. -/
 def bellumLinkage : Linkage BellumLex BellumStem BellumCell where
-  stems _ _ := {.bell}
+  realize _ _ := {.bell}
   pm _ σ := bellumPm σ
 
-/-- The realizations of the form cells of `bell`, the paper's (22). -/
+/-- `bellRealize` reads the realization of each form cell of `bell` off the attested forms,
+the paper's (22). -/
 def bellRealize : BellumStem → BellumCell → List String
   | _, σ => attested "war" [("Case", σ.case.code), ("Number", σ.num.code)]
 
-/-- Directional syncretism: the nominative and accusative singular share a form
-correspondent. -/
+/-- The nominative and accusative singular share a form correspondent, a directional
+syncretism. -/
 theorem bellum_nom_acc_syncretic : bellumLinkage.IsSyncretic :=
   ⟨.bellum, ⟨.nom, .sg⟩, ⟨.acc, .sg⟩, by decide, by decide⟩
 
-/-- Nondirectional syncretism: the dative and ablative singular share a form correspondent. -/
+/-- The dative and ablative singular share a form correspondent, a nondirectional
+syncretism. -/
 theorem bellum_dat_abl_syncretic : bellumLinkage.IsSyncretic :=
   ⟨.bellum, ⟨.dat, .sg⟩, ⟨.abl, .sg⟩, by decide, by decide⟩
 
-/-- A shared form correspondent forces a shared realization: the nominative and accusative
-singular both realize as *bellum*, the paper's (26). -/
+/-- The nominative and accusative singular have the same realization because they share a
+form correspondent, the paper's (26). -/
 theorem bellum_nom_acc_realize_eq :
-    bellumLinkage.realize bellRealize .bellum ⟨.nom, .sg⟩ =
-      bellumLinkage.realize bellRealize .bellum ⟨.acc, .sg⟩ :=
-  bellumLinkage.realize_eq_of_corr_eq bellRealize (by decide)
+    bellumLinkage.realized bellRealize .bellum ⟨.nom, .sg⟩ =
+      bellumLinkage.realized bellRealize .bellum ⟨.acc, .sg⟩ :=
+  bellumLinkage.realized_eq_of_corr_eq bellRealize (by decide)
 
 /-- The nominative singular realizes through the accusative form cell. -/
 theorem bellum_nom_realizes_acc :
-    bellumLinkage.realize bellRealize .bellum ⟨.nom, .sg⟩ =
+    bellumLinkage.realized bellRealize .bellum ⟨.nom, .sg⟩ =
       {(attested "war" [("Case", "acc"), ("Number", "sg")], ⟨.acc, .sg⟩)} := by
   decide
 
-/-- Syncretism is the failure of injectivity. -/
+/-- BELLUM's linkage is not injective, since syncretism is a failure of injectivity. -/
 theorem bellum_not_injective : ¬ bellumLinkage.IsInjective :=
-  bellumLinkage.isSyncretic_iff_not_isInjective.mp bellum_nom_acc_syncretic
+  bellumLinkage.not_isInjective_iff.mpr bellum_nom_acc_syncretic
 
 end Bellum
 
@@ -279,7 +284,7 @@ def Voice.code : Voice → String
   | .active => "act"
   | .passive => "pass"
 
-/-- A finite content cell: a voice and an agreement feature. -/
+/-- A finite content cell pairs a voice with an agreement feature. -/
 structure VCell where
   voice : Voice
   agr : Agr
@@ -289,11 +294,11 @@ instance : Fintype VCell :=
   Fintype.ofEquiv (Voice × Agr)
     ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.voice, c.agr), λ _ => rfl, λ _ => rfl⟩
 
-/-- The linkage of the two verbs: deponent HORTĀRĪ has a stem on its active cells only and
-the voice-flipping property mapping of rule (29), the stem specification (30a); regular
+/-- In the linkage of the two verbs, deponent HORTĀRĪ has a stem on its active cells only and
+the voice-flipping property mapping of rule (29), the stem specification (30a), while regular
 LAUDĀRE is canonical, (30b). -/
 def latinLinkage : Linkage LatinVerb VerbStem VCell where
-  stems l σ := match l, σ.voice with
+  realize l σ := match l, σ.voice with
     | .hortari, .active => {.hort}
     | .hortari, .passive => ∅
     | .laudare, _ => {.laud}
@@ -301,17 +306,18 @@ def latinLinkage : Linkage LatinVerb VerbStem VCell where
     | .hortari => { σ with voice := .passive }
     | .laudare => σ
 
-/-- The personal endings, read off LAUDĀRE's forms of (28) after its stem. -/
+/-- `personalEnding v a` is the personal ending for the voice `v` and the agreement `a`, read
+off LAUDĀRE's forms of (28) after its stem. -/
 def personalEnding (v : Voice) (a : Agr) : List String :=
   (attested "praise" [("Voice", v.code), ("Agr", a.code)]).drop 4
 
-/-- The realization of a form cell: the stem and the ending of the form cell's voice. -/
+/-- A form cell realizes as its stem followed by the ending of the form cell's voice. -/
 def verbRealize : VerbStem → VCell → List String
   | .hort, τ => ["h", "o", "r", "t"] ++ personalEnding τ.voice τ.agr
   | .laud, τ => ["l", "a", "u", "d"] ++ personalEnding τ.voice τ.agr
 
-/-- Deponency: the property mapping of HORTĀRĪ's active content cells is unfaithful, flipping
-to passive. -/
+/-- HORTĀRĪ's deponency makes the linkage unfaithful, since the property mapping flips its
+active content cells to passive. -/
 theorem hortari_unfaithful : latinLinkage.IsUnfaithful := ⟨.hortari, ⟨.active, .s1⟩, by decide⟩
 
 /-- Every active content cell of HORTĀRĪ has a passive form correspondent. -/
@@ -322,28 +328,28 @@ theorem hortari_active_realized_by_passive (a : Agr) :
 /-- The active content cells of HORTĀRĪ realize with LAUDĀRE's passive endings, as the
 paper's (28) lists. -/
 theorem hortari_realizes_hortor (a : Agr) :
-    latinLinkage.realize verbRealize .hortari ⟨.active, a⟩ =
+    latinLinkage.realized verbRealize .hortari ⟨.active, a⟩ =
       {(attested "urge" [("Voice", "pass"), ("Agr", a.code)], ⟨.passive, a⟩)} := by
   revert a; decide
 
-/-- The same active content cell: LAUDĀRE realizes through an active form cell, HORTĀRĪ
+/-- On the same active content cell, LAUDĀRE realizes through an active form cell and HORTĀRĪ
 through a passive one. -/
 theorem depon_vs_regular (a : Agr) :
-    latinLinkage.realize verbRealize .laudare ⟨.active, a⟩ =
+    latinLinkage.realized verbRealize .laudare ⟨.active, a⟩ =
         {(attested "praise" [("Voice", "act"), ("Agr", a.code)], ⟨.active, a⟩)} ∧
-      latinLinkage.realize verbRealize .hortari ⟨.active, a⟩ =
+      latinLinkage.realized verbRealize .hortari ⟨.active, a⟩ =
         {(attested "urge" [("Voice", "pass"), ("Agr", a.code)], ⟨.passive, a⟩)} := by
   revert a; decide
 
-/-- Deponency compounds with defectiveness: the passive content cells of HORTĀRĪ lack a
+/-- Deponency compounds with defectiveness, since the passive content cells of HORTĀRĪ lack a
 stem. -/
 theorem hortari_defective : latinLinkage.IsDefective := ⟨.hortari, ⟨.passive, .s1⟩, rfl⟩
 
-/-- The active form cell of `hort` is virtual: no content cell corresponds to it, since
-active content maps to passive form and passive content has no correspondent. The later
-Latin active *hortābat*, as [hippisley-2010] describes, releases it. -/
+/-- The first singular active form cell of `hort` is virtual. No content cell corresponds to
+it, since active content maps to passive form and passive content has no correspondent. The
+later Latin active *hortābat*, as [hippisley-2010] describes, releases it. -/
 theorem hortari_active_form_virtual : latinLinkage.IsVirtual (.hort, ⟨.active, .s1⟩) := by
-  unfold Linkage.IsVirtual; decide
+  decide
 
 end Hortari
 
@@ -351,20 +357,20 @@ end Hortari
 
 section Hungarian
 
-/-- The personal pronouns ÉN '1sg' and TE '2sg'. -/
+/-- `Pron` has the personal pronouns ÉN '1sg' and TE '2sg'. -/
 inductive Pron
   | en
   | te
   deriving DecidableEq, Fintype, Repr
 
-/-- The oblique cases of (38) represented here. -/
+/-- `HuCase` lists the oblique cases of (38) represented here. -/
 inductive HuCase
   | dative
   | inessive
   | superessive
   deriving DecidableEq, Fintype, Repr
 
-/-- The pronominal person-number properties the form cell carries. -/
+/-- `PersNum` lists the pronominal person-number properties that a form cell carries. -/
 inductive PersNum
   | p1sg
   | p2sg
@@ -374,13 +380,13 @@ def PersNum.code : PersNum → String
   | .p1sg => "p1sg"
   | .p2sg => "p2sg"
 
-/-- A Hungarian property set: a content-side case or a form-side person-number set. -/
+/-- A Hungarian property set is a content-side case or a form-side person-number set. -/
 inductive HuProp
   | case (c : HuCase)
   | agr (pn : PersNum)
   deriving DecidableEq, Fintype, Repr
 
-/-- The case postposition stems *nek*, *benn*, *rajt*. -/
+/-- `CaseStem` lists the case postposition stems *nek*, *benn* and *rajt*. -/
 inductive CaseStem
   | nek
   | benn
@@ -392,7 +398,7 @@ def CaseStem.pid : CaseStem → String
   | .benn => "benn"
   | .rajt => "rajt"
 
-/-- The stem selection of rule (37): the case picks the postpositional stem. -/
+/-- In the stem selection of rule (37), the case picks the postpositional stem. -/
 def enStems : Pron → HuProp → Finset CaseStem
   | _, .case .dative => {.nek}
   | _, .case .inessive => {.benn}
@@ -405,12 +411,13 @@ def enPm : Pron → HuProp → HuProp
   | .en, _ => .agr .p1sg
   | .te, _ => .agr .p2sg
 
-/-- ÉN's linkage: case-driven stem, lexeme-driven property mapping. -/
+/-- The pronouns' linkage selects the stem by case and the form property set by lexeme. -/
 def enLinkage : Linkage Pron CaseStem HuProp where
-  stems := enStems
+  realize := enStems
   pm := enPm
 
-/-- The inflected postpositions of (36). -/
+/-- A person-number form cell of a case stem realizes as the inflected postposition of
+(36). -/
 def enRealize : CaseStem → HuProp → List String
   | z, .agr pn => attested z.pid [("PersNum", pn.code)]
   | _, _ => []
@@ -419,21 +426,21 @@ def enRealize : CaseStem → HuProp → List String
 theorem en_inessive_corr : enLinkage.corr .en (.case .inessive) = {(.benn, .agr .p1sg)} := by
   decide
 
-/-- The correspondent's property set is the pronoun's, not the case's: the reversal is
-unfaithful. -/
+/-- The reversal is unfaithful, since the correspondent's property set is the pronoun's, not
+the case's. -/
 theorem en_functor_argument_reversal : enLinkage.IsUnfaithful := ⟨.en, .case .inessive, by decide⟩
 
-/-- The property mapping consults the lexeme: ÉN and TE send the same inessive content cell to
-different form property sets. -/
+/-- ÉN and TE send the same inessive content cell to different form property sets, so the
+property mapping consults the lexeme. -/
 theorem en_pm_lexeme_sensitive :
     enLinkage.pm .en (.case .inessive) ≠ enLinkage.pm .te (.case .inessive) := by
   decide
 
 /-- The inessive of ÉN and of TE realize as the first and second person forms of *benn*. -/
 theorem inessive_realizes :
-    enLinkage.realize enRealize .en (.case .inessive) =
+    enLinkage.realized enRealize .en (.case .inessive) =
         {(attested "benn" [("PersNum", "p1sg")], .agr .p1sg)} ∧
-      enLinkage.realize enRealize .te (.case .inessive) =
+      enLinkage.realized enRealize .te (.case .inessive) =
         {(attested "benn" [("PersNum", "p2sg")], .agr .p2sg)} := by
   decide
 
@@ -452,24 +459,23 @@ inductive FerreStem
   | tul
   deriving DecidableEq, Fintype, Repr
 
-/-- FERRE's linkage: the stem specification (42) gives two suppletive stems in complementary
-distribution, and the default rule supplies the identity property mapping. -/
+/-- In FERRE's linkage, the stem specification (42) gives two suppletive stems in
+complementary distribution, and the default rule supplies the identity property mapping. -/
 def ferreLinkage : Linkage FerreLex FerreStem SysCell where
-  stems _ σ := match σ.sys with | .pres => {.fer} | .perf => {.tul}
+  realize _ σ := match σ.sys with | .pres => {.fer} | .perf => {.tul}
   pm _ σ := σ
 
-/-- FERRE is suppletive: the present- and perfect-system cells draw on different stems. -/
-theorem ferre_suppletive : ferreLinkage.IsSuppletive := λ h =>
-  absurd (h .ferre (σ₁ := ⟨.pres, .s1⟩) (σ₂ := ⟨.perf, .s1⟩) (z₁ := .fer) (z₂ := .tul)
-    (by decide) (by decide)) (by decide)
+/-- FERRE is suppletive because its present- and perfect-system cells draw on different
+stems. -/
+theorem ferre_suppletive : ferreLinkage.IsSuppletive .ferre := by decide
 
-/-- FERRE is property-preserving: with no override the default rule preserves the content
-cell's property set. -/
+/-- FERRE is property-preserving, since with no override the default rule preserves the
+content cell's property set. -/
 theorem ferre_propertyPreserving : ferreLinkage.IsPropertyPreserving := λ _ _ => rfl
 
-/-- Suppletive yet property-preserving: the two axes are independent. -/
+/-- FERRE is suppletive yet property-preserving, so the two axes are independent. -/
 theorem ferre_suppletive_yet_faithful :
-    ferreLinkage.IsSuppletive ∧ ferreLinkage.IsPropertyPreserving :=
+    ferreLinkage.IsSuppletive .ferre ∧ ferreLinkage.IsPropertyPreserving :=
   ⟨ferre_suppletive, ferre_propertyPreserving⟩
 
 end Ferre
@@ -482,7 +488,7 @@ inductive ThurfaLex
   | thurfa
   deriving DecidableEq, Fintype, Repr
 
-/-- The strong stem *þarf* and the weak stem *þurf*. -/
+/-- ÞURFA has the strong stem *þarf* and the weak stem *þurf*. -/
 inductive ThurfaStem
   | strong
   | weak
@@ -493,7 +499,7 @@ inductive Tense
   | past
   deriving DecidableEq, Fintype, Repr
 
-/-- A ÞURFA content cell: a tense and an agreement feature. -/
+/-- A ÞURFA content cell pairs a tense with an agreement feature. -/
 structure TCell where
   tense : Tense
   agr : Agr
@@ -503,38 +509,36 @@ instance : Fintype TCell :=
   Fintype.ofEquiv (Tense × Agr)
     ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.tense, c.agr), λ _ => rfl, λ _ => rfl⟩
 
-/-- ÞURFA's linkage, the paper's (45) and (46): the strong stem for the present and the weak
-stem for the past, suppletion, and a property mapping sending every cell to the past, the
+/-- ÞURFA's linkage, the paper's (45) and (46), gives the present the strong stem and the past
+the weak stem, a suppletion, and its property mapping sends every cell to the past, the
 deponent tense. -/
 def thurfaLinkage : Linkage ThurfaLex ThurfaStem TCell where
-  stems _ σ := match σ.tense with | .pres => {.strong} | .past => {.weak}
+  realize _ σ := match σ.tense with | .pres => {.strong} | .past => {.weak}
   pm _ σ := { σ with tense := .past }
 
-/-- The realizations of (46): the strong stem at a past form cell gives the present forms,
-the weak stem the past forms. -/
+/-- In the realizations of (46), the strong stem at a past form cell gives the present forms
+and the weak stem the past forms. -/
 def thurfaRealize : ThurfaStem → TCell → List String
   | .strong, τ => attested "need" [("Tense", "pres"), ("Agr", τ.agr.code)]
   | .weak, τ => attested "need" [("Tense", "past"), ("Agr", τ.agr.code)]
 
-/-- ÞURFA is suppletive: present and past draw on different stems. -/
-theorem thurfa_suppletive : thurfaLinkage.IsSuppletive := λ h =>
-  absurd (h .thurfa (σ₁ := ⟨.pres, .s1⟩) (σ₂ := ⟨.past, .s1⟩) (z₁ := .strong) (z₂ := .weak)
-    (by decide) (by decide)) (by decide)
+/-- ÞURFA is suppletive because its present and past draw on different stems. -/
+theorem thurfa_suppletive : thurfaLinkage.IsSuppletive .thurfa := by decide
 
-/-- ÞURFA is unfaithful: a present content cell maps to a past form cell. -/
+/-- ÞURFA is unfaithful because a present content cell maps to a past form cell. -/
 theorem thurfa_unfaithful : thurfaLinkage.IsUnfaithful := ⟨.thurfa, ⟨.pres, .s1⟩, by decide⟩
 
-/-- The compound deviation: suppletion and deponent tense mapping in one linkage. -/
+/-- ÞURFA's linkage compounds suppletion with a deponent tense mapping. -/
 theorem thurfa_suppletive_and_unfaithful :
-    thurfaLinkage.IsSuppletive ∧ thurfaLinkage.IsUnfaithful :=
+    thurfaLinkage.IsSuppletive .thurfa ∧ thurfaLinkage.IsUnfaithful :=
   ⟨thurfa_suppletive, thurfa_unfaithful⟩
 
 /-- The present content cell realizes as *þarf* through the strong stem at the past form
 cell, and the past content cell as *þurfta* through the weak stem. -/
 theorem thurfa_realizes :
-    thurfaLinkage.realize thurfaRealize .thurfa ⟨.pres, .s1⟩ =
+    thurfaLinkage.realized thurfaRealize .thurfa ⟨.pres, .s1⟩ =
         {(attested "need" [("Tense", "pres"), ("Agr", "s1")], ⟨.past, .s1⟩)} ∧
-      thurfaLinkage.realize thurfaRealize .thurfa ⟨.past, .s1⟩ =
+      thurfaLinkage.realized thurfaRealize .thurfa ⟨.past, .s1⟩ =
         {(attested "need" [("Tense", "past"), ("Agr", "s1")], ⟨.past, .s1⟩)} := by
   decide
 

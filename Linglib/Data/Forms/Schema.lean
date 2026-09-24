@@ -11,25 +11,31 @@ public import Linglib.Core.Order.Flat
 /-!
 # CLDF word forms
 
-Substrate types for word-level data, aligned with the Wordlist module of the Cross-Linguistic
-Data Formats ([forkel-etal-2018]), version 1.3 ([forkel-etal-2024]): a `Form` is a row of the
-`FormTable` (a form of a language expressing a concept,
-with its segmentation), and a `Parameter` is a row of the `ParameterTable` (the concept). The
-sentence-level `LinguisticExample` of `Data/Examples/` is the Examples component; this is its
-counterpart for morphology, where the datum is a word and its parts rather than an utterance
-and its gloss.
+This file defines the types for word-level data, aligned with the Wordlist module of the
+Cross-Linguistic Data Formats of Forkel and colleagues, version 1.3, and the lookups a study
+makes on a paper's forms. It is the morphological counterpart of the Examples component in
+`Data/Examples/`: the datum is a word and its parts rather than an utterance and its gloss.
 
-Per-paper data lives in `Linglib/Data/Forms/{AuthorYear}.json`, an object whose keys are CLDF
-table names holding arrays of rows under the CLDF column names, and is compiled by
-`scripts/gen_forms.py` into `Linglib/Data/Forms/{AuthorYear}.lean`, declaring
-`namespace {AuthorYear}.Forms`.
+## Main definitions
 
-`FormRelation` is a linglib extension table, `FormRelationTable`, for the paradigmatic pairs a
-paper asserts between forms (a stem and its past, an adjective and its comparative, a base
-and its reduplicant); CLDF has no standard component for these and permits custom tables.
+* `Data.Forms.Form`: a row of the `FormTable`, a form of a language expressing a concept, with
+  its segmentation.
+* `Data.Forms.Parameter`: a row of the `ParameterTable`, the concept.
+* `Data.Forms.FormRelation`: a row of `FormRelationTable`, a linglib extension table for the
+  paradigmatic pairs a paper asserts between forms (a stem and its past, an adjective and its
+  comparative, a base and its reduplicant); CLDF has no standard component for these and permits
+  custom tables.
+* `Data.Forms.Form.column?`, `Data.Forms.Form.columnAs?`: the value of a custom column, as
+  printed or read through a table of labels.
+* `Data.Forms.matching`: every form of a list that expresses a concept and carries given values
+  in given custom columns.
 
 ## Implementation notes
 
+* Per-paper data lives in `Linglib/Data/Forms/{AuthorYear}.json`, an object whose keys are CLDF
+  table names holding arrays of rows under the CLDF column names, and is compiled by
+  `scripts/gen_forms.py` into `Linglib/Data/Forms/{AuthorYear}.lean`, declaring
+  `namespace {AuthorYear}.Forms`.
 * `Language_ID` is a Glottocode rather than a foreign key into a `LanguageTable`, as in
   `Data/Examples/`. `Source` follows the CLDF reference syntax `bibkey[label]` in JSON and is
   parsed into `SourceRef` values.
@@ -38,8 +44,10 @@ and its reduplicant); CLDF has no standard component for these and permits custo
   variable. `Form.slots` reads the segments as a slot-indexed item on the flat carrier, the
   shape the schema substrate consumes.
 * CLDF lets any table carry custom columns. A form's are kept as `columns`, name-value pairs
-  under the column names of the JSON and read by `Form.column?`, for the per-form codes a paper
-  assigns (a canonicity judgment, a tone class).
+  under the column names of the JSON, for the per-form codes a paper assigns (a case, a
+  canonicity judgment, a tone class).
+* `matching` returns every matching row rather than the first, so a cell a paper fills with two
+  alternants yields both.
 * Identifiers follow the CLDF `id` format `[a-zA-Z0-9_-]+`, enforced by the generator.
 
 ## References
@@ -54,55 +62,73 @@ namespace Data.Forms
 
 open Data.Examples
 
-/-- A row of a CLDF `FormTable`: a word form of a language expressing a concept, with its
-segmentation. -/
+/-- A `Form` is a row of a CLDF `FormTable`, a word form of a language expressing a concept,
+with its segmentation. -/
 structure Form where
-  /-- `ID`: a stable, paper-keyed identifier. -/
+  /-- The `ID` column holds a stable identifier keyed to the paper. -/
   id : String
-  /-- `Language_ID`: the Glottocode of the language. -/
+  /-- The `Language_ID` column holds the Glottocode of the language. -/
   languageId : Glottocode
-  /-- `Parameter_ID`: the concept the form expresses. -/
+  /-- The `Parameter_ID` column names the concept the form expresses. -/
   parameterId : String
-  /-- `Form`: the written form. -/
+  /-- The `Form` column holds the written form. -/
   form : String
-  /-- `Segments`: the form's segmentation. -/
+  /-- The `Segments` column holds the form's segmentation. -/
   segments : List String
-  /-- `Comment`. -/
+  /-- The `Comment` column holds a free-text comment. -/
   comment : String := ""
-  /-- `Source`: the references, each a bibkey with a locator. -/
+  /-- The `Source` column holds the references, each a bibkey with a locator. -/
   source : List SourceRef := []
-  /-- The custom columns of the table, by column name. -/
+  /-- The custom columns of the table hold further values of the form, by column name. -/
   columns : List (String × String) := []
   deriving DecidableEq, Repr
 
-/-- The segments of a form as a slot-indexed item on the flat carrier. -/
+/-- `f.slots` reads the segments of `f` as a slot-indexed item on the flat carrier. -/
 def Form.slots (f : Form) (i : Fin f.segments.length) : Flat String := ↑(f.segments.get i)
 
-/-- The value of a custom column, if the form has one. -/
+/-- `f.column? name` is the value of `f` in the custom column `name`, if `f` has one. -/
 def Form.column? (f : Form) (name : String) : Option String := f.columns.lookup name
 
-/-- A row of a CLDF `ParameterTable`: a concept forms express. -/
+/-- `f.columnAs? name table` is the entry of `table` under the value of `f` in the custom column
+`name`, if `f` has that column and `table` lists its value. -/
+def Form.columnAs? {α : Type*} (f : Form) (name : String) (table : List (String × α)) :
+    Option α :=
+  (f.column? name).bind (List.lookup · table)
+
+/-- `matching forms pid cols` is the list of every form in `forms` that expresses the concept
+`pid` and has the value `v` in the custom column `c` for each pair `(c, v)` of `cols`, in the
+order of `forms`. -/
+def matching (forms : List Form) (pid : String) (cols : List (String × String)) : List Form :=
+  forms.filter fun f ↦ f.parameterId == pid && cols.all fun c ↦ f.column? c.1 == some c.2
+
+@[simp]
+theorem mem_matching {forms : List Form} {pid : String} {cols : List (String × String)}
+    {f : Form} : f ∈ matching forms pid cols ↔
+      f ∈ forms ∧ f.parameterId = pid ∧ ∀ c ∈ cols, f.column? c.1 = some c.2 := by
+  simp [matching]
+
+/-- A `Parameter` is a row of a CLDF `ParameterTable`, a concept that forms express. -/
 structure Parameter where
-  /-- `ID`. -/
+  /-- The `ID` column holds the concept's identifier. -/
   id : String
-  /-- `Name`. -/
+  /-- The `Name` column holds the concept's name. -/
   name : String
-  /-- `Description`. -/
+  /-- The `Description` column holds a description of the concept. -/
   description : String := ""
   deriving DecidableEq, Repr
 
-/-- A row of the `FormRelationTable`: a paradigmatic relation a paper asserts from one form to
-another, named by the paper's term for it. -/
+/-- A `FormRelation` is a row of the `FormRelationTable`, a paradigmatic relation that a paper
+asserts from one form to another, named by the paper's term for it. -/
 structure FormRelation where
-  /-- `ID`. -/
+  /-- The `ID` column holds the relation's identifier. -/
   id : String
-  /-- `Form_ID`: the first form. -/
+  /-- The `Form_ID` column names the first form. -/
   formId : String
-  /-- `Target_ID`: the second form. -/
+  /-- The `Target_ID` column names the second form. -/
   targetId : String
-  /-- `Relation`: the paper's name for the relation. -/
+  /-- The `Relation` column holds the paper's name for the relation. -/
   relation : String
-  /-- `Source`. -/
+  /-- The `Source` column holds the references, each a bibkey with a locator. -/
   source : List SourceRef := []
   deriving DecidableEq, Repr
 
