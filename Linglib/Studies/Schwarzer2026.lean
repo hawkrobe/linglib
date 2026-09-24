@@ -61,12 +61,12 @@ namespace Schwarzer2026
 
 open WordOrder BrueningAlKhalaf2020
 
-/-- The position of a coordinated complement relative to the finite verb in a German root
-declarative: the verb in second position precedes its complements, the configuration of (17). -/
+/-- In a German root declarative the verb in second position precedes its complements, the
+configuration of (17). -/
 abbrev rootPosition : HeadDirection := .headInitial
 
-/-- The position in an embedded finite clause: the verb is clause-final, so the coordination
-precedes it, the configuration of (16). -/
+/-- In an embedded finite clause the verb is clause-final, so the coordination precedes it, the
+configuration of (16). -/
 abbrev embeddedPosition : HeadDirection := .headFinal
 
 /-- The temporal closeness analysis predicts the order the linear one does: in either position
@@ -144,8 +144,9 @@ theorem selection_raises (c : Complement) :
     (ratings c .no).meanZ.toRat < (ratings c .yes).meanZ.toRat := by
   cases c <;> decide +kernel
 
-/-- The interaction of Experiment 1: a coordination gains less from selection than a bare
-*dass*-clause, so after a verb that does not select a clause it is rated above the bare clause. -/
+/-- In the interaction of Experiment 1 a coordination gains less from selection than a bare
+*dass*-clause, so that after a verb that does not select a clause it is rated above the bare
+clause. -/
 theorem selection_interaction :
     (ratings .coord .yes).meanZ.toRat - (ratings .coord .no).meanZ.toRat <
       (ratings .dass .yes).meanZ.toRat - (ratings .dass .no).meanZ.toRat ∧
