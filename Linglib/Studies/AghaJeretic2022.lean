@@ -2,9 +2,9 @@ module
 
 public import Linglib.Logic.Duality
 public import Linglib.Semantics.Homogeneity.Usable
-public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Data.Generalizations.HomogeneityGap
 public import Linglib.Data.Examples.AghaJeretic2022
+public import Mathlib.Order.Minimal
 
 /-!
 # Weak necessity modals as homogeneous pluralities of worlds
@@ -25,12 +25,13 @@ addressing give the exception tolerance of the perfect-grade scenario under one 
 not the other, and the unusability of *have to* under either (`exception_tolerance`), and the
 two-doors scenario where *should* is indeterminate and *must* false (`two_doors`).
 
-Weak necessity is derived from strong necessity by an operator picking the unique minimal
-witness set of the quantifier: for *must* this is the domain itself, so the result is the
-plurality *should* denotes (`x_must`), while possibility has one minimal witness per best world,
-so the operator is undefined on it — Javanese NE attaches to necessity only — whereas a
-counterfactual marker needing only some witness applies to both, as French *devrais* and
-*pourrais* show (`possibility_witnesses`). Domain restriction, on which *should* quantifies over
+Weak necessity is derived from strong necessity by an operator picking the unique minimal set
+in the quantifier, taken as the family of sets it holds of ([barwise-cooper-1981]): for *must*
+this is the domain itself, so the result is the plurality *should* denotes (`x_must`), while
+possibility has one minimal set per best world (`minimal_inter_nonempty_iff`), so the operator
+is undefined on it — Javanese NE attaches to necessity only — whereas a counterfactual marker
+needing only some minimal set applies to both, as French *devrais* and *pourrais* show
+(`possibility_witnesses`). Domain restriction, on which *should* quantifies over
 a proper subset of the worlds *allowed* ranges over, cannot make the negated modal contradict
 the existential continuation (`domainRestriction_no_contradiction`); run over the pooled
 polarity-by-scenario rows it matches the classical cells and fails exactly the gap cells
@@ -58,7 +59,7 @@ namespace AghaJeretic2022
 
 open Trivalent (Prop3 dist dist_eq_true_iff dist_eq_false_iff dist_eq_indet_iff
   dist_not_of_nonempty)
-open Homogeneity Quantifier Quantifier.GQ Data.Examples
+open Homogeneity Data.Examples
 open Generalizations.HomogeneityGap (GapDatum GapScenario fromExample)
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
@@ -192,24 +193,67 @@ theorem domainRestriction_no_contradiction {D' D : Finset W} (h : D' ⊂ D) :
   let ⟨w, hw, hw'⟩ := Finset.exists_of_ssubset h
   ⟨(· ∉ D'), fun _ hw h' => h' hw, w, hw, hw'⟩
 
-/-! ### Deriving weak from strong necessity -/
+/-! ### Deriving weak from strong necessity
 
-variable [DecidableEq W] (w : W)
+The quantifiers are families of sets of worlds, and the operator deriving weak necessity picks
+out a minimal set in the family. For the universal quantifier `(D ⊆ ·)` that is mathlib's
+`minimal_ge_iff`; the existential quantifier needs the lemma below. -/
+
+section Minimal
+
+open scoped Finset
+
+variable {E : Type*} [DecidableEq E] {s X : Finset E}
+
+/-- The minimal sets in the existential quantifier over `s` are the singletons of its
+elements. -/
+theorem minimal_inter_nonempty_iff :
+    Minimal (fun X ↦ (s ∩ X).Nonempty) X ↔ ∃ w ∈ s, X = {w} := by
+  refine ⟨fun h ↦ ?_, ?_⟩
+  · obtain ⟨w, hw⟩ := h.1
+    obtain ⟨hws, hwX⟩ := Finset.mem_inter.1 hw
+    have hsub : {w} ⊆ X := Finset.singleton_subset_iff.2 hwX
+    exact ⟨w, hws, (h.2 ⟨w, by simp [hws]⟩ hsub).antisymm hsub⟩
+  · rintro ⟨w, hw, rfl⟩
+    exact minimal_iff_forall_lt.2 ⟨⟨w, Finset.mem_inter.2 ⟨hw, Finset.mem_singleton_self w⟩⟩,
+      fun Y hY ↦ by simp [Finset.ssubset_singleton_iff.1 hY]⟩
+
+/-- The existential quantifier over a nonempty `s` has a minimal set. -/
+theorem exists_minimal_inter_nonempty (h : s.Nonempty) :
+    ∃ X, Minimal (fun X ↦ (s ∩ X).Nonempty) X :=
+  let ⟨w, hw⟩ := h
+  ⟨{w}, minimal_inter_nonempty_iff.2 ⟨w, hw, rfl⟩⟩
+
+/-- The existential quantifier over an `s` with two or more elements has no unique minimal
+set. -/
+theorem not_existsUnique_minimal_inter_nonempty (h : 1 < #s) :
+    ¬ ∃! X, Minimal (fun X ↦ (s ∩ X).Nonempty) X := by
+  rintro ⟨X, -, huniq⟩
+  obtain ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.1 h
+  exact hab <| Finset.singleton_injective <|
+    (huniq {a} (minimal_inter_nonempty_iff.2 ⟨a, ha, rfl⟩)).trans
+      (huniq {b} (minimal_inter_nonempty_iff.2 ⟨b, hb, rfl⟩)).symm
+
+end Minimal
+
+variable (w : W)
 
 /-- Strong necessity, as a quantifier over sets of worlds, has the domain as its unique minimal
-witness set, so picking that set out yields the plurality weak necessity denotes. -/
+set, so picking that set out yields the plurality weak necessity denotes. -/
 theorem x_must :
-    (∃! X, IsMinimalWitness (D w ⊆ ·) X) ∧ ∀ X, IsMinimalWitness (D w ⊆ ·) X ↔ X = D w :=
-  ⟨existsUnique_isMinimalWitness_subset _, fun _ => isMinimalWitness_subset_iff _ _⟩
+    (∃! X, Minimal (D w ⊆ ·) X) ∧ ∀ X, Minimal (D w ⊆ ·) X ↔ X = D w :=
+  ⟨⟨D w, minimal_ge_iff.2 rfl, fun _ ↦ minimal_ge_iff.1⟩, fun _ ↦ minimal_ge_iff⟩
 
-/-- Possibility over two or more best worlds has minimal witness sets but no unique one: a
-marker that needs only some witness applies to it, one that needs the unique witness does
-not. -/
-theorem possibility_witnesses (h : 1 < (D w).card) :
-    (∃ X, IsMinimalWitness (fun X => (D w ∩ X).Nonempty) X) ∧
-      ¬ ∃! X, IsMinimalWitness (fun X => (D w ∩ X).Nonempty) X :=
-  ⟨exists_isMinimalWitness_inter_nonempty (Finset.card_pos.1 (by omega)),
-    not_existsUnique_isMinimalWitness_inter_nonempty h⟩
+variable [DecidableEq W]
+
+open scoped Finset in
+/-- Possibility over two or more best worlds has minimal sets but no unique one: a marker that
+needs only some minimal set applies to it, one that needs the unique minimal set does not. -/
+theorem possibility_witnesses (h : 1 < #(D w)) :
+    (∃ X, Minimal (fun X ↦ (D w ∩ X).Nonempty) X) ∧
+      ¬ ∃! X, Minimal (fun X ↦ (D w ∩ X).Nonempty) X :=
+  ⟨exists_minimal_inter_nonempty (Finset.card_pos.1 (zero_lt_one.trans h)),
+    not_existsUnique_minimal_inter_nonempty h⟩
 
 /-! ### The data -/
 

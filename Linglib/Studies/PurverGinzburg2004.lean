@@ -215,19 +215,19 @@ variable {α : Type*} {Q : NP α} {A X : α → Prop}
 /-- The plain witness representation (85) is vacuous for a quantifier that the empty set
 witnesses, such as *few* or *no*: every predicate contains a witness set. -/
 theorem witness_subset_of_empty (hQ : Q (λ _ => False)) (X : α → Prop) :
-    ∃ w, BarwiseCooper1981.Witness Q A w ∧ ∀ x, w x → X x :=
+    ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
   ⟨λ _ => False, ⟨λ _ h => h.elim, hQ⟩, λ _ h => h.elim⟩
 
 /-- So the equivalence (24) fails for every such quantifier that fails of some predicate. -/
 theorem not_witness_iff_of_empty (hQ : Q (λ _ => False)) (hX : ¬ Q X) :
-    ¬ ∀ X, Q X ↔ ∃ w, BarwiseCooper1981.Witness Q A w ∧ ∀ x, w x → X x :=
+    ¬ ∀ X, Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
   λ h => hX ((h X).2 (witness_subset_of_empty hQ X))
 
 /-- The pair representation (91): a quantifier living on `A` holds of `X` exactly when some
 witness set is contained in `X` and its complement in `A` is disjoint from `X`. This is exact
 for every quantifier, monotone or not. -/
 theorem pair_apply_iff (h : LivesOn Q A) :
-    Q X ↔ ∃ R, BarwiseCooper1981.Witness Q A R ∧ (∀ x, R x → X x) ∧
+    Q X ↔ ∃ R, Witness Q A R ∧ (∀ x, R x → X x) ∧
       ∀ x, A x → ¬ R x → ¬ X x := by
   constructor
   · intro hX
