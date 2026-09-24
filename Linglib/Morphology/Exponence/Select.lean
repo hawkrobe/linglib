@@ -8,21 +8,34 @@ public import Mathlib.Data.List.MinMax
 
 This file defines selection by a specificity score (`selectBy`) and over the
 specificity preorder (`selectMinimal`), and proves that both produce Elsewhere
-winners.
+winners. The exponent of the minimal selection, falling back on a default where
+no rule applies, is the shape shared by Stump's rules of paradigm linkage over a
+root and by Bonami and Stump's rules of basic stem choice.
 
 ## Main definitions
 
 * `selectBy`, `realize`: the applicable rule of greatest score, and its
   exponent.
-* `selectMinimal`: the first applicable rule that no applicable rule
-  strictly undercuts.
+* `selectMinimal`, `realizeMinimal`: the first applicable rule that no
+  applicable rule strictly undercuts, and its exponent.
+* `realizeMinimalD`: the exponent of the minimal selection, or a fallback where
+  no rule applies.
 
 ## Main results
 
 * `selectBy_isElsewhereWinner`, `selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
-* `selectMinimal_factorsThrough`: selection factors through any map on
-  contexts that every rule's applicability factors through.
+* `selectMinimal_factorsThrough`, `realizeMinimalD_factorsThrough`: selection,
+  and realization with a fallback, factor through any map on contexts that every
+  rule's applicability (and the fallback) factors through.
+* `realizeMinimalD_eq_of_isElsewhereWinner`: over a coherent vocabulary with
+  comparable winners, realization with a fallback is the exponent of any
+  Elsewhere winner, whatever the order of the vocabulary.
+
+## References
+
+* [bonami-stump-2016]
+* [stump-2006]
 -/
 
 @[expose] public section
@@ -142,5 +155,98 @@ theorem selectMinimal_factorsThrough {V : Type*} {A : Ctx → V}
     (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
     (selectMinimal v).FactorsThrough A :=
   fun _ _ hA ↦ selectMinimal_congr <| List.filter_congr fun r hr ↦ by simp [h r hr hA]
+
+/-- The exponent of the rule selected by `selectMinimal`, the order-based counterpart of
+`realize`. -/
+def realizeMinimal (v : List R) (c : Ctx) : Option E :=
+  (selectMinimal v c).map exponent
+
+theorem realizeMinimal_eq_none_iff : realizeMinimal v c = none ↔ applicable v c = [] :=
+  Option.map_eq_none_iff.trans selectMinimal_eq_none_iff
+
+theorem realizeMinimal_isSome_iff : (realizeMinimal v c).isSome ↔ ∃ r ∈ v, Applies r c := by
+  rw [realizeMinimal, Option.isSome_map]
+  exact selectMinimal_isSome_iff
+
+/-- Contexts with the same applicable rules realize the same exponent. -/
+theorem realizeMinimal_congr (h : applicable v c = applicable v c') :
+    realizeMinimal v c = realizeMinimal v c' :=
+  congrArg (Option.map exponent) (selectMinimal_congr h)
+
+/-- Minimally realized exponents satisfy `Realizes`. -/
+theorem realizeMinimal_realizes (h : realizeMinimal v c = some φ) : Realizes v c φ := by
+  obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨r, selectMinimal_isElsewhereWinner hr, rfl⟩
+
+/-- Over a coherent vocabulary whose Elsewhere winners are comparable, the minimally realized
+exponent is that of any Elsewhere winner, so it does not depend on the order of the
+vocabulary. -/
+theorem realizeMinimal_eq_of_isElsewhereWinner (hv : Coherent v)
+    (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner v c r → IsElsewhereWinner v c s → s ≤ r ∨ r ≤ s)
+    (hr : IsElsewhereWinner v c r) : realizeMinimal v c = some (exponent r) := by
+  obtain ⟨φ, hφ⟩ := Option.isSome_iff_exists.mp
+    (realizeMinimal_isSome_iff.mpr ⟨r, hr.prop.1, hr.prop.2⟩)
+  rw [hφ, (realizeMinimal_realizes hφ).eq hv hcmp ⟨r, hr, rfl⟩]
+
+/-! ### Realization with a fallback -/
+
+/-- `realizeMinimalD v fallback c` is the exponent of the rule selected by `selectMinimal`, or
+`fallback c` where no rule of `v` applies at `c`. -/
+def realizeMinimalD (v : List R) (fallback : Ctx → E) (c : Ctx) : E :=
+  (realizeMinimal v c).getD (fallback c)
+
+variable {fallback : Ctx → E}
+
+/-- With no rules, realization is the fallback. -/
+@[simp] theorem realizeMinimalD_nil (fallback : Ctx → E) :
+    realizeMinimalD ([] : List R) fallback = fallback :=
+  funext fun _ ↦ rfl
+
+theorem realizeMinimalD_eq_of_selectMinimal_eq_some (h : selectMinimal v c = some r) :
+    realizeMinimalD v fallback c = exponent r := by
+  simp [realizeMinimalD, realizeMinimal, h]
+
+theorem realizeMinimalD_eq_fallback_of_selectMinimal_eq_none (h : selectMinimal v c = none) :
+    realizeMinimalD v fallback c = fallback c := by
+  simp [realizeMinimalD, realizeMinimal, h]
+
+/-- The realized value is the fallback or the exponent of one of the rules. -/
+theorem realizeMinimalD_eq_fallback_or_mem : realizeMinimalD v fallback c = fallback c ∨
+    ∃ r ∈ v, realizeMinimalD v fallback c = exponent r :=
+  match h : selectMinimal v c with
+  | none => .inl (realizeMinimalD_eq_fallback_of_selectMinimal_eq_none h)
+  | some r => .inr ⟨r, selectMinimal_mem h, realizeMinimalD_eq_of_selectMinimal_eq_some h⟩
+
+/-- A property of the fallback and of every rule's exponent holds of the realized value. -/
+theorem realizeMinimalD_induction (q : E → Prop) (hd : q (fallback c))
+    (hv : ∀ r ∈ v, q (exponent r)) : q (realizeMinimalD v fallback c) := by
+  obtain h | ⟨r, hr, h⟩ :=
+    realizeMinimalD_eq_fallback_or_mem (v := v) (fallback := fallback) (c := c)
+  · exact h ▸ hd
+  · exact h ▸ hv r hr
+
+/-- Contexts with the same applicable rules and the same fallback realize the same value. -/
+theorem realizeMinimalD_congr (h : applicable v c = applicable v c')
+    (hd : fallback c = fallback c') :
+    realizeMinimalD v fallback c = realizeMinimalD v fallback c' := by
+  rw [realizeMinimalD, realizeMinimalD, realizeMinimal_congr h, hd]
+
+/-- Rules whose applicability sees only what `A` sees, with a fallback that factors through
+`A`, realize values that factor through `A`. This is the reasoning of Stump 2006 (§5.5), by
+which a rule of paradigm linkage sensitive to number alone makes number an absolute correlate of
+heteroclisis. -/
+theorem realizeMinimalD_factorsThrough {V : Type*} {A : Ctx → V}
+    (hd : fallback.FactorsThrough A)
+    (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
+    (realizeMinimalD v fallback).FactorsThrough A :=
+  fun _ _ hA ↦ by rw [realizeMinimalD, realizeMinimalD, realizeMinimal, realizeMinimal,
+    selectMinimal_factorsThrough h hA, hd hA]
+
+/-- Over a coherent vocabulary whose Elsewhere winners are comparable, the realized value is the
+exponent of any Elsewhere winner, so it does not depend on the order of the vocabulary. -/
+theorem realizeMinimalD_eq_of_isElsewhereWinner (hv : Coherent v)
+    (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner v c r → IsElsewhereWinner v c s → s ≤ r ∨ r ≤ s)
+    (hr : IsElsewhereWinner v c r) : realizeMinimalD v fallback c = exponent r := by
+  rw [realizeMinimalD, realizeMinimal_eq_of_isElsewhereWinner hv hcmp hr, Option.getD_some]
 
 end Morphology.Exponence
