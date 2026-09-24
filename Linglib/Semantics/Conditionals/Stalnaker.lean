@@ -34,7 +34,6 @@ holds throughout the context, without being identified with it.
 namespace Conditional
 
 open Mood (Grammatical)
-open _root_.Conditional (SelectionFunction selectionPrefers)
 
 /-! ### The pragmatic constraint -/
 

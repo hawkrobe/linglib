@@ -67,17 +67,19 @@ section ConditionalLogic
 
 variable {W : Type*} (cond : Set W → Set W → Set W)
 
-/-- The finite consequence condition: a conditional operator weakens its consequent,
-agglomerates consequents, and has every tautological consequent. -/
+/-- A conditional operator satisfies the finite consequence condition when it weakens its
+consequent, agglomerates consequents, and has every tautological consequent. -/
 structure ConsequenceCondition : Prop where
   mono : ∀ A B C, B ⊆ C → cond A B ⊆ cond A C
   agg : ∀ A B C, cond A B ∩ cond A C ⊆ cond A (B ∩ C)
   taut : ∀ A, cond A Set.univ = Set.univ
 
-/-- Conditional excluded middle: a conditional or its opposite holds everywhere. -/
+/-- Conditional excluded middle holds for an operator when a conditional or its opposite holds
+everywhere. -/
 def CEM : Prop := ∀ A B, cond A B ∪ cond A Bᶜ = Set.univ
 
-/-- Distribution: a conditional with a disjunctive consequent yields one with a disjunct. -/
+/-- An operator distributes when a conditional with a disjunctive consequent yields one with a
+disjunct. -/
 def Distribution : Prop := ∀ A B C, cond A (B ∪ C) ⊆ cond A B ∪ cond A C
 
 /-- Under the consequence condition, conditional excluded middle and distribution are
@@ -122,7 +124,7 @@ end Selection
 
 section BizetVerdi
 
-/-- The worlds of the Bizet–Verdi example: the actual world, and the two closest worlds in
+/-- The worlds of the Bizet–Verdi example are the actual world and the two closest worlds in
 which the composers are compatriots. -/
 inductive BVWorld
   | actual | bothItalian | bothFrench
@@ -159,21 +161,23 @@ nor false. -/
 theorem verdi_french_indet :
     selectionalCounterfactual bvSim compatriots verdiFrench .actual = .indet := by decide
 
-/-- Conditional excluded middle holds for the example under supervaluation: the disjunction of
-the conditional and its opposite is not false. -/
+/-- Conditional excluded middle holds for the example under supervaluation, since the disjunction
+of the conditional and its opposite is not false. -/
 theorem bizet_verdi_cem :
     selectionalCounterfactual bvSim compatriots bizetItalian .actual ⊔
       selectionalCounterfactual bvSim compatriots bizetItalianᶜ .actual ≠ .false :=
   cem_selectional bvSim compatriots bizetItalian .actual
 
-/-- On the universal analysis both counterfactuals are false, and excluded middle fails. -/
+/-- On the universal analysis both counterfactuals are false, and excluded middle fails, because
+the two closest compatriot worlds disagree on Bizet's nationality. -/
 theorem bizet_cem_fails_universal :
     .actual ∉ closestImp bvSim compatriots bizetItalian ∧
     .actual ∉ closestImp bvSim compatriots bizetItalianᶜ :=
-  ⟨by decide, by decide⟩
+  not_mem_ofDomain_and_compl (v := .bothItalian) (v' := .bothFrench) (by decide) (by decide) rfl
+    (by decide)
 
-/-- Quine's inference: *if they had been compatriots, Bizet would have been Italian or Verdi
-French* is true on the universal analysis, but neither disjunct's conditional is, so
+/-- Quine's *if they had been compatriots, Bizet would have been Italian or Verdi French* is
+true on the universal analysis, but neither disjunct's conditional is, so
 distribution fails. -/
 theorem distribution_fails_bizetverdi :
     .actual ∈ closestImp bvSim compatriots (bizetItalian ∪ verdiFrench) ∧
@@ -197,7 +201,7 @@ end BizetVerdi
 
 section Court
 
-/-- The worlds of the appointment example: the actual world, with no vacancy, and two equally
+/-- The worlds of the appointment example are the actual world, with no vacancy, and two equally
 close worlds in which a vacancy is filled by a different woman. -/
 inductive CourtWorld
   | actual | w1 | w2
@@ -268,9 +272,9 @@ theorem not_lewisMight_eq (h : (ord w).minimals A = ∅) (x : W) :
     w ∉ might (variablyStrictImp ord) A {x} :=
   notMem_might_variablyStrictImp_singleton h x
 
-/-- Without the limit assumption the consequence condition fails: the consequents *not x*,
-over all antecedent-worlds `x`, jointly entail *not A*, each conditional is true, and for a
-possible antecedent the conditional with the entailed consequent is false. -/
+/-- Without the limit assumption the consequence condition fails. The consequents *not x*, over
+all antecedent-worlds `x`, jointly entail *not A*, each conditional is true, and for a possible
+antecedent the conditional with the entailed consequent is false. -/
 theorem not_consequence_lewisWould (h : (ord w).minimals A = ∅) (hA : A.Nonempty) :
     (⋂ x ∈ A, ({x}ᶜ : Set W)) ⊆ Aᶜ ∧ (∀ x ∈ A, w ∈ variablyStrictImp ord A {x}ᶜ) ∧
       w ∉ variablyStrictImp ord A Aᶜ := by
@@ -288,8 +292,8 @@ section Might
 variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (ord w).le] (A B : Set W)
   [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] (w : W)
 
-/-- *Might* as a possibility operator over the conditional keeps Lewis's formulation: *if A,
-might B* is true exactly when *if A, would not-B* is not true. -/
+/-- *Might* as a possibility operator over the conditional keeps Lewis's formulation, on which
+*if A, might B* is true exactly when *if A, would not-B* is not true. -/
 theorem selectionalMight_iff (h : ((ord w).minimals A).Nonempty) :
     selectionalMight ord A B w ↔ selectionalCounterfactual ord A Bᶜ w ≠ .true := by
   obtain ⟨v, hv⟩ := h

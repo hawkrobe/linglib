@@ -136,6 +136,21 @@ theorem mem_ofDomain_or_compl (h : (D i p).Subsingleton) :
     i ∈ ofDomain D p q ∨ i ∈ ofDomain D p qᶜ :=
   mem_ofDomain_or h (by simp)
 
+/-- Two worlds of the domain that disagree on the consequent refute both *if p, q* and
+*if p, not q*. -/
+theorem not_mem_ofDomain_and_compl {v v' : W} (hv : v ∈ D i p) (hv' : v' ∈ D i p) (hq : v ∈ q)
+    (hq' : v' ∉ q) : i ∉ ofDomain D p q ∧ i ∉ ofDomain D p qᶜ :=
+  ⟨fun h ↦ hq' (h hv'), fun h ↦ h hv hq⟩
+
+/-- Conditional Excluded Middle for every consequent characterizes the domains with at most one
+world. -/
+theorem forall_mem_ofDomain_or_compl_iff :
+    (∀ r : Set W, i ∈ ofDomain D p r ∨ i ∈ ofDomain D p rᶜ) ↔ (D i p).Subsingleton := by
+  refine ⟨fun h v hv v' hv' ↦ ?_, fun h _ ↦ mem_ofDomain_or_compl h⟩
+  rcases h {v} with h | h
+  · exact (h hv').symm
+  · exact absurd rfl (h hv)
+
 /-- Modus ponens holds when every antecedent-world lies in its own domain. -/
 theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :
     ofDomain D p q ⊆ materialImp p q :=
