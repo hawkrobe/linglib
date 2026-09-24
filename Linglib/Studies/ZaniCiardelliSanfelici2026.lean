@@ -60,7 +60,7 @@ and exhaustification strengthens it to SDA (`distributive_of_exh`).
 
 namespace ZaniCiardelliSanfelici2026
 
-open Conditional Conditional.Counterfactual
+open Conditional
 
 section Closest
 

@@ -20,17 +20,17 @@ agree on the consequent, and part under embedding.
 
 ## Main definitions
 
-* `Counterfactual.selectionalCounterfactual`: the selectional counterfactual, super-truth over
+* `selectionalCounterfactual`: the selectional counterfactual, super-truth over
   the closest antecedent-worlds.
-* `Counterfactual.superCounterfactual`: Stalnaker's supervaluation over completions.
-* `Counterfactual.homogeneityCounterfactual`: the homogeneity counterfactual.
-* `Counterfactual.selectionalMight`: the selectional *might*.
+* `superCounterfactual`: Stalnaker's supervaluation over completions.
+* `homogeneityCounterfactual`: the homogeneity counterfactual.
+* `selectionalMight`: the selectional *might*.
 
 ## Main results
 
-* `Counterfactual.eval_homogeneityCounterfactual`: unembedded, the homogeneity counterfactual
+* `eval_homogeneityCounterfactual`: unembedded, the homogeneity counterfactual
   evaluates to the selectional one.
-* `Counterfactual.superCounterfactual_eq_selectionalCounterfactual`: on a finite, strongly
+* `superCounterfactual_eq_selectionalCounterfactual`: on a finite, strongly
   centered ordering the supervaluation over completions is the selectional counterfactual.
 
 ## References
@@ -48,7 +48,7 @@ agree on the consequent, and part under embedding.
 @[expose] public section
 
 
-namespace Conditional.Counterfactual
+namespace Conditional
 
 open Presupposition
 
@@ -278,4 +278,4 @@ theorem stalnaker_lewis_would_diverge :
   rw [mem_selectionConditional_of_nonempty _ ⟨1, by simp⟩, hsel]
   rfl
 
-end Conditional.Counterfactual
+end Conditional

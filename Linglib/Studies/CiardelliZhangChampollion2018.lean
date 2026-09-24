@@ -42,14 +42,12 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 
 namespace CiardelliZhangChampollion2018
 
-open Conditional (closestImp mem_closestImp_union)
-open Conditional.Counterfactual
-  (selectionalCounterfactual selectionalCounterfactual_eq_true_iff homogeneityCounterfactual
-   eval_homogeneityCounterfactual)
+open Conditional (closestImp mem_closestImp_union selectionalCounterfactual
+  selectionalCounterfactual_eq_true_iff homogeneityCounterfactual eval_homogeneityCounterfactual)
 
 /-! ### The switches scenario (Fig. 1) -/
 
-/-- The four worlds, by the positions of A and B: `u` up, `d` down. -/
+/-- The four worlds are named by the positions of A and B, `u` for up and `d` for down. -/
 inductive World where
   | uu | ud | du | dd
   deriving Repr, DecidableEq, Fintype
@@ -59,7 +57,7 @@ abbrev aUp : Set World := {.uu, .ud}
 /-- Switch B is up. -/
 abbrev bUp : Set World := {.uu, .du}
 
-/-- The wiring: the light is on iff the switches are in the same position. -/
+/-- The wiring puts the light on iff the switches are in the same position. -/
 abbrev lightOn : Set World := {.uu, .dd}
 
 /-- *Switch A is down.* -/
@@ -91,8 +89,8 @@ def hamming : World → World → Nat
 /-- Similarity by Hamming distance, one natural ordering on the scenario. -/
 abbrev hammingSim (w₀ : World) : Preorder World := Preorder.lift (hamming w₀)
 
-/-- *If A were down, the light would be off* is true at the actual world: the closest A-down
-world is `du`. -/
+/-- *If A were down, the light would be off* is true at the actual world, since the closest
+A-down world is `du`. -/
 theorem aDn_off_at_uu :
     .uu ∈ closestImp hammingSim aDn lightOff := by decide
 
@@ -100,7 +98,7 @@ theorem aDn_off_at_uu :
 theorem bDn_off_at_uu :
     .uu ∈ closestImp hammingSim bDn lightOff := by decide
 
-/-- *If A or B were down, the light would be off* is true at the actual world: the closest
+/-- *If A or B were down, the light would be off* is true at the actual world, since the closest
 worlds are `ud` and `du`. -/
 theorem aOrBdn_off_at_uu :
     .uu ∈ closestImp hammingSim aOrBdn lightOff := by decide
@@ -175,8 +173,8 @@ theorem table3_pattern :
     norm_num [trueRate_aDn_off, trueRate_bDn_off, trueRate_aOrBdn_off,
       trueRate_notBothUp_off, trueRate_notBothUp_on]
 
-/-- The De Morgan pair diverges: the disjunctive antecedent was judged true more often than its
-equivalent. -/
+/-- The De Morgan pair diverges, the disjunctive antecedent being judged true more often than
+its equivalent. -/
 theorem deMorgan_antecedents_diverge :
     trueRate_notBothUp_off < trueRate_aOrBdn_off := by
   norm_num [trueRate_aOrBdn_off, trueRate_notBothUp_off]

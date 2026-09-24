@@ -129,7 +129,7 @@ theorem only_presup {R : W → W → Prop} {a b : Set W} (h₁ : ∃ w ∈ poss 
 
 section Simplification
 
-open Conditional Conditional.Counterfactual
+open Conditional
 
 variable (ord : W → Preorder W) (p q r : Set W)
 
@@ -275,8 +275,6 @@ abbrev off : Set Switch := {w | w.light w.up₁ w.up₂ = false}
 
 /-- Both switches up, and the light on exactly when the switches agree. -/
 def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
-
-open Conditional.Counterfactual
 
 /-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario:
 its strengthening asserts both simplifications and denies the conjunctive one. -/

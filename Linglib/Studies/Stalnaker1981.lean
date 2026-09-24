@@ -60,7 +60,6 @@ affirming a *might*, and the Kennedy example are not formalized.
 namespace Stalnaker1981
 
 open Conditional
-open Conditional.Counterfactual
 
 /-! ### Conditional excluded middle and distribution -/
 

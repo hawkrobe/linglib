@@ -49,7 +49,7 @@ The paper's verdicts are checked in `rows_agree`.
 
 namespace AlonsoOvalle2009
 
-open Conditional Conditional.Counterfactual McKayVanInwagen1977
+open Conditional McKayVanInwagen1977
   Data.Examples
 
 variable {W : Type*} [DecidableEq W] [Fintype W] (ord : W → Preorder W)
