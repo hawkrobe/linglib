@@ -44,7 +44,7 @@ inductive ScalarDimension
   | height | width | length | weight | thickness | depth | speed | strength
   | age | generalSize
   -- Sensory
-  | temperature | brightness | volume
+  | temperature | brightness | volume | taste
   -- Evaluative
   | happiness | cost | price | quality | value | danger | beauty | importance | safety
   -- Psychological
@@ -61,7 +61,7 @@ inductive ScalarDimension
 def ScalarDimension.domain : ScalarDimension → PropertyDomain
   | .height | .width | .length | .weight | .thickness | .depth | .speed
   | .strength | .age | .generalSize | .quantity => .size
-  | .temperature | .brightness | .volume => .sensory
+  | .temperature | .brightness | .volume | .taste => .sensory
   | .happiness | .cost | .price | .quality | .value | .danger | .beauty
   | .importance | .safety => .evaluative
   | .intelligence | .expectation | .possibility | .confidence => .psychological
@@ -84,7 +84,7 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .confidence => .upperClosed
   | .wetness => .lowerClosed
   | .height | .width | .length | .weight | .thickness | .depth | .speed
-  | .strength | .age | .generalSize | .temperature | .brightness | .volume
+  | .strength | .age | .generalSize | .temperature | .brightness | .volume | .taste
   | .happiness | .cost | .price | .quality | .value | .danger | .beauty
   | .importance | .intelligence | .expectation | .possibility
   | .hardness | .color | .corrosion | .quantity

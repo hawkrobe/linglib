@@ -14,7 +14,7 @@ noun phrases are bare. The negative article *geen* occurs with singular, plural 
 alike, and the grammar argues that it is a quantifier rather than an article. The proximate
 demonstrative *deze* ~ *dit* and the distal demonstrative *die* ~ *dat* agree exactly as the
 definite article does. These three agreeing determiners are the agreement evidence for the
-two-gender carrier of `Dutch.Gender`.
+two genders of `Dutch.Gender`.
 
 ## Main declarations
 
@@ -22,7 +22,7 @@ two-gender carrier of `Dutch.Gender`.
   and `Dutch.Determiners.singular` gives that form. `Dutch.Determiners.plural` is the
   common-gender form, which every plural takes.
 * `Dutch.Determiners.injective_singular` shows that each agreeing determiner distinguishes the
-  two genders, and `Dutch.Determiners.faithful` concludes that the carrier is faithful to the
+  two genders, and `Dutch.Determiners.faithful` concludes that the two genders are faithful to the
   evidence.
 * `Dutch.Determiners.inventory` is the inventory, whose citation forms are the plural forms,
   and `Dutch.Determiners.marking` derives its [moroney-2021] cell.
@@ -35,10 +35,12 @@ German, are not `DefiniteUse` cells and so go unrecorded.
 
 ## References
 
-* [broekhuis-corver-2026b]
-* [schwarz-2009]
-* [moroney-2021]
-* [schmuck-2020]
+* [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume V: Nouns and Noun Phrases 2: Prenominal
+  Elements, Pronouns and Syntactic Uses of Noun Phrases* (2026)][broekhuis-corver-2026b]
+* [F. Schwarz, *Two Types of Definites in Natural Language* (2009)][schwarz-2009]
+* [M. Moroney, *Definiteness and quantification: Evidence from Shan* (2021)][moroney-2021]
+* [M. Schmuck, *The Grammaticalisation of Definite Articles in German, Dutch, and English: A
+  Micro-Typological Approach* (2020)][schmuck-2020]
 -/
 
 @[expose] public section
@@ -71,7 +73,7 @@ def plural (t : Target) : String := singular .common t
 /-- Each agreeing determiner distinguishes the two genders in the singular. -/
 theorem injective_singular : ∀ t, Function.Injective (singular · t) := by decide
 
-/-- The two-gender carrier is faithful to the determiner evidence. -/
+/-- The two genders are faithful to the determiner evidence. -/
 theorem faithful : Gender.Faithful singular :=
   fun _ _ h ↦ injective_singular .definite (congrFun h _)
 

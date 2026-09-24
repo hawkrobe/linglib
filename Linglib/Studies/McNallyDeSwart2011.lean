@@ -13,8 +13,8 @@ to abstract objects such as colours, illustrated with *rood* 'red': the uninflec
 instantiated in one bearer. The uninflected nominal of a root is the subkind of the shade
 partition its root determines, so distinct roots denote disjoint kinds, the disjointness
 condition of [carlson-1977] (`uninflectedNominal`, `uninflectedNominal_disjoint`); the
-derived nominal is defined only for roots with a *-heid* form and then denotes the same
-kind (`derivedNominal`, `derivedNominal_eq_uninflected`); the inflectional suffix is not a
+derived nominal, the noun in *-heid* of the root (`Dutch.Adjectives.heid`), denotes the same
+kind (`derivedNominal`); the inflectional suffix is not a
 category-changing nominalizer but a valence-increasing operator turning the adjective into a
 relation between an object and its aspect, which the determiner *het*, the nominalization
 operator of [chierchia-1984] when it embeds an adjective phrase, reifies as a trope
@@ -34,51 +34,49 @@ the pair of the aspect property and its bearer. The paper's observation that the
 construction is rare with concrete adjectives, and its extension to Dutch nominalized
 infinitives and Spanish *lo*-nominals, are described in prose.
 
-## TODO
-
-The paper is not on file; the example numbers are transcribed from an earlier version of
-this file and are UNVERIFIED.
-
 ## References
 
-* [mcnally-deswart-2011]
-* [chierchia-1984]
-* [carlson-1977]
+* [L. McNally and H. de Swart, *Inflection and Derivation: How Adjectives and Nouns Refer to
+  Abstract Objects* (2011)][mcnally-deswart-2011]
+* [G. Chierchia, *Topics in the Syntax and Semantics of Infinitives and Gerunds*
+  (1984)][chierchia-1984]
+* [G. N. Carlson, *A Unified Analysis of the English Bare Plural* (1977)][carlson-1977]
 -/
 
 @[expose] public section
 
 namespace McNallyDeSwart2011
 
-open Genericity.Subkinds Dutch.Adjectives
+open Genericity.Subkinds
+open Dutch.Adjectives (rood roze)
 
 /-! ### Kinds: the uninflected and derived nominals -/
 
 /-- A shade: an adjective entry of the fragment with an index, so that several shades belong
 to one colour. -/
 structure Shade where
-  root : AdjEntry
+  root : Dutch.Adjectives.Adjective
   idx : ℕ
   deriving DecidableEq, Repr
 
 /-- The kind-forming relation on shades: sharing a root. -/
 def kfShade : Setoid Shade where
   r s₁ s₂ := s₁.root = s₂.root
-  iseqv := ⟨λ _ => rfl, Eq.symm, Eq.trans⟩
+  iseqv := ⟨fun _ ↦ rfl, Eq.symm, Eq.trans⟩
 
 /-- The canonical shade of a root. -/
-def canonicalShade (a : AdjEntry) : Shade := ⟨a, 0⟩
+def canonicalShade (a : Dutch.Adjectives.Adjective) : Shade := ⟨a, 0⟩
 
 /-- The uninflected nominal *het rood* (19): the set of subkinds, the shades, of the colour. -/
-def uninflectedNominal (a : AdjEntry) : Set Shade :=
+def uninflectedNominal (a : Dutch.Adjectives.Adjective) : Set Shade :=
   subkindOf kfShade (canonicalShade a)
 
-theorem mem_uninflectedNominal (a : AdjEntry) (s : Shade) :
+theorem mem_uninflectedNominal (a : Dutch.Adjectives.Adjective) (s : Shade) :
     s ∈ uninflectedNominal a ↔ s.root = a :=
   ⟨Eq.symm, Eq.symm⟩
 
 /-- Distinct roots denote disjoint kinds, the disjointness condition of [carlson-1977]. -/
-theorem uninflectedNominal_disjoint {a₁ a₂ : AdjEntry} (h : a₁ ≠ a₂) :
+theorem uninflectedNominal_disjoint {a₁ a₂ : Dutch.Adjectives.Adjective} (h : a₁ ≠ a₂) :
     Disjoint (uninflectedNominal a₁) (uninflectedNominal a₂) :=
   disjointness_condition kfShade (a := canonicalShade a₁) (b := canonicalShade a₂) h
 
@@ -88,19 +86,13 @@ def ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) (P 
     Set Shade :=
   {x | x ∈ P ∧ R x s}
 
-/-- The derived nominal *de roodheid* (24): defined for the roots with a *-heid* form, and
-denoting the kind of the root. -/
-def derivedNominal (a : AdjEntry) : Option (Set Shade) :=
-  a.nominalHeid.map λ _ => uninflectedNominal a
+/-- The derived nominal *de roodheid* (24), the noun in *-heid* of the root, denotes the kind of
+the root. -/
+def derivedNominal (a : Dutch.Adjectives.Adjective) : Set Shade := uninflectedNominal a
 
-/-- Where defined, the derived nominal is the uninflected one. -/
-theorem derivedNominal_eq_uninflected {a : AdjEntry} (h : a.nominalHeid.isSome) :
-    derivedNominal a = some (uninflectedNominal a) := by
-  obtain ⟨_, hh⟩ := Option.isSome_iff_exists.1 h
-  simp [derivedNominal, hh]
-
-/-- *roze* 'pink' has no *-heid* form, so no derived nominal. -/
-theorem derivedNominal_roze : derivedNominal roze = none := by decide
+/-- *rood* and *roze* denote disjoint kinds, so *roodheid* and *rozeheid* would. -/
+theorem derivedNominal_rood_roze : Disjoint (derivedNominal rood) (derivedNominal roze) :=
+  uninflectedNominal_disjoint (by decide)
 
 /-! ### The trope: the inflected form -/
 
@@ -160,9 +152,10 @@ def Form.AdmitsOtherDeterminers (f : Form) : Prop := f.embedded = .noun
 def Form.AdmitsGeneric (f : Form) : Prop := f.denotation = .kind
 
 instance : DecidablePred Form.AdmitsAdjectivalModification :=
-  λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred Form.AdmitsOtherDeterminers := λ _ => inferInstanceAs (Decidable (_ = _))
-instance : DecidablePred Form.AdmitsGeneric := λ _ => inferInstanceAs (Decidable (_ = _))
+  fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred Form.AdmitsOtherDeterminers :=
+  fun _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred Form.AdmitsGeneric := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The inflected form fails all three diagnostics, and the two nominal forms pass them. -/
 theorem inflected_diagnostics :

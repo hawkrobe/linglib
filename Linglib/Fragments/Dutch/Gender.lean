@@ -9,14 +9,15 @@ Dutch has two controller genders. The common gender, which Broekhuis and Corver'
 non-neuter, is the merger of the historical masculine and feminine and is the gender of the
 *de*-words; the neuter is the gender of the *het*-words. The definite article and the
 demonstratives distinguish the two genders in the singular only, and
-`Dutch.Determiners.singular` records that evidence. The carrier is read off the determiners
+`Dutch.Determiners.singular` records that evidence. The genders are read off the determiners
 rather than the pronouns, since pronominal agreement is partly semantic and follows the
 individuation of the referent ([kraaikamp-2012]).
 
 ## References
 
-* [broekhuis-corver-2026b]
-* [kraaikamp-2012]
+* [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume V: Nouns and Noun Phrases 2: Prenominal
+  Elements, Pronouns and Syntactic Uses of Noun Phrases* (2026)][broekhuis-corver-2026b]
+* [M. Kraaikamp, *The Semantics of the Dutch Gender System* (2012)][kraaikamp-2012]
 -/
 
 @[expose] public section
