@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Syntax.Minimalist.MinimalPronoun
-public import Linglib.Fragments.Mixtec.SMPM.Basic
+public import Linglib.Fragments.Mixtec.SMPM.Pronouns
+public import Linglib.Fragments.Mixtec.SMPM.Verbs
 public import Linglib.Syntax.Control.Head
 public import Linglib.Syntax.Control.Basic
 public import Linglib.Syntax.Control.Diagnostics
@@ -11,33 +12,27 @@ public import Linglib.Studies.Allotey2021
 /-!
 # Ostrove (2026): Obligatorily Overt PRO in San Martín Peras Mixtec
 
-This file formalizes the analysis in [ostrove-2026] of obligatory control in San Martín Peras
-Mixtec, where the controlled subject must be an overt clitic pronoun. Embedded clauses come in
-three types, finite, tensed subjunctive, and untensed subjunctive, distinguished by their
-tense-aspect-mood morphology, by whether they admit a non-coreferential subject, and by
-restructuring (`clause_types_distinguished`); the untensed subjunctives, the C-subjunctives
-of [landau-2004], show the full obligatory-control signature and the other two types none of
-it (`smpmProfile`, `isObligatory_iff`, `landauToSMPM`). The controlled subject is a genuine
-pronoun rather than a copy: exempt anaphors reject quantified antecedents yet occur in
-untensed subjunctives under quantified controllers, which refutes movement into the
-controlled position (`smpm_refutes_movement`). The analysis is morphological: bound variables
-are minimal pronouns ([kratzer-2009], [safir-2014], [landau-2015]) exponed by contextual
-allomorphy, and the language lacks the null vocabulary item that yields PRO elsewhere, so the
-elsewhere pronoun surfaces (`smpmInventory`, `smpm_overt_pro`); English, Quiegolani Zapotec,
-Haitian, and SMPM then occupy four distinct cells of the syncretism typology (92)
-(`syncretism_typology`). SMPM instantiates obligatory pronominal copy control, the type in
-which overtness is unconditional, alongside Gã ([allotey-2021]) and Bùlì ([sulemana-2021])
-(`CopyControlType`, `smpm_controlled_must_be_clitic`, `ga_patterns_with_smpm`), and the
-tentative universal (54) that overt PRO entails the absence of pro-drop
-(`smpm_satisfies_universal`).
+Ostrove argues that San Martín Peras Mixtec (SMPM) has obligatory control whose controlled
+subject must be an overt clitic pronoun. Of its three embedded clause types, finite clauses,
+tensed subjunctives and untensed subjunctives, only the untensed subjunctive shows Landau's
+signature of obligatory control (`isObligatory_iff`). Exempt anaphors reject quantified
+antecedents yet occur in untensed subjunctives under quantified controllers, so the controlled
+subject is a pronoun rather than a copy left by movement (`smpm_refutes_movement`). The analysis
+is morphological: bound variables are minimal pronouns realized by vocabulary items, and SMPM
+lacks the null item that yields silent PRO elsewhere, so the elsewhere pronoun surfaces
+(`smpm_overt_pro`, `syncretism_typology`). A tentative universal closes the argument: overt PRO
+entails no pro-drop (`Universal54`).
 
 ## Implementation notes
 
-Clause properties, the pronoun series, and the exempt-anaphor facts are read off the Mixtec
-Fragment, and the control profile derives from the non-coreferential-subject property by the
-same map as the Gã study. The logophoric and scope-sensitive types of pronominal copy
-control, and the base-generation analysis of the control dependency itself, are described in
-prose only.
+The clause type of a complement is read off the fragment's verbs (`EmbeddedClauseType.ofFrame`):
+indicative complements are finite, and irrealis ones are untensed exactly when the verb's reading
+is controlled. The properties of (26) are the paper's summary (`shows`); deriving them from
+example rows, as `Studies/Allotey2021` does for Gã, awaits a transcription of the examples.
+Landau's calculus fits the three types only if the tensed subjunctive is `[+Agr]`
+(`landau_predicts_control_iff`), which the paper does not discuss. The pro-drop status is the
+paper's own 101A cell, as WALS does not sample the language. Example numbers follow the
+manuscript version of the article.
 
 ## References
 
@@ -46,6 +41,7 @@ prose only.
 * [landau-2015]
 * [kratzer-2009]
 * [safir-2014]
+* [cardinaletti-starke-1999]
 * [polinsky-potsdam-2006]
 * [allotey-2021]
 * [wals-2013]
@@ -65,37 +61,83 @@ open Mixtec.SMPM
 
 /-! ### The clause typology (26) -/
 
-/-- The three embedded clause types are pairwise distinguished by the properties of (26). -/
-theorem clause_types_distinguished (c c' : EmbeddedClauseType) (h : c ≠ c') :
-    clauseProperties c ≠ clauseProperties c' := by
-  revert h; cases c <;> cases c' <;> decide
+/-- The three embedded clause types of (26). -/
+inductive EmbeddedClauseType where
+  | finite
+  | tensedSubjunctive
+  | untensedSubjunctive
+  deriving DecidableEq, Repr, Fintype
 
-/-- The control signature of each clause type, from whether it admits a non-coreferential
-subject, by the derivation of `Landau2013.ofNoncoreferential`. -/
+/-- A verb's complement frame is finite in the indicative coding and otherwise a subjunctive,
+untensed exactly when the verb's reading of the frame is controlled (§3). -/
+def EmbeddedClauseType.ofFrame (v : Verb) (fr : ArgumentFrame) : EmbeddedClauseType :=
+  if Complement.Coding.indicative ∈ fr.codings then .finite
+  else if ((v.reading? fr).bind (·.control)).isSome then .untensedSubjunctive
+  else .tensedSubjunctive
+
+/-- The fragment's controlled complements are exactly its untensed subjunctives: no finite
+complement is controlled, not even that of *kònì* 'know', which also takes an untensed one. -/
+theorem control_iff_untensed : ∀ v ∈ verbs, ∀ fr ∈ v.frames,
+    ((v.reading? fr).bind (·.control)).isSome ↔
+      EmbeddedClauseType.ofFrame v fr = .untensedSubjunctive := by
+  decide
+
+/-- The properties of (26), with the independent tense of (10), (16) and (17), which time
+adverbs diagnose. -/
+inductive Property where
+  | unrestrictedTAM
+  | independentTense
+  | noncoreferentSubject
+  | restructuring
+  deriving DecidableEq, Repr, Fintype
+
+/-- The properties each clause type shows, the checkmarks of (26) and the tense column.
+*Kòni* 'want' is an exception to the restructuring column, letting a quantifier front out of
+its tensed subjunctive (fn. 8). -/
+def shows : EmbeddedClauseType → Finset Property
+  | .finite => {.unrestrictedTAM, .independentTense, .noncoreferentSubject}
+  | .tensedSubjunctive => {.independentTense, .noncoreferentSubject}
+  | .untensedSubjunctive => {.restructuring}
+
+/-- The properties of (26) distinguish the three clause types. -/
+theorem shows_injective : Function.Injective shows := by decide
+
+/-- The control signature of each clause type, from whether it admits a non-coreferent subject,
+by the derivation of `Landau2013.ofNoncoreferential`. -/
 def smpmProfile (c : EmbeddedClauseType) : Set Landau2013.Clause74 :=
-  Landau2013.ofNoncoreferential (clauseProperties c).noncoreferentialSubject
+  Landau2013.ofNoncoreferential (decide (.noncoreferentSubject ∈ shows c))
 
 /-- Only untensed subjunctives are obligatory-control clauses: sloppy readings only under
 ellipsis (33), exhaustive binding (37), and a local c-commanding antecedent (40), (44); the
 other two types allow strict readings, non-exhaustive binding, and non-local antecedents. -/
 theorem isObligatory_iff (c : EmbeddedClauseType) :
     smpmProfile c = Set.univ ↔ c = .untensedSubjunctive := by
-  cases c <;> simp [smpmProfile, clauseProperties]
+  cases c <;> simp [smpmProfile, shows]
+
+/-! ### Landau's scale -/
 
 /-- The clause types on the finiteness scale of [landau-2004]: untensed subjunctives are
 C-subjunctives and tensed ones F-subjunctives (§3). -/
 def landauToSMPM : ClauseClass → EmbeddedClauseType
   | .cSubjunctive => .untensedSubjunctive
   | .fSubjunctive => .tensedSubjunctive
-  | .finite => .finiteEmbedded
+  | .finite => .finite
 
-/-- The scale position of a clause type, from the Fragment's tense observables. -/
+/-- The scale position of a clause type, from its TAM and tense properties. -/
 def smpmToLandau (c : EmbeddedClauseType) : ClauseClass :=
-  .ofFiniteness (clauseProperties c).unrestrictedTAM (clauseProperties c).independentTense
+  .ofFiniteness (decide (.unrestrictedTAM ∈ shows c)) (decide (.independentTense ∈ shows c))
 
 /-- SMPM realizes every position of the scale, unlike Gã (`Allotey2021.ga_no_fSubjunctive`). -/
 theorem smpmToLandau_landauToSMPM (c : ClauseClass) : smpmToLandau (landauToSMPM c) = c := by
-  cases c <;> rfl
+  cases c <;> decide
+
+/-- Landau's calculus predicts the control profile of every clause type exactly when the clauses
+are `[+Agr]`: at `[−Agr]` it makes the tensed subjunctive, an F-subjunctive, obligatory control,
+yet its subject may be disjoint from the matrix subject (18b). -/
+theorem landau_predicts_control_iff (agr : Bool) :
+    (∀ c, smpmProfile c = Set.univ ↔ (smpmToLandau c).HasOC agr) ↔ agr = true := by
+  simp only [isObligatory_iff]
+  cases agr <;> decide
 
 /-! ### Against movement (§6) -/
 
@@ -149,15 +191,14 @@ theorem smpm_overt_pro :
     smpmInventory.controlForm = .pronoun ∧ englishInventory.controlForm = .null :=
   ⟨rfl, rfl⟩
 
-/-- The syncretism table (92), each row derived from its inventory: whether the reflexive, the
-controlled subject, and the bound variable share the referential pronoun's form. The four
-languages occupy four distinct cells. -/
+/-- The syncretism table (92), each row derived from its inventory: the contexts in which the
+bound form is the referential pronoun's. The four languages occupy four distinct cells. -/
 theorem syncretism_typology :
-    syncretismFromInventory englishInventory = ⟨"", false, false, true⟩ ∧
-      syncretismFromInventory quiegolaniInventory = ⟨"", true, true, true⟩ ∧
-      syncretismFromInventory haitianInventory = ⟨"", true, false, true⟩ ∧
-      syncretismFromInventory smpmInventory = ⟨"", false, true, true⟩ :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    englishInventory.syncretic = {.boundVariable, .free} ∧
+      quiegolaniInventory.syncretic = Finset.univ ∧
+      haitianInventory.syncretic = {.locallyBound, .boundVariable, .free} ∧
+      smpmInventory.syncretic = {.controlledSubject, .boundVariable, .free} := by
+  decide
 
 /-! ### Copy control (§5) -/
 
@@ -175,48 +216,65 @@ inductive CopyControlType where
   | obligatoryPronominal
   deriving DecidableEq
 
-/-- The type in which overtness is unconditional. -/
-def CopyControlType.UnconditionallyOvert : CopyControlType → Prop := (· = .obligatoryPronominal)
-
 /-- SMPM's type: the controlled subject is a pronoun rather than a full copy (57), it is overt
 outside attitude reports, and it cannot bear focus, so the scope-sensitive alternation with
 null PRO is unavailable. -/
 def smpmCopyControlType : CopyControlType := .obligatoryPronominal
 
-/-- The clitic requirement (65), (67), from the Fragment through the deficiency order: the
-controlled-subject class is strictly more deficient than every entry of the strong series. -/
-theorem smpm_controlled_must_be_clitic :
-    ∀ p ∈ strongSeries, ∀ s ∈ p.strength, controlledSubjectStrength < s :=
-  controlledSubject_is_most_deficient
+/-- A controlled subject is of the clitic class of [cardinaletti-starke-1999], since non-clitic
+forms, strengthened *mí =rà* among them, are ungrammatical there (67); the subject of a tensed
+subjunctive may be non-clitic (68). -/
+def controlledSubjectStrength : Pronoun.Strength := .clitic
 
-/-- Gã sits in SMPM's cell: the same controlled-subject realization, derived from the Gã
-inventory of [allotey-2021], and the same pro-drop status. -/
-theorem ga_patterns_with_smpm :
-    Allotey2021.gaInventory.controlForm = smpmInventory.controlForm ∧
-      Allotey2021.allowsProDrop = allowsProDrop :=
-  ⟨rfl, rfl⟩
+/-- The pronouns that can be a controlled subject are exactly the clitics, none of which bears
+focus (65), (66): the overt subject is not the focused pronoun of scope-sensitive copy
+control. -/
+theorem controlledSubject_iff_mem_clitics :
+    ∀ p ∈ pronouns, p.strength = some controlledSubjectStrength ↔ p ∈ clitics := by
+  decide
 
 /-! ### The implicational universal (54) -/
 
+/-- SMPM's cell of [wals-2013]'s 101A, which does not sample the language, is obligatory
+subject pronouns, expletive and impersonal ones included (3). -/
+def pronominalSubjects : Data.WALS.F101A.ExpressionOfPronominalSubjects :=
+  .obligatoryPronounsInSubjectPosition
+
+/-- A language with minimal-pronoun inventory `inv` and 101A cell `s` satisfies the
+implicational universal (54) when overt PRO implies obligatory subject pronouns, that is, no
+pro-drop. -/
+def Universal54 (inv : MinPronInventory PronForm)
+    (s : Data.WALS.F101A.ExpressionOfPronominalSubjects) : Prop :=
+  inv.controlForm ≠ .null → s = .obligatoryPronounsInSubjectPosition
+
 /-- SMPM instantiates the universal: overt PRO and no pro-drop. -/
-theorem smpm_satisfies_universal : smpmInventory.OvertPROUniversal allowsProDrop :=
+theorem smpm_universal54 : Universal54 smpmInventory pronominalSubjects := fun _ ↦ rfl
+
+/-- English satisfies it vacuously, whatever its 101A cell, since its PRO is null. -/
+theorem english_universal54 (s : Data.WALS.F101A.ExpressionOfPronominalSubjects) :
+    Universal54 englishInventory s :=
+  fun h ↦ absurd rfl h
+
+/-- Gã sits in SMPM's cell: the same controlled-subject realization, derived from the Gã
+inventory of [allotey-2021], and the same 101A cell. -/
+theorem ga_patterns_with_smpm :
+    Allotey2021.gaInventory.controlForm = smpmInventory.controlForm ∧
+      Allotey2021.pronominalSubjects = pronominalSubjects :=
+  ⟨rfl, rfl⟩
+
+/-- Gã instantiates the universal ([allotey-2021]). -/
+theorem ga_universal54 : Universal54 Allotey2021.gaInventory Allotey2021.pronominalSubjects :=
   fun _ ↦ rfl
 
-/-- English satisfies it vacuously, whatever its pro-drop status, since its PRO is null. -/
-theorem english_satisfies_universal (proDrop : Bool) :
-    englishInventory.OvertPROUniversal proDrop :=
-  MinPronInventory.overtPROUniversal_of_controlForm_eq_null rfl proDrop
-
-/-- Gã instantiates it: overt PRO and no pro-drop ([allotey-2021]). -/
-theorem ga_satisfies_universal :
-    Allotey2021.gaInventory.OvertPROUniversal Allotey2021.allowsProDrop :=
-  MinPronInventory.overtPROUniversal_of_not_proDrop _
-
-/-- The universal has bite for Gã: with overt PRO it fails the moment Gã counts as pro-drop, so
-its Gã instance rests on [allotey-2021]'s analysis of the subject markers as obligatory pronouns
-rather than the affixes of [wals-2013]'s 101A coding (`Allotey2021.wals_codes_affixes`). -/
-theorem ga_violates_universal_of_proDrop : ¬ Allotey2021.gaInventory.OvertPROUniversal true :=
-  fun h ↦ PronForm.noConfusion (Allotey2021.ga_overt_pro.symm.trans
-    (MinPronInventory.controlForm_eq_null_of_overtPROUniversal h))
+/-- The universal has bite for Gã: under [wals-2013]'s coding of its subject markers as affixes
+(`Allotey2021.wals_codes_affixes`) Gã violates it, so its instance rests on [allotey-2021]'s
+analysis of the markers as pronouns. -/
+theorem ga_violates_universal54_of_wals :
+    ∀ s ∈ (Data.WALS.F101A.lookupISO "gaa").map (·.value),
+      ¬ Universal54 Allotey2021.gaInventory s := by
+  intro s hs h
+  rw [Allotey2021.wals_codes_affixes, Option.mem_some_iff] at hs
+  subst hs
+  exact absurd (h (by rw [Allotey2021.ga_overt_pro]; decide)) (by decide)
 
 end Ostrove2026

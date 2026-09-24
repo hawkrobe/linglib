@@ -121,11 +121,6 @@ theorem wals_codes_affixes :
     (Data.WALS.F101A.lookupISO "gaa").map (·.value) = some .subjectAffixesOnVerb := by
   decide +kernel
 
-/-- Whether Gã allows a null pronominal subject: the paper's reading of its
-    cell, that a language whose subject pronouns are obligatory drops none
-    (§2.1). -/
-def allowsProDrop : Bool := decide (pronominalSubjects ≠ .obligatoryPronounsInSubjectPosition)
-
 /-! ### Complementizer selection (§5.5.1) -/
 
 /-- The three-way clause typology is the selection relation: each clause type's
