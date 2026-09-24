@@ -10,7 +10,7 @@ extension gap is nonempty ([kriz-2016]): true when the predicate holds
 throughout its specification points, false when it fails throughout, and
 undefined in between. Instantiations differ in the specification-point
 sort — atoms of a plurality (`Homogeneity.Plural`), closest antecedent
-worlds (`Conditional.Counterfactual.selectionalCounterfactual`), overlapping pluralities
+worlds (`Conditional.selectionalCounterfactual`), overlapping pluralities
 (`Homogeneity.Collective`), best modal worlds (`Studies/AghaJeretic2022`).
 Homogeneity removers (*all*, *necessarily*, *completely*) denote the
 Beaver-Krahmer assertion operator `Prop3.metaAssert`, which collapses the

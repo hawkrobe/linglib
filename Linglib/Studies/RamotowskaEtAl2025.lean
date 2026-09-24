@@ -54,7 +54,7 @@ of §5 and §6 are not restated.
 @[expose] public section
 
 
-open Conditional Conditional.Counterfactual
+open Conditional
 
 namespace RamotowskaEtAl2025
 
