@@ -1,475 +1,70 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Finset.Powerset
+public import Linglib.Semantics.Quantification.Defs
+public import Mathlib.Order.Minimal
 
 /-!
-# Witness-set quantification
+# Witness sets
 
-[cooper-2023] [barwise-cooper-1981]
-
-Witness-set semantics for natural-language quantifiers: a quantifier `q(P, Q)`
-is witnessed by a finite set `X` of `P`-individuals satisfying a
-quantifier-specific cardinality condition, together with evidence that each
-member of `X` (or alternatively each member outside `X`) bears `Q`. The
-architecture descends from [barwise-cooper-1981]'s notion of *witness
-sets*, formulated as type-theoretic predicates in [cooper-2023] Ch. 7.
-
-This file extracts the framework as reusable substrate. It is consumed by
-`Studies.Cooper2023` (Cooper's own deployment) and
-`Studies.LuckingGinzburg2022` (the Referential Transparency Theory of
-quantification, which uses witness sets as a comparator for its
-refset/compset/maxset framework).
+A witness set for a type ⟨1⟩ quantifier `Q` living on `A` is a subset of `A` that `Q` holds of
+([barwise-cooper-1981] §4.9). Witness sets characterise the monotone quantifiers: an increasing
+quantifier holds of `X` iff `X` contains one of its witness sets, and a decreasing quantifier holds
+of `X` iff `X ∩ A` is contained in one (C11). Living on `A` already confines the minimal sets in
+`Q` to `A`, so the minimal witness sets are exactly the minimal sets in the quantifier.
 
 ## Main definitions
 
-* `WitnessSet P X` — the base condition `X ⊆ ext(P)` shared by all
-  quantifier-specific witness types. Structural conservativity follows.
-* `IsExistW`, `IsNoW`, `IsEveryW`, `IsMostW`, `IsManyAbsW`, `IsManyPropW`,
-  `IsFewAbsW`, `IsFewPropW`, `IsAFewAbsW`, `IsAFewPropW`, `IsCompFewAbsW`,
-  `IsCompFewPropW` — quantifier-specific witness-set conditions.
-* `GeneralWC_Incr`, `GeneralWC_Decr` — general witness conditions
-  parameterised by an `isWS` predicate (monotone-increasing /
-  monotone-decreasing forms).
-* `ParticularWC_Exist`, `ParticularWC_No`, `ParticularWC_FewComp` —
-  particular (anaphora-exposing) witness conditions.
-* `AnaphoraRef`, `WitnessCondition`, `QuantName`, `anaphoraAvailable` —
-  per-quantifier anaphora-set predictions (REFSET / MAXSET / COMPSET),
-  derived from the witness conditions each quantifier uses.
-* `witnessGQ_exist`, `witnessGQ_every` — induced classical
-  generalised-quantifier denotations.
+* `Quantifier.NP.Witness Q A w` — `w ⊆ A` and `Q w`.
 
 ## Main statements
 
-* `witnessGQ_exist_conservative`, `witnessGQ_every_conservative` —
-  conservativity follows structurally from the `WitnessSet` subset
-  condition, rather than being stipulated as in [barwise-cooper-1981].
-* `particular_exist_iff_witnessGQ`, `universal_iff_witnessGQ`,
-  `particularWC_to_witnessGQ`, `particularWC_no_to_witnessGQ` — bridges
-  between particular witness conditions and the classical GQ denotations.
-* `particular_exist_implies_general`, `particular_no_implies_general` —
-  every particular condition implies the matching general one.
-* `comp_witness_card`, `few_comp_partition` — complement-witness-set
-  combinatorics underpinning COMPSET anaphora.
-* `generalWC_incr_mono`, `generalWC_decr_mono` — monotonicity of the
-  general witness conditions follows from their structural shape.
+* `Quantifier.NP.LivesOn.monotone_apply_iff`, `Quantifier.NP.LivesOn.antitone_apply_iff` —
+  C11 for increasing and decreasing quantifiers.
+* `Quantifier.NP.LivesOn.minimal_witness_iff` — the minimal witness sets of a quantifier living
+  on `A` are its minimal sets.
 
 ## Implementation notes
 
-* All witness-set predicates take a `DecidablePred` `P : E → Prop` rather
-  than a Type-valued `E → Type` predicate. This matches
-  [barwise-cooper-1981]'s set-theoretic formulation and lets Lean's
-  `decide` close finite cardinality goals. Type-valued witness conditions
-  (`ParticularWC_*`, `GeneralWC_*`) coexist for the proof-relevant
-  predicates used in compositional semantics.
-* Anaphora-availability (`anaphoraAvailable`) is derived from the
-  witness conditions [cooper-2023] §7.4 assigns to each quantifier
-  relation (`QuantName.conditions`) and the paths their witnesses
-  provide (`WitnessCondition.anaphora`); `Studies.Cooper2023` checks it
-  against the book's examples.
+Witness sets are predicates, like the arguments of an `NP`; a study over a finite domain states a
+`Finset` witness `X` as `(· ∈ X)`.
+
+## References
+
+* [J. Barwise, R. Cooper, *Generalized Quantifiers and Natural Language*
+  (1981)][barwise-cooper-1981]
 -/
 
 @[expose] public section
 
-namespace Quantifier.GQ
-
-
-open Quantifier.NP
-/-! ### Extension of a predicate as a `Finset` -/
-
-/-- The extension `[↓P]` of a predicate `P` as a `Finset`. -/
-def fullExtFinset {E : Type} [Fintype E] (P : E → Prop) [DecidablePred P] :
-    Finset E :=
-  Finset.univ.filter P
-
-/-! ### Witness-set predicates -/
-
-variable {E : Type}
-
-/-- Base witness-set condition ([barwise-cooper-1981]): a witness set
-for `P` is a subset of `[↓P]`. Every quantifier-specific witness type
-extends this condition. -/
-structure WitnessSet (P : E → Prop) (X : Finset E) : Prop where
-  subset : ∀ a ∈ X, P a
-
-/-- `existʷ(P)`: a singleton witness set. -/
-structure IsExistW (P : E → Prop) (X : Finset E) : Prop extends WitnessSet P X where
-  card_eq : X.card = 1
-
-/-- `exist_plʷ(P)`: a plural-some witness set, `|X| ≥ 2`. -/
-structure IsExistPlW (P : E → Prop) (X : Finset E) : Prop extends WitnessSet P X where
-  card_ge : X.card ≥ 2
-
-/-- `noʷ(P)`: the empty witness set. -/
-def IsNoW (_P : E → Prop) (X : Finset E) : Prop := X = ∅
-
-/-- `everyʷ(P)`: the full extension. -/
-def IsEveryW [Fintype E] (P : E → Prop) [DecidablePred P]
-    (X : Finset E) : Prop := X = fullExtFinset P
-
-/-- `mostʷ(P)`: proportional, `|X| / |[↓P]| ≥ θ_num / θ_denom`. Stated
-as cross-multiplication. -/
-structure IsMostW [Fintype E] (P : E → Prop) [DecidablePred P]
-    (θ_num θ_denom : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  extPos : (fullExtFinset P).card > 0
-  proportion : X.card * θ_denom ≥ θ_num * (fullExtFinset P).card
-
-/-- `many_aʷ(P)`: absolute threshold, `|X| ≥ θ`. -/
-structure IsManyAbsW (P : E → Prop) (θ : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  card_ge : X.card ≥ θ
-
-/-- `many_pʷ(P)`: proportional threshold. -/
-structure IsManyPropW [Fintype E] (P : E → Prop) [DecidablePred P]
-    (θ_num θ_denom : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  extPos : (fullExtFinset P).card > 0
-  proportion : X.card * θ_denom ≥ θ_num * (fullExtFinset P).card
-
-/-- `few_aʷ(P)`: absolute upper bound, `|X| ≤ θ`. -/
-structure IsFewAbsW (P : E → Prop) (θ : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  card_le : X.card ≤ θ
-
-/-- `few_pʷ(P)`: proportional upper bound. -/
-structure IsFewPropW [Fintype E] (P : E → Prop) [DecidablePred P]
-    (θ_num θ_denom : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  extPos : (fullExtFinset P).card > 0
-  proportion : X.card * θ_denom ≤ θ_num * (fullExtFinset P).card
-
-/-- `a_few_aʷ(P)`: absolute lower bound (same threshold as `few_a`,
-reversed direction). -/
-structure IsAFewAbsW (P : E → Prop) (θ : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  card_ge : X.card ≥ θ
-
-/-- `a_few_pʷ(P)`: proportional lower bound. -/
-structure IsAFewPropW [Fintype E] (P : E → Prop) [DecidablePred P]
-    (θ_num θ_denom : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  extPos : (fullExtFinset P).card > 0
-  proportion : X.card * θ_denom ≥ θ_num * (fullExtFinset P).card
-
-/-- Complement witness set for `few` (absolute):
-`X̄ : few̄ʷ_a(P) iff |X| ≥ |[↓P]| − θ`. Predicts COMPSET anaphora. -/
-structure IsCompFewAbsW [Fintype E] (P : E → Prop) [DecidablePred P]
-    (θ : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  card_ge : X.card ≥ (fullExtFinset P).card - θ
-
-/-- Complement witness set for `few` (proportional). -/
-structure IsCompFewPropW [Fintype E] (P : E → Prop) [DecidablePred P]
-    (θ_num θ_denom : ℕ) (X : Finset E) : Prop extends WitnessSet P X where
-  extPos : (fullExtFinset P).card > 0
-  proportion : X.card * θ_denom ≥ (θ_denom - θ_num) * (fullExtFinset P).card
-
-/-- `noʷ` has exactly one witness set: `∅`. -/
-theorem isNoW_iff_empty (P : E → Prop) (X : Finset E) :
-    IsNoW P X ↔ X = ∅ := Iff.rfl
-
-/-- `everyʷ` has exactly one witness set: the full extension. -/
-theorem isEveryW_iff [DecidableEq E] [Fintype E] (P : E → Prop) [DecidablePred P]
-    (X : Finset E) : IsEveryW P X ↔ X = fullExtFinset P := Iff.rfl
-
-/-! ### General and particular witness conditions -/
-
-/-- General witness condition for monotone-increasing quantifiers
-([cooper-2023] §7.4): a witness set `X` plus a per-element
-mapping into `Q`-evidence. -/
-structure GeneralWC_Incr (P Q : E → Type)
-    (isWS : Finset E → Prop) [DecidableEq E] where
-  X : Finset E
-  witnessOK : isWS X
-  f : (a : E) → a ∈ X → Q a
-
-/-- General witness condition for monotone-decreasing quantifiers: a
-witness set `X` plus universal containment of `P ∩ Q`-entities in `X`. -/
-structure GeneralWC_Decr (P Q : E → Type)
-    (isWS : Finset E → Prop) [DecidableEq E] where
-  X : Finset E
-  witnessOK : isWS X
-  f : (a : E) → Nonempty (P a) → Nonempty (Q a) → a ∈ X
-
-/-- Particular witness condition for `exist(P, Q)`: a specific
-individual `x` witnessing both `P` and `Q`. The `x`-field enables REFSET
-(singular) anaphora ("A dog barked. It heard an intruder.",
-[cooper-2023] §7.4.1 (103d)). -/
-structure ParticularWC_Exist (P Q : E → Type) where
-  x : E
-  pWit : P x
-  qWit : Q x
-
-/-- `exist(P, Q)` is witnessed iff the extensions of `P` and `Q` overlap. -/
-theorem nonempty_particularWC_exist_iff (P Q : E → Type) :
-    Nonempty (ParticularWC_Exist P Q) ↔ ∃ a, Nonempty (P a) ∧ Nonempty (Q a) :=
-  ⟨λ ⟨w⟩ => ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩, λ ⟨a, ⟨p⟩, ⟨q⟩⟩ => ⟨⟨a, p, q⟩⟩⟩
-
-/-- Particular witness condition for `no(P, Q)`: every `P`-entity
-precludes `Q`, the function into the negated type of [cooper-2023]
-§7.4 (70). Its witness set, `everyʷ(P)`, is what complement set
-anaphora picks up ("No dog barked. They were all busy gnawing on a
-bone.", (71)). -/
-structure ParticularWC_No (P Q : E → Type) where
-  f : (a : E) → P a → Q a → Empty
-
-/-- Particular witness condition for `few` with complement: a set of
-`P`-entities all lacking `Q`. Predicts COMPSET anaphora ("Few dogs
-barked. They did not hear the intruder.", [cooper-2023] §7.4.1 (113d)). -/
-structure ParticularWC_FewComp (P Q : E → Type) [DecidableEq E] where
-  X : Finset E
-  allP : ∀ a ∈ X, Nonempty (P a)
-  allNotQ : ∀ a ∈ X, IsEmpty (Q a)
-
-/-- The particular `exist` condition implies the general one with a
-singleton witness set. -/
-def particular_exist_implies_general [DecidableEq E]
-    (P Q : E → Type) (h : ParticularWC_Exist P Q)
-    (Pd : E → Prop) (hPd : ∀ a, Pd a ↔ Nonempty (P a)) :
-    GeneralWC_Incr P Q (IsExistW Pd) :=
-  ⟨{h.x},
-   { subset := λ a ha => by
-       rw [Finset.mem_singleton] at ha
-       rw [ha]; exact (hPd h.x).mpr ⟨h.pWit⟩
-     card_eq := Finset.card_singleton h.x },
-   λ a ha => by rw [Finset.mem_singleton] at ha; rw [ha]; exact h.qWit⟩
-
-/-- The particular `no` condition implies the general decreasing one
-with the empty witness set. -/
-def particular_no_implies_general [DecidableEq E]
-    (P Q : E → Type) (h : ParticularWC_No P Q)
-    (Pd : E → Prop) :
-    GeneralWC_Decr P Q (IsNoW Pd) :=
-  ⟨∅, rfl, λ a hP hQ => (h.f a hP.some hQ.some).elim⟩
-
-/-! ### Anaphora-set predictions
-
-Which anaphora sets a quantified noun phrase makes available follows
-from the paths a witness for its content provides ([cooper-2023] §7.4,
-§7.4.1): the content's `restr` field is the property's extension,
-MAXSET; the individual field of the particular existential condition
-and the set field of a general condition are objects with both
-properties, REFSET; and the set field of a condition whose function
-maps into negated types, the particular conditions for `no` and for
-`few`, is objects with the first property but not the second, COMPSET. -/
-
-/-- Anaphora-set kinds reachable from a quantified noun phrase, the
-REFSET, MAXSET and COMPSET of [moxey-sanford-1987]. -/
-inductive AnaphoraRef where
-  /-- REFSET: the witness individual or set ("A dog barked. It heard
-  an intruder.", [cooper-2023] §7.4.1 (103d)). -/
-  | refset
-  /-- MAXSET: the full extension ("Every dog barked. They had been
-  disturbed by the intruder.", [cooper-2023] §7.4 (73)). -/
-  | maxset
-  /-- COMPSET: the complement witness set ("Few dogs barked. They did
-  not hear the intruder.", [cooper-2023] §7.4.1 (113d)). -/
-  | compset
-  deriving DecidableEq, Repr
-
-/-- The witness conditions of [cooper-2023] §7.4 by the paths their
-witnesses provide. -/
-inductive WitnessCondition where
-  /-- (59a): a witness set and a function from it into the scope. -/
-  | generalIncr
-  /-- (59b): a witness set and a function into it from the objects with
-  both properties. -/
-  | generalDecr
-  /-- (63): an individual with both properties. -/
-  | particularExist
-  /-- (70): the set of all objects with the first property, each
-  precluding the scope. -/
-  | particularNo
-  /-- (85)–(86): a complement witness set, each member precluding the
-  scope. -/
-  | particularFewComp
-  deriving DecidableEq, Repr
-
-/-- The anaphora set a condition's witness provides beyond the content's
-`restr` field. -/
-def WitnessCondition.anaphora : WitnessCondition → AnaphoraRef
-  | .generalIncr | .generalDecr | .particularExist => .refset
-  | .particularNo | .particularFewComp => .compset
-
-/-- The English fragment's quantifier names. -/
-inductive QuantName where
-  | exist | existPl | no | every | most | many | few | aFew
-  deriving DecidableEq, Repr
-
-/-- The witness conditions [cooper-2023] §7.4 uses for each quantifier
-relation: the particular ones for `exist` (63) and `no` (70), the
-general one elsewhere, and for `few` the general (79)–(80) and the
-particular (85)–(86) as alternatives. -/
-def QuantName.conditions : QuantName → List WitnessCondition
-  | .exist => [.particularExist]
-  | .existPl | .every | .most | .many | .aFew => [.generalIncr]
-  | .no => [.particularNo]
-  | .few => [.generalDecr, .particularFewComp]
-
-/-- The anaphora sets a quantified noun phrase makes available: MAXSET
-from the content's `restr` field, and the set of each of its witness
-conditions. -/
-def anaphoraAvailable (q : QuantName) : List AnaphoraRef :=
-  .maxset :: q.conditions.map WitnessCondition.anaphora
-
-/-! ### Induced classical GQ denotations -/
-
-
-/-- The GQ induced by existential witness sets:
-`exist(A, B)` iff some element bears both `A` and `B`. -/
-def witnessGQ_exist : GQ E :=
-  λ A B => ∃ x : E, A x ∧ B x
-
-/-- The GQ induced by universal witness sets:
-`every(A, B)` iff every `A`-element also bears `B`. -/
-def witnessGQ_every : GQ E :=
-  λ A B => ∀ x : E, A x → B x
-
-/-- Conservativity of `witnessGQ_exist` follows structurally from the
-`WitnessSet` subset condition — not stipulated as in
-[barwise-cooper-1981]. -/
-theorem witnessGQ_exist_conservative :
-    Conservative (α := E) witnessGQ_exist := by
-  intro R S
-  simp only [witnessGQ_exist]
-  exact ⟨λ ⟨x, hR, hS⟩ => ⟨x, hR, hR, hS⟩,
-         λ ⟨x, hR, _, hS⟩ => ⟨x, hR, hS⟩⟩
-
-/-- Conservativity of `witnessGQ_every`. -/
-theorem witnessGQ_every_conservative :
-    Conservative (α := E) witnessGQ_every := by
-  intro R S
-  simp only [witnessGQ_every]
-  exact ⟨λ h x hR => ⟨hR, h x hR⟩,
-         λ h x hR => (h x hR).2⟩
-
-/-! ### Bridges between particular witness conditions and GQs -/
-
-/-- The particular existential condition equals the existential GQ
-denotation (both unfold to `∃ x, P x ∧ Q x`). -/
-theorem particular_exist_iff_witnessGQ (P Q : E → Prop) :
-    (∃ x, P x ∧ Q x) ↔ witnessGQ_exist P Q :=
-  Iff.rfl
-
-/-- The universal condition equals the universal GQ denotation. -/
-theorem universal_iff_witnessGQ (P Q : E → Prop) :
-    (∀ x, P x → Q x) ↔ witnessGQ_every P Q :=
-  Iff.rfl
-
-/-- `ParticularWC_Exist` constructs a witness for the existential GQ. -/
-theorem particularWC_to_witnessGQ [DecidableEq E]
-    {P Q : E → Type} (w : ParticularWC_Exist P Q)
-    (Pd Qd : E → Prop)
-    (hP : ∀ a, Pd a ↔ Nonempty (P a)) (hQ : ∀ a, Qd a ↔ Nonempty (Q a)) :
-    witnessGQ_exist Pd Qd := by
-  rw [← particular_exist_iff_witnessGQ]
-  exact ⟨w.x, (hP w.x).mpr ⟨w.pWit⟩, (hQ w.x).mpr ⟨w.qWit⟩⟩
-
-/-- `ParticularWC_No` constructs the universal GQ with negated scope. -/
-theorem particularWC_no_to_witnessGQ [DecidableEq E]
-    {P Q : E → Type} (w : ParticularWC_No P Q)
-    (Pd Qd : E → Prop)
-    (hP : ∀ a, Pd a ↔ Nonempty (P a)) (hQ : ∀ a, Qd a ↔ Nonempty (Q a)) :
-    witnessGQ_every Pd (λ x => ¬ Qd x) := by
-  rw [← universal_iff_witnessGQ]
-  intro x hPx hQx
-  have hP' := (hP x).mp hPx
-  have hQ' := (hQ x).mp hQx
-  exact (w.f x hP'.some hQ'.some).elim
-
-/-! ### Complement witness sets and the few / a_few contrast -/
-
-/-- The complement of a `few_a` witness set satisfies the complement
-cardinality condition. -/
-theorem comp_witness_card [DecidableEq E] [Fintype E]
-    (P : E → Prop) [DecidablePred P]
-    (X : Finset E) (_hSub : ∀ a ∈ X, P a) (θ : ℕ)
-    (_hFew : X.card ≤ θ)
-    (hXsub : X ⊆ fullExtFinset P) :
-    (fullExtFinset P \ X).card ≥ (fullExtFinset P).card - θ := by
-  have h := Finset.card_sdiff_of_subset hXsub
-  omega
-
-/-- A witness set and its complement partition the extension. -/
-theorem few_comp_partition [DecidableEq E] [Fintype E]
-    (P : E → Prop) [DecidablePred P]
-    (X : Finset E) (hX : X ⊆ fullExtFinset P) :
-    X ∪ (fullExtFinset P \ X) = fullExtFinset P :=
-  Finset.union_sdiff_of_subset hX
-
-/-! ### Monotonicity from witness-condition shape -/
-
-/-- Upward monotonicity of the increasing general witness condition. -/
-def generalWC_incr_mono [DecidableEq E] (P Q Q' : E → Type)
-    (isWS : Finset E → Prop)
-    (embed : ∀ a : E, Q a → Q' a)
-    (w : GeneralWC_Incr P Q isWS) : GeneralWC_Incr P Q' isWS :=
-  ⟨w.X, w.witnessOK, λ a ha => embed a (w.f a ha)⟩
-
-/-- Downward monotonicity of the decreasing general witness condition. -/
-def generalWC_decr_mono [DecidableEq E] (P Q Q' : E → Type)
-    (isWS : Finset E → Prop)
-    (embed : ∀ a : E, Q' a → Q a)
-    (w : GeneralWC_Decr P Q isWS) : GeneralWC_Decr P Q' isWS :=
-  ⟨w.X, w.witnessOK, λ a hP hQ' => w.f a hP ⟨embed a hQ'.some⟩⟩
-
-
-/-! ### Minimal witness sets
-
-[barwise-cooper-1981]'s witness sets of a quantifier viewed as a set of sets: a *minimal* witness
-is a witness none of whose proper subsets witnesses. A universal quantifier over `D` has exactly
-one, `D` itself; an existential over `D` has one per element, the singletons. -/
-
-section Minimal
-
-variable {E : Type*} [DecidableEq E]
-
-/-- `X` witnesses `M` and no proper subset of `X` does. -/
-def IsMinimalWitness (M : Finset E → Prop) (X : Finset E) : Prop :=
-  M X ∧ ∀ Y ⊂ X, ¬ M Y
-
-/-- The minimal witnesses of the universal quantifier over `D` are exactly `D`. -/
-theorem isMinimalWitness_subset_iff (D X : Finset E) :
-    IsMinimalWitness (D ⊆ ·) X ↔ X = D := by
-  constructor
-  · rintro ⟨hDX, hmin⟩
-    by_contra hne
-    exact hmin D (Finset.ssubset_iff_subset_ne.2 ⟨hDX, Ne.symm hne⟩) le_rfl
-  · rintro rfl
-    exact ⟨le_rfl, fun Y hY hDY => hY.not_subset hDY⟩
-
-/-- The minimal witnesses of the existential quantifier over `D` are exactly the singletons of
-its elements. -/
-theorem isMinimalWitness_inter_nonempty_iff (D X : Finset E) :
-    IsMinimalWitness (fun X => (D ∩ X).Nonempty) X ↔ ∃ w ∈ D, X = {w} := by
-  constructor
-  · rintro ⟨⟨w, hw⟩, hmin⟩
-    rw [Finset.mem_inter] at hw
-    refine ⟨w, hw.1, ?_⟩
-    by_contra hne
-    exact hmin {w}
-      (Finset.ssubset_iff_subset_ne.2 ⟨Finset.singleton_subset_iff.2 hw.2, Ne.symm hne⟩)
-      ⟨w, Finset.mem_inter.2 ⟨hw.1, Finset.mem_singleton_self w⟩⟩
-  · rintro ⟨w, hw, rfl⟩
-    refine ⟨⟨w, Finset.mem_inter.2 ⟨hw, Finset.mem_singleton_self w⟩⟩, fun Y hY => ?_⟩
-    rw [Finset.ssubset_singleton_iff.1 hY]
-    simp
-
-/-- The universal quantifier over `D` has a unique minimal witness. -/
-theorem existsUnique_isMinimalWitness_subset (D : Finset E) :
-    ∃! X, IsMinimalWitness (D ⊆ ·) X :=
-  ⟨D, (isMinimalWitness_subset_iff D D).2 rfl, fun X hX => (isMinimalWitness_subset_iff D X).1 hX⟩
-
-/-- The existential quantifier over a nonempty `D` has a minimal witness. -/
-theorem exists_isMinimalWitness_inter_nonempty {D : Finset E} (h : D.Nonempty) :
-    ∃ X, IsMinimalWitness (fun X => (D ∩ X).Nonempty) X :=
-  let ⟨w, hw⟩ := h
-  ⟨{w}, (isMinimalWitness_inter_nonempty_iff D _).2 ⟨w, hw, rfl⟩⟩
-
-/-- The existential quantifier over a `D` with two or more elements has no unique minimal
-witness. -/
-theorem not_existsUnique_isMinimalWitness_inter_nonempty {D : Finset E} (h : 1 < D.card) :
-    ¬ ∃! X, IsMinimalWitness (fun X => (D ∩ X).Nonempty) X := by
-  rintro ⟨X, _, huniq⟩
-  obtain ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.1 h
-  have ha' := huniq {a} ((isMinimalWitness_inter_nonempty_iff D _).2 ⟨a, ha, rfl⟩)
-  have hb' := huniq {b} ((isMinimalWitness_inter_nonempty_iff D _).2 ⟨b, hb, rfl⟩)
-  exact hab (Finset.singleton_injective (ha'.trans hb'.symm))
-
-end Minimal
-
-end Quantifier.GQ
+namespace Quantifier.NP
+
+variable {α : Type*} {Q : NP α} {A X w : α → Prop}
+
+/-- A witness set for a quantifier living on `A`: a subset of `A` in the quantifier
+([barwise-cooper-1981] §4.9). -/
+def Witness (Q : NP α) (A w : α → Prop) : Prop := (∀ x, w x → A x) ∧ Q w
+
+/-- C11(i): an increasing quantifier living on `A` holds of `X` iff some witness set is
+contained in `X`. -/
+theorem LivesOn.monotone_apply_iff (h : LivesOn Q A) (hm : Monotone Q) :
+    Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
+  ⟨fun hX ↦ ⟨fun x ↦ A x ∧ X x, ⟨fun _ hx ↦ hx.1, (h X).1 hX⟩, fun _ hx ↦ hx.2⟩,
+    fun ⟨_, hw, hwX⟩ ↦ hm hwX hw.2⟩
+
+/-- C11(ii): a decreasing quantifier living on `A` holds of `X` iff `X ∩ A` is contained in
+some witness set. -/
+theorem LivesOn.antitone_apply_iff (h : LivesOn Q A) (hm : Antitone Q) :
+    Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, X x ∧ A x → w x :=
+  ⟨fun hX ↦ ⟨fun x ↦ A x ∧ X x, ⟨fun _ hx ↦ hx.1, (h X).1 hX⟩, fun _ hx ↦ ⟨hx.2, hx.1⟩⟩,
+    fun ⟨_, hw, hXw⟩ ↦ (h X).2 (hm (fun x hx ↦ hXw x ⟨hx.2, hx.1⟩) hw.2)⟩
+
+/-- The minimal witness sets of a quantifier living on `A` are its minimal sets: a minimal set
+in `Q` lies inside `A`, since `Q` also holds of its intersection with `A`. -/
+theorem LivesOn.minimal_witness_iff (h : LivesOn Q A) :
+    Minimal (Witness Q A) w ↔ Minimal Q w :=
+  ⟨fun hm ↦ ⟨hm.1.2, fun _ hy hyw ↦ hm.2 ⟨fun x hx ↦ hm.1.1 x (hyw x hx), hy⟩ hyw⟩,
+    fun hm ↦
+      have hle : w ≤ fun x ↦ A x ∧ w x := hm.2 ((h w).1 hm.1) fun _ hx ↦ hx.2
+      ⟨⟨fun x hx ↦ (hle x hx).1, hm.1⟩, fun _ hy hyw ↦ hm.2 hy.2 hyw⟩⟩
+
+end Quantifier.NP

@@ -21,10 +21,12 @@ whether the bipartition with an empty reference set survives the sieve, is deriv
 denotation and gates anaphora to the complement set (`deriveQPersp`). The paper's minimal
 pair: *few* and *a few* share their condition, but *a few* carries a reference individual,
 so its denotation lacks the empty-reference bipartition and the complement set is
-inaccessible (`few_dog_qpersp`, `aFew_dog_qpersp`). Reference sets are witness sets in the
-sense of [barwise-cooper-1981] (`bp_refset_is_witnessSet`), and the denotations over a noun
-with `k` instances number `2 ^ (k + 1) - 1`, fewer than the conservative generalized
-quantifiers of [van-benthem-1984] (`rttQuantifierCount_lt_conservative`).
+inaccessible (`few_dog_qpersp`, `aFew_dog_qpersp`). Read as a generalized quantifier
+(`qcondToGQ`), a condition lives on the head noun, and the reference set of every surviving
+bipartition is a witness set of that quantifier in the sense of [barwise-cooper-1981]
+(`bp_refset_is_witness`). The denotations over a noun with `k`
+instances number `2 ^ (k + 1) - 1`, fewer than the conservative generalized quantifiers of
+[van-benthem-1984] (`rttQuantifierCount_lt_conservative`).
 
 ## Implementation notes
 
@@ -64,16 +66,19 @@ def BP.maxset (b : BP α) : Finset α := b.refset ∪ b.compset
 
 /-- All ordered bipartitions of a set: each subset with its complement. -/
 def allBP (S : Finset α) : Finset (BP α) :=
-  S.powerset.map ⟨λ R => ⟨R, S \ R⟩, λ a b h => by simp [BP.mk.injEq] at h; exact h.1⟩
+  S.powerset.map ⟨fun R ↦ ⟨R, S \ R⟩, fun a b h ↦ by simp [BP.mk.injEq] at h; exact h.1⟩
 
+/-- A set of `k` elements has `2 ^ k` ordered bipartitions. -/
 theorem allBP_card (S : Finset α) : (allBP S).card = 2 ^ S.card := by
   simp [allBP, Finset.card_map, Finset.card_powerset]
 
+/-- The two sets of a bipartition of `S` make up `S`. -/
 theorem allBP_maxset (S : Finset α) (b : BP α) (h : b ∈ allBP S) : b.maxset = S := by
   simp [allBP, Finset.mem_map] at h
   obtain ⟨R, hR, rfl⟩ := h
   exact Finset.union_sdiff_of_subset hR
 
+/-- The reference set of a bipartition of `S` lies within `S`. -/
 theorem allBP_refset_sub (S : Finset α) (b : BP α) (h : b ∈ allBP S) : b.refset ⊆ S := by
   simp [allBP, Finset.mem_map] at h
   obtain ⟨R, hR, rfl⟩ := h
@@ -87,32 +92,32 @@ abbrev QCond := ℕ → ℕ → Prop
 
 /-- The sieve: the bipartitions meeting the condition. -/
 def sieve (qc : QCond) [DecidableRel qc] (bps : Finset (BP α)) : Finset (BP α) :=
-  bps.filter λ b => qc b.refset.card b.compset.card
+  bps.filter fun b ↦ qc b.refset.card b.compset.card
 
 /-- *every*: an empty complement set. -/
-def every_qcond : QCond := λ _ c => c = 0
+def every_qcond : QCond := fun _ c ↦ c = 0
 
 /-- *no*: an empty reference set. -/
-def no_qcond : QCond := λ r _ => r = 0
+def no_qcond : QCond := fun r _ ↦ r = 0
 
 /-- *some*: a non-empty reference set. -/
-def some_qcond : QCond := λ r _ => 1 ≤ r
+def some_qcond : QCond := fun r _ ↦ 1 ≤ r
 
 /-- *most*: the reference set outnumbers the complement set. -/
-def most_qcond : QCond := λ r c => c < r
+def most_qcond : QCond := fun r c ↦ c < r
 
 /-- *few*: the complement set outnumbers the reference set. -/
-def few_qcond : QCond := λ r c => r < c
+def few_qcond : QCond := fun r c ↦ r < c
 
 /-- *many* (the paper's (39)): the reference set exceeds a contextual standard. -/
-def many_qcond (θ : ℕ) : QCond := λ r _ => θ < r
+def many_qcond (θ : ℕ) : QCond := fun r _ ↦ θ < r
 
-instance : DecidableRel every_qcond := λ _ c => inferInstanceAs (Decidable (c = 0))
-instance : DecidableRel no_qcond := λ r _ => inferInstanceAs (Decidable (r = 0))
-instance : DecidableRel some_qcond := λ r _ => inferInstanceAs (Decidable (1 ≤ r))
-instance : DecidableRel most_qcond := λ r c => inferInstanceAs (Decidable (c < r))
-instance : DecidableRel few_qcond := λ r c => inferInstanceAs (Decidable (r < c))
-instance (θ : ℕ) : DecidableRel (many_qcond θ) := λ r _ => inferInstanceAs (Decidable (θ < r))
+instance : DecidableRel every_qcond := fun _ c ↦ inferInstanceAs (Decidable (c = 0))
+instance : DecidableRel no_qcond := fun r _ ↦ inferInstanceAs (Decidable (r = 0))
+instance : DecidableRel some_qcond := fun r _ ↦ inferInstanceAs (Decidable (1 ≤ r))
+instance : DecidableRel most_qcond := fun r c ↦ inferInstanceAs (Decidable (c < r))
+instance : DecidableRel few_qcond := fun r c ↦ inferInstanceAs (Decidable (r < c))
+instance (θ : ℕ) : DecidableRel (many_qcond θ) := fun r _ ↦ inferInstanceAs (Decidable (θ < r))
 
 /-! ### Quantifier perspective -/
 
@@ -130,7 +135,7 @@ def deriveQPersp (bps : Finset (BP α)) : QPerspective :=
 
 /-- The reference individual of *a few* (the paper's (46)) requires a non-empty reference
 set. -/
-def refindFilter (bps : Finset (BP α)) : Finset (BP α) := bps.filter λ b => b.refset.Nonempty
+def refindFilter (bps : Finset (BP α)) : Finset (BP α) := bps.filter fun b ↦ b.refset.Nonempty
 
 /-! ### The dogs -/
 
@@ -142,6 +147,7 @@ inductive Dog
 /-- The extension of *dog*. -/
 def dogs : Finset Dog := Finset.univ
 
+/-- Three dogs have eight ordered bipartitions. -/
 theorem dog_bipartitions_card : (allBP dogs).card = 8 := by decide
 
 /-- *every*: the sole surviving bipartition has all dogs in the reference set. -/
@@ -151,9 +157,11 @@ theorem every_dog_qpersp :
 /-- *no*: the sole surviving bipartition has an empty reference set. -/
 theorem no_dog_qpersp : deriveQPersp (sieve no_qcond (allBP dogs)) = .refsetEmpty := by decide
 
+/-- *some*: every surviving bipartition has a non-empty reference set. -/
 theorem some_dog_qpersp :
     deriveQPersp (sieve some_qcond (allBP dogs)) = .refsetNonempty := by decide
 
+/-- *most*: every surviving bipartition has a non-empty reference set. -/
 theorem most_dog_qpersp :
     deriveQPersp (sieve most_qcond (allBP dogs)) = .refsetNonempty := by decide
 
@@ -170,26 +178,31 @@ theorem aFew_dog_qpersp :
 
 /-! ### Witness sets and conservativity -/
 
-/-- Every reference set is a witness set of the head noun. -/
-theorem bp_refset_is_witnessSet [Fintype α] (P : α → Prop) [DecidablePred P] (b : BP α)
-    (h : b ∈ allBP (fullExtFinset P)) : WitnessSet P b.refset :=
-  ⟨λ _ ha => (Finset.mem_filter.mp (allBP_refset_sub _ b h ha)).2⟩
-
 /-- The generalized quantifier of a condition: the verb phrase holds throughout the
 reference set of some surviving bipartition. -/
-def qcondToGQ (qc : QCond) [DecidableRel qc] [Fintype α] (N : α → Prop) [DecidablePred N]
-    (Q : α → Prop) : Prop :=
-  ∃ b ∈ allBP (Finset.univ.filter N), qc b.refset.card b.compset.card ∧ ∀ a ∈ b.refset, Q a
+def qcondToGQ (qc : QCond) [DecidableRel qc] [Fintype α] (N : α → Prop) [DecidablePred N] :
+    NP α :=
+  fun Q ↦ ∃ b ∈ sieve qc (allBP {x | N x}), ∀ a ∈ b.refset, Q a
 
-/-- Conservativity holds by construction: the reference set lies within the restrictor. -/
-theorem qcond_conservative [Fintype α] (qc : QCond) [DecidableRel qc] (N Q : α → Prop)
-    [DecidablePred N] : qcondToGQ qc N Q ↔ qcondToGQ qc N λ x => N x ∧ Q x := by
-  constructor
-  · rintro ⟨b, hmem, hqc, hQ⟩
-    exact ⟨b, hmem, hqc, λ a ha =>
-      ⟨(Finset.mem_filter.mp (allBP_refset_sub _ b hmem ha)).2, hQ a ha⟩⟩
-  · rintro ⟨b, hmem, hqc, hNQ⟩
-    exact ⟨b, hmem, hqc, λ a ha => (hNQ a ha).2⟩
+/-- The reference set of a surviving bipartition lies within the head noun. -/
+theorem refset_sub_of_mem_sieve [Fintype α] {qc : QCond} [DecidableRel qc] {N : α → Prop}
+    [DecidablePred N] {b : BP α} (h : b ∈ sieve qc (allBP {x | N x})) {a : α}
+    (ha : a ∈ b.refset) : N a :=
+  (Finset.mem_filter.1 (allBP_refset_sub _ b (Finset.mem_filter.1 h).1 ha)).2
+
+/-- Conservativity holds by construction: the quantifier lives on the head noun, since the
+reference set lies within it. -/
+theorem qcond_conservative [Fintype α] (qc : QCond) [DecidableRel qc] (N : α → Prop)
+    [DecidablePred N] : LivesOn (qcondToGQ qc N) N := fun _ ↦
+  ⟨fun ⟨b, hb, hQ⟩ ↦ ⟨b, hb, fun _ ha ↦ ⟨refset_sub_of_mem_sieve hb ha, hQ _ ha⟩⟩,
+    fun ⟨b, hb, hNQ⟩ ↦ ⟨b, hb, fun _ ha ↦ (hNQ _ ha).2⟩⟩
+
+/-- The reference set of a surviving bipartition is a witness set of the quantifier: it lies
+within the head noun, and the quantifier holds of it, the bipartition itself verifying it. -/
+theorem bp_refset_is_witness [Fintype α] (qc : QCond) [DecidableRel qc] (N : α → Prop)
+    [DecidablePred N] {b : BP α} (h : b ∈ sieve qc (allBP {x | N x})) :
+    Witness (qcondToGQ qc N) N (· ∈ b.refset) :=
+  ⟨fun _ ↦ refset_sub_of_mem_sieve h, b, h, fun _ ↦ id⟩
 
 /-- The number of denotations over a noun with `k` instances (§4.8): the non-empty sets of
 its `2 ^ k` bipartitions. -/
@@ -226,7 +239,7 @@ theorem every_truth_conditions (S : Finset α) (VP : α → Prop) :
     by_contra h
     exact absurd (hcomp ▸ Finset.mem_sdiff.mpr ⟨haS, h⟩) (by simp)
   · intro hall
-    refine ⟨⟨S, S \ S⟩, Finset.mem_filter.mpr ⟨?_, ?_⟩, hall, λ _ ha => ?_⟩
+    refine ⟨⟨S, S \ S⟩, Finset.mem_filter.mpr ⟨?_, ?_⟩, hall, fun _ ha ↦ ?_⟩
     · rw [allBP, Finset.mem_map]
       exact ⟨S, Finset.mem_powerset.mpr (Finset.Subset.refl S), rfl⟩
     · simp [every_qcond]

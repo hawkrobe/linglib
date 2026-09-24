@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Semantics.Quantification.Lindstrom
+public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Semantics.Composition.Reduction
 public import Linglib.Data.Examples.BarwiseCooper1981
@@ -39,7 +40,6 @@ their own §4.8 discussion of *many* and *few* already marks as unstable. Partia
 
 * `livesOn_apply_iff`, `there_of_positiveStrong`, `Definite.positiveStrong` — C1–C3.
 * `strong_trivial_of_intersective` — C6; `scopeUp_of_restrictorUp_symmetric` — C7.
-* `monotone_apply_iff`, `antitone_apply_iff` — C11 witness sets.
 * `exists_and_of_scopeUp_dualQ` — C10; `most_selfDual_of_odd_count`.
 * `more_than_half_not_definable` (C12), `more_than_half_not_Q_definable` (C13),
   `no_tree_means_most`.
@@ -88,24 +88,6 @@ theorem principalFilter_livesOn_iff : LivesOn (principalFilter B) A ↔ ∀ x, B
 theorem sieve_principalFilter (hB : ∃ x, B x) : Sieve (principalFilter B) :=
   ⟨⟨λ _ => True, λ _ _ => trivial⟩,
     ⟨λ _ => False, λ h => let ⟨x, hx⟩ := hB; h x hx⟩⟩
-
-/-- A witness set for a quantifier living on `A`: a subset of `A` in the quantifier
-(§4.9). -/
-def Witness (Q : NP α) (A w : α → Prop) : Prop := (∀ x, w x → A x) ∧ Q w
-
-/-- C11(i): an increasing quantifier living on `A` holds of `X` iff some witness set is
-contained in `X`. -/
-theorem monotone_apply_iff (h : LivesOn Q A) (hm : Monotone Q) :
-    Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
-  ⟨λ hX => ⟨λ x => A x ∧ X x, ⟨λ _ hx => hx.1, (h X).1 hX⟩, λ _ hx => hx.2⟩,
-    λ ⟨_, hw, hwX⟩ => hm hwX hw.2⟩
-
-/-- C11(ii): a decreasing quantifier living on `A` holds of `X` iff `X ∩ A` is contained in
-some witness set. -/
-theorem antitone_apply_iff (h : LivesOn Q A) (hm : Antitone Q) :
-    Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, X x ∧ A x → w x :=
-  ⟨λ hX => ⟨λ x => A x ∧ X x, ⟨λ _ hx => hx.1, (h X).1 hX⟩, λ _ hx => ⟨hx.2, hx.1⟩⟩,
-    λ ⟨_, hw, hXw⟩ => (h X).2 (hm (λ x hx => hXw x ⟨hx.2, hx.1⟩) hw.2)⟩
 
 /-- §4.10: a mixed conjunction of an increasing and a decreasing quantifier — *John and no
 woman* — is neither increasing nor decreasing. -/
