@@ -9,10 +9,10 @@ public import Linglib.Studies.BarLevFox2020
 This file formalizes the semantic predictions that [zani-ciardelli-sanfelici-2026] tests in
 an acquisition study of conditionals with disjunctive antecedents, *if A or B, C*. The three
 readings of Table 2 are truth conditions over a similarity model: the simplification reading
-SDA is the conjunction of the two simplifications, the substrate's `Distributive`; the
+SDA is the conjunction of the two simplifications, the substrate's `distributiveImp`; the
 disjunctive conditional reading `DCR` is their disjunction; and the asymmetric reading AR is
 the simplification of the more realistic disjunct. Under [lewis-1973]'s minimal-change
-semantics, the substrate's `would`, the DAC quantifies over the closest worlds of the
+semantics, the substrate's `disjunctiveImp`, the DAC quantifies over the closest worlds of the
 disjunction, and §2's case analysis follows: when neither disjunct is more realistic than the
 other the DAC is equivalent to SDA (`would_iff_distributive_of_equallyRealistic`), and when
 one is more realistic it is equivalent to that disjunct's simplification
@@ -68,8 +68,8 @@ variable {W : Type*} (ord : W → Preorder W) (A B : Set W) (w : W)
 
 /-! ### Realism (§2) -/
 
-/-- `A` is more realistic than `B` at `w`: `A` has closest worlds, and each of them is strictly
-closer to `w` than every closest `B`-world. -/
+/-- `A` is more realistic than `B` at `w` when `A` has closest worlds and each of them is
+strictly closer to `w` than every closest `B`-world. -/
 def MoreRealistic : Prop :=
   ((ord w).minimals A).Nonempty ∧ ∀ a ∈ (ord w).minimals A, ∀ b ∈ (ord w).minimals B,
     (ord w).lt a b
@@ -81,8 +81,8 @@ private theorem exists_mem_minimals_le {S : Set W} {x : W} (hx : x ∈ S) :
     ∃ b ∈ (ord w).minimals S, (ord w).le b x :=
   Preorder.exists_le_mem_minimals (let := ord w; wellFounded_lt) hx
 
-/-- Case 2 of §2: when `A` is more realistic than `B`, the closest worlds of the disjunction are
-the closest `A`-worlds. -/
+/-- In case 2 of §2, when `A` is more realistic than `B`, the closest worlds of the disjunction
+are the closest `A`-worlds. -/
 theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
     (h : MoreRealistic ord A B w) : (ord w).minimals (A ∪ B) = (ord w).minimals A := by
   let := ord w
@@ -98,8 +98,8 @@ theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
     · obtain ⟨b, hb, hbu⟩ := exists_mem_minimals_le hu
       exact (hAB x ((Preorder.mem_minimals_iff_forall_le (htot w)).2 ⟨hx, hle⟩) b hb).le.trans hbu
 
-/-- Case 1 of §2: when neither disjunct is more realistic than the other, the closest worlds of
-the disjunction are the closest worlds of the disjuncts together. -/
+/-- In case 1 of §2, when neither disjunct is more realistic than the other, the closest worlds
+of the disjunction are the closest worlds of the disjuncts together. -/
 theorem minimals_union_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
     (hAB : ¬ MoreRealistic ord A B w) (hBA : ¬ MoreRealistic ord B A w) :
     (ord w).minimals (A ∪ B) = (ord w).minimals A ∪ (ord w).minimals B := by
@@ -128,15 +128,8 @@ variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (
 
 /-! ### The three readings (Table 2) -/
 
-/-- The disjunctive conditional reading: some simplification holds. -/
+/-- The disjunctive conditional reading holds when some simplification holds. -/
 def DCR : Prop := w ∈ closestImp ord ↑A C ∨ w ∈ closestImp ord ↑B C
-
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
-/-- Lewis's truth condition for the DAC quantifies over the closest worlds of the union of the
-disjuncts. -/
-theorem would_pair : would ord [A, B] C w ↔ (ord w).minimals (↑A ∪ ↑B) ⊆ C := by
-  simp only [would, disjunctiveClosure, List.foldr, Finset.union_empty, Finset.coe_union,
-    mem_closestImp]
 
 variable {ord A B w}
 
@@ -144,55 +137,48 @@ omit [∀ w, DecidableRel (ord w).le] in
 /-- When neither disjunct is more realistic, Lewis's DAC is equivalent to SDA. -/
 theorem would_iff_distributive_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
     (hAB : ¬ MoreRealistic ord ↑A ↑B w) (hBA : ¬ MoreRealistic ord ↑B ↑A w) :
-    would ord [A, B] C w ↔ Distributive ord [A, B] C w := by
-  rw [would_pair, minimals_union_of_equallyRealistic htot hAB hBA, Set.union_subset_iff]
-  simp only [Distributive, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
-    forall_eq, mem_closestImp]
+    w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ distributiveImp ord {A, B} C := by
+  rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_equallyRealistic htot hAB hBA,
+    Set.union_subset_iff, mem_distributiveImp_pair, mem_closestImp, mem_closestImp]
 
 omit [∀ w, DecidableRel (ord w).le] in
 /-- When `A` is more realistic than `B`, Lewis's DAC is equivalent to the simplification with
 the more realistic disjunct: the asymmetric reading. -/
 theorem would_iff_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
-    (h : MoreRealistic ord ↑A ↑B w) : would ord [A, B] C w ↔ w ∈ closestImp ord ↑A C := by
-  rw [would_pair, minimals_union_of_moreRealistic htot h, mem_closestImp]
+    (h : MoreRealistic ord ↑A ↑B w) :
+    w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C := by
+  rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_moreRealistic htot h, mem_closestImp]
 
 omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- SDA entails Lewis's DAC, and so the asymmetric reading. -/
-theorem would_of_distributive (h : Distributive ord [A, B] C w) : would ord [A, B] C w :=
-  (would_pair ord A B C w).2 (mem_closestImp_union (h A (by simp)) (h B (by simp)))
+theorem would_of_distributive (h : w ∈ distributiveImp ord {A, B} C) :
+    w ∈ disjunctiveImp ord {A, B} C :=
+  mem_disjunctiveImp_pair_of_mem_distributiveImp h
 
 omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- Lewis's DAC, and so the asymmetric reading, entails DCR under a total ordering. -/
-theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : would ord [A, B] C w) :
-    DCR ord A B C w :=
-  mem_closestImp_or_of_mem_union htot ((would_pair ord A B C w).1 h)
+theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : w ∈ disjunctiveImp ord {A, B} C) :
+    DCR ord A B C w := by
+  rw [disjunctiveImp_pair] at h
+  exact mem_closestImp_or_of_mem_union htot h
 
 /-! ### Homogeneity and exhaustification (§2, §3) -/
 
 /-- On the homogeneity accounts, DCR is the existential resolution of the homogeneous
-quantification over the disjuncts: the DAC is not false. SDA is its universal resolution,
-`distributive_iff_homogeneity_eq_true`. -/
+quantification over the disjuncts, on which the DAC is not false. SDA is its universal
+resolution, `homogeneousImp_eq_true_iff`. -/
 theorem dcr_iff_homogeneity_ne_false [DecidablePred (· ∈ C)] :
-    DCR ord A B C w ↔ homogeneity ord [A, B] C w ≠ .false := by
-  rw [Ne, homogeneity_eq_false_iff, DCR]
-  constructor
-  · rintro h ⟨-, hall⟩
-    exact h.elim (hall A (by simp)) (hall B (by simp))
-  · intro h
-    by_contra hn
-    rw [not_or] at hn
-    refine h ⟨by simp, fun S hS ↦ ?_⟩
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at hS
-    rcases hS with rfl | rfl
-    exacts [hn.1, hn.2]
+    DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ .false := by
+  simp only [DCR, Ne, homogeneousImp_eq_false_iff, Finset.insert_nonempty, true_and,
+    Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, not_and_or, not_not]
 
 open BarLevFox2020 in
 omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- The literal meaning of the DAC on the exhaustification account is Lewis's. -/
-theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = {v | would ord [A, B] C v} :=
-  Set.ext fun v ↦ (would_pair ord A B C v).symm
+theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = disjunctiveImp ord {A, B} C :=
+  (disjunctiveImp_pair A B).symm
 
-omit [DecidableEq W] [Fintype W] [∀ w, DecidableRel (ord w).le] in
+omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 open BarLevFox2020 in
 /-- Exhaustification with innocent inclusion strengthens the literal DAC to SDA, under the
 model conditions of [bar-lev-fox-2020]'s derivation. -/
@@ -204,12 +190,9 @@ theorem distributive_of_exh
       v ∉ closestImp ord ↑A C ∪ closestImp ord (↑A ∩ ↑B) C)
     (h : ∃ v ∈ closestImp ord ↑A C ∩ closestImp ord ↑B C, v ∉ closestImp ord (↑A ∩ ↑B) C)
     (hw : w ∈ Exhaustification.exhIEII (sdaAlts ord ↑A ↑B C) (closestImp ord (↑A ∪ ↑B) C)) :
-    Distributive ord [A, B] C w := by
+    w ∈ distributiveImp ord {A, B} C := by
   rw [sda htot h₁ h₂ h] at hw
-  intro S hS
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hS
-  rcases hS with rfl | rfl
-  exacts [hw.1.1, hw.1.2]
+  exact mem_distributiveImp_pair.2 ⟨hw.1.1, hw.1.2⟩
 
 /-! ### The closeness evaluation item (§4) -/
 
@@ -259,13 +242,13 @@ def Competitor.speed : Competitor → ℕ
 winner. -/
 abbrev nonEqual (_ : Competitor) : Preorder Competitor := Preorder.lift Competitor.speed
 
-/-- Figure 3(b), the equally realistic condition: the squirrel and the tortoise tie. -/
+/-- In Figure 3(b), the equally realistic condition, the squirrel and the tortoise tie. -/
 abbrev equal (_ : Competitor) : Preorder Competitor := Preorder.lift fun v ↦ min v.speed 1
 
 theorem nonEqual_total (w₀ : Competitor) : Std.Total (nonEqual w₀).le :=
   Preorder.total_lift _
 
-/-- A target item (9): *if `first` or `second` wins, it will get `prize`*. -/
+/-- A target item (9) reads *if `first` or `second` wins, it will get `prize`*. -/
 structure Item where
   first : Competitor
   second : Competitor
@@ -278,7 +261,7 @@ def items : List Item :=
 
 /-- The SDA verdict on an item in the actual world, where the hare won. -/
 def Item.sda (it : Item) : Prop :=
-  Distributive nonEqual [{it.first}, {it.second}] {v | v.prize = it.prize} .hare
+  .hare ∈ distributiveImp nonEqual {{it.first}, {it.second}} {v | v.prize = it.prize}
 
 /-- The DCR verdict on an item. -/
 def Item.dcr (it : Item) : Prop :=
@@ -287,28 +270,28 @@ def Item.dcr (it : Item) : Prop :=
 /-- Lewis's verdict on an item in the non-equally realistic condition: the asymmetric
 reading. -/
 def Item.ar (it : Item) : Prop :=
-  would nonEqual [{it.first}, {it.second}] {v | v.prize = it.prize} .hare
+  .hare ∈ disjunctiveImp nonEqual {{it.first}, {it.second}} {v | v.prize = it.prize}
 
-instance (it : Item) : Decidable it.sda := inferInstanceAs (Decidable (Distributive _ _ _ _))
+instance (it : Item) : Decidable it.sda := inferInstanceAs (Decidable (_ ∈ distributiveImp _ _ _))
 instance (it : Item) : Decidable it.dcr := inferInstanceAs (Decidable (_ ∨ _))
-instance (it : Item) : Decidable it.ar := inferInstanceAs (Decidable (would _ _ _ _))
+instance (it : Item) : Decidable it.ar := inferInstanceAs (Decidable (_ ∈ disjunctiveImp _ _ _))
 
-/-- Table 3, SDA: every target item is false, since one simplification always fails. -/
+/-- On SDA in Table 3 every target item is false, since one simplification always fails. -/
 theorem table3_sda : items.map (fun it ↦ decide it.sda) = [false, false, false, false] := by
   decide
 
-/-- Table 3, DCR: every target item is true, since one simplification always holds. -/
+/-- On DCR in Table 3 every target item is true, since one simplification always holds. -/
 theorem table3_dcr : items.map (fun it ↦ decide it.dcr) = [true, true, true, true] := by
   decide
 
-/-- Table 3, AR: the items naming the squirrel's prize are true and the others false. -/
+/-- On AR in Table 3 the items naming the squirrel's prize are true and the others false. -/
 theorem table3_ar : items.map (fun it ↦ decide it.ar) = [true, true, false, false] := by
   decide
 
 /-- In the equally realistic condition, Lewis's verdicts coincide with SDA on every item. -/
 theorem table3_equal :
-    items.map (fun it ↦ decide (would equal [{it.first}, {it.second}]
-      {v | v.prize = it.prize} .hare)) = [false, false, false, false] := by
+    items.map (fun it ↦ decide (.hare ∈ disjunctiveImp equal {{it.first}, {it.second}}
+      {v | v.prize = it.prize})) = [false, false, false, false] := by
   decide
 
 /-- The closeness evaluation item *if the hare doesn't win, the squirrel will win* holds in

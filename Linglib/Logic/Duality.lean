@@ -36,10 +36,10 @@ def aggregate (d : ProjectionType) (l : List Trivalent) : Trivalent :=
   | .disjunctive => l.foldl (· ⊔ ·) ⊥
   | .conjunctive => l.foldl (· ⊓ ·) ⊤
 
-/-- Existential (disjunctive) aggregation: true if ANY true. -/
+/-- Existential, disjunctive aggregation is true when any value is true. -/
 def existsAny (l : List Trivalent) : Trivalent := aggregate .disjunctive l
 
-/-- Universal (conjunctive) aggregation: true only if ALL true. -/
+/-- Universal, conjunctive aggregation is true only when every value is true. -/
 def forallAll (l : List Trivalent) : Trivalent := aggregate .conjunctive l
 
 theorem foldl_sup_of_true (l : List Trivalent) : l.foldl (· ⊔ ·) Trivalent.true = .true := by
@@ -259,26 +259,6 @@ def dist {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Triv
   else if ∃ a ∈ s, P a then .indet
   else .false
 
-/-- List variant of `dist` — direct definition over `∀`/`∃` on a List,
-    no `[DecidableEq α]` required. Same trichotomy: `.true` on (vacuously
-    or genuinely) all-`P`, `.false` on nonempty-but-no-`P`, `.indet` mixed.
-    Agrees with `dist l.toFinset P` when `[DecidableEq α]` is available. -/
-def distList {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] : Trivalent :=
-  if ∀ a ∈ l, P a then .true
-  else if ∃ a ∈ l, P a then .indet
-  else .false
-
-/-- `distList l P = .false` iff `l` is nonempty and no element satisfies `P`. -/
-theorem distList_eq_false_iff {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] :
-    distList l P = .false ↔ l ≠ [] ∧ ∀ a ∈ l, ¬ P a := by
-  unfold distList
-  split_ifs with h₁ h₂
-  · exact ⟨nofun, fun ⟨hne, hno⟩ =>
-      let ⟨a, ha⟩ := List.exists_mem_of_ne_nil l hne; hno a ha (h₁ a ha)⟩
-  · exact ⟨nofun, fun ⟨_, hno⟩ => let ⟨a, ha, hPa⟩ := h₂; hno a ha hPa⟩
-  · exact ⟨fun _ => ⟨fun hnil => h₁ (by simp [hnil]), fun a ha hPa => h₂ ⟨a, ha, hPa⟩⟩,
-      fun _ => rfl⟩
-
 /-- `dist s P = .true` iff every element of `s` satisfies `P`. -/
 theorem dist_eq_true_iff {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] :
     dist s P = .true ↔ ∀ a ∈ s, P a := by
@@ -341,8 +321,8 @@ theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
       · rintro ⟨⟨a, ha, hPa⟩, _⟩
         exact (h2 ⟨a, ha, hPa⟩).elim
 
-/-- On a nonempty `s`, `dist` commutes with negation: truth and falsity swap and the gap is
-fixed — the homogeneity of plural predication. -/
+/-- On a nonempty `s`, `dist` commutes with negation, so truth and falsity swap and the gap is
+fixed, the homogeneity of plural predication. -/
 theorem dist_not_of_nonempty {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P]
     (hne : s.Nonempty) : dist s (fun a => ¬ P a) = (dist s P).neg := by
   cases h : dist s P with
@@ -361,7 +341,7 @@ theorem dist_not_of_nonempty {α : Type*} (s : Finset α) (P : α → Prop) [Dec
 @[simp] theorem dist_empty {α : Type*} (P : α → Prop) [DecidablePred P] :
     dist (∅ : Finset α) P = .true := by simp [dist]
 
-/-- `dist` on a singleton: `.true` if `P a` holds, `.false` otherwise. -/
+/-- `dist` on a singleton is `.true` if `P a` holds and `.false` otherwise. -/
 @[simp] theorem dist_singleton {α : Type*} (a : α)
     (P : α → Prop) [DecidablePred P] :
     dist ({a} : Finset α) P = if P a then .true else .false := by
@@ -374,24 +354,6 @@ theorem dist_not_of_nonempty {α : Type*} (s : Finset α) (P : α → Prop) [Dec
 @[simp] theorem dist_const_true {α : Type*} (s : Finset α) :
     dist s (fun _ => True) = .true := by
   simp [dist]
-
-/-- `distList` is `.true` on the empty list (vacuous super-truth). -/
-@[simp] theorem distList_nil {α : Type*} (P : α → Prop) [DecidablePred P] :
-    distList ([] : List α) P = .true := by simp [distList]
-
-/-- `distList` on a singleton: `.true` if `P a` holds, `.false` otherwise. -/
-@[simp] theorem distList_singleton {α : Type*} (a : α)
-    (P : α → Prop) [DecidablePred P] :
-    distList [a] P = if P a then .true else .false := by
-  simp only [distList, List.mem_singleton, forall_eq, exists_eq_left]
-  by_cases h : P a
-  · simp [h]
-  · simp [h]
-
-/-- `distList` is `.true` on the constantly-true predicate. -/
-@[simp] theorem distList_const_true {α : Type*} (l : List α) :
-    distList l (fun _ => True) = .true := by
-  simp [distList]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Prop-valued Quantifier Projection
