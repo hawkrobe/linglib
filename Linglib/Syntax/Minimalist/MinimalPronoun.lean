@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
@@ -22,6 +23,7 @@ item inventory.
 
 - `BVAContext`: The four licensing contexts for bound variable anaphora
 - `MinPronInventory`: A language's Vocabulary Items (D[uφ] → Form / context) + elsewhere default
+- `MinPronInventory.syncretic`: the contexts whose form is the elsewhere pronoun's
 - `PronForm`: Standard surface form categories (null, pronoun, reflexive)
 
 ## Core Claims
@@ -30,7 +32,7 @@ item inventory.
 2. φ-values are transmitted from the antecedent (via Agree or variable binding)
 3. Vocabulary items map valued feature bundles to surface forms, conditioned
    by syntactic context (locally bound, controlled subject, etc.)
-4. The **Elsewhere Condition** (DM; Halle & Marantz 1993): if no
+4. The **Elsewhere Condition** of [halle-marantz-1993]: if no
    context-specific item matches, the default (pronoun) applies
 5. Cross-linguistic variation in anaphoric form is morphological, not
    syntactic ([safir-2014]: "all anaphoric diversity is morphological").
@@ -65,7 +67,7 @@ inductive BVAContext where
   | boundVariable
   /-- Free / referential (unbound) -/
   | free
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-! ### Vocabulary Items and the Elsewhere Condition -/
 
@@ -110,70 +112,13 @@ inductive PronForm where
   | reflexive
   deriving DecidableEq, Repr
 
-/-- Whether a language's minimal-pronoun inventory realizes the
-    controlled-subject context with an overt form. The criterion is
-    non-nullness, not specifically `.pronoun`: [ostrove-2026]'s universal
-    is about overt-vs-null PRO, so an inventory whose controlled-subject
-    form is `.reflexive` also counts as overt PRO. -/
-def MinPronInventory.hasOvertPRO (inv : MinPronInventory PronForm) : Prop :=
-  inv.controlForm ≠ .null
+/-! ### Syncretism with the referential pronoun -/
 
-instance (inv : MinPronInventory PronForm) : Decidable inv.hasOvertPRO :=
-  inferInstanceAs (Decidable (_ ≠ _))
-
-/-! ### The overt-PRO / pro-drop universal -/
-
-/-- [ostrove-2026]'s implicational universal, for a language with
-    minimal-pronoun inventory `inv` and matrix pro-drop observable
-    `proDrop`: overt PRO entails no *pro*-drop. An empirical universal,
-    so each language's study proves its own instance. -/
-def MinPronInventory.OvertPROUniversal
-    (inv : MinPronInventory PronForm) (proDrop : Bool) : Prop :=
-  inv.hasOvertPRO → proDrop = false
-
-/-- A null-PRO inventory satisfies the universal vacuously. -/
-theorem MinPronInventory.overtPROUniversal_of_controlForm_eq_null
-    {inv : MinPronInventory PronForm} (h : inv.controlForm = .null)
-    (proDrop : Bool) : inv.OvertPROUniversal proDrop :=
-  fun hovert => absurd h hovert
-
-/-- A non-*pro*-drop language satisfies the universal trivially. -/
-theorem MinPronInventory.overtPROUniversal_of_not_proDrop
-    (inv : MinPronInventory PronForm) : inv.OvertPROUniversal false :=
-  fun _ => rfl
-
-/-- The universal's bite: a *pro*-drop language must realize controlled
-    subjects as null. -/
-theorem MinPronInventory.controlForm_eq_null_of_overtPROUniversal
-    {inv : MinPronInventory PronForm} (h : inv.OvertPROUniversal true) :
-    inv.controlForm = .null :=
-  Decidable.byContradiction fun hne => Bool.noConfusion (h hne)
-
-/-! ### Cross-Linguistic BVA Syncretism -/
-
-/-- Cross-linguistic syncretism among BVA forms: whether each BVA
-    context uses the same form as the referential (free) pronoun.
-    Used by [ostrove-2026]'s syncretism typology and grounded in the
-    minimal pronoun approach of [kratzer-2009] and [safir-2014]. -/
-structure BVASyncretism where
-  language : String
-  /-- Is the reflexive form identical to the referential pronoun? -/
-  reflexiveEqReferential : Bool
-  /-- Is the controlled subject form identical to the referential pronoun? -/
-  controlledEqReferential : Bool
-  /-- Is the bound variable pronoun identical to the referential pronoun? -/
-  boundVarEqReferential : Bool
-  deriving DecidableEq, Repr
-
-/-- Derive syncretism from a vocabulary item inventory: a context is
-    syncretic with the referential pronoun iff its realized form equals
-    the elsewhere (pronoun) form — no context-specific vocabulary item
-    overrides the default. -/
-def syncretismFromInventory {Form : Type} [BEq Form]
-    (inv : MinPronInventory Form) (lang : String := "") : BVASyncretism where
-  language := lang
-  reflexiveEqReferential := inv.realize .locallyBound == inv.elsewhere
-  controlledEqReferential := inv.realize .controlledSubject == inv.elsewhere
-  boundVarEqReferential := inv.realize .boundVariable == inv.elsewhere
+/-- The contexts in which an inventory's minimal pronoun is syncretic with the referential
+pronoun are those that no context-specific item overrides, so that the elsewhere form surfaces
+([kratzer-2009], [safir-2014]). -/
+def MinPronInventory.syncretic {Form : Type} [DecidableEq Form]
+    (inv : MinPronInventory Form) : Finset BVAContext :=
+  {c | inv.realize c = inv.elsewhere}
 
 end Minimalist.MinimalPronoun
