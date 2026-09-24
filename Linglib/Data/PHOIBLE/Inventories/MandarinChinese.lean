@@ -7,7 +7,7 @@ public import Linglib.Data.PHOIBLE.Chart
 [moran-mccloy-2019]
 
 Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
-**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py cmn`.
+**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py cmn=16`.
 
 43 phonemes. PHOIBLE inventory ID 16, Glottocode `mand1415`.
 Source: PHOIBLE donor `spa`.

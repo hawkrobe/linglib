@@ -98,7 +98,7 @@ structure Phoneme where
       Empty when `NA` in source. -/
   allophones : List String
   /-- Whether the segment is marginal in the inventory (the `Marginal`
-      column: `+` → true, NA → false). -/
+      column: `TRUE` → true, `FALSE` or `NA` → false). -/
   marginal : Bool
   segmentClass : SegmentClass
   features : FeatureMatrix

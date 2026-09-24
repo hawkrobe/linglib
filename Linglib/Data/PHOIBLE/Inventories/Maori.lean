@@ -7,7 +7,7 @@ public import Linglib.Data.PHOIBLE.Chart
 [moran-mccloy-2019]
 
 Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
-**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py mri`.
+**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py mri=42`.
 
 20 phonemes. PHOIBLE inventory ID 42, Glottocode `maor1246`.
 Source: PHOIBLE donor `spa`.
