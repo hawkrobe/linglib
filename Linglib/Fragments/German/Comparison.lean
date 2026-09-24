@@ -3,17 +3,20 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# German comparative data
+# German comparison
 
-German compares with *X ist größer als Y*: the particle *als* marks the
-standard, the bound affix *-er* marks degree (never periphrastic for
-adjectives), and the superlative is morphological (*am größten*). German is
-absent from the 167-language WALS Ch 121A sample; its particle classification
-is derived from the construction's anatomy (`als.type`), consistent with
-[stassen-2013]'s criteria (the chapter cites German for the comparative affix)
-and [haspelmath-2001]'s Standard Average European comparative-particle
-feature. WALS Ch 81A classifies German as lacking a dominant word order (V2
-main clauses, verb-final subordinate clauses).
+This file defines the German comparative construction, *X ist größer als Y* 'X is bigger than Y'.
+The standard of comparison follows the particle *als* and takes its case from the compared noun
+phrase, and the adjective carries the comparative ending *-er* and the superlative ending *-st*
+whatever its length: Durrell notes that *mehr* and *meist* form comparatives and superlatives only
+in a few special cases. The construction is a particle comparative in the sense of Stassen's WALS
+chapter on comparatives, whose sample does not include German, so its type is read off the
+construction (`Comparative.type`).
+
+## References
+
+* [durrell-2011]
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -22,17 +25,21 @@ namespace German.Comparison
 
 open Comparative
 
-/-- The *als*-comparative: particle-marked standard, bound degree affix. -/
+/-- The *als*-comparative marks the standard with the particle *als* and the adjective with the
+bound ending *-er*. -/
 def als : Comparative :=
   { standardMarker := some "als"
   , caseAssignment := .derived
   , degreeMarker := some "-er"
   , degreeMorphology := true }
 
-/-- Bound comparative affix *-er*; no free degree word for adjectives. -/
+/-- The comparative degree is marked by the ending *-er*, not by a free degree word. -/
 def degreeWord : DegreeWordType := .morphological
 
-/-- Morphological superlative (*am größten*). -/
+/-- The superlative is marked by the ending *-st*, as in *das tiefste*. -/
 def superlative : SuperlativeStrategy := .morphological
+
+/-- The *als*-comparative is a particle comparative. -/
+theorem als_type : als.type = .particle := rfl
 
 end German.Comparison

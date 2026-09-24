@@ -736,9 +736,7 @@ import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Evidentiality
 import Linglib.Fragments.Georgian.PolarityItems
-import Linglib.Fragments.German.BarePluralWordOrder
 import Linglib.Fragments.German.Case
-import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.German.Coordination

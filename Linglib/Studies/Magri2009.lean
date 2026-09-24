@@ -4,7 +4,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Exhaustification.Finite
 public import Linglib.Semantics.Genericity.SortedOntology
 public import Linglib.Data.Examples.CohenErteschikShir2002
-public import Linglib.Fragments.German.BarePluralWordOrder
+public import Linglib.Data.Examples.Magri2009
 
 /-!
 # Magri (2009): A Theory of Individual-Level Predicates Based on Blind Mandatory Scalar Implicatures
@@ -22,7 +22,7 @@ and *all* equivalent. Individual-level predicates are homogeneous over times and
 adverbs over them (*Sometimes, John is tall*), bare plural subjects, and overt *always*
 trigger the mismatch, while stage-level predicates and universal quantification over
 individuals escape it; the German word-order facts of the paper's §4.5 are checked against
-the fragment.
+its examples.
 
 ## Implementation notes
 
@@ -36,6 +36,7 @@ exhaustification of the same abbreviation elsewhere in the library.
 * [magri-2009]
 * [fox-2007]
 * [carlson-1977]
+* [diesing-1992]
 -/
 
 @[expose] public section
@@ -984,42 +985,44 @@ theorem magri_predicts_slp_existential :
 
 end BarePluralBridge
 
-/-! ### German BPS word order matches BH+MH predictions
+/-! ### German word order (§4.5)
 
-[magri-2009] §4.5 argues that [diesing-1992]'s German BPS word
-order contrast (BPS left vs right of *ja doch*) follows from BH+MH:
+Magri takes Diesing's German contrast (8), repeated as (125). The bare plural subject
+*Feuerwehrmänner* 'firemen' sits on either side of the particles *ja doch* with the stage-level
+*verfügbar* 'available', but only to their left with the individual-level *intelligent*. To the
+right of the particles the subject is inside the VP and has only the existential reading, so the
+sentence is the existential bare plural sentence of §4.2 and is odd with an individual-level
+predicate; to their left the generic reading is available. Magri adds that universally
+quantified subjects are fine to the right of the particle, which his account predicts and
+Diesing's does not, and that definite subjects pattern with bare plurals, which his account
+leaves open. -/
 
-- S-predicate BPS both positions OK → BH+MH: no mismatch (SLP)
-- I-predicate BPS left only → BH+MH: right-of-*ja doch* = VP-internal =
-  existential reading only → mismatch with homogeneity → odd
+section GermanWordOrder
 
-The data in `German.BarePluralWordOrder` independently records
-this pattern. The bridge theorem confirms that the oddness pattern in
-the German data aligns with the model scenarios. -/
+open Data.Examples
 
-section GermanBridge
+/-- The blind scenario of a bare plural subject's predicate, homogeneous over times for an
+individual-level predicate. -/
+def scenarioOf : PredicateLevel → BlindScenario BPSWorld BPSReading
+  | .individualLevel => bpsScenario
+  | .stageLevel => bpsSLPScenario
 
-open German.BarePluralWordOrder
+/-- A row of (8) is predicted odd when its subject sits to the right of *ja doch*, where only the
+existential reading is available, and that reading is blind-odd for its predicate. -/
+def PredictedOdd (row : LinguisticExample) : Prop :=
+  row.feature? "position" = some "right" ∧
+    ∃ l ∈ predicateLevelOf row, (scenarioOf l).blindOdd .existential_ = true
 
-/-- The German *ja doch* data confirms the same ILP/SLP split:
-the ONLY unacceptable configuration is ILP + right of *ja doch*
-(= VP-internal = existential-only reading).
+instance (row : LinguisticExample) : Decidable (PredictedOdd row) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-- ILP right of *ja doch* → odd: matches `bpsScenario.blindOdd .existential_`
-- SLP both positions → fine: matches `bpsSLPScenario.blindOdd .existential_`
-- ILP left of *ja doch* → fine: the GEN reading is available (not blocked) -/
-theorem german_data_matches_magri :
-    -- German data: only ILP + right is unacceptable
-    allJaDochData.all (λ d =>
-      d.acceptable == !(d.predicateLevel == .individualLevel &&
-                        d.bpsPosition == .rightOfJaDoch)) = true ∧
-    -- Magri model: ILP existential is odd
-    bpsScenario.blindOdd .existential_ = true ∧
-    -- Magri model: SLP existential is fine
-    bpsSLPScenario.blindOdd .existential_ = false :=
-  ⟨by decide, by decide, by decide⟩
+/-- The rows of (8): a sentence is acceptable exactly when it is not predicted odd, and only the
+individual-level predicate with its subject to the right of *ja doch*, (8c), is odd. -/
+theorem word_order_rows :
+    ∀ row ∈ Examples.all, (row.judgment = .acceptable ↔ ¬ PredictedOdd row) := by
+  decide
 
-end GermanBridge
+end GermanWordOrder
 
 /-! ### "Firemen are always tall" is fine (§4.6.2 Remark)
 
