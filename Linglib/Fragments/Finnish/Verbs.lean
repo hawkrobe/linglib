@@ -1,19 +1,49 @@
 module
 
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Semantics.Causation.Implicative
+public import Linglib.Fragments.Finnish.Infinitives
 
 /-!
 # Finnish verbs
 
-Finnish verbs fall into six conjugation classes by the shape of the infinitive stem, and each
-verb has an active and an impersonal form, as *avata* 'to open' has *avaa* 'opens' and
-*avataan* 'one opens, it is opened'. The impersonal form, traditionally the passive and the
-fourth person of Karlsson's grammar, says that an unspecified human agent performs the action,
-has no subject expressed as an independent phrase, and admits no correspondent to an
-Indo-European *by*-agent; it is the impersonal passive of the typology. The implicative verbs
-Nadathur studies, *onnistua* 'manage', *uskaltaa* 'dare' and their kin, extend the entries with
-their implicative class.
+A Finnish verb has two stems. The infinitive stem is the dictionary form without the ending of
+the A infinitive, as *tul-* of *tul-la* 'come', and the inflectional stem, from which the
+present is formed, is *tule-*, as in *tule-n* 'I come'. Karlsson sorts the verbs into six
+conjugations by how the two stems are related, each named after a member. *Anta-a* 'give'
+verbs, whose infinitive ending follows a short vowel, and *saa-da* 'get' verbs, whose ending
+follows a long vowel or a diphthong, have the infinitive stem alone. *Tul-la* 'come' and
+*nous-ta* 'rise' verbs add -e to it. The final -t of the infinitive stem becomes -A in
+*huomat-a* 'notice' verbs, is followed by -se in *tarvit-a* 'need' verbs and becomes -ne in
+*lämm-et-ä* 'get warm' verbs. Consonant gradation gives the infinitive stem the weak grade
+where the inflectional stem has the strong one, as in *hypät-ä* 'jump' against *hyppää-n* 'I
+jump'.
+
+Each verb has an active and an impersonal form, as *avat-a* 'open' has *avaa* 'opens' and
+*avat-a-an* 'one opens, it is opened'. The impersonal form, traditionally the passive and the
+fourth person of Karlsson's grammar, says that an unspecified human agent performs the
+action, has no subject expressed as an independent phrase, and admits no correspondent to an
+Indo-European *by*-agent; it is the impersonal passive of the typology.
+
+A verb taking an infinitival complement governs its infinitive and case, the A infinitive for
+*uskaltaa* 'dare', as in *uskals-i avat-a ove-n* 'dared to open the door', and the MA
+infinitive illative for *pystyä* 'be able', as in *pysty-i tappelema-an* 'was able to fight'.
+The entries include the implicative verbs of [nadathur-2023-implicatives], with the polarity
+of the complement they entail.
+
+## Main definitions
+
+* `Finnish.Conjugation`: Karlsson's six conjugations.
+* `Finnish.Verb`: a Finnish verb, the root `Verb` with its conjugation, its two stems and the
+  infinitive its complement takes.
+* `Finnish.Verb.infinitive`: the infinitives of a verb.
+* `Finnish.verbs`: the entries.
+
+## Main results
+
+* `Finnish.ofString?_form`: the citation form of each entry is the A infinitive of its stem.
+* `Finnish.inflectionalStem_eq`: the verbs of the *anta-a* and *saa-da* conjugations have one
+  stem.
+* `Finnish.complement_mem_cases`: each entry's complement is in a case its infinitive takes.
 
 ## References
 
@@ -23,76 +53,58 @@ their implicative class.
 
 @[expose] public section
 
-namespace Finnish.Verbs
+namespace Finnish
 
--- ============================================================================
--- § 1: Verb Entry Type
--- ============================================================================
+open Phonology
 
-/-- Finnish verb type (conjugation class, Karlsson §10.1). -/
-inductive VerbType where
-  | type1  -- -aa/-ää stems (sanoa, lukea)
-  | type2  -- -da/-dä stems (saada, myydä)
-  | type3  -- -la/-lä, -na/-nä, -ra/-rä, -sta/-stä stems (tulla, mennä)
-  | type4  -- -ata/-ätä stems (haluta, pelätä)
-  | type5  -- -ita/-itä stems (tarvita, häiritä)
-  | type6  -- -eta/-etä stems (vanheta, lämmetä)
+/-- The conjugations, named after a member (§6.2). -/
+inductive Conjugation where
+  /-- The infinitive ending follows a short vowel, and there is one stem: *anta-a* 'give'. -/
+  | antaa
+  /-- The infinitive ending follows a long vowel or a diphthong, and there is one stem:
+  *saa-da* 'get'. -/
+  | saada
+  /-- The inflectional stem adds -e: *tul-la* 'come', *nous-ta* 'rise'. -/
+  | tulla
+  /-- The final -t of the infinitive stem is -A in the inflectional stem: *huomat-a*
+  'notice'. -/
+  | huomata
+  /-- The inflectional stem adds -se: *tarvit-a* 'need'. -/
+  | tarvita
+  /-- The final -t of the infinitive stem is -ne in the inflectional stem: *lämm-et-ä* 'get
+  warm'. -/
+  | lämmetä
   deriving DecidableEq, Repr
 
-/-- A Finnish verb entry with active and impersonal "passive" forms. -/
-structure FinnishVerb where
-  /-- Infinitive (dictionary form, I infinitive) -/
-  infinitive : String
-  /-- English gloss -/
-  gloss : String
-  /-- Verb type (conjugation class) -/
-  verbType : VerbType
-  /-- 3sg present active -/
-  pres3sgAct : String
-  /-- Impersonal "passive" present -/
-  presImpersonal : String
-  deriving Repr, BEq
+/-- A Finnish verb is the root entry, whose `form` is the A infinitive, together with its
+conjugation, its two stems and the infinitive and case its complement takes. -/
+structure Verb extends _root_.Verb where
+  /-- The conjugation. -/
+  conjugation : Conjugation
+  /-- The infinitive stem, on which the A and E infinitives are built. -/
+  infinitiveStem : List Segment
+  /-- The inflectional stem, in the strong grade, on which the present and the MA and MINEN
+  infinitives are built. -/
+  inflectionalStem : List Segment
+  /-- The infinitive and case of the complement. -/
+  complement : Option (Infinitive × Case) := none
 
--- ============================================================================
--- § 2: Sample Verb Entries
--- ============================================================================
+namespace Verb
 
-def avata : FinnishVerb :=
-  { infinitive := "avata"
-  , gloss := "to open"
-  , verbType := .type4
-  , pres3sgAct := "avaa"
-  , presImpersonal := "avataan" }
+/-- The infinitive `i` of the verb before a case ending: the A and E infinitives are built on
+the infinitive stem, the MA and MINEN infinitives on the inflectional stem. -/
+def infinitive (v : Verb) : Infinitive → List Segment
+  | .a => surface (Infinitive.a.base v.infinitiveStem)
+  | .e => surface (Infinitive.e.base v.infinitiveStem)
+  | .ma => surface (Infinitive.ma.base v.inflectionalStem)
+  | .minen => surface (Infinitive.minen.base v.inflectionalStem)
 
-def lukea : FinnishVerb :=
-  { infinitive := "lukea"
-  , gloss := "to read"
-  , verbType := .type1
-  , pres3sgAct := "lukee"
-  , presImpersonal := "luetaan" }
-
-def tulla : FinnishVerb :=
-  { infinitive := "tulla"
-  , gloss := "to come"
-  , verbType := .type3
-  , pres3sgAct := "tulee"
-  , presImpersonal := "tullaan" }
-
-def haluta : FinnishVerb :=
-  { infinitive := "haluta"
-  , gloss := "to want"
-  , verbType := .type4
-  , pres3sgAct := "haluaa"
-  , presImpersonal := "halutaan" }
+end Verb
 
 /-! ### Voice
 
-The active and the passive, the fourth person of the verb: the action is performed by an
-unspecified human agent, the form has no grammatical subject expressed as an independent
-phrase, and there is no correspondent to an Indo-European *by*-agent ([karlsson-2017]
-§21.1). It is the impersonal passive of the typology, marked by the suffix *-tA-* and its
-variants, the object keeping its coding; the inventory lists the voices projecting
-transitive clauses. -/
+The impersonal passive is marked by the suffix *-tA-* and its variants with the personal ending
+*-Vn* ([karlsson-2017] §21.1). The inventory lists the voices projecting transitive clauses. -/
 
 /-- The impersonal passive, the fourth person: the passive marker, *-ttA*, *-tA*, *-dA* or
 *-A*, with the personal ending *-Vn*. -/
@@ -101,280 +113,183 @@ def impersonalPassive : Voice := Voice.impersonalPassive.marked [.suff "tA", .su
 /-- The active and the impersonal passive. -/
 def voices : Finset Voice := {.active, impersonalPassive}
 
--- ============================================================================
--- § 6: Finnish Implicative Verbs ([nadathur-2023-implicatives])
--- ============================================================================
+/-! ### Entries -/
 
-/-! Finnish is the ideal testing ground for implicative verb semantics because
-    it has a much richer inventory of lexically-specific implicatives than
-    English. Where English has primarily *manage* (underspecified) and *dare*
-    (courage), Finnish has ~12 common implicatives that each lexicalize a
-    different prerequisite type.
+/-- *avata* 'open', with *avaa* 'opens' and the impersonal *avataan*. -/
+def avata : Verb where
+  form := "avata"
+  frames := [ArgumentFrame.np]
+  conjugation := .huomata
+  infinitiveStem := [a, v, a, t]
+  inflectionalStem := [a, v, a, a]
 
-    The structure extends `FinnishVerb` with implicative fields. -/
+/-- *lukea* 'read'. -/
+def lukea : Verb where
+  form := "lukea"
+  frames := [ArgumentFrame.np]
+  conjugation := .antaa
+  infinitiveStem := [l, u, k, e]
+  inflectionalStem := [l, u, k, e]
 
-open Implicative (Directionality Prerequisite ImplicativeClass)
+/-- *tulla* 'come'. -/
+def tulla : Verb where
+  form := "tulla"
+  frames := [ArgumentFrame.intransitive]
+  conjugation := .tulla
+  infinitiveStem := [t, u, l]
+  inflectionalStem := [t, u, l, e]
 
-/-- A Finnish implicative verb entry, extending the base verb with
-    implicative classification from [nadathur-2023-implicatives]. -/
-structure FinnishImplicativeVerb extends FinnishVerb where
-  /-- Positive (entails complement) or negative (entails ¬complement) -/
-  implicative : Polarity
-  /-- One-way or two-way complement entailment -/
-  directionality : Directionality
-  /-- The lexically-specified prerequisite type -/
-  prerequisite : Prerequisite
-  /-- Negative 3sg present (with negation verb *ei*) -/
-  neg3sgAct : String
-  deriving Repr, BEq
+/-- *haluta* 'want', with the A infinitive. -/
+def haluta : Verb where
+  form := "haluta"
+  frames := [ArgumentFrame.np, ArgumentFrame.infinitival]
+  conjugation := .huomata
+  infinitiveStem := [h, a, l, u, t]
+  inflectionalStem := [h, a, l, u, a]
+  complement := some (.a, .nom)
 
--- ── Two-way positive implicatives ──
+/-! ### Implicative verbs
 
-/-- *onnistua* 'succeed, manage' — two-way positive, unspecified prerequisite.
-    "Eman onnistui pakenema-an" → 'Eman fled.'
-    "Eman ei onnistunut pakenema-an" → 'Eman did not flee.'
-    ([nadathur-2023-implicatives] ex. 2) -/
-def onnistua : FinnishImplicativeVerb :=
-  { infinitive := "onnistua"
-    gloss := "to succeed, to manage"
-    verbType := .type1
-    pres3sgAct := "onnistuu"
-    presImpersonal := "onnistutaan"
-    implicative := .positive
-    directionality := .twoWay
-    prerequisite := .unspecified
-    neg3sgAct := "onnistu" }
+The positive implicatives entail their complement or its negation, *onnistua* 'manage' both
+ways and *jaksaa* 'have the strength' only when negated. *Laiminlyödä* 'neglect' and
+*epäröidä* 'hesitate' reverse the polarity. -/
 
-/-- *uskaltaa* 'dare' — two-way positive, prerequisite = courage.
-    "Juno uskaltaa avata oven" → 'Juno opens the door.'
-    "Juno ei uskaltanut avata ovea" → 'Juno did not open the door.'
-    ([nadathur-2023-implicatives] ex. 4) -/
-def uskaltaa : FinnishImplicativeVerb :=
-  { infinitive := "uskaltaa"
-    gloss := "to dare"
-    verbType := .type1
-    pres3sgAct := "uskaltaa"
-    presImpersonal := "uskalletaan"
-    implicative := .positive
-    directionality := .twoWay
-    prerequisite := .courage
-    neg3sgAct := "uskalla" }
+/-- *onnistua* 'succeed, manage', with the MA infinitive illative. -/
+def onnistua : Verb where
+  form := "onnistua"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [o, n, n, i, s, t, u]
+  inflectionalStem := [o, n, n, i, s, t, u]
+  complement := some (.ma, .ill)
+  implicative := some .positive
 
-/-- *viitsiä* 'bother' — two-way positive, prerequisite = engagement.
-    ([nadathur-2023-implicatives] ex. 10) -/
-def viitsia : FinnishImplicativeVerb :=
-  { infinitive := "viitsiä"
-    gloss := "to bother"
-    verbType := .type1
-    pres3sgAct := "viitsii"
-    presImpersonal := "viitsitään"
-    implicative := .positive
-    directionality := .twoWay
-    prerequisite := .engagement
-    neg3sgAct := "viitsi" }
+/-- *uskaltaa* 'dare'. -/
+def uskaltaa : Verb where
+  form := "uskaltaa"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [u, s, k, a, l, t, a]
+  inflectionalStem := [u, s, k, a, l, t, a]
+  complement := some (.a, .nom)
+  implicative := some .positive
 
-/-- *malttaa* 'have the patience' — two-way positive, prerequisite = patience.
-    "Marja malttoi odottaa" → 'Marja waited.'
-    "Marja ei malttanut odottaa" → 'Marja did not wait.'
-    ([nadathur-2023-implicatives] ex. 11) -/
-def malttaa : FinnishImplicativeVerb :=
-  { infinitive := "malttaa"
-    gloss := "to have the patience"
-    verbType := .type1
-    pres3sgAct := "malttaa"
-    presImpersonal := "maltetaan"
-    implicative := .positive
-    directionality := .twoWay
-    prerequisite := .patience
-    neg3sgAct := "maltta" }
+/-- *viitsiä* 'bother'. -/
+def viitsiä : Verb where
+  form := "viitsiä"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [v, i, i, t, s, i]
+  inflectionalStem := [v, i, i, t, s, i]
+  complement := some (.a, .nom)
+  implicative := some .positive
 
-/-- *hennoa* 'have the heart' — two-way positive, prerequisite = hard-heartedness.
-    ([nadathur-2023-implicatives] ex. 27) -/
-def hennoa : FinnishImplicativeVerb :=
-  { infinitive := "hennoa"
-    gloss := "to have the heart"
-    verbType := .type1
-    pres3sgAct := "hennoaa"  -- note: not *hennoo
-    presImpersonal := "hennotaan"
-    implicative := .positive
-    directionality := .twoWay
-    prerequisite := .hardHeartedness
-    neg3sgAct := "hennoa" }  -- negation: ei hennoa (no consonant gradation)
+/-- *malttaa* 'have the patience'. -/
+def malttaa : Verb where
+  form := "malttaa"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [m, a, l, t, t, a]
+  inflectionalStem := [m, a, l, t, t, a]
+  complement := some (.a, .nom)
+  implicative := some .positive
 
-/-- *kehdata* 'act without shame, be unembarrassed' — two-way positive.
-    ([nadathur-2023-implicatives] ex. 40) -/
-def kehdata : FinnishImplicativeVerb :=
-  { infinitive := "kehdata"
-    gloss := "to act without shame"
-    verbType := .type4
-    pres3sgAct := "kehtaa"
-    presImpersonal := "kehdataan"
-    implicative := .positive
-    directionality := .twoWay
-    prerequisite := .shamelessness
-    neg3sgAct := "kehtaa" }
+/-- *hennoa* 'have the heart'. -/
+def hennoa : Verb where
+  form := "hennoa"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [h, e, n, n, o]
+  inflectionalStem := [h, e, n, n, o]
+  complement := some (.a, .nom)
+  implicative := some .positive
 
-/-- *ehtiä* 'find/make time' — two-way positive, prerequisite = time.
-    ([nadathur-2023-implicatives] ex. 39) -/
-def ehtia : FinnishImplicativeVerb :=
-  { infinitive := "ehtiä"
-    gloss := "to find time, to make time"
-    verbType := .type1
-    pres3sgAct := "ehtii"
-    presImpersonal := "ehditään"
-    implicative := .positive
-    directionality := .twoWay
-    prerequisite := .time
-    neg3sgAct := "ehdi" }
+/-- *kehdata* 'be unembarrassed, act without shame'. -/
+def kehdata : Verb where
+  form := "kehdata"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .huomata
+  infinitiveStem := [k, e, h, d, a, t]
+  inflectionalStem := [k, e, h, t, a, a]
+  complement := some (.a, .nom)
+  implicative := some .positive
 
--- ── One-way positive implicatives ──
+/-- *ehtiä* 'find time, make time'. -/
+def ehtiä : Verb where
+  form := "ehtiä"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [e, h, t, i]
+  inflectionalStem := [e, h, t, i]
+  complement := some (.a, .nom)
+  implicative := some .positive
 
-/-- *jaksaa* 'have the strength' — one-way positive, prerequisite = strength.
-    Positive: "Sampo jaksoi nousta" ↛ 'Sampo rose.' (only implicature)
-    Negative: "Sampo ei jaksanut nousta" → 'Sampo did not rise.'
-    ([nadathur-2023-implicatives] ex. 5) -/
-def jaksaa : FinnishImplicativeVerb :=
-  { infinitive := "jaksaa"
-    gloss := "to have the strength"
-    verbType := .type1
-    pres3sgAct := "jaksaa"
-    presImpersonal := "jaksetaan"
-    implicative := .positive
-    directionality := .oneWay
-    prerequisite := .strength
-    neg3sgAct := "jaksa" }
+/-- *jaksaa* 'have the strength'. -/
+def jaksaa : Verb where
+  form := "jaksaa"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [j, a, k, s, a]
+  inflectionalStem := [j, a, k, s, a]
+  complement := some (.a, .nom)
+  implicative := some .positive
 
-/-- *mahtua* 'fit, be small enough' — one-way positive, prerequisite = fitness.
-    "Freija mahtui kulkemaan oven" ↛ 'Freija went through the door.'
-    "Freija ei mahtunut kulkemaan oven" → 'Freija did not go through the door.'
-    ([nadathur-2023-implicatives] ex. 30) -/
-def mahtua : FinnishImplicativeVerb :=
-  { infinitive := "mahtua"
-    gloss := "to fit"
-    verbType := .type1
-    pres3sgAct := "mahtuu"
-    presImpersonal := "mahdutaan"
-    implicative := .positive
-    directionality := .oneWay
-    prerequisite := .fitness
-    neg3sgAct := "mahdu" }
+/-- *mahtua* 'fit, be small enough', with the MA infinitive illative. -/
+def mahtua : Verb where
+  form := "mahtua"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [m, a, h, t, u]
+  inflectionalStem := [m, a, h, t, u]
+  complement := some (.ma, .ill)
+  implicative := some .positive
 
-/-- *pystyä* 'be able' — one-way positive (the Finnish counterpart of *be able*).
-    "Maarit pystyi tappelema-an" ↛ 'Maarit fought.'
-    "Maarit ei pystynyt tappelema-an" → 'Maarit did not fight.'
-    ([nadathur-2023-implicatives] ex. 29) -/
-def pystya : FinnishImplicativeVerb :=
-  { infinitive := "pystyä"
-    gloss := "to be able"
-    verbType := .type1
-    pres3sgAct := "pystyy"
-    presImpersonal := "pystytään"
-    implicative := .positive
-    directionality := .oneWay
-    prerequisite := .unspecified
-    neg3sgAct := "pysty" }
+/-- *pystyä* 'be able', with the MA infinitive illative. -/
+def pystyä : Verb where
+  form := "pystyä"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .antaa
+  infinitiveStem := [p, y, s, t, y]
+  inflectionalStem := [p, y, s, t, y]
+  complement := some (.ma, .ill)
+  implicative := some .positive
 
--- ── Polarity-reversing implicatives ──
+/-- *laiminlyödä* 'neglect'. -/
+def laiminlyödä : Verb where
+  form := "laiminlyödä"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .saada
+  infinitiveStem := [l, a, i, m, i, n, l, y, ö]
+  inflectionalStem := [l, a, i, m, i, n, l, y, ö]
+  complement := some (.a, .nom)
+  implicative := some .negative
 
-/-- *laiminlyödä* 'neglect' — polarity-reversing two-way.
-    "Hän laiminlöi korjata virheen" → 'He did not correct the error.'
-    "Hän ei laiminlyönyt korjata virhettä" → 'He corrected the error.'
-    ([nadathur-2023-implicatives] ex. 44) -/
-def laiminlyoda : FinnishImplicativeVerb :=
-  { infinitive := "laiminlyödä"
-    gloss := "to neglect"
-    verbType := .type2
-    pres3sgAct := "laiminlyö"
-    presImpersonal := "laiminlyödään"
-    implicative := .negative
-    directionality := .twoWay
-    prerequisite := .unspecified
-    neg3sgAct := "laiminlyö" }
+/-- *epäröidä* 'hesitate'. -/
+def epäröidä : Verb where
+  form := "epäröidä"
+  frames := [ArgumentFrame.infinitival]
+  conjugation := .saada
+  infinitiveStem := [e, p, ä, r, ö, i]
+  inflectionalStem := [e, p, ä, r, ö, i]
+  complement := some (.a, .nom)
+  implicative := some .negative
 
-/-- *epäröidä* 'hesitate' — polarity-reversing one-way.
-    "Juno epäröi ottaa osaa kilpailuun" ↛ 'Juno did not take part.'
-    "Juno ei epäröinyt ottaa osaa kilpailuun" → 'Juno took part.'
-    ([nadathur-2023-implicatives] §6.4, ex. 46) -/
-def eparoida : FinnishImplicativeVerb :=
-  { infinitive := "epäröidä"
-    gloss := "to hesitate"
-    verbType := .type2
-    pres3sgAct := "epäröi"
-    presImpersonal := "epäröidään"
-    implicative := .negative
-    directionality := .oneWay
-    prerequisite := .courage
-    neg3sgAct := "epäröi" }
+/-- The entries. -/
+def verbs : List Verb :=
+  [avata, lukea, tulla, haluta, onnistua, uskaltaa, viitsiä, malttaa, hennoa, kehdata, ehtiä,
+    jaksaa, mahtua, pystyä, laiminlyödä, epäröidä]
 
--- ── Verification theorems ──
+/-- The citation form of each entry is the A infinitive of its infinitive stem. -/
+theorem ofString?_form : ∀ v ∈ verbs, ofString? v.form = some (v.infinitive .a) := by
+  decide +kernel
 
-/-- All two-way implicatives have `.twoWay` directionality. -/
-theorem twoWay_verbs_correct :
-    onnistua.directionality = .twoWay ∧
-    uskaltaa.directionality = .twoWay ∧
-    viitsia.directionality = .twoWay ∧
-    malttaa.directionality = .twoWay ∧
-    hennoa.directionality = .twoWay ∧
-    kehdata.directionality = .twoWay ∧
-    ehtia.directionality = .twoWay ∧
-    laiminlyoda.directionality = .twoWay :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- The verbs of the *anta-a* and *saa-da* conjugations have one stem. -/
+theorem inflectionalStem_eq : ∀ v ∈ verbs, v.conjugation = .antaa ∨ v.conjugation = .saada →
+    v.inflectionalStem = v.infinitiveStem := by
+  decide +kernel
 
-/-- All one-way implicatives have `.oneWay` directionality. -/
-theorem oneWay_verbs_correct :
-    jaksaa.directionality = .oneWay ∧
-    mahtua.directionality = .oneWay ∧
-    pystya.directionality = .oneWay ∧
-    eparoida.directionality = .oneWay :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- Each entry's complement is in a case its infinitive takes. -/
+theorem complement_mem_cases : ∀ v ∈ verbs, ∀ ic ∈ v.complement, ic.2 ∈ ic.1.cases := by
+  decide +kernel
 
-/-- Each specific implicative has a distinct prerequisite type. -/
-theorem prerequisites_distinct :
-    uskaltaa.prerequisite = .courage ∧
-    viitsia.prerequisite = .engagement ∧
-    malttaa.prerequisite = .patience ∧
-    hennoa.prerequisite = .hardHeartedness ∧
-    jaksaa.prerequisite = .strength ∧
-    mahtua.prerequisite = .fitness ∧
-    ehtia.prerequisite = .time ∧
-    kehdata.prerequisite = .shamelessness :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Bleached implicatives (manage-type) have unspecified prerequisites. -/
-theorem bleached_unspecified :
-    onnistua.prerequisite = .unspecified ∧
-    pystya.prerequisite = .unspecified :=
-  ⟨rfl, rfl⟩
-
-/-- Polarity-reversing verbs have negative polarity. -/
-theorem polarity_reversing :
-    laiminlyoda.implicative = .negative ∧
-    eparoida.implicative = .negative :=
-  ⟨rfl, rfl⟩
-
-/-- Polarity-preserving verbs have positive polarity. -/
-theorem polarity_preserving :
-    onnistua.implicative = .positive ∧
-    uskaltaa.implicative = .positive ∧
-    viitsia.implicative = .positive ∧
-    malttaa.implicative = .positive ∧
-    hennoa.implicative = .positive ∧
-    jaksaa.implicative = .positive ∧
-    mahtua.implicative = .positive ∧
-    pystya.implicative = .positive ∧
-    kehdata.implicative = .positive ∧
-    ehtia.implicative = .positive :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Convert a Finnish implicative verb to an ImplicativeClass. -/
-def FinnishImplicativeVerb.toImplicativeClass (v : FinnishImplicativeVerb) : ImplicativeClass :=
-  { polarity := v.implicative
-    directionality := v.directionality
-    aspectGoverned := false
-    prerequisite := some v.prerequisite }
-
-/-- Uskaltaa and English dare have the same classification. -/
-theorem uskaltaa_matches_dare :
-    uskaltaa.toImplicativeClass = ImplicativeClass.dare := rfl
-
-end Finnish.Verbs
+end Finnish

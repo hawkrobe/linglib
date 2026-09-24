@@ -307,8 +307,7 @@ def ImplicativeClass.too : ImplicativeClass :=
   { polarity := .negative, directionality := .oneWay, aspectGoverned := true }
 
 def ImplicativeClass.hesitate : ImplicativeClass :=
-  { polarity := .negative, directionality := .oneWay, aspectGoverned := false
-    prerequisite := some .courage }
+  { polarity := .negative, directionality := .oneWay, aspectGoverned := false }
 
 -- Classification theorems (substrate-independent — about the enum)
 

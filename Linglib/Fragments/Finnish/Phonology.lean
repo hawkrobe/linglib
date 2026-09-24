@@ -24,6 +24,13 @@ inventory and kept on the features that distinguish the eight vowels. The altern
 vowel is the meet of /ɑ/ and /æ/, the features they share, and so has no value for [back].
 Phonemes are named by their letters, so a list of them reads as the word is spelled.
 
+Karlsson writes the vowel of the illative -Vn and of the passive personal ending as `V`, a
+vowel that is the same as the nearest vowel before it, as in *talo-on* 'into the house' and
+*tie-hen* 'to the road'. `V` is a vowel with no other feature, and it copies each quality
+feature from that vowel before harmony applies. When the nearest vowel is the suffix vowel,
+as in *luke-ma-an* 'to read', `V` is left without [back] and harmony gives both the same
+value.
+
 Consonant gradation, the second of Karlsson's two important sound alternations, weakens a
 stop at the onset of a syllable that an ending closes. The long stops shorten, *kukka*
 'flower' but *kuka-n*, which is quantitative gradation, and the short stops change, *katu*
@@ -36,9 +43,12 @@ with two, and only a short vowel stands between the stop and the ending, so that
 
 * `Finnish.a`, `Finnish.k` and the like: the vowels and the consonants of the example forms,
   and `Finnish.vowels`, `Finnish.consonants` the sets of them.
-* `Finnish.A`: the alternating suffix vowel.
-* `Finnish.palatalHarmony`: palatal harmony.
-* `Finnish.ofChar`: the phoneme that a letter writes.
+* `Finnish.A`, `Finnish.O`: the alternating suffix vowels.
+* `Finnish.V`, `Finnish.C`: the copy vowel, which as a rule context is any vowel, and any
+  consonant.
+* `Finnish.palatalHarmony`, `Finnish.vowelCopy`: palatal harmony and the copying of `V`.
+* `Finnish.surface`: the surface form of a word, vowel copy followed by harmony.
+* `Finnish.ofChar`, `Finnish.ofString?`: the phonemes that a letter and a word write.
 * `Finnish.consonantGradation`: the qualitative rules followed by the quantitative ones.
 
 ## Main results
@@ -52,6 +62,8 @@ with two, and only a short vowel stands between the stop and the ending, so that
   and with [back] filled in it is /ɑ/ or /æ/.
 * `Finnish.sourceValue_back`: a back stem vowel is the source across a neutral one, and a
   stem of neutral vowels has no source.
+* `Finnish.surface_suffix`: the suffix vowel after back, front and neutral stems, and `V`
+  after a vowel and after the suffix vowel.
 * `Finnish.katto`: Karlsson's paradigm of *katto*, gradation in *katon*, *katolla* and
   *katolta* and none in *kattona*.
 * `Finnish.quantitative_gradation`, `Finnish.qualitative_gradation`: his examples of the two
@@ -62,6 +74,12 @@ with two, and only a short vowel stands between the stop and the ending, so that
 The inventory is PHOIBLE 2535, which transcribes the low back vowel [ɑ] and the mid vowels
 with lowering diacritics. The consonants take plain chart glyphs, which that inventory
 writes with place diacritics, so membership is stated for the vowels only.
+
+Consonant gradation belongs to the lexicon, since many words do not undergo it (*auto-ssa*
+'in the car'), so `surface` leaves it out and a stem is given in the grade its ending
+selects, as in Karlsson's segmentations *pöydä-llä* and *käde-ssä*. A search copies one
+feature, so vowel copy is four searches. `V` is the only vowel without [round], so the
+targets of each search are the vowels without it and [round] is copied last.
 
 A rule has one right context, so each alternation is two rules, one for an ending of a
 single consonant and one for an ending that begins with two. The qualitative rules apply
@@ -150,11 +168,20 @@ def l : Segment := .ofChart .«l»
 /-- The palatal glide /j/. -/
 def j : Segment := .ofChart .«j»
 
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
+
+/-- The glottal fricative /h/. -/
+def h : Segment := .ofChart .«h»
+
+/-- The trill /r/. -/
+def r : Segment := .ofChart .«r»
+
 /-- The eight vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[a, o, u, ä, ö, y, e, i], by decide⟩
 
 /-- The consonants of the example forms, pairwise distinct. -/
-def consonants : Finset Segment := ⟨↑[p, t, k, d, s, n, v, l, j], by decide⟩
+def consonants : Finset Segment := ⟨↑[p, t, k, d, s, n, v, l, j, m, h, r], by decide⟩
 
 /-- Each vowel is the segment of a phoneme of PHOIBLE's Finnish inventory. -/
 theorem exists_mem_fin :
@@ -165,15 +192,24 @@ theorem exists_mem_fin :
 It is what `a` and `ä` share. -/
 def A : Segment := a ⊓ ä
 
+/-- `O` is the vowel of the interrogative clitic -kO. It is what `o` and `ö` share. -/
+def O : Segment := o ⊓ ö
+
+/-- `V` is the vowel of the illative -Vn, a vowel with no other feature. As a rule context it
+is any vowel. -/
+def V : Segment := Segment.ofSpecs [(.syllabic, true)]
+
+/-- `C`, as a rule context, is any consonant. -/
+def C : Segment := Segment.ofSpecs [(.syllabic, false)]
+
 /-! ### Harmonic classification -/
 
 /-- A back vowel is [+syllabic, +back]. -/
-def IsBackVowel (s : Segment) : Prop := s.HasValue .syllabic true ∧ s.HasValue .back true
+def IsBackVowel (s : Segment) : Prop := s.IsVowel ∧ s.HasValue .back true
 
 /-- A neutral vowel is front, unrounded and non-low, and is transparent to harmony. -/
 def IsNeutral (s : Segment) : Prop :=
-  s.HasValue .syllabic true ∧ s.HasValue .back false ∧ s.HasValue .round false ∧
-    s.HasValue .low false
+  s.IsVowel ∧ s.HasValue .back false ∧ s.HasValue .round false ∧ s.HasValue .low false
 
 instance : DecidablePred IsBackVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsNeutral := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -191,10 +227,25 @@ vowels unspecified for it, and a stem with no harmonic vowel takes front suffixe
 Consonants and the neutral vowels /e i/ are off the tier. -/
 def palatalHarmony : System Segment :=
   System.mk' (feature := .back)
-    (IsTarget := fun s ↦ s.HasValue .syllabic true ∧ s .back = none)
-    (IsTransparent := fun s ↦ ¬ s.HasValue .syllabic true ∨ IsNeutral s)
+    (IsTarget := fun s ↦ s.IsVowel ∧ s.Unspecified .back)
+    (IsTransparent := fun s ↦ ¬ s.IsVowel ∨ IsNeutral s)
     (direction := .rightward)
     (default := some false)
+
+/-- The copying of the feature `f` into `V` from the nearest vowel before it. Consonants are
+off the tier, and the targets are the vowels without [round], which `V` alone is. -/
+def copyToV (f : Phonology.Feature) : System Segment :=
+  System.mk' (feature := f)
+    (IsTarget := fun s ↦ s.IsVowel ∧ s.Unspecified .round)
+    (IsTransparent := fun s ↦ ¬ s.IsVowel)
+
+/-- Vowel copy gives `V` the quality of the nearest vowel before it, [round] last. -/
+def vowelCopy (w : List Segment) : List Segment :=
+  [Phonology.Feature.back, .high, .low, .round].foldl (fun w f ↦ (copyToV f).searchCopy.apply w) w
+
+/-- The surface form of a word: `V` copies its vowel, and then palatal harmony fills the
+suffix vowels. -/
+def surface (w : List Segment) : List Segment := palatalHarmony.searchCopy.apply (vowelCopy w)
 
 /-- The natural class of the suffix vowel among the vowels is its two alternants. -/
 theorem naturalClass_A : A.naturalClass vowels = {a, ä} := by decide
@@ -216,6 +267,18 @@ theorem sourceValue_back :
       palatalHarmony.searchCopy.sourceValue [e, i] = none := by
   decide
 
+/-- The suffix vowel is back after *talo* 'house', front after *kylä* 'village' and front by
+default after *tie* 'road', whose vowels are neutral. `V` copies the vowel before it, and
+after the suffix vowel it harmonizes with it, as in *talo-on* and *talo-na-an*. -/
+theorem surface_suffix :
+    surface [t, a, l, o, s, s, A] = [t, a, l, o, s, s, a] ∧
+      surface [k, y, l, ä, s, s, A] = [k, y, l, ä, s, s, ä] ∧
+      surface [t, i, e, s, s, A] = [t, i, e, s, s, ä] ∧
+      surface [t, a, l, o, V, n] = [t, a, l, o, o, n] ∧
+      surface [t, i, e, h, V, n] = [t, i, e, h, e, n] ∧
+      surface [t, a, l, o, n, A, V, n] = [t, a, l, o, n, a, a, n] := by
+  decide
+
 /-! ### Spelling -/
 
 /-- `ofChar c` is the phoneme that the letter `c` writes. A long vowel or stop is written
@@ -224,29 +287,26 @@ def ofChar : Char → Option Segment
   | 'a' => some a | 'o' => some o | 'u' => some u | 'ä' => some ä | 'ö' => some ö
   | 'y' => some y | 'e' => some e | 'i' => some i | 'p' => some p | 't' => some t
   | 'k' => some k | 'd' => some d | 's' => some s | 'n' => some n | 'v' => some v
-  | 'l' => some l | 'j' => some j
+  | 'l' => some l | 'j' => some j | 'm' => some m | 'h' => some h | 'r' => some r
   | _ => none
 
+/-- `ofString? w` is the phonemes that the word `w` writes, if its letters all write one. -/
+def ofString? (w : String) : Option (List Segment) := w.toList.mapM ofChar
+
 /-! ### Consonant gradation -/
-
-/-- A vowel, as a rule context. -/
-def V : ContextElem := .seg (Segment.ofSpecs [(.syllabic, true)])
-
-/-- A consonant, as a rule context. -/
-def C : ContextElem := .seg (Segment.ofSpecs [(.syllabic, false)])
 
 /-- The rules weakening `target` after `left`, before a short vowel and an ending that is one
 consonant or begins with two. -/
 def gradation (target : Segment) (effect : Effect) (left : ContextElem) : List Rule :=
-  [[V, C, .wordBoundary], [V, C, C]].map fun right ↦
+  [[.seg V, .seg C, .wordBoundary], [.seg V, .seg C, .seg C]].map fun right ↦
     { target, effect, leftContext := [left], rightContext := right }
 
 /-- In qualitative gradation after a vowel, /p/ becomes /v/, /t/ becomes /d/ and /k/ is
 lost. -/
 def qualitativeGradation : List Rule :=
-  gradation p (.replace v) V ++
-    gradation t (.changeFeatures (Segment.ofSpecs [(.voice, true)])) V ++
-    gradation k .delete V
+  gradation p (.replace v) (.seg V) ++
+    gradation t (.changeFeatures (Segment.ofSpecs [(.voice, true)])) (.seg V) ++
+    gradation k .delete (.seg V)
 
 /-- In quantitative gradation a long stop loses its second half. -/
 def quantitativeGradation : List Rule :=

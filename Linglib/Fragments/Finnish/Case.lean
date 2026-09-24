@@ -1,152 +1,53 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Case.Order
 
 /-!
-# Finnish Case Inventory [blake-1994]
-[karlsson-2017]
+# Finnish case
 
-Finnish has **15 morphological cases**, one of the richest
-case systems in Europe:
+Finnish has some fifteen cases, each with an ending in the singular. There are the
+grammatical nominative, genitive, accusative and partitive, six local cases, and the essive,
+translative, comitative, abessive and instructive. The accusative ending -t is confined to
+the personal pronouns, as in *häne-t* 'him, her'. The local cases cross the direction of
+motion with a region. The inessive -ssA 'in', the elative -stA 'out of' and the illative -Vn
+'into' make up the interior series, and the adessive -llA 'on', the ablative -ltA 'off' and
+the allative -lle 'onto' the exterior series. Finnish has no surface series, which Hungarian
+has, and no dative, whose recipient function the allative covers, a gap [blake-1994]'s
+hierarchy registers (`Studies/Blake1994.lean`).
 
-- **Grammatical** (3): nominative, genitive, partitive (+ accusative for
-  pronouns/total objects, often syncretic with NOM or GEN)
-- **Internal local** (3): inessive (-ssA, 'in'), elative (-stA, 'out of'),
-  illative (-Vn, 'into')
-- **External local** (3): adessive (-llA, 'on/at'), ablative (-ltA, 'from'),
-  allative (-lle, 'to/onto')
-- **Other** (5–6): essive (-nA, 'as'), translative (-ksi, 'becoming'),
-  abessive (-ttA, 'without'), comitative (-ine-, 'with'),
-  instructive (-n, 'by means of')
+The comparative label of the instructive, a case of manner and means as in *jala-n* 'on
+foot', is the instrumental.
 
-Our 19-value `Case` represents 12 of the 15 Finnish cases. The three
-Finnish-specific semantic cases (essive, translative, abessive) are included
-directly; the internal/external local pairs (inessive/adessive → LOC,
-elative/ablative → ABL, illative/allative → ALL) are collapsed into a
-single rank.
+## Main definitions
 
-Finnish lacks a dedicated **dative** case — the allative covers recipient
-function, which leaves the dative position of [blake-1994]'s hierarchy unfilled
-(`Studies/Blake1994.lean`).
+* `Finnish.Case.inventory`: the cases, under their comparative labels.
 
+## Main results
+
+* `Finnish.Case.toCase_mem_inventory_iff`: the local cases are the interior and exterior series
+  of the shared `Region × PathDir` decomposition.
+
+The endings, spelled in segments, are in `Finnish.Declension`.
+
+## References
+
+* [karlsson-2017]
+* [blake-1994]
 -/
 
 @[expose] public section
 
 namespace Finnish.Case
 
--- ============================================================================
--- § 1: Case Inventory
--- ============================================================================
-
-/-- Finnish case inventory mapped to `Case`.
-
-    All 15 Finnish cases now have Case equivalents (essive, translative,
-    abessive added to Case; internal/external local pairs collapsed):
-    - NOM →.nom, ACC →.acc (pronoun/total-object accusative)
-    - GEN →.gen, PART →.part
-    - the 6 local cases as *distinct* cells: INE/ELA/ILL (interior),
-      ADE/ABL/ALL (exterior) — via the shared `Region × PathDir`
-      decomposition (`Syntax/Case/Order.lean`)
-    - ESS →.ess, TRANSL →.transl, ABESS →.abess
-    - INSTR →.inst, COM →.com -/
+/-- The Finnish cases under their comparative labels. -/
 def inventory : Finset Case :=
-  {.nom, .acc, .gen, .part, .ine, .ade, .ela, .abl, .ill, .all,
-   .ess, .transl, .abess, .inst, .com}
+  {.nom, .gen, .acc, .part, .ine, .ela, .ill, .ade, .abl, .all, .ess, .transl, .com, .abess,
+    .inst}
 
--- ============================================================================
--- § 3: Local Case Matrix (3 × 2)
--- ============================================================================
-
-/-- Direction of motion/relation in the Finnish local case system.
-    [karlsson-2017]: the three directional dimensions —
-    static location, source of motion, and goal of motion. -/
-inductive Direction where
-  | static   -- at/in/on (no motion)
-  | source   -- from/out of/off (motion away)
-  | goal     -- to/into/onto (motion toward)
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Location type: whether the spatial relation is conceptualized as
-    internal (containment) or external (surface/proximity).
-    [karlsson-2017]: Finnish systematically distinguishes
-    "inside" (inessive/elative/illative) from "at/on" (adessive/ablative/allative). -/
-inductive LocationType where
-  | internal  -- containment: in, out of, into
-  | external  -- surface/proximity: on/at, off/from, to/onto
-  deriving DecidableEq, Repr, Inhabited
-
-/-- A cell in the Finnish local case matrix: the case name, suffix,
-    directional coordinates, and mapping to `Case`. -/
-structure LocalCase where
-  name : String
-  suffix : String
-  direction : Direction
-  locationType : LocationType
-  coreCase : Case
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The Finnish directional dimension as the shared `Case.PathDir`
-    (static = the locative Place base). -/
-def Direction.toPathDir : Direction → Case.PathDir
-  | .static => .place
-  | .source => .source
-  | .goal => .goal
-
-/-- The Finnish location type as the shared `Case.Region`. -/
-def LocationType.toRegion : LocationType → Case.Region
-  | .internal => .interior
-  | .external => .exterior
-
-/-- The 3×2 local case matrix, mapping each cell to its *distinct* `Case`
-    via the shared `Region × PathDir` decomposition
-    (`Syntax/Case/Order.lean`) — no longer collapsing internal/external
-    (cf. the deleted `static_collapses_to_loc`).
-
-    |           | Internal      | External      |
-    |-----------|---------------|---------------|
-    | Static    | inessive -ssA | adessive -llA |
-    | Source    | elative -stA  | ablative -ltA |
-    | Goal      | illative -Vn  | allative -lle | -/
-def localCaseMatrix : Direction → LocationType → LocalCase
-  | .static, .internal => ⟨"inessive",  "-ssA", .static, .internal, .ine⟩
-  | .static, .external => ⟨"adessive",  "-llA", .static, .external, .ade⟩
-  | .source, .internal => ⟨"elative",   "-stA", .source, .internal, .ela⟩
-  | .source, .external => ⟨"ablative",  "-ltA", .source, .external, .abl⟩
-  | .goal,   .internal => ⟨"illative",  "-Vn",  .goal,   .internal, .ill⟩
-  | .goal,   .external => ⟨"allative",  "-lle", .goal,   .external, .all⟩
-
-/-- All 6 local cases as a flat list. -/
-def allLocalCases : List LocalCase :=
-  [ localCaseMatrix .static .internal
-  , localCaseMatrix .static .external
-  , localCaseMatrix .source .internal
-  , localCaseMatrix .source .external
-  , localCaseMatrix .goal   .internal
-  , localCaseMatrix .goal   .external ]
-
-/-- Each cell's `Case` is exactly what the shared `Case.toCase`
-    decomposition builds from its `Region × PathDir` coordinates — the
-    matrix is the shared spatial decomposition, not a private table. -/
-theorem coreCase_eq_toCase (d : Direction) (l : LocationType) :
-    some (localCaseMatrix d l).coreCase =
-      Case.toCase l.toRegion d.toPathDir := by
-  cases d <;> cases l <;> rfl
-
-/-- The 6 local cases are 6 *distinct* `Case` cells — the faithful
-    decomposition keeps internal and external apart (the lossy collapse
-    of the old `*_collapses_to_*` theorems is gone). -/
-theorem localCases_distinct :
-    (allLocalCases.map LocalCase.coreCase).Nodup := by decide
-
-/-- All 6 local cases appear in the full Finnish inventory. -/
-theorem localCases_subset_inventory :
-    ∀ lc ∈ allLocalCases, lc.coreCase ∈ inventory := by decide
-
-/-- Within each direction, internal and external suffixes differ. -/
-theorem internal_external_distinct (d : Direction) :
-    (localCaseMatrix d .internal).suffix ≠ (localCaseMatrix d .external).suffix := by
-  cases d <;> decide
+/-- The local cases are the interior and exterior series: a cell of the shared spatial
+decomposition is a Finnish case exactly when its region is not the surface. -/
+theorem toCase_mem_inventory_iff {r : Case.Region} {d : Case.PathDir} {c : Case}
+    (h : Case.toCase r d = some c) : c ∈ inventory ↔ r ≠ .surface := by
+  cases r <;> cases d <;> cases h <;> decide
 
 end Finnish.Case
