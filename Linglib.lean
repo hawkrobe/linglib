@@ -734,7 +734,6 @@ import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Evidentiality
-import Linglib.Fragments.Georgian.PolarityItems
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.German.Conditionals

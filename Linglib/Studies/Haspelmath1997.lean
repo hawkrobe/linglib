@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Linglib.Data.Examples.Haspelmath1997
 public import Linglib.Fragments.English.Indefinites
+public import Linglib.Fragments.Georgian.Indefinites
 public import Linglib.Fragments.German.Indefinites
 public import Linglib.Fragments.Kannada.Indefinites
 public import Linglib.Fragments.Latin.Indefinites
@@ -18,7 +19,7 @@ public import Linglib.Fragments.Yakut.Indefinites
 /-!
 # Haspelmath (1997): Indefinite Pronouns
 
-This file formalizes the implicational map of [haspelmath-1997] and the distributional claims
+This file formalizes Haspelmath's implicational map of indefinite functions and the claims
 made over it: the adjacency requirement that every indefinite series cover a connected region of
 the nine-function map, the two further principles of §4.5 restricting which connected regions
 occur, and the series of eighteen languages of the 40-language sample as Appendix A draws them.
@@ -57,8 +58,8 @@ functions of *-nibud'*, which is preferred there), and it fills cells the book h
 on the strength of the map (Yakut *da* and Mandarin
 bare interrogatives under indirect negation, the Swahili comparative). For those cells
 `sample_contiguous` restates the map; it tests the adjacency requirement on the others. The
-pronouns of English, German, Kannada, Latin, Latvian, Russian and Yakut are their Fragments'
-entries.
+pronouns of English, Georgian, German, Kannada, Latin, Latvian, Russian and Yakut are their
+Fragments' entries.
 
 ## TODO
 
@@ -87,16 +88,16 @@ theorem exists_adj_mem_of_contiguous (h : Contiguous s) (hs : 1 < s.card) {f : H
     (hf : f ∈ s) : ∃ g ∈ s, implicationalMap.Adj f g :=
   h.preconnected.exists_adj_mem_of_nontrivial (Finset.one_lt_card_iff_nontrivial.1 hs) hf
 
-/-- Specific known's only neighbour is specific unknown: no series expresses specific known and
-irrealis non-specific without specific unknown, the ABA syncretism. -/
+/-- A contiguous region containing specific known and a second function contains specific
+unknown, the only neighbour of specific known. -/
 theorem specificUnknown_mem_of_specificKnown_mem (h : Contiguous s) (hs : 1 < s.card)
     (hf : .specificKnown ∈ s) : .specificUnknown ∈ s := by
   obtain ⟨g, hg, hadj⟩ := exists_adj_mem_of_contiguous h hs hf
   simp only [implicationalMap, HaspelmathFunction.adjacent, List.mem_singleton] at hadj
   exact hadj ▸ hg
 
-/-- A series covering specific known and irrealis non-specific covers specific unknown: the ABA
-syncretism of the three specific functions is not a connected region. -/
+/-- A series covering specific known and irrealis non-specific covers specific unknown, so the
+ABA syncretism of the three specific functions is not a connected region. -/
 theorem specificUnknown_mem_of_irrealis_mem (h : Contiguous s) (hk : .specificKnown ∈ s)
     (hi : .irrealis ∈ s) : .specificUnknown ∈ s :=
   specificUnknown_mem_of_specificKnown_mem h
@@ -118,27 +119,27 @@ theorem comparative_mem_of_freeChoice_mem (h : Contiguous s) (hs : 1 < s.card)
 
 /-! ### Table 4.1 and the principles of §4.5 -/
 
-/-- The functions with the given numbers: the book's digit notation. -/
+/-- `region ns` is the set of functions whose numbers are in `ns`, the book's digit notation. -/
 def region (ns : List ℕ) : Finset HaspelmathFunction := Finset.univ.filter (·.number ∈ ns)
 
-/-- The middle of the map: question, conditional, indirect negation, comparative. -/
+/-- The middle of the map is question, conditional, indirect negation and comparative. -/
 def middle : Finset HaspelmathFunction := region [4, 5, 6, 8]
 
-/-- Principle 1: a series confined to the middle of the map covers at least three
-functions. -/
+/-- A region satisfies Principle 1 if it covers at least three functions whenever it is confined
+to the middle of the map. -/
 def Principle1 (s : Finset HaspelmathFunction) : Prop := s ⊆ middle → 3 ≤ s.card
 
 instance : DecidablePred Principle1 := fun _ ↦ inferInstanceAs (Decidable (_ → _))
 
-/-- Principle 2: the comparative and free-choice functions are never combined with
-specific-known. -/
+/-- A region satisfies Principle 2 if it does not combine specific known with the comparative or
+free-choice function. -/
 def Principle2 (s : Finset HaspelmathFunction) : Prop :=
   .specificKnown ∈ s → .comparative ∉ s ∧ .freeChoice ∉ s
 
 instance : DecidablePred Principle2 := fun _ ↦ inferInstanceAs (Decidable (_ → _))
 
-/-- Table 4.1: the combinations of functions attested in the 40-language sample, each with the
-series the table gives as its example. -/
+/-- Table 4.1 lists the combinations of functions attested in the 40-language sample, each with
+the series the table gives as its example. -/
 def attestedCombinations : List (String × Finset HaspelmathFunction) :=
   [ ("Russian koe-", region [1]), ("Kazakh älde-", region [1, 2]),
     ("Serbian/Croatian ne-", region [1, 2, 3]), ("English some-", region [1, 2, 3, 4, 5]),
@@ -171,7 +172,7 @@ def excludedByPrinciple2 : List (Finset HaspelmathFunction) :=
   [region [1, 2, 3, 4, 5, 6, 8], region [1, 2, 3, 4, 6, 7, 8], region [1, 2, 3, 4, 6, 8, 9],
     region [1, 2, 3, 4, 6, 7, 8, 9], region [1, 2, 3, 5, 8], region [1, 2, 3, 4, 5, 8, 9]]
 
-/-- The adjacency requirement: every attested combination is a connected region of the map. -/
+/-- Every attested combination is a connected region of the map, as adjacency requires. -/
 theorem attested_contiguous : ∀ c ∈ attestedCombinations, Contiguous c.2 := by decide
 
 /-- Every attested combination satisfies both principles. -/
@@ -179,8 +180,8 @@ theorem attested_principles :
     ∀ c ∈ attestedCombinations, Principle1 c.2 ∧ Principle2 c.2 := by
   decide
 
-/-- The principles restrict beyond adjacency: every combination they exclude is a connected
-region. -/
+/-- The principles restrict beyond adjacency, since every combination they exclude is a
+connected region. -/
 theorem excluded_contiguous :
     ∀ s ∈ excludedByPrinciple1 ++ excludedByPrinciple2, Contiguous s := by
   decide +kernel
@@ -192,8 +193,8 @@ theorem excluded_violate :
 
 /-! ### Eighteen languages of the 40-language sample -/
 
-/-- An indefinite series as a figure of Appendix A draws it: a pronoun of the series with the
-region of the map the figure encloses for it. -/
+/-- A `Series` pairs a pronoun of an indefinite series with the region of the map that the
+series' figure in Appendix A encloses. -/
 structure Series where
   /-- The book's name for the series, by which its examples are tagged. -/
   label : String
@@ -209,16 +210,16 @@ def series (label form : String) (basis : MorphologicalBasis) (ns : List ℕ)
     (ontology : OntologicalCategory := .person) : Series :=
   ⟨label, { form, ontology, basis }, region ns⟩
 
-/-- English (A.3, §4.3.1): *some-* 12345, *any-* 456789, *no-* 7. -/
+/-- The English series (A.3, §4.3.1) are *some-* 12345, *any-* 456789 and *no-* 7. -/
 def english : List Series :=
   [ ⟨"some-", English.Indefinites.someEntry, region [1, 2, 3, 4, 5]⟩,
     ⟨"any-", English.Indefinites.anyEntry, region [4, 5, 6, 7, 8, 9]⟩,
     ⟨"no-", English.Indefinites.noEntry, region [7]⟩ ]
 
-/-- Russian (A.16): *koe-* 1, *-to* 2345, *-nibud'* 345, *-libo* 34568, *by to ni bylo* 568,
-*ni-* 7, *ugodno* and the determiner *ljuboj* 9. The *-to*-series is mainly used specifically
-but is not excluded from the functions of *-nibud'*, where *-nibud'* is preferred; *-libo*
-replaces *-nibud'* under indirect negation and in comparatives. -/
+/-- The Russian series (A.16) are *koe-* 1, *-to* 2345, *-nibud'* 345, *-libo* 34568, *by to ni
+bylo* 568, *ni-* 7, and *ugodno* and the determiner *ljuboj* 9. The *-to*-series is mainly used
+specifically but is not excluded from the functions of *-nibud'*, where *-nibud'* is preferred;
+*-libo* replaces *-nibud'* under indirect negation and in comparatives. -/
 def russian : List Series :=
   [ ⟨"koe-", Russian.Indefinites.koeEntry, region [1]⟩,
     ⟨"-to", Russian.Indefinites.toEntry, region [2, 3, 4, 5]⟩,
@@ -229,7 +230,8 @@ def russian : List Series :=
     ⟨"ugodno", Russian.Indefinites.ugodnoEntry, region [9]⟩,
     series "ljuboj" "ljuboj" .special [9] .determiner ]
 
-/-- German (A.1): *etwas* 123456, *irgend-* 2345689, temporal *je* 4568, *jeder* 689, *n-* 7. -/
+/-- The German series (A.1) are *etwas* 123456, *irgend-* 2345689, temporal *je* 4568, *jeder*
+689 and *n-* 7. -/
 def german : List Series :=
   [ ⟨"etwas-", German.Indefinites.jemandEntry, region [1, 2, 3, 4, 5, 6]⟩,
     ⟨"irgend-", German.Indefinites.irgendEntry, region [2, 3, 4, 5, 6, 8, 9]⟩,
@@ -237,8 +239,8 @@ def german : List Series :=
     ⟨"jeder", German.Indefinites.jederEntry, region [6, 8, 9]⟩,
     ⟨"n-", German.Indefinites.niemandEntry, region [7]⟩ ]
 
-/-- Latin (A.6): *-dam* 1, *ali-* 2345, *-quam* 4568, the negative series 7, *-vis* and
-*-libet* 9. -/
+/-- The Latin series (A.6) are *-dam* 1, *ali-* 2345, *-quam* 4568, the negative series 7, and
+*-vis* and *-libet* 9. -/
 def latin : List Series :=
   [ ⟨"-dam", Latin.Indefinites.damEntry, region [1]⟩,
     ⟨"ali-", Latin.Indefinites.aliEntry, region [2, 3, 4, 5]⟩,
@@ -246,38 +248,39 @@ def latin : List Series :=
     ⟨"n-", Latin.Indefinites.nemoEntry, region [7]⟩,
     ⟨"-vis", Latin.Indefinites.visEntry, region [9]⟩ ]
 
-/-- Yakut (A.25): *ere* 12, *eme* 345, *da* 6789 with indirect negation predicted, *bayarar*
-9. -/
+/-- The Yakut series (A.25) are *ere* 12, *eme* 345, *da* 6789 with indirect negation
+predicted, and *bayarar* 9. -/
 def yakut : List Series :=
   [ ⟨"ere", Yakut.Indefinites.ereEntry, region [1, 2]⟩,
     ⟨"eme", Yakut.Indefinites.emeEntry, region [3, 4, 5]⟩,
     ⟨"da", Yakut.Indefinites.daEntry, region [6, 7, 8, 9]⟩,
     ⟨"bayarar", Yakut.Indefinites.bayararEntry, region [9]⟩ ]
 
-/-- Kannada (A.35): *-oo* 2, *-aadaruu* 345, *-uu* 6789; no series for a referent the speaker
-has in mind. -/
+/-- The Kannada series (A.35) are *-oo* 2, *-aadaruu* 345 and *-uu* 6789; no series expresses a
+referent the speaker has in mind. -/
 def kannada : List Series :=
   [ ⟨"-oo", Kannada.Indefinites.ooEntry, region [2]⟩,
     ⟨"-aadaruu", Kannada.Indefinites.aadaruuEntry, region [3, 4, 5]⟩,
     ⟨"-uu", Kannada.Indefinites.uuEntry, region [6, 7, 8, 9]⟩ ]
 
-/-- Latvian (A.18): *kaut* 12345, the figure not separating the specific functions, *ne-* 7 and
-*jeb-* 689. The bare interrogatives are also used as indefinites, *kāds* 'somebody' in
-conditionals and under indirect negation, and the figure draws no region for them. -/
+/-- The Latvian series (A.18) are *kaut* 12345, the figure not separating the specific
+functions, *ne-* 7 and *jeb-* 689. The bare interrogatives are also used as indefinites, *kāds*
+'somebody' in conditionals and under indirect negation, and the figure draws no region for
+them. -/
 def latvian : List Series :=
   [ ⟨"kaut", Latvian.Indefinites.kautKas, region [1, 2, 3, 4, 5]⟩,
     ⟨"ne-", Latvian.Indefinites.neviens, region [7]⟩,
     ⟨"jeb-", Latvian.Indefinites.jebkāds, region [6, 8, 9]⟩ ]
 
-/-- Japanese (A.38): *-ka* 12345, *-mo* 678, *-demo* 9. -/
+/-- The Japanese series (A.38) are *-ka* 12345, *-mo* 678 and *-demo* 9. -/
 def japanese : List Series :=
   [ series "-ka" "dare-ka" .interrogative [1, 2, 3, 4, 5],
     series "-mo" "dare-mo" .interrogative [6, 7, 8],
     series "-demo" "dare-demo" .interrogative [9] ]
 
-/-- Mandarin Chinese (A.36): generic nouns 12, the bare interrogatives in all non-specific
-non-emphatic functions 34567 (with no data for indirect negation), *dōu*/*yě* 7, the determiner
-*rènhé* 6789. -/
+/-- The Mandarin Chinese series (A.36) are generic nouns 12, the bare interrogatives in all
+non-specific non-emphatic functions 34567 (with no data for indirect negation), *dōu*/*yě* 7,
+and the determiner *rènhé* 6789. -/
 def mandarin : List Series :=
   [ series "generic noun" "rén" .genericNoun [1, 2],
     series "bare interrogative" "shéi" .interrogative [3, 4, 5, 6, 7],
@@ -285,37 +288,37 @@ def mandarin : List Series :=
     series "yě" "shéi yě" .interrogative [7],
     series "rènhé" "rènhé" .special [6, 7, 8, 9] .determiner ]
 
-/-- Turkish (A.23): *bir-* 1234567, *hiç* 467, *herhangi* 23456789. The figure starts the
-*herhangi* outline at irrealis non-specific; the text admits either series in every function
-from specific unknown to direct negation and gives *herhangi biri* as a specific-unknown
-example, and the region follows the text. -/
+/-- The Turkish series (A.23) are *bir-* 1234567, *hiç* 467 and *herhangi* 23456789. The figure
+starts the *herhangi* outline at irrealis non-specific; the text admits either series in every
+function from specific unknown to direct negation and gives *herhangi biri* as a
+specific-unknown example, and the region follows the text. -/
 def turkish : List Series :=
   [ series "bir-" "biri(si)" .genericNoun [1, 2, 3, 4, 5, 6, 7],
     series "hiç" "hiç kimse" .genericNoun [4, 6, 7],
     series "herhangi" "herhangi biri" .genericNoun [2, 3, 4, 5, 6, 7, 8, 9] ]
 
-/-- Hindi/Urdu (A.22): *koii* 1234567, *koii bhii* 3456789. -/
+/-- The Hindi/Urdu series (A.22) are *koii* 1234567 and *koii bhii* 3456789. -/
 def hindi : List Series :=
   [ series "koii" "koii" .special [1, 2, 3, 4, 5, 6, 7],
     series "bhii" "koii bhii" .special [3, 4, 5, 6, 7, 8, 9] ]
 
-/-- Italian (A.10): *qualche-* 123456, *nessuno* 467 (questions but not conditionals),
-*-unque* 89. -/
+/-- The Italian series (A.10) are *qualche-* 123456, *nessuno* 467 (questions but not
+conditionals) and *-unque* 89. -/
 def italian : List Series :=
   [ series "qualche-" "qualcuno" .special [1, 2, 3, 4, 5, 6],
     series "nessuno" "nessuno" .special [4, 6, 7],
     series "-unque" "chiunque" .interrogative [8, 9] ]
 
-/-- Finnish (A.27): *eräs* 1, *-kin* 2345, *-kaan* 4678, *hyvänsä* 589 with the comparative
-only as an equative standard. -/
+/-- The Finnish series (A.27) are *eräs* 1, *-kin* 2345, *-kaan* 4678, and *hyvänsä* 589 with
+the comparative only as an equative standard. -/
 def finnish : List Series :=
   [ series "eräs" "eräs" .special [1],
     series "-kin" "joku" .special [2, 3, 4, 5],
     series "-kaan" "kukaan" .interrogative [4, 6, 7, 8],
     series "hyvänsä" "kuka hyvänsä" .interrogative [5, 8, 9] ]
 
-/-- Korean (A.39): the bare interrogatives and *-nka* 123456 alike, *-to* 678, *-na* and
-*-tunci* 9. -/
+/-- The Korean series (A.39) are the bare interrogatives and *-nka*, alike at 123456, *-to* 678,
+and *-na* and *-tunci* 9. -/
 def korean : List Series :=
   [ series "bare interrogative" "nwukwu" .interrogative [1, 2, 3, 4, 5, 6],
     series "-nka" "nwukwu-nka" .interrogative [1, 2, 3, 4, 5, 6],
@@ -323,28 +326,30 @@ def korean : List Series :=
     series "-na" "nwukwu-na" .interrogative [9],
     series "-tunci" "nwukwu-tunci" .interrogative [9] ]
 
-/-- Hungarian (A.26): *vala-* 123456, *sem-* 7, *akár-* and *bár-* 5689, excluded from
-questions. -/
+/-- The Hungarian series (A.26) are *vala-* 123456, *sem-* 7, and *akár-* and *bár-* 5689,
+excluded from questions. -/
 def hungarian : List Series :=
   [ series "vala-" "valaki" .interrogative [1, 2, 3, 4, 5, 6],
     series "sem-" "senki" .interrogative [7],
     series "akár-" "akárki" .interrogative [5, 6, 8, 9],
     series "bár-" "bárki" .interrogative [5, 6, 8, 9] ]
 
-/-- Georgian (A.34): *-γac* 12, *-me* 34568, *ara-* 7; free choice is expressed by the adjective
-*nebismieri*, not an indefinite pronoun. -/
+/-- The Georgian series (A.34) are *-γac* 12, *-me* 34568 and *ara-* 7. The text also puts the
+potential *vera-* and prohibitive *nura-* series in direct negation, where the figure does not
+draw them, and free choice is expressed by the adjective *nebismieri*, not by a series. -/
 def georgian : List Series :=
-  [ series "-γac" "vi-γac" .interrogative [1, 2],
-    series "-me" "vin-me" .interrogative [3, 4, 5, 6, 8],
-    series "ara-" "ara-vin" .interrogative [7] ]
+  [ ⟨"-γac", Georgian.Indefinites.viγac, region [1, 2]⟩,
+    ⟨"-me", Georgian.Indefinites.vinMe, region [3, 4, 5, 6, 8]⟩,
+    ⟨"ara-", Georgian.Indefinites.araVin, region [7]⟩ ]
 
-/-- Ancash Quechua (A.37): the bare interrogatives for the specific functions, which the map of
-the language does not distinguish, and *-pis* 3456789. -/
+/-- The Ancash Quechua series (A.37) are the bare interrogatives for the specific functions,
+which the map of the language does not distinguish, and *-pis* 3456789. -/
 def quechua : List Series :=
   [ series "bare interrogative" "pi" .interrogative [1, 2],
     series "-pis" "pi-pis" .interrogative [3, 4, 5, 6, 7, 8, 9] ]
 
-/-- Swahili (A.33): generic nouns 1234567, CL-o CL-ote 456789 with the comparative predicted. -/
+/-- The Swahili series (A.33) are generic nouns 1234567 and CL-o CL-ote 456789, with the
+comparative predicted. -/
 def swahili : List Series :=
   [ series "generic noun" "mtu" .genericNoun [1, 2, 3, 4, 5, 6, 7],
     series "CL-o CL-ote" "mtu ye yote" .special [4, 5, 6, 7, 8, 9] ]
@@ -354,7 +359,7 @@ def sample : List (List Series) :=
   [ english, russian, german, latin, yakut, kannada, latvian, japanese, mandarin, turkish, hindi,
     italian, finnish, korean, hungarian, georgian, quechua, swahili ]
 
-/-- The adjacency requirement on the sample: every series covers a connected region. -/
+/-- Every series of the sample covers a connected region, as adjacency requires. -/
 theorem sample_contiguous : ∀ p ∈ sample, ∀ e ∈ p, Contiguous e.functions := by decide
 
 /-- Both principles hold of every series in the sample. -/
@@ -407,8 +412,8 @@ def functionTable : List (String × HaspelmathFunction) :=
     ("indirectNeg", .indirectNeg), ("directNeg", .directNeg), ("comparative", .comparative),
     ("freeChoice", .freeChoice)]
 
-/-- The series an example is tagged with: two for a sentence with two indefinites, none for an
-indefinite outside the series of its language. -/
+/-- `seriesLabels e` lists the series an example is tagged with, two for a sentence with two
+indefinites and none for an indefinite outside the series of its language. -/
 def seriesLabels (e : LinguisticExample) : List String :=
   e.paperFeatures.filterMap fun kv ↦ if kv.1 = "series" then some kv.2 else none
 
@@ -430,14 +435,14 @@ instance (e : LinguisticExample) (label : String) : Decidable (Covers e label) :
 instance (e : LinguisticExample) (label : String) : Decidable (Excludes e label) :=
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
-/-- The figures cover the book's examples: every acceptable example lies in the region drawn
-for each of its series. -/
+/-- Every acceptable example of the book lies in the region its figure draws for each of its
+series. -/
 theorem acceptable_covers :
     ∀ e ∈ Examples.all, e.judgment = .acceptable → ∀ l ∈ seriesLabels e, Covers e l := by
   decide +kernel
 
-/-- The figures exclude what the book stars: every example starred out of context lies outside
-the region drawn for each of its series. The two starred English conditionals are starred for
+/-- Every example the book stars out of context lies outside the region its figure draws for
+each of its series. The two starred English conditionals are starred for
 the speaker's expectation, which their context records, and not for the function. -/
 theorem ungrammatical_excludes :
     ∀ e ∈ Examples.all, e.judgment = .ungrammatical → e.context = "" →
