@@ -46,7 +46,7 @@ of [asher-1987]'s Concorde case (32) and the amendment (40) blocking `want p ∧
 
 namespace Heim1992
 
-open DynamicSemantics CCP.Partial Presupposition Desire.Conditional
+open DynamicSemantics PartialUpdate CCP.Partial Presupposition Desire.Conditional
 open Presupposition.BeliefEmbedding
   (presupAttributedToHolder transparentProjection opaque_implies_transparent_when_reflexive)
 

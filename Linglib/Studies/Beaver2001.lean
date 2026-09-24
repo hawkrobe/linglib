@@ -104,7 +104,7 @@ defined for `∂φ` only at states that are fixed points of `φ`. -/
 noncomputable def eval : Formula W → CCP.Partial W
   | atom p => fun σ => Part.some {w ∈ σ | w ∈ p}
   | not φ => CCP.Partial.neg φ.eval
-  | and φ ψ => CCP.Partial.seq φ.eval ψ.eval
+  | and φ ψ => PartialUpdate.seq φ.eval ψ.eval
   | might φ => fun σ => (φ.eval σ).map fun υ => if υ.Nonempty then σ else ∅
   | must φ => fun σ => (φ.eval σ).map fun υ => if υ = σ then σ else ∅
   | presup φ => fun σ => ⟨σ ∈ φ.eval σ, fun _ => σ⟩
@@ -135,7 +135,7 @@ theorem eval_eliminative : ∀ (φ : Formula W) {σ τ : Set W}, τ ∈ φ.eval 
   | atom _, _, _, h => mem_eval_atom.1 h ▸ Set.sep_subset _ _
   | not _, _, _, h => CCP.Partial.isEliminative_neg _ _ _ h
   | and φ ψ, _, _, h =>
-    CCP.Partial.IsEliminative.seq (fun _ _ => eval_eliminative φ) (fun _ _ => eval_eliminative ψ)
+    PartialUpdate.IsEliminative.seq (fun _ _ => eval_eliminative φ) (fun _ _ => eval_eliminative ψ)
       _ _ h
   | might _, _, _, h => by obtain ⟨_, -, rfl⟩ := mem_eval_might.1 h; split_ifs <;> simp
   | must _, _, _, h => by obtain ⟨_, -, rfl⟩ := mem_eval_must.1 h; split_ifs <;> simp
@@ -151,7 +151,7 @@ theorem empty_mem_eval_empty : ∀ φ : Formula W, ∅ ∈ φ.eval ∅
   | presup φ => mem_eval_presup.2 ⟨empty_mem_eval_empty φ, rfl⟩
 
 /-- `σ` satisfies `φ` (D29): `σ[φ]σ`, that is, `σ` supports the update. -/
-def Satisfies (σ : Set W) (φ : Formula W) : Prop := CCP.Partial.supports σ φ.eval
+def Satisfies (σ : Set W) (φ : Formula W) : Prop := PartialUpdate.supports σ φ.eval
 
 /-- `φ` presupposes `ψ` (D31, D46): every state admitting `φ` satisfies `ψ`. -/
 def Presupposes (φ ψ : Formula W) : Prop := ∀ σ, φ.eval.admits σ → Satisfies σ ψ
@@ -171,7 +171,7 @@ theorem admits_of_mem (h : τ ∈ φ.eval σ) : φ.eval.admits σ := Part.dom_if
 theorem Satisfies.admits (h : Satisfies σ φ) : φ.eval.admits σ := admits_of_mem h
 
 theorem entails_iff_forall : Entails φ ψ ↔ ∀ σ τ, τ ∈ φ.eval σ → Satisfies τ ψ :=
-  CCP.Partial.entails_bind_iff
+  PartialUpdate.entails_bind_iff
 
 /-- *must* is the dual of *might* (Fact 6.1). -/
 theorem eval_must (φ : Formula W) : (must φ).eval = (not (might (not φ))).eval := by
@@ -456,7 +456,7 @@ every world of the state, and keeps exactly the worlds at which the sentence is 
 theorem mem_eval_iff (hφ : NonModal φ) (σ τ : Set W) :
     τ ∈ φ.eval σ ↔ (∀ w ∈ σ, φ.eval.admits {w}) ∧ τ = {w ∈ σ | TrueAt w φ} := by
   induction hφ generalizing σ τ with
-  | atom p => simp [trueAt_atom, CCP.Partial.admits, eval]
+  | atom p => simp [trueAt_atom, PartialUpdate.admits, eval]
   | @not φ' hφ ih =>
     rw [mem_eval_not]
     constructor
@@ -493,7 +493,7 @@ theorem mem_eval_iff (hφ : NonModal φ) (σ τ : Set W) :
 
 /-- A non-modal sentence is satisfied iff it is true at every world of the state. -/
 theorem satisfies_iff (hφ : NonModal φ) : Satisfies σ φ ↔ ∀ w ∈ σ, TrueAt w φ := by
-  rw [Satisfies, CCP.Partial.supports_iff_mem, mem_eval_iff hφ]
+  rw [Satisfies, PartialUpdate.supports_iff_mem, mem_eval_iff hφ]
   constructor
   · rintro ⟨_, hσ⟩ w hw
     exact ((Set.ext_iff.1 hσ w).1 hw).2

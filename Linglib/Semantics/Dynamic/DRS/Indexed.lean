@@ -19,7 +19,7 @@ re-declared referents ([muskens-1996]'s fn. 4 divergence).
 Persistence types the semantics: `toRelAt X K` is read only at `X` and, given
 the referential presupposition `K.freeVarFinset ⊆ X`, written only at `X ∪ U`,
 so a well-formed DRS denotes a spine transition `Transition X (X ∪ U)` and a
-proper DRS expresses an information state by acting on `⊥` (Def. 22). The
+proper DRS expresses an information state by acting on the initial state `⊤` (Def. 22). The
 Merging Lemma here needs less than the flat freshness hypothesis — only
 capture by sub-box universes is fatal, re-declaration is harmless — and lifts
 to the spine, where the action equation is an instance of functoriality
@@ -239,13 +239,13 @@ theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
 /-- The information state a proper DRS expresses (Def. 22): act on the
 initial state. -/
 def DRS.state (W : Type*) (K : DRS L V) (hK : K.IsProper) : State W V M :=
-  (K.transition W ∅ (Finset.subset_empty.mpr hK)).applyState ⊥
+  (K.transition W ∅ (Finset.subset_empty.mpr hK)).applyState ⊤
 
 /-- The state a DRS expresses lives in its referents' stratum. -/
 theorem DRS.uniformAt_state (W : Type*) (K : DRS L V) (hK : K.IsProper) :
     State.UniformAt ↑K.referents (K.state (M := M) W hK) := by
   have h := Transition.uniformAt_applyState
-    (K.transition (M := M) W ∅ (Finset.subset_empty.mpr hK)) ⊥
+    (K.transition (M := M) W ∅ (Finset.subset_empty.mpr hK)) ⊤
   simpa [DRS.state] using h
 
 /-- The characteristic membership form: a point survives in `⟦K⟧ˢ` iff it
