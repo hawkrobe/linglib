@@ -22,10 +22,17 @@ linkage gives a content cell of a lexeme a form correspondent built on one of th
 stems: the universal default assigns the root, and narrower language-specific rules override
 it by Pāṇini's principle, assigning a coradical, a stem that differs from the root in form or
 in inflection class. The paper's rules (5), (14), (15), (17) and (18) realize every form of the
-Czech nouns in its Tables 1, 6 and 8, read from the forms data. The paper measures how closely
-a heteroclite paradigm's class boundary follows an inflectional category, and claims that the
-categories serving as absolute correlates are privileged: every rule of paradigm linkage
-sensitive to some category is sensitive to a privileged one.
+Czech nouns in its Tables 1, 6 and 8, read from the forms data. The heteroclisis of Czech
+PRAMEN is morphosyntactically conditioned, its inflection class fixed by the property sets its
+cells express, whereas that of Sanskrit AHAN is morphologically conditioned, following a
+pattern of alternation among Strong, Middle and Weakest stems. Stump's Sanskrit rules of
+paradigm linkage (20a,b) "are independently motivated by the need to account for the pattern of
+stem alternation in nonheteroclite paradigms such as the masculine and neuter paradigms of
+PRATYAÑC" (p. 295): one list of rules gives the grades of PRATYAÑC's stems, which share a
+declension, and the stems of AHAN, which do not. The paper measures how closely a heteroclite
+paradigm's class boundary follows an inflectional category, and claims that the categories
+serving as absolute correlates are privileged: every rule of paradigm linkage sensitive to some
+category is sensitive to a privileged one.
 
 ## Main definitions
 
@@ -40,7 +47,10 @@ sensitive to some category is sensitive to a privileged one.
   `IsIntersectiveCorrelate`: the paper's classification of heteroclite paradigms, over any
   cells pairing a case with a number.
 * `SensitiveTo`, `Privileged`, `SatisfiesPCR`: the privileged category restriction.
-* `sktLinkage`, `matLinkage`: Sanskrit HṚD(AYA) and Russian MAT'.
+* `SktForm`, `f₁`: Sanskrit form property sets and the property mapping (10).
+* `strength`, `rule20a`, `rule20b`, `sktLinkage`: the strong and weak property sets of (19),
+  the rules (20a,b), and the linkage of PRATYAÑC and AHAN.
+* `hrdLinkage`, `matLinkage`: Sanskrit HṚD(AYA) and Russian MAT'.
 
 ## Main results
 
@@ -54,17 +64,28 @@ sensitive to some category is sensitive to a privileged one.
 * `pcr`, `not_satisfiesPCR_hypothetical`: the Czech rules satisfy (40), and a case-only rule
   would violate it.
 * `fractured_minimal_intersective_privileged`: claim (39) for the Czech nouns.
-* `hrd_cloven_by_case`, `mat_suppletive_not_heteroclite`: suppletion with and without
+* `rules_match_table9`, `rules_match_table10`: (19) and (20a,b) give PRATYAÑC's grades and
+  AHAN's stems at every cell of Tables 9 and 10.
+* `pratyanc_not_heteroclite`, `ahan_heteroclite`, `ahan_grade_eq_pratyancN`: one list of rules
+  makes AHAN heteroclite and PRATYAÑC not, with the same grades.
+* `ahan_degrees`, `ahan_fractured`: AHAN's paradigm is fractured, its case correlation .71.
+* `hrd_cloven`, `privileged_case`, `pcr_skt`: case, the absolute correlate of HṚD(AYA)'s cloven
+  paradigm, is privileged, and (20a,b) satisfy (40).
+* `hrd_form_suppletive`, `mat_suppletive_not_heteroclite`: suppletion with and without
   heteroclisis.
 
 ## Implementation notes
 
-The paper writes PŘEDSEDA's root *předseda* and its coradical *předsed*; here both stems have
-the segments *předsed*, the hard-feminine endings being segmented after ŽENA's *žen-*. Endings
-are read off exemplars, chosen by animacy and a final back obstruent as the tables juxtapose
-SLUHA with FILOLOG and MUŽ. Palatalization is witnessed only for *h* and *g*. Rules compete by
-domain inclusion, the rendering of Pāṇini's principle, and the universal default (5) is the
-root that selection falls back on rather than a listed rule.
+PŘEDSEDA's root *předseda* and coradical *předsed* share the segments *předsed*, ŽENA's endings
+being segmented after *žen-*. Endings are read off exemplars, chosen in Czech by animacy and a
+final back obstruent, as the tables juxtapose SLUHA with FILOLOG and MUŽ, and in Sanskrit by
+declension among PRATYAÑC, NĀMAN and MANAS; Czech palatalization is witnessed only for *h* and
+*g*. Rules compete by domain inclusion, the rendering of Pāṇini's principle, and selection falls
+back on the root, by (5) and (12). Gender is taken as lexical: PRATYAÑC's masculine and neuter
+are two lexemes, clause (ii) of `f₁` is vacuous, and the feminine, whose ī-stem *pratīcī*
+(n. 18) would make PRATYAÑC heteroclite, is left out, as are n. 21's stem indexing and n. 22's
+alternants. Sanskrit sandhi (*aho-bhis*, *pratyag-*) is unstated, so no forms are built. Rows
+are filtered by language.
 
 ## References
 
@@ -103,10 +124,13 @@ def CzCell.number (σ : CzCell) : Number := σ.2.1
 /-- `caseLabels` reads the case codes of the forms data as cases. -/
 def caseLabels : List (String × Case) :=
   [("nom", .nom), ("gen", .gen), ("dat", .dat), ("acc", .acc), ("voc", .voc), ("loc", .loc),
-    ("ins", .inst)]
+    ("ins", .inst), ("abl", .abl)]
 
 /-- `numberLabels` reads the number codes of the forms data as numbers. -/
-def numberLabels : List (String × Number) := [("sg", .singular), ("pl", .plural)]
+def numberLabels : List (String × Number) := [("sg", .singular), ("du", .dual), ("pl", .plural)]
+
+/-- `czForms` are the Czech rows of the forms data, those of Tables 1, 6 and 8. -/
+def czForms : List Form := Forms.all.filter (·.languageId == "czec1258")
 
 /-- The Czech nouns of Tables 1, 6 and 8 are POKOJ 'room', PRAMEN 'spring', MOST 'bridge',
 ŽENA 'woman', PŘEDSEDA 'president', FILOSOF 'philosopher', SLUHA 'servant', FILOLOG
@@ -132,7 +156,7 @@ def CzNoun.paramId : CzNoun → String
 /-- The attested forms of a cell are the segments of every row of the forms data for the noun
 whose case and number codes decode to the cell's, so a cell with two alternants has two. -/
 def attested (l : CzNoun) (σ : CzCell) : Finset (List String) :=
-  ((Forms.all.filter fun f ↦ f.parameterId == l.paramId &&
+  ((czForms.filter fun f ↦ f.parameterId == l.paramId &&
       f.columnAs? "Case" caseLabels == some σ.case &&
       f.columnAs? "Number" numberLabels == some σ.number).map Form.segments).toFinset
 
@@ -787,7 +811,7 @@ theorem fractured_minimal_intersective_privileged {l : CzNoun}
     ∃ S, Minimal (IsIntersectiveCorrelate (cellClass l)) S ∧ ∃ c ∈ S, Privileged cellClass c :=
   ⟨univ, minimal_univ_of_isFractured h, .number, mem_univ _, privileged_number⟩
 
-/-! ### Sanskrit HṚD(AYA) (Table 4) -/
+/-! ### Sanskrit cells, stems and form property sets -/
 
 /-- The Sanskrit cases are the nominative, vocative, accusative, instrumental, dative, ablative,
 genitive and locative. -/
@@ -796,37 +820,77 @@ abbrev SktCase : Finset Case := {.nom, .voc, .acc, .inst, .dat, .abl, .gen, .loc
 /-- The Sanskrit numbers are the singular, the dual and the plural. -/
 abbrev SktNumber : Finset Number := {.singular, .dual, .plural}
 
-/-- A Sanskrit content cell pairs a case with a number. -/
+/-- A Sanskrit content cell pairs a case with a number, gender being constant within a
+paradigm. -/
 abbrev SktCell : Type := SktCase × SktNumber
 
-instance : Nonempty SktCell := ⟨(⟨.nom, by decide⟩, ⟨.singular, by decide⟩)⟩
+/-- `SktCell.of c n` is the cell of case `c` and number `n`. -/
+def SktCell.of (c : Case) (n : Number) (hc : c ∈ SktCase := by decide)
+    (hn : n ∈ SktNumber := by decide) : SktCell :=
+  (⟨c, hc⟩, ⟨n, hn⟩)
 
-/-- The declensions of HṚD(AYA)'s stems are the neuter a-stem and the neuter consonant-stem
-declensions. -/
+instance : Nonempty SktCell := ⟨.of .nom .singular⟩
+
+/-- The genders of the Sanskrit paradigms considered are the masculine and the neuter. -/
+inductive SktGender
+  | masc
+  | neut
+  deriving DecidableEq, Fintype, Repr
+
+/-- `g.code` is the code of the gender `g` in the forms data. -/
+def SktGender.code : SktGender → String
+  | .masc => "masc"
+  | .neut => "neut"
+
+/-- The Sanskrit declensions considered are the neuter a-stem declension of HṚD(AYA)'s *hṛdaya*
+(Table 4), the general consonant-stem declension, followed by HṚD(AYA)'s *hṛd* and by every stem
+of PRATYAÑC (Table 9), and the neuter an-stem and neuter as-stem declensions (Table 10). -/
 inductive SktDecl
   | aStem
   | consStem
+  | anStem
+  | asStem
   deriving DecidableEq, Fintype, Repr
 
-/-- HṚD(AYA) has the stems *hṛdaya* and *hṛd*. -/
-inductive SktStem
-  | hrdaya
-  | hrd
-  deriving DecidableEq, Fintype, Repr
+/-- A stem is individuated, as in the paper, by its form and the declension it inflects in. -/
+structure SktStem where
+  /-- `form` is the form of the stem. -/
+  form : String
+  /-- `decl` is the declension the stem inflects in. -/
+  decl : SktDecl
+  deriving DecidableEq, Repr
 
-/-- `z.form` is the form of the stem `z`. -/
-def SktStem.form : SktStem → String
-  | .hrdaya => "hṛdaya"
-  | .hrd => "hṛd"
+/-- A form case is a case or the property [nominative ∨ accusative] that the operator ∨ joins,
+"such that any rule realizing p or p′ also realizes [p ∨ p′]" (p. 286). -/
+inductive SktFormCase
+  | plain (c : SktCase)
+  | nomAcc
+  deriving DecidableEq
 
-/-- A stem's declension follows its final segment, for "because hṛdaya is a neuter stem ending in
-a, it follows the neuter a-stem declension ..., but because hṛd is a neuter stem ending in a
-consonant, it instead follows the neuter consonant-stem declension" (p. 282). -/
-def SktStem.decl : SktStem → SktDecl
-  | .hrdaya => .aStem
-  | .hrd => .consStem
+/-- A form property set pairs a form case with a number. It omits gender, which is lexical for
+the lexemes considered. -/
+abbrev SktForm : Type := SktFormCase × SktNumber
 
-/-- HṚD(AYA) is the one Sanskrit lexeme considered. -/
+/-- `ι σ` is the form property set specified exactly as the content property set `σ`. -/
+def ι (σ : SktCell) : SktForm := (.plain σ.1, σ.2)
+
+/-- Distinct content property sets have distinct identically specified form property sets. -/
+theorem ι_injective : Function.Injective ι := fun σ τ h ↦ by
+  simp only [ι, Prod.mk.injEq, SktFormCase.plain.injEq] at h
+  exact Prod.ext h.1 h.2
+
+/-- The property mapping `f₁ g` of a lexeme of gender `g` is (10) (p. 288), which reads "Where α
+is any gender and β is any oblique case: (i) if σ = {neut nom X} or {neut acc X}, then
+f₁(σ) = {neut [nom ∨ acc] X}; (ii) if σ = {α β X}, then f₁(σ) = {β X}; (iii) otherwise
+f₁(σ) = σ." Gender being lexical here and absent from form property sets, clause (ii) is
+vacuous. -/
+def f₁ : SktGender → SktCell → SktForm
+  | .masc, σ => ι σ
+  | .neut, σ => if σ.1.1 = .nom ∨ σ.1.1 = .acc then (.nomAcc, σ.2) else ι σ
+
+/-! ### Sanskrit HṚD(AYA) (Table 4) -/
+
+/-- HṚD(AYA) 'heart' is the Sanskrit noun of Table 4. -/
 inductive SktNoun
   | hrdaya
   deriving DecidableEq, Fintype, Repr
@@ -836,26 +900,381 @@ abbrev direct : Finset Case := {.nom, .voc, .acc}
 
 /-- `hrdStem σ` is the stem of the cell `σ`, since "the direct ... case forms of HṚD(AYA) are
 built on the stem hṛdaya, while its remaining, oblique case forms are built on the stem hṛd"
-(p. 282). -/
-def hrdStem (σ : SktCell) : SktStem := if σ.1.1 ∈ direct then .hrdaya else .hrd
+(p. 282). Its stems' declensions follow their final segments, for "because hṛdaya is a neuter
+stem ending in a, it follows the neuter a-stem declension ..., but because hṛd is a neuter stem
+ending in a consonant, it instead follows the neuter consonant-stem declension" (p. 282). -/
+def hrdStem (σ : SktCell) : SktStem :=
+  if σ.1.1 ∈ direct then ⟨"hṛdaya", .aStem⟩ else ⟨"hṛd", .consStem⟩
 
-/-- `sktLinkage` is the paradigm linkage of HṚD(AYA). -/
-def sktLinkage : Linkage SktNoun SktStem SktCell SktCell := Linkage.ofFun id fun _ ↦ hrdStem
+/-- `hrdLinkage` is the paradigm linkage of HṚD(AYA), whose stem alternation "is not the effect
+of any regular rule of inflectional exponence, but is instead simply stipulated in HṚD(AYA)'s
+lexical entry" (p. 282). HṚD(AYA) is neuter, and its property sets map by `f₁`. -/
+def hrdLinkage : Linkage SktNoun SktStem SktCell SktForm where
+  realize _ σ := {hrdStem σ}
+  pm _ := f₁ .neut
+
+/-- `hrdClass σ` is the declension that the cell `σ` of HṚD(AYA) inflects in. -/
+def hrdClass (σ : SktCell) : SktDecl := (hrdStem σ).decl
 
 /-- HṚD(AYA) is heteroclite. -/
-theorem hrd_heteroclite : sktLinkage.IsHeteroclite SktStem.decl .hrdaya := by decide
+theorem hrd_heteroclite : hrdLinkage.IsHeteroclite SktStem.decl .hrdaya := by decide
 
 /-- HṚD(AYA)'s stems also differ in form, its heteroclisis being an effect of stem suppletion,
 unlike PRAMEN's (`segments_invariant`). -/
-theorem hrd_form_suppletive : sktLinkage.IsHeteroclite SktStem.form .hrdaya := by decide
+theorem hrd_form_suppletive : hrdLinkage.IsHeteroclite SktStem.form .hrdaya := by decide
 
-/-- Case is an absolute correlate of HṚD(AYA)'s heteroclisis and number is not, so its
-paradigm is cloven, as the paper counts it (p. 313), and "in Sanskrit, for example, cloven noun
-paradigms have case as their absolute correlate" (p. 310). -/
-theorem hrd_cloven_by_case :
-    degree (fun σ : SktCell ↦ σ.1) (fun σ ↦ (hrdStem σ).decl) = 1 ∧
-      degree (fun σ : SktCell ↦ σ.2) (fun σ ↦ (hrdStem σ).decl) ≠ 1 :=
-  ⟨degree_eq_one_iff.mpr (by decide), mt degree_eq_one_iff.mp (by decide)⟩
+/-- HṚD(AYA)'s paradigm is cloven, as the paper counts it (p. 313), with case as its absolute
+correlate, for "in Sanskrit, for example, cloven noun paradigms have case as their absolute
+correlate" (p. 310). -/
+theorem hrd_cloven : IsCloven hrdClass ∧ IsAbsoluteCorrelate .case hrdClass := by decide
+
+/-! ### Sanskrit stem grades (§3.2)
+
+"In instances of morphosyntactically conditioned heteroclisis, the choice of inflection class in
+the realization of a paradigm's individual cells is directly determined by the morphosyntactic
+property sets expressed by those cells; in instances of morphologically conditioned
+heteroclisis, the choice of inflection class in the realization of a paradigm's individual cells
+is instead determined by an independently observable pattern of stem alternation" (p. 293).
+PRAMEN's is of the first sort. In Sanskrit, rules (20a,b) give each cell of an alternating
+nominal its Strong, Middle or Weakest stem by the strength (19) of its property set and by the
+ending that follows; they make PRATYAÑC 'westerly' alternate among stems of one declension and
+AHAN 'day' among stems of two. -/
+
+/-- The grades of an alternating Sanskrit stem are the Strong, the Middle and the Weakest. -/
+inductive Grade
+  | strong
+  | middle
+  | weakest
+  deriving DecidableEq, Fintype, Repr
+
+/-- A property set is strong or weak, as (19) defines. -/
+inductive Strength
+  | strong
+  | weak
+  deriving DecidableEq, Repr
+
+/-- Clause (19a) makes strong the direct-case property sets of a masculine and the direct-case
+plural ones of a neuter. -/
+def rule19a (g : SktGender) : Exponence.DomainRule SktCell Strength :=
+  ⟨{σ | σ.1.1 ∈ direct ∧ (g = .masc ∨ σ.2.1 = .plural)}, .strong⟩
+
+/-- Clause (19b) makes weak the accusative plural property set of a masculine. -/
+def rule19b (g : SktGender) : Exponence.DomainRule SktCell Strength :=
+  ⟨{σ | g = .masc ∧ σ.1.1 = .acc ∧ σ.2.1 = .plural}, .weak⟩
+
+/-- Clause (19b) is narrower than (19a), for "because 19b is the more narrowly applicable of the
+two clauses, it overrides 19a, in accordance with Pāṇini's principle" (n. 19). -/
+theorem rule19b_lt_rule19a : rule19b .masc < rule19a .masc := by decide
+
+/-- The strength of a property set is given by (19) (p. 294), which reads "Where α is masculine
+or feminine, β is any direct case (nominative, vocative, or accusative), and γ is any number
+(singular, dual, or plural), a. instances of {α β γ} and {neuter β plural} are strong by
+default; b. but instances of {α accusative plural} are weak; in addition, c. any
+gender/case/number combination that is not strong according to (a) is weak." Clause (19b)
+overrides (19a) by Pāṇini's principle, and (19c) is the default. -/
+def strength (g : SktGender) (σ : SktCell) : Strength :=
+  ((Exponence.selectMinimal [rule19a g, rule19b g] σ).map (·.exponent)).getD .weak
+
+/-- `weak g` is the set of weak property sets of a lexeme of gender `g`. -/
+def weak (g : SktGender) : Finset SktCell := {σ | strength g σ = .weak}
+
+/-- `sktForms` are the Sanskrit rows of the forms data, those of Tables 9 and 10. -/
+def sktForms : List Form := Forms.all.filter (·.languageId == "sans1269")
+
+/-- `sktRows pid g σ` are the Sanskrit rows expressing the concept `pid` in the gender `g` at the
+cell `σ`. -/
+def sktRows (pid : String) (g : SktGender) (σ : SktCell) : List Form :=
+  (matching sktForms pid [("Gender", g.code)]).filter fun f ↦
+    f.columnAs? "Case" caseLabels == some σ.1.1 && f.columnAs? "Number" numberLabels == some σ.2.1
+
+/-- The ending of a row is what follows its stem alternant, nothing for a bare stem. -/
+def endingOf (f : Form) : List String := f.segments.drop 1
+
+/-- `d.exemplar` is the concept whose rows exemplify the declension `d`, PRATYAÑC 'westerly' for
+the general consonant-stem declension and, for the neuter an-stem and as-stem declensions, NĀMAN
+'name' and MANAS 'mind', which Table 10 sets beside AHAN. The tables print no a-stem paradigm. -/
+def SktDecl.exemplar : SktDecl → Option String
+  | .aStem => none
+  | .consStem => some "westerly"
+  | .anStem => some "name"
+  | .asStem => some "mind"
+
+/-- The row realizing a form case is that of the case itself, or of the nominative for the join
+[nominative ∨ accusative], the accusative row agreeing with it (`sktEndings_nomAcc`). -/
+def SktFormCase.rowCase : SktFormCase → SktCase
+  | .plain c => c
+  | .nomAcc => ⟨.nom, by decide⟩
+
+/-- `sktEndings d g τ` are the endings of the declension `d` for the gender `g` at the form property
+set `τ`, those of its exemplar's row. -/
+def sktEndings (d : SktDecl) (g : SktGender) (τ : SktForm) : List (List String) :=
+  match d.exemplar with
+  | some pid => (sktRows pid g (τ.1.rowCase, τ.2)).map endingOf
+  | none => []
+
+/-- The neuter nominative and accusative rows of every exemplar share their endings. -/
+theorem sktEndings_nomAcc : ∀ d (n : SktNumber),
+    sktEndings d .neut (.nomAcc, n) = sktEndings d .neut (.plain ⟨.acc, by decide⟩, n) := by decide
+
+/-- `sktVowels` are the vowels of Sanskrit. -/
+def sktVowels : List String := ["a", "ā", "i", "ī", "u", "ū", "ṛ", "ṝ", "ḷ", "e", "ai", "o", "au"]
+
+/-- An ending is vowel-initial when its first segment begins with a vowel. -/
+def VowelInitial (e : List String) : Prop :=
+  ∃ s ∈ e.head?, ∃ v ∈ sktVowels, v.toList <+: s.toList
+
+instance : DecidablePred VowelInitial := fun _ ↦ inferInstanceAs (Decidable (∃ s ∈ _, _))
+
+/-- The lexemes of §3.2 are the adjective PRATYAÑC 'westerly' and the noun AHAN 'day'.
+PRATYAÑC's masculine and neuter paradigms (Table 9) are indexed separately, gender being lexical
+for the nouns that share their cells. -/
+inductive SktLex
+  | pratyancM
+  | pratyancN
+  | ahan
+  deriving DecidableEq, Fintype, Repr
+
+/-- A lexical entry records a lexeme's gender, its root, the Strong stem, and whichever of a
+Middle and a Weakest coradical it has, for "some alternating nominals possess only two stems: a
+Strong stem and a single Weak stem. Others have a Strong stem and two Weak stems" (p. 293). -/
+structure SktEntry where
+  /-- `gender` is the lexeme's gender. -/
+  gender : SktGender
+  /-- `root` is the lexeme's Strong stem. -/
+  root : SktStem
+  /-- `middle` is the lexeme's Middle coradical, if it has one. -/
+  middle : Option SktStem
+  /-- `weakest` is the lexeme's Weakest coradical, if it has one. -/
+  weakest : Option SktStem
+  deriving DecidableEq, Repr
+
+/-- `sktEntry l` is the lexical entry of `l`. PRATYAÑC's root is its Strong stem *pratyañc*, and
+*pratyac* and *pratīc* are its Middle and Weakest coradicals, all three following "the general
+consonant-stem declension" (p. 294). For AHAN, "ahan is identified as AHAN's root (= its Strong
+stem), ahas as its Middle coradical, and ahn as its Weakest coradical", where "ahan and its
+zero-grade counterpart ahn inflect according to the neuter an-stem declension, while ahas
+inflects according to the neuter as-stem declension" (p. 295). -/
+def sktEntry : SktLex → SktEntry
+  | .pratyancM => ⟨.masc, ⟨"pratyañc", .consStem⟩, some ⟨"pratyac", .consStem⟩,
+      some ⟨"pratīc", .consStem⟩⟩
+  | .pratyancN => ⟨.neut, ⟨"pratyañc", .consStem⟩, some ⟨"pratyac", .consStem⟩,
+      some ⟨"pratīc", .consStem⟩⟩
+  | .ahan => ⟨.neut, ⟨"ahan", .anStem⟩, some ⟨"ahas", .asStem⟩, some ⟨"ahn", .anStem⟩⟩
+
+/-- The stems of an entry are its root and its coradicals. -/
+def SktEntry.stems (e : SktEntry) : List SktStem := e.root :: (e.middle.toList ++ e.weakest.toList)
+
+/-- A Sanskrit rule of paradigm linkage gives the cells of its domain form correspondents built on
+its exponent, a stem. -/
+abbrev SktRule : Type := Exponence.DomainRule SktCell SktStem
+
+/-- Rule (20a) (p. 294) reads "Where L is a nominal lexeme having s_w as its Weakest coradical and
+σ is a weak property set, if the realization of the form-cell ⟨s_w, f₁(σ)⟩ is s_w[vowel]X, then
+the content-cell ⟨L, σ⟩ has ⟨s_w, f₁(σ)⟩ as its form-correspondent." Its domain is read off the
+endings of s_w's declension rather than listed. -/
+def rule20a (e : SktEntry) : Option SktRule :=
+  e.weakest.map fun z : SktStem ↦
+    ⟨{σ ∈ weak e.gender | ∃ w ∈ sktEndings z.decl e.gender (f₁ e.gender σ), VowelInitial w}, z⟩
+
+/-- Rule (20b) (p. 294) reads "If L is a nominal lexeme having s_m as its Middle coradical and σ
+is a weak property set, then the content-cell ⟨L, σ⟩ has ⟨s_m, f₁(σ)⟩ as its
+form-correspondent." -/
+def rule20b (e : SktEntry) : Option SktRule := e.middle.map (⟨weak e.gender, ·⟩)
+
+/-- The rules (20a,b) that apply to a lexeme are those whose coradicals it has. The Sanskrit
+default (12) is not among them: it is the root that `Linkage.selectStem` falls back on. -/
+def sktRulesFor (e : SktEntry) : List SktRule := (rule20a e).toList ++ (rule20b e).toList
+
+/-- `sktRules l` are the rules of paradigm linkage of the lexeme `l`. -/
+def sktRules (l : SktLex) : List SktRule := sktRulesFor (sktEntry l)
+
+/-- `sktRoot l` is the root of `l`, the stem that the Sanskrit rule of paradigm linkage (12)
+(p. 289) gives every cell that no rule of `l` reaches: "Where L is a nominal lexeme having r as
+its root, the content-cell ⟨L, σ⟩ has ⟨r, f₁(σ)⟩ as its form-correspondent." -/
+def sktRoot (l : SktLex) : SktStem := (sktEntry l).root
+
+/-- The stem of a cell is the one Pāṇini's principle selects, by which "20a will, as the
+narrower of the two rules, override 20b in any instance in which the former rule is applicable"
+(p. 295). -/
+def sktStem (l : SktLex) (σ : SktCell) : SktStem := Linkage.selectStem sktRules sktRoot l σ
+
+/-- The Sanskrit paradigm linkage gives each content cell the stem its rules select, with the
+form property set that `f₁` maps its property set to. -/
+def sktLinkage : Linkage SktLex SktStem SktCell SktForm where
+  realize l σ := {sktStem l σ}
+  pm l := f₁ (sktEntry l).gender
+
+/-- The grade of a stem in an entry is weakest for its Weakest coradical, middle for its Middle
+coradical, and strong for its root. -/
+def SktEntry.gradeOf (e : SktEntry) (z : SktStem) : Grade :=
+  if e.weakest = some z then .weakest else if e.middle = some z then .middle else .strong
+
+/-- `grade l σ` is the grade of the stem that the rules select at the cell `σ` of `l`. -/
+def grade (l : SktLex) (σ : SktCell) : Grade := (sktEntry l).gradeOf (sktStem l σ)
+
+/-- `sktClass l σ` is the declension that the cell `σ` of `l` inflects in. -/
+def sktClass (l : SktLex) (σ : SktCell) : SktDecl := (sktStem l σ).decl
+
+/-! ### The rules against Tables 9 and 10 -/
+
+/-- `l.paramId` is the concept that the forms of `l` express in the forms data. -/
+def SktLex.paramId : SktLex → String
+  | .pratyancM | .pratyancN => "westerly"
+  | .ahan => "day"
+
+/-- `l.rows σ` are the rows of the forms data for the cell `σ` of `l`. -/
+def SktLex.rows (l : SktLex) (σ : SktCell) : List Form := sktRows l.paramId (sktEntry l).gender σ
+
+/-- `gradeLabels` reads the grade codes of the forms data as grades. -/
+def gradeLabels : List (String × Grade) :=
+  [("strong", .strong), ("middle", .middle), ("weakest", .weakest)]
+
+/-- Every lexeme's Weakest coradical has one exemplar row at each cell, so the vowel test of
+(20a) never fails for want of a row. -/
+theorem sktEndings_length : ∀ l σ, ∀ z ∈ (sktEntry l).weakest,
+    (sktEndings z.decl (sktEntry l).gender (f₁ (sktEntry l).gender σ)).length = 1 := by decide
+
+/-- Rule (20a) is narrower than (20b) for each lexeme (p. 295). -/
+theorem rule20a_lt_rule20b : ∀ l, ∀ a ∈ rule20a (sktEntry l), ∀ b ∈ rule20b (sktEntry l),
+    a < b := by decide
+
+/-- The rules (19) and (20a,b) give every cell of PRATYAÑC's masculine and neuter paradigms the
+grade that Table 9 (p. 294) shades it with, each cell having one row. -/
+theorem rules_match_table9 : ∀ l ∈ [SktLex.pratyancM, .pratyancN], ∀ σ,
+    (l.rows σ).map (·.columnAs? "Grade" gradeLabels) = [some (grade l σ)] := by decide
+
+/-- The rules give every cell of AHAN the stem that Table 10 (p. 296) and p. 295 build it on,
+each cell having one row. -/
+theorem rules_match_table10 : ∀ σ,
+    (SktLex.ahan.rows σ).map (·.column? "Stem") = [some (sktStem .ahan σ).form] := by decide
+
+/-! ### Heteroclisis from stem alternation -/
+
+/-- The exponent of a rule of an entry is one of its stems. -/
+theorem SktEntry.exponent_mem_stems {e : SktEntry} {r : SktRule} (hr : r ∈ sktRulesFor e) :
+    r.exponent ∈ e.stems := by
+  rcases List.mem_append.mp hr with hr | hr <;>
+    obtain ⟨z, hz, rfl⟩ := Option.map_eq_some_iff.mp (Option.mem_toList.mp hr) <;>
+    simp [SktEntry.stems, hz]
+
+/-- Each cell is built on one of its lexeme's stems. -/
+theorem sktStem_mem_stems (l : SktLex) (σ : SktCell) : sktStem l σ ∈ (sktEntry l).stems :=
+  Linkage.selectStem_induction (· ∈ (sktEntry l).stems) List.mem_cons_self
+    fun _ hr ↦ SktEntry.exponent_mem_stems hr
+
+/-- A lexeme of §3.2 is heteroclite exactly when two of its cells differ in class. -/
+theorem sktLinkage_isHeteroclite_iff {l : SktLex} :
+    sktLinkage.IsHeteroclite SktStem.decl l ↔ ∃ σ τ, sktClass l σ ≠ sktClass l τ := by
+  simp [Linkage.IsHeteroclite, sktLinkage, sktClass]
+
+/-- A lexeme whose stems all follow one declension is not heteroclite. -/
+theorem not_isHeteroclite_of_stems {l : SktLex} {d : SktDecl}
+    (h : ∀ z ∈ (sktEntry l).stems, z.decl = d) : ¬ sktLinkage.IsHeteroclite SktStem.decl l := by
+  rintro ⟨σ, σ', z, hz, z', hz', hne⟩
+  rw [Finset.mem_singleton.mp hz, Finset.mem_singleton.mp hz'] at hne
+  exact hne ((h _ (sktStem_mem_stems l σ)).trans (h _ (sktStem_mem_stems l σ')).symm)
+
+/-- Neither of PRATYAÑC's paradigms is heteroclite, since "the coradicals pratyac and pratīc
+belong to the same declension as the root pratyañc" (p. 318), so that "all of their forms follow
+the general consonant-stem declension" (p. 294). -/
+theorem pratyanc_not_heteroclite :
+    ∀ l ∈ [SktLex.pratyancM, .pratyancN], ¬ sktLinkage.IsHeteroclite SktStem.decl l := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false]
+  rintro _ (rfl | rfl) <;> exact not_isHeteroclite_of_stems (d := .consStem) (by decide)
+
+/-- AHAN is heteroclite, since of the three stems its paradigm is built on, "ahan and its
+zero-grade counterpart ahn inflect according to the neuter an-stem declension, while ahas
+inflects according to the neuter as-stem declension" (p. 295). -/
+theorem ahan_heteroclite : sktLinkage.IsHeteroclite SktStem.decl .ahan := by decide
+
+/-- AHAN's cells have the grades of neuter PRATYAÑC's, though (20a) tests the an-stem endings for
+the one and the consonant-stem endings for the other: the rules "independently motivated by the
+need to account for the pattern of stem alternation in nonheteroclite paradigms such as the
+masculine and neuter paradigms of PRATYAÑC ... also account for the patterns of
+declension-class alternation exhibited by heteroclite nouns such as AHAN" (p. 295). -/
+theorem ahan_grade_eq_pratyancN : ∀ σ, grade .ahan σ = grade .pratyancN σ := by decide
+
+/-- Fourteen of AHAN's cells inflect in the neuter an-stem declension and ten in the neuter
+as-stem declension. -/
+theorem ahan_class_counts : #{σ | sktClass .ahan σ = .anStem} = 14 ∧
+    #{σ | sktClass .ahan σ = .asStem} = 10 := by decide
+
+/-- AHAN's degree of case correlation is .71 (= 17/24), as Table 21 (p. 312) prints it, and its
+degree of number correlation, which the paper does not print, is 7/12. -/
+theorem ahan_degrees : degree Category.case.proj (sktClass .ahan) = 17 / 24 ∧
+    degree Category.number.proj (sktClass .ahan) = 7 / 12 := by
+  decide +kernel
+
+/-- AHAN's paradigm is fractured, as Table 25 (p. 317) classes it. -/
+theorem ahan_fractured : IsFractured (sktClass .ahan) := by decide
+
+/-- Case is the maximal correlate of AHAN's heteroclisis, as Table 21 (p. 312) has it. -/
+theorem ahan_case_maximal : IsMaximalCorrelate .case (sktClass .ahan) := by decide
+
+/-! ### The property mapping `f₁` -/
+
+/-- PRATYAÑC's masculine paradigm preserves property sets, `f₁` mapping every masculine
+property set to its identically specified form property set. -/
+theorem pratyancM_pm (σ : SktCell) : sktLinkage.pm .pratyancM σ = ι σ := rfl
+
+/-- The nominative and accusative cells of a neuter lexeme share their form correspondents,
+`f₁` joining their property sets and the rules selecting one stem for both. -/
+theorem neut_corr_nom_eq_acc : ∀ l, (sktEntry l).gender = .neut → ∀ n : SktNumber,
+    sktLinkage.corr l (⟨.nom, by decide⟩, n) = sktLinkage.corr l (⟨.acc, by decide⟩, n) := by decide
+
+/-- The Sanskrit linkage is syncretic, AHAN's nominative and accusative singular sharing their
+form correspondent. -/
+theorem sktLinkage_isSyncretic : sktLinkage.IsSyncretic := by
+  refine ⟨.ahan, .of .nom .singular, .of .acc .singular, by decide, ?_⟩
+  rw [SktCell.of, SktCell.of, neut_corr_nom_eq_acc .ahan rfl, disjoint_self_iff_empty,
+    ← not_nonempty_iff_eq_empty, not_not, Linkage.corr_nonempty]
+  exact singleton_nonempty _
+
+/-- The Sanskrit linkage is unfaithful, the nominative singular of a neuter mapping to a form
+property set with the joined case [nominative ∨ accusative]. -/
+theorem sktLinkage_isUnfaithful : sktLinkage.IsUnfaithful ι :=
+  ⟨.ahan, .of .nom .singular, by decide⟩
+
+/-! ### The privileged category restriction in Sanskrit -/
+
+/-- The Sanskrit nominals considered are HṚD(AYA) and the lexemes of §3.2. -/
+abbrev SktNominal : Type := SktNoun ⊕ SktLex
+
+/-- `sktClasses n σ` is the declension that the cell `σ` of the nominal `n` inflects in. -/
+def sktClasses : SktNominal → SktCell → SktDecl := Sum.elim (fun _ ↦ hrdClass) sktClass
+
+/-- The rules of paradigm linkage of a nominal are those of (20a,b) it instantiates, and none for
+HṚD(AYA), whose stem alternation is "simply stipulated in HṚD(AYA)'s lexical entry" (p. 282). -/
+def sktNominalRules : SktNominal → List SktRule := Sum.elim (fun _ ↦ []) sktRules
+
+/-- Case is privileged for Sanskrit nominals, "a privileged inflectional category for Sanskrit
+nouns" (p. 318), as the absolute correlate of HṚD(AYA)'s cloven paradigm. -/
+theorem privileged_case : Privileged sktClasses .case := ⟨.inl .hrdaya, hrd_cloven⟩
+
+/-- Number is not privileged for Sanskrit nominals, since HṚD(AYA)'s absolute correlate is
+case, PRATYAÑC is not heteroclite and AHAN's paradigm is fractured. -/
+theorem not_privileged_number : ¬ Privileged sktClasses .number := by
+  rintro ⟨_ | l, hcl, hn⟩
+  · obtain ⟨σ, τ, hne⟩ := hcl.1
+    exact hne (cellClass_eq_of_isAbsoluteCorrelate hn hrd_cloven.2 σ τ)
+  · cases l
+    case ahan => exact ahan_fractured.2 .number hn
+    all_goals exact pratyanc_not_heteroclite _ (by simp) (sktLinkage_isHeteroclite_iff.mpr hcl.1)
+
+/-- Rules (20a,b) are sensitive to case, for "in the inflection of Sanskrit PRATYAÑC, the rules
+20a,b assigning form-correspondents containing the Middle and Weakest coradicals pratyac and
+pratīc are sensitive to case, a privileged inflectional category for Sanskrit nouns" (p. 318). -/
+theorem sktRules_sensitiveTo_case : ∀ l, ∀ r ∈ sktRules l, SensitiveTo r .case := by decide
+
+/-- Rules (20a,b) are sensitive to number as well as to case. -/
+theorem sktRules_sensitiveTo_number : ∀ l, ∀ r ∈ sktRules l, SensitiveTo r .number := by decide
+
+/-- The Sanskrit rules satisfy (40), since each, though sensitive to number as well, is
+sensitive to case, which is privileged. -/
+theorem pcr_skt : SatisfiesPCR sktClasses sktNominalRules := by
+  rintro (_ | l) r hr -
+  · simp [sktNominalRules] at hr
+  · exact ⟨.case, privileged_case, sktRules_sensitiveTo_case l r hr⟩
 
 /-! ### Russian MAT' (Table 5) -/
 
