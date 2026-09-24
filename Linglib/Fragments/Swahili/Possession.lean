@@ -1,57 +1,84 @@
 module
 
 public import Linglib.Fragments.Swahili.Basic
+public import Linglib.Data.WALS.Features.F117A
+public import Linglib.Data.WALS.Features.F24A
 
 /-!
-# Swahili Possessive Constructions
-[stassen-2009] [nichols-1986] [heine-1997]
+# Swahili possession
 
-Swahili (Bantu, Niger-Congo) derives its primary have-construction from the
-**Companion Schema** ("X is with Y" → "X has Y"). The possessive marker
-`-na` is a fusion of the copula `-wa` 'be' and the comitative preposition
-`na` 'with'. In the present tense unmarked form, the copula is deleted,
-leaving subject prefix + `na` as an unanalyzable possessive marker.
-Swahili also has locative noun classes 16 (`pa-`), 17 (`ku-`), and 18 (`mu-`)
-that take the same `-na` marker, and an Equation Schema belong-construction
-using the associative `-a` (`Saa ni y-angu.` 'The watch is mine.'). The
-typological codings (WALS 24A, 58A, 59A, 117A) are read from
-`Data/WALS/Features/`; this file holds the `-na` paradigm.
+This file defines the Swahili have-construction as Heine and Stassen describe it. The
+possessor is the subject and the possessee follows the comitative *na* 'with', an instance of
+Heine's companion schema, "X is with Y", and of Stassen's with-possessive. In the present
+tense the copula is absent and the subject prefix attaches to *na*, *ni-na saa* 'I have a
+watch'; in the other tenses the copula *kuwa* 'be' is kept, *a-li-ku-wa na wake wawili* 'he had
+two wives'. With a locative class as subject the same construction is the existential, *ku-na
+chakula* 'there is food', and the progressive *wa-na-ku-la* 'they are eating' has the same
+source. The belong-construction is the equational *saa ni y-angu* 'the watch is mine', and the
+attributive possessive marks the possessor phrase with the connective *-a* agreeing with the
+possessum, *nyumba y-a Habiba* 'Habiba's house'.
 
-## Possessive paradigm
+## Main definitions
 
-| Person | Singular | Plural |
-|--------|----------|--------|
-| 1st    | ni-na    | tu-na  |
-| 2nd    | u-na     | m-na   |
-| 3rd    | a-na     | wa-na  |
+* `Swahili.Possession.na`, `present`, `past`: the comitative and the present and past
+  have-constructions on a subject prefix
 
-## Examples
+## Main results
 
-- `Nina kitabu.` 'I have a book.' (Companion: I-with book)
-- `Ana na watoto wawili.` 'He/she has two children.' (lit. 'is with children two')
+* `Swahili.Possession.present_first_singular`, `past_third_singular`: the forms of the
+  examples from the subject-prefix paradigm
+* `Swahili.Possession.existential`: the existential is the present construction on a locative
+  subject prefix
+* `Swahili.Possession.wals_117A`, `wals_24A`: the atlas codes the predicative possessive as
+  conjunctional and the attributive possessive as dependent-marking
+
+## References
+
+* [B. Heine, *Possession: Cognitive Sources, Forces, and Grammaticalization*
+  (1997)][heine-1997]
+* [L. Stassen, *Predicative Possession* (2009)][stassen-2009]
 -/
 
 @[expose] public section
 
 namespace Swahili.Possession
 
-open Swahili (NounClass)
+open Swahili Agreement Morphology Data.WALS
 
-/-- The possessive form: subject prefix + "na". -/
-def possessiveForm (c : NounClass) : String :=
-  c.subjPrefix ++ "na"
+/-- The comitative *na* 'with', the predicate of the have-construction. -/
+def na : Morph := .free "na"
 
-/-- First-person singular and plural forms use special prefixes. -/
-def possForm1sg : String := "nina"
-def possForm1pl : String := "tuna"
-def possForm2sg : String := "una"
-def possForm2pl : String := "mna"
+/-- The present tense have-construction puts the subject prefix on *na*, with no copula. -/
+def present (s : Morph) : List Morph := [s, na]
 
-/-- Locative classes use the same `-na` marker for "there is ... with",
-    illustrating how Companion and Location schemas overlap in Swahili. -/
-theorem locative_uses_na :
-    possessiveForm .cl16 = "pana" ∧
-    possessiveForm .cl17 = "kuna" ∧
-    possessiveForm .cl18 = "muna" := ⟨rfl, rfl, rfl⟩
+/-- The past tense have-construction keeps the copula, the subject prefix, the past *-li-*
+and *ku-wa* before *na*. -/
+def past (s : Morph) : List Morph := [s, .pref "li", .pref "ku", .root "wa", na]
+
+/-- *ni-na saa* 'I have a watch'. -/
+theorem present_first_singular :
+    (subjectPrefix.realize (.pn .first .singular)).map present = some [.pref "ni", na] := rfl
+
+/-- *a-li-ku-wa na wake wawili* 'he had two wives'. -/
+theorem past_third_singular :
+    (subjectPrefix.realize (.pn .third .singular)).map past =
+      some [.pref "a", .pref "li", .pref "ku", .root "wa", na] := rfl
+
+/-- The existential is the present construction on a locative subject prefix, *ku-na chakula*
+'there is food' and *pa-na watu wengi* 'there are many people'. -/
+theorem existential :
+    present NounClass.cl17.subjPrefix = [.pref "ku", na] ∧
+      present NounClass.cl16.subjPrefix = [.pref "pa", na] :=
+  ⟨rfl, rfl⟩
+
+/-- The atlas codes the predicative possessive as conjunctional, Stassen's with-possessive. -/
+theorem wals_117A :
+    (Datapoint.lookupISO F117A.allData "swh").map (·.value) = some .conjunctional := by
+  decide
+
+/-- The atlas codes the attributive possessive as dependent-marking. -/
+theorem wals_24A :
+    (Datapoint.lookupISO F24A.allData "swh").map (·.value) = some .dependentMarking := by
+  decide
 
 end Swahili.Possession

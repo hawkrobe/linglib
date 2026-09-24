@@ -1,217 +1,166 @@
 module
 
-public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Fragments.Swahili.Basic
 
 /-!
-# Swahili Relativization Fragment
-[scott-2021] [keenan-comrie-1977]
+# Swahili relativization
 
-Swahili *amba*-relative clauses use the overt complementizer *amba*
-(related to *ku-amba* 'say'), which agrees with the head noun in noun
-class via a suffix. The head appears before the complementizer.
+This file defines the Swahili *amba* relative clause and its resumptive pronouns as Scott
+describes them. The head precedes the complementizer *amba*, which takes the relative concord
+of the head's class, *vi-azi amba-vyo u-li-vi-menya* 'the potatoes that you peeled'. A
+relativized subject or direct object leaves a gap, with subject and object agreement obligatory
+on the verb, and no pronoun may fill it. The object of a monosyllabic preposition or
+connective, *na* 'with', *ya* 'of' or *mwa* 'in', is instead resumed by a pronoun suffixed to
+it, since a stranded monosyllable would fall below the two-unit minimal word; a trisyllabic
+preposition such as *katika* 'on' is dropped instead. The resumptive pronouns are the
+prepositional pronouns of matrix clauses, and the third person ones are the concords of
+classes 1 and 2, the animate gender, which carry number and gender but no person. Inside an
+adjunct island the resumptive is a bound pronoun matching the head in person; in a parasitic
+gap it is a movement copy without person, the analysis of `Studies/Scott2021.lean`.
 
-## Two Types of Resumptive Pronouns
+## Main definitions
 
-[scott-2021] shows Swahili distinguishes two types of resumptive
-pronouns that coexist within the same language and are morphologically
-distinct:
+* `Swahili.amba`, `Swahili.ambaBound`, `Swahili.ambaMovement`, `Swahili.relMarkers`: the
+  relative markers
+* `Swahili.pronoun`, `Swahili.resumptive`: the full and the resumptive pronouns by person and
+  number
+* `Swahili.NounClass.concord?`: the relative concord of classes 1 to 10
+* `Swahili.Preposition`, `Preposition.TriggersResumption`: the prepositions and connectives
+  with their syllable count, and the minimal-word condition on resumption
 
-1. **Bound resumptives** (person-matching): *-mi* (1SG), *-we* (2SG),
-   *-si* (1PL), *-nyi* (2PL). These are base-generated bound pronouns
-   that obligatorily match the extractee in person features. Found inside
-   adjunct islands.
+## Main results
 
-2. **Movement resumptives** (personless): *-ye* (class 1 SG), *-o*
-   (class 2 PL). These are lower copies of Ā-movement chains, reduced
-   by chain reduction at PF (PersP deleted by MaxElide). Found in
-   parasitic gap constructions.
+* `Swahili.amba_isPrimary`, `Swahili.amba_isContinuous`: *amba* with a gap is the primary
+  strategy and relativizes a contiguous segment of the hierarchy
+* `Swahili.resumptive_third`: the third person resumptives are the concords of classes 1 and 2
+* `Swahili.Preposition.triggersResumption`: the monosyllables trigger resumption and the
+  trisyllable does not
 
-## Resumption Trigger
+## Implementation notes
 
-Resumption is phonologically motivated: it occurs only on objects of
-monosyllabic prepositions (*na* 'with', *ya* 'of', *mwa* 'in') to
-satisfy a bimoraic Minimality requirement. Multisyllabic prepositions
-(*katika* 'on') do not trigger resumption — they are dropped instead.
+* Scott gives the concords of classes 1 to 10 only, so `concord?` is partial. The concord is
+  also the suffix of the emphatic copula *ndi-* of the clefts Scott's data come from.
+* The syllable count is recorded rather than read off the form, since a syllabic nasal, as in
+  *mtu*, would need the phonology.
 
-## Resumptive Pronoun Paradigm
+## References
 
-| Person | Singular | Plural |
-|--------|----------|--------|
-| 1st    | -mi      | -si    |
-| 2nd    | -we      | -nyi   |
-| 3rd    | -ye      | -o     |
-
-The 3rd person forms *-ye* and *-o* are also the noun class 1/2
-(animate) resumptive pronouns (Table 3). The theoretical analysis of
-why 1st/2nd person forms carry person features while 3rd person forms
-do not is in `Studies/Scott2021.lean`.
-
-## Naming convention
-
-Auxiliary types specific to the relativization paradigm carry the
-`Rel` prefix (`RelPerson`, `RelGramNum`, `RelMonosyllabicWord`,
-`RelNonTriggeringWord`) so they can live at top-level
-`Swahili` without colliding with morphology-side `Person` or
-number features defined in sibling Swahili Fragment files. This follows
-the mathlib convention of prefix-disambiguating small support types
-rather than nesting them under a sub-namespace.
+* [T. Scott, *Two Types of Resumptive Pronouns in Swahili* (2021)][scott-2021]
 -/
 
 @[expose] public section
 
 namespace Swahili
 
-open RelativeClause
+open RelativeClause Agreement Morphology
 
--- ============================================================================
--- § 1: Amba-RC Markers
--- ============================================================================
+/-! ### The amba relative clause -/
 
-/-- The *amba*-complementizer with gap (subject and direct object
-    extraction). Subject and object agreement are obligatory on the
-    verb; no resumptive pronoun appears. -/
-def ambaGap : Marker :=
-  { form := "amba"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject, .directObject} }
+/-- The complementizer *amba* with the relative concord of the head's class. A relativized
+subject or direct object leaves a gap, and the verb agrees with both. -/
+def amba : Marker :=
+  { form := "amba", npRel := .gap, bearsCaseMarking := false, placement := .postNominal,
+    positions := {.subject, .directObject} }
 
-/-- The *amba*-complementizer with bound resumptive pronoun
-    (person-matching). Objects of monosyllabic prepositions inside
-    adjunct islands obligatorily surface with person features.
-    [scott-2021] examples (31)–(33). -/
+/-- *amba* with a bound resumptive pronoun on the object of a monosyllabic preposition, the
+only option inside an adjunct island. -/
 def ambaBound : Marker :=
-  { form := "amba + bound RP"
-  , npRel := .resumptiveBound
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.oblique} }
+  { form := "amba", npRel := .resumptiveBound, bearsCaseMarking := true,
+    placement := .postNominal, positions := {.oblique} }
 
-/-- The *amba*-complementizer with movement resumptive pronoun
-    (personless). Objects of monosyllabic prepositions in parasitic
-    gap constructions surface without person features.
-    [scott-2021] examples (36)–(37). -/
+/-- *amba* with a movement resumptive on the object of a monosyllabic preposition, a copy
+without person, diagnosed by parasitic gaps. -/
 def ambaMovement : Marker :=
-  { form := "amba + movement RP"
-  , npRel := .resumptiveMovement
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.oblique} }
+  { form := "amba", npRel := .resumptiveMovement, bearsCaseMarking := true,
+    placement := .postNominal, positions := {.oblique} }
 
-/-- All Swahili relative clause markers. -/
-def relMarkers : List Marker := [ambaGap, ambaBound, ambaMovement]
+/-- The relative markers. -/
+def relMarkers : List Marker := [amba, ambaBound, ambaMovement]
 
--- ============================================================================
--- § 2: Personal Pronoun Paradigm
--- ============================================================================
+/-- *amba* with a gap is the primary strategy. -/
+theorem amba_isPrimary : amba.IsPrimary := by decide
 
-/-- Person feature in the Swahili relativization paradigm
-    ([scott-2021] Table 1). Prefixed `Rel` so it can live at
-    top-level `Swahili` without colliding with morphology-side
-    person features. -/
-inductive RelPerson where | first | second | third
+/-- *amba* with a gap relativizes a contiguous segment of the hierarchy. -/
+theorem amba_isContinuous : amba.IsContinuous := by decide
+
+/-! ### Pronouns -/
+
+/-- The full personal pronouns. -/
+def pronoun : Paradigm Morph :=
+  [(.pn .first .singular, .free "mimi"), (.pn .second .singular, .free "wewe"),
+    (.pn .third .singular, .free "yeye"), (.pn .first .plural, .free "sisi"),
+    (.pn .second .plural, .free "nyinyi"), (.pn .third .plural, .free "wao")]
+
+/-- The resumptive pronouns, suffixed to the monosyllabic preposition; they are also the
+prepositional pronouns of matrix clauses, *ni-li-kutana na-ye* 'I met with her'. -/
+def resumptive : Paradigm Morph :=
+  [(.pn .first .singular, .suff "mi"), (.pn .second .singular, .suff "we"),
+    (.pn .third .singular, .suff "ye"), (.pn .first .plural, .suff "si"),
+    (.pn .second .plural, .suff "nyi"), (.pn .third .plural, .suff "o")]
+
+/-- The relative concord of a class, the suffix of *amba* and the resumptive pronoun of a noun
+of the class, for classes 1 to 10. -/
+def NounClass.concord? : NounClass → Option Morph
+  | .cl1 => some (.suff "ye")
+  | .cl2 => some (.suff "o")
+  | .cl3 => some (.suff "o")
+  | .cl4 => some (.suff "yo")
+  | .cl5 => some (.suff "lo")
+  | .cl6 => some (.suff "yo")
+  | .cl7 => some (.suff "cho")
+  | .cl8 => some (.suff "vyo")
+  | .cl9 => some (.suff "yo")
+  | .cl10 => some (.suff "zo")
+  | _ => none
+
+/-- The third person resumptives are the concords of classes 1 and 2, the animate gender, and
+so carry number and gender but no person. -/
+theorem resumptive_third :
+    resumptive.realize (.pn .third .singular) = Gender.genderA.singularClass.concord? ∧
+      resumptive.realize (.pn .third .plural) = Gender.genderA.pluralClass.concord? :=
+  ⟨rfl, rfl⟩
+
+/-! ### Resumption and the minimal word -/
+
+/-- A preposition or connective with its number of syllables, the size that decides whether
+its object is resumed. -/
+structure Preposition where
+  /-- The form. -/
+  form : String
+  /-- The gloss. -/
+  gloss : String
+  /-- The number of syllables. -/
+  syllables : ℕ
   deriving DecidableEq, Repr
 
-/-- Number feature in the Swahili relativization paradigm. -/
-inductive RelGramNum where | sg | pl
-  deriving DecidableEq, Repr
+namespace Preposition
 
-/-- The relativization paradigm's number dimension, canonically. -/
-def RelGramNum.toNumber : RelGramNum → Number
-  | .sg => .singular
-  | .pl => .plural
+/-- *na* 'with, to, by'. -/
+def na : Preposition := ⟨"na", "with, to, by", 1⟩
 
-/-- Full pronoun form. -/
-def fullPronoun : RelPerson → RelGramNum → String
-  | .first,  .sg => "mimi"
-  | .first,  .pl => "sisi"
-  | .second, .sg => "wewe"
-  | .second, .pl => "nyinyi"
-  | .third,  .sg => "yeye"
-  | .third,  .pl => "wao"
+/-- The connective *ya* 'of', the class 9 concord on *-a*. -/
+def ya : Preposition := ⟨"ya", "of", 1⟩
 
--- ============================================================================
--- § 3: Resumptive Pronoun Paradigm
--- ============================================================================
+/-- The connective *mwa* 'in', the class 18 concord on *-a*. -/
+def mwa : Preposition := ⟨"mwa", "in", 1⟩
 
-/-- Resumptive (suffixal) pronoun forms ([scott-2021] Table 2).
-    Person-matching forms: 1st/2nd person specify [PERS].
-    Personless defaults: 3rd person = noun class agreement (no [PERS]). -/
-def resumptivePronoun : RelPerson → RelGramNum → String
-  | .first,  .sg => "-mi"
-  | .first,  .pl => "-si"
-  | .second, .sg => "-we"
-  | .second, .pl => "-nyi"
-  | .third,  .sg => "-ye"
-  | .third,  .pl => "-o"
+/-- *katika* 'on, in'. -/
+def katika : Preposition := ⟨"katika", "on, in", 3⟩
 
-/-- Resumptive pronoun by noun class ([scott-2021] Table 3).
-    These forms express number and gender only (no person features).
-    For animate classes 1/2, the forms *-ye*/*-o* are identical to the
-    3rd person resumptive pronouns — this identity is what the
-    PersP-deletion analysis explains. -/
-def resumptiveByClass : NounClass → String
-  | .cl1  => "-ye"   -- Gender A sg
-  | .cl2  => "-o"    -- Gender A pl
-  | .cl3  => "-o"    -- Gender B sg
-  | .cl4  => "-yo"   -- Gender B pl
-  | .cl5  => "-lo"   -- Gender C sg
-  | .cl6  => "-yo"   -- Gender C pl
-  | .cl7  => "-cho"  -- Gender D sg
-  | .cl8  => "-vyo"  -- Gender D pl
-  | .cl9  => "-yo"   -- Gender E sg
-  | .cl10 => "-zo"   -- Gender E pl
-  | .cl14 => "-o"    -- abstract
-  | .cl15 => "-ko"   -- infinitive
-  | .cl16 => "-po"   -- locative
-  | .cl17 => "-ko"   -- locative
-  | .cl18 => "-mo"   -- locative
+/-- A preposition's object is resumed when stranding the preposition would leave a word below
+the two-unit minimum, that is, when the preposition is monosyllabic. -/
+def TriggersResumption (p : Preposition) : Prop := p.syllables = 1
 
--- ============================================================================
--- § 4: Resumptive Pronoun Features (Theory-Neutral Data)
--- ============================================================================
+instance : DecidablePred TriggersResumption := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- Whether a resumptive pronoun form is person-matching (bound) or
-    personless (movement copy). Theory-neutral observable. -/
-def resumptivePronounIsPersonMatching : RelPerson → RelGramNum → Bool
-  | .first,  _ => true
-  | .second, _ => true
-  | .third,  _ => false
+/-- The monosyllables *na*, *ya* and *mwa* trigger resumption, and the trisyllable *katika*
+does not, its object being relativized with the preposition dropped. -/
+theorem triggersResumption :
+    na.TriggersResumption ∧ ya.TriggersResumption ∧ mwa.TriggersResumption ∧
+      ¬ katika.TriggersResumption := by
+  decide
 
--- ============================================================================
--- § 5: Resumption Trigger (Phonological Minimality)
--- ============================================================================
-
-/-- Monosyllabic words that trigger resumption. [scott-2021] §3.3:
-    resumption is triggered when a monosyllabic word (*na*, *ya*, *mwa*,
-    etc.) would otherwise be stranded, violating the bimoraic Minimality
-    requirement. These include true prepositions and connectives (the
-    form *na* functions as both). -/
-inductive RelMonosyllabicWord where
-  | na    -- preposition/connective: 'with', 'to', 'by'
-  | ya    -- connective: 'of' (associative -a + class prefix)
-  | mwa   -- connective: 'in' (-a + class 18 prefix mu-)
-  deriving DecidableEq, Repr
-
-/-- Words whose objects do NOT trigger resumption when relativized.
-    For trisyllabic words like *katika* 'on', the preposition is dropped
-    instead. Noun-like words (*uvunguni* 'under', *chini* 'below',
-    *kando* 'beside') must be followed by a monosyllabic connective,
-    so it is the connective (not the noun-like word) that determines
-    resumption. [scott-2021] (22)–(23). -/
-inductive RelNonTriggeringWord where
-  | katika    -- 'on', 'in' (trisyllabic; dropped under relativization)
-  deriving DecidableEq, Repr
-
-/-- Monosyllabic words always trigger resumption. -/
-def RelMonosyllabicWord.triggersResumption : RelMonosyllabicWord → Bool
-  | _ => true
-
-/-- Trisyllabic words never trigger resumption. -/
-def RelNonTriggeringWord.triggersResumption : RelNonTriggeringWord → Bool
-  | _ => false
+end Preposition
 
 end Swahili
