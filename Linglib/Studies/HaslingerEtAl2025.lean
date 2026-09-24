@@ -12,11 +12,12 @@ exception-intolerant in both its determiner and its distance use, *alle* and num
 are exception-intolerant but not distributive, and definite plurals are neither (5); the
 distance distributor *jeweils* fills the remaining cell, since some speakers accept it in
 scenarios whose question under discussion makes an exception irrelevant, where DP-*jeder* is
-rejected and distance *jeder* mostly rejected (§3). `Item.class` is the classification,
-read off the German fragment where it has an entry and off the paper's truth-value judgments in
-the scenarios of (3) for the rest, and `jeweils_answers_Q` is the negative answer. In
-[kriz-spector-2021]'s parameter semantics the contrast is a maximal distributive operator against
-a tolerant one with a contextually supplied tolerance: `jeweils_accepts_magnets` runs the magnets
+rejected and distance *jeder* mostly rejected (§3). `Item.class` is the classification of (5),
+which the paper's truth-value judgments in the scenarios of (3) confirm (`class_of_rows`), and
+`jeweils_answers_Q` is the negative answer. In [kriz-spector-2021]'s parameter semantics the
+contrast is a maximal distributive operator against a tolerant one with a contextually supplied
+tolerance, the denotations of *jeder* and *jeweils* in the German fragment:
+`jeweils_accepts_magnets` runs the magnets
 scenario of (23), where the tolerance identifies the pluralities the explosion question does
 not distinguish, and the speakers who reject *jeweils* there are those for whom the tolerance is
 the identity. The same tools define the hypothetical determiner *jeder\** of (27), which
@@ -68,14 +69,12 @@ instance : DecidablePred Item.IsDeterminer
   | .jederDP | .alle | .numeralIndefinite => isTrue trivial
   | .definitePlural | .jederDistance | .jeweils => isFalse not_false
 
-/-- The two properties of (5), obligatory distributivity and exception intolerance, read
-off the German fragment where it has an entry. -/
+/-- The classification of (5), obligatory distributivity crossed with exception intolerance. -/
 def Item.class : Item → DistMaxClass
   | .definitePlural => .nonDistNonMax
-  | .numeralIndefinite => .nonDistMax
-  | .alle => alleEntry.distMaxClass
-  | .jederDP | .jederDistance => jederEntry.distMaxClass
-  | .jeweils => jeweilsEntry.distMaxClass
+  | .numeralIndefinite | .alle => .nonDistMax
+  | .jederDP | .jederDistance => .distMax
+  | .jeweils => .distNonMax
 
 /-- Their question Q answered in the negative: an obligatorily distributive item that permits
 exceptions. -/
@@ -126,18 +125,19 @@ def hasTwoMagnets (b : Box) (_ : Unit) : Prop := b < 4
 
 instance (b : Box) (u : Unit) : Decidable (hasTwoMagnets b u) := inferInstanceAs (Decidable (b < 4))
 
-/-- DP-*jeder* and distance *jeder*, `distMaximal`: false, since one box has one magnet. -/
-theorem jeder_rejects_magnets : ¬ distMaximal hasTwoMagnets Finset.univ () := by decide
+/-- DP-*jeder* and distance *jeder* are false in the scenario, since one box has one magnet. -/
+theorem jeder_rejects_magnets : ¬ jederSem hasTwoMagnets Finset.univ () := by decide
 
 /-- *jeweils* with the tolerance the explosion question induces, every nonempty subplurality:
 true, witnessed by the four boxes with two magnets. -/
-theorem jeweils_accepts_magnets : distTolerant hasTwoMagnets Tolerance.trivial Finset.univ () := by
+theorem jeweils_accepts_magnets :
+    jeweilsSem hasTwoMagnets Tolerance.trivial Finset.univ () := by
   decide
 
 /-- The speakers who reject *jeweils* in the scenario are those whose tolerance is the identity,
 for whom it coincides with *jeder*. -/
 theorem jeweils_identity_rejects_magnets :
-    ¬ distTolerant hasTwoMagnets Tolerance.identity Finset.univ () :=
+    ¬ jeweilsSem hasTwoMagnets Tolerance.identity Finset.univ () :=
   λ h => jeder_rejects_magnets
     ((distMaximal_iff_identity Finset.univ_nonempty).mpr h)
 

@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Data.Examples.Gutzmann2015
-public import Linglib.Fragments.German.Particles
 
 /-!
 # Gutzmann (2015): Use-Conditional Meaning
@@ -20,12 +19,12 @@ mood follows Truckenbrodt's decomposition into a deontic operator (5.85), presen
 matrix clause by the root rule (5.43), an epistemic modifier of it (5.91), present where a
 [±wh] feature is visible at LF (5.41), and the hearer knowledge condition (5.99) of
 v2-interrogatives; the German clause types compose as in (5.82), (5.93), and (5.100),
-`GermanClauseType.mood`, so every clause's truth conditions are its content, its use conditions
+`ClauseType.mood`, so every clause's truth conditions are its content, its use conditions
 are the deontic attitude, and a v2-interrogative differs from a vl-interrogative exactly by
 hearer knowledge, the Cuban cigar scenario (5.36). Of the modal particles, *wohl* modifies the
-epistemic operator (6.103), so its exclusion from imperatives is a type mismatch: no derivation
-over an imperative's lexicon reaches the epistemic type, `Derivable`, which is the distribution
-`Fragments/German/Particles.lean` records, `wohl_licensed_iff`; *ja* (6.122) and *denn*
+epistemic operator (6.103), so its exclusion from imperatives and root *dass*-clauses is a type
+mismatch: no derivation over their lexicon reaches the epistemic type, `Derivable`, and the
+book's *wohl* examples are acceptable exactly where one does, `wohl_rows`; *ja* (6.122) and *denn*
 (6.133) compose with any mood, and their use conditions in the excluded clause types, (6.129)
 and (6.142), are ones the book argues no rational speaker holds. The book's examples are the
 rows of `Data.Examples.Gutzmann2015`.
@@ -52,7 +51,36 @@ logic, so their use conditions are derived and the restriction is left to the ro
 
 namespace Gutzmann2015
 
-open German.ClauseTypes German.Particles
+open Data.Examples
+
+/-- The German clause types of chapter 5, told apart by the position of the finite verb and by
+the complementizer: root *dass*-clauses with the verb last, v2-declaratives, v2-interrogatives
+with the finite verb in C, vl-interrogatives with the verb last, and imperatives. -/
+inductive ClauseType where
+  | dassVL
+  | v2Declarative
+  | v2Interrogative
+  | vlInterrogative
+  | imperative
+  deriving DecidableEq, Repr, Fintype
+
+/-- The clause type a row's `clauseType` feature names. -/
+def ClauseType.ofString? : String → Option ClauseType
+  | "dassVL" => some .dassVL
+  | "v2Declarative" => some .v2Declarative
+  | "v2Interrogative" => some .v2Interrogative
+  | "vlInterrogative" => some .vlInterrogative
+  | "imperative" => some .imperative
+  | _ => none
+
+/-- A clause type has the epistemic modifier of the deontic operator where a [±wh] feature is
+visible at LF (5.41): in every clause type but root *dass*-clauses and imperatives. -/
+def ClauseType.HasEpistemic : ClauseType → Prop
+  | .dassVL | .imperative => False
+  | _ => True
+
+instance : DecidablePred ClauseType.HasEpistemic := fun ct ↦ by
+  cases ct <;> unfold ClauseType.HasEpistemic <;> infer_instance
 
 universe u
 
@@ -226,8 +254,7 @@ def v2InterrogativeMood (p : W → Prop) : Deriv W C .t .t :=
 the deontic operator alone, since [−wh] on the meaningless *dass* is invisible at LF (5.41) and
 imperatives carry no visible feature; declaratives and vl-interrogatives the epistemically
 modified deontic operator; v2-interrogatives the hearer knowledge condition as well. -/
-def _root_.German.ClauseTypes.GermanClauseType.mood :
-    GermanClauseType → (W → Prop) → Deriv W C .t .t
+def ClauseType.mood : ClauseType → (W → Prop) → Deriv W C .t .t
   | .dassVL | .imperative => deonticOnly M
   | .v2Declarative | .vlInterrogative => deonticEpistemic M
   | .v2Interrogative => v2InterrogativeMood M
@@ -235,7 +262,7 @@ def _root_.German.ClauseTypes.GermanClauseType.mood :
 variable {M} {p : W → Prop} {c : C}
 
 /-- (5.83a) and (5.94): the truth conditions of every clause type are its content. -/
-theorem mood_t (ct : GermanClauseType) : (ct.mood M p).eval.t = p := by
+theorem mood_t (ct : ClauseType) : (ct.mood M p).eval.t = p := by
   cases ct <;> rfl
 
 /-- (5.83b): a root dass-clause or imperative is felicitous when the speaker holds a suitable
@@ -256,7 +283,7 @@ theorem v2InterrogativeMood_u :
 
 /-- (5.43), the root rule: the use conditions of every clause type include a deontic attitude
 of the speaker. -/
-theorem exists_deont_of_mood_u (ct : GermanClauseType) (h : (ct.mood M p).eval.u c) :
+theorem exists_deont_of_mood_u (ct : ClauseType) (h : (ct.mood M p).eval.u c) :
     ∃ q, deont M q c := by
   cases ct
   · exact ⟨p, deonticOnly_u.1 h⟩
@@ -268,9 +295,9 @@ theorem exists_deont_of_mood_u (ct : GermanClauseType) (h : (ct.mood M p).eval.u
 /-- (5.36), the Cuban cigar scenario: a v2-interrogative is felicitous exactly when the
 vl-interrogative with the same content is and the addressee knows the answer. -/
 theorem v2Interrogative_mood_u_iff :
-    (GermanClauseType.v2Interrogative.mood M p).eval.u c ↔
-      (GermanClauseType.vlInterrogative.mood M p).eval.u c ∧ M.knowsWhether c p := by
-  simp only [GermanClauseType.mood, v2InterrogativeMood_u, deonticEpistemic_u]
+    (ClauseType.v2Interrogative.mood M p).eval.u c ↔
+      (ClauseType.vlInterrogative.mood M p).eval.u c ∧ M.knowsWhether c p := by
+  simp only [ClauseType.mood, v2InterrogativeMood_u, deonticEpistemic_u]
   exact and_comm
 
 /-! ### Modal particles, chapter 6 -/
@@ -374,7 +401,7 @@ inductive Derivable (L : Set UCType) : UCType → Prop
 /-- The active-dimension types of a clause type's mood items: the deontic operator, and the
 epistemic modifier where a [±wh] feature is visible at LF; hearer knowledge has the deontic
 operator's type. -/
-def _root_.German.ClauseTypes.GermanClauseType.moodTypes : GermanClauseType → Set UCType
+def ClauseType.moodTypes : ClauseType → Set UCType
   | .dassVL | .imperative => {func .t .u}
   | .v2Declarative | .vlInterrogative | .v2Interrogative => {func .t .u, modifier (func .t .u) 1}
 
@@ -402,20 +429,30 @@ theorem not_derivable_deonticOnly :
     ¬ Derivable ({func .t .u} ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) :=
   λ h => by simpa using derivable_deonticOnly_subset h
 
-/-- Section 6.5.1 against Table 6.1: *wohl* is licensed in a clause type exactly when the
-epistemic modifier's type is derivable from that clause's mood items together with *wohl* and a
-proposition. -/
-theorem wohl_licensed_iff (ct : GermanClauseType) :
-    licensedInClause wohl ct = true ↔
-      Derivable (ct.moodTypes ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) := by
+/-- Section 6.5.1: the epistemic modifier's type is derivable from a clause type's mood items
+together with *wohl* and a proposition exactly when the clause type has the epistemic
+modifier. -/
+theorem derivable_wohl_iff (ct : ClauseType) :
+    Derivable (ct.moodTypes ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) ↔
+      ct.HasEpistemic := by
   have hpos (L : Set UCType) (h₂ : modifier (func .t .u) 2 ∈ L) (h₁ : modifier (func .t .u) 1 ∈ L) :
       Derivable L (modifier (func .t .u) 1) :=
     .app (.lex h₂) (.lex h₁)
   cases ct
-  · exact ⟨λ h => absurd h Bool.false_ne_true, λ h => (not_derivable_deonticOnly h).elim⟩
-  · exact ⟨λ _ => hpos _ (by simp) (by simp [GermanClauseType.moodTypes]), λ _ => by decide⟩
-  · exact ⟨λ _ => hpos _ (by simp) (by simp [GermanClauseType.moodTypes]), λ _ => by decide⟩
-  · exact ⟨λ _ => hpos _ (by simp) (by simp [GermanClauseType.moodTypes]), λ _ => by decide⟩
-  · exact ⟨λ h => absurd h Bool.false_ne_true, λ h => (not_derivable_deonticOnly h).elim⟩
+  · exact ⟨not_derivable_deonticOnly, False.elim⟩
+  · exact ⟨fun _ ↦ trivial, fun _ ↦ hpos _ (by simp) (by simp [ClauseType.moodTypes])⟩
+  · exact ⟨fun _ ↦ trivial, fun _ ↦ hpos _ (by simp) (by simp [ClauseType.moodTypes])⟩
+  · exact ⟨fun _ ↦ trivial, fun _ ↦ hpos _ (by simp) (by simp [ClauseType.moodTypes])⟩
+  · exact ⟨not_derivable_deonticOnly, False.elim⟩
+
+/-- The *wohl* rows of sections 6.2.3 and 6.5.1: a sentence with *wohl* is acceptable exactly
+when *wohl* finds the epistemic modifier's type among its clause type's mood items. -/
+theorem wohl_rows :
+    ∀ row ∈ Examples.all, row.feature? "particle" = some "wohl" →
+      ∀ ct ∈ (row.feature? "clauseType").bind ClauseType.ofString?,
+        (row.judgment = .acceptable ↔
+          Derivable (ct.moodTypes ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1)) := by
+  simp only [derivable_wohl_iff]
+  decide
 
 end Gutzmann2015

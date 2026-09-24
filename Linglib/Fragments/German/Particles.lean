@@ -1,152 +1,85 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
-public import Linglib.Fragments.German.ClauseTypes
 
 /-!
-# German Particles
+# German modal particles
 
-The German particle inventory as `Particle` values: the modal particles
-(*Modalpartikeln*, [gutzmann-2015] Table 6.1) and the question-marking
-particles ([theiler-2021], [seeliger-repp-2018]), one entry per lexeme.
-Analytical classifications live with their analyses: L_TU typing in
-`Gutzmann2015`, highlighting and bias in `Theiler2021`, the PRQ/NRQ
-profile in `SeeligerRepp2018`. Response uses of *ja*/*doch* live in
-`PolarityMarking.lean`.
+This file defines the German modal particles *ja*, *denn*, *wohl*, *halt* and *doch* and the
+combination *doch wohl* as `Particle` entries, each with the sentence types of a main clause in
+which Durrell describes it. A modal particle stands in the middle of the clause and adds the
+speaker's attitude to what is said. *Ja* appeals for agreement in statements, expresses surprise
+in exclamations and intensifies a command, often as a warning and especially when stressed.
+*Denn* is used in questions only, polar and constituent questions alike. *Wohl* signals
+probability in statements and uncertainty in questions. *Halt* occurs in statements and
+commands. *Doch* marks disagreement in statements, urgency in commands, a request for
+confirmation in constituent questions and surprise in exclamations; unstressed, it can turn a
+statement into a question expecting the answer yes, and with *wohl* it hopes that something is
+the case. A sentence type the grammar says nothing about is left unrecorded.
 
-Table 6.1's undifferentiated interrogative column is recorded on both
-interrogative cells.
+The response particles *ja*, *nein* and *doch* are in `German.PolarityMarking`, and the analyses
+of the modal particles are with the studies of them: Gutzmann's typing of *ja*, *denn* and *wohl*
+with his own examples, Theiler's *denn*, Seeliger and Repp's *doch wohl*.
+
+## References
+
+* [durrell-2011]
+* [gutzmann-2015]
+* [theiler-2021]
+* [seeliger-repp-2018]
 -/
 
 @[expose] public section
 
 namespace German.Particles
 
-open German.ClauseTypes (GermanClauseType)
+open Clause (EmbeddingContext)
 
-/-- *ja* — common-ground reminder particle ("as you may already know").
-Declaratives only: its use condition references the truth of its
-propositional argument, conflicting with interrogative uncertainty and
-imperative non-epistemicity (`Gutzmann2015`). Distinct from answer
-particle *ja* (`PolarityMarking.lean`). -/
+/-- `inMatrix yes no` records a particle as optional in the main-clause sentence types `yes` and
+excluded from those in `no`, and records nothing else. -/
+def inMatrix (yes no : List Particle.ClauseType) :
+    Particle.ClauseType → EmbeddingContext → Option ParticleStatus
+  | c, .matrix => if c ∈ yes then some .optional else if c ∈ no then some .excluded else none
+  | _, _ => none
+
+/-- *Ja* appeals for agreement in statements, expresses surprise in exclamations and intensifies
+a command. -/
 def ja : Particle where
   form := "ja"
   position := some .clauseMedial
-  distribution := fun c e => match e with
-    | .matrix =>
-      match c with
-      | .declarative => some .optional
-      | .polar => some .excluded
-      | .constituent => some .excluded
-      | .imperative => some .excluded
-      | _ => none
-    | .subordinated => some .excluded
-    | _ => none
+  distribution := inMatrix [.declarative, .exclamative, .imperative] []
 
-/-- *denn* — interrogative-only particle, one lexeme under two analyses:
-[gutzmann-2015]'s question-prompting UCI (the interrogative counterpart
-of *ja*; typing in `Gutzmann2015`) and [theiler-2021]'s
-highlighting-sensitive particle (felicity condition in `Theiler2021`). Licensed in polar and constituent questions, excluded
-from declaratives and imperatives. -/
+/-- *Denn* is used in questions only, polar and constituent. -/
 def denn : Particle where
   form := "denn"
   position := some .clauseMedial
-  distribution := fun c e => match e with
-    | .matrix =>
-      match c with
-      | .declarative => some .excluded
-      | .polar => some .optional
-      | .constituent => some .optional
-      | .imperative => some .excluded
-      | _ => none
-    | .subordinated => some .excluded
-    | _ => none
+  distribution := inMatrix [.polar, .constituent] [.declarative, .imperative, .exclamative]
 
-/-- *wohl* — epistemic hedging particle: declaratives and interrogatives
-(which involve EPIS), never imperatives (which lack it); see
-`wohl_licensed_iff` and the selectional analysis in `Gutzmann2015`. -/
+/-- *Wohl* signals probability in statements and uncertainty in questions. -/
 def wohl : Particle where
   form := "wohl"
   position := some .clauseMedial
-  distribution := fun c e => match e with
-    | .matrix =>
-      match c with
-      | .declarative => some .optional
-      | .polar => some .optional
-      | .constituent => some .optional
-      | .imperative => some .excluded
-      | _ => none
-    | .subordinated => some .excluded
-    | _ => none
+  distribution := inMatrix [.declarative, .polar, .constituent] []
 
-/-- *halt* — resignation/acceptance particle ("that's just the way it
-is"). Declaratives only. -/
+/-- *Halt* occurs in statements and commands. -/
 def halt : Particle where
   form := "halt"
   position := some .clauseMedial
-  distribution := fun c e => match e with
-    | .matrix =>
-      match c with
-      | .declarative => some .optional
-      | .polar => some .excluded
-      | .constituent => some .excluded
-      | .imperative => some .excluded
-      | _ => none
-    | .subordinated => some .excluded
-    | _ => none
+  distribution := inMatrix [.declarative, .imperative] []
 
-/-- *doch* — contradiction/insistence particle. Uniquely among common
-MPs, licensed in both declaratives and imperatives. Distinct from the
-polarity-reversal response *doch* (`PolarityMarking.lean`). -/
+/-- *Doch* occurs in statements, commands, constituent questions and exclamations. -/
 def doch : Particle where
   form := "doch"
   position := some .clauseMedial
-  distribution := fun c e => match e with
-    | .matrix =>
-      match c with
-      | .declarative => some .optional
-      | .polar => some .excluded
-      | .constituent => some .excluded
-      | .imperative => some .optional
-      | _ => none
-    | .subordinated => some .excluded
-    | _ => none
+  distribution := inMatrix [.declarative, .imperative, .constituent, .exclamative] []
 
-/-- *doch wohl* — the particle combination that marks a matrix declarative as a rejecting
-question, non-compositionally ([seeliger-repp-2018]). That the declarative is a question and not
-an assertion is a matter of speech act, not of clause type, analysed in `SeeligerRepp2018`. -/
+/-- *Doch wohl*, also *wohl doch*, occurs in statements and hopes that something is the case. -/
 def dochWohl : Particle where
   form := "doch wohl"
   position := some .clauseMedial
-  distribution := fun c e ↦ match c, e with
-    | .declarative, .matrix => some .optional
-    | _, _ => none
+  distribution := inMatrix [.declarative] []
 
-/-- The modal-particle inventory ([gutzmann-2015] Table 6.1). -/
+/-- The modal particles. -/
 def modalParticles : List Particle := [ja, denn, wohl, halt, doch]
-
-/-- The question-marking particles ([theiler-2021],
-[seeliger-repp-2018]). *denn* is in both inventories. -/
-def questionParticles : List Particle := [denn, dochWohl]
-
-/-- Licensing across the [gutzmann-2015] German clause types, read off
-the clause-type facet (dass-VL clauses exclude modal particles). -/
-def licensedInClause (p : Particle) : GermanClauseType → Bool
-  | .dassVL          => false
-  | .v2Declarative   => decide (p.LicensedIn .declarative)
-  | .v2Interrogative => decide (p.LicensedIn .polar)
-  | .vlInterrogative => decide (p.LicensedIn .constituent)
-  | .imperative      => decide (p.LicensedIn .imperative)
-
-/-- Every MP is excluded from dass-VL clauses. -/
-theorem all_excluded_from_dassVL :
-    ∀ mp ∈ modalParticles, licensedInClause mp .dassVL = false :=
-  fun _ _ => rfl
-
-/-- *ja* and *denn* are in complementary distribution: no clause type
-licenses both. -/
-theorem ja_denn_complementary (ct : GermanClauseType) :
-    ¬(licensedInClause ja ct = true ∧ licensedInClause denn ct = true) := by
-  cases ct <;> decide
 
 end German.Particles

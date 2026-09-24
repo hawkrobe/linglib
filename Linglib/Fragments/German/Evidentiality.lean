@@ -5,13 +5,17 @@ public import Linglib.Semantics.Evidential.Defs
 /-!
 # German evidentiality
 
-German has no grammatical evidentials: the reportative use of the present conditional
-(Konjunktiv I) in reported speech is an evidentiality strategy, as are the modal verbs
-*sollen* and *wollen*, so the inventory is empty. WALS codes the language as indirect-only.
+This file records that German has no grammatical evidentials. Aikhenvald counts the present
+conditional, Konjunktiv I, which marks reported speech and can stand on its own in free indirect
+speech, as an evidentiality strategy rather than an evidential, and she discusses the modal verb
+*sollen*, which can mark information as reported or inferred, as a candidate strategy whose
+status turns on whether the modals are a closed class. De Haan's survey instead codes German as
+having indirect evidentials only (`Data/WALS/Features/F77A.lean`), which WALS Feature 78A codes
+as a modal morpheme, so the two classifications differ over the modals.
 
 ## References
 
-* [aikhenvald-2004], §4.8
+* [aikhenvald-2004]
 * [de-haan-2013]
 -/
 
@@ -19,6 +23,7 @@ German has no grammatical evidentials: the reportative use of the present condit
 
 namespace German.Evidentiality
 
+/-- German has no evidentials. -/
 def evidentials : List Evidential := []
 
 end German.Evidentiality

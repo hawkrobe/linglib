@@ -1,0 +1,93 @@
+[
+  {
+    "id": "magri2009_8a",
+    "source": {"bibkey": "diesing-1992", "paperLabel": "UNVERIFIED"},
+    "reportedIn": {"bibkey": "magri-2009", "paperLabel": "(8a)"},
+    "language": "stan1295",
+    "primaryText": "weil ja doch Feuerwehrmänner verfügbar sind.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["weil", "since"], ["ja doch", "PARTS"], ["Feuerwehrmänner", "firemen"],
+      ["verfügbar", "available"], ["sind", "are"]
+    ],
+    "translation": "since firemen are available.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "existential", "judgment": "acceptable"},
+      {"name": "generic", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate_level", "stage"],
+      ["position", "right"]
+    ],
+    "comment": "Repeated as (125a), where Magri adds, following Diesing, that the bare plural subject to the right of ja doch has only the existential reading."
+  },
+  {
+    "id": "magri2009_8b",
+    "source": {"bibkey": "diesing-1992", "paperLabel": "UNVERIFIED"},
+    "reportedIn": {"bibkey": "magri-2009", "paperLabel": "(8b)"},
+    "language": "stan1295",
+    "primaryText": "weil Feuerwehrmänner ja doch verfügbar sind.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["weil", "since"], ["Feuerwehrmänner", "firemen"], ["ja doch", "PARTS"],
+      ["verfügbar", "available"], ["sind", "are"]
+    ],
+    "translation": "since firemen are available.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate_level", "stage"],
+      ["position", "left"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "magri2009_8c",
+    "source": {"bibkey": "diesing-1992", "paperLabel": "UNVERIFIED"},
+    "reportedIn": {"bibkey": "magri-2009", "paperLabel": "(8c)"},
+    "language": "stan1295",
+    "primaryText": "weil ja doch Feuerwehrmänner intelligent sind.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["weil", "since"], ["ja doch", "PARTS"], ["Feuerwehrmänner", "firemen"],
+      ["intelligent", "intelligent"], ["sind", "are"]
+    ],
+    "translation": "since firemen are intelligent.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate_level", "individual"],
+      ["position", "right"]
+    ],
+    "comment": "Starred in (8); repeated as (125b), where it is marked # as odd."
+  },
+  {
+    "id": "magri2009_8d",
+    "source": {"bibkey": "diesing-1992", "paperLabel": "UNVERIFIED"},
+    "reportedIn": {"bibkey": "magri-2009", "paperLabel": "(8d)"},
+    "language": "stan1295",
+    "primaryText": "weil Feuerwehrmänner ja doch intelligent sind.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["weil", "since"], ["Feuerwehrmänner", "firemen"], ["ja doch", "PARTS"],
+      ["intelligent", "intelligent"], ["sind", "are"]
+    ],
+    "translation": "since firemen are intelligent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate_level", "individual"],
+      ["position", "left"]
+    ],
+    "comment": ""
+  }
+]
