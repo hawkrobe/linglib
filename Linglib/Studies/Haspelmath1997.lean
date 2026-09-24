@@ -16,6 +16,7 @@ public import Linglib.Fragments.Kannada.Indefinites
 public import Linglib.Fragments.Latin.Indefinites
 public import Linglib.Fragments.Latvian.Indefinites
 public import Linglib.Fragments.Slavic.Russian.Indefinites
+public import Linglib.Fragments.Turkish.Indefinites
 public import Linglib.Fragments.Yakut.Indefinites
 
 /-!
@@ -295,9 +296,9 @@ starts the *herhangi* outline at irrealis non-specific; the text admits either s
 function from specific unknown to direct negation and gives *herhangi biri* as a
 specific-unknown example, and the region follows the text. -/
 def turkish : List Series :=
-  [ series "bir-" "biri(si)" .genericNoun [1, 2, 3, 4, 5, 6, 7],
-    series "hiç" "hiç kimse" .genericNoun [4, 6, 7],
-    series "herhangi" "herhangi biri" .genericNoun [2, 3, 4, 5, 6, 7, 8, 9] ]
+  [ ⟨"bir-", Turkish.Indefinites.biri, region [1, 2, 3, 4, 5, 6, 7]⟩,
+    ⟨"hiç", Turkish.Indefinites.hiçKimse, region [4, 6, 7]⟩,
+    ⟨"herhangi", Turkish.Indefinites.herhangiBiri, region [2, 3, 4, 5, 6, 7, 8, 9]⟩ ]
 
 /-- The Hindi/Urdu series (A.22) are *koii* 1234567 and *koii bhii* 3456789. -/
 def hindi : List Series :=
@@ -370,15 +371,15 @@ theorem sample_principles :
   decide
 
 /-- In most languages several series overlap in distribution, which the book holds against
-accounts of grammatical meaning that rely on contrast: thirteen of the eighteen paradigms have
-a function expressed by more than one series. -/
+accounts of grammatical meaning that rely on contrast, since thirteen of the eighteen
+paradigms have a function expressed by more than one series. -/
 theorem sample_overlap :
     ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, italian, finnish,
       korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
 /-- The comparative's other neighbour is indirect negation, and a series may cover it with the
-negation functions and without free choice: Japanese *-mo*. -/
+negation functions and without free choice, as Japanese *-mo* does. -/
 theorem mo_comparative_with_negation :
     ∃ e ∈ japanese, .comparative ∈ e.functions ∧ .directNeg ∈ e.functions ∧
       .freeChoice ∉ e.functions := by

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Turkish.Case
 public import Linglib.Core.Computability.RegularExpressions
 public import Linglib.Phonology.Hiatus
 public import Linglib.Syntax.Agreement.Paradigm
@@ -114,7 +115,8 @@ theorem initial_concat {s : Suffix} {b : Segment} (h : s.bracketed = some b)
 
 /-- A suffix whose bracketed segment differs from its first fixed segment in being a vowel, as
 every bracketed suffix of the grammar does, attaches with vowels and consonants alternating
-across the juncture: the segment after the stem-final `l` differs from `l` in being a vowel. -/
+across the juncture, so the segment after the stem-final `l` differs from `l` in being a
+vowel. -/
 theorem attach_concat_alternates {s : Suffix} {b h : Segment} {t : List Segment}
     (hb : s.bracketed = some b) (hs : s.segments = h :: t) (hbh : ¬ (b.IsVowel ↔ h.IsVowel))
     (w : List Segment) (l : Segment) :
@@ -311,8 +313,8 @@ def Exponent.form : Exponent σ → Suffix
   | .dir => ⟨none, [D, I, r]⟩
 
 open RegularExpression in
-/-- The template of the finite verb: its slots in the order of §8.2, each of which a verb may
-skip, the voice slot taking any number of suffixes. -/
+/-- The template of the finite verb lists its slots in the order of §8.2, each of which a verb
+may skip, the voice slot taking any number of suffixes. -/
 def template : RegularExpression Slot :=
   (char .voice).star *
     sublists [.possibility, .negation, .auxiliary, .tam, .copula, .person, .generalizing]
@@ -390,14 +392,29 @@ def forms : List (Σ σ, Exponent σ) → List Suffix
     (if Exponent.IsThirdPossessive e ∧ ∃ e' ∈ es.head?, e'.1 = .case then
       { e.2.form with segments := e.2.form.segments ++ [n] } else e.2.form) :: forms es
 
-/-- The template of the nominal: the slots number, possession and case, in that order, each of
-which a nominal may skip (§8.1). -/
+/-- The template of the nominal lists the slots number, possession and case, in that order,
+each of which a nominal may skip (§8.1). -/
 def template : RegularExpression Slot := .sublists [.number, .possession, .case]
 
 /-- A string of suffixes is licensed when its slots match the template. -/
 def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
 
 instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+/-- The comparative label of a case exponent. -/
+def Exponent.toCase : Exponent .case → Case
+  | .accusative => .acc
+  | .dative => .dat
+  | .locative => .loc
+  | .ablative => .abl
+  | .genitive => .gen
+
+/-- The case inventory is the unmarked nominative with the cases the five exponents
+realize. -/
+theorem toCase_inventory :
+    Case.inventory = {.nom, Exponent.accusative.toCase, Exponent.dative.toCase,
+      Exponent.locative.toCase, Exponent.ablative.toCase, Exponent.genitive.toCase} :=
+  rfl
 
 end Nominal
 

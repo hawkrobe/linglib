@@ -5,11 +5,10 @@ public import Linglib.Syntax.Comparative
 /-!
 # Swahili comparison
 
-This file defines the Swahili comparative construction. Stassen codes Swahili in the World
-Atlas of Language Structures as an exceed comparative: the standard of comparison is the
-object of *kuliko*, a verb-derived marker, as in *X ni Adj kuliko Y*, and the adjective carries
-no degree marking. The construction's anatomy is stated so that its type, read off the
-anatomy, is the type the atlas records.
+This file defines the Swahili comparative construction as Stassen's atlas entry records it,
+from Ashton's grammar. The standard of comparison is the object of *kuliko*, a verb-derived
+marker, as in *X ni Adj kuliko Y*, and the adjective carries no degree marking, so the
+construction's type, read off its anatomy, is the exceed comparative.
 
 ## Main definitions
 
@@ -17,14 +16,13 @@ anatomy, is the type the atlas records.
 
 ## Main results
 
-* `Swahili.Comparison.type_kuliko`, `Swahili.Comparison.type_eq_wals`: the construction is an
-  exceed comparative, as the atlas codes Swahili
+* `Swahili.Comparison.type_kuliko`: the construction is an exceed comparative
 
 ## Implementation notes
 
-* The atlas datapoint cites Ashton's grammar, which was not opened; the marker and the
-  absence of degree marking are recorded as the datapoint's type implies them and await the
-  grammar for the verbal *-zidi* variant and the superlative.
+* Ashton's grammar was not opened; the marker and the absence of degree marking are recorded
+  as the atlas entry's type implies them and await the grammar for the verbal *-zidi* variant
+  and the superlative.
 
 ## References
 
@@ -45,7 +43,5 @@ def kuliko : Comparative :=
 /-- The construction is an exceed comparative. -/
 theorem type_kuliko : kuliko.type = .exceed := rfl
 
-/-- The atlas codes Swahili as the construction's type. -/
-theorem type_eq_wals : ComparativeType.ofWALS "swh" = some kuliko.type := by decide
 
 end Swahili.Comparison

@@ -995,11 +995,9 @@ import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.Turkish.Coordination
-import Linglib.Fragments.Turkish.Definiteness
 import Linglib.Fragments.Turkish.Evidentiality
 import Linglib.Fragments.Turkish.Morphotactics
 import Linglib.Fragments.Turkish.Negation
-import Linglib.Fragments.Turkish.PolarityItems
 import Linglib.Fragments.Turkish.Possession
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Relativization

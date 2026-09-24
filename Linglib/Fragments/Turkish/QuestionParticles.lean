@@ -24,8 +24,8 @@ namespace Turkish.QuestionParticles
 
 open Polarity
 
-/-- A Turkish question particle: citation form, vowel-harmony allomorphs, and the operator on
-propositions it contributes, polymorphic in the world type. -/
+/-- A Turkish question particle has a citation form, its vowel-harmony allomorphs, and the
+operator on propositions it contributes, polymorphic in the world type. -/
 structure TurkishQParticle where
   form : String
   allomorphs : List String

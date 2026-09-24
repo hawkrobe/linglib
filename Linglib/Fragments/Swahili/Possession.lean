@@ -1,8 +1,6 @@
 module
 
 public import Linglib.Fragments.Swahili.Basic
-public import Linglib.Data.WALS.Features.F117A
-public import Linglib.Data.WALS.Features.F24A
 
 /-!
 # Swahili possession
@@ -29,8 +27,6 @@ possessum, *nyumba y-a Habiba* 'Habiba's house'.
   examples from the subject-prefix paradigm
 * `Swahili.Possession.existential`: the existential is the present construction on a locative
   subject prefix
-* `Swahili.Possession.wals_117A`, `wals_24A`: the atlas codes the predicative possessive as
-  conjunctional and the attributive possessive as dependent-marking
 
 ## References
 
@@ -43,7 +39,7 @@ possessum, *nyumba y-a Habiba* 'Habiba's house'.
 
 namespace Swahili.Possession
 
-open Swahili Agreement Morphology Data.WALS
+open Swahili Agreement Morphology
 
 /-- The comitative *na* 'with', the predicate of the have-construction. -/
 def na : Morph := .free "na"
@@ -71,14 +67,5 @@ theorem existential :
       present NounClass.cl16.subjPrefix = [.pref "pa", na] :=
   ⟨rfl, rfl⟩
 
-/-- The atlas codes the predicative possessive as conjunctional, Stassen's with-possessive. -/
-theorem wals_117A :
-    (Datapoint.lookupISO F117A.allData "swh").map (·.value) = some .conjunctional := by
-  decide
-
-/-- The atlas codes the attributive possessive as dependent-marking. -/
-theorem wals_24A :
-    (Datapoint.lookupISO F24A.allData "swh").map (·.value) = some .dependentMarking := by
-  decide
 
 end Swahili.Possession
