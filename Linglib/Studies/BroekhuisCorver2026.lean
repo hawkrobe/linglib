@@ -19,13 +19,20 @@ The same rule predicts what can be extracted. Dutch resists preposition strandin
 that precedes the adpositional head can leave the phrase, and precisely the complements that move
 precede it: R-pronouns and the complements of directional postpositions can be extracted, ordinary
 nominal complements of prepositions cannot, and the complement of a circumposition patterns with
-the prepositional case because it sits inside the raised prepositional phrase.
+the prepositional case because it sits inside the raised prepositional phrase. An R-pronoun
+never yields the postpositional order, since *de wandeling er op* 'the hike on it' has only the
+locational reading, so a circumpositional phrase R-pronominalizes through its prepositional
+complement, and under wh-movement the first part of a circumposition pied-pipes alone, which
+shows that it heads a phrase.
 
 The lexical generalizations are checked against the Dutch adposition fragment, which follows the
 authors' grammar: every postpositional use denotes a path, every postposition but *af* is also a
 preposition, an adposition with both uses is locational before its complement unless it is one
 of the grammar's directional prepositions, circumpositions take only nominal complements, and
-the morphologically complex prepositions resist R-pronominalization.
+the morphologically complex prepositions resist R-pronominalization. The chapter itself notes
+that *af* and *heen*, the second parts of *van … af* and *over … heen*, are not commonly used
+as prepositions, although they once were, and remain postpositions or particles with a
+directional meaning.
 
 ## Main definitions
 
@@ -37,6 +44,7 @@ the morphologically complex prepositions resist R-pronominalization.
 
 * `postP_iff_directional_nominal`, `circumP_iff_prePP_complement`: each surface class is the
   effect of one complement kind and directionality, not a lexical property.
+* `rPronoun_not_postP`: an R-pronoun complement never gives the postpositional order.
 * `extraction_pattern`, `circumP_patterns_with_preP`: the extraction asymmetries follow.
 * `postP_directional`, `postP_subset_preP`: every postposition is a directional adposition,
   and all but *af* are prepositions too.
@@ -44,12 +52,23 @@ the morphologically complex prepositions resist R-pronominalization.
   R-pronominalization restrictions.
 * `postP_selects_zijn`: a postpositional phrase denotes a path and its verb takes *zijn* 'be'.
 
+## Implementation notes
+
+* The chapter's extraction evidence is modelled over complement kinds only. The extraction of
+  modifiers such as measure phrases from a prepositional phrase, the pied-piping of the first
+  part of a circumposition alone under wh-movement, and the restriction of pronominal
+  complements to human referents, which R-pronouns lift, are described in the chapter and not
+  formalized.
+* The chapter offers the raising analysis as a hypothesis that idealizes away the exceptional
+  prepositional phrases with a prepositional complement, such as *van na de oorlog* 'from
+  after the war'.
+
 ## TODO
 
-The grammar's eight directional prepositions, *naar* 'to' among them, have no postpositional
-use, although their phrases are directional; the analysis attributes this to a semantic
-condition on the raising of a nominal complement that `movesToSpec` does not formalize, so
-`postP_iff_directional_nominal` predicts a postpositional order for them.
+The chapter conditions the raising of a nominal complement semantically and does not state
+the condition; `movesToSpec` raises every nominal complement of a directional phrase, so
+`postP_iff_directional_nominal` predicts a postpositional order for the grammar's eight
+directional prepositions, *naar* 'to' among them, which have none.
 
 ## References
 
@@ -120,6 +139,12 @@ theorem circumP_iff_prePP_complement (k : ComplementKind) (d : Bool) :
     surfaceOrder k d = .circumP ↔ k = .prePP := by
   cases k <;> cases d <;> simp [surfaceOrder]
 
+/-- An R-pronoun never yields the postpositional order: *de wandeling er op* 'the hike on it'
+has only the locational reading, so R-pronominalization is confined to prepositional phrases,
+and a circumpositional phrase R-pronominalizes through its prepositional complement. -/
+theorem rPronoun_not_postP (d : Bool) : surfaceOrder .rPronoun d ≠ .postP := by
+  cases d <;> decide
+
 /-- Every one of the four classes is produced by the rule, so none of them need be listed in the
 lexicon. -/
 theorem every_order_derived (o : PPSurfaceOrder) : ∃ k d, surfaceOrder k d = o := by
@@ -168,7 +193,7 @@ theorem postP_subset_preP :
   pre_of_post
 
 /-- The second elements *af* and *heen* of *van … af* and *over … heen* are not prepositions on
-their own. -/
+their own, as the chapter notes, and head the raised phrase as postpositions. -/
 theorem circumP_parts_not_preP : .pre ∉ af.linearization ∧ .pre ∉ heen.linearization := by
   decide
 
