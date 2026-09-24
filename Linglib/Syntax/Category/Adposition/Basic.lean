@@ -74,10 +74,13 @@ inductive Complement where
   | np
   | pp
   | clause
-  /-- Adjectival complement (Dutch *tot voor kort* 'until recently'). -/
+  /-- Adjectival complement (Dutch *sinds kort* 'since recently'). -/
   | ap
   /-- Measure-phrase complement (*for three hours*, *three days ago*). -/
   | measure
+  /-- A subject with its predicate, the absolute construction (Dutch *met Jan ziek* 'with Jan
+      ill', English *with John away*). -/
+  | smallClause
   deriving DecidableEq, Repr, Fintype
 
 /-- Exponence on the grammaticalization cline (criterion 5). `affix` is the

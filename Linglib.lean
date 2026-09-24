@@ -689,7 +689,6 @@ import Linglib.Fragments.Dutch.Modals
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.Dutch.TemporalConnectives
-import Linglib.Fragments.Dutch.VerbParticles
 import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.Comparison

@@ -1,274 +1,365 @@
 module
 
-public import Linglib.Semantics.Events.Path
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Syntax.Category.Adposition.Basic
+public import Linglib.Syntax.Case.Order
 
 /-!
 # Dutch adpositions
 
-Lexical entries for the Dutch adpositions, recording for each one the orders it occurs in
-(preposition, postposition, circumposition, intransitive particle), whether its complement can be
-R-pronominalized, the complement types it takes, and its locational and directional readings with
-the path each directional reading describes.
+This file defines the Dutch adposition as a lexical entry after Broekhuis and Corver's grammar.
+An entry is the root `Adposition` with, for each position it takes relative to its complement,
+the direction of the path a spatial use in that position denotes, and with whether it is used
+with its complement omitted and whether its complement can be replaced by an R-word such as
+*er*. The grammar sorts adpositions into prepositions, postpositions, circumpositions and
+intransitive adpositions by that position, and into spatial, temporal and other adpositions by
+the relation they mark. A spatial use is locational, referring to a location that the verb
+reads as a place or as the result of a change of place, or directional, denoting a path whose
+endpoint, starting point or interior is the reference object. Eight prepositions denote a path
+and the others are locational, but every postpositional use denotes a path, so *op* is
+locational before its complement, *op de berg* 'on the mountain', and denotes a goal path
+after it, *de berg op* 'up the mountain'. Every postposition but *af* 'off' is also a
+preposition. The complement of a non-spatial preposition that is morphologically complex,
+*tijdens* 'during', cannot be R-pronominalized.
+
+## Main definitions
+
+* `Dutch.Adpositions.Adposition`: the entry.
+* `Dutch.Adpositions.inventory`: the entries.
+
+## Main results
+
+* `Dutch.Adpositions.direction_post_ne_place`: every postpositional use denotes a path.
+* `Dutch.Adpositions.pre_of_post`: every postposition but *af* is also a preposition.
+* `Dutch.Adpositions.relation_ne_spatial_of_not_rPronoun`: the adpositions that resist
+  R-pronominalization are non-spatial.
+
+## Implementation notes
+
+* The relation of a polysemous adposition is its spatial one where it has one: *voor* is
+  recorded as spatial although it is also temporal, 'before', and marks a goal, 'for', and
+  *door* as spatial although it also marks an agent and a cause. The grammar's complement
+  types are the root's, a *te*-infinitive counting as a clause.
+* The direction of a position records the grammar's classification of the use as locational or
+  directional and, for a directional use, whether the complement is the endpoint, the starting
+  point or a point on the path. The directional prepositions are the eight the grammar tests
+  against verbs of location; *door* 'through', which the grammar marks as both, is recorded as
+  locational, and *over* is two entries as in the grammar. The direction of a postpositional
+  use is read off the grammar's gloss.
+* A circumposition is an entry with a complex form and the circumpositional position, recorded
+  with the direction of its directional use, since the grammar suspects that the locational
+  uses of the circumpositions that have one are prepositional phrases with a particle.
+* An entry with no complement type is a particle, used only without a complement; the grammar
+  says that a particle has lost some of the spatial meaning of the adposition it is related to,
+  and this file does not draw that line, recording only that the entry occurs without a
+  complement.
 
 ## References
 
-* [broekhuis-corver-2026a]
-* [dendikken-2010]
+* [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume VII: Adpositions and Adpositional
+  Phrases* (2026)][broekhuis-corver-2026c]
 -/
 
 @[expose] public section
 
 namespace Dutch.Adpositions
 
-open Spatial (Path)
-open Aspect
+/-- A Dutch adposition is the root entry with, for each position relative to its complement,
+the direction of the path a spatial use there denotes, and with whether it occurs without its
+complement and whether its complement can be R-pronominalized. -/
+structure Adposition extends _root_.Adposition where
+  /-- `direction l` is `.place` when a use in position `l` is locational and `.goal`, `.source`
+  or `.route` when it denotes a path whose endpoint, starting point or interior is the
+  reference object; a position the entry does not take is `.place`. -/
+  direction : _root_.Adposition.Linearization → Case.PathDir := fun _ ↦ .place
+  /-- The entry is used with its complement omitted, as *op* in *Jan zet een hoed op* 'Jan
+  puts a hat on'. -/
+  intransitive : Bool := false
+  /-- The complement can be replaced by an R-word, as *met de pop* 'with the doll' beside *er
+  ... mee* 'with it'. -/
+  rPronoun : Bool := true
 
-/-- The complement types Dutch adpositions are attested with. -/
-inductive PComplementType where
-  | nominal      -- DP complement (default)
-  | pp           -- PP complement (van [PP na de oorlog], tot [PP in het bos])
-  | adjectival   -- AP complement (tot [AP voor kort])
-  | clausal      -- dat-clause (voor [CP dat hij vertrok])
-  | infinitival  -- te-infinitive (na [CP te zijn gevallen])
-  | smallClause  -- subject + predicate (met [SC Jan in ons team])
-  | none_        -- no complement (intransitive / verbal particle)
-  deriving DecidableEq, Repr
+/-- `preposition form relation` is the preposition over a noun phrase with a locational use. -/
+def preposition (form : String) (relation : _root_.Adposition.RelationType := .spatial) :
+    Adposition :=
+  { form := .simple form, relation, complement := [.np], linearization := [.pre] }
 
-/-- A Dutch adposition, recorded by its attested distribution. -/
-structure DutchAdposition where
-  /-- Surface form -/
-  form         : String
-  /-- Attested as preposition (complement follows P) -/
-  prePOk       : Bool
-  /-- Attested as postposition (complement precedes P) -/
-  postPOk      : Bool
-  /-- Second element if this P participates in a circumposition -/
-  circumPart   : Option String := none
-  /-- Attested without complement (intransitive / verbal particle use) -/
-  intransOk    : Bool := false
-  /-- Allows R-pronominalization: *er*, *daar* or *waar* in place of the complement. -/
-  rPronOk      : Bool := true
-  /-- Attested complement types -/
-  complTypes   : List PComplementType := [.nominal]
-  /-- Has locational reading (place/state) -/
-  locational   : Bool := false
-  /-- Has directional reading (path/change of location) -/
-  directional  : Bool := false
-  /-- Directionality and telicity for directional uses (if any) -/
-  pathType     : Option (Path.Directionality × Telicity) := none
-  /-- English gloss -/
-  gloss        : String
-  deriving DecidableEq, Repr
+/-- `directional form d` is the preposition over a noun phrase denoting a path in direction
+`d`. -/
+def directional (form : String) (d : Case.PathDir) : Adposition :=
+  { preposition form with direction := fun _ ↦ d }
 
-/-! ### Spatial adpositions -/
+/-- `ambipositional form d` is the spatial adposition over a noun phrase that is locational
+before its complement and denotes a path in direction `d` after it. -/
+def ambipositional (form : String) (d : Case.PathDir) : Adposition :=
+  { preposition form with
+    linearization := [.pre, .post], direction := fun | .post => d | _ => .place }
 
-/-- *Op* is locational as a preposition and directional as a postposition: *op de heuvel* 'on the
-hill' against *de heuvel op* 'onto the hill', with *hebben* and *zijn* as their perfect
-auxiliaries. -/
-def op : DutchAdposition :=
-  { form := "op", prePOk := true, postPOk := true
-  , intransOk := true
-  , locational := true, directional := true
-  , pathType := some (.goal, .telic)
-  , gloss := "on/onto/up" }
+/-- `circumposition first second d` is the circumposition *first … second* over a noun phrase,
+denoting a path in direction `d`, or locational when `d` is `.place`. -/
+def circumposition (first second : String) (d : Case.PathDir) : Adposition :=
+  { form := .complex [first, second], relation := .spatial, complement := [.np],
+    linearization := [.circum], direction := fun | .circum => d | _ => .place }
 
-/-- *In* is locational as a preposition and directional as a postposition: *in de garage* 'in the
-garage' against *de boom in* 'into the tree'. -/
-def in_ : DutchAdposition :=
-  { form := "in", prePOk := true, postPOk := true
-  , intransOk := true
-  , locational := true, directional := true
-  , pathType := some (.goal, .telic)
-  , gloss := "in/into" }
+/-! ### Spatial adpositions
 
-/-- *Naar* 'to' is inherently directional and occurs only as a preposition. -/
-def naar : DutchAdposition :=
-  { form := "naar", prePOk := true, postPOk := false
-  , directional := true
-  , pathType := some (.goal, .telic)
-  , gloss := "to" }
+The locational prepositions are the deictic *achter*, *naast* and *voor*, the absolute *boven*,
+*om*, *onder*, *rond* and *tussen*, and the inherent *aan*, *bij*, *binnen*, *buiten*, *door*,
+*in*, *langs*, *op*, *over*, *tegen*, *tegenover* and *uit*; the directional prepositions are
+*naar* and *tot*, whose complement is the endpoint, *van*, *vanaf* and *vanuit*, whose
+complement is the starting point, and *over*, *via* and *voorbij*, whose complement lies on
+the path. -/
 
-/-- *Van* 'from' indicates the starting point of a path. It takes prepositional complements —
-*van [PP na de oorlog]* 'from after the war' — and forms a circumposition with *af*: *van het dak
-af* 'off the roof'. -/
-def van : DutchAdposition :=
-  { form := "van", prePOk := true, postPOk := false
-  , circumPart := some "af"
-  , complTypes := [.nominal, .pp]
-  , directional := true
-  , pathType := some (.source, .telic)
-  , gloss := "from/of" }
+/-- *aan* 'on' is a locational preposition, also used without its complement, *Jan doet een jas
+aan* 'Jan puts on a coat', and the second part of *achter … aan* and *tegen … aan*. -/
+def aan : Adposition := { preposition "aan" with intransitive := true }
 
-/-- *Tot* 'to, until' indicates a later point on a path, not necessarily its end. It takes
-prepositional as well as nominal complements: *tot [PP (diep) in het bos]*. See also
-`Dutch.TemporalConnectives.tot` for the temporal sense, whose complement is nominal only. -/
-def tot : DutchAdposition :=
-  { form := "tot", prePOk := true, postPOk := false
-  , complTypes := [.nominal, .pp]
-  , directional := true
-  , pathType := some (.goal, .telic)
-  , gloss := "to/until" }
+/-- *achter* 'behind' is a deictic locational preposition, *Jan staat achter de auto* 'Jan
+stands behind the car', and the particle of *achter blijven* 'lag behind'. -/
+def achter : Adposition := { preposition "achter" with intransitive := true }
 
-/-- *Achter* 'behind', also used without a complement: *mijn fiets staat achter* 'my bike is at
-the back'. -/
-def achter : DutchAdposition :=
-  { form := "achter", prePOk := true, postPOk := false
-  , intransOk := true
-  , locational := true
-  , gloss := "behind" }
+/-- *bij* 'near' is a locational preposition, also used without its complement, *het
+postkantoor is dicht bij* 'the post office is close by'. -/
+def bij : Adposition := { preposition "bij" with intransitive := true }
 
-/-- *Boven* 'above', also used without a complement: *de douche bevindt zich boven* 'the shower
-is upstairs'. -/
-def boven : DutchAdposition :=
-  { form := "boven", prePOk := true, postPOk := false
-  , intransOk := true
-  , locational := true
-  , gloss := "above" }
+/-- *binnen* 'inside' is locational before its complement and denotes a goal path after it,
+*het huis binnen* 'into the house', and is the particle of *binnen komen* 'come in'. -/
+def binnen : Adposition := { ambipositional "binnen" .goal with intransitive := true }
 
-/-- *Onder* 'under' is locational as a preposition and directional in the circumposition with
-*door*: *onder de brug door* 'under and past the bridge'. -/
-def onder : DutchAdposition :=
-  { form := "onder", prePOk := true, postPOk := false
-  , circumPart := some "door"
-  , locational := true, directional := true
-  , pathType := some (.goal, .telic)
-  , gloss := "under" }
+/-- *boven* 'above' is a locational preposition, *de lamp hangt boven de kast* 'the lamp hangs
+above the cupboard', and the particle of *boven komen* 'come to the surface'. -/
+def boven : Adposition := { preposition "boven" with intransitive := true }
 
-/-- *Over* 'over' is locational as a preposition and directional in the circumposition with
-*heen*: *over de heide heen* 'across the heath'. -/
-def over : DutchAdposition :=
-  { form := "over", prePOk := true, postPOk := false
-  , circumPart := some "heen"
-  , intransOk := true
-  , locational := true, directional := true
-  , pathType := some (.goal, .telic)
-  , gloss := "over/across" }
+/-- *buiten* 'outside' is a locational preposition and the particle of *buiten komen* 'get
+outside'. -/
+def buiten : Adposition := { preposition "buiten" with intransitive := true }
 
-/-- *Tussen* 'between', with the circumpositional variant *tussen de kippen in* 'in among the
-chickens', which stays locational. -/
-def tussen : DutchAdposition :=
-  { form := "tussen", prePOk := true, postPOk := false
-  , circumPart := some "in"
-  , locational := true
-  , gloss := "between" }
+/-- *door* 'through' is locational before its complement, where the grammar marks it directional
+as well, and denotes a route after it, *het hek door* 'through the gate' and the temporal *het
+hele jaar door* 'throughout the year'. It takes a finite clause in *doordat* 'because' and a
+*te*-infinitive, *door hard te werken* 'by working hard', is the particle of *door lopen* 'keep
+walking', and is the second part of *onder … door* and *tussen … door*. -/
+def door : Adposition :=
+  { ambipositional "door" .route with complement := [.np, .clause], intransitive := true }
 
-/-- *Bij* 'at, near', locational only. -/
-def bij : DutchAdposition :=
-  { form := "bij", prePOk := true, postPOk := false
-  , locational := true
-  , gloss := "at/near" }
+/-- *in* 'in' is locational before its complement and denotes a goal path after it, *de sloot
+in* 'into the ditch' and the temporal *het nieuwe jaar in* 'into the new year', and is the
+particle of *iets in brengen* 'introduce something'. -/
+def in_ : Adposition := { ambipositional "in" .goal with intransitive := true }
 
-/-- *Tegen* 'against'. -/
-def tegen : DutchAdposition :=
-  { form := "tegen", prePOk := true, postPOk := false
-  , locational := true
-  , gloss := "against" }
+/-- *langs* 'along' is locational before its complement, *de ladder ligt langs de muur* 'the
+ladder lies along the wall', denotes a route after it, *het huis langs* 'along the house', and
+is the particle of *bij iemand langs gaan* 'check on someone'. -/
+def langs : Adposition := { ambipositional "langs" .route with intransitive := true }
 
-/-- *Langs* 'along'. -/
-def langs : DutchAdposition :=
-  { form := "langs", prePOk := true, postPOk := false
-  , locational := true
-  , gloss := "along" }
+/-- *naar* 'to' denotes a path whose endpoint is its complement, *Jan rijdt naar Groningen* 'Jan
+is driving to Groningen', and is the first part of *naar … toe*. -/
+def naar : Adposition := directional "naar" .goal
 
-/-- *Uit* 'out of' describes a path away from a source, and is also a verbal particle: *Jan
-slaapt graag uit* 'Jan likes to sleep late'. -/
-def uit : DutchAdposition :=
-  { form := "uit", prePOk := true, postPOk := false
-  , intransOk := true
-  , directional := true
-  , pathType := some (.source, .telic)
-  , gloss := "out of" }
+/-- *naast* 'next to' is a deictic locational preposition. -/
+def naast : Adposition := preposition "naast"
 
-/-- *Om* 'around', also used without a complement: *Marie deed een sjaal om* 'Marie put on a
-scarf'. -/
-def om : DutchAdposition :=
-  { form := "om", prePOk := true, postPOk := false
-  , intransOk := true
-  , locational := true
-  , gloss := "around" }
+/-- *om* 'around' is locational before its complement, *de mannen zitten om de tafel* 'the men
+sit around the table', denotes a route after it, *de hoek om* 'around the corner', and is used
+without its complement, *Jan doet een das om* 'Jan puts on a scarf'. It is also temporal, 'at',
+and marks a purpose. -/
+def om : Adposition := { ambipositional "om" .route with intransitive := true }
 
-/-! ### Non-spatial adpositions -/
+/-- *onder* 'under' is a locational preposition, *de bal ligt onder de kast* 'the ball lies
+under the cupboard', and the first part of *onder … door*. -/
+def onder : Adposition := preposition "onder"
 
-/-- *Met* 'with' takes a small clause in the absolute construction: *met [Jan in ons team]
-zullen we nooit verliezen* 'with Jan on our team we will never lose'. -/
-def met : DutchAdposition :=
-  { form := "met", prePOk := true, postPOk := false
-  , complTypes := [.nominal, .smallClause]
-  , gloss := "with" }
+/-- *op* 'on' is locational before its complement and denotes a goal path after it, *op de berg*
+'on the mountain' against *de berg op* 'up the mountain', and is used without its complement,
+*Jan zet een hoed op* 'Jan puts a hat on'. It is also temporal. -/
+def op : Adposition := { ambipositional "op" .goal with intransitive := true }
 
-/-- *Voor* 'for, before' is the widest-selecting preposition of the set: nominal, prepositional
-(*voor [PP bij de koffie]*), adjectival (*voor [AP heel kort]*) and clausal (*voor [CP (dat) hij
-vertrok]*) complements. -/
-def voor : DutchAdposition :=
-  { form := "voor", prePOk := true, postPOk := false
-  , complTypes := [.nominal, .pp, .adjectival, .clausal]
-  , locational := true
-  , gloss := "for/before" }
+/-- *over* 'across', the grammar's first *over*, denotes a route before its complement and
+after it, *het grasveld over* 'across the lawn', and is the first part of *over … heen*. -/
+def over₁ : Adposition := { directional "over" .route with linearization := [.pre, .post] }
 
-/-- *Na* 'after' takes a clausal complement with obligatory *dat* — *na [CP dat hij gevallen
-was]* — and a *te*-infinitive: *na [CP te zijn gevallen]* 'after falling'. -/
-def na : DutchAdposition :=
-  { form := "na", prePOk := true, postPOk := false
-  , complTypes := [.nominal, .clausal, .infinitival]
-  , gloss := "after" }
+/-- *over* 'over', the grammar's second *over*, is a locational preposition. -/
+def over₂ : Adposition := preposition "over"
 
-/-- *Zonder* 'without' takes a *te*-infinitive — *zonder [CP te snurken]* 'without snoring' —
-and resists R-pronominalization: *\*er zonder*. -/
-def zonder : DutchAdposition :=
-  { form := "zonder", prePOk := true, postPOk := false
-  , rPronOk := false
-  , complTypes := [.nominal, .infinitival]
-  , gloss := "without" }
+/-- *rond* 'around' is locational before its complement, *de kaarsen staan rond de kerststal*
+'the candles stand around the crib', and denotes a route after it, *het plein rond* 'around
+the square'. -/
+def rond : Adposition := ambipositional "rond" .route
 
-/-- *Tijdens* 'during' resists R-pronominalization: *\*er tijdens*. -/
-def tijdens : DutchAdposition :=
-  { form := "tijdens", prePOk := true, postPOk := false
-  , rPronOk := false
-  , gloss := "during" }
+/-- *tegen* 'against' is a locational preposition, *de ladder ligt tegen de muur* 'the ladder
+lies against the wall', also temporal, 'towards', and the first part of *tegen … aan*, *tegen
+… in* and *tegen … op*. -/
+def tegen : Adposition := preposition "tegen"
 
-/-- *Ondanks* 'despite' resists R-pronominalization: *\*er ondanks*. -/
-def ondanks : DutchAdposition :=
-  { form := "ondanks", prePOk := true, postPOk := false
-  , rPronOk := false
-  , gloss := "despite" }
+/-- *tegenover* 'opposite' is a locational preposition. -/
+def tegenover : Adposition := preposition "tegenover"
 
-/-- *Door* 'through, by' expresses cause as well as path, and takes a clausal complement: *door
-[CP dat de wind hard waaide]* 'because the wind was blowing hard'. It is also the second element of
-*onder … door* and a verbal particle. -/
-def door : DutchAdposition :=
-  { form := "door", prePOk := true, postPOk := false
-  , intransOk := true
-  , complTypes := [.nominal, .clausal]
-  , gloss := "through/by" }
+/-- *tot* 'until, as far as' denotes a path on which its complement is a point, the endpoint of
+a part of the path, also temporally, and takes an adpositional phrase as well as a noun
+phrase, as *van* does. -/
+def tot : Adposition := { directional "tot" .goal with complement := [.np, .pp] }
 
-/-! ### Second elements of circumpositions, and particles -/
+/-- *tussen* 'between' is a locational preposition, *de lamp staat tussen twee vazen* 'the
+lamp stands between two vases', also temporal, and the first part of *tussen … in* and
+*tussen … door*. -/
+def tussen : Adposition := preposition "tussen"
 
-/-- *Af* 'off, down' is the second element of *van … af* and a verbal particle; it is not
-commonly used as a preposition on its own. -/
-def af : DutchAdposition :=
-  { form := "af", prePOk := false, postPOk := false
-  , intransOk := true
-  , directional := true
-  , pathType := some (.source, .telic)
-  , gloss := "off/down" }
+/-- *uit* 'out of' is locational before its complement in the grammar's classification and
+denotes a source path after it, *de auto uit* 'out of the car' and the temporal *dag in dag
+uit* 'day in day out', and is used without its complement, which it then cannot take. -/
+def uit : Adposition := { ambipositional "uit" .source with intransitive := true }
 
-/-- *Heen* is a directional particle and the second element of *over … heen*; it is not commonly
-used as a preposition on its own. -/
-def heen : DutchAdposition :=
-  { form := "heen", prePOk := false, postPOk := false
-  , intransOk := true
-  , directional := true
-  , pathType := some (.goal, .telic)
-  , gloss := "thither (directional)" }
+/-- *van* 'from' denotes a path whose starting point is its complement, *Jan reed van Utrecht
+naar Groningen* 'Jan drove from Utrecht to Groningen', and takes an adpositional phrase, *van
+boven de kast* 'from above the cupboard'. It also marks a possessor, 'of', and is the first
+part of *van … af*. -/
+def van : Adposition := { directional "van" .source with complement := [.np, .pp] }
+
+/-- *vanaf* 'from' denotes a path whose starting point is its complement, also temporally. -/
+def vanaf : Adposition := directional "vanaf" .source
+
+/-- *vanuit* 'from out of' denotes a path whose starting point is its complement. -/
+def vanuit : Adposition := directional "vanuit" .source
+
+/-- *via* 'via' denotes a path on which its complement lies. -/
+def via : Adposition := directional "via" .route
+
+/-- *voor* 'in front of' is a deictic locational preposition, *Jan staat voor de auto* 'Jan
+stands in front of the car', and also temporal, 'before'. Marking an intended goal, 'for', *de
+koekjes zijn voor jou* 'the biscuits are for you', it takes an adpositional phrase, *voor na
+het eten* 'for after dinner', and an adjective phrase, *voor hoe lang* 'for how long', and it
+takes a finite clause in *voordat* 'before'. -/
+def voor : Adposition :=
+  { preposition "voor" with complement := [.np, .pp, .ap, .clause] }
+
+/-- *voorbij* 'past' denotes a path on which its complement lies, before its complement and
+after it, *het huis voorbij* 'past the house'. -/
+def voorbij : Adposition :=
+  { directional "voorbij" .route with linearization := [.pre, .post] }
+
+/-- *af* 'off' is the one postposition that is not also a preposition, denoting a source path,
+*de berg af* 'down the mountain'; it is used without its complement, *Jan zet zijn hoed af*
+'Jan takes his hat off', and is the second part of *van … af* and *op … af*. -/
+def af : Adposition :=
+  { preposition "af" with
+    linearization := [.post], direction := fun | .post => .source | _ => .place,
+    intransitive := true }
+
+/-- *heen* is a particle and the second part of *over … heen* and its kin, and is not an
+adposition on its own. -/
+def heen : Adposition :=
+  { form := .simple "heen", relation := .spatial, complement := [], linearization := [],
+    intransitive := true }
+
+/-! ### Circumpositions -/
+
+/-- *van … af* 'from, off', *van het dak af springen* 'jump off the roof'. -/
+def vanAf : Adposition := circumposition "van" "af" .source
+
+/-- *onder … door* 'under and past', *onder de brug door lopen* 'walk under the bridge'. -/
+def onderDoor : Adposition := circumposition "onder" "door" .route
+
+/-- *tussen … door* 'through, between', *tussen de bomen door lopen* 'walk between the trees',
+and the temporal *tussen twee lessen door* 'in between two lessons'. -/
+def tussenDoor : Adposition := circumposition "tussen" "door" .route
+
+/-- *over … heen* 'over, across', *over het hek heen springen* 'jump over the fence'. -/
+def overHeen : Adposition := circumposition "over" "heen" .route
+
+/-- *door … heen* 'through', *door het stof heen lopen* 'walk through the dust'. -/
+def doorHeen : Adposition := circumposition "door" "heen" .route
+
+/-- *om … heen* 'around', *om het huis heen lopen* 'walk around the house'. -/
+def omHeen : Adposition := circumposition "om" "heen" .route
+
+/-- *naar … toe* 'towards', *naar Peter toe lopen* 'walk towards Peter'. -/
+def naarToe : Adposition := circumposition "naar" "toe" .goal
+
+/-- *tussen … in* 'in between' is locational, *tussen twee meisjes in zitten* 'sit between two
+girls'. -/
+def tussenIn : Adposition := circumposition "tussen" "in" .place
+
+/-! ### Temporal and other adpositions -/
+
+/-- *na* 'after' is temporal and takes a finite clause in *nadat* 'after' and a *te*-infinitive,
+*na zijn vader gekust te hebben* 'after having kissed his father'. -/
+def na : Adposition := { preposition "na" .temporal with complement := [.np, .clause] }
+
+/-- *tijdens* 'during' is temporal and resists R-pronominalization, *tijdens de oorlog* 'during
+the war' but not *er tijdens*. -/
+def tijdens : Adposition := { preposition "tijdens" .temporal with rPronoun := false }
+
+/-- *met* 'with' marks an instrument or a companion, *Jan speelt met de pop* 'Jan plays with
+the doll', and heads the absolute construction over a subject and its predicate, *met Jan
+ziek* 'with Jan ill'. -/
+def met : Adposition :=
+  { preposition "met" .grammatical with complement := [.np, .smallClause] }
+
+/-- *zonder* 'without' takes a *te*-infinitive, *zonder iets te vragen* 'without asking
+anything', heads an absolute construction like *met*, and resists R-pronominalization. -/
+def zonder : Adposition :=
+  { preposition "zonder" .grammatical with
+    complement := [.np, .clause, .smallClause], rPronoun := false }
+
+/-- *dankzij* 'thanks to' resists R-pronominalization. -/
+def dankzij : Adposition := { preposition "dankzij" .logical with rPronoun := false }
+
+/-- *namens* 'on behalf of' resists R-pronominalization. -/
+def namens : Adposition := { preposition "namens" .grammatical with rPronoun := false }
+
+/-- *ondanks* 'despite' resists R-pronominalization. -/
+def ondanks : Adposition := { preposition "ondanks" .logical with rPronoun := false }
+
+/-- *ongeacht* 'regardless of' resists R-pronominalization. -/
+def ongeacht : Adposition := { preposition "ongeacht" .logical with rPronoun := false }
+
+/-- *vanwege* 'because of' resists R-pronominalization. -/
+def vanwege : Adposition := { preposition "vanwege" .logical with rPronoun := false }
+
+/-- *volgens* 'according to' resists R-pronominalization. -/
+def volgens : Adposition := { preposition "volgens" .grammatical with rPronoun := false }
+
+/-- *wegens* 'because of' resists R-pronominalization. -/
+def wegens : Adposition := { preposition "wegens" .logical with rPronoun := false }
 
 /-! ### The inventory -/
 
-/-- The Dutch adpositions covered here. -/
-def dutchAdpositions : List DutchAdposition :=
-  [ op, in_, naar, van, tot, achter, boven, onder, over, tussen
-  , bij, tegen, langs, uit, om
-  , met, voor, na, zonder, tijdens, ondanks, door
-  , af, heen ]
+/-- `inventory` lists the entries. -/
+def inventory : List Adposition :=
+  [aan, achter, bij, binnen, boven, buiten, door, in_, langs, naar, naast, om, onder, op,
+   over₁, over₂, rond, tegen, tegenover, tot, tussen, uit, van, vanaf, vanuit, via, voor,
+   voorbij, af, heen,
+   vanAf, onderDoor, tussenDoor, overHeen, doorHeen, omHeen, naarToe, tussenIn,
+   na, tijdens, met, zonder, dankzij, namens, ondanks, ongeacht, vanwege, volgens, wegens]
+
+/-- Every postpositional use denotes a path. -/
+theorem direction_post_ne_place :
+    ∀ a ∈ inventory, .post ∈ a.linearization → a.direction .post ≠ .place := by
+  decide
+
+/-- Every postposition but *af* is also a preposition. -/
+theorem pre_of_post :
+    ∀ a ∈ inventory, .post ∈ a.linearization →
+      .pre ∈ a.linearization ∨ a.form = .simple "af" := by
+  decide
+
+/-- An entry takes the circumpositional position exactly when its form is complex. -/
+theorem circum_iff_isComplex :
+    ∀ a ∈ inventory, .circum ∈ a.linearization ↔ a.isComplex = true := by
+  decide
+
+/-- A circumposition takes a noun phrase only. -/
+theorem complement_of_circum :
+    ∀ a ∈ inventory, .circum ∈ a.linearization → a.complement = [.np] := by
+  decide
+
+/-- The adpositions whose complement cannot be R-pronominalized are non-spatial. -/
+theorem relation_ne_spatial_of_not_rPronoun :
+    ∀ a ∈ inventory, a.rPronoun = false → a.relation ≠ .spatial := by
+  decide
+
+/-- An entry used only without a complement is a particle. -/
+theorem intransitive_of_complement_nil :
+    ∀ a ∈ inventory, a.complement = [] → a.intransitive = true := by
+  decide
 
 end Dutch.Adpositions

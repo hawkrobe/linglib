@@ -9,7 +9,7 @@ public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 Dutch adpositions are traditionally sorted into four classes by where they stand relative to their
 complement: prepositions, postpositions, circumpositions, and intransitive adpositions. This file
 formalizes the argument that the classification is epiphenomenal. Each class is the surface effect
-of one movement rule inside the adpositional phrase — a nominal complement stays in the position
+of one movement rule inside the adpositional phrase. A nominal complement stays in the position
 where the adposition selects it unless the phrase is directional, while a prepositional complement
 or an R-pronoun moves to the specifier of a phrase-internal functional projection. Postpositions
 are then directional prepositions with a raised complement, and circumpositions are postpositions
@@ -19,32 +19,64 @@ The same rule predicts what can be extracted. Dutch resists preposition strandin
 that precedes the adpositional head can leave the phrase, and precisely the complements that move
 precede it: R-pronouns and the complements of directional postpositions can be extracted, ordinary
 nominal complements of prepositions cannot, and the complement of a circumposition patterns with
-the prepositional case because it sits inside the raised prepositional phrase.
+the prepositional case because it sits inside the raised prepositional phrase. An R-pronoun
+never yields the postpositional order, since *de wandeling er op* 'the hike on it' has only the
+locational reading, so a circumpositional phrase R-pronominalizes through its prepositional
+complement, and under wh-movement the first part of a circumposition pied-pipes alone, which
+shows that it heads a phrase.
 
-The lexical generalizations are stated over the Dutch adposition Fragment: every postposition is
-also a preposition, postpositional uses are directional, postpositional and circumpositional uses
-take only nominal complements, and the morphologically complex prepositions resist
-R-pronominalization.
+The lexical generalizations are checked against the Dutch adposition fragment, which follows the
+authors' grammar: every postpositional use denotes a path, every postposition but *af* is also a
+preposition, an adposition with both uses is locational before its complement unless it is one
+of the grammar's directional prepositions, circumpositions take only nominal complements, and
+the morphologically complex prepositions resist R-pronominalization. The chapter itself notes
+that *af* and *heen*, the second parts of *van … af* and *over … heen*, are not commonly used
+as prepositions, although they once were, and remain postpositions or particles with a
+directional meaning.
 
 ## Main definitions
 
-* `ComplementKind`, `movesToSpec` — what a phrase-internal complement is, and when it raises
-* `surfaceOrder` — the traditional four-way classification, derived
-* `Extractable` — extraction requires the extracted element to precede the adpositional head
+* `ComplementKind`, `movesToSpec`: what a phrase-internal complement is, and when it raises.
+* `surfaceOrder`: the traditional four-way classification, derived.
+* `Extractable`: extraction requires the extracted element to precede the adpositional head.
 
 ## Main results
 
-* `postP_iff_directional_nominal`, `circumP_iff_prePP_complement` — each surface class is the
-  effect of one complement kind and directionality, not a lexical property
-* `extraction_pattern`, `circumP_patterns_with_preP` — the extraction asymmetries follow
-* `postP_subset_preP`, `postP_has_both_readings` — every postposition is a directional preposition
-* `postP_complement_nominal`, `circumP_complement_nominal` — the complement-type restriction
-* `postP_selects_zijn` — a directional postposition gives a telic phrase and the *be* auxiliary
+* `postP_iff_directional_nominal`, `circumP_iff_prePP_complement`: each surface class is the
+  effect of one complement kind and directionality, not a lexical property.
+* `rPronoun_not_postP`: an R-pronoun complement never gives the postpositional order.
+* `extraction_pattern`, `circumP_patterns_with_preP`: the extraction asymmetries follow.
+* `postP_directional`, `postP_subset_preP`: every postposition is a directional adposition,
+  and all but *af* are prepositions too.
+* `circumP_complement_nominal`, `no_rPron_not_postP`: the complement-type and
+  R-pronominalization restrictions.
+* `postP_selects_zijn`: a postpositional phrase denotes a path and its verb takes *zijn* 'be'.
+
+## Implementation notes
+
+* The chapter's extraction evidence is modelled over complement kinds only. The extraction of
+  modifiers such as measure phrases from a prepositional phrase, the pied-piping of the first
+  part of a circumposition alone under wh-movement, and the restriction of pronominal
+  complements to human referents, which R-pronouns lift, are described in the chapter and not
+  formalized.
+* The chapter offers the raising analysis as a hypothesis that idealizes away the exceptional
+  prepositional phrases with a prepositional complement, such as *van na de oorlog* 'from
+  after the war'.
+
+## TODO
+
+The chapter conditions the raising of a nominal complement semantically and does not state
+the condition; `movesToSpec` raises every nominal complement of a directional phrase, so
+`postP_iff_directional_nominal` predicts a postpositional order for the grammar's eight
+directional prepositions, *naar* 'to' among them, which have none.
 
 ## References
 
-* [broekhuis-corver-2026a]
-* [sorace-2000]
+* [H. Broekhuis and N. Corver, *Adpositions and Adpositional Phrases: A Syntactic View from
+  Dutch* (2026)][broekhuis-corver-2026a]
+* [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume VII: Adpositions and Adpositional
+  Phrases* (2026)][broekhuis-corver-2026c]
+* [A. Sorace, *Gradients in auxiliary selection with intransitive verbs* (2000)][sorace-2000]
 -/
 
 @[expose] public section
@@ -107,6 +139,12 @@ theorem circumP_iff_prePP_complement (k : ComplementKind) (d : Bool) :
     surfaceOrder k d = .circumP ↔ k = .prePP := by
   cases k <;> cases d <;> simp [surfaceOrder]
 
+/-- An R-pronoun never yields the postpositional order: *de wandeling er op* 'the hike on it'
+has only the locational reading, so R-pronominalization is confined to prepositional phrases,
+and a circumpositional phrase R-pronominalizes through its prepositional complement. -/
+theorem rPronoun_not_postP (d : Bool) : surfaceOrder .rPronoun d ≠ .postP := by
+  cases d <;> decide
+
 /-- Every one of the four classes is produced by the rule, so none of them need be listed in the
 lexicon. -/
 theorem every_order_derived (o : PPSurfaceOrder) : ∃ k d, surfaceOrder k d = o := by
@@ -140,60 +178,68 @@ theorem circumP_patterns_with_preP :
 
 /-! ### The Dutch lexicon -/
 
-/-- Every adposition with a postpositional use also has a prepositional use, as the raising
-analysis requires: the postpositional order is derived from the prepositional one. -/
-theorem postP_subset_preP : ∀ a ∈ dutchAdpositions, a.postPOk → a.prePOk := by decide
+/-- Every postpositional use denotes a path, as the raising analysis requires: the postpositional
+order is the directional reading with a raised complement. -/
+theorem postP_directional :
+    ∀ a ∈ inventory, .post ∈ a.linearization → a.direction .post ≠ .place :=
+  direction_post_ne_place
 
-/-- The second elements of circumpositions are not prepositions on their own. -/
-theorem circumP_parts_not_preP : af.prePOk = false ∧ heen.prePOk = false := ⟨rfl, rfl⟩
+/-- Every postposition but *af* is also a preposition, so the postpositional order is derived from
+the prepositional one; *af*, the one postposition the grammar records without a prepositional
+use, is a directional adposition whose complement always raises. -/
+theorem postP_subset_preP :
+    ∀ a ∈ inventory, .post ∈ a.linearization →
+      .pre ∈ a.linearization ∨ a.form = .simple "af" :=
+  pre_of_post
 
-/-- An adposition with a postpositional use has both a locational and a directional reading — *op
-de heuvel* 'on the hill' against *de heuvel op* 'onto the hill' — the directional one being the
-postpositional order. -/
+/-- The second elements *af* and *heen* of *van … af* and *over … heen* are not prepositions on
+their own, as the chapter notes, and head the raised phrase as postpositions. -/
+theorem circumP_parts_not_preP : .pre ∉ af.linearization ∧ .pre ∉ heen.linearization := by
+  decide
+
+/-- An adposition with both orders is locational before its complement, *op de berg* 'on the
+mountain' against *de berg op* 'up the mountain', unless it is one of the grammar's directional
+prepositions, *over* 'across' and *voorbij* 'past', whose complement raises in either order. -/
 theorem postP_has_both_readings :
-    ∀ a ∈ dutchAdpositions, a.postPOk → a.locational ∧ a.directional := by decide
+    ∀ a ∈ inventory, .post ∈ a.linearization → .pre ∈ a.linearization →
+      a.direction .pre = .place ∨ a.form = .simple "over" ∨ a.form = .simple "voorbij" := by
+  decide
 
-/-- Every adposition with a directional reading has a path. -/
-theorem directional_has_pathType :
-    ∀ a ∈ dutchAdpositions, a.directional → a.pathType.isSome := by decide
-
-/-- Postpositional and circumpositional uses take neither adjectival nor clausal complements, in
-contrast with prepositional uses. -/
-theorem postP_complement_nominal :
-    ∀ a ∈ dutchAdpositions, a.postPOk →
-      ∀ t ∈ a.complTypes, t ≠ .adjectival ∧ t ≠ .clausal := by decide
-
-/-- The same for circumpositional uses. -/
+/-- A circumposition takes only a nominal complement, the complement of the raised prepositional
+phrase. -/
 theorem circumP_complement_nominal :
-    ∀ a ∈ dutchAdpositions, a.circumPart.isSome →
-      ∀ t ∈ a.complTypes, t ≠ .adjectival ∧ t ≠ .clausal := by decide
+    ∀ a ∈ inventory, .circum ∈ a.linearization → a.complement = [.np] :=
+  complement_of_circum
+
+/-- Every postposition takes a nominal complement, the one that raises; *door* also takes a clause,
+in its prepositional use only. -/
+theorem postP_complement_np :
+    ∀ a ∈ inventory, .post ∈ a.linearization → .np ∈ a.complement := by
+  decide
 
 /-- The morphologically complex prepositions resist R-pronominalization: *tijdens het journaal*
-but not *er tijdens*. -/
+'during the news' but not *er tijdens*. -/
 theorem complex_no_rPron :
-    tijdens.rPronOk = false ∧ ondanks.rPronOk = false ∧ zonder.rPronOk = false :=
+    tijdens.rPronoun = false ∧ ondanks.rPronoun = false ∧ zonder.rPronoun = false :=
   ⟨rfl, rfl, rfl⟩
 
 /-- An adposition that cannot be R-pronominalized has no postpositional use either. -/
 theorem no_rPron_not_postP :
-    ∀ a ∈ dutchAdpositions, a.rPronOk = false → a.postPOk = false := by decide
+    ∀ a ∈ inventory, a.rPronoun = false → .post ∉ a.linearization := by
+  decide
 
 /-! ### Directional phrases and the perfect auxiliary -/
 
-/-- A postpositional use denotes a bounded path, so the phrase is telic. -/
-theorem postP_telic :
-    ∀ a ∈ dutchAdpositions, a.postPOk → a.pathType.map Prod.snd = some .telic := by decide
+/-- *Op* denotes a goal path after its complement and *van* a source path before it, so the two
+path shapes are independent of the order. -/
+theorem op_van_paths : op.direction .post = .goal ∧ van.direction .pre = .source := ⟨rfl, rfl⟩
 
-/-- *Op* is a goal-oriented bounded path in its postpositional use, *van* a source-oriented one;
-both are telic, so the two path shapes are independent of telicity. -/
-theorem op_van_paths :
-    op.pathType = some (.goal, .telic) ∧ van.pathType = some (.source, .telic) := ⟨rfl, rfl⟩
-
-/-- A telic directional phrase makes its clause unaccusative, and Dutch unaccusatives take *zijn*
-'be': *de fietser is de heuvel op gereden* against *de fietser heeft op de heuvel gereden*
-([sorace-2000]). -/
-theorem postP_selects_zijn (a : DutchAdposition) (ha : a ∈ dutchAdpositions) (h : a.postPOk) :
-    a.pathType.map Prod.snd = some .telic ∧ canonicalSelection .unaccusative = .be :=
-  ⟨postP_telic a ha h, rfl⟩
+/-- A postpositional phrase denotes a path and is the complementive of a verb of traversing, which
+is unaccusative and takes *zijn* 'be': *de fietser is de heuvel op gereden* 'the cyclist rode up
+the hill' against *de fietser heeft op de heuvel gereden* ([sorace-2000]). -/
+theorem postP_selects_zijn :
+    ∀ a ∈ inventory, .post ∈ a.linearization →
+      a.direction .post ≠ .place ∧ canonicalSelection .unaccusative = .be :=
+  fun a ha h ↦ ⟨direction_post_ne_place a ha h, rfl⟩
 
 end BroekhuisCorver2026

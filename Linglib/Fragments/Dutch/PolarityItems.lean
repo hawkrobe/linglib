@@ -12,8 +12,9 @@ paper's (47); [karttunen-1974] on the parallel German *erst*).
 
 ## References
 
-* [giannakidou-2002]
-* [karttunen-1974]
+* [A. Giannakidou, *UNTIL, Aspect, and Negation: A Novel Argument for Two "Until"s*
+  (2002)][giannakidou-2002]
+* [L. Karttunen, *Until* (1974)][karttunen-1974]
 -/
 
 @[expose] public section
