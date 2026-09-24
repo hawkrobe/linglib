@@ -12,9 +12,9 @@ public import Linglib.Semantics.Alternatives.Basic
 
 The anaphoric source of the squiggle's contrast set ([rooth-1992]):
 what the preceding discourse supplies — a question, a prior assertion
-to correct, explicitly offered alternatives, or a parallel focus
-([uhmann-1991]'s focus-control taxonomy, adopted by
-[hartmann-zimmermann-2007] §1.2). `Use` classifies the shapes;
+to correct, explicitly offered alternatives, or a parallel focus, the
+four contexts that control a focus in [hartmann-zimmermann-2007] §1.2,
+the notion of control being [uhmann-1991]'s. `Use` classifies the shapes;
 felicity (`Antecedent.Admits`) is containment of the antecedent's
 contrast set in the focus value, uniformly across uses — and `use_not_factorsThrough_contrastSet`
 shows the four-way split is invisible to the semantics.
