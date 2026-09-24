@@ -1,85 +1,122 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Agreement.Paradigm
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Morphology.Morph
 
 /-!
 # Swahili noun classes
 
-This file defines the Swahili noun-class system: the fifteen classes with their subject
-markers and the five genders that pair a singular class with its plural ([carstens-1991],
-[scott-2021]). Class conditions
-subject and object agreement, possessive and demonstrative agreement and, in relativization,
-the form of the resumptive pronoun.
+This file defines the noun classes of Swahili, the genders that pair a singular class with its
+plural, and the subject prefixes of the verb. A class is one of the Bantu classes in the
+traditional numbering. A noun of a class carries its prefix, *ki-kapu* 'basket' in class 7 and
+*vi-kapu* 'baskets' in class 8, and controls its agreement, the prefix *ki-* or *vi-* on the
+adjective, the numeral and the verb. A controller gender is the pair of classes a noun takes
+its agreements from, and Corbett's outline of the gender forms, after Welmers, gives the noun
+prefixes and the verbal agreements of each. A verb agrees with its subject by a prefix, the
+class prefix for a nominal subject and a person prefix for a speech-act participant.
+
+## Main definitions
+
+* `Swahili.NounClass`, `NounClass.subjPrefix`: the classes and the subject prefix of each
+* `Swahili.Gender`, `Gender.singularClass`, `Gender.pluralClass`, `Gender.class`: the five
+  genders as pairs of classes
+* `Swahili.subjectPrefix`: the subject prefixes of the person cells, the third person those of
+  classes 1 and 2
+
+## Main results
+
+* `Swahili.Gender.faithful_subjPrefix`: subject agreement distinguishes the five genders
+
+## Implementation notes
+
+* The numbering is Scott's, after Carstens, with the *u-* class as 14 and no class 11; Corbett
+  and Welmers number that class 11 and pair it with class 10 as a gender of its own, and count
+  the infinitive class 15 as a gender with no plural. Neither is among the five genders here,
+  which are Scott's genders A to E.
+* The class prefixes are the typical forms of Corbett's table: *m-* before a consonant and
+  *mw-* before a vowel in classes 1 and 3, *ji-* or nothing in class 5, and a nasal that
+  assimilates to the stem in classes 9 and 10.
+
+## TODO
+
+* The second person plural prefix *m-* is not attested in the sources opened.
 
 ## References
 
-* [carstens-1991]
-* [scott-2021]
+* [G. G. Corbett, *Gender* (1991)][corbett-1991]
+* [B. Heine, *Possession: Cognitive Sources, Forces, and Grammaticalization*
+  (1997)][heine-1997]
+* [T. Scott, *Two Types of Resumptive Pronouns in Swahili* (2021)][scott-2021]
+* [L. Stassen, *Predicative Possession* (2009)][stassen-2009]
 -/
 
 @[expose] public section
 
 namespace Swahili
 
+open Agreement Morphology
+
 /-! ### Classes -/
 
-/-- The noun classes in the Bantu numbering; classes 11–13 are absent. -/
+/-- A noun class in the Bantu numbering. -/
 inductive NounClass where
-  /-- *m-*, *mw-*: mtoto 'child'. -/
+  /-- *m-*, *mw-*: *mtu* 'person', *mwalimu* 'teacher'. -/
   | cl1
-  /-- *wa-*: watoto 'children'. -/
+  /-- *wa-*: *watu* 'people'. -/
   | cl2
-  /-- *m-*, *mw-*: mti 'tree'. -/
+  /-- *m-*, *mw-*: *mti* 'tree'. -/
   | cl3
-  /-- *mi-*: miti 'trees'. -/
+  /-- *mi-*: *miti* 'trees'. -/
   | cl4
-  /-- *ji-*, often unprefixed: jicho 'eye'. -/
+  /-- *ji-*, often unprefixed: *joka* 'giant snake'. -/
   | cl5
-  /-- *ma-*: macho 'eyes'. -/
+  /-- *ma-*: *maji* 'water'. -/
   | cl6
-  /-- *ki-*: kiti 'chair'. -/
+  /-- *ki-*: *kikapu* 'basket'. -/
   | cl7
-  /-- *vi-*: viti 'chairs'. -/
+  /-- *vi-*: *vikapu* 'baskets'. -/
   | cl8
-  /-- *n-*, often unprefixed: nyumba 'house'. -/
+  /-- A nasal: *nyoka* 'snake', *nyumba* 'house'. -/
   | cl9
-  /-- *n-*, often unprefixed: nyumba 'houses'. -/
+  /-- A nasal: *nyumba* 'houses'. -/
   | cl10
-  /-- *u-*, the abstract class: uzuri 'beauty'. -/
+  /-- *u-*, the class Corbett and Welmers number 11 and pair with class 10. -/
   | cl14
-  /-- *ku-*, the infinitive class: kusoma 'to read'. -/
+  /-- *ku-*, the infinitive class: *ku-la* 'to eat'. -/
   | cl15
-  /-- *pa-*, definite location: mahali 'place'. -/
+  /-- *pa-*, a locative class: *pa-na watu wengi* 'there are many people'. -/
   | cl16
-  /-- *ku-*, indefinite location. -/
+  /-- *ku-*, a locative class: *ku-na chakula* 'there is food'. -/
   | cl17
-  /-- *mu-*, *m-*, interior location. -/
+  /-- *mu-*, a locative class, with the connective *mw-a* of *uvungu-ni mw-a kiti* 'under a
+  chair'. -/
   | cl18
   deriving DecidableEq, Repr, Fintype
 
-/-- The subject marker of a class on the verb. -/
-def NounClass.subjPrefix : NounClass → String
-  | .cl1 => "a"
-  | .cl2 => "wa"
-  | .cl3 => "u"
-  | .cl4 => "i"
-  | .cl5 => "li"
-  | .cl6 => "ya"
-  | .cl7 => "ki"
-  | .cl8 => "vi"
-  | .cl9 => "i"
-  | .cl10 => "zi"
-  | .cl14 => "u"
-  | .cl15 => "ku"
-  | .cl16 => "pa"
-  | .cl17 => "ku"
-  | .cl18 => "mu"
+/-- The subject prefix of the class on the verb. -/
+def NounClass.subjPrefix : NounClass → Morph
+  | .cl1 => .pref "a"
+  | .cl2 => .pref "wa"
+  | .cl3 => .pref "u"
+  | .cl4 => .pref "i"
+  | .cl5 => .pref "li"
+  | .cl6 => .pref "ya"
+  | .cl7 => .pref "ki"
+  | .cl8 => .pref "vi"
+  | .cl9 => .pref "i"
+  | .cl10 => .pref "zi"
+  | .cl14 => .pref "u"
+  | .cl15 => .pref "ku"
+  | .cl16 => .pref "pa"
+  | .cl17 => .pref "ku"
+  | .cl18 => .pref "mu"
 
 /-! ### Genders -/
 
-/-- The five genders, each pairing a singular class with its plural. -/
+/-- A controller gender pairs a singular class with its plural, in Scott's lettering. -/
 inductive Gender where
-  /-- Classes 1/2. -/
+  /-- Classes 1/2, the animates. -/
   | genderA
   /-- Classes 3/4. -/
   | genderB
@@ -91,6 +128,7 @@ inductive Gender where
   | genderE
   deriving DecidableEq, Repr, Fintype
 
+/-- The singular class of a gender. -/
 def Gender.singularClass : Gender → NounClass
   | .genderA => .cl1
   | .genderB => .cl3
@@ -98,11 +136,30 @@ def Gender.singularClass : Gender → NounClass
   | .genderD => .cl7
   | .genderE => .cl9
 
+/-- The plural class of a gender. -/
 def Gender.pluralClass : Gender → NounClass
   | .genderA => .cl2
   | .genderB => .cl4
   | .genderC => .cl6
   | .genderD => .cl8
   | .genderE => .cl10
+
+/-- The class of a gender in the singular or, when `plural`, the plural. -/
+def Gender.class (g : Gender) (plural : Bool) : NounClass :=
+  if plural then g.pluralClass else g.singularClass
+
+/-- Subject agreement, singular and plural, distinguishes the five genders. -/
+theorem Gender.faithful_subjPrefix :
+    Gender.Faithful fun (g : Gender) (plural : Bool) ↦ (g.class plural).subjPrefix := by
+  decide
+
+/-! ### Subject prefixes of the persons -/
+
+/-- The subject prefixes of the person cells are *ni-*, *u-*, *tu-* and *m-* for the speech-act
+participants and the prefixes of classes 1 and 2 for the third person. -/
+def subjectPrefix : Paradigm Morph :=
+  [(.pn .first .singular, .pref "ni"), (.pn .second .singular, .pref "u"),
+    (.pn .third .singular, NounClass.cl1.subjPrefix), (.pn .first .plural, .pref "tu"),
+    (.pn .second .plural, .pref "m"), (.pn .third .plural, NounClass.cl2.subjPrefix)]
 
 end Swahili
