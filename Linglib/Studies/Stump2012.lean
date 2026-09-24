@@ -38,7 +38,10 @@ passive endings are LAUDĀRE's, which realize the deponent's active content cell
 
 ## Implementation notes
 
-The merged dative/ablative form cell of rule (25) is represented by the dative, with both
+The Breton, Latin and Old Icelandic linkages give content and form cells one type of property
+sets, identified by `id`; the Hungarian pronouns' content cells carry cases and their form cells
+person-number sets, a case being identified with the form property set `HuProp.case`. The
+merged dative/ablative form cell of rule (25) is represented by the dative, with both
 content cells mapped there. Deponent HORTĀRĪ's stem is taken as the segments before the
 personal ending, as is LAUDĀRE's, so that the endings are shared. The Hungarian pronoun's
 direct-case forms and the full Old Icelandic paradigm of (44) are not represented; the
@@ -103,10 +106,11 @@ inductive HervezStem
 
 /-- HERVEZ's linkage has one stem and the identity property mapping, the canonical pattern of
 the paper's (14). -/
-def hervezLinkage : Linkage HervezLex HervezStem Agr := Linkage.canonical λ _ => .hervez
+def hervezLinkage : Linkage HervezLex HervezStem Agr Agr := Linkage.canonical id fun _ ↦ .hervez
 
 /-- HERVEZ is canonical on all five axes. -/
-theorem hervez_isCanonical : hervezLinkage.IsCanonical := Linkage.canonical_isCanonical _
+theorem hervez_isCanonical : hervezLinkage.IsCanonical id :=
+  Linkage.canonical_isCanonical Function.injective_id _
 
 end Breton
 
@@ -133,7 +137,7 @@ instance : Fintype SysCell :=
 
 /-- COEPISSE's linkage follows the stem specification (18), which gives the perfect-system
 cells the stem `coep` and the present-system cells no stem. -/
-def coepisseLinkage : Linkage CoepLex CoepStem SysCell where
+def coepisseLinkage : Linkage CoepLex CoepStem SysCell SysCell where
   realize _ σ := match σ.sys with | .perf => {.coep} | .pres => ∅
   pm _ σ := σ
 
@@ -223,7 +227,7 @@ def bellumPm (σ : BellumCell) : BellumCell :=
   | _ => σ
 
 /-- BELLUM's linkage has one stem and the syncretizing property mapping. -/
-def bellumLinkage : Linkage BellumLex BellumStem BellumCell where
+def bellumLinkage : Linkage BellumLex BellumStem BellumCell BellumCell where
   realize _ _ := {.bell}
   pm _ σ := bellumPm σ
 
@@ -297,7 +301,7 @@ instance : Fintype VCell :=
 /-- In the linkage of the two verbs, deponent HORTĀRĪ has a stem on its active cells only and
 the voice-flipping property mapping of rule (29), the stem specification (30a), while regular
 LAUDĀRE is canonical, (30b). -/
-def latinLinkage : Linkage LatinVerb VerbStem VCell where
+def latinLinkage : Linkage LatinVerb VerbStem VCell VCell where
   realize l σ := match l, σ.voice with
     | .hortari, .active => {.hort}
     | .hortari, .passive => ∅
@@ -318,7 +322,8 @@ def verbRealize : VerbStem → VCell → List String
 
 /-- HORTĀRĪ's deponency makes the linkage unfaithful, since the property mapping flips its
 active content cells to passive. -/
-theorem hortari_unfaithful : latinLinkage.IsUnfaithful := ⟨.hortari, ⟨.active, .s1⟩, by decide⟩
+theorem hortari_unfaithful : latinLinkage.IsUnfaithful id :=
+  ⟨.hortari, ⟨.active, .s1⟩, by decide⟩
 
 /-- Every active content cell of HORTĀRĪ has a passive form correspondent. -/
 theorem hortari_active_realized_by_passive (a : Agr) :
@@ -380,7 +385,8 @@ def PersNum.code : PersNum → String
   | .p1sg => "p1sg"
   | .p2sg => "p2sg"
 
-/-- A Hungarian property set is a content-side case or a form-side person-number set. -/
+/-- A form property set of a Hungarian case stem is a case, the property set that a faithful
+correspondent of a case content cell would carry, or a person-number set. -/
 inductive HuProp
   | case (c : HuCase)
   | agr (pn : PersNum)
@@ -399,20 +405,20 @@ def CaseStem.pid : CaseStem → String
   | .rajt => "rajt"
 
 /-- In the stem selection of rule (37), the case picks the postpositional stem. -/
-def enStems : Pron → HuProp → Finset CaseStem
-  | _, .case .dative => {.nek}
-  | _, .case .inessive => {.benn}
-  | _, .case .superessive => {.rajt}
-  | _, _ => ∅
+def enStems : Pron → HuCase → Finset CaseStem
+  | _, .dative => {.nek}
+  | _, .inessive => {.benn}
+  | _, .superessive => {.rajt}
 
 /-- The property mapping computes the form property set from the lexeme, the
 functor-argument reversal of (32) and (37). -/
-def enPm : Pron → HuProp → HuProp
+def enPm : Pron → HuCase → HuProp
   | .en, _ => .agr .p1sg
   | .te, _ => .agr .p2sg
 
-/-- The pronouns' linkage selects the stem by case and the form property set by lexeme. -/
-def enLinkage : Linkage Pron CaseStem HuProp where
+/-- The pronouns' linkage selects the stem by case and the form property set by lexeme; its
+content cells carry cases and its form cells person-number sets. -/
+def enLinkage : Linkage Pron CaseStem HuCase HuProp where
   realize := enStems
   pm := enPm
 
@@ -423,24 +429,29 @@ def enRealize : CaseStem → HuProp → List String
   | _, _ => []
 
 /-- The inessive of ÉN corresponds to the 1sg form cell of *benn*, the paper's (38). -/
-theorem en_inessive_corr : enLinkage.corr .en (.case .inessive) = {(.benn, .agr .p1sg)} := by
+theorem en_inessive_corr : enLinkage.corr .en .inessive = {(.benn, .agr .p1sg)} := by
   decide
+
+/-- Every oblique case content cell has the case's postpositional stem, so the pronouns'
+linkage is total. -/
+theorem en_isTotal : enLinkage.IsTotal := by decide
 
 /-- The reversal is unfaithful, since the correspondent's property set is the pronoun's, not
 the case's. -/
-theorem en_functor_argument_reversal : enLinkage.IsUnfaithful := ⟨.en, .case .inessive, by decide⟩
+theorem en_functor_argument_reversal : enLinkage.IsUnfaithful HuProp.case :=
+  ⟨.en, .inessive, by decide⟩
 
 /-- ÉN and TE send the same inessive content cell to different form property sets, so the
 property mapping consults the lexeme. -/
 theorem en_pm_lexeme_sensitive :
-    enLinkage.pm .en (.case .inessive) ≠ enLinkage.pm .te (.case .inessive) := by
+    enLinkage.pm .en .inessive ≠ enLinkage.pm .te .inessive := by
   decide
 
 /-- The inessive of ÉN and of TE realize as the first and second person forms of *benn*. -/
 theorem inessive_realizes :
-    enLinkage.realized enRealize .en (.case .inessive) =
+    enLinkage.realized enRealize .en .inessive =
         {(attested "benn" [("PersNum", "p1sg")], .agr .p1sg)} ∧
-      enLinkage.realized enRealize .te (.case .inessive) =
+      enLinkage.realized enRealize .te .inessive =
         {(attested "benn" [("PersNum", "p2sg")], .agr .p2sg)} := by
   decide
 
@@ -461,7 +472,7 @@ inductive FerreStem
 
 /-- In FERRE's linkage, the stem specification (42) gives two suppletive stems in
 complementary distribution, and the default rule supplies the identity property mapping. -/
-def ferreLinkage : Linkage FerreLex FerreStem SysCell where
+def ferreLinkage : Linkage FerreLex FerreStem SysCell SysCell where
   realize _ σ := match σ.sys with | .pres => {.fer} | .perf => {.tul}
   pm _ σ := σ
 
@@ -471,11 +482,11 @@ theorem ferre_suppletive : ferreLinkage.IsSuppletive .ferre := by decide
 
 /-- FERRE is property-preserving, since with no override the default rule preserves the
 content cell's property set. -/
-theorem ferre_propertyPreserving : ferreLinkage.IsPropertyPreserving := λ _ _ => rfl
+theorem ferre_propertyPreserving : ferreLinkage.IsPropertyPreserving id := fun _ _ ↦ rfl
 
 /-- FERRE is suppletive yet property-preserving, so the two axes are independent. -/
 theorem ferre_suppletive_yet_faithful :
-    ferreLinkage.IsSuppletive .ferre ∧ ferreLinkage.IsPropertyPreserving :=
+    ferreLinkage.IsSuppletive .ferre ∧ ferreLinkage.IsPropertyPreserving id :=
   ⟨ferre_suppletive, ferre_propertyPreserving⟩
 
 end Ferre
@@ -512,7 +523,7 @@ instance : Fintype TCell :=
 /-- ÞURFA's linkage, the paper's (45) and (46), gives the present the strong stem and the past
 the weak stem, a suppletion, and its property mapping sends every cell to the past, the
 deponent tense. -/
-def thurfaLinkage : Linkage ThurfaLex ThurfaStem TCell where
+def thurfaLinkage : Linkage ThurfaLex ThurfaStem TCell TCell where
   realize _ σ := match σ.tense with | .pres => {.strong} | .past => {.weak}
   pm _ σ := { σ with tense := .past }
 
@@ -526,11 +537,11 @@ def thurfaRealize : ThurfaStem → TCell → List String
 theorem thurfa_suppletive : thurfaLinkage.IsSuppletive .thurfa := by decide
 
 /-- ÞURFA is unfaithful because a present content cell maps to a past form cell. -/
-theorem thurfa_unfaithful : thurfaLinkage.IsUnfaithful := ⟨.thurfa, ⟨.pres, .s1⟩, by decide⟩
+theorem thurfa_unfaithful : thurfaLinkage.IsUnfaithful id := ⟨.thurfa, ⟨.pres, .s1⟩, by decide⟩
 
 /-- ÞURFA's linkage compounds suppletion with a deponent tense mapping. -/
 theorem thurfa_suppletive_and_unfaithful :
-    thurfaLinkage.IsSuppletive .thurfa ∧ thurfaLinkage.IsUnfaithful :=
+    thurfaLinkage.IsSuppletive .thurfa ∧ thurfaLinkage.IsUnfaithful id :=
   ⟨thurfa_suppletive, thurfa_unfaithful⟩
 
 /-- The present content cell realizes as *þarf* through the strong stem at the past form

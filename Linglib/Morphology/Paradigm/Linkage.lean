@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Realization
+public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Finset.Card
 
@@ -9,29 +10,43 @@ public import Mathlib.Data.Finset.Card
 
 This file defines Stump's paradigm linkage, which realizes a lexeme's content cell `⟨l, σ⟩`
 through form cells `⟨z, τ⟩` of its stems. A linkage is a stem selection, a `Realization` of
-lexemes by stems, together with a lexeme-sensitive property mapping. Each deviation from
-canonical linkage negates one of its axes, after Corbett's canonical typology. Stump maintains
-that PRAMEN, whose stem is phonologically constant across two inflection classes, exhibits "a
-kind of stem suppletion", on which view heteroclisis "simply entails suppletion".
+lexemes by stems, together with a lexeme-sensitive property mapping from content property sets
+to form property sets. Each deviation from canonical linkage negates one of its axes, after
+Corbett's canonical typology. Stump maintains that PRAMEN, whose stem is phonologically constant
+across two inflection classes, exhibits "a kind of stem suppletion", on which view heteroclisis
+"simply entails suppletion". Stump's rules of paradigm linkage compete by Pāṇini's principle,
+here the Elsewhere selection of a narrowest applicable rule, and a cell that no rule reaches
+takes the lexeme's root.
 
 ## Main definitions
 
 * `Linkage`, `Linkage.corr`, `Linkage.realized`: the linkage, its form correspondents, and the
   realized paradigm.
-* `Linkage.IsCanonical`, with the deviations `IsDefective`, `IsSyncretic`, `IsUnfaithful`.
+* `Linkage.IsCanonical`, relative to an identification `ι` of content with form property sets,
+  with the deviations `IsDefective`, `IsSyncretic`, `IsUnfaithful`.
 * `Linkage.IsInvariantAlong`, `Linkage.IsHeteroclite`: per-lexeme invariance and variance of
   stems along a projection, such as their inflection class.
 * `Linkage.ofFun`, `Linkage.canonical`: the linkage of a stem-choice function.
+* `Linkage.selectStem`, `Linkage.ofRules`: the stem that a lexeme's rules of paradigm linkage
+  select at a cell, and the linkage of those rules.
 
 ## Main results
 
 * `Linkage.IsHeteroclite.isSuppletive`: heteroclisis entails suppletion.
 * `Linkage.realized_eq_of_corr_eq`: equal correspondent sets force equal realizations.
+* `Linkage.ofFun_isCanonical_iff`: under an injective identification, the linkage of a stem
+  choice is canonical exactly when each lexeme's stem is constant.
+* `Linkage.ofRules_nil`: with no language-specific rules, the linkage of rules is the canonical
+  linkage of the roots.
+* `Linkage.selectStem_factorsThrough`: rules that see only a projection of the cells select
+  stems that factor through it.
 
 ## Implementation notes
 
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
-`IsOverabundant` ([thornton-2011]'s cell-mates) are inherited from `Realization`.
+`IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`. Taking `S = M` and
+`ι = id` recovers a single type of property sets. The universal default rule (5) is not a
+listed rule of `ofRules` but its fallback `root`.
 
 ## References
 
@@ -49,37 +64,43 @@ namespace Morphology
 /-- A paradigm linkage ([stump-2012-mmm8]) consists of a stem selection, the inherited
 `realize`, which gives the finite set of stems realizing each content cell `⟨l, σ⟩`, and a
 property mapping `pm`. The stem set is empty at a gap in the stem specification and has several
-members at an overabundant cell. -/
-structure Linkage (L Z P : Type*) extends Realization L P Z where
+members at an overabundant cell. Content and form cells carry property sets of types `S` and
+`M`, since [stump-2006] (p. 288) distinguishes a language's s-properties, "any property
+belonging to σ in a content-cell ⟨L, σ⟩", from its m-properties, "any property belonging to τ in
+a form-cell ⟨s, τ⟩", so that the relation between their property sets "can be represented as a
+function from sets of s-properties to sets of m-properties", a property mapping; "in the
+simplest cases—those determined by the default rule of paradigm linkage in 5—the relevant
+property mapping is an identity function". -/
+structure Linkage (L Z S M : Type*) extends Realization L S Z where
   /-- The property mapping carries a content cell's property set to that of its form
   correspondents, and may consult the lexeme. -/
-  pm : L → P → P
+  pm : L → S → M
 
 namespace Linkage
 
-variable {L Z P W X Y K : Type*} (ℓ : Linkage L Z P)
+variable {L Z S M W X Y K : Type*} (ℓ : Linkage L Z S M)
 
 /-- The form correspondents of a content cell `⟨l, σ⟩` pair each of its stems with the mapped
 property set `ℓ.pm l σ`. -/
-def corr (l : L) (σ : P) : Finset (Z × P) := ℓ.realize l σ ×ˢ {ℓ.pm l σ}
+def corr (l : L) (σ : S) : Finset (Z × M) := ℓ.realize l σ ×ˢ {ℓ.pm l σ}
 
-@[simp] theorem mem_corr {l : L} {σ : P} {zτ : Z × P} :
+@[simp] theorem mem_corr {l : L} {σ : S} {zτ : Z × M} :
     zτ ∈ ℓ.corr l σ ↔ zτ.1 ∈ ℓ.realize l σ ∧ zτ.2 = ℓ.pm l σ := by
   rw [corr, Finset.mem_product, Finset.mem_singleton]
 
-@[simp] theorem corr_nonempty (l : L) (σ : P) :
+@[simp] theorem corr_nonempty (l : L) (σ : S) :
     (ℓ.corr l σ).Nonempty ↔ (ℓ.realize l σ).Nonempty := by
   simp [corr]
 
-@[simp] theorem card_corr (l : L) (σ : P) : (ℓ.corr l σ).card = (ℓ.realize l σ).card := by
+@[simp] theorem card_corr (l : L) (σ : S) : (ℓ.corr l σ).card = (ℓ.realize l σ).card := by
   simp [corr]
 
 /-- The realized paradigm of a content cell realizes each form correspondent `⟨z, τ⟩` as
 `rf z τ`, keeping the property set `τ`. -/
-def realized [DecidableEq W] (rf : Z → P → W) (l : L) (σ : P) : Finset (W × P) :=
+def realized [DecidableEq W] (rf : Z → M → W) (l : L) (σ : S) : Finset (W × M) :=
   ((ℓ.realize l σ).image fun z ↦ rf z (ℓ.pm l σ)) ×ˢ {ℓ.pm l σ}
 
-@[simp] theorem mem_realized [DecidableEq W] {rf : Z → P → W} {l : L} {σ : P} {wτ : W × P} :
+@[simp] theorem mem_realized [DecidableEq W] {rf : Z → M → W} {l : L} {σ : S} {wτ : W × M} :
     wτ ∈ ℓ.realized rf l σ ↔ ∃ z ∈ ℓ.realize l σ, (rf z (ℓ.pm l σ), ℓ.pm l σ) = wτ := by
   simp [realized, Prod.ext_iff]
 
@@ -90,14 +111,16 @@ stem. -/
 def IsStemInvariant : Prop := ∀ l, ℓ.IsInvariant l
 
 /-- A linkage is injective when no two content cells of a lexeme share a form correspondent. -/
-def IsInjective : Prop := ∀ l ⦃σ₁ σ₂ : P⦄, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
+def IsInjective : Prop := ∀ l ⦃σ₁ σ₂ : S⦄, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
 
-/-- A linkage is property-preserving when every form correspondent carries its content cell's
-own property set. -/
-def IsPropertyPreserving : Prop := ∀ l σ, ℓ.pm l σ = σ
+/-- A linkage is property-preserving relative to an identification `ι` of content with form
+property sets when every form correspondent carries the image under `ι` of its content cell's
+property set. -/
+def IsPropertyPreserving (ι : S → M) : Prop := ∀ l σ, ℓ.pm l σ = ι σ
 
-/-- A linkage is canonical ([stump-2012-mmm8]) when it satisfies all five axes. -/
-structure IsCanonical : Prop where
+/-- A linkage is canonical ([stump-2012-mmm8]) relative to an identification `ι` of content
+with form property sets when it satisfies all five axes. -/
+structure IsCanonical (ι : S → M) : Prop where
   /-- Every content cell has a form correspondent. -/
   total : ℓ.IsTotal
   /-- No content cell has more than one form correspondent. -/
@@ -106,8 +129,8 @@ structure IsCanonical : Prop where
   stemInvariant : ℓ.IsStemInvariant
   /-- No two content cells of a lexeme share a form correspondent. -/
   injective : ℓ.IsInjective
-  /-- Every form correspondent carries its content cell's own property set. -/
-  propertyPreserving : ℓ.IsPropertyPreserving
+  /-- Every form correspondent carries the image of its content cell's property set. -/
+  propertyPreserving : ℓ.IsPropertyPreserving ι
 
 /-! ### Deviations from canonical linkage -/
 
@@ -118,12 +141,13 @@ def IsDefective : Prop := ∃ l σ, ℓ.realize l σ = ∅
 a form correspondent. -/
 def IsSyncretic : Prop := ∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)
 
-/-- A linkage is unfaithful ([stump-2012-mmm8]) when some content cell's form correspondents
-carry a different property set, as under deponency and functor-argument reversal. -/
-def IsUnfaithful : Prop := ∃ l σ, ℓ.pm l σ ≠ σ
+/-- A linkage is unfaithful ([stump-2012-mmm8]) relative to `ι` when some content cell's form
+correspondents carry a property set other than its image under `ι`, as under deponency and
+functor-argument reversal. -/
+def IsUnfaithful (ι : S → M) : Prop := ∃ l σ, ℓ.pm l σ ≠ ι σ
 
 /-- A form cell is virtual ([stump-2012-mmm8]) when no content cell corresponds to it. -/
-def IsVirtual (zτ : Z × P) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
+def IsVirtual (zτ : Z × M) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
 
 /-- Defectiveness is exactly the failure of totality. -/
 @[simp, push] theorem not_isTotal_iff : ¬ ℓ.IsTotal ↔ ℓ.IsDefective := by
@@ -134,16 +158,22 @@ def IsVirtual (zτ : Z × P) : Prop := ∀ l σ, zτ ∉ ℓ.corr l σ
   simp [IsSyncretic, IsInjective]
 
 /-- Unfaithfulness is exactly the failure of property preservation. -/
-@[simp, push] theorem not_isPropertyPreserving_iff :
-    ¬ ℓ.IsPropertyPreserving ↔ ℓ.IsUnfaithful := by
+@[simp, push] theorem not_isPropertyPreserving_iff (ι : S → M) :
+    ¬ ℓ.IsPropertyPreserving ι ↔ ℓ.IsUnfaithful ι := by
   simp [IsUnfaithful, IsPropertyPreserving]
+
+/-- A property mapping injective at each lexeme makes the linkage injective. -/
+theorem isInjective_of_injective_pm {ℓ : Linkage L Z S M}
+    (h : ∀ l, Function.Injective (ℓ.pm l)) : ℓ.IsInjective :=
+  fun l _ _ hne ↦ Finset.disjoint_left.mpr fun _ h₁ h₂ ↦
+    hne (h l (((mem_corr ℓ).mp h₁).2.symm.trans ((mem_corr ℓ).mp h₂).2))
 
 /-! ### Invariance along a projection -/
 
 /-- A lexeme is invariant along `p` when the stems of all its cells have one image under `p`;
 along `id` this is `IsInvariant`. -/
 def IsInvariantAlong (p : Z → X) (l : L) : Prop :=
-  ∀ ⦃σ σ' : P⦄, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'
+  ∀ ⦃σ σ' : S⦄, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'
 
 /-- A lexeme is heteroclite along a classification `cls` of stems ([stump-2006]) when two of
 its cells draw on stems of distinct classes; along `id` this is `IsSuppletive`. -/
@@ -185,11 +215,11 @@ kernel. The per-lexeme instances quantify over stem sets and need no `Fintype Z`
 
 section Decidable
 
-variable (ℓ) [Fintype P]
+variable (ℓ) [Fintype S]
 
 instance [DecidableEq X] (p : Z → X) (l : L) : Decidable (ℓ.IsInvariantAlong p l) :=
   inferInstanceAs
-    (Decidable (∀ σ σ' : P, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'))
+    (Decidable (∀ σ σ' : S, ∀ z ∈ ℓ.realize l σ, ∀ z' ∈ ℓ.realize l σ', p z = p z'))
 
 instance [DecidableEq K] (cls : Z → K) (l : L) : Decidable (ℓ.IsHeteroclite cls l) :=
   inferInstanceAs
@@ -200,24 +230,24 @@ variable [Fintype L]
 instance [DecidableEq Z] : Decidable ℓ.IsStemInvariant :=
   inferInstanceAs (Decidable (∀ l, ℓ.IsInvariant l))
 
-instance [DecidableEq Z] [DecidableEq P] : Decidable ℓ.IsInjective :=
+instance [DecidableEq Z] [DecidableEq S] [DecidableEq M] : Decidable ℓ.IsInjective :=
   inferInstanceAs
-    (Decidable (∀ l, ∀ σ₁ σ₂ : P, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
+    (Decidable (∀ l, ∀ σ₁ σ₂ : S, σ₁ ≠ σ₂ → Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
 
-instance [DecidableEq P] : Decidable ℓ.IsPropertyPreserving :=
-  inferInstanceAs (Decidable (∀ l σ, ℓ.pm l σ = σ))
+instance [DecidableEq M] (ι : S → M) : Decidable (ℓ.IsPropertyPreserving ι) :=
+  inferInstanceAs (Decidable (∀ l σ, ℓ.pm l σ = ι σ))
 
 instance [DecidableEq Z] : Decidable ℓ.IsDefective :=
   inferInstanceAs (Decidable (∃ l σ, ℓ.realize l σ = ∅))
 
-instance [DecidableEq Z] [DecidableEq P] : Decidable ℓ.IsSyncretic :=
+instance [DecidableEq Z] [DecidableEq S] [DecidableEq M] : Decidable ℓ.IsSyncretic :=
   inferInstanceAs
     (Decidable (∃ l σ₁ σ₂, σ₁ ≠ σ₂ ∧ ¬ Disjoint (ℓ.corr l σ₁) (ℓ.corr l σ₂)))
 
-instance [DecidableEq P] : Decidable ℓ.IsUnfaithful :=
-  inferInstanceAs (Decidable (∃ l σ, ℓ.pm l σ ≠ σ))
+instance [DecidableEq M] (ι : S → M) : Decidable (ℓ.IsUnfaithful ι) :=
+  inferInstanceAs (Decidable (∃ l σ, ℓ.pm l σ ≠ ι σ))
 
-instance [DecidableEq Z] [DecidableEq P] (zτ : Z × P) : Decidable (ℓ.IsVirtual zτ) :=
+instance [DecidableEq Z] [DecidableEq M] (zτ : Z × M) : Decidable (ℓ.IsVirtual zτ) :=
   inferInstanceAs (Decidable (∀ l σ, zτ ∉ ℓ.corr l σ))
 
 end Decidable
@@ -226,16 +256,16 @@ end Decidable
 
 section Realized
 
-variable (ℓ) [DecidableEq W] (rf : Z → P → W)
+variable (ℓ) [DecidableEq W] (rf : Z → M → W)
 
 /-- A content cell realizes as the image of its form correspondents under `rf`. -/
-theorem realized_eq_image_corr [DecidableEq P] (l : L) (σ : P) :
+theorem realized_eq_image_corr [DecidableEq M] (l : L) (σ : S) :
     ℓ.realized rf l σ = (ℓ.corr l σ).image fun zτ ↦ (rf zτ.1 zτ.2, zτ.2) := by
   ext; simp
 
 /-- Equal correspondent sets force equal realizations, within a lexeme (the mechanism of
 syncretism) and across lexemes. -/
-theorem realized_eq_of_corr_eq {l₁ l₂ : L} {σ₁ σ₂ : P} (h : ℓ.corr l₁ σ₁ = ℓ.corr l₂ σ₂) :
+theorem realized_eq_of_corr_eq {l₁ l₂ : L} {σ₁ σ₂ : S} (h : ℓ.corr l₁ σ₁ = ℓ.corr l₂ σ₂) :
     ℓ.realized rf l₁ σ₁ = ℓ.realized rf l₂ σ₂ := by
   classical
   rw [realized_eq_image_corr, realized_eq_image_corr, h]
@@ -244,54 +274,128 @@ end Realized
 
 /-! ### Linkages of stem-choice functions -/
 
-/-- The linkage of a stem choice `f` gives the content cell `⟨l, σ⟩` the single stem `f l σ`
-and preserves its property set. -/
-def ofFun (f : L → P → Z) : Linkage L Z P where
+/-- The linkage of a stem choice `f` under an identification `ι` gives the content cell
+`⟨l, σ⟩` the single stem `f l σ` and the form property set `ι σ`. -/
+def ofFun (ι : S → M) (f : L → S → Z) : Linkage L Z S M where
   realize l σ := {f l σ}
-  pm _ σ := σ
+  pm _ σ := ι σ
 
 section OfFun
 
-variable (f : L → P → Z)
+variable (ι : S → M) (f : L → S → Z)
 
-@[simp] theorem ofFun_realize (l : L) (σ : P) : (ofFun f).realize l σ = {f l σ} := rfl
+@[simp] theorem ofFun_realize (l : L) (σ : S) : (ofFun ι f).realize l σ = {f l σ} := rfl
 
-@[simp] theorem ofFun_pm (l : L) (σ : P) : (ofFun f).pm l σ = σ := rfl
+@[simp] theorem ofFun_pm (l : L) (σ : S) : (ofFun ι f).pm l σ = ι σ := rfl
 
-@[simp] theorem ofFun_corr (l : L) (σ : P) : (ofFun f).corr l σ = {(f l σ, σ)} :=
+@[simp] theorem ofFun_corr (l : L) (σ : S) : (ofFun ι f).corr l σ = {(f l σ, ι σ)} :=
   Finset.singleton_product_singleton
 
-@[simp] theorem ofFun_realized [DecidableEq W] (rf : Z → P → W) (l : L) (σ : P) :
-    (ofFun f).realized rf l σ = {(rf (f l σ) σ, σ)} := by
+@[simp] theorem ofFun_realized [DecidableEq W] (rf : Z → M → W) (l : L) (σ : S) :
+    (ofFun ι f).realized rf l σ = {(rf (f l σ) (ι σ), ι σ)} := by
   simp [realized]
 
-variable {f}
+variable {ι f}
 
 @[simp] theorem ofFun_isInvariantAlong_iff :
-    (ofFun f).IsInvariantAlong p l ↔ ∀ σ σ', p (f l σ) = p (f l σ') := by
+    (ofFun ι f).IsInvariantAlong p l ↔ ∀ σ σ', p (f l σ) = p (f l σ') := by
   simp [IsInvariantAlong]
 
 @[simp] theorem ofFun_isHeteroclite_iff :
-    (ofFun f).IsHeteroclite cls l ↔ ∃ σ σ', cls (f l σ) ≠ cls (f l σ') := by
+    (ofFun ι f).IsHeteroclite cls l ↔ ∃ σ σ', cls (f l σ) ≠ cls (f l σ') := by
   simp [IsHeteroclite]
 
-/-- The linkage of a stem choice is canonical exactly when each lexeme's stem is independent of
-the property set. -/
-theorem ofFun_isCanonical_iff : (ofFun f).IsCanonical ↔ ∀ l σ σ', f l σ = f l σ' := by
-  refine ⟨fun h l ↦ ofFun_isInvariantAlong_iff.mp (h.stemInvariant l), fun h ↦
+/-- Under an injective identification, the linkage of a stem choice is canonical exactly when
+each lexeme's stem is independent of the property set. -/
+theorem ofFun_isCanonical_iff (hι : Function.Injective ι) :
+    (ofFun ι f).IsCanonical ι ↔ ∀ l σ σ', f l σ = f l σ' :=
+  ⟨fun h l ↦ ofFun_isInvariantAlong_iff.mp (h.stemInvariant l), fun h ↦
     ⟨fun _ _ ↦ Finset.singleton_nonempty _, fun _ _ ↦ (Finset.card_singleton _).le,
-      fun l ↦ ofFun_isInvariantAlong_iff.mpr (h l), fun l σ σ' hne ↦ ?_, fun _ _ ↦ rfl⟩⟩
-  simp [hne]
+      fun l ↦ ofFun_isInvariantAlong_iff.mpr (h l), isInjective_of_injective_pm fun _ ↦ hι,
+      fun _ _ ↦ rfl⟩⟩
 
 end OfFun
 
-/-- The canonical linkage of `st` gives every cell of the lexeme `l` the stem `st l`, the graph
-of the universal default rule of paradigm linkage ([stump-2006]) with `st l` the root of `l`. -/
-abbrev canonical (st : L → Z) : Linkage L Z P := ofFun fun l _ ↦ st l
+/-- The canonical linkage of `st` under `ι` gives every cell of the lexeme `l` the stem `st l`
+and the image under `ι` of its property set. It is the linkage of the universal default rule of
+paradigm linkage (5) of [stump-2006] with no language-specific rules (`ofRules_nil`), `st l`
+being the root of `l`. -/
+abbrev canonical (ι : S → M) (st : L → Z) : Linkage L Z S M := ofFun ι fun l _ ↦ st l
 
-/-- The canonical linkage is canonical. -/
-theorem canonical_isCanonical (st : L → Z) : (canonical (P := P) st).IsCanonical :=
-  ofFun_isCanonical_iff.mpr fun _ _ _ ↦ rfl
+/-- Under an injective identification, the canonical linkage is canonical. -/
+theorem canonical_isCanonical {ι : S → M} (hι : Function.Injective ι) (st : L → Z) :
+    (canonical ι st).IsCanonical ι :=
+  (ofFun_isCanonical_iff hι).mpr fun _ _ _ ↦ rfl
+
+/-! ### Rules of paradigm linkage -/
+
+section Rules
+
+open Exponence
+
+variable {R V : Type*} [Rule R S Z] [Preorder R] [DecidableRel (· < · : R → R → Prop)]
+  [DecidableRel (Applies : R → S → Prop)] {rules : L → List R} {root : L → Z} {σ : S} {r : R}
+
+/-- The stem that a lexeme's rules of paradigm linkage select at a cell is the exponent of the
+first applicable rule that no applicable rule is narrower than, or the lexeme's root, by the
+universal default rule (5) of [stump-2006], when none of its rules applies. -/
+def selectStem (rules : L → List R) (root : L → Z) (l : L) (σ : S) : Z :=
+  ((selectMinimal (rules l) σ).map exponent).getD (root l)
+
+/-- The linkage of rules of paradigm linkage gives each content cell the stem that its
+lexeme's rules select, and the image under `ι` of its property set. -/
+abbrev ofRules (ι : S → M) (rules : L → List R) (root : L → Z) : Linkage L Z S M :=
+  ofFun ι (selectStem rules root)
+
+/-- With no language-specific rules, the linkage of rules is the canonical linkage of the
+roots. -/
+theorem ofRules_nil (ι : S → M) (st : L → Z) :
+    ofRules ι (fun _ ↦ ([] : List R)) st = canonical ι st :=
+  rfl
+
+theorem selectStem_eq_of_selectMinimal_eq_some (h : selectMinimal (rules l) σ = some r) :
+    selectStem rules root l σ = exponent r := by
+  simp [selectStem, h]
+
+theorem selectStem_eq_root_of_selectMinimal_eq_none (h : selectMinimal (rules l) σ = none) :
+    selectStem rules root l σ = root l := by
+  simp [selectStem, h]
+
+/-- The selected stem is the root or the exponent of one of the lexeme's rules. -/
+theorem selectStem_eq_root_or_mem :
+    selectStem rules root l σ = root l ∨ ∃ r ∈ rules l, selectStem rules root l σ = exponent r :=
+  match h : selectMinimal (rules l) σ with
+  | none => .inl (selectStem_eq_root_of_selectMinimal_eq_none h)
+  | some r => .inr ⟨r, selectMinimal_mem h, selectStem_eq_of_selectMinimal_eq_some h⟩
+
+/-- A property of the root and of every rule's exponent holds of the selected stem. -/
+theorem selectStem_induction (q : Z → Prop) (hroot : q (root l))
+    (hrules : ∀ r ∈ rules l, q (exponent r)) : q (selectStem rules root l σ) := by
+  obtain h | ⟨r, hr, h⟩ :=
+    selectStem_eq_root_or_mem (rules := rules) (root := root) (l := l) (σ := σ)
+  · exact h ▸ hroot
+  · exact h ▸ hrules r hr
+
+/-- Rules whose applicability sees only what `A` sees select stems whose classes factor through
+`A`. This is the reasoning of [stump-2006] §5.5, by which a rule sensitive to number alone, such
+as (41a), makes number an absolute correlate of heteroclisis. -/
+theorem selectStem_factorsThrough (cls : Z → K) {A : S → V}
+    (h : ∀ r ∈ rules l, ∀ ⦃σ σ'⦄, A σ = A σ' → (Applies r σ ↔ Applies r σ')) :
+    (fun σ ↦ cls (selectStem rules root l σ)).FactorsThrough A :=
+  fun _ _ hA ↦ by simp only [selectStem, selectMinimal_factorsThrough h hA]
+
+/-- Over a coherent list of rules whose Elsewhere winners are comparable, the selected stem is
+the exponent of any Elsewhere winner, so it does not depend on the order of the rules. -/
+theorem selectStem_eq_of_isElsewhereWinner (hv : Coherent (rules l))
+    (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner (rules l) σ r → IsElsewhereWinner (rules l) σ s →
+      s ≤ r ∨ r ≤ s)
+    (hr : IsElsewhereWinner (rules l) σ r) : selectStem rules root l σ = exponent r := by
+  obtain ⟨w, hw⟩ := Option.isSome_iff_exists.mp
+    (selectMinimal_isSome_iff.mpr ⟨r, hr.prop.1, hr.prop.2⟩)
+  rw [selectStem_eq_of_selectMinimal_eq_some hw]
+  exact Realizes.eq hv hcmp ⟨w, selectMinimal_isElsewhereWinner hw, rfl⟩ ⟨r, hr, rfl⟩
+
+end Rules
 
 end Linkage
 

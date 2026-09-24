@@ -428,8 +428,8 @@ end FunctionCompositionDefault
 realization of a paradigm linkage's block cascade ([stump-2016]'s
 `PF(⟨L, σ⟩) = PF(Corr(⟨L, σ⟩))`) is this paradigm function. -/
 theorem _root_.Morphology.Linkage.realized_eq_paradigmFunction [DecidableEq Z]
-    (ℓ : Linkage L Z P) (Lindex : Z → L) (stemChoice : L × P → Z)
-    (blocks : List (Block L Z P)) (l : L) (σ : P) (h : ℓ.IsPropertyPreserving)
+    (ℓ : Linkage L Z P P) (Lindex : Z → L) (stemChoice : L × P → Z)
+    (blocks : List (Block L Z P)) (l : L) (σ : P) (h : ℓ.IsPropertyPreserving id)
     (hstem : ∀ l σ, ℓ.realize l σ = {stemChoice (l, σ)}) :
     ℓ.realized (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
       = {paradigmFunction Lindex stemChoice blocks (l, σ)} := by
@@ -439,7 +439,7 @@ theorem _root_.Morphology.Linkage.realized_eq_paradigmFunction [DecidableEq Z]
 function. -/
 theorem _root_.Morphology.Linkage.ofFun_realized_eq_paradigmFunction [DecidableEq Z]
     (Lindex : Z → L) (stemChoice : L × P → Z) (blocks : List (Block L Z P)) (l : L) (σ : P) :
-    (Linkage.ofFun (Function.curry stemChoice)).realized
+    (Linkage.ofFun id (Function.curry stemChoice)).realized
         (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
       = {paradigmFunction Lindex stemChoice blocks (l, σ)} :=
   Linkage.realized_eq_paradigmFunction _ Lindex stemChoice blocks l σ (fun _ _ ↦ rfl)

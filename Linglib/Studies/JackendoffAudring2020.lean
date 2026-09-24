@@ -554,7 +554,7 @@ inductive Tense
 
 /-- In the paradigm linkage, each lexeme selects its pivot in every cell, with the cell's own
 property set. -/
-def linkage : Linkage Lexeme Pivot Tense where
+def linkage : Linkage Lexeme Pivot Tense Tense where
   realize
     | .take, _ | .takePart, _ => {.take}
     | .drawPicture, _ | .drawElicit, _ | .withdraw, _ => {.draw}

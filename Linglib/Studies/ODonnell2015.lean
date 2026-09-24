@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Dirichlet
 public import Linglib.Core.Probability.PitmanYor
+public import Linglib.Morphology.Exponence.Domain
 public import Linglib.Morphology.Exponence.Select
 public import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 
@@ -107,14 +108,14 @@ structure SpectrumStats where
   hapaxes    : Nat
   deriving DecidableEq, Repr
 
-/-- *-ness*: 1024 word types, 15,568 tokens, 350 hapaxes
-([odonnell-2015] pp. 267–268). LNRE-shaped: hapax-rich, spectrum
+/-- *-ness* has 1024 word types, 15,568 tokens and 350 hapaxes
+([odonnell-2015] pp. 267–268). Its spectrum is LNRE-shaped, hapax-rich and
 peaked at frequency 1 (Fig 7.4, left). -/
 def nessStats : SpectrumStats := ⟨1024, 15568, 350⟩
 
-/-- *-ion*: 1117 word types, 162,573 tokens, 83 hapaxes
-([odonnell-2015] pp. 267–268). Not LNRE-shaped: hapax-poor, mass
-spread toward higher frequencies (Fig 7.4, right). -/
+/-- *-ion* has 1117 word types, 162,573 tokens and 83 hapaxes
+([odonnell-2015] pp. 267–268). Its spectrum is not LNRE-shaped, being hapax-poor with its
+mass spread toward higher frequencies (Fig 7.4, right). -/
 def ionStats : SpectrumStats := ⟨1117, 162573, 83⟩
 
 /-- *-ness* is hapax-richer than *-ion* (350/1024 vs 83/1117) — the
@@ -149,8 +150,8 @@ inference problem of §3.2. `TableAssignment` uses mathlib's `OrderedFinpartitio
 `extendEquiv` is the seating-plan bijection of [pitman-2006]; `pypFactor` depends only on the
 block sizes. -/
 
-/-- The book's adaptor grammar over `G`: a Dirichlet PCFG with a Pitman–Yor process memoising
-the subtrees rooted at each nonterminal. -/
+/-- The book's adaptor grammar over `G` is a Dirichlet PCFG with a Pitman–Yor process
+memoising the subtrees rooted at each nonterminal. -/
 @[ext]
 structure AdaptorGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
     [DecidableEq G.NT] extends DirichletPCFG G where
@@ -161,8 +162,8 @@ namespace AdaptorGrammar
 
 variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
-/-- The latent table assignment `Y`: for each nonterminal, a set partition of its uses in the
-corpus by the table they sat at. Consistency with the corpus is the caller's hypothesis. -/
+/-- The latent table assignment `Y` gives, for each nonterminal, a set partition of its uses in
+the corpus by the table they sat at. Consistency with the corpus is the caller's hypothesis. -/
 abbrev TableAssignment (G : ContextFreeGrammar T) : Type :=
   G.NT → Σ n, OrderedFinpartition n
 
@@ -172,8 +173,8 @@ variable (M : AdaptorGrammar G)
 noncomputable def pypFactor (a : G.NT) (Y : TableAssignment G) : ℝ :=
   (M.pyp a).partitionProb (Y a).snd.toNatPartition
 
-/-- The corpus probability given a table assignment: at each nonterminal the grammar expands,
-the Dirichlet PCFG factor times the Pitman–Yor factor. -/
+/-- The corpus probability given a table assignment is the product, over the nonterminals the
+grammar expands, of the Dirichlet PCFG factor and the Pitman–Yor factor. -/
 noncomputable def corpusProbGivenTables (D : Multiset (RoseTree (Symbol T G.NT)))
     (Y : TableAssignment G) : ℝ :=
   ∏ a ∈ G.rules.image (·.input), M.toDirichletPCFG.lhsFactor a D * M.pypFactor a Y
@@ -222,15 +223,15 @@ urn, which is the representation the book computes with. The halt count `Z` is l
 `Y`; the book writes the halt count at a slot of `r` as `x_r - z_{r,B}`, so a `Z` consistent with
 the corpus has `Z r i .recurse + Z r i .halt` equal to the corpus count of `r`. -/
 
-/-- The outcome of the lazy coin at a nonterminal slot: `recurse` expands the slot productively,
-`halt` leaves it open in the stored fragment. -/
+/-- The outcome of the lazy coin at a nonterminal slot is `recurse`, which expands the slot
+productively, or `halt`, which leaves it open in the stored fragment. -/
 inductive FragmentGrammar.Decision
   | recurse
   | halt
   deriving DecidableEq, Fintype, Inhabited
 
-/-- A fragment grammar over `G`: an adaptor grammar with, at each nonterminal position of each
-rule, a Pólya urn over `recurse`/`halt` decisions whose pseudo-counts are the beta parameters
+/-- A fragment grammar over `G` is an adaptor grammar with, at each nonterminal position of
+each rule, a Pólya urn over `recurse`/`halt` decisions whose pseudo-counts are the beta parameters
 `ψ_{r,B}`. -/
 @[ext]
 structure FragmentGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
@@ -242,14 +243,14 @@ namespace FragmentGrammar
 
 variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
-/-- The latent variable `Z`: at each nonterminal position of each rule, the number of
-`recurse` and of `halt` decisions taken there across the corpus. -/
+/-- The latent variable `Z` counts, at each nonterminal position of each rule, the `recurse`
+and the `halt` decisions taken there across the corpus. -/
 abbrev HaltCounts (G : ContextFreeGrammar T) : Type :=
   (r : ContextFreeRule T G.NT) → r.NonterminalPos → Decision → ℕ
 
 variable (M : FragmentGrammar G)
 
-/-- The corpus probability given a table assignment `Y` and halt counts `Z`: the
+/-- The corpus probability given a table assignment `Y` and halt counts `Z` is the
 adaptor-grammar factor times, at each nonterminal slot, the urn likelihood of the decisions
 taken there. -/
 noncomputable def corpusProbGivenStorage (D : Multiset (RoseTree (Symbol T G.NT)))
@@ -268,8 +269,9 @@ theorem corpusProbGivenStorage_empty :
   simp only [corpusProbGivenStorage, AdaptorGrammar.corpusProbGivenTables_empty, one_mul]
   exact Finset.prod_eq_one λ r _ => Finset.prod_eq_one λ i _ => (M.halt r i).seqProb_zero
 
-/-- The conjugate update by a corpus `D` and its halt counts `Z`: the adaptor-grammar component
-absorbs the rule counts of `D`, and the urn at each slot absorbs the decisions taken there. -/
+/-- In the conjugate update by a corpus `D` and its halt counts `Z`, the adaptor-grammar
+component absorbs the rule counts of `D`, and the urn at each slot absorbs the decisions taken
+there. -/
 noncomputable def posterior (D : Multiset (RoseTree (Symbol T G.NT))) (Z : HaltCounts G) :
     FragmentGrammar G where
   toAdaptorGrammar := M.toAdaptorGrammar.posterior D
@@ -336,8 +338,8 @@ def rV : ContextFreeRule Sym SuffixNT :=
 def rBnd : ContextFreeRule Sym SuffixNT :=
   ⟨SuffixNT.BND, [.terminal Sym.bnd]⟩
 
-/-- The toy CFG: nominalisation via `-ness` (from adjective) or
-    `-ion` (from verb), verb formation via `-ate` (from bound stem). -/
+/-- The toy CFG has nominalisation via `-ness` (from adjective) or
+    `-ion` (from verb), and verb formation via `-ate` (from bound stem). -/
 def suffixGrammar : ContextFreeGrammar Sym where
   NT := SuffixNT
   initial := SuffixNT.N
@@ -430,8 +432,8 @@ theorem suffixPrior_predictive_lt_of_count_gap (D : Multiset (RoseTree (Symbol S
   rw [pseudoVal_rNess, pseudoVal_rIon]
   linarith
 
-/-- With no data the Dirichlet PCFG orders the nominalising rules correctly: the prior
-    predictive is the normalised pseudo-count, and `pseudoVal rNess > pseudoVal rIon`. The
+/-- With no data the Dirichlet PCFG orders the nominalising rules correctly, since the prior
+    predictive is the normalised pseudo-count and `pseudoVal rNess > pseudoVal rIon`. The
     model's failure is data-driven, not prior-driven. -/
 theorem suffixPrior_predictive_prior_lt :
     suffixPrior.predictive rIon 0 < suffixPrior.predictive rNess 0 := by
@@ -450,9 +452,9 @@ theorem suffixPrior_predictivePCFG_prior_lt :
     ENNReal.ofReal_lt_ofReal_iff (suffixPrior.predictive_pos (by decide) 0)]
   exact suffixPrior_predictive_prior_lt
 
-/-- The Chapter 7 critique of the Dirichlet PCFG in one theorem: right without data, wrong once
-    `-ion` tokens dominate. The fix the book proposes, the fragment grammar, gives a posterior
-    that does not collapse productivity into raw frequency. -/
+/-- The Chapter 7 critique of the Dirichlet PCFG in one theorem is that it is right without
+    data and wrong once `-ion` tokens dominate. The fix the book proposes, the fragment
+    grammar, gives a posterior that does not collapse productivity into raw frequency. -/
 theorem suffixPrior_prior_and_posterior_disagree (D : Multiset (RoseTree (Symbol Sym SuffixNT)))
     (h : RoseTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
          RoseTree.corpusRuleCount (N := SuffixNT) rIon D) :
@@ -473,7 +475,8 @@ conditioning preserves the preference. The book quotes
 `Inputs(r₂) ⊂ Inputs(r₁)` — which is `Morphology.Exponence.Rule`'s
 specificity order (applicability-set inclusion, `Exponence.toPreorder`).
 
-Formalized in the uniform-generation case, where the preference is
+Formalized over `Exponence.DomainRule`, a rule's support being its
+domain, in the uniform-generation case, where the preference is
 pointwise rather than on average: nested supports give the narrower
 rule a strictly higher generation probability at every shared form
 (`genProb_lt_of_ssubset`), and a likelihood-maximal rule among a
@@ -497,8 +500,8 @@ case of [odonnell-2015] §5.5.3's rules-as-distributions. -/
 def genProb (s : Finset Ctx) (c : Ctx) : ℚ :=
   if c ∈ s then (s.card : ℚ)⁻¹ else 0
 
-/-- The pointwise probabilistic Elsewhere Condition: at every shared
-form, a properly narrower rule assigns strictly higher probability. -/
+/-- By the pointwise probabilistic Elsewhere Condition, at every shared
+form a properly narrower rule assigns strictly higher probability. -/
 theorem genProb_lt_of_ssubset {s₁ s₂ : Finset Ctx} (h : s₂ ⊂ s₁)
     {c : Ctx} (hc : c ∈ s₂) : genProb s₁ c < genProb s₂ c := by
   have hc₁ : c ∈ s₁ := h.1 hc
@@ -523,35 +526,17 @@ theorem genProb_le_iff_card_le {s₁ s₂ : Finset Ctx} {c : Ctx}
   rw [inv_le_inv₀ hs₁ hs₂]
   exact_mod_cast Iff.rfl
 
-/-- A finitely supported rule: an exponent with a finite set of forms
-it can generate. -/
-structure FinRule (Ctx F : Type*) where
-  /-- The exponent. -/
-  exponent : F
-  /-- The forms the rule generates. -/
-  supp : Finset Ctx
-
-/-- A finitely supported rule exposes the shared exponence core interface
-(`Morphology.Exponence.Rule`): applicability is support membership. -/
-instance : Exponence.Rule (FinRule Ctx F) Ctx F :=
-  ⟨FinRule.exponent, λ r c => c ∈ r.supp⟩
-
-instance : Preorder (FinRule Ctx F) := Exponence.toPreorder
-
-instance : DecidableRel (Exponence.Applies : FinRule Ctx F → Ctx → Prop) :=
-  λ r c => inferInstanceAs (Decidable (c ∈ r.supp))
-
 omit [DecidableEq Ctx] in
-/-- Dualized support cardinality is strictly antitone in specificity: a
+/-- Dualized support cardinality is strictly antitone in specificity, since a
 strictly broader finitely supported rule has strictly larger support
 (card `≤` does not imply support `⊆`, so the score is not an order
 embedding — strict antitonicity is exactly what the `Finset`-support
 engine retains). -/
 private theorem finRule_card_strictAnti :
-    StrictAnti (λ r : FinRule Ctx F => OrderDual.toDual r.supp.card) := by
+    StrictAnti (fun r : DomainRule Ctx F ↦ OrderDual.toDual r.dom.card) := by
   intro s r hlt
-  have hsub : s.supp ⊆ r.supp := λ x hx => hlt.le hx
-  have hns : ¬ r.supp ⊆ s.supp := λ hsub' => not_le_of_gt hlt λ x hx => hsub' hx
+  have hsub : s.dom ⊆ r.dom := fun x hx ↦ hlt.le hx
+  have hns : ¬ r.dom ⊆ s.dom := fun hsub' ↦ not_le_of_gt hlt fun x hx ↦ hsub' hx
   exact OrderDual.toDual_lt_toDual.mpr
     (Finset.card_lt_card (lt_of_le_not_ge hsub hns))
 
@@ -562,9 +547,9 @@ the shared core's `Exponence.selectBy` yields an Elsewhere winner.
 Minimizing support cardinality *is* maximizing uniform generation
 probability (`genProb_le_iff_card_le`), so this is Elsewhere selection as
 maximum-likelihood inference, on record as a score. -/
-theorem selectByCard_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
-    {r : FinRule Ctx F}
-    (h : selectBy (λ s => OrderDual.toDual s.supp.card) v c = some r) :
+theorem selectByCard_isElsewhereWinner {v : List (DomainRule Ctx F)} {c : Ctx}
+    {r : DomainRule Ctx F}
+    (h : selectBy (fun s ↦ OrderDual.toDual s.dom.card) v c = some r) :
     IsElsewhereWinner v c r :=
   selectBy_isElsewhereWinner (finRule_card_strictAnti.strictAntiOn _) h
 
@@ -575,18 +560,18 @@ winner of the corresponding vocabulary. Maximizing probability is
 minimizing support cardinality (`genProb_le_iff_card_le`), whence
 card-minimality forces `⊆`-minimality — the same reasoning
 `selectByCard_isElsewhereWinner` routes through the core's score. -/
-theorem maxGenProb_isElsewhereWinner {v : List (FinRule Ctx F)} {c : Ctx}
-    {r : FinRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.supp)
-    (hmax : ∀ s ∈ v, c ∈ s.supp → genProb s.supp c ≤ genProb r.supp c) :
+theorem maxGenProb_isElsewhereWinner {v : List (DomainRule Ctx F)} {c : Ctx}
+    {r : DomainRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.dom)
+    (hmax : ∀ s ∈ v, c ∈ s.dom → genProb s.dom c ≤ genProb r.dom c) :
     IsElsewhereWinner v c r := by
   refine ⟨⟨hrv, hrc⟩, ?_⟩
   rintro s ⟨hsv, htc⟩ hle
-  have htc' : c ∈ s.supp := htc
-  have hsub : s.supp ⊆ r.supp := λ x hx => hle hx
-  have hcard : r.supp.card ≤ s.supp.card :=
+  have htc' : c ∈ s.dom := htc
+  have hsub : s.dom ⊆ r.dom := fun x hx ↦ hle hx
+  have hcard : r.dom.card ≤ s.dom.card :=
     (genProb_le_iff_card_le htc' hrc).mp (hmax s hsv htc')
-  have heq : s.supp = r.supp := Finset.eq_of_subset_of_card_le hsub hcard
-  exact λ x hx => show x ∈ s.supp from heq ▸ hx
+  have heq : s.dom = r.dom := Finset.eq_of_subset_of_card_le hsub hcard
+  exact fun x hx ↦ show x ∈ s.dom from heq ▸ hx
 
 end ProbabilisticElsewhere
 
