@@ -14,9 +14,11 @@ kernel of the indicator of `p`, a question decides `p` exactly when it refines t
 question, `Q ≤ polar p`, and the question raised by a family of propositions is the meet of
 their polar questions, so a finer question decides more (`le_trans`), the finest question
 decides everything (`bot_le`), and a family's question decides each member (`iInf₂_le`). A
-proposition a question decides is [cariani-2013]'s visible, [phillips-brown-2025]'s
-considered, and an issue in a subject matter for [von-fintel-gillies-2010]; the converse
-relation, a proposition settling a question, is `Question.Resolves`.
+question settles the value of a function exactly when it decides each of its fibres
+(`le_ker_iff_forall_decides`). A proposition a question decides is [cariani-2013]'s visible,
+[phillips-brown-2025]'s considered, and an issue in a subject matter for
+[von-fintel-gillies-2010]; the converse relation, a proposition settling a question, is
+`Question.Resolves`.
 
 ## Main definitions
 
@@ -142,6 +144,13 @@ theorem decides_cell (w : W) : Q.Decides (Q.cell w) :=
 /-- A cell of a question deciding `p` that meets `p` entails it. -/
 theorem Decides.cell_subset (h : Q.Decides p) (hw : w ∈ p) : Q.cell w ⊆ p :=
   λ _ hv => (decides_iff.1 h _ _ hv).2 hw
+
+/-- A question settles the value of `f`, refining its kernel, exactly when it decides each fibre
+of `f`. -/
+theorem le_ker_iff_forall_decides {β : Type*} {f : W → β} :
+    Q ≤ ker f ↔ ∀ b, Q.Decides (f ⁻¹' {b}) :=
+  ⟨fun h _ ↦ decides_iff.2 fun _ _ hwv ↦ by simp [ker_def.1 (h hwv)],
+    fun h w _ hwv ↦ (((h (f w)).iff hwv).1 rfl).symm⟩
 
 /-! ### The question raised by a family of propositions -/
 
