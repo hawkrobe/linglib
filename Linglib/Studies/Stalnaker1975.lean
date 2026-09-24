@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Conditionals.Stalnaker
+public import Linglib.Semantics.Conditionals.SelectionFunction
 
 /-!
 # Stalnaker (1975): Indicative Conditionals
@@ -11,11 +11,14 @@ has the selection-function truth condition of [stalnaker-1968], and entails the 
 conditional without being entailed by it (`Conditional.selectionConditional_subset_materialImp`,
 `not_entails_direct`). What makes the argument compelling is pragmatic: in a context, an
 indicative conditional's selection function keeps to the context set whenever the antecedent
-is compatible with it, and a disjunction is appropriately asserted only where each disjunct
-can hold without the other. Under the constraint, a proposition accepted in the context is
-accepted under any compatible antecedent (`selectionConditional_of_accepted`), the indicative
-and the material conditional are accepted in the same contexts (`accepted_iff_material`), and
-so the direct argument, contraposition and the hypothetical syllogism are reasonable for
+is compatible with it (`pragmaticConstraint`), and a disjunction is appropriately asserted only
+where each disjunct can hold without the other. Under Stalnaker's earlier condition (4) on
+selection functions, the constraint says that restricting the selection function to the context
+set changes nothing at context worlds (`pragmaticConstraint_iff_restrict`). Under the
+constraint, a proposition accepted in the context is accepted under any compatible antecedent
+(`selectionConditional_of_accepted`), the indicative and the material conditional are accepted
+in the same contexts (`accepted_iff_material`), and so the direct argument, contraposition and
+the hypothetical syllogism are reasonable for
 indicatives though invalid (`direct_argument`, `contraposition`, `hypothetical_syllogism`).
 
 The appendix's calculus makes reasonable inference a logical notion: a pragmatic
@@ -39,8 +42,7 @@ the updated set, so that indicatives conform to the constraint after every asser
 appropriateness relation encodes the paper's two generalizations, that a disjunction requires
 each disjunct to be open without the other and that an indicative conditional requires a
 compatible antecedent, together with the first postulate. Subjunctive conditionals, which
-suspend the constraint, are outside the language; the substrate's `Mood.admissibleSelection`
-carries the paper's account of the mood distinction.
+suspend the constraint, are outside the language.
 
 ## References
 
@@ -57,6 +59,51 @@ namespace Stalnaker1975
 
 open Conditional
 
+/-! ### The pragmatic constraint -/
+
+section Constraint
+
+variable {W : Type*} (s : SelectionFunction W) {C : Set W}
+
+/-- The pragmatic constraint on a selection function relative to a context set `C`. At a world of
+`C`, an antecedent true somewhere in `C` selects a world of `C`, which Stalnaker glosses as the
+worlds of the context set being closer to each other than to any world outside it. -/
+def pragmaticConstraint (C : Set W) : Prop :=
+  ∀ w (A : Set W), w ∈ C → (A ∩ C).Nonempty → s.sel w A ∈ C
+
+/-- The restriction of a selection function to a context obeys the pragmatic constraint for
+that context. -/
+theorem pragmaticConstraint_restrict (C : Set W) : pragmaticConstraint (s.restrict C) C :=
+  fun w A hw hA ↦ by
+    rw [s.restrict_sel_of_mem C hw hA]
+    exact (s.inclusion w (A ∩ C) hA).2
+
+/-- Under Stalnaker's condition (4), the pragmatic constraint says that restricting the selection
+function to the context set changes nothing at context worlds. -/
+theorem pragmaticConstraint_iff_restrict {s : SelectionFunction W} (hs : s.IsCSO) :
+    pragmaticConstraint s C ↔ ∀ w ∈ C, ∀ A, (s.restrict C).sel w A = s.sel w A := by
+  constructor
+  · intro h w hw A
+    by_cases hAC : (A ∩ C).Nonempty
+    · rw [s.restrict_sel_of_mem C hw hAC]
+      exact ((hs.sel_mem_iff hAC).1 (h w A hw hAC)).symm
+    · exact s.restrict_sel_of_not_nonempty C hAC
+  · intro h w A hw hAC
+    rw [← h w hw A, s.restrict_sel_of_mem C hw hAC]
+    exact (s.inclusion w (A ∩ C) hAC).2
+
+/-- At a context world, for an antecedent compatible with the context and a selection function
+meeting the pragmatic constraint, the selection conditional holds whenever the material
+conditional holds throughout the context. -/
+theorem mem_selectionConditional_of_forall_mem {p q : Set W} {w : W} (hw : w ∈ C)
+    (hopen : (p ∩ C).Nonempty) (hC : pragmaticConstraint s C)
+    (himp : ∀ w' ∈ C, w' ∈ p → w' ∈ q) : w ∈ selectionConditional s p q := by
+  obtain ⟨v, hv, -⟩ := id hopen
+  rw [mem_selectionConditional_of_nonempty s ⟨v, hv⟩]
+  exact himp _ (hC w p hw hopen) (s.inclusion w p ⟨v, hv⟩)
+
+end Constraint
+
 /-! ### The indicative conditional in a context -/
 
 section Context
@@ -70,7 +117,7 @@ theorem selectionConditional_of_accepted (hC : pragmaticConstraint s C) (hp : �
   mem_selectionConditional_of_forall_mem s hw (hp.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC
     fun w' hw' _ ↦ hq w' hw'
 
-/-- The direct argument is reasonable: in a context accepting the disjunction where the
+/-- The direct argument is reasonable, since in a context accepting the disjunction where the
 negated first disjunct is open, the indicative conditional is accepted. -/
 theorem direct_argument (hC : pragmaticConstraint s C) (hopen : ∃ w ∈ C, w ∉ p)
     (hdisj : ∀ w ∈ C, w ∈ p ∨ w ∈ q) : ∀ w ∈ C, w ∈ selectionConditional s pᶜ q := fun _ hw ↦
@@ -84,8 +131,8 @@ theorem accepted_iff_material (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, 
   ⟨fun h w hw ↦ selectionConditional_subset_materialImp s (h w hw), fun h _ hw ↦
     mem_selectionConditional_of_forall_mem s hw (hp.imp fun _ hv ↦ ⟨hv.2, hv.1⟩) hC h⟩
 
-/-- Contraposition is reasonable for indicatives: when the conditional is accepted and the
-negated consequent is open, the contrapositive is accepted. -/
+/-- Contraposition is reasonable for indicatives, since when the conditional is accepted and
+the negated consequent is open, the contrapositive is accepted. -/
 theorem contraposition (hC : pragmaticConstraint s C) (hq : ∃ w ∈ C, w ∉ q)
     (h : ∀ w ∈ C, w ∈ selectionConditional s p q) :
     ∀ w ∈ C, w ∈ selectionConditional s qᶜ pᶜ := by
@@ -95,7 +142,7 @@ theorem contraposition (hC : pragmaticConstraint s C) (hq : ∃ w ∈ C, w ∉ q
   have hsel : s.sel w qᶜ ∈ C := hC w _ hw (hq.imp fun _ hv ↦ ⟨hv.2, hv.1⟩)
   exact fun hp ↦ s.inclusion w qᶜ hne (selectionConditional_subset_materialImp s (h _ hsel) hp)
 
-/-- The hypothetical syllogism is reasonable for indicatives: when both conditionals are
+/-- The hypothetical syllogism is reasonable for indicatives, since when both conditionals are
 accepted and the first antecedent is open, the chained conditional is accepted. -/
 theorem hypothetical_syllogism (hC : pragmaticConstraint s C) (hp : ∃ w ∈ C, w ∈ p)
     (h₁ : ∀ w ∈ C, w ∈ selectionConditional s p q) (h₂ : ∀ w ∈ C, w ∈ selectionConditional s q r) :
@@ -111,7 +158,7 @@ end Context
 
 /-! ### Reasonable inference -/
 
-/-- A pragmatic interpretation of a language (the paper's appendix): the proposition each
+/-- A pragmatic interpretation of a language, the paper's appendix, gives the proposition each
 sentence expresses in a context, an appropriateness relation, and a change function, obeying
 the two postulates that an appropriate assertion is compatible with the context and that an
 assertion adds its proposition to the context set. -/
@@ -136,19 +183,19 @@ variable {L W K : Type*} (I : PragmaticInterpretation L W K)
 /-- The context after asserting a sequence of sentences. -/
 def changeSeq (σ : List L) (k : K) : K := σ.foldl (fun k P ↦ I.change P k) k
 
-/-- Sequential appropriateness: each sentence is appropriate in the context the preceding
-ones produce. -/
+/-- A sequence of sentences is appropriate when each is appropriate in the context the
+preceding ones produce. -/
 def AppropriateSeq : List L → K → Prop
   | [], _ => True
   | P :: σ, k => I.appropriate P k ∧ AppropriateSeq σ (I.change P k)
 
-/-- Reasonable inference: every context in which the premisses are appropriately asserted in
-sequence comes to entail the conclusion. -/
+/-- An inference is reasonable when every context in which the premisses are appropriately
+asserted in sequence comes to entail the conclusion. -/
 def Reasonable (σ : List L) (P : L) : Prop :=
   ∀ k, I.AppropriateSeq σ k → I.contextSet (I.changeSeq σ k) ⊆ I.prop P (I.changeSeq σ k)
 
-/-- Entailment in the language: the premiss's proposition is included in the conclusion's in
-every context. -/
+/-- A sentence entails another in the language when the premiss's proposition is included in
+the conclusion's in every context. -/
 def Entails (P Q : L) : Prop := ∀ k, I.prop P k ⊆ I.prop Q k
 
 /-- A sentence is rigid when it expresses the same proposition in every context. -/
@@ -162,8 +209,8 @@ theorem Reasonable.of_entails {P Q : L} (hQ : I.Rigid Q) (h : I.Entails P Q) :
   rw [changeSeq_singleton, I.contextSet_change, hQ (I.change P k) k]
   exact fun _ hw ↦ h _ hw.2
 
-/-- Constructive dilemma for entailment: with disjunction interpreted as union, entailments
-from the disjuncts yield an entailment from the disjunction. -/
+/-- Constructive dilemma holds for entailment, since with disjunction interpreted as union,
+entailments from the disjuncts yield an entailment from the disjunction. -/
 theorem Entails.or {P₁ P₂ Q₁ Q₂ P Q : L} (hP : ∀ k, I.prop P k = I.prop P₁ k ∪ I.prop P₂ k)
     (hQ : ∀ k, I.prop Q k = I.prop Q₁ k ∪ I.prop Q₂ k) (h₁ : I.Entails P₁ Q₁)
     (h₂ : I.Entails P₂ Q₂) : I.Entails P Q := fun k ↦ by
@@ -174,14 +221,14 @@ end PragmaticInterpretation
 
 /-! ### The language of the direct argument -/
 
-/-- The sentences: atoms, negation, disjunction, and the indicative conditional. -/
+/-- The sentences are built from atoms by negation, disjunction, and the indicative conditional. -/
 inductive Sentence (Atom : Type*)
   | atom (a : Atom)
   | not (P : Sentence Atom)
   | or (P Q : Sentence Atom)
   | ifThen (P Q : Sentence Atom)
 
-/-- A context: a context set and a selection function obeying the pragmatic constraint for
+/-- A context is a context set with a selection function obeying the pragmatic constraint for
 it. -/
 structure Context (W : Type*) where
   /-- The context set. -/
@@ -200,9 +247,9 @@ def Sentence.prop (V : Atom → Set W) : Sentence Atom → Context W → Set W
   | .or P Q, k => P.prop V k ∪ Q.prop V k
   | .ifThen P Q, k => selectionConditional k.sel (P.prop V k) (Q.prop V k)
 
-/-- Appropriateness: a disjunction requires each disjunct to be open without the other, an
-indicative conditional requires a compatible antecedent, and every assertion is compatible
-with the context. -/
+/-- An assertion is appropriate when it is compatible with the context, a disjunction moreover
+requires each disjunct to be open without the other, and an indicative conditional requires a
+compatible antecedent. -/
 def Sentence.Appropriate (V : Atom → Set W) : Sentence Atom → Context W → Prop
   | .or P Q, k =>
     (k.set ∩ (P.prop V k ∩ (Q.prop V k)ᶜ)).Nonempty ∧
@@ -211,7 +258,7 @@ def Sentence.Appropriate (V : Atom → Set W) : Sentence Atom → Context W → 
     (k.set ∩ P.prop V k).Nonempty ∧ (k.set ∩ (Sentence.ifThen P Q).prop V k).Nonempty
   | P, k => (k.set ∩ P.prop V k).Nonempty
 
-/-- The context after accepting a proposition: the narrowed context set with the selection
+/-- The context after accepting a proposition has the narrowed context set with the selection
 function restricted to it. -/
 noncomputable def Context.update (k : Context W) (P : Set W) : Context W :=
   ⟨k.set ∩ P, k.sel.restrict (k.set ∩ P), pragmaticConstraint_restrict _ _⟩
@@ -233,11 +280,11 @@ noncomputable def interp (V : Atom → Set W) : PragmaticInterpretation (Sentenc
     | not P => exact h
   contextSet_change _ _ := rfl
 
-/-- Reasonable inference in the language: reasonable under every valuation. -/
+/-- An inference is reasonable in the language when it is reasonable under every valuation. -/
 def ReasonableInL (W : Type*) (σ : List (Sentence Atom)) (P : Sentence Atom) : Prop :=
   ∀ V : Atom → Set W, (interp V).Reasonable σ P
 
-/-- Entailment in the language: entailment under every valuation. -/
+/-- A sentence entails another in the language when it does so under every valuation. -/
 def EntailsInL (W : Type*) (P Q : Sentence Atom) : Prop :=
   ∀ V : Atom → Set W, (interp V).Entails P Q
 
@@ -248,7 +295,7 @@ theorem ifThen_entails_material (P Q : Sentence Atom) :
   · exact Or.inr (selectionConditional_subset_materialImp k.sel h hp)
   · exact Or.inl hp
 
-/-- The direct argument is reasonable in the language: wherever a disjunction of atoms is
+/-- The direct argument is reasonable in the language, since wherever a disjunction of atoms is
 appropriately asserted, the context comes to accept the conditional from the negated first
 disjunct to the second. -/
 theorem direct_argument_reasonable (a b : Atom) :
@@ -271,7 +318,7 @@ inductive Culprit
   | butler | gardener
   deriving DecidableEq, Repr
 
-/-- The valuation: each atom names its suspect. -/
+/-- The valuation on which each atom names its suspect. -/
 def culpritOf : Culprit → Set Suspect
   | .butler => {.butler}
   | .gardener => {.gardener}
@@ -316,12 +363,12 @@ theorem not_entails_direct :
 
 /-! ### Fatalism -/
 
-/-- The atoms of the fatalist's argument: being killed, and taking precautions. -/
+/-- The atoms of the fatalist's argument are being killed and taking precautions. -/
 inductive Fate
   | killed | precautions
   deriving DecidableEq, Repr
 
-/-- A world: whether one is killed, and whether one takes precautions. -/
+/-- A world records whether one is killed and whether one takes precautions. -/
 abbrev Outcome := Bool × Bool
 
 /-- The valuation of the fatalist's atoms. -/
@@ -361,8 +408,8 @@ def killed : Sentence Fate := .atom .killed
 /-- *I take precautions.* -/
 def precautions : Sentence Fate := .atom .precautions
 
-/-- The fatalist's argument: *I will be killed or not; if I will, then even with precautions I
-will be killed; if I will not, then even without precautions I will not be; so precautions are
+/-- The fatalist argues *I will be killed or not; if I will, then even with precautions I will
+be killed; if I will not, then even without precautions I will not be; so precautions are
 ineffective or unnecessary*. In the null context the disjunction is appropriate, and each
 conditional is accepted in the context supposing its disjunct; but the disjunction of the
 conditionals is not accepted in the context of the disjunctive premiss, since at a world
