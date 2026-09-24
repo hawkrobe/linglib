@@ -8,181 +8,156 @@ module
 public import Linglib.Fragments.Hausa.TAM
 public import Linglib.Fragments.Hausa.Tone
 public import Linglib.Semantics.Focus.Marking
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Hausa focus and the stabilizer nē/cē
+# Hausa focus and the stabilizer
 
-Hausa focuses a constituent by fronting it (*ex-situ*) or leaving it in
-place (*in-situ*). Ex-situ focus shifts the clause's TAM to the Relative
-form where one exists; the agreeing polar-tone particle *nē/cē* — Newman's
-*stabilizer* ([newman-2000] §66) — may surface after the focus in either
-strategy, and in-situ focus is otherwise unmarked, prosody included
-([hartmann-zimmermann-2007] §2, §5).
+Hausa focuses a constituent by fronting it to a focus slot at the beginning of its clause,
+where the stabilizer may follow it: *Hàdīzà cē ta ci lambā̀* 'It was Hadiza who won the prize'.
+The clause after a fronted focus is a Rel environment, so its TAM must be a Rel form: *Audù nē ya
+tàfi kā̀suwā* 'It is Audu who went to the market', with the preterite, against *Audù yā tàfi
+kā̀suwā* 'Audu has gone to the market', with the completive ([newman-2000]). A focus may also stay
+in place, with the TAM of a general clause and no marking of any kind; the particle rarely
+follows it then, at the end of the clause or before an adjunct: *Audù yaa sàyi zoobèe ne* 'Audu
+bought a RING' ([hartmann-zimmermann-2007-exhaustivity]).
+
+The stabilizer has polar tone and no agreement feature but gender: it is *cē* after a feminine
+singular and *nē* after anything else, a masculine, a plural, feminine coordinations included, a
+prepositional phrase or a verb phrase. It can always be left out, and
+[hartmann-zimmermann-2007-exhaustivity] argue that it marks not focus but exhaustivity, being
+excluded where a property is known to hold of more than the focus.
 
 ## Main definitions
 
-* `Stabilizer`, `stabilizerFor`: the particle's two allomorphs and their
-  selection by gender and number.
-* `FocusConfig`: a focused clause's PAC, `Focus.Strategy`, focus
-  agreement features, and stabilizer.
-* `FocusConfig.Licensed`: ex-situ focus with a Relative-capable TAM must
-  surface Relative mode ([jaggar-green-2003] analyse this as movement to
-  a single CP-internal position; only the licensing condition is recorded
-  here).
+* `Hausa.ne`, `Hausa.ce`, `Hausa.stabilizer` — the stabilizer and its agreement
+* `Hausa.FocusConfig` — a focused clause: its TAM, the TAM its PAC surfaces in, the PAC's subject
+  cell, the focus strategy, and the focus's agreement features
+* `Hausa.FocusConfig.Licensed` — a fronted focus takes a Rel counterpart of the clause's TAM, a
+  focus in place a general TAM unchanged
 
 ## Main results
 
-* `stabilizerFor_eq_cee_iff`: *cē* appears exactly with feminine-singular
-  focus.
-* `stabilizer_tone_is_polar`: the stabilizer's surface tone is
-  `Hausa.polarOf` of the host's final tone — the same autosegmental
-  operation as the genitive linker *-n*.
+* `Hausa.FocusConfig.pacTAM_ne_iff` — a licensed focus changes the TAM exactly when it is fronted
+  and the TAM does not occur in Rel environments, so fronting is audible in the PAC with the
+  completive, the continuous and the potential and nowhere else
 
-## Implementation notes
+## References
 
-`Licensed` is propositional, not a `Subtype` invariant: `FocusConfig` is
-unrestricted, and `exSitu_with_genCmp` is an explicit ill-licensed
-configuration showing the predicate has bite. `mkInSitu`/`mkExSitu` are
-ergonomic constructors; the ex-situ one takes the licensing obligation as
-an argument.
+* [newman-2000]
+* [hartmann-zimmermann-2007-exhaustivity]
 -/
 
 @[expose] public section
 
 namespace Hausa
 
-open Tone (TRN)
+open Agreement Tone
 
 /-! ### The stabilizer -/
 
-/-- The stabilizer has two allomorphs, *cē* with feminine-singular focus and *nē*
-elsewhere ([newman-2000] §66.1). -/
-inductive Stabilizer where
-  | nee
-  | cee
-  deriving DecidableEq, Repr, Inhabited
+/-- *nē*, the stabilizer after a phrase that is not feminine. -/
+def ne : Particle := { form := "nē", position := some .postHost }
 
-/-- Surface form of the stabilizer. -/
-def Stabilizer.form : Stabilizer → String
-  | .nee => "nē"
-  | .cee => "cē"
+/-- *cē*, the stabilizer after a feminine. -/
+def ce : Particle := { form := "cē", position := some .postHost }
 
-/-- The stabilizer agreeing with a focus of the given gender and number:
-*cē* iff feminine singular; plurals of either gender take *nē*
-([newman-2000] §66.1). -/
-def stabilizerFor (g : Gender) (singular : Bool) : Stabilizer :=
-  match g, singular with
-  | .feminine, true => .cee
-  | _, _            => .nee
+/-- The stabilizer after a phrase of the given gender; a plural, a prepositional phrase and a verb
+phrase have none. -/
+def stabilizer (g : Option Gender) : Particle := if g = some .feminine then ce else ne
+
+theorem stabilizer_eq_ce_iff (g : Option Gender) : stabilizer g = ce ↔ g = some .feminine := by
+  unfold stabilizer
+  split_ifs with h
+  · simpa using h
+  · simpa [ne, ce] using h
+
+/-- The stabilizer's tone after *rìgā* 'gown' is low: *rìgā cè* 'it's a gown'. -/
+example : polarAfter [.H] = some .L := rfl
+
+/-- The stabilizer's tone after *mōtà* 'car' is high: *mōtà cē* 'it's a car'. -/
+example : polarAfter [.L] = some .H := rfl
 
 /-! ### Focus configurations -/
 
-/-- A focused clause carries its PAC, its focus strategy, the focused constituent's
-agreement features, and whether a stabilizer surfaces. -/
+/-- A focused clause: its TAM as a general clause has it, the TAM its PAC surfaces in, the PAC's
+subject cell, the focus strategy, the gender of the focus, none for a plural, and whether the
+stabilizer surfaces. -/
 structure FocusConfig where
-  /-- The clause's person-aspect complex. -/
-  pac      : PAC
-  /-- The focus strategy; pragmatic-type distinctions cut across both
-  strategies and live in study files. -/
+  tam : TAM
+  pacTAM : TAM
+  cell : Bundle
   strategy : Focus.Strategy
-  /-- Gender of the focused constituent (selects *nē* vs *cē*). -/
-  focusG   : Gender
-  /-- Whether the focused constituent is singular. -/
-  focusSG  : Bool
-  /-- Whether a stabilizer surfaces (optional ex-situ, sporadic
-  sentence-final in-situ, [hartmann-zimmermann-2007] §2.2). -/
-  hasStab  : Bool
+  focusGender : Option Gender
+  hasStab : Bool
   deriving Repr
 
-/-- The stabilizer realised by a configuration, if any. -/
-def FocusConfig.stab? (c : FocusConfig) : Option Stabilizer :=
-  if c.hasStab then some (stabilizerFor c.focusG c.focusSG) else none
+namespace FocusConfig
 
-/-- Ex-situ focus must surface the Relative mode whenever the TAM has a
-Relative form; in-situ focus is unconstrained ([newman-2000] §65–§66). -/
-def FocusConfig.Licensed (c : FocusConfig) : Prop :=
-  c.strategy = .exSitu → c.pac.tam.HasRelativeForm → c.pac.mode = .relative
+variable (c : FocusConfig)
 
-instance (c : FocusConfig) : Decidable c.Licensed :=
-  inferInstanceAs (Decidable (_ → _ → _))
+/-- A fronted focus takes a Rel counterpart of the clause's TAM; a focus in place leaves a general
+TAM unchanged. -/
+def Licensed : Prop :=
+  (c.strategy = .inSitu → c.pacTAM = c.tam ∧ c.tam ∈ TAM.general) ∧
+    (c.strategy = .exSitu → c.pacTAM ∈ c.tam.relCounterparts)
 
-/-! ### Constructors -/
+instance : Decidable c.Licensed := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- An in-situ focus configuration; always licensed. The stabilizer
-defaults to absent but may sporadically surface sentence-finally
-([hartmann-zimmermann-2007] §2.2). -/
-def mkInSitu (pac : PAC) (focusG : Gender) (focusSG : Bool)
-    (hasStab : Bool := false) : FocusConfig :=
-  ⟨pac, .inSitu, focusG, focusSG, hasStab⟩
+/-- The surface PAC. -/
+def pac : Option String := c.pacTAM.form c.cell
 
-/-- An ex-situ focus configuration; the anonymous argument is the
-licensing obligation it threads (see `mkExSitu_licensed`). -/
-def mkExSitu (pac : PAC) (focusG : Gender) (focusSG : Bool)
-    (_ : pac.tam.HasRelativeForm → pac.mode = .relative)
-    (hasStab : Bool := true) : FocusConfig :=
-  ⟨pac, .exSitu, focusG, focusSG, hasStab⟩
+/-- The stabilizer, if it surfaces. -/
+def stab? : Option Particle :=
+  if c.hasStab then some (stabilizer c.focusGender) else none
 
-theorem mkInSitu_licensed (p : PAC) (g : Gender) (sg hs : Bool) :
-    (mkInSitu p g sg hs).Licensed := nofun
+variable {c}
 
-theorem mkExSitu_licensed (p : PAC) (g : Gender) (sg : Bool)
-    (h : p.tam.HasRelativeForm → p.mode = .relative) (hs : Bool) :
-    (mkExSitu p g sg h hs).Licensed := fun _ => h
+/-- A licensed focus changes the TAM exactly when it is fronted and the TAM does not occur in Rel
+environments. -/
+theorem pacTAM_ne_iff (h : c.Licensed) :
+    c.pacTAM ≠ c.tam ↔ c.strategy = .exSitu ∧ c.tam ∉ TAM.rel := by
+  cases hs : c.strategy
+  · simp [(h.1 hs).1]
+  · simpa using TAM.ne_iff_not_mem_rel _ _ (h.2 hs)
 
-/-! ### Examples -/
+end FocusConfig
 
-/-- Ex-situ feminine-singular focus with the Relative completive;
-licensed, surfaces *cē*. -/
-def exSitu_fem_relCmp : FocusConfig :=
-  mkExSitu cmp_3sm_R .feminine true (fun _ => rfl)
+/-- A focus in place, with the clause's TAM. -/
+def mkInSitu (tam : TAM) (cell : Bundle) (g : Option Gender) (hasStab : Bool := false) :
+    FocusConfig :=
+  ⟨tam, tam, cell, .inSitu, g, hasStab⟩
 
-/-- In-situ focus with a General-mode PAC; licensed unconditionally. -/
-def inSitu_any : FocusConfig := mkInSitu cmp_3sm_G .masculine true
+/-- A fronted focus, its PAC in the TAM `pacTAM`. -/
+def mkExSitu (tam pacTAM : TAM) (cell : Bundle) (g : Option Gender) (hasStab : Bool := true) :
+    FocusConfig :=
+  ⟨tam, pacTAM, cell, .exSitu, g, hasStab⟩
 
-/-- An ill-licensed ex-situ configuration with the General completive,
-built directly to show `Licensed` has bite. -/
-def exSitu_with_genCmp : FocusConfig :=
-  ⟨cmp_3sm_G, .exSitu, .masculine, true, false⟩
-
-/-- The licensed focus-configuration registry used downstream;
-`exSitu_with_genCmp` is deliberately excluded. -/
-def focusConfigs : List FocusConfig := [exSitu_fem_relCmp, inSitu_any]
-
-/-! ### Licensing and agreement -/
-
-/-- *cē* appears exactly with feminine-singular focus. -/
-theorem stabilizerFor_eq_cee_iff (g : Gender) (sg : Bool) :
-    stabilizerFor g sg = .cee ↔ g = .feminine ∧ sg = true := by
-  cases g <;> cases sg <;> simp [stabilizerFor]
-
-theorem all_focusConfigs_licensed : ∀ c ∈ focusConfigs, c.Licensed := by decide
-
-theorem exSitu_with_genCmp_not_licensed : ¬ exSitu_with_genCmp.Licensed := by
+/-- *Audù nē ya tàfi kā̀suwā* 'It is Audu who went to the market': the fronted subject takes the
+preterite *ya* for the completive. -/
+example :
+    let c := mkExSitu .completive .preterite (genderedSingular .third .masculine) (some .masculine)
+    c.Licensed ∧ c.pac = some "ya" ∧ c.stab? = some ne := by
   decide
 
-/-- The feminine-singular ex-situ example surfaces *cē*. -/
-theorem exSitu_fem_picks_cee : exSitu_fem_relCmp.stab? = some .cee := rfl
+/-- The completive does not occur after a fronted focus. -/
+example :
+    ¬ (mkExSitu .completive .completive (genderedSingular .third .masculine)
+      (some .masculine)).Licensed := by
+  decide
 
-/-! ### Stabilizer tone -/
+/-- *Audù yaa sàyi zoobèe ne* 'Audu bought a RING': the object focus stays in place, the TAM keeps
+its general form, and the stabilizer ends the clause. -/
+example :
+    let c := mkInSitu .completive (genderedSingular .third .masculine) (some .masculine) true
+    c.Licensed ∧ c.pac = some "yā" ∧ c.stab? = some ne := by
+  decide
 
-/-- Surface tone of the stabilizer after a host whose final TBU carries
-the given tone: polar, i.e. the opposite of the host ([newman-2000]
-§66.1). -/
-def Stabilizer.toneAfter (_ : Stabilizer) (host : TRN) : TRN :=
-  polarOf host
-
-/-- The stabilizer's surface tone is `Hausa.polarOf` of the host tone —
-the same autosegmental operation as the genitive linker *-n*, not a
-separate stipulation. -/
-theorem stabilizer_tone_is_polar (s : Stabilizer) (host : TRN) :
-    s.toneAfter host = polarOf host := rfl
-
-/-- Two applications of the stabilizer-tone map restore the host tone on
-the H/L sublattice. Direct corollary of `polarOf_involutive_on_HL`. -/
-theorem stabilizer_toneAfter_involutive (s : Stabilizer) (h : TRN)
-    (hh : h ∈ ([.H, .L] : List TRN)) :
-    polarOf (s.toneAfter h) = h :=
-  polarOf_involutive_on_HL h hh
+/-- *Hàdīzà cē ta ci lambā̀* 'It was Hadiza who won the prize': the stabilizer agrees with the
+feminine focus. -/
+example :
+    (mkExSitu .completive .preterite (genderedSingular .third .feminine)
+      (some .feminine)).stab? = some ce := by
+  decide
 
 end Hausa

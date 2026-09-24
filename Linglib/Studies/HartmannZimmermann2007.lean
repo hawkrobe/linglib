@@ -31,7 +31,12 @@ The §1.2 control taxonomy of uses and its factor-through theorems live in
 context rather than tagged. Subject foci in TAMs lacking a Relative form (future, habitual,
 subjunctive) are syntactically and morphologically unmarked, which the paper analyses as
 string-vacuous fronting, so the licensing predicate bans in-situ subjects unconditionally and the
-subjunctive subject focus is licensed yet reflex-free. The §3.3 corpus tendencies stay in prose:
+future subject focus of (8) is licensed yet reflex-free. The paper counts the subjunctive with the
+future and the habitual, but [newman-2000] excludes it from Rel environments, and the fragment's
+licensing, which is his, rejects a fronted subjunctive (`not_licensed_exSitu_subjunctive`). Which
+TAMs show Relative morphology is not stipulated: a licensed fronted focus changes the TAM exactly
+when the TAM does not occur in Rel environments (`Hausa.FocusConfig.pacTAM_ne_iff`), the
+completive and continuous of the paper's data. The §3.3 corpus tendencies stay in prose:
 answers to *wh*-questions are mostly in situ (99 against 25) and selective, corrective and
 contrastive foci mostly ex situ (154 against 12), but no use is categorically excluded from
 either position, and only that categorical claim is a theorem. Locators follow the authors'
@@ -158,50 +163,58 @@ theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
 Each cell's pragmatic type is *computed* from its controlling context:
 the constructors take a `Focus.Antecedent`, not a tag. -/
 
-def mkExSituUtt (pac : PAC) (g : Gender) (sg hasStab : Bool)
-    (h : pac.tam.HasRelativeForm → pac.mode = .relative)
-    {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject) :
-    FocusUtterance :=
-  ⟨mkExSitu pac g sg h hasStab, ctl.use, foc⟩
+def mkExSituUtt (tam pacTAM : TAM) (cell : Agreement.Bundle) (g : Gender) (hasStab : Bool)
+    {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject) : FocusUtterance :=
+  ⟨mkExSitu tam pacTAM cell (some g) hasStab, ctl.use, foc⟩
 
-def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
+def mkInSituUtt (tam : TAM) (cell : Agreement.Bundle) (g : Gender)
     {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject)
-    (hasStab : Bool := false) :
-    FocusUtterance :=
-  ⟨mkInSitu pac g sg hasStab, ctl.use, foc⟩
+    (hasStab : Bool := false) : FocusUtterance :=
+  ⟨mkInSitu tam cell (some g) hasStab, ctl.use, foc⟩
+
+/-- The first person singular PAC cell. -/
+def s1 : Agreement.Bundle := .pn .first .singular
+
+/-- The third person masculine singular PAC cell. -/
+def s3m : Agreement.Bundle := genderedSingular .third .masculine
+
+/-- The third person feminine singular PAC cell. -/
+def s3f : Agreement.Bundle := genderedSingular .third .feminine
+
+/-- The impersonal PAC cell. -/
+def p4 : Agreement.Bundle := .pn .zero .plural
 
 /-- Ex-situ new-information focus ((22), `Examples.ex22`). -/
 def exSitu_newInfo : FocusUtterance :=
-  mkExSituUtt cont_3sf_R .masculine true true (fun _ ↦ rfl) (ctx .newInfo)
+  mkExSituUtt .continuous .relContinuous1 s3f .masculine true (ctx .newInfo)
 
 /-- Ex-situ corrective focus on a feminine subject ((24),
 `Examples.ex24`). -/
 def exSitu_corrective : FocusUtterance :=
-  mkExSituUtt cmp_3sf_R .feminine true true (fun _ ↦ rfl) (ctx .corrective) .subject
+  mkExSituUtt .completive .preterite s3f .feminine true (ctx .corrective) .subject
 
 /-- Ex-situ selective focus, no stabilizer ((29), `Examples.ex29`). -/
 def exSitu_selective : FocusUtterance :=
-  mkExSituUtt cont_1sg_R .masculine true false (fun _ ↦ rfl) (ctx .selective)
+  mkExSituUtt .continuous .relContinuous1 s1 .masculine false (ctx .selective)
 
-/-- Ex-situ contrastive focus, no stabilizer ((27), `Examples.ex27`);
-the paper's 4sg impersonal *akèe* is approximated with the 3sg.M
-Relative continuous. -/
+/-- Ex-situ contrastive focus, no stabilizer, with the impersonal *akèe* ((27),
+`Examples.ex27`). -/
 def exSitu_contrastive : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true false (fun _ ↦ rfl) (ctx .contrastive)
+  mkExSituUtt .continuous .relContinuous1 p4 .masculine false (ctx .contrastive)
 
 /-- In-situ new-information focus ((23), `Examples.ex23`). -/
-def inSitu_newInfo : FocusUtterance := mkInSituUtt cmp_1sg_G .masculine true (ctx .newInfo)
+def inSitu_newInfo : FocusUtterance := mkInSituUtt .completive s1 .masculine (ctx .newInfo)
 
 /-- In-situ corrective focus with sentence-final *nèe* ((25),
 `Examples.ex25`). -/
 def inSitu_corrective : FocusUtterance :=
-  mkInSituUtt fut_1sg .masculine true (ctx .corrective) (hasStab := true)
+  mkInSituUtt .future s1 .masculine (ctx .corrective) (hasStab := true)
 
 /-- In-situ selective focus ((30), `Examples.ex30`). -/
-def inSitu_selective : FocusUtterance := mkInSituUtt fut_1sg .masculine true (ctx .selective)
+def inSitu_selective : FocusUtterance := mkInSituUtt .future s1 .masculine (ctx .selective)
 
 /-- In-situ contrastive focus ((26), `Examples.ex26`). -/
-def inSitu_contrastive : FocusUtterance := mkInSituUtt fut_1sg .masculine true (ctx .contrastive)
+def inSitu_contrastive : FocusUtterance := mkInSituUtt .future s1 .masculine (ctx .contrastive)
 
 /-- The 8-cell matrix of §3.2: both strategies × all four pragmatic
 types. -/
@@ -248,37 +261,44 @@ theorem subject_focus_only_exSitu (u : FocusUtterance)
 
 /-- The starred in-situ subject focus ((17 A2), `Examples.ex17a2`). -/
 def starred_inSitu_subject : FocusUtterance :=
-  mkInSituUtt cont_3sm_G .masculine true (ctx .newInfo) .subject
+  mkInSituUtt .continuous s3m .masculine (ctx .newInfo) .subject
 
 theorem starred_inSitu_subject_not_IsHausaLicensed :
     ¬ starred_inSitu_subject.IsHausaLicensed := by decide
 
 /-- The grammatical ex-situ subject focus ((17 A1), `Examples.ex17a1`). -/
 def licensed_exSitu_subject : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true true (fun _ ↦ rfl) (ctx .newInfo) .subject
+  mkExSituUtt .continuous .relContinuous1 s3m .masculine true (ctx .newInfo) .subject
 
 theorem licensed_exSitu_subject_IsHausaLicensed :
     licensed_exSitu_subject.IsHausaLicensed := by decide
 
-/-- Subject focus in a TAM with no Relative form (the (8) pattern,
-`Examples.ex8`): string-vacuous fronting with no overt reflex — see
-`exSitu_subject_subjunctive_no_reflex`. -/
-def exSitu_subject_subjunctive : FocusUtterance :=
-  mkExSituUtt subj_3sm .masculine true false (by decide) (ctx .newInfo) .subject
+/-- Subject focus in the future, which occurs in Rel environments unchanged ((8),
+`Examples.ex8`): string-vacuous fronting with no overt reflex, see
+`exSitu_subject_future_no_reflex`. -/
+def exSitu_subject_future : FocusUtterance :=
+  mkExSituUtt .future .future s3m .masculine false (ctx .newInfo) .subject
 
-theorem exSitu_subject_subjunctive_IsHausaLicensed :
-    exSitu_subject_subjunctive.IsHausaLicensed := by decide
+theorem exSitu_subject_future_IsHausaLicensed :
+    exSitu_subject_future.IsHausaLicensed := by decide
+
+/-- No fronted subjunctive is licensed: the subjunctive has no Rel counterpart. -/
+theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle) (g : Option Gender)
+    (hs : Bool) : ¬ (mkExSitu .subjunctive t c g hs).Licensed :=
+  fun h ↦ by simpa [mkExSitu, TAM.relCounterparts] using h.2 rfl
 
 /-! ## Universalist Basic Focus Rule (§5, §6.2) -/
 
 /-- The overt reflexes of a focus utterance in the shared `Reflex` vocabulary: non-vacuous
-fronting (subjects front string-vacuously), Relative-form morphology, and the stabilizer. -/
+fronting (subjects front string-vacuously), the Rel form of the PAC where fronting changes the
+TAM, and the stabilizer. -/
 def FocusUtterance.reflexes (u : FocusUtterance) : Finset (Reflex Focused) :=
   (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu then {.displacement u.focused}
     else ∅) ∪
-  (if u.cfg.pac.mode = .relative then {.morpheme u.focused [.free u.cfg.pac.form]} else ∅) ∪
+  (if u.cfg.pacTAM ≠ u.cfg.tam then {.morpheme u.focused (u.cfg.pac.toList.map .free)}
+    else ∅) ∪
   (if u.cfg.hasStab then
-    {.morpheme u.focused [.free (Hausa.stabilizerFor u.cfg.focusG u.cfg.focusSG).form]}
+    {.morpheme u.focused [.free (stabilizer u.cfg.focusGender).form]}
   else ∅)
 
 /-- A morphosyntactic reflex of focus: some reflex outside the phonological channel. -/
@@ -300,9 +320,9 @@ reflex either. -/
 theorem hausa_falsifies_UniversalBFR : ¬ UniversalBFR :=
   fun h ↦ absurd (h inSitu_newInfo (by decide)) (by decide)
 
-/-- The subject-side counterexample (the (8) pattern). -/
-theorem exSitu_subject_subjunctive_no_reflex :
-    ¬ exSitu_subject_subjunctive.HasMorphosyntacticReflex := by decide
+/-- The subject-side counterexample, (8). -/
+theorem exSitu_subject_future_no_reflex :
+    ¬ exSitu_subject_future.HasMorphosyntacticReflex := by decide
 
 /-- Every Hausa focus reflex is morphosyntactic, so a morphosyntactic reflex is just an overt
 one. -/
@@ -322,16 +342,17 @@ theorem hausa_refutes_perceptibility :
     ((hasMorphosyntacticReflex_iff inSitu_newInfo).mpr (h ⟨inSitu_newInfo, by decide⟩))
     (by decide)
 
-/-! ## Polar tone of *nē/cē* (§2.1)
+/-! ## Polar tone of *nē/cē* (§2.1) -/
 
-`Stabilizer.toneAfter` is `Hausa.polarOf`; the minimal pair below is
-(3a, 3b). -/
+/-- The rows' tone labels. -/
+def toneTable : List (String × Tone.TRN) := [("H", .H), ("L", .L)]
 
-/-- (3a): host *Kandè* ends low, the stabilizer surfaces high. -/
-example : Stabilizer.cee.toneAfter .L = .H := rfl
-
-/-- (3b): host *Kiifii* ends high, the stabilizer surfaces low. -/
-example : Stabilizer.nee.toneAfter .H = .L := rfl
+/-- In (3a) and (3b) the stabilizer's tone is polar to the host's final tone: high after
+*Kandè*, low after *Kiifii*. -/
+theorem stab_tone_polar :
+    ∀ e ∈ [Examples.ex3a, Examples.ex3b],
+      e.parse? "stab_tone" toneTable = (e.parse? "host_tone" toneTable).map polarOf := by
+  decide
 
 /-! ## Data linkage
 
@@ -354,9 +375,8 @@ def focusedLabel : Focused → String
 
 def stabLabel (c : FocusConfig) : String :=
   match c.stab? with
-  | some .nee => "nee"
-  | some .cee => "cee"
-  | none      => "none"
+  | some p => if p = ce then "cee" else "nee"
+  | none => "none"
 
 def cellRows :
     List (FocusUtterance × Data.Examples.LinguisticExample) :=
@@ -374,6 +394,34 @@ theorem cells_match_rows :
       p.2.feature? "pragType" = some (pragLabel p.1.pragType) ∧
       p.2.feature? "focused" = some (focusedLabel p.1.focused) ∧
       p.2.feature? "stabilizer" = some (stabLabel p.1.cfg) := by decide
+
+/-- (8) carries no pragmatic tag; its other tags agree with its cell. -/
+theorem ex8_matches_row :
+    Examples.ex8.feature? "strategy" = some (strategyLabel exSitu_subject_future.cfg.strategy) ∧
+      Examples.ex8.feature? "focused" = some (focusedLabel exSitu_subject_future.focused) ∧
+      Examples.ex8.feature? "stabilizer" = some (stabLabel exSitu_subject_future.cfg) := by
+  decide
+
+def tamLabel : TAM → String
+  | .completive => "completive"
+  | .preterite => "preterite"
+  | .continuous => "continuous"
+  | .relContinuous1 => "relContinuous1"
+  | .relContinuous2 => "relContinuous2"
+  | .future => "future"
+  | .allative => "allative"
+  | .potential => "potential"
+  | .rhetorical => "rhetorical"
+  | .habitual => "habitual"
+  | .subjunctive => "subjunctive"
+
+/-- The rows that tag a TAM tag the clause's TAM, not its PAC's: (17 A1) is continuous with a
+Rel-continuous PAC. -/
+theorem tam_matches_rows :
+    ∀ p ∈ [(exSitu_subject_future, Examples.ex8), (licensed_exSitu_subject, Examples.ex17a1),
+      (starred_inSitu_subject, Examples.ex17a2)],
+      p.2.feature? "tam" = some (tamLabel p.1.cfg.tam) := by
+  decide
 
 /-- The row the paper stars is the cell the licensing predicate
 rejects. -/

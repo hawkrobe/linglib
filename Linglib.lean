@@ -771,7 +771,6 @@ import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.Gender
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
-import Linglib.Fragments.Hausa.VerbGrades
 import Linglib.Fragments.Hawaiian.Possession
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Hebrew.Relativization

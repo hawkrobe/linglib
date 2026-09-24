@@ -3,134 +3,87 @@ module
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
-# Hausa Gender Fragment
-[newman-2000] [corbett-1991] [kramer-2020]
+# Hausa gender
 
-Hausa (Chadic, Afroasiatic) has a two-gender system: masculine and
-feminine, with -ā as a frequent (but neither necessary nor sufficient)
-correlate of feminine gender.
+Hausa has two genders, masculine and feminine, operative only in the singular: *yārò* 'boy' is
+masculine and *yārinyā̀* 'girl' feminine, while the plural *yârā* 'children' has no gender. Nouns
+for people and large animals take the gender of the referent's sex; for the rest gender is
+lexically specific, *turmī* 'mortar' masculine and *wuƙā* 'knife' feminine.
 
-## Theory-neutral data layer
+Most native feminine nouns end in *-ā*, as *rìgā* 'gown', but the ending does not assign gender.
+Some hundred feminines end otherwise, among them the old native word *màcè* 'woman', and over 250
+of some 3,000 masculine nouns end in *-ā*: native stems such as *kadā̀* 'crocodile' and *ùbā*
+'father', loanwords, and erstwhile plurals such as *gidā* 'house'. The correlation is historical:
+feminine nouns acquired the ending by overt characterization, the addition of the feminine suffix
+{-ā} to words that were already feminine ([newman-2000]).
 
-Each entry is a `GenderedNoun` with two empirical fields:
+## Main definitions
 
-- `gender : Gender` — the agreement-trigger fact
-  (which gender determiners, possessive linkers, TAM clitics, and
-  pronouns realize when referring to this noun). Verified against
-  [newman-2000] Ch. 31 (pp. 201–215).
-- `naturalGender : Option Gender` — the gender of the referents, where
-  the noun has one (including lexicalized pairs like *kāzā* 'hen' ~
-  *zàkarā* 'rooster').
-  Newman/Corbett/Kramer all agree on this empirical field.
+* `Hausa.Noun` — a noun with its gender and the sex of its referents where it has one
+* `Hausa.Noun.EndsInAa` — the noun ends in *-ā*
+* `Hausa.allNouns` — the nouns
 
-These two fields suffice for the *-ā* diagnostics of [kramer-2020]
-(`Studies/Kramer2020.lean`) and for Newman-style and Corbett-style
-analyses that don't go through DM at all.
+## References
 
-## Empirical baseline ([newman-2000] Ch. 31)
-
-- p. 201: lexical-gender lists for each entry verified.
-- p. 208 footnote [i]: *mācè* 'woman' is feminine but does NOT end in
-  *-ā* — Newman's canonical exception, derived from *mātā* via a
-  process that lost -ā.
-- p. 209: 250+ ā-final masculines out of ~3000, partitioned into
-  (a) Native (e.g. *kadā* 'crocodile', *ùbā* 'father', *zàkarā* 'rooster'),
-  (b) Loanwords, (c) Erstwhile plurals (e.g. *gidā* 'house', *karā*
-  'cornstalk', *ruwā* 'water'). Both *kadā* and *gidā* in this Fragment
-  are masculine but in distinct historical classes.
-- p. 213: Newman's "overt characterization" theory — synchronically
-  the {-ā} suffix is a morphological feminine marker (not a phonological
-  rule); diachronically, feminine nouns acquired -ā via overt
-  characterization ([newman-1979a]).
-
-## Theoretical framings (deferred to Studies/)
-
-[corbett-1991] §3.2.2 (pp. 52–53): synchronic phonological
-assignment with exceptions. Diachronic origin in §4.5 (pp. 102–103).
-
-[kramer-2020] §3.3.1 (pp. 60–61): morphophonological *realization*
-of [+FEM] on n, NOT phonological *assignment*. Aligns with Newman's
-synchronic view.
-
-The cross-framework theorems live in `Studies/Kramer2020.lean`.
-Spanish/Russian/German Fragment Gender files still bake in DM `Categorizer.Head`
-fields; Hausa is the pilot for theory-neutral Fragment-layer encoding.
+* [newman-2000]
 -/
 
 @[expose] public section
 
 namespace Hausa
 
-
-/-- A Hausa noun: its gender, the agreement it takes on determiners, pronouns and TAM
-    clitics ([newman-2000] Ch. 31), and the gender of its referents where it has one
-    (humans, paired animals like *kāzā/zàkarā*). -/
+/-- A Hausa noun, with the gender its agreement shows and the gender of its referents where it
+has one. -/
 abbrev Noun := GenderedNoun Gender
 
 namespace Noun
 
-/-- The *-ā* suffix diagnostic. Tone-tolerant: a trailing combining
-    diacritic (e.g. low-tone grave on *kadā̀*) does not block the match,
-    so the predicate captures the linguistic notion "ends in long *-ā*"
-    rather than the orthographic notion "last codepoint is U+0101". We
-    test membership in the last two characters of the surface form's
-    `toList`; this admits an optional trailing combining mark without
-    risking false positives for our entries (`mācè`, `littāfī`, `yārō`,
-    `mùtûm` all correctly fail). We work on the character list rather
-    than `String.endsWith` because the latter does not reduce in the
-    kernel. -/
+/-- The noun ends in *-ā*, whatever its final tone: the long vowel is one of the last two
+characters, the second being a tone mark. -/
 abbrev EndsInAa (n : Noun) : Prop :=
   'ā' ∈ n.form.toList.reverse.take 2
 
 end Noun
 
--- Lexical entries. Transcriptions follow [newman-2000] Ch. 31
--- (macron = long vowel, grave = low tone, circumflex = falling tone,
--- ƙ = ejective velar). Each entry is verified against Newman's gender
--- lists on pp. 201, 208–209, 213.
+/-- *yārinyā̀* 'girl'. -/
+def yarinya : Noun := ⟨⟨"yārinyā̀", "girl"⟩, .feminine, some .feminine⟩
 
-def yarinya : Noun := ⟨⟨"yārinyā", "girl"⟩, .feminine, some .feminine⟩
-/-- *mācè* 'woman' — feminine despite NOT ending in *-ā*.
-    [newman-2000] p. 208 footnote [i] explicitly flags *mācè* as
-    the canonical exception: feminine but ends in -è. Newman: *mācè*
-    is historically a derived form ('female') from *mātā* 'woman/wife'
-    that lost -ā; only later became a common noun. -/
-def mace : Noun := ⟨⟨"mācè", "woman"⟩, .feminine, some .feminine⟩
-/-- *kāzā* 'hen' — natural feminine. [newman-2000] p. 201 lists
-    *kāzā* in the natural-gender feminine pair with *zàkarā* 'rooster'.
-    The distinction is lexicalized (separate words for hen/rooster), so
-    natural per Newman + per Kramer's "honoris causa" criterion
-    ([kramer-2020] p. 57). -/
-def kaza : Noun := ⟨⟨"kāzā", "hen"⟩, .feminine, some .feminine⟩
-def riga : Noun := ⟨⟨"rīgā", "gown"⟩, .feminine, none⟩
-def yaro : Noun := ⟨⟨"yārō", "boy"⟩, .masculine, some .masculine⟩
+/-- *màcè* 'woman', a basic feminine word not in *-ā*, perhaps once a derived form meaning
+'female'. -/
+def mace : Noun := ⟨⟨"màcè", "woman"⟩, .feminine, some .feminine⟩
+
+/-- *kā̀zā* 'hen', opposite *zàkarā̀* 'cock'. -/
+def kaza : Noun := ⟨⟨"kā̀zā", "hen"⟩, .feminine, some .feminine⟩
+
+/-- *rìgā* 'gown'. -/
+def riga : Noun := ⟨⟨"rìgā", "gown"⟩, .feminine, none⟩
+
+/-- *yārò* 'boy'. -/
+def yaro : Noun := ⟨⟨"yārò", "boy"⟩, .masculine, some .masculine⟩
+
+/-- *mùtûm* 'man'. -/
 def mutum : Noun := ⟨⟨"mùtûm", "man"⟩, .masculine, some .masculine⟩
-def littafi : Noun := ⟨⟨"littāfī", "book"⟩, .masculine, none⟩
-/-- *gidā* 'house' — masculine despite ending in *-ā*.
-    [newman-2000] p. 209 class (c) "Erstwhile plurals" (alongside
-    *karā* 'cornstalk', *ƙudā* 'housefly', *ruwā* 'water'): historically
-    plural forms now used as singulars. Distinct historical class from
-    the native ā-final masculines (kadā, ubā, zàkarā). -/
+
+/-- *turmī* 'mortar'. -/
+def turmi : Noun := ⟨⟨"turmī", "mortar"⟩, .masculine, none⟩
+
+/-- *gidā* 'house', a masculine in *-ā* that was once a plural. -/
 def gida : Noun := ⟨⟨"gidā", "house"⟩, .masculine, none⟩
-def kasaLand : Noun := ⟨⟨"ƙasā", "land"⟩, .feminine, none⟩
-def rana : Noun := ⟨⟨"rānā", "sun/day"⟩, .feminine, none⟩
-/-- *kadā̀* 'crocodile' — masculine despite ending in *-ā*.
-    [newman-2000] p. 209 class (a) "Native" ā-final masculines.
-    [kramer-2020] ex. 22e (p. 55) cites this from Newman as the
-    canonical counterexample to phonological assignment. -/
+
+/-- *wuƙā* 'knife'. -/
+def wuka : Noun := ⟨⟨"wuƙā", "knife"⟩, .feminine, none⟩
+
+/-- *rānā* 'sun'. -/
+def rana : Noun := ⟨⟨"rānā", "sun"⟩, .feminine, none⟩
+
+/-- *kadā̀* 'crocodile', a native masculine in *-ā*. -/
 def kada : Noun := ⟨⟨"kadā̀", "crocodile"⟩, .masculine, none⟩
-/-- *ùbā* 'father' — natural masculine ending in *-ā*.
-    [newman-2000] p. 209 class (a) "Native" ā-final masculines.
-    [kramer-2015] Ch. 1 cites this as one of two introductory
-    Hausa examples (alongside *sāfīyā* 'morning.f') from
-    [newman-2000] p. 201. Doubles as a natural-gender masculine
-    AND a masculine -ā witness — refutes phonological assignment from a
-    different angle than *kadā̀* (which is non-natural): even
-    semantically male-denoting nouns in Hausa can end in -ā. -/
+
+/-- *ùbā* 'father', a native masculine in *-ā*. -/
 def uba : Noun := ⟨⟨"ùbā", "father"⟩, .masculine, some .masculine⟩
 
+/-- The nouns. -/
 def allNouns : List Noun :=
-  [yarinya, mace, kaza, riga, yaro, mutum, littafi, gida,
-   kasaLand, rana, kada, uba]
+  [yarinya, mace, kaza, riga, yaro, mutum, turmi, gida, wuka, rana, kada, uba]
 
 end Hausa
