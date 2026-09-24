@@ -680,7 +680,6 @@ import Linglib.Fragments.CoastalMarind.Gender
 import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Dargwa.Agreement
 import Linglib.Fragments.Dargwa.Case
-import Linglib.Fragments.Dargwa.ComplexPredicates
 import Linglib.Fragments.Dargwa.Coordination
 import Linglib.Fragments.Dargwa.Locatives
 import Linglib.Fragments.Drubea.Prosody
