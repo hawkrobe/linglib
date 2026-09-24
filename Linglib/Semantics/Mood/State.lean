@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Setoid.Basic
 public import Linglib.Discourse.QUD.Issue
 public import Linglib.Semantics.Mood.Defs
-public import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
+public import Linglib.Semantics.Dynamic.Expectation
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Semantics.Questions.Partition.Inquisitive
 
@@ -76,7 +76,7 @@ Phenomena that are not partitions, such as mention-some readings and intermediat
 
 namespace Mood
 
-open UpdateSemantics.Default
+open DynamicSemantics
 
 /-- A mood state is an `ExpState` enriched with an inquiry partition recording the open question,
 where `⊤` stands for no question. -/

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.UpdateSemantics.Default
+public import Linglib.Semantics.Dynamic.Expectation
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
@@ -9,7 +9,7 @@ public import Mathlib.Data.Fintype.Powerset
 This file formalizes the paper of Veltman, which treats *normally φ* as an update of an agent's
 expectations rather than a sentence about them. The framework of section 1, acceptance as a fixed
 point of the update, the three notions of validity and additivity, with Propositions 1.2 and 1.3,
-is `Semantics/Dynamic/UpdateSemantics/Validity.lean`.
+is `Semantics/Dynamic/Validity.lean`.
 
 Section 2 studies *might* on sets of worlds, whose updates of Definition 2.3 are `CCP.up`,
 `CCP.neg` and `CCP.might`. The test *might φ* satisfies Strengthening, Idempotence and Monotony,
@@ -21,7 +21,7 @@ fragment without *might* validity is classical, `valid₁_up_iff`.
 
 A state of section 3 pairs an expectation pattern, a preorder on worlds, with the agent's knowledge
 of the facts; *normally φ* refines the pattern in favour of the `φ`-worlds and *presumably φ* tests
-whether `φ` holds in the optimal worlds. That system is `UpdateSemantics.Default`, and Examples
+whether `φ` holds in the optimal worlds. That system is `DynamicSemantics.ExpState`, and Examples
 3.10 are stated here as verdicts of validity₁ on the paper's four worlds, together with the
 rain-or-snow contrast by which *normally (p ∨ q)* is stronger than *normally p*, `rain_or_snow` and
 `normally_not_normally_or`. Rules and facts are additive, so a rule that follows under validity₁
@@ -50,14 +50,14 @@ the near-validity of Strengthening with a Consequent and Disjunction of Antecede
 
 ## Implementation notes
 
-The update with *normally φ* of `UpdateSemantics.Default` does not crash, so the second clause of
+The update with *normally φ* of `DynamicSemantics.ExpState` does not crash, so the second clause of
 Example 3.10(i) is stated as the failure of the acceptability condition, `ex310_conflict`.
 
 Every frame an agent reaches from the minimal state is the total frame refined by the rules it has
 accepted, so a frame of section 4 is presented by its list of rules, `Frame.ofRules`, which makes
 coherence, normality, applicability and the optimal worlds decidable and lets each verdict be
 checked by `decide` over the atoms `p`, `q` and `r`. Acceptance then compares the facts and the
-frames of two states rather than their presentations, so `Valid` is `UpdateSemantics.Valid₁` read
+frames of two states rather than their presentations, so `Valid` is `DynamicSemantics.Valid₁` read
 up to presentation. The comparison with the default logics of Asher and Morreau in section 5 is
 discussed in the paper and not formalized.
 
@@ -72,13 +72,13 @@ discussed in the paper and not formalized.
 
 namespace Veltman1996
 
-open UpdateSemantics.Default
+open DynamicSemantics DynamicSemantics.ExpState
 
 /-! ### Might (§2) -/
 
 section Might
 
-open DynamicSemantics UpdateSemantics Function
+open Function
 
 variable {W : Type*} {φ : CCP W} {c d : Set W}
 
@@ -179,7 +179,7 @@ private theorem mem_foldl_up {cs : List (Set W)} {σ : Set W} {w : W} :
 at which all the premises hold (§2). -/
 theorem valid₁_up_iff {cs : List (Set W)} :
     Valid₁ (cs.map CCP.up) (CCP.up d) ↔ ∀ w, (∀ c ∈ cs, w ∈ c) → w ∈ d := by
-  rw [Valid₁, (isAdditive_up d).isFixedPt_iff]
+  rw [Valid₁, (CCP.isAdditive_up d).isFixedPt_iff]
   exact ⟨fun h w hw ↦ (h (mem_foldl_up.2 ⟨trivial, hw⟩)).2,
     fun h w hw ↦ ⟨trivial, h w (mem_foldl_up.1 hw).2⟩⟩
 
@@ -217,7 +217,7 @@ def σ₀ : ExpState PQWorld := ExpState.init
 
 section Validity
 
-open UpdateSemantics Function
+open Function
 open ExpState (promote assert)
 
 /-- Rules can have exceptions, since learning `¬p` after *normally p* does not crash (3.10(i)). -/

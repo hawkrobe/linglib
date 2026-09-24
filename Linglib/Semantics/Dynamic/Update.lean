@@ -281,10 +281,6 @@ def might (φ : CCP S) : CCP S := guard (λ s => (φ s).Nonempty)
 /-- `must φ` passes iff `φ` returns its input unchanged ([veltman-1996]). -/
 def must (φ : CCP S) : CCP S := guard (λ s => φ s = s)
 
-/-- Acceptance consequence: every `φ`-output is a fixed point of `ψ`
-([veltman-1996]'s acceptance validity; [beaver-2001]'s D45). -/
-def entails (φ ψ : CCP S) : Prop := ∀ s : Set S, ψ (φ s) = φ s
-
 /-! ### Classification -/
 
 /-- A transformer is *eliminative* if it never adds possibilities. -/
@@ -543,12 +539,6 @@ relation is classical entailment on contents. -/
 theorem dynamicEntailsOf_iff_content_subset (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) :
     dynamicEntailsOf sat ψ₁ ψ₂ ↔ contentOf sat ψ₁ ⊆ contentOf sat ψ₂ :=
   ⟨λ h _ hp => h Set.univ ⟨trivial, hp⟩, λ h _ => Set.inter_subset_right.trans h⟩
-
-/-- Dynamic entailment is acceptance consequence of the induced updates. -/
-theorem dynamicEntailsOf_iff_entails (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) :
-    dynamicEntailsOf sat ψ₁ ψ₂ ↔
-      CCP.entails (CCP.updateFromSat sat ψ₁) (CCP.updateFromSat sat ψ₂) :=
-  forall_congr' fun s => support_iff_update_eq sat ψ₂ (CCP.updateFromSat sat ψ₁ s)
 
 /-- Dynamic entailment is reflexive. -/
 theorem dynamicEntails_refl (sat : S → φ → Prop) (ψ : φ) :

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
+public import Linglib.Semantics.Dynamic.Expectation
 public import Linglib.Semantics.Mood.State
 public import Linglib.Semantics.Mood.Defs
 
@@ -53,7 +53,7 @@ is restricted to declarative complementation.
 
 namespace Mood
 
-open UpdateSemantics.Default
+open DynamicSemantics
 open HasTarget (target)
 
 variable {W : Type*}
@@ -109,7 +109,7 @@ def VerbalOp.interp (m : VerbalOp) : State W → (W → Prop) → Prop :=
 /-- Total information over `Bool`, ordered so that `false`, the unique `sepProp`-world, is the
 unique optimal world. -/
 def sepState : ExpState Bool :=
-  ⟨Set.univ, crit State.sepProp⟩
+  ⟨Set.univ, ExpState.crit State.sepProp⟩
 
 /-- `sepState` with trivial inquiry. -/
 def sepStateTriv : State Bool := State.ofExpState sepState

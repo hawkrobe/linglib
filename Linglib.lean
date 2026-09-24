@@ -1312,9 +1312,6 @@ import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Dynamic.State
 import Linglib.Semantics.Dynamic.Transition
 import Linglib.Semantics.Dynamic.Update
-import Linglib.Semantics.Dynamic.UpdateSemantics.Bilateral
-import Linglib.Semantics.Dynamic.UpdateSemantics.Default
-import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 import Linglib.Logic.Natural.Additivity
 import Linglib.Logic.Natural.Basic
 import Linglib.Logic.Natural.Completeness
