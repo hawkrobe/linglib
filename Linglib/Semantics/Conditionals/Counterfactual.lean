@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Supervaluation
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Core.Data.Trivalent
 public import Linglib.Logic.Duality
@@ -10,17 +9,20 @@ public import Linglib.Semantics.Presupposition.Defs
 # Counterfactual conditionals: three theories
 
 This file defines three theories of counterfactuals, all stated over the closest
-antecedent-worlds of a similarity ordering. On the universal theory *if p, would q* is true when
-every closest `p`-world is a `q`-world. On the selectional theory a selection function picks one
-closest `p`-world and ties are resolved by supervaluation, so the counterfactual is true when
-every closest `p`-world is a `q`-world, false when none is, and indeterminate otherwise. On the
-homogeneity theory the universal assertion carries the presupposition that the closest
-`p`-worlds agree on `q`. The three agree whenever the closest antecedent-worlds agree on the
-consequent, and part under embedding.
+antecedent-worlds of a similarity ordering. On the universal theory of Lewis and Kratzer *if p,
+would q* is true when every closest `p`-world is a `q`-world. On the selectional theory of
+Stalnaker a selection function picks one closest `p`-world and ties are resolved by
+supervaluation over the completions of the ordering, so the counterfactual is true when every
+closest `p`-world is a `q`-world, false when none is, and indeterminate otherwise. On the
+homogeneity theory of von Fintel and Križ the universal assertion carries the presupposition
+that the closest `p`-worlds agree on `q`. The three agree whenever the closest antecedent-worlds
+agree on the consequent, and part under embedding.
 
 ## Main definitions
 
-* `Counterfactual.selectionalCounterfactual`: the selectional counterfactual.
+* `Counterfactual.selectionalCounterfactual`: the selectional counterfactual, super-truth over
+  the closest antecedent-worlds.
+* `Counterfactual.superCounterfactual`: Stalnaker's supervaluation over completions.
 * `Counterfactual.homogeneityCounterfactual`: the homogeneity counterfactual.
 * `Counterfactual.selectionalMight`: the selectional *might*.
 
@@ -28,8 +30,8 @@ consequent, and part under embedding.
 
 * `Counterfactual.eval_homogeneityCounterfactual`: unembedded, the homogeneity counterfactual
   evaluates to the selectional one.
-* `Counterfactual.selectionalCounterfactual_eq_true_iff_forall_compatible`: the selectional
-  counterfactual is the supervaluation over the completions of the ordering.
+* `Counterfactual.superCounterfactual_eq_selectionalCounterfactual`: on a finite, strongly
+  centered ordering the supervaluation over completions is the selectional counterfactual.
 
 ## References
 
@@ -41,7 +43,6 @@ consequent, and part under embedding.
 * [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
 * [K. von Fintel, *Bare Plurals, Bare Conditionals, and Only* (1997)][von-fintel-1997]
 * [M. Križ, *Aspects of Homogeneity in the Semantics of Natural Language* (2015)][kriz-2015]
-* [K. Fine, *Vagueness, Truth and Logic* (1975)][fine-1975]
 -/
 
 @[expose] public section
@@ -53,46 +54,7 @@ open Presupposition
 
 section Theories
 
-variable {W : Type*} [Fintype W] (ord : W → Preorder W)
-  [∀ w, DecidableRel (ord w).le] (p q r : Set W) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
-  [DecidablePred (· ∈ r)] (w : W)
-
-/-! ### The selectional theory -/
-
-/-- The selectional counterfactual, true when every closest `p`-world is a `q`-world, false when
-every one is a `qᶜ`-world, and indeterminate otherwise. -/
-def selectionalCounterfactual : Trivalent :=
-  if w ∈ closestImp ord p q then .true
-  else if w ∈ closestImp ord p qᶜ then .false
-  else .indet
-
-variable {ord p q w}
-
-theorem selectionalCounterfactual_eq_true_iff :
-    selectionalCounterfactual ord p q w = .true ↔ w ∈ closestImp ord p q := by
-  unfold selectionalCounterfactual; split_ifs <;> simp_all
-
-theorem selectionalCounterfactual_eq_false_iff :
-    selectionalCounterfactual ord p q w = .false ↔
-      w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
-  unfold selectionalCounterfactual; split_ifs <;> simp_all
-
-/-- The selectional counterfactual is super-truth (`Trivalent.dist`) over the closest worlds. -/
-theorem selectionalCounterfactual_eq_dist :
-    selectionalCounterfactual ord p q w =
-      Trivalent.dist ((ord w).minimals p).toFinset (· ∈ q) := by
-  unfold selectionalCounterfactual Trivalent.dist
-  simp only [mem_closestImp, Set.subset_def, Set.mem_toFinset, Set.mem_compl_iff]
-  split_ifs with h₁ h₂ h₃ <;> try rfl
-  all_goals first | exact absurd h₂ (by simpa using h₃) | simp_all
-
-variable (ord p q w)
-
-/-- The selectional disjunction of *if p, q* and *if p, not q* is never false. -/
-theorem cem_selectional :
-    selectionalCounterfactual ord p q w ⊔ selectionalCounterfactual ord p qᶜ w ≠ .false := by
-  simp only [selectionalCounterfactual, compl_compl]
-  split_ifs <;> simp_all (config := { decide := true })
+variable {W : Type*} (ord : W → Preorder W) (p q r : Set W) (w : W)
 
 /-! ### The homogeneity theory
 
@@ -100,21 +62,18 @@ The homogeneity counterfactual is a partial proposition. Unembedded, its three-v
 is the selectional counterfactual, and the two theories part only under embedding, where
 [ramotowska-marty-romoli-santorio-2025] test them. -/
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] in
 /-- The homogeneity counterfactual, which asserts that every closest `p`-world is a `q`-world and
 presupposes that the closest `p`-worlds agree on `q`. -/
 def homogeneityCounterfactual : PartialProp W where
   presup w := w ∈ closestImp ord p q ∨ w ∈ closestImp ord p qᶜ
   assertion w := w ∈ closestImp ord p q
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] in
 /-- The presupposition is symmetric in the consequent and its negation. -/
 theorem presup_homogeneityCounterfactual_compl :
     (homogeneityCounterfactual ord p qᶜ).presup w ↔
       (homogeneityCounterfactual ord p q).presup w := by
   simp only [homogeneityCounterfactual, compl_compl, or_comm]
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] in
 /-- Negating the consequent negates the assertion when the presupposition holds and some closest
 `p`-world exists. -/
 theorem assertion_homogeneityCounterfactual_compl
@@ -125,24 +84,66 @@ theorem assertion_homogeneityCounterfactual_compl
   obtain ⟨v, hv⟩ := h_nonvac
   refine ⟨fun hn hq ↦ hn hv (hq hv), fun hn ↦ h_presup.resolve_left hn⟩
 
+/-! ### The selectional theory
+
+The selectional counterfactual is super-truth over the closest antecedent-worlds, each of them
+one resolution of the selection function's tie. -/
+
+variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)]
+  [DecidablePred (· ∈ q)] [DecidablePred (· ∈ r)]
+
+/-- The selectional counterfactual, true when every closest `p`-world is a `q`-world, false when
+every one is a `qᶜ`-world, and indeterminate otherwise. -/
+def selectionalCounterfactual : Trivalent :=
+  Trivalent.dist ((ord w).minimals p).toFinset (· ∈ q)
+
+variable {ord p q w}
+
+theorem selectionalCounterfactual_eq_true_iff :
+    selectionalCounterfactual ord p q w = .true ↔ w ∈ closestImp ord p q := by
+  simp [selectionalCounterfactual, Trivalent.dist_eq_true_iff, Set.subset_def]
+
+theorem selectionalCounterfactual_eq_false_iff :
+    selectionalCounterfactual ord p q w = .false ↔
+      w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
+  simp only [selectionalCounterfactual, Trivalent.dist_eq_false_iff, Set.toFinset_nonempty,
+    Set.mem_toFinset, mem_closestImp, Set.subset_def, Set.mem_compl_iff]
+  exact ⟨fun ⟨⟨v, hv⟩, h⟩ ↦ ⟨fun h' ↦ h v hv (h' v hv), h⟩, fun ⟨hn, h⟩ ↦
+    ⟨Set.nonempty_iff_ne_empty.2 fun he ↦ hn fun v hv ↦ absurd hv (he ▸ Set.notMem_empty v), h⟩⟩
+
+theorem selectionalCounterfactual_eq_indet_iff :
+    selectionalCounterfactual ord p q w = .indet ↔
+      w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
+  simp [selectionalCounterfactual, Trivalent.dist_eq_indet_iff, Set.not_subset, and_comm]
+
+/-- With closest antecedent-worlds, negating the consequent negates the verdict. -/
+theorem selectionalCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
+    selectionalCounterfactual ord p qᶜ w = (selectionalCounterfactual ord p q w).neg := by
+  simpa [selectionalCounterfactual] using
+    Trivalent.dist_not_of_nonempty _ (· ∈ q) (by simpa using h)
+
+variable (ord p q w)
+
+/-- The selectional disjunction of *if p, q* and *if p, not q* is never false. -/
+theorem cem_selectional :
+    selectionalCounterfactual ord p q w ⊔ selectionalCounterfactual ord p qᶜ w ≠ .false := by
+  rcases ((ord w).minimals p).eq_empty_or_nonempty with h | h
+  · simp [selectionalCounterfactual, h]
+  · rw [selectionalCounterfactual_compl h]
+    cases selectionalCounterfactual ord p q w <;> decide
+
 /-- Unembedded, the homogeneity counterfactual evaluates to the selectional counterfactual. -/
 theorem eval_homogeneityCounterfactual :
     (homogeneityCounterfactual ord p q).eval w = selectionalCounterfactual ord p q w := by
-  by_cases h₁ : w ∈ closestImp ord p q <;> by_cases h₂ : w ∈ closestImp ord p qᶜ <;>
-    simp [PartialProp.eval, homogeneityCounterfactual, selectionalCounterfactual, h₁, h₂]
-
-/-! ### Supervaluation over the closest worlds
-
-The selectional counterfactual is supervaluation ([fine-1975]) over the closest worlds, each
-closest world being one resolution of the selection function's tie. -/
-
-open Semantics.Supervaluation (SpecSpace superTrue)
-
-/-- The selectional counterfactual is supervaluation over the closest worlds. -/
-theorem selectional_as_supervaluation
-    (hne : ((ord w).minimals p).toFinset.Nonempty) :
-    selectionalCounterfactual ord p q w = superTrue (· ∈ q) ⟨((ord w).minimals p).toFinset, hne⟩ :=
-  selectionalCounterfactual_eq_dist
+  by_cases h₁ : w ∈ closestImp ord p q <;> by_cases h₂ : w ∈ closestImp ord p qᶜ
+  · simp [PartialProp.eval, homogeneityCounterfactual, h₁,
+      selectionalCounterfactual_eq_true_iff.2 h₁]
+  · simp [PartialProp.eval, homogeneityCounterfactual, h₁,
+      selectionalCounterfactual_eq_true_iff.2 h₁]
+  · simp [PartialProp.eval, homogeneityCounterfactual, h₁, h₂,
+      selectionalCounterfactual_eq_false_iff.2 ⟨h₁, h₂⟩]
+  · simp [PartialProp.eval, homogeneityCounterfactual, h₁, h₂,
+      selectionalCounterfactual_eq_indet_iff.2 ⟨h₁, h₂⟩]
 
 /-! ### *Might* counterfactuals
 
@@ -195,16 +196,24 @@ end Theories
 
 [stalnaker-1981] supervaluates the [stalnaker-1968] selection conditional over the completions of
 a similarity ordering. A conditional is true when every completion makes it true, false when
-every one makes it false, and indeterminate otherwise, which for a single conditional on a
-finite, strongly centered ordering is the selectional counterfactual. The disjunction that
-`cem_selectional` shows is never false is weaker than Stalnaker's claim that Conditional
-Excluded Middle is true on every completion. -/
+every one makes it false, and indeterminate otherwise (`superCounterfactual`), which for a single
+conditional on a finite, strongly centered ordering is the selectional counterfactual. -/
 
 section Supervaluation
 
-variable {W : Type*} [Fintype W] {ord : W → Preorder W}
-  [∀ w, DecidableRel (ord w).le] {p q : Set W}
-  [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] {w : W}
+variable {W : Type*} (ord : W → Preorder W) (p q : Set W) (w : W)
+
+/-- The supervaluation of the selection conditional over the completions of a family of
+preorders, true when every compatible selection function makes *if p, q* true, false when every
+one makes it false, and indeterminate otherwise. -/
+noncomputable def superCounterfactual : Trivalent :=
+  open Classical in
+  if ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q then .true
+  else if ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q then .false
+  else .indet
+
+variable {ord p q w} [Fintype W] [∀ w, DecidableRel (ord w).le]
+  [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
 
 /-- The selectional counterfactual is true iff the selection conditional is true on every
 completion. -/
@@ -233,6 +242,15 @@ theorem selectionalCounterfactual_eq_false_iff_forall_compatible (hc : IsCentere
     rw [mem_selectionConditional]
     intro hp hq
     exact h s hs ((mem_selectionConditional_of_nonempty s hp).2 hq)
+
+/-- On a finite, strongly centered family of preorders the supervaluation over completions is
+the selectional counterfactual. -/
+theorem superCounterfactual_eq_selectionalCounterfactual (hc : IsCentered ord) :
+    superCounterfactual ord p q w = selectionalCounterfactual ord p q w := by
+  unfold superCounterfactual
+  rw [← selectionalCounterfactual_eq_true_iff_forall_compatible hc,
+    ← selectionalCounterfactual_eq_false_iff_forall_compatible hc]
+  cases selectionalCounterfactual ord p q w <;> simp
 
 /-- Under the uniqueness assumption of [stalnaker-1981], at most one closest antecedent-world, any
 compatible selection function decides the selectional counterfactual. -/

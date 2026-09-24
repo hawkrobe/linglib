@@ -12,10 +12,11 @@ that it has at most one; in the logic of conditionals the first is the consequen
 and the second is conditional excluded middle, which is equivalent to the distribution of a
 conditional over a disjunctive consequent (`cem_iff_distribution`). Uniqueness is neutralized
 by supervaluation: the selection functions in use correspond to orderings with ties, and a
-conditional is true when every completion makes it true, so conditional excluded middle stays
-valid while [quine-1950]'s two counterfactuals about Bizet and Verdi come out neither true nor
-false rather than, as for Lewis, both false (`bizet_italian_indet`, `bizet_verdi_cem`,
-`bizet_cem_fails_universal`); distribution likewise separates the analyses
+conditional is true when every completion makes it true (`superCounterfactual`), so
+conditional excluded middle stays valid while [quine-1950]'s two counterfactuals about Bizet
+and Verdi come out neither true nor false rather than, as for Lewis, both false
+(`bizet_italian_indet`, `bizet_verdi_cem`, `bizet_cem_fails_universal`); distribution likewise
+separates the analyses
 (`distribution_needs_uniqueness`, `distribution_fails_bizetverdi`). Because Lewis's antecedents
 are necessity operators, his analysis predicts a scope ambiguity between a quantifier inside
 and outside a counterfactual, as with the woman President Carter would have appointed to the
@@ -130,17 +131,18 @@ inductive BVWorld
   | actual | bothItalian | bothFrench
   deriving Repr, DecidableEq, Fintype
 
-/-- Similarity to `w₀`: the actual world is closest to itself, and the two compatriot worlds
-tie. -/
-def bvCloser : BVWorld → BVWorld → BVWorld → Bool
-  | .actual, .actual, _ => true
-  | .actual, .bothItalian, .bothFrench => true
-  | .actual, .bothFrench, .bothItalian => true
-  | _, w₁, w₂ => w₁ == w₂
+/-- Similarity to `w₀` puts `w₀` strictly closest, and from the actual world the two compatriot
+worlds tie. -/
+def bvCloser (w₀ w₁ w₂ : BVWorld) : Bool :=
+  w₁ == w₀ || w₁ == w₂ || (w₀ == .actual && w₁ != .actual && w₂ != .actual)
 
 /-- The similarity preorders of `bvCloser`. -/
 abbrev bvSim (w₀ : BVWorld) : Preorder BVWorld :=
   Preorder.ofLE (bvCloser w₀ · · = true) (by revert w₀; decide) (by revert w₀; decide)
+
+theorem isCentered_bvSim : IsCentered bvSim := fun w w' h ↦ by
+  change bvCloser w w w' = true ∧ ¬ bvCloser w w' w = true
+  revert w w' h; decide
 
 /-- Bizet and Verdi are compatriots. -/
 abbrev compatriots : Set BVWorld := {.bothItalian, .bothFrench}
@@ -152,14 +154,16 @@ abbrev bizetItalian : Set BVWorld := {.bothItalian}
 abbrev verdiFrench : Set BVWorld := {.bothFrench}
 
 /-- *If Bizet and Verdi had been compatriots, Bizet would have been Italian* is neither true
-nor false: the closest compatriot worlds disagree. -/
+nor false on the supervaluation over completions, since the closest compatriot worlds disagree. -/
 theorem bizet_italian_indet :
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .indet := by decide
+    superCounterfactual bvSim compatriots bizetItalian .actual = .indet := by
+  rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 /-- *If Bizet and Verdi had been compatriots, Verdi would have been French* is neither true
 nor false. -/
 theorem verdi_french_indet :
-    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .indet := by decide
+    superCounterfactual bvSim compatriots verdiFrench .actual = .indet := by
+  rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 /-- Conditional excluded middle holds for the example under supervaluation, since the disjunction
 of the conditional and its opposite is not false. -/
@@ -207,16 +211,18 @@ inductive CourtWorld
   | actual | w1 | w2
   deriving Repr, DecidableEq, Fintype
 
-/-- Similarity to `w₀`: the two vacancy worlds tie. -/
-def courtCloser : CourtWorld → CourtWorld → CourtWorld → Bool
-  | .actual, .actual, _ => true
-  | .actual, .w1, .w2 => true
-  | .actual, .w2, .w1 => true
-  | _, w₁, w₂ => w₁ == w₂
+/-- Similarity to `w₀` puts `w₀` strictly closest, and from the actual world the two vacancy
+worlds tie. -/
+def courtCloser (w₀ w₁ w₂ : CourtWorld) : Bool :=
+  w₁ == w₀ || w₁ == w₂ || (w₀ == .actual && w₁ != .actual && w₂ != .actual)
 
 /-- The similarity preorders of `courtCloser`. -/
 abbrev courtSim (w₀ : CourtWorld) : Preorder CourtWorld :=
   Preorder.ofLE (courtCloser w₀ · · = true) (by revert w₀; decide) (by revert w₀; decide)
+
+theorem isCentered_courtSim : IsCentered courtSim := fun w w' h ↦ by
+  change courtCloser w w w' = true ∧ ¬ courtCloser w w' w = true
+  revert w w' h; decide
 
 /-- A vacancy occurs. -/
 abbrev vacancy : Set CourtWorld := {.w1, .w2}
@@ -249,9 +255,10 @@ theorem court_scope_universal :
 indeterminate: there is no particular woman he would have appointed, by underdetermination
 rather than ambiguity. -/
 theorem court_no_particular_woman :
-    selectionalCounterfactual courtSim vacancy (⋃ x, appointed x) .actual = .true ∧
-    ∀ x, selectionalCounterfactual courtSim vacancy (appointed x) .actual = .indet :=
-  ⟨by decide, by decide⟩
+    superCounterfactual courtSim vacancy (⋃ x, appointed x) .actual = .true ∧
+    ∀ x, superCounterfactual courtSim vacancy (appointed x) .actual = .indet := by
+  simp only [superCounterfactual_eq_selectionalCounterfactual isCentered_courtSim]
+  exact ⟨by decide, by decide⟩
 
 end Court
 
@@ -296,11 +303,8 @@ variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (
 *if A, might B* is true exactly when *if A, would not-B* is not true. -/
 theorem selectionalMight_iff (h : ((ord w).minimals A).Nonempty) :
     selectionalMight ord A B w ↔ selectionalCounterfactual ord A Bᶜ w ≠ .true := by
-  obtain ⟨v, hv⟩ := h
-  unfold selectionalMight selectionalCounterfactual
-  simp only [compl_compl]
-  split_ifs with h₁ h₂ h₃ <;> simp_all
-  exact h₂ hv (h₁ hv)
+  rw [selectionalMight, selectionalCounterfactual_compl h]
+  cases selectionalCounterfactual ord A B w <;> decide
 
 /-- In the Bizet–Verdi example both *might* conditionals are true while both *would*
 conditionals are indeterminate: *might* and *would* part, as they cannot on Lewis's dual
