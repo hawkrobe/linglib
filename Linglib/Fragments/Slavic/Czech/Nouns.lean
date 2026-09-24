@@ -39,6 +39,8 @@ vocative plural.
 * `Czech.stem_append_nomSg`: every entry's citation form is its stem followed by the nominative
   singular ending of its class
 * `Czech.gender_eq_cls_gender`: every entry has the gender of its class's table
+* `Czech.isVelar_stem_iff`, `Czech.isSome_ofChars_forms`: the velar stems are those of *sluha*
+  and *filolog*, and every form is written in Czech letters
 * `Czech.forms_examples`: the forms the grammars give Stump's nouns in the cells where they
   depart from the model nouns' tables
 
@@ -228,6 +230,16 @@ def nouns : List Noun :=
 /-- Every entry's citation form is its stem followed by the nominative singular ending of its
 class, so each is declined in a class whose nominative singular it has. -/
 theorem stem_append_nomSg : ∀ n ∈ nouns, n.stem ++ n.cls.nomSg = segments n.form := by
+  decide +kernel
+
+/-- The velar stems among the entries are those of *sluha* and *filolog*, ending in *h* and
+*g*. -/
+theorem isVelar_stem_iff : ∀ n ∈ nouns, IsVelar n.stem ↔ n = sluha ∨ n = filolog := by
+  decide +kernel
+
+/-- Every form of every entry is written in Czech letters, and so has phonemes. -/
+theorem isSome_ofChars_forms :
+    ∀ n ∈ nouns, ∀ σ, ∀ w ∈ n.forms σ, (Phonology.ofChars (w.flatMap String.toList)).isSome := by
   decide +kernel
 
 /-- Every entry has the gender of its class's table. -/

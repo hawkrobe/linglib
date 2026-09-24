@@ -139,7 +139,7 @@ clauses recording the order of object and verb with text type, object length, an
 - **Download**: <https://github.com/phoible/dev/blob/master/data/phoible.csv> (`PHOIBLE/raw/phoible.csv`)
 - **Generator**: `scripts/gen_phoible.py`
 - **Output**: `Linglib/Data/PHOIBLE/Inventories/{Lang}.lean`, and `Linglib/Data/PHOIBLE/Chart.lean`, the feature matrix of each glyph. A glyph has the same feature values in every PHOIBLE inventory, so the chart is language-independent; it leaves out tones and the glyphs with contour values such as `-,+`.
-- **Coverage**: 21 languages (Akan, Arabic, English, Finnish, French, Georgian, German, Hindi-Urdu, Hungarian, Japanese, Korean, Mandarin, Maori, Persian, Russian, Spanish, Swahili, Tagalog, Turkish, Yoruba, Zulu); the first inventory per ISO unless `ISO=ID` names another. A phoneme's feature matrix is its chart entry, written inline only for tones and contour-valued glyphs.
+- **Coverage**: 23 languages (Akan, Arabic, Czech, English, Finnish, French, Georgian, German, Hindi-Urdu, Hungarian, Indonesian, Japanese, Korean, Mandarin, Maori, Persian, Russian, Spanish, Swahili, Tagalog, Turkish, Yoruba, Zulu); the first inventory per ISO unless `ISO=ID` names another. A phoneme's feature matrix is its chart entry, written inline only for tones and contour-valued glyphs.
 
 #### Regenerating
 
