@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.Exponence.Decomposition
+public import Linglib.Fragments.Latvian.Pronouns
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.Sigma
 
@@ -32,7 +33,8 @@ Table 25's eight derivation rows are reproduced by `decide`; the Latvian
 emphatic pronoun (Table 20, rules (7)) and the Yiddish 1st person (fn. 25) are
 run as full stem-distribution checks, including the paper's two minimality
 points: *pat-* needs the singular feature alongside k₀ (fn. 26), and *undz*
-needs k₁ (fn. 25).
+needs k₁ (fn. 25). The Latvian stems are read off the segmented forms of
+`Latvian.Pronouns.pats`.
 
 ## Main results
 
@@ -46,6 +48,14 @@ needs k₁ (fn. 25).
 * `latvian_stems` / `latvian_gender_blind` / `latvian_pat_needs_singular` —
   Table 20 under rules (7)
 * `yiddish_stems` / `undz_needs_k1` — the fn. 25 paradigm and its k₁ argument
+
+## References
+
+* [bobaljik-2012]
+* [caha-2009]
+* [christopoulos-zompi-2023]
+* [mcfadden-2018]
+* [smith-moskal-xu-kang-bobaljik-2019]
 -/
 
 @[expose] public section
@@ -165,6 +175,18 @@ inductive LNum | sg | pl
 inductive LGen | masc | fem
   deriving DecidableEq, Fintype, Repr
 
+/-- The case a member of the triplet is. -/
+def Case3.toCase : Case3 → Case
+  | .nom => .nom | .acc => .acc | .dat => .dat
+
+/-- The number a value of `LNum` is. -/
+def LNum.toNumber : LNum → Number
+  | .sg => .singular | .pl => .plural
+
+/-- The gender a value of `LGen` is. -/
+def LGen.toGender : LGen → Gender
+  | .masc => .masculine | .fem => .feminine
+
 /-- A Latvian cell: case, number, gender. -/
 structure LCell where
   case : Case3
@@ -182,14 +204,14 @@ def latvian (c : LCell) : Finset K :=
 def latvianRules : List (Rule LCell latvian String) :=
   [⟨{.k0, .s0}, "pat"⟩, ⟨∅, "paš"⟩]
 
-/-- The stem distribution of Table 20: *pat-* exactly in the nominative
-singulars, *paš-* elsewhere (stems read off *pat-s, pat-i, paš-u, paš-am,
-paš-ai, paš-i, paš-as, paš-us, paš-iem, paš-ām*). -/
-def table20stem (c : LCell) : String :=
-  if c.case = .nom ∧ c.num = .sg then "pat" else "paš"
+/-- The stem of Table 20 at a cell: the root of the form of *pats* in the
+cell's case, number and gender. -/
+def table20stem (c : LCell) : Option String :=
+  (Latvian.Pronouns.pats c.case.toCase c.num.toNumber c.gen.toGender).bind
+    fun ms ↦ (ms.find? (·.kind = .root)).map (·.form)
 
 /-- Rules (7) generate Table 20's stem distribution. -/
-theorem latvian_stems : ∀ c, pattern latvianRules c = some (table20stem c) := by
+theorem latvian_stems : ∀ c, pattern latvianRules c = table20stem c := by
   decide
 
 /-- The pattern "cuts across genders": neither rule references gender, so the

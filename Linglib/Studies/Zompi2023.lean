@@ -62,6 +62,11 @@ namespace Zompi2023
 
 open Morphology Morphology.Decomposition ChristopoulosZompi2023
 
+/- The `decide` proofs below range over `featSpace.powerset` and lists of feature sets. The
+substrate puts `Fintype (Finset K)` in scope, through which `decide` would enumerate every set
+of features instead. -/
+attribute [-instance] Finset.fintype
+
 /-- The inflectional dimensions the constraints are relativized to. -/
 inductive Dim | kase | num | gen
   deriving DecidableEq, Repr
