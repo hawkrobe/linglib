@@ -49,7 +49,7 @@ open DistributedMorphology DistributedMorphology.Allosemy Data.Examples German.V
 open Aspect
 
 /-- The fragment entry of a verb form named in a row. -/
-def entryOf (form : String) : Option GermanVerbEntry := allVerbs.find? (·.form = form)
+def entryOf (form : String) : Option German.Verbs.Verb := allVerbs.find? (·.form = form)
 
 /-! ## Content nominalizations (Ch. 3) -/
 
@@ -513,9 +513,9 @@ instance (s : StructureSolution) (pe : PreverbalElement) : Decidable (s.Admits p
 
 /-- *-ung* requires complex change-of-state event structure ([rossdeutscher-kamp-2010],
 endorsed at §5.3.1), the accomplishments of the fragment. -/
-def CanUngNominalize (v : GermanVerbEntry) : Prop := v.vendlerClass = some .accomplishment
+def CanUngNominalize (v : German.Verbs.Verb) : Prop := v.vendlerClass = some .accomplishment
 
-instance (v : GermanVerbEntry) : Decidable (CanUngNominalize v) :=
+instance (v : German.Verbs.Verb) : Decidable (CanUngNominalize v) :=
   inferInstanceAs (Decidable (_ = _))
 
 def typeOf : String → Option NominalizationType

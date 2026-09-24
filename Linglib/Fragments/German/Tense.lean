@@ -54,30 +54,22 @@ namespace German
 
 open ArgumentStructure.AuxiliarySelection
 
-/-- The principal parts of a verb, in the third person singular, with the auxiliary of its
-perfect. -/
-structure PrincipalParts where
-  /-- The infinitive. -/
-  infinitive : String
-  /-- The third person singular present. -/
-  present : String
-  /-- The third person singular past. -/
-  past : String
-  /-- The past participle. -/
-  pastParticiple : String
+/-- The principal parts of a verb are its stem, the infinitive, the third person singular present
+and past and the past participle, with the auxiliary of its perfect. -/
+structure PrincipalParts extends Conjugation.Stem where
   /-- The auxiliary of the perfect. -/
   perfect : PerfectAux
   deriving DecidableEq, Repr
 
 /-- The auxiliary *haben* forms the perfect of most verbs, and its own. -/
-def haben : PrincipalParts := ⟨"haben", "hat", "hatte", "gehabt", .have⟩
+def haben : PrincipalParts := ⟨Conjugation.strong "haben" "hat" "hatte" "gehabt", .have⟩
 
 /-- The auxiliary *sein* forms the perfect of intransitive verbs of motion and change of state,
 and its own. -/
-def sein : PrincipalParts := ⟨"sein", "ist", "war", "gewesen", .be⟩
+def sein : PrincipalParts := ⟨Conjugation.strong "sein" "ist" "war" "gewesen", .be⟩
 
 /-- The auxiliary *werden* forms the future with the infinitive. -/
-def werden : PrincipalParts := ⟨"werden", "wird", "wurde", "geworden", .be⟩
+def werden : PrincipalParts := ⟨Conjugation.strong "werden" "wird" "wurde" "geworden", .be⟩
 
 /-- The auxiliary verb a perfect is formed with. -/
 def PrincipalParts.perfectVerb (v : PrincipalParts) : PrincipalParts :=
@@ -94,9 +86,10 @@ theorem germanSelection_eq_be_iff (c : TransitivityClass) :
     germanSelection c = .be ↔ c = .unaccusative := by
   cases c <;> decide
 
-/-- The principal parts of a verb entry. -/
-def Verbs.GermanVerbEntry.principalParts (v : Verbs.GermanVerbEntry) : PrincipalParts :=
-  ⟨v.form, v.form3sg, v.formPast, v.formPastPart, perfectAuxiliary v.toVerb⟩
+/-- The principal parts of a verb entry are its stem with the auxiliary its unaccusativity
+selects. -/
+def Verbs.Verb.principalParts (v : Verbs.Verb) : PrincipalParts :=
+  ⟨v.stem, perfectAuxiliary v.toVerb⟩
 
 /-- German builds its tense forms with the past participle under the verb's perfect auxiliary and
 the infinitive under *werden*. It has no future inflection and no form with a present

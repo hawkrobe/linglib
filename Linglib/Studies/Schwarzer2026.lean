@@ -4,6 +4,7 @@ public import Linglib.Syntax.WordOrder
 public import Linglib.Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Schwarzer2026
 public import Linglib.Data.Experiments.Schwarzer2026
+public import Linglib.Fragments.German.Verbs
 public import Mathlib.Algebra.Order.Field.Rat
 
 /-!
@@ -39,8 +40,9 @@ indirectly.
 
 * The verb positions are read off the German verb-second profile, with the finite verb in the
   clause-final position of an embedded clause and in second position of a root declarative.
-  The predicates of the experiments are recorded with their clausal frames in
-  `Fragments/German/Verbs`.
+* The eight predicates of Experiment 1 are the entries of `Fragments/German/Verbs`, whose frames
+  say whether a predicate takes a *dass*-clause; each row's selection value is read off its
+  predicate's entry (`rows_selectsCP`), and so are the judgments of the bare clauses (`dass_rows`).
 * The descriptive statistics of Experiment 1 and the choices of Experiment 2 are
   `Data/Experiments/Schwarzer2026`; the mixed model and the logistic regression are not
   formalized, and the preferred order is read off the counts as the order chosen more often.
@@ -95,6 +97,45 @@ theorem closeness_refuted {observed : HeadDirection → ConjunctOrder}
       temporalOrder embeddedPosition ≠ observed embeddedPosition := by
   rw [h]
   exact ⟨by decide, by decide⟩
+
+/-! ### The predicates -/
+
+/-- The fragment entry of a predicate named in a row. -/
+def entryOf (form : String) : Option German.Verbs.Verb :=
+  German.Verbs.allVerbs.find? (·.form = form)
+
+/-- The four predicates of Experiment 1 that select a *dass*-clause. -/
+def selecting : List German.Verbs.Verb :=
+  [German.Verbs.veranlassen, German.Verbs.vergessen, German.Verbs.erwarten,
+    German.Verbs.beschliessen]
+
+/-- The four predicates of Experiment 1 that do not. -/
+def nonSelecting : List German.Verbs.Verb :=
+  [German.Verbs.beenden, German.Verbs.streichen, German.Verbs.uebereilen, German.Verbs.entwickeln]
+
+/-- All eight predicates take a noun phrase, and only the selecting four a clause. -/
+theorem selection_of_entries :
+    (∀ v ∈ selecting ++ nonSelecting, v.toVerb.TakesNominal) ∧
+      (∀ v ∈ selecting, v.toVerb.TakesClausal) ∧ ∀ v ∈ nonSelecting, ¬ v.toVerb.TakesClausal := by
+  decide
+
+/-- Every row names a predicate with a fragment entry. -/
+theorem rows_have_entries : ∀ e ∈ Examples.all, ((e.feature? "verb").bind entryOf).isSome := by
+  decide
+
+/-- Each row's selection value is that of its predicate's entry. -/
+theorem rows_selectsCP :
+    ∀ e ∈ Examples.all, ∀ v ∈ (e.feature? "verb").bind entryOf,
+      (e.feature? "selectsCP" = some "yes" ↔ v.toVerb.TakesClausal) := by
+  decide
+
+/-- A bare *dass*-clause is acceptable exactly after a predicate that takes a clause, (11a) and
+(12a). -/
+theorem dass_rows :
+    ∀ e ∈ Examples.all, e.feature? "complement" = some "dass" →
+      ∀ v ∈ (e.feature? "verb").bind entryOf,
+        (e.judgment = .acceptable ↔ v.toVerb.TakesClausal) := by
+  decide
 
 /-! ### The experiments -/
 
