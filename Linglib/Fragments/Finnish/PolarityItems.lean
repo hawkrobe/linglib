@@ -4,25 +4,30 @@ public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Fragments.Finnish.TemporalConnectives
 
 /-!
-# Finnish Polarity-Sensitive Items
-[haspelmath-1997], [karlsson-2017], [karttunen-1974]
+# Finnish polarity-sensitive items
 
-Finnish indefinite pronoun polarity items, typed by the categories from
-`Polarity`.
+Finnish has no negative quantifier: 'nobody' is the negative auxiliary with the
+polarity-sensitive indefinite *kukaan*, as in *Kukaan ei usko minu-a* 'No one believes me'.
+*Kukaan* is *kuka* 'who' with the clitic -kAAn '(not) either', which follows the case ending,
+as in *ke-tä-än* 'anyone' (partitive), and it occurs chiefly with the negative auxiliary and
+in questions. The wh-words with *tahansa* form free-choice items such as *kuka tahansa*
+'whoever, anyone at all'. The positive polarity item *vasta* 'only then', the twin of German
+*erst*, is the punctual 'until' of a positive clause.
 
-Unlike Russian *nikto*, Italian *nessuno*, German *niemand*, or Hungarian
-*senki* — all single-word negative quantifiers ("n-words") that have their own
-sister-Fragment entries typed `.npiWeak` with `.negation, .nobody` licensing —
-Finnish realizes "nobody" compositionally. *Kukaan* is the polarity-sensitive
-indefinite (in [haspelmath-1997]'s terms, the *-kAArI*-series); *ei* is a
-fully-conjugated negative auxiliary verb (en/et/ei/emme/ette/eivät) that takes
-the connegative form of the lexical verb ([karlsson-2017] §19.5). The
-direct-negation reading 'nobody came' is *ei kukaan tullut*, a syntactic
-combination, not a single lexical entry.
+## Main definitions
 
-- **kukaan**: Polarity-sensitive indefinite (questions, conditionals, negation)
-- **kuka tahansa**: Free choice item ('whoever / anyone at all')
-- **vasta**: the positive polarity punctual *until*, German *erst* ([karttunen-1974])
+* `Finnish.PolarityItems.kukaan`, `Finnish.PolarityItems.kukaTahansa`,
+  `Finnish.PolarityItems.vasta`: the entries.
+
+## Main results
+
+* `Finnish.PolarityItems.finnish_licensing_sound`: every context of every entry licenses it.
+
+## References
+
+* [karlsson-2017]
+* [haspelmath-1997]
+* [karttunen-1974]
 -/
 
 @[expose] public section
@@ -33,32 +38,22 @@ open PolarityItem
 
 /-! ### NPI -/
 
-/-- *kukaan* — Polarity-sensitive indefinite.
-    Decomposes morphologically as *kuka* 'who' + *-kAAn* concessive clitic
-    ([karlsson-2017] §25.6 on the *-kin* / *-kAAn* clitic pair); the
-    *-kAAn*-series is [haspelmath-1997]'s A.27.1 Finnish series (i),
-    parallel to Hindi *koii bhii* and Korean wh+*-do* / wh+*-na* — hence
-    `morphology := .indefPlusEven`. In direct negation, co-occurs with the
-    appropriate person/number form of the negation verb *ei*: 'ei kukaan
-    tullut' (nobody came). -/
+/-- *kukaan* 'anyone, no one', *kuka* 'who' with the scalar clitic -kAAn, the *-kaan* series of
+[haspelmath-1997]. -/
 def kukaan : PolarityItem :=
   { form := "kukaan"
   , licensor := some .weak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditionalAntecedent, .negation]
+  , licensingContexts := [.question, .negation]
   , scalarDirection := some .strengthening
   , morphology := .indefPlusEven
   , alternativeType := .domain }
 
 /-! ### FCI -/
 
-/-- *kuka tahansa* — Free choice item.
-    'Whoever / anyone at all'. One cell of a productive *X tahansa* paradigm
-    over wh-words (also *mikä tahansa* 'whatever', *milloin tahansa* 'whenever',
-    *missä tahansa* 'wherever'), with a literary *X hyvänsä* alternant.
-    [haspelmath-1997] A.27 lists this as the *-hyvänsä*-series, used
-    mainly in the free-choice function and predicted by his implicational map
-    to extend to comparative. Not covered in [karlsson-2017]. -/
+/-- *kuka tahansa* 'whoever, anyone at all', one cell of the paradigm of wh-words with
+*tahansa*, beside *mikä tahansa* 'whatever' and *missä tahansa* 'wherever', which has a literary
+alternant with *hyvänsä*. -/
 def kukaTahansa : PolarityItem :=
   { form := "kuka tahansa"
   , freeChoice := true
@@ -69,22 +64,18 @@ def kukaTahansa : PolarityItem :=
 /-! ### PPI -/
 
 /-- *vasta* 'only then', the punctual *until* of a positive clause, the twin of German *erst* and
-the positive counterpart of the negated *ennen kuin* ([karttunen-1974], the paper's (39)). Its
-connective entry is `Finnish.TemporalConnectives.vasta`. -/
+the positive counterpart of the negated *ennen kuin* ([karttunen-1974]). Its connective entry is
+`Finnish.TemporalConnectives.vasta`. -/
 def vasta : PolarityItem :=
   { form := TemporalConnectives.vasta.form
   , ppi := true
   , baseForce := .temporal
   , licensingContexts := [] }
 
-/-! ### Joint -/
-
-/-- All Finnish polarity-sensitive entries declared in this Fragment. -/
+/-- The entries. -/
 def items : List PolarityItem := [kukaan, kukaTahansa, vasta]
 
-/-! ### Verification -/
-
-/-- Every attested context of every entry is predicted licensed. -/
+/-- Every context of every entry licenses it. -/
 theorem finnish_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
 

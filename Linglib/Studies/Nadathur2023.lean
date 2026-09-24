@@ -2,6 +2,8 @@ module
 
 public import Linglib.Semantics.Causation.Implicative
 public import Linglib.Studies.Karttunen1971a
+public import Linglib.Fragments.Finnish.Verbs
+public import Linglib.Data.Examples.Nadathur2023
 
 /-!
 # Nadathur (2023): Causal Semantics for Implicative Verbs
@@ -15,6 +17,14 @@ Courage, the lexical prerequisite of *dare*, is causally necessary and sufficien
 sending the message (`dare_felicitous_for_msg`), but necessary and not sufficient for
 establishing communication and for spying, which stay unsettled while the listener and the
 garbling are unresolved (`nrv_necessary_not_sufficient_for_com_and_spy`).
+
+The paper's Finnish verbs fall into its classes by polarity, by whether a verb entails under
+both matrix polarities, and by the prerequisite it names: *onnistua* is the counterpart of
+*manage*, *uskaltaa* of *dare* and *viitsiä* of *bother*, *laiminlyödä* patterns with *fail* and
+*epäröidä* with *hesitate*, and *pystyä* is the one-way counterpart of the bleached verbs. The
+classes agree with the polarities of the Finnish Fragment's entries (`implicative_eq`), and the
+paper's minimal pairs bear them out: each claim entails its complement, the complement's
+negation, or neither, as its class predicts (`rows_agree`).
 
 ## Implementation notes
 
@@ -53,7 +63,7 @@ inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
 
 /-- Causal graph: SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK},
     SPY←{SEC,COM}; INT, NRV, LST, BRK exogenous. -/
-def graph : CausalGraph V := ⟨λ
+def graph : CausalGraph V := ⟨fun
   | .INT | .NRV | .LST | .BRK => ∅
   | .SEC => {.INT}
   | .MSG => {.INT, .NRV}
@@ -81,7 +91,7 @@ instance : CausalGraph.IsDAG dreyfusSEM.graph :=
 
 /-- Background: Dreyfus intends to spy and has already collected secrets
     (INT = SEC = 1); NRV, LST, BRK are unresolved. -/
-def dreyfusBg : Valuation (λ _ : V => Bool) :=
+def dreyfusBg : Valuation (fun _ : V ↦ Bool) :=
   Valuation.empty.extend .INT true |>.extend .SEC true
 
 /-- *dare* dispatches to the sufficiency semantics the theorems below are
@@ -181,6 +191,65 @@ theorem msg_iff_nerve :
        SEM.causallyEntails dreyfusSEM s' .NRV true) :=
   Implicative.complement_iff_prerequisite dreyfusSEM
     (by decide) (by decide) nrv_sufficient_for_msg nrv_necessary_for_msg
+
+/-! ### The Finnish implicatives -/
+
+open Implicative (Directionality)
+open Data.Examples
+
+/-- A positive implicative whose prerequisite is `p`. -/
+def positiveClass (d : Directionality) (p : Prerequisite) : ImplicativeClass :=
+  { polarity := .positive, directionality := d, aspectGoverned := false, prerequisite := some p }
+
+/-- The classes of the Finnish verbs. *Malttaa* names patience, *hennoa* hard-heartedness,
+*kehdata* the lack of shame and *ehtiä* time; *mahtua* names being small enough and entails only
+when negated, and *pystyä*, which the paper also allows might be a modal, is unconstrained. -/
+def finnish : List (Finnish.Verb × ImplicativeClass) :=
+  [(Finnish.onnistua, .manage), (Finnish.uskaltaa, .dare), (Finnish.viitsiä, .bother),
+    (Finnish.malttaa, positiveClass .twoWay .patience),
+    (Finnish.hennoa, positiveClass .twoWay .hardHeartedness),
+    (Finnish.kehdata, positiveClass .twoWay .shamelessness),
+    (Finnish.ehtiä, positiveClass .twoWay .time), (Finnish.jaksaa, .jaksaa),
+    (Finnish.mahtua, positiveClass .oneWay .fitness),
+    (Finnish.pystyä, positiveClass .oneWay .unspecified), (Finnish.laiminlyödä, .fail),
+    (Finnish.epäröidä, .hesitate)]
+
+/-- The polarity of each class is the complement polarity of the Fragment's entry. -/
+theorem implicative_eq : ∀ p ∈ finnish, p.1.implicative = some p.2.polarity := by
+  decide
+
+/-- The truth value that a claim with a verb of class `k` entails for its complement, when the
+matrix is positive or negated: a two-way verb entails one under either polarity and a one-way
+verb only under negation. -/
+def entailed (k : ImplicativeClass) (negated : Bool) : Option Bool :=
+  if k.directionality = .oneWay ∧ ¬ negated then none
+  else some (decide (k.polarity = .positive) != negated)
+
+/-- A minimal-pair member: the class of its verb, whether the matrix is negated, and the truth
+value the paper says it entails for the complement. -/
+structure Row where
+  implicativeClass : ImplicativeClass
+  negated : Bool
+  entails : Option Bool
+
+/-- A row from the paper's features. -/
+def Row.ofExample (e : LinguisticExample) : Option Row := do
+  let k ← e.parse? "verb" (finnish.map fun p ↦ (p.1.form, p.2))
+  let neg ← e.parse? "matrix" [("positive", false), ("negated", true)]
+  let ent ← e.parse? "entails"
+    [("complement", some true), ("negation", some false), ("nothing", none)]
+  some ⟨k, neg, ent⟩
+
+/-- Every example is a row. -/
+theorem isSome_ofExample : ∀ e ∈ Examples.all, (Row.ofExample e).isSome := by
+  decide
+
+/-- The rows of the paper's Finnish minimal pairs. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Each claim entails what its verb's class predicts. -/
+theorem rows_agree : ∀ r ∈ rows, entailed r.implicativeClass r.negated = r.entails := by
+  decide
 
 end Nadathur2023
 

@@ -1,7 +1,9 @@
 module
 
 public import Linglib.Data.Examples.Karlsson2017
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Data.Forms.Karlsson2017
+public import Linglib.Fragments.Finnish.Infinitives
+public import Linglib.Fragments.Finnish.Possession
 public import Linglib.Semantics.Aspect.Defs
 
 /-!
@@ -20,11 +22,24 @@ The partitive is the stronger object case (`case_eq_part_iff`), and in an affirm
 about a definite quantity the object is partitive exactly when the action is irresultative
 (`part_iff_atelic`), the case marking of aspect the grammar describes.
 
+The word forms of the grammar's tables of endings are derived from the Finnish Fragment
+(`forms_derived`). A form is its stem followed by the function ending of an infinitive, an ending
+of its case and a possessive ending, in the archiphonemic spelling of the tables, and vowel copy
+and palatal harmony give its surface. The tables are those of the cases, the possessive endings
+and the structure of nominals and of non-finite forms (section 3), of the possessive endings
+after a case ending (section 14.1), of the A infinitive translative (section 22.2.2) and of the
+MA infinitive (section 22.4.1).
+
 ## Implementation notes
 
 Resultative and irresultative action are read as the telic and atelic values of
 `Aspect.Telicity`. The grammar lists the constructions under which a singular total object
 drops its ending rather than unifying them; `Clause` lists them likewise.
+
+The forms of the tables are those with no plural or clitic ending, and none in which a possessive
+ending follows an alternant of the partitive or of the illative other than the first, since the
+Fragment represents neither the number and clitic endings nor the choice of alternant before a
+possessive ending.
 
 ## References
 
@@ -66,7 +81,7 @@ namespace Object
 quantity. -/
 def IsPartitive (o : Object) : Prop := o.negated ∨ o.telicity = .atelic ∨ ¬ o.definite
 
-instance : DecidablePred IsPartitive := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred IsPartitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- The total-object ending of section 13.3.2. -/
 def totalCase (o : Object) : Case :=
@@ -139,5 +154,67 @@ def rows : List Row := Examples.all.filterMap Row.ofExample
 
 /-- The grammar's examples take the case its rules assign. -/
 theorem rows_agree : ∀ r ∈ rows, r.object.case = r.case := by decide
+
+/-! ### Word structure -/
+
+section WordStructure
+
+open Finnish Phonology Data.Forms
+
+/-- A word of the tables: its stem, the infinitive built on it, its case and its possessor. -/
+structure Word where
+  stem : List Segment
+  infinitive : Option Infinitive
+  case : Case
+  possessor : Option Agreement.Bundle
+
+def caseLabels : List (String × Case) :=
+  [("nom", .nom), ("gen", .gen), ("acc", .acc), ("part", .part), ("ine", .ine), ("ela", .ela),
+    ("ill", .ill), ("ade", .ade), ("abl", .abl), ("all", .all), ("ess", .ess),
+    ("transl", .transl), ("com", .com), ("abess", .abess), ("inst", .inst)]
+
+def possessorLabels : List (String × Agreement.Bundle) :=
+  [("1sg", .pn .first .singular), ("2sg", .pn .second .singular), ("3sg", .pn .third .singular),
+    ("1pl", .pn .first .plural), ("2pl", .pn .second .plural), ("3pl", .pn .third .plural)]
+
+def infinitiveLabels : List (String × Infinitive) := [("a", .a), ("e", .e), ("ma", .ma)]
+
+/-- The phonemes a word writes, a capital as its small letter. -/
+def spell (w : String) : Option (List Segment) := (w.toList.map Char.toLower).mapM ofChar
+
+/-- The value of a column that may be empty, read through a table. -/
+def optionalColumn {α : Type} (f : Form) (key : String) (table : List (String × α)) :
+    Option (Option α) :=
+  match f.column? key with
+  | none | some "" => some none
+  | some v => (List.lookup v table).map some
+
+/-- A word from a form's segmentation and columns. -/
+def Word.ofForm (f : Form) : Option Word := do
+  let stem ← f.segments.head?.bind spell
+  let c ← (f.column? "Case").bind (List.lookup · caseLabels)
+  let inf ← optionalColumn f "Infinitive" infinitiveLabels
+  let p ← optionalColumn f "Possessor" possessorLabels
+  some ⟨stem, inf, c, p⟩
+
+/-- The surface forms the Fragment gives a word: its stem with the function ending of its
+infinitive, followed by an ending of its case, or by its case and possessive endings. -/
+def Word.forms (w : Word) : List (List Segment) :=
+  let base := (w.infinitive.map (·.base w.stem)).getD w.stem
+  let endings := match w.possessor with
+    | some p => (Possession.inflection w.case p).toList
+    | none => Declension.endings w.case
+  endings.map fun e ↦ surface (base ++ e)
+
+/-- Every form of the tables is a word. -/
+theorem isSome_ofForm : ∀ f ∈ Forms.all, (Word.ofForm f).isSome := by
+  decide +kernel
+
+/-- The Fragment gives each form of the tables. -/
+theorem forms_derived :
+    ∀ f ∈ Forms.all, ∀ w ∈ Word.ofForm f, ∃ x ∈ spell f.form, x ∈ w.forms := by
+  decide +kernel
+
+end WordStructure
 
 end Karlsson2017

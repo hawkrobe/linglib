@@ -19,6 +19,7 @@ is not discussed in [aikhenvald-2004].
 
 namespace Finnish.Evidentiality
 
+/-- The grammatical evidentials, of which there are none. -/
 def evidentials : List Evidential := []
 
 end Finnish.Evidentiality

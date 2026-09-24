@@ -1,172 +1,111 @@
 module
 
 public import Linglib.Fragments.Finnish.Case
+public import Linglib.Fragments.Finnish.Phonology
 
 /-!
-# Finnish Infinitive System [karlsson-2017]
+# Finnish infinitives
 
-Finnish has **four productive infinitive forms**,
-each built from the verb stem plus a characteristic marker and case suffix:
+Karlsson names the Finnish infinitives after their function endings, as the *Iso suomen
+kielioppi* does. There are the A infinitive, which is the dictionary form, the E infinitive,
+the MA infinitive and the rare MINEN infinitive, traditionally the first to the fourth.
+Infinitives take case endings as nouns do, but few of them. The A infinitive has its basic
+form, a nominative, and a translative that takes a possessive ending, as in *sano-a-kse-ni*
+'in order for me to say'. The E infinitive has an inessive of time, as in *sano-e-ssa* 'while
+saying', and an instructive of manner, as in *itki-e-n* 'crying'. The MA infinitive has the
+inessive, elative, illative, adessive and abessive, as in *luke-ma-ssa* 'reading', and a rare
+instructive of necessity, as in *tule-ma-n*. The MINEN infinitive has only a nominative and a
+partitive, both of obligation.
 
-| Infinitive | Marker | Case forms                               |
-|------------|--------|------------------------------------------|
-| I (A)      | -a / -ä  | translative only (basic citation form)    |
-| II (E)     | -e-    | inessive, instructive                     |
-| III (MA)   | -ma-   | inessive, elative, illative, adessive, abessive |
-| IV (MINEN) | -minen | nominative (verbal noun)                  |
+The A and E infinitives are built on the infinitive stem, and the MA and MINEN infinitives on
+the inflectional stem, the stem of the present, as *ole-ma-* against *ol-la* 'be'. The ending
+of the A infinitive depends on how its stem ends. It is -dA after a long vowel or a diphthong,
+as in *saa-da* 'get', and -tA after `s`, as in *juos-ta* 'run'. After `l`, `n` or `r` it
+repeats that consonant, as in *tul-la* 'come', and after a short vowel or a `t` it is -A, as
+in *sano-a* 'say' and *huomat-a* 'notice'. The E infinitive changes the -A to -e, as in
+*sano-e-* and *juos-te-*.
 
-The **III infinitive** is linguistically remarkable: it takes **local case
-suffixes** on verbal stems, mirroring the nominal local case system. Four of
-its five case forms correspond exactly to cells in the 3×2 local case matrix
-(see `Finnish.Case.localCaseMatrix`):
+## Main definitions
 
-- inessive -massa = static + internal
-- elative -masta = source + internal
-- illative -maan = goal + internal
-- adessive -malla = static + external
+* `Finnish.Infinitive`: the four infinitives.
+* `Finnish.Infinitive.cases`: the cases an infinitive takes.
+* `Finnish.Infinitive.aEnding`: the ending of the A infinitive after its stem.
+* `Finnish.Infinitive.base`: a stem with an infinitive's function ending, before a case
+  ending.
 
-The fifth, abessive -matta ('without V-ing'), comes from outside the local
-case matrix — abessive is a "marginal" case.
+## Main results
 
-This structural parallel — the same case paradigm applying to both nouns
-and nonfinite verbs — is evidence that Finnish local cases are genuine
-morphosyntactic features, not frozen adverbial suffixes.
+* `Finnish.Infinitive.cases_subset_inventory`: an infinitive takes cases of the noun.
+* `Finnish.Infinitive.toCase_mem_cases_ma_iff`: of the local cases the MA infinitive takes the
+  interior series and, of the exterior series, the adessive alone.
 
+## Implementation notes
+
+The stems *teh-* 'do' and *näh-* 'see' take -dA, which Karlsson lists among the exceptions, and
+the E infinitive of a stem in -e changes it to -i, as in *luki-e-ssa* 'while reading'; neither
+is represented. The partitive of the MINEN infinitive is built on -mis-, as in *mene-mis-tä*,
+and a case ending after it is not derived.
+
+## References
+
+* [karlsson-2017]
 -/
 
 @[expose] public section
 
-namespace Finnish.Infinitives
+namespace Finnish
 
-open Finnish.Case (Direction LocationType LocalCase localCaseMatrix)
+open Phonology
 
--- ============================================================================
--- § 1: Infinitive Types
--- ============================================================================
+/-- The Finnish infinitives, named by their function endings. -/
+inductive Infinitive where
+  /-- The A infinitive, the first, which is the dictionary form: *sano-a* 'say'. -/
+  | a
+  /-- The E infinitive, the second: *sano-e-ssa* 'while saying'. -/
+  | e
+  /-- The MA infinitive, the third: *sano-ma-an* 'to say'. -/
+  | ma
+  /-- The MINEN infinitive, the fourth: *tietä-minen* 'knowing'. -/
+  | minen
+  deriving DecidableEq, Repr, Fintype
 
-/-- The four Finnish infinitive classes. -/
-inductive InfClass where
-  | i    -- A-infinitive: -a / -ä (basic infinitive / citation form)
-  | ii   -- E-infinitive: -e- + case
-  | iii  -- MA-infinitive: -ma- + case (mirrors local cases)
-  | iv   -- MINEN-infinitive: -minen (verbal noun)
-  deriving DecidableEq, Repr, Inhabited
+namespace Infinitive
 
-/-- A case form available to an infinitive class. -/
-structure InfForm where
-  infClass : InfClass
-  caseName : String
-  suffix : String
-  gloss : String
-  deriving DecidableEq, Repr, Inhabited
+/-- The cases an infinitive takes. -/
+def cases : Infinitive → Finset Case
+  | .a => {.nom, .transl}
+  | .e => {.ine, .inst}
+  | .ma => {.ine, .ela, .ill, .ade, .abess, .inst}
+  | .minen => {.nom, .part}
 
--- ============================================================================
--- § 2: Infinitive Paradigms
--- ============================================================================
+/-- An infinitive takes cases of the noun. -/
+theorem cases_subset_inventory (i : Infinitive) : i.cases ⊆ Case.inventory := by
+  cases i <;> decide
 
-/-- I infinitive (A-infinitive): the basic citation form.
-    "lukea" = 'to read'. Only appears in translative. -/
-def inf1 : List InfForm :=
-  [ ⟨.i, "translative", "-a / -ä", "to V"⟩ ]
+/-- Of the local cases the MA infinitive takes the interior series and, of the exterior
+series, the adessive alone. -/
+theorem toCase_mem_cases_ma_iff {r : Case.Region} {d : Case.PathDir} {c : Case}
+    (h : Case.toCase r d = some c) : c ∈ ma.cases ↔ r = .interior ∨ r = .exterior ∧ d = .place := by
+  cases r <;> cases d <;> cases h <;> decide
 
-/-- II infinitive (E-infinitive): -e- + inessive or instructive.
-    "lukiessa" = 'while reading', "lukien" = 'by reading'. -/
-def inf2 : List InfForm :=
-  [ ⟨.ii, "inessive",    "-e-ssA",  "while V-ing"⟩
-  , ⟨.ii, "instructive",  "-e-n",    "by V-ing"⟩ ]
+/-- The ending of the A infinitive after its stem: -dA after a long vowel or a diphthong, -tA
+after `s`, the stem's final consonant with -A after `l`, `n` or `r`, and -A otherwise. -/
+def aEnding (w : List Segment) : List Segment :=
+  match w.reverse with
+  | x :: y :: _ =>
+    if x.IsVowel ∧ y.IsVowel then [d, A]
+    else if x = s then [t, A]
+    else if x = l ∨ x = n ∨ x = r then [x, A]
+    else [A]
+  | _ => [A]
 
-/-- III infinitive (MA-infinitive): -ma- + local case suffixes.
-    The paradigm that mirrors the nominal local case matrix.
-    "lukemassa" = 'reading' (at it), "lukemasta" = 'from reading',
-    "lukemaan" = 'to read' (goal), "lukemalla" = 'by reading',
-    "lukematta" = 'without reading'. -/
-def inf3 : List InfForm :=
-  [ ⟨.iii, "inessive",  "-ma-ssA",  "V-ing (at it)"⟩
-  , ⟨.iii, "elative",   "-ma-stA",  "from V-ing"⟩
-  , ⟨.iii, "illative",  "-ma-Vn",   "to V (goal)"⟩
-  , ⟨.iii, "adessive",  "-ma-llA",  "by V-ing"⟩
-  , ⟨.iii, "abessive",  "-ma-ttA",  "without V-ing"⟩ ]
+/-- The stem `w` with the function ending of an infinitive, before a case ending. -/
+def base : Infinitive → List Segment → List Segment
+  | .a, w => w ++ aEnding w
+  | .e, w => w ++ (aEnding w).dropLast ++ [Finnish.e]
+  | .ma, w => w ++ [m, A]
+  | .minen, w => w ++ [m, i, n, Finnish.e, n]
 
-/-- IV infinitive (MINEN-infinitive): verbal noun, nominative only.
-    "lukeminen" = 'reading' (the act). -/
-def inf4 : List InfForm :=
-  [ ⟨.iv, "nominative", "-minen", "the act of V-ing"⟩ ]
+end Infinitive
 
-/-- All infinitive forms across all classes. -/
-def allInfForms : List InfForm := inf1 ++ inf2 ++ inf3 ++ inf4
-
-/-- Total number of infinitive forms. -/
-theorem allInfForms_count : allInfForms.length = 9 := by decide
-
-/-- The III infinitive has the richest paradigm (5 forms). -/
-theorem inf3_richest : inf3.length = 5 := by decide
-
--- ============================================================================
--- § 3: III Infinitive ↔ Local Case Matrix
--- ============================================================================
-
-/-- A III-infinitive case form paired with the local case matrix cell it
-    mirrors. `none` for abessive (outside the local matrix). -/
-structure Inf3LocalMapping where
-  infForm : InfForm
-  localCell : Option LocalCase
-  deriving Repr, Inhabited
-
-/-- The mapping from III infinitive forms to local case matrix cells.
-    Four of five forms correspond to matrix cells; abessive does not. -/
-def inf3LocalMappings : List Inf3LocalMapping :=
-  [ ⟨inf3[0]!, some (localCaseMatrix .static .internal)⟩   -- inessive
-  , ⟨inf3[1]!, some (localCaseMatrix .source .internal)⟩   -- elative
-  , ⟨inf3[2]!, some (localCaseMatrix .goal   .internal)⟩   -- illative
-  , ⟨inf3[3]!, some (localCaseMatrix .static .external)⟩   -- adessive
-  , ⟨inf3[4]!, none⟩ ]                                      -- abessive (marginal)
-
-/-- Exactly 4 of 5 III-infinitive forms map to local case matrix cells. -/
-theorem inf3_local_overlap :
-    (inf3LocalMappings.filter (·.localCell.isSome)).length = 4 := by decide
-
-/-- The one unmapped form is abessive. -/
-theorem inf3_unmapped_is_abessive :
-    (inf3LocalMappings.filter (·.localCell.isNone)).length = 1 ∧
-    (inf3LocalMappings.filter (·.localCell.isNone))[0]!.infForm.caseName = "abessive" := by
-  decide
-
-/-- The III infinitive's inessive matches the nominal inessive
-    (static + internal cell of the matrix). -/
-theorem inf3_inessive_matches_nominal :
-    (localCaseMatrix .static .internal).name = "inessive" ∧
-    inf3[0]!.caseName = "inessive" := by decide
-
-/-- The III infinitive's elative matches the nominal elative
-    (source + internal cell of the matrix). -/
-theorem inf3_elative_matches_nominal :
-    (localCaseMatrix .source .internal).name = "elative" ∧
-    inf3[1]!.caseName = "elative" := by decide
-
-/-- The III infinitive's illative matches the nominal illative
-    (goal + internal cell of the matrix). -/
-theorem inf3_illative_matches_nominal :
-    (localCaseMatrix .goal .internal).name = "illative" ∧
-    inf3[2]!.caseName = "illative" := by decide
-
-/-- The III infinitive's adessive matches the nominal adessive
-    (static + external cell of the matrix). -/
-theorem inf3_adessive_matches_nominal :
-    (localCaseMatrix .static .external).name = "adessive" ∧
-    inf3[3]!.caseName = "adessive" := by decide
-
-/-- The 4 mapped III-infinitive forms cover 3 of the 6 local case matrix cells
-    (the 3 internal cases + adessive), leaving ablative and allative unused.
-
-    This asymmetry — all internal cases but only one external case — reflects
-    that the III infinitive is primarily about containment ("in the process of"),
-    departure ("from the process"), and goal ("into doing"), with adessive
-    ("by means of") as the sole external form. -/
-theorem inf3_covers_internal_column :
-    let mapped := inf3LocalMappings.filterMap (·.localCell)
-    mapped.all (fun lc =>
-      lc.locationType == .internal ||
-      (lc.direction == .static && lc.locationType == .external)) = true := by
-  decide
-
-end Finnish.Infinitives
+end Finnish
