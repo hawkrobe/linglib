@@ -5,6 +5,7 @@ public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Syntax.Case.Order
 public import Linglib.Fragments.Dargwa.Case
 public import Linglib.Fragments.Finnish.Case
+public import Linglib.Fragments.German.Basel.Case
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.Greek.Ancient.Case
 public import Linglib.Fragments.Greek.StandardModern.Case
@@ -14,13 +15,21 @@ public import Linglib.Fragments.Icelandic.Case
 public import Linglib.Fragments.Japanese.Case
 public import Linglib.Fragments.Korean.Case
 public import Linglib.Fragments.Latin.Case
+public import Linglib.Fragments.Mongolian.Case
+public import Linglib.Fragments.Slavic.Belarusian.Case
+public import Linglib.Fragments.Slavic.Cassubian.Case
 public import Linglib.Fragments.Slavic.Czech.Case
 public import Linglib.Fragments.Slavic.Polish.Case
+public import Linglib.Fragments.Slavic.Russian.Case
 public import Linglib.Fragments.Slavic.Serbian.Case
 public import Linglib.Fragments.Slavic.Slovak.Case
+public import Linglib.Fragments.Slavic.Slovenian.Case
+public import Linglib.Fragments.Slavic.Sorbian.Case
+public import Linglib.Fragments.Slavic.Ukrainian.Case
 public import Linglib.Fragments.Tamil.Case
 public import Linglib.Fragments.Telugu.Case
 public import Linglib.Fragments.Turkish.Case
+public import Linglib.Fragments.Yakut.Case
 
 /-!
 # Blake (1994): Case
@@ -60,7 +69,8 @@ functions the Latin cases express fill it.
 * `latin_abl_functions_ancient_greek`, `latin_dat_functions_ssubset_ancient_greek`: Greek has no
   ablative, its genitive and dative expressing the functions of the Latin one, and its dative is
   the more comprehensive case.
-* `gaps_finnish`, `gaps_hungarian`, `gaps_dargwa`: the gaps among the fragment inventories.
+* `gaps_finnish`, `gaps_hungarian`, `gaps_dargwa`, `gaps_mongolian`, `gaps_yakut`, `gaps_basel`:
+  the gaps among the fragment inventories.
 
 ## Implementation notes
 
@@ -72,6 +82,7 @@ purposive not being a `Case` value. The text was checked in the second edition (
 
 * [blake-1994]
 * [blake-2001]
+* [suter-1992]
 -/
 
 @[expose] public section
@@ -252,10 +263,13 @@ theorem latin_dat_functions_ssubset_ancient_greek :
 
 /-! ### The other case inventories of the fragments -/
 
-/-- Modern Greek, Hindi, Japanese, Korean and Telugu conform. -/
+/-- Modern Greek, Hindi, Japanese, Korean, Telugu and the Slavic languages not among Blake's
+systems conform. -/
 theorem fragments_conform :
     ∀ inv ∈ [Greek.StandardModern.Case.inventory, Hindi.Case.inventory, Japanese.Case.inventory,
-      Korean.Case.inventory, Telugu.Case.inventory], Conforms inv := by
+      Korean.Case.inventory, Telugu.Case.inventory, Belarusian.Case.inventory,
+      Cassubian.Case.inventory, Russian.Case.inventory, Slovenian.Case.inventory,
+      Sorbian.Case.inventory, Ukrainian.Case.inventory], Conforms inv := by
   decide
 
 /-- Finnish has no dative, the allative marking the recipient. -/
@@ -268,5 +282,14 @@ theorem gaps_hungarian : gaps Hungarian.Case.inventory = {.gen} := by decide
 /-- The grammatical cases of Dargwa skip the locative and the ablative, which belong to its
 separate series of local cases. -/
 theorem gaps_dargwa : gaps Dargwa.Case.inventory = {.loc, .ablInst} := by decide
+
+/-- Mongolian has no locative, which postpositions express. -/
+theorem gaps_mongolian : gaps Mongolian.Case.inventory = {.loc} := by decide
+
+/-- Yakut has no locative. -/
+theorem gaps_yakut : gaps Yakut.Case.inventory = {.loc} := by decide
+
+/-- Basel German has no genitive, its possessor a dative construction. -/
+theorem gaps_basel : gaps German.Basel.Case.inventory = {.gen} := by decide
 
 end Blake1994
