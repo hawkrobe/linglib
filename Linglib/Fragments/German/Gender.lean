@@ -1,124 +1,114 @@
 module
 
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
-# German Derivational Gender: *-schaft* and related suffixes
-[kramer-2020] [kramer-2015]
+# German gender
 
-German is a 3-gender language (masculine, feminine, neuter) where certain
-derivational suffixes deterministically assign gender:
+This file defines the three German genders and the suffixes that fix the gender of a noun.
+German has three controller genders, the masculine, the feminine and the neuter. The determiners
+and the adjectives distinguish them in the singular and not in the plural, and
+`German.Determiners` records that evidence. A noun's gender follows its meaning for many nouns
+denoting persons and animals, and its ending for many others. Of the endings Durrell tabulates,
+*-heit* ~ *-keit*, *-schaft* and *-ung* make a noun feminine and the diminutives *-chen* and
+*-lein* make it neuter, and for these five he gives no exception. The diminutives do so whatever
+the sex of the referent: *Mädchen* 'girl' and *Fräulein* 'young lady' are neuter, like *Bübchen*
+'little boy'. Determiners and adjectives agree with that gender, relative pronouns almost always
+do, and personal pronouns often follow the sex of the referent instead, especially in speech.
 
-- *-schaft* → always feminine: *Freundschaft*, *Gesellschaft*,
-  *Wissenschaft*
-- *-heit*, *-keit* → always feminine: *Freiheit*, *Möglichkeit*
-- *-ung* → always feminine: *Zeitung*, *Bildung*
-- *-chen*, *-lein* → always neuter: *Mädchen*, *Büchlein*
+## Main definitions
 
-## Theory-neutral data layer
+* `German.Gender.Value`: the three genders.
+* `German.Gender.Suffix`, `German.Gender.Suffix.gender`: the suffixes that fix the gender of the
+  nouns they end, and the gender each fixes.
+* `German.Gender.Suffix.noun`: a noun ending in such a suffix, whose gender is the suffix's.
 
-The Fragment carries one empirical field per suffix: `assignedGender`,
-the deterministic gender output. No `naturalGender` field —
-derivational suffixes always assign arbitrary gender (the suffix is the
-locus of the gender feature, not the root's semantic content). The
-[kramer-2015] structural analysis (each suffix IS a categorizing
-head *n* with a fixed gender feature: *-schaft* = n u[+FEM], *-chen* =
-plain n) is a projection that lives in `Studies/`.
+## References
 
-The empirical content captured here is the **morphological override**:
-*Mädchen* 'girl' is neuter despite its semantic referent being female,
-because the diminutive suffix *-chen* fixes the gender. This is
-diagnostic for any theory in which suffixes can override semantics.
+* [durrell-2011]
 -/
 
 @[expose] public section
 
 namespace German.Gender
 
+/-- German has three controller genders. -/
+inductive Value where
+  | masc
+  | fem
+  | neut
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- § 1: Derivational Suffixes
--- ============================================================================
+/-- Each German gender bears the comparative label of the same name. -/
+def Value.toLabel : Value → Gender
+  | .masc => .masculine
+  | .fem => .feminine
+  | .neut => .neuter
 
-/-- A German derivational suffix that deterministically assigns gender.
-    Theory-neutral: carries the empirical gender output, not a DM
-    categorizing head. -/
-structure DerivationalSuffix where
-  form : String
-  /-- Gender this suffix always assigns, regardless of the base. -/
-  assignedGender : Gender
-  deriving DecidableEq, Repr
+/-- The suffixes that fix the gender of every noun they end. -/
+inductive Suffix where
+  | heit
+  | keit
+  | schaft
+  | ung
+  | chen
+  | lein
+  deriving DecidableEq, Repr, Fintype
 
-def schaft : DerivationalSuffix := ⟨"-schaft", .feminine⟩
-def heit   : DerivationalSuffix := ⟨"-heit",   .feminine⟩
-def keit   : DerivationalSuffix := ⟨"-keit",   .feminine⟩
-def ung    : DerivationalSuffix := ⟨"-ung",    .feminine⟩
-def chen   : DerivationalSuffix := ⟨"-chen",   .neuter⟩
-def lein   : DerivationalSuffix := ⟨"-lein",   .neuter⟩
+/-- `s.form` is the written form of the suffix `s`. -/
+def Suffix.form : Suffix → String
+  | .heit => "-heit"
+  | .keit => "-keit"
+  | .schaft => "-schaft"
+  | .ung => "-ung"
+  | .chen => "-chen"
+  | .lein => "-lein"
 
--- ============================================================================
--- § 2: Derived Nouns
--- ============================================================================
+/-- The suffixes *-heit* ~ *-keit*, *-schaft* and *-ung* fix the feminine, and the diminutives
+*-chen* and *-lein* the neuter. -/
+def Suffix.gender : Suffix → Value
+  | .heit | .keit | .schaft | .ung => .fem
+  | .chen | .lein => .neut
 
-/-- A German noun derived via a gender-assigning suffix. The noun's
-    surface gender is the suffix's `assignedGender` (suffix overrides
-    base semantics, e.g. *Mädchen*). -/
-structure DerivedNoun where
-  form : String
-  gloss : String
-  suffix : DerivationalSuffix
-  deriving DecidableEq, Repr
+/-- `s.noun form gloss` is the noun `form` 'gloss' ending in the suffix `s`, and its gender is the
+one `s` fixes. -/
+def Suffix.noun (s : Suffix) (form gloss : String) (naturalGender : Option Gender := none) :
+    GenderedNoun Value :=
+  { form, gloss, gender := s.gender, naturalGender }
 
-namespace DerivedNoun
+/-- A noun ending in a gender-fixing suffix has natural gender just when its referents' gender is
+the one the suffix fixes. -/
+theorem Suffix.isNaturalGender_noun_iff (s : Suffix) (form gloss : String) (g : Gender) :
+    (s.noun form gloss g).IsNaturalGender Value.toLabel ↔ g = s.gender.toLabel := by
+  simp [noun, GenderedNoun.IsNaturalGender]
 
-abbrev gender (n : DerivedNoun) : Gender := n.suffix.assignedGender
+/-! ### Nouns -/
 
-end DerivedNoun
+/-- *Krankheit* 'illness' is a noun in *-heit*. -/
+def krankheit : GenderedNoun Value := Suffix.heit.noun "Krankheit" "illness"
 
--- -schaft nouns (all feminine)
-def freundschaft  : DerivedNoun := ⟨"Freundschaft",  "friendship",   schaft⟩
-def gesellschaft  : DerivedNoun := ⟨"Gesellschaft",  "society",      schaft⟩
-def wissenschaft  : DerivedNoun := ⟨"Wissenschaft",  "science",      schaft⟩
-def meisterschaft : DerivedNoun := ⟨"Meisterschaft", "championship", schaft⟩
+/-- *Herrschaft* 'rule' is a noun in *-schaft*. -/
+def herrschaft : GenderedNoun Value := Suffix.schaft.noun "Herrschaft" "rule"
 
--- -heit/-keit nouns (all feminine)
-def freiheit      : DerivedNoun := ⟨"Freiheit",      "freedom",      heit⟩
-def moeglichkeit  : DerivedNoun := ⟨"Möglichkeit",   "possibility",  keit⟩
+/-- *Bedeutung* 'meaning' is a noun in *-ung*. -/
+def bedeutung : GenderedNoun Value := Suffix.ung.noun "Bedeutung" "meaning"
 
--- -ung nouns (all feminine)
-def zeitung       : DerivedNoun := ⟨"Zeitung",       "newspaper",    ung⟩
-def bildung       : DerivedNoun := ⟨"Bildung",       "education",    ung⟩
+/-- *Büchlein* 'little book' is a noun in *-lein*. -/
+def buechlein : GenderedNoun Value := Suffix.lein.noun "Büchlein" "little book"
 
--- -chen/-lein nouns (all neuter, even from feminine bases)
-def maedchen      : DerivedNoun := ⟨"Mädchen",       "girl",         chen⟩
-def buechlein     : DerivedNoun := ⟨"Büchlein",      "booklet",      lein⟩
+/-- *Mädchen* 'girl' is neuter, though its referents are female. -/
+def maedchen : GenderedNoun Value := Suffix.chen.noun "Mädchen" "girl" (some .feminine)
 
-def allDerived : List DerivedNoun :=
-  [freundschaft, gesellschaft, wissenschaft, meisterschaft,
-   freiheit, moeglichkeit, zeitung, bildung, maedchen, buechlein]
+/-- *Fräulein* 'young lady' is neuter, though its referents are female. -/
+def fraeulein : GenderedNoun Value := Suffix.lein.noun "Fräulein" "young lady" (some .feminine)
 
--- ============================================================================
--- § 3: Empirical observations
--- ============================================================================
+/-- *Bübchen* 'little boy' is neuter, though its referents are male. -/
+def buebchen : GenderedNoun Value := Suffix.chen.noun "Bübchen" "little boy" (some .masculine)
 
-/-- All *-schaft*, *-heit*, *-keit*, *-ung* derived nouns surface as
-    feminine — the suffix deterministically assigns feminine. Stated
-    directly over `assignedGender` (no DM intermediary). -/
-theorem feminine_suffixes_assign_feminine :
-    [freundschaft, gesellschaft, wissenschaft, meisterschaft,
-     freiheit, moeglichkeit, zeitung, bildung].all
-      (·.gender == .feminine) := by decide
-
-/-- *-chen* and *-lein* derived nouns surface as neuter. -/
-theorem diminutive_suffixes_assign_neuter :
-    chen.assignedGender = .neuter ∧ lein.assignedGender = .neuter :=
-  ⟨rfl, rfl⟩
-
-/-- **Mädchen override**: *Mädchen* 'girl' is neuter despite its
-    semantic referent being female. The diminutive suffix *-chen*
-    overrides the natural-gender expectation — empirical fact that any
-    theory must account for. -/
-theorem maedchen_neuter_override :
-    maedchen.gender = .neuter ∧ maedchen.gloss = "girl" := ⟨rfl, rfl⟩
+/-- The diminutives denoting persons are neuter whatever the sex of the referent. -/
+theorem not_isNaturalGender_diminutive :
+    ¬ maedchen.IsNaturalGender Value.toLabel ∧ ¬ fraeulein.IsNaturalGender Value.toLabel ∧
+      ¬ buebchen.IsNaturalGender Value.toLabel := by
+  decide
 
 end German.Gender

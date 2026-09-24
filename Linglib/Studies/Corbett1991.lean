@@ -15,6 +15,7 @@ public import Linglib.Fragments.Romanian.Gender
 public import Linglib.Fragments.Slavic.Russian.Gender
 public import Linglib.Fragments.Hausa.Gender
 public import Linglib.Fragments.Latin.Gender
+public import Linglib.Fragments.German.Determiners
 public import Linglib.Data.Examples.Corbett1991
 
 /-!
@@ -68,8 +69,8 @@ never less semantic than its assignment. The judgments the book reports are the 
   fragment nouns as each language requires. Optional rules are recorded as rows. Number
   resolution is `Number.resolveIn` folded over the conjuncts, except that a coordination of
   plurals alone resolves nothing, the book's restriction that keeps gender resolution from
-  being triggered. The gender carriers of French, German, Lak, Slovene, Icelandic and Ojibwa
-  are declared in the study, there being no fragments for them.
+  being triggered. The gender carriers of French, Lak, Slovene, Icelandic and Ojibwa are
+  declared in the study, there being no fragments for them.
 * Not modelled: the psycholinguistic evidence of chapter 4, the morphology of agreement and
   its limits in chapter 5, syncretism and neutral agreement in chapter 7, the diachrony of
   chapters 8 to 10, Russian acronyms and indeclinables, Chichewa's target-gender rule for
@@ -393,31 +394,12 @@ end French
 
 namespace German
 
-/-- The three genders and the definite article, three forms in the singular, one in the
-plural: Figure 6.7. -/
-inductive Value where
-  | masc
-  | fem
-  | neut
-  deriving DecidableEq, Repr, Fintype
-
-/-- The definite article. -/
-inductive Article where
-  | der
-  | die
-  | das
-  deriving DecidableEq, Repr, Fintype
-
-/-- The singular article of each gender. -/
-def Value.sgArticle : Value → Article
-  | .masc => .der
-  | .fem => .die
-  | .neut => .das
-
-/-- The plural article, one form for all three. -/
-def Value.plArticle : Value → Article := λ _ => .die
-
-theorem convergent : Gender.Convergent Value.sgArticle Value.plArticle := by decide
+open _root_.German.Case _root_.German.Determiners in
+/-- The three genders and the definite article, three forms in the nominative singular and one in
+the plural: Figure 6.7. -/
+theorem convergent :
+    Gender.Convergent (fun g ↦ definite (.sg g) (cell .nom)) fun _ ↦ definite .pl (cell .nom) := by
+  decide
 
 end German
 
