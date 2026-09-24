@@ -6,18 +6,17 @@ public import Linglib.Fragments.Mandarin.Aspect
 /-!
 # Mandarin negation
 
-Mandarin negates a declarative verbal clause with one of two preverbal negators, chosen by
-aspect. *Bù* negates non-perfective predicates, present and future, is the natural choice with
-states, and adds nothing else to the clause: *Nézha bù tǎoyàn Yángjiǎn* 'Nezha does not hate
-Yangjian'. *Méi* negates perfective and experiential predicates and is the dedicated negator of
-the existential and possessive verb *yǒu* 'have', which may follow it in the long form
-*méi-yǒu*. The perfective particle *le* does not occur under it, while the experiential *guò*
-does: *Nézha chuī le chángdí* 'Nezha played the flute' is negated as *Nézha méi-yǒu chuī
-chángdí*. Prohibitions use neither negator but the negative imperatives *bié* and *búyào*,
-literally 'not want'. The description follows [miestamo-2005], [zhao-2025] and [jin-koenig-2021]; [miestamo-2005]'s
-classification of the constructions as symmetric and asymmetric lives in
-`Studies/Miestamo2005.lean`, and the negators that appear expletively under *fear* and *regret*
-are the rows of `Data.Examples.JinKoenig2021`.
+Mandarin negates a declarative verbal clause with one of two preverbal negators, chosen by aspect.
+*Bù* negates non-perfective predicates, present and future, is the natural choice with states, and
+adds nothing else to the clause: *Nézha bù tǎoyàn Yángjiǎn* 'Nezha does not hate Yangjian'. *Méi*
+negates perfective and experiential predicates and is the dedicated negator of the existential and
+possessive verb *yǒu* 'have', which may follow it in the long form *méi-yǒu*. The perfective
+particle *le* does not occur under it, while the experiential *guò* does: *Nézha chuī le chángdí*
+'Nezha played the flute' is negated as *Nézha méi-yǒu chuī chángdí*. Prohibitions use neither
+negator but the negative imperatives *bié* and *búyào*, literally 'not want'. The description
+follows [miestamo-2005], [zhao-2025] and [jin-koenig-2021]; [miestamo-2005]'s classification of the
+constructions as symmetric and asymmetric lives in `Studies/Miestamo2005.lean`, and the negators
+that appear expletively under *fear* and *regret* are the rows of `Data.Examples.JinKoenig2021`.
 
 ## References
 

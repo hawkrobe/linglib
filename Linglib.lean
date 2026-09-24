@@ -659,7 +659,6 @@ import Linglib.Fragments.Arabic.ModernStandard.Comparison
 import Linglib.Fragments.Arabic.ModernStandard.Negation
 import Linglib.Fragments.Arabic.ModernStandard.Phonology
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
-import Linglib.Fragments.Armenian.Classifiers
 import Linglib.Fragments.Aymara.Evidentiality
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Basque.Agreement
@@ -762,7 +761,6 @@ import Linglib.Fragments.Greek.StandardModern.Declension
 import Linglib.Fragments.Greek.StandardModern.Gender
 import Linglib.Fragments.Greek.StandardModern.Modals
 import Linglib.Fragments.Greek.StandardModern.Negation
-import Linglib.Fragments.Greek.StandardModern.Nouns
 import Linglib.Fragments.Greek.StandardModern.Reciprocals
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
@@ -853,7 +851,6 @@ import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Evidentiality
-import Linglib.Fragments.Mandarin.Modals
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.PolarityItems

@@ -1,15 +1,13 @@
 module
 
 public import Linglib.Fragments.Bantu.Params
-public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Shona noun classes
 
 This file defines the Shona noun-class system: the fourteen classes with their subject markers,
 the eight genders that pair a singular class with its plural, two of them sharing a plural
-class, the semantic core each gender bears ([carstens-2026]), and the parameters of the class
-system as a classifier device.
+class, and the semantic core each gender bears ([carstens-2026]).
 
 ## References
 
@@ -138,36 +136,5 @@ def Gender.status : Gender → GenderStatus
   | .genderA => .interpretable .human
   | .genderD => .interpretable .nonhuman
   | _ => .uninterpretable
-
-/-! ### Noun-class parameters -/
-
-/-- Gender is realized by agreement inside the head-modifier NP; the clause is a further scope. -/
-def classifierLocus : Classifier.Scope := .headModifierNP
-
-def classifierConstituent : Classifier.Constituent := .headNoun
-
-/-- The kind of device, read off its locus and the constituent it characterizes. -/
-abbrev classifierKind : Option Classifier.Kind :=
-  Classifier.kind classifierLocus classifierConstituent
-
-/-- Every environment the device operates in. -/
-def classifierScopes : List Classifier.Scope := [.headModifierNP, .predicateArgument]
-
-/-- Semantic core with morphological residue. -/
-def classifierAssignment : Classifier.Assignment := .mixed
-
-/-- Class prefixes on the noun and its agreement targets. -/
-def classifierRealizations : List Classifier.Realization := [.prefix]
-
-def classifierAgreement : Bool := true
-
-def classifierObligatory : Bool := true
-
-/-- A default agreement class. -/
-def classifierDefault : Bool := true
-
-def classifierSemantics : List Classifier.Parameter := [.humanness, .animacy]
-
-def obligatoryNumber : Bool := true
 
 end Shona

@@ -3,12 +3,19 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# Mandarin comparative data
+# Mandarin comparison
 
-Mandarin compares with *X bǐ Y Adj* (WALS Ch 121A: exceed, [stassen-2013]):
-the standard is the object of *bǐ*, and the free degree word *gèng* 'even
-more' is available. No superlative strategy is recorded: the free superlative
-word *zuì* fits none of `SuperlativeStrategy`'s cases.
+This file defines the Mandarin comparative of superiority, *tā bǐ nǐ gāo* 'she is taller than
+you': the compared item, *bǐ* 'compare with' followed by the standard, and the predicate naming
+the dimension. The standard is the object of *bǐ*, a role the construction fixes rather than one
+copied from the compared item, so the construction is an exceed comparative (`Comparative.type`). The comparatives of inferiority, with
+*méi(yǒu)* or *bùrú*, and of equality, with *gēn … yíyàng*, have the same shape, and the
+superlative is the adverb *zuì* 'most' before the predicate.
+
+## References
+
+* [li-thompson-1981]
+* [stassen-2013]
 -/
 
 @[expose] public section
@@ -17,14 +24,13 @@ namespace Mandarin.Comparison
 
 open Comparative
 
-/-- The *bǐ*-comparative: the standard is *bǐ*'s object. -/
+/-- The *bǐ*-comparative: the standard is the object of *bǐ* 'compare with'. -/
 def bi : Comparative :=
-  { standardMarker := some "bi"
+  { standardMarker := some "bǐ"
   , caseAssignment := .fixed
-  , fixedEncoding := some .directObject
-  , degreeMarker := some "geng" }
+  , fixedEncoding := some .directObject }
 
-/-- Free degree word *gèng*. -/
-def degreeWord : DegreeWordType := .hasDegreeWord
+/-- The *bǐ*-comparative is an exceed comparative. -/
+theorem bi_type : bi.type = .exceed := rfl
 
 end Mandarin.Comparison

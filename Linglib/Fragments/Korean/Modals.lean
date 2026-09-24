@@ -5,14 +5,27 @@ public import Linglib.Semantics.Modality.Basic
 /-!
 # Korean modals
 
-The Korean modal expressions of Qing and Uegaki's survey with the forces and flavours each
-expresses: the epistemic necessity suffixes *-napo-*, *-keyss-*, *ke-* and *they-*, the
-deontic and circumstantial necessity of *-ya ha-* and *-ya keyss-*, the circumstantial *kes.i
-coh-*, and the possibility expressions *ci(-to) molun-*, *swu(-to) iss-* and *-to toy-*.
+The Korean modal expressions of Uegaki and Hannon's elicited dataset of force-flavour combinations,
+distributed with the modal typology database of [guo-imel-steinert-threlkeld-2022], with the forces
+and flavours each expresses: the epistemic necessity suffixes *-napo-*, *-keyss-*, *ke-* and
+*they-*, the deontic and circumstantial necessity of *-ya ha-*, the deontic necessity of *-ya
+keyss-*, the circumstantial *kes.i coh-*, and the possibility expressions *ci(-to) molun-*,
+*swu(-to) iss-* and *-to toy-*.
+
+## Implementation notes
+
+The dataset records whether each expression is felicitous in contexts of three forces,
+necessity, weak necessity and possibility, and five flavors, epistemic, deontic, teleological,
+circumstantial and bouletic, with and without negation. An entry's meaning is its
+positive-polarity cells judged felicitous, with weak necessity entered as necessity and
+teleological as circumstantial; bouletic cells are left out, and so are the expressions with no
+other felicitous cell. Whether a meaning has independent force and flavor depends on this
+projection.
 
 ## References
 
-* [qing-uegaki-2025]
+* [uegaki-hannon-2022]
+* [guo-imel-steinert-threlkeld-2022]
 -/
 
 @[expose] public section

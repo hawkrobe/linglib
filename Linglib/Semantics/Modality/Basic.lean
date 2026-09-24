@@ -3,6 +3,7 @@ module
 public import Linglib.Pragmatics.SocialMeaning.Register
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -88,14 +89,15 @@ def dual : ModalForce → ModalForce
 from possibility ([zeijlstra-2007]). -/
 def IsUniversal (f : ModalForce) : Prop := f ≠ possibility
 
-instance : DecidablePred IsUniversal := λ _ => inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred IsUniversal := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 end ModalForce
 
 /-! ### Modal flavor -/
 
-/-- A modal flavor is the source of a modal claim, the four conversational backgrounds of
-[kratzer-1981]; teleological modality counts as circumstantial. -/
+/-- A modal flavor is the source of a modal claim: an epistemic or a circumstantial modal base,
+or a circumstantial base ordered by what the law requires or what someone wants
+([kratzer-1981]); teleological modality, ordered by goals, counts as circumstantial. -/
 inductive ModalFlavor where
   | epistemic
   | deontic
@@ -104,9 +106,8 @@ inductive ModalFlavor where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- A force-flavor pair is one point of the modal semantic space of
-[imel-guo-steinert-threlkeld-2026]. Their database uses two forces and three flavors; weak
-necessity ([agha-jeretic-2026]) and bouletic flavor ([kratzer-1981]) extend the space to twelve
-points. -/
+[imel-guo-steinert-threlkeld-2026], which has two forces and three flavors; weak necessity
+([agha-jeretic-2026]) and bouletic flavor ([kratzer-1981]) extend the space to twelve points. -/
 abbrev ForceFlavor := ModalForce × ModalFlavor
 
 /-- The force of a force-flavor pair. -/
@@ -151,13 +152,13 @@ def VariesForce (m : ModalItem) : Prop := 2 ≤ m.forces.card
 /-- A modal item varies in flavour when it expresses two flavours. -/
 def VariesFlavor (m : ModalItem) : Prop := 2 ≤ m.flavors.card
 
-instance : DecidablePred Epistemic := λ _ => inferInstanceAs (Decidable (∀ _ ∈ _, _ = _))
+instance : DecidablePred Epistemic := fun _ ↦ inferInstanceAs (Decidable (∀ _ ∈ _, _ = _))
 
-instance : DecidablePred Circumstantial := λ _ => inferInstanceAs (Decidable (∀ _ ∈ _, _ ≠ _))
+instance : DecidablePred Circumstantial := fun _ ↦ inferInstanceAs (Decidable (∀ _ ∈ _, _ ≠ _))
 
-instance : DecidablePred VariesForce := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+instance : DecidablePred VariesForce := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 
-instance : DecidablePred VariesFlavor := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+instance : DecidablePred VariesFlavor := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 
 end ModalItem
 
@@ -178,14 +179,22 @@ inductive ForceAnalysis where
   | strengthened (base : ModalForce)
   deriving DecidableEq, Repr
 
-/-- A force analysis is consistent with a meaning when the forces the meaning attests are the
-one the analysis fixes or strengthens, or two for a variable-force analysis. -/
+/-- A force analysis is consistent with a meaning when the meaning attests only the force the
+analysis fixes; when the strengthened base is the weakest force it attests, the stronger ones
+arising by strengthening; or when it attests two forces, for a variable-force analysis. -/
 def ForceAnalysis.Consistent : ForceAnalysis → Finset ForceFlavor → Prop
-  | .fixed fo, m | .strengthened fo, m => m.image Prod.fst = {fo}
+  | .fixed fo, m => m.image Prod.fst = {fo}
+  | .strengthened fo, m => fo ∈ m.image Prod.fst ∧ ∀ g ∈ m.image Prod.fst, fo ≤ g
   | .variableForce, m => 2 ≤ (m.image Prod.fst).card
 
 instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (a.Consistent m) := by
   cases a <;> unfold ForceAnalysis.Consistent <;> infer_instance
+
+/-- A strengthened base force is consistent with a meaning exactly when it is the least force the
+meaning attests. -/
+theorem ForceAnalysis.consistent_strengthened_iff {fo : ModalForce} {m : Finset ForceFlavor} :
+    (strengthened fo).Consistent m ↔ IsLeast (m.image Prod.fst : Set ModalForce) fo :=
+  Iff.rfl
 
 /-! ### Modal-temporal axes
 

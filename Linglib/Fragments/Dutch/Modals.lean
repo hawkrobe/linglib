@@ -3,13 +3,28 @@ module
 public import Linglib.Semantics.Modality.Basic
 
 /-!
-# Dutch Modal Inventory
+# Dutch modals
 
-Modal expressions from Dutch (Indo-European), based on
-[qing-uegaki-2025].
+The Dutch modal expressions of Uegaki and Hannon's elicited dataset of force-flavour combinations,
+distributed with the modal typology database of [guo-imel-steinert-threlkeld-2022]. Under the
+projection below, *zou/zouden ... kunnen* is the one expression whose force and flavor are not
+independent: it expresses epistemic necessity and epistemic and circumstantial possibility, but not
+circumstantial necessity.
 
-Dutch has one non-IFF modal: zou/zouden...kunnen expresses
-{(nec,e),(poss,e),(poss,c)} which is not Cartesian-closed.
+## Implementation notes
+
+The dataset records whether each expression is felicitous in contexts of three forces,
+necessity, weak necessity and possibility, and five flavors, epistemic, deontic, teleological,
+circumstantial and bouletic, with and without negation. An entry's meaning is its
+positive-polarity cells judged felicitous, with weak necessity entered as necessity and
+teleological as circumstantial; bouletic cells are left out, and so are the expressions with no
+other felicitous cell. Whether a meaning has independent force and flavor depends on this
+projection.
+
+## References
+
+* [uegaki-hannon-2022]
+* [guo-imel-steinert-threlkeld-2022]
 -/
 
 @[expose] public section

@@ -24,31 +24,21 @@ share one meaning is the dissertation's analysis and lives in `Studies/Zhao2025.
 
 namespace Mandarin.Aspect
 
-/-- A Mandarin aspect particle: its pinyin, its character, its gloss and the viewpoint it
-marks. -/
-structure Marker where
-  /-- The pinyin form. -/
-  pinyin : String
-  /-- The character. -/
-  hanzi : String
-  /-- The gloss. -/
-  gloss : String
-  /-- The viewpoint the particle marks. -/
-  viewpoint : _root_.Aspect.ViewpointType
-  deriving Repr, DecidableEq
-
 /-- The perfective suffix *le* 了: *Nézha mǎi le yī-píng cù* 'Nezha bought a bottle of
 vinegar'. -/
-def le : Marker := { pinyin := "le", hanzi := "了", gloss := "PFV", viewpoint := .perfective }
+def le : Aspect.Marker :=
+  { form := "le", script := some "了", gloss := "PFV", viewpoint := .perfective }
 
 /-- The experiential suffix *guò* 过, an experiential perfect: *Nézha chuī guò chángdí* 'Nezha
 has played the flute before'. -/
-def guo : Marker := { pinyin := "guò", hanzi := "过", gloss := "EXP", viewpoint := .perfect }
+def guo : Aspect.Marker :=
+  { form := "guò", script := some "过", gloss := "EXP", viewpoint := .perfect }
 
 /-- The progressive *zài* 在: *Nézha zài chàng gē* 'Nezha is singing'. -/
-def zai : Marker := { pinyin := "zài", hanzi := "在", gloss := "PROG", viewpoint := .imperfective }
+def zai : Aspect.Marker :=
+  { form := "zài", script := some "在", gloss := "PROG", viewpoint := .imperfective }
 
 /-- The aspect particles. -/
-def markers : List Marker := [le, guo, zai]
+def markers : List Aspect.Marker := [le, guo, zai]
 
 end Mandarin.Aspect

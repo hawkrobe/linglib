@@ -55,11 +55,10 @@ namespace PrasertsonSmithCulbertson2026
 
 /-- Every noun class or numeral classifier device of the sample has animacy, humanness, or sex
 among its basic semantic parameters, and none has colour. -/
-theorem animacy_not_colour :
-    ∀ d ∈ Aikhenvald2000.allDevices,
-      d.kind = some .nounClass ∨ d.kind = some .numeralClassifier →
-        (∃ p ∈ d.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex) ∧ .colour ∉ d.semantics :=
-  λ d hd hk => ⟨Aikhenvald2000.animacy_basic d hd hk, Aikhenvald2000.colour_never d hd⟩
+theorem animacy_not_colour (l : Aikhenvald2000.Language)
+    (hk : l.kind = some .nounClass ∨ l.kind = some .numeralClassifier) :
+    (∃ p ∈ l.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex) ∧ .colour ∉ l.semantics :=
+  ⟨Aikhenvald2000.animacy_basic l hk, Aikhenvald2000.colour_never l⟩
 
 /-! ### The stimulus dimensions (§4.2.2, Fig. 10) -/
 

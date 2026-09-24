@@ -1,68 +1,35 @@
 module
 
-public import Linglib.Data.UD.UPOS
-public import Linglib.Morphology.Word.Basic
 public import Linglib.Syntax.Reciprocal
+
+/-!
+# Mandarin reciprocals
+
+Mandarin can express reciprocity by compounding a verb with *lái* 'come' and *qù* 'go' in the
+pattern V-*lái*-V-*qù*: *Tāmen dǎ-lái-dǎ-qù* 'They beat each other', [konig-kokutani-2006]'s example
+as [nordlinger-2023] cites it. König and Kokutani class it as a compound verbal strategy, and
+[nordlinger-2023] notes that [evans-2008]'s typology places it among the multiclausal strategies, as
+verb compounding with a repeated one-way predicate. The adverb *hùxiāng* 互相 'mutually' also marks
+reciprocity; adverbs are outside the strategy vocabulary of `Reciprocal.Strategy`.
+
+## References
+
+* [nordlinger-2023]
+* [konig-kokutani-2006]
+* [evans-2008]
+-/
 
 @[expose] public section
 
-open Morphology (Word Features)
-
-/-!
-# Mandarin Reciprocal Fragment
-[nordlinger-2023] [konig-kokutani-2006]
-
-Mandarin uses a compound verb strategy for reciprocity: V-lái-V-qù
-(V-come-V-go), expressing mutual back-and-forth action. This is a
-verbal strategy (monovalent) and is distinct from the reflexive "zìjǐ".
-
-Example: "dǎ-lái-dǎ-qù" (beat-come-beat-go = 'beat each other')
-[nordlinger-2023] ex. 13.
-
-The adverb "hùxiāng" ('mutually') can also mark reciprocity but is
-not the primary morphosyntactic strategy.
--/
-
 namespace Mandarin.Reciprocals
-
-
-/-- Compound verb pattern for Mandarin reciprocals.
-    The pattern is: V-lái-V-qù (V-come-V-go). -/
-structure CompoundRecip where
-  verb : String
-  script : Option String := none
-  deriving Repr, BEq
-
-/-- Generate the compound reciprocal form. -/
-def CompoundRecip.toForm (c : CompoundRecip) : String :=
-  c.verb ++ "-lái-" ++ c.verb ++ "-qù"
-
-/-- dǎ-lái-dǎ-qù — 'beat each other' ([nordlinger-2023] ex. 13). -/
-def daLaiDaQu : CompoundRecip :=
-  { verb := "dǎ", script := some "打来打去" }
-
-/-- 互相 hùxiāng — adverb 'mutually'. -/
-def huxiang : Word :=
-  { form :="hùxiāng", cat := .ADV }
-
-/-- 自己 zìjǐ — reflexive pronoun (for contrast). -/
-def ziji : Word :=
-  { form :="zìjǐ", cat := .PRON, features := Features.of (person := some .third) }
-
-/-- Compound reciprocal form is distinct from reflexive. -/
-theorem recip_distinct_from_reflexive :
-    daLaiDaQu.toForm ≠ ziji.form := by decide
 
 open Reciprocal
 
-/-- The V-lái-V-qù compound as a reciprocal marker (form derived from
-    `daLaiDaQu`). The adverbial *hùxiāng* is outside the strategy
-    vocabulary ([evans-2008]'s adverbial strategy). -/
+/-- *dǎ-lái-dǎ-qù* 打来打去 'beat each other', the V-*lái*-V-*qù* compound. -/
 def compound : Marker :=
-  { form := daLaiDaQu.toForm, script := daLaiDaQu.script
-  , strategy := .compoundVerb }
+  { form := "dǎ-lái-dǎ-qù", script := some "打来打去", strategy := .compoundVerb }
 
-/-- Marker inventory. -/
+/-- The reciprocal markers. -/
 def markers : Finset Marker := {compound}
 
 end Mandarin.Reciprocals

@@ -2,20 +2,17 @@ module
 
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Fragments.Japanese.Classifiers
-public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Japanese nouns
 
 The Japanese noun as a lexical entry: the root `Noun` with its romanization, the classifier it
 counts with, and the optional plural in *-tachi* where the entry records one; a name is the root
-`ProperName` with its romanization. Japanese is [+arg, −pred] ([chierchia-1998]): nouns denote
-kinds, and with no articles no covert shift is blocked, so every bare noun is an argument. The
-classifiers are `Japanese.Classifier`.
+`ProperName` with its romanization. Japanese has no articles, and a bare noun can be an argument.
+The classifiers are `Japanese.Classifier`.
 
 ## References
 
-* [chierchia-1998]
 * [downing-1996]
 -/
 
@@ -24,7 +21,6 @@ classifiers are `Japanese.Classifier`.
 namespace Japanese.Nouns
 
 open Japanese (Classifier)
-open Genericity
 
 /-- A Japanese noun: the root entry with its romanization, the classifier it counts with, if any,
 and its optional plural. -/
@@ -82,11 +78,5 @@ def taro : ProperName := name "太郎" "Tarō" (some .masculine)
 def hanako : ProperName := name "花子" "Hanako" (some .feminine)
 def yamada : ProperName := name "山田" "Yamada"
 def tanaka : ProperName := name "田中" "Tanaka"
-
-/-! ### The Nominal Mapping Parameter -/
-
-/-- Japanese is [+arg, −pred]: nouns denote kinds, and with no articles
-(`Japanese.Determiners.inventory`) no covert shift is blocked ([chierchia-1998]). -/
-def nominalMapping : NominalMapping := .argOnly
 
 end Japanese.Nouns

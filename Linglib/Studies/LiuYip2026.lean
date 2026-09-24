@@ -234,7 +234,7 @@ theorem correlation_II (a : Again) :
 /-- The Cantonese aspect suffixes associate with a projection, the perfective *-zo*, the
 progressive *-gan* and the experiential *-gwo* with the outer one and the continuous *-zyu* with
 the inner one. -/
-def aspectProjection (m : Cantonese.Aspect.Marker) : AspProjection :=
+def aspectProjection (m : Aspect.Marker) : AspProjection :=
   if m = Cantonese.Aspect.zyu then .inner else .outer
 
 /-- Every phase complement associates with the inner projection. -/

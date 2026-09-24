@@ -3,24 +3,20 @@ module
 public import Linglib.Fragments.Dutch.Determiners
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Semantics.Plurality.MassCount
-public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Dutch nouns
 
-This file records the Dutch noun as a lexical entry. An entry is the root `GenderedNoun` over
-the two-gender carrier of `Dutch.Gender`, with the mass/count feature and with its plural and
-diminutive where the entry records them; names are the root `ProperName`. The definite article
-a noun takes, `Noun.definiteArticle`, is read off its gender through
-`Dutch.Determiners.singular`. Dutch is [+arg, +pred] like the other Germanic languages
-([chierchia-1998]). Since *de*, *het* and *een* block the covert ι and ∃, bare plurals and
-bare mass nouns are arguments and bare singular count nouns are not. The entries are the nouns
+This file records the Dutch noun as a lexical entry. An entry is the root `GenderedNoun` over the
+two-gender carrier of `Dutch.Gender`, with the mass/count feature and with its plural and diminutive
+where the entry records them; names are the root `ProperName`. The definite article a noun takes,
+`Noun.definiteArticle`, is read off its gender through `Dutch.Determiners.singular`. Bare plurals
+and bare mass nouns are arguments and bare singular count nouns are not. The entries are the nouns
 of [le-bruyn-de-swart-2022]'s scrambling data.
 
 ## References
 
 * [broekhuis-corver-2026b]
-* [chierchia-1998]
 * [le-bruyn-de-swart-2022]
 -/
 
@@ -28,7 +24,6 @@ of [le-bruyn-de-swart-2022]'s scrambling data.
 
 namespace Dutch.Nouns
 
-open Genericity
 
 /-- A Dutch noun is the root gendered entry with the mass/count feature and with its plural and
 diminutive where recorded. -/
@@ -79,11 +74,5 @@ def helen : ProperName := name "Helen" .feminine
 def jan : ProperName := name "Jan" .masculine
 def piet : ProperName := name "Piet" .masculine
 def marie : ProperName := name "Marie" .feminine
-
-/-! ### The Nominal Mapping Parameter -/
-
-/-- Dutch is [+arg, +pred], like the other Germanic languages ([chierchia-1998]); its articles
-(`Dutch.Determiners.inventory`) block the covert ι and ∃. -/
-def nominalMapping : NominalMapping := .argAndPred
 
 end Dutch.Nouns

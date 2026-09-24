@@ -3,13 +3,28 @@ module
 public import Linglib.Semantics.Modality.Basic
 
 /-!
-# Modern Greek Modal Inventory
+# Modern Greek modals
 
-Modal expressions from Modern Greek (Indo-European), based on
-[qing-uegaki-2025].
+The Modern Greek modal expressions of Uegaki and Hannon's elicited dataset of force-flavour
+combinations, distributed with the modal typology database of [guo-imel-steinert-threlkeld-2022].
+Under the projection below, neither *prepei* nor *mporei* has independent force and flavor: *prepei*
+expresses necessity of every flavor but only epistemic possibility, and *mporei* possibility of
+every flavor but not deontic necessity.
 
-Greek has non-IFF modals: Prepei and Mporei express non-rectangular
-subsets of the meaning space.
+## Implementation notes
+
+The dataset records whether each expression is felicitous in contexts of three forces,
+necessity, weak necessity and possibility, and five flavors, epistemic, deontic, teleological,
+circumstantial and bouletic, with and without negation. An entry's meaning is its
+positive-polarity cells judged felicitous, with weak necessity entered as necessity and
+teleological as circumstantial; bouletic cells are left out, and so are the expressions with no
+other felicitous cell. Whether a meaning has independent force and flavor depends on this
+projection.
+
+## References
+
+* [uegaki-hannon-2022]
+* [guo-imel-steinert-threlkeld-2022]
 -/
 
 @[expose] public section

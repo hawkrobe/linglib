@@ -2,88 +2,200 @@ module
 
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Fragments.Mandarin.Classifiers
-public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # Mandarin nouns
 
-The Mandarin noun as a lexical entry: the root `Noun` with its pinyin and the classifier it
-counts with; a name is the root `ProperName` with its pinyin. Mandarin is [+arg, −pred] ([chierchia-1998]): nouns
-denote kinds, there is no number morphology and no article, so no covert shift is blocked and
-every bare noun is an argument; counting goes through a classifier
-(`Mandarin.Classifiers`).
+The Mandarin noun as a lexical entry: the root entry with the pinyin as citation form, its
+characters, and the classifiers it is counted with; a name is the root `ProperName` with its
+characters. Each noun has its own classifier, and a few have two according to their meaning,
+*shū* 'book' taking *běn* as a thing and *bù* as a work; beside its own classifiers a noun can
+always be counted with the general *gè* (`Noun.Takes`). A noun that denotes a measure, *tiān*
+'day', and a noun counted through measure words, *jiǔ* 'wine' or *fàn* 'cooked rice', takes no
+classifier. The entries are the pairings of noun and classifier that Li and Thompson and Chao
+give.
 
 ## References
 
-* [chierchia-1998]
+* [li-thompson-1981]
+* [chao-1968]
 -/
 
 @[expose] public section
 
 namespace Mandarin.Nouns
 
-open Mandarin.Classifiers
-open Genericity
+/-- A Mandarin noun: the root entry with the pinyin as citation form, its characters, and the
+classifiers it is counted with. -/
+structure Noun extends ClassifiedNoun Classifier where
+  /-- The characters. -/
+  hanzi : String
+  deriving DecidableEq
 
-/-- A Mandarin noun: the root entry with its pinyin and the classifier it counts with, if
-any. -/
-structure Noun extends _root_.Noun where
-  /-- The pinyin. -/
-  pinyin : String
-  /-- The classifier the noun counts with; none for a mass noun. -/
-  classifier : Option Classifier := some ge
-  deriving DecidableEq, Repr
+/-- A noun can be counted with a classifier of its own, and with the general *gè* when it takes
+a classifier at all. -/
+def Noun.Takes (n : Noun) (c : Classifier) : Prop :=
+  c ∈ n.classifiers ∨ c = Classifiers.ge ∧ n.classifiers.Nonempty
 
-/-! ### Common nouns -/
+instance (n : Noun) (c : Classifier) : Decidable (n.Takes c) :=
+  inferInstanceAs (Decidable (_ ∨ _))
 
-def gou : Noun := { form := "狗", gloss := "dog", pinyin := "gǒu", classifier := some zhi }
-def mao : Noun := { form := "猫", gloss := "cat", pinyin := "māo", classifier := some zhi }
-def niao : Noun := { form := "鸟", gloss := "bird", pinyin := "niǎo", classifier := some zhi }
-def ren : Noun := { form := "人", gloss := "person", pinyin := "rén" }
-def xuesheng : Noun := { form := "学生", gloss := "student", pinyin := "xuésheng" }
-def pengyou : Noun := { form := "朋友", gloss := "friend", pinyin := "péngyou" }
-def laoshi : Noun :=
-  { form := "老师", gloss := "teacher", pinyin := "lǎoshī", classifier := some wei }
-def nuer : Noun := { form := "女儿", gloss := "daughter", pinyin := "nǚ'ér" }
-def erzi : Noun := { form := "儿子", gloss := "son", pinyin := "érzi" }
-def shu : Noun := { form := "书", gloss := "book", pinyin := "shū", classifier := some ben }
-def che : Noun := { form := "车", gloss := "vehicle", pinyin := "chē", classifier := some liang }
-def hua : Noun := { form := "花", gloss := "flower", pinyin := "huā", classifier := some duo }
-def shui : Noun := { form := "水", gloss := "water", pinyin := "shuǐ", classifier := none }
-def fan : Noun := { form := "饭", gloss := "cooked rice", pinyin := "fàn", classifier := none }
+/-- A noun that takes a classifier can be counted with *gè*. -/
+theorem Noun.takes_ge {n : Noun} (h : n.classifiers.Nonempty) : n.Takes Classifiers.ge :=
+  .inr ⟨rfl, h⟩
 
-/-! ### Part nouns and relational nouns -/
+/-- A noun that takes no classifier takes none. -/
+theorem Noun.not_takes_of_eq_empty {n : Noun} (h : n.classifiers = ∅) (c : Classifier) :
+    ¬ n.Takes c := by
+  simp [Noun.Takes, h]
 
-def zuoyi : Noun := { form := "座椅", gloss := "seat", pinyin := "zuòyǐ" }
-def fangxiangpan : Noun := { form := "方向盘", gloss := "steering wheel", pinyin := "fāngxiàngpán" }
-def lunzi : Noun := { form := "轮子", gloss := "wheel", pinyin := "lúnzi" }
-def fengmian : Noun := { form := "封面", gloss := "cover", pinyin := "fēngmiàn" }
-def zuozhe : Noun := { form := "作者", gloss := "author", pinyin := "zuòzhě", classifier := some wei }
-def muqin : Noun := { form := "母亲", gloss := "mother", pinyin := "mǔqīn", classifier := some wei }
-def fuqin : Noun := { form := "父亲", gloss := "father", pinyin := "fùqīn", classifier := some wei }
-def laobanniang : Noun :=
-  { form := "老板娘", gloss := "proprietress", pinyin := "lǎobǎnniáng", classifier := some wei }
-def laoban : Noun := { form := "老板", gloss := "boss", pinyin := "lǎobǎn", classifier := some wei }
+/-! ### Nouns counted with *gè* alone -/
+
+/-- 人 *rén* 'person'. -/
+def ren : Noun :=
+  { form := "rén", hanzi := "人", gloss := "person", classifiers := {Classifiers.ge} }
+
+/-- 问题 *wèntí* 'problem'. -/
+def wenti : Noun :=
+  { form := "wèntí", hanzi := "问题", gloss := "problem", classifiers := {Classifiers.ge} }
+
+/-! ### Nouns with a classifier of their own -/
+
+/-- 先生 *xiānsheng* 'gentleman', counted with the polite *wèi*. -/
+def xiansheng : Noun :=
+  { form := "xiānsheng", hanzi := "先生", gloss := "gentleman", classifiers := {Classifiers.wei} }
+
+/-- 狗 *gǒu* 'dog', with *zhī* and, in some dialects, *tiáo*. -/
+def gou : Noun :=
+  { form := "gǒu", hanzi := "狗", gloss := "dog",
+    classifiers := {Classifiers.zhi, Classifiers.tiao} }
+
+/-- 手 *shǒu* 'hand'. -/
+def shou : Noun :=
+  { form := "shǒu", hanzi := "手", gloss := "hand", classifiers := {Classifiers.zhi} }
+
+/-- 衣服 *yīfu* 'garment'. -/
+def yifu : Noun :=
+  { form := "yīfu", hanzi := "衣服", gloss := "garment", classifiers := {Classifiers.jian} }
+
+/-- 花 *huā* 'flower', with *duǒ* for the blossom and *kē* for the plant. -/
+def hua : Noun :=
+  { form := "huā", hanzi := "花", gloss := "flower",
+    classifiers := {Classifiers.duo, Classifiers.ke} }
+
+/-- 草 *cǎo* 'grass'. -/
+def cao : Noun := { form := "cǎo", hanzi := "草", gloss := "grass", classifiers := {Classifiers.ke} }
+
+/-- 飞机 *fēijī* 'airplane'. -/
+def feiji : Noun :=
+  { form := "fēijī", hanzi := "飞机", gloss := "airplane", classifiers := {Classifiers.jia} }
+
+/-- 车 *chē* 'vehicle'. -/
+def che : Noun :=
+  { form := "chē", hanzi := "车", gloss := "vehicle", classifiers := {Classifiers.liang} }
+
+/-- 灯 *dēng* 'lamp'. -/
+def deng : Noun :=
+  { form := "dēng", hanzi := "灯", gloss := "lamp", classifiers := {Classifiers.zhan} }
+
+/-- 马 *mǎ* 'horse'. -/
+def ma : Noun := { form := "mǎ", hanzi := "马", gloss := "horse", classifiers := {Classifiers.pi} }
+
+/-- 牛 *niú* 'cattle, cow', with *tóu* and *tiáo*. -/
+def niu : Noun :=
+  { form := "niú", hanzi := "牛", gloss := "cattle",
+    classifiers := {Classifiers.tou, Classifiers.tiao} }
+
+/-- 书 *shū* 'book', with *běn* for the thing and *bù* for the work. -/
+def shu : Noun :=
+  { form := "shū", hanzi := "书", gloss := "book", classifiers := {Classifiers.ben, Classifiers.bu} }
+
+/-- 床 *chuáng* 'bed'. -/
+def chuang : Noun :=
+  { form := "chuáng", hanzi := "床", gloss := "bed", classifiers := {Classifiers.zhang} }
+
+/-- 桌子 *zhuōzi* 'table'. -/
+def zhuozi : Noun :=
+  { form := "zhuōzi", hanzi := "桌子", gloss := "table", classifiers := {Classifiers.zhang} }
+
+/-- 刀 *dāo* 'knife'. -/
+def dao : Noun := { form := "dāo", hanzi := "刀", gloss := "knife", classifiers := {Classifiers.ba} }
+
+/-- 毛笔 *máobǐ* 'brush-pen', elongated but counted with *zhī* 枝 rather than *tiáo*. -/
+def maobi : Noun :=
+  { form := "máobǐ", hanzi := "毛笔", gloss := "brush-pen", classifiers := {Classifiers.zhiBranch} }
+
+/-- 箭 *jiàn* 'arrow', elongated but counted with *zhī* 枝 rather than *tiáo*. -/
+def jian : Noun :=
+  { form := "jiàn", hanzi := "箭", gloss := "arrow", classifiers := {Classifiers.zhiBranch} }
+
+/-- 蛇 *shé* 'snake'. -/
+def she : Noun :=
+  { form := "shé", hanzi := "蛇", gloss := "snake", classifiers := {Classifiers.tiao} }
+
+/-- 鱼 *yú* 'fish'. -/
+def yu : Noun := { form := "yú", hanzi := "鱼", gloss := "fish", classifiers := {Classifiers.tiao} }
+
+/-- 绳子 *shéngzi* 'rope'. -/
+def shengzi : Noun :=
+  { form := "shéngzi", hanzi := "绳子", gloss := "rope", classifiers := {Classifiers.tiao} }
+
+/-- 路 *lù* 'road'. -/
+def lu : Noun := { form := "lù", hanzi := "路", gloss := "road", classifiers := {Classifiers.tiao} }
+
+/-- 河 *hé* 'river', with *tiáo* and *dào*. -/
+def he : Noun :=
+  { form := "hé", hanzi := "河", gloss := "river",
+    classifiers := {Classifiers.tiao, Classifiers.dao} }
+
+/-- 新闻 *xīnwén* 'news', counted with *tiáo* though not elongated. -/
+def xinwen : Noun :=
+  { form := "xīnwén", hanzi := "新闻", gloss := "news", classifiers := {Classifiers.tiao} }
+
+/-- 法律 *fǎlǜ* 'law', counted with *tiáo* though not elongated. -/
+def falu : Noun :=
+  { form := "fǎlǜ", hanzi := "法律", gloss := "law", classifiers := {Classifiers.tiao} }
+
+/-- 菜 *cài* 'course of food', counted with *dào*. -/
+def cai : Noun :=
+  { form := "cài", hanzi := "菜", gloss := "course of food", classifiers := {Classifiers.dao} }
+
+/-- 大炮 *dàpào* 'artillery piece'. -/
+def dapao : Noun :=
+  { form := "dàpào", hanzi := "大炮", gloss := "artillery piece", classifiers := {Classifiers.men} }
+
+/-! ### Nouns with no classifier -/
+
+/-- 天 *tiān* 'day', a noun denoting a measure: *sān tiān* 'three days', not *sān ge tiān*. -/
+def tian : Noun := { form := "tiān", hanzi := "天", gloss := "day", classifiers := ∅ }
+
+/-- 酒 *jiǔ* 'wine', counted through a measure word: *bēi jiǔ* 'glasses of wine'. -/
+def jiu : Noun := { form := "jiǔ", hanzi := "酒", gloss := "wine", classifiers := ∅ }
+
+/-- 饭 *fàn* 'cooked rice', counted through a measure word: *yī guō fàn* 'a pot of rice'. -/
+def fan : Noun := { form := "fàn", hanzi := "饭", gloss := "cooked rice", classifiers := ∅ }
+
+/-- The nouns. -/
+def nouns : List Noun :=
+  [ren, wenti, xiansheng, gou, shou, yifu, hua, cao, feiji, che, deng, ma, niu, shu, chuang,
+    zhuozi, dao, maobi, jian, she, yu, shengzi, lu, he, xinwen, falu, cai, dapao, tian, jiu, fan]
+
+/-- *Sān ge tiān* is out: *tiān* takes no classifier, not even *gè*. -/
+theorem not_takes_tian (c : Classifier) : ¬ tian.Takes c := Noun.not_takes_of_eq_empty rfl c
 
 /-! ### Proper names -/
 
-/-- A Mandarin name: the root name with its pinyin. -/
+/-- A Mandarin name: the root name with the pinyin as citation form, and its characters. -/
 structure ProperName extends _root_.ProperName where
-  /-- The pinyin. -/
-  pinyin : String
+  /-- The characters. -/
+  hanzi : String
   deriving DecidableEq, Repr
 
 /-- A personal name glossed by its pinyin. -/
-def name (form pinyin : String) : ProperName := { form, gloss := pinyin, pinyin }
+def name (form hanzi : String) : ProperName := { form, gloss := form, hanzi }
 
-def zhangsan : ProperName := name "张三" "Zhāng Sān"
-def lisi : ProperName := name "李四" "Lǐ Sì"
-def xiaoming : ProperName := name "小明" "Xiǎo Míng"
-
-/-! ### The Nominal Mapping Parameter -/
-
-/-- Mandarin is [+arg, −pred]: nouns denote kinds, and with no articles
-(`Mandarin.Determiners.inventory`) no covert shift is blocked ([chierchia-1998]). -/
-def nominalMapping : NominalMapping := .argOnly
+def zhangsan : ProperName := name "Zhāngsān" "张三"
+def lisi : ProperName := name "Lǐsì" "李四"
+def xiaoming : ProperName := name "Xiǎomíng" "小明"
 
 end Mandarin.Nouns

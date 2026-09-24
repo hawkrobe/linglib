@@ -1,18 +1,15 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
-public import Linglib.Syntax.Category.Classifier.Basic
 public import Linglib.Semantics.Plurality.MassCount
-public import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
 # French nouns
 
-The French noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine
-genders, with the mass/count feature and its plural; names are the root `ProperName`. French is
-[−arg, +pred] ([chierchia-1998]): nouns are predicates and need a determiner
-(`French.Determiners.inventory`) to be arguments, so no bare nominal is one. The typological
-parameters of the gender system as a classifier device follow the entries.
+The French noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine genders,
+with the mass/count feature and its plural; names are the root `ProperName`. A French noun needs a
+determiner (`French.Determiners.inventory`) to be an argument, so no bare nominal is one
+([chierchia-1998]).
 
 ## References
 
@@ -23,7 +20,6 @@ parameters of the gender system as a classifier device follow the entries.
 
 namespace French.Nouns
 
-open Genericity
 
 /-- A French noun: the root gendered entry with the mass/count feature and its plural. -/
 structure Noun extends GenderedNoun Gender where
@@ -80,45 +76,4 @@ def jean : ProperName := name "Jean" .masculine
 def marie : ProperName := name "Marie" .feminine
 def pierre : ProperName := name "Pierre" .masculine
 
-/-! ### The Nominal Mapping Parameter -/
-
-/-- French is [−arg, +pred]: nouns are predicates and need D to be arguments
-([chierchia-1998]); its articles are `French.Determiners.inventory`. -/
-def nominalMapping : NominalMapping := .predOnly
-
 end French.Nouns
-
-/-! ### Typological parameters -/
-
-namespace French
-
-/-- Gender is realized by agreement inside the head-modifier NP; the clause is a further scope. -/
-def classifierLocus : Classifier.Scope := .headModifierNP
-
-def classifierConstituent : Classifier.Constituent := .headNoun
-
-/-- The kind of device, read off its locus and the constituent it characterizes. -/
-abbrev classifierKind : Option Classifier.Kind :=
-  Classifier.kind classifierLocus classifierConstituent
-
-/-- Every environment the device operates in. -/
-def classifierScopes : List Classifier.Scope := [.headModifierNP, .predicateArgument]
-
-/-- Semantic core with a morphological residue. -/
-def classifierAssignment : Classifier.Assignment := .mixed
-
-/-- Agreement inflection on modifiers; noun classes are never free lexemes. -/
-def classifierRealizations : List Classifier.Realization := [.suffix]
-
-def classifierAgreement : Bool := true
-
-def classifierObligatory : Bool := true
-
-/-- Masculine is the unmarked gender. -/
-def classifierDefault : Bool := true
-
-def classifierSemantics : List Classifier.Parameter := [.sex, .animacy]
-
-def obligatoryNumber : Bool := true
-
-end French

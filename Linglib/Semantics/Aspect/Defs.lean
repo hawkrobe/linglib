@@ -14,8 +14,9 @@ and progressive diagnostics are functions of the features (`forXPrediction`, `in
 `progressivePrediction`). Viewpoint is the
 presentation of a situation, Klein's four relations between the topic time and the situation
 time together with Smith's neutral viewpoint (`ViewpointType`), and at its coarsest the
-opposition of perfective and imperfective (`Perfectivity`). The operators that viewpoints
-denote are in `Semantics/Aspect/Viewpoint.lean`.
+opposition of perfective and imperfective (`Perfectivity`). A language's aspect morphemes are
+entered with the viewpoint each marks (`Marker`). The operators that viewpoints denote are in
+`Semantics/Aspect/Viewpoint.lean`.
 
 ## Main definitions
 
@@ -24,6 +25,7 @@ denote are in `Semantics/Aspect/Viewpoint.lean`.
 * `Aspect.DiagnosticResult`: the outcome of a diagnostic, with the *for*-adverbial,
   *in*-adverbial and progressive tests as functions of a situation type.
 * `Aspect.ViewpointType`, `Aspect.Perfectivity`: the viewpoints.
+* `Aspect.Marker`: a grammatical aspect marker and the viewpoint it marks.
 
 ## References
 
@@ -224,5 +226,18 @@ inductive Perfectivity
   | perfective
   | imperfective
   deriving DecidableEq, Repr, Inhabited
+
+/-- A grammatical aspect marker: its form, romanized where the language has a native script, its
+spelling in that script, its gloss and the viewpoint it marks. -/
+structure Marker where
+  /-- The form, a romanization where the language has a native script. -/
+  form : String
+  /-- The spelling in the native script. -/
+  script : Option String := none
+  /-- The interlinear gloss. -/
+  gloss : String
+  /-- The viewpoint the marker marks. -/
+  viewpoint : ViewpointType
+  deriving DecidableEq, Repr
 
 end Aspect

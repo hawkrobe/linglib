@@ -5,19 +5,18 @@ module
 
 This file defines the word-class record for classifiers and the vocabulary of Aikhenvald's
 typology of noun categorization devices. `Classifier` is the lexical entry Fragments store in
-their inventories: a form, a gloss, the semantic parameters motivating its choice, whether it is
-the general or a mensural classifier, and its dimensionality. A language's device is described
-by where its morphemes occur and what they characterize — the locus and the constituent — and
-its kind (noun class, numeral classifier, verbal classifier, …) is the classification of that
-pair by Table 15.1 (`Classifier.kind`), never a stored label; assignment principle, surface
-realizations, agreement, obligatoriness, general member, semantic parameters, and the
-language's number marking complete the description. Fragments record these values field by
-field beside the inventory (`Mandarin.classifierLocus`, …) or beside the gender data for
-noun-class languages; the record assembling them is study-local (`Aikhenvald2000.Device`).
+their inventories: a form, its spelling in a native script, and a gloss. Which nouns a
+classifier counts, whether it is a language's general classifier, and which semantic parameters
+motivate it are facts about a whole system or analyses of it, not properties of the entry: a
+noun records the classifiers it takes (`ClassifiedNoun`), and a typology's coding of a system
+lives in the study that makes it. A device is described by where its morphemes occur and what
+they characterize, the locus and the constituent, and its kind (noun class, numeral classifier,
+verbal classifier, …) is the classification of that pair by Table 15.1 (`Classifier.kind`), never
+a stored label.
 
 ## Main definitions
 
-* `Classifier` — the lexical entry; `Classifier.Encodes`, `Classifier.parameters`.
+* `Classifier` — the lexical entry.
 * `Classifier.Parameter`, `Classifier.Dimension` — the semantic parameters and dimensionality.
 * `Classifier.Scope`, `Classifier.Constituent`, `Classifier.Kind`, `Classifier.kind` — the nine
   kinds of device as the classification of a locus by the constituent it characterizes.
@@ -94,34 +93,18 @@ inductive Dimension where
 
 end Classifier
 
-/-- A classifier lexical entry: its form and gloss, the semantic parameters motivating its
-choice, whether it is the general classifier of its system, whether it is mensural rather than
-sortal, and its dimensionality when shape-based. -/
+/-- A classifier lexical entry: its form, romanized where the language has a native script, its
+spelling in that script, and its gloss. -/
 structure Classifier where
-  /-- Surface form. -/
+  /-- The form, a romanization where the language has a native script. -/
   form : String
-  /-- Gloss. -/
-  gloss : String := ""
-  /-- The semantic parameters motivating the choice of this classifier. -/
-  semantics : List Classifier.Parameter := []
-  /-- Whether this is the general classifier that can replace the specific ones. -/
-  isDefault : Bool := false
-  /-- Whether the classifier individuates by measure rather than by inherent properties. -/
-  isMensural : Bool := false
-  /-- Dimensionality, when the classifier is shape-based. -/
-  dimension : Option Classifier.Dimension := none
-  deriving Repr, DecidableEq
+  /-- The spelling in the native script. -/
+  script : Option String := none
+  /-- The gloss. -/
+  gloss : String := "CL"
+  deriving DecidableEq, Repr
 
 namespace Classifier
-
-/-- `c.Encodes p` when the classifier `c` is motivated by the parameter `p`. -/
-def Encodes (c : Classifier) (p : Parameter) : Prop := p ∈ c.semantics
-
-instance (c : Classifier) (p : Parameter) : Decidable (c.Encodes p) :=
-  inferInstanceAs (Decidable (p ∈ c.semantics))
-
-/-- The distinct semantic parameters attested across an inventory. -/
-def parameters (cls : List Classifier) : List Parameter := (cls.flatMap (·.semantics)).eraseDups
 
 /-! ### Kinds of device, by locus and constituent -/
 

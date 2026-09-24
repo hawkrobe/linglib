@@ -5,8 +5,8 @@ public import Linglib.Syntax.Category.WhModifier
 /-!
 # Mandarin questions
 
-Mandarin leaves its wh-phrases in situ, and the aggressively non-D-linked modifier 到底
-*daodi* 'on earth' need not sit next to the wh-phrase it modifies: it moves to matrix Spec-CP
+Mandarin leaves its wh-phrases in situ, and the aggressively non-D-linked modifier *dàodǐ*
+到底 'on earth' need not sit next to the wh-phrase it modifies: it moves to matrix Spec-CP
 on its own ([chou-2012]), which is where [chan-shen-2026] locate its difference from English
 and Singlish *the-hell*.
 
@@ -22,8 +22,8 @@ namespace Mandarin.Questions
 
 open WhModifier
 
-/-- 到底 *daodi* 'on earth': moves to its scope position on its own. -/
+/-- *dàodǐ* 到底 'on earth': moves to its scope position on its own. -/
 def daodi : WhModifier :=
-  { form := "daodi", gloss := "on earth", mobility := .independent }
+  { form := "dàodǐ", gloss := "on earth", mobility := .independent }
 
 end Mandarin.Questions

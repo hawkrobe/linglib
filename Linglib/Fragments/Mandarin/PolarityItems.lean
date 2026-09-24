@@ -41,7 +41,7 @@ open PolarityItem
     *?Tā bù xǐhuan shéi* is degraded where *shénme* is perfect (A267,
     [li-1992] p. 150) — that slot belongs to the emphatic series. -/
 def shei : PolarityItem :=
-  { form := "shéi (谁, non-interrog.)"
+  { form := "shéi"
   , licensor := some .weak
   , freeChoice := true
   , baseForce := .existential
@@ -56,7 +56,7 @@ def shei : PolarityItem :=
     diǎn shénme zài zǒu ba!* 'Please eat a little something before you
     leave' (A264, [li-1992] p. 152); conditional (A266). -/
 def shenme : PolarityItem :=
-  { form := "shénme (什么, non-interrog.)"
+  { form := "shénme"
   , licensor := some .weak
   , freeChoice := true
   , baseForce := .existential
@@ -77,7 +77,7 @@ def shenme : PolarityItem :=
     open whether the negated uses are indefinites or wide-scope
     universals. -/
 def sheiDou : PolarityItem :=
-  { form := "shéi dōu/yě (谁都/谁也, neg)"
+  { form := "shéi dōu"
   , licensor := some .antiMorphic
   , baseForce := .universal
   , licensingContexts := [.negation]
@@ -95,7 +95,7 @@ def sheiDou : PolarityItem :=
     Etymologically *rèn* 'allow; appoint' + old interrogative *hé* 'what'
     ([haspelmath-1997] A.36.2). -/
 def renhe : PolarityItem :=
-  { form := "rènhé (任何)"
+  { form := "rènhé"
   , licensor := some .weak
   , freeChoice := true
   , baseForce := .existential

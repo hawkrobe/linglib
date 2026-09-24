@@ -58,27 +58,6 @@ structure TeleologicalFlavor (W : Type*) where
   circumstances : ModalBase W
   goals : OrderingSource W
 
-/-! ## Flavor Tags
-
-Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
-`Intensional`, bridging Kratzer's parameterized semantics to the
-typological meaning space (Imel, Guo, & [imel-guo-steinert-threlkeld-2026]). -/
-
-open Modality (ModalFlavor)
-
-/-- Epistemic modality maps to the epistemic flavor tag. -/
-def EpistemicFlavor.flavorTag : ModalFlavor := .epistemic
-
-/-- Deontic modality maps to the deontic flavor tag. -/
-def DeonticFlavor.flavorTag : ModalFlavor := .deontic
-
-/-- Bouletic modality maps to the bouletic flavor tag (desire-based ordering). -/
-def BouleticFlavor.flavorTag : ModalFlavor := .bouletic
-
-/-- Teleological modality maps to the circumstantial flavor tag
-    (teleological is subsumed under circumstantial in the 2×3 space). -/
-def TeleologicalFlavor.flavorTag : ModalFlavor := .circumstantial
-
 /-! ## Kratzer Parameters -/
 
 structure KratzerParams (W : Type*) where

@@ -1,14 +1,13 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
 # Swahili noun classes
 
 This file defines the Swahili noun-class system: the fifteen classes with their subject
-markers, the five genders that pair a singular class with its plural ([carstens-1991],
-[scott-2021]), and the parameters of the class system as a classifier device. Class conditions
+markers and the five genders that pair a singular class with its plural ([carstens-1991],
+[scott-2021]). Class conditions
 subject and object agreement, possessive and demonstrative agreement and, in relativization,
 the form of the resumptive pronoun.
 
@@ -105,36 +104,5 @@ def Gender.pluralClass : Gender → NounClass
   | .genderC => .cl6
   | .genderD => .cl8
   | .genderE => .cl10
-
-/-! ### Noun-class parameters -/
-
-/-- Gender is realized by agreement inside the head-modifier NP; the clause is a further scope. -/
-def classifierLocus : Classifier.Scope := .headModifierNP
-
-def classifierConstituent : Classifier.Constituent := .headNoun
-
-/-- The kind of device, read off its locus and the constituent it characterizes. -/
-abbrev classifierKind : Option Classifier.Kind :=
-  Classifier.kind classifierLocus classifierConstituent
-
-/-- Every environment the device operates in. -/
-def classifierScopes : List Classifier.Scope := [.headModifierNP, .predicateArgument]
-
-/-- Semantic core with morphological residue. -/
-def classifierAssignment : Classifier.Assignment := .mixed
-
-/-- Class prefixes on the noun and its agreement targets. -/
-def classifierRealizations : List Classifier.Realization := [.prefix]
-
-def classifierAgreement : Bool := true
-
-def classifierObligatory : Bool := true
-
-/-- A default agreement class. -/
-def classifierDefault : Bool := true
-
-def classifierSemantics : List Classifier.Parameter := [.humanness, .animacy]
-
-def obligatoryNumber : Bool := true
 
 end Swahili

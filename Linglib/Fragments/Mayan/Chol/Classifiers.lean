@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
-# Ch'ol Numeral Classifier Lexicon
+# Ch'ol numeral classifiers
 
 Typed classifier entries for Ch'ol (Cholan, Mayan), a classifier-for-numeral
 language ([little-moroney-royer-2022]; [bale-coon-2014]). Classifiers in
@@ -33,10 +33,16 @@ numeral requires as its first argument:
   ⟦ux⟧ = λm λP λx. [P(x) ∧ m(x) = 3]
   ⟦-kojty⟧ = μ_# (atom-counting measure for animals)
 
-The typological parameters follow [bale-coon-2014], [bale-et-al-2019] and
-[little-moroney-royer-2022]: numeral classifiers suffixed to the numeral stem, obligatory with
-native numerals (Spanish loan numerals reject them), with *-p'ej* as the generic default and
-attested co-occurrence with plural marking.
+Following [bale-coon-2014], [bale-et-al-2019] and [little-moroney-royer-2022], the classifiers are
+suffixes on the numeral stem, obligatory with native numerals, which Spanish loan numerals
+reject, with *-p'ej* as the generic default, and they co-occur with plural marking.
+
+## References
+
+* [little-moroney-royer-2022]
+* [bale-coon-2014]
+* [bale-et-al-2019]
+* [arcos-lopez-2009]
 -/
 
 @[expose] public section
@@ -48,35 +54,24 @@ namespace Chol.Classifiers
 /-- -p'ej — inanimate/generic default classifier. Semantically bleached
     for inanimates; also the base of vigesimal classifiers (-k'al for 20,
     -bajk for 400, -pijk for 8000). -/
-def pej : Classifier :=
-  { form := "-p'ej", gloss := "inanimate/generic", isDefault := true }
+def pej : Classifier := { form := "-p'ej", gloss := "inanimate/generic" }
 
 /-- -kojty — animals. Derived from positional root *koty* 'standing on
     four legs'. -/
-def kojty : Classifier :=
-  { form := "-kojty", gloss := "animal"
-  , semantics := [.animacy] }
+def kojty : Classifier := { form := "-kojty", gloss := "animal" }
 
 /-- -tyikil — people/humans. -/
-def tyikil : Classifier :=
-  { form := "-tyikil", gloss := "human"
-  , semantics := [.humanness] }
+def tyikil : Classifier := { form := "-tyikil", gloss := "human" }
 
 /-- -k'ej — flat round objects (tortillas, tables). -/
-def kej : Classifier :=
-  { form := "-k'ej", gloss := "flat.round"
-  , semantics := [.shape], dimension := some .twoD }
+def kej : Classifier := { form := "-k'ej", gloss := "flat.round" }
 
 /-- -ts'ijty — long things (trees, ropes). -/
-def tsijty : Classifier :=
-  { form := "-ts'ijty", gloss := "long"
-  , semantics := [.shape], dimension := some .oneD }
+def tsijty : Classifier := { form := "-ts'ijty", gloss := "long" }
 
 /-- -bujch — seated/propped up things (bottles propped up, seated objects).
     Derived from positional root *buch* 'seated'. -/
-def bujch : Classifier :=
-  { form := "-bujch", gloss := "seated/propped"
-  , semantics := [.arrangement] }
+def bujch : Classifier := { form := "-bujch", gloss := "seated/propped" }
 
 /-! ### Inventory -/
 
@@ -85,57 +80,9 @@ def allClassifiers : List Classifier :=
 
 def defaultClassifier : Classifier := pej
 
-/-! ### Verification -/
-
-/-- The default classifier is marked as default. -/
-theorem default_is_default : defaultClassifier.isDefault = true := rfl
-
-/-- All non-default classifiers carry at least one semantic parameter. -/
-theorem specific_classifiers_motivated :
-    (allClassifiers.filter (!·.isDefault)).all
-      (·.semantics.length > 0) = true := by decide
-
-/-- Ch'ol classifiers are bound morphemes (suffixes on the numeral stem).
-    All forms begin with a hyphen, indicating bound status. -/
-theorem classifiers_are_bound :
-    allClassifiers.all (·.form.startsWith "-") = true := by native_decide
-
 end Chol.Classifiers
 
-/-! ### Typological parameters -/
-
 namespace Chol
-
-/-- Classifiers occur in the numeral phrase and characterize the head noun. -/
-def classifierLocus : Classifier.Scope := .numeralNP
-
-def classifierConstituent : Classifier.Constituent := .headNoun
-
-/-- The kind of device, read off its locus and the constituent it characterizes. -/
-abbrev classifierKind : Option Classifier.Kind :=
-  Classifier.kind classifierLocus classifierConstituent
-
-/-- Every environment the device operates in. -/
-def classifierScopes : List Classifier.Scope := [.numeralNP]
-
-/-- Classifier choice is semantic. -/
-def classifierAssignment : Classifier.Assignment := .semantic
-
-/-- Suffixes on the numeral stem. -/
-def classifierRealizations : List Classifier.Realization := [.suffix]
-
-def classifierAgreement : Bool := false
-
-/-- Obligatory with native numerals. -/
-def classifierObligatory : Bool := true
-
-/-- Whether the inventory has a general classifier. -/
-def classifierDefault : Bool := Classifiers.allClassifiers.any (·.isDefault)
-
-def classifierSemantics : List Classifier.Parameter :=
-  Classifier.parameters Classifiers.allClassifiers
-
-def obligatoryNumber : Bool := false
 
 /-- Whether classifiers and plural marking co-occur. -/
 def pluralClassifierCooccur : Bool := true
