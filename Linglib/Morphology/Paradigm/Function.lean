@@ -46,8 +46,9 @@ payload equality.
 * `Action`, `Rule`: the payload (exponence or referral) and the payload-polymorphic
   realization rule, with its `Exponence.Rule` and two-clause narrowness `Preorder` instances.
 * `identityDefault`: the Identity Function Default.
-* `evalBlock`, `paradigmFunction`, `stemChoiceOf`: narrowest-rule block evaluation and the
-  block cascade.
+* `evalBlock`, `paradigmFunction`: narrowest-rule block evaluation and the block cascade.
+  Basic stem choice over rules of stem choice is `Exponence.realizeMinimalD`, narrowest-rule
+  realization with a per-lexeme fallback.
 * `evalPortmanteau`, `functionCompositionDefault`: portmanteau blocks, and the Function
   Composition Default as a derived `≤`-maximal rule.
 
@@ -61,8 +62,10 @@ payload equality.
   elsewhere-only, the mechanism behind `identityDefault` and the FCD.
 * `evalPortmanteau_eq_functionCompositionDefault`: the stipulated portmanteau evaluation
   equals its appended-block form.
-* `Linkage.realized_eq_paradigmFunction`, `Linkage.ofFun_realized_eq_paradigmFunction`: the
-  PFM2 realization of a linkage's block cascade is this paradigm function.
+* `Linkage.realized_eq_paradigmFunction`, `Linkage.ofFun_realized_eq_paradigmFunction`,
+  `Linkage.ofRules_realized_eq_paradigmFunction`: the PFM2 realization of a linkage's block
+  cascade is this paradigm function, with the stem choice of rules of paradigm linkage as its
+  basic stem choice.
 
 ## References
 
@@ -298,13 +301,6 @@ def paradigmFunction (Lindex : Z → L) (stemChoice : L × P → Z)
     (blocks : List (Block L Z P)) (c : L × P) : Z × P :=
   blocksEval Lindex blocks (stemChoice c, c.2)
 
-/-- `stemChoiceOf` performs basic stem choice ([bonami-stump-2016]'s (7)) as
-narrowest-rule selection over stem-choice rules (`payload := Z`), falling back to
-a per-lexeme default. Rule conflicts (the chapter's `greip`/`grip`/`gríp`) are
-resolved by the same narrowness order. -/
-def stemChoiceOf (sv : List (Rule L P Z)) (default : L → Z) : L × P → Z :=
-  fun c => ((selectMinimal sv c).map Rule.payload).getD (default c.1)
-
 /-- The rules of a **portmanteau block** `[m, n]` ([bonami-stump-2016]) compete
 with the composition of blocks `m` and `n`, and when none applies the **Function
 Composition Default** falls back to that composition. This is the handbook's
@@ -444,6 +440,17 @@ theorem _root_.Morphology.Linkage.ofFun_realized_eq_paradigmFunction [DecidableE
       = {paradigmFunction Lindex stemChoice blocks (l, σ)} :=
   Linkage.realized_eq_paradigmFunction _ Lindex stemChoice blocks l σ (fun _ _ ↦ rfl)
     fun _ _ ↦ rfl
+
+/-- The linkage of rules of paradigm linkage realizes its block cascade as the paradigm function
+whose basic stem choice realizes each lexeme's rules over its root. -/
+theorem _root_.Morphology.Linkage.ofRules_realized_eq_paradigmFunction [DecidableEq Z]
+    {R : Type*} [Exponence.Rule R P Z] [Preorder R] [DecidableRel (· < · : R → R → Prop)]
+    [DecidableRel (Exponence.Applies : R → P → Prop)] (rules : L → List R) (root : L → Z)
+    (Lindex : Z → L) (blocks : List (Block L Z P)) (l : L) (σ : P) :
+    (Linkage.ofRules id rules root).realized (fun z τ ↦ (blocksEval Lindex blocks (z, τ)).1) l σ
+      = {paradigmFunction Lindex (fun c ↦ realizeMinimalD (rules c.1) (fun _ ↦ root c.1) c.2)
+          blocks (l, σ)} :=
+  Linkage.realized_eq_paradigmFunction _ Lindex _ blocks l σ (fun _ _ ↦ rfl) fun _ _ ↦ rfl
 
 /-- `paradigmRealization` presents the paradigm function as a realization whose
 opaque indices are lexemes, realized at every cell, total and univalent, PFM's

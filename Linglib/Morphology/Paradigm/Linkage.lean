@@ -27,8 +27,8 @@ takes the lexeme's root.
 * `Linkage.IsInvariantAlong`, `Linkage.IsHeteroclite`: per-lexeme invariance and variance of
   stems along a projection, such as their inflection class.
 * `Linkage.ofFun`, `Linkage.canonical`: the linkage of a stem-choice function.
-* `Linkage.selectStem`, `Linkage.ofRules`: the stem that a lexeme's rules of paradigm linkage
-  select at a cell, and the linkage of those rules.
+* `Linkage.ofRules`: the linkage of rules of paradigm linkage, each cell taking the stem its
+  lexeme's rules realize over the lexeme's root.
 
 ## Main results
 
@@ -38,15 +38,13 @@ takes the lexeme's root.
   choice is canonical exactly when each lexeme's stem is constant.
 * `Linkage.ofRules_nil`: with no language-specific rules, the linkage of rules is the canonical
   linkage of the roots.
-* `Linkage.selectStem_factorsThrough`: rules that see only a projection of the cells select
-  stems that factor through it.
 
 ## Implementation notes
 
 `IsTotal`, `IsUnivalent`, and the per-lexeme `IsInvariant`, `IsSuppletive`, and
 `IsOverabundant` (Thornton's cell-mates) are inherited from `Realization`. Taking `S = M` and
 `ι = id` recovers a single type of property sets. The universal default rule (5) is not a
-listed rule of `ofRules` but its fallback `root`.
+listed rule of `ofRules` but the fallback of `Exponence.realizeMinimalD`, the lexeme's root.
 
 ## References
 
@@ -331,69 +329,21 @@ theorem canonical_isCanonical {ι : S → M} (hι : Function.Injective ι) (st :
 
 section Rules
 
-open Exponence
-
-variable {R V : Type*} [Rule R S Z] [Preorder R] [DecidableRel (· < · : R → R → Prop)]
-  [DecidableRel (Applies : R → S → Prop)] {rules : L → List R} {root : L → Z} {σ : S} {r : R}
-
-/-- The stem that a lexeme's rules of paradigm linkage select at a cell is the exponent of the
-first applicable rule that no applicable rule is narrower than, or the lexeme's root, by the
-universal default rule (5) of [stump-2006], when none of its rules applies. -/
-def selectStem (rules : L → List R) (root : L → Z) (l : L) (σ : S) : Z :=
-  ((selectMinimal (rules l) σ).map exponent).getD (root l)
+variable {R : Type*} [Exponence.Rule R S Z] [Preorder R] [DecidableRel (· < · : R → R → Prop)]
+  [DecidableRel (Exponence.Applies : R → S → Prop)]
 
 /-- The linkage of rules of paradigm linkage gives each content cell the stem that its
-lexeme's rules select, and the image under `ι` of its property set. -/
+lexeme's rules realize, the exponent of an applicable rule that no applicable rule is narrower
+than, or the lexeme's root, by the universal default rule (5) of [stump-2006], where none of its
+rules applies; its form property set is the image under `ι` of the cell's. -/
 abbrev ofRules (ι : S → M) (rules : L → List R) (root : L → Z) : Linkage L Z S M :=
-  ofFun ι (selectStem rules root)
+  ofFun ι fun l σ ↦ Exponence.realizeMinimalD (rules l) (fun _ ↦ root l) σ
 
 /-- With no language-specific rules, the linkage of rules is the canonical linkage of the
 roots. -/
 theorem ofRules_nil (ι : S → M) (st : L → Z) :
     ofRules ι (fun _ ↦ ([] : List R)) st = canonical ι st :=
   rfl
-
-theorem selectStem_eq_of_selectMinimal_eq_some (h : selectMinimal (rules l) σ = some r) :
-    selectStem rules root l σ = exponent r := by
-  simp [selectStem, h]
-
-theorem selectStem_eq_root_of_selectMinimal_eq_none (h : selectMinimal (rules l) σ = none) :
-    selectStem rules root l σ = root l := by
-  simp [selectStem, h]
-
-/-- The selected stem is the root or the exponent of one of the lexeme's rules. -/
-theorem selectStem_eq_root_or_mem :
-    selectStem rules root l σ = root l ∨ ∃ r ∈ rules l, selectStem rules root l σ = exponent r :=
-  match h : selectMinimal (rules l) σ with
-  | none => .inl (selectStem_eq_root_of_selectMinimal_eq_none h)
-  | some r => .inr ⟨r, selectMinimal_mem h, selectStem_eq_of_selectMinimal_eq_some h⟩
-
-/-- A property of the root and of every rule's exponent holds of the selected stem. -/
-theorem selectStem_induction (q : Z → Prop) (hroot : q (root l))
-    (hrules : ∀ r ∈ rules l, q (exponent r)) : q (selectStem rules root l σ) := by
-  obtain h | ⟨r, hr, h⟩ :=
-    selectStem_eq_root_or_mem (rules := rules) (root := root) (l := l) (σ := σ)
-  · exact h ▸ hroot
-  · exact h ▸ hrules r hr
-
-/-- Rules whose applicability sees only what `A` sees select stems whose classes factor through
-`A`. This is the reasoning of [stump-2006] §5.5, by which a rule sensitive to number alone, such
-as (41a), makes number an absolute correlate of heteroclisis. -/
-theorem selectStem_factorsThrough (cls : Z → K) {A : S → V}
-    (h : ∀ r ∈ rules l, ∀ ⦃σ σ'⦄, A σ = A σ' → (Applies r σ ↔ Applies r σ')) :
-    (fun σ ↦ cls (selectStem rules root l σ)).FactorsThrough A :=
-  fun _ _ hA ↦ by simp only [selectStem, selectMinimal_factorsThrough h hA]
-
-/-- Over a coherent list of rules whose Elsewhere winners are comparable, the selected stem is
-the exponent of any Elsewhere winner, so it does not depend on the order of the rules. -/
-theorem selectStem_eq_of_isElsewhereWinner (hv : Coherent (rules l))
-    (hcmp : ∀ ⦃r s⦄, IsElsewhereWinner (rules l) σ r → IsElsewhereWinner (rules l) σ s →
-      s ≤ r ∨ r ≤ s)
-    (hr : IsElsewhereWinner (rules l) σ r) : selectStem rules root l σ = exponent r := by
-  obtain ⟨w, hw⟩ := Option.isSome_iff_exists.mp
-    (selectMinimal_isSome_iff.mpr ⟨r, hr.prop.1, hr.prop.2⟩)
-  rw [selectStem_eq_of_selectMinimal_eq_some hw]
-  exact Realizes.eq hv hcmp ⟨w, selectMinimal_isElsewhereWinner hw, rfl⟩ ⟨r, hr, rfl⟩
 
 end Rules
 
