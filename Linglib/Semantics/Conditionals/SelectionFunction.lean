@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Conditionals.Basic
 public import Mathlib.Order.Extension.Linear
+public import Mathlib.Data.Prod.Lex
 public import Mathlib.Data.Fintype.Card
 
 /-!
@@ -176,18 +177,17 @@ section Compatible
 
 variable {W : Type*} {ord : W → Preorder W} {s : SelectionFunction W} {p q : Set W} {w v : W}
 
-/-- A completion of a family of preorders assigns to each center a linear order of the worlds that
-extends its strict order. -/
+/-- A completion of a family of preorders assigns to each center a linear order of the worlds
+extending its strict order. -/
 structure Completion (ord : W → Preorder W) where
   /-- The completed order at each center. -/
-  le : W → W → W → Prop
-  linear : ∀ w, IsLinearOrder W (le w)
-  le_of_lt : ∀ w x y, (ord w).lt x y → le w x y
+  order : W → LinearOrder W
+  le_of_lt : ∀ w x y, (ord w).lt x y → (order w).le x y
 
 /-- A selection function is selected by a completion when it selects, for each center, the least
 possible antecedent-world in the completion's order. -/
 def SelectionFunction.SelectedBy (s : SelectionFunction W) (c : Completion ord) : Prop :=
-  ∀ w p, p.Nonempty → ∀ u ∈ p, c.le w (s.sel w p) u
+  ∀ w p, p.Nonempty → ∀ u ∈ p, (c.order w).le (s.sel w p) u
 
 /-- A selection function is compatible with a family of preorders when some completion of the
 family selects it. -/
@@ -198,19 +198,17 @@ def SelectionFunction.Compatible (s : SelectionFunction W) (ord : W → Preorder
 theorem SelectionFunction.Compatible.isCSO (hs : s.Compatible ord) : s.IsCSO := by
   intro w p p' hp hp' h₁ h₂
   obtain ⟨c, hc⟩ := hs
-  have := c.linear w
-  exact antisymm (hc w p hp _ h₁) (hc w p' hp' _ h₂)
+  exact (c.order w).le_antisymm _ _ (hc w p hp _ h₁) (hc w p' hp' _ h₂)
 
 /-- A compatible selection function selects a closest antecedent-world. -/
 theorem SelectionFunction.Compatible.sel_mem_minimals (hs : s.Compatible ord) (hp : p.Nonempty) :
     s.sel w p ∈ (ord w).minimals p := by
   obtain ⟨c, hc⟩ := hs
-  have := c.linear w
-  let := ord w
   refine ⟨s.inclusion w p hp, fun u hu hus ↦ ?_⟩
   by_contra hn
-  have hu := antisymm (c.le_of_lt w u _ (hus.lt_of_not_ge hn)) (hc w p hp u hu)
-  exact hn (hu ▸ le_rfl)
+  have hlt : (ord w).lt u (s.sel w p) := ((ord w).lt_iff_le_not_ge _ _).2 ⟨hus, hn⟩
+  exact hn (((c.order w).le_antisymm _ _ (c.le_of_lt w u _ hlt) (hc w p hp u hu)) ▸
+    (ord w).le_refl _)
 
 theorem SelectionFunction.Compatible.domain_subset (hs : s.Compatible ord) :
     s.domain w p ⊆ (ord w).minimals p := by
@@ -222,117 +220,75 @@ theorem SelectionFunction.Compatible.closestImp_subset (hs : s.Compatible ord) :
     closestImp ord p q ⊆ selectionConditional s p q :=
   fun _ h ↦ hs.domain_subset.trans h
 
-/-- A strict order with equality is a partial order. -/
-private theorem isPartialOrder_eq_or_lt (P : Preorder W) :
-    IsPartialOrder W fun x y ↦ x = y ∨ P.lt x y :=
-  let := P
-  { refl := fun _ ↦ .inl rfl
-    trans := fun x y z hxy hyz ↦ by
-      rcases hxy with rfl | h₁
-      · exact hyz
-      rcases hyz with rfl | h₂
-      exacts [.inr h₁, .inr (h₁.trans h₂)]
-    antisymm := fun x y hxy hyx ↦ by
-      rcases hxy with rfl | h₁
-      · rfl
-      rcases hyx with rfl | h₂
-      exacts [rfl, absurd h₂ h₁.asymm] }
-
-open Classical in
-/-- Any closest antecedent-world comes first among the antecedent-worlds in some completion, which
-orders the worlds strictly closer than it, then it, then the rest. -/
+/-- Any closest antecedent-world comes first among the antecedent-worlds in some completion. At
+its center the completion orders the worlds strictly closer than it, then it, then the rest, and
+within each group as a linear extension of the strict order; elsewhere it is a linear extension
+of the strict order. -/
 theorem exists_completion (hv : v ∈ (ord w).minimals p) :
-    ∃ c : Completion ord, ∀ u ∈ p, c.le w v u := by
-  choose L hL hext using fun w' ↦ @extend_partialOrder W _ (isPartialOrder_eq_or_lt (ord w'))
-  let key : W → ℕ := fun u ↦ if (ord w).lt u v then 0 else if u = v then 1 else 2
-  let le : W → W → W → Prop := fun w' x y ↦
-    if w' = w then key x < key y ∨ (key x = key y ∧ L w x y) else L w' x y
-  have lin : ∀ w', IsLinearOrder W (le w') := by
-    intro w'
-    have := hL w'
-    have := hL w
+    ∃ c : Completion ord, ∀ u ∈ p, (c.order w).le v u := by
+  classical
+  let key : W → W → ℕ := fun w' u ↦
+    if w' = w then if (ord w).lt u v then 0 else if u = v then 1 else 2 else 0
+  have hkey : ∀ w' x y, (ord w').lt x y → key w' x ≤ key w' y := by
+    intro w' x y hxy
     by_cases hw : w' = w
     · subst hw
-      simp only [le, ↓reduceIte]
-      exact
-        { refl := fun x ↦ .inr ⟨rfl, refl x⟩
-          trans := fun x y z hxy hyz ↦ by
-            rcases hxy with h | ⟨h, h'⟩ <;> rcases hyz with g | ⟨g, g'⟩
-            · exact .inl (h.trans g)
-            · exact .inl (g ▸ h)
-            · exact .inl (h ▸ g)
-            · exact .inr ⟨h.trans g, _root_.trans h' g'⟩
-          antisymm := fun x y hxy hyx ↦ by
-            rcases hxy with h | ⟨h, h'⟩ <;> rcases hyx with g | ⟨g, g'⟩
-            · exact absurd (h.trans g) (lt_irrefl _)
-            · exact absurd h (g ▸ lt_irrefl _)
-            · exact absurd g (h ▸ lt_irrefl _)
-            · exact antisymm h' g'
-          total := fun x y ↦ by
-            rcases lt_trichotomy (key x) (key y) with h | h | h
-            · exact .inl (.inl h)
-            · exact (total_of (L w') x y).imp (fun g ↦ .inr ⟨h, g⟩) fun g ↦ .inr ⟨h.symm, g⟩
-            · exact .inr (.inl h) }
-    · simp only [le, hw, ↓reduceIte]
-      exact hL w'
-  have hkey : ∀ x y, (ord w).lt x y → key x ≤ key y := by
-    intro x y hxy
-    let := ord w
-    have h₀ : y < v → x < v := hxy.trans
-    have h₁ : y = v → x < v := fun h ↦ h ▸ hxy
-    simp only [key]
-    split_ifs <;> first | omega | (exfalso; tauto)
-  refine ⟨⟨le, lin, fun w' x y hxy ↦ ?_⟩, fun u hu ↦ ?_⟩
-  · by_cases hw : w' = w
-    · subst hw
-      simp only [le, ↓reduceIte]
-      rcases (hkey x y hxy).lt_or_eq with hk | hk
-      exacts [.inl hk, .inr ⟨hk, hext w' x y (.inr hxy)⟩]
-    · simp only [le, hw, ↓reduceIte]
-      exact hext w' x y (.inr hxy)
-  · simp only [le, ↓reduceIte]
+      let := ord w'
+      have h₀ : y < v → x < v := hxy.trans
+      have h₁ : y = v → x < v := fun h ↦ h ▸ hxy
+      simp only [key, ite_true]
+      split_ifs <;> first | omega | (exfalso; tauto)
+    · simp [key, hw]
+  let order : W → LinearOrder W := fun w' ↦
+    letI := ord w'
+    letI : PartialOrder W := partialOrderOfSO (· < ·)
+    LinearOrder.lift' (toLinearExtension ∘ toLex ∘ fun x ↦ (key w' x, x))
+      (Function.Injective.comp (fun _ _ h ↦ h)
+        (Function.Injective.comp toLex.injective fun _ _ h ↦ (Prod.mk.inj h).2))
+  refine ⟨⟨order, fun w' x y hxy ↦ ?_⟩, fun u hu ↦ ?_⟩
+  · let P : PartialOrder W := (letI := ord w'; partialOrderOfSO (· < ·))
+    refine toLinearExtension.monotone ?_
+    rcases (hkey w' x y hxy).lt_or_eq with hk | hk
+    · exact Prod.Lex.left _ _ hk
+    · show toLex (key w' x, x) ≤ toLex (key w' y, y)
+      rw [hk]
+      exact Prod.Lex.right _ (Or.inr hxy)
+  · let P : PartialOrder W := (letI := ord w; partialOrderOfSO (· < ·))
+    refine toLinearExtension.monotone ?_
     rcases eq_or_ne u v with rfl | huv
-    · have := hL w
-      exact .inr ⟨rfl, refl u⟩
-    · refine .inl ?_
-      let := ord w
-      have h0 : ¬ u < v := fun h ↦ h.not_ge (hv.2 hu h.le)
-      simp [key, h0, huv]
+    · exact Prod.Lex.right _ (Or.inl rfl)
+    · have h0 : ¬ (ord w).lt u v := fun h ↦
+        (((ord w).lt_iff_le_not_ge _ _).1 h).2 (hv.2 hu (((ord w).lt_iff_le_not_ge _ _).1 h).1)
+      exact Prod.Lex.left _ _ (by simp [key, h0, huv])
 
-open Classical in
 /-- On a finite, strongly centered family of preorders, any closest antecedent-world is selected
 by some compatible selection function. -/
 theorem SelectionFunction.exists_compatible [Finite W] (hc : IsCentered ord)
     (hv : v ∈ (ord w).minimals p) :
     ∃ s : SelectionFunction W, s.Compatible ord ∧ s.sel w p = v := by
+  classical
   obtain ⟨c, hcv⟩ := exists_completion hv
-  have hleast : ∀ w' (p' : Set W), p'.Nonempty → ∃ m ∈ p', ∀ u ∈ p', c.le w' m u := by
+  have hleast : ∀ w' (p' : Set W), p'.Nonempty → ∃ m ∈ p', ∀ u ∈ p', (c.order w').le m u := by
     intro w' p' hp'
-    have := c.linear w'
-    let lt : W → W → Prop := fun x y ↦ c.le w' x y ∧ ¬ c.le w' y x
-    have : IsTrans W lt :=
-      ⟨fun x y z h g ↦ ⟨_root_.trans h.1 g.1, fun hzx ↦ h.2 (_root_.trans g.1 hzx)⟩⟩
-    have : Std.Irrefl lt := ⟨fun x h ↦ h.2 h.1⟩
-    obtain ⟨m, hm, hmin⟩ := (Finite.wellFounded_of_trans_of_irrefl lt).has_min p' hp'
-    exact ⟨m, hm, fun u hu ↦ (total_of (c.le w') m u).elim id fun hum ↦
-      not_not.1 fun hmu ↦ hmin u hu ⟨hum, hmu⟩⟩
+    let := c.order w'
+    obtain ⟨m, hm, hmin⟩ := (wellFounded_lt (α := W)).has_min p' hp'
+    exact ⟨m, hm, fun u hu ↦ not_lt.1 (hmin u hu)⟩
   choose! m hm hmle using hleast
   refine ⟨⟨fun w' p' ↦ if h : p'.Nonempty then m w' p' else w', fun w' p' hp' ↦ ?_,
     fun w' p' hw' ↦ ?_⟩, ⟨c, fun w' p' hp' u hu ↦ ?_⟩, ?_⟩
   · simpa [hp'] using hm w' p' hp'
-  · have := c.linear w'
-    have hne : p'.Nonempty := ⟨w', hw'⟩
+  · have hne : p'.Nonempty := ⟨w', hw'⟩
     show (if h : p'.Nonempty then m w' p' else w') = w'
     simp only [hne, ↓reduceDIte]
     rcases eq_or_ne (m w' p') w' with h | h
     · exact h
-    · exact antisymm (hmle w' p' ⟨w', hw'⟩ w' hw') (c.le_of_lt w' w' _ (hc w' _ h.symm))
+    · exact (c.order w').le_antisymm _ _ (hmle w' p' ⟨w', hw'⟩ w' hw')
+        (c.le_of_lt w' w' _ (hc w' _ h.symm))
   · simpa [hp'] using hmle w' p' hp' u hu
-  · have := c.linear w
-    have hp : p.Nonempty := ⟨v, hv.1⟩
+  · have hp : p.Nonempty := ⟨v, hv.1⟩
     show (if h : p.Nonempty then m w p else w) = v
     simp only [hp, ↓reduceDIte]
-    exact antisymm (hmle w p hp v hv.1) (hcv _ (hm w p hp))
+    exact (c.order w).le_antisymm _ _ (hmle w p hp v hv.1) (hcv _ (hm w p hp))
 
 /-- On a finite, strongly centered family of preorders, the conditional of the closest worlds
 holds iff the selection conditional is true on every completion, [stalnaker-1981]'s
