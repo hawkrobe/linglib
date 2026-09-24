@@ -5,7 +5,7 @@ public import Linglib.Semantics.Tense.Perspective
 /-!
 # Japanese temporal deictic adverbs
 
-Japanese *tooji* 'then, at that time' refers to a time before the deictic centre. Unlike English
+Japanese *tōji* 'then, at that time' refers to a time before the deictic centre. Unlike English
 *then* it is used only of past times: for a future meeting one says *sonotoki ai-mashou* 'see you
 then', not *tooji ai-mashou*. The description and examples follow [tsilia-zhao-2026].
 
@@ -22,7 +22,7 @@ open Semantics
 
 open Tense
 
-/-- *tooji* (当時) 'then', a time before the deictic centre. -/
-def tooji : DeicticAdverb := { form := "tooji", cell := ⟦past⟧ }
+/-- *tōji* 当時 'then', a time before the deictic centre. -/
+def tooji : DeicticAdverb := { form := "tōji", cell := ⟦past⟧ }
 
 end Japanese.TemporalDeictic

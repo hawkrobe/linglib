@@ -4,22 +4,27 @@ public import Linglib.Syntax.Agreement.Allocutive
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Category.Pronoun.Reciprocal
 public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Syntax.Category.Pronoun.Interrogative
 
 /-!
 # Japanese pronouns and the addressee-honorific marker
 
-Personal pronouns of Japanese — register-differentiated first-person forms
-(*watashi*, *boku*, *ore*; [ochs-1992] on the masculine stance the latter
-index), the second-person contrast *kimi* vs *anata*, and the third-person
-forms *kare*, *kanojo*, *karera* — the reciprocal *otagai*, the reflexive *zibun*, and the
-addressee-honorific verbal marker *-mas-*, which is sensitive to the
-complementizer when embedded ([alok-bhalla-2026] (14)–(15), (33)).
+The personal pronouns of Japanese — the register-differentiated first-person forms *watashi*,
+*boku* and *ore* ([ochs-1992] on the masculine stance the latter index), the second-person
+contrast *kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera* — the reciprocal
+*otagai*, the reflexive *jibun*, and the addressee-honorific verbal marker *-mas-*, which is
+sensitive to the complementizer when embedded ([alok-bhalla-2026]). The indeterminate pronouns
+*dare* 'who', *nani* 'what', *dono* 'which', *doko* 'where', *itsu* 'when', *naze* 'why' and *dō*
+'how' ([kratzer-shimoyama-2002]) are the interrogatives, and the quantifiers and indefinite
+series of `Fragments/Japanese/Determiners.lean` and `Fragments/Japanese/Indefinites.lean` are
+built on them, as is *nan-* 'how many' before a classifier.
 
 ## References
 
-* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
-* [E. Ochs, *Indexing Gender* (1992)][ochs-1992]
-* [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
+* [alok-bhalla-2026]
+* [ochs-1992]
+* [sells-1987]
+* [kratzer-shimoyama-2002]
 -/
 
 @[expose] public section
@@ -76,18 +81,45 @@ def karera : PersonalPronoun :=
 def pronouns : Finset PersonalPronoun :=
   {watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera}
 
-/-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *zibun*. -/
+/-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *jibun*. -/
 def otagai : ReciprocalPronoun :=
   { form := "otagai", script := some "互い", number := some .plural }
 
-/-- 自分 *zibun* — the reflexive, which also takes an antecedent outside its clause when that
+/-- 自分 *jibun* — the reflexive, which also takes an antecedent outside its clause when that
     antecedent is a pivot, the point-of-view centre ([sells-1987]). -/
-def zibun : ReflexivePronoun :=
-  { form := "zibun", script := some "自分", requiredRole := some .pivot }
+def jibun : ReflexivePronoun :=
+  { form := "jibun", script := some "自分", requiredRole := some .pivot }
 
-/-- Any perspectival antecedent licenses *zibun* at a distance: a pivot is the weakest role. -/
-theorem zibun_licensedBy (r : Reference.LogophoricRole) : zibun.LicensedBy r :=
+/-- Any perspectival antecedent licenses *jibun* at a distance: a pivot is the weakest role. -/
+theorem jibun_licensedBy (r : Reference.LogophoricRole) : jibun.LicensedBy r :=
   ⟨.pivot, rfl, bot_le (a := r)⟩
+
+/-! ### Indeterminate pronouns -/
+
+/-- 誰 *dare* 'who'. -/
+def dare : InterrogativePronoun := { form := "dare", script := some "誰", ontology := .person }
+
+/-- 何 *nani* 'what'. -/
+def nani : InterrogativePronoun := { form := "nani", script := some "何", ontology := .thing }
+
+/-- どの *dono* 'which', a determiner. -/
+def dono : InterrogativePronoun :=
+  { form := "dono", script := some "どの", ontology := .determiner }
+
+/-- どこ *doko* 'where'. -/
+def doko : InterrogativePronoun := { form := "doko", script := some "どこ", ontology := .place }
+
+/-- いつ *itsu* 'when'. -/
+def itsu : InterrogativePronoun := { form := "itsu", script := some "いつ", ontology := .time }
+
+/-- なぜ *naze* 'why'. -/
+def naze : InterrogativePronoun := { form := "naze", script := some "なぜ", ontology := .reason }
+
+/-- どう *dō* 'how'. -/
+def doo : InterrogativePronoun := { form := "dō", script := some "どう", ontology := .manner }
+
+/-- 何 *nan-* 'how many', before a classifier. -/
+def nan : InterrogativePronoun := { form := "nan", script := some "何", ontology := .amount }
 
 /-- *-mas-* — the addressee-honorific marker on the verb. -/
 def mas : AllocutiveMarker := { form := "-mas-", honorific := .honorific }

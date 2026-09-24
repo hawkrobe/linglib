@@ -17,7 +17,7 @@ a stored label.
 ## Main definitions
 
 * `Classifier` — the lexical entry.
-* `Classifier.Parameter`, `Classifier.Dimension` — the semantic parameters and dimensionality.
+* `Classifier.Parameter` — the semantic parameters.
 * `Classifier.Scope`, `Classifier.Constituent`, `Classifier.Kind`, `Classifier.kind` — the nine
   kinds of device as the classification of a locus by the constituent it characterizes.
 * `Classifier.Assignment`, `Classifier.Realization` — assignment principles and realizations.
@@ -81,14 +81,6 @@ inductive Parameter where
   | quanta
   /-- Colour: perceptually salient but never a basis for noun categorization. -/
   | colour
-  deriving DecidableEq, Repr
-
-/-- The three values of dimensionality: one-dimensional (long), two-dimensional (flat), and
-three-dimensional (spherical). -/
-inductive Dimension where
-  | oneD
-  | twoD
-  | threeD
   deriving DecidableEq, Repr
 
 end Classifier

@@ -5,26 +5,27 @@ public import Linglib.Semantics.Quantification.Lexicon
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Denotation
 public import Linglib.Fragments.Japanese.Coordination
+public import Linglib.Fragments.Japanese.Pronouns
+public import Linglib.Fragments.Japanese.Classifiers
 
 /-!
 # Japanese quantifiers
 
-Japanese has no articles, and most of its quantifiers are built from an indeterminate pronoun
-(*dare* 'who', *nani* 'what', *dono* 'which', *nan* 'how many') and a particle: with *ka* the
-phrase is existential (*dare-ka* 'someone'), with *mo* universal (*dare-mo* 'everyone', *dono*
-N *mo* 'every N'), the particles being the coordinators *ka* 'or' and *mo* 'and', so that the
-force of the phrase is the Boolean operation of its particle. The remaining quantifiers are
-words of their own, the carrier `QuantityWord` of *subete* 'all', *hotondo* 'most' and *ryōhō*
-'both'. Both carriers denote the readings available for their members, an indeterminate
-quantifier reading by the force of its particle. Numeral quantifiers
-such as *nan-nin-ka* 'several people' float away from their noun phrase, and *dare-mo* under
-clausemate negation is the negative indefinite of `Fragments/Japanese/PolarityItems.lean`.
+Japanese has no articles, and most of its quantifiers are built from an indeterminate pronoun of
+`Japanese.Pronouns` (*dare* 'who', *dono* 'which', *nan-* 'how many') and a particle: with *ka* the
+phrase is existential (*dare-ka* 'someone'), with *mo* universal (*dare-mo* 'everyone', *dono* N
+*mo* 'every N'), the particles being the coordinators *ka* 'or' and *mo* 'and', so that the force of
+the phrase is the Boolean operation of its particle. The remaining quantifiers are words of their
+own, the carrier `QuantityWord` of *subete* 'all', *hotondo* 'most' and *ryōhō* 'both'. Both
+carriers denote the readings available for their members, an indeterminate quantifier reading by the
+force of its particle. Numeral quantifiers such as *nan-nin-ka* 'several people' float away from
+their noun phrase, and *dare-mo* under clausemate negation is the negative indefinite of
+`Fragments/Japanese/PolarityItems.lean`.
 
 ## Main definitions
 
-* `Japanese.Determiners.Indeterminate`, `Japanese.Determiners.Indefinite` — the indeterminate
-  pronouns and the quantifiers an indeterminate and a particle form, with the force
-  `Indefinite.force` of the particle
+* `Japanese.Determiners.Indefinite` — the quantifiers an indeterminate and a particle form, with
+  the force `Indefinite.force` of the particle
 * `Japanese.Determiners.QuantityWord` — the quantifiers that are words of their own
 * `Japanese.Determiners.inventory` — the determiner inventory, quantifiers only
 
@@ -43,36 +44,6 @@ open Quantifier.Lexicon
 
 universe u
 
-/-- The indeterminate pronouns. -/
-inductive Indeterminate where
-  /-- *dare* 'who'. -/
-  | dare
-  /-- *nani* 'what'. -/
-  | nani
-  /-- *dono* 'which', a determiner. -/
-  | dono
-  /-- *nan* 'how many', before a classifier. -/
-  | nan
-  deriving DecidableEq, Repr, Fintype
-
-namespace Indeterminate
-
-/-- The romanization. -/
-def romaji : Indeterminate → String
-  | .dare => "dare"
-  | .nani => "nani"
-  | .dono => "dono"
-  | .nan => "nan"
-
-/-- The kanji or kana form. -/
-def form : Indeterminate → String
-  | .dare => "誰"
-  | .nani => "何"
-  | .dono => "どの"
-  | .nan => "何"
-
-end Indeterminate
-
 /-- The force a particle gives an indeterminate: existential for the disjunction *ka* and
 universal for the conjunction *mo*. -/
 def particleForce (p : Coordinator) : QForce :=
@@ -80,30 +51,32 @@ def particleForce (p : Coordinator) : QForce :=
   | .disjunctive => .existential
   | _ => .universal
 
-/-- A quantifier built from an indeterminate and a particle, with the classifier or noun
-between them where there is one. -/
+/-- A quantifier built from an indeterminate and a particle, with the classifier between them
+where there is one. -/
 structure Indefinite where
   /-- The indeterminate. -/
-  indeterminate : Indeterminate
+  indeterminate : InterrogativePronoun
   /-- The particle, *ka* or *mo*. -/
   particle : Coordinator
-  /-- What stands between the indeterminate and the particle. -/
-  host : Option String := none
-  deriving DecidableEq, Repr
+  /-- The classifier after the indeterminate, as in *nan-nin-ka*. -/
+  classifier : Option Classifier := none
+  deriving DecidableEq
 
 namespace Indefinite
 
 variable (q : Indefinite)
 
-/-- The romanized form, the parts joined by hyphens. -/
-def romaji : String :=
-  q.indeterminate.romaji ++ "-" ++ (q.host.elim "" (· ++ "-")) ++ q.particle.form
+/-- The form: the indeterminate, its classifier and the particle joined by hyphens, and for the
+determiner *dono* the particle after the noun the determiner takes. -/
+def form : String :=
+  if q.indeterminate.ontology = .determiner then q.indeterminate.form ++ " … " ++ q.particle.form
+  else q.indeterminate.form ++ (q.classifier.elim "" ("-" ++ ·.form)) ++ "-" ++ q.particle.form
 
 /-- The force of the quantifier, that of its particle. -/
 def force : QForce := particleForce q.particle
 
 /-- The quantifier as a determiner entry. -/
-def toQuantifier : Quantifier := { form := q.romaji }
+def toQuantifier : Quantifier := { form := q.form }
 
 /-- The reading available for an indeterminate quantifier is that of its particle's force,
 `some_sem` for the disjunction *ka* and `every_sem` for the conjunction *mo*. -/
@@ -116,16 +89,16 @@ instance : Semantics.Denotes Indefinite (Set Quantifier.GQ.Family.{u}) where
 end Indefinite
 
 /-- *dare-ka* 'someone'. -/
-def dare_ka : Indefinite := ⟨.dare, Coordination.ka, none⟩
+def dare_ka : Indefinite := ⟨Pronouns.dare, Coordination.ka, none⟩
 
 /-- *dare-mo* 'everyone'. -/
-def dare_mo : Indefinite := ⟨.dare, Coordination.mo, none⟩
+def dare_mo : Indefinite := ⟨Pronouns.dare, Coordination.mo, none⟩
 
 /-- *dono* N *mo* 'every N'. -/
-def dono_N_mo : Indefinite := ⟨.dono, Coordination.mo, some "N"⟩
+def dono_N_mo : Indefinite := ⟨Pronouns.dono, Coordination.mo, none⟩
 
 /-- *nan-nin-ka* 'several people', with the classifier *-nin*. -/
-def nan_nin_ka : Indefinite := ⟨.nan, Coordination.ka, some "nin"⟩
+def nan_nin_ka : Indefinite := ⟨Pronouns.nan, Coordination.ka, some Classifiers.nin⟩
 
 /-- The indeterminate quantifiers. -/
 def indefinites : List Indefinite := [dare_ka, dare_mo, dono_N_mo, nan_nin_ka]

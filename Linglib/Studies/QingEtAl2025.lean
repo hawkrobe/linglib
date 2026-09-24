@@ -199,7 +199,7 @@ def attitude? : String → Option Attitude
   | "danxin" => Mandarin.danxin.attitude
   | "xiwang" => Mandarin.xiwang.attitude
   | "haipa" => Mandarin.haipa.attitude
-  | "tanosimi" => Japanese.tanosimi.attitude
+  | "tanosimi" => Japanese.tanoshimi.attitude
   | "sinpai" => Japanese.shinpai.attitude
   | "osore" => Japanese.osore.attitude
   | "nozomu" => Japanese.nozomu.attitude

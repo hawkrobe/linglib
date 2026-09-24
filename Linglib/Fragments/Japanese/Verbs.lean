@@ -16,7 +16,7 @@ non-thematic.
 
 ## Main definitions
 
-* `Japanese.Verb` — a Japanese verb, the root `Verb` with its romanization
+* `Japanese.Verb` — a Japanese verb, the root `Verb` with its spelling
 * `Japanese.verbs` — the attitude, causative and departure verbs
 
 ## References
@@ -32,47 +32,54 @@ namespace Japanese
 
 open ArgumentStructure
 
-/-- A Japanese verb: the root entry, its `form` the romanized citation form. -/
+/-- A Japanese verb: the root entry with its romanized citation form, and its spelling. -/
 structure Verb extends _root_.Verb where
+  /-- The spelling in kanji and kana. -/
+  script : String
   deriving BEq
 
 /-! ### Preferential attitudes -/
 
-/-- *tanoshimi* 'look forward to', a positive preference relative to relevance. -/
-def tanosimi : Verb where
-  form := "tanosimi"
+/-- 楽しみ *tanoshimi* 'look forward to', a positive preference relative to relevance. -/
+def tanoshimi : Verb where
+  form := "tanoshimi"
+  script := "楽しみ"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.relevanceBased .positive))
 
-/-- *osore* 'fear', a negative preference by comparison of degrees. -/
+/-- 恐れ *osore* 'fear', a negative preference by comparison of degrees. -/
 def osore : Verb where
   form := "osore"
+  script := "恐れ"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
 
-/-- *kitai* 'expect, hope', a positive preference by comparison of degrees. -/
+/-- 期待 *kitai* 'expect, hope', a positive preference by comparison of degrees. -/
 def kitai : Verb where
   form := "kitai"
+  script := "期待"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
 
-/-- *nozomu* 'hope', a positive preference by comparison of degrees. -/
+/-- 望む *nozomu* 'hope', a positive preference by comparison of degrees. -/
 def nozomu : Verb where
   form := "nozomu"
+  script := "望む"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
 
-/-- *shinpai* 'worry', a preference relative to uncertainty. -/
+/-- 心配 *shinpai* 'worry', a preference relative to uncertainty. -/
 def shinpai : Verb where
   form := "shinpai"
+  script := "心配"
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
@@ -80,40 +87,44 @@ def shinpai : Verb where
 
 /-! ### Causatives -/
 
-/-- *ik-ase-ru* 'make go', the causative of *iku* with an accusative causee. -/
+/-- 行かせる *ik-ase-ru* 'make go', the causative of *iku* with an accusative causee. -/
 def ik_ase : Verb where
   form := "ik-ase-ru"
+  script := "行かせる"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
-/-- *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
+/-- 食べさせる *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
 def tabe_sase : Verb where
   form := "tabe-sase-ru"
+  script := "食べさせる"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-! ### Departure verbs -/
 
-/-- *hanareru* 'leave': the leaver its theme, the source accusative or ablative, and no
+/-- 離れる *hanareru* 'leave': the leaver its theme, the source accusative or ablative, and no
 thematic Voice. -/
 def hanareru : Verb where
   form := "hanareru"
+  script := "離れる"
   frames := [ArgumentFrame.np]
   voiceType := some .nonThematic
   passivizable := false
 
-/-- *deru* 'exit': the leaver its theme, the source accusative or ablative, and no thematic
+/-- 出る *deru* 'exit': the leaver its theme, the source accusative or ablative, and no thematic
 Voice. -/
 def deru : Verb where
   form := "deru"
+  script := "出る"
   frames := [ArgumentFrame.np]
   voiceType := some .nonThematic
   passivizable := false
 
 /-- The inventory. -/
 def verbs : List Verb :=
-  [tanosimi, osore, kitai, nozomu, shinpai, ik_ase, tabe_sase, hanareru, deru]
+  [tanoshimi, osore, kitai, nozomu, shinpai, ik_ase, tabe_sase, hanareru, deru]
 
 end Japanese

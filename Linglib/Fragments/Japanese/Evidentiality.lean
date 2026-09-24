@@ -21,6 +21,7 @@ language as indirect-only.
 
 namespace Japanese.Evidentiality
 
+/-- Japanese has no grammatical evidentials. -/
 def evidentials : List Evidential := []
 
 end Japanese.Evidentiality
