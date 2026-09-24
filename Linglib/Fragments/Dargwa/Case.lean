@@ -1,71 +1,83 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Case.Alignment
+public import Linglib.Morphology.Morph
+
 /-!
-# Dargwa (Tanti) Case Inventory [sumbatova-2021]
+# Tanti Dargwa case
 
-Dargwa (Tanti dialect; Nakh-Dagestanian) has a **consistently ergative**
-alignment system — unlike Georgian's tense-conditioned split. All transitive
-verbs mark the A-argument with ergative *-li* and leave the P-argument
-unmarked (absolutive). There is no split conditioning.
+This file defines the grammatical cases of Tanti Dargwa as Sumbatova describes them. A noun has
+a direct stem, its absolutive singular, and an oblique stem, the direct stem with *-li*, which
+is its ergative singular and the base of most other forms. The dative and the comitative add
+their suffix to the oblique stem, as do the locative forms of `Locatives.lean`, while the
+absolutive and the adverbial are built on the direct stem. Tanti has the absolutive, ergative,
+genitive, dative and comitative of most Dargwa varieties and an adverbial case of nominal and
+secondary predicates besides, which goes under the comparative label of the essive. The
+alignment is ergative without a split, A ergative and S and P absolutive.
 
-## Grammatical Cases (Table 4.3 of [sumbatova-2021])
+## Main definitions
 
-| Case        | Morpheme | Function                                |
-|-------------|----------|-----------------------------------------|
-| absolutive  | ∅        | S-argument, P-argument, nominal pred.   |
-| ergative    | -li      | A-argument, instrument                  |
-| genitive    | -la, -lla | nominal modifier, possessor            |
-| dative      | -ž       | experiencer, recipient, benefactive     |
-| comitative  | -c:ele   | comitative, instrument                  |
-| adverbial   | -le      | nominal predicate, secondary predicate  |
+* `Dargwa.Case.obliqueStem`: the oblique stem suffix *-li*
+* `Dargwa.Case.exponent`: the suffixes of a case after the direct stem, `none` for a case
+  Tanti lacks
+* `Dargwa.Case.inventory`: the cases, those with an exponent
+* `Dargwa.Case.marking`: the ergative marking of the core arguments
 
-The rich locative system (8 localizations × 4 orientations × 4 directions)
-is in `Dargwa/Locatives.lean`.
+## Main results
+
+* `Dargwa.Case.builtOnOblique_iff`: the ergative, dative and comitative are the cases built
+  on the oblique stem
+
+## Implementation notes
+
+* The genitive is *-la*, or *-lla* for some nouns, and for some nouns is built on the oblique
+  stem; the exponent records the *-la* of *dubur-la* 'mountain's'. The plural builds its
+  oblique forms on an oblique plural stem, the absolutive plural with *-a*, which is not
+  treated.
+
+## References
+
+* [N. Sumbatova, *Dargwa* (2021)][sumbatova-2021]
 -/
 
 @[expose] public section
 
 namespace Dargwa.Case
 
--- ============================================================================
--- § 1: Grammatical Case Inventory
--- ============================================================================
+open Morphology
 
-/-- Dargwa grammatical case inventory: ABS(∅), ERG(-li), GEN(-la, -lla),
-    DAT(-ž), COM(-c:ele), ADV(-le).
+/-- The oblique stem suffix *-li*. The oblique singular stem is the direct stem with it, and
+is the ergative singular. -/
+def obliqueStem : Morph := .suff "li"
 
-    We use `Case` values. The adverbial case is mapped to `ess`
-    (essive) as the closest typological equivalent — it marks
-    "being-in-a-state" predicates, analogous to the Finnish essive.
+/-- The suffixes of a case after the direct singular stem. The absolutive is unmarked, the
+ergative is the oblique stem, the genitive takes *-la*, the dative *-ž* and the comitative
+*-cːele* on the oblique stem, and the adverbial, the essive under its comparative label,
+*-le*. -/
+def exponent : Case → Option (List Morph)
+  | .abs => some []
+  | .erg => some [obliqueStem]
+  | .gen => some [.suff "la"]
+  | .dat => some [obliqueStem, .suff "ž"]
+  | .com => some [obliqueStem, .suff "cːele"]
+  | .ess => some [.suff "le"]
+  | _ => none
 
-    Genitive has two allomorphs: -la and -lla. -/
-def inventory : Finset Case :=
-  {.abs, .erg, .gen, .dat, .com, .ess}
+/-- The cases of Tanti, those with an exponent. -/
+def inventory : Finset Case := Finset.univ.filter fun c ↦ (exponent c).isSome
 
--- ============================================================================
--- § 2: Consistent Ergative Alignment
--- ============================================================================
+/-- A case is built on the oblique stem when its exponent begins with the stem suffix. -/
+def BuiltOnOblique (c : Case) : Prop := (exponent c).bind List.head? = some obliqueStem
 
-/-- Dargwa alignment: consistently ergative — no tense/aspect split.
-    Transitive A-arguments always take ergative *-li*;
-    S and P arguments take unmarked absolutive. -/
-def alignment : Alignment.AlignmentType := .ergative
+instance : DecidablePred BuiltOnOblique := fun c ↦ by unfold BuiltOnOblique; infer_instance
 
-/-- Case of the transitive agent (A-argument): always ergative. -/
-def agentCase : Case := .erg
+/-- The ergative, dative and comitative are the cases built on the oblique stem. -/
+theorem builtOnOblique_iff (c : Case) :
+    BuiltOnOblique c ↔ c = .erg ∨ c = .dat ∨ c = .com := by
+  cases c <;> decide
 
-/-- Case of the S-argument and P-argument: always absolutive. -/
-def patientCase : Case := .abs
-
--- ============================================================================
--- § 3: Verification
--- ============================================================================
-
-/-- The inventory contains both core ergative cases. -/
-theorem has_core_ergative :
-    .abs ∈ inventory ∧ .erg ∈ inventory := by
-  refine ⟨?_, ?_⟩ <;> decide
+/-- The marking of the core arguments is ergative, A ergative and S and P absolutive, with no
+split by tense or aspect. -/
+abbrev marking : ArgumentRole → Case := Alignment.ergative
 
 end Dargwa.Case

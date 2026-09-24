@@ -1,150 +1,259 @@
 module
 
+public import Linglib.Syntax.Case.Order
 public import Linglib.Fragments.Dargwa.Case
+public import Linglib.Fragments.Dargwa.Agreement
 
 /-!
-# Dargwa (Tanti) Locative System [sumbatova-2021]
+# Tanti Dargwa locative forms
 
-In addition to the 6 grammatical cases (see `Dargwa/Case.lean`), Dargwa
-has a rich **spatial case** system. Locative forms decompose into three
-morphological layers:
+This file defines the locative forms of Tanti Dargwa as Sumbatova describes them. A locative
+form is the oblique stem followed by three suffix slots: a localization, the domain in space
+with respect to the reference point, of which Tanti has eight; an orientation, whether the
+object is in that domain, moving towards it, from it or across it; and a direction of the
+motion with respect to the speaker, which the essive lacks, the elative requires and the lative
+admits. The translative combines only with the localizations *sub*, *ante* and *post*, and
+*post* with the translative alone. The orientations are the path heads of Pantcheva's
+decomposition and the localizations refine its regions, so the forms fill the region-by-path
+grid except for the route outside the exterior. An elative without the direction marker the
+spatial paradigm demands has a non-locative use, as the causee of a transitive causative and
+the standard of comparison.
 
-    STEM — LOCALIZATION — ORIENTATION — DIRECTION
+## Main definitions
 
-Eight localizations (SUPER, SUB, ANTE, IN, INTER, AD, APUD, POST) ×
-four orientations (LATIVE, ELATIVE, ESSIVE, TRANSLATIVE) ×
-four directions (UP, DOWN, HITHER, THITHER).
+* `Dargwa.Localization`, `Dargwa.Orientation`, `Dargwa.Direction`: the three categories with
+  their suffixes, and `Localization.region` and `Orientation.pathDir` their comparative labels
+* `Dargwa.LocativeForm`: a form, with `LocativeForm.morphs` its suffixes and
+  `LocativeForm.IsSpatial` the combinatorics of the spatial paradigm
+* `Dargwa.comparisonStandard`: the super-elative of the standard of comparison
 
-This yields a large paradigm, though not all cells are filled.
+## Main results
+
+* `Dargwa.LocativeForm.not_isSpatial_elative_none`: no directionless elative is spatial
+* `Dargwa.LocativeForm.isSpatial_post_iff`: *post* takes the translative alone
+* `Dargwa.LocativeForm.exists_isSpatial_iff`: the region-by-path grid is filled except for
+  the route outside the exterior
+
+## Implementation notes
+
+* The essive is the localization followed by the gender marker, so `morphs` takes the marker.
+* The direction suffixes are cited in their long forms; the short forms drop *-le*, and
+  *-sale* and *-dale* vary with *-sele* and *-dele*. Whether the translative takes a direction
+  marker is not stated, so `IsSpatial` leaves it open.
+* The general-localization form of some nouns, *kis-na-b* 'in the pocket', is irregular and
+  left out, as are the locative adverbs and postpositions, which inflect for orientation.
+
+## References
+
+* [N. Sumbatova, *Dargwa* (2021)][sumbatova-2021]
+* [M. Pantcheva, *Decomposing Path: The Nanosyntax of Directional Expressions*
+  (2011)][pantcheva-2011]
 -/
 
 @[expose] public section
 
-namespace Dargwa.Locatives
+namespace Dargwa
 
--- ============================================================================
--- § 1: Locative Decomposition
--- ============================================================================
+open Morphology
 
-/-- Localization values: spatial domain w.r.t. the reference point.
-    Tanti has 8 localizations ([sumbatova-2021] §4.4.3.3). -/
+/-! ### Localization -/
+
+/-- A localization is the domain in space a locative form specifies with respect to the
+reference point. -/
 inductive Localization where
-  | super  -- -ja: 'on the surface'
-  | sub    -- -gu: 'under'
-  | ante   -- -sa: 'in front of'
-  | in_    -- -ħe (-ħaˁ): 'inside a container'
-  | inter  -- -c:e: 'in a solid substance'
-  | ad     -- -š:u: 'in the functionally associated place'
-  | apud   -- -hira: 'near, in the vicinity'
-  | post   -- -hi: 'behind'
-  deriving DecidableEq, Repr
+  /-- *super* *-ja*, on the surface of the object. -/
+  | super
+  /-- *sub* *-gu*, under the object. -/
+  | sub
+  /-- *ante* *-sa*, in front of the object. -/
+  | ante
+  /-- *in* *-ʜe*, *-ʜaˁ* for some nouns, inside a container. -/
+  | in_
+  /-- *inter* *-cːe*, in a solid substance. -/
+  | inter
+  /-- *apud* *-hira*, near the object. -/
+  | apud
+  /-- *ad* *-šːu*, in the place functionally associated with the object. -/
+  | ad
+  /-- *post* *-hi*, behind the object. -/
+  | post
+  deriving DecidableEq, Repr, Fintype
 
-/-- Orientation values: motion w.r.t. the reference point.
-    Tanti has 4 orientations ([sumbatova-2021] §4.4.3.3). -/
+/-- The localization suffix. -/
+def Localization.suffix : Localization → Morph
+  | .super => .suff "ja"
+  | .sub => .suff "gu"
+  | .ante => .suff "sa"
+  | .in_ => .suff "ʜe"
+  | .inter => .suff "cːe"
+  | .apud => .suff "hira"
+  | .ad => .suff "šːu"
+  | .post => .suff "hi"
+
+/-- The region of the comparative decomposition a localization falls in. *super* is the
+surface, *in* and *inter* are the interior and the rest are the exterior. -/
+def Localization.region : Localization → Case.Region
+  | .super => .surface
+  | .in_ | .inter => .interior
+  | .sub | .ante | .apud | .ad | .post => .exterior
+
+/-- The localizations the translative combines with. -/
+def Localization.TakesTranslative (l : Localization) : Prop := l = .sub ∨ l = .ante ∨ l = .post
+
+instance : DecidablePred Localization.TakesTranslative := fun l ↦ by
+  unfold Localization.TakesTranslative; infer_instance
+
+/-! ### Orientation -/
+
+/-- An orientation is the motion, or its absence, with respect to the reference point. -/
 inductive Orientation where
-  | lative       -- unmarked: motion toward
-  | elative      -- -r: motion from
-  | essive       -- localization + gender marker: position
-  | translative  -- -t:i: motion across
-  deriving DecidableEq, Repr
+  /-- The lative, unmarked, motion towards the reference point. -/
+  | lative
+  /-- The elative *-r*, motion from the reference point. -/
+  | elative
+  /-- The essive, the gender marker after the localization, location in the reference
+  point. -/
+  | essive
+  /-- The translative *-tːi*, motion across the reference point. -/
+  | translative
+  deriving DecidableEq, Repr, Fintype
 
-/-- Direction values: motion w.r.t. the speaker.
-    Tanti has 4 directions ([sumbatova-2021] §4.4.3.3). -/
+/-- The orientation suffixes, with the gender marker `g` the essive takes. -/
+def Orientation.morphs : Orientation → Gender.Marker → List Morph
+  | .lative, _ => []
+  | .elative, _ => [.suff "r"]
+  | .essive, g => [.suff g.form]
+  | .translative, _ => [.suff "tːi"]
+
+/-- The path head of the comparative decomposition an orientation expresses. -/
+def Orientation.pathDir : Orientation → Case.PathDir
+  | .essive => .place
+  | .lative => .goal
+  | .elative => .source
+  | .translative => .route
+
+/-! ### Direction -/
+
+/-- A direction orients the motion with respect to the speaker or another point of
+reference. -/
 inductive Direction where
-  | up      -- -ha(le)
-  | down    -- -ka(le)
-  | hither  -- -se(le), -sale
-  | thither -- -de(le), -dale
-  deriving DecidableEq, Repr
+  /-- *-ha(le)*, upward. -/
+  | up
+  /-- *-ka(le)*, downward. -/
+  | down
+  /-- *-se(le)* or *-sale*, towards the speaker. -/
+  | hither
+  /-- *-de(le)* or *-dale*, away from the speaker. -/
+  | thither
+  deriving DecidableEq, Repr, Fintype
 
-/-- A full locative form combines all three layers. -/
+/-- The direction suffix, in its long form. -/
+def Direction.suffix : Direction → Morph
+  | .up => .suff "hale"
+  | .down => .suff "kale"
+  | .hither => .suff "sele"
+  | .thither => .suff "dele"
+
+/-! ### Locative forms -/
+
+/-- A locative form is a localization, an orientation and, where the form has one, a
+direction. -/
 structure LocativeForm where
   localization : Localization
   orientation : Orientation
-  direction : Option Direction  -- absent in essives
-  deriving Repr
+  direction : Option Direction
+  deriving DecidableEq, Repr, Fintype
 
-/-- Well-formedness of a locative form, encoding all combinatorial
-    constraints from [sumbatova-2021] §4.4.3.3:
+namespace LocativeForm
 
-    **Direction**: absent in essive and translative, obligatory in
-    elative, optional in lative.
+variable (f : LocativeForm)
 
-    **Localization × Orientation**: translative combines only with SUB,
-    ANTE, POST. POST combines only with translative. -/
-def LocativeForm.wellFormed (lf : LocativeForm) : Bool :=
-  let dirOk := match lf.orientation with
-    | .essive      => lf.direction.isNone
-    | .elative     => lf.direction.isSome
-    | .translative => lf.direction.isNone
-    | .lative      => true
-  let locOrOk := match lf.orientation, lf.localization with
-    | .translative, .sub  => true
-    | .translative, .ante => true
-    | .translative, .post => true
-    | .translative, _     => false
-    | _, .post             => false
-    | _, _                 => true
-  dirOk && locOrOk
+/-- The suffixes of a locative form after the oblique stem, with the gender marker `g` in the
+essive. -/
+def morphs (g : Gender.Marker) : List Morph :=
+  f.localization.suffix :: (f.orientation.morphs g ++ (f.direction.map Direction.suffix).toList)
 
-/-- Translative combines only with SUB, ANTE, and POST. -/
-def Orientation.translativeRestricted (loc : Localization) : Bool :=
-  match loc with
-  | .sub | .ante | .post => true
-  | _ => false
+/-- A form is spatial when its slots combine as the paradigm allows. The essive takes no
+direction marker, the elative requires one and the lative admits one; the translative combines
+only with the localizations that take it, and *post* only with the translative. -/
+def IsSpatial : Prop :=
+  (f.orientation = .essive → f.direction = none) ∧
+    (f.orientation = .elative → f.direction ≠ none) ∧
+    (f.orientation = .translative → f.localization.TakesTranslative) ∧
+    (f.localization = .post → f.orientation = .translative)
 
--- ============================================================================
--- § 2: Verification
--- ============================================================================
+instance : DecidablePred IsSpatial := fun f ↦ by unfold IsSpatial; infer_instance
 
-/-- All 8 localizations are distinct (no collapse). -/
-theorem eight_localizations :
-    [Localization.super, .sub, .ante, .in_, .inter, .ad, .apud, .post].length = 8 := rfl
-
-/-- Translative combines only with SUB, ANTE, and POST
-    ([sumbatova-2021] ex. 13). -/
-theorem translative_restricted_sub :
-    Orientation.translativeRestricted .sub = true := rfl
-
-theorem translative_restricted_ante :
-    Orientation.translativeRestricted .ante = true := rfl
-
-theorem translative_restricted_post :
-    Orientation.translativeRestricted .post = true := rfl
-
-theorem translative_blocked_super :
-    Orientation.translativeRestricted .super = false := rfl
-
-/-- POST + LATIVE is ill-formed (POST only combines with translative). -/
-theorem post_lative_illformed :
-    (LocativeForm.mk .post .lative none).wellFormed = false := rfl
-
-/-- POST + TRANSLATIVE is the only well-formed POST combination. -/
-theorem post_translative_wellformed :
-    (LocativeForm.mk .post .translative none).wellFormed = true := rfl
-
-/-- Elative requires a direction marker. -/
-theorem elative_needs_direction :
-    (LocativeForm.mk .super .elative none).wellFormed = false := rfl
-
-/-- Essive rejects direction markers. -/
-theorem essive_rejects_direction :
-    (LocativeForm.mk .super .essive (some .hither)).wellFormed = false := rfl
-
-/-- SUPER-ELATIVE-HITHER (ex. 16: 'from the bridge hither') is well-formed. -/
+/-- *kːumi-li-ja-r-sele* 'from the bridge hither' is the super-elative with the direction
+*hither*, a spatial form whose suffixes the slots derive. -/
 theorem super_elative_hither :
-    (LocativeForm.mk .super .elative (some .hither)).wellFormed = true := rfl
+    IsSpatial ⟨.super, .elative, some .hither⟩ ∧
+      (⟨.super, .elative, some .hither⟩ : LocativeForm).morphs .b =
+        [.suff "ja", .suff "r", .suff "sele"] := by
+  decide
 
-/-- SUPER-ESSIVE (ex. 12: 'on the bridge, position') is well-formed. -/
-theorem super_essive :
-    (LocativeForm.mk .super .essive none).wellFormed = true := rfl
+variable {l : Localization}
 
-/-- SUB-TRANSLATIVE (ex. 13: 'under the bridge, motion') is well-formed. -/
-theorem sub_translative :
-    (LocativeForm.mk .sub .translative none).wellFormed = true := rfl
+/-- No elative without a direction marker is spatial. -/
+theorem not_isSpatial_elative_none (l : Localization) : ¬ IsSpatial ⟨l, .elative, none⟩ :=
+  fun h ↦ h.2.1 rfl rfl
 
-/-- Translative + SUPER is ill-formed. -/
-theorem translative_super_illformed :
-    (LocativeForm.mk .super .translative none).wellFormed = false := rfl
+/-- The essive of every localization but *post* is spatial. -/
+theorem isSpatial_essive (h : l ≠ .post) : IsSpatial ⟨l, .essive, none⟩ :=
+  ⟨fun _ ↦ rfl, nofun, nofun, fun hl ↦ absurd hl h⟩
 
-end Dargwa.Locatives
+/-- The lative of every localization but *post* is spatial, with or without a direction. -/
+theorem isSpatial_lative (d : Option Direction) (h : l ≠ .post) : IsSpatial ⟨l, .lative, d⟩ :=
+  ⟨nofun, nofun, nofun, fun hl ↦ absurd hl h⟩
+
+/-- The elative with a direction of every localization but *post* is spatial. -/
+theorem isSpatial_elative_some (d : Direction) (h : l ≠ .post) :
+    IsSpatial ⟨l, .elative, some d⟩ :=
+  ⟨nofun, fun _ ↦ nofun, nofun, fun hl ↦ absurd hl h⟩
+
+/-- The translative is spatial exactly with the localizations that take it. -/
+theorem isSpatial_translative_iff {d : Option Direction} :
+    IsSpatial ⟨l, .translative, d⟩ ↔ l.TakesTranslative :=
+  ⟨fun h ↦ h.2.2.1 rfl, fun h ↦ ⟨nofun, nofun, fun _ ↦ h, fun _ ↦ rfl⟩⟩
+
+/-- *post* takes the translative alone. -/
+theorem isSpatial_post_iff {o : Orientation} {d : Option Direction} :
+    IsSpatial ⟨.post, o, d⟩ ↔ o = .translative :=
+  ⟨fun h ↦ h.2.2.2 rfl, fun h ↦ h ▸ isSpatial_translative_iff.2 (.inr (.inr rfl))⟩
+
+/-- The forms fill the grid of regions and path heads except for the route, which the
+translative expresses, outside the exterior. -/
+theorem exists_isSpatial_iff (r : Case.Region) (d : Case.PathDir) :
+    (∃ f : LocativeForm,
+      f.IsSpatial ∧ f.localization.region = r ∧ f.orientation.pathDir = d) ↔
+      d ≠ .route ∨ r = .exterior := by
+  constructor
+  · rintro ⟨⟨l, o, dir⟩, hs, rfl, rfl⟩
+    cases o
+    · exact .inl nofun
+    · exact .inl nofun
+    · exact .inl nofun
+    · rcases hs.2.2.1 rfl with rfl | rfl | rfl <;> exact .inr rfl
+  · intro h
+    obtain ⟨l, hl, hp⟩ : ∃ l : Localization, l.region = r ∧ l ≠ .post := by
+      cases r
+      · exact ⟨.in_, rfl, nofun⟩
+      · exact ⟨.super, rfl, nofun⟩
+      · exact ⟨.sub, rfl, nofun⟩
+    cases d
+    · exact ⟨⟨l, .essive, none⟩, isSpatial_essive hp, hl, rfl⟩
+    · exact ⟨⟨l, .lative, none⟩, isSpatial_lative none hp, hl, rfl⟩
+    · exact ⟨⟨l, .elative, some .up⟩, isSpatial_elative_some .up hp, hl, rfl⟩
+    · obtain rfl : r = .exterior := h.resolve_left (not_not.2 rfl)
+      exact ⟨⟨.sub, .translative, none⟩, isSpatial_translative_iff.2 (.inl rfl), rfl, rfl⟩
+
+end LocativeForm
+
+/-- The super-elative without a direction marker of the standard of comparison. -/
+def comparisonStandard : LocativeForm := ⟨.super, .elative, none⟩
+
+/-- The standard of comparison is not a spatial form. -/
+theorem not_isSpatial_comparisonStandard : ¬ comparisonStandard.IsSpatial :=
+  LocativeForm.not_isSpatial_elative_none _
+
+end Dargwa

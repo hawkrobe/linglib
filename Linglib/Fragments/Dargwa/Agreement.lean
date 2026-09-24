@@ -96,6 +96,13 @@ inductive Marker where
   | d
   deriving DecidableEq, Repr, Fintype
 
+/-- The segment of a marker. -/
+def Marker.form : Marker → String
+  | .w => "w"
+  | .r => "r"
+  | .b => "b"
+  | .d => "d"
+
 /-- A singular controller of each gender takes its own marker. -/
 def Value.sgMarker : Value → Marker
   | .masc => .w
@@ -181,7 +188,8 @@ theorem not_isDargic_irrealis : ¬ IsDargic PersonSet.irrealis.paradigm := by de
 /-! ### Transitive clauses -/
 
 /-- The argument a transitive verb agrees with in person, by the hierarchies 1, 2 > 3 and
-absolutive > ergative: A when it alone is a speech-act participant, otherwise the absolutive P. -/
+absolutive > ergative. It is A when A alone is a speech-act participant and the absolutive P
+otherwise. -/
 def personController (s : Scenario Person) : ArgumentRole :=
   if s.high.IsSAP ∧ ¬ s.low.IsSAP then .A else .P
 
@@ -207,9 +215,9 @@ def transitiveClitic (a p : Person × Number) : Option (List Morph) :=
   let c := if personController ⟨a.1, p.1⟩ = .A then a else p
   PersonSet.clitic.paradigm.realize (.pn c.1 c.2)
 
-/-- 'I caught you' *=de*, 'you caught me' *=da*, 'I caught him' *=da*, 'you caught him' *=de*
-and 'Rasul caught you' *=de*: the verb agrees with the absolutive when both arguments are
-speech-act participants and with the participant when one is. -/
+/-- 'I caught you' takes *=de*, 'you caught me' *=da*, 'I caught him' *=da*, 'you caught him'
+*=de* and 'Rasul caught you' *=de*, since the verb agrees with the absolutive when both
+arguments are speech-act participants and with the participant when one is. -/
 theorem transitiveClitic_caught :
     transitiveClitic (.first, .singular) (.second, .singular) = some [.encl "de"] ∧
     transitiveClitic (.second, .singular) (.first, .singular) = some [.encl "da"] ∧
