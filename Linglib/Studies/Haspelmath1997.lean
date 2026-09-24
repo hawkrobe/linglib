@@ -9,6 +9,7 @@ public import Linglib.Core.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Linglib.Data.Examples.Haspelmath1997
 public import Linglib.Fragments.English.Indefinites
 public import Linglib.Fragments.Georgian.Indefinites
+public import Linglib.Fragments.Hungarian.Indefinites
 public import Linglib.Fragments.German.Indefinites
 public import Linglib.Fragments.Kannada.Indefinites
 public import Linglib.Fragments.Latin.Indefinites
@@ -58,8 +59,8 @@ functions of *-nibud'*, which is preferred there), and it fills cells the book h
 on the strength of the map (Yakut *da* and Mandarin
 bare interrogatives under indirect negation, the Swahili comparative). For those cells
 `sample_contiguous` restates the map; it tests the adjacency requirement on the others. The
-pronouns of English, Georgian, German, Kannada, Latin, Latvian, Russian and Yakut are their
-Fragments' entries.
+pronouns of English, Georgian, German, Hungarian, Kannada, Latin, Latvian, Russian and Yakut
+are their Fragments' entries.
 
 ## TODO
 
@@ -327,12 +328,12 @@ def korean : List Series :=
     series "-tunci" "nwukwu-tunci" .interrogative [9] ]
 
 /-- The Hungarian series (A.26) are *vala-* 123456, *sem-* 7, and *akár-* and *bár-* 5689,
-excluded from questions. -/
+excluded from questions. The figure does not draw the marginal *né*-series. -/
 def hungarian : List Series :=
-  [ series "vala-" "valaki" .interrogative [1, 2, 3, 4, 5, 6],
-    series "sem-" "senki" .interrogative [7],
-    series "akár-" "akárki" .interrogative [5, 6, 8, 9],
-    series "bár-" "bárki" .interrogative [5, 6, 8, 9] ]
+  [ ⟨"vala-", Hungarian.Indefinites.valaki, region [1, 2, 3, 4, 5, 6]⟩,
+    ⟨"sem-", Hungarian.Indefinites.senki, region [7]⟩,
+    ⟨"akár-", Hungarian.Indefinites.akárki, region [5, 6, 8, 9]⟩,
+    ⟨"bár-", Hungarian.Indefinites.bárki, region [5, 6, 8, 9]⟩ ]
 
 /-- The Georgian series (A.34) are *-γac* 12, *-me* 34568 and *ara-* 7. The text also puts the
 potential *vera-* and prohibitive *nura-* series in direct negation, where the figure does not
