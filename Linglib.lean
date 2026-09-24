@@ -1252,7 +1252,6 @@ import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy

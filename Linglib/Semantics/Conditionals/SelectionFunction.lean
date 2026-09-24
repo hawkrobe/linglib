@@ -19,12 +19,15 @@ the conditional of the closest worlds.
 
 * `SelectionFunction`: a selection function.
 * `selectionConditional`: the selection conditional.
+* `SelectionFunction.IsCSO`: Stalnaker's condition (4), that antecedents each true at the world
+  selected for the other select the same world.
+* `SelectionFunction.restrict`: a selection function restricted to a set of worlds.
 * `Completion`: a linear extension of a family of preorders at each center.
 * `SelectionFunction.Compatible`: selection by a completion of a family of preorders.
 
 ## Main results
 
-* `SelectionFunction.Compatible.cso`: selection by a completion is coherent across antecedents.
+* `SelectionFunction.Compatible.isCSO`: selection by a completion satisfies condition (4).
 * `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
   supervaluation over completions.
 
@@ -68,8 +71,8 @@ theorem SelectionFunction.domain_eq_singleton (hp : p.Nonempty) :
 theorem SelectionFunction.subsingleton_domain : (s.domain w p).Subsingleton :=
   Set.subsingleton_singleton.anti Set.inter_subset_left
 
-/-- Centering as an equality of functions on `p`: at a `p`-world the selection for `p` is the
-identity. -/
+/-- Centering says that on `p` the selection for `p` is the identity, as an equality of
+functions. -/
 theorem SelectionFunction.eqOn_sel : Set.EqOn (s.sel · p) id p := fun w hw ↦ s.centering w p hw
 
 theorem SelectionFunction.domain_of_mem (hw : w ∈ p) : s.domain w p = {w} := by
@@ -118,6 +121,51 @@ theorem selectionConditional_subset_materialImp : selectionConditional s p q ⊆
 
 end SelectionConditional
 
+/-! ### Condition (4) and restriction -/
+
+section CSO
+
+variable {W : Type*} {s : SelectionFunction W} {w : W} {p q : Set W}
+
+/-- A selection function satisfies [stalnaker-1968]'s condition (4) when two possible antecedents
+each true at the world selected for the other select the same world. -/
+def SelectionFunction.IsCSO (s : SelectionFunction W) : Prop :=
+  ∀ w (p p' : Set W), p.Nonempty → p'.Nonempty → s.sel w p' ∈ p → s.sel w p ∈ p' →
+    s.sel w p = s.sel w p'
+
+/-- Under condition (4), the world selected for `p` lies in `q` iff it is the world selected for
+`p ∩ q`. -/
+theorem SelectionFunction.IsCSO.sel_mem_iff (hs : s.IsCSO) (h : (p ∩ q).Nonempty) :
+    s.sel w p ∈ q ↔ s.sel w p = s.sel w (p ∩ q) :=
+  ⟨fun hq ↦ hs w p (p ∩ q) (h.mono Set.inter_subset_left) h (s.inclusion w _ h).1
+      ⟨s.inclusion w p (h.mono Set.inter_subset_left), hq⟩,
+    fun he ↦ he ▸ (s.inclusion w _ h).2⟩
+
+open Classical in
+/-- The restriction of a selection function to a set `C`, which at a world of `C` selects among
+the antecedent-worlds in `C` when there are any and otherwise selects as before. -/
+noncomputable def SelectionFunction.restrict (s : SelectionFunction W) (C : Set W) :
+    SelectionFunction W where
+  sel w A := if w ∈ C ∧ (A ∩ C).Nonempty then s.sel w (A ∩ C) else s.sel w A
+  inclusion w A hA := by
+    split_ifs with h
+    · exact (s.inclusion w (A ∩ C) h.2).1
+    · exact s.inclusion w A hA
+  centering w A hw := by
+    split_ifs with h
+    · exact s.centering w (A ∩ C) ⟨hw, h.1⟩
+    · exact s.centering w A hw
+
+theorem SelectionFunction.restrict_sel_of_mem (s : SelectionFunction W) (C : Set W) {A : Set W}
+    (hw : w ∈ C) (hA : (A ∩ C).Nonempty) : (s.restrict C).sel w A = s.sel w (A ∩ C) := by
+  simp [SelectionFunction.restrict, hw, hA]
+
+theorem SelectionFunction.restrict_sel_of_not_nonempty (s : SelectionFunction W) (C : Set W)
+    {A : Set W} (hA : ¬ (A ∩ C).Nonempty) : (s.restrict C).sel w A = s.sel w A := by
+  simp [SelectionFunction.restrict, hA]
+
+end CSO
+
 /-! ### Selection functions compatible with a similarity ordering
 
 [stalnaker-1981] reads a similarity ordering with ties and incomparabilities as the class of its
@@ -146,11 +194,9 @@ family selects it. -/
 def SelectionFunction.Compatible (s : SelectionFunction W) (ord : W → Preorder W) : Prop :=
   ∃ c : Completion ord, s.SelectedBy c
 
-/-- A selection function selected by a completion satisfies [stalnaker-1968]'s condition (4), that
-two antecedents each true at the world selected for the other select the same world. -/
-theorem SelectionFunction.Compatible.cso (hs : s.Compatible ord) {p p' : Set W}
-    (hp : p.Nonempty) (hp' : p'.Nonempty) (h₁ : s.sel w p' ∈ p) (h₂ : s.sel w p ∈ p') :
-    s.sel w p = s.sel w p' := by
+/-- A selection function selected by a completion satisfies [stalnaker-1968]'s condition (4). -/
+theorem SelectionFunction.Compatible.isCSO (hs : s.Compatible ord) : s.IsCSO := by
+  intro w p p' hp hp' h₁ h₂
   obtain ⟨c, hc⟩ := hs
   have := c.linear w
   exact antisymm (hc w p hp _ h₁) (hc w p' hp' _ h₂)
