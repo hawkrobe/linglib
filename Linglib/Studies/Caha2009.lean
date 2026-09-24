@@ -6,6 +6,7 @@ public import Linglib.Morphology.Exponence.Containment.Contiguity
 public import Linglib.Syntax.Case.Order
 public import Linglib.Fragments.Dargwa.Case
 public import Linglib.Fragments.Finnish.Case
+public import Linglib.Fragments.German.Basel.Case
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.Greek.StandardModern.Case
 public import Linglib.Fragments.Hindi.Case
@@ -26,7 +27,6 @@ public import Linglib.Fragments.Slavic.Slovak.Case
 public import Linglib.Fragments.Slavic.Slovenian.Case
 public import Linglib.Fragments.Slavic.Sorbian.Case
 public import Linglib.Fragments.Slavic.Ukrainian.Case
-public import Linglib.Fragments.SwissGerman.Case
 public import Linglib.Fragments.Tamil.Case
 public import Linglib.Fragments.Telugu.Case
 public import Linglib.Fragments.Turkish.Case
@@ -43,12 +43,13 @@ paradigm the cells sharing a form must be contiguous in the sequence, which is n
 axiom but the generative capacity of nanosyntactic spellout — lexical entries competing under the
 Superset Principle realize exactly the contiguous patterns.
 
-Every case inventory in the Fragments is downward closed but two, and both exceptions are
+Every case inventory in the Fragments is downward closed but three, and the exceptions are
 principled: Dargwa is ergative, and containment is keyed to accusative alignment, while Hungarian
 has no morphological genitive, the textbook surface counterexample to the hierarchy, which the
-literature resolves by treating its dative as expressing the possessor. Finnish looks like a third
-but is not: its locative richness is on the orthogonal directional dimension, so on the nominal
-chain it has only nominative, accusative and genitive.
+literature resolves by treating its dative as expressing the possessor. Basel German has the
+Hungarian pattern: its genitive has vanished as a case, and the dative expresses the possessor.
+Finnish looks like a fourth but is not: its locative richness is on the orthogonal directional
+dimension, so on the nominal chain it has only nominative, accusative and genitive.
 
 The paradigm-shape half covers the four Slavic languages analysed in detail. The syncretism shapes
 they attest are collected once and checked for contiguity, and each language's section records
@@ -66,8 +67,8 @@ phonological conflation or accidental homophony.
 
 * `respectsCahaContainment_iff_isLowerSet` — the containment condition is an order-theoretic
   closure property
-* `conformers_respectCaha`, `dargwa_not_respectsCaha`, `hungarian_not_respectsCaha` — the
-  inventories and the two principled exceptions
+* `conformers_respectCaha`, `dargwa_not_respectsCaha`, `hungarian_not_respectsCaha`,
+  `basel_not_respectsCaha` — the inventories and the three principled exceptions
 * `Slavic.universalContiguity_iff_spellable` — contiguity is what the spellout engine generates
 * the per-language `all_attested_contiguous` and `Counterexamples.all_attested_not_contiguous`
 
@@ -77,6 +78,7 @@ phonological conflation or accidental homophony.
 * [caha-2008]
 * [blake-1994]
 * [pantcheva-2011]
+* [suter-1992]
 -/
 
 @[expose] public section
@@ -137,9 +139,8 @@ def conformers : List (Finset Case) :=
   [ -- non-Slavic
     German.Case.inventory, Greek.StandardModern.Case.inventory, Hindi.Case.inventory,
     Icelandic.Case.inventory, Japanese.Case.inventory, Korean.Case.inventory,
-    Latin.Case.inventory, Mongolian.Case.inventory, SwissGerman.Case.inventory,
-    Tamil.Case.inventory, Telugu.Case.inventory, Turkish.Case.inventory,
-    Yakut.Case.inventory,
+    Latin.Case.inventory, Mongolian.Case.inventory, Tamil.Case.inventory,
+    Telugu.Case.inventory, Turkish.Case.inventory, Yakut.Case.inventory,
     -- Slavic (each aliases Slavic.Case.coreInventory)
     Belarusian.Case.inventory, Cassubian.Case.inventory, Czech.Case.inventory,
     Polish.Case.inventory, Russian.Case.inventory, Serbian.Case.inventory,
@@ -184,6 +185,13 @@ theorem finnish_respectsCaha :
     and holds vacuously here since Hungarian marks all cases suffixally.) -/
 theorem hungarian_not_respectsCaha :
     ¬ RespectsCahaContainment Hungarian.Case.inventory := by decide
+
+/-- Basel German has the Hungarian pattern. Its genitive has long vanished as a case: a possessor
+is one of two dative constructions, and verbs and prepositions that govern the genitive in the
+standard language take the dative ([suter-1992] §§91, 193–194). The inventory its articles and
+pronouns realize has rank 3 (DAT) without rank 2 (GEN), failing downward closure. -/
+theorem basel_not_respectsCaha :
+    ¬ RespectsCahaContainment German.Basel.Case.inventory := by decide
 
 /-! ## § 4: Slavic paradigm-shape syncretism (Caha §§8.3.1-4)
 
