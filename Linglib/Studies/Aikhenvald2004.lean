@@ -38,8 +38,8 @@ inventory (`kind`). Disjoint evidentials realize distinct terms, so in a well-fo
 the letter of the kind counts the evidentials, plus one for an everything-else term
 (`choices_eq_length`). Turkish, Abkhaz and Bulgarian derive as A2 once their unmarked pasts
 are read as evidentiality-neutral rather than firsthand, Cuzco Quechua as B1, Tuyuca and
-Tariana as D1, while Kashaya's performative lies outside the six parameters, so its paradigm
-fits no kind.
+Tariana as D1, while Kashaya's performative lies outside the six parameters and its factual
+spans seeing and general knowledge, so its paradigms fit no kind.
 
 ## References
 
@@ -238,7 +238,9 @@ theorem sample_wellFormed :
     ∀ es ∈ [Turkish.Evidentiality.evidentials, Abkhaz.Evidentiality.evidentials,
       Bulgarian.Evidentiality.evidentials, Quechua.Evidentiality.evidentials,
       Tuyuca.Evidentiality.evidentials, Tariana.Evidentiality.evidentials,
-      Kashaya.Evidentiality.evidentials], Evidential.WellFormed es := by decide
+      Kashaya.Evidentiality.paradigm .spontaneous .imperfective,
+      Kashaya.Evidentiality.paradigm .spontaneous .perfective], Evidential.WellFormed es := by
+  decide
 
 theorem turkish : kind Turkish.Evidentiality.evidentials = some .A2 :=
   (kind_eq_some_iff _ _).2 (by decide)
@@ -258,10 +260,12 @@ theorem tuyuca : kind Tuyuca.Evidentiality.evidentials = some .D1 :=
 theorem tariana : kind Tariana.Evidentiality.evidentials = some .D1 :=
   (kind_eq_some_iff _ _).2 (by decide)
 
-/-- Kashaya's performative covers none of the six parameters, so its paradigm — visual,
+/-- Kashaya's performative covers none of the six parameters and its imperfective factual
+spans seeing and general knowledge, so in either aspect the paradigm of a spontaneous remark —
 auditory, inferential and reported terms besides — is beyond the fourteen kinds. -/
-theorem kashaya_unclassified : kind Kashaya.Evidentiality.evidentials = none :=
-  (kind_eq_none_iff _).2 fun k => by cases k <;> decide
+theorem kashaya_unclassified (a : Aspect.Perfectivity) :
+    kind (Kashaya.Evidentiality.paradigm .spontaneous a) = none :=
+  (kind_eq_none_iff _).2 fun k => by cases a <;> cases k <;> decide
 
 /-! ### The book's illustrations -/
 
