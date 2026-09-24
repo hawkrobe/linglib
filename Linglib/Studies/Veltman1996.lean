@@ -9,7 +9,7 @@ public import Mathlib.Data.Fintype.Powerset
 This file formalizes the paper of Veltman, which treats *normally φ* as an update of an agent's
 expectations rather than a sentence about them. The framework of section 1, acceptance as a fixed
 point of the update, the three notions of validity and additivity, with Propositions 1.2 and 1.3,
-is `Semantics/Dynamic/Validity.lean`.
+is `Semantics/Dynamic/Consequence.lean`.
 
 Section 2 studies *might* on sets of worlds, whose updates of Definition 2.3 are `CCP.up`,
 `CCP.neg` and `CCP.might`. The test *might φ* satisfies Strengthening, Idempotence and Monotony,
@@ -57,9 +57,9 @@ Every frame an agent reaches from the minimal state is the total frame refined b
 accepted, so a frame of section 4 is presented by its list of rules, `Frame.ofRules`, which makes
 coherence, normality, applicability and the optimal worlds decidable and lets each verdict be
 checked by `decide` over the atoms `p`, `q` and `r`. Acceptance then compares the facts and the
-frames of two states rather than their presentations, so `Valid` is `DynamicSemantics.Valid₁` read
-up to presentation. The comparison with the default logics of Asher and Morreau in section 5 is
-discussed in the paper and not formalized.
+frames of two states rather than their presentations, so `Valid` is
+`DynamicSemantics.EntailsFrom ⊤` read up to presentation. The comparison with the default logics
+of Asher and Morreau in section 5 is discussed in the paper and not formalized.
 
 ## References
 
@@ -132,11 +132,11 @@ theorem not_consistent_up_might_neg : ¬Consistent [CCP.up c, CCP.might (CCP.neg
 /-- Right monotonicity fails: *might ¬p ⊩ might ¬p*, but *might ¬p, p ⊮ might ¬p*
 (Example 2.7(ii)). -/
 theorem valid₁_might_neg :
-    Valid₁ [CCP.might (CCP.neg (CCP.up c))] (CCP.might (CCP.neg (CCP.up c))) :=
-  valid₁_append_self (ψs := []) (might_idem _)
+    [CCP.might (CCP.neg (CCP.up c))] ⊩₁ CCP.might (CCP.neg (CCP.up c)) :=
+  entailsFrom_append_self (ψs := []) (might_idem _)
 
 theorem not_valid₁_might_neg_up (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
-    ¬Valid₁ [CCP.might (CCP.neg (CCP.up c)), CCP.up c] (CCP.might (CCP.neg (CCP.up c))) := by
+    ¬[CCP.might (CCP.neg (CCP.up c)), CCP.up c] ⊩₁ CCP.might (CCP.neg (CCP.up c)) := by
   intro h
   have h' : CCP.might (CCP.neg (CCP.up c)) (CCP.up c (CCP.might (CCP.neg (CCP.up c)) ⊤)) =
       CCP.up c (CCP.might (CCP.neg (CCP.up c)) ⊤) := h
@@ -144,11 +144,11 @@ theorem not_valid₁_might_neg_up (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
   exact Set.not_nonempty_empty (h' ▸ up_top_nonempty hc)
 
 /-- Left monotonicity fails: *⊩ might p*, but *¬p ⊮ might p* (Example 2.7(iii)). -/
-theorem valid₁_might (hc : c.Nonempty) : Valid₁ [] (CCP.might (CCP.up c)) :=
+theorem valid₁_might (hc : c.Nonempty) : [] ⊩₁ CCP.might (CCP.up c) :=
   CCP.guard_pos (up_top_nonempty hc)
 
 theorem not_valid₁_neg_might (hc : cᶜ.Nonempty) :
-    ¬Valid₁ [CCP.neg (CCP.up c)] (CCP.might (CCP.up c)) := by
+    ¬[CCP.neg (CCP.up c)] ⊩₁ CCP.might (CCP.up c) := by
   intro h
   have h' : CCP.might (CCP.up c) (CCP.neg (CCP.up c) ⊤) = CCP.neg (CCP.up c) ⊤ := h
   rw [might_up_neg_up] at h'
@@ -167,21 +167,21 @@ theorem not_isAdditive_might (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
     ¬IsAdditive (CCP.might (CCP.up c)) :=
   fun h ↦ not_isLowerSet_might hc hc' (isAdditive_iff.1 h).2.2.2
 
-private theorem mem_foldl_up {cs : List (Set W)} {σ : Set W} {w : W} :
-    w ∈ (cs.map CCP.up).foldl (fun σ ψ ↦ ψ σ) σ ↔ w ∈ σ ∧ ∀ c ∈ cs, w ∈ c := by
+private theorem mem_text_up {cs : List (Set W)} {σ : Set W} {w : W} :
+    w ∈ text (cs.map CCP.up) σ ↔ w ∈ σ ∧ ∀ c ∈ cs, w ∈ c := by
   induction cs generalizing σ with
   | nil => simp
   | cons c cs ih =>
-    simp only [List.map_cons, List.foldl_cons, ih, List.forall_mem_cons]
+    simp only [List.map_cons, text_cons, ih, List.forall_mem_cons]
     exact ⟨fun ⟨⟨hσ, hc⟩, hcs⟩ ↦ ⟨hσ, hc, hcs⟩, fun ⟨hσ, hc, hcs⟩ ↦ ⟨⟨hσ, hc⟩, hcs⟩⟩
 
 /-- On the fragment without *might* validity is classical: the conclusion holds at every world
 at which all the premises hold (§2). -/
 theorem valid₁_up_iff {cs : List (Set W)} :
-    Valid₁ (cs.map CCP.up) (CCP.up d) ↔ ∀ w, (∀ c ∈ cs, w ∈ c) → w ∈ d := by
-  rw [Valid₁, (CCP.isAdditive_up d).isFixedPt_iff]
-  exact ⟨fun h w hw ↦ (h (mem_foldl_up.2 ⟨trivial, hw⟩)).2,
-    fun h w hw ↦ ⟨trivial, h w (mem_foldl_up.1 hw).2⟩⟩
+    cs.map CCP.up ⊩₁ CCP.up d ↔ ∀ w, (∀ c ∈ cs, w ∈ c) → w ∈ d := by
+  rw [EntailsFrom, (CCP.isAdditive_up d).isFixedPt_iff]
+  exact ⟨fun h w hw ↦ (h (mem_text_up.2 ⟨trivial, hw⟩)).2,
+    fun h w hw ↦ ⟨trivial, h w (mem_text_up.1 hw).2⟩⟩
 
 end Might
 
@@ -235,7 +235,7 @@ theorem ex310_conflict :
   exact hnp hw'.2
 
 /-- *Normally p ⊩ presumably p* (3.10(ii)). -/
-theorem ex310_presumably : Valid₁ [(promote · atomP)] (presumablyTest atomP) :=
+theorem ex310_presumably : [(promote · atomP)] ⊩₁ presumablyTest atomP :=
   normally_presumably_succeeds atomP Set.univ ⟨w₁, Set.mem_univ _, atomP_w₁⟩
 
 private theorem not_presumably_w₀ :
@@ -245,11 +245,11 @@ private theorem not_presumably_w₀ :
 
 /-- The default inference *normally p ⊩ presumably p* is not valid₂, since a state may already know
 that `p` fails, and Veltman concentrates on validity₁ for this reason (§1.3). -/
-theorem not_valid₂_presumably : ¬Valid₂ [(promote · atomP)] (presumablyTest atomP) :=
+theorem not_valid₂_presumably : ¬[(promote · atomP)] ⊩₂ presumablyTest atomP :=
   fun h ↦ not_presumably_w₀ (h ⟨{w₀}, ⊤⟩)
 
 /-- Nor is it valid₃: a state that knows `¬p` accepts *normally p* without presuming `p`. -/
-theorem not_valid₃_presumably : ¬Valid₃ [(promote · atomP)] (presumablyTest atomP) :=
+theorem not_valid₃_presumably : ¬[(promote · atomP)] ⊩₃ presumablyTest atomP :=
   fun h ↦ not_presumably_w₀ <| h _ fun _ hψ ↦ by
     obtain rfl := List.mem_singleton.1 hψ; exact promote_promote_self _ atomP
 
@@ -258,45 +258,45 @@ private theorem w₀_optimal : w₀ ∈ ((σ₀.promote atomP).assert (¬atomP �
 
 /-- Exceptions defeat presumptions, *normally p, ¬p ⊮ presumably p* (3.10(ii)). -/
 theorem ex310_defeat :
-    ¬Valid₁ [(promote · atomP), (assert · (¬atomP ·))] (presumablyTest atomP) :=
+    ¬[(promote · atomP), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomP :=
   fun h ↦ atomP_w₀ (isFixedPt_presumablyTest_iff.1 h w₀ w₀_optimal)
 
 /-- Exceptions do not defeat the rule, *normally p, ¬p ⊩ normally p* (3.10(ii)). -/
 theorem ex310_rule_persists :
-    Valid₁ [(promote · atomP), (assert · (¬atomP ·))] (promote · atomP) :=
+    [(promote · atomP), (assert · (¬atomP ·))] ⊩₁ (promote · atomP) :=
   promote_respects_idempotent ((σ₀.promote atomP).assert (¬atomP ·)) atomP
     (persistence_assert _ atomP _ (normally_creates_respect σ₀ atomP))
 
 /-- Rules and facts are additive, so the persistence of the rule holds under every notion of
 validity (Proposition 1.3), unlike the presumption. -/
 theorem ex310_rule_persists_valid₃ :
-    Valid₃ [(promote · atomP), (assert · (¬atomP ·))] (promote · atomP) := by
-  refine ((tfae_valid ?_ (ExpState.isAdditive_promote _)).out 1 3).1 ex310_rule_persists
+    [(promote · atomP), (assert · (¬atomP ·))] ⊩₃ (promote · atomP) := by
+  refine ((tfae_entails ?_ (ExpState.isAdditive_promote _)).out 1 3).1 ex310_rule_persists
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   exact ⟨ExpState.isAdditive_promote _, ExpState.isAdditive_assert _⟩
 
 /-- Irrelevant information does not block a presumption, *normally p, q ⊩ presumably p*
 (3.10(iii)). -/
-theorem ex310_irrelevant : Valid₁ [(promote · atomP), (assert · atomQ)] (presumablyTest atomP) :=
+theorem ex310_irrelevant : [(promote · atomP), (assert · atomQ)] ⊩₁ presumablyTest atomP :=
   isFixedPt_presumablyTest_iff.2 fun _ ⟨_, hopt⟩ ↦ by_contra fun hnpw ↦
     hnpw ((hopt ⟨Set.mem_univ _, atomQ_w₃⟩ ⟨trivial, fun _ ↦ atomP_w₃⟩).2 atomP_w₃)
 
 /-- Information to the contrary does, *normally p, q, ¬p ⊮ presumably p* (3.10(iii)). -/
 theorem ex310_contrary :
-    ¬Valid₁ [(promote · atomP), (assert · atomQ), (assert · (¬atomP ·))] (presumablyTest atomP) :=
+    ¬[(promote · atomP), (assert · atomQ), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomP :=
   fun h ↦ atomP_w₂ <| isFixedPt_presumablyTest_iff.1 h w₂
     ⟨⟨⟨Set.mem_univ _, atomQ_w₂⟩, atomP_w₂⟩, fun _ hv _ ↦ ⟨trivial, fun hp ↦ absurd hp hv.2⟩⟩
 
 /-- Two rules each yield their presumption, *normally p, normally q ⊩ presumably p* (3.10(iv)). -/
 theorem ex310_two_rules :
-    Valid₁ [(promote · atomP), (promote · atomQ)] (presumablyTest atomP) :=
+    [(promote · atomP), (promote · atomQ)] ⊩₁ presumablyTest atomP :=
   isFixedPt_presumablyTest_iff.2 fun _ ⟨_, hopt⟩ ↦ by_contra fun hnpw ↦
     hnpw ((hopt (Set.mem_univ w₃) ⟨⟨trivial, fun _ ↦ atomP_w₃⟩, fun _ ↦ atomQ_w₃⟩).1.2 atomP_w₃)
 
 /-- An exception to one rule defeats its presumption, *normally p, normally q, ¬p ⊮ presumably p*
 (3.10(iv)). -/
 theorem ex310_two_rules_defeat :
-    ¬Valid₁ [(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] (presumablyTest atomP) :=
+    ¬[(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomP :=
   fun h ↦ atomP_w₂ <| isFixedPt_presumablyTest_iff.1 h w₂
     ⟨⟨Set.mem_univ _, atomP_w₂⟩,
       fun _ hv _ ↦ ⟨⟨trivial, fun hp ↦ absurd hp hv.2⟩, fun _ ↦ atomQ_w₂⟩⟩
@@ -304,7 +304,7 @@ theorem ex310_two_rules_defeat :
 /-- But not the other rule's, since two rules are independent, *normally p, normally q, ¬p ⊩
 presumably q* (3.10(iv)). -/
 theorem ex310_independence :
-    Valid₁ [(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] (presumablyTest atomQ) :=
+    [(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomQ :=
   isFixedPt_presumablyTest_iff.2 fun _ ⟨⟨_, hnpw⟩, hopt⟩ ↦
     by_contra fun hnqw ↦ hnqw ((hopt ⟨Set.mem_univ _, atomP_w₂⟩
       ⟨⟨trivial, fun hpw ↦ absurd hpw hnpw⟩, fun hqw ↦ absurd hqw hnqw⟩).2 atomQ_w₂)
@@ -314,7 +314,7 @@ theorem ex310_independence :
 theorem ex310_ambiguity :
     let ψs : List (ExpState PQWorld → ExpState PQWorld) :=
       [(promote · atomP), (promote · atomQ), (assert · fun w ↦ ¬(atomP w ∧ atomQ w))]
-    ¬Valid₁ ψs (presumablyTest atomP) ∧ ¬Valid₁ ψs (presumablyTest atomQ) := by
+    ¬ψs ⊩₁ presumablyTest atomP ∧ ¬ψs ⊩₁ presumablyTest atomQ := by
   intro ψs
   refine ⟨fun h ↦ atomP_w₂ (isFixedPt_presumablyTest_iff.1 h w₂
       ⟨⟨Set.mem_univ _, fun ⟨hp, _⟩ ↦ atomP_w₂ hp⟩, ?_⟩),
@@ -329,8 +329,8 @@ theorem ex310_ambiguity :
 rains or snows; it is not raining; so presumably it snows* is valid (§3), because a rule *normally
 (p ∨ q)* says what to expect when `p` fails. -/
 theorem rain_or_snow :
-    ¬Valid₁ [(promote · atomP), (assert · (¬atomP ·))] (presumablyTest atomQ) ∧
-      Valid₁ [(promote · fun w ↦ atomP w ∨ atomQ w), (assert · (¬atomP ·))]
+    ¬[(promote · atomP), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomQ ∧
+      [(promote · fun w ↦ atomP w ∨ atomQ w), (assert · (¬atomP ·))] ⊩₁
         (presumablyTest atomQ) := by
   refine ⟨fun h ↦ atomQ_w₀ (isFixedPt_presumablyTest_iff.1 h w₀ w₀_optimal),
     isFixedPt_presumablyTest_iff.2 ?_⟩
@@ -341,7 +341,7 @@ theorem rain_or_snow :
 
 /-- Hence *normally p ⊮ normally (p ∨ q)*, since the second rule further refines the pattern. -/
 theorem normally_not_normally_or :
-    ¬Valid₁ [(promote · atomP)] (promote · fun w ↦ atomP w ∨ atomQ w) := by
+    ¬[(promote · atomP)] ⊩₁ (promote · fun w ↦ atomP w ∨ atomQ w) := by
   intro h
   have h' : refine (refine ⊤ atomP) (fun w ↦ atomP w ∨ atomQ w) = refine ⊤ atomP :=
     congrArg ExpState.order h

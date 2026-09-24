@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Minimals
-public import Linglib.Semantics.Dynamic.Validity
+public import Linglib.Semantics.Dynamic.Consequence
 
 /-!
 # Expectation states
@@ -19,7 +19,7 @@ by the propositions it respects. An expectation state pairs a pattern with the a
 information. Asserting a fact eliminates worlds, *normally φ* refines the pattern in favour of
 `φ` without eliminating anything, and *presumably φ* tests whether `φ` holds in the optimal
 worlds, the minimal worlds of the information under the pattern. Assertion and promotion are
-additive in the sense of `Semantics/Dynamic/Validity.lean`. Defaults are dynamic: a promoted
+additive in the sense of `Semantics/Dynamic/Consequence.lean`. Defaults are dynamic: a promoted
 expectation persists under further assertions and promotions, conflicting defaults leave the
 agent agnostic, and compatible ones reinforce each other.
 

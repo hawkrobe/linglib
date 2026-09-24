@@ -295,43 +295,43 @@ theorem atom_disjoint (pred : W → Prop) (s : Set (Possibility W V (Part E))) :
 
 theorem atom_positive_monotone (pred : W → Prop) :
     Monotone (atom pred (V := V) (E := E)).positive :=
-  sep_monotone _
+  CCP.monotone_up _
 
 theorem atom_negative_monotone (pred : W → Prop) :
     Monotone (atom pred (V := V) (E := E)).negative :=
-  sep_monotone _
+  CCP.monotone_up _
 
 theorem atom_positive_eliminative (pred : W → Prop) :
     CCP.IsEliminative (atom pred (V := V) (E := E)).positive :=
-  sep_eliminative _
+  (CCP.isClassical_up _).1
 
 theorem atom_negative_eliminative (pred : W → Prop) :
     CCP.IsEliminative (atom pred (V := V) (E := E)).negative :=
-  sep_eliminative _
+  (CCP.isClassical_up _).1
 
 theorem pred1_positive_monotone (P : E → W → Prop) (t : V) :
     Monotone (pred1 P t (W := W)).positive :=
-  sep_monotone _
+  CCP.monotone_up _
 
 theorem pred1_negative_monotone (P : E → W → Prop) (t : V) :
     Monotone (pred1 P t (W := W)).negative :=
-  sep_monotone _
+  CCP.monotone_up _
 
 theorem pred1_positive_eliminative (P : E → W → Prop) (t : V) :
     CCP.IsEliminative (pred1 P t (W := W)).positive :=
-  sep_eliminative _
+  (CCP.isClassical_up _).1
 
 theorem pred1_negative_eliminative (P : E → W → Prop) (t : V) :
     CCP.IsEliminative (pred1 P t (W := W)).negative :=
-  sep_eliminative _
+  (CCP.isClassical_up _).1
 
 theorem pred2_positive_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) :
     CCP.IsEliminative (pred2 P t₁ t₂ (W := W)).positive :=
-  sep_eliminative _
+  (CCP.isClassical_up _).1
 
 theorem pred2_negative_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) :
     CCP.IsEliminative (pred2 P t₁ t₂ (W := W)).negative :=
-  sep_eliminative _
+  (CCP.isClassical_up _).1
 
 /-! ### The bilateral algebra -/
 

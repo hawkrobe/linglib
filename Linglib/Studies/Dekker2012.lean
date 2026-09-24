@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Semantics.Dynamic.Consequence
 public import Mathlib.Data.Stream.Init
 public import Mathlib.Data.List.Basic
 public import Mathlib.Logic.Function.Basic
@@ -703,7 +703,8 @@ theorem supports_iff : ∀ (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W
 /-- Support is a fixed point of update, the second half of Observation 17. -/
 theorem supports_iff_update_eq (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W → E))
     (σ : Set W) : Supports M g γ σ φ ↔ update M g γ σ φ = σ := by
-  rw [supports_iff, update_eq, DynamicSemantics.CCP.up, Set.inter_eq_left]
+  rw [supports_iff, update_eq]
+  exact DynamicSemantics.CCP.isFixedPt_up_iff.symm
 
 /-- A state supports a negation iff every update with the negated formula is absurd. -/
 theorem supports_neg_iff (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W → E)) (σ : Set W) :

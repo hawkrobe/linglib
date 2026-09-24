@@ -17,9 +17,9 @@ strongest postcondition, the weakest precondition, and its dual are
 `SetRel.image`, `SetRel.preimage`, and `SetRel.core`; this file adds the
 tests and the static connectives built from them. The image sends an update
 to a transformer, `lower` recovers it, and the distributive transformers are
-exactly the relational images. A satisfaction relation induces the standard
-eliminative fragment (`updateFromSat`), which PLA, DRT, and DPL instantiate.
-The monadic reading of the pair is in `Collapse.lean`.
+exactly the relational images. Acceptance and the consequence relations of
+dynamic meanings are in `Consequence.lean`, and the monadic reading of the pair
+is in `Collapse.lean`.
 
 ## Main definitions
 
@@ -32,8 +32,6 @@ The monadic reading of the pair is in `Collapse.lean`.
   `CCP.IsClassical`: the classification of transformers.
 * `CCP.up`, `CCP.down`: the content–update coercions.
 * `CCP.lower`: the inverse of `SetRel.image` on distributive transformers.
-* `supportOf`, `contentOf`, `CCP.updateFromSat`, `dynamicEntailsOf`: the layer a
-  satisfaction relation induces.
 
 ## Main results
 
@@ -48,16 +46,13 @@ The monadic reading of the pair is in `Collapse.lean`.
 * `CCP.isClassical_iff_up_down_eq`, `CCP.exists_eq_image_test_iff`: the classical
   transformers are exactly the static ones — `up` of their own content, the
   images of tests; `CCP.might_not_isDistributive` separates.
-* `support_iff_update_eq`: support is being a fixed point of the update.
 
 ## Implementation notes
 
 The algebraic instances are scoped: `Update S` abbreviates a set of pairs and
 `CCP S` a function type. Sequencing distributes over arbitrary unions by
 mathlib's `SetRel.comp_sUnion` and `SetRel.sUnion_comp`, and the image is left
-adjoint to the core by `SetRel.image_core_gc`. `CCP.updateFromSat` is the
-literal filter rather than `(test _).image` so that instantiating frameworks
-connect to it by `rfl`.
+adjoint to the core by `SetRel.image_core_gc`.
 `Update.neg` does not validate double-negation elimination and `CCP.negTest`
 is not `CCP.neg`; the framework-specific repairs and comparisons live in the
 studies. [groenendijk-stokhof-1991]'s entailment notions live in
@@ -345,6 +340,10 @@ theorem IsEliminative.down_eq (he : IsEliminative u) : down u = {i | u {i} = {i}
 /-- An update is *classical* if it is eliminative and distributive. -/
 def IsClassical (u : CCP S) : Prop := IsEliminative u ∧ IsDistributive u
 
+/-- Static updates are monotone. -/
+theorem monotone_up (c : Set S) : Monotone (up c) :=
+  fun _ _ h ↦ Set.inter_subset_inter_left _ h
+
 /-- Static updates are classical. -/
 theorem isClassical_up (c : Set S) : IsClassical (up c) :=
   ⟨λ _ => Set.inter_subset_left,
@@ -437,120 +436,5 @@ theorem CCP.isClassical_iff_up_down_eq {φ : CCP S} :
    fun h => h ▸ CCP.isClassical_up _⟩
 
 end RelationalBridge
-
-/-! ## The satisfaction layer
-
-A satisfaction relation `sat : S → φ → Prop` induces the standard eliminative
-fragment, and the layer reduces to mathlib's intersection–subset API: the
-induced update intersects with content (definitionally), support is inclusion
-in content, and dynamic entailment is content inclusion
-(`dynamicEntailsOf_iff_content_subset`). PLA, DRT, and DPL instantiate
-`sat`. -/
-
-section Satisfaction
-
-variable {S φ : Type*}
-
-open Update
-
-/-- The content of a formula: all possibilities satisfying it. -/
-def contentOf (sat : S → φ → Prop) (ψ : φ) : Set S := { p | sat p ψ }
-
-/-- `s` supports `ψ` when every possibility in `s` satisfies `ψ`: inclusion
-in content. -/
-def supportOf (sat : S → φ → Prop) (s : Set S) (ψ : φ) : Prop :=
-  s ⊆ contentOf sat ψ
-
-/-- Support is downward closed: smaller states support more. -/
-theorem support_mono (sat : S → φ → Prop) (s t : Set S) (ψ : φ)
-    (h : t ⊆ s) (hs : supportOf sat s ψ) : supportOf sat t ψ :=
-  h.trans hs
-
-/-- The empty state supports everything (vacuously). -/
-theorem empty_supports (sat : S → φ → Prop) (ψ : φ) :
-    supportOf sat ∅ ψ :=
-  Set.empty_subset _
-
-/-- Content is monotone in pointwise entailment. -/
-theorem content_mono (sat : S → φ → Prop) (ψ₁ ψ₂ : φ)
-    (h : ∀ p, sat p ψ₁ → sat p ψ₂) :
-    contentOf sat ψ₁ ⊆ contentOf sat ψ₂ :=
-  Set.ofPred_subset_ofPred.mpr h
-
-/-- Filtering a set by a predicate is monotone. -/
-theorem sep_monotone (pred : S → Prop) :
-    Monotone (λ s : Set S => { p ∈ s | pred p }) :=
-  λ _ _ h => Set.inter_subset_inter_left _ h
-
-/-- Filtering a set by a predicate is eliminative. -/
-theorem sep_eliminative (pred : S → Prop) :
-    CCP.IsEliminative (λ s : Set S => { p ∈ s | pred p }) :=
-  λ s => Set.sep_subset s pred
-
-/-- The update a satisfaction relation induces: filter to the satisfying
-possibilities (see the implementation notes on the choice of body). -/
-def CCP.updateFromSat (sat : S → φ → Prop) (ψ : φ) : CCP S :=
-  λ s => { p ∈ s | sat p ψ }
-
-@[simp] theorem CCP.mem_updateFromSat {sat : S → φ → Prop} {ψ : φ}
-    {s : Set S} {p : S} :
-    p ∈ updateFromSat sat ψ s ↔ p ∈ s ∧ sat p ψ := Iff.rfl
-
-/-- Induced updates are eliminative. -/
-theorem CCP.updateFromSat_eliminative (sat : S → φ → Prop) (ψ : φ) :
-    CCP.IsEliminative (updateFromSat sat ψ) :=
-  λ _ => Set.inter_subset_left
-
-/-- `updateFromSat` is monotone in the state argument. -/
-theorem CCP.updateFromSat_monotone (sat : S → φ → Prop) (ψ : φ) :
-    Monotone (updateFromSat sat ψ) :=
-  λ _ _ h => Set.inter_subset_inter_left _ h
-
-/-- Updating is intersecting with the content. -/
-theorem CCP.updateFromSat_eq_inter_content (sat : S → φ → Prop)
-    (ψ : φ) (s : Set S) :
-    updateFromSat sat ψ s = s ∩ contentOf sat ψ :=
-  rfl
-
-/-- The induced update is the image of the satisfaction test. -/
-theorem CCP.updateFromSat_eq_image_test (sat : S → φ → Prop) (ψ : φ) :
-    updateFromSat sat ψ = (test (contentOf sat ψ)).image :=
-  funext fun s => (image_test _ s).symm
-
-/-- Induced updates are distributive. -/
-theorem CCP.updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
-    CCP.IsDistributive (updateFromSat sat ψ) :=
-  updateFromSat_eq_image_test sat ψ ▸ image_isDistributive _
-
-/-- Support is being a fixed point of the update ([dekker-2012]'s Proper
-Support). -/
-theorem support_iff_update_eq (sat : S → φ → Prop)
-    (ψ : φ) (s : Set S) :
-    supportOf sat s ψ ↔ CCP.updateFromSat sat ψ s = s :=
-  Set.inter_eq_left.symm
-
-/-- Dynamic entailment: updating with `ψ₁` always yields a state supporting
-`ψ₂`. -/
-def dynamicEntailsOf (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) : Prop :=
-  ∀ s : Set S, supportOf sat (CCP.updateFromSat sat ψ₁ s) ψ₂
-
-/-- Dynamic entailment is content inclusion — the layer's consequence
-relation is classical entailment on contents. -/
-theorem dynamicEntailsOf_iff_content_subset (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) :
-    dynamicEntailsOf sat ψ₁ ψ₂ ↔ contentOf sat ψ₁ ⊆ contentOf sat ψ₂ :=
-  ⟨λ h _ hp => h Set.univ ⟨trivial, hp⟩, λ h _ => Set.inter_subset_right.trans h⟩
-
-/-- Dynamic entailment is reflexive. -/
-theorem dynamicEntails_refl (sat : S → φ → Prop) (ψ : φ) :
-    dynamicEntailsOf sat ψ ψ :=
-  λ _ => Set.inter_subset_right
-
-/-- Dynamic entailment is transitive. -/
-theorem dynamicEntails_trans (sat : S → φ → Prop) (ψ₁ ψ₂ ψ₃ : φ)
-    (h1 : dynamicEntailsOf sat ψ₁ ψ₂) (h2 : dynamicEntailsOf sat ψ₂ ψ₃) :
-    dynamicEntailsOf sat ψ₁ ψ₃ :=
-  λ s => Set.Subset.trans (h1 s) ((dynamicEntailsOf_iff_content_subset sat ψ₂ ψ₃).mp h2)
-
-end Satisfaction
 
 end DynamicSemantics

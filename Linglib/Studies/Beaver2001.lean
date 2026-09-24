@@ -150,14 +150,15 @@ theorem empty_mem_eval_empty : ∀ φ : Formula W, ∅ ∈ φ.eval ∅
   | must φ => mem_eval_must.2 ⟨∅, empty_mem_eval_empty φ, by simp⟩
   | presup φ => mem_eval_presup.2 ⟨empty_mem_eval_empty φ, rfl⟩
 
-/-- `σ` satisfies `φ` (D29): `σ[φ]σ`. -/
-def Satisfies (σ : Set W) (φ : Formula W) : Prop := σ ∈ φ.eval σ
+/-- `σ` satisfies `φ` (D29): `σ[φ]σ`, that is, `σ` supports the update. -/
+def Satisfies (σ : Set W) (φ : Formula W) : Prop := CCP.Partial.supports σ φ.eval
 
 /-- `φ` presupposes `ψ` (D31, D46): every state admitting `φ` satisfies `ψ`. -/
 def Presupposes (φ ψ : Formula W) : Prop := ∀ σ, φ.eval.admits σ → Satisfies σ ψ
 
-/-- `φ` entails `ψ` (D26, D45): every update with `φ` yields a state satisfying `ψ`. -/
-def Entails (φ ψ : Formula W) : Prop := ∀ σ τ, τ ∈ φ.eval σ → Satisfies τ ψ
+/-- `φ` entails `ψ` (D26, D45): dynamic entailment between the two updates, which holds when
+every update with `φ` yields a state satisfying `ψ` (`entails_iff_forall`). -/
+def Entails (φ ψ : Formula W) : Prop := DynamicSemantics.Entails [(· >>= φ.eval)] (· >>= ψ.eval)
 
 /-- `σ` is consistent with `φ` (MP7): updating does not reach the absurd state. -/
 def ConsistentWith (σ : Set W) (φ : Formula W) : Prop := ∃ τ ∈ φ.eval σ, τ.Nonempty
@@ -168,6 +169,9 @@ def IsTest (φ : Formula W) : Prop := ∀ σ τ, τ ∈ φ.eval σ → τ = σ �
 theorem admits_of_mem (h : τ ∈ φ.eval σ) : φ.eval.admits σ := Part.dom_iff_mem.2 ⟨τ, h⟩
 
 theorem Satisfies.admits (h : Satisfies σ φ) : φ.eval.admits σ := admits_of_mem h
+
+theorem entails_iff_forall : Entails φ ψ ↔ ∀ σ τ, τ ∈ φ.eval σ → Satisfies τ ψ :=
+  CCP.Partial.entails_bind_iff
 
 /-- *must* is the dual of *might* (Fact 6.1). -/
 theorem eval_must (φ : Formula W) : (must φ).eval = (not (might (not φ))).eval := by
@@ -489,7 +493,7 @@ theorem mem_eval_iff (hφ : NonModal φ) (σ τ : Set W) :
 
 /-- A non-modal sentence is satisfied iff it is true at every world of the state. -/
 theorem satisfies_iff (hφ : NonModal φ) : Satisfies σ φ ↔ ∀ w ∈ σ, TrueAt w φ := by
-  rw [Satisfies, mem_eval_iff hφ]
+  rw [Satisfies, CCP.Partial.supports_iff_mem, mem_eval_iff hφ]
   constructor
   · rintro ⟨_, hσ⟩ w hw
     exact ((Set.ext_iff.1 hσ w).1 hw).2
@@ -503,13 +507,14 @@ theorem admits_iff (hφ : NonModal φ) : φ.eval.admits σ ↔ ∀ w ∈ σ, φ.
 /-- For non-modal sentences, entailment is entailment at every world (Lemma 10.2). -/
 theorem entails_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
     Entails φ ψ ↔ ∀ w, TrueAt w φ → TrueAt w ψ :=
-  ⟨fun h w hw => h {w} {w} hw, fun h σ τ hτ => (satisfies_iff hψ).2 fun w hw =>
-    h w ((Set.ext_iff.1 ((mem_eval_iff hφ σ τ).1 hτ).2 w).1 hw).2⟩
+  entails_iff_forall.trans ⟨fun h w hw => h {w} {w} hw,
+    fun h σ τ hτ => (satisfies_iff hψ).2 fun w hw =>
+      h w ((Set.ext_iff.1 ((mem_eval_iff hφ σ τ).1 hτ).2 w).1 hw).2⟩
 
 /-- For non-modal sentences, entailment is preservation of fixed points (D73). -/
 theorem entails_iff_satisfies (hφ : NonModal φ) (hψ : NonModal ψ) :
     Entails φ ψ ↔ ∀ σ, Satisfies σ φ → Satisfies σ ψ :=
-  ⟨fun h σ hs => h σ σ hs, fun h => (entails_iff hφ hψ).2 fun w hw => h {w} hw⟩
+  ⟨fun h σ hs => entails_iff_forall.1 h σ σ hs, fun h => (entails_iff hφ hψ).2 fun w hw => h {w} hw⟩
 
 /-- The update and trivalent entailment notions coincide on PL+∂ (Fact 10.3). -/
 theorem entails_iff_tval (hφ : NonModal φ) (hψ : NonModal ψ) :
@@ -522,7 +527,7 @@ characterisation of trivalent presupposition. -/
 theorem presupposes_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
     Presupposes φ ψ ↔ Entails φ ψ ∧ Entails (not φ) ψ := by
   constructor
-  · refine fun h => ⟨fun σ τ hτ => ?_, fun σ τ hτ => ?_⟩
+  · refine fun h => ⟨entails_iff_forall.2 fun σ τ hτ => ?_, entails_iff_forall.2 fun σ τ hτ => ?_⟩
     · have hs := (satisfies_iff hψ).1 (h σ (admits_of_mem hτ))
       exact (satisfies_iff hψ).2 fun w hw => hs w (eval_eliminative φ hτ hw)
     · have ha : (not φ).eval.admits σ := admits_of_mem hτ
@@ -531,8 +536,8 @@ theorem presupposes_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
   · rintro ⟨h₁, h₂⟩ σ hσ
     refine (satisfies_iff hψ).2 fun w hw => ?_
     rcases trueAt_or_falseAt ((admits_iff hφ).1 hσ w hw) with ht | hf
-    · exact h₁ {w} {w} ht
-    · exact h₂ {w} {w} (trueAt_not.2 hf)
+    · exact entails_iff_forall.1 h₁ {w} {w} ht
+    · exact entails_iff_forall.1 h₂ {w} {w} (trueAt_not.2 hf)
 
 end Formula
 
