@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Atoms
 public import Linglib.Semantics.Focus.Marking
 
 /-!
@@ -102,7 +103,7 @@ instance : DecidableRel FBCViolation := fun _ _ ↦ inferInstanceAs (Decidable (
 /-- The revised constraint of [winckel-et-al-2025], that an extracted element should not be more
 focused than its non-local governor, is the original one on binary marks. -/
 theorem fbcViolation_iff_lt (filler domain : Mark) : FBCViolation filler domain ↔ domain < filler :=
-  and_comm.trans Mark.lt_iff.symm
+  (IsSimpleOrder.lt_iff_eq_bot_and_eq_top.trans and_comm).symm
 
 /-- The constraint's prediction for a construction. -/
 def FBCPredictsIsland (c : FGDConstruction) : Prop :=

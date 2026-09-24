@@ -59,8 +59,6 @@ instance : IsSimpleOrder Mark where
   exists_pair_ne := ⟨.nonFocused, .focused, by decide⟩
   eq_bot_or_eq_top := by decide
 
-theorem lt_iff : ∀ {a b : Mark}, a < b ↔ a = .nonFocused ∧ b = .focused := by decide
-
 end Mark
 
 /-- A focused constituent is realized in its base position or fronted to the left periphery
