@@ -38,8 +38,9 @@ inventory (`kind`). Disjoint evidentials realize distinct terms, so in a well-fo
 the letter of the kind counts the evidentials, plus one for an everything-else term
 (`choices_eq_length`). Turkish, Abkhaz and Bulgarian derive as A2 once their unmarked pasts
 are read as evidentiality-neutral rather than firsthand, Cuzco Quechua as B1, Tuyuca and
-Tariana as D1, while Kashaya's performative lies outside the six parameters and its factual
-spans seeing and general knowledge, so its paradigms fit no kind.
+Tariana as D1, while Kashaya's performative lies outside the six parameters, so the paradigm
+of a spontaneous remark fits no kind, though the responsive mode, which drops the performative,
+is C1.
 
 ## References
 
@@ -107,11 +108,11 @@ theorem Term.head_mem {e : Evidential} {t : Term} (h : Term.of e = some t) :
   unfold Term.of at h
   split_ifs at h with hd hv hi hia hr hh hn <;> cases h
   · exact hv
-  · exact mem_of_subset_pair hd.1 hd.2 hv
+  · exact mem_of_subset_pair hd.1 (EvidenceType.block_attested ▸ hd.2) hv
   · exact hia
-  · exact mem_of_subset_pair hi.1 hi.2 hia
+  · exact mem_of_subset_pair hi.1 (EvidenceType.block_inferring ▸ hi.2) hia
   · exact hh
-  · exact mem_of_subset_pair hr.1 hr.2 hh
+  · exact mem_of_subset_pair hr.1 (EvidenceType.block_reported ▸ hr.2) hh
   · exact hn.1
 
 /-- Disjoint evidentials realize distinct terms. -/
@@ -260,12 +261,18 @@ theorem tuyuca : kind Tuyuca.Evidentiality.evidentials = some .D1 :=
 theorem tariana : kind Tariana.Evidentiality.evidentials = some .D1 :=
   (kind_eq_some_iff _ _).2 (by decide)
 
-/-- Kashaya's performative covers none of the six parameters and its imperfective factual
-spans seeing and general knowledge, so in either aspect the paradigm of a spontaneous remark —
-auditory, inferential and reported terms besides — is beyond the fourteen kinds. -/
+/-- Kashaya's performative covers none of the six parameters, so in either aspect the
+paradigm of a spontaneous remark — visual, auditory, inferential and reported terms besides —
+is beyond the fourteen kinds. -/
 theorem kashaya_unclassified (a : Aspect.Perfectivity) :
     kind (Kashaya.Evidentiality.paradigm .spontaneous a) = none :=
   (kind_eq_none_iff _).2 fun k => by cases a <;> cases k <;> decide
+
+/-- Without the performative, which a response drops, Kashaya distinguishes visual, non-visual,
+inferred and reported evidence: a C1 system. -/
+theorem kashaya_responsive (a : Aspect.Perfectivity) :
+    kind (Kashaya.Evidentiality.paradigm .responsive a) = some .C1 :=
+  (kind_eq_some_iff _ _).2 (by cases a <;> decide)
 
 /-! ### The book's illustrations -/
 

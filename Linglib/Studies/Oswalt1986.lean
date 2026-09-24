@@ -21,13 +21,12 @@ of the table are a hierarchy, Performative > Factual-Visual > Auditory > Inferen
 Quotative, each with priority over those below it, so the evidential a speaker uses is the
 first of the column covering a source at hand (`preferred`). Seeing takes precedence over every
 other source (`preferred_of_visual_mem`), the quotative is used exactly when report is at hand
-and no other row covers a source at hand (`preferred_eq_quotative_iff`), the performative is
-never chosen on the strength of a parameter (`preferred_ne_performative`), and general
-knowledge is stated with the imperfective factual and has no perfective evidential
-(`preferred_assumption`). Inferential II must be followed by another suffix and belongs to no
-column (`inferentialII_notMem`). The chapter's examples name the evidential they illustrate
-and, for the suffixes of the paradigm, the mode; each lies in the paradigm of its mode for the
-aspect of its stem (`examples_mem_paradigm`).
+and no other row covers a source at hand (`preferred_eq_quotative_iff`), and the performative
+is never chosen on the strength of a parameter (`preferred_ne_performative`). Inferential II
+must be followed by another suffix and belongs to no column (`inferentialII_notMem`). The
+chapter's examples name the evidential they illustrate and, for the suffixes of the paradigm,
+the mode; each lies in the paradigm of its mode for the aspect of its stem
+(`examples_mem_paradigm`).
 
 ## References
 
@@ -110,9 +109,9 @@ theorem preferred_eq_quotative_iff (a : Perfectivity) (S : Finset Parameter) :
     preferred (paradigm .spontaneous a) S = some quotative ↔
       .hearsay ∈ S ∧ ∀ e ∈ paradigm .spontaneous a, e ≠ quotative → Disjoint e.covers S := by
   by_cases hv : .visual ∈ S <;> by_cases hs : .sensory ∈ S <;> by_cases hi : .inference ∈ S <;>
-    by_cases hh : .hearsay ∈ S <;> by_cases ha : .assumption ∈ S <;> cases a <;>
+    by_cases hh : .hearsay ∈ S <;> cases a <;>
     simp [preferred, paradigm, List.find?, performative, factualVisual, auditory, inferential,
-      quotative, Finset.Nonempty, Finset.disjoint_left, hv, hs, hi, hh, ha]
+      quotative, Finset.Nonempty, Finset.disjoint_left, hv, hs, hi, hh]
 
 /-- The performative is never chosen on the strength of a parameter: its source lies outside
 them. -/
@@ -120,14 +119,6 @@ theorem preferred_ne_performative (a : Perfectivity) (S : Finset Parameter) :
     preferred (paradigm .spontaneous a) S ≠ some (performative a) := fun h ↦ by
   have := List.find?_some h
   cases a <;> simp [performative] at this
-
-/-- General knowledge is stated with the imperfective factual and has no perfective
-evidential. -/
-theorem preferred_assumption :
-    preferred (paradigm .spontaneous .imperfective) {.assumption} =
-        some (factualVisual .imperfective) ∧
-      preferred (paradigm .spontaneous .perfective) {.assumption} = none := by
-  decide
 
 /-! ### The examples -/
 

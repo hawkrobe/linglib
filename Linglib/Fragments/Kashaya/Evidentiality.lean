@@ -33,9 +33,11 @@ mutually exclusive paradigm. WALS codes the language as having direct and indire
 The forms are Oswalt's morphophonemic suffixes in Aikhenvald's typography, *ŵ* an initial that
 surfaces only after a vowel, *V̂* a vowel determined by the preceding consonant and *ă* a final
 vowel that is zero before a word boundary. The performative covers none of Aikhenvald's six
-parameters: its source, the speaker's own act, lies outside them. The six parameters cannot split
-hearing from the other senses, so the auditory carries the whole non-visual sensory parameter
-although Oswalt notes that smell and touch fall by default to inferential I.
+parameters: its source, the speaker's own act, lies outside them. The general truths the
+factual states are general knowledge cast in the visual, an extension of its coverage rather
+than a parameter of its own. The six parameters cannot split hearing from the other senses, so
+the auditory carries the whole non-visual sensory parameter although Oswalt notes that smell
+and touch fall by default to inferential I.
 
 ## References
 
@@ -66,9 +68,10 @@ def performative : Perfectivity → Evidential
   | .perfective => { form := "-mela", exponent := .verbalAffix, covers := ∅ }
 
 /-- The factual-visual pair: the speaker sees or saw the event. The imperfective factual *-ŵă*
-also states general truths and common knowledge; the perfective visual *-yă* does not. -/
+also states general truths and common knowledge, general knowledge cast in the visual; the
+perfective visual *-yă* does not. -/
 def factualVisual : Perfectivity → Evidential
-  | .imperfective => { form := "-ŵă", exponent := .verbalAffix, covers := {.visual, .assumption} }
+  | .imperfective => { form := "-ŵă", exponent := .verbalAffix, covers := {.visual} }
   | .perfective => { form := "-yă", exponent := .verbalAffix, covers := {.visual} }
 
 /-- The auditory *-V̂nnă*: the speaker heard the sound of the action but did not see it. -/
@@ -89,14 +92,12 @@ def inferentialII : Evidential :=
 /-- The personal experience *-yowă* of the narrative construction, the factual on an element
 *-yo-*, which replaces every evidential of direct evidence. -/
 def personalExperience : Evidential :=
-  { form := "-yowă", exponent := .verbalAffix,
-    covers := {.visual, .sensory, .inference, .assumption} }
+  { form := "-yowă", exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
 
 /-- The archaic remote past *-miyă*, the visual on an element *-mi-*: personal experience in an
 irretrievable past. -/
 def remotePast : Evidential :=
-  { form := "-miyă", exponent := .verbalAffix,
-    covers := {.visual, .sensory, .inference, .assumption} }
+  { form := "-miyă", exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
 
 /-- The paradigm of a mode for stems of an aspect: a column of Table 1 read top down, in the
 order of Oswalt's hierarchy. -/

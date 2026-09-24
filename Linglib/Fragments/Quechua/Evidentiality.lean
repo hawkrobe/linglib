@@ -22,8 +22,8 @@ open Evidential
 
 /-- Direct *-mi*, reportative *-si* and conjectural *-chá*. -/
 def evidentials : List Evidential :=
-  [ { form := "-mi", exponent := .clitic2P, covers := {.visual, .sensory} },
-    { form := "-si", exponent := .clitic2P, covers := {.hearsay} },
-    { form := "-chá", exponent := .clitic2P, covers := {.inference, .assumption} } ]
+  [ { form := "-mi", exponent := .clitic, covers := {.visual, .sensory} },
+    { form := "-si", exponent := .clitic, covers := {.hearsay} },
+    { form := "-chá", exponent := .clitic, covers := {.inference, .assumption} } ]
 
 end Quechua.Evidentiality
