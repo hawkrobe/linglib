@@ -1,23 +1,25 @@
 module
 
+public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Semantics.Conditionals.Counterfactual
 public import Linglib.Logic.Duality
 
 /-!
 # Counterfactuals over sets of antecedent propositions
 
-This file defines counterfactuals whose antecedent denotes a set of propositions, such as the
-disjuncts of a disjunctive antecedent or the antecedent's truthmakers. Such a counterfactual can
-be read distributively, requiring the counterfactual of each proposition, which validates the
-simplification of disjunctive antecedents, or collectively, quantifying over the closest worlds
-of their union, which does not. The homogeneous reading is true when every proposition's
-counterfactual holds, false when none does, and indeterminate otherwise.
+This file defines counterfactuals whose antecedent denotes a finite set of propositions, such as
+the disjuncts of a disjunctive antecedent or the antecedent's truthmakers. Such a counterfactual
+can be read collectively, quantifying over the closest worlds of the union of the propositions,
+which is Lewis's treatment of a disjunctive antecedent and does not validate the simplification
+of disjunctive antecedents, or distributively, requiring the counterfactual of each proposition,
+which does. The homogeneous reading is super-truth over the propositions: true when every
+proposition's counterfactual holds, false when none does, and indeterminate otherwise.
 
 ## Main definitions
 
-* `Counterfactual.would`: the counterfactual over the union of the propositions.
-* `Counterfactual.Distributive`: the counterfactual of each proposition.
-* `Counterfactual.homogeneity`: the all-or-nothing verdict over the propositions.
+* `Conditional.disjunctiveImp`: the counterfactual over the union of the propositions.
+* `Conditional.distributiveImp`: the counterfactual of each proposition.
+* `Conditional.homogeneousImp`: the all-or-nothing verdict over the propositions.
 
 ## References
 
@@ -29,58 +31,76 @@ counterfactual holds, false when none does, and indeterminate otherwise.
 
 @[expose] public section
 
+namespace Conditional
 
-namespace Conditional.Counterfactual
-
-variable {W : Type*} [DecidableEq W] [Fintype W] (ord : W → Preorder W)
-  [∀ w, DecidableRel (ord w).le] (S : List (Finset W)) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
-
-/-- The union of the propositions in `S`. -/
-def disjunctiveClosure : Finset W := S.foldr (· ∪ ·) ∅
-
-omit [Fintype W] in
-@[simp] theorem mem_disjunctiveClosure {x : W} :
-    x ∈ disjunctiveClosure S ↔ ∃ A ∈ S, x ∈ A := by
-  induction S with
-  | nil => simp [disjunctiveClosure]
-  | cons A S ih =>
-    rw [disjunctiveClosure, List.foldr_cons, Finset.mem_union, List.exists_mem_cons_iff]
-    exact or_congr_right ih
+variable {W : Type*} [DecidableEq W] (ord : W → Preorder W) (S : Finset (Finset W)) (C : Set W)
 
 /-- The counterfactual over `S` quantifies over the closest worlds of the union of its
 propositions. -/
-def would : Prop := w ∈ closestImp ord ↑(disjunctiveClosure S) C
+def disjunctiveImp : Set W := closestImp ord ↑(S.sup id) C
 
 /-- The distributive reading, on which the counterfactual holds of each proposition in `S`. -/
-def Distributive : Prop := ∀ A ∈ S, w ∈ closestImp ord ↑A C
+def distributiveImp : Set W := ⋂ A ∈ S, closestImp ord ↑A C
 
-/-- The all-or-nothing verdict over `S`. -/
-def homogeneity : Trivalent :=
-  Trivalent.distList S fun A ↦ w ∈ closestImp ord ↑A C
+variable {ord S C} {w : W}
 
-instance : Decidable (would ord S C w) :=
-  inferInstanceAs (Decidable (w ∈ closestImp ord _ C))
+theorem coe_sup_id : (↑(S.sup id) : Set W) = ⋃ A ∈ S, (↑A : Set W) := by
+  ext; simp
 
-instance : Decidable (Distributive ord S C w) :=
-  inferInstanceAs (Decidable (∀ A ∈ S, w ∈ closestImp ord ↑A C))
+theorem disjunctiveImp_eq_closestImp_iUnion :
+    disjunctiveImp ord S C = closestImp ord (⋃ A ∈ S, (↑A : Set W)) C := by
+  rw [disjunctiveImp, coe_sup_id]
 
-theorem distributive_iff_homogeneity_eq_true :
-    Distributive ord S C w ↔ homogeneity ord S C w = .true := by
-  unfold homogeneity Trivalent.distList
-  by_cases h : ∀ A ∈ S, w ∈ closestImp ord ↑A C
-  · rw [ite_eq_left h]; exact ⟨fun _ ↦ rfl, fun _ ↦ h⟩
-  · rw [ite_eq_right h]
-    refine ⟨fun h' ↦ (h h').elim, fun h' ↦ ?_⟩
-    split_ifs at h'
+@[simp] theorem mem_distributiveImp :
+    w ∈ distributiveImp ord S C ↔ ∀ A ∈ S, w ∈ closestImp ord ↑A C :=
+  Set.mem_iInter₂
 
-/-- The verdict is false iff `S` is nonempty and no proposition's counterfactual holds. -/
-theorem homogeneity_eq_false_iff :
-    homogeneity ord S C w = .false ↔ S ≠ [] ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
-  Trivalent.distList_eq_false_iff _ _
+theorem disjunctiveImp_singleton (A : Finset W) :
+    disjunctiveImp ord {A} C = closestImp ord ↑A C := by
+  simp [disjunctiveImp]
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] in
-/-- On a single proposition the counterfactual quantifies over its closest worlds. -/
-theorem would_singleton (A : Finset W) : would ord [A] C w ↔ w ∈ closestImp ord ↑A C := by
-  simp only [would, disjunctiveClosure, List.foldr, Finset.union_empty]
+theorem disjunctiveImp_pair (A B : Finset W) :
+    disjunctiveImp ord {A, B} C = closestImp ord (↑A ∪ ↑B) C := by
+  simp [disjunctiveImp]
 
-end Conditional.Counterfactual
+theorem mem_distributiveImp_pair {A B : Finset W} :
+    w ∈ distributiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C ∧ w ∈ closestImp ord ↑B C := by
+  simp
+
+/-- Each proposition's counterfactual entails the counterfactual over the union for a pair. -/
+theorem mem_disjunctiveImp_pair_of_mem_distributiveImp {A B : Finset W}
+    (h : w ∈ distributiveImp ord {A, B} C) : w ∈ disjunctiveImp ord {A, B} C := by
+  rw [disjunctiveImp_pair]
+  exact mem_closestImp_union (mem_distributiveImp_pair.1 h).1 (mem_distributiveImp_pair.1 h).2
+
+section Homogeneity
+
+variable (ord S C) [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] (w : W)
+
+/-- The all-or-nothing verdict over `S`, super-truth over its propositions' counterfactuals. -/
+def homogeneousImp : Trivalent := Trivalent.dist S fun A ↦ w ∈ closestImp ord ↑A C
+
+instance : Decidable (w ∈ disjunctiveImp ord S C) :=
+  inferInstanceAs (Decidable (w ∈ closestImp ord ↑(S.sup id) C))
+
+instance : Decidable (w ∈ distributiveImp ord S C) :=
+  decidable_of_iff _ mem_distributiveImp.symm
+
+variable {ord S C w}
+
+theorem homogeneousImp_eq_true_iff :
+    homogeneousImp ord S C w = .true ↔ w ∈ distributiveImp ord S C := by
+  rw [homogeneousImp, Trivalent.dist_eq_true_iff, mem_distributiveImp]
+
+theorem homogeneousImp_eq_false_iff :
+    homogeneousImp ord S C w = .false ↔ S.Nonempty ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
+  Trivalent.dist_eq_false_iff _ _
+
+theorem homogeneousImp_eq_indet_iff :
+    homogeneousImp ord S C w = .indet ↔
+      (∃ A ∈ S, w ∈ closestImp ord ↑A C) ∧ ∃ A ∈ S, w ∉ closestImp ord ↑A C :=
+  Trivalent.dist_eq_indet_iff _ _
+
+end Homogeneity
+
+end Conditional

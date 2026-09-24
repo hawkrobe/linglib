@@ -52,14 +52,13 @@ type rather than generated from syntactic substitution sources.
 
 namespace Santorio2018
 
-open Conditional (closestImp)
-open Conditional.Counterfactual
+open Conditional
 
 variable {W : Type*} [DecidableEq W] [Fintype W]
 
 /-! ### The stability algorithm (§5) -/
 
-/-- `σ` is stable with respect to the alternatives `alts`: some world verifies every member
+/-- `σ` is stable with respect to the alternatives `alts` when some world verifies every member
 of `σ` and falsifies every other alternative. -/
 def Stable (alts σ : List (Finset W)) : Prop :=
   ∃ w, (∀ A ∈ σ, w ∈ A) ∧ ∀ A ∈ alts, A ∉ σ → w ∉ A
@@ -81,8 +80,8 @@ instance (alts σ : List (Finset W)) : Decidable (MinimalStable alts σ) :=
 /-- `⋀σ`. -/
 def conjunctiveClosure (σ : List (Finset W)) : Finset W := σ.foldr (· ∩ ·) Finset.univ
 
-/-- The truthmakers of `S` relative to `alts`: the conjunctive closures of the minimal stable
-subsets of `alts` that entail `S` — the denotation of the *if*-clause. -/
+/-- The truthmakers of `S` relative to `alts` are the conjunctive closures of the minimal stable
+subsets of `alts` that entail `S`, the denotation of the *if*-clause. -/
 def truthmakers (alts : List (Finset W)) (S : Finset W) : List (Finset W) :=
   ((alts.sublists.filter fun σ ↦ decide (MinimalStable alts σ)).map conjunctiveClosure).filter
     fun p ↦ decide (p ⊆ S)
@@ -91,33 +90,32 @@ theorem subset_of_mem_truthmakers {alts : List (Finset W)} {S p : Finset W}
     (h : p ∈ truthmakers alts S) : p ⊆ S := by
   simpa using (List.mem_filter.1 h).2
 
-/-- The disjunctive closure of the truthmakers is at most the antecedent. -/
-theorem disjunctiveClosure_truthmakers_subset (alts : List (Finset W)) (S : Finset W) :
-    disjunctiveClosure (truthmakers alts S) ⊆ S := fun _ hx ↦
-  let ⟨_, hp, hxp⟩ := (mem_disjunctiveClosure _).1 hx
-  subset_of_mem_truthmakers hp hxp
+/-- The union of the truthmakers is at most the antecedent. -/
+theorem sup_truthmakers_subset (alts : List (Finset W)) (S : Finset W) :
+    (truthmakers alts S).toFinset.sup id ⊆ S :=
+  Finset.sup_le fun _ hp ↦ subset_of_mem_truthmakers (List.mem_toFinset.1 hp)
 
 /-! ### Conditionals as descriptions (§6) -/
 
 variable (ord : W → Preorder W) [∀ w, DecidableRel (ord w).le] (alts : List (Finset W))
   (S : Finset W) (C : Set W) [DecidablePred (· ∈ C)] (w : W)
 
-/-- `[if φ] DIST_π [would ψ]`: the counterfactual holds of every truthmaker of `φ`. -/
-def distributiveConditional : Prop := Distributive ord (truthmakers alts S) C w
+/-- `[if φ] DIST_π [would ψ]` holds when the counterfactual holds of every truthmaker of `φ`. -/
+def distributiveConditional : Prop := w ∈ distributiveImp ord (truthmakers alts S).toFinset C
 
-/-- The homogeneity presupposition of `DIST_π`: every truthmaker's counterfactual holds, or
-none does. -/
-def homogeneityPresup : Trivalent := homogeneity ord (truthmakers alts S) C w
+/-- The homogeneity presupposition of `DIST_π` is that every truthmaker's counterfactual holds,
+or none does. -/
+def homogeneityPresup : Trivalent := homogeneousImp ord (truthmakers alts S).toFinset C w
 
-/-- `[if φ] would ψ` without `DIST_π`: the modal extracts the disjunctive closure of the
-truthmakers. -/
-def collectiveConditional : Prop := would ord (truthmakers alts S) C w
+/-- `[if φ] would ψ` without `DIST_π` holds when the modal extracts the disjunctive closure of
+the truthmakers. -/
+def collectiveConditional : Prop := w ∈ disjunctiveImp ord (truthmakers alts S).toFinset C
 
 instance : Decidable (distributiveConditional ord alts S C w) :=
-  inferInstanceAs (Decidable (Distributive ord (truthmakers alts S) C w))
+  inferInstanceAs (Decidable (w ∈ distributiveImp ord _ C))
 
 instance : Decidable (collectiveConditional ord alts S C w) :=
-  inferInstanceAs (Decidable (would ord (truthmakers alts S) C w))
+  inferInstanceAs (Decidable (w ∈ disjunctiveImp ord _ C))
 
 /-! ### Otto and Anna (44) -/
 
@@ -132,11 +130,11 @@ inductive Party where
 abbrev otto : Finset Party := {.ottoOnly, .both}
 abbrev anna : Finset Party := {.annaOnly, .both}
 
-/-- (45): the alternatives to *Otto or Anna went to the party*. -/
+/-- The alternatives to *Otto or Anna went to the party*, (45). -/
 def partyAlts : List (Finset Party) := [otto ∪ anna, otto, anna, otto ∩ anna]
 
-/-- The truthmakers of (44) are *Otto went* and *Anna went*: the minimal stable subsets are
-`{O ∨ A, O}` and `{O ∨ A, A}`. -/
+/-- The truthmakers of (44) are *Otto went* and *Anna went*, since the minimal stable subsets
+are `{O ∨ A, O}` and `{O ∨ A, A}`. -/
 theorem party_truthmakers : (truthmakers partyAlts (otto ∪ anna)).toFinset = {otto, anna} := by
   decide
 
@@ -159,12 +157,12 @@ abbrev someW : Finset Reading := {.everyWP, .mixed, .everyBoth}
 /-- `∃(A ∨ W)`, which coincides with `∀(A ∨ W)` on these five worlds. -/
 abbrev someAorW : Finset Reading := everyAorW
 
-/-- The alternatives to (35): the universal and existential claims over `A ∧ W`, `A`, `W`,
+/-- The alternatives to (35) are the universal and existential claims over `A ∧ W`, `A`, `W`,
 `A ∨ W`. -/
 def readingAlts : List (Finset Reading) :=
   [everyA ∩ everyW, everyA, everyW, everyAorW, someA ∩ someW, someA, someW, someAorW]
 
-/-- (35) has three truthmakers: *every student read AK*, *every student read W&P*, and the
+/-- (35) has three truthmakers, *every student read AK*, *every student read W&P*, and the
 mixed *some read AK and some read W&P*. -/
 theorem karenina_truthmakers :
     (truthmakers readingAlts everyAorW).toFinset = {everyA, everyW, someA ∩ someW} := by
@@ -190,15 +188,15 @@ abbrev allies : Finset SpainWorld := Finset.univ.filter (· ∈ foughtAllies)
 /-- The alternatives to *Spain fought with the Axis or the Allies*. -/
 def spainAlts : List (Finset SpainWorld) := [axis ∪ allies, axis, allies, axis ∩ allies]
 
-/-- Collectively, (8) is true: the closest world where Spain fought with either is the Axis
-world. Strengthening the antecedent to *the Allies* makes it false — Antecedent
+/-- Collectively, (8) is true, since the closest world where Spain fought with either is the
+Axis world. Strengthening the antecedent to *the Allies* makes it false, so Antecedent
 Strengthening fails. -/
 theorem spain_collective :
     collectiveConditional spainSim spainAlts (axis ∪ allies) foughtAxis .actual ∧
       .actual ∉ closestImp spainSim ↑allies foughtAxis := by
   decide
 
-/-- Distributively, (8) is false: the Allies truthmaker's counterfactual fails, so
+/-- Distributively, (8) is false, since the Allies truthmaker's counterfactual fails, so
 Simplification is not validated by the collective parsing. -/
 theorem spain_not_distributive :
     ¬ distributiveConditional spainSim spainAlts (axis ∪ allies) foughtAxis .actual := by
@@ -213,14 +211,14 @@ end Spain
 
 /-! ### Substitution of Logical Equivalents (57)–(58) -/
 
-/-- Closeness for the party: the Anna-only world is closest to the actual world, then the
+/-- Closeness for the party puts the Anna-only world closest to the actual world, then the
 world where both came, then Otto's. -/
 abbrev partySim (_ : Party) : Preorder Party := Preorder.ofLE
   (fun w₁ w₂ ↦ (w₁ == w₂ || (w₁ == .annaOnly && w₂ != .neither) ||
     (w₁ == .both && w₂ == .ottoOnly)) = true)
   (by decide) (by decide)
 
-/-- *The party was fun*: only when Anna came alone. -/
+/-- *The party was fun* holds only when Anna came alone. -/
 abbrev partyFun : Finset Party := {.annaOnly}
 
 /-- (57) *If Anna came, the party would be fun* and (58) *If Anna, or Otto and Anna, came,
@@ -229,8 +227,8 @@ denoting `{Anna came}` and `{Anna came, Otto and Anna came}` the distributive pa
 (57) true and (58) false. -/
 theorem substitution_fails :
     anna = anna ∪ (otto ∩ anna) ∧
-      Distributive partySim [anna] ↑partyFun .neither ∧
-      ¬ Distributive partySim [anna, otto ∩ anna] ↑partyFun .neither := by
+      .neither ∈ distributiveImp partySim {anna} ↑partyFun ∧
+      .neither ∉ distributiveImp partySim {anna, otto ∩ anna} ↑partyFun := by
   decide
 
 end Santorio2018
