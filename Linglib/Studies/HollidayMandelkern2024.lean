@@ -32,8 +32,8 @@ one.
   general Lemma 5.4 is the substrate's `mem_box_embed` and `mem_diamond_embed`, and
   Theorem 5.7.4 is instantiated as `diamond_P_not_subset`.
 * The paper contrasts its symmetric Wittgenstein's Law with the order asymmetry of dynamic
-  semantics (§6); the update-semantic side is `UpdateSemantics.might_order_matters`, and no
-  theorem here conjoins the two.
+  semantics (§6); the update-semantic side is `Veltman1996.consistent_might_neg` beside
+  `Veltman1996.not_consistent_up_might_neg`, and no theorem here conjoins the two.
 * The Epistemic Grid (Example 4.34), the logics EO and EO+ together with the completeness
   theorems for them, and the remaining principles of Proposition 5.12 are not formalized.
 

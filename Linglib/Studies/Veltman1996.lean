@@ -7,39 +7,59 @@ public import Mathlib.Data.Fintype.Powerset
 # Veltman (1996): Defaults in Update Semantics
 
 This file formalizes the paper of Veltman, which treats *normally φ* as an update of an agent's
-expectations rather than a sentence about them. A state pairs an expectation pattern, a preorder
-on worlds, with the agent's knowledge of the facts; *normally φ* refines the pattern in favour of
-the `φ`-worlds and *presumably φ* tests whether `φ` holds in the optimal worlds. That system,
-section 3, is `UpdateSemantics.Default`, and the first section here checks its Examples 3.10 on
-the paper's four worlds, together with the rain-or-snow contrast by which *normally (p ∨ q)* is
-stronger than *normally p*, `rain_or_snow` and `normally_not_normally_or`. Section 4 adds the
-restricted rules *if φ, then normally ψ*. An expectation frame assigns a pattern to every domain
-of worlds, Definition 4.2, `Frame`; a world is normal in a domain when it is top-ranked in every
-subdomain containing it, Definition 4.3, `Normal`; a frame is coherent when every nonempty domain
-has a normal world, `Coherent`; accepting a rule refines the pattern at the rule's domain and
-crashes when the result is incoherent, Definitions 4.5 and 4.6, `rule`; and a set of defaults
-applies within the agent's information when every domain extending it has a normal world complying
-with them, Definition 4.9, `Applies`. The optimal worlds comply with a maximal applicable set of
-defaults, Definition 4.13, `State.optimal`, computed over the accepted rules by Proposition 4.14.
-Validity is the paper's validity₁, section 1.2: the minimal state updated with the premises in
-order accepts the conclusion, `Valid`. Proved in general are the refinement clause of Definition
-4.5, `Frame.ofRules_cons_self` and `Frame.ofRules_cons_of_ne`, Proposition 4.7, coherent
-acceptance being applicability of the new rule within its own domain, `coherent_cons_iff`,
-Conditional Identity and Conjunction of Consequents, `rule_self` and `conjConsequents`, and the
-section 5 observation that Weakening the Consequent never crashes a state,
-`weakenConsequent_coherent`. Checked on the paper's eight worlds are Examples 4.8 and 4.11, the
-Nixon diamond, the student who is presumably an unemployed adult, Independence, defeasible Modus
-Tollens, Modus Ponens over Modus Tollens on a cyclic net, the failure of Hypothetical Syllogism,
-Contraposition and Strengthening the Antecedent beside their defeasible versions, and the
-near-validity of Strengthening with a Consequent and Disjunction of Antecedents.
+expectations rather than a sentence about them. The framework of section 1, acceptance as a fixed
+point of the update, the three notions of validity and additivity, with Propositions 1.2 and 1.3,
+is `Semantics/Dynamic/UpdateSemantics/Validity.lean`.
+
+Section 2 studies *might* on sets of worlds, whose updates of Definition 2.3 are `CCP.up`,
+`CCP.neg` and `CCP.might`. The test *might φ* satisfies Strengthening, Idempotence and Monotony,
+Lemma 2.8, `might_le`, `might_idem` and `might_monotone`, but not Persistence, so the system is
+not additive, `not_isLowerSet_might` and `not_isAdditive_might`. Examples 2.7 show that
+consistency depends on the order of the text, `consistent_might_neg` and
+`not_consistent_up_might_neg`, and that validity₁ is neither right nor left monotone. On the
+fragment without *might* validity is classical, `valid₁_up_iff`.
+
+A state of section 3 pairs an expectation pattern, a preorder on worlds, with the agent's knowledge
+of the facts; *normally φ* refines the pattern in favour of the `φ`-worlds and *presumably φ* tests
+whether `φ` holds in the optimal worlds. That system is `UpdateSemantics.Default`, and Examples
+3.10 are stated here as verdicts of validity₁ on the paper's four worlds, together with the
+rain-or-snow contrast by which *normally (p ∨ q)* is stronger than *normally p*, `rain_or_snow` and
+`normally_not_normally_or`. Rules and facts are additive, so a rule that follows under validity₁
+follows under validity₃ as well, `ex310_rule_persists_valid₃`, while the default inference
+*normally p ⊩ presumably p* is valid₁ but neither valid₂ nor valid₃, `not_valid₂_presumably` and
+`not_valid₃_presumably`, which is why Veltman concentrates on validity₁.
+
+Section 4 adds the restricted rules *if φ, then normally ψ*. An expectation frame assigns a pattern
+to every domain of worlds, Definition 4.2, `Frame`; a world is normal in a domain when it is
+top-ranked in every subdomain containing it, Definition 4.3, `Normal`; a frame is coherent when
+every nonempty domain has a normal world, `Coherent`; accepting a rule refines the pattern at the
+rule's domain and crashes when the result is incoherent, Definitions 4.5 and 4.6, `rule`; and a set
+of defaults applies within the agent's information when every domain extending it has a normal
+world complying with them, Definition 4.9, `Applies`. The optimal worlds comply with a maximal
+applicable set of defaults, Definition 4.13, `State.optimal`, computed over the accepted rules by
+Proposition 4.14. Validity is validity₁, `Valid`. Proved in general are the refinement clause of
+Definition 4.5, `Frame.ofRules_cons_self` and `Frame.ofRules_cons_of_ne`, Proposition 4.7,
+coherent acceptance being applicability of the new rule within its own domain,
+`coherent_cons_iff`, Conditional Identity and Conjunction of Consequents, `rule_self` and
+`conjConsequents`, and the section 5 observation that Weakening the Consequent never crashes a
+state, `weakenConsequent_coherent`. Checked on the paper's eight worlds are Examples 4.8 and 4.11,
+the Nixon diamond, the student who is presumably an unemployed adult, Independence, defeasible
+Modus Tollens, Modus Ponens over Modus Tollens on a cyclic net, the failure of Hypothetical
+Syllogism, Contraposition and Strengthening the Antecedent beside their defeasible versions, and
+the near-validity of Strengthening with a Consequent and Disjunction of Antecedents.
 
 ## Implementation notes
 
+The update with *normally φ* of `UpdateSemantics.Default` does not crash, so the second clause of
+Example 3.10(i) is stated as the failure of the acceptability condition, `ex310_conflict`.
+
 Every frame an agent reaches from the minimal state is the total frame refined by the rules it has
-accepted, so a frame is presented by its list of rules, `Frame.ofRules`, which makes coherence,
-normality, applicability and the optimal worlds decidable and lets each verdict be checked by
-`decide` over the atoms `p`, `q` and `r`. The comparison with the default logics of Asher and
-Morreau in section 5 is discussed in the paper and not formalized.
+accepted, so a frame of section 4 is presented by its list of rules, `Frame.ofRules`, which makes
+coherence, normality, applicability and the optimal worlds decidable and lets each verdict be
+checked by `decide` over the atoms `p`, `q` and `r`. Acceptance then compares the facts and the
+frames of two states rather than their presentations, so `Valid` is `UpdateSemantics.Valid₁` read
+up to presentation. The comparison with the default logics of Asher and Morreau in section 5 is
+discussed in the paper and not formalized.
 
 ## References
 
@@ -53,6 +73,117 @@ Morreau in section 5 is discussed in the paper and not formalized.
 namespace Veltman1996
 
 open UpdateSemantics.Default
+
+/-! ### Might (§2) -/
+
+section Might
+
+open DynamicSemantics UpdateSemantics Function
+
+variable {W : Type*} {φ : CCP W} {c d : Set W}
+
+/-- The test *might φ* never adds possibilities (Lemma 2.8(i)). -/
+theorem might_le (φ : CCP W) (σ : Set W) : CCP.might φ σ ⊆ σ := fun _ h ↦ h.1
+
+/-- The test *might φ* is idempotent (Lemma 2.8(ii)). -/
+theorem might_idem (φ : CCP W) (σ : Set W) : IsFixedPt (CCP.might φ) (CCP.might φ σ) := by
+  rcases CCP.guard_isTest (fun s ↦ (φ s).Nonempty) σ with h | h
+  · exact congrArg (CCP.might φ) h
+  · rw [IsFixedPt, show CCP.might φ σ = ∅ from h]
+    exact Set.subset_empty_iff.1 (might_le φ ∅)
+
+/-- The test *might φ* is monotone when `φ` is (Lemma 2.8(iii)). -/
+theorem might_monotone (hφ : Monotone φ) : Monotone (CCP.might φ) :=
+  fun _ _ hst _ ⟨hw, hne⟩ ↦ ⟨hst hw, hne.mono (hφ hst)⟩
+
+/-- A text is consistent when updating some state with it does not yield the absurd state
+(Definition 2.4). -/
+def Consistent (ψs : List (CCP W)) : Prop := ∃ σ : Set W, (ψs.foldl (fun σ ψ ↦ ψ σ) σ).Nonempty
+
+private theorem neg_up_top_nonempty (hc : cᶜ.Nonempty) : (CCP.neg (CCP.up c) ⊤).Nonempty :=
+  let ⟨v, hv⟩ := hc; ⟨v, trivial, fun h ↦ hv h.2⟩
+
+private theorem up_top_nonempty (hc : c.Nonempty) : (CCP.up c ⊤).Nonempty :=
+  let ⟨v, hv⟩ := hc; ⟨v, trivial, hv⟩
+
+private theorem might_neg_up_top (hc : cᶜ.Nonempty) :
+    CCP.might (CCP.neg (CCP.up c)) ⊤ = ⊤ :=
+  CCP.guard_pos (neg_up_top_nonempty hc)
+
+private theorem might_neg_up_up (σ : Set W) :
+    CCP.might (CCP.neg (CCP.up c)) (CCP.up c σ) = ∅ :=
+  CCP.guard_neg fun ⟨_, hv, hnv⟩ ↦ hnv ⟨hv, hv.2⟩
+
+private theorem might_up_neg_up (σ : Set W) :
+    CCP.might (CCP.up c) (CCP.neg (CCP.up c) σ) = ∅ :=
+  CCP.guard_neg fun ⟨_, ⟨_, hv⟩, hvc⟩ ↦ hv ⟨‹_›, hvc⟩
+
+/-- *Might ¬p, p* is consistent, but *p, might ¬p* is not (Example 2.7(i)). -/
+theorem consistent_might_neg (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
+    Consistent [CCP.might (CCP.neg (CCP.up c)), CCP.up c] :=
+  ⟨⊤, by simpa only [List.foldl_cons, List.foldl_nil, might_neg_up_top hc'] using
+    up_top_nonempty hc⟩
+
+theorem not_consistent_up_might_neg : ¬Consistent [CCP.up c, CCP.might (CCP.neg (CCP.up c))] :=
+  fun ⟨σ, h⟩ ↦ by
+    simp only [List.foldl_cons, List.foldl_nil, might_neg_up_up] at h
+    exact Set.not_nonempty_empty h
+
+/-- Right monotonicity fails: *might ¬p ⊩ might ¬p*, but *might ¬p, p ⊮ might ¬p*
+(Example 2.7(ii)). -/
+theorem valid₁_might_neg :
+    Valid₁ [CCP.might (CCP.neg (CCP.up c))] (CCP.might (CCP.neg (CCP.up c))) :=
+  valid₁_append_self (ψs := []) (might_idem _)
+
+theorem not_valid₁_might_neg_up (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
+    ¬Valid₁ [CCP.might (CCP.neg (CCP.up c)), CCP.up c] (CCP.might (CCP.neg (CCP.up c))) := by
+  intro h
+  have h' : CCP.might (CCP.neg (CCP.up c)) (CCP.up c (CCP.might (CCP.neg (CCP.up c)) ⊤)) =
+      CCP.up c (CCP.might (CCP.neg (CCP.up c)) ⊤) := h
+  rw [might_neg_up_up, might_neg_up_top hc'] at h'
+  exact Set.not_nonempty_empty (h' ▸ up_top_nonempty hc)
+
+/-- Left monotonicity fails: *⊩ might p*, but *¬p ⊮ might p* (Example 2.7(iii)). -/
+theorem valid₁_might (hc : c.Nonempty) : Valid₁ [] (CCP.might (CCP.up c)) :=
+  CCP.guard_pos (up_top_nonempty hc)
+
+theorem not_valid₁_neg_might (hc : cᶜ.Nonempty) :
+    ¬Valid₁ [CCP.neg (CCP.up c)] (CCP.might (CCP.up c)) := by
+  intro h
+  have h' : CCP.might (CCP.up c) (CCP.neg (CCP.up c) ⊤) = CCP.neg (CCP.up c) ⊤ := h
+  rw [might_up_neg_up] at h'
+  exact Set.not_nonempty_empty (h' ▸ neg_up_top_nonempty hc)
+
+/-- *Might p* is not persistent: the minimal state accepts it, but the more informed state that
+has learnt *¬p* does not (§2). -/
+theorem not_isLowerSet_might (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
+    ¬IsLowerSet (fixedPoints (CCP.might (CCP.up c))) := fun h ↦
+  not_valid₁_neg_might hc' <|
+    show CCP.neg (CCP.up c) ⊤ ∈ fixedPoints _ from h le_top (valid₁_might hc)
+
+/-- So *might p* is not additive, although it satisfies Strengthening, Idempotence and Monotony
+(§2). -/
+theorem not_isAdditive_might (hc : c.Nonempty) (hc' : cᶜ.Nonempty) :
+    ¬IsAdditive (CCP.might (CCP.up c)) :=
+  fun h ↦ not_isLowerSet_might hc hc' (isAdditive_iff.1 h).2.2.2
+
+private theorem mem_foldl_up {cs : List (Set W)} {σ : Set W} {w : W} :
+    w ∈ (cs.map CCP.up).foldl (fun σ ψ ↦ ψ σ) σ ↔ w ∈ σ ∧ ∀ c ∈ cs, w ∈ c := by
+  induction cs generalizing σ with
+  | nil => simp
+  | cons c cs ih =>
+    simp only [List.map_cons, List.foldl_cons, ih, List.forall_mem_cons]
+    exact ⟨fun ⟨⟨hσ, hc⟩, hcs⟩ ↦ ⟨hσ, hc, hcs⟩, fun ⟨hσ, hc, hcs⟩ ↦ ⟨⟨hσ, hc⟩, hcs⟩⟩
+
+/-- On the fragment without *might* validity is classical: the conclusion holds at every world
+at which all the premises hold (§2). -/
+theorem valid₁_up_iff {cs : List (Set W)} :
+    Valid₁ (cs.map CCP.up) (CCP.up d) ↔ ∀ w, (∀ c ∈ cs, w ∈ c) → w ∈ d := by
+  rw [Valid₁, (isAdditive_up d).isFixedPt_iff]
+  exact ⟨fun h w hw ↦ (h (mem_foldl_up.2 ⟨trivial, hw⟩)).2,
+    fun h w hw ↦ ⟨trivial, h w (mem_foldl_up.1 hw).2⟩⟩
+
+end Might
 
 /-! ### Rules with exceptions (§3) -/
 
@@ -84,12 +215,18 @@ private theorem atomQ_w₃ : atomQ w₃ := trivial
 /-- The minimal state `0`. -/
 def σ₀ : ExpState PQWorld := ExpState.init
 
+section Validity
+
+open UpdateSemantics Function
+open ExpState (promote assert)
+
 /-- Rules can have exceptions, since learning `¬p` after *normally p* does not crash (3.10(i)). -/
 theorem ex310_exception : ((σ₀.promote atomP).assert (¬atomP ·)).info.Nonempty :=
   ⟨w₀, Set.mem_univ _, atomP_w₀⟩
 
-/-- The opposite rule is then unacceptable, since no optimal world of `0[normally p]` is a
-`¬p`-world (3.10(i)). -/
+/-- The opposite rule is then unacceptable, since no normal world of `0[normally p]` is a
+`¬p`-world (3.10(i)). The update with *normally* does not crash here, so this is the
+acceptability condition rather than the crash. -/
 theorem ex310_conflict :
     ¬∃ w ∈ (σ₀.promote atomP).order.minimals Set.univ, ¬atomP w := by
   rintro ⟨w, hw, hnp⟩
@@ -97,41 +234,92 @@ theorem ex310_conflict :
   rw [minimals_refine_top atomP Set.univ ⟨w₁, Set.mem_univ _, atomP_w₁⟩] at hw'
   exact hnp hw'.2
 
+/-- *Normally p ⊩ presumably p* (3.10(ii)). -/
+theorem ex310_presumably : Valid₁ [(promote · atomP)] (presumablyTest atomP) :=
+  normally_presumably_succeeds atomP Set.univ ⟨w₁, Set.mem_univ _, atomP_w₁⟩
+
+private theorem not_presumably_w₀ :
+    ¬IsFixedPt (presumablyTest atomP) ((⟨{w₀}, ⊤⟩ : ExpState PQWorld).promote atomP) :=
+  fun h ↦ atomP_w₀ <| isFixedPt_presumablyTest_iff.1 h w₀
+    ⟨rfl, fun _ hv _ ↦ by obtain rfl : _ = w₀ := hv; exact ⟨trivial, id⟩⟩
+
+/-- The default inference *normally p ⊩ presumably p* is not valid₂, since a state may already know
+that `p` fails, and Veltman concentrates on validity₁ for this reason (§1.3). -/
+theorem not_valid₂_presumably : ¬Valid₂ [(promote · atomP)] (presumablyTest atomP) :=
+  fun h ↦ not_presumably_w₀ (h ⟨{w₀}, ⊤⟩)
+
+/-- Nor is it valid₃: a state that knows `¬p` accepts *normally p* without presuming `p`. -/
+theorem not_valid₃_presumably : ¬Valid₃ [(promote · atomP)] (presumablyTest atomP) :=
+  fun h ↦ not_presumably_w₀ <| h _ fun _ hψ ↦ by
+    obtain rfl := List.mem_singleton.1 hψ; exact promote_promote_self _ atomP
+
 private theorem w₀_optimal : w₀ ∈ ((σ₀.promote atomP).assert (¬atomP ·)).optimal :=
   ⟨⟨Set.mem_univ _, atomP_w₀⟩, fun _ ⟨_, hnpv⟩ _ ↦ ⟨trivial, fun hpv ↦ absurd hpv hnpv⟩⟩
 
-/-- Exceptions defeat presumptions, so *normally p, ¬p ⊮ presumably p* (3.10(ii)). -/
+/-- Exceptions defeat presumptions, *normally p, ¬p ⊮ presumably p* (3.10(ii)). -/
 theorem ex310_defeat :
-    ¬∀ w ∈ ((σ₀.promote atomP).assert (¬atomP ·)).optimal, atomP w :=
-  fun h ↦ atomP_w₀ (h w₀ w₀_optimal)
+    ¬Valid₁ [(promote · atomP), (assert · (¬atomP ·))] (presumablyTest atomP) :=
+  fun h ↦ atomP_w₀ (isFixedPt_presumablyTest_iff.1 h w₀ w₀_optimal)
 
-/-- Exceptions do not defeat the rule, so *normally p, ¬p ⊩ normally p* (3.10(ii)). -/
+/-- Exceptions do not defeat the rule, *normally p, ¬p ⊩ normally p* (3.10(ii)). -/
 theorem ex310_rule_persists :
-    Respects ((σ₀.promote atomP).assert (¬atomP ·)).order atomP :=
-  persistence_assert (σ₀.promote atomP) atomP _ (normally_creates_respect σ₀ atomP)
+    Valid₁ [(promote · atomP), (assert · (¬atomP ·))] (promote · atomP) :=
+  promote_respects_idempotent ((σ₀.promote atomP).assert (¬atomP ·)) atomP
+    (persistence_assert _ atomP _ (normally_creates_respect σ₀ atomP))
 
-/-- Irrelevant information does not block a presumption, so *normally p, q ⊩ presumably p*
+/-- Rules and facts are additive, so the persistence of the rule holds under every notion of
+validity (Proposition 1.3), unlike the presumption. -/
+theorem ex310_rule_persists_valid₃ :
+    Valid₃ [(promote · atomP), (assert · (¬atomP ·))] (promote · atomP) := by
+  refine ((tfae_valid ?_ (ExpState.isAdditive_promote _)).out 1 3).1 ex310_rule_persists
+  simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
+  exact ⟨ExpState.isAdditive_promote _, ExpState.isAdditive_assert _⟩
+
+/-- Irrelevant information does not block a presumption, *normally p, q ⊩ presumably p*
 (3.10(iii)). -/
-theorem ex310_irrelevant : ∀ w ∈ ((σ₀.promote atomP).assert atomQ).optimal, atomP w := by
-  rintro w ⟨_, hopt⟩
-  by_contra hnpw
-  exact hnpw ((hopt ⟨Set.mem_univ _, atomQ_w₃⟩ ⟨trivial, fun _ ↦ atomP_w₃⟩).2 atomP_w₃)
+theorem ex310_irrelevant : Valid₁ [(promote · atomP), (assert · atomQ)] (presumablyTest atomP) :=
+  isFixedPt_presumablyTest_iff.2 fun _ ⟨_, hopt⟩ ↦ by_contra fun hnpw ↦
+    hnpw ((hopt ⟨Set.mem_univ _, atomQ_w₃⟩ ⟨trivial, fun _ ↦ atomP_w₃⟩).2 atomP_w₃)
 
-/-- Two rules are independent, so *normally p, normally q, ¬p ⊩ presumably q* (3.10(iv)). -/
+/-- Information to the contrary does, *normally p, q, ¬p ⊮ presumably p* (3.10(iii)). -/
+theorem ex310_contrary :
+    ¬Valid₁ [(promote · atomP), (assert · atomQ), (assert · (¬atomP ·))] (presumablyTest atomP) :=
+  fun h ↦ atomP_w₂ <| isFixedPt_presumablyTest_iff.1 h w₂
+    ⟨⟨⟨Set.mem_univ _, atomQ_w₂⟩, atomP_w₂⟩, fun _ hv _ ↦ ⟨trivial, fun hp ↦ absurd hp hv.2⟩⟩
+
+/-- Two rules each yield their presumption, *normally p, normally q ⊩ presumably p* (3.10(iv)). -/
+theorem ex310_two_rules :
+    Valid₁ [(promote · atomP), (promote · atomQ)] (presumablyTest atomP) :=
+  isFixedPt_presumablyTest_iff.2 fun _ ⟨_, hopt⟩ ↦ by_contra fun hnpw ↦
+    hnpw ((hopt (Set.mem_univ w₃) ⟨⟨trivial, fun _ ↦ atomP_w₃⟩, fun _ ↦ atomQ_w₃⟩).1.2 atomP_w₃)
+
+/-- An exception to one rule defeats its presumption, *normally p, normally q, ¬p ⊮ presumably p*
+(3.10(iv)). -/
+theorem ex310_two_rules_defeat :
+    ¬Valid₁ [(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] (presumablyTest atomP) :=
+  fun h ↦ atomP_w₂ <| isFixedPt_presumablyTest_iff.1 h w₂
+    ⟨⟨Set.mem_univ _, atomP_w₂⟩,
+      fun _ hv _ ↦ ⟨⟨trivial, fun hp ↦ absurd hp hv.2⟩, fun _ ↦ atomQ_w₂⟩⟩
+
+/-- But not the other rule's, since two rules are independent, *normally p, normally q, ¬p ⊩
+presumably q* (3.10(iv)). -/
 theorem ex310_independence :
-    ∀ w ∈ (((σ₀.promote atomP).promote atomQ).assert (¬atomP ·)).optimal, atomQ w := by
-  rintro w ⟨⟨_, hnpw⟩, hopt⟩
-  by_contra hnqw
-  exact hnqw ((hopt ⟨Set.mem_univ _, atomP_w₂⟩
-    ⟨⟨trivial, fun hpw ↦ absurd hpw hnpw⟩, fun hqw ↦ absurd hqw hnqw⟩).2 atomQ_w₂)
+    Valid₁ [(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] (presumablyTest atomQ) :=
+  isFixedPt_presumablyTest_iff.2 fun _ ⟨⟨_, hnpw⟩, hopt⟩ ↦
+    by_contra fun hnqw ↦ hnqw ((hopt ⟨Set.mem_univ _, atomP_w₂⟩
+      ⟨⟨trivial, fun hpw ↦ absurd hpw hnpw⟩, fun hqw ↦ absurd hqw hnqw⟩).2 atomQ_w₂)
 
 /-- The state *normally p, normally q, ¬(p ∧ q)* is ambiguous and presumes neither `p` nor `q`
 (3.10(v)). -/
 theorem ex310_ambiguity :
-    let σ := ((σ₀.promote atomP).promote atomQ).assert fun w ↦ ¬(atomP w ∧ atomQ w)
-    ¬(∀ w ∈ σ.optimal, atomP w) ∧ ¬(∀ w ∈ σ.optimal, atomQ w) := by
-  refine ⟨fun h ↦ atomP_w₂ (h w₂ ⟨⟨Set.mem_univ _, fun ⟨hp, _⟩ ↦ atomP_w₂ hp⟩, ?_⟩),
-    fun h ↦ atomQ_w₁ (h w₁ ⟨⟨Set.mem_univ _, fun ⟨_, hq⟩ ↦ atomQ_w₁ hq⟩, ?_⟩)⟩
+    let ψs : List (ExpState PQWorld → ExpState PQWorld) :=
+      [(promote · atomP), (promote · atomQ), (assert · fun w ↦ ¬(atomP w ∧ atomQ w))]
+    ¬Valid₁ ψs (presumablyTest atomP) ∧ ¬Valid₁ ψs (presumablyTest atomQ) := by
+  intro ψs
+  refine ⟨fun h ↦ atomP_w₂ (isFixedPt_presumablyTest_iff.1 h w₂
+      ⟨⟨Set.mem_univ _, fun ⟨hp, _⟩ ↦ atomP_w₂ hp⟩, ?_⟩),
+    fun h ↦ atomQ_w₁ (isFixedPt_presumablyTest_iff.1 h w₁
+      ⟨⟨Set.mem_univ _, fun ⟨_, hq⟩ ↦ atomQ_w₁ hq⟩, ?_⟩)⟩
   · rintro v ⟨_, hnpq⟩ ⟨⟨_, _⟩, hqv⟩
     exact ⟨⟨trivial, fun hpv ↦ absurd ⟨hpv, hqv atomQ_w₂⟩ hnpq⟩, fun _ ↦ atomQ_w₂⟩
   · rintro v ⟨_, hnpq⟩ ⟨⟨_, hpv⟩, _⟩
@@ -141,9 +329,11 @@ theorem ex310_ambiguity :
 rains or snows; it is not raining; so presumably it snows* is valid (§3), because a rule *normally
 (p ∨ q)* says what to expect when `p` fails. -/
 theorem rain_or_snow :
-    ¬(∀ w ∈ ((σ₀.promote atomP).assert (¬atomP ·)).optimal, atomQ w) ∧
-      ∀ w ∈ ((σ₀.promote fun w ↦ atomP w ∨ atomQ w).assert (¬atomP ·)).optimal, atomQ w := by
-  refine ⟨fun h ↦ atomQ_w₀ (h w₀ w₀_optimal), ?_⟩
+    ¬Valid₁ [(promote · atomP), (assert · (¬atomP ·))] (presumablyTest atomQ) ∧
+      Valid₁ [(promote · fun w ↦ atomP w ∨ atomQ w), (assert · (¬atomP ·))]
+        (presumablyTest atomQ) := by
+  refine ⟨fun h ↦ atomQ_w₀ (isFixedPt_presumablyTest_iff.1 h w₀ w₀_optimal),
+    isFixedPt_presumablyTest_iff.2 ?_⟩
   rintro w ⟨⟨_, hnpw⟩, hopt⟩
   by_contra hnqw
   exact ((hopt ⟨Set.mem_univ _, atomP_w₂⟩ ⟨trivial, fun _ ↦ Or.inr atomQ_w₂⟩).2
@@ -151,15 +341,15 @@ theorem rain_or_snow :
 
 /-- Hence *normally p ⊮ normally (p ∨ q)*, since the second rule further refines the pattern. -/
 theorem normally_not_normally_or :
-    (σ₀.promote atomP).promote (fun w ↦ atomP w ∨ atomQ w) ≠ σ₀.promote atomP := by
+    ¬Valid₁ [(promote · atomP)] (promote · fun w ↦ atomP w ∨ atomQ w) := by
   intro h
-  have h' : refine (refine ⊤ atomP)
-      (fun w ↦ atomP w ∨ atomQ w) = refine ⊤ atomP :=
+  have h' : refine (refine ⊤ atomP) (fun w ↦ atomP w ∨ atomQ w) = refine ⊤ atomP :=
     congrArg ExpState.order h
-  have hle : (refine (refine ⊤ atomP)
-      fun w ↦ atomP w ∨ atomQ w).le w₀ w₂ := by
+  have hle : (refine (refine ⊤ atomP) fun w ↦ atomP w ∨ atomQ w).le w₀ w₂ := by
     rw [h']; exact ⟨trivial, fun hp ↦ absurd hp atomP_w₂⟩
   exact (hle.2 (Or.inr atomQ_w₂)).elim atomP_w₀ atomQ_w₀
+
+end Validity
 
 /-! ### Rules for exceptions (§4) -/
 
