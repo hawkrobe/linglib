@@ -12,7 +12,7 @@ public import Linglib.Studies.Landau2015
 /-!
 # Landau (2024): Control
 
-This file formalizes the empirical generalizations of [landau-2024], the Element surveying
+This file formalizes the empirical generalizations of [landau-2024a], the Element surveying
 control theory. The trichotomy of obligatory control, non-obligatory control, and no control
 is read off finiteness and position on the Spanish paradigm (41): finite clauses show no
 control in either position, infinitival complements obligatory control, and infinitival
@@ -42,7 +42,7 @@ being validated on the English inventory rather than derived.
 
 ## References
 
-* [landau-2024]
+* [landau-2024a]
 * [van-urk-2013]
 * [postal-1970]
 * [grano-2015]
@@ -50,7 +50,7 @@ being validated on the English inventory rather than derived.
 
 @[expose] public section
 
-namespace Landau2024
+namespace Landau2024a
 
 open Control SetRel
 open Semantics.Composition (Ty)
@@ -253,4 +253,4 @@ theorem alternates_iff_propositional_variant (a : AdjunctType) :
     a.Alternates ↔ a.HasPropositionalVariant := by
   cases a <;> decide
 
-end Landau2024
+end Landau2024a

@@ -68,7 +68,7 @@ inductive Mechanism where
   | occupant
   /-- Referential co-valuation only (LFG anaphoric control; predication). -/
   | referent
-  /-- A binding leg composed over a predication leg ([landau-2024]). -/
+  /-- A binding leg composed over a predication leg ([landau-2024a]). -/
   | composite
   /-- No grammatical dependency (non-obligatory control). -/
   | free
