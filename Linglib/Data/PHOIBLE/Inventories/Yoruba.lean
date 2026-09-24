@@ -7,7 +7,7 @@ public import Linglib.Data.PHOIBLE.Chart
 [moran-mccloy-2019]
 
 Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
-**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py yor`.
+**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py yor=636`.
 
 29 phonemes. PHOIBLE inventory ID 636, Glottocode `yoru1245`.
 Source: PHOIBLE donor `upsid`.
@@ -90,7 +90,7 @@ def yor : Inventory :=
     { glyph := "n",
       glyphId := "006E",
       allophones := [],
-      marginal := false,
+      marginal := true,
       segmentClass := .consonant,
       features := .«n» },
     { glyph := "s",
@@ -198,7 +198,7 @@ def yor : Inventory :=
     { glyph := "ɛ̃",
       glyphId := "025B+0303",
       allophones := [],
-      marginal := false,
+      marginal := true,
       segmentClass := .vowel,
       features := .«ɛ̃» } ] }
 

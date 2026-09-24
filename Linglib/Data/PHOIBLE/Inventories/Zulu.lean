@@ -7,7 +7,7 @@ public import Linglib.Data.PHOIBLE.Chart
 [moran-mccloy-2019]
 
 Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
-**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py zul`.
+**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py zul=147`.
 
 43 phonemes. PHOIBLE inventory ID 147, Glottocode `zulu1248`.
 Source: PHOIBLE donor `spa`.
