@@ -138,17 +138,10 @@ def condAssert (A B : W → Prop) : PartialProp W where
 
 /-! ### Satisfaction relations -/
 
-/-- Full satisfaction relation: both presupposition and assertion hold.
-
-    Argument order `(w : W) (p : PartialProp W)` supports `updateFromSat`:
-    `updateFromSat PartialProp.holds p` gives the full CCP (presupposition
-    test + assertion filter). -/
+/-- Full satisfaction relation: both presupposition and assertion hold. -/
 def holds (w : W) (p : PartialProp W) : Prop := p.presup w ∧ p.assertion w
 
-/-- Definedness relation: presupposition holds at the evaluation point.
-
-    Argument order `(w : W) (p : PartialProp W)` supports `updateFromSat`:
-    `updateFromSat PartialProp.defined p` gives the presupposition test CCP. -/
+/-- Definedness relation: presupposition holds at the evaluation point. -/
 def defined (w : W) (p : PartialProp W) : Prop := p.presup w
 
 /-- The worlds where `p` is defined and true. -/

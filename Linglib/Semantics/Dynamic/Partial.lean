@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.PFun
-public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Semantics.Dynamic.Consequence
 public import Linglib.Semantics.Presupposition.Context
 
 /-!
@@ -43,9 +43,11 @@ dynamic conjunction, conditional, and disjunction
 - `admits_seq` — the Karttunen satisfaction law, by construction
 - `IsEliminative` — Heim's Principle (A), closed under negation and
   sequencing
-- `supports`, `entails` — a state supports an update it is a fixed point
-  of, and `φ` entails `ψ` when every update with `φ` supports `ψ`;
-  entailment is absorption, `seq φ ψ = φ` (`entails_iff_seq_eq`)
+- `supports` — a state supports an update it is a fixed point of, which is
+  acceptance of the extension along `Part.bind` (`supports_iff_isFixedPt`);
+  `φ` entails `ψ` when every defined update with `φ` supports `ψ`, which is
+  `Entails` of the extensions and holds exactly when sequencing `ψ` after `φ`
+  changes nothing (`entails_bind_iff_seq_eq`)
 - `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
 - `mem_ofPartialProp_self` — a context is a fixed point of an atomic update iff
   presupposition and assertion hold throughout it ([heim-1992]'s `c + φ = same`)
@@ -90,7 +92,7 @@ def ofTotal (φ : CCP P) : CCP.Partial P := fun s => Part.some (φ s)
     assertion.
 
     The whole-state domain condition is what separates admittance from
-    per-world filtering (`updateFromSat`): a context containing a single
+    per-world filtering (the static update `CCP.up`): a context containing a single
     presupposition-failing world admits nothing, rather than silently
     discarding the world. -/
 def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
@@ -162,45 +164,45 @@ theorem isEliminative_cond (φ ψ : CCP.Partial P) : (cond φ ψ).IsEliminative 
 
 /-- `s` supports `φ`: the update changes nothing ([heim-1992]'s `c + φ = c`,
 [veltman-1996]'s acceptance). -/
-def supports (s : Set P) (φ : CCP.Partial P) : Prop := φ s = Part.some s
+def supports (s : Set P) (φ : CCP.Partial P) : Prop := s ∈ φ s
 
-/-- Support is being a fixed point of the update. -/
-theorem supports_iff_mem : supports s φ ↔ s ∈ φ s := Part.eq_some_iff
+theorem supports_iff_mem : supports s φ ↔ s ∈ φ s := Iff.rfl
+
+theorem supports_iff_eq_some : supports s φ ↔ φ s = Part.some s := Part.eq_some_iff.symm
 
 /-- After a supported update, sequencing continues from the same state. -/
 theorem supports.seq_apply (h : supports s φ) (ψ : CCP.Partial P) : seq φ ψ s = ψ s := by
-  rw [seq, PFun.comp_apply, h, Part.bind_some]
+  rw [seq, PFun.comp_apply, supports_iff_eq_some.1 h, Part.bind_some]
 
-/-- Dynamic entailment: every defined update with `φ` supports `ψ`
-([veltman-1996]'s acceptance consequence; [heim-1982]'s entailment between
-file change potentials). -/
-def entails (φ ψ : CCP.Partial P) : Prop := ∀ s, ∀ s' ∈ φ s, supports s' ψ
+/-- Support is acceptance: `s` supports `φ` exactly when `s` is a fixed point of the extension
+of `φ` along `Part.bind`. -/
+theorem supports_iff_isFixedPt :
+    supports s φ ↔ Function.IsFixedPt (· >>= φ) (pure s : Part (Set P)) :=
+  supports_iff_eq_some.trans isFixedPt_bind_pure_iff.symm
 
-/-- Entailment is absorption: `φ` entails `ψ` iff sequencing `ψ` after `φ`
-changes nothing. -/
-theorem entails_iff_seq_eq : entails φ ψ ↔ seq φ ψ = φ := by
-  constructor
-  · intro h
-    funext s
-    refine Part.ext fun t ↦ ?_
-    rw [seq, PFun.comp_apply, Part.mem_bind_iff]
-    constructor
-    · rintro ⟨s', hs', ht⟩
-      rw [h s s' hs', Part.mem_some_iff] at ht
-      exact ht ▸ hs'
-    · exact fun ht ↦ ⟨t, ht, by rw [h s t ht]; exact Part.mem_some t⟩
-  · intro h s s' hs'
-    rw [supports, Part.eq_some_iff]
-    have hs'' : s' ∈ seq φ ψ s := by rw [h]; exact hs'
+/-- Dynamic entailment between partial updates, every defined update with `φ` supporting `ψ`
+([veltman-1996]'s acceptance consequence; [heim-1982]'s entailment between file change
+potentials), is `Entails` of their extensions along `Part.bind`, and it is absorption: sequencing
+`ψ` after `φ` changes nothing. -/
+theorem entails_bind_iff_seq_eq : Entails [(· >>= φ)] (· >>= ψ) ↔ seq φ ψ = φ := by
+  rw [entails_singleton_iff, seq_eq_kleisliComp]
+  refine ⟨fun h ↦ funext fun s ↦ ?_, fun h ↦ funext fun x ↦ ?_⟩
+  · simpa [Bind.kleisliRight] using congrFun h (pure s)
+  · simp only [Function.comp_apply, bind_assoc]
+    exact congrArg (x >>= ·) h
+
+/-- Entailment between partial updates holds exactly when every defined update with `φ` supports
+`ψ`. -/
+theorem entails_bind_iff : Entails [(· >>= φ)] (· >>= ψ) ↔ ∀ s, ∀ s' ∈ φ s, supports s' ψ := by
+  rw [entails_bind_iff_seq_eq]
+  refine ⟨fun h s s' hs' ↦ ?_, fun h ↦ funext fun s ↦ Part.ext fun t ↦ ?_⟩
+  · have hs'' : s' ∈ seq φ ψ s := by rw [h]; exact hs'
     obtain ⟨t, ht, hst⟩ := Part.mem_bind_iff.mp hs''
     exact Part.mem_unique ht hs' ▸ hst
-
-theorem entails_trans (h₁ : entails φ ψ) (h₂ : entails ψ χ) : entails φ χ :=
-  fun s s' hs' ↦ h₂ s' s' (supports_iff_mem.mp (h₁ s s' hs'))
-
-/-- Whatever follows from the second conjunct follows from the conjunction. -/
-theorem entails_seq_left (h : entails ψ χ) (φ : CCP.Partial P) : entails (seq φ ψ) χ :=
-  fun _ s' hs' ↦ let ⟨t, _, ht⟩ := Part.mem_bind_iff.mp hs'; h t s' ht
+  · rw [seq, PFun.comp_apply, Part.mem_bind_iff]
+    refine ⟨fun ⟨s', hs', ht⟩ ↦ ?_, fun ht ↦ ⟨t, ht, h s t ht⟩⟩
+    rw [supports_iff_eq_some.1 (h s s' hs'), Part.mem_some_iff] at ht
+    exact ht ▸ hs'
 
 /-! ### The satisfaction law -/
 

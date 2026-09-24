@@ -134,7 +134,7 @@ theorem admits_defNP (i : ℕ) (N : M → Prop) (F : File W M) :
 
 theorem supports_unary_true (F : File W M) {i : ℕ} (h : State.Familiar F i) :
     CCP.Partial.supports F (unary (fun _ ↦ True) i) := by
-  rw [CCP.Partial.supports, unary_eq_atomVar, FCP.atomVar_eq_of_familiar _ h]
+  rw [CCP.Partial.supports_iff_eq_some, unary_eq_atomVar, FCP.atomVar_eq_of_familiar _ h]
   exact congrArg Part.some (Set.sep_eq_self_iff_mem_true.mpr fun p hp ↦
     let ⟨m, hm⟩ := Part.dom_iff_mem.mp (h p hp); ⟨m, hm, trivial⟩)
 
