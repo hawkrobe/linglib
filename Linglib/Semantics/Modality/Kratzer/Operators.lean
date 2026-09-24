@@ -17,7 +17,7 @@ Limit Assumption (`humanNecessity_iff_necessity`). The modal axioms follow from 
 conditions the backgrounds impose (`duality`, `K_axiom`, `totally_realistic_gives_T`), a
 realistic base being exactly one over which simple necessity is veridical
 (`isRealistic_iff_simpleNecessity_le_id`), and a conditional antecedent restricts the modal base
-(`restrictedBase`).
+(`restrictedBase`, `accessibleWorlds_restrictedBase`).
 
 ## Implementation notes
 
@@ -76,14 +76,14 @@ def simpleNecessity (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
 def simplePossibility (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
   diamond (kratzerR f) p w
 
-/-- **Necessity with ordering**: `p` holds at every best world.
+/-- Necessity with an ordering source holds when `p` holds at every best world.
     `⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')`.
 
     Adopts the Limit-Assumption-collapsed form. -/
 def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   box (kratzerBestR f g) p w
 
-/-- **Possibility with ordering**: `p` holds at some best world.
+/-- Possibility with an ordering source holds when `p` holds at some best world.
     `⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')`. -/
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   diamond (kratzerBestR f g) p w
@@ -113,7 +113,7 @@ theorem necessity_of_humanNecessity {f : ModalBase W} {g : OrderingSource W}
   obtain ⟨v, hvacc, hvle, hall⟩ := h w' hacc
   exact hall w' hacc (hmin hvacc hvle)
 
-/-- The Limit Assumption at `w`: every accessible world sees a best
+/-- The Limit Assumption at `w` says that every accessible world sees a best
 world at least as good. -/
 def LimitAssumption (f : ModalBase W) (g : OrderingSource W) (w : W) : Prop :=
   ∀ u ∈ accessibleWorlds f w, ∃ v ∈ bestWorlds f g w,
@@ -181,8 +181,8 @@ theorem necessity_empty_iff_simple (f : ModalBase W) (p : W → Prop) (w : W) :
 
 /-! ### Monotonicity in the modal base -/
 
-/-- Premise growth preserves simple necessity: more evidence, fewer accessible
-    worlds, at least as many necessities. This is [kratzer-2012]'s point about
+/-- Premise growth preserves simple necessity, since more evidence leaves fewer accessible
+    worlds and so at least as many necessities. This is [kratzer-2012]'s point about
     epistemic change over time (Ch. 4's approaching-man dialogue): one
     conversational background can represent evidence that grows as time goes by,
     and what *must* hold on the earlier evidence still must on the later. -/
@@ -204,7 +204,7 @@ theorem realistic_refl (f : ModalBase W) (hReal : isRealistic f) :
     Std.Refl (kratzerR f) :=
   ⟨fun w p hp => hReal w p hp⟩
 
-/-- Realistic base: the evaluation world is itself accessible. -/
+/-- Over a realistic base the evaluation world is itself accessible. -/
 theorem realistic_gives_reflexive_access (f : ModalBase W)
     (hReal : isRealistic f) (w : W) :
     w ∈ accessibleWorlds f w :=
@@ -245,21 +245,21 @@ theorem empty_base_universal_access (w : W) :
 
 /-! ### Modal axioms (from `RestrictedModality`) -/
 
-/-- **Modal duality**: `□p ↔ ¬◇¬p`. Since `necessity = box (kratzerBestR f g)`,
-    this is the box–diamond duality (`ModalLogic.not_diamond`). -/
+/-- Modal duality, `□p ↔ ¬◇¬p`, is the box–diamond duality (`ModalLogic.not_diamond`), since
+    `necessity = box (kratzerBestR f g)`. -/
 theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' => ¬ p w') w := by
   rw [necessity, possibility, ModalLogic.not_diamond]
   simp [ModalLogic.box]
 
-/-- **K (Distribution)**: `□(p → q) → □p → □q`. -/
+/-- The K axiom, distribution, gives `□(p → q) → □p → □q`. -/
 theorem K_axiom (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W)
     (hImpl : necessity f g (fun w' => p w' → q w') w)
     (hP : necessity f g p w) :
     necessity f g q w :=
   box_K hImpl hP
 
-/-- Totally realistic base: simple T holds for full necessity. -/
+/-- Over a totally realistic base the T axiom holds for full necessity. -/
 theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
     (hTotal : isTotallyRealistic f)
     (p : W → Prop) (w : W)
@@ -276,8 +276,26 @@ theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
 
 /-! ### Conditionals as modal-base restriction -/
 
-/-- "If α, must β" is `must_{f + α} β`: prepend the antecedent to the modal base. -/
+/-- The modal base restricted by an antecedent, which prepends the antecedent to the base, so that
+*if α, must β* is `must_{f + α} β`. -/
 def restrictedBase (f : ModalBase W) (antecedent : W → Prop) : ModalBase W :=
   fun w => antecedent :: f w
+
+/-- The accessible worlds of the restricted base are the antecedent-worlds among the accessible
+worlds. -/
+theorem accessibleWorlds_restrictedBase (f : ModalBase W) (α : W → Prop) (w : W) :
+    accessibleWorlds (restrictedBase f α) w = {v ∈ accessibleWorlds f w | α v} :=
+  Set.ext fun _ ↦ List.forall_mem_cons.trans and_comm
+
+theorem mem_accessibleWorlds_restrictedBase {f : ModalBase W} {α : W → Prop} {w v : W} :
+    v ∈ accessibleWorlds (restrictedBase f α) w ↔ v ∈ accessibleWorlds f w ∧ α v :=
+  List.forall_mem_cons.trans and_comm
+
+/-- Restricting by a stronger antecedent leaves fewer accessible worlds. -/
+theorem accessibleWorlds_restrictedBase_mono (f : ModalBase W) {α₁ α₂ : W → Prop} (w : W)
+    (h : ∀ v, α₂ v → α₁ v) :
+    accessibleWorlds (restrictedBase f α₂) w ⊆ accessibleWorlds (restrictedBase f α₁) w :=
+  fun _ hv ↦ mem_accessibleWorlds_restrictedBase.2
+    ⟨(mem_accessibleWorlds_restrictedBase.1 hv).1, h _ (mem_accessibleWorlds_restrictedBase.1 hv).2⟩
 
 end Modality.Kratzer
