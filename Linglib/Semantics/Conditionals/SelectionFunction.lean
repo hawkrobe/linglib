@@ -1,6 +1,5 @@
 module
 
-public import Mathlib.Data.Set.Basic
 public import Linglib.Semantics.Conditionals.Basic
 public import Mathlib.Order.Extension.Linear
 public import Mathlib.Data.Fintype.Card
@@ -34,8 +33,6 @@ the conditional of the closest worlds.
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
 * [R. C. Stalnaker, *Indicative conditionals* (1975)][stalnaker-1975]
 * [R. C. Stalnaker, *A Defense of Conditional Excluded Middle* (1981)][stalnaker-1981]
-* [F. Cariani and P. Santorio, *Will done Better: Selection Semantics, Future Credence, and
-  Indeterminacy* (2018)][cariani-santorio-2018]
 -/
 
 @[expose] public section
@@ -52,12 +49,6 @@ structure SelectionFunction (W : Type*) where
   inclusion : ∀ (w : W) (A : Set W), A.Nonempty → sel w A ∈ A
   /-- A world at which the proposition holds selects itself. -/
   centering : ∀ (w : W) (A : Set W), w ∈ A → sel w A = w
-
-namespace SelectionFunction
-
-variable {W : Type*}
-
-end SelectionFunction
 
 section SelectionConditional
 
@@ -77,6 +68,14 @@ theorem SelectionFunction.domain_eq_singleton (hp : p.Nonempty) :
 theorem SelectionFunction.subsingleton_domain : (s.domain w p).Subsingleton :=
   Set.subsingleton_singleton.anti Set.inter_subset_left
 
+/-- Centering as an equality of functions on `p`: at a `p`-world the selection for `p` is the
+identity. -/
+theorem SelectionFunction.eqOn_sel : Set.EqOn (s.sel · p) id p := fun w hw ↦ s.centering w p hw
+
+theorem SelectionFunction.domain_of_mem (hw : w ∈ p) : s.domain w p = {w} := by
+  rw [SelectionFunction.domain, s.centering w p hw,
+    Set.inter_eq_left.2 (Set.singleton_subset_iff.2 hw)]
+
 /-- The selection conditional of [stalnaker-1968], true at `w` when `q` holds at the world `s`
 selects for `p` and vacuously true when `p` is impossible. The indicative reading of
 [stalnaker-1975] and the counterfactual reading of [stalnaker-1981] share this clause and differ
@@ -93,6 +92,14 @@ theorem mem_selectionConditional_of_nonempty (hp : p.Nonempty) :
     w ∈ selectionConditional s p q ↔ s.sel w p ∈ q := by
   simp [mem_selectionConditional, hp]
 
+/-- At an antecedent-world the selection conditional reduces to its consequent, by centering. -/
+theorem mem_selectionConditional_of_mem (hw : w ∈ p) :
+    w ∈ selectionConditional s p q ↔ w ∈ q := by
+  rw [mem_selectionConditional_of_nonempty s ⟨w, hw⟩, s.centering w p hw]
+
+theorem selectionConditional_inter_self : selectionConditional s p q ∩ p = q ∩ p :=
+  Set.ext fun _ ↦ and_congr_left (mem_selectionConditional_of_mem s)
+
 /-- The selection conditional satisfies Conditional Excluded Middle, since a single selected world
 settles every consequent. -/
 theorem selectionConditional_cem :
@@ -107,22 +114,9 @@ theorem selectionConditional_or (h : w ∈ selectionConditional s p (q ∪ r)) :
 /-- The selection conditional entails the material conditional, since by centering an
 antecedent-world selects itself. -/
 theorem selectionConditional_subset_materialImp : selectionConditional s p q ⊆ materialImp p q :=
-  ofDomain_subset_materialImp fun w hw ↦ ⟨(s.centering w p hw).symm, hw⟩
+  fun _ h hp ↦ (mem_selectionConditional_of_mem s hp).1 h
 
 end SelectionConditional
-
-/-- `w₁` is preferred to `w₂` from `w₀` when the selection function picks `w₁` from `{w₁, w₂}`. -/
-def selectionPrefers {W : Type*} (s : SelectionFunction W)
-    (w₀ w₁ w₂ : W) : Prop :=
-  s.sel w₀ {w₁, w₂} = w₁
-
-/-- A selection function is coherent when its pairwise preference is transitive. Coherence is
-weaker than [stalnaker-1968]'s condition (4), which selection by a completion satisfies and which
-makes the similarity relation a selection function induces a well ordering ([stalnaker-1981]). -/
-def SelectionFunction.isCoherent {W : Type*} (s : SelectionFunction W) : Prop :=
-  ∀ w₀ w₁ w₂ w₃ : W,
-    selectionPrefers s w₀ w₁ w₂ → selectionPrefers s w₀ w₂ w₃ →
-    selectionPrefers s w₀ w₁ w₃
 
 /-! ### Selection functions compatible with a similarity ordering
 
@@ -303,13 +297,6 @@ theorem mem_closestImp_iff_forall_compatible [Finite W] (hc : IsCentered ord) :
   refine ⟨fun h s hs ↦ hs.closestImp_subset h, fun h v hv ↦ ?_⟩
   obtain ⟨s, hs, rfl⟩ := SelectionFunction.exists_compatible hc hv
   exact (mem_selectionConditional_of_nonempty s ⟨_, hv.1⟩).1 (h s hs)
-
-/-- Conditional Excluded Middle is true on every completion ([stalnaker-1981]), though under a tie
-neither conditional need be. -/
-theorem cem_superTrue (ord : W → Preorder W) (p q : Set W) (w : W) :
-    ∀ s : SelectionFunction W, s.Compatible ord →
-      w ∈ selectionConditional s p q ∪ selectionConditional s p qᶜ :=
-  fun s _ ↦ selectionConditional_cem s
 
 end Compatible
 

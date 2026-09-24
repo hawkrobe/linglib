@@ -1253,7 +1253,6 @@ import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Conditionals.Stalnaker
-import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
@@ -1361,7 +1360,6 @@ import Linglib.Semantics.Modality.Orthologic.Lifting
 import Linglib.Semantics.Modality.Orthologic.Modal
 import Linglib.Semantics.Modality.Orthologic.RegularProp
 import Linglib.Semantics.Modality.ProbabilityOrdering
-import Linglib.Semantics.Modality.Selectional
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion

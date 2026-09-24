@@ -1,9 +1,5 @@
 module
 
-public import Mathlib.Data.Finset.Card
-public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Conditionals.WillConditional
-public import Linglib.Semantics.Modality.Selectional
 public import Linglib.Semantics.Supervaluation
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Core.Data.Trivalent
@@ -46,8 +42,6 @@ consequent, and part under embedding.
 * [K. von Fintel, *Bare Plurals, Bare Conditionals, and Only* (1997)][von-fintel-1997]
 * [M. Križ, *Aspects of Homogeneity in the Semantics of Natural Language* (2015)][kriz-2015]
 * [K. Fine, *Vagueness, Truth and Logic* (1975)][fine-1975]
-* [F. Cariani and P. Santorio, *Will done Better: Selection Semantics, Future Credence, and
-  Indeterminacy* (2018)][cariani-santorio-2018]
 -/
 
 @[expose] public section
@@ -250,22 +244,7 @@ theorem selectionalCounterfactual_eq_ofBool {s : SelectionFunction W} (hs : s.Co
 
 end Supervaluation
 
-/-! ### The selection conditional as a *will*-conditional
-
-[cariani-santorio-2018] give *will* a selection-function semantics and form *will*-conditionals
-by restricting its modal parameter to the antecedent. A selection conditional with a possible
-antecedent is the *will*-conditional whose parameter is the whole space. For an impossible
-antecedent the *will*-conditional is not vacuous, unlike the selection conditional. -/
-
-/-- A selection conditional with a possible antecedent is the will-conditional over the
-universe. -/
-theorem mem_selectionConditional_iff_willConditional_univ {W : Type*}
-    (s : Conditional.SelectionFunction W) {p q : Set W} {w : W} (hp : p.Nonempty) :
-    w ∈ selectionConditional s p q ↔
-      Conditional.WillConditional.willConditional s (· ∈ p) (· ∈ q) Set.univ w := by
-  rw [mem_selectionConditional_of_nonempty s hp]
-  simp [Conditional.WillConditional.willConditional, Conditional.WillConditional.restrict,
-    Modality.Selectional.willSem]
+/-! ### Ties -/
 
 /-- With two antecedent-worlds tied for closest, a compatible selection function makes *if p, q*
 true while the conditional of the closest worlds does not ([lewis-1973], [stalnaker-1981]). -/

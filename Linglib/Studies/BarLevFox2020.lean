@@ -6,7 +6,9 @@ public import Linglib.Semantics.Presupposition.Defs
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.BarLevFox2020
 public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
 
 /-!
 # Bar-Lev and Fox 2020: Free choice, simplification, and Innocent Inclusion
@@ -139,10 +141,9 @@ def sdaAlts : Set (Set W) :=
 
 variable {ord p q r}
 
-/-- Simplification of disjunctive antecedents: over total similarity preorders, given a world
-where only the first simplification holds, one where only the second does, and one where both
-hold but the conjunctive one fails, `(p ∨ q) → r` strengthens to
-`(p → r) ∧ (q → r) ∧ ¬((p ∧ q) → r)`. -/
+/-- Disjunctive antecedents simplify. Over total similarity preorders, given a world where only
+the first simplification holds, one where only the second does, and one where both hold but the
+conjunctive one fails, `(p ∨ q) → r` strengthens to `(p → r) ∧ (q → r) ∧ ¬((p ∧ q) → r)`. -/
 theorem sda (htot : ∀ w, Std.Total (ord w).le)
     (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r,
       w ∉ closestImp ord q r ∪ closestImp ord (p ∩ q) r)
@@ -161,8 +162,8 @@ theorem sda (htot : ∀ w, Std.Total (ord w).le)
     (h₂.imp fun w h ↦ ⟨⟨h.1, (hcov h.1).resolve_left fun h' ↦ h.2 (Or.inl h')⟩, h.2⟩)
     (h.imp fun w h ↦ ⟨⟨⟨hsub h.1, h.1.1⟩, h.1.2⟩, h.2⟩), Set.inter_assoc, Set.inter_eq_right.2 hsub]
 
-/-- Simplification fails when the consequent is one of the disjuncts (71): the other
-simplification is the only contingent alternative, so it is excluded. -/
+/-- Simplification fails when the consequent is one of the disjuncts (71), since the other
+simplification is the only contingent alternative and so is excluded. -/
 theorem sda_consequent_disjunct
     (h : ∃ w ∈ closestImp ord (p ∪ q) p, w ∉ closestImp ord q p) :
     exhIEII (sdaAlts ord p q p) (closestImp ord (p ∪ q) p) =
