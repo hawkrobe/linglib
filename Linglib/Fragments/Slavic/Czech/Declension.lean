@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.Slavic.Declension
 public import Linglib.Fragments.Slavic.Czech.Case
 public import Linglib.Fragments.Slavic.Czech.Gender
+public import Linglib.Fragments.Slavic.Czech.Phonology
 public import Linglib.Morphology.Paradigm.Basic
 public import Mathlib.Data.Fintype.Prod
 
@@ -42,9 +43,10 @@ second paradigm is primed.
 * `Czech.Declension.Class`: the declensions of Short's tables, by model noun
 * `Czech.Declension.Class.gender`: the gender each table is for
 * `Czech.Declension.Class.endings`: the endings of a class at each cell
+* `Czech.Declension.finalPhoneme`: the final phoneme of a stem
 * `Czech.Declension.IsVelar`, `Czech.Declension.Class.endingsOn`: the velar vocative singular
   and locative plural
-* `Czech.Declension.palatalize`: the second palatalization of velars
+* `Czech.Declension.palatalize`: the second palatalization of velars on a stem
 * `Czech.Declension.Class.Palatalizes`, `Czech.Declension.Class.inflect`,
   `Czech.Declension.Class.formsOn`: where a stem palatalizes, and the forms of a class on a stem
 * `Czech.Declension.paradigms`: Caha's Czech paradigms
@@ -60,6 +62,8 @@ second paradigm is primed.
   hard masculine inanimates and the neuter o-stems
 * `dat_singular_u_ovi`: the masculine dative singular *-u* is that of the hard masculines, and
   *-ovi* alone that of the masculine a-stems
+* `isVelar_singleton_iff`: the velar letters are *k*, *g*, *h* and *ch*, and they palatalize to
+  *c*, *z*, *z* and *š*
 * `endingsOn_voc_velar`, `formsOn_locPl_velar`, `palatalize_examples`: the grammars' examples
   of the stem conditions
 
@@ -85,6 +89,16 @@ the plural *-i* and *-ích*: not where the alternation is of *r*, as *bratr–br
 dative-locative singular *ruce* of *ruka* (Short, p. 462). The palatal dentals are written as the
 plain ones before *i* (Short, p. 459). The types Short describes without a table, the animates in
 *-ce* (p. 466) and the *píseň* type (p. 468), have no class.
+
+The stem conditions are stated over the phonemes that the stem's letters write
+(`Czech.Phonology.ofChars`): a stem is velar when its final phoneme is one of
+`Czech.Phonology.palatalizing`, and `palatalize` replaces that phoneme by its reflex under
+`Czech.Phonology.secondPalatalization` and writes the reflex with its letter. The endings stay
+lists of letters. The alternation of *d*, *t* and *n* with *ď*, *ť* and *ň* before a front vowel
+and the /j/ after a labial before *ě* (Short, pp. 459, 462) are not rules here: the spelling
+writes them on the *ě* or *i* of the ending, so a form's phonemes are read from its letters and
+not composed from the stem's and the ending's. Stating these alternations as rules is the step
+that would make the endings lists of phonemes.
 
 Czech keeps the vocative, which `Slavic.Declension.Cell`, the six cases the Slavic languages
 share, leaves out, so its cells are its own. Caha's paradigms are `Slavic.Declension.Paradigm`s
@@ -238,12 +252,18 @@ def Class.nomSg (k : Class) : List String := (k.endings (.of .nom .singular)).he
 
 /-! ### Stem conditions -/
 
-/-- A stem is velar when it ends in *k*, *g*, *h* or *ch*. Short counts /h/ among the
-laryngeals (p. 457), but it alternates with *z* as *g* does in the second palatalization
-(p. 462) and takes the velar vocative, as *vrahu* 'murderer' (p. 465). -/
-def IsVelar (s : List String) : Prop := ∃ x ∈ s.getLast?, x ∈ ["k", "g", "h", "ch"]
+/-- The final phoneme of a stem, the last of the phonemes its letters write, if they are all
+Czech. -/
+def finalPhoneme (s : List String) : Option Phonology.Segment :=
+  (Phonology.ofChars (s.flatMap String.toList)).bind List.getLast?
 
-instance : DecidablePred IsVelar := fun s ↦ inferInstanceAs (Decidable (∃ x ∈ s.getLast?, _))
+/-- A stem is velar when its final phoneme is one that the second palatalization changes, *k*,
+*g*, *ch* or *h*. Short counts /h/ among the laryngeals (p. 457), but it alternates with *z* as
+*g* does in the second palatalization (p. 462) and takes the velar vocative, as *vrahu*
+'murderer' (p. 465). -/
+def IsVelar (s : List String) : Prop := ∃ x ∈ finalPhoneme s, x ∈ Phonology.palatalizing
+
+instance : DecidablePred IsVelar := fun s ↦ inferInstanceAs (Decidable (∃ x ∈ finalPhoneme s, _))
 
 /-- The endings of a class on a stem are those of its table, except on a velar stem.
 
@@ -262,27 +282,37 @@ plural, which Short gives by example, *geolozích* (p. 462) and *sluzích* (p. 4
 and the velar ones *-ích*, *dělnících*, *sluzích* (p. 292), *filolozích* (p. 295), *kolezích*
 (p. 300), *rybnících*, *dialozích* (p. 305). -/
 def Class.endingsOn (k : Class) (s : List String) (σ : Cell) : List (List String) :=
-  if IsVelar s ∧ (k = .chlap ∨ k = .hrad) ∧ σ.case = .voc ∧ σ.number = .singular then [["u"]]
-  else if IsVelar s ∧ (k = .chlap ∨ k = .hrad ∨ k = .hrdina) ∧ σ.case = .loc ∧
-      σ.number = .plural then [["í", "ch"]]
+  if (k = .chlap ∨ k = .hrad) ∧ σ.case = .voc ∧ σ.number = .singular ∧ IsVelar s then [["u"]]
+  else if (k = .chlap ∨ k = .hrad ∨ k = .hrdina) ∧ σ.case = .loc ∧ σ.number = .plural ∧
+      IsVelar s then [["í", "ch"]]
   else k.endings σ
 
-/-- The second palatalization of velars replaces a stem-final velar as Short states it, "*k* › *c*;
-*h* › *z*; *ch* › *š* (NB not *s*). Here too the reflex of *g* has de-affricated from *dz* to *z*"
-(p. 462). Short's examples of it in declension are the dative-locative singular of the a-stems,
-*ruka/ruce* 'hand' (p. 462) and *matka/matce* 'mother' (p. 467), and the locative plural in *-ích*
-of velar stems, *geolog–geolozích* 'geologist' (p. 462) and *sluha/sluzích* 'servant' (p. 467). -/
+/-- The second palatalization of velars replaces the final phoneme of a velar stem by its reflex,
+as Short states it, "*k* › *c*; *h* › *z*; *ch* › *š* (NB not *s*). Here too the reflex of *g* has
+de-affricated from *dz* to *z*" (p. 462), and writes the reflex with its letter. Short's examples
+of it in declension are the dative-locative singular of the a-stems, *ruka/ruce* 'hand' (p. 462)
+and *matka/matce* 'mother' (p. 467), and the locative plural in *-ích* of velar stems,
+*geolog–geolozích* 'geologist' (p. 462) and *sluha/sluzích* 'servant' (p. 467). -/
 def palatalize (s : List String) : List String :=
-  match s.getLast? with
-  | some "k" => s.dropLast ++ ["c"]
-  | some "h" | some "g" => s.dropLast ++ ["z"]
-  | some "ch" => s.dropLast ++ ["š"]
-  | _ => s
+  match finalPhoneme s with
+  | some x =>
+    if x ∈ Phonology.palatalizing then
+      s.dropLast ++ (Phonology.letter (Phonology.secondPalatalization x)).toList
+    else s
+  | none => s
 
 /-- The second palatalization leaves a stem that is not velar as it is. -/
 theorem palatalize_of_not_isVelar {s : List String} (h : ¬ IsVelar s) : palatalize s = s := by
   unfold palatalize
   split <;> simp_all [IsVelar]
+
+/-- A letter of the alphabet is a velar stem exactly when it is *k*, *g*, *h* or *ch*, and the
+second palatalization replaces these by *c*, *z*, *z* and *š*. -/
+theorem isVelar_singleton_iff :
+    (∀ l ∈ Phonology.alphabet, IsVelar [l] ↔ l ∈ ["k", "g", "h", "ch"]) ∧
+      palatalize ["k"] = ["c"] ∧ palatalize ["g"] = ["z"] ∧ palatalize ["h"] = ["z"] ∧
+      palatalize ["ch"] = ["š"] := by
+  decide +kernel
 
 /-- A stem of a class palatalizes before an ending at a cell when the class is masculine and the
 ending is the locative plural *-ích*, or the class is masculine animate and the ending the

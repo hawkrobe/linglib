@@ -163,7 +163,8 @@ def emit_phoneme(row: dict) -> str:
     glyph = row.get("Phoneme", "").strip().strip('"')
     glyph_id = row.get("GlyphID", "").strip().strip('"')
     allo = parse_allophones(row.get("Allophones", ""))
-    marginal = row.get("Marginal", "").strip().strip('"') == "+"
+    # PHOIBLE 2.0 writes the column as TRUE, FALSE or NA.
+    marginal = row.get("Marginal", "").strip().strip('"') == "TRUE"
     seg_cls = segment_class(row.get("SegmentClass", "consonant"))
 
     allo_str = "[" + ", ".join(lean_string(a) for a in allo) + "]"
