@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Verb.CaseArray
 public import Linglib.Fragments.Icelandic.Case
 
 /-!
@@ -19,8 +20,7 @@ are entries like any other.
 
 ## Main definitions
 
-* `Verb` — the entry, with `Verb.cases` its case array and `Verb.IsQuirky` the non-nominative
-  subject
+* `Verb` — the entry, the root `Verb` with its `Verb.CaseArray`
 * `verbs` — the entries
 
 ## Implementation notes
@@ -42,24 +42,12 @@ The order of two objects is the one the sources gloss.
 
 namespace Icelandic.Verbs
 
-/-- An Icelandic verb: the root entry with the case of its subject and the cases of its objects
-in linear order. -/
-structure Verb extends _root_.Verb where
-  /-- The case of the subject. -/
-  subject : Case
-  /-- The cases of the objects, in linear order. -/
-  objects : List Case := []
+/-- An Icelandic verb is the root entry with its case array, the case of its subject and the
+cases of its objects in linear order. -/
+structure Verb extends _root_.Verb, _root_.Verb.CaseArray
   deriving BEq
 
 namespace Verb
-
-/-- The case array: the subject's case, then the objects'. -/
-def cases (v : Verb) : List Case := v.subject :: v.objects
-
-/-- The subject is not nominative. -/
-def IsQuirky (v : Verb) : Prop := v.subject ≠ .nom
-
-instance (v : Verb) : Decidable v.IsQuirky := inferInstanceAs (Decidable (_ ≠ _))
 
 /-- The entry for a citation form and its case array. -/
 def ofCases (form : String) (subject : Case) (objects : List Case := []) : Verb :=

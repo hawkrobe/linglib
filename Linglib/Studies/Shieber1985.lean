@@ -1,451 +1,262 @@
 module
 
+public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 public import Linglib.Core.Computability.NonContextFree.AmBnCmDn
-public import Linglib.Fragments.SwissGerman.Case
+public import Linglib.Fragments.German.Zurich.Verbs
 public import Linglib.Data.Examples.Shieber1985
+public import Mathlib.Data.List.Sort
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Shieber (1985): Evidence Against the Context-Freeness of Natural Language
 
-This file formalizes the paper's proof that Swiss German is not weakly context-free. Two facts
-about the language carry the argument: verbs subcategorize for dative or accusative objects, and
-subordinate clauses allow the cross-serial order in which all the noun phrases precede all the
-verbs, the case requirements holding across the construction ((1)–(8)). The proof rests on four
-claims about the string set alone (§3): clauses with all verbs after all noun phrases exist
-(Claim 1), among them those with the noun phrases and the verbs each sorted by case (Claim 2),
-the dative and the accusative verbs are as many as the dative and the accusative noun phrases
-(Claim 3), and the verbs are unbounded in number (Claim 4). The homomorphism `f` sends
-*d'chind*, *em Hans*, *laa* and *hälfe* to `a`, `b`, `c`, `d` and the rest of a clause to fixed
-letters; intersecting the image with the regular language `w a* b* x c* d* y` leaves
-`w aᵐ bⁿ x cᵐ dⁿ y`, which is not context-free, and since context-free languages are closed
-under homomorphisms and under intersection with regular languages ([bar-hillel-perles-shamir-1961],
-[hopcroft-motwani-ullman-2000]), neither is Swiss German. Strong non-context-freeness follows as
-a corollary, and the argument, unlike the Dutch one of [bresnan-etal-1982] that
-[gazdar-pullum-1982] contested, mentions neither constituent structure nor meaning.
+This file proves Shieber's theorem that a language meeting his four claims about Swiss German
+subordinate clauses is not context-free. The homomorphism `f` sends the words of the clauses to
+letters, and the image of the language intersected with the regular language
+`r = w a* b* x c* d* y` is `w aᵐ bⁿ x cᵐ dⁿ y`. Erasing `w`, `x` and `y` leaves `aᵐ bⁿ cᵐ dⁿ`,
+which is not context-free, and the context-free languages are closed under homomorphisms and
+under intersection with regular languages.
 
-`swissGermanLang` is any language over the paper's token classes meeting Claims 1 to 3,
-`tokenStringHom` the homomorphism with the boundary material erased, `caseSorted` the regular
-filter, and `stringMap_swissGerman_inter_caseSorted_eq_ambncmdn` the intersection equality that
-`swiss_german_not_contextFree` feeds to the closure theorems. Claim 3 is checked against all
-twenty-two clauses of the paper (`caseMatched_rows`): the starred ones are exactly those whose
-case requirements go unmet, whatever the order of their constituents (§4.2), and every
-case-matched clause in cross-serial order is in the language (`tokens_mem_swissGermanLang`).
+## Main definitions
+
+* `Letter`: the letters of the image of `f`
+* `caseSorted`: the regular language `r`
+* `Claims f L`: the four claims about a language `L` whose words `f` sends to letters
+
+## Main results
+
+* `Claims.map_inf_caseSorted`: the image of the language intersected with `r`
+* `Claims.not_isContextFree`: a language meeting the claims is not context-free
+* `not_isContextFree_of_count_le`: the same with optional objects, under a one-sided Claim 3
+* `acceptable_iff_perm`: Claim 3 against the paper's clauses (1)–(22)
 
 ## Implementation notes
 
-* The letters follow the schema of Claim 2 and the definition of `f`, in which the accusative
-  *d'chind* and *laa* precede the dative *em Hans* and *hälfe*; the prose of Claim 2 puts the
-  datives first. The boundary strings `w`, `x`, `y` are erased rather than kept, the second image
-  of the paper's fifth note, so the witness is `aᵐ bⁿ cᵐ dⁿ` itself.
-* Verb cases are read off the Fragment's lexemes (`SwissGerman.Case.verbObjectCase`), *laa*
-  being the infinitive of *lönd*; the raising verbs *haend* and *wele* take no object and count as
-  boundary material.
+The letters put the accusative *d'chind* and *laa* before the dative *em Hans* and *hälfe*, as the
+schema of Claim 2 and `f` do; the prose of Claim 2 puts the datives first. In the data, a verb
+requires the case of its entry in `German.Zurich.Verbs`, and a noun phrase bears the case its
+gloss marks.
+
+## TODO
+
+Note 4 restricts Claim 3 to clauses with as many noun phrases as verbs, which does not suffice:
+the image, with the frame erased, can then be `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u} ∪ {aᵐ bⁿ cᵐ dⁿ}`,
+the union of the context-free `{aᵖ bᵠ cʳ dᵘ | p + q ≠ r + u}` and `{aᵏ bʲ cᵏ dˡ}`. Stating the
+counterexample needs the closure of the context-free languages under union.
 
 ## References
 
 * [shieber-1985]
+* [hopcroft-ullman-1979]
 * [bar-hillel-perles-shamir-1961]
-* [hopcroft-motwani-ullman-2000]
-* [bresnan-etal-1982]
-* [gazdar-pullum-1982]
 -/
 
 @[expose] public section
 
 namespace Shieber1985
 
-open SwissGerman.Case Data.Examples
+/-! ### The letters and the regular language `r` -/
 
-/-! ### Tokens, the homomorphism and the language -/
+/-- `Letter` is the alphabet of the image of `f`, its letters declared in the order of
+`r = w a* b* x c* d* y`. -/
+inductive Letter
+  /-- `w` is the image of *Jan säit das mer* 'Jan says that we'. -/
+  | w
+  /-- `a` is the image of the accusative *d'chind* 'the children'. -/
+  | a
+  /-- `b` is the image of the dative *em Hans* 'Hans'. -/
+  | b
+  /-- `x` is the image of *es huus haend wele* 'the house have wanted'. -/
+  | x
+  /-- `c` is the image of *laa* 'let', which requires an accusative. -/
+  | c
+  /-- `d` is the image of *hälfe* 'help', which requires a dative. -/
+  | d
+  /-- `y` is the image of *aastriiche* 'paint'. -/
+  | y
+  /-- `z` is the image of any other word. -/
+  | z
+  deriving DecidableEq, Fintype, Repr
 
-/-- A token of a subordinate clause, projected to the classes the argument uses: a noun phrase
-or a verb with its case, or boundary material such as the raising verbs. -/
-inductive Token
-  | accNP | datNP | accV | datV | boundary
-  deriving DecidableEq, Repr
+instance : LinearOrder Letter := LinearOrder.lift' Letter.ctorIdx (by decide)
 
-/-- The noun-phrase token of an object case. -/
-def Token.np (c : Case) : Option Token :=
-  if c = .acc then some .accNP else if c = .dat then some .datNP else none
+private theorem Letter.le_def {ℓ ℓ' : Letter} : ℓ ≤ ℓ' ↔ ℓ.ctorIdx ≤ ℓ'.ctorIdx := Iff.rfl
 
-/-- The verb token of a Fragment lexeme, by the case it requires. -/
-def Token.v (v : CrossSerialVerb) : Token :=
-  if verbObjectCase v = .dat then .datV else .accV
+open Letter List Language
 
-def Token.isNP : Token → Bool
-  | .accNP | .datNP => true
-  | _ => false
+/-- `clause p q r u` is `w aᵖ bᵠ x cʳ dᵘ y`, the image of the clause with `p` *d'chind*,
+`q` *em Hans*, `r` *laa* and `u` *hälfe*. -/
+def clause (p q r u : ℕ) : List Letter :=
+  w :: replicate p a ++ replicate q b ++ x :: replicate r c ++ replicate u d ++ [y]
 
-def Token.isV : Token → Bool
-  | .accV | .datV => true
-  | _ => false
+/-- `schema` is `w (a|b)* x (c|d)* y`, the images of the clauses of the schema of Claim 1. -/
+def schema : Language Letter :=
+  {l | ∃ nps vs : List Letter, (∀ ℓ ∈ nps, ℓ = a ∨ ℓ = b) ∧ (∀ ℓ ∈ vs, ℓ = c ∨ ℓ = d) ∧
+    l = w :: nps ++ x :: vs ++ [y]}
 
-def Token.isBoundary : Token → Bool
-  | .boundary => true
-  | _ => false
+/-- `caseSorted` is the regular language `r = w a* b* x c* d* y`, the images of the clauses of
+the schema of Claim 2. -/
+def caseSorted : Language Letter := {l | ∃ p q r u, l = clause p q r u}
 
-/-- The homomorphism `f` with the boundary erased: *d'chind* to `a`, *em Hans* to `b`, *laa*
-to `c` and *hälfe* to `d`, lifted to strings by `List.flatMap`. -/
-def tokenStringHom : Token → List FourSymbol
-  | .accNP => [.a]
-  | .datNP => [.b]
-  | .accV => [.c]
-  | .datV => [.d]
-  | .boundary => []
+/-- `crossSerial` is the language `w aᵐ bⁿ x cᵐ dⁿ y`. -/
+def crossSerial : Language Letter := {l | ∃ m n, l = clause m n m n}
 
-/-- Any language over the tokens meeting Claims 1 to 3: with the boundary material erased, a
-clause is its noun phrases followed by its verbs, with as many dative and accusative verbs as
-dative and accusative noun phrases. -/
-def swissGermanLang : Language Token :=
-  { ts | ∃ nps vs : List Token,
-      ts.filter (!·.isBoundary) = nps ++ vs ∧
-      (∀ t ∈ nps, t.isNP = true) ∧ (∀ t ∈ vs, t.isV = true) ∧
-      nps.count .datNP = vs.count .datV ∧ nps.count .accNP = vs.count .accV }
+theorem sortedLE_clause (p q r u : ℕ) : (clause p q r u).SortedLE := by
+  simp +decide [clause, sortedLE_iff_pairwise, pairwise_append, pairwise_replicate,
+    mem_replicate, Letter.le_def, or_imp, forall_and]
 
-/-- The clause of the schema of Claim 2 with `m` accusative and `n` dative pairs. -/
-def canonical (m n : ℕ) : List Token :=
-  List.replicate m .accNP ++ List.replicate n .datNP ++
-    List.replicate m .accV ++ List.replicate n .datV
+theorem count_clause (p q r u : ℕ) (ℓ : Letter) :
+    (clause p q r u).count ℓ = match ℓ with
+      | w | x | y => 1 | a => p | b => q | c => r | d => u | z => 0 := by
+  cases ℓ <;> simp [clause, count_replicate]
 
-theorem flatMap_canonical (m n : ℕ) :
-    (canonical m n).flatMap tokenStringHom = makeString_ambncmdn m n := by
-  simp [canonical, tokenStringHom, makeString_ambncmdn, List.flatMap_replicate]
+theorem clause_mem_schema (p q r u : ℕ) : clause p q r u ∈ schema :=
+  ⟨replicate p a ++ replicate q b, replicate r c ++ replicate u d,
+    by simp +contextual [mem_replicate, or_imp], by simp +contextual [mem_replicate, or_imp],
+    by simp [clause]⟩
+
+/-- A word is in `r` iff it is sorted with one `w`, one `x`, one `y` and no `z`, since a sorted
+word is determined by its letter counts. -/
+theorem mem_caseSorted_iff {l : List Letter} :
+    l ∈ caseSorted ↔
+      l.SortedLE ∧ l.count w = 1 ∧ l.count x = 1 ∧ l.count y = 1 ∧ l.count z = 0 := by
+  refine ⟨?_, fun ⟨hs, hw, hx, hy, hz⟩ ↦ ⟨l.count a, l.count b, l.count c, l.count d, ?_⟩⟩
+  · rintro ⟨p, q, r, u, rfl⟩
+    exact ⟨sortedLE_clause .., by simp [count_clause]⟩
+  · refine (perm_iff_count.mpr fun ℓ ↦ ?_).eq_of_sortedLE hs (sortedLE_clause ..)
+    cases ℓ <;> simp [count_clause, *]
+
+theorem isRegular_caseSorted : caseSorted.IsRegular := by
+  let D : Language Letter :=
+    {l | l.SortedLE ∧ l.count w ≤ 1 ∧ l.count x ≤ 1 ∧ l.count y ≤ 1 ∧ l.count z = 0}
+  have hD : D.IsSublistClosed := fun v l hvl ⟨hs, hw, hx, hy, hz⟩ ↦
+    ⟨(hs.pairwise.sublist hvl).sortedLE, (hvl.count_le _).trans hw, (hvl.count_le _).trans hx,
+      (hvl.count_le _).trans hy, Nat.le_zero.mp (hz ▸ hvl.count_le _)⟩
+  have : caseSorted = D ⊓ (shuffleIdeal [w] ⊓ shuffleIdeal [x] ⊓ shuffleIdeal [y]) := by
+    ext l
+    change _ ↔ (_ ∧ _) ∧ ([w] <+ l ∧ [x] <+ l) ∧ [y] <+ l
+    simp only [mem_caseSorted_iff, singleton_sublist, ← count_pos_iff]
+    grind
+  exact this ▸ hD.isRegular.inf
+    (((isRegular_shuffleIdeal _).inf (isRegular_shuffleIdeal _)).inf (isRegular_shuffleIdeal _))
+
+/-! ### The image of note 5 -/
+
+/-- `eraseFrame` is the homomorphism of note 5, which erases `w`, `x`, `y` and `z`. -/
+def eraseFrame : Letter → List FourSymbol
+  | a => [.a] | b => [.b] | c => [.c] | d => [.d] | _ => []
+
+theorem flatMap_eraseFrame_clause (p q r u : ℕ) : (clause p q r u).flatMap eraseFrame =
+    replicate p .a ++ replicate q .b ++ replicate r .c ++ replicate u .d := by
+  simp [clause, eraseFrame, flatMap_replicate]
+
+theorem stringMap_eraseFrame_crossSerial : stringMap eraseFrame crossSerial = ambncmdn := by
+  ext l
+  constructor
+  · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
+    exact ⟨m, n, flatMap_eraseFrame_clause m n m n⟩
+  · rintro ⟨m, n, rfl⟩
+    exact ⟨_, ⟨m, n, rfl⟩, flatMap_eraseFrame_clause m n m n⟩
+
+/-- `w aᵐ bⁿ x cᵐ dⁿ y` is not context-free, since erasing the frame leaves `aᵐ bⁿ cᵐ dⁿ`. -/
+theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree :=
+  not_isContextFree_of_stringMap_not eraseFrame
+    (stringMap_eraseFrame_crossSerial ▸ ambncmdn_not_contextFree)
+
+/-! ### The claims and the argument -/
+
+variable {W : Type*} {f : W → Letter} {L : Language W}
+
+variable (f L) in
+/-- `Claims f L` states the four claims of §3 about a language `L` over a vocabulary `W` whose
+words `f` sends to letters. -/
+structure Claims : Prop where
+  /-- By Claims 1, 2 and 4, some clause `w aᵐ bⁿ x cᵐ dⁿ y` is grammatical for all `m`, `n`. -/
+  exists_mem : ∀ m n, ∃ s ∈ L, s.map f = clause m n m n
+  /-- By Claim 3, a clause of the schema has as many `c` (*laa*) as `a` (*d'chind*) and as many
+  `d` (*hälfe*) as `b` (*em Hans*). -/
+  count_eq : ∀ s ∈ L, s.map f ∈ schema →
+    (s.map f).count a = (s.map f).count c ∧ (s.map f).count b = (s.map f).count d
+
+/-- The image of a language meeting the claims, intersected with `r`, is `w aᵐ bⁿ x cᵐ dⁿ y`. -/
+theorem Claims.map_inf_caseSorted (h : Claims f L) : L.map f ⊓ caseSorted = crossSerial := by
+  ext l
+  refine ⟨?_, fun ⟨m, n, hl⟩ ↦ ?_⟩
+  · rintro ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩
+    have := h.count_eq s hs (he ▸ clause_mem_schema p q r u)
+    simp only [he, count_clause] at this
+    obtain ⟨rfl, rfl⟩ := this
+    exact ⟨p, q, he⟩
+  · obtain ⟨s, hs, he⟩ := h.exists_mem m n
+    exact ⟨⟨s, hs, he.trans hl.symm⟩, m, n, m, n, hl⟩
+
+/-- A language meeting the four claims is not context-free. -/
+theorem Claims.not_isContextFree (h : Claims f L) : ¬ L.IsContextFree :=
+  not_isContextFree_via_witness (fun t ↦ [f t]) caseSorted isRegular_caseSorted <| by
+    rw [stringMap_singleton, h.map_inf_caseSorted]
+    exact not_isContextFree_crossSerial
+
+/-- A language is not context-free if every clause `w aⁿ bⁿ x cⁿ dⁿ y` is grammatical and every
+object noun phrase of a clause of the schema has a verb requiring its case, objects being
+optional. -/
+theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clause n n n n)
+    (hle : ∀ s ∈ L, s.map f ∈ schema →
+      (s.map f).count a ≤ (s.map f).count c ∧ (s.map f).count b ≤ (s.map f).count d) :
+    ¬ L.IsContextFree :=
+  not_isContextFree_via_witness (fun t ↦ [f t]) caseSorted isRegular_caseSorted <| by
+    rw [stringMap_singleton]
+    refine not_isContextFree_of_stringMap_not eraseFrame
+      (not_isContextFree_of_anbncndn_le ?_ ?_)
+    · rintro _ ⟨n, rfl⟩
+      obtain ⟨s, hs, he⟩ := hmem n
+      exact ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, flatMap_eraseFrame_clause n n n n⟩
+    · rintro _ ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩
+      have := hle s hs (he ▸ clause_mem_schema p q r u)
+      simpa [he, count_clause, flatMap_eraseFrame_clause, count_replicate] using this
+
+/-! ### The claims are consistent and not idle -/
+
+/-- `countMatched` is the language of the words that meet Claim 3 if they are in the schema. -/
+def countMatched : Language Letter :=
+  {l | l ∈ schema → l.count a = l.count c ∧ l.count b = l.count d}
+
+/-- The claims are consistent, since `countMatched` meets them. -/
+theorem claims_countMatched : Claims id countMatched where
+  exists_mem m n := ⟨clause m n m n, fun _ ↦ by simp [count_clause], by simp⟩
+  count_eq s hs hsch := by simpa using hs (by simpa using hsch)
+
+/-- Claim 3 excludes the full language, which is context-free. -/
+theorem not_claims_top : ¬ Claims id (⊤ : Language Letter) := fun h ↦ by
+  simpa [count_clause] using
+    h.count_eq (clause 1 0 0 0) trivial (by simpa using clause_mem_schema 1 0 0 0)
 
 /-! ### The paper's clauses (1)–(22) -/
 
-/-- A clause of the paper's data: the cases of its noun phrases in order, its case-taking verbs
-as Fragment lexemes in order, and its judgment. -/
-structure Row where
-  nps : List Case
-  verbs : List CrossSerialVerb
-  acceptable : Bool
-  deriving DecidableEq, Repr
+open Data.Examples German.Zurich.Verbs
 
-/-- Read the noun-phrase cases off a feature string: `A` accusative, `D` dative. -/
-def parseCases (s : String) : List Case :=
-  s.toList.filterMap λ
-    | 'A' => some .acc
-    | 'D' => some .dat
-    | _ => none
+/-- `glossCase? g` is the case the gloss `g` marks on its noun phrase, if any. -/
+def glossCase? (g : String) : Option Case :=
+  if ".ACC".toList <:+ g.toList then some .acc
+  else if ".DAT".toList <:+ g.toList then some .dat else none
 
-/-- Read the verbs off a feature string: `L` *lönd* or *laa*, `H` *hälfe*, `A` *aastriiche*. -/
-def parseVerbs (s : String) : List CrossSerialVerb :=
-  s.toList.filterMap λ
-    | 'L' => some .loend
-    | 'H' => some .haelfe
-    | 'A' => some .aastriiche
-    | _ => none
+/-- `objectCases e` lists the cases the glosses of the clause `e` mark on its noun phrases. -/
+def objectCases (e : LinguisticExample) : List Case :=
+  e.glossedTokens.filterMap (glossCase? ·.2)
 
-def Row.ofExample (e : LinguisticExample) : Option Row := do
-  let n ← e.paperFeatures.lookup "nps"
-  let v ← e.paperFeatures.lookup "verbs"
-  pure ⟨parseCases n, parseVerbs v, match e.judgment with | .acceptable => true | _ => false⟩
+/-- `requiredCases e` lists the cases the verbs of the clause `e` require of their objects. -/
+def requiredCases (e : LinguisticExample) : List Case :=
+  e.glossedTokens.flatMap fun t ↦ (verbs.find? (t.1 ∈ ·.forms)).elim [] (·.objects)
 
-/-- The clauses (1)–(22). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+/-- As note 4 observes, every clause of the paper has as many objects as its verbs require. -/
+theorem length_objectCases_eq :
+    ∀ e ∈ Examples.all, (objectCases e).length = (requiredCases e).length := by
+  decide
 
-/-- Claim 3 on a clause: the dative and the accusative verbs are as many as the dative and the
-accusative noun phrases. -/
-def Row.CaseMatched (r : Row) : Prop :=
-  r.nps.count .dat = (r.verbs.map verbObjectCase).count .dat ∧
-    r.nps.count .acc = (r.verbs.map verbObjectCase).count .acc
-
-instance : DecidablePred Row.CaseMatched := λ _ => inferInstanceAs (Decidable (_ ∧ _))
-
-theorem rows_complete : ∀ e ∈ Examples.all, (Row.ofExample e).isSome = true := by decide
-
-/-- Claim 3 against the paper's data: a clause is grammatical exactly when its case requirements
-are met, whatever the order of its constituents (§4.2). -/
-theorem caseMatched_rows : ∀ r ∈ rows, r.acceptable = true ↔ r.CaseMatched := by decide
-
-/-- The token string of a clause in cross-serial order: its noun phrases, then its verbs. -/
-def Row.tokens (r : Row) : List Token := r.nps.filterMap Token.np ++ r.verbs.map Token.v
-
-private theorem count_np_filterMap (cs : List Case) :
-    (cs.filterMap Token.np).count .datNP = cs.count .dat ∧
-      (cs.filterMap Token.np).count .accNP = cs.count .acc := by
-  induction cs with
-  | nil => simp
-  | cons c cs ih => cases c <;> simp [Token.np] at ih ⊢ <;> omega
-
-private theorem count_v_map (vs : List CrossSerialVerb) :
-    (vs.map Token.v).count .datV = (vs.map verbObjectCase).count .dat ∧
-      (vs.map Token.v).count .accV = (vs.map verbObjectCase).count .acc := by
-  induction vs with
-  | nil => simp
-  | cons v vs ih => cases v <;> simp [Token.v, verbObjectCase, ih]
-
-/-- Every case-matched clause in cross-serial order is in the language. -/
-theorem tokens_mem_swissGermanLang (r : Row) (h : r.CaseMatched) :
-    r.tokens ∈ swissGermanLang := by
-  refine ⟨r.nps.filterMap Token.np, r.verbs.map Token.v, ?_, ?_, ?_, ?_, ?_⟩
-  · refine List.filter_eq_self.mpr λ t ht => ?_
-    rcases List.mem_append.mp ht with ht | ht
-    · obtain ⟨c, -, hc⟩ := List.mem_filterMap.mp ht
-      cases c <;> simp [Token.np] at hc <;> subst hc <;> decide
-    · obtain ⟨v, -, rfl⟩ := List.mem_map.mp ht
-      cases v <;> decide
-  · intro t ht
-    obtain ⟨c, -, hc⟩ := List.mem_filterMap.mp ht
-    cases c <;> simp [Token.np] at hc <;> subst hc <;> decide
-  · intro t ht
-    obtain ⟨v, -, rfl⟩ := List.mem_map.mp ht
-    cases v <;> decide
-  · rw [(count_np_filterMap r.nps).1, (count_v_map r.verbs).1]
-    exact h.1
-  · rw [(count_np_filterMap r.nps).2, (count_v_map r.verbs).2]
-    exact h.2
-
-/-- The schema clause is the cross-serial clause with `m` accusative and `n` dative pairs. -/
-theorem canonical_eq_tokens (m n : ℕ) :
-    canonical m n =
-      Row.tokens ⟨List.replicate m .acc ++ List.replicate n .dat,
-        List.replicate m .loend ++ List.replicate n .haelfe, true⟩ := by
-  simp [canonical, Row.tokens, Token.np, Token.v, verbObjectCase]
-
-theorem canonical_mem_swissGermanLang (m n : ℕ) : canonical m n ∈ swissGermanLang := by
-  rw [canonical_eq_tokens]
-  refine tokens_mem_swissGermanLang _ ⟨?_, ?_⟩ <;>
-    simp [List.count_replicate, verbObjectCase]
-
-/-! ### The regular filter `a* b* c* d*` -/
-
-/-- The states of the automaton for `a* b* c* d*`. -/
-inductive CaseSortedState
-  | sA | sB | sC | sD | sDead
-  deriving DecidableEq, Fintype, Repr
-
-/-- The automaton recognizing `a* b* c* d*`. -/
-def caseSortedDFA : DFA FourSymbol CaseSortedState where
-  start := .sA
-  accept := {.sA, .sB, .sC, .sD}
-  step
-    | .sA, .a => .sA | .sA, .b => .sB | .sA, .c => .sC | .sA, .d => .sD
-    | .sB, .a => .sDead | .sB, .b => .sB | .sB, .c => .sC | .sB, .d => .sD
-    | .sC, .a => .sDead | .sC, .b => .sDead | .sC, .c => .sC | .sC, .d => .sD
-    | .sD, .a => .sDead | .sD, .b => .sDead | .sD, .c => .sDead | .sD, .d => .sD
-    | .sDead, _ => .sDead
-
-/-- The regular language `a* b* c* d*`, the image of the paper's filter with the boundary
-letters erased. -/
-def caseSorted : Language FourSymbol := caseSortedDFA.accepts
-
-theorem caseSorted_isRegular : caseSorted.IsRegular :=
-  ⟨CaseSortedState, inferInstance, caseSortedDFA, rfl⟩
-
-private theorem evalFrom_replicate_a (k : ℕ) :
-    caseSortedDFA.evalFrom .sA (List.replicate k .a) = .sA := by
-  induction k with
-  | zero => rfl
-  | succ k ih => rw [List.replicate_succ, DFA.evalFrom_cons]; exact ih
-
-private theorem evalFrom_replicate_b (k : ℕ) (s : CaseSortedState) (h : s = .sA ∨ s = .sB) :
-    caseSortedDFA.evalFrom s (List.replicate k .b) = if k = 0 then s else .sB := by
-  induction k generalizing s with
-  | zero => simp
-  | succ k ih =>
-    rw [List.replicate_succ, DFA.evalFrom_cons]
-    rcases h with rfl | rfl <;>
-    · show caseSortedDFA.evalFrom .sB (List.replicate k .b) = _
-      rw [ih .sB (.inr rfl)]; cases k <;> simp
-
-private theorem evalFrom_replicate_c (k : ℕ) (s : CaseSortedState)
-    (h : s = .sA ∨ s = .sB ∨ s = .sC) :
-    caseSortedDFA.evalFrom s (List.replicate k .c) = if k = 0 then s else .sC := by
-  induction k generalizing s with
-  | zero => simp
-  | succ k ih =>
-    rw [List.replicate_succ, DFA.evalFrom_cons]
-    rcases h with rfl | rfl | rfl <;>
-    · show caseSortedDFA.evalFrom .sC (List.replicate k .c) = _
-      rw [ih .sC (.inr (.inr rfl))]; cases k <;> simp
-
-private theorem evalFrom_replicate_d (k : ℕ) (s : CaseSortedState)
-    (h : s = .sA ∨ s = .sB ∨ s = .sC ∨ s = .sD) :
-    caseSortedDFA.evalFrom s (List.replicate k .d) = if k = 0 then s else .sD := by
-  induction k generalizing s with
-  | zero => simp
-  | succ k ih =>
-    rw [List.replicate_succ, DFA.evalFrom_cons]
-    rcases h with rfl | rfl | rfl | rfl <;>
-    · show caseSortedDFA.evalFrom .sD (List.replicate k .d) = _
-      rw [ih .sD (.inr (.inr (.inr rfl)))]; cases k <;> simp
-
-/-- Every `aᵐ bⁿ cᵐ dⁿ` passes the filter. -/
-theorem makeString_ambncmdn_mem_caseSorted (m n : ℕ) : makeString_ambncmdn m n ∈ caseSorted := by
-  show caseSortedDFA.evalFrom .sA (makeString_ambncmdn m n) ∈ caseSortedDFA.accept
-  simp only [makeString_ambncmdn, DFA.evalFrom_of_append, evalFrom_replicate_a]
-  rw [evalFrom_replicate_b n .sA (.inl rfl)]
-  set s₁ := if n = 0 then CaseSortedState.sA else .sB
-  have hs₁ : s₁ = .sA ∨ s₁ = .sB := by by_cases hn : n = 0 <;> simp [s₁, hn]
-  rw [evalFrom_replicate_c m s₁ (hs₁.imp_right (.inl ·))]
-  set s₂ := if m = 0 then s₁ else .sC
-  have hs₂ : s₂ = .sA ∨ s₂ = .sB ∨ s₂ = .sC := by
-    by_cases hm : m = 0
-    · simp only [s₂, hm, ite_true]
-      exact hs₁.imp_right .inl
-    · simp [s₂, hm]
-  rw [evalFrom_replicate_d n s₂ (hs₂.imp_right (·.imp_right .inl))]
-  rcases hs₂ with h | h | h <;> by_cases hn : n = 0 <;>
-    simp_all (config := { decide := true }) [caseSortedDFA]
-
-private theorem evalFrom_sDead (xs : List FourSymbol) :
-    caseSortedDFA.evalFrom .sDead xs = .sDead := by
-  induction xs with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [DFA.evalFrom_cons]
-    exact ih
-
-private theorem sDead_notMem_accept : CaseSortedState.sDead ∉ caseSortedDFA.accept := by
-  rintro (h | h | h | h) <;> exact CaseSortedState.noConfusion h
-
-private theorem ne_sDead_of_mem_accept {s : CaseSortedState} {xs : List FourSymbol}
-    (h : caseSortedDFA.evalFrom s xs ∈ caseSortedDFA.accept) :
-    caseSortedDFA.evalFrom s xs ≠ .sDead :=
-  λ h' => sDead_notMem_accept (h' ▸ h)
-
-private theorem sD_decomp (xs : List FourSymbol)
-    (h : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept) :
-    ∃ u, xs = List.replicate u .d := by
-  induction xs with
-  | nil => exact ⟨0, rfl⟩
-  | cons x xs ih =>
-    rw [DFA.evalFrom_cons] at h
-    cases x with
-    | d =>
-      obtain ⟨u, rfl⟩ := ih h
-      exact ⟨u + 1, by rw [List.replicate_succ]⟩
-    | _ => exact absurd (evalFrom_sDead xs) (ne_sDead_of_mem_accept h)
-
-private theorem sC_decomp (xs : List FourSymbol)
-    (h : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept) :
-    ∃ r u, xs = List.replicate r .c ++ List.replicate u .d := by
-  induction xs with
-  | nil => exact ⟨0, 0, rfl⟩
-  | cons x xs ih =>
-    rw [DFA.evalFrom_cons] at h
-    cases x with
-    | c =>
-      obtain ⟨r, u, rfl⟩ := ih h
-      exact ⟨r + 1, u, by rw [List.replicate_succ]; rfl⟩
-    | d =>
-      obtain ⟨u, rfl⟩ := sD_decomp xs h
-      exact ⟨0, u + 1, by simp [List.replicate]⟩
-    | _ => exact absurd (evalFrom_sDead xs) (ne_sDead_of_mem_accept h)
-
-private theorem sB_decomp (xs : List FourSymbol)
-    (h : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept) :
-    ∃ q r u, xs = List.replicate q .b ++ List.replicate r .c ++ List.replicate u .d := by
-  induction xs with
-  | nil => exact ⟨0, 0, 0, rfl⟩
-  | cons x xs ih =>
-    rw [DFA.evalFrom_cons] at h
-    cases x with
-    | b =>
-      obtain ⟨q, r, u, rfl⟩ := ih h
-      exact ⟨q + 1, r, u, by rw [List.replicate_succ]; rfl⟩
-    | c =>
-      obtain ⟨r, u, rfl⟩ := sC_decomp xs h
-      exact ⟨0, r + 1, u, by simp [List.replicate]⟩
-    | d =>
-      obtain ⟨u, rfl⟩ := sD_decomp xs h
-      exact ⟨0, 0, u + 1, by simp [List.replicate]⟩
-    | a => exact absurd (evalFrom_sDead xs) (ne_sDead_of_mem_accept h)
-
-/-- A string the filter accepts is a block string `aᵖ bᵠ cʳ dᵘ`. -/
-theorem caseSorted_decomp (xs : List FourSymbol) (h : xs ∈ caseSorted) :
-    ∃ p q r u, xs = List.replicate p .a ++ List.replicate q .b ++
-      List.replicate r .c ++ List.replicate u .d := by
-  induction xs with
-  | nil => exact ⟨0, 0, 0, 0, rfl⟩
-  | cons x xs ih =>
-    change caseSortedDFA.evalFrom .sA (x :: xs) ∈ caseSortedDFA.accept at h
-    rw [DFA.evalFrom_cons] at h
-    cases x with
-    | a =>
-      obtain ⟨p, q, r, u, rfl⟩ := ih h
-      exact ⟨p + 1, q, r, u, by rw [List.replicate_succ]; rfl⟩
-    | b =>
-      obtain ⟨q, r, u, rfl⟩ := sB_decomp xs h
-      exact ⟨0, q + 1, r, u, by simp [List.replicate]⟩
-    | c =>
-      obtain ⟨r, u, rfl⟩ := sC_decomp xs h
-      exact ⟨0, 0, r + 1, u, by simp [List.replicate]⟩
-    | d =>
-      obtain ⟨u, rfl⟩ := sD_decomp xs h
-      exact ⟨0, 0, 0, u + 1, by simp [List.replicate]⟩
-
-/-! ### The intersection and the theorem -/
-
-private theorem count_image (ts : List Token) :
-    (ts.flatMap tokenStringHom).count .a = ts.count .accNP ∧
-      (ts.flatMap tokenStringHom).count .b = ts.count .datNP ∧
-      (ts.flatMap tokenStringHom).count .c = ts.count .accV ∧
-      (ts.flatMap tokenStringHom).count .d = ts.count .datV := by
-  induction ts with
-  | nil => simp
-  | cons t ts ih => cases t <;> simp [List.flatMap_cons, tokenStringHom, ih]
-
-private theorem count_filter_notBoundary (ts : List Token) :
-    (ts.filter (!·.isBoundary)).count .accNP = ts.count .accNP ∧
-      (ts.filter (!·.isBoundary)).count .datNP = ts.count .datNP ∧
-      (ts.filter (!·.isBoundary)).count .accV = ts.count .accV ∧
-      (ts.filter (!·.isBoundary)).count .datV = ts.count .datV := by
-  induction ts with
-  | nil => simp
-  | cons t ts ih =>
-    rw [List.filter_cons]
-    cases t <;> simp [Token.isBoundary]
-
-private theorem count_nps_vs {nps vs : List Token} (hn : ∀ t ∈ nps, t.isNP = true)
-    (hv : ∀ t ∈ vs, t.isV = true) :
-    vs.count .accNP = 0 ∧ vs.count .datNP = 0 ∧ nps.count .accV = 0 ∧ nps.count .datV = 0 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> refine List.count_eq_zero.mpr λ h => ?_
-  · have := hv _ h; simp [Token.isV] at this
-  · have := hv _ h; simp [Token.isV] at this
-  · have := hn _ h; simp [Token.isNP] at this
-  · have := hn _ h; simp [Token.isNP] at this
-
-/-- The intersection equality: the image of the language under `f`, filtered to the case-sorted
-shape, is `aᵐ bⁿ cᵐ dⁿ`. The homomorphism collapses each case class to a letter, the filter
-forces the sorted order of Claim 2, and Claim 3 equates the exponents. -/
-theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
-    Language.stringMap tokenStringHom swissGermanLang ⊓ caseSorted = ambncmdn := by
-  ext w
-  constructor
-  · rintro ⟨⟨ts, ⟨nps, vs, hfilter, hn, hv, hdat, hacc⟩, rfl⟩, hw⟩
-    obtain ⟨p, q, r, u, hw'⟩ := caseSorted_decomp _ hw
-    obtain ⟨ha, hb, hc, hd⟩ := count_image ts
-    obtain ⟨fa, fb, fc, fd⟩ := count_filter_notBoundary ts
-    obtain ⟨z₁, z₂, z₃, z₄⟩ := count_nps_vs hn hv
-    rw [hfilter, List.count_append] at fa fb fc fd
-    have hp : p = ts.count .accNP := by
-      rw [← ha, hw']; simp [List.count_replicate]
-    have hq : q = ts.count .datNP := by
-      rw [← hb, hw']; simp [List.count_replicate]
-    have hr : r = ts.count .accV := by
-      rw [← hc, hw']; simp [List.count_replicate]
-    have hu : u = ts.count .datV := by
-      rw [← hd, hw']; simp [List.count_replicate]
-    refine (mem_ambncmdn_iff _).mpr ⟨p, q, ?_⟩
-    rw [hw']
-    have hpr : r = p := by omega
-    have hqu : u = q := by omega
-    rw [hpr, hqu]
-    rfl
-  · intro hw
-    obtain ⟨m, n, rfl⟩ := (mem_ambncmdn_iff w).mp hw
-    exact ⟨⟨canonical m n, canonical_mem_swissGermanLang m n, flatMap_canonical m n⟩,
-      makeString_ambncmdn_mem_caseSorted m n⟩
-
-/-- Swiss German is not weakly context-free: the image of the language under `f`, intersected
-with the regular filter, is `aᵐ bⁿ cᵐ dⁿ`, so the closure of the context-free languages under
-homomorphisms and intersection with regular languages rules the source out. -/
-theorem swiss_german_not_contextFree : ¬ swissGermanLang.IsContextFree := by
-  apply Language.not_isContextFree_via_witness tokenStringHom caseSorted caseSorted_isRegular
-  rw [stringMap_swissGerman_inter_caseSorted_eq_ambncmdn]
-  exact ambncmdn_not_contextFree
+/-- Among clauses (1)–(22), cross-serial or not, the acceptable ones are exactly those whose
+objects bear the cases their verbs require, as many of each. -/
+theorem acceptable_iff_perm :
+    ∀ e ∈ Examples.all, e.judgment = .acceptable ↔ (objectCases e).Perm (requiredCases e) := by
+  decide
 
 end Shieber1985

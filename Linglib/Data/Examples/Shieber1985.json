@@ -5,7 +5,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(1)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans es huus hälfed aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -45,14 +45,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "HA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -66,7 +58,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(2)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer de Hans es huus lönd aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -106,14 +98,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AA"
-      ],
-      [
-        "verbs",
-        "LA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -127,7 +111,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(3)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans es huus lönd aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -167,14 +151,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "LA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -188,7 +164,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(4)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer de Hans em huus lönd aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -228,14 +204,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AD"
-      ],
-      [
-        "verbs",
-        "LA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -249,7 +217,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(5)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer d'chind em Hans es huus lönd hälfe aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -297,14 +265,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "ADA"
-      ],
-      [
-        "verbs",
-        "LHA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -318,7 +278,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(6)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer d'chind de Hans es huus lönd hälfe aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -366,14 +326,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AAA"
-      ],
-      [
-        "verbs",
-        "LHA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -387,7 +339,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(7)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans es huus haend wele hälfe aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -435,14 +387,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "HA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -456,7 +400,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(8)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer d'chind em Hans es huus haend wele laa hälfe aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -512,14 +456,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "ADA"
-      ],
-      [
-        "verbs",
-        "LHA"
-      ],
-      [
         "order",
         "crossSerial"
       ]
@@ -533,7 +469,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(9)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans hälfed es huus aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -573,14 +509,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "HA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -594,7 +522,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(10)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans es huus aastriiche hälfed",
     "discourseSegments": [],
     "glossedTokens": [
@@ -634,14 +562,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "AH"
-      ],
-      [
         "order",
         "other"
       ]
@@ -655,7 +575,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(11)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "em Hans mer es huus hälfed aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -695,14 +615,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "HA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -716,7 +628,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(12)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer de Hans hälfed es huus aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -756,14 +668,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AA"
-      ],
-      [
-        "verbs",
-        "HA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -777,7 +681,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(13)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans hälfed em huus aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -817,14 +721,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DD"
-      ],
-      [
-        "verbs",
-        "HA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -838,7 +734,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(14)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans lönd es huus aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -878,14 +774,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "LA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -899,7 +787,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(15)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer de Hans lönd em huus aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -939,14 +827,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AD"
-      ],
-      [
-        "verbs",
-        "LA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -960,7 +840,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(16)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer de Hans es huus aastriiche hälfed",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1000,14 +880,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AA"
-      ],
-      [
-        "verbs",
-        "AH"
-      ],
-      [
         "order",
         "other"
       ]
@@ -1021,7 +893,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(17)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans em huus aastriiche hälfed",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1061,14 +933,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DD"
-      ],
-      [
-        "verbs",
-        "AH"
-      ],
-      [
         "order",
         "other"
       ]
@@ -1082,7 +946,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(18)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer em Hans es huus aastriiche lönd",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1122,14 +986,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "DA"
-      ],
-      [
-        "verbs",
-        "AL"
-      ],
-      [
         "order",
         "other"
       ]
@@ -1143,7 +999,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(19)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer de Hans em huus aastriiche lönd",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1183,14 +1039,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AD"
-      ],
-      [
-        "verbs",
-        "AL"
-      ],
-      [
         "order",
         "other"
       ]
@@ -1204,7 +1052,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(20)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer de Hans haend wele hälfe es huus aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1252,14 +1100,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AA"
-      ],
-      [
-        "verbs",
-        "HA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -1273,7 +1113,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(21)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer d'chind lönd de Hans hälfe es huus aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1321,14 +1161,6 @@
     "readings": [],
     "paperFeatures": [
       [
-        "nps",
-        "AAA"
-      ],
-      [
-        "verbs",
-        "LHA"
-      ],
-      [
         "order",
         "other"
       ]
@@ -1342,7 +1174,7 @@
       "bibkey": "shieber-1985",
       "paperLabel": "(22)"
     },
-    "language": "swis1247",
+    "language": "zuri1239",
     "primaryText": "mer d'chind de Hans es huus lönd hälfe aastriiche",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1389,14 +1221,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "nps",
-        "AAA"
-      ],
-      [
-        "verbs",
-        "LHA"
-      ],
       [
         "order",
         "crossSerial"
