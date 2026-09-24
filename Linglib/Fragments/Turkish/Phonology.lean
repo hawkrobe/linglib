@@ -188,7 +188,8 @@ def consonants : Finset Segment :=
 /-- Every phoneme but `a` and the two laterals is the segment of a phoneme of PHOIBLE's
 Turkish inventory, and the chart entry of `a` is in that inventory. -/
 theorem exists_mem_tur :
-    (∀ x ∈ vowels, x ≠ a → ∃ y ∈ Inventories.Turkish.tur.phonemes, x = vowel y.features) ∧
+    (∀ x ∈ vowels, x ≠ a →
+      ∃ y ∈ Inventories.Turkish.tur.phonemes, x = vowel y.features) ∧
       (∀ x ∈ consonants, x ≠ l → x ≠ l' →
         ∃ y ∈ Inventories.Turkish.tur.phonemes, x = consonant y.features) ∧
       FeatureMatrix.«a» ∈ Inventories.Turkish.tur.phonemes.map (·.features) := by
@@ -215,7 +216,8 @@ fronting's tier test reads. -/
 theorem unspecified_back_iff : ∀ x ∈ consonants, x.Unspecified .back ↔ x ≠ l' := by decide
 
 /-- Every phoneme has a value for [voice], so that only `D` is a target of voicing. -/
-theorem not_unspecified_voice : ∀ x ∈ vowels ∪ consonants, ¬ x.Unspecified .voice := by decide
+theorem not_unspecified_voice : ∀ x ∈ vowels ∪ consonants, ¬ x.Unspecified .voice := by
+  decide
 
 /-- The natural class of a vowel archiphoneme among the vowels, and of `D` among the
 consonants, is its alternants. -/

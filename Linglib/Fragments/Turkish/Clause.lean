@@ -103,8 +103,8 @@ def follows : Converb → Verb.Slot
   | ken | casina => .tam
   | madan => .possibility
 
-/-- An exponent of the slot may precede the converb: the slot is the one the converb follows,
-or the finite verb's template admits it before that one. -/
+/-- An exponent of the slot may precede the converb, since the slot is the one the converb
+follows or the finite verb's template admits it before that one. -/
 def Admits (c : Converb) (s : Verb.Slot) : Prop :=
   c.follows = s ∨ [s, c.follows] ∈ Verb.template.matches'
 

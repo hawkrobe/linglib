@@ -35,7 +35,8 @@ def nonAorist : List Pair :=
   [⟨[.root "gel", .suff "di"], [.root "gel", .suff "mA", .suff "di"]⟩,
    ⟨[.root "gel", .suff "ecek"], [.root "gel", .suff "mA", .suff "ecek"]⟩]
 
-/-- The aorist of *gel-* 'come': third singular, first singular and third plural. -/
+/-- The aorist of *gel-* 'come' in the third singular, the first singular and the third
+plural. -/
 def aorist : List Pair :=
   [⟨[.root "gel", .suff "ir"], [.root "gel", .suff "mA", .suff "z"]⟩,
    ⟨[.root "gel", .suff "ir", .suff "im"], [.root "gel", .suff "mA", .suff "m"]⟩,

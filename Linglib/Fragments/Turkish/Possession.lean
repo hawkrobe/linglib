@@ -1,64 +1,78 @@
 module
 
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Fragments.Turkish.Morphotactics
 
 /-!
-# Turkish Possessive Constructions
-[stassen-2009] [nichols-1986] [heine-1997]
+# Turkish possession
 
-Turkish (Turkic) derives its primary have-construction from the **Genitive
-Schema** ("X's Y exists" → "X has Y"): possessor in the genitive (`-(n)In`),
-possessum with a possessive agreement suffix (`-(s)I`), and the non-verbal
-existential predicate `var` 'existent' (or `yok` 'non-existent'), which takes
-no tense/aspect morphology in its base form. Turkish also has a Goal Schema
-variant using the dative (`-A`) with existential `var`, and the Equation
-Schema for belong-constructions (`Kitap Hasan-ın.` 'The book is Hasan's.').
-The typological codings (WALS 24A, 58A, 59A, 117A) are read from
-`Data/WALS/Features/`; this file holds the possessive suffix paradigm and the
-existential predicate.
+This file defines the Turkish possessive existential sentence as Göksel and Kerslake describe
+it, the construction Stassen classes as a genitive possessive and Heine derives from the
+genitive schema. The possessor is a genitive noun phrase and the possessee carries the
+possessive suffix that agrees with it in person, the two forming the genitive-possessive
+construction of attributive possession, and the predicate is *var* 'existent' or *yok*
+'non-existent', with a copular marker outside the present tense: *Mehmed'in parası var*
+'Mehmet has money' and *Mehmed'in parası yok* 'Mehmet has no money'. Lewis's observation,
+which Stassen takes up, is that the possessor is a sentence topic and not the modifier of the
+possessee, since adverbials may come between them. The locative existential *bende bir kitap
+var* 'I have a book' is the same predicate on a locative phrase.
 
-## Examples
+## Main definitions
 
-- `Hasan-ın inek-i var.` 'Hasan has a cow.' (Hasan-GEN cow-POSS existent)
-- `Bende kitap var.` 'I have a book.' (at-me book existent; Location variant)
-- `Kitab-ım var.` 'I have a book.' (book-POSS.1SG existent; Genitive)
+* `Turkish.Possession.Existential`: *var* and *yok*, with `Existential.form`
+* `Turkish.Possession.possessor`, `Turkish.Possession.possessee`: the genitive, and the noun
+  with the possessive suffix of a cell, as surface forms
+* `Turkish.Possession.sentence`: the possessive existential sentence of a possessor, a possessee
+  and a predicate
+
+## Main results
+
+* `Turkish.Possession.mehmet`: the surface forms of Lewis's two sentences
+
+## References
+
+* [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
+* [B. Heine, *Possession: Cognitive Sources, Forces, and Grammaticalization*
+  (1997)][heine-1997]
+* [L. Stassen, *Predicative Possession* (2009)][stassen-2009]
 -/
 
 @[expose] public section
 
+open Phonology Turkish Turkish.Phonology Turkish.Nominal
+
 namespace Turkish.Possession
 
-/-- Turkish possessive suffix paradigm. These suffixes appear on the
-    possessum and agree with the possessor in person and number. -/
-inductive PossPerson where
-  | first | second | third
-  deriving DecidableEq, Repr
-
-inductive PossNumber where
-  | sg | pl
-  deriving DecidableEq, Repr
-
-/-- The possessive paradigm's number dimension, canonically. -/
-def PossNumber.toNumber : PossNumber → Number
-  | .sg => .singular
-  | .pl => .plural
-
-/-- Possessive suffix forms (after consonant-final stems). -/
-def possSuffix : PossPerson → PossNumber → String
-  | .first,  .sg => "-(I)m"
-  | .second, .sg => "-(I)n"
-  | .third,  .sg => "-(s)I"
-  | .first,  .pl => "-(I)mIz"
-  | .second, .pl => "-(I)nIz"
-  | .third,  .pl => "-lArI"
-
-/-- The existential predicate in Turkish possessive constructions: a non-verbal
-    predicate that takes no tense/aspect morphology in the base form. -/
-inductive ExistPred where
-  /-- `var` 'existent, there is' — affirmative possession -/
+/-- The existential predicates *var* 'existent' and *yok* 'non-existent', which take the
+copular markers and person markers of a nominal predicate. -/
+inductive Existential where
   | var
-  /-- `yok` 'non-existent, there is not' — negative possession -/
   | yok
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
+
+/-- The form of a predicate. -/
+def Existential.form : Existential → List Segment
+  | .var => [v, a, r]
+  | .yok => [y, o, k]
+
+/-- The possessor is the genitive of its stem. -/
+def possessor (w : List Segment) : List Segment := realize w [Exponent.genitive.form]
+
+/-- The possessee carries the possessive suffix of the possessor's person and number. -/
+def possessee (w : List Segment) (c : Agreement.Bundle) : List Segment :=
+  realize w [(Exponent.possessive c).form]
+
+/-- The possessive existential sentence of a possessor, a possessee and a predicate. -/
+def sentence (pr pe : List Segment) (c : Agreement.Bundle) (e : Existential) :
+    List (List Segment) :=
+  [possessor pr, possessee pe c, e.form]
+
+/-- *Mehmed'in parası var* 'Mehmet has money' and *Mehmed'in parası yok* 'Mehmet has no
+money'. -/
+theorem mehmet :
+    sentence [m, e, h, m, e, d] [p, a, r, a] (.pn .third .singular) .var =
+        [[m, e, h, m, e, d, i, n], [p, a, r, a, s, ı], [v, a, r]] ∧
+      sentence [m, e, h, m, e, d] [p, a, r, a] (.pn .third .singular) .yok =
+        [[m, e, h, m, e, d, i, n], [p, a, r, a, s, ı], [y, o, k]] := by
+  decide
 
 end Turkish.Possession

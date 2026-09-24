@@ -3,22 +3,31 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# Turkish Comparative Construction [stassen-1985]
+# Turkish comparison
 
-Turkish uses a **separative** comparative construction: the standard NP is
-marked with the ablative suffix `-dan`/`-den` (subject to vowel harmony). The
-adjective appears in its bare (positive) form with no comparative morphology.
+This file defines the Turkish comparative construction as Göksel and Kerslake describe it. The
+standard of comparison takes the ablative and the adjective is preceded by the adverb *daha*
+'more', which may be omitted when the ablative complement is present, *bu makine öbüründen
+(daha) ucuz* 'this machine is cheaper than the other one'; the superlative is the adverb *en*
+'most' before the adjective. The construction's type, read off its anatomy, is locational.
 
-Example: *Ali Veli-den (daha) uzun*
-         'Ali Veli-ABL (more) tall'
-         = 'Ali is taller than Veli'
+## Main definitions
 
-The ablative case suffix `-dan`/`-den` is the same morpheme used for spatial
-'from' (*İstanbul'dan* 'from Istanbul'), exemplifying [stassen-1985]'s
-localistic hypothesis: comparative markers derive from spatial case morphology.
-The optional adverb *daha* ('more') may intensify but is not required. No
-superlative strategy is recorded: the free superlative word *en* fits none of
-`SuperlativeStrategy`'s cases.
+* `Turkish.Comparison.dan`: the comparative construction
+* `Turkish.Comparison.degreeWord`: the free degree word *daha*
+
+## Main results
+
+* `Turkish.Comparison.type_dan`: the construction is locational
+
+## Implementation notes
+
+* The superlative *en* is a free adverb that `SuperlativeStrategy` has no case for, so none is
+  recorded.
+
+## References
+
+* [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
 -/
 
 @[expose] public section
@@ -27,17 +36,16 @@ namespace Turkish.Comparison
 
 open Comparative
 
-/-- The ablative comparative: `-dan`/`-den`-marked standard, optional free
-    *daha*, no degree morphology. -/
+/-- The ablative comparative, whose standard takes *-DAn* and whose adjective is preceded by
+the optional *daha* and carries no comparative morphology. -/
 def dan : Comparative :=
-  { standardMarker := some "-dan/-den"
-  , caseAssignment := .fixed
-  , fixedEncoding := some .adverbial
-  , standardCase := some .abl
-  , degreeMarker := some "daha" }
+  { standardMarker := some "-DAn", caseAssignment := .fixed, fixedEncoding := some .adverbial,
+    standardCase := some .abl, degreeMarker := some "daha" }
 
-/-- Optional free degree word *daha*; the adjective itself carries no
-    comparative morphology. -/
+/-- The degree word *daha* is free and optional. -/
 def degreeWord : DegreeWordType := .hasDegreeWord
+
+/-- The construction is locational. -/
+theorem type_dan : dan.type = .locational := rfl
 
 end Turkish.Comparison

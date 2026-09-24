@@ -63,7 +63,7 @@ def birbiri : ReciprocalPronoun :=
 def birbirlerini : ReciprocalPronoun :=
   { birbirleri with form := "birbirlerini", case_ := some .acc }
 
-/-- The entered forms of the reciprocal: the four person forms and the accusative of
+/-- The entered forms of the reciprocal are the four person forms and the accusative of
 *birbirleri*. -/
 def reciprocals : Finset ReciprocalPronoun :=
   {birbirimiz, birbiriniz, birbirleri, birbiri, birbirlerini}
