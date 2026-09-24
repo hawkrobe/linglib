@@ -45,7 +45,7 @@ def kmet_sg : Paradigm :=
   ⟨"farmer", .singular, forms "kmèt" "kméta" "kméta" "kmêtu" "kmétu" "kmétom"⟩
 
 /-- *jàz* 'I', singular. -/
-def jaz : Paradigm := ⟨"I", .singular, forms "jàz" "mẹ́ne" "mẹ́ne" "mẹ́ni" "mẹ́ni" "menój"⟩
+def jaz : Paradigm := ⟨"I", .singular, forms "jàz" "mȩ́ne" "mȩ́ne" "mȩ́ni" "mȩ́ni" "menój"⟩
 
 /-- *mo̧ji* 'my', plural. -/
 def moj_mpl : Paradigm :=
