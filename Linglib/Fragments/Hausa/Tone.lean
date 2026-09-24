@@ -1,189 +1,149 @@
 module
 
 public import Linglib.Phonology.Tone.Grammatical
-public import Linglib.Phonology.Tone.Basic
+public import Mathlib.Data.Finset.Insert
 
 /-!
-# Hausa Tone — mathlib-style
-[newman-2000] [inkelas-1998]
+# Hausa tone
 
-Hausa is a register tone language with a **two-level lexical contrast**
-(H, L) and a **derived falling contour** (F = HL on a single TBU).
-There is no rising contour: a low followed by a high on adjacent TBUs
-realises as L H, never as a rising tone on one TBU ([newman-2000]
-ch. 71).
+Hausa has three surface tones: high, unmarked in the orthography (*shā* 'drink'), low, marked by
+a grave accent (*dà* 'with, and'), and falling, marked by a circumflex (*tî* 'tea'). A fall is a
+high and a low on one syllable, and occurs only on a heavy syllable. There is no rising tone: a
+low-high sequence that arises on one syllable, as when a vowel is lost, simplifies to low after a
+high in the same word and to high elsewhere, so *gawàyī* 'charcoal' shortens to *gawài* and
+*tàusàyī* 'pity' to *tàusái* ([newman-2000]).
 
-## Architectural shape
+The definite article is *-n*, or *-r̃* after a feminine singular noun in *-a*, preceded by a
+floating low tone. The low turns a final high into a fall, *bàkā* 'bow' and *bàkân* 'the bow',
+and attaches vacuously after a low or a fall, *watà* 'month' and *watàn* 'the month'. A few
+morphemes have polar tone, the opposite of an adjacent tone: the stabilizer *nē* / *cē* takes the
+opposite of the preceding syllable, the possessive markers *nā* / *tā* the opposite of a
+following pronoun, and the weak subject pronouns of the light paradigm the opposite of the
+adjacent TAM marker. Tone-integrating suffixes give the whole word their melody, as the class 1
+plural *-ōCī*, with a copy of the base-final consonant, makes every tone high: *gyàlè* 'shawl',
+*gyalōlī* 'shawls'.
 
-This file is the *interpretation* of two existing Theory interfaces in
-Hausa, not a parallel hierarchy:
+## Main definitions
 
-- `Tone.TRN` is the
-  underlying autosegmental primitive; `HausaTone` is a surface
-  inventory whose decomposition is given by `toAutoseg`.
-- `Tone.GTSpec` is the GT-trigger
-  type. Hausa uses two of [rolle-2018]'s six dominance cells —
-  replacive-dominant and neutral. We expose smart constructors
-  `mkReplacive`/`mkNeutral` that fix the other GTSpec fields to the
-  Hausa defaults, register the morphemes in `hausaGTs`, and prove the
-  typological signature as a universal theorem.
+* `Hausa.syllableTones` — the three surface tones as melodies on one syllable
+* `Hausa.simplifyRising`, `Hausa.simplifyRisingWord` — the two rules removing a rise
+* `Hausa.dockLow` — the floating low of the definite article on a word's final syllable
+* `Hausa.polarOf`, `Hausa.polarAfter` — polar tone, and the polar tone after a syllable
+* `Hausa.pluralOCi` — the class 1 plural as a replacive-dominant grammatical tone
 
-Per-cell facts (e.g. *the plural template is dominant*) appear as
-`example`s — corollaries of the smart-constructor lemmas.
+## Main results
+
+* `Hausa.simplifyRisingWord_mem` — the rules leave every syllable with a surface tone
+* `Hausa.dockLow_mem`, `Hausa.getLast?_dockLow` — the definite article creates no new tone and
+  leaves the word ending low
+* `Hausa.polarAfter_fall` — a polar tone after a fall is high, as after a low, which follows from
+  analysing the fall as a high and a low
+
+## Implementation notes
+
+A syllable's tones are its melody, a list of tonal root nodes, so that the fall is `[H, L]` and a
+word is a list of syllable melodies. The polar morphemes and the article are lexical items of
+other files; their tone is computed here from their host.
+
+## References
+
+* [newman-2000]
 -/
 
 @[expose] public section
 
 namespace Hausa
 
-open _root_.Tone (TRN)
-open _root_.Tone
-  (Spec GTSpec TonalMelody ValuationWindow GTDominance
-   GTLevel ExponenceType tonalOverwrite TBU)
+open Tone (TRN GTSpec)
 
--- ============================================================================
--- § 1: Surface Tone Inventory ([newman-2000] ch. 71)
--- ============================================================================
+/-! ### Surface tones and the absence of a rise -/
 
-/-- Surface tones on a Hausa TBU (= mora). The contour `F` is realised
-    only on heavy (bimoraic) syllables and decomposes as H+L on the
-    autosegmental tier. There is **no R (rising) tone**: the prediction
-    is that no Hausa surface form exhibits a single-TBU rising contour. -/
-inductive HausaTone where
-  | H   -- High
-  | L   -- Low
-  | F   -- Falling (HL on one heavy TBU)
-  deriving DecidableEq, Repr, Inhabited
+/-- The surface tones of a syllable: high, low, and the fall. -/
+def syllableTones : Finset (List TRN) := {[.H], [.L], [.H, .L]}
 
-namespace HausaTone
+/-- A low-high sequence on one syllable, given the tone before it in the word, simplifies to low
+after a high and to high elsewhere; any other melody is unchanged. -/
+def simplifyRising (prev : Option TRN) (σ : List TRN) : List TRN :=
+  if σ = [.L, .H] then if prev = some .H then [.L] else [.H] else σ
 
-/-- The surface inventory in canonical order. -/
-def all : List HausaTone := [.H, .L, .F]
+/-- `simplifyRising` across a word, each syllable seeing the last tone of the one before. -/
+def simplifyRisingWord : Option TRN → List (List TRN) → List (List TRN)
+  | _, [] => []
+  | prev, σ :: w => simplifyRising prev σ :: simplifyRisingWord (simplifyRising prev σ).getLast? w
 
-/-- Project a Hausa surface tone to its autosegmental decomposition on
-    the underlying tone tier. The falling contour decomposes to `[H, L]`,
-    a level tone to a singleton. -/
-def toAutoseg : HausaTone → List TRN
-  | .H => [.H]
-  | .L => [.L]
-  | .F => [.H, .L]
+theorem simplifyRising_mem {prev : Option TRN} {σ : List TRN}
+    (h : σ ∈ syllableTones ∨ σ = [.L, .H]) : simplifyRising prev σ ∈ syllableTones := by
+  unfold simplifyRising
+  split_ifs with h₁ <;> simp_all [syllableTones]
 
-end HausaTone
+/-- A word whose syllables carry surface tones or a rise surfaces with surface tones only. -/
+theorem simplifyRisingWord_mem (prev : Option TRN) (w : List (List TRN))
+    (h : ∀ σ ∈ w, σ ∈ syllableTones ∨ σ = [.L, .H]) :
+    ∀ σ ∈ simplifyRisingWord prev w, σ ∈ syllableTones := by
+  induction w generalizing prev with
+  | nil => simp [simplifyRisingWord]
+  | cons τ w ih =>
+    simp only [simplifyRisingWord, List.mem_cons, forall_eq_or_imp] at h ⊢
+    exact ⟨simplifyRising_mem h.1, ih _ h.2⟩
 
-/-- **No rising contour.** Every surface tone in the Hausa inventory
-    begins with H or L on the autosegmental tier. A rising tone would
-    have to begin with L and continue to H on the same TBU; the
-    inventory provides no such cell ([newman-2000] §71.1). -/
-theorem no_rising_contour :
-    ∀ t ∈ HausaTone.all,
-      t.toAutoseg.head? = some .H ∨ t.toAutoseg.head? = some .L := by
-  intro t ht
-  simp only [HausaTone.all, List.mem_cons, List.not_mem_nil, or_false] at ht
-  rcases ht with rfl | rfl | rfl <;> decide
+/-- *gawàyī* 'charcoal' loses its last vowel, and the rise after a high becomes low: *gawài*. -/
+example : simplifyRisingWord none [[.H], [.L, .H]] = [[.H], [.L]] := by decide
 
--- ============================================================================
--- § 2: Tonal Polarity ([newman-2000] ch. 71.6)
--- ============================================================================
+/-- *tàusàyī* 'pity' loses its last vowel, and the rise after a low becomes high: *tàusái*. -/
+example : simplifyRisingWord none [[.L], [.L, .H]] = [[.L], [.H]] := by decide
 
-/-- Tonal polarity: a morpheme surfaces with the *opposite* tone of its
-    host. The classic Hausa case is the **linker -n** of the genitive
-    construction, which is L after a H-final host and H after a L-final
-    host. Polarity is one of the named operations in [rolle-2018]
-    (`GTOperation.polarization`); we derive its behaviour structurally. -/
+/-- *ɗòyī* 'stench' shortens to one syllable, and the rise with nothing before it becomes high:
+*ɗwái*. -/
+example : simplifyRisingWord none [[.L, .H]] = [[.H]] := by decide
+
+/-! ### The floating low of the definite article -/
+
+/-- A floating low docked on a syllable: after a final high it makes a fall; after a low it
+attaches vacuously. -/
+def dockLow (σ : List TRN) : List TRN := if σ.getLast? = some .H then σ ++ [.L] else σ
+
+/-- Docking the low on a surface tone gives a surface tone. -/
+theorem dockLow_mem : ∀ σ ∈ syllableTones, dockLow σ ∈ syllableTones := by decide
+
+/-- A syllable with a surface tone ends low once the low has docked. -/
+theorem getLast?_dockLow : ∀ σ ∈ syllableTones, (dockLow σ).getLast? = some .L := by decide
+
+/-- The last syllable of *bàkā* 'bow' is high and falls in *bàkân* 'the bow'. -/
+example : dockLow [.H] = [.H, .L] := by decide
+
+/-- The last syllable of *watà* 'month' is low and stays low in *watàn* 'the month'. -/
+example : dockLow [.L] = [.L] := by decide
+
+/-- The last syllable of *fàsfô* 'passport' falls and still falls in *fàsfôn* 'the passport'. -/
+example : dockLow [.H, .L] = [.H, .L] := by decide
+
+/-! ### Polar tone -/
+
+/-- The tone opposite to a tone: low opposite a high, high opposite anything else. -/
 def polarOf : TRN → TRN
   | .H => .L
-  | _  => .H
+  | _ => .H
 
-/-- **Polarity is involutive on the H/L sublattice.** This is what
-    licenses polarity as a "natural" tonal operation: the linker -n
-    swaps H and L, and applying the swap twice returns to the
-    original. -/
-theorem polarOf_involutive_on_HL :
-    ∀ t ∈ ([.H, .L] : List TRN), polarOf (polarOf t) = t := by
-  intro t ht
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
-  rcases ht with rfl | rfl <;> decide
+/-- Polarity is an involution on high and low. -/
+theorem polarOf_polarOf : ∀ t ∈ [TRN.H, TRN.L], polarOf (polarOf t) = t := by decide
 
--- ============================================================================
--- § 3: Hausa GT Smart Constructors
--- ============================================================================
+/-- The polar tone after a syllable, opposite to its last tone. -/
+def polarAfter (σ : List TRN) : Option TRN := σ.getLast?.map polarOf
 
-/-- Build a **replacive-dominant** word-level GTSpec from a name and
-    melody. Hausa's morphological tonal templates (the plural template,
-    the genitive linker, ...) all share these defaults: a `whole`
-    valuation window, word-level GT, and auxiliary exponence (the
-    template co-occurs with segmental material). -/
-def mkReplacive (name : String) (melody : TonalMelody) : GTSpec where
-  name      := name
-  melody    := melody
-  window    := .whole
-  dominance := .replaciveDominant
-  level     := .word
-  exponence := .auxiliary
+/-- After a fall a polar tone is high, as after a low: *nân nē* 'it's here' with *zōbè nē* 'it's a
+ring', against *nan nè* 'it's there'. -/
+theorem polarAfter_fall : polarAfter [.H, .L] = polarAfter [.L] := rfl
 
-/-- Build a **neutral** word-level GTSpec from a name and melody.
-    Used for floating-tone clitics whose melody concatenates with the
-    host's underlying tones rather than overwriting them. -/
-def mkNeutral (name : String) (melody : TonalMelody) : GTSpec where
-  name      := name
-  melody    := melody
-  window    := .local
-  dominance := .neutral
-  level     := .word
-  exponence := .auxiliary
+/-! ### Tone-integrating plurals -/
 
--- ============================================================================
--- § 4: Hausa Morphological Tone Registry
--- ============================================================================
+/-- The class 1 plural *-ōCī*, whose all-high melody replaces the tones of the whole word. -/
+def pluralOCi : GTSpec :=
+  { name := "-ōCī", melody := [.H], window := .whole, dominance := .replaciveDominant,
+    level := .word, exponence := .auxiliary }
 
-/-- The Hausa plural template *-ōoCíi* imposes an all-H melody on the
-    base, regardless of the lexical tone of the singular
-    ([inkelas-1998], [newman-2000] §56.4). The paradigmatic
-    case of replacive-dominant GT. -/
-def pluralTemplate : GTSpec := mkReplacive "PL.-ōoCíi" [.H]
-
-/-- The Hausa referential clitic *-ⁿn* attaches a floating L to the host
-    without overwriting lexical tones ([newman-2000] §31.5). The
-    paradigmatic case of neutral GT in Hausa. -/
-def referentialClitic : GTSpec := mkNeutral "REF.-ⁿn" [.L]
-
-/-- The morphological-tone registry: every Hausa GT trigger we
-    formalise. Universal theorems below quantify over this list. -/
-def hausaGTs : List GTSpec := [pluralTemplate, referentialClitic]
-
--- ============================================================================
--- § 5: Typological Signature (universal theorem)
--- ============================================================================
-
-/-- **Hausa uses only the dominant/neutral cells of the GT typology.**
-    Of [rolle-2018]'s six dominance categories, Hausa morphological
-    tone occupies exactly two: replacive-dominant (templates) and
-    neutral (floating clitics). No subtractive, additive, melodic, or
-    recessive GT is attested. -/
-theorem hausa_dominance_is_replacive_or_neutral :
-    ∀ s ∈ hausaGTs,
-      s.dominance = .replaciveDominant ∨ s.dominance = .neutral := by
-  intro s hs
-  simp only [hausaGTs, List.mem_cons, List.not_mem_nil, or_false] at hs
-  rcases hs with rfl | rfl <;> decide
-
--- ============================================================================
--- § 6: Per-Trigger Verifications (demoted to `example`s)
--- ============================================================================
-
-example : pluralTemplate.dominance.IsDominant := by decide
-example : referentialClitic.dominance.IsNonDominant := by decide
-
-/-- Concrete demonstration: an all-L disyllabic stem is overwritten to
-    H on every TBU under the plural template. -/
-def demoStem : List (TBU Unit) := [⟨(), .L⟩, ⟨(), .L⟩]
-
+/-- The plural makes the low tones of *gyàlè* 'shawl' high, *gyalōlī* 'shawls'. -/
 example :
-    (tonalOverwrite demoStem pluralTemplate.toSpec).map (·.tone) = [.H, .H] :=
+    (Tone.tonalOverwrite [⟨"gya", .L⟩, ⟨"le", .L⟩] pluralOCi.toSpec).map (·.tone) = [.H, .H] :=
   rfl
-
-/-- Neutral GT does *not* overwrite the host: the same melody under a
-    `local` window leaves the surface to general phonology. -/
-example : tonalOverwrite demoStem referentialClitic.toSpec = demoStem := rfl
 
 end Hausa

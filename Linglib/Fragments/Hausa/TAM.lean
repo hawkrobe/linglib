@@ -1,283 +1,166 @@
 module
 
-public import Linglib.Syntax.Person.Category
-public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Agreement.Paradigm
+public import Mathlib.Data.Fintype.Basic
 
 /-!
-# Hausa TAM and the Person-Aspect-Complex (PAC) — mathlib-style
-[newman-2000] [jaggar-2001]
+# Hausa tense, aspect and mood
 
-Hausa inflection is concentrated in a portmanteau preverbal element
-called the **PAC** (person-aspect-complex), which fuses:
+Hausa marks tense, aspect and mood not on the verb but on a preverbal person-aspect complex (PAC),
+which a clause requires whether or not its subject is expressed: *Tàlātù zā tà dafà àbinci*
+'Talatu will cook food' against *Tàlātù tanā̀ dafà àbinci* 'Talatu is cooking food'. A PAC is a
+weak subject pronoun and a TAM marker, the marker following the pronoun except in the future and
+the allative, and in the completive the two are fused into a single heavy-syllable pronoun. The
+pronoun distinguishes nine cells: 1s, 2m, 2f, 3m, 3f, 1p, 2p, 3p, and the impersonal 4p, which
+patterns with the plurals. A TAM is the paradigm of its PACs.
 
-- the subject's **person, number and (in 2sg/3sg) gender**, and
-- the **TAM** of the clause (completive, continuous, future,
-  subjunctive, habitual, …).
+[newman-2000] classifies the TAMs by three rubrics. The general ones occur in ordinary affirmative
+clauses. The relative ones are those allowed or required in Rel environments, where the verb
+follows the relativizer *dà*, a question word, or any other focused element. The negative ones
+are not recorded here. The continuous is replaced in Rel environments by the Rel-continuous1 or
+the Rel-continuous2, which occur nowhere else; the completive does not occur there, and its Rel
+counterpart is the preterite, which occurs in both; the potential's Rel counterpart is the future;
+the rhetorical occurs only in Rel environments; and the subjunctive neither occurs in them nor has
+a counterpart there.
 
-([newman-2000] ch. 70.) Because the PAC is the only inflectional
-locus, the verb stem itself is unmarked for tense or person agreement —
-all of that information lives in the PAC.
+## Main definitions
 
-## The General / Relative split
+* `Hausa.pacCells` — the nine subject cells of a PAC paradigm
+* `Hausa.TAM`, `Hausa.TAM.paradigm` — the affirmative TAMs and their PACs
+* `Hausa.TAM.general`, `Hausa.TAM.rel` — the TAMs of general clauses and of Rel environments
+* `Hausa.TAM.relCounterparts` — the TAMs a Rel environment takes in place of a TAM
 
-A second axis cross-cuts the TAM dimension: a **General** (matrix
-declarative) vs **Relative** form. The Relative forms surface in three
-syntactic environments ([newman-2000] ch. 64–65):
+## Main results
 
-1. relative clauses headed by *dà*;
-2. *wh*-questions (in-situ or *ex*-situ); and
-3. ex-situ focus constructions licensed by the stabilizer *nē/cē*.
+* `Hausa.TAM.mem_rel_iff` — a TAM occurs in Rel environments exactly when it is its own Rel
+  counterpart, so Newman's statement of the counterparts agrees with his overview table
+* `Hausa.TAM.form_ne_of_mem_relCounterparts` — a counterpart that is another TAM differs from it
+  in every cell, so the replacement is always audible
 
-The Relative form is morphologically distinct in only the completive
-and continuous TAMs (others are syncretic with the General form). This
-yields a four-way diagnostic that we encode here as a TAM × Mode pair.
-The Focus fragment (`Hausa/Focus.lean`) consumes this split as the
-licensing condition on ex-situ focus.
+## Implementation notes
 
-`PAC.WellFormed` is a propositional predicate (`Prop` with a
-`Decidable` instance). It is *not* enforced as a `Subtype` invariant —
-ill-formed PACs are constructible by direct field assignment. The
-`mkGeneralPAC` and `mkRelativePAC` constructors are ergonomic helpers:
-the relative one takes a proof obligation `tam.HasRelativeForm` so that
-PACs built via it are well-formed by construction, but a downstream
-file is free to construct a deliberately ill-formed PAC and prove it
-ill-formed (see `Focus.lean`'s `exSitu_with_genCmp`, which is exactly
-that pattern).
+The forms are those of Newman's paradigm tables, in his orthography: an unmarked vowel is high,
+a grave accent marks low tone, a circumflex a falling tone on a long vowel, and a macron vowel
+length. Where he gives two Standard Hausa forms the first is recorded, the contracted *zân* and
+*zâi* of the future and the allative among them; dialect variants are left out. The neutral, the
+bare pronoun a clause takes when it repeats the TAM of the one before, is not recorded.
+
+## References
+
+* [newman-2000]
 -/
 
 @[expose] public section
 
 namespace Hausa
 
-open Person
+open Agreement
 
--- ============================================================================
--- § 1: TAM Inventory ([newman-2000] ch. 70)
--- ============================================================================
+/-- The cell of a second or third person singular of the given gender. -/
+def genderedSingular (p : Person) (g : Gender) : Bundle :=
+  Function.update (Bundle.pn p .singular) .gender ↑g
 
-/-- The seven core TAM categories of the PAC. We follow Newman's labels;
-    the modally-ambiguous "potential" TAM is included for completeness
-    but rarely controls the General/Relative split. -/
+/-- The nine cells of a PAC paradigm in [newman-2000]'s order: 1s, 2m, 2f, 3m, 3f, 1p, 2p, 3p
+and the impersonal 4p. -/
+def pacCells : List Bundle :=
+  [.pn .first .singular, genderedSingular .second .masculine,
+    genderedSingular .second .feminine, genderedSingular .third .masculine,
+    genderedSingular .third .feminine, .pn .first .plural, .pn .second .plural,
+    .pn .third .plural, .pn .zero .plural]
+
+/-- The affirmative TAMs of the PAC. -/
 inductive TAM where
-  | completive   -- "perfect / aorist": yā tāfi 'he went'
-  | continuous   -- "imperfective": yanā tāfiyā 'he is going'
-  | future       -- prospective: zāi tāfi 'he will go'
-  | subjunctive  -- volitive: yà tāfi 'let him go'
-  | habitual     -- generic / habitual: yakàn tāfi 'he goes (habitually)'
-  | rhetorical   -- "rhetorical neg": bā yā tāfi
-  | potential    -- modal: yâ tāfi
-  deriving DecidableEq, Repr, Inhabited
+  /-- The completive, a portmanteau of pronoun and TAM: *Mūsā yā tàfi Bicì* 'Musa went, has gone
+  to Bichi'. -/
+  | completive
+  /-- The preterite, or Rel-completive. -/
+  | preterite
+  | continuous
+  /-- The Rel-continuous1, the marker *-kḕ*. -/
+  | relContinuous1
+  /-- The Rel-continuous2, the short-vowel marker *-kè*. -/
+  | relContinuous2
+  | future
+  /-- The allative, imminent or future motion toward a place. -/
+  | allative
+  /-- The potential, a future of lesser certainty. -/
+  | potential
+  /-- The rhetorical, the marker *-kā̀*. -/
+  | rhetorical
+  | habitual
+  | subjunctive
+  deriving DecidableEq, Repr, Fintype
 
 namespace TAM
 
-/-- The seven TAMs in canonical order. -/
-def all : List TAM :=
-  [.completive, .continuous, .future, .subjunctive,
-   .habitual, .rhetorical, .potential]
+/-- The PACs of a TAM, from [newman-2000]'s paradigm tables. -/
+def paradigm : TAM → Paradigm String
+  | .completive => pacCells.zip ["nā", "kā", "kin", "yā", "tā", "mun", "kun", "sun", "an"]
+  | .preterite => pacCells.zip ["na", "ka", "kikà", "ya", "ta", "mukà", "kukà", "sukà", "akà"]
+  | .continuous =>
+    pacCells.zip ["inā̀", "kanā̀", "kinā̀", "yanā̀", "tanā̀", "munā̀", "kunā̀", "sunā̀", "anā̀"]
+  | .relContinuous1 =>
+    pacCells.zip ["nakḕ", "kakḕ", "kikḕ", "yakḕ", "takḕ", "mukḕ", "kukḕ", "sukḕ", "akḕ"]
+  | .relContinuous2 =>
+    pacCells.zip ["nakè", "kakè", "kikè", "yakè", "takè", "mukè", "kukè", "sukè", "akè"]
+  | .future =>
+    pacCells.zip ["zân", "zā kà", "zā kì", "zâi", "zā tà", "zā mù", "zā kù", "zā sù", "zā à"]
+  | .allative =>
+    pacCells.zip ["zâ ni", "zâ ka", "zâ ki", "zâ shi", "zâ ta", "zâ mu", "zâ ku", "zâ su", "zâ a"]
+  | .potential => pacCells.zip ["nâ", "kâ", "kyâ", "yâ", "tâ", "mâ", "kwâ", "sâ", "â"]
+  | .rhetorical =>
+    pacCells.zip ["nikā̀", "kakā̀", "kikā̀", "yakā̀", "takā̀", "mukā̀", "kukā̀", "sukā̀", "akā̀"]
+  | .habitual =>
+    pacCells.zip ["nakàn", "kakàn", "kikàn", "yakàn", "takàn", "mukàn", "kukàn", "sukàn", "akàn"]
+  | .subjunctive => pacCells.zip ["ìn", "kà", "kì", "yà", "tà", "mù", "kù", "sù", "à"]
 
-/-- The General/Relative split surfaces morphologically only for the
-    completive and continuous TAMs ([newman-2000] §64.2, Table 32).
-    `HasRelativeForm` is the propositional predicate; downstream
-    constructors take it as a proof obligation. -/
-def HasRelativeForm : TAM → Prop
-  | .completive => True
-  | .continuous => True
-  | _           => False
+/-- The PAC of a TAM in a subject cell. -/
+def form (t : TAM) (c : Bundle) : Option String := t.paradigm.realize c
 
-instance (t : TAM) : Decidable t.HasRelativeForm := by
-  cases t <;> unfold HasRelativeForm <;> infer_instance
+/-- The TAMs of general clauses: all but the rhetorical and the two Rel-continuous ones. -/
+def general : Finset TAM :=
+  {completive, preterite, continuous, future, allative, potential, habitual, subjunctive}
 
-end TAM
+/-- The TAMs of Rel environments. -/
+def rel : Finset TAM :=
+  {preterite, relContinuous1, relContinuous2, future, allative, rhetorical, habitual}
 
-/-- General vs Relative form. Most TAMs are syncretic between the two;
-    completive and continuous are the empirically diagnostic cases. -/
-inductive Mode where
-  | general
-  | relative
-  deriving DecidableEq, Repr, Inhabited
+/-- The TAMs a Rel environment takes in place of a TAM: the TAM itself if it occurs there; the
+preterite for the completive; the Rel-continuous1 or Rel-continuous2 for the continuous; the
+future for the potential; none for the subjunctive. -/
+def relCounterparts : TAM → Finset TAM
+  | completive => {preterite}
+  | continuous => {relContinuous1, relContinuous2}
+  | potential => {future}
+  | subjunctive => ∅
+  | t => {t}
 
--- ============================================================================
--- § 2: Subject Slot (Person × Number × Gender)
--- ============================================================================
+/-- Every TAM has a PAC in every cell. -/
+theorem form_isSome : ∀ t : TAM, ∀ c ∈ pacCells, (t.form c).isSome := by decide
 
-/-- The subject slot of the PAC. Hausa makes a 2sg / 3sg gender
-    distinction (M vs F), absent in the plural and 1st person.
-    We use `Person.Category` for the singular/group cut and add
-    a `gender` field that is empty (`none`) outside the 2sg/3sg cells. -/
-structure Subject where
-  person : Category
-  gender : Option Gender
-  deriving DecidableEq, Repr
+/-- The Rel counterparts occur in Rel environments. -/
+theorem relCounterparts_subset_rel : ∀ t : TAM, t.relCounterparts ⊆ rel := by decide
 
-namespace Subject
+/-- A TAM occurs in Rel environments exactly when it is its own Rel counterpart. -/
+theorem mem_rel_iff : ∀ t : TAM, t ∈ rel ↔ t.relCounterparts = {t} := by decide
 
-/-- A subject **has a gender contrast** iff its gender field is non-empty.
-    Propositional predicate (with `Decidable`), not Bool. -/
-def HasGenderContrast (s : Subject) : Prop := s.gender ≠ none
+/-- Every TAM occurs in general clauses or in Rel environments. -/
+theorem general_union_rel : general ∪ rel = Finset.univ := by decide
 
-instance (s : Subject) : Decidable s.HasGenderContrast :=
-  inferInstanceAs (Decidable (_ ≠ _))
-
-end Subject
-
-/-- The subject inventory of Hausa. We restrict to the cells that
-    actually appear in the PAC paradigm (`Person.Category` includes
-    inclusive/exclusive distinctions that Hausa lacks). -/
-def hausaSubjects : List Subject :=
-  [ ⟨.speaker, none⟩,                     -- 1sg (no gender)
-    ⟨.addressee, some .masculine⟩,          -- 2sg.M
-    ⟨.addressee, some .feminine⟩,           -- 2sg.F
-    ⟨.other, some .masculine⟩,          -- 3sg.M
-    ⟨.other, some .feminine⟩,           -- 3sg.F
-    ⟨.speakerOthers, none⟩,                   -- 1pl  (Hausa has no incl/excl split)
-    ⟨.addresseeOthers, none⟩,              -- 2pl
-    ⟨.others, none⟩ ]              -- 3pl
-
-/-- **Gender contrast is restricted to the singular.** A Hausa subject
-    has a gender contrast only in 2sg or 3sg cells. -/
-theorem gender_contrast_only_in_singular :
-    ∀ s ∈ hausaSubjects, s.HasGenderContrast →
-      s.person = .addressee ∨ s.person = .other := by
+/-- The subjunctive is the one TAM with no Rel counterpart. -/
+theorem relCounterparts_eq_empty_iff : ∀ t : TAM, t.relCounterparts = ∅ ↔ t = subjunctive := by
   decide
 
--- ============================================================================
--- § 3: PAC Forms — smart constructors
--- ============================================================================
+/-- A Rel counterpart is another TAM exactly when the TAM does not occur in Rel environments. -/
+theorem ne_iff_not_mem_rel :
+    ∀ t : TAM, ∀ t' ∈ t.relCounterparts, t' ≠ t ↔ t ∉ rel := by
+  decide
 
-/-- A PAC: subject × TAM × mode → surface form. The `WellFormed`
-    invariant (relative mode requires a TAM that admits the relative
-    form) is enforced at construction time by `mkRelativePAC`; PACs
-    built via `mkGeneralPAC` are well-formed unconditionally.
-    The full paradigm is in [newman-2000] §70 Table 38. -/
-structure PAC where
-  subj : Subject
-  tam  : TAM
-  mode : Mode
-  /-- Surface form (graphic, with marked tones). -/
-  form : String
-  deriving Repr
+/-- A Rel counterpart that is another TAM differs from it in every cell. -/
+theorem form_ne_of_mem_relCounterparts :
+    ∀ t : TAM, ∀ t' ∈ t.relCounterparts, t' ≠ t → ∀ c ∈ pacCells, t'.form c ≠ t.form c := by
+  decide
 
-/-- A PAC is **well-formed** iff the relative mode is licensed by the
-    TAM. Propositional predicate (with `Decidable`). -/
-def PAC.WellFormed (p : PAC) : Prop :=
-  p.mode = .relative → p.tam.HasRelativeForm
-
-instance (p : PAC) : Decidable p.WellFormed :=
-  inferInstanceAs (Decidable (_ → _))
-
-/-- Smart constructor for a General-mode PAC. Always well-formed. -/
-def mkGeneralPAC (subj : Subject) (tam : TAM) (form : String) : PAC :=
-  ⟨subj, tam, .general, form⟩
-
-/-- Smart constructor for a Relative-mode PAC. Takes a proof that the
-    TAM admits a relative form; well-formedness then follows
-    immediately (see `mkRelativePAC_wellFormed`). -/
-def mkRelativePAC (subj : Subject) (tam : TAM) (form : String)
-    (_ : tam.HasRelativeForm) : PAC :=
-  ⟨subj, tam, .relative, form⟩
-
-/-- A PAC built by `mkRelativePAC` is well-formed: the proof obligation
-    threaded through the smart constructor *is* the witness. -/
-theorem mkRelativePAC_wellFormed (s : Subject) (t : TAM) (f : String)
-    (h : t.HasRelativeForm) :
-    (mkRelativePAC s t f h).WellFormed := fun _ => h
-
--- ============================================================================
--- § 4: Representative PACs ([newman-2000] §70.2, §64 Table 32)
--- ============================================================================
-
-/-- 3sg.M completive, General form *yā* (high tone). -/
-def cmp_3sm_G : PAC :=
-  mkGeneralPAC ⟨.other, some .masculine⟩ .completive "yā"
-
-/-- 3sg.M completive, Relative form *yà* (low tone). The G/R contrast
-    here is purely tonal — a textbook minimal pair. -/
-def cmp_3sm_R : PAC :=
-  mkRelativePAC ⟨.other, some .masculine⟩ .completive "yà" trivial
-
-/-- 3sg.F completive, Relative form *ta* ([newman-2000] §70.2,
-    [hartmann-zimmermann-2007] eq. 24). -/
-def cmp_3sf_R : PAC :=
-  mkRelativePAC ⟨.other, some .feminine⟩ .completive "ta" trivial
-
-/-- 3sg.M continuous, General form *yanā*. -/
-def cont_3sm_G : PAC :=
-  mkGeneralPAC ⟨.other, some .masculine⟩ .continuous "yanā"
-
-/-- 3sg.M continuous, Relative form *yake* — a stem alternation, not
-    just a tone change ([newman-2000] §70.2). -/
-def cont_3sm_R : PAC :=
-  mkRelativePAC ⟨.other, some .masculine⟩ .continuous "yake" trivial
-
-/-- 3sg.F continuous, Relative form *takèe*
-    ([hartmann-zimmermann-2007] eq. 22). -/
-def cont_3sf_R : PAC :=
-  mkRelativePAC ⟨.other, some .feminine⟩ .continuous "takèe" trivial
-
-/-- 1sg completive, General form *naa*
-    ([hartmann-zimmermann-2007] eq. 23). -/
-def cmp_1sg_G : PAC :=
-  mkGeneralPAC ⟨.speaker, none⟩ .completive "naa"
-
-/-- 1sg continuous, Relative form *nakèe*
-    ([hartmann-zimmermann-2007] eq. 29). -/
-def cont_1sg_R : PAC :=
-  mkRelativePAC ⟨.speaker, none⟩ .continuous "nakèe" trivial
-
-/-- 1sg future *zân* ([hartmann-zimmermann-2007] eqs. 25, 30).
-    No General/Relative contrast in the future TAM. -/
-def fut_1sg : PAC :=
-  mkGeneralPAC ⟨.speaker, none⟩ .future "zân"
-
-/-- 3sg.M subjunctive *yà*. No General/Relative contrast in this TAM. -/
-def subj_3sm : PAC :=
-  mkGeneralPAC ⟨.other, some .masculine⟩ .subjunctive "yà"
-
-/-- The PAC registry: representative cells used by downstream fragments
-    (notably `Hausa/Focus.lean`). Every entry is well-formed by
-    construction (see `all_representative_PACs_wellFormed`). -/
-def representativePACs : List PAC :=
-  [cmp_3sm_G, cmp_3sm_R, cmp_3sf_R, cont_3sm_G, cont_3sm_R, cont_3sf_R,
-   cmp_1sg_G, cont_1sg_R, fut_1sg, subj_3sm]
-
--- ============================================================================
--- § 5: Universal Theorems
--- ============================================================================
-
-/-- **The G/R contrast is morphologically distinct only in completive
-    and continuous.** In our representative TAM list, exactly the
-    completive and continuous admit a Relative form. -/
-theorem only_cmp_cont_split (t : TAM) :
-    t.HasRelativeForm ↔ t = .completive ∨ t = .continuous := by
-  cases t <;> simp [TAM.HasRelativeForm]
-
-/-- **The completive G/R minimal pair.** The 3sg.M completive surfaces
-    as *yā* (G) vs *yà* (R) — a tonal minimal pair. -/
-theorem completive_3sm_G_R_contrast :
-    cmp_3sm_G.form = "yā" ∧ cmp_3sm_R.form = "yà" := ⟨rfl, rfl⟩
-
-/-- **Every PAC built by the smart constructors is well-formed.** The
-    representative registry is well-formed because every entry is built
-    via `mkGeneralPAC` or `mkRelativePAC`. -/
-theorem all_representative_PACs_wellFormed :
-    ∀ p ∈ representativePACs, p.WellFormed := by
-  intro p hp
-  simp only [representativePACs, List.mem_cons, List.not_mem_nil, or_false] at hp
-  rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
-
-/-- **The registry covers both modes for every TAM that admits the
-    split.** This is what makes the registry a genuine empirical
-    sample of the G/R contrast rather than a one-sided collection. -/
-theorem registry_covers_relative_TAMs :
-    ∀ t : TAM, t.HasRelativeForm →
-      (∃ p ∈ representativePACs, p.tam = t ∧ p.mode = .general) ∧
-      (∃ p ∈ representativePACs, p.tam = t ∧ p.mode = .relative) := by
-  intro t ht
-  cases t <;> simp [TAM.HasRelativeForm] at ht <;>
-    first
-    | exact ⟨⟨cmp_3sm_G, by simp [representativePACs], rfl, rfl⟩,
-            ⟨cmp_3sm_R, by simp [representativePACs], rfl, rfl⟩⟩
-    | exact ⟨⟨cont_3sm_G, by simp [representativePACs], rfl, rfl⟩,
-            ⟨cont_3sm_R, by simp [representativePACs], rfl, rfl⟩⟩
+end TAM
 
 end Hausa
