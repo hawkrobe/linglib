@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Phonology.Subregular.Transduction
 public import Linglib.Phonology.Tone.Register
 public import Linglib.Fragments.Drubea.Prosody
 public import Linglib.Fragments.Numee.Prosody
@@ -30,7 +31,12 @@ unit (`mora_is_rbu`).
 
 The postlexical derivation is downstep displacement (§4.6), the boundary features h% of
 Drubea and l% of Numèè (§4.8), and pre-downstep h-epenthesis (§4.4), realized by terracing
-from the baseline with the utterance-initial downstep unrealized (§4.5). The realization
+from the baseline with the utterance-initial downstep unrealized (§4.5). Each is a
+`Subregular.Docking` process over the tier with its syllable boundaries written in, and
+each but the spreading variant of h-epenthesis has a quantifier-free guard
+([chandlee-jardine-2019]): displacement is spreading then delinking, both one step across a
+boundary; raising reads the next mora and, the syllables being at most bimoraic, one mora
+back within its own; the boundary features read the last two syllables. The realization
 reproduces Rivierre's pitch levels where he transcribes whole steps ((11), (19), (20),
 (24), (26), (30), (38), (53)) and, for every transcribed utterance, the direction of each
 step between syllables (`rows_signs`); the double downstep of (25), (52) and (53b) is a
@@ -51,6 +57,9 @@ syllable-dependent (`drubea_tonal`, `drubea_not_stressAccent`) — close the fil
   downstep unless the mora's own syllable is downstepped before it, which is what keeps
   /ꜜgoo/ at the baseline in (33) and /ꜜɳii/ unraised in (12). Spreading h-epenthesis ((16))
   and the lh contour on a downstepped mora ((18), (63)) are stated on their own.
+* The quantifier-free processes are relabelling transductions over the register alphabet
+  (`Transduction.apply_relabel`); that spreading h-epenthesis has no quantifier-free guard
+  awaits a two-sided bounded-window congruence for `Subregular.QF`.
 * The comparison with a tonal alternative (§5) is prose and is not represented.
 
 ## References
@@ -59,13 +68,14 @@ syllable-dependent (`drubea_tonal`, `drubea_not_stressAccent`) — close the fil
 * [leben-2018]
 * [hyman-2006]
 * [rivierre-1973]
+* [chandlee-jardine-2019]
 -/
 
 @[expose] public section
 
 namespace Lionnet2025
 
-open Tone Tone.Registered Data.Examples
+open Tone Tone.Registered Data.Examples Subregular
 open Prosody (Syllable)
 
 /-- The weight a syllable contributes: its mora count. -/
@@ -240,102 +250,142 @@ def pitch (s : Stem) : Option RegisterTier :=
 'end'. -/
 theorem drubea_tonal : Hyman2006.Tonal pitch := ⟨⟨Drubea.kureEnd, by decide⟩, by decide⟩
 
-/-! ### The postlexical derivation -/
+/-! ### The postlexical derivation
 
-/-- Utterance-initial neutralisation (§3.5, §4.5): the downstep on the first mora is left
+The processes act on the tier with its syllabification written in: a boundary before each
+syllable's morae. -/
+
+/-- A slot of the marked tier: a mora's nodes, or a syllable boundary. -/
+abbrev Slot := Option (List TRN)
+
+/-- The tier of a word with a boundary before each syllable. -/
+def marked (r : Registered Syllable) : List Slot :=
+  (r.syllableNodes μ).flatMap fun ms ↦ none :: ms.map some
+
+/-- The tier back from a marked string. -/
+def unmark (m : List Slot) : RegisterTier := m.filterMap id
+
+theorem unmark_flatMap (L : List (List (List TRN))) :
+    unmark (L.flatMap fun ms ↦ none :: ms.map some) = L.flatten := by
+  induction L with
+  | nil => rfl
+  | cons ms L ih =>
+    simp only [List.flatMap_cons, List.flatten_cons, unmark, List.filterMap_append] at ih ⊢
+    rw [ih]
+    congr 1
+    simp
+
+/-- Unmarking undoes marking on an aligned word. -/
+theorem unmark_marked {r : Registered Syllable} (h : r.IsAligned μ) :
+    unmark (marked r) = r.tier := by
+  rw [marked, unmark_flatMap, syllableNodes, List.splitWrtComposition]
+  exact List.flatten_splitWrtCompositionAux h.symm
+
+/-- The register alphabet of the derivations: a boundary, a registerless mora, a downstep,
+a double downstep, an upstep, and the `lh` contour. -/
+def alphabet : List Slot :=
+  [none, some [], some [.downstep], some [.downstep, .downstep], some [.upstep],
+    some [.downstep, .upstep]]
+
+/-- The position variable. -/
+def x : Term := .var
+
+/-- `t` reads a syllable boundary. -/
+def bar (t : Term) : QF Slot := .label none t
+
+/-- `t` reads a registerless mora. -/
+def empty (t : Term) : QF Slot := .label (some []) t
+
+/-- `t` reads a mora bearing a downstep, single or double. -/
+def bearsL (t : Term) : QF Slot :=
+  .disj (.label (some [.downstep]) t) (.label (some [.downstep, .downstep]) t)
+
+/-- The next mora, across a boundary if there is one, bears a downstep. -/
+def nextBearsL : QF Slot := .disj (bearsL x.succ) (.conj (bar x.succ) (bearsL x.succ.succ))
+
+/-- A node appended to a mora. -/
+def append (t : TRN) : Slot → Slot := Option.map (· ++ [t])
+
+/-- Pre-downstep h-epenthesis (§4.4): a registerless mora before a downstepped one takes `h`,
+unless its own syllable is downstepped before it — one mora back, the syllables being at
+most bimoraic. -/
+def raising : Docking Slot :=
+  .ofQF (.conj (empty x) (.conj nextBearsL (.neg (bearsL x.pred)))) (append .upstep)
+
+/-- Spreading h-epenthesis ((16)): every registerless mora of the stretch before a downstep
+takes `h`. The look-ahead is unbounded, so the guard is not quantifier-free. -/
+def spreading : Docking Slot where
+  dock := append .upstep
+  Docks m i := m[i]? = some (some []) ∧ ∃ k < m.length, i < k ∧
+    (m[k]? = some (some [.downstep]) ∨ m[k]? = some (some [.downstep, .downstep])) ∧
+    ∀ j < k, i < j → m[j]? = some (some []) ∨ m[j]? = some none
+  lt_length h := (List.getElem?_eq_some_iff.1 h.1).1
+  decDocks _ _ := inferInstance
+
+/-- Utterance-initial neutralisation (§3.5, §4.5): the first mora's downstep is left
 unrealized, there being no preceding register to contrast with; the feature is not
 deleted, so it still blocks h-epenthesis on its syllable. -/
-def neutralizeInitial (tier : RegisterTier) : RegisterTier :=
-  tier.modifyHead (·.filter (· ≠ TRN.downstep))
+def neutralization : Docking Slot :=
+  .ofQF (.conj (bar x.pred) (QF.initial x.pred)) (Option.map (·.filter (· ≠ TRN.downstep)))
 
-/-- Pre-downstep h-epenthesis within a syllable (§4.4): a registerless mora immediately
-before a downstepped one takes `h`, the syllable's own downstep blocking the rule on the
-morae after it; `next` is whether the following syllable begins downstepped. -/
-def raiseMorae (next : Bool) : List (List TRN) → List (List TRN)
-  | [] => []
-  | [ns] => [if ns = [] ∧ next then [TRN.upstep] else ns]
-  | ns :: ms :: rest =>
-    if TRN.downstep ∈ ns then ns :: ms :: rest
-    else (if ns = [] ∧ TRN.downstep ∈ ms then [TRN.upstep] else ns) :: raiseMorae next (ms :: rest)
+/-- Downstep displacement, first half (§4.6): the downstep on the last mora of a bimoraic
+syllable spreads to the next syllable's first mora, stacking on a downstep there. -/
+def spreadL : Docking Slot :=
+  .ofQF (.conj (bar x.pred) (.conj (bearsL x.pred.pred)
+    (.conj (.defined x.pred.pred.pred) (.neg (bar x.pred.pred.pred))))) (append .downstep)
 
-/-- H-epenthesis over the syllables of an utterance. -/
-def raiseSyllables : List (List (List TRN)) → List (List (List TRN))
-  | [] => []
-  | [a] => [raiseMorae false a]
-  | a :: b :: rest => raiseMorae (TRN.downstep ∈ b.headD []) a :: raiseSyllables (b :: rest)
+/-- Downstep displacement, second half: the spread downstep delinks from its host. -/
+def delinkL : Docking Slot :=
+  .ofQF (.conj (bearsL x) (.conj (.defined x.pred) (.conj (.neg (bar x.pred))
+    (.conj (bar x.succ) (.defined x.succ.succ))))) (Option.map (·.erase TRN.downstep))
 
-/-- H-epenthesis over a word. -/
-def raise (r : Registered Syllable) : Registered Syllable :=
-  ⟨r.syllables, (raiseSyllables (r.syllableNodes μ)).flatten⟩
-
-/-- Spreading h-epenthesis ((16)): the raising extends leftward over the whole registerless
-stretch before the downstep. -/
-def hSpread : RegisterTier → RegisterTier
-  | [] => []
-  | ms :: rest =>
-    match hSpread rest with
-    | [] => [ms]
-    | ns :: rest' =>
-      (if ms = [] ∧ (TRN.downstep ∈ ns ∨ ns = [TRN.upstep]) then [TRN.upstep] else ms) ::
-        ns :: rest'
-
-/-- Downstep displacement (§4.6): the `l` on the last mora of a bimoraic syllable spreads to
-the first mora of the next syllable and delinks, stacking on an `l` already there; `carry`
-is the node arriving from the syllable before. -/
-def displaceSyllables (carry : List TRN) : List (List (List TRN)) → List (List (List TRN))
-  | [] => []
-  | a :: rest =>
-    let a' := match a with
-      | first :: ms => (first ++ carry) :: ms
-      | [] => []
-    if 2 ≤ a'.length ∧ TRN.downstep ∈ a'.getLastD [] ∧ rest ≠ [] then
-      (a'.dropLast ++ [(a'.getLastD []).erase TRN.downstep]) ::
-        displaceSyllables [TRN.downstep] rest
-    else a' :: displaceSyllables [] rest
-
-/-- Displacement over a word. -/
-def displace (r : Registered Syllable) : Registered Syllable :=
-  ⟨r.syllables, (displaceSyllables [] (r.syllableNodes μ)).flatten⟩
-
-/-- A boundary feature docks on the final mora. -/
-def dockFinal (t : TRN) (r : Registered Syllable) : Registered Syllable :=
-  ⟨r.syllables, r.tier.modify (r.tier.length - 1) (· ++ [t])⟩
+/-- The final syllable bears no node. -/
+def finalRegisterless : QF Slot :=
+  .conj (QF.final x) (.conj (empty x) (.disj (bar x.pred) (.conj (empty x.pred) (bar x.pred.pred))))
 
 /-- Drubea's final raising (§3.3, §4.8): h% docks on an utterance-final registerless
 syllable. -/
-def drubeaFinal (r : Registered Syllable) : Registered Syllable :=
-  if r.IsRegisterless μ (r.syllables.length - 1) then dockFinal .upstep r else r
+def finalRaising : Docking Slot := .ofQF finalRegisterless (append .upstep)
 
-/-- The condition of Numèè's final lowering (§3.4, §4.8): a light final syllable after a
-registerless syllable. -/
-def NumeeFinalApplies (r : Registered Syllable) : Prop :=
-  (r.shape μ).getLast? = some 1 ∧ 2 ≤ r.syllables.length ∧
-    r.IsRegisterless μ (r.syllables.length - 2)
+/-- Numèè's final lowering (§3.4, §4.8): l% docks on a light final syllable after a
+registerless syllable, whether the final is registerless or downstepped. -/
+def finalLowering : Docking Slot :=
+  .ofQF (.conj (QF.final x) (.conj (bar x.pred) (.conj (empty x.pred.pred)
+    (.disj (bar x.pred.pred.pred) (.conj (empty x.pred.pred.pred) (bar x.pred.pred.pred.pred))))))
+    (append .downstep)
 
-instance (r : Registered Syllable) : Decidable (NumeeFinalApplies r) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-/-- Numèè's final lowering: l% docks when its condition holds, on a registerless and on a
-downstepped final alike. -/
-def numeeFinal (r : Registered Syllable) : Registered Syllable :=
-  if NumeeFinalApplies r then dockFinal .downstep r else r
-
-/-- The surface form of a morpheme sequence under the postlexical steps its transcription
-shows, in order. -/
-def derive (steps : List (Registered Syllable → Registered Syllable))
-    (ws : List (Registered Syllable)) : Registered Syllable :=
-  steps.foldl (fun r f ↦ f r) (concat ws)
+/-- The surface form of a morpheme sequence under the processes its transcription shows, in
+order. -/
+def derive (steps : List (Docking Slot)) (ws : List (Registered Syllable)) :
+    Registered Syllable :=
+  ⟨(concat ws).syllables, unmark (steps.foldl (fun m D ↦ D.map m) (marked (concat ws)))⟩
 
 /-- The baseline: level 4 of the 1-to-5 scale (§3.5). -/
 def baseline : Int := 4
 
 /-- The level each mora reaches, the utterance-initial downstep unrealized. -/
 def realize (r : Registered Syllable) : List Int :=
-  RegisterTier.realize baseline (neutralizeInitial r.tier)
+  RegisterTier.realize baseline (unmark (neutralization.map (marked r)))
 
 /-- The level of each syllable: that of its last mora. -/
 def syllableLevels (r : Registered Syllable) (levels : List Int) : List Int :=
   (((r.shape μ).scanl (· + ·) 0).tail).map fun e ↦ levels.getD (e - 1) 0
+
+/-! ### Locality
+
+Every process but `spreading` is `Docking.ofQF`, so on words over the register alphabet it
+is computed by a one-copy relabelling transduction, the quantifier-free logical transductions
+of [chandlee-jardine-2019]. -/
+
+/-- The marked tier of every stem is over the register alphabet. -/
+theorem marked_mem_alphabet : ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ a ∈ marked s, a ∈ alphabet := by
+  decide
+
+/-- Raising on a stem's marked tier is the relabelling transduction's output. -/
+theorem raising_apply_relabel {s : Registered Syllable} (hs : s ∈ Drubea.stems ++ Numee.stems) :
+    (Transduction.relabel (.conj (empty x) (.conj nextBearsL (.neg (bearsL x.pred))))
+      (append .upstep) alphabet).apply (marked s) = raising.map (marked s) :=
+  Transduction.apply_relabel (marked_mem_alphabet s hs)
 
 /-! ### Drubea utterances -/
 
@@ -355,7 +405,7 @@ open Drubea in
 /-- (20) /ꜜtaa bee pwi + ꜛ%/ 'one cooked fish': h% raises the final registerless syllable —
 [taa4 bee4 pwi5]. -/
 theorem ex20_levels :
-    realize (derive [drubeaFinal] [taaOne, beeFish, pwiCooked]) = [4, 4, 4, 4, 5] := by
+    realize (derive [finalRaising] [taaOne, beeFish, pwiCooked]) = [4, 4, 4, 4, 5] := by
   decide
 
 open Drubea in
@@ -371,16 +421,16 @@ a downstep, an initial registerless syllable is raised above the baseline while 
 downstepped one is not, its unrealized `l` blocking h-epenthesis; the following
 downstepped syllable is lower than the initial in both. -/
 theorem ex32_ex33_contrast :
-    (∃ x ∈ realize (derive [raise] [gooHibbertia, mieWet]), baseline < x) ∧
-      (∀ x ∈ realize (derive [raise] [gooTree, mieWet]), x ≤ baseline) ∧
-      realize (derive [raise] [gooTree, mieWet]) = [4, 4, 3, 3] := by
+    (∃ x ∈ realize (derive [raising] [gooHibbertia, mieWet]), baseline < x) ∧
+      (∀ x ∈ realize (derive [raising] [gooTree, mieWet]), x ≤ baseline) ∧
+      realize (derive [raising] [gooTree, mieWet]) = [4, 4, 3, 3] := by
   decide
 
 open Drubea in
 /-- (32) and (33) differ in h-epenthesis alone: the surface tiers of (64) and (65). -/
 theorem ex32_ex33_tiers :
-    (derive [raise] [gooHibbertia, mieWet]).tier = [[], [.upstep], [.downstep], []] ∧
-      (derive [raise] [gooTree, mieWet]).tier = [[.downstep], [], [.downstep], []] := by
+    (derive [raising] [gooHibbertia, mieWet]).tier = [[], [.upstep], [.downstep], []] ∧
+      (derive [raising] [gooTree, mieWet]).tier = [[.downstep], [], [.downstep], []] := by
   decide
 
 open Drubea in
@@ -388,21 +438,21 @@ open Drubea in
 the CVꜜV downstep displaces onto the next syllable, a single downstep on registerless
 /kwɛ/, a double one on downstepped /ꜜkwe/ — [koo5 kwɛ4] vs [koo5 kwe3]. -/
 theorem ex53_displacement :
-    (derive [displace, raise] [kooPlace, kweDance, reAct]).tier =
+    (derive [spreadL, delinkL, raising] [kooPlace, kweDance, reAct]).tier =
         [[], [.upstep], [.downstep], []] ∧
-      (derive [displace, raise] [kooPlace, kweEat, reAct]).tier =
+      (derive [spreadL, delinkL, raising] [kooPlace, kweEat, reAct]).tier =
         [[], [.upstep], [.downstep, .downstep], []] ∧
-      realize (derive [displace, raise] [kooPlace, kweDance, reAct]) = [4, 5, 4, 4] ∧
-      realize (derive [displace, raise] [kooPlace, kweEat, reAct]) = [4, 5, 3, 3] := by
+      realize (derive [spreadL, delinkL, raising] [kooPlace, kweDance, reAct]) = [4, 5, 4, 4] ∧
+      realize (derive [spreadL, delinkL, raising] [kooPlace, kweEat, reAct]) = [4, 5, 3, 3] := by
   decide
 
 open Drubea in
 /-- (46) /ɲi beꜜe ŋa-ɽe/ 'he doesn't work': undisplaced, /beꜜe/ raises its own first mora
 and lowers its second, the register of what follows — [ɲi ꜛbeꜜe ŋa-ɽe]. -/
 theorem ex46_undisplaced :
-    (derive [raise] [ni3sg, beeNeg, ngaWork, reAct]).tier =
+    (derive [raising] [ni3sg, beeNeg, ngaWork, reAct]).tier =
         [[], [.upstep], [.downstep], [], []] ∧
-      realize (derive [raise] [ni3sg, beeNeg, ngaWork, reAct]) = [4, 5, 4, 4, 4] := by
+      realize (derive [raising] [ni3sg, beeNeg, ngaWork, reAct]) = [4, 5, 4, 4, 4] := by
   decide
 
 /-- Register copying (§3.9, §4.7): a verbal classifier prefix takes the nodes of the verb's
@@ -423,14 +473,15 @@ open Drubea in
 marker and still drops before the verb — [ko4 te4.5 ʈa4 ti3 e3 -ɽe3], the model's raised
 step a whole one. -/
 theorem ex57_levels :
-    realize (derive [raise] [ko1sg, teDescr, copyPrefix taHand tieTear, tieTear, reAct]) =
+    realize (derive [raising] [ko1sg, teDescr, copyPrefix taHand tieTear, tieTear, reAct]) =
       [4, 5, 4, 3, 3, 3] := by
   decide
 
 /-- (16): spreading h-epenthesis raises the whole registerless stretch before /maꜜa/'s
-downstep, the two morae of /ŋe-ɽe/ and the first of /maꜜa/. -/
-theorem hSpread_stretch :
-    hSpread [[], [], [], [.downstep]] = [[.upstep], [.upstep], [.upstep], [.downstep]] := by
+downstep, the two morae of /ŋe-ɽe/ and the first of /maꜜa/, across the syllable boundary. -/
+theorem spreading_stretch :
+    spreading.map [none, some [], some [], none, some [], some [.downstep]] =
+      [none, some [.upstep], some [.upstep], none, some [.upstep], some [.downstep]] := by
   decide
 
 /-! ### Numèè utterances -/
@@ -439,38 +490,40 @@ open Numee in
 /-- (24) /jaa ɲĩ + ꜜ%/ 'coconut juice': l% docks on the light registerless final and raises
 the syllable before — [ɟaa5 ɲĩ4]. -/
 theorem ex24_levels :
-    NumeeFinalApplies (concat [jaaJuice, niCoconut]) ∧
-      realize (derive [numeeFinal, raise] [jaaJuice, niCoconut]) = [4, 5, 4] := by
+    (derive [finalLowering] [jaaJuice, niCoconut]).tier = [[], [], [.downstep]] ∧
+      realize (derive [finalLowering, raising] [jaaJuice, niCoconut]) = [4, 5, 4] := by
   decide
 
 open Numee in
 /-- (25) /jaa ꜜɲĩ + ꜜ%/ 'breast milk': on a downstepped final, l% stacks a second downstep,
 realized below the registerless final of (24) — [ɟaa5 ɲĩ3.5]. -/
 theorem ex25_double :
-    (derive [numeeFinal, raise] [jaaJuice, niBreast]).tier =
+    (derive [finalLowering, raising] [jaaJuice, niBreast]).tier =
         [[], [.upstep], [.downstep, .downstep]] ∧
-      realize (derive [numeeFinal, raise] [jaaJuice, niBreast]) = [4, 5, 3] := by
+      realize (derive [finalLowering, raising] [jaaJuice, niBreast]) = [4, 5, 3] := by
   decide
 
 open Numee in
 /-- (26) /dɛɳʊ a mii + ꜜ%/ 'lower jaw': a heavy final blocks l% — [dɛ4 ɳʊ4 a4 mii4]. -/
 theorem ex26_heavy_blocks :
-    ¬ NumeeFinalApplies (concat [denuJaw, aRel, miiLow]) ∧
-      realize (derive [numeeFinal] [denuJaw, aRel, miiLow]) = [4, 4, 4, 4, 4] := by
+    derive [finalLowering] [denuJaw, aRel, miiLow] = concat [denuJaw, aRel, miiLow] ∧
+      realize (derive [finalLowering] [denuJaw, aRel, miiLow]) = [4, 4, 4, 4, 4] := by
   decide
 
 open Numee in
 /-- (28) and (29): a downstepped syllable before the final blocks l%. -/
 theorem ex28_ex29_after_downstep_blocks :
-    ¬ NumeeFinalApplies (concat [teeGirl, eProx, noGrill, betiiThree, kuYam]) ∧
-      ¬ NumeeFinalApplies (concat [ni3sg, yuuBerth, aLoc, paaUp, kweSand]) := by
+    derive [finalLowering] [teeGirl, eProx, noGrill, betiiThree, kuYam] =
+        concat [teeGirl, eProx, noGrill, betiiThree, kuYam] ∧
+      derive [finalLowering] [ni3sg, yuuBerth, aLoc, paaUp, kweSand] =
+        concat [ni3sg, yuuBerth, aLoc, paaUp, kweSand] := by
   decide
 
 open Numee in
 /-- (38) /ꜜcĩĩbu ꜜmwã ꜜku mwoɽo + ꜜ%/ 'The rat escaped safe and sound.': l% on the final,
 h-epenthesis before each downstep — [cĩĩ4 bu5 mwã4 ku3 mwo4 ɽo3]. -/
 theorem ex38_levels :
-    realize (derive [numeeFinal, raise] [ciibuRat, mwaPfv, kuFlee, mworoAlive]) =
+    realize (derive [finalLowering, raising] [ciibuRat, mwaPfv, kuFlee, mworoAlive]) =
       [4, 4, 5, 4, 3, 4, 3] := by
   decide
 
@@ -479,7 +532,7 @@ open Numee in
 displace onto downstepped /ꜜmẽ/, a double downstep each time, while the disyllable
 /ɲa.ꜜi/ keeps its own. -/
 theorem ex52_double :
-    (derive [displace, raise] [yaaNeg, meThat, gee1plExcl, meFut, nyaiArrive]).tier =
+    (derive [spreadL, delinkL, raising] [yaaNeg, meThat, gee1plExcl, meFut, nyaiArrive]).tier =
       [[], [.upstep], [.downstep, .downstep], [], [.upstep], [.downstep, .downstep],
         [.upstep], [.downstep]] := by
   decide
@@ -488,7 +541,8 @@ theorem ex52_double :
 contour, the rise after the drop, which lifts the register the next downstep lowers. -/
 theorem ex18_contour :
     RegisterTier.realize baseline
-        (neutralizeInitial [[.downstep], [.downstep, .upstep], [.downstep]]) =
+        (unmark (neutralization.map
+          [none, some [.downstep], none, some [.downstep, .upstep], none, some [.downstep]])) =
       [4, 4, 3] := by
   decide
 
@@ -534,27 +588,29 @@ surface transcription shows. The two transcriptions of (13) are left out: their 
 def derivations : List (Registered Syllable × LinguisticExample) :=
   [(derive [] [Drubea.ni3pl, Drubea.mwaPfv, Drubea.niiSay, Drubea.meThat], Examples.ex11),
     (derive [] [Drubea.taaOne, Drubea.diiSmall, Drubea.beeFish], Examples.ex19),
-    (derive [drubeaFinal] [Drubea.taaOne, Drubea.beeFish, Drubea.pwiCooked], Examples.ex20),
+    (derive [finalRaising] [Drubea.taaOne, Drubea.beeFish, Drubea.pwiCooked], Examples.ex20),
     (derive [] [Drubea.ko1sg, Drubea.teDescr, Drubea.tiiLook, Drubea.reAct, Drubea.kureForest],
       Examples.ex30),
-    (derive [raise] [Drubea.gooHibbertia, Drubea.mieWet], Examples.ex32),
-    (derive [raise] [Drubea.gooTree, Drubea.mieWet], Examples.ex33),
-    (derive [displace, raise] [Drubea.kooPlace, Drubea.kweDance, Drubea.reAct], Examples.ex53a),
-    (derive [displace, raise] [Drubea.kooPlace, Drubea.kweEat, Drubea.reAct], Examples.ex53b),
-    (derive [raise] [Drubea.ko1sg, Drubea.teDescr, copyPrefix Drubea.taHand Drubea.tieTear,
+    (derive [raising] [Drubea.gooHibbertia, Drubea.mieWet], Examples.ex32),
+    (derive [raising] [Drubea.gooTree, Drubea.mieWet], Examples.ex33),
+    (derive [spreadL, delinkL, raising] [Drubea.kooPlace, Drubea.kweDance, Drubea.reAct],
+      Examples.ex53a),
+    (derive [spreadL, delinkL, raising] [Drubea.kooPlace, Drubea.kweEat, Drubea.reAct],
+      Examples.ex53b),
+    (derive [raising] [Drubea.ko1sg, Drubea.teDescr, copyPrefix Drubea.taHand Drubea.tieTear,
       Drubea.tieTear, Drubea.reAct], Examples.ex57),
-    (derive [numeeFinal, raise] [Numee.denuJaw, Numee.aRel, Numee.naUp], Examples.ex22),
-    (derive [numeeFinal, raise] [Numee.jaaJuice, Numee.niCoconut], Examples.ex24),
-    (derive [numeeFinal, raise] [Numee.jaaJuice, Numee.niBreast], Examples.ex25),
-    (derive [numeeFinal] [Numee.denuJaw, Numee.aRel, Numee.miiLow], Examples.ex26),
-    (derive [raise] [Numee.teeGirl, Numee.eProx, Numee.noGrill, Numee.betiiThree, Numee.kuYam],
+    (derive [finalLowering, raising] [Numee.denuJaw, Numee.aRel, Numee.naUp], Examples.ex22),
+    (derive [finalLowering, raising] [Numee.jaaJuice, Numee.niCoconut], Examples.ex24),
+    (derive [finalLowering, raising] [Numee.jaaJuice, Numee.niBreast], Examples.ex25),
+    (derive [finalLowering] [Numee.denuJaw, Numee.aRel, Numee.miiLow], Examples.ex26),
+    (derive [raising] [Numee.teeGirl, Numee.eProx, Numee.noGrill, Numee.betiiThree, Numee.kuYam],
       Examples.ex28),
-    (derive [numeeFinal, raise] [Numee.ciibuRat, Numee.mwaPfv, Numee.kuFlee, Numee.mworoAlive],
+    (derive [finalLowering, raising] [Numee.ciibuRat, Numee.mwaPfv, Numee.kuFlee, Numee.mworoAlive],
       Examples.ex38),
-    (derive [displace, raise]
+    (derive [spreadL, delinkL, raising]
       [Numee.yaaNeg, Numee.meThat, Numee.gee1plExcl, Numee.meFut, Numee.nyaiArrive],
       Examples.ex52),
-    (derive [raise] [Numee.gu2sg, Numee.capeRaise, Numee.panaaMast, Numee.koOn, Numee.nyuBoat,
+    (derive [raising] [Numee.gu2sg, Numee.capeRaise, Numee.panaaMast, Numee.koOn, Numee.nyuBoat,
       Numee.wiiDown, Numee.toThere], Examples.ex62)]
 
 /-- Every derivation rises and falls between syllables exactly where the source's levels
