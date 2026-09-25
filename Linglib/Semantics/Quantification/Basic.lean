@@ -71,15 +71,6 @@ local notation:max "⟦every⟧" => (every_sem : GQ α)
 local notation:max "⟦some⟧" => (some_sem : GQ α)
 local notation:max "⟦no⟧" => (no_sem : GQ α)
 
-/-! ### Bijection invariance -/
-
-/-- `∀ x, P x` is invariant under bijective substitution. -/
-theorem forall_bij_inv (f : α → α) (hBij : Function.Bijective f)
-    (P : α → Prop) :
-    (∀ x, P x) ↔ (∀ x, P (f x)) := by
-  refine ⟨fun h x => h (f x), fun h x => ?_⟩
-  obtain ⟨y, rfl⟩ := hBij.surjective x; exact h y
-
 /-! ### Conservativity -/
 
 theorem every_conservative : Conservative ⟦every⟧ := by
