@@ -29,7 +29,9 @@ Answerhood (3) and relevance (15) are checked on the discourse's assertions.
 
 ## Implementation notes
 
-Entailment between questions is inclusion of complete-answer sets, and the substrate's
+Entailment between questions is inclusion of complete-answer sets; the substrate's lattice
+order, entailment by resolution, runs the other way on the discourse's Hamblin questions
+(`wh_le_q1`), as the paper notes it would off complete answers. The substrate's
 inquisitive `Question.polar`, with alternatives a proposition and its complement, is a rival
 yes/no convention, not the paper's singleton alternative set. The context set of a move is
 the intersection of the assertions before it from a trivial initial common ground, so
@@ -197,7 +199,8 @@ instance (C : Finset World) : ∀ q : Qn, Decidable (CompletelyAnsweredBy q.den 
 /-! ### Question entailment ((3), (8))
 
 A question entails another when answering it yields a complete answer to the other: the
-inclusion of complete-answer sets, which the paper tabulates for the seven questions. -/
+inclusion of complete-answer sets, which the paper tabulates for the seven questions. The
+lattice order of the substrate reverses it (`wh_le_q1`, `not_q1_le_wh`). -/
 
 /-- "Who ate what?" entails "What did `u` eat?". -/
 theorem q1_entails_wh (u : Person) :
@@ -231,6 +234,20 @@ theorem polar_not_entails_wh :
     exact Or.inl subset_rfl
   have := h hma _ (mem_alt_wh .hilary .tofu)
   rcases this with h' | h' <;> exact absurd h' (by decide)
+
+/-- Read as the lattice order, entailment runs the other way, as the paper warns it would
+without complete answers: every state establishing something `u` ate establishes something
+someone ate. -/
+theorem wh_le_q1 (u : Person) : wh u ≤ q_1 :=
+  (isNormal_of_finite (Set.toFinite _)).le_of_alt_subset (alt_wh_subset_q1 u)
+
+/-- The converse fails: that Robin ate the bagels settles "Who ate what?" but nothing Hilary
+ate. -/
+theorem not_q1_le_wh : ¬ q_1 ≤ wh .hilary := fun h ↦ by
+  obtain ⟨_, ⟨f, rfl⟩, hf⟩ : ∃ a ∈ Set.range (ate .hilary), robinBagels ⊆ a := by
+    rw [← alt_wh, ← mem_iff_exists_alt_subset (isNormal_of_finite (Set.toFinite _))]
+    exact h (mem_of_mem_alt (mem_alt_q1 .robin .bagels))
+  exact absurd (ate_subset_ate_iff.mp hf).1 (by decide)
 
 /-! ### Answer composition (11)
 

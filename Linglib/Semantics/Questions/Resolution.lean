@@ -9,7 +9,7 @@ public import Linglib.Semantics.Questions.Hamblin
 This file defines the answerhood predicates over the inquisitive substrate `Question W`, with
 the question as subject so that dot notation reads in the right direction. Resolution is
 membership, `σ ∈ Q`, the support relation of [ciardelli-groenendijk-roelofsen-2018]
-(`Question.Support`), which under finiteness is settling some alternative
+(`Question.Support`), which on normal questions is settling some alternative
 (`mem_iff_exists_alt_subset`), the mention-some reading of [groenendijk-stokhof-1984]. A state
 completely answers a question when it decides every alternative (`CompletelyAnsweredBy`), the
 mention-all reading, and partially answers it when it decides some alternative
@@ -64,15 +64,15 @@ def IsSubquestionOf (C : Set W) (P Q : Question W) : Prop :=
 /-- A question whose alternatives are among another's is its subquestion in every context. -/
 theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (h : alt P ⊆ alt Q) :
     IsSubquestionOf C P Q :=
-  λ a ha => ⟨a, h ha, Or.inl Set.inter_subset_right⟩
+  fun a ha ↦ ⟨a, h ha, Or.inl Set.inter_subset_right⟩
 
 theorem IsSubquestionOf.refl (C : Set W) (P : Question W) : IsSubquestionOf C P P :=
   isSubquestionOf_of_alt_subset C subset_rfl
 
-/-- Under finiteness, entailment gives subquestionhood in every context. -/
-theorem isSubquestionOf_of_le (C : Set W) {P Q : Question W} (hQ : Q.props.Finite)
-    (h : P ≤ Q) : IsSubquestionOf C P Q := λ _ ha =>
-  let ⟨q, hq, haq⟩ := exists_alt_above Q hQ (le_def.mp h (alt_subset_props P ha))
+/-- Entailment of a normal question gives subquestionhood in every context. -/
+theorem isSubquestionOf_of_le (C : Set W) {P Q : Question W} (hQ : Q.IsNormal)
+    (h : P ≤ Q) : IsSubquestionOf C P Q := fun _ ha ↦
+  let ⟨q, hq, haq⟩ := hQ _ (le_def.mp h (alt_subset_props P ha))
   ⟨q, hq, Or.inl (Set.inter_subset_right.trans haq)⟩
 
 /-- Contextual partial answerhood is partial answerhood of the relativized alternatives. -/
@@ -96,14 +96,14 @@ theorem mem_of_exists_alt_subset (h : ∃ p ∈ alt Q, σ ⊆ p) : σ ∈ Q :=
   let ⟨p, hp, hsub⟩ := h
   Q.downward_closed p (alt_subset_props _ hp) σ hsub
 
-/-- Under finiteness, resolving a question is settling one of its alternatives. -/
-theorem mem_iff_exists_alt_subset (hFin : Q.props.Finite) : σ ∈ Q ↔ ∃ p ∈ alt Q, σ ⊆ p :=
-  ⟨exists_alt_above Q hFin, mem_of_exists_alt_subset⟩
+/-- Resolving a normal question is settling one of its alternatives. -/
+theorem mem_iff_exists_alt_subset (hQ : Q.IsNormal) : σ ∈ Q ↔ ∃ p ∈ alt Q, σ ⊆ p :=
+  ⟨hQ σ, mem_of_exists_alt_subset⟩
 
-/-- Under finiteness, resolving implies partially answering: the positive disjunct fires. -/
-theorem partiallyAnsweredBy_of_mem (hFin : Q.props.Finite) (h : σ ∈ Q) :
+/-- Resolving a normal question partially answers it: the positive disjunct fires. -/
+theorem partiallyAnsweredBy_of_mem (hQ : Q.IsNormal) (h : σ ∈ Q) :
     PartiallyAnsweredBy Q σ :=
-  let ⟨p, hp, hsub⟩ := exists_alt_above Q hFin h
+  let ⟨p, hp, hsub⟩ := hQ σ h
   ⟨p, hp, Or.inl hsub⟩
 
 /-- Every alternative partially answers its own question. -/
