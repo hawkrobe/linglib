@@ -53,8 +53,8 @@ the tolerance-premise sorites valid but unsound, its tolerance premise not being
   `exists_realize_tolerant` (Theorem 2); `consequence_tolerant_iff_lp`,
   `consequence_strict_iff_k3` (Theorem 3).
 * `consequence_iff_dual` (Lemma 6), `Consequence.mono` (Lemma 7), `Consequence.restricted_iff`
-  (Lemma 8), `not_consequence_tolerant_strict` (Lemma 9), `Consequence.cons_cons_iff`
-  (Lemma 10).
+  (Lemma 8), `not_consequence_tolerant_strict` (Lemma 9), `Consequence.iff_valid_imp`,
+  `deductionTheorem_iff`, `Consequence.iff_valid_imp_of_restricted` (Lemma 10).
 * `not_cc_one_step`, `not_valid_classical_tolerance`, `not_sc_two_step`, `not_ct_two_step` —
   the §3.4 distinctness of `cc`, `sc`, `ct` and `st`, on the four-element model.
 * `stdRefl_consequence_iff`, `Consequence.cut`, `isTrans_consequence_iff` — reflexivity and
@@ -203,6 +203,20 @@ variable (M : TModel Pred C D)
 @[simp] theorem realize_imp (m : Mode) (φ ψ : Formula Pred C) :
     M.Realize m (φ.imp ψ) ↔ (M.Realize m.dual φ → M.Realize m ψ) := by
   simp [Trivalent.Formula.imp]
+
+/-- The conjunction `⋀(φ, Γ)` of a nonempty list. -/
+@[simp] theorem realize_foldr_conj (m : Mode) (φ : Formula Pred C) (Γ : List (Formula Pred C)) :
+    M.Realize m (Γ.foldr .conj φ) ↔ (∀ γ ∈ Γ, M.Realize m γ) ∧ M.Realize m φ := by
+  induction Γ with
+  | nil => simp
+  | cons γ Γ ih => simp [ih, and_assoc]
+
+/-- The disjunction `⋁(φ, Δ)` of a nonempty list. -/
+@[simp] theorem realize_foldr_disj (m : Mode) (φ : Formula Pred C) (Δ : List (Formula Pred C)) :
+    M.Realize m (Δ.foldr .disj φ) ↔ (∃ δ ∈ Δ, M.Realize m δ) ∨ M.Realize m φ := by
+  induction Δ with
+  | nil => simp
+  | cons δ Δ ih => simp [ih, or_assoc]
 
 instance decidableRealize [Fintype D] [∀ P, DecidableRel (M.sim P)]
     [∀ P, DecidablePred (M.interp P)] : ∀ (m : Mode) (φ : Formula Pred C), Decidable (M.Realize m φ)
@@ -360,18 +374,25 @@ theorem consequence_iff_dual_self (h : m = n.dual) :
   subst h
   simpa using consequence_iff_dual (m := n.dual) (n := n) (Γ := Γ) (Δ := Δ)
 
-/-- **Lemma 10**, the deduction theorem for self-dual consequence relations, in sequent form: a
-premise moves into the antecedent of a conclusion. Its converse rests on the nine relations
-being distinct (§3.4). -/
+/-- The deduction theorem for self-dual relations in sequent form: when `m = d(n)`, a premise
+moves into the antecedent of a conclusion. -/
 theorem Consequence.cons_cons_iff (h : m = n.dual) :
     Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Consequence m n Γ (φ.imp ψ :: Δ) := by
   subst h
   exact mixedConsequence_cons_cons_iff fun M ↦ M.2.realize_imp n φ ψ
 
-/-- **Lemma 10** for a single premise and conclusion: `φ ⊨ᵐⁿ ψ` iff `φ → ψ` is `n`-valid. -/
-theorem Consequence.singleton_iff_valid_imp (h : m = n.dual) :
-    Consequence m n [φ] [ψ] ↔ Valid n (φ.imp ψ) :=
-  (Consequence.cons_cons_iff h).trans consequence_nil_singleton
+/-- Premises are read conjunctively and conclusions disjunctively: `φ, Γ ⊨ᵐⁿ ψ, Δ` iff
+`⋀(φ, Γ) ⊨ᵐⁿ ⋁(ψ, Δ)`. -/
+theorem consequence_cons_cons_iff_foldr :
+    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Consequence m n [Γ.foldr .conj φ] [Δ.foldr .disj ψ] := by
+  simp [MixedConsequence, Consequence.Satisfies, and_comm, or_comm]
+
+/-- **Lemma 10**, right to left: when `m = d(n)`, `Γ ⊨ᵐⁿ Δ` iff `⊨ᵐⁿ ⋀Γ → ⋁Δ`, for the nonempty
+finite sides the language can conjoin and disjoin (footnote 13). -/
+theorem Consequence.iff_valid_imp (h : m = n.dual) :
+    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Valid n ((Γ.foldr .conj φ).imp (Δ.foldr .disj ψ)) :=
+  consequence_cons_cons_iff_foldr.trans <|
+    (Consequence.cons_cons_iff h).trans consequence_nil_singleton
 
 /-- Cut, when the premise standard is at least the conclusion standard (§3.3.2, footnote 11):
 `tc` and `cs` are transitive. -/
@@ -624,6 +645,59 @@ theorem consequence_strict_iff_k3 (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
       fun v δ hδ ↦ (ofMV_realize v (hΔ δ hδ)).2.1,
     fun h ↦ h.comap (fun M ↦ toMV M.2) (fun M γ _ ↦ (M.2.realize_toMV γ).2.1)
       fun M δ _ ↦ (M.2.realize_toMV δ).2.2⟩
+
+/-! ### The deduction theorem -/
+
+/-- The model on the constants in which `a` alone is `P` and everything is indifferent: tolerance
+from `a` to another constant fails in it classically. -/
+def cutAt (a : C) : TModel Pred C C where
+  const := id
+  interp _ d := d = a
+  sim _ _ _ := True
+  sim_ktb _ := { refl := fun _ ↦ trivial, symm := fun _ _ _ ↦ trivial }
+
+/-- **Lemma 10**: the deduction theorem holds for `⊨ᵐⁿ` iff `m = d(n)`, so for `st`, `cc` and
+`ts` only. Validity depends only on `n`, so the theorem makes `⊨ᵐⁿ` and `⊨^{d(n)n}` agree;
+against the conclusion `¬ a I_P a`, which nothing satisfies, they are `m`- and
+`d(n)`-unsatisfiability, which a contradiction and the negated tolerance principle separate. -/
+theorem deductionTheorem_iff {m n : Mode} [Nonempty Pred] [Nontrivial C] :
+    (∀ (φ ψ : Formula Pred C) Γ Δ, Consequence m n (φ :: Γ) (ψ :: Δ) ↔
+      Valid n ((Γ.foldr .conj φ).imp (Δ.foldr .disj ψ))) ↔ m = n.dual := by
+  refine ⟨fun h ↦ ?_, fun h _ _ _ _ ↦ Consequence.iff_valid_imp h⟩
+  obtain ⟨P⟩ := ‹Nonempty Pred›
+  obtain ⟨a, b, hab⟩ := exists_pair_ne C
+  have hbot (x : Mode) (φ : Formula Pred C) :
+      Consequence x n [φ] [.neg (.atom (.sim P a a))] ↔ Unsat x φ := by
+    simp [Unsat, TModels.Realize, fun M : TModels Pred C ↦
+      (Std.Refl.refl _ : M.2.sim P (M.2.const a) (M.2.const a))]
+  have key (φ : Formula Pred C) : Unsat m φ ↔ Unsat n.dual φ :=
+    (hbot m φ).symm.trans <| (h φ _ [] []).trans <|
+      (Consequence.iff_valid_imp rfl).symm.trans (hbot n.dual φ)
+  have hc₁ (x : Mode) (hx : x ≠ .tolerant) :
+      Unsat x (.conj (.atom (.pred P a)) (.neg (.atom (.pred P a)))) :=
+    fun M h ↦ hx (M.2.eq_tolerant_of_realize_conj_neg h)
+  have hc₂ : ¬ Unsat .tolerant (.conj (.atom (.pred P a)) (.neg (.atom (.pred P a)))) :=
+    fun h ↦ h ⟨_, allBorderline Pred C⟩
+      (allBorderline_realize (φ := .conj (.atom (.pred P a)) (.neg (.atom (.pred P a))))
+        ⟨trivial, trivial⟩).2
+  have ht₁ : Unsat .strict (.neg (tolerance P a b)) := fun M h ↦ h (tolerance_valid P a b M)
+  have ht₂ : ¬ Unsat .classical (.neg (tolerance P a b)) := fun h ↦
+    h ⟨_, cutAt a⟩ (by simp [TModels.Realize, tolerance, cutAt, hab.symm])
+  cases m <;> cases n <;> first
+    | rfl
+    | exact absurd ((key _).1 (hc₁ _ (by decide))) hc₂
+    | exact absurd ((key _).2 (hc₁ _ (by decide))) hc₂
+    | exact absurd ((key _).1 ht₁) ht₂
+    | exact absurd ((key _).2 ht₁) ht₂
+
+/-- On the restricted vocabulary the deduction theorem also holds for `sc` and `ct`, which there
+coincide with `cc` and `st` (§3.4). -/
+theorem Consequence.iff_valid_imp_of_restricted (hΓ : ∀ γ ∈ φ :: Γ, IsRestricted γ)
+    (hΔ : ∀ δ ∈ ψ :: Δ, IsRestricted δ) (hm : m ≤ .classical) (hn : .classical ≤ n) :
+    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Valid n ((Γ.foldr .conj φ).imp (Δ.foldr .disj ψ)) := by
+  have hdn : n.dual ≤ .classical := by cases n <;> first | decide | exact absurd hn (by decide)
+  rw [Consequence.restricted_iff hΓ hΔ hm hn, ← Consequence.restricted_iff hΓ hΔ hdn hn]
+  exact Consequence.iff_valid_imp rfl
 
 /-! ### Sorites series -/
 
