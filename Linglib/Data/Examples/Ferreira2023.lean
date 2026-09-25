@@ -31,7 +31,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "pos_notp")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -49,7 +49,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "pos_notp")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -67,7 +67,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "pos_notp")]
-    comment := "Repeated as (23)."
+    comment := "Repeated as (23). The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -85,7 +85,7 @@ def ex_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "not_wn_p")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -103,7 +103,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -121,7 +121,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_pos_p")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -139,7 +139,7 @@ def ex_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "not_wn_p")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -157,7 +157,7 @@ def ex_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "wn_notp")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15)."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -175,7 +175,7 @@ def ex_25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "sn_notp")]
-    comment := ""
+    comment := "The paper gives an interlinear gloss; the translation follows (15)."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -251,6 +251,42 @@ def ex_32b : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_24, ex_25, ex_30a, ex_30b, ex_32a, ex_32b]
+def ex_80 : LinguisticExample :=
+  { id := "ferreira2023_80"
+    source := ⟨"ferreira-2023", "(80)"⟩
+    reportedIn := none
+    language := "braz1246"
+    primaryText := "(É por isso que) ele devia estar lá."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "(That's why) he ought to be there."
+    context := "A: Where is Peter? B: Probably in his office. A: But today is a holiday! B: Oh, I didn't know it was …"
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("base", "holiday")]
+    comment := "Repeats (65). The paper glosses devia as wn.pst.imp and contrasts the English 'That's why I expected him to be there.'"
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_81 : LinguisticExample :=
+  { id := "ferreira2023_81"
+    source := ⟨"ferreira-2023", "(81)"⟩
+    reportedIn := none
+    language := "braz1246"
+    primaryText := "Estranho! Ele devia estar lá."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Strange! He ought to be there."
+    context := "A: Where is Peter? B: Probably in his office. A: I have just checked and he isn't there."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("base", "checked")]
+    comment := "Repeats (66). The paper glosses devia as wn.pst.imp."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_24, ex_25, ex_30a, ex_30b, ex_32a, ex_32b, ex_80, ex_81]
 
 end Ferreira2023.Examples
