@@ -206,11 +206,11 @@ is a prior positive phase, scopes over a possibility modal, *he may still win*, 
 whose presupposition is a prior negative phase, cannot, *he may already win*; read backward, it
 is why *he may win this game* is false once he has lost. -/
 theorem may_antitone {history : HistoricalAlternatives W T}
-    (hBC : history.backwardsClosed) (hQ : Q.IsEventuality) :
+    (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality) :
     Antitone λ t : T => PRES t (MAY (metaphysicalBase history) Q) w := by
   simp only [pres_may_iff]
   rintro t' t h ⟨w', hw', hat⟩
-  exact ⟨w', metaphysicalBase_antitone hBC w h hw', hat.mono hQ (Interval.antitone_Ici h)⟩
+  exact ⟨w', hBC w h hw', hat.mono hQ (Interval.antitone_Ici h)⟩
 
 /-- The prior-phase half of Löbner's presupposition of *already*: a prior negative phase. -/
 def AlreadyPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop := ∃ t' < now, ¬ PRES t' Q w
@@ -221,7 +221,7 @@ def StillPresup (Q : SortedProperty W T) (w : W) (now : T) : Prop := ∃ t' < no
 /-- *He may already win*: the presupposition of *already* over a metaphysical possibility
 contradicts its assertion. -/
 theorem not_already_may {history : HistoricalAlternatives W T}
-    (hBC : history.backwardsClosed) (hQ : Q.IsEventuality)
+    (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality)
     (h : PRES now (MAY (metaphysicalBase history) Q) w) :
     ¬ AlreadyPresup (MAY (metaphysicalBase history) Q) w now :=
   λ ⟨_, ht', hn⟩ => hn (may_antitone hBC hQ ht'.le h)
@@ -230,7 +230,7 @@ theorem not_already_may {history : HistoricalAlternatives W T}
 merely consistent with the shrinking of possibilities, as the paper puts it, but entailed by
 the assertion, given any earlier time. -/
 theorem still_may {history : HistoricalAlternatives W T}
-    (hBC : history.backwardsClosed) (hQ : Q.IsEventuality)
+    (hBC : ∀ w, Antitone (metaphysicalBase history w)) (hQ : Q.IsEventuality)
     (h : PRES now (MAY (metaphysicalBase history) Q) w) (ht' : t' < now) :
     StillPresup (MAY (metaphysicalBase history) Q) w now :=
   ⟨t', ht', may_antitone hBC hQ ht'.le h⟩
@@ -240,7 +240,7 @@ theorem still_may {history : HistoricalAlternatives W T}
 /-- The history relation fixes the instantiation of `Q` at every interval up to its time:
 worlds identical up to `t` agree on `Q` there. -/
 def FixesPast (history : HistoricalAlternatives W T) (Q : SortedProperty W T) : Prop :=
-  ∀ t w w', histEquiv history t w w' →
+  ∀ t w w', w' ∈ history (w, t) →
     ∀ r : Interval (WithTop T), (∀ x ∈ r, x ≤ ↑t) → (At r w Q ↔ At r w' Q)
 
 /-- Worlds agreeing on the events that have begun agree on which events lie within an interval
@@ -286,7 +286,7 @@ base, so a context cannot assign that base to a possibility modal applying to it
 over the perfect and the present-referring stative are epistemic. -/
 theorem not_diverse_of_settled {history : HistoricalAlternatives W T} {cg : Set W} {t : T}
     {R : W → Prop} (h : settled history cg t R) : ¬ diverse (metaphysicalBase history) cg t R :=
-  settled_not_diverse history _ cg t R (λ _ _ _ hw => hw) h
+  settled_not_diverse (fun _ _ _ hw ↦ hw) h
 
 /-! ### The counterfactual implication -/
 

@@ -51,7 +51,7 @@ namespace Mizuno2024
 
 open Modality.Exclusion (MarkingStrategy XMarkingExponent)
 open Conditional (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
-open HistoricalAlternatives (histEquiv_mono)
+open HistoricalAlternatives (metaphysicalBase)
 open Reference
 open Data.Examples (LinguisticExample Glottocode)
 
@@ -174,8 +174,8 @@ def historyJones : HistoricalAlternatives Bool ℤ :=
 theorem mem_historyJones {w : Bool} {s : Index Bool ℤ} :
     w ∈ historyJones s ↔ w = s.world ∨ s.time ≤ 0 := Iff.rfl
 
-theorem historyJones_backwardsClosed : historyJones.backwardsClosed :=
-  λ _ _ _ _ hle hmem => Or.imp id (le_trans hle) hmem
+theorem historyJones_antitone (w : Bool) : Antitone (metaphysicalBase historyJones w) :=
+  fun _ _ hle _ hmem ↦ Or.imp id (le_trans hle) hmem
 
 /-- The utterance index; its domain is the paper's `D`. -/
 def utteranceIdx : Index Bool ℤ := ⟨true, 1⟩
@@ -216,15 +216,15 @@ theorem consequent_open_over_xMarkedBase :
 /-! ### Japanese O-marking: HP expansion under branching time
 
 §3.3: the HP shift moves the evaluation index backward; live possibilities shrink
-monotonically over time (the substrate's `backwardsClosed`, anchored on
+monotonically over time (the substrate's `HistoricalProperties.antitone`, anchored on
 [condoravdi-2002]), so the earlier index has a larger domain. -/
 
-/-- The HP shift strictly enlarges the live domain (§3.3): subset by `histEquiv_mono`,
+/-- The HP shift strictly enlarges the live domain (§3.3): subset by antitonicity,
     strictness by the newly live symptom-absent world. -/
 theorem hp_expands_jones_domain :
     historyJones utteranceIdx ⊂ historyJones hpIdx :=
   (Set.ssubset_iff_of_subset
-      (λ _ hw => histEquiv_mono historyJones_backwardsClosed true _ zero_le_one hw)).mpr
+      (fun _ hw ↦ historyJones_antitone true zero_le_one hw)).mpr
     ⟨false, Or.inr le_rfl, false_not_live⟩
 
 /-- Over the HP-shifted domain the consequent is left open — the conclusion
