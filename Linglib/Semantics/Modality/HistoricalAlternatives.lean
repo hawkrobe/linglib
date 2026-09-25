@@ -207,19 +207,6 @@ theorem historicalProperties_ofDatedFacts [Preorder T] {F : Type*} (time : F →
   trans _ _ _ _ h₁ h₂ f hf := (h₁ f hf).trans (h₂ f hf)
   backwards _ _ _ _ hle h f hf := h f (le_trans hf hle)
 
-/-- A temporal proposition: true or false at each situation. The
-    situation-semantic analog of `Prop' W`. -/
-abbrev TProp (W T : Type*) := Index W T → Prop
-
-/-- Lift a world proposition to a temporal proposition, true at situation `s`
-    iff the original holds at `s.world`. -/
-def liftProp (p : W → Prop) : TProp W T :=
-  λ s => p s.world
-
-/-- A proposition holds at time `t` in world `w`. -/
-def holdsAt (p : TProp W T) (w : W) (t : T) : Prop :=
-  p ⟨w, t⟩
-
 /-! ## Time projections of the situation bases
 
 The Upper Limit Constraint — the embedded reference time under a doxastic attitude is no

@@ -88,18 +88,18 @@ variable {W T E : Type*}
 goal, highest priority first. Goal-relative preference (52), the paper's first pass, is the
 lexicographic order on profiles: `profile G c < profile G c'` when `c'` realizes the first goal
 on which they differ. -/
-def profile (G : List (TProp W T)) (c : Index W T) : List Prop := G.map (· c)
+def profile (G : List (Index W T → Prop)) (c : Index W T) : List Prop := G.map (· c)
 
 /-- Goal-relative preference refines Kratzer's ordering: a circumstance realizing every goal
 another realizes has at least as good a profile. -/
-theorem profile_le_of_atLeastAsGoodAs {G : List (TProp W T)} {c c' : Index W T}
+theorem profile_le_of_atLeastAsGoodAs {G : List (Index W T → Prop)} {c c' : Index W T}
     (h : c ≤[G] c') : profile G c' ≤ profile G c :=
   List.Forall₂.le <| List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <|
     List.forall₂_same.2 h
 
 /-- Goal-relative preference refines Kratzer's strict ordering: a circumstance realizing
 strictly more goals than another has a strictly better profile. -/
-theorem profile_lt_of_strictlyBetter {G : List (TProp W T)} {c c' : Index W T}
+theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Index W T}
     (h : strictlyBetter G c c') : profile G c' < profile G c :=
   List.Forall₂.lt_of_ne
     (List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <| List.forall₂_same.2 h.1)
@@ -176,19 +176,19 @@ theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
 
 /-- An if-clause adds its proposition to the modal base, which shrinks the applicable
 circumstances. -/
-theorem applic_restrictedBase_subset (q : TProp W T) (c : Index W T) :
+theorem applic_restrictedBase_subset (q : Index W T → Prop) (c : Index W T) :
     applic history g (restrictedBase f q) P a c ⊆ applic history g f P a c :=
   fun _ h ↦ ⟨accessibleWorlds_anti (List.subset_cons_self _ _) h.1, h.2⟩
 
 /-- A futurate modal base stays futurate under an if-clause. -/
-theorem IsFuturate.restrictedBase (hf : IsFuturate history g f P a) (q : TProp W T) :
+theorem IsFuturate.restrictedBase (hf : IsFuturate history g f P a) (q : Index W T → Prop) :
     IsFuturate history g (restrictedBase f q) P a :=
   fun c c' h ↦ hf c c' (accessibleWorlds_anti (List.subset_cons_self _ _) h)
 
 /-- Imperatives are conditional: a direction entails its restriction by an if-clause, which
 only makes explicit some of the conditions on applicability. -/
 theorem realizes_restrictedBase {c : Index W T} (h : realizes history g f P a c)
-    (q : TProp W T) : realizes history g (restrictedBase f q) P a c :=
+    (q : Index W T → Prop) : realizes history g (restrictedBase f q) P a c :=
   fun c' hc' ↦ h c' (applic_restrictedBase_subset q c hc')
 
 end Semantics
@@ -203,7 +203,7 @@ structure Scoreboard (I W T : Type*) where
   /-- The questions under discussion, the immediate one first. -/
   qud : List (Question (Index W T))
   /-- Each interlocutor's evident goals, highest priority first. -/
-  goals : I → List (TProp W T)
+  goals : I → List (Index W T → Prop)
 
 /-- The denotation of a root sentence: a proposition, a question, or a property indexed to
 the addressee, an imperative's realization conditions. -/
