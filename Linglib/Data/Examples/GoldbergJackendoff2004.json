@@ -599,7 +599,7 @@
         "AP"
       ],
       [
-        "verbRole",
+        "subjectRole",
         "agent"
       ]
     ],
@@ -634,7 +634,7 @@
         "PP"
       ],
       [
-        "verbRole",
+        "subjectRole",
         "agent"
       ]
     ],
@@ -669,11 +669,295 @@
         "PP"
       ],
       [
-        "verbRole",
+        "subjectRole",
         "patient"
       ]
     ],
     "comment": "Noncausal property resultative: something happens to the bleeder, a patient, so the roles cohere."
+  },
+  {
+    "id": "gj2004_46a",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(46a)"
+    },
+    "language": "stan1293",
+    "primaryText": "He coughed awake and we were all overjoyed, especially Sierra.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "cough"
+      ],
+      [
+        "subconstruction",
+        "noncausative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "subjectRole",
+        "agent or patient"
+      ]
+    ],
+    "comment": "Web example: the single argument of cough is construable as a patient as well as an agent, so it can be the patient of BECOME."
+  },
+  {
+    "id": "gj2004_47a",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(47a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Patamon coughed himself awake on the bank of the lake where he and Gomammon had their play.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "cough"
+      ],
+      [
+        "subconstruction",
+        "causative property"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "selection",
+        "fake reflexive"
+      ],
+      [
+        "subjectRole",
+        "agent or patient"
+      ]
+    ],
+    "comment": "Web example with a fake object: the subject of cough is construable as an agent, the causer of CAUSE."
+  },
+  {
+    "id": "gj2004_48a",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(48a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The worm wriggled onto the carpet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "wriggle"
+      ],
+      [
+        "subconstruction",
+        "noncausative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "subjectRole",
+        "agent"
+      ]
+    ],
+    "comment": "The subject of wriggle is an agent, compatible with the agentive reading of GO."
+  },
+  {
+    "id": "gj2004_48b",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(48b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The chocolate melted onto the carpet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "melt"
+      ],
+      [
+        "subconstruction",
+        "noncausative path"
+      ],
+      [
+        "rpCat",
+        "PP"
+      ],
+      [
+        "subjectRole",
+        "patient"
+      ]
+    ],
+    "comment": "The subject of melt is a patient, compatible with the nonagentive reading of GO."
+  },
+  {
+    "id": "gj2004_49a",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(49a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill wiggled himself loose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "wiggle"
+      ],
+      [
+        "subconstruction",
+        "causative path"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "subjectRole",
+        "agent"
+      ]
+    ],
+    "comment": "Transitive spatial resultative: the subject is volitional and agentive."
+  },
+  {
+    "id": "gj2004_49b",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(49b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Aliza wiggled her tooth loose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "wiggle"
+      ],
+      [
+        "subconstruction",
+        "causative path"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "subjectRole",
+        "agent"
+      ]
+    ],
+    "comment": "Transitive spatial resultative: the subject is volitional and agentive."
+  },
+  {
+    "id": "gj2004_49c",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(49c)"
+    },
+    "language": "stan1293",
+    "primaryText": "The mechanical doll wiggled itself loose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "wiggle"
+      ],
+      [
+        "subconstruction",
+        "causative path"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "subjectRole",
+        "agent"
+      ]
+    ],
+    "comment": "The mechanical doll can instigate wiggling, so it is construable as an agent."
+  },
+  {
+    "id": "gj2004_49e",
+    "source": {
+      "bibkey": "goldberg-jackendoff-2004",
+      "paperLabel": "(49e)"
+    },
+    "language": "stan1293",
+    "primaryText": "*The ball wiggled itself loose.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "wiggle"
+      ],
+      [
+        "subconstruction",
+        "causative path"
+      ],
+      [
+        "rpCat",
+        "AP"
+      ],
+      [
+        "subjectRole",
+        "patient"
+      ]
+    ],
+    "comment": "The ball cannot independently instigate wiggling: it is construable only as undergoing it, not as the agent of CAUSE."
   },
   {
     "id": "gj2004_wipe",
@@ -708,7 +992,7 @@
         "selected"
       ],
       [
-        "verbRole",
+        "objectRole",
         "patient"
       ]
     ],

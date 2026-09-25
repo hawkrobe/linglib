@@ -2945,6 +2945,22 @@ def fidget : Verb := .mkRegular {
   vendlerClass := some .activity
   levinClasses := {LevinClass.bodyInternalMotion} }
 
+/-- "wiggle" — Levin 47.3 Modes of Being Involving Motion and 49 Body-Internal Motion verbs;
+    transitive with a body part or small object ("wiggle a tooth"). -/
+def wiggle : Verb := .mkRegular {
+  form := "wiggle"
+  frames := [ArgumentFrame.intransitive, ArgumentFrame.np]
+  vendlerClass := some .activity
+  levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .bodyInternalMotion} }
+
+/-- "wriggle" — Levin 49 Body-Internal Motion verbs. -/
+def wriggle : Verb := .mkRegular {
+  form := "wriggle"
+  frames := [ArgumentFrame.intransitive]
+  passivizable := false
+  vendlerClass := some .activity
+  levinClasses := {LevinClass.bodyInternalMotion} }
+
 /-- "sit" — Levin 50 Assume Position verbs. Stative. -/
 def sit : Verb where
   form := "sit"
@@ -3353,7 +3369,7 @@ def verbs : List Verb :=
    flash, flinch, dress, drown, glow, buzz, rumble, bleed,
    freeze, heat, bend, boil, rust, increase, straighten, flatten,
    open_, lengthen, widen, cool, warm, exist, appear, fidget,
-   sit, stand, walk, swim, fly, roll, float, avoid,
+   wiggle, wriggle, sit, stand, walk, swim, fly, roll, float, avoid,
    linger, rush, rain, charge, cost, fine, tip, pay,
    strike_, forgive, spare, deny, permit, assign, begrudge, bet,
    serve, teach, feed, show_, award, forward_, grant, offer,
