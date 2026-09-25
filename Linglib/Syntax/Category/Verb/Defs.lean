@@ -73,7 +73,8 @@ inductive VoiceType where
 def VoiceType.AssignsTheta (vt : VoiceType) : Prop :=
   vt = .agentive ∨ vt = .reflexive ∨ vt = .experiencer
 
-instance : DecidablePred VoiceType.AssignsTheta := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred VoiceType.AssignsTheta :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- The sense that distinguishes polysemous entries sharing a citation form, as *remember* the
 implicative and *remember* the question-embedding factive. -/
@@ -99,9 +100,9 @@ so flat access (`v.frames`) is preserved. -/
 
 namespace Verb
 
-/-- Argument structure and realization: the argument frames, proto-role entailments and
-    voice. Unaccusativity and implicit arguments are frame shapes (`ArgumentFrame.unaccusative`,
-    `ArgumentFrame.objectDrop`). -/
+/-- The argument structure and realization of a verb are its argument frames, proto-role
+    entailments and voice. Unaccusativity and implicit arguments are frame shapes
+    (`ArgumentFrame.unaccusative`, `ArgumentFrame.objectDrop`). -/
 structure ArgStructure where
   /-- Argument frames, citation frame first: `ArgumentFrame.intransitive`, `ArgumentFrame.np`,
       `ArgumentFrame.finiteClause`, … (`Syntax/Category/Verb/ArgumentFrame/Basic.lean`). `[]`
@@ -120,8 +121,8 @@ structure ArgStructure where
   passivizable : Bool := true
   deriving Repr, BEq
 
-/-- Aspectual class: Vendler class, degree-achievement scale, incrementality,
-    and phasal class. -/
+/-- The aspectual class of a verb is its Vendler class, degree-achievement scale,
+    incrementality and phasal class. -/
 structure Aspect where
   /-- [vendler-1957] aspectual class of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
@@ -141,8 +142,9 @@ structure Aspect where
   phasal : Option Phasal := none
   deriving Repr, BEq
 
-/-- Presupposition profile: factivity class and complement-projection behavior. Whether the
-    verb triggers a presupposition, and of which kind, is derived (`Verb.triggerType`). -/
+/-- The presupposition profile of a verb is its factivity class and complement-projection
+    behavior. Whether the verb triggers a presupposition, and of which kind, is derived
+    (`Verb.triggerType`). -/
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
@@ -152,7 +154,8 @@ structure Presupposition where
   projectionBehavior : Option _root_.Presupposition.ProjectionBehavior := none
   deriving Repr, BEq
 
-/-- Causal/implicative semantics: implicative polarity and causative mechanism. -/
+/-- The causal and implicative semantics of a verb are its implicative polarity and causative
+    mechanism. -/
 structure Causation where
   /-- For implicative verbs: complement entailment polarity (links to compositional semantics). -/
   implicative : Option Polarity := none
@@ -179,8 +182,8 @@ structure Reading where
   size : Option Clause.Size := none
   deriving DecidableEq, Repr
 
-/-- Attitudinal and intensional properties: attitude classification, opacity,
-    question-embedding, and complement monotonicity. -/
+/-- The attitudinal and intensional properties of a verb are its attitude classification,
+    opacity, question-embedding and complement monotonicity. -/
 structure Attitude where
   /-- Does the verb create an opaque context for its complement? -/
   opaqueContext : Bool := false
@@ -235,8 +238,8 @@ structure Verb extends
   senseTag : SenseTag := .default
   deriving BEq
 
-/-- The scale along which a degree achievement measures change: its dimension's, dualized when
-the change is towards the negative pole, as the scale of a negative adjective is. -/
+/-- The scale along which a degree achievement measures change is its dimension's, dualized
+when the change is towards the negative pole, as the scale of a negative adjective is. -/
 def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
   v.scaleDimension.map (v.scalePolarity • ·.boundedness)
 
@@ -249,7 +252,7 @@ the alternate frame's, when present. -/
 /-- The citation frame, the first of the entry's frames. -/
 def Verb.citationFrame? (v : Verb) : Option ArgumentFrame := v.frames.head?
 
-/-- The reading keyed to frame `fr`: the first whose frame `fr` refines. -/
+/-- The reading keyed to frame `fr` is the first whose frame `fr` refines. -/
 def Verb.reading? (v : Verb) (fr : ArgumentFrame) : Option Verb.Reading :=
   v.readings.find? fun r ↦ decide (r.frame ≤ fr)
 
@@ -267,7 +270,7 @@ def Verb.controlType (v : Verb) : ControlType :=
 def Verb.altControlType (v : Verb) : ControlType :=
   (v.frames[1]?.bind fun fr ↦ (v.reading? fr).bind (·.control)).getD .none
 
-/-- The effective attitude on frame `fr`: reading override, else lexeme
+/-- The effective attitude on frame `fr` is the reading's override, else the lexeme's
     default. -/
 def Verb.attitudeOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Attitude :=
   ((v.reading? fr).bind (·.attitude)).orElse fun _ ↦ v.attitude
@@ -276,25 +279,27 @@ def Verb.attitudeOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Attitude :=
 def Verb.codings (v : Verb) : List Complement.Coding :=
   v.frames.flatMap ArgumentFrame.codings
 
-/-- Some frame of the verb records force `f`. -/
-def Verb.TakesForce (v : Verb) (f : Mood.Illocutionary) : Prop :=
-  ∃ fr ∈ v.frames, fr.hasForce f
+/-- Some frame of the verb selects the sentence type `t`. -/
+def Verb.TakesType (v : Verb) (t : Clause.SentenceType) : Prop :=
+  ∃ fr ∈ v.frames, fr.hasType t
 
-instance (v : Verb) (f : Mood.Illocutionary) : Decidable (v.TakesForce f) :=
+instance (v : Verb) (t : Clause.SentenceType) : Decidable (v.TakesType t) :=
   inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
 
-/-- The verb records an interrogative frame, as the responsives and rogatives *know*, *wonder*
-and *ask* do. -/
-abbrev Verb.TakesQuestion (v : Verb) : Prop := v.TakesForce .interrogative
+/-- The verb selects some interrogative sentence type, as the responsives and rogatives
+*know*, *wonder* and *ask* do. -/
+def Verb.TakesQuestion (v : Verb) : Prop := ∃ t, t.IsInterrogative ∧ v.TakesType t
 
-/-- Some frame of the verb has a clausal position: the verb selects a CP or
+instance (v : Verb) : Decidable v.TakesQuestion := inferInstanceAs (Decidable (∃ _t, _ ∧ _))
+
+/-- Some frame of the verb has a clausal position, so the verb selects a CP or
     reduced clause ([schwarzer-2026]'s CP-selecting verbs). -/
 def Verb.TakesClausal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasClausal
 
 instance (v : Verb) : Decidable v.TakesClausal :=
   inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
 
-/-- Some frame of the verb has a nominal position: the verb selects a DP. -/
+/-- Some frame of the verb has a nominal position, so the verb selects a DP. -/
 def Verb.TakesNominal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasNominal
 
 instance (v : Verb) : Decidable v.TakesNominal :=

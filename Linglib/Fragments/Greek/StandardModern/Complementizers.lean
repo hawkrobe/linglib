@@ -34,7 +34,7 @@ namespace Greek.StandardModern.Complementizers
 def oti : Complementizer where
   morphs := [.free "oti"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
 
 /-- *pu* — factive complementizer ([christidis-1982], [roussou-2019]);
     selected by emotive factives, and by perception/memory verbs on
@@ -45,7 +45,7 @@ def oti : Complementizer where
 def pu : Complementizer where
   morphs := [.free "pu"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
   factive := some true
 
 /-- *an* — interrogative complementizer 'if' ([roussou-2010]); types
@@ -55,10 +55,11 @@ def pu : Complementizer where
 def an : Complementizer where
   morphs := [.free "an"]
   coding := some .indicative
-  force := some .interrogative
+  types := .only .polar
 
 /-- *na* — subjunctive ([grano-2024]), selected by volitional, intention and causative
-    verbs (`Verbs.lean`). Whether *na* heads C or a Mood projection is debated; the schema is head-agnostic,
+    verbs (`Verbs.lean`). Whether *na* heads C or a Mood projection is debated; the schema is
+    head-agnostic,
     and [angelopoulos-2026] sets *na* aside. -/
 def na : Complementizer where
   morphs := [.free "na"]

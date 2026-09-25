@@ -38,7 +38,7 @@ def sa : Complementizer where
 def ca : Complementizer where
   morphs := [.free "că"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
 
 /-- The clause-typers of finite complements. -/
 def complementizers : List Complementizer := [sa, ca]

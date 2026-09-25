@@ -30,7 +30,7 @@ namespace Korean.Complementizers
 def ta : Complementizer where
   morphs := [.suff "ta"]
   verbForm := some .Fin
-  force := some .declarative
+  types := .only .declarative
 
 /-- *-nun*, the adnominal ending, which turns a clause into a noun modifier and under *kes*
 'thing' yields a nominalized complement. -/

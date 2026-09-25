@@ -37,11 +37,10 @@ def positionCat : ArgumentFrame.Position → Option Cat
   | .nominal => some .D
   | .clausal (some c) _ _ =>
     some (if c.IsFinite then .C else if c = .infinitive then .T else .V)
-  | .clausal none (some .interrogative) _ => some .C
-  | .clausal none _ _ => some .D
+  | .clausal none t _ => some (if t.IsInterrogative then .C else .D)
   | _ => none
 
-/-- Map a verb's citation frame to its selectional stack: each c-selected argument is one
+/-- The selectional stack of a verb's citation frame, in which each c-selected argument is one
     `Cat` feature consumed by complement Merge.
     Folded in from the former `Syntax/Minimalist/FromFragments.lean` (its only consumer). -/
 def verbToSelStack (v : English.Verb) : SelStack :=
@@ -55,8 +54,8 @@ def verbToSO (v : English.Verb) (id : Nat) : SyntacticObject :=
 /-- A proper name as a leaf, projecting as `.D`. -/
 def nameToSO (n : ProperName) (id : Nat) : SyntacticObject := mkLeafPhon .D [] n.form id
 
-/-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
-    is *Mary* (`em .right`), then *John* is added as specifier (`em .left`). -/
+/-- The Minimalist Merge derivation of "John sees Mary", in which *see*'s complement is
+    *Mary* (`em .right`) and then *John* is added as specifier (`em .left`). -/
 def john_sees_mary : Derivation :=
   { initial := verbToSO English.see 31
     steps   := [.em .right (nameToSO English.Nouns.mary 11),

@@ -48,7 +48,7 @@ namespace Ga
 def ake : Complementizer where
   morphs := [.free "akɛ"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
   verbForm := some .Fin
 
 /-- *kɛji* — the finite complementizer of conditional clauses (ex 97a) and,
@@ -58,7 +58,7 @@ def ake : Complementizer where
 def keji : Complementizer where
   morphs := [.free "kɛji"]
   coding := some .indicative
-  force := some .interrogative
+  types := .of {.polar, .alternative}
   verbForm := some .Fin
 
 /-- *ni* — the irrealis complementizer of controlled clauses, glossed C with the
@@ -76,17 +76,16 @@ def complementizers : List Complementizer := [ake, keji, ni]
 
 /-! ### Embedded clause typology -/
 
-/-- The finite declarative frame `akɛ` types: definitionally the library's
-    generic `ArgumentFrame.finiteClause`. -/
+/-- The finite declarative frame `akɛ` types is definitionally the library's generic
+    `ArgumentFrame.finiteClause`. -/
 def akeFrame : ArgumentFrame := .typedBy ake
 
 /-- The finite interrogative frame `kɛji` types. -/
 def kejiFrame : ArgumentFrame := .typedBy keji
 
-/-- The controlled irrealis frame `ni` types: [noonan-2007]-infinitival, the
-    paper's own term, with a subject that is an overt pronoun in the
-    subjective (nominative) form of Table 3 — never null and never a lexical
-    DP (exx 40–42). -/
+/-- The controlled irrealis frame `ni` types is [noonan-2007]-infinitival, the paper's own
+    term, with a subject that is an overt pronoun in the subjective (nominative) form of
+    Table 3, never null and never a lexical DP (exx 40–42). -/
 def niFrame : ArgumentFrame := .typedBy ni (some (.overt (some .nom)))
 
 /-- The three embedded clause types of [allotey-2021], named by the
