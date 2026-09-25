@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Studies.Ferreira2023
-public import Linglib.Semantics.Homogeneity.Decided
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Data.Examples.AghaJeretic2026
 
@@ -33,8 +32,8 @@ negation and the determiner–modal generalization for infinitival relatives
 
 * `contradiction_tests`, `triviality_tests`, `tests_predicted`, `crosslinguistic_tests`: (6),
   (8), (11) and (12) from the force scale, and the chapter's judgments row by row.
-* `vfiWeak_negRaises_iff`: domain-restriction weak necessity neg-raises exactly over a decided
-  domain, the remark of §2.5.
+* `vfiWeak_negRaises_iff`: domain-restriction weak necessity neg-raises for every prejacent at
+  once only in the one-world limit of its domain.
 * `projection_matches_table`, `readings_licensed`: the four projections license exactly the
   readings of the chapter's table, and every reading of its examples.
 * `exh_subdomain`: (50), exhaustification over the subdomain alternatives is necessity over
@@ -63,6 +62,7 @@ negation and the determiner–modal generalization for infinitival relatives
 * [ferreira-2023]
 * [von-fintel-iatridou-2008]
 * [rubinstein-2014]
+* [horn-2001]
 * [deal-2011]
 * [jeretic-2021a]
 * [jeretic-2021b]
@@ -77,7 +77,6 @@ negation and the determiner–modal generalization for infinitival relatives
 namespace AghaJeretic2026
 
 open Modality Modality.Kratzer Modality.Directive Data.Examples Exhaustification
-open Homogeneity (negRaising_iff_subsingleton)
 open Ferreira2023 (Conjunct Pattern)
 
 variable {W : Type*}
@@ -130,12 +129,15 @@ theorem crosslinguistic_tests :
           Pattern.Consistent ⟨⟨φ, false, false⟩, ⟨.necessity, true, false⟩⟩) := by
   decide
 
-/-- §2.5: domain-restriction weak necessity neg-raises at a world exactly when its nested
-best-world domain is decided. -/
+/-- Domain-restriction weak necessity neg-raises for every prejacent at once exactly when its
+nested best-world domain has at most one world, the dichotomous limit [horn-2001] excludes from
+neg-raising: a library observation, where the chapter's §2.5 only remarks that a
+non-quantificational semantics may fare better on the neg-raising facts. -/
 theorem vfiWeak_negRaises_iff (f : ModalBase W) (g g' : OrderingSource W) (w : W) :
     (∀ p : W → Prop, ¬ weakNecessity f g g' p w → weakNecessity f g g' (fun w' ↦ ¬ p w') w) ↔
       (bestAmong (bestWorlds f g w) (g' w)).Subsingleton :=
-  negRaising_iff_subsingleton _
+  ModalLogic.box_not_of_not_box_at_iff (R := fun _ v ↦ v ∈ bestAmong (bestWorlds f g w) (g' w))
+    (w := w)
 
 /-! ### Scope under negation ((18)–(20)) -/
 
