@@ -80,13 +80,6 @@ theorem forall_bij_inv (f : α → α) (hBij : Function.Bijective f)
   refine ⟨fun h x => h (f x), fun h x => ?_⟩
   obtain ⟨y, rfl⟩ := hBij.surjective x; exact h y
 
-/-- `∃ x, P x` is invariant under bijective substitution. -/
-theorem exists_bij_inv (f : α → α) (hBij : Function.Bijective f)
-    (P : α → Prop) :
-    (∃ x, P x) ↔ (∃ x, P (f x)) := by
-  refine ⟨fun ⟨x, hx⟩ => ?_, fun ⟨y, hy⟩ => ⟨f y, hy⟩⟩
-  obtain ⟨y, rfl⟩ := hBij.surjective x; exact ⟨y, hx⟩
-
 /-! ### Conservativity -/
 
 theorem every_conservative : Conservative ⟦every⟧ := by
@@ -261,8 +254,11 @@ theorem notAll_doubleMono :
   ⟨outerNeg_restrictorDown_to_up _ every_restrictor_down,
    outerNeg_up_to_down _ every_scope_up⟩
 
-theorem every_filtrating : Filtrating ⟦every⟧ := by
-  intro A B C hAB hAC x hA; exact ⟨hAB x hA, hAC x hA⟩
+/-- *Every* is scope-intersective, and so filtrating. -/
+theorem every_scopeIntersective : ScopeIntersective ⟦every⟧ :=
+  fun _ _ _ hAB hAC x hA => ⟨hAB x hA, hAC x hA⟩
+
+theorem every_filtrating : Filtrating ⟦every⟧ := ⟨every_scope_up, every_scopeIntersective⟩
 
 /-! ### Aristotelian square of opposition
 
@@ -327,22 +323,6 @@ are instances. -/
 theorem isContradictory_outerNeg (q : GQ α) (R : α → Prop) :
     Aristotelian.IsContradictory ((q R) : (α → Prop) → Prop) (outerNeg q R) :=
   isCompl_compl
-
-/-- The A–O diagonal, where `every` and `not every` are contradictory. -/
-theorem every_satisfies_isContradictory_pointwise (R : α → Prop) :
-    Aristotelian.IsContradictory
-      ((⟦every⟧ R) : (α → Prop) → Prop)
-      (outerNeg ⟦every⟧ R) :=
-  isContradictory_outerNeg _ R
-
-/-- The E–I diagonal, where `no` and `some` are contradictory. -/
-theorem no_satisfies_isContradictory_pointwise (R : α → Prop) :
-    Aristotelian.IsContradictory
-      ((⟦no⟧ R) : (α → Prop) → Prop)
-      (⟦some⟧ R) := by
-  have hno : outerNeg ⟦no⟧ = some_sem := by
-    rw [← innerNeg_every_eq_no]; exact dualQ_every_eq_some
-  rw [← hno]; exact isContradictory_outerNeg _ R
 
 /-! ### Basic left monotonicities ([peters-westerstahl-2006] §5.5) -/
 
