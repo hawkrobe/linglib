@@ -66,6 +66,9 @@ namespace Square
 
 variable {X Y α β R : Type*} {n : ℕ} (sq : Square X)
 
+/-- The square with its rows and columns exchanged. -/
+def transpose : Square X := ⟨sq.tl, sq.bl, sq.tr, sq.br⟩
+
 /-! ### Independence -/
 
 /-- `f` is insensitive to the rows: it agrees on the two forms of each column (Figure 4a of
@@ -121,6 +124,11 @@ theorem interaction_eq_zero_iff' {f : X → R} :
     sq.interaction f = 0 ↔ f sq.tl - f sq.bl = f sq.tr - f sq.br := by
   rw [interaction_apply]
   constructor <;> intro h <;> linear_combination h
+
+@[simp] theorem interaction_transpose (f : X → R) :
+    sq.transpose.interaction f = sq.interaction f := by
+  simp only [transpose, interaction_apply]
+  ring
 
 theorem InsensitiveToRow.interaction_eq_zero {f : X → R} (h : sq.InsensitiveToRow f) :
     sq.interaction f = 0 := by

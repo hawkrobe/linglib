@@ -17,9 +17,11 @@ harmonies of its single-constraint profiles (32) (`separable_iff_eq_prod_single`
 
 Maximum entropy harmony is separable (29), which recovers §3's observation that it predicts the
 generalization (`predictsHZ_meHarmony`). Feeding the weighted violations to the inverse function
-instead of the exponential (27) is not separable: on the Tagalog square of [zuraw-hayes-2017] it
-satisfies the constant difference only when the two prefix constraints have equal weights or the
-two stem-nasal constraints have none (§4.4, `inverseHarmony_hz_tagalog_iff`). Every separable
+instead of the exponential (27) is not separable: on the Tagalog square, whose rows and columns
+are independent relative to six of [zuraw-hayes-2017]'s constraints (§2.3,
+`tagalog_independent`), it satisfies the constant difference only when the two prefix
+constraints have equal weights or the two stem-nasal constraints have none (§4.4,
+`inverseHarmony_hz_tagalog_iff`). Every separable
 harmony is maximum entropy harmony over the constraints rescaled by `Ĉₖ = −log hₖ(Cₖ)` ((33),
 (34), `prod_rpow_eq_meHarmony_rescale`), a rescaling that preserves the order of violation
 counts and which of them are zero.
@@ -36,6 +38,9 @@ counts and which of them are zero.
   vary along the rows and the others along the columns gives
   `H (update u k c) = H (single k c) * H (update u k 0)`, whence (32) by induction on the
   constraints.
+* The Tagalog square crosses the prefix constructions *maŋ-* OTHER and *maŋ-* RED-, which the
+  paper calls *maŋ-* and *paŋ-* (footnote 1), with the stems /b/ and /k/. Its constraints are
+  [zuraw-hayes-2017]'s less *[root m/n/ŋ, which penalizes every substitution (footnote 3).
 * The weights of (30) add no generality to the class of separable harmonies, since `hₖ ^ wₖ` is
   itself a unary function (`separable_iff_exists_prod`); they matter to the grammars a learner
   can reach, not to the characterization.
@@ -207,6 +212,22 @@ theorem rescale_nonneg (hpos : ∀ c, 0 < h k c) (hanti : StrictAnti (h k)) (h0 
     (c : ℕ) : 0 ≤ rescale h k c := by
   simpa [rescale, h0] using (strictMono_rescale hpos hanti).monotone c.zero_le
 
+/-! ### The Tagalog square (§2.1, §2.3) -/
+
+/-- The Tagalog square (11): *maŋ-* OTHER and *maŋ-* RED- crossed with /b/ and /k/. -/
+def tagalogSquare : Square (Prefix × Zuraw2010.StemC) := square .mangOther .mangRed .b .k
+
+/-- The six constraints of §2.3: `NasSub`, *NC̥, *[stem ŋ, *[stem ŋ/n, and the Uniformity
+constraints of the two prefixes. -/
+def tagalogConstraints : CON Candidate 6 :=
+  ![nasSub, starNC, starRootVelar, starRootCorVel, unif .mangOther, unif .mangRed]
+
+/-- Prefixes and stems are independent dimensions (§2.3, Figure 3): the markedness constraints
+are insensitive to the prefix, the Uniformity constraints to the stem. -/
+theorem tagalog_independent : tagalogSquare.Independent tagalogConstraints := by
+  intro k
+  fin_cases k <;> first | exact .inl ⟨rfl, rfl⟩ | exact .inr ⟨rfl, rfl⟩
+
 /-! ### The inverse harmony (§4.4) -/
 
 /-- The inverse harmony (27): the weighted violations fed to `h(x) = 1/(1+x)` in place of maximum
@@ -224,12 +245,11 @@ theorem inverseHarmony_pos {w : Fin n → ℝ} (hw : ∀ k, 0 ≤ w k) (v : Fin 
 prefix constraints have equal weights, or the two stem-nasal constraints have none (§4.4 and
 footnote 11). -/
 theorem inverseHarmony_hz_tagalog_iff {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k) :
-    nasalSubSquare.interaction (logOdds (inverseHarmony w) constraints .yes .no) = 0 ↔
+    tagalogSquare.interaction (logOdds (inverseHarmony w) tagalogConstraints .yes .no) = 0 ↔
       w 4 = w 5 ∨ w 2 = 0 ∧ w 3 = 0 := by
-  simp [logOdds, inverseHarmony, weightedViolations, Fin.sum_univ_six, nasalSubSquare, constraints,
-    nasSub, starNC, starStemVelar, starStemVelarCoronal, unifMang, unifPang, Zuraw2010.nasSub,
-    Zuraw2010.starNC, Zuraw2010.starInitVelar, Zuraw2010.starInitCorVel,
-    NasalSubCandidate.project, NasalSubInput.toStemC, NasalSubOutput.toSubSt]
+  simp [logOdds, inverseHarmony, weightedViolations, Fin.sum_univ_six, tagalogSquare, square,
+    tagalogConstraints, nasSub, starNC, starRootVelar, starRootCorVel, unif, Zuraw2010.nasSub,
+    Zuraw2010.starNC, Zuraw2010.starInitVelar, Zuraw2010.starInitCorVel, project]
   have hp (k : Fin 6) : 0 < 1 + w k := by linarith [hw k]
   have hp' (i j k : Fin 6) : 0 < 1 + (w i + w j + w k) := by linarith [hw i, hw j, hw k]
   have hp'' : 0 < 1 + (w 0 + w 1) := by linarith [hw 0, hw 1]
@@ -257,7 +277,7 @@ stem-nasal constraint is active. -/
 theorem not_separable_inverseHarmony {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k) (h45 : w 4 ≠ w 5)
     (h2 : w 2 ≠ 0) : ¬ Separable (inverseHarmony w) := fun hH ↦ by
   have := (inverseHarmony_hz_tagalog_iff hw).1 <|
-    hH.predictsHZ (fun v ↦ (inverseHarmony_pos hw v).ne') _ _ _ _ independent .yes .no
+    hH.predictsHZ (fun v ↦ (inverseHarmony_pos hw v).ne') _ _ _ _ tagalog_independent .yes .no
   tauto
 
 end Magri2025
