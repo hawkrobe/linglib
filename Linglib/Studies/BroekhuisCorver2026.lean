@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.Dutch.Adpositions
 public import Linglib.Syntax.WordOrder
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Studies.Helmantel2002
 
 /-!
 # Broekhuis and Corver 2026: Dutch adpositions
@@ -39,6 +40,13 @@ resist R-pronominalization. The chapter itself notes that *af* and *heen*, the s
 *van … af* and *over … heen*, are not commonly used as prepositions, although they once were,
 and remain postpositions or particles with a directional meaning.
 
+The chapter says that the raising of a nominal complement is semantically conditioned and does
+not state the condition. Helmantel's analysis, which the chapter names as a starting point,
+supplies one: the complement raises when the phrase is directional and the adposition is not
+inherently directional, since an inherently directional adposition such as *naar* 'to' checks
+the directionality itself. That condition entails the chapter's rule and keeps the grammar's
+inherently directional prepositions out of the postpositional order.
+
 ## Main definitions
 
 * `ComplementKind`, `Raises`: what a phrase-internal complement is, and when it raises to the
@@ -59,6 +67,9 @@ and remain postpositions or particles with a directional meaning.
 * `extractable_iff_raises`, `extractable_iff_of_linearization_eq_pre`,
   `extractable_of_linearization_ne_pre`: extraction is raising, so from a prepositional phrase
   only an R-pronoun leaves and from any other phrase the complement does.
+* `raises_nominal_of_dpRaises`, `pointLocative_not_postP`: Helmantel's condition on nominal
+  raising entails the chapter's rule, and under it the inherently directional prepositions have
+  no postpositional use.
 * `linearization_direction_post`, `circumP_parts`: the rule reproduces every postpositional
   use of the fragment and every circumposition decomposes into listed parts.
 * `postP_subset_preP`, `circumP_complement_nominal`, `no_rPron_not_postP`: the lexical
@@ -84,11 +95,12 @@ and remain postpositions or particles with a directional meaning.
 
 ## TODO
 
-The chapter conditions the raising of a nominal complement semantically and does not state
-the condition; `Raises` raises every nominal complement of a directional phrase, so
-`linearization_eq_post_iff` predicts a postpositional order for the grammar's directional
-prepositions, *naar* 'to' among them, which have none, and reads the prepositional phrase inside
-*van het dak af* 'off the roof' as locational although *van* denotes a source path.
+`Raises` idealizes the chapter's semantic condition to directionality, so
+`linearization_eq_post_iff` predicts a postpositional order for every directional preposition.
+Helmantel's condition removes *naar*, *tot* and *van*, but *vanaf*, *vanuit* and *via*, which
+she does not classify, still come out postpositional although the grammar records no such use,
+and the prepositional phrase inside *van het dak af* 'off the roof' is read as locational
+although *van* denotes a source path.
 
 ## References
 
@@ -96,6 +108,7 @@ prepositions, *naar* 'to' among them, which have none, and reads the preposition
   Dutch* (2026)][broekhuis-corver-2026a]
 * [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume VII: Adpositions and Adpositional
   Phrases* (2026)][broekhuis-corver-2026c]
+* [M. Helmantel, *Interactions in the Dutch Adpositional Domain* (2002)][helmantel-2002]
 -/
 
 @[expose] public section
@@ -241,6 +254,23 @@ This is why circumpositions pattern with prepositions rather than with postposit
 theorem circumP_patterns_with_preP :
     ¬ Extractable .nominal .place ∧ Extractable .rPronoun .place :=
   ⟨fun h ↦ (extractable_nominal_iff _).1 h rfl, extractable_rPronoun _⟩
+
+/-! ### The condition on nominal raising -/
+
+/-- The semantic condition the chapter leaves open is, in Helmantel's analysis, that the
+adposition is not inherently directional: a directional phrase raises its nominal complement
+when its directionality is syntactic rather than lexical, and that raising entails the chapter's
+idealized rule. -/
+theorem raises_nominal_of_dpRaises {inherent : Prop} {d : Case.PathDir}
+    (h : Helmantel2002.DPRaises (d ≠ .place) inherent) : Raises .nominal d :=
+  h.1
+
+/-- Under that condition the inherently directional prepositions *naar*, *tot* and *van* raise no
+complement and have no postpositional use, as the fragment records, which removes them from the
+rule's overprediction. -/
+theorem pointLocative_not_postP :
+    ∀ a ∈ Helmantel2002.pointLocatives, .post ∉ a.linearization :=
+  fun a ha h ↦ by simp [Helmantel2002.pointLocative_linearization a ha] at h
 
 /-! ### The Dutch lexicon -/
 
