@@ -66,7 +66,7 @@ namespace Yolyan2025
 open Subregular Subregular.BMRS
 
 /-- The single BMRS index variable. -/
-abbrev x : Term := .var
+abbrev x : Walk := .var
 
 variable {α : Type*} [DecidableEq α]
 

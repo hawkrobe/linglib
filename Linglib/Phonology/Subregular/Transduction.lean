@@ -12,7 +12,7 @@ public import Linglib.Phonology.Subregular.Docking
 
 String-to-string **logical transductions** in the quantifier-free fragment ([chandlee-2014],
 [chandlee-jardine-2019]): a map defined by a **copy set** and, per copy, an ordered list of
-guarded output clauses, where each guard is a `Subregular.QF` formula at the input position. A
+guarded output clauses, where each guard is a `Subregular.WindowFormula` at the input position. A
 copy set of size `k` lets the output be larger than the input (insertion); guards that match
 nothing delete; relabelling copies rewrite a symbol in place.
 
@@ -57,7 +57,7 @@ variable {α β γ : Type*}
 
 /-- A per-copy output clause: a quantifier-free guard at the input position and the output symbol
 emitted when it is the first matching clause. -/
-abbrev Clause (α β : Type*) := QF α × β
+abbrev Clause (α β : Type*) := WindowFormula α × β
 
 /-- A quantifier-free order-preserving logical transduction: `copies` output copies of each input
 position, and for each copy an ordered list of guarded output clauses. -/
@@ -120,18 +120,18 @@ theorem emitAt_eq_of_agree {r : ℕ} {T : Transduction α β}
   apply findSome?_congr
   intro cl hcl
   have hb := hT c cl hcl
+  have hc := WindowFormula.BackBounded.realize_congr hn hn' hlbl hedge hb
   by_cases h : cl.1.Realize w n
-  · rw [ite_eq_left h, ite_eq_left ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mp h)]
-  · rw [ite_eq_right h,
-      ite_eq_right (fun hh => h ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mpr hh))]
+  · rw [ite_eq_left h, ite_eq_left (hc.mp h)]
+  · rw [ite_eq_right h, ite_eq_right (fun hh => h (hc.mpr hh))]
 
 end Transduction
 
 /-! ### Relabelling transductions -/
 
-theorem QF.realize_label_var_iff [DecidableEq α] {w : List α} {n : ℕ} {a : α} :
-    (QF.label a .var).Realize w n ↔ w[n]? = some a := by
-  simp only [QF.Realize, Term.eval]
+theorem WindowFormula.realize_label_var_iff [DecidableEq α] {w : List α} {n : ℕ} {a : α} :
+    (WindowFormula.label a .var).Realize w n ↔ w[n]? = some a := by
+  simp only [WindowFormula.Realize, Walk.eval]
   split_ifs with h
   · simp
   · have : w[n]? = none := List.getElem?_eq_none (Nat.le_of_not_lt h)
@@ -144,7 +144,8 @@ variable [DecidableEq α]
 /-- The one-copy relabelling transduction of a quantifier-free docking process over the
 symbols `alphabet`: for each symbol, a clause docking it under the guard, then a faithful
 clause. -/
-def relabel (φ : QF α) (dock : α → α) (alphabet : List α) : Transduction α α where
+def relabel (φ : WindowFormula α) (dock : α → α) (alphabet : List α) :
+    Transduction α α where
   copies := 1
   clause _ :=
     (alphabet.map fun a => (φ.conj (.label a .var), dock a)) ++
@@ -175,7 +176,7 @@ private theorem flatMap_range_toList_eq_mapIdx {β : Type*} (f : ℕ → α → 
     simp
 
 /-- On a word over the alphabet, the relabelling transduction computes the docking map. -/
-theorem apply_relabel {φ : QF α} {dock : α → α} {alphabet : List α} {w : List α}
+theorem apply_relabel {φ : WindowFormula α} {dock : α → α} {alphabet : List α} {w : List α}
     (hw : ∀ a ∈ w, a ∈ alphabet) :
     (relabel φ dock alphabet).apply w = (Docking.ofQF φ dock).map w := by
   have hemit : (relabel φ dock alphabet).emitAt w = fun n =>
@@ -183,11 +184,11 @@ theorem apply_relabel {φ : QF α} {dock : α → α} {alphabet : List α} {w : 
     funext n
     simp only [emitAt, relabel, List.finRange_succ, List.finRange_zero, List.map_nil,
       List.filterMap_cons, List.filterMap_nil, List.findSome?_append, List.findSome?_map,
-      Function.comp_def, QF.Realize]
+      Function.comp_def, WindowFormula.Realize]
     by_cases hn : n < w.length
     · have hmem : w[n] ∈ alphabet := hw _ (List.getElem_mem hn)
-      have hvar : ((Term.eval w n Term.var).bind fun x => w[x]?) = some w[n] := by
-        simp [Term.eval, hn]
+      have hvar : ((Walk.eval w n Walk.var).bind fun x => w[x]?) = some w[n] := by
+        simp [Walk.eval, hn]
       simp only [hvar, Option.some.injEq, List.getElem?_eq_getElem hn]
       by_cases hφ : φ.Realize w n
       · simp only [hφ, true_and]
@@ -196,7 +197,7 @@ theorem apply_relabel {φ : QF α} {dock : α → α} {alphabet : List α} {w : 
       · simp only [hφ, false_and, ite_false, findSome?_none, Option.none_or]
         rw [findSome?_eq_of_mem hmem]
         simp [hn]
-    · simp [Term.eval, hn, findSome?_none]
+    · simp [Walk.eval, hn, findSome?_none]
   rw [apply, hemit, flatMap_range_toList_eq_mapIdx]
   rfl
 
@@ -209,12 +210,12 @@ section Example
 private inductive Sym | a | b | c
   deriving DecidableEq
 
-private def x : Term := .var
-private def isA (t : Term) : QF Sym := .label .a t
+private def x : Walk := .var
+private def isA (t : Walk) : WindowFormula Sym := .label .a t
 /-- Any non-`a` symbol of the demo alphabet. -/
-private def nonA (t : Term) : QF Sym := .disj (.label .b t) (.label .c t)
+private def nonA (t : Walk) : WindowFormula Sym := .disj (.label .b t) (.label .c t)
 /-- The position is flanked by `a`s. -/
-private def flankedA : QF Sym := .conj (isA x.pred) (isA x.succ)
+private def flankedA : WindowFormula Sym := .conj (isA x.pred) (isA x.succ)
 
 /-- **Relabelling** — rewrite `b → c` between `a`s: the `b → c` clause precedes the faithful
 `b → b` clause, so it wins in that context. -/
@@ -230,7 +231,7 @@ example : relabelBC.apply [Sym.a, .b, .a] = [Sym.a, .c, .a] := by decide
 private def deleteFlanked : Transduction Sym Sym where
   copies := 1
   clause _ := [(.label .a x, .a), (.label .c x, .c),
-               (QF.conj (.label .b x) flankedA.neg, .b)]
+               (WindowFormula.conj (.label .b x) flankedA.neg, .b)]
 
 example : deleteFlanked.apply [Sym.a, .b, .a] = [Sym.a, .a] := by decide
 
@@ -242,7 +243,7 @@ private def insertA : Transduction Sym Sym where
     if k = 0 then
       [(.label .a x, .a), (.label .b x, .b), (.label .c x, .c)]
     else
-      [(nonA x |>.conj (QF.final x), .a)]
+      [(nonA x |>.conj (WindowFormula.final x), .a)]
 
 example : insertA.apply [Sym.a, .b] = [Sym.a, .b, .a] := by decide
 

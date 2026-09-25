@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.QF
+public import Linglib.Phonology.Subregular.WindowFormula
 public import Linglib.Core.Data.List.DependsOn
 public import Mathlib.Data.Finset.Basic
 
@@ -17,7 +17,7 @@ mutually recursive Boolean-valued unary predicates over words, built from `if…
 edge tests `initial`/`final` (`min`/`max`), input class tests, and recursive calls. Its
 one-sided fragments characterize the left- and right-subsequential functions;
 [bhaskar-chandlee-jardine-2023] extends the characterization and [chandlee-jardine-2021] applies
-it to phonological modelling. Terms are the position walks of `Subregular.Term`.
+it to phonological modelling. The walks are `Subregular.Walk`.
 
 Two symbol types dissolve the usual signature bookkeeping: input labels `α` get the
 lookup rule, rule heads `F` get the unfolding rule, and a `Program` is a total map
@@ -58,14 +58,14 @@ variable {α F : Type*}
 input **class tests** `label` (the lookup rule; a `Finset` of symbols, so featural
 predicates like V or N over a segment alphabet are single atoms — a symbol test is the
 singleton case), rule-head calls `call` (the unfolding rule), and `if…then…else`.
-Terms are the position walks of `Subregular.Term`. -/
+The walks are `Subregular.Walk`. -/
 inductive Expr (α F : Type*) where
   | tru
   | fls
-  | initial (t : Term)
-  | final (t : Term)
-  | label (s : Finset α) (t : Term)
-  | call (f : F) (t : Term)
+  | initial (t : Walk)
+  | final (t : Walk)
+  | label (s : Finset α) (t : Walk)
+  | call (f : F) (t : Walk)
   | ite (c e₁ e₂ : Expr α F)
   deriving DecidableEq
 
@@ -83,7 +83,7 @@ def Expr.not (e : Expr α F) : Expr α F := .ite e .fls .tru
 
 /-- Substitute a term for the variable throughout an expression: `e.subst u` is
 `e[u/x]`, the operation the μ-calculus translation writes `tr(φ)[s(x)]`. -/
-def Expr.subst : Expr α F → Term → Expr α F
+def Expr.subst : Expr α F → Walk → Expr α F
   | .tru, _ => .tru
   | .fls, _ => .fls
   | .initial t, u => .initial (t.comp u)
@@ -154,7 +154,7 @@ inductive Eval (P : Program α F) (w : List α) : ℕ → Expr α F → Bool →
   | ite_false {i c e₁ e₂ b} (hc : Eval P w i c false) (h₂ : Eval P w i e₂ b) :
       Eval P w i (.ite c e₁ e₂) b
 
-variable {P : Program α F} {w w' : List α} {i v n m : ℕ} {t u : Term}
+variable {P : Program α F} {w w' : List α} {i v n m : ℕ} {t u : Walk}
   {e : Expr α F} {b b' : Bool}
 
 /-- Boolean-form introduction for the edge test: the value is the comparison. -/
@@ -170,7 +170,7 @@ theorem Eval.final (h : t.eval w i = some v) : Eval P w i (.final t) (v == w.len
   · rw [beq_self_eq_true]
     exact .final_true h
   · rw [beq_eq_false_iff_ne.mpr hne]
-    exact .final_false h (by have := Term.eval_lt h; omega)
+    exact .final_false h (by have := Walk.eval_lt h; omega)
 
 /-- Boolean-form introduction for the class test. -/
 theorem Eval.label [DecidableEq α] {s : Finset α} {a : α} (h : t.eval w i = some v)
@@ -299,11 +299,11 @@ theorem eval_iff_evalFuel [DecidableEq α] :
 
 /-! ### Substitution -/
 
-/-- Term reads sequence through composition. -/
+/-- Walk reads sequence through composition. -/
 private theorem eval_comp_of {z : ℕ} (hu : u.eval w i = some v)
     (h : t.eval w v = some z) :
     (t.comp u).eval w i = some z := by
-  rw [Term.eval_comp, hu]
+  rw [Walk.eval_comp, hu]
   exact h
 
 /-- Transport a derivation through substitution: evaluating `e[u/x]` at `i` is
@@ -339,22 +339,22 @@ theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
   | initial_true h =>
-    exact fun _ _ => Eval.initial_true ((Term.eval_congr hlen _).symm.trans h)
+    exact fun _ _ => Eval.initial_true ((Walk.eval_congr hlen _).symm.trans h)
   | initial_false h hv =>
-    exact fun _ _ => Eval.initial_false ((Term.eval_congr hlen _).symm.trans h) hv
+    exact fun _ _ => Eval.initial_false ((Walk.eval_congr hlen _).symm.trans h) hv
   | final_true h =>
-    exact fun _ _ => Eval.final_true ((Term.eval_congr hlen _).symm.trans (hlen ▸ h))
+    exact fun _ _ => Eval.final_true ((Walk.eval_congr hlen _).symm.trans (hlen ▸ h))
   | final_false h hv =>
-    exact fun _ _ => Eval.final_false ((Term.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
+    exact fun _ _ => Eval.final_false ((Walk.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
-    exact fun he hag => Eval.label_true ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Iic.mpr (Term.eval_le_of_backward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_true ((Walk.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Iic.mpr (Walk.eval_le_of_backward he h)) ▸ hl) has
   | label_false h hl has =>
-    exact fun he hag => Eval.label_false ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Iic.mpr (Term.eval_le_of_backward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_false ((Walk.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Iic.mpr (Walk.eval_le_of_backward he h)) ▸ hl) has
   | call h he' ih =>
-    exact fun he hag => Eval.call ((Term.eval_congr hlen _).symm.trans h)
-      (ih (hP _) (hag.mono (Set.Iic_subset_Iic.mpr (Term.eval_le_of_backward he h))))
+    exact fun he hag => Eval.call ((Walk.eval_congr hlen _).symm.trans h)
+      (ih (hP _) (hag.mono (Set.Iic_subset_Iic.mpr (Walk.eval_le_of_backward he h))))
   | ite_true hc h₁ ihc ih₁ =>
     exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>
@@ -369,22 +369,22 @@ theorem Eval.congr_eqOn_Ici (hP : P.Forward) (hlen : w.length = w'.length)
   | tru => exact fun _ _ => .tru
   | fls => exact fun _ _ => .fls
   | initial_true h =>
-    exact fun _ _ => Eval.initial_true ((Term.eval_congr hlen _).symm.trans h)
+    exact fun _ _ => Eval.initial_true ((Walk.eval_congr hlen _).symm.trans h)
   | initial_false h hv =>
-    exact fun _ _ => Eval.initial_false ((Term.eval_congr hlen _).symm.trans h) hv
+    exact fun _ _ => Eval.initial_false ((Walk.eval_congr hlen _).symm.trans h) hv
   | final_true h =>
-    exact fun _ _ => Eval.final_true ((Term.eval_congr hlen _).symm.trans (hlen ▸ h))
+    exact fun _ _ => Eval.final_true ((Walk.eval_congr hlen _).symm.trans (hlen ▸ h))
   | final_false h hv =>
-    exact fun _ _ => Eval.final_false ((Term.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
+    exact fun _ _ => Eval.final_false ((Walk.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
-    exact fun he hag => Eval.label_true ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Ici.mpr (Term.le_eval_of_forward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_true ((Walk.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Ici.mpr (Walk.le_eval_of_forward he h)) ▸ hl) has
   | label_false h hl has =>
-    exact fun he hag => Eval.label_false ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Ici.mpr (Term.le_eval_of_forward he h)) ▸ hl) has
+    exact fun he hag => Eval.label_false ((Walk.eval_congr hlen _).symm.trans h)
+      (hag.getElem?_eq (mem_Ici.mpr (Walk.le_eval_of_forward he h)) ▸ hl) has
   | call h he' ih =>
-    exact fun he hag => Eval.call ((Term.eval_congr hlen _).symm.trans h)
-      (ih (hP _) (hag.mono (Set.Ici_subset_Ici.mpr (Term.le_eval_of_forward he h))))
+    exact fun he hag => Eval.call ((Walk.eval_congr hlen _).symm.trans h)
+      (ih (hP _) (hag.mono (Set.Ici_subset_Ici.mpr (Walk.le_eval_of_forward he h))))
   | ite_true hc h₁ ihc ih₁ =>
     exact fun he hag => Eval.ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false hc h₂ ihc ih₂ =>

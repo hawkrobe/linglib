@@ -1122,7 +1122,6 @@ import Linglib.Phonology.Subregular.Multitier
 import Linglib.Phonology.Subregular.OCP
 import Linglib.Phonology.Subregular.OSL
 import Linglib.Phonology.Subregular.OTBound
-import Linglib.Phonology.Subregular.QF
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.StrictlyLocal
 import Linglib.Phonology.Subregular.StrictlyPiecewise
