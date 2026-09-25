@@ -1,7 +1,7 @@
 [
   {
     "id": "rubinstein2014_nr_should",
-    "source": {"bibkey": "horn-1978", "paperLabel": "(31a)"},
+    "source": {"bibkey": "horn-1978", "paperLabel": "p. 198"},
     "reportedIn": {"bibkey": "rubinstein-2014", "paperLabel": "(31a)"},
     "language": "stan1293",
     "primaryText": "I don't think you should leave.",
@@ -25,7 +25,7 @@
   },
   {
     "id": "rubinstein2014_nr_ought",
-    "source": {"bibkey": "horn-1978", "paperLabel": "(31a)"},
+    "source": {"bibkey": "horn-1978", "paperLabel": "p. 198"},
     "reportedIn": {"bibkey": "rubinstein-2014", "paperLabel": "(31a)"},
     "language": "stan1293",
     "primaryText": "I don't think you ought to leave.",
@@ -49,13 +49,13 @@
   },
   {
     "id": "rubinstein2014_nr_better",
-    "source": {"bibkey": "horn-1978", "paperLabel": "(31a)"},
+    "source": {"bibkey": "horn-1978", "paperLabel": "p. 198"},
     "reportedIn": {"bibkey": "rubinstein-2014", "paperLabel": "(31a)"},
     "language": "stan1293",
-    "primaryText": "I don't think you'd better leave.",
+    "primaryText": "I don't think you better leave.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I don't think you'd better leave.",
+    "translation": "I don't think you better leave.",
     "context": "Embedded under 'I don't think', testing the lower-negation (neg-raising) reading.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -73,7 +73,7 @@
   },
   {
     "id": "rubinstein2014_nr_good",
-    "source": {"bibkey": "horn-1978", "paperLabel": "(30)"},
+    "source": {"bibkey": "horn-1978", "paperLabel": "p. 211"},
     "reportedIn": {"bibkey": "rubinstein-2014", "paperLabel": "(30)"},
     "language": "stan1293",
     "primaryText": "It wouldn't be good for you to cheat on your taxes.",
@@ -97,7 +97,7 @@
   },
   {
     "id": "rubinstein2014_nr_must",
-    "source": {"bibkey": "horn-1978", "paperLabel": "(31b)"},
+    "source": {"bibkey": "horn-1978", "paperLabel": "p. 198"},
     "reportedIn": {"bibkey": "rubinstein-2014", "paperLabel": "(31b)"},
     "language": "stan1293",
     "primaryText": "I don't think you must leave.",
@@ -121,7 +121,7 @@
   },
   {
     "id": "rubinstein2014_nr_haveTo",
-    "source": {"bibkey": "horn-1978", "paperLabel": "(31b)"},
+    "source": {"bibkey": "horn-1978", "paperLabel": "p. 198"},
     "reportedIn": {"bibkey": "rubinstein-2014", "paperLabel": "(31b)"},
     "language": "stan1293",
     "primaryText": "I don't think you have to leave.",
@@ -154,7 +154,7 @@
       ["ce'irim", "young.PL"], ["sinim", "Chinese.PL"], ["kayom", "today"], ["lo", "NEG"],
       ["xošvim", "think.PL"], ["še-'adif", "that-preferable"], ["axeret", "differently"]
     ],
-    "translation": "Young Chinese these days don't think it would be better otherwise.",
+    "translation": "(I'm astonished that) young Chinese these days don't think it would be better if things were different.",
     "context": "Blog discussion of attitudes; tests neg-raising (cyclicity) of 'adif 'preferable' in Hebrew.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -195,7 +195,7 @@
   },
   {
     "id": "rubinstein2014_compositional_deberia",
-    "source": {"bibkey": "von-fintel-iatridou-2008", "paperLabel": "(8b)"},
+    "source": {"bibkey": "von-fintel-iatridou-2008", "paperLabel": "p. 122"},
     "reportedIn": {"bibkey": "rubinstein-2014", "paperLabel": "(8b)"},
     "language": "stan1288",
     "primaryText": "Debería limpiar los platos, pero no estoy obligado.",
@@ -205,7 +205,7 @@
       ["platos", "dish.PL"], ["pero", "but"], ["no", "NEG"], ["estoy", "be.1SG"],
       ["obligado", "obliged"]
     ],
-    "translation": "I ought to clean the dishes, but I am not obliged to.",
+    "translation": "I ought to do the dishes but I am not obliged to.",
     "context": "Spanish derives weak necessity compositionally: strong modal deber + conditional morphology.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -213,7 +213,8 @@
     "paperFeatures": [
       ["modal", "deberia"],
       ["category", "compositional"],
-      ["strategy", "compositional"]
+      ["strategy", "compositional"],
+      ["diagnostic", "test1"]
     ],
     "comment": "Rubinstein (2014) ex. (8b), 'Compositional WN' (von Fintel & Iatridou 2008, p. 122): Spanish builds weak necessity from a strong necessity modal (deber) plus the conditional morphology characteristic of counterfactual consequents.",
     "metaLanguage": "stan1293",
@@ -231,8 +232,8 @@
       ["ha-kelim", "DEF-dish.PL"], ["aval", "but"], ["hu", "3SG.M"], ["lo", "NEG"],
       ["xayav", "must.SG.M"]
     ],
-    "translation": "He needs to wash the dishes, but he doesn't have to.",
-    "context": "Test 1 (x ought to q, but doesn't have to) with carix 'need' substituted for ought.",
+    "translation": "?He needs to do the dishes, but he doesn't have to.",
+    "context": "Given the rules of the house. Test 1 (x ought to q, but doesn't have to) with carix 'need' substituted for ought.",
     "judgment": "questionable",
     "alternatives": [],
     "readings": [],
@@ -371,6 +372,39 @@
       ["pairwise", "true"]
     ],
     "comment": "Rubinstein (2014) ex. (24) (Julia Staffel, p.c.): the morphological comparative 'better' supports an explicit than-clause comparing two alternatives, whereas modal 'ought' (positive/superlative) only selects the overall best. The comparative backbone is overt in the than-clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "rubinstein2014_nr_carix",
+    "source": {"bibkey": "rubinstein-2014", "paperLabel": "(57)"},
+    "reportedIn": null,
+    "language": "hebr1245",
+    "primaryText": "ani lo xoševet še-ata carix lihyot po",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ani", "I"],
+      ["lo", "NEG"],
+      ["xoševet", "think.FSG"],
+      ["še-ata", "that-you.MSG"],
+      ["carix", "need.MSG"],
+      ["lihyot", "be"],
+      ["po", "here"]
+    ],
+    "translation": "I don't think you should be here.",
+    "context": "The speaker tries to prevent someone from entering a meeting they are not invited to.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "lowerNeg", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "carix"],
+      ["category", "modalVerb"],
+      ["diagnostic", "negRaising"],
+      ["hybrid", "true"]
+    ],
+    "comment": "Read as 'I think you shouldn't be here': the paper's apparent exception to the rule that strong necessity modals do not neg-raise, tied to the hybrid nature of carix.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   }

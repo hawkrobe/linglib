@@ -521,7 +521,7 @@
     "id": "aghajeretic2026_17",
     "source": {
       "bibkey": "rubinstein-2014",
-      "paperLabel": "(17)"
+      "paperLabel": "(21a)"
     },
     "reportedIn": {
       "bibkey": "agha-jeretic-2026",
@@ -592,7 +592,15 @@
       ],
       [
         "test",
-        "contradiction"
+        "triviality"
+      ],
+      [
+        "first",
+        "weak"
+      ],
+      [
+        "second",
+        "strong"
       ]
     ],
     "comment": "",
@@ -989,10 +997,13 @@
   {
     "id": "aghajeretic2026_26a",
     "source": {
+      "bibkey": "weingartz-hohaus-2024",
+      "paperLabel": ""
+    },
+    "reportedIn": {
       "bibkey": "agha-jeretic-2026",
       "paperLabel": "(26a)"
     },
-    "reportedIn": null,
     "language": "afri1274",
     "primaryText": "Ek moet nog na die partyjie toe gaan!",
     "discourseSegments": [],
@@ -1023,10 +1034,13 @@
   {
     "id": "aghajeretic2026_28a",
     "source": {
+      "bibkey": "weingartz-hohaus-2024",
+      "paperLabel": ""
+    },
+    "reportedIn": {
       "bibkey": "agha-jeretic-2026",
       "paperLabel": "(28a)"
     },
-    "reportedIn": null,
     "language": "samo1305",
     "primaryText": "E tatau ona ou alu i le pātī.",
     "discourseSegments": [],
@@ -1111,8 +1125,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "You can't go.",
-    "context": "",
-    "judgment": "acceptable",
+    "context": "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave.",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
       {
@@ -1134,7 +1148,7 @@
         "clausemate negation"
       ]
     ],
-    "comment": "Intended 'You don't have to go' is unavailable.",
+    "comment": "Marked # in the context: the intended 'You don't have to go' is unavailable, and the actual 'You can't go' is weird there.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
@@ -1153,8 +1167,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "If I can call the doctor, I will.",
-    "context": "",
-    "judgment": "acceptable",
+    "context": "Prompt: If I have to call the doctor, I will.",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
       {
@@ -1316,7 +1330,38 @@
       {
         "name": "possibility",
         "judgment": "acceptable"
-      },
+      }
+    ],
+    "paperFeatures": [
+      [
+        "modal",
+        "får"
+      ],
+      [
+        "environment",
+        "unembedded"
+      ]
+    ],
+    "comment": "The necessity reading of får is shown by (52).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2026_52",
+    "source": {
+      "bibkey": "agha-jeretic-2026",
+      "paperLabel": "(52)"
+    },
+    "reportedIn": null,
+    "language": "swed1254",
+    "primaryText": "Isac får betala en bot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Isac has to pay a fine.",
+    "context": "I'm telling a story in which Isac illegally parked the car, and the police caught him.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
       {
         "name": "necessity",
         "judgment": "acceptable"
@@ -1332,7 +1377,7 @@
         "unembedded"
       ]
     ],
-    "comment": "The necessity reading is (52) 'Isac has to pay a fine.'",
+    "comment": "The necessity reading of får unembedded.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
@@ -1394,7 +1439,38 @@
       {
         "name": "possibility",
         "judgment": "acceptable"
-      },
+      }
+    ],
+    "paperFeatures": [
+      [
+        "modal",
+        "får"
+      ],
+      [
+        "environment",
+        "other DE"
+      ]
+    ],
+    "comment": "The necessity reading of får in a conditional antecedent is shown by (56).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "aghajeretic2026_56",
+    "source": {
+      "bibkey": "agha-jeretic-2026",
+      "paperLabel": "(56)"
+    },
+    "reportedIn": null,
+    "language": "swed1254",
+    "primaryText": "Om Maria får betala en böter blir hon olycklig.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If Maria has to pay a fine, she will be unhappy.",
+    "context": "Maria took the train without paying and is worried about getting caught.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
       {
         "name": "necessity",
         "judgment": "acceptable"
@@ -1410,17 +1486,20 @@
         "other DE"
       ]
     ],
-    "comment": "The necessity reading is (56).",
+    "comment": "The necessity reading of får in a conditional antecedent.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "aghajeretic2026_57",
     "source": {
+      "bibkey": "newkirk-2022a",
+      "paperLabel": ""
+    },
+    "reportedIn": {
       "bibkey": "agha-jeretic-2026",
       "paperLabel": "(57)"
     },
-    "reportedIn": null,
     "language": "nand1264",
     "primaryText": "Kabunga a-anga-na-sy-a oko kalhasi ko munabwire",
     "discourseSegments": [],
@@ -1460,12 +1539,15 @@
   {
     "id": "aghajeretic2026_58",
     "source": {
+      "bibkey": "newkirk-2022a",
+      "paperLabel": ""
+    },
+    "reportedIn": {
       "bibkey": "agha-jeretic-2026",
       "paperLabel": "(58)"
     },
-    "reportedIn": null,
     "language": "nand1264",
-    "primaryText": "si-u-anga-sat-a",
+    "primaryText": "nga-oko reglema yi-ka-bug-a, si-u-anga-sat-a",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "According to the rules, you can't play.",
@@ -1537,6 +1619,10 @@
       [
         "environment",
         "unembedded"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1580,6 +1666,10 @@
       [
         "environment",
         "clausemate negation"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1623,6 +1713,10 @@
       [
         "environment",
         "other DE"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1666,6 +1760,10 @@
       [
         "environment",
         "unembedded"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1709,6 +1807,10 @@
       [
         "environment",
         "clausemate negation"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1752,6 +1854,10 @@
       [
         "environment",
         "other DE"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1795,6 +1901,10 @@
       [
         "environment",
         "unembedded"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1838,6 +1948,10 @@
       [
         "environment",
         "clausemate negation"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1881,6 +1995,10 @@
       [
         "environment",
         "other DE"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1924,6 +2042,10 @@
       [
         "environment",
         "unembedded"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -1967,6 +2089,10 @@
       [
         "environment",
         "clausemate negation"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -2010,6 +2136,10 @@
       [
         "environment",
         "other DE"
+      ],
+      [
+        "table",
+        "true"
       ]
     ],
     "comment": "",
@@ -2038,7 +2168,7 @@
       },
       {
         "name": "narrow",
-        "judgment": "unacceptable"
+        "judgment": "marginal"
       }
     ],
     "paperFeatures": [
@@ -2051,7 +2181,7 @@
         "clausemate"
       ]
     ],
-    "comment": "The salient reading is that hard work never results in success.",
+    "comment": "The chapter calls the strong reading, that hard work never results in success, the most salient and preferred one.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
@@ -2077,7 +2207,7 @@
       },
       {
         "name": "narrow",
-        "judgment": "unacceptable"
+        "judgment": "marginal"
       }
     ],
     "paperFeatures": [
@@ -2090,7 +2220,7 @@
         "clausemate"
       ]
     ],
-    "comment": "",
+    "comment": "The chapter reports the reading that babies never eat arugula as the salient one.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
@@ -2129,7 +2259,7 @@
         "weak"
       ]
     ],
-    "comment": "From Hackl and Nissenbaum 1999.",
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
@@ -2168,7 +2298,7 @@
         "weak"
       ]
     ],
-    "comment": "From Hackl and Nissenbaum 1999.",
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
@@ -2207,7 +2337,7 @@
         "strong"
       ]
     ],
-    "comment": "From Hackl and Nissenbaum 1999.",
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
@@ -2246,7 +2376,7 @@
         "strong"
       ]
     ],
-    "comment": "From Hackl and Nissenbaum 1999.",
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   }
