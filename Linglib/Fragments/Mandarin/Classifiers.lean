@@ -44,65 +44,65 @@ namespace Mandarin.Classifiers
 /-! ### Individual classifiers -/
 
 /-- *gè* 个, the general classifier: *sān ge rén* 'three people'. -/
-def ge : Classifier := { form := "gè", script := some "个" }
+def ge : Classifier := { toMorph := .free "gè", script := some "个" }
 
 /-- *wèi* 位, the polite counterpart of *gè* for persons: *xiānsheng* 'gentleman'. -/
-def wei : Classifier := { form := "wèi", script := some "位" }
+def wei : Classifier := { toMorph := .free "wèi", script := some "位" }
 
 /-- *zhī* 只: *shǒu* 'hand', *gǒu* 'dog'. -/
-def zhi : Classifier := { form := "zhī", script := some "只" }
+def zhi : Classifier := { toMorph := .free "zhī", script := some "只" }
 
 /-- *jiàn* 件: *yīfu* 'garment'. -/
-def jian : Classifier := { form := "jiàn", script := some "件" }
+def jian : Classifier := { toMorph := .free "jiàn", script := some "件" }
 
 /-- *duǒ* 朵: *huā* 'flower'. -/
-def duo : Classifier := { form := "duǒ", script := some "朵" }
+def duo : Classifier := { toMorph := .free "duǒ", script := some "朵" }
 
 /-- *jià* 架: *fēijī* 'airplane'. -/
-def jia : Classifier := { form := "jià", script := some "架" }
+def jia : Classifier := { toMorph := .free "jià", script := some "架" }
 
 /-- *liàng* 辆: *chē* 'vehicle'. -/
-def liang : Classifier := { form := "liàng", script := some "辆" }
+def liang : Classifier := { toMorph := .free "liàng", script := some "辆" }
 
 /-- *zhǎn* 盏: *dēng* 'lamp'. -/
-def zhan : Classifier := { form := "zhǎn", script := some "盏" }
+def zhan : Classifier := { toMorph := .free "zhǎn", script := some "盏" }
 
 /-- *pǐ* 匹: *mǎ* 'horse'. -/
-def pi : Classifier := { form := "pǐ", script := some "匹" }
+def pi : Classifier := { toMorph := .free "pǐ", script := some "匹" }
 
 /-- *tóu* 头 'head': *niú* 'cattle'. -/
-def tou : Classifier := { form := "tóu", script := some "头" }
+def tou : Classifier := { toMorph := .free "tóu", script := some "头" }
 
 /-- *běn* 本 'volume': *shū* 'book' as a thing. -/
-def ben : Classifier := { form := "běn", script := some "本" }
+def ben : Classifier := { toMorph := .free "běn", script := some "本" }
 
 /-- *bù* 部: *shū* 'book' as a work. -/
-def bu : Classifier := { form := "bù", script := some "部" }
+def bu : Classifier := { toMorph := .free "bù", script := some "部" }
 
 /-- *zhāng* 张 'sheet': *chuáng* 'bed', *zhuōzi* 'table'. -/
-def zhang : Classifier := { form := "zhāng", script := some "张" }
+def zhang : Classifier := { toMorph := .free "zhāng", script := some "张" }
 
 /-- *bǎ* 把, of things taken hold of: *dāo* 'knife'. -/
-def ba : Classifier := { form := "bǎ", script := some "把" }
+def ba : Classifier := { toMorph := .free "bǎ", script := some "把" }
 
 /-- *zhī* 枝 'branch': *máobǐ* 'brush-pen', *jiàn* 'arrow'. -/
-def zhiBranch : Classifier := { form := "zhī", script := some "枝" }
+def zhiBranch : Classifier := { toMorph := .free "zhī", script := some "枝" }
 
 /-- *kē* 棵: *cǎo* 'grass', *huā* 'flower' as a plant. -/
-def ke : Classifier := { form := "kē", script := some "棵" }
+def ke : Classifier := { toMorph := .free "kē", script := some "棵" }
 
 /-- *tiáo* 条 'strip': *shé* 'snake', *hé* 'river', *niú* 'cow', *xīnwén* 'news'. -/
-def tiao : Classifier := { form := "tiáo", script := some "条" }
+def tiao : Classifier := { toMorph := .free "tiáo", script := some "条" }
 
 /-- *dào* 道 'way, course': *hé* 'river', *cài* 'course of food'. -/
-def dao : Classifier := { form := "dào", script := some "道" }
+def dao : Classifier := { toMorph := .free "dào", script := some "道" }
 
 /-- *mén* 门: *dàpào* 'artillery piece'. -/
-def men : Classifier := { form := "mén", script := some "门" }
+def men : Classifier := { toMorph := .free "mén", script := some "门" }
 
 /-- *xiē* 些, the classifier of plurality, 'several' after *yī* 'one': *yī xiē wánjù* 'some
 toys'. -/
-def xie : Classifier := { form := "xiē", script := some "些", gloss := "PL" }
+def xie : Classifier := { toMorph := .free "xiē", script := some "些", gloss := "PL" }
 
 /-- The individual classifiers. -/
 def classifiers : Finset Classifier :=
@@ -112,25 +112,25 @@ def classifiers : Finset Classifier :=
 /-! ### Container measures -/
 
 /-- *píng* 瓶 'bottle': *yóu* 'oil', *cù* 'vinegar'. -/
-def ping : Classifier := { form := "píng", script := some "瓶", gloss := "bottle" }
+def ping : Classifier := { toMorph := .free "píng", script := some "瓶", gloss := "bottle" }
 
 /-- *bēi* 杯 'glass, cup': *jiǔ* 'wine', *chá* 'tea'. -/
-def bei : Classifier := { form := "bēi", script := some "杯", gloss := "glass" }
+def bei : Classifier := { toMorph := .free "bēi", script := some "杯", gloss := "glass" }
 
 /-- *xiāng* 箱 'box, chest': *júzi* 'orange'. -/
-def xiang : Classifier := { form := "xiāng", script := some "箱", gloss := "box" }
+def xiang : Classifier := { toMorph := .free "xiāng", script := some "箱", gloss := "box" }
 
 /-- *hé* 盒 'small box': *táng* 'candy'. -/
-def he : Classifier := { form := "hé", script := some "盒", gloss := "box" }
+def he : Classifier := { toMorph := .free "hé", script := some "盒", gloss := "box" }
 
 /-- *guō* 锅 'pot': *fàn* 'cooked rice'. -/
-def guo : Classifier := { form := "guō", script := some "锅", gloss := "pot" }
+def guo : Classifier := { toMorph := .free "guō", script := some "锅", gloss := "pot" }
 
 /-- *gāng* 缸 'vat': *cù* 'vinegar'. -/
-def gang : Classifier := { form := "gāng", script := some "缸", gloss := "vat" }
+def gang : Classifier := { toMorph := .free "gāng", script := some "缸", gloss := "vat" }
 
 /-- *wǎn* 碗 'bowl': *fàn* 'cooked rice'. -/
-def wan : Classifier := { form := "wǎn", script := some "碗", gloss := "bowl" }
+def wan : Classifier := { toMorph := .free "wǎn", script := some "碗", gloss := "bowl" }
 
 /-- The container measures, examples of an open class. -/
 def containerMeasures : Finset Classifier := {ping, bei, xiang, he, guo, gang, wan}

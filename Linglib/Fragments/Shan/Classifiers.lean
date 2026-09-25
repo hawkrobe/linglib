@@ -1,84 +1,52 @@
 module
 
 public import Linglib.Syntax.Category.Classifier.Basic
+public import Mathlib.Data.Finset.Insert
 
 /-!
 # Shan numeral classifiers
 
-Typed classifier entries for Shan (Southwestern Tai, Kra-Dai), a
-classifier-for-noun language spoken in Myanmar and surrounding countries
-by approximately 4.6 million speakers.
+A Shan noun is counted through a classifier, a free morpheme after the numeral in the order
+noun–numeral–classifier: *mǎa sǎam tǒ* 'three dogs'. The classifier is chosen by the noun, and
+the classifiers are nominal in origin: *tǒ* for animals is also the noun 'body', and *ton* for
+plants is the head of the compound *ton-mâj* 'tree', which it counts. The classifier also
+appears with the interrogative numeral *lǎaj* 'how many', with quantifiers, demonstratives and
+relative clauses, and *ʔǎn* is the general classifier of inanimates. The basic classifiers below
+are those of [little-moroney-royer-2022]'s table of Shan classifiers, after [moroney-2021].
 
-Unlike Ch'ol classifiers, which are bound to the numeral, Shan classifiers
-are free morphemes derived from nominal elements. The classifier for
-animals, *tǒ*, also means 'body'; the classifier for plants, *ton*, is
-the head of the compound *ton-mâj* 'tree'.
+## Main definitions
 
-## CLF-for-N semantics
-
-In the CLF-for-N analysis ([little-moroney-royer-2022] §4;
-[chierchia-1998]; [jenks-2011]), the classifier atomizes the
-noun denotation:
-  ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]
-
-Because the classifier is semantically connected to the noun (not the
-numeral), it appears in contexts beyond numerals: with quantifiers (*ku*
-'every'), demonstratives (*nâj* 'this'), and relative clauses.
-
-## Word order
-
-Shan word order is [N Num CLF], with the noun preceding the numeral and
-classifier. [moroney-2021] analyzes this as NP-movement from a base
-position below ClfP to a position above the numeral and classifier.
-
-Following [moroney-2021] and [little-moroney-royer-2022], the classifiers are free morphemes
-derived from nominal elements, required uniformly by numerals and extending to quantifiers,
-demonstratives and relative clauses, with a generic classifier, and they do not co-occur with
-plural marking.
+* `Shan.Classifiers.classifiers` — the classifiers entered here.
 
 ## References
 
 * [little-moroney-royer-2022]
 * [moroney-2021]
-* [chierchia-1998]
 -/
 
 @[expose] public section
 
 namespace Shan.Classifiers
 
-/-! ### Numeral classifiers ([little-moroney-royer-2022] Table 6) -/
+/-- *ʔǎn*, the general classifier of inanimates: *tsɔ̂ sǎam ʔǎn* 'three spoons'. -/
+def an : Classifier := { toMorph := .free "ʔǎn" }
 
-/-- ʔǎn — inanimates (generic/default classifier for inanimate objects). -/
-def an : Classifier := { form := "ʔǎn", gloss := "inanimate/generic" }
+/-- *tǒ*, animals, also the noun 'body': *mɛ́w sǎam tǒ* 'three cats'. -/
+def «to» : Classifier := { toMorph := .free "tǒ" }
 
-/-- tǒ — animals. Also means 'body' as a free noun. -/
-def to : Classifier := { form := "tǒ", gloss := "animal" }
+/-- *kɔ̂*, people: *kón sǎam kɔ̂* 'three people'. -/
+def ko : Classifier := { toMorph := .free "kɔ̂" }
 
-/-- kǒ — people/humans. -/
-def ko : Classifier := { form := "kǒ", gloss := "human" }
+/-- *hòj*, round objects: *màak-khɔ̌ sǎam hòj* 'three jujubes'. -/
+def hoj : Classifier := { toMorph := .free "hòj" }
 
-/-- hòj — round objects (fruits, jujubes). -/
-def hoj : Classifier := { form := "hòj", gloss := "round" }
+/-- *ton*, plants and trees, the head of *ton-mâj* 'tree': *ton-mâj sǎam ton* 'three trees'. -/
+def ton : Classifier := { toMorph := .free "ton" }
 
-/-- ton — plants, trees. Head of compound *ton-mâj* 'tree'. -/
-def ton : Classifier := { form := "ton", gloss := "plant" }
+/-- *lǎŋ*, buildings: *hɤ́n sǎam lǎŋ* 'three houses'. -/
+def lang : Classifier := { toMorph := .free "lǎŋ" }
 
-/-- lǎŋ — buildings, houses. -/
-def lang : Classifier := { form := "lǎŋ", gloss := "building" }
-
-/-! ### Inventory -/
-
-def allClassifiers : List Classifier :=
-  [an, to, ko, hoj, ton, lang]
-
-def defaultClassifier : Classifier := an
+/-- The classifiers. -/
+def classifiers : Finset Classifier := {an, «to», ko, hoj, ton, lang}
 
 end Shan.Classifiers
-
-namespace Shan
-
-/-- Whether classifiers and plural marking co-occur. -/
-def pluralClassifierCooccur : Bool := false
-
-end Shan

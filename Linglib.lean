@@ -1230,7 +1230,6 @@ import Linglib.Semantics.Causation.SEM.Forced
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Valuation
 import Linglib.Semantics.Causation.VerbClass
-import Linglib.Semantics.Classifier
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont

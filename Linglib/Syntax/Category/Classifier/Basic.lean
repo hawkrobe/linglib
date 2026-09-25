@@ -1,38 +1,56 @@
 module
 
+public import Linglib.Morphology.Morph
+
 /-!
 # Classifiers
 
-This file defines the word-class record for classifiers and the vocabulary of Aikhenvald's
-typology of noun categorization devices. `Classifier` is the lexical entry Fragments store in
-their inventories: a form, its spelling in a native script, and a gloss. Which nouns a
-classifier counts, whether it is a language's general classifier, and which semantic parameters
-motivate it are facts about a whole system or analyses of it, not properties of the entry: a
-noun records the classifiers it takes (`ClassifiedNoun`), and a typology's coding of a system
-lives in the study that makes it. A device is described by where its morphemes occur and what
-they characterize, the locus and the constituent, and its kind (noun class, numeral classifier,
-verbal classifier, …) is the classification of that pair by Table 15.1 (`Classifier.kind`), never
-a stored label.
+This file defines the word-class record for classifiers and the vocabulary of
+[aikhenvald-2000]'s typology of noun categorization devices. `Classifier` is the lexical entry
+Fragments store in their inventories: a morph, which is how the classifier attaches and its
+form, with its spelling in a native script and its gloss. Which nouns a classifier counts,
+whether it is a language's general classifier, and which semantic parameters motivate it are
+facts about a whole system or analyses of it, not properties of the entry: a noun records the
+classifiers it takes (`ClassifiedNoun`), and a typology's coding of a system lives in the study
+that makes it. A device is described by where its morphemes occur and what they characterize,
+the locus and the constituent, and its kind (noun class, numeral classifier, verbal classifier,
+…) is the classification of that pair by the book's table of scopes (`Kind.ofScope`), never a
+stored label: every kind is the classification of some pair (`Kind.ofScope_surjective`), and
+noun class is the one kind with two loci, agreement inside and outside the noun phrase
+(`Kind.ofScope_eq_some_nounClass_iff`). How a device is realized is likewise read off its
+entries where it has them (`Classifier.realization`): the segmental realizations are the
+attachment kinds of `Morphology.Morph`, and the book's further devices for marking noun classes
+on a noun are the remaining cases of `Realization`.
 
 ## Main definitions
 
-* `Classifier` — the lexical entry.
+* `Classifier` — the lexical entry, a morph with its script and gloss.
 * `Classifier.Parameter` — the semantic parameters.
-* `Classifier.Scope`, `Classifier.Constituent`, `Classifier.Kind`, `Classifier.kind` — the nine
-  kinds of device as the classification of a locus by the constituent it characterizes.
-* `Classifier.Assignment`, `Classifier.Realization` — assignment principles and realizations.
-* `Classifier.Strategy` — the compositional strategies a framework may attribute to classifiers.
+* `Classifier.Scope`, `Classifier.Constituent`, `Classifier.Kind`, `Classifier.Kind.ofScope` —
+  the nine kinds of device as the classification of a locus by the constituent it
+  characterizes.
+* `Classifier.Assignment`, `Classifier.Realization`, `Classifier.realization` — assignment
+  principles, realizations, and the realization of an entry.
 
 ## References
 
-* [aikhenvald-2000], §1.5, §2.3, §4.4.1, §10.5, §11.1, Tables 15.1–15.3
+* [aikhenvald-2000], §1.5, §2.3, §10.5, §11.1, Tables 15.1–15.3
 * [corbett-1991]
-* [downing-1996]
 * [allan-1977]
-* [little-moroney-royer-2022]
 -/
 
 @[expose] public section
+
+open Morphology (Morph)
+
+/-- A classifier lexical entry: the morph, its attachment kind and form, the form a romanization
+where the language has a native script, its spelling in that script, and its gloss. -/
+structure Classifier extends Morph where
+  /-- The spelling in the native script. -/
+  script : Option String := none
+  /-- The gloss. -/
+  gloss : String := "CL"
+  deriving DecidableEq, Repr
 
 namespace Classifier
 
@@ -82,21 +100,6 @@ inductive Parameter where
   /-- Colour: perceptually salient but never a basis for noun categorization. -/
   | colour
   deriving DecidableEq, Repr
-
-end Classifier
-
-/-- A classifier lexical entry: its form, romanized where the language has a native script, its
-spelling in that script, and its gloss. -/
-structure Classifier where
-  /-- The form, a romanization where the language has a native script. -/
-  form : String
-  /-- The spelling in the native script. -/
-  script : Option String := none
-  /-- The gloss. -/
-  gloss : String := "CL"
-  deriving DecidableEq, Repr
-
-namespace Classifier
 
 /-! ### Kinds of device, by locus and constituent -/
 
@@ -169,7 +172,7 @@ inside a head-modifier NP or agreeing with an argument outside it, noun classifi
 numeral classifiers in the numeral NP, the three possessive kinds by which part of the
 possessive NP they characterize, verbal classifiers agreeing with an argument in the clause,
 locative and deictic classifiers in adpositional and attributive NPs. -/
-def kind : Scope → Constituent → Option Kind
+def Kind.ofScope : Scope → Constituent → Option Kind
   | .headModifierNP, .headNoun => some .nounClass
   | .predicateArgument, .argument => some .nounClass
   | .noun, .headNoun => some .nounClassifier
@@ -181,6 +184,25 @@ def kind : Scope → Constituent → Option Kind
   | .adpositionalNP, .adpositionArgument => some .locativeClassifier
   | .attributiveNP, .headNoun => some .deicticClassifier
   | _, _ => none
+
+/-- Every kind of device is the classification of some locus and constituent. -/
+theorem Kind.ofScope_surjective : ∀ k : Kind, ∃ s c, ofScope s c = some k
+  | .nounClass => ⟨.headModifierNP, .headNoun, rfl⟩
+  | .nounClassifier => ⟨.noun, .headNoun, rfl⟩
+  | .numeralClassifier => ⟨.numeralNP, .headNoun, rfl⟩
+  | .relationalClassifier => ⟨.possessiveNP, .possessiveRelation, rfl⟩
+  | .possessedClassifier => ⟨.possessiveNP, .possessedNoun, rfl⟩
+  | .possessorClassifier => ⟨.possessiveNP, .possessor, rfl⟩
+  | .verbalClassifier => ⟨.clause, .argument, rfl⟩
+  | .locativeClassifier => ⟨.adpositionalNP, .adpositionArgument, rfl⟩
+  | .deicticClassifier => ⟨.attributiveNP, .headNoun, rfl⟩
+
+/-- Noun class is the one kind with two loci: agreement with the head noun inside a
+head-modifier NP, and with an argument outside the NP. -/
+theorem Kind.ofScope_eq_some_nounClass_iff {s : Scope} {c : Constituent} :
+    ofScope s c = some .nounClass ↔
+      s = .headModifierNP ∧ c = .headNoun ∨ s = .predicateArgument ∧ c = .argument := by
+  cases s <;> cases c <;> simp [ofScope]
 
 /-! ### Assignment and realization -/
 
@@ -196,16 +218,12 @@ inductive Assignment where
   | mixed
   deriving DecidableEq, Repr
 
-/-- The surface realization of a classifier morpheme. -/
+/-- The surface realization of a noun categorization device: a segmental morph, attached on a
+side of its host as an affix or a clitic or free, or one of the further devices by which noun
+classes are marked on the noun itself. -/
 inductive Realization where
-  /-- Prefix or proclitic. -/
-  | prefix
-  /-- Suffix or enclitic. -/
-  | suffix
-  /-- Clitic. -/
-  | clitic
-  /-- An independent lexeme. -/
-  | freeForm
+  /-- A segmental morph of the given attachment kind. -/
+  | morph (kind : Morph.Kind)
   /-- Stem-internal vowel change. -/
   | apophony
   /-- A suppletive stem. -/
@@ -220,24 +238,11 @@ inductive Realization where
   | repeater
   deriving DecidableEq, Repr
 
-/-! ### Compositional strategies -/
+/-- The realization of an entry: the attachment kind of its morph. -/
+def realization (c : Classifier) : Realization := .morph c.kind
 
-/-- The compositional strategy a framework attributes to classifier constructions. Strategy
-assignments to particular languages are made in the study files of the papers that make them
-(`Chierchia1998`, `LittleMoroneyRoyer2022`, `Sudo2016`), never in the Fragments. -/
-inductive Strategy where
-  /-- The classifier is a measure function required by the numeral, which takes it as its
-  first argument ([krifka-1995b], [bale-coon-2014]); predicts classifier–plural co-occurrence
-  and classifiers in counting contexts without a noun. -/
-  | forNumeral
-  /-- The classifier atomizes the noun denotation so that the numeral can count
-  ([chierchia-1998]); predicts classifiers beyond numerals and complementary distribution with
-  plural marking. -/
-  | forNoun
-  /-- Numerals are type-`n` singular terms shifted to predicates by a silent ∪-operator that
-  overt classifiers in the lexicon block ([sudo-2016]); predicts classifiers with numerals only
-  and no numeral or noun idiosyncrasies. -/
-  | sudoBlocking
-  deriving DecidableEq, Repr
+@[simp] theorem realization_mk (m : Morph) (script : Option String) (gloss : String) :
+    realization ⟨m, script, gloss⟩ = .morph m.kind :=
+  rfl
 
 end Classifier
