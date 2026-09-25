@@ -23,7 +23,7 @@ preposition. The complement of a non-spatial preposition that is morphologically
 
 ## Main definitions
 
-* `Dutch.Adpositions.Adposition`: the entry.
+* `Dutch.Adposition`: the entry.
 * `Dutch.Adpositions.inventory`: the entries.
 
 ## Main results
@@ -61,7 +61,7 @@ preposition. The complement of a non-spatial preposition that is morphologically
 
 @[expose] public section
 
-namespace Dutch.Adpositions
+namespace Dutch
 
 /-- A Dutch adposition is the root entry with, for each position relative to its complement,
 the direction of the path a spatial use there denotes, and with whether it occurs without its
@@ -77,6 +77,8 @@ structure Adposition extends _root_.Adposition where
   /-- The complement can be replaced by an R-word, as *met de pop* 'with the doll' beside *er
   ... mee* 'with it'. -/
   rPronoun : Bool := true
+
+namespace Adpositions
 
 /-- `preposition form relation` is the preposition over a noun phrase with a locational use. -/
 def preposition (form : String) (relation : _root_.Adposition.RelationType := .spatial) :
@@ -104,7 +106,8 @@ def circumposition (first second : String) (d : Case.PathDir) : Adposition :=
 
 The locational prepositions are the deictic *achter*, *naast* and *voor*, the absolute *boven*,
 *om*, *onder*, *rond* and *tussen*, and the inherent *aan*, *bij*, *binnen*, *buiten*, *door*,
-*in*, *langs*, *op*, *over*, *tegen*, *tegenover* and *uit*; the directional prepositions are
+*in*, *langs*, *op*, *over*, *tegen*, *tegenover* and *uit*, with *beneden* 'below', the
+counterpart of *boven*, listed beside them; the directional prepositions are
 *naar* and *tot*, whose complement is the endpoint, *van*, *vanaf* and *vanuit*, whose
 complement is the starting point, and *over*, *via* and *voorbij*, whose complement lies on
 the path. -/
@@ -116,6 +119,11 @@ def aan : Adposition := { preposition "aan" with intransitive := true }
 /-- *achter* 'behind' is a deictic locational preposition, *Jan staat achter de auto* 'Jan
 stands behind the car', and the particle of *achter blijven* 'lag behind'. -/
 def achter : Adposition := { preposition "achter" with intransitive := true }
+
+/-- *beneden* 'below' is a locational preposition, *Jan bevindt zich beneden de grote rivieren*
+'Jan is south of the big rivers', and is used without its complement, *de kamer beneden* 'the
+room downstairs'. -/
+def beneden : Adposition := { preposition "beneden" with intransitive := true }
 
 /-- *bij* 'near' is a locational preposition, also used without its complement, *het
 postkantoor is dicht bij* 'the post office is close by'. -/
@@ -331,7 +339,7 @@ def wegens : Adposition := { preposition "wegens" .logical with rPronoun := fals
 
 /-- `inventory` lists the entries. -/
 def inventory : List Adposition :=
-  [aan, achter, bij, binnen, boven, buiten, door, in_, langs, naar, naast, om, onder, op,
+  [aan, achter, beneden, bij, binnen, boven, buiten, door, in_, langs, naar, naast, om, onder, op,
    over₁, over₂, rond, tegen, tegenover, tot, tussen, uit, van, vanaf, vanuit, via, voor,
    voorbij, af, heen, toe,
    vanAf, onderDoor, tussenDoor, overHeen, doorHeen, omHeen, naarToe, tussenIn,
@@ -368,4 +376,6 @@ theorem intransitive_of_complement_nil :
     ∀ a ∈ inventory, a.complement = [] → a.intransitive = true := by
   decide
 
-end Dutch.Adpositions
+end Adpositions
+
+end Dutch
