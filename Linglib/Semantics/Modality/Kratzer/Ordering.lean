@@ -25,7 +25,7 @@ verifies the whole ordering source, the best worlds are exactly those that do
 
 * `kratzerPreorder A`, `atLeastAsGoodAs A w z`, `strictlyBetter A w z`: the ordering induced
   by `A`, in its non-strict and strict forms.
-* `accessibleWorlds f w`: the worlds compatible with the modal base at `w`.
+* `f.accessibleWorlds w`: the worlds compatible with the modal base at `w`.
 * `bestAmong worlds A`, `bestWorlds f g w`: the minimal worlds of a domain, and of the
   accessible worlds.
 
@@ -38,7 +38,7 @@ verifies the whole ordering source, the best worlds are exactly those that do
 @[expose] public section
 
 
-namespace Modality.Kratzer
+namespace Modality
 
 variable {W : Type*}
 
@@ -86,17 +86,17 @@ theorem strictlyBetter_iff (A : List (W → Prop)) (w z : W) :
 
 /-- The worlds accessible from `w` given the modal base `f` are those compatible with every
 proposition of `f w`, Kratzer's `⋂f(w)`. -/
-def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
+def ModalBase.accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
   propIntersection (f w)
 
 /-- Growing the modal base can only shrink the accessible worlds. -/
 theorem accessibleWorlds_anti {f f' : ModalBase W} {w : W} (h : f w ⊆ f' w) :
-    accessibleWorlds f' w ⊆ accessibleWorlds f w :=
+    f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   propIntersection_anti_of_subset h
 
 /-- A modal base is realistic iff every world is accessible from itself. -/
 theorem isRealistic_iff_mem_accessible (f : ModalBase W) :
-    isRealistic f ↔ ∀ w, w ∈ accessibleWorlds f w :=
+    f.IsRealistic ↔ ∀ w, w ∈ f.accessibleWorlds w :=
   ⟨fun h w p hp ↦ h w p hp, fun h w p hp ↦ h w p hp⟩
 
 /-! ### Best worlds -/
@@ -142,16 +142,16 @@ theorem exists_mem_bestAmong [Finite W] (h : worlds.Nonempty) : (bestAmong world
 source at `w`. Kratzer's official necessity is the limit-free `humanNecessity`, which quantifies
 over exactly this set under the Limit Assumption (`humanNecessity_iff_necessity`). -/
 def bestWorlds (f : ModalBase W) (g : OrderingSource W) (w : W) : Set W :=
-  bestAmong (accessibleWorlds f w) (g w)
+  bestAmong (f.accessibleWorlds w) (g w)
 
 theorem mem_bestWorlds {f : ModalBase W} {g : OrderingSource W} {w u : W} :
     u ∈ bestWorlds f g w ↔
-      u ∈ accessibleWorlds f w ∧ ∀ v ∈ accessibleWorlds f w, (v ≤[g w] u) → (u ≤[g w] v) :=
+      u ∈ f.accessibleWorlds w ∧ ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] u) → (u ≤[g w] v) :=
   Iff.rfl
 
 /-- With an empty ordering source the best worlds are the accessible ones. -/
 theorem bestWorlds_emptyBackground (f : ModalBase W) (w : W) :
-    bestWorlds f emptyBackground w = accessibleWorlds f w :=
+    bestWorlds f emptyBackground w = f.accessibleWorlds w :=
   bestAmong_nil _
 
 /-- A best world verifying a member of the ordering source that excludes `p` stays best when `p` is
@@ -170,8 +170,8 @@ theorem mem_bestWorlds_cons {f : ModalBase W} {g : OrderingSource W} {p q : W �
 /-- A best world of a modal base is a best world of any narrower modal base it is accessible
 under. -/
 theorem mem_bestWorlds_of_subset {f f' : ModalBase W} {g : OrderingSource W} {w u : W}
-    (h : accessibleWorlds f' w ⊆ accessibleWorlds f w) (hu : u ∈ bestWorlds f g w)
-    (hu' : u ∈ accessibleWorlds f' w) : u ∈ bestWorlds f' g w :=
+    (h : f'.accessibleWorlds w ⊆ f.accessibleWorlds w) (hu : u ∈ bestWorlds f g w)
+    (hu' : u ∈ f'.accessibleWorlds w) : u ∈ bestWorlds f' g w :=
   bestAmong_superset h hu hu'
 
-end Modality.Kratzer
+end Modality

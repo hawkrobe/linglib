@@ -26,7 +26,7 @@ this apparatus live in `Studies/Zheng2025.lean`.
 ## Main declarations
 
 - `Kernel`: direct-information propositions with their modal base `B_K = ⋂K`,
-  entailment (`Kernel.followsFrom`), and compatibility (`Kernel.compatibleWith`)
+  entailment (`Kernel.FollowsFrom`), and compatibility (`Kernel.compatibleWith`)
 - `Kernel.directlySettles`: Implementation 1 — some `X ∈ K` entails or
   excludes the prejacent
 - `explicit_implies_entailment`: settling implies entailment; the converse
@@ -41,7 +41,7 @@ this apparatus live in `Studies/Zheng2025.lean`.
 
 namespace Modality
 
-open Modality.Kratzer
+open Modality
 open Presupposition
 
 variable {W : Type*}
@@ -67,23 +67,23 @@ def toModalBase : ModalBase W :=
   λ _ => k.props
 
 /-- `K` is consistent iff `B_K ≠ ∅`. -/
-def isConsistent : Prop :=
-  Modality.Kratzer.isConsistent k.props
+def IsConsistent : Prop :=
+  Modality.IsConsistent k.props
 
 /-- `φ` follows from `K` iff `B_K ⊆ ⟦φ⟧`. -/
-def followsFrom : Prop :=
-  Modality.Kratzer.followsFrom φ k.props
+def FollowsFrom : Prop :=
+  Modality.FollowsFrom φ k.props
 
 /-- `φ` is compatible with `K` iff `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
 def compatibleWith : Prop :=
-  isCompatibleWith φ k.props
+  IsCompatibleWith φ k.props
 
 /-- The `EpistemicFlavor` with the kernel's modal base and empty ordering. -/
 def toEpistemicFlavor : EpistemicFlavor W where
   evidence := k.toModalBase
   ordering := emptyBackground
 
-theorem followsFrom_iff : k.followsFrom φ ↔ ∀ w ∈ k.base, φ w := Iff.rfl
+theorem followsFrom_iff : k.FollowsFrom φ ↔ ∀ w ∈ k.base, φ w := Iff.rfl
 
 theorem compatibleWith_iff : k.compatibleWith φ ↔ ∃ w ∈ k.base, φ w :=
   isCompatibleWith_iff_exists
@@ -100,7 +100,7 @@ def Kernel.directlySettles : Prop :=
 /-- If `K` directly settles `φ` then `B_K ⊆ ⟦φ⟧` or `B_K ⊆ ⟦¬φ⟧`; the
     converse fails (see `VonFintelGillies2010.entailment_settling_gap`). -/
 theorem explicit_implies_entailment (h : k.directlySettles φ) :
-    k.followsFrom φ ∨ k.followsFrom (λ w' => ¬ φ w') := by
+    k.FollowsFrom φ ∨ k.FollowsFrom (λ w' => ¬ φ w') := by
   obtain ⟨x, hx_mem, h_sub | h_disj⟩ := h
   · exact Or.inl ((propIntersection_subset hx_mem).trans h_sub)
   · exact Or.inr ((propIntersection_subset hx_mem).trans
@@ -128,7 +128,7 @@ theorem Kernel.directlySettles_singleton (p : W → Prop) :
     `B_K ⊆ ⟦φ⟧`. -/
 def kernelMust : PartialProp W where
   presup := λ _ => ¬ k.directlySettles φ
-  assertion := λ _ => k.followsFrom φ
+  assertion := λ _ => k.FollowsFrom φ
 
 /-- `⟦might φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ∩ ⟦φ⟧ ≠ ∅`. -/

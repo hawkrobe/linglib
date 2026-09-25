@@ -34,7 +34,7 @@ and section number not checked against the original.
 
 namespace Modality.ProbabilityOrdering
 
-open Modality.Kratzer
+open Modality
 
 /-! ## Polymorphic core -/
 
@@ -107,7 +107,7 @@ theorem prob_ordering_best_w0 (w : World) :
   simp only [Set.mem_singleton_iff]
   refine ⟨?_, ?_⟩
   · rintro ⟨_, hMin⟩
-    have hUniv : (0 : World) ∈ accessibleWorlds emptyBackground w := by
+    have hUniv : (0 : World) ∈ ModalBase.accessibleWorlds emptyBackground w := by
       rw [empty_base_universal_access]; exact Set.mem_univ _
     have hDom : atLeastAsGoodAs (probToOrdering skewedProb w) 0 w' := by
       apply higher_prob_dominates
@@ -130,7 +130,7 @@ theorem prob_ordering_best_w0 (w : World) :
     | 3 => simp [skewedProb] at h_w'; norm_num at h_w'
   · rintro rfl
     refine ⟨?_, ?_⟩
-    · show (0 : World) ∈ accessibleWorlds emptyBackground w
+    · show (0 : World) ∈ ModalBase.accessibleWorlds emptyBackground w
       rw [empty_base_universal_access]; exact Set.mem_univ _
     · intro w'' _ _
       apply higher_prob_dominates

@@ -76,7 +76,7 @@ negation and the determiner–modal generalization for infinitival relatives
 
 namespace AghaJeretic2026
 
-open Modality Modality.Kratzer Modality.Directive Data.Examples Exhaustification
+open Modality Modality.Directive Data.Examples Exhaustification
 open Ferreira2023 (Conjunct Pattern)
 
 variable {W : Type*}

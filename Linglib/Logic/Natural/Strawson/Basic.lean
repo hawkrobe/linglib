@@ -39,7 +39,7 @@ Every operator here has a presupposition monotone in its argument and an asserti
 it; Strawson downward entailingness is the antitone assertion alone, and the failure of
 classical downward entailingness is the presupposition failing at the empty argument. The
 attitude operators take their belief set and best worlds as world-indexed sets so that
-`Modality.Kratzer.bestWorlds` can be supplied at the use site, and `only` and `superlative`
+`Modality.bestWorlds` can be supplied at the use site, and `only` and `superlative`
 take an intensional property `ι → Set W`, an extensional predicate being its world-constant
 case.
 

@@ -46,7 +46,7 @@ restricts a definite description (`not_isStrawsonDE_theSuperlativeExceeds`).
 
 namespace VonFintel1999
 
-open NaturalLogic Presupposition Modality.Kratzer Conditional
+open NaturalLogic Presupposition Modality Conditional
 
 variable {W ι : Type*}
 
@@ -172,8 +172,8 @@ theorem not_antitone_conditionalNecessity :
       {w | Restrictor.conditionalNecessity (λ _ => []) (λ _ => [(· = 0)]) α (· = 0) w} :=
   λ h => by
     have := @h (· = 1) (λ _ => True) (λ _ _ => trivial) 0
-    simp only [Restrictor.conditionalNecessity, necessity_iff_all, bestWorlds,
-      mem_bestAmong, accessibleWorlds, restrictedBase, propIntersection, atLeastAsGoodAs_iff,
+    simp only [Restrictor.conditionalNecessity, necessity_iff_all, bestWorlds, mem_bestAmong,
+      ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection, atLeastAsGoodAs_iff,
       List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true, and_true,
       Set.mem_ofPred_eq] at this
     revert this

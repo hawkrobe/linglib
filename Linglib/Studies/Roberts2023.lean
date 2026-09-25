@@ -23,7 +23,7 @@ refines Kratzer's ordering, `profile_le_of_atLeastAsGoodAs`. The applicable circ
 those in whose timely futures realizing the prejacent is never worse, by the goals held there,
 than not realizing it, `applic`, and the property holds of an addressee who in every applicable
 circumstance comes to realize the prejacent in time, `realizes`. The content is conditional and
-futurate but not deontic: an if-clause restricts the modal base, `realizes_restrictedBase`, and
+futurate but not deontic: an if-clause restricts the modal base, `realizes_restrict`, and
 deontic force arises only when a direction is accepted and the realization of the property joins
 the addressee's goals on the scoreboard, after which, other goals being equal, circumstances
 realizing it are preferred, `Scoreboard.accept_prefers`. The illocutionary force linking
@@ -78,7 +78,7 @@ rather than built into the domain of `realizes`.
 
 namespace Roberts2023
 
-open Reference HistoricalAlternatives Modality.Kratzer Quantifier Filter
+open Reference HistoricalAlternatives Modality Quantifier Filter
 
 variable {W T E : Type*}
 
@@ -126,14 +126,14 @@ variable (f : ModalBase (Index W T)) (P : Index W T → E → Prop) (a : E)
 circumstance compatible with the base at a circumstance lies in its world, later than it, and
 has a timely future at which `a` realizes `P`. -/
 def IsFuturate : Prop :=
-  ∀ c c', c' ∈ accessibleWorlds f c →
+  ∀ c c', c' ∈ f.accessibleWorlds c →
     c'.world = c.world ∧ c.time < c'.time ∧ ∃ c'' ∈ timelyFut history g c', P c'' a
 
 /-- The applicable circumstances (53) for the realization of `P` by `a` at `c`: those
 compatible with the modal base at `c` in whose timely futures a realizer of `P` is at least as
 good as a non-realizer by the goals held there. -/
 def applic (c : Index W T) : Set (Index W T) :=
-  {c' ∈ accessibleWorlds f c |
+  {c' ∈ f.accessibleWorlds c |
     ∀ c₁ ∈ timelyFut history g c', ∀ c₂ ∈ timelyFut history g c',
       P c₁ a → ¬ P c₂ a → profile (g c') c₂ ≤ profile (g c') c₁}
 
@@ -176,20 +176,20 @@ theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
 
 /-- An if-clause adds its proposition to the modal base, which shrinks the applicable
 circumstances. -/
-theorem applic_restrictedBase_subset (q : Index W T → Prop) (c : Index W T) :
-    applic history g (restrictedBase f q) P a c ⊆ applic history g f P a c :=
+theorem applic_restrict_subset (q : Index W T → Prop) (c : Index W T) :
+    applic history g (f.restrict q) P a c ⊆ applic history g f P a c :=
   fun _ h ↦ ⟨accessibleWorlds_anti (List.subset_cons_self _ _) h.1, h.2⟩
 
 /-- A futurate modal base stays futurate under an if-clause. -/
-theorem IsFuturate.restrictedBase (hf : IsFuturate history g f P a) (q : Index W T → Prop) :
-    IsFuturate history g (restrictedBase f q) P a :=
+theorem IsFuturate.restrict (hf : IsFuturate history g f P a) (q : Index W T → Prop) :
+    IsFuturate history g (f.restrict q) P a :=
   fun c c' h ↦ hf c c' (accessibleWorlds_anti (List.subset_cons_self _ _) h)
 
 /-- Imperatives are conditional: a direction entails its restriction by an if-clause, which
 only makes explicit some of the conditions on applicability. -/
-theorem realizes_restrictedBase {c : Index W T} (h : realizes history g f P a c)
-    (q : Index W T → Prop) : realizes history g (restrictedBase f q) P a c :=
-  fun c' hc' ↦ h c' (applic_restrictedBase_subset q c hc')
+theorem realizes_restrict {c : Index W T} (h : realizes history g f P a c)
+    (q : Index W T → Prop) : realizes history g (f.restrict q) P a c :=
+  fun c' hc' ↦ h c' (applic_restrict_subset q c hc')
 
 end Semantics
 

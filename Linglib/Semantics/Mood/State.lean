@@ -354,16 +354,16 @@ identification read in the other direction — a Kratzer pair is a
 world-indexed family of expectation states — and the theorems below
 are his (3a)/(3b). -/
 
-open Modality.Kratzer
+open Modality
 
 /-- The expectation state that a modal base and ordering source induce at a world has the accessible
 worlds as information and the ordering-source ranking as pattern. -/
 def stateAt (f : ModalBase W) (g : OrderingSource W) (w : W) :
     ExpState W :=
-  ⟨accessibleWorlds f w, kratzerPreorder (g w)⟩
+  ⟨f.accessibleWorlds w, kratzerPreorder (g w)⟩
 
 @[simp] theorem stateAt_info (f : ModalBase W) (g : OrderingSource W) (w : W) :
-    (stateAt f g w).info = accessibleWorlds f w := rfl
+    (stateAt f g w).info = f.accessibleWorlds w := rfl
 
 @[simp] theorem stateAt_order (f : ModalBase W) (g : OrderingSource W) (w : W) :
     (stateAt f g w).order = kratzerPreorder (g w) := rfl
@@ -398,7 +398,7 @@ theorem le_assert_iff_simpleNecessity (f : ModalBase W)
 its own induced information state. -/
 theorem isRealistic_iff_mem_stateAt_info (f : ModalBase W)
     (g : OrderingSource W) :
-    isRealistic f ↔ ∀ w, w ∈ (stateAt f g w).info :=
+    f.IsRealistic ↔ ∀ w, w ∈ (stateAt f g w).info :=
   isRealistic_iff_mem_accessible f
 
 end Mood

@@ -15,7 +15,7 @@ public import Linglib.Semantics.Modality.Kratzer.Operators
 # Kratzer (1981): The Notional Category of Modality
 
 This file formalizes the paper's practical-inference example, on the modal base and ordering
-source semantics of `Modality.Kratzer.Operators`. Someone wants two things, to become mayor
+source semantics of `Modality.Operators`. Someone wants two things, to become mayor
 and to avoid the pub, while the circumstances are such that they become mayor only if they go
 to the pub. The circumstances supply the modal base and the desires the ordering source, and
 the two ideals pull apart: a world where the speaker goes to the pub and becomes mayor and one
@@ -68,7 +68,7 @@ paper in [kratzer-2012].
 
 namespace Kratzer1981
 
-open Modality.Kratzer
+open Modality
 
 /-- A world: does the speaker become mayor, and go to the pub regularly? -/
 abbrev World := Bool × Bool
@@ -85,9 +85,9 @@ def desires : OrderingSource World :=
 
 /-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
-  `(tactic| (simp only [accessibleWorlds, propIntersection, atLeastAsGoodAs_iff, circumstances,
-      desires, Function.const_apply, Set.mem_ofPred_eq, List.forall_mem_cons, List.mem_nil_iff,
-      false_implies, implies_true, and_true]; decide))
+  `(tactic| (simp only [ModalBase.accessibleWorlds, propIntersection, atLeastAsGoodAs_iff,
+      circumstances, desires, Function.const_apply, Set.mem_ofPred_eq, List.forall_mem_cons,
+      List.mem_nil_iff, false_implies, implies_true, and_true]; decide))
 
 /-- The paper's clause (c): the world of going to the pub and becoming mayor and the world of
 staying home are incomparable, so the ordering is not connected. -/
@@ -108,8 +108,8 @@ theorem pub_no_mayor_worst :
 /-- No accessible world is at least as good as every accessible world: on the dominance
 reading of "best" the example would have no best world at all. -/
 theorem no_dominant_world :
-    ¬ ∃ w ∈ accessibleWorlds circumstances w₀,
-      ∀ v ∈ accessibleWorlds circumstances w₀, atLeastAsGoodAs (desires w₀) w v := by
+    ¬ ∃ w ∈ circumstances.accessibleWorlds w₀,
+      ∀ v ∈ circumstances.accessibleWorlds w₀, atLeastAsGoodAs (desires w₀) w v := by
   decide_worlds
 
 /-- The best worlds are the two ideal-realizing ones. -/
@@ -162,7 +162,7 @@ differ in the settings of the two backgrounds. -/
 open Conditional.Restrictor
 
 /-- Material implication: a totally realistic modal base and an empty ordering source. -/
-theorem material_implication {W : Type*} {f : ModalBase W} (hf : isTotallyRealistic f)
+theorem material_implication {W : Type*} {f : ModalBase W} (hf : f.IsTotallyRealistic)
     (α β : W → Prop) (w : W) :
     conditionalNecessity f emptyBackground α β w ↔ (α w → β w) :=
   material_from_restrictor f α β w (hf w)
@@ -216,8 +216,8 @@ def morallyAccessible : ModalBase Situation := Function.const Situation [λ s =>
 
 /-- Decide a claim about the backgrounds and the ordering over the four situations. -/
 scoped macro "decide_situations" : tactic =>
-  `(tactic| (simp only [accessibleWorlds, propIntersection, restrictedBase, emptyBackground,
-      atLeastAsGoodAs_iff, morallyGood, morallyAccessible, Function.const_apply,
+  `(tactic| (simp only [ModalBase.accessibleWorlds, propIntersection, ModalBase.restrict,
+      emptyBackground, atLeastAsGoodAs_iff, morallyGood, morallyAccessible, Function.const_apply,
       Set.mem_ofPred_eq, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
       and_true, injustice, amended, rewarded]; decide))
 
@@ -231,7 +231,7 @@ theorem mem_bestWorlds_good_iff (s : Situation) :
 /-- Among the situations with injustice, the one closest to the good is the one where it is
 amended for. -/
 theorem mem_bestWorlds_injustice_iff (s : Situation) :
-    s ∈ bestWorlds (restrictedBase emptyBackground injustice) morallyGood none ↔
+    s ∈ bestWorlds (ModalBase.restrict emptyBackground injustice) morallyGood none ↔
       s = some .amended := by
   revert s
   simp only [mem_bestWorlds]
@@ -240,7 +240,7 @@ theorem mem_bestWorlds_injustice_iff (s : Situation) :
 /-- The restricted base satisfies the Limit Assumption, so the verdicts below are those of the
 paper's human necessity as well. -/
 theorem limitAssumption_injustice :
-    LimitAssumption (restrictedBase emptyBackground injustice) morallyGood none := by
+    LimitAssumption (ModalBase.restrict emptyBackground injustice) morallyGood none := by
   simp only [LimitAssumption, mem_bestWorlds_injustice_iff]
   decide_situations
 

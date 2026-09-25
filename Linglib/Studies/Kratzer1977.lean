@@ -7,7 +7,7 @@ public import Mathlib.Data.Fintype.Prod
 # Kratzer (1977): What 'must' and 'can' must and can mean
 
 This file formalizes the paper's two worked examples of modality in view of an inconsistent
-premise set, on the premise semantics of `Modality.Kratzer.Premise`. In a New Zealand whose
+premise set, on the premise semantics of `Modality.Premise`. In a New Zealand whose
 whole common law is three judgments, that murder is a crime and that deer are, and are not,
 personally responsible for the damage they inflict on young trees, the premise set is
 inconsistent. Under Definitions 5 and 6, which read *must* as consequence and *can* as
@@ -38,7 +38,7 @@ them.
 
 namespace Kratzer1977
 
-open Modality.Kratzer
+open Modality
 
 /-- The four worlds: the truth values of the two issues an example turns on. -/
 abbrev World := Bool × Bool
@@ -54,7 +54,7 @@ def neg (r : World → Prop) : World → Prop := λ w => ¬ r w
 
 /-- Decide a claim about concrete premise lists over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
-  `(tactic| (simp only [isConsistent, isCompatibleWith, followsFrom, propIntersection,
+  `(tactic| (simp only [IsConsistent, IsCompatibleWith, FollowsFrom, propIntersection,
       Set.Nonempty, Set.subset_def, Set.mem_ofPred_eq, List.forall_mem_cons, List.mem_nil_iff,
       false_implies, implies_true, and_true, p, q, neg]; decide))
 
@@ -67,22 +67,22 @@ judgment (12). -/
 /-- What the New Zealand judgments provide. -/
 def judgments : List (World → Prop) := [p, q, neg q]
 
-theorem judgments_inconsistent : ¬ isConsistent judgments := λ ⟨_, h⟩ =>
+theorem judgments_inconsistent : ¬ IsConsistent judgments := λ ⟨_, h⟩ =>
   h (neg q) (by simp [judgments]) (h q (by simp [judgments]))
 
 /-- Under Definition 5 the inconsistent judgments make (7) true: it must be that murder is
 not a crime, by ex falso quodlibet. -/
-theorem must_neg_p (w : World) : mustInView (Function.const World judgments) (neg p) w :=
+theorem must_neg_p (w : World) : MustInView (Function.const World judgments) (neg p) w :=
   λ _ h => absurd (h q (by simp [judgments])) (h (neg q) (by simp [judgments]))
 
 /-- Under Definition 6 nothing is compatible with the judgments, so (8) is false: deer cannot
 be personally responsible. -/
-theorem not_can_q (w : World) : ¬ canInView (Function.const World judgments) q w :=
+theorem not_can_q (w : World) : ¬ CanInView (Function.const World judgments) q w :=
   λ ⟨_, h⟩ => h (neg q) (by simp [judgments]) (h q (by simp))
 
 /-- Definition 7 makes (6) true, murder must be a crime: `p` is compatible with every
 consistent subset of the judgments. -/
-theorem must'_p (w : World) : mustInView' (Function.const World judgments) p w := by
+theorem must'_p (w : World) : MustInView' (Function.const World judgments) p w := by
   refine mustInView'_of_forall_isCompatibleWith rfl ?_
   rintro B ⟨hB, hc⟩
   simp [judgments, List.sublists] at hB
@@ -92,7 +92,7 @@ theorem must'_p (w : World) : mustInView' (Function.const World judgments) p w :
 /-- Definition 7 makes (7) false: no consistent subset of the judgments entails that murder
 is not a crime. -/
 theorem not_must'_neg_p (w : World) :
-    ¬ mustInView' (Function.const World judgments) (neg p) w := λ h =>
+    ¬ MustInView' (Function.const World judgments) (neg p) w := λ h =>
   let ⟨C, ⟨hC, hc⟩, _, hf⟩ := h [] ⟨by simp [judgments, List.sublists], by decide_worlds⟩
   by
     simp [judgments, List.sublists] at hC
@@ -101,19 +101,19 @@ theorem not_must'_neg_p (w : World) :
 
 /-- Definition 8 makes (8) true: the judgment that deer are responsible is itself a consistent
 subset. -/
-theorem can'_q (w : World) : canInView' (Function.const World judgments) q w :=
+theorem can'_q (w : World) : CanInView' (Function.const World judgments) q w :=
   canInView'_of_mem (B := [q]) ⟨by simp [judgments, List.sublists], by decide_worlds⟩
     List.mem_cons_self
 
 /-- Definition 8 makes (9) true, symmetrically. -/
-theorem can'_neg_q (w : World) : canInView' (Function.const World judgments) (neg q) w :=
+theorem can'_neg_q (w : World) : CanInView' (Function.const World judgments) (neg q) w :=
   canInView'_of_mem (B := [neg q]) ⟨by simp [judgments, List.sublists], by decide_worlds⟩
     List.mem_cons_self
 
 /-- Definition 8 makes (13) false, it cannot be that murder is not a crime: the dual of
 (6). -/
 theorem not_can'_neg_p (w : World) :
-    ¬ canInView' (Function.const World judgments) (neg p) w :=
+    ¬ CanInView' (Function.const World judgments) (neg p) w :=
   (mustInView'_iff_not_canInView'_not _ _ _).mp (must'_p w)
 
 /-! ### The Whare Wananga recommendations (§2.3)
@@ -134,7 +134,7 @@ private theorem neg_p_ne_conj : neg p ≠ λ w => p w ∧ q w := λ h =>
 
 /-- On the first reading (16) is false: Te Kini's ban is a consistent subset whose only
 consistent extension is itself, and flying does not follow from it. -/
-theorem not_must'_q (w : World) : ¬ mustInView' (Function.const World recommendations) q w :=
+theorem not_must'_q (w : World) : ¬ MustInView' (Function.const World recommendations) q w :=
   λ h =>
   let ⟨C, ⟨hC, hc⟩, hBC, hf⟩ :=
     h [neg p] ⟨by simp [recommendations, List.sublists], by decide_worlds⟩
@@ -148,7 +148,7 @@ theorem not_must'_q (w : World) : ¬ mustInView' (Function.const World recommend
       | exact absurd hc (by decide_worlds)
 
 /-- On the second reading (16) is true: flying is compatible with every consistent subset. -/
-theorem must'_q (w : World) : mustInView' (Function.const World recommendations') q w := by
+theorem must'_q (w : World) : MustInView' (Function.const World recommendations') q w := by
   refine mustInView'_of_forall_isCompatibleWith rfl ?_
   rintro B ⟨hB, hc⟩
   simp [recommendations', List.sublists] at hB

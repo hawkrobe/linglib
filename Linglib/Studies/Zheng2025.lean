@@ -55,7 +55,7 @@ the argument of the paper's footnote on (17).
 namespace Zheng2025
 
 open Modality (Kernel)
-open Modality.Kratzer
+open Modality
 
 variable {W : Type*}
 

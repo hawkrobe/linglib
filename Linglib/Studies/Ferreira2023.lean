@@ -89,7 +89,7 @@ which Portuguese fills with *tem que*, *tinha que*, *deve*, *devia* (135).
 
 namespace Ferreira2023
 
-open Modality Modality.Kratzer Modality.Directive Data.Examples
+open Modality Modality.Directive Data.Examples
 
 variable {W : Type*}
 
@@ -99,8 +99,8 @@ variable {W : Type*}
 whose domain at `w` is the domain of `f` together with the `p`-worlds most similar to some world
 of it. -/
 def revise (sim : OrderingSource W) (f : ModalBase W) (p : W → Prop) : ModalBase W :=
-  fun w ↦ [fun w' ↦ w' ∈ accessibleWorlds f w ∨
-    ∃ w'' ∈ accessibleWorlds f w, w' ∈ bestAmong {v | p v} (sim w'')]
+  fun w ↦ [fun w' ↦ w' ∈ f.accessibleWorlds w ∨
+    ∃ w'' ∈ f.accessibleWorlds w, w' ∈ bestAmong {v | p v} (sim w'')]
 
 section
 
@@ -109,20 +109,20 @@ variable {sim : OrderingSource W} {f : ModalBase W} {g : OrderingSource W} {p q 
 
 theorem accessibleWorlds_revise (sim : OrderingSource W) (f : ModalBase W) (p : W → Prop)
     (w : W) :
-    accessibleWorlds (revise sim f p) w =
-      accessibleWorlds f w ∪
-        {w' | ∃ w'' ∈ accessibleWorlds f w, w' ∈ bestAmong {v | p v} (sim w'')} := by
+    (revise sim f p).accessibleWorlds w =
+      f.accessibleWorlds w ∪
+        {w' | ∃ w'' ∈ f.accessibleWorlds w, w' ∈ bestAmong {v | p v} (sim w'')} := by
   ext w'
-  simp [accessibleWorlds, propIntersection, revise]
+  simp [ModalBase.accessibleWorlds, propIntersection, revise]
 
 /-- The revision widens the domain. -/
 theorem subset_accessibleWorlds_revise (sim : OrderingSource W) (f : ModalBase W)
-    (p : W → Prop) (w : W) : accessibleWorlds f w ⊆ accessibleWorlds (revise sim f p) w := by
+    (p : W → Prop) (w : W) : f.accessibleWorlds w ⊆ (revise sim f p).accessibleWorlds w := by
   rw [accessibleWorlds_revise]; exact Set.subset_union_left
 
 /-- Every world the revision adds is a `p`-world. -/
 theorem prop_of_mem_accessibleWorlds_revise {w' : W}
-    (h : w' ∈ accessibleWorlds (revise sim f p) w) (hn : w' ∉ accessibleWorlds f w) : p w' := by
+    (h : w' ∈ (revise sim f p).accessibleWorlds w) (hn : w' ∉ f.accessibleWorlds w) : p w' := by
   rw [accessibleWorlds_revise] at h
   rcases h with h | ⟨_, _, h⟩
   · exact absurd h hn
@@ -133,7 +133,7 @@ prejacent preserves strong necessity. -/
 theorem strongNecessity_revise (sim : OrderingSource W) (h : strongNecessity f g q w) :
     strongNecessity (revise sim f q) g q w := by
   intro w' hw'
-  by_cases hmem : w' ∈ accessibleWorlds f w
+  by_cases hmem : w' ∈ f.accessibleWorlds w
   · exact h w' (bestAmong_superset (subset_accessibleWorlds_revise sim f q w) hw' hmem)
   · exact prop_of_mem_accessibleWorlds_revise hw'.1 hmem
 
@@ -243,7 +243,7 @@ theorem not_exists_starstar_orderingSource :
 
 /-- (132b): strong necessity with the ordering source ∗∗-revised for `p`. -/
 def snXg (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W) : Prop :=
-  ∀ w' ∈ bestOf (starstar g p w (accessibleWorlds f w)) (accessibleWorlds f w), q w'
+  ∀ w' ∈ bestOf (starstar g p w (f.accessibleWorlds w)) (f.accessibleWorlds w), q w'
 
 /-- (133): weak necessity is strong necessity with an X-marked ordering source, the secondary
 ordering source of [von-fintel-iatridou-2008] being the revision's target. -/
@@ -272,7 +272,7 @@ def Vertex.base (v : Vertex) (sim : OrderingSource W) (f : ModalBase W) (q : W �
 ∗∗-revised for `p` when the ordering source is X-marked. -/
 def Vertex.necessity (v : Vertex) (sim : OrderingSource W) (f : ModalBase W)
     (g : OrderingSource W) (p q : W → Prop) (w : W) : Prop :=
-  let D := accessibleWorlds (v.base sim f q) w
+  let D := (v.base sim f q).accessibleWorlds w
   ∀ w' ∈ bestOf (if v.xg then starstar g p w D else fun u v ↦ u <[g w] v) D, q w'
 
 /-- Without X-marking of the ordering source, a vertex is strong necessity over its base. -/
@@ -294,7 +294,7 @@ theorem Vertex.necessity_xg_true (xf : Bool) :
 /-- Entailment between vertices: over every model whose similarity ordering is totally
 realistic (41a). -/
 def Vertex.Entails (v v' : Vertex) : Prop :=
-  ∀ (W : Type) (sim : OrderingSource W), isTotallyRealistic sim →
+  ∀ (W : Type) (sim : OrderingSource W), sim.IsTotallyRealistic →
     ∀ (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W),
       v.necessity sim f g p q w → v'.necessity sim f g p q w
 
@@ -339,14 +339,14 @@ private theorem bestAmong_eq_singleton {S : Set W} {b : W} (hb : b ∈ S) :
 
 /-- The similarity ordering that singles each world out by identity. -/
 private theorem isTotallyRealistic_eq :
-    isTotallyRealistic (fun w ↦ [(· = w)] : OrderingSource W) := by
+    ConvBackground.IsTotallyRealistic (fun w ↦ [(· = w)] : OrderingSource W) := by
   intro w; ext v; simp [propIntersection]
 
 /-! The first countermodel: nothing excluded, nothing ordered. The Xg vertices hold, since the
 `p`-best world is the prejacent-world, and the others fail. -/
 
 private theorem M1_acc (sim : OrderingSource Bool) (v : Vertex) :
-    accessibleWorlds (v.base sim emptyBackground (· = true)) true = Set.univ := by
+    (v.base sim emptyBackground (· = true)).accessibleWorlds true = Set.univ := by
   unfold Vertex.base
   split
   · exact Set.eq_univ_of_univ_subset
@@ -371,11 +371,11 @@ Xf vertices hold and the others fail. -/
 private abbrev simB : OrderingSource Bool := fun w ↦ [(· = w)]
 
 private theorem M2_acc :
-    accessibleWorlds (fun _ ↦ [(· = false)] : ModalBase Bool) true = {false} := by
-  ext v; simp [accessibleWorlds, propIntersection]
+    ModalBase.accessibleWorlds (fun _ ↦ [(· = false)] : ModalBase Bool) true = {false} := by
+  ext v; simp [ModalBase.accessibleWorlds, propIntersection]
 
 private theorem M2_mem :
-    true ∈ accessibleWorlds (revise simB (fun _ ↦ [(· = false)]) (· = true)) true := by
+    true ∈ ModalBase.accessibleWorlds (revise simB (fun _ ↦ [(· = false)]) (· = true)) true := by
   rw [accessibleWorlds_revise, M2_acc]
   exact Or.inr ⟨false, rfl, rfl, fun v hv _ ↦ by
     rw [show v = true from hv]; exact atLeastAsGoodAs_refl _ _⟩
@@ -411,16 +411,16 @@ private abbrev f₃ : ModalBase (Fin 3) := fun _ ↦ [fun w ↦ w ≠ 2]
 private abbrev q₃ : Fin 3 → Prop := fun w ↦ w = 1 ∨ w = 2
 private abbrev sim₃ : OrderingSource (Fin 3) := fun w ↦ [(· = w)]
 
-private theorem accessibleWorlds_f₃ : accessibleWorlds f₃ 0 = {0, 1} := by
+private theorem accessibleWorlds_f₃ : f₃.accessibleWorlds 0 = {0, 1} := by
   ext u
-  simp only [accessibleWorlds, propIntersection, Set.mem_ofPred_eq, Set.mem_insert_iff,
+  simp only [ModalBase.accessibleWorlds, propIntersection, Set.mem_ofPred_eq, Set.mem_insert_iff,
     Set.mem_singleton_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
     and_true]
   revert u
   decide
 
 private theorem accessibleWorlds_revise_f₃ :
-    accessibleWorlds (revise sim₃ f₃ q₃) 0 = Set.univ := by
+    (revise sim₃ f₃ q₃).accessibleWorlds 0 = Set.univ := by
   rw [accessibleWorlds_revise, accessibleWorlds_f₃]
   ext u
   simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq,
@@ -668,7 +668,7 @@ private theorem bestWorlds_ofAcc (acc : Option Bool) (w : Bool) :
     bestWorlds (ofAcc acc) emptyBackground w = {v | v ∈ accList acc} := by
   rw [bestWorlds_emptyBackground]
   ext v
-  cases acc <;> cases v <;> simp [accessibleWorlds, propIntersection, ofAcc, accList]
+  cases acc <;> cases v <;> simp [ModalBase.accessibleWorlds, propIntersection, ofAcc, accList]
 
 private theorem bestAmong_ofRev (acc rev : Option Bool) :
     bestAmong {v | v ∈ accList acc} [ofRev rev] = {v | v ∈ topList acc rev} := by
@@ -835,7 +835,7 @@ namespace Day
 def sim : OrderingSource Day :=
   fun w ↦ [fun v ↦ v.office = w.office, fun v ↦ v.holiday = w.holiday]
 
-theorem sim_isTotallyRealistic : isTotallyRealistic sim := by
+theorem sim_isTotallyRealistic : sim.IsTotallyRealistic := by
   intro w
   ext v
   simp only [propIntersection, sim, Set.mem_ofPred_eq, Set.mem_singleton_iff,
@@ -859,15 +859,15 @@ def checked : ModalBase Day := fun _ ↦ [fun v ↦ v.office = false]
 def holidayInfo : ModalBase Day := fun _ ↦ [fun v ↦ v.holiday = true]
 
 private theorem accessibleWorlds_checked (w : Day) :
-    accessibleWorlds checked w = {v | v.office = false} := by
+    checked.accessibleWorlds w = {v | v.office = false} := by
   ext v
-  simp only [accessibleWorlds, propIntersection, checked, Set.mem_ofPred_eq,
+  simp only [ModalBase.accessibleWorlds, propIntersection, checked, Set.mem_ofPred_eq,
     List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true]
 
 private theorem accessibleWorlds_holidayInfo (w : Day) :
-    accessibleWorlds holidayInfo w = {v | v.holiday = true} := by
+    holidayInfo.accessibleWorlds w = {v | v.holiday = true} := by
   ext v
-  simp only [accessibleWorlds, propIntersection, holidayInfo, Set.mem_ofPred_eq,
+  simp only [ModalBase.accessibleWorlds, propIntersection, holidayInfo, Set.mem_ofPred_eq,
     List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true]
 
 /-- The office-world most similar to a world keeps its holiday value. -/
@@ -892,7 +892,7 @@ private theorem bestAmong_workday_sim (w : Day) :
 
 /-- (81): suspending that Peter is not in his office makes every world accessible. -/
 private theorem accessibleWorlds_revise_checked (w : Day) :
-    accessibleWorlds (revise sim checked atOffice) w = Set.univ := by
+    (revise sim checked atOffice).accessibleWorlds w = Set.univ := by
   rw [accessibleWorlds_revise, accessibleWorlds_checked]
   ext ⟨o, h⟩
   simp only [Set.mem_union, Set.mem_ofPred_eq, bestAmong_atOffice_sim, Set.mem_singleton_iff,
@@ -901,7 +901,7 @@ private theorem accessibleWorlds_revise_checked (w : Day) :
 
 /-- (80): suspending that Peter is not in his office on a holiday adds only holiday worlds. -/
 private theorem accessibleWorlds_revise_holidayInfo (w : Day) :
-    accessibleWorlds (revise sim holidayInfo atOffice) w = {v | v.holiday = true} := by
+    (revise sim holidayInfo atOffice).accessibleWorlds w = {v | v.holiday = true} := by
   rw [accessibleWorlds_revise, accessibleWorlds_holidayInfo]
   ext ⟨o, h⟩
   simp only [Set.mem_union, Set.mem_ofPred_eq, bestAmong_atOffice_sim, Set.mem_singleton_iff]
@@ -909,7 +909,7 @@ private theorem accessibleWorlds_revise_holidayInfo (w : Day) :
 
 /-- Footnote 18: suspending the holiday information instead makes every world accessible. -/
 private theorem accessibleWorlds_revise_workday (w : Day) :
-    accessibleWorlds (revise sim holidayInfo workday) w = Set.univ := by
+    (revise sim holidayInfo workday).accessibleWorlds w = Set.univ := by
   rw [accessibleWorlds_revise, accessibleWorlds_holidayInfo]
   ext ⟨o, h⟩
   simp only [Set.mem_union, Set.mem_ofPred_eq, bestAmong_workday_sim, Set.mem_singleton_iff,

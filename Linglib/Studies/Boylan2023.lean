@@ -283,7 +283,7 @@ end Conflict
 /-! ### The classic semantics (59) -/
 
 omit [DecidableEq W] in
-open Modality.Kratzer ModalLogic in
+open Modality ModalLogic in
 /-- The classic entry (59), Kratzer necessity over the best worlds, agglomerates
 unconditionally, so it cannot fit The Office for any modal base and ordering source. -/
 theorem classic_agglomerates {f : ModalBase W} {g : OrderingSource W} {φ ψ : W → Prop} {w : W}

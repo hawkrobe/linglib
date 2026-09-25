@@ -50,7 +50,7 @@ the modal-base timing licenses *will*, and the acquisition timing does not
 
 namespace Huijsmans2025
 
-open Modality.Kratzer Tense.Evidential
+open Modality Tense.Evidential
 
 variable {T W : Type*} [LinearOrder T]
 

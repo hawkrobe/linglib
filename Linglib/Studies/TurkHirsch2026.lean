@@ -41,7 +41,7 @@ without any bound, `Alternatives.hamblin_alternatives_subset`.
 
 ## Implementation notes
 
-Propositions are sets of worlds, the deontic modal is `Modality.Kratzer.necessity` over a modal
+Propositions are sets of worlds, the deontic modal is `Modality.necessity` over a modal
 base and an ordering source, and the lexicon is a finite set of terminals of `Syntax.Tree`, so
 that category match is the terminal clause of `Alternatives.hamblin`; the denotation of a tree
 is its terminal's operator and the identity elsewhere. Two-dimensional values are
@@ -68,7 +68,7 @@ rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch202
 
 namespace TurkHirsch2026
 
-open Alternatives Modality.Kratzer Question Syntax
+open Alternatives Modality Question Syntax
 
 /-! ### The polar morphemes and the deontic modal -/
 

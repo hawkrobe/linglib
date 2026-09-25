@@ -3,53 +3,48 @@ module
 public import Linglib.Semantics.Modality.Kratzer.Premise
 
 /-!
-# Conversational Backgrounds
+# Conversational backgrounds
 
-[kratzer-1981] [kratzer-2012]
+A conversational background assigns each world a premise set, a list of propositions, and
+Kratzer's two parameters of modal interpretation are both backgrounds in different roles: a
+modal base, `ModalBase`, whose premises at a world fix the accessible worlds, those in its
+intersection, and an ordering source, `OrderingSource`, whose premises rank the accessible
+worlds by how many of them they verify ([kratzer-1981], [kratzer-2012]). A background is
+realistic when every world verifies its own premises, `ConvBackground.IsRealistic`, so that the
+actual world is accessible from itself, and totally realistic when its premises single out the
+world, `ConvBackground.IsTotallyRealistic`; the empty background, `emptyBackground`, makes every
+world accessible.
 
-A conversational background maps worlds to sets of propositions. Two roles:
+## References
 
-- **Modal base** (`ModalBase`) determines accessibility — `R_f(w, w') ≡ w' ∈ ⋂f(w)`.
-- **Ordering source** (`OrderingSource`) ranks accessible worlds by how many
-  ordering propositions they satisfy.
+* [A. Kratzer, *The notional category of modality* (1981)][kratzer-1981]
+* [A. Kratzer, *Modals and conditionals* (2012)][kratzer-2012]
 -/
 
 @[expose] public section
 
-
-namespace Modality.Kratzer
+namespace Modality
 
 variable {W : Type*}
 
-/-- A conversational background maps worlds to sets of propositions.
-
-    Kratzer's key innovation: the modal base and ordering source are both
-    conversational backgrounds, but play different roles. -/
+/-- A conversational background assigns each world a premise set. -/
 abbrev ConvBackground (W : Type*) := W → List (W → Prop)
 
-/-- The modal base: determines which worlds are accessible. -/
+/-- A modal base, the background whose premises fix the accessible worlds. -/
 abbrev ModalBase (W : Type*) := ConvBackground W
 
-/-- The ordering source: determines how accessible worlds are ranked. -/
+/-- An ordering source, the background whose premises rank the accessible worlds. -/
 abbrev OrderingSource (W : Type*) := ConvBackground W
 
-/-- A conversational background is **realistic** iff for all w: w ∈ ⋂f(w).
-    The actual world satisfies all propositions in the background.
-
-    [kratzer-1981]: realistic conversational backgrounds make every fact
-    about `w` part of `⋂f(w)`. UNVERIFIED page reference. -/
-def isRealistic (f : ConvBackground W) : Prop :=
+/-- A background is realistic when every world verifies its own premises. -/
+def ConvBackground.IsRealistic (f : ConvBackground W) : Prop :=
   ∀ w : W, ∀ p ∈ f w, p w
 
-/-- A conversational background is **totally realistic** iff for all w:
-    `⋂f(w) = {w}`. The strongest form: only the actual world is accessible.
-    UNVERIFIED page reference. -/
-def isTotallyRealistic (f : ConvBackground W) : Prop :=
+/-- A background is totally realistic when its premises at a world single out that world. -/
+def ConvBackground.IsTotallyRealistic (f : ConvBackground W) : Prop :=
   ∀ w : W, propIntersection (f w) = {w}
 
-/-- The **empty** conversational background: `f(w) = ∅` for all w.
-    `⋂f(w) = W` (vacuous intersection), so the empty background is itself
-    trivially realistic. UNVERIFIED page reference. -/
-def emptyBackground : ConvBackground W := λ _ => []
+/-- The empty background, with no premises at any world, makes every world accessible. -/
+def emptyBackground : ConvBackground W := fun _ ↦ []
 
-end Modality.Kratzer
+end Modality

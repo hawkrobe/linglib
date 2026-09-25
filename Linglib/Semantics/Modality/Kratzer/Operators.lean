@@ -17,7 +17,7 @@ Limit Assumption (`humanNecessity_iff_necessity`). The modal axioms follow from 
 conditions the backgrounds impose (`duality`, `K_axiom`, `totally_realistic_gives_T`), a
 realistic base being exactly one over which simple necessity is veridical
 (`isRealistic_iff_simpleNecessity_le_id`), and a conditional antecedent restricts the modal base
-(`restrictedBase`, `accessibleWorlds_restrictedBase`).
+(`ModalBase.restrict`, `accessibleWorlds_restrict`).
 
 ## Implementation notes
 
@@ -35,7 +35,7 @@ necessity, and slight possibility, is not formalized.
 @[expose] public section
 
 
-namespace Modality.Kratzer
+namespace Modality
 
 open ModalLogic
 
@@ -101,9 +101,9 @@ least as good, below which `p` holds throughout. Neutral with respect
 to the Limit Assumption, after Lewis's counterfactual semantics. -/
 def humanNecessity (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W) : Prop :=
-  ∀ u ∈ accessibleWorlds f w, ∃ v ∈ accessibleWorlds f w,
+  ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
     atLeastAsGoodAs (g w) v u ∧
-    ∀ z ∈ accessibleWorlds f w, atLeastAsGoodAs (g w) z v → p z
+    ∀ z ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) z v → p z
 
 /-- Human necessity implies best-worlds necessity, unconditionally. -/
 theorem necessity_of_humanNecessity {f : ModalBase W} {g : OrderingSource W}
@@ -116,7 +116,7 @@ theorem necessity_of_humanNecessity {f : ModalBase W} {g : OrderingSource W}
 /-- The Limit Assumption at `w` says that every accessible world sees a best
 world at least as good. -/
 def LimitAssumption (f : ModalBase W) (g : OrderingSource W) (w : W) : Prop :=
-  ∀ u ∈ accessibleWorlds f w, ∃ v ∈ bestWorlds f g w,
+  ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ bestWorlds f g w,
     atLeastAsGoodAs (g w) v u
 
 /-- Under the Limit Assumption, best-worlds necessity implies human
@@ -159,11 +159,11 @@ theorem humanNecessity_emptyBackground_iff (f : ModalBase W)
 
 @[simp]
 theorem simpleNecessity_iff_all (f : ModalBase W) (p : W → Prop) (w : W) :
-    simpleNecessity f p w ↔ ∀ w' ∈ accessibleWorlds f w, p w' := Iff.rfl
+    simpleNecessity f p w ↔ ∀ w' ∈ f.accessibleWorlds w, p w' := Iff.rfl
 
 @[simp]
 theorem simplePossibility_iff_any (f : ModalBase W) (p : W → Prop) (w : W) :
-    simplePossibility f p w ↔ ∃ w' ∈ accessibleWorlds f w, p w' := Iff.rfl
+    simplePossibility f p w ↔ ∃ w' ∈ f.accessibleWorlds w, p w' := Iff.rfl
 
 @[simp]
 theorem necessity_iff_all (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
@@ -200,29 +200,29 @@ theorem not_necessity_cons {f : ModalBase W} {g : OrderingSource W} {p q r : W �
 /-! ### Frame conditions on `kratzerR` -/
 
 /-- A realistic modal base gives reflexive accessibility. -/
-theorem realistic_refl (f : ModalBase W) (hReal : isRealistic f) :
+theorem realistic_refl (f : ModalBase W) (hReal : f.IsRealistic) :
     Std.Refl (kratzerR f) :=
   ⟨fun w p hp => hReal w p hp⟩
 
 /-- Over a realistic base the evaluation world is itself accessible. -/
 theorem realistic_gives_reflexive_access (f : ModalBase W)
-    (hReal : isRealistic f) (w : W) :
-    w ∈ accessibleWorlds f w :=
+    (hReal : f.IsRealistic) (w : W) :
+    w ∈ f.accessibleWorlds w :=
   (realistic_refl f hReal).refl w
 
 /-- Realistic ⟹ serial. -/
-theorem realistic_is_serial (f : ModalBase W) (hReal : isRealistic f) :
+theorem realistic_is_serial (f : ModalBase W) (hReal : f.IsRealistic) :
     IsSerial (kratzerR f) :=
   ⟨fun w => ⟨w, (realistic_refl f hReal).refl w⟩⟩
 
 /-- A modal base is realistic exactly when its accessibility relation is reflexive. -/
-theorem isRealistic_iff_refl {f : ModalBase W} : isRealistic f ↔ Std.Refl (kratzerR f) :=
+theorem isRealistic_iff_refl {f : ModalBase W} : f.IsRealistic ↔ Std.Refl (kratzerR f) :=
   ⟨realistic_refl f, fun h w => h.refl w⟩
 
 /-- A modal base is realistic exactly when simple necessity over it is veridical, what must be
 the case being the case: **T** defines realism. -/
 theorem isRealistic_iff_simpleNecessity_le_id {f : ModalBase W} :
-    isRealistic f ↔ simpleNecessity f ≤ id :=
+    f.IsRealistic ↔ simpleNecessity f ≤ id :=
   isRealistic_iff_refl.trans box_T_iff.symm
 
 /-- Under the empty modal base, every world is accessible. -/
@@ -237,9 +237,9 @@ theorem kratzerR_singleton (p : W → Prop) (w w' : W) :
 
 /-- Empty modal base gives universal accessibility. -/
 theorem empty_base_universal_access (w : W) :
-    accessibleWorlds (emptyBackground (W := W)) w = Set.univ := by
+    ModalBase.accessibleWorlds (emptyBackground (W := W)) w = Set.univ := by
   ext w'
-  simp only [accessibleWorlds, emptyBackground, propIntersection,
+  simp only [ModalBase.accessibleWorlds, emptyBackground, propIntersection,
              List.not_mem_nil, false_implies, forall_const, Set.mem_ofPred_eq,
              Set.mem_univ]
 
@@ -261,7 +261,7 @@ theorem K_axiom (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w :
 
 /-- Over a totally realistic base the T axiom holds for full necessity. -/
 theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
-    (hTotal : isTotallyRealistic f)
+    (hTotal : f.IsTotallyRealistic)
     (p : W → Prop) (w : W)
     (hNec : necessity f g p w) : p w := by
   have hSelf : kratzerBestR f g w w := by
@@ -278,24 +278,24 @@ theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
 
 /-- The modal base restricted by an antecedent, which prepends the antecedent to the base, so that
 *if α, must β* is `must_{f + α} β`. -/
-def restrictedBase (f : ModalBase W) (antecedent : W → Prop) : ModalBase W :=
+def ModalBase.restrict (f : ModalBase W) (antecedent : W → Prop) : ModalBase W :=
   fun w => antecedent :: f w
 
 /-- The accessible worlds of the restricted base are the antecedent-worlds among the accessible
 worlds. -/
-theorem accessibleWorlds_restrictedBase (f : ModalBase W) (α : W → Prop) (w : W) :
-    accessibleWorlds (restrictedBase f α) w = {v ∈ accessibleWorlds f w | α v} :=
+theorem accessibleWorlds_restrict (f : ModalBase W) (α : W → Prop) (w : W) :
+    (f.restrict α).accessibleWorlds w = {v ∈ f.accessibleWorlds w | α v} :=
   Set.ext fun _ ↦ List.forall_mem_cons.trans and_comm
 
-theorem mem_accessibleWorlds_restrictedBase {f : ModalBase W} {α : W → Prop} {w v : W} :
-    v ∈ accessibleWorlds (restrictedBase f α) w ↔ v ∈ accessibleWorlds f w ∧ α v :=
+theorem mem_accessibleWorlds_restrict {f : ModalBase W} {α : W → Prop} {w v : W} :
+    v ∈ (f.restrict α).accessibleWorlds w ↔ v ∈ f.accessibleWorlds w ∧ α v :=
   List.forall_mem_cons.trans and_comm
 
 /-- Restricting by a stronger antecedent leaves fewer accessible worlds. -/
-theorem accessibleWorlds_restrictedBase_mono (f : ModalBase W) {α₁ α₂ : W → Prop} (w : W)
+theorem accessibleWorlds_restrict_mono (f : ModalBase W) {α₁ α₂ : W → Prop} (w : W)
     (h : ∀ v, α₂ v → α₁ v) :
-    accessibleWorlds (restrictedBase f α₂) w ⊆ accessibleWorlds (restrictedBase f α₁) w :=
-  fun _ hv ↦ mem_accessibleWorlds_restrictedBase.2
-    ⟨(mem_accessibleWorlds_restrictedBase.1 hv).1, h _ (mem_accessibleWorlds_restrictedBase.1 hv).2⟩
+    (f.restrict α₂).accessibleWorlds w ⊆ (f.restrict α₁).accessibleWorlds w :=
+  fun _ hv ↦ mem_accessibleWorlds_restrict.2
+    ⟨(mem_accessibleWorlds_restrict.1 hv).1, h _ (mem_accessibleWorlds_restrict.1 hv).2⟩
 
-end Modality.Kratzer
+end Modality

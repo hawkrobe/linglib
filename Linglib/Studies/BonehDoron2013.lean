@@ -24,7 +24,7 @@ and [pancheva-2003]'s final-subinterval perfect.
 ## Main definitions
 
 * `hab` — the chapter's (13)/(15), with (14)'s iteration as `Mereology.IsPlural`
-  and the modal base `Modality.Kratzer.ModalBase`.
+  and the modal base `Modality.ModalBase`.
 * `retro`, `usedToOp`, `perfectOp` — (19b), (18), and the (34a) perfect over
   `IntervalPred`, with (19a) as the substrate's `IMPF`.
 * `HabitualForm`, `admitsViewpoint`, `admitsPerspective` — Table (41).
@@ -60,7 +60,7 @@ namespace BonehDoron2013
 open Quantifier Quantifier.GQ Quantifier.NP
 open Genericity (Situation traditionalGEN)
 open Aspect (Perfectivity IntervalPred IMPF)
-open Modality.Kratzer (ModalBase accessibleWorlds)
+open Modality (ModalBase)
 
 /-! ### Hab against Gen ((4)–(8), (13)–(15))
 
@@ -99,7 +99,7 @@ unanalyzed, so it is a parameter; the temporal anchoring `τ(s) ⊆ τ(e)` is
 suppressed with the event times. -/
 def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : ModalBase W)
     (indicatesDisposition : W → Prop) (w : W) : Prop :=
-  indicatesDisposition w ∧ ∀ w' ∈ accessibleWorlds mb w, ∃ e, Mereology.IsPlural (P · w') e
+  indicatesDisposition w ∧ ∀ w' ∈ mb.accessibleWorlds w, ∃ e, Mereology.IsPlural (P · w') e
 
 /-- (16)–(17), (42a–b): Hab is dispositional — it holds on the strength of a
 single actual initiating event, with the iteration living only in the
@@ -111,7 +111,7 @@ theorem hab_without_actual_iteration :
     fun _ => [(· = true)], ⟨rfl, ?_⟩, ?_⟩
   · intro w' hw'
     have hw : w' = true := by
-      simpa [accessibleWorlds, Modality.Kratzer.propIntersection] using hw'
+      simpa [ModalBase.accessibleWorlds, Modality.propIntersection] using hw'
     subst hw
     exact ⟨{0} ⊔ {1}, .sum (.base (by decide)) (.base (by decide)),
       {0}, by decide, {1}, by decide, by decide, by decide, by decide⟩

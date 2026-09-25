@@ -39,7 +39,7 @@ from which argument controls, and check the Fragment's control verbs against bot
 
 namespace Chierchia1984
 
-open Modality.Kratzer
+open Modality
 
 variable {E W Args : Type*}
 

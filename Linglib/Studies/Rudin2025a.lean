@@ -53,7 +53,7 @@ steps are needed, and both are formalized.
 
 namespace Rudin2025a
 
-open Modality.Kratzer
+open Modality
 
 variable {W : Type*}
 
