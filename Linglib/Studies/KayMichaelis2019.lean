@@ -110,48 +110,46 @@ theorem same_form (E : Type*) :
 def demoCx (E : Type*) : List (Construction (CompositionRule (Den E))) :=
   [intersectiveModification E, operatorModification E]
 
-/-- Toy lexicon. -/
-def demoLexicon : Lexicon where
-  pos
-    | "purple" | "alleged" => some .ADJ
-    | "plum" | "thief" => some .NOUN
-    | _ => none
-
 section Demo
 
 variable {E : Type*} (purple plum thief : E → Prop)
   (alleged : (E → Prop) → (E → Prop))
 
-/-- Toy denotation lexicon: *purple* is a predicate, *alleged* an
-operator. -/
-def demoLex : String → Option (Den E)
+/-- Toy denotations, by form: *purple* is a predicate, *alleged* an operator. -/
+def demoLex (w : Morphology.Word) : Option (Den E) :=
+  match w.form with
   | "purple" => some (.pred purple)
   | "alleged" => some (.op alleged)
   | "plum" => some (.pred plum)
   | "thief" => some (.pred thief)
   | _ => none
 
+/-- *purple plum*, two words tagged for part of speech. -/
+def purplePlum : Syntax.Tree Unit Morphology.Word :=
+  .node () [.leaf (.mk' "purple" .ADJ), .leaf (.mk' "plum" .NOUN)]
+
+/-- *alleged thief*, two words tagged for part of speech. -/
+def allegedThief : Syntax.Tree Unit Morphology.Word :=
+  .node () [.leaf (.mk' "alleged" .ADJ), .leaf (.mk' "thief" .NOUN)]
+
 /-- *Purple plum* has exactly one reading: the intersection. The operator
 construction matches the form but its rule rejects two predicate
 daughters. -/
 theorem purple_plum_intersective :
-    interps (demoCx E) demoLexicon (demoLex purple plum thief alleged)
-        (.node () [.leaf "purple", .leaf "plum"])
+    interps (demoCx E) (demoLex purple plum thief alleged) purplePlum
       = [.pred fun x ↦ purple x ∧ plum x] := rfl
 
 /-- *Alleged thief* has exactly one reading: the operator applied to the
 head predicate — not an intersection. -/
 theorem alleged_thief_operator :
-    interps (demoCx E) demoLexicon (demoLex purple plum thief alleged)
-        (.node () [.leaf "alleged", .leaf "thief"])
+    interps (demoCx E) (demoLex purple plum thief alleged) allegedThief
       = [.pred (alleged thief)] := rfl
 
 /-- With only the intersective construction, *alleged thief* has no
 reading at all: the chapter's point that intersection cannot be the
 single rule of adjectival modification. -/
 theorem alleged_thief_needs_operator_construction :
-    interps [intersectiveModification E] demoLexicon (demoLex purple plum thief alleged)
-        (.node () [.leaf "alleged", .leaf "thief"])
+    interps [intersectiveModification E] (demoLex purple plum thief alleged) allegedThief
       = [] := rfl
 
 end Demo

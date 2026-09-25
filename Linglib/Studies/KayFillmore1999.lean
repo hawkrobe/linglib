@@ -84,78 +84,97 @@ theorem wxdy_partially_open : wxdyConstruction.specificity = .partiallyOpen := r
 /-! ### The grammatical evidence (Section 2.3)
 
 The paper's minimal pairs, matched against the form: each is a sequence of daughter trees in the
-slot order `X`, BE, *doing*, *what*, `Y`, with lemma-level words. -/
+slot order `X`, BE, *doing*, *what*, `Y`, with lemma-level words tagged for part of speech. -/
 
-/-- The parts of speech of the fixed heads, and the negator. -/
-def wxdyLexicon : Lexicon where
-  pos
-    | "be" => some .AUX
-    | "doing" => some .VERB
-    | _ => none
-  negators := ["not"]
+open Syntax (Tree)
+open Morphology (Word)
+
+/-- *not*, a particle of negative polarity. -/
+def negator : Word := { form := "not", cat := .PART, features := .of (polarity := some .Neg) }
 
 /-- (3a) *What's this scratch doing on the table?* -/
-def scratchTokens : List (Syntax.Tree Unit String) :=
-  [ .leaf "scratch", .node () [.leaf "be"], .node () [.leaf "doing"], .leaf "what",
-    .node () [.leaf "on", .leaf "table"] ]
+def scratchTokens : List (Tree Unit Word) :=
+  [ .leaf (.mk' "scratch" .NOUN),
+    .node () [.leaf (.mk' "be" .AUX)],
+    .node () [.leaf (.mk' "doing" .VERB)],
+    .leaf (.mk' "what" .PRON),
+    .node () [.leaf (.mk' "on" .ADP), .leaf (.mk' "table" .NOUN)] ]
 
 /-- (14a) *What's he doing knowing the answer?*, a stative complement. -/
-def stativeTokens : List (Syntax.Tree Unit String) :=
-  [ .leaf "he", .node () [.leaf "be"], .node () [.leaf "doing"], .leaf "what",
-    .node () [.leaf "knowing", .leaf "answer"] ]
+def stativeTokens : List (Tree Unit Word) :=
+  [ .leaf (.mk' "he" .PRON),
+    .node () [.leaf (.mk' "be" .AUX)],
+    .node () [.leaf (.mk' "doing" .VERB)],
+    .leaf (.mk' "what" .PRON),
+    .node () [.leaf (.mk' "knowing" .VERB), .leaf (.mk' "answer" .NOUN)] ]
 
 /-- (12a) *What does this scratch do on the table?*, with bare-stem *do*. -/
-def bareStemTokens : List (Syntax.Tree Unit String) :=
-  [ .leaf "scratch", .node () [.leaf "do"], .node () [.leaf "do"], .leaf "what",
-    .node () [.leaf "on", .leaf "table"] ]
+def bareStemTokens : List (Tree Unit Word) :=
+  [ .leaf (.mk' "scratch" .NOUN),
+    .node () [.leaf (.mk' "do" .AUX)],
+    .node () [.leaf (.mk' "do" .VERB)],
+    .leaf (.mk' "what" .PRON),
+    .node () [.leaf (.mk' "on" .ADP), .leaf (.mk' "table" .NOUN)] ]
 
 /-- (13a) *What did he keep doing in the tool shed?*, *doing* as complement of *keep* rather
 than of copular BE: a fine sentence, but not an instance of the construction. -/
-def nonCopulaTokens : List (Syntax.Tree Unit String) :=
-  [ .leaf "he", .node () [.leaf "keep"], .node () [.leaf "doing"], .leaf "what",
-    .node () [.leaf "in", .leaf "shed"] ]
+def nonCopulaTokens : List (Tree Unit Word) :=
+  [ .leaf (.mk' "he" .PRON),
+    .node () [.leaf (.mk' "keep" .VERB)],
+    .node () [.leaf (.mk' "doing" .VERB)],
+    .leaf (.mk' "what" .PRON),
+    .node () [.leaf (.mk' "in" .ADP), .leaf (.mk' "shed" .NOUN)] ]
 
 /-- (15f) *What else are you doing eating cold pizza?*, with *else* on WXDY-*what*. -/
-def whatElseTokens : List (Syntax.Tree Unit String) :=
-  [ .leaf "you", .node () [.leaf "be"], .node () [.leaf "doing"],
-    .node () [.leaf "what", .leaf "else"], .node () [.leaf "eating", .leaf "pizza"] ]
+def whatElseTokens : List (Tree Unit Word) :=
+  [ .leaf (.mk' "you" .PRON),
+    .node () [.leaf (.mk' "be" .AUX)],
+    .node () [.leaf (.mk' "doing" .VERB)],
+    .node () [.leaf (.mk' "what" .PRON), .leaf (.mk' "else" .ADV)],
+    .node () [.leaf (.mk' "eating" .VERB), .leaf (.mk' "pizza" .NOUN)] ]
 
 /-- (17b) *What are my brushes not doing soaking in water?*, with negated *doing*. -/
-def negatedDoingTokens : List (Syntax.Tree Unit String) :=
-  [ .leaf "brushes", .node () [.leaf "be"], .node () [.leaf "not", .leaf "doing"], .leaf "what",
-    .node () [.leaf "soaking", .leaf "water"] ]
+def negatedDoingTokens : List (Tree Unit Word) :=
+  [ .leaf (.mk' "brushes" .NOUN),
+    .node () [.leaf (.mk' "be" .AUX)],
+    .node () [.leaf negator, .leaf (.mk' "doing" .VERB)],
+    .leaf (.mk' "what" .PRON),
+    .node () [.leaf (.mk' "soaking" .VERB), .leaf (.mk' "water" .NOUN)] ]
 
 /-- (17c) *What are my brushes doing not soaking in water?*, negation inside `Y`. -/
-def negatedComplementTokens : List (Syntax.Tree Unit String) :=
-  [ .leaf "brushes", .node () [.leaf "be"], .node () [.leaf "doing"], .leaf "what",
-    .node () [.leaf "not", .leaf "soaking", .leaf "water"] ]
+def negatedComplementTokens : List (Tree Unit Word) :=
+  [ .leaf (.mk' "brushes" .NOUN),
+    .node () [.leaf (.mk' "be" .AUX)],
+    .node () [.leaf (.mk' "doing" .VERB)],
+    .leaf (.mk' "what" .PRON),
+    .node () [.leaf negator, .leaf (.mk' "soaking" .VERB), .leaf (.mk' "water" .NOUN)] ]
 
 /-- The construction licenses the canonical (3a) and the stative (14a): WXDY does not encode
 progressive aspect. -/
 theorem wxdy_matches_canonical :
-    FormMatches wxdyLexicon wxdyConstruction.form scratchTokens ∧
-      FormMatches wxdyLexicon wxdyConstruction.form stativeTokens := by
+    FormMatches wxdyConstruction.form scratchTokens ∧
+      FormMatches wxdyConstruction.form stativeTokens := by
   decide
 
 /-- The present participle is frozen: bare-stem *do* is rejected, (12a). -/
 theorem wxdy_rejects_bare_stem :
-    ¬ FormMatches wxdyLexicon wxdyConstruction.form bareStemTokens := by
+    ¬ FormMatches wxdyConstruction.form bareStemTokens := by
   decide
 
 /-- *doing* must complement copular BE: *keep doing* is no instance, (13a). -/
 theorem wxdy_rejects_non_copula :
-    ¬ FormMatches wxdyLexicon wxdyConstruction.form nonCopulaTokens := by
+    ¬ FormMatches wxdyConstruction.form nonCopulaTokens := by
   decide
 
 /-- WXDY-*what* does not accept *else*, (15f): the slot is lexically fixed. -/
 theorem wxdy_rejects_what_else :
-    ¬ FormMatches wxdyLexicon wxdyConstruction.form whatElseTokens := by
+    ¬ FormMatches wxdyConstruction.form whatElseTokens := by
   decide
 
 /-- Negation of *doing* is rejected, (17b), while negation inside `Y` is licensed, (17c). -/
 theorem wxdy_negation_contrast :
-    ¬ FormMatches wxdyLexicon wxdyConstruction.form negatedDoingTokens ∧
-      FormMatches wxdyLexicon wxdyConstruction.form negatedComplementTokens := by
+    ¬ FormMatches wxdyConstruction.form negatedDoingTokens ∧
+      FormMatches wxdyConstruction.form negatedComplementTokens := by
   decide
 
 /-! ### Coinstantiation (Figure 13, Section 4.2) -/

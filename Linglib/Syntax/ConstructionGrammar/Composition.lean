@@ -71,26 +71,26 @@ theorem CompositionRule.override_nil [DecidableEq D]
   cases h : r ds <;> simp [CompositionRule.override, h]
 
 open Syntax (Tree)
+open Morphology (Word)
 
 mutual
 
 /-- All readings of a tree: each construction whose typed form the daughters instantiate
 contributes the readings its meaning pole, a composition rule, produces from the daughters'
-readings; words read from the lexicon `den`. -/
-def interps (cxns : List (Construction (CompositionRule D))) (lex : Lexicon)
-    (den : String → Option D) : Tree Unit String → List D
+readings; words read their denotations `den`. -/
+def interps (cxns : List (Construction (CompositionRule D))) (den : Word → Option D) :
+    Tree Unit Word → List D
   | .terminal _ w => (den w).toList
   | .node _ ts =>
       cxns.flatMap fun c ↦
-        if FormMatches lex c.form ts then (interpsList cxns lex den ts).filterMap c.meaning
-        else []
+        if FormMatches c.form ts then (interpsList cxns den ts).filterMap c.meaning else []
   | .trace _ _ | .bind _ _ _ => []
 
 /-- All sequences of daughter readings. -/
-def interpsList (cxns : List (Construction (CompositionRule D))) (lex : Lexicon)
-    (den : String → Option D) : List (Tree Unit String) → List (List D)
+def interpsList (cxns : List (Construction (CompositionRule D))) (den : Word → Option D) :
+    List (Tree Unit Word) → List (List D)
   | [] => [[]]
-  | t :: ts => (interps cxns lex den t).flatMap fun d ↦ (interpsList cxns lex den ts).map (d :: ·)
+  | t :: ts => (interps cxns den t).flatMap fun d ↦ (interpsList cxns den ts).map (d :: ·)
 
 end
 
