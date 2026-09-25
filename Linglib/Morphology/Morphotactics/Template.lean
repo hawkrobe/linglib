@@ -20,11 +20,11 @@ here.
 A word's affix template: the ordered position-class slots of its prefix and
 suffix strings, parameterized by the slot type `Slot` — so the order lives
 once, as Fragment data, and study files derive their checks from it rather
-than re-typing the template. Instantiating at `MorphCategory`
-(`Morphology/RelevanceHierarchy.lean`) gives a language's slot order in
-relevance-hierarchy vocabulary; a language-specific slot type carries
-finer position classes: the Mayan fragments' `template`s use `Mayan.VerbSlot`, with the
-prefix/suffix split encoding a morpheme's position relative to the verb stem.
+than re-typing the template. The Mayan fragments' `template`s use `Mayan.VerbSlot`, with the
+prefix/suffix split encoding a morpheme's position relative to the verb stem; a comparison of
+the slots with a cross-linguistic inventory such as `MorphCategory`
+(`Morphology/Morphotactics/RelevanceHierarchy.lean`) maps them along a hom in the study that
+draws it.
 
 A word fills a template's positions in order, and the strings of slots a template admits form
 a regular language. A grammar whose positions are each filled at most once admits the sublists
