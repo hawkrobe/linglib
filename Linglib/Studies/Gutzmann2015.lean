@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Data.Examples.Gutzmann2015
+public import Linglib.Fragments.German.Particles
+public import Linglib.Fragments.German.V2
 
 /-!
 # Gutzmann (2015): Use-Conditional Meaning
@@ -29,6 +31,15 @@ book's *wohl* examples are acceptable exactly where one does, `wohl_rows`; *ja* 
 and (6.142), are ones the book argues no rational speaker holds. The book's examples are the
 rows of `Data.Examples.Gutzmann2015`.
 
+Truckenbrodt's five clause types are read off the library's clause cells, `ClauseType.ofCell`:
+the finite verb moves to C in a root declarative or interrogative, while a *dass*-clause or a
+deliberative *ob*- or wh-question used as a root utterance, Evans's insubordination, keeps it
+last, and the imperative stands apart, (5.39). On the cells both classify, Truckenbrodt's verb
+movement is the verb-second requirement of `German.verbSecond`, `verbInC_iff_required`; the
+sentence types in which Durrell licenses *wohl* all have a clause type carrying the epistemic
+modifier, `wohl_licensed_hasEpistemic`; and where Durrell excludes a modal particle from a cell
+the book's row there is unacceptable, `excluded_rows`.
+
 ## Implementation notes
 
 The type system (4.45) is taken at the propositional fragment: `t` is the type of propositions,
@@ -45,6 +56,8 @@ logic, so their use conditions are derived and the restriction is left to the ro
 * [gutzmann-2015]
 * [potts-2005]
 * [kaplan-1999]
+* [durrell-2011]
+* [evans-2007]
 -/
 
 @[expose] public section
@@ -52,10 +65,12 @@ logic, so their use conditions are derived and the restriction is left to the ro
 namespace Gutzmann2015
 
 open Data.Examples
+open Clause (SentenceType EmbeddingContext)
 
-/-- The German clause types of chapter 5, told apart by the position of the finite verb and by
-the complementizer: root *dass*-clauses with the verb last, v2-declaratives, v2-interrogatives
-with the finite verb in C, vl-interrogatives with the verb last, and imperatives. -/
+/-- The German clause types of chapter 5, Truckenbrodt's, told apart by the position of the
+finite verb and by the complementizer: root *dass*-clauses with the verb last, v2-declaratives,
+v2-interrogatives with the finite verb in C, vl-interrogatives with the verb last, and
+imperatives. -/
 inductive ClauseType where
   | dassVL
   | v2Declarative
@@ -64,14 +79,40 @@ inductive ClauseType where
   | imperative
   deriving DecidableEq, Repr, Fintype
 
-/-- The clause type a row's `clauseType` feature names. -/
-def ClauseType.ofString? : String → Option ClauseType
-  | "dassVL" => some .dassVL
-  | "v2Declarative" => some .v2Declarative
-  | "v2Interrogative" => some .v2Interrogative
-  | "vlInterrogative" => some .vlInterrogative
-  | "imperative" => some .imperative
-  | _ => none
+/-- The clause type of a cell. The finite verb moves to C in a root declarative or
+interrogative, a *dass*-clause or an interrogative used as a root utterance keeps it last, and
+the imperative stands apart. -/
+def ClauseType.ofCell : SentenceType → EmbeddingContext → Option ClauseType
+  | .declarative, .matrix => some .v2Declarative
+  | .polar, .matrix | .alternative, .matrix | .constituent, .matrix => some .v2Interrogative
+  | .imperative, .matrix => some .imperative
+  | .declarative, .insubordinated => some .dassVL
+  | .polar, .insubordinated | .alternative, .insubordinated | .constituent, .insubordinated =>
+    some .vlInterrogative
+  | _, _ => none
+
+/-- The finite verb has moved to C, (5.39), in the v2 types and in the imperative. -/
+def ClauseType.VerbInC : ClauseType → Prop
+  | .v2Declarative | .v2Interrogative | .imperative => True
+  | .dassVL | .vlInterrogative => False
+
+instance : DecidablePred ClauseType.VerbInC
+  | .v2Declarative | .v2Interrogative | .imperative => isTrue trivial
+  | .dassVL | .vlInterrogative => isFalse id
+
+/-- On the cells both classify, imperatives apart as in (5.39), Truckenbrodt's verb movement is
+the verb-second requirement of the German fragment. -/
+theorem verbInC_iff_required :
+    ∀ t e, t ≠ .imperative → (t, e) ∈ German.verbSecond.recorded →
+      ∀ ct ∈ ClauseType.ofCell t e, (ct.VerbInC ↔ (t, e) ∈ German.verbSecond.required) := by
+  decide
+
+/-- The cell a row records, a sentence type in a matrix or insubordinated context. -/
+def cellOf (row : LinguisticExample) : Option (SentenceType × EmbeddingContext) :=
+  (row.parse? "sentenceType" [("declarative", .declarative), ("polar", .polar),
+    ("constituent", .constituent), ("imperative", .imperative)]).bind fun t ↦
+    (row.parse? "embedding" [("matrix", .matrix), ("insubordinated", .insubordinated)]).map
+      (t, ·)
 
 /-- A clause type has the epistemic modifier of the deontic operator where a [±wh] feature is
 visible at LF (5.41): in every clause type but root *dass*-clauses and imperatives. -/
@@ -81,6 +122,13 @@ def ClauseType.HasEpistemic : ClauseType → Prop
 
 instance : DecidablePred ClauseType.HasEpistemic := fun ct ↦ by
   cases ct <;> unfold ClauseType.HasEpistemic <;> infer_instance
+
+/-- Every sentence type in which Durrell licenses *wohl* has a clause type carrying the
+epistemic modifier that *wohl* takes, (6.103). -/
+theorem wohl_licensed_hasEpistemic :
+    ∀ t e, (t, e) ∈ German.Particles.wohl.distribution.possible →
+      ∀ ct ∈ ClauseType.ofCell t e, ct.HasEpistemic := by
+  decide
 
 universe u
 
@@ -449,10 +497,18 @@ theorem derivable_wohl_iff (ct : ClauseType) :
 when *wohl* finds the epistemic modifier's type among its clause type's mood items. -/
 theorem wohl_rows :
     ∀ row ∈ Examples.all, row.feature? "particle" = some "wohl" →
-      ∀ ct ∈ (row.feature? "clauseType").bind ClauseType.ofString?,
+      ∀ c ∈ cellOf row, ∀ ct ∈ ClauseType.ofCell c.1 c.2,
         (row.judgment = .acceptable ↔
           Derivable (ct.moodTypes ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1)) := by
   simp only [derivable_wohl_iff]
+  decide
+
+/-- Where Durrell excludes a modal particle from a cell, the book's row in that cell is
+unacceptable. -/
+theorem excluded_rows :
+    ∀ row ∈ Examples.all, ∀ p ∈ German.Particles.modalParticles,
+      row.feature? "particle" = some p.form → ∀ c ∈ cellOf row,
+        p.distribution c.1 c.2 = some .excluded → row.judgment ≠ .acceptable := by
   decide
 
 end Gutzmann2015

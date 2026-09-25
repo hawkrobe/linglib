@@ -17,8 +17,9 @@ interrogative, imperative and exclamative, with the interrogative subtyped as po
 alternative or constituent, and the promissive that Korean grammaticalizes beside the
 imperative. A sentence type is a form; the speech act it conventionally performs is its force,
 `Discourse.SpeechAct.Force`, read off by `Clause.SentenceType.force`. An embedding context is
-where a clause token occurs, Bhatt and Dayal's four cells. A cell is a sentence type in an embedding
-context, and a distribution records for each cell whether some element or process is
+where a clause token occurs, Bhatt and Dayal's four contexts together with Evans's
+insubordination, the conventionalized root use of a subordinate form. A cell is a sentence type
+in an embedding context, and a distribution records for each cell whether some element or process is
 obligatory, optional or excluded there, or nothing where the source is silent; the cells where
 it is possible and where it is required are the two relations a distribution determines. A
 particle's licensing and a language's verb-second grammar are distributions. A selection is
@@ -51,6 +52,7 @@ complement clause are the remaining axes.
 * [bondarenko-2022]
 * [wurmbrand-lohninger-2023]
 * [wurmbrand-2024]
+* [evans-2007]
 -/
 
 @[expose] public section
@@ -84,7 +86,7 @@ instance : DecidablePred SentenceType.IsInterrogative :=
 /-! ### Embedding contexts and cells -/
 
 /-- Where a clause token occurs, the interrogative-embedding contexts of Bhatt and Dayal and of
-Dayal: a property of the token, not of the clause. -/
+Dayal together with Evans's insubordination, a property of the token, not of the clause. -/
 inductive EmbeddingContext where
   | matrix
   | subordinated
@@ -92,6 +94,10 @@ inductive EmbeddingContext where
   have them. -/
   | quasiSubordinated
   | quotation
+  /-- A formally subordinate clause used as a root utterance, as the German command
+  *Dass du nicht wieder die Schlüssel vergisst!* and the deliberative question *Ob er immer noch
+  kubanische Zigarren mag?*. -/
+  | insubordinated
   deriving DecidableEq, Repr, Fintype
 
 /-- The cell of a root clause of sentence type `t`. -/
