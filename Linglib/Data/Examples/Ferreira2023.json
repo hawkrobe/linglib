@@ -24,7 +24,7 @@
         "pos_notp"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
   },
   {
     "id": "ferreira2023_17",
@@ -51,7 +51,7 @@
         "pos_notp"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
   },
   {
     "id": "ferreira2023_18",
@@ -78,7 +78,7 @@
         "pos_notp"
       ]
     ],
-    "comment": "Repeated as (23)."
+    "comment": "Repeated as (23). The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
   },
   {
     "id": "ferreira2023_19",
@@ -105,7 +105,7 @@
         "not_wn_p"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
   },
   {
     "id": "ferreira2023_20",
@@ -132,7 +132,7 @@
         "not_sn_p"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
   },
   {
     "id": "ferreira2023_21",
@@ -159,7 +159,7 @@
         "not_pos_p"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
   },
   {
     "id": "ferreira2023_22",
@@ -186,7 +186,7 @@
         "not_wn_p"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
   },
   {
     "id": "ferreira2023_24",
@@ -213,7 +213,7 @@
         "wn_notp"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15)."
   },
   {
     "id": "ferreira2023_25",
@@ -240,7 +240,7 @@
         "sn_notp"
       ]
     ],
-    "comment": ""
+    "comment": "The paper gives an interlinear gloss; the translation follows (15)."
   },
   {
     "id": "ferreira2023_30a",
@@ -349,5 +349,51 @@
       ]
     ],
     "comment": ""
+  },
+  {
+    "id": "ferreira2023_80",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(80)"
+    },
+    "language": "braz1246",
+    "primaryText": "(É por isso que) ele devia estar lá.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "(That's why) he ought to be there.",
+    "context": "A: Where is Peter? B: Probably in his office. A: But today is a holiday! B: Oh, I didn't know it was …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "base",
+        "holiday"
+      ]
+    ],
+    "comment": "Repeats (65). The paper glosses devia as wn.pst.imp and contrasts the English 'That's why I expected him to be there.'"
+  },
+  {
+    "id": "ferreira2023_81",
+    "source": {
+      "bibkey": "ferreira-2023",
+      "paperLabel": "(81)"
+    },
+    "language": "braz1246",
+    "primaryText": "Estranho! Ele devia estar lá.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Strange! He ought to be there.",
+    "context": "A: Where is Peter? B: Probably in his office. A: I have just checked and he isn't there.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "base",
+        "checked"
+      ]
+    ],
+    "comment": "Repeats (66). The paper glosses devia as wn.pst.imp."
   }
 ]
