@@ -37,6 +37,9 @@ which Portuguese fills with *tem que*, *tinha que*, *deve*, *devia* (135).
 
 * `snXg_iff_weakNecessity`: (133), weak necessity is strong necessity with an X-marked
   ordering source.
+* `domainIndependent_starstar_iff`, `not_exists_starstar_orderingSource`: the ∗∗-revision is
+  domain-independent exactly when bestness is stable under widening, which a three-world frame
+  refutes, so (131) has no solution among ordering sources.
 * `Vertex.entails_iff`: the entailment order of the square (134). Strong necessity entails
   every vertex, *tinha que* entails *devia*, and nothing else entails anything, which confirms
   (29) and (82a) and refutes the first half of (82b).
@@ -54,9 +57,9 @@ which Portuguese fills with *tem que*, *tinha que*, *deve*, *devia* (135).
 * The similarity ordering of (41) is a totally realistic ordering source, and (41b)(i) is read
   with the best worlds drawn from the domain. The ∗-revision is the modal base whose single
   premise is the widened domain of (79).
-* (131) has no solution among ordering sources (`starstar_not_domainIndependent`), so
-  `starstar` takes the domain as an argument and a vertex quantifies over the minimal elements
-  of the revised relation (`bestOf`).
+* (131) presupposes that a best world stays best when the domain widens, which fails
+  (`domainIndependent_starstar_iff`), so `starstar` takes the domain as an argument and a
+  vertex quantifies over the minimal elements of the revised relation (`bestOf`).
 * The ordering revision's target is a contextual parameter different from the prejacent, the
   asymmetry §4 leaves open, and one target is shared by both conjuncts of a pattern, which is
   what makes (24) contradictory. Contradictoriness quantifies over models with nonempty best
@@ -159,30 +162,82 @@ theorem bestOf_starstar (g : OrderingSource W) (p : W → Prop) (w : W) (D : Set
     List.forall_mem_singleton, Set.mem_ofPred_eq]
   grind
 
-/-- (131) has no solution: no betterness relation independent of the domain restricts to the
-∗∗-revision on every domain, because a world best in a small domain may be bettered in a
-larger one. Worlds `0` and `1` are both best in `{0, 1}`, and `1`, the `p`-world, then betters
-`0`; in the whole frame `2` betters `1`, which is no longer best. -/
-theorem starstar_not_domainIndependent :
-    ¬ ∃ R : Fin 3 → Fin 3 → Prop, ∀ (D : Set (Fin 3)) (u v : Fin 3), u ∈ D → v ∈ D →
-      (R u v ↔ starstar (fun _ ↦ [(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)]) (· = 1) 0 D u v) := by
-  rintro ⟨R, hR⟩
-  have hsmall : starstar (W := Fin 3) (fun _ ↦ [(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)]) (· = 1) 0
-      {x | x ≠ 2} 1 0 := by
-    refine Or.inr ⟨rfl, by decide, ?_, ?_⟩ <;>
-    · simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_ofPred_eq, List.forall_mem_cons,
-        List.mem_nil_iff, false_implies, implies_true, and_true]
-      decide
-  have hbig : ¬ starstar (W := Fin 3) (fun _ ↦ [(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)]) (· = 1) 0
-      Set.univ 1 0 := by
-    rintro (h | ⟨-, -, h, -⟩)
-    · exact absurd (((strictlyBetter_iff _ _ _).1 h).1 (· = 0) List.mem_cons_self rfl) (by decide)
-    · refine absurd (h.2 (Set.mem_univ 2) ?_ (· = 2) (by simp) rfl) (by decide)
-      intro r hr hr1
-      simp only [List.mem_cons, List.mem_nil_iff, or_false] at hr
-      rcases hr with rfl | rfl | rfl <;> simp_all
-  exact hbig ((hR Set.univ 1 0 trivial trivial).1
-    ((hR {x | x ≠ 2} 1 0 (by decide) (by decide)).2 hsmall))
+/-- (131) asks for one betterness relation whose restriction to every domain is the ∗∗-revision
+on that domain. -/
+def DomainIndependent (F : Set W → W → W → Prop) : Prop :=
+  ∃ R : W → W → Prop, ∀ D u v, u ∈ D → v ∈ D → (R u v ↔ F D u v)
+
+/-- The ∗∗-revision is domain-independent exactly when a `p`-world and a non-`p`-world that are
+both best in a domain stay best in every larger domain. Bestness is stable under shrinking a
+domain (`bestAmong_superset`); (131) presupposes stability under widening. -/
+theorem domainIndependent_starstar_iff (g : OrderingSource W) (p : W → Prop) (w : W) :
+    DomainIndependent (starstar g p w) ↔
+      ∀ ⦃D D' : Set W⦄, D ⊆ D' → ∀ ⦃u v⦄, p u → ¬ p v →
+        u ∈ bestAmong D (g w) → v ∈ bestAmong D (g w) →
+          u ∈ bestAmong D' (g w) ∧ v ∈ bestAmong D' (g w) := by
+  constructor
+  · rintro ⟨R, hR⟩ D D' hD u v hu hv hbu hbv
+    rcases (hR D' u v (hD hbu.1) (hD hbv.1)).1
+      ((hR D u v hbu.1 hbv.1).2 (Or.inr ⟨hu, hv, hbu, hbv⟩)) with h | ⟨-, -, h⟩
+    · exact absurd (hbv.2 hbu.1 ((strictlyBetter_iff _ _ _).1 h).1)
+        ((strictlyBetter_iff _ _ _).1 h).2
+    · exact h
+  · intro h
+    refine ⟨fun u v ↦ starstar g p w {u, v} u v, fun D u v hu hv ↦ ?_⟩
+    have hp : ({u, v} : Set W) ⊆ D := Set.insert_subset hu (Set.singleton_subset_iff.2 hv)
+    constructor
+    · rintro (hlt | ⟨hpu, hpv, hbu, hbv⟩)
+      · exact Or.inl hlt
+      · exact Or.inr ⟨hpu, hpv, (h hp hpu hpv hbu hbv).1, (h hp hpu hpv hbu hbv).2⟩
+    · rintro (hlt | ⟨hpu, hpv, hbu, hbv⟩)
+      · exact Or.inl hlt
+      · exact Or.inr ⟨hpu, hpv, bestAmong_superset hp hbu (by simp),
+          bestAmong_superset hp hbv (by simp)⟩
+
+/-! ### A three-world frame
+
+Worlds `0` and `1` are incomparable, so both are best among `{0, 1}`, and `2` betters `1`.
+Widening the domain to the whole frame unseats `1`, which is what defeats (131) and, in the
+countermodels below, the entailment from *deve* to *devia*. Three worlds and all three criteria
+are needed: a `p`-world and a non-`p`-world must both be best somewhere, and a third world must
+better one of them. -/
+
+/-- The ordering source of the three-world frame. -/
+abbrev g₃ : OrderingSource (Fin 3) := fun _ ↦ [(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)]
+
+/-- Both worlds of the pair are best in it. -/
+theorem bestAmong_pair_g₃ : bestAmong ({0, 1} : Set (Fin 3)) (g₃ 0) = {0, 1} := by
+  ext u
+  simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true]
+  revert u
+  decide
+
+/-- Over the whole frame `2` betters `1`. -/
+theorem bestAmong_univ_g₃ : bestAmong Set.univ (g₃ 0) = {0, 2} := by
+  ext u
+  simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_univ, true_and, Set.mem_insert_iff,
+    Set.mem_singleton_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
+    and_true]
+  revert u
+  decide
+
+/-- (131) has no solution on the three-world frame: `1`, the `p`-world, and `0` are both best in
+the pair, and `1` is not best in the whole frame. -/
+theorem not_domainIndependent_starstar : ¬ DomainIndependent (starstar g₃ (· = 1) 0) := by
+  intro h
+  have h₁ := (domainIndependent_starstar_iff g₃ (· = 1) 0).1 h (D := {0, 1}) (D' := Set.univ)
+    (Set.subset_univ _) (u := 1) (v := 0) rfl (by decide) (by rw [bestAmong_pair_g₃]; simp)
+    (by rw [bestAmong_pair_g₃]; simp)
+  rw [bestAmong_univ_g₃] at h₁
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h₁
+  exact absurd h₁.1 (by decide)
+
+/-- In the paper's terms: no ordering source is a ∗∗-revision of `g₃` for `(· = 1)`. -/
+theorem not_exists_starstar_orderingSource :
+    ¬ ∃ g' : OrderingSource (Fin 3), ∀ (D : Set (Fin 3)) (u v : Fin 3), u ∈ D → v ∈ D →
+      ((u <[g' 0] v) ↔ starstar g₃ (· = 1) 0 D u v) :=
+  fun ⟨g', h⟩ ↦ not_domainIndependent_starstar ⟨fun u v ↦ u <[g' 0] v, h⟩
 
 /-! ### The square of necessities (132)–(134) -/
 
@@ -348,50 +403,48 @@ private theorem M2_iff (v : Vertex) :
   · exact iff_of_true htf rfl
   · exact iff_of_true (Vertex.entails_xg true _ _ isTotallyRealistic_eq _ _ _ _ _ htf) rfl
 
-/-! The third countermodel refutes *deve q ⊨ devia q*. Worlds `0`, `1`, `2`: the base excludes
-`2`, the revision for the prejacent puts it back, and `2` then betters `1`, the only `p`-world.
-Only *deve* holds. -/
+/-! The third countermodel refutes *deve q ⊨ devia q* on the three-world frame: the base
+excludes `2`, the revision for the prejacent puts it back, and `2` unseats `1`, the only
+`p`-world. Only *deve* holds. -/
 
 private abbrev f₃ : ModalBase (Fin 3) := fun _ ↦ [fun w ↦ w ≠ 2]
-private abbrev g₃ : OrderingSource (Fin 3) := fun _ ↦ [(· = 0), fun w ↦ w = 1 ∨ w = 2, (· = 2)]
 private abbrev q₃ : Fin 3 → Prop := fun w ↦ w = 1 ∨ w = 2
 private abbrev sim₃ : OrderingSource (Fin 3) := fun w ↦ [(· = w)]
 
+private theorem accessibleWorlds_f₃ : accessibleWorlds f₃ 0 = {0, 1} := by
+  ext u
+  simp only [accessibleWorlds, propIntersection, Set.mem_ofPred_eq, Set.mem_insert_iff,
+    Set.mem_singleton_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
+    and_true]
+  revert u
+  decide
+
+private theorem accessibleWorlds_revise_f₃ :
+    accessibleWorlds (revise sim₃ f₃ q₃) 0 = Set.univ := by
+  rw [accessibleWorlds_revise, accessibleWorlds_f₃]
+  ext u
+  simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq,
+    mem_bestAmong, atLeastAsGoodAs_iff, List.forall_mem_singleton, Set.mem_univ, iff_true]
+  revert u
+  decide
+
 private theorem M3_ft : Vertex.necessity ⟨false, true⟩ sim₃ f₃ g₃ (· = 1) q₃ 0 := by
-  rw [Vertex.necessity_xg_true, weakNecessity]
+  rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-  have h1 : (1 : Fin 3) ∈ bestWorlds f₃ g₃ 0 := by
-    simp only [mem_bestWorlds, accessibleWorlds, propIntersection, atLeastAsGoodAs_iff,
-      List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true,
-      Set.mem_ofPred_eq]
-    decide
-  rw [bestAmong_eq_of_exists ⟨1, h1, by simp⟩]
-  rintro w' ⟨-, hw'⟩
-  exact Or.inl (hw' _ (List.mem_singleton_self _))
+  rw [accessibleWorlds_f₃, bestAmong_pair_g₃,
+    bestAmong_eq_singleton (S := {0, 1}) (b := 1) (by simp)]
+  rintro _ rfl
+  exact Or.inl rfl
 
 private theorem M3_not_tt : ¬ Vertex.necessity ⟨true, true⟩ sim₃ f₃ g₃ (· = 1) q₃ 0 := by
-  rw [Vertex.necessity_xg_true, weakNecessity]
+  rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, ↓reduceIte]
-  have h0f : (0 : Fin 3) ∈ accessibleWorlds f₃ 0 := by simp [accessibleWorlds, propIntersection]
-  have h2D : (2 : Fin 3) ∈ accessibleWorlds (revise sim₃ f₃ q₃) 0 := by
-    rw [accessibleWorlds_revise]
-    refine Or.inr ⟨0, h0f, Or.inr rfl, fun v hv _ r hr hrv ↦ ?_⟩
-    rw [List.mem_singleton.mp hr] at hrv
-    subst hrv
-    exact absurd hv (by decide)
-  have h21 : (2 : Fin 3) ≤[g₃ 0] 1 := by
-    simp only [atLeastAsGoodAs_iff, List.forall_mem_cons, List.mem_nil_iff, false_implies,
-      implies_true, and_true]
+  rw [accessibleWorlds_revise_f₃, bestAmong_univ_g₃]
+  have h0 : (0 : Fin 3) ∈ bestAmong ({0, 2} : Set (Fin 3)) [(· = 1)] := by
+    simp only [mem_bestAmong, atLeastAsGoodAs_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+      List.forall_mem_singleton]
     decide
-  have h1best : (1 : Fin 3) ∉ bestWorlds (revise sim₃ f₃ q₃) g₃ 0 := fun h ↦
-    absurd (h.2 h2D h21 (· = 2) (by simp) rfl) (by decide)
-  have h0best : (0 : Fin 3) ∈ bestWorlds (revise sim₃ f₃ q₃) g₃ 0 :=
-    ⟨subset_accessibleWorlds_revise sim₃ f₃ q₃ 0 h0f, fun v _ hv ↦ by
-      rw [show v = 0 from hv (· = 0) List.mem_cons_self rfl]; exact atLeastAsGoodAs_refl _ _⟩
-  refine fun h ↦ absurd (h 0 ⟨h0best, fun v hv _ r hr hrv ↦ ?_⟩) (by decide)
-  rw [List.mem_singleton.mp hr] at hrv ⊢
-  obtain rfl : v = 1 := hrv
-  exact absurd hv h1best
+  exact fun h ↦ absurd (h 0 h0) (by decide)
 
 private theorem M3_iff (v : Vertex) :
     v.necessity sim₃ f₃ g₃ (· = 1) q₃ 0 ↔ v = ⟨false, true⟩ := by
