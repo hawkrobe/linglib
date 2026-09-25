@@ -27,18 +27,18 @@ namespace English.Complementizers
 def that : Complementizer where
   morphs := [.free "that"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
 
 /-- *if* — embedded polar-question complementizer; the same word
 introduces conditional protases. -/
 def if_ : Complementizer where
   morphs := [.free "if"]
-  force := some .interrogative
+  types := .only .polar
 
 /-- *whether* — embedded polar-question complementizer. -/
 def whether : Complementizer where
   morphs := [.free "whether"]
-  force := some .interrogative
+  types := .only .polar
 
 /-- The complementizer inventory (adverbial subordinators excluded). -/
 def complementizers : List Complementizer := [that, if_, whether]

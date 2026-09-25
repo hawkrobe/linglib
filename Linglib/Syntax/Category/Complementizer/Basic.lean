@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.UD.UPOS
 public import Linglib.Data.UD.Features
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Syntax.Clause.Basic
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
@@ -45,8 +45,8 @@ conventions:
   bound root that never surfaces bare (Buryat *gɘ*, Uyghur *de*), or the
   affixes of a prefix or suffix complex (Tigrinya *kɛm-zɨ-*). Attachment
   is read off the morphs' kinds rather than stored.
-- `force`: only `.declarative` and `.interrogative` are attested on
-  embedded-clause typers.
+- `types`: the sentence types of the clauses the morpheme types, a
+  selection; a complementizer of polar questions records `.only .polar`.
 - `licenser` names the licensing projection, not the morphological
   host stem (which for a suffixal clause-typer is the verb it
   attaches to).
@@ -62,8 +62,8 @@ inductive Complementizer.Licenser where
   | verbal
   deriving DecidableEq, Fintype, Repr
 
-/-- A complementizer: its exponent as morphs plus the consensus
-clause-typing axes. -/
+/-- A complementizer is its exponent as morphs together with the consensus clause-typing
+axes. -/
 structure Complementizer where
   /-- The exponent, in surface order. -/
   morphs : List Morph
@@ -71,8 +71,8 @@ structure Complementizer where
   script : Option String := none
   /-- [noonan-2007] coding of the clause this morpheme types. -/
   coding : Option Complement.Coding := none
-  /-- Illocutionary force of the clause this morpheme types. -/
-  force : Option Mood.Illocutionary := none
+  /-- The sentence types of the clauses this morpheme types. -/
+  types : Clause.Selection := ⊥
   /-- Verb form derived on the host (UD). -/
   verbForm : Option UD.VerbForm := none
   /-- Category of the adjacent licensing projection. -/
@@ -83,16 +83,16 @@ structure Complementizer where
 
 namespace Complementizer
 
-/-- The surface form: the morphs' forms with their boundary notation. -/
+/-- The surface form is the morphs' forms with their boundary notation. -/
 def form (c : Complementizer) : String := Morph.surface c.morphs
 
-/-- Bound: no morph of the exponent is a free form. -/
+/-- A complementizer is bound when no morph of its exponent is a free form. -/
 def IsBound (c : Complementizer) : Prop := ∀ m ∈ c.morphs, m.kind ≠ .free
 
 instance : DecidablePred IsBound := fun c => by
   unfold IsBound; infer_instance
 
-/-- Finite: the clause the morpheme types has a finite verb form. -/
+/-- A complementizer is finite when the clause it types has a finite verb form. -/
 def IsFinite (c : Complementizer) : Prop := c.verbForm = some .Fin
 
 instance : DecidablePred IsFinite := fun c =>

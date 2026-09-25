@@ -37,7 +37,7 @@ namespace Ndebele
 subjunctive complements alike ((4), (7b), fn. 3). -/
 def ukuthi : Complementizer where
   morphs := [.pref "u", .root "kuthi"]
-  force := some .declarative
+  types := .only .declarative
   verbForm := some .Fin
 
 /-! ### Predicates -/
@@ -58,7 +58,7 @@ def cabanga : Verb where
 def funa : Verb where
   form := "funa"
   frames :=
-    [{ complements := [.clausal (coding := some .subjunctive) (force := some .declarative)] },
+    [{ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
       ArgumentFrame.np]
   predicateClass := .desiderative
   attitude := some (.preferential (.degreeComparison .positive))

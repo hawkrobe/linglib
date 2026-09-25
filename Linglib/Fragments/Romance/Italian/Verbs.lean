@@ -46,7 +46,7 @@ open ArgumentStructure
 /-- *che* introduces a finite complement clause, indicative or subjunctive. -/
 def che : Complementizer where
   morphs := [.free "che"]
-  force := some .declarative
+  types := .only .declarative
 
 /-- *di* introduces an infinitival complement. -/
 def di : Complementizer where

@@ -1,9 +1,11 @@
 module
 
+public import Linglib.Core.Order.PartialUnify
 public import Linglib.Syntax.Case.Basic
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Basic
+public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -19,8 +21,12 @@ clause token occurs, Bhatt and Dayal's four cells. A cell is a sentence type in 
 context, and a distribution records for each cell whether some element or process is
 obligatory, optional or excluded there, or nothing where the source is silent; the cells where
 it is possible and where it is required are the two relations a distribution determines. A
-particle's licensing and a language's verb-second grammar are distributions. The subject
-requirement and the semantic size of a complement clause are the remaining axes.
+particle's licensing and a language's verb-second grammar are distributions. A selection is
+the set of sentence types a complementizer types or a clausal argument position selects, so
+that *whether* selects polar and alternative questions and *wonder* any question; selections
+are ordered by information, a smaller set being the more specific, and two of them unify to
+their intersection when it is nonempty. The subject requirement and the semantic size of a
+complement clause are the remaining axes.
 
 ## Main definitions
 
@@ -30,6 +36,8 @@ requirement and the semantic size of a complement clause are the remaining axes.
 * `Clause.Occurrence`, `Clause.Distribution`: the value of a cell and a table of cells.
 * `Clause.Distribution.recorded`, `possible`, `required`: the relations a distribution
   determines.
+* `Clause.Selection`: the sentence types a clause-typer types or a clausal position selects,
+  unified by intersection.
 * `Clause.EmbeddedSubject`, `Clause.Size`: the subject requirement and the size of a
   complement clause.
 
@@ -146,6 +154,130 @@ theorem possible_subset_recorded : d.possible ⊆ d.recorded := by
   rintro c (h | h) <;> simp [recorded, h]
 
 end Distribution
+
+/-! ### Selections -/
+
+/-- A nonempty set of sentence types, the more specific selection being the smaller set. -/
+abbrev Selection.Types := {s : Finset SentenceType // s.Nonempty}ᵒᵈ
+
+/-- The sentence types a clause-typer types or a clausal position selects: nothing recorded,
+the bottom, or a nonempty set of types. -/
+abbrev Selection := WithBot Selection.Types
+
+namespace Selection
+
+/-- The selection of a nonempty set of types. -/
+def of (s : Finset SentenceType) (h : s.Nonempty := by decide) : Selection :=
+  ((OrderDual.toDual ⟨s, h⟩ : Types) : Selection)
+
+/-- The selection of one type. -/
+def only (t : SentenceType) : Selection := of {t} (Finset.singleton_nonempty t)
+
+/-- The selection of the three interrogative types. -/
+def interrogatives : Selection := of {.polar, .alternative, .constituent}
+
+/-- The types a selection records; none when nothing is recorded. -/
+def types : Selection → Finset SentenceType
+  | ⊥ => ∅
+  | (s : Types) => (OrderDual.ofDual s).1
+
+instance : Membership SentenceType Selection := ⟨fun sel t ↦ t ∈ sel.types⟩
+
+instance : Repr Selection :=
+  ⟨fun sel _ ↦ repr (([.declarative, .polar, .alternative, .constituent, .imperative,
+    .exclamative, .promissive] : List SentenceType).filter fun t ↦ decide (t ∈ sel.types))⟩
+
+theorem mem_iff {sel : Selection} {t : SentenceType} : t ∈ sel ↔ t ∈ sel.types := Iff.rfl
+
+instance (sel : Selection) (t : SentenceType) : Decidable (t ∈ sel) :=
+  inferInstanceAs (Decidable (t ∈ sel.types))
+
+@[simp] theorem types_bot : (⊥ : Selection).types = ∅ := rfl
+
+@[simp] theorem types_of (s : Finset SentenceType) (h : s.Nonempty) : (of s h).types = s := rfl
+
+@[simp] theorem types_only (t : SentenceType) : (only t).types = {t} := rfl
+
+/-- A selection records some interrogative type. -/
+def IsInterrogative (sel : Selection) : Prop := ∃ t ∈ sel, t.IsInterrogative
+
+instance (sel : Selection) : Decidable sel.IsInterrogative :=
+  inferInstanceAs (Decidable (∃ t ∈ sel.types, _))
+
+/-- Two nonempty sets of types unify to their intersection when it is nonempty. -/
+def unifyTypes (a b : Types) : Option Types :=
+  if h : ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty then
+    some (OrderDual.toDual ⟨_, h⟩)
+  else none
+
+theorem le_iff {a b : Types} : a ≤ b ↔ (OrderDual.ofDual b).1 ⊆ (OrderDual.ofDual a).1 :=
+  Iff.rfl
+
+instance : PartialUnify Types where
+  unify := unifyTypes
+  isLUB_of_unify_eq_some := by
+    intro a b c h
+    unfold unifyTypes at h
+    split at h
+    · next hne =>
+      obtain rfl := Option.some.inj h
+      refine ⟨PartialUnify.mem_upperBounds_pair.mpr
+        ⟨le_iff.mpr Finset.inter_subset_left, le_iff.mpr Finset.inter_subset_right⟩,
+        fun u hu ↦ ?_⟩
+      obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+      exact le_iff.mpr (Finset.subset_inter (le_iff.mp hau) (le_iff.mp hbu))
+    · exact absurd h (by simp)
+  isSome_unify_of_bddAbove := by
+    intro a b ⟨u, hu⟩
+    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    have hne : ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty :=
+      (OrderDual.ofDual u).2.mono (Finset.subset_inter (le_iff.mp hau) (le_iff.mp hbu))
+    simp [unifyTypes, hne]
+
+/-- The bottom unifies with anything, and two recorded selections unify to their intersection
+when it is nonempty. -/
+def unify : Selection → Selection → Option Selection
+  | ⊥, y => some y
+  | (a : Types), ⊥ => some a
+  | (a : Types), (b : Types) => (PartialUnify.unify a b).map WithBot.some
+
+instance : PartialUnify Selection where
+  unify := unify
+  isLUB_of_unify_eq_some := by
+    intro x y z h
+    match x, y with
+    | ⊥, y =>
+      obtain rfl := Option.some.inj h
+      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
+        fun u hu ↦ (PartialUnify.mem_upperBounds_pair.mp hu).2⟩
+    | (a : Types), ⊥ =>
+      obtain rfl := Option.some.inj h
+      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
+        fun u hu ↦ (PartialUnify.mem_upperBounds_pair.mp hu).1⟩
+    | (a : Types), (b : Types) =>
+      simp only [unify, Option.map_eq_some_iff] at h
+      obtain ⟨c, hc, rfl⟩ := h
+      have hl := PartialUnify.isLUB_of_unify_eq_some hc
+      obtain ⟨hac, hbc⟩ := PartialUnify.mem_upperBounds_pair.mp hl.1
+      refine ⟨PartialUnify.mem_upperBounds_pair.mpr
+        ⟨WithBot.coe_le_coe.mpr hac, WithBot.coe_le_coe.mpr hbc⟩, fun u hu ↦ ?_⟩
+      obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+      obtain ⟨u', rfl, hau'⟩ := WithBot.coe_le_iff.mp hau
+      exact WithBot.coe_le_coe.mpr (hl.2 (PartialUnify.mem_upperBounds_pair.mpr
+        ⟨hau', WithBot.coe_le_coe.mp hbu⟩))
+  isSome_unify_of_bddAbove := by
+    intro x y ⟨u, hu⟩
+    obtain ⟨hxu, hyu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    match x, y with
+    | ⊥, _ => rfl
+    | (a : Types), ⊥ => rfl
+    | (a : Types), (b : Types) =>
+      obtain ⟨u', rfl, hau'⟩ := WithBot.coe_le_iff.mp hxu
+      obtain ⟨c, hc⟩ := Option.isSome_iff_exists.mp (PartialUnify.isSome_unify_of_bddAbove
+        ⟨u', PartialUnify.mem_upperBounds_pair.mpr ⟨hau', WithBot.coe_le_coe.mp hyu⟩⟩)
+      simp [unify, hc]
+
+end Selection
 
 /-! ### Complement clauses -/
 

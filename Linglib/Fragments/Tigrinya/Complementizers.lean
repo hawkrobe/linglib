@@ -76,7 +76,7 @@ cognitive non-factive, fiction and utterance verbs. -/
 def ilu : Complementizer where
   morphs := [.free "ʔɨlu"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
 
 /-- The complementizer inventory. -/
 def complementizers : List Complementizer := [zi, kemzi, ki, ilu]

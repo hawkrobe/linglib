@@ -41,20 +41,20 @@ namespace Bulgarian
 def che : Complementizer where
   morphs := [.free "če"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
 
 /-- The invariant relativizer *deto*, which also introduces the complements of the emotive
 factives that take a *za* phrase, alternating with *če* (§5). -/
 def deto : Complementizer where
   morphs := [.free "deto"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
 
 /-- The form *zadeto* of the same complementizer (fn. 45). -/
 def zadeto : Complementizer where
   morphs := [.free "zadeto"]
   coding := some .indicative
-  force := some .declarative
+  types := .only .declarative
 
 /-! ### Predicates -/
 

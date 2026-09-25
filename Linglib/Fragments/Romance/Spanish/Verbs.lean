@@ -63,7 +63,7 @@ structure SpanishVerbEntry extends Verb where
   anticausativeMarking : Option AnticausativeMarking
   deriving BEq
 
-/-- The verb alternates: it has a transitive causative use beside its intransitive. -/
+/-- The verb alternates when it has a transitive causative use beside its intransitive. -/
 abbrev SpanishVerbEntry.Alternates (v : SpanishVerbEntry) : Prop :=
   v.toVerb.Alternates Voice.anticausative
 
@@ -154,8 +154,8 @@ def rasgar : SpanishVerbEntry :=
       agentControl := {.incompatible, .neutral}
     } } }
 
-/-- *asesinar* 'assassinate', whose causer must be an agent. It has no intransitive: with the
-clitic it is only reflexive, *el senador se asesinó* 'the senator killed himself'
+/-- *asesinar* 'assassinate', whose causer must be an agent, has no intransitive, since with
+the clitic it is only reflexive, *el senador se asesinó* 'the senator killed himself'
 ([koontz-garboden-2009] exx. 24–29). -/
 def asesinar : SpanishVerbEntry :=
   { form := "asesinar", frames := [ArgumentFrame.np],
@@ -352,8 +352,8 @@ the subjunctive and a belief in the indicative. -/
 def convencer : Verb where
   form := "convencer"
   frames :=
-    [⟨some .nominal, [.nominal, .clausal (some .subjunctive) (some .declarative)]⟩,
-     ⟨some .nominal, [.nominal, .clausal (some .indicative) (some .declarative)]⟩]
+    [⟨some .nominal, [.nominal, .clausal (some .subjunctive) (.only .declarative)]⟩,
+     ⟨some .nominal, [.nominal, .clausal (some .indicative) (.only .declarative)]⟩]
   opaqueContext := true
 
 end Spanish.Verbs

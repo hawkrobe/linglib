@@ -9,8 +9,8 @@ public import Linglib.Data.UD.Features
 
 Nez Perce (Sahaptian, ISO 639-3 `nez`) embeds a finite clause under an attitude predicate in
 two shapes. Under the emotive predicates *lilooy* 'be happy', *’etqew* 'be sad', *cicwaay* 'be
-surprised', *’eey’s* 'be joyful', *q’eese’* 'be bothered' and *tim’neeneki* 'be worried', and
-under *timiipni* 'remember', the clause opens with the relative pronoun *yox̂* and the
+surprised', *’eey’s* 'be joyful', *q’eese’* 'be bothered' and *tim’neeneki* 'be worried',
+and under *timiipni* 'remember', the clause opens with the relative pronoun *yox̂* and the
 complementizer *ke*, the edge of a relative clause, and these predicates take no noun-phrase
 object. Under *neki* 'think', *hi* 'say, tell' and *cuukwe* 'know' the clause has the shape of a
 matrix clause, and *hi* takes an accusative addressee. Consultants endorse the complement of the
@@ -111,7 +111,7 @@ def neki : Verb where
 def hi : Verb where
   form := "hi"
   frames := [{ complements :=
-    [.nominal, .clausal (coding := some .indicative) (force := some .declarative)] }]
+    [.nominal, .clausal (coding := some .indicative) (types := .only .declarative)] }]
   predicateClass := .utterance
   speechActVerb := true
 
@@ -146,7 +146,7 @@ def rp_erg_pl : RelativePronoun := ⟨.Erg, .Plur, ["konmam"]⟩
 def rp_acc_sg : RelativePronoun := ⟨.Acc, .Sing, ["konya"]⟩
 def rp_acc_pl : RelativePronoun := ⟨.Acc, .Plur, ["konmana", "yox̂mene"]⟩
 
-/-- The full paradigm: three cases × two numbers, six cells. -/
+/-- The full paradigm has three cases × two numbers, six cells. -/
 def relativePronounParadigm : List RelativePronoun :=
   [rp_nom_sg, rp_nom_pl, rp_erg_sg, rp_erg_pl, rp_acc_sg, rp_acc_pl]
 
