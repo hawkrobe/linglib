@@ -1,0 +1,529 @@
+[
+  {
+    "id": "lionnet2025_ex11",
+    "source": {"bibkey": "shintani-paita-1990b", "paperLabel": "p. 19"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(11)"},
+    "language": "dumb1241",
+    "primaryText": "ꜜɳi ꜜmwa ꜜɳii ꜜme",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ꜜɳi", "3PL.SBJ"], ["ꜜmwa", "PFV"], ["ꜜɳii", "say"], ["ꜜme", "that"]
+    ],
+    "translation": "They said that…",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"],
+      ["underlying", "ꜜɳi ꜜmwa ꜜɳii ꜜme"],
+      ["surface", "(ꜜ)ɳi ꜜmwa ꜜɳii ꜜme"],
+      ["levels", "4 3 2 1"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex13a",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 132"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(13a)"},
+    "language": "dumb1241",
+    "primaryText": "ko te ꜜbeɽu-ɽe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ko", "1SG.SBJ"], ["te", "DESCR"], ["ꜜbeɽu-ɽe", "swim-ACT"]
+    ],
+    "translation": "I swim.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["underlying", "ko te ꜜbeɽu-ɽe"],
+      ["surface", "ko te ꜜbeɽu-ɽe"],
+      ["levels", "4 4 3 2.5 2.5"]
+    ],
+    "comment": "Without pre-downstep raising.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex13b",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 132"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(13b)"},
+    "language": "dumb1241",
+    "primaryText": "ko te ꜜbeɽu-ɽe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ko", "1SG.SBJ"], ["te", "DESCR"], ["ꜜbeɽu-ɽe", "swim-ACT"]
+    ],
+    "translation": "I swim.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["underlying", "ko te ꜜbeɽu-ɽe"],
+      ["surface", "ko ꜛte ꜜbeɽu-ɽe"],
+      ["levels", "4 5 2.5 2 2"]
+    ],
+    "comment": "With pre-downstep raising of the descriptive marker.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex19",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 126"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(19)"},
+    "language": "dumb1241",
+    "primaryText": "ꜜtaa dɪɪ bee",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ꜜtaa", "one"], ["dɪɪ", "small"], ["bee", "fish"]
+    ],
+    "translation": "one small fish",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["underlying", "ꜜtaa dɪɪ bee"],
+      ["surface", "(ꜜ)taa dɪɪ bee"],
+      ["levels", "4 4 4"]
+    ],
+    "comment": "Repeated as (31).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex20",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 128"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(20)"},
+    "language": "dumb1241",
+    "primaryText": "ꜜtaa bee pwi + ꜛ%",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ꜜtaa", "one"], ["bee", "fish"], ["pwi", "cooked"]
+    ],
+    "translation": "one cooked fish",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"],
+      ["underlying", "ꜜtaa bee pwi + ꜛ%"],
+      ["surface", "(ꜜ)taa bee ꜛ%pwi"],
+      ["levels", "4 4 5"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex30",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 127"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(30)"},
+    "language": "dumb1241",
+    "primaryText": "ko te tɪɪ-ɽe kuɽe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ko", "1SG.SBJ"], ["te", "DESCR"], ["tɪɪ-ɽe", "look.at-ACT"], ["kuɽe", "bush"]
+    ],
+    "translation": "I look at the bush.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.5"],
+      ["underlying", "ko te tɪɪ-ɽe kuɽe"],
+      ["surface", "ko te tɪɪ-ɽe kuɽe"],
+      ["levels", "4 4 4 4 4"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex32",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 125"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(32)"},
+    "language": "dumb1241",
+    "primaryText": "goo ꜜmie",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["goo", "plant.sp"], ["ꜜmie", "wet"]
+    ],
+    "translation": "wet Hibbertia pancheri",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.5"],
+      ["underlying", "goo ꜜmie"],
+      ["surface", "ꜛgoo ꜜmie"],
+      ["levels", "5 3"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex33",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 125"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(33)"},
+    "language": "dumb1241",
+    "primaryText": "ꜜgoo ꜜmie",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ꜜgoo", "tree"], ["ꜜmie", "wet"]
+    ],
+    "translation": "wet tree",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.5"],
+      ["underlying", "ꜜgoo ꜜmie"],
+      ["surface", "(ꜜ)goo ꜜmie"],
+      ["levels", "4 3"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex53a",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 144"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(53a)"},
+    "language": "dumb1241",
+    "primaryText": "koꜜo kwɛ-ɽe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koꜜo", "place"], ["kwɛ-ɽe", "dance-ACT"]
+    ],
+    "translation": "place of dancing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.7"],
+      ["underlying", "koꜜo kwɛ-ɽe"],
+      ["surface", "ꜛkoo ꜜkwɛ-ɽe"],
+      ["levels", "5 4"]
+    ],
+    "comment": "The source gives no level for the suffix.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex53b",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 144"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(53b)"},
+    "language": "dumb1241",
+    "primaryText": "koꜜo ꜜkwe-ɽe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["koꜜo", "place"], ["ꜜkwe-ɽe", "eat-ACT"]
+    ],
+    "translation": "place of eating",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.7"],
+      ["underlying", "koꜜo ꜜkwe-ɽe"],
+      ["surface", "ꜛkoo ꜜꜜkwe-ɽe"],
+      ["levels", "5 3"]
+    ],
+    "comment": "The source gives no level for the suffix.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex56a",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "pp. 140–141"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(56a)"},
+    "language": "dumb1241",
+    "primaryText": "ʈa-uɽu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ʈa-uɽu", "with.hand-cut"]
+    ],
+    "translation": "cut by hand",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.9"],
+      ["underlying", "ʈa-uɽu"],
+      ["surface", "ʈa-uɽu"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex56b",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "pp. 140–141"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(56b)"},
+    "language": "dumb1241",
+    "primaryText": "ʈa-ꜜtie",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ʈa-ꜜtie", "with.hand-tear"]
+    ],
+    "translation": "tear by hand",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.9"],
+      ["underlying", "ʈa-ꜜtie"],
+      ["surface", "ꜜʈa-ꜜtie"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex57",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 141"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(57)"},
+    "language": "dumb1241",
+    "primaryText": "ko te ʈa-ꜜtie-ɽe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ko", "1SG.SBJ"], ["te", "DESCR"], ["ʈa-", "with.hand-"], ["ꜜtie", "tear"], ["-ɽe", "-ACT"]
+    ],
+    "translation": "I tear by hand.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.9"],
+      ["underlying", "ko te ʈa-ꜜtie-ɽe"],
+      ["surface", "ko ꜛte ꜜʈa-ꜜtie-ɽe"],
+      ["levels", "4 4.5 4 3 3 3"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex18",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 147"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(18)"},
+    "language": "nucl1484",
+    "primaryText": "ꜜɳe ꜜmwa ꜜve",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ꜜɳe", "3PL.SBJ"], ["ꜜmwa", "PFV"], ["ꜜve", "go"]
+    ],
+    "translation": "They go.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"],
+      ["underlying", "ꜜɳe ꜜmwa ꜜve"],
+      ["surface", "(ꜜ)ɳe ꜜmwaꜛa ꜜve"]
+    ],
+    "comment": "Levels 4, 3.5–4, 3: the raised second half of the perfective marker is a contour.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex22",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 132"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(22)"},
+    "language": "nucl1484",
+    "primaryText": "dɛɳu a ɳa + ꜜ%",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dɛɳu", "jaw"], ["a", "REL"], ["ɳa", "up"]
+    ],
+    "translation": "upper jaw",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.4"],
+      ["underlying", "dɛɳu a ɳa + ꜜ%"],
+      ["surface", "dɛɳu ꜛa ꜜ%ɳa"],
+      ["levels", "4 4 4.5 3"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex24",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 127"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(24)"},
+    "language": "nucl1484",
+    "primaryText": "jaa ɲĩ + ꜜ%",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jaa", "juice"], ["ɲĩ", "coconut"]
+    ],
+    "translation": "coconut juice",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.4"],
+      ["underlying", "jaa ɲĩ + ꜜ%"],
+      ["surface", "ꜛɟaa ꜜ%ɲĩ"],
+      ["levels", "5 4"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex25",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 127"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(25)"},
+    "language": "nucl1484",
+    "primaryText": "jaa ꜜɲĩ + ꜜ%",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["jaa", "juice"], ["ꜜɲĩ", "breast"]
+    ],
+    "translation": "breast milk",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.4"],
+      ["underlying", "jaa ꜜɲĩ + ꜜ%"],
+      ["surface", "ꜛɟaa ꜜꜜ%ɲĩ"],
+      ["levels", "5 3.5"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex26",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 132"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(26)"},
+    "language": "nucl1484",
+    "primaryText": "dɛɳʊ a mii + ꜜ%",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dɛɳʊ", "jaw"], ["a", "REL"], ["mii", "low"]
+    ],
+    "translation": "lower jaw",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.4"],
+      ["underlying", "dɛɳʊ a mii + ꜜ%"],
+      ["surface", "dɛɳʊ a mii"],
+      ["levels", "4 4 4 4"]
+    ],
+    "comment": "The source prints the second vowel of 'jaw' as /u/ in (22).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex28",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 135"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(28)"},
+    "language": "nucl1484",
+    "primaryText": "ꜜtẽẽ-ꜜẽ nõ bɛꜜtĩĩ ku + ꜜ%",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ꜜtẽẽ-ꜜẽ", "girl-PROX"], ["nõ", "grill"], ["bɛꜜtĩĩ", "three"], ["ku", "yam"]
+    ],
+    "translation": "This girl is grilling three yams.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.4"],
+      ["underlying", "ꜜtẽẽ-ꜜẽ nõ bɛꜜtĩĩ ku + ꜜ%"],
+      ["surface", "(ꜜ)tẽẽ-ꜜẽ nõ ꜛbɛꜜtĩĩ ku"],
+      ["levels", "5 4 4 5 3 3"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex38",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 146"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(38)"},
+    "language": "nucl1484",
+    "primaryText": "ꜜcĩĩbu ꜜmwã ꜜku mwoɽo + ꜜ%",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ꜜcĩĩbu", "rat"], ["ꜜmwã", "PFV"], ["ꜜku", "flee"], ["mwoɽo", "alive"]
+    ],
+    "translation": "The rat escaped safe and sound.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.6"],
+      ["underlying", "ꜜcĩĩbu ꜜmwã ꜜku mwoɽo + ꜜ%"],
+      ["surface", "(ꜜ)cĩĩꜛbu ꜜmwã ꜜku ꜛmwoꜜ%ɽo"],
+      ["levels", "4 5 4 3 4 3"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex52",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 143"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(52)"},
+    "language": "nucl1484",
+    "primaryText": "yaꜜa ꜜmẽ geꜜe ꜜmẽ ɲaꜜi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["yaꜜa", "NEG"], ["ꜜmẽ", "that"], ["geꜜe", "1PL.EXCL.SBJ"], ["ꜜmẽ", "FUT"],
+      ["ɲaꜜi", "arrive"]
+    ],
+    "translation": "We will not arrive.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.7"],
+      ["underlying", "yaꜜa ꜜmẽ geꜜe ꜜmẽ ɲaꜜi"],
+      ["surface", "ꜛyaa ꜜꜜmẽ ꜛgee ꜜꜜmẽ ꜛɲaꜜi"],
+      ["levels", "5 3 5 3 4 3"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "lionnet2025_ex62",
+    "source": {"bibkey": "rivierre-1973", "paperLabel": "p. 134"},
+    "reportedIn": {"bibkey": "lionnet-2025", "paperLabel": "(62)"},
+    "language": "nucl1484",
+    "primaryText": "gu ꜜcapɛ ꜜpaɳaa ꜜko ɲʊ ꜜwii to",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["gu", "2SG.SBJ"], ["ꜜcapɛ", "raise"], ["ꜜpaɳaa", "mast"], ["ꜜko", "on"], ["ɲʊ", "boat"],
+      ["ꜜwii", "down"], ["to", "there"]
+    ],
+    "translation": "Raise the mast on the boat!",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.4"],
+      ["underlying", "gu ꜜcapɛ ꜜpaɳaa ꜜko ɲʊ ꜜwii to"],
+      ["surface", "ꜛgu ꜜcaꜛpɛ ꜜpaꜛɳaa ꜜko ꜛɲʊ ꜜwii to"],
+      ["levels", "5 4 4.5 3 3.5 2 2.5 1.5 1.5"]
+    ],
+    "comment": "",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  }
+]

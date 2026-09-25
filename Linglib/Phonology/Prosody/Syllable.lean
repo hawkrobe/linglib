@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.PNat.Defs
 public import Linglib.Phonology.Prosody.Mora
 public import Linglib.Core.Data.RoseTree.Basic
 
@@ -23,10 +24,12 @@ moraic carrier on weight; the segment string is the `yield`.
 ## Main definitions
 
 * `Syllable` — a headed moraic σ: `onset`, a nucleus `head` mora, and a `tail` of morae.
-* `Syllable.morae` / `nucleusMora` / `nucleusSegments` / `weight` / `moraCount`.
+* `Syllable.morae` / `nucleusMora` / `nucleusSegments` / `weight` / `moraCount` /
+  `pnatMoraCount`.
 * `Syllable.IsHeavy` / `IsLight` — the weight inventory (sonority/SSP well-formedness is
   a syllabification follow-up).
-* `Syllable.ofCV` / `mk'` — smart constructors (a non-empty nucleus is required).
+* `Syllable.ofCV` / `ofVowel` / `ofLongVowel` / `mk'` — smart constructors (a non-empty
+  nucleus is required; a long vowel is two morae on one melody).
 * `Syllable.yield` / `toOnsetRime` — re-representations; `toOnsetRime_weight` is the
   weight-correspondence between the moraic and onset-rime theories.
 * `Syllable.Weight` — `Nat` (the mora count), with `.light`/`.heavy`/`.superheavy`.
@@ -80,6 +83,12 @@ def moraCount (σ : Syllable) : Nat := σ.morae.length
 /-- The syllable's weight (= its mora count). -/
 abbrev weight (σ : Syllable) : Weight := σ.moraCount
 
+/-- A syllable has at least its nucleus mora. -/
+theorem moraCount_pos (σ : Syllable) : 0 < σ.moraCount := Nat.succ_pos _
+
+/-- The mora count as a positive natural: the weight a `Tone.Registered` word reads. -/
+def pnatMoraCount (σ : Syllable) : ℕ+ := ⟨σ.moraCount, σ.moraCount_pos⟩
+
 /-- A heavy syllable: at least two morae. -/
 def IsHeavy (σ : Syllable) : Prop := Weight.heavy ≤ σ.weight
 /-- A light syllable: exactly one mora. -/
@@ -112,6 +121,19 @@ def ofCV (onset nucleus coda : List Segment) (wbp : Bool := true)
       match (ns.map Mora.of).reverse with
       | last :: rest => ⟨onset, Mora.of n₀, rest.reverse ++ [last.attach coda]⟩
       | []           => ⟨onset, (Mora.of n₀).attach coda, []⟩
+
+/-- The open syllable of an onset and a short vowel: one mora. -/
+def ofVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of v, []⟩
+
+/-- The open syllable of an onset and a long vowel: two morae dominating the same melody
+([hayes-1989]). -/
+def ofLongVowel (onset : List Segment) (v : Segment) : Syllable := ⟨onset, .of v, [.of v]⟩
+
+@[simp] theorem moraCount_ofVowel (onset : List Segment) (v : Segment) :
+    (ofVowel onset v).moraCount = 1 := rfl
+
+@[simp] theorem moraCount_ofLongVowel (onset : List Segment) (v : Segment) :
+    (ofLongVowel onset v).moraCount = 2 := rfl
 
 /-- The segment string (yield) of a syllable: onset followed by the moraic melody. -/
 def yield (σ : Syllable) : List Segment := σ.onset ++ σ.morae.flatMap (·.dominates)
