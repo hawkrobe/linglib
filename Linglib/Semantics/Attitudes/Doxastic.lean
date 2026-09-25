@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Attitudes.Basic
+public import Linglib.Logic.Modal.Defs
 
 /-!
 # Doxastic attitude semantics
@@ -11,7 +12,9 @@ Accessibility-based semantics for doxastic attitude verbs (*believe*,
 "`w'` is compatible with what `x` believes/knows in `w`", and
 ⟦x believes p⟧(w) is the universal modal over accessible worlds —
 `BoxAt`, with `DiamondAt` its existential dual, both quantifying over a
-finite `worlds` list as the decidable rendering.
+finite `worlds` list as the decidable rendering; `BoxAt` is the relational
+box over the accessibility relation restricted to that list
+(`boxAt_iff_box`).
 
 A `DoxasticPredicate` bundles the accessibility relation with
 veridicality and opacity. Its proposition-taking semantics
@@ -68,6 +71,13 @@ instance (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
     Decidable (DiamondAt R agent w worlds p) :=
   inferInstanceAs (Decidable (∃ w' ∈ worlds, _))
+
+/-- The doxastic box is the relational box over the accessibility relation restricted to
+`worlds`. -/
+theorem boxAt_iff_box (R : E → W → W → Prop) (agent : E) (w : W) (worlds : List W)
+    (p : W → Prop) :
+    BoxAt R agent w worlds p ↔ ModalLogic.box (fun u v ↦ v ∈ worlds ∧ R agent u v) p w := by
+  simp only [BoxAt, ModalLogic.box, and_imp]
 
 /-- Closure under known implication — the K axiom: if the agent
     believes `p` and believes `p → q`, the agent believes `q`. -/
