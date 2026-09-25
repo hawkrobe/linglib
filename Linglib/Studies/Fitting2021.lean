@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.Bilattice.Basic
 public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Consequence
 
 /-!
 # Fitting (2021): The strict/tolerant idea and bilattices
@@ -27,6 +28,9 @@ from `FOUR` (Examples 8.10.2–8.10.5).
 
 * Formulas have conjunction, disjunction and negation only (Definition 8.6.1); prime bifilters and
   prime filters carry the nonemptiness and properness that §8.2 requires of designated sets.
+* Sequent satisfaction is `Consequence.Satisfies`, with strict and tolerant designation as the
+  premise and conclusion standards, so local cut in `C⟨B, F⟩` is `Consequence.Satisfies.cut`;
+  `LValid` is the unmixed `Consequence.MixedConsequence`.
 * Lemma 8.8.2, the general interlaced-bilattice route to Proposition 8.8.3, is not formalized;
   the proposition is proved in coordinates for the product.
 * Locators use the chapter's numbering, `8.n` for the preprint's `§n`.
@@ -161,11 +165,13 @@ def TolerantlyDesignated (F : PrimeBifilter B) (a : B) : Prop := a ∈ F ∧ IsA
 /-- A valuation satisfies a sequent strict-to-tolerantly: if every premise is strictly
 designated, some conclusion is tolerantly designated. -/
 def STSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : List (Fml α)) : Prop :=
-  (∀ φ ∈ Γ, StrictlyDesignated F (φ.eval v)) → ∃ ψ ∈ Δ, TolerantlyDesignated F (ψ.eval v)
+  Consequence.Satisfies (fun v φ ↦ StrictlyDesignated F (φ.eval v))
+    (fun v φ ↦ TolerantlyDesignated F (φ.eval v)) v Γ Δ
 
 /-- A valuation satisfies a sequent strictly on both sides. -/
 def CSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : List (Fml α)) : Prop :=
-  (∀ φ ∈ Γ, StrictlyDesignated F (φ.eval v)) → ∃ ψ ∈ Δ, StrictlyDesignated F (ψ.eval v)
+  Consequence.Satisfies (fun v φ ↦ StrictlyDesignated F (φ.eval v))
+    (fun v φ ↦ StrictlyDesignated F (φ.eval v)) v Γ Δ
 
 /-- `ST⟨B, F⟩` validity ([fitting-2021] Def 8.7.1): over valuations into the anticonsistent
 values, strict premises entail a tolerant conclusion. -/
@@ -211,14 +217,8 @@ omit [Interlaced B] [NegConfComm B] in
 /-- Cut is locally valid in `C⟨B, F⟩` ([fitting-2021] Prop 8.7.3): a valuation satisfying both
 premises of a cut instance satisfies its conclusion. -/
 theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α} {v : α → B}
-    (h₁ : CSatisfies F v (A :: Γ) Δ) (h₂ : CSatisfies F v Γ (A :: Δ)) : CSatisfies F v Γ Δ := by
-  intro hΓ
-  obtain ⟨ψ, hψ, hd⟩ := h₂ hΓ
-  rcases List.mem_cons.mp hψ with rfl | hψΔ
-  · exact h₁ λ φ hφ => by
-      rcases List.mem_cons.mp hφ with rfl | h
-      exacts [hd, hΓ _ h]
-  · exact ⟨ψ, hψΔ, hd⟩
+    (h₁ : CSatisfies F v (A :: Γ) Δ) (h₂ : CSatisfies F v Γ (A :: Δ)) : CSatisfies F v Γ Δ :=
+  Consequence.Satisfies.cut id h₁ h₂
 
 variable [BoundedOrder (Know B)]
 
@@ -318,7 +318,7 @@ def Fml.evalL (v : α → L) : Fml α → L
 
 /-- Validity in the logic `⟨L, D⟩` (§8.2): designated premises entail a designated conclusion. -/
 def LValid (D : PrimeFilter L) (Γ Δ : List (Fml α)) : Prop :=
-  ∀ v : α → L, (∀ φ ∈ Γ, φ.evalL v ∈ D) → ∃ ψ ∈ Δ, ψ.evalL v ∈ D
+  Consequence.MixedConsequence (fun v φ ↦ φ.evalL v ∈ D) (fun v φ ↦ φ.evalL v ∈ D) Γ Δ
 
 /-- The exact valuation of `L ⊙ L` a valuation in `L` determines, `p ↦ ⟨v p, (v p)ᶜ⟩`. -/
 def exactVal (v : α → L) (p : α) : L ⊙ L := mk (v p) (v p)ᶜ
