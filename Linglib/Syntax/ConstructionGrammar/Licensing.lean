@@ -12,7 +12,7 @@ public import Linglib.Syntax.ConstructionGrammar.Basic
 
 The licensing model of constructional grammar ([sag-2012]; [goldberg-1995]):
 an utterance token is grammatical iff every constituent in it instantiates
-some construction of the network. `Constructicon.licenses` is the
+some construction of the inventory. `licenses` is the
 recognizer — a constituent's daughters must match some construction's
 typed form slot-by-slot (`formMatches`), and each daughter must itself be
 licensed; words are licensed lexically.
@@ -28,7 +28,7 @@ and match any token. Slot constraints are enforced where they can be:
 - `Token`: utterance tokens (words and constituents)
 - `SlotFiller.matches`, `SlotConstraint.allows`, `formMatches`:
   slot/daughter matching
-- `Constructicon.Licenses`: the licensing relation, via the recognizer
+- `Licenses`: the licensing relation, via the recognizer
 -/
 
 @[expose] public section
@@ -112,40 +112,39 @@ daughter matches its slot's filler and respects its slot's constraints. -/
 def formMatches (pos : String → Option UD.UPOS)
     (form : TypedForm String) (ts : List Token) : Bool :=
   form.length == ts.length &&
-  (form.zip ts).all (λ ⟨s, t⟩ =>
-    s.filler.matches pos t && s.constraints.all (·.allows t))
+  (form.zip ts).all fun ⟨s, t⟩ ↦
+    s.filler.matches pos t && s.constraints.all (·.allows t)
 
 variable {Sem : Type*}
 
 mutual
 
 /-- The licensing recognizer: words are licensed lexically; a constituent
-is licensed iff its daughters instantiate some construction of the network
+is licensed iff its daughters instantiate some construction of the inventory
 and are each licensed themselves. -/
-def Constructicon.licenses (cx : Constructicon Sem)
+def licenses (cxns : List (Construction Sem))
     (pos : String → Option UD.UPOS) : Token → Bool
   | .word _ => true
   | .node ts =>
-      cx.constructions.any (λ c => formMatches pos c.form ts) &&
-      cx.licensesList pos ts
+      cxns.any (fun c ↦ formMatches pos c.form ts) && licensesList cxns pos ts
 
 /-- All tokens in a list are licensed. -/
-def Constructicon.licensesList (cx : Constructicon Sem)
+def licensesList (cxns : List (Construction Sem))
     (pos : String → Option UD.UPOS) : List Token → Bool
   | [] => true
-  | t :: ts => cx.licenses pos t && cx.licensesList pos ts
+  | t :: ts => licenses cxns pos t && licensesList cxns pos ts
 
 end
 
-/-- `cx` licenses token `t` (relative to a POS lexicon): every constituent
-instantiates some construction of the network. Defined via the
+/-- `cxns` licenses token `t` (relative to a POS lexicon): every constituent
+instantiates some construction of the inventory. Defined via the
 `licenses` recognizer, so concrete cases are kernel-decidable. -/
-def Constructicon.Licenses (cx : Constructicon Sem)
+def Licenses (cxns : List (Construction Sem))
     (pos : String → Option UD.UPOS) (t : Token) : Prop :=
-  cx.licenses pos t = true
+  licenses cxns pos t = true
 
-instance (cx : Constructicon Sem) (pos : String → Option UD.UPOS) (t : Token) :
-    Decidable (cx.Licenses pos t) :=
+instance (cxns : List (Construction Sem)) (pos : String → Option UD.UPOS) (t : Token) :
+    Decidable (Licenses cxns pos t) :=
   inferInstanceAs (Decidable (_ = true))
 
 end ConstructionGrammar

@@ -47,8 +47,7 @@ index (coinstantiation, Figure 13); WXDY-*what* is left-isolated and nonreferent
 *doing* cannot be negated (Section 4.6). `X` is a referential argument of the predicate `Y`
 (Section 4.7), a predicate phrase of any category. -/
 def wxdyConstruction : Construction Unit :=
-  { name := "What's X doing Y?"
-  , form :=
+  { form :=
       [ { filler := .semantic "referential", gf := some .subj, refIdx := some 2 }
       , { filler := .headed "be" .AUX, isHead := true }
       , { filler := .headed "doing" .VERB, gf := some .comp, constraints := [.negMinus] }

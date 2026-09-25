@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.ConstructionGrammar.Inheritance
+public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Syntax.ConstructionGrammar.Licensing
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Data.Examples.GoldbergShirtz2025
@@ -18,20 +18,21 @@ wittier and more sarcastic, robustly to PAL frequency, and found four narrowly d
 (*must-V*, *a simple ⟨PAL⟩*, *Don't ⟨PAL⟩ me*, *the old ⟨PAL⟩ N*) judged more natural than
 minimally different foils.
 
-The paper's Figure 5 network is a `Constructicon`: the prenominal PAL construction inherits in
-normal mode from both the NN compound and adjectival modification, which conflict on bar level and
-stress (`nn_adjN_incompatible`), so the network is well-formed only because PAL's own specification
-legislates exactly those fields and inherits the rest (`palSpec_eq`); the four subtypes inherit the
-familiarity presupposition through the links (`subtypes_inherit_familiarity`), and removing PAL
-leaves a phrase in a word slot unlicensed. The attested tokens of example (1) and Tables 2–3 and the
+The paper's Figure 5 network is a `Constructicon` (`figure5`): the prenominal PAL construction
+inherits in normal mode from both the NN compound and adjectival modification, which conflict on
+bar level and stress (`mothers_conflict`), so PAL states exactly those properties and inherits the
+rest (`inherited_palN`). The zero-level PAL and the four conventional subtypes are joined to it by
+motivation links, and removing PAL leaves a phrase in a word slot unlicensed
+(`pal_load_bearing`). The attested tokens of example (1) and Tables 2–3 and the
 comparable constructions of section 7 are rows: PALs occupy every word-class slot and take that
 slot's inflection (`rows_inflection`), and the host frame of a comparable construction need not be
 a compound (`hostFrames_complete`).
 
 ## Implementation notes
 
-Inheritance links name constructions by string, the substrate's convention; the experimental
-statistics stay in the paper. The lemma-like familiarity is recorded as a presupposition, although
+Only the two thick arrows of Figure 5 are inheritance links; its thin two-headed arrows are
+motivation links, which pass no information down. The experimental statistics stay in the
+paper. The lemma-like familiarity is recorded as a presupposition, although
 the paper treats it as an invited construal that speakers exploit precisely for situation types
 that are not antecedently familiar.
 
@@ -59,8 +60,7 @@ is phrasal modifies a head N, forming an N′ (the paper's structure (7),
 is left underspecified since PALs may modify nouns with complements
 ("a 'don't mess with me' type of driver"). -/
 def palConstruction : Construction Unit :=
-  { name := "PAL"
-  , form :=
+  { form :=
       [ { filler := .phrasal, level := some .zero }
       , { filler := .open_ .NOUN, isHead := true } ]
   , meaning := ()
@@ -70,8 +70,7 @@ def palConstruction : Construction Unit :=
 *must-read*, *must-see*, *must-have*. Study 5 tested only rare tokens
 (≤ 10 COCA hits) against *should-V* foils. -/
 def mustVerbConstruction : Construction Unit :=
-  { name := "must-V"
-  , form :=
+  { form :=
       [ { filler := .fixed "must" }
       , { filler := .open_ .VERB }
       , { filler := .open_ .NOUN, isHead := true } ]
@@ -82,8 +81,7 @@ def mustVerbConstruction : Construction Unit :=
 *simple* marking the situation type as routine ("Could've tried a simple
 'I'm sorry.'"). Study 5's foils used *a short*. -/
 def aSimplePALConstruction : Construction Unit :=
-  { name := "a simple [PAL⁰]"
-  , form :=
+  { form :=
       [ { filler := .fixed "a" }
       , { filler := .fixed "simple" }
       , { filler := .phrasal, level := some .zero
@@ -96,8 +94,7 @@ immediately preceding discourse, and occurs in an interdiction context
 ("A: you're welcome. B: No, don't 'you're welcome' me."). Study 5's foils
 broke exactly the quote-from-context or interdiction condition. -/
 def dontPALmeConstruction : Construction Unit :=
-  { name := "Don't [PAL⁰ x y z] me"
-  , form :=
+  { form :=
       [ { filler := .fixed "Don't" }
       , { filler := .phrasal, level := some .zero
         , isHead := true }
@@ -110,8 +107,7 @@ marking the situation type as conventional ("my dad pulled the old 'I'm
 going to the store for smokes, be back in five'"). Study 5's foils used
 *the tired*. -/
 def theOldPALConstruction : Construction Unit :=
-  { name := "the old [PAL⁰] (N)"
-  , form :=
+  { form :=
       [ { filler := .fixed "the" }
       , { filler := .fixed "old" }
       , { filler := .phrasal, level := some .zero
@@ -122,8 +118,7 @@ def theOldPALConstruction : Construction Unit :=
 
 /-- NN compound construction (parent: PAL-internal stress, tight unit). -/
 def nnCompound : Construction Unit :=
-  { name := "NN compound"
-  , form :=
+  { form :=
       [ { filler := .open_ .NOUN, level := some .zero }
       , { filler := .open_ .NOUN, isHead := true
         , level := some .zero } ]
@@ -131,8 +126,7 @@ def nnCompound : Construction Unit :=
 
 /-- Adjectival modification construction (parent: prenominal slot). -/
 def adjNModification : Construction Unit :=
-  { name := "Adj+N modification"
-  , form :=
+  { form :=
       [ { filler := .open_ .ADJ, level := some .zero }
       , { filler := .open_ .NOUN, isHead := true
         , level := some .bar } ]
@@ -155,66 +149,88 @@ theorem table8_specificity :
     nnCompound.specificity = .fullyAbstract ∧
     palConstruction.specificity = .fullyAbstract := by decide
 
-/-- The PAL constructicon (the paper's Figure 5): the prenominal PAL
-construction partially inherits, in normal mode, from both the NN compound
-and adjectival modification constructions; the four conventional subtypes
-confirmed by study 5 inherit from it. The figure's caption labels all
-arrows "motivation and (normal mode) inheritance links", so no
-Goldberg-1995 link type is assigned. -/
-def palConstructicon : Constructicon Unit :=
-  { constructions :=
-      [ palConstruction
-      , mustVerbConstruction
-      , aSimplePALConstruction
-      , dontPALmeConstruction
-      , theOldPALConstruction
-      , nnCompound
-      , adjNModification ]
-  , links :=
-      [ { parent := "NN compound"
-        , child := "PAL"
-        , mode := .normal
-        , sharedProperties := ["prenominal slot for the modifier"
-                              , "tight semantic and phonological unit: stress falls within the PAL"]
-        , overriddenProperties := ["modifier is internally phrasal; PAL N is an N′, not an N⁰"] }
-      , { parent := "Adj+N modification"
-        , child := "PAL"
-        , mode := .normal
-        , sharedProperties := ["prenominal slot for the modifier"
-                              , "no recursive embedding within another PAL N construction"]
-        , overriddenProperties := ["modifier is a zero-level PAL, not an Adj"] }
-      , { parent := "PAL"
-        , child := "must-V"
-        , mode := .normal
-        , sharedProperties := ["lemma-like construal: presumed familiarity"]
-        , overriddenProperties := ["'must' lexically fixed; V slot open"] }
-      , { parent := "PAL"
-        , child := "a simple [PAL⁰]"
-        , mode := .normal
-        , sharedProperties := ["lemma-like construal: presumed familiarity"]
-        , overriddenProperties := ["PAL is the head noun, not a prenominal modifier"] }
-      , { parent := "PAL"
-        , child := "Don't [PAL⁰ x y z] me"
-        , mode := .normal
-        , sharedProperties := ["lemma-like construal: presumed familiarity"]
-        , overriddenProperties :=
-            ["PAL fills a V slot; quote-from-context and interdiction required"] }
-      , { parent := "PAL"
-        , child := "the old [PAL⁰] (N)"
-        , mode := .normal
-        , sharedProperties := ["lemma-like construal: presumed familiarity"]
-        , overriddenProperties := ["head N optional; PAL may serve as head"] } ] }
+/-- The zero-level PAL, a phrase in a word-level position, with its familiar tokens
+(*do-it-yourself*, *know-it-all*, *pay-as-you-go*). -/
+def zeroLevelPAL : Construction Unit :=
+  { form := [{ filler := .phrasal, level := some .zero }]
+  , meaning := ()
+  , pragmaticPoint := true }
 
-/-! ### Form-side specifications (§6)
+/-- The constructions of Figure 5. -/
+inductive Figure5 where
+  /-- The NN compound, N⁰ modifies N⁰. -/
+  | nnCompound
+  /-- Adjectival modification, Adj modifies N′. -/
+  | adjN
+  /-- The prenominal PAL construction, PAL⁰ modifies N, at the center of the figure. -/
+  | palN
+  /-- The zero-level PAL. -/
+  | pal
+  /-- *must-V*. -/
+  | mustV
+  /-- *a simple ⟨PAL⟩*. -/
+  | aSimple
+  /-- *Don't ⟨PAL⟩ me*. -/
+  | dontMe
+  /-- *the old ⟨PAL⟩ (N)*. -/
+  | theOld
+  deriving DecidableEq, Fintype
 
-The inheritable form-side properties at issue in the Figure 5 network, as
-`Flat` feature slots (`⊥` = the construction does not legislate), with
-the componentwise lifts of the `ConstructionGrammar.Inheritance` slot
-algebra. -/
+/-- The construction at each node of Figure 5. -/
+def construction : Figure5 → Construction Unit
+  | .nnCompound => nnCompound
+  | .adjN => adjNModification
+  | .palN => palConstruction
+  | .pal => zeroLevelPAL
+  | .mustV => mustVerbConstruction
+  | .aSimple => aSimplePALConstruction
+  | .dontMe => dontPALmeConstruction
+  | .theOld => theOldPALConstruction
 
-/-- Locus of primary stress in a modification construction: compound
-stress falls within the modifier (*BLACKbird*), phrasal modification
-stresses the head (*black BIRD*). -/
+/-- Figure 5. The prenominal PAL construction inherits in normal mode from the NN compound and
+from adjectival modification, the two thick arrows. The zero-level PAL and the conventional
+subtypes are joined to it by the thin two-headed arrows, *must-V* and *Don't ⟨PAL⟩ me* through
+the zero-level PAL; these motivate the subtypes and pass no information down. The caption calls
+the arrows "motivation and (normal mode) inheritance links" and assigns none of the link types of
+[goldberg-1995]. -/
+def figure5 : Constructicon Figure5 Unit where
+  cxn := construction
+  mothers
+    | .palN => [(.nnCompound, none), (.adjN, none)]
+    | _ => []
+  related
+    | .palN => [(.pal, none), (.aSimple, none), (.theOld, none)]
+    | .pal => [(.mustV, none), (.dontMe, none)]
+    | _ => []
+
+/-- The depth of a construction below those it inherits from. -/
+def Figure5.rank : Figure5 → ℕ
+  | .palN => 1
+  | _ => 0
+
+instance : PartialOrder Figure5 := figure5.partialOrder Figure5.rank (by decide)
+
+instance : DecidableLE Figure5 := figure5.decidableLE [.nnCompound, .adjN] (by decide)
+
+/-- Only the prenominal PAL construction inherits, from the NN compound and adjectival
+modification. -/
+theorem isMother_iff (c m : Figure5) :
+    figure5.IsMother c m ↔ c = .palN ∧ (m = .nnCompound ∨ m = .adjN) := by
+  revert c m; decide
+
+/-! ### Two mothers force normal-mode inheritance (§6)
+
+The form-side properties at issue in Figure 5, each stated by the constructions that specify it
+and inherited by `DefaultInheritance.inherited` over the network's order. PAL N's two mothers
+conflict, the NN compound yielding an N⁰ with stress within the modifier and adjectival
+modification an N′ with head stress, so were PAL N to state neither property it would inherit
+both values of each (`mothers_conflict`): "specifications in two mother nodes may conflict with one
+another", which makes complete inheritance "unsuitable whenever a node is allowed more than a
+single mother". PAL N states exactly those two properties, and inherits the rest
+(`inherited_palN`). -/
+
+/-- Locus of primary stress in a modification construction: compound stress falls within the
+modifier (*BLACKbird*), phrasal modification stresses the head (*black BIRD*). -/
 inductive StressLocus where
   | modifier
   | head
@@ -226,162 +242,64 @@ inductive ModPosition where
   | postnominal
   deriving DecidableEq, Repr
 
-/-- Whether a construction's output can recur inside the construction's
-own open slot. -/
+/-- Whether a construction's output can recur inside the construction's own open slot. -/
 inductive SelfEmbedding where
   | allowed
   | banned
   deriving DecidableEq, Repr
 
-/-- A partial constructional specification: the inheritable form-side
-properties of a nominal-modification construction ([goldberg-1995] §3.3;
-[goldberg-shirtz-2025] §6). -/
-structure CxnSpec where
-  /-- X-bar level of the construction's output -/
-  level : Flat BarLevel := ⊥
-  /-- Position of the modifier slot -/
-  modPosition : Flat ModPosition := ⊥
-  /-- Locus of primary stress -/
-  stress : Flat StressLocus := ⊥
-  /-- Whether the construction self-embeds -/
-  selfEmbedding : Flat SelfEmbedding := ⊥
-  deriving DecidableEq, Repr
+open DefaultInheritance
 
-namespace CxnSpec
+/-- The bar level of a construction's output, where it states one: PAL N forms an N′, with
+adjectival modification and against the compound's N⁰. -/
+def level : Figure5 → Option BarLevel
+  | .nnCompound => some .zero
+  | .adjN | .palN => some .bar
+  | _ => none
 
-/-- Componentwise compatibility: complete-mode inheritance
-([goldberg-1995]'s complete mode; the regime of [sag-2012]'s type
-hierarchy) is defined exactly on compatible specifications. -/
-def IsCompatible (p q : CxnSpec) : Prop :=
-  Compat p.level q.level ∧ Compat p.modPosition q.modPosition ∧
-    Compat p.stress q.stress ∧ Compat p.selfEmbedding q.selfEmbedding
+/-- The position of the modifier slot, which both mothers state and PAL N does not. -/
+def modPosition : Figure5 → Option ModPosition
+  | .nnCompound | .adjN => some .prenominal
+  | _ => none
 
-instance (p q : CxnSpec) : Decidable (p.IsCompatible q) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+/-- The locus of primary stress: PAL N forms "a tight semantic and phonological unit", with the
+stress within the PAL as in the compound, against adjectival modification. -/
+def stress : Figure5 → Option StressLocus
+  | .nnCompound | .palN => some .modifier
+  | .adjN => some .head
+  | _ => none
 
-/-- Normal-mode inheritance from a family of parent specifications,
-componentwise. -/
-def inherit (own : CxnSpec) (parents : List CxnSpec) : CxnSpec where
-  level := inheritField own.level (parents.map (·.level))
-  modPosition := inheritField own.modPosition (parents.map (·.modPosition))
-  stress := inheritField own.stress (parents.map (·.stress))
-  selfEmbedding := inheritField own.selfEmbedding (parents.map (·.selfEmbedding))
+/-- Whether the output self-embeds: "like Adj + N combinations, the PAL N construction cannot be
+recursively embedded within another PAL N construction". -/
+def selfEmbedding : Figure5 → Option SelfEmbedding
+  | .adjN => some .banned
+  | _ => none
 
-/-- The child's own specification legislates every field its parents
-conflict on — well-formedness of a normal-mode multi-mother node. -/
-def Resolves (own : CxnSpec) (parents : List CxnSpec) : Prop :=
-  ResolvesField own.level (parents.map (·.level)) ∧
-    ResolvesField own.modPosition (parents.map (·.modPosition)) ∧
-    ResolvesField own.stress (parents.map (·.stress)) ∧
-    ResolvesField own.selfEmbedding (parents.map (·.selfEmbedding))
+/-- Were PAL N to state neither its bar level nor its stress, it would inherit both mothers'
+values of each. -/
+theorem mothers_conflict :
+    inherited (Function.update level .palN none) .palN = {.zero, .bar} ∧
+      inherited (Function.update stress .palN none) .palN = {.modifier, .head} := by
+  refine ⟨Set.ext fun v ↦ ?_, Set.ext fun v ↦ ?_⟩ <;>
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] <;> cases v <;> decide
 
-instance (own : CxnSpec) (parents : List CxnSpec) :
-    Decidable (own.Resolves parents) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
-
-end CxnSpec
-
-/-! ### Two mothers force normal-mode inheritance (§6)
-
-The paper's argument for normal-mode over complete inheritance: PAL's
-two mothers conflict — the NN compound construction yields an N⁰ with
-modifier-internal stress, adjectival modification an N′ with head stress —
-so strict unification of the parents is impossible
-(`nn_adjN_incompatible`), and the network is well-formed only because the
-PAL construction's own specification legislates exactly the conflicting
-fields (`pal_resolves`). The rest is genuinely inherited: the prenominal
-modifier slot from both mothers, non-self-embedding from Adj+N
-(`palSpec_eq`). -/
-
-/-- NN compound specification: zero-level output, prenominal modifier,
-compound stress within the modifier. -/
-def nnCompoundSpec : CxnSpec :=
-  { level := .some .zero
-  , modPosition := .some .prenominal
-  , stress := .some .modifier }
-
-/-- Adj+N modification specification: N′ output, prenominal modifier,
-phrasal (head) stress; per §6, "like Adj + N combinations, the PAL N
-construction cannot be recursively embedded within another PAL N
-construction", so Adj+N carries the non-self-embedding value PAL
-inherits. -/
-def adjNSpec : CxnSpec :=
-  { level := .some .bar
-  , modPosition := .some .prenominal
-  , stress := .some .head
-  , selfEmbedding := .some .banned }
-
-/-- The PAL construction's own specification: exactly the two fields its
-mothers conflict on, resolved as the paper describes — N′ output (with
-Adj+N, against the compound) and PAL-internal stress (with the compound,
-against Adj+N). -/
-def palOwnSpec : CxnSpec :=
-  { level := .some .bar
-  , stress := .some .modifier }
-
-/-- Own-specification assignment for the Figure 5 network: the two
-mothers carry their specifications, PAL legislates exactly its mothers'
-conflicts, and the conventional subtypes add no form-side constraints of
-their own. -/
-def figure5Spec (c : Construction Unit) : CxnSpec :=
-  if c.name == "NN compound" then nnCompoundSpec
-  else if c.name == "Adj+N modification" then adjNSpec
-  else if c.name == "PAL" then palOwnSpec
-  else {}
-
-/-- PAL's full specification, computed through the network's links by
-normal-mode inheritance. -/
-def palSpec : CxnSpec :=
-  palConstructicon.derivedSpec CxnSpec.inherit figure5Spec palConstruction
-
-/-- No dangling links: every Figure 5 link endpoint names a construction
-of the network. -/
-theorem palConstructicon_wellFormed : palConstructicon.WellFormed := by
-  decide
-
-/-- The links, not a hand-written list, determine PAL's mothers. -/
-theorem pal_parents :
-    palConstructicon.parentsOf "PAL" = [nnCompound, adjNModification] := by
-  decide
-
-/-- The whole network is normal-mode well-formed: every construction
-legislates every field its parents conflict on. -/
-theorem palConstructicon_resolvesAll :
-    palConstructicon.ResolvesAll CxnSpec.Resolves figure5Spec := by decide
-
-/-- The two mothers conflict (bar level and stress), so complete-mode
-inheritance cannot relate PAL to both parents — the formal content of §6's
-observation that complete inheritance "is unsuitable whenever a node is
-allowed more than a single mother, since specifications in two mother
-nodes may conflict with one another". -/
-theorem nn_adjN_incompatible :
-    ¬ CxnSpec.IsCompatible nnCompoundSpec adjNSpec := by decide
-
-/-- The Figure 5 network is normal-mode well-formed: PAL's own
-specification legislates every field its mothers conflict on. Delete
-either field of `palOwnSpec` and this fails. -/
-theorem pal_resolves :
-    CxnSpec.Resolves palOwnSpec [nnCompoundSpec, adjNSpec] := by decide
-
-/-- The derived PAL specification, computed rather than stipulated: the
-prenominal slot is inherited from both mothers (they agree),
-non-self-embedding is inherited from Adj+N alone, and N′-hood and
-PAL-internal stress come from PAL's own conflict resolutions. -/
-theorem palSpec_eq :
-    palSpec =
-      { level := .some .bar
-      , modPosition := .some .prenominal
-      , stress := .some .modifier
-      , selfEmbedding := .some .banned } := by decide
+/-- PAL N's full specification, computed by normal-mode inheritance: its own N′ level and stress
+within the modifier, the prenominal slot from both mothers, which agree, and non-self-embedding
+from adjectival modification. -/
+theorem inherited_palN :
+    inherited level .palN = {.bar} ∧ inherited modPosition .palN = {.prenominal} ∧
+      inherited stress .palN = {.modifier} ∧ inherited selfEmbedding .palN = {.banned} := by
+  refine ⟨inherited_eq_singleton_of_eq_some rfl, Set.ext fun v ↦ ?_,
+    inherited_eq_singleton_of_eq_some rfl,
+    inherited_eq_singleton_of_isLeast (m := .adjN) (by decide) rfl⟩
+  rw [Set.mem_singleton_iff]; cases v <;> decide
 
 /-! ### Licensing: PAL is load-bearing
 
-A minimal demonstration with the network's licensing relation
-(`Constructicon.Licenses`): the attested "a must-do task" (the paper's
-ex. (1b), determiner elided) parses as a phrase-daughter in the modifier
-slot plus a head noun. The network licenses it through the PAL
-construction, and rejects it when PAL is removed — the
-phrase-in-word-slot configuration has no other license. -/
+A minimal demonstration with the licensing relation (`Licenses`): the attested "a must-do task"
+(the paper's ex. (1b), determiner elided) parses as a phrase-daughter in the modifier slot plus a
+head noun. The constructions of Figure 5 license it through the PAL construction, and without PAL
+it is rejected: the phrase-in-word-slot configuration has no other license. -/
 
 /-- Toy POS lexicon for the licensing demonstration. -/
 def demoLexicon : String → Option UD.UPOS
@@ -389,87 +307,42 @@ def demoLexicon : String → Option UD.UPOS
   | "task" => some .NOUN
   | _ => none
 
-/-- The internal syntax of the *must-do* PAL: must-V
-(cf. `mustVerbConstruction`, which is the full prenominal construction). -/
+/-- The internal syntax of the *must-do* PAL: must-V (cf. `mustVerbConstruction`, which is the
+full prenominal construction). -/
 def mustVCore : Construction Unit :=
-  { name := "must-V core"
-  , form :=
+  { form :=
       [ { filler := .fixed "must" }
       , { filler := .open_ .VERB, isHead := true } ]
   , meaning := () }
 
-/-- The Figure 5 network plus the must-V-internal construction. -/
-def demoNetwork : Constructicon Unit :=
-  { constructions := mustVCore :: palConstructicon.constructions
-  , links := palConstructicon.links }
+/-- The constructions of Figure 5 and the must-V-internal construction. -/
+def demoInventory : List (Construction Unit) :=
+  mustVCore ::
+    [.nnCompound, .adjN, .palN, .pal, .mustV, .aSimple, .dontMe, .theOld].map construction
 
-/-- "must-do task" (ex. (1b), determiner elided): the PAL phrase as a
-constituent daughter in the word-level modifier slot. -/
+/-- "must-do task" (ex. (1b), determiner elided): the PAL phrase as a constituent daughter in the
+word-level modifier slot. -/
 def mustDoTask : Token :=
   .node [.node [.word "must", .word "do"], .word "task"]
 
-/-- The network licenses the PAL token. -/
-theorem demo_licenses_mustDoTask :
-    demoNetwork.Licenses demoLexicon mustDoTask := by decide
+/-- The inventory licenses the PAL token. -/
+theorem demo_licenses_mustDoTask : Licenses demoInventory demoLexicon mustDoTask := by decide
 
-/-- Remove the PAL construction and the token is rejected: nothing else
-licenses a phrase in a word-level modifier slot. PAL is load-bearing. -/
+/-- Remove the PAL construction and the token is rejected: nothing else licenses a phrase in a
+word-level modifier slot. PAL is load-bearing. -/
 theorem pal_load_bearing :
-    ¬ ({ demoNetwork with
-         constructions :=
-           demoNetwork.constructions.filter (·.name != "PAL") }
-        : Constructicon Unit).Licenses demoLexicon mustDoTask := by decide
+    ¬ Licenses (demoInventory.erase palConstruction) demoLexicon mustDoTask := by decide
 
-/-! ### Lemma-like meaning -/
+/-- A PAL utterance's two-part meaning: the head noun's denotation is at-issue (an instance of the
+situation type), and the lemma-like construal contributes that the situation type itself is
+presumed familiar ("presumes familiarity with 'PAL'", Figure 5).
 
-/-- A PAL utterance's two-part meaning: the head noun's denotation is
-at-issue (an instance of the situation type); the lemma-like construal
-contributes that the situation type itself is presumed familiar.
-
-The paper treats the familiarity as an invited *as-if* construal rather
-than a hard definedness condition: speakers exploit the construction
-precisely for situation types that are not antecedently familiar
-(observational humor, sniglets), so common-ground satisfaction is typically
+The paper treats the familiarity as an invited *as-if* construal rather than a hard definedness
+condition: speakers exploit the construction precisely for situation types that are not
+antecedently familiar (observational humor, sniglets), so common-ground satisfaction is typically
 reached by accommodation or pretense, not antecedent entailment. -/
 def palMeaning (W : Type*) (situationType headNoun : W → Prop) : PartialProp W :=
   { presup := situationType, assertion := headNoun }
-
-/-! ### Typed pragmatics: familiarity inherits through the network
-
-The four subtype links' shared property — "lemma-like construal: presumed
-familiarity" — as a computed fact rather than a string: only PAL itself
-carries a pragmatic contribution (`palMeaning`); the conventional subtypes
-carry none of their own, and the network derives theirs by normal-mode
-inheritance through the links. Their at-issue increments ('simple' marks
-routine-ness, the interdiction of *Don't ⟨PAL⟩ me*, etc.) are not modeled;
-the presupposition component is the inherited content. -/
-
-/-- The links determine PAL's conventional subtypes. -/
-theorem pal_children :
-    palConstructicon.childrenOf "PAL" =
-      [ mustVerbConstruction, aSimplePALConstruction
-      , dontPALmeConstruction, theOldPALConstruction ] := by decide
-
-/-- Own pragmatic contributions for the Figure 5 network: only PAL itself
-carries one — the familiarity-presupposing meaning. -/
-def figure5Pragmatics (W : Type*) (situationType headNoun : W → Prop) :
-    Construction Unit → Option (PartialProp W) :=
-  λ c => if c.name == "PAL" then some (palMeaning W situationType headNoun)
-         else none
-
-/-- Every conventional subtype inherits the familiarity presupposition
-through the network: each child of PAL has a derived pragmatic
-contribution whose presupposition is the situation type. -/
-theorem subtypes_inherit_familiarity (W : Type*)
-    (situationType headNoun : W → Prop) :
-    ∀ c ∈ palConstructicon.childrenOf "PAL",
-      (palConstructicon.derivedField
-          (figure5Pragmatics W situationType headNoun) c).map (·.presup)
-        = some situationType := by
-  intro c hc
-  rw [pal_children] at hc
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
-  rcases hc with rfl | rfl | rfl | rfl <;> rfl
 
 /-! ### Irreducibility -/
 

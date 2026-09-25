@@ -2,7 +2,8 @@ module
 
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Order.UpperLower.Basic
-public import Linglib.Syntax.ConstructionGrammar.Inheritance
+public import Mathlib.Data.Fintype.Sum
+public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Studies.Traugott2010
 
 /-!
@@ -14,15 +15,17 @@ path from the prototypical N+PP (*the hell of his own invention*) through the he
 evaluative modifier (*a hell of a man*) and the binominal intensifier (*a hell of a large sum*)
 (`Stage`). The features of the book's two overview tables hold over intervals of the path, with
 one exception (`ordConnected_span_iff`): the second determiner is lost in the head-classifier and
-reappears in the evaluative binominal, which the book explains by inheritance from the N+PP. A
+reappears in the evaluative binominal, which the book explains by inheritance from the N+PP, and
+which the network derives (`inherited_secondDeterminer`). A
 feature that holds over an interval is never lost once gained if it holds at the last stage
 (`isUpperSet_span_of_top_mem`), and the features together tell every two stages apart
 (`profile_injective`).
 
 Every first noun of the case studies and of the corpus study is attested at all stages below the
-ones it has reached (`isLowerSet_stages`). In the constructional network the metaphorical links
-are the covering relation of the path (`metaphorical_iff_covBy`), and the step onto the
-evaluative stages is a subjectification in Traugott's sense.
+ones it has reached (`isLowerSet_stages`). In the constructional network every later stage
+inherits from the N+PP mother node, the horizontal metaphorical links are the covering relation of
+the path (`metaphorical_iff_covBy`), and the step onto the evaluative stages is a subjectification
+in Traugott's sense.
 
 ## Implementation notes
 
@@ -276,65 +279,114 @@ open ConstructionGrammar
 /-- The form of the construction at each stage; the optional *a* of the modifier and the
 intensifier is left out. -/
 def Stage.construction : Stage → Construction Unit
-  | .nPP => ⟨"N+PP",
-      [{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
-       { filler := .fixed "of" }, { filler := .open_ .DET }, { filler := .open_ .NOUN }], (), false⟩
-  | .headClassifier => ⟨"Head-Classifier",
-      [{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
-       { filler := .fixed "of" }, { filler := .open_ .NOUN }], (), false⟩
-  | .evaluative => ⟨"Evaluative BNP",
-      [{ filler := .open_ .DET }, { filler := .open_ .NOUN }, { filler := .fixed "of" },
-       { filler := .fixed "a" }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
-  | .evaluativeModifier => ⟨"Evaluative Modifier",
-      [{ filler := .open_ .DET }, { filler := .open_ .NOUN }, { filler := .fixed "of" },
-       { filler := .open_ .NOUN, isHead := true }], (), false⟩
-  | .binominalIntensifier => ⟨"Binominal Intensifier",
-      [{ filler := .open_ .DET }, { filler := .open_ .NOUN }, { filler := .fixed "of" },
-       { filler := .open_ .ADJ }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+  | .nPP => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
+      { filler := .fixed "of" }, { filler := .open_ .DET }, { filler := .open_ .NOUN }], (), false⟩
+  | .headClassifier => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true },
+      { filler := .fixed "of" }, { filler := .open_ .NOUN }], (), false⟩
+  | .evaluative => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN },
+      { filler := .fixed "of" }, { filler := .fixed "a" },
+      { filler := .open_ .NOUN, isHead := true }], (), false⟩
+  | .evaluativeModifier => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN },
+      { filler := .fixed "of" }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+  | .binominalIntensifier => ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN },
+      { filler := .fixed "of" }, { filler := .open_ .ADJ },
+      { filler := .open_ .NOUN, isHead := true }], (), false⟩
 
 /-- The simple noun phrase, whose classifying and evaluative premodifiers share their function
 with the binominals. -/
 def simpleNP : Construction Unit :=
-  ⟨"Simple NP", [{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
+  ⟨[{ filler := .open_ .DET }, { filler := .open_ .NOUN, isHead := true }], (), false⟩
 
 /-- The adjective phrase, whose intensifiers share their function with the binominal
 intensifier. -/
 def adjectivePhrase : Construction Unit :=
-  ⟨"AP", [{ filler := .open_ .ADV }, { filler := .open_ .ADJ, isHead := true }], (), false⟩
+  ⟨[{ filler := .open_ .ADV }, { filler := .open_ .ADJ, isHead := true }], (), false⟩
 
-/-- A link between two constructions of the network. -/
-def link (parent child : Construction Unit) (type : LinkType) (shared : String) :
-    InheritanceLink :=
-  { parent := parent.name, child := child.name, mode := .normal, linkType := some type,
-    sharedProperties := [shared] }
+/-- The nodes of the network: the constructions of the path, the simple noun phrase and the
+adjective phrase. -/
+inductive Node where
+  | stage (s : Stage)
+  | simpleNP
+  | adjectivePhrase
+  deriving DecidableEq, Fintype
+
+/-- The construction at each node. -/
+def construction : Node → Construction Unit
+  | .stage s => s.construction
+  | .simpleNP => simpleNP
+  | .adjectivePhrase => adjectivePhrase
 
 open Stage in
-/-- The network of the *of*-binominals: metaphorical links along the path, and polysemy links
-from each stage to the phrase whose modifier shares its function (*a book of poetry* and *a
-poetry book*, *her round moon of a face* and *her moon-like face*). -/
-def network : Constructicon Unit where
-  constructions := Stage.path.map Stage.construction ++ [simpleNP, adjectivePhrase]
-  links :=
-    [ link nPP.construction headClassifier.construction .metaphorical "N₁ heads"
-    , link headClassifier.construction evaluative.construction .metaphorical
-        "descriptive content of N₁"
-    , link evaluative.construction evaluativeModifier.construction .metaphorical "N₁ evaluates"
-    , link evaluativeModifier.construction binominalIntensifier.construction .metaphorical
-        "[N₁ of a] is a chunk"
-    , link headClassifier.construction simpleNP .polysemy "classifying modifier"
-    , link evaluative.construction simpleNP .polysemy "N₁ denotes an attribute"
-    , link evaluativeModifier.construction simpleNP .polysemy "evaluative premodifier"
-    , link binominalIntensifier.construction adjectivePhrase .polysemy "intensifier" ]
+/-- The network of the *of*-binominals (chapter 8). Every construction after the N+PP has a
+taxonomic link to the schematic N+PP mother node, weakened for the evaluative modifier and the
+binominal intensifier (the dotted links of Figures 8.11 and 8.13). The horizontal links, which pass
+no information down, are the metaphorical extensions along the path at the micro-construction
+level, and the polysemy links from the head-classifier, the evaluative binominal and the evaluative
+modifier to the simple noun phrase, whose premodifiers share their function (*a book of poetry*
+and *a poetry book*), and from the binominal intensifier to the adjective phrase. -/
+def network : Constructicon Node Unit where
+  cxn := construction
+  mothers
+    | .stage nPP => []
+    | .stage _ => [(.stage nPP, none)]
+    | _ => []
+  related
+    | .stage nPP => [(.stage headClassifier, some .metaphorical)]
+    | .stage headClassifier =>
+        [(.stage evaluative, some .metaphorical), (.simpleNP, some .polysemy)]
+    | .stage evaluative =>
+        [(.stage evaluativeModifier, some .metaphorical), (.simpleNP, some .polysemy)]
+    | .stage evaluativeModifier =>
+        [(.stage binominalIntensifier, some .metaphorical), (.simpleNP, some .polysemy)]
+    | .stage binominalIntensifier => [(.adjectivePhrase, some .polysemy)]
+    | _ => []
 
-/-- Every link of the network joins two of its constructions. -/
-theorem network_wellFormed : network.WellFormed := by decide
+/-- The depth of a node below the N+PP mother node. -/
+def Node.rank : Node → ℕ
+  | .stage .nPP | .simpleNP | .adjectivePhrase => 0
+  | .stage _ => 1
+
+instance : PartialOrder Node := network.partialOrder Node.rank (by decide)
+
+instance : DecidableLE Node := network.decidableLE [.stage .nPP] (by decide)
 
 /-- The metaphorical links are the covering relation of the path, so each stage is a metaphorical
 extension of the one before it and of no other. -/
 theorem metaphorical_iff_covBy (s t : Stage) :
-    (∃ l ∈ network.links, l.linkType = some .metaphorical ∧
-      l.parent = s.construction.name ∧ l.child = t.construction.name) ↔ s ⋖ t := by
+    (.stage t, some .metaphorical) ∈ network.related (.stage s) ↔ s ⋖ t := by
   revert s t; decide
+
+/-- Whether a construction states a second determiner: the N+PP has one, the head-classifier has
+none ("no Det2", Figure 8.6), and the constructions after it state nothing of their own. -/
+def secondDeterminer : Node → Option Bool
+  | .stage .nPP => some true
+  | .stage .headClassifier => some false
+  | _ => none
+
+/-- Whether a construction states that its second determiner marks number: the N+PP's does, the
+head-classifier has none, and the evaluative modifier's "no longer marks number for N2" (Figure
+8.10), nor does the binominal intensifier's. -/
+def secondDeterminerNumber : Node → Option Bool
+  | .stage .nPP => some true
+  | .stage .headClassifier | .stage .evaluativeModifier | .stage .binominalIntensifier =>
+      some false
+  | _ => none
+
+open DefaultInheritance in
+/-- "The inheritance link between the EBNP and the N+PP would explain the reappearance of the
+indefinite article in the second determiner position in the EBNP" (p. 226): the stages that
+inherit a second determiner through the network are exactly those at which the overview tables
+record one, the head-classifier excepted. -/
+theorem inherited_secondDeterminer (s : Stage) :
+    true ∈ inherited secondDeterminer (.stage s) ↔ s ∈ Diagnostic.det₂.span := by
+  revert s; decide
+
+open DefaultInheritance in
+/-- The evaluative binominal inherits a number-marking second determiner from the N+PP, the other
+exception to contiguity in the tables (`ordConnected_span_iff`). -/
+theorem inherited_secondDeterminerNumber (s : Stage) :
+    true ∈ inherited secondDeterminerNumber (.stage s) ↔ s ∈ Diagnostic.det₂Number.span := by
+  revert s; decide
 
 /-- The head of the form precedes *of* exactly at the stages where the first noun is the semantic
 head. -/
