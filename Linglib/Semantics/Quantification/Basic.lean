@@ -6,17 +6,27 @@ public import Linglib.Core.Order.Aristotelian
 
 /-!
 # Concrete propositional generalized quantifiers
-[barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006]
 
-The propositional GQs `every_sem`, `some_sem`, `no_sem` and the Russellian `the_sem`, with
-the property proofs that don't need `Fintype`. Counting GQs (`most_sem`, `few_sem`, etc.) and
-their proofs live in `Quantification/Counting.lean`.
+This file defines the generalized quantifiers *every*, *some*, *no* and the Russellian *the*,
+whose truth conditions need no counting, and proves their conservativity, monotonicity,
+symmetry, duality and square-of-opposition properties. The properties checked are Barwise and
+Cooper's universals of conservativity and scope monotonicity, Keenan and Stavi's Boolean
+structure, and Peters and Westerståhl's left monotonicity and smoothness. The counting
+quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
-## Main declarations
+## Main definitions
 
-* `every_sem`, `some_sem`, `no_sem`, `the_sem` — the propositional GQ denotations.
-* `SatisfiesUniversals` — B&C universals: conservativity + monotonicity in scope.
-* Conservativity/monotonicity/symmetry/intersectivity/duality/etc. proofs.
+* `every_sem`, `some_sem`, `no_sem`, `the_sem`: the propositional denotations.
+* `SatisfiesUniversals`: conservativity together with monotonicity in the scope.
+
+## References
+
+* [barwise-cooper-1981]
+* [keenan-stavi-1986]
+* [peters-westerstahl-2006]
+* [russell-1905]
+* [van-benthem-1984]
+* [van-de-pol-etal-2023]
 -/
 
 @[expose] public section
@@ -156,28 +166,21 @@ theorem no_raa : RightAntiAdditive ⟦no⟧ := by
                     fun x hR hS' => h x hR (Or.inr hS')⟩,
           fun ⟨h1, h2⟩ x hR hSS' => hSS'.elim (h1 x hR) (h2 x hR)⟩
 
-/-- [peters-westerstahl-2006] Prop 13: the only non-trivial CONSERV, EXT,
-    and ISOM quantifiers satisfying LAA are `every` and `no` (and `A = ∅`). -/
-theorem laa_characterization :
-    LeftAntiAdditive ⟦every⟧ ∧
-    LeftAntiAdditive ⟦no⟧ := ⟨every_laa, no_laa⟩
-
 /-! ### Duality square (B&C §4.11) -/
 
-/-- Inner negation maps `every` to `no`: every...not = no.
-    `∀x. R(x) → ¬S(x)` = `¬∃x. R(x) ∧ S(x)`. -/
+/-- Inner negation maps `every` to `no`, since *every ... not* is *no*. -/
 theorem innerNeg_every_eq_no :
     (innerNeg ⟦every⟧ : GQ α) = ⟦no⟧ := by
   funext R S; simp only [innerNeg, every_sem, no_sem]
 
-/-- The dual of `every` is `some`: Q̌(every) = some. -/
+/-- The dual of `every` is `some`. -/
 theorem dualQ_every_eq_some :
     (dualQ ⟦every⟧ : GQ α) = ⟦some⟧ := by
   funext R S; simp only [dualQ, outerNeg_apply, innerNeg, every_sem, some_sem]
   exact propext ⟨fun h => by push Not at h; exact h,
                  fun ⟨x, hR, hS⟩ h => h x hR hS⟩
 
-/-- `outerNeg ⟦some⟧ = ⟦no⟧`: negating existence gives universal negation. -/
+/-- The outer negation of `some` is `no`, since negating existence gives universal negation. -/
 theorem outerNeg_some_eq_no :
     (outerNeg ⟦some⟧ : GQ α) = ⟦no⟧ := by
   funext R S; simp only [outerNeg_apply, some_sem, no_sem]
@@ -279,39 +282,37 @@ existential import (non-empty restrictor) and are `|R|`-sensitive — at a singl
 do not apply. They stay as the conditional theorems (`a_e_contrary`, `subalternation_a_i`, …),
 the faithful Aristotelian-vs-Boolean existential-import treatment. -/
 
-/-- Contradiction (A vs O): the A-form and O-form are contradictories. -/
+/-- The A-form and the O-form are contradictories. -/
 theorem every_contradicts_notEvery (R S : α → Prop) :
     ⟦every⟧ R S ↔ ¬ (outerNeg ⟦every⟧ R S) := by
   simp [outerNeg, Classical.not_not]
 
-/-- Contradiction (E vs I): the E-form and I-form are contradictories. -/
+/-- The E-form and the I-form are contradictories. -/
 theorem no_contradicts_some (R S : α → Prop) :
     ⟦no⟧ R S ↔ ¬ (⟦some⟧ R S) := by
   simp only [no_sem, some_sem]; push Not; rfl
 
-/-- Contrariety (A ∧ E): the A-form and E-form can't both hold unless the
-    restrictor is empty. -/
+/-- The A-form and the E-form are contraries, since they cannot both hold unless the
+restrictor is empty. -/
 theorem a_e_contrary (R S : α → Prop) :
     ⟦every⟧ R S → ⟦no⟧ R S →
     ∀ x : α, ¬ R x := by
   intro hA hE x hR; exact hE x hR (hA x hR)
 
-/-- Subalternation (A → I): the A-form entails the I-form when the
-    restrictor is non-empty. -/
+/-- The A-form entails the I-form when the restrictor is nonempty. -/
 theorem subalternation_a_i (R S : α → Prop)
     (hR : ∃ x : α, R x) :
     ⟦every⟧ R S → ⟦some⟧ R S := by
   intro hA; obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
 
-/-- Subalternation (E → O): the E-form entails the O-form when the
-    restrictor is non-empty. -/
+/-- The E-form entails the O-form when the restrictor is nonempty. -/
 theorem subalternation_e_o (R S : α → Prop)
     (hR : ∃ x : α, R x) :
     ⟦no⟧ R S → outerNeg ⟦every⟧ R S := by
   intro hE hA; obtain ⟨x, hRx⟩ := hR; exact hE x hRx (hA x hRx)
 
-/-- Subcontrariety (I ∨ O): the I-form and O-form can't both fail when the
-    restrictor is non-empty. -/
+/-- The I-form and the O-form are subcontraries, since they cannot both fail when the
+restrictor is nonempty. -/
 theorem subcontrariety_i_o (R S : α → Prop)
     (hR : ∃ x : α, R x) :
     ⟦some⟧ R S ∨ outerNeg ⟦every⟧ R S := by
@@ -320,22 +321,21 @@ theorem subcontrariety_i_o (R S : α → Prop)
   · right; intro hA; apply h
     obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
 
-/-- Every quantifier is `Aristotelian.IsContradictory` to its outer negation: the Boolean
-    complement law `isCompl_compl` on the Pi-instance Boolean algebra `(α → Prop) → Prop`
-    (where `outerNeg = ᶜ`). The square's contradictory diagonals are instances — this is the
-    "single home" for the diagonals, by construction rather than re-derivation. -/
+/-- Every quantifier is `Aristotelian.IsContradictory` to its outer negation, by the Boolean
+complement law on the Boolean algebra `(α → Prop) → Prop`. The square's contradictory diagonals
+are instances. -/
 theorem isContradictory_outerNeg (q : GQ α) (R : α → Prop) :
     Aristotelian.IsContradictory ((q R) : (α → Prop) → Prop) (outerNeg q R) :=
   isCompl_compl
 
-/-- A–O diagonal: `every` and `not-every` are contradictory. -/
+/-- The A–O diagonal, where `every` and `not every` are contradictory. -/
 theorem every_satisfies_isContradictory_pointwise (R : α → Prop) :
     Aristotelian.IsContradictory
       ((⟦every⟧ R) : (α → Prop) → Prop)
       (outerNeg ⟦every⟧ R) :=
   isContradictory_outerNeg _ R
 
-/-- E–I diagonal: `no` and `some` are contradictory, since `some = ~no`. -/
+/-- The E–I diagonal, where `no` and `some` are contradictory. -/
 theorem no_satisfies_isContradictory_pointwise (R : α → Prop) :
     Aristotelian.IsContradictory
       ((⟦no⟧ R) : (α → Prop) → Prop)
@@ -384,10 +384,8 @@ theorem every_upSE_direct : UpSEMon ⟦every⟧ := by
 theorem every_smooth : Smooth ⟦every⟧ :=
   ⟨every_downNE, every_upSE_direct⟩
 
-theorem no_coSmooth_partial :
-    DownNWMon ⟦no⟧ ∧ DownNEMon ⟦no⟧ :=
-  ⟨restrictorDownMono_to_downNW _ no_restrictor_down,
-   restrictorDownMono_to_downNE _ no_restrictor_down⟩
+theorem no_coSmooth : CoSmooth ⟦no⟧ :=
+  ⟨no_downNW, fun _ _ _ _ hInt hQ x hR' hS => hQ x (hInt x hR' hS) hS⟩
 
 /-! ### Satisfies universals: B&C's CONS + MON ([barwise-cooper-1981]; used as a
 learnability/complexity target by [van-de-pol-etal-2023]) -/

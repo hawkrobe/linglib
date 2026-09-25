@@ -1,183 +1,398 @@
 module
 
-public import Linglib.Semantics.Quantification.UnifiedUniversal
-public import Linglib.Semantics.Quantification.ONEModifiers
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Fragments.German.Distributives
+public import Linglib.Semantics.Mereology
 public import Linglib.Fragments.English.Determiners
+public import Linglib.Data.Examples.HaslingerHienEtAl2025
+public import Mathlib.Data.PFun
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Haslinger, Hien, Rosina, Schmitt and Wurm (2025): A unified semantics for universal quantifiers
 
-This file formalizes [haslinger-etal-2025-nllt]'s account of the Distributivity–Number
-Generalization: across languages a universal quantifier with a singular count complement is
-distributive and one with a plural complement is not, a strengthening of [gil-1995]'s
-implicational universal. One morpheme, `QForall`, applies its scope to every maximal
-non-overlapping element of its restrictor, so the reading falls out of the restrictor's
-algebra: a singular restrictor of atoms gives the distributive reading and a sum-closed plural
-restrictor with one maximal element the non-distributive one (`dng_sg_concrete`,
-`dng_pl_concrete`). Two-form languages such as English and German realize a head ONE below the
-quantifier that presupposes non-overlap (*every*) or atomicity (*each*), following
-[fassi-fehri-2020], so that *each* entails *every* entails *all* (`presup_chain`) and *each*
-rejects the non-atomic intervals of *ten minutes* while *every* accepts them
-(`each_ten_minutes_blocked`); one-form languages use the bare quantifier, whose reading the
-complement's number fixes. On an atomic restrictor sort the quantifier is the canonical
-universal generalized quantifier (`QForall_eq_every_sem`).
+This file formalizes the single universal quantifier of Haslinger, Hien, Rosina, Schmitt and
+Wurm and the two presuppositional heads it combines with. The quantifier `Q∀` applies its scope
+to every element of its restrictor that contains each restrictor element it overlaps. Whether the
+result distributes falls out of the restrictor's part structure. A restrictor of pairwise
+non-overlapping elements, such as the denotation of a singular count noun, makes `Q∀` the
+ordinary universal quantifier, and a sum-closed plural restrictor with a largest element makes it
+a claim about that largest sum. This is the authors' Distributivity–Number Generalization, which
+strengthens the implicational universal of Gil. In two-form languages such as English and German
+a head ONE below the quantifier presupposes that the restrictor has more than one element and
+either is pairwise non-overlapping (English *every*) or consists of atoms (*each*, German
+*jeder*), following Fassi Fehri. The heads are partial identities on restrictors, so a
+presupposition failure is undefinedness rather than falsity.
+
+## Main definitions
+
+* `MaxNonOverlap`, `QForall`: the quantifier's domain condition and the quantifier `Q∀`.
+* `oneEmpty`, `oneAt`: the heads ONE_∅ and ONE_AT as partial functions on restrictors.
+* `over`, `every`, `each`, `jeder`: the quantifier over a head, and the English and German
+  structures as partial propositions.
+
+## Main results
+
+* `qForall_iff_of_disjoint`, `qForall_iff_of_supClosed`: the two halves of the generalization.
+* `each_le_every`: *each* is defined on fewer restrictors than *every* and agrees where both are.
+* `dng`, `qForall_twoStudents`: the generalization on one algebra of students, and the vacuity
+  of `Q∀` over *two students* when three students are salient.
+* `every_tenMinutes_dom`, `each_tenMinutes_undefined`: consecutive ten-minute intervals meet the
+  presupposition of *every* and fail that of *each*.
+* `one_iff_singular`: the English forms carrying a ONE head are the ones the fragment records as
+  selecting the singular.
+* `judgment_rows`: the paper's *ten minutes* judgments are the definedness predictions.
 
 ## Implementation notes
 
-The quantifier, the ONE heads and the generalization's two halves live in
-`Semantics/Quantification/UnifiedUniversal.lean` and `ONEModifiers.lean`; the study instantiates
-them on finite models and records the paper's survey. The survey rows (Tables 1 and 2)
-are study-local data, with the English and German forms read off the determiner fragments; the
-distributive readings that plural forms additionally allow come from a VP-level distributivity
-operator ([link-1987]), not from the quantifier, and stay outside the models. The S&P paper of
-the overlapping author set, `Studies/HaslingerEtAl2025.lean`, separates distributivity from
-maximality; this one separates it from number.
+The null individual is `IsBot`, the overlap relation `Mereology.Overlap`, and non-overlap of a
+restrictor `Mereology.DisjointPred`. The heads are `PFun.res` of the identity on the
+restrictors meeting their presupposition, and a structure applied to a restrictor and a scope is
+a `Part Prop`, defined when the head is. Time is measured in minutes, so *ten minutes* denotes the
+consecutive half-open intervals of `ℕ`. The survey of universal quantifiers in the paper's first
+two tables is not formalized here, since a survey of lexemes has no data format in the library.
 
 ## References
 
 * [haslinger-etal-2025-nllt]
 * [gil-1995]
 * [fassi-fehri-2020]
-* [link-1987]
 -/
 
 @[expose] public section
 
 namespace HaslingerHienEtAl2025
 
-open Quantifier.UnifiedUniversal Quantifier.ONEModifiers Mereology
+open Mereology
 
-/-! ### The survey (Tables 1 and 2) -/
+variable {α : Type*} {P Q : Set α} {x : α}
 
-/-- Whether a language has one universal-quantifier lexeme whose reading the complement's
-number fixes, or two lexemes, one distributive and one not. -/
-inductive SystemType where
-  | oneForm
-  | twoForm
-  deriving DecidableEq, Repr
+/-! ### The quantifier -/
 
-/-- A language's universal-quantifier inventory as the survey compiles it. -/
-structure UQProfile where
-  language : String
-  family : String
-  systemType : SystemType
-  /-- The distributive form; in a one-form language, the sole form. -/
-  distForm : String
-  /-- The non-distributive form; empty in a one-form language. -/
-  nonDistForm : String := ""
-  deriving Repr, DecidableEq
+section PartialOrder
 
-/-- The fifteen languages of Tables 1 and 2; the English and German forms are the
-fragments'. -/
-def typologicalSample : List UQProfile :=
-  [ ⟨"Dagara", "Mabia", .oneForm, "'hà", ""⟩,
-    ⟨"Moore", "Mabia", .oneForm, "fãa", ""⟩,
-    ⟨"Gourmantchema", "Mabia", .oneForm, "kuli", ""⟩,
-    ⟨"Wolof", "Atlantic", .oneForm, "-epp", ""⟩,
-    ⟨"Syrian Arabic", "Semitic", .oneForm, "kul", ""⟩,
-    ⟨"English", "Indo-European (Germanic)", .twoForm, English.Determiners.QuantityWord.every.form,
-      English.Determiners.QuantityWord.all.form⟩,
-    ⟨"German", "Indo-European (Germanic)", .twoForm, German.Distributives.jeder.form,
-      German.Distributives.alle.form⟩,
-    ⟨"Hindi", "Indo-European (Indic)", .twoForm, "praty-ek", "saar-"⟩,
-    ⟨"Russian", "Indo-European (Slavic)", .twoForm, "každyj", "vse"⟩,
-    ⟨"Imbabura Quichua", "Quechuan", .twoForm, "kada", "tukuy(-lla)"⟩,
-    ⟨"Turkish", "Turkic", .twoForm, "her", "bütün, hepsi"⟩,
-    ⟨"Basque", "isolate", .twoForm, "bakoitz", "guzti, den, oro"⟩,
-    ⟨"Telugu", "Dravidian", .twoForm, "prăti:", "ăndărŭ, ăn:ĭ, ănta:"⟩,
-    ⟨"Hausa", "Afro-Asiatic (West Chadic)", .twoForm, "koowànè", "duk"⟩,
-    ⟨"Logoori", "Niger-Congo (Bantu)", .twoForm, "vuri", "-oosi"⟩ ]
+variable [PartialOrder α]
 
-/-! ### Finite models of the generalization -/
+/-- `MaxNonOverlap P x` says that `x` is a `P`-element containing every `P`-element it
+overlaps, the domain condition of the quantifier. -/
+def MaxNonOverlap (P : Set α) (x : α) : Prop := x ∈ P ∧ ∀ y ∈ P, Overlap x y → y ≤ x
 
-section FiniteModels
+/-- The single universal quantifier `Q∀` says that the scope holds of every maximal
+non-overlapping element of the restrictor. -/
+def QForall (P Q : Set α) : Prop := ∀ x, MaxNonOverlap P x → x ∈ Q
 
-/-- Three students, a flat domain in which every element is an atom. -/
+theorem MaxNonOverlap.mem (h : MaxNonOverlap P x) : x ∈ P := h.1
+
+/-- A non-null maximal non-overlapping element is maximal in `P`. -/
+theorem MaxNonOverlap.maximal (hx : ¬ IsBot x) (h : MaxNonOverlap P x) : Maximal (· ∈ P) x :=
+  ⟨h.1, fun y hy hle ↦ h.2 y hy ⟨x, hx, le_rfl, hle⟩⟩
+
+/-- On a pairwise non-overlapping restrictor every element is maximal non-overlapping. -/
+theorem maxNonOverlap_iff_of_disjoint (h : DisjointPred Overlap P) :
+    MaxNonOverlap P x ↔ x ∈ P :=
+  ⟨And.left, fun hx ↦ ⟨hx, fun y hy hov ↦
+    (Classical.byContradiction fun hne ↦ h ⟨x, hx, y, hy, Ne.symm hne, hov⟩).le⟩⟩
+
+/-- The singular half of the generalization says that on a pairwise non-overlapping restrictor
+the quantifier is the ordinary universal. -/
+theorem qForall_iff_of_disjoint (h : DisjointPred Overlap P) : QForall P Q ↔ ∀ x ∈ P, x ∈ Q :=
+  forall_congr' fun _ ↦ imp_congr_left (maxNonOverlap_iff_of_disjoint h)
+
+/-- On a pairwise non-overlapping restrictor the quantifier is the generalized quantifier
+*every*. -/
+theorem qForall_iff_every_sem (h : DisjointPred Overlap P) :
+    QForall P Q ↔ Quantifier.GQ.every_sem P Q :=
+  qForall_iff_of_disjoint h
+
+end PartialOrder
+
+section SemilatticeSup
+
+variable [SemilatticeSup α] {m : α}
+
+/-- On a sum-closed restrictor a maximal element is maximal non-overlapping. -/
+theorem maxNonOverlap_of_supClosed (hP : SupClosed P) (hm : Maximal (· ∈ P) m) :
+    MaxNonOverlap P m :=
+  ⟨hm.1, fun _ hy _ ↦ le_sup_right.trans (hm.2 (hP hm.1 hy) le_sup_left)⟩
+
+/-- On a sum-closed restrictor without the null individual, the maximal non-overlapping element
+is the maximal element. -/
+theorem maxNonOverlap_iff_of_supClosed (h0 : ∀ x ∈ P, ¬ IsBot x) (hP : SupClosed P)
+    (hm : Maximal (· ∈ P) m) : MaxNonOverlap P x ↔ x = m :=
+  ⟨fun hx ↦ cum_maximal_unique hP (hx.maximal (h0 x hx.1)) hm,
+   fun hxm ↦ hxm ▸ maxNonOverlap_of_supClosed hP hm⟩
+
+/-- The plural half of the generalization says that on a sum-closed restrictor without the null
+individual the quantifier applies the scope to the largest sum. -/
+theorem qForall_iff_of_supClosed (h0 : ∀ x ∈ P, ¬ IsBot x) (hP : SupClosed P)
+    (hm : Maximal (· ∈ P) m) : QForall P Q ↔ m ∈ Q := by
+  simp only [QForall, maxNonOverlap_iff_of_supClosed h0 hP hm, forall_eq]
+
+end SemilatticeSup
+
+/-! ### The heads ONE_∅ and ONE_AT -/
+
+section Heads
+
+variable [PartialOrder α]
+
+/-- The presupposition of ONE_∅ is that the restrictor has more than one element and no two of
+them overlap. -/
+def OneEmptyDom (P : Set α) : Prop := P.Nontrivial ∧ DisjointPred Overlap P
+
+/-- The presupposition of ONE_AT is that the restrictor has more than one element, all of them
+atoms. -/
+def OneAtDom (P : Set α) : Prop := P.Nontrivial ∧ ∀ x ∈ P, Atom x
+
+/-- Distinct atoms never overlap, so the presupposition of ONE_AT entails that of ONE_∅. -/
+theorem OneAtDom.oneEmptyDom (h : OneAtDom P) : OneEmptyDom P :=
+  ⟨h.1, fun ⟨x, hx, y, hy, hne, _, hz, hzx, hzy⟩ ↦
+    hne (((h.2 x hx).eq hzx hz).symm.trans ((h.2 y hy).eq hzy hz))⟩
+
+/-- The head ONE_∅ is the identity on the restrictors meeting its presupposition. -/
+def oneEmpty : Set α →. Set α := PFun.res id {P | OneEmptyDom P}
+
+/-- The head ONE_AT is the identity on the restrictors meeting its presupposition. -/
+def oneAt : Set α →. Set α := PFun.res id {P | OneAtDom P}
+
+/-- The quantifier over a head is defined when the head is defined on the restrictor, and is then
+the quantifier over the head's output. -/
+def over (h : Set α →. Set α) (P Q : Set α) : Part Prop := (h P).map (QForall · Q)
+
+/-- English *every* is the quantifier over ONE_∅. -/
+def every (P Q : Set α) : Part Prop := over oneEmpty P Q
+
+/-- English *each* is the quantifier over ONE_∅ over ONE_AT. -/
+def each (P Q : Set α) : Part Prop := over (oneEmpty.comp oneAt) P Q
+
+/-- German *jeder* is the quantifier over ONE_AT alone, since German lacks ONE_∅. -/
+def jeder (P Q : Set α) : Part Prop := over oneAt P Q
+
+theorem every_dom : (every P Q).Dom ↔ OneEmptyDom P := Iff.rfl
+
+theorem jeder_dom : (jeder P Q).Dom ↔ OneAtDom P := Iff.rfl
+
+theorem each_dom : (each P Q).Dom ↔ OneAtDom P :=
+  ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.oneEmptyDom⟩⟩
+
+/-- *Each* is defined on fewer restrictors than *every*, and where both are defined they agree,
+since the presupposition of *each* entails that of *every* and both leave the bare quantifier. -/
+theorem each_le_every : each P Q ≤ every P Q :=
+  fun _ ⟨h, hp⟩ ↦ ⟨(each_dom.1 h).oneEmptyDom, hp⟩
+
+/-- Under its presupposition *every* is the ordinary universal quantifier. -/
+theorem every_get_iff (h : (every P Q).Dom) : (every P Q).get h ↔ ∀ x ∈ P, x ∈ Q :=
+  qForall_iff_of_disjoint h.2
+
+/-- Under its presupposition *each* is the ordinary universal quantifier. -/
+theorem each_get_iff (h : (each P Q).Dom) : (each P Q).get h ↔ ∀ x ∈ P, x ∈ Q :=
+  qForall_iff_of_disjoint (each_dom.1 h).oneEmptyDom.2
+
+/-! ### Decidability on finite carriers -/
+
+section Decidable
+
+variable [Fintype α] [DecidableEq α] [DecidableLE α] [DecidablePred (IsBot : α → Prop)]
+  [DecidablePred (· ∈ P)] [DecidablePred (· ∈ Q)]
+
+instance (x y : α) : Decidable (Overlap x y) := Fintype.decidableExistsFintype
+
+instance (x : α) : Decidable (Atom x) :=
+  inferInstanceAs (Decidable (¬ IsBot x ∧ ∀ ⦃y⦄, ¬ IsBot y → y ≤ x → x ≤ y))
+
+instance (x : α) : Decidable (Maximal (· ∈ P) x) :=
+  inferInstanceAs (Decidable (x ∈ P ∧ ∀ ⦃y⦄, y ∈ P → x ≤ y → y ≤ x))
+
+instance : DecidablePred (MaxNonOverlap P) := fun x ↦
+  inferInstanceAs (Decidable (x ∈ P ∧ ∀ y ∈ P, Overlap x y → y ≤ x))
+
+instance : Decidable (QForall P Q) :=
+  inferInstanceAs (Decidable (∀ x, MaxNonOverlap P x → x ∈ Q))
+
+instance : Decidable P.Nontrivial := inferInstanceAs (Decidable (∃ x ∈ P, ∃ y ∈ P, x ≠ y))
+
+instance : Decidable (OverlapPred Overlap P) :=
+  inferInstanceAs (Decidable (∃ x ∈ P, ∃ y ∈ P, x ≠ y ∧ Overlap x y))
+
+instance : Decidable (DisjointPred Overlap P) :=
+  inferInstanceAs (Decidable (¬ OverlapPred Overlap P))
+
+instance : Decidable (OneEmptyDom P) :=
+  inferInstanceAs (Decidable (P.Nontrivial ∧ DisjointPred Overlap P))
+
+instance : Decidable (OneAtDom P) :=
+  inferInstanceAs (Decidable (P.Nontrivial ∧ ∀ x ∈ P, Atom x))
+
+end Decidable
+
+end Heads
+
+/-! ### Three students -/
+
+section Students
+
+/-- Three salient students; a plurality is a nonempty finset and the null individual is `∅`. -/
 inductive Student where
   | alice
   | bob
   | carol
   deriving DecidableEq, Repr, Fintype, Inhabited
 
-/-- The flat order: `x ≤ y` iff `x = y`. -/
-instance : PartialOrder Student where
-  le x y := x = y
-  le_refl _ := rfl
-  le_trans _ _ _ h₁ h₂ := h₁.trans h₂
-  le_antisymm _ _ h _ := h
+/-- The plural restrictor *students* holds of the nonempty pluralities and is closed under sum. -/
+def students : Set (Finset Student) := {s | s.Nonempty}
 
-instance : NoBotOrder Student where
-  exists_not_ge
-    | .alice => ⟨.bob, Student.noConfusion⟩
-    | .bob => ⟨.alice, Student.noConfusion⟩
-    | .carol => ⟨.alice, Student.noConfusion⟩
+/-- The singular restrictor *student* holds of the atoms. -/
+def student : Set (Finset Student) := {s | s.card = 1}
 
-instance : IsAtomicDomain Student := isAtomicDomain_of_le_iff_eq (λ _ _ => Iff.rfl)
+/-- The restrictor *two students* holds of the pairs. -/
+def twoStudents : Set (Finset Student) := {s | s.card = 2}
 
-/-- Alice and Bob passed, Carol did not. -/
-def passed : Student → Prop
-  | .alice => True
-  | .bob => True
-  | .carol => False
+/-- The collective scope *met*, true of the whole group only. -/
+def met : Set (Finset Student) := {s | s = Finset.univ}
 
-/-- The singular half of the generalization: on the atomic domain the quantifier distributes
-to each student, and *every student passed* is false because of Carol. -/
-theorem dng_sg_concrete :
-    (QForall (λ _ : Student => True) passed ↔ ∀ x : Student, passed x) ∧
-      ¬ QForall (λ _ : Student => True) passed := by
-  have h := dng_atoms (P := λ _ : Student => True) (Q := passed)
-    (λ x _ => IsAtomicDomain.all_atoms x (not_isBot x))
-    (λ _ _ _ _ hov => IsAtomicDomain.eq_of_overlap hov)
-  simp only [forall_const] at h
-  exact ⟨h, λ hQ => (h.mp hQ) .carol⟩
+instance : DecidablePred (· ∈ students) := fun s ↦ inferInstanceAs (Decidable s.Nonempty)
+instance : DecidablePred (· ∈ student) := fun s ↦ inferInstanceAs (Decidable (s.card = 1))
+instance : DecidablePred (· ∈ twoStudents) := fun s ↦ inferInstanceAs (Decidable (s.card = 2))
+instance : DecidablePred (· ∈ met) := fun s ↦ inferInstanceAs (Decidable (s = Finset.univ))
 
-/-- The plural domain: nonempty groups of students, ordered by inclusion and closed under
-sum. -/
-def students (s : Finset Student) : Prop := s.Nonempty
+/-- The Distributivity–Number Generalization on one algebra, where the collective scope holds
+under the plural restrictor and fails under the singular one. -/
+theorem dng : QForall students met ∧ ¬ QForall student met := by decide
 
-/-- The plural half of the generalization: on the sum-closed restrictor the quantifier applies
-its scope to the one maximal element, the sum of all the students. -/
-theorem dng_pl_concrete (Q : Finset Student → Prop) :
-    QForall students Q ↔ Q Finset.univ :=
-  dng_cum' (λ _ hx h => hx.ne_empty (Finset.subset_empty.mp (h ∅)))
-    (λ _ hx _ _ => hx.mono Finset.subset_union_left)
-    ⟨Finset.univ_nonempty, λ y _ _ => Finset.subset_univ y⟩
+/-- In the model the plural half says that the quantifier over *students* is a claim about the
+sum of all the students. -/
+theorem qForall_students_iff (Q : Set (Finset Student)) : QForall students Q ↔ Finset.univ ∈ Q :=
+  qForall_iff_of_supClosed (fun _ hs h ↦ hs.ne_empty (Finset.subset_empty.1 (h ∅)))
+    (fun _ hx _ _ ↦ hx.mono Finset.subset_union_left)
+    ⟨Finset.univ_nonempty, fun y _ _ ↦ Finset.subset_univ y⟩
 
-end FiniteModels
+/-- In the model the singular half says that the quantifier over *student* is the ordinary
+universal. -/
+theorem qForall_student_iff (Q : Set (Finset Student)) : QForall student Q ↔ ∀ s ∈ student, s ∈ Q :=
+  qForall_iff_of_disjoint (by decide)
 
-/-! ### The English decomposition (79) -/
+/-- Every pair of students is a maximal element of *two students*. -/
+theorem maximal_twoStudents : ∀ s ∈ twoStudents, Maximal (· ∈ twoStudents) s := by decide
 
-section EnglishDecomposition
+/-- Yet every pair overlaps another pair, so no pair is maximal non-overlapping. -/
+theorem not_maxNonOverlap_twoStudents : ∀ s, ¬ MaxNonOverlap twoStudents s := by decide
 
-variable {α : Type*} [PartialOrder α] {P Q : α → Prop}
+/-- With three salient students the quantifier over *two students* is vacuous, so the reading
+on which every pair of students satisfies the scope is unavailable. -/
+theorem qForall_twoStudents (Q : Set (Finset Student)) : QForall twoStudents Q :=
+  fun s hs ↦ (not_maxNonOverlap_twoStudents s hs).elim
 
-/-- *each* entails *every* entails *all*: the atomicity presupposition entails the non-overlap
-presupposition, and both leave the bare quantifier. -/
-theorem presup_chain : eachPresup P Q → everyPresup P Q ∧ QForall P Q :=
-  λ h => ⟨each_entails_every h, h.2⟩
+/-- ONE_∅ rejects the plural restrictor, whose pluralities overlap. -/
+theorem not_oneEmptyDom_students : ¬ OneEmptyDom students := by decide
 
-/-- Under the non-overlap presupposition the quantifier distributes to the restrictor's
-elements. -/
-theorem every_is_distributive (hONE : ONE_empty P) : QForall P Q ↔ ∀ x, P x → Q x :=
-  every_distributes hONE
+/-- ONE_AT accepts the singular restrictor. -/
+theorem oneAtDom_student : OneAtDom student := by decide
 
-end EnglishDecomposition
+end Students
 
-/-- The atomicity presupposition of *each* fails on a restrictor with a non-atomic element,
-such as the intervals of *ten minutes*; *every* accepts non-overlapping intervals. -/
-theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α] {P : α → Prop}
-    (hNonAtomic : ∃ x, P x ∧ ¬ Atom x) (hONE_AT : ONE_AT P) : False :=
-  let ⟨x, hPx, hNA⟩ := hNonAtomic
-  hNA (hONE_AT.all_atomic x hPx)
+/-! ### Ten minutes -/
 
-/-- On an atomic restrictor sort, the quantifier over a restrictor excluding the null
-individual is the canonical universal generalized quantifier. -/
-theorem QForall_eq_every_sem {α : Type*} [PartialOrder α] [IsAtomicDomain α]
-    {P Q : α → Prop} (hP0 : ∀ x, P x → ¬ IsBot x) :
-    QForall P Q ↔ Quantifier.GQ.every_sem P Q :=
-  QForall_eq_standardGQ (λ x hx => IsAtomicDomain.all_atoms x (hP0 x hx))
-    (λ _ _ _ _ h => IsAtomicDomain.eq_of_overlap h)
+section Intervals
+
+/-- The coerced denotation of *ten minutes* holds of the consecutive ten-minute intervals, with
+time measured in minutes. -/
+def tenMinutes : Set (Set ℕ) := Set.range fun k ↦ Set.Ico (10 * k) (10 * k + 10)
+
+theorem tenMinutes_nontrivial : tenMinutes.Nontrivial :=
+  Set.nontrivial_of_mem_mem_ne (Set.mem_range_self 0) (Set.mem_range_self 1) fun h ↦ by
+    simpa using Set.ext_iff.1 h 0
+
+theorem tenMinutes_disjoint : DisjointPred Overlap tenMinutes := by
+  rintro ⟨_, ⟨j, rfl⟩, _, ⟨k, rfl⟩, hne, z, hz, hzj, hzk⟩
+  obtain ⟨n, hn⟩ : z.Nonempty := Set.nonempty_iff_ne_empty.2 fun h ↦ hz (h ▸ isBot_bot)
+  obtain ⟨hj₁, hj₂⟩ := hzj hn
+  obtain ⟨hk₁, hk₂⟩ := hzk hn
+  obtain rfl : j = k := by omega
+  exact hne rfl
+
+theorem oneEmptyDom_tenMinutes : OneEmptyDom tenMinutes :=
+  ⟨tenMinutes_nontrivial, tenMinutes_disjoint⟩
+
+/-- An interval of ten minutes is the sum of shorter intervals, so it is not an atom. -/
+theorem not_atom_tenMinutes : ∀ I ∈ tenMinutes, ¬ Atom I := by
+  rintro _ ⟨k, rfl⟩ h
+  obtain ⟨n, hn⟩ := Set.isAtom_iff.1 (atom_iff_isAtom.1 h)
+  rw [Set.ext_iff] at hn
+  have h0 : 10 * k = n := (hn _).1 ⟨le_rfl, by omega⟩
+  have h1 : 10 * k + 1 = n := (hn _).1 ⟨by omega, by omega⟩
+  omega
+
+theorem not_oneAtDom_tenMinutes : ¬ OneAtDom tenMinutes :=
+  fun h ↦ not_atom_tenMinutes _ (Set.mem_range_self 0) (h.2 _ (Set.mem_range_self 0))
+
+/-- *Every ten minutes* is defined. -/
+theorem every_tenMinutes_dom (Q : Set (Set ℕ)) : (every tenMinutes Q).Dom :=
+  oneEmptyDom_tenMinutes
+
+/-- *Each ten minutes* is a presupposition failure. -/
+theorem each_tenMinutes_undefined (Q : Set (Set ℕ)) : ¬ (each tenMinutes Q).Dom :=
+  fun h ↦ not_oneAtDom_tenMinutes (each_dom.1 h)
+
+/-- German *jede zehn Minuten* is a presupposition failure, since *jeder* carries ONE_AT. -/
+theorem jeder_tenMinutes_undefined (Q : Set (Set ℕ)) : ¬ (jeder tenMinutes Q).Dom :=
+  not_oneAtDom_tenMinutes
+
+end Intervals
+
+/-! ### The English and German forms -/
+
+/-- A universal quantifier form realizes one of four structures, namely the bare quantifier, the
+quantifier over ONE_∅, the quantifier over ONE_∅ and ONE_AT, or the quantifier over ONE_AT alone,
+as in German. -/
+inductive Structure where
+  | bare
+  | nonOverlap
+  | atomic
+  | atomicOnly
+  deriving DecidableEq, Repr, Fintype
+
+/-- The head a structure spells out. -/
+def Structure.head [PartialOrder α] : Structure → (Set α →. Set α)
+  | .bare => PFun.lift id
+  | .nonOverlap => oneEmpty
+  | .atomic => oneEmpty.comp oneAt
+  | .atomicOnly => oneAt
+
+/-- The English universal determiners *all*, *every* and *each*. -/
+def english : English.Determiners.QuantityWord → Option Structure
+  | .all => some .bare
+  | .every => some .nonOverlap
+  | .each => some .atomic
+  | _ => none
+
+/-- At the lexicon the generalization says that the English forms carrying a ONE head are exactly
+the universal determiners the fragment records as selecting the singular. -/
+theorem one_iff_singular :
+    ∀ w s, english w = some s →
+      (s ≠ .bare ↔ w.numberRestriction = some .singular) := by
+  decide
+
+/-- Which structures are defined on the intervals of *ten minutes*. -/
+theorem structure_dom_tenMinutes (s : Structure) (Q : Set (Set ℕ)) :
+    (over s.head tenMinutes Q).Dom ↔ s = .bare ∨ s = .nonOverlap := by
+  cases s
+  · exact iff_of_true trivial (.inl rfl)
+  · exact iff_of_true oneEmptyDom_tenMinutes (.inr rfl)
+  · exact iff_of_false (each_tenMinutes_undefined Q) (by decide)
+  · exact iff_of_false not_oneAtDom_tenMinutes (by decide)
+
+instance (s : Structure) (Q : Set (Set ℕ)) : Decidable (over s.head tenMinutes Q).Dom :=
+  decidable_of_iff _ (structure_dom_tenMinutes s Q).symm
+
+/-- The structure names of the example rows. -/
+def structureTable : List (String × Structure) :=
+  [("bare", .bare), ("nonOverlap", .nonOverlap), ("atomic", .atomic),
+    ("atomicOnly", .atomicOnly)]
+
+/-- The paper's judgments on universal quantifiers with *ten minutes* are the definedness
+predictions, since a form is acceptable just in case its structure is defined on the intervals. -/
+theorem judgment_rows :
+    ∀ row ∈ Examples.all, ∃ s, row.parse? "structure" structureTable = some s ∧
+      (row.judgment = .acceptable ↔ (over s.head tenMinutes Set.univ).Dom) := by
+  decide +kernel
 
 end HaslingerHienEtAl2025
