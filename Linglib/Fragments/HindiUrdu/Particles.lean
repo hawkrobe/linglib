@@ -45,7 +45,7 @@ def ki : Particle where
       | .matrix => some .excluded
       | .subordinated => some .optional
       | .quasiSubordinated => some .optional
-      | .quotation => none
+      | .quotation | .insubordinated => none
     | _ => none
 
 /-- *kya:* is a polar question particle. -/

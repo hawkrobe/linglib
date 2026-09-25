@@ -43,6 +43,7 @@ def ka : Particle where
       | .subordinated => some .obligatory
       | .quasiSubordinated => some .optional
       | .quotation => some .optional
+      | .insubordinated => none
     | _ => none
 
 /-- *no* — clause-typing particle for questions (informal). -/
@@ -56,7 +57,7 @@ def no_ : Particle where
       | .matrix => some .optional
       | .subordinated => some .optional
       | .quasiSubordinated => some .optional
-      | .quotation => none
+      | .quotation | .insubordinated => none
     | _ => none
 
 /-- *koto* — complementizer for declarative clauses. Contrast with *ka*:
@@ -88,6 +89,7 @@ def kke : Particle where
       | .subordinated => some .excluded
       | .quasiSubordinated => some .excluded
       | .quotation => some .optional
+      | .insubordinated => none
     | _ => none
 
 /-- *darō* だろう — conjectural/epistemic copula.
@@ -107,7 +109,7 @@ def daroo : Particle where
       | .matrix => some .optional
       | .subordinated => some .excluded
       | .quasiSubordinated => some .optional
-      | .quotation => none
+      | .quotation | .insubordinated => none
     | _ => none
 
 /-- The clause-typing particles. -/

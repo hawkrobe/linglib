@@ -28,6 +28,7 @@ def quick : Particle where
       | .subordinated => some .excluded
       | .quasiSubordinated => some .excluded
       | .quotation => some .optional
+      | .insubordinated => none
     | _ => none
 
 def allQuestionParticles : List Particle := [quick]

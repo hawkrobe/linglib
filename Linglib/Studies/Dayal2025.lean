@@ -75,13 +75,13 @@ open English English.QuestionParticles HindiUrdu.Particles Japanese.Particles
 
 /-! ### The three layers (7), (20) -/
 
-/-- The layer an embedding context reaches: subordination CP, quasi-subordination
-PerspP, a matrix clause or a quotation SAP. -/
+/-- The layer an embedding context reaches is CP under subordination, PerspP under
+quasi-subordination, and SAP for a matrix clause, a quotation or an insubordinated root
+utterance. -/
 def layerOfContext : EmbeddingContext → QParticleLayer
   | .subordinated => .cp
   | .quasiSubordinated => .perspP
-  | .matrix => .sap
-  | .quotation => .sap
+  | .matrix | .quotation | .insubordinated => .sap
 
 /-- The height of a layer in (7). -/
 def height : QParticleLayer → ℕ
