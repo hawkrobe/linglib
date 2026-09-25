@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Data.Examples.Judgment
-public import Linglib.Semantics.Mood.Defs
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Morphology.Word.Basic
 
@@ -40,7 +39,7 @@ open Data.Examples Processing.MinimalPairs
 
 /-! ### Word-based -/
 
-/-- A minimal pair: two candidate forms with per-side acceptability
+/-- A minimal pair is two candidate forms with per-side acceptability
     judgments. The judgment fields default to the traditional binary
     (`lhs` = `.acceptable`, `rhs` = `.ungrammatical`) so most data sites
     only need to provide `lhs` and `rhs`; studies of graded phenomena
@@ -51,8 +50,8 @@ structure MinimalPair where
   rhs : List Word
   lhsJudgment : Judgment := .acceptable
   rhsJudgment : Judgment := .ungrammatical
-  force : Mood.Illocutionary := .declarative
-  context : Clause.EmbeddingContext := .matrix
+  /-- The cell of the clause containing the contrast, a root declarative by default. -/
+  cell : Clause.SentenceType × Clause.EmbeddingContext := (.declarative, .matrix)
   description : String
   citation : String := ""
   deriving Repr
@@ -101,10 +100,8 @@ structure SentencePair where
   grammatical : String
   /-- The ungrammatical sentence -/
   ungrammatical : String
-  /-- Illocutionary force of the clause containing the contrast. -/
-  force : Mood.Illocutionary := .declarative
-  /-- Embedding context of that clause. -/
-  context : Clause.EmbeddingContext := .matrix
+  /-- The cell of the clause containing the contrast, a root declarative by default. -/
+  cell : Clause.SentenceType × Clause.EmbeddingContext := (.declarative, .matrix)
   /-- Description of what the pair tests -/
   description : String
   /-- Citation for the data; empty string for uncited examples. -/

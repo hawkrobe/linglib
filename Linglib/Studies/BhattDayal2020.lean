@@ -77,8 +77,8 @@ theorem kya_not_two_cell {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
 
 /-! ### Alternative questions -/
 
-/-- The alternative question *p or q*: the disjunction of the two polar questions ((44),
-(52)). -/
+/-- The alternative question *p or q* is the disjunction of the two polar questions, (44) and
+(52). -/
 def altQ (p q : Set W) : Question W := ofSet p ⊔ ofSet q
 
 theorem mem_alt_altQ_left {p q : Set W} (h : ¬ p ⊆ q) : p ∈ alt (altQ p q) :=
@@ -100,14 +100,14 @@ theorem kya_in_disjunct (p q : Set W) :
     (SingletonQuestion.ofSet p).issue ⊔ ofSet q = altQ p q :=
   rfl
 
-/-- Disjunction inside a polar question keeps a singleton: the yes/no reading of *p or q*
+/-- Disjunction inside a polar question keeps a singleton, the yes/no reading of *p or q*,
 (45). -/
 theorem kya_polar_disjunction (p q : Set W) : IsSingleton (ofSet (p ∪ q)) :=
   isSingleton_ofSet _
 
 /-! ### Distribution -/
 
-/-- The embedding contexts whose selecting predicate takes a ForceP complement (21): the
+/-- The embedding contexts whose selecting predicate takes a ForceP complement, (21), are the
 matrix clause and quasi-subordination, not ordinary subordination. -/
 def selectsForceP (e : EmbeddingContext) : Prop :=
   e = .matrix ∨ e = .quasiSubordinated
@@ -121,10 +121,10 @@ theorem kya_licensed_iff_selectsForceP :
     ∀ e, e ≠ EmbeddingContext.quotation → (kya.LicensedInEmbed e ↔ selectsForceP e) := by
   decide
 
-/-- *kya:* is licensed in exactly the clause types whose denotation can be a singleton: polar
-and alternative questions, not constituent questions ((4), (5)). -/
+/-- *kya:* is licensed in exactly the clause types whose denotation can be a singleton, polar
+and alternative questions and not constituent questions, (4) and (5). -/
 theorem kya_clause_types :
-    ∀ c, kya.LicensedIn c ↔ c = Particle.ClauseType.polar ∨ c = .alternative := by
+    ∀ c, kya.LicensedIn c ↔ c = Clause.SentenceType.polar ∨ c = .alternative := by
   decide
 
 end BhattDayal2020
