@@ -1,16 +1,24 @@
 module
 
 public import Linglib.Semantics.Quantification.Defs
-public meta import Linglib.Logic.Natural.Basic
-public meta import Linglib.Semantics.Quantification.Defs
 
 /-!
-# Generalized Quantifier Properties — Theorems
-[barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006] [van-benthem-1984] [van-benthem-1986] [icard-2012]
+# Properties of generalized quantifiers
 
-Theorems about GQ properties: duality, conservativity/symmetry/strength,
-left monotonicity and smoothness, Boolean closure, type ⟨1⟩ theorems,
-van Benthem characterization, and entailment-signature bridge.
+This file proves the general theorems about the properties of generalized quantifiers defined
+in `Quantification/Defs.lean`. The negations and the dual reverse monotonicity and preserve
+quantity invariance; conservativity and monotonicity are closed under the Boolean operations
+and under adjectival restriction, as Keenan and Stavi show; and conservativity together with
+symmetry or with the left monotonicities yields the characterizations of van Benthem and of
+Peters and Westerståhl. Barwise and Cooper's theorems on type ⟨1⟩ quantifiers close the file.
+
+## References
+
+* [barwise-cooper-1981]
+* [keenan-stavi-1986]
+* [peters-westerstahl-2006]
+* [van-benthem-1984]
+* [van-benthem-1986]
 -/
 
 @[expose] public section
@@ -23,66 +31,66 @@ variable {α : Type*}
 
 /-! ### Duality Theorems -/
 
-/-- Outer negation reverses scope monotonicity: mon↑ → mon↓. B&C Theorem C9. -/
+/-- Outer negation turns a scope-upward monotone quantifier into a scope-downward one. -/
 theorem outerNeg_up_to_down (q : GQ α)
     (h : ScopeUpwardMono q) : ScopeDownwardMono (outerNeg q) := by
   intro R S S' hSS' hNeg hQS
   exact hNeg (h R S S' hSS' hQS)
 
-/-- Outer negation reverses scope monotonicity: mon↓ → mon↑. B&C Theorem C9. -/
+/-- Outer negation turns a scope-downward monotone quantifier into a scope-upward one. -/
 theorem outerNeg_down_to_up (q : GQ α)
     (h : ScopeDownwardMono q) : ScopeUpwardMono (outerNeg q) := by
   intro R S S' hSS' hNeg hQS'
   exact hNeg (h R S S' hSS' hQS')
 
-/-- Inner negation reverses scope monotonicity: mon↑ → mon↓ (B&C §4.11). -/
+/-- Inner negation turns a scope-upward monotone quantifier into a scope-downward one. -/
 theorem innerNeg_up_to_down (q : GQ α)
     (h : ScopeUpwardMono q) : ScopeDownwardMono (innerNeg q) := by
   intro R S S' hSS' hInner
   exact h R (fun x => ¬ S' x) (fun x => ¬ S x) (fun x hNS' hSx => hNS' (hSS' x hSx)) hInner
 
-/-- Inner negation reverses scope monotonicity: mon↓ → mon↑ (B&C §4.11). -/
+/-- Inner negation turns a scope-downward monotone quantifier into a scope-upward one. -/
 theorem innerNeg_down_to_up (q : GQ α)
     (h : ScopeDownwardMono q) : ScopeUpwardMono (innerNeg q) := by
   intro R S S' hSS' hInner
   exact h R (fun x => ¬ S' x) (fun x => ¬ S x) (fun x hNS' hSx => hNS' (hSS' x hSx)) hInner
 
-/-- Outer negation reverses restrictor monotonicity: mon↑ → mon↓. -/
+/-- Outer negation turns a restrictor-upward monotone quantifier into a restrictor-downward
+one. -/
 theorem outerNeg_restrictorUp_to_down (q : GQ α)
     (h : RestrictorUpwardMono q) : RestrictorDownwardMono (outerNeg q) := by
   intro R R' S hRR' hNeg hQR
   exact hNeg (h R R' S hRR' hQR)
 
-/-- Outer negation reverses restrictor monotonicity: mon↓ → mon↑. -/
+/-- Outer negation turns a restrictor-downward monotone quantifier into a restrictor-upward
+one. -/
 theorem outerNeg_restrictorDown_to_up (q : GQ α)
     (h : RestrictorDownwardMono q) : RestrictorUpwardMono (outerNeg q) := by
   intro R R' S hRR' hNeg hQR'
   exact hNeg (h R R' S hRR' hQR')
 
-/-- Outer negation is involutive: ~~Q = Q. (Uses propositional extensionality.) -/
+/-- Outer negation is an involution. -/
 theorem outerNeg_involution (q : GQ α) : outerNeg (outerNeg q) = q := by
   funext R S; simp [outerNeg]
 
-/-- Inner negation is involutive: Q~~ = Q. (Uses propositional extensionality.) -/
+/-- Inner negation is an involution. -/
 theorem innerNeg_involution (q : GQ α) : innerNeg (innerNeg q) = q := by
   funext R S; simp [innerNeg]
 
-/-- Dual is involutive: Q̌̌ = Q. -/
+/-- The dual is an involution. -/
 theorem dualQ_involution (q : GQ α) : dualQ (dualQ q) = q := by
   funext R S; simp [dualQ, outerNeg, innerNeg]
 
 /-! #### QuantityInvariant closure -/
 
-/-- Outer negation preserves QuantityInvariant: if Q is bijection-invariant,
-    so is ~Q. -/
+/-- Outer negation preserves quantity invariance. -/
 theorem quantityInvariant_outerNeg (q : GQ α)
     (h : QuantityInvariant q) : QuantityInvariant (outerNeg q) := by
   intro A B A' B' f hBij hA hB
   simp only [outerNeg_apply, not_iff_not]
   exact h A B A' B' f hBij hA hB
 
-/-- Inner negation preserves QuantityInvariant: if Q is bijection-invariant,
-    so is Q~. -/
+/-- Inner negation preserves quantity invariance. -/
 theorem quantityInvariant_innerNeg (q : GQ α)
     (h : QuantityInvariant q) : QuantityInvariant (innerNeg q) := by
   intro A B A' B' f hBij hA hB
@@ -454,33 +462,33 @@ theorem conservative_gqJoin (f g : GQ α)
     Conservative (gqJoin f g) := by
   intro R S; simp only [gqJoin]; exact or_congr (hf R S) (hg R S)
 
-/-- K&S (26): complement distributes over join via de Morgan. -/
+/-- The complement of a join is the meet of the complements. -/
 theorem outerNeg_gqJoin (f g : GQ α) :
     outerNeg (gqJoin f g) = gqMeet (outerNeg f) (outerNeg g) := by
   funext R S; simp [outerNeg, gqJoin, gqMeet, not_or]
 
-/-- K&S (26): complement distributes over meet via de Morgan. -/
+/-- The complement of a meet is the join of the complements. -/
 theorem outerNeg_gqMeet (f g : GQ α) :
     outerNeg (gqMeet f g) = gqJoin (outerNeg f) (outerNeg g) := by
   funext R S
   simp only [outerNeg, gqMeet, gqJoin]
   exact propext not_and_or
 
-/-- K&S PROP 6: Meet of scope-↑ functions is scope-↑. -/
+/-- The meet of two scope-upward monotone quantifiers is scope-upward monotone. -/
 theorem scopeUpMono_gqMeet (f g : GQ α)
     (hf : ScopeUpwardMono f) (hg : ScopeUpwardMono g) :
     ScopeUpwardMono (gqMeet f g) := by
   intro R S S' hSS' ⟨hfRS, hgRS⟩
   exact ⟨hf R S S' hSS' hfRS, hg R S S' hSS' hgRS⟩
 
-/-- K&S PROP 6: Meet of scope-↓ functions is scope-↓. -/
+/-- The meet of two scope-downward monotone quantifiers is scope-downward monotone. -/
 theorem scopeDownMono_gqMeet (f g : GQ α)
     (hf : ScopeDownwardMono f) (hg : ScopeDownwardMono g) :
     ScopeDownwardMono (gqMeet f g) := by
   intro R S S' hSS' ⟨hfRS', hgRS'⟩
   exact ⟨hf R S S' hSS' hfRS', hg R S S' hSS' hgRS'⟩
 
-/-- K&S PROP 6: Join of scope-↑ functions is scope-↑. -/
+/-- The join of two scope-upward monotone quantifiers is scope-upward monotone. -/
 theorem scopeUpMono_gqJoin (f g : GQ α)
     (hf : ScopeUpwardMono f) (hg : ScopeUpwardMono g) :
     ScopeUpwardMono (gqJoin f g) := by
@@ -489,7 +497,7 @@ theorem scopeUpMono_gqJoin (f g : GQ α)
   · exact Or.inl (hf R S S' hSS' hfRS)
   · exact Or.inr (hg R S S' hSS' hgRS)
 
-/-- K&S PROP 3: Conservativity is preserved under adjectival restriction. -/
+/-- Conservativity is preserved under adjectival restriction. -/
 theorem conservative_adjRestrict (q : GQ α) (adj : α → Prop)
     (h : Conservative q) : Conservative (adjRestrict q adj) := by
   intro R S
@@ -500,13 +508,13 @@ theorem conservative_adjRestrict (q : GQ α) (adj : α → Prop)
     exact ⟨fun ⟨h1, _, h3⟩ => ⟨h1, h3⟩, fun ⟨h1, h2⟩ => ⟨h1, h1.1, h2⟩⟩
   rw [heq]
 
-/-- K&S PROP 5: Scope-upward monotonicity is preserved under adjectival restriction. -/
+/-- Scope-upward monotonicity is preserved under adjectival restriction. -/
 theorem scopeUpMono_adjRestrict (q : GQ α) (adj : α → Prop)
     (h : ScopeUpwardMono q) : ScopeUpwardMono (adjRestrict q adj) := by
   intro R S S' hSS' hAdj
   exact h _ S S' hSS' hAdj
 
-/-- K&S PROP 5: Scope-downward monotonicity is preserved under adjectival restriction. -/
+/-- Scope-downward monotonicity is preserved under adjectival restriction. -/
 theorem scopeDownMono_adjRestrict (q : GQ α) (adj : α → Prop)
     (h : ScopeDownwardMono q) : ScopeDownwardMono (adjRestrict q adj) := by
   intro R S S' hSS' hAdj
@@ -903,55 +911,5 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] 
         ⟨fun ⟨hAx, hBx⟩ => hDisj x ⟨hAx, hBx⟩, fun hF => hF.elim⟩
     rw [hEmpty]
     exact empty_true
-
-/-! ### Entailment Signature Bridge ([icard-2012]) -/
-
-open NaturalLogic (Signature)
-
-/--
-Map a pair of entailment signatures (restrictor, scope) to `DoubleMono`,
-the [van-benthem-1984] double monotonicity classification.
-
-Returns `none` for signature pairs that don't correspond to a standard
-generalized quantifier pattern.
--/
-def Signature.pairToDoubleMono : Signature → Signature → Option DoubleMono
-  | .additive, .additive => some .upUp
-  | .antiAdd, .mult => some .downUp
-  | .additive, .antiMult => some .upDown
-  | .antiAdd, .antiAdd => some .downDown
-  | _, _ => none
-
-#guard Signature.pairToDoubleMono .additive .additive == some .upUp
-#guard Signature.pairToDoubleMono .antiAdd .mult == some .downUp
-#guard Signature.pairToDoubleMono .additive .antiMult == some .upDown
-#guard Signature.pairToDoubleMono .antiAdd .antiAdd == some .downDown
-
-/-- "every" has signature (◇, ⊞) = (antiAdd in restrictor, mult in scope). -/
-def everySignature : Signature × Signature := (.antiAdd, .mult)
-
-/-- "some" has signature (⊕, ⊕) = (additive in both arguments). -/
-def someSignature : Signature × Signature := (.additive, .additive)
-
-/-- "no" has signature (◇, ◇) = (antiAdd in both arguments). -/
-def noSignature : Signature × Signature := (.antiAdd, .antiAdd)
-
-/-- "not every" has signature (⊕, ⊟) = (additive in restrictor, antiMult in scope). -/
-def notEverySignature : Signature × Signature := (.additive, .antiMult)
-
-#guard Signature.pairToDoubleMono everySignature.1 everySignature.2 == some .downUp
-#guard Signature.pairToDoubleMono someSignature.1 someSignature.2 == some .upUp
-#guard Signature.pairToDoubleMono noSignature.1 noSignature.2 == some .downDown
-#guard Signature.pairToDoubleMono notEverySignature.1 notEverySignature.2 == some .upDown
-
-#guard Signature.sign everySignature.2 == 1
-#guard Signature.sign someSignature.2 == 1
-#guard Signature.sign noSignature.2 == -1
-#guard Signature.sign notEverySignature.2 == -1
-
-#guard Signature.sign everySignature.1 == -1
-#guard Signature.sign someSignature.1 == 1
-#guard Signature.sign noSignature.1 == -1
-#guard Signature.sign notEverySignature.1 == 1
 
 end Quantifier.GQ
