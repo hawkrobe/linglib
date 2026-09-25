@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Anaphora.Basic
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Order.Monotone.Defs
 
@@ -44,7 +43,7 @@ spine defined here and the nominal spine of Benz and Salzmann are instances.
 The VP-adjunction site is a position of its own, below v but outside v's complement, so that
 restitutive *again* and manner roots survive v-stranding VP-ellipsis while V does not; it is what
 separates the domain of [E] on v from that of [E] on Voice. Every ellipsis is a surface anaphor in
-Hankamer and Sag's sense, which the `Anaphor.HasDepth` instance records.
+Hankamer and Sag's sense, since [E] silences a complement that is syntactically present.
 
 ## References
 
@@ -169,10 +168,6 @@ theorem spares_ePosition (e : Ellipsis) : e.Spares e.ePosition := external_self 
 
 theorem Spares.of_le (h : e.Spares d) (hle : e'.ePosition ≤ e.ePosition) : e'.Spares d :=
   DeletionSpine.External.of_le h hle
-
-/-- Every ellipsis is a surface anaphor in Hankamer and Sag's sense, since deletion under identity
-leaves the full structure in place. -/
-instance : Anaphor.HasDepth Ellipsis := ⟨fun _ ↦ .surface⟩
 
 /-- Sluicing puts [E] on C and deletes TP. -/
 def sluicing : Ellipsis := ⟨.C⟩

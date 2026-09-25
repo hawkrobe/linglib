@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.Romance.Spanish.Binominals
 public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Anaphora.Basic
 public import Linglib.Data.Examples.Saab2026
 public import Mathlib.Tactic.DeriveFintype
 
@@ -32,10 +33,13 @@ Identity between an antecedent and an ellipsis site is taken modulo case and num
 paper argues: case is assigned at PF or overwritten by D after identity is computed, and
 number sits on the licensing head outside the ellipsis domain. The paper's three kinds of
 nominal gap are distinguished by the recovery they need, a linguistic antecedent for
-ellipsis, a contextual assignment for the indexical empty noun and none for a silent noun,
-which is what the sub-extraction, argument-structure and context diagnostics of the rows
-track. Pesetsky's derivation of genitive marking and the equations at the entity and
-proposition types are not formalized.
+ellipsis, a contextual assignment for the indexical empty noun and none for a silent noun.
+The first two are anaphoric, and their depth in the sense of [hankamer-sag-1976] is
+`Anaphor.Depth`: NP-ellipsis is a surface anaphor, and the indexical empty noun, which has no
+internal structure, a deep one. The sub-extraction and argument-structure diagnostics of the
+rows test for internal structure, and the context diagnostic for a deep anaphor. Pesetsky's
+derivation of genitive marking and the equations at the entity and proposition types are not
+formalized.
 
 ## References
 
@@ -85,8 +89,8 @@ ellipsis of its complement, and has internal structure: the indexical empty noun
 index, so eliding it is vacuous. -/
 def Structure.Elidable (s : Structure) (x : Nominal) : Prop := s.head = x ∧ x ≠ .index
 
-instance (s : Structure) (x : Nominal) : Decidable (s.Elidable x) := by
-  unfold Structure.Elidable; infer_instance
+instance (s : Structure) (x : Nominal) : Decidable (s.Elidable x) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The number of a nominal, given the coda's. The first noun is singular, and the indexical
 empty noun takes the coda's number through the equation. -/
@@ -97,31 +101,17 @@ def Nominal.number (c : Number) : Nominal → Number
 /-- The verb agrees with the Num head, whose number is that of its complement. -/
 def Structure.agreement (s : Structure) (c : Number) : Number := s.head.number c
 
-/-- The gap left by a missing nominal is a true ellipsis or an indexical empty noun. -/
-inductive Gap where
-  | ellipsis
-  | index
-  deriving DecidableEq, Repr
+/-- The gap left by a missing coda is a deep anaphor when the structure has an indexical empty
+noun, whose value the assignment function supplies from the context, and NP-ellipsis, a surface
+anaphor, otherwise. -/
+def Structure.depth (s : Structure) : Anaphor.Depth :=
+  if s.head = .index then .deep else .surface
 
-/-- The gap of a binominal whose coda is missing is an indexical empty noun when the structure
-has one, and an ellipsis otherwise. -/
-def Structure.gap (s : Structure) : Gap := if s.head = .index then .index else .ellipsis
-
-/-- A gap with internal structure hosts arguments and allows sub-extraction. -/
-def Gap.Structured : Gap → Prop
-  | .ellipsis => True
-  | .index => False
-
-/-- A gap resolved by a contextual assignment rather than a linguistic antecedent. -/
-def Gap.ContextResolved : Gap → Prop
-  | .ellipsis => False
-  | .index => True
-
-instance : DecidablePred Gap.Structured := fun g ↦ by
-  cases g <;> unfold Gap.Structured <;> infer_instance
-
-instance : DecidablePred Gap.ContextResolved := fun g ↦ by
-  cases g <;> unfold Gap.ContextResolved <;> infer_instance
+/-- The gap of a structure has internal structure exactly when the structure elides one of its
+nominals: NP-ellipsis is the surface anaphor. -/
+theorem Structure.hasInternalStructure_depth_iff (s : Structure) :
+    s.depth.HasInternalStructure ↔ ∃ x, s.Elidable x := by
+  revert s; decide
 
 /-- Nothing in the equative structure can be elided, since the coda has no licensor and the
 index is atomic. -/
@@ -200,15 +190,15 @@ theorem agreement_matches :
       x.parse? "agreement" numbers = (x.parse? "codaNumber" numbers).map s.agreement := by
   decide +kernel
 
-/-- In the diagnostic rows, sub-extraction and argument structure succeed exactly in a
-structured gap, and contextual resolution exactly in an indexical one. -/
+/-- In the diagnostic rows, sub-extraction and argument structure succeed exactly when the gap
+has internal structure, and resolution by the context exactly when it is a deep anaphor. -/
 theorem diagnostics_match :
     ∀ x ∈ Examples.all, ∀ s, structure? x = some s →
       (x.feature? "diagnostic" = some "subextraction" ∨
           x.feature? "diagnostic" = some "argumentStructure" →
-        (x.judgment = .acceptable ↔ s.gap.Structured)) ∧
+        (x.judgment = .acceptable ↔ s.depth.HasInternalStructure)) ∧
       (x.feature? "diagnostic" = some "contextResolved" →
-        (x.judgment = .acceptable ↔ s.gap.ContextResolved)) := by
+        (x.judgment = .acceptable ↔ s.depth = .deep)) := by
   decide +kernel
 
 end Saab2026

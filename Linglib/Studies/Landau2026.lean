@@ -1,245 +1,209 @@
 module
 
-public import Linglib.Syntax.Anaphora.Diagnostic
+public import Linglib.Syntax.Anaphora.Basic
+public import Linglib.Syntax.Minimalist.Defs
 public import Linglib.Data.Examples.Landau2026
+public import Mathlib.Data.Finset.Disjoint
 
 /-!
 # Landau (2026): Silent Resumption: A New Test for Ellipsis
 
-This file formalizes the ellipsis-internal resumption test of [landau-2026]: by the ban on
-vacuous quantification ([chomsky-1982]) an Ā-operator binds into a null site only if the site
-has structure at LF to host a resumptive variable, so binding into a null site diagnoses a
-surface anaphor, an ellipsis, in the sense of [hankamer-sag-1976]. The three diagnostics are
-`Diagnostic`s over anaphoric depth: the new test decides depth (`eir_decides`), since a
-resumptive dependency is fixed at LF and can be neither bled by derivational timing nor blocked
-by an island, whereas the extraction and agreement tests of [merchant-2001] leave a failure
-ambiguous (`extraction_not_decides`, `agreement_not_decides`) and are refined by the new test
-(`eir_refines_extraction`, `eir_refines_agreement`). The paper's Hebrew nominal ellipses, where
-extraction is unavailable, and its cross-linguistic mixed anaphors are rows of
-`Data/Examples/Landau2026.json`, and every row's acceptability matches the prediction read off
-its depth (`all_eir_consistent`).
+This file formalizes the ellipsis-internal resumption test of [landau-2026]. By the ban on vacuous
+quantification ([chomsky-1982]) an Ā-operator binds into a null site only if the site has structure
+at LF to host a resumptive variable, so a resumptive dependency into a null site diagnoses a surface
+anaphor in the sense of [hankamer-sag-1976]. A failed extraction has two possible sources, the
+paper's two reasons for the star: the site is a deep anaphor with no structure to host the
+dependency, or it is a surface anaphor and ellipsis applied in the derivation bled the dependency.
+An island around the site blocks extraction for a further reason, independent of ellipsis. Movement
+is exposed to both of these confounds and agreement to the first; a resumptive dependency is formed
+at LF and is exposed to neither. A test decides depth when the depth of a site factors through its
+outcome, and a dependency decides depth exactly when it is exposed to no confound
+(`Dependency.decides_iff`), so of the three only resumption does
+(`Dependency.decides_iff_eq_resumption`). The paper's Hebrew nominal and prepositional ellipses,
+whose domains are all islands, and its cross-linguistic mixed anaphors are rows of
+`Data/Examples/Landau2026.json`. The resumption judgments are the test's predictions
+(`eir_matches`), extraction fails on every Hebrew row (`hebrew_extraction_fails`), and the judgments
+alone fix a deep anaphor and an ellipsis in each Hebrew domain (`hebrew_domains`) and the deep
+status of the mixed anaphors (`mixed_anaphors_deep`).
 
 ## Implementation notes
 
-The paper was not available for this pass, and the row annotations and example numbers carried
-over from the earlier version of this file are marked as unverified. A row's depth, domain, and
-the availability of extraction are read from its paper features, and passing the test is the
-acceptability of the resumptive-binding sentence.
+A site is modelled by its depth and the confounds present at it, and a test by the dependency it
+forms into the site. The paper does not say whether islands block agreement, and nothing below
+depends on it: agreement fails to decide depth on the timing confound alone. The rows' texts and
+judgments agree with the August 2025 preprint of the paper; the example numbers the rows carry run
+two below the preprint's throughout and have not been checked against the published version. The
+domain of a null site is the category of its head, `Minimalist.Cat`.
 
 ## References
 
 * [landau-2026]
-* [hankamer-sag-1976], [chomsky-1982], [merchant-2001]
+* [hankamer-sag-1976]
+* [chomsky-1982]
 -/
 
 @[expose] public section
 
 namespace Landau2026
 
--- UNVERIFIED: the example numbers and row annotations are those of the earlier version of
--- this file.
-
-open Anaphor (Depth DepthCause)
+open Anaphor (Depth)
 open Data.Examples (LinguisticExample)
 
-/-! ### Types
+/-! ### Sites and dependencies -/
 
-Anaphoric depth (deep/surface, [hankamer-sag-1976]) is the framework-neutral
-substrate primitive `Anaphor.Depth`; EN/NCA/*pro*/*do so*/*dat doen*/*det* are
-`.deep`, VP-ellipsis/ENP/AE/PPE are `.surface`. -/
-
-/-- Syntactic domain of the null element. -/
-inductive NullDomain where
-  | nP  -- Noun phrase nucleus (complement of Num)
-  | DP  -- Full determiner phrase
-  | PP  -- Prepositional phrase
-  | VP  -- Verb phrase
+/-- What can block a dependency into a surface site: ellipsis applied in the derivation before
+the dependency was formed, bleeding it, or an island around the site. -/
+inductive Confound where
+  | timing
+  | island
   deriving DecidableEq, Repr
 
-/-! ### BVQ and the EIR prediction -/
+/-- A null site, given by the depth of its anaphor and the confounds present at it. -/
+structure Site where
+  /-- The depth of the anaphor at the site. -/
+  depth : Depth
+  /-- The confounds present at the site. -/
+  confounds : Finset Confound
 
-/-- **EIR prediction.** A null site passes the Ellipsis-Internal Resumption test
-    iff it has LF-visible internal structure (`Anaphor.Depth.HasInternalStructure`)
-    — iff it is a surface anaphor. The paper's argument: by the BVQ
-    ([chomsky-1982]) an Ā-operator must bind a variable at LF; a resumptive
-    pronoun is that variable, and it can only be hosted inside a site with
-    internal structure; so binding into a null site is licensed iff the site is a
-    surface anaphor. The prediction is therefore *literally* the substrate
-    structural property, not a separate stipulation. -/
-abbrev PassesEIR (d : Depth) : Prop := d.HasInternalStructure
+/-- The dependency a test forms into a null site: extraction moves an operator out of it,
+agreement probes into it, and the EIR test binds a resumptive pronoun inside it. -/
+inductive Dependency where
+  | movement
+  | agreement
+  | resumption
+  deriving DecidableEq, Repr
 
-/-! ### EIR vs the classic tests (extraction, agreement)
+/-- The confounds a dependency is exposed to. Movement is formed in the derivation and is
+constrained by islands; agreement is formed in the derivation, so ellipsis can bleed it; a
+resumptive dependency is formed at LF and is indifferent to islands. -/
+def Dependency.exposure : Dependency → Finset Confound
+  | .movement => {.timing, .island}
+  | .agreement => {.timing}
+  | .resumption => ∅
 
-All three are `Diagnostic`s over `Anaphor.Depth`: a pass means the site had
-structure to host the variable/trace (surface). They differ only in what a
-*failure* admits — and that single field is the paper's whole point. Extraction and
-agreement are the two *reliable* classic diagnostics ([landau-2026], after
-[merchant-2001]); EIR is the new third one. -/
+/-- A site hosts a dependency when it has internal structure for the dependency to end in and no
+confound the dependency is exposed to is present. -/
+def Site.Hosts (s : Site) (d : Dependency) : Prop :=
+  s.depth.HasInternalStructure ∧ Disjoint d.exposure s.confounds
 
-/-- The **EIR test** as a depth diagnostic. A pass is `hostsVariable` (surface
-    structure hosts the resumptive); a failure can *only* be a `deepAnaphor`,
-    because resumptive dependencies are established at LF and cannot be bled by
-    derivational timing, nor blocked by islands. -/
-def eir : Diagnostic Bool Depth :=
-  .ofCauses (λ pass => if pass then {.hostsVariable} else {.deepAnaphor}) DepthCause.entails
+instance (s : Site) (d : Dependency) : Decidable (s.Hosts d) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The **extraction test** as a depth diagnostic. A pass is `hostsVariable`
-    (surface); a failure is ambiguous — a `deepAnaphor`, or a *surface* site whose
-    Ā-movement was `derivationalBleeding` (bled by ellipsis timing) or
-    `islandBlocking`. That extra ambiguity is exactly the gap EIR closes. -/
-def extraction : Diagnostic Bool Depth :=
-  .ofCauses
-    (λ pass => if pass then {.hostsVariable}
-                 else {.deepAnaphor, .derivationalBleeding, .islandBlocking})
-    DepthCause.entails
+/-- A test decides depth when the depth of a site is determined by whether the site hosts the
+test's dependency. -/
+def Dependency.Decides (d : Dependency) : Prop :=
+  Function.FactorsThrough Site.depth (·.Hosts d)
 
-@[simp] theorem eir_consistent_true : eir.consistent true = {Depth.surface} := by
-  simp [eir, DepthCause.entails]
+variable {s : Site} {d d' : Dependency}
 
-@[simp] theorem eir_consistent_false : eir.consistent false = {Depth.deep} := by
-  simp [eir, DepthCause.entails]
+/-- A site that hosts any dependency is a surface anaphor: the success of a test is always
+conclusive. -/
+theorem Site.Hosts.depth_eq_surface (h : s.Hosts d) : s.depth = .surface := h.1
 
-@[simp] theorem extraction_consistent_true : extraction.consistent true = {Depth.surface} := by
-  simp [extraction, DepthCause.entails]
+/-- A dependency exposed to fewer confounds is hosted wherever one exposed to more is. -/
+theorem Site.Hosts.mono (h : s.Hosts d) (hle : d'.exposure ⊆ d.exposure) : s.Hosts d' :=
+  ⟨h.1, h.2.mono_left hle⟩
 
-@[simp] theorem extraction_consistent_false :
-    extraction.consistent false = {Depth.deep, Depth.surface} := by
-  simp [extraction, DepthCause.entails, Set.image_insert_eq]
+/-- Resumption succeeds wherever any dependency does. -/
+theorem Site.Hosts.resumption (h : s.Hosts d) : s.Hosts .resumption :=
+  h.mono (Finset.empty_subset _)
 
-/-- **Headline — Landau's contribution.** EIR *decides* anaphoric depth: on every
-    site the verdict recovers the depth exactly — a pass means surface (ellipsis),
-    a failure means deep. This is what "a new test for ellipsis" amounts to,
-    made precise as `Diagnostic.Decides`. -/
-theorem eir_decides : eir.Decides Depth.testOutcome :=
-  λ d => by cases d <;> simp [Depth.testOutcome]
+theorem Site.hosts_resumption_iff : s.Hosts .resumption ↔ s.depth = .surface := by
+  simp [Site.Hosts, Dependency.exposure, Depth.HasInternalStructure]
 
-/-- Extraction does **not** decide depth: on a deep site its verdict still admits
-    `surface` (the failure could be a bled or island-blocked extraction), so it is
-    inconclusive exactly where EIR is decisive. -/
-theorem extraction_not_decides : ¬ extraction.Decides Depth.testOutcome := by
-  intro h
-  have hmem : Depth.surface ∈ extraction.consistent (Depth.testOutcome .deep) :=
-    ⟨.derivationalBleeding, by simp [Depth.testOutcome], rfl⟩
-  rw [h .deep] at hmem
-  simp at hmem
+/-- Whatever confounds a site contains, the outcome of resumption into it fixes its depth. -/
+theorem Site.depth_eq_of_iff_hosts_resumption {p : Prop} [Decidable p]
+    (h : p ↔ s.Hosts .resumption) : s.depth = if p then .surface else .deep := by
+  rw [Site.hosts_resumption_iff] at h
+  cases hd : s.depth <;> simp_all
 
-/-- EIR strictly refines extraction: identical on a pass, but EIR resolves the
-    failure extraction leaves open (its failure-causes are a subset). -/
-theorem eir_refines_extraction : eir.Refines extraction := by
-  intro o c hc
-  cases o <;> simp_all [eir, extraction, DepthCause.entails]
+/-- A dependency decides depth exactly when it is exposed to no confound. Otherwise a deep site
+and a surface site where a confound blocks the dependency both fail it. -/
+theorem Dependency.decides_iff : d.Decides ↔ d.exposure = ∅ := by
+  refine ⟨fun h ↦ ?_, fun h a b hab ↦ ?_⟩
+  · by_contra hne
+    obtain ⟨k, hk⟩ := Finset.nonempty_iff_ne_empty.mpr hne
+    have := @h ⟨.deep, ∅⟩ ⟨.surface, {k}⟩ (by simp [Site.Hosts, Depth.HasInternalStructure, hk])
+    exact Depth.noConfusion this
+  · rcases a with ⟨_ | _, _⟩ <;> rcases b with ⟨_ | _, _⟩ <;>
+      simp_all [Site.Hosts, Depth.HasInternalStructure]
 
-/-- The **agreement test** as a depth diagnostic. The other *reliable* classic
-    diagnostic ([landau-2026], after [merchant-2001]). A pass is `hostsVariable`
-    (surface); a failure is ambiguous between a `deepAnaphor` and a surface site
-    whose agreement was `derivationalBleeding` (bled by ellipsis timing). Agreement
-    is not movement, so it has no island confound — but it is still inconclusive on
-    failure. (It is also inapplicable in agreement-less languages, the analogue of
-    `extractionAvailable = false`.) -/
-def agreement : Diagnostic Bool Depth :=
-  .ofCauses
-    (λ pass => if pass then {.hostsVariable} else {.deepAnaphor, .derivationalBleeding})
-    DepthCause.entails
+/-- Of the three dependencies, only resumption decides depth: a failed extraction or a failed
+agreement is compatible with a surface site, a failed resumption is not. -/
+theorem Dependency.decides_iff_eq_resumption : d.Decides ↔ d = .resumption := by
+  cases d <;> simp [decides_iff, exposure]
 
-@[simp] theorem agreement_consistent_false :
-    agreement.consistent false = {Depth.deep, Depth.surface} := by
-  simp [agreement, DepthCause.entails, Set.image_insert_eq]
+/-- The analysis predicts surface sites where ellipsis bleeds extraction but a resumptive pronoun
+is hosted; the paper reports no such case yet. The Hebrew rows show the same split with an island
+in place of timing (`hebrew_extraction_fails`, `eir_matches`). -/
+theorem exists_hosts_resumption_not_movement :
+    ∃ s : Site, s.Hosts .resumption ∧ ¬ s.Hosts .movement :=
+  ⟨⟨.surface, {.timing}⟩, by decide⟩
 
-/-- Agreement, like extraction, does **not** decide depth: its failure also admits
-    a bled-but-surface site. EIR escapes this confound too. -/
-theorem agreement_not_decides : ¬ agreement.Decides Depth.testOutcome := by
-  intro h
-  have hmem : Depth.surface ∈ agreement.consistent (Depth.testOutcome .deep) :=
-    ⟨.derivationalBleeding, by simp [Depth.testOutcome], rfl⟩
-  rw [h .deep] at hmem
-  simp at hmem
+/-! ### The paper's examples
 
-/-- EIR refines agreement too — so EIR decides depth where *both* reliable classic
-    tests are inconclusive, escaping both their derivational-bleeding (and, for
-    extraction, island) confounds. This is Landau's actual headline: EIR matches the
-    confidence of the classic diagnostics while their failure-confounds it lacks. -/
-theorem eir_refines_agreement : eir.Refines agreement := by
-  intro o c hc
-  cases o <;> simp_all [eir, agreement, DepthCause.entails]
+Every row is a resumptive dependency into a null site, and its judgment is the outcome of the EIR
+test. The depth of the site, its domain, and whether the domain is an island are read from the
+row's paper features. -/
 
-/-! ### Data
+-- UNVERIFIED: the rows' example numbers against the published version; they run two below the
+-- August 2025 preprint's.
 
-The empirical rows live in `Data/Examples/Landau2026.json` (typed
-`LinguisticExample`s — the paper's (18a)–(47b) stimuli). The study reads each
-row's EIR-relevant classification by projection: `domain`/`depth`/extraction from
-`paperFeatures`, and grammaticality straight off the example's `judgment` —
-passing EIR *is* the resumptive-binding sentence being acceptable. -/
+def depths : List (String × Depth) := [("deep", .deep), ("surface", .surface)]
 
-def parseDomain : String → NullDomain
-  | "DP" => .DP | "PP" => .PP | "VP" => .VP | _ => .nP
+def domains : List (String × Minimalist.Cat) := [("nP", .n), ("DP", .D), ("PP", .P), ("VP", .V)]
 
-def parseDepth : String → Depth
-  | "surface" => .surface | _ => .deep
+/-- The confounds a row's `extractionAvailable` feature records: a domain out of which extraction
+is unavailable is an island. -/
+def barriers : List (String × Finset Confound) := [("true", ∅), ("false", {.island})]
 
-/-- The null-element domain of an EIR example (from `paperFeatures`). -/
-def domainOf (e : LinguisticExample) : NullDomain :=
-  parseDomain ((e.paperFeatures.lookup "domain").getD "nP")
-
-/-- The Hankamer–Sag `Anaphor.Depth` of an EIR example (from `paperFeatures`). -/
-def depthOf (e : LinguisticExample) : Depth :=
-  parseDepth ((e.paperFeatures.lookup "depth").getD "deep")
-
-/-- Whether the example passes EIR — this *is* its grammaticality `judgment`: the
-    resumptive-binding sentence is acceptable iff the site hosts the variable. -/
-def eirGrammatical (e : LinguisticExample) : Bool :=
-  match e.judgment with | .acceptable => true | _ => false
-
-/-- Whether the extraction test is applicable to the example's domain (`false`
-    for the Hebrew nominal domains, which are absolute islands). -/
-def extractionAvailable (e : LinguisticExample) : Bool :=
-  (e.paperFeatures.lookup "extractionAvailable").getD "true" == "true"
-
-/-! ### Data collections
-
-EN/NCA/*pro*/*do so*/*dat doen*/*det* are deep; ENP/AE/PPE/VP-ellipsis surface.
-Each example's `comment` in the JSON carries the construction notes. -/
+/-- The site of a row: its recorded depth, and the island confound when extraction out of its
+domain is unavailable. -/
+def site? (e : LinguisticExample) : Option Site := do
+  pure ⟨← e.parse? "depth" depths, ← e.parse? "extractionAvailable" barriers⟩
 
 def hebrewData : List LinguisticExample :=
-  [Examples.hebrewEN, Examples.hebrewENP, Examples.hebrewNCA_DP,
-   Examples.hebrewAE, Examples.hebrewNCA_PP, Examples.hebrewPPE]
+  [Examples.hebrewEN, Examples.hebrewENP, Examples.hebrewNCA_DP, Examples.hebrewAE,
+    Examples.hebrewNCA_PP, Examples.hebrewPPE]
 
 def mixedAnaphorData : List LinguisticExample :=
   [Examples.englishDoSo, Examples.dutchDatDoen, Examples.danishDet, Examples.koreanNullObj]
 
-def crossLingData : List LinguisticExample :=
-  Examples.englishVPE :: mixedAnaphorData
+/-- Every row records a depth and whether its domain is an island, so each theorem below speaks
+about all the rows. -/
+theorem site?_isSome : ∀ e ∈ Examples.all, (site? e).isSome := by decide +kernel
 
-def allData : List LinguisticExample := Examples.all
+/-- The judgments are the predictions of the EIR test: binding a resumptive pronoun inside the
+null site is acceptable exactly when the site hosts the dependency. -/
+theorem eir_matches : ∀ e ∈ Examples.all, ∀ s, site? e = some s →
+    (e.judgment = .acceptable ↔ s.Hosts .resumption) := by
+  decide +kernel
 
-/-! ### Summary properties
+/-- Every Hebrew domain tested is an island, so extraction fails on every Hebrew row, surface or
+deep, and cannot diagnose ellipsis there. -/
+theorem hebrew_extraction_fails :
+    ∀ e ∈ hebrewData, ∀ s, site? e = some s → ¬ s.Hosts .movement := by
+  decide +kernel
 
-Every datum's observed grammaticality (`eirGrammatical`, off its `judgment`)
-matches the `PassesEIR` prediction read off its depth — the `decide p = true ↔ p`
-bridge between a recorded observation and the substrate structural property. -/
+/-- Hebrew has both a deep anaphor and ellipsis in each of the nP, DP and PP domains: for each
+domain and depth, some row's resumption judgment is accounted for only by a site of that
+depth. -/
+theorem hebrew_domains : ∀ c ∈ [Minimalist.Cat.n, .D, .P], ∀ δ : Depth, ∃ e ∈ hebrewData,
+    e.parse? "domain" domains = some c ∧
+      ∀ s : Site, (e.judgment = .acceptable ↔ s.Hosts .resumption) → s.depth = δ := by
+  intro c hc δ
+  obtain ⟨e, he, hd, hj⟩ : ∃ e ∈ hebrewData, e.parse? "domain" domains = some c ∧
+      (if e.judgment = .acceptable then .surface else .deep) = δ := by
+    revert c δ; decide +kernel
+  exact ⟨e, he, hd, fun s h ↦ (Site.depth_eq_of_iff_hosts_resumption h).trans hj⟩
 
-/-- All data are consistent: every example's EIR grammaticality matches the
-    prediction read off its depth classification. -/
-theorem all_eir_consistent :
-    ∀ e ∈ allData, (eirGrammatical e = true ↔ PassesEIR (depthOf e)) := by decide
-
-/-- Hebrew has both deep and surface strategies in all three nominal domains
-    (nP, DP, PP). -/
-theorem hebrew_both_depths_all_domains :
-    (∃ e ∈ hebrewData, depthOf e = .deep ∧ domainOf e = .nP) ∧
-    (∃ e ∈ hebrewData, depthOf e = .surface ∧ domainOf e = .nP) ∧
-    (∃ e ∈ hebrewData, depthOf e = .deep ∧ domainOf e = .DP) ∧
-    (∃ e ∈ hebrewData, depthOf e = .surface ∧ domainOf e = .DP) ∧
-    (∃ e ∈ hebrewData, depthOf e = .deep ∧ domainOf e = .PP) ∧
-    (∃ e ∈ hebrewData, depthOf e = .surface ∧ domainOf e = .PP) := by decide
-
-/-- Extraction is unavailable for all Hebrew domains tested. This is precisely
-    why the EIR test is needed: it provides syntactic evidence where the
-    extraction test cannot. -/
-theorem hebrew_extraction_unavailable :
-    ∀ e ∈ hebrewData, extractionAvailable e = false := by decide
-
-/-- All four cross-linguistic mixed anaphors are diagnosed as deep. -/
-theorem mixed_anaphors_deep :
-    ∀ e ∈ mixedAnaphorData, depthOf e = .deep := by decide
+/-- The mixed anaphors *do so*, *dat doen*, *det* and the Korean null object are deep: their
+resumption is unacceptable, so any site that accounts for the judgment is deep, whatever
+confounds it contains. -/
+theorem mixed_anaphors_deep : ∀ e ∈ mixedAnaphorData, ∀ s : Site,
+    (e.judgment = .acceptable ↔ s.Hosts .resumption) → s.depth = .deep := by
+  intro e he s h
+  have hj : ∀ e ∈ mixedAnaphorData, e.judgment ≠ .acceptable := by decide
+  simpa [hj e he] using Site.depth_eq_of_iff_hosts_resumption h
 
 end Landau2026
