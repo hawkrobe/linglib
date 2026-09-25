@@ -51,6 +51,8 @@ the calculus predicts the judgment of every row it covers.
   row is judged as the calculus predicts.
 * `rows_prefixed`: every prefixed particle is judged by the voices its language incorporates in.
 * `norwegian_incorporates`: Norwegian incorporates in the passive only, as the chapter states.
+* `rows_participle`: Åfarli's *sparke ut* rows show the participle the fragment gives for their
+  auxiliary exactly when they are judged acceptable.
 
 ## Implementation notes
 
@@ -64,7 +66,8 @@ which the chapter records without deriving, so the Danish rows enter only `rows_
 Norwegian prefixed forms, *utsparka* after *vart* and not after *har*, are the compound
 participles of the reference grammar, which puts them after *være* and *bli* and not after *ha*
 whatever the voice, so the voices Norwegian incorporates in are read off the fragment through
-the auxiliary each voice has in the rows. The Bokmål rows were constructed and judged by Arnfinn
+the auxiliary each voice has in the rows, and the *sparke ut* rows are checked against the forms
+the fragment conjugates. The Bokmål rows were constructed and judged by Arnfinn
 Vonen and Alma Næss for den Dikken; the Nynorsk rows are Åfarli's. The arguments from
 small-clause constituency, from verb-particle idioms and from the ergativity of the particle,
 and Herslund's observation that Danish incorporation is lexically conditioned, are recorded in
@@ -400,6 +403,23 @@ theorem rows_prefixed :
     ∀ r ∈ Examples.all, placementOf r = some .prefixed →
       ∀ L ∈ languageOf r,
         (r.judgment = .acceptable ↔ voiceOf r ∈ L.incorporates) := by
+  decide +kernel
+
+/-- The fragment's verb of a row of Åfarli's (134a) and (135a), Nynorsk *sparke ut*. The rows
+of (134b) and (134c) have none: the grammar's lists do not place *klippe*, and the book spells
+Åfarli's *køyrt* as Bokmål *kjørt*. -/
+def verbOf (r : LinguisticExample) : Option Norwegian.Verb :=
+  match r.reportedIn with
+  | some ⟨_, "(134a)"⟩ | some ⟨_, "(135a)"⟩ => some Norwegian.Verbs.Nynorsk.sparkeUt
+  | _ => none
+
+/-- Where the participle of the verb phrase is contiguous, in the inner and prefixed rows, a row
+is judged acceptable exactly when it shows the participle the grammar gives for its auxiliary,
+*sparka ut* after *har* and *utsparka* after *vart*. -/
+theorem rows_participle :
+    ∀ r ∈ Examples.all, ∀ v ∈ verbOf r, placementOf r ≠ some .outer →
+      (r.judgment = .acceptable ↔
+        (v.participle (participleContext (voiceOf r))).toList <:+: r.primaryText.toList) := by
   decide +kernel
 
 end Dendikken1995
