@@ -38,9 +38,13 @@ paper's morpheme templates against Bybee's relevance hierarchy.
   Sesotho forms are licensed by the Fragments' templates.
 * `japanese_violates_surveyed_relevance`: Bybee's survey ranks tense closer to the stem than
   mood, and the Japanese suffix order is not sorted by the relevance hierarchy.
-* `sesotho_suffixes_respect_relevance`, `sesotho_prefixes_violate_relevance`: the Sesotho
-  suffixes are sorted by the hierarchy and the prefixes are not, the object marker lying inside
-  the tense prefixes.
+* `paper_sesotho_suffixes_respect_relevance`, `sesotho_suffixes_violate_relevance`: the paper's
+  Sesotho suffix order is sorted by the hierarchy; Demuth's, with the perfect before the passive,
+  is not.
+* `demuth_perfect_passive`: Demuth's *pheh-ets-w-e* is licensed by the Fragment and not by the
+  paper's order.
+* `sesotho_prefixes_violate_relevance`: the Sesotho prefix order is not sorted by the hierarchy,
+  the object marker lying inside the tense prefixes.
 
 ## Implementation notes
 
@@ -51,8 +55,12 @@ paper's morpheme templates against Bybee's relevance hierarchy.
 * The classifications of the Japanese and Sesotho slots in Bybee's inventory, `bybeeCategory?`
   and `sesothoCategory?`, are the paper's; Japanese politeness, which Bybee does not rank, is
   left out rather than compared as agreement.
-* The Sesotho rows carry the paper's own segmentation: two forms have a tense prefix fused
-  with the neighbouring marker, glossed as that marker.
+* The paper orders the Sesotho passive before the perfect, in its text, its Table 4 and its
+  supplement; [demuth-1992]'s schema (14) and examples (28) and (44) order the perfect before
+  the passive, and the Fragment follows Demuth. The paper's order is `paperSesothoSuffixes`.
+* The Sesotho rows are the verbs of Demuth's examples, their glosses without the noun classes,
+  and two corpus forms from the supplement in which a tense prefix is fused with the
+  neighbouring marker and glossed as that marker.
 * Time runs over `ℕ` from the initial memory state. Every quantity in the bound is an entropy of
   a finite block, so the paper's two-sided process enters through its one-sided restriction.
 * The initial memory state is an arbitrary random variable, so the bound holds without the
@@ -66,6 +74,7 @@ paper's morpheme templates against Bybee's relevance hierarchy.
 * [M. Hahn, J. Degen, R. Futrell, *Modeling Word and Morpheme Order in Natural Language as an
   Efficient Trade-Off of Memory and Surprisal* (2021)][hahn-degen-futrell-2021]
 * [J. Bybee, *Morphology: A Study of the Relation between Meaning and Form* (1985)][bybee-1985]
+* [K. Demuth, *Acquisition of Sesotho* (1992)][demuth-1992]
 -/
 
 @[expose] public section
@@ -337,51 +346,57 @@ theorem japanese_forms_licensed :
 
 /-! ### The Sesotho affix template
 
-The paper's examples (2) and its supplement's table of Sesotho forms are segmented into a stem
-and its affixes; every affix gloss names an affix of the Fragment, and the affixes of every form
-are licensed by its template. -/
+The paper's examples (2), the forms of [demuth-1992] its supplement tabulates, and two forms
+from the corpus are segmented into a stem and its affixes; every gloss but the stem's names an
+affix of the Fragment, and the affixes of every form are licensed by its template. -/
 
-/-- The paper's glosses of the Sesotho affixes, as affixes of the Fragment. -/
-def sesothoAffix? : String → Option (Σ σ, Sesotho.Verb.Exponent σ)
-  | "SM" => some ⟨_, .subject⟩
-  | "SR" => some ⟨_, .relativeSubject⟩
-  | "NEG" => some ⟨_, .negative⟩
-  | "FUT" => some ⟨_, .future⟩
-  | "PRS" => some ⟨_, .present⟩
-  | "POT" => some ⟨_, .potential⟩
-  | "PERS" => some ⟨_, .persistive⟩
-  | "REC" => some ⟨_, .recentPast⟩
-  | "OM" => some ⟨_, .object⟩
-  | "RFL" => some ⟨_, .reflexive⟩
-  | "RV" => some ⟨_, .reversive⟩
-  | "CAUS" => some ⟨_, .causative⟩
-  | "NT" => some ⟨_, .neuter⟩
-  | "APPL" => some ⟨_, .applicative⟩
-  | "CL" => some ⟨_, .completive⟩
-  | "RC" => some ⟨_, .reciprocal⟩
-  | "PASS" => some ⟨_, .passive⟩
-  | "PRF" => some ⟨_, .perfect⟩
-  | "IND" => some ⟨_, .indicative⟩
-  | "SBJV" => some ⟨_, .subjunctive⟩
-  | "IMP" => some ⟨_, .imperative⟩
-  | "IMP.PL" => some ⟨_, .imperativePlural⟩
-  | "WH" => some ⟨_, .interrogative⟩
-  | "REL" => some ⟨_, .relative⟩
-  | _ => none
+/-- The affixes a gloss names: Demuth's labels, the corpus labels of the supplement, and the
+fused applicative perfect *-ets-*. Demuth's mood vowel is read as the indicative ending. -/
+def sesothoAffix : String → List (Σ σ, Sesotho.Verb.Exponent σ)
+  | "SM" => [⟨_, .subject⟩]
+  | "OBJ" => [⟨_, .object⟩]
+  | "REFL" => [⟨_, .reflexive⟩]
+  | "NEG" => [⟨_, .negative⟩]
+  | "FUT" => [⟨_, .future⟩]
+  | "POT" => [⟨_, .potential⟩]
+  | "CAUS" => [⟨_, .causative⟩]
+  | "NT" => [⟨_, .neuter⟩]
+  | "APL" => [⟨_, .applicative⟩]
+  | "CL" => [⟨_, .completive⟩]
+  | "RC" => [⟨_, .reciprocal⟩]
+  | "APL:PERF" => [⟨_, .applicative⟩, ⟨_, .perfect⟩]
+  | "PASS" => [⟨_, .passive⟩]
+  | "PERF" => [⟨_, .perfect⟩]
+  | "M" => [⟨_, .indicative⟩]
+  | "RL" => [⟨_, .relative⟩]
+  | "WH" => [⟨_, .interrogative⟩]
+  | _ => []
 
 /-- The affixes a row's gloss line names, in linear order. -/
 def sesothoAffixes (r : LinguisticExample) : List (Σ σ, Sesotho.Verb.Exponent σ) :=
-  r.glossLine.filterMap sesothoAffix?
+  r.glossLine.flatMap sesothoAffix
 
 /-- The paper's Sesotho forms. -/
 def sesothoForms : List LinguisticExample :=
   Examples.all.filter (·.language = "sout2807")
 
-/-- Every gloss but the stem's in each of the paper's Sesotho forms names an affix of the
-Fragment, and the affixes of the form are licensed by `Sesotho.Verb.template`. -/
+/-- In each Sesotho form exactly one gloss, the stem's, names no affix, and the affixes of the
+form are licensed by `Sesotho.Verb.template`. -/
 theorem sesotho_forms_licensed :
-    ∀ r ∈ sesothoForms, (sesothoAffixes r).length + 1 = r.glossLine.length ∧
+    ∀ r ∈ sesothoForms, (r.glossLine.filter fun g ↦ (sesothoAffix g).isEmpty).length = 1 ∧
       Sesotho.Verb.Licensed (sesothoAffixes r) := by
+  decide
+
+/-- The paper's own Sesotho suffix order, which places the passive before the perfect. -/
+def paperSesothoSuffixes : List Sesotho.Verb.Slot :=
+  [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative]
+
+/-- Demuth's *pheh-ets-w-e* (44), the perfect before the passive, is licensed by the Fragment
+and not by the paper's order. -/
+theorem demuth_perfect_passive :
+    Sesotho.Verb.Licensed (sesothoAffixes Examples.so6) ∧
+      ¬ List.Sublist ((sesothoAffixes Examples.so6).map Sigma.fst)
+        (Sesotho.Verb.prefixes ++ paperSesothoSuffixes) := by
   decide
 
 /-! ### Morpheme order and the relevance hierarchy
@@ -428,10 +443,16 @@ def bybeeCategory? : Japanese.Verb.Slot → Option MorphCategory
 /-- The Japanese suffix order in Bybee's vocabulary. -/
 def japaneseCategories : List MorphCategory := Japanese.Verb.slots.filterMap bybeeCategory?
 
-/-- Sesotho's suffixes, the reversive, the extensions, the passive, the perfect, the mood
-ending and the interrogative or relative marker, are sorted by the relevance hierarchy, which
-on the surveyed categories is [bybee-1985]'s order, `Bybee1985.survey_order_iso_relevance`. -/
-theorem sesotho_suffixes_respect_relevance : sesothoSuffixCategories.SortedLE := by decide
+/-- The paper's Sesotho suffix order, the reversive, the extensions, the passive, the perfect,
+the mood vowel and the interrogative or relative marker, is sorted by the relevance hierarchy,
+which on the surveyed categories is [bybee-1985]'s order,
+`Bybee1985.survey_order_iso_relevance`. -/
+theorem paper_sesotho_suffixes_respect_relevance :
+    (paperSesothoSuffixes.filterMap sesothoCategory?).SortedLE := by decide
+
+/-- The Fragment's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
+before voice, and is not sorted by the hierarchy: the paper's agreement rests on its order. -/
+theorem sesotho_suffixes_violate_relevance : ¬ sesothoSuffixCategories.SortedLE := by decide
 
 /-- The paper's claim for the prefixes is that subject agreement lies farther from the stem
 than the tense prefixes, which holds; but the object marker lies inside them, so the prefix

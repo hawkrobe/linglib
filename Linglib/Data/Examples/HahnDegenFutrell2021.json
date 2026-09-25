@@ -499,6 +499,10 @@
   {
     "id": "hahndegenfutrell2021_so1",
     "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(13)"
+    },
+    "reportedIn": {
       "bibkey": "hahn-degen-futrell-2021",
       "paperLabel": "(2a)"
     },
@@ -512,7 +516,7 @@
       ],
       [
         "di",
-        "OM"
+        "OBJ"
       ],
       [
         "rek",
@@ -520,10 +524,10 @@
       ],
       [
         "a",
-        "IND"
+        "M"
       ]
     ],
-    "translation": "(he) is buying (it)",
+    "translation": "(Thabo) is buying it (the food)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -538,12 +542,16 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The paper takes the form from Demuth (1992).",
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here. The subject marker carries the present-tense -a of a verb without a lexical argument.",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "hahndegenfutrell2021_so2",
     "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(41)"
+    },
+    "reportedIn": {
       "bibkey": "hahn-degen-futrell-2021",
       "paperLabel": "(2b)"
     },
@@ -561,14 +569,14 @@
       ],
       [
         "el",
-        "APPL"
+        "APL"
       ],
       [
         "a",
-        "IND"
+        "M"
       ]
     ],
-    "translation": "(he) cooks (food) for (him)",
+    "translation": "(Thabo) cooks (food for Mpho)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -583,14 +591,18 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The paper takes the form from Demuth (1992).",
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here.",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "hahndegenfutrell2021_so3",
     "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(15)"
+    },
+    "reportedIn": {
       "bibkey": "hahn-degen-futrell-2021",
-      "paperLabel": "SI, Sesotho, examples table row 1"
+      "paperLabel": "SI, Sesotho, examples table"
     },
     "language": "sout2807",
     "primaryText": "o-pheh-il-e",
@@ -606,14 +618,14 @@
       ],
       [
         "il",
-        "PRF"
+        "PERF"
       ],
       [
         "e",
-        "IND"
+        "M"
       ]
     ],
-    "translation": "(Thabo) cooked (food)",
+    "translation": "(Thabo) cooked (some/the food)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -628,14 +640,18 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of Sesotho examples, segmented as there; the supplement takes the form from Demuth (1992).",
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here.",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "hahndegenfutrell2021_so4",
     "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(26c)"
+    },
+    "reportedIn": {
       "bibkey": "hahn-degen-futrell-2021",
-      "paperLabel": "SI, Sesotho, examples table row 2"
+      "paperLabel": "SI, Sesotho, examples table"
     },
     "language": "sout2807",
     "primaryText": "ke-e-f-uw-e",
@@ -647,7 +663,7 @@
       ],
       [
         "e",
-        "OM"
+        "OBJ"
       ],
       [
         "f",
@@ -659,10 +675,10 @@
       ],
       [
         "e",
-        "IND"
+        "M"
       ]
     ],
-    "translation": "(I) was given (the book)",
+    "translation": "(I) was given it (by Thabo)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -677,14 +693,18 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of Sesotho examples, segmented as there; the supplement takes the form from Demuth (1992).",
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here.",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "hahndegenfutrell2021_so5",
     "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(43)"
+    },
+    "reportedIn": {
       "bibkey": "hahn-degen-futrell-2021",
-      "paperLabel": "SI, Sesotho, examples table row 4"
+      "paperLabel": "SI, Sesotho, examples table"
     },
     "language": "sout2807",
     "primaryText": "o-pheh-el-w-a",
@@ -700,7 +720,7 @@
       ],
       [
         "el",
-        "APPL"
+        "APL"
       ],
       [
         "w",
@@ -708,7 +728,7 @@
       ],
       [
         "a",
-        "IND"
+        "M"
       ]
     ],
     "translation": "(Mpho) is being cooked (food)",
@@ -726,11 +746,154 @@
         "morphemeOrder"
       ]
     ],
-    "comment": "The supplement's table of Sesotho examples, segmented as there; the supplement takes the form from Demuth (1992).",
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here. The supplement's table cites the example as (42).",
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
     "id": "hahndegenfutrell2021_so6",
+    "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(44)"
+    },
+    "language": "sout2807",
+    "primaryText": "o-pheh-ets-w-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "o",
+        "SM"
+      ],
+      [
+        "pheh",
+        "cook"
+      ],
+      [
+        "ets",
+        "APL:PERF"
+      ],
+      [
+        "w",
+        "PASS"
+      ],
+      [
+        "e",
+        "M"
+      ]
+    ],
+    "translation": "(Mpho) was cooked (food)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here. The applicative and the perfect fuse as -ets-; the passive follows them.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so7",
+    "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(45)"
+    },
+    "language": "sout2807",
+    "primaryText": "o-hod-is-ets-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "o",
+        "SM"
+      ],
+      [
+        "hod",
+        "grow"
+      ],
+      [
+        "is",
+        "CAUS"
+      ],
+      [
+        "ets",
+        "APL"
+      ],
+      [
+        "a",
+        "M"
+      ]
+    ],
+    "translation": "(S/he) brings up (the child for her/his daughter)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here. The causative precedes the applicative.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so8",
+    "source": {
+      "bibkey": "demuth-1992",
+      "paperLabel": "(29)"
+    },
+    "language": "sout2807",
+    "primaryText": "pheh-il-e-ng",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pheh",
+        "cook"
+      ],
+      [
+        "il",
+        "PERF"
+      ],
+      [
+        "e",
+        "M"
+      ],
+      [
+        "ng",
+        "RL"
+      ]
+    ],
+    "translation": "(it is who) that cooked (the food)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The verb of Demuth's example; Demuth's glosses carry the noun class of the subject and object markers, dropped here. The verb of a cleft, with the relative -ng after the mood vowel.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so9",
     "source": {
       "bibkey": "hahn-degen-futrell-2021",
       "paperLabel": "SI, Sesotho, completive footnote"
@@ -741,7 +904,7 @@
     "glossedTokens": [
       [
         "u",
-        "OM"
+        "OBJ"
       ],
       [
         "neh",
@@ -749,7 +912,7 @@
       ],
       [
         "el",
-        "APPL"
+        "APL"
       ],
       [
         "ets",
@@ -761,7 +924,7 @@
       ],
       [
         "a",
-        "IND"
+        "M"
       ],
       [
         "ng",
@@ -787,7 +950,7 @@
     "lgrConformance": "MORPHEME_ALIGNED"
   },
   {
-    "id": "hahndegenfutrell2021_so7",
+    "id": "hahndegenfutrell2021_so10",
     "source": {
       "bibkey": "hahn-degen-futrell-2021",
       "paperLabel": "SI, Sesotho, stacking footnote"
@@ -806,7 +969,7 @@
       ],
       [
         "el",
-        "APPL"
+        "APL"
       ],
       [
         "an",
@@ -814,7 +977,7 @@
       ],
       [
         "a",
-        "IND"
+        "M"
       ]
     ],
     "translation": "Do they share?",

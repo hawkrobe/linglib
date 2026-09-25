@@ -10,16 +10,21 @@ the stem, word-edge inward, come the subject marker, the negative *-sa-*, a tens
 mood marker and the object marker or the reflexive; after it, stem-outward, the reversive
 *-oll-*, the extensions that change valence (the causative *-is-*, the neuter *-eh-*, the
 applicative *-el-*, the completive *-ell-*, which reduplicates the applicative, and the
-reciprocal *-an-*), the passive *-w-*, the perfect *-il-*, the mood ending and the
+reciprocal *-an-*), the perfect *-il-*, the passive *-w-*, the mood vowel and the
 interrogative or relative *-ng*. A form takes at most one affix of each position except the
 extensions, which stack, so the template is a regular expression over the positions with the
 extension position starred, and a string of affixes in linear order, the stem left out, is
 licensed when its positions match it.
 
-The inventory and its order are those [hahn-degen-futrell-2021] extract from the corpus of
-[demuth-1992] and document from [doke-mofokeng-1967]. The corpus fuses some neighbouring
-markers, a tense prefix with the following object marker in particular, and treats the
-interrogative *-ng*, a clitic form of *eng* 'what', as a suffix.
+The order is [demuth-1992]'s schema (14) of the verbal complex, subject marker, tense or
+aspect, object marker, stem, extensions, perfect, passive, mood, in which the passive is added
+last when an extension, the perfect and the passive co-occur, as in *pheh-ets-w-e* 'was cooked
+(food)' (44), and the relative *-ng* follows the mood vowel, *pheh-il-e-ng* (29). The
+inventory within the positions is the one [hahn-degen-futrell-2021] extract from the corpus of
+[demuth-1992] and document from [doke-mofokeng-1967]; the paper's own order places the passive
+before the perfect, against (44). The corpus fuses some neighbouring markers, a tense prefix
+with the following object marker in particular, and treats the interrogative *-ng*, a clitic
+form of *eng* 'what', as a suffix.
 
 ## Main definitions
 
@@ -70,11 +75,11 @@ inductive Slot where
   | reversive
   /-- The extensions that change valence. -/
   | extension
-  /-- The passive *-w-*. -/
-  | voice
   /-- The perfect *-il-*. -/
   | tense
-  /-- The mood ending. -/
+  /-- The passive *-w-*. -/
+  | voice
+  /-- The mood vowel. -/
   | mood
   /-- The interrogative and the relative *-ng*. -/
   | interrogativeRelative
@@ -116,7 +121,7 @@ inductive Exponent : Slot → Type where
   | reciprocal : Exponent .extension
   /-- The passive *-w-*. -/
   | passive : Exponent .voice
-  /-- The perfect *-il-*, *-its-* among its allomorphs. -/
+  /-- The perfect *-il-*, fusing with a preceding applicative as *-ets-*. -/
   | perfect : Exponent .tense
   /-- The indicative ending, *-a* or *-e*. -/
   | indicative : Exponent .mood
@@ -137,14 +142,14 @@ def prefixes : List Slot := [.subject, .negation, .tam, .object]
 
 /-- The suffix positions, stem-outward. -/
 def suffixes : List Slot :=
-  [.reversive, .extension, .voice, .tense, .mood, .interrogativeRelative]
+  [.reversive, .extension, .tense, .voice, .mood, .interrogativeRelative]
 
 open RegularExpression in
 /-- The template: the positions in linear order, each at most once, the extension position any
 number of times. -/
 def template : RegularExpression Slot :=
   sublists [.subject, .negation, .tam, .object, .reversive] * (char .extension).star *
-    sublists [.voice, .tense, .mood, .interrogativeRelative]
+    sublists [.tense, .voice, .mood, .interrogativeRelative]
 
 /-- A string of affixes, in linear order, is licensed when its positions match the template. -/
 def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ template.matches'
@@ -157,7 +162,7 @@ theorem licensed_of_sublist {w : List (Σ σ, Exponent σ)}
     (h : w.map Sigma.fst <+ prefixes ++ suffixes) : Licensed w := by
   have h' : w.map Sigma.fst <+
       ([.subject, .negation, .tam, .object, .reversive] ++ [.extension]) ++
-        [.voice, .tense, .mood, .interrogativeRelative] := h
+        [.tense, .voice, .mood, .interrogativeRelative] := h
   obtain ⟨a', c, hw, ha', hc⟩ := sublist_append_iff.mp h'
   obtain ⟨a, b, rfl, ha, hb⟩ := sublist_append_iff.mp ha'
   have hb' : b ∈ KStar.kstar ({[Slot.extension]} : Language Slot) := by
