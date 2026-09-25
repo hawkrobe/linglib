@@ -32,9 +32,9 @@ evidential felicity conditions live with their analysis.
 
 namespace Mandarin.QuestionParticles
 
-/-- The distribution the three items share: optional in a matrix polar question, excluded from
-matrix declaratives and constituent questions; no embedded use is recorded. -/
-def polarOnly : Particle.ClauseType → Clause.EmbeddingContext → Option ParticleStatus
+/-- The three items share one distribution, optional in a matrix polar question and excluded
+from matrix declaratives and constituent questions, with no embedded use recorded. -/
+def polarOnly : Clause.Distribution
   | .declarative, .matrix => some .excluded
   | .polar, .matrix => some .optional
   | .constituent, .matrix => some .excluded

@@ -6,29 +6,35 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Discourse.Role
-public import Linglib.Data.UD.Features
+public import Linglib.Syntax.Clause.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Mood Categories
+# Mood categories
 
-A clause carries two independent mood dimensions: an illocutionary
-force (the speech-act type — the F in F(p)) and a grammatical mood
-(the indicative/subjunctive verb morphology). The dimensions cross
-freely ([holmberg-2016]): a polar question is [interrogative,
-indicative], while the Spanish deliberative "¿Que duerma?" is
-[interrogative, subjunctive]. This file defines the two category
-enums, their pairing `ClauseType`, and the bridge from the UD `Mood` feature.
+This file defines grammatical mood and illocutionary force. Grammatical mood is the
+indicative or subjunctive morphology of the verb. Illocutionary force is the speech act an
+utterance performs, the F in F(p); each sentence type conventionally performs one force,
+`Clause.SentenceType.force`, and a form used for another act, a rising declarative that asks or
+an interrogative that requests, is a mismatch between that pairing and the act. The two
+dimensions cross freely, as Holmberg observes: a polar question is interrogative and
+indicative, while the Spanish deliberative *¿Que duerma?* is interrogative and subjunctive.
+Portner classifies each force by the coordinate of the mood state it operates on.
 
 ## Main declarations
 
-* `Grammatical`, `SubjunctiveType` — verb-morphological mood.
-* `Illocutionary`, `Illocutionary.authority` — speech-act force and
-  its epistemic-authority assignment.
-* `ClauseType` — force × mood.
-* `Component`, `HasTarget` — [portner-2018]'s classification: the
-  coordinate of the mood state each category operates on.
-* `UD.Mood.toClauseType` — corpus bridge.
+* `Grammatical`, `SubjunctiveType`: verb-morphological mood.
+* `Illocutionary`, `Illocutionary.authority`: speech-act force and Lakoff's epistemic
+  authority.
+* `Clause.SentenceType.force`: the force a sentence type conventionally performs.
+* `Component`, `HasTarget`: Portner's classification by the coordinate of the mood state.
+
+## References
+
+* [holmberg-2016]
+* [portner-2018]
+* [lakoff-1970]
+* [rizzi-1997]
 -/
 
 @[expose] public section
@@ -63,7 +69,8 @@ inductive SubjunctiveType where
 
 /-! ### Illocutionary force -/
 
-/-- Illocutionary mood: the speech-act force of an utterance — the F in F(p). -/
+/-- The illocutionary force of an utterance is the act it performs, the F in F(p), which its
+sentence type conventionally fixes and which form and use may pull apart. -/
 inductive Illocutionary where
   | declarative
   | interrogative
@@ -80,38 +87,6 @@ def Illocutionary.authority : Illocutionary → Discourse.Role
   | .imperative     => .speaker
   | .promissive     => .speaker
   | .exclamative    => .speaker
-
-/-! ### Clause type: force × mood
-
-| Force         | Mood        | Example                              |
-|---------------|-------------|--------------------------------------|
-| declarative   | indicative  | "John sleeps."                       |
-| declarative   | subjunctive | "Long live the king!"                |
-| interrogative | indicative  | "Does John sleep?"                   |
-| interrogative | subjunctive | "¿Que duerma?" (Sp. deliberative)    |
-| imperative    | —           | "Sleep!" (mood often neutralized)    |
--/
-
-/-- A clause type: the independent pairing of illocutionary force with
-grammatical mood ([holmberg-2016], [rizzi-1997]). -/
-structure ClauseType where
-  /-- The illocutionary force: the speech act performed. -/
-  force : Illocutionary
-  /-- The grammatical mood: verb morphology. -/
-  mood : Grammatical
-  deriving DecidableEq, Repr
-
-/-- A standard declarative-indicative clause. -/
-def ClauseType.declInd : ClauseType :=
-  { force := .declarative, mood := .indicative }
-
-/-- A standard polar question (interrogative-indicative). -/
-def ClauseType.polarQuestion : ClauseType :=
-  { force := .interrogative, mood := .indicative }
-
-/-- The epistemic authority of a clause type, via its force. -/
-def ClauseType.authority (ct : ClauseType) : Discourse.Role :=
-  Illocutionary.authority ct.force
 
 /-! ### Mood components -/
 
@@ -145,24 +120,22 @@ instance : HasTarget Illocutionary where
 
 end Mood
 
-/-! ### Bridge to UD.Mood -/
+/-! ### The conventional force of a sentence type -/
 
-namespace UD.Mood
+/-- The force a sentence type conventionally performs, asking for the three interrogatives and
+the act of its name for each other type. -/
+def Clause.SentenceType.force : Clause.SentenceType → Mood.Illocutionary
+  | .declarative => .declarative
+  | .polar | .alternative | .constituent => .interrogative
+  | .imperative => .imperative
+  | .exclamative => .exclamative
+  | .promissive => .promissive
 
-/-- The default `ClauseType` for a `UD.Mood` value. The UD feature is a
-flat enum conflating force with mood, so the map is a non-injective
-default cross-product. -/
-def toClauseType : UD.Mood → Mood.ClauseType
-  | .Ind => { force := .declarative, mood := .indicative }
-  | .Sub => { force := .declarative, mood := .subjunctive }
-  | .Imp => { force := .imperative,  mood := .indicative }
-  | .Cnd => { force := .declarative, mood := .subjunctive }
-  | .Opt => { force := .declarative, mood := .subjunctive }
-  | .Jus => { force := .imperative,  mood := .subjunctive }
-  | .Pot => { force := .declarative, mood := .subjunctive }
-  | .Qot => { force := .declarative, mood := .indicative }
-  | .Adm => { force := .exclamative, mood := .indicative }
-  | .Nec => { force := .declarative, mood := .subjunctive }
-  | .Irr => { force := .declarative, mood := .subjunctive }
+/-- Every force is the conventional force of some sentence type. -/
+theorem Clause.SentenceType.force_surjective : Function.Surjective Clause.SentenceType.force := by
+  decide
 
-end UD.Mood
+/-- A sentence type asks iff it is interrogative. -/
+theorem Clause.SentenceType.force_eq_interrogative_iff (t : Clause.SentenceType) :
+    t.force = .interrogative ↔ t.IsInterrogative := by
+  cases t <;> simp [Clause.SentenceType.force, Clause.SentenceType.IsInterrogative]
