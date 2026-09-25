@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.FunctionalSequence
 public import Linglib.Syntax.Voice.Basic
+public import Linglib.Fragments.Norwegian.Verbs
 public import Linglib.Data.Examples.Dendikken1995
 
 /-!
@@ -35,8 +36,9 @@ the calculus predicts the judgment of every row it covers.
 * `Licensed`, `Derivable`: the strategies a configuration licenses and the placements it derives.
 * `PredicateExtractable`, `PredicateExtractableFrom`: extraction of the predicate of the inner
   small clause, by strategy and by placement.
-* `Language.incorporates`: the voices, `Voice.active` or `Voice.passive`, in which a language
-  incorporates its particles overtly.
+* `Language.incorporates`, `participleContext`: the voices, `Voice.active` or `Voice.passive`,
+  in which a language incorporates its particles overtly, Norwegian's read off the contexts
+  that take the compound participle in `Norwegian.Verb.participle`.
 
 ## Main results
 
@@ -48,6 +50,7 @@ the calculus predicts the judgment of every row it covers.
 * `rows_derivable`, `rows_predicateExtraction`, `rows_subextraction`: every English and Norwegian
   row is judged as the calculus predicts.
 * `rows_prefixed`: every prefixed particle is judged by the voices its language incorporates in.
+* `norwegian_incorporates`: Norwegian incorporates in the passive only, as the chapter states.
 
 ## Implementation notes
 
@@ -58,16 +61,21 @@ is available. Overt incorporation is the third strategy, licensed by the languag
 alone, and the extracted predicate's trace is taken to be governed by the overtly incorporated
 complex as by the reanalysed one, a point the chapter has no data on. Danish has no inner order,
 which the chapter records without deriving, so the Danish rows enter only `rows_prefixed`. The
-Bokmål rows were constructed and judged by Arnfinn Vonen and Alma Næss for den Dikken; the
-Nynorsk rows are Åfarli's. The arguments from small-clause constituency, from verb-particle
-idioms and from the ergativity of the particle, and Herslund's observation that Danish
-incorporation is lexically conditioned, are recorded in the rows and not formalized.
+Norwegian prefixed forms, *utsparka* after *vart* and not after *har*, are the compound
+participles of the reference grammar, which puts them after *være* and *bli* and not after *ha*
+whatever the voice, so the voices Norwegian incorporates in are read off the fragment through
+the auxiliary each voice has in the rows. The Bokmål rows were constructed and judged by Arnfinn
+Vonen and Alma Næss for den Dikken; the Nynorsk rows are Åfarli's. The arguments from
+small-clause constituency, from verb-particle idioms and from the ergativity of the particle,
+and Herslund's observation that Danish incorporation is lexically conditioned, are recorded in
+the rows and not formalized.
 
 ## References
 
 * [dendikken-1995]
 * [afarli-1985]
 * [herslund-1984]
+* [faarlund-lie-vannebo-1997]
 * [baker-1988]
 * [burzio-1986]
 * [kayne-1984]
@@ -287,20 +295,33 @@ inductive Language
   | danish
   deriving DecidableEq
 
+/-- The context of the participle in a Norwegian row of a voice: the passive rows have *bli*
+or *verte*, the active ones the perfect with *ha*. -/
+def participleContext (v : Voice) : Norwegian.ParticipleContext :=
+  if v = Voice.passive then .copular else .perfect
+
 /-- The voices in which a language incorporates its particle overtly into the verb. English
-never does, (133); Norwegian and Swedish do in the passive only, (134)–(136); Danish does in the
-active as well, (138). -/
+never does, (133); Norwegian does where the reference grammar puts the compound participle,
+after *bli* and *verte* and not after *ha*, (134)–(135), Swedish in the passive, (136), and
+Danish in the active as well, (138). -/
 def Language.incorporates : Language → Set Voice
   | .english => ∅
-  | .norwegian => {Voice.passive}
+  | .norwegian => {v | (participleContext v).IsCompound}
   | .swedish => {Voice.passive}
   | .danish => Set.univ
 
 instance : ∀ L : Language, DecidablePred (· ∈ L.incorporates)
   | .english => fun _ ↦ isFalse fun h ↦ h
-  | .norwegian => fun v ↦ inferInstanceAs (Decidable (v = Voice.passive))
+  | .norwegian => fun v ↦ inferInstanceAs (Decidable (participleContext v).IsCompound)
   | .swedish => fun v ↦ inferInstanceAs (Decidable (v = Voice.passive))
   | .danish => fun _ ↦ isTrue trivial
+
+/-- Norwegian incorporates in the passive only, as the chapter states, because the grammar's
+compound participle follows *bli* and *være* and not *ha*. -/
+theorem norwegian_incorporates : Language.incorporates .norwegian = {Voice.passive} := by
+  ext v
+  by_cases h : v = Voice.passive <;>
+    simp [Language.incorporates, participleContext, Norwegian.ParticipleContext.IsCompound, h]
 
 /-! ### The rows -/
 
