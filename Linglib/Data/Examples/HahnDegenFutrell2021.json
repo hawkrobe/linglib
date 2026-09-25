@@ -495,5 +495,344 @@
     ],
     "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
     "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so1",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "(2a)"
+    },
+    "language": "sout2807",
+    "primaryText": "oa-di-rek-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "oa",
+        "SM"
+      ],
+      [
+        "di",
+        "OM"
+      ],
+      [
+        "rek",
+        "buy"
+      ],
+      [
+        "a",
+        "IND"
+      ]
+    ],
+    "translation": "(he) is buying (it)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The paper takes the form from Demuth (1992).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so2",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "(2b)"
+    },
+    "language": "sout2807",
+    "primaryText": "o-pheh-el-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "o",
+        "SM"
+      ],
+      [
+        "pheh",
+        "cook"
+      ],
+      [
+        "el",
+        "APPL"
+      ],
+      [
+        "a",
+        "IND"
+      ]
+    ],
+    "translation": "(he) cooks (food) for (him)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The paper takes the form from Demuth (1992).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so3",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Sesotho, examples table row 1"
+    },
+    "language": "sout2807",
+    "primaryText": "o-pheh-il-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "o",
+        "SM"
+      ],
+      [
+        "pheh",
+        "cook"
+      ],
+      [
+        "il",
+        "PRF"
+      ],
+      [
+        "e",
+        "IND"
+      ]
+    ],
+    "translation": "(Thabo) cooked (food)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of Sesotho examples, segmented as there; the supplement takes the form from Demuth (1992).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so4",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Sesotho, examples table row 2"
+    },
+    "language": "sout2807",
+    "primaryText": "ke-e-f-uw-e",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ke",
+        "SM"
+      ],
+      [
+        "e",
+        "OM"
+      ],
+      [
+        "f",
+        "give"
+      ],
+      [
+        "uw",
+        "PASS"
+      ],
+      [
+        "e",
+        "IND"
+      ]
+    ],
+    "translation": "(I) was given (the book)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of Sesotho examples, segmented as there; the supplement takes the form from Demuth (1992).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so5",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Sesotho, examples table row 4"
+    },
+    "language": "sout2807",
+    "primaryText": "o-pheh-el-w-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "o",
+        "SM"
+      ],
+      [
+        "pheh",
+        "cook"
+      ],
+      [
+        "el",
+        "APPL"
+      ],
+      [
+        "w",
+        "PASS"
+      ],
+      [
+        "a",
+        "IND"
+      ]
+    ],
+    "translation": "(Mpho) is being cooked (food)",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of Sesotho examples, segmented as there; the supplement takes the form from Demuth (1992).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so6",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Sesotho, completive footnote"
+    },
+    "language": "sout2807",
+    "primaryText": "u-neh-el-ets-w-a-ng",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "u",
+        "OM"
+      ],
+      [
+        "neh",
+        "give"
+      ],
+      [
+        "el",
+        "APPL"
+      ],
+      [
+        "ets",
+        "CL"
+      ],
+      [
+        "w",
+        "PASS"
+      ],
+      [
+        "a",
+        "IND"
+      ],
+      [
+        "ng",
+        "WH"
+      ]
+    ],
+    "translation": "What is it that you want passed to you?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's example from the Demuth corpus for the completive before the passive; it glosses u- as a present-tense marker fused with the second-singular object marker.",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_so7",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Sesotho, stacking footnote"
+    },
+    "language": "sout2807",
+    "primaryText": "ba-arol-el-an-a",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "ba",
+        "SM"
+      ],
+      [
+        "arol",
+        "divide"
+      ],
+      [
+        "el",
+        "APPL"
+      ],
+      [
+        "an",
+        "RC"
+      ],
+      [
+        "a",
+        "IND"
+      ]
+    ],
+    "translation": "Do they share?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Sesotho"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's example from the Demuth corpus for a reciprocal after an applicative; it glosses ba- as the class 2 subject marker with a fused present-tense marker.",
+    "lgrConformance": "MORPHEME_ALIGNED"
   }
 ]

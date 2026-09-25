@@ -34,10 +34,13 @@ paper's morpheme templates against Bybee's relevance hierarchy.
   the conditional entropy of a word given the `T` words before it.
 * `heavyNPShift_shorter`: heavy NP shift in the paper's example (2) lowers total dependency
   length.
-* `japanese_forms_licensed`: the suffixes of the supplement's Japanese forms are licensed by the
-  Fragment's template.
+* `japanese_forms_licensed`, `sesotho_forms_licensed`: the affixes of the paper's Japanese and
+  Sesotho forms are licensed by the Fragments' templates.
 * `japanese_violates_surveyed_relevance`: Bybee's survey ranks tense closer to the stem than
   mood, and the Japanese suffix order is not sorted by the relevance hierarchy.
+* `sesotho_suffixes_respect_relevance`, `sesotho_prefixes_violate_relevance`: the Sesotho
+  suffixes are sorted by the hierarchy and the prefixes are not, the object marker lying inside
+  the tense prefixes.
 
 ## Implementation notes
 
@@ -45,8 +48,11 @@ paper's morpheme templates against Bybee's relevance hierarchy.
   supplement and its code, with the polite suffix before the desiderative; the paper's Table 2
   lists the two the other way round. The supplement's forms attest neither order, the two
   suffixes never sharing a form there.
-* The classification of the Japanese slots in Bybee's inventory, `bybeeCategory?`, is the
-  paper's; politeness, which Bybee does not rank, is left out rather than compared as agreement.
+* The classifications of the Japanese and Sesotho slots in Bybee's inventory, `bybeeCategory?`
+  and `sesothoCategory?`, are the paper's; Japanese politeness, which Bybee does not rank, is
+  left out rather than compared as agreement.
+* The Sesotho rows carry the paper's own segmentation: two forms have a tense prefix fused
+  with the neighbouring marker, glossed as that marker.
 * Time runs over `ℕ` from the initial memory state. Every quantity in the bound is an entropy of
   a finite block, so the paper's two-sided process enters through its one-sided restriction.
 * The initial memory state is an arbitrary random variable, so the bound holds without the
@@ -329,12 +335,85 @@ theorem japanese_forms_licensed :
       Japanese.Verb.Licensed (japaneseSuffixes r) := by
   decide
 
+/-! ### The Sesotho affix template
+
+The paper's examples (2) and its supplement's table of Sesotho forms are segmented into a stem
+and its affixes; every affix gloss names an affix of the Fragment, and the affixes of every form
+are licensed by its template. -/
+
+/-- The paper's glosses of the Sesotho affixes, as affixes of the Fragment. -/
+def sesothoAffix? : String → Option (Σ σ, Sesotho.Verb.Exponent σ)
+  | "SM" => some ⟨_, .subject⟩
+  | "SR" => some ⟨_, .relativeSubject⟩
+  | "NEG" => some ⟨_, .negative⟩
+  | "FUT" => some ⟨_, .future⟩
+  | "PRS" => some ⟨_, .present⟩
+  | "POT" => some ⟨_, .potential⟩
+  | "PERS" => some ⟨_, .persistive⟩
+  | "REC" => some ⟨_, .recentPast⟩
+  | "OM" => some ⟨_, .object⟩
+  | "RFL" => some ⟨_, .reflexive⟩
+  | "RV" => some ⟨_, .reversive⟩
+  | "CAUS" => some ⟨_, .causative⟩
+  | "NT" => some ⟨_, .neuter⟩
+  | "APPL" => some ⟨_, .applicative⟩
+  | "CL" => some ⟨_, .completive⟩
+  | "RC" => some ⟨_, .reciprocal⟩
+  | "PASS" => some ⟨_, .passive⟩
+  | "PRF" => some ⟨_, .perfect⟩
+  | "IND" => some ⟨_, .indicative⟩
+  | "SBJV" => some ⟨_, .subjunctive⟩
+  | "IMP" => some ⟨_, .imperative⟩
+  | "IMP.PL" => some ⟨_, .imperativePlural⟩
+  | "WH" => some ⟨_, .interrogative⟩
+  | "REL" => some ⟨_, .relative⟩
+  | _ => none
+
+/-- The affixes a row's gloss line names, in linear order. -/
+def sesothoAffixes (r : LinguisticExample) : List (Σ σ, Sesotho.Verb.Exponent σ) :=
+  r.glossLine.filterMap sesothoAffix?
+
+/-- The paper's Sesotho forms. -/
+def sesothoForms : List LinguisticExample :=
+  Examples.all.filter (·.language = "sout2807")
+
+/-- Every gloss but the stem's in each of the paper's Sesotho forms names an affix of the
+Fragment, and the affixes of the form are licensed by `Sesotho.Verb.template`. -/
+theorem sesotho_forms_licensed :
+    ∀ r ∈ sesothoForms, (sesothoAffixes r).length + 1 = r.glossLine.length ∧
+      Sesotho.Verb.Licensed (sesothoAffixes r) := by
+  decide
+
 /-! ### Morpheme order and the relevance hierarchy
 
-The paper classifies its Japanese slots as it lists them: *suru* is derivation, the causative
-valence, the passive and the potential voice, the desiderative mood, and the final inflection
-tense, aspect, mood and finiteness, compared here as tense. Politeness has no place in
-[bybee-1985]'s inventory and is left out of the comparison. -/
+The paper classifies its slots as it lists them. In Japanese *suru* is derivation, the
+causative valence, the passive and the potential voice, the desiderative mood, and the final
+inflection tense, aspect, mood and finiteness, compared here as tense; politeness has no place
+in [bybee-1985]'s inventory and is left out of the comparison. In Sesotho the reversive is
+derivation, the extensions valence, the passive voice, the perfect tense, the mood ending mood,
+the subject and object markers agreement, the tense prefixes tense, and the interrogative and
+relative markers the substrate's nonfinite class, which houses them. -/
+
+/-- The paper's classification of the Sesotho affix positions in [bybee-1985]'s inventory. -/
+def sesothoCategory? : Sesotho.Verb.Slot → Option MorphCategory
+  | .subject => some (.agreement .subj)
+  | .negation => some .negation
+  | .tam => some .tense
+  | .object => some (.agreement .obj)
+  | .reversive => some .derivation
+  | .extension => some .valence
+  | .voice => some .voice
+  | .tense => some .tense
+  | .mood => some .mood
+  | .interrogativeRelative => some .nonfinite
+
+/-- The Sesotho suffix order in Bybee's vocabulary, stem-outward. -/
+def sesothoSuffixCategories : List MorphCategory :=
+  Sesotho.Verb.suffixes.filterMap sesothoCategory?
+
+/-- The Sesotho prefix order in Bybee's vocabulary, stem-outward. -/
+def sesothoPrefixCategories : List MorphCategory :=
+  Sesotho.Verb.prefixes.reverse.filterMap sesothoCategory?
 
 /-- The paper's classification of the Japanese suffix positions in [bybee-1985]'s inventory. -/
 def bybeeCategory? : Japanese.Verb.Slot → Option MorphCategory
@@ -349,10 +428,17 @@ def bybeeCategory? : Japanese.Verb.Slot → Option MorphCategory
 /-- The Japanese suffix order in Bybee's vocabulary. -/
 def japaneseCategories : List MorphCategory := Japanese.Verb.slots.filterMap bybeeCategory?
 
-/-- Sesotho's suffixes, valence, voice, tense, mood, and the final interrogative or relative
-slot, are sorted by the relevance hierarchy, which on the surveyed categories is
-[bybee-1985]'s order, `Bybee1985.survey_order_iso_relevance`. -/
-theorem sesotho_suffixes_respect_relevance : Sesotho.verbAffixTemplate.suffixSlots.SortedLE := by
+/-- Sesotho's suffixes, the reversive, the extensions, the passive, the perfect, the mood
+ending and the interrogative or relative marker, are sorted by the relevance hierarchy, which
+on the surveyed categories is [bybee-1985]'s order, `Bybee1985.survey_order_iso_relevance`. -/
+theorem sesotho_suffixes_respect_relevance : sesothoSuffixCategories.SortedLE := by decide
+
+/-- The paper's claim for the prefixes is that subject agreement lies farther from the stem
+than the tense prefixes, which holds; but the object marker lies inside them, so the prefix
+order read stem-outward is not sorted by the hierarchy. -/
+theorem sesotho_prefixes_violate_relevance :
+    (∀ a ∈ sesothoCategory? .tam, ∀ b ∈ sesothoCategory? .subject, a < b) ∧
+      ¬ sesothoPrefixCategories.SortedLE := by
   decide
 
 /-- Japanese is sorted by the hierarchy up to its final inflection: derivation, valence, voice,
