@@ -278,6 +278,10 @@ ultrafilter. -/
 theorem individual_injective : Function.Injective (individual (α := α)) :=
   fun a b h => (show b = a from (congrFun h (· = a)).mp rfl).symm
 
+/-- The Montague lift of a member of `A` lives on `A`. -/
+theorem individual_livesOn {A : α → Prop} {a : α} (ha : A a) : LivesOn (individual a) A :=
+  fun _ ↦ ⟨fun h ↦ ⟨ha, h⟩, And.right⟩
+
 /-- The singleton property of an entity, `ident j = {j}`, whose lift is `individual j`. -/
 def ident (j : α) : α → Prop := (· = j)
 

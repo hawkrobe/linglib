@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Data.List.Forall2
 public import Mathlib.Logic.Relation
+public import Mathlib.Order.Basic
 
 /-!
 # Composition, transitivity, and antisymmetry of `List.Forall₂`
@@ -14,7 +15,10 @@ public import Mathlib.Logic.Relation
 `List.Forall₂ R` relates lists of equal length pointwise. It composes pointwise
 (`List.forall₂_comp_iff`), so it inherits transitivity and antisymmetry from `R`, as
 `List.SublistForall₂` does in `Mathlib/Data/List/Forall2.lean`; with `R := (· ≤ ·)` this is the
-pointwise order on lists of equal length. [UPSTREAM] candidates for that file, beside
+pointwise order on lists of equal length, which the lexicographic order refines
+(`List.Forall₂.le`, `List.Forall₂.lt_of_ne`), as `Pi.toLex_monotone` and `Pi.toLex_strictMono`
+say of `Pi.Lex`; the pointwise witnesses of `Phonology/Tone/Register.lean` lift to the
+lexicographic order this way. [UPSTREAM] candidates for that file, beside
 `List.SublistForall₂.is_refl` and `List.SublistForall₂.is_trans`.
 
 ## Main results
@@ -23,6 +27,8 @@ pointwise order on lists of equal length. [UPSTREAM] candidates for that file, b
   `Forall₂ S`.
 * `List.Forall₂.trans`, `List.Forall₂.antisymm`, and the `Std.Refl`, `IsTrans`, `Std.Antisymm`
   instances on `Forall₂ R`.
+* `List.Forall₂.le`, `List.Forall₂.lt_of_ne`: lists ordered pointwise are ordered
+  lexicographically.
 -/
 
 @[expose] public section
@@ -65,5 +71,29 @@ instance Forall₂.instIsTrans [IsTrans α R] : IsTrans (List α) (Forall₂ R) 
 
 instance Forall₂.instAntisymm [Std.Antisymm R] : Std.Antisymm (Forall₂ R) :=
   ⟨fun _ _ ↦ Forall₂.antisymm⟩
+
+/-! ### The lexicographic order refines the pointwise order -/
+
+/-- Lists ordered pointwise are ordered lexicographically, the list form of
+`Pi.toLex_monotone`. -/
+theorem Forall₂.le [Preorder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ ·) l₁ l₂) : l₁ ≤ l₂ := by
+  induction h with
+  | nil => exact fun h ↦ nomatch h
+  | cons hab _ ih =>
+    intro hlt
+    cases hlt with
+    | cons hlt => exact ih hlt
+    | rel hlt => exact hab.not_gt hlt
+
+/-- Distinct lists ordered pointwise are strictly ordered lexicographically, the list form of
+`Pi.toLex_strictMono`. -/
+theorem Forall₂.lt_of_ne [PartialOrder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ ·) l₁ l₂)
+    (hne : l₁ ≠ l₂) : l₁ < l₂ := by
+  induction h with
+  | nil => exact absurd rfl hne
+  | cons hab _ ih =>
+    rcases hab.lt_or_eq with hab | rfl
+    · exact .rel hab
+    · exact .cons (ih fun h ↦ hne (h ▸ rfl))
 
 end List
