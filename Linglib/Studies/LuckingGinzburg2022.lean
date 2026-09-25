@@ -4,6 +4,7 @@ public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Quantification.NumberTree
 public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Lücking and Ginzburg (2022): Referential Transparency as the Proper Treatment for Quantification
@@ -53,7 +54,7 @@ variable {α : Type} [DecidableEq α]
 
 /-! ### Ordered set bipartitions -/
 
-/-- An ordered set bipartition (the paper's (15)): a reference set and a complement set,
+/-- An ordered set bipartition (the paper's (15)) is a reference set and a complement set,
 disjoint with union the head noun's extension; the two conditions are verified extrinsically
 so that the type decides. -/
 structure BP (α : Type) where
@@ -64,7 +65,7 @@ structure BP (α : Type) where
 /-- The union of the two sets, the head noun's extension. -/
 def BP.maxset (b : BP α) : Finset α := b.refset ∪ b.compset
 
-/-- All ordered bipartitions of a set: each subset with its complement. -/
+/-- All ordered bipartitions of a set, each subset with its complement. -/
 def allBP (S : Finset α) : Finset (BP α) :=
   S.powerset.map ⟨fun R ↦ ⟨R, S \ R⟩, fun a b h ↦ by simp [BP.mk.injEq] at h; exact h.1⟩
 
@@ -86,30 +87,31 @@ theorem allBP_refset_sub (S : Finset α) (b : BP α) (h : b ∈ allBP S) : b.ref
 
 /-! ### Descriptive quantifier conditions -/
 
-/-- A descriptive quantifier condition (§4.2): a relation on the cardinalities of the
+/-- A descriptive quantifier condition (§4.2) is a relation on the cardinalities of the
 reference and complement sets. -/
 abbrev QCond := ℕ → ℕ → Prop
 
-/-- The sieve: the bipartitions meeting the condition. -/
+/-- The sieve keeps the bipartitions meeting the condition. -/
 def sieve (qc : QCond) [DecidableRel qc] (bps : Finset (BP α)) : Finset (BP α) :=
   bps.filter fun b ↦ qc b.refset.card b.compset.card
 
-/-- *every*: an empty complement set. -/
+/-- The condition of *every*, an empty complement set. -/
 def every_qcond : QCond := fun _ c ↦ c = 0
 
-/-- *no*: an empty reference set. -/
+/-- The condition of *no*, an empty reference set. -/
 def no_qcond : QCond := fun r _ ↦ r = 0
 
-/-- *some*: a non-empty reference set. -/
+/-- The condition of *some*, a non-empty reference set. -/
 def some_qcond : QCond := fun r _ ↦ 1 ≤ r
 
-/-- *most*: the reference set outnumbers the complement set. -/
+/-- The condition of *most*, a reference set outnumbering the complement set. -/
 def most_qcond : QCond := fun r c ↦ c < r
 
-/-- *few*: the complement set outnumbers the reference set. -/
+/-- The condition of *few*, a complement set outnumbering the reference set. -/
 def few_qcond : QCond := fun r c ↦ r < c
 
-/-- *many* (the paper's (39)): the reference set exceeds a contextual standard. -/
+/-- The condition of *many* (the paper's (39)), a reference set exceeding a contextual
+standard. -/
 def many_qcond (θ : ℕ) : QCond := fun r _ ↦ θ < r
 
 instance : DecidableRel every_qcond := fun _ c ↦ inferInstanceAs (Decidable (c = 0))
@@ -121,7 +123,7 @@ instance (θ : ℕ) : DecidableRel (many_qcond θ) := fun r _ ↦ inferInstanceA
 
 /-! ### Quantifier perspective -/
 
-/-- The quantifier perspective (the paper's (47)–(48)): whether the bipartition with an
+/-- The quantifier perspective (the paper's (47)–(48)) records whether the bipartition with an
 empty reference set belongs to the denotation, in which case the complement set is
 accessible to anaphora. -/
 inductive QPerspective
@@ -150,35 +152,35 @@ def dogs : Finset Dog := Finset.univ
 /-- Three dogs have eight ordered bipartitions. -/
 theorem dog_bipartitions_card : (allBP dogs).card = 8 := by decide
 
-/-- *every*: the sole surviving bipartition has all dogs in the reference set. -/
+/-- For *every* the sole surviving bipartition has all dogs in the reference set. -/
 theorem every_dog_qpersp :
     deriveQPersp (sieve every_qcond (allBP dogs)) = .refsetNonempty := by decide
 
-/-- *no*: the sole surviving bipartition has an empty reference set. -/
+/-- For *no* the sole surviving bipartition has an empty reference set. -/
 theorem no_dog_qpersp : deriveQPersp (sieve no_qcond (allBP dogs)) = .refsetEmpty := by decide
 
-/-- *some*: every surviving bipartition has a non-empty reference set. -/
+/-- For *some* every surviving bipartition has a non-empty reference set. -/
 theorem some_dog_qpersp :
     deriveQPersp (sieve some_qcond (allBP dogs)) = .refsetNonempty := by decide
 
-/-- *most*: every surviving bipartition has a non-empty reference set. -/
+/-- For *most* every surviving bipartition has a non-empty reference set. -/
 theorem most_dog_qpersp :
     deriveQPersp (sieve most_qcond (allBP dogs)) = .refsetNonempty := by decide
 
-/-- *few*: the empty-reference bipartition survives, so the complement set is accessible,
-*Few dogs barked. They slept through.* -/
+/-- For *few* the empty-reference bipartition survives, so the complement set is accessible,
+as in *Few dogs barked. They slept through.* -/
 theorem few_dog_qpersp : deriveQPersp (sieve few_qcond (allBP dogs)) = .refsetEmpty := by
   decide
 
-/-- *a few*: the same condition, but the reference individual excludes the empty-reference
-bipartition, so the complement set is inaccessible. -/
+/-- For *a few* the condition is the same, but the reference individual excludes the
+empty-reference bipartition, so the complement set is inaccessible. -/
 theorem aFew_dog_qpersp :
     deriveQPersp (refindFilter (sieve few_qcond (allBP dogs))) = .refsetNonempty := by
   decide
 
 /-! ### Witness sets and conservativity -/
 
-/-- The generalized quantifier of a condition: the verb phrase holds throughout the
+/-- The generalized quantifier of a condition holds when the verb phrase holds throughout the
 reference set of some surviving bipartition. -/
 def qcondToGQ (qc : QCond) [DecidableRel qc] [Fintype α] (N : α → Prop) [DecidablePred N] :
     NP α :=
@@ -190,21 +192,21 @@ theorem refset_sub_of_mem_sieve [Fintype α] {qc : QCond} [DecidableRel qc] {N :
     (ha : a ∈ b.refset) : N a :=
   (Finset.mem_filter.1 (allBP_refset_sub _ b (Finset.mem_filter.1 h).1 ha)).2
 
-/-- Conservativity holds by construction: the quantifier lives on the head noun, since the
-reference set lies within it. -/
+/-- Conservativity holds by construction, since the quantifier lives on the head noun, the
+reference set lying within it. -/
 theorem qcond_conservative [Fintype α] (qc : QCond) [DecidableRel qc] (N : α → Prop)
     [DecidablePred N] : LivesOn (qcondToGQ qc N) N := fun _ ↦
   ⟨fun ⟨b, hb, hQ⟩ ↦ ⟨b, hb, fun _ ha ↦ ⟨refset_sub_of_mem_sieve hb ha, hQ _ ha⟩⟩,
     fun ⟨b, hb, hNQ⟩ ↦ ⟨b, hb, fun _ ha ↦ (hNQ _ ha).2⟩⟩
 
-/-- The reference set of a surviving bipartition is a witness set of the quantifier: it lies
-within the head noun, and the quantifier holds of it, the bipartition itself verifying it. -/
+/-- The reference set of a surviving bipartition is a witness set of the quantifier, since it
+lies within the head noun and the quantifier holds of it, the bipartition itself verifying it. -/
 theorem bp_refset_is_witness [Fintype α] (qc : QCond) [DecidableRel qc] (N : α → Prop)
     [DecidablePred N] {b : BP α} (h : b ∈ sieve qc (allBP {x | N x})) :
     Witness (qcondToGQ qc N) N (· ∈ b.refset) :=
   ⟨fun _ ↦ refset_sub_of_mem_sieve h, b, h, fun _ ↦ id⟩
 
-/-- The number of denotations over a noun with `k` instances (§4.8): the non-empty sets of
+/-- The number of denotations over a noun with `k` instances (§4.8), the non-empty sets of
 its `2 ^ k` bipartitions. -/
 def rttQuantifierCount (k : ℕ) : ℕ := 2 ^ (k + 1) - 1
 
@@ -222,8 +224,9 @@ fails of every member of the complement set. -/
 def antiPredication (VP : α → Prop) (b : BP α) : Prop :=
   (∀ a ∈ b.refset, VP a) ∧ ∀ a ∈ b.compset, ¬ VP a
 
-/-- *every N VP*: some surviving bipartition is anti-predicated exactly when the verb phrase
-holds throughout the extension, the sole survivor having everything in its reference set. -/
+/-- For *every N VP*, some surviving bipartition is anti-predicated exactly when the verb
+phrase holds throughout the extension, the sole survivor having everything in its reference
+set. -/
 theorem every_truth_conditions (S : Finset α) (VP : α → Prop) :
     (∃ b ∈ sieve every_qcond (allBP S), antiPredication VP b) ↔ ∀ a ∈ S, VP a := by
   constructor

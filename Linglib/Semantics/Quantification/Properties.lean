@@ -70,8 +70,7 @@ theorem outerNeg_restrictorDown_to_up (q : GQ α)
   exact hNeg (h R R' S hRR' hQR')
 
 /-- Outer negation is an involution. -/
-theorem outerNeg_involution (q : GQ α) : outerNeg (outerNeg q) = q := by
-  funext R S; simp [outerNeg]
+theorem outerNeg_involution (q : GQ α) : outerNeg (outerNeg q) = q := compl_compl q
 
 /-- Inner negation is an involution. -/
 theorem innerNeg_involution (q : GQ α) : innerNeg (innerNeg q) = q := by
@@ -462,18 +461,6 @@ theorem conservative_gqJoin (f g : GQ α)
     Conservative (gqJoin f g) := by
   intro R S; simp only [gqJoin]; exact or_congr (hf R S) (hg R S)
 
-/-- The complement of a join is the meet of the complements. -/
-theorem outerNeg_gqJoin (f g : GQ α) :
-    outerNeg (gqJoin f g) = gqMeet (outerNeg f) (outerNeg g) := by
-  funext R S; simp [outerNeg, gqJoin, gqMeet, not_or]
-
-/-- The complement of a meet is the join of the complements. -/
-theorem outerNeg_gqMeet (f g : GQ α) :
-    outerNeg (gqMeet f g) = gqJoin (outerNeg f) (outerNeg g) := by
-  funext R S
-  simp only [outerNeg, gqMeet, gqJoin]
-  exact propext not_and_or
-
 /-- The meet of two scope-upward monotone quantifiers is scope-upward monotone. -/
 theorem scopeUpMono_gqMeet (f g : GQ α)
     (hf : ScopeUpwardMono f) (hg : ScopeUpwardMono g) :
@@ -584,20 +571,18 @@ theorem zwarts_refl_trans_restrictorDown (q : GQ α)
     rw [this]; exact hRefl R
   exact hTrans R R' S hQRR' hQR'S
 
-/-- [van-benthem-1984] Thm 4.1.3 (Zwarts): for symmetric quantifiers,
-    scope-↑ implies quasi-reflexive, under CONSERV. -/
-theorem zwarts_sym_scopeUp_quasiRefl (q : GQ α)
-    (hCons : Conservative q) (_hSym : QSymmetric q)
-    (hUp : ScopeUpwardMono q) : QuasiReflexive q := by
+/-- Under conservativity a scope-upward monotone quantifier is quasi-reflexive, the half of van
+Benthem's theorem on symmetric quantifiers that needs no symmetry. -/
+theorem quasiReflexive_of_scopeUp (q : GQ α)
+    (hCons : Conservative q) (hUp : ScopeUpwardMono q) : QuasiReflexive q := by
   intro A B hQAB
   have h1 : q A (fun x => A x ∧ B x) := (hCons A B).mp hQAB
   exact hUp A (fun x => A x ∧ B x) A (fun x hx => hx.1) h1
 
-/-- [van-benthem-1984] Thm 4.1.3 (Zwarts): for symmetric quantifiers,
-    scope-↓ implies quasi-universal, under CONSERV. -/
-theorem zwarts_sym_scopeDown_quasiUniv (q : GQ α)
-    (hCons : Conservative q) (_hSym : QSymmetric q)
-    (hDown : ScopeDownwardMono q) : QuasiUniversal q := by
+/-- Under conservativity a scope-downward monotone quantifier is quasi-universal, the half of
+van Benthem's theorem on symmetric quantifiers that needs no symmetry. -/
+theorem quasiUniversal_of_scopeDown (q : GQ α)
+    (hCons : Conservative q) (hDown : ScopeDownwardMono q) : QuasiUniversal q := by
   intro A B hQAA
   rw [hCons A B]
   exact hDown A (fun x => A x ∧ B x) A (fun x hx => hx.1) hQAA
