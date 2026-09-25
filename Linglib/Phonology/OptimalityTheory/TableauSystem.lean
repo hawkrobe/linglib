@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Optimization.Evaluation
 public import Linglib.Core.Optimization.System
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
@@ -37,7 +36,6 @@ No study consumes this file yet.
 namespace OptimalityTheory
 
 open Core.Optimization
-open Core.Optimization.Evaluation
 
 variable {C : Type*} [DecidableEq C] {n : Nat}
 

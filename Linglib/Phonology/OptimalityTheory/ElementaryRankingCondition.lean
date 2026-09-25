@@ -34,7 +34,6 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
 
 @[expose] public section
 
-open Core.Optimization.Evaluation
 
 namespace OptimalityTheory
 open Constraints
@@ -105,7 +104,7 @@ def SatisfiedBy : Prop := toLex 0 ≤ r • toLex α
 `L` is preceded by a `W`. -/
 theorem lex_nonneg_iff_dominance (v : Fin n → ERCVal) :
     toLex 0 ≤ toLex v ↔ ∀ p, v p = .L → ∃ q < p, v q = .W := by
-  rw [lex_le_iff_forall]
+  rw [Pi.lex_le_iff_forall]
   exact forall_congr' fun p => imp_congr (ERCVal.lt_zero_iff _)
     (exists_congr fun q => and_congr_right fun _ => ERCVal.zero_lt_iff _)
 
@@ -114,8 +113,8 @@ satisfies an ERC iff the `r`-earliest non-neutral constraint, when one exists, i
 winner-preferring. -/
 theorem satisfiedBy_iff_lead :
     α.SatisfiedBy r ↔ ∀ he : ∃ p, α (r p) ≠ .e, α (r (Fin.find _ he)) = .W :=
-  ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((lex_le_iff_lead _ _).mp h he),
-   fun h => (lex_le_iff_lead _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
+  ⟨fun h he => (ERCVal.zero_lt_iff _).mp ((Pi.lex_le_iff_find _ _).mp h he),
+   fun h => (Pi.lex_le_iff_find _ _).mpr fun he => (ERCVal.zero_lt_iff _).mpr (h he)⟩
 
 /-- A loser-preferring constraint witnesses a non-neutral position. -/
 private theorem exists_ne_of_L {c : Fin n} (hc : α c = .L) : ∃ p, α (r p) ≠ .e :=
@@ -303,12 +302,12 @@ def ercOfList (vs : List ERCVal) (h : vs.length = n := by decide) : ERC n :=
 of the first difference decides both. -/
 theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
     toLex (fun _ => (0 : ERCVal)) ≤ toLex (ercOfProfiles w l) ↔ w ≤ l :=
-  (lex_le_iff_forall _ _).trans <|
+  (Pi.lex_le_iff_forall _ _).trans <|
     (forall_congr' fun p => imp_congr
       ((ERCVal.lt_zero_iff _).trans (ercOfProfiles_eq_L_iff w l p))
       (exists_congr fun q => and_congr_right fun _ =>
         (ERCVal.zero_lt_iff _).trans (ercOfProfiles_eq_W_iff w l q))).trans
-    (lex_le_iff_forall (ofLex w) (ofLex l)).symm
+    (Pi.lex_le_iff_forall (ofLex w) (ofLex l)).symm
 
 /-- ERC satisfaction *is* lexicographic domination: `r` satisfies the ERC of a
 winner/loser pair iff the winner's profile, read in `r`'s priority order, is lex-≤
@@ -331,7 +330,7 @@ theorem tableauERC_satisfiedBy_iff {C : Type*} [DecidableEq C]
   satisfiedBy_ercOfProfiles_iff_le r (t.profile w) (t.profile l)
 
 /-- At the identity ranking, ERC satisfaction is exactly the tableau's own lex
-comparison — connecting ERC inference to `LexMinProblem`. -/
+comparison — connecting ERC inference to the tableau's winner set. -/
 theorem tableauERC_satisfiedBy_id_iff {C : Type*} [DecidableEq C]
     (t : Tableau C n) (w l : C) :
     (tableauERC t w l).SatisfiedBy (Ranking.id n) ↔ t.profile w ≤ t.profile l := by

@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Optimization.Evaluation
 public import Linglib.Phonology.OptimalityTheory.Ranking
 public import Linglib.Phonology.Constraints.Defs
 public import Linglib.Phonology.Constraints.Profile
@@ -12,9 +11,8 @@ public import Mathlib.Data.List.Permutation
 
 The OT evaluation vocabulary and machinery. A `Tableau` is the lexicographic
 minimisation problem [prince-smolensky-1993] solves — a finite candidate set ranked by a
-`ViolationProfile`-valued objective. These are OT-tradition names for the
-`LexMinProblem` engine in `Core.Optimization.Evaluation`; downstream OT code uses
-`Tableau`/`Tableau.optimal` rather than the generic spellings. On top of the vocabulary:
+`ViolationProfile`-valued objective, whose winners are the candidates with a profile at most
+every candidate's under mathlib's `Pi.Lex` order. On top of the vocabulary:
 smart constructors, the structural optimality theorems, and factorial-typology
 computation.
 
@@ -56,22 +54,29 @@ computation.
 
 namespace OptimalityTheory
 
-open Core.Optimization.Evaluation LexMinProblem Constraints
+open Constraints
 
 /-! ### The tableau vocabulary -/
 
-/-- OT-named alias for `LexMinProblem` — a finite candidate set ranked by a
-fixed-length violation profile. -/
-abbrev Tableau (C : Type*) [DecidableEq C] (n : Nat) := LexMinProblem C n
+/-- An OT tableau: a finite candidate set scored by a fixed-length violation profile, with a
+witness that there is a candidate. -/
+structure Tableau (C : Type*) [DecidableEq C] (n : Nat) where
+  /-- The candidates. -/
+  candidates : Finset C
+  /-- Each candidate's violation profile. -/
+  profile : C → ViolationProfile n
+  /-- A tableau has a candidate. -/
+  nonempty : candidates.Nonempty
 
 namespace Tableau
 
 variable {C : Type*} [DecidableEq C] {n : Nat} (t : Tableau C n) (c : C)
 
-/-- OT-named alias for `LexMinProblem.lexMins` — the winning candidates. Optimality is
-plain membership `c ∈ t.optimal`, unfolded by `mem_optimal_iff`; there is no separate
-winner predicate. -/
-abbrev optimal : Finset C := lexMins t
+/-- The winning candidates, those whose profile is lexicographically at most every
+candidate's; the comparison is decided by `Pi.Lex.decidableLE`. Optimality is plain membership
+`c ∈ t.optimal`, unfolded by `mem_optimal_iff`; there is no separate winner predicate. -/
+def optimal : Finset C :=
+  t.candidates.filter fun c ↦ ∀ d ∈ t.candidates, t.profile c ≤ t.profile d
 
 variable {t c}
 
@@ -79,32 +84,55 @@ variable {t c}
 candidate. -/
 theorem mem_optimal_iff :
     c ∈ t.optimal ↔ c ∈ t.candidates ∧ ∀ d ∈ t.candidates, t.profile c ≤ t.profile d :=
-  mem_lexMins_iff t c
+  Finset.mem_filter
 
-/-- OT-named alias for `LexMinProblem.lexMins_nonempty`. -/
-theorem optimal_nonempty : t.optimal.Nonempty := lexMins_nonempty t
+/-- Every tableau has a winner, since the linearly ordered image of a nonempty finset has a
+minimum. -/
+theorem optimal_nonempty : t.optimal.Nonempty :=
+  let ⟨c, hc, hmin⟩ := Finset.exists_min_image t.candidates t.profile t.nonempty
+  ⟨c, mem_optimal_iff.mpr ⟨hc, hmin⟩⟩
 
-/-- OT-named alias for `LexMinProblem.lexMins_subset`. -/
-theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates := lexMins_subset t c
+theorem optimal_subset : c ∈ t.optimal → c ∈ t.candidates := fun h ↦ (mem_optimal_iff.mp h).1
 
 /-- A winner's profile bounds every candidate's. -/
 theorem le_of_mem_optimal {d : C} (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
-    t.profile c ≤ t.profile d := le_of_mem_argMinSet hc hd
+    t.profile c ≤ t.profile d :=
+  (mem_optimal_iff.mp hc).2 d hd
 
 /-- Optimality factors through the profile, so it transports along profile equality:
 scoring like a winner is winning. -/
 theorem mem_optimal_of_profile_eq {d : C} (hd : d ∈ t.optimal) (hc : c ∈ t.candidates)
-    (he : t.profile c = t.profile d) : c ∈ t.optimal := mem_argMinSet_of_eq hd hc he
+    (he : t.profile c = t.profile d) : c ∈ t.optimal :=
+  mem_optimal_iff.mpr ⟨hc, fun _ he' ↦ he ▸ le_of_mem_optimal hd he'⟩
 
 /-- A candidate whose profile vanishes wins, since `0` is the least profile. -/
 theorem mem_optimal_of_profile_eq_zero (hc : c ∈ t.candidates) (h0 : t.profile c = 0) :
-    c ∈ t.optimal := mem_argMinSet_of_eq_bot hc h0
+    c ∈ t.optimal :=
+  mem_optimal_iff.mpr ⟨hc, fun _ _ ↦ h0 ▸ ViolationProfile.zero_le _⟩
 
 /-- A tableau has sole winner `m` iff `m` strictly lex-dominates every other
 candidate. -/
 theorem optimal_eq_singleton_iff {m : C} (hm : m ∈ t.candidates) :
-    t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c :=
-  argMinSet_eq_singleton_iff hm
+    t.optimal = {m} ↔ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c := by
+  constructor
+  · intro h c hc hcm
+    have hmo : m ∈ t.optimal := h ▸ Finset.mem_singleton_self m
+    exact (le_of_mem_optimal hmo hc).lt_of_ne fun he ↦
+      hcm <| Finset.mem_singleton.mp (h ▸ mem_optimal_of_profile_eq hmo hc he.symm)
+  · intro h
+    refine Finset.eq_singleton_iff_unique_mem.mpr
+      ⟨mem_optimal_iff.mpr ⟨hm, fun d hd ↦ ?_⟩, fun c hc ↦ ?_⟩
+    · rcases eq_or_ne d m with rfl | hdm
+      · exact le_rfl
+      · exact (h d hd hdm).le
+    · by_contra hcm
+      exact lt_irrefl (t.profile c) (lt_of_le_of_lt (le_of_mem_optimal hc hm)
+        (h c (optimal_subset hc) hcm))
+
+/-- A tableau with a single candidate has it as sole winner. -/
+@[simp] theorem optimal_singleton (hc : t.candidates = {c}) : t.optimal = {c} := by
+  ext x
+  simp +contextual [mem_optimal_iff, hc]
 
 /-- A two-candidate tableau has sole winner `c` iff `c` strictly lex-dominates `d`. -/
 theorem optimal_eq_singleton_iff_pair {d : C} (hcand : t.candidates = {c, d}) (hne : c ≠ d) :

@@ -56,7 +56,7 @@ iterates the candidate; Stratal OT varies the ranking and chains the candidate
 
 namespace OptimalityTheory
 
-open Constraints Core.Optimization.Evaluation
+open Constraints
 
 /-! ### The serial search -/
 
@@ -224,7 +224,7 @@ with no intermediate combinator. Simp-normalized toward `Converged`. -/
 theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c := by
   show D.evalFilter (D.gen c) = ({c} : Finset C)
   rw [h, evalFilter, dite_eq_left (Finset.singleton_nonempty c)]
-  exact argMinSet_singleton c _
+  exact Tableau.optimal_singleton rfl
 
 /-- An `n`-round HS derivation: `iterateGen` over `stepOptimum` with a caller-supplied
 `pick` tie-breaker for non-singleton optima (ties not yet broken by directional eval,

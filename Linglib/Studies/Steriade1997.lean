@@ -114,13 +114,13 @@ def con30' : CON Form 3 := ![lexP L P, lexPM L Q M, wellFormed P]
 theorem con30_profile (t : Form) :
     buildViolationProfile (con30 L P Q M) t =
       toLex ![lexP L P t, wellFormed P t, lexPM L Q M t] := by
-  rw [buildViolationProfile, Core.Optimization.Evaluation.lexFinNatOf, toLex_inj]
+  rw [buildViolationProfile, toLex_inj]
   funext i; fin_cases i <;> rfl
 
 theorem con30'_profile (t : Form) :
     buildViolationProfile (con30' L P Q M) t =
       toLex ![lexP L P t, lexPM L Q M t, wellFormed P t] := by
-  rw [buildViolationProfile, Core.Optimization.Evaluation.lexFinNatOf, toLex_inj]
+  rw [buildViolationProfile, toLex_inj]
   funext i; fin_cases i <;> rfl
 
 theorem lexPM_eq_one {μ t : Form} (h : μ ∈ L) (hP : P μ) (hM : M μ) (ht : ¬ P t) :

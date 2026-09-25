@@ -47,7 +47,7 @@ of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wa
 
 namespace Presupposition.MaximizePresupposition
 
-open Agreement Constraints OptimalityTheory Core.Optimization.Evaluation
+open Agreement Constraints OptimalityTheory
 
 /-- `φ` is blocked under Maximize Presupposition when an alternative with the same assertion
 carries a strictly stronger presupposition. -/

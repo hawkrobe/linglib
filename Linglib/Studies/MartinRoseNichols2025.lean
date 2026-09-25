@@ -79,7 +79,7 @@ non-alternating, against the fragment, which gives it an unaccusative frame.
 
 namespace MartinRoseNichols2025
 
-open BidirectionalOT Core.Optimization.Evaluation
+open BidirectionalOT
 
 /-! ### Two concepts of causation -/
 
@@ -139,7 +139,7 @@ def production (promotes : Bool) (p : Form × Reading) : ℕ :=
   if promotes ∧ p.2 = .dependence then 1 else 0
 
 /-- The tableau of a form and reading under `markedness ≫ production`. -/
-def tableau (promotes : Bool) : Form × Reading → LexNatList :=
+def tableau (promotes : Bool) : Form × Reading → List ℕ :=
   profile [markedness, production promotes]
 
 /-- The transitive forms expressing a causal relation between a subject and an object. -/

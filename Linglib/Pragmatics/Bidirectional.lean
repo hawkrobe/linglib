@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Optimization.Evaluation
+public import Mathlib.Data.List.Lex
 public import Mathlib.Order.FixedPoints
 public import Mathlib.Order.Preorder.Finite
 
@@ -55,9 +55,8 @@ form in every interpretation.
 ## Implementation notes
 
 The harmony ordering is any preorder `α` reached through a profile `f`, so `profile` (the
-`LexNatList` preorder of `Core/Optimization/Evaluation.lean`) and the linear order
-`Lex (Fin n → ℕ)` both serve. The paper's "other pair" clause in the principles is dropped:
-`f q < f p` already forces `q ≠ p`.
+lexicographic order on `List ℕ`) and the linear order `Lex (Fin n → ℕ)` both serve. The
+paper's "other pair" clause in the principles is dropped: `f q < f p` already forces `q ≠ p`.
 
 The step `unblockedSet pairs f` is antitone, so its square is monotone and mathlib's
 `OrderHom.gfp` applies without further hypotheses. The step maps that greatest fixed point to
@@ -87,13 +86,13 @@ convergence hypothesis, and the early exit keeps `decide` shallow. The pair
 
 namespace BidirectionalOT
 
-open Core.Optimization.Evaluation Function OrderHom
+open Function OrderHom
 
 variable {F M α : Type*} [Preorder α]
 
 /-- The violation profile of a ranking: a pair's violations listed from the dominant constraint
 down, compared lexicographically. -/
-def profile (ranking : List (F × M → ℕ)) (p : F × M) : LexNatList := ⟨ranking.map (· p)⟩
+def profile (ranking : List (F × M → ℕ)) (p : F × M) : List ℕ := ranking.map (· p)
 
 /-! ### Blocking -/
 
