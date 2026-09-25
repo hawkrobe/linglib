@@ -1,156 +1,171 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Phonology.Tone.Basic
+public import Linglib.Fragments.Numee.Phonology
+public import Linglib.Fragments.Drubea.Prosody
 
 /-!
-# Numèè Prosodic Fragment
-[lionnet-2025]
+# Numèè register
 
-Lexical and utterance-level prosody for Numèè (Glottocode: numa1247),
-a Southern Oceanic language of New Caledonia. Data here are drawn from
-the Goro dialect as described and analysed by [lionnet-2025]
-(which cites earlier descriptive work by Rivierre).
+The stems of Numèè with their register tiers, as [lionnet-2025] transcribes them after
+[rivierre-1973] and the Haudricourt–Rivierre recordings, in the representation of
+`Fragments/Drubea/Prosody`: syllables, and on each mora the downstep it bears or nothing.
+Numèè shares Drubea's register system; the two diverge only at the utterance-final
+boundary, whose Numèè condition is stated in `Studies/Lionnet2025`. The entries are the
+stems, affixes and pronouns of the utterances the source transcribes with pitch levels;
+each docstring gives the example number.
 
-The Numèè register system shares the same underlying inventory as
-Drubea — registerless and downstepped morae as the only contrastive
-units, with no tone features. The two languages diverge at the
-**utterance-final boundary** ([lionnet-2025] §3.3–3.4):
+## Main results
 
-- **Drubea** (`Fragments/Drubea/Prosody.lean`): utterance-final raising
-  `h%` on the final registerless syllable.
-- **Numèè** (this file): utterance-final downstepping `⁺%` on the final
-  **light CV** syllable, only when **preceded by a registerless syllable**.
-  When the final is itself underlyingly downstepped, the boundary
-  inserts an *extra* downstep — a stacked "double downstep" `⁺⁺` —
-  preserving the registerless/downstepped contrast utterance-finally
-  ([lionnet-2025] ex. 24 vs 25).
+* `Numee.stems_aligned`, `Numee.affixes_aligned`: every tier has one entry per mora.
 
-This fragment models syllable structure explicitly (the `Drubea`
-fragment works at the morpheme/spec-list level), because the Numèè
-boundary phenomenon's eligibility conditions reference syllable weight
-(light CV vs CVV) and the immediately preceding syllable's register
-status — neither expressible in a flat `List TRN`.
+## References
+
+* [lionnet-2025]
+* [rivierre-1973]
 -/
 
 @[expose] public section
 
-namespace Numee.Prosody
+open Phonology Tone
+open Prosody (Syllable)
+open Drubea (cv cvv a e i o u openE upsilon iNasal eNasal oNasal aNasal b c d g j k kw m mw n
+  nPalatal nRetroflex p rRetroflex t v w y)
 
-open Tone
+namespace Numee
 
--- ============================================================================
--- § 1: Syllable-Level Representation
--- ============================================================================
+/-! ### Stems -/
 
-/-- A Numèè syllable: surface form (segmental, no register marks) plus
-    one `TRN` per mora. The mora is the register-bearing unit
-    ([lionnet-2025] §4.2), so light CV is monomoraic and CVV is
-    bimoraic. A downstep mark `⁺` on the leftmost mora of a syllable
-    surfaces as `some .l` at the corresponding `specs` index. -/
-structure Syllable where
-  form  : String
-  specs : List TRN
-  deriving Repr, DecidableEq
+/-- /jaa/ 'juice' ((24), (25)). -/
+def jaaJuice : Registered Syllable := ⟨[cvv [j] a], [[], []]⟩
 
-namespace Syllable
+/-- /ɲĩ/ 'coconut' ((24)). -/
+def niCoconut : Registered Syllable := ⟨[cv [nPalatal] iNasal], [[]]⟩
 
-/-- Number of morae in this syllable (one `TRN` per mora). -/
-def morae (s : Syllable) : Nat := s.specs.length
+/-- /ꜜɲĩ/ 'breast' ((25)). -/
+def niBreast : Registered Syllable := ⟨[cv [nPalatal] iNasal], [[.downstep]]⟩
 
-/-- Light CV: a monomoraic short syllable (e.g. `ku`, `nĩ`, `kwɛ̃`).
-    The Numèè boundary downstep `⁺%` only docks on light CV finals. -/
-def isLightCV (s : Syllable) : Bool := s.morae == 1
+/-- /ɲĩ/ 3SG.SBJ ((29)). -/
+def ni3sg : Registered Syllable := ⟨[cv [nPalatal] iNasal], [[]]⟩
 
-/-- All morae of this syllable are registerless (no `l` or `h`). The
-    Numèè `⁺%` boundary requires the *preceding* syllable to satisfy
-    this. -/
-def isRegisterless (s : Syllable) : Bool := s.specs.all (· == TRN.empty)
+/-- /dɛ.ɳu/ 'jaw' ((22); (26) prints the second vowel as /ʊ/). -/
+def denuJaw : Registered Syllable := ⟨[cv [d] openE, cv [nRetroflex] u], [[], []]⟩
 
-/-- The syllable carries an underlying downstep `l` on at least one mora. -/
-def isDownstepped (s : Syllable) : Bool := s.specs.any (· == TRN.downstep)
+/-- /a/ REL ((22), (26)). -/
+def aRel : Registered Syllable := ⟨[cv [] a], [[]]⟩
 
-end Syllable
+/-- /ɳa/ 'up' ((22)). -/
+def naUp : Registered Syllable := ⟨[cv [nRetroflex] a], [[]]⟩
 
-/-- A Numèè utterance: an ordered sequence of syllables. -/
-abbrev Utterance := List Syllable
+/-- /mii/ 'low' ((26)). -/
+def miiLow : Registered Syllable := ⟨[cvv [m] i], [[], []]⟩
 
--- ============================================================================
--- § 2: Boundary Downstep ⁺% ([lionnet-2025] §3.4)
--- ============================================================================
+/-- /ꜜtẽẽ/ 'girl' ((28)). -/
+def teeGirl : Registered Syllable := ⟨[cvv [t] eNasal], [[.downstep], []]⟩
 
-/-- Realisation outcome for the Numèè utterance-final boundary downstep
-    `⁺%` ([lionnet-2025] §3.4):
+/-- /nõ/ 'grill' ((28)). -/
+def noGrill : Registered Syllable := ⟨[cv [n] oNasal], [[]]⟩
 
-    - `none`: eligibility conditions not met; the final syllable
-      surfaces unchanged (heavy final, or final preceded by a
-      downstepped syllable).
-    - `single`: a registerless final acquires one extra downstep step
-      (the canonical Goro pattern).
-    - `double`: an already-downstepped final is realised with a stacked
-      double downstep `⁺⁺`, lowering pitch *below* what an underlyingly
-      downstepped non-final realisation would ([lionnet-2025] ex. 24
-      vs 25). This stacking preserves the registerless/downstepped
-      contrast in utterance-final position. -/
-inductive BoundaryEffect where
-  | none
-  | single
-  | double
-  deriving DecidableEq, Repr
+/-- /bɛ.ꜜtĩĩ/ 'three' ((28)). -/
+def betiiThree : Registered Syllable :=
+  ⟨[cv [b] openE, cvv [t] iNasal], [[], [.downstep], []]⟩
 
-/-- The Numèè utterance-final boundary downstep `⁺%`
-    ([lionnet-2025] §3.4).
+/-- /ku/ 'yam' ((28)). -/
+def kuYam : Registered Syllable := ⟨[cv [k] u], [[]]⟩
 
-    Eligibility: the final syllable must be **light CV** (monomoraic)
-    AND **preceded by a registerless syllable**. When eligible, the
-    outcome depends on the final syllable's underlying register:
-    registerless → `single`, downstepped → `double` (stacking). -/
-def numeeBoundaryEffect : Utterance → BoundaryEffect := fun utt =>
-  match utt.reverse with
-  | last :: penult :: _ =>
-      if last.isLightCV && penult.isRegisterless then
-        if last.isDownstepped then .double else .single
-      else .none
-  | _ => .none
+/-- /yʊʊ/ 'berth' ((29)). -/
+def yuuBerth : Registered Syllable := ⟨[cvv [y] upsilon], [[], []]⟩
 
--- ============================================================================
--- § 3: Lexical Data ([lionnet-2025] §3.4 ex. 22–29)
--- ============================================================================
+/-- /ꜜpaa/ 'up' ((29)). -/
+def paaUp : Registered Syllable := ⟨[cvv [p] a], [[.downstep], []]⟩
 
-/-- /jaa/ 'juice' — bimoraic CVV, registerless (ex. 24, 25). -/
-def jaa : Syllable := ⟨"jaa", [TRN.empty, TRN.empty]⟩
+/-- /kwẽ/ 'sand' ((29)). -/
+def kweSand : Registered Syllable := ⟨[cv [kw] eNasal], [[]]⟩
 
-/-- /nĩ/ 'coconut' — monomoraic CV, registerless (ex. 24). -/
-def niCoconut : Syllable := ⟨"nĩ", [TRN.empty]⟩
+/-- /yaꜜa/ NEG ((52)). -/
+def yaaNeg : Registered Syllable := ⟨[cvv [y] a], [[], [.downstep]]⟩
 
-/-- /⁺nĩ/ 'breast' — monomoraic CV, downstepped (ex. 25). The
-    minimal-pair partner of `niCoconut`. -/
-def niBreast : Syllable := ⟨"nĩ", [TRN.downstep]⟩
+/-- /ꜜmẽ/ 'that' ((52)). -/
+def meThat : Registered Syllable := ⟨[cv [m] eNasal], [[.downstep]]⟩
 
-/-- /mii/ 'low' — bimoraic CVV, registerless (ex. 26). Heavy finals
-    block the boundary downstep. -/
-def mii : Syllable := ⟨"mii", [TRN.empty, TRN.empty]⟩
+/-- /geꜜe/ 1PL.EXCL.SBJ ((52)). -/
+def gee1plExcl : Registered Syllable := ⟨[cvv [g] e], [[], [.downstep]]⟩
 
-/-- /ku/ 'yam' — monomoraic CV, registerless (ex. 28). Light, but in
-    ex. 28 it is preceded by a downstepped syllable, so the boundary
-    is blocked. -/
-def ku : Syllable := ⟨"ku", [TRN.empty]⟩
+/-- /ꜜmẽ/ FUT ((52)). -/
+def meFut : Registered Syllable := ⟨[cv [m] eNasal], [[.downstep]]⟩
 
-/-- /⁺tĩĩ/ 'three' — bimoraic CVV, downstep on first mora (ex. 28).
-    Whether or not light, what matters here is that it counts as
-    *downstepped* and so blocks the boundary on the following `ku`. -/
-def beTii : Syllable := ⟨"tĩĩ", [TRN.downstep, TRN.empty]⟩
+/-- /ɲa.ꜜi/ 'arrive' ((52)), a disyllable whose downstep is not displaced. -/
+def nyaiArrive : Registered Syllable := ⟨[cv [nPalatal] a, cv [] i], [[], [.downstep]]⟩
 
-/-- /kwɛ̃/ 'sand' — monomoraic CV, registerless (ex. 29). Like `ku`,
-    light but preceded by a downstepped syllable in its example. -/
-def kwe : Syllable := ⟨"kwɛ̃", [TRN.empty]⟩
+/-- /ꜜɳe/ 3PL.SBJ ((18)). -/
+def ne3pl : Registered Syllable := ⟨[cv [nRetroflex] e], [[.downstep]]⟩
 
-/-- /⁺paa/ 'down' — bimoraic CVV with downstep on first mora (ex. 29). -/
-def paa : Syllable := ⟨"paa", [TRN.downstep, TRN.empty]⟩
+/-- /ꜜmwa/ PFV ((18); (38) prints it nasalised). -/
+def mwaPfv : Registered Syllable := ⟨[cv [mw] a], [[.downstep]]⟩
 
-/-- A registerless filler syllable used to pad utterances (`a`, `nõ`,
-    `dɛŋo`, etc. in the §3.4 examples — segmental detail varies but
-    the prosodic content is just `[TRN.empty]` or `[TRN.empty, TRN.empty]`). -/
-def regCV  : Syllable := ⟨"σ", [TRN.empty]⟩
-def regCVV : Syllable := ⟨"σː", [TRN.empty, TRN.empty]⟩
+/-- /ꜜve/ 'go' ((18)). -/
+def veGo : Registered Syllable := ⟨[cv [v] e], [[.downstep]]⟩
 
-end Numee.Prosody
+/-- /ꜜcĩĩ.bu/ 'rat' ((38)). -/
+def ciibuRat : Registered Syllable :=
+  ⟨[cvv [c] iNasal, cv [b] u], [[.downstep], [], []]⟩
+
+/-- /ꜜku/ 'flee' ((38)). -/
+def kuFlee : Registered Syllable := ⟨[cv [k] u], [[.downstep]]⟩
+
+/-- /mwo.ɽo/ 'alive' ((38)). -/
+def mworoAlive : Registered Syllable :=
+  ⟨[cv [mw] o, cv [rRetroflex] o], [[], []]⟩
+
+/-- /gu/ 2SG.SBJ ((62)). -/
+def gu2sg : Registered Syllable := ⟨[cv [g] u], [[]]⟩
+
+/-- /ꜜca.pɛ/ 'raise' ((62)). -/
+def capeRaise : Registered Syllable := ⟨[cv [c] a, cv [p] openE], [[.downstep], []]⟩
+
+/-- /ꜜpa.ɳaa/ 'mast' ((62)). -/
+def panaaMast : Registered Syllable :=
+  ⟨[cv [p] a, cvv [nRetroflex] a], [[.downstep], [], []]⟩
+
+/-- /ꜜko/ 'on' ((62)). -/
+def koOn : Registered Syllable := ⟨[cv [k] o], [[.downstep]]⟩
+
+/-- /ɲʊ/ 'boat' ((62)). -/
+def nyuBoat : Registered Syllable := ⟨[cv [nPalatal] upsilon], [[]]⟩
+
+/-- /ꜜwii/ 'down' ((62)). -/
+def wiiDown : Registered Syllable := ⟨[cvv [w] i], [[.downstep], []]⟩
+
+/-- /to/ 'there' ((62)). -/
+def toThere : Registered Syllable := ⟨[cv [t] o], [[]]⟩
+
+/-! ### Affixes -/
+
+/-- The suffix -ꜜẽ PROX ((28)), transcribed downstepped. -/
+def eProx : Registered Syllable := ⟨[cv [] eNasal], [[.downstep]]⟩
+
+/-- The prefix a- LOC ((29)). -/
+def aLoc : Registered Syllable := ⟨[cv [] a], [[]]⟩
+
+/-! ### The lists -/
+
+/-- The stems. -/
+def stems : List (Registered Syllable) :=
+  [jaaJuice, niCoconut, niBreast, ni3sg, denuJaw, aRel, naUp, miiLow, teeGirl, noGrill,
+    betiiThree, kuYam, yuuBerth, paaUp, kweSand, yaaNeg, meThat, gee1plExcl, meFut, nyaiArrive,
+    ne3pl, mwaPfv, veGo, ciibuRat, kuFlee, mworoAlive, gu2sg, capeRaise, panaaMast, koOn,
+    nyuBoat, wiiDown, toThere]
+
+/-- The affixes. -/
+def affixes : List (Registered Syllable) := [eProx, aLoc]
+
+/-- Every stem's tier has one entry per mora. -/
+theorem stems_aligned : ∀ s ∈ stems, s.IsAligned Prosody.Syllable.pnatMoraCount := by decide
+
+theorem affixes_aligned : ∀ s ∈ affixes, s.IsAligned Prosody.Syllable.pnatMoraCount := by decide
+
+end Numee

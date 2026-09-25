@@ -33,8 +33,8 @@ Creek and Tokyo Japanese oppositely (`cuts_differ`).
 * A `Marking` records, for each lexical word, its units and the units bearing the mark, the
   primary stress or the restricted tone; the tone-bearing unit is `Tone.TBUKind`. Tone is
   stated on a lexicon of morphemes with an optional pitch specification.
-* Table I's quadrants remain the two Boolean dimensions of `Tone.WordProsody`, which the
-  Drubea fragment and [lionnet-2025] instantiate; the languages of Table I are not listed.
+* Table I's languages are not listed; its two dimensions are `Tonal` and `StressAccent`,
+  which `Studies/Lionnet2025` evaluates for Drubea.
 
 ## References
 
@@ -109,22 +109,6 @@ theorem not_obligatory_of_no_units {m : Marking Word U} {w : Word} (h : m.units 
 
 theorem not_stressAccent_of_no_units {m : Marking Word U} {w : Word} (h : m.units w = ∅) :
     ¬ StressAccent m := λ hs => not_obligatory_of_no_units h hs.2.1
-
-/-- Table I's four cells. -/
-inductive ProsodicQuadrant where
-  | toneAndStress
-  | toneOnly
-  | stressOnly
-  | neither
-  deriving DecidableEq, Repr
-
-/-- The cell of Table I a profile falls in. -/
-def quadrant (p : WordProsody) : ProsodicQuadrant :=
-  match p.tone, p.stressAccent with
-  | true, true => .toneAndStress
-  | true, false => .toneOnly
-  | false, true => .stressOnly
-  | false, false => .neither
 
 /-! ### Tokyo Japanese -/
 

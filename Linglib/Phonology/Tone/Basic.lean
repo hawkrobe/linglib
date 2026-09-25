@@ -25,8 +25,8 @@ shifts; the terracing reading of `[raised]` is `Tone.Register`.
 * `TRN.H`, `TRN.M`, `TRN.L`, `TRN.superHigh` — the four full specifications;
   `TRN.empty`, `TRN.downstep`, `TRN.upstep` — the register-only nodes.
 * `TRN.assimilate`, `TRN.merge`, `TRN.dock` — the feature operations, through the bundle.
-* `TBUKind`, `WordProsody`, `IsRegisterOnly` — the tone-bearing unit, [hyman-2006]'s two
-  word-prosodic dimensions, and [lionnet-2025]'s register-only inventories.
+* `TBUKind`, `IsRegisterOnly` — the tone-bearing unit and [lionnet-2025]'s register-only
+  inventories.
 -/
 
 @[expose] public section
@@ -51,8 +51,7 @@ structure TRN where
 
 namespace TRN
 
-/-- The fully unspecified node: the registerless mora of Drubea and Numèè
-([lionnet-2025]). -/
+/-- The fully unspecified node. -/
 @[match_pattern] def empty : TRN := ⟨none, none⟩
 
 /-- A floating `[-raised]`: the downstep node of a register-only system. -/
@@ -127,14 +126,6 @@ Drubea and Numèè ([lionnet-2025]). -/
 inductive TBUKind where
   | mora
   | syllable
-  deriving DecidableEq, Repr
-
-/-- A language's word prosody: [hyman-2006]'s two independent dimensions — whether pitch
-enters the lexical realization of morphemes (his definition (3) of tone) and whether words
-carry an obligatory metrical head (his definition (5) of stress accent). -/
-structure WordProsody where
-  tone : Bool
-  stressAccent : Bool
   deriving DecidableEq, Repr
 
 /-- A **register-only** inventory ([lionnet-2025]): no node specifies `[upper]`, so only the
