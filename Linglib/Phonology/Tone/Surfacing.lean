@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.List.TakeDrop
 public import Linglib.Phonology.Subregular.Dependence
+public import Linglib.Phonology.Subregular.Docking
 
 /-!
 # Tonal surfacing processes
@@ -26,6 +27,22 @@ The laws are the shared minimum: surfacing positions are in-domain (`lt_length`)
 marked tone is faithful — an underlying marked tone always surfaces (`surfaces_of_hi`) —
 and the two written values are distinct (`hi_ne_lo`), which makes the pointwise
 characterizations (`map_getElem?_hi_iff`, `map_getElem?_lo_iff`) read the map exactly.
+
+A surfacing process writes the default at every non-surfacing position, which is the whole
+story over a two-letter alphabet; over a richer alphabet the general positional rewrite is
+`Subregular.Docking`, which docks a change at the positions its context picks out and keeps
+the rest, and a surfacing process on a two-letter word is the case `Surfacing.toDocking`
+(`Surfacing.toDocking_map`).
+
+## Main definitions
+
+* `Surfacing`, `Surfacing.map`, `Surfacing.support` — the process, its rewrite and its
+  surfacing set.
+* `Surfacing.toDocking` — a surfacing process as a docking process.
+
+## References
+
+* [jardine-2016a]
 -/
 
 @[expose] public section
@@ -146,5 +163,28 @@ theorem map_eq_indicator :
   List.ext_getElem (by simp [map]) fun i h₁ h₂ => by simp [map, mem_support]
 
 end Surfacing
+
+/-- A surfacing process as a docking process: the marked tone docks at the surfacing
+positions. -/
+def Surfacing.toDocking {α : Type*} (P : Surfacing α) : Subregular.Docking α where
+  dock _ := P.hi
+  Docks := P.Surfaces
+  lt_length := P.lt_length
+  decDocks := P.decSurfaces
+
+/-- On a two-letter word the two rewrites agree: a non-surfacing position holds the default,
+the marked tone being faithful. -/
+theorem Surfacing.toDocking_map {α : Type*} (P : Surfacing α) {w : List α}
+    (hw : ∀ a ∈ w, a = P.hi ∨ a = P.lo) : P.toDocking.map w = P.map w := by
+  refine List.ext_getElem? fun i => ?_
+  rw [Subregular.Docking.map_getElem?, Surfacing.map_getElem?]
+  rcases hi : w[i]? with _ | a
+  · rfl
+  · simp only [Option.map_some, toDocking, Option.some.injEq]
+    split_ifs with hs
+    · rfl
+    · rcases hw a (List.mem_of_getElem? hi) with rfl | rfl
+      · exact absurd (P.surfaces_of_hi hi) hs
+      · rfl
 
 end Tone

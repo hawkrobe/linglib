@@ -24,16 +24,20 @@ schemes (`BMRS.lean`).
 
 * `Subregular.succ?` / `Subregular.pred?`: the next/previous position, as partial functions.
 * `Subregular.Term`: walks; `Term.eval` reads the position a walk reaches, `none` off an edge.
-* `Term.Backward` / `Term.Forward` / `Term.pdepth`: one-sided walks and how far back one reaches.
+* `Term.Backward` / `Term.Forward` / `Term.pdepth` / `Term.sdepth`: one-sided walks and how far
+  back and forward a walk reaches.
 * `Subregular.QF`: label/definedness tests on walks, closed under boolean combination;
   `QF.Realize` is decidable satisfaction; `initial`/`final` are the derived edge tests.
-* `QF.BackBounded`: every walk backward with depth `≤ r`.
+* `QF.Bounded l r`: every walk reaches at most `l` back and `r` forward; `QF.BackBounded r` is
+  `Bounded r 0`.
 
 ## Main results
 
 * `Term.eval_backward`: a backward walk of depth `j` from position `n` reads exactly `n - j`.
-* `BackBounded.realize_congr`: a backward-bounded formula cannot distinguish positions whose
-  bounded left contexts agree.
+* `Term.eval_bounded`: a walk reads the same displacement from two positions whose windows
+  have the same edges.
+* `Bounded.realize_congr`: a bounded formula cannot distinguish positions whose windows agree;
+  `BackBounded.realize_congr` is the left-window case.
 
 ## Implementation notes
 
@@ -200,6 +204,12 @@ def pdepth : Term → ℕ
   | .pred t => t.pdepth + 1
   | .succ t => t.pdepth
 
+/-- The successor depth of a term: how far forward it reaches. -/
+def sdepth : Term → ℕ
+  | .var => 0
+  | .pred t => t.sdepth
+  | .succ t => t.sdepth + 1
+
 instance instDecidableBackward : ∀ t : Term, Decidable t.Backward
   | .var => .isTrue trivial
   | .pred t => instDecidableBackward t
@@ -247,6 +257,105 @@ theorem eval_backward (hn : n < w.length) :
       · rw [pred?_of_pos (by omega) (by omega), ite_eq_left (by omega), Nat.sub_sub]
     · rw [ite_eq_right h, Option.bind_none, ite_eq_right (by omega)]
 
+
+/-! ### Bounded windows -/
+
+/-- A walk reaches at most `pdepth` back. -/
+theorem le_eval_add_pdepth : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → n ≤ v + t.pdepth
+  | .var, v, h => by
+    obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
+    simp [pdepth]
+  | .succ t, v, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
+    have := le_eval_add_pdepth hu
+    simp only [pdepth]; omega
+  | .pred t, v, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
+    have := le_eval_add_pdepth hu
+    simp only [pdepth]; omega
+
+/-- A walk reaches at most `sdepth` forward. -/
+theorem eval_le_add_sdepth : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → v ≤ n + t.sdepth
+  | .var, v, h => by
+    obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
+    simp [sdepth]
+  | .succ t, v, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
+    have := eval_le_add_sdepth hu
+    simp only [sdepth]; omega
+  | .pred t, v, h => by
+    obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
+    have := eval_le_add_sdepth hu
+    simp only [sdepth]; omega
+
+/-- **Window transport.** From two in-range positions whose windows `l` back and `r` forward
+have the same edges — an offset stays in range at one exactly when it does at the other — a
+walk reaching at most `l` back and `r` forward reads the same displacement, or falls off at
+both. -/
+theorem eval_bounded {l r n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
+    (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n'))
+    (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length)) :
+    ∀ {t : Term}, t.pdepth ≤ l → t.sdepth ≤ r →
+      ((t.eval w n).map fun v ↦ (v : Int) - n) = (t.eval w' n').map fun v ↦ (v : Int) - n' := by
+  intro t
+  induction t with
+  | var => intro _ _; simp [eval_var hn, eval_var hn']
+  | succ t ih =>
+    intro hp hs
+    simp only [pdepth, sdepth] at hp hs
+    have ih := ih hp (by omega)
+    simp only [eval_succ]
+    rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
+      simp [hv, hv'] at ih ⊢
+    have hvn := le_eval_add_pdepth hv
+    have hvs := eval_le_add_sdepth hv
+    have hvl := eval_lt hv
+    have hvl' := eval_lt hv'
+    have key : v + 1 < w.length ↔ v' + 1 < w'.length := by
+      rcases Nat.lt_or_ge v n with hlt | hge
+      · constructor <;> intro <;> omega
+      · obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hge
+        have hj : j + 1 ≤ r := by omega
+        have := hright (j + 1) hj
+        have hv'eq : v' = n' + j := by omega
+        subst hv'eq
+        simpa [Nat.add_assoc] using this
+    by_cases h : v + 1 < w.length
+    · rw [show succ? w v = some (v + 1) from succ?_eq_some_iff.mpr ⟨rfl, h⟩,
+        show succ? w' v' = some (v' + 1) from succ?_eq_some_iff.mpr ⟨rfl, key.mp h⟩]
+      simp; omega
+    · rw [show succ? w v = none from by simp [succ?, h],
+        show succ? w' v' = none from by simp [succ?, mt key.mpr h]]
+      rfl
+  | pred t ih =>
+    intro hp hs
+    simp only [pdepth, sdepth] at hp hs
+    have ih := ih (by omega) hs
+    simp only [eval_pred]
+    rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
+      simp [hv, hv'] at ih ⊢
+    have hvn := le_eval_add_pdepth hv
+    have hvl := eval_lt hv
+    have hvl' := eval_lt hv'
+    have key : 1 ≤ v ↔ 1 ≤ v' := by
+      rcases Nat.lt_or_ge n v with hlt | hge
+      · constructor <;> intro <;> omega
+      · obtain ⟨j, hj⟩ := Nat.exists_eq_add_of_le hge
+        have hjl : j + 1 ≤ l := by omega
+        have := hleft (j + 1) hjl
+        constructor <;> intro <;> omega
+    by_cases h : 1 ≤ v
+    · have h' : 1 ≤ v' := key.mp h
+      rw [pred?_of_pos h (Nat.le_of_lt hvl), pred?_of_pos h' (Nat.le_of_lt hvl')]
+      simp
+      omega
+    · rw [show v = 0 by omega, show v' = 0 by omega]
+      rfl
+
 end Term
 
 /-! ### Quantifier-free formulas -/
@@ -290,49 +399,82 @@ def initial (t : Term) : QF α := .conj (.defined t) (.neg (.defined t.pred))
 /-- `t` reads a final position: in-domain with no successor. -/
 def final (t : Term) : QF α := .conj (.defined t) (.neg (.defined t.succ))
 
-/-! ### Backward-bounded formulas read only a left window -/
+/-! ### Bounded formulas read only a window -/
 
-/-- A formula is backward-bounded by `r` if every term it uses is backward with predecessor
-depth `≤ r`, so it reads only the `r + 1` positions ending at its own. -/
-def BackBounded (r : ℕ) : QF α → Prop
-  | .label _ t => t.Backward ∧ t.pdepth ≤ r
-  | .defined t => t.Backward ∧ t.pdepth ≤ r
+/-- A formula is bounded by `l` back and `r` forward if every walk it uses reaches at most `l`
+positions back and `r` forward, so it reads only the window from `l` before its position to
+`r` after. -/
+def Bounded (l r : ℕ) : QF α → Prop
+  | .label _ t => t.pdepth ≤ l ∧ t.sdepth ≤ r
+  | .defined t => t.pdepth ≤ l ∧ t.sdepth ≤ r
   | .tru => True
   | .fls => True
-  | .neg φ => φ.BackBounded r
-  | .conj φ ψ => φ.BackBounded r ∧ ψ.BackBounded r
-  | .disj φ ψ => φ.BackBounded r ∧ ψ.BackBounded r
+  | .neg φ => φ.Bounded l r
+  | .conj φ ψ => φ.Bounded l r ∧ ψ.Bounded l r
+  | .disj φ ψ => φ.Bounded l r ∧ ψ.Bounded l r
 
-/-- A backward-bounded formula reads only the `r + 1` symbols ending at its position: it has the
-same truth value at `(w, n)` and `(w', n')` whenever their bounded left contexts — the labels at
-offsets `0 … r`, and which of those offsets stay in range — agree. -/
-theorem BackBounded.realize_congr {r : ℕ} {w w' : List α} {n n' : ℕ}
+instance instDecidableBounded (l r : ℕ) : ∀ φ : QF α, Decidable (φ.Bounded l r)
+  | .label _ _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .defined _ => inferInstanceAs (Decidable (_ ∧ _))
+  | .tru => .isTrue trivial
+  | .fls => .isTrue trivial
+  | .neg φ => instDecidableBounded l r φ
+  | .conj φ ψ => @instDecidableAnd _ _ (instDecidableBounded l r φ) (instDecidableBounded l r ψ)
+  | .disj φ ψ => @instDecidableAnd _ _ (instDecidableBounded l r φ) (instDecidableBounded l r ψ)
+
+/-- A formula is backward-bounded by `r` if it reads only the `r + 1` positions ending at its
+own: bounded by `r` back and nothing forward. -/
+abbrev BackBounded (r : ℕ) (φ : QF α) : Prop := φ.Bounded r 0
+
+/-- A bounded formula reads only its window: it has the same truth value at `(w, n)` and
+`(w', n')` whenever the windows `l` back and `r` forward agree — the same labels at each
+offset, and the same offsets in range. -/
+theorem Bounded.realize_congr {l r : ℕ} {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
-    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
-    (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
-    ∀ {φ : QF α}, φ.BackBounded r → (φ.Realize w n ↔ φ.Realize w' n') := by
+    (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n') ∧ (j ≤ n → w[n - j]? = w'[n' - j]?))
+    (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length) ∧ w[n + j]? = w'[n' + j]?) :
+    ∀ {φ : QF α}, φ.Bounded l r → (φ.Realize w n ↔ φ.Realize w' n') := by
+  have hl : ∀ j ≤ l, (j ≤ n ↔ j ≤ n') := fun j hj ↦ (hleft j hj).1
+  have hr : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length) := fun j hj ↦ (hright j hj).1
   intro φ
   induction φ with
   | label a t =>
-    rintro ⟨ht, hb⟩
-    simp only [Realize, Term.eval_backward hn ht, Term.eval_backward hn' ht]
-    by_cases h : t.pdepth ≤ n
-    · rw [ite_eq_left h, ite_eq_left ((hedge t.pdepth hb).mp h)]
-      simp only [Option.bind_some]
-      rw [hlbl t.pdepth hb]
-    · rw [ite_eq_right h, ite_eq_right (fun hh => h ((hedge t.pdepth hb).mpr hh)),
-        Option.bind_none, Option.bind_none]
+    rintro ⟨hp, hs⟩
+    have h := Term.eval_bounded hn hn' hl hr hp hs
+    simp only [Realize]
+    rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
+      simp [hv, hv'] at h ⊢
+    have hvn := Term.le_eval_add_pdepth hv
+    have hvs := Term.eval_le_add_sdepth hv
+    rcases Nat.lt_or_ge v n with hlt | hge
+    · have hveq : v = n - (n - v) := by omega
+      have hv'eq : v' = n' - (n - v) := by omega
+      rw [hveq, hv'eq, (hleft (n - v) (by omega)).2 (by omega)]
+    · obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hge
+      have hv'eq : v' = n' + j := by omega
+      rw [hv'eq, (hright j (by omega)).2]
   | defined t =>
-    rintro ⟨ht, hb⟩
-    simp only [Realize, Term.eval_backward hn ht, Term.eval_backward hn' ht]
-    by_cases h : t.pdepth ≤ n
-    · rw [ite_eq_left h, ite_eq_left ((hedge t.pdepth hb).mp h)]; simp
-    · rw [ite_eq_right h, ite_eq_right (fun hh => h ((hedge t.pdepth hb).mpr hh))]
+    rintro ⟨hp, hs⟩
+    have h := Term.eval_bounded hn hn' hl hr hp hs
+    simp only [Realize]
+    rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
+      simp [hv, hv'] at h ⊢
   | tru => intro _; simp [Realize]
   | fls => intro _; simp [Realize]
   | neg φ ih => intro hφ; simp only [Realize, ih hφ]
   | conj φ ψ ihφ ihψ => rintro ⟨h1, h2⟩; simp only [Realize, ihφ h1, ihψ h2]
   | disj φ ψ ihφ ihψ => rintro ⟨h1, h2⟩; simp only [Realize, ihφ h1, ihψ h2]
+
+/-- A backward-bounded formula reads only the `r + 1` symbols ending at its position. -/
+theorem BackBounded.realize_congr {r : ℕ} {w w' : List α} {n n' : ℕ}
+    (hn : n < w.length) (hn' : n' < w'.length)
+    (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
+    (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
+    ∀ {φ : QF α}, φ.BackBounded r → (φ.Realize w n ↔ φ.Realize w' n') :=
+  Bounded.realize_congr hn hn' (fun j hj ↦ ⟨hedge j hj, fun _ ↦ hlbl j hj⟩) fun j hj ↦ by
+    obtain rfl : j = 0 := Nat.le_zero.mp hj
+    exact ⟨iff_of_true (by simpa using hn) (by simpa using hn'),
+      by simpa using hlbl 0 (Nat.zero_le _)⟩
 
 end QF
 

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.QF
+public import Linglib.Phonology.Subregular.Docking
 
 /-!
 # Quantifier-free logical transductions
@@ -32,11 +32,15 @@ transduction, though the composite is not in general itself quantifier-free.
 * `Transduction.applyComp`: composition of two transductions (one cyclic derivation step on top
   of another).
 * `Transduction.LeftLocal`: every guard backward-bounded by `r`.
+* `Transduction.relabel`: the one-copy relabelling transduction of a quantifier-free docking
+  process (`Subregular.Docking.ofQF`) over a finite alphabet.
 
 ## Main results
 
 * `Transduction.emitAt_eq_of_agree`: a left-local transduction emits the same block at positions
   whose bounded left contexts agree.
+* `Transduction.apply_relabel`: on words over the alphabet, the relabelling transduction of a
+  quantifier-free docking process computes its map.
 
 ## Implementation notes
 
@@ -120,6 +124,81 @@ theorem emitAt_eq_of_agree {r : ℕ} {T : Transduction α β}
   · rw [ite_eq_left h, ite_eq_left ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mp h)]
   · rw [ite_eq_right h,
       ite_eq_right (fun hh => h ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mpr hh))]
+
+end Transduction
+
+/-! ### Relabelling transductions -/
+
+theorem QF.realize_label_var_iff [DecidableEq α] {w : List α} {n : ℕ} {a : α} :
+    (QF.label a .var).Realize w n ↔ w[n]? = some a := by
+  simp only [QF.Realize, Term.eval]
+  split_ifs with h
+  · simp
+  · have : w[n]? = none := List.getElem?_eq_none (Nat.le_of_not_lt h)
+    simp [this]
+
+namespace Transduction
+
+variable [DecidableEq α]
+
+/-- The one-copy relabelling transduction of a quantifier-free docking process over the
+symbols `alphabet`: for each symbol, a clause docking it under the guard, then a faithful
+clause. -/
+def relabel (φ : QF α) (dock : α → α) (alphabet : List α) : Transduction α α where
+  copies := 1
+  clause _ :=
+    (alphabet.map fun a => (φ.conj (.label a .var), dock a)) ++
+      alphabet.map fun a => (.label a .var, a)
+
+private theorem findSome?_eq_of_mem {β : Type*} {a : α} {v : α → β} :
+    ∀ {l : List α}, a ∈ l →
+      l.findSome? (fun b => if a = b then some (v b) else none) = some (v a)
+  | b :: l, h => by
+    rw [List.findSome?_cons]
+    by_cases hb : a = b
+    · subst hb; simp
+    · simp only [hb, ↓reduceIte]
+      exact findSome?_eq_of_mem (List.mem_of_ne_of_mem hb h)
+
+omit [DecidableEq α] in
+private theorem findSome?_none (l : List α) {β : Type*} :
+    l.findSome? (fun _ => (none : Option β)) = none :=
+  List.findSome?_eq_none_iff.2 fun _ _ => rfl
+
+omit [DecidableEq α] in
+private theorem flatMap_range_toList_eq_mapIdx {β : Type*} (f : ℕ → α → β) :
+    ∀ w : List α, (List.range w.length).flatMap (fun n => (w[n]?.map (f n)).toList) = w.mapIdx f
+  | [] => rfl
+  | a :: l => by
+    rw [List.length_cons, List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map,
+      List.mapIdx_cons, ← flatMap_range_toList_eq_mapIdx (fun i => f (i + 1)) l]
+    simp
+
+/-- On a word over the alphabet, the relabelling transduction computes the docking map. -/
+theorem apply_relabel {φ : QF α} {dock : α → α} {alphabet : List α} {w : List α}
+    (hw : ∀ a ∈ w, a ∈ alphabet) :
+    (relabel φ dock alphabet).apply w = (Docking.ofQF φ dock).map w := by
+  have hemit : (relabel φ dock alphabet).emitAt w = fun n =>
+      (w[n]?.map fun a => if n < w.length ∧ φ.Realize w n then dock a else a).toList := by
+    funext n
+    simp only [emitAt, relabel, List.finRange_succ, List.finRange_zero, List.map_nil,
+      List.filterMap_cons, List.filterMap_nil, List.findSome?_append, List.findSome?_map,
+      Function.comp_def, QF.Realize]
+    by_cases hn : n < w.length
+    · have hmem : w[n] ∈ alphabet := hw _ (List.getElem_mem hn)
+      have hvar : ((Term.eval w n Term.var).bind fun x => w[x]?) = some w[n] := by
+        simp [Term.eval, hn]
+      simp only [hvar, Option.some.injEq, List.getElem?_eq_getElem hn]
+      by_cases hφ : φ.Realize w n
+      · simp only [hφ, true_and]
+        rw [findSome?_eq_of_mem hmem, Option.some_or]
+        simp [hn]
+      · simp only [hφ, false_and, ite_false, findSome?_none, Option.none_or]
+        rw [findSome?_eq_of_mem hmem]
+        simp [hn]
+    · simp [Term.eval, hn, findSome?_none]
+  rw [apply, hemit, flatMap_range_toList_eq_mapIdx]
+  rfl
 
 end Transduction
 
