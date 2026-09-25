@@ -16,8 +16,8 @@ A sentence type is the grammatical kind of a clause: Sadock and Zwicky's declara
 interrogative, imperative and exclamative, with the interrogative subtyped as polar,
 alternative or constituent, and the promissive that Korean grammaticalizes beside the
 imperative. A sentence type is a form; the speech act it conventionally performs is its force,
-`Mood.Illocutionary`, read off by `Clause.SentenceType.force`. An embedding context is where a
-clause token occurs, Bhatt and Dayal's four cells. A cell is a sentence type in an embedding
+`Discourse.SpeechAct.Force`, read off by `Clause.SentenceType.force`. An embedding context is
+where a clause token occurs, Bhatt and Dayal's four cells. A cell is a sentence type in an embedding
 context, and a distribution records for each cell whether some element or process is
 obligatory, optional or excluded there, or nothing where the source is silent; the cells where
 it is possible and where it is required are the two relations a distribution determines. A

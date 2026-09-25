@@ -29,7 +29,7 @@ the targeted component.
 * `SpeechEvent` — a force together with `CON(e*)`.
 * `SpeechEvent.toState`, `SpeechEvent.modal` — the induced state and
   its licensed necessity modal.
-* `Component.flavor`, `Illocutionary.primaryFlavor` — Hacquard's
+* `Component.flavor`, `Discourse.SpeechAct.Force.primaryFlavor` — Hacquard's
   flavor assignment, derived from component targeting.
 * `HasTarget ModalFlavor` — the third instance of [portner-2018]'s
   classification.
@@ -38,7 +38,7 @@ the targeted component.
 
 [speas-tenny-2003] grammaticalize exactly four speech acts
 (declarative, interrogative, imperative, subjunctive). `SpeechEvent`
-uses the library-wide five-way `Illocutionary` — no subjunctive;
+uses the library-wide five-way `Discourse.SpeechAct.Force` — no subjunctive;
 promissive and exclamative are conjectural linglib extensions — and
 Hacquard gives content clauses only for declaratives and imperatives,
 so the inquisitive route induces the initial state. Binding height
@@ -53,6 +53,7 @@ namespace Mood
 open DynamicSemantics
 open Modality (ModalFlavor)
 open HasTarget (target)
+open Discourse.SpeechAct (Force)
 
 variable {W : Type*}
 
@@ -62,7 +63,7 @@ variable {W : Type*}
 ([hacquard-2006], her assumption 4, pp. 142–3). -/
 structure SpeechEvent (W : Type*) where
   /-- The illocutionary force the SAP head encodes. -/
-  force : Illocutionary
+  force : Force
   /-- `CON(e*)`: the propositional content of the speech event. -/
   content : W → List (W → Prop)
 
@@ -176,7 +177,7 @@ def Component.flavor : Component → ModalFlavor
 
 /-- The primary flavor a speech act licenses ([hacquard-2006]):
 the targeted component's flavor. -/
-def Illocutionary.primaryFlavor (f : Illocutionary) : ModalFlavor :=
+def _root_.Discourse.SpeechAct.Force.primaryFlavor (f : Force) : ModalFlavor :=
   (target f).flavor
 
 /-- `Component.flavor` is a section of the modal-flavor targeting on
@@ -187,16 +188,15 @@ theorem target_flavor (c : Component) (h : c ≠ .inquisitive) :
   cases c <;> first | rfl | exact absurd rfl h
 
 @[simp] theorem primaryFlavor_declarative :
-    Illocutionary.declarative.primaryFlavor = .epistemic := rfl
+    Force.declarative.primaryFlavor = .epistemic := rfl
 
 @[simp] theorem primaryFlavor_imperative :
-    Illocutionary.imperative.primaryFlavor = .deontic := rfl
+    Force.imperative.primaryFlavor = .deontic := rfl
 
 /-- Different speech acts, different flavors — the "must" ambiguity
 without lexical ambiguity. -/
 theorem speech_act_determines_flavor :
-    Illocutionary.declarative.primaryFlavor ≠
-      Illocutionary.imperative.primaryFlavor := by decide
+    Force.declarative.primaryFlavor ≠ Force.imperative.primaryFlavor := by decide
 
 /-! ### Worked example: "You can leave"
 

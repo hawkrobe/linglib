@@ -2,7 +2,6 @@ module
 
 public import Linglib.Discourse.Commitment.Preferential
 public import Linglib.Discourse.Role
-public import Linglib.Fragments.Marathi.Particles
 public import Linglib.Data.Examples.Deo2025
 
 /-!

@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Rigidity
+public import Linglib.Syntax.Clause.Basic
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Pragmatics.Expressives.Basic
@@ -121,35 +122,25 @@ end Outlook
 
 /-! ### The counterstance requirement ((37)–(39)) -/
 
-/-- The prior discourse move an outlook-marked utterance responds to. -/
-inductive PriorMove where
-  /-- An assertion evaluating the prejacent's topic ((37)). -/
-  | evaluativeAssertion
-  /-- A polar question about the prejacent's issue ((39), Q1). -/
-  | polarQuestion
-  /-- A general wh-question that leaves the prejacent's issue unraised ((38), (39) Q2). -/
-  | whQuestion
-  deriving DecidableEq
+/-- A prior move raises a counterstance when it puts the prejacent's issue at issue, as an
+evaluative assertion about its topic, (37), or a polar question about it, (39) Q1, does and a
+general wh-question that leaves the issue unraised, (38) and (39) Q2, does not. -/
+def RaisesCounterstance (t : Clause.SentenceType) : Prop := t = .declarative ∨ t = .polar
 
-/-- A prior move raises a counterstance when it puts the prejacent's issue at issue: an
-evaluative assertion or a polar question does, a general wh-question does not. -/
-def PriorMove.RaisesCounterstance (m : PriorMove) : Prop := m ≠ .whQuestion
+instance : DecidablePred RaisesCounterstance := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-instance : DecidablePred PriorMove.RaisesCounterstance :=
-  λ m => inferInstanceAs (Decidable (m ≠ .whQuestion))
-
-/-- The row's prior move. -/
-def priorMove? (row : LinguisticExample) : Option PriorMove :=
+/-- The sentence type of the row's prior move. -/
+def priorMove? (row : LinguisticExample) : Option Clause.SentenceType :=
   match row.feature? "priorMove" with
-  | some "evaluativeAssertion" => some .evaluativeAssertion
-  | some "polarQuestion" => some .polarQuestion
-  | some "whQuestion" => some .whQuestion
+  | some "evaluativeAssertion" => some .declarative
+  | some "polarQuestion" => some .polar
+  | some "whQuestion" => some .constituent
   | _ => none
 
 /-- The prediction for a row: felicitous iff its prior move raises a counterstance. -/
 def PredictsFelicitous (row : LinguisticExample) : Prop :=
   match priorMove? row with
-  | some m => m.RaisesCounterstance
+  | some t => RaisesCounterstance t
   | none => False
 
 instance (row : LinguisticExample) : Decidable (PredictsFelicitous row) := by

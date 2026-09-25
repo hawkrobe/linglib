@@ -51,15 +51,14 @@ namespace RuytenbeekEtAl2017
 
 open Discourse.SpeechAct French
 open Modality
-open Mood (Illocutionary)
-open Mood.Illocutionary (primaryFlavor)
+open Discourse.SpeechAct.Force (primaryFlavor)
 
 /-! ### Constructions and forces -/
 
-/-- The morphosyntactic mood of a construction. -/
-def Construction.mood : Construction → Illocutionary
+/-- The sentence type of a construction; its interrogatives are polar questions. -/
+def Construction.sentenceType : Construction → Clause.SentenceType
   | .imperative => .imperative
-  | .controlInterrogative | .canYou | .isItPossible => .interrogative
+  | .controlInterrogative | .canYou | .isItPossible => .polar
   | .youMust | .youCan | .itIsPossible | .controlDeclarative => .declarative
 
 /-- The modal of a construction, from the French fragment. -/
@@ -73,20 +72,6 @@ def Construction.modal : Construction → Option ModalItem
 requests is the addressee's ability. -/
 def Construction.queriedPrep : Construction → Option PreparatoryCondition
   | .canYou | .isItPossible => some .ability
-  | _ => none
-
-/-- The major illocutionary forces. -/
-inductive Force where
-  | directive
-  | question
-  | assertion
-  deriving DecidableEq, Repr
-
-/-- The force a sentence type encodes under literalism. -/
-def encodedForce : Illocutionary → Option Force
-  | .imperative => some .directive
-  | .interrogative => some .question
-  | .declarative => some .assertion
   | _ => none
 
 /-! ### The corpus and conventionalisation -/
@@ -115,13 +100,14 @@ theorem conventionalised : Conventionalised .canYou ∧ ¬ Conventionalised .isI
 directive force or the construction is a conventionalised indirect request; any other
 directive reading is secondary and activates the encoded force. -/
 def Literalist.DirectivePrimary (c : Construction) : Prop :=
-  encodedForce c.mood = some .directive ∨ Conventionalised c
+  c.sentenceType.force = .imperative ∨ Conventionalised c
 
 /-- Under non-literalism a directive reading is primary when the construction shares the
 imperative's directive-making semantics: the imperative's own deontic necessity, the
 questioning of the addressee's ability, or a possibility modal's enablement. -/
 def NonLiteralist.DirectivePrimary (c : Construction) : Prop :=
-  c.mood = .imperative ∨ (∃ m ∈ c.modal, (.necessity, primaryFlavor .imperative) ∈ m.meaning) ∨
+  c.sentenceType = .imperative ∨
+    (∃ m ∈ c.modal, (.necessity, primaryFlavor .imperative) ∈ m.meaning) ∨
     c.queriedPrep = some .ability ∨ ∃ m ∈ c.modal, .possibility ∈ m.forces
 
 instance (c : Construction) : Decidable (Literalist.DirectivePrimary c) := by

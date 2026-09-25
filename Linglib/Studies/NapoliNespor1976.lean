@@ -84,7 +84,7 @@ instance (c : Construction) : Decidable c.Precise := inferInstanceAs (Decidable 
 /-- A discourse move hosting a *non₂* candidate. -/
 structure Move where
   priorBelief : PriorBelief
-  force : Illocutionary
+  force : Discourse.SpeechAct.Force
   matrix : Polarity
   construction : Construction
   deriving DecidableEq, Repr
