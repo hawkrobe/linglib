@@ -1,16 +1,17 @@
 module
 
-public import Linglib.Syntax.Minimalist.VerbSecond
+public import Linglib.Syntax.Clause.Basic
 
 /-!
 # English verb second
 
-This file records the verb-second grammars of Standard English and Belfast English, the
-clause-type heads of Westergaard's split ForceP that the finite verb moves to, as her Table 3.1
-gives them. Standard English moves the verb, an auxiliary, only in matrix wh-questions and
-yes/no-questions, the subject–auxiliary inversion. Belfast English adds imperatives, *Bring you
-that with you!*, and embedded yes/no-questions, *They asked me was I going to the party*, the
-examples Henry reports; Westergaard notes that the imperative movement may target a lower head.
+This file records where the finite verb of Standard English and of Belfast English moves to the
+left periphery, as a distribution over sentence types and embedding contexts. Standard English
+moves the verb, an auxiliary, only in matrix wh-questions and yes/no-questions, the
+subject–auxiliary inversion; declaratives, exclamatives, imperatives and embedded clauses are
+not verb second. Belfast English adds imperatives, *Bring you that with you!*, and embedded
+root-like yes/no-questions, *They asked me was I going to the party*, the examples Henry
+reports; Westergaard notes that the imperative movement may target a lower head.
 
 ## References
 
@@ -22,13 +23,26 @@ examples Henry reports; Westergaard notes that the imperative movement may targe
 
 namespace English
 
-open Minimalist
+open Clause
 
-/-- Standard English moves the finite verb to Int⁰ and Pol⁰ only. -/
-abbrev verbSecond : V2Grammar := {.Int, .Pol}
+/-- In Standard English the auxiliary moves in root wh-questions and yes/no-questions and
+nowhere else. -/
+def verbSecond : Distribution
+  | .polar, .matrix => some .obligatory
+  | .constituent, .matrix => some .obligatory
+  | .declarative, .matrix => some .excluded
+  | .exclamative, .matrix => some .excluded
+  | .imperative, .matrix => some .excluded
+  | .declarative, .subordinated => some .excluded
+  | .polar, .subordinated => some .excluded
+  | .constituent, .subordinated => some .excluded
+  | _, _ => none
 
-/-- Belfast English moves the finite verb to Int⁰, Pol⁰, Imp⁰ and, in embedded questions,
-Wh⁰. -/
-abbrev Belfast.verbSecond : V2Grammar := {.Int, .Pol, .Imp, .Wh}
+/-- Belfast English is Standard English with verb movement in imperatives and in embedded
+root-like yes/no-questions. -/
+def Belfast.verbSecond : Distribution
+  | .imperative, .matrix => some .obligatory
+  | .polar, .quasiSubordinated => some .obligatory
+  | t, e => English.verbSecond t e
 
 end English

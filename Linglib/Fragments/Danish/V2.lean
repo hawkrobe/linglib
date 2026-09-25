@@ -1,14 +1,14 @@
 module
 
-public import Linglib.Syntax.Minimalist.VerbSecond
+public import Linglib.Syntax.Clause.Basic
 
 /-!
 # Danish verb second
 
-This file records the verb-second grammar of Danish, the clause-type heads of Westergaard's
-split ForceP that the finite verb moves to, as her Table 3.1 gives them: declaratives,
-wh-questions and yes/no-questions as in Standard Norwegian, and exclamatives besides, *Hvor er
-han sød!*, though Westergaard notes that only certain types of Danish exclamative are verb
+This file records where the finite verb of Danish moves to the left periphery, as a
+distribution over sentence types and embedding contexts. Danish is verb second in root
+declaratives, wh-questions and yes/no-questions as Standard Norwegian is, and in some types of
+exclamative, *Hvor er han sød!*, though not all, as Westergaard notes; imperatives are not verb
 second.
 
 ## References
@@ -20,9 +20,16 @@ second.
 
 namespace Danish
 
-open Minimalist
+open Clause
 
-/-- Danish moves the finite verb to Decl⁰, Int⁰, Pol⁰ and Excl⁰. -/
-abbrev verbSecond : V2Grammar := {.Decl, .Int, .Pol, .Excl}
+/-- Danish has obligatory verb second in the three root clause types, verb second in some
+exclamatives, and none in imperatives. -/
+def verbSecond : Distribution
+  | .declarative, .matrix => some .obligatory
+  | .polar, .matrix => some .obligatory
+  | .constituent, .matrix => some .obligatory
+  | .exclamative, .matrix => some .optional
+  | .imperative, .matrix => some .excluded
+  | _, _ => none
 
 end Danish

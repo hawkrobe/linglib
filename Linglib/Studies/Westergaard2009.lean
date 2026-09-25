@@ -1,65 +1,139 @@
 module
 
-public import Linglib.Syntax.Minimalist.VerbSecond
+public import Linglib.Syntax.Clause.Basic
 public import Linglib.Fragments.Norwegian.V2
 public import Linglib.Fragments.English.V2
 public import Linglib.Fragments.German.V2
 public import Linglib.Fragments.Danish.V2
 public import Linglib.Data.Examples.Westergaard2009
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Westergaard (2009): The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy
 
-This file formalizes the syntactic model of [westergaard-2009]. Verb second is not one
-parameter but a setting per clause-type head of a split ForceP: a language's grammar is the
-set of heads the finite verb moves to (`Minimalist.V2Grammar`), and Table 3.1's six Germanic
-varieties are the verb-second grammars of the Norwegian, English, German and Danish
-fragments. What children acquire are
-micro-cues, pieces of I-language structure stating, for one head, what its specifier holds and
-whether the verb fills it (`MicroCue`); a grammar expresses a cue when its setting for that
-head is the cue's, so that Table 3.2's cues separate the five grammars (`table_3_2`). In the
-Tromsø dialect the monosyllabic *wh*-words *ka*, *kem* and *kor* are heads and sit in Int°
-themselves, which blocks verb movement there (`TromsøWh.status`); the V2 that still occurs is
-verb movement to a lower Top° whose [−foc] feature a given subject checks from the specifier
-and a focused subject leaves for the verb (`order`), so that these questions are V2 exactly
-when the subject is new (`isV2_order_iff`).
+This file formalizes the syntactic model of Westergaard's monograph. Verb second is not one
+parameter but a setting per clause-type head of a split ForceP, one head per sentence type in
+root clauses and one each for embedded declaratives and embedded questions, so that a
+language's grammar is the set of cells, a sentence type in an embedding context, in which the
+finite verb moves to the left periphery. Her Table 3.1 gives that set for six Germanic
+varieties. The fragments record, from the reference grammars and from her own descriptions,
+where verb second is obligatory, optional or excluded, and her binary settings agree with
+them: each grammar contains the cells where the fragment requires verb second and lies within
+the cells where it allows it, and for five of the six varieties it is exactly the required
+cells. What children acquire are micro-cues, pieces of structure stating for one cell what its
+specifier holds and whether the verb fills its head, and four cues separate the five grammars
+of her Table 3.2. In the Tromsø dialect the monosyllabic *wh*-words *ka*, *kem* and *kor* are
+heads and sit in Int⁰ themselves, which blocks verb movement there; the verb second that still
+occurs is movement to a lower Top⁰, whose feature a given subject checks from the specifier and
+a focused subject leaves for the verb, so that these questions are verb second exactly when the
+subject is new.
+
+## Main definitions
+
+* `V2Grammar`: a set of cells, the clause-type heads the finite verb moves to.
+* `stdNorwegian`, `stdEnglish`, `nordmore`, `belfast`, `german`, `danish`: the grammars of
+  Table 3.1.
+* `MicroCue`, `Expresses`: a cue and its expression by a grammar.
+* `TromsøWh`, `WhStatus`, `order`: the Tromsø *wh*-words, their status, and the word order of a
+  monosyllabic *wh*-question.
+
+## Main results
+
+* `table_3_1_eq_required`, `danish_table_3_1`: Table 3.1 against the fragments.
+* `nordmore_english_mirror`, `embedded_german_polar_all`: the mirror image and the two
+  universals read off the fragments.
+* `table_3_2`, `not_expresses_both`: the cues separate the grammars.
+* `rows_consistent`: every judged word order in the data is consistent with its fragment.
+* `isV2_order_iff`: a Tromsø monosyllabic *wh*-question is verb second iff its subject is new.
 
 ## Implementation notes
 
-The cues of §4 are recorded as data; the two structures of §3.3 are linearized as
-*wh*–subject–verb or *wh*–verb–subject by which element checks Top°. The cues (57) and (60)
-for verb movement to I°, which Westergaard motivates with Icelandic and which no head of the
-split ForceP carries, the cue for English inflectional elements, *som*-insertion,
-focus-sensitive adverbs, *kanskje*, and the acquisition chapters are not formalized.
+Westergaard's Fin⁰ and Wh⁰ heads are realized as the embedded root-like cells of Bhatt and
+Dayal: German complementizer-less verb-second complements and Belfast English embedded
+inversion are both `quasiSubordinated`, and her Wh⁰ is the yes/no cell her Belfast example
+instantiates. Danish is the one variety whose table entry is not the fragment's required set,
+since only some Danish exclamatives are verb second. The cues (57) and (60) for verb movement
+to I°, which she motivates with Icelandic, the cue for English inflectional elements,
+*som*-insertion, focus-sensitive adverbs, *kanskje*, and the acquisition chapters are not
+formalized; the Tromsø rows have no fragment and enter only the *wh*-word model.
 
 ## References
 
 * [westergaard-2009]
 * [rizzi-1997]
+* [henry-1997]
 -/
 
 @[expose] public section
 
 namespace Westergaard2009
 
-open Minimalist
+open Clause
+open Data.Examples (LinguisticExample)
+
+/-- A verb-second grammar is the set of cells, a sentence type in an embedding context, in
+which the finite verb moves to the left periphery: Westergaard's clause-type heads. -/
+abbrev V2Grammar := SetRel SentenceType EmbeddingContext
 
 /-! ### Micro-parameters (Table 3.1) -/
 
-/-- Nordmøre Norwegian is the mirror image of Standard English on Decl° and Int°. -/
+/-- Standard Norwegian moves the verb to Decl⁰, Int⁰ and Pol⁰. -/
+abbrev stdNorwegian : V2Grammar := {root .declarative, root .constituent, root .polar}
+
+/-- Standard English moves the verb to Int⁰ and Pol⁰. -/
+abbrev stdEnglish : V2Grammar := {root .constituent, root .polar}
+
+/-- Nordmøre Norwegian moves the verb to Decl⁰ and Pol⁰. -/
+abbrev nordmore : V2Grammar := {root .declarative, root .polar}
+
+/-- Belfast English moves the verb to Int⁰, Pol⁰, Imp⁰ and Wh⁰, the last in an embedded
+root-like yes/no-question. -/
+abbrev belfast : V2Grammar :=
+  {root .constituent, root .polar, root .imperative, (.polar, .quasiSubordinated)}
+
+/-- German moves the verb to Decl⁰, Int⁰, Pol⁰ and, in a complementizer-less embedded
+declarative, Fin⁰. -/
+abbrev german : V2Grammar :=
+  {root .declarative, root .constituent, root .polar, (.declarative, .quasiSubordinated)}
+
+/-- Danish moves the verb to Decl⁰, Int⁰, Pol⁰ and Excl⁰. -/
+abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar, root .exclamative}
+
+/-- Table 3.1 is the required set of the fragment for Standard Norwegian, Standard English,
+Nordmøre, Belfast English and German. -/
+theorem table_3_1_eq_required :
+    Norwegian.verbSecond.required = stdNorwegian ∧ English.verbSecond.required = stdEnglish ∧
+      Norwegian.Nordmore.verbSecond.required = nordmore ∧
+      English.Belfast.verbSecond.required = belfast ∧ German.verbSecond.required = german := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> ext c <;> revert c <;> decide
+
+/-- Table 3.1's Danish grammar lies between the fragment's required and possible cells, since
+verb second in some exclamatives only is marked as movement to Excl⁰. -/
+theorem danish_table_3_1 :
+    Danish.verbSecond.required ⊆ danish ∧ danish ⊆ Danish.verbSecond.possible := by
+  refine ⟨?_, ?_⟩ <;> intro c <;> revert c <;> decide
+
+/-- Nordmøre Norwegian is the mirror image of Standard English on Decl⁰ and Int⁰. -/
 theorem nordmore_english_mirror :
-    .Decl ∈ Norwegian.Nordmore.verbSecond ∧ .Int ∉ Norwegian.Nordmore.verbSecond ∧
-      .Decl ∉ English.verbSecond ∧ .Int ∈ English.verbSecond := by
+    root .declarative ∈ Norwegian.Nordmore.verbSecond.required ∧
+      root .constituent ∉ Norwegian.Nordmore.verbSecond.required ∧
+      root .declarative ∉ English.verbSecond.required ∧
+      root .constituent ∈ English.verbSecond.required := by
   decide
 
-/-- Only German has verb movement to Fin°; every variety has it to Pol°. -/
-theorem fin_german_pol_all :
-    .Fin ∈ German.verbSecond ∧ .Fin ∉ Norwegian.verbSecond ∧ .Fin ∉ English.verbSecond ∧
-      .Fin ∉ Norwegian.Nordmore.verbSecond ∧ .Fin ∉ English.Belfast.verbSecond ∧
-      .Fin ∉ Danish.verbSecond ∧ .Pol ∈ Norwegian.verbSecond ∧
-      .Pol ∈ English.verbSecond ∧ .Pol ∈ Norwegian.Nordmore.verbSecond ∧
-      .Pol ∈ English.Belfast.verbSecond ∧
-      .Pol ∈ German.verbSecond ∧ .Pol ∈ Danish.verbSecond := by
+/-- Only German requires verb second in an embedded declarative, and every variety requires it
+in a root yes/no-question. -/
+theorem embedded_german_polar_all :
+    (.declarative, .quasiSubordinated) ∈ German.verbSecond.required ∧
+      (.declarative, .quasiSubordinated) ∉ Norwegian.verbSecond.required ∧
+      (.declarative, .quasiSubordinated) ∉ English.verbSecond.required ∧
+      (.declarative, .quasiSubordinated) ∉ Danish.verbSecond.required ∧
+      root .polar ∈ Norwegian.verbSecond.required ∧
+      root .polar ∈ English.verbSecond.required ∧
+      root .polar ∈ Norwegian.Nordmore.verbSecond.required ∧
+      root .polar ∈ English.Belfast.verbSecond.required ∧
+      root .polar ∈ German.verbSecond.required ∧
+      root .polar ∈ Danish.verbSecond.required := by
   decide
 
 /-! ### Micro-cues (§4) -/
@@ -69,39 +143,45 @@ inductive Filler
   | none | xp | wh
   deriving DecidableEq, Repr
 
-/-- A micro-cue: for one head, what its specifier holds and whether the finite verb fills it. -/
+/-- A micro-cue: for one cell, what its specifier holds and whether the finite verb fills its
+head. -/
 structure MicroCue where
-  target : ForceHead
+  target : SentenceType × EmbeddingContext
   spec : Filler
   verbInHead : Bool
   deriving DecidableEq, Repr
 
 /-- The cue (45) is V2 in *wh*-questions. -/
-def cueIntV2 : MicroCue := ⟨.Int, .wh, true⟩
+def cueIntV2 : MicroCue := ⟨root .constituent, .wh, true⟩
 
 /-- The cue (46) is V2 in declaratives. -/
-def cueDeclV2 : MicroCue := ⟨.Decl, .xp, true⟩
+def cueDeclV2 : MicroCue := ⟨root .declarative, .xp, true⟩
 
 /-- The cue (49) is V2 in yes/no-questions. -/
-def cuePolV2 : MicroCue := ⟨.Pol, .none, true⟩
+def cuePolV2 : MicroCue := ⟨root .polar, .none, true⟩
 
 /-- The cue (52) is V2 in exclamatives. -/
-def cueExclV2 : MicroCue := ⟨.Excl, .wh, true⟩
+def cueExclV2 : MicroCue := ⟨root .exclamative, .wh, true⟩
 
-/-- The cue (53) is V2 in embedded questions. -/
-def cueWhV2 : MicroCue := ⟨.Wh, .wh, true⟩
+/-- The cue (53) is V2 in embedded questions, the embedded root-like yes/no-question of Belfast
+English. -/
+def cueWhV2 : MicroCue := ⟨(.polar, .quasiSubordinated), .wh, true⟩
 
 /-- The cue (54) is V2 in imperatives. -/
-def cueImpV2 : MicroCue := ⟨.Imp, .none, true⟩
+def cueImpV2 : MicroCue := ⟨root .imperative, .none, true⟩
 
 /-- The cue (58) is non-V2 in exclamatives. -/
-def cueExclNonV2 : MicroCue := ⟨.Excl, .wh, false⟩
+def cueExclNonV2 : MicroCue := ⟨root .exclamative, .wh, false⟩
 
 /-- The cue (59) is non-V2 in embedded questions. -/
-def cueWhNonV2 : MicroCue := ⟨.Wh, .wh, false⟩
+def cueWhNonV2 : MicroCue := ⟨(.polar, .quasiSubordinated), .wh, false⟩
 
-/-- A grammar expresses a cue when its setting for the cue's head is the cue's. -/
+/-- A grammar expresses a cue when its setting for the cue's cell is the cue's. -/
 def Expresses (lang : V2Grammar) (c : MicroCue) : Prop := c.target ∈ lang ↔ c.verbInHead = true
+
+instance (lang : V2Grammar) (c : MicroCue) [Decidable (c.target ∈ lang)] :
+    Decidable (Expresses lang c) :=
+  inferInstanceAs (Decidable (_ ↔ _))
 
 /-- A cue and the cue for its absence are never both expressed. -/
 theorem not_expresses_both (lang : V2Grammar) {c c' : MicroCue} (ht : c.target = c'.target)
@@ -113,29 +193,81 @@ theorem not_expresses_both (lang : V2Grammar) {c c' : MicroCue} (ht : c.target =
 
 /-- Table 3.2 shows that four cues separate the five grammars. -/
 theorem table_3_2 :
-    (Expresses Norwegian.verbSecond cueIntV2 ∧ Expresses Norwegian.verbSecond cueDeclV2 ∧
-        ¬ Expresses Norwegian.verbSecond cueExclV2 ∧
-        ¬ Expresses Norwegian.verbSecond cueWhV2) ∧
-      (Expresses English.verbSecond cueIntV2 ∧ ¬ Expresses English.verbSecond cueDeclV2 ∧
-        ¬ Expresses English.verbSecond cueExclV2 ∧
-        ¬ Expresses English.verbSecond cueWhV2) ∧
-      (¬ Expresses Norwegian.Nordmore.verbSecond cueIntV2 ∧
-        Expresses Norwegian.Nordmore.verbSecond cueDeclV2 ∧
-        ¬ Expresses Norwegian.Nordmore.verbSecond cueExclV2 ∧
-        ¬ Expresses Norwegian.Nordmore.verbSecond cueWhV2) ∧
-      (Expresses English.Belfast.verbSecond cueIntV2 ∧
-        ¬ Expresses English.Belfast.verbSecond cueDeclV2 ∧
-        ¬ Expresses English.Belfast.verbSecond cueExclV2 ∧
-        Expresses English.Belfast.verbSecond cueWhV2) ∧
-      (Expresses Danish.verbSecond cueIntV2 ∧ Expresses Danish.verbSecond cueDeclV2 ∧
-        Expresses Danish.verbSecond cueExclV2 ∧ ¬ Expresses Danish.verbSecond cueWhV2) := by
+    (Expresses stdNorwegian cueIntV2 ∧ Expresses stdNorwegian cueDeclV2 ∧
+        ¬ Expresses stdNorwegian cueExclV2 ∧ ¬ Expresses stdNorwegian cueWhV2) ∧
+      (Expresses stdEnglish cueIntV2 ∧ ¬ Expresses stdEnglish cueDeclV2 ∧
+        ¬ Expresses stdEnglish cueExclV2 ∧ ¬ Expresses stdEnglish cueWhV2) ∧
+      (¬ Expresses nordmore cueIntV2 ∧ Expresses nordmore cueDeclV2 ∧
+        ¬ Expresses nordmore cueExclV2 ∧ ¬ Expresses nordmore cueWhV2) ∧
+      (Expresses belfast cueIntV2 ∧ ¬ Expresses belfast cueDeclV2 ∧
+        ¬ Expresses belfast cueExclV2 ∧ Expresses belfast cueWhV2) ∧
+      (Expresses danish cueIntV2 ∧ Expresses danish cueDeclV2 ∧
+        Expresses danish cueExclV2 ∧ ¬ Expresses danish cueWhV2) := by
   simp [Expresses, cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
 
 /-- The Norwegian children hear the cues for non-V2 in exclamatives and embedded questions. -/
 theorem norwegian_nonV2_cues :
-    Expresses Norwegian.verbSecond cueExclNonV2 ∧
-      Expresses Norwegian.verbSecond cueWhNonV2 := by
+    Expresses stdNorwegian cueExclNonV2 ∧ Expresses stdNorwegian cueWhNonV2 := by
   simp [Expresses, cueExclNonV2, cueWhNonV2]
+
+/-! ### The rows -/
+
+/-- The cell a row's `clause` or `wh` feature records; an embedded question is Belfast's
+yes/no-question. -/
+def cellOf (r : LinguisticExample) : Option (SentenceType × EmbeddingContext) :=
+  match r.feature? "clause", r.feature? "wh" with
+  | some "declarative", _ | some "subject-initial declarative", _
+  | some "non-subject-initial declarative", _ => some (root .declarative)
+  | some "wh-question", _ | none, some _ => some (root .constituent)
+  | some "yes/no-question", _ => some (root .polar)
+  | some "imperative", _ => some (root .imperative)
+  | some "exclamative", _ => some (root .exclamative)
+  | some "embedded declarative", _ => some (embedded .declarative)
+  | some "embedded question", _ => some (.polar, .quasiSubordinated)
+  | _, _ => none
+
+/-- A row records the verb as moved, as in V2 and in the V1 of a yes/no-question, as unmoved,
+or as either. -/
+inductive Order
+  | moved | unmoved | either
+  deriving DecidableEq, Repr
+
+/-- The order a row's `order` feature records. -/
+def orderOf (r : LinguisticExample) : Option Order :=
+  r.parse? "order"
+    [("V2", .moved), ("V1", .moved), ("non-V2", .unmoved), ("non-V2 or V2", .either),
+      ("V2 or non-V2", .either)]
+
+/-- The fragment of a row's variety, Standard Norwegian, Nordmøre, Standard or Belfast English
+or Danish; the Tromsø rows have none. -/
+def grammarOf (r : LinguisticExample) : Option Distribution :=
+  match r.feature? "variety", r.language with
+  | some "Nordmøre", _ => some Norwegian.Nordmore.verbSecond
+  | some "Belfast English", _ => some English.Belfast.verbSecond
+  | some "Standard Norwegian", _ | none, "norw1258" => some Norwegian.verbSecond
+  | none, "stan1293" => some English.verbSecond
+  | none, "dani1285" => some Danish.verbSecond
+  | _, _ => none
+
+/-- An order is consistent with a distribution at a cell when a moved verb sits where verb
+second is possible, an unmoved one where it is not required, and either where it is optional. -/
+def Order.Consistent (d : Distribution) (c : SentenceType × EmbeddingContext) : Order → Prop
+  | .moved => c ∈ d.possible
+  | .unmoved => c ∉ d.required
+  | .either => c ∈ d.possible ∧ c ∉ d.required
+
+instance (d : Distribution) (c : SentenceType × EmbeddingContext) :
+    DecidablePred (Order.Consistent d c)
+  | .moved => inferInstanceAs (Decidable (_ ∈ _))
+  | .unmoved => inferInstanceAs (Decidable (_ ∉ _))
+  | .either => inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Every judged word order in the data is consistent with the fragment of its variety, apart
+from the *kanskje* rows, which the chapter treats as a lexical exception. -/
+theorem rows_consistent :
+    ∀ r ∈ Examples.all, r.feature? "adverb" = none →
+      ∀ d ∈ grammarOf r, ∀ c ∈ cellOf r, ∀ o ∈ orderOf r, o.Consistent d c := by
+  decide +kernel
 
 /-! ### *Wh*-heads and information structure (§3.2, §3.3) -/
 
@@ -148,9 +280,10 @@ inductive WhStatus
 /-- A monosyllabic *wh*-word is a head, a longer one a phrase. -/
 def WhStatus.ofSyllables (n : ℕ) : WhStatus := if n ≤ 1 then .head else .phrase
 
-/-- A *wh*-head sits in Int⁰ itself and blocks verb movement to it; a phrase in the specifier
-blocks nothing. -/
-def WhStatus.Blocks (w : WhStatus) (f : ForceHead) : Prop := w = .head ∧ f = .Int
+/-- A *wh*-head sits in Int⁰ itself and blocks verb movement to it in a root *wh*-question; a
+phrase in the specifier blocks nothing. -/
+def WhStatus.Blocks (w : WhStatus) (c : SentenceType × EmbeddingContext) : Prop :=
+  w = .head ∧ c = root .constituent
 
 instance : DecidableRel WhStatus.Blocks := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -167,13 +300,13 @@ def TromsøWh.syllables : TromsøWh → ℕ
 /-- The status of each *wh*-word, by its syllable count. -/
 def TromsøWh.status (w : TromsøWh) : WhStatus := .ofSyllables w.syllables
 
-/-- *ka*, *kem* and *kor* are heads and block verb movement to Int°; the others are phrases
+/-- *ka*, *kem* and *kor* are heads and block verb movement to Int⁰; the others are phrases
 and block nothing. -/
 theorem tromsøWh_blocking :
-    ∀ w : TromsøWh, w.status.Blocks .Int ↔ w.syllables = 1 := by
+    ∀ w : TromsøWh, w.status.Blocks (root .constituent) ↔ w.syllables = 1 := by
   decide
 
-/-- Which element checks the [−foc] feature of Top° in a monosyllabic *wh*-question: a
+/-- Which element checks the [−foc] feature of Top⁰ in a monosyllabic *wh*-question: a
 [−foc] subject from the specifier (32), otherwise the finite verb in the head (31). -/
 inductive Checker
   | subject | verb
@@ -187,7 +320,7 @@ inductive Word
   | wh | subject | verb
   deriving DecidableEq, Repr
 
-/-- The surface order puts the *wh*-head in Int°, then the specifier and head of TopP, then the
+/-- The surface order puts the *wh*-head in Int⁰, then the specifier and head of TopP, then the
 rest of the clause. -/
 def order (subjectFoc : Bool) : List Word :=
   match checker subjectFoc with
