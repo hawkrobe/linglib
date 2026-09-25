@@ -351,20 +351,17 @@ theorem alt_nonExh (hne : ∀ d, (a d).Nonempty) (hN : (nobody a).Nonempty)
     (hind : ∀ d d', a d ⊆ a d' → d = d') :
     alt (nonExh a) = Set.range (Option.elim · (nobody a) a) := by
   rw [nonExh, alt_which_of_forall_subset_eq Set.univ_nonempty, Set.image_univ]
-  · rintro (_ | d) -
-    · exact hN
-    · exact hne d
-  · rintro (_ | d) - (_ | d') - h
-    · rfl
-    · obtain ⟨u, hu⟩ := hN
-      have := h hu
-      simp only [nobody, Set.mem_iInter, Set.mem_compl_iff] at hu
-      exact absurd this (hu d')
-    · obtain ⟨u, hu⟩ := hne d
-      have := h hu
-      simp only [Option.elim, nobody, Set.mem_iInter, Set.mem_compl_iff] at this
-      exact absurd hu (this d)
-    · exact congrArg _ (hind d d' h)
+  rintro (_ | d) - (_ | d') - h
+  · rfl
+  · obtain ⟨u, hu⟩ := hN
+    have := h hu
+    simp only [nobody, Set.mem_iInter, Set.mem_compl_iff] at hu
+    exact absurd this (hu d')
+  · obtain ⟨u, hu⟩ := hne d
+    have := h hu
+    simp only [Option.elim, nobody, Set.mem_iInter, Set.mem_compl_iff] at this
+    exact absurd hu (this d)
+  · exact congrArg _ (hind d d' h)
 
 theorem subset_cell_of_Ecmp_nonExh (hne : ∀ d, (a d).Nonempty) (hN : (nobody a).Nonempty)
     (hind : ∀ d d', a d ⊆ a d' → d = d') (hw : D ∈ Ecmp (nonExh a) w)

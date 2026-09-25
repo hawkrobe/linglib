@@ -85,8 +85,7 @@ theorem query_ofSet_eq_iSup (p : Set W) :
 
 theorem alt_query_ofSet {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
     alt (ofSet p).query = {p, pᶜ} := by
-  rw [query_ofSet_eq_iSup, alt_iSup_ofSet (λ b => by cases b <;> assumption)
-    (λ i j h => by
+  rw [query_ofSet_eq_iSup, alt_iSup_ofSet (λ i j h => by
       cases i <;> cases j
       · rfl
       · exact absurd (h hpc.some_mem) hpc.some_mem

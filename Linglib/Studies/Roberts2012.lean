@@ -134,12 +134,11 @@ theorem ate_antichain (uf uf' : Person × Food)
   rw [h1, h2]
 
 theorem alt_wh (u : Person) : alt (wh u) = Set.range (ate u) :=
-  alt_iSup_ofSet (λ _ => Set.nonempty_Ici)
-    (λ f f' h => ate_antichain (u, f) (u, f') h)
+  alt_iSup_ofSet (λ f f' h => ate_antichain (u, f) (u, f') h)
 
 theorem alt_q_1 :
     alt q_1 = Set.range λ uf : Person × Food => ate uf.1 uf.2 :=
-  alt_iSup_ofSet (λ _ => Set.nonempty_Ici) ate_antichain
+  alt_iSup_ofSet ate_antichain
 
 theorem mem_alt_wh (u : Person) (f : Food) : ate u f ∈ alt (wh u) := by
   rw [alt_wh]; exact Set.mem_range_self f
@@ -259,8 +258,7 @@ wh-question and jointly answering the two wh-questions is answering the big ques
 polar subquestions. -/
 theorem completeAnswers_wh (u : Person) :
     completeAnswers (wh u) = ⋂ f, completeAnswers (polar u f) :=
-  completeAnswers_iSup_ofSet (λ _ => Set.nonempty_Ici)
-    (λ f f' h => ate_antichain (u, f) (u, f') h)
+  completeAnswers_iSup_ofSet (λ f f' h => ate_antichain (u, f) (u, f') h)
 
 /-- Jointly answering the polar subquestions is exactly answering "What did `u` eat?". -/
 theorem completeAnswers_polar_inter (u : Person) :
@@ -272,7 +270,7 @@ theorem completeAnswers_polar_inter (u : Person) :
 "Who ate what?". -/
 theorem completeAnswers_wh_inter :
     completeAnswers (wh .hilary) ∩ completeAnswers (wh .robin) = completeAnswers q_1 := by
-  rw [completeAnswers_iSup_ofSet (λ _ => Set.nonempty_Ici) ate_antichain]
+  rw [completeAnswers_iSup_ofSet ate_antichain]
   ext σ
   simp [completeAnswers_wh, Prod.forall, Person.forall_person]
 
