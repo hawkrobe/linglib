@@ -41,7 +41,7 @@ The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
 * `Flat.liftEquiv` — the free-domain universal property: functions `α → D` are
   exactly strict continuous maps `Flat α →𝒄 D`
 * `Flat.compat_iff` — slot compatibility (`Compat`), characterized
-* `Flat.unify_distinct_eq_none` — distinct atoms do not unify (the
+* `Flat.unify_eq_top_of_ne` — distinct atoms do not unify (the
   non-distributivity witness)
 
 ## TODO
@@ -55,8 +55,8 @@ The free-domain universal property is now `liftEquiv` (with its enabling lemma
   `WithBot`).
 * **Lifting monad.** Give `Flat` (= `Option`) its ω-CPO monad structure — the
   partiality/lifting monad — whose Kleisli arrows `α → Flat β` are partial
-  continuous functions; `PartialUnify.unify` is one, which is why it composes
-  through `Option.bind` (`unify_assoc`). (mathlib has this for `Part`.)
+  continuous functions; `PartialUnify.unify` is one, valued in `WithTop` with `⊤`
+  as failure. (mathlib has this for `Part`.)
 * **Algebraicity / bounded-completeness.** Every element of `Flat α` is compact,
   making it an algebraic (finite-height) bounded-complete domain — the
   Scott-domain packaging of the partial join `PartialUnify` provides.
@@ -287,7 +287,7 @@ theorem not_disjoint_iff : ¬ Disjoint x y ↔ ∃ a : α, x = ↑a ∧ y = ↑a
 /-- Two committed slots are compatible exactly when they agree. -/
 @[simp] theorem compat_coe_coe : Compat (a : Flat α) b ↔ a = b :=
   ⟨fun ⟨_, hu⟩ ↦ by
-    obtain ⟨ha, hb⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    obtain ⟨ha, hb⟩ := mem_upperBounds_pair.mp hu
     exact coe_inj.1 ((coe_le_iff.1 ha).symm.trans (coe_le_iff.1 hb)),
    fun h ↦ h ▸ compat_self _⟩
 
@@ -405,75 +405,73 @@ end OmegaCPO
 
 /-- Unification of two slots merges equal commitments, treats `⊥` as
 identity, and fails on distinct commitments. -/
-protected def unify [DecidableEq α] (x y : Flat α) : Option (Flat α) :=
-  match x, y with
-  | ⊥, y => Option.some y
-  | (a : α), ⊥ => Option.some ↑a
-  | (a : α), (b : α) => if a = b then Option.some ↑a else Option.none
+protected def unify [DecidableEq α] : Flat α → Flat α → WithTop (Flat α)
+  | ⊥, y => y
+  | (a : α), ⊥ => (a : Flat α)
+  | (a : α), (b : α) => if a = b then ((a : Flat α) : WithTop (Flat α)) else ⊤
 
 private theorem unify_coe_coe [DecidableEq α] (a b : α) :
-    Flat.unify (↑a : Flat α) ↑b = if a = b then Option.some ↑a else Option.none :=
+    Flat.unify (↑a : Flat α) ↑b = if a = b then ((a : Flat α) : WithTop (Flat α)) else ⊤ :=
   rfl
 
 instance [DecidableEq α] : PartialUnify (Flat α) where
   unify := Flat.unify
-  isLUB_of_unify_eq_some := by
+  isLUB_of_unify_eq_coe := by
     intro x y z h
     match x, y with
     | ⊥, y =>
-      obtain rfl : y = z := Option.some.inj h
-      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
-        fun u hu => (PartialUnify.mem_upperBounds_pair.mp hu).2⟩
+      obtain rfl : y = z := WithTop.coe_inj.mp h
+      exact ⟨mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
+        fun u hu ↦ (mem_upperBounds_pair.mp hu).2⟩
     | (a : α), ⊥ =>
-      obtain rfl : (↑a : Flat α) = z := Option.some.inj h
-      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
-        fun u hu => (PartialUnify.mem_upperBounds_pair.mp hu).1⟩
+      obtain rfl : (↑a : Flat α) = z := WithTop.coe_inj.mp h
+      exact ⟨mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
+        fun u hu ↦ (mem_upperBounds_pair.mp hu).1⟩
     | (a : α), (b : α) =>
       rw [unify_coe_coe] at h
       split at h
       · next hab =>
         subst hab
-        obtain rfl : (↑a : Flat α) = z := Option.some.inj h
+        obtain rfl : (↑a : Flat α) = z := WithTop.coe_inj.mp h
         rw [Set.pair_eq_singleton]
         exact isLUB_singleton
-      · exact absurd h.symm (Option.some_ne_none z)
-  isSome_unify_of_bddAbove := by
-    intro x y hbdd
-    obtain ⟨u, hu⟩ := hbdd
-    obtain ⟨hxu, hyu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+      · exact absurd h WithTop.top_ne_coe
+  unify_ne_top_of_bddAbove := by
+    intro x y ⟨u, hu⟩
+    obtain ⟨hxu, hyu⟩ := mem_upperBounds_pair.mp hu
     match x, y with
-    | ⊥, y => exact rfl
-    | (a : α), ⊥ => exact rfl
+    | ⊥, y => exact WithTop.coe_ne_top
+    | (a : α), ⊥ => exact WithTop.coe_ne_top
     | (a : α), (b : α) =>
       obtain rfl : u = ↑a := coe_le_iff.mp hxu
       obtain rfl : a = b := coe_inj.mp (coe_le_iff.mp hyu)
-      show (Flat.unify (↑a : Flat α) ↑a).isSome
+      show Flat.unify (↑a : Flat α) ↑a ≠ ⊤
       rw [unify_coe_coe, ite_eq_left rfl]
-      rfl
+      exact WithTop.coe_ne_top
 
 /-- Two slots are compatible exactly when their committed values coincide;
 an uncommitted slot is a wildcard. -/
 theorem compat_iff [DecidableEq α] :
     Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑b → a = b := by
-  rw [compat_iff_isSome_unify]
-  show (Flat.unify x y).isSome = true ↔ _
+  rw [compat_iff_unify_ne_top]
+  show Flat.unify x y ≠ ⊤ ↔ _
   match x, y with
-  | ⊥, y => exact iff_of_true rfl (fun a ha => absurd ha bot_ne_coe)
-  | (a : α), ⊥ => exact iff_of_true rfl (fun _ _ b hb => absurd hb bot_ne_coe)
+  | ⊥, y => exact iff_of_true WithTop.coe_ne_top (fun a ha ↦ absurd ha bot_ne_coe)
+  | (a : α), ⊥ => exact iff_of_true WithTop.coe_ne_top (fun _ _ b hb ↦ absurd hb bot_ne_coe)
   | (a : α), (b : α) =>
     rw [unify_coe_coe]
     by_cases hab : a = b
     · subst hab
-      exact iff_of_true (by rw [ite_eq_left rfl]; rfl)
-        (fun a' ha' b' hb' => (coe_inj.mp ha').symm.trans (coe_inj.mp hb'))
+      exact iff_of_true (by rw [ite_eq_left rfl]; exact WithTop.coe_ne_top)
+        (fun a' ha' b' hb' ↦ (coe_inj.mp ha').symm.trans (coe_inj.mp hb'))
     · rw [ite_eq_right hab]
-      exact iff_of_false nofun (fun h => hab (h a rfl b rfl))
+      exact iff_of_false (fun h ↦ h rfl) (fun h ↦ hab (h a rfl b rfl))
 
 /-- On compatible slots, unification is the priority union: agreeing
 commitments collapse and `⊥` defers, so the biased and unbiased merges
 coincide. -/
-theorem unify_eq_some_or_of_compat [DecidableEq α] {x y : Flat α}
-    (h : Compat x y) : PartialUnify.unify x y = Option.some (x.or y) := by
+theorem unify_eq_coe_or_of_compat [DecidableEq α] {x y : Flat α}
+    (h : Compat x y) : PartialUnify.unify x y = ↑(x.or y) := by
   match x, y with
   | ⊥, y => rfl
   | (a : α), ⊥ => rfl
@@ -489,12 +487,10 @@ The flat order is not distributive: three distinct atoms (with a top
 adjoined) form the diamond M₃ — [carpenter-1992] takes subsumption orders
 to be neither distributive nor modular in general. `Flat` carries only the
 partial join (`PartialUnify`), so the distributive law cannot even be
-*stated* on it directly; `unify_distinct_eq_none` is the witness — distinct
+*stated* on it directly; `unify_eq_top_of_ne` is the witness — distinct
 atoms have no upper bound, so the join the law would require is undefined. -/
 
-theorem unify_distinct_eq_none [DecidableEq α] (h : a ≠ b) :
-    Flat.unify (↑a : Flat α) ↑b = Option.none := by
-  rw [unify_coe_coe]
-  exact ite_eq_right h
+theorem unify_eq_top_of_ne [DecidableEq α] (h : a ≠ b) : Flat.unify (↑a : Flat α) ↑b = ⊤ := by
+  rw [unify_coe_coe, ite_eq_right h]
 
 end Flat

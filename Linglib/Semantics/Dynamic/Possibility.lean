@@ -143,7 +143,7 @@ theorem union_le (hp : p ≤ u) (hq : q ≤ u) : p.union q ≤ u :=
 theorem compat_iff_forall : Compat p q ↔
     p.world = q.world ∧ ∀ v, Compat (p.assignment v) (q.assignment v) :=
   ⟨fun ⟨_, hu⟩ =>
-    have ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    have ⟨hp, hq⟩ := mem_upperBounds_pair.mp hu
     ⟨hp.1.trans hq.1.symm, fun v => .of_le (hp.2 v) (hq.2 v)⟩,
    fun ⟨hw, hc⟩ => .of_le le_union_left
     ⟨hw.symm, fun v => Part.le_or_right (hc v)⟩⟩
@@ -163,9 +163,9 @@ theorem le_union_right (h : Compat p q) : q ≤ p.union q :=
 
 /-- The union of compatible points is their least upper bound. -/
 theorem isLUB_union (h : Compat p q) : IsLUB {p, q} (p.union q) :=
-  ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_union_left, le_union_right h⟩,
+  ⟨mem_upperBounds_pair.mpr ⟨le_union_left, le_union_right h⟩,
     fun _ hu =>
-      have h := PartialUnify.mem_upperBounds_pair.mp hu
+      have h := mem_upperBounds_pair.mp hu
       union_le h.1 h.2⟩
 
 /-- The joins of pairs of points: `u` bounds `{p, q}` least exactly when
@@ -175,6 +175,24 @@ theorem isLUB_pair_iff : IsLUB {p, q} u ↔ Compat p q ∧ u = p.union q :=
     have hc : Compat p q := ⟨u, h.1⟩
     ⟨hc, ((isLUB_union hc).unique h).symm⟩,
    fun ⟨hc, hu⟩ => hu ▸ isLUB_union hc⟩
+
+open Classical in
+/-- Unification of points is their union when they are compatible, and fails otherwise. The
+instance is noncomputable, like `union`. -/
+noncomputable instance : PartialUnify (Possibility W V (Part M)) where
+  unify p q := if Compat p q then ↑(p.union q) else ⊤
+  isLUB_of_unify_eq_coe {p q u} h := by
+    split_ifs at h with hc
+    · exact WithTop.coe_inj.mp h ▸ isLUB_union hc
+    · exact absurd h WithTop.top_ne_coe
+  unify_ne_top_of_bddAbove {p q} h := by
+    rw [ite_eq_left h]
+    exact WithTop.coe_ne_top
+
+/-- `u` is the unification of `p` and `q` exactly when they are compatible and `u` is their
+union. -/
+theorem unify_eq_coe_iff : PartialUnify.unify p q = ↑u ↔ Compat p q ∧ u = p.union q :=
+  PartialUnify.unify_eq_coe_iff_isLUB.trans isLUB_pair_iff
 
 /-- The union of two points defines the union of their domains. -/
 theorem domain_union : (p.union q).domain = p.domain ∪ q.domain := by
@@ -210,7 +228,7 @@ theorem bot_le : bot p.world ≤ p :=
 below it. -/
 theorem bot_le_of_compat {w : W} (h : Compat p (bot w)) : bot w ≤ p := by
   obtain ⟨u, hu⟩ := h
-  obtain ⟨hpu, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+  obtain ⟨hpu, hbu⟩ := mem_upperBounds_pair.mp hu
   rw [show w = p.world from hbu.1.trans hpu.1.symm]
   exact bot_le
 

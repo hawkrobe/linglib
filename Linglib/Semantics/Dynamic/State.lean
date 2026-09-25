@@ -4,6 +4,7 @@ public import Linglib.Semantics.Dynamic.Possibility
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
 public import Mathlib.Order.Antisymmetrization
+public import Mathlib.Order.UpperLower.Closure
 public import Mathlib.Order.UpperLower.CompleteLattice
 public import Mathlib.Order.Hom.Basic
 
@@ -119,27 +120,49 @@ bottom of both. -/
 
 /-! ### Consistent merge as multiplication -/
 
-/-- `s * s'` is consistent merge — the joins of pairs of points, one
-from each state — and `1 = ⊤`. -/
-instance : CommMonoid (State W V M) where
-  mul := Set.lubs
-  mul_assoc := Set.lubs_assoc fun _ _ h => ⟨_, Possibility.isLUB_union h⟩
-  one := ⊤
-  one_mul _ := (Set.lubs_comm _ _).trans <| Set.lubs_eq_left
-    (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
-    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
-  mul_one _ := Set.lubs_eq_left
-    (fun p => ⟨.bot p.world, ⟨p.world, rfl⟩, Possibility.bot_le⟩)
-    fun _ _ ⟨_, hw⟩ h => hw ▸ Possibility.bot_le_of_compat (hw ▸ h)
-  mul_comm := Set.lubs_comm
+open PartialUnify (unify unify_comm unify_assoc sup_coe_eq_coe_iff coe_sup_eq_coe_iff
+  unify_eq_left unify_eq_right unify_le_coe_iff unify_ne_top_iff_bddAbove)
+
+/-- `s * s'` is consistent merge, the unifications of pairs of points, one from each state. -/
+instance : Mul (State W V M) := ⟨fun s s' ↦ {r | ∃ p ∈ s, ∃ q ∈ s', unify p q = ↑r}⟩
+
+/-- The unit of merge is the initial state. -/
+instance : One (State W V M) := ⟨⊤⟩
 
 theorem one_eq_top : (1 : State W V M) = ⊤ := rfl
 
+/-- A point is in the merge when it is the unification of a point of each state. -/
+theorem mem_mul_iff_unify : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', unify p q = ↑r := Iff.rfl
+
 /-- Membership in the merge, in union form. -/
-theorem mem_mul :
-    r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
-  show r ∈ Set.lubs s s' ↔ _
-  simp only [Set.mem_lubs, Possibility.isLUB_pair_iff]
+theorem mem_mul : r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
+  simp only [mem_mul_iff_unify, Possibility.unify_eq_coe_iff]
+
+instance : CommMonoid (State W V M) where
+  mul_assoc s t u := Set.ext fun r ↦
+    ⟨fun ⟨v, ⟨p, hp, q, hq, hv⟩, w, hw, hr⟩ ↦
+      let ⟨v', hv', hr'⟩ :=
+        coe_sup_eq_coe_iff.mp (unify_assoc p q w ▸ sup_coe_eq_coe_iff.mpr ⟨v, hv, hr⟩)
+      ⟨p, hp, v', ⟨q, hq, w, hw, hv'⟩, hr'⟩,
+     fun ⟨p, hp, v, ⟨q, hq, w, hw, hv⟩, hr⟩ ↦
+      let ⟨v', hv', hr'⟩ :=
+        sup_coe_eq_coe_iff.mp ((unify_assoc p q w).symm ▸ coe_sup_eq_coe_iff.mpr ⟨v, hv, hr⟩)
+      ⟨v', ⟨p, hp, q, hq, hv'⟩, w, hw, hr'⟩⟩
+  one_mul s := Set.ext fun r ↦
+    ⟨fun ⟨_, ⟨w, rfl⟩, p, hp, h⟩ ↦
+      have hw : Possibility.bot w ≤ p := Possibility.bot_le_of_compat
+        (Compat.symm (unify_ne_top_iff_bddAbove.mp (h ▸ WithTop.coe_ne_top)))
+      WithTop.coe_inj.mp ((unify_eq_right.mpr hw).symm.trans h) ▸ hp,
+     fun hr ↦ ⟨_, ⟨r.world, rfl⟩, r, hr, unify_eq_right.mpr Possibility.bot_le⟩⟩
+  mul_one s := Set.ext fun r ↦
+    ⟨fun ⟨p, hp, _, ⟨w, rfl⟩, h⟩ ↦
+      have hw : Possibility.bot w ≤ p :=
+        Possibility.bot_le_of_compat (unify_ne_top_iff_bddAbove.mp (h ▸ WithTop.coe_ne_top))
+      WithTop.coe_inj.mp ((unify_eq_left.mpr hw).symm.trans h) ▸ hp,
+     fun hr ↦ ⟨r, hr, _, ⟨r.world, rfl⟩, unify_eq_left.mpr Possibility.bot_le⟩⟩
+  mul_comm s s' := Set.ext fun _ ↦
+    ⟨fun ⟨p, hp, q, hq, h⟩ ↦ ⟨q, hq, p, hp, (unify_comm q p).trans h⟩,
+     fun ⟨q, hq, p, hp, h⟩ ↦ ⟨p, hp, q, hq, (unify_comm p q).trans h⟩⟩
 
 /-- The absurd state absorbs merge. -/
 @[simp] theorem empty_mul : (∅ : State W V M) * s = ∅ :=
@@ -149,8 +172,15 @@ theorem mem_mul :
 
 /-- The Smyth face of the merge: upper closures compose by join. -/
 theorem upperClosure_mul :
-    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' :=
-  Set.upperClosure_lubs (fun _ _ h => ⟨_, Possibility.isLUB_union h⟩) _ _
+    upperClosure (s * s') = upperClosure s ⊔ upperClosure s' := by
+  ext x
+  simp only [SetLike.mem_coe, UpperSet.mem_sup_iff, mem_upperClosure]
+  exact ⟨fun ⟨r, ⟨p, hp, q, hq, h⟩, hrx⟩ ↦
+      have := unify_le_coe_iff.mp (h ▸ WithTop.coe_le_coe.mpr hrx)
+      ⟨⟨p, hp, this.1⟩, q, hq, this.2⟩,
+    fun ⟨⟨p, hp, hpx⟩, q, hq, hqx⟩ ↦
+      let ⟨r, hr, hrx⟩ := WithTop.le_coe_iff.mp (unify_le_coe_iff.mpr ⟨hpx, hqx⟩)
+      ⟨r, ⟨p, hp, q, hq, hr⟩, hrx⟩⟩
 
 /-- The merge is below the left factor. -/
 theorem mul_le_left : s * s' ≤ s :=

@@ -82,9 +82,9 @@ order — exactly when they agree wherever both are defined. -/
 theorem compat_iff : Compat p q ↔ ∀ a b, a ∈ p → b ∈ q → a = b := by
   constructor
   · rintro ⟨u, hu⟩
-    obtain ⟨hp, hq⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    obtain ⟨hp, hq⟩ := mem_upperBounds_pair.mp hu
     exact fun a b ha hb => mem_unique (hp a ha) (hq b hb)
-  · exact fun hag => ⟨p.or q, PartialUnify.mem_upperBounds_pair.mpr
+  · exact fun hag ↦ ⟨p.or q, mem_upperBounds_pair.mpr
       ⟨le_or_left, le_or_right_of_agree hag⟩⟩
 
 theorem le_or_right (h : Compat p q) : q ≤ p.or q :=

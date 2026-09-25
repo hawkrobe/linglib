@@ -60,13 +60,13 @@ inductive InfoFeature where
 
 /-- Unify two info features: the partial join in the subsumption order below
 (`PartialUnify`). -/
-def InfoFeature.unify : InfoFeature → InfoFeature → Option InfoFeature
-  | .unmarked, f => some f
-  | f, .unmarked => some f
-  | .θ, .θ => some .θ
-  | .ρ, .ρ => some .ρ
-  | .φ, .φ => some .φ
-  | _, _ => none
+def InfoFeature.unify : InfoFeature → InfoFeature → WithTop InfoFeature
+  | .unmarked, f => f
+  | f, .unmarked => f
+  | .θ, .θ => (.θ : InfoFeature)
+  | .ρ, .ρ => (.ρ : InfoFeature)
+  | .φ, .φ => (.φ : InfoFeature)
+  | _, _ => ⊤
 
 /-! ### The information feature as a subsumption order
 
@@ -107,21 +107,21 @@ instance : SemilatticeInf InfoFeature :=
 /-- The two `PartialUnify` axioms in decidable form: a successful unification is the
 least upper bound, and unification succeeds on bounded-above pairs. -/
 private theorem InfoFeature.unify_spec (a b : InfoFeature) :
-    (∀ c, InfoFeature.unify a b = some c →
+    (∀ c : InfoFeature, InfoFeature.unify a b = ↑c →
         (a ≤ c ∧ b ≤ c) ∧ ∀ u, a ≤ u → b ≤ u → c ≤ u) ∧
-      ((∃ u, a ≤ u ∧ b ≤ u) → (InfoFeature.unify a b).isSome) := by
+      ((∃ u, a ≤ u ∧ b ≤ u) → InfoFeature.unify a b ≠ ⊤) := by
   revert a b; decide
 
 instance : PartialUnify InfoFeature where
   unify := InfoFeature.unify
-  isLUB_of_unify_eq_some {a b c} h := by
+  isLUB_of_unify_eq_coe {a b c} h := by
     obtain ⟨⟨hac, hbc⟩, hmin⟩ := (InfoFeature.unify_spec a b).1 c h
-    refine ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨hac, hbc⟩, fun u hu => ?_⟩
-    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    refine ⟨mem_upperBounds_pair.mpr ⟨hac, hbc⟩, fun u hu ↦ ?_⟩
+    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
     exact hmin u hau hbu
-  isSome_unify_of_bddAbove {a b} h := by
+  unify_ne_top_of_bddAbove {a b} h := by
     obtain ⟨u, hu⟩ := h
-    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
     exact (InfoFeature.unify_spec a b).2 ⟨u, hau, hbu⟩
 
 /-! ### Projecting information structure through a derivation -/

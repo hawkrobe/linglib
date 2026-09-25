@@ -38,6 +38,7 @@ the most specific structure subsumed by both inputs, is total, the meet.
 namespace Shieber1986
 
 open Morphology PartialUnify
+open scoped PartialUnify
 
 variable {f g h u : Features}
 
@@ -49,37 +50,35 @@ theorem le_iff : f ≤ g ↔ ∀ t, f t ≤ g t := Pi.le_def
 theorem bot_le (f : Features) : ⊥ ≤ f := _root_.bot_le
 
 /-- Unification succeeds exactly on structures with a common upper bound. -/
-theorem isSome_unify_iff : (unify f g).isSome ↔ Compat f g :=
-  compat_iff_isSome_unify.symm
+theorem unify_ne_top_iff : unify f g ≠ ⊤ ↔ Compat f g := unify_ne_top_iff_bddAbove
 
 /-- Unification is the least upper bound: the most general structure both inputs subsume. -/
-theorem unify_eq_some_iff_isLUB : unify f g = some u ↔ IsLUB {f, g} u :=
-  PartialUnify.unify_eq_some_iff_isLUB
+theorem unify_eq_coe_iff_isLUB : unify f g = ↑u ↔ IsLUB {f, g} u :=
+  PartialUnify.unify_eq_coe_iff_isLUB
 
 /-- Unification adds information: each input subsumes the result. -/
-theorem le_of_unify_eq_some (hu : unify f g = some u) : f ≤ u ∧ g ≤ u :=
-  mem_upperBounds_pair.1 (unify_eq_some_iff_isLUB.1 hu).1
+theorem le_of_unify_eq_coe (hu : unify f g = ↑u) : f ≤ u ∧ g ≤ u :=
+  unify_le_coe_iff.1 hu.le
 
 /-- Unification is idempotent. -/
-theorem unify_self (f : Features) : unify f f = some f := PartialUnify.unify_self f
+theorem unify_self (f : Features) : unify f f = ↑f := PartialUnify.unify_self f
 
 /-- The variable is the identity of unification. -/
-theorem bot_unify (f : Features) : unify ⊥ f = some f := PartialUnify.bot_unify f
+theorem bot_unify (f : Features) : unify ⊥ f = ↑f := PartialUnify.bot_unify f
 
-theorem unify_bot (f : Features) : unify f ⊥ = some f := PartialUnify.unify_bot f
+theorem unify_bot (f : Features) : unify f ⊥ = ↑f := PartialUnify.unify_bot f
 
 /-- Unification is commutative. -/
 theorem unify_comm (f g : Features) : unify f g = unify g f := PartialUnify.unify_comm f g
 
 /-- Unification is associative, failure propagating, so a set of structures unifies in any
 order. -/
-theorem unify_assoc (f g h : Features) :
-    (unify f g).bind (unify · h) = (unify g h).bind (unify f ·) :=
+theorem unify_assoc (f g h : Features) : unify f g ⊔ ↑h = ↑f ⊔ unify g h :=
   PartialUnify.unify_assoc f g h
 
 /-- Unification is monotone: more general inputs unify to a more general result. -/
-theorem unify_mono {f' g' : Features} (hf : f ≤ f') (hg : g ≤ g') (hu : unify f' g' = some u) :
-    ∃ v, unify f g = some v ∧ v ≤ u :=
+theorem unify_mono {f' g' : Features} (hf : f ≤ f') (hg : g ≤ g') (hu : unify f' g' = ↑u) :
+    ∃ v : Features, unify f g = ↑v ∧ v ≤ u :=
   PartialUnify.unify_mono hf hg hu
 
 /-- Generalization is the meet, the most specific structure both inputs subsume, and is
@@ -90,8 +89,8 @@ theorem le_inf_iff : h ≤ f ⊓ g ↔ h ≤ f ∧ h ≤ g := _root_.le_inf_iff
 tenses fail to unify. -/
 theorem unify_examples :
     unify (Features.of (person := some .third)) (Features.of (number := some .singular)) =
-        some (Features.of (person := some .third) (number := some .singular)) ∧
-      unify (Features.of (tense := some .Past)) (Features.of (tense := some .Pres)) = none := by
+        ↑(Features.of (person := some .third) (number := some .singular)) ∧
+      unify (Features.of (tense := some .Past)) (Features.of (tense := some .Pres)) = ⊤ := by
   decide
 
 end Shieber1986

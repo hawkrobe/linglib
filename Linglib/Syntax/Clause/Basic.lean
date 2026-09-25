@@ -205,77 +205,77 @@ instance (sel : Selection) : Decidable sel.IsInterrogative :=
   inferInstanceAs (Decidable (∃ t ∈ sel.types, _))
 
 /-- Two nonempty sets of types unify to their intersection when it is nonempty. -/
-def unifyTypes (a b : Types) : Option Types :=
+def unifyTypes (a b : Types) : WithTop Types :=
   if h : ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty then
-    some (OrderDual.toDual ⟨_, h⟩)
-  else none
+    ((OrderDual.toDual ⟨_, h⟩ : Types) : WithTop Types)
+  else ⊤
 
 theorem le_iff {a b : Types} : a ≤ b ↔ (OrderDual.ofDual b).1 ⊆ (OrderDual.ofDual a).1 :=
   Iff.rfl
 
 instance : PartialUnify Types where
   unify := unifyTypes
-  isLUB_of_unify_eq_some := by
+  isLUB_of_unify_eq_coe := by
     intro a b c h
     unfold unifyTypes at h
     split at h
     · next hne =>
-      obtain rfl := Option.some.inj h
-      refine ⟨PartialUnify.mem_upperBounds_pair.mpr
+      obtain rfl := WithTop.coe_inj.mp h
+      refine ⟨mem_upperBounds_pair.mpr
         ⟨le_iff.mpr Finset.inter_subset_left, le_iff.mpr Finset.inter_subset_right⟩,
         fun u hu ↦ ?_⟩
-      obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+      obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
       exact le_iff.mpr (Finset.subset_inter (le_iff.mp hau) (le_iff.mp hbu))
-    · exact absurd h (by simp)
-  isSome_unify_of_bddAbove := by
+    · exact absurd h WithTop.top_ne_coe
+  unify_ne_top_of_bddAbove := by
     intro a b ⟨u, hu⟩
-    obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
     have hne : ((OrderDual.ofDual a).1 ∩ (OrderDual.ofDual b).1).Nonempty :=
       (OrderDual.ofDual u).2.mono (Finset.subset_inter (le_iff.mp hau) (le_iff.mp hbu))
     simp [unifyTypes, hne]
 
 /-- The bottom unifies with anything, and two recorded selections unify to their intersection
 when it is nonempty. -/
-def unify : Selection → Selection → Option Selection
-  | ⊥, y => some y
-  | (a : Types), ⊥ => some a
+def unify : Selection → Selection → WithTop Selection
+  | ⊥, y => y
+  | (a : Types), ⊥ => (a : Selection)
   | (a : Types), (b : Types) => (PartialUnify.unify a b).map WithBot.some
 
 instance : PartialUnify Selection where
   unify := unify
-  isLUB_of_unify_eq_some := by
+  isLUB_of_unify_eq_coe := by
     intro x y z h
     match x, y with
     | ⊥, y =>
-      obtain rfl := Option.some.inj h
-      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
-        fun u hu ↦ (PartialUnify.mem_upperBounds_pair.mp hu).2⟩
+      obtain rfl := WithTop.coe_inj.mp h
+      exact ⟨mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
+        fun u hu ↦ (mem_upperBounds_pair.mp hu).2⟩
     | (a : Types), ⊥ =>
-      obtain rfl := Option.some.inj h
-      exact ⟨PartialUnify.mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
-        fun u hu ↦ (PartialUnify.mem_upperBounds_pair.mp hu).1⟩
+      obtain rfl := WithTop.coe_inj.mp h
+      exact ⟨mem_upperBounds_pair.mpr ⟨le_rfl, bot_le⟩,
+        fun u hu ↦ (mem_upperBounds_pair.mp hu).1⟩
     | (a : Types), (b : Types) =>
-      simp only [unify, Option.map_eq_some_iff] at h
+      simp only [unify, WithTop.map_eq_some_iff] at h
       obtain ⟨c, hc, rfl⟩ := h
-      have hl := PartialUnify.isLUB_of_unify_eq_some hc
-      obtain ⟨hac, hbc⟩ := PartialUnify.mem_upperBounds_pair.mp hl.1
-      refine ⟨PartialUnify.mem_upperBounds_pair.mpr
+      have hl := PartialUnify.isLUB_of_unify_eq_coe hc
+      obtain ⟨hac, hbc⟩ := mem_upperBounds_pair.mp hl.1
+      refine ⟨mem_upperBounds_pair.mpr
         ⟨WithBot.coe_le_coe.mpr hac, WithBot.coe_le_coe.mpr hbc⟩, fun u hu ↦ ?_⟩
-      obtain ⟨hau, hbu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+      obtain ⟨hau, hbu⟩ := mem_upperBounds_pair.mp hu
       obtain ⟨u', rfl, hau'⟩ := WithBot.coe_le_iff.mp hau
-      exact WithBot.coe_le_coe.mpr (hl.2 (PartialUnify.mem_upperBounds_pair.mpr
+      exact WithBot.coe_le_coe.mpr (hl.2 (mem_upperBounds_pair.mpr
         ⟨hau', WithBot.coe_le_coe.mp hbu⟩))
-  isSome_unify_of_bddAbove := by
+  unify_ne_top_of_bddAbove := by
     intro x y ⟨u, hu⟩
-    obtain ⟨hxu, hyu⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+    obtain ⟨hxu, hyu⟩ := mem_upperBounds_pair.mp hu
     match x, y with
-    | ⊥, _ => rfl
-    | (a : Types), ⊥ => rfl
+    | ⊥, _ => exact WithTop.coe_ne_top
+    | (a : Types), ⊥ => exact WithTop.coe_ne_top
     | (a : Types), (b : Types) =>
       obtain ⟨u', rfl, hau'⟩ := WithBot.coe_le_iff.mp hxu
-      obtain ⟨c, hc⟩ := Option.isSome_iff_exists.mp (PartialUnify.isSome_unify_of_bddAbove
-        ⟨u', PartialUnify.mem_upperBounds_pair.mpr ⟨hau', WithBot.coe_le_coe.mp hyu⟩⟩)
-      simp [unify, hc]
+      obtain ⟨c, hc⟩ := WithTop.ne_top_iff_exists.mp (PartialUnify.unify_ne_top_of_bddAbove
+        ⟨u', mem_upperBounds_pair.mpr ⟨hau', WithBot.coe_le_coe.mp hyu⟩⟩)
+      simp [unify, ← hc]
 
 end Selection
 
