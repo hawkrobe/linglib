@@ -1,30 +1,34 @@
 module
 
 public import Mathlib.Data.List.Basic
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Norwegian conjugation
 
-This file defines the stem of a Bokmål verb and builds it from the infinitive by the weak
-classes of Faarlund, Lie and Vannebo's reference grammar. A stem is the infinitive, the present,
-the preterite and the past participle. The present of every weak verb is the infinitive with
-*-r*: *-er* on the root of an infinitive in *-e*, *-r* on a stem in a stressed vowel. The classes
-differ in the preterite and the participle, and the grammar draws the line between them there.
-A weak verb of the first class, the largest and the productive one, has one form for both,
-*-et* on the root, *kaste*, *kastet*, *kastet*, with *-a* as a rarer written variant. A weak verb
-of the second class has a dental in both, and the dental of the participle is that of the
-preterite: *-te* and *-t* after most stems, *reiste*, *reist*, *-de* and *-d* after a stem in a
-voiced *-d*, *-g* or *-v* or in the diphthongs *-ei* and *-øy*, *levde*, *levd*, and *-dde* and
-*-dd* after a stem in a single stressed vowel, *rodde*, *rodd*. A double consonant at the end of
-the stem is written single before the dental endings, *kjenne*, *kjente*, *bygge*, *bygde*. A
-strong verb, or a weak verb with a vowel change such as *sette*, *satte*, *satt*, is given by
-its four forms.
+This file defines the stem of a Norwegian verb and builds it from the infinitive by the weak
+classes of Faarlund, Lie and Vannebo's reference grammar, in either written standard. A stem is
+the infinitive, the present, the preterite and the past participle. The classes differ in the
+preterite and the participle, and the grammar draws the line between them there. A weak verb of
+the first class, the largest and the productive one, has one form for both: in Bokmål *-et* on
+the root, *kaste*, *kaster*, *kastet*, *kastet*, with *-a* as a rarer written variant, and in
+Nynorsk *-a*, with the present in *-ar*, *kaste*, *kastar*, *kasta*, *kasta*. A weak verb of the
+second class has a dental in both, and the dental of the participle is that of the preterite,
+in both standards alike: *-te* and *-t* after most stems, *reiste*, *reist*, *-de* and *-d*
+after a stem in a voiced *-d*, *-g* or *-v* or in the diphthongs *-ei* and *-øy*, *levde*,
+*levd*, and *-dde* and *-dd* after a stem in a single stressed vowel, *rodde*, *rodd*. The
+present of a second-class verb, and of a Bokmål first-class verb, is the infinitive with *-r*:
+*-er* on the root of an infinitive in *-e*, *-r* on a stem in a stressed vowel. A double
+consonant at the end of the stem is written single before the dental endings, *kjenne*,
+*kjente*, *bygge*, *bygde*. A strong verb, or a weak verb with a vowel change such as *sette*,
+*satte*, *satt*, is given by its four forms.
 
 ## Main definitions
 
+* `Norwegian.Standard`: the written standards, Bokmål and Nynorsk.
 * `Norwegian.Conjugation.Stem`: the infinitive, present, preterite and past participle.
 * `Norwegian.Conjugation.weak1`, `dental`, `weak2a`, `weak2b`, `weak2c`: the stem of a weak
-  verb of each class, from its infinitive.
+  verb of each class, from its infinitive, the first class by standard.
 
 ## Main results
 
@@ -35,9 +39,12 @@ its four forms.
 
 ## Implementation notes
 
-The rules read the spelling. The *-a* variant of the first class and the Nynorsk classes are not
-covered, and a verb whose stressed vowel is *e*, as *kle*, is a second-class verb in *-dde* by
-`weak2c`, which does not take the final *-e* for an infinitive ending.
+The rules read the spelling. The *-a* variant of the Bokmål first class, the Nynorsk side forms
+of the second class with *-t* in the participle, the Nynorsk fourth subclass with a bare
+present and a vowel change, *telje*, *tel*, *talde*, *talt*, and the agreement of a Nynorsk
+participle after *vere* and *verte* are not covered. A verb whose stressed vowel is *e*, as
+*kle*, is a second-class verb in *-dde* by `weak2c`, which does not take the final *-e* for an
+infinitive ending.
 
 ## References
 
@@ -46,7 +53,15 @@ covered, and a verb whose stressed vowel is *e*, as *kle*, is a second-class ver
 
 @[expose] public section
 
-namespace Norwegian.Conjugation
+namespace Norwegian
+
+/-- The written standards of Norwegian. -/
+inductive Standard where
+  | bokmaal
+  | nynorsk
+  deriving DecidableEq, Repr, Fintype
+
+namespace Conjugation
 
 /-- The stem of a verb is its infinitive, its present, its preterite and its past participle. -/
 structure Stem where
@@ -75,11 +90,17 @@ def dentalStem (inf : String) : String :=
   | c :: c' :: r => if c = c' then String.ofList (c :: r).reverse else root inf
   | _ => root inf
 
-/-- `weak1 inf` is the stem of a weak verb of the first class, with *-et* on the root in the
-preterite and the participle, as *kaste*, *kaster*, *kastet*, *kastet*. -/
-def weak1 (inf : String) : Stem :=
-  { infinitive := inf, present := inf ++ "r", preterite := root inf ++ "et",
-    participle := root inf ++ "et" }
+/-- `weak1 s inf` is the stem of a weak verb of the first class in the standard `s`, with one
+form for the preterite and the participle: in Bokmål *-et* on the root, *kaste*, *kaster*,
+*kastet*, *kastet*, in Nynorsk *-a*, with the present in *-ar*, *kaste*, *kastar*, *kasta*,
+*kasta*. -/
+def weak1 : Standard → String → Stem
+  | .bokmaal, inf =>
+    { infinitive := inf, present := inf ++ "r", preterite := root inf ++ "et",
+      participle := root inf ++ "et" }
+  | .nynorsk, inf =>
+    { infinitive := inf, present := root inf ++ "ar", preterite := root inf ++ "a",
+      participle := root inf ++ "a" }
 
 /-- `dental d inf` is the stem of a weak verb of the second class with the dental `d`, the
 preterite in `d` with *-e* and the participle in `d`, on the stem written with a single final
@@ -104,9 +125,11 @@ def weak2c (inf : String) : Stem :=
 
 /-! ### The forms across the classes -/
 
-/-- The verbs of the first class have the same form in the preterite and the participle. -/
-theorem weak1_preterite_eq_participle (inf : String) :
-    (weak1 inf).preterite = (weak1 inf).participle := rfl
+/-- The verbs of the first class have the same form in the preterite and the participle, in
+both standards. -/
+theorem weak1_preterite_eq_participle (s : Standard) (inf : String) :
+    (weak1 s inf).preterite = (weak1 s inf).participle := by
+  cases s <;> rfl
 
 /-- In the second class the dental of the participle is that of the preterite. -/
 theorem dental_preterite (d inf : String) :
@@ -116,8 +139,8 @@ theorem weak2c_preterite (inf : String) :
     (weak2c inf).preterite = (weak2c inf).participle ++ "e" := by
   rw [weak2c, String.append_assoc]; rfl
 
-/-- The present of a first-class verb is *-er* on its root. -/
-theorem weak1_present (s : String) : (weak1 (s ++ "e")).present = s ++ "er" := by
+/-- The present of a Bokmål first-class verb is *-er* on its root. -/
+theorem weak1_present (s : String) : (weak1 .bokmaal (s ++ "e")).present = s ++ "er" := by
   rw [weak1, String.append_assoc]; rfl
 
 /-- The present of a second-class verb with an infinitive in *-e* is *-er* on its root. -/
@@ -131,4 +154,6 @@ example :
       (weak2b "bygge").preterite = "bygde" ∧ (weak2b "bygge").participle = "bygd" := by
   decide
 
-end Norwegian.Conjugation
+end Conjugation
+
+end Norwegian

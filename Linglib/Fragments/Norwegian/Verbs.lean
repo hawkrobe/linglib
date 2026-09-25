@@ -29,7 +29,8 @@ verbs they are formed on, conjugated by the grammar's classes.
   the one a context takes.
 * `Norwegian.Verb.transitive`, `Norwegian.Verb.withParticle`: the transitive entry of a stem,
   and the verb phrase formed on an entry with a verbal particle.
-* `Norwegian.Verbs.allVerbs`: the entries.
+* `Norwegian.Verbs.allVerbs`, `Norwegian.Verbs.Nynorsk.sparkeUt`: the Bokmål entries and the
+  Nynorsk one.
 
 ## Main results
 
@@ -41,9 +42,11 @@ verbs they are formed on, conjugated by the grammar's classes.
 
 ## Implementation notes
 
-The entries are Bokmål with the *-et* forms of the first weak class; den Dikken's examples are
-Nynorsk, *sparka*, *klipt*, and are recorded as rows of his study. Which verb phrases also exist
-as compound verbs in all their forms, the grammar's three groups, is not recorded.
+The entries are Bokmål with the *-et* forms of the first weak class, and Nynorsk *sparke* for
+Åfarli's rows in den Dikken's study. His other Nynorsk verbs have no entry: the grammar's lists
+do not place *klippe*, and his *kjørt* is the Bokmål spelling of Nynorsk *køyrt*. Which verb
+phrases also exist as compound verbs in all their forms, the grammar's three groups, is not
+recorded.
 
 ## References
 
@@ -145,13 +148,13 @@ namespace Verbs
 /-! ### Simplex verbs -/
 
 /-- *kaste* 'throw', the paradigm verb of the first weak class. -/
-def kaste : Verb := .transitive (weak1 "kaste")
+def kaste : Verb := .transitive (weak1 .bokmaal "kaste")
 
 /-- *sparke* 'kick', of the first weak class like the other stems in *-rk*. -/
-def sparke : Verb := .transitive (weak1 "sparke")
+def sparke : Verb := .transitive (weak1 .bokmaal "sparke")
 
 /-- *klippe* 'cut', of the first weak class like the other stems in *-pp*. -/
-def klippe : Verb := .transitive (weak1 "klippe")
+def klippe : Verb := .transitive (weak1 .bokmaal "klippe")
 
 /-- *kjøre* 'drive', of the second weak class with *-te*, a stem in a long vowel and a single
 consonant. -/
@@ -229,6 +232,19 @@ er oppgjort* after *være*. -/
 theorem gjoereOpp_participle :
     gjoereOpp.participle .perfect = "gjort opp" ∧ gjoereOpp.participle .copular = "oppgjort" := by
   decide
+
+/-! ### Nynorsk -/
+
+namespace Nynorsk
+
+/-- Nynorsk *sparke* 'kick', of the first weak class, *sparka*, as in the grammar's *Han vart
+sparka*. -/
+def sparke : Verb := .transitive (weak1 .nynorsk "sparke")
+
+/-- Nynorsk *sparke ut* 'kick out', Åfarli's *sparka ut* and *utsparka*. -/
+def sparkeUt : Verb := sparke.withParticle "ut"
+
+end Nynorsk
 
 end Verbs
 
