@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Syntax.ConstructionGrammar.Inheritance
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Data.Fintype.Sum
+public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
@@ -16,10 +18,12 @@ resultative (*X CAUSES Y to BECOME Z*), the intransitive motion (*X MOVES Y*) an
 the resultative it acquires both, so the causative alternation is predicted for it there and not
 alone (`manner_verb_alternates_in_resultative`, `manner_verb_no_alternation`).
 
-The constructions form a network of inheritance links (§3.3). The ditransitive is a polysemy
-family whose senses share one argument frame, which `PolysemyFamily` enforces by construction
-(`PolysemyFamily.extension_form`); intransitive motion is a subpart of caused motion, and the
-resultative a metaphorical extension of it (`goldberg1995Network`).
+The constructions form a network of normal-mode inheritance links (§3.3, `network`). The
+extensions of the polysemous ditransitive state no syntax of their own and inherit the central
+sense's (`inherited_statedForm`), and the network checks each link against the forms its type
+requires (`network_wellTyped`): a polysemy extension has the form of its central sense, and
+intransitive motion is a proper subpart of caused motion. The resultative is a metaphorical
+extension of caused motion.
 
 ## Implementation notes
 
@@ -47,8 +51,7 @@ open ConstructionGrammar ArgumentStructure
 /-- The ditransitive, [Subj V Obj Obj₂]: *X CAUSES Y to RECEIVE Z* (*Pat faxed Bill the
 letter*). -/
 def ditransitive : Construction MeaningComponents :=
-  { name := "Ditransitive"
-  , form :=
+  { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .NOUN }
@@ -59,8 +62,7 @@ def ditransitive : Construction MeaningComponents :=
 (*Pat sneezed the napkin off the table*). A verb such as *sneeze*, lexicalizing neither motion nor
 causation, acquires both from the construction. -/
 def causedMotion : Construction MeaningComponents :=
-  { name := "Caused-motion"
-  , form :=
+  { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .NOUN }
@@ -71,8 +73,7 @@ def causedMotion : Construction MeaningComponents :=
 flat*). A manner verb such as *push*, lexicalizing neither change of state nor causation,
 acquires both from the construction. -/
 def resultative : Construction MeaningComponents :=
-  { name := "Resultative"
-  , form :=
+  { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .NOUN }
@@ -82,8 +83,7 @@ def resultative : Construction MeaningComponents :=
 /-- The intransitive motion construction, [Subj V Obl]: *X MOVES Y* (*The fly buzzed into the
 room*). -/
 def intransitiveMotion : Construction MeaningComponents :=
-  { name := "Intransitive-motion"
-  , form :=
+  { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .ADP } ]
@@ -92,8 +92,7 @@ def intransitiveMotion : Construction MeaningComponents :=
 /-- The conative, [Subj V Obl_at]: *X DIRECTS ACTION at Y* (*Sam kicked at Bill*). The at-phrase
 marks the target without entailing contact. -/
 def conative : Construction MeaningComponents :=
-  { name := "Conative"
-  , form :=
+  { form :=
       [ { filler := .open_ .NOUN }
       , { filler := .open_ .VERB, isHead := true }
       , { filler := .open_ .ADP } ]
@@ -130,60 +129,12 @@ theorem manner_verb_alternates_in_resultative (mc : MeaningComponents)
     predictedAlternationInConstruction mc resultative .causativeInchoative = true :=
   (fuse_cos_caus_enables mc resultative.meaning rfl rfl hInstr rfl).1
 
-/-! ### The ditransitive as a polysemy family (§3.3.2, pp. 75–77) -/
-
-/-- A polysemy family: one argument frame shared by a central sense and its extensions. -/
-structure PolysemyFamily (Sem : Type*) where
-  /-- The name of the family. -/
-  name : String
-  /-- The shared argument frame. -/
-  form : TypedForm String
-  /-- The central sense. -/
-  centralMeaning : Sem
-  /-- The extended senses, each with its name and the properties it overrides. -/
-  extensions : List (String × Sem × List String)
-
-variable {Sem : Type*}
-
-/-- The central sense as a construction. -/
-def PolysemyFamily.centralConstruction (f : PolysemyFamily Sem) : Construction Sem :=
-  { name := f.name, form := f.form, meaning := f.centralMeaning }
-
-/-- An extension as a construction, sharing the family's form by definition. -/
-def PolysemyFamily.extensionConstruction (f : PolysemyFamily Sem)
-    (ext : String × Sem × List String) : Construction Sem :=
-  { name := f.name ++ "-" ++ ext.1, form := f.form, meaning := ext.2.1 }
-
-/-- Every sense of the family, the central one first. -/
-def PolysemyFamily.allConstructions (f : PolysemyFamily Sem) : List (Construction Sem) :=
-  f.centralConstruction :: f.extensions.map f.extensionConstruction
-
-/-- The polysemy links a family determines, one per extension. -/
-def PolysemyFamily.polysemyLinks (f : PolysemyFamily Sem) : List InheritanceLink :=
-  f.extensions.map fun ⟨extName, _, overrides⟩ ↦
-    { parent := f.name
-    , child := f.name ++ "-" ++ extName
-    , mode := .normal
-    , linkType := some .polysemy
-    , sharedProperties := ["shared argument frame"]
-    , overriddenProperties := overrides }
-
-/-- Every extension has the family's form: "the syntactic specifications of the central sense
-are inherited by the extensions" (p. 75). -/
-theorem PolysemyFamily.extension_form (f : PolysemyFamily Sem)
-    (ext : String × Sem × List String) : (f.extensionConstruction ext).form = f.form := rfl
-
-/-- Every link a polysemy family derives is a polysemy link. -/
-theorem PolysemyFamily.polysemyLinks_typed (f : PolysemyFamily Sem) :
-    ∀ l ∈ f.polysemyLinks, l.linkType = some .polysemy := by
-  intro l hl
-  obtain ⟨_, _, rfl⟩ := List.mem_map.1 hl
-  rfl
+/-! ### The network (§3.3) -/
 
 /-- The modality of the CAUSE-RECEIVE relation that distinguishes the ditransitive's senses
 (pp. 75–77). -/
 inductive TransferModality where
-  /-- Actual transfer: X CAUSES Y TO RECEIVE Z. -/
+  /-- Actual transfer, the central sense: X CAUSES Y TO RECEIVE Z. -/
   | actual
   /-- Conditions of satisfaction imply X CAUSES Y TO RECEIVE Z. -/
   | satisfaction
@@ -195,60 +146,72 @@ inductive TransferModality where
   | intended
   /-- X ACTS TO CAUSE Y TO RECEIVE Z at some future point in time. -/
   | future
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
-/-- The ditransitive's six senses sharing one argument frame (pp. 75–77; verb classes per
-Figure 2.2, p. 38). The extension labels are the formalizer's; the book numbers the senses. -/
-def ditransitiveFamily : PolysemyFamily TransferModality :=
-  { name := "Ditransitive"
-  , form := ditransitive.form
-  , centralMeaning := .actual
-  , extensions :=
-      [ ("Satisfaction", .satisfaction, ["transfer is implied, not entailed"])
-      , ("Enablement", .enablement, ["enablement replaces direct causation"])
-      , ("Negated", .negated, ["transfer is negated"])
-      , ("Intended", .intended, ["transfer is intended, not actual"])
-      , ("Future", .future, ["transfer deferred to future"]) ] }
+/-- The constructions of the book's network: the ditransitive in each of its senses and the other
+argument structure constructions. -/
+inductive Node where
+  | ditransitive (m : TransferModality)
+  | causedMotion
+  | intransitiveMotion
+  | resultative
+  | conative
+  deriving DecidableEq, Fintype
 
-/-! ### The network (§3.3–3.7) -/
+/-- The construction at each node; the senses of the ditransitive share its form. -/
+def construction : Node → Construction MeaningComponents
+  | .ditransitive _ => ditransitive
+  | .causedMotion => causedMotion
+  | .intransitiveMotion => intransitiveMotion
+  | .resultative => resultative
+  | .conative => conative
 
-/-- The subpart link from caused motion to intransitive motion (p. 78, "I_S: cause"): the
-intransitive motion construction is a proper subpart of the caused-motion construction, the
-cause role absent. -/
-def causedMotionSubpart : InheritanceLink :=
-  { parent := "Caused-motion"
-  , child := "Intransitive-motion"
-  , mode := .normal
-  , linkType := some .subpart
-  , sharedProperties := ["MOVE predicate", "theme role", "path/goal role"] }
+/-- The network of chapters 2 and 3, "the entire collection of constructions as forming a lattice,
+with individual constructions related by specific types of asymmetric normal mode inheritance
+links" (§3.7, p. 99). Each extension of the ditransitive inherits from the central sense by a
+polysemy link (pp. 75–77), intransitive motion from caused motion by a subpart link (p. 78), and
+the resultative from caused motion by a metaphorical link, change of state as change of location
+(pp. 81–84). The conative is in the book's inventory (p. 4) but in no link. -/
+def network : Constructicon Node MeaningComponents where
+  cxn := construction
+  mothers
+    | .ditransitive .actual => []
+    | .ditransitive _ => [(.ditransitive .actual, some .polysemy)]
+    | .intransitiveMotion => [(.causedMotion, some .subpart)]
+    | .resultative => [(.causedMotion, some .metaphorical)]
+    | _ => []
 
-/-- The metaphorical link from caused motion to the resultative (pp. 81–84): the resultative
-extends caused motion by the metaphor of change of state as change of location. -/
-def causedMotionToResultative : InheritanceLink :=
-  { parent := "Caused-motion"
-  , child := "Resultative"
-  , mode := .normal
-  , linkType := some .metaphorical
-  , sharedProperties := ["X CAUSES Y to undergo change", "causal structure"]
-  , overriddenProperties := ["motion → change of state", "location → state"] }
+/-- The depth of a node below the constructions it inherits from. -/
+def Node.rank : Node → ℕ
+  | .ditransitive .actual | .causedMotion | .conative => 0
+  | _ => 1
 
-/-- The constructional network of chapters 2 and 3, with the meaning poles erased: "the entire
-collection of constructions as forming a lattice, with individual constructions related by
-specific types of asymmetric normal mode inheritance links" (§3.7, p. 99). The conative is in
-the book's inventory (p. 4) but in no inheritance link. -/
-def goldberg1995Network : Constructicon Unit :=
-  { constructions :=
-      ditransitiveFamily.allConstructions.map (.map fun _ ↦ ()) ++
-        [causedMotion, intransitiveMotion, resultative, conative].map (.map fun _ ↦ ())
-  , links := ditransitiveFamily.polysemyLinks ++ [causedMotionSubpart, causedMotionToResultative] }
+instance : PartialOrder Node := network.partialOrder Node.rank (by decide)
 
-/-- Every link of the network resolves to a member construction. -/
-theorem goldberg1995Network_wellFormed : goldberg1995Network.WellFormed := by
-  decide
+instance : DecidableLE Node :=
+  network.decidableLE [.ditransitive .actual, .causedMotion] (by decide)
 
-/-- The links determine the resultative's mother: caused motion, by the metaphorical link. -/
-theorem resultative_parent :
-    goldberg1995Network.parentsOf "Resultative" = [causedMotion.map fun _ ↦ ()] := by
-  decide
+/-- Every link respects its type: the extensions of the ditransitive have its form, and
+intransitive motion is a proper subpart of caused motion. -/
+theorem network_wellTyped : network.WellTyped := by decide
+
+/-- The links determine the resultative's mother: caused motion. -/
+theorem isMother_resultative_iff (n : Node) :
+    network.IsMother .resultative n ↔ n = .causedMotion := by
+  revert n; decide
+
+/-- The form a construction states itself. The extensions of the ditransitive state none: "the
+syntactic specifications of the central sense are inherited by the extensions; therefore we do
+not need to state the syntactic realization for each extension" (p. 75). -/
+def statedForm : Node → Option (TypedForm String)
+  | .ditransitive .actual => some ditransitive.form
+  | .ditransitive _ => none
+  | n => some (construction n).form
+
+/-- Each sense of the ditransitive inherits the central sense's form. -/
+theorem inherited_statedForm (m : TransferModality) :
+    DefaultInheritance.inherited statedForm (.ditransitive m) = {ditransitive.form} := by
+  cases m <;> exact DefaultInheritance.inherited_eq_singleton_of_isLeast
+    (m := .ditransitive .actual) (by decide) rfl
 
 end Goldberg1995

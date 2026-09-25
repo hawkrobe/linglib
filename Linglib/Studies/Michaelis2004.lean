@@ -83,8 +83,7 @@ def frameAdverbialRule : CompositionRule VendlerClass
 /-- The frame adverbial construction (Figure 5): an *in*-headed adjunct
 added to the verbal valence. -/
 def frameAdverbial : Construction (CompositionRule VendlerClass) :=
-  { name := "Frame adverbial"
-  , form :=
+  { form :=
       [ { filler := .open_ .VERB, isHead := true }
       , { filler := .fixed "in" }
       , { filler := .open_ .NOUN } ]
@@ -103,8 +102,7 @@ def progressiveRule : CompositionRule VendlerClass
 participial complement whose subject unifies with the auxiliary's — an
 instance of [kay-fillmore-1999]'s coinstantiation construction. -/
 def progressive : Construction (CompositionRule VendlerClass) :=
-  { name := "Progressive"
-  , form :=
+  { form :=
       [ { filler := .open_ .NOUN, gf := some .subj, refIdx := some 1 }
       , { filler := .headed "be" .AUX, isHead := true }
       , { filler := .open_ .VERB, gf := some .comp, refIdx := some 1 } ]

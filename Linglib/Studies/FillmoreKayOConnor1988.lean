@@ -188,8 +188,7 @@ end ScalarModel
 /-- The *let alone* construction F ⟨X A Y let alone B⟩ (20a): the paired foci A and B flank
 *let alone*; the shared material X and Y and the trigger F are elided from the typed form. -/
 def letAloneConstruction : Construction Unit :=
-  { name := "let alone"
-    form := [{ filler := .open_ .NOUN }, { filler := .fixed "let" }, { filler := .fixed "alone" },
+  { form := [{ filler := .open_ .NOUN }, { filler := .fixed "let" }, { filler := .fixed "alone" },
       { filler := .open_ .NOUN }]
     meaning := ()
     pragmaticPoint := true }
@@ -202,8 +201,7 @@ theorem letAloneConstruction_isFormalIdiom : letAloneConstruction.IsFormalIdiom 
 service of specific pragmatic or rhetorical purposes": a non-nominative subject with a bare-stem
 predicate. -/
 def incredulityResponse : Construction Unit :=
-  { name := "Incredulity Response"
-    form := [{ filler := .open_ .PRON, gf := some .subj },
+  { form := [{ filler := .open_ .PRON, gf := some .subj },
       { filler := .phrasal, level := some .phrase, gf := some .pred }]
     meaning := ()
     pragmaticPoint := true }

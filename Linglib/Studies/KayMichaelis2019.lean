@@ -10,7 +10,7 @@ public import Linglib.Studies.FillmoreKayOConnor1988
 This file formalizes the two formal claims of the survey chapter [kay-michaelis-2019]. First,
 rules of semantic combination are construction-relative: a construction specifies how the
 semantics of the daughters combine into the semantics of the mother and what the construction
-itself adds (Sections 1 and 4). The substrate's `CompositionRule` and `Constructicon.interps`
+itself adds (Sections 1 and 4). The substrate's `CompositionRule` and `interps`
 give that architecture content over the licensing layer's local trees, a token's readings being
 whatever the syntactically matching constructions' rules produce from its daughters' readings;
 the chapter's opening contrast, *purple plum* composed by intersection and *alleged thief* by
@@ -92,15 +92,13 @@ def modificationForm : TypedForm String :=
 intersective rule. -/
 def intersectiveModification (E : Type*) :
     Construction (CompositionRule (Den E)) :=
-  { name := "Intersective modification"
-  , form := modificationForm
+  { form := modificationForm
   , meaning := intersectiveRule E }
 
 /-- Operator Adj+N modification: its meaning pole is the operator rule. -/
 def operatorModification (E : Type*) :
     Construction (CompositionRule (Den E)) :=
-  { name := "Operator modification"
-  , form := modificationForm
+  { form := modificationForm
   , meaning := operatorRule E }
 
 /-- §1's premise: one rule of syntactic formation, two semantic
@@ -108,10 +106,9 @@ specifications — the constructions share their typed form. -/
 theorem same_form (E : Type*) :
     (intersectiveModification E).form = (operatorModification E).form := rfl
 
-/-- The demo network: both modification constructions. -/
-def demoCx (E : Type*) : Constructicon (CompositionRule (Den E)) :=
-  { constructions := [intersectiveModification E, operatorModification E]
-  , links := [] }
+/-- The demo inventory: both modification constructions. -/
+def demoCx (E : Type*) : List (Construction (CompositionRule (Den E))) :=
+  [intersectiveModification E, operatorModification E]
 
 /-- Toy POS lexicon. -/
 def demoPos : String → Option UD.UPOS
@@ -137,14 +134,14 @@ def demoLex : String → Option (Den E)
 construction matches the form but its rule rejects two predicate
 daughters. -/
 theorem purple_plum_intersective :
-    (demoCx E).interps demoPos (demoLex purple plum thief alleged)
+    interps (demoCx E) demoPos (demoLex purple plum thief alleged)
         (.node [.word "purple", .word "plum"])
-      = [.pred (λ x => purple x ∧ plum x)] := rfl
+      = [.pred fun x ↦ purple x ∧ plum x] := rfl
 
 /-- *Alleged thief* has exactly one reading: the operator applied to the
 head predicate — not an intersection. -/
 theorem alleged_thief_operator :
-    (demoCx E).interps demoPos (demoLex purple plum thief alleged)
+    interps (demoCx E) demoPos (demoLex purple plum thief alleged)
         (.node [.word "alleged", .word "thief"])
       = [.pred (alleged thief)] := rfl
 
@@ -152,9 +149,7 @@ theorem alleged_thief_operator :
 reading at all: the chapter's point that intersection cannot be the
 single rule of adjectival modification. -/
 theorem alleged_thief_needs_operator_construction :
-    ({ constructions := [intersectiveModification E], links := [] }
-        : Constructicon (CompositionRule (Den E))).interps demoPos
-        (demoLex purple plum thief alleged)
+    interps [intersectiveModification E] demoPos (demoLex purple plum thief alleged)
         (.node [.word "alleged", .word "thief"])
       = [] := rfl
 

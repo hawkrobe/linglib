@@ -9,7 +9,7 @@ public import Linglib.Data.UD.UPOS
 public import Mathlib.Data.List.Dedup
 
 /-!
-# Constructions and the constructicon
+# Constructions
 
 A construction is a learned pairing of a form and a meaning
 ([goldberg-2006]), the basic unit of grammatical knowledge in CxG. The
@@ -26,7 +26,6 @@ opening a category, or admitting any phrase, with a construction's
   form–meaning pairings
 * `Construction.IsFullyCompositional`, `Construction.IsFormalIdiom`: analyzability by the
   universal combination schemata, and lexical openness
-* `InheritanceLink`, `Constructicon`: the network
 
 ## References
 
@@ -55,35 +54,6 @@ inductive Specificity where
   | partiallyOpen
   /-- Every slot open: [N⁰ N⁰ N⁰], [N′ PAL⁰ N]. -/
   | fullyAbstract
-  deriving Repr, DecidableEq
-
-/-- Mode of information transfer in an inheritance link, orthogonal to
-the link's semantic relation ([goldberg-1995] §3.3.1, p. 73–74). -/
-inductive InheritanceMode where
-  /-- The child inherits defaults from its parents but may override
-  them — the only mode [goldberg-1995] uses. -/
-  | normal
-  /-- All information is inherited strictly, with no conflicts allowed —
-  the mode "normally assumed in unification-based grammars" (p. 74). -/
-  | complete
-  deriving Repr, DecidableEq
-
-/-- The semantic relation an inheritance link records: [goldberg-1995]'s
-four major link types (§3.3.2, p. 75). -/
-inductive LinkType where
-  /-- I_P: relates a construction's central sense to an extension, which
-  inherits the syntax but differs in meaning (the six senses of the
-  ditransitive, pp. 75–77). -/
-  | polysemy
-  /-- I_M: source and target related by a systematic metaphor
-  (caused-motion → resultative via motion→change, p. 81). -/
-  | metaphorical
-  /-- I_S: the child is a proper subpart of the parent (intransitive
-  motion inside caused-motion, p. 78). -/
-  | subpart
-  /-- I_I: the child is a more fully specified version of the parent
-  (*drive*-crazy as an instance of the resultative, p. 79). -/
-  | instance
   deriving Repr, DecidableEq
 
 /-- X-bar level of a syntactic position or constructional output. -/
@@ -274,7 +244,7 @@ pole is typed by the domain that owns the construction — a composition
 rule, a `MeaningComponents` contribution, a presupposition — with `Unit`
 for a purely formal record or a defective, form-only construction. -/
 structure Construction (Sem : Type*) where
-  name : String
+  /-- The form pole. -/
   form : TypedForm String
   /-- The meaning pole. -/
   meaning : Sem
@@ -292,8 +262,7 @@ def Construction.specificity (c : Construction Sem) : Specificity :=
 /-- Reinterpret the meaning pole along `f`, keeping the form. -/
 def Construction.map {Sem' : Type*} (f : Sem → Sem') (c : Construction Sem) :
     Construction Sem' :=
-  { name := c.name, form := c.form, meaning := f c.meaning
-  , pragmaticPoint := c.pragmaticPoint }
+  { form := c.form, meaning := f c.meaning, pragmaticPoint := c.pragmaticPoint }
 
 /-- A construction is fully compositional when the universal combination schemata alone analyze
 it: its form is fully abstract and it carries no pragmatic point. A proxy for [mueller-2013]'s
@@ -312,32 +281,5 @@ def Construction.IsFormalIdiom (c : Construction Sem) : Prop :=
 
 instance (c : Construction Sem) : Decidable c.IsFormalIdiom :=
   inferInstanceAs (Decidable (¬ _))
-
-/-- An inheritance link between two constructions in the network,
-recording how information flows and what semantic relation holds; purely
-taxonomic links use `linkType := none`. -/
-structure InheritanceLink where
-  /-- Name of the parent construction. -/
-  parent : String
-  /-- Name of the child construction. -/
-  child : String
-  /-- How information flows along the link. -/
-  mode : InheritanceMode
-  /-- The semantic relation the link records, if any. -/
-  linkType : Option LinkType := none
-  /-- Properties the child inherits from the parent. -/
-  sharedProperties : List String
-  /-- Inherited properties the child overrides. -/
-  overriddenProperties : List String := []
-  deriving Repr, DecidableEq
-
-/-- A constructicon: a network of constructions connected by inheritance
-links. -/
-structure Constructicon (Sem : Type*) where
-  /-- The inventory of constructions. -/
-  constructions : List (Construction Sem)
-  /-- The inheritance links, keyed by construction name. -/
-  links : List InheritanceLink
-  deriving Repr
 
 end ConstructionGrammar

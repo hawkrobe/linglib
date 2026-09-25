@@ -24,8 +24,7 @@ structure in which it is embedded.
 * `CompositionRule`: from the daughters' denotations to the mother's
 * `CompositionRule.override`: readings under the override principle, one
   per reconciliation operator
-* `Constructicon.interps`: all readings of a token, through the licensing
-  recognizer
+* `interps`: all readings of a token, through the licensing recognizer
 -/
 
 @[expose] public section
@@ -69,24 +68,19 @@ mutual
 daughters instantiate contributes the readings its meaning pole — its
 composition rule — produces from the daughters' readings; words read
 from the lexicon. -/
-def Constructicon.interps {D : Type*}
-    (cx : Constructicon (CompositionRule D)) (pos : String → Option UD.UPOS)
-    (lex : String → Option D) : Token → List D
+def interps (cxns : List (Construction (CompositionRule D)))
+    (pos : String → Option UD.UPOS) (lex : String → Option D) : Token → List D
   | .word w => (lex w).toList
   | .node ts =>
-      cx.constructions.flatMap (λ c =>
-        if formMatches pos c.form ts then
-          (cx.interpsList pos lex ts).filterMap c.meaning
-        else [])
+      cxns.flatMap fun c ↦
+        if formMatches pos c.form ts then (interpsList cxns pos lex ts).filterMap c.meaning
+        else []
 
 /-- All sequences of daughter readings. -/
-def Constructicon.interpsList {D : Type*}
-    (cx : Constructicon (CompositionRule D)) (pos : String → Option UD.UPOS)
-    (lex : String → Option D) : List Token → List (List D)
+def interpsList (cxns : List (Construction (CompositionRule D)))
+    (pos : String → Option UD.UPOS) (lex : String → Option D) : List Token → List (List D)
   | [] => [[]]
-  | t :: ts =>
-      (cx.interps pos lex t).flatMap (λ d =>
-        (cx.interpsList pos lex ts).map (d :: ·))
+  | t :: ts => (interps cxns pos lex t).flatMap fun d ↦ (interpsList cxns pos lex ts).map (d :: ·)
 
 end
 
