@@ -44,14 +44,11 @@ def verbSecond : Distribution
   | .constituent, .subordinated => some .excluded
   | _, _ => none
 
-/-- Nordmøre Norwegian has obligatory verb second in root declaratives and yes/no-questions,
-optional verb second in wh-questions, and none in exclamatives and imperatives. -/
+/-- Nordmøre Norwegian differs from Standard Norwegian in root clauses only in its wh-questions,
+where verb second is optional; its embedded clauses are not described. -/
 def Nordmore.verbSecond : Distribution
-  | .declarative, .matrix => some .obligatory
-  | .polar, .matrix => some .obligatory
   | .constituent, .matrix => some .optional
-  | .exclamative, .matrix => some .excluded
-  | .imperative, .matrix => some .excluded
+  | t, .matrix => Norwegian.verbSecond t .matrix
   | _, _ => none
 
 end Norwegian

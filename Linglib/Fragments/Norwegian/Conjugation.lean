@@ -7,23 +7,37 @@ public import Mathlib.Data.List.Basic
 
 This file defines the stem of a Bokmål verb and builds it from the infinitive by the weak
 classes of Faarlund, Lie and Vannebo's reference grammar. A stem is the infinitive, the present,
-the preterite and the past participle. A weak verb of the first class, the largest and the
-productive one, has the preterite and the participle in *-et*, *kaste*, *kastet*, *kastet*, with
-*-a* as a rarer written variant. A weak verb of the second class has a preterite in *-te*,
-*-de* or *-dde* and a participle in *-t*, *-d* or *-dd*: *-te* after most stems, *reiste*,
-*reist*, *-de* after a stem in a voiced *-d*, *-g* or *-v* or in the diphthongs *-ei* and *-øy*,
-*levde*, *levd*, and *-dde* after a stem in a single vowel, *rodde*, *rodd*; a double consonant
-at the end of the stem is written single before these endings, *kjenne*, *kjente*, *bygge*,
-*bygde*. The present adds *-er* to the stem, or *-r* to a stem in a stressed vowel. A strong
-verb, or a weak verb with a vowel change such as *sette*, *satte*, *satt*, gives its principal
-parts.
+the preterite and the past participle. The present of every weak verb is the infinitive with
+*-r*: *-er* on the root of an infinitive in *-e*, *-r* on a stem in a stressed vowel. The classes
+differ in the preterite and the participle, and the grammar draws the line between them there.
+A weak verb of the first class, the largest and the productive one, has one form for both,
+*-et* on the root, *kaste*, *kastet*, *kastet*, with *-a* as a rarer written variant. A weak verb
+of the second class has a dental in both, and the dental of the participle is that of the
+preterite: *-te* and *-t* after most stems, *reiste*, *reist*, *-de* and *-d* after a stem in a
+voiced *-d*, *-g* or *-v* or in the diphthongs *-ei* and *-øy*, *levde*, *levd*, and *-dde* and
+*-dd* after a stem in a single stressed vowel, *rodde*, *rodd*. A double consonant at the end of
+the stem is written single before the dental endings, *kjenne*, *kjente*, *bygge*, *bygde*. A
+strong verb, or a weak verb with a vowel change such as *sette*, *satte*, *satt*, is given by
+its four forms.
 
 ## Main definitions
 
 * `Norwegian.Conjugation.Stem`: the infinitive, present, preterite and past participle.
-* `Norwegian.Conjugation.weak1`, `weak2a`, `weak2b`, `weak2c`: the stem of a weak verb of each
-  class, from its infinitive.
-* `Norwegian.Conjugation.principalParts`: the stem of a verb given by its four forms.
+* `Norwegian.Conjugation.weak1`, `dental`, `weak2a`, `weak2b`, `weak2c`: the stem of a weak
+  verb of each class, from its infinitive.
+
+## Main results
+
+* `Norwegian.Conjugation.weak1_preterite_eq_participle`, `dental_preterite`,
+  `weak2c_preterite`: the first class has one form for the preterite and the participle, and the
+  second class the participle with *-e*.
+* `Norwegian.Conjugation.weak1_present`, `dental_present`: the present is *-er* on the root.
+
+## Implementation notes
+
+The rules read the spelling. The *-a* variant of the first class and the Nynorsk classes are not
+covered, and a verb whose stressed vowel is *e*, as *kle*, is a second-class verb in *-dde* by
+`weak2c`, which does not take the final *-e* for an infinitive ending.
 
 ## References
 
@@ -52,6 +66,8 @@ def root (inf : String) : String :=
   | 'e' :: r => String.ofList r.reverse
   | _ => inf
 
+@[simp] theorem root_append_e (s : String) : root (s ++ "e") = s := by simp [root]
+
 /-- `dentalStem inf` is the root of `inf` with a final double consonant written single, the
 stem the dental endings of the second class attach to, *kjenn* to *kjen*. -/
 def dentalStem (inf : String) : String :=
@@ -59,43 +75,58 @@ def dentalStem (inf : String) : String :=
   | c :: c' :: r => if c = c' then String.ofList (c :: r).reverse else root inf
   | _ => root inf
 
-/-- `weak1 inf` is the stem of a weak verb of the first class, with *-er*, *-et* and *-et* on
-the root, as *kaste*, *kaster*, *kastet*, *kastet*. -/
+/-- `weak1 inf` is the stem of a weak verb of the first class, with *-et* on the root in the
+preterite and the participle, as *kaste*, *kaster*, *kastet*, *kastet*. -/
 def weak1 (inf : String) : Stem :=
-  { infinitive := inf, present := root inf ++ "er", preterite := root inf ++ "et",
+  { infinitive := inf, present := inf ++ "r", preterite := root inf ++ "et",
     participle := root inf ++ "et" }
+
+/-- `dental d inf` is the stem of a weak verb of the second class with the dental `d`, the
+preterite in `d` with *-e* and the participle in `d`, on the stem written with a single final
+consonant. -/
+def dental (d inf : String) : Stem :=
+  { infinitive := inf, present := inf ++ "r", preterite := dentalStem inf ++ d ++ "e",
+    participle := dentalStem inf ++ d }
 
 /-- `weak2a inf` is the stem of a weak verb of the second class with the preterite in *-te*
 and the participle in *-t*, as *reise*, *reiser*, *reiste*, *reist*. -/
-def weak2a (inf : String) : Stem :=
-  { infinitive := inf, present := root inf ++ "er", preterite := dentalStem inf ++ "te",
-    participle := dentalStem inf ++ "t" }
+abbrev weak2a : String → Stem := dental "t"
 
 /-- `weak2b inf` is the stem of a weak verb of the second class with the preterite in *-de*
 and the participle in *-d*, as *leve*, *lever*, *levde*, *levd*. -/
-def weak2b (inf : String) : Stem :=
-  { infinitive := inf, present := root inf ++ "er", preterite := dentalStem inf ++ "de",
-    participle := dentalStem inf ++ "d" }
+abbrev weak2b : String → Stem := dental "d"
 
-/-- `weak2c inf` is the stem of a weak verb of the second class whose stem ends in a single
-stressed vowel, with *-r*, *-dde* and *-dd* on the infinitive, as *ro*, *ror*, *rodde*,
-*rodd*. -/
+/-- `weak2c inf` is the stem of a weak verb of the second class whose stem is the infinitive,
+ending in a single stressed vowel, with *-dde* and *-dd*, as *ro*, *ror*, *rodde*, *rodd*. -/
 def weak2c (inf : String) : Stem :=
   { infinitive := inf, present := inf ++ "r", preterite := inf ++ "dde",
     participle := inf ++ "dd" }
 
-/-- `principalParts inf pres pret pp` is the stem of a verb given by its four forms, a strong
-verb or a weak verb with a vowel change. -/
-def principalParts (inf pres pret pp : String) : Stem :=
-  { infinitive := inf, present := pres, preterite := pret, participle := pp }
+/-! ### The forms across the classes -/
 
 /-- The verbs of the first class have the same form in the preterite and the participle. -/
 theorem weak1_preterite_eq_participle (inf : String) :
     (weak1 inf).preterite = (weak1 inf).participle := rfl
 
+/-- In the second class the dental of the participle is that of the preterite. -/
+theorem dental_preterite (d inf : String) :
+    (dental d inf).preterite = (dental d inf).participle ++ "e" := rfl
+
+theorem weak2c_preterite (inf : String) :
+    (weak2c inf).preterite = (weak2c inf).participle ++ "e" := by
+  rw [weak2c, String.append_assoc]; rfl
+
+/-- The present of a first-class verb is *-er* on its root. -/
+theorem weak1_present (s : String) : (weak1 (s ++ "e")).present = s ++ "er" := by
+  rw [weak1, String.append_assoc]; rfl
+
+/-- The present of a second-class verb with an infinitive in *-e* is *-er* on its root. -/
+theorem dental_present (d s : String) : (dental d (s ++ "e")).present = s ++ "er" := by
+  rw [dental, String.append_assoc]; rfl
+
 /-- The double consonant is written single before the dental endings, *kjenne*, *kjente*,
 *kjent* and *bygge*, *bygde*, *bygd*. -/
-theorem weak2_double_consonant :
+example :
     (weak2a "kjenne").preterite = "kjente" ∧ (weak2a "kjenne").participle = "kjent" ∧
       (weak2b "bygge").preterite = "bygde" ∧ (weak2b "bygge").participle = "bygd" := by
   decide
