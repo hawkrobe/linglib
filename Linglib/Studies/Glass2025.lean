@@ -115,19 +115,17 @@ variable {E : Type*}
 /-- A veridical predicate's presupposition is satisfied exactly when its complement is Common
 Ground: the factive presupposition (10). -/
 theorem presupSatisfied_toPartialProp_veridical (V : DoxasticPredicate W E)
-    (hV : V.veridicality = .veridical) (a : E) (worlds : List W) :
-    Context.presupSatisfied c (V.toPartialProp a p worlds) ↔ EntailsP c p := by
-  simp only [Context.presupSatisfied, DoxasticPredicate.toPartialProp, hV, VeridicalityHolds,
-    Set.subset_def]
+    (hV : V.veridicality = .veridical) (a : E) :
+    Context.presupSatisfied c (V.toPartialProp a p) ↔ EntailsP c p := by
+  simp only [Context.presupSatisfied, DoxasticPredicate.toPartialProp, hV]
   exact Iff.rfl
 
 /-- A non-veridical predicate places no condition on the Common Ground. -/
 theorem presupSatisfied_toPartialProp_nonVeridical (V : DoxasticPredicate W E)
-    (hV : V.veridicality = .nonVeridical) (a : E) (worlds : List W) :
-    Context.presupSatisfied c (V.toPartialProp a p worlds) := by
-  simp only [Context.presupSatisfied, DoxasticPredicate.toPartialProp, hV, VeridicalityHolds,
-    Set.subset_def]
-  exact λ _ _ => trivial
+    (hV : V.veridicality = .nonVeridical) (a : E) :
+    Context.presupSatisfied c (V.toPartialProp a p) := by
+  simp only [Context.presupSatisfied, DoxasticPredicate.toPartialProp, hV]
+  exact fun _ _ ↦ trivial
 
 /-! ### yǐwéi's postsupposition -/
 
