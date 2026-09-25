@@ -38,13 +38,14 @@ This file:
 (= `AnalyticEntails`); the Up clause and mereological parthood are exactly what the
 world-extensional notion drops.
 
-`Semantics/Attitudes/Doxastic.lean`'s Hintikka `BoxAt` is
-∀-over-accessible-worlds; truthmaker `attHolds` (`Basic.lean`) is
+The Hintikka box `□[R]` of `Logic/Modal/Defs.lean`, the assertion of a
+`Doxastic.DoxasticPredicate`, is ∀-over-accessible-worlds; truthmaker
+`attHolds` (`Basic.lean`) is
 ∃-verifier-part-of-info-state. The empirical heart of
 [bondarenko-elliott-2026] is exactly this divergence: `attHolds`
 distinguishes hyperintensional content (witness: the headline theorem
 `subjectMatter_distinguishes_classically_equivalent` in `Basic.lean`),
-which `BoxAt` cannot.
+which the box cannot.
 
 -/
 

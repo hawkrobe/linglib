@@ -17,7 +17,7 @@ first person under *say* denotes the reported speaker. An attitude verb therefor
 over contexts of the reported speech act or thought, of which [hintikka-1962]'s
 quantification over worlds is the special case where the embedded meaning reads only the
 world coordinate (`ContextBox`, `contextBox_world_only`); the doxastic predicates of
-`Semantics/Attitudes/Doxastic` are that special case with a veridicality check
+`Semantics/Attitudes/Doxastic` are that special case with a veridicality requirement
 (`doxastic_holdsAt_iff_contextBox`). The reported context is the innermost context after the
 attitude shift, with the holder as agent and the accessible world as world
 (`reportedContext`). The Fixity Thesis is rendered as independence of a meaning's truth value
@@ -35,10 +35,10 @@ said that I am happy* is false read as English and true read as Amharic
 
 The paper's context variables and its syntactic filtering of shiftable from non-shiftable
 indexicals are not modelled; shiftability is the choice between the origin and the innermost
-access pattern of `Semantics/Reference/Context/Tower`. A finite list of worlds renders the
-quantification decidably, as in the doxastic substrate. A monstrous operator whose embedded
-meaning consumes the whole shifted tower, needed for mixed origin and local readings, is not
-defined.
+access pattern of `Semantics/Reference/Context/Tower`. Quantification over the accessible worlds
+is the relational box of `Logic/Modal/Defs`, decidable over finitely many worlds. A monstrous
+operator whose embedded meaning consumes the whole shifted tower, needed for mixed origin and
+local readings, is not defined.
 
 ## References
 
@@ -51,15 +51,14 @@ defined.
 
 namespace Schlenker2003
 
-open Reference
-open Doxastic (BoxAt)
+open Reference ModalLogic
 
 variable {W E P T : Type*}
 
 /-! ### The context of the reported speech act -/
 
 /-- The context of the reported speech act ([schlenker-2003] (4)): push
-    the attitude shift onto the tower and read the innermost context —
+    the attitude shift onto the tower and read the innermost context:
     the holder becomes the agent, the accessible world the world, and
     the remaining coordinates are inherited. -/
 def reportedContext (t : ContextTower (Context W E P T)) (holder : E)
@@ -93,45 +92,37 @@ def reportedContext (t : ContextTower (Context W E P T)) (holder : E)
 
 /-! ### Context quantification -/
 
-/-- `ContextBox R holder φ t w worlds` iff at every accessible world
-    `w'` the embedded meaning `φ` holds of the context of the reported
-    speech act — [schlenker-2003]'s attitude verb quantifying over
-    contexts, with the finite `worlds` list as the decidable rendering
-    of the quantification (cf. `BoxAt`). -/
-def ContextBox (R : E → W → W → Prop) (holder : E)
-    (φ : Context W E P T → Prop)
-    (t : ContextTower (Context W E P T)) (w : W) (worlds : List W) : Prop :=
-  ∀ w' ∈ worlds, R holder w w' → φ (reportedContext t holder w')
+/-- `ContextBox R holder φ t w` iff at every world `R holder`-accessible from `w` the embedded
+    meaning `φ` holds of the context of the reported speech act: [schlenker-2003]'s attitude
+    verb quantifying over contexts, the box over the reported contexts. -/
+def ContextBox (R : E → W → W → Prop) (holder : E) (φ : Context W E P T → Prop)
+    (t : ContextTower (Context W E P T)) : W → Prop :=
+  □[R holder] fun w' ↦ φ (reportedContext t holder w')
 
-instance (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')]
-    (holder : E) (φ : Context W E P T → Prop) [DecidablePred φ]
-    (t : ContextTower (Context W E P T)) (w : W) (worlds : List W) :
-    Decidable (ContextBox R holder φ t w worlds) :=
-  inferInstanceAs (Decidable (∀ w' ∈ worlds, _))
+instance [Fintype W] (R : E → W → W → Prop) (holder : E) (φ : Context W E P T → Prop)
+    [DecidablePred φ] (t : ContextTower (Context W E P T)) (w : W)
+    [∀ v, Decidable (R holder w v)] : Decidable (ContextBox R holder φ t w) :=
+  inferInstanceAs (Decidable (□[R holder] (fun w' ↦ φ (reportedContext t holder w')) w))
 
 /-- With a world-only meaning, context quantification is Hintikka world
-    quantification — the sense in which [hintikka-1962]'s semantics is
+    quantification, the sense in which [hintikka-1962]'s semantics is
     a special case of [schlenker-2003]'s. -/
-theorem contextBox_world_only
-    (R : E → W → W → Prop) (holder : E) (p : W → Prop)
-    (t : ContextTower (Context W E P T)) (w : W) (worlds : List W) :
-    ContextBox R holder (λ c => p c.world) t w worlds ↔
-    BoxAt R holder w worlds p := by
-  simp only [ContextBox, BoxAt, reportedContext_world]
+theorem contextBox_world_only (R : E → W → W → Prop) (holder : E) (p : W → Prop)
+    (t : ContextTower (Context W E P T)) :
+    ContextBox R holder (fun c ↦ p c.world) t = □[R holder] p := by
+  simp only [ContextBox, reportedContext_world]
 
-/-- `DoxasticPredicate.HoldsAt` is a veridicality check plus context
-    quantification over a world-only meaning — every doxastic predicate
+/-- `DoxasticPredicate.HoldsAt` is a veridicality requirement plus context
+    quantification over a world-only meaning: every doxastic predicate
     of `Doxastic.lean` is a special case of [schlenker-2003]'s context
     quantification. -/
-theorem doxastic_holdsAt_iff_contextBox
-    (V : Doxastic.DoxasticPredicate W E) (agent : E)
-    (p : W → Prop) (w : W) (worlds : List W)
-    (t : ContextTower (Context W E P T)) :
-    V.HoldsAt agent p w worlds ↔
-    (Doxastic.VeridicalityHolds V.veridicality p w ∧
-     ContextBox V.access agent (λ c => p c.world) t w worlds) := by
-  simp only [Doxastic.DoxasticPredicate.HoldsAt,
-    contextBox_world_only]
+theorem doxastic_holdsAt_iff_contextBox (V : Doxastic.DoxasticPredicate W E) (agent : E)
+    (p : W → Prop) (w : W) (t : ContextTower (Context W E P T)) :
+    V.HoldsAt agent p w ↔
+      Doxastic.VeridicalityHolds V.veridicality p w ∧
+        ContextBox V.access agent (fun c ↦ p c.world) t w := by
+  rw [contextBox_world_only]
+  exact V.holdsAt_iff agent p w
 
 /-! ### The Fixity Thesis -/
 
@@ -148,13 +139,13 @@ def SatisfiesFixity (φ : ContextTower (Context W E P T) → W → Prop) : Prop 
 /-- World-only meanings satisfy the Fixity Thesis. -/
 theorem fixity_world_only (p : W → Prop) :
     SatisfiesFixity (W := W) (E := E) (P := P) (T := T)
-      (λ _ w => p w) :=
-  λ _ _ _ => Iff.rfl
+      (fun _ w ↦ p w) :=
+  fun _ _ _ ↦ Iff.rfl
 
 /-! ### Shifted indexicals -/
 
 /-- English *I* is invariant under the attitude shift used by
-    `ContextBox` — it resolves to the origin agent (the actual
+    `ContextBox`: it resolves to the origin agent (the actual
     speaker), not the attitude holder. -/
 theorem english_I_invariant
     (t : ContextTower (Context W E P T)) (holder : E) (w' : W) :
@@ -201,7 +192,7 @@ theorem logophoric_local_of_ne (t : ContextTower (Context W E P T)) (holder : E)
 /-- The actual speaker is never logophoric. -/
 theorem not_logophoric_origin_agent (t : ContextTower (Context W E P T)) (d : DepthSpec) :
     ¬ Logophoric d t.origin.agent t :=
-  λ h => h.2 rfl
+  fun h ↦ h.2 rfl
 
 /-! ### A two-person, two-world model -/
 
@@ -215,7 +206,7 @@ inductive Person where
 inductive World where
   | w0
   | w1
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 abbrev Ctx := Context World Person Unit Unit
 
@@ -244,10 +235,8 @@ instance : ∀ p w, Decidable (isHappy p w) := by
 is world-only, and true read as Amharic, where *I* is the agent of the reported context:
 context quantification is strictly more expressive than world quantification. -/
 theorem english_amharic_differ :
-    ¬ ContextBox bobBel .bob (λ c => isHappy .alice c.world)
-        (ContextTower.root speechCtx) .w0 [.w0, .w1] ∧
-      ContextBox bobBel .bob (λ c => isHappy c.agent c.world)
-        (ContextTower.root speechCtx) .w0 [.w0, .w1] := by
+    ¬ ContextBox bobBel .bob (fun c ↦ isHappy .alice c.world) (.root speechCtx) .w0 ∧
+      ContextBox bobBel .bob (fun c ↦ isHappy c.agent c.world) (.root speechCtx) .w0 := by
   decide
 
 end Schlenker2003
