@@ -98,7 +98,7 @@ def isSemantic {Lex : Type*} : SlotFiller Lex → Bool
 /-- The stage at which a first-order construction emerges, read off its constraints. -/
 def emergenceStage {Lex : Type*} (form : TypedForm Lex) : Stage :=
   if form.any (isSemantic ·.filler) then .semPlus
-  else if form.any (·.filler.isOpen) then .synOnly
+  else if form.any (·.filler.IsOpen) then .synOnly
   else .lexOnly
 
 /-- (2) is early-stage and (3) late-stage. -/

@@ -99,17 +99,18 @@ def progressiveRule : CompositionRule VendlerClass
   | _ => none
 
 /-- The progressive construction (Figure 6): auxiliary *be* with a
-participial complement whose subject unifies with the auxiliary's — an
-instance of [kay-fillmore-1999]'s coinstantiation construction. -/
+participial complement whose subject requirement unifies with the
+auxiliary's subject, an instance of [kay-fillmore-1999]'s coinstantiation
+construction. -/
 def progressive : Construction (CompositionRule VendlerClass) :=
   { form :=
       [ { filler := .open_ .NOUN, gf := some .subj, refIdx := some 1 }
       , { filler := .headed "be" .AUX, isHead := true }
-      , { filler := .open_ .VERB, gf := some .comp, refIdx := some 1 } ]
+      , { filler := .open_ .VERB, gf := some .comp, subjIdx := some 1 } ]
   , meaning := progressiveRule }
 
 /-- Figure 6's raising property: the subject of *be* and the complement's
-subject form one coreference group, the coinstantiation pattern. -/
+subject requirement bear one index, the coinstantiation pattern. -/
 theorem progressive_coinstantiation : refGroupCount progressive.form = 1 := by
   decide
 

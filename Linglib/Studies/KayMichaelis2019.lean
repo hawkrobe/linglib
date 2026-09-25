@@ -110,11 +110,12 @@ theorem same_form (E : Type*) :
 def demoCx (E : Type*) : List (Construction (CompositionRule (Den E))) :=
   [intersectiveModification E, operatorModification E]
 
-/-- Toy POS lexicon. -/
-def demoPos : String → Option UD.UPOS
-  | "purple" | "alleged" => some .ADJ
-  | "plum" | "thief" => some .NOUN
-  | _ => none
+/-- Toy lexicon. -/
+def demoLexicon : Lexicon where
+  pos
+    | "purple" | "alleged" => some .ADJ
+    | "plum" | "thief" => some .NOUN
+    | _ => none
 
 section Demo
 
@@ -134,23 +135,23 @@ def demoLex : String → Option (Den E)
 construction matches the form but its rule rejects two predicate
 daughters. -/
 theorem purple_plum_intersective :
-    interps (demoCx E) demoPos (demoLex purple plum thief alleged)
-        (.node [.word "purple", .word "plum"])
+    interps (demoCx E) demoLexicon (demoLex purple plum thief alleged)
+        (.node () [.leaf "purple", .leaf "plum"])
       = [.pred fun x ↦ purple x ∧ plum x] := rfl
 
 /-- *Alleged thief* has exactly one reading: the operator applied to the
 head predicate — not an intersection. -/
 theorem alleged_thief_operator :
-    interps (demoCx E) demoPos (demoLex purple plum thief alleged)
-        (.node [.word "alleged", .word "thief"])
+    interps (demoCx E) demoLexicon (demoLex purple plum thief alleged)
+        (.node () [.leaf "alleged", .leaf "thief"])
       = [.pred (alleged thief)] := rfl
 
 /-- With only the intersective construction, *alleged thief* has no
 reading at all: the chapter's point that intersection cannot be the
 single rule of adjectival modification. -/
 theorem alleged_thief_needs_operator_construction :
-    interps [intersectiveModification E] demoPos (demoLex purple plum thief alleged)
-        (.node [.word "alleged", .word "thief"])
+    interps [intersectiveModification E] demoLexicon (demoLex purple plum thief alleged)
+        (.node () [.leaf "alleged", .leaf "thief"])
       = [] := rfl
 
 end Demo

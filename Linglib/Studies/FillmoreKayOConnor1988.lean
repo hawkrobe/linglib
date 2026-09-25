@@ -202,7 +202,7 @@ service of specific pragmatic or rhetorical purposes": a non-nominative subject 
 predicate. -/
 def incredulityResponse : Construction Unit :=
   { form := [{ filler := .open_ .PRON, gf := some .subj },
-      { filler := .phrasal, level := some .phrase, gf := some .pred }]
+      { filler := .phrasal, level := some .phrase }]
     meaning := ()
     pragmaticPoint := true }
 
