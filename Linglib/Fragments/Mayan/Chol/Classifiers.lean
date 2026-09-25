@@ -1,41 +1,24 @@
 module
 
 public import Linglib.Syntax.Category.Classifier.Basic
+public import Mathlib.Data.Finset.Insert
 
 /-!
 # Ch'ol numeral classifiers
 
-Typed classifier entries for Ch'ol (Cholan, Mayan), a classifier-for-numeral
-language ([little-moroney-royer-2022]; [bale-coon-2014]). Classifiers in
-Ch'ol are bound morphemes suffixed to the numeral stem, obligatory with all
-Mayan-based numerals (1–6 and the vigesimal system); Spanish-borrowed
-numerals (7+) already encode a measure function and take no classifier.
+A Ch'ol numeral of the native vigesimal series takes a classifier suffix: *ux-p'ej juñ* 'three
+books', *ux-kojty mis* 'three cats'. The suffix is obligatory with the native numerals, and the
+Spanish loan numerals from *siete* 'seven' up reject it. The classifier is chosen by the noun and
+its configuration: many classifiers derive from positional and transitive verb roots, *-kojty*
+from *koty* 'standing on four legs' and *-bujch* from *buch* 'seated', so one noun is counted
+with different classifiers in different positions. *-p'ej* is the general classifier of
+inanimates and also the base of the classifiers of the vigesimal powers. [arcos-lopez-2009]
+identifies at least 180 classifiers; those below are the common ones of
+[little-moroney-royer-2022]'s table of Ch'ol classifiers.
 
-## Main declarations
+## Main definitions
 
-* `Chol.Classifiers.pej`, `kojty`, `tyikil`, `kej`, `tsijty`, `bujch`: the
-  classifier entries ([little-moroney-royer-2022] Table 4).
-* `Chol.Classifiers.allClassifiers`, `defaultClassifier`: the inventory and
-  its generic default (*-p'ej*).
-
-## Implementation notes
-
-Ch'ol classifiers are largely derived from positional and transitive verb
-roots ([arcos-lopez-2009]; [bale-et-al-2019]); the position or shape of the
-noun is relevant, so the same noun can be counted with different classifiers
-depending on its configuration (e.g. one long tree vs. one fallen tree).
-[arcos-lopez-2009] identifies at least 180 classifiers.
-
-In the CLF-for-NUM analysis ([little-moroney-royer-2022] §4;
-[bale-coon-2014]), each classifier denotes a measure function μ that the
-numeral requires as its first argument:
-
-  ⟦ux⟧ = λm λP λx. [P(x) ∧ m(x) = 3]
-  ⟦-kojty⟧ = μ_# (atom-counting measure for animals)
-
-Following [bale-coon-2014], [bale-et-al-2019] and [little-moroney-royer-2022], the classifiers are
-suffixes on the numeral stem, obligatory with native numerals, which Spanish loan numerals
-reject, with *-p'ej* as the generic default, and they co-occur with plural marking.
+* `Chol.Classifiers.classifiers` — the classifiers entered here.
 
 ## References
 
@@ -49,42 +32,27 @@ reject, with *-p'ej* as the generic default, and they co-occur with plural marki
 
 namespace Chol.Classifiers
 
-/-! ### Numeral classifiers ([little-moroney-royer-2022] Table 4) -/
+/-- *-p'ej*, the general classifier of inanimates: *ux-p'ej juñ* 'three books'. -/
+def pej : Classifier := { toMorph := .suff "p'ej" }
 
-/-- -p'ej — inanimate/generic default classifier. Semantically bleached
-    for inanimates; also the base of vigesimal classifiers (-k'al for 20,
-    -bajk for 400, -pijk for 8000). -/
-def pej : Classifier := { form := "-p'ej", gloss := "inanimate/generic" }
+/-- *-kojty*, animals, from the positional root *koty* 'standing on four legs': *ux-kojty mis*
+'three cats'. -/
+def kojty : Classifier := { toMorph := .suff "kojty" }
 
-/-- -kojty — animals. Derived from positional root *koty* 'standing on
-    four legs'. -/
-def kojty : Classifier := { form := "-kojty", gloss := "animal" }
+/-- *-tyikil*, people: *ux-tyikil x'ixik* 'three women'. -/
+def tyikil : Classifier := { toMorph := .suff "tyikil" }
 
-/-- -tyikil — people/humans. -/
-def tyikil : Classifier := { form := "-tyikil", gloss := "human" }
+/-- *-k'ej*, flat round objects: *ux-k'ej waj* 'three tortillas'. -/
+def kej : Classifier := { toMorph := .suff "k'ej" }
 
-/-- -k'ej — flat round objects (tortillas, tables). -/
-def kej : Classifier := { form := "-k'ej", gloss := "flat.round" }
+/-- *-ts'ijty*, long things: *ux-ts'ijty tye'* 'three trees'. -/
+def tsijty : Classifier := { toMorph := .suff "ts'ijty" }
 
-/-- -ts'ijty — long things (trees, ropes). -/
-def tsijty : Classifier := { form := "-ts'ijty", gloss := "long" }
+/-- *-bujch*, things seated or propped up, from the positional root *buch* 'seated': *ux-bujch
+bux* 'three propped-up bottles'. -/
+def bujch : Classifier := { toMorph := .suff "bujch" }
 
-/-- -bujch — seated/propped up things (bottles propped up, seated objects).
-    Derived from positional root *buch* 'seated'. -/
-def bujch : Classifier := { form := "-bujch", gloss := "seated/propped" }
-
-/-! ### Inventory -/
-
-def allClassifiers : List Classifier :=
-  [pej, kojty, tyikil, kej, tsijty, bujch]
-
-def defaultClassifier : Classifier := pej
+/-- The classifiers. -/
+def classifiers : Finset Classifier := {pej, kojty, tyikil, kej, tsijty, bujch}
 
 end Chol.Classifiers
-
-namespace Chol
-
-/-- Whether classifiers and plural marking co-occur. -/
-def pluralClassifierCooccur : Bool := true
-
-end Chol

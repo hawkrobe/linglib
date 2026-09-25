@@ -26,14 +26,9 @@ admits exactly the bare nominals kind formation is defined for, so English has b
 bare mass nouns but no bare singular count nouns. Each language's blocking is derived from its
 determiner inventory by `Determiner.Inventory.Blocks`.
 
-The parameter commits the framework to classifiers that serve the noun rather than the numeral:
-`japaneseStrategy` and `mandarinStrategy` record that commitment, and the studies of later
-classifier accounts dispute it there rather than in the Fragments.
-
 ## Main definitions
 
 * `Language.nominalMapping` — the setting of the parameter in each sampled language
-* `japaneseStrategy`, `mandarinStrategy` — the classifier-for-noun commitment
 
 ## Main results
 
@@ -93,20 +88,6 @@ theorem hasClassifiers_iff : ∀ l : Language, l.HasClassifiers ↔ l.nominalMap
   | .japanese =>
     iff_of_true ⟨Japanese.Classifiers.tsu, by simp [Japanese.Classifiers.classifiers]⟩ rfl
   | .french | .italian | .english => iff_of_false id (by decide)
-
-/-! ### The classifier-for-noun commitment
-
-The parameter makes the nouns of a [+arg, −pred] language denote kinds, which need individuating,
-so the classifier serves the noun. The assignments are the framework's commitment and live here
-rather than in the Fragments, which stay neutral between classifier accounts. -/
-
-/-- Chierchia's strategy assignment for Japanese: CLF atomizes a kind-denoting
-    noun. -/
-def japaneseStrategy : Classifier.Strategy := .forNoun
-
-/-- Chierchia's strategy assignment for Mandarin: CLF atomizes a kind-denoting
-    noun. -/
-def mandarinStrategy : Classifier.Strategy := .forNoun
 
 /-! ### Bare arguments and type-shift blocking
 

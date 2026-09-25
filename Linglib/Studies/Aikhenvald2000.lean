@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.Mandarin.Nouns
 public import Linglib.Studies.Downing1996
+public import Mathlib.Data.Finset.Image
 
 /-!
 # A typology of noun categorization devices
@@ -15,8 +16,8 @@ exceptions. Here the book's parameters are functions on a sample of seven langua
 (`Language`), the French and Italian gender systems, the Xhosa, Shona and Swahili noun-class
 systems, and the Mandarin and Japanese numeral-classifier systems, coded as the book describes
 them, with the kind of each device derived from its locus and the constituent it characterizes
-rather than stored; the book's summary claims are checked on that sample, and none is a
-universal.
+rather than stored and the realizations of the classifier languages read off their fragments'
+entries; the book's summary claims are checked on that sample, and none is a universal.
 
 Agreement by a constituent outside the noun is the definitional property of a noun class system, a
 closed obligatory grammatical system (`nounClass_agreement_obligatory`), and noun classes are never
@@ -66,7 +67,7 @@ def locus : Language → Scope
 def constituent (_ : Language) : Constituent := .headNoun
 
 /-- The kind of a device, read off its locus and the constituent it characterizes. -/
-def kind (l : Language) : Option Kind := Classifier.kind l.locus l.constituent
+def kind (l : Language) : Option Kind := Kind.ofScope l.locus l.constituent
 
 /-- (B): every scope the device operates in. Mandarin uses the same classifiers with numerals
 and with demonstratives (the book's Table 9.1); agreement in gender and class reaches the
@@ -82,12 +83,14 @@ def assignment : Language → Assignment
   | mandarin | japanese => .semantic
   | french | italian | xhosa | shona | swahili => .mixed
 
-/-- (D): the surface realizations: Mandarin classifiers are independent forms, Japanese ones
-suffixes on the numeral, gender is inflection on the agreeing words and Bantu class a prefix. -/
+/-- (D): the surface realizations, read off the fragments' entries for the classifier
+languages, Mandarin's independent forms and Japanese's suffixes on the numeral; gender is
+inflection on the agreeing words and Bantu class a prefix. -/
 def realizations : Language → Finset Realization
-  | mandarin => {.freeForm}
-  | japanese | french | italian => {.suffix}
-  | xhosa | shona | swahili => {.prefix}
+  | mandarin => Mandarin.Classifiers.classifiers.image Classifier.realization
+  | japanese => Japanese.Classifiers.classifiers.image Classifier.realization
+  | french | italian => {.morph (.bound .after .affix)}
+  | xhosa | shona | swahili => {.morph (.bound .before .affix)}
 
 /-- (E): the device participates in agreement. -/
 def Agreement : Language → Prop
@@ -144,12 +147,12 @@ theorem nounClass_agreement_obligatory :
 
 /-- Noun classes are realized with affixes or clitics, never with free lexemes. -/
 theorem nounClass_bound :
-    ∀ l : Language, l.kind = some .nounClass → .freeForm ∉ l.realizations := by
+    ∀ l : Language, l.kind = some .nounClass → .morph .free ∉ l.realizations := by
   decide
 
 /-- Numeral classifiers expressed as free morphemes do not participate in agreement. -/
 theorem free_numeralClassifier_no_agreement :
-    ∀ l : Language, l.kind = some .numeralClassifier → .freeForm ∈ l.realizations →
+    ∀ l : Language, l.kind = some .numeralClassifier → .morph .free ∈ l.realizations →
       ¬ l.Agreement := by
   decide
 

@@ -32,8 +32,10 @@ predicative numeral of (15) and its classifier-suffixed counterpart (16). The in
 ∩-operator maps a property of having a fixed number of atoms back to its numeral (`IsDown`,
 `isDown_up`), has no overt counterpart and so is available in Japanese, where it returns
 the type-`n` correlate of a numeral-plus-classifier phrase (`isDown_sortal`), the paper's
-(22) to (25). The disagreement with [chierchia-1998] over Japanese is a difference in the
-strategy assigned to the language (`sudo_disagrees_with_chierchia_on_japanese`).
+(22) to (25). The blocking premise, that the Japanese lexicon has classifiers, is the fact
+[chierchia-1998]'s typology records for Japanese, so the two accounts share their premise and
+part over what the classifier serves, the kind-denoting noun there and the type-`n` numeral
+here (`predicateOf_iff_japanese`).
 
 ## Implementation notes
 
@@ -169,14 +171,15 @@ end General
 theorem japanese_has_classifiers : Japanese.Classifiers.classifiers.Nonempty :=
   ⟨Japanese.Classifiers.tsu, by simp [Japanese.Classifiers.classifiers]⟩
 
-/-- Sudo's strategy assignment for Japanese: the classifier blocks the silent ∪-operator on
-numerals. -/
-def japaneseStrategy : Classifier.Strategy := .sudoBlocking
-
-/-- Sudo and Chierchia assign Japanese different strategies: the classifier atomizes a
-kind-denoting noun for [chierchia-1998], and blocks the ∪-operator on numerals here. -/
-theorem sudo_disagrees_with_chierchia_on_japanese :
-    japaneseStrategy ≠ Chierchia1998.japaneseStrategy := by decide
+/-- With the classifiers [chierchia-1998]'s typology records for Japanese in the lexicon, every
+predicate use of a Japanese numeral goes through a classifier: the two accounts share the
+premise and part over what the classifier serves, the kind-denoting noun there and the
+type-`n` numeral here. -/
+theorem predicateOf_iff_japanese {W E : Type*} [SemilatticeSup E] (atomic : Sortal W E)
+    (n : W → ℕ) (P : W → E → Prop) :
+    PredicateOf (Chierchia1998.Language.HasClassifiers .japanese) atomic n P ↔
+      ∃ c : Sortal W E, P = fun w x ↦ (c.apply n w).presup x ∧ (c.apply n w).assertion x :=
+  predicateOf_iff_of_hasClassifiers japanese_has_classifiers atomic n P
 
 /-! ### Witnesses on the set-based ontology -/
 
