@@ -30,9 +30,8 @@ classes of any equivalence relation.
 - `fromSetoid_le_iff` — partition refinement is issue entailment.
 - `alt_fromSetoid`, `info_fromSetoid` — the alternatives are the cells;
   partition issues are non-informative.
-- `isPartition_polar`, `isPartition_ofList` — the basic Hamblin
-  constructions yield partition issues under nontriviality /
-  disjointness / cover hypotheses.
+- `isPartition_polar` — the polar question of a nontrivial proposition
+  is a partition issue.
 - `toSetoid_fromSetoid`, `fromSetoid_toSetoid` — the two round-trip
   directions of the partition–setoid correspondence.
 -/
@@ -277,16 +276,5 @@ theorem isPartition_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
   · rintro (h | h)
     · exact hne h.symm
     · exact hnu (Set.compl_empty_iff.mp h.symm)
-
-/-- `ofList L` is a partition issue when `L` is a nonempty list of
-pairwise-disjoint nonempty cells that exhaust `W`. -/
-theorem isPartition_ofList {L : List (Set W)} (hL : L ≠ [])
-    (hdisj : ∀ p₁ ∈ L, ∀ p₂ ∈ L, p₁ ≠ p₂ → Disjoint p₁ p₂)
-    (hne : ∀ p ∈ L, p ≠ ∅)
-    (hcover : ∀ w : W, ∃ p ∈ L, w ∈ p) :
-    (ofList L).IsPartition := by
-  rw [IsPartition, alt_ofList_of_pairwise_disjoint_nonempty L hL hdisj hne]
-  exact Set.PairwiseDisjoint.isPartition_of_exists_of_ne_empty
-    (fun p₁ h₁ p₂ h₂ h₁₂ => hdisj p₁ h₁ p₂ h₂ h₁₂) hcover fun h => hne ∅ h rfl
 
 end Question

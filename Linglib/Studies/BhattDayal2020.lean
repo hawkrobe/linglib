@@ -61,12 +61,11 @@ theorem kya_polar (p : Set W) : IsSingleton (ofSet p) :=
 /-- A constituent question with two distinct answer cells is not a singleton (22a), so
 *kya:* is undefined on it (4). -/
 theorem kya_not_wh {E : Type*} {D : Set E} {P : E → Set W}
-    (hD : D.Nonempty) (hne : ∀ e ∈ D, (P e).Nonempty)
-    (hA : IsAntichain (· ⊆ ·) (P '' D))
+    (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D))
     {e₁ e₂ : E} (h₁ : e₁ ∈ D) (h₂ : e₂ ∈ D) (hPne : P e₁ ≠ P e₂) :
     ¬ IsSingleton (which D P) := by
   refine not_isSingleton_of_two_alternatives _ ?_ ?_ hPne <;>
-    rw [alt_which_of_antichain hD hne hA]
+    rw [alt_which_of_antichain hD hA]
   exacts [⟨e₁, h₁, rfl⟩, ⟨e₂, h₂, rfl⟩]
 
 /-- The two-cell Hamblin polar question fails the presupposition as well; the paper's polar

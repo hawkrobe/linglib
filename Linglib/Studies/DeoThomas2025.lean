@@ -344,14 +344,12 @@ theorem widerThan_mentionAll [Nontrivial A] :
     WiderThan (mentionAll (A := A)) mentionSome := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne A
   have hall : alt (mentionAll (A := A)) = (λ E => {E}) '' {E : Set A | E.Nonempty} :=
-    alt_which_of_forall_subset_eq ⟨{a}, Set.singleton_nonempty a⟩
-      (λ E _ => Set.singleton_nonempty E) λ E _ E' _ h => by
-        rw [Set.singleton_subset_singleton.1 h]
+    alt_which_of_forall_subset_eq ⟨{a}, Set.singleton_nonempty a⟩ λ E _ E' _ h => by
+      rw [Set.singleton_subset_singleton.1 h]
   have hsome : alt (mentionSome (A := A)) = (λ a => {E | a ∈ E}) '' Set.univ :=
-    alt_which_of_forall_subset_eq ⟨a, Set.mem_univ a⟩ (λ a _ => ⟨{a}, Set.mem_singleton a⟩)
-      λ a _ b _ h => by
-        have hba : b = a := h (Set.mem_singleton a)
-        rw [hba]
+    alt_which_of_forall_subset_eq ⟨a, Set.mem_univ a⟩ λ a _ b _ h => by
+      have hba : b = a := h (Set.mem_singleton a)
+      rw [hba]
   refine ⟨?_, ?_, {{a}}, hall ▸ ⟨{a}, Set.singleton_nonempty a, rfl⟩, {E | a ∈ E},
     hsome ▸ ⟨a, Set.mem_univ a, rfl⟩, Set.singleton_subset_iff.2 (Set.mem_singleton a),
     λ hsub => ?_⟩

@@ -104,10 +104,9 @@ theorem trueAnswers_image_eq_empty_iff :
 
 /-- The substrate's wh-question has the paper's alternatives when the answers form an
 antichain. -/
-theorem trueAnswers_alt_which (hD : D.Nonempty) (hne : ∀ e ∈ D, (P e).Nonempty)
-    (hA : IsAntichain (· ⊆ ·) (P '' D)) :
+theorem trueAnswers_alt_which (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D)) :
     trueAnswers (alt (which D P)) w = trueAnswers (P '' D) w := by
-  rw [alt_which_of_antichain hD hne hA]
+  rw [alt_which_of_antichain hD hA]
 
 /-- (19): what is told with an indirect question is true, as what is told with a
 *that*-clause need not be. -/
