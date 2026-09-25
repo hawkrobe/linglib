@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.ConstructionGrammar.Idiom
 public import Linglib.Syntax.ConstructionGrammar.Licensing
 
 /-!
@@ -69,7 +68,7 @@ theorem wxdy_coinstantiation :
   decide
 
 /-- WXDY is a formal idiom: the `X` and `Y` slots are open. -/
-theorem wxdy_formal_idiom : wxdyConstruction.IsFormalIdiom := rfl
+theorem wxdy_formal_idiom : wxdyConstruction.IsFormalIdiom := by decide
 
 /-- It is properly partial: BE, *doing* and *what* are fixed while `X` and `Y` are open. -/
 theorem wxdy_partially_open : wxdyConstruction.specificity = .partiallyOpen := rfl

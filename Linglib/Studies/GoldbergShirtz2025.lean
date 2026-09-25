@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 public import Linglib.Syntax.ConstructionGrammar.Inheritance
 public import Linglib.Syntax.ConstructionGrammar.Licensing
 public import Linglib.Semantics.Presupposition.Basic
@@ -477,9 +476,9 @@ theorem subtypes_inherit_familiarity (W : Type*)
 /-- The PAL construction is not fully compositional: pairing
 phrase-in-a-word-slot form with a presumed-familiarity function is a
 construction-specific pragmatic function, so PAL cannot be decomposed into
-the three universal combination schemata (see `isFullyCompositional`). -/
+the three universal combination schemata (see `Construction.IsFullyCompositional`). -/
 theorem pal_irreducible :
-    isFullyCompositional palConstruction = false := rfl
+    ¬ palConstruction.IsFullyCompositional := by decide
 
 /-- The PAL modifier slot is a phrase in a word-level position — the typed
 content of "phrase-as-lemma". The NN compound's modifier slot is the
