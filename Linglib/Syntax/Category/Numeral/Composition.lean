@@ -13,7 +13,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 /-!
 # Hurford's universal numeral grammar
 
-This file defines Hurford's phrase-structure grammar of numerals and the Packing Strategy, the
+This file defines Hurford's phrase-structure grammar of numerals and his Packing Strategy, the
 constraint that selects one well-formed numeral for each number. A NUMBER is *one* or a PHRASE,
 optionally followed by another NUMBER, and denotes the sum of its parts. A PHRASE is a NUMBER
 followed by an M and denotes their product. An M is a lexical base such as *ten*, or a NUMBER
@@ -26,28 +26,26 @@ leaves exactly one numeral for each positive number.
 
 * `Number`, `Phrase`, `M`: the three categories, with their `value`s
 * `M.IsHighestUnder`: the highest-valued lexical M under a ceiling
-* `Number.Packed`: the Packing Strategy relative to a lexicon of Ms
-* `decimal`: the lexicon with an M for every power of ten
+* `Number.Packed`, `Phrase.Packed`: the Packing Strategy relative to a lexicon of Ms
 
 ## Main results
 
 * `Number.value_phraseAnd_eq_hyperoperation`, `Phrase.value_mk_eq_hyperoperation`,
   `M.value_mk_eq_hyperoperation`: the values are hyperoperations
+* `Number.packed_phraseAnd_iff`, `Number.packed_oneAnd_iff`: `Packed` is Hurford's formulation
 * `Number.existsUnique_packed`: every positive number has exactly one packed NUMBER
-* `Number.eq_oneHundredThirteen`: under `decimal` the packed NUMBER for 113 is Griffiths's tree
 
 ## Implementation notes
 
-The grammar is Hurford's 1975 one as Griffiths reports it, with digits as tallies of *one* and
-bases of any size so that other languages' Ms fit. Hurford's interpretive function reads the
-operation off a node's depth, where here the level is the category's. The Packing Strategy is
-Hurford's 2007 statement, the ceiling of a sister being the value of the node above it.
+A base is a row of any number of marks above one. The Ms of a lexicon are taken as given, so the
+Packing Strategy is checked at NUMBERs and PHRASEs only. `Number.Packed` bounds the M of a PHRASE
+by the value of the NUMBER above it, which selects the same NUMBERs as Hurford's bound by the
+PHRASE's own value.
 
 ## References
 
 * [hurford-1975]
 * [hurford-2007]
-* [griffiths-1977]
 -/
 
 @[expose] public section
@@ -57,7 +55,8 @@ namespace Numeral
 /-! ### The phrase-structure categories -/
 
 mutual
-/-- A NUMBER is *one* or a PHRASE, optionally followed by another NUMBER. -/
+/-- A NUMBER is *one* or a PHRASE, optionally followed by another NUMBER, rule (2a) of
+[hurford-1975], p. 19. -/
 inductive Number where
   /-- *one*, a single mark, is a NUMBER. -/
   | one : Number
@@ -69,14 +68,15 @@ inductive Number where
   | phraseAnd (p : Phrase) (rest : Number) : Number
   deriving DecidableEq, Repr
 
-/-- A PHRASE is a NUMBER followed by an M, as in *two hundred*. -/
+/-- A PHRASE is a NUMBER followed by an M, as in *two hundred*, rule (2b). -/
 inductive Phrase where
   | mk (n : Number) (m : M) : Phrase
   deriving DecidableEq, Repr
 
-/-- An M is a lexical base or a NUMBER followed by an M, as *hundred* is `[two ten]`. -/
+/-- An M is a lexical base or a NUMBER followed by an M, as *hundred* is `[two ten]`, rule (2c). -/
 inductive M where
-  /-- A lexical base is a row of `b` marks. -/
+  /-- A lexical base is a row of `b` marks, *ten* in English and 2, 5 or 20 in some other
+  languages ([hurford-1975], p. 21). -/
   | base (b : ℕ) (hb : 1 < b := by decide) : M
   /-- A NUMBER followed by an M is an M. -/
   | mk (n : Number) (m : M) : M
@@ -86,7 +86,8 @@ end
 /-! ### The projection rules -/
 
 mutual
-/-- The value of a NUMBER is the sum of its immediate constituents. -/
+/-- The value of a NUMBER is the sum of its immediate constituents, (23) of [hurford-1975],
+pp. 29–30. -/
 def Number.value : Number → ℕ
   | .one => 1
   | .oneAnd rest => 1 + rest.value
@@ -110,11 +111,12 @@ def M.ten : M := .base 10
 
 /-! ### One operation at three levels
 
-Each projection rule is a hyperoperation whose level is the category's, whose base is the second
-constituent, and whose iteration count is the first: a NUMBER adds the value of its PHRASE to the
-rest one mark at a time, a PHRASE adds its M to itself as often as its NUMBER says, and an M
-multiplies the inner M by itself as often. The recursion defining the sequence,
-`hyperoperation_recursion`, is the reduction of each operation to iterations of the one below. -/
+The single projection rule (29) of [hurford-1975], p. 34, values a node of depth `d` with
+immediate constituents of values `x` and `y` as `CALCULATE+ d x y`, the depth being 1 at NUMBERs,
+2 at PHRASEs and 3 at Ms by the convention (28). CALCULATE, (26) on p. 32, starts from `y` and
+applies the operation of depth `d - 1` to it `x` times at depth 1 and `x - 1` times above, depth
+0 being incrementing, so that for `x ≥ 1` it is `hyperoperation d y x`. Its fourth argument is
+the sign `+`, which `-` replaces for the inverse operations. -/
 
 theorem Number.value_phraseAnd_eq_hyperoperation (p : Phrase) (rest : Number) :
     (phraseAnd p rest).value = hyperoperation 1 rest.value p.value := by
@@ -149,7 +151,8 @@ theorem M.one_lt_value : ∀ m : M, 1 < m.value
   | .base _ hb => hb
   | .mk n m => m.one_lt_value.trans_le (Nat.le_self_pow n.value_pos.ne' _)
 
-/-- `tally n` is the NUMBER `[one [one ... one]]` of `n + 1` marks, the structure of a digit. -/
+/-- `tally n` is the NUMBER `[one [one ... one]]` of `n + 1` marks, the structure of the digits
+*one* to *nine* ([hurford-1975], p. 23). -/
 def Number.tally : ℕ → Number
   | 0 => .one
   | n + 1 => .oneAnd (tally n)
@@ -166,7 +169,8 @@ theorem Number.range_value : Set.range value = {n | 0 < n} := by
   simp only [value_tally]
   exact Nat.sub_add_cancel hn
 
-/-- `tenPow k` is the M of value `10 ^ (k + 1)`, *ten* or `[k + 1 ten]`. -/
+/-- `tenPow k` is the M of value `10 ^ (k + 1)`, *ten* or `[k + 1 ten]`, *thousand* being
+`[three ten]` ([hurford-1975], p. 23). -/
 def M.tenPow : ℕ → M
   | 0 => .ten
   | k + 1 => .mk (.tally (k + 1)) .ten
@@ -220,9 +224,9 @@ theorem M.exists_isHighestUnder {v : ℕ} {m₀ : M} (hm₀ : m₀ ∈ L) (hv : 
   exact ⟨m, hmL, hm ▸ hS⟩
 
 /-- A NUMBER is packed relative to the lexicon `L` when the sister of every NUMBER in it has the
-highest possible value. After *one* that holds only where no lexical M fits under the whole; a
-PHRASE sister has the highest lexical M under the NUMBER's value, and leaves a remainder below
-that M. -/
+highest possible value, the Packing Strategy (82) of [hurford-1975], p. 67. After *one* that holds
+only where no lexical M fits under the whole; a PHRASE sister has the highest lexical M under the
+NUMBER's value, and leaves a remainder below that M. -/
 def Number.Packed (L : Set M) : Number → Prop
   | .one => True
   | .oneAnd rest => (∀ m ∈ L, 1 + rest.value < m.value) ∧ rest.Packed L
@@ -364,61 +368,88 @@ theorem Number.Packed.eq_of_value_eq (hL : Set.InjOn M.value L) {e e' : Number}
       ih _ (by omega) he.2.2.2 he'.2.2.2 hr rfl]
 
 /-- Every positive number has exactly one packed NUMBER, given a lexicon whose Ms have distinct
-values. -/
+values, as (82) selects just one way of expressing each number ([hurford-1975], p. 75). -/
 theorem Number.existsUnique_packed (hL : Set.InjOn M.value L) {v : ℕ} (hv : 0 < v) :
     ∃! e : Number, e.Packed L ∧ e.value = v := by
   obtain ⟨e, he, rfl⟩ := exists_packed L hv
   exact ⟨e, ⟨he, rfl⟩, fun e' ⟨he', h⟩ ↦ he'.eq_of_value_eq hL he h⟩
 
-/-! ### The decimal lexicon -/
+/-! ### Hurford's formulation
 
-/-- `decimal` is the lexicon with an M for every power of ten. -/
-def decimal : Set M := Set.range M.tenPow
+[hurford-1975]'s (82) rules out a node of value `x` whose daughters are a NUMBER and a sister of
+value `y` when some well-formed structure of a category other than NUMBER that the node expands
+to has a value `z` with `y < z ≤ x`. At a PHRASE the sister is its M, so (82) is `Phrase.Packed`;
+at a NUMBER the sister is a single mark or a PHRASE, and (82) agrees with `Number.Packed`. -/
 
-theorem injOn_value_decimal : Set.InjOn M.value decimal := by
-  rintro _ ⟨a, rfl⟩ _ ⟨b, rfl⟩ h
-  simp only [M.value_tenPow, Nat.pow_right_inj (by decide : 1 < 10), Nat.add_right_cancel_iff] at h
-  rw [h]
+/-- A PHRASE is packed relative to `L` when its M is the highest lexical M under its value and its
+NUMBER is packed. -/
+def Phrase.Packed (L : Set M) : Phrase → Prop
+  | .mk n m => m.IsHighestUnder L (n.value * m.value) ∧ n.Packed L
 
-/-- Under the decimal lexicon the highest M under `v` is the power of ten with `v` below the
-next. -/
-theorem M.tenPow_isHighestUnder_decimal_iff {k v : ℕ} :
-    (tenPow k).IsHighestUnder decimal v ↔ 10 ^ (k + 1) ≤ v ∧ v < 10 ^ (k + 2) := by
-  simp only [isHighestUnder_iff, decimal, Set.mem_range_self, true_and, Set.forall_mem_range,
-    value_tenPow]
-  refine and_congr_right fun _ ↦ ⟨fun h ↦ lt_of_not_ge fun hv ↦ ?_, fun hv j hj ↦ ?_⟩
-  · have := h (k + 1) hv
-    rw [Nat.pow_le_pow_iff_right (by decide)] at this
+@[simp] theorem Number.packed_phrase_iff {p : Phrase} : (phrase p).Packed L ↔ p.Packed L := by
+  cases p; rfl
+
+theorem Phrase.packed_mk_one {m : M} (hm : m ∈ L) : (mk .one m).Packed L :=
+  ⟨M.isHighestUnder_iff.2 ⟨hm, by simp [Number.value], fun _ _ h ↦ by simpa [Number.value] using h⟩,
+    trivial⟩
+
+/-- A mark is the sister of a NUMBER in a packed NUMBER exactly when no packed PHRASE fits under
+the whole. -/
+theorem Number.packed_oneAnd_iff {r : Number} :
+    (oneAnd r).Packed L ↔
+      r.Packed L ∧ ∀ q : Phrase, q.Packed L → q.value ≤ (oneAnd r).value → q.value ≤ 1 := by
+  simp only [Packed, Number.value]
+  refine ⟨fun ⟨hlow, hr⟩ ↦ ⟨hr, fun ⟨n, m⟩ ⟨hm, _⟩ hq ↦ ?_⟩, fun ⟨hr, hq⟩ ↦ ⟨fun m hm ↦ ?_, hr⟩⟩
+  · have := hlow m hm.1
+    have := Nat.le_mul_of_pos_left m.value n.value_pos
+    simp only [Phrase.value] at hq ⊢
     omega
-  · have := (Nat.pow_lt_pow_iff_right (by decide : 1 < 10)).1 (hj.trans_lt hv)
-    exact Nat.pow_le_pow_right (by decide) (by omega)
+  · by_contra hmv
+    have := hq _ (Phrase.packed_mk_one hm) (by simp only [Phrase.value, Number.value]; omega)
+    simp only [Phrase.value, Number.value, one_mul] at this
+    have := m.one_lt_value
+    omega
 
-/-- `[[one hundred] [[one ten] three]]` is *one hundred and thirteen* in the structure
-[griffiths-1977] gives it. -/
-def Number.oneHundredThirteen : Number :=
-  .phraseAnd (.mk .one (.tenPow 1)) (.phraseAnd (.mk .one .ten) (.tally 2))
-
-/-- `[[eleven ten] three]` also has the value 113. -/
-def Number.eleventyThree : Number :=
-  .phraseAnd (.mk (.phraseAnd (.mk .one .ten) .one) .ten) (.tally 2)
-
-theorem Number.value_oneHundredThirteen : oneHundredThirteen.value = 113 := rfl
-
-theorem Number.value_eleventyThree : eleventyThree.value = 113 := rfl
-
-theorem Number.packed_oneHundredThirteen : oneHundredThirteen.Packed decimal :=
-  ⟨M.tenPow_isHighestUnder_decimal_iff.2 (by decide), by decide, trivial,
-    (M.tenPow_isHighestUnder_decimal_iff (k := 0)).2 (by decide), by decide, trivial,
-    packed_tally_iff.2 <| Set.forall_mem_range.2 fun k ↦ by
-      simpa using (by decide : 3 < 10).trans_le (Nat.le_self_pow k.succ_ne_zero 10)⟩
-
-/-- `[[eleven ten] three]` is not packed, since *hundred* fits under 113. -/
-theorem Number.not_packed_eleventyThree : ¬ eleventyThree.Packed decimal := fun h ↦
-  absurd ((M.tenPow_isHighestUnder_decimal_iff (k := 0)).1 h.1) (by decide)
-
-/-- Under the decimal lexicon the packed NUMBER for 113 is *one hundred and thirteen*. -/
-theorem Number.eq_oneHundredThirteen {e : Number} (he : e.Packed decimal) (h : e.value = 113) :
-    e = oneHundredThirteen :=
-  he.eq_of_value_eq injOn_value_decimal packed_oneHundredThirteen h
+/-- A PHRASE is the sister of a NUMBER in a packed NUMBER exactly when it is packed and no packed
+PHRASE has a higher value not above the whole. -/
+theorem Number.packed_phraseAnd_iff {p : Phrase} {r : Number} :
+    (phraseAnd p r).Packed L ↔ p.Packed L ∧ r.Packed L ∧
+      ∀ q : Phrase, q.Packed L → q.value ≤ (phraseAnd p r).value → q.value ≤ p.value := by
+  obtain ⟨n, m⟩ := p
+  simp only [Packed, Number.value, Phrase.value]
+  have h1 := m.one_lt_value
+  have hnm := Nat.le_mul_of_pos_left m.value n.value_pos
+  constructor
+  · rintro ⟨hm, hr, hn, hrp⟩
+    obtain ⟨hmL, -, hub⟩ := M.isHighestUnder_iff.1 hm
+    refine ⟨⟨M.isHighestUnder_iff.2 ⟨hmL, hnm, fun m' hm' h ↦ hub m' hm' (by omega)⟩, hn⟩, hrp,
+      fun ⟨n', m'⟩ ⟨hm', _⟩ hq ↦ ?_⟩
+    simp only [Phrase.value] at hq ⊢
+    obtain ⟨hm'L, hm'v, hub'⟩ := M.isHighestUnder_iff.1 hm'
+    by_cases hle : m.value ≤ n'.value * m'.value
+    · have hmm : m'.value = m.value :=
+        le_antisymm (hub m' hm'L (by omega)) (hub' m hmL hle)
+      rw [hmm] at hq ⊢
+      have : n'.value * m.value < (n.value + 1) * m.value := by rw [Nat.succ_mul]; omega
+      exact Nat.mul_le_mul_right _ (by have := Nat.lt_of_mul_lt_mul_right this; omega)
+    · omega
+  · rintro ⟨⟨hm, hn⟩, hrp, hq⟩
+    obtain ⟨hmL, -, hub⟩ := M.isHighestUnder_iff.1 hm
+    have hhigh : ∀ m' ∈ L, m'.value ≤ n.value * m.value + r.value → m'.value ≤ m.value := by
+      intro m' hm' h
+      by_contra hlt
+      have hq' := hq _ (Phrase.packed_mk_one hm') (by simp only [Phrase.value, Number.value]; omega)
+      simp only [Phrase.value, Number.value, one_mul] at hq'
+      exact hlt (hub m' hm' hq')
+    have hmx : m.IsHighestUnder L (n.value * m.value + r.value) :=
+      M.isHighestUnder_iff.2 ⟨hmL, by omega, hhigh⟩
+    refine ⟨hmx, lt_of_not_ge fun hr ↦ ?_, hn, hrp⟩
+    obtain ⟨k, hk, hkv⟩ := exists_packed L (show 0 < n.value + 1 by omega)
+    have hkm : k.value * m.value ≤ n.value * m.value + r.value := by rw [hkv, Nat.succ_mul]; omega
+    have hq' := hq ⟨k, m⟩
+      ⟨M.isHighestUnder_iff.2 ⟨hmL, Nat.le_mul_of_pos_left _ k.value_pos,
+        fun m' hm' h ↦ hhigh m' hm' (h.trans hkm)⟩, hk⟩ hkm
+    simp only [Phrase.value, hkv, Nat.succ_mul] at hq'
+    omega
 
 end Numeral

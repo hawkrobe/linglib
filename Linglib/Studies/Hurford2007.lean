@@ -27,6 +27,8 @@ are not, while English *twenty one hundred*, one of his rare exceptions, is atte
 
 * `packed_count`: counting reaches a packed numeral
 * `packed_iff_eq_count`: the packed numerals are the outcomes of counting
+* `Mixtec.count_eq_numeral7999`, `Hawaiian.count_eq_numeral609751`: counting reaches the paper's
+  Mixtec and Hawaiian numerals
 * `English.not_packed_twentyOneHundred`: the Packing Strategy rejects *twenty one hundred*
 
 ## Implementation notes
@@ -100,6 +102,11 @@ theorem packed_iff_eq_count {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) 
   obtain ⟨hc, hcv⟩ := packed_count L e.value_pos
   exact ⟨fun he ↦ he.eq_of_value_eq hL hc hcv.symm, fun he ↦ he ▸ hc⟩
 
+/-- Counting reaches every packed numeral, over bases with distinct values. -/
+theorem count_eq_of_packed {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) {e : Number} {v : ℕ}
+    (he : e.Packed {m | m ∈ L}) (hv : e.value = v) : count L v = e :=
+  hv ▸ ((packed_iff_eq_count hL).1 he).symm
+
 /-- `digit d` is the tally of `d` marks. -/
 abbrev digit (d : ℕ) : Number := .tally (d - 1)
 
@@ -113,17 +120,15 @@ abbrev hundred : M := .tenPow 1
 /-- *thousand* is the M of value `10 ^ 3`. -/
 abbrev thousand : M := .tenPow 2
 
-/-- *million* is the M of value `10 ^ 6`. -/
+/-- *million* is the M of value `10 ^ 6`. [hurford-1975] builds it on *thousand*, with (31),
+p. 35, raising the exponent by one in American English. -/
 abbrev million : M := .tenPow 5
 
 /-- The English bases are *ten*, *hundred*, *thousand* and *million*. -/
 def bases : List M := [.ten, hundred, thousand, million]
 
-theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} := by
-  intro a ha b hb h
-  simp only [bases, Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false] at ha hb
-  rcases ha with rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl <;>
-    first | rfl | simp at h
+theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
+  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
 
 /-- *five million, two thousand, six hundred* is `[[five million] [[two thousand] [six hundred]]]`.
 -/
@@ -153,33 +158,31 @@ def twentyOneHundred : Number :=
   .phrase (.mk (.phraseAnd (.mk (digit 2) .ten) (digit 1)) hundred)
 
 /-- In additive constructions the higher-valued PHRASEs are packed nearer the top. -/
-theorem packed_fiveMillionTwoThousandSixHundred :
-    fiveMillionTwoThousandSixHundred.Packed {m | m ∈ bases} := by decide
+theorem count_eq_fiveMillionTwoThousandSixHundred :
+    count bases 5002600 = fiveMillionTwoThousandSixHundred :=
+  count_eq_of_packed injOn_bases (by decide) rfl
 
-theorem value_sixHundredTwoThousandFiveMillion :
-    sixHundredTwoThousandFiveMillion.value = fiveMillionTwoThousandSixHundred.value := rfl
+example : sixHundredTwoThousandFiveMillion.value = fiveMillionTwoThousandSixHundred.value := rfl
 
 theorem not_packed_sixHundredTwoThousandFiveMillion :
     ¬ sixHundredTwoThousandFiveMillion.Packed {m | m ∈ bases} := by decide
 
 /-- In multiplicative constructions the higher-valued bases are packed nearer the top. -/
-theorem packed_sixHundredThousand : sixHundredThousand.Packed {m | m ∈ bases} := by decide
+theorem count_eq_sixHundredThousand : count bases 600000 = sixHundredThousand :=
+  count_eq_of_packed injOn_bases (by decide) rfl
 
-theorem value_sixThousandHundred : sixThousandHundred.value = sixHundredThousand.value := rfl
+example : sixThousandHundred.value = sixHundredThousand.value := rfl
 
 theorem not_packed_sixThousandHundred : ¬ sixThousandHundred.Packed {m | m ∈ bases} := by decide
 
-theorem packed_twoThousandOneHundred : twoThousandOneHundred.Packed {m | m ∈ bases} := by decide
+theorem count_eq_twoThousandOneHundred : count bases 2100 = twoThousandOneHundred :=
+  count_eq_of_packed injOn_bases (by decide) rfl
 
-theorem value_twentyOneHundred : twentyOneHundred.value = twoThousandOneHundred.value := rfl
+example : twentyOneHundred.value = twoThousandOneHundred.value := rfl
 
 /-- The Packing Strategy rejects *twenty one hundred*, which English allows, one of the rare
 counterexamples to its prediction that each number has a single numeral. -/
 theorem not_packed_twentyOneHundred : ¬ twentyOneHundred.Packed {m | m ∈ bases} := by decide
-
-/-- The numeral counting reaches for 2100 is *two thousand, one hundred*. -/
-theorem count_bases_2100 : count bases 2100 = twoThousandOneHundred :=
-  ((packed_iff_eq_count injOn_bases).1 packed_twoThousandOneHundred).symm
 
 end English
 
@@ -199,6 +202,9 @@ def fourHundred : M := .base 400
 /-- The bases of the example are 15, 20 and 400. -/
 def bases : List M := [fifteen, twenty, fourHundred]
 
+theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
+  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
+
 /-- *šiaʼu kuu*, fifteen and four, is 19. -/
 def nineteen : Number := .phraseAnd (.mk .one fifteen) (digit 4)
 
@@ -211,13 +217,12 @@ def numeral7999 : Number :=
 def transposed : Number :=
   .phraseAnd (.mk nineteen twenty) (.phraseAnd (.mk nineteen fourHundred) nineteen)
 
-theorem value_numeral7999 : numeral7999.value = 7999 := rfl
-
-theorem value_transposed : transposed.value = numeral7999.value := rfl
-
 /-- The sisters of the recursive NUMBERs are the highest-valued the lexicon allows below the
 value of the dominating node. -/
-theorem packed_numeral7999 : numeral7999.Packed {m | m ∈ bases} := by decide
+theorem count_eq_numeral7999 : count bases 7999 = numeral7999 :=
+  count_eq_of_packed injOn_bases (by decide) rfl
+
+example : transposed.value = numeral7999.value := rfl
 
 /-- Transposing the two Ms loses well-formedness. -/
 theorem not_packed_transposed : ¬ transposed.Packed {m | m ∈ bases} := by decide
@@ -232,6 +237,9 @@ namespace Hawaiian
 def bases : List M :=
   [.base 10, .base 20, .base 40, .base 400, .base 4000, .base 40000, .base 400000]
 
+theorem injOn_bases : Set.InjOn M.value {m | m ∈ bases} :=
+  fun _ ha _ hb ↦ List.inj_on_of_nodup_map (by decide) ha hb
+
 /-- The numeral for 609,751 is one 400,000, five 40,000s, two 4000s, four 400s, three 40s,
 twenty, ten and one. -/
 def numeral609751 : Number :=
@@ -243,9 +251,8 @@ def numeral609751 : Number :=
   .phraseAnd (.mk .one (.base 20)) <|
   .phraseAnd (.mk .one (.base 10)) .one
 
-theorem value_numeral609751 : numeral609751.value = 609751 := rfl
-
-theorem packed_numeral609751 : numeral609751.Packed {m | m ∈ bases} := by decide
+theorem count_eq_numeral609751 : count bases 609751 = numeral609751 :=
+  count_eq_of_packed injOn_bases (by decide) rfl
 
 end Hawaiian
 
