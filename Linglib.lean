@@ -1214,7 +1214,6 @@ import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
-import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Causation.CauserSort

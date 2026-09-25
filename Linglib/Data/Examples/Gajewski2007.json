@@ -1,0 +1,1106 @@
+[
+  {
+    "id": "gajewski2007_12a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(12a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary left until yesterday",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "positive"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_12b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(12b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't leave until yesterday",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_13a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill has left the country in (at least two) years",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "positive"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_13b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill hasn't left the country in (at least two) years",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_14a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(14a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill didn't claim that Mary would arrive until tomorrow",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": "Claim is not neg-raising."
+  },
+  {
+    "id": "gajewski2007_14b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(14b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary didn't claim that Bill had left the country in years",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": "Claim is not neg-raising."
+  },
+  {
+    "id": "gajewski2007_15a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(15a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill doesn't think Mary will leave until tomorrow",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThink"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_15b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(15b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary doesn't believe Bill has left the country in years",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThink"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_54a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(54a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not a single student has visited in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notSome"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_54b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(54b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not every student has visited in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_57",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(57)"
+    },
+    "language": "stan1293",
+    "primaryText": "John doesn't think Mary left until five.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThink"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_58a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(58a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill doesn't think Sue has visited in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThink"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_58b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(58b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill doesn't know that Sue has visited in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notKnow"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_68a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(68a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not every student arrived until 5 o'clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_68b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(68b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not a single student arrived until 5 o'clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notSome"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_69a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(69a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not every student has visited Bill in (at least two) years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_69b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(69b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Not a single student has visited Bill in (at least two) years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notSome"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_71a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(71a)"
+    },
+    "language": "stan1293",
+    "primaryText": "An applicant is not allowed to have left the country in at least 2 years",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notSome"
+      ],
+      [
+        "npi",
+        "in years"
+      ],
+      [
+        "clause",
+        "nonfinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_71b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(71b)"
+    },
+    "language": "stan1293",
+    "primaryText": "An applicant can't have left the country in at least 2 years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notSome"
+      ],
+      [
+        "npi",
+        "in years"
+      ],
+      [
+        "clause",
+        "nonfinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_72a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(72a)"
+    },
+    "language": "stan1293",
+    "primaryText": "An applicant is not required to have left the country in at least 2 years",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "in years"
+      ],
+      [
+        "clause",
+        "nonfinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_72b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(72b)"
+    },
+    "language": "stan1293",
+    "primaryText": "An applicant doesn't have to have left the country in at least 2 years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "in years"
+      ],
+      [
+        "clause",
+        "nonfinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_73",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(73)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is not certain that Bill has left the country in at least 2 years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notEvery"
+      ],
+      [
+        "npi",
+        "in years"
+      ],
+      [
+        "clause",
+        "finite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_74",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(74)"
+    },
+    "language": "stan1293",
+    "primaryText": "It is not possible that Bill has left the country in at least 2 years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notSome"
+      ],
+      [
+        "npi",
+        "in years"
+      ],
+      [
+        "clause",
+        "finite"
+      ]
+    ],
+    "comment": "The paper marks it ?? and takes the finite clause boundary to degrade it."
+  },
+  {
+    "id": "gajewski2007_83",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(83)"
+    },
+    "language": "stan1293",
+    "primaryText": "No one thought Bill would leave until tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "noOneThinks"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_97a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(97a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't believe John wanted Harry to die until tomorrow",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThinkWant"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": "Based on Horn (1971)."
+  },
+  {
+    "id": "gajewski2007_97b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(97b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I don't want John to believe Harry died until yesterday",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notWantThink"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": "Based on Horn (1971)."
+  },
+  {
+    "id": "gajewski2007_98a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(98a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary doesn't think Bill should have left until yesterday",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThinkWant"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_98b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(98b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary shouldn't think Bill left until yesterday",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notWantThink"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_99a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(99a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill doesn't imagine Sue ought to have left until yesterday",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThinkWant"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_99b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(99b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill ought not imagine Sue left until yesterday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notWantThink"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_123a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(123a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only John arrived until 5 o'clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "only"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_123b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(123b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only John has visited Marry in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "only"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": "The paper prints Marry."
+  },
+  {
+    "id": "gajewski2007_123c",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(123c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Only John likes waffles either.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Only John likes pancakes.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "only"
+      ],
+      [
+        "npi",
+        "either"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_126a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(126)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue is sorry that Bill arrived until five",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "adversative"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_126b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(126)"
+    },
+    "language": "stan1293",
+    "primaryText": "Sue is sorry that Bill has visited John in years",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "adversative"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_127a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(127)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Bill arrived until five, Mary was upset.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "conditional"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_127b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(127)"
+    },
+    "language": "stan1293",
+    "primaryText": "If Sue has visited Bill in years, then Mary is upset.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "conditional"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_132a",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(132a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Erin is the tallest girl John has seen in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "superlative"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_132b",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "(132b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The tallest girl John had seen until Friday walked in the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "superlative"
+      ],
+      [
+        "npi",
+        "until"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "gajewski2007_fn7ii",
+    "source": {
+      "bibkey": "gajewski-2007",
+      "paperLabel": "fn. 7 (ii)"
+    },
+    "language": "stan1293",
+    "primaryText": "I DON'T think Bill has visited in years.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "environment",
+        "notThinkStressed"
+      ],
+      [
+        "npi",
+        "in years"
+      ]
+    ],
+    "comment": "Capitals mark stress on the negation, the reading without neg-raising."
+  }
+]
