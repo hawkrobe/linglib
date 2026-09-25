@@ -60,11 +60,11 @@ theorem sInter_individual (a : E) : ⋂₀ (individual a : Set (Set E)) = {a} :=
 
 /-! ### Predicative content and existential closure -/
 
-/-- Predicative content of a quantifier: `BE(Q) = λx. Q(λy. y = x)`. -/
+/-- The predicative content of a quantifier, `BE(Q) = λx. Q(λy. y = x)`. -/
 def BE (Q : NP E) : E → Prop :=
   fun x => Q (fun y => y = x)
 
-/-- Existential closure: `A(P) = λQ. ∃x ∈ domain. P(x) ∧ Q(x)`. -/
+/-- Existential closure of a property over a domain, `A(P) = λQ. ∃x ∈ domain. P(x) ∧ Q(x)`. -/
 def A (domain : List E) (P : E → Prop) : NP E :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
 
@@ -169,16 +169,15 @@ theorem BE_leftInverse_A (domain : List E)
     Function.LeftInverse BE (A domain) :=
   fun P => BE_A_id domain P hcomplete
 
-/-- `BE` is surjective: every property is the predicative content of some
-    quantifier. -/
+/-- `BE` is surjective, since every property is the predicative content of some
+quantifier. -/
 theorem BE_surjective (domain : List E)
     (hcomplete : ∀ x : E, x ∈ domain) :
     Function.Surjective (@BE E) :=
   (BE_leftInverse_A domain hcomplete).surjective
 
-/-- `A` is injective: distinct properties yield distinct quantifiers under
-    existential closure — different common nouns mean different things as
-    indefinites. -/
+/-- `A` is injective, since distinct properties yield distinct quantifiers under existential
+closure. -/
 theorem A_injective (domain : List E)
     (hcomplete : ∀ x : E, x ∈ domain) :
     Function.Injective (A domain) :=
@@ -223,9 +222,8 @@ private lemma singleton_le_of_mem {x : E} {R : E → Prop} (hRx : R x) :
     (fun y => y = x) ≤ R := by
   intro y (h : y = x); rw [h]; exact hRx
 
-/-- **Counit inequality**: `A(BE(Q)) ≤ Q` for upward-closed `Q`. This is what
-    fails for non-monotone `Q` such as `λR. ¬R(a)`, where `Q({a})` is false but
-    `Q(∅)` is true. -/
+/-- The counit inequality `A(BE(Q)) ≤ Q` holds for upward-closed `Q`; it fails for
+non-monotone `Q` such as `λR. ¬R(a)`, where `Q({a})` is false but `Q(∅)` is true. -/
 theorem A_BE_le_of_mono (domain : List E) (Q : (E → Prop) →o Prop) :
     A_up domain (BE_up Q) ≤ Q := by
   show A domain (BE Q) ≤ (Q : (E → Prop) → Prop)
@@ -244,7 +242,7 @@ def galoisCoinsertion (domain : List E)
     (A_BE_le_of_mono domain)
     (fun P => BE_A_id domain P hcomplete)
 
-/-- The Galois connection: `A(P) ≤ Q ↔ P ≤ BE(Q)` for monotone `Q`. -/
+/-- The Galois connection `A(P) ≤ Q ↔ P ≤ BE(Q)` for monotone `Q`. -/
 theorem gc_A_BE (domain : List E)
     (hcomplete : ∀ x : E, x ∈ domain) :
     GaloisConnection (A_up domain (E := E)) BE_up :=
@@ -278,5 +276,27 @@ def _root_.Quantifier.GQ.objectShift (D : GQ E) : (E → Prop) → (E → E → 
 
 @[simp] theorem _root_.Quantifier.GQ.objectShift_apply (D : GQ E) (P : E → Prop)
     (R : E → E → Prop) (x : E) : GQ.objectShift D P R x = D P fun y ↦ R y x := rfl
+
+/-! ### Conjunctions and disjunctions of individuals -/
+
+/-- The conjunction of the individuals of `X`, the meet of their lifts. -/
+def conjGQ (X : Set E) : NP E := ⨅ x ∈ X, individual x
+
+/-- The disjunction of the individuals of `X`, the join of their lifts. -/
+def disjGQ (X : Set E) : NP E := ⨆ x ∈ X, individual x
+
+@[simp] theorem conjGQ_apply (X : Set E) (P : E → Prop) : conjGQ X P ↔ ∀ x ∈ X, P x := by
+  simp [conjGQ, iInf_apply, iInf_Prop_eq, individual]
+
+@[simp] theorem disjGQ_apply (X : Set E) (P : E → Prop) : disjGQ X P ↔ ∃ x ∈ X, P x := by
+  simp [disjGQ, iSup_apply, iSup_Prop_eq, individual]
+
+/-- The conjunction of the individuals of `X` is *every* restricted to `X`. -/
+theorem conjGQ_eq_every_sem (X : Set E) : conjGQ X = every_sem X :=
+  funext fun P ↦ propext (conjGQ_apply X P)
+
+/-- The disjunction of the individuals of `X` is *some* restricted to `X`. -/
+theorem disjGQ_eq_some_sem (X : Set E) : disjGQ X = some_sem X :=
+  funext fun P ↦ propext (disjGQ_apply X P)
 
 end Quantifier.NP

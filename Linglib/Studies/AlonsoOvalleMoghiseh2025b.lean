@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Semantics.Quantification.Generators
+public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
@@ -60,7 +60,7 @@ abbrev Entity := Finset Atom
 
 abbrev World := Finset Atom
 
-/-- Distributive *bought*: every atom of the entity was bought. -/
+/-- Distributive *bought*, true of an entity when every atom of it was bought. -/
 def bought (e : Entity) (w : World) : Prop := e ⊆ w
 
 instance (e : Entity) : DecidablePred (bought e) := fun w => inferInstanceAs (Decidable (e ⊆ w))
@@ -71,7 +71,7 @@ theorem bought_union (e₁ e₂ : Entity) (w : World) :
 /-- The number-neutral root (37): atoms and pluralities. -/
 def neutral : Finset Entity := univ.filter (·.Nonempty)
 
-/-- SING (42): the atoms. -/
+/-- SING (42), the atoms. -/
 def atoms : Finset Entity := univ.filter (·.card = 1)
 
 /-! ### Hamblin sets over generalized quantifiers (29) -/
@@ -87,15 +87,16 @@ def disjProp (X : Finset Entity) : Finset W := univ.filter fun w => ∃ e ∈ X,
 
 omit [DecidableEq W] in
 theorem mem_conjProp (X : Finset Entity) (w : W) :
-    w ∈ conjProp P X ↔ conjGQ X.toList (P · w) := by
-  simp [conjProp, conjGQ_iff_forall]
+    w ∈ conjProp P X ↔ conjGQ ↑X (P · w) := by
+  simp [conjProp]
 
 omit [DecidableEq W] in
 theorem mem_disjProp (X : Finset Entity) (w : W) :
-    w ∈ disjProp P X ↔ disjGQ X.toList (P · w) := by
-  simp [disjProp, disjGQ_iff_exists]
+    w ∈ disjProp P X ↔ disjGQ ↑X (P · w) := by
+  simp [disjProp]
 
-/-- The Hamblin set (29): ⊓ and ⊔ over every nonempty subdomain of `D`, applied to `P`. -/
+/-- The Hamblin set (29), the meets and joins over every nonempty subdomain of `D`, applied to
+`P`. -/
 def hamblin (D : Finset Entity) : Finset (Finset W) :=
   (D.powerset.filter (·.Nonempty)).image (conjProp P) ∪
     (D.powerset.filter (·.Nonempty)).image (disjProp P)
@@ -108,8 +109,8 @@ def hamblinRo (D : Finset Entity) : Finset (Finset W) := D.biUnion fun e => hamb
 def dom (H : Finset (Finset W)) : Finset W :=
   univ.filter (IsExhaustivelyResolvable (ofFinset H))
 
-/-- EXHp (15): `φ` is defined and every alternative `ψ` with a stronger presupposition is
-undefined. -/
+/-- EXHp (15) holds when `φ` is defined and every alternative `ψ` with a stronger presupposition
+is undefined. -/
 def ExhP (φ ψ : Finset (Finset W)) (w : W) : Prop :=
   IsExhaustivelyResolvable (ofFinset φ) w ∧
     (dom ψ ⊂ dom φ → ¬ IsExhaustivelyResolvable (ofFinset ψ) w)
@@ -123,8 +124,8 @@ instance (φ ψ : Finset (Finset W)) (w : W) : Decidable (ExhP φ ψ w) :=
 abbrev one : World := {0}
 abbrev two : World := {0, 1}
 
-/-- Whether a singular and a plural answer are available: the presupposition (8) holds in the
-world where one atom was bought and in the world where two were. -/
+/-- Whether a singular and a plural answer are available, that is, whether the presupposition
+(8) holds in the world where one atom was bought and in the world where two were. -/
 def answers (H : Finset (Finset World)) : Bool × Bool :=
   (decide (IsExhaustivelyResolvable (ofFinset H) one),
     decide (IsExhaustivelyResolvable (ofFinset H) two))
@@ -133,13 +134,13 @@ def answers (H : Finset (Finset World)) : Bool × Bool :=
 def exhAnswers (φ ψ : Finset (Finset World)) : Bool × Bool :=
   (decide (ExhP φ ψ one), decide (ExhP φ ψ two))
 
-/-- (53)/(55): over a singleton subdomain ⊓ and ⊔ collapse, so the *-ro* Hamblin sets contain
-the individual answers only — with the plurality for the neutral domain. -/
+/-- Over a singleton subdomain the meet and the join collapse, so the *-ro* Hamblin sets of
+(53) and (55) contain the individual answers only, with the plurality for the neutral domain. -/
 theorem hamblinRo_neutral :
     hamblinRo bought neutral = (neutral.image fun e => univ.filter (bought e)) ∧
       hamblinRo bought atoms = atoms.image fun e => univ.filter (bought e) := by decide
 
-/-- §2: English bare interrogatives (9)–(11) allow both answers, singular complex ones
+/-- In section 2, English bare interrogatives (9)–(11) allow both answers, singular complex ones
 (12)–(13) only a singular answer, and plural complex ones (14)–(15), whose singular
 alternative has the stronger presupposition, only a plural one. -/
 theorem dayal_english :
@@ -149,16 +150,16 @@ theorem dayal_english :
       exhAnswers (hamblinRo bought neutral) (hamblinRo bought atoms) = (false, true) := by
   decide
 
-/-- (19): over atoms alone a Spanish singular bare interrogative wrongly presupposes
-uniqueness; ranging over their conjunctions and disjunctions admits the plural answer. -/
+/-- In (19), over atoms alone a Spanish singular bare interrogative wrongly presupposes
+uniqueness, while ranging over their conjunctions and disjunctions admits the plural answer. -/
 theorem spanish_gq :
     answers (hamblinRo bought atoms) = (true, false) ∧
       answers (hamblin bought atoms) = (true, true) := by
   decide
 
-/-- (40), (45): singular bare and complex interrogatives allow both answers; (53): so does
-the *-ro* bare interrogative, through the plurality; (55): the *-ro* complex interrogative
-allows only the singular answer. -/
+/-- In (40) and (45) singular bare and complex interrogatives allow both answers, in (53) so
+does the *-ro* bare interrogative through the plurality, and in (55) the *-ro* complex
+interrogative allows only the singular answer. -/
 theorem farsi :
     answers (hamblin bought neutral) = (true, true) ∧
       answers (hamblin bought atoms) = (true, true) ∧
@@ -168,22 +169,22 @@ theorem farsi :
 
 /-! ### Questions with *must* (30)–(36) and collective predicates (56)–(57) -/
 
-/-- A deontic world: the nonempty set of buy-worlds it permits. -/
+/-- A deontic world, given by the nonempty set of buy-worlds it permits. -/
 abbrev Base := {A : Finset World // A.Nonempty}
 
-/-- *Must*'s accessibility: the buy-worlds a deontic world permits. -/
+/-- The accessibility of *must*, relating a deontic world to the buy-worlds it permits. -/
 def permits (A : Base) (v : World) : Prop := v ∈ A.1
 
 /-- Every buy-world is the sole world some deontic world permits. -/
 theorem permits_singleton (v : World) : ∃ A : Base, ∀ u, permits A u ↔ u = v :=
   ⟨⟨{v}, Finset.singleton_nonempty v⟩, fun _ => Finset.mem_singleton⟩
 
-/-- (59): Forood must buy one of two things, and either is permitted. -/
+/-- The scenario of (59), where Forood must buy one of two things and either is permitted. -/
 def freeChoice : Base := ⟨{{0}, {1}}, by decide⟩
 
-/-- (35)–(36) vs. (32)–(33): with the interrogative binding into the scope of *must* (34), the
-question is resolvable in the free-choice scenario iff the interrogative ranges over
-disjunctions — which *-ro* removes, (62)–(63). -/
+/-- With the interrogative binding into the scope of *must* (34), the question is resolvable in
+the free-choice scenario iff the interrogative ranges over disjunctions, which *-ro* removes,
+the contrast between (35)–(36) and (32)–(33) and between (62) and (63). -/
 theorem modal_gq :
     ∀ D ∈ [neutral, atoms],
       IsExhaustivelyResolvable (box (ofFinset (hamblin bought D)) permits) freeChoice ∧
@@ -192,13 +193,13 @@ theorem modal_gq :
     (s := (↑freeChoice.1 : Set World)) fun _ => Iff.rfl]
   decide
 
-/-- *Mixed together*: a collective predicate, true of a plurality that was bought. -/
+/-- *Mixed together*, a collective predicate true of a plurality that was bought. -/
 def mixed (e : Entity) (w : World) : Prop := 2 ≤ e.card ∧ e ⊆ w
 
 instance (e : Entity) : DecidablePred (mixed e) :=
   fun w => inferInstanceAs (Decidable (2 ≤ e.card ∧ e ⊆ w))
 
-/-- (56)–(57): a collective predicate has a true answer over the neutral domain, with or
+/-- In (56)–(57) a collective predicate has a true answer over the neutral domain, with or
 without *-ro*, and none over the atoms. -/
 theorem collective :
     answers (hamblin mixed neutral) = (false, true) ∧
@@ -222,8 +223,8 @@ def hamblinOf (row : LinguisticExample) : Option (Finset (Finset World)) :=
   | none, some "SCI", some "yes" => some (hamblinRo bought atoms)
   | _, _, _ => none
 
-/-- Whether a singular and a plural answer are predicted: the English plural complex
-interrogative goes through EXHp against its singular alternative, the others through ANS. -/
+/-- Whether a singular and a plural answer are predicted, where the English plural complex
+interrogative goes through EXHp against its singular alternative and the others through ANS. -/
 def predicted (row : LinguisticExample) : Option (Bool × Bool) :=
   match row.feature? "language", row.feature? "type" with
   | some "English", some "PCI" =>
@@ -243,7 +244,7 @@ theorem rows_agree :
 
 example : (Examples.all.filter fun row => (predicted row).isSome).length = 16 := by decide +kernel
 
-/-- (60)–(63): the embedded questions are felicitous in (59) iff their interrogative ranges
+/-- In (60)–(63) the embedded questions are felicitous in (59) iff their interrogative ranges
 over disjunctions (`isExhaustivelyResolvable_box_iff` relates this to the question with
 *must*). -/
 theorem scenario_rows :

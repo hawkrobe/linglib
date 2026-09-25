@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.DomainRestriction
+public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Order.Hom.Basic
 public import Linglib.Data.Examples.RitchieSchiller2024
 
@@ -47,11 +47,11 @@ formalized.
 
 namespace RitchieSchiller2024
 
-open Quantifier.DomainRestriction Data.Examples
+open Quantifier.GQ Data.Examples
 
 /-! ### Cognitive heuristics -/
 
-/-- A perceptual situation relative to viewpoints: which entities are present at the
+/-- A perceptual situation relative to viewpoints records which entities are present at the
 viewpoint's location and time, which it could perceive with minimal bodily distortion,
 which grab its attention, and which it could control, move or interact with. -/
 structure Situation (V E : Type*) where
@@ -64,15 +64,16 @@ variable {V E : Type*} (s : Situation V E) (v : V)
 
 namespace Situation
 
-/-- Perceptually available: perceivable from the viewpoint, which only present objects
+/-- The perceptually available entities are the perceivable ones, which only present objects
 are. -/
 def available : Set E := s.present v ∩ s.perceivable v
 
-/-- Manipulable: available and controllable, the second salience heuristic. -/
+/-- The manipulable entities are the available and controllable ones, the second salience
+heuristic. -/
 def manipulable : Set E := s.available v ∩ s.controllable v
 
-/-- Salient: available and either attention-grabbing or manipulable, manipulability being a
-way of being salient. -/
+/-- The salient entities are the available ones that are attention-grabbing or manipulable,
+manipulability being a way of being salient. -/
 def salient : Set E := s.available v ∩ (s.attentionGrabbing v ∪ s.controllable v)
 
 theorem available_subset_present : s.available v ⊆ s.present v := Set.inter_subset_left
@@ -111,7 +112,7 @@ instance : OrderTop Heuristic where
 
 end Heuristic
 
-/-- The default domain restriction possibilities of a situation: the domains the heuristics
+/-- The default domain restriction possibilities of a situation are the domains the heuristics
 deliver, nested because each filters the last, so an order homomorphism from the heuristic
 scale to domains. -/
 def Situation.restrictors : Heuristic →o Set E where
@@ -148,7 +149,7 @@ theorem default_subset_present {h : Heuristic} (hh : h ≠ ⊤) :
     exact (s.manipulable_subset_salient v).trans
       ((s.salient_subset_available v).trans (s.available_subset_present v))
 
-/-- A restriction reaching beyond the here and now is no default: the displaced readings of
+/-- A restriction reaching beyond the here and now is no default, so the displaced readings of
 the paper's section 4.1 come from applying the heuristics at another viewpoint. -/
 theorem not_isDefault_of_not_subset {C : Set E} (hC : ¬ C ⊆ s.present v) (hu : C ≠ Set.univ) :
     ¬ s.IsDefault v C := by
@@ -160,18 +161,18 @@ theorem not_isDefault_of_not_subset {C : Set E} (hC : ¬ C ⊆ s.present v) (hu 
 /-- A universal claim true of the available objects is true of the salient ones, so an
 utterance judged on what is in reach, as in the meadow, is weaker than one judged on all that
 is in view, as in the room; the converse fails. -/
-theorem every_salient_of_every_available [Fintype E] [DecidableEq E] (R S : E → Prop) :
-    every_restricted (s.available v) R S → every_restricted (s.salient v) R S :=
-  every_restricted_anti_mono (s.salient_subset_available v)
+theorem every_salient_of_every_available (R S : E → Prop) :
+    adjRestrict every_sem (s.available v) R S → adjRestrict every_sem (s.salient v) R S :=
+  every_restrictor_down _ _ S fun _ hx ↦ ⟨hx.1, s.salient_subset_available v hx.2⟩
 
-theorem some_available_of_some_salient [Fintype E] [DecidableEq E] (R S : E → Prop) :
-    some_restricted (s.salient v) R S → some_restricted (s.available v) R S :=
-  some_restricted_mono (s.salient_subset_available v)
+theorem some_available_of_some_salient (R S : E → Prop) :
+    adjRestrict some_sem (s.salient v) R S → adjRestrict some_sem (s.available v) R S :=
+  some_restrictor_up _ _ S fun _ hx ↦ ⟨hx.1, s.salient_subset_available v hx.2⟩
 
 /-! ### Joint purposes -/
 
-/-- The joint purpose in force: the minimal shared aims, under which a heuristic fixes the
-domain, or a specific purpose, installed by a discourse move or a prior plan, which makes
+/-- The joint purpose in force is either the minimal shared aims, under which a heuristic fixes
+the domain, or a specific purpose, installed by a discourse move or a prior plan, which makes
 its own objects relevant. -/
 inductive Purpose (E : Type*) where
   | minimal (h : Heuristic)
@@ -234,14 +235,14 @@ inductive Setup where
   | displacement
   deriving DecidableEq, Fintype
 
-/-- An example: the intended restriction, its anchor, the setup, and the judgment. -/
+/-- An example records the intended restriction, its anchor, the setup, and the judgment. -/
 structure Datum where
   restriction : Restriction
   anchor : Anchor
   setup : Setup
   judgment : Data.Examples.Judgment
 
-/-- A default restriction possibility: a heuristic restriction anchored to the here and
+/-- A default restriction possibility is a heuristic restriction anchored to the here and
 now. -/
 def Datum.IsDefault (d : Datum) : Prop := d.restriction.IsHeuristic ∧ d.anchor = .hereNow
 

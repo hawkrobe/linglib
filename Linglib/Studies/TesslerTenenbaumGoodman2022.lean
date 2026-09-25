@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Syllogistic.Forms
+public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.InformationTheory.Entropy
@@ -37,7 +37,8 @@ speaker can never prefer a quantified conclusion to *nothing follows*, `literalS
 
 The paper takes existential import on *all* alone (section 2.1): `tesslerAll` conjoins the
 modern `syllAll` with the existence of a populated restrictor region, and the other three
-forms are the modern ones of `Quantifier.Syllogistic`. Semantic noise follows the paper's
+forms are the modern ones, the generalized quantifiers over the populated regions of a
+three-circle Venn diagram. Semantic noise follows the paper's
 prose and released model code: with probability `φ` the listener disregards an utterance, so
 a false utterance carries weight `φ` and a true one weight `1`, and the two premises are
 disregarded independently. The released code implements the literal and state-communication
@@ -60,8 +61,140 @@ comparison with mReasoner and the Probability Heuristics Model are not formalize
 
 namespace TesslerTenenbaumGoodman2022
 
-open MeasureTheory ProbabilityTheory InformationTheory RSA Quantifier.Syllogistic
+open MeasureTheory ProbabilityTheory InformationTheory RSA
+open Quantifier.GQ (every_sem some_sem no_sem subalternation_a_i)
 open scoped ENNReal
+
+/-! ### Syllogisms and Venn states -/
+
+/-- The four Aristotelian quantifiers A, I, O and E. -/
+inductive AristQuant where
+  | all
+  | some
+  | someNot
+  | no
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- The seven nonempty regions of a three-circle Venn diagram over the terms A, B and C. -/
+inductive Region where
+  | A
+  | B
+  | C
+  | AB
+  | AC
+  | BC
+  | ABC
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- A Venn state records which regions are populated. -/
+abbrev VennState := Region → Bool
+
+/-- The regions inside the circle A. -/
+def hasA : Region → Bool
+  | .A | .AB | .AC | .ABC => true
+  | _ => false
+
+/-- The regions inside the circle B. -/
+def hasB : Region → Bool
+  | .B | .AB | .BC | .ABC => true
+  | _ => false
+
+/-- The regions inside the circle C. -/
+def hasC : Region → Bool
+  | .C | .AC | .BC | .ABC => true
+  | _ => false
+
+/-- A syllogism is two quantified premises sharing the middle term B, and the term orders of
+the premises fix the figure. -/
+structure Syllogism where
+  q1 : AristQuant
+  /-- The first premise is `q1 A B` rather than `q1 B A`. -/
+  order1AB : Bool
+  q2 : AristQuant
+  /-- The second premise is `q2 B C` rather than `q2 C B`. -/
+  order2BC : Bool
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- The nine conclusions are the eight quantified relations between the end terms and
+*nothing follows*. -/
+inductive Conclusion where
+  | allAC
+  | allCA
+  | someAC
+  | someCA
+  | someNotAC
+  | someNotCA
+  | noAC
+  | noCA
+  | nvc
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Whether a conclusion has A as its subject. -/
+def Conclusion.isAC : Conclusion → Bool
+  | .allAC | .someAC | .someNotAC | .noAC => true
+  | _ => false
+
+instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
+    Decidable (every_sem R S) :=
+  inferInstanceAs (Decidable (∀ r, R r → S r))
+
+instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
+    Decidable (some_sem R S) :=
+  inferInstanceAs (Decidable (∃ r, R r ∧ S r))
+
+instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
+    Decidable (no_sem R S) :=
+  inferInstanceAs (Decidable (∀ r, R r → ¬ S r))
+
+/-- *All Xs are Ys* on the modern reading, *every* over the populated X-regions. -/
+def syllAll (s : VennState) (X Y : Region → Bool) : Bool :=
+  decide (every_sem (fun r ↦ s r ∧ X r) fun r ↦ Y r)
+
+/-- *Some Xs are Ys*, *some* over the populated X-regions. -/
+def syllSome (s : VennState) (X Y : Region → Bool) : Bool :=
+  decide (some_sem (fun r ↦ s r ∧ X r) fun r ↦ Y r)
+
+/-- *Some Xs are not Ys*, *some* over the populated X-regions with the complement scope. -/
+def syllSomeNot (s : VennState) (X Y : Region → Bool) : Bool :=
+  decide (some_sem (fun r ↦ s r ∧ X r) fun r ↦ ¬ Y r)
+
+/-- *No Xs are Ys* on the modern reading, *no* over the populated X-regions. -/
+def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
+  decide (no_sem (fun r ↦ s r ∧ X r) fun r ↦ Y r)
+
+/-- *All Xs are Ys* entails *some Xs are Ys* when some populated region is an X-region. -/
+theorem syllAll_imp_syllSome (s : VennState) (X Y : Region → Bool)
+    (hExists : ∃ r, s r = true ∧ X r = true) (h : syllAll s X Y = true) :
+    syllSome s X Y = true := by
+  simp only [syllAll, syllSome, decide_eq_true_eq] at h ⊢
+  exact subalternation_a_i _ _ hExists h
+
+/-- Barbara, *all A are B* and *all B are C*, the paradigm valid syllogism. -/
+def barbara : Syllogism := ⟨.all, true, .all, true⟩
+
+/-- *All A are B* and *all C are B*, the paradigm invalid syllogism. -/
+def allAB_allCB : Syllogism := ⟨.all, true, .all, false⟩
+
+/-- Barbara is valid, since its premises entail *all A are C*. -/
+theorem barbara_valid (s : VennState) (h1 : syllAll s hasA hasB = true)
+    (h2 : syllAll s hasB hasC = true) : syllAll s hasA hasC = true := by
+  simp only [syllAll, decide_eq_true_eq] at h1 h2 ⊢
+  exact fun r ⟨hs, hA⟩ ↦ h2 r ⟨hs, h1 r ⟨hs, hA⟩⟩
+
+/-- The state populating only the regions AB and BC. -/
+def state_AB_BC : VennState
+  | .AB | .BC => true
+  | _ => false
+
+/-- The state populating only the region ABC. -/
+def state_ABC : VennState
+  | .ABC => true
+  | _ => false
+
+/-- The state populating only the regions A and AC. -/
+def state_A_AC : VennState
+  | .A | .AC => true
+  | _ => false
 
 instance : MeasurableSpace Syllogism := ⊤
 instance : DiscreteMeasurableSpace Syllogism := ⟨λ _ => trivial⟩
@@ -70,8 +203,8 @@ instance : DiscreteMeasurableSpace Conclusion := ⟨λ _ => trivial⟩
 
 /-! ### Semantics (section 2.1) -/
 
-/-- *All Xs are Ys* with existential import: some populated region is an X-region, and every
-populated X-region is a Y-region. -/
+/-- *All Xs are Ys* with existential import, so that some populated region is an X-region and
+every populated X-region is a Y-region. -/
 def tesslerAll (s : VennState) (X Y : Region → Bool) : Bool :=
   syllAll s X Y && decide (∃ r, s r = true ∧ X r = true)
 
@@ -115,7 +248,7 @@ theorem coe_states (p : VennState → Bool) : (states p : Set VennState) = {s | 
 theorem states_nvc : states (concMeaning .nvc) = Finset.univ := by
   simp [states, concMeaning]
 
-/-- The noisy meaning: with probability `φ` the listener disregards the utterance. -/
+/-- The noisy meaning, under which the listener disregards the utterance with probability `φ`. -/
 def noisy (φ : ℝ≥0∞) (b : Bool) : ℝ≥0∞ := if b then 1 else φ
 
 theorem noisy_zero (b : Bool) : noisy 0 b = ({s : Bool | s = true}).indicator 1 b := by
@@ -133,8 +266,8 @@ section Model
 
 variable (φ : ℝ≥0∞) (μ : Measure VennState)
 
-/-- The reasoner as listener (2): the prior conditioned on the noisy meanings of both
-premises, each disregarded independently. -/
+/-- The reasoner as listener (2), the prior conditioned on the noisy meanings of both premises,
+each disregarded independently. -/
 noncomputable def reasoner : Kernel Syllogism VennState :=
   literalListener μ λ syl s => noisy φ (premise1 syl s) * noisy φ (premise2 syl s)
 
@@ -192,9 +325,9 @@ theorem naive_apply_ne_zero [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠
 
 /-! ### The speakers (section 2.3) -/
 
-/-- The figural preference (section 3.1.1): when exactly one end term is the subject of a
-premise, conclusions with that term as subject carry weight `β`; *nothing follows* and every
-conclusion of the mixed figures carry weight `1`. -/
+/-- The figural preference (section 3.1.1), under which, when exactly one end term is the
+subject of a premise, conclusions with that term as subject carry weight `β`, while *nothing
+follows* and every conclusion of the mixed figures carry weight `1`. -/
 def figuralWeight (β : ℝ) (syl : Syllogism) (c : Conclusion) : ℝ :=
   if c = .nvc then 1
   else if syl.order1AB && syl.order2BC then if c.isAC then β else 1
@@ -203,8 +336,8 @@ def figuralWeight (β : ℝ) (syl : Syllogism) (c : Conclusion) : ℝ :=
 
 variable (α β : ℝ)
 
-/-- The literal speaker's utility (3): the reasoner's posterior probability that the
-conclusion is true. -/
+/-- The literal speaker's utility (3), the reasoner's posterior probability that the conclusion
+is true. -/
 noncomputable def literalScore (syl : Syllogism) (c : Conclusion) : EReal :=
   ((Real.log (figuralWeight β syl c) +
     α * (reasoner φ μ syl).real {s | concMeaning c s = true} : ℝ) : EReal)
@@ -319,8 +452,8 @@ section Noiseless
 
 variable {α β : ℝ}
 
-/-- A conclusion false at a state satisfying the premises: the naive listener's posterior does
-not dominate the reasoner's. -/
+/-- For a conclusion false at a state satisfying the premises, the naive listener's posterior
+does not dominate the reasoner's. -/
 theorem klDiv_zero_eq_top {syl : Syllogism} {c : Conclusion} {s₀ : VennState}
     (hs : premises syl s₀ = true) (hc : concMeaning c s₀ = false) :
     klDiv (reasoner 0 (uniformOn Set.univ) syl) (naive 0 (uniformOn Set.univ) c) = ∞ := by
@@ -370,8 +503,8 @@ theorem beliefAlignment_nvc_of_invalid (hα : 0 < α) {syl : Syllogism}
           beliefAlignment_zero_apply_of_false hα hs hc) (λ h => absurd (Finset.mem_univ _) h)).symm
     _ = 1 := by rw [sum_measure_singleton, Finset.coe_univ, measure_univ]
 
-/-- The score of a conclusion entailed by the premises: the log ratio of the premises'
-extension to the conclusion's, and the figural weight. -/
+/-- The score of a conclusion entailed by the premises is the log ratio of the premises'
+extension to the conclusion's, with the figural weight. -/
 theorem alignmentScore_zero_of_valid {syl : Syllogism} {c : Conclusion}
     (hE : (states (premises syl)).Nonempty)
     (hc : states (premises syl) ⊆ states (concMeaning c)) :
@@ -451,7 +584,7 @@ theorem barbara_prefers_allAC (hα : 0 < α) (hβ : 1 ≤ β) :
   rw [hw, hw', Real.log_one]
   nlinarith [Real.log_nonneg hβ, mul_lt_mul_of_pos_left hlt hα]
 
-/-- *All A are B, All C are B* is invalid: every quantified conclusion fails at a state
+/-- *All A are B, All C are B* is invalid, since every quantified conclusion fails at a state
 satisfying the premises, so the noiseless belief-alignment speaker says *nothing follows*. -/
 theorem allAB_allCB_nvc (hα : 0 < α) :
     beliefAlignment 0 (uniformOn Set.univ) α β allAB_allCB {.nvc} = 1 := by
