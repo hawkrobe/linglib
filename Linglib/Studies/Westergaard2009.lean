@@ -42,7 +42,7 @@ subject is new.
 * `table_3_1_eq_required`, `danish_table_3_1`: Table 3.1 against the fragments.
 * `nordmore_english_mirror`, `embedded_german_polar_all`: the mirror image and the two
   universals read off the fragments.
-* `table_3_2`, `not_expresses_both`: the cues separate the grammars.
+* `table_3_2`, `not_expresses_both`: the four cues separate the five grammars.
 * `rows_consistent`: every judged word order in the data is consistent with its fragment.
 * `isV2_order_iff`: a Tromsø monosyllabic *wh*-question is verb second iff its subject is new.
 
@@ -191,19 +191,17 @@ theorem not_expresses_both (lang : V2Grammar) {c c' : MicroCue} (ht : c.target =
     rw [ht] at h
     cases hc : c.verbInHead <;> cases hc' : c'.verbInHead <;> simp_all)
 
-/-- Table 3.2 shows that four cues separate the five grammars. -/
+/-- The four cues of Table 3.2. -/
+def tableCues : List MicroCue := [cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
+
+/-- The five grammars of Table 3.2. -/
+def tableGrammars : List V2Grammar := [stdNorwegian, stdEnglish, nordmore, belfast, danish]
+
+/-- Table 3.2 shows that the four cues separate the five grammars: any two differ on some cue. -/
 theorem table_3_2 :
-    (Expresses stdNorwegian cueIntV2 ∧ Expresses stdNorwegian cueDeclV2 ∧
-        ¬ Expresses stdNorwegian cueExclV2 ∧ ¬ Expresses stdNorwegian cueWhV2) ∧
-      (Expresses stdEnglish cueIntV2 ∧ ¬ Expresses stdEnglish cueDeclV2 ∧
-        ¬ Expresses stdEnglish cueExclV2 ∧ ¬ Expresses stdEnglish cueWhV2) ∧
-      (¬ Expresses nordmore cueIntV2 ∧ Expresses nordmore cueDeclV2 ∧
-        ¬ Expresses nordmore cueExclV2 ∧ ¬ Expresses nordmore cueWhV2) ∧
-      (Expresses belfast cueIntV2 ∧ ¬ Expresses belfast cueDeclV2 ∧
-        ¬ Expresses belfast cueExclV2 ∧ Expresses belfast cueWhV2) ∧
-      (Expresses danish cueIntV2 ∧ Expresses danish cueDeclV2 ∧
-        Expresses danish cueExclV2 ∧ ¬ Expresses danish cueWhV2) := by
-  simp [Expresses, cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
+    tableGrammars.Pairwise fun g g' ↦
+      ∃ c ∈ tableCues, ¬ (Expresses g c ↔ Expresses g' c) := by
+  simp [tableGrammars, tableCues, Expresses, cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
 
 /-- The Norwegian children hear the cues for non-V2 in exclamatives and embedded questions. -/
 theorem norwegian_nonV2_cues :
