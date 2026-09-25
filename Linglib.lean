@@ -2269,7 +2269,6 @@ import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Anaphora.Basic
-import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Syntax.CCG.Cat

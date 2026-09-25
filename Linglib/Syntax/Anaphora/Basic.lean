@@ -1,156 +1,62 @@
 module
 
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Tactic.DeriveFintype
+
 /-!
-# Anaphor — Hankamer & Sag's deep/surface anaphora theory
+# Deep and surface anaphora
 
-[hankamer-sag-1976]'s theory of (unbounded) anaphoric processes. The organizing
-distinction is **control** (pragmatic/deictic vs syntactic) — the conceptual
-entry point of H&S's argument — with **depth** (deep vs surface) as the
-conclusion. A **deep** anaphor is interpreted at an underlying/semantic level,
-can be pragmatically (deictically) controlled, and needs only a coherent semantic
-referent (definite pronouns, *do it*, null complement anaphora, *pro*). A
-**surface** anaphor is derived by deletion under identity with a surface
-antecedent, so it requires a coherent *syntactic* antecedent (VP-ellipsis,
-sluicing, gapping, argument ellipsis). Pragmatic controllability is the conceptual
-cut, *not* a reliable test on its own: [landau-2026], following [merchant-2001],
-holds the reliable classic diagnostics to be extraction and agreement — this file
-models extraction and Landau's EIR test (`Syntax/Anaphora/Diagnostic.lean`).
+[hankamer-sag-1976] divide anaphoric processes into two kinds. A surface anaphor is derived by
+deletion under identity with a linguistic antecedent, so its site keeps the syntactic structure of
+the elided phrase: VP-ellipsis, sluicing, NP-ellipsis and argument ellipsis are surface anaphora. A
+deep anaphor is a pro-form with no internal structure, interpreted as a pronoun is: null complement
+anaphora, *pro*, empty nouns and *do it* are deep. This file defines the classification and its
+defining property. It classifies anaphoric processes, not nominals, and is independent of the
+binding classes of `Binding.BindingClass`.
 
-`Depth` is the genus, not an ellipsis classification: ellipsis ⊊ surface anaphora
-⊊ anaphora, and the deep values (*do so*, NCA, *pro*) are precisely the
-*non-ellipsis* anaphors. Ellipsis-specific machinery (deletion domains,
-`[E]`-feature, ellipsis-type taxonomy) lives in `Syntax/Minimalist/Ellipsis.lean` and
-*consumes* this axis — a `Minimalist.Ellipsis` is a `HasDepth` carrier with depth
-`.surface`.
+## Main definitions
 
-This is the **unbounded**-anaphora axis, orthogonal to (and a sibling of) the
-binding-theoretic Principle-A/B/C axis (`Binding.BindingClass`): H&S explicitly set aside
-bounded anaphora (reflexivization) as a separate, always-syntactic process. A reflexive's
-class is a `Binding.BindingClass.IsAnaphor`; *do so*
-is an `Anaphor.Depth.deep`.
+* `Anaphor.Depth`: the depth of an anaphoric process, deep or surface.
+* `Anaphor.Depth.HasInternalStructure`: the site of the anaphor contains syntactic structure,
+  which holds of surface anaphora and of no others.
 
-Other H&S diagnostics are *not* modeled here: the missing-antecedent test (itself
-judged unreliable by [landau-2026]), the coherent-semantic-entity requirement on
-deep anaphora, and the Backwards Anaphora Constraint.
+## Implementation notes
 
-## Main declarations
+The classification is defined by internal structure alone. The other properties Hankamer and Sag
+associated with depth, such as pragmatic control and the missing-antecedent phenomenon, are tests
+for that structure, and a test is stated with the data of the study that applies it.
+[merchant-2013-diagnosing] keeps extraction, agreement and inverse scope as diagnostics of
+ellipsis and sets pragmatic control aside, since an ellipsis can be pragmatically controlled under
+limited conditions; [landau-2026] adds a test that decides depth where extraction and agreement
+cannot, and `Studies/Landau2026.lean` shows when a test decides depth.
 
-* `Anaphor.Depth` — deep/surface (the conclusion).
-* `Anaphor.Control` — pragmatic/syntactic (H&S's organizing distinction).
-* `Anaphor.Depth.HasInternalStructure` / `Anaphor.Depth.control` — the structural
-  property and the depth→control map; `allowsPragmaticControl_iff_…` proves the
-  typology's two correlated properties coincide by construction.
-* `Anaphor.HasDepth` — the carrier capability on the depth axis.
+## References
+
+* [hankamer-sag-1976]
+* [merchant-2013-diagnosing]
+* [landau-2026]
 -/
 
 @[expose] public section
 
 namespace Anaphor
 
-/-- Hankamer & Sag's deep/surface classification of (unbounded) anaphoric
-    processes [hankamer-sag-1976]. -/
+/-- The depth of an anaphoric process [hankamer-sag-1976]. A `surface` anaphor is derived by
+deletion under identity and keeps the structure of the elided phrase; a `deep` anaphor is a
+pro-form without internal structure. -/
 inductive Depth where
   | deep
   | surface
-  deriving DecidableEq, Repr
-
-/-- How an anaphoric relation is controlled [hankamer-sag-1976]: a `pragmatic`
-    (deictic) anaphor can be controlled by the nonlinguistic context with no
-    linguistic antecedent; a `syntactic` anaphor requires a coherent linguistic
-    antecedent in surface structure. This is H&S's organizing distinction; depth
-    is the conclusion drawn from it. -/
-inductive Control where
-  | pragmatic
-  | syntactic
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace Depth
 
-/-- The defining structural property: surface anaphora project *syntactically
-    present* internal structure (deletion under identity), deep anaphora do not.
-    Every account of the distinction ([hankamer-sag-1976], [merchant-2001],
-    [landau-2026]) shares this much; they differ on the *level* (H&S: surface
-    structure; Merchant/Landau: LF — the difference EIR turns on). -/
-def HasInternalStructure : Depth → Prop
-  | .surface => True
-  | .deep    => False
+/-- The site of an anaphor has internal structure when the anaphor is surface: deletion leaves
+the structure of the elided phrase in place, and a deep anaphor has none. -/
+def HasInternalStructure (d : Depth) : Prop := d = .surface
 
-instance : DecidablePred HasInternalStructure := fun d =>
-  match d with
-  | .surface => isTrue trivial
-  | .deep    => isFalse (fun h => h)
-
--- The value lemmas are subsumed by `hasInternalStructure_iff_surface` on the simp
--- set, so they carry no `@[simp]` (kept for direct `exact` use).
-theorem hasInternalStructure_surface : HasInternalStructure .surface := trivial
-
-theorem not_hasInternalStructure_deep : ¬ HasInternalStructure .deep := fun h => h
-
-@[simp] theorem hasInternalStructure_iff_surface (d : Depth) :
-    HasInternalStructure d ↔ d = .surface := by
-  cases d <;> simp [HasInternalStructure]
-
-/-- The control type a depth determines [hankamer-sag-1976]: deep anaphora allow
-    pragmatic (deictic) control; surface anaphora are syntactically controlled
-    (deletion under identity with a surface antecedent). -/
-def control : Depth → Control
-  | .deep    => .pragmatic
-  | .surface => .syntactic
-
-/-- A depth *allows pragmatic control* iff it is deep — the conceptual cut H&S
-    start from, here a consequence of `control`, not a separate stipulation. -/
-def AllowsPragmaticControl (d : Depth) : Prop := d.control = .pragmatic
-
-instance : DecidablePred AllowsPragmaticControl := fun d =>
-  inferInstanceAs (Decidable (d.control = .pragmatic))
-
-/-- The depth typology's two correlated properties coincide *by construction*: a
-    depth allows pragmatic control iff it lacks internal structure (is deep). This
-    is definitional given the 2-element typology — the *empirical* content is which
-    anaphors get which depth, tested against data in the consuming study, not this
-    biconditional. -/
-@[simp] theorem allowsPragmaticControl_iff_not_hasInternalStructure (d : Depth) :
-    AllowsPragmaticControl d ↔ ¬ HasInternalStructure d := by
-  cases d <;> simp [AllowsPragmaticControl, control, HasInternalStructure]
+instance : DecidablePred HasInternalStructure := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 end Depth
-
-/-! ### The `HasDepth` capability -/
-
-/-- A carrier whose every element has a Hankamer & Sag `Anaphor.Depth`. An ellipsis-type
-    record, a paper's datum struct, or a syntactic object each supplies its own
-    instance. -/
-class HasDepth (α : Type _) where
-  /-- The deep/surface depth of every element. -/
-  depth : α → Depth
-
-/-- `a` is a deep anaphor (no internal structure; pragmatic control). -/
-def HasDepth.IsDeep {α : Type _} [HasDepth α] (a : α) : Prop :=
-  HasDepth.depth a = .deep
-
-/-- `a` is a surface anaphor (deletion under identity; syntactic control). -/
-def HasDepth.IsSurface {α : Type _} [HasDepth α] (a : α) : Prop :=
-  HasDepth.depth a = .surface
-
-/-- The element's structural property, via its depth. -/
-def HasDepth.HasInternalStructure {α : Type _} [HasDepth α] (a : α) : Prop :=
-  (HasDepth.depth a).HasInternalStructure
-
-instance {α : Type _} [HasDepth α] (a : α) : Decidable (HasDepth.IsDeep a) := by
-  unfold HasDepth.IsDeep; infer_instance
-
-instance {α : Type _} [HasDepth α] (a : α) : Decidable (HasDepth.IsSurface a) := by
-  unfold HasDepth.IsSurface; infer_instance
-
-instance {α : Type _} [HasDepth α] (a : α) :
-    Decidable (HasDepth.HasInternalStructure a) := by
-  unfold HasDepth.HasInternalStructure; infer_instance
-
-/-- `IsSurface` is exactly having internal structure. -/
-@[simp] theorem HasDepth.hasInternalStructure_iff_isSurface
-    {α : Type _} [HasDepth α] (a : α) :
-    HasDepth.HasInternalStructure a ↔ HasDepth.IsSurface a := by
-  unfold HasDepth.HasInternalStructure HasDepth.IsSurface
-  exact Depth.hasInternalStructure_iff_surface _
 
 end Anaphor
