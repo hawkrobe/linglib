@@ -1084,7 +1084,6 @@ import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 import Linglib.Phonology.Constraints.Harmony
-import Linglib.Phonology.HarmonicGrammar.Separability
 import Linglib.Studies.Ginzburg2012
 import Linglib.Studies.Heim1982
 import Linglib.Studies.Just2024
