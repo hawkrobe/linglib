@@ -2,7 +2,8 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Discourse.Role
+public import Linglib.Syntax.Clause.Basic
 public import Linglib.Data.Examples.Rudin2025b
 
 /-!
@@ -54,7 +55,6 @@ issue without uttering a sentence, are not represented.
 namespace Rudin2025b
 
 open ArgumentStructure Commitment Data.Examples
-open Mood (Illocutionary)
 
 variable {T : Type*} [LinearOrder T] {P δ W : Type*}
 
@@ -108,7 +108,7 @@ inductive Volume where
 
 /-- A sentence as uttered: its clause type, the denotation of its radical, and its tune. -/
 structure Sentence (W : Type*) where
-  mood : Illocutionary
+  type : Clause.SentenceType
   radical : Set W
   rising : Bool
 
@@ -131,12 +131,12 @@ def Material.Linguistic : Material W → Prop
 
 /-- Response-eliciting material: a rising declarative or an interrogative. -/
 def Material.Resp : Material W → Prop
-  | .utterance s => s.mood = .declarative ∧ s.rising = true ∨ s.mood = .interrogative
+  | .utterance s => s.type = .declarative ∧ s.rising = true ∨ s.type = .polar
   | _ => False
 
 /-- Assertive material: a falling declarative. -/
 def Material.Assertive : Material W → Prop
-  | .utterance s => s.mood = .declarative ∧ s.rising = false
+  | .utterance s => s.type = .declarative ∧ s.rising = false
   | _ => False
 
 instance : DecidablePred (Material.Linguistic (W := W)) := λ m => by
@@ -154,7 +154,7 @@ polar question. -/
 def Sentence.update : Sentence W → Table Discourse.Role W → Table Discourse.Role W
   | ⟨.declarative, p, false⟩, K => K.assert .speaker p
   | ⟨.declarative, p, true⟩, K => K.push (Question.ofSet p)
-  | ⟨.interrogative, p, _⟩, K => K.polarQuestion p
+  | ⟨.polar, p, _⟩, K => K.polarQuestion p
   | _, K => K
 
 /-- The context update of a performance: that of the sentence it utters, if any. -/
@@ -201,8 +201,9 @@ theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.
       (by simp [Material.Resp])
   | ⟨.utterance ⟨.declarative, p, true⟩, _⟩ =>
     iff_of_true (λ _ => ⟨Question.ofSet p, rfl, λ _ _ hq => hq⟩) (Or.inl ⟨rfl, rfl⟩)
-  | ⟨.utterance ⟨.interrogative, p, _⟩, _⟩ =>
+  | ⟨.utterance ⟨.polar, p, _⟩, _⟩ =>
     iff_of_true (λ _ => ⟨Question.polar p, rfl, λ _ _ hq => hq⟩) (Or.inr rfl)
+  | ⟨.utterance ⟨.alternative, _, _⟩, _⟩ | ⟨.utterance ⟨.constituent, _, _⟩, _⟩
   | ⟨.utterance ⟨.imperative, _, _⟩, _⟩ | ⟨.utterance ⟨.promissive, _, _⟩, _⟩
   | ⟨.utterance ⟨.exclamative, _, _⟩, _⟩ =>
     iff_of_false (not_asking_of_stack λ _ => rfl) (by simp [Material.Resp])
@@ -217,10 +218,11 @@ theorem Performance.assertion_iff : ∀ u : Performance W, u.Assertion ↔ u.mat
     iff_of_false (λ h => by
       obtain ⟨_, _, hq⟩ := h Table.empty
       simp [Performance.update, Sentence.update] at hq) (by simp [Material.Assertive])
-  | ⟨.utterance ⟨.interrogative, _, _⟩, _⟩ =>
+  | ⟨.utterance ⟨.polar, _, _⟩, _⟩ =>
     iff_of_false (λ h => by
       obtain ⟨_, _, hq⟩ := h Table.empty
       simp [Performance.update, Sentence.update] at hq) (by simp [Material.Assertive])
+  | ⟨.utterance ⟨.alternative, _, _⟩, _⟩ | ⟨.utterance ⟨.constituent, _, _⟩, _⟩
   | ⟨.utterance ⟨.imperative, _, _⟩, _⟩ | ⟨.utterance ⟨.promissive, _, _⟩, _⟩
   | ⟨.utterance ⟨.exclamative, _, _⟩, _⟩ =>
     iff_of_false (not_assertion_of_stack λ _ => rfl) (by simp [Material.Assertive])
@@ -300,8 +302,9 @@ def verbs : List (String × Verb) :=
 def volumes : List (String × Volume) :=
   [("neutral", .neutral), ("loud", .loud), ("whispered", .whispered)]
 
-def moods : List (String × Illocutionary) :=
-  [("declarative", .declarative), ("interrogative", .interrogative)]
+/-- The sentence types the rows record; the paper's interrogatives are polar questions. -/
+def types : List (String × Clause.SentenceType) :=
+  [("declarative", .declarative), ("interrogative", .polar)]
 
 /-- The quoted performance of a row, its sentence read as denoting a fixed proposition. -/
 def performance? (x : LinguisticExample) : Option (Performance Bool) := do
@@ -310,9 +313,9 @@ def performance? (x : LinguisticExample) : Option (Performance Bool) := do
     | some "none" => some .none
     | some "inarticulate" => some .inarticulate
     | some "sentence" => do
-      let mood ← x.parse? "mood" moods
+      let type ← x.parse? "mood" types
       let rising ← x.parse? "tune" [("rising", true), ("falling", false)]
-      pure (.utterance ⟨mood, {true}, rising⟩)
+      pure (.utterance ⟨type, {true}, rising⟩)
     | _ => none
   pure ⟨material, volume⟩
 

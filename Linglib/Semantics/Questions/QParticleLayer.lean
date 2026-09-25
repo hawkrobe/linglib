@@ -1,17 +1,18 @@
 module
 
 /-!
-# Q-Particle Layer Feature
-[dayal-2025] [turk-hirsch-2026]
+# Question-particle layers
 
-A typological feature classifying Q-particles by their position in the
-left periphery. Used cross-paper by typological work on question
-particles (Bhatt-Dayal 2020, Theiler 2021, Simik 2024, Zheng 2025,
-Seeliger-Repp 2018).
+This file defines the layer of the left periphery a question particle sits in, Dayal's three
+points at which question meaning is built, clause typing at C, centering at PerspP and the
+speech act at SAP, together with the clause-internal polarity head that Türk and Hirsch argue
+Turkish *mI* occupies. A particle's layer is derived from its distribution over embedding
+contexts in the study of Dayal's proposal, not stored.
 
-Lives in `Features/` (not `Semantics/Questions/`) because it
-is a feature taxonomy with no semantic commitments — sibling of
-`Polarity`, `Mood`, `Evidentiality`.
+## References
+
+* [dayal-2025]
+* [turk-hirsch-2026]
 -/
 
 @[expose] public section

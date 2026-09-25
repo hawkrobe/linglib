@@ -4,7 +4,7 @@ public import Linglib.Semantics.Reference.Context.Index
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Kratzer.Ordering
 public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Mood.Defs
+public import Linglib.Discourse.SpeechAct
 public import Linglib.Discourse.QUD.Basic
 public import Mathlib.Data.List.Lex
 
@@ -176,7 +176,7 @@ variable {I : Type*}
 
 /-- The illocutionary force linking principle (56): the default force of a root sentence is
 fixed by the type of its denotation. -/
-def Denotation.force : Denotation I W T → Mood.Illocutionary
+def Denotation.force : Denotation I W T → Discourse.SpeechAct.Force
   | .proposition _ => .declarative
   | .question _ => .interrogative
   | .property _ => .imperative

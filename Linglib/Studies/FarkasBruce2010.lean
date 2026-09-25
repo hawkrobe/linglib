@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.FarkasBruce2010
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Discourse.Role
+public import Linglib.Discourse.SpeechAct
 
 /-!
 # Farkas and Bruce (2010): On Reacting to Assertions and Polar Questions
@@ -235,12 +235,6 @@ theorem not_inCrisis_reversing_polarQuestion {s t : Sentence W} (h : Reversing s
   rw [h]
   exact not_inCrisis_polarQuestion_assert_compl K s.prop hK b hc
 
-/-- The initiating move of a responding assertion. -/
-inductive Reaction
-  | assertion
-  | question
-  deriving DecidableEq, Repr
-
 /-- The polarity particles of the paper's examples. -/
 inductive Particle
   | yes | no | da | nu | ba | si | doch
@@ -254,7 +248,8 @@ inductive Language
 initiating and responding sentences, the particles, and the judgment. -/
 structure Row where
   language : Language
-  reaction : Reaction
+  /-- The initiating move, an assertion or a question. -/
+  reaction : Discourse.SpeechAct.Force
   input : Polarity
   response : Polarity
   particles : List Particle
@@ -268,7 +263,8 @@ def Row.relative (r : Row) : Polarity := r.response * r.input
 def languageTable : List (String × Language) :=
   [("stan1293", .english), ("roma1327", .romanian), ("stan1290", .french), ("stan1295", .german)]
 
-def reactionTable : List (String × Reaction) := [("assertion", .assertion), ("question", .question)]
+def reactionTable : List (String × Discourse.SpeechAct.Force) :=
+  [("assertion", .declarative), ("question", .interrogative)]
 
 def polarityTable : List (String × Polarity) := [("positive", .positive), ("negative", .negative)]
 
@@ -316,14 +312,15 @@ theorem ba_reverse :
 
 /-- *ba* is possible in every denial. -/
 theorem ba_denial :
-    ∀ r ∈ rows, r.language = .romanian → r.reaction = .assertion → r.relative = .negative →
-      .ba ∈ r.particles → r.judgment = .acceptable := by
+    ∀ r ∈ rows, r.language = .romanian → r.reaction = .declarative →
+      r.relative = .negative → .ba ∈ r.particles → r.judgment = .acceptable := by
   decide
 
 /-- In a [reverse, −] answer to a question, *ba* is impossible and its absence acceptable. -/
 theorem ba_not_reverse_answer_neg :
-    ∀ r ∈ rows, r.language = .romanian → r.reaction = .question → r.relative = .negative →
-      r.response = .negative → (r.judgment = .acceptable ↔ .ba ∉ r.particles) := by
+    ∀ r ∈ rows, r.language = .romanian → r.reaction = .interrogative →
+      r.relative = .negative → r.response = .negative →
+      (r.judgment = .acceptable ↔ .ba ∉ r.particles) := by
   decide
 
 /-- French *si* and German *doch* mark the marked combination [reverse, +], after assertions

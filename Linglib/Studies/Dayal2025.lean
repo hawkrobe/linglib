@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Dayal2025
 public import Linglib.Fragments.English.QuestionParticles
+public import Linglib.Fragments.English.Verbs
 public import Linglib.Fragments.HindiUrdu.Particles
 public import Linglib.Fragments.Japanese.Particles
 public import Linglib.Semantics.Questions.Exhaustivity
@@ -287,7 +288,7 @@ theorem selection_rows :
     ∀ row ∈ Examples.all, ∀ v ∈ verbs, ∀ e,
       row.feature? "verb" = some v.form → (row.feature? "embedding").bind contextOf = some e →
       e ≠ .quasiSubordinated →
-      (Fine row.judgment ↔ Selects (deriveSelectionClass v) e) := by
+      (Fine row.judgment ↔ Selects (deriveSelectionClass v.toVerb) e) := by
   decide
 
 /-- The answer relation of a responsive's at-issue content (43b): *know* and *remember*
@@ -310,8 +311,8 @@ theorem quasi_rows :
       (row.feature? "embedding").bind contextOf = some .quasiSubordinated →
       row.feature? "invested" = none →
       (Fine row.judgment ↔
-        Selects (deriveSelectionClass v) .quasiSubordinated ∧
-          (deriveSelectionClass v = .responsive →
+        Selects (deriveSelectionClass v.toVerb) .quasiSubordinated ∧
+          (deriveSelectionClass v.toVerb = .responsive →
             assertsKnowledge v.form = false ∨ row.feature? "negated" = some "true" ∨
               row.feature? "questioned" = some "true")) := by
   decide
