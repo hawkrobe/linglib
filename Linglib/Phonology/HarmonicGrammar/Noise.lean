@@ -147,9 +147,9 @@ theorem normalMaxEnt_choiceProb_eq (con : CON C n) (w : Fin n → ℝ)
     NHG lacks it because its noise variance σ_d depends on the violation
     profile (see `nhgSigmaD`).
 
-    See also `maxent_logit_as_finsum` (Separability.lean) for the
-    Fin-indexed decomposition, and `me_predicts_hz` for the consequence
-    that independent violation differences yield HZ's generalization. -/
+    See `HarmonicGrammar.Square.Independent.interaction_logOdds_softmax`
+    (`IntersectingFamilies.lean`) for the consequence that intersecting
+    constraint families yield constant logit differences. -/
 theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
     (s : ι → ℝ) (a b : ι) :
     log (softmax s a / softmax s b) = s a - s b := by
