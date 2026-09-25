@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.QF
+public import Linglib.Phonology.Subregular.Docking
 
 /-!
 # Quantifier-free logical transductions
@@ -32,9 +32,8 @@ transduction, though the composite is not in general itself quantifier-free.
 * `Transduction.applyComp`: composition of two transductions (one cyclic derivation step on top
   of another).
 * `Transduction.LeftLocal`: every guard backward-bounded by `r`.
-* `Docking`: a positional rewrite — a change docked at the positions a context predicate picks
-  out, the rest kept; `Docking.ofQF`, the quantifier-free case; `Transduction.relabel`, its
-  rendering as a one-copy relabelling transduction over a finite alphabet.
+* `Transduction.relabel`: the one-copy relabelling transduction of a quantifier-free docking
+  process (`Subregular.Docking.ofQF`) over a finite alphabet.
 
 ## Main results
 
@@ -127,55 +126,6 @@ theorem emitAt_eq_of_agree {r : ℕ} {T : Transduction α β}
       ite_eq_right (fun hh => h ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mpr hh))]
 
 end Transduction
-
-/-! ### Docking processes -/
-
-/-- A **docking process** over the alphabet `α`: what docking does to a position's symbol, and
-the context predicate saying at which positions of a word it docks; the other positions keep
-their symbol. It is the string function a relabelling transduction computes, with the
-context left semantic: `ofQF` is the quantifier-free case, which `Transduction.relabel`
-renders as a transduction. -/
-structure Docking (α : Type*) where
-  /-- The change docked at a position. -/
-  dock : α → α
-  /-- Position `i` of `w` is docked at. -/
-  Docks : List α → ℕ → Prop
-  /-- Docking positions are in-domain. -/
-  lt_length : ∀ {w : List α} {i : ℕ}, Docks w i → i < w.length
-  /-- The context predicate is decidable, so the map computes. -/
-  decDocks : ∀ w i, Decidable (Docks w i)
-
-namespace Docking
-
-variable {α : Type*} (P : Docking α) {w : List α} {i : ℕ}
-
-instance (w : List α) (i : ℕ) : Decidable (P.Docks w i) := P.decDocks w i
-
-/-- The induced rewrite: the change docked exactly at the docking positions. -/
-def map (w : List α) : List α := w.mapIdx fun i a => if P.Docks w i then P.dock a else a
-
-@[simp] theorem map_nil : P.map [] = [] := rfl
-
-@[simp] theorem map_length : (P.map w).length = w.length := by simp [map]
-
-theorem map_getElem? :
-    (P.map w)[i]? = w[i]?.map fun a => if P.Docks w i then P.dock a else a := by
-  simp [map, List.getElem?_mapIdx]
-
-theorem map_getElem?_of_docks (h : P.Docks w i) : (P.map w)[i]? = w[i]?.map P.dock := by
-  simp [map_getElem?, h]
-
-theorem map_getElem?_of_not_docks (h : ¬ P.Docks w i) : (P.map w)[i]? = w[i]? := by
-  simp [map_getElem?, h]
-
-/-- The docking process whose context is a quantifier-free formula. -/
-def ofQF [DecidableEq α] (φ : QF α) (dock : α → α) : Docking α where
-  dock := dock
-  Docks w i := i < w.length ∧ φ.Realize w i
-  lt_length h := h.1
-  decDocks _ _ := inferInstance
-
-end Docking
 
 /-! ### Relabelling transductions -/
 

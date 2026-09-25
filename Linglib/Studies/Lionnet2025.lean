@@ -58,8 +58,9 @@ syllable-dependent (`drubea_tonal`, `drubea_not_stressAccent`) — close the fil
   /ꜜgoo/ at the baseline in (33) and /ꜜɳii/ unraised in (12). Spreading h-epenthesis ((16))
   and the lh contour on a downstepped mora ((18), (63)) are stated on their own.
 * The quantifier-free processes are relabelling transductions over the register alphabet
-  (`Transduction.apply_relabel`); that spreading h-epenthesis has no quantifier-free guard
-  awaits a two-sided bounded-window congruence for `Subregular.QF`.
+  (`Transduction.apply_relabel`) and depend boundedly on both sides
+  (`raising_boundedDependence`); spreading h-epenthesis has no quantifier-free guard
+  (`spreading_not_qf`).
 * The comparison with a tonal alternative (§5) is prose and is not represented.
 
 ## References
@@ -309,8 +310,10 @@ def append (t : TRN) : Slot → Slot := Option.map (· ++ [t])
 /-- Pre-downstep h-epenthesis (§4.4): a registerless mora before a downstepped one takes `h`,
 unless its own syllable is downstepped before it — one mora back, the syllables being at
 most bimoraic. -/
-def raising : Docking Slot :=
-  .ofQF (.conj (empty x) (.conj nextBearsL (.neg (bearsL x.pred)))) (append .upstep)
+def raisingGuard : QF Slot := .conj (empty x) (.conj nextBearsL (.neg (bearsL x.pred)))
+
+/-- Pre-downstep h-epenthesis as a process. -/
+def raising : Docking Slot := .ofQF raisingGuard (append .upstep)
 
 /-- Spreading h-epenthesis ((16)): every registerless mora of the stretch before a downstep
 takes `h`. The look-ahead is unbounded, so the guard is not quantifier-free. -/
@@ -325,19 +328,28 @@ def spreading : Docking Slot where
 /-- Utterance-initial neutralisation (§3.5, §4.5): the first mora's downstep is left
 unrealized, there being no preceding register to contrast with; the feature is not
 deleted, so it still blocks h-epenthesis on its syllable. -/
+def neutralizationGuard : QF Slot := .conj (bar x.pred) (QF.initial x.pred)
+
+/-- Utterance-initial neutralisation as a process. -/
 def neutralization : Docking Slot :=
-  .ofQF (.conj (bar x.pred) (QF.initial x.pred)) (Option.map (·.filter (· ≠ TRN.downstep)))
+  .ofQF neutralizationGuard (Option.map (·.filter (· ≠ TRN.downstep)))
 
 /-- Downstep displacement, first half (§4.6): the downstep on the last mora of a bimoraic
 syllable spreads to the next syllable's first mora, stacking on a downstep there. -/
-def spreadL : Docking Slot :=
-  .ofQF (.conj (bar x.pred) (.conj (bearsL x.pred.pred)
-    (.conj (.defined x.pred.pred.pred) (.neg (bar x.pred.pred.pred))))) (append .downstep)
+def spreadLGuard : QF Slot :=
+  .conj (bar x.pred) (.conj (bearsL x.pred.pred)
+    (.conj (.defined x.pred.pred.pred) (.neg (bar x.pred.pred.pred))))
+
+/-- The spreading half of displacement as a process. -/
+def spreadL : Docking Slot := .ofQF spreadLGuard (append .downstep)
 
 /-- Downstep displacement, second half: the spread downstep delinks from its host. -/
-def delinkL : Docking Slot :=
-  .ofQF (.conj (bearsL x) (.conj (.defined x.pred) (.conj (.neg (bar x.pred))
-    (.conj (bar x.succ) (.defined x.succ.succ))))) (Option.map (·.erase TRN.downstep))
+def delinkLGuard : QF Slot :=
+  .conj (bearsL x) (.conj (.defined x.pred) (.conj (.neg (bar x.pred))
+    (.conj (bar x.succ) (.defined x.succ.succ))))
+
+/-- The delinking half of displacement as a process. -/
+def delinkL : Docking Slot := .ofQF delinkLGuard (Option.map (·.erase TRN.downstep))
 
 /-- The final syllable bears no node. -/
 def finalRegisterless : QF Slot :=
@@ -349,10 +361,12 @@ def finalRaising : Docking Slot := .ofQF finalRegisterless (append .upstep)
 
 /-- Numèè's final lowering (§3.4, §4.8): l% docks on a light final syllable after a
 registerless syllable, whether the final is registerless or downstepped. -/
-def finalLowering : Docking Slot :=
-  .ofQF (.conj (QF.final x) (.conj (bar x.pred) (.conj (empty x.pred.pred)
-    (.disj (bar x.pred.pred.pred) (.conj (empty x.pred.pred.pred) (bar x.pred.pred.pred.pred))))))
-    (append .downstep)
+def finalLoweringGuard : QF Slot :=
+  .conj (QF.final x) (.conj (bar x.pred) (.conj (empty x.pred.pred)
+    (.disj (bar x.pred.pred.pred) (.conj (empty x.pred.pred.pred) (bar x.pred.pred.pred.pred)))))
+
+/-- Numèè's final lowering as a process. -/
+def finalLowering : Docking Slot := .ofQF finalLoweringGuard (append .downstep)
 
 /-- The surface form of a morpheme sequence under the processes its transcription shows, in
 order. -/
@@ -383,9 +397,53 @@ theorem marked_mem_alphabet : ∀ s ∈ Drubea.stems ++ Numee.stems, ∀ a ∈ m
 
 /-- Raising on a stem's marked tier is the relabelling transduction's output. -/
 theorem raising_apply_relabel {s : Registered Syllable} (hs : s ∈ Drubea.stems ++ Numee.stems) :
-    (Transduction.relabel (.conj (empty x) (.conj nextBearsL (.neg (bearsL x.pred))))
-      (append .upstep) alphabet).apply (marked s) = raising.map (marked s) :=
+    (Transduction.relabel raisingGuard (append .upstep) alphabet).apply (marked s) =
+      raising.map (marked s) :=
   Transduction.apply_relabel (marked_mem_alphabet s hs)
+
+/-- The windows the guards read: raising one mora back and two slots forward, neutralisation
+two back, spreading three back, delinking one back and two forward, the boundary features
+two and four back. -/
+theorem guards_bounded :
+    raisingGuard.Bounded 1 2 ∧ neutralizationGuard.Bounded 2 0 ∧ spreadLGuard.Bounded 3 0 ∧
+      delinkLGuard.Bounded 1 2 ∧ finalRegisterless.Bounded 2 1 ∧
+      finalLoweringGuard.Bounded 4 1 := by
+  decide
+
+/-- Raising depends boundedly on both sides: the process is strictly local. -/
+theorem raising_boundedDependence :
+    BoundedDependence raising.map .left ∧ BoundedDependence raising.map .right :=
+  ⟨Docking.ofQF_boundedDependence_left guards_bounded.1 _,
+    Docking.ofQF_boundedDependence_right guards_bounded.1 _⟩
+
+/-- Spreading h-epenthesis has no quantifier-free guard: whatever window a guard reads, a
+downstep just beyond it switches the raising on. -/
+theorem spreading_not_qf :
+    ¬ ∃ (l r : ℕ) (φ : QF Slot), φ.Bounded l r ∧
+      ∀ m i, spreading.Docks m i ↔ i < m.length ∧ φ.Realize m i := by
+  rintro ⟨l, r, φ, hφ, h⟩
+  let m₁ : List Slot := List.replicate (r + 2) (some []) ++ [some [.downstep]]
+  let m₂ : List Slot := List.replicate (r + 3) (some [])
+  have hlen₁ : m₁.length = r + 3 := by simp [m₁]
+  have hlen₂ : m₂.length = r + 3 := by simp [m₂]
+  have h₁ : spreading.Docks m₁ 0 := by
+    refine ⟨by simp [m₁], r + 2, by omega, by omega, ?_, ?_⟩
+    · left; simp [m₁]
+    · intro j hj _; left
+      simp [m₁, List.getElem?_append_left, hj]
+  have h₂ : ¬ spreading.Docks m₂ 0 := by
+    rintro ⟨-, k, hk, -, hk', -⟩
+    rw [hlen₂] at hk
+    simp [m₂, hk] at hk'
+  refine h₂ ((h m₂ 0).2 ⟨by omega, ?_⟩)
+  refine (QF.Bounded.realize_congr (w := m₁) (w' := m₂) (n := 0) (n' := 0) (by omega) (by omega)
+    (fun j _ ↦ ⟨Iff.rfl, fun hj ↦ by
+      obtain rfl : j = 0 := Nat.le_zero.mp hj
+      simp [m₁, m₂]⟩)
+    (fun j hj ↦ ⟨by rw [hlen₁, hlen₂], by
+      simp [m₁, m₂, show j < r + 2 by omega,
+        show j < r + 3 by omega]⟩)
+    hφ).1 ((h m₁ 0).1 h₁).2
 
 /-! ### Drubea utterances -/
 

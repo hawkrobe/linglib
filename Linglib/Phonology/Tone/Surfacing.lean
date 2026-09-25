@@ -8,7 +8,7 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.List.TakeDrop
 public import Linglib.Phonology.Subregular.Dependence
-public import Linglib.Phonology.Subregular.Transduction
+public import Linglib.Phonology.Subregular.Docking
 
 /-!
 # Tonal surfacing processes
