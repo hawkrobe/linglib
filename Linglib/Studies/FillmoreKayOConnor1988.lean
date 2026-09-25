@@ -5,7 +5,7 @@ public import Mathlib.Order.UpperLower.CompleteLattice
 public import Mathlib.Order.Max
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.ConstructionGrammar.Idiom
+public import Linglib.Syntax.ConstructionGrammar.Basic
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.FillmoreKayOConnor1988
 
@@ -36,8 +36,8 @@ rows of `Data/Examples/FillmoreKayOConnor1988.json`, and `rankRows_predicted` an
 `focusRows_predicted` check them against `Felicitous` and the order in which the conjunction
 presents the stronger clause (p. 533).
 
-The construction itself is a formal idiom in the sense of §1, the typology of which is
-`ConstructionGrammar.Idiom` (`letAloneConstruction_isFormalIdiom`). Its syntax (§2.2) — a
+The construction itself is a formal idiom, a lexically open one in the sense of §1.1.3
+(`letAloneConstruction_isFormalIdiom`). Its syntax (§2.2) — a
 coordination that neither topicalizes nor clefts as a unit (31)–(34), admits no VP ellipsis
 because the INFL-complex belongs to the trigger F (39)–(41), and is licensed in the affective
 environments of [klima-1964] (62)–(70) yet attested under positive polarity when the fragment
@@ -65,6 +65,13 @@ are pragmatic, in the tradition of [fauconnier-1975] rather than the semantic sc
   lowest commissioned rank", since in a lower-set state holding some rank is holding the lowest.
 * The (104)/(105) contrast rests on the two-dimension stipulation and on a lottery model the
   paper describes but does not build; (104) is a row without a model.
+
+## TODO
+
+- The §1 typology of idioms (decoding and encoding, grammatical and extragrammatical, and §1.2's
+  familiarity of pieces and of arrangement), once rows classify idioms by it. Its fourth cell,
+  unfamiliar pieces familiarly arranged, is excluded by the argument of §1.2.1 that unique pieces
+  have no standard principles of arrangement, which the typology should derive rather than omit.
 
 ## References
 

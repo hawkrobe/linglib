@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Order.Interval
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
-public import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+public import Linglib.Studies.Goldberg1995
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.Levin2026
 
@@ -298,20 +298,14 @@ theorem exertingForce_not_all_pushPull :
       v ∈ LevinClass.members .throw := by
   decide +kernel
 
-/-- Fused with the resultative, the meaning of any verb that specifies no instrument is
-predicted to alternate. -/
-theorem predictedAlternation_resultative (mc : MeaningComponents)
-    (h : mc.instrumentSpec = false) :
-    predictedAlternationInConstruction mc resultative .causativeInchoative = true :=
-  (fuse_cos_caus_enables mc resultative.meaning rfl rfl h rfl).1
-
 /-- The resultative makes the alternation available but does not restrict it, since the meaning of a
 manner verb of contact and motion is predicted to alternate in the resultative, and the paper
 has unacceptable intransitive resultatives with manner verbs. -/
 theorem fusion_overgenerates :
-    predictedAlternationInConstruction .hit resultative .causativeInchoative = true ∧
+    Goldberg1995.predictedAlternationInConstruction .hit Goldberg1995.resultative
+      .causativeInchoative = true ∧
     ∃ d ∈ data, d.verb = .other ∧ d.frame = .intransitive ∧ d.result.isSome ∧
       d.judgment ≠ .acceptable :=
-  ⟨predictedAlternation_resultative _ rfl, by decide +kernel⟩
+  ⟨Goldberg1995.manner_verb_alternates_in_resultative _ rfl, by decide +kernel⟩
 
 end Levin2026

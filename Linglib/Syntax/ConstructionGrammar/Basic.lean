@@ -24,7 +24,21 @@ opening a category, or admitting any phrase, with a construction's
   from forms
 * `Construction`, `Construction.specificity`, `Construction.map`: typed
   form–meaning pairings
+* `Construction.IsFullyCompositional`, `Construction.IsFormalIdiom`: analyzability by the
+  universal combination schemata, and lexical openness
 * `InheritanceLink`, `Constructicon`: the network
+
+## References
+
+* [goldberg-2006]
+* [goldberg-2003]
+* [goldberg-1995]
+* [dunn-2025]
+* [kay-fillmore-1999]
+* [fillmore-kay-oconnor-1988]
+* [goldberg-shirtz-2025]
+* [mueller-2013]
+* [kay-michaelis-2019]
 -/
 
 @[expose] public section
@@ -280,6 +294,24 @@ def Construction.map {Sem' : Type*} (f : Sem → Sem') (c : Construction Sem) :
     Construction Sem' :=
   { name := c.name, form := c.form, meaning := f c.meaning
   , pragmaticPoint := c.pragmaticPoint }
+
+/-- A construction is fully compositional when the universal combination schemata alone analyze
+it: its form is fully abstract and it carries no pragmatic point. A proxy for [mueller-2013]'s
+structural criterion, approximating what [kay-michaelis-2019] survey as a continuum. -/
+def Construction.IsFullyCompositional (c : Construction Sem) : Prop :=
+  c.specificity = .fullyAbstract ∧ c.pragmaticPoint = false
+
+instance (c : Construction Sem) : Decidable c.IsFullyCompositional :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- A formal idiom in the sense of [fillmore-kay-oconnor-1988] §1.1.3, a lexically open idiom: a
+syntactic pattern rather than a lexically filled expression. The distinction is a cline (fn. 3),
+which `Specificity` discretizes. -/
+def Construction.IsFormalIdiom (c : Construction Sem) : Prop :=
+  c.specificity ≠ .lexicallySpecified
+
+instance (c : Construction Sem) : Decidable c.IsFormalIdiom :=
+  inferInstanceAs (Decidable (¬ _))
 
 /-- An inheritance link between two constructions in the network,
 recording how information flows and what semantic relation holds; purely

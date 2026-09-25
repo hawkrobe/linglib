@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.ConstructionGrammar.Composition
-public import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+public import Linglib.Studies.Goldberg1995
 public import Linglib.Studies.FillmoreKayOConnor1988
 
 /-!
@@ -170,7 +170,7 @@ meaning each contributes. -/
 (§6, ex. 32), and the incredulity type (§7, ex. 14, *Him get first
 prize?!*). -/
 def chapterCases : List (Construction Unit × MeaningKind) :=
-  [ (causedMotion.map λ _ => (), .argumentStructure)
+  [ (Goldberg1995.causedMotion.map fun _ ↦ (), .argumentStructure)
   , (_root_.FillmoreKayOConnor1988.letAloneConstruction, .conventionalImplicature)
   , (_root_.FillmoreKayOConnor1988.incredulityResponse, .illocutionaryForce) ]
 
