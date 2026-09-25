@@ -137,9 +137,38 @@ theorem toList_attach (side : Morph.Side) (afx : M) (t : Tree M) :
     (t.attach side afx).toList = side.attach afx t.toList := by
   cases side <;> rfl
 
+theorem attach_inj {s s' : Morph.Side} {afx afx' : M} {t t' : Tree M} :
+    t.attach s afx = t'.attach s' afx' ↔ s = s' ∧ afx = afx' ∧ t = t' := by
+  cases s <;> cases s' <;> simp [and_comm]
+
+theorem attach_ne_root (side : Morph.Side) (afx : M) (t : Tree M) (m : M) :
+    t.attach side afx ≠ root m := by
+  cases side <;> simp
+
 /-- Attach affixes to a root in order, innermost first. -/
 def attachAll (root : M) (affixes : List (Morph.Side × M)) : Tree M :=
   affixes.foldl (fun t p => t.attach p.1 p.2) (.root root)
+
+@[simp] theorem attachAll_nil (root : M) : attachAll root [] = .root root := rfl
+
+theorem attachAll_concat (root : M) (affixes : List (Morph.Side × M)) (p : Morph.Side × M) :
+    attachAll root (affixes ++ [p]) = (attachAll root affixes).attach p.1 p.2 :=
+  List.foldl_concat ..
+
+/-- The tree records the affixes attached and their order: attachment to a root is injective. -/
+theorem attachAll_injective (root : M) : Function.Injective (attachAll root) := by
+  intro l₁ l₂ h
+  induction l₁ using List.reverseRecOn generalizing l₂ with
+  | nil =>
+    induction l₂ using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton _ p _ => exact absurd h.symm (by rw [attachAll_concat]; apply attach_ne_root)
+  | append_singleton l₁ p ih =>
+    induction l₂ using List.reverseRecOn with
+    | nil => exact absurd h (by rw [attachAll_concat]; apply attach_ne_root)
+    | append_singleton l₂ q _ =>
+      rw [attachAll_concat, attachAll_concat, attach_inj] at h
+      rw [ih h.2.2, Prod.ext h.1 h.2.1]
 
 theorem toList_foldl_attach (t : Tree M) : ∀ affixes : List (Morph.Side × M),
     (affixes.foldl (fun t p => t.attach p.1 p.2) t).toList =

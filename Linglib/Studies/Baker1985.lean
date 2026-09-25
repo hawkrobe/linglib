@@ -1,37 +1,67 @@
 module
 
 public import Linglib.Data.Examples.Baker1985
-public import Linglib.Morphology.Morphotactics.MirrorPrinciple
+public import Linglib.Morphology.Word.Tree
+public import Linglib.Syntax.Voice.Basic
 
 /-!
 # Baker 1985: the Mirror Principle
 
-Processes like passive, causative, applicative and reciprocal formation each add an affix to
-the verb and rearrange the grammatical functions of its arguments. The Mirror Principle says
-the two derivations must match: affix order outward from the root is the order in which the
-syntactic components applied. Given the independently known behaviour of each process, this
-explains why Chamorro's plural agreement *fan-* registers the surface subject outside the
-passive marker, the semantic subject inside the causative marker, and an intermediate subject
-between the two; why a reciprocal inside a causative links the root's agent and patient while a
-causative inside a reciprocal links the causer to the patient in Quechua but to the agent in
-Bemba, whose causative makes the old subject the object; and why an applied argument becomes
-the passive subject only with the applied affix inside the passive affix, so that the
-patient-subject reading is out in Chi-Mwi:ni and in only in Kinyarwanda, whose passive reaches
-a second object independently. Across languages, an agreement morpheme inside a GF-rule
-morpheme references semantic functions and one outside it surface functions; the other two
-combinations do not occur.
+[baker-1985]'s Mirror Principle (4): morphological derivations must directly reflect syntactic
+derivations. Passive, causative, applicative and reciprocal formation each add an affix to the
+verb and rearrange the grammatical functions of its arguments, so the order of the affixes
+outward from the root is the order in which the syntactic components applied. Given the
+independently known behaviour of each process, this explains why Chamorro's plural agreement
+*fan-* registers the surface subject outside the passive marker, the semantic subject inside
+the causative marker, and an intermediate subject between the two; why a reciprocal inside a
+causative links the root's agent and patient while a causative inside a reciprocal links the
+causer to the patient in Quechua but to the agent in Bemba, whose causative makes the old
+subject the object; and why an applied argument becomes the passive subject only with the
+applied affix inside the passive affix, so that the patient-subject reading is out in
+Chi-Mwi:ni and in only in Kinyarwanda, whose passive reaches a second object independently.
+
+Baker argues (§6) that the principle should not be stipulated but follow from an architecture
+in which the morphological and the syntactic effect of a process are one thing. A
+`Derivation` here is that one thing, a list of processes each with the affix it adds, from
+which the word (`word`, a `Word.Tree` of morphs) and the grammatical functions (`outcomes`, a
+run of `Voice` correspondences) are both read. The word determines the sequence of processes
+(`word_injective`), and the universal restriction on agreement (27) holds by construction
+(`registered_agree_apply`, `registered_apply_agree`).
 
 ## Main definitions
 
-* `Stage`, `Grammar`, `Process.apply`: grammatical functions at a derivational stage and the
-  syntactic component of each process, with the two causative types and the Kinyarwanda
-  passive as language settings.
-* `processes`, `derivation`: a row's processes in order of attachment, read off its
-  segmentation, and the derivation they form; `outcomes` runs them.
-* `IsAttested`, `isAttested_iff_deriveReference`: the agreement restriction, derived from
-  derivational timing.
-* `rows_surface`, `rows_agreement`, `rows_links`, `rows_subject`: the paper's examples, each
-  derived from its morphology.
+* `passiveAt`, `causativeChamorro`, `causativeQuechua`, `applicativeOf`, `reciprocalOf`: the
+  GF-rules as the voice of each frame, Baker's schemas with the remaining material carried
+  along.
+* `Stage`, `Stage.apply`, `Stage.agree`: participants at the slots of a frame, the effect of a
+  voice on them, and agreement registration.
+* `Process`, `Grammar`, `outcomes`: the paper's processes, a language's settings, and the stages
+  a sequence of processes reaches.
+* `Derivation`, `word`: a derivation and the word it builds.
+* `derivation`, `processes`, `initialOf`: a row's derivation, read off its segmentation.
+
+## Main results
+
+* `causativeChamorro_intransitive`, `reciprocalOf_np`, `passiveAt_fateOfRole`,
+  `applicativeOf_isValencyIncreasing`: Baker's rules are the substrate's voices where the frames
+  meet.
+* `word_injective`: the morphological derivation determines the processes (§2.1).
+* `registered_agree_apply`, `registered_apply_agree`: (27), an agreement morpheme inside a
+  GF-rule morpheme references semantic and one outside it surface grammatical functions.
+* `applied_subject_needs_applicative_first`, `applied_subject_of_applicative_first`: an applied
+  argument becomes the subject only with the applied affix inside the passive affix (§4.2).
+* `rows_word`, `rows_agreement`, `rows_links`, `rows_subject`: the paper's examples.
+
+## Implementation notes
+
+* A row's derivation is read off its segmentation: the prefixes from the root outward and then
+  the suffixes, each a morph bound on its side (§2.1). The Chamorro passive *-in-* is an infix;
+  the paper treats it as a prefix in a generalized sense (§3.1, §5) and the rows list it
+  before the root, so it is a `Morph.pref` here.
+* Baker's passive (12) keeps the demoted subject as an oblique where [creissels-2024]'s
+  `Voice.passive` records it as implicit; the two agree on the fate of every core term
+  (`passiveAt_fateOfRole`). His applicative (53) promotes an initial oblique where
+  `Voice.applicative` introduces the applied participant.
 
 ## References
 
@@ -41,165 +71,317 @@ combinations do not occur.
 * [givon-1976] — Bemba
 * [comrie-1982], [kisseberth-abasheikh-1977], [kimenyi-1980] — Huichol, Chi-Mwi:ni,
   Kinyarwanda
+* [creissels-2024]
 -/
 
 @[expose] public section
 
 namespace Baker1985
 
-open Morphology.MirrorPrinciple Data.Examples
+open Morphology Morphology.Word Data.Examples
+open ArgumentFrame (Slot Position)
 
-/-! ### Grammatical-function rules -/
+/-! ### Grammatical-function rules
 
-/-- The arguments a clause may host: the root's agent and patient, a causer, and the oblique an
-    applicative promotes. -/
+Each rule is the voice of the frame it applies to, Baker's schema with the "…" material
+carried along ([baker-1985] §2.2): the subject is the external argument, the objects are the
+nominal complements and the obliques the adpositional ones. -/
+
+/-- A nominal position demoted to an oblique. -/
+def demote : Position → Position
+  | .nominal => .adpositional
+  | p => p
+
+/-- Passive (12) promoting the `j`-th complement, if nominal: it becomes the subject and the old
+subject an oblique after the remaining complements. -/
+def passiveAt (j : ℕ) (fr : ArgumentFrame) : Option Voice :=
+  if fr.complements[j]? = some .nominal then some
+    { source := fr, target := ⟨some .nominal, fr.complements.eraseIdx j ++ [.adpositional]⟩,
+      correspondence := (.external, .complement (fr.complements.length - 1)) ::
+        (.complement j, .external) ::
+        (List.range fr.complements.length).filterMap fun i ↦
+          if i < j then some (.complement i, .complement i)
+          else if j < i then some (.complement i, .complement (i - 1)) else none }
+  else none
+
+/-- The Chamorro-type causative (18), (50): a causer is the new subject, the old subject becomes
+the object and the old objects become obliques. -/
+def causativeChamorro (fr : ArgumentFrame) : Voice where
+  source := fr
+  target := ⟨some .nominal, .nominal :: fr.complements.map demote⟩
+  correspondence := (.external, .complement 0) ::
+    (List.range fr.complements.length).map fun i ↦ (.complement i, .complement (i + 1))
+
+/-- The Quechua-type causative (42): of a transitive, the objects stay and the old subject
+becomes an oblique; of an intransitive, the Chamorro type. -/
+def causativeQuechua (fr : ArgumentFrame) : Voice :=
+  if fr.HasNominal then
+    { source := fr, target := ⟨some .nominal, fr.complements ++ [.adpositional]⟩,
+      correspondence := (.external, .complement fr.complements.length) ::
+        (List.range fr.complements.length).map fun i ↦ (.complement i, .complement i) }
+  else causativeChamorro fr
+
+/-- Applicative (53): the first oblique becomes the object and the old object a second object
+after it. -/
+def applicativeOf (fr : ArgumentFrame) : Option Voice :=
+  (fr.complements.findIdx? fun p ↦ decide p.IsAdpositional).map fun j ↦
+    { source := fr, target := ⟨some .nominal, .nominal :: fr.complements.eraseIdx j⟩,
+      correspondence := (.external, .external) :: (.complement j, .complement 0) ::
+        (List.range fr.complements.length).filterMap fun i ↦
+          if i < j then some (.complement i, .complement (i + 1))
+          else if j < i then some (.complement i, .complement i) else none }
+
+/-- Reflexive-reciprocal formation (44): the object is bound to the subject and becomes the
+subject. -/
+def reciprocalOf (fr : ArgumentFrame) : Option Voice :=
+  (fr.complements.findIdx? fun p ↦ decide p.IsNominal).map fun j ↦
+    { source := fr, target := ⟨some .nominal, fr.complements.eraseIdx j⟩,
+      correspondence := (.external, .external) :: (.complement j, .external) ::
+        (List.range fr.complements.length).filterMap fun i ↦
+          if i < j then some (.complement i, .complement i)
+          else if j < i then some (.complement i, .complement (i - 1)) else none }
+
+/-- Both causative types treat an intransitive alike (§4.1), as [creissels-2024]'s causative. -/
+theorem causativeChamorro_intransitive : causativeChamorro .intransitive = Voice.causative := by
+  decide
+
+theorem causativeQuechua_intransitive : causativeQuechua .intransitive = Voice.causative := by
+  decide
+
+/-- Of a transitive, reflexive-reciprocal formation is [creissels-2024]'s reflexive. -/
+theorem reciprocalOf_np : reciprocalOf .np = some Voice.reflexive := by decide
+
+/-- Baker's passive and [creissels-2024]'s agree on the fate of every core term. -/
+theorem passiveAt_fateOfRole (r : Voice.TermRole) :
+    ∀ v ∈ passiveAt 0 .np, v.fateOfRole r = Voice.passive.fateOfRole r := by
+  cases r <;> decide
+
+/-- Baker's applicative is valency-increasing, as [creissels-2024]'s. -/
+theorem applicativeOf_isValencyIncreasing :
+    ∀ v ∈ applicativeOf .np_pp, v.IsValencyIncreasing := by
+  decide
+
+/-! ### Participants and stages -/
+
+/-- The nominals a clause may host: the root's agent and patient, NP1 and NP2 of the paper's
+schemas, the oblique an applicative promotes, NP3, and the causer a causative introduces. -/
 inductive Arg
   | agent
   | patient
-  | causer
   | applied
+  | causer
   deriving DecidableEq, Repr
 
-/-- Grammatical functions at a derivational stage, with the referential dependencies and the
-    agreement registrations made so far; `second` holds an object an applicative displaced. -/
+/-- A derivational stage: the current frame, the slot each participant occupies, the
+referential dependencies established and the agreements registered so far. -/
 structure Stage where
-  subj : Arg
-  obj : Option Arg := none
-  second : Option Arg := none
-  obl : List Arg := []
+  frame : ArgumentFrame
+  slots : List (Arg × Slot)
   links : List (Arg × Arg) := []
   registered : List Arg := []
   deriving DecidableEq, Repr
 
-/-- The two causative types: the Quechua type leaves a transitive root's object in place and
-    demotes its subject, the Chamorro type makes the old subject the object. -/
-inductive CausativeType
-  | quechua
-  | chamorro
-  deriving DecidableEq
+namespace Stage
 
-/-- What a language's rules consult: its causative type, and whether its passive can promote
-    the object an applicative displaced. -/
-structure Grammar where
-  causative : CausativeType
-  passivizeSecond : Bool := false
+variable (s : Stage)
 
-/-- A process with a morphological and a syntactic component: a GF-rule, or number
-    agreement. -/
+/-- The participants in the subject slot, the pivot of the frame. -/
+def subjects : List Arg :=
+  (s.slots.filter fun p ↦ some p.2 = s.frame.coreSlots.head?).map (·.1)
+
+/-- The stage a voice derives: each participant moves to the slot its own corresponds to,
+suppressed if none, a fresh participant enters the slot the voice introduces, and a subject
+the voice cumulates is linked to each participant cumulated with it. -/
+def apply (v : Voice) (fresh : Option Arg) : Stage where
+  frame := v.target
+  slots := (fresh.bind fun a ↦ v.introduced.head?.map (a, ·)).toList ++
+    s.slots.filterMap fun p ↦ (v.image p.2).map (p.1, ·)
+  links := s.links ++ s.slots.flatMap fun p ↦
+    if some p.2 = s.frame.coreSlots.head? ∧ v.fate p.2 = .cumulated then
+      s.slots.filterMap fun q ↦
+        if q.2 ≠ p.2 ∧ v.image q.2 = v.image p.2 then some (p.1, q.1) else none
+    else []
+  registered := s.registered
+
+/-- Number agreement (16) registers the subject. -/
+def agree : Stage := { s with registered := s.registered ++ s.subjects }
+
+@[simp] theorem registered_apply (v : Voice) (a : Option Arg) :
+    (s.apply v a).registered = s.registered := rfl
+
+@[simp] theorem registered_agree : s.agree.registered = s.registered ++ s.subjects := rfl
+
+@[simp] theorem subjects_agree : s.agree.subjects = s.subjects := rfl
+
+end Stage
+
+/-! ### The universal restriction on agreement
+
+Of the four combinations of an agreement morpheme's position relative to a GF-rule morpheme
+with the level of grammatical functions it references, (27), only two occur: agreement inside
+the GF-rule morpheme references semantic functions and agreement outside it surface functions.
+With the morphological and the syntactic effect of a process one thing, the restriction holds
+by construction ([baker-1985] §6): agreement attached before a GF-rule registers the subject
+before the rule applied, and agreement attached after it the subject after. -/
+
+/-- (27a): agreement inside the GF-rule morpheme registers the semantic subject. -/
+theorem registered_agree_apply (s : Stage) (v : Voice) (a : Option Arg) :
+    (s.agree.apply v a).registered = s.registered ++ s.subjects := rfl
+
+/-- (27d): agreement outside the GF-rule morpheme registers the surface subject. -/
+theorem registered_apply_agree (s : Stage) (v : Voice) (a : Option Arg) :
+    (s.apply v a).agree.registered = s.registered ++ (s.apply v a).subjects := rfl
+
+/-! ### Processes and grammars -/
+
+/-- The paper's processes: the GF-rules (§2.2) and number agreement (§3.1). -/
 inductive Process
-  | gf (r : GFRuleType)
+  | passive
+  | causative
+  | applicative
+  | reciprocal
   | agreement
   deriving DecidableEq, Repr
 
-/-- The syntactic component of each process, as the stages it can yield: passive promotes the
-    object (or, where the grammar allows, a displaced object) and demotes the subject; a
-    causative adds the causer as subject; an applicative promotes the oblique to object,
-    displacing the old one; reciprocal formation binds subject to object and makes the object
-    the subject; number agreement registers the subject of an intransitive stage. -/
+/-- The two causative types (§4.1): the Quechua type leaves a transitive root's object in place
+and demotes its subject, the Chamorro type makes the old subject the object. -/
+inductive CausativeType
+  | quechua
+  | chamorro
+  deriving DecidableEq, Repr
+
+/-- A language's settings: its causative type, and whether its passive can promote the second of
+two objects (58). -/
+structure Grammar where
+  causative : CausativeType
+  passiveSecond : Bool := false
+  deriving DecidableEq, Repr
+
+/-- The causative voice of a frame under the grammar. -/
+def Grammar.causativeOf : Grammar → ArgumentFrame → Voice
+  | ⟨.chamorro, _⟩ => causativeChamorro
+  | ⟨.quechua, _⟩ => causativeQuechua
+
+/-- The passive voices of a frame under the grammar. -/
+def Grammar.passivesOf (g : Grammar) (fr : ArgumentFrame) : List Voice :=
+  (passiveAt 0 fr).toList ++ if g.passiveSecond then (passiveAt 1 fr).toList else []
+
+/-- The stages a process can derive from a stage: the GF-rules apply their voices, the causative
+introducing the causer, and number agreement applies to a clause with no object (16). -/
 def Process.apply (g : Grammar) : Process → Stage → List Stage
-  | .gf .passive, s =>
-    (match s.obj with
-      | some o => [{ s with subj := o, obj := none, obl := s.subj :: s.obl }]
-      | none => []) ++
-    (match s.second, g.passivizeSecond with
-      | some o, true => [{ s with subj := o, second := none, obl := s.subj :: s.obl }]
-      | _, _ => [])
-  | .gf .causative, s =>
-    match g.causative, s.obj with
-    | .quechua, none => [{ s with subj := .causer, obj := some s.subj }]
-    | .quechua, some _ => [{ s with subj := .causer, obl := s.subj :: s.obl }]
-    | .chamorro, o => [{ s with subj := .causer, obj := some s.subj, obl := o.toList ++ s.obl }]
-  | .gf .applicative, s =>
-    if s.obl.contains .applied then
-      [{ s with obj := some .applied, second := s.obj, obl := s.obl.erase .applied }]
-    else []
-  | .gf .reflexReciprocal, s =>
-    match s.obj with
-    | some o => [{ s with subj := o, obj := none, links := (s.subj, o) :: s.links }]
-    | none => []
-  | .agreement, s =>
-    match s.obj with
-    | none => [{ s with registered := s.subj :: s.registered }]
-    | some _ => []
+  | .passive, s => (g.passivesOf s.frame).map (s.apply · none)
+  | .causative, s => [s.apply (g.causativeOf s.frame) (some .causer)]
+  | .applicative, s => (applicativeOf s.frame).toList.map (s.apply · none)
+  | .reciprocal, s => (reciprocalOf s.frame).toList.map (s.apply · none)
+  | .agreement, s => if s.frame.HasNominal then [] else [s.agree]
 
-/-- The stages a sequence of processes can reach from a start. -/
+/-- The stages a sequence of processes can reach from a stage. -/
 def outcomes (g : Grammar) (ps : List Process) (s : Stage) : List Stage :=
-  ps.foldl (λ ss p => ss.flatMap (p.apply g)) [s]
+  ps.foldl (fun ss p ↦ ss.flatMap (p.apply g)) [s]
 
-/-- An applied argument becomes the subject only with the applied affix inside the passive
-    affix: with the passive applied first, no grammar yields it. -/
-theorem applied_subject_needs_applicative_first (g : Grammar) (s : Stage)
-    (hs : s.subj ≠ .applied) (ho : s.obj ≠ some .applied) (h2 : s.second ≠ some .applied) :
-    ∀ st ∈ outcomes g [.gf .passive, .gf .applicative] s, st.subj ≠ .applied := by
-  intro st hst
-  obtain ⟨subj, obj, second, obl, links, registered⟩ := s
+/-- The initial stage of a root: the agent as subject, the patient as object if transitive, and
+the oblique an applicative will promote. -/
+def initial (transitive applied : Bool) : Stage where
+  frame := ⟨some .nominal,
+    (if transitive then [.nominal] else []) ++ if applied then [.adpositional] else []⟩
+  slots := (.agent, .external) :: (if transitive then [(.patient, .complement 0)] else []) ++
+    if applied then [(.applied, .complement (if transitive then 1 else 0))] else []
+
+/-- An applied argument becomes the subject only with the applied affix inside the passive affix
+(§4.2): with the passive applied first, no grammar and no root yields it. -/
+theorem applied_subject_needs_applicative_first (g : Grammar) (transitive applied : Bool) :
+    ∀ st ∈ outcomes g [.passive, .applicative] (initial transitive applied),
+      .applied ∉ st.subjects := by
   rcases g with ⟨c, ps⟩
-  cases obj <;> cases second <;> cases ps <;> aesop (add simp [outcomes, Process.apply])
+  cases c <;> cases ps <;> cases transitive <;> cases applied <;> decide +kernel
 
-/-! ### Agreement and derivational timing -/
+/-- With the applied affix inside the passive affix, the applied argument is the subject. -/
+theorem applied_subject_of_applicative_first (g : Grammar) :
+    ∃ st ∈ outcomes g [.applicative, .passive] (initial true true),
+      st.subjects = [.applied] := by
+  rcases g with ⟨c, ps⟩
+  cases c <;> cases ps <;> decide +kernel
 
-/-- The attested agreement patterns: inner agreement referencing semantic functions and outer
-    agreement referencing surface functions. -/
-def IsAttested (p : AgreementPattern) : Prop :=
-  p = ⟨.inner, .semantic⟩ ∨ p = ⟨.outer, .surface⟩
+/-! ### Derivations and words -/
 
-instance : DecidablePred IsAttested := λ p =>
-  inferInstanceAs (Decidable (p = ⟨.inner, .semantic⟩ ∨ p = ⟨.outer, .surface⟩))
+/-- A derivation: the processes with the affix each adds, in order of application, the single
+object whose two projections are the word and the grammatical functions ([baker-1985] §6). -/
+abbrev Derivation := List (Process × Morph)
 
-/-- The Mirror Principle derives the restriction: a pattern is attested exactly when its
-    reference is the one derivational timing dictates for its position. -/
-theorem isAttested_iff_deriveReference {p : AgreementPattern} :
-    IsAttested p ↔ p.reference = deriveReference p.position := by
-  obtain ⟨pos, ref⟩ := p
-  cases pos <;> cases ref <;> decide
+/-- The word a derivation builds on a root: each affix attached on its side, in order of
+application (§2.1). -/
+def word (root : Morph) (d : Derivation) : Tree Morph :=
+  Tree.attachAll root (d.filterMap fun pm ↦ (pm.2.kind.side?).map (·, pm.2))
+
+/-- The morphological derivation determines the syntactic one (§2.1): for a language marking
+each process by its own affix, the word is injective in the sequence of processes. -/
+theorem word_injective (root : Morph) (μ : Process → Morph) (σ : Process → Morph.Side)
+    (hμ : Function.Injective μ) (hσ : ∀ p, (μ p).kind = .bound (σ p) .affix) :
+    Function.Injective fun ps : List Process ↦ word root (ps.map fun p ↦ (p, μ p)) := by
+  intro ps₁ ps₂ h
+  have key (ps : List Process) :
+      (ps.map fun p ↦ (p, μ p)).filterMap
+          (fun pm : Process × Morph ↦ (pm.2.kind.side?).map (·, pm.2)) =
+        ps.map fun p ↦ (σ p, μ p) := by
+    rw [List.filterMap_map, ← List.filterMap_eq_map]
+    exact List.filterMap_congr fun p _ ↦ by simp [hσ]
+  have := Tree.attachAll_injective root (by simpa only [word, key] using h)
+  exact List.map_injective_iff.mpr (fun p q hpq ↦ hμ (Prod.ext_iff.mp hpq).2) this
 
 /-! ### The paper's examples -/
 
-/-- A row's segmentation, as gloss labels in surface order. -/
-def morphs (r : LinguisticExample) : List String :=
-  ["m1", "m2", "m3", "m4", "m5", "m6"].filterMap r.feature?
+/-- The keys of a row's segmentation: the gloss label and the form of each morph. -/
+def morphKeys : List (String × String) :=
+  [("m1", "f1"), ("m2", "f2"), ("m3", "f3"), ("m4", "f4"), ("m5", "f5"), ("m6", "f6")]
 
-/-- A row's root. -/
-def root (r : LinguisticExample) : String := (r.feature? "root").getD ""
+/-- A row's segmentation: the gloss label and form of each morph in surface order. -/
+def segmentation (r : LinguisticExample) : List (String × String) :=
+  morphKeys.filterMap fun k ↦ (r.feature? k.1).bind fun l ↦ (r.feature? k.2).map (l, ·)
 
-/-- The affixes before the root, outermost first. -/
-def prefixes (r : LinguisticExample) : List String := (morphs r).takeWhile (· ≠ root r)
+/-- The gloss label of a row's root. -/
+def rootLabel (r : LinguisticExample) : String := (r.feature? "root").getD ""
 
-/-- The affixes after the root, innermost first. -/
-def suffixes (r : LinguisticExample) : List String :=
-  ((morphs r).dropWhile (· ≠ root r)).drop 1
+/-- The morphs before the root, outermost first. -/
+def prefixes (r : LinguisticExample) : List (String × String) :=
+  (segmentation r).takeWhile (·.1 ≠ rootLabel r)
+
+/-- The morphs after the root, innermost first. -/
+def suffixes (r : LinguisticExample) : List (String × String) :=
+  ((segmentation r).dropWhile (·.1 ≠ rootLabel r)).drop 1
+
+/-- A row's root morph. -/
+def rootMorph (r : LinguisticExample) : Morph :=
+  .root ((((segmentation r).find? (·.1 = rootLabel r)).map (·.2)).getD "")
+
+/-- A row's morphs in surface order: prefixes, root, suffixes. -/
+def morphs (r : LinguisticExample) : List Morph :=
+  (prefixes r).map (Morph.pref ·.2) ++ rootMorph r :: (suffixes r).map (Morph.suff ·.2)
 
 /-- The process a gloss label marks. -/
 def process? : String → Option Process
-  | "PASS" => some (.gf .passive)
-  | "CAUS" => some (.gf .causative)
-  | "APPL" | "BEN" | "INSTR" => some (.gf .applicative)
-  | "RECP" | "REFL" => some (.gf .reflexReciprocal)
+  | "PASS" => some .passive
+  | "CAUS" => some .causative
+  | "APPL" | "BEN" | "INSTR" => some .applicative
+  | "RECP" | "REFL" => some .reciprocal
   | "PL" => some .agreement
   | _ => none
 
-/-- A row's derivation: its process-marking affixes in order of attachment — prefixes from the
-    root outward, then suffixes — each on its side. -/
+/-- A row's derivation: its process-marking affixes in order of application, the prefixes from
+the root outward and then the suffixes, each bound on its side. -/
 def derivation (r : LinguisticExample) : Derivation :=
-  ((prefixes r).reverse.filterMap λ m => (process? m).map (·, m, Morphology.Morph.Side.before)) ++
-    ((suffixes r).filterMap λ m => (process? m).map (·, m, Morphology.Morph.Side.after))
-  |>.filterMap λ (x : Process × String × Morphology.Morph.Side) =>
-    match x with
-    | (.gf g, m, side) => some ⟨g, m, side⟩
-    | (.agreement, _, _) => none
+  ((prefixes r).reverse.filterMap fun m ↦ (process? m.1).map (·, Morph.pref m.2)) ++
+    (suffixes r).filterMap fun m ↦ (process? m.1).map (·, Morph.suff m.2)
 
-/-- A row's processes in order of attachment, agreement included. -/
-def processes (r : LinguisticExample) : List Process :=
-  ((prefixes r).reverse ++ suffixes r).filterMap process?
+/-- A row's processes in order of application. -/
+def processes (r : LinguisticExample) : List Process := (derivation r).map (·.1)
 
-/-- The stage a root starts from: an agent, a patient if transitive, and an oblique for an
-    applicative to promote. -/
-def initial (r : LinguisticExample) : Stage :=
-  { subj := .agent, obj := if r.feature? "valence" = some "transitive" then some .patient else none,
-    obl := [.applied] }
+/-- A row's initial stage: transitive as recorded, with an oblique when an applicative
+applies. -/
+def initialOf (r : LinguisticExample) : Stage :=
+  initial (r.feature? "valence" = some "transitive") (.applicative ∈ processes r)
 
-/-- A row's language settings: Chamorro and Bemba have the Chamorro causative, Quechua its
-    own; Kinyarwanda's passive reaches a displaced object. -/
+/-- A row's language settings: Chamorro, Bemba, Huichol and Chi-Mwi:ni have the Chamorro
+causative, Quechua its own; Kinyarwanda's passive reaches a second object. -/
 def grammar? (r : LinguisticExample) : Option Grammar :=
   match r.language with
   | "cham1312" | "bemb1257" | "huic1243" | "chim1312" => some ⟨.chamorro, false⟩
@@ -207,75 +389,64 @@ def grammar? (r : LinguisticExample) : Option Grammar :=
   | "kiny1244" => some ⟨.chamorro, true⟩
   | _ => none
 
-/-- The GF-rule affixes of a row's derivation, on their sides around the root, are a
-    subsequence of its segmentation: the Mirror Principle's linearization. -/
-theorem rows_surface :
-    ∀ r ∈ Examples.all, (surface (root r) (derivation r)).Sublist (morphs r) := by
+/-- The word a row's derivation builds linearizes to its process-marking morphs around the root
+in the row's order. -/
+theorem rows_word :
+    ∀ r ∈ Examples.all, (word (rootMorph r) (derivation r)).toList.Sublist (morphs r) := by
   decide +kernel
 
-/-- Which subject a registration matches: the surface subject, the semantic subject, or
-    neither. -/
-def agreesWith (start final : Stage) : Option String :=
+/-- The level of grammatical functions an agreement references: the surface subject, the
+semantic subject, or an intermediate one. -/
+inductive Level
+  | surface
+  | semantic
+  | intermediate
+  deriving DecidableEq, Repr
+
+/-- The subject a row reports its agreement registering. -/
+def level? (r : LinguisticExample) : Option Level :=
+  r.parse? "agreesWith" [("surface subject", .surface), ("semantic subject", .semantic),
+    ("intermediate subject", .intermediate)]
+
+/-- The level of a single registration: the surface subject, the semantic subject, or
+neither. -/
+def level (start final : Stage) : Option Level :=
   match final.registered with
-  | [x] =>
-    some (if x = final.subj then "surface subject"
-      else if x = start.subj then "semantic subject" else "intermediate subject")
+  | [a] => some (if a ∈ final.subjects then .surface
+      else if a ∈ start.subjects then .semantic else .intermediate)
   | _ => none
 
 /-- Every Chamorro row's *fan-* registers the subject the paper says it does: the surface
-    subject outside the passive, the semantic subject inside the causative, and the subject
-    between passive and causative in their combination. -/
+subject outside the passive, the semantic subject inside the causative, and the subject
+between passive and causative in their combination. -/
 theorem rows_agreement :
-    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ w ∈ r.feature? "agreesWith",
-      ∀ st ∈ outcomes g (processes r) (initial r), agreesWith (initial r) st = some w := by
-  decide
-
-/-- A row's agreement pattern relative to its single GF-rule: position from the affix order,
-    reference from the registration. -/
-def pattern? (r : LinguisticExample) (st : Stage) : Option AgreementPattern :=
-  match (processes r).filter (· ≠ .agreement), agreesWith (initial r) st with
-  | [g], some "surface subject" =>
-    some ⟨if (processes r).idxOf .agreement < (processes r).idxOf g then .inner else .outer,
-      .surface⟩
-  | [g], some "semantic subject" =>
-    some ⟨if (processes r).idxOf .agreement < (processes r).idxOf g then .inner else .outer,
-      .semantic⟩
-  | _, _ => none
-
-/-- The Chamorro passive and causative rows instantiate the two attested patterns. -/
-theorem rows_pattern_attested :
-    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ st ∈ outcomes g (processes r) (initial r),
-      ∀ p ∈ pattern? r st, IsAttested p := by
-  decide
+    ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ w ∈ level? r,
+      ∀ st ∈ outcomes g (processes r) (initialOf r), level (initialOf r) st = some w := by
+  decide +kernel
 
 /-- The dependency a row's translation records. -/
 def links? (r : LinguisticExample) : Option (Arg × Arg) :=
-  match r.feature? "links" with
-  | some "agent-patient" => some (.agent, .patient)
-  | some "causer-patient" => some (.causer, .patient)
-  | some "causer-agent" => some (.causer, .agent)
-  | _ => none
+  r.parse? "links" [("agent-patient", (.agent, .patient)), ("causer-patient", (.causer, .patient)),
+    ("causer-agent", (.causer, .agent))]
 
 /-- Reciprocal formation links the root's agent and patient when it applies before the
-    causative, and the causer to the patient (Quechua) or the agent (Bemba) when after. -/
+causative, and the causer to the patient (Quechua) or the agent (Bemba) when after. -/
 theorem rows_links :
     ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ l ∈ links? r,
-      ∀ st ∈ outcomes g (processes r) (initial r), st.links = [l] := by
-  decide
+      ∀ st ∈ outcomes g (processes r) (initialOf r), st.links = [l] := by
+  decide +kernel
 
 /-- The surface subject a row reports. -/
 def surfaceSubject? (r : LinguisticExample) : Option Arg :=
-  match r.feature? "surfaceSubject" with
-  | some "applied object" => some .applied
-  | some "patient" => some .patient
-  | _ => none
+  r.parse? "surfaceSubject" [("applied object", .applied), ("patient", .patient)]
 
-/-- A passive of an applicative is acceptable exactly when some derivation in the affix order
-    makes the reported argument the subject: the applied object everywhere, the patient only in
-    Kinyarwanda. -/
+/-- A passive of an applicative is acceptable exactly when some run of the affix order makes
+the reported argument the subject: the applied object everywhere, the patient only in
+Kinyarwanda. -/
 theorem rows_subject :
     ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ a ∈ surfaceSubject? r,
-      (r.judgment = .acceptable ↔ ∃ st ∈ outcomes g (processes r) (initial r), st.subj = a) := by
-  decide
+      (r.judgment = .acceptable ↔
+        ∃ st ∈ outcomes g (processes r) (initialOf r), st.subjects = [a]) := by
+  decide +kernel
 
 end Baker1985
