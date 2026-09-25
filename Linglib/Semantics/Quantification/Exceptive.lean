@@ -23,7 +23,7 @@ of the quantification.
 
 * `ExcLeast.unique`, `ExcLeast.sInf_eq` — the least exception is unique and is the intersection
   of the sets whose subtraction verifies the quantification.
-* `ExcLeast.not_of_restrictorUpwardMono`, `ExcRestrictive.not_of_restrictorUpwardMono` — a
+* `ExcLeast.not_of_restrictorMonotone`, `ExcRestrictive.not_of_restrictorMonotone` — a
   left-upward-monotone determiner admits only the empty exception, and no restrictive one.
 * `ExcRestrictive.mono` — under a left-downward-monotone determiner restrictiveness is preserved
   by enlarging the exception, the inference the least exception blocks.
@@ -59,14 +59,14 @@ variable {Q : GQ α} {A C B : α → Prop}
 namespace ExcRestrictive
 
 /-- A left-upward-monotone determiner falsifies every restrictive exceptive. -/
-theorem not_of_restrictorUpwardMono (hQ : RestrictorUpwardMono Q) : ¬ ExcRestrictive Q A C B :=
-  λ h => h.2 (hQ _ _ _ (λ _ ha => ha.1) h.1)
+theorem not_of_restrictorMonotone (hQ : RestrictorMonotone Q) : ¬ ExcRestrictive Q A C B :=
+  fun h => h.2 (hQ _ (fun _ ha => ha.1) h.1)
 
 /-- Under a left-downward-monotone determiner a restrictive exceptive survives enlarging the
 exception set. -/
-theorem mono (hQ : RestrictorDownwardMono Q) (h : ExcRestrictive Q A C B) {C' : α → Prop}
+theorem mono (hQ : RestrictorAntitone Q) (h : ExcRestrictive Q A C B) {C' : α → Prop}
     (hC : C ≤ C') : ExcRestrictive Q A C' B :=
-  ⟨hQ _ _ _ (λ _ ha => ⟨ha.1, λ hc => ha.2 (hC _ hc)⟩) h.1, h.2⟩
+  ⟨hQ _ (fun _ ha => ⟨ha.1, fun hc => ha.2 (hC _ hc)⟩) h.1, h.2⟩
 
 end ExcRestrictive
 
@@ -83,9 +83,9 @@ theorem sInf_eq (h : ExcLeast Q A C B) : sInf {S | Q (λ x => A x ∧ ¬ S x) B}
 
 /-- A left-upward-monotone determiner has no nonempty least exception: once the quantification
 holds with `C` subtracted it holds with nothing subtracted, so the least exception is empty. -/
-theorem not_of_restrictorUpwardMono (hQ : RestrictorUpwardMono Q) (h : ExcLeast Q A C B) (x : α) :
+theorem not_of_restrictorMonotone (hQ : RestrictorMonotone Q) (h : ExcLeast Q A C B) (x : α) :
     ¬ C x :=
-  λ hx => h.2 (hQ _ _ _ (λ _ ha => ⟨ha.1, id⟩) h.1) x hx
+  fun hx => h.2 (hQ _ (fun _ ha => ⟨ha.1, id⟩) h.1) x hx
 
 /-- A nonempty least exception is restrictive, so the uniqueness condition subsumes
 restrictiveness. -/

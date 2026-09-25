@@ -248,12 +248,12 @@ theorem gc_A_BE (domain : List E)
     GaloisConnection (A_up domain (E := E)) BE_up :=
   (galoisCoinsertion domain hcomplete).gc
 
-/-- Existential closure over a complete finite domain is ⟦some⟧, since both compute
+/-- Existential closure over a complete finite domain is (GQ.some : GQ α), since both compute
 `λR.λS. ∃x. R(x) ∧ S(x)`. -/
-theorem A_eq_some_sem (E : Type*) (domain : List E) (hComplete : ∀ x : E, x ∈ domain) :
-    A domain = (some_sem : GQ E) := by
+theorem A_eq_some (E : Type*) (domain : List E) (hComplete : ∀ x : E, x ∈ domain) :
+    A domain = (GQ.some : GQ E) := by
   funext R S
-  simp only [A, some_sem]
+  simp only [A, GQ.some]
   exact propext ⟨fun ⟨x, _, hR, hS⟩ ↦ ⟨x, hR, hS⟩, fun ⟨x, hR, hS⟩ ↦ ⟨x, hComplete x, hR, hS⟩⟩
 
 /-! ### The object-position shift
@@ -292,11 +292,11 @@ def disjGQ (X : Set E) : NP E := ⨆ x ∈ X, individual x
   simp [disjGQ, iSup_apply, iSup_Prop_eq, individual]
 
 /-- The conjunction of the individuals of `X` is *every* restricted to `X`. -/
-theorem conjGQ_eq_every_sem (X : Set E) : conjGQ X = every_sem X :=
+theorem conjGQ_eq_every (X : Set E) : conjGQ X = every X :=
   funext fun P ↦ propext (conjGQ_apply X P)
 
 /-- The disjunction of the individuals of `X` is *some* restricted to `X`. -/
-theorem disjGQ_eq_some_sem (X : Set E) : disjGQ X = some_sem X :=
+theorem disjGQ_eq_some (X : Set E) : disjGQ X = GQ.some X :=
   funext fun P ↦ propext (disjGQ_apply X P)
 
 end Quantifier.NP

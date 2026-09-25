@@ -26,7 +26,7 @@ assertiveness, and Barbara's major alone implies her conclusion.
 ## Main statements
 
 * `belnap_forall_content_eq_every`, `belnap_exists_content_eq_some`: the
-  content of the restricted forms (11)–(12) is `every_sem`/`some_sem`;
+  content of the restricted forms (11)–(12) is `every`/`GQ.some`;
   their shared assertiveness condition is [strawson-1952]'s stipulated
   existential presupposition, here derived.
 * `content_square_relations`: the four forms satisfy all six
@@ -84,13 +84,13 @@ def restrictedExists (C B : E → Prop) : PartialProp Unit where
 
 /-! ### The content is generalized quantification -/
 
-/-- What (11) asserts, when assertive, is exactly `every_sem`. -/
+/-- What (11) asserts, when assertive, is exactly `every`. -/
 theorem belnap_forall_content_eq_every (C B : E → Prop) :
-    (restrictedForall C B).assertion () ↔ every_sem C B := Iff.rfl
+    (restrictedForall C B).assertion () ↔ every C B := Iff.rfl
 
-/-- What (12) asserts, when assertive, is exactly `some_sem`. -/
+/-- What (12) asserts, when assertive, is exactly `GQ.some`. -/
 theorem belnap_exists_content_eq_some (C B : E → Prop) :
-    (restrictedExists C B).assertion () ↔ some_sem C B := Iff.rfl
+    (restrictedExists C B).assertion () ↔ GQ.some C B := Iff.rfl
 
 /-- Assertiveness of (11) is the existential presupposition of universals:
 what [strawson-1952] stipulated, Belnap derives — ∀x(Cx/Bx) is

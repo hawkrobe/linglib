@@ -64,8 +64,8 @@ def toList : List Sign :=
 universe u
 
 /-- The readings available for a sign, those of its gloss: the universals and `EACH` read as
-`every_sem`, `NONEsym` as `no_sem`, the existentials as `some_sem`, `FEW` as `few_sem`, `MOST` as
-`most_sem`, and the numerals as `at_least_n_sem` or `exactly_n_sem`; `MANY` has no reading, its
+`every`, `NONEsym` as `no`, the existentials as `Quantifier.GQ.some`, `FEW` as `few`, `MOST` as
+`most`, and the numerals as `atLeast` or `exactly`; `MANY` has no reading, its
 standard being contextual. -/
 noncomputable instance : Semantics.Denotes Sign (Set Quantifier.GQ.Family.{u}) where
   denote

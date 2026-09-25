@@ -151,12 +151,12 @@ theorem pos_ne_subcomparative :
 /-- On a scale without a top the negated *than*-clause, the degrees `d` such that nobody
 bought a `d`-expensive book (11), has no greatest degree (12). -/
 theorem not_isGreatest_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity → D) :
-    ¬ ∃ m, IsGreatest (scopeDegrees (no_sem bought) μ) m :=
-  not_isGreatest_scopeDegrees (antitone_no_sem bought) μ
+    ¬ ∃ m, IsGreatest (scopeDegrees (no bought) μ) m :=
+  not_isGreatest_scopeDegrees (antitone_no bought) μ
 
 /-- `er` over a negated *than*-clause never holds, the negative island ((11), (87a)). -/
 theorem not_er_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity → D) (S : Set D) :
-    ¬ er (scopeDegrees (no_sem bought) μ) S :=
+    ¬ er (scopeDegrees (no bought) μ) S :=
   fun ⟨m, _, hm, _, _⟩ => not_isGreatest_nobody bought μ ⟨m, hm⟩
 
 /-- A *yori*-clause built on the unbought individuals denotes the unique one of them, so the
@@ -173,7 +173,7 @@ the comparative can hold when no book was read by every boy, so it lacks the uni
 presupposition of the *yori*-clause ((94), (95)). -/
 theorem er_everyone_without_shared_book :
     ∃ (read : Fin 2 → Fin 3 → Prop) (μ : Fin 3 → ℕ),
-      er (scopeDegrees (fun S => ∀ b, some_sem (read b) S) μ) (Set.Iic (μ 2)) ∧
+      er (scopeDegrees (fun S => ∀ b, GQ.some (read b) S) μ) (Set.Iic (μ 2)) ∧
         ¬ ∃ x, ∀ b, read b x := by
   refine ⟨fun b x => x.val = b.val, ![1, 1, 2],
     ⟨1, _, ⟨fun b => ?_, fun d hd => ?_⟩, isGreatest_Iic, by simp⟩, ?_⟩
@@ -205,12 +205,12 @@ theorem erJ_iff_pos (μ : Entity → D) (c : D) (x : Entity) :
 /-- The wide-scope reading of *need to be exactly s long*, the comparative over `need`, says
 that the greatest degree reached in every acceptable world is the target `s` (136b). -/
 def wideScope {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
-  highScope (maxIn {s}) (every_sem (· ∈ acc)) μ
+  highScope (maxIn {s}) (every (· ∈ acc)) μ
 
 /-- The in-situ reading, which `erJ` with a differential yields, says that in every acceptable
 world the greatest degree is the target `s`. -/
 def inSitu {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
-  lowScope (maxIn {s}) (every_sem (· ∈ acc)) μ
+  lowScope (maxIn {s}) (every (· ∈ acc)) μ
 
 theorem inSitu_iff {W : Type*} (acc : Set W) (μ : W → D) (s : D) :
     inSitu acc μ s ↔ ∀ w ∈ acc, μ w = s :=

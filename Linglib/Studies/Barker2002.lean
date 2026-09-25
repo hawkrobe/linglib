@@ -278,21 +278,21 @@ theorem john_saw_NPgq (w : String) (Q : Quantifier.GQ E) (p p' : Priority) :
 
 /-- *Every man saw a woman* with VP priority has the inverse reading. -/
 theorem every_man_saw_a_woman_inverse (p : Priority) :
-    (S .right (NPgq "every" Quantifier.GQ.every_sem (lex man'))
-      (VP p (lex saw') (NPgq "a" Quantifier.GQ.some_sem (lex woman')))).eval =
+    (S .right (NPgq "every" Quantifier.GQ.every (lex man'))
+      (VP p (lex saw') (NPgq "a" Quantifier.GQ.some (lex woman')))).eval =
       ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := by
   cases p <;> rfl
 
 /-- With subject priority it has the surface reading. -/
 theorem every_man_saw_a_woman_surface (p : Priority) :
-    (S .left (NPgq "every" Quantifier.GQ.every_sem (lex man'))
-      (VP p (lex saw') (NPgq "a" Quantifier.GQ.some_sem (lex woman')))).eval =
+    (S .left (NPgq "every" Quantifier.GQ.every (lex man'))
+      (VP p (lex saw') (NPgq "a" Quantifier.GQ.some (lex woman')))).eval =
       ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := by
   cases p <;> rfl
 
 /-- In *a man thought everyone saw Mary* the island traps *everyone* under every priority. -/
 theorem a_man_thought_everyone_saw_mary (p₁ p₂ p₃ p₄ : Priority) :
-    (S p₁ (NPgq "a" Quantifier.GQ.some_sem (lex man'))
+    (S p₁ (NPgq "a" Quantifier.GQ.some (lex man'))
       (VS p₂ (lex thought') (island (S p₃ everyone (VP p₄ (lex saw') (lex m)))))).eval =
       ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := by
   cases p₁ <;> cases p₂ <;> cases p₃ <;> cases p₄ <;> rfl
@@ -319,9 +319,9 @@ theorem john_saw_every_man (p₁ p₂ p₃ : Priority) :
 give *John saw every man* the same truth conditions. -/
 theorem john_saw_every_man_iff (hman : ∃ x, man' x) (p₁ p₂ p₃ : Priority) :
     (S p₁ (lex j) (VP p₂ (lex saw') (NP p₃ every (lex man')))).eval ↔
-      Quantifier.GQ.every_sem man' (saw' · j) := by
+      Quantifier.GQ.every man' (saw' · j) := by
   rw [john_saw_every_man]
-  exact CF.forall_isCorrect_iff_every_sem hman (saw' · j)
+  exact CF.forall_isCorrect_iff_every hman (saw' · j)
 
 /-- When there are no men they come apart, since the choice-function sentence says that John
 saw everyone and the generalized-quantifier sentence is vacuously true. -/

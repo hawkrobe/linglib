@@ -124,7 +124,7 @@ def partitive (x : E) : E → Prop := (· ≤ x)
 /-- `FS(ALL)` composed with a partitive pronoun over worlds `W`, as in (50e) and (51e), is
 defined where the pronoun is and asserts that every part of its referent satisfies the scope. -/
 def fsAllOf {W : Type*} (pron : W → Option E) (Q : E → W → Prop) : PartialProp W :=
-  PartialProp.presupOfReferent pron λ x w => every_sem (partitive x) (Q · w)
+  PartialProp.presupOfReferent pron λ x w => every (partitive x) (Q · w)
 
 /-- The quantifier presupposes what its pronoun presupposes, so `FS(ALL)-of-[ixᵢ-arc-h]` is
 defined iff `g i` is a non-atomic plural meeting the height presupposition. -/
@@ -144,23 +144,23 @@ theorem fsAllOf_assertion {W : Type*} {pron : W → Option E} {Q : E → W → P
 at the higher locus entail their neutral forms, while `SOMEONE` at the neutral locus entails
 its high form, as in section 4. -/
 theorem all_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
-    every_sem (partitive x') Q → every_sem (partitive x) Q :=
-  every_restrictor_down _ _ Q λ _ hy => le_trans hy h
+    every (partitive x') Q → every (partitive x) Q :=
+  restrictorAntitone_every Q fun _ hy => le_trans hy h
 
 theorem no_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
-    no_sem (partitive x') Q → no_sem (partitive x) Q :=
-  no_restrictor_down _ _ Q λ _ hy => le_trans hy h
+    no (partitive x') Q → no (partitive x) Q :=
+  restrictorAntitone_no Q fun _ hy => le_trans hy h
 
 theorem some_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
-    some_sem (partitive x) Q → some_sem (partitive x') Q :=
-  some_restrictor_up _ _ Q λ _ hy => le_trans hy h
+    GQ.some (partitive x) Q → GQ.some (partitive x') Q :=
+  restrictorMonotone_some Q fun _ hy => le_trans hy h
 
 /-- Height is not intensification (section 4, after (36)), since a part of the wider plural
 outside the narrower one makes `SOMEONE-high` true where `SOMEONE-neutral` is false, so on no
 reading of height as strengthening, on which the high form would entail the neutral one as
 [bergen-2016] has for stressed quantifiers, does the existential come out right. -/
 theorem not_strengthening {x x' w : E} (hw : w ≤ x') (hwx : ¬ w ≤ x) :
-    ¬ ∀ Q : E → Prop, some_sem (partitive x') Q → some_sem (partitive x) Q :=
+    ¬ ∀ Q : E → Prop, GQ.some (partitive x') Q → GQ.some (partitive x) Q :=
   λ h => let ⟨_, hy, e⟩ := h (· = w) ⟨w, hw, rfl⟩; hwx (e ▸ hy)
 
 /-! ### Realising the pronoun in the quantifier -/

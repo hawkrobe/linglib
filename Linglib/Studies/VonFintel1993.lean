@@ -71,10 +71,10 @@ theorem excLeast_iff_forall_disjoint (hCA : C ≤ A) :
       h2 (λ x => A x ∧ ¬ S x) (λ _ h => h.1) hS x hx ⟨hCA x hx, hSx⟩⟩
 
 /-- (23) for *every*: the exception set is the restrictor minus the scope. -/
-theorem excLeast_every_iff : ExcLeast every_sem A C B ↔ ∀ x, C x ↔ A x ∧ ¬ B x := by
+theorem excLeast_every_iff : ExcLeast every A C B ↔ ∀ x, C x ↔ A x ∧ ¬ B x := by
   constructor
   · rintro ⟨h1, h2⟩ x
-    have hS : every_sem (λ x => A x ∧ ¬ (A x ∧ ¬ B x)) B :=
+    have hS : every (λ x => A x ∧ ¬ (A x ∧ ¬ B x)) B :=
       λ _ ha => by_contra λ hB => ha.2 ⟨ha.1, hB⟩
     exact ⟨λ hx => h2 hS x hx, λ hx => by_contra λ hC => hx.2 (h1 x ⟨hx.1, hC⟩)⟩
   · intro hC
@@ -82,10 +82,10 @@ theorem excLeast_every_iff : ExcLeast every_sem A C B ↔ ∀ x, C x ↔ A x ∧
     exact by_contra λ hSx => ((hC x).1 hx).2 (hS x ⟨((hC x).1 hx).1, hSx⟩)
 
 /-- (23) for *no*: the exception set is the intersection of restrictor and scope. -/
-theorem excLeast_no_iff : ExcLeast no_sem A C B ↔ ∀ x, C x ↔ A x ∧ B x := by
+theorem excLeast_no_iff : ExcLeast no A C B ↔ ∀ x, C x ↔ A x ∧ B x := by
   constructor
   · rintro ⟨h1, h2⟩ x
-    have hS : no_sem (λ x => A x ∧ ¬ (A x ∧ B x)) B := λ _ ha hB => ha.2 ⟨ha.1, hB⟩
+    have hS : no (λ x => A x ∧ ¬ (A x ∧ B x)) B := λ _ ha hB => ha.2 ⟨ha.1, hB⟩
     exact ⟨λ hx => h2 hS x hx, λ hx => by_contra λ hC => h1 x ⟨hx.1, hC⟩ hx.2⟩
   · intro hC
     refine ⟨λ x hx hB => hx.2 ((hC x).2 ⟨hx.1, hB⟩), λ S hS x hx => ?_⟩
@@ -94,7 +94,7 @@ theorem excLeast_no_iff : ExcLeast no_sem A C B ↔ ∀ x, C x ↔ A x ∧ B x :
 /-- (9): *every student but John attended* says that John is the only student who did not
 attend. -/
 theorem excLeast_every_singleton (j : α) :
-    ExcLeast every_sem A (· = j) B ↔ ∀ x, x = j ↔ A x ∧ ¬ B x :=
+    ExcLeast every A (· = j) B ↔ ∀ x, x = j ↔ A x ∧ ¬ B x :=
   excLeast_every_iff
 
 /-! ### Consequences of uniqueness (§1.5, §1.7) -/
@@ -115,15 +115,15 @@ theorem eq_of_excLeast_singleton {j m : α} (hj : ExcLeast Q A (· = j) B)
 exception. -/
 def GuaranteesException (Q : GQ α) : Prop := ∀ A B : α → Prop, ∃ C, ExcLeast Q A C B
 
-theorem guaranteesException_every : GuaranteesException (every_sem : GQ α) :=
+theorem guaranteesException_every : GuaranteesException (every : GQ α) :=
   λ A B => ⟨λ x => A x ∧ ¬ B x, excLeast_every_iff.2 λ _ => Iff.rfl⟩
 
-theorem guaranteesException_no : GuaranteesException (no_sem : GQ α) :=
+theorem guaranteesException_no : GuaranteesException (no : GQ α) :=
   λ A B => ⟨λ x => A x ∧ B x, excLeast_no_iff.2 λ _ => Iff.rfl⟩
 
 /-- *Some* guarantees no exception: when nothing in the restrictor is in the scope, no
 subtraction helps. -/
-theorem not_guaranteesException_some : ¬ GuaranteesException (some_sem : GQ α) := by
+theorem not_guaranteesException_some : ¬ GuaranteesException (GQ.some : GQ α) := by
   rintro h
   obtain ⟨_, ⟨_, _, hx⟩, -⟩ := h (λ _ => True) (λ _ => False)
   exact hx
@@ -133,13 +133,13 @@ abbrev attended : Fin 5 → Prop := (3 ≤ ·)
 
 /-- (25): *most students attended* is false, and no set of students is the least whose exclusion
 makes it true, since excluding any two of the three nonattenders does. -/
-theorem not_excLeast_most (C : Fin 5 → Prop) : ¬ ExcLeast most_sem (λ _ => True) C attended := by
+theorem not_excLeast_most (C : Fin 5 → Prop) : ¬ ExcLeast most (λ _ => True) C attended := by
   rintro ⟨h1, h2⟩
-  have hTJ : most_sem (λ x : Fin 5 => True ∧ ¬ (x = 0 ∨ x = 1)) attended :=
+  have hTJ : most (λ x : Fin 5 => True ∧ ¬ (x = 0 ∨ x = 1)) attended :=
     (mostOn_univ _ _).1 (by decide)
-  have hTH : most_sem (λ x : Fin 5 => True ∧ ¬ (x = 0 ∨ x = 2)) attended :=
+  have hTH : most (λ x : Fin 5 => True ∧ ¬ (x = 0 ∨ x = 2)) attended :=
     (mostOn_univ _ _).1 (by decide)
-  have hJH : most_sem (λ x : Fin 5 => True ∧ ¬ (x = 1 ∨ x = 2)) attended :=
+  have hJH : most (λ x : Fin 5 => True ∧ ¬ (x = 1 ∨ x = 2)) attended :=
     (mostOn_univ _ _).1 (by decide)
   have hC : ∀ x, ¬ C x := λ x hx => by
     have := h2 hTJ x hx
@@ -148,20 +148,20 @@ theorem not_excLeast_most (C : Fin 5 → Prop) : ¬ ExcLeast most_sem (λ _ => T
     omega
   have e : (λ x : Fin 5 => True ∧ ¬ C x) = λ _ => True :=
     funext λ x => propext ⟨λ _ => trivial, λ _ => ⟨trivial, hC x⟩⟩
-  have h1' : most_sem (λ x : Fin 5 => True ∧ ¬ C x) attended := h1
+  have h1' : most (λ x : Fin 5 => True ∧ ¬ C x) attended := h1
   rw [e] at h1'
   exact absurd ((mostOn_univ _ _).2 h1') (by decide)
 
-theorem not_guaranteesException_most : ¬ GuaranteesException (most_sem : GQ (Fin 5)) :=
+theorem not_guaranteesException_most : ¬ GuaranteesException (most : GQ (Fin 5)) :=
   λ h => let ⟨C, hC⟩ := h (λ _ => True) attended; not_excLeast_most C hC
 
 /-- The limiting case: with two students, John and Harry, of whom only Harry attended, *most*
 has the unique exception John. -/
 theorem exists_excLeast_most_two :
-    ∃ C, ExcLeast most_sem (λ _ : Fin 2 => True) C (· = 1) := by
+    ∃ C, ExcLeast most (λ _ : Fin 2 => True) C (· = 1) := by
   refine ⟨(· = 0), (mostOn_univ _ _).1 (by decide), λ S hS x hx => ?_⟩
   subst hx
-  have hS' : most_sem (λ x : Fin 2 => True ∧ ¬ S x) (· = 1) := hS
+  have hS' : most (λ x : Fin 2 => True ∧ ¬ S x) (· = 1) := hS
   by_contra h0
   by_cases h1 : S 1
   · have e : (λ x : Fin 2 => True ∧ ¬ S x) = (· = 0) :=
@@ -178,13 +178,13 @@ theorem exists_excLeast_most_two :
 /-- (34c): the free exceptive occurs with *most*; in situation (25) *except for Tom and John,
 most students attended* holds, where no *but*-phrase does. -/
 theorem excRestrictive_most :
-    ExcRestrictive most_sem (λ _ : Fin 5 => True) (λ x => x = 0 ∨ x = 1) attended :=
+    ExcRestrictive most (λ _ : Fin 5 => True) (λ x => x = 0 ∨ x = 1) attended :=
   ⟨(mostOn_univ _ _).1 (by decide), λ h => absurd ((mostOn_univ _ _).2 h) (by decide)⟩
 
 /-- With a universal determiner the *but* reading is the pragmatic strengthening of the free
 exceptive to an exception set that contains only exceptions (§2.3). -/
-theorem excLeast_every_of_excRestrictive (h : ExcRestrictive every_sem A C B)
-    (hmin : ∀ x, C x → A x ∧ ¬ B x) : ExcLeast every_sem A C B :=
+theorem excLeast_every_of_excRestrictive (h : ExcRestrictive every A C B)
+    (hmin : ∀ x, C x → A x ∧ ¬ B x) : ExcLeast every A C B :=
   excLeast_every_iff.2 λ x => ⟨hmin x, λ hx => by_contra λ hC => hx.2 (h.1 x ⟨hx.1, hC⟩)⟩
 
 end VonFintel1993

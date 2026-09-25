@@ -24,7 +24,7 @@ the book's resolution of the perspective paradox.
 * `most_planets_rings_icy`, `not_unnarrowed`: the planets-and-rings model —
   narrowing is truth-conditionally active, and `Poss` builds it in via `dom`.
 * `symmetric_iff_possessor_dominant`: with a unique possessee per possessor,
-  *most* over possessor–possessee pairs agrees with `Poss most_sem` — the
+  *most* over possessor–possessee pairs agrees with `Poss most` — the
   perspective paradox resolved.
 * `favorite_color_possessor_dominant`, `not_favorite_color_possessee_dominant`:
   *most people's favorite color is blue* counts people, never colors.
@@ -49,7 +49,7 @@ instance {α : Type*} [Fintype α] {A : α → Prop} {R : α → α → Prop}
 
 instance {α : Type*} [Fintype α] {R S : α → Prop}
     [DecidablePred R] [DecidablePred S] :
-    Decidable (some_sem R S) :=
+    Decidable (GQ.some R S) :=
   decidable_of_iff (∃ x, R x ∧ S x) Iff.rfl
 
 /-! ### The perspective paradox resolved (Ch. 4)
@@ -92,20 +92,20 @@ private theorem count_pair_eq (C A : α → Prop) (R : α → α → Prop)
 open Classical in
 /-- The uniqueness presupposition neutralizes the perspective paradox (Ch. 4):
 when each possessor has at most one possessee, *most* over
-possessor–possessee pairs (the symmetric construal) and `Poss most_sem` (the
+possessor–possessee pairs (the symmetric construal) and `Poss most` (the
 possessor-dominant construal) have the same truth conditions. -/
 theorem symmetric_iff_possessor_dominant (C A B : α → Prop) (R : α → α → Prop)
     (huniq : ∀ x y y', A y → R x y → A y' → R x y' → y = y') :
-    most_sem (fun p : α × α => C p.1 ∧ A p.2 ∧ R p.1 p.2) (fun p => B p.2) ↔
-      Poss most_sem C some_sem R A B := by
-  unfold Poss most_sem
+    most (fun p : α × α => C p.1 ∧ A p.2 ∧ R p.1 p.2) (fun p => B p.2) ↔
+      Poss most C GQ.some R A B := by
+  unfold Poss most
   beta_reduce
   rw [count_eq_decidable (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ B p.2) _,
       count_eq_decidable (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ ¬ B p.2) _,
       count_eq_decidable (fun x => (C x ∧ dom A R x) ∧
-        some_sem (fun y => A y ∧ R x y) B) _,
+        GQ.some (fun y => A y ∧ R x y) B) _,
       count_eq_decidable (fun x => (C x ∧ dom A R x) ∧
-        ¬ some_sem (fun y => A y ∧ R x y) B) _]
+        ¬ GQ.some (fun y => A y ∧ R x y) B) _]
   have h1' : count (fun p : α × α => (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ B p.2)
       = count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ B y) :=
     (count_irrel _ _ _).trans
@@ -115,12 +115,12 @@ theorem symmetric_iff_possessor_dominant (C A B : α → Prop) (R : α → α �
     (count_irrel _ _ _).trans
       ((count_pair_eq C A R huniq fun _ y => ¬ B y).trans (count_irrel _ _ _))
   have hc1 : count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ B y)
-      = count (fun x => (C x ∧ dom A R x) ∧ some_sem (fun y => A y ∧ R x y) B) :=
-    count_congr_iff fun x => by unfold some_sem; tauto
+      = count (fun x => (C x ∧ dom A R x) ∧ GQ.some (fun y => A y ∧ R x y) B) :=
+    count_congr_iff fun x => by unfold GQ.some; tauto
   have hc2 : count (fun x => (C x ∧ dom A R x) ∧ ∃ y, A y ∧ R x y ∧ ¬ B y)
-      = count (fun x => (C x ∧ dom A R x) ∧ ¬ some_sem (fun y => A y ∧ R x y) B) :=
+      = count (fun x => (C x ∧ dom A R x) ∧ ¬ GQ.some (fun y => A y ∧ R x y) B) :=
     count_congr_iff fun x => by
-      unfold some_sem
+      unfold GQ.some
       constructor
       · rintro ⟨⟨hC, hdom⟩, y, hA, hR, hnB⟩
         exact ⟨⟨hC, hdom⟩, fun ⟨y', ⟨hA', hR'⟩, hB'⟩ =>
@@ -148,37 +148,37 @@ abbrev isIcy : Fin 12 → Prop := fun y => y = 9 ∨ y = 10
 /-- *Most planets' rings are made of ice* is true: `Poss` narrows the domain
 to the three ringed planets, two of which have icy rings. -/
 theorem most_planets_rings_icy :
-    Poss most_sem isPlanet some_sem hasRing isRing isIcy := by
-  unfold Poss most_sem
+    Poss most isPlanet GQ.some hasRing isRing isIcy := by
+  unfold Poss most
   beta_reduce
   rw [count_eq_decidable (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
-        some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _,
+        GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) _,
       count_eq_decidable (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
-        ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _]
+        ¬ GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) _]
   have v1 : count (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
-      some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 2 := by
+      GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) = 2 := by
     simp only [count, countOn]; decide
   have v2 : count (fun x : Fin 12 => (isPlanet x ∧ dom isRing hasRing x) ∧
-      ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 1 := by
+      ¬ GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) = 1 := by
     simp only [count, countOn]; decide
   omega
 
 /-- Without narrowing, the quantification is false: only two of the nine
 planets have an icy ring. -/
 theorem not_unnarrowed :
-    ¬ most_sem isPlanet
-      (fun x => some_sem (fun y => isRing y ∧ hasRing x y) isIcy) := by
-  unfold most_sem
+    ¬ most isPlanet
+      (fun x => GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) := by
+  unfold most
   beta_reduce
   rw [count_eq_decidable (fun x : Fin 12 => isPlanet x ∧
-        some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _,
+        GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) _,
       count_eq_decidable (fun x : Fin 12 => isPlanet x ∧
-        ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) _]
+        ¬ GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) _]
   have v1 : count (fun x : Fin 12 => isPlanet x ∧
-      some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 2 := by
+      GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) = 2 := by
     simp only [count, countOn]; decide
   have v2 : count (fun x : Fin 12 => isPlanet x ∧
-      ¬ some_sem (fun y => isRing y ∧ hasRing x y) isIcy) = 7 := by
+      ¬ GQ.some (fun y => isRing y ∧ hasRing x y) isIcy) = 7 := by
     simp only [count, countOn]; decide
   omega
 
@@ -200,26 +200,26 @@ abbrev isBlue : Fin 8 → Prop := fun y => y = 7
 
 /-- *Most people's favorite color is blue*, counting people: true, 3 of 5. -/
 theorem favorite_color_possessor_dominant :
-    Poss most_sem isPerson some_sem favors isColor isBlue := by
-  unfold Poss most_sem
+    Poss most isPerson GQ.some favors isColor isBlue := by
+  unfold Poss most
   beta_reduce
   rw [count_eq_decidable (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
-        some_sem (fun y => isColor y ∧ favors x y) isBlue) _,
+        GQ.some (fun y => isColor y ∧ favors x y) isBlue) _,
       count_eq_decidable (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
-        ¬ some_sem (fun y => isColor y ∧ favors x y) isBlue) _]
+        ¬ GQ.some (fun y => isColor y ∧ favors x y) isBlue) _]
   have v1 : count (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
-      some_sem (fun y => isColor y ∧ favors x y) isBlue) = 3 := by
+      GQ.some (fun y => isColor y ∧ favors x y) isBlue) = 3 := by
     simp only [count, countOn]; decide
   have v2 : count (fun x : Fin 8 => (isPerson x ∧ dom isColor favors x) ∧
-      ¬ some_sem (fun y => isColor y ∧ favors x y) isBlue) = 2 := by
+      ¬ GQ.some (fun y => isColor y ∧ favors x y) isBlue) = 2 := by
     simp only [count, countOn]; decide
   omega
 
 /-- Counting favored colors instead of people would make the sentence false —
 the reading English does not have. -/
 theorem not_favorite_color_possessee_dominant :
-    ¬ most_sem (fun c => isColor c ∧ ∃ p, isPerson p ∧ favors p c) isBlue := by
-  unfold most_sem
+    ¬ most (fun c => isColor c ∧ ∃ p, isPerson p ∧ favors p c) isBlue := by
+  unfold most
   beta_reduce
   rw [count_eq_decidable (fun c : Fin 8 =>
         (isColor c ∧ ∃ p, isPerson p ∧ favors p c) ∧ isBlue c) _,
@@ -241,7 +241,7 @@ theorem favors_unique :
 /-- The symmetric construal of the favorite-color sentence, derived from the
 possessor-dominant one through `symmetric_iff_possessor_dominant`. -/
 theorem favorite_color_symmetric :
-    most_sem (fun p : Fin 8 × Fin 8 => isPerson p.1 ∧ isColor p.2 ∧ favors p.1 p.2)
+    most (fun p : Fin 8 × Fin 8 => isPerson p.1 ∧ isColor p.2 ∧ favors p.1 p.2)
       (fun p => isBlue p.2) :=
   (symmetric_iff_possessor_dominant isPerson isColor isBlue favors
     favors_unique).mpr favorite_color_possessor_dominant
@@ -276,9 +276,9 @@ def mercurysRings : Possession.Description (Fin 12) Unit where
 /-- *Mercury's rings are icy* is false: the description denotation carries
 existential import, and Mercury has no ring. -/
 theorem mercurysRings_not_icy :
-    ¬ mercurysRings.toGQ some_sem () isRing isIcy := by
+    ¬ mercurysRings.toGQ GQ.some () isRing isIcy := by
   intro h
-  obtain ⟨b, -, hr⟩ := mercurysRings.toGQ_existential_import some_sem () h
+  obtain ⟨b, -, hr⟩ := mercurysRings.toGQ_existential_import GQ.some () h
   have hb : hasRing 3 b := hr
   rcases hb with ⟨h3, -⟩ | ⟨h3, -⟩ | ⟨h3, -⟩ <;> exact absurd h3 (by decide)
 

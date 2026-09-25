@@ -14,7 +14,7 @@ the extension (`existsUnique_iff_nonempty_subsingleton`), the two components
 
 [partee-1987]'s partial type shifts are Russellian iotas: `THE`, the Montague lift of the unique
 member of a property, and `lower`, the entity whose lift a principal ultrafilter is; each inverts
-its total shift (`THE_ident`, `lower_individual`). The determiner `Quantifier.GQ.the_sem` is the
+its total shift (`THE_ident`, `lower_individual`). The determiner `Quantifier.GQ.the` is the
 same object at the third type: it asserts its scope of the Russellian referent, and it is `THE`
 applied to the scope (`the_sem_iff_russellIota`, `the_sem_iff_THE`).
 
@@ -100,13 +100,13 @@ theorem THE_ident : THE (ident j) = some (individual j) := by
 variable (S : E → Prop)
 
 /-- The determiner *the* asserts its scope of the Russellian referent. -/
-theorem the_sem_iff_russellIota : the_sem P S ↔ ∃ x ∈ russellIota P, S x :=
+theorem the_sem_iff_russellIota : the P S ↔ ∃ x ∈ russellIota P, S x :=
   exists_congr fun x ↦ and_congr_left' <|
     (⟨fun h ↦ ⟨(h x).2 rfl, fun y ↦ (h y).1⟩, fun ⟨hx, hu⟩ y ↦ ⟨hu y, fun e ↦ e ▸ hx⟩⟩ :
       (∀ y, P y ↔ y = x) ↔ P x ∧ ∀ y, P y → y = x).trans (russellIota_eq_some_iff P).symm
 
 /-- The determiner *the* is the quantifier `THE` applied to its scope. -/
-theorem the_sem_iff_THE : the_sem P S ↔ ∃ Q ∈ THE P, Q S :=
+theorem the_sem_iff_THE : the P S ↔ ∃ Q ∈ THE P, Q S :=
   (the_sem_iff_russellIota P S).trans
     ⟨fun ⟨x, hx, hS⟩ ↦ ⟨individual x, Option.map_eq_some_iff.2 ⟨x, hx, rfl⟩, hS⟩,
       fun ⟨_, hQ, hS⟩ ↦

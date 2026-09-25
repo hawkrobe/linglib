@@ -86,20 +86,20 @@ def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop
 /-- An existential scoping over a universal entails the universal scoping over the existential,
 so the two linear readings of an *every*/*some* pair are nested. -/
 theorem iterate_every_some_of_some_every (A B : α → Prop) (R : α → α → Prop)
-    (h : iterate some_sem every_sem A B R) : iterate every_sem some_sem B A (flip R) :=
+    (h : iterate GQ.some every A B R) : iterate every GQ.some B A (flip R) :=
   let ⟨x, hx, hall⟩ := h; fun y hy ↦ ⟨x, hx, hall y hy⟩
 
 /-! ### Monotonicity -/
 
 /-- The iteration of two scope-upward-monotone quantifiers is monotone in the relation. -/
-theorem iterate_mono (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂)
+theorem iterate_mono (h₁ : ScopeMonotone Q₁) (h₂ : ScopeMonotone Q₂)
     (hR : ∀ x y, R x y → R' x y) : iterate Q₁ Q₂ A B R → iterate Q₁ Q₂ A B R' :=
-  h₁ A _ _ fun x ↦ h₂ B _ _ (hR x)
+  h₁ A fun x ↦ h₂ B (hR x)
 
 /-- The resumption of a scope-upward-monotone quantifier is monotone in the diagonal of the
 relation. -/
-theorem resume_mono (h : ScopeUpwardMono Q) (hR : ∀ x, R x x → R' x x) :
+theorem resume_mono (h : ScopeMonotone Q) (hR : ∀ x, R x x → R' x x) :
     resume Q A R → resume Q A R' :=
-  h A _ _ hR
+  h A hR
 
 end Quantifier.Polyadic

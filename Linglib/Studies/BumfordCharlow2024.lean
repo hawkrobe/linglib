@@ -445,8 +445,8 @@ theorem eval_bind_pure {E : Type} (q : Cont Prop E) (scope' : E → Prop) :
 
 /-- Surface scope reading holds in the toy model. -/
 theorem surface_scope_via_cont :
-    ContT.eval (gqAsCont (every_sem person_sem) >>= λ x =>
-      gqAsCont (some_sem person_sem) >>= λ y =>
+    ContT.eval (gqAsCont (every person_sem) >>= λ x =>
+      gqAsCont (GQ.some person_sem) >>= λ y =>
         pure (ToyLexicon.sees_sem y x)) := by
   intro x hpx
   cases x with
@@ -456,8 +456,8 @@ theorem surface_scope_via_cont :
 
 /-- Inverse scope reading does not hold in the toy model. -/
 theorem inverse_scope_via_cont :
-    ¬ ContT.eval (gqAsCont (some_sem person_sem) >>= λ y =>
-      gqAsCont (every_sem person_sem) >>= λ x =>
+    ¬ ContT.eval (gqAsCont (GQ.some person_sem) >>= λ y =>
+      gqAsCont (every person_sem) >>= λ x =>
         pure (ToyLexicon.sees_sem y x)) := by
   intro ⟨y, _, hy⟩
   cases y with
@@ -468,11 +468,11 @@ theorem inverse_scope_via_cont :
 /-- The two scope orderings via Cont yield genuinely different readings,
     matching `HeimKratzer1998.scope_readings_differ`. -/
 theorem cont_scope_readings_differ :
-    ContT.eval (gqAsCont (every_sem person_sem) >>= λ x =>
-      gqAsCont (some_sem person_sem) >>= λ y =>
+    ContT.eval (gqAsCont (every person_sem) >>= λ x =>
+      gqAsCont (GQ.some person_sem) >>= λ y =>
         pure (ToyLexicon.sees_sem y x)) ≠
-    ContT.eval (gqAsCont (some_sem person_sem) >>= λ y =>
-      gqAsCont (every_sem person_sem) >>= λ x =>
+    ContT.eval (gqAsCont (GQ.some person_sem) >>= λ y =>
+      gqAsCont (every person_sem) >>= λ x =>
         pure (ToyLexicon.sees_sem y x)) := by
   intro h
   have hS := surface_scope_via_cont

@@ -79,7 +79,7 @@ def force : QForce := particleForce q.particle
 def toQuantifier : Quantifier := { form := q.form }
 
 /-- The reading available for an indeterminate quantifier is that of its particle's force,
-`some_sem` for the disjunction *ka* and `every_sem` for the conjunction *mo*. -/
+`Quantifier.GQ.some` for the disjunction *ka* and `every` for the conjunction *mo*. -/
 instance : Semantics.Denotes Indefinite (Set Quantifier.GQ.Family.{u}) where
   denote q :=
     match q.particle.role with
@@ -123,8 +123,8 @@ def toQuantifier (w : QuantityWord) : Quantifier := { form := w.form }
 /-- All the words. -/
 def toList : List QuantityWord := [.subete, .hotondo, .ryoho]
 
-/-- The readings available for a word: *subete* reads as `every_sem`, *hotondo* as `most_sem`
-and *ryōhō* as `both_sem`. -/
+/-- The readings available for a word: *subete* reads as `every`, *hotondo* as `most`
+and *ryōhō* as `both`. -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .subete => {Quantifier.GQ.Family.every}

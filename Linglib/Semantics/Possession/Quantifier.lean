@@ -79,9 +79,9 @@ def PossNP (Q : NP α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
 
 /-! ### Conservativity -/
 
-/-- Conservativity inherits from `Q₂`, for any `Q₁`: the possessee restrictor `A ∩ Rₓ` refines
-`A`, so a conservative `Q₂` cannot tell `B` from `A ∩ B` in the scope (the CONSERV half of their
-(7.29), p. 255). -/
+/-- Conservativity inherits from `Q₂` for any `Q₁`, since the possessee restrictor `A ∩ Rₓ`
+refines `A`, so a conservative `Q₂` cannot tell `B` from `A ∩ B` in the scope (the CONSERV half
+of their (7.29), p. 255). -/
 theorem poss_conservative {Q₁ Q₂ : GQ α} (C : α → Prop) (R : α → α → Prop)
     (h₂ : Conservative Q₂) : Conservative (Poss Q₁ C Q₂ R) := fun _ _ =>
   iff_of_eq (congrArg (Q₁ _) (funext fun _ => propext
@@ -100,34 +100,34 @@ give Mon↓. -/
 
 /-- `Q₁` Mon↑, `Q₂` Mon↑ ⇒ `Poss` Mon↑ in scope. -/
 theorem poss_scopeUpMono_of_up_up {Q₁ Q₂ : GQ α} (C : α → Prop)
-    (R : α → α → Prop) (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂) :
-    ScopeUpwardMono (Poss Q₁ C Q₂ R) :=
-  fun _ B B' hBB' => h₁ _ _ _ fun _ => h₂ _ B B' hBB'
+    (R : α → α → Prop) (h₁ : ScopeMonotone Q₁) (h₂ : ScopeMonotone Q₂) :
+    ScopeMonotone (Poss Q₁ C Q₂ R) :=
+  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
 
 /-- `Q₁` Mon↑, `Q₂` Mon↓ ⇒ `Poss` Mon↓ in scope. -/
 theorem poss_scopeDownMono_of_up_down {Q₁ Q₂ : GQ α} (C : α → Prop)
-    (R : α → α → Prop) (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeDownwardMono Q₂) :
-    ScopeDownwardMono (Poss Q₁ C Q₂ R) :=
-  fun _ B B' hBB' => h₁ _ _ _ fun _ => h₂ _ B B' hBB'
+    (R : α → α → Prop) (h₁ : ScopeMonotone Q₁) (h₂ : ScopeAntitone Q₂) :
+    ScopeAntitone (Poss Q₁ C Q₂ R) :=
+  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
 
 /-- `Q₁` Mon↓, `Q₂` Mon↓ ⇒ `Poss` Mon↑ in scope. -/
 theorem poss_scopeUpMono_of_down_down {Q₁ Q₂ : GQ α} (C : α → Prop)
-    (R : α → α → Prop) (h₁ : ScopeDownwardMono Q₁) (h₂ : ScopeDownwardMono Q₂) :
-    ScopeUpwardMono (Poss Q₁ C Q₂ R) :=
-  fun _ B B' hBB' => h₁ _ _ _ fun _ => h₂ _ B B' hBB'
+    (R : α → α → Prop) (h₁ : ScopeAntitone Q₁) (h₂ : ScopeAntitone Q₂) :
+    ScopeMonotone (Poss Q₁ C Q₂ R) :=
+  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
 
 /-- `Q₁` Mon↓, `Q₂` Mon↑ ⇒ `Poss` Mon↓ in scope. -/
 theorem poss_scopeDownMono_of_down_up {Q₁ Q₂ : GQ α} (C : α → Prop)
-    (R : α → α → Prop) (h₁ : ScopeDownwardMono Q₁) (h₂ : ScopeUpwardMono Q₂) :
-    ScopeDownwardMono (Poss Q₁ C Q₂ R) :=
-  fun _ B B' hBB' => h₁ _ _ _ fun _ => h₂ _ B B' hBB'
+    (R : α → α → Prop) (h₁ : ScopeAntitone Q₁) (h₂ : ScopeMonotone Q₂) :
+    ScopeAntitone (Poss Q₁ C Q₂ R) :=
+  fun _ _ _ hBB' => h₁ _ fun _ => h₂ _ hBB'
 
 /-! ### Narrowing vacuity (Fact 1, §7.8.1, p. 260) -/
 
-/-- For a symmetric conservative possessor quantifier, domain narrowing is vacuous: `Poss Q₁ C Q₂ R`
-is `PossNP` at `Q₁` frozen to `C`. Narrowing only matters for non-intersective `Q₁` (proportionals
-like *most students'*). -/
-theorem poss_eq_possNP_restrict {Q₁ : GQ α} (hSym : QSymmetric Q₁) (hCons : Conservative Q₁)
+/-- For a symmetric conservative possessor quantifier, domain narrowing is vacuous, so
+`Poss Q₁ C Q₂ R` is `PossNP` at `Q₁` frozen to `C`; narrowing only matters for non-intersective
+`Q₁`, such as the proportional *most students'*. -/
+theorem poss_eq_possNP_restrict {Q₁ : GQ α} (hSym : Std.Symm Q₁) (hCons : Conservative Q₁)
     (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) :
     Poss Q₁ C Q₂ R = PossNP (restrict Q₁ C) Q₂ R :=
   funext fun _ => funext fun _ =>
@@ -135,8 +135,8 @@ theorem poss_eq_possNP_restrict {Q₁ : GQ α} (hSym : QSymmetric Q₁) (hCons :
 
 /-! ### Existential import -/
 
-/-- *John's A B* carries existential import: whatever `Q₂` is, it entails that John possesses an
-`A`-thing — the `dom` conjunct of (7.45). -/
+/-- *John's A B* carries existential import, since whatever `Q₂` is it entails that John
+possesses an `A`-thing, the `dom` conjunct of (7.45). -/
 theorem possNP_individual_existential_import {Q₂ : GQ α} {R : α → α → Prop}
     {a : α} {A B : α → Prop} (h : PossNP (individual a) Q₂ R A B) :
     ∃ b, A b ∧ R a b :=
@@ -144,14 +144,14 @@ theorem possNP_individual_existential_import {Q₂ : GQ α} {R : α → α → P
 
 /-! ### Denoting a description -/
 
-/-- The quantificational denotation of a possessive description at a situation `s`: its possessor,
-as an individual NP, and its relation frozen at `s`, fed to `PossNP`; `Q₂` is the (usually covert)
-possessee quantifier. -/
+/-- The quantificational denotation of a possessive description at a situation `s` feeds its
+possessor, as an individual NP, and its relation frozen at `s` to `PossNP`; `Q₂` is the usually
+covert possessee quantifier. -/
 def Description.toGQ {E S : Type*} (d : Description E S) (Q₂ : GQ E) (s : S) : GQ E :=
   PossNP (individual d.possessor) Q₂ (fun x y => d.relation x y s)
 
-/-- A description's denotation carries existential import: if it holds of possessee class `A` and
-scope `B`, the possessor stands in the relation to some `A`-thing. -/
+/-- A description's denotation carries existential import, since if it holds of possessee class
+`A` and scope `B`, the possessor stands in the relation to some `A`-thing. -/
 theorem Description.toGQ_existential_import {E S : Type*} (d : Description E S) (Q₂ : GQ E)
     (s : S) {A B : E → Prop} (h : d.toGQ Q₂ s A B) : ∃ b, A b ∧ d.relation d.possessor b s :=
   possNP_individual_existential_import h
@@ -162,27 +162,27 @@ theorem Description.toGQ_existential_import {E S : Type*} (d : Description E S) 
 `PossNP` at a Montagovian individual with existential `Q₂` and trivial possessee restrictor — the
 possessee class is folded into `R` by Barker's `π` shift. -/
 theorem asNPQ_iff_possNP (a : α) (R : α → α → Prop) (P : α → Prop) :
-    asNPQ a R P ↔ PossNP (individual a) some_sem R (fun _ => True) P := by
-  simp only [asNPQ, PossNP, dom, individual, some_sem, true_and]
+    asNPQ a R P ↔ PossNP (individual a) GQ.some R (fun _ => True) P := by
+  simp only [asNPQ, PossNP, dom, individual, GQ.some, true_and]
   exact ⟨fun ⟨y, hR, hP⟩ => ⟨⟨y, hR⟩, y, hR, hP⟩, fun ⟨_, y, hR, hP⟩ => ⟨y, hR, hP⟩⟩
 
 /-! ### Non-logicality -/
 
-/-- With a fixed possession relation, possessive GQs are not isomorphism-invariant: permuting
-`Bool` by `not` flips `some (· = true)'s (·) (⊤)` from true to false, because `R` does not travel
-along the permutation. "Due to the presence of the fixed set C and relation R, Poss(Q₁, C, Q₂, R)
-is almost never Isom" (p. 256); an operation closely related to `Poss` itself is Isom (their
-Chapter 9.2). -/
+/-- With a fixed possession relation, possessive GQs are not isomorphism-invariant, since
+permuting `Bool` by `not` flips `some (· = true)'s (·) (⊤)` from true to false because `R` does
+not travel along the permutation. "Due to the presence of the fixed set C and relation R,
+Poss(Q₁, C, Q₂, R) is almost never Isom" (p. 256); an operation closely related to `Poss` itself
+is Isom (their Chapter 9.2). -/
 theorem poss_not_quantityInvariant :
     ¬ QuantityInvariant
-        (Poss (some_sem (α := Bool)) (fun _ => True) some_sem
+        (Poss (GQ.some (α := Bool)) (fun _ => True) GQ.some
           (fun x y => x = true ∧ y = true)) := by
   intro h
   have hiff := h (fun x => x = true) (fun _ => True) (fun x => x = false)
     (fun _ => True) Bool.not
     ((Function.Involutive.bijective fun b => Bool.not_not b))
     (fun x => by cases x <;> simp) (fun _ => Iff.rfl)
-  have hpos : Poss (some_sem (α := Bool)) (fun _ => True) some_sem
+  have hpos : Poss (GQ.some (α := Bool)) (fun _ => True) GQ.some
       (fun x y => x = true ∧ y = true) (fun x => x = true) (fun _ => True) :=
     ⟨true, ⟨trivial, true, rfl, rfl, rfl⟩, true, ⟨rfl, rfl, rfl⟩, trivial⟩
   obtain ⟨x, ⟨-, b, hb, -, hb'⟩, -⟩ := hiff.mp hpos

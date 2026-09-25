@@ -37,9 +37,9 @@ takes wide scope over negation; a situation quantifier separates them (`bound_fr
   indefinite under negation is specific, where the existential one may take narrow scope.
 * `bound_free_collapse`, `bound_free_diverge_box`: extensional operators neutralize, and
   situation quantifiers separate, the free and bound construals of the situation argument.
-* `isCorrect_some_of_apply`, `correct_cfs_disagree_on_some_sem`: a correct choice function
+* `isCorrect_some_of_apply`, `correct_cfs_disagree_on_some`: a correct choice function
   witnesses the existential reading, and distinct correct functions commit to distinct witnesses.
-* `CF.exists_isCorrect_iff_some_sem`, `CF.forall_isCorrect_iff_every_sem`: quantifying over
+* `CF.exists_isCorrect_iff_some`, `CF.forall_isCorrect_iff_every`: quantifying over
   correct choice functions gives the existential and universal readings on a nonempty restrictor.
 * `CF.exists_isCorrect_forall_iff`: a choice function whose restrictor contains a bound variable
   takes no scope relative to the binder.
@@ -166,7 +166,7 @@ theorem box_not_isExtensionalAt :
 
 /-! ### The existential reading
 
-A correct choice function witnesses the existential reading `some_sem` on a nonempty
+A correct choice function witnesses the existential reading `GQ.some` on a nonempty
 restrictor, but the two analyses are not equivalent: the existential reading asserts the
 existence of a witness, the choice function commits to one, and distinct correct functions
 commit differently. -/
@@ -176,7 +176,7 @@ open Quantifier Quantifier.GQ Quantifier.NP
 /-- A correct choice function whose output satisfies the predicate witnesses the existential
 reading. -/
 theorem isCorrect_some_of_apply {f : CF E} (hf : f.IsCorrect) {N VP : E → Prop} (hN : ∃ x, N x)
-    (hVP : VP (f N)) : some_sem N VP :=
+    (hVP : VP (f N)) : GQ.some N VP :=
   ⟨f N, hf N hN, hVP⟩
 
 /-- Every member of a property is the pick of some correct choice function. -/
@@ -190,15 +190,15 @@ theorem CF.exists_isCorrect_apply_eq {N : E → Prop} {x : E} (hx : N x) :
   exacts [hPN ▸ hx, hP.choose_spec]
 
 /-- Existential quantification over correct choice functions is the existential reading. -/
-theorem CF.exists_isCorrect_iff_some_sem {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
-    (∃ f : CF E, f.IsCorrect ∧ VP (f N)) ↔ some_sem N VP :=
+theorem CF.exists_isCorrect_iff_some {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
+    (∃ f : CF E, f.IsCorrect ∧ VP (f N)) ↔ GQ.some N VP :=
   ⟨fun ⟨_, hf, h⟩ ↦ isCorrect_some_of_apply hf hN h, fun ⟨_, hx, h⟩ ↦
     let ⟨f, hf, hfx⟩ := CF.exists_isCorrect_apply_eq hx; ⟨f, hf, hfx ▸ h⟩⟩
 
 /-- Universal quantification over correct choice functions is the universal reading, on a
 nonempty restrictor. -/
-theorem CF.forall_isCorrect_iff_every_sem {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
-    (∀ f : CF E, f.IsCorrect → VP (f N)) ↔ every_sem N VP :=
+theorem CF.forall_isCorrect_iff_every {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
+    (∀ f : CF E, f.IsCorrect → VP (f N)) ↔ every N VP :=
   ⟨fun h _ hx ↦ let ⟨f, hf, hfx⟩ := CF.exists_isCorrect_apply_eq hx; hfx ▸ h f hf,
     fun h _ hf ↦ h _ (hf N hN)⟩
 
@@ -244,9 +244,9 @@ theorem CF.exists_isCorrect_forall_iff [Nonempty E] {ι : Type*} (R : ι → E �
 /-- Two correct choice functions disagree on the same restrictor and predicate. Over `Bool`,
 the function preferring `true` hits the witness of `(· = true)` and the one preferring `false`
 does not. -/
-theorem correct_cfs_disagree_on_some_sem :
+theorem correct_cfs_disagree_on_some :
     ∃ f₁ f₂ : CF Bool, f₁.IsCorrect ∧ f₂.IsCorrect ∧
-      ∃ N VP : Bool → Prop, some_sem N VP ∧ VP (f₁ N) ∧ ¬ VP (f₂ N) := by
+      ∃ N VP : Bool → Prop, GQ.some N VP ∧ VP (f₁ N) ∧ ¬ VP (f₂ N) := by
   classical
   refine ⟨fun P ↦ if P true then true else false, fun P ↦ if P false then false else true,
     ?_, ?_, fun _ ↦ True, (· = true), ⟨true, trivial, rfl⟩, by simp, by simp⟩

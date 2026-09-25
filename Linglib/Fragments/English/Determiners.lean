@@ -13,7 +13,7 @@ carrier `QuantityWord`. A word projects to its `Quantifier` record by
 `QuantityWord.toQuantifier`, which carries only what the readings leave open, the selected
 number and whether mass nouns are selected, and denotes the set of readings the literature makes
 available for it through the `Denotes` instance, each a `Quantifier.GQ.Family`. A word with one
-consensus reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every_sem}`, and *many*,
+consensus reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every}`, and *many*,
 whose standard [barwise-cooper-1981] leave to context, denotes `∅` until the theory hub has a
 reading for it. A study takes a stand by membership, and everything a reading fixes, force,
 monotonicity, strength and conservativity, is a theorem about the member chosen
@@ -112,9 +112,9 @@ theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 universe u
 
 /-- The readings the literature makes available for a word, as generalized quantifiers on every
-finite domain. *None* reads as `no_sem`, *some* as `some_sem`, *all*, *every* and *each* as
-`every_sem`, *most* as `most_sem`, *few* as `few_sem`, *half* as `half_sem`, *both* as
-`both_sem` and *neither* as `neither_sem`; *many* has no reading, since
+finite domain. *None* reads as `no`, *some* as `Quantifier.GQ.some`, *all*, *every* and *each* as
+`every`, *most* as `most`, *few* as `few`, *half* as `half`, *both* as
+`both` and *neither* as `neither`; *many* has no reading, since
 [barwise-cooper-1981] leave its standard to context. -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote

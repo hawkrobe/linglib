@@ -21,7 +21,7 @@ derive-don't-stipulate rule.
 
 Coverage is incremental (`contextWitness?` is `Option`-valued): the
 witnessed rows are those whose operators exist in the zoo — negation
-(complementation), the quantifier rows (`every_sem`/`no_sem`/`few_sem` sections,
+(complementation), the quantifier rows (`every`/`no`/`few` sections,
 `atMost2_student`), conditional antecedents (`Conditional.strictImp`), and the
 four Strawson-only rows (`only`, `regret`, `superlative`, `since`). The `none`
 rows await operators (*without*, *deny*, *doubt*, *before*, *too…to*, the
@@ -219,46 +219,46 @@ def negationWitness : ContextWitness .negation where
 
 theorem everyRestrictor_soundFor :
     Signature.SoundFor .antiAdd
-      (fun R => every_sem (α := Bool) R (fun _ => False)) :=
+      (fun R => every (α := Bool) R (fun _ => False)) :=
   soundFor_antiAdd
-    ⟨(leftAntiAdditive_iff_isAntiAdditive _).mp every_laa _,
+    ⟨(leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every _,
      propext ⟨fun h => h true trivial, False.elim⟩⟩
 
-/-- Universal restrictor: the restrictor section of `every_sem` is
+/-- Universal restrictor: the restrictor section of `every` is
 completely anti-additive (toy scope falsifying the unit condition's
 vacuity). -/
 noncomputable def universalRestrictorWitness :
     ContextWitness .universalRestrictor where
-  f := fun R => every_sem (α := Bool) R (fun _ => False)
+  f := fun R => every (α := Bool) R (fun _ => False)
   defined := fun _ => ⊤
   strawson := everyRestrictor_soundFor.strawsonSoundFor _
   classical := soundFor_of_mem_some everyRestrictor_soundFor
   strength := strength_of_mem_some (s₀ := .antiAdditive) (by decide)
-    ((leftAntiAdditive_iff_isAntiAdditive _).mp every_laa _)
+    ((leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every _)
 
 theorem noScope_soundFor :
     Signature.SoundFor .antiAdd
-      (fun S => no_sem (α := Bool) (fun _ => True) S) :=
+      (fun S => no (α := Bool) (fun _ => True) S) :=
   soundFor_antiAdd
-    ⟨(rightAntiAdditive_iff_isAntiAdditive _).mp no_raa _,
+    ⟨(rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no _,
      propext ⟨fun h => h true trivial trivial, False.elim⟩⟩
 
-/-- *Nobody*: the scope section of `no_sem` is completely anti-additive. -/
+/-- *Nobody*: the scope section of `no` is completely anti-additive. -/
 noncomputable def nobodyWitness : ContextWitness .nobody where
-  f := fun S => no_sem (α := Bool) (fun _ => True) S
+  f := fun S => no (α := Bool) (fun _ => True) S
   defined := fun _ => ⊤
   strawson := noScope_soundFor.strawsonSoundFor _
   classical := soundFor_of_mem_some noScope_soundFor
   strength := strength_of_mem_some (s₀ := .antiAdditive) (by decide)
-    ((rightAntiAdditive_iff_isAntiAdditive _).mp no_raa _)
+    ((rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no _)
 
 noncomputable def fewScope : Set Bool → Prop :=
-  few_sem (α := Bool) (fun _ => True)
+  few (α := Bool) (fun _ => True)
 
 theorem fewScope_soundFor : Signature.SoundFor .anti fewScope :=
-  soundFor_anti_iff.mpr ((scopeDownMono_iff_antitone _).mp few_scope_down _)
+  soundFor_anti_iff.mpr (scopeAntitone_few _)
 
-/-- *Few*: the scope section of `few_sem` is antitone (weak DE — and not
+/-- *Few*: the scope section of `few` is antitone (weak DE — and not
 anti-additive, matching its `.anti` row). -/
 noncomputable def fewWitness : ContextWitness .few where
   f := fewScope

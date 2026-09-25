@@ -15,7 +15,7 @@ algebra with the predicates of polarized groups.
 
 The Boolean algebra on `GQ α` is mathlib's Pi instance (`Prop` is a Boolean algebra and
 `(α → Prop) → (α → Prop) → Prop` lifts pointwise); closure under `⊔` and `⊓` is
-`conservative_gqJoin` and `conservative_gqMeet`, and the complement of a conservative quantifier
+`Conservative.sup` and `Conservative.inf`, and the complement of a conservative quantifier
 is conservative because conservativity is an equivalence at every restrictor and scope.
 
 ## References
@@ -33,8 +33,8 @@ variable {α : Type*}
 /-- The conservative GQs, a Boolean subalgebra of `GQ α`. -/
 def conservativeSubalgebra : BooleanSubalgebra (GQ α) where
   carrier := {q | Conservative q}
-  supClosed' q₁ hq₁ q₂ hq₂ := conservative_gqJoin q₁ q₂ hq₁ hq₂
-  infClosed' q₁ hq₁ q₂ hq₂ := conservative_gqMeet q₁ q₂ hq₁ hq₂
+  supClosed' q₁ hq₁ q₂ hq₂ := Conservative.sup q₁ q₂ hq₁ hq₂
+  infClosed' q₁ hq₁ q₂ hq₂ := Conservative.inf q₁ q₂ hq₁ hq₂
   compl_mem' hq R S := not_congr (hq R S)
   bot_mem' _ _ := Iff.rfl
 
@@ -42,19 +42,13 @@ def conservativeSubalgebra : BooleanSubalgebra (GQ α) where
     q ∈ conservativeSubalgebra ↔ Conservative q :=
   Iff.rfl
 
-/-- Conservative GQs: the subtype of `GQ α` satisfying conservativity, a Boolean algebra under
-the pointwise propositional operations, the order being pointwise implication. -/
+/-- The conservative GQs form the subtype of `GQ α` satisfying conservativity, a Boolean algebra
+under the pointwise propositional operations with pointwise implication as the order. -/
 abbrev ConsGQ (α : Type*) := conservativeSubalgebra (α := α)
 
 namespace ConsGQ
 
 variable {α : Type*}
-
-/-- The join of conservative GQs agrees with `gqJoin`. -/
-theorem sup_eq_gqJoin (q₁ q₂ : ConsGQ α) : (q₁ ⊔ q₂).1 = gqJoin q₁.1 q₂.1 := rfl
-
-/-- The meet of conservative GQs agrees with `gqMeet`. -/
-theorem inf_eq_gqMeet (q₁ q₂ : ConsGQ α) : (q₁ ⊓ q₂).1 = gqMeet q₁.1 q₂.1 := rfl
 
 @[simp] theorem sup_val (q₁ q₂ : ConsGQ α) (R S : α → Prop) :
     (q₁ ⊔ q₂).1 R S = (q₁.1 R S ∨ q₂.1 R S) := rfl

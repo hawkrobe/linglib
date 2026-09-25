@@ -155,8 +155,8 @@ instance : DecidablePred RequiresDou := fun w ↦ by unfold RequiresDou; cases w
 universe u
 
 /-- The readings available for a word, as generalized quantifiers on every finite domain.
-*Yīxiē* reads as `some_sem`, *méiyǒu* as `no_sem`, *shǎoshù* as `few_sem`, *duōshù* and
-*dàbùfèn* as `most_sem`, and *měi*, *suǒyǒu* and *quánbù* as `every_sem`; *hěnduō* has no reading,
+*Yīxiē* reads as `Quantifier.GQ.some`, *méiyǒu* as `no`, *shǎoshù* as `few`, *duōshù* and
+*dàbùfèn* as `most`, and *měi*, *suǒyǒu* and *quánbù* as `every`; *hěnduō* has no reading,
 its standard being a value judgment left to context ([kuo-yu-2012]). Speakers judging
 *dàbùfèn* accept its majority reading far more often than a relative one ([wang-2012]). -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where

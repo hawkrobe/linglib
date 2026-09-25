@@ -47,8 +47,8 @@ open Quantifier Quantifier.GQ Quantifier.NP Data.Examples
 the token reading, so a generic use of a bare name needs the naming predicate. -/
 theorem referentialist_generic_is_token {E : Type} [Fintype E] [DecidableEq E] (j : E)
     (VP : E → Prop) :
-    most_sem (ident j) VP ↔ VP j :=
-  most_sem_singleton_iff j VP
+    most (ident j) VP ↔ VP j :=
+  most_singleton_iff j VP
 
 /-! ### The paper's judgments -/
 

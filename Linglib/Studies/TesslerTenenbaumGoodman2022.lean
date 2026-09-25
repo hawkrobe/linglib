@@ -62,7 +62,7 @@ comparison with mReasoner and the Probability Heuristics Model are not formalize
 namespace TesslerTenenbaumGoodman2022
 
 open MeasureTheory ProbabilityTheory InformationTheory RSA
-open Quantifier.GQ (every_sem some_sem no_sem subalternation_a_i)
+open Quantifier.GQ (every some no subalternation_a_i)
 open scoped ENNReal
 
 /-! ### Syllogisms and Venn states -/
@@ -135,32 +135,32 @@ def Conclusion.isAC : Conclusion → Bool
   | _ => false
 
 instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
-    Decidable (every_sem R S) :=
+    Decidable (every R S) :=
   inferInstanceAs (Decidable (∀ r, R r → S r))
 
 instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
-    Decidable (some_sem R S) :=
+    Decidable (Quantifier.GQ.some R S) :=
   inferInstanceAs (Decidable (∃ r, R r ∧ S r))
 
 instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
-    Decidable (no_sem R S) :=
+    Decidable (no R S) :=
   inferInstanceAs (Decidable (∀ r, R r → ¬ S r))
 
 /-- *All Xs are Ys* on the modern reading, *every* over the populated X-regions. -/
 def syllAll (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (every_sem (fun r ↦ s r ∧ X r) fun r ↦ Y r)
+  decide (every (fun r ↦ s r ∧ X r) fun r ↦ Y r)
 
 /-- *Some Xs are Ys*, *some* over the populated X-regions. -/
 def syllSome (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (some_sem (fun r ↦ s r ∧ X r) fun r ↦ Y r)
+  decide (Quantifier.GQ.some (fun r ↦ s r ∧ X r) fun r ↦ Y r)
 
 /-- *Some Xs are not Ys*, *some* over the populated X-regions with the complement scope. -/
 def syllSomeNot (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (some_sem (fun r ↦ s r ∧ X r) fun r ↦ ¬ Y r)
+  decide (Quantifier.GQ.some (fun r ↦ s r ∧ X r) fun r ↦ ¬ Y r)
 
 /-- *No Xs are Ys* on the modern reading, *no* over the populated X-regions. -/
 def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (no_sem (fun r ↦ s r ∧ X r) fun r ↦ Y r)
+  decide (no (fun r ↦ s r ∧ X r) fun r ↦ Y r)
 
 /-- *All Xs are Ys* entails *some Xs are Ys* when some populated region is an X-region. -/
 theorem syllAll_imp_syllSome (s : VennState) (X Y : Region → Bool)

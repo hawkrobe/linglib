@@ -235,22 +235,22 @@ theorem existentialSubalgebra_le :
 
 /-- (99)–(100): *at least n* is existential. -/
 theorem existential_at_least_n [Fintype α] (n : ℕ) :
-    Existential (at_least_n_sem (α := α) n) := by
+    Existential (atLeast (α := α) n) := by
   classical
   intro R T
-  simp only [at_least_n_sem]
+  simp only [atLeast]
   rw [count_eq_decidable (λ x => (R x ∧ T x) ∧ True), count_eq_decidable (λ x => R x ∧ T x),
     count_congr_iff (Q := λ x => R x ∧ T x) λ _ => iff_of_eq (and_true _)]
 
 /-- *every* is not existential: with two lawyers, one of them a doctor, *every lawyer is a
 doctor* is false while *every lawyer who is a doctor is an individual* is true. -/
-theorem not_existential_every : ¬ Existential (every_sem : GQ (Fin 2)) := λ h =>
+theorem not_existential_every : ¬ Existential (every : GQ (Fin 2)) := λ h =>
   absurd ((h (λ _ => True) (· = 0)).mpr λ _ _ => trivial) λ h' =>
     absurd (h' 1 trivial) (by decide)
 
 open Classical in
 /-- (43): *the n*, the universal on a restrictor of exactly `n` individuals. -/
-noncomputable def theN [Fintype α] (n : ℕ) : GQ α := λ R T => count R = n ∧ every_sem R T
+noncomputable def theN [Fintype α] (n : ℕ) : GQ α := λ R T => count R = n ∧ every R T
 
 /-- *the two* is not existential: with three individuals, two of them with the scope
 property, *the two individuals have it* is false while *the two individuals who have it are
@@ -258,7 +258,7 @@ individuals* is true. -/
 theorem not_existential_theN : ¬ Existential (theN (α := Fin 3) 2) := by
   intro h
   have key := (h (λ _ => True) (· ≠ 2)).mpr
-  simp only [theN, every_sem, true_and, imp_true_iff, and_true, true_imp_iff] at key
+  simp only [theN, every, true_and, imp_true_iff, and_true, true_imp_iff] at key
   rw [count_eq_decidable (λ x : Fin 3 => x ≠ 2), count_eq_decidable (λ _ : Fin 3 => True)] at key
   simp only [count, countOn] at key
   revert key
