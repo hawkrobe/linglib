@@ -106,5 +106,394 @@
       ]
     ],
     "comment": "Heavy NP shift: shortens the verb-to-PP dependency while only modestly lengthening the verb-to-object one."
+  },
+  {
+    "id": "hahndegenfutrell2021_si1",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 1"
+    },
+    "language": "nucl1643",
+    "primaryText": "mi-naka-tta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mi",
+        "see"
+      ],
+      [
+        "naka",
+        "NEG"
+      ],
+      [
+        "tta",
+        "PST"
+      ]
+    ],
+    "translation": "did not see",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si2",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 2"
+    },
+    "language": "nucl1643",
+    "primaryText": "mi-taku-nai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mi",
+        "see"
+      ],
+      [
+        "taku",
+        "DESID"
+      ],
+      [
+        "nai",
+        "NEG"
+      ]
+    ],
+    "translation": "I do not wish to see",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si3",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 3"
+    },
+    "language": "nucl1643",
+    "primaryText": "mi-taku-naka-tta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mi",
+        "see"
+      ],
+      [
+        "taku",
+        "DESID"
+      ],
+      [
+        "naka",
+        "NEG"
+      ],
+      [
+        "tta",
+        "PST"
+      ]
+    ],
+    "translation": "I did not wish to see",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si4",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 4"
+    },
+    "language": "nucl1643",
+    "primaryText": "tat-ase-rare-ta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "tat",
+        "stand"
+      ],
+      [
+        "ase",
+        "CAUS"
+      ],
+      [
+        "rare",
+        "PASS"
+      ],
+      [
+        "ta",
+        "PST"
+      ]
+    ],
+    "translation": "was made to stand up",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Kaiser et al. (2013).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si5",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 5"
+    },
+    "language": "nucl1643",
+    "primaryText": "waraw-are-ta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "waraw",
+        "laugh"
+      ],
+      [
+        "are",
+        "PASS"
+      ],
+      [
+        "ta",
+        "PST"
+      ]
+    ],
+    "translation": "was laughed at",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Kaiser et al. (2013).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si6",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 6"
+    },
+    "language": "nucl1643",
+    "primaryText": "mi-rare-mase-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mi",
+        "see"
+      ],
+      [
+        "rare",
+        "PASS"
+      ],
+      [
+        "mase",
+        "POL"
+      ],
+      [
+        "n",
+        "NEG"
+      ]
+    ],
+    "translation": "is not seen",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si7",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 7"
+    },
+    "language": "nucl1643",
+    "primaryText": "mi-rare-mash-yoo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mi",
+        "see"
+      ],
+      [
+        "rare",
+        "PASS"
+      ],
+      [
+        "mash",
+        "POL"
+      ],
+      [
+        "yoo",
+        "HORT"
+      ]
+    ],
+    "translation": "will be seen",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si8",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 8"
+    },
+    "language": "nucl1643",
+    "primaryText": "de-naka-roo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "de",
+        "go.out"
+      ],
+      [
+        "naka",
+        "NEG"
+      ],
+      [
+        "roo",
+        "HORT"
+      ]
+    ],
+    "translation": "will not go out",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "hahndegenfutrell2021_si9",
+    "source": {
+      "bibkey": "hahn-degen-futrell-2021",
+      "paperLabel": "SI, Japanese, ordering table row 9"
+    },
+    "language": "nucl1643",
+    "primaryText": "mi-e-mase-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mi",
+        "see"
+      ],
+      [
+        "e",
+        "POT"
+      ],
+      [
+        "mase",
+        "POL"
+      ],
+      [
+        "n",
+        "NEG"
+      ]
+    ],
+    "translation": "cannot see",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "SI Japanese"
+      ],
+      [
+        "phenomenon",
+        "morphemeOrder"
+      ]
+    ],
+    "comment": "The supplement's table of relative orderings of the Japanese verb suffixes, segmented as there; the supplement takes the form from Vaccari and Vaccari's grammar (1938).",
+    "lgrConformance": "MORPHEME_ALIGNED"
   }
 ]

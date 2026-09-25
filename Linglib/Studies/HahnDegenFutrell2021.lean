@@ -34,11 +34,19 @@ paper's morpheme templates against Bybee's relevance hierarchy.
   the conditional entropy of a word given the `T` words before it.
 * `heavyNPShift_shorter`: heavy NP shift in the paper's example (2) lowers total dependency
   length.
+* `japanese_forms_licensed`: the suffixes of the supplement's Japanese forms are licensed by the
+  Fragment's template.
 * `japanese_violates_surveyed_relevance`: Bybee's survey ranks tense closer to the stem than
-  mood, and the Japanese suffix template is not sorted by the relevance hierarchy.
+  mood, and the Japanese suffix order is not sorted by the relevance hierarchy.
 
 ## Implementation notes
 
+* The Japanese suffix order is `Japanese.Verb.slots`, the order of the paper's text, its
+  supplement and its code, with the polite suffix before the desiderative; the paper's Table 2
+  lists the two the other way round. The supplement's forms attest neither order, the two
+  suffixes never sharing a form there.
+* The classification of the Japanese slots in Bybee's inventory, `bybeeCategory?`, is the
+  paper's; politeness, which Bybee does not rank, is left out rather than compared as agreement.
 * Time runs over `ℕ` from the initial memory state. Every quantity in the bound is an entropy of
   a finite block, so the paper's two-sided process enters through its one-sided restriction.
 * The initial memory state is an arbitrary random variable, so the bound holds without the
@@ -58,7 +66,7 @@ paper's morpheme templates against Bybee's relevance hierarchy.
 
 namespace HahnDegenFutrell2021
 
-open DependencyGrammar Morphology
+open Data.Examples DependencyGrammar Morphology
 open Morphology (Word)
 
 /-! ### Dependency locality -/
@@ -288,35 +296,75 @@ theorem information_locality_bound :
 
 end InformationLocality
 
-/-! ### Morpheme order and the relevance hierarchy -/
+/-! ### The Japanese suffix template
 
-/-- The template's suffix order is sorted by the relevance hierarchy. -/
-def _root_.Morphology.AffixTemplate.suffixRespectsRelevance
-    (t : AffixTemplate MorphCategory) : Prop :=
-  RespectsRelevanceHierarchy t.suffixSlots
+The supplement tabulates the relative orders of the Japanese verb suffixes in attested forms,
+each segmented into a stem and its suffixes. Every suffix gloss names a suffix of the Fragment,
+and the suffixes of every form are licensed by its template. -/
 
-instance (t : AffixTemplate MorphCategory) : Decidable t.suffixRespectsRelevance :=
-  inferInstanceAs (Decidable (RespectsRelevanceHierarchy _))
+/-- The paper's glosses of the Japanese suffixes, as suffixes of the Fragment. -/
+def japaneseSuffix? : String → Option (Σ σ, Japanese.Verb.Exponent σ)
+  | "CAUS" => some ⟨_, .sase⟩
+  | "PASS" => some ⟨_, .rare⟩
+  | "POT" => some ⟨_, .potential⟩
+  | "POL" => some ⟨_, .mas⟩
+  | "DESID" => some ⟨_, .tai⟩
+  | "NEG" => some ⟨_, .na⟩
+  | "PST" => some ⟨_, .ta⟩
+  | "HORT" => some ⟨_, .yoo⟩
+  | _ => none
+
+/-- The suffixes a row's gloss line names after the stem. -/
+def japaneseSuffixes (r : LinguisticExample) : List (Σ σ, Japanese.Verb.Exponent σ) :=
+  r.glossLine.tail.filterMap japaneseSuffix?
+
+/-- The supplement's Japanese forms. -/
+def japaneseForms : List LinguisticExample :=
+  Examples.all.filter (·.language = "nucl1643")
+
+/-- Every gloss after the stem of each of the supplement's Japanese forms names a suffix of
+the Fragment, and the suffixes of the form are licensed by `Japanese.Verb.template`. -/
+theorem japanese_forms_licensed :
+    ∀ r ∈ japaneseForms, (japaneseSuffixes r).length + 1 = r.glossLine.length ∧
+      Japanese.Verb.Licensed (japaneseSuffixes r) := by
+  decide
+
+/-! ### Morpheme order and the relevance hierarchy
+
+The paper classifies its Japanese slots as it lists them: *suru* is derivation, the causative
+valence, the passive and the potential voice, the desiderative mood, and the final inflection
+tense, aspect, mood and finiteness, compared here as tense. Politeness has no place in
+[bybee-1985]'s inventory and is left out of the comparison. -/
+
+/-- The paper's classification of the Japanese suffix positions in [bybee-1985]'s inventory. -/
+def bybeeCategory? : Japanese.Verb.Slot → Option MorphCategory
+  | .derivation => some .derivation
+  | .valence => some .valence
+  | .voice => some .voice
+  | .politeness => none
+  | .desiderative => some .mood
+  | .negation => some .negation
+  | .inflection => some .tense
+
+/-- The Japanese suffix order in Bybee's vocabulary. -/
+def japaneseCategories : List MorphCategory := Japanese.Verb.slots.filterMap bybeeCategory?
 
 /-- Sesotho's suffixes, valence, voice, tense, mood, and the final interrogative or relative
 slot, are sorted by the relevance hierarchy, which on the surveyed categories is
 [bybee-1985]'s order, `Bybee1985.survey_order_iso_relevance`. -/
-theorem sesotho_suffixes_respect_relevance :
-    Sesotho.verbAffixTemplate.suffixRespectsRelevance := by decide
-
-/-- Japanese respects the hierarchy up to its mood slot, over derivation, valence, voice, and
-mood. -/
-theorem japanese_partial_relevance :
-    RespectsRelevanceHierarchy [MorphCategory.derivation, .valence, .voice, .mood] := by
+theorem sesotho_suffixes_respect_relevance : Sesotho.verbAffixTemplate.suffixSlots.SortedLE := by
   decide
 
+/-- Japanese is sorted by the hierarchy up to its final inflection: derivation, valence, voice,
+mood and negation. -/
+theorem japanese_partial_relevance : japaneseCategories.dropLast.SortedLE := by decide
+
 /-- [bybee-1985]'s survey ranks tense closer to the stem than mood,
-`Bybee1985.SurveyedCloser`, yet the Japanese desiderative, a mood suffix, precedes tense and
-negation, so the full suffix order is not sorted by the relevance hierarchy. The paper's
-"broadly in agreement" is not agreement. -/
+`Bybee1985.SurveyedCloser`, yet the Japanese desiderative, a mood suffix, precedes tense, so
+the suffix order is not sorted by the relevance hierarchy. The paper's "broadly in agreement"
+is not agreement. -/
 theorem japanese_violates_surveyed_relevance :
-    Bybee1985.SurveyedCloser .tense .mood ∧
-      ¬ Japanese.verbAffixTemplate.suffixRespectsRelevance := by
+    Bybee1985.SurveyedCloser .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
   decide
 
 end HahnDegenFutrell2021

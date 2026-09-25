@@ -15,7 +15,7 @@ does so without a single counterexample.
 
 The order those counts determine is then shown to be the substrate's relevance order rather than a
 table chosen to match it: on the four categories the survey covers, the relation derived from the
-counts and the substrate's `RelevanceLT` are the same order. Fusion, the third claim, is
+counts and the substrate's relevance order are the same. Fusion, the third claim, is
 qualitative in the source.
 
 Chapter 5's notion of lexical strength closes the file: an irregular verb keeps its irregularity
@@ -36,10 +36,10 @@ where its token frequency is high, and the Strong Verbs that regularized are the
   relevance and generality frequency predictions.
 * `predicted_outnumbers_counter`, `aspect_categorical_against_tense_and_mood` — the order
   predictions.
-* `survey_order_iso_relevance` — on the surveyed categories `SurveyedCloser` and the substrate
-  `RelevanceLT` coincide via `toMorphCategory`: the hierarchy is the order the §6 survey forces,
-  not a stipulated table.
-* `bybeeSurveyedOrder_respects_hierarchy` — closes the loop to `RespectsRelevanceHierarchy`.
+* `survey_order_iso_relevance` — on the surveyed categories `SurveyedCloser` and the substrate's
+  `<` coincide via `toMorphCategory`: the hierarchy is the order the §6 survey forces, not a
+  stipulated table.
+* `bybeeSurveyedOrder_respects_hierarchy` — the surveyed order is sorted by the hierarchy.
 * `strong_verbs_higher_frequency_than_regularized` — the Ch 5 §6 diachronic
   claim: still-Strong verbs have a strictly higher mean token frequency than
   the regularized ones.
@@ -246,18 +246,17 @@ def toMorphCategory : BybeeCategory → MorphCategory
 /-- The substrate relevance order is strictly increasing along the six Ch 2 §3
 categories: it reproduces valence < voice < aspect < tense < mood < agreement. -/
 theorem substrate_matches_bybee_hierarchy :
-    List.Pairwise MorphCategory.RelevanceLT
-      ([BybeeCategory.valence, .voice, .aspect, .tense, .mood, .personAgr].map
-        toMorphCategory) := by
+    ([BybeeCategory.valence, .voice, .aspect, .tense, .mood, .personAgr].map
+      toMorphCategory).SortedLT := by
   decide
 
 /-! ### Grounding the hierarchy in the survey
 
 On the four categories Bybee surveyed (aspect, tense, mood, person), the
 substrate order is not a free choice: `SurveyedCloser`, derived from
-`orderPairs`, coincides with `RelevanceLT` via `toMorphCategory`
-(`survey_order_iso_relevance`). So a `RespectsRelevanceHierarchy` check over
-these categories rests on an order isomorphism, not a stipulated table. -/
+`orderPairs`, coincides with the substrate's `<` via `toMorphCategory`
+(`survey_order_iso_relevance`). So a sortedness check over these categories
+rests on an order isomorphism, not a stipulated table. -/
 
 /-- `a` is *surveyed closer to the stem than* `b` when some tested Ch 2 §6 pair
 predicts `a` closer than `b` and the language counts confirm that direction
@@ -295,12 +294,12 @@ theorem surveyedCloser_total : ∀ a b : BybeeCategory,
   decide
 
 /-- Order isomorphism: on the surveyed categories, `SurveyedCloser` and the
-substrate `RelevanceLT` coincide via `toMorphCategory`. The hierarchy there is
+substrate's `<` coincide via `toMorphCategory`. The hierarchy there is
 not merely consistent with Bybee's evidence — it *is* the order the §6 survey
 determines. -/
 theorem survey_order_iso_relevance : ∀ a b : BybeeCategory,
     Surveyed a → Surveyed b →
-      (SurveyedCloser a b ↔ (toMorphCategory a).RelevanceLT (toMorphCategory b)) := by
+      (SurveyedCloser a b ↔ toMorphCategory a < toMorphCategory b) := by
   decide
 
 /-- The stem-outward ordering of the surveyed categories — a literal, but
@@ -315,10 +314,10 @@ theorem bybeeSurveyedOrder_sorted : bybeeSurveyedOrder.Pairwise SurveyedCloser :
 theorem bybeeSurveyedOrder_complete : ∀ c : BybeeCategory,
     Surveyed c → c ∈ bybeeSurveyedOrder := by decide
 
-/-- The data-derived surveyed order satisfies the substrate predicate, closing
-the loop between Bybee's §6 evidence and `RespectsRelevanceHierarchy`. -/
+/-- The data-derived surveyed order is sorted by the substrate's relevance order, closing
+the loop between Bybee's §6 evidence and the hierarchy. -/
 theorem bybeeSurveyedOrder_respects_hierarchy :
-    RespectsRelevanceHierarchy (bybeeSurveyedOrder.map toMorphCategory) := by decide
+    (bybeeSurveyedOrder.map toMorphCategory).SortedLE := by decide
 
 /-! ### Lexical strength
 
