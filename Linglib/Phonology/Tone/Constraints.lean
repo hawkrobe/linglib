@@ -43,7 +43,7 @@ Directionality is **not** a separate kind of constraint. Following [lamont-2022b
 scalar float-flag constraints (`starFloatBlock`), whose coordinate `i` flags whether
 autosegment `i` is floating, so splicing the block into a ranking and comparing under the
 canonical lexicographic profile order recovers the directional EVAL exactly
-(`Core.Optimization.Evaluation.lexLE_ofFn`). The block is laid out left-to-right for
+(`List.ofFn_le_ofFn_iff`). The block is laid out left-to-right for
 `*FLOAT^→` (`starFloatBlock`) or right-to-left for `*FLOAT^←` (`starFloatBlockRev`);
 `starFloatCount` is the count collapse (parallel `*FLOAT`). They agree on at most one
 floating tone but diverge as the set grows — a single count cannot tell "delete

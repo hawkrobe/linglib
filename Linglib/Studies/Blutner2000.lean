@@ -2,6 +2,7 @@ module
 
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Semantics.Presupposition.Accommodation
+public import Mathlib.Data.Fintype.Pi
 
 /-!
 # Blutner (2000): Some aspects of optimality in natural language interpretation
@@ -59,7 +60,7 @@ alternative exists, Zeevat's generalization.
 
 namespace Blutner2000
 
-open BidirectionalOT Core.Optimization.Evaluation
+open BidirectionalOT
 
 /-! ### Total blocking and the division of pragmatic labour
 
@@ -90,7 +91,7 @@ def situationMarkedness : Form × Situation → ℕ
   | (_, .stereotypical) => 0
 
 /-- The tableau's ranking, F over C. -/
-def tableau : Form × Situation → LexNatList := profile [formMarkedness, situationMarkedness]
+def tableau : Form × Situation → List ℕ := profile [formMarkedness, situationMarkedness]
 
 /-- The full generator: both forms express both situations. -/
 def fullGen : Finset (Form × Situation) :=

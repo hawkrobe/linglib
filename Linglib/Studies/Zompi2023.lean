@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Studies.ChristopoulosZompi2023
-public import Linglib.Core.Optimization.Evaluation
+public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.Data.Finset.Powerset
 
 /-!
@@ -17,7 +17,7 @@ number decompositions of `ChristopoulosZompi2023`, with candidates carried by th
 type as that study's Subset Principle, so that only the competition changes.
 
 Evaluation is lexicographic minimization of the ranked violation vector (`mem_eval_iff`), the
-engine of `OptimalityTheory.Tableau` (`mem_eval_iff_lexMins`). On it, the two minimally
+engine of `OptimalityTheory.Tableau` (`mem_eval_iff_optimal`). On it, the two minimally
 compliant patterns of the case-number paradigm are derived from opposite rankings of the same
 two candidate specifications, East Frisian with ABA down the nominative column and Malayalam
 with ABA down the plural row (`eastFrisian_pattern`, `malayalam_pattern`); the checkerboard
@@ -132,19 +132,16 @@ instance [DecidableEq F] {rk : List Con} {v : List (Cand F)} {c : ZCell}
 /-! ### The shared lexicographic-minimization core
 
 `eval` is the strict-domination filter cascade; the phonology OT engine is
-lexicographic arg-min over a fixed-length violation profile. Its foundation is
-`Core.Optimization.Evaluation.LexMinProblem` — a finite candidate set scored by
-a `Lex (Fin n → ℕ)` profile, exposing the winner set `LexMinProblem.lexMins`;
-`OptimalityTheory.Tableau` is a definitional alias for it (`Tableau := LexMinProblem`,
-`Tableau.optimal := lexMins`). `eval` and this engine are one object, not two
-parallel engines: `mem_eval_iff` characterizes an Eval survivor as a
-lexicographic minimizer of the ranked violation vector, and
-`mem_eval_iff_lexMins` reads that off the `LexMinProblem` whose candidates are
-`v` and whose profile is that vector. So morphological Max/Dep Eval and
-phonological OT provably share the same lexicographic core. -/
+lexicographic arg-min over a fixed-length violation profile, `OptimalityTheory.Tableau`, a
+finite candidate set scored by a `Lex (Fin n → ℕ)` profile with the winner set
+`Tableau.optimal`. `eval` and this engine are one object, not two parallel engines:
+`mem_eval_iff` characterizes an Eval survivor as a lexicographic minimizer of the ranked
+violation vector, and `mem_eval_iff_optimal` reads that off the tableau whose candidates are
+`v` and whose profile is that vector. So morphological Max/Dep Eval and phonological OT
+provably share the same lexicographic core. -/
 
 section SharedCore
-open Core.Optimization.Evaluation LexMinProblem
+open OptimalityTheory
 
 /-- The candidate's violation vector at a cell, ordered by the ranking — the
 `List ℕ` reading of the OT `ViolationProfile`. -/
@@ -182,30 +179,30 @@ theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
 cascade iff its ranked violation vector is lexicographically ≤ every rival's:
 the strict-domination cut sequence computes exactly the lex-min set. -/
 theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F} :
-    r ∈ eval rk v c ↔ r ∈ v ∧ ∀ s ∈ v, LexLE (rankedViols rk c r) (rankedViols rk c s) := by
+    r ∈ eval rk v c ↔ r ∈ v ∧ ∀ s ∈ v, rankedViols rk c r ≤ rankedViols rk c s := by
   induction rk generalizing v with
-  | nil => simp [eval, LexLE]
+  | nil => simp [eval]
   | cons C rk ih =>
     rw [show eval (C :: rk) v c = eval rk (cut c v C) c from rfl, ih]
     constructor
     · rintro ⟨hrcut, htail⟩
       obtain ⟨hrv, hrmin⟩ := mem_cut_iff.mp hrcut
       refine ⟨hrv, λ s hs => ?_⟩
-      rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff]
+      rw [rankedViols_cons, rankedViols_cons, List.cons_le_cons_iff']
       rcases lt_or_eq_of_le (hrmin s hs) with hlt | heq
       · exact Or.inl hlt
       · exact Or.inr ⟨heq, htail s (mem_cut_iff.mpr ⟨hs, λ t ht => heq ▸ hrmin t ht⟩)⟩
     · rintro ⟨hrv, hcons⟩
       have hrmin : ∀ s ∈ v, viol C c r ≤ viol C c s := λ s hs => by
         have := hcons s hs
-        rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff] at this
+        rw [rankedViols_cons, rankedViols_cons, List.cons_le_cons_iff'] at this
         rcases this with hlt | ⟨heq, _⟩
         · exact le_of_lt hlt
         · exact le_of_eq heq
       refine ⟨mem_cut_iff.mpr ⟨hrv, hrmin⟩, λ s hs => ?_⟩
       obtain ⟨hsv, hsmin⟩ := mem_cut_iff.mp hs
       have := hcons s hsv
-      rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff] at this
+      rw [rankedViols_cons, rankedViols_cons, List.cons_le_cons_iff'] at this
       rcases this with hlt | ⟨_, htail⟩
       · exact absurd (hsmin r hrv) (not_le_of_gt hlt)
       · exact htail
@@ -220,28 +217,25 @@ theorem rankedViols_eq_ofFn (rk : List Con) (c : ZCell) (r : Cand F) :
     rankedViols rk c r = List.ofFn (λ i : Fin rk.length => viol (rk.get i) c r) :=
   map_eq_ofFn_get rk (λ C => viol C c r)
 
-/-- The Eval competition as a `LexMinProblem` — the engine `OptimalityTheory.Tableau`
-aliases: candidate set `v`, profile the ranked violation vector (rank position `i`
-reading the `i`-th constraint as a violation count via `lexFinNatOf`). This is a
-phonological OT tableau with morphological Max/Dep constraints. -/
+/-- The Eval competition as an `OptimalityTheory.Tableau`: candidate set `v`, profile the
+ranked violation vector, rank position `i` reading the `i`-th constraint as a violation count.
+This is a phonological OT tableau with morphological Max/Dep constraints. -/
 def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : ZCell)
-    (hv : v ≠ []) : LexMinProblem (Cand F) rk.length where
+    (hv : v ≠ []) : Tableau (Cand F) rk.length where
   candidates := v.toFinset
-  profile := lexFinNatOf (λ i => viol (rk.get i) c)
+  profile r := toLex fun i ↦ viol (rk.get i) c r
   nonempty := let ⟨x, hx⟩ := List.exists_mem_of_ne_nil v hv; ⟨x, List.mem_toFinset.mpr hx⟩
 
-/-- **Eval and OT are one engine.** An Eval survivor is exactly a lex-minimizer
-of the OT tableau `zTableau`: the morphological Max/Dep competition *is* a
-phonological OT tableau (`LexMinProblem`) over the shared
-lexicographic-minimization core. -/
-theorem mem_eval_iff_lexMins [DecidableEq F] {rk : List Con} {v : List (Cand F)}
+/-- **Eval and OT are one engine.** An Eval survivor is exactly a winner of the OT tableau
+`zTableau`: the morphological Max/Dep competition *is* a phonological OT tableau over the
+shared lexicographic order. -/
+theorem mem_eval_iff_optimal [DecidableEq F] {rk : List Con} {v : List (Cand F)}
     {c : ZCell} {r : Cand F} (hv : v ≠ []) :
-    r ∈ eval rk v c ↔ r ∈ (zTableau rk v c hv).lexMins := by
-  rw [mem_eval_iff, LexMinProblem.mem_lexMins_iff]
-  simp only [LexMinProblem.IsLexMin]
-  refine and_congr List.mem_toFinset.symm (forall_congr' λ s => ?_)
+    r ∈ eval rk v c ↔ r ∈ (zTableau rk v c hv).optimal := by
+  rw [mem_eval_iff, Tableau.mem_optimal_iff]
+  refine and_congr List.mem_toFinset.symm (forall_congr' fun s ↦ ?_)
   refine imp_congr List.mem_toFinset.symm ?_
-  rw [rankedViols_eq_ofFn, rankedViols_eq_ofFn, lexLE_ofFn]
+  rw [rankedViols_eq_ofFn, rankedViols_eq_ofFn, List.ofFn_le_ofFn_iff]
   rfl
 
 end SharedCore

@@ -50,7 +50,7 @@ convergence checked at the last step; the factorial typology of §4 is not forma
 
 namespace Lamont2022c
 
-open Prosody Constraints OptimalityTheory Core.Optimization.Evaluation
+open Prosody Constraints OptimalityTheory
 
 variable {S : Type*} [DecidableEq S]
 
@@ -134,14 +134,14 @@ def strays (n : ℕ) : Footing Unit := List.replicate n stray
 
 /-- `Parse(σ)⇒` orders the placements of a trochee, the leftmost best ((13a)). -/
 theorem parseLR_orders_trochees :
-    LexLT (vec (parseLR 4) [troch, stray, stray]) (vec (parseLR 4) [stray, troch, stray]) ∧
-      LexLT (vec (parseLR 4) [stray, troch, stray]) (vec (parseLR 4) [stray, stray, troch]) := by
+    vec (parseLR 4) [troch, stray, stray] < vec (parseLR 4) [stray, troch, stray] ∧
+      vec (parseLR 4) [stray, troch, stray] < vec (parseLR 4) [stray, stray, troch] := by
   decide +kernel
 
 /-- `Parse(σ)⇐` orders them the other way, the rightmost best ((14a)). -/
 theorem parseRL_orders_trochees :
-    LexLT (vec (parseRL 4) [stray, stray, troch]) (vec (parseRL 4) [stray, troch, stray]) ∧
-      LexLT (vec (parseRL 4) [stray, troch, stray]) (vec (parseRL 4) [troch, stray, stray]) := by
+    vec (parseRL 4) [stray, stray, troch] < vec (parseRL 4) [stray, troch, stray] ∧
+      vec (parseRL 4) [stray, troch, stray] < vec (parseRL 4) [troch, stray, stray] := by
   decide +kernel
 
 /-- `Parse(σ)⇒ ≫ Trochee ≫ Iamb`: Murinbata's exhaustive left-to-right trochees ((21), (23),

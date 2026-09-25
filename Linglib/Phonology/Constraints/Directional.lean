@@ -19,7 +19,7 @@ are ordered lexicographically, which is exactly how candidates are ordered with 
 to an entire constraint set in OT". So a directional constraint with **single-segment
 loci** over a **length-preserving** GEN *is* a position-indexed block of binary
 constraints, spliced into a ranking and compared under the canonical `ViolationProfile`
-lex order (`Core.Optimization.Evaluation.lexLE_ofFn`) — no new mechanism beyond the
+lex order (`List.ofFn_le_ofFn_iff`) — no new mechanism beyond the
 `CON`/`ViolationProfile` substrate already present.
 
 `directionalBlock n locus` is that block: at each position `i < n` it flags whether
@@ -56,7 +56,7 @@ for positions `i < n`. Spliced into a ranking and compared under the canonical l
 profile this is directional EVAL — `⇒` (left-to-right) for the forward block, `⇐` for
 `.reverse`. The block's `i`-th coordinate is exactly the directional violation vector's
 `i`-th entry, so the spliced profile equals the directional one
-(`Core.Optimization.Evaluation.lexLE_ofFn`). -/
+(`List.ofFn_le_ofFn_iff`). -/
 def directionalBlock {C : Type*} (n : ℕ) (locus : Fin n → C → Prop)
     [∀ i, DecidablePred (locus i)] : List (Constraint C) :=
   (List.finRange n).map (fun i => Constraint.binary (locus i))

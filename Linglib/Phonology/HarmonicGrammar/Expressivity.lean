@@ -4,7 +4,6 @@ public import Linglib.Phonology.Constraints.Defs
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Core.Optimization.Evaluation
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.Optimization.Semiring
 public import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
@@ -50,7 +49,7 @@ high-weight one, is HG-expressible but not OT-expressible.
 
 namespace HarmonicGrammar
 
-open Core Constraints Core.Optimization.Evaluation Real Finset Filter Topology
+open Core Constraints Real Finset Filter Topology
 open OptimalityTheory
 
 /-! ### OT → HG weights

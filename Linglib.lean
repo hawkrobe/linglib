@@ -211,7 +211,6 @@ import Linglib.Core.Optimization.Decoder
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
 import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
-import Linglib.Core.Optimization.Evaluation
 import Linglib.Core.Optimization.Linearization
 import Linglib.Core.Optimization.NoiseKernel
 import Linglib.Core.Optimization.PermSubsetCombinatorics
