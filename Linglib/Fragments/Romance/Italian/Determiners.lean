@@ -11,7 +11,7 @@ This file records the Italian determiner lexicon. The quantificational determine
 carrier `QuantityWord`, whose masculine and feminine forms are `QuantityWord.form` and
 `QuantityWord.feminine`, the invariant *ogni* and *qualche* having one form, and whose members
 project to a `Quantifier` record and denote the readings the literature makes available for
-them, so `⟦QuantityWord.tutti⟧` is `{every_sem}` and *molti*, like English *many*, denotes
+them, so `⟦QuantityWord.tutti⟧` is `{every}` and *molti*, like English *many*, denotes
 `∅`. The definite article *il*, *lo*, *la* and plural *i*, *gli*, *le* is one syncretic definite
 over the [schwarz-2009] use types, the indefinite is *un*, *uno*, *una*, and the partitive *del*,
 *dello*, *della* and plural *dei*, *degli*, *delle* is the indefinite of mass nouns and plurals.
@@ -114,8 +114,8 @@ theorem feminine_eq_form_iff (w : QuantityWord) :
 
 universe u
 
-/-- The readings available for a word. *Ogni* and *tutti* read as `every_sem`, *qualche* and
-*alcuni* as `some_sem`, *nessuno* as `no_sem` and *pochi* as `few_sem`; *molti* has no reading,
+/-- The readings available for a word. *Ogni* and *tutti* read as `every`, *qualche* and
+*alcuni* as `Quantifier.GQ.some`, *nessuno* as `no` and *pochi* as `few`; *molti* has no reading,
 its standard being contextual like that of English *many*. -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote

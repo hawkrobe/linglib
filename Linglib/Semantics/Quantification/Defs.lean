@@ -24,19 +24,23 @@ denotations are in `Quantification/Basic.lean` and the type ⟨1⟩ quantifiers 
 
 * `GQ`, `GQ.Family`, `NP`: quantifier denotations on a type, on every finite type, and of
   type ⟨1⟩.
-* `GQ.Conservative`, `GQ.ScopeUpwardMono`, `GQ.RestrictorUpwardMono`, `GQ.QSymmetric`,
-  `GQ.PositiveStrong`: the properties of Barwise and Cooper.
+* `GQ.Conservative`, `GQ.ScopeMonotone`, `GQ.RestrictorMonotone`, `GQ.PositiveStrong`: the
+  properties of Barwise and Cooper; symmetry is `Std.Symm`.
 * `GQ.UpSEMon`, `GQ.Smooth`, `GQ.LeftAntiAdditive`: the left monotonicities of Peters and
   Westerståhl.
 * `GQ.QuasiReflexive`, `GQ.Filtrating`, `GQ.QuantityInvariant`: van Benthem's relational
   properties and quantity invariance.
-* `GQ.outerNeg`, `GQ.innerNeg`, `GQ.dualQ`, `GQ.adjRestrict`: the operations.
+* `GQ.innerNeg`, `GQ.dual`, `GQ.adjRestrict`: the operations; the outer negation, meet and join
+  are the Boolean algebra's `ᶜ`, `⊓` and `⊔`.
 * `NP.individual`, `NP.LivesOn`: the Montague lift and the live-on property.
 
 ## Implementation notes
 
 Extension, the independence of a quantifier from the ambient universe, holds by construction,
-since a denotation is given on one type. Decidability of the concrete denotations is recovered
+since a denotation is given on one type. A quantifier is a binary relation on predicates, so the
+classical relational properties are the core relation classes `Std.Symm`, `IsTrans`,
+`Std.Antisymm`, `Std.Asymm` and `Std.Trichotomous` applied to it, and the monotonicities are
+`Monotone` and `Antitone` of its sections. Decidability of the concrete denotations is recovered
 pointwise from `[Fintype α]` and decidable restrictor and scope.
 
 ## References
@@ -80,15 +84,13 @@ determiner denotes a conservative quantifier. -/
 def Conservative (q : GQ α) : Prop :=
   ∀ (R S : α → Prop), q R S ↔ q R (fun x => R x ∧ S x)
 
-/-- A quantifier is scope-upward monotone when `B ⊆ B'` and `Q(A, B)` give `Q(A, B')`, which is
-`∀ R, Monotone (q R)` under the pointwise ordering. -/
-def ScopeUpwardMono (q : GQ α) : Prop :=
-  ∀ (R S S' : α → Prop), (∀ x, S x → S' x) → q R S → q R S'
+/-- A quantifier is scope monotone when `B ⊆ B'` and `Q(A, B)` give `Q(A, B')`, that is, when
+every section `q R` is `Monotone` under the pointwise ordering. -/
+def ScopeMonotone (q : GQ α) : Prop := ∀ R, Monotone (q R)
 
-/-- A quantifier is scope-downward monotone when `B ⊆ B'` and `Q(A, B')` give `Q(A, B)`, which is
-`∀ R, Antitone (q R)`. -/
-def ScopeDownwardMono (q : GQ α) : Prop :=
-  ∀ (R S S' : α → Prop), (∀ x, S x → S' x) → q R S' → q R S
+/-- A quantifier is scope antitone when `B ⊆ B'` and `Q(A, B')` give `Q(A, B)`, that is, when
+every section `q R` is `Antitone`. -/
+def ScopeAntitone (q : GQ α) : Prop := ∀ R, Antitone (q R)
 
 /-- A quantifier satisfies the intersection condition when `Q(A, B)` depends only on `A ∩ B`. -/
 def IntersectionCondition (q : GQ α) : Prop :=
@@ -96,20 +98,13 @@ def IntersectionCondition (q : GQ α) : Prop :=
     (∀ x, (R x ∧ S x) ↔ (R' x ∧ S' x)) →
     (q R S ↔ q R' S')
 
-/-- A quantifier is symmetric when `Q(A, B) ↔ Q(B, A)`. Under conservativity this is the
-intersection condition. -/
-def QSymmetric (q : GQ α) : Prop :=
-  ∀ (R S : α → Prop), q R S ↔ q S R
+/-- A quantifier is restrictor monotone, or persistent, when `A ⊆ A'` and `Q(A, B)` give
+`Q(A', B)`, that is, when `q · S` is `Monotone` for every scope `S`. -/
+def RestrictorMonotone (q : GQ α) : Prop := ∀ S, Monotone (q · S)
 
-/-- A quantifier is restrictor-upward monotone, or persistent, when `A ⊆ A'` and `Q(A, B)` give
-`Q(A', B)`. -/
-def RestrictorUpwardMono (q : GQ α) : Prop :=
-  ∀ (R R' S : α → Prop), (∀ x, R x → R' x) → q R S → q R' S
-
-/-- A quantifier is restrictor-downward monotone, or anti-persistent, when `A ⊆ A'` and
-`Q(A', B)` give `Q(A, B)`. -/
-def RestrictorDownwardMono (q : GQ α) : Prop :=
-  ∀ (R R' S : α → Prop), (∀ x, R x → R' x) → q R' S → q R S
+/-- A quantifier is restrictor antitone, or anti-persistent, when `A ⊆ A'` and `Q(A', B)` give
+`Q(A, B)`, that is, when `q · S` is `Antitone` for every scope `S`. -/
+def RestrictorAntitone (q : GQ α) : Prop := ∀ S, Antitone (q · S)
 
 /-! ### Strength -/
 
@@ -186,19 +181,9 @@ def RightAntiAdditive (q : GQ α) : Prop :=
 /-! ### Relational properties
 
 Van Benthem reads a quantifier as a relation between predicates and asks which relational
-properties it has; *all* is the transitive antisymmetric one and *not all* the linear one. -/
-
-/-- A quantifier is transitive when `Q(A, B)` and `Q(B, C)` give `Q(A, C)`. -/
-def QTransitive (q : GQ α) : Prop :=
-  ∀ (A B C : α → Prop), q A B → q B C → q A C
-
-/-- A quantifier is antisymmetric when `Q(A, B)` and `Q(B, A)` give `A = B`. -/
-def QAntisymmetric (q : GQ α) : Prop :=
-  ∀ (A B : α → Prop), q A B → q B A → A = B
-
-/-- A quantifier is linear when any two predicates are equal or related in one direction. -/
-def QLinear (q : GQ α) : Prop :=
-  ∀ (A B : α → Prop), A = B ∨ q A B ∨ q B A
+properties it has. The classical ones are the core relation classes: *all* is `IsTrans` and
+`Std.Antisymm`, *some* and *no* are `Std.Symm`, and *not all* is `Std.Trichotomous`. The
+properties below are the ones the theory of quantifiers adds. -/
 
 /-- A quantifier is quasi-reflexive when `Q(A, B)` gives `Q(A, A)`, as for *some*. -/
 def QuasiReflexive (q : GQ α) : Prop :=
@@ -213,12 +198,8 @@ which is the transitivity of its complement. -/
 def AlmostConnected (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop), q A B → q A C ∨ q C B
 
-/-- A quantifier is asymmetric when `Q(A, B)` excludes `Q(B, A)`. -/
-def QAsymmetric (q : GQ α) : Prop :=
-  ∀ (A B : α → Prop), q A B → ¬ q B A
-
 /-- A quantifier is circular when `Q(A, B)` and `Q(B, C)` give `Q(C, A)`. -/
-def QCircular (q : GQ α) : Prop :=
+def Circular (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop), q A B → q B C → q C A
 
 /-- A quantifier is right continuous when `Q(A, B₁)`, `Q(A, B₂)` and `B₁ ⊆ B ⊆ B₂` give
@@ -234,9 +215,9 @@ def ScopeIntersective (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop),
     q A B → q A C → q A (fun x => B x ∧ C x)
 
-/-- A quantifier is filtrating when it is scope-upward monotone and scope-intersective, so that
-its scopes at a fixed restrictor form a filter. -/
-def Filtrating (q : GQ α) : Prop := ScopeUpwardMono q ∧ ScopeIntersective q
+/-- A quantifier is filtrating when it is scope monotone and scope-intersective, so that its
+scopes at a fixed restrictor form a filter. -/
+def Filtrating (q : GQ α) : Prop := ScopeMonotone q ∧ ScopeIntersective q
 
 /-! ### Invariance -/
 
@@ -249,37 +230,26 @@ def QuantityInvariant (q : GQ α) : Prop :=
     (∀ x, A (f x) ↔ A' x) → (∀ x, B (f x) ↔ B' x) →
     (q A B ↔ q A' B')
 
-/-! ### Negations and the dual -/
+/-! ### The Boolean algebra, the negations and the dual
 
-/-- The outer negation of a quantifier, `(~Q)(A, B) = ¬ Q(A, B)`, is its Boolean complement,
-named for the duality square it forms with the inner negation and the dual. -/
-abbrev outerNeg (q : GQ α) : GQ α := qᶜ
+The outer negation of a quantifier is its complement `qᶜ`, and determiner conjunction and
+disjunction are the meet `f ⊓ g` and join `f ⊔ g` of the Boolean algebra `GQ α`; the lemmas
+below are their pointwise normal forms. -/
 
-@[simp] theorem outerNeg_apply (q : GQ α) (R S : α → Prop) : outerNeg q R S = ¬ q R S := rfl
+@[simp] theorem compl_apply (q : GQ α) (R S : α → Prop) : qᶜ R S = ¬ q R S := rfl
+
+@[simp] theorem inf_apply (f g : GQ α) (R S : α → Prop) : (f ⊓ g) R S = (f R S ∧ g R S) := rfl
+
+@[simp] theorem sup_apply (f g : GQ α) (R S : α → Prop) : (f ⊔ g) R S = (f R S ∨ g R S) := rfl
 
 /-- The inner negation of a quantifier, `(Q~)(A, B) = Q(A, ¬ B)`. -/
 def innerNeg (q : GQ α) : GQ α :=
   fun R S => q R (fun x => ¬ S x)
 
-/-- The dual of a quantifier, `Q̌ = ~(Q~)`, so that the dual of *every* is *some*. -/
-def dualQ (q : GQ α) : GQ α :=
-  outerNeg (innerNeg q)
+/-- The dual of a quantifier, `Q̌ = (Q~)ᶜ`, so that the dual of *every* is *some*. -/
+def dual (q : GQ α) : GQ α := (innerNeg q)ᶜ
 
-/-! ### Boolean operations and restriction -/
-
-/-- The meet of two quantifiers is determiner conjunction, the meet `⊓` of the Boolean algebra
-`GQ α` under the name of the linguistic operation. -/
-abbrev gqMeet (f g : GQ α) : GQ α := f ⊓ g
-
-@[simp] theorem gqMeet_apply (f g : GQ α) (R S : α → Prop) :
-    gqMeet f g R S = (f R S ∧ g R S) := rfl
-
-/-- The join of two quantifiers is determiner disjunction, the join `⊔` of the Boolean algebra
-`GQ α`. -/
-abbrev gqJoin (f g : GQ α) : GQ α := f ⊔ g
-
-@[simp] theorem gqJoin_apply (f g : GQ α) (R S : α → Prop) :
-    gqJoin f g R S = (f R S ∨ g R S) := rfl
+/-! ### Restriction -/
 
 /-- The restriction of a quantifier by an adjective or relative clause narrows the restrictor,
 so that *tall student* is *student* and *tall*. -/
@@ -288,26 +258,6 @@ def adjRestrict (q : GQ α) (adj : α → Prop) : GQ α :=
 
 /-- The type ⟨1⟩ quantifier a determiner and a restrictor denote, `restrict Q A B = Q A B`. -/
 def restrict (q : GQ α) (A : α → Prop) : NP α := q A
-
-/-! ### The monotonicity properties as `Monotone` and `Antitone` -/
-
-/-- Scope-upward monotonicity is `Monotone` of every section, under the pointwise ordering. -/
-theorem scopeUpMono_iff_monotone (q : GQ α) : ScopeUpwardMono q ↔ ∀ R, Monotone (q R) :=
-  Iff.rfl
-
-/-- Scope-downward monotonicity is `Antitone` of every section. -/
-theorem scopeDownMono_iff_antitone (q : GQ α) : ScopeDownwardMono q ↔ ∀ R, Antitone (q R) :=
-  Iff.rfl
-
-/-- Restrictor-upward monotonicity is `Monotone` of every restrictor section. -/
-theorem restrictorUpMono_iff_monotone (q : GQ α) :
-    RestrictorUpwardMono q ↔ ∀ S, Monotone (fun R => q R S) :=
-  ⟨fun h S _ _ hle hq => h _ _ S hle hq, fun h _ _ S hle hq => h S hle hq⟩
-
-/-- Restrictor-downward monotonicity is `Antitone` of every restrictor section. -/
-theorem restrictorDownMono_iff_antitone (q : GQ α) :
-    RestrictorDownwardMono q ↔ ∀ S, Antitone (fun R => q R S) :=
-  ⟨fun h S _ _ hle hq => h _ _ S hle hq, fun h _ _ S hle hq => h S hle hq⟩
 
 end GQ
 

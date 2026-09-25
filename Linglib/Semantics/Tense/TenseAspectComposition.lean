@@ -55,65 +55,63 @@ variable {W T : Type*} [LinearOrder T]
 def evalPres (p : PointPred W T) (tc : T) (w : W) : Prop :=
   p ⟨w, tc⟩
 
-/-- Existential tense evaluation: the GQ `some` (`Quantifier.GQ.some_sem`)
-    over times `rel`-related to the evaluation time `tc`, scope `p` at `⟨w, ·⟩`.
-    `evalPast`/`evalFut` are the `<`/`>` instances. -/
+/-- Existential tense evaluation is `Quantifier.GQ.some` over the times `rel`-related to the
+evaluation time `tc`, with scope `p` at `⟨w, ·⟩`; `evalPast` and `evalFut` are the `<` and `>`
+instances. -/
 def evalRel (rel : T → T → Prop) (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  Quantifier.GQ.some_sem (fun t => rel t tc) (fun t => p ⟨w, t⟩)
+  Quantifier.GQ.some (fun t => rel t tc) (fun t => p ⟨w, t⟩)
 
 omit [LinearOrder T] in
-/-- Monotone in the body predicate — inherited from `some_scope_up`, not reproved. -/
+/-- Monotone in the body predicate — inherited from `scopeMonotone_some`, not reproved. -/
 theorem evalRel_mono {rel : T → T → Prop} {p q : PointPred W T}
     (h : ∀ x, p x → q x) {tc : T} {w : W} :
     evalRel rel p tc w → evalRel rel q tc w :=
-  Quantifier.GQ.some_scope_up _ _ _ fun _ hp => h _ hp
+  Quantifier.GQ.scopeMonotone_some _ fun _ hp => h _ hp
 
-/-- Evaluate a point predicate with existential past (PAST): `∃ t < tc, p(w)(t)`. -/
+/-- Existential past evaluates a point predicate as `∃ t < tc, p(w)(t)`. -/
 def evalPast (p : PointPred W T) (tc : T) (w : W) : Prop :=
   evalRel (· < ·) p tc w
 
-/-- Evaluate a point predicate with existential future (FUTURE): `∃ t > tc, p(w)(t)`. -/
+/-- Existential future evaluates a point predicate as `∃ t > tc, p(w)(t)`. -/
 def evalFut (p : PointPred W T) (tc : T) (w : W) : Prop :=
   evalRel (· > ·) p tc w
 
 /-! ### Composed Tense–Aspect Forms -/
 
-/-- **Simple present**: PRES(IMPF(V).atPoint).
-    "John runs" = at speech time, ∃e with tc ⊂ τ(e) and V(e).
-    Since atPoint evaluates at [tc, tc], this gives:
-    ∃e, [tc,tc] ⊂ τ(e) ∧ V(e). -/
+/-- The simple present is `PRES(IMPF(V).atPoint)`, so *John runs* holds at speech time when
+some event `e` with `[tc, tc] ⊂ τ(e)` satisfies `V`. -/
 def simplePresent (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPres (IntervalPred.atPoint (IMPF V)) tc w
 
-/-- **Simple past**: PAST(PRFV(V).atPoint).
-    "John ran" = ∃t < tc, ∃e with τ(e) ⊆ [t,t] and V(e). -/
+/-- The simple past is `PAST(PRFV(V).atPoint)`, so *John ran* holds when some `t < tc` and some
+event `e` with `τ(e) ⊆ [t, t]` satisfy `V`. -/
 def simplePast (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPast (IntervalPred.atPoint (PRFV V)) tc w
 
-/-- **Present perfect progressive**: PRES(PERF(IMPF(V))).
-    "John has been running" = at tc, ∃PTS with RB(PTS, tc) and IMPF(V)(PTS). -/
+/-- The present perfect progressive is `PRES(PERF(IMPF(V)))`, so *John has been running* holds
+at `tc` when some perfect time span right-bounded by `tc` satisfies `IMPF(V)`. -/
 def presPerfProg (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPres (PERF (IMPF V)) tc w
 
-/-- **Present perfect simple**: PRES(PERF(PRFV(V))).
-    "John has run" = at tc, ∃PTS with RB(PTS, tc) and PRFV(V)(PTS). -/
+/-- The present perfect simple is `PRES(PERF(PRFV(V)))`, so *John has run* holds at `tc` when
+some perfect time span right-bounded by `tc` satisfies `PRFV(V)`. -/
 def presPerfSimple (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPres (PERF (PRFV V)) tc w
 
-/-- **Present perfect progressive with Extended Now**: PRES(PERF_XN(IMPF(V), tᵣ)).
-    [knick-sharf-2026] eq. 39b: the U-perf reading.
-    "John has been running (since Monday)" with domain restriction tᵣ on LB. -/
+/-- The present perfect progressive with Extended Now is `PRES(PERF_XN(IMPF(V), tᵣ))`, the
+U-perfect reading of [knick-sharf-2026]; *John has been running since Monday* restricts the left
+boundary to `tᵣ`. -/
 def presPerfProgXN (V : W → Event T → Prop) (tᵣ : Set T) (tc : T) (w : W) : Prop :=
   evalPres (PERF_XN (IMPF V) tᵣ) tc w
 
-/-- **Past perfect progressive**: PAST(PERF(IMPF(V))).
-    "John had been running" = ∃t < tc, PERF(IMPF(V))(w)(t). -/
+/-- The past perfect progressive is `PAST(PERF(IMPF(V)))`, so *John had been running* holds when
+some `t < tc` satisfies `PERF(IMPF(V))`. -/
 def pastPerfProg (V : W → Event T → Prop) (tc : T) (w : W) : Prop :=
   evalPast (PERF (IMPF V)) tc w
 
 /-! ### Unfold Theorems -/
 
-/-- Simple present unfolds to: ∃e, [tc,tc] ⊂ τ(e) ∧ V(w)(e). -/
+/-- The simple present unfolds to `∃e, [tc, tc] ⊂ τ(e) ∧ V(w)(e)`. -/
 theorem simplePresent_unfold (V : W → Event T → Prop) (tc : T) (w : W) :
     simplePresent V tc w ↔
     ∃ e : Event T, NonemptyInterval.pure tc < e.τ ∧ V w e := by
@@ -130,16 +128,9 @@ theorem presPerfProgXN_unfold (V : W → Event T → Prop) (tᵣ : Set T)
 
 /-! ### [knick-sharf-2026] Core Results -/
 
-/-- **Theorem 3** ([knick-sharf-2026]): U-perf(tᵣ) entails simple present.
-
-    For any domain restriction tᵣ, the present perfect progressive with
-    Extended Now entails the simple present. Intuitively: if there is a PTS
-    ending at tc containing the reference time inside an ongoing event, then
-    tc itself is inside that event.
-
-    Proof sketch: Given PERF_XN(IMPF(V), tᵣ)(w)(tc), we have PTS with
-    RB(PTS, tc) and ∃e with PTS ⊂ τ(e). Since [tc,tc] ⊆ PTS (because
-    tc = PTS.snd) and PTS ⊂ τ(e), we get [tc,tc] ⊂ τ(e). -/
+/-- Theorem 3 of [knick-sharf-2026] says that the U-perfect entails the simple present for any
+domain restriction `tᵣ`: a perfect time span ending at `tc` inside an ongoing event puts `tc`
+itself inside that event. -/
 theorem u_perf_entails_simple_present (V : W → Event T → Prop)
     (tᵣ : Set T) (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w → simplePresent V tc w := by
@@ -154,16 +145,10 @@ theorem u_perf_entails_simple_present (V : W → Event T → Prop)
        (fun h => Or.inl (lt_of_lt_of_le h (le_trans pts.fst_le_snd (le_of_eq hRB))))
        (fun h => Or.inr (lt_of_eq_of_lt hRB.symm h))⟩, hV⟩
 
-/-- **Theorem 4** ([knick-sharf-2026]): U-perf with maximal domain ↔ simple present.
-
-    Under broad focus (tᵣ = Set.univ), the U-perf reading is equivalent to
-    the simple present. This is the "degenerate" case where no LB constraint
-    is imposed.
-
-    Proof sketch: (→) by Theorem 3. (←) Given simplePresent, we have
-    ∃e with [tc,tc] ⊂ τ(e). Construct PTS = [e.τ.fst, tc]. Then
-    LB(e.τ.fst, PTS) ∈ Set.univ, RB(PTS, tc), and PTS ⊆ τ(e) with
-    PTS ⊂ τ(e) (since tc < e.τ.snd by properSubinterval). -/
+/-- Theorem 4 of [knick-sharf-2026] says that under broad focus, where `tᵣ` is the whole line,
+the U-perfect is equivalent to the simple present, the degenerate case without a left-boundary
+constraint; the converse direction takes the perfect time span from the event's start to
+`tc`. -/
 theorem broad_focus_equiv (V : W → Event T → Prop) (tc : T) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w := by
   constructor
@@ -171,19 +156,9 @@ theorem broad_focus_equiv (V : W → Event T → Prop) (tc : T) (w : W) :
   · intro h
     exact ⟨NonemptyInterval.pure tc, tc, Set.mem_univ _, rfl, rfl, h⟩
 
-/-- **Theorem 5** ([knick-sharf-2026]): Earlier LB is stronger under IMPF.
-
-    If tLB₁ < tLB₂, then PERF_XN(IMPF(V), {tLB₁}) entails
-    PERF_XN(IMPF(V), {tLB₂}).
-
-    Under IMPF, the event must contain the entire PTS. A PTS starting
-    earlier (at tLB₁) requires a longer event runtime, which also
-    contains a PTS starting later (at tLB₂) — because IMPF gives
-    the subinterval property.
-
-    Proof sketch: Given PTS₁ = [tLB₁, tc] with e.τ ⊃ PTS₁ and V(e),
-    construct PTS₂ = [tLB₂, tc]. Since tLB₁ < tLB₂ ≤ tc, PTS₂ is valid.
-    PTS₂ ⊆ PTS₁ ⊆ τ(e), and PTS₂ ⊂ τ(e) follows from PTS₁ ⊂ τ(e). -/
+/-- Theorem 5 of [knick-sharf-2026] says that an earlier left boundary is stronger under the
+imperfective, since an event containing a perfect time span from `tLB₁` also contains the
+shorter one from a later `tLB₂` by the subinterval property. -/
 theorem earlier_lb_stronger_impf (V : W → Event T → Prop)
     (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
     PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ := by
@@ -204,19 +179,9 @@ theorem earlier_lb_stronger_impf (V : W → Event T → Prop)
     have : tLB = tLB₁ := htLB
     exact Or.inl (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
 
-/-- **Theorem 6** ([knick-sharf-2026]): Later LB is stronger under PRFV.
-
-    If tLB₁ < tLB₂, then PERF_XN(PRFV(V), {tLB₂}) entails
-    PERF_XN(PRFV(V), {tLB₁}).
-
-    Under PRFV, the event must be contained within the PTS. A PTS
-    starting later (at tLB₂) is shorter, imposing a tighter constraint
-    on event placement. But a PTS starting earlier (at tLB₁) is longer,
-    so any event fitting in [tLB₂, tc] also fits in [tLB₁, tc].
-
-    Proof sketch: Given PTS₂ = [tLB₂, tc] with τ(e) ⊆ PTS₂,
-    construct PTS₁ = [tLB₁, tc]. Since tLB₁ < tLB₂, PTS₂ ⊆ PTS₁,
-    so τ(e) ⊆ PTS₁. -/
+/-- Theorem 6 of [knick-sharf-2026] says that a later left boundary is stronger under the
+perfective, since an event fitting inside the shorter span from `tLB₂` also fits inside the
+longer span from an earlier `tLB₁`. -/
 theorem later_lb_stronger_prfv (V : W → Event T → Prop)
     (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) :
     PERF_XN (PRFV V) {tLB₂} ⟨w, tc⟩ → PERF_XN (PRFV V) {tLB₁} ⟨w, tc⟩ := by
@@ -234,16 +199,9 @@ theorem later_lb_stronger_prfv (V : W → Event T → Prop)
   · -- e.τ.snd ≤ tc: from e.τ.snd ≤ pts.snd = tc
     exact le_trans hS2 (le_of_eq hRB)
 
-/-- **Theorem 7** ([knick-sharf-2026]): Converse of Theorem 5 is FALSE.
-
-    PERF_XN(IMPF(V), {tLB₂}) does NOT entail PERF_XN(IMPF(V), {tLB₁})
-    when tLB₁ < tLB₂. An event that has been going on since tLB₂ need not
-    have been going on since the earlier tLB₁.
-
-    Counterexample: Let tLB₁ = 0, tLB₂ = 2, tc = 4. An event with
-    runtime [1, 5] satisfies IMPF for PTS = [2, 4] (since [2,4] ⊂ [1,5]),
-    but does NOT satisfy IMPF for PTS = [0, 4] (since [0,4] ⊄ [1,5]:
-    the event hadn't started at time 0). -/
+/-- Theorem 7 of [knick-sharf-2026] says that the converse of Theorem 5 fails, since an event
+going on since `tLB₂` need not have been going on since an earlier `tLB₁`; the counterexample
+takes the boundaries `0` and `2`, speech time `4`, and an event running over `[1, 5]`. -/
 theorem earlier_lb_not_weaker_impf :
     ¬ ∀ (V : Unit → Event ℤ → Prop) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
       tLB₁ < tLB₂ →

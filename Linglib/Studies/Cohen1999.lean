@@ -144,7 +144,7 @@ The relativized readings are exactly what departs from this. -/
 /-- With trivial alternatives over the whole carrier, gen is `most`. -/
 theorem gen_univ_eq_most_sem {β : Type*} [Fintype β] (R S : β → Prop)
     [DecidablePred R] [DecidablePred S] (hR : 0 < countOn Finset.univ R) :
-    gen Finset.univ R (fun _ => True) S ↔ Quantifier.GQ.most_sem R S := by
+    gen Finset.univ R (fun _ => True) S ↔ Quantifier.GQ.most R S := by
   have hR' : 0 < countOn Finset.univ (fun x => R x ∧ True) := by
     rwa [countOn_congr (P := fun x => R x ∧ True) (Q := R) fun x _ => by simp]
   rw [gen_iff_mostOn _ _ _ _ hR', ← Quantifier.GQ.mostOn_univ]

@@ -99,8 +99,8 @@ theorem qForall_iff_of_disjoint (h : DisjointPred Overlap P) : QForall P Q ↔ �
 
 /-- On a pairwise non-overlapping restrictor the quantifier is the generalized quantifier
 *every*. -/
-theorem qForall_iff_every_sem (h : DisjointPred Overlap P) :
-    QForall P Q ↔ Quantifier.GQ.every_sem P Q :=
+theorem qForall_iff_every (h : DisjointPred Overlap P) :
+    QForall P Q ↔ Quantifier.GQ.every P Q :=
   qForall_iff_of_disjoint h
 
 end PartialOrder

@@ -16,7 +16,7 @@ This file formalizes the universal two-head structure for the conjunction of nou
 proposed by [mitrovic-sauerland-2016]. The head μ combines with a predicate and denotes the
 subset relation, (12a), and the head J′ intersects two quantifiers, (12b); an individual reaches
 μ through the shift to its characteristic property. The subset relation is the generalized
-quantifier *every* (`mu_eq_every_sem`), which is why a μ particle on an indeterminate, Japanese
+quantifier *every* (`mu_eq_every`), which is why a μ particle on an indeterminate, Japanese
 *dare-mo*, is a universal quantifier (`dare_mo_denotes_mu`), and μ of a shifted individual is its
 Montague lift (`mu_shift`). The structure J′(μ(↑a))(μ(↑b)) of (13) therefore denotes the meet of
 the two lifts (`conjunction_eq`), true of a predicate that holds of each conjunct
@@ -68,7 +68,7 @@ def shift (a : α) : α → Prop := (· = a)
 
 /-- The subset relation is the generalized quantifier *every*, so a μ particle on a restrictor
 is a universal quantifier, (15). -/
-theorem mu_eq_every_sem : (mu : GQ α) = GQ.every_sem := rfl
+theorem mu_eq_every : (mu : GQ α) = GQ.every := rfl
 
 /-- μ of a shifted individual is its Montague lift. -/
 theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=

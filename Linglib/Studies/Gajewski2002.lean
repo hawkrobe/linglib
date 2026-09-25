@@ -23,7 +23,7 @@ L-tautology because every set is a subset of the domain (`thereSkeleton_isLTauto
 with *some* the skeleton is false under the empty assignment and true otherwise.
 [von-fintel-1993] explained the restriction of *but*-exceptives to universal determiners by the
 contradiction his least-exception semantics produces under a left-upward-monotone determiner,
-which admits no nonempty least exception (`ExcLeast.not_of_restrictorUpwardMono`): the skeleton
+which admits no nonempty least exception (`ExcLeast.not_of_restrictorMonotone`): the skeleton
 with *some* is an L-contradiction (`exceptiveSkeleton_isLContradiction`), and the skeletons with
 *every* and *no* are contingent. Both analyses had appealed to trivial truth conditions, which
 *war is war* shows cannot be the explanation, and L-analyticity is narrower than triviality:
@@ -111,7 +111,7 @@ theorem thereSkeleton_isLTautology {Q : GQ α} (hc : Conservative Q) (hs : Posit
 /-- (25): with *some* the skeleton is false under the empty assignment and true under the total
 one. -/
 theorem thereSkeleton_some_not_isLAnalytic (a : α) :
-    ¬ (thereSkeleton (some_sem : GQ α)).IsLAnalytic := by
+    ¬ (thereSkeleton (GQ.some : GQ α)).IsLAnalytic := by
   rintro (h | h)
   · obtain ⟨_, hx, -⟩ := h (λ _ _ => False)
     exact hx
@@ -125,9 +125,9 @@ def exceptiveSkeleton (Q : GQ α) : Skeleton (Fin 3) (λ _ => α → Prop) :=
   ⟨λ g => (∃ x, g 1 x) ∧ ExcLeast Q (g 0) (g 1) (g 2)⟩
 
 /-- (33): with a left-upward-monotone determiner the exceptive skeleton is an L-contradiction. -/
-theorem exceptiveSkeleton_isLContradiction {Q : GQ α} (h : RestrictorUpwardMono Q) :
+theorem exceptiveSkeleton_isLContradiction {Q : GQ α} (h : RestrictorMonotone Q) :
     (exceptiveSkeleton Q).IsLContradiction :=
-  λ _ ⟨⟨x, hx⟩, he⟩ => he.not_of_restrictorUpwardMono h x hx
+  λ _ ⟨⟨x, hx⟩, he⟩ => he.not_of_restrictorMonotone h x hx
 
 /-- No exceptive skeleton is an L-tautology: an empty exception set falsifies it. -/
 theorem exceptiveSkeleton_not_isLTautology (Q : GQ α) :
@@ -137,14 +137,14 @@ theorem exceptiveSkeleton_not_isLTautology (Q : GQ α) :
 /-- (32): with *every* the exceptive skeleton is true when the exception is the one individual
 outside the scope. -/
 theorem exceptiveSkeleton_every_not_isLContradiction (a : α) :
-    ¬ (exceptiveSkeleton (every_sem : GQ α)).IsLContradiction := λ h =>
+    ¬ (exceptiveSkeleton (every : GQ α)).IsLContradiction := λ h =>
   h ![λ _ => True, (· = a), (· ≠ a)]
     ⟨⟨a, rfl⟩, λ _ hx => hx.2, λ _ hS x hx => by_contra λ hs => hS x ⟨trivial, hs⟩ hx⟩
 
 /-- With *no* the exceptive skeleton is true when the exception is the one individual inside the
 scope. -/
 theorem exceptiveSkeleton_no_not_isLContradiction (a : α) :
-    ¬ (exceptiveSkeleton (no_sem : GQ α)).IsLContradiction := λ h =>
+    ¬ (exceptiveSkeleton (no : GQ α)).IsLContradiction := λ h =>
   h ![λ _ => True, (· = a), (· = a)]
     ⟨⟨a, rfl⟩, λ _ hx hxa => hx.2 hxa, λ _ hS x hx => by_contra λ hs => hS x ⟨trivial, hs⟩ hx⟩
 
@@ -152,7 +152,7 @@ theorem exceptiveSkeleton_no_not_isLContradiction (a : α) :
 
 /-- The skeleton (35) of *every woman is a woman*, with distinct variables for the two
 occurrences. -/
-def everyIsSkeleton : Skeleton (Fin 2) (λ _ => α → Prop) := ⟨λ g => every_sem (g 0) (g 1)⟩
+def everyIsSkeleton : Skeleton (Fin 2) (λ _ => α → Prop) := ⟨λ g => every (g 0) (g 1)⟩
 
 theorem everyIsSkeleton_not_isLAnalytic (a : α) : ¬ (everyIsSkeleton (α := α)).IsLAnalytic := by
   rintro (h | h)
@@ -179,9 +179,9 @@ inductive Determiner
 
 /-- The denotation of a determiner over a domain. -/
 def Determiner.denote : Determiner → GQ α
-  | .every => every_sem
-  | .some => some_sem
-  | .no => no_sem
+  | .every => GQ.every
+  | .some => GQ.some
+  | .no => GQ.no
 
 /-- The constructions of the paper's sentences, with their determiner where one matters. -/
 inductive Construction
@@ -227,10 +227,10 @@ private theorem rows_eq : rows =
 /-- Principle (29): the paper's sentences are grammatical exactly when their skeletons are not
 L-analytic. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.grammatical = true ↔ ¬ r.LAnalytic) := by
-  have hevery : (thereSkeleton (every_sem : GQ Bool)).IsLAnalytic :=
-    Or.inl (thereSkeleton_isLTautology every_conservative every_positive_strong)
-  have hsome : (exceptiveSkeleton (some_sem : GQ Bool)).IsLAnalytic :=
-    Or.inr (exceptiveSkeleton_isLContradiction some_restrictor_up)
+  have hevery : (thereSkeleton (every : GQ Bool)).IsLAnalytic :=
+    Or.inl (thereSkeleton_isLTautology conservative_every positiveStrong_every)
+  have hsome : (exceptiveSkeleton (GQ.some : GQ Bool)).IsLAnalytic :=
+    Or.inr (exceptiveSkeleton_isLContradiction restrictorMonotone_some)
   rw [rows_eq]
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)

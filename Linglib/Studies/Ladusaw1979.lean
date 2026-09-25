@@ -73,19 +73,19 @@ theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing 
 
 /-- *every* is not downward entailing in its scope: with a witness in the domain, a scope
 true of everything shrinks to one true of nothing. -/
-theorem every_not_scope_down : ¬ ScopeDownwardMono (every_sem (α := ToyEntity)) :=
-  λ h => h (λ _ => True) (λ _ => False) (λ _ => True) (λ _ hx => hx.elim) (λ _ _ => trivial)
-    .john trivial
+theorem every_not_scope_down : ¬ ScopeAntitone (every (α := ToyEntity)) := fun h =>
+  h (fun _ => True) (show ((fun _ : ToyEntity => False) : ToyEntity → Prop) ≤ fun _ => True
+    from fun _ hx => hx.elim) (fun _ _ => trivial) .john trivial
 
 /-- Inherent scope relations: *no* reverses entailment in both arguments, *few* in its scope,
 and *every* in its restrictor but not its scope, which is where each licenses a polarity
 item. -/
 theorem determiner_monotonicity :
-    ScopeDownwardMono (no_sem (α := ToyEntity)) ∧ RestrictorDownwardMono (no_sem (α := ToyEntity)) ∧
-      ScopeDownwardMono (few_sem (α := ToyEntity)) ∧
-      RestrictorDownwardMono (every_sem (α := ToyEntity)) ∧
-      ¬ ScopeDownwardMono (every_sem (α := ToyEntity)) :=
-  ⟨no_scope_down, no_restrictor_down, few_scope_down, every_restrictor_down,
+    ScopeAntitone (no (α := ToyEntity)) ∧ RestrictorAntitone (no (α := ToyEntity)) ∧
+      ScopeAntitone (few (α := ToyEntity)) ∧
+      RestrictorAntitone (every (α := ToyEntity)) ∧
+      ¬ ScopeAntitone (every (α := ToyEntity)) :=
+  ⟨scopeAntitone_no, restrictorAntitone_no, scopeAntitone_few, restrictorAntitone_every,
     every_not_scope_down⟩
 
 end Ladusaw1979

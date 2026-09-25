@@ -84,7 +84,7 @@ def highScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
   𝒟 (scopeDegrees Q μ)
 
 /-- The than-clause degree set, the degrees reached by some `P`-witness. -/
-def thanDegrees (P : α → Prop) (μ : α → D) : Set D := scopeDegrees (some_sem P) μ
+def thanDegrees (P : α → Prop) (μ : α → D) : Set D := scopeDegrees (GQ.some P) μ
 
 theorem mem_thanDegrees {P : α → Prop} : d ∈ thanDegrees P μ ↔ ∃ x, P x ∧ d ≤ μ x := Iff.rfl
 
@@ -95,13 +95,13 @@ theorem thanDegrees_singleton (μ : α → D) (b : α) : thanDegrees (· = b) μ
 
 /-- `every R` yields the lower bounds of the measures of `R`. -/
 theorem scopeDegrees_every (R : α → Prop) (μ : α → D) :
-    scopeDegrees (every_sem R) μ = lowerBounds (μ '' {x | R x}) := by
+    scopeDegrees (every R) μ = lowerBounds (μ '' {x | R x}) := by
   ext d
   exact (mem_lowerBounds.trans forall_mem_image).symm
 
 /-- `no R` yields the degrees no `R`-witness reaches. -/
 theorem scopeDegrees_no (R : α → Prop) (μ : α → D) :
-    scopeDegrees (no_sem R) μ = (thanDegrees R μ)ᶜ := by
+    scopeDegrees (no R) μ = (thanDegrees R μ)ᶜ := by
   ext d
   exact (not_exists.trans (forall_congr' λ _ => not_and)).symm
 
@@ -154,7 +154,7 @@ theorem lowScope_of_highScope (hQ : Monotone Q) (hU : IsUpperSet U)
 a least-measuring member, since if every girl's height lies in the interval so does the
 shortest girl's. -/
 theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y, R y → μ x ≤ μ y)
-    (h : lowScope (maxIn U) (every_sem R) μ) : highScope (maxIn U) (every_sem R) μ := by
+    (h : lowScope (maxIn U) (every R) μ) : highScope (maxIn U) (every R) μ := by
   rw [lowScope_maxIn] at h
   obtain ⟨x₀, hx₀, hmin⟩ := hR
   exact ⟨μ x₀, h x₀ hx₀, hmin, λ _ hd => hd x₀ hx₀⟩
@@ -162,13 +162,13 @@ theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y
 /-- The exact degree quantifier over `every R`: the greatest degree every `R`-witness reaches is
 the infimum of their measures. -/
 theorem highScope_maxIn_singleton_every {R : α → Prop} {m : D} :
-    highScope (maxIn {m}) (every_sem R) μ ↔ IsGLB (μ '' {x | R x}) m := by
+    highScope (maxIn {m}) (every R) μ ↔ IsGLB (μ '' {x | R x}) m := by
   rw [highScope, maxIn_singleton, scopeDegrees_every]; rfl
 
 /-- The exact degree quantifier over `some R`: the greatest degree some `R`-witness reaches is
 the greatest of their measures. -/
 theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
-    highScope (maxIn {m}) (some_sem R) μ ↔ IsGreatest (μ '' {x | R x}) m := by
+    highScope (maxIn {m}) (GQ.some R) μ ↔ IsGreatest (μ '' {x | R x}) m := by
   rw [highScope, maxIn_singleton]
   constructor
   · rintro ⟨⟨x, hx, hmx⟩, hub⟩
@@ -179,8 +179,8 @@ theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
 
 /-- The high scope entails the low one under `some` at every interval, the tallest witness being
 a witness. -/
-theorem lowScope_some_of_highScope {R : α → Prop} (h : highScope (maxIn U) (some_sem R) μ) :
-    lowScope (maxIn U) (some_sem R) μ := by
+theorem lowScope_some_of_highScope {R : α → Prop} (h : highScope (maxIn U) (GQ.some R) μ) :
+    lowScope (maxIn U) (GQ.some R) μ := by
   obtain ⟨m, hmU, ⟨x, hx, hmx⟩, hub⟩ := h
   exact lowScope_maxIn.2 ⟨x, hx, show μ x ∈ U from hmx.antisymm (hub ⟨x, hx, le_rfl⟩) ▸ hmU⟩
 

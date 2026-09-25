@@ -155,13 +155,13 @@ theorem nonempty_particularWCExist_iff {P Q : Ppty E} :
   ⟨fun ⟨w⟩ ↦ ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩, fun ⟨a, ⟨p⟩, ⟨q⟩⟩ ↦ ⟨⟨a, p, q⟩⟩⟩
 
 /-- A witness of the particular condition for `exist` verifies the classical `some`. -/
-theorem some_sem_of_particularWCExist {P Q : Ppty E} (w : ParticularWCExist P Q) :
-    some_sem (fun a ↦ Nonempty (P a)) (fun a ↦ Nonempty (Q a)) :=
+theorem some_of_particularWCExist {P Q : Ppty E} (w : ParticularWCExist P Q) :
+    GQ.some (fun a ↦ Nonempty (P a)) (fun a ↦ Nonempty (Q a)) :=
   ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩
 
 /-- A witness of the particular condition for `no` verifies the classical `no`. -/
 theorem no_sem_of_particularWCNo {P Q : Ppty E} (w : ParticularWCNo P Q) :
-    no_sem (fun a ↦ Nonempty (P a)) (fun a ↦ Nonempty (Q a)) :=
+    no (fun a ↦ Nonempty (P a)) (fun a ↦ Nonempty (Q a)) :=
   fun a ⟨p⟩ ⟨q⟩ ↦ (w.f a p q).elim
 
 /-- `SemIndefArt` (37): a restrictor property to the existential quantifier over it, whose
@@ -790,8 +790,8 @@ theorem witnessType_iff_witness :
     · rfl
 
 /-- The witness sets of `everyʷ(P)` are the B&C witness sets of `every P`. -/
-theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every_sem P) P (· ∈ X) := by
-  simp only [WitnessType, CardRel.every, Witness, every_sem]
+theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every P) P (· ∈ X) := by
+  simp only [WitnessType, CardRel.every, Witness, every]
   exact ⟨fun ⟨h, hc⟩ ↦ ⟨fun a ha ↦ (Finset.mem_filter.1 (h ha)).2, fun a ha ↦
       Finset.eq_of_subset_of_card_le h hc.ge ▸ Finset.mem_filter.2 ⟨Finset.mem_univ a, ha⟩⟩,
     fun ⟨h, hP⟩ ↦
@@ -799,8 +799,8 @@ theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every_sem P) P 
       ⟨hX.le, congrArg Finset.card hX⟩⟩
 
 /-- The witness set of `noʷ(P)` is the B&C witness set of `no P`. -/
-theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no_sem P) P (· ∈ X) := by
-  simp only [WitnessType, CardRel.no, Witness, no_sem, Finset.card_eq_zero]
+theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no P) P (· ∈ X) := by
+  simp only [WitnessType, CardRel.no, Witness, no, Finset.card_eq_zero]
   exact ⟨fun ⟨_, h⟩ ↦ ⟨by simp [h], by simp [h]⟩,
     fun ⟨h, hn⟩ ↦ ⟨by simpa [Finset.subset_iff] using h,
       Finset.eq_empty_of_forall_notMem fun a ha ↦ hn a (h a ha) ha⟩⟩
@@ -808,8 +808,8 @@ theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no_sem P) P (· ∈ X
 /-- Cooper's singleton witness sets for `exist` (21) are the minimal B&C witness sets of
 `some P`. -/
 theorem existW_iff_minimal_witness [DecidableEq E] :
-    WitnessType P .exist X ↔ Minimal (fun Y : Finset E ↦ Witness (some_sem P) P (· ∈ Y)) X := by
-  simp only [WitnessType, CardRel.exist, Witness, some_sem, minimal_iff_forall_lt,
+    WitnessType P .exist X ↔ Minimal (fun Y : Finset E ↦ Witness (GQ.some P) P (· ∈ Y)) X := by
+  simp only [WitnessType, CardRel.exist, Witness, GQ.some, minimal_iff_forall_lt,
     Finset.card_eq_one]
   constructor
   · rintro ⟨hs, a, rfl⟩
@@ -993,16 +993,16 @@ theorem nonempty_generalWCIncr_exist_iff [DecidableEq E] :
 open Classical in
 /-- `many_a` (77) and `a_few_a` (89) are the counting quantifier *at least `θ`*. -/
 theorem nonempty_generalWCIncr_atLeast_iff {θ : ℕ} :
-    Nonempty (GeneralWCIncr P (.atLeast θ) Q) ↔ at_least_n_sem θ P fun a ↦ Nonempty (Q a) :=
+    Nonempty (GeneralWCIncr P (.atLeast θ) Q) ↔ atLeast θ P fun a ↦ Nonempty (Q a) :=
   (nonempty_generalWCIncr_iff (CardRel.monotone_atLeast θ)).trans <| by
-    simp only [CardRel.atLeast, at_least_n_sem, count, countOn, ge_iff_le]
+    simp only [CardRel.atLeast, atLeast, count, countOn, ge_iff_le]
 
 open Classical in
 /-- `few_a` (79) is *at most `θ`*. -/
 theorem nonempty_generalWCDecr_atMost_iff {θ : ℕ} :
-    Nonempty (GeneralWCDecr P (.atMost θ) Q) ↔ at_most_n_sem θ P fun a ↦ Nonempty (Q a) :=
+    Nonempty (GeneralWCDecr P (.atMost θ) Q) ↔ atMost θ P fun a ↦ Nonempty (Q a) :=
   (nonempty_generalWCDecr_iff (CardRel.antitone_atMost θ)).trans <| by
-    simp only [CardRel.atMost, at_most_n_sem, count, countOn]
+    simp only [CardRel.atMost, atMost, count, countOn]
 
 open Classical in
 /-- `most` (74), `many_p` (78) and `a_few_p` (90) are the proportional threshold quantifier

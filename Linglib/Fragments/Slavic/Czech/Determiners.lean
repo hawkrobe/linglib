@@ -61,8 +61,8 @@ def toList : List QuantityWord := [.kazdy, .zadny, .nejaky, .nektery]
 
 universe u
 
-/-- The readings available for a word. *Každý* reads as `every_sem`, *žádný* as `no_sem`, and
-*nějaký* and *některý* as `some_sem`, the partitive specificity of *některý* being no part of
+/-- The readings available for a word. *Každý* reads as `every`, *žádný* as `no`, and *nějaký*
+and *některý* as `Quantifier.GQ.some`, the partitive specificity of *některý* being no part of
 its truth conditions. -/
 instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote

@@ -73,12 +73,12 @@ inductive LexicalType
   deriving DecidableEq, Repr
 
 /-- [sharvit-2014] (30b): quantificational past as the generalized quantifier
-    `some` (`Quantifier.GQ.some_sem`) over the contextual restrictor `K`, with
+    `some` (`Quantifier.GQ.some`) over the contextual restrictor `K`, with
     scope "precedes `t` and satisfies `p`". Definitionally
     `∃ t' ∈ K, t' < t ∧ p t'`. -/
 def quantificationalPast {T : Type*} [LT T]
     (K : Set T) (p : T → Prop) (t : T) : Prop :=
-  Quantifier.GQ.some_sem (· ∈ K) (fun t' => t' < t ∧ p t')
+  Quantifier.GQ.some (· ∈ K) (fun t' => t' < t ∧ p t')
 
 /-- The pipeline's existential past is the quantificational past with trivial
     restrictor: `evalPast` = `quantificationalPast` over `Set.univ`. Together
@@ -88,7 +88,7 @@ def quantificationalPast {T : Type*} [LT T]
 theorem evalPast_iff_quantificationalPast {W T : Type*} [LinearOrder T]
     (p : PointPred W T) (tc : T) (w : W) :
     evalPast p tc w ↔ quantificationalPast Set.univ (λ t => p ⟨w, t⟩) tc := by
-  simp [evalPast, evalRel, quantificationalPast, Quantifier.GQ.some_sem]
+  simp [evalPast, evalRel, quantificationalPast, Quantifier.GQ.some]
 
 /-- IPF ([sharvit-2014] (27), p. 272): when the body of `before^{B&C}` is the
     quantificational past `[[PAST]]^{K,g}(q)`, and the restrictor `C` is

@@ -59,8 +59,8 @@ variable {W : Type*}
 
 /-! ### The silent exhaustivity operator -/
 
-/-- The silent operator of syntax-based conventionalism: the prejacent with every stronger
-alternative negated. -/
+/-- The silent operator of syntax-based conventionalism conjoins the prejacent with the negation
+of every stronger alternative. -/
 def so (φ : Set W) (A : Set (Set W)) : Set W := {w | w ∈ φ ∧ ∀ ψ ∈ A, ψ ⊂ φ → w ∉ ψ}
 
 /-- Against the two-membered scale of *some* and *all*, the operator returns *some but not all*. -/
@@ -71,8 +71,8 @@ theorem so_pair {φ ψ : Set W} (h : ψ ⊂ φ) : so φ {φ, ψ} = φ \ ψ := by
   exact ⟨λ ⟨hw, _, hψ⟩ => ⟨hw, hψ h⟩,
     λ ⟨hw, hψ⟩ => ⟨hw, λ hφ => absurd hφ (lt_irrefl φ), λ _ => hψ⟩⟩
 
-/-- The parse with the operator below the belief verb: the agent believes *some* and believes
-*not all*. -/
+/-- The parse with the operator below the belief verb, on which the agent believes *some* and
+believes *not all*. -/
 theorem local_reading (R : W → W → Prop) {some all : Set W} (h : all ⊂ some) :
     box R (so some {some, all}) = λ w => box R some w ∧ box R allᶜ w := by
   rw [so_pair h]
@@ -80,16 +80,16 @@ theorem local_reading (R : W → W → Prop) {some all : Set W} (h : all ⊂ som
   exact propext ⟨λ hb => ⟨λ v hv => (hb v hv).1, λ v hv => (hb v hv).2⟩,
     λ ⟨h₁, h₂⟩ v hv => ⟨h₁ v hv, h₂ v hv⟩⟩
 
-/-- The Gricean derivation of a seemingly local inference: the parse with the operator above the
-belief verb says the agent believes *some* and does not believe *all*, and an agent opinionated on
-*all* then believes *not all*, which is the local reading. -/
+/-- The Gricean derivation of a seemingly local inference, on which the parse with the operator
+above the belief verb says the agent believes *some* and does not believe *all*, and an agent
+opinionated on *all* then believes *not all*, which is the local reading. -/
 theorem local_of_global_of_opinionated (R : W → W → Prop) {some all : Set W} (h : all ⊂ some)
     {w : W} (h₃₁ : box R some w) (h₃₂ : ¬ box R all w) (h₃₃ : box R all w ∨ box R allᶜ w) :
     box R (so some {some, all}) w := by
   rw [local_reading R h]
   exact ⟨h₃₁, h₃₃.resolve_left h₃₂⟩
 
-/-- The same derivation for a universal quantifier: the global implicature that not every
+/-- The same derivation for a universal quantifier, where the global implicature that not every
 customer shot at every salesman yields that none did only under the uniformity assumption that
 either all or none did. -/
 theorem all_not_all_of_uniform {C S : Type*} (Shot : C → S → Prop) (h₃₆ : ¬ ∀ c s, Shot c s)
@@ -100,12 +100,13 @@ theorem all_not_all_of_uniform {C S : Type*} (Shot : C → S → Prop) (h₃₆ 
 
 variable {α : Type*}
 
-/-- The stronger mainstream prediction: a local scalar inference is preferred in every scope that
-is not downward entailing. -/
-def PredictsLocalSI (Q : GQ α) : Prop := ¬ ScopeDownwardMono Q
+/-- The stronger mainstream prediction, that a local scalar inference is preferred in every scope
+that is not downward entailing. -/
+def PredictsLocalSI (Q : GQ α) : Prop := ¬ ScopeAntitone Q
 
-/-- The weaker prediction: a local scalar inference is preferred in upward-entailing scopes. -/
-def PredictsLocalSIWeak (Q : GQ α) : Prop := ScopeUpwardMono Q
+/-- The weaker prediction, that a local scalar inference is preferred in upward-entailing
+scopes. -/
+def PredictsLocalSIWeak (Q : GQ α) : Prop := ScopeMonotone Q
 
 /-- The quantifiers over squares of the third experiment's sentences. -/
 inductive Quant
@@ -113,33 +114,34 @@ inductive Quant
   deriving DecidableEq, Repr
 
 noncomputable def Quant.sem [Fintype α] : Quant → GQ α
-  | .all => every_sem
-  | .moreThanOne => at_least_n_sem 2
-  | .exactlyTwo => exactly_n_sem 2
-  | .notAll => outerNeg every_sem
-  | .notMoreThanOne => at_most_n_sem 1
+  | .all => every
+  | .moreThanOne => atLeast 2
+  | .exactlyTwo => exactly 2
+  | .notAll => everyᶜ
+  | .notMoreThanOne => atMost 1
 
 theorem all_predictsLocalSIWeak [Fintype α] : PredictsLocalSIWeak (Quant.all.sem : GQ α) :=
-  every_scope_up
+  scopeMonotone_every
 
 theorem moreThanOne_predictsLocalSIWeak [Fintype α] :
     PredictsLocalSIWeak (Quant.moreThanOne.sem : GQ α) :=
-  at_least_n_scope_up 2
+  scopeMonotone_atLeast 2
 
 theorem notAll_not_predictsLocalSI [Fintype α] : ¬ PredictsLocalSI (Quant.notAll.sem : GQ α) :=
-  not_not.mpr (outerNeg_up_to_down _ every_scope_up)
+  not_not.mpr (ScopeMonotone.compl _ scopeMonotone_every)
 
 theorem notMoreThanOne_not_predictsLocalSI [Fintype α] :
     ¬ PredictsLocalSI (Quant.notMoreThanOne.sem : GQ α) :=
-  not_not.mpr (at_most_n_scope_down 1)
+  not_not.mpr (scopeAntitone_atMost 1)
 
 /-! ### The verification situations -/
 
-/-- A situation of the third experiment: which squares are connected with which circles. -/
+/-- A situation of the third experiment records which squares are connected with which
+circles. -/
 abbrev Situation := Fin 3 → Fin 3 → Prop
 
-/-- Every square connected with some circle and two of them with all: the situation for *all*,
-*more than one* and the two downward-entailing sentences. -/
+/-- The situation for *all*, *more than one* and the two downward-entailing sentences, in which
+every square is connected with some circle and two of them with all. -/
 abbrev allSome : Situation := λ s c => s ≠ 0 ∨ c = 0
 
 /-- One square connected with some but not all circles, one with all, one with none. -/
@@ -170,19 +172,23 @@ def Classical (q : Quant) (t : Trial) : Prop := q.sem (λ _ => True) (someC (sit
 /-- The local-implicature construal of a verification item. -/
 def Local (q : Quant) (t : Trial) : Prop := q.sem (λ _ => True) (someNotAllC (situation q t))
 
-/-- What mainstream conventionalism predicts of an item: the local construal outside
-downward-entailing scopes, the classical one within them. -/
+/-- What mainstream conventionalism predicts of an item, the local construal outside
+downward-entailing scopes and the classical one within them. -/
 def Mainstream (q : Quant) (t : Trial) : Prop :=
   (PredictsLocalSI (q.sem : GQ (Fin 3)) ∧ Local q t) ∨
     (¬ PredictsLocalSI (q.sem : GQ (Fin 3)) ∧ Classical q t)
 
-theorem all_predictsLocalSI : PredictsLocalSI (Quant.all.sem : GQ (Fin 3)) := λ h =>
-  h (λ _ => True) (λ _ => False) (λ _ => True) (λ _ hf => hf.elim) (λ _ _ => trivial) 0 trivial
+theorem all_predictsLocalSI : PredictsLocalSI (Quant.all.sem : GQ (Fin 3)) := fun h =>
+  h (fun _ => True) (show ((fun _ : Fin 3 => False) : Fin 3 → Prop) ≤ fun _ => True from
+    fun _ hf => hf.elim) (fun _ _ => trivial) 0 trivial
 
 theorem moreThanOne_predictsLocalSI : PredictsLocalSI (Quant.moreThanOne.sem : GQ (Fin 3)) := by
   intro h
-  have key := h (λ _ => True) (λ _ => False) (λ _ => True) (λ _ hf => hf.elim)
-  simp only [Quant.sem, at_least_n_sem] at key
+  have key : Quant.moreThanOne.sem (fun _ : Fin 3 => True) (fun _ => True) →
+      Quant.moreThanOne.sem (fun _ : Fin 3 => True) (fun _ => False) :=
+    h (fun _ => True) (show ((fun _ : Fin 3 => False) : Fin 3 → Prop) ≤ fun _ => True from
+      fun _ hf => hf.elim)
+  simp only [Quant.sem, atLeast] at key
   rw [count_eq_decidable (λ _ : Fin 3 => True ∧ True),
     count_eq_decidable (λ _ : Fin 3 => True ∧ False)] at key
   revert key
@@ -190,8 +196,11 @@ theorem moreThanOne_predictsLocalSI : PredictsLocalSI (Quant.moreThanOne.sem : G
 
 theorem exactlyTwo_predictsLocalSI : PredictsLocalSI (Quant.exactlyTwo.sem : GQ (Fin 3)) := by
   intro h
-  have key := h (λ _ => True) (· = 0) (λ s => s = 0 ∨ s = 1) (λ _ hs => Or.inl hs)
-  simp only [Quant.sem, exactly_n_sem] at key
+  have key : Quant.exactlyTwo.sem (fun _ : Fin 3 => True) (fun s => s = 0 ∨ s = 1) →
+      Quant.exactlyTwo.sem (fun _ : Fin 3 => True) (· = 0) :=
+    h (fun _ => True) (show ((· = 0) : Fin 3 → Prop) ≤ fun s => s = 0 ∨ s = 1 from
+      fun _ hs => Or.inl hs)
+  simp only [Quant.sem, exactly] at key
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ (s = 0 ∨ s = 1)),
     count_eq_decidable (λ s : Fin 3 => True ∧ s = 0)] at key
   revert key
@@ -204,32 +213,32 @@ theorem not_local_all : ¬ Local .all .none :=
   show ¬ ∀ s : Fin 3, True → someNotAllC allSome s by decide
 
 theorem classical_moreThanOne : Classical .moreThanOne .none := by
-  simp only [Classical, Quant.sem, situation, at_least_n_sem]
+  simp only [Classical, Quant.sem, situation, atLeast]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC allSome s)]
   decide
 
 theorem not_local_moreThanOne : ¬ Local .moreThanOne .none := by
-  simp only [Local, Quant.sem, situation, at_least_n_sem]
+  simp only [Local, Quant.sem, situation, atLeast]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC allSome s)]
   decide
 
 theorem classical_exactlyTwo_a : Classical .exactlyTwo .a := by
-  simp only [Classical, Quant.sem, situation, exactly_n_sem]
+  simp only [Classical, Quant.sem, situation, exactly]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC onePartial s)]
   decide
 
 theorem not_local_exactlyTwo_a : ¬ Local .exactlyTwo .a := by
-  simp only [Local, Quant.sem, situation, exactly_n_sem]
+  simp only [Local, Quant.sem, situation, exactly]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC onePartial s)]
   decide
 
 theorem not_classical_exactlyTwo_b : ¬ Classical .exactlyTwo .b := by
-  simp only [Classical, Quant.sem, situation, exactly_n_sem]
+  simp only [Classical, Quant.sem, situation, exactly]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC twoPartial s)]
   decide
 
 theorem local_exactlyTwo_b : Local .exactlyTwo .b := by
-  simp only [Local, Quant.sem, situation, exactly_n_sem]
+  simp only [Local, Quant.sem, situation, exactly]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC twoPartial s)]
   decide
 
@@ -240,12 +249,12 @@ theorem local_notAll : Local .notAll .none :=
   show ¬ ∀ s : Fin 3, True → someNotAllC allSome s by decide
 
 theorem not_classical_notMoreThanOne : ¬ Classical .notMoreThanOne .none := by
-  simp only [Classical, Quant.sem, situation, at_most_n_sem]
+  simp only [Classical, Quant.sem, situation, atMost]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC allSome s)]
   decide
 
 theorem local_notMoreThanOne : Local .notMoreThanOne .none := by
-  simp only [Local, Quant.sem, situation, at_most_n_sem]
+  simp only [Local, Quant.sem, situation, atMost]
   rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC allSome s)]
   decide
 

@@ -78,7 +78,7 @@ theorem exh_eq_of_forall_le {Q : GQ α} {C : Set (GQ α)} {A : α → Prop}
   Exhaustification.exh_eq_self_iff.2 (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP)
 
 /-- Exhaustified *no* is *no*. -/
-theorem exh_no : exh (no_sem : GQ α) {outerNeg every_sem} = no_sem := by
+theorem exh_no : exh (no : GQ α) {everyᶜ} = no := by
   funext A
   refine exh_eq_of_forall_le λ Q' hQ' P hP => ?_
   rw [Set.mem_singleton_iff] at hQ'
@@ -88,31 +88,31 @@ theorem exh_no : exh (no_sem : GQ α) {outerNeg every_sem} = no_sem := by
 
 /-- Exhaustified *not every* is *some but not every* once the restrictor has two elements. -/
 theorem exh_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y) (hxy : x ≠ y) :
-    exh (outerNeg every_sem) {no_sem} A = λ P => some_sem A P ∧ outerNeg every_sem A P := by
+    exh (everyᶜ) {no} A = λ P => GQ.some A P ∧ everyᶜ A P := by
   funext P
   refine propext (mem_exh.trans
     ⟨λ ⟨hne, h⟩ => ⟨?_, hne⟩, λ ⟨⟨z, hz, hPz⟩, hne⟩ => ⟨hne, λ Q' hQ' hno => ?_⟩⟩)
   · by_contra hsome
-    exact h no_sem (Set.mem_singleton _) (λ z hz hPz => hsome ⟨z, hz, hPz⟩) (· = x)
+    exact h no (Set.mem_singleton _) (λ z hz hPz => hsome ⟨z, hz, hPz⟩) (· = x)
       (λ hall => hxy (hall y hy).symm) x hx rfl
   · exact ((Set.mem_singleton_iff.mp hQ' ▸ hno) z hz hPz).elim
 
 /-- An enriched meaning satisfiable at a restrictor but excluded at the empty scope is not
 downward entailing in its scope. -/
 theorem not_scopeDownwardMono_exh {Q : GQ α} {C : Set (GQ α)} {A P : α → Prop}
-    (hP : exh Q C A P) (h : ¬ exh Q C A (λ _ => False)) : ¬ ScopeDownwardMono (exh Q C) :=
-  λ hde => h (hde A _ P (λ _ hf => hf.elim) hP)
+    (hP : exh Q C A P) (h : ¬ exh Q C A (λ _ => False)) : ¬ ScopeAntitone (exh Q C) :=
+  fun hde => h (hde A (show ((fun _ : α => False) : α → Prop) ≤ P from fun _ hf => hf.elim) hP)
 
 /-! ### The licensing principles -/
 
 /-- Exhaustified *no* is downward entailing, so *no* licenses strong items. -/
-theorem no_strong : ScopeDownwardMono (exh (no_sem : GQ α) {outerNeg every_sem}) := by
-  rw [exh_no]; exact no_scope_down
+theorem no_strong : ScopeAntitone (exh (no : GQ α) {everyᶜ}) := by
+  rw [exh_no]; exact scopeAntitone_no
 
-/-- Exhaustified *not every* is not downward entailing: at the empty scope the stronger
+/-- Exhaustified *not every* is not downward entailing, since at the empty scope the stronger
 scale-mate *no* is true and excluded. -/
 theorem notEvery_not_strong [Nontrivial α] :
-    ¬ ScopeDownwardMono (exh (outerNeg every_sem : GQ α) {no_sem}) := by
+    ¬ ScopeAntitone (exh (everyᶜ : GQ α) {no}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
   refine not_scopeDownwardMono_exh (A := λ _ => True) (P := (· = x))
     (mem_exh.2 ⟨λ h => hxy (h y trivial).symm, λ Q' hQ' hno =>
@@ -120,9 +120,10 @@ theorem notEvery_not_strong [Nontrivial α] :
     (exh_not_of_not_le (Set.mem_singleton _) (λ _ _ hf => hf)
       λ hle => hle (· = x) (λ h => hxy (h y trivial).symm) x trivial rfl)
 
-/-- Exhaustified *some* is not downward entailing: *some* itself fails at the empty scope. -/
+/-- Exhaustified *some* is not downward entailing, since *some* itself fails at the empty
+scope. -/
 theorem some_not_strong [Nontrivial α] :
-    ¬ ScopeDownwardMono (exh (some_sem : GQ α) {every_sem}) := by
+    ¬ ScopeAntitone (exh (GQ.some : GQ α) {every}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
   exact not_scopeDownwardMono_exh (A := λ _ => True) (P := (· = x))
     (mem_exh.2 ⟨⟨x, trivial, rfl⟩, λ Q' hQ' hev =>
@@ -132,14 +133,14 @@ theorem some_not_strong [Nontrivial α] :
 /-- *At most five* sits above *at most four* on its scale; excluding the scale-mate leaves
 *exactly five*, which is not downward entailing. -/
 theorem atMostFive_not_strong :
-    ¬ ScopeDownwardMono (exh (at_most_n_sem 5 : GQ (Fin 6)) {at_most_n_sem 4}) := by
-  have h4 : ¬ at_most_n_sem 4 (λ _ : Fin 6 => True) (· ≠ 0) := by
-    rw [at_most_n_sem_iff]; decide
+    ¬ ScopeAntitone (exh (atMost 5 : GQ (Fin 6)) {atMost 4}) := by
+  have h4 : ¬ atMost 4 (λ _ : Fin 6 => True) (· ≠ 0) := by
+    rw [atMost_iff]; decide
   refine not_scopeDownwardMono_exh (A := λ _ => True) (P := (· ≠ 0))
-    (mem_exh.2 ⟨by rw [at_most_n_sem_iff]; decide,
+    (mem_exh.2 ⟨by rw [atMost_iff]; decide,
       λ Q' hQ' h => (h4 (Set.mem_singleton_iff.mp hQ' ▸ h)).elim⟩)
-    (exh_not_of_not_le (Set.mem_singleton _) (by rw [at_most_n_sem_iff]; decide)
-      λ hle => h4 (hle (· ≠ 0) (by rw [at_most_n_sem_iff]; decide)))
+    (exh_not_of_not_le (Set.mem_singleton _) (by rw [atMost_iff]; decide)
+      λ hle => h4 (hle (· ≠ 0) (by rw [atMost_iff]; decide)))
 
 /-- The paper's licensers. -/
 inductive Licenser
@@ -151,17 +152,18 @@ inductive Strength
   | weak | strong
   deriving DecidableEq, Repr
 
-/-- The two licensing principles applied to a licenser's analysis: a weak item needs the plain
-meaning Strawson downward entailing, a strong item needs the enriched meaning downward
-entailing, which for a presupposition trigger without scale-mates is its full meaning. -/
+/-- The two licensing principles applied to a licenser's analysis, on which a weak item needs
+the plain meaning Strawson downward entailing and a strong item needs the enriched meaning
+downward entailing, which for a presupposition trigger without scale-mates is its full
+meaning. -/
 def Licensed : Licenser → Strength → Prop
-  | .no, .weak => ∀ {α : Type}, ScopeDownwardMono (no_sem : GQ α)
-  | .no, .strong => ∀ {α : Type}, ScopeDownwardMono (exh (no_sem : GQ α) {outerNeg every_sem})
-  | .atMostFive, .weak => ∀ {α : Type} [Fintype α], ScopeDownwardMono (at_most_n_sem (α := α) 5)
+  | .no, .weak => ∀ {α : Type}, ScopeAntitone (no : GQ α)
+  | .no, .strong => ∀ {α : Type}, ScopeAntitone (exh (no : GQ α) {everyᶜ})
+  | .atMostFive, .weak => ∀ {α : Type} [Fintype α], ScopeAntitone (atMost (α := α) 5)
   | .atMostFive, .strong =>
-      ∀ {α : Type} [Fintype α], ScopeDownwardMono (exh (at_most_n_sem (α := α) 5) {at_most_n_sem 4})
-  | .some, .weak => ∀ {α : Type}, ScopeDownwardMono (some_sem : GQ α)
-  | .some, .strong => ∀ {α : Type}, ScopeDownwardMono (exh (some_sem : GQ α) {every_sem})
+      ∀ {α : Type} [Fintype α], ScopeAntitone (exh (atMost (α := α) 5) {atMost 4})
+  | .some, .weak => ∀ {α : Type}, ScopeAntitone (GQ.some : GQ α)
+  | .some, .strong => ∀ {α : Type}, ScopeAntitone (exh (GQ.some : GQ α) {every})
   | .only, .weak => ∀ {ι W : Type} (x : ι), IsStrawsonDE (only (W := W) x)
   | .only, .strong => ∀ {ι W : Type} (x : ι), Antitone λ P : ι → Set W => (only x P).truthSet
   | .conditional, .weak => ∀ {W : Type} (domain : W → Set W) (q : Set W),
@@ -172,8 +174,8 @@ def Licensed : Licenser → Strength → Prop
   | .sorryThat, .strong => ∀ {W : Type} (dox best : W → Set W),
       Antitone λ p => (regret dox best p).truthSet
 
-/-- The puzzle: *only*, *would* and *sorry* are Strawson anti-additive, the Strawson form of
-what strong items were held to need, yet none licenses them. -/
+/-- The puzzle is that *only*, *would* and *sorry* are Strawson anti-additive, the Strawson form
+of what strong items were held to need, yet none licenses them. -/
 theorem strawsonAA_not_sufficient :
     (∀ {ι W : Type} (x : ι), IsStrawsonAntiAdditive (only (W := W) x)) ∧
       (∀ {W : Type} (domain : W → Set W) (q : Set W),
@@ -200,12 +202,13 @@ theorem licensed_strong_iff (L : Licenser) : Licensed L .strong ↔ L = .no := b
 downward entailing. -/
 theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := by
   cases L with
-  | no => exact iff_of_true (λ {_} => no_scope_down) nofun
-  | atMostFive => exact iff_of_true (λ {_} => at_most_n_scope_down 5) nofun
+  | no => exact iff_of_true (λ {_} => scopeAntitone_no) nofun
+  | atMostFive => exact iff_of_true (λ {_} => scopeAntitone_atMost 5) nofun
   | some =>
     refine iff_of_false (λ h => ?_) (· rfl)
-    exact (h (α := Bool) (λ _ => True) (λ _ => False) (λ _ => True) (λ _ hf => hf.elim)
-      ⟨true, trivial, trivial⟩).elim λ _ h => h.2
+    exact (h (α := Bool) (fun _ => True)
+      (show ((fun _ : Bool => False) : Bool → Prop) ≤ fun _ => True from fun _ hf => hf.elim)
+      ⟨true, trivial, trivial⟩).elim fun _ h => h.2
   | only => exact iff_of_true (λ x => only_isStrawsonDE x) nofun
   | conditional => exact iff_of_true (λ d q => would_isStrawsonDE d q) nofun
   | sorryThat => exact iff_of_true (λ d b => regret_isStrawsonDE d b) nofun
@@ -223,7 +226,7 @@ def IsTrivial (f : Set α → Prop) : Prop := (∀ x, f x) ∨ ∀ x, ¬ f x
 its complement: the items above the midpoint of their scale ([horn-1989]). -/
 def IsIntolerant (f : Set α → Prop) : Prop := ¬ IsTrivial f → ∀ x, ¬ f x ∨ ¬ f xᶜ
 
-/-- Anti-additivity implies Intolerance: accepting `x` and `xᶜ` means accepting everything. -/
+/-- Anti-additivity implies Intolerance, since accepting `x` and `xᶜ` means accepting everything. -/
 theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive f) :
     IsIntolerant f := λ hnt x => by
   by_contra hx
@@ -233,36 +236,39 @@ theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive
   exact hnt (Or.inl λ y => h.antitone (Set.subset_univ y) huniv)
 
 open Classical in
-/-- Proportional *few* is Intolerant: fewer than half in and fewer than half out is impossible. -/
-theorem few_isIntolerant [Fintype α] (A : α → Prop) : IsIntolerant (few_sem A) := λ _ x => by
+/-- Proportional *few* is Intolerant, since fewer than half in and fewer than half out is
+impossible. -/
+theorem few_isIntolerant [Fintype α] (A : α → Prop) : IsIntolerant (few A) := λ _ x => by
   by_contra hx
-  rw [not_or, not_not, not_not, few_sem_iff, few_sem_iff] at hx
+  rw [not_or, not_not, not_not, few_iff, few_iff] at hx
   obtain ⟨h₁, h₂⟩ := hx
   rw [count_congr_iff (P := λ z => A z ∧ xᶜ z) (Q := λ z => A z ∧ ¬ x z) λ _ => Iff.rfl,
     count_congr_iff (P := λ z => A z ∧ ¬ xᶜ z) (Q := λ z => A z ∧ x z)
       λ _ => and_congr_right' not_not] at h₂
   omega
 
-/-- Cardinal *fewer than four* is not Intolerant: with six elements, three in and three out. -/
+/-- Cardinal *fewer than four* is not Intolerant, since with six elements three are in and three
+out. -/
 theorem atMostThree_not_isIntolerant :
-    ¬ IsIntolerant (at_most_n_sem 3 (λ _ : Fin 6 => True)) := λ h => by
+    ¬ IsIntolerant (atMost 3 (λ _ : Fin 6 => True)) := λ h => by
   let _ : DecidablePred λ z : Fin 6 => True ∧ (λ x : Fin 6 => x < 3)ᶜ z :=
     λ z => inferInstanceAs (Decidable (True ∧ ¬ z < 3))
   exact (h (λ ht => ht.elim
-      (λ h => absurd (at_most_n_sem_iff.1 (h (λ _ => True))) (by decide))
-      λ h => h (λ _ => False) (at_most_n_sem_iff.2 (by decide))) (· < 3)).elim
-    (· (at_most_n_sem_iff.2 (by decide))) (· (at_most_n_sem_iff.2 (by decide)))
+      (λ h => absurd (atMost_iff.1 (h (λ _ => True))) (by decide))
+      λ h => h (λ _ => False) (atMost_iff.2 (by decide))) (· < 3)).elim
+    (· (atMost_iff.2 (by decide))) (· (atMost_iff.2 (by decide)))
 
 /-- Proportional *few* is downward entailing and Intolerant but not anti-additive, so
 Intolerance is a proper intermediate between anti-additivity and downward entailment. -/
-theorem few_not_rightAntiAdditive : ¬ RightAntiAdditive (few_sem : GQ (Fin 4)) := λ h =>
+theorem few_not_rightAntiAdditive : ¬ RightAntiAdditive (few : GQ (Fin 4)) := λ h =>
   absurd ((h (λ _ => True) (· = 0) (· = 1)).mpr
-      ⟨few_sem_iff.mpr (by decide), few_sem_iff.mpr (by decide)⟩)
-    (few_sem_iff.not.mpr (by decide))
+      ⟨few_iff.mpr (by decide), few_iff.mpr (by decide)⟩)
+    (few_iff.not.mpr (by decide))
 
 /-! ### The paper's sentences -/
 
-/-- A sentence of the paper: its licenser, the strength of its polarity item, and the judgment. -/
+/-- A sentence of the paper records its licenser, the strength of its polarity item, and the
+judgment. -/
 structure Row where
   licenser : Licenser
   strength : Strength

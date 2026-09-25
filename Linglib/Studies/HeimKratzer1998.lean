@@ -127,7 +127,7 @@ def tree_everyStudentSleeps : Tree Unit String :=
 
 /-- Every student sleeps is false (Mary is a student but doesn't sleep). -/
 theorem every_student_sleeps_false :
-    ¬(every_sem student_sem ToyLexicon.sleeps_sem) := by
+    ¬(every student_sem ToyLexicon.sleeps_sem) := by
   intro h; exact h ToyEntity.mary trivial
 
 /-- The QR tree `[S [DP some student] [1 [S t₁ sleeps]]]`. -/
@@ -138,7 +138,7 @@ def tree_someStudentSleeps : Tree Unit String :=
 
 /-- Some student sleeps = true (John is a student and sleeps). -/
 theorem some_student_sleeps_true :
-    some_sem student_sem ToyLexicon.sleeps_sem :=
+    GQ.some student_sem ToyLexicon.sleeps_sem :=
   ⟨ToyEntity.john, trivial, trivial⟩
 
 /-! ### Scope ambiguity: "Every person sees some person"
@@ -176,11 +176,11 @@ def tree_inverse : Tree Unit (QuantityWord ⊕ String) :=
 
 /-- The surface-scope reading, `∀ > ∃`: `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
-  surfaceScope every_sem some_sem person_sem person_sem λ x y => ToyLexicon.sees_sem y x
+  surfaceScope every GQ.some person_sem person_sem λ x y => ToyLexicon.sees_sem y x
 
 /-- The inverse-scope reading, `∃ > ∀`. -/
 abbrev inverseScopeProp : Prop :=
-  inverseScope every_sem some_sem person_sem person_sem λ x y => ToyLexicon.sees_sem y x
+  inverseScope every GQ.some person_sem person_sem λ x y => ToyLexicon.sees_sem y x
 
 /-- Surface scope is true in the toy model.
 (John sees Mary and Mary sees John — each person sees some person.) -/
@@ -441,14 +441,14 @@ theorem Denotes.unique [Nonempty E] {lex : L → Option (Denotation E W)} {g : A
 around two Predicate Abstractions, with the quantifier words as terminals. -/
 theorem denotes_surface : Denotes lex g₀ tree_surface ⟨Ty.t, surfaceScopeProp⟩ := by
   show Denotes lex g₀ tree_surface
-    ⟨Ty.t, every_sem person_sem fun x ↦ some_sem person_sem fun y ↦ ToyLexicon.sees_sem y x⟩
-  refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := every_sem person_sem) ?_
+    ⟨Ty.t, every person_sem fun x ↦ GQ.some person_sem fun y ↦ ToyLexicon.sees_sem y x⟩
+  refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := every person_sem) ?_
     (.pa (τ := .t) fun x ↦ ?_)
-  · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := every_sem)
+  · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := every)
       (a := person_sem) (.tn rfl) (.tn rfl)
-  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := some_sem person_sem) ?_
+  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := GQ.some person_sem) ?_
       (.pa (τ := .t) fun y ↦ ?_)
-    · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := some_sem)
+    · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := GQ.some)
         (a := person_sem) (.tn rfl) (.tn rfl)
     · exact .faRight (lex := lex) (σ := .e) (τ := .t) (a := x) (f := ToyLexicon.sees_sem y) .trace
         (.faLeft (lex := lex) (σ := .e) (τ := .e ⇒ .t) (f := ToyLexicon.sees_sem) (a := y)

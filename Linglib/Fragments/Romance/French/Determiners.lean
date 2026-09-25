@@ -10,7 +10,7 @@ public import Linglib.Semantics.Denotation
 This file records the French determiners the studies consume. The quantificational determiners
 are the carrier `QuantityWord`, whose members project to a `Quantifier` record by
 `QuantityWord.toQuantifier` and denote the readings the literature makes available for them,
-so `⟦QuantityWord.tous⟧` is `{every_sem}`. French has no lexical dual universal, and *les deux*
+so `⟦QuantityWord.tous⟧` is `{every}`. French has no lexical dual universal, and *les deux*
 is the expression that serves as its indirect alternative
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]), marked with the dual number it
 realizes; *toujours* is the adverbial universal the same paper sets beside English *always*, and
@@ -67,7 +67,7 @@ def toList : List QuantityWord := [.tous, .chaque, .aucun, .les_deux, .quelques,
 universe u
 
 /-- The readings the literature makes available for a word. *Tous* and *chaque* read as
-`every_sem`, *aucun* as `no_sem`, *quelques* as `some_sem` and *les deux* as `both_sem`;
+`every`, *aucun* as `no`, *quelques* as `Quantifier.GQ.some` and *les deux* as `both`;
 *toujours* has no determiner reading. -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote

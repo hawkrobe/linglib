@@ -39,7 +39,7 @@ strengthens to a secondary one ((44)), each contradicting the assertion together
 The worlds of the pragmatics are counts, so a form's content is the set `c.interval m` of counts,
 the alternatives are the five forms of the numeral, one for each `Degree.Comparison`, and the
 neo-Gricean operators are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. A
-root modal is the quantifier `every_sem R` or `some_sem R` over its accessible worlds `R`, and
+root modal is the quantifier `every R` or `GQ.some R` over its accessible worlds `R`, and
 the numeral's two scopes are `Degree.lowScope` and `Degree.highScope` of `maxIn {m}` over it. The
 interactions of Class B modifiers with root modals (Section 4.2) are not formalized.
 
@@ -109,13 +109,13 @@ private theorem isGLB_iff_isLeast {s : Set ℕ} : IsGLB s m ↔ IsLeast s m :=
 /-- (33b): over a necessity modal the bare numeral is lower-bounded: `m` is the least count the
 modal requires. -/
 theorem necessity_wide_iff :
-    highScope (maxIn {m}) (every_sem R) count ↔ IsLeast (count '' {w | R w}) m :=
+    highScope (maxIn {m}) (every R) count ↔ IsLeast (count '' {w | R w}) m :=
   highScope_maxIn_singleton_every.trans (isGLB_iff_isLeast m)
 
 /-- (34b): over a possibility modal the bare numeral is upper-bounded: `m` is the greatest count
 the modal allows. -/
 theorem possibility_wide_iff :
-    highScope (maxIn {m}) (some_sem R) count ↔ IsGreatest (count '' {w | R w}) m :=
+    highScope (maxIn {m}) (GQ.some R) count ↔ IsGreatest (count '' {w | R w}) m :=
   highScope_maxIn_singleton_some
 
 end Modals

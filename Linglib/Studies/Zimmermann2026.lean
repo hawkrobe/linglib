@@ -81,7 +81,7 @@ passenger model the ∃ > ¬ reading holds while ¬ > ∃ fails, so the scopal
 flexibility of *wani* is empirically detectable. -/
 theorem wani_scopings_diverge :
     ¬ ((¬ ∃ x : Zimmermann2008.Faasinjee, Zimmermann2008.Daura x) ↔
-      some_sem (λ _ : Zimmermann2008.Faasinjee => True)
+      GQ.some (λ _ : Zimmermann2008.Faasinjee => True)
         (¬ Zimmermann2008.Daura ·)) :=
   λ h =>
     Zimmermann2008.wani_narrow_scope_false (h.mpr Zimmermann2008.wani_wide_scope)

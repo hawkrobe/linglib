@@ -20,7 +20,7 @@ restrictor and scope positions at the `Prop` instance, and *every* and *no* rece
 
 * `leftAntiAdditive_iff_isAntiAdditive`, `rightAntiAdditive_iff_isAntiAdditive`: the two
   anti-additivities as sectionwise `IsAntiAdditive`.
-* `every_sem_soundFor`, `no_sem_soundFor`: the certified determiner profiles.
+* `soundFor_every`, `soundFor_no`: the certified determiner profiles.
 
 ## References
 
@@ -52,28 +52,28 @@ theorem rightAntiAdditive_iff_isAntiAdditive (q : GQ α) :
 /-! ### Certified determiner profiles -/
 
 /-- *Every* realizes ↓MON↑ as a certified profile, the restrictor side
-derived from left anti-additivity (`every_laa`). -/
-theorem every_sem_soundFor :
-    Signature₂.SoundFor ⟨.anti, .mono⟩ (every_sem (α := α)) :=
+derived from left anti-additivity (`leftAntiAdditive_every`). -/
+theorem soundFor_every :
+    Signature₂.SoundFor ⟨.anti, .mono⟩ (every (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr
-      (((leftAntiAdditive_iff_isAntiAdditive _).mp every_laa S).antitone),
+      (((leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every S).antitone),
    fun R => soundFor_mono_iff.mpr
-      ((scopeUpMono_iff_monotone _).mp every_scope_up R)⟩
+      (scopeMonotone_every R)⟩
 
-/-- *No* realizes ↓MON↓, both positions via anti-additivity (`no_laa`,
-`no_raa`). -/
-theorem no_sem_soundFor :
-    Signature₂.SoundFor ⟨.anti, .anti⟩ (no_sem (α := α)) :=
+/-- *No* realizes ↓MON↓, both positions via anti-additivity (`leftAntiAdditive_no`,
+`rightAntiAdditive_no`). -/
+theorem soundFor_no :
+    Signature₂.SoundFor ⟨.anti, .anti⟩ (no (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr
-      (((leftAntiAdditive_iff_isAntiAdditive _).mp no_laa S).antitone),
+      (((leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_no S).antitone),
    fun R => soundFor_anti_iff.mpr
-      (((rightAntiAdditive_iff_isAntiAdditive _).mp no_raa R).antitone)⟩
+      (((rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no R).antitone)⟩
 
 /-- *Not every* is obtained by composition, since negating *every* composes the anti-morphism
 row into both positions of *every*'s profile; the scope component `.antiAddMult * .mono = .anti`
 records that *any* is licensed in *not every*'s scope. -/
 example : Signature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
-    (fun R S => ¬ every_sem (α := α) R S) :=
-  not_soundFor_antiAddMult.comp₂ every_sem_soundFor
+    (fun R S => ¬ every (α := α) R S) :=
+  not_soundFor_antiAddMult.comp₂ soundFor_every
 
 end Quantifier.GQ

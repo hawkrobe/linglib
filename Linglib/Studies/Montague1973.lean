@@ -47,7 +47,6 @@ namespace Montague1973
 
 open Semantics.Composition
 open Reference (IsRigid isRigid_const)
-open Quantifier.GQ (every_sem some_sem)
 open Quantifier.Polyadic (iterate surfaceScope inverseScope)
 
 /-! ### Categories and the category-to-type map -/
@@ -316,8 +315,8 @@ include h
 /-- *every man walks* translates to `∧u[man*(u) → walk*(u)]`. -/
 theorem translate_every_man_walks :
     translate M (f4 (every (basic man)) (basic walk)) g i ↔
-      every_sem (star₁ (M.man i)) (star₁ (M.walk i)) := by
-  simp only [translate, every_sem]
+      Quantifier.GQ.every (star₁ (M.man i)) (star₁ (M.walk i)) := by
+  simp only [translate, Quantifier.GQ.every]
   refine ⟨λ H u hu => H _ hu, λ H x hx => ?_⟩
   obtain ⟨hr, hx⟩ := (h.man_iff i x).1 hx
   exact (congrArg (M.walk i) (hr.eq_const i)).mpr (H _ hx)
@@ -325,8 +324,8 @@ theorem translate_every_man_walks :
 /-- *a man walks* translates to `∨u[man*(u) ∧ walk*(u)]`. -/
 theorem translate_a_man_walks :
     translate M (f4 (a (basic man)) (basic walk)) g i ↔
-      some_sem (star₁ (M.man i)) (star₁ (M.walk i)) := by
-  simp only [translate, some_sem]
+      Quantifier.GQ.some (star₁ (M.man i)) (star₁ (M.walk i)) := by
+  simp only [translate, Quantifier.GQ.some]
   refine ⟨λ ⟨x, hx, hw⟩ => ?_, λ ⟨u, hu, hw⟩ => ⟨_, hu, hw⟩⟩
   obtain ⟨hr, hx⟩ := (h.man_iff i x).1 hx
   exact ⟨x i, hx, (congrArg (M.walk i) (hr.eq_const i)).mp hw⟩
@@ -350,8 +349,8 @@ theorem translate_the_man_walks :
 /-- *John finds a unicorn* translates to `∨u[unicorn*(u) ∧ find*(j, u)]`. -/
 theorem translate_john_finds_a_unicorn :
     translate M (f4 (basic john) (f5 (basic find) (a (basic unicorn)))) g i ↔
-      some_sem (star₁ (M.unicorn i)) (star₂ (M.find i) · M.john) := by
-  simp only [translate, some_sem, h.find_iff]
+      Quantifier.GQ.some (star₁ (M.unicorn i)) (star₂ (M.find i) · M.john) := by
+  simp only [translate, Quantifier.GQ.some, h.find_iff]
   refine ⟨λ ⟨x, hx, hf⟩ => ?_, λ ⟨u, hu, hf⟩ => ⟨_, hu, hf⟩⟩
   obtain ⟨-, hx⟩ := (h.unicorn_iff i x).1 hx
   exact ⟨x i, hx, hf⟩
@@ -386,10 +385,10 @@ include h
 existential scopes over the universal. -/
 theorem translate_direct :
     translate M aWomanLovesEveryMan.direct g i ↔
-      surfaceScope some_sem every_sem (star₁ (M.woman i)) (star₁ (M.man i))
+      surfaceScope Quantifier.GQ.some Quantifier.GQ.every (star₁ (M.woman i)) (star₁ (M.man i))
         (λ u v => star₂ (M.love i) v u) := by
-  simp only [aWomanLovesEveryMan.direct, translate, surfaceScope, iterate, some_sem, every_sem,
-    h.love_iff]
+  simp only [aWomanLovesEveryMan.direct, translate, surfaceScope, iterate, Quantifier.GQ.some,
+    Quantifier.GQ.every, h.love_iff]
   constructor
   · rintro ⟨y, hy, H⟩
     exact ⟨y i, ((h.woman_iff i y).1 hy).2, λ v hv => H _ hv⟩
@@ -401,10 +400,10 @@ theorem translate_direct :
 the universal scopes over the existential. -/
 theorem translate_quantifiedIn :
     translate M aWomanLovesEveryMan.quantifiedIn g i ↔
-      inverseScope some_sem every_sem (star₁ (M.woman i)) (star₁ (M.man i))
+      inverseScope Quantifier.GQ.some Quantifier.GQ.every (star₁ (M.woman i)) (star₁ (M.man i))
         (λ u v => star₂ (M.love i) v u) := by
-  simp only [aWomanLovesEveryMan.quantifiedIn, translate, inverseScope, iterate, some_sem,
-    every_sem, h.love_iff, Function.update_self]
+  simp only [aWomanLovesEveryMan.quantifiedIn, translate, inverseScope, iterate, Quantifier.GQ.some,
+    Quantifier.GQ.every, h.love_iff, Function.update_self]
   constructor
   · intro H v hv
     obtain ⟨y, hy, hl⟩ := H _ hv
@@ -446,7 +445,8 @@ theorem aWomanLovesEveryMan_ambiguous (g : Assignment (Unit → ℕ)) :
       ¬ translate (loveData.interp Unit) aWomanLovesEveryMan.direct g () := by
   have h := loveData.interp_logicallyPossible (W := Unit)
   rw [translate_quantifiedIn h g (), translate_direct h g ()]
-  simp only [inverseScope, surfaceScope, iterate, every_sem, some_sem, ExtData.star₁_man,
+  simp only [inverseScope, surfaceScope, iterate, Quantifier.GQ.every, Quantifier.GQ.some,
+    ExtData.star₁_man,
     ExtData.star₁_woman, ExtData.star₂_love, loveData]
   refine ⟨λ v hv => ?_, λ ⟨u, hu, H⟩ => ?_⟩
   · rcases hv with rfl | rfl

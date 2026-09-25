@@ -32,82 +32,79 @@ variable {α : Type*}
 /-! ### Duality Theorems -/
 
 /-- Outer negation turns a scope-upward monotone quantifier into a scope-downward one. -/
-theorem outerNeg_up_to_down (q : GQ α)
-    (h : ScopeUpwardMono q) : ScopeDownwardMono (outerNeg q) := by
+theorem ScopeMonotone.compl (q : GQ α)
+    (h : ScopeMonotone q) : ScopeAntitone (qᶜ) := by
   intro R S S' hSS' hNeg hQS
-  exact hNeg (h R S S' hSS' hQS)
+  exact hNeg (h R hSS' hQS)
 
 /-- Outer negation turns a scope-downward monotone quantifier into a scope-upward one. -/
-theorem outerNeg_down_to_up (q : GQ α)
-    (h : ScopeDownwardMono q) : ScopeUpwardMono (outerNeg q) := by
+theorem ScopeAntitone.compl (q : GQ α)
+    (h : ScopeAntitone q) : ScopeMonotone (qᶜ) := by
   intro R S S' hSS' hNeg hQS'
-  exact hNeg (h R S S' hSS' hQS')
+  exact hNeg (h R hSS' hQS')
 
 /-- Inner negation turns a scope-upward monotone quantifier into a scope-downward one. -/
-theorem innerNeg_up_to_down (q : GQ α)
-    (h : ScopeUpwardMono q) : ScopeDownwardMono (innerNeg q) := by
+theorem ScopeMonotone.innerNeg (q : GQ α)
+    (h : ScopeMonotone q) : ScopeAntitone (innerNeg q) := by
   intro R S S' hSS' hInner
-  exact h R (fun x => ¬ S' x) (fun x => ¬ S x) (fun x hNS' hSx => hNS' (hSS' x hSx)) hInner
+  exact h R (show (fun x => ¬ S' x) ≤ (fun x => ¬ S x) from fun x hNS' hSx => hNS' (hSS' x hSx))
+    hInner
 
 /-- Inner negation turns a scope-downward monotone quantifier into a scope-upward one. -/
-theorem innerNeg_down_to_up (q : GQ α)
-    (h : ScopeDownwardMono q) : ScopeUpwardMono (innerNeg q) := by
+theorem ScopeAntitone.innerNeg (q : GQ α)
+    (h : ScopeAntitone q) : ScopeMonotone (innerNeg q) := by
   intro R S S' hSS' hInner
-  exact h R (fun x => ¬ S' x) (fun x => ¬ S x) (fun x hNS' hSx => hNS' (hSS' x hSx)) hInner
+  exact h R (show (fun x => ¬ S' x) ≤ (fun x => ¬ S x) from fun x hNS' hSx => hNS' (hSS' x hSx))
+    hInner
 
 /-- Outer negation turns a restrictor-upward monotone quantifier into a restrictor-downward
 one. -/
-theorem outerNeg_restrictorUp_to_down (q : GQ α)
-    (h : RestrictorUpwardMono q) : RestrictorDownwardMono (outerNeg q) := by
-  intro R R' S hRR' hNeg hQR
-  exact hNeg (h R R' S hRR' hQR)
+theorem RestrictorMonotone.compl (q : GQ α)
+    (h : RestrictorMonotone q) : RestrictorAntitone (qᶜ) := by
+  intro S R R' hRR' hNeg hQR
+  exact hNeg (h S hRR' hQR)
 
 /-- Outer negation turns a restrictor-downward monotone quantifier into a restrictor-upward
 one. -/
-theorem outerNeg_restrictorDown_to_up (q : GQ α)
-    (h : RestrictorDownwardMono q) : RestrictorUpwardMono (outerNeg q) := by
-  intro R R' S hRR' hNeg hQR'
-  exact hNeg (h R R' S hRR' hQR')
-
-/-- Outer negation is an involution. -/
-theorem outerNeg_involution (q : GQ α) : outerNeg (outerNeg q) = q := compl_compl q
+theorem RestrictorAntitone.compl (q : GQ α)
+    (h : RestrictorAntitone q) : RestrictorMonotone (qᶜ) := by
+  intro S R R' hRR' hNeg hQR'
+  exact hNeg (h S hRR' hQR')
 
 /-- Inner negation is an involution. -/
-theorem innerNeg_involution (q : GQ α) : innerNeg (innerNeg q) = q := by
+theorem innerNeg_innerNeg (q : GQ α) : innerNeg (innerNeg q) = q := by
   funext R S; simp [innerNeg]
 
 /-- The dual is an involution. -/
-theorem dualQ_involution (q : GQ α) : dualQ (dualQ q) = q := by
-  funext R S; simp [dualQ, outerNeg, innerNeg]
+theorem dual_dual (q : GQ α) : dual (dual q) = q := by
+  funext R S; simp [dual, compl_apply, innerNeg]
 
 /-! #### QuantityInvariant closure -/
 
 /-- Outer negation preserves quantity invariance. -/
-theorem quantityInvariant_outerNeg (q : GQ α)
-    (h : QuantityInvariant q) : QuantityInvariant (outerNeg q) := by
+theorem QuantityInvariant.compl (q : GQ α)
+    (h : QuantityInvariant q) : QuantityInvariant (qᶜ) := by
   intro A B A' B' f hBij hA hB
-  simp only [outerNeg_apply, not_iff_not]
+  simp only [compl_apply, not_iff_not]
   exact h A B A' B' f hBij hA hB
 
 /-- Inner negation preserves quantity invariance. -/
-theorem quantityInvariant_innerNeg (q : GQ α)
+theorem QuantityInvariant.innerNeg (q : GQ α)
     (h : QuantityInvariant q) : QuantityInvariant (innerNeg q) := by
   intro A B A' B' f hBij hA hB
-  simp only [innerNeg]
-  exact h A (fun x => ¬ B x) A' (fun x => ¬ B' x) f hBij hA
-    (fun x => not_congr (hB x))
+  exact h A (fun x => ¬ B x) A' (fun x => ¬ B' x) f hBij hA (fun x => not_congr (hB x))
 
 /-- Dual preserves QuantityInvariant. -/
-theorem quantityInvariant_dualQ (q : GQ α)
-    (h : QuantityInvariant q) : QuantityInvariant (dualQ q) :=
-  quantityInvariant_outerNeg _ (quantityInvariant_innerNeg _ h)
+theorem QuantityInvariant.dual (q : GQ α)
+    (h : QuantityInvariant q) : QuantityInvariant (dual q) :=
+  QuantityInvariant.compl _ (QuantityInvariant.innerNeg _ h)
 
 /-- Meet preserves QuantityInvariant. -/
-theorem quantityInvariant_gqMeet (f g : GQ α)
+theorem QuantityInvariant.inf (f g : GQ α)
     (hf : QuantityInvariant f) (hg : QuantityInvariant g) :
-    QuantityInvariant (gqMeet f g) := by
+    QuantityInvariant ((f ⊓ g)) := by
   intro A B A' B' σ hBij hA hB
-  simp only [gqMeet]
+  simp only [inf_apply]
   exact and_congr (hf A B A' B' σ hBij hA hB) (hg A B A' B' σ hBij hA hB)
 
 /-- Conservative + intersection condition → symmetric (B&C Theorem C5).
@@ -116,22 +113,22 @@ theorem quantityInvariant_gqMeet (f g : GQ α)
     equates them. -/
 theorem intersection_conservative_symmetric (q : GQ α)
     (hCons : Conservative q) (hInt : IntersectionCondition q) :
-    QSymmetric q := by
-  intro R S
-  rw [hCons R S, hCons S R]
-  apply hInt
-  intro x
-  exact ⟨fun ⟨_, hR, hS⟩ => ⟨hS, hS, hR⟩, fun ⟨_, hS, hR⟩ => ⟨hR, hR, hS⟩⟩
+    Std.Symm q :=
+  ⟨fun R S h => by
+    rw [hCons R S] at h
+    rw [hCons S R]
+    exact (hInt R (fun x => R x ∧ S x) S (fun x => S x ∧ R x) fun x =>
+      ⟨fun ⟨_, hR, hS⟩ => ⟨hS, hS, hR⟩, fun ⟨_, hS, hR⟩ => ⟨hR, hR, hS⟩⟩).mp h⟩
 
 /-- Scope-downward monotonicity is equivalent to scope-upward monotonicity
     of the inner negation (co-property characterization, P&W §3.2.4). -/
 theorem co_property_mono (q : GQ α) :
-    ScopeDownwardMono q ↔ ScopeUpwardMono (innerNeg q) := by
+    ScopeAntitone q ↔ ScopeMonotone (innerNeg q) := by
   constructor
-  · exact innerNeg_down_to_up q
+  · exact ScopeAntitone.innerNeg q
   · intro h
-    have h' := innerNeg_up_to_down (innerNeg q) h
-    rw [innerNeg_involution] at h'
+    have h' := ScopeMonotone.innerNeg (innerNeg q) h
+    rw [innerNeg_innerNeg] at h'
     exact h'
 
 /-! ### Conservativity, Symmetry, and Strength -/
@@ -146,13 +143,13 @@ theorem Conservative.congr_scope {q : GQ α} (h : Conservative q) {X S S' : α �
     This is the single most important bridge theorem — it explains why
     weak determiners allow there-insertion. -/
 theorem conserv_symm_iff_int (q : GQ α) (hCons : Conservative q) :
-    QSymmetric q ↔ IntersectionCondition q := by
+    Std.Symm q ↔ IntersectionCondition q := by
   constructor
   · intro hSym R S R' S' hEq
     have step_RS : q R S ↔ q (fun x => R x ∧ S x) (fun x => R x ∧ S x) := by
       calc q R S
           ↔ q R (fun x => R x ∧ S x) := hCons R S
-        _ ↔ q (fun x => R x ∧ S x) R := hSym R (fun x => R x ∧ S x)
+        _ ↔ q (fun x => R x ∧ S x) R := ⟨hSym.symm _ _, hSym.symm _ _⟩
         _ ↔ q (fun x => R x ∧ S x) (fun x => (R x ∧ S x) ∧ R x) :=
             hCons (fun x => R x ∧ S x) R
         _ ↔ q (fun x => R x ∧ S x) (fun x => R x ∧ S x) := by
@@ -160,7 +157,7 @@ theorem conserv_symm_iff_int (q : GQ α) (hCons : Conservative q) :
     have step_R'S' : q R' S' ↔ q (fun x => R' x ∧ S' x) (fun x => R' x ∧ S' x) := by
       calc q R' S'
           ↔ q R' (fun x => R' x ∧ S' x) := hCons R' S'
-        _ ↔ q (fun x => R' x ∧ S' x) R' := hSym R' (fun x => R' x ∧ S' x)
+        _ ↔ q (fun x => R' x ∧ S' x) R' := ⟨hSym.symm _ _, hSym.symm _ _⟩
         _ ↔ q (fun x => R' x ∧ S' x) (fun x => (R' x ∧ S' x) ∧ R' x) :=
             hCons (fun x => R' x ∧ S' x) R'
         _ ↔ q (fun x => R' x ∧ S' x) (fun x => R' x ∧ S' x) := by
@@ -173,7 +170,7 @@ theorem conserv_symm_iff_int (q : GQ α) (hCons : Conservative q) :
 
 /-- Non-trivial symmetric quantifiers are not positive strong (P&W Ch.6 Fact 7). -/
 theorem symm_not_positive_strong (q : GQ α) (hCons : Conservative q)
-    (hSym : QSymmetric q)
+    (hSym : Std.Symm q)
     (hNontrivF : ∃ R S, ¬ q R S) :
     ¬ PositiveStrong q := by
   intro hPos
@@ -198,19 +195,19 @@ theorem Conservative.iff_of_inf_eq {q : GQ α} (hq : Conservative q) {R S S' : �
 /-! ### Basic Left Monotonicity and Smoothness ([peters-westerstahl-2006] §5.5-5.6) -/
 
 /-- Persistence → ↑_SE Mon. -/
-theorem restrictorUpMono_to_upSE (q : GQ α)
-    (h : RestrictorUpwardMono q) : UpSEMon q :=
-  fun R S R' hSub _ hQ => h R R' S hSub hQ
+theorem RestrictorMonotone.upSE (q : GQ α)
+    (h : RestrictorMonotone q) : UpSEMon q :=
+  fun _ S _ hSub _ hQ => h S hSub hQ
 
 /-- Persistence → ↑_SW Mon. -/
-theorem restrictorUpMono_to_upSW (q : GQ α)
-    (h : RestrictorUpwardMono q) : UpSWMon q :=
-  fun R S R' hSub _ hQ => h R R' S hSub hQ
+theorem RestrictorMonotone.upSW (q : GQ α)
+    (h : RestrictorMonotone q) : UpSWMon q :=
+  fun _ S _ hSub _ hQ => h S hSub hQ
 
 /-- ↑_SW Mon ∧ ↑_SE Mon → Persistence ([peters-westerstahl-2006] Prop 6). -/
-theorem upSW_upSE_to_restrictorUpMono (q : GQ α)
-    (hSW : UpSWMon q) (hSE : UpSEMon q) : RestrictorUpwardMono q := by
-  intro R R' S hSub hQ
+theorem restrictorMonotone_of_upSW_of_upSE (q : GQ α)
+    (hSW : UpSWMon q) (hSE : UpSEMon q) : RestrictorMonotone q := by
+  intro S R R' hSub hQ
   classical
   let R'' : α → Prop := fun x => R x ∨ (R' x ∧ ¬ S x)
   have step1 : q R'' S := by
@@ -226,25 +223,25 @@ theorem upSW_upSE_to_restrictorUpMono (q : GQ α)
   · exact Or.inr ⟨hR'x, hNS⟩
 
 /-- Persistence ↔ ↑_SW Mon ∧ ↑_SE Mon ([peters-westerstahl-2006] Prop 6). -/
-theorem persistent_iff_upSW_and_upSE (q : GQ α) :
-    RestrictorUpwardMono q ↔ UpSWMon q ∧ UpSEMon q :=
-  ⟨fun h => ⟨restrictorUpMono_to_upSW q h, restrictorUpMono_to_upSE q h⟩,
-   fun ⟨hSW, hSE⟩ => upSW_upSE_to_restrictorUpMono q hSW hSE⟩
+theorem restrictorMonotone_iff_upSW_and_upSE (q : GQ α) :
+    RestrictorMonotone q ↔ UpSWMon q ∧ UpSEMon q :=
+  ⟨fun h => ⟨RestrictorMonotone.upSW q h, RestrictorMonotone.upSE q h⟩,
+   fun ⟨hSW, hSE⟩ => restrictorMonotone_of_upSW_of_upSE q hSW hSE⟩
 
 /-- Anti-persistence → ↓_NW Mon. -/
-theorem restrictorDownMono_to_downNW (q : GQ α)
-    (h : RestrictorDownwardMono q) : DownNWMon q :=
-  fun R S R' hSub _ hQ => h R' R S hSub hQ
+theorem RestrictorAntitone.downNW (q : GQ α)
+    (h : RestrictorAntitone q) : DownNWMon q :=
+  fun _ S _ hSub _ hQ => h S hSub hQ
 
 /-- Anti-persistence → ↓_NE Mon. -/
-theorem restrictorDownMono_to_downNE (q : GQ α)
-    (h : RestrictorDownwardMono q) : DownNEMon q :=
-  fun R S R' hSub _ hQ => h R' R S hSub hQ
+theorem RestrictorAntitone.downNE (q : GQ α)
+    (h : RestrictorAntitone q) : DownNEMon q :=
+  fun _ S _ hSub _ hQ => h S hSub hQ
 
 /-- ↓_NW Mon ∧ ↓_NE Mon → Anti-persistence. -/
-theorem downNW_downNE_to_restrictorDownMono (q : GQ α)
-    (hNW : DownNWMon q) (hNE : DownNEMon q) : RestrictorDownwardMono q := by
-  intro R R' S hSub hQ
+theorem restrictorAntitone_of_downNW_of_downNE (q : GQ α)
+    (hNW : DownNWMon q) (hNE : DownNEMon q) : RestrictorAntitone q := by
+  intro S R R' hSub hQ
   classical
   let R'' : α → Prop := fun x => R x ∨ (R' x ∧ S x)
   have step1 : q R'' S := by
@@ -260,86 +257,86 @@ theorem downNW_downNE_to_restrictorDownMono (q : GQ α)
   · exact absurd h.2 hNS
 
 /-- Anti-persistence ↔ ↓_NW Mon ∧ ↓_NE Mon. -/
-theorem anti_persistent_iff_downNW_and_downNE (q : GQ α) :
-    RestrictorDownwardMono q ↔ DownNWMon q ∧ DownNEMon q :=
-  ⟨fun h => ⟨restrictorDownMono_to_downNW q h, restrictorDownMono_to_downNE q h⟩,
-   fun ⟨hNW, hNE⟩ => downNW_downNE_to_restrictorDownMono q hNW hNE⟩
+theorem restrictorAntitone_iff_downNW_and_downNE (q : GQ α) :
+    RestrictorAntitone q ↔ DownNWMon q ∧ DownNEMon q :=
+  ⟨fun h => ⟨RestrictorAntitone.downNW q h, RestrictorAntitone.downNE q h⟩,
+   fun ⟨hNW, hNE⟩ => restrictorAntitone_of_downNW_of_downNE q hNW hNE⟩
 
 -- Prop 8: Negation rotates basic monotonicities
 
 /-- Outer negation reverses ↑_SE to ↓_NW ([peters-westerstahl-2006] Prop 8a). -/
-theorem outerNeg_upSE_to_downNW (q : GQ α)
-    (h : UpSEMon q) : DownNWMon (outerNeg q) := by
+theorem UpSEMon.compl (q : GQ α)
+    (h : UpSEMon q) : DownNWMon (qᶜ) := by
   intro R S R' hSub hDiff hNQ hQR'
   exact hNQ (h R' S R hSub hDiff hQR')
 
 /-- Outer negation reverses ↓_NW to ↑_SE. -/
-theorem outerNeg_downNW_to_upSE (q : GQ α)
-    (h : DownNWMon q) : UpSEMon (outerNeg q) := by
+theorem DownNWMon.compl (q : GQ α)
+    (h : DownNWMon q) : UpSEMon (qᶜ) := by
   intro R S R' hSub hDiff hNQ hQR'
   exact hNQ (h R' S R hSub hDiff hQR')
 
 /-- Outer negation reverses ↑_SW to ↓_NE. -/
-theorem outerNeg_upSW_to_downNE (q : GQ α)
-    (h : UpSWMon q) : DownNEMon (outerNeg q) := by
+theorem UpSWMon.compl (q : GQ α)
+    (h : UpSWMon q) : DownNEMon (qᶜ) := by
   intro R S R' hSub hDiff hNQ hQR'
   exact hNQ (h R' S R hSub hDiff hQR')
 
 /-- Outer negation reverses ↓_NE to ↑_SW. -/
-theorem outerNeg_downNE_to_upSW (q : GQ α)
-    (h : DownNEMon q) : UpSWMon (outerNeg q) := by
+theorem DownNEMon.compl (q : GQ α)
+    (h : DownNEMon q) : UpSWMon (qᶜ) := by
   intro R S R' hSub hDiff hNQ hQR'
   exact hNQ (h R' S R hSub hDiff hQR')
 
 /-- Inner negation switches ↓_NE ↔ ↓_NW ([peters-westerstahl-2006] Prop 8b). -/
-theorem innerNeg_downNE_to_downNW (q : GQ α)
+theorem DownNEMon.innerNeg (q : GQ α)
     (h : DownNEMon q) : DownNWMon (innerNeg q) := by
   intro R S R' hSub hDiff hQ
   exact h R (fun x => ¬ S x) R' hSub
     (fun x hRx hNS => hDiff x hRx (fun hSx => hNS hSx)) hQ
 
 /-- Inner negation switches ↓_NW ↔ ↓_NE. -/
-theorem innerNeg_downNW_to_downNE (q : GQ α)
+theorem DownNWMon.innerNeg (q : GQ α)
     (h : DownNWMon q) : DownNEMon (innerNeg q) := by
   intro R S R' hSub hDiff hQ
   exact h R (fun x => ¬ S x) R' hSub
     (fun x hRx hNNS => hDiff x hRx (Classical.not_not.mp hNNS)) hQ
 
 /-- Inner negation switches ↑_SE ↔ ↑_SW. -/
-theorem innerNeg_upSE_to_upSW (q : GQ α)
+theorem UpSEMon.innerNeg (q : GQ α)
     (h : UpSEMon q) : UpSWMon (innerNeg q) := by
   intro R S R' hSub hDiff hQ
   exact h R (fun x => ¬ S x) R' hSub
     (fun x hR'x hNNS => hDiff x hR'x (Classical.not_not.mp hNNS)) hQ
 
 /-- Inner negation switches ↑_SW ↔ ↑_SE. -/
-theorem innerNeg_upSW_to_upSE (q : GQ α)
+theorem UpSWMon.innerNeg (q : GQ α)
     (h : UpSWMon q) : UpSEMon (innerNeg q) := by
   intro R S R' hSub hDiff hQ
   exact h R (fun x => ¬ S x) R' hSub
     (fun x hR'x hNS => hDiff x hR'x (fun hSx => hNS hSx)) hQ
 
 /-- Smooth ↔ outer negation is co-smooth ([peters-westerstahl-2006] Prop 8a). -/
-theorem smooth_iff_outerNeg_coSmooth (q : GQ α) :
-    Smooth q ↔ CoSmooth (outerNeg q) :=
-  ⟨fun ⟨hNE, hSE⟩ => ⟨outerNeg_upSE_to_downNW q hSE, outerNeg_downNE_to_upSW q hNE⟩,
+theorem smooth_iff_coSmooth_compl (q : GQ α) :
+    Smooth q ↔ CoSmooth (qᶜ) :=
+  ⟨fun ⟨hNE, hSE⟩ => ⟨UpSEMon.compl q hSE, DownNEMon.compl q hNE⟩,
    fun ⟨hNW, hSW⟩ => by
-    rw [show q = outerNeg (outerNeg q) from (outerNeg_involution q).symm]
-    exact ⟨outerNeg_upSW_to_downNE _ hSW, outerNeg_downNW_to_upSE _ hNW⟩⟩
+    rw [show q = qᶜᶜ from (compl_compl q).symm]
+    exact ⟨UpSWMon.compl _ hSW, DownNWMon.compl _ hNW⟩⟩
 
 /-- Smooth ↔ inner negation is co-smooth ([peters-westerstahl-2006] Prop 8b). -/
-theorem smooth_iff_innerNeg_coSmooth (q : GQ α) :
+theorem smooth_iff_coSmooth_innerNeg (q : GQ α) :
     Smooth q ↔ CoSmooth (innerNeg q) :=
-  ⟨fun ⟨hNE, hSE⟩ => ⟨innerNeg_downNE_to_downNW q hNE, innerNeg_upSE_to_upSW q hSE⟩,
+  ⟨fun ⟨hNE, hSE⟩ => ⟨DownNEMon.innerNeg q hNE, UpSEMon.innerNeg q hSE⟩,
    fun ⟨hNW, hSW⟩ => by
-    rw [show q = innerNeg (innerNeg q) from (innerNeg_involution q).symm]
-    exact ⟨innerNeg_downNW_to_downNE _ hNW, innerNeg_upSW_to_upSE _ hSW⟩⟩
+    rw [show q = innerNeg (innerNeg q) from (innerNeg_innerNeg q).symm]
+    exact ⟨DownNWMon.innerNeg _ hNW, UpSWMon.innerNeg _ hSW⟩⟩
 
 -- Prop 9: Smooth → Mon↑
 
 /-- CONSERV ∧ Smooth → Mon↑ ([peters-westerstahl-2006] Prop 9). -/
-theorem smooth_conservative_scopeUpMono (q : GQ α)
-    (hCons : Conservative q) (hSmooth : Smooth q) : ScopeUpwardMono q := by
+theorem scopeMonotone_of_smooth (q : GQ α)
+    (hCons : Conservative q) (hSmooth : Smooth q) : ScopeMonotone q := by
   obtain ⟨hNE, hSE⟩ := hSmooth
   intro R S S' hSS' hQ
   classical
@@ -366,16 +363,16 @@ theorem smooth_conservative_scopeUpMono (q : GQ α)
 
 -- Prop 7: Symmetry ↔ ↑_SW + ↓_NE (under CONSERV)
 
-/-- CONSERV ∧ QSymmetric → ↑_SW Mon ∧ ↓_NE Mon ([peters-westerstahl-2006] Prop 7). -/
-theorem symmetric_to_upSW_downNE (q : GQ α)
-    (hCons : Conservative q) (hSym : QSymmetric q) :
+/-- CONSERV ∧ Std.Symm → ↑_SW Mon ∧ ↓_NE Mon ([peters-westerstahl-2006] Prop 7). -/
+theorem upSW_and_downNE_of_symm (q : GQ α)
+    (hCons : Conservative q) (hSym : Std.Symm q) :
     UpSWMon q ∧ DownNEMon q := by
   have toIntersect : ∀ A B : α → Prop,
       q A B ↔ q (fun x => A x ∧ B x) (fun x => A x ∧ B x) := by
     intro A B
     have h1 : q A B ↔ q A (fun x => A x ∧ B x) := hCons A B
     have h2 : q A (fun x => A x ∧ B x) ↔ q (fun x => A x ∧ B x) A :=
-      hSym A (fun x => A x ∧ B x)
+      ⟨hSym.symm _ _, hSym.symm _ _⟩
     have h3 : q (fun x => A x ∧ B x) A ↔
         q (fun x => A x ∧ B x) (fun x => (A x ∧ B x) ∧ A x) :=
       hCons (fun x => A x ∧ B x) A
@@ -402,93 +399,78 @@ theorem symmetric_to_upSW_downNE (q : GQ α)
     rw [← toIntersect R' S] at hQ
     exact hQ
 
-/-- ↑_SW Mon ∧ ↓_NE Mon → QSymmetric (under CONSERV). -/
-theorem upSW_downNE_to_symmetric (q : GQ α)
+/-- ↑_SW Mon ∧ ↓_NE Mon → Std.Symm (under CONSERV). -/
+theorem symm_of_upSW_of_downNE (q : GQ α)
     (hCons : Conservative q) (hUpSW : UpSWMon q) (hDownNE : DownNEMon q) :
-    QSymmetric q := by
-  intro A B
-  constructor
-  · intro hQ
-    rw [hCons A B] at hQ
-    have hABint : q (fun x => A x ∨ B x) (fun x => A x ∧ B x) := by
-      apply hUpSW A (fun x => A x ∧ B x) (fun x => A x ∨ B x)
-        (fun x hAx => Or.inl hAx) (fun x _ hIntx => hIntx.1) hQ
-    have hBint : q B (fun x => A x ∧ B x) := by
-      apply hDownNE (fun x => A x ∨ B x) (fun x => A x ∧ B x) B
-        (fun x hBx => Or.inr hBx) (fun x _ hIntx => hIntx.2) hABint
-    rw [hCons B A]
-    have hCommSwap : (fun x => B x ∧ A x) = (fun x => A x ∧ B x) :=
-      funext fun x => propext ⟨fun ⟨h1, h2⟩ => ⟨h2, h1⟩, fun ⟨h1, h2⟩ => ⟨h2, h1⟩⟩
-    rw [hCommSwap]
-    exact hBint
-  · intro hQ
-    rw [hCons B A] at hQ
-    have hBAint : q (fun x => B x ∨ A x) (fun x => B x ∧ A x) := by
-      apply hUpSW B (fun x => B x ∧ A x) (fun x => B x ∨ A x)
-        (fun x hBx => Or.inl hBx) (fun x _ hIntx => hIntx.1) hQ
-    have hAint : q A (fun x => B x ∧ A x) := by
-      apply hDownNE (fun x => B x ∨ A x) (fun x => B x ∧ A x) A
-        (fun x hAx => Or.inr hAx) (fun x _ hIntx => hIntx.2) hBAint
-    rw [hCons A B]
-    have hCommSwap : (fun x => A x ∧ B x) = (fun x => B x ∧ A x) :=
-      funext fun x => propext ⟨fun ⟨h1, h2⟩ => ⟨h2, h1⟩, fun ⟨h1, h2⟩ => ⟨h2, h1⟩⟩
-    rw [hCommSwap]
-    exact hAint
+    Std.Symm q := by
+  refine ⟨fun A B hQ => ?_⟩
+  rw [hCons A B] at hQ
+  have hABint : q (fun x => A x ∨ B x) (fun x => A x ∧ B x) := by
+    apply hUpSW A (fun x => A x ∧ B x) (fun x => A x ∨ B x)
+      (fun x hAx => Or.inl hAx) (fun x _ hIntx => hIntx.1) hQ
+  have hBint : q B (fun x => A x ∧ B x) := by
+    apply hDownNE (fun x => A x ∨ B x) (fun x => A x ∧ B x) B
+      (fun x hBx => Or.inr hBx) (fun x _ hIntx => hIntx.2) hABint
+  rw [hCons B A]
+  have hCommSwap : (fun x => B x ∧ A x) = (fun x => A x ∧ B x) :=
+    funext fun x => propext ⟨fun ⟨h1, h2⟩ => ⟨h2, h1⟩, fun ⟨h1, h2⟩ => ⟨h2, h1⟩⟩
+  rw [hCommSwap]
+  exact hBint
 
 /-- [peters-westerstahl-2006] Prop 7: a CONSERV type ⟨1,1⟩ quantifier
     is symmetric iff it satisfies ↑_SW Mon and ↓_NE Mon. -/
-theorem symmetric_iff_upSW_downNE (q : GQ α) (hCons : Conservative q) :
-    QSymmetric q ↔ (UpSWMon q ∧ DownNEMon q) :=
-  ⟨symmetric_to_upSW_downNE q hCons,
-   fun ⟨h1, h2⟩ => upSW_downNE_to_symmetric q hCons h1 h2⟩
+theorem symm_iff_upSW_and_downNE (q : GQ α) (hCons : Conservative q) :
+    Std.Symm q ↔ (UpSWMon q ∧ DownNEMon q) :=
+  ⟨upSW_and_downNE_of_symm q hCons,
+   fun ⟨h1, h2⟩ => symm_of_upSW_of_downNE q hCons h1 h2⟩
 
 /-! ### Boolean Closure ([keenan-stavi-1986]) -/
 
 /-- Conservativity is closed under complement. -/
-theorem conservative_outerNeg (q : GQ α) (h : Conservative q) :
-    Conservative (outerNeg q) := by
-  intro R S; simp only [outerNeg_apply, not_iff_not]; exact h R S
+theorem Conservative.compl (q : GQ α) (h : Conservative q) :
+    Conservative (qᶜ) := by
+  intro R S; simp only [compl_apply, not_iff_not]; exact h R S
 
 /-- Conservativity is closed under meet. -/
-theorem conservative_gqMeet (f g : GQ α)
+theorem Conservative.inf (f g : GQ α)
     (hf : Conservative f) (hg : Conservative g) :
-    Conservative (gqMeet f g) := by
-  intro R S; simp only [gqMeet]; exact and_congr (hf R S) (hg R S)
+    Conservative ((f ⊓ g)) := by
+  intro R S; simp only [inf_apply]; exact and_congr (hf R S) (hg R S)
 
 /-- Conservativity is closed under join. -/
-theorem conservative_gqJoin (f g : GQ α)
+theorem Conservative.sup (f g : GQ α)
     (hf : Conservative f) (hg : Conservative g) :
-    Conservative (gqJoin f g) := by
-  intro R S; simp only [gqJoin]; exact or_congr (hf R S) (hg R S)
+    Conservative ((f ⊔ g)) := by
+  intro R S; simp only [sup_apply]; exact or_congr (hf R S) (hg R S)
 
 /-- The meet of two scope-upward monotone quantifiers is scope-upward monotone. -/
-theorem scopeUpMono_gqMeet (f g : GQ α)
-    (hf : ScopeUpwardMono f) (hg : ScopeUpwardMono g) :
-    ScopeUpwardMono (gqMeet f g) := by
+theorem ScopeMonotone.inf (f g : GQ α)
+    (hf : ScopeMonotone f) (hg : ScopeMonotone g) :
+    ScopeMonotone ((f ⊓ g)) := by
   intro R S S' hSS' ⟨hfRS, hgRS⟩
-  exact ⟨hf R S S' hSS' hfRS, hg R S S' hSS' hgRS⟩
+  exact ⟨hf R hSS' hfRS, hg R hSS' hgRS⟩
 
 /-- The meet of two scope-downward monotone quantifiers is scope-downward monotone. -/
-theorem scopeDownMono_gqMeet (f g : GQ α)
-    (hf : ScopeDownwardMono f) (hg : ScopeDownwardMono g) :
-    ScopeDownwardMono (gqMeet f g) := by
+theorem ScopeAntitone.inf (f g : GQ α)
+    (hf : ScopeAntitone f) (hg : ScopeAntitone g) :
+    ScopeAntitone ((f ⊓ g)) := by
   intro R S S' hSS' ⟨hfRS', hgRS'⟩
-  exact ⟨hf R S S' hSS' hfRS', hg R S S' hSS' hgRS'⟩
+  exact ⟨hf R hSS' hfRS', hg R hSS' hgRS'⟩
 
 /-- The join of two scope-upward monotone quantifiers is scope-upward monotone. -/
-theorem scopeUpMono_gqJoin (f g : GQ α)
-    (hf : ScopeUpwardMono f) (hg : ScopeUpwardMono g) :
-    ScopeUpwardMono (gqJoin f g) := by
+theorem ScopeMonotone.sup (f g : GQ α)
+    (hf : ScopeMonotone f) (hg : ScopeMonotone g) :
+    ScopeMonotone ((f ⊔ g)) := by
   intro R S S' hSS' h
   rcases h with hfRS | hgRS
-  · exact Or.inl (hf R S S' hSS' hfRS)
-  · exact Or.inr (hg R S S' hSS' hgRS)
+  · exact Or.inl (hf R hSS' hfRS)
+  · exact Or.inr (hg R hSS' hgRS)
 
 /-- Conservativity is preserved under adjectival restriction. -/
-theorem conservative_adjRestrict (q : GQ α) (adj : α → Prop)
+theorem Conservative.adjRestrict (q : GQ α) (adj : α → Prop)
     (h : Conservative q) : Conservative (adjRestrict q adj) := by
   intro R S
-  simp only [adjRestrict]
+  simp only [GQ.adjRestrict]
   rw [h (fun x => R x ∧ adj x) S, h (fun x => R x ∧ adj x) (fun x => R x ∧ S x)]
   have heq : (fun x => (R x ∧ adj x) ∧ R x ∧ S x) = (fun x => (R x ∧ adj x) ∧ S x) := by
     funext x; apply propext
@@ -496,16 +478,16 @@ theorem conservative_adjRestrict (q : GQ α) (adj : α → Prop)
   rw [heq]
 
 /-- Scope-upward monotonicity is preserved under adjectival restriction. -/
-theorem scopeUpMono_adjRestrict (q : GQ α) (adj : α → Prop)
-    (h : ScopeUpwardMono q) : ScopeUpwardMono (adjRestrict q adj) := by
+theorem ScopeMonotone.adjRestrict (q : GQ α) (adj : α → Prop)
+    (h : ScopeMonotone q) : ScopeMonotone (adjRestrict q adj) := by
   intro R S S' hSS' hAdj
-  exact h _ S S' hSS' hAdj
+  exact h _ hSS' hAdj
 
 /-- Scope-downward monotonicity is preserved under adjectival restriction. -/
-theorem scopeDownMono_adjRestrict (q : GQ α) (adj : α → Prop)
-    (h : ScopeDownwardMono q) : ScopeDownwardMono (adjRestrict q adj) := by
+theorem ScopeAntitone.adjRestrict (q : GQ α) (adj : α → Prop)
+    (h : ScopeAntitone q) : ScopeAntitone (adjRestrict q adj) := by
   intro R S S' hSS' hAdj
-  exact h _ S S' hSS' hAdj
+  exact h _ hSS' hAdj
 
 /-! ### Type ⟨1⟩ Theorems (P&W Ch.2-3) -/
 
@@ -525,7 +507,7 @@ theorem individual_meet_closed (a : α) (P Q : α → Prop) :
     is the only reflexive antisymmetric quantifier. -/
 theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
-    (hAnti : QAntisymmetric q) :
+    (hAnti : Std.Antisymm q) :
     ∀ A B, q A B ↔ (∀ x, A x → B x) := by
   intro A B
   constructor
@@ -536,7 +518,7 @@ theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
       have hEq : (fun x => (A x ∧ B x) ∧ A x) = (fun x => A x ∧ B x) :=
         funext fun x => propext ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, h.1⟩⟩
       rw [hEq]; exact hRefl _
-    have hEq := hAnti A (fun x => A x ∧ B x) h1 h2
+    have hEq := hAnti.antisymm A (fun x => A x ∧ B x) h1 h2
     intro x hAx
     have hp : A x = (A x ∧ B x) := congr_fun hEq x
     exact ((iff_of_eq hp).mp hAx).2
@@ -550,109 +532,98 @@ theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
 /-- [van-benthem-1984] Thm 4.1.1 (Zwarts): reflexive + transitive → MON↑. -/
 theorem zwarts_refl_trans_scopeUp (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
-    (hTrans : QTransitive q) : ScopeUpwardMono q := by
+    (hTrans : IsTrans _ q) : ScopeMonotone q := by
   intro R S S' hSS' hQRS
   have hQSS' : q S S' := by
     rw [hCons S S']
     have : (fun x => S x ∧ S' x) = S :=
       funext fun x => propext ⟨fun h => h.1, fun hS => ⟨hS, hSS' x hS⟩⟩
     rw [this]; exact hRefl S
-  exact hTrans R S S' hQRS hQSS'
+  exact hTrans.trans R S S' hQRS hQSS'
 
 /-- [van-benthem-1984] Thm 4.1.1 (Zwarts): reflexive + transitive → ↓MON. -/
 theorem zwarts_refl_trans_restrictorDown (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
-    (hTrans : QTransitive q) : RestrictorDownwardMono q := by
-  intro R R' S hRR' hQR'S
+    (hTrans : IsTrans _ q) : RestrictorAntitone q := by
+  intro S R R' hRR' hQR'S
   have hQRR' : q R R' := by
     rw [hCons R R']
     have : (fun x => R x ∧ R' x) = R :=
       funext fun x => propext ⟨fun h => h.1, fun hR => ⟨hR, hRR' x hR⟩⟩
     rw [this]; exact hRefl R
-  exact hTrans R R' S hQRR' hQR'S
+  exact hTrans.trans R R' S hQRR' hQR'S
 
 /-- Under conservativity a scope-upward monotone quantifier is quasi-reflexive, the half of van
 Benthem's theorem on symmetric quantifiers that needs no symmetry. -/
 theorem quasiReflexive_of_scopeUp (q : GQ α)
-    (hCons : Conservative q) (hUp : ScopeUpwardMono q) : QuasiReflexive q := by
+    (hCons : Conservative q) (hUp : ScopeMonotone q) : QuasiReflexive q := by
   intro A B hQAB
   have h1 : q A (fun x => A x ∧ B x) := (hCons A B).mp hQAB
-  exact hUp A (fun x => A x ∧ B x) A (fun x hx => hx.1) h1
+  exact hUp A (show (fun x => A x ∧ B x) ≤ A from fun x hx => hx.1) h1
 
 /-- Under conservativity a scope-downward monotone quantifier is quasi-universal, the half of
 van Benthem's theorem on symmetric quantifiers that needs no symmetry. -/
 theorem quasiUniversal_of_scopeDown (q : GQ α)
-    (hCons : Conservative q) (hDown : ScopeDownwardMono q) : QuasiUniversal q := by
+    (hCons : Conservative q) (hDown : ScopeAntitone q) : QuasiUniversal q := by
   intro A B hQAA
   rw [hCons A B]
-  exact hDown A (fun x => A x ∧ B x) A (fun x hx => hx.1) hQAA
+  exact hDown A (show (fun x => A x ∧ B x) ≤ A from fun x hx => hx.1) hQAA
 
 /-- Right-monotone quantifiers are right-continuous. -/
-theorem scopeUpMono_rightContinuous (q : GQ α)
-    (h : ScopeUpwardMono q) : RightContinuous q := by
+theorem ScopeMonotone.rightContinuous (q : GQ α)
+    (h : ScopeMonotone q) : RightContinuous q := by
   intro A B B₁ _ hB₁B _ hQ1 _
-  exact h A B₁ B hB₁B hQ1
+  exact h A hB₁B hQ1
 
 /-- [van-benthem-1984] Thm 4.1.2: irreflexive + almost-connected → MON↓. -/
 theorem irrefl_almostConn_scopeDown (q : GQ α)
     (hCons : Conservative q)
     (hIrrefl : NegativeStrong q)
-    (hAC : AlmostConnected q) : ScopeDownwardMono q := by
-  have hRefl : PositiveStrong (outerNeg q) := fun R => hIrrefl R
-  have hTrans : QTransitive (outerNeg q) := by
-    intro A B C hNAB hNBC hQAC
-    rcases hAC A C B hQAC with h | h
-    · exact hNAB h
-    · exact hNBC h
-  have hUp := zwarts_refl_trans_scopeUp (outerNeg q)
-    (conservative_outerNeg q hCons) hRefl hTrans
-  rw [← outerNeg_involution q]
-  exact outerNeg_up_to_down (outerNeg q) hUp
+    (hAC : AlmostConnected q) : ScopeAntitone q := by
+  have hRefl : PositiveStrong (qᶜ) := fun R => hIrrefl R
+  have hTrans : IsTrans _ (qᶜ) := ⟨fun A B C hNAB hNBC hQAC => (hAC A C B hQAC).elim hNAB hNBC⟩
+  have hUp := zwarts_refl_trans_scopeUp (qᶜ)
+    (Conservative.compl q hCons) hRefl hTrans
+  rw [← compl_compl q]
+  exact ScopeMonotone.compl (qᶜ) hUp
 
 /-- [van-benthem-1984] Thm 4.1.2: irreflexive + almost-connected → ↑MON. -/
 theorem irrefl_almostConn_restrictorUp (q : GQ α)
     (hCons : Conservative q)
     (hIrrefl : NegativeStrong q)
-    (hAC : AlmostConnected q) : RestrictorUpwardMono q := by
-  have hRefl : PositiveStrong (outerNeg q) := fun R => hIrrefl R
-  have hTrans : QTransitive (outerNeg q) := by
-    intro A B C hNAB hNBC hQAC
-    rcases hAC A C B hQAC with h | h
-    · exact hNAB h
-    · exact hNBC h
-  have hDown := zwarts_refl_trans_restrictorDown (outerNeg q)
-    (conservative_outerNeg q hCons) hRefl hTrans
-  intro R R' S hRR' hQ
+    (hAC : AlmostConnected q) : RestrictorMonotone q := by
+  have hRefl : PositiveStrong (qᶜ) := fun R => hIrrefl R
+  have hTrans : IsTrans _ (qᶜ) := ⟨fun A B C hNAB hNBC hQAC => (hAC A C B hQAC).elim hNAB hNBC⟩
+  have hDown := zwarts_refl_trans_restrictorDown (qᶜ)
+    (Conservative.compl q hCons) hRefl hTrans
+  intro S R R' hRR' hQ
   by_contra h
-  exact (hDown R R' S hRR' h) hQ
+  exact hDown S hRR' h hQ
 
 /-! ### Asymmetry and circularity
 
 [peters-westerstahl-2006] Ch 6.4 -/
 
 /-- Asymmetric quantifiers are negative-strong (irreflexive). -/
-theorem asymmetric_negativeStrong (q : GQ α) (hAsym : QAsymmetric q) :
-    NegativeStrong q := fun A hQAA => hAsym A A hQAA hQAA
+theorem asymmetric_negativeStrong (q : GQ α) (hAsym : Std.Asymm q) :
+    NegativeStrong q := fun A hQAA => hAsym.asymm A A hQAA hQAA
 
 /-- Asymmetric implies antisymmetric (vacuously). -/
-theorem asymmetric_antisymmetric (q : GQ α) (hAsym : QAsymmetric q) :
-    QAntisymmetric q := fun A B hAB hBA => absurd hBA (hAsym A B hAB)
+theorem asymmetric_antisymmetric (q : GQ α) (hAsym : Std.Asymm q) :
+    Std.Antisymm q := ⟨fun A B hAB hBA => absurd hBA (hAsym.asymm A B hAB)⟩
 
 /-- Circular + symmetric → quasi-reflexive. -/
 theorem circular_symmetric_quasiRefl (q : GQ α)
-    (hSym : QSymmetric q) (hCirc : QCircular q) :
+    (hSym : Std.Symm q) (hCirc : Circular q) :
     QuasiReflexive q := by
   intro A B hAB
-  have hBA : q B A := (hSym A B).mp hAB
+  have hBA : q B A := hSym.symm A B hAB
   exact hCirc A B A hAB hBA
 
 /-- Circularity + reflexivity → symmetry. -/
 theorem circular_reflexive_symmetric (q : GQ α)
-    (hCirc : QCircular q) (hPS : PositiveStrong q) :
-    QSymmetric q := by
-  intro A B
-  exact ⟨fun hAB => hCirc A A B (hPS A) hAB,
-         fun hBA => hCirc B B A (hPS B) hBA⟩
+    (hCirc : Circular q) (hPS : PositiveStrong q) :
+    Std.Symm q := ⟨fun A B hAB => hCirc A A B (hPS A) hAB⟩
 
 /-- Piecewise involution swapping A\B ↔ B\A, fixing A∩B and the complement.
     Used to witness ISOM in the proof of `isom_asymmetric_eq_diff`. -/
@@ -749,7 +720,7 @@ private theorem swapDiff_preserves_AB [Fintype α] [DecidableEq α]
     Under CONSERV + ISOM + asymmetry, ¬Q(A,B) whenever |A \ B| = |B \ A|. -/
 theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hIsom : QuantityInvariant q)
-    (hAsym : QAsymmetric q)
+    (hAsym : Std.Asymm q)
     {A B : α → Prop} [DecidablePred A] [DecidablePred B]
     (hCard : Fintype.card {x // A x ∧ ¬ B x} =
              Fintype.card {x // B x ∧ ¬ A x}) :
@@ -766,7 +737,7 @@ theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
       (swapDiff_involutive A B e).bijective
       (swapDiff_swaps_A A B e)
       (swapDiff_preserves_AB A B e)
-  exact hAsym A B hQAB (hAB_eq_BA.mp hQAB)
+  exact hAsym.asymm A B hQAB (hAB_eq_BA.mp hQAB)
 
 /-! ### "Aristotle reversed": square from inferential conditions
 
@@ -775,7 +746,7 @@ theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
 /-- [van-benthem-1984] Cor 3.3.2: Under conservativity, the ONLY
     symmetric quasi-reflexive quantifier is overlap (= "some"). -/
 theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : GQ α)
-    (hCons : Conservative q) (hSym : QSymmetric q)
+    (hCons : Conservative q) (hSym : Std.Symm q)
     (hQR : QuasiReflexive q)
     (hWitT : ∃ x, q (fun y => y = x) (fun y => y = x))
     (hWitF : ∃ A, ¬ q A A)
@@ -837,7 +808,7 @@ theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : 
 /-- [van-benthem-1984] Cor 3.3.3: Under conservativity, the ONLY
     symmetric quasi-universal quantifier is disjointness (= "no"). -/
 theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] (q : GQ α)
-    (hCons : Conservative q) (hSym : QSymmetric q)
+    (hCons : Conservative q) (hSym : Std.Symm q)
     (hQU : QuasiUniversal q)
     (hWitF : ∃ x, ¬ q (fun y => y = x) (fun y => y = x))
     (hWitT : ∃ A, q A A)
@@ -852,7 +823,7 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] 
       (∀ x, C x → D x) → q D D → q C C := by
     intro C D hCD hDD
     have h1 : q D C := hQU D C hDD
-    have h2 : q C D := (hSym D C).mp h1
+    have h2 : q C D := hSym.symm D C h1
     have h3 : q C D ↔ q C C := by
       rw [hCons C D]
       have : (fun x => C x ∧ D x) = C :=

@@ -29,7 +29,7 @@ universal under either negation, (91) (`neg_duk_iff`).
 
 * The chapter leaves the choice among generalized-quantifier, indeterminate-pronoun and
   choice-function analyses of the class-B quantifiers open (§3.2.5); *wani* and *koo*+*wh* are
-  read here as the generalized quantifiers `some_sem` and `every_sem`, the first of the three.
+  read here as the generalized quantifiers `GQ.some` and `every`, the first of the three.
 * A collective predicate is one that holds only of pluralities of at least two members; the
   distributive universal applies it member by member and so fails.
 * The binding differences of §4.2.3 and the adverbial quantifiers of §6 are not represented.
@@ -92,7 +92,7 @@ theorem bare_no_wide_scope :
 
 /-- The wide-scope reading of *wani faasinjèe bài daurà wàndà ba*, some passenger did not
 buckle their seatbelt, (69ii): Càdi is the witness. -/
-theorem wani_wide_scope : some_sem (λ _ : Faasinjee => True) (¬ Daura ·) :=
+theorem wani_wide_scope : GQ.some (λ _ : Faasinjee => True) (¬ Daura ·) :=
   ⟨.cadi, trivial, id⟩
 
 /-- The negative existential reading, no passenger buckled their seatbelt, (69i), fails: Audù
@@ -102,27 +102,27 @@ theorem wani_narrow_scope_false : ¬ ¬ ∃ x : Faasinjee, Daura x :=
 
 /-- The two readings of *wani* under verb-phrase negation come apart on the model, (69). -/
 theorem wani_ambiguity_witness :
-    some_sem (λ _ : Faasinjee => True) (¬ Daura ·) ∧ ¬ ¬ ∃ x : Faasinjee, Daura x :=
+    GQ.some (λ _ : Faasinjee => True) (¬ Daura ·) ∧ ¬ ¬ ∃ x : Faasinjee, Daura x :=
   ⟨wani_wide_scope, wani_narrow_scope_false⟩
 
 /-- The universal over the negation is the negative existential: *koo*+*wh* under verb-phrase
 negation, (73), *I saw no one*. -/
 theorem every_neg_iff_not_some (R S : α → Prop) :
-    every_sem R (¬ S ·) ↔ ¬ some_sem R S := by
-  simp [every_sem, some_sem]
+    every R (¬ S ·) ↔ ¬ GQ.some R S := by
+  simp [every, GQ.some]
 
 /-- The negative existential of (73) and the negative universal of (74) differ on the model:
 not every passenger buckled, yet it is false that none did. -/
 theorem kowWh_negation_readings_diverge :
-    ¬ every_sem (λ _ : Faasinjee => True) Daura ∧
-      ¬ every_sem (λ _ : Faasinjee => True) (¬ Daura ·) :=
+    ¬ every (λ _ : Faasinjee => True) Daura ∧
+      ¬ every (λ _ : Faasinjee => True) (¬ Daura ·) :=
   ⟨λ h => h .cadi trivial, λ h => h .audu trivial trivial⟩
 
 /-! ### The two universals, §4 -/
 
-/-- The distributive universal *koo*+*wh*: the generalized quantifier `every_sem` over a
+/-- The distributive universal *koo*+*wh*: the generalized quantifier `every` over a
 predicate of individuals. -/
-def kowWhSem (R S : α → Prop) : Prop := every_sem R S
+def kowWhSem (R S : α → Prop) : Prop := every R S
 
 /-- The collective universal *duk*: its plural or mass argument, (85)–(86), is a plurality, and
 the predicate applies to the plurality as a whole. -/
@@ -147,8 +147,8 @@ theorem not_every_collective {R : Finset α} {S : Finset α → Prop} (hS : Coll
 /-- *Duk* under negation is the negative universal *not all*, (91), under verb-phrase and
 sentence negation alike: for a distributive predicate, not every member satisfies it. -/
 theorem neg_duk_iff (R : Finset α) (P : α → Prop) :
-    ¬ dukSem R (λ s => ∀ x ∈ s, P x) ↔ ¬ every_sem (· ∈ R) P := by
-  simp [dukSem, every_sem]
+    ¬ dukSem R (λ s => ∀ x ∈ s, P x) ↔ ¬ every (· ∈ R) P := by
+  simp [dukSem, every]
 
 /-- *Kōwānè faasinjèe yā daurà wàndà* 'every passenger buckled their seatbelt' is false on the
 model: Càdi did not. -/
