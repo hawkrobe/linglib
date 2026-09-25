@@ -95,16 +95,16 @@ def stress (w : List Seg) : Option ℕ := (w.findIdxs (decide <| Seg.Full ·)).g
 
 /-! ### Reduction as a quantifier-free transduction, (46) and §6.6.1 -/
 
-def x : Term := .var
+def x : Walk := .var
 
 /-- The guard that a term reads a nucleus not carrying the destressing mark. -/
-def nucleusAt (t : Term) : QF (Seg × Bool) :=
+def nucleusAt (t : Walk) : WindowFormula (Seg × Bool) :=
   .disj (.label (.h, false) t) (.disj (.label (.v, false) t)
     (.disj (.label (.uj, false) t) (.label (.schwa, false) t)))
 
 /-- The context in which deletion leaves a syllabifiable cluster, (46): a nucleus and a single
 consonant before the target and a single consonant and a nucleus after it. -/
-def deletable : QF (Seg × Bool) :=
+def deletable : WindowFormula (Seg × Bool) :=
   .conj (nucleusAt x.pred.pred) (.conj (.label (.c, false) x.pred)
     (.conj (.label (.c, false) x.succ) (nucleusAt x.succ.succ)))
 

@@ -11,9 +11,9 @@ public import Mathlib.Data.List.Basic
 # Quantifier-free position tests
 
 The quantifier-free apparatus of the subregular program ([chandlee-2014],
-[chandlee-jardine-2019]): a `Subregular.Term` walks successor/predecessor steps from a position,
-and a `Subregular.QF` formula is a boolean combination of label and definedness tests on such
-walks. Because successor and predecessor are *functions*, a term reaches a bounded neighbourhood
+[chandlee-jardine-2019]): a `Subregular.Walk` walks successor/predecessor steps from a position,
+and a `Subregular.WindowFormula` is a boolean combination of label and definedness tests on
+such walks. Because successor and predecessor are *functions*, a term reaches a bounded neighbourhood
 of its position with no quantifiers — the syntactic source of strict locality. Satisfaction is
 decidable, and a formula whose walks are backward with depth `≤ r` reads only the `r + 1`
 symbols ending at its position (`BackBounded.realize_congr`). These formulas are the guards of
@@ -23,25 +23,25 @@ schemes (`BMRS.lean`).
 ## Main definitions
 
 * `Subregular.succ?` / `Subregular.pred?`: the next/previous position, as partial functions.
-* `Subregular.Term`: walks; `Term.eval` reads the position a walk reaches, `none` off an edge.
-* `Term.Backward` / `Term.Forward` / `Term.pdepth` / `Term.sdepth`: one-sided walks and how far
+* `Subregular.Walk`: walks; `Walk.eval` reads the position a walk reaches, `none` off an edge.
+* `Walk.Backward` / `Walk.Forward` / `Walk.pdepth` / `Walk.sdepth`: one-sided walks and how far
   back and forward a walk reaches.
-* `Subregular.QF`: label/definedness tests on walks, closed under boolean combination;
-  `QF.Realize` is decidable satisfaction; `initial`/`final` are the derived edge tests.
-* `QF.Bounded l r`: every walk reaches at most `l` back and `r` forward; `QF.BackBounded r` is
-  `Bounded r 0`.
+* `Subregular.WindowFormula`: label/definedness tests on walks, closed under boolean combination;
+  `WindowFormula.Realize` is decidable satisfaction; `initial`/`final` are the derived edge tests.
+* `WindowFormula.Bounded l r`: every walk reaches at most `l` back and `r` forward;
+  `WindowFormula.BackBounded r` is `Bounded r 0`.
 
 ## Main results
 
-* `Term.eval_backward`: a backward walk of depth `j` from position `n` reads exactly `n - j`.
-* `Term.eval_bounded`: a walk reads the same displacement from two positions whose windows
+* `Walk.eval_backward`: a backward walk of depth `j` from position `n` reads exactly `n - j`.
+* `Walk.eval_bounded`: a walk reads the same displacement from two positions whose windows
   have the same edges.
 * `Bounded.realize_congr`: a bounded formula cannot distinguish positions whose windows agree;
   `BackBounded.realize_congr` is the left-window case.
 
 ## Implementation notes
 
-The logic is monadic — one position variable, so `Term.eval` takes a position rather than an
+The logic is monadic — one position variable, so `Walk.eval` takes a position rather than an
 assignment — since every consumer (transduction guards, BMRS) is; and there is no equality atom:
 with a single position variable, two walks from one origin agree exactly when both are defined
 with equal displacement, so equality tests reduce to definedness tests. It is a bespoke syntax
@@ -104,37 +104,37 @@ theorem pred?_congr {w w' : List α} (h : w.length = w'.length) : pred? w = pred
 
 /-- A **term**: a walk of successor/predecessor steps from the position variable. Chains of
 `succ`/`pred` give bounded-window reach with no quantifier apparatus. -/
-inductive Term where
-  | var : Term
-  | succ : Term → Term
-  | pred : Term → Term
+inductive Walk where
+  | var : Walk
+  | succ : Walk → Walk
+  | pred : Walk → Walk
   deriving DecidableEq
 
-namespace Term
+namespace Walk
 
 /-- The position a term reads, walking from position `n` of `w`; `none` once the walk falls off
 an edge. -/
-def eval (w : List α) (n : ℕ) : Term → Option ℕ
+def eval (w : List α) (n : ℕ) : Walk → Option ℕ
   | .var => if n < w.length then some n else none
   | .succ t => (eval w n t).bind (succ? w)
   | .pred t => (eval w n t).bind (pred? w)
 
-variable {w w' : List α} {n v : ℕ} {t u : Term}
+variable {w w' : List α} {n v : ℕ} {t u : Walk}
 
 @[simp] theorem eval_succ : t.succ.eval w n = (t.eval w n).bind (succ? w) := rfl
 
 @[simp] theorem eval_pred : t.pred.eval w n = (t.eval w n).bind (pred? w) := rfl
 
-theorem eval_var_eq_some_iff : Term.var.eval w n = some v ↔ v = n ∧ n < w.length := by
+theorem eval_var_eq_some_iff : Walk.var.eval w n = some v ↔ v = n ∧ n < w.length := by
   rw [eval]
   split <;> simp_all [eq_comm]
   omega
 
 /-- The variable reads its own in-domain position. -/
-@[simp] theorem eval_var (h : n < w.length) : Term.var.eval w n = some n := ite_eq_left h
+@[simp] theorem eval_var (h : n < w.length) : Walk.var.eval w n = some n := ite_eq_left h
 
 /-- Terms read in-domain positions. -/
-theorem eval_lt : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → v < w.length
+theorem eval_lt : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v < w.length
   | .var, _, h => by
     obtain ⟨rfl, hlt⟩ := eval_var_eq_some_iff.mp h
     exact hlt
@@ -147,7 +147,7 @@ theorem eval_lt : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → v < w.length
     exact (pred?_eq_some_iff.mp hu).2
 
 /-- A one-step successor walk reads the successor position. -/
-@[simp] theorem eval_succ_var : Term.var.succ.eval w n = succ? w n := by
+@[simp] theorem eval_succ_var : Walk.var.succ.eval w n = succ? w n := by
   rcases Nat.lt_or_ge n w.length with h | h
   · rw [eval_succ, eval_var h, Option.bind_some]
   · rw [eval_succ, eval, ite_eq_right (by simpa using h), Option.bind_none, eq_comm,
@@ -158,23 +158,23 @@ theorem eval_lt : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → v < w.length
 
 /-- A one-step predecessor walk reads the predecessor position (in-domain: off the right edge
 `pred?` is still defined at `w.length` but the variable is not). -/
-theorem eval_pred_var (h : n < w.length) : Term.var.pred.eval w n = pred? w n := by
+theorem eval_pred_var (h : n < w.length) : Walk.var.pred.eval w n = pred? w n := by
   rw [eval_pred, eval_var h, Option.bind_some]
 
 /-- Terms read only the length, so their reads transport across equal-length words. -/
-theorem eval_congr (hlen : w.length = w'.length) : ∀ t : Term, t.eval w n = t.eval w' n
+theorem eval_congr (hlen : w.length = w'.length) : ∀ t : Walk, t.eval w n = t.eval w' n
   | .var => by simp [eval, hlen]
   | .succ t => by rw [eval_succ, eval_succ, eval_congr hlen t, succ?_congr hlen]
   | .pred t => by rw [eval_pred, eval_pred, eval_congr hlen t, pred?_congr hlen]
 
 /-- Substitution: `t.comp u` walks `u` first, then `t`. -/
-def comp : Term → Term → Term
+def comp : Walk → Walk → Walk
   | .var, u => u
   | .succ t, u => .succ (t.comp u)
   | .pred t, u => .pred (t.comp u)
 
 /-- Composite terms read sequenced positions. -/
-theorem eval_comp : ∀ t u : Term, (t.comp u).eval w n = (u.eval w n).bind fun v => t.eval w v
+theorem eval_comp : ∀ t u : Walk, (t.comp u).eval w n = (u.eval w n).bind fun v => t.eval w v
   | .var, u => by
     cases hu : u.eval w n with
     | none => simp [comp, hu]
@@ -186,43 +186,43 @@ theorem eval_comp : ∀ t u : Term, (t.comp u).eval w n = (u.eval w n).bind fun 
 
 /-- A term is *backward* if it uses no successor — only the variable and predecessors, so it
 reads positions at or before its variable. -/
-def Backward : Term → Prop
+def Backward : Walk → Prop
   | .var => True
   | .pred t => t.Backward
   | .succ _ => False
 
 /-- A term is *forward* if it uses no predecessor, so it reads positions at or after its
 variable. -/
-def Forward : Term → Prop
+def Forward : Walk → Prop
   | .var => True
   | .pred _ => False
   | .succ t => t.Forward
 
 /-- The predecessor depth of a term: how far back it reaches. -/
-def pdepth : Term → ℕ
+def pdepth : Walk → ℕ
   | .var => 0
   | .pred t => t.pdepth + 1
   | .succ t => t.pdepth
 
 /-- The successor depth of a term: how far forward it reaches. -/
-def sdepth : Term → ℕ
+def sdepth : Walk → ℕ
   | .var => 0
   | .pred t => t.sdepth
   | .succ t => t.sdepth + 1
 
-instance instDecidableBackward : ∀ t : Term, Decidable t.Backward
+instance instDecidableBackward : ∀ t : Walk, Decidable t.Backward
   | .var => .isTrue trivial
   | .pred t => instDecidableBackward t
   | .succ _ => .isFalse not_false
 
-instance instDecidableForward : ∀ t : Term, Decidable t.Forward
+instance instDecidableForward : ∀ t : Walk, Decidable t.Forward
   | .var => .isTrue trivial
   | .pred _ => .isFalse not_false
   | .succ t => instDecidableForward t
 
 /-- Backward terms only move left. -/
 theorem eval_le_of_backward :
-    ∀ {t : Term}, t.Backward → ∀ {v}, t.eval w n = some v → v ≤ n
+    ∀ {t : Walk}, t.Backward → ∀ {v}, t.eval w n = some v → v ≤ n
   | .var, _, v, h => Nat.le_of_eq (eval_var_eq_some_iff.mp h).1
   | .pred t, ht, v, h => by
     obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
@@ -231,7 +231,7 @@ theorem eval_le_of_backward :
 
 /-- Forward terms only move right. -/
 theorem le_eval_of_forward :
-    ∀ {t : Term}, t.Forward → ∀ {v}, t.eval w n = some v → n ≤ v
+    ∀ {t : Walk}, t.Forward → ∀ {v}, t.eval w n = some v → n ≤ v
   | .var, _, v, h => Nat.le_of_eq (eval_var_eq_some_iff.mp h).1.symm
   | .succ t, ht, v, h => by
     obtain ⟨u, hu, huv⟩ := Option.bind_eq_some_iff.mp h
@@ -241,7 +241,7 @@ theorem le_eval_of_forward :
 /-- A backward term of predecessor depth `j`, read from an in-range position `n`, reads exactly
 position `n - j` — defined iff `j ≤ n`. -/
 theorem eval_backward (hn : n < w.length) :
-    ∀ {t : Term}, t.Backward →
+    ∀ {t : Walk}, t.Backward →
       t.eval w n = if t.pdepth ≤ n then some (n - t.pdepth) else none := by
   intro t ht
   induction t with
@@ -261,7 +261,7 @@ theorem eval_backward (hn : n < w.length) :
 /-! ### Bounded windows -/
 
 /-- A walk reaches at most `pdepth` back. -/
-theorem le_eval_add_pdepth : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → n ≤ v + t.pdepth
+theorem le_eval_add_pdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → n ≤ v + t.pdepth
   | .var, v, h => by
     obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
     simp [pdepth]
@@ -277,7 +277,7 @@ theorem le_eval_add_pdepth : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → n
     simp only [pdepth]; omega
 
 /-- A walk reaches at most `sdepth` forward. -/
-theorem eval_le_add_sdepth : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → v ≤ n + t.sdepth
+theorem eval_le_add_sdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v ≤ n + t.sdepth
   | .var, v, h => by
     obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
     simp [sdepth]
@@ -299,7 +299,7 @@ both. -/
 theorem eval_bounded {l r n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
     (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n'))
     (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length)) :
-    ∀ {t : Term}, t.pdepth ≤ l → t.sdepth ≤ r →
+    ∀ {t : Walk}, t.pdepth ≤ l → t.sdepth ≤ r →
       ((t.eval w n).map fun v ↦ (v : Int) - n) = (t.eval w' n').map fun v ↦ (v : Int) - n' := by
   intro t
   induction t with
@@ -356,25 +356,25 @@ theorem eval_bounded {l r n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
     · rw [show v = 0 by omega, show v' = 0 by omega]
       rfl
 
-end Term
+end Walk
 
 /-! ### Quantifier-free formulas -/
 
 /-- A **quantifier-free formula**: a boolean combination of label and definedness tests on term
 walks from a single position. -/
-inductive QF (α : Type*) where
-  | label : α → Term → QF α
-  | defined : Term → QF α
-  | tru : QF α
-  | fls : QF α
-  | neg : QF α → QF α
-  | conj : QF α → QF α → QF α
-  | disj : QF α → QF α → QF α
+inductive WindowFormula (α : Type*) where
+  | label : α → Walk → WindowFormula α
+  | defined : Walk → WindowFormula α
+  | tru : WindowFormula α
+  | fls : WindowFormula α
+  | neg : WindowFormula α → WindowFormula α
+  | conj : WindowFormula α → WindowFormula α → WindowFormula α
+  | disj : WindowFormula α → WindowFormula α → WindowFormula α
 
-namespace QF
+namespace WindowFormula
 
 /-- Satisfaction of a formula at position `n` of `w`; tests on an undefined walk are false. -/
-def Realize (w : List α) (n : ℕ) : QF α → Prop
+def Realize (w : List α) (n : ℕ) : WindowFormula α → Prop
   | .label a t => (t.eval w n).bind (w[·]?) = some a
   | .defined t => t.eval w n ≠ none
   | .tru => True
@@ -384,7 +384,7 @@ def Realize (w : List α) (n : ℕ) : QF α → Prop
   | .disj φ ψ => φ.Realize w n ∨ ψ.Realize w n
 
 instance instDecidableRealize [DecidableEq α] (w : List α) (n : ℕ) :
-    (φ : QF α) → Decidable (φ.Realize w n)
+    (φ : WindowFormula α) → Decidable (φ.Realize w n)
   | .label _ t => inferInstanceAs (Decidable ((t.eval w n).bind _ = _))
   | .defined t => inferInstanceAs (Decidable (t.eval w n ≠ none))
   | .tru => isTrue trivial
@@ -394,17 +394,17 @@ instance instDecidableRealize [DecidableEq α] (w : List α) (n : ℕ) :
   | .disj φ ψ => @instDecidableOr _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
 
 /-- `t` reads an initial position: in-domain with no predecessor. -/
-def initial (t : Term) : QF α := .conj (.defined t) (.neg (.defined t.pred))
+def initial (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.pred))
 
 /-- `t` reads a final position: in-domain with no successor. -/
-def final (t : Term) : QF α := .conj (.defined t) (.neg (.defined t.succ))
+def final (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.succ))
 
 /-! ### Bounded formulas read only a window -/
 
 /-- A formula is bounded by `l` back and `r` forward if every walk it uses reaches at most `l`
 positions back and `r` forward, so it reads only the window from `l` before its position to
 `r` after. -/
-def Bounded (l r : ℕ) : QF α → Prop
+def Bounded (l r : ℕ) : WindowFormula α → Prop
   | .label _ t => t.pdepth ≤ l ∧ t.sdepth ≤ r
   | .defined t => t.pdepth ≤ l ∧ t.sdepth ≤ r
   | .tru => True
@@ -413,7 +413,7 @@ def Bounded (l r : ℕ) : QF α → Prop
   | .conj φ ψ => φ.Bounded l r ∧ ψ.Bounded l r
   | .disj φ ψ => φ.Bounded l r ∧ ψ.Bounded l r
 
-instance instDecidableBounded (l r : ℕ) : ∀ φ : QF α, Decidable (φ.Bounded l r)
+instance instDecidableBounded (l r : ℕ) : ∀ φ : WindowFormula α, Decidable (φ.Bounded l r)
   | .label _ _ => inferInstanceAs (Decidable (_ ∧ _))
   | .defined _ => inferInstanceAs (Decidable (_ ∧ _))
   | .tru => .isTrue trivial
@@ -424,7 +424,7 @@ instance instDecidableBounded (l r : ℕ) : ∀ φ : QF α, Decidable (φ.Bounde
 
 /-- A formula is backward-bounded by `r` if it reads only the `r + 1` positions ending at its
 own: bounded by `r` back and nothing forward. -/
-abbrev BackBounded (r : ℕ) (φ : QF α) : Prop := φ.Bounded r 0
+abbrev BackBounded (r : ℕ) (φ : WindowFormula α) : Prop := φ.Bounded r 0
 
 /-- A bounded formula reads only its window: it has the same truth value at `(w, n)` and
 `(w', n')` whenever the windows `l` back and `r` forward agree — the same labels at each
@@ -433,19 +433,19 @@ theorem Bounded.realize_congr {l r : ℕ} {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
     (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n') ∧ (j ≤ n → w[n - j]? = w'[n' - j]?))
     (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length) ∧ w[n + j]? = w'[n' + j]?) :
-    ∀ {φ : QF α}, φ.Bounded l r → (φ.Realize w n ↔ φ.Realize w' n') := by
+    ∀ {φ : WindowFormula α}, φ.Bounded l r → (φ.Realize w n ↔ φ.Realize w' n') := by
   have hl : ∀ j ≤ l, (j ≤ n ↔ j ≤ n') := fun j hj ↦ (hleft j hj).1
   have hr : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length) := fun j hj ↦ (hright j hj).1
   intro φ
   induction φ with
   | label a t =>
     rintro ⟨hp, hs⟩
-    have h := Term.eval_bounded hn hn' hl hr hp hs
+    have h := Walk.eval_bounded hn hn' hl hr hp hs
     simp only [Realize]
     rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
       simp [hv, hv'] at h ⊢
-    have hvn := Term.le_eval_add_pdepth hv
-    have hvs := Term.eval_le_add_sdepth hv
+    have hvn := Walk.le_eval_add_pdepth hv
+    have hvs := Walk.eval_le_add_sdepth hv
     rcases Nat.lt_or_ge v n with hlt | hge
     · have hveq : v = n - (n - v) := by omega
       have hv'eq : v' = n' - (n - v) := by omega
@@ -455,7 +455,7 @@ theorem Bounded.realize_congr {l r : ℕ} {w w' : List α} {n n' : ℕ}
       rw [hv'eq, (hright j (by omega)).2]
   | defined t =>
     rintro ⟨hp, hs⟩
-    have h := Term.eval_bounded hn hn' hl hr hp hs
+    have h := Walk.eval_bounded hn hn' hl hr hp hs
     simp only [Realize]
     rcases hv : t.eval w n with _ | v <;> rcases hv' : t.eval w' n' with _ | v' <;>
       simp [hv, hv'] at h ⊢
@@ -470,13 +470,13 @@ theorem BackBounded.realize_congr {r : ℕ} {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
     (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?)
     (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
-    ∀ {φ : QF α}, φ.BackBounded r → (φ.Realize w n ↔ φ.Realize w' n') :=
+    ∀ {φ : WindowFormula α}, φ.BackBounded r → (φ.Realize w n ↔ φ.Realize w' n') :=
   Bounded.realize_congr hn hn' (fun j hj ↦ ⟨hedge j hj, fun _ ↦ hlbl j hj⟩) fun j hj ↦ by
     obtain rfl : j = 0 := Nat.le_zero.mp hj
     exact ⟨iff_of_true (by simpa using hn) (by simpa using hn'),
       by simpa using hlbl 0 (Nat.zero_le _)⟩
 
-end QF
+end WindowFormula
 
 /-! ### Worked example -/
 
@@ -486,7 +486,7 @@ private inductive Sym | a | b deriving DecidableEq
 
 /-- The position is flanked by `a`s — a bounded two-sided context stated by walks, with no
 quantifier. -/
-private def flankedByA : QF Sym :=
+private def flankedByA : WindowFormula Sym :=
   .conj (.label .a (.pred .var)) (.label .a (.succ .var))
 
 private def aba : List Sym := [Sym.a, Sym.b, Sym.a]
@@ -495,8 +495,8 @@ private def aba : List Sym := [Sym.a, Sym.b, Sym.a]
 example : flankedByA.Realize aba 1 := by decide
 example : ¬ flankedByA.Realize aba 0 := by decide
 -- The edge tests compute as expected.
-example : (QF.initial (α := Sym) .var).Realize aba 0 := by decide
-example : (QF.final (α := Sym) .var).Realize aba 2 := by decide
+example : (WindowFormula.initial (α := Sym) .var).Realize aba 0 := by decide
+example : (WindowFormula.final (α := Sym) .var).Realize aba 2 := by decide
 
 end Example
 

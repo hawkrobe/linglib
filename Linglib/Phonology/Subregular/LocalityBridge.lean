@@ -11,7 +11,7 @@ local**: a transduction that is `LeftLocal r` (guards backward-bounded by `r`) i
 `IsLeftInputStrictlyLocal (r + 1)`.
 
 The mathematical crux is upstream (`Transduction.emitAt_eq_of_agree`, resting on
-`Term.eval_backward`): a left-local transduction emits the same block at positions whose bounded
+`Walk.eval_backward`): a left-local transduction emits the same block at positions whose bounded
 left contexts agree. This file threads that fact through the ISL window: the window maintained by
 `ISLRule.applyAux` stays exactly the bounded left context, so the induced rule reproduces the
 transduction's output.
@@ -111,13 +111,13 @@ section Example
 private inductive Sym | a | b | c
   deriving DecidableEq
 
-private def xv : Term := .var
+private def xv : Walk := .var
 
 /-- Relabel `b → c` immediately after an `a`: the guard looks only left (a predecessor `a`), so it
 is backward with radius 1. -/
 private def afterA : Transduction Sym Sym where
   copies := 1
-  clause _ := [(QF.conj (.label .a xv.pred) (.label .b xv), .c),
+  clause _ := [(WindowFormula.conj (.label .a xv.pred) (.label .b xv), .c),
                (.label .b xv, .b), (.label .c xv, .c), (.label .a xv, .a)]
 
 -- The induced 2-Left-ISL rule computes the same function on a sample — the bridge, concretely.
