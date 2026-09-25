@@ -170,4 +170,32 @@ theorem box_five_iff : diamond R ≤ box R ∘ diamond R ↔ IsEuclidean R where
     match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩
   mpr hE _ w h v hwv := let ⟨u, hwu, hpu⟩ := h; ⟨u, hE.eucl w v u hwv hwu, hpu⟩
 
+/-- **Alt₁** at a world: `◇p → □p` for every `p` at `w` iff `w` sees at most one world. -/
+theorem diamond_le_box_at_iff :
+    (∀ p : W → Prop, ◇[R] p w → □[R] p w) ↔ ∀ ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u where
+  mp h v hv u hu := (h (· = v) ⟨v, hv, rfl⟩ u hu).symm
+  mpr h _ := fun ⟨_, hu, hpu⟩ _ hv ↦ h hu hv ▸ hpu
+
+/-- **Alt₁** defines partial functionality. -/
+theorem diamond_le_box_iff : diamond R ≤ box R ↔ ∀ w ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u :=
+  ⟨fun h _ ↦ diamond_le_box_at_iff.1 fun p ↦ h p _,
+    fun h p w ↦ diamond_le_box_at_iff.2 (h w) p⟩
+
+/-- The excluded middle for every `p` at `w`, `□p ∨ □¬p`, holds iff `w` sees at most one
+world. -/
+theorem box_or_box_not_at_iff :
+    (∀ p : W → Prop, □[R] p w ∨ □[R] (fun v ↦ ¬ p v) w) ↔
+      ∀ ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u := by
+  rw [← diamond_le_box_at_iff]
+  refine forall_congr' fun p ↦ ?_
+  rw [← not_diamond, or_comm, or_iff_not_imp_left, not_not]
+
+/-- The neg-raising inference for every `p` at `w`, `¬□p → □¬p`, holds iff `w` sees at most
+one world. -/
+theorem box_not_of_not_box_at_iff :
+    (∀ p : W → Prop, ¬ □[R] p w → □[R] (fun v ↦ ¬ p v) w) ↔
+      ∀ ⦃v⦄, R w v → ∀ ⦃u⦄, R w u → v = u := by
+  rw [← box_or_box_not_at_iff]
+  exact forall_congr' fun p ↦ (or_iff_not_imp_left).symm
+
 end ModalLogic

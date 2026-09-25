@@ -1332,7 +1332,6 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Genericity.SortedOntology
 import Linglib.Semantics.Genericity.Subkinds
 import Linglib.Semantics.Homogeneity.Collective
-import Linglib.Semantics.Homogeneity.Decided
 import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
