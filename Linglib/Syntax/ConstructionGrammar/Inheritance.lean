@@ -39,7 +39,7 @@ legislate leaves the slot unspecified.
 
 namespace ConstructionGrammar
 
-open PartialUnify (unifyList unifyList_pair unify_eq_none_iff)
+open PartialUnify (unifyList unifyList_pair unify_eq_top_iff)
 
 /-! ### Default-mode slot algebra
 
@@ -58,13 +58,13 @@ wins; an unspecified slot takes its parents' unification when it exists;
 a parental conflict the child does not legislate leaves the slot
 unspecified. -/
 def inheritField (own : Flat α) (parents : List (Flat α)) : Flat α :=
-  own.or ((unifyList parents).getD ⊥)
+  own.or ((unifyList parents).untopD ⊥)
 
 /-- The child legislates wherever its parents conflict — [goldberg-1995]'s
 normal mode: "conflicts are addressed by the inheriting construction,
 which specifies its own constraints". -/
 def ResolvesField (own : Flat α) (parents : List (Flat α)) : Prop :=
-  unifyList parents = none → own ≠ ⊥
+  unifyList parents = ⊤ → own ≠ ⊥
 
 instance (own : Flat α) (parents : List (Flat α)) :
     Decidable (ResolvesField own parents) :=
@@ -76,7 +76,7 @@ theorem inheritField_coe (a : α) (parents : List (Flat α)) :
 
 @[simp]
 theorem inheritField_nil (own : Flat α) : inheritField own [] = own := by
-  simp [inheritField]
+  simp [inheritField, ← WithTop.coe_bot]
 
 /-- Absent conflict, normal-mode inheritance agrees with strict
 (complete-mode) unification: with compatible parents the inherited value
@@ -84,15 +84,15 @@ is the priority union of child and parents. Normal mode departs from
 complete inheritance only at genuine conflicts. -/
 theorem inheritField_of_compat (own : Flat α) {p q : Flat α}
     (h : Compat p q) : inheritField own [p, q] = (own.or p).or q := by
-  simp only [inheritField, unifyList_pair,
-    Flat.unify_eq_some_or_of_compat h, Option.getD_some]
+  simp only [inheritField, unifyList_pair, Flat.unify_eq_coe_or_of_compat h,
+    WithTop.untopD_coe]
   exact (Flat.or_assoc own p q).symm
 
 /-- Compatible parents impose no resolution burden on the child. -/
 theorem resolvesField_of_compat (own : Flat α) {p q : Flat α}
     (h : Compat p q) : ResolvesField own [p, q] := by
   intro hnone
-  rw [unifyList_pair, unify_eq_none_iff] at hnone
+  rw [unifyList_pair, unify_eq_top_iff] at hnone
   exact absurd h hnone
 
 end FieldAlgebra

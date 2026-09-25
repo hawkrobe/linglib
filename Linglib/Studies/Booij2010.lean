@@ -78,7 +78,7 @@ theorem carlessness_instantiates : nessSchema.Instantiates Forms.carlessness.slo
 `carlessness` returns `carlessness` — [booij-2010-compass]'s worked example. -/
 theorem carlessness_unifies :
     PartialUnify.unify nessSchema.body Forms.carlessness.slots =
-      some Forms.carlessness.slots :=
+      WithTop.some Forms.carlessness.slots :=
   nessSchema.instantiates_iff_unify.mp carlessness_instantiates
 
 /-- The stored `-ness` nouns of the paper's opening word set, feeding the schema's two
@@ -256,13 +256,13 @@ def onbaarSchema : Schema OnbaarSlot (Flat BaarAtom) where
 /-- The `on-` and `V-baar` descriptions unify into the `on-V-baar` description — the
 schema unification `(16)`, with no intermediate `V-baar` word required. -/
 theorem onbaar_unifies :
-    PartialUnify.unify onSchema.body baarSchema.body = some onbaarSchema.body := by decide
+    PartialUnify.unify onSchema.body baarSchema.body = ↑onbaarSchema.body := by decide
 
 /-- The unified schema's instances are exactly the words that are at once `on-`
 prefixed and `-baar` suffixed: the content of coining `onbedwingbaar` directly. -/
 theorem onbaarSchema_instantiates_iff {w : OnbaarSlot → Flat BaarAtom} :
     onbaarSchema.Instantiates w ↔ onSchema.Instantiates w ∧ baarSchema.Instantiates w :=
-  Schema.instantiates_iff_of_unify_eq_some onbaar_unifies
+  Schema.instantiates_iff_of_unify_eq_coe onbaar_unifies
 
 /-! ### Further constructional phenomena (prose)
 

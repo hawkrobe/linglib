@@ -56,7 +56,7 @@ variables (`Schema.instantiates_iff_instantiation_of_forall_isMax`).
   `Schema.generates_iff_mem_pi`: what a schema generates is the product of its slotwise
   fillers.
 * `Instantiation`, `Contrast`: the relational links, same except at a set of positions.
-* `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_some`: the meet of two
+* `Schema.instantiates_inf_iff`, `Schema.instantiates_iff_of_unify_eq_coe`: the meet of two
   items is their least general generalization, the Structural Intersection of Relational
   Morphology, and the unification of two descriptions has exactly their common instances.
 
@@ -125,19 +125,14 @@ theorem body_le_body_iff :
 /-- An item instantiates a schema exactly when unifying it with the description returns the
 item. -/
 theorem instantiates_iff_unify [Fintype V] [PartialUnify α] :
-    s.Instantiates w ↔ PartialUnify.unify s.body w = some w := by
-  rw [PartialUnify.unify_eq_some_iff_isLUB]
-  refine ⟨λ h => ⟨?_, ?_⟩, λ h => h.1 (Set.mem_insert _ _)⟩
-  · rintro x (rfl | rfl)
-    exacts [h, le_rfl]
-  · exact λ _ hu => hu (Set.mem_insert_of_mem _ rfl)
+    s.Instantiates w ↔ PartialUnify.unify s.body w = ↑w :=
+  PartialUnify.unify_eq_right.symm
 
 /-- The instances of a unified description are the common instances of its two conjuncts. -/
-theorem instantiates_iff_of_unify_eq_some [Fintype V] [PartialUnify α] {u : Schema V α}
-    (h : PartialUnify.unify s.body t.body = some u.body) :
+theorem instantiates_iff_of_unify_eq_coe [Fintype V] [PartialUnify α] {u : Schema V α}
+    (h : PartialUnify.unify s.body t.body = ↑u.body) :
     u.Instantiates w ↔ s.Instantiates w ∧ t.Instantiates w := by
-  rw [Instantiates, isLUB_le_iff (PartialUnify.isLUB_of_unify_eq_some h),
-    PartialUnify.mem_upperBounds_pair]
+  rw [Instantiates, ← WithTop.coe_le_coe, ← h, PartialUnify.unify_le_coe_iff]
   rfl
 
 end PartialOrder

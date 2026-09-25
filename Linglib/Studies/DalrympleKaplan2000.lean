@@ -131,8 +131,8 @@ theorem not_eq_and_eq_of_ne {α : Type*} {x a b : α} (h : a ≠ b) : ¬ (x = a 
     value with the two verbs' requirements fails, the transitivity argument of (24) as order
     theory. -/
 theorem flat_no_join {α : Type*} [DecidableEq α] {a b : α} (h : a ≠ b) :
-    Flat.unify (↑a : Flat α) ↑b = none :=
-  Flat.unify_distinct_eq_none h
+    Flat.unify (↑a : Flat α) ↑b = ⊤ :=
+  Flat.unify_eq_top_of_ne h
 
 /-- On the token bundle, the accusative and nominative requirements of the two verbs of (17)
     are not bounded above in the subsumption order, so Shieber's unification of them fails. -/
