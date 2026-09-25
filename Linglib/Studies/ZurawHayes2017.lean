@@ -27,14 +27,28 @@ effects of the prefixes are across the board on every square, for every weightin
 probability, so the stem differences grow with the prefix probability, the paper's claws
 (`decision_tree_monotonic_diff`).
 
+Stochastic OT fails differently (§3.8). When a lone constraint opposes two synergistic families
+that each apply through one constraint, as in the French liaison and elision data, generation is
+a race: the opposing constraint's candidate wins when that constraint outruns the other two
+(`raceRate`). By a theorem of Magri's that the paper reports, the difference that a stronger
+constraint of one family makes then grows monotonically as the constraint of the other family
+weakens (`raceRate_add_le`, `antitone_raceRate_sub`) and vanishes as it strengthens
+(`tendsto_raceRate_atTop`): the rates converge in one direction and diverge in the other. In
+Harmonic Grammar's tug-of-war the difference vanishes in both directions
+(`not_antitone_not_monotone_sigmoid_sub`).
+
 ## Implementation notes
 
 * The inputs are the thirty-six crossings of the six prefix constructions of Figure 3 with the
   six stem-initial consonants of [zuraw-2010]; its /t/ stands for the paper's t/s class.
 * The constraints are those of Table 1, in its order, the consonant-sensitive ones pulled back
   from [zuraw-2010] along the projection of a candidate onto its stem and decision.
-* The paper's fitted weights, their log likelihoods, the empirical rates, and the stochastic OT
-  and partial-ordering models are not represented.
+* Magri's theorem is proved for noise of any law, stochastic OT's Gaussian noise among them: the
+  opposing candidate's rate integrates, against the law of its constraint, the product of the
+  other two constraints' distribution functions (`rumChoiceProb_eq_lintegral`), and that product
+  has increasing differences in the two ranking values.
+* The paper's fitted weights and ranking values, their log likelihoods, the empirical rates, the
+  French and Hungarian data, and the partial-ordering model are not represented.
 
 ## References
 
@@ -229,6 +243,127 @@ theorem nhg_acrossTheBoard (w : Fin 11 → ℝ) {σ : ℝ} (hσ : 0 < σ) (p p' 
   have := diffSq_pos (.mangOther, x.2)
   have : (0 : ℝ) < diffSq (.mangOther, x.2) := by exact_mod_cast this
   positivity
+
+/-! ### Stochastic OT with synergistic families (§3.8) -/
+
+section StochasticOT
+
+open MeasureTheory Filter Topology Set
+open scoped ENNReal
+
+variable (η : Measure ℝ) [IsProbabilityMeasure η]
+
+/-- In stochastic OT every ranking value is perturbed by independent noise of law `η`, and an
+evaluation is decided by the highest-ranked constraint that distinguishes the candidates. When a
+lone opposing constraint, with ranking value `n`, faces two synergistic families, each applying
+through one constraint, with ranking values `a` and `u`, the candidate it favors wins exactly
+when it outruns the other two (§3.8). `raceRate η n a u` is the rate of that candidate. -/
+noncomputable def raceRate (n a u : ℝ) : ℝ≥0∞ :=
+  rumChoiceProb ![η.map (n + ·), η.map (a + ·), η.map (u + ·)] 0
+
+omit [IsProbabilityMeasure η] in
+private theorem map_add_Iio (r x : ℝ) : η.map (r + ·) (Iio x) = η (Iio (x - r)) := by
+  rw [Measure.map_apply (measurable_const_add r) measurableSet_Iio, preimage_const_add_Iio]
+
+omit [IsProbabilityMeasure η] in
+private theorem measurable_Iio_sub (r : ℝ) : Measurable fun x ↦ η (Iio (x - r)) :=
+  Monotone.measurable fun _ _ h ↦ measure_mono (Iio_subset_Iio (by linarith))
+
+omit [IsProbabilityMeasure η] in
+private theorem measurable_race (a u : ℝ) :
+    Measurable fun x ↦ η (Iio (x - a)) * η (Iio (x - u)) :=
+  (measurable_Iio_sub η a).mul (measurable_Iio_sub η u)
+
+/-- The rate of the first candidate integrates, against the law of its constraint, the product of
+the distribution functions of the other two: the race. -/
+theorem raceRate_eq (n a u : ℝ) :
+    raceRate η n a u = ∫⁻ x, η (Iio (x - a)) * η (Iio (x - u)) ∂η.map (n + ·) := by
+  have : ∀ j, SigmaFinite (![η.map (n + ·), η.map (a + ·), η.map (u + ·)] j) := fun j ↦ by
+    fin_cases j <;> simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val] <;>
+      infer_instance
+  rw [raceRate, rumChoiceProb_eq_lintegral, show univ.erase (0 : Fin 3) = {1, 2} by decide]
+  simp [map_add_Iio]
+
+theorem raceRate_le_one (n a u : ℝ) : raceRate η n a u ≤ 1 := by
+  rw [raceRate_eq]
+  calc _ ≤ ∫⁻ _, 1 ∂η.map (n + ·) := lintegral_mono fun _ ↦ mul_le_one' prob_le_one prob_le_one
+    _ = 1 := by simp [Measure.map_apply (measurable_const_add n) .univ]
+
+/-- Magri's theorem (§3.8): the difference that a stronger constraint of one family makes to the
+opposing candidate's rate is larger the weaker the constraint of the other family, for noise of
+any law. -/
+theorem raceRate_add_le {n a a' u u' : ℝ} (ha : a' ≤ a) (hu : u ≤ u') :
+    raceRate η n a u + raceRate η n a' u' ≤ raceRate η n a' u + raceRate η n a u' := by
+  simp only [raceRate_eq]
+  rw [← lintegral_add_left (measurable_race η a u), ← lintegral_add_left (measurable_race η a' u)]
+  refine lintegral_mono fun x ↦ ?_
+  obtain ⟨p, hp⟩ := exists_add_of_le (measure_mono (μ := η) (Iio_subset_Iio (sub_le_sub_left ha x)))
+  obtain ⟨q, hq⟩ := exists_add_of_le (measure_mono (μ := η) (Iio_subset_Iio (sub_le_sub_left hu x)))
+  rw [hp, hq]
+  set A := η (Set.Iio (x - a))
+  set B := η (Set.Iio (x - u'))
+  calc A * (B + q) + (A + p) * B = A * B + p * B + (A * B + A * q) := by ring
+    _ ≤ A * B + p * B + (A * B + A * q) + p * q := le_self_add
+    _ = (A + p) * (B + q) + A * B := by ring
+
+/-- The difference that a stronger constraint of one family makes grows monotonically as the
+constraint of the other family weakens: the rates diverge uniformly (§3.8, Figure 20). -/
+theorem antitone_raceRate_sub (n : ℝ) {u u' : ℝ} (hu : u ≤ u') :
+    Antitone fun a ↦ (raceRate η n a u).toReal - (raceRate η n a u').toReal := by
+  intro a' a ha
+  have h := raceRate_add_le η (n := n) ha hu
+  have fin (a u : ℝ) : raceRate η n a u ≠ ∞ :=
+    ((raceRate_le_one η n a u).trans_lt ENNReal.one_lt_top).ne
+  rw [← ENNReal.toReal_le_toReal (ENNReal.add_ne_top.2 ⟨fin _ _, fin _ _⟩)
+    (ENNReal.add_ne_top.2 ⟨fin _ _, fin _ _⟩), ENNReal.toReal_add (fin _ _) (fin _ _),
+    ENNReal.toReal_add (fin _ _) (fin _ _)] at h
+  simp only
+  linarith
+
+/-- As a constraint of one family strengthens, the opposing candidate's rate vanishes whatever
+the other: the rates converge (§3.8). -/
+theorem tendsto_raceRate_atTop (n u : ℝ) :
+    Tendsto (fun a ↦ raceRate η n a u) atTop (𝓝 0) := by
+  have hlim (x : ℝ) : Tendsto (fun a ↦ η (Iio (x - a))) atTop (𝓝 0) := by
+    have h := ENNReal.tendsto_ofReal ((tendsto_cdf_atBot η).comp
+      (tendsto_atBot_add_const_left atTop x tendsto_neg_atTop_atBot))
+    rw [ENNReal.ofReal_zero] at h
+    exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h (fun _ ↦ bot_le)
+      fun a ↦ (measure_mono Set.Iio_subset_Iic_self).trans_eq
+        (by rw [Function.comp_apply, ← sub_eq_add_neg, ofReal_cdf])
+  have key := tendsto_lintegral_filter_of_dominated_convergence (μ := η.map (n + ·)) (l := atTop)
+    (F := fun a x ↦ η (Iio (x - a)) * η (Iio (x - u))) (f := fun _ ↦ 0) (fun _ ↦ 1)
+    (.of_forall (measurable_race η · u))
+    (.of_forall fun _ ↦ .of_forall fun _ ↦ mul_le_one' prob_le_one prob_le_one)
+    (by rw [lintegral_one]; exact measure_ne_top _ _)
+    (.of_forall fun x ↦ by
+      simpa using ENNReal.Tendsto.mul_const (hlim x) (.inr (measure_ne_top η _)))
+  simpa [raceRate_eq] using key
+
+/-- In Harmonic Grammar the three constraints pull against each other as in a tug-of-war: with
+two candidates MaxEnt gives the first the rate `sigmoid (n - a - u)` (13). A stronger constraint of
+one family then makes no difference at either extreme of the other, so the difference it makes
+is neither antitone nor monotone. -/
+theorem not_antitone_not_monotone_sigmoid_sub (n : ℝ) {u u' : ℝ} (hu : u < u') :
+    ¬ Antitone (fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')) ∧
+      ¬ Monotone (fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')) := by
+  set D := fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')
+  have hpos : 0 < D 0 := sub_pos.2 (sigmoid_strictMono (by linarith))
+  have hbot : Tendsto D atBot (𝓝 0) := by
+    have h (v : ℝ) : Tendsto (fun a ↦ sigmoid (n - a - v)) atBot (𝓝 1) :=
+      tendsto_sigmoid_atTop.comp (tendsto_atTop_add_const_right _ _
+        (tendsto_atTop_add_const_left _ _ tendsto_neg_atBot_atTop))
+    simpa using (h u).sub (h u')
+  have htop : Tendsto D atTop (𝓝 0) := by
+    have h (v : ℝ) : Tendsto (fun a ↦ sigmoid (n - a - v)) atTop (𝓝 0) :=
+      tendsto_sigmoid_atBot.comp (tendsto_atBot_add_const_right _ _
+        (tendsto_atBot_add_const_left _ _ tendsto_neg_atTop_atBot))
+    simpa using (h u).sub (h u')
+  refine ⟨fun hD ↦ ?_, fun hD ↦ ?_⟩
+  · exact hpos.not_ge (ge_of_tendsto hbot (eventually_le_atBot 0 |>.mono fun a ha ↦ hD ha))
+  · exact hpos.not_ge (ge_of_tendsto htop (eventually_ge_atTop 0 |>.mono fun a ha ↦ hD ha))
+
+end StochasticOT
 
 /-! ### The decision-tree model -/
 
