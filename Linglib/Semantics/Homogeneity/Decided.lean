@@ -16,9 +16,11 @@ is the shared structural core of several superficially different phenomena:
 
 * attitude **neg-raising** ([gajewski-2007], [horn-2001]):
   `Semantics/Attitudes/NegRaising.lean`;
-* modal **weak necessity** — the comparative ([rubinstein-2014]), homogeneity
-  ([agha-jeretic-2022]), and domain-restriction analyses surveyed in
-  [agha-jeretic-2026] all reduce their neg-raising prediction to it;
+* modal **weak necessity** — the domain-restriction analysis surveyed in
+  [agha-jeretic-2026] neg-raises exactly over a decided domain, and the homogeneity analysis
+  ([agha-jeretic-2022]) has its gap there; the comparative analysis ([rubinstein-2014])
+  instead derives neg-raising from the choice of a negotiable ideal
+  (`Studies/Rubinstein2014.lean`);
 * nominal **plural homogeneity** — the same lemmas instantiated over individuals
   rather than worlds ("Ann didn't eat the cookies" = ate none).
 
