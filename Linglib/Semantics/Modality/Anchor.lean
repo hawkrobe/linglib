@@ -30,7 +30,7 @@ conditions a modal item may impose on its anchor.
 
 namespace Modality
 
-open Mood Modality.Kratzer
+open Mood Modality
 
 variable {Event W : Type*}
 

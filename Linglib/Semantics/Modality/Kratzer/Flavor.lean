@@ -14,7 +14,7 @@ public import Linglib.Semantics.Modality.Basic
 
 @[expose] public section
 
-namespace Modality.Kratzer
+namespace Modality
 
 variable {W : Type*}
 
@@ -104,16 +104,16 @@ See `Operators.duality` for the proof. -/
 
 /-- Evaluate a `KratzerParams` as necessity (∀ over best worlds). -/
 def KratzerParams.necessity (params : KratzerParams W) (p : W → Prop) (w : W) : Prop :=
-  Kratzer.necessity params.base params.ordering p w
+  Modality.necessity params.base params.ordering p w
 
 /-- Evaluate a `KratzerParams` as possibility (∃ over best worlds). -/
 def KratzerParams.possibility (params : KratzerParams W) (p : W → Prop) (w : W) : Prop :=
-  Kratzer.possibility params.base params.ordering p w
+  Modality.possibility params.base params.ordering p w
 
 /-- Duality: □p ↔ ¬◇¬p for any KratzerParams. -/
 theorem KratzerParams.duality (params : KratzerParams W) (p : W → Prop)
     (w : W) :
     params.necessity p w ↔ ¬ params.possibility (fun w' => ¬ p w') w :=
-  Kratzer.duality params.base params.ordering p w
+  Modality.duality params.base params.ordering p w
 
-end Modality.Kratzer
+end Modality

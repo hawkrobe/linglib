@@ -49,7 +49,7 @@ Mastermind scenario (Pascal asking Mordecai *Must there be two reds?*):
 `B_K = {w1}` entails *blue* without either kernel proposition settling it. -/
 
 open Modality
-open Modality.Kratzer
+open Modality
 
 /-- Four worlds, with `w0` red, `w1` blue, `w2` green, and `w3` unknown. -/
 inductive World where
@@ -97,7 +97,7 @@ theorem mastermind_blue_unsettled :
     · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)
         (show blue .w1 from by decide)
 
-theorem mastermind_blue_follows : mastermindK.followsFrom blue := by
+theorem mastermind_blue_follows : mastermindK.FollowsFrom blue := by
   rw [Kernel.followsFrom_iff, mastermind_base]
   rintro w rfl
   rfl
@@ -128,7 +128,7 @@ theorem mastermind_redOrBlue_settled :
 simultaneously defined and true. -/
 theorem entailment_settling_gap :
     ∃ (k : Kernel World) (φ : World → Prop),
-      k.followsFrom φ ∧ ¬ k.directlySettles φ :=
+      k.FollowsFrom φ ∧ ¬ k.directlySettles φ :=
   ⟨mastermindK, blue, mastermind_blue_follows, mastermind_blue_unsettled⟩
 
 /-- Indirectness and assertion strength are orthogonal dimensions: must can
@@ -207,7 +207,7 @@ theorem subjectMatter_rel_base {v w : W} (hv : v ∈ k.base) (hw : w ∈ k.base)
     with `explicit_implies_entailment`, the converse fails. -/
 theorem partition_implies_entailment (φ : W → Prop)
     (h : settlesByPartition k φ) :
-    k.followsFrom φ ∨ k.followsFrom (λ w => ¬ φ w) := by
+    k.FollowsFrom φ ∨ k.FollowsFrom (λ w => ¬ φ w) := by
   rcases Set.eq_empty_or_nonempty k.base with hEmpty | ⟨w₀, hw₀⟩
   · exact Or.inl λ w hw => absurd (hEmpty ▸ hw) (Set.notMem_empty w)
   · exact (Classical.em (φ w₀)).imp
@@ -258,7 +258,7 @@ theorem partition_not_implies_explicit :
     partition. -/
 theorem entailment_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
-      k.followsFrom φ ∧ ¬ settlesByPartition k φ :=
+      k.FollowsFrom φ ∧ ¬ settlesByPartition k φ :=
   ⟨⟨[red]⟩, redOrBlue,
     λ w hw => Or.inl (mem_propIntersection.mp hw red (by simp)),
     not_settles_redOrBlue⟩

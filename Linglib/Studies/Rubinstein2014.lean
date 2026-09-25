@@ -69,7 +69,7 @@ Hebrew reaches weak necessity through the comparatives alone.
 
 namespace Rubinstein2014
 
-open Modality.Kratzer Data.Examples
+open Modality Data.Examples
 
 variable {W : Type*}
 
@@ -87,7 +87,7 @@ structure Backgrounds (W : Type*) where
 /-- A set of priorities is consistent with the circumstances at `w` when some accessible world
 verifies all of them. -/
 def ConsistentWith (b : Backgrounds W) (w : W) (X : Set (W → Prop)) : Prop :=
-  ∃ v ∈ accessibleWorlds b.circumstances w, ∀ q ∈ X, q v
+  ∃ v ∈ b.circumstances.accessibleWorlds w, ∀ q ∈ X, q v
 
 /-- (39): the maximal sets of promoted priorities consistent with the circumstances, the sets
 [frank-1996]'s compatibility-restricted union adds to the circumstances. -/
@@ -97,7 +97,7 @@ def extensions (b : Backgrounds W) (w : W) : Set (Set (W → Prop)) :=
 /-- (40): the favored worlds, the accessible worlds verifying some maximal consistent set of
 promoted priorities. -/
 def favoredWorlds (b : Backgrounds W) (w : W) : Set W :=
-  ⋃ X ∈ extensions b w, {u ∈ accessibleWorlds b.circumstances w | ∀ q ∈ X, q u}
+  ⋃ X ∈ extensions b w, {u ∈ b.circumstances.accessibleWorlds w | ∀ q ∈ X, q u}
 
 /-- The promoted priorities a world verifies. -/
 def verified (b : Backgrounds W) (w u : W) : Set (W → Prop) :=
@@ -120,7 +120,7 @@ theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b
 
 /-- A world verifying a maximal consistent extension is best. -/
 theorem mem_bestWorlds_of_extension {X : Set (W → Prop)} {u : W} (hX : X ∈ extensions b w)
-    (hu : u ∈ accessibleWorlds b.circumstances w) (huX : ∀ q ∈ X, q u) :
+    (hu : u ∈ b.circumstances.accessibleWorlds w) (huX : ∀ q ∈ X, q u) :
     u ∈ bestWorlds b.circumstances b.nonNegotiable w := by
   have hX' : Maximal (fun Y ↦ Y ⊆ {q | q ∈ b.nonNegotiable w} ∧ ConsistentWith b w Y) X := hX
   refine ⟨hu, fun v hv hvu ↦ atLeastAsGoodAs_iff_verified_subset.2 fun q hq ↦ ⟨hq.1, huX q ?_⟩⟩
@@ -253,8 +253,8 @@ def reportAll (v : Revenue) : Prop := v.1 = true ∧ v.2 = true
 
 private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     favoredWorlds (ofIdeals h g) w = {v | ∀ i ∈ h, i.holds v} := by
-  have hall : (true, true) ∈ accessibleWorlds (ofIdeals h g).circumstances w := by
-    show (true, true) ∈ accessibleWorlds emptyBackground w
+  have hall : (true, true) ∈ (ofIdeals h g).circumstances.accessibleWorlds w := by
+    show (true, true) ∈ ModalBase.accessibleWorlds emptyBackground w
     rw [empty_base_universal_access]; exact Set.mem_univ _
   rw [favoredWorlds_eq_bestWorlds, bestWorlds, bestAmong_eq_of_exists ⟨(true, true), hall, ?_⟩]
   · ext v

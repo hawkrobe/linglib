@@ -49,7 +49,7 @@ attitude the anchor can be coindexed with the external modal's (`harmonic`, (82)
 
 namespace AlonsoOvalleRoyer2024
 
-open Modality Modality.Kratzer ModalLogic Mood Presupposition Data.Examples Finset
+open Modality ModalLogic Mood Presupposition Data.Examples Finset
 
 /-! ### Events and what they project -/
 

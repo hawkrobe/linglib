@@ -25,7 +25,7 @@ coincide (`weak_eq_strong_no_secondary`).
 
 namespace Modality.Directive
 
-open Modality.Kratzer
+open Modality
 
 variable {W : Type*}
 
@@ -57,7 +57,7 @@ theorem weak_not_entails_strong :
   let g : OrderingSource Bool := fun _ ↦ [fun _ ↦ True]
   let g' : OrderingSource Bool := fun _ ↦ [fun w ↦ w = true]
   let p : Bool → Prop := fun w ↦ w = true
-  have hAcc : ∀ w' : Bool, w' ∈ accessibleWorlds f true := by
+  have hAcc : ∀ w' : Bool, w' ∈ f.accessibleWorlds true := by
     intro w' q hq
     cases hq
   have hTriv : ∀ a b : Bool, atLeastAsGoodAs (g true) a b := by

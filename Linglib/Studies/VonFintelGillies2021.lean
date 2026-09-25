@@ -39,7 +39,7 @@ Kernel semantics resolves this: *can't φ* = *must*(¬φ) by definition
 (`kernelCant`), so Observation 4's evidential parallelism holds by
 construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation 5. -/
 
-open Modality Modality.Kratzer VonFintelGillies2010
+open Modality VonFintelGillies2010
 
 variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
@@ -80,7 +80,7 @@ theorem cant_dilemma_resolved :
       · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)
           (show ¬ notBlue .w1 from by decide)
   · rw [show (kernelCant mastermindK notBlue).assertion .w1 =
-        mastermindK.followsFrom (λ w => ¬ notBlue w) from rfl,
+        mastermindK.FollowsFrom (λ w => ¬ notBlue w) from rfl,
       Kernel.followsFrom_iff, mastermind_base]
     rintro w rfl
     decide

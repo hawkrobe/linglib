@@ -62,7 +62,7 @@ diagnostics of sections 3 and 3.1 are predicted by the heads the complement reac
 
 namespace FuscoSgrizzi2026
 
-open Modality Modality.Kratzer Minimalist Italian.Verbs Data.Examples Event
+open Modality Minimalist Italian.Verbs Data.Examples Event
 
 section Semantics
 

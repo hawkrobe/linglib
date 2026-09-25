@@ -40,7 +40,7 @@ status, since the model has no other individuals.
 
 namespace Kratzer2012
 
-open Modality.Kratzer
+open Modality
 
 /-- A world: was Roger elected chief, and does the rumor that he was exist? -/
 abbrev World := Bool × Bool
@@ -62,17 +62,17 @@ def content : ModalBase World := Function.const World [chief]
 /-- Decide a claim about the backgrounds over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
   `(tactic| ((try simp only [simpleNecessity, simplePossibility, ModalLogic.box,
-      ModalLogic.diamond, kratzerR, isRealistic, evidence, content, chief, rumor,
+      ModalLogic.diamond, kratzerR, ConvBackground.IsRealistic, evidence, content, chief, rumor,
       Function.const_apply, List.forall_mem_cons, List.mem_nil_iff, false_implies,
       implies_true, and_true]) <;> decide))
 
 /-- The evidence-of-things background is realistic: every world has the rumor's status it
 has. -/
-theorem evidence_realistic : isRealistic evidence := by decide_worlds
+theorem evidence_realistic : evidence.IsRealistic := by decide_worlds
 
 /-- The informational background is not realistic: at a world where the rumor is a lie,
 the world itself is not among those compatible with the rumor's content. -/
-theorem content_not_realistic : ¬ isRealistic content := by decide_worlds
+theorem content_not_realistic : ¬ content.IsRealistic := by decide_worlds
 
 /-- (8b): the reportative reading holds at every world, a lie included, because it reports
 the rumor's content. -/

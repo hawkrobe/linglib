@@ -43,13 +43,13 @@ past the evidential meaning is no implicature (`bestWorlds_subset_accessible`).
 
 namespace Izvorski1997
 
-open Modality.Kratzer Presupposition
+open Modality Presupposition
 
 variable {W : Type*}
 
 /-- The speaker knows `p` relative to the background `f` when `p` holds throughout the worlds
 compatible with it. -/
-def Known (f : ModalBase W) (w : W) (p : W → Prop) : Prop := ∀ u ∈ accessibleWorlds f w, p u
+def Known (f : ModalBase W) (w : W) (p : W → Prop) : Prop := ∀ u ∈ f.accessibleWorlds w, p u
 
 /-- The indirect evidential of (8) and (17) to (19). The background `f` assigns each world the
 propositions the speaker counts as indirect evidence, and `g` assigns the speaker's beliefs about
@@ -72,7 +72,7 @@ theorem ev_assertion_eq_must : (Ev f g p).assertion = (must f g p).assertion := 
 
 /-- *must* quantifies over what is known, a background at least as rich as the indirect
 evidence, so its accessible worlds are among the evidential's, (10) and (11). -/
-theorem accessible_must_subset (h : f w ⊆ f' w) : accessibleWorlds f' w ⊆ accessibleWorlds f w :=
+theorem accessible_must_subset (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   accessibleWorlds_anti h
 
 /-- With no evidence the evidential is undefined where *must* is not, as in (12) and (13). -/
@@ -91,8 +91,8 @@ theorem neg_presup : (PartialProp.neg (Ev f g p)).presup = (Ev f g p).presup :=
 /-- The force of the evidential is set by the beliefs about the evidence. When some accessible world
 verifies every belief and all such worlds verify `p`, the assertion holds. A reliable report or a
 sound inference makes the reading close to universal, and an unreliable source leaves it weak. -/
-theorem necessity_of_beliefs (hex : ∃ u ∈ accessibleWorlds f w, ∀ q ∈ g w, q u)
-    (h : ∀ u ∈ accessibleWorlds f w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
+theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, q u)
+    (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
   rw [necessity_iff_all]
   intro u hu
   rw [bestWorlds, bestAmong_eq_of_exists hex] at hu
@@ -101,7 +101,7 @@ theorem necessity_of_beliefs (hex : ∃ u ∈ accessibleWorlds f w, ∀ q ∈ g 
 /-- The domain of quantification lies within the epistemically accessible worlds, where the
 counterfactual's lies outside them, so the evidential meaning is asserted of the actual epistemic
 state and is no implicature (Section 5.3). -/
-theorem bestWorlds_subset_accessible : bestWorlds f g w ⊆ accessibleWorlds f w :=
+theorem bestWorlds_subset_accessible : bestWorlds f g w ⊆ f.accessibleWorlds w :=
   Preorder.minimals_subset _ _
 
 /-- The present perfect supplies the presupposition (Section 5.2). The consequent state of the event

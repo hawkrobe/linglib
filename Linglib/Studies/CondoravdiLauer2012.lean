@@ -60,7 +60,7 @@ adviser's structures.
 
 namespace CondoravdiLauer2012
 
-open Commitment Desire.Preferential Modality.Kratzer Data.Examples
+open Commitment Desire.Preferential Modality Data.Examples
 
 variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Set W} {w : W}
 

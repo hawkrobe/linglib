@@ -17,9 +17,9 @@ index is: worlds, situations, or times.
 ## Main definitions
 
 * `propIntersection A`: the indices satisfying every member of `A`, Kratzer's `⋂A`.
-* `followsFrom p A`, `isConsistent A`, `isCompatibleWith p A`.
-* `mustInView`, `canInView`: Definitions 5 and 6.
-* `mustInView'`, `canInView'`: Definitions 7 and 8, over `consistentSublists`.
+* `FollowsFrom p A`, `IsConsistent A`, `IsCompatibleWith p A`.
+* `MustInView`, `CanInView`: Definitions 5 and 6.
+* `MustInView'`, `CanInView'`: Definitions 7 and 8, over `consistentSublists`.
 
 ## Main results
 
@@ -38,7 +38,7 @@ index is: worlds, situations, or times.
 
 @[expose] public section
 
-namespace Modality.Kratzer
+namespace Modality
 
 variable {W : Type*}
 
@@ -50,16 +50,16 @@ def propIntersection (props : List (W → Prop)) : Set W :=
 
 /-- A proposition `p` **follows from** a premise set `A` iff `⋂ A ⊆ {i | p i}`
     ([kratzer-1977] p. 31). -/
-def followsFrom (p : W → Prop) (A : List (W → Prop)) : Prop :=
+def FollowsFrom (p : W → Prop) (A : List (W → Prop)) : Prop :=
   propIntersection A ⊆ {i | p i}
 
 /-- A premise set is **consistent** iff `⋂ A` is non-empty ([kratzer-1977] p. 31). -/
-def isConsistent (A : List (W → Prop)) : Prop :=
+def IsConsistent (A : List (W → Prop)) : Prop :=
   (propIntersection A).Nonempty
 
 /-- A proposition `p` is **compatible with** `A` iff `A ∪ {p}` is consistent. -/
-def isCompatibleWith (p : W → Prop) (A : List (W → Prop)) : Prop :=
-  isConsistent (p :: A)
+def IsCompatibleWith (p : W → Prop) (A : List (W → Prop)) : Prop :=
+  IsConsistent (p :: A)
 
 theorem mem_propIntersection {A : List (W → Prop)} {i : W} :
     i ∈ propIntersection A ↔ ∀ p ∈ A, p i := Iff.rfl
@@ -81,17 +81,17 @@ theorem propIntersection_singleton (p : W → Prop) : propIntersection [p] = {i 
   rw [propIntersection_cons, propIntersection_nil, Set.inter_univ]
 
 theorem isCompatibleWith_iff_exists {p : W → Prop} {A : List (W → Prop)} :
-    isCompatibleWith p A ↔ ∃ i ∈ propIntersection A, p i := by
-  simp only [isCompatibleWith, isConsistent, Set.Nonempty, mem_propIntersection,
+    IsCompatibleWith p A ↔ ∃ i ∈ propIntersection A, p i := by
+  simp only [IsCompatibleWith, IsConsistent, Set.Nonempty, mem_propIntersection,
     List.forall_mem_cons]
   exact ⟨fun ⟨i, hp, hA⟩ => ⟨i, hA, hp⟩, fun ⟨i, hA, hp⟩ => ⟨i, hp, hA⟩⟩
 
 /-- Duality: `p` is compatible with `A` iff `¬p` does not follow from `A`. -/
 theorem isCompatibleWith_iff_not_followsFrom_not {p : W → Prop}
     {A : List (W → Prop)} :
-    isCompatibleWith p A ↔ ¬ followsFrom (fun i => ¬ p i) A := by
+    IsCompatibleWith p A ↔ ¬ FollowsFrom (fun i => ¬ p i) A := by
   rw [isCompatibleWith_iff_exists]
-  simp [followsFrom, Set.subset_def, not_forall]
+  simp [FollowsFrom, Set.subset_def, not_forall]
 
 /-! ### Definitions 5 and 6: must and can in view of -/
 
@@ -99,15 +99,15 @@ theorem isCompatibleWith_iff_not_followsFrom_not {p : W → Prop}
     iff `p` follows from the premise set `f i`.
 
     `ν(p, f) = {i : ⋂(f i) ⊆ p}` -/
-def mustInView (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
-  followsFrom p (f i)
+def MustInView (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
+  FollowsFrom p (f i)
 
 /-- **Def 6** ([kratzer-1977]): `can p in view of f` at index `i`
     iff `p` is compatible with the premise set `f i`.
 
     `μ(p, f) = {i : ⋂((f i) ∪ {p}) ≠ ∅}` -/
-def canInView (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
-  isCompatibleWith p (f i)
+def CanInView (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
+  IsCompatibleWith p (f i)
 
 /-! ### Definitions 7 and 8: must and can over consistent sublists -/
 
@@ -116,7 +116,7 @@ def canInView (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
 
     Concretely: a sublist `B` of `A` such that `B` is consistent. -/
 def consistentSublists (A : List (W → Prop)) : Set (List (W → Prop)) :=
-  {B | B ∈ A.sublists ∧ isConsistent B}
+  {B | B ∈ A.sublists ∧ IsConsistent B}
 
 /-- **Def 7** ([kratzer-1977]): the revised necessity operator that handles
     possibly inconsistent premise sets.
@@ -126,9 +126,9 @@ def consistentSublists (A : List (W → Prop)) : Set (List (W → Prop)) :=
 
     Original notation:
     `ν(p, f) = {i : ∀B[B ∈ X_{f(i)} → ∃C[C ∈ X_{f(i)} ∧ B ⊆ C ∧ ⋂C ⊆ p]]}` -/
-def mustInView' (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
+def MustInView' (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
   ∀ B ∈ consistentSublists (f i),
-    ∃ C ∈ consistentSublists (f i), B ⊆ C ∧ followsFrom p C
+    ∃ C ∈ consistentSublists (f i), B ⊆ C ∧ FollowsFrom p C
 
 /-- **Def 8** ([kratzer-1977]): the revised possibility operator that handles
     possibly inconsistent premise sets.
@@ -138,9 +138,9 @@ def mustInView' (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
 
     Original notation:
     `μ(p, f) = {i : ∃B[B ∈ X_{f(i)} ∧ ∀C[(C ∈ X_{f(i)} ∧ B ⊆ C) → consistent(C ∪ {p})]]}` -/
-def canInView' (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
+def CanInView' (f : W → List (W → Prop)) (p : W → Prop) (i : W) : Prop :=
   ∃ B ∈ consistentSublists (f i),
-    ∀ C ∈ consistentSublists (f i), B ⊆ C → isCompatibleWith p C
+    ∀ C ∈ consistentSublists (f i), B ⊆ C → IsCompatibleWith p C
 
 /-! ### Monotonicity
 
@@ -155,19 +155,19 @@ theorem propIntersection_anti_of_subset
   intro _ hi p hp
   exact hi p (h hp)
 
-/-- `followsFrom` is **monotone** in the premise list: more premises only add
+/-- `FollowsFrom` is **monotone** in the premise list: more premises only add
     consequences. -/
 theorem followsFrom_mono_of_subset
     {p : W → Prop} {A B : List (W → Prop)}
-    (h : A ⊆ B) (hp : followsFrom p A) : followsFrom p B :=
+    (h : A ⊆ B) (hp : FollowsFrom p A) : FollowsFrom p B :=
   fun _ hi => hp (propIntersection_anti_of_subset h hi)
 
-/-- `isCompatibleWith` is **anti-monotone** in the premise list: removing
+/-- `IsCompatibleWith` is **anti-monotone** in the premise list: removing
     premises can only make a proposition easier to be compatible with. -/
 theorem isCompatibleWith_anti_of_subset
     {p : W → Prop} {A B : List (W → Prop)}
-    (h : B ⊆ A) (hp : isCompatibleWith p A) :
-    isCompatibleWith p B := by
+    (h : B ⊆ A) (hp : IsCompatibleWith p A) :
+    IsCompatibleWith p B := by
   have hcons : (p :: B) ⊆ (p :: A) := by
     intro x hx
     rcases List.mem_cons.mp hx with rfl | hxB
@@ -179,7 +179,7 @@ theorem isCompatibleWith_anti_of_subset
 /-- A consistent premise list is itself a member of its own consistent
     sublist powerset. -/
 theorem self_mem_consistentSublists
-    {A : List (W → Prop)} (h : isConsistent A) :
+    {A : List (W → Prop)} (h : IsConsistent A) :
     A ∈ consistentSublists A :=
   ⟨List.mem_sublists.mpr (List.Sublist.refl _), h⟩
 
@@ -200,16 +200,16 @@ is consistent by hypothesis, and `B ⊆ f i` for every `B ∈ consistentSublists
     the original. -/
 theorem mustInView_iff_mustInView'_of_consistent
     (f : W → List (W → Prop)) (p : W → Prop) (i : W)
-    (h : isConsistent (f i)) :
-    mustInView' f p i ↔ mustInView f p i := by
-  unfold mustInView mustInView'
+    (h : IsConsistent (f i)) :
+    MustInView' f p i ↔ MustInView f p i := by
+  unfold MustInView MustInView'
   refine ⟨fun hAll => ?_, fun hFollows B hB => ?_⟩
   · -- (⇒) Specialize the universal to `B := f i`; the resulting `C` is a
-    -- sublist of `f i`, so `followsFrom` lifts back to `f i`.
+    -- sublist of `f i`, so `FollowsFrom` lifts back to `f i`.
     obtain ⟨C, hC_mem, _, hfollows⟩ := hAll _ (self_mem_consistentSublists h)
     exact followsFrom_mono_of_subset (subset_of_mem_consistentSublists hC_mem) hfollows
   · -- (⇐) Take `C := f i`; it dominates every `B` in the sublist powerset
-    -- and inherits `followsFrom p` from the hypothesis.
+    -- and inherits `FollowsFrom p` from the hypothesis.
     exact ⟨f i, self_mem_consistentSublists h,
       subset_of_mem_consistentSublists hB, hFollows⟩
 
@@ -217,9 +217,9 @@ theorem mustInView_iff_mustInView'_of_consistent
     the original. -/
 theorem canInView_iff_canInView'_of_consistent
     (f : W → List (W → Prop)) (p : W → Prop) (i : W)
-    (h : isConsistent (f i)) :
-    canInView' f p i ↔ canInView f p i := by
-  unfold canInView canInView'
+    (h : IsConsistent (f i)) :
+    CanInView' f p i ↔ CanInView f p i := by
+  unfold CanInView CanInView'
   refine ⟨fun ⟨B, hB_mem, hAll⟩ => ?_, fun hCompat => ?_⟩
   · -- (⇒) Apply the universal to `C := f i`, which dominates `B`.
     exact hAll (f i) (self_mem_consistentSublists h)
@@ -236,18 +236,18 @@ theorem canInView_iff_canInView'_of_consistent
 a premise set is the failure of the negation to follow from it. -/
 
 theorem canInView_iff_not_mustInView_not (f : W → List (W → Prop)) (p : W → Prop) (i : W) :
-    canInView f p i ↔ ¬ mustInView f (fun j => ¬ p j) i :=
+    CanInView f p i ↔ ¬ MustInView f (fun j => ¬ p j) i :=
   isCompatibleWith_iff_not_followsFrom_not
 
 theorem canInView'_iff_not_mustInView'_not (f : W → List (W → Prop)) (p : W → Prop) (i : W) :
-    canInView' f p i ↔ ¬ mustInView' f (fun j => ¬ p j) i := by
-  simp only [canInView', mustInView', isCompatibleWith_iff_not_followsFrom_not, not_forall,
+    CanInView' f p i ↔ ¬ MustInView' f (fun j => ¬ p j) i := by
+  simp only [CanInView', MustInView', isCompatibleWith_iff_not_followsFrom_not, not_forall,
     not_exists, not_and, exists_prop]
 
 theorem mustInView'_iff_not_canInView'_not (f : W → List (W → Prop)) (p : W → Prop) (i : W) :
-    mustInView' f p i ↔ ¬ canInView' f (fun j => ¬ p j) i := by
+    MustInView' f p i ↔ ¬ CanInView' f (fun j => ¬ p j) i := by
   rw [canInView'_iff_not_mustInView'_not, not_not]
-  simp only [mustInView', followsFrom, not_not]
+  simp only [MustInView', FollowsFrom, not_not]
 
 /-! ### Sufficient conditions for Definitions 7 and 8 -/
 
@@ -255,14 +255,14 @@ theorem mustInView'_iff_not_canInView'_not (f : W → List (W → Prop)) (p : W 
 extension still contains it. -/
 theorem canInView'_of_mem {f : W → List (W → Prop)} {p : W → Prop} {i : W}
     {B : List (W → Prop)} (hB : B ∈ consistentSublists (f i)) (hp : p ∈ B) :
-    canInView' f p i :=
+    CanInView' f p i :=
   ⟨B, hB, fun _ ⟨_, w, hw⟩ hBC => ⟨w, List.forall_mem_cons.mpr ⟨hw p (hBC hp), hw⟩⟩⟩
 
 /-- The head of the premise set is necessary under Definition 7 when it is compatible with
 every consistent sublist: a sublist without it extends by it, one with it entails it. -/
 theorem mustInView'_of_forall_isCompatibleWith {f : W → List (W → Prop)} {p : W → Prop}
     {A : List (W → Prop)} {i : W} (hf : f i = p :: A)
-    (h : ∀ B ∈ consistentSublists (f i), isCompatibleWith p B) : mustInView' f p i := by
+    (h : ∀ B ∈ consistentSublists (f i), IsCompatibleWith p B) : MustInView' f p i := by
   intro B hB
   have hBA : B.Sublist (p :: A) := hf ▸ List.mem_sublists.mp hB.1
   rcases List.sublist_cons_iff.mp hBA with hBA | ⟨r, rfl, hr⟩
@@ -270,4 +270,4 @@ theorem mustInView'_of_forall_isCompatibleWith {f : W → List (W → Prop)} {p 
       List.subset_cons_self p B, propIntersection_subset List.mem_cons_self⟩
   · exact ⟨p :: r, hB, List.Subset.refl _, propIntersection_subset List.mem_cons_self⟩
 
-end Modality.Kratzer
+end Modality

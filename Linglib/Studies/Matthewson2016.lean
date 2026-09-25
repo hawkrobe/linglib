@@ -73,7 +73,7 @@ universal and holds of the four inventories.
 
 namespace Matthewson2016
 
-open Modality Modality.Kratzer Data.Examples Evidential
+open Modality Data.Examples Evidential
 
 /-! ### Modes of projection (Table 18.2) -/
 
@@ -91,14 +91,14 @@ variable {W : Type*} {f : ModalBase W} {μ : ProjectionMode}
 counterparts a factual base projects, so a factual base is realistic; the content of a source
 may be false, so a content base need not be. -/
 def ProjectionMode.Admits : ProjectionMode → ModalBase W → Prop
-  | .factual, f => isRealistic f
+  | .factual, f => f.IsRealistic
   | .content, _ => True
 
 /-- A modal base allows *must p, but not p* when at some world `p` is necessary and false. -/
 def Deniable (f : ModalBase W) : Prop := ∃ p w, simpleNecessity f p w ∧ ¬ p w
 
 /-- A base allows the denial of a necessity claim exactly when it is not realistic. -/
-theorem deniable_iff_not_isRealistic : Deniable f ↔ ¬ isRealistic f := by
+theorem deniable_iff_not_isRealistic : Deniable f ↔ ¬ f.IsRealistic := by
   simp [Deniable, isRealistic_iff_simpleNecessity_le_id, Pi.le_def]
 
 /-- A mode is veridical over a space of worlds when no base it projects there allows the denial

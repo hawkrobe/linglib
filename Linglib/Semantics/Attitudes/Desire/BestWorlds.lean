@@ -8,7 +8,7 @@ public import Linglib.Semantics.Modality.Kratzer.Ordering
 `a wants p` iff every best belief-world is a `p`-world, where belief-worlds are ordered by
 the desires they satisfy: [von-fintel-1999]'s semantics, [kratzer-1981]'s ordering with the
 desire propositions as ordering source and the belief set as domain, so that *want* is
-Kratzer's necessity over the best belief-worlds (`Want`, `Modality.Kratzer.bestAmong`). Some
+Kratzer's necessity over the best belief-worlds (`Want`, `Modality.bestAmong`). Some
 belief-world is always best on a finite frame, so `p` and `¬p` cannot both be wanted
 (`Want.not_compl`); the semantics is upward monotone in `p` (`Want.mono`), which is the
 doxastic-closure problem of [villalta-2008].
@@ -24,7 +24,7 @@ doxastic-closure problem of [villalta-2008].
 
 namespace Desire.BestWorlds
 
-open Modality.Kratzer
+open Modality
 
 variable {W : Type*} (G : List (Finset W)) (bel p : Set W)
 

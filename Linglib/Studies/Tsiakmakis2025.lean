@@ -28,7 +28,7 @@ deontic ordering source, `ProperHost`, the revised inventory (95), `Host`.
 
 ## Implementation notes
 
-Propositions are sets of worlds and NEG₂ is the substrate's `Modality.Kratzer.necessity`, the
+Propositions are sets of worlds and NEG₂ is the substrate's `Modality.necessity`, the
 best worlds of a modal base and an ordering source; the two negators of the Greek fragment are
 the markers, their semantics being the paper's. The flavour of the ordering source varies by
 host and language, epistemic for Greek *min*, deontic for French fear-predicate *ne*, and is
@@ -54,7 +54,7 @@ and that conditionals and free relatives are tentative hosts. The examples are t
 
 namespace Tsiakmakis2025
 
-open Modality.Kratzer
+open Modality
 
 variable {W : Type*} (f : ModalBase W) (g : OrderingSource W)
 
