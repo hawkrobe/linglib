@@ -250,6 +250,12 @@ def heen : Adposition :=
   { form := .simple "heen", relation := .spatial, complement := [], linearization := [],
     intransitive := true }
 
+/-- *toe* is a particle, the second part of *naar … toe* and the closing element of *tot (aan)
+het einde (aan) toe* 'to the very end', and is not an adposition on its own. -/
+def toe : Adposition :=
+  { form := .simple "toe", relation := .spatial, complement := [], linearization := [],
+    intransitive := true }
+
 /-! ### Circumpositions -/
 
 /-- *van … af* 'from, off', *van het dak af springen* 'jump off the roof'. -/
@@ -327,7 +333,7 @@ def wegens : Adposition := { preposition "wegens" .logical with rPronoun := fals
 def inventory : List Adposition :=
   [aan, achter, bij, binnen, boven, buiten, door, in_, langs, naar, naast, om, onder, op,
    over₁, over₂, rond, tegen, tegenover, tot, tussen, uit, van, vanaf, vanuit, via, voor,
-   voorbij, af, heen,
+   voorbij, af, heen, toe,
    vanAf, onderDoor, tussenDoor, overHeen, doorHeen, omHeen, naarToe, tussenIn,
    na, tijdens, met, zonder, dankzij, namens, ondanks, ongeacht, vanwege, volgens, wegens]
 
