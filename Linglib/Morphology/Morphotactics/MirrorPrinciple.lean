@@ -63,8 +63,8 @@ def GFRuleType.toMorphCategory : GFRuleType → MorphCategory
 [bybee-1985]'s hierarchy. A relevance-order fact, not a positional universal:
 prefixal agreement can sit inside a GF-rule morpheme, as in Chamorro
 *na'-fan-otchu* ([baker-1985] (15c)). -/
-theorem GFRuleType.toMorphCategory_relevanceLT_agreement (r : GFRuleType) :
-    r.toMorphCategory.RelevanceLT (.agreement .subj) := by
+theorem GFRuleType.toMorphCategory_lt_agreement (r : GFRuleType) :
+    r.toMorphCategory < .agreement .subj := by
   cases r <;> decide
 
 /-! ### Derivations -/

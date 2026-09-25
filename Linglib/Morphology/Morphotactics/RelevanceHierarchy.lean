@@ -11,21 +11,26 @@ public import Mathlib.Data.List.Sort
 ordered by semantic relevance to the stem, and the stem-outward
 sortedness this order induces on affix sequences.
 
-`MorphCategory` is a **comparative concept**, not a universal slot
-inventory: languages own their slot types (`AffixTemplate (Slot)`,
-`Mayan.VerbSlot`), and cross-linguistic relevance claims are stated by
-pulling the order back along a fragment-supplied `Slot → MorphCategory`
-hom — sortedness of the image, with the hom carrying the analytical
-commitments (see `Fragments/Japanese/Morph.lean` for the worked
-example). The law layer is mathlib's: the order is `Preorder.lift
-peripherality` and `RespectsRelevanceHierarchy` is `List.SortedLE`.
+`MorphCategory` is a comparative concept, not a universal slot inventory: languages own their
+slot types (`AffixTemplate Slot`, `Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a
+cross-linguistic relevance claim pulls the order back along a `Slot → MorphCategory` hom
+supplied by the study that draws the comparison. The order is `Preorder.lift peripherality`
+and a sequence respects the hierarchy when it is `List.SortedLE`.
 
 ## Main definitions
 
-- `MorphCategory`: Bybee's comparative inventory, with the relevance
-  `Preorder` (`Preorder.lift peripherality`).
-- `MorphCategory.RelevanceLE`/`RelevanceLT`: the order, named.
-- `RespectsRelevanceHierarchy`: a slot list sorted stem-outward.
+* `MorphCategory`: Bybee's comparative inventory, with the relevance `Preorder`.
+* `MorphCategory.peripherality`: the rank realizing the order, `MorphCategory.le_iff`.
+
+## References
+
+* [J. Bybee, *Morphology: A Study of the Relation between Meaning and Form* (1985)][bybee-1985]
+* [G. D. S. Anderson, *Auxiliary Verb Constructions* (2006)][anderson-2006a]
+* [J. H. Greenberg, *Some Universals of Grammar with Particular Reference to the Order of
+  Meaningful Elements* (1963)][greenberg-1963]
+* [M. Miestamo, *Standard Negation: The Negation of Declarative Verbal Main Clauses in a
+  Typological Perspective* (2005)][miestamo-2005]
+* [L. Stassen, *Comparative Constructions* (2013)][stassen-2013]
 -/
 
 @[expose] public section
@@ -72,11 +77,8 @@ mirrors stem-outward linear position in suffixing morphology
 this directionality explicit and avoids the wrong-on-its-face
 gloss "high relevance rank means low relevance."
 
-**Categories from Bybee 1985 Ch 2 §3** (verified against the book):
-valence, voice, aspect, tense, mood, agreement.
-
-**Linglib extensions** (NOT in Bybee 1985 — flag in any consumer
-that reads these ranks):
+Bybee's own categories (Ch 2 §3) are valence, voice, aspect, tense, mood and agreement. The
+others are extensions, with the ranks chosen here:
 - `derivation` (rank 1): Bybee Ch 4 argues lex/deriv/infl is a
   *continuum*, not a discrete level on the relevance scale.
 - `number` (rank 3): Bybee discusses verbal-number agreement at
@@ -110,66 +112,26 @@ def MorphCategory.peripherality : MorphCategory → Nat
 
 /-! ### The relevance order
 
-`peripherality` is a *rank function* — a numeric embedding. The object the
-hierarchy is really about is the **order** it induces: which categories are
-more stem-relevant than which. All relevance-hierarchy code — this file's
-`RespectsRelevanceHierarchy` and the consumers in `Studies/` — speaks in that
-order via `RelevanceLE` / `RelevanceLT`; the specific ℕ values of
-`peripherality` are an implementation detail (only their comparisons carry
-meaning, as `relevanceLE_iff_peripherality` records). -/
+`peripherality` is a rank function; the object the hierarchy is about is the preorder it induces,
+`Preorder.lift peripherality`: `a ≤ b` when `a` is at least as stem-relevant as `b`. Only a
+preorder, since the rank is not injective (voice and number share one). A slot sequence respects
+the hierarchy when it is sorted stem-outward by this order, mathlib's `List.SortedLE`; a
+language's slots are compared by pulling the order back along a `Slot → MorphCategory` hom,
+sortedness of the image, with the hom carrying the analytical commitments
+(`Studies/HahnDegenFutrell2021.lean` for the worked example). -/
 
-/-- The relevance preorder: `a ≤ b` iff `a` is at least as stem-relevant
-as `b`. Only a preorder — `peripherality` is non-injective (voice and
-number share a rank), so there is no antisymmetry. -/
 instance : Preorder MorphCategory := Preorder.lift MorphCategory.peripherality
 
-/-- `a` is at least as stem-relevant as `b`, named. This *is* the
-`Preorder` order (`Iff.rfl`); the name keeps consumer statements
-readable. -/
-def MorphCategory.RelevanceLE (a b : MorphCategory) : Prop := a ≤ b
+instance : DecidableLE MorphCategory :=
+  fun a b ↦ inferInstanceAs (Decidable (a.peripherality ≤ b.peripherality))
 
-/-- `a` is strictly more stem-relevant than `b`, named. -/
-def MorphCategory.RelevanceLT (a b : MorphCategory) : Prop := a < b
+instance : DecidableLT MorphCategory :=
+  fun a b ↦ inferInstanceAs (Decidable (a.peripherality < b.peripherality))
 
-instance : DecidableRel MorphCategory.RelevanceLE :=
-  fun a b => inferInstanceAs (Decidable (a.peripherality ≤ b.peripherality))
+theorem MorphCategory.le_iff {a b : MorphCategory} :
+    a ≤ b ↔ a.peripherality ≤ b.peripherality := Iff.rfl
 
-instance : DecidableRel MorphCategory.RelevanceLT :=
-  fun a b => inferInstanceAs (Decidable (a.peripherality < b.peripherality))
-
-/-- The relevance order is reflexive. -/
-@[refl] theorem MorphCategory.RelevanceLE.refl (a : MorphCategory) : a.RelevanceLE a :=
-  le_refl a
-
-/-- The relevance order is transitive. -/
-theorem MorphCategory.RelevanceLE.trans {a b c : MorphCategory}
-    (h₁ : a.RelevanceLE b) (h₂ : b.RelevanceLE c) : a.RelevanceLE c :=
-  le_trans h₁ h₂
-
-/-- The relevance order is total: any two categories are comparable. -/
-theorem MorphCategory.RelevanceLE.total (a b : MorphCategory) :
-    a.RelevanceLE b ∨ b.RelevanceLE a :=
-  Nat.le_total _ _
-
-/-- Strict relevance order is the strict part of the order. -/
-theorem MorphCategory.RelevanceLT_iff {a b : MorphCategory} :
-    a.RelevanceLT b ↔ a.RelevanceLE b ∧ ¬ b.RelevanceLE a :=
-  lt_iff_le_not_ge
-
-/-- `peripherality` reflects the relevance order exactly: it is the canonical
-rank realizing the order, so the order carries precisely the information the
-rank does. -/
-theorem MorphCategory.relevanceLE_iff_peripherality {a b : MorphCategory} :
-    a.RelevanceLE b ↔ a.peripherality ≤ b.peripherality := Iff.rfl
-
-/-- A morpheme ordering respects the relevance hierarchy when its categories
-are sorted stem-outward by the relevance order — mathlib's `List.SortedLE`
-under the relevance `Preorder` (equivalently `Pairwise (· ≤ ·)`, via
-`List.sortedLE_iff_pairwise`). -/
-def RespectsRelevanceHierarchy (slots : List MorphCategory) : Prop :=
-  slots.SortedLE
-
-instance : DecidablePred RespectsRelevanceHierarchy := fun slots =>
-  decidable_of_iff (slots.Pairwise (· ≤ ·)) List.sortedLE_iff_pairwise.symm
+theorem MorphCategory.lt_iff {a b : MorphCategory} :
+    a < b ↔ a.peripherality < b.peripherality := Iff.rfl
 
 end Morphology
