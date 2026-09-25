@@ -124,7 +124,7 @@ theorem isRigidAcrossAlternatives_of_isRigid
 /-- **Metaphysical** alternative set ([klecha-2016] DOX): the worlds
     sharing the holder's actual history up to her now, paired with times
     at-or-before her now. -/
-def metaphysicalAlternatives [LE T]
+def metaphysicalAlternatives [Preorder T]
     (history : HistoricalAlternatives W T) (dr : TemporalDeReReading W E P T) :
     Set (Index W T) :=
   actualHistoryBase history dr.holderContext.toIndex

@@ -109,7 +109,7 @@ theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Ind
 
 section Semantics
 
-variable [LT T] (history : HistoricalAlternatives W T) (g : OrderingSource (Index W T))
+variable [Preorder T] (history : HistoricalAlternatives W T) (g : OrderingSource (Index W T))
 
 /-- The timely future circumstances of a circumstance (50): its possible futures at which the
 goals held at it remain in force. -/
@@ -296,7 +296,7 @@ theorem nobody_livesOn (addr : E → Prop) : NP.LivesOn (nobody addr) addr :=
 /-- The derivation (42′) of *Nobody move!*: the addressees have the property when in every
 applicable circumstance there is a timely later time at which none of them moves, so each of
 them is directed not to move in the applicable circumstances. -/
-theorem realizes_nobody_move [LT T] {history : HistoricalAlternatives W T}
+theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
     {g : OrderingSource (Index W T)} {f : ModalBase (Index W T)} {addr : E → Prop}
     {move : Index W T → E → Prop} {c c' : Index W T} {x y : E}
     (h : realizes history g f (fun c _ ↦ nobody addr (move c)) x c)

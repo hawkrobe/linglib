@@ -76,15 +76,15 @@ theorem compare_mem_orientations [LinearOrder T] (m : ModalBase)
     (history : HistoricalAlternatives W T) {s s' : Index W T} (h : s' ∈ m.base history s) :
     compare s'.time s.time ∈ m.orientations := by
   cases m
-  · exact Finset.mem_union.2 ((lt_or_eq_of_le (actualHistoryBase_time_actual history s s' h)).elim
+  · exact Finset.mem_union.2 ((lt_or_eq_of_le (time_le_of_mem_actualHistoryBase h)).elim
       (λ h => Or.inl ((compare_mem_past _ _).2 h)) (λ h => Or.inr ((compare_mem_present _ _).2 h)))
-  · exact (compare_mem_future _ _).2 (futureHistoryBase_time_future history s s' h)
+  · exact (compare_mem_future _ _).2 (time_lt_of_mem_futureHistoryBase h)
 
 /-- §4.2: the Upper Limit Constraint of [abusch-1997], `Tense.upperLimitConstraint`, is the
 `dox` case, derived from the modal base rather than imposed on tense. -/
 theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
     {s s' : Index W T} (h : s' ∈ dox.base history s) : upperLimitConstraint s'.time s.time :=
-  actualHistoryBase_time_actual history s s' h
+  time_le_of_mem_actualHistoryBase h
 
 /-- The derivations of §3.3 as the four cells of modal base against tense, (43): `dox` with a
 past is past, `dox` with a non-past is simultaneous, (55), `cir` with a non-past is future,
