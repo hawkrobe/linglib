@@ -19,12 +19,13 @@ the `lp` diagonal Priest's Logic of Paradox — same tables, different designate
 ([cobreros-etal-2012]).
 
 The API mirrors `Mathlib.ModelTheory` (`Realize`, per-constructor `@[simp]` lemmas, `⊨`
-notation); consequence follows linglib's list-based `MixedConsequence` rather than
-`Set`-based theories, matching the [cobreros-etal-2012] framework its consumers use.
+notation); consequence is the multiple-conclusion, list-based `MixedConsequence` of the
+[cobreros-etal-2012] framework rather than `Set`-based theories.
 
 ## Main results
 
-- `Formula.realize_neg` — the K3/LP duality: negation swaps the standards.
+- `Formula.realize_neg`, `Formula.isDual` — the K3/LP duality: negation swaps the standards.
+- `consequence_iff_dual` — so `Γ ⊨ Δ` in K3 iff `¬Δ ⊨ ¬Γ` in LP.
 - `Formula.realize_ofBool` — on a Boolean model both standards are classical truth
   (`Formula.evalBool`).
 - `k3_no_tautologies`, `lp_all_satisfiable` — the all-`indet` model gives K3 no
@@ -40,7 +41,7 @@ notation); consequence follows linglib's list-based `MixedConsequence` rather th
 
 namespace Trivalent
 
-open Consequence (MixedConsequence)
+open Consequence (IsDual MixedConsequence mixedConsequence_iff_dual)
 
 /-- Propositional formulas over an atom type (`CobrerosEtAl2012.Formula` instantiates it). -/
 inductive Formula (Atom : Type*) where
@@ -108,6 +109,11 @@ def Realize (M : Model Atom) (d : Trivalent.Designation) (φ : Formula Atom) : P
   have h := Trivalent.designated_neg_iff d.dual (eval M φ)
   rwa [Trivalent.Designation.dual_dual] at h
 
+/-- Each standard is dual to the other along negation ([cobreros-etal-2012], Definition 20). -/
+theorem isDual (d : Trivalent.Designation) :
+    IsDual Formula.neg (fun M : Model Atom ↦ Realize M d.dual) (Realize · d) := fun _ _ ↦ by
+  simp
+
 /-- On a Boolean model every standard is classical truth. -/
 theorem realize_ofBool (v : Atom → Bool) (d : Trivalent.Designation) (φ : Formula Atom) :
     (Trivalent.ofBool ∘ v ⊨[d] φ) ↔ evalBool v φ = Bool.true := by
@@ -137,11 +143,10 @@ at the dual standard. -/
 
 end Formula
 
-open scoped Formula in
-/-- Mixed consequence over designation standards: premises at `m`, conclusion at `n`. -/
+/-- Mixed consequence over designation standards: premises at `m`, conclusions at `n`. -/
 abbrev Consequence {Atom : Type*} (m n : Trivalent.Designation)
-    (Γ : List (Formula Atom)) (φ : Formula Atom) : Prop :=
-  MixedConsequence (Formula.Realize (Atom := Atom)) m n Γ φ
+    (Γ Δ : List (Formula Atom)) : Prop :=
+  MixedConsequence (Formula.Realize · m) (Formula.Realize · n) Γ Δ
 
 /-! ### Meta-theorems -/
 
@@ -149,9 +154,15 @@ open scoped Formula
 
 variable {Atom : Type*}
 
+/-- Negation dualizes consequence: `Γ ⊨ Δ` at `m, n` iff `¬Δ ⊨ ¬Γ` at the dual standards, so
+K3 and LP are each other's duals ([cobreros-etal-2012], Lemma 6). -/
+theorem consequence_iff_dual {m n : Trivalent.Designation} {Γ Δ : List (Formula Atom)} :
+    Consequence m n Γ Δ ↔ Consequence n.dual m.dual (Δ.map .neg) (Γ.map .neg) :=
+  mixedConsequence_iff_dual (Formula.isDual m) (Formula.isDual n)
+
 /-- In the all-indeterminate model every formula evaluates to `indet`. -/
 theorem eval_allIndet (φ : Formula Atom) :
-    Formula.eval (λ _ : Atom => Trivalent.indet) φ = Trivalent.indet := by
+    Formula.eval (fun _ : Atom ↦ Trivalent.indet) φ = Trivalent.indet := by
   induction φ with
   | atom _ => rfl
   | neg ψ ih => simp [ih, Trivalent.neg]
@@ -162,25 +173,23 @@ theorem eval_allIndet (φ : Formula Atom) :
 theorem k3_no_tautologies [Nonempty Atom] (φ : Formula Atom) :
     ¬(∀ M : Model Atom, M ⊨[.k3] φ) := by
   intro h
-  have := h (λ _ => Trivalent.indet)
+  have := h fun _ ↦ Trivalent.indet
   simp [Formula.Realize, eval_allIndet] at this
 
 /-- Every formula is LP-satisfiable: the all-indeterminate model designates everything
 ([cobreros-etal-2012], Theorem 2). -/
 theorem lp_all_satisfiable (φ : Formula Atom) :
-    (λ _ : Atom => Trivalent.indet) ⊨[.lp] φ := by
+    (fun _ : Atom ↦ Trivalent.indet) ⊨[.lp] φ := by
   simp [Formula.Realize, eval_allIndet]
 
 /-- Explosion fails in LP: `{a ∧ ¬a} ⊭ b`, with countermodel `M a = indet`,
 `M b = false`. -/
 theorem lp_no_explosion :
-    ∃ (φ ψ : Formula Bool), ¬Consequence .lp .lp [.conj φ (.neg φ)] ψ := by
-  refine ⟨.atom Bool.true, .atom Bool.false, ?_⟩
-  intro h
-  have := h (λ b => if b then Trivalent.indet else Trivalent.false)
-    (λ γ hγ => by
-      simp at hγ; subst hγ
-      simp [Formula.Realize, Trivalent.neg])
+    ∃ (φ ψ : Formula Bool), ¬Consequence .lp .lp [.conj φ (.neg φ)] [ψ] := by
+  refine ⟨.atom Bool.true, .atom Bool.false, fun h ↦ ?_⟩
+  have := h (fun b ↦ if b then Trivalent.indet else Trivalent.false) fun γ hγ ↦ by
+    simp only [List.mem_singleton] at hγ; subst hγ
+    simp [Formula.Realize, Trivalent.neg]
   simp [Formula.Realize] at this
 
 end Trivalent

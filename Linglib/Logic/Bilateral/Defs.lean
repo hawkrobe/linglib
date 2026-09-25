@@ -27,10 +27,11 @@ swaps `positive` and `negative` *as values*, with no commitment to
 - Fine-style truthmaker semantics (`BilProp`): `verifier`/`falsifier` are
   predicates over a state space; negation swaps them.
 
-Distinct from the **classical** bilateral pattern (`SatDuality`, in
-`Bilateral/Classical.lean`), where negation IS propositional negation
-modulo mode duality: `sat (neg φ) ↔ ¬sat (dual m) φ`. TCS, LP, RM3
-satisfy that stronger axiom; BSML and friends do not.
+Distinct from the **classical** pattern (`Consequence.IsDual`, in
+`Logic/Consequence.lean`), where negation IS propositional negation
+modulo a duality of satisfaction notions: `sat' (neg φ) ↔ ¬sat φ`. The
+strict/tolerant notions of TCS and the K3/LP designations satisfy that
+stronger axiom; BSML and friends do not.
 
 ## Why a `Prop`-bundle, not a typeclass
 
@@ -38,7 +39,7 @@ Three free type parameters (`Form`, `Result`, plus `positive`/`negative`/
 `negate` as fields) make typeclass elaboration infeasible — the previous
 `Bilateral.lean` (deleted in 0.230.649) tried this and failed. A
 `Prop`-bundle of axioms parameterised over the data is the working
-mathlib pattern (compare `IsLowerSet`, `SatDuality`, `IsLub`).
+mathlib pattern (compare `IsLowerSet`, `IsLub`).
 
 Consumers provide their `positive`, `negative`, `negate` as ordinary
 definitions, then prove `IsBilateral` separately. Derived theorems
@@ -73,7 +74,7 @@ variable {Form Result : Type*}
     Captures the paraconsistent pattern shared by BSML, QBSML, BUS,
     ICDRT, and Fine-style truthmaker semantics. The classical pattern
     (negation negates the proposition modulo mode duality) is captured
-    by `Bilateral.Classical.SatDuality`. -/
+    by `Consequence.IsDual`. -/
 structure IsBilateral
     (positive negative : Form → Result) (negate : Form → Form) : Prop where
   /-- Negation flips `positive` to `negative`. -/

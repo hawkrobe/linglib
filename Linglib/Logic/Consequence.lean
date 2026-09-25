@@ -1,197 +1,165 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Mathlib.Data.List.Basic
-public import Linglib.Logic.Bilateral.Classical
+public import Mathlib.Order.Basic
 
 /-!
-# Mixed Consequence Relations
-[cobreros-etal-2012]
+# Mixed consequence
 
-Abstract framework for mixed notions of logical consequence, where
-premises and conclusions may be evaluated under different standards
-of satisfaction.
+A mixed consequence relation ([cobreros-etal-2012], Definition 17) reads the premises of a
+sequent `Γ ⇒ Δ` by one notion of satisfaction and its conclusions by another: `Γ ⇒ Δ` is valid
+when every model that `p`-satisfies all of `Γ` `q`-satisfies some member of `Δ`. With `p = q` this
+is ordinary multiple-conclusion consequence. The strict, classical and tolerant satisfaction of
+[cobreros-etal-2012] give nine such relations, among them the non-transitive `st`.
 
-## Motivation
+The structural behaviour of a mixed relation is fixed by how its two notions compare, in the
+pointwise order on satisfaction relations. The relation is reflexive iff `p ≤ q`, closed under cut
+when `q ≤ p`, and grows as `p` strengthens and `q` weakens (Lemma 7). Negation dualizes it
+(Lemma 6), and the deduction theorem holds when the conditional is read at `q` with its
+antecedent at `p` (Lemma 10).
 
-Given multiple notions of satisfaction for a logic (e.g., tolerant,
-classical, strict), we can form *mixed* consequence relations by
-requiring premises to be satisfied under one standard and conclusions
-under another. This generates a lattice of consequence relations
-whose structural properties (strength ordering, duality, deduction
-theorem) depend only on the relationships between the satisfaction
-notions — not on the specific logic.
+## Main definitions
 
-## Key Definitions
+* `Consequence.Satisfies p q M Γ Δ`: the model `M` satisfies the sequent `Γ ⇒ Δ`.
+* `Consequence.MixedConsequence p q Γ Δ`: every model satisfies it (Definition 17).
+* `Consequence.IsDual neg p' p`: `p'` is the dual of `p` along `neg` (Definition 20).
 
-- `MixedConsequence`: Γ ⊨ᵐⁿ φ iff every model m-satisfying all
-  of Γ also n-satisfies φ
-- `SatImplies`: one satisfaction notion implies another
-- `consequence_dual`: (Cobreros Lemma 6) consequence under the
-  satisfaction duality of `Bilateral.SatDuality`
+## Main results
 
-## Key Results
+* `MixedConsequence.comap`: validity transfers along model correspondences (§2.2.2).
+* `MixedConsequence.mono`: strength monotonicity (Lemma 7).
+* `stdRefl_mixedConsequence_iff`: reflexivity holds iff `p ≤ q`.
+* `MixedConsequence.cut`, `isTrans_mixedConsequence`: cut, and hence transitivity, when
+  `q ≤ p`.
+* `mixedConsequence_iff_dual`: `Γ ⇒ Δ` is valid iff `¬Δ ⇒ ¬Γ` is valid for the dual standards
+  (Lemma 6).
+* `mixedConsequence_cons_cons_iff`: the deduction theorem in sequent form (Lemma 10).
 
-- **Premise monotonicity**: stronger premises → more things follow
-- **Conclusion monotonicity**: weaker conclusions → more things follow
-- **Duality**: ⊨ᵐⁿ dualizes to ⊨^{d(n)d(m)} on negated formulas
+## Implementation notes
+
+Satisfaction notions are relations `Model → Formula → Prop`, ordered pointwise, so `p ≤ q` says
+that whatever a model `p`-satisfies it also `q`-satisfies. A family of notions indexed by modes,
+like the three of [cobreros-etal-2012], enters by fixing the mode. Premises and conclusions are
+lists: sequents are finite, as the deduction theorem requires.
+
+## References
+
+* [P. Cobreros, P. Égré, D. Ripley and R. van Rooij, *Tolerant, Classical, Strict*
+  (2012)][cobreros-etal-2012]
 -/
 
 @[expose] public section
 
 namespace Consequence
 
-section MixedConsequence
+variable {Model Formula : Type*}
 
-variable {Model Formula Mode : Type*}
+/-- The model `M` satisfies the sequent `Γ ⇒ Δ` with premises read by `p` and conclusions by `q`:
+if it `p`-satisfies every premise, it `q`-satisfies some conclusion. -/
+def Satisfies (p q : Model → Formula → Prop) (M : Model) (Γ Δ : List Formula) : Prop :=
+  (∀ γ ∈ Γ, p M γ) → ∃ δ ∈ Δ, q M δ
 
-/-- Mixed consequence relation. Γ ⊨ᵐⁿ φ iff every model that
-    m-satisfies all premises also n-satisfies the conclusion.
+/-- Mixed consequence ([cobreros-etal-2012], Definition 17): every model that `p`-satisfies all
+the premises `q`-satisfies some conclusion. -/
+def MixedConsequence (p q : Model → Formula → Prop) (Γ Δ : List Formula) : Prop :=
+  ∀ M, Satisfies p q M Γ Δ
 
-    When m = n, this is standard (unmixed) consequence.
-    When m ≠ n, the standard for premises differs from that for
-    conclusions — a key feature of [cobreros-etal-2012]'s
-    framework for vagueness.
+/-- `p'` is the dual of `p` along `neg` ([cobreros-etal-2012], Definition 20): a model
+`p'`-satisfies `neg φ` exactly when it does not `p`-satisfy `φ`. -/
+def IsDual (neg : Formula → Formula) (p' p : Model → Formula → Prop) : Prop :=
+  ∀ M φ, p' M (neg φ) ↔ ¬ p M φ
 
-    Definition 15/17 of [cobreros-etal-2012], specialized
-    to single-conclusion. -/
-def MixedConsequence (sat : Model → Mode → Formula → Prop)
-    (m n : Mode) (Γ : List Formula) (φ : Formula) : Prop :=
-  ∀ M : Model, (∀ γ ∈ Γ, sat M m γ) → sat M n φ
+variable {p p' q q' : Model → Formula → Prop} {M : Model} {Γ Γ' Δ Δ' : List Formula}
+  {φ ψ : Formula}
 
-/-- mn-validity: φ is valid when it holds with empty premises.
-    The premise mode m is vacuously satisfied and thus irrelevant. -/
-def mnValid (sat : Model → Mode → Formula → Prop)
-    (n : Mode) (φ : Formula) : Prop :=
-  ∀ M : Model, sat M n φ
+/-- Cut at a single model: if `M` satisfies `φ, Γ ⇒ Δ` and `Γ ⇒ φ, Δ`, it satisfies `Γ ⇒ Δ`,
+provided `q`-satisfying the cut formula implies `p`-satisfying it. -/
+theorem Satisfies.cut (hqp : q M φ → p M φ) (h₁ : Satisfies p q M (φ :: Γ) Δ)
+    (h₂ : Satisfies p q M Γ (φ :: Δ)) : Satisfies p q M Γ Δ := fun hΓ ↦ by
+  obtain ⟨δ, hδ, hq⟩ := h₂ hΓ
+  rcases List.mem_cons.1 hδ with rfl | hδ
+  · exact h₁ (List.forall_mem_cons.2 ⟨hqp hq, hΓ⟩)
+  · exact ⟨δ, hδ, hq⟩
 
-/-- mn-validity is just n-validity: the premise mode is irrelevant
-    when there are no premises. -/
-theorem mnValid_iff_emptyPremise (sat : Model → Mode → Formula → Prop)
-    (m n : Mode) (φ : Formula) :
-    MixedConsequence sat m n [] φ ↔ mnValid sat n φ := by
-  simp [MixedConsequence, mnValid]
+namespace MixedConsequence
+
+/-- Validity transfers along a map of models that preserves the satisfaction of the premises and
+reflects that of the conclusions: the model correspondences of [cobreros-etal-2012], §2.2.2. -/
+theorem comap {Model' : Type*} {p' q' : Model' → Formula → Prop} (f : Model' → Model)
+    (hp : ∀ M, ∀ γ ∈ Γ, p' M γ → p (f M) γ) (hq : ∀ M, ∀ δ ∈ Δ, q (f M) δ → q' M δ)
+    (h : MixedConsequence p q Γ Δ) : MixedConsequence p' q' Γ Δ := fun M hΓ ↦
+  (h (f M) fun γ hγ ↦ hp M γ hγ (hΓ γ hγ)).imp fun δ ⟨hδ, hqδ⟩ ↦ ⟨hδ, hq M δ hδ hqδ⟩
+
+/-- Lemma 7 of [cobreros-etal-2012]: holding premises to a stronger standard, or conclusions to a
+weaker one, preserves validity. -/
+theorem mono (hp : p' ≤ p) (hq : q ≤ q') (h : MixedConsequence p q Γ Δ) :
+    MixedConsequence p' q' Γ Δ :=
+  h.comap id (fun M γ _ ↦ hp M γ) fun M δ _ ↦ hq M δ
+
+/-- Weakening: adding premises or conclusions preserves validity. -/
+theorem weaken (hΓ : Γ ⊆ Γ') (hΔ : Δ ⊆ Δ') (h : MixedConsequence p q Γ Δ) :
+    MixedConsequence p q Γ' Δ' := fun M hΓ' ↦
+  (h M fun γ hγ ↦ hΓ' γ (hΓ hγ)).imp fun _ ↦ .imp_left (@hΔ _)
+
+/-- A sequent sharing a formula between its sides is valid when `p ≤ q`. -/
+theorem of_mem (hpq : p ≤ q) (hΓ : φ ∈ Γ) (hΔ : φ ∈ Δ) : MixedConsequence p q Γ Δ :=
+  fun M h ↦ ⟨φ, hΔ, hpq M φ (h φ hΓ)⟩
+
+/-- Cut: from `φ, Γ ⇒ Δ` and `Γ ⇒ φ, Δ` infer `Γ ⇒ Δ`, when `q ≤ p` (the form of transitivity in
+[cobreros-etal-2012], §3.3.2). -/
+theorem cut (hqp : q ≤ p) (h₁ : MixedConsequence p q (φ :: Γ) Δ)
+    (h₂ : MixedConsequence p q Γ (φ :: Δ)) : MixedConsequence p q Γ Δ :=
+  fun M ↦ (h₁ M).cut (hqp M φ) (h₂ M)
 
 end MixedConsequence
 
--- ════════════════════════════════════════════════════
--- § 2. Strength Ordering
--- ════════════════════════════════════════════════════
+/-- With a single conclusion, mixed consequence is truth preservation from `p` to `q`. -/
+@[simp] theorem mixedConsequence_singleton_right :
+    MixedConsequence p q Γ [φ] ↔ ∀ M, (∀ γ ∈ Γ, p M γ) → q M φ := by
+  simp [MixedConsequence, Satisfies]
 
-section Strength
+/-- Definition 18 of [cobreros-etal-2012]: validity with no premises is `q`-validity. -/
+theorem mixedConsequence_nil_singleton : MixedConsequence p q [] [φ] ↔ ∀ M, q M φ := by
+  simp
 
-variable {Model Formula Mode : Type*}
+/-- Definition 18 of [cobreros-etal-2012]: validity with no conclusions is `p`-unsatisfiability. -/
+theorem mixedConsequence_singleton_nil : MixedConsequence p q [φ] [] ↔ ∀ M, ¬ p M φ := by
+  simp [MixedConsequence, Satisfies]
 
-/-- One satisfaction notion implies another: m-satisfaction entails
-    m'-satisfaction for all models and formulas. -/
-def SatImplies (sat : Model → Mode → Formula → Prop)
-    (m m' : Mode) : Prop :=
-  ∀ (M : Model) (φ : Formula), sat M m φ → sat M m' φ
+/-- The single-premise, single-conclusion relation is reflexive exactly when `p ≤ q`. -/
+theorem stdRefl_mixedConsequence_iff :
+    Std.Refl (fun φ ψ ↦ MixedConsequence p q [φ] [ψ]) ↔ p ≤ q :=
+  ⟨fun ⟨h⟩ M φ hp ↦ by simpa using h φ M (by simpa using hp),
+    fun hpq ↦ ⟨fun _ ↦ .of_mem hpq (List.mem_singleton_self _) (List.mem_singleton_self _)⟩⟩
 
-/-- `SatImplies` is reflexive. -/
-theorem SatImplies.refl (sat : Model → Mode → Formula → Prop)
-    (m : Mode) : SatImplies sat m m :=
-  fun _ _ h => h
+/-- The single-premise, single-conclusion relation is transitive when `q ≤ p`. -/
+theorem isTrans_mixedConsequence (hqp : q ≤ p) :
+    IsTrans Formula fun φ ψ ↦ MixedConsequence p q [φ] [ψ] :=
+  ⟨fun _ ψ _ h₁ h₂ ↦ .cut (φ := ψ) hqp (h₂.weaken (by simp) (by simp))
+    (h₁.weaken (by simp) (by simp))⟩
 
-/-- `SatImplies` is transitive. -/
-theorem SatImplies.trans {sat : Model → Mode → Formula → Prop}
-    {m₁ m₂ m₃ : Mode}
-    (h₁₂ : SatImplies sat m₁ m₂) (h₂₃ : SatImplies sat m₂ m₃) :
-    SatImplies sat m₁ m₃ :=
-  fun M φ h => h₂₃ M φ (h₁₂ M φ h)
+/-- Lemma 6 of [cobreros-etal-2012]: `Γ ⇒ Δ` is valid for `p, q` iff the negated sequent
+`¬Δ ⇒ ¬Γ` is valid for their duals `q', p'`. -/
+theorem mixedConsequence_iff_dual {neg : Formula → Formula} (hp : IsDual neg p' p)
+    (hq : IsDual neg q' q) :
+    MixedConsequence p q Γ Δ ↔ MixedConsequence q' p' (Δ.map neg) (Γ.map neg) := by
+  refine forall_congr' fun M ↦ ?_
+  simp only [Satisfies, List.forall_mem_map, hq M]
+  simp only [List.mem_map, exists_exists_and_eq_and, hp M]
+  grind
 
-/-- **Premise strength monotonicity** (Lemma 7, first part of
-    [cobreros-etal-2012]).
-
-    If m' implies m (m' is at least as strong), then
-    mn-consequence is at least as inclusive as m'n-consequence.
-    Rationale: stronger premises exclude more models, so fewer
-    models need to verify the conclusion, making more arguments
-    valid. -/
-theorem premise_monotone {sat : Model → Mode → Formula → Prop}
-    {m m' n : Mode} (h : SatImplies sat m' m)
-    {Γ : List Formula} {φ : Formula}
-    (hc : MixedConsequence sat m n Γ φ) :
-    MixedConsequence sat m' n Γ φ :=
-  fun M hp => hc M (fun γ hγ => h M γ (hp γ hγ))
-
-/-- **Conclusion strength monotonicity** (Lemma 7, second part).
-
-    If n implies n' (n' is at least as weak), then
-    mn-consequence is at least as inclusive as mn'-consequence.
-    Rationale: weaker conclusions are easier to satisfy. -/
-theorem conclusion_monotone {sat : Model → Mode → Formula → Prop}
-    {m n n' : Mode} (h : SatImplies sat n n')
-    {Γ : List Formula} {φ : Formula}
-    (hc : MixedConsequence sat m n Γ φ) :
-    MixedConsequence sat m n' Γ φ :=
-  fun M hp => h M φ (hc M hp)
-
-/-- **Combined monotonicity**: if m' ⟹ m and n ⟹ n', then
-    mn-consequence ⊆ m'n'-consequence. -/
-theorem mixed_monotone {sat : Model → Mode → Formula → Prop}
-    {m m' n n' : Mode}
-    (hm : SatImplies sat m' m) (hn : SatImplies sat n n')
-    {Γ : List Formula} {φ : Formula}
-    (hc : MixedConsequence sat m n Γ φ) :
-    MixedConsequence sat m' n' Γ φ :=
-  conclusion_monotone hn (premise_monotone hm hc)
-
-end Strength
-
--- ════════════════════════════════════════════════════
--- § 3. Duality
--- ════════════════════════════════════════════════════
-
-section Duality
-
-variable {Model Formula Mode : Type*}
-
-/-- **Consequence duality** (Lemma 6 of [cobreros-etal-2012]).
-
-    If φ ⊨ᵐⁿ ψ, then ¬ψ ⊨^{d(n)d(m)} ¬φ.
-    Duality swaps premise/conclusion modes and negates formulas. -/
-theorem consequence_dual {sat : Model → Mode → Formula → Prop}
-    {neg : Formula → Formula} {dual : Mode → Mode}
-    (hd : Bilateral.SatDuality sat neg dual)
-    {m n : Mode} {φ ψ : Formula}
-    (hc : MixedConsequence sat m n [φ] ψ) :
-    MixedConsequence sat (dual n) (dual m) [neg ψ] (neg φ) := by
-  intro M hprem
-  have hnψ : ¬sat M n ψ := by
-    have := hprem (neg ψ) (List.mem_singleton.mpr rfl)
-    rwa [hd.neg_swap, hd.dual_invol] at this
-  rw [hd.neg_swap, hd.dual_invol]
-  intro hφ
-  exact hnψ (hc M (fun γ hγ => by
-    rw [List.mem_singleton.mp hγ]; exact hφ))
-
-end Duality
-
--- ════════════════════════════════════════════════════
--- § 4. Self-Duality
--- ════════════════════════════════════════════════════
-
-section SelfDuality
-
-variable {Mode : Type*}
-
-/-- A mixed consequence relation ⊨ᵐⁿ is **self-dual** when
-    m = d(n) and n = d(m). Self-dual relations are exactly
-    those satisfying the deduction theorem (Lemma 10 of
-    [cobreros-etal-2012]).
-
-    The three self-dual relations in TCS are: st, cc, and ts. -/
-def IsSelfDual (dual : Mode → Mode) (m n : Mode) : Prop :=
-  dual n = m
-
-/-- Self-duality is symmetric when `dual` is an involution. -/
-theorem selfDual_symm {dual : Mode → Mode}
-    (hinv : ∀ m : Mode, dual (dual m) = m)
-    {m n : Mode} (h : IsSelfDual dual m n) :
-    IsSelfDual dual n m := by
-  unfold IsSelfDual at *
-  rw [← h, hinv]
-
-end SelfDuality
+/-- Lemma 10 of [cobreros-etal-2012] in sequent form: a premise moves into the antecedent of a
+conclusion when the conditional is `q`-satisfied just if its antecedent's `p`-satisfaction brings
+its consequent's `q`-satisfaction. -/
+theorem mixedConsequence_cons_cons_iff {imp : Formula → Formula → Formula}
+    (himp : ∀ M, q M (imp φ ψ) ↔ (p M φ → q M ψ)) :
+    MixedConsequence p q (φ :: Γ) (ψ :: Δ) ↔ MixedConsequence p q Γ (imp φ ψ :: Δ) := by
+  refine forall_congr' fun M ↦ ?_
+  simp only [Satisfies, List.mem_cons, exists_eq_or_imp, himp]
+  grind
 
 end Consequence
