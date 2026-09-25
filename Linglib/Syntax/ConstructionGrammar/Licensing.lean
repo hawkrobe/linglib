@@ -6,145 +6,123 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.ConstructionGrammar.Basic
+public import Linglib.Syntax.Tree.Basic
 
 /-!
 # Constructional licensing
 
-The licensing model of constructional grammar ([sag-2012]; [goldberg-1995]):
-an utterance token is grammatical iff every constituent in it instantiates
-some construction of the inventory. `licenses` is the
-recognizer — a constituent's daughters must match some construction's
-typed form slot-by-slot (`formMatches`), and each daughter must itself be
-licensed; words are licensed lexically.
+A constructional grammar licenses a structure when every constituent in it instantiates some
+construction ([sag-2012]; [goldberg-1995]). `Licenses` is the local version of that relation
+over constituency trees: every internal node's daughters instantiate, slot by slot, the typed
+form of some construction of an inventory (`FormMatches`), and words are licensed lexically.
+A node is licensed by the form of one construction alone, without the constraints it inherits
+from the constructions above it in a network.
 
-Matching is relative to a POS lexicon `String → Option UD.UPOS`. `headed`
-fillers are checked against immediate daughters (a flat approximation of
-headedness), and `semantic` constraints are not checkable at this level
-and match any token. Slot constraints are enforced where they can be:
-`negMinus` rejects a negated daughter (`SlotConstraint.allows`).
+Matching is relative to a `Lexicon`, the part of speech of each word and the words that negate.
+A `headed` filler is checked against the immediate daughters, a flat approximation of
+headedness, and a `semantic` filler, which the form cannot check, matches anything. Of the
+slot constraints only `negMinus` bears on the daughter itself: it rejects a negated daughter
+(`SlotConstraint.Allows`).
 
 ## Main declarations
 
-- `Token`: utterance tokens (words and constituents)
-- `SlotFiller.matches`, `SlotConstraint.allows`, `formMatches`:
-  slot/daughter matching
-- `Licenses`: the licensing relation, via the recognizer
+- `Lexicon`: parts of speech and negators
+- `SlotFiller.Matches`, `SlotConstraint.Allows`, `Slot.Admits`, `FormMatches`: matching daughters
+  against a form
+- `LicensedLocally`, `Licenses`: the licensing relation
+
+## References
+
+* [sag-2012]
+* [goldberg-1995]
+* [kay-fillmore-1999]
 -/
 
 @[expose] public section
 
 namespace ConstructionGrammar
 
-/-- An utterance token: a word or a constituent with daughter tokens. -/
-inductive Token where
-  | word : String → Token
-  | node : List Token → Token
+open Syntax (Tree)
 
-mutual
+/-- What the recognizer knows of words: the part of speech of each, and the words that negate,
+which a `negMinus` slot rejects. -/
+structure Lexicon where
+  /-- The part of speech of each word. -/
+  pos : String → Option UD.UPOS
+  /-- The negators. -/
+  negators : List String := []
 
-/-- Boolean equality on tokens (hand-rolled: `Token` is a nested
-inductive, outside the deriving handlers' fragment). -/
-def Token.beq : Token → Token → Bool
-  | .word a, .word b => a == b
-  | .node as, .node bs => Token.beqList as bs
-  | _, _ => false
+variable (lex : Lexicon)
 
-/-- Boolean equality on token lists. -/
-def Token.beqList : List Token → List Token → Bool
-  | [], [] => true
-  | a :: as, b :: bs => Token.beq a b && Token.beqList as bs
-  | _, _ => false
+/-- A daughter fills a slot: a fixed word is that word, an open slot a word of its part of
+speech, a phrasal slot any constituent, and a headed slot a constituent with its head word, of
+its part of speech, among the daughters. -/
+def SlotFiller.Matches : SlotFiller String → Tree Unit String → Prop
+  | .fixed w, .terminal _ w' => w = w'
+  | .open_ c, .terminal _ w => lex.pos w = some c
+  | .phrasal, .node _ _ => True
+  | .headed h c, .node _ ts => .terminal () h ∈ ts ∧ lex.pos h = some c
+  | .semantic _, _ => True
+  | _, _ => False
 
-end
+instance : ∀ (f : SlotFiller String) (t : Tree Unit String), Decidable (f.Matches lex t)
+  | .fixed w, .terminal _ w' => inferInstanceAs (Decidable (w = w'))
+  | .open_ c, .terminal _ w => inferInstanceAs (Decidable (lex.pos w = some c))
+  | .phrasal, .node _ _ => isTrue trivial
+  | .headed h c, .node _ ts =>
+      inferInstanceAs (Decidable (.terminal () h ∈ ts ∧ lex.pos h = some c))
+  | .semantic _, _ => isTrue trivial
+  | .fixed _, .node _ _ | .fixed _, .trace _ _ | .fixed _, .bind _ _ _
+  | .open_ _, .node _ _ | .open_ _, .trace _ _ | .open_ _, .bind _ _ _
+  | .phrasal, .terminal _ _ | .phrasal, .trace _ _ | .phrasal, .bind _ _ _
+  | .headed _ _, .terminal _ _ | .headed _ _, .trace _ _ | .headed _ _, .bind _ _ _ => isFalse id
 
-instance : BEq Token := ⟨Token.beq⟩
+/-- A daughter respects a slot constraint. `negMinus` forbids a negator, as the daughter or among
+its daughters; `locMinus` and `refEmpty` concern the slot's external syntax and semantics and
+are not checkable against the daughter itself. -/
+def SlotConstraint.Allows : SlotConstraint → Tree Unit String → Prop
+  | .negMinus, .terminal _ w => w ∉ lex.negators
+  | .negMinus, .node _ ts => ∀ w ∈ lex.negators, .terminal () w ∉ ts
+  | _, _ => True
 
-mutual
+instance : ∀ (c : SlotConstraint) (t : Tree Unit String), Decidable (c.Allows lex t)
+  | .negMinus, .terminal _ w => inferInstanceAs (Decidable (w ∉ lex.negators))
+  | .negMinus, .node _ ts => inferInstanceAs (Decidable (∀ w ∈ lex.negators, .terminal () w ∉ ts))
+  | .negMinus, .trace _ _ | .negMinus, .bind _ _ _ | .locMinus, _ | .refEmpty, _ => isTrue trivial
 
-theorem Token.beq_iff_eq : ∀ a b : Token, (Token.beq a b = true) ↔ a = b
-  | .word a, .word b => by simp [Token.beq]
-  | .word _, .node _ => by simp [Token.beq]
-  | .node _, .word _ => by simp [Token.beq]
-  | .node as, .node bs => by
-      simp only [Token.beq, Token.node.injEq]
-      exact Token.beqList_iff_eq as bs
+/-- A daughter instantiates a slot: it fills the slot and respects its constraints. -/
+def Slot.Admits (s : Slot String) (t : Tree Unit String) : Prop :=
+  s.filler.Matches lex t ∧ ∀ c ∈ s.constraints, c.Allows lex t
 
-theorem Token.beqList_iff_eq : ∀ as bs : List Token,
-    (Token.beqList as bs = true) ↔ as = bs
-  | [], [] => by simp [Token.beqList]
-  | [], _ :: _ => by simp [Token.beqList]
-  | _ :: _, [] => by simp [Token.beqList]
-  | a :: as, b :: bs => by
-      simp [Token.beqList, Token.beq_iff_eq a b, Token.beqList_iff_eq as bs]
+instance (s : Slot String) (t : Tree Unit String) : Decidable (s.Admits lex t) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-end
+/-- A daughter sequence instantiates a typed form, slot by slot. -/
+def FormMatches (form : TypedForm String) (ts : List (Tree Unit String)) : Prop :=
+  List.Forall₂ (Slot.Admits lex) form ts
 
-instance : LawfulBEq Token where
-  eq_of_beq h := (Token.beq_iff_eq _ _).mp h
-  rfl := (Token.beq_iff_eq _ _).mpr rfl
+instance (form : TypedForm String) (ts : List (Tree Unit String)) :
+    Decidable (FormMatches lex form ts) :=
+  inferInstanceAs (Decidable (List.Forall₂ _ form ts))
 
-instance : DecidableEq Token := fun a b => decidable_of_iff _ (Token.beq_iff_eq a b)
+variable {Sem : Type*} (cxns : List (Construction Sem))
 
-/-- Does a token satisfy a slot filler, relative to a POS lexicon?
-`semantic` constraints are not checkable at this level and match any
-token; `headed` requires the head word as an immediate daughter, of the
-required category. -/
-def SlotFiller.matches (pos : String → Option UD.UPOS) :
-    SlotFiller String → Token → Bool
-  | .fixed w, .word w' => w == w'
-  | .open_ cat, .word w => pos w == some cat
-  | .phrasal, .node _ => true
-  | .headed h cat, .node ts => ts.contains (.word h) && pos h == some cat
-  | .semantic _, _ => true
-  | _, _ => false
+/-- A node is licensed locally when a word, or when its daughters instantiate the form of some
+construction of the inventory; traces and binders are not. -/
+def LicensedLocally : Tree Unit String → Prop
+  | .terminal _ _ => True
+  | .node _ ts => ∃ c ∈ cxns, FormMatches lex c.form ts
+  | .trace _ _ | .bind _ _ _ => False
 
-/-- Does a token respect a slot constraint? `negMinus` forbids a negation
-daughter; `locMinus` and `refEmpty` concern the slot's external syntax
-and semantics and are not checkable against the daughter itself. -/
-def SlotConstraint.allows : SlotConstraint → Token → Bool
-  | .negMinus, .node ts => !ts.contains (.word "not")
-  | .negMinus, .word w => !(w == "not")
-  | .locMinus, _ => true
-  | .refEmpty, _ => true
+instance : ∀ t : Tree Unit String, Decidable (LicensedLocally lex cxns t)
+  | .terminal _ _ => isTrue trivial
+  | .node _ ts => inferInstanceAs (Decidable (∃ c ∈ cxns, FormMatches lex c.form ts))
+  | .trace _ _ | .bind _ _ _ => isFalse id
 
-/-- A daughter sequence instantiates a typed form: same arity, and each
-daughter matches its slot's filler and respects its slot's constraints. -/
-def formMatches (pos : String → Option UD.UPOS)
-    (form : TypedForm String) (ts : List Token) : Bool :=
-  form.length == ts.length &&
-  (form.zip ts).all fun ⟨s, t⟩ ↦
-    s.filler.matches pos t && s.constraints.all (·.allows t)
+/-- The inventory licenses a tree when every constituent in it is licensed locally. -/
+def Licenses (t : Tree Unit String) : Prop := ∀ s ∈ t.subtrees, LicensedLocally lex cxns s
 
-variable {Sem : Type*}
-
-mutual
-
-/-- The licensing recognizer: words are licensed lexically; a constituent
-is licensed iff its daughters instantiate some construction of the inventory
-and are each licensed themselves. -/
-def licenses (cxns : List (Construction Sem))
-    (pos : String → Option UD.UPOS) : Token → Bool
-  | .word _ => true
-  | .node ts =>
-      cxns.any (fun c ↦ formMatches pos c.form ts) && licensesList cxns pos ts
-
-/-- All tokens in a list are licensed. -/
-def licensesList (cxns : List (Construction Sem))
-    (pos : String → Option UD.UPOS) : List Token → Bool
-  | [] => true
-  | t :: ts => licenses cxns pos t && licensesList cxns pos ts
-
-end
-
-/-- `cxns` licenses token `t` (relative to a POS lexicon): every constituent
-instantiates some construction of the inventory. Defined via the
-`licenses` recognizer, so concrete cases are kernel-decidable. -/
-def Licenses (cxns : List (Construction Sem))
-    (pos : String → Option UD.UPOS) (t : Token) : Prop :=
-  licenses cxns pos t = true
-
-instance (cxns : List (Construction Sem)) (pos : String → Option UD.UPOS) (t : Token) :
-    Decidable (Licenses cxns pos t) :=
-  inferInstanceAs (Decidable (_ = true))
+instance (t : Tree Unit String) : Decidable (Licenses lex cxns t) :=
+  inferInstanceAs (Decidable (∀ s ∈ t.subtrees, _))
 
 end ConstructionGrammar

@@ -85,7 +85,7 @@ variable {Lex : Type*}
 
 /-- A slot refines another when the two are equal or the other is open: the lexically filled
 slots of an instance fill open slots of the construction it instantiates. -/
-def Slot.Refines (s t : Slot Lex) : Prop := s = t ∨ t.filler.isOpen = true
+def Slot.Refines (s t : Slot Lex) : Prop := s = t ∨ t.filler.IsOpen
 
 instance [DecidableEq Lex] (s t : Slot Lex) : Decidable (s.Refines t) :=
   inferInstanceAs (Decidable (_ ∨ _))

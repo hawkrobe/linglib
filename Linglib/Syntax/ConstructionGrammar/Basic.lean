@@ -68,10 +68,10 @@ inductive BarLevel where
 
 /-! ### Typed slots
 
-Slot content comes at [dunn-2025]'s three representation levels — LEX (a
-fixed lexeme), SYN (any word of a category), SEM (a semantic constraint) —
-plus [kay-fillmore-1999]'s headed phrases, grammatical functions,
-coreference indices, and slot constraints. -/
+Slot content follows [dunn-2025]'s three representation levels, a fixed lexeme (LEX), a word of
+a category (SYN) and a semantic constraint (SEM), with the categories the parts of speech of
+Universal Dependencies where Dunn's are learned, plus [kay-fillmore-1999]'s headed phrases,
+grammatical functions, coreference indices and slot constraints. -/
 
 /-- A slot's filler: the representation level of slot content.
 
@@ -80,7 +80,7 @@ works for strings, morphemes, or phonological forms. -/
 inductive SlotFiller (Lex : Type*) where
   /-- A specific word form (LEX level): `fixed "must"` -/
   | fixed : Lex → SlotFiller Lex
-  /-- Any word of a given POS category (SYN level): `open_ .VERB` -/
+  /-- Any word of a given part of speech: `open_ .VERB`. -/
   | open_ : UD.UPOS → SlotFiller Lex
   /-- A phrase headed by a specific lexeme ([kay-fillmore-1999]):
       `headed "doing" .VERB` is a VP headed by *doing*. LEX-level —
@@ -95,19 +95,19 @@ inductive SlotFiller (Lex : Type*) where
   | phrasal : SlotFiller Lex
   deriving DecidableEq, Repr
 
-/-- Whether a slot is open — not lexically anchored: `open_`, `semantic`,
-and `phrasal` fillers count as open; `fixed` and `headed` do not, the
-latter fixing its head lexeme even though the phrase is open. -/
-def SlotFiller.isOpen {Lex : Type*} : SlotFiller Lex → Bool
-  | .fixed _ => false
-  | .open_ _ => true
-  | .headed _ _ => false
-  | .semantic _ => true
-  | .phrasal => true
+/-- A filler is open when no lexeme anchors it: `open_`, `semantic` and `phrasal` fillers are
+open, while `fixed` and `headed` are not, the latter fixing its head lexeme even though the
+phrase is open. -/
+def SlotFiller.IsOpen {Lex : Type*} : SlotFiller Lex → Prop
+  | .fixed _ | .headed _ _ => False
+  | .open_ _ | .semantic _ | .phrasal => True
 
-/-- Grammatical function of a valence member ([kay-fillmore-1999],
-Figure 12), distinct from semantic role: a subject can be an agent, a
-theme, or an experiencer. -/
+instance {Lex : Type*} : DecidablePred (SlotFiller.IsOpen (Lex := Lex))
+  | .fixed _ | .headed _ _ => isFalse id
+  | .open_ _ | .semantic _ | .phrasal => isTrue trivial
+
+/-- Grammatical function of a valence member ([kay-fillmore-1999], Figure 12), distinct from
+semantic role: a subject can be an agent, a theme, or an experiencer. -/
 inductive GrammaticalFunction where
   /-- Subject. -/
   | subj
@@ -115,13 +115,10 @@ inductive GrammaticalFunction where
   | comp
   /-- Direct object. -/
   | obj
-  /-- Predicative complement or secondary predicate. -/
-  | pred
   deriving DecidableEq, Repr
 
-/-- Referential index for cross-slot coreference constraints. Slots
-    sharing a `RefIndex` have unified semantic values
-    ([kay-fillmore-1999]'s #1, #2). -/
+/-- An index for unification across slots, [kay-fillmore-1999]'s #1 and #2: values bearing one
+index are unified. -/
 abbrev RefIndex := Nat
 
 /-- Syntactic constraint on a slot ([kay-fillmore-1999], Figure 12). -/
@@ -130,14 +127,16 @@ inductive SlotConstraint where
   | locMinus
   /-- [neg -]: cannot be negated. -/
   | negMinus
-  /-- [ref ∅]: nonreferential — no variable-binding function. -/
+  /-- [ref ∅]: not an operator, "in the sense of binding the reference of something else". -/
   | refEmpty
   deriving DecidableEq, Repr
 
-/-- A slot in a construction's form: filler content, headedness, and the
-bar level of the position itself. `level := none` leaves the position's
-bar level unspecified; slots sharing a `refIdx` are co-indexed, the hook
-by which a typed meaning pole refers to slots. -/
+/-- A slot in a construction's form: filler content, headedness, and the bar level of the
+position itself. `level := none` leaves the position's bar level unspecified. A slot's
+semantics bears its `refIdx`, and a predicate phrase that does not realize its own subject
+bears the index of that subject requirement as its `subjIdx`: coinstantiation, which covers
+raising and control, unifies a predicator's subject with the subject requirement of its
+complement ([kay-fillmore-1999], Figure 13). -/
 structure Slot (Lex : Type*) where
   /-- What fills this slot -/
   filler : SlotFiller Lex
@@ -145,10 +144,12 @@ structure Slot (Lex : Type*) where
   isHead : Bool := false
   /-- Bar level of the position (`some .zero` = a word-level slot) -/
   level : Option BarLevel := none
-  /-- Grammatical function (subj, comp, obj, pred) — [kay-fillmore-1999] -/
+  /-- Grammatical function (subj, comp, obj) — [kay-fillmore-1999] -/
   gf : Option GrammaticalFunction := none
-  /-- Coreference index: slots sharing an index have unified semantics -/
+  /-- The index of the slot's semantics. -/
   refIdx : Option RefIndex := none
+  /-- The index of the slot's unrealized subject requirement. -/
+  subjIdx : Option RefIndex := none
   /-- Syntactic constraints on this slot ([loc -], [neg -], [ref ∅]) -/
   constraints : List SlotConstraint := []
   deriving DecidableEq, Repr
@@ -172,13 +173,11 @@ instance {Lex : Type*} [DecidableEq Lex] (s : Slot Lex) :
 section DerivedSpecificity
 variable {Lex : Type*}
 
-/-- The specificity of a form: `fullyAbstract` when every slot is open
-(vacuously so for the empty form), `lexicallySpecified` when none is,
-and `partiallyOpen` otherwise. -/
+/-- The specificity of a form: `fullyAbstract` when every slot is open (vacuously so for the
+empty form), `lexicallySpecified` when none is, and `partiallyOpen` otherwise. -/
 def derivedSpecificity (form : TypedForm Lex) : Specificity :=
-  let openCount := (form.filter (·.filler.isOpen)).length
-  if openCount = form.length then .fullyAbstract
-  else if openCount = 0 then .lexicallySpecified
+  if ∀ s ∈ form, s.filler.IsOpen then .fullyAbstract
+  else if ∀ s ∈ form, ¬ s.filler.IsOpen then .lexicallySpecified
   else .partiallyOpen
 
 /-- Some slot in the form bears the constraint `c`. -/
@@ -189,51 +188,32 @@ instance (form : TypedForm Lex) (c : SlotConstraint) :
     Decidable (HasConstraint form c) :=
   inferInstanceAs (Decidable (∃ s ∈ form, c ∈ s.constraints))
 
-/-- Count of distinct coreference groups in a form. -/
+/-- The number of distinct unification indices in a form, on slots and on their subject
+requirements. -/
 def refGroupCount (form : TypedForm Lex) : Nat :=
-  (form.filterMap (·.refIdx)).dedup.length
+  (form.flatMap fun s ↦ s.refIdx.toList ++ s.subjIdx.toList).dedup.length
 
 /-! ### Characterization lemmas -/
 
-/-- A form is fully abstract exactly when every slot is open (vacuously so
-for the empty form). -/
+/-- A form is fully abstract exactly when every slot is open (vacuously so for the empty
+form). -/
 theorem derivedSpecificity_eq_fullyAbstract_iff (form : TypedForm Lex) :
-    derivedSpecificity form = .fullyAbstract ↔
-      ∀ s ∈ form, s.filler.isOpen = true := by
-  refine Iff.trans ?_
-    (List.length_filter_eq_length_iff (p := fun s : Slot Lex => s.filler.isOpen)
-      (l := form))
-  simp only [derivedSpecificity]
-  split_ifs with h1 h2 <;> simp [h1]
+    derivedSpecificity form = .fullyAbstract ↔ ∀ s ∈ form, s.filler.IsOpen := by
+  unfold derivedSpecificity; split_ifs <;> simp_all
 
-/-- A form is lexically specified exactly when it is nonempty and no slot
-is open. -/
+/-- A form is lexically specified exactly when it is nonempty and no slot is open. -/
 theorem derivedSpecificity_eq_lexicallySpecified_iff (form : TypedForm Lex) :
     derivedSpecificity form = .lexicallySpecified ↔
-      form ≠ [] ∧ ∀ s ∈ form, s.filler.isOpen = false := by
-  have hzero : (form.filter (·.filler.isOpen)) = [] ↔
-      ∀ s ∈ form, s.filler.isOpen = false := by
-    rw [List.filter_eq_nil_iff]; simp
-  simp only [derivedSpecificity]
-  split_ifs with h1 h2
-  · constructor
-    · intro h; cases h
-    · rintro ⟨hnil, hall⟩
-      rcases List.exists_mem_of_ne_nil form hnil with ⟨s, hs⟩
-      have hopen := List.length_filter_eq_length_iff.mp h1 s hs
-      have := hall s hs
-      simp_all
-  · constructor
-    · intro _
-      constructor
-      · rintro rfl; exact h1 (by simp)
-      · rw [List.length_eq_zero_iff] at h2
-        exact hzero.mp h2
-    · intro _; rfl
-  · constructor
-    · intro h; cases h
-    · rintro ⟨hnil, hall⟩
-      exact absurd (by rw [List.length_eq_zero_iff]; exact hzero.mpr hall) h2
+      form ≠ [] ∧ ∀ s ∈ form, ¬ s.filler.IsOpen := by
+  unfold derivedSpecificity
+  split_ifs with h₁ h₂
+  · simp only [false_iff, not_and]
+    intro hne hall
+    obtain ⟨s, hs⟩ := List.exists_mem_of_ne_nil form hne
+    exact hall s hs (h₁ s hs)
+  · exact iff_of_true rfl ⟨by rintro rfl; simp at h₁, h₂⟩
+  · simp only [false_iff, not_and]
+    exact fun _ ↦ h₂
 
 end DerivedSpecificity
 

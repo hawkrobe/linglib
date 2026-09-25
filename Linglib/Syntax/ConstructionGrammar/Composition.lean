@@ -22,9 +22,14 @@ structure in which it is embedded.
 ## Main definitions
 
 * `CompositionRule`: from the daughters' denotations to the mother's
-* `CompositionRule.override`: readings under the override principle, one
-  per reconciliation operator
-* `interps`: all readings of a token, through the licensing recognizer
+* `CompositionRule.override`: readings under the override principle, one per daughter and
+  reconciliation operator
+* `interps`: all readings of a tree, through the forms its constituents instantiate
+
+## References
+
+* [kay-michaelis-2019]
+* [michaelis-2004]
 -/
 
 @[expose] public section
@@ -38,18 +43,21 @@ partial because a rule demands daughter denotations of the right shape
 ([kay-michaelis-2019] §4). -/
 abbrev CompositionRule (D : Type*) := List D → Option D
 
-/-- Readings under the override principle ([michaelis-2004], (20)): the
-rule's own output where the daughters already conform, and otherwise one
-reading per reconciliation operator that makes them conform. Distinct
-operators yielding distinct repairs produce genuine ambiguity. -/
+/-- Readings under the override principle ([michaelis-2004], (20)): "if a lexical item is
+semantically incompatible with its morphosyntactic context, the meaning of the lexical item
+conforms to the meaning of the structure in which it is embedded". The rule's own output where
+the daughters already conform, and otherwise one reading for each daughter and reconciliation
+operator that makes the daughters conform when applied to that daughter alone. Distinct repairs
+produce genuine ambiguity. -/
 def CompositionRule.override [DecidableEq D] (r : CompositionRule D)
     (shifts : List (D → D)) (ds : List D) : List D :=
   match r ds with
   | some d => [d]
-  | none => (shifts.filterMap fun s => r (ds.map s)).dedup
+  | none =>
+    ((List.range ds.length).flatMap fun i ↦ shifts.filterMap fun s ↦ r (ds.modify i s)).dedup
 
-/-- Conforming daughters are composed directly: implicit type-shifting
-occurs only on mismatch ([michaelis-2004], Table 3). -/
+/-- Conforming daughters are composed directly: implicit type-shifting occurs only on mismatch
+([michaelis-2004], (20)). -/
 theorem CompositionRule.override_eq_of_eq_some [DecidableEq D]
     {r : CompositionRule D} {ds : List D} {d : D} (shifts : List (D → D))
     (h : r ds = some d) : r.override shifts ds = [d] := by
@@ -62,25 +70,27 @@ theorem CompositionRule.override_nil [DecidableEq D]
     r.override [] ds = (r ds).toList := by
   cases h : r ds <;> simp [CompositionRule.override, h]
 
+open Syntax (Tree)
+
 mutual
 
-/-- All readings of a token: each construction whose typed form the
-daughters instantiate contributes the readings its meaning pole — its
-composition rule — produces from the daughters' readings; words read
-from the lexicon. -/
-def interps (cxns : List (Construction (CompositionRule D)))
-    (pos : String → Option UD.UPOS) (lex : String → Option D) : Token → List D
-  | .word w => (lex w).toList
-  | .node ts =>
+/-- All readings of a tree: each construction whose typed form the daughters instantiate
+contributes the readings its meaning pole, a composition rule, produces from the daughters'
+readings; words read from the lexicon `den`. -/
+def interps (cxns : List (Construction (CompositionRule D))) (lex : Lexicon)
+    (den : String → Option D) : Tree Unit String → List D
+  | .terminal _ w => (den w).toList
+  | .node _ ts =>
       cxns.flatMap fun c ↦
-        if formMatches pos c.form ts then (interpsList cxns pos lex ts).filterMap c.meaning
+        if FormMatches lex c.form ts then (interpsList cxns lex den ts).filterMap c.meaning
         else []
+  | .trace _ _ | .bind _ _ _ => []
 
 /-- All sequences of daughter readings. -/
-def interpsList (cxns : List (Construction (CompositionRule D)))
-    (pos : String → Option UD.UPOS) (lex : String → Option D) : List Token → List (List D)
+def interpsList (cxns : List (Construction (CompositionRule D))) (lex : Lexicon)
+    (den : String → Option D) : List (Tree Unit String) → List (List D)
   | [] => [[]]
-  | t :: ts => (interps cxns pos lex t).flatMap fun d ↦ (interpsList cxns pos lex ts).map (d :: ·)
+  | t :: ts => (interps cxns lex den t).flatMap fun d ↦ (interpsList cxns lex den ts).map (d :: ·)
 
 end
 

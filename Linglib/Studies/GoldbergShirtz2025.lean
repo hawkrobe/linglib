@@ -301,11 +301,12 @@ A minimal demonstration with the licensing relation (`Licenses`): the attested "
 head noun. The constructions of Figure 5 license it through the PAL construction, and without PAL
 it is rejected: the phrase-in-word-slot configuration has no other license. -/
 
-/-- Toy POS lexicon for the licensing demonstration. -/
-def demoLexicon : String → Option UD.UPOS
-  | "do" => some .VERB
-  | "task" => some .NOUN
-  | _ => none
+/-- Toy lexicon for the licensing demonstration. -/
+def demoLexicon : Lexicon where
+  pos
+    | "do" => some .VERB
+    | "task" => some .NOUN
+    | _ => none
 
 /-- The internal syntax of the *must-do* PAL: must-V (cf. `mustVerbConstruction`, which is the
 full prenominal construction). -/
@@ -322,16 +323,16 @@ def demoInventory : List (Construction Unit) :=
 
 /-- "must-do task" (ex. (1b), determiner elided): the PAL phrase as a constituent daughter in the
 word-level modifier slot. -/
-def mustDoTask : Token :=
-  .node [.node [.word "must", .word "do"], .word "task"]
+def mustDoTask : Syntax.Tree Unit String :=
+  .node () [.node () [.leaf "must", .leaf "do"], .leaf "task"]
 
 /-- The inventory licenses the PAL token. -/
-theorem demo_licenses_mustDoTask : Licenses demoInventory demoLexicon mustDoTask := by decide
+theorem demo_licenses_mustDoTask : Licenses demoLexicon demoInventory mustDoTask := by decide
 
 /-- Remove the PAL construction and the token is rejected: nothing else licenses a phrase in a
 word-level modifier slot. PAL is load-bearing. -/
 theorem pal_load_bearing :
-    ¬ Licenses (demoInventory.erase palConstruction) demoLexicon mustDoTask := by decide
+    ¬ Licenses demoLexicon (demoInventory.erase palConstruction) mustDoTask := by decide
 
 /-- A PAL utterance's two-part meaning: the head noun's denotation is at-issue (an instance of the
 situation type), and the lemma-like construal contributes that the situation type itself is
