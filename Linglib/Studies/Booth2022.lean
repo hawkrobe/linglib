@@ -306,7 +306,7 @@ theorem isFalse_possibility_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) 
 Per-constructor equations for `Question.alt` on `BilatInqProp`'s
 positive interpretation. Used by the worked example (§6), the general
 Independence theorem (§7), and downstream Booth Compactness
-(`eq_iSup_ofSet_alt_of_exists_alt`) consumers. The atomic-case
+(`Question.IsNormal.eq_iSup_ofSet_alt`) consumers. The atomic-case
 private corollaries (`alt_disj_atom_eq_pair`,
 `alt_conj_atom_negate_eq_singleton`) are derived from the public
 generalizations. -/
@@ -552,37 +552,28 @@ end BoothExample
 
 For each `BilatInqProp` constructor, the compactness equation
 `(... constructor ...).pos = ⨆ p ∈ alt _.pos, ofSet p` (and the
-dual `.neg` form where it differs). Each proof discharges the
-`∀ p ∈ Q.props, ∃ q ∈ alt Q, p ⊆ q` hypothesis of
-`Question.eq_iSup_ofSet_alt_of_exists_alt`.
+dual `.neg` form where it differs). Each is an instance of
+`Question.IsNormal.eq_iSup_ofSet_alt`: the modal and atomic clauses are
+declaratives, which are normal, and normality is closed under
+disjunction, so the disjunctive equation needs no non-Hurford condition.
 
 These are the building blocks for proving compactness of any specific
 `BilatInqProp` formula. (The fully general statement for arbitrary
 formulas requires an inductive `BSML.Formula` type with an interpretation
 function; that's deferred.) -/
 
-/-- Compactness equation for `atom V`'s positive interpretation.
-    `(atom V).pos = declarative V`, with `alt = {V}`; every prop ⊆ V
-    extends to V trivially. -/
+/-- Compactness equation for `atom V`'s positive interpretation, the
+    declarative of `V`. -/
 theorem pos_eq_iSup_alt_atom (V : Set W) :
     (BilatInqProp.atom V).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.atom V).pos, Question.ofSet p := by
-  apply Question.eq_iSup_ofSet_alt_of_exists_alt
-  intro p hp
-  refine ⟨V, ?_, hp⟩
-  rw [alt_atom_pos]
-  exact Set.mem_singleton _
+      ⨆ p ∈ Question.alt (BilatInqProp.atom V).pos, Question.ofSet p :=
+  (Question.isNormal_ofSet V).eq_iSup_ofSet_alt
 
 /-- Dual of `pos_eq_iSup_alt_atom` for `.neg`. -/
 theorem neg_eq_iSup_alt_atom (V : Set W) :
     (BilatInqProp.atom V).neg =
-      ⨆ p ∈ Question.alt (BilatInqProp.atom V).neg, Question.ofSet p := by
-  apply Question.eq_iSup_ofSet_alt_of_exists_alt
-  intro p hp
-  refine ⟨Vᶜ, ?_, hp⟩
-  show Vᶜ ∈ Question.alt (Question.ofSet Vᶜ)
-  rw [Question.alt_ofSet]
-  exact Set.mem_singleton _
+      ⨆ p ∈ Question.alt (BilatInqProp.atom V).neg, Question.ofSet p :=
+  (Question.isNormal_ofSet Vᶜ).eq_iSup_ofSet_alt
 
 /-- Compactness for `negate φ`'s positive interpretation reduces to
     compactness of `φ.neg` (since `(negate φ).pos = φ.neg` by `rfl`). -/
@@ -601,12 +592,8 @@ theorem neg_eq_iSup_alt_negate (φ : BilatInqProp W)
     a single declarative whose alt is the singleton witness w-set. -/
 theorem pos_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
     (BilatInqProp.necessity R φ).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).pos, Question.ofSet p := by
-  apply Question.eq_iSup_ofSet_alt_of_exists_alt
-  intro p hp
-  refine ⟨_, ?_, hp⟩
-  rw [alt_necessity_pos]
-  exact Set.mem_singleton _
+      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).pos, Question.ofSet p :=
+  (Question.isNormal_ofSet _).eq_iSup_ofSet_alt
 
 /-- The `alt` of `necessity`'s `.neg` is the singleton of the existential
     witness w-set (same shape as `alt_necessity_pos` with the existential
@@ -621,32 +608,18 @@ theorem alt_necessity_neg (R : W → Set W) (φ : BilatInqProp W) :
 /-- Dual of `pos_eq_iSup_alt_necessity` for `.neg`. -/
 theorem neg_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
     (BilatInqProp.necessity R φ).neg =
-      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).neg, Question.ofSet p := by
-  apply Question.eq_iSup_ofSet_alt_of_exists_alt
-  intro p hp
-  refine ⟨_, ?_, hp⟩
-  rw [alt_necessity_neg]
-  exact Set.mem_singleton _
+      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).neg, Question.ofSet p :=
+  (Question.isNormal_ofSet _).eq_iSup_ofSet_alt
 
-/-- Compactness for `disj φ ψ`'s positive interpretation under summand
-    pos-compactness + non-Hurford on alts. The alt of the disj is the
-    union of summand alts (`alt_disj_pos_eq_union`); each prop in the
-    disj's pos comes from one summand's pos and lifts to its alt. -/
+/-- Compactness for `disj φ ψ`'s positive interpretation from normality
+    of the summands' positive interpretations, whose join is normal
+    (`Question.IsNormal.sup`) whether or not the disjunction is
+    non-Hurford. -/
 theorem pos_eq_iSup_alt_disj (φ ψ : BilatInqProp W)
-    (hφ : ∀ p ∈ φ.pos.props, ∃ q ∈ Question.alt φ.pos, p ⊆ q)
-    (hψ : ∀ p ∈ ψ.pos.props, ∃ q ∈ Question.alt ψ.pos, p ⊆ q)
-    (hφψ : ∀ a ∈ Question.alt φ.pos, a ∉ ψ.pos.props)
-    (hψφ : ∀ b ∈ Question.alt ψ.pos, b ∉ φ.pos.props) :
+    (hφ : φ.pos.IsNormal) (hψ : ψ.pos.IsNormal) :
     (BilatInqProp.disj φ ψ).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.disj φ ψ).pos, Question.ofSet p := by
-  apply Question.eq_iSup_ofSet_alt_of_exists_alt
-  intro p hp
-  rw [alt_disj_pos_eq_union φ ψ hφψ hψφ]
-  rcases hp with hp | hp
-  · obtain ⟨q, hq, hpq⟩ := hφ p hp
-    exact ⟨q, Or.inl hq, hpq⟩
-  · obtain ⟨q, hq, hpq⟩ := hψ p hp
-    exact ⟨q, Or.inr hq, hpq⟩
+      ⨆ p ∈ Question.alt (BilatInqProp.disj φ ψ).pos, Question.ofSet p :=
+  (hφ.sup hψ).eq_iSup_ofSet_alt
 
 /-- Compactness for `possibility R φ`'s positive interpretation. Direct
     via duality: `(possibility R φ).pos = (necessity R (negate φ)).neg`,
