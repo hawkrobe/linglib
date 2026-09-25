@@ -887,7 +887,6 @@ import Linglib.Fragments.NezPerce.Clause
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Fragments.Niuean.Modals
 import Linglib.Fragments.Norwegian.V2
-import Linglib.Fragments.Norwegian.VerbParticles
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Poko.Tone
 import Linglib.Fragments.Portuguese.Modals
