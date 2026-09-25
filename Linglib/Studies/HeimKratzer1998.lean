@@ -9,7 +9,6 @@ public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Composition.Lexicon
 public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Quantification.Polyadic
-public import Linglib.Semantics.Quantification.Terminal
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
 
@@ -70,11 +69,39 @@ open scoped Semantics
 
 /-! ### Model and lexicon -/
 
-/-- The study's stand on the quantifier words: the one reading each of *every* and *some* makes
+/-- A reading as a composition terminal on the entity domain `E`, at the determiner type. -/
+def toDenotation (d : Family.{0}) (E W : Type) [Fintype E] : Denotation E W := ⟨Ty.det, d E⟩
+
+/-- The terminals of a set of readings on a domain. -/
+def terminals (s : Set Family.{0}) (E W : Type) [Fintype E] : Set (Denotation E W) :=
+  (toDenotation · E W) '' s
+
+theorem toDenotation_mem_terminals {s : Set Family.{0}} {d : Family.{0}} (h : d ∈ s)
+    (E W : Type) [Fintype E] : toDenotation d E W ∈ terminals s E W :=
+  Set.mem_image_of_mem _ h
+
+/-- The object-position entry of a terminal of the determiner type, the book's lexical rule
+applied to a lexical item, and `none` at any other type. -/
+def objectShift? {E W : Type} (d : Denotation E W) : Option (Denotation E W) :=
+  if h : d.1 = Ty.det then
+    Option.some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .e ⇒ .t) ⇒ .e ⇒ .t,
+      GQ.objectShift (h ▸ d.2 : Ty.Domain E W Ty.det)⟩
+  else none
+
+/-- The object-position entries the lexical rule derives from a set of readings. -/
+def objectShifts {E W : Type} (s : Set (Denotation E W)) : Set (Denotation E W) :=
+  {d | ∃ d₁ ∈ s, objectShift? d₁ = some d}
+
+theorem objectShift?_mem_objectShifts {E W : Type} {s : Set (Denotation E W)}
+    {d₁ d : Denotation E W} (h₁ : d₁ ∈ s) (h : objectShift? d₁ = some d) :
+    d ∈ objectShifts s :=
+  ⟨d₁, h₁, h⟩
+
+/-- The study's stand on the quantifier words, the one reading each of *every* and *some* makes
 available, as a terminal on the toy domain. -/
 def quantifierReading : QuantityWord → Option (Denotation ToyEntity Unit)
-  | .every => some (Family.every.toDenotation ToyEntity Unit)
-  | .some_ => some (Family.some.toDenotation ToyEntity Unit)
+  | .every => some (toDenotation Family.every ToyEntity Unit)
+  | .some_ => some (toDenotation Family.some ToyEntity Unit)
   | _ => none
 
 /-- Each chosen terminal is among the terminals of the word's available readings. -/
@@ -83,7 +110,7 @@ theorem quantifierReading_mem {w : QuantityWord} {d : Denotation ToyEntity Unit}
   cases w <;> simp only [quantifierReading, Option.some.injEq, reduceCtorEq] at h <;> subst h <;>
     exact toDenotation_mem_terminals (Set.mem_singleton _) _ _
 
-/-- The leaf interpretation: the quantifier words through their readings, and the toy
+/-- The leaf interpretation reads the quantifier words through their readings and the toy
 fragment's nouns and verbs through the toy lexicon. -/
 def lex : QuantityWord ⊕ String → Option (Denotation ToyEntity Unit) :=
   Sum.elim quantifierReading toyLexicon
@@ -92,7 +119,7 @@ def g₀ : Assignment ToyEntity := λ _ => .john
 
 /-! ### "Every student sleeps" -/
 
-/-- QR tree: `[S [DP every student] [1 [S t₁ sleeps]]]` -/
+/-- The QR tree `[S [DP every student] [1 [S t₁ sleeps]]]`. -/
 def tree_everyStudentSleeps : Tree Unit String :=
   .bin
     (.bin (.leaf "every") (.leaf "student"))
@@ -103,7 +130,7 @@ theorem every_student_sleeps_false :
     ¬(every_sem student_sem ToyLexicon.sleeps_sem) := by
   intro h; exact h ToyEntity.mary trivial
 
-/-- QR tree: `[S [DP some student] [1 [S t₁ sleeps]]]` -/
+/-- The QR tree `[S [DP some student] [1 [S t₁ sleeps]]]`. -/
 def tree_someStudentSleeps : Tree Unit String :=
   .bin
     (.bin (.leaf "some") (.leaf "student"))
@@ -176,13 +203,13 @@ theorem inverse_scope_false : ¬inverseScopeProp := by
   | pizza => exact hy_all ToyEntity.john trivial
   | book => exact hy_all ToyEntity.john trivial
 
-/-- The two scope readings differ: proof of genuine ambiguity. -/
+/-- The two scope readings differ, so the ambiguity is genuine. -/
 theorem scope_readings_differ : surfaceScopeProp ≠ inverseScopeProp := by
   intro h
   exact inverse_scope_false (h ▸ surface_scope_true)
 
-/-- The readings are nested: the inverse reading entails the surface one (`∃∀ ⊨ ∀∃`), so a
-model can separate them only in the direction the toy model does. -/
+/-- The readings are nested, since the inverse reading entails the surface one, so a model can
+separate them only in the direction the toy model does. -/
 theorem inverse_entails_surface : inverseScopeProp → surfaceScopeProp :=
   iterate_every_some_of_some_every _ _ _
 
@@ -193,16 +220,16 @@ The QR trees and the readings `surfaceScopeProp`/`inverseScopeProp` are linked b
 scope-ambiguity result is a fact about the *engine's* output, not a parallel
 re-implementation alongside it. -/
 
-/-- Surface scope: the engine computes the hand-written reading. -/
+/-- On the surface-scope tree the engine computes the hand-written reading. -/
 theorem interp_computes_surface :
     interp lex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
-/-- Inverse scope: likewise. -/
+/-- On the inverse-scope tree the engine computes the hand-written reading. -/
 theorem interp_computes_inverse :
     interp lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
 
-/-- Scope ambiguity, stated about the engine: the two QR derivations interpret to
-genuinely different meanings. -/
+/-- Scope ambiguity stated about the engine, since the two QR derivations interpret to
+different meanings. -/
 theorem scope_ambiguity_computed :
     interp lex g₀ tree_surface ≠
       interp lex g₀ tree_inverse := by
@@ -258,7 +285,7 @@ end Readings
 Section 7.2.1's alternative to movement leaves the object quantifier in place and lets the
 quantifier words be multiply ambiguous. The object-position entry takes a two-place predicate
 and the subject and quantifies over the object, and the book's lexical rule derives it for
-every determiner from its basic entry of the determiner type (`Denotation.objectShift?`), so
+every determiner from its basic entry of the determiner type (`objectShift?`), so
 the words' readings grow by their object-position entries. The book's subscripts are a
 resolution of the flat tree, the basic entry in subject position and the object-position entry
 in object position, and under it the tree composes by Functional Application alone to the
@@ -271,13 +298,13 @@ section InSitu
 /-- The words' readings closed under the lexical rule, each quantifier word making its
 object-position entry available beside its basic one. -/
 def lexFlex (w : QuantityWord ⊕ String) : Set (Denotation ToyEntity Unit) :=
-  lexReadings w ∪ Denotation.objectShifts (lexReadings w)
+  lexReadings w ∪ objectShifts (lexReadings w)
 
 /-- A resolution of the quantifier words, the words in `object` taking their object-position
 entry and the others their basic one. -/
 def resolve (object : QuantityWord → Prop) [DecidablePred object] :
     QuantityWord ⊕ String → Option (Denotation ToyEntity Unit) :=
-  Sum.elim (fun w ↦ if object w then (quantifierReading w).bind Denotation.objectShift?
+  Sum.elim (fun w ↦ if object w then (quantifierReading w).bind objectShift?
     else quantifierReading w) toyLexicon
 
 /-- Every resolution chooses among the readings the lexical rule makes available. -/
@@ -289,7 +316,7 @@ theorem resolve_mem_lexFlex (object : QuantityWord → Prop) [DecidablePred obje
     simp only [resolve, Sum.elim_inl] at h
     split_ifs at h with hw
     · obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.mp h
-      exact .inr (Denotation.objectShift?_mem_objectShifts (quantifierReading_mem h₁) h)
+      exact .inr (objectShift?_mem_objectShifts (quantifierReading_mem h₁) h)
     · exact .inl (quantifierReading_mem h)
   | inr s => exact .inl h
 
@@ -444,8 +471,8 @@ open Semantics.Composition
 example : (compileFO {} toyNaming tree_everyStudentSleeps).isSome = true := rfl
 example : (compileFO {} toyNaming tree_someStudentSleeps).isSome = true := rfl
 
-/-- The agreement theorem instantiated at the toy model: for any tree in the
-fragment, engine truth conditions are `Realize` of the compiled formula. -/
+/-- The agreement theorem instantiated at the toy model, where for any tree in the fragment
+the engine's truth conditions are `Realize` of the compiled formula. -/
 theorem interp_eq_realize {t : Tree Unit String} {φ : toyLang.Formula ℕ}
     (h : compileFO {} toyNaming t = some φ) (g : Assignment ToyEntity) :
     Tree.interp (toyModel.lexiconFO {} toyNaming ()) g t
@@ -464,9 +491,8 @@ def tree_conj : Tree Unit String :=
   .bin (.bin (.leaf "John") (.leaf "sleeps"))
        (.bin (.leaf "and") (.bin (.leaf "Mary") (.leaf "laughs")))
 
-/-- **Consequence transfer**: conjunction elimination is a first-order
-consequence, so the entailment holds in the toy model — and by the same
-theorem in *every* composition model interpreting the signature. -/
+/-- Conjunction elimination is a first-order consequence, so the entailment holds in the toy
+model and, by the same theorem, in every composition model interpreting the signature. -/
 theorem conj_entails_first (g : Assignment ToyEntity) :
     HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g tree_conj →
       HoldsAt toyModel (toyModel.lexiconFO {} toyNaming ()) g

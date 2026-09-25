@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Quantification.Counting
-public import Linglib.Semantics.Quantification.Generic
 public import Linglib.Studies.Cohen1999
 
 /-!
@@ -76,8 +75,8 @@ instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → 
     Decidable (nickelGEN entities normalIn ways restrictor scope) := by
   unfold nickelGEN; infer_instance
 
-/-- Conjunctive generic: both `GEN[A][F₁]` and `GEN[A][F₂]` hold, potentially via
-    different normality ways. -/
+/-- A conjunctive generic holds when both `GEN[A][F₁]` and `GEN[A][F₂]` hold, possibly through
+different normality ways. -/
 def nickelConjunctiveGEN {α : Type*} (entities : Finset α)
     (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay)
     (restrictor scope1 scope2 : α → Prop)
@@ -93,9 +92,9 @@ instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → 
     Decidable (nickelConjunctiveGEN entities normalIn ways restrictor scope1 scope2) := by
   unfold nickelConjunctiveGEN; infer_instance
 
-/-- Normality ways are pairwise incompatible: no entity is normal in two distinct
-    ways. The paper (p. 643) states this holds "usually (perhaps always)"; here it
-    is a property of the toy model, not a commitment of the account. -/
+/-- Normality ways are pairwise incompatible when no entity is normal in two distinct ways.
+The paper (p. 643) states this holds "usually (perhaps always)"; here it is a property of the
+toy model, not a commitment of the account. -/
 def waysIncompatible {α : Type*} (entities : Finset α)
     (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay)
     [∀ w, DecidablePred (λ e => normalIn e w)] : Prop :=
@@ -111,7 +110,7 @@ instance {α : Type*} (entities : Finset α) (normalIn : α → NormalcyWay → 
 
 section Elephants
 
-/-- 10 elephants: 6 African (ids 0–5), 4 Asian (ids 6–9). -/
+/-- Ten elephants, six African (ids 0–5) and four Asian (ids 6–9). -/
 def elephants : Finset Entity := ((List.range 10).map (λ n => (⟨n⟩ : Entity))).toFinset
 
 abbrev isElephant : Entity → Prop := λ _ => True
@@ -132,8 +131,8 @@ end Elephants
 
 section Bears
 
-/-- 20 bears across 4 continents (5 each): NA 0–4, SA 5–9, EU 10–14, AS 15–19.
-    The majority view fails for ALL four habitat conjuncts (each is 5/20 = 25%). -/
+/-- Twenty bears across four continents, five each, with NA 0–4, SA 5–9, EU 10–14 and AS
+15–19, so that each habitat is a quarter of the bears. -/
 def bears : Finset Entity := ((List.range 20).map (λ n => (⟨n⟩ : Entity))).toFinset
 
 abbrev isBear : Entity → Prop := λ _ => True
@@ -142,7 +141,7 @@ abbrev bearSA : Entity → Prop := λ e => e.id ≥ 5 ∧ e.id < 10
 abbrev bearEU : Entity → Prop := λ e => e.id ≥ 10 ∧ e.id < 15
 abbrev bearAS : Entity → Prop := λ e => e.id ≥ 15
 
-/-- The disjunction of the habitat alternatives: every bear lives somewhere. -/
+/-- The disjunction of the habitat alternatives, which every bear satisfies. -/
 abbrev bearHabitat : Entity → Prop := λ e => bearNA e ∨ bearSA e ∨ bearEU e ∨ bearAS e
 
 def bearWays : Finset NormalcyWay := {⟨1⟩, ⟨2⟩, ⟨3⟩, ⟨4⟩}
@@ -155,13 +154,13 @@ end Bears
 
 /-! ### Key Theorems -/
 
-/-- Nickel's view succeeds for the elephant conjunction: Africa is witnessed by the
-    African way, Asia by the Asian way. -/
+/-- Nickel's view succeeds for the elephant conjunction, with Africa witnessed by the African
+way and Asia by the Asian way. -/
 theorem nickel_handles_elephant_conjunction :
     nickelConjunctiveGEN elephants elephantNormalIn ways
       isElephant livesInAfrica livesInAsia := by decide
 
-/-- The bears example (2a): Nickel's view succeeds for all four habitat conjuncts. -/
+/-- In the bears example (2a) Nickel's view succeeds for all four habitat conjuncts. -/
 theorem bears_nickel_succeeds :
     nickelGEN bears bearNormalIn bearWays isBear bearNA ∧
     nickelGEN bears bearNormalIn bearWays isBear bearSA ∧
@@ -199,8 +198,8 @@ theorem cohen_fails_nickel_succeeds_on_conjunction :
   refine ⟨cohen_fails_elephant_asia, ?_⟩
   decide
 
-/-- The bears conjunction (2a) fails even harder for the majority view: every one of
-    the four habitats is a 25% minority. -/
+/-- The bears conjunction (2a) fails for the majority view on every conjunct, since each of the
+four habitats is a minority. -/
 theorem cohen_fails_all_bear_habitats :
     ¬ Cohen1999.gen bears isBear bearHabitat bearNA ∧
     ¬ Cohen1999.gen bears isBear bearHabitat bearSA ∧
@@ -222,17 +221,6 @@ theorem nickel_single_way_is_everyOn {α : Type*} (entities : Finset α)
     nickelGEN entities normalIn {w} restrictor scope ↔
       everyOn entities (λ e => restrictor e ∧ normalIn e w) scope := by
   simp [nickelGEN]
-
-/-! ### Generic-quantifier interface -/
-
-/-- Nickel's `nickelGEN` over the whole carrier is exactly the ways-of-normality
-    generalized quantifier `Quantifier.GQ.genWays` — its `GQ`-interface form,
-    the [nickel-2009] instance of the shared schema in `Quantifier.Generic`. -/
-theorem nickelGEN_univ_eq_genWays {α : Type*} [Fintype α]
-    (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] [∀ w, DecidablePred (λ e => normalIn e w)] :
-    nickelGEN Finset.univ normalIn ways R S ↔ Quantifier.GQ.genWays normalIn ways R S := by
-  simp only [nickelGEN, Quantifier.GQ.genWays, everyOn, and_comm]
 
 /-!
 ## Summary: Three Views of Normality

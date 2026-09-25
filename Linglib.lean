@@ -1397,10 +1397,7 @@ import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Quantification.Defs
-import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Semantics.Quantification.Exceptive
-import Linglib.Semantics.Quantification.Generators
-import Linglib.Semantics.Quantification.Generic
 import Linglib.Semantics.Quantification.Lattice
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Quantification.Lindstrom
@@ -1411,8 +1408,6 @@ import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Semantics.Quantification.Properties
 import Linglib.Semantics.Quantification.Witness
-import Linglib.Semantics.Quantification.Syllogistic.Defs
-import Linglib.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Closure

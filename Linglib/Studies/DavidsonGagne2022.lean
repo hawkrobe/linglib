@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.DavidsonGagne2022
 public import Linglib.Fragments.ASL.Determiners
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Quantification.DomainRestriction
+public import Linglib.Semantics.Quantification.Basic
 public import Mathlib.Order.Heyting.Basic
 
 /-!
@@ -64,10 +64,10 @@ variable {E : Type*} [PartialOrder E]
 
 /-! ### The height feature on plural pronouns -/
 
-/-- (46a) `⟦arc⟧`: the referent of the plural pronoun is not an atom. -/
+/-- `⟦arc⟧` of (46a) says that the referent of the plural pronoun is not an atom. -/
 def Arc (x : E) : Prop := ¬ Mereology.Atom x
 
-/-- (47c) `⟦neutral⟧`: every part of the referent lies in the contextual domain. -/
+/-- `⟦neutral⟧` of (47c) says that every part of the referent lies in the contextual domain. -/
 def Neutral (C : Set E) (x : E) : Prop := Set.Iic x ⊆ C
 
 /-- (44), (46b) `⟦domain-k⟧`: the referent properly contains the contextual domain. -/
@@ -76,7 +76,7 @@ def Domain (C : Set E) (x : E) : Prop := C ⊂ Set.Iic x
 /-- (47b) `⟦-a⟧`: a marked horizontal locus presupposes a distinct focus alternative. -/
 def Contrast (alt : E → Set E) (x : E) : Prop := ∃ y ∈ alt x, x ≠ y
 
-/-- The vertical feature of §5: the neutral plane, or a marked locus above it. -/
+/-- The vertical feature of section 5, the neutral plane or a marked locus above it. -/
 inductive Height
   | neutral
   | marked
@@ -93,7 +93,7 @@ plural meeting the height presupposition, and is otherwise undefined. -/
 noncomputable def ixArc {ι : Type*} (g : ι → E) (C : Set E) (h : Height) (i : ι) : Option E :=
   if Arc (g i) ∧ h.presup C (g i) then some (g i) else none
 
-/-- A referent within the context does not properly extend it: the two heights exclude each
+/-- A referent within the context does not properly extend it, so the two heights exclude each
 other. -/
 theorem not_domain_of_neutral {C : Set E} {x : E} (h : Neutral C x) : ¬ Domain C x :=
   λ h' => h'.2 h
@@ -104,14 +104,14 @@ theorem neutral_iff {c x : E} : Neutral (Set.Iic c) x ↔ x ≤ c := Set.Iic_sub
 
 theorem domain_iff {c x : E} : Domain (Set.Iic c) x ↔ c < x := Set.Iic_ssubset_Iic
 
-/-- (48): under the convention (45) that vertical order maps marked loci to proper parts, the
-marked presupposition met at one locus is met at every higher one. -/
+/-- Under the convention (45) that vertical order maps marked loci to proper parts, the marked
+presupposition met at one locus is met at every higher one, as in (48). -/
 theorem domain_of_lt {H : Type*} [Preorder H] {ref : H → E} (hconv : StrictMono ref)
     {C : Set E} {k k' : H} (hk : Domain C (ref k)) (hkk' : k < k') : Domain C (ref k') :=
   hk.trans (Set.Iic_ssubset_Iic.2 (hconv hkk'))
 
-/-- (14): the remainder of a plane less an established locus sums with it to the plane, and a
-higher plane's remainder contains the neutral plane's. -/
+/-- The remainder of a plane less an established locus sums with it to the plane, and a higher
+plane's remainder contains the neutral plane's, as in (14). -/
 theorem remainder {E : Type*} [GeneralizedCoheytingAlgebra E] {a d d' : E} (h : a ≤ d)
     (h' : d ≤ d') : a ⊔ d \ a = d ∧ d \ a ≤ d' \ a :=
   ⟨sup_sdiff_cancel_right h, sdiff_le_sdiff_right h'⟩
@@ -121,12 +121,12 @@ theorem remainder {E : Type*} [GeneralizedCoheytingAlgebra E] {a d d' : E} (h : 
 /-- (50b) `⟦of⟧ = λx λy. y ≤ x` ([ladusaw-1982]): the parts of the pronoun's referent. -/
 def partitive (x : E) : E → Prop := (· ≤ x)
 
-/-- (50e), (51e) `FS(ALL)` composed with a partitive pronoun, over worlds `W`: defined where
-the pronoun is, and asserting that every part of its referent satisfies the scope. -/
+/-- `FS(ALL)` composed with a partitive pronoun over worlds `W`, as in (50e) and (51e), is
+defined where the pronoun is and asserts that every part of its referent satisfies the scope. -/
 def fsAllOf {W : Type*} (pron : W → Option E) (Q : E → W → Prop) : PartialProp W :=
   PartialProp.presupOfReferent pron λ x w => every_sem (partitive x) (Q · w)
 
-/-- The quantifier presupposes what its pronoun presupposes: `FS(ALL)-of-[ixᵢ-arc-h]` is
+/-- The quantifier presupposes what its pronoun presupposes, so `FS(ALL)-of-[ixᵢ-arc-h]` is
 defined iff `g i` is a non-atomic plural meeting the height presupposition. -/
 theorem fsAllOf_ixArc_presup {W ι : Type*} {g : ι → E} {C : Set E} {h : Height} {i : ι}
     {Q : E → W → Prop} {w : W} :
@@ -134,15 +134,15 @@ theorem fsAllOf_ixArc_presup {W ι : Type*} {g : ι → E} {C : Set E} {h : Heig
   simp only [fsAllOf, PartialProp.presupOfReferent_presup, ixArc]
   split_ifs with hp <;> simp [hp]
 
-/-- (50e): where the neutral pronoun denotes the sum of the context, `FS(ALL)-neutral`
-quantifies over the context. -/
+/-- Where the neutral pronoun denotes the sum of the context, `FS(ALL)-neutral` quantifies over
+the context, as in (50e). -/
 theorem fsAllOf_assertion {W : Type*} {pron : W → Option E} {Q : E → W → Prop} {w : W} {c : E}
     (h : pron w = some c) : (fsAllOf pron Q).assertion w = ∀ y ∈ Set.Iic c, Q y w :=
   PartialProp.presupOfReferent_assertion_some pron _ w c h
 
-/-- §4: with the marked pronoun denoting a plural containing the neutral one, `FS(ALL)` and
-`NONE` at the higher locus entail their neutral forms, while `SOMEONE` at the neutral locus
-entails its high form. -/
+/-- With the marked pronoun denoting a plural containing the neutral one, `FS(ALL)` and `NONE`
+at the higher locus entail their neutral forms, while `SOMEONE` at the neutral locus entails
+its high form, as in section 4. -/
 theorem all_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
     every_sem (partitive x') Q → every_sem (partitive x) Q :=
   every_restrictor_down _ _ Q λ _ hy => le_trans hy h
@@ -155,9 +155,9 @@ theorem some_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
     some_sem (partitive x) Q → some_sem (partitive x') Q :=
   some_restrictor_up _ _ Q λ _ hy => le_trans hy h
 
-/-- Height is not intensification (§4, after (36)): a part of the wider plural outside the
-narrower one makes `SOMEONE-high` true where `SOMEONE-neutral` is false, so on no reading of
-height as strengthening, on which the high form would entail the neutral one as
+/-- Height is not intensification (section 4, after (36)), since a part of the wider plural
+outside the narrower one makes `SOMEONE-high` true where `SOMEONE-neutral` is false, so on no
+reading of height as strengthening, on which the high form would entail the neutral one as
 [bergen-2016] has for stressed quantifiers, does the existential come out right. -/
 theorem not_strengthening {x x' w : E} (hw : w ≤ x') (hwx : ¬ w ≤ x) :
     ¬ ∀ Q : E → Prop, some_sem (partitive x') Q → some_sem (partitive x) Q :=
@@ -180,8 +180,8 @@ theorem realization_rows :
       (e.feature? "realization" = some "sequential" → q ∈ sequential) := by
   decide
 
-/-- (38): a quantifier that incorporates the pronoun rejects a further height-marked
-`IX-arc`. -/
+/-- A quantifier that incorporates the pronoun rejects a further height-marked `IX-arc`, as in
+(38). -/
 theorem no_double_marking :
     ∀ e ∈ Examples.all, e.feature? "realization" = some "both" → e.judgment = .ungrammatical := by
   decide
@@ -193,7 +193,7 @@ theorem verb_height_iff_directional :
       (e.judgment = .acceptable ↔ e.feature? "verbClass" = some "directional") := by
   decide
 
-/-- (27): height on a bare noun has no widened-domain reading. -/
+/-- Height on a bare noun has no widened-domain reading, as in (27). -/
 theorem noun_no_widening :
     ∀ e ∈ Examples.all, e.feature? "heightOn" = some "noun" →
       e.readings.lookup "widened" = some .unacceptable := by

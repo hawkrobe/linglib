@@ -57,10 +57,6 @@ linguistic realization functor on top of it.
   class to GQ `outerNeg`.
 * `someDet_holds_eq_compl`/`noDet_toGQ_eq_innerNeg`/`someDet_toGQ_eq_dualQ` — the `no`/`some`
   corners as the complement/inner-negation/dual images of the model-theoretic structure.
-
-`L_UV`/`uvRel`/`uRel`/`vRel` are re-derived in `Studies.BarwiseCooper1981` (its
-Appendix-C Fraïssé argument predates this substrate); that copy will be deduped against
-this one in a follow-up.
 -/
 
 @[expose] public section
@@ -76,14 +72,14 @@ open CategoryTheory (Bundled)
 
 /-! ### The monadic language `L_UV` -/
 
-/-- The two unary relation symbols of `L_UV`: restrictor `U` and scope `V`. -/
+/-- The two unary relation symbols of `L_UV`, the restrictor `U` and the scope `V`. -/
 inductive uvRel : ℕ → Type
   | U : uvRel 1
   | V : uvRel 1
   deriving DecidableEq
 
-/-- The monadic language of generalized determiners: no function symbols, two unary
-relation symbols `U`, `V`. -/
+/-- The monadic language of generalized determiners, with no function symbols and the two unary
+relation symbols `U` and `V`. -/
 def L_UV : Language :=
   { Functions := fun _ => Empty
     Relations := uvRel }
@@ -117,7 +113,7 @@ abbrev Det := LindstromQuantifier.{0, 0, u} L_UV
 
 namespace Det
 
-/-- Realize a determiner as a `GQ α` denotation: `(A, B)` holds iff the structure
+/-- A determiner realized as a `GQ α` denotation, which holds of `(A, B)` iff the structure
 `(α, A, B)` is in the quantifier's class. -/
 def toGQ (Q : Det.{u}) (α : Type u) : GQ α :=
   fun A B => (⟨α, structOfAB A B⟩ : Bundled.{u} L_UV.Structure) ∈ Q.holds
@@ -160,7 +156,7 @@ end Det
 
 /-! ### The Aristotelian determiner classes -/
 
-/-- Transfer a `RelMap` fact for `U` across `e.symm`: `RelMap_N U ![y] ↔ RelMap_M U ![e.symm y]`. -/
+/-- A `RelMap` fact for `U` transfers across `e.symm`. -/
 private theorem relMap_symm_U {M N : Bundled.{u} L_UV.Structure} (e : M ≃[L_UV] N) (y : N) :
     N.str.RelMap uRel ![y] ↔ M.str.RelMap uRel ![e.symm y] := by
   have h := e.map_rel uRel ![e.symm y]
@@ -172,7 +168,7 @@ private theorem relMap_symm_V {M N : Bundled.{u} L_UV.Structure} (e : M ≃[L_UV
   have h := e.map_rel vRel ![e.symm y]
   rwa [Matrix.comp_vecCons, Matrix.comp_vecEmpty, e.apply_symm_apply] at h
 
-/-- `every`: `∀ x, U x → V x`. -/
+/-- The determiner *every*, holding when `∀ x, U x → V x`. -/
 def everyDet : Det.{u} where
   holds := {M | ∀ x : M, M.str.RelMap uRel ![x] → M.str.RelMap vRel ![x]}
   iso_inv {M N} h := by
@@ -184,7 +180,7 @@ def everyDet : Det.{u} where
       exact (relMap_symm_V g y).mpr (hP (g.symm y) ((relMap_symm_U g y).mp hu))
     exact ⟨key e, key e.symm⟩
 
-/-- `some`: `∃ x, U x ∧ V x`. -/
+/-- The determiner *some*, holding when `∃ x, U x ∧ V x`. -/
 def someDet : Det.{u} where
   holds := {M | ∃ x : M, M.str.RelMap uRel ![x] ∧ M.str.RelMap vRel ![x]}
   iso_inv {M N} h := by
@@ -200,7 +196,7 @@ def someDet : Det.{u} where
         rwa [Matrix.comp_vecCons, Matrix.comp_vecEmpty] at this
     exact ⟨key e, key e.symm⟩
 
-/-- `no`: `∀ x, U x → ¬ V x`. -/
+/-- The determiner *no*, holding when `∀ x, U x → ¬ V x`. -/
 def noDet : Det.{u} where
   holds := {M | ∀ x : M, M.str.RelMap uRel ![x] → ¬ M.str.RelMap vRel ![x]}
   iso_inv {M N} h := by
@@ -217,19 +213,19 @@ def noDet : Det.{u} where
 The GQ denotations the codebase already uses (`every_sem`, `some_sem`, `no_sem`) are
 exactly the realizations of the Lindström classes above. -/
 
-/-- `everyDet` realizes `every_sem`: `⟦every⟧ = λR S. ∀x. R x → S x`. -/
+/-- `everyDet` realizes `every_sem`. -/
 theorem everyDet_toGQ (α : Type u) : everyDet.toGQ α = (every_sem : GQ α) := by
   funext A B
   simp only [Det.toGQ, everyDet, Set.mem_ofPred_eq, structOfAB_relMap_U, structOfAB_relMap_V,
     Matrix.cons_val_fin_one, every_sem]
 
-/-- `someDet` realizes `some_sem`: `⟦some⟧ = λR S. ∃x. R x ∧ S x`. -/
+/-- `someDet` realizes `some_sem`. -/
 theorem someDet_toGQ (α : Type u) : someDet.toGQ α = (some_sem : GQ α) := by
   funext A B
   simp only [Det.toGQ, someDet, Set.mem_ofPred_eq, structOfAB_relMap_U, structOfAB_relMap_V,
     Matrix.cons_val_fin_one, some_sem]
 
-/-- `noDet` realizes `no_sem`: `⟦no⟧ = λR S. ∀x. R x → ¬ S x`. -/
+/-- `noDet` realizes `no_sem`. -/
 theorem noDet_toGQ (α : Type u) : noDet.toGQ α = (no_sem : GQ α) := by
   funext A B
   simp only [Det.toGQ, noDet, Set.mem_ofPred_eq, structOfAB_relMap_U, structOfAB_relMap_V,
@@ -268,12 +264,12 @@ theorem toGQ_compl (Q : Det.{u}) (α : Type u) : Det.toGQ Qᶜ α = outerNeg (Q.
   funext A B
   simp only [Det.toGQ, LindstromQuantifier.holds_compl, Set.mem_compl_iff, outerNeg_apply]
 
-/-- The `E` corner: `no` realizes the inner negation of `every` (`every…not = no`). -/
+/-- At the `E` corner, `no` realizes the inner negation of `every`. -/
 theorem noDet_toGQ_eq_innerNeg (α : Type u) :
     noDet.toGQ α = innerNeg (everyDet.toGQ α) := by
   rw [noDet_toGQ, everyDet_toGQ, innerNeg_every_eq_no]
 
-/-- The `I` corner: `some` realizes the dual of `every` (`every̌ = some`). -/
+/-- At the `I` corner, `some` realizes the dual of `every`. -/
 theorem someDet_toGQ_eq_dualQ (α : Type u) :
     someDet.toGQ α = dualQ (everyDet.toGQ α) := by
   rw [someDet_toGQ, everyDet_toGQ, dualQ_every_eq_some]
