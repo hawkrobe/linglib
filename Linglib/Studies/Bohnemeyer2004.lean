@@ -81,7 +81,7 @@ causation (§6). -/
 
 /-- The event-structure template of a stem class, the activity for actives, the achievement for
 the three state-change classes and the accomplishment for transitives. -/
-def stemTemplate : VerbStemClass → Template
+def stemTemplate : VerbStemClass → Template .event
   | .active => .act
   | .inactive | .inchoative | .positional => .achievement
   | .transitiveActive => .accomplishment
@@ -470,13 +470,15 @@ passivize and anticausativize may not entail one. -/
 causing subevent for the antipassive (28), the caused one for the anticausative and passive
 ((29)–(30)). The passive differs from the anticausative in participant structure, not in the
 subevent it denotes. -/
-def DetransitivizationType.template : DetransitivizationType → Template → Option Template
+def DetransitivizationType.template :
+    DetransitivizationType → Template .event → Option (Template .event)
   | .antipassive => Template.causing
   | .anticausative | .passive => Template.caused
 
 /-- Rules (28)–(30) presuppose that only verbs encoding a causal relation between two subevents
 detransitivize. -/
-theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType) (t : Template) :
+theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType)
+    (t : Template .event) :
     (d.template t).isSome ↔ ∃ c e, t = .cause c e := by
   cases d <;> cases t <;>
     simp [DetransitivizationType.template, Template.causing, Template.caused]

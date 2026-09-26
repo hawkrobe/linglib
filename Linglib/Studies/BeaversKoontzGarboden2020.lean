@@ -20,11 +20,11 @@ both a manner and a result. The root of *blossom* entails a change and so falsif
 (`bifurcation_thesis_false`); the roots of *hand* and *drown* entail both a manner and a result
 and so falsify the second (`manner_result_complementarity_false`).
 
-The modifier *again* attaches to the root, to `vbecome` or to `vcause`, and the entailments
-among its three readings follow from the monotonicity of the presupposition of
-`Presupposition.again`. The book's hypothesis about which roots alternate between a causative
-and an inchoative is compared with the class pages of Levin's *English Verb Classes and
-Alternations* (`rootHypothesis_matches_profile`).
+The modifier *again* attaches to the root, to `vbecome` or to `vcause`, the three subterms of
+the causative template, and the entailments among its three readings follow from the subterm
+order (`Template.exists_denote_of_isSubterm`). The book's hypothesis about which roots alternate
+between a causative and an inchoative is compared with the class pages of Levin's *English Verb
+Classes and Alternations* (`rootHypothesis_matches_profile`).
 
 ## Implementation notes
 
@@ -158,68 +158,56 @@ namespace BeaversKoontzGarboden2020
 
 section Again
 
-open Presupposition ArgumentStructure
+open Presupposition ArgumentStructure EventStructure Template
 
 /-! ### Sublexical *again* and the hierarchy of its readings
 
 *Again* is a presupposition trigger that can attach at three points in the change-of-state
-structure, the root, `vbecome` and `vcause`, which yields the three readings of *Mary flattened
-the rug again*: the restitutive one, that the rug had been flat, the repetitive one over the
-change, that it had flattened, and the repetitive one over the causation, that Mary had
-flattened it. The entry for *again* is `Presupposition.again`, with the precedence between
-eventualities as its relation. The hierarchy of the readings and the collapse of the
-restitutive reading for result roots follow from the change-of-state entailments by the
-monotonicity of the presupposition. -/
+structure, the root, `vbecome` and `vcause` (27), which yields the three readings of *Mary
+flattened the rug again* (25): the restitutive one, that the rug had been flat, the repetitive
+one over the change, that it had flattened, and the repetitive one over the causation, that
+Mary had flattened it. The three points are the subterms `state`, `achievement` and
+`accomplishment` of the causative template, whose causing subevent is left unconstrained, as
+`vcause` leaves it (`Template.denote_cause_act_top`), and the entry for *again* is
+`Presupposition.again`. The hierarchy of the readings is the subterm order: attached at a
+template, *again* presupposes that each of its subterms was realized. -/
 
-variable {Entity State Event : Type*} (M : EventStructure.Interpretation Entity State Event)
-  {ltS : State → State → Prop} {ltE : Event → Event → Prop} {P : Entity → State → Prop}
-  {x y : Entity}
+universe u
 
-/-- *Again* attached low, to the root, modifies the root's state predicate `P`, which is the
-restitutive reading. -/
-def againRestitutive (ltS : State → State → Prop) (P : Entity → State → Prop) (x : Entity) :
-    PartialProp State :=
-  again ltS (P x)
+variable {Entity : Type*} {State Event : Type u} (M : Interpretation Entity State Event)
+  {σ τ : Eventuality} {P : Entity → State → Prop} {y x : Entity}
 
-/-- *Again* attached to `vbecomeP` is the repetitive reading over the change. -/
-def againRepetitiveBecome (ltE : Event → Event → Prop) (P : Entity → State → Prop)
-    (x : Entity) : PartialProp Event :=
-  again ltE (M.vBecome P x)
-
-/-- *Again* attached high, to `vcauseP`, is the repetitive reading over the causation. -/
-def againRepetitiveCause (ltE : Event → Event → Prop) (P : Entity → State → Prop)
-    (y x : Entity) : PartialProp Event :=
-  again ltE (M.vCause (M.vBecome P x) y)
+/-- *Again* attached at the subterm `t` of the causative template of a root with state predicate
+`P`, with `r` the precedence on the sort of `t`: the restitutive reading at `state`, the
+repetitive reading over the change at `achievement`, and over the causation at
+`accomplishment`. -/
+def againAt (t : Template σ) (r : σ.Carrier State Event → σ.Carrier State Event → Prop)
+    (P : Entity → State → Prop) (y x : Entity) : PartialProp (σ.Carrier State Event) :=
+  again r (t.denote M P ⊤ y x)
 
 variable {M}
 
-/-- In the upper step of the hierarchy, the presupposition of the repetitive reading over the
-causation gives an earlier change, since a causing event brings one about. -/
-theorem againRepetitiveCause_presup_entails_become {w : Event}
-    (h : (againRepetitiveCause M ltE P y x).presup w) :
-    ∃ w', ltE w' w ∧ ∃ e, M.vBecome P x e :=
-  again_presup_mono (Q := fun _ ↦ ∃ e, M.vBecome P x e)
-    (fun _ ↦ EventStructure.Interpretation.exists_of_vCause) w h
+/-- The hierarchy of the readings: *again* attached at a template presupposes an earlier
+eventuality of the template, and so the realization of each of its subterms, with the same
+undergoer. -/
+theorem exists_denote_of_againAt_presup {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
+    {r : σ.Carrier State Event → σ.Carrier State Event → Prop} {w : σ.Carrier State Event}
+    (h : (againAt M t r P y x).presup w) : ∃ w', r w' w ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
+  again_presup_mono (fun _ ↦ exists_denote_of_isSubterm hu) w h
 
-/-- In the lower step of the hierarchy, the presupposition of the repetitive reading over the
-change gives an earlier root state, since a change brings one about. -/
-theorem againRepetitiveBecome_presup_entails_state {e : Event}
-    (h : (againRepetitiveBecome M ltE P x).presup e) :
-    ∃ e', ltE e' e ∧ ∃ s, M.become s e' ∧ P x s :=
-  h
-
-/-- End to end, the hierarchy says that Mary's having flattened the rug before entails that it
-had been flat before. -/
-theorem againRepetitiveCause_presup_entails_state {w : Event}
-    (h : (againRepetitiveCause M ltE P y x).presup w) :
-    ∃ w', ltE w' w ∧ ∃ e s, M.become s e ∧ P x s :=
-  again_presup_mono (Q := fun _ ↦ ∃ e s, M.become s e ∧ P x s)
-    (fun _ ↦ EventStructure.Interpretation.exists_of_vCause) w h
+/-- End to end, the repetitive reading over the causation presupposes an earlier causing
+eventuality and a change to the root's state. -/
+theorem exists_become_of_againAt_accomplishment_presup {r : Event → Event → Prop} {w : Event}
+    (h : (againAt M .accomplishment r P y x).presup w) :
+    ∃ w', r w' w ∧ ∃ e s, M.become s e ∧ P x s :=
+  let ⟨w', hw, _, e, s, hb, hs⟩ := exists_denote_of_againAt_presup (.caused (.refl _)) h
+  ⟨w', hw, e, s, hb, hs⟩
 
 /-- For a state predicate that entails change, even the restitutive attachment of *again*
 presupposes a change, so result roots never admit a truly restitutive reading. -/
-theorem againRestitutive_presup_entails_change {s : State} (hres : M.EntailsChange P)
-    (h : (againRestitutive ltS P x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
+theorem exists_become_of_againAt_state_presup {r : State → State → Prop} {s : State}
+    (hres : M.EntailsChange P) (h : (againAt M .state r P y x).presup s) :
+    ∃ s', r s' s ∧ ∃ e, M.become s' e :=
   again_presup_mono (Q := fun s' ↦ ∃ e, M.become s' e) (hres x) s h
 
 end Again
@@ -437,23 +425,6 @@ theorem crack_respects :
       · exact fun _ _ _ ↦ ⟨(), trivial⟩
       · exact fun _ _ _ ↦ ⟨(), (), trivial, trivial⟩,
     fun h ↦ let ⟨_, _, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
-
-/-! ### The templates of the canonical realization rules
-
-`Semantics.Root.template` reads a template off the collocational closure of a root's signature,
-the canonical realization of Rappaport Hovav and Levin. The book does not adopt such rules; the
-templates are used below only to state its hypothesis about the causative alternation. -/
-
-theorem flat_template : flat.template = .state := by decide
-theorem jog_template : jog.template = .act := by decide
-theorem blossom_template : blossom.template = .achievement := by decide
-theorem crack_template : crack.template = .accomplishment := by decide
-
-/-- The template of √crack embeds a result state and that of √jog does not, which is the
-*break* and *hit* contrast at the template layer. -/
-theorem crack_template_hasResultState : crack.template.HasResultState := by decide
-
-theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decide
 
 /-! ### The root hypothesis against Levin's class profiles -/
 

@@ -95,14 +95,16 @@ end Roots
 
 section Again
 
-variable {Entity State Event : Type*} {M : Interpretation Entity State Event}
+universe u
+
+variable {Entity : Type*} {State Event : Type u} {M : Interpretation Entity State Event}
   {lt : Event → Event → Prop} {B : Entity → State → Prop} {x : Entity} {e : Event}
 
 /-- *Again* attached to a change-of-state root presupposes an earlier change, so no attachment
 gives a restitutive reading. -/
 theorem change_of_again_changeOfState (h : (again lt (M.vBecome B x)).presup e) :
     ∃ e', lt e' e ∧ ∃ s, M.become s e' :=
-  BeaversEtAl2021.change_of_againRepetitiveBecome_presup M h
+  BeaversEtAl2021.exists_become_of_againAt_achievement_presup (y := x) M h
 
 end Again
 
