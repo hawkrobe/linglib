@@ -890,10 +890,10 @@ def break_ : Verb where
     -- direction unconstrained: *break* covers snapping (bidirectional),
     -- hammering (omnidirectional), and directed blows (unidirectional)
     patientRobustness := {.moderate, .robust}
-    resultGeometry := {.fracture}
+    -- English speakers describe both snapping and smashing with *break*
+    -- ([majid-boster-bowerman-2008])
+    resultGeometry := {.fracture, .fragmentation}
     agentControl := {.incompatible, .neutral}
-    -- break is unspecified for instrument and object dimensionality
-    -- ([majid-boster-bowerman-2008]: Dim 1 low predictability)
   } }
   levinClasses := {LevinClass.appear, .break_, .cheat, .hurt, .split}
 
@@ -902,8 +902,8 @@ def break_ : Verb where
     pulling apart) and is compatible with careful controlled action.
     Patient restriction: any solid capable of irregular separation.
     [spalek-mcnally-2026] (§3.1–3.2).
-    [majid-boster-bowerman-2008]: Dimension 2 — tearing consistently
-    distinguished from break/cut across 10/28 languages. -/
+    In [majid-boster-bowerman-2008] ten of twenty-eight languages have a verb used only for
+    tearing cloth by hand, and English speakers extend *tear* to pulling yarn apart. -/
 def tear_ : Verb where
   form := "tear"
   form3sg := "tears"
@@ -922,7 +922,6 @@ def tear_ : Verb where
     resultGeometry := {.separation}
     agentControl := {.neutral, .compatible}
     instrument := {.hands}
-    patientDimensionality := {.twoD}
   } }
   levinClasses := {LevinClass.break_, .run, .split}
 
@@ -2440,8 +2439,8 @@ def touch : Verb := .mkRegular {
 /-! ### Cutting (§ 21) -/
 
 /-- "cut" — Levin 21.1 Cut verbs. Incremental by length of cut.
-    [majid-boster-bowerman-2008]: Dimension 1 high predictability —
-    sharp instrument on yielding object → predictable locus of separation. -/
+    [majid-boster-bowerman-2008] place cutting at the predictable end of their first
+    dimension, a sharp instrument pressed into a firm but yielding object. -/
 def cut : Verb where
   form := "cut"
   form3sg := "cuts"

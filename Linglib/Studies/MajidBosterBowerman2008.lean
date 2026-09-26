@@ -1,572 +1,122 @@
 module
 
-public import Linglib.Semantics.Attitudes.Basic
-public import Linglib.Semantics.Causation.VerbClass
-public import Linglib.Semantics.ArgumentStructure.LevinClass
-public import Linglib.Semantics.ArgumentStructure.MeaningComponents
-public import Linglib.Semantics.ArgumentStructure.EventStructure
 public import Linglib.Fragments.English.Verbs
 
 /-!
 # Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
 
-This file formalizes the event space of [majid-boster-bowerman-2008], who had speakers of
-twenty-eight languages describe sixty-one video clips of cutting and breaking and found four
-shared dimensions of categorization: the predictability of the locus of separation, sharp
-instruments on yielding objects at one end and blunt instruments or hands at the other; the
-tearing of cloth by hand; snapping against smashing among the unpredictable events; and the
-poking of holes. A clip is a point in the feature space over which verb roots define ranges
-(`SeparationEvent`, the substrate's `Root.Content`), and a verb applies to an event when the
-event's values fall within its root's ranges, the many-to-many mapping that varies across
-languages. The cut and break classes of [levin-1993] sit at the ends of the first dimension,
-and the separation in material integrity of [hale-keyser-1987] is their shared superordinate.
+This file formalizes the stimulus clips of [majid-boster-bowerman-2008] and the English
+descriptions they report. Speakers of twenty-eight languages described sixty-one clips of
+separation events, and a correspondence analysis of which clips shared a verb found four
+dimensions across the forty-three agentive cutting-and-breaking clips: the predictability of
+the locus of separation, tearing, snapping against smashing, and poking a hole. A clip is
+described by what the paper states about it, as a region of the substrate's `Root.Content`.
+
+## Main definitions
+
+* `stimulus`: the instrument, object dimensionality and result the paper states for a clip
+* `tearing`, `pullingYarn`, `snapping`, `smashing`: the clips named for Dimensions 2 and 3
+
+## Main results
+
+* `dim1_not_factorsThrough`: the first dimension is a function neither of the instrument nor
+  of the object
+* `tear_overlaps_stimulus`, `not_cut_not_break_of_tearing`, `break_overlaps_stimulus`: the
+  English fragment's *tear*, *cut* and *break* agree with the descriptions the paper reports
 
 ## Implementation notes
 
-The first dimension is continuous in the paper's correspondence analysis and is
-discretized here into three values.
+Clips are the appendix numbers. A dimension the paper leaves unstated is unconstrained, so a
+root is compatible with a clip (`Root.Content.Overlaps`) when its regions contain the stated
+values. The paper classes rope as one-dimensional but not yarn, which is coded like rope.
+Positions on the first dimension enter only through the order the text states.
+
+## TODO
+
+The per-language naming data are not in the paper. Its illustrations need fragments with
+separation roots: the placement of the karate chop by Chontal, Hindi and Jalonke, and the
+Yélî Dnye tearing verb's extension to carrots split along the grain (§3.1). The English
+fragment lacks the change-of-state *snap* (its *snap* is the manner-of-speaking verb) and the
+*smash*, *stab* and *bodge* the paper reports.
 
 ## References
 
 * [majid-boster-bowerman-2008]
-* [levin-1993]
-* [hale-keyser-1987]
 -/
 
 @[expose] public section
 
 namespace MajidBosterBowerman2008
 
-open Verb
-open Semantics
-open ArgumentStructure
-
-open Semantics.Root.Content
-open Semantics.Root.Content.InstrumentType Semantics.Root.Content.ObjectDimensionality
-  Semantics.Root.Content.Robustness Semantics.Root.Content.ResultGeometry
-  Semantics.Root.Content.ForceLevel
-  Semantics.Root.Content.ForceDirection
-
-/-- A separation event characterized by physical properties of the
-    action, instrument, and affected object.
-
-    This is the **stimulus level**: each value is a specific point,
-    not a range. Corresponds to a single video clip in the experiment.
-    Verb roots select *ranges* over these same dimensions
-    (via `Root.Content`). -/
-structure SeparationEvent where
-  /-- Instrument used to effect separation. -/
-  instrument : InstrumentType
-  /-- Dimensionality of the affected object. -/
-  objectDim : ObjectDimensionality
-  /-- Material robustness of the affected object. -/
-  objectRob : Robustness
-  /-- Physical result type. -/
-  result : ResultGeometry
-  /-- Force magnitude. -/
-  force : ForceLevel
-  /-- Force directionality. -/
-  forceDir : ForceDirection
-  /-- Is the separation reversible (can the object be reassembled)? -/
-  reversible : Bool
-  deriving DecidableEq, Repr
-
-/-! Encodings of representative clips from the appendix. Clip numbers
-    follow [majid-boster-bowerman-2008] Appendix (pp. 248–249).
-    We encode a representative subset spanning all 4 dimensions rather
-    than all 61 clips. -/
-
-/-- Clip 9: Slice carrot lengthwise into two pieces with knife.
-    High predictability (sharp blade, rigid 1D object). -/
-def clip09_sliceCarrot : SeparationEvent :=
-  ⟨.sharpBlade, .oneD, .robust, .surfaceBreach, .moderate, .unidirectional, false⟩
-
-/-- Clip 10: Slice carrot crosswise into multiple pieces with knife. -/
-def clip10_sliceCarrotCross : SeparationEvent :=
-  ⟨.sharpBlade, .oneD, .robust, .surfaceBreach, .moderate, .unidirectional, false⟩
-
-/-- Clip 24: Cut rope in two with scissors.
-    High predictability (sharp blade, 1D object). -/
-def clip24_cutRope : SeparationEvent :=
-  ⟨.sharpBlade, .oneD, .moderate, .surfaceBreach, .moderate, .unidirectional, false⟩
-
-/-- Clip 32: Cut carrot in half crosswise with single karate chop.
-    Intermediate predictability (hand, but directed blow). -/
-def clip32_karateCarrot : SeparationEvent :=
-  ⟨.hands, .oneD, .robust, .fracture, .high, .unidirectional, false⟩
-
-/-- Clip 1: Tear cloth into two pieces by hand.
-    Tearing event (Dimension 2). -/
-def clip01_tearCloth : SeparationEvent :=
-  ⟨.hands, .twoD, .flimsy, .separation, .moderate, .bidirectional, false⟩
-
-/-- Clip 36: Tear cloth about halfway through with two hands. -/
-def clip36_tearClothHalf : SeparationEvent :=
-  ⟨.hands, .twoD, .flimsy, .separation, .moderate, .bidirectional, false⟩
-
-/-- Clip 19: Snap twig with two hands.
-    Snapping event (Dimension 3). -/
-def clip19_snapTwig : SeparationEvent :=
-  ⟨.hands, .oneD, .moderate, .fracture, .moderate, .bidirectional, false⟩
-
-/-- Clip 57: Snap carrot with two hands. -/
-def clip57_snapCarrot : SeparationEvent :=
-  ⟨.hands, .oneD, .robust, .fracture, .moderate, .bidirectional, false⟩
-
-/-- Clip 39: Smash flower pot with single hammer blow.
-    Smashing event (Dimension 3). -/
-def clip39_smashPot : SeparationEvent :=
-  ⟨.bluntImpact, .threeD, .robust, .fragmentation, .high, .omnidirectional, false⟩
-
-/-- Clip 40: Smash plate with single hammer blow. -/
-def clip40_smashPlate : SeparationEvent :=
-  ⟨.bluntImpact, .twoD, .robust, .fragmentation, .high, .omnidirectional, false⟩
-
-/-- Clip 53: Break stick in two with single downward chisel blow.
-    A chisel is sharp-edged but used ballistically (single blow), giving
-    intermediate predictability — the sharp edge partially constrains the
-    locus of separation but the ballistic delivery reduces control. -/
-def clip53_breakStick : SeparationEvent :=
-  ⟨.sharpBlade, .oneD, .moderate, .fracture, .high, .unidirectional, false⟩
-
-/-- Clip 45: Poke hole in cloth stretched between two tables with a twig.
-    Distinguished on Dimension 4. A twig is a pointed implement but not
-    a sharp blade — it breaches the material through puncture, not clean
-    cutting. -/
-def clip45_pokeHole : SeparationEvent :=
-  ⟨.other, .twoD, .flimsy, .surfaceBreach, .low, .unidirectional, false⟩
-
-/-- Clip 7: Push chair back from table (reversible separation). -/
-def clip07_pushChair : SeparationEvent :=
-  ⟨.hands, .threeD, .robust, .deformation, .low, .unidirectional, true⟩
-
-/-- Clip 33: Open a book (reversible separation). -/
-def clip33_openBook : SeparationEvent :=
-  ⟨.hands, .twoD, .moderate, .deformation, .low, .unidirectional, true⟩
-
-/-- Predictability of the locus of separation (Dimension 1).
-
-    The most important dimension cross-linguistically. Events where the
-    agent has precise control over where separation occurs (sharp blade
-    on a yielding surface) are "cutting"; events where the locus is
-    unpredictable (blow from a hammer, snapping by hand) are "breaking".
-
-    This is a derived property, not a primitive — it emerges from the
-    interaction of instrument type, object properties, and manner. -/
-inductive Predictability where
-  | high          -- sharp blade, controlled contact → "cutting"
-  | intermediate  -- karate chop, directed blow → variable
-  | low           -- hammer blow, snapping, tearing → "breaking"
-  deriving DecidableEq, Repr
-
-/-- Compute predictability from event features.
-
-    Predictability emerges from the interaction of instrument, force, and
-    manner — not from instrument alone. A sharp blade used with controlled
-    motion yields high predictability, but the same blade used ballistically
-    (e.g., a chisel struck with a single blow) yields only intermediate
-    predictability. The paper emphasizes that Dimension 1 is continuous and
-    "not adequately captured by any single feature." -/
-def SeparationEvent.predictability (e : SeparationEvent) : Predictability :=
-  match e.instrument with
-  | .sharpBlade =>
-    match e.force with
-    | .high => .intermediate    -- ballistic blow with sharp tool (e.g., chisel strike)
-    | _ => .high                -- controlled cutting with sharp tool
-  | .bluntImpact => .low
-  | .hands =>
-    match e.forceDir with
-    | .bidirectional => .low     -- tearing/snapping: unpredictable
-    | .omnidirectional => .low   -- smashing by hand: unpredictable
-    | .unidirectional => .intermediate  -- karate chop: partly predictable
-    | .undirected => .low
-  | .other => .low
-
-/-- Break subtypes within the low-predictability cluster (Dimension 3).
-
-    Among events with unpredictable separation, languages further
-    distinguish snapping (pressure from both ends breaks a rigid 1D
-    object) from smashing (a blow fragments a rigid 3D object). -/
-inductive BreakSubtype where
-  | snapping   -- bidirectional pressure on 1D rigid object
-  | smashing   -- blow from blunt instrument fragments object
-  | other      -- other breaking patterns
-  deriving DecidableEq, Repr
-
-/-- Classify break subtype for low-predictability events. -/
-def SeparationEvent.breakSubtype (e : SeparationEvent) : BreakSubtype :=
-  if e.instrument == .hands && e.forceDir == .bidirectional
-     && e.objectDim == .oneD then .snapping
-  else if e.instrument == .bluntImpact
-     && e.result == .fragmentation then .smashing
-  else .other
-
-/-- Is this a tearing event? (Dimension 2)
-    Tearing = hand separation of a flat flexible object. -/
-def SeparationEvent.isTearing (e : SeparationEvent) : Bool :=
-  match e.instrument, e.objectDim, e.result, e.forceDir with
-  | .hands, .twoD, .separation, .bidirectional => true
-  | _, _, _, _ => false
-
-/-- Is this a "cutting and breaking" event (irreversible material
-    destruction) as opposed to a reversible separation? (Dimension 1
-    of the first correspondence analysis, before restricting to core
-    cut/break events.) -/
-def SeparationEvent.isMaterialDestruction (e : SeparationEvent) : Bool :=
-  !e.reversible
-
-/-- Is this a hole-poking event? (Dimension 4)
-
-    Poking a hole in a flat flexible object — distinguished from
-    cutting and breaking because the object is not separated into
-    pieces. The paper notes this emerged as a distinct cluster in 5/28
-    languages. Our encoding uses `.other` for the twig since
-    `InstrumentType` lacks a `.pointed` variant; the diagnostic feature
-    is the combination of surface breach + 2D flexible object. -/
-def SeparationEvent.isPokingHole (e : SeparationEvent) : Bool :=
-  e.result == .surfaceBreach && e.objectDim == .twoD && e.objectRob == .flimsy
-
-/-- A separation event is compatible with a root's profile when each of its feature
-    values lies in the root's region for that dimension. -/
-def SeparationEvent.CompatibleWith (e : SeparationEvent) (r : Root.Content) : Prop :=
-  e.force ∈ r.force ∧ e.forceDir ∈ r.direction ∧ e.objectRob ∈ r.patientRobustness ∧
-    e.result ∈ r.resultGeometry ∧ e.instrument ∈ r.instrument ∧
-    e.objectDim ∈ r.patientDimensionality
-
-instance (e : SeparationEvent) (r : Root.Content) : Decidable (e.CompatibleWith r) := by
-  unfold SeparationEvent.CompatibleWith; infer_instance
-
-/-- Slicing a carrot with a knife has high predictability. -/
-theorem sliceCarrot_high_predictability :
-    clip09_sliceCarrot.predictability = .high := rfl
-
-/-- Cutting rope with scissors has high predictability. -/
-theorem cutRope_high_predictability :
-    clip24_cutRope.predictability = .high := rfl
-
-/-- Karate-chopping a carrot has intermediate predictability. -/
-theorem karateCarrot_intermediate :
-    clip32_karateCarrot.predictability = .intermediate := rfl
-
-/-- Snapping a twig has low predictability. -/
-theorem snapTwig_low_predictability :
-    clip19_snapTwig.predictability = .low := rfl
-
-/-- Smashing a pot has low predictability. -/
-theorem smashPot_low_predictability :
-    clip39_smashPot.predictability = .low := rfl
-
-/-- Tearing cloth is classified as tearing (Dimension 2). -/
-theorem tearCloth_is_tearing :
-    clip01_tearCloth.isTearing = true := rfl
-
-/-- Snapping a twig is not tearing. -/
-theorem snapTwig_not_tearing :
-    clip19_snapTwig.isTearing = false := rfl
-
-/-- Snapping a twig is classified as snapping (Dimension 3). -/
-theorem snapTwig_is_snapping :
-    clip19_snapTwig.breakSubtype = .snapping := rfl
-
-/-- Smashing a pot is classified as smashing (Dimension 3). -/
-theorem smashPot_is_smashing :
-    clip39_smashPot.breakSubtype = .smashing := rfl
-
-/-- Reversible events (push chair, open book) are not material destruction. -/
-theorem pushChair_reversible :
-    clip07_pushChair.isMaterialDestruction = false := rfl
-
-theorem openBook_reversible :
-    clip33_openBook.isMaterialDestruction = false := rfl
-
-/-- Cutting events are material destruction (irreversible). -/
-theorem sliceCarrot_irreversible :
-    clip09_sliceCarrot.isMaterialDestruction = true := rfl
-
-/-- Poking a hole in cloth is a hole-poking event (Dimension 4). -/
-theorem pokeHole_is_poking :
-    clip45_pokeHole.isPokingHole = true := rfl
-
-/-- Cutting a carrot is NOT a hole-poking event. -/
-theorem sliceCarrot_not_poking :
-    clip09_sliceCarrot.isPokingHole = false := rfl
-
-/-! **Consistency checks for paired clips.**
-    Clips depicting the same event type with different objects should
-    receive the same dimension classifications. -/
-
-/-- Slicing carrot crosswise ≡ lengthwise in predictability. -/
-theorem sliceCarrot_cross_consistent :
-    clip10_sliceCarrotCross.predictability = clip09_sliceCarrot.predictability := rfl
-
-/-- Tearing cloth halfway ≡ fully in tearing classification. -/
-theorem tearClothHalf_consistent :
-    clip36_tearClothHalf.isTearing = clip01_tearCloth.isTearing := rfl
-
-/-- Snapping carrot ≡ snapping twig in break subtype. -/
-theorem snapCarrot_consistent :
-    clip57_snapCarrot.breakSubtype = clip19_snapTwig.breakSubtype := rfl
-
-/-- Smashing plate ≡ smashing pot in break subtype. -/
-theorem smashPlate_consistent :
-    clip40_smashPlate.breakSubtype = clip39_smashPot.breakSubtype := rfl
-
-/-- English cutting-and-breaking verb categories.
-
-    English has 5 basic categories for material destruction events
-    (plus *open*, *take apart* for reversible separations):
-    *cut*, *break*, *tear*, *snap*, *smash*. -/
-inductive EnglishCBVerb where
-  | cut    -- high-predictability separation with sharp instrument
-  | break_ -- default low-predictability separation
-  | tear   -- hand separation of flexible material
-  | snap   -- bidirectional pressure breaking rigid 1D object
-  | smash  -- blow fragmenting rigid object
-  deriving DecidableEq, Repr
-
-/-- English verb assignment for core cutting-and-breaking events. -/
-def englishVerb (e : SeparationEvent) : EnglishCBVerb :=
-  if e.reversible then .break_  -- simplification; open/take apart not modeled
-  else if e.predictability == .high then .cut
-  else if e.isTearing then .tear
-  else match e.breakSubtype with
-    | .snapping => .snap
-    | .smashing => .smash
-    | .other => .break_
-
-/-- Yélî Dnye (Papuan isolate, Rossel Island) verb categories.
-
-    [majid-boster-bowerman-2008]: Yélî Dnye speakers used only
-    3 different verbs for the 61 clips, yet their categorization still
-    correlates with the 4 cross-linguistic dimensions. Demonstrates
-    that even languages with minimal verb inventories respect the
-    shared dimensional structure.
-
-    The paper reports category count (3 verbs) and how they partition
-    the stimulus space but does not list the specific verb forms. We
-    use abstract labels (`v1`/`v2`/`v3`) for the three categories.
-
-    **Limitation:** The paper reports (p. 242) that the YD verb for
-    tearing was *also* used for carrot-cutting events (clips 37, 9)
-    that depict separation along the grain. This grouping principle
-    (grain-alignment) is not captured by our predictability-based
-    model. Our `SeparationEvent` does not encode grain alignment, so
-    `yeliDnyeVerb` incorrectly assigns along-the-grain cutting to `v1`
-    rather than `v3`. See `yeliDnye_grain_limitation`. -/
-inductive YeliDnyeCBVerb where
-  | v1   -- cutting events (high predictability, but see limitation above)
-  | v2   -- breaking, smashing events (low predictability, impact)
-  | v3   -- snapping, tearing, and along-the-grain separation (hand action)
-  deriving DecidableEq, Repr
-
-/-- Yélî Dnye verb assignment (approximate, based on reported
-    categorization patterns in the correspondence analysis).
-
-    This model uses predictability as the primary split, which
-    captures the overall pattern but misses the grain-alignment
-    grouping (see `YeliDnyeCBVerb` docstring). -/
-def yeliDnyeVerb (e : SeparationEvent) : YeliDnyeCBVerb :=
-  if e.predictability == .high then .v1
-  else if e.breakSubtype == .snapping || e.isTearing then .v3
-  else .v2
-
-/-! **Tzeltal (Mayan)** has the most fine-grained inventory in the sample:
-    speakers used 50+ different verbs for the 61 clips (p. 243). Despite
-    this extreme specificity, Tzeltal's categorization still correlates
-    with the 4 shared dimensions — the dimensions are robust to both
-    very coarse (Yélî Dnye, 3 verbs) and very fine (Tzeltal, 50+ verbs)
-    inventories. We do not model Tzeltal verb assignment because the paper
-    does not provide sufficient data on individual verb-to-clip mappings
-    for 50+ verbs. -/
-
-/-! All three languages agree on the superordinate cut/break boundary
-    (Dimension 1): high-predictability events get a "cutting" verb,
-    low-predictability events get a "breaking" verb. The languages
-    differ in how finely they subdivide the breaking domain. -/
-
-/-- English and Yélî Dnye agree: slicing a carrot is "cutting". -/
-theorem slice_is_cutting_EN : englishVerb clip09_sliceCarrot = .cut := rfl
-theorem slice_is_cutting_YD : yeliDnyeVerb clip09_sliceCarrot = .v1 := rfl
-
-/-- English and Yélî Dnye agree: smashing a pot is "breaking". -/
-theorem smash_is_breaking_EN : englishVerb clip39_smashPot = .smash := rfl
-theorem smash_is_breaking_YD : yeliDnyeVerb clip39_smashPot = .v2 := rfl
-
-/-- English distinguishes tearing from breaking; Yélî Dnye groups
-    tearing with snapping (both involve hand action). -/
-theorem tear_distinct_EN : englishVerb clip01_tearCloth = .tear := rfl
-theorem tear_grouped_YD : yeliDnyeVerb clip01_tearCloth = .v3 := rfl
-
-/-- English distinguishes snapping from general breaking. -/
-theorem snap_distinct_EN : englishVerb clip19_snapTwig = .snap := rfl
-
-/-- Yélî Dnye groups snapping with tearing (both hand actions). -/
-theorem snap_grouped_YD : yeliDnyeVerb clip19_snapTwig = .v3 := rfl
-
-/-- High-predictability events correspond to Levin's *cut* class
-    meaning components: change of state + contact + motion + causation
-    + instrument specification. -/
-theorem cut_cluster_matches_levin_cut :
-    MeaningComponents.cut.changeOfState = true
-    ∧ MeaningComponents.cut.contact = true
-    ∧ MeaningComponents.cut.motion = true
-    ∧ MeaningComponents.cut.causation = true
-    ∧ MeaningComponents.cut.instrumentSpec = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Low-predictability events correspond to Levin's *break* class:
-    change of state + causation, but NO contact, motion, or instrument
-    specification. The absence of contact/motion/instrumentSpec reflects
-    the fact that break verbs are underspecified for manner — consistent
-    with the unpredictability of the separation locus. -/
-theorem break_cluster_matches_levin_break :
-    MeaningComponents.break_.changeOfState = true
-    ∧ MeaningComponents.break_.contact = false
-    ∧ MeaningComponents.break_.motion = false
-    ∧ MeaningComponents.break_.causation = true
-    ∧ MeaningComponents.break_.instrumentSpec = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- The cut/break distinction in MeaningComponents captures the
-    endpoints of Dimension 1: *cut* specifies manner (instrumentSpec,
-    contact, motion) while *break* does not. -/
-theorem cut_specifies_manner_break_does_not :
-    MeaningComponents.cut.instrumentSpec = true
-    ∧ MeaningComponents.break_.instrumentSpec = false := ⟨rfl, rfl⟩
-
-/-- Both *cut* and *break* map to accomplishment templates —
-    they share event structure ([ACT CAUSE [BECOME ⟨STATE⟩]]) and differ
-    only in root content. This explains why the cut/break distinction
-    is about manner/predictability (root-level), not about event
-    structure (template-level). -/
-theorem cut_break_same_template :
-    MeaningComponents.cut.predictedTemplate = MeaningComponents.break_.predictedTemplate :=
-  rfl
-
-/-! Rather than defining inline profiles, we derive them from the actual
-    Fragment entries in `English.Verbs`. This
-    ensures that compatibility theorems test the real lexical data. -/
-
-open English hiding Verb in
-/-- Extract the root profile from a Fragment verb entry. -/
-def fragmentContent (v : English.Verb) : Root.Content :=
-  v.rootContent
-
-open English hiding Verb
-
-/-- The tear cloth event is compatible with the Fragment *tear* entry. -/
-theorem tearCloth_compatible_tear :
-    clip01_tearCloth.CompatibleWith (fragmentContent tear_) := by decide
-
-/-- A cutting event is NOT compatible with the *tear* profile
-    (wrong instrument type). -/
-theorem sliceCarrot_incompatible_tear :
-    ¬ clip09_sliceCarrot.CompatibleWith (fragmentContent tear_) := by decide
-
-/-- Smashing a pot is NOT compatible with the *break* profile
-    (fragmentation ≠ fracture — English *smash* covers fragmentation). -/
-theorem smashPot_incompatible_break :
-    ¬ clip39_smashPot.CompatibleWith (fragmentContent break_) := by decide
-
-/-- A snapping event IS compatible with *break* (fracture result, moderate
-    force) — English *break* can cover snapping events, though *snap*
-    is more specific. -/
-theorem snapTwig_compatible_break :
-    clip19_snapTwig.CompatibleWith (fragmentContent break_) := by decide
-
-/-- Slicing a carrot is compatible with the *cut* entry. -/
-theorem sliceCarrot_compatible_cut :
-    clip09_sliceCarrot.CompatibleWith (fragmentContent cut) := by decide
-
-/-- Tearing cloth is NOT compatible with the *cut* profile (wrong instrument). -/
-theorem tearCloth_incompatible_cut :
-    ¬ clip01_tearCloth.CompatibleWith (fragmentContent cut) := by decide
-
-/-- The 4 dimensions are not independent: tearing events (Dim 2)
-    always have low predictability (Dim 1). -/
-theorem tearing_implies_low_predictability (e : SeparationEvent)
-    (h : e.isTearing = true) :
-    e.predictability = .low := by
-  obtain ⟨inst, dim, rob, res, f, fd, rev⟩ := e
-  simp only [SeparationEvent.isTearing] at h
-  cases inst <;> cases dim <;> cases res <;> cases fd <;>
-    simp_all [SeparationEvent.predictability]
-
-/-- High-predictability events are never tearing events.
-    Contrapositive of: tearing → low predictability. -/
-theorem high_predictability_not_tearing (e : SeparationEvent)
-    (h : e.predictability = .high) :
-    e.isTearing = false := by
-  obtain ⟨inst, dim, rob, res, f, fd, rev⟩ := e
-  simp only [SeparationEvent.predictability] at h
-  cases inst <;> cases f <;> cases fd <;> simp_all [SeparationEvent.isTearing]
-
-/-- The superordinate cut/break distinction (Dimension 1) is exhaustive:
-    every event is either high, intermediate, or low predictability. -/
-theorem predictability_exhaustive (e : SeparationEvent) :
-    e.predictability = .high ∨ e.predictability = .intermediate
-    ∨ e.predictability = .low := by
-  obtain ⟨inst, dim, rob, res, f, fd, rev⟩ := e
-  simp only [SeparationEvent.predictability]
-  cases inst <;> simp
-  · cases f <;> simp
-  · cases fd <;> simp
-
-/-- Dimension 3 (snap/smash) is nested within Dimension 1: the snap vs
-    smash distinction only applies to low-predictability events. Events
-    with high or intermediate predictability always have breakSubtype
-    `.other`. This formalizes the hierarchical structure visible in
-    the correspondence analysis (Fig. 4). -/
-theorem dim3_nested_in_dim1 (e : SeparationEvent)
-    (h : e.breakSubtype ≠ .other) :
-    e.predictability = .low := by
-  obtain ⟨inst, dim, rob, res, f, fd, rev⟩ := e
-  -- After splitting inst × fd, each case either has predictability = .low (rfl)
-  -- or breakSubtype = .other definitionally (contradicting h)
-  cases inst <;> cases fd <;> first | rfl | exact absurd rfl h
-
-/-- The paradigmatic hole-poking event (clip 45) has low predictability —
-    it sits in the "breaking" side of Dimension 1. -/
-theorem pokeHole_low_predictability :
-    clip45_pokeHole.predictability = .low := rfl
-
-/-! The key relativity finding: languages share the dimensional structure
-    but place category boundaries at different points. English makes finer
-    distinctions than Yélî Dnye — and crucially, the languages *disagree*
-    on intermediate events. -/
-
-/-- English and Yélî Dnye DISAGREE on tearing: English gives *tear* its
-    own category; Yélî Dnye groups it with snapping under a single verb
-    (hand-action separation). -/
-theorem tear_disagreement :
-    englishVerb clip01_tearCloth ≠ englishVerb clip19_snapTwig
-    ∧ yeliDnyeVerb clip01_tearCloth = yeliDnyeVerb clip19_snapTwig :=
-  ⟨by decide, rfl⟩
-
-/-- English distinguishes smashing from snapping; Yélî Dnye distinguishes
-    them too (different verbs). This is an *agreement* on Dimension 3. -/
-theorem dim3_agreement :
-    englishVerb clip39_smashPot ≠ englishVerb clip19_snapTwig
-    ∧ yeliDnyeVerb clip39_smashPot ≠ yeliDnyeVerb clip19_snapTwig :=
-  ⟨by decide, by decide⟩
-
-/-- The chisel-blow event (clip 53, intermediate predictability) is a
-    boundary case: it has a sharp instrument but ballistic delivery.
-    English categorizes it as *break* (the result matters more than the
-    instrument for English), while Yélî Dnye's v1 covers all
-    high-predictability events. -/
-theorem chiselBlow_english_break :
-    englishVerb clip53_breakStick = .break_ := rfl
-
-theorem chiselBlow_yeliDnye :
-    yeliDnyeVerb clip53_breakStick = .v2 := rfl
-
-/-- **Known limitation of the Yélî Dnye model.**
-    Our model assigns clip 9 (slice carrot lengthwise) to v1 (cutting),
-    but the paper reports that Yélî Dnye groups this event with tearing
-    (v3) — both involve separation along the grain of the material.
-    This documents the mismatch: the real YD system uses grain-alignment
-    as a grouping principle that our `SeparationEvent` cannot express. -/
-theorem yeliDnye_grain_limitation :
-    yeliDnyeVerb clip09_sliceCarrot = .v1
-    ∧ clip09_sliceCarrot.predictability = .high := ⟨rfl, rfl⟩
+open Semantics.Root Semantics.Root.Content English
+
+/-! ### Clips -/
+
+/-- In the tearing clips cloth is torn by hand, completely (clip 1) or halfway (clip 36).
+Dimension 2 sets them apart from all other clips (§3.1). -/
+def tearing : Finset ℕ := {1, 36}
+
+/-- In clips 35 and 38 yarn is pulled apart, and English, German and Dutch extend their
+tearing verb to them (§3.1). -/
+def pullingYarn : Finset ℕ := {35, 38}
+
+/-- In the snapping clips (25, 19, 57, 5) pressure on both ends separates a one-dimensional
+rigid object into two pieces. They form one pole of Dimension 3 (§3.1). -/
+def snapping : Finset ℕ := {25, 19, 57, 5}
+
+/-- In the smashing clips (40, 39, 21, 31) a blow fragments a rigid object into many pieces.
+They form the other pole of Dimension 3 (§3.1). -/
+def smashing : Finset ℕ := {40, 39, 21, 31}
+
+/-- `stimulus c` is what the paper states about clip `c`, as a region of root content. The
+hands tear cloth, pull yarn apart and snap one-dimensional objects, a hammer fragments the
+smashed objects, and clips 10 and 32 cut a carrot, one of the paper's one-dimensional objects
+(§2.2), with a knife and with a karate chop. -/
+def stimulus (c : ℕ) : Content :=
+  if c ∈ tearing then
+    { instrument := {.hands}, resultGeometry := {.separation}, patientDimensionality := {.twoD} }
+  else if c ∈ pullingYarn then
+    { instrument := {.hands}, resultGeometry := {.separation}, patientDimensionality := {.oneD} }
+  else if c ∈ snapping then
+    { instrument := {.hands}, resultGeometry := {.fracture}, patientDimensionality := {.oneD} }
+  else if c ∈ smashing then
+    { instrument := {.bluntImpact}, resultGeometry := {.fragmentation} }
+  else if c = 10 then { instrument := {.sharpBlade}, patientDimensionality := {.oneD} }
+  else if c = 32 then { instrument := {.hands}, patientDimensionality := {.oneD} }
+  else {}
+
+/-! ### The first dimension -/
+
+/-- Placement on Dimension 1, the predictability of the locus of separation, is a function
+neither of the instrument nor of the object (§3.1). The hands alone karate-chop a carrot in the
+middle of the dimension (clip 32) and snap a twig at its unpredictable end (clip 19); carrots
+are sliced at the predictable end (clip 10) and karate-chopped in the middle. -/
+theorem dim1_not_factorsThrough {P : Type*} [Preorder P] (pos : ℕ → P)
+    (h₁ : pos 10 < pos 32) (h₂ : pos 32 < pos 19) :
+    ¬ pos.FactorsThrough (fun c ↦ (stimulus c).instrument) ∧
+      ¬ pos.FactorsThrough (fun c ↦ (stimulus c).patientDimensionality) :=
+  ⟨fun h ↦ h₂.ne (h (by decide)), fun h ↦ h₁.ne (h (by decide))⟩
+
+/-! ### English -/
+
+/-- English speakers labeled the tearing clips *tear* and extended the verb to pulling yarn
+apart (§3.1, Dimension 2); the fragment's *tear* is compatible with all four clips. -/
+theorem tear_overlaps_stimulus :
+    ∀ c ∈ tearing ∪ pullingYarn, tear_.rootContent.Overlaps (stimulus c) := by
+  decide
+
+/-- English speakers labeled the tearing clips *tear* as distinct from *cut* and *break*
+(§3.1), and the fragment's *cut* and *break*, which want a blade and a fractured or fragmented
+result, reject them. -/
+theorem not_cut_not_break_of_tearing : ∀ c ∈ tearing,
+    ¬ cut.rootContent.Overlaps (stimulus c) ∧ ¬ break_.rootContent.Overlaps (stimulus c) := by
+  decide
+
+/-- Some English speakers grouped the snapping and smashing clips together under *break*
+(§3.1, Dimension 3), the general verb beside the specific *snap* and *smash* to which the paper
+attributes the intermediate correlation of English with that dimension (§3.1.1). -/
+theorem break_overlaps_stimulus :
+    ∀ c ∈ snapping ∪ smashing, break_.rootContent.Overlaps (stimulus c) := by
+  decide
 
 end MajidBosterBowerman2008
