@@ -166,21 +166,24 @@ open Presupposition ArgumentStructure EventStructure Template
 structure, the root, `vbecome` and `vcause` (27), which yields the three readings of *Mary
 flattened the rug again* (25): the restitutive one, that the rug had been flat, the repetitive
 one over the change, that it had flattened, and the repetitive one over the causation, that
-Mary had flattened it. The three points are the subterms `state`, `achievement` and
-`accomplishment` of the causative template, whose causing subevent is left unconstrained, as
-`vcause` leaves it (`Template.denote_cause_act_top`), and the entry for *again* is
-`Presupposition.again`. The hierarchy of the readings is the subterm order: attached at a
-template, *again* presupposes that each of its subterms was realized. -/
+Mary had flattened it. The three points are the subterms `state` and `achievement` of the
+causative template (18c), `[y CAUSE [x BECOME P]]`, and the template itself, `causative`, whose
+causing subevent is an eventuality with the causer as effector
+(`Template.denote_cause_effector`), and the entry for *again* is `Presupposition.again`. The
+hierarchy of the readings is the subterm order: attached at a template, *again* presupposes
+that each of its subterms was realized. -/
 
 universe u
 
 variable {Entity : Type*} {State Event : Type u} (M : Interpretation Entity State Event)
   {σ τ : Eventuality} {P : Entity → State → Prop} {y x : Entity}
 
+/-- The causative change-of-state template (18c), `[y CAUSE [x BECOME P]]`. -/
+def causative : Template .event := .cause .effector .achievement
+
 /-- *Again* attached at the subterm `t` of the causative template of a root with state predicate
 `P`, with `r` the precedence on the sort of `t`: the restitutive reading at `state`, the
-repetitive reading over the change at `achievement`, and over the causation at
-`accomplishment`. -/
+repetitive reading over the change at `achievement`, and over the causation at `causative`. -/
 def againAt (t : Template σ) (r : σ.Carrier State Event → σ.Carrier State Event → Prop)
     (P : Entity → State → Prop) (y x : Entity) : PartialProp (σ.Carrier State Event) :=
   again r (t.denote M P ⊤ y x)
@@ -197,8 +200,8 @@ theorem exists_denote_of_againAt_presup {t : Template σ} {u : Template τ} (hu 
 
 /-- End to end, the repetitive reading over the causation presupposes an earlier causing
 eventuality and a change to the root's state. -/
-theorem exists_become_of_againAt_accomplishment_presup {r : Event → Event → Prop} {w : Event}
-    (h : (againAt M .accomplishment r P y x).presup w) :
+theorem exists_become_of_againAt_causative_presup {r : Event → Event → Prop} {w : Event}
+    (h : (againAt M causative r P y x).presup w) :
     ∃ w', r w' w ∧ ∃ e s, M.become s e ∧ P x s :=
   let ⟨w', hw, _, e, s, hb, hs⟩ := exists_denote_of_againAt_presup (.caused (.refl _)) h
   ⟨w', hw, e, s, hb, hs⟩

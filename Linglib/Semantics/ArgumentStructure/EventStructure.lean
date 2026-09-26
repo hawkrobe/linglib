@@ -11,8 +11,9 @@ as arguments and so build larger templates out of smaller ones ([rappaport-hovav
 [beavers-koontz-garboden-2020]). A verb's meaning pairs a template, which fixes its class, with a
 root, which tells it apart from the other members of the class. The basic inventory of
 [rappaport-hovav-levin-1998] is the state `[x ⟨STATE⟩]`, the activity `[x ACT⟨MANNER⟩]`, the
-achievement `[BECOME [x ⟨STATE⟩]]` and the accomplishment
-`[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`.
+achievement `[BECOME [x ⟨STATE⟩]]` and the two accomplishments
+`[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]` and `[x CAUSE [BECOME [y ⟨STATE⟩]]]`, the second
+with an individual causer, which is the `vcause` of [beavers-koontz-garboden-2020].
 
 Templates are sorted like the domain of an `Interpretation`: `BECOME` turns a state template into
 an event template and `CAUSE` relates two event templates. `Template.denote` interprets a
@@ -38,17 +39,18 @@ modifier such as *again* attached at different subterms.
 * `Template.hasResultState_iff`, `Template.hasCause_iff`: the diagnostics are the entailments
   of the denotation
 * `Template.exists_denote_of_isSubterm`: a template's subterms are realized with its undergoer
-* `Template.denote_cause_act_top`: with the manner unconstrained, the accomplishment is `vCause`
+* `Template.IsSubterm.kinds_subset`: a subterm's primitives are among the template's
+* `Template.denote_cause_effector`: CAUSE with an individual causer is `vCause`
 
 ## Implementation notes
 
 A template relates two participants, the actor `y`, which is the effector of an action and of a
 causing subevent, and the undergoer `x`, of which the state holds. The caused subevent of
 `CAUSE` is predicated of the undergoer, which is its actor when the caused subevent is itself
-an action or a causation. The inventory's second accomplishment,
-`[x CAUSE [BECOME [y ⟨STATE⟩]]]`, whose causer is an individual, is the accomplishment whose
-manner is unconstrained, which is the `vcause` of [beavers-koontz-garboden-2020]. The carriers
-of the two sorts share a universe, so that the type of a denotation can depend on the sort.
+an action or a causation. An individual causer is the leaf `effector`, an eventuality with the
+actor as its effector and no further content, so that `CAUSE` always relates two subevents. A
+root has one manner, which every `ACT` of the template carries. The carriers of the two sorts
+share a universe, so that the type of a denotation can depend on the sort.
 
 ## References
 
@@ -85,6 +87,9 @@ inductive Template : Eventuality → Type where
   | state : Template .state
   /-- `[x ACT⟨MANNER⟩]`, the activity. -/
   | act : Template .event
+  /-- `[x]`, an eventuality with no content beyond its effector: the individual causer of
+  `[x CAUSE t]`. -/
+  | effector : Template .event
   /-- `[BECOME t]`. -/
   | become (t : Template .state) : Template .event
   /-- `[causing CAUSE caused]`. -/
@@ -105,6 +110,7 @@ action, the change of `BECOME` and the causation of `CAUSE`. -/
 def kinds : {σ : Eventuality} → Template σ → Root.Kinds
   | _, state => {.state}
   | _, act => {.manner}
+  | _, effector => ∅
   | _, become t => insert .result t.kinds
   | _, cause c e => insert .cause (c.kinds ∪ e.kinds)
 
@@ -138,6 +144,17 @@ inductive IsSubterm : {α β : Eventuality} → Template α → Template β → 
   | caused {α : Eventuality} {u : Template α} {c e : Template .event} :
       IsSubterm u e → IsSubterm u (cause c e)
 
+/-- A subterm's primitives are among the template's. -/
+theorem IsSubterm.kinds_subset {u : Template τ} {t : Template σ} (h : u.IsSubterm t) :
+    u.kinds ⊆ t.kinds := by
+  induction h with
+  | refl => exact Finset.Subset.refl _
+  | become _ ih => exact ih.trans (Finset.subset_insert _ _)
+  | causing _ ih =>
+    exact ih.trans (Finset.subset_union_left.trans (Finset.subset_insert _ _))
+  | caused _ ih =>
+    exact ih.trans (Finset.subset_union_right.trans (Finset.subset_insert _ _))
+
 /-! ### Denotation -/
 
 section Denotation
@@ -151,16 +168,17 @@ template's sort. -/
 def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Carrier State Event → Prop
   | _, state, _, x, s => P x s
   | _, act, y, _, v => M.effector y v ∧ Q v
+  | _, effector, y, _, v => M.effector y v
   | _, become t, y, x, e => M.vBecome (fun x ↦ denote t y x) x e
   | _, cause c t, y, x, v => denote c y x v ∧ M.vCause (denote t x x) y v
 
 variable {M P Q} {y x : Entity}
 
-/-- With the manner unconstrained, the accomplishment is the head `vCause` over its caused
-subevent: an event whose effector is the causer. -/
-theorem denote_cause_act_top {t : Template .event} {v : Event} :
-    (cause act t).denote M P ⊤ y x v ↔ M.vCause (t.denote M P ⊤ x x) y v :=
-  ⟨And.right, fun h ↦ ⟨⟨let ⟨_, he, _⟩ := h; he, trivial⟩, h⟩⟩
+/-- CAUSE with an individual causer is the head `vCause` over its caused subevent: an event
+whose effector is the causer. -/
+theorem denote_cause_effector {t : Template .event} {v : Event} :
+    (cause effector t).denote M P Q y x v ↔ M.vCause (t.denote M P Q x x) y v :=
+  ⟨And.right, fun h ↦ ⟨let ⟨_, he, _⟩ := h; he, h⟩⟩
 
 /-- A template's denotation entails that each of its subterms is realized, with the same
 undergoer. -/
@@ -177,7 +195,7 @@ theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.I
 theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
     {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ s e, M.become s e := by
   induction t generalizing y x with
-  | state | act => simp [HasResultState, kinds] at ht
+  | state | act | effector => simp [HasResultState, kinds] at ht
   | become _ _ => obtain ⟨s, hb, _⟩ := h; exact ⟨s, _, hb⟩
   | cause c e ihc ihe =>
     simp only [HasResultState, kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq,
@@ -189,7 +207,7 @@ theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
 theorem exists_cause_of_denote {t : Template σ} (ht : t.HasCause)
     {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ v e, M.cause v e := by
   induction t generalizing y x with
-  | state | act => simp [HasCause, kinds] at ht
+  | state | act | effector => simp [HasCause, kinds] at ht
   | become t ih =>
     simp only [HasCause, kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
     obtain ⟨_, _, hs⟩ := h
@@ -224,7 +242,7 @@ private theorem denote_noChange [Nonempty Event] {t : Template σ} (ht : ¬ t.Ha
     (y x : Entity) (v : σ.Carrier State Event) :
     t.denote (noChange Entity State Event) ⊤ ⊤ y x v := by
   induction t generalizing y x with
-  | state => trivial
+  | state | effector => trivial
   | act => exact ⟨trivial, trivial⟩
   | become _ _ => exact absurd (Finset.mem_insert_self _ _) ht
   | cause c e ihc ihe =>
@@ -236,7 +254,7 @@ private theorem denote_noCause [Nonempty State] {t : Template σ} (ht : ¬ t.Has
     (y x : Entity) (v : σ.Carrier State Event) :
     t.denote (noCause Entity State Event) ⊤ ⊤ y x v := by
   induction t generalizing y x with
-  | state => trivial
+  | state | effector => trivial
   | act => exact ⟨trivial, trivial⟩
   | become t ih =>
     simp only [HasCause, kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
