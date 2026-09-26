@@ -1,324 +1,226 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Binding.Basic
+public import Linglib.Studies.Reinhart1976
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Fragments.English.Coordination
-public import Linglib.Processing.Acceptability.MinimalPairs
-import all Linglib.Syntax.Binding.Basic  -- for unfolding the `Decidable` instances built by `split`
-
-@[expose] public section
-
-open Morphology (Word)
 
 /-!
-# Chomsky 1981: binding principles A, B and C
+# Chomsky (1981): the binding theory
 
-The Government-and-Binding binding theory of [chomsky-1981]
-classifies nominal expressions into three types and constrains their
-distribution by c-command + a local binding domain:
+This file formalizes the binding theory of Government and Binding as an instance of the
+framework-neutral conditions of `Syntax/Binding`. A noun phrase binds another when the two are
+coindexed and the first c-commands the second; an anaphor is bound in its governing category
+(Principle A), a pronominal is free there (Principle B), and an R-expression is free
+(Principle C). The positions are the noun phrases of a phrase-structure tree, the command
+relation is Reinhart's c-command (`Reinhart1976.CCommands`), the binding domain of a noun phrase
+is the minimal clause containing it (`Syntax.Tree.sCommand`), the dependency is coindexation,
+and no anaphor is exempt. An indexing is licit when coindexed noun phrases agree in φ-features
+and it satisfies the three principles, and a tree is grammatical when some indexing is licit.
 
-- **Principle A**: an anaphor must be bound (c-commanded by a coindexed
-  antecedent) in its local domain
-- **Principle B**: a pronoun must be free (not bound) in its local domain
-- **Principle C**: an R-expression must be free everywhere
-
-This file holds the textbook minimal-pair paradigm and verifies the Minimalist binding
-implementation — c-command as a `CommandRelation` instance over the phrase-structure tree —
-against the pairs. Three of the five datasets are contrasts the sentence-level predicate can
-adjudicate and it captures all of them; Principle C is a fact about a construal rather than a
-string, so the referential-expression contrast is checked at the construal level, where the
-engine blocks a commanded name from corefering; and the reciprocal data's coordinated subjects
-lie outside the three-word parser, with the plural-antecedent contrast checked within it.
+Since nothing is exempt, an anaphor that nothing in its clause c-commands is out under every
+indexing, which excludes an anaphoric subject. For two noun phrases coindexed with each other
+alone, Principle C is Reinhart's restriction (10b) read with c-command. The textbook paradigm
+checks the instance: a reflexive object must corefer with its subject and agree with it, a
+pronominal object cannot corefer with it, locality separates the two in an embedded clause, and
+an R-expression cannot corefer with a c-commanding pronoun at any distance.
 
 ## Main definitions
 
-* `reflexiveCoreferenceData`, `pronominalDisjointReferenceData`,
-  `referentialExpressionFreedomData`, `complementaryDistributionData`,
-  `reciprocalCoreferenceData` — the minimal-pair datasets
-* the `CommandRelation` instance — Minimalist c-command over the clause's tree
+* `Chomsky1981.configuration`: c-command and the minimal clause on the noun phrases of a tree.
+* `Chomsky1981.Licit`, `Grammatical`, `CanCorefer`, `MustCorefer`.
 
 ## Main results
 
-* `captures_binding_data` — the engine captures the three sentence-level datasets
-* `principleC_blocks_commanded_name` — Principle C at the construal level
-* `reciprocal_plural_antecedent` — the reciprocal contrast within the parser's reach
+* `Chomsky1981.not_grammatical_of_not_locallyCommanded`: an anaphor with nothing in its clause
+  c-commanding it rules the tree out.
+* `Chomsky1981.permits_iff`: Principle C for a coindexed pair is Reinhart's restriction (10b).
 
-Companion to `Reinhart1976.lean` (which formalizes the c-command
-relation that Principles A/B/C presuppose) and to
-`SagWasowBender2003.lean` (the HPSG re-axiomatization that subsumes
-Principle C under Principle B); `Hudson1990.lean` (DG) and
-`Cooper2023/Basic.lean` (TTR) verify their analyses against the same
-tables.
+## Implementation notes
+
+A one-word noun phrase is a terminal of category `NP`, and the positions are those terminals.
+The governing category is approximated by the minimal clause: the governor and the accessible
+subject that refine it are not modelled, nor are noun phrases with subjects. Indexings range
+over maps from the noun phrases to themselves, which realize every partition of them.
+
+## TODO
+
+The paradigm is the textbook one; check each sentence against Chapter 3 of the book, which was
+not available, and move the verified ones to `Data/Examples`.
+
+## References
+
+* [N. Chomsky, *Lectures on government and binding* (1981)][chomsky-1981]
+* [T. Reinhart, *The syntactic domain of anaphora* (1976)][reinhart-1976]
 -/
+@[expose] public section
 
 namespace Chomsky1981
 
+open Morphology (Word)
+open Core.Order Syntax Syntax.Tree Binding
 
-open Processing.MinimalPairs
-open Minimalist SyntacticObject
-open Binding (SimpleClause Pos CommandRelation)
+/-! ### Clauses and their noun phrases -/
 
-abbrev john := English.Nouns.john.toWord
-abbrev mary := English.Nouns.mary.toWord
-abbrev sam := English.Nouns.sam.toWord
-abbrev pat := English.Nouns.pat.toWord
-abbrev he := English.Pronouns.he.toWord
-abbrev him := English.Pronouns.him.toWord
-abbrev her := English.Pronouns.her.toWord
-abbrev they := English.Pronouns.they.toWord
-abbrev them := English.Pronouns.them.toWord
-abbrev himself := English.Pronouns.himself.toWord
-abbrev herself := English.Pronouns.herself.toWord
-abbrev themselves := English.Pronouns.themselves.toWord
-abbrev eachOther := English.Pronouns.eachOther.toWord
-abbrev sees := English.Verbs.see.toWord .thirdSg
-abbrev see := English.Verbs.see.toWord .presentPlural
-abbrev saw := English.Verbs.see.toWord .past
-abbrev and_ := English.Coordination.and_.toWord
+/-- `np w` is the one-word noun phrase `w`. -/
+def np (w : Word) : Tree Cat Word := .terminal .NP w
 
-/-! ### Coreference / binding (relocated from Minimalist/Coreference.lean)
+/-- `clause subj v comp` is the clause with subject `subj`, verb `v` and complement `comp`. -/
+def clause (subj v : Word) (comp : Tree Cat Word) : Tree Cat Word :=
+  .node .S [np subj, .node .VP [.terminal .V v, comp]]
 
-Binding via **c-command** and locality ([chomsky-1981]). The binding
-principles themselves are *not* restated here: this section supplies Minimalism's
-command relation (c-command, read off the phrase-structure tree) as a
-`Syntax.Binding.CommandRelation` instance, and the framework-neutral engine
-(`Syntax/Binding/Basic.lean`) derives Principles A/B/C and the coreference
-predictions from it. The instance is language-neutral; the theorems below
-combine it with English's binding-class classifier.
--/
+/-- `nominals t` lists the noun phrases of `t`, each with its position. -/
+def nominals (t : Tree Cat Word) : List (TreePath × Word) :=
+  t.fold (fun c w ↦ if c = .NP then [(⊥, w)] else [])
+    (fun _ bs ↦ bs.zipIdx.flatMap fun (ps, i) ↦ ps.map fun (p, w) ↦ (⟨i :: p.toList⟩, w))
+    (fun _ _ ↦ []) (fun _ _ ps ↦ ps.map fun (p, w) ↦ (⟨0 :: p.toList⟩, w))
 
-/-! #### C-command from tree geometry -/
+/-- `Nominal t` is the type of noun phrases of `t`. -/
+abbrev Nominal (t : Tree Cat Word) : Type := {x // x ∈ nominals t}
 
-/-- Convert a word to a Minimalist lexical-item token (UPOS mapped to `Cat`,
-    phonological form attached). The smart Merge `SyntacticObject.merge` is noncomputable, so
-    concrete trees are built planar-first from these tokens and `decide`d over. -/
-def wordTok (w : Word) (id : Nat) : LIToken :=
-  ⟨.simple (uposToCat w.cat) [] w.form, id⟩
+variable {t : Tree Cat Word}
 
-/-- Build a phrase-structure tree from a clause: transitive `{subj, {verb, obj}}`
-    (subject specifier, verb–object a head-complement pair), intransitive
-    `{subj, verb}`. C-command follows from the geometry. Built planar-first so
-    the containment / c-command decision procedures reduce. -/
-def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
-  let subjP : PlanarSyntacticObject := wordTok clause.subject 0
-  let verbP : PlanarSyntacticObject := wordTok clause.verb 1
-  match clause.object with
-  | none => ↑(subjP * verbP)
-  | some obj => ↑(subjP * (verbP * wordTok obj 2))
+/-! ### The binding configuration -/
 
-def subjectSO (clause : SimpleClause) : SyntacticObject :=
-  leaf (wordTok clause.subject 0)
+/-- The configuration on the noun phrases of `t` takes c-command as its command relation and the
+minimal clause containing a noun phrase as that noun phrase's binding domain. -/
+def configuration (t : Tree Cat Word) : Configuration (Nominal t) where
+  commands a b := Reinhart1976.CCommands t a.1.1 b.1.1
+  domain b := {a | (b.1.1, a.1.1) ∈ sCommand t}
 
-def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
-  clause.object.map fun obj => leaf (wordTok obj 2)
+instance : DecidableRel (configuration t).commands :=
+  fun a b ↦ inferInstanceAs (Decidable (Reinhart1976.CCommands t a.1.1 b.1.1))
 
-/-- Subject c-commands object: in `{subj, {verb, obj}}`, the subject's sister
-    `{verb, obj}` contains the object. -/
-def subjectCCommandsObject (clause : SimpleClause) : Prop :=
-  match objectSO? clause with
-  | none => False
-  | some objSO => cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
+instance (b : Nominal t) : DecidablePred (· ∈ (configuration t).domain b) :=
+  fun a ↦ inferInstanceAs (Decidable ((b.1.1, a.1.1) ∈ sCommand t))
 
-instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := by
-  unfold subjectCCommandsObject; cases objectSO? clause <;> infer_instance
+/-- The binding class of a noun phrase is the binding class of its word. -/
+def classOf (x : Nominal t) : Option BindingClass := bindingClassOf x.1.2
 
-/-- Object does not c-command subject: in `{subj, {verb, obj}}`, the object's
-    sister `verb` does not contain the subject. -/
-def objectCCommandsSubject (clause : SimpleClause) : Prop :=
-  match objectSO? clause with
-  | none => False
-  | some objSO => cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
+/-- An indexing is licit when coindexed noun phrases agree and coindexation satisfies the three
+principles, with no anaphor exempt. -/
+def Licit (t : Tree Cat Word) {κ : Type*} (idx : Nominal t → κ) : Prop :=
+  (∀ a b, idx a = idx b → a.1.2.Agree b.1.2) ∧
+    (configuration t).Satisfies (fun a b ↦ idx a = idx b) ∅ classOf
 
-instance (clause : SimpleClause) : Decidable (objectCCommandsSubject clause) := by
-  unfold objectCCommandsSubject; cases objectSO? clause <;> infer_instance
+instance {κ : Type*} [DecidableEq κ] (idx : Nominal t → κ) : Decidable (Licit t idx) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Both positions are in the local clause tree (the minimal domain). -/
-def sameLocalDomain (clause : SimpleClause) : Prop :=
-  match objectSO? clause with
-  | none => True
-  | some objSO =>
-    contains (toSyntacticObject clause) (subjectSO clause) ∧
-    contains (toSyntacticObject clause) objSO
+/-- A tree is grammatical when some indexing of its noun phrases is licit. -/
+def Grammatical (t : Tree Cat Word) : Prop := ∃ idx : Nominal t → Nominal t, Licit t idx
 
-instance (clause : SimpleClause) : Decidable (sameLocalDomain clause) := by
-  unfold sameLocalDomain; cases objectSO? clause <;> infer_instance
+/-- The noun phrases at `p` and `q` can corefer when some licit indexing coindexes them. -/
+def CanCorefer (t : Tree Cat Word) (p q : TreePath) : Prop :=
+  ∃ idx : Nominal t → Nominal t, Licit t idx ∧ ∀ a b, a.1.1 = p → b.1.1 = q → idx a = idx b
 
-/-! #### Minimalism as a command relation -/
+/-- The noun phrases at `p` and `q` must corefer when every licit indexing coindexes them. -/
+def MustCorefer (t : Tree Cat Word) (p q : TreePath) : Prop :=
+  ∀ idx : Nominal t → Nominal t, Licit t idx → ∀ a b, a.1.1 = p → b.1.1 = q → idx a = idx b
 
-/-- The Minimalist command relation: c-command read off the tree. -/
-def commands (c : SimpleClause) : Pos → Pos → Prop
-  | .subject, .object => subjectCCommandsObject c
-  | .object, .subject => objectCCommandsSubject c
-  | _, _ => False
+instance : Decidable (Grammatical t) := inferInstanceAs (Decidable (∃ _, _))
 
-instance (c : SimpleClause) (i j : Pos) : Decidable (commands c i j) := by
-  unfold commands; split <;> infer_instance
+instance (p q : TreePath) : Decidable (CanCorefer t p q) := inferInstanceAs (Decidable (∃ _, _))
 
-/-- Locality: in a simple clause all positions share the one binding domain. -/
-def sameDomain (c : SimpleClause) (_ _ : Pos) : Prop := sameLocalDomain c
+instance (p q : TreePath) : Decidable (MustCorefer t p q) := inferInstanceAs (Decidable (∀ _, _))
 
-instance (c : SimpleClause) (i j : Pos) : Decidable (sameDomain c i j) :=
-  inferInstanceAs (Decidable (sameLocalDomain c))
+/-! ### Principle A without exemption -/
 
-/-- Minimalism is an instance of the abstract command relation
-    ([barker-pullum-1990]). The binding principles
-    (`Syntax.Binding.grammaticalForCoreference` etc.) come from the engine;
-    the theorems below apply them with this instance in scope and a language
-    classifier. -/
-instance : CommandRelation where
-  commands := commands
-  sameDomain := sameDomain
-  commandsDec := fun _ _ _ => inferInstance
-  sameDomainDec := fun _ _ _ => inferInstance
+/-- An anaphor that nothing in its clause c-commands violates Principle A under every indexing,
+so the tree is out. -/
+theorem not_grammatical_of_not_locallyCommanded {b : Nominal t} {c : BindingClass}
+    (hb : classOf b = some c) (hc : c.IsAnaphor)
+    (hl : ¬ (configuration t).LocallyCommanded b) : ¬ Grammatical t :=
+  fun ⟨_, _, h⟩ ↦ hl ((Configuration.condition_empty_iff hc).1 (h b c hb)).2
 
-/-- Reflexives require local c-commanding antecedent. -/
-def reflexiveCoreferenceData : PhenomenonData := {
-  name := "Reflexive Coreference"
-  generalization := "Reflexives require a c-commanding antecedent in the local domain"
-  pairs := [
-    -- Local antecedent required
-    { lhs := [john, sees, himself]
-      rhs := [himself, sees, john]
-      description := "Reflexive needs c-commanding antecedent"
-      citation := "Chomsky (1981); Pollard & Sag (1994)" },
+/-! ### Principle C and Reinhart's restriction -/
 
-    { lhs := [mary, sees, herself]
-      rhs := [herself, sees, mary]
-      description := "Reflexive needs c-commanding antecedent" },
+/-- `pair a b` relates `a` and `b` to each other and nothing else. -/
+def pair (a b : Nominal t) (x y : Nominal t) : Prop := x = a ∧ y = b ∨ x = b ∧ y = a
 
-    { lhs := [they, see, themselves]
-      rhs := [themselves, see, them]
-      description := "Plural reflexive needs plural antecedent" },
+/-- For two noun phrases coindexed with each other alone, Principle C is Reinhart's restriction
+(10b) read with c-command, the R-expressions being the noun phrases outside `pron`. -/
+theorem permits_iff {a b : Nominal t} (hab : a ≠ b) (pron : List TreePath) :
+    Reinhart1976.Permits (Reinhart1976.CCommands t) pron a.1.1 b.1.1 ↔
+      (b.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) b) ∧
+        (a.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) a) := by
+  have hb : (configuration t).Bound (pair a b) b ↔ Reinhart1976.CCommands t a.1.1 b.1.1 := by
+    rw [Configuration.bound_iff_binds (a := a) fun x hx ↦ by rcases hx with h | h <;> simp [h]]
+    exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨hab, .inl ⟨rfl, rfl⟩, h⟩⟩
+  have ha : (configuration t).Bound (pair a b) a ↔ Reinhart1976.CCommands t b.1.1 a.1.1 := by
+    rw [Configuration.bound_iff_binds (a := b) fun x hx ↦ by rcases hx with h | h <;> simp [h]]
+    exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨hab.symm, .inr ⟨rfl, rfl⟩, h⟩⟩
+  rw [hb, ha]
+  simp only [Reinhart1976.Permits, not_imp_not]
 
-    -- Agreement required
-    { lhs := [john, sees, himself]
-      rhs := [john, sees, herself]
-      description := "Reflexive must agree with antecedent (gender)" },
+/-! ### The paradigm -/
 
-    { lhs := [they, see, themselves]
-      rhs := [they, see, himself]
-      description := "Reflexive must agree with antecedent (number)" }
-  ]
-}
+section Paradigm
 
-/-- Pronouns cannot corefer with local c-commanding antecedent. -/
-def pronominalDisjointReferenceData : PhenomenonData := {
-  name := "Pronominal Disjoint Reference"
-  generalization := "Pronouns cannot corefer with a c-commanding nominal in the local domain"
-  pairs := [
-    -- Coreference blocked locally (the ungrammatical reading is with coreference)
-    { lhs := [john, sees, mary]
-      rhs := [john, sees, him]  -- intended: John₁ sees him₁
-      description := "Pronoun resists coreference with local subject"
-      citation := "Chomsky (1981)" },
+open English
 
-    { lhs := [mary, sees, john]
-      rhs := [mary, sees, her]  -- intended: Mary₁ sees her₁
-      description := "Pronoun resists coreference with local subject" }
-  ]
-}
+private abbrev john := Nouns.john.toWord
+private abbrev mary := Nouns.mary.toWord
+private abbrev he := Pronouns.he.toWord
+private abbrev him := Pronouns.him.toWord
+private abbrev himself := Pronouns.himself.toWord
+private abbrev herself := Pronouns.herself.toWord
+private abbrev they := Pronouns.they.toWord
+private abbrev themselves := Pronouns.themselves.toWord
+private abbrev sees := Verbs.see.toWord .thirdSg
+private abbrev see := Verbs.see.toWord .presentPlural
+private abbrev likes := Verbs.like.toWord .thirdSg
+private abbrev thinks := Verbs.think.toWord .thirdSg
 
-/-- Full nominals cannot corefer with c-commanding pronoun. -/
-def referentialExpressionFreedomData : PhenomenonData := {
-  name := "Referential Expression Freedom"
-  generalization := "Names and descriptions cannot corefer with a c-commanding pronoun"
-  pairs := [
-    { lhs := [john, sees, mary]
-      rhs := [he, sees, john]  -- intended: He₁ sees John₁
-      description := "Name resists coreference with c-commanding pronoun"
-      citation := "Chomsky (1981)" }
-  ]
-}
-
-/-- Reflexives and pronouns in complementary distribution. -/
-def complementaryDistributionData : PhenomenonData := {
-  name := "Complementary Distribution"
-  generalization := "In the local domain, coreference requires reflexive; pronouns are blocked"
-  pairs := [
-    { lhs := [john, sees, himself]
-      rhs := [john, sees, him]  -- intended coreference
-      description := "Local coreference: reflexive required, pronoun blocked"
-      citation := "Chomsky (1981)" },
-
-    { lhs := [mary, sees, herself]
-      rhs := [mary, sees, her]  -- intended coreference
-      description := "Local coreference: reflexive required, pronoun blocked" }
-  ]
-}
-
-/-- Reciprocals require a plural/coordinated antecedent and local binding. -/
-def reciprocalCoreferenceData : PhenomenonData := {
-  name := "Reciprocal Coreference"
-  generalization :=
-    "Reciprocals require a c-commanding semantically plural antecedent in the local domain"
-  pairs := [
-    -- Coordinated antecedent required
-    { lhs := [sam, and_, pat, saw, eachOther]
-      rhs := [eachOther, saw, sam, and_, pat]
-      description := "Reciprocal needs c-commanding antecedent"
-      citation := "Dalrymple et al. (1998)" },
-
-    -- Reciprocal vs reflexive complementary distribution
-    { lhs := [sam, and_, pat, saw, eachOther]
-      rhs := [sam, and_, pat, saw, themselves]  -- awkward as reciprocal reading
-      description := "Reciprocal preferred for symmetric reading with coordinated subject" },
-
-    -- Plural antecedent requirement
-    { lhs := [they, see, eachOther]
-      rhs := [john, sees, eachOther]  -- singular antecedent fails
-      description := "Reciprocal requires semantically plural antecedent" }
-  ]
-}
-
-/-- English binding under Minimalist (c-command): the framework-neutral engine
-    (`Binding.grammaticalForCoreference`) applied with Minimalism's
-    `CommandRelation` instance (the relocated instance above) and
-    English's binding-class classifier. -/
-abbrev grammaticalForCoreference (ws : List Word) : Prop :=
-  Binding.grammaticalForCoreference Binding.bindingClassOf ws
-
-/-- Coverage of a `PhenomenonData` set under Minimalist binding theory.
-
-    Stated `Prop`-valued (with a `Decidable` instance) because the
-    underlying `grammaticalForCoreference` predicate is `Prop`-valued. -/
-def capturesCoreferenceData (phenom : PhenomenonData) : Prop :=
-  ∀ p ∈ phenom.pairs,
-    grammaticalForCoreference p.lhs ∧ ¬ grammaticalForCoreference p.rhs
-
-instance (phenom : PhenomenonData) : Decidable (capturesCoreferenceData phenom) := by
-  unfold capturesCoreferenceData; infer_instance
-
-/-- Minimalist binding theory captures every minimal pair in the three datasets the
-sentence-level predicate can adjudicate: the grammatical member of each pair is licensed for
-coreference and its partner is not. -/
-theorem captures_binding_data :
-    ∀ phenom ∈ [reflexiveCoreferenceData, pronominalDisjointReferenceData,
-                complementaryDistributionData],
-      capturesCoreferenceData phenom := by
-  intro phenom h
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at h
-  rcases h with rfl | rfl | rfl <;> decide
-
-/-- Principle C is a fact about a construal, not a string: *he sees John* is grammatical on the
-non-coreferential reading, so the sentence-level predicate cannot register
-`referentialExpressionFreedomData`'s contrast. At the construal level the engine blocks it — the
-commanded name object cannot corefer with the pronoun subject. -/
-theorem principleC_blocks_commanded_name :
-    Binding.computeCoreferenceStatus Binding.bindingClassOf
-      { subject := he, verb := sees, object := some john } .subject .object = .blocked := by
+/-- *John sees himself* is licit, and its reflexive must be coindexed with the subject. -/
+example : Grammatical (clause john sees (np himself)) ∧
+    MustCorefer (clause john sees (np himself)) ⟨[0]⟩ ⟨[1, 1]⟩ := by
   decide
 
-/-- Reciprocal binding within the three-word parser's reach: a semantically plural antecedent
-licenses *each other* and a singular one does not. The reciprocal dataset's coordinated subjects
-(*Sam and Pat saw each other*) lie outside that parser, so they are recorded as data but not
-adjudicated here. -/
-theorem reciprocal_plural_antecedent :
-    grammaticalForCoreference [they, see, eachOther] ∧
-    ¬ grammaticalForCoreference [john, sees, eachOther] := by
+/-- In *They see themselves* a plural subject licenses the plural reflexive. -/
+example : Grammatical (clause they see (np themselves)) := by decide
+
+/-- \**Himself sees John* is out, since nothing c-commands the subject anaphor. -/
+example : ¬ Grammatical (clause himself sees (np john)) := by decide
+
+/-- \**John sees herself* is out, since coindexation fails agreement and disjoint indexing fails
+Principle A. -/
+example : ¬ Grammatical (clause john sees (np herself)) := by decide
+
+/-- *John sees him* is licit, but only with disjoint reference, by Principle B. -/
+example : Grammatical (clause john sees (np him)) ∧
+    ¬ CanCorefer (clause john sees (np him)) ⟨[0]⟩ ⟨[1, 1]⟩ := by
   decide
+
+/-- *He sees John* is licit, but by Principle C the name cannot corefer with the pronoun that
+c-commands it. -/
+example : Grammatical (clause he sees (np john)) ∧
+    ¬ CanCorefer (clause he sees (np john)) ⟨[0]⟩ ⟨[1, 1]⟩ := by
+  decide
+
+/-- In *John thinks Mary likes him* the pronoun is free in its own clause, so it may corefer
+with the matrix subject. -/
+example : CanCorefer (clause john thinks (clause mary likes (np him))) ⟨[0]⟩ ⟨[1, 1, 1, 1]⟩ := by
+  decide
+
+/-- \**John thinks Mary likes himself* is out, since the reflexive's domain is the embedded
+clause, whose subject does not agree with it. -/
+example : ¬ Grammatical (clause john thinks (clause mary likes (np himself))) := by decide
+
+/-- In *He thinks Mary likes John* the name cannot corefer with the matrix pronoun, Principle C
+not being local. -/
+example : ¬ CanCorefer (clause he thinks (clause mary likes (np john))) ⟨[0]⟩ ⟨[1, 1, 1, 1]⟩ := by
+  decide
+
+/-- An embedding has three noun phrases, the matrix subject and the embedded subject and object. -/
+example : (nominals (clause john thinks (clause mary likes (np him)))).map Prod.fst =
+    [⟨[0]⟩, ⟨[1, 1, 0]⟩, ⟨[1, 1, 1, 1]⟩] := by decide
+
+end Paradigm
 
 end Chomsky1981
