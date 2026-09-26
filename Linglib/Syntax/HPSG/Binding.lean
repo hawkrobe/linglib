@@ -8,6 +8,7 @@ module
 public import Linglib.Syntax.HPSG.Description
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Binding.Basic
 
 /-!
 # HPSG binding theory in RSRL
@@ -17,7 +18,8 @@ on small models of a transitive clause. One argument locally o-commands another 
 the same argument structure and the first is less oblique. It locally o-binds the other when, in
 addition, the two share their index and agree in gender and number. Principle A requires a
 locally o-commanded anaphor to be locally o-bound, and Principle B requires a personal pronoun
-to be locally o-free.
+to be locally o-free. The two principles are the framework-neutral Conditions A and B of
+`Syntax/Binding` over local o-command, with the anaphors that nothing locally o-commands exempt.
 
 ## Main definitions
 
@@ -26,6 +28,14 @@ to be locally o-free.
 * `HPSG.RSRL.Binding.principleA`: Principle A.
 * `HPSG.RSRL.Binding.principleB`: Principle B.
 * `HPSG.RSRL.Binding.clause`: the model of a transitive clause with a given object.
+* `HPSG.RSRL.Binding.configuration`: local o-command as a framework-neutral binding
+  configuration.
+
+## Main results
+
+* `HPSG.RSRL.Binding.models_grammar_iff`: a clause models the principles exactly when its
+  codependence satisfies the framework-neutral Conditions A and B over local o-command, with the
+  anaphors that nothing locally o-commands exempt.
 
 ## Implementation notes
 
@@ -209,5 +219,46 @@ example : ¬ (clause .synsem .iSubj .gMasc .nSing).IsSortResolved ∧
 component of an index but the index itself. -/
 example : (clause .ana .iSubj .gMasc .nSing).IsComponentOf .s .gMasc ∧
     ¬ (clause .ana .iSubj .gMasc .nSing).IsComponentOf .iSubj .s := by decide
+
+/-! ### The framework-neutral conditions -/
+
+/-- Local o-command gives a binding configuration on the entities of a clause, in which the
+subject commands the object and every domain is the whole clause, local o-command being local
+already. -/
+def configuration : _root_.Binding.Configuration Ent where
+  commands a b := a = .subj ∧ b = .obj
+  domain _ := Set.univ
+
+instance : DecidableRel configuration.commands :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+instance (b : Ent) : DecidablePred (· ∈ configuration.domain b) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∈ Set.univ))
+
+/-- Two entities of a model are codependent when they share their index, gender and number, that
+is, when they are coindexed and agree. -/
+def Codependent (I : Interpretation sig Ent) (x y : Ent) : Prop :=
+  I.A .IDX x = I.A .IDX y ∧ I.A .GEND x = I.A .GEND y ∧ I.A .NUM x = I.A .NUM y
+
+instance (I : Interpretation sig Ent) : DecidableRel (Codependent I) :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- An anaphor falls under Condition A and a personal pronoun under Condition B. The fragment
+states no Principle C, so a nonpronoun has no binding class. -/
+def Srt.bindingClass : Srt → Option _root_.Binding.BindingClass
+  | .ana => some .reflexive
+  | .ppro => some .pronoun
+  | _ => none
+
+/-- A clause models the principles exactly when its codependence satisfies the framework-neutral
+Conditions A and B over local o-command, with the anaphors that nothing locally o-commands
+exempt. -/
+theorem models_grammar_iff :
+    ∀ σ ∈ [Srt.ana, .ppro, .npro], ∀ i ∈ [Ent.iSubj, .iObj], ∀ γ ∈ [Ent.gMasc, .gFem],
+      ∀ n ∈ [Ent.nSing, .nPlur],
+        ((clause σ i γ n).Models grammar ↔
+          configuration.Satisfies (Codependent (clause σ i γ n)) configuration.exempt
+            fun x ↦ ((clause σ i γ n).S x).bindingClass) := by
+  decide +kernel
 
 end HPSG.RSRL.Binding

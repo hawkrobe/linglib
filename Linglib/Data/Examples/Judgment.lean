@@ -25,8 +25,7 @@ this is why the type is a labeled enum rather than a Likert-style ordinal.
 acceptability scale, a `LinearOrder` with `ungrammatical` at the bottom
 and `acceptable` at the top, so that `≤` reads "rated at most as
 acceptable as". It is the judgment type carried by
-`Linglib/Data/Examples/Schema.lean`'s `LinguisticExample` and by the
-minimal-pair vocabulary in `Linglib/Processing/Acceptability/MinimalPairs.lean`. For
+`Linglib/Data/Examples/Schema.lean`'s `LinguisticExample`. For
 factorial-design machinery over experimental ratings (difference-in-
 differences scores etc.), see `Linglib/Studies/SprouseEtAl2012.lean`.
 -/

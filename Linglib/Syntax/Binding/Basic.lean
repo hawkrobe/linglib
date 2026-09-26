@@ -1,92 +1,119 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
+public import Mathlib.Data.Fintype.Defs
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.UD.UPOS
-public import Linglib.Syntax.Binding.CoreferenceStatus
 public import Linglib.Morphology.Word.Agree
 
+/-!
+# Binding theory
+
+This file defines the binding conditions over an arbitrary configuration and proves how they
+relate. A configuration says which positions command which and gives each position a binding
+domain; an anaphoric dependency says which positions are antecedents of which. A position binds
+another when it is an antecedent of it, distinct from it, that commands it. An anaphor is bound
+in its domain (Condition A), a pronominal is not (Condition B), and an R-expression is not bound
+at all (Condition C), the three conditions of Chomsky's binding theory.
+
+Frameworks differ in what they supply. Chomsky binds coindexed noun phrases under c-command
+within the governing category; Pollard and Sag bind under local o-command, which holds between a
+less oblique and a more oblique argument of one head; Charnavel takes the domain to be the
+smallest spell-out domain. C-command is one of the tree-configurational command relations of
+Barker and Pullum; o-command is not configurational.
+
+The dependency is a relation, not an assignment of indices. Coindexation is one encoding of it;
+Reuland reviews why syntactic indices were given up and binding redefined from the logical
+binding of a λ-operator. Both are relations `L` with `L a b` read as "`a` is an antecedent of
+`b`".
+
+Condition A holds of the anaphors outside an exempt set. Pollard and Sag exempt an anaphor that
+nothing in its domain commands (`Configuration.exempt`), Chomsky exempts none, and Charnavel
+argues that exempt anaphors are logophoric, so that interpretation rather than structure fixes
+the set. Outside the exempt set anaphors and pronominals are in complementary distribution;
+inside it an anaphor meets its condition under any dependency, so both forms are possible.
+
+## Main definitions
+
+* `Binding.BindingClass`, `Binding.bindingClassOf`: anaphor, pronominal or R-expression, read
+  off a word's morphology.
+* `Binding.Configuration`: a command relation and a binding domain.
+* `Configuration.Binds`, `Bound`, `LocallyBound`, `LocallyCommanded`, `exempt`.
+* `Configuration.Condition`, `Configuration.Satisfies`: Conditions A, B and C.
+
+## Main results
+
+* `Configuration.condition_iff_not_condition_pronoun`: complementarity outside the exempt set.
+* `Configuration.condition_of_mem`: an anaphor at an exempt position meets its condition.
+* `Configuration.condition_exempt_iff`: with the structural exemption, an anaphor meets its
+  condition when, if commanded in its domain, it is bound there.
+* `Configuration.condition_empty_iff`: without exemption an anaphor must in addition be
+  commanded in its domain.
+* `Configuration.condition_pronoun_of_rExpression`: Condition C entails Condition B.
+
+## Implementation notes
+
+The conditions restrict binding. Coreference that is not binding falls outside Condition B, as
+Reuland stresses, and outside this file.
+
+## References
+
+* [N. Chomsky, *Lectures on government and binding* (1981)][chomsky-1981]
+* [C. Pollard and I. A. Sag, *Head-driven phrase structure grammar* (1994)][pollard-sag-1994]
+* [C. Barker and G. K. Pullum, *A theory of command relations* (1990)][barker-pullum-1990]
+* [E. Reuland, *Reflexives and reflexivity* (2018)][reuland-2018]
+* [I. Charnavel, *Locality and logophoricity: A theory of exempt anaphora* (2019)][charnavel-2019]
+-/
 @[expose] public section
 
 open Morphology (Word)
 
-/-!
-# Binding principles over a command relation
-[barker-pullum-1990] [chomsky-1981] [pollard-sag-1994]
-
-A framework-neutral binding engine. The binding principles (A/B/C) and the
-coreference-status computation are stated **once**, parameterized by a
-`CommandRelation` — the structural-prominence order they range over. A
-syntactic framework supplies that relation and inherits the principles
-unchanged; the candidate notions are Minimalist c-command (tree geometry — the
-instance in `Studies/Chomsky1981.lean`), HPSG ARG-ST outranking (obliqueness),
-and dependency-grammar d-command (dependency subgraph).
-
-[barker-pullum-1990] give the general notion of which c-command,
-m-command, and the rest are instances; the linglib frameworks' command notions
-are further instances. Stating the principles over the abstract relation makes
-the cross-framework convergence a theorem rather than a coincidence: any two
-`CommandRelation`s that agree on a clause predict the same binding facts.
-
-## Main declarations
-
-* `Pos` — a binding position in a simple clause (subject / object).
-* `SimpleClause` / `parseSimpleClause` — the clause representation the
-  principles range over, and a surface-list parser.
-* `CommandRelation` — the abstract command relation + locality (the only piece
-  a framework supplies).
-* `reflexiveLicensed` / `reciprocalLicensed` / `pronounLocallyFree` /
-  `rExpressionFree` — Principles A / B / C, derived over `[CommandRelation]`,
-  `Word.Agree`, and a binding-class classifier.
-* `grammaticalForCoreference`, `computeCoreferenceStatus` — top-level
-  predictions, derived once.
-
-## Implementation notes
-
-The binding-class classifier (`Word → Option BindingClass`) is a *language*
-parameter, orthogonal to the *framework* parameter `CommandRelation`; it is
-passed explicitly rather than baked in, so the engine imports no Fragment.
-A language (English, …) supplies the classifier; a framework supplies the
-command relation; a study combines them.
--/
-
 namespace Binding
 
+/-! ### Binding classes -/
 
-open Binding (BindingClass CoreferenceStatus)
+/-- A nominal's binding class is an anaphor, reflexive or reciprocal, a pronominal, or an
+R-expression, which fall under Conditions A, B and C. -/
+inductive BindingClass where
+  /-- Reflexive anaphor (*himself*, *herself*, *themselves*). -/
+  | reflexive
+  /-- Reciprocal anaphor (*each other*, *one another*). -/
+  | reciprocal
+  /-- Pronominal (*he*, *she*, *they*, …). -/
+  | pronoun
+  /-- Referring expression (proper name, full noun phrase). -/
+  | rExpression
+  deriving Repr, DecidableEq, Fintype
 
-/-- A binding position in a simple clause. The verb is not a binding position. -/
-inductive Pos where
-  | subject
-  | object
-  deriving DecidableEq, Repr
+namespace BindingClass
 
-/-- A simple (mono-clausal, transitive-or-intransitive) clause: the
-    representation binding principles range over. `semanticPl` records whether
-    the subject *denotes* a plurality, which can diverge from morphosyntactic
-    number ([rakosi-2019]); it defaults to the syntactic number. -/
-structure SimpleClause where
-  subject : Word
-  verb : Word
-  object : Option Word
-  semanticPl : Bool := subject.features .number == some .plural
-  deriving Repr
+/-- A class is an anaphor's, subject to Condition A, when it is reflexive or reciprocal. -/
+def IsAnaphor (c : BindingClass) : Prop := c = .reflexive ∨ c = .reciprocal
 
-/-- The `Word` at a position, if present. -/
-def SimpleClause.at? (c : SimpleClause) : Pos → Option Word
-  | .subject => some c.subject
-  | .object => c.object
+/-- A class is a pronominal's, subject to Condition B. -/
+def IsPronominal (c : BindingClass) : Prop := c = .pronoun
 
-/-- Is this a nominal part-of-speech (proper noun, common noun, or pronoun)? A
-    theory-neutral UPOS check the clause parser uses to recognize arguments. -/
+/-- A class is a referring expression's, subject to Condition C. -/
+def IsRExpression (c : BindingClass) : Prop := c = .rExpression
+
+instance (c : BindingClass) : Decidable c.IsAnaphor := inferInstanceAs (Decidable (_ ∨ _))
+instance (c : BindingClass) : Decidable c.IsPronominal := inferInstanceAs (Decidable (_ = _))
+instance (c : BindingClass) : Decidable c.IsRExpression := inferInstanceAs (Decidable (_ = _))
+
+end BindingClass
+
+/-- A part of speech is nominal when it is a proper noun, a common noun or a pronoun. -/
 def isNominalCat (cat : UD.UPOS) : Bool :=
   cat == .PROPN || cat == .NOUN || cat == .PRON
 
-/-- The canonical, language-neutral binding-class source: a word's Principle A/B/C class read off
-    its own UD morphology (`Reflex`, `PronType`) and category — *no* lexicon and *no* surface-form
-    lookup. Reflexive morphology → anaphor; reciprocal `PronType` → reciprocal anaphor; any other
-    pronoun → pronominal; a proper/common-noun category → R-expression; a non-nominal → `none`.
-    This is the framework- *and* language-neutral default `Binding.BindingSource Word`, replacing
-    per-language form-string classifiers ([chomsky-1981]'s A/B/C classes as morphology). -/
-def bindingClassOf : Binding.BindingSource Word := fun w =>
+/-- `bindingClassOf w` reads the binding class of `w` off its morphology and category.
+Reflexive marking makes a reflexive, the reciprocal pronoun type a reciprocal, any other pronoun
+a pronominal, and a noun an R-expression. -/
+def bindingClassOf (w : Word) : Option BindingClass :=
   if (w.features .reflex).isSome then some .reflexive
   else match w.features .pronType with
     | some .Rcp => some .reciprocal
@@ -95,204 +122,149 @@ def bindingClassOf : Binding.BindingSource Word := fun w =>
       else if isNominalCat w.cat then some .rExpression
       else none
 
-/-- Parse a surface word list into a simple clause: `[subj, verb, obj]` or
-    `[subj, verb]`, requiring nominal subject/object and a verb. -/
-def parseSimpleClause (ws : List Word) : Option SimpleClause :=
-  match ws with
-  | [subj, v, obj] =>
-    if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
-      some { subject := subj, verb := v, object := some obj }
-    else none
-  | [subj, v] =>
-    if isNominalCat subj.cat && v.cat == .VERB then
-      some { subject := subj, verb := v, object := none }
-    else none
-  | _ => none
+/-! ### Configurations -/
 
-/-- A **command relation** ([barker-pullum-1990]): the structural-prominence
-    order binding principles are defined over, together with the locality
-    (same-binding-domain) restriction. The frameworks' c-command, ARG-ST
-    outranking, and d-command are instances. This is the *only* component a
-    syntactic framework must supply to obtain the binding principles. -/
-class CommandRelation where
-  /-- Does the element at position `i` structurally command the element at `j`? -/
-  commands : SimpleClause → Pos → Pos → Prop
-  /-- Are positions `i` and `j` within the same binding (locality) domain? -/
-  sameDomain : SimpleClause → Pos → Pos → Prop
-  /-- `commands` is decidable — frameworks compute it from concrete structure. -/
-  commandsDec : (c : SimpleClause) → (i j : Pos) → Decidable (commands c i j)
-  /-- `sameDomain` is decidable. -/
-  sameDomainDec : (c : SimpleClause) → (i j : Pos) → Decidable (sameDomain c i j)
+/-- A binding configuration on the positions `ι` says which positions command which and gives
+each position its binding domain. -/
+structure Configuration (ι : Type*) where
+  /-- `commands a b` holds when `a` commands `b`. -/
+  commands : ι → ι → Prop
+  /-- `domain b` is the binding domain of `b`. -/
+  domain : ι → Set ι
 
-instance [CommandRelation] (c : SimpleClause) (i j : Pos) :
-    Decidable (CommandRelation.commands c i j) := CommandRelation.commandsDec c i j
+namespace Configuration
 
-instance [CommandRelation] (c : SimpleClause) (i j : Pos) :
-    Decidable (CommandRelation.sameDomain c i j) := CommandRelation.sameDomainDec c i j
+variable {ι : Type*} (s : Configuration ι) (L : ι → ι → Prop)
 
-variable [CommandRelation]
+/-- `a` binds `b` along the dependency `L` when `a` is an antecedent of `b` other than `b`
+itself and commands `b`. -/
+def Binds (a b : ι) : Prop := a ≠ b ∧ L a b ∧ s.commands a b
 
--- The classifier mapping a word to its binding class is a language parameter
--- (English supplies one); the engine stays Fragment-free.
-variable (classify : Word → Option BindingClass)
+/-- `b` is bound when some position binds it. -/
+def Bound (b : ι) : Prop := ∃ a, s.Binds L a b
 
-/-! ### Principle A (anaphors) -/
+/-- `b` is locally bound when some position in its domain binds it. -/
+def LocallyBound (b : ι) : Prop := ∃ a ∈ s.domain b, s.Binds L a b
 
-/-- **Principle A.** A reflexive object is licensed iff it is commanded by the
-    subject within the local domain *and* agrees with it in φ-features
-    (`Word.Agree`). Vacuously true when the object is not a reflexive. -/
-def reflexiveLicensed (c : SimpleClause) : Prop :=
-  match c.object with
-  | none => False
-  | some obj =>
-    match classify obj with
-    | some .reflexive =>
-      CommandRelation.commands c .subject .object ∧
-      CommandRelation.sameDomain c .subject .object ∧
-      Word.Agree c.subject obj
-    | _ => True
+/-- `b` is locally commanded when some position other than `b` in its domain commands it. -/
+def LocallyCommanded (b : ι) : Prop := ∃ a ∈ s.domain b, a ≠ b ∧ s.commands a b
 
-instance (c : SimpleClause) : Decidable (reflexiveLicensed classify c) := by
-  unfold reflexiveLicensed; split
-  · infer_instance
-  · split <;> infer_instance
+/-- `exempt` is the set of positions that nothing in their domain commands. -/
+def exempt : Set ι := {b | ¬ s.LocallyCommanded b}
 
-/-- **Principle A** for reciprocals: licensed iff commanded by the subject in
-    the local domain and the subject denotes a *plurality* (an LF condition —
-    semantic, not morphosyntactic, plurality; [rakosi-2019]). -/
-def reciprocalLicensed (c : SimpleClause) : Prop :=
-  match c.object with
-  | none => False
-  | some obj =>
-    match classify obj with
-    | some .reciprocal =>
-      CommandRelation.commands c .subject .object ∧
-      CommandRelation.sameDomain c .subject .object ∧
-      c.semanticPl = true
-    | _ => True
+/-- `Condition E b c` is the condition a nominal of class `c` at `b` must meet when the
+positions in `E` are exempt from Condition A. An anaphor is bound in its domain unless exempt, a
+pronominal is not bound in its domain, and an R-expression is not bound. -/
+def Condition (E : Set ι) (b : ι) : BindingClass → Prop
+  | .reflexive | .reciprocal => b ∈ E ∨ s.LocallyBound L b
+  | .pronoun => ¬ s.LocallyBound L b
+  | .rExpression => ¬ s.Bound L b
 
-instance (c : SimpleClause) : Decidable (reciprocalLicensed classify c) := by
-  unfold reciprocalLicensed; split
-  · infer_instance
-  · split <;> infer_instance
+/-- The dependency `L` satisfies the binding theory, with the positions in `E` exempt from
+Condition A, when every position the classifier `cls` classifies meets its class's condition. -/
+def Satisfies (E : Set ι) (cls : ι → Option BindingClass) : Prop :=
+  ∀ b c, cls b = some c → s.Condition L E b c
 
-/-! ### Principle B (pronouns) -/
+variable {s L} {L' : ι → ι → Prop} {E E' : Set ι} {cls : ι → Option BindingClass} {a b : ι}
+  {c : BindingClass}
 
-/-- **Principle B.** A pronoun object must be free in its local domain: it must
-    *not* be both commanded by the subject and in the same domain. -/
-def pronounLocallyFree (c : SimpleClause) : Prop :=
-  match c.object with
-  | none => True
-  | some obj =>
-    match classify obj with
-    | some .pronoun =>
-      ¬ (CommandRelation.commands c .subject .object ∧
-         CommandRelation.sameDomain c .subject .object)
-    | _ => True
+theorem Binds.commands (h : s.Binds L a b) : s.commands a b := h.2.2
 
-instance (c : SimpleClause) : Decidable (pronounLocallyFree classify c) := by
-  unfold pronounLocallyFree; split
-  · infer_instance
-  · split <;> infer_instance
+theorem Binds.mono (hL : L ≤ L') (h : s.Binds L a b) : s.Binds L' a b :=
+  ⟨h.1, hL a b h.2.1, h.2.2⟩
 
-/-! ### Principle C (R-expressions) -/
+theorem Bound.mono (hL : L ≤ L') (h : s.Bound L b) : s.Bound L' b :=
+  let ⟨a, ha⟩ := h
+  ⟨a, ha.mono hL⟩
 
-/-- **Principle C.** An R-expression object coindexed with a pronominal subject
-    is blocked when the subject commands it. -/
-def rExpressionFree (c : SimpleClause) : Prop :=
-  match classify c.subject with
-  | some .pronoun =>
-    match c.object with
-    | some obj =>
-      match classify obj with
-      | some .rExpression => ¬ CommandRelation.commands c .subject .object
-      | _ => True
-    | none => True
-  | _ => True
+theorem LocallyBound.mono (hL : L ≤ L') (h : s.LocallyBound L b) : s.LocallyBound L' b :=
+  let ⟨a, hd, ha⟩ := h
+  ⟨a, hd, ha.mono hL⟩
 
-instance (c : SimpleClause) : Decidable (rExpressionFree classify c) := by
-  unfold rExpressionFree
-  split
-  · split
-    · split <;> infer_instance
-    · infer_instance
-  · infer_instance
+theorem LocallyBound.bound (h : s.LocallyBound L b) : s.Bound L b :=
+  let ⟨a, _, ha⟩ := h
+  ⟨a, ha⟩
 
-/-! ### Top-level acceptability -/
+theorem LocallyBound.locallyCommanded (h : s.LocallyBound L b) : s.LocallyCommanded b :=
+  let ⟨a, hd, ha⟩ := h
+  ⟨a, hd, ha.1, ha.commands⟩
 
-/-- Is a surface word list grammatical for coreference? Anaphors cannot be
-    subjects (no commander); a pronoun object locally commanded by the subject
-    violates Principle B; reflexive/reciprocal objects must be licensed. -/
-def grammaticalForCoreference (ws : List Word) : Prop :=
-  match parseSimpleClause ws with
-  | none => False
-  | some c =>
-    match classify c.subject with
-    | some .reflexive => False
-    | some .reciprocal => False
-    | _ =>
-      match c.object with
-      | none => True
-      | some obj =>
-        match classify obj with
-        | some .reflexive => reflexiveLicensed classify c
-        | some .reciprocal => reciprocalLicensed classify c
-        | some .pronoun => False
-        | _ => True
+theorem not_locallyBound_of_mem_exempt (hb : b ∈ s.exempt) : ¬ s.LocallyBound L b :=
+  fun h ↦ hb h.locallyCommanded
 
-instance (ws : List Word) : Decidable (grammaticalForCoreference classify ws) := by
-  unfold grammaticalForCoreference; split
-  · infer_instance
-  · split
-    · infer_instance
-    · infer_instance
-    · split
-      · infer_instance
-      · split <;> infer_instance
+/-- A position whose only antecedents are `a` and itself is bound exactly when `a` binds it. -/
+theorem bound_iff_binds (h : ∀ x, L x b → x = a ∨ x = b) : s.Bound L b ↔ s.Binds L a b :=
+  ⟨fun ⟨x, hx⟩ ↦ (h x hx.2.1).elim (· ▸ hx) (absurd · hx.1), fun h ↦ ⟨a, h⟩⟩
 
-/-- Coreference status of positions `i`, `j` under the command relation:
-    Principle A makes a commanded anaphor obligatorily coreferent; Principle B/C
-    block a commanded pronoun/R-expression; otherwise coreference is possible. -/
-def computeCoreferenceStatus (c : SimpleClause) (i j : Pos) : CoreferenceStatus :=
-  match c.at? j with
-  | none => .unspecified
-  | some tgt =>
-    if CommandRelation.commands c i j ∧ CommandRelation.sameDomain c i j then
-      match classify tgt with
-      | some .reflexive => .obligatory
-      | some .reciprocal => .obligatory
-      | some .pronoun => .blocked
-      | some .rExpression => .blocked
-      | none => .unspecified
-    else
-      match classify tgt with
-      | some .reflexive => .blocked
-      | some .reciprocal => .blocked
-      | some .pronoun => .possible
-      | some .rExpression => .possible
-      | none => .unspecified
+theorem condition_anaphor (hc : c.IsAnaphor) :
+    s.Condition L E b c ↔ b ∈ E ∨ s.LocallyBound L b := by
+  rcases hc with rfl | rfl <;> rfl
 
-/-! ### Cross-framework convergence
+/-- Outside the exempt positions an anaphor meets its condition exactly where a pronominal fails
+its own. -/
+theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E) :
+    s.Condition L E b c ↔ ¬ s.Condition L E b .pronoun := by
+  rw [condition_anaphor hc, Condition, not_not, or_iff_right hb]
 
-Stated over the abstract relation, the principles depend on the framework only
-through `CommandRelation`. Two frameworks that agree on a clause's command and
-locality facts therefore make identical binding predictions — by construction,
-not coincidence. -/
+/-- At an exempt position an anaphor meets its condition under any dependency. -/
+theorem condition_of_mem (hc : c.IsAnaphor) (hb : b ∈ E) : s.Condition L E b c :=
+  (condition_anaphor hc).2 (.inl hb)
 
-omit [CommandRelation] in
-/-- If two command relations agree on the relevant command and locality facts
-    of a clause, they license a reflexive identically. The cross-framework
-    convergence the prose comparisons assert, made a theorem. -/
-theorem reflexiveLicensed_congr
-    (R₁ R₂ : CommandRelation) (classify : Word → Option BindingClass)
-    (c : SimpleClause)
-    (hc : R₁.commands c .subject .object ↔ R₂.commands c .subject .object)
-    (hd : R₁.sameDomain c .subject .object ↔ R₂.sameDomain c .subject .object) :
-    @reflexiveLicensed R₁ classify c ↔ @reflexiveLicensed R₂ classify c := by
-  rcases hobj : c.object with _ | obj
-  · simp only [reflexiveLicensed, hobj]
-  · rcases hbc : classify obj with _ | bc
-    · simp only [reflexiveLicensed, hobj, hbc]
-    · cases bc <;> simp only [reflexiveLicensed, hobj, hbc, hc, hd]
+/-- With the structural exemption, an anaphor meets its condition exactly when it is bound in
+its domain if anything there commands it. -/
+theorem condition_exempt_iff (hc : c.IsAnaphor) :
+    s.Condition L s.exempt b c ↔ (s.LocallyCommanded b → s.LocallyBound L b) := by
+  rw [condition_anaphor hc, imp_iff_not_or]
+  rfl
+
+/-- Without exemption an anaphor meets its condition exactly when it meets it under the
+structural exemption and something in its domain commands it. -/
+theorem condition_empty_iff (hc : c.IsAnaphor) :
+    s.Condition L ∅ b c ↔ s.Condition L s.exempt b c ∧ s.LocallyCommanded b := by
+  rw [condition_anaphor hc, condition_exempt_iff hc]
+  exact ⟨fun h ↦ ⟨fun _ ↦ h.resolve_left id, (h.resolve_left id).locallyCommanded⟩,
+    fun h ↦ .inr (h.1 h.2)⟩
+
+/-- A position that meets Condition C meets Condition B, since a position that is not bound is
+not bound in its domain. -/
+theorem condition_pronoun_of_rExpression (h : s.Condition L E b .rExpression) :
+    s.Condition L E b .pronoun :=
+  fun hb ↦ h hb.bound
+
+/-- Exempting more positions weakens the theory. -/
+theorem Satisfies.mono_exempt (hE : E ⊆ E') (h : s.Satisfies L E cls) : s.Satisfies L E' cls := by
+  intro b c hbc
+  have := h b c hbc
+  cases c with
+  | reflexive | reciprocal => exact this.imp_left (hE ·)
+  | pronoun | rExpression => exact this
+
+section Decidable
+
+variable (s L) [Fintype ι] [DecidableEq ι] [DecidableRel L] [DecidableRel s.commands]
+  [∀ b, DecidablePred (· ∈ s.domain b)]
+
+instance (a b : ι) : Decidable (s.Binds L a b) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+instance (b : ι) : Decidable (s.Bound L b) := inferInstanceAs (Decidable (∃ _, _))
+
+instance (b : ι) : Decidable (s.LocallyBound L b) := inferInstanceAs (Decidable (∃ _, _ ∧ _))
+
+instance (b : ι) : Decidable (s.LocallyCommanded b) :=
+  inferInstanceAs (Decidable (∃ _, _ ∧ _))
+
+instance : DecidablePred (· ∈ s.exempt) := fun _ ↦ inferInstanceAs (Decidable (¬ _))
+
+instance (E : Set ι) [DecidablePred (· ∈ E)] (b : ι) : ∀ c, Decidable (s.Condition L E b c)
+  | .reflexive | .reciprocal => inferInstanceAs (Decidable (_ ∨ _))
+  | .pronoun | .rExpression => inferInstanceAs (Decidable (¬ _))
+
+instance (E : Set ι) [DecidablePred (· ∈ E)] (cls : ι → Option BindingClass) :
+    Decidable (s.Satisfies L E cls) :=
+  inferInstanceAs (Decidable (∀ _ _, _ → _))
+
+end Decidable
+
+end Configuration
 
 end Binding
