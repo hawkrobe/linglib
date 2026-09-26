@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.EnergySource
+public import Linglib.Semantics.ArgumentStructure.EventStructure
 public import Linglib.Data.Examples.RappaportHovavLevin2024
 
 /-!
@@ -23,17 +24,20 @@ through her hair* while admitting *fire swept through their home*. `Licensed` de
 the realization principles the surface frames an event admits, and
 `acceptable_iff_licensed` checks the paper's judgments, those for *rub* and *scrape* included,
 against it. A non-agentive subject in the simple transitive frame comes with no small clause,
-against the resultative restriction.
+against the resultative restriction. The event structures are templates: the transitive+PP
+frame is the causative (50) of the activity (42), with no result state for *again* to scope
+over (57).
 
 ## Implementation notes
 
 The cause of the causativized event structure and the agent whose instrument or body part sits
-in a *with* phrase are one participant, the causer. Interpretive properties the paper derives
-from the conceptual content of *broom* (a floor-like surface, the removal of unwanted material,
-the *with* phrase naming a broom), the resultatives, the *again* readings and the relaxation
-under which a contextually recoverable agent goes unexpressed are outside the model, and their
-rows are omitted. The causativized event structure has no result state, so it is not the
-accomplishment of `ArgumentStructure.EventStructure.Template`.
+in a *with* phrase are one participant, the causer. In the template of (42) both predicates are
+the manner of one `ACT`, and which of them determines argument realization is `Predicate`.
+Interpretive properties the paper derives from the conceptual content of *broom* (a floor-like
+surface, the removal of unwanted material, the *with* phrase naming a broom), the resultatives,
+the *again* readings other than the causative's lack of a result state, and the relaxation under
+which a contextually recoverable agent goes unexpressed are outside the model, and their rows
+are omitted.
 
 ## References
 
@@ -382,6 +386,44 @@ theorem broomSweep_unspecifiedObject_iff (c : Kind) :
 theorem broomSweep_not_uncaused (p : Predicate) (σ : Slots) :
     ¬ Licensed ⟨broomSweep, .instrument, none⟩ p σ :=
   λ ⟨⟨_, h⟩, _⟩ => by simpa using h rfl
+
+/-! ### The event structures and *again*
+
+The event structure (42) is an activity, one eventuality in which the moving entity moves across
+the surface while imparting a force to it through contact. The broom sense keeps it (76),
+restricting the moving entity to a broom. The transitive+PP frame is its causativized
+counterpart (50), in which a cause brings the activity about. A narrow scope reading of *again*
+emerges when a causative includes a result state or location for *again* to scope over, and
+(50) has none, so *she swept the brush through Megan's shiny hair again* (57) has only the
+reading on which the whole event is repeated. -/
+
+section EventStructure
+
+open EventStructure Template
+
+/-- The event structure (42) of basic-*sweep*, which broom-*sweep* keeps (76). -/
+def eventStructure : Template .event := .act
+
+/-- The causativized event structure (50) of the transitive+PP frame, in which a cause brings
+about the activity (42). -/
+def causativeEventStructure : Template .event := .cause .effector eventStructure
+
+/-- (50) is causative. -/
+theorem causativeEventStructure_hasCause : causativeEventStructure.HasCause := by decide
+
+/-- (50) has no result state or location: the state is no subterm of it, so *again* has no
+restitutive attachment (57). -/
+theorem not_isSubterm_state : ¬ state.IsSubterm causativeEventStructure :=
+  fun h ↦ absurd (h.kinds_subset (Finset.mem_singleton_self _)) (by decide)
+
+/-- Nor does (50) entail a change: in some interpretation a cause brings about the activity
+with nothing giving rise to a state. -/
+theorem not_forall_exists_become :
+    ¬ ∀ (M : Interpretation Unit Unit Unit) P Q y x v,
+      causativeEventStructure.denote M P Q y x v → ∃ s e, M.become s e :=
+  fun h ↦ absurd (hasResultState_iff.2 h) (by decide)
+
+end EventStructure
 
 /-! ### The resultative restriction -/
 
