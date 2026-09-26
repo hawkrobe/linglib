@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Probability.Lift
+public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Core.Order.Probability.Completeness
 public import Linglib.Logic.ComparativeProbability.Defs
 
@@ -31,12 +32,14 @@ from intuitive entailments.
 ## Implementation notes
 
 * The axioms of comparative probability, the measure classes and the order theory of both
-  liftings are substrate (`Core/Order/Probability`); Figure 1's patterns are the paper's own
-  apparatus and live here. Each pattern is derived once from the weakest axioms, and a model
-  discharges it by instance resolution: the measures carry every axiom, and a world-ordering
-  model carries a preorder on worlds, so both lifts are monotone and transitive and the
-  m-lifting of a finite preorder reverses complements. V6, V12 for the l-lifting and V13 for
-  the m-lifting use the lifts' own structure. V8–V10 are omitted, as in Figure 1.
+  liftings are substrate (`Core/Order/Probability`), and Figure 1's patterns V1–V12 and I1–I3
+  are [yalcin-2010]'s (`Logic/ComparativeProbability/Patterns`); the figure's own addition V13
+  lives here. Each pattern is derived once from the weakest axioms, and a model discharges it
+  by instance resolution: the measures carry every axiom, and a world-ordering model carries
+  a preorder on worlds, so both lifts are monotone and transitive and the m-lifting of a
+  finite preorder reverses complements. V6, V12 for the l-lifting and V13 for the m-lifting
+  use the lifts' own structure. V8–V10 are omitted, as in Figure 1, and V6 and V7 use the
+  paper's order-internal `□a := ⊥ ≽ aᶜ` and `◇a := ¬ ⊥ ≽ a`.
 * The refutations are countermodels: the uniform measure on three worlds for the measure
   classes, and the indiscriminate world order (every world at least as good as every other) on
   two or three worlds for the liftings.
@@ -81,117 +84,18 @@ private instance {α : Type*} : IsPreorder α fun _ _ ↦ True where
   refl _ := trivial
   trans _ _ _ _ _ := trivial
 
-/-! ### Figure 1: the patterns
+/-! ### Figure 1's addition: V13
 
-The intuitively valid (V1–V13) and invalid (I1–I3) patterns of [yalcin-2010] and Figure 1,
-stated for a likelihood relation `r` on a Boolean algebra. -/
+V1–V12 and I1–I3 are [yalcin-2010]'s, stated in `Logic/ComparativeProbability/Patterns`;
+the figure adds V13. -/
 
-section Patterns
-
-variable {α : Type*} [BooleanAlgebra α] (r : α → α → Prop)
-
-/-- V1: `△a → ¬△aᶜ`. -/
-def patternV1 : Prop := ∀ a : α, Probably r a → ¬ Probably r aᶜ
-/-- V2: `△(a ⊓ b) → △a ∧ △b`. -/
-def patternV2 : Prop := ∀ a b : α, Probably r (a ⊓ b) → Probably r a ∧ Probably r b
-/-- V3: `△a → △(a ⊔ b)`. -/
-def patternV3 : Prop := ∀ a b : α, Probably r a → Probably r (a ⊔ b)
-/-- V4: `a ≽ ⊥`. -/
-def patternV4 : Prop := ∀ a : α, r a ⊥
-/-- V5: `⊤ ≽ a`. -/
-def patternV5 : Prop := ∀ a : α, r ⊤ a
-/-- V6: `□a → △a`, where `□a` is `⊥ ≽ aᶜ`. -/
-def patternV6 : Prop := ∀ a : α, r ⊥ aᶜ → Probably r a
-/-- V7: `△a → ◇a`. -/
-def patternV7 : Prop := ∀ a : α, Probably r a → Possibly r a
-/-- V11: `b ≽ a → △a → △b`. -/
-def patternV11 : Prop := ∀ a b : α, r b a → Probably r a → Probably r b
-/-- V12: `b ≽ a → a ≽ aᶜ → b ≽ bᶜ`. -/
-def patternV12 : Prop := ∀ a b : α, r b a → r a aᶜ → r b bᶜ
-/-- V13: `(a \ b) ≻ ⊥ → (a ⊔ b) ≻ b`. -/
-def patternV13 : Prop := ∀ a b : α, Strict r (a \ b) ⊥ → Strict r (a ⊔ b) b
-/-- I1: `a ≽ b → a ≽ c → a ≽ (b ⊔ c)`. -/
-def patternI1 : Prop := ∀ a b c : α, r a b → r a c → r a (b ⊔ c)
-/-- I2: `a ≽ aᶜ → a ≽ b`. -/
-def patternI2 : Prop := ∀ a b : α, r a aᶜ → r a b
-/-- I3: `△a → a ≽ b`. -/
-def patternI3 : Prop := ∀ a b : α, Probably r a → r a b
-
-end Patterns
-
-/-! ### The patterns from the axioms
-
-The paper's logics are axiom schemas over the comparative (Figures 4–6): monotonicity
-`Mon`, transitivity `Tran`, qualitative additivity `A` and non-triviality `BT`, the mixin
-classes of `Core/Order/Probability/Defs`. Each pattern is derived once from the weakest
-axioms; a model discharges it by instance resolution. -/
-
-section Derivations
-
-variable {α : Type*} [BooleanAlgebra α] variable {r : α → α → Prop}
-
-/-- V1 holds for **any** relation: it is pure logic about `Strict` and double complement. -/
-theorem patternV1_holds : patternV1 r := by
-  rintro a ⟨_, hanot⟩ ⟨hac, _⟩
-  rw [compl_compl] at hac; exact hanot hac
-
-/-- V2 from monotonicity and transitivity. -/
-theorem patternV2_of [IsLikelihoodMono r] [IsTrans α r] : patternV2 r := by
-  rintro a b ⟨hab, habnot⟩
-  have hsa : r a (a ⊓ b) := mono _ _ inf_le_left
-  have hsb : r b (a ⊓ b) := mono _ _ inf_le_right
-  have hca : r (a ⊓ b)ᶜ aᶜ := mono _ _ (compl_le_compl inf_le_left)
-  have hcb : r (a ⊓ b)ᶜ bᶜ := mono _ _ (compl_le_compl inf_le_right)
-  refine ⟨⟨Trans.trans (Trans.trans hsa hab) hca, ?_⟩,
-          ⟨Trans.trans (Trans.trans hsb hab) hcb, ?_⟩⟩
-  · exact fun hc ↦ habnot (Trans.trans (Trans.trans hca hc) hsa)
-  · exact fun hc ↦ habnot (Trans.trans (Trans.trans hcb hc) hsb)
-
-/-- V3 from monotonicity and transitivity. -/
-theorem patternV3_of [IsLikelihoodMono r] [IsTrans α r] : patternV3 r := by
-  rintro a b ⟨hA, hAnot⟩
-  have h1 : r (a ⊔ b) a := mono _ _ le_sup_left
-  have h2 : r aᶜ (aᶜ ⊓ bᶜ) := mono _ _ inf_le_left
-  refine ⟨?_, ?_⟩
-  · rw [compl_sup]; exact Trans.trans (Trans.trans h1 hA) h2
-  · rw [compl_sup]; exact fun hc ↦ hAnot (Trans.trans (Trans.trans h2 hc) h1)
-
-/-- V4 from monotonicity. -/
-theorem patternV4_of [IsLikelihoodMono r] : patternV4 r := fun _ ↦ mono _ _ bot_le
-
-/-- V5 from monotonicity. -/
-theorem patternV5_of [IsLikelihoodMono r] : patternV5 r := fun _ ↦ mono _ _ le_top
-
-/-- V6 from monotonicity, transitivity, additivity, and non-triviality. -/
-theorem patternV6_of [IsLikelihoodMono r] [IsTrans α r] [hq : IsQualitativeAdditive r]
-    [IsNontrivial r] : patternV6 r := by
-  intro a h0ac
-  have hA0 : r a ⊥ := mono _ _ bot_le
-  refine ⟨Trans.trans hA0 h0ac, ?_⟩
-  intro hAcA
-  have h0A : r ⊥ a := Trans.trans h0ac hAcA
-  have hAtop : r a ⊤ := by rw [hq.qadd a ⊤]; simpa using h0ac
-  exact IsNontrivial.bot_not_ge_top (Trans.trans h0A hAtop)
-
-/-- V7 from monotonicity and transitivity. -/
-theorem patternV7_of [IsLikelihoodMono r] [IsTrans α r] : patternV7 r := by
-  rintro a ⟨_, hAnot⟩ hempty
-  exact hAnot (IsTrans.trans aᶜ ⊥ a (mono ⊥ aᶜ bot_le) hempty)
-
-/-- V11 from transitivity and complement reversal. -/
-theorem patternV11_of [IsTrans α r] [IsComplementReversing r] : patternV11 r := by
-  rintro a b hba ⟨ha, hanot⟩
-  have h2 : r aᶜ bᶜ := complRev _ _ hba
-  refine ⟨Trans.trans (Trans.trans hba ha) h2, ?_⟩
-  exact fun hc ↦ hanot (Trans.trans (Trans.trans h2 hc) hba)
-
-/-- V12 from transitivity and complement reversal. -/
-theorem patternV12_of [IsTrans α r] [IsComplementReversing r] : patternV12 r := by
-  intro a b hba ha
-  exact Trans.trans (Trans.trans hba ha) (complRev _ _ hba)
+/-- V13: `(a \ b) ≻ ⊥ → (a ⊔ b) ≻ b`, the pattern Lassiter suggested to the authors. -/
+def patternV13 {α : Type*} [BooleanAlgebra α] (r : α → α → Prop) : Prop :=
+  ∀ a b : α, Strict r (a \ b) ⊥ → Strict r (a ⊔ b) b
 
 /-- V13 from monotonicity and additivity. -/
-theorem patternV13_of [IsLikelihoodMono r] [IsQualitativeAdditive r] : patternV13 r := by
+theorem patternV13_of {α : Type*} [BooleanAlgebra α] {r : α → α → Prop} [IsLikelihoodMono r]
+    [IsQualitativeAdditive r] : patternV13 r := by
   rintro a b ⟨_, hABnot⟩
   refine ⟨mono _ _ le_sup_right, ?_⟩
   intro hc
@@ -200,8 +104,6 @@ theorem patternV13_of [IsLikelihoodMono r] [IsQualitativeAdditive r] : patternV1
   have hab : (a ⊔ b) \ b = a \ b := sup_sdiff_right_self
   have hx := (qadd b (a ⊔ b)).mp hc
   rwa [hb, hab] at hx
-
-end Derivations
 
 /-! ### Fact 1: Kratzer's world-ordering semantics -/
 
@@ -212,7 +114,8 @@ variable (ge_w : W → W → Prop) [IsPreorder W ge_w]
 omit [IsPreorder W ge_w] in
 /-- V6 for the l-lifting: only `W` itself is dominated by the empty set, and on a nonempty
 domain `W` is strictly more likely than its complement. -/
-theorem lLift_V6 [Nonempty W] : patternV6 (DominationLift ge_w) := by
+theorem lLift_V6 [Nonempty W] :
+    patternV6 (DominationLift ge_w) (fun A ↦ DominationLift ge_w ⊥ Aᶜ) := by
   intro A hA
   obtain rfl : A = Set.univ := by simpa using dominationLift_empty_left_iff.1 hA
   rw [Probably, Strict, Set.compl_univ]
@@ -234,8 +137,10 @@ V12. -/
 theorem lLift_validities [Nonempty W] :
     patternV1 (DominationLift ge_w) ∧ patternV2 (DominationLift ge_w) ∧
       patternV3 (DominationLift ge_w) ∧ patternV4 (DominationLift ge_w) ∧
-      patternV5 (DominationLift ge_w) ∧ patternV6 (DominationLift ge_w) ∧
-      patternV7 (DominationLift ge_w) ∧ patternV12 (DominationLift ge_w) :=
+      patternV5 (DominationLift ge_w) ∧
+      patternV6 (DominationLift ge_w) (fun A ↦ DominationLift ge_w ⊥ Aᶜ) ∧
+      patternV7 (DominationLift ge_w) (Possibly (DominationLift ge_w)) ∧
+      patternV12 (DominationLift ge_w) :=
   ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, lLift_V6 ge_w,
     patternV7_of, lLift_V12 ge_w⟩
 
@@ -297,8 +202,10 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 /-- **Fact 2**, validities: every finitely additive measure validates V1–V13. -/
 theorem measure_validities (m : FinAddMeasure K W) :
     patternV1 m.inducedGe ∧ patternV2 m.inducedGe ∧ patternV3 m.inducedGe ∧
-      patternV4 m.inducedGe ∧ patternV5 m.inducedGe ∧ patternV6 m.inducedGe ∧
-      patternV7 m.inducedGe ∧ patternV11 m.inducedGe ∧ patternV12 m.inducedGe ∧
+      patternV4 m.inducedGe ∧ patternV5 m.inducedGe ∧
+      patternV6 m.inducedGe (fun A ↦ m.inducedGe ⊥ Aᶜ) ∧
+      patternV7 m.inducedGe (Possibly m.inducedGe) ∧ patternV11 m.inducedGe ∧
+      patternV12 m.inducedGe ∧
       patternV13 m.inducedGe :=
   ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, patternV6_of,
     patternV7_of, patternV11_of, patternV12_of, patternV13_of⟩
@@ -347,8 +254,10 @@ theorem measures_refute_I_patterns :
 /-- **Fact 3**, validities: qualitative additivity already yields V1–V13. -/
 theorem qualAddMeasure_validities (m : QualAddMeasure K W) :
     patternV1 m.inducedGe ∧ patternV2 m.inducedGe ∧ patternV3 m.inducedGe ∧
-      patternV4 m.inducedGe ∧ patternV5 m.inducedGe ∧ patternV6 m.inducedGe ∧
-      patternV7 m.inducedGe ∧ patternV11 m.inducedGe ∧ patternV12 m.inducedGe ∧
+      patternV4 m.inducedGe ∧ patternV5 m.inducedGe ∧
+      patternV6 m.inducedGe (fun A ↦ m.inducedGe ⊥ Aᶜ) ∧
+      patternV7 m.inducedGe (Possibly m.inducedGe) ∧ patternV11 m.inducedGe ∧
+      patternV12 m.inducedGe ∧
       patternV13 m.inducedGe :=
   ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, patternV6_of,
     patternV7_of, patternV11_of, patternV12_of, patternV13_of⟩
@@ -380,7 +289,7 @@ variable (ge_w : W → W → Prop) [IsPreorder W ge_w]
 
 omit [IsPreorder W ge_w] in
 /-- V6 for the m-lifting, as for the l-lifting. -/
-theorem mLift_V6 [Nonempty W] : patternV6 (MatchingLift ge_w) := by
+theorem mLift_V6 [Nonempty W] : patternV6 (MatchingLift ge_w) (fun A ↦ MatchingLift ge_w ⊥ Aᶜ) := by
   intro A hA
   obtain rfl : A = Set.univ := by simpa using matchingLift_empty_left_iff.1 hA
   rw [Probably, Strict, Set.compl_univ]
@@ -404,8 +313,10 @@ V11–V13. -/
 theorem mLift_validities [Finite W] [Nonempty W] :
     patternV1 (MatchingLift ge_w) ∧ patternV2 (MatchingLift ge_w) ∧
       patternV3 (MatchingLift ge_w) ∧ patternV4 (MatchingLift ge_w) ∧
-      patternV5 (MatchingLift ge_w) ∧ patternV6 (MatchingLift ge_w) ∧
-      patternV7 (MatchingLift ge_w) ∧ patternV11 (MatchingLift ge_w) ∧
+      patternV5 (MatchingLift ge_w) ∧
+      patternV6 (MatchingLift ge_w) (fun A ↦ MatchingLift ge_w ⊥ Aᶜ) ∧
+      patternV7 (MatchingLift ge_w) (Possibly (MatchingLift ge_w)) ∧
+      patternV11 (MatchingLift ge_w) ∧
       patternV12 (MatchingLift ge_w) ∧ patternV13 (MatchingLift ge_w) :=
   ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, mLift_V6 ge_w,
     patternV7_of, patternV11_of, patternV12_of, mLift_V13 ge_w⟩
