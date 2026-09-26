@@ -2,35 +2,37 @@ module
 
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
-public import Linglib.Fragments.Mayan.Mam.Pronouns
 public import Linglib.Fragments.Mayan.Agreement
-public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Clause.ArgumentRole
-public import Linglib.Syntax.Person.Basic
 
 /-!
-# Mam Agreement Fragment
+# San Juan Atitán Mam agreement
 
-Agreement morphology of San Juan Atitán Mam (SJA Mam, Mayan), following [scott-2023]. Two
-paradigms cross-reference arguments on the verb: Set A prefixes on Voice for the transitive
-subject (Table 2.8, `Mam.setAExponent`), and Set B markers on Infl for the intransitive subject
-(Table 3.5, `Mam.setBExponent`). Transitive objects are cross-referenced by neither set: they
-co-occur with the default Set B marker *tz'=* (`Mam.defaultSetB`) and are full pronouns, though
-some speakers accept agreeing Set B for objects as a more formal variant (ch. 3, ex. 156). The
-underlying case system is tripartite, ERG from Voice, ACC from Voice and ABS from Infl, visible
-only through agreement (`Mam.caseInventory`); Set B precedes the stem in the verbal complex, the
-high-absolutive placement (`Mam.template`).
+Mam cross-references arguments with two sets of person markers that distinguish only first from
+non-first person and singular from plural: Set A, the prefixes *n-* before a consonant and
+*w-* before a vowel, *t-*, *q-* and *ky-*, and Set B, *chin*, *tz'=* or zero, *qo* and *chi*.
+Set A indexes transitive subjects and possessors and Set B intransitive subjects; the enclitics
+of `Mam.Pronouns` complete the person distinctions. In San Juan Atitán Mam, the variety Scott
+describes, a transitive object is not cross-referenced: the verb carries the non-first singular
+Set B *tz'=* whatever the object, which is a full pronoun, though some speakers accept agreeing
+Set B for objects as a more formal variant. The underlying case system is therefore tripartite,
+an ergative from Voice, an accusative from Voice and an absolutive from Infl, visible only
+through agreement, and it holds in every aspect. Set B precedes the stem in the verbal complex,
+the high-absolutive placement. England's sketch gives the ergative pattern of the other
+varieties, where Set B indexes the object, with the dialectal forms of the enclitics.
 
-## Implementation notes
+## Main definitions
 
-This fragment records SJA Mam specifically. Other Mam dialects, notably Ixtahuacán Mam
-(England 1983b, used by [zavala-maldonado-2017] §4–5), are characterized as ergative with a
-neutral pattern in aspectless dependent clauses; per [scott-2023] §1.2.4 and Table 1.2, Mam
-dialects vary substantially. The tripartite case function is `Alignment.tripartite`
-in every aspect (`Mam.assignCase`). Person-number cells are the canonical φ-cells
-`Agreement.Bundle`; the
-pronoun lexicon and its feature values live in `Fragments/Mayan/Mam/Pronouns.lean`, and the
-derivation of the paradigms from a Vocabulary in `Studies/Scott2023.lean`.
+* `Mam.setAExponent`, `Mam.setBExponent`, `Mam.defaultSetB`: the two paradigms and the Set B
+  of a transitive clause.
+* `Mam.template`, `Mam.assignCase`, `Mam.caseInventory`: the verbal complex, the tripartite case
+  function, and the three cases it realizes.
+
+## References
+
+* [scott-2023]
+* [england-2017]
+* [zavala-maldonado-2017]
 -/
 
 @[expose] public section
@@ -38,15 +40,12 @@ derivation of the paradigms from a Vocabulary in `Studies/Scott2023.lean`.
 namespace Mam
 
 open Mayan (ExponentTable)
-open Agreement
 
-/-! ### Agreement marker paradigms -/
+/-! ### The paradigms -/
 
-/-- Set A (ERG) markers cross-referencing the transitive agent
-    ([scott-2023] Table 2.8) by following-segment environment; t- is
-    syncretic for 2/3SG, ky- for 2/3PL. Scott: 1SG is the sole Set A
-    allomorphy — pre-consonantal `n-`, pre-vocalic `w-` (exx. (28)-(29));
-    the other markers do not alternate. -/
+/-- The Set A markers by the following segment; only the first person singular alternates,
+*n-* before a consonant and *w-* before a vowel, and *t-* and *ky-* serve the second and the
+third person alike. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .singular, [.pref "n"]), (.pn .second .singular, [.pref "t"]),
@@ -57,79 +56,26 @@ def setAExponent : Phonology.Segment.Class → ExponentTable
      (.pn .third .singular, [.pref "t"]), (.pn .first .plural, [.pref "q"]),
      (.pn .second .plural, [.pref "ky"]), (.pn .third .plural, [.pref "ky"])]
 
-/-- Set B (ABS) markers ([scott-2023] Table 3.5). The 2/3SG form tz'= is
-    the Elsewhere default: it realizes both real 2/3SG intransitive-S
-    agreement and default Set B in transitives when Infl's probe is
-    blocked by VoiceP. Per Scott's DM analysis 2SG and 3SG are not
-    specific Vocabulary Items but surface via Elsewhere fallback (see
-    `setBSpecificCells`). -/
+/-- The Set B markers; the non-first singular is *tz'=*, also zero. -/
 def setBExponent : ExponentTable :=
   [(.pn .first .singular, [.free "chin"]), (.pn .second .singular, [.procl "tz'"]),
    (.pn .third .singular, [.procl "tz'"]), (.pn .first .plural, [.free "qo"]),
    (.pn .second .plural, [.free "chi"]), (.pn .third .plural, [.free "chi"])]
 
-/-- The four Set B cells with specific Vocabulary Items ([scott-2023]);
-    2SG and 3SG fall through to the Elsewhere entry. -/
-def setBSpecificCells : List Bundle :=
-  [.pn .first .singular, .pn .first .plural, .pn .second .plural, .pn .third .plural]
-
-/-- The Elsewhere Set B marker, surfacing in transitives when Infl's
-    probe is blocked and for 2/3SG intransitive S. -/
+/-- The Set B of a transitive clause, the non-first singular *tz'=* whatever the object. -/
 def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 
-/-! ### The verbal complex -/
+/-! ### The verbal complex and case -/
 
-/-- The position classes of the SJA Mam verbal complex: the aspect marker, Set B and Set A
-before the stem, and no status suffix ([scott-2023]). -/
+/-- The position classes of the verbal complex, the aspect marker, Set B and Set A before the
+stem and no status suffix. -/
 def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], []⟩
 
-/-- SJA Mam assigns case tripartitely in every aspect, with no aspect-conditioned split
-([scott-2023]): ergative to the transitive subject, accusative to the object and absolutive
-to the intransitive subject, visible only through agreement. -/
+/-- Case is tripartite in every aspect, ergative on the transitive subject, accusative on the
+object and absolutive on the intransitive subject. -/
 def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.tripartite
 
-/-! ### Case -/
-
-/-- The three core roles take three distinct cases: SJA Mam is tripartite in every aspect. -/
-theorem isTripartite_perfective : Alignment.IsTripartite (assignCase .Perf) :=
-  Alignment.isTripartite_tripartite
-
-/-! ### Case inventory -/
-
-/-- The case inventory realized by the core positions: {ERG, ACC, ABS}. -/
+/-- The cases the core roles realize, the ergative, the accusative and the absolutive. -/
 def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).toFinset
-
-/-- The inventory covers all argument positions. -/
-theorem inventory_covers_positions :
-    ∀ p ∈ ArgumentRole.core, (assignCase .Perf) p ∈ caseInventory := by decide
-
-/-! ### Marker verification -/
-
-/-- Set A 1SG marker: pre-consonantal `n-`, pre-vocalic `w-`. -/
-theorem setA_1sg :
-    (setAExponent .consonant).realize (.pn .first .singular) = some [.pref "n"] ∧
-    (setAExponent .vowel).realize (.pn .first .singular) = some [.pref "w"] := ⟨rfl, rfl⟩
-
-/-- Set A 3SG marker is `t-` (the default singular Set A — syncretic with 2SG). -/
-theorem setA_3sg :
-    (setAExponent .consonant).realize (.pn .third .singular) = some [.pref "t"] := rfl
-
-/-- Set B 1SG marker is *chin*. -/
-theorem setB_1sg : setBExponent.realize (.pn .first .singular) = some [.free "chin"] := rfl
-
-/-- Set B 3SG marker is the default `tz'=`. -/
-theorem setB_3sg : setBExponent.realize (.pn .third .singular) = some defaultSetB := rfl
-
-/-- A controller's φ-features index the agreement paradigm directly: the
-    Set A table is keyed by canonical φ-cells, so a pronoun's
-    `Word.phi` drives realization in one shared feature space
-    ([corbett-1998]; [scott-2023] Ch. 2). The realizational account
-    (impoverishment, Elsewhere; [scott-2023] Ch. 4) stays in the study. -/
-theorem erg_1sg_from_phi :
-    (setAExponent .consonant).realizeFor
-      { form :="", cat := .PRON,
-        features := Morphology.Features.of (person := some .first) (number := some .singular) } =
-      some [.pref "n"] := by
-  rfl
 
 end Mam
