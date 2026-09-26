@@ -3,8 +3,8 @@ module
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 public import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Fragments.English.Verbs
-public import Linglib.Fragments.English.Adposition
+public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Fragments.English.Adpositions
 public import Linglib.Data.Examples.Levin1993
 
 /-!
@@ -179,7 +179,7 @@ where
 refining both frames of each schema the page attests for the whole class, and none for a
 schema it stars. -/
 theorem frames_realize_class :
-    ∀ v ∈ English.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
+    ∀ v ∈ English.Verbs.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
       ∀ p ∈ c.properties, ∀ a ∈ p.property.alternation?, ∀ σ ∈ schema? a,
         (p.attestation = .attested → p.scope = .all → v.toVerb.Alternates σ) ∧
           (p.attestation = .starred → ¬ v.toVerb.Alternates σ) := by

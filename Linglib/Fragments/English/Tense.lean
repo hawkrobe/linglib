@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Basic
 public import Linglib.Syntax.Category.Verb.Tense
 
 /-!
@@ -19,10 +19,10 @@ is not among the tense forms.
 
 ## Main declarations
 
-* `English.TenseVerb`: a lexical verb or one of the tense auxiliaries *have* and *be*.
-* `English.periphrasis`, `English.Verb.tenseForm`: the means by which English builds its tense
+* `English.Tense.TenseVerb`: a lexical verb or one of the tense auxiliaries *have* and *be*.
+* `English.Tense.periphrasis`, `English.Verbs.Verb.tenseForm`: the means by which English builds its tense
   forms, and the words of a tense form of a verb, finite verb first.
-* `English.tenseForms`: the eight tense forms; `Verb.tenseForm_isSome_iff` shows that they are
+* `English.Tense.tenseForms`: the eight tense forms; `Verb.tenseForm_isSome_iff` shows that they are
   exactly the forms that English realizes.
 
 ## Implementation notes
@@ -38,11 +38,13 @@ lexical verb or *be*, and *be* governing a lexical verb only.
 
 @[expose] public section
 
-namespace English
+namespace English.Tense
+
+open English.Verbs
 
 /-- A verb in a tense form is a lexical verb or one of the tense auxiliaries *have* and *be*. -/
 inductive TenseVerb where
-  | lexical (v : Verb)
+  | lexical (v : Verbs.Verb)
   | have
   | be
 
@@ -69,11 +71,6 @@ def periphrasis : Tense.Periphrasis TenseVerb where
     | .lexical _, .presentParticiple => some .be
     | _, _ => none
 
-/-- `v.tenseForm f` gives the words of the tense form `f` of `v` in the third person singular, the
-finite verb first and then the nonfinite verbs, the lexical verb last. -/
-def Verb.tenseForm (v : Verb) (f : Tense.Form) : Option (List String) :=
-  (periphrasis.realize (.lexical v) f).map fun x ↦ x.1 :: x.2.reverse
-
 /-- English has the present and the preterite of the simple, progressive, perfect and perfect
 progressive constructions. -/
 def tenseForms : List Tense.Form :=
@@ -83,7 +80,7 @@ def tenseForms : List Tense.Form :=
 /-- The chains English builds over a lexical verb are the empty one, the perfect, the
 progressive, and the perfect of the progressive, and each leaves the lexical verb, *have*, *be*
 and *have* to be inflected. -/
-theorem chain_eq_some {v : Verb} :
+theorem chain_eq_some {v : Verbs.Verb} :
     ∀ {ns : List Tense.Form.Nonfinite} {ws : List String} {u : TenseVerb},
       periphrasis.chain (.lexical v) ns = some (ws, u) →
         ns = [] ∧ u = .lexical v ∨ ns = [.pastParticiple] ∧ u = .have ∨
@@ -101,8 +98,19 @@ theorem chain_eq_some {v : Verb} :
       rcases chain_eq_some h' with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
         cases n <;> simp_all [periphrasis]
 
+end English.Tense
+
+namespace English.Verbs
+
+open English.Tense
+
+/-- `v.tenseForm f` gives the words of the tense form `f` of `v` in the third person singular, the
+finite verb first and then the nonfinite verbs, the lexical verb last. -/
+def Verb.tenseForm (v : Verbs.Verb) (f : Tense.Form) : Option (List String) :=
+  (periphrasis.realize (.lexical v) f).map fun x ↦ x.1 :: x.2.reverse
+
 /-- The tense forms are exactly the forms that English realizes. -/
-theorem Verb.tenseForm_isSome_iff (v : Verb) (f : Tense.Form) :
+theorem Verb.tenseForm_isSome_iff (v : Verbs.Verb) (f : Tense.Form) :
     (v.tenseForm f).isSome ↔ f ∈ tenseForms := by
   constructor
   · obtain ⟨t, ns⟩ := f
@@ -128,4 +136,4 @@ example :
       build.tenseForm .future = none := by
   decide
 
-end English
+end English.Verbs

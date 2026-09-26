@@ -4,7 +4,7 @@ public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Studies.Krifka1998
 
 /-!
@@ -438,7 +438,8 @@ end Verb
 
 namespace Champollion2017
 
-open English hiding Verb
+open English
+open English.Verbs hiding Verb
 open _root_.Mereology
 open Aspect
 

@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Presupposition.Trivalent
 public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Quantification.NP
-public import Linglib.Fragments.English.Toy
+public import Linglib.Semantics.Composition.Toy
 public import Linglib.Data.Examples.Belnap1970
 public import Mathlib.Data.Fintype.Basic
 

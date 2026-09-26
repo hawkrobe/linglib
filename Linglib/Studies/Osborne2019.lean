@@ -2,9 +2,9 @@ module
 
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Auxiliaries
-public import Linglib.Fragments.English.Adposition
+public import Linglib.Fragments.English.Adpositions
 public import Linglib.Syntax.DependencyGrammar.Valency
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Syntax.DependencyGrammar.Catena
@@ -62,23 +62,23 @@ abbrev the_ := English.Determiners.the.toWord
 abbrev was_ := English.Auxiliaries.was.toWord
 abbrev by_ := English.Adpositions.by_.toWord
 abbrev to_ := English.Adpositions.to_.toWord
-abbrev sleeps := English.sleep.toWord .thirdSg
-abbrev devours := English.devour.toWord .thirdSg
-abbrev gives := English.give.toWord .thirdSg
-private abbrev kicked := English.kick.toWord .past
-abbrev kickedPass := English.kick.passiveParticiple
-abbrev givenPass := English.give.passiveParticiple
+abbrev sleeps := English.Verbs.sleep.toWord .thirdSg
+abbrev devours := English.Verbs.devour.toWord .thirdSg
+abbrev gives := English.Verbs.give.toWord .thirdSg
+private abbrev kicked := English.Verbs.kick.toWord .past
+abbrev kickedPass := English.Verbs.kick.passiveParticiple
+abbrev givenPass := English.Verbs.give.passiveParticiple
 abbrev a_ := English.Determiners.a.toWord
-abbrev manages := English.manage.toWord .thirdSg
-abbrev persuaded := English.persuade.toWord .past
-abbrev seems := English.seem.toWord .thirdSg
-abbrev sleep_ := English.sleep.toWord .base
-abbrev run_ := English.run.toWord .base
+abbrev manages := English.Verbs.manage.toWord .thirdSg
+abbrev persuaded := English.Verbs.persuade.toWord .past
+abbrev seems := English.Verbs.seem.toWord .thirdSg
+abbrev sleep_ := English.Verbs.sleep.toWord .base
+abbrev run_ := English.Verbs.run.toWord .base
 
 /-! ### Valency frames from the Fragment (sixth chapter) -/
 
 /-- The valency of the fragment entry's citation frame. -/
-private def citationValency (v : English.Verb) : Valency :=
+private def citationValency (v : English.Verbs.Verb) : Valency :=
   (v.citationFrame?.map Valency.ofFrame).getD []
 
 def intransTree : Graph 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
@@ -89,11 +89,11 @@ def transTree : Graph 3 :=
 def ditransTree : Graph 4 :=
   .ofArcs [john, gives, mary, book] 1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
 
-example : intransTree.SatisfiesFrames (.ofList [(1, citationValency English.sleep)]) := by
+example : intransTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
   decide
-example : transTree.SatisfiesFrames (.ofList [(1, citationValency English.devour)]) := by
+example : transTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.devour)]) := by
   decide
-example : ditransTree.SatisfiesFrames (.ofList [(1, citationValency English.give)]) := by
+example : ditransTree.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.give)]) := by
   decide
 
 /-- *John sleeps book: an intransitive with a spurious object. -/
@@ -103,9 +103,9 @@ def intransWithObj : Graph 3 :=
 /-- *John devours: a transitive missing its object. -/
 def transNoObj : Graph 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
 
-example : ¬ intransWithObj.SatisfiesFrames (.ofList [(1, citationValency English.sleep)]) := by
+example : ¬ intransWithObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.sleep)]) := by
   decide
-example : ¬ transNoObj.SatisfiesFrames (.ofList [(1, citationValency English.devour)]) := by
+example : ¬ transNoObj.SatisfiesFrames (.ofList [(1, citationValency English.Verbs.devour)]) := by
   decide
 
 /-! ### The passive frame from the active frame (§6.6)
@@ -124,7 +124,7 @@ def voiceValency (v : Voice) : Valency :=
     (v.source.coreSlots.filter (v.fate · = .denucleativized)).map fun _ ↦ ⟨.obl, .right, false⟩
 
 /-- (8a): the English passive has the subject and an optional *by*-phrase. -/
-theorem voiceValency_passive : voiceValency English.passive = Valency.passiveTransitive := by
+theorem voiceValency_passive : voiceValency English.Verbs.passive = Valency.passiveTransitive := by
   decide
 
 /-- (8b): the passive of the double-object frame keeps the second object. -/
@@ -133,12 +133,12 @@ theorem voiceValency_passive_np_np : voiceValency (Voice.passive .np_np) =
   decide
 
 /-- *Open* alternates by the anticausative, whose valency has no *by*-phrase. -/
-theorem voiceValency_anticausative : English.open_.Alternates Voice.anticausative ∧
+theorem voiceValency_anticausative : English.Verbs.open_.Alternates Voice.anticausative ∧
     voiceValency Voice.anticausative = Valency.intransitive := by
   decide
 
 /-- The valency of the fragment entry's passive participle. -/
-private def passiveValency (v : English.Verb) : Valency :=
+private def passiveValency (v : English.Verbs.Verb) : Valency :=
   (v.citationFrame?.map fun fr ↦ voiceValency (Voice.passive fr)).getD []
 
 /-- *The ball was kicked (by John)* satisfies the participle's derived valency. -/
@@ -149,8 +149,8 @@ def longPassiveTree : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obl), (5, 4, .case_)]
 
-example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.kick)]) := by decide
-example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.kick)]) := by
+example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by decide
+example : longPassiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide
 
 /-- *The ball was kicked the pizza: a passive with a leftover object. -/
@@ -158,7 +158,7 @@ def passiveWithObj : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, the_, pizza] 3
     [(1, 0, .det), (3, 1, .nsubj), (3, 2, .auxPass), (3, 5, .obj), (5, 4, .det)]
 
-example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English.kick)]) := by
+example : ¬ passiveWithObj.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide
 
 /-- *Mary was given a book*: the passive of a double-object verb keeps its second object. -/
@@ -170,9 +170,9 @@ def ditransPassiveTree : Graph 5 :=
 def ditransPassiveNoObj : Graph 3 :=
   .ofArcs [mary, was_, givenPass] 2 [(2, 0, .nsubj), (2, 1, .auxPass)]
 
-example : ditransPassiveTree.SatisfiesFrames (.ofList [(2, passiveValency English.give)]) := by
+example : ditransPassiveTree.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
   decide
-example : ¬ ditransPassiveNoObj.SatisfiesFrames (.ofList [(2, passiveValency English.give)]) := by
+example : ¬ ditransPassiveNoObj.SatisfiesFrames (.ofList [(2, passiveValency English.Verbs.give)]) := by
   decide
 
 /-! ### Catenae against constituents (fourth chapter, §12.7)

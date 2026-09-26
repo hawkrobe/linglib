@@ -10,7 +10,7 @@ public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Composition.Binding
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Fragments.English.Toy
+public import Linglib.Semantics.Composition.Toy
 public import Linglib.Semantics.Composition.Lexicon
 
 /-!

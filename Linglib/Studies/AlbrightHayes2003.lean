@@ -55,7 +55,7 @@ discount, and the analogical model itself are not modelled.
 
 namespace AlbrightHayes2003
 
-open Data.Examples Phonology Subregular.LocalRewrite English
+open Data.Examples Phonology Subregular.LocalRewrite English English.Phonology
 
 deriving instance DecidableEq for ContextElem
 
@@ -245,14 +245,14 @@ theorem filter_matches_single (k : Segment) (I : Finset Segment) :
 keeps what [t] and [d] share, and that featural term characterizes the class [t, d]
 uniquely. -/
 theorem learned_vote_need :
-    learned [vote, need] = [.seg (t ⊓ d)] ∧ (t ⊓ d).naturalClass English.inventory = {t, d} := by
+    learned [vote, need] = [.seg (t ⊓ d)] ∧ (t ⊓ d).naturalClass English.Phonology.inventory = {t, d} := by
   decide
 
 /-- As footnote 4 observes, whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned
 from *rub*, *sag* and *plan* reaches *need*, and only the phonology keeps *needd* out. -/
 theorem learned_rub_sag_plan :
     learned [rub, sag, plan] = [.seg (b ⊓ g ⊓ n)] ∧
-      d ∈ (b ⊓ g ⊓ n).naturalClass English.inventory := by
+      d ∈ (b ⊓ g ⊓ n).naturalClass English.Phonology.inventory := by
   decide
 
 /-- The voiced segments, as a description. -/
@@ -266,10 +266,10 @@ From *rub*, *sag*, *plan*, *love* and *flow*, whose final segments are all non-l
 reaches every voiced segment but /l/, and a stem in /l/ completes it. -/
 theorem learned_voiced :
     learned [rub, sag, plan, love, flow] = [.seg (b ⊓ g ⊓ n ⊓ v ⊓ o)] ∧
-      (b ⊓ g ⊓ n ⊓ v ⊓ o).naturalClass English.inventory =
-        voiced.naturalClass English.inventory \ {l} ∧
-      (b ⊓ g ⊓ n ⊓ v ⊓ o ⊓ l).naturalClass English.inventory =
-        voiced.naturalClass English.inventory := by
+      (b ⊓ g ⊓ n ⊓ v ⊓ o).naturalClass English.Phonology.inventory =
+        voiced.naturalClass English.Phonology.inventory \ {l} ∧
+      (b ⊓ g ⊓ n ⊓ v ⊓ o ⊓ l).naturalClass English.Phonology.inventory =
+        voiced.naturalClass English.Phonology.inventory := by
   decide
 
 /-- In (7b) the `-t` rule does likewise. From *jump*, *miss* and *laugh*, whose final segments
@@ -277,10 +277,10 @@ are all non-dorsal, it reaches every voiceless segment but /k/, and a stem in /k
 it. -/
 theorem learned_voiceless :
     learned [jump, miss, laugh] = [.seg (p ⊓ s ⊓ f)] ∧
-      (p ⊓ s ⊓ f).naturalClass English.inventory =
-        voiceless.naturalClass English.inventory \ {k} ∧
-      (p ⊓ s ⊓ f ⊓ k).naturalClass English.inventory =
-        voiceless.naturalClass English.inventory := by
+      (p ⊓ s ⊓ f).naturalClass English.Phonology.inventory =
+        voiceless.naturalClass English.Phonology.inventory \ {k} ∧
+      (p ⊓ s ⊓ f ⊓ k).naturalClass English.Phonology.inventory =
+        voiceless.naturalClass English.Phonology.inventory := by
   decide
 
 /-- The island (8) is `-t` after a voiceless fricative. -/
@@ -289,7 +289,7 @@ def voicelessFricative : Segment :=
 
 /-- (8) is met by the four voiceless fricatives and nothing else. -/
 theorem naturalClass_voicelessFricative :
-    voicelessFricative.naturalClass English.inventory = {f, θ, s, esh} := by
+    voicelessFricative.naturalClass English.Phonology.inventory = {f, θ, s, esh} := by
   decide
 
 /-- The rule learned from *miss*, *wish* and *laugh* lies inside the island (8), and further

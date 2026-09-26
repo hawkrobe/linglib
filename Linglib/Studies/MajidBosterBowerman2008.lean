@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 
 /-!
 # Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
@@ -48,7 +48,7 @@ fragment lacks the change-of-state *snap* (its *snap* is the manner-of-speaking 
 
 namespace MajidBosterBowerman2008
 
-open Semantics.Root Semantics.Root.Content English
+open Semantics.Root Semantics.Root.Content English English.Verbs
 
 /-! ### Clips -/
 

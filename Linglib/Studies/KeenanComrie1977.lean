@@ -87,7 +87,7 @@ theorem prc_of_hc2 {markers : List Marker} (h : SatisfiesHC2 markers) : Satisfie
 
 The seventeen languages of Table 1 whose markers the fragments record. -/
 
-abbrev english := English.relMarkers
+abbrev english := English.Relativization.relMarkers
 abbrev welsh := Welsh.relMarkers
 /-- The two Modern Standard Arabic markers Table 1 records, the definite-headed relative
 pronoun with a gap and with a resumptive; the fragment's indefinite-headed asyndetic markers

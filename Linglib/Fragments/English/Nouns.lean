@@ -30,6 +30,8 @@ Bare plurals and bare mass nouns are arguments and a bare singular count noun is
 
 namespace English.Nouns
 
+open English.Inflection
+
 open Morphology (Word Features)
 
 /-- An English noun: the root entry with the mass/count feature, its lexical gender where it

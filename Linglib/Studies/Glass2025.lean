@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Attitudes.Doxastic
 public import Linglib.Semantics.Presupposition.Context
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Data.Examples.Glass2025
 public import Linglib.Semantics.Attitudes.Verb
@@ -53,7 +53,8 @@ admitted states (`rows_admits`).
 namespace Glass2025
 
 open Doxastic Presupposition Data.Examples
-open English hiding Verb
+open English
+open English.Verbs hiding Verb
 
 variable {W : Type*} {c : Set W} {p : W → Prop}
 

@@ -17,7 +17,7 @@ final silent *e* drops before a vowel-initial suffix.
 
 @[expose] public section
 
-namespace English
+namespace English.Inflection
 
 def isVowel (c : Char) : Bool :=
   c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
@@ -50,4 +50,4 @@ def suffixIng (stem : String) : String :=
     String.ofList (stem.toList.dropLast ++ "ing".toList)
   else stem ++ "ing"
 
-end English
+end English.Inflection

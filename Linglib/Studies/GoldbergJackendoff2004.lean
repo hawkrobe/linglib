@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
 public import Linglib.Semantics.Events.SpatialTrace
 public import Linglib.Syntax.Category.Verb.Argument
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.GoldbergJackendoff2004
 
 /-!
@@ -64,7 +64,8 @@ patient.
 namespace GoldbergJackendoff2004
 
 open ArgumentStructure Data.Examples
-open English hiding Verb
+open English
+open English.Verbs hiding Verb
 
 /-! ### The family -/
 
@@ -190,7 +191,7 @@ selection of a transitive, whether the result phrase is end-bounded where the pa
 telicity, the paper's construals of the verb's subject and object where it discusses them, and
 the judgment. -/
 structure Row where
-  verb : English.Verb
+  verb : English.Verbs.Verb
   subconstruction : Subconstruction
   relation : SubeventRelation
   selection : Option ObjectSelection
@@ -200,7 +201,7 @@ structure Row where
   judgment : Judgment
 
 /-- The paper's verbs, by citation form. -/
-def verbs : List (String × English.Verb) :=
+def verbs : List (String × English.Verbs.Verb) :=
   [("hammer", hammer), ("laugh", laugh), ("freeze", freeze), ("roll", roll), ("water", water),
    ("break", break_), ("drink", drink), ("talk", talk), ("yell", yell), ("heat", heat),
    ("weave", weave), ("float", float), ("push", push), ("cry", cry), ("bleed", bleed),

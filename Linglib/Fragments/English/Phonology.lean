@@ -14,15 +14,15 @@ and its segment is the segment of that chart entry, so the values are PHOIBLE's.
 
 ## Main definitions
 
-* `English.p`, `English.esh` and the like: the phonemes, as segments of their chart entries.
-* `English.inventory`: the set of them.
-* `English.preglottalization`, `English.postnasalDeletion`: two rules of Hayes's.
+* `English.Phonology.p`, `English.Phonology.esh` and the like: the phonemes, as segments of their chart entries.
+* `English.Phonology.inventory`: the set of them.
+* `English.Phonology.preglottalization`, `English.Phonology.postnasalDeletion`: two rules of Hayes's.
 
 ## Main results
 
-* `English.naturalClass_nasal`, `English.isNaturalClass_voicelessStops`: Hayes's examples of
+* `English.Phonology.naturalClass_nasal`, `English.Phonology.isNaturalClass_voicelessStops`: Hayes's examples of
   natural classes, the nasals and /p t k/.
-* `English.isNaturalClass_sonorantConsonants`, `English.not_isNaturalClass_stops_liquids`: the
+* `English.Phonology.isNaturalClass_sonorantConsonants`, `English.Phonology.not_isNaturalClass_stops_liquids`: the
   sonorant consonants, contiguous in sonority, are a natural class, and the stops with the
   liquids are not.
 
@@ -42,7 +42,7 @@ stated. English /ɹ/ is the chart's `ɹ`, which is [−consonantal] and so a gli
 
 open Phonology Subregular.LocalRewrite Data.PHOIBLE
 
-namespace English
+namespace English.Phonology
 
 /-! ### Phonemes -/
 
@@ -167,4 +167,4 @@ def postnasalDeletion : Rule where
   leftContext := [.seg (Segment.ofSpecs [(Phonology.Feature.nasal, true)])]
   rightContext := [.seg (Segment.ofSpecs [(Phonology.Feature.syllabic, true)])]
 
-end English
+end English.Phonology

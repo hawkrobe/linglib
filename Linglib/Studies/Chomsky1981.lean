@@ -5,7 +5,7 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Processing.Acceptability.MinimalPairs
 import all Linglib.Syntax.Binding.Basic  -- for unfolding the `Decidable` instances built by `split`
@@ -75,9 +75,9 @@ abbrev himself := English.Pronouns.himself.toWord
 abbrev herself := English.Pronouns.herself.toWord
 abbrev themselves := English.Pronouns.themselves.toWord
 abbrev eachOther := English.Pronouns.eachOther.toWord
-abbrev sees := English.see.toWord .thirdSg
-abbrev see := English.see.toWord .presentPlural
-abbrev saw := English.see.toWord .past
+abbrev sees := English.Verbs.see.toWord .thirdSg
+abbrev see := English.Verbs.see.toWord .presentPlural
+abbrev saw := English.Verbs.see.toWord .past
 abbrev and_ := English.Coordination.and_.toWord
 
 /-! ### Coreference / binding (relocated from Minimalist/Coreference.lean)

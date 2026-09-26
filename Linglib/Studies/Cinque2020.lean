@@ -178,8 +178,8 @@ def englishThatObject : RC :=
 /-- Its realization, a direct-object gap, is what the English Fragment's *that* attests. -/
 theorem englishThatObject_attested :
     englishThatObject.WellFormed ∧ ¬ englishThatObject.Reconstructs ∧
-      englishThatObject.position ∈ English.relThat.positions ∧
-      englishThatObject.strategy.toNPRel = English.relThat.npRel := by
+      englishThatObject.position ∈ English.Relativization.relThat.positions ∧
+      englishThatObject.strategy.toNPRel = English.Relativization.relThat.npRel := by
   decide
 
 /-- *The man to whom I spoke*: the internal Head, a DP inside a PP, is bigger than `dP`, so it is
@@ -191,8 +191,8 @@ def englishWhomOblique : RC :=
 attests. -/
 theorem englishWhomOblique_attested :
     englishWhomOblique.WellFormed ∧
-      englishWhomOblique.position ∈ English.relWhom.positions ∧
-      englishWhomOblique.strategy.toNPRel = English.relWhom.npRel := by
+      englishWhomOblique.position ∈ English.Relativization.relWhom.positions ∧
+      englishWhomOblique.strategy.toNPRel = English.Relativization.relWhom.npRel := by
   decide
 
 /-- Hebrew *she-* with a resumptive at the genitive: the internal Head, a DP inside a DP, is

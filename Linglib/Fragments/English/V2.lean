@@ -21,7 +21,7 @@ reports; Westergaard notes that the imperative movement may target a lower head.
 
 @[expose] public section
 
-namespace English
+namespace English.V2
 
 open Clause
 
@@ -43,6 +43,6 @@ root-like yes/no-questions. -/
 def Belfast.verbSecond : Distribution
   | .imperative, .matrix => some .obligatory
   | .polar, .quasiSubordinated => some .obligatory
-  | t, e => English.verbSecond t e
+  | t, e => English.V2.verbSecond t e
 
-end English
+end English.V2

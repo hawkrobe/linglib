@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Degree.Scale
 public import Linglib.Semantics.Degree.Measure.Temporal
 public import Linglib.Semantics.Degree.Boundedness
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Adjectives
 public import Mathlib.Order.Max
 public import Mathlib.Order.Bounds.Basic
@@ -117,12 +117,12 @@ end Readings
 
 /-- The fragment's degree achievements. -/
 def daVerbs : List Verb :=
-  [English.bend.toVerb, English.boil.toVerb,
-   English.rust.toVerb, English.increase.toVerb,
-   English.clean.toVerb, English.dry.toVerb, English.straighten.toVerb,
-   English.flatten.toVerb, English.open_.toVerb,
-   English.lengthen.toVerb, English.widen.toVerb,
-   English.cool.toVerb, English.warm.toVerb]
+  [English.Verbs.bend.toVerb, English.Verbs.boil.toVerb,
+   English.Verbs.rust.toVerb, English.Verbs.increase.toVerb,
+   English.Verbs.clean.toVerb, English.Verbs.dry.toVerb, English.Verbs.straighten.toVerb,
+   English.Verbs.flatten.toVerb, English.Verbs.open_.toVerb,
+   English.Verbs.lengthen.toVerb, English.Verbs.widen.toVerb,
+   English.Verbs.cool.toVerb, English.Verbs.warm.toVerb]
 
 /-- Every degree achievement's Vendler class is the one its base scale derives: closed above,
 an accomplishment; otherwise an activity. -/
@@ -133,15 +133,15 @@ theorem da_vendler_classes_agree :
 /-- The adjective–verb pairs of the fragment are *clean*, *dry*, *straight*, *flat* and *open*
 with closed scales, and *long*, *wide*, *cool* and *warm* with open ones. -/
 def pairs : List (GradableAdjective × Verb) :=
-  [(English.Adjectives.clean, English.clean.toVerb),
-   (English.Adjectives.dry, English.dry.toVerb),
-   (English.Adjectives.straight, English.straighten.toVerb),
-   (English.Adjectives.flat, English.flatten.toVerb),
-   (English.Adjectives.open_, English.open_.toVerb),
-   (English.Adjectives.long, English.lengthen.toVerb),
-   (English.Adjectives.wide, English.widen.toVerb),
-   (English.Adjectives.cool, English.cool.toVerb),
-   (English.Adjectives.warm, English.warm.toVerb)]
+  [(English.Adjectives.clean, English.Verbs.clean.toVerb),
+   (English.Adjectives.dry, English.Verbs.dry.toVerb),
+   (English.Adjectives.straight, English.Verbs.straighten.toVerb),
+   (English.Adjectives.flat, English.Verbs.flatten.toVerb),
+   (English.Adjectives.open_, English.Verbs.open_.toVerb),
+   (English.Adjectives.long, English.Verbs.lengthen.toVerb),
+   (English.Adjectives.wide, English.Verbs.widen.toVerb),
+   (English.Adjectives.cool, English.Verbs.cool.toVerb),
+   (English.Adjectives.warm, English.Verbs.warm.toVerb)]
 
 /-- A degree achievement measures on its adjective's scale. -/
 theorem adjective_verb_scales :

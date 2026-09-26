@@ -1,10 +1,10 @@
 module
 
 public import Linglib.Fragments.English.Nouns
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.English.Determiners
-public import Linglib.Fragments.English.Adposition
+public import Linglib.Fragments.English.Adpositions
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Length
@@ -47,7 +47,7 @@ namespace FutrellEtAl2020
 
 open DependencyGrammar
 open Morphology (Word)
-open English.Nouns English English.Pronouns English.Determiners
+open English.Nouns English English.Pronouns English.Determiners English.Verbs
   English.Adpositions English.Auxiliaries
 
 -- `this` is a Lean keyword, so the demonstrative needs a qualified alias.

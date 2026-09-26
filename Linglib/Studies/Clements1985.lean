@@ -99,7 +99,7 @@ the sets a rule may copy, not between formalisms.
 
 namespace Clements1985
 
-open Phonology Phonology.FeatureGeometry English Subregular.LocalRewrite
+open Phonology Phonology.FeatureGeometry English Subregular.LocalRewrite English.Phonology
 
 attribute [local instance] Set.decidableEqOnOfFintype
 

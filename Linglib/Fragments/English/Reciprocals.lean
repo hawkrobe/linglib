@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.English.Pronouns
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Reciprocal
 
 /-!
@@ -33,8 +33,8 @@ def oneAnother : Marker := Pronouns.oneAnother.toMarker
 
 /-- The inherently reciprocal predicates, as verb entries: the lexical strategy marks
 predicates, not forms ([nordlinger-2023], [siloni-2012]). -/
-def lexicalReciprocals : List English.Verb :=
-  [English.meet]
+def lexicalReciprocals : List English.Verbs.Verb :=
+  [English.Verbs.meet]
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {eachOther, oneAnother}

@@ -5,7 +5,7 @@ public import Mathlib.Algebra.Order.Group.Defs
 public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Semantics.Degree.Measure.Temporal
 public import Linglib.Semantics.Degree.Scale
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Data.Examples.HayKennedyLevin1999
 
@@ -56,7 +56,8 @@ component of transitive degree achievements (footnote 2) are not modelled.
 namespace HayKennedyLevin1999
 
 open Data.Examples Degree
-open English hiding Verb
+open English
+open English.Verbs hiding Verb
 
 /-! ### The difference value (§2) -/
 
@@ -277,8 +278,8 @@ theorem fragment_range :
     adjectives, *straighten*, *dry* and *flatten* on a scale with a maximum and *lengthen* and
     *widen* on one without. -/
 theorem fragment_verbs :
-    (∀ v ∈ [English.straighten, English.dry, English.flatten], ∃ b ∈ v.changeScale, b.HasMax) ∧
-    ∀ v ∈ [English.lengthen, English.widen], ∃ b ∈ v.changeScale, ¬ b.HasMax := by
+    (∀ v ∈ [English.Verbs.straighten, English.Verbs.dry, English.Verbs.flatten], ∃ b ∈ v.changeScale, b.HasMax) ∧
+    ∀ v ∈ [English.Verbs.lengthen, English.Verbs.widen], ∃ b ∈ v.changeScale, ¬ b.HasMax := by
   decide
 
 /-- The default telicity the fragment derives for a degree achievement is the telicity of the

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Semantics.Questions.Resolution
@@ -116,7 +116,7 @@ theorem inter_compl_cosOccurs_eq_empty {F : Set ι} (hF : F ⊆ cosOccurs t r P)
 /-- *John didn't stop smoking* (§3.1), with *stop* the English Fragment's entry: John having
 smoked is consistent with the negated trigger, since he may still smoke. -/
 theorem stop_mem_cosPrecondition_diff_cosOccurs {i i' : ι} (hr : r i' i) (h' : P i')
-    (h : P i) : ∃ t, English.stop.phasal = some t ∧ i ∈ cosPrecondition t r P \ cosOccurs t r P :=
+    (h : P i) : ∃ t, English.Verbs.stop.phasal = some t ∧ i ∈ cosPrecondition t r P \ cosOccurs t r P :=
   ⟨.cessation, rfl, mem_cosPrecondition_diff_cosOccurs hr h' (not_not_intro h)⟩
 
 end ChangeOfState
