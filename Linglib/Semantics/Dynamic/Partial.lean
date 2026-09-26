@@ -59,6 +59,9 @@ dynamic conjunction, conditional, and disjunction
 - `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
 - `mem_ofPartialProp_self` — a context is a fixed point of an atomic update iff
   presupposition and assertion hold throughout it ([heim-1992]'s `c + φ = same`)
+- `admits_seq_ofPartialProp_iff`, `admits_cond_ofPartialProp_iff`,
+  `admits_disj_ofPartialProp_iff` — the connectives evaluate their second argument in
+  [karttunen-1974-presupposition]'s local context (`Presupposition.Connective.localContext`)
 - `admits_seq_ofPartialProp`, `admits_cond_ofPartialProp`,
   `admits_disj_ofPartialProp` — the filtering connectives, derived
 
@@ -274,11 +277,45 @@ theorem admits_ofPartialProp (p : PartialProp W) (s : Set W) :
     (ofPartialProp p).admits s ↔ Context.presupSatisfied s p :=
   Iff.rfl
 
+/-! ### Local contexts
+
+The connectives evaluate their second argument in [karttunen-1974-presupposition]'s local
+context (`Presupposition.Connective.localContext`): conjunction and the conditional in the
+context updated with the first argument, disjunction in the context updated with its negation. -/
+
+open Presupposition (Connective)
+
+/-- Dynamic conjunction admits `s` iff `s` admits the first conjunct and the second conjunct's
+local context admits the second. -/
+theorem admits_seq_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
+    (PartialUpdate.seq (ofPartialProp p) ψ).admits s ↔
+      Context.presupSatisfied s p ∧ ψ.admits (Connective.conj.localContext s p.assertion) :=
+  ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
+
+/-- The conditional admits `s` iff `s` admits the antecedent and the consequent's local context
+admits the consequent. -/
+theorem admits_cond_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
+    (cond (ofPartialProp p) ψ).admits s ↔
+      Context.presupSatisfied s p ∧ ψ.admits (Connective.cond.localContext s p.assertion) :=
+  admits_seq_ofPartialProp_iff p ψ s
+
+/-- Disjunction admits `s` iff `s` admits the first disjunct and the second disjunct's local
+context admits the second. -/
+theorem admits_disj_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
+    (disj (ofPartialProp p) ψ).admits s ↔
+      Context.presupSatisfied s p ∧ ψ.admits (Connective.disj.localContext s p.assertion) := by
+  have e : s \ {w ∈ s | p.assertion w} = Connective.disj.localContext s p.assertion :=
+    Set.ext fun _ ↦ ⟨fun ⟨hs, hn⟩ ↦ ⟨hs, fun ha ↦ hn ⟨hs, ha⟩⟩, fun ⟨hs, hn⟩ ↦ ⟨hs, fun h ↦ hn h.2⟩⟩
+  refine ⟨fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩⟩
+  · rw [← e]; exact hψ
+  · change ψ.admits (s \ {w ∈ s | p.assertion w}); rw [e]; exact hψ
+
 /-! ### Filtering connectives, derived
 
 Under `ofPartialProp`, the admittance conditions of the dynamic
 connectives are pointwise exactly the presuppositions of the *filtering*
-connectives of `Presupposition/Basic.lean` — Karttunen filtering is the
+connectives of `Presupposition/Basic.lean`: both are satisfaction in the local contexts
+(`PartialProp.presupSatisfied_andFilter` and its siblings), so Karttunen filtering is the
 composition law of partial updates, not a stipulation. -/
 
 /-- Dynamic conjunction admits `s` iff `s` satisfies `andFilter`'s
@@ -286,8 +323,7 @@ composition law of partial updates, not a stipulation. -/
 theorem admits_seq_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (PartialUpdate.seq (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.andFilter p q).presup w :=
-  ⟨fun ⟨hp, hq⟩ _ hw => ⟨hp hw, fun ha => hq ⟨hw, ha⟩⟩,
-   fun h => ⟨fun w hw => (h w hw).1, fun w hw => (h w hw.1).2 hw.2⟩⟩
+  (admits_seq_ofPartialProp_iff p _ s).trans PartialProp.presupSatisfied_andFilter.symm
 
 /-- Dynamic conditional admits `s` iff `s` satisfies `impFilter`'s
     presupposition pointwise. -/
@@ -302,9 +338,7 @@ theorem admits_cond_ofPartialProp (p q : PartialProp W) (s : Set W) :
 theorem admits_disj_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (disj (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.orFilter p q).presup w :=
-  ⟨fun ⟨hp, hq⟩ _ hw => ⟨hp hw, fun hna => hq ⟨hw, fun hc => hna hc.2⟩⟩,
-   fun h => ⟨fun w hw => (h w hw).1,
-     fun w hw => (h w hw.1).2 (fun ha => hw.2 ⟨hw.1, ha⟩)⟩⟩
+  (admits_disj_ofPartialProp_iff p _ s).trans PartialProp.presupSatisfied_orFilter.symm
 
 /-- Negation projects the atomic presupposition unchanged. -/
 theorem admits_neg_ofPartialProp (p : PartialProp W) (s : Set W) :

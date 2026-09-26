@@ -6,24 +6,26 @@ public import Linglib.Discourse.CommonGround
 /-!
 # Presuppositions in context
 
-Operations relating a presupposition (`PartialProp W`) to a context set (`Set W`), in the
-tradition of [stalnaker-1974] and [heim-1983]: filtering, projection and conceivability, and
-the local contexts of the satisfaction theory.
+A presupposition (`PartialProp W`) is satisfied in a context set (`Set W`) when the context
+entails it, in the tradition of [stalnaker-1974] and [heim-1983], and projects otherwise. Where
+it is satisfied is its local context: [karttunen-1974-presupposition] gives the second argument
+of a conjunction or a conditional the context updated with the first argument's content, the
+second disjunct the context updated with its negation, and the first argument, or the argument
+of negation, the context itself. `Connective.localContext` is that table. Theories of projection
+agree on it and differ in why it holds, so each proves it of its own mechanism: Karttunen's
+filtering connectives are satisfaction in it (`PartialProp.presupSatisfied_andFilter` and its
+siblings), Heim's context change potentials evaluate their second argument in it
+(`Semantics/Dynamic/Partial.lean`), and [schlenker-2009] derives it from transparency. The
+theories part at disjunction, where the table is asymmetric and symmetric filtering is
+`PartialProp.orKPSymmetric`.
 
 ## Main declarations
 
-* `presupSatisfied` — the context entails the presupposition (filtering).
-* `presupSatisfiable` — some context world satisfies it (conceivability).
-* `presupProjects` — the context does not entail it (projection).
-* `localCtxConsequent`, `localCtxSecondDisjunct`, `localCtxNegation` — per-connective local
-  contexts.
-
-## Conceivability
-
-`presupSatisfiable` is the conceivability check needed for
-[enguehard-2024]'s conceivability presupposition: a number feature's
-presupposition is *conceivable* in the common ground iff there exists some
-world in the context set satisfying it.
+* `presupSatisfied`, `presupProjects` — the context entails the presupposition, or does not.
+* `Connective`, `Connective.localContext` — the local context of a connective's second argument.
+* `PartialProp.presupSatisfied_andFilter`, `PartialProp.presupSatisfied_impFilter`,
+  `PartialProp.presupSatisfied_orFilter` — the filtering connectives are satisfaction in the
+  local contexts.
 
 ## References
 
@@ -33,122 +35,69 @@ world in the context set satisfying it.
 * [karttunen-1974-presupposition]
 * [peters-1979]
 * [schlenker-2009]
-* [enguehard-2024]
 -/
 
 @[expose] public section
 
-namespace Presupposition.Context
-
-open Presupposition
+namespace Presupposition
 
 variable {W : Type*}
 
-/-! ### Core operations -/
+namespace Context
 
-/-- A presupposition is **satisfied** (filtered) in context `c` iff the context
-    entails it: every world in the context satisfies the presupposition.
-
-    This is Karttunen's filtering condition and Schlenker's local satisfaction. -/
+/-- A presupposition is satisfied in the context `c` when the context entails it. -/
 abbrev presupSatisfied (c : Set W) (p : PartialProp W) : Prop := c ⊆ p.presup
 
-/-- A presupposition is **satisfiable** (conceivable) in context `c` iff some
-    world in the context satisfies it.
-
-    This is Enguehard's conceivability condition: a singular indefinite's number
-    presupposition is conceivable iff the common ground contains a world where
-    the witness set has the right cardinality. -/
-abbrev presupSatisfiable (c : Set W) (p : PartialProp W) : Prop :=
-  (c ∩ p.presup).Nonempty
-
-/-- A presupposition **projects** from context `c` iff it is NOT satisfied
-    (not filtered). Projection is the complement of filtering. -/
+/-- A presupposition projects from the context `c` when the context does not entail it. -/
 abbrev presupProjects (c : Set W) (p : PartialProp W) : Prop :=
   ¬ presupSatisfied c p
 
-/-! ### Theorems -/
+end Context
 
-/-- Satisfaction implies satisfiability (when the context is non-empty). -/
-theorem satisfied_implies_satisfiable (c : Set W) (p : PartialProp W)
-    (hne : c.Nonempty) (hsat : presupSatisfied c p) : presupSatisfiable c p := by
-  obtain ⟨w, hw⟩ := hne
-  exact ⟨w, hw, hsat hw⟩
+/-- The binary connectives of [karttunen-1974-presupposition]'s table of local contexts. -/
+inductive Connective
+  | conj
+  | cond
+  | disj
+  deriving DecidableEq, Fintype
 
-/-- If the presupposition is not even satisfiable, it projects. -/
-theorem not_satisfiable_implies_projects (c : Set W) (p : PartialProp W)
-    (hne : c.Nonempty) (h : ¬ presupSatisfiable c p) : presupProjects c p :=
-  fun hsat => h (satisfied_implies_satisfiable c p hne hsat)
+/-- The local context of a connective's second argument in the context `C`, where `A` is the
+first argument's content: `C` updated with `A` for a conjunction or a conditional, and with its
+negation for a disjunction. -/
+def Connective.localContext (C A : Set W) : Connective → Set W
+  | conj => C ∩ A
+  | cond => C ∩ A
+  | disj => C ∩ Aᶜ
 
-/-! ### Local contexts (satisfaction tradition)
+namespace PartialProp
 
-Per-connective local contexts, stipulated in the satisfaction tradition
-([karttunen-1974-presupposition], [heim-1983]); [schlenker-2009]'s algorithm reconstructs
-these clauses from bivalent meanings plus incremental transparency. A
-presupposition is filtered at a position iff the local context there
-satisfies it (`presupSatisfied`), and projects otherwise
-(`presupProjects`). -/
+open Connective Context
 
-/-- Local context for the consequent of a conditional — and equally for the
-    second conjunct: "If P then Q" / "P and Q" give Q the local context
-    c + P.assertion (the shared rule behind
-    `PartialProp.impFilter_presup_eq_andFilter_presup`).
+variable {C : Set W} {p q : PartialProp W}
 
-    This is why "If the king exists, the king is bald" doesn't presuppose
-    king exists: the local context at "the king is bald" already entails it. -/
-def localCtxConsequent (c : Set W) (antecedent : PartialProp W) : Set W :=
-  c ∩ {w | antecedent.assertion w}
+/-- Karttunen's filtering conjunction is satisfied in a context when the first conjunct is and
+the second is satisfied in its local context. -/
+theorem presupSatisfied_andFilter :
+    presupSatisfied C (p.andFilter q) ↔
+      presupSatisfied C p ∧ presupSatisfied (conj.localContext C p.assertion) q :=
+  ⟨fun h ↦ ⟨fun _ hw ↦ (h hw).1, fun _ hw ↦ (h hw.1).2 hw.2⟩,
+    fun h _ hw ↦ ⟨h.1 hw, fun ha ↦ h.2 ⟨hw, ha⟩⟩⟩
 
-/-- Local context for the second disjunct: "P or Q" gives Q the local
-    context c + ¬P.assertion ([schlenker-2009], reconstructing
-    [karttunen-1973]'s asymmetric disjunction rule). -/
-def localCtxSecondDisjunct (c : Set W) (first : PartialProp W) : Set W :=
-  c ∩ {w | ¬ first.assertion w}
+/-- Karttunen's filtering conditional is satisfied in a context when the antecedent is and the
+consequent is satisfied in its local context. -/
+theorem presupSatisfied_impFilter :
+    presupSatisfied C (p.impFilter q) ↔
+      presupSatisfied C p ∧ presupSatisfied (cond.localContext C p.assertion) q :=
+  presupSatisfied_andFilter
 
-/-- Local context under negation: unchanged — negation is a hole
-    ([karttunen-1973]). -/
-def localCtxNegation (c : Set W) : Set W := c
+/-- Karttunen's filtering disjunction is satisfied in a context when the first disjunct is and
+the second is satisfied in its local context. -/
+theorem presupSatisfied_orFilter :
+    presupSatisfied C (p.orFilter q) ↔
+      presupSatisfied C p ∧ presupSatisfied (disj.localContext C p.assertion) q :=
+  ⟨fun h ↦ ⟨fun _ hw ↦ (h hw).1, fun _ hw ↦ (h hw.1).2 hw.2⟩,
+    fun h _ hw ↦ ⟨h.1 hw, fun ha ↦ h.2 ⟨hw, ha⟩⟩⟩
 
-/-- Presupposition of the consequent is filtered when the antecedent's
-    assertion entails the presupposition throughout the context. -/
-theorem conditional_filters_when_entailed (c : Set W) (p q : PartialProp W)
-    (h : ∀ w, c w → p.assertion w → q.presup w) :
-    presupSatisfied (localCtxConsequent c p) q := by
-  intro w hw
-  have ⟨hw_in, hp_true⟩ := hw
-  exact h w hw_in hp_true
+end PartialProp
 
-/-- If the antecedent's assertion doesn't entail the consequent's
-    presupposition somewhere in the context, it projects. -/
-theorem conditional_projects_when_not_entailed (c : Set W) (p q : PartialProp W)
-    (h : ∃ w, c w ∧ p.assertion w ∧ ¬q.presup w) :
-    presupProjects (localCtxConsequent c p) q := by
-  obtain ⟨w, hw_in, hp_true, hq_false⟩ := h
-  intro hfilter
-  exact hq_false (hfilter ⟨hw_in, hp_true⟩)
-
-/-- The stipulated local-context computation agrees with the Karttunen
-    filtering implication formula ([karttunen-1973], [peters-1979]). -/
-theorem local_context_matches_impFilter (c : Set W) (p q : PartialProp W) :
-    (∀ w, c w → (PartialProp.impFilter p q).presup w) ↔
-    (∀ w, c w → p.presup w ∧ (p.assertion w → q.presup w)) :=
-  Iff.rfl
-
-/-- Schlenker's local context at the second disjunct derives Karttunen's
-    asymmetric disjunction filter (`PartialProp.disjFilterLeft`).
-
-    For "A ∨ B_ψ" in context c:
-    - Schlenker: local context at B is c ∧ ¬A; ψ filtered iff c ∧ ¬A ⊧ ψ
-    - Karttunen: residual presupposition is ¬A → ψ; satisfied iff ∀w∈c, ¬A(w) → ψ(w)
-
-    These are the same condition (currying/uncurrying the conjunction).
-    Analogous to `local_context_matches_impFilter` for conditionals.
-    [schlenker-2009], [karttunen-1973] -/
-theorem local_context_matches_disjFilterLeft (c : Set W)
-    (firstDisjunct : PartialProp W) (second : PartialProp W) :
-    presupSatisfied (localCtxSecondDisjunct c firstDisjunct) second ↔
-    (∀ w, c w → (PartialProp.disjFilterLeft firstDisjunct.assertion second).presup w) := by
-  constructor
-  · intro h w hc hn; exact h ⟨hc, hn⟩
-  · intro h w ⟨hc, hn⟩; exact h w hc hn
-
-end Presupposition.Context
+end Presupposition

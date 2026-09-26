@@ -23,7 +23,7 @@ The canonical connectives, entailment relations, and combinators on
   canonical [von-fintel-1999] form (presup-as-premise; not transitive,
   `strawsonEntails_not_trans`) and the stronger variant that additionally
   requires `q`'s presupposition to project from `p`'s satisfaction.
-* Embedding combinators `disjFilterLeft`, `negFactive`.
+* The embedding combinator `negFactive`.
 * `presupOfReferent` — definite-description combinator (single source of
   truth for singular definite denotations).
 
@@ -119,10 +119,7 @@ def impFilter (p q : PartialProp W) : PartialProp W where
     of the first disjunct can satisfy the second's presupposition —
     *Either there is no bathroom or the bathroom is upstairs* is defined
     because the second disjunct's bathroom presupposition is required
-    only at worlds where the first disjunct is false.
-
-    Generalizes `disjFilterLeft` to a presuppositional first disjunct
-    (`orFilter_ofProp`). The symmetric K&P variant is
+    only at worlds where the first disjunct is false. The symmetric K&P variant is
     `PartialProp.orKPSymmetric` (`Presupposition.Trivalent`). -/
 def orFilter (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ (¬p.assertion w → q.presup w)
@@ -328,25 +325,7 @@ theorem eval_xor_no_filter (p q : PartialProp W) (w : W)
   have : ¬(xor p q).presup w := fun ⟨_, hq'⟩ => hq hq'
   simp [eval, ite_eq_right this]
 
-/-! ### Embedding combinators ([heim-1992], [karttunen-1973], [delpinal-bassi-sauerland-2024]) -/
-
-/-- Asymmetric filtering disjunction: plain proposition ∨ PartialProp.
-
-    For "A ∨ B_ψ" where only B carries a presupposition ψ, the overall
-    presupposition is ¬A → ψ (Karttunen's generalization for disjunction).
-    The assertion is A ∨ B.
-
-    This is the standard projection rule for presuppositions in the second
-    disjunct of a disjunction. [karttunen-1973], [heim-1983] -/
-def disjFilterLeft (firstDisjunct : W → Prop) (second : PartialProp W) :
-    PartialProp W where
-  assertion := fun w => firstDisjunct w ∨ second.assertion w
-  presup := fun w => ¬firstDisjunct w → second.presup w
-
-/-- `orFilter` with a presuppositionless first disjunct is `disjFilterLeft`. -/
-theorem orFilter_ofProp (A : W → Prop) (q : PartialProp W) :
-    orFilter (ofProp A) q = disjFilterLeft A q :=
-  PartialProp.ext (funext fun _ => propext (and_iff_right trivial)) rfl
+/-! ### Embedding combinators ([heim-1992], [delpinal-bassi-sauerland-2024]) -/
 
 /-- Embedding under a negative factive (e.g., "is unaware that").
 
@@ -365,28 +344,6 @@ def negFactive (complement : PartialProp W)
     (believes : (W → Prop) → (W → Prop)) : PartialProp W where
   assertion := fun w => ¬(believes complement.assertion w)
   presup := fun w => complement.holds w
-
-/-- When the first disjunct is false, `disjFilterLeft` recovers full
-    satisfaction of the second disjunct. -/
-theorem disjFilterLeft_recovers (firstDisjunct : W → Prop) (sp : PartialProp W)
-    (w : W) (hFirst : ¬firstDisjunct w)
-    (hFiltered : (disjFilterLeft firstDisjunct sp).holds w) :
-    sp.holds w := by
-  obtain ⟨hPresup, hAssert⟩ := hFiltered
-  exact ⟨hPresup hFirst, hAssert.resolve_left hFirst⟩
-
-/-- When `¬A` entails `q`'s presupposition pointwise, `disjFilterLeft A q`
-    is presuppositionless (the filtering condition is satisfied at every
-    world). The substrate-side fact behind [karttunen-1973]'s
-    asymmetric disjunction filtering rule (24b), p. 181: "A or B" carries
-    no residual presupposition from B when ¬A entails it. -/
-theorem disjFilterLeft_eliminates_presup_when_neg_entails
-    (A : W → Prop) (q : PartialProp W)
-    (h : ∀ w, ¬A w → q.presup w) :
-    (disjFilterLeft A q).presup = fun _ => True := by
-  funext w
-  simp only [disjFilterLeft, eq_iff_iff, iff_true]
-  exact h w
 
 /-- Presupposition of `negFactive` is full satisfaction of the complement. -/
 theorem negFactive_presup_eq (complement : PartialProp W)

@@ -23,9 +23,9 @@ is the set of context worlds at which some frame depends on the gap
 (`isLocalContext_pointwise`). Negation, an initial conjunct or disjunct, and an antecedent thus
 take the global context as local context; the second conjunct and the consequent take the
 context updated with the first clause, and the second disjunct the context updated with the
-first disjunct's negation. These are the update-rule local contexts that [heim-1983] and
-[beaver-2001] stipulate (`Presupposition.Context.localCtxConsequent`, `localCtxSecondDisjunct`,
-`localCtxNegation`), derived here from bivalent meanings alone. Belief reports use
+first disjunct's negation. These are [karttunen-1974-presupposition]'s local contexts
+(`Presupposition.Connective.localContext`), which [heim-1983] and [beaver-2001] build into
+their update rules, derived here from bivalent meanings alone. Belief reports use
 two-dimensional denotations: the local context of the complement of *believe* is the set of
 pairs of an utterance world in the context and a world doxastically accessible from it
 (`isLocalContext_believe`), which is the substrate's `BeliefLocalCtx.atWorld`. On the King
@@ -44,6 +44,7 @@ paper. Uniqueness of the bottom element is `IsLeast.unique`.
 ## References
 
 * [schlenker-2009]
+* [karttunen-1974-presupposition]
 * [heim-1983]
 * [beaver-2001]
 * [heim-1992]
@@ -142,7 +143,7 @@ def disjunct (p : W → Prop) : Environment (Set W) W := pointwise '' {λ w b =>
 
 /-- (21): negation is a hole. -/
 theorem isLocalContext_negation (C : Set W) :
-    IsLocalContext C negation (localCtxNegation C) :=
+    IsLocalContext C negation C :=
   isLocalContext_of_forall C _ λ _ _ => ⟨_, rfl, by simp⟩
 
 /-- (18): an initial conjunct or disjunct takes the global context. -/
@@ -151,8 +152,9 @@ theorem isLocalContext_initial (C : Set W) : IsLocalContext C initial C :=
 
 /-- (24): the second conjunct takes the context updated with the first. -/
 theorem isLocalContext_conjunct (C : Set W) (p : PartialProp W) :
-    IsLocalContext C (conjunct p.assertion) (localCtxConsequent C p) := by
-  simpa [conjunct, localCtxConsequent] using
+    IsLocalContext C (conjunct p.assertion) (Connective.conj.localContext C p.assertion) := by
+  show IsLocalContext C _ (C ∩ {w | p.assertion w})
+  simpa [conjunct] using
     isLocalContext_pointwise C {λ w b => p.assertion w ∧ b}
 
 /-- (27): an antecedent takes the global context. -/
@@ -161,14 +163,16 @@ theorem isLocalContext_antecedent (C : Set W) : IsLocalContext C antecedent C :=
 
 /-- (30): the consequent takes the context updated with the antecedent. -/
 theorem isLocalContext_consequent (C : Set W) (p : PartialProp W) :
-    IsLocalContext C (consequent p.assertion) (localCtxConsequent C p) := by
-  simpa [consequent, localCtxConsequent] using
+    IsLocalContext C (consequent p.assertion) (Connective.cond.localContext C p.assertion) := by
+  show IsLocalContext C _ (C ∩ {w | p.assertion w})
+  simpa [consequent] using
     isLocalContext_pointwise C {λ w b => p.assertion w → b}
 
 /-- (33): the second disjunct takes the context updated with the first disjunct's negation. -/
 theorem isLocalContext_disjunct (C : Set W) (p : PartialProp W) :
-    IsLocalContext C (disjunct p.assertion) (localCtxSecondDisjunct C p) := by
-  simpa [disjunct, localCtxSecondDisjunct] using
+    IsLocalContext C (disjunct p.assertion) (Connective.disj.localContext C p.assertion) := by
+  show IsLocalContext C _ (C ∩ {w | ¬ p.assertion w})
+  simpa [disjunct] using
     isLocalContext_pointwise C {λ w b => p.assertion w ∨ b}
 
 /-! ### Belief reports (§3.1.2) -/
@@ -212,8 +216,7 @@ context satisfies the presupposition of the filtering connective. -/
 theorem satisfied_iff_impFilter (C : Set W) (p q : PartialProp W) :
     Satisfied C antecedent p ∧ Satisfied C (consequent p.assertion) q ↔
       presupSatisfied C (PartialProp.impFilter p q) := by
-  rw [satisfied_iff (isLocalContext_antecedent C), satisfied_iff (isLocalContext_consequent C p)]
-  exact ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ ha => hq ⟨hw, ha⟩⟩,
-    λ h => ⟨λ _ hw => (h hw).1, λ _ hw => (h hw.1).2 hw.2⟩⟩
+  rw [satisfied_iff (isLocalContext_antecedent C), satisfied_iff (isLocalContext_consequent C p),
+    PartialProp.presupSatisfied_impFilter]
 
 end Schlenker2009
