@@ -3,35 +3,32 @@ module
 public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Slovenian Question Particles
-[simik-2024]
+# Slovene question particles
 
-The Slovenian clause-initial polar question particles: *ali* of the
-default (quiz-felicitous) strategy, and the colloquial *a* and *kaj*,
-which the quiz scenario excludes. Bias profiles live in `Simik2024`.
+Slovene polar questions may be introduced by the clause-initial particle *ali*, optional in the
+default quiz question ([simik-2024] ex. 28), or by the colloquial *a* and *kaj*, neutral yet
+excluded from the quiz scenario ([simik-2024] §4.1). The strategy profile is in
+`Studies/Simik2024.lean`.
 
-## Cross-Module Connections
+## References
 
-- `Simik2024.slovenian` (`Studies/Simik2024`): PQ strategy profile
+* [simik-2024]
 -/
 
 @[expose] public section
 
 namespace Slovenian.QuestionParticles
 
-/-- ali — clause-initial PQ particle ([simik-2024] ex. 28). Optional in
-default PQs; incompatible with DeclPQs. -/
+/-- *ali*, the clause-initial polar question particle. -/
 def ali : Particle where
   form := "ali"
   position := some .clauseInitial
   distribution := fun c e => match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
     | _, _ => none
 
-/-- *a* — colloquial clause-initial PQ particle, neutral yet excluded from
-the quiz scenario ([simik-2024] §4.1). -/
+/-- *a*, the colloquial clause-initial polar question particle. -/
 def a : Particle where
   form := "a"
   position := some .clauseInitial
@@ -39,8 +36,7 @@ def a : Particle where
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *kaj* (lit. 'what') — clause-initial PQ particle excluded from the
-quiz scenario ([simik-2024] §4.1). -/
+/-- *kaj* (literally 'what'), the colloquial clause-initial polar question particle. -/
 def kaj : Particle where
   form := "kaj"
   position := some .clauseInitial

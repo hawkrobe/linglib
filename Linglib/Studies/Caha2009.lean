@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Morphology.Exponence.Containment.Contiguity
-public import Linglib.Fragments.Slavic.Czech.Declension
+public import Linglib.Fragments.Slavic.Czech.Nouns
 public import Linglib.Fragments.Slavic.Serbian.Declension
 public import Linglib.Fragments.Slavic.Slovak.Declension
 public import Linglib.Fragments.Slavic.Slovenian.Declension
@@ -24,6 +24,7 @@ open, and a Slovene paradigm he passes over.
 * `sequence`, `slavicSequence`: the Case sequence (10b) and its Slavic refinement (13)
 * `shape`: a paradigm's forms along the Slavic sequence
 * `accounts`, `analyses`: Caha's treatment of the paradigms with an offending syncretism
+* `Declines`: a noun of the Czech fragment declines a paradigm of the tables at a cell
 
 ## Main results
 
@@ -32,6 +33,8 @@ open, and a Slovene paradigm he passes over.
 * `supersetSpellable_shape`: Superset spellout generates the other paradigms
 * `isContiguous_analysis`: the underlying forms Caha gives are contiguous
 * `isNone_iff_adjacent`: the syncretisms (67) calls non-accidental are the adjacent ones
+* `declines_czechNouns`, `declines_hrad_mesto_iff`, `declines_colloquial_iff`: Caha's literary
+  Czech noun paradigms are the fragment's declensions after Short and *Mluvnice češtiny*
 
 ## Implementation notes
 
@@ -44,6 +47,8 @@ the Czech *ta* of note 26 is feminine singular, and the Slovene *dva* of (16) is
 
 * [caha-2009]
 * [blake-1994]
+* [short-1993-czech]
+* [komarek-etal-1986]
 -/
 
 @[expose] public section
@@ -150,5 +155,64 @@ def table67 : List (Case × Case × Option Account) :=
 /-- The syncretisms (67) calls non-accidental are the ones of adjacent cases. -/
 theorem isNone_iff_adjacent : ∀ r ∈ table67, r.2.2 = none ↔ Adjacent r.1 r.2.1 := by
   decide
+
+/-! ### Caha's Czech nouns and Short's declensions
+
+Caha's Czech noun paradigms are those of the fragment's declension classes, the classes of
+[short-1993-czech]'s tables with the stem conditions of [komarek-etal-1986]: each form of the
+literary paradigms is one of the forms the fragment gives the noun. The plural of *kluk* 'boy'
+depends on the stem conditions, since the tables alone would give *kluki* and *klukech* where Caha
+has *kluci* and *klucích*. Caha's *hradu* and *městu* are the locative singular in *-u* that Short
+describes beside the tables' *-ě* for the hard inanimates (p. 466) and the neuters (p. 467), and
+his colloquial paradigms depart from the literary declension in the locative and the
+instrumental. -/
+
+/-- The cell of a Czech noun's declension that a cell of the tables names in the number `m`. -/
+def czechCell (c : Cell) (m : Czech.Declension.numbers) : Czech.Declension.Cell :=
+  (Subtype.map id (fun _ h ↦ Slavic.Case.coreInventory_subset_fullInventory h) c, m)
+
+/-- A noun of the fragment declines a paradigm of the tables at a cell when the paradigm's form
+there is one of the noun's forms at that cell in the paradigm's number. -/
+def Declines (n : Czech.Noun) (p : Paradigm) (c : Cell) : Prop :=
+  ∃ h : p.number ∈ Czech.Declension.numbers,
+    Czech.Declension.segments (p.form c) ∈ n.forms (czechCell c ⟨_, h⟩)
+
+instance (n : Czech.Noun) (p : Paradigm) (c : Cell) : Decidable (Declines n p c) :=
+  inferInstanceAs (Decidable (∃ _, _))
+
+/-- The literary paradigms of the tables that decline nouns of the fragment, with the nouns. -/
+def czechNouns : List (Paradigm × Czech.Noun) :=
+  [(Czech.Declension.muz_sg, Czech.muz), (Czech.Declension.muz_pl, Czech.muz),
+    (Czech.Declension.stroj_sg, Czech.stroj), (Czech.Declension.stroj_pl, Czech.stroj),
+    (Czech.Declension.kost_sg, Czech.kost), (Czech.Declension.kost_pl, Czech.kost),
+    (Czech.Declension.zena_sg, Czech.zena), (Czech.Declension.zena_pl, Czech.zena),
+    (Czech.Declension.kluk_pl, Czech.kluk)]
+
+/-- The fragment declines each literary paradigm of the tables in every cell. -/
+theorem declines_czechNouns : ∀ x ∈ czechNouns, ∀ c, Declines x.2 x.1 c := by
+  decide +kernel
+
+/-- The endings of Short's table on the bare stem do not give Caha's *kluci* and *klucích*. -/
+theorem kluk_pl_not_mem_table :
+    Czech.Declension.segments (Czech.Declension.kluk_pl.form (cell .nom)) ∉
+        (Czech.Declension.Class.chlap.endings (.of .nom .plural)).map (Czech.kluk.stem ++ ·) ∧
+      Czech.Declension.segments (Czech.Declension.kluk_pl.form (cell .loc)) ∉
+        (Czech.Declension.Class.chlap.endings (.of .loc .plural)).map (Czech.kluk.stem ++ ·) := by
+  decide +kernel
+
+/-- The fragment declines Caha's *hrad* and *město* in every cell but the locative, where Caha has
+*hradu* and *městu* and the fragment the tables' *hradě* and *městě*. -/
+theorem declines_hrad_mesto_iff (c : Cell) :
+    (Declines Czech.hrad Czech.Declension.hrad_sg c ↔ c ≠ cell .loc) ∧
+      (Declines Czech.mesto Czech.Declension.mesto_sg c ↔ c ≠ cell .loc) := by
+  revert c; decide +kernel
+
+/-- The colloquial *klukách* and *klukama* and *mužema* are not the literary declension, which
+the colloquial paradigms follow in the other cells. -/
+theorem declines_colloquial_iff (c : Cell) :
+    (Declines Czech.kluk Czech.Declension.kluk_pl_colloquial c ↔
+        c ≠ cell .loc ∧ c ≠ cell .inst) ∧
+      (Declines Czech.muz Czech.Declension.muz_pl_colloquial c ↔ c ≠ cell .inst) := by
+  revert c; decide +kernel
 
 end Caha2009

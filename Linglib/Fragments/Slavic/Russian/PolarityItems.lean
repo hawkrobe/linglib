@@ -1,30 +1,27 @@
 module
 
+public import Linglib.Fragments.Slavic.Russian.Indefinites
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
-# Russian Polarity-Sensitive Items
-[haspelmath-1997] [zeijlstra-2004] [giannakidou-1998]
+# Russian polarity items
 
-Russian indefinite-pronoun polarity items, typed by the theory-neutral
-categories from `Polarity`. The classification follows
-[haspelmath-1997]'s implicational map for the Russian series: the
-*-либо* series spans the weak-NPI functions (irrealis non-specific,
-question, conditional, comparative, indirect negation), while the *ни-*
-series occupies the *direct negation* function as strict negative-concord
-items, obligatorily co-occurring with clausemate verbal negation *не*.
+This file gives the Russian indefinite polarity items, typed by `PolarityItem`, the person row
+taking its forms from `Russian.Indefinites`, after
+[haspelmath-1997]'s map of the Russian series: the *-libo* series spans the functions of a weak
+negative polarity item, questions, conditionals, comparatives and indirect negation; the *ni-*
+series occupies direct negation as negative concord items, which co-occur with clausemate verbal
+negation *ne* ([zeijlstra-2004], [giannakidou-1998]); and *kto ugodno* is a free-choice item.
 
-- **кто-либо** (kto-libo): weak NPI — questions, conditionals,
-  comparatives, indirect negation.
-- **никто / ничего / никогда** (nikto / nichego / nikogda): strict-NC
-  *ни-* words, obligatory clausemate *не* ([zeijlstra-2004],
-  [giannakidou-1998]).
-- **кто угодно** (kto ugodno): free-choice item.
-
-The strict-NC *ни-* series carries `licensor := some .antiMorphic`:
-clausemate *не* is the only anti-morphic environment, so strict concord is
-characterized exactly by the licensing keystone
+The concord items carry `licensor := some .antiMorphic`, and clausemate *ne* being the only
+anti-morphic environment, their licensing is characterized by it
 (`niSeries_licensing_characterized`).
+
+## References
+
+* [haspelmath-1997]
+* [zeijlstra-2004]
+* [giannakidou-1998]
 -/
 
 @[expose] public section
@@ -33,72 +30,68 @@ namespace Russian.PolarityItems
 
 open PolarityItem
 
-/-! ### Weak NPI (the *-либо* series) -/
+/-! ### The *-libo* series -/
 
-/-- *кто-либо* (kto-libo) — weak NPI. The *-либо* series is licensed across
-    the DE functions of [haspelmath-1997]'s map: questions, conditionals,
-    comparatives, and indirect (non-clausemate) negation — distinct from the
-    direct-negation *ни-* series below. -/
+/-- *kto-libo* (кто-либо) 'anyone', a weak negative polarity item, licensed in questions,
+conditionals, comparatives and under indirect negation. -/
 def ktoLibo : PolarityItem :=
-  { form := "кто-либо (kto-libo)"
+  { form := Indefinites.ktoLibo.form
   , licensor := some .weak
   , baseForce := .existential
   , licensingContexts := [.question, .conditionalAntecedent, .negation, .clausalComparative]
   , scalarDirection := some .strengthening }
 
-/-! ### Strict-NC *ни-* words (the direct-negation series) -/
+/-! ### The *ni-* series -/
 
-/-- *никто* (nikto) — strict-NC n-word ('nobody'). Direct-negation series;
-    requires clausemate negation: 'nikto ne prišël' (nobody NEG came). -/
+/-- *nikto* (никто) 'nobody', a negative concord item that requires clausemate negation, *nikto
+ne prišël* 'nobody came'. -/
 def nikto : PolarityItem :=
-  { form := "никто (nikto)"
+  { form := Indefinites.nikto.form
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
   , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
-/-- *ничего* (nichego) — non-human strict-NC n-word ('nothing').
-    'Ničego ne videl' = '(I) saw nothing'. -/
+/-- *ničego* (ничего) 'nothing', the non-human negative concord item, *ničego ne videl* '(he) saw
+nothing'. -/
 def nichego : PolarityItem :=
-  { form := "ничего (nichego)"
+  { form := "ničego"
   , licensor := some .antiMorphic
   , baseForce := .existential
   , licensingContexts := [.negation]
   , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
-/-- *никогда* (nikogda) — temporal strict-NC n-word ('never').
-    'Nikogda ne prixodil' = '(He) never came'. -/
+/-- *nikogda* (никогда) 'never', the temporal negative concord item, *nikogda ne prixodil* '(he)
+never came'. -/
 def nikogda : PolarityItem :=
-  { form := "никогда (nikogda)"
+  { form := "nikogda"
   , licensor := some .antiMorphic
   , baseForce := .temporal
   , licensingContexts := [.negation]
   , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
-/-! ### Free choice item -/
+/-! ### Free choice -/
 
-/-- *кто угодно* (kto ugodno) — free choice item.
-    Universal-like: 'anyone at all'. -/
+/-- *kto ugodno* (кто угодно) 'anyone at all', a free-choice item. -/
 def ktoUgodno : PolarityItem :=
-  { form := "кто угодно (kto ugodno)"
+  { form := Indefinites.ktoUgodno.form
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
-/-! ### Inventory -/
+/-! ### The entries -/
 
-/-- The Russian polarity-item inventory: the Fragment-side joint listing
-    every polarity item this fragment defines. -/
+/-- The polarity items. -/
 def items : List PolarityItem :=
   [ktoLibo, nikto, nichego, nikogda, ktoUgodno]
 
 /-! ### Verification -/
 
-/-- The strict-NC *ни-* series characterized exactly: clausemate *не* is
-    the only licensing environment. -/
+/-- The negative concord items are licensed exactly in their attested contexts, clausemate
+negation. -/
 theorem niSeries_licensing_characterized :
     ∀ e ∈ [nikto, nichego, nikogda], ∀ c,
       c.licenses e ↔ c ∈ e.licensingContexts := by decide
@@ -107,9 +100,7 @@ theorem niSeries_licensing_characterized :
 theorem russian_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
 
-/-- Every NPI in the inventory is scalar-strengthening. The free-choice
-    `kto ugodno` is correctly excluded by the substrate `isNPI` guard rather
-    than dropped from a hand-listed sublist. -/
+/-- Every negative polarity item is scalar-strengthening. -/
 theorem npis_strengthening :
     ∀ e ∈ items, e.isNPI → e.scalarDirection = some .strengthening := by
   decide

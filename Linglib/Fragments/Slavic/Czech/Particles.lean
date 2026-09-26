@@ -3,12 +3,19 @@ module
 public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Czech Particles
-[stankova-2025] [stankova-2026] [simik-2024] [nekula-1996]
+# Czech particles
 
-Czech discourse particles of polar questions as `Particle` values.
-The negation-position diagnostics and Table 1 licensing live in
-`Stankova2026`; the bias experiments in `StankovaSimik2025`.
+This file gives the Czech discourse particles of polar questions as `Particle` values: *náhodou*,
+*ještě*, *fakt* and *vůbec*, which [stankova-2026] uses to diagnose the position of negation, and
+the question particles *snad* and *copak* ([nekula-1996], [simik-2024]). The diagnostics are in
+`Studies/Stankova2026.lean` and the bias experiments in `Studies/StankovaSimik2025.lean`.
+
+## References
+
+* [stankova-2025]
+* [stankova-2026]
+* [simik-2024]
+* [nekula-1996]
 -/
 
 @[expose] public section

@@ -3,21 +3,24 @@ module
 public import Linglib.Fragments.Slavic.Case
 
 /-!
-# Polish Case Inventory
-[rothstein-1993] [blake-1994]
+# Polish case inventory
 
-Per [rothstein-1993] (p. 696), Polish has the full inherited
-7-case system including a productive vocative used consistently with
-titles and vocative phrases (panie Janku, kochana Basiu), with a
-growing tendency for NOM to substitute for VOC with bare personal
-names. `inventory` aliases the shared 6-case core;
-`Slavic.Case.fullInventory` carries the +VOC form.
+This file defines the Polish cases, the seven of the Slavic inventory: "Polish has preserved the
+full inherited case system, including the vocative, but there is a growing tendency to use the
+nominative instead of the vocative for personal names. The vocative is consistently used with
+titles and with personal names when they are used as part of a vocative phrase"
+([rothstein-1993], p. 696), as in *panie Janku* and *kochana Basiu* 'dear Basia'.
+
+## References
+
+* [rothstein-1993]
 -/
 
 @[expose] public section
 
 namespace Polish.Case
 
-abbrev inventory : Finset Case := Slavic.Case.coreInventory
+/-- The Polish cases are the seven of the Slavic inventory. -/
+abbrev inventory : Finset Case := Slavic.Case.fullInventory
 
 end Polish.Case

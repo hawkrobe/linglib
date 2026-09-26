@@ -3,13 +3,16 @@ module
 public import Linglib.Syntax.Comparative
 
 /-!
-# Russian comparative data
+# Russian comparison
 
-Russian compares with *X Adj-ee, chem Y*: the particle *chem* marks the
-standard (WALS Ch 121A: particle, [stassen-2013]); a bare genitive standard
-(*X Adj-ee Y-GEN*) is also available, its anatomy unrecorded here pending a
-source for its Stassen classification. Degree is marked by the bound affix
-*-ee* ~ *-ej*; the superlative is morphological.
+Russian compares with *X Adj-ee, chem Y*: the particle *chem* marks the standard, the particle
+comparative of WALS Ch 121A ([stassen-2013]). A bare genitive standard, *X Adj-ee Y-GEN*, is also
+available and is not entered. Degree is marked by the bound affix *-ee* ~ *-ej*, and the
+superlative is morphological.
+
+## References
+
+* [stassen-2013]
 -/
 
 @[expose] public section

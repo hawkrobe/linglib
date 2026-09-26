@@ -6,17 +6,19 @@ public import Linglib.Semantics.Polarity.Licensing
 # Czech polarity items
 
 Czech indefinites come in two polarity-sensitive series, typed by `PolarityItem`. The
-*ni-* series (*nikdo*, *nic*, *nikdy*, *nikam*) and the determiner *žádný* are strict
-negative concord items: each obligatorily co-occurs with the *ne-* prefixed verb whatever
-its position, *Nikdo nepřišel* 'Nobody NEG.came', *Neviděl nikoho* 'NEG.saw nobody',
-unlike the position-dependent concord of Italian or Spanish. The *ně-* series (*někdo*,
-the determiner *nějaký*) are positive polarity items, which escape the immediate scope of
-clausemate negation; the two determiners therefore diagnose the position of negation in
-polar questions ([stankova-2025], [stankova-2026]). The *ne-* prefix lives in the sibling
+*ni-* series (*nikdo*, *nic*, *nikdy*, *nikam*) and the determiner *žádný* are negative concord
+items: "any negative subject or object pronoun or pronoun-adverb is reinforced by ne- in the
+verb", as in *Nikdo to nekoupil* 'No one bought it' and *Petr nekoupil nic* 'Peter didn't buy
+anything' ([short-1993-czech], p. 511), so that the concord holds whether the item precedes the
+verb or follows it. The *ně-* series (*někdo*, the determiner *nějaký*), built on the prefix
+*ně-* ([haspelmath-1997]), are positive polarity items, which escape the immediate scope of
+clausemate negation; the two determiners therefore diagnose the position of negation in polar
+questions ([stankova-2025], [stankova-2026]). The *ne-* prefix lives in the sibling
 `Negation.lean`.
 
 ## References
 
+* [short-1993-czech]
 * [haspelmath-1997]
 * [stankova-2025]
 * [stankova-2026]

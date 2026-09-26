@@ -132,9 +132,9 @@ theorem coexpression_is_underspecification :
       (∃ s ∈ yakut, s.pronoun = Yakut.Indefinites.ereEntry ∧ Instantiates s .specific) ∧
       (∃ s ∈ latin, s.pronoun = Latin.Indefinites.aliEntry ∧ Instantiates s .epistemic) ∧
       (∃ s ∈ latin, s.pronoun = Latin.Indefinites.damEntry ∧ Instantiates s .specificKnown) ∧
-      (∃ s ∈ russian, s.pronoun = Russian.Indefinites.nibudEntry ∧ Instantiates s .nonSpecific) ∧
-      (∃ s ∈ russian, s.pronoun = Russian.Indefinites.toEntry ∧ Instantiates s .epistemic) ∧
-      ∃ s ∈ russian, s.pronoun = Russian.Indefinites.koeEntry ∧ Instantiates s .specificKnown := by
+      (∃ s ∈ russian, s.pronoun = Russian.Indefinites.ktoNibud ∧ Instantiates s .nonSpecific) ∧
+      (∃ s ∈ russian, s.pronoun = Russian.Indefinites.ktoTo ∧ Instantiates s .epistemic) ∧
+      ∃ s ∈ russian, s.pronoun = Russian.Indefinites.koeKto ∧ Instantiates s .specificKnown := by
   decide
 
 /-- Russian *-to* is the epistemic type on the region [haspelmath-1997] draws for it, which
@@ -143,7 +143,7 @@ leaves it the specific-unknown layer alone: *-nibud'* is the non-specific form o
 paradigm and takes that layer by the Elsewhere Principle. What a form may express and what it
 spells out under paradigmatic competition come apart. -/
 theorem to_is_epistemic_under_competition :
-    (∃ s ∈ russian, s.pronoun = Russian.Indefinites.toEntry ∧ Instantiates s .epistemic) ∧
+    (∃ s ∈ russian, s.pronoun = Russian.Indefinites.ktoTo ∧ Instantiates s .epistemic) ∧
       spellout (lexicon russian) 0 = some "kto-nibud'" := by decide
 
 end Bubnov2026

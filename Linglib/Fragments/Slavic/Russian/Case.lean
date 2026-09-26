@@ -3,22 +3,24 @@ module
 public import Linglib.Fragments.Slavic.Case
 
 /-!
-# Russian Case Inventory
-[timberlake-1993] [blake-1994] [pesetsky-2013]
+# Russian case inventory
 
-Per [timberlake-1993] (p. 836), Russian has 6 primary cases
-(NOM/ACC/GEN/DAT/INST/LOC) and 2 secondary cases (second GEN, second
-LOC) used by a small and shrinking class of masculines; the historical
-vocative is moribund. `inventory` aliases the shared 6-case core
-(secondary cases are paradigm slots within selected nouns, not modeled
-at the inventory level). For [pesetsky-2013]'s POS-as-case
-reduction, see `Pesetsky2013`.
+This file defines the Russian cases, the six the Slavic languages share. [timberlake-1993] (p. 836)
+takes Russian to have "six primary cases and two secondary cases (second genitive and second
+locative), the secondary cases being available for a decreasing number of masculines", and finds
+the historical vocative moribund. The secondary cases are cells of the paradigms of some nouns and
+not cases of the inventory.
+
+## References
+
+* [timberlake-1993]
 -/
 
 @[expose] public section
 
 namespace Russian.Case
 
+/-- The Russian cases are the six primary cases, those the Slavic languages share. -/
 abbrev inventory : Finset Case := Slavic.Case.coreInventory
 
 end Russian.Case
