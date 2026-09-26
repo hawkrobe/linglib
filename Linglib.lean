@@ -1132,11 +1132,7 @@ import Linglib.Phonology.Tone.Plateauing
 import Linglib.Phonology.Tone.Register
 import Linglib.Phonology.Tone.Surfacing
 import Linglib.Pragmatics.Bidirectional
-import Linglib.Pragmatics.DecisionTheoretic.Also
 import Linglib.Pragmatics.DecisionTheoretic.Basic
-import Linglib.Pragmatics.DecisionTheoretic.But
-import Linglib.Pragmatics.DecisionTheoretic.Even
-import Linglib.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Pragmatics.Efficiency
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.Implicature.Diagnostics
@@ -1997,7 +1993,6 @@ import Linglib.Studies.MeinhardtEtAl2024
 import Linglib.Studies.Mendes2025
 import Linglib.Studies.Merchant2013
 import Linglib.Studies.MerchantPrince2022
-import Linglib.Studies.Merin1999
 import Linglib.Studies.MeyerFeiman2021
 import Linglib.Studies.Middleton2026
 import Linglib.Studies.Miestamo2005
