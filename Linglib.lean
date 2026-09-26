@@ -1292,7 +1292,6 @@ import Linglib.Logic.Natural.Strawson.Soundness
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.CEM
 import Linglib.Semantics.Events.Path
-import Linglib.Semantics.Events.Phase
 import Linglib.Semantics.Events.SpatialTrace
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
@@ -1365,7 +1364,6 @@ import Linglib.Semantics.Possession.Basic
 import Linglib.Semantics.Possession.Defs
 import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
-import Linglib.Semantics.Presupposition.Aboutness
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Semantics.Presupposition.ContentLayer
