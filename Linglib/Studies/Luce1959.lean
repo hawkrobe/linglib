@@ -9,22 +9,27 @@ public import Mathlib.Order.BooleanAlgebra.Basic
 /-!
 # Luce (1959): Individual Choice Behavior
 
-This file formalizes four parts of [luce-1959]. From the first chapter it takes the just
-noticeable difference: a threshold splits pairwise choice into discriminable preference and
-indistinguishability, which form a semiorder, and the induced trace is the weak order of the
-ratio scale. From the second chapter it takes the psychophysical scales. The power law of
-Stevens is the ratio scale of the choice axiom in the coordinates of raw intensity, where
-Fechner's law is the same scale in log intensity, and it yields the linear generalization of
-Weber's law; independent stimulus continua multiply. Thurstone's Case V model of discriminal
-processes is strongly stochastically transitive, and its extension to three alternatives is
-incompatible with the choice axiom (`theorem7`). The ranking postulate
-makes the probability of a rank ordering the product of successive first choices from the
-shrinking set of alternatives, now the Plackett–Luce model; these probabilities sum to one,
-marginalize to the choice probabilities, and order expected rank by scale value. From the
-third chapter it takes the theory of choices among gambles: a decomposable preference
-structure couples a choice function over gambles with one over chance events, the events
-fall into at most three classes of subjective likelihood, exactly three under the
-complementation axioms, and the choice function over events is constant across classes.
+This file formalizes five parts of Luce's *Individual Choice Behavior*. From the first chapter it
+takes the just noticeable difference: a threshold splits pairwise choice into discriminable
+preference and indistinguishability, which form a semiorder, and the induced trace is the weak order
+of the ratio scale. From the second chapter it takes the psychophysical scales. The power law of
+Stevens is the ratio scale of the choice axiom in the coordinates of raw intensity, where Fechner's
+law is the same scale in log intensity, and it yields the linear generalization of Weber's law;
+independent stimulus continua multiply. Thurstone's Case V model of discriminal processes is
+strongly stochastically transitive, and its extension to three alternatives is incompatible with the
+choice axiom (`theorem7`). The ranking postulate makes the probability of a rank ordering the
+product of successive first choices from the shrinking set of alternatives, now the Plackett–Luce
+model; these probabilities sum to one, marginalize to the choice probabilities, and order expected
+rank by scale value. From the third chapter it takes the theory of choices among gambles: a
+decomposable preference structure couples a choice function over gambles with one over chance
+events, the events fall into at most three classes of subjective likelihood, exactly three under the
+complementation axioms, and the choice function over events is constant across classes. From the
+fourth chapter it takes the alpha and beta learning operators on response strengths. An alpha-model
+matrix changes the total strength by a fixed proportion exactly when each of its columns sums to
+that proportion, so its probability operator is linear, and with two alternatives it is the linear
+operator of Bush and Mosteller. The independence-of-unit condition makes the beta model multiply
+each strength by a constant; its probability operator applies the same multipliers to the
+probabilities and renormalizes, so the beta operators commute.
 
 ## Implementation notes
 
@@ -38,13 +43,22 @@ globally positive scale cannot represent. The first axiom lives in the structure
 axioms of the third chapter and the nondegeneracy of the three-class theorem are hypotheses
 of the theorems that use them, as in the book. The three-class theorems are stated on
 representatives, without a quotient. Luce offers the factoring `v(aρb) = w(a,b)·φ(ρ)` as a
-hypothesis, not a theorem, and so does `gam_of_factored`.
+hypothesis, not a theorem, and so does `gam_of_factored`. The alpha model is stated for its
+matrix, the form Luce derives from the unboundedness, superposition, and independence-of-unit
+conditions, and `responseProb` is the ratio rule on a strength vector, the stateless form of
+`RationalAction.policy`.
+
+## TODO
+
+The gamma model (§4.E), the comparison of the three models on partial reinforcement (§4.F), and
+the asymptotic theory of the beta model (§4.G) are not formalized.
 
 ## References
 
 * [R. D. Luce, *Individual Choice Behavior*][luce-1959]
 * [thurstone-1927]
 * [plackett-1975]
+* [bush-mosteller-1955]
 -/
 
 @[expose] public section
@@ -2573,5 +2587,144 @@ theorem gam_of_factored {S : Set (Gamble A E)} {v : Alternative A E → ℝ}
 end DecomposablePreference
 
 end Utility
+
+section Learning
+
+open Finset Matrix
+
+/-!
+### §4: Response-strength operators (pp. 93–102)
+
+A learning event changes the vector `v` of response strengths by an operator, and the choice
+probabilities follow from the new strengths by the ratio rule (`responseProb`). The alpha model
+(§4.C) takes the operator to be a nonnegative matrix that changes the total strength by a fixed
+proportion; its probability operator is then linear, and for two alternatives it is the linear
+operator of Bush and Mosteller. The beta model (§4.D) lets each strength change on its own,
+which by the independence-of-unit condition makes the operator a positive multiplier on each
+strength; its probability operator is nonlinear but commutative.
+-/
+
+variable {A : Type*} [Fintype A]
+
+/-- The choice probabilities over the whole set of alternatives given the response strengths `v`,
+`P(i) = v(i) / ∑ⱼ v(j)` (the scale of Theorem 3). -/
+noncomputable def responseProb (v : A → ℝ) : A → ℝ := (∑ j, v j)⁻¹ • v
+
+theorem responseProb_apply (v : A → ℝ) (i : A) : responseProb v i = v i / ∑ j, v j := by
+  simp [responseProb, div_eq_inv_mul]
+
+theorem sum_responseProb {v : A → ℝ} (hv : ∑ j, v j ≠ 0) : ∑ i, responseProb v i = 1 := by
+  simp [responseProb_apply, ← sum_div, div_self hv]
+
+/-- Multiplying all response strengths by the same constant leaves the choice probabilities
+unchanged (p. 95). -/
+theorem responseProb_smul {c : ℝ} (hc : c ≠ 0) (v : A → ℝ) :
+    responseProb (c • v) = responseProb v := by
+  ext i
+  simp [responseProb_apply, ← mul_sum, mul_div_mul_left _ _ hc]
+
+/-! #### §4.C: The alpha model -/
+
+/-- An operator `M` satisfies the proportional change assumption (p. 97) with constant `a` if it
+multiplies the total strength of every positive vector by `a`. -/
+def ProportionalChange (M : Matrix A A ℝ) (a : ℝ) : Prop :=
+  ∀ v : A → ℝ, (∀ i, 0 < v i) → ∑ i, (M *ᵥ v) i = a * ∑ i, v i
+
+private theorem sum_mulVec_eq_sum_mul (M : Matrix A A ℝ) (v : A → ℝ) :
+    ∑ i, (M *ᵥ v) i = ∑ j, (∑ i, M i j) * v j := by
+  simp only [mulVec, dotProduct, sum_mul]
+  exact sum_comm
+
+/-- The proportional change assumption holds exactly when every column of `M` sums to `a`
+(equation (1), p. 98). -/
+theorem proportionalChange_iff {M : Matrix A A ℝ} {a : ℝ} :
+    ProportionalChange M a ↔ ∀ j, ∑ i, M i j = a := by
+  classical
+  refine ⟨fun h j ↦ ?_, fun h v _ ↦ by simp [sum_mulVec_eq_sum_mul, h, mul_sum]⟩
+  have h₁ := h 1 fun _ ↦ one_pos
+  have h₂ := h (1 + Pi.single j 1) fun i ↦ by
+    rw [Pi.add_apply, Pi.single_apply]; split_ifs <;> norm_num
+  simp [mulVec_add, sum_add_distrib, mul_add, h₁] at h₂
+  linarith
+
+/-- Under the proportional change assumption the probability operator of the alpha model is
+linear, with matrix `aᵢⱼ / a` (p. 97). -/
+theorem ProportionalChange.responseProb_mulVec {M : Matrix A A ℝ} {a : ℝ}
+    (h : ProportionalChange M a) (v : A → ℝ) :
+    responseProb (M *ᵥ v) = (a⁻¹ • M) *ᵥ responseProb v := by
+  have hsum : ∑ i, (M *ᵥ v) i = a * ∑ i, v i := by
+    simp [sum_mulVec_eq_sum_mul, proportionalChange_iff.1 h, mul_sum]
+  simp only [responseProb, hsum, mulVec_smul, smul_mulVec, smul_smul, mul_inv]
+  rw [mul_comm]
+
+/-- With two alternatives, Luce's `1` and `2` here `0` and `1`, the alpha model is the linear
+operator `P'(1,2) = α·P(1,2) + (1 − α)·λ` of [bush-mosteller-1955], with `α = (a₁₁ − a₁₂)/a`
+and `λ = a₁₂/(a₁₂ + a₂₁)` (p. 99). -/
+theorem ProportionalChange.pairwiseProb_mulVec {M : Matrix (Fin 2) (Fin 2) ℝ} {a : ℝ}
+    (h : ProportionalChange M a) (ha : a ≠ 0) (hM : ∀ i j, 0 ≤ M i j) {v : Fin 2 → ℝ}
+    (hv : v 0 + v 1 ≠ 0) :
+    pairwiseProb (M *ᵥ v) 0 1 = (M 0 0 - M 0 1) / a * pairwiseProb v 0 1 +
+      (1 - (M 0 0 - M 0 1) / a) * (M 0 1 / (M 0 1 + M 1 0)) := by
+  have hP (w : Fin 2 → ℝ) : pairwiseProb w 0 1 = responseProb w 0 := by
+    simp [pairwiseProb, responseProb_apply, Fin.sum_univ_two]
+  have hcol : M 0 0 + M 1 0 = a := by simpa [Fin.sum_univ_two] using proportionalChange_iff.1 h 0
+  have hsum := sum_responseProb (v := v) (by simpa [Fin.sum_univ_two] using hv)
+  rw [hP, hP, h.responseProb_mulVec]
+  simp only [Fin.sum_univ_two] at hsum
+  simp only [mulVec, dotProduct, Fin.sum_univ_two, Matrix.smul_apply, smul_eq_mul]
+  rcases eq_or_ne (M 0 1 + M 1 0) 0 with h' | h'
+  · have : M 0 1 = 0 := by linarith [hM 0 1, hM 1 0]
+    simp [this, div_eq_inv_mul, mul_assoc]
+  · field_simp
+    linear_combination (M 0 1 + M 1 0) * M 0 1 * hsum + M 0 1 * hcol
+
+/-! #### §4.D: The beta model -/
+
+/-- An operator on a single response strength that is independent of the unit multiplies every
+strength by its value at `1`, `f(v) = β·v` (p. 100, by the argument of p. 30). -/
+theorem eq_mul_of_independenceOfUnit {f : ℝ → ℝ} (h : ∀ k > 0, ∀ x > 0, f (k * x) = k * f x)
+    {x : ℝ} (hx : 0 < x) : f x = f 1 * x := by
+  simpa [mul_comm] using h x hx 1 one_pos
+
+/-- In probability terms the beta operator multiplies each probability by its `βᵢ` and
+renormalizes, `P'(i) = βᵢ·P(i) / ∑ⱼ βⱼ·P(j)` (p. 101). -/
+theorem responseProb_mul_responseProb (β : A → ℝ) {v : A → ℝ} (hv : ∑ j, v j ≠ 0) :
+    responseProb (β * responseProb v) = responseProb (β * v) := by
+  rw [show β * responseProb v = (∑ j, v j)⁻¹ • (β * v) from mul_smul_comm _ _ _,
+    responseProb_smul (inv_ne_zero hv)]
+
+/-- The beta operators commute on the probabilities, as they do on the strengths (p. 101). -/
+theorem responseProb_mul_comm (β γ : A → ℝ) {p : A → ℝ} (hβ : ∑ j, β j * p j ≠ 0)
+    (hγ : ∑ j, γ j * p j ≠ 0) :
+    responseProb (β * responseProb (γ * p)) = responseProb (γ * responseProb (β * p)) := by
+  rw [responseProb_mul_responseProb β (v := γ * p) hγ,
+    responseProb_mul_responseProb γ (v := β * p) hβ, mul_left_comm]
+
+/-- In the simple beta model only the chosen alternative `i` changes strength, `βᵢ = β` and
+`βⱼ = 1` for `j ≠ i`, so `P'(i) = β·P(i) / (1 + (β − 1)·P(i))` and
+`P'(j) = P(j) / (1 + (β − 1)·P(i))` (p. 101). -/
+theorem responseProb_update_mul [DecidableEq A] (i : A) (β : ℝ) {v : A → ℝ}
+    (hv : ∑ j, v j ≠ 0) (j : A) :
+    responseProb (Function.update (1 : A → ℝ) i β * v) j =
+      Function.update (1 : A → ℝ) i β j * responseProb v j / (1 + (β - 1) * responseProb v i) := by
+  have hs : ∑ k, Function.update (1 : A → ℝ) i β k * responseProb v k =
+      1 + (β - 1) * responseProb v i := by
+    have h1 := sum_responseProb hv
+    rw [← add_sum_erase _ _ (mem_univ i)] at h1 ⊢
+    rw [sum_congr rfl fun k hk ↦ by rw [Function.update_of_ne (ne_of_mem_erase hk)]]
+    simp only [Function.update_self, Pi.one_apply, one_mul]
+    linarith
+  rw [← responseProb_mul_responseProb _ hv, responseProb_apply]
+  simp only [Pi.mul_apply, hs]
+
+/-- With two alternatives the general beta model is the simple one with `β = β₁/β₂`
+(p. 102). -/
+theorem responseProb_mul_fin_two (β : Fin 2 → ℝ) (hβ : β 1 ≠ 0) (v : Fin 2 → ℝ) :
+    responseProb (β * v) = responseProb (Function.update (1 : Fin 2 → ℝ) 0 (β 0 / β 1) * v) := by
+  conv_rhs => rw [← responseProb_smul hβ, ← smul_mul_assoc]
+  congr 2
+  ext i; fin_cases i <;> simp [mul_div_cancel₀ _ hβ]
+
+end Learning
 
 end Luce1959

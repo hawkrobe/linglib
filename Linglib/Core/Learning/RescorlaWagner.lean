@@ -126,8 +126,7 @@ cues follows an affine recurrence after each trial,
     ΣV' = ΣV + β · (Σ_{c∈S} α_c) · (λ − ΣV)
         = (1 − β·A) · ΣV + β·A·λ       where A = Σ_{c∈S} α_c
 
-the same shape as the Luce α-model (cf. `LinearLearner.iterate_closed_form`) with
-retention rate `1 − β·A`, since the prediction error `(λ − ΣV)` is shared across
+with retention rate `1 − β·A`, since the prediction error `(λ − ΣV)` is shared across
 all present cues. -/
 theorem RescorlaWagner.totalStrength_recurrence (rw : RescorlaWagner C)
     (S : Finset C) (V : C → ℝ) :
