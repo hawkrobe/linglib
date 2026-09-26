@@ -14,6 +14,8 @@ MAX-command from the maximal projections, and c-command from the branching nodes
 relevant categories, so the Intersection Theorem identifies K-command with
 S-command ∩ NP-command, and Rouveret and Vergnaud's relation, which takes the lower of the
 first branching node and the first maximal projection, with c-command ∩ MAX-command.
+Reinhart's c-command, `CCommands`, is the c-command relation restricted to nodes neither of
+which dominates the other.
 
 ## References
 
@@ -21,6 +23,7 @@ first branching node and the first maximal projection, with c-command ∩ MAX-co
 * [langacker-1969]
 * [lasnik-1976]
 * [rouveret-vergnaud-1980]
+* [reinhart-1976]
 -/
 
 @[expose] public section
@@ -69,6 +72,18 @@ theorem kCommand_eq : kCommand t = sCommand t ∩ npCommand t := by
 /-- Rouveret and Vergnaud's relation is c-command ∩ MAX-command. -/
 theorem rvCommand_eq (max : Set Cat) : rvCommand t max = cCommandAt t ∩ maxCommand t max :=
   commandRelation_union _ _
+
+section CCommands
+
+variable {C : Type*} (t : Tree C W)
+
+/-- `a` c-commands `b` in `t` when neither dominates the other and every branching node properly
+dominating `a` dominates `b`. -/
+def CCommands (a b : TreePath) : Prop := (a, b) ∈ cCommandAt t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
+
+instance : DecidableRel (CCommands t) := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+end CCommands
 
 section RoseTree
 
