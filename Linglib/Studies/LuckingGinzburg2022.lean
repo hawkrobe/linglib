@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Quantification.Witness
 public import Linglib.Semantics.Quantification.NumberTree
 public import Mathlib.Data.Finset.Powerset
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Lücking and Ginzburg (2022): Referential Transparency as the Proper Treatment for Quantification
@@ -51,17 +50,13 @@ clarification-request diagnostics, and the type-theoretic encoding are not repre
 
 ## TODO
 
-The derived perspective makes the complement set accessible after any cardinal quantifier whose
-set contains zero (`compsetAccessible_cardinal`), including *fewer than 100* in the paper's (43d),
-which the paper marks as blocking the anaphora; the lexical feature of the paper can stipulate
-its way past the case, the derivation cannot.
+Read as the cardinal condition `|refset| < 100`, *fewer than 100* in the paper's (43d) keeps the
+empty reference set, so the derived perspective makes the complement set accessible where the
+paper marks the anaphora bad; the paper's lexical feature can stipulate its way past the case.
 
 The paper's count of 63 quantifiers on a two-element domain (§4.8) multiplies the per-noun count
 over the subsets of the domain rather than over their sizes, so it distinguishes the two
-singletons, against its own closing remark that a quantifier word applies one condition to the
-extensions of every noun. The permutation-invariant selections number `∏ (2 ^ (k + 1) - 1)` over
-the sizes `k ≤ n`, 21 for two individuals, and from three individuals on the paper's product
-exceeds the `2 ^ ((n + 1) * (n + 2) / 2)` tree quantifiers of [van-benthem-1984].
+singletons, against its own restriction to quantitative quantifiers in the same section.
 
 ## References
 
@@ -130,24 +125,19 @@ instance (D : Finset (Finset α)) : Decidable (CompsetAccessible D) :=
 theorem compsetAccessible_sieve : CompsetAccessible (sieve q S) ↔ q #S 0 := by
   simp [CompsetAccessible]
 
-/-- *Every N* makes the complement set inaccessible, the noun being nonempty. -/
+/-- *Every N* makes the complement set inaccessible, the noun being nonempty: the paper's (49a),
+*All music lovers admire Reger. #They love Mozart.* -/
 theorem not_compsetAccessible_all (hS : S.Nonempty) :
     ¬ CompsetAccessible (sieve NumberTree.all S) := fun h ↦
   hS.card_pos.ne' ((compsetAccessible_sieve (q := NumberTree.all)).1 h)
 
-/-- *No N* makes the complement set accessible. -/
+/-- *No N* makes the complement set accessible, the empty reference set being its denotation
+(§4.3). -/
 theorem compsetAccessible_no : CompsetAccessible (sieve NumberTree.no S) :=
   compsetAccessible_sieve.2 rfl
 
-/-- *Some N* makes the complement set inaccessible. -/
-theorem not_compsetAccessible_some : ¬ CompsetAccessible (sieve NumberTree.some S) := fun h ↦
-  compsetAccessible_sieve.1 h rfl
-
-/-- *Most N* makes the complement set inaccessible. -/
-theorem not_compsetAccessible_most : ¬ CompsetAccessible (sieve most S) := fun h ↦
-  Nat.not_lt_zero _ (compsetAccessible_sieve.1 h)
-
-/-- *Many N* makes the complement set inaccessible. -/
+/-- *Many N* makes the complement set inaccessible: the paper's (43b), *Many music lovers admire
+Reger. #They prefer Mozart.* -/
 theorem not_compsetAccessible_many (θ : ℕ) : ¬ CompsetAccessible (sieve (many θ) S) := fun h ↦
   Nat.not_lt_zero θ ((compsetAccessible_sieve (q := many θ)).1 h)
 
@@ -155,12 +145,6 @@ theorem not_compsetAccessible_many (θ : ℕ) : ¬ CompsetAccessible (sieve (man
 *Few music lovers admire Reger. They prefer Mozart.* -/
 theorem compsetAccessible_few (hS : S.Nonempty) : CompsetAccessible (sieve few S) :=
   compsetAccessible_sieve.2 hS.card_pos
-
-/-- A cardinal quantifier whose set contains zero makes the complement set accessible. This
-includes *fewer than 100*, which the paper's (43d) marks as blocking the anaphora. -/
-theorem compsetAccessible_cardinal {s : Set ℕ} [DecidablePred (· ∈ s)] (hs : 0 ∈ s) :
-    CompsetAccessible (sieve (cardinal s) S) :=
-  (compsetAccessible_sieve (q := cardinal s)).2 hs
 
 /-- The reference individual of *a few* (the paper's (46)) requires a nonempty reference set,
 which removes the empty-reference bipartition from a denotation. -/
@@ -235,13 +219,6 @@ instances up to the choice of reference sets. -/
 def row (q : NumberTree) [DecidableRel q] (k : ℕ) : Finset (ℕ × ℕ) :=
   (antidiagonal k).filter fun p ↦ q p.1 p.2
 
-/-- Every set of points of row `k` is the row of some condition, its membership condition. -/
-theorem row_mem {k : ℕ} {T : Finset (ℕ × ℕ)} (hT : T ⊆ antidiagonal k) :
-    row (fun a b ↦ (a, b) ∈ T) k = T := by
-  ext ⟨a, b⟩
-  simp only [row, mem_filter]
-  exact ⟨And.right, fun h ↦ ⟨hT h, h⟩⟩
-
 /-- Two conditions sieve a noun alike exactly when they select the same points of its row. -/
 theorem sieve_eq_iff {q' : NumberTree} [DecidableRel q'] :
     sieve q S = sieve q' S ↔ row q #S = row q' #S := by
@@ -265,29 +242,11 @@ theorem card_powerset_antidiagonal_erase (k : ℕ) :
 each subset of the domain, taken as a head noun's extension. -/
 def domainCount (M : Finset α) : ℕ := ∏ R ∈ M.powerset, (2 ^ (#R + 1) - 1)
 
-/-! ### The paper's examples -/
-
 /-- The seven denotations over two individuals enumerated in §4.8. -/
 example : #((antidiagonal 2).powerset.erase ∅) = 7 := by decide
 
 /-- The paper's `1 × 3 × 3 × 7 = 63` quantifiers on a domain of two individuals, against the 512
 conservative ones it cites, the `2 ^ 3 ^ 2` of [keenan-stavi-1986]. -/
 example : domainCount (univ : Finset (Fin 2)) = 63 ∧ 63 < 2 ^ 3 ^ 2 := by decide
-
-/-- Three dogs, a constructed domain. -/
-inductive Dog
-  | fido | rex | spot
-  deriving DecidableEq, Fintype
-
-/-- The extension of *dog*. -/
-def dogs : Finset Dog := univ
-
-/-- *Every dog* keeps one of the eight bipartitions, *most dogs* four. -/
-example : #(sieve NumberTree.all dogs) = 1 ∧ #(sieve most dogs) = 4 := by decide
-
-/-- *Few* against *a few* on the dogs, and the divergence on *fewer than 100*. -/
-example : CompsetAccessible (sieve few dogs) ∧ ¬ CompsetAccessible (refind (sieve few dogs)) ∧
-    CompsetAccessible (sieve (cardinal {b | b < 100}) dogs) := by
-  decide
 
 end LuckingGinzburg2022
