@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Baker1985
 public import Linglib.Morphology.Word.Tree
-public import Linglib.Syntax.Voice.Basic
+public import Linglib.Syntax.Voice.Derivation
 
 /-!
 # Baker 1985: the Mirror Principle
@@ -33,8 +33,7 @@ run of `Voice` correspondences) are both read. The word determines the sequence 
 * `passiveAt`, `causativeChamorro`, `causativeQuechua`, `applicativeOf`, `reciprocalOf`: the
   GF-rules as the voice of each frame, Baker's schemas with the remaining material carried
   along.
-* `Stage`, `Stage.apply`, `Stage.agree`: participants at the slots of a frame, the effect of a
-  voice on them, and agreement registration.
+* `Stage`: the substrate's `Voice.Stage` over the paper's participants.
 * `Process`, `Grammar`, `outcomes`: the paper's processes, a language's settings, and the stages
   a sequence of processes reaches.
 * `Derivation`, `word`: a derivation and the word it builds.
@@ -172,48 +171,8 @@ inductive Arg
   | causer
   deriving DecidableEq, Repr
 
-/-- A derivational stage: the current frame, the slot each participant occupies, the
-referential dependencies established and the agreements registered so far. -/
-structure Stage where
-  frame : ArgumentFrame
-  slots : List (Arg × Slot)
-  links : List (Arg × Arg) := []
-  registered : List Arg := []
-  deriving DecidableEq, Repr
-
-namespace Stage
-
-variable (s : Stage)
-
-/-- The participants in the subject slot, the pivot of the frame. -/
-def subjects : List Arg :=
-  (s.slots.filter fun p ↦ some p.2 = s.frame.coreSlots.head?).map (·.1)
-
-/-- The stage a voice derives: each participant moves to the slot its own corresponds to,
-suppressed if none, a fresh participant enters the slot the voice introduces, and a subject
-the voice cumulates is linked to each participant cumulated with it. -/
-def apply (v : Voice) (fresh : Option Arg) : Stage where
-  frame := v.target
-  slots := (fresh.bind fun a ↦ v.introduced.head?.map (a, ·)).toList ++
-    s.slots.filterMap fun p ↦ (v.image p.2).map (p.1, ·)
-  links := s.links ++ s.slots.flatMap fun p ↦
-    if some p.2 = s.frame.coreSlots.head? ∧ v.fate p.2 = .cumulated then
-      s.slots.filterMap fun q ↦
-        if q.2 ≠ p.2 ∧ v.image q.2 = v.image p.2 then some (p.1, q.1) else none
-    else []
-  registered := s.registered
-
-/-- Number agreement (16) registers the subject. -/
-def agree : Stage := { s with registered := s.registered ++ s.subjects }
-
-@[simp] theorem registered_apply (v : Voice) (a : Option Arg) :
-    (s.apply v a).registered = s.registered := rfl
-
-@[simp] theorem registered_agree : s.agree.registered = s.registered ++ s.subjects := rfl
-
-@[simp] theorem subjects_agree : s.agree.subjects = s.subjects := rfl
-
-end Stage
+/-- A derivational stage over the paper's participants. -/
+abbrev Stage := Voice.Stage Arg
 
 /-! ### The universal restriction on agreement
 
@@ -226,11 +185,13 @@ before the rule applied, and agreement attached after it the subject after. -/
 
 /-- (27a): agreement inside the GF-rule morpheme registers the semantic subject. -/
 theorem registered_agree_apply (s : Stage) (v : Voice) (a : Option Arg) :
-    (s.agree.apply v a).registered = s.registered ++ s.subjects := rfl
+    (s.agree.apply v a).registered = s.registered ++ s.subjects :=
+  Voice.Stage.registered_agree_apply s v a
 
 /-- (27d): agreement outside the GF-rule morpheme registers the surface subject. -/
 theorem registered_apply_agree (s : Stage) (v : Voice) (a : Option Arg) :
-    (s.apply v a).agree.registered = s.registered ++ (s.apply v a).subjects := rfl
+    (s.apply v a).agree.registered = s.registered ++ (s.apply v a).subjects :=
+  Voice.Stage.registered_apply_agree s v a
 
 /-! ### Processes and grammars -/
 
@@ -310,8 +271,7 @@ abbrev Derivation := List (Process × Morph)
 
 /-- The word a derivation builds on a root: each affix attached on its side, in order of
 application (§2.1). -/
-def word (root : Morph) (d : Derivation) : Tree Morph :=
-  Tree.attachAll root (d.filterMap fun pm ↦ (pm.2.kind.side?).map (·, pm.2))
+def word (root : Morph) (d : Derivation) : Tree Morph := Tree.attachMorphs root (d.map (·.2))
 
 /-- The morphological derivation determines the syntactic one (§2.1): for a language marking
 each process by its own affix, the word is injective in the sequence of processes. -/
@@ -319,14 +279,12 @@ theorem word_injective (root : Morph) (μ : Process → Morph) (σ : Process →
     (hμ : Function.Injective μ) (hσ : ∀ p, (μ p).kind = .bound (σ p) .affix) :
     Function.Injective fun ps : List Process ↦ word root (ps.map fun p ↦ (p, μ p)) := by
   intro ps₁ ps₂ h
-  have key (ps : List Process) :
-      (ps.map fun p ↦ (p, μ p)).filterMap
-          (fun pm : Process × Morph ↦ (pm.2.kind.side?).map (·, pm.2)) =
-        ps.map fun p ↦ (σ p, μ p) := by
-    rw [List.filterMap_map, ← List.filterMap_eq_map]
-    exact List.filterMap_congr fun p _ ↦ by simp [hσ]
-  have := Tree.attachAll_injective root (by simpa only [word, key] using h)
-  exact List.map_injective_iff.mpr (fun p q hpq ↦ hμ (Prod.ext_iff.mp hpq).2) this
+  have key (ps : List Process) : ∀ m ∈ ps.map μ, ∃ s, m.kind = .bound s .affix := by
+    simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+    exact fun p _ ↦ ⟨σ p, hσ p⟩
+  have := Tree.attachMorphs_injOn root (key ps₁) (key ps₂)
+    (by simpa only [word, List.map_map, Function.comp_def] using h)
+  exact List.map_injective_iff.mpr hμ this
 
 /-! ### The paper's examples -/
 

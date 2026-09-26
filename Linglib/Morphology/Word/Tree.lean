@@ -24,7 +24,10 @@ constituency, which applying the operations as functions would forget.
   `toList_attach` linearizes attachment to `Morph.Side.attach`
 * `Word.Tree.toList`, `Word.Tree.IsConcatenative` — linearization, and the
   shapes where it is the word's segmentation; `toList_attachAll` reads the
-  affixes of each side outward from the root in order of attachment
+  affixes of each side outward from the root in order of attachment, and
+  `attachAll_injective` says the tree records the affixes and their order
+* `Word.Tree.attachMorphs` — attachment of morphs on the sides their kinds
+  give; `attachMorphs_injOn` on sequences of affixes
 * `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
   relational notions
 * `Word.Tree.IsKindCoherent` — attachment kinds match their positions
@@ -200,6 +203,28 @@ theorem isConcatenative_foldl_attach {t : Tree M} (ht : t.IsConcatenative) :
 theorem isConcatenative_attachAll (root : M) (affixes : List (Morph.Side × M)) :
     (attachAll root affixes).IsConcatenative :=
   isConcatenative_foldl_attach (show (Tree.root root).IsConcatenative from trivial) affixes
+
+/-! ### Attachment of morphs -/
+
+/-- Attach morphs to a root in order, each on the side its kind gives; a morph bound on no
+side, an infix or a free form, is not attached. -/
+def attachMorphs (root : Morph) (ms : List Morph) : Tree Morph :=
+  attachAll root (ms.filterMap fun m ↦ (m.kind.side?).map (·, m))
+
+/-- On sequences of affixes, morphs bound on a side, attachment records the affixes and
+their order. -/
+theorem attachMorphs_injOn (root : Morph) :
+    Set.InjOn (attachMorphs root) {ms | ∀ m ∈ ms, ∃ s, m.kind = .bound s .affix} := by
+  intro l₁ h₁ l₂ h₂ h
+  have key : ∀ l : List Morph, (∀ m ∈ l, ∃ s, m.kind = .bound s .affix) →
+      (l.filterMap fun m ↦ (m.kind.side?).map (·, m)) =
+        l.map fun m ↦ ((m.kind.side?).getD .before, m) := by
+    intro l hl
+    rw [← List.filterMap_eq_map]
+    exact List.filterMap_congr fun m hm ↦ by obtain ⟨s, hs⟩ := hl m hm; simp [hs]
+  have := attachAll_injective root
+    (by simpa only [attachMorphs, key l₁ h₁, key l₂ h₂] using h)
+  exact List.map_injective_iff.mpr (fun m m' hmm ↦ (Prod.ext_iff.mp hmm).2) this
 
 /-! ### Laws -/
 
