@@ -38,44 +38,56 @@ structure MeasureTerm where
 /-- The unit quantity a measure term denotes. -/
 def MeasureTerm.quantity (t : MeasureTerm) : Degree.Quantity ℚ := (t.magnitude, .of t.dimension)
 
+/-- *gram*. -/
 def gram : MeasureTerm :=
   { form := "gram", formPlural := "grams", symbol := "g", dimension := .mass }
+/-- *kilogram*. -/
 def kilogram : MeasureTerm :=
   { form := "kilogram", formPlural := "kilograms", symbol := "kg", dimension := .mass,
     magnitude := 1000 }
+/-- *kilo*. -/
 def kilo : MeasureTerm :=
   { form := "kilo", formPlural := "kilos", symbol := "kg", dimension := .mass, magnitude := 1000 }
+/-- *pound*. -/
 def pound : MeasureTerm :=
   { form := "pound", formPlural := "pounds", symbol := "lb", dimension := .mass,
     magnitude := 45359237 / 100000 }
+/-- *milliliter*. -/
 def milliliter : MeasureTerm :=
   { form := "milliliter", formPlural := "milliliters", symbol := "mL",
     dimension := .volume }
+/-- *liter*. -/
 def liter : MeasureTerm :=
   { form := "liter", formPlural := "liters", symbol := "L", dimension := .volume,
     magnitude := 1000 }
+/-- *mile*. -/
 def mile : MeasureTerm :=
   { form := "mile", formPlural := "miles", symbol := "mi", dimension := .distance,
     magnitude := 1609344 / 1000 }
+/-- *kilometer*. -/
 def kilometer : MeasureTerm :=
   { form := "kilometer", formPlural := "kilometers", symbol := "km", dimension := .distance,
     magnitude := 1000 }
+/-- *meter*. -/
 def meter : MeasureTerm :=
   { form := "meter", formPlural := "meters", symbol := "m", dimension := .distance }
+/-- *hour*. -/
 def hour : MeasureTerm :=
   { form := "hour", formPlural := "hours", symbol := "h", dimension := .time, magnitude := 3600 }
+/-- *second*. -/
 def second_ : MeasureTerm :=
   { form := "second", formPlural := "seconds", symbol := "s", dimension := .time }
 
+/-- The measure terms. -/
 def allMeasureTerms : List MeasureTerm :=
   [gram, kilogram, kilo, pound, milliliter, liter, mile, kilometer, meter, hour, second_]
 
 /-- The measure term with singular or plural form `s`. -/
 def measureTerm? (s : String) : Option MeasureTerm :=
-  allMeasureTerms.find? λ t => t.form = s ∨ t.formPlural = s
+  allMeasureTerms.find? fun t ↦ t.form = s ∨ t.formPlural = s
 
-/-- A quantizing noun, one that turns a mass term into a countable expression: a measure
-term, a container noun, or an atomizer. -/
+/-- A quantizing noun turns a mass term into a countable expression, as a measure term, a
+container noun or an atomizer. -/
 structure QuantizingNoun where
   form : String
   formPlural : String
@@ -92,24 +104,40 @@ def MeasureTerm.toQuantizingNoun (t : MeasureTerm) : QuantizingNoun :=
 
 instance : Coe MeasureTerm QuantizingNoun := ⟨MeasureTerm.toQuantizingNoun⟩
 
+/-- *glass*. -/
 def glass : QuantizingNoun :=
   { form := "glass", formPlural := "glasses", nounClass := .containerNoun,
     dimension := some .volume }
+/-- *box*. -/
 def box : QuantizingNoun :=
   { form := "box", formPlural := "boxes", nounClass := .containerNoun, dimension := some .volume }
+/-- *cup*. -/
 def cup : QuantizingNoun :=
   { form := "cup", formPlural := "cups", nounClass := .containerNoun, dimension := some .volume }
+/-- *bag*. -/
 def bag : QuantizingNoun :=
   { form := "bag", formPlural := "bags", nounClass := .containerNoun, dimension := some .volume }
+/-- *bottle*. -/
 def bottle : QuantizingNoun :=
   { form := "bottle", formPlural := "bottles", nounClass := .containerNoun,
     dimension := some .volume }
-def grain : QuantizingNoun := { form := "grain", formPlural := "grains", nounClass := .atomizer }
-def piece : QuantizingNoun := { form := "piece", formPlural := "pieces", nounClass := .atomizer }
-def drop : QuantizingNoun := { form := "drop", formPlural := "drops", nounClass := .atomizer }
-def slice : QuantizingNoun := { form := "slice", formPlural := "slices", nounClass := .atomizer }
-def chunk : QuantizingNoun := { form := "chunk", formPlural := "chunks", nounClass := .atomizer }
+/-- *grain*. -/
+def grain : QuantizingNoun :=
+  { form := "grain", formPlural := "grains", nounClass := .atomizer }
+/-- *piece*. -/
+def piece : QuantizingNoun :=
+  { form := "piece", formPlural := "pieces", nounClass := .atomizer }
+/-- *drop*. -/
+def drop : QuantizingNoun :=
+  { form := "drop", formPlural := "drops", nounClass := .atomizer }
+/-- *slice*. -/
+def slice : QuantizingNoun :=
+  { form := "slice", formPlural := "slices", nounClass := .atomizer }
+/-- *chunk*. -/
+def chunk : QuantizingNoun :=
+  { form := "chunk", formPlural := "chunks", nounClass := .atomizer }
 
+/-- The quantizing nouns. -/
 def allQuantizingNouns : List QuantizingNoun :=
   allMeasureTerms.map (↑) ++ [glass, box, cup, bag, bottle, grain, piece, drop, slice, chunk]
 
