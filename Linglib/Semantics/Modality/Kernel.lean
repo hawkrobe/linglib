@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Flavor
+public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -64,7 +64,7 @@ def base : Set W :=
 
 /-- The kernel as a context-independent modal base. -/
 def toModalBase : ModalBase W :=
-  λ _ => k.props
+  fun _ ↦ k.props
 
 /-- `K` is consistent iff `B_K ≠ ∅`. -/
 def IsConsistent : Prop :=
@@ -77,11 +77,6 @@ def FollowsFrom : Prop :=
 /-- `φ` is compatible with `K` iff `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
 def compatibleWith : Prop :=
   IsCompatibleWith φ k.props
-
-/-- The `EpistemicFlavor` with the kernel's modal base and empty ordering. -/
-def toEpistemicFlavor : EpistemicFlavor W where
-  evidence := k.toModalBase
-  ordering := emptyBackground
 
 theorem followsFrom_iff : k.FollowsFrom φ ↔ ∀ w ∈ k.base, φ w := Iff.rfl
 
@@ -100,7 +95,7 @@ def Kernel.directlySettles : Prop :=
 /-- If `K` directly settles `φ` then `B_K ⊆ ⟦φ⟧` or `B_K ⊆ ⟦¬φ⟧`; the
     converse fails (see `VonFintelGillies2010.entailment_settling_gap`). -/
 theorem explicit_implies_entailment (h : k.directlySettles φ) :
-    k.FollowsFrom φ ∨ k.FollowsFrom (λ w' => ¬ φ w') := by
+    k.FollowsFrom φ ∨ k.FollowsFrom (fun w' ↦ ¬ φ w') := by
   obtain ⟨x, hx_mem, h_sub | h_disj⟩ := h
   · exact Or.inl ((propIntersection_subset hx_mem).trans h_sub)
   · exact Or.inr ((propIntersection_subset hx_mem).trans
@@ -109,7 +104,7 @@ theorem explicit_implies_entailment (h : k.directlySettles φ) :
 theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
     (h : k.directlySettles φ) :
     k'.directlySettles φ :=
-  h.imp λ _ ⟨hm, hx⟩ => ⟨hk hm, hx⟩
+  h.imp fun _ ⟨hm, hx⟩ ↦ ⟨hk hm, hx⟩
 
 @[simp]
 theorem Kernel.base_singleton (p : W → Prop) :
@@ -127,18 +122,18 @@ theorem Kernel.directlySettles_singleton (p : W → Prop) :
 /-- `⟦must φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ⊆ ⟦φ⟧`. -/
 def kernelMust : PartialProp W where
-  presup := λ _ => ¬ k.directlySettles φ
-  assertion := λ _ => k.FollowsFrom φ
+  presup := fun _ ↦ ¬ k.directlySettles φ
+  assertion := fun _ ↦ k.FollowsFrom φ
 
 /-- `⟦might φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
 def kernelMight : PartialProp W where
-  presup := λ _ => ¬ k.directlySettles φ
-  assertion := λ _ => k.compatibleWith φ
+  presup := fun _ ↦ ¬ k.directlySettles φ
+  assertion := fun _ ↦ k.compatibleWith φ
 
 /-- `⟦can't φ⟧` is `⟦must ¬φ⟧`. -/
 def kernelCant : PartialProp W :=
-  kernelMust k (λ w' => ¬ φ w')
+  kernelMust k (fun w' ↦ ¬ φ w')
 
 /-! ### Core properties -/
 
@@ -150,12 +145,12 @@ theorem must_entails_prejacent (hReal : w ∈ k.base)
 
 /-- Might `φ` and `¬must ¬φ` have the same assertion content. -/
 theorem kernel_duality :
-    (kernelMight k φ).assertion w ↔ ¬(kernelMust k (λ w' => ¬ φ w')).assertion w :=
+    (kernelMight k φ).assertion w ↔ ¬(kernelMust k (fun w' ↦ ¬ φ w')).assertion w :=
   isCompatibleWith_iff_not_followsFrom_not
 
 /-- The empty kernel settles nothing, so must is always defined. -/
 theorem empty_kernel_always_defined : (kernelMust ⟨[]⟩ φ).presup w :=
-  λ ⟨_, hx, _⟩ => List.not_mem_nil hx
+  fun ⟨_, hx, _⟩ ↦ List.not_mem_nil hx
 
 /-! ### Bridge to Kratzer necessity -/
 
