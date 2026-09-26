@@ -4,31 +4,26 @@ public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Hungarian verbs
-[kiss-2002]
 
-Hungarian matrix predicates that embed finite *hogy*-clauses, extending `Verb`
-with the Hungarian inflectional paradigm. The verbs here are the perception,
-cognition, and communication predicates used in [egressy-2026]'s study of
-sequence of tense (see `Studies.Egressy2026`).
+This file defines the Hungarian matrix predicates of Egressy's study of sequence of tense, the
+perception, cognition, psychological and communication verbs that embed a finite *hogy*-clause:
+*lát* 'see', *hall* 'hear', *álmodik* 'dream', *gondol* 'think', *hisz* 'believe', *aggaszt*
+'worry', *mond* 'say', *rikolt* 'shout' and *morog* 'growl'. A Hungarian verb agrees with the
+definiteness of its object as well as with its subject, in the definite or the indefinite
+objective conjugation of the reference grammar, so a clausal complement with the accusative
+expletive *azt* takes the definite form, *tudta* 'knew it'. Whether the complement reports
+speech or not is a property of the clause and not of the verb, as Egressy shows with *hall*
+and *morog*, so the entries carry no clause type.
 
-## Definite vs indefinite conjugation
+## Main definitions
 
-Hungarian verbs agree not just with the subject but with the definiteness of
-the object: a definite object (including a clause whose accusative expletive
-*az-t* 'it' is present) triggers **definite** conjugation (*tud-t-a*
-know-PST-3SG.DF), an indefinite object the **indefinite** conjugation
-(*tud-ott* know-PST.3SG.INDF) ([kiss-2002]). This is object agreement, not a
-clause-size diagnostic.
+* `Hungarian.Verbs.verbs`: the entries.
 
-## Clause type is not a verb property
+## References
 
-A central point of [egressy-2026] is that whether a complement is
-*speech-reporting* (encodes the content of a verbal/representational sign) or
-*non-speech-reporting* (perception, dreaming, belief) is a property of the
-*clause*, not of the matrix verb: perception verbs like *hall* 'hear' and
-cognition verbs like *gondol* 'think' embed either type. So this fragment
-records only general lexical class (perception / communication / attitude); the
-clause-type analysis lives in `Studies.Egressy2026`.
+* [egressy-2026]
+* [kenesei-vago-fenyvesi-1998]
+* [kiss-2002]
 -/
 
 @[expose] public section
@@ -37,161 +32,37 @@ namespace Hungarian.Verbs
 
 open ArgumentStructure
 
-/-- Hungarian verb entry: extends `Verb` with the definite/indefinite
-    conjugation paradigm. Conjugation fields default to `""` (unspecified)
-    for entries whose paradigm is not needed here. -/
-structure HungarianVerbEntry extends Verb where
-  /-- English gloss -/
-  gloss : String
-  /-- 3sg present definite conjugation -/
-  formPresDef : String := ""
-  /-- 3sg present indefinite conjugation -/
-  formPresIndef : String := ""
-  /-- 3sg past definite conjugation -/
-  formPastDef : String := ""
-  /-- 3sg past indefinite conjugation -/
-  formPastIndef : String := ""
-  deriving BEq
+/-- *lát* 'see', a perception verb. -/
+def lat : Verb := { form := "lát", frames := [ArgumentFrame.finiteClause] }
 
+/-- *hall* 'hear', a perception verb that embeds a perceived event or a heard report alike. -/
+def hall : Verb := { form := "hall", frames := [ArgumentFrame.finiteClause] }
 
--- ════════════════════════════════════════════════════════════════
--- § Perception verbs (embed non-speech-reporting clauses)
--- ════════════════════════════════════════════════════════════════
+/-- *álmodik* 'dream'. -/
+def almodik : Verb := { form := "álmodik", frames := [ArgumentFrame.finiteClause] }
 
-/-- *lát* 'see' — perception verb ([egressy-2026], exx. (4), (16)).
-    With direct perception its complement is non-speech-reporting. -/
-def lat : HungarianVerbEntry where
-  form := "lát"
-  gloss := "see"
-  formPresDef := "látja"
-  formPresIndef := "lát"
-  formPastDef := "látta"
-  formPastIndef := "látott"
-  frames := [ArgumentFrame.finiteClause]
+/-- *gondol* 'think'. -/
+def gondol : Verb := { form := "gondol", frames := [ArgumentFrame.finiteClause] }
 
-/-- *hall* 'hear' — perception verb ([egressy-2026], exx. (5), (13), (17)).
-    Takes a non-speech-reporting complement (perceiving an event) *or* a
-    speech-reporting one (hearing a verbal report). -/
-def hall : HungarianVerbEntry where
-  form := "hall"
-  gloss := "hear"
-  formPresDef := "hallja"
-  formPresIndef := "hall"
-  formPastDef := "hallotta"
-  formPastIndef := "hallott"
-  frames := [ArgumentFrame.finiteClause]
+/-- *hisz* 'believe'. -/
+def hisz : Verb := { form := "hisz", frames := [ArgumentFrame.finiteClause] }
 
-/-- *álmodik* 'dream' — perception-in-a-dream ([egressy-2026], exx. (6), (10)).
-    Non-speech-reporting complement. -/
-def almodik : HungarianVerbEntry where
-  form := "álmodik"
-  gloss := "dream"
-  frames := [ArgumentFrame.finiteClause]
+/-- *aggaszt* 'worry', a psychological verb whose clause is its subject. -/
+def aggaszt : Verb := { form := "aggaszt", frames := [ArgumentFrame.finiteClause] }
 
+/-- *mond* 'say'. -/
+def mond : Verb :=
+  { form := "mond", frames := [ArgumentFrame.finiteClause], speechActVerb := true }
 
--- ════════════════════════════════════════════════════════════════
--- § Cognition / attitude verbs (embed non-speech-reporting clauses)
--- ════════════════════════════════════════════════════════════════
+/-- *rikolt* 'shout', a manner-of-speaking verb. -/
+def rikolt : Verb :=
+  { form := "rikolt", frames := [ArgumentFrame.finiteClause], speechActVerb := true }
 
-/-- *gondol* 'think' — doxastic attitude verb ([egressy-2026], ex. (7)). -/
-def gondol : HungarianVerbEntry where
-  form := "gondol"
-  gloss := "think"
-  formPresDef := "gondolja"
-  formPresIndef := "gondol"
-  formPastDef := "gondolta"
-  formPastIndef := "gondolt"
-  frames := [ArgumentFrame.finiteClause]
-  attitude := some (.doxastic .nonVeridical)
-  complementSig := some .mono
+/-- *morog* 'growl', a manner-of-speaking verb that also takes a reason adjunct. -/
+def morog : Verb :=
+  { form := "morog", frames := [ArgumentFrame.finiteClause], speechActVerb := true }
 
-/-- *hisz* 'believe' — doxastic non-veridical attitude verb
-    ([egressy-2026], ex. (7)). -/
-def hisz : HungarianVerbEntry where
-  form := "hisz"
-  gloss := "believe"
-  formPresDef := "hiszi"
-  formPresIndef := "hisz"
-  formPastDef := "hitte"
-  formPastIndef := "hitt"
-  frames := [ArgumentFrame.finiteClause]
-  opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
-  complementSig := some .mono
-
-/-- *tud* 'know' — factive doxastic veridical attitude verb. -/
-def tud : HungarianVerbEntry where
-  form := "tud"
-  gloss := "know"
-  formPresDef := "tudja"
-  formPresIndef := "tud"
-  formPastDef := "tudta"
-  formPastIndef := "tudott"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
-  factivity := some .semi
-  attitude := some (.doxastic .veridical)
-  complementSig := some .mono
-
-/-- *aggaszt* 'worry' — subject-experiencer psych verb taking a subject clause
-    ([egressy-2026], ex. (8)). Embeds a non-speech-reporting clause. -/
-def aggaszt : HungarianVerbEntry where
-  form := "aggaszt"
-  gloss := "worry"
-  frames := [ArgumentFrame.finiteClause]
-
-
--- ════════════════════════════════════════════════════════════════
--- § Communication verbs (embed speech-reporting clauses)
--- ════════════════════════════════════════════════════════════════
-
-/-- *mond* 'say' — speech verb ([egressy-2026], ex. (11a)). -/
-def mond : HungarianVerbEntry where
-  form := "mond"
-  gloss := "say"
-  formPresDef := "mondja"
-  formPresIndef := "mond"
-  formPastDef := "mondta"
-  formPastIndef := "mondott"
-  frames := [ArgumentFrame.finiteClause]
-  speechActVerb := true
-
-/-- *rikolt* 'shout' — manner-of-speaking verb ([egressy-2026], ex. (11)). -/
-def rikolt : HungarianVerbEntry where
-  form := "rikolt"
-  gloss := "shout"
-  frames := [ArgumentFrame.finiteClause]
-  speechActVerb := true
-
-/-- *morog* 'growl' — manner-of-speaking verb ([egressy-2026], exx. (9), (11)).
-    With a speech-reporting complement it reports the words growled; with a
-    non-speech-reporting adjunct it gives the reason for growling (ex. (9)). -/
-def morog : HungarianVerbEntry where
-  form := "morog"
-  gloss := "growl"
-  frames := [ArgumentFrame.finiteClause]
-  speechActVerb := true
-
-
--- ════════════════════════════════════════════════════════════════
--- § Collections
--- ════════════════════════════════════════════════════════════════
-
-/-- All Hungarian verb entries from [egressy-2026]. -/
-def allEntries : List HungarianVerbEntry :=
-  [lat, hall, almodik, gondol, hisz, tud, aggaszt, mond, rikolt, morog]
-
-/-- Entries whose full definite/indefinite past paradigm is recorded. -/
-def conjugatedEntries : List HungarianVerbEntry :=
-  [lat, hall, gondol, hisz, tud, mond]
-
-/-- The definite and indefinite past forms are distinct for every verb whose
-    paradigm is recorded — the object-agreement contrast [kiss-2002]. -/
-theorem def_indef_distinct :
-    ∀ v ∈ conjugatedEntries, v.formPastDef ≠ v.formPastIndef := by
-  intro v hv
-  simp only [conjugatedEntries, List.mem_cons, List.mem_nil_iff, or_false] at hv
-  rcases hv with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [lat, hall, gondol, hisz, tud, mond]
-
+/-- The entries. -/
+def verbs : List Verb := [lat, hall, almodik, gondol, hisz, aggaszt, mond, rikolt, morog]
 
 end Hungarian.Verbs
