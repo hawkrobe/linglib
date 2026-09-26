@@ -1,273 +1,322 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
-public import Linglib.Core.Optimization.Linearization
-public import Linglib.Fragments.Turkish.Anaphors
-public import Linglib.Data.Examples.BakayEtAl2026
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Optimization.Linearization
+public import Linglib.Data.Examples.BakayEtAl2026
+public import Linglib.Fragments.Turkish.Anaphors
+public import Linglib.Syntax.Binding.Tree
 
 /-!
-# Bakay, Akkuş & Dillon 2026: hierarchical relations in antecedent retrieval
+# Bakay, Akkuş and Dillon (2026): hierarchical relations in antecedent retrieval
 
-Three visual-world experiments ask whether c-command between noun phrases within one clause
-guides antecedent retrieval for the Turkish reciprocal *birbirleri*, deconfounded from
-clause-mateness, case marking, subjecthood and linear order, which earlier studies had let
-stand in for hierarchy and which can be stored as item-level features. Targets and distractors
-share the embedded clause and the case ending: an embedded subject against a possessor inside
-the subject or inside an adjunct, and an indirect object against the complement of a
-postposition. Looks go to the c-commanding target immediately at the reciprocal, whether it
-precedes or follows the distractor and whether or not the distractor matches the reciprocal in
-number; a pre-registered replication confirms it. A cue-based account can carry this only if a
-dynamically assigned feature approximates c-command and hierarchical cues weigh more than the
-rest; a representational account instead grants c-commanding items a privileged store. Both
-predict the target advantage and part company only on interference from feature-matching
-distractors, which the paper finds limited and inconsistent.
+This file formalizes the structural claims behind three visual-world experiments on the Turkish
+reciprocal *birbirleri*, which must be bound by a c-commanding antecedent in its own clause.
+Bakay, Akkuş and Dillon ask whether c-command between the noun phrases of one clause guides
+antecedent retrieval, and they deconfound it from clause-mateness, case, subjecthood and linear
+order. The target, an embedded subject or an indirect object, and the distractor, a possessor
+inside the subject or inside an adjunct noun phrase or the complement of a postposition, share
+the reciprocal's clause and case. The four embedded structures are phrase-structure trees here,
+and Principle A over their clause configuration makes the embedded subject and an indirect
+object available and the matrix subject and every distractor unavailable (`available_iff`), as
+the paper's coindexations record (`rows_available`).
 
-## Main definitions
+The paper weighs two ways retrieval could use the relation. On the cue-based account of Lewis
+and Vasishth the reciprocal cues features stored with each candidate, and c-command enters
+through Kush's `local` feature, carried by the noun phrases attached to the spine of the current
+clause or serving as its arguments. On every stimulus that feature holds of exactly the
+available antecedents (`local_iff_available`), so the target out-activates each distractor under
+any weighting that gives the hierarchical cue weight (`target_retrieved`); a distractor that
+matches the reciprocal in number still out-activates one that does not whenever item-level cues
+carry weight, the interference both weightings predict (`distractor_interference`). On the
+representational account after McElree and Oberauer, the noun phrases that c-command the
+retrieval site from within its clause sit in a privileged store. That store holds exactly the
+available antecedents (`privileged_iff_available`), so no distractor is accessed
+(`not_privileged_second`).
 
-* `Cue`, `matchCount`, `weightedActivation`, `dominance`: activation as a weighted cue-match
-  count, and pointwise dominance of match vectors.
-* `Configuration`, `Role`: the three stimulus structures, with `Role.available` and
-  `Role.features` read off the geometry.
-* `birbirleriCues`: the cue bundle, with the number cue supplied by the fragment.
-* `privileged`: the representational rival.
-* `rows_available`, `rows_target_retrieved`: the paper's coindexations and the target
-  advantage, per stimulus.
+## Implementation notes
+
+* The trees keep the noun phrases, the heads that embed them and the verbal spine, and omit
+  adverbs. The embedded clause is the complement of the matrix verb, and an adjunct is a sister
+  of the lowest verb phrase.
+* Argumenthood in Kush's feature is read off attachment: a noun phrase is local when its mother
+  is a clause or verb-phrase node of the retrieval site's clause.
+* A cue is matched either against the hierarchical feature or against an item-level feature,
+  and activation is the count of matched cues weighted by where they are matched.
 
 ## References
 
-* [bakay-etal-2026]
-* [lewis-vasishth-2005] — cue-based retrieval
-* [kush-2013] — the dynamically assigned locality feature
-* [mcelree-2006], [oberauer-2002] — direct access and the privileged region
-* [reinhart-1976], [barker-pullum-1990] — c-command on tree addresses
-* [pollard-sag-1994] — the coargumenthood alternative
+* [Ö. Bakay, F. Akkuş and B. Dillon, *Hierarchical relations guide memory retrieval in sentence
+  comprehension: Evidence from a local anaphor in Turkish* (2026)][bakay-etal-2026]
+* [N. Chomsky, *Lectures on Government and Binding* (1981)][chomsky-1981]
+* [T. Reinhart, *The Syntactic Domain of Anaphora* (1976)][reinhart-1976]
+* [R. L. Lewis and S. Vasishth, *An Activation-Based Model of Sentence Processing as Skilled
+  Memory Retrieval* (2005)][lewis-vasishth-2005]
+* [D. W. Kush, *Respecting Relations: Memory Access and Antecedent Retrieval in Incremental
+  Sentence Processing* (2013)][kush-2013]
+* [B. McElree, *Accessing Recent Events* (2006)][mcelree-2006]
+* [K. Oberauer, *Access to information in working memory: Exploring the focus of attention*
+  (2002)][oberauer-2002]
 -/
 
 @[expose] public section
 
 namespace BakayEtAl2026
 
-open Data.Examples
+open Core.Order Syntax Syntax.Tree Binding Data.Examples
 
-/-- A direction in a binary tree. -/
-inductive Dir
-  | L
-  | R
-  deriving DecidableEq
+/-! ### The stimuli -/
 
-/-- A tree address: the path from the root. -/
-abbrev Address := List Dir
+/-- The embedded-clause structures of the stimuli, by the clause's second noun phrase. It is a
+possessor inside the subject in (5a), a possessor inside an adjunct noun phrase in (5b) and
+(10c), the complement of a postposition in (8b) and (10b), and an indirect object in (8a), (8c)
+and (10a). -/
+inductive Structure
+  | possessorInSubject
+  | possessorInAdjunct
+  | postpositionalAdjunct
+  | indirectObject
+  deriving DecidableEq, Fintype, Repr
 
-/-- The sister of an address: its last direction flipped. -/
-def sister : Address → Option Address
-  | [] => none
-  | [.L] => some [.R]
-  | [.R] => some [.L]
-  | d :: rest => (sister rest).map (d :: ·)
+/-- `np` is a one-word noun phrase. -/
+def np : Tree Cat Unit := .terminal .NP ()
 
-/-- C-command on addresses ([reinhart-1976]): the sister of `a` dominates `b`. -/
-def cCommand (a b : Address) : Bool := (sister a).elim false (·.isPrefixOf b)
+/-- `possessive` is a noun phrase of a possessor and its head noun. -/
+def possessive : Tree Cat Unit := .node .NP [np, .terminal .N ()]
+
+/-- `reciprocalVP` is the lowest verb phrase, of the reciprocal object and the embedded verb. -/
+def reciprocalVP : Tree Cat Unit := .node .VP [np, .terminal .V ()]
+
+/-- The embedded clause of a structure. -/
+def Structure.clause : Structure → Tree Cat Unit
+  | .possessorInSubject => .node .S [possessive, reciprocalVP]
+  | .possessorInAdjunct => .node .S [np, .node .VP [possessive, reciprocalVP]]
+  | .postpositionalAdjunct =>
+      .node .S [np, .node .VP [.node .PP [np, .terminal .P ()], reciprocalVP]]
+  | .indirectObject => .node .S [np, .node .VP [np, reciprocalVP]]
+
+/-- A stimulus is the matrix subject over the embedded clause and the matrix verb. -/
+def Structure.tree (s : Structure) : Tree Cat Unit :=
+  .node .S [np, .node .VP [s.clause, .terminal .V ()]]
+
+/-- The noun phrases of a stimulus are the matrix subject, the embedded subject, the embedded
+clause's second noun phrase, a distractor or an indirect object, and the reciprocal. -/
+inductive Role
+  | matrixSubject
+  | embeddedSubject
+  | second
+  | reciprocal
+  deriving DecidableEq, Fintype, Repr
+
+/-- The position of a noun phrase in a stimulus. -/
+def Structure.path : Structure → Role → TreePath
+  | _, .matrixSubject => ⟨[0]⟩
+  | _, .embeddedSubject => ⟨[1, 0, 0]⟩
+  | .possessorInSubject, .second => ⟨[1, 0, 0, 0]⟩
+  | .possessorInSubject, .reciprocal => ⟨[1, 0, 1, 0]⟩
+  | .indirectObject, .second => ⟨[1, 0, 1, 0]⟩
+  | _, .second => ⟨[1, 0, 1, 0, 0]⟩
+  | _, .reciprocal => ⟨[1, 0, 1, 1, 0]⟩
+
+/-- Every noun phrase of a stimulus sits at a noun phrase of its tree. -/
+theorem path_mem_labeled : ∀ s r, Structure.path s r ∈ labeled (Structure.tree s) {.NP} := by
+  decide
+
+/-- Distinct noun phrases of a stimulus sit at distinct positions. -/
+theorem path_injective (s : Structure) : Function.Injective s.path := by
+  revert s; decide
+
+/-- The binding configuration on the noun phrases of a stimulus is its tree's clause
+configuration read at their positions. -/
+abbrev Structure.configuration (s : Structure) : Configuration Role :=
+  s.tree.clauseConfiguration.comap s.path
+
+/-- A noun phrase is an available antecedent when the reciprocal, coindexed with it alone, meets
+Principle A. -/
+def Role.Available (s : Structure) (r : Role) : Prop :=
+  s.configuration.Condition (pair r .reciprocal) ∅ .reciprocal .reciprocal
+
+instance (s : Structure) (r : Role) : Decidable (r.Available s) :=
+  inferInstanceAs
+    (Decidable (s.configuration.Condition (pair r .reciprocal) ∅ .reciprocal .reciprocal))
+
+/-- The embedded subject is available in every structure, and the second noun phrase exactly
+when it is an indirect object. The matrix subject lies outside the reciprocal's clause, and a
+distractor does not c-command the reciprocal. -/
+theorem available_iff (s : Structure) (r : Role) :
+    r.Available s ↔ r = .embeddedSubject ∨ s = .indirectObject ∧ r = .second := by
+  revert s r; decide
 
 /-! ### Cue-based retrieval -/
 
-/-- Where a retrieval cue comes from: a relation between the retrieval site and the candidate,
-    a feature stored with the candidate, or the candidate's position. -/
+/-- The noun phrase at `p` carries Kush's `local` feature at a retrieval site `q` when its mother
+is a clause or verb-phrase node sharing the minimal clause of `q`, so that it hangs from the
+spine of that clause. -/
+def Local (t : Tree Cat Unit) (p q : TreePath) : Prop :=
+  p.parent ∈ labeled t {.S, .VP} ∧ (p.parent, q) ∈ mateRelation (labeled t {.S})
+
+instance (t : Tree Cat Unit) (p q : TreePath) : Decidable (Local t p q) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- On every stimulus Kush's feature at the reciprocal holds of exactly the available
+antecedents. -/
+theorem local_iff_available (s : Structure) (r : Role) (hr : r ≠ .reciprocal) :
+    Local s.tree (s.path r) (s.path .reciprocal) ↔ r.Available s := by
+  revert s r; decide
+
+/-- A retrieval cue is matched against the hierarchical feature or against an item-level feature
+stored with the candidate. -/
 inductive CueSource
-  | relational
+  | hierarchical
   | itemLevel
-  | positional
   deriving DecidableEq, Fintype, Repr
 
-/-- A retrieval cue: a required feature tagged with its source. -/
+/-- A retrieval cue is a feature a candidate should carry, tagged with where it is matched. -/
 structure Cue (F : Type*) where
+  /-- Where the cue is matched. -/
   source : CueSource
+  /-- The feature the cue seeks. -/
   feature : F
-  deriving Repr
+
+section Activation
 
 variable {F : Type*} [DecidableEq F]
 
-/-- The cues from source `s` that a memory item's feature bundle matches. -/
+/-- `matchCount feats cues s` counts the cues matched at `s` that a candidate with the features
+`feats` matches. -/
 def matchCount (feats : List F) (cues : List (Cue F)) (s : CueSource) : ℕ :=
-  cues.countP λ c => decide (c.source = s ∧ c.feature ∈ feats)
+  cues.countP fun c ↦ decide (c.source = s ∧ c.feature ∈ feats)
 
-/-- Activation as a weighted count of cue matches. -/
+/-- Activation is the count of matched cues, weighted by where they are matched. -/
 def weightedActivation (w : CueSource → ℕ) (feats : List F) (cues : List (Cue F)) : ℕ :=
   ∑ s, w s * matchCount feats cues s
 
-/-- An item whose match vector pointwise dominates another's, strictly at a positively
-    weighted source, out-activates it under every such weighting. -/
-theorem dominance {w : CueSource → ℕ} {a b : List F} {cues : List (Cue F)}
+/-- A candidate that matches whatever cue another matches matches at least as many cues at
+every source. -/
+theorem matchCount_le {a b : List F} {cues : List (Cue F)}
+    (h : ∀ c ∈ cues, c.feature ∈ b → c.feature ∈ a) (s : CueSource) :
+    matchCount b cues s ≤ matchCount a cues s :=
+  List.countP_mono_left fun c hc hb ↦ by
+    simp only [decide_eq_true_eq] at hb ⊢
+    exact ⟨hb.1, h c hc hb.2⟩
+
+/-- A candidate whose matches dominate another's at every source, strictly at a source with
+positive weight, out-activates it. -/
+theorem weightedActivation_lt {w : CueSource → ℕ} {a b : List F} {cues : List (Cue F)}
     (hle : ∀ s, matchCount b cues s ≤ matchCount a cues s)
     (hlt : ∃ s, 0 < w s ∧ matchCount b cues s < matchCount a cues s) :
     weightedActivation w b cues < weightedActivation w a cues :=
   Core.Optimization.sum_mul_lt_sum_mul hle hlt
 
-/-! ### The stimuli -/
+end Activation
 
-/-- Grammatical number. -/
-inductive Number
-  | plural
-  | singular
-  deriving DecidableEq, Repr
-
-/-- The case endings the stimuli carry. -/
-inductive Marking
-  | genitive
-  | dative
-  deriving DecidableEq, Repr
-
-/-- Features relevant to retrieving an antecedent for *birbirleri*; `cCommanding` is the
-    dynamically assigned feature that approximates the relation. -/
+/-- A noun phrase is stored with Kush's `local` feature, a clause-mate feature, its number and
+its case. -/
 inductive Feature
-  | cCommanding
+  | «local»
   | clauseMate
   | number (n : Number)
-  | marking (m : Marking)
+  | marking (c : Case)
   deriving DecidableEq, Repr
 
-/-- The stimulus number a grammatical number corresponds to. -/
-def Number.ofNumber? : _root_.Number → Option Number
-  | .plural => some .plural
-  | .singular => some .singular
-  | _ => none
+/-- The features of the noun phrase `r` of `s`, of number `n` and case `c`. It carries the
+`local` feature when Kush's feature holds of it at the reciprocal, and the clause-mate feature
+when it shares the reciprocal's minimal clause. -/
+def Role.features (s : Structure) (r : Role) (n : Number) (c : Case) : List Feature :=
+  (if Local s.tree (s.path r) (s.path .reciprocal) then [.«local»] else []) ++
+    (if (s.path r, s.path .reciprocal) ∈ mateRelation (labeled s.tree {.S}) then [.clauseMate]
+      else []) ++ [.number n, .marking c]
 
-/-- The item-level number cue: the number the fragment's reciprocal bears, which an
-    antecedent must share (`Turkish.Anaphors.not_candidateAntecedent_of_singular`). -/
-def numberCues : List (Cue Feature) :=
-  ((Turkish.Anaphors.birbirlerini.number.bind Number.ofNumber?).map
-    fun n ↦ (⟨.itemLevel, .number n⟩ : Cue Feature)).toList
-
-/-- The cues generated on encountering *birbirleri*: Principle A supplies the relational
-    c-command cue and the clause-mate cue, the fragment the number cue. -/
+/-- *Birbirleri* cues the `local` feature, the clause-mate feature and the number of the
+fragment's reciprocal, which its antecedent shares. -/
 def birbirleriCues : List (Cue Feature) :=
-  ⟨.relational, .cCommanding⟩ :: ⟨.itemLevel, .clauseMate⟩ :: numberCues
+  ⟨.hierarchical, .«local»⟩ :: ⟨.itemLevel, .clauseMate⟩ ::
+    (Turkish.Anaphors.birbirlerini.number.map fun n ↦ ⟨.itemLevel, .number n⟩).toList
 
-/-- The three embedded-clause structures: a possessor inside the subject, or a second noun
-    phrase inside the verb phrase — an indirect object, or the complement of a postposition or
-    a possessed adjunct noun. -/
-inductive Configuration
-  | possessorInSubject
-  | secondInVP
-  deriving DecidableEq
+theorem birbirleriCues_eq :
+    birbirleriCues =
+      [⟨.hierarchical, .«local»⟩, ⟨.itemLevel, .clauseMate⟩, ⟨.itemLevel, .number .plural⟩] :=
+  rfl
 
-/-- The noun phrases of a stimulus. -/
-inductive Role
-  | matrixSubject
-  | embeddedSubject
-  | indirectObject
-  | distractor
-  deriving DecidableEq
+theorem features_embeddedSubject (s : Structure) (n : Number) (c : Case) :
+    Role.features s .embeddedSubject n c = [.«local», .clauseMate, .number n, .marking c] := by
+  cases s <;> rfl
 
-/-- Whether a noun phrase shares the reciprocal's clause. -/
-def Role.clauseMate : Role → Bool
-  | .matrixSubject => false
-  | _ => true
+theorem features_second {s : Structure} (hs : s ≠ .indirectObject) (n : Number) (c : Case) :
+    Role.features s .second n c = [.clauseMate, .number n, .marking c] := by
+  cases s <;> first | exact absurd rfl hs | rfl
 
-/-- Tree addresses within the embedded clause: the subject is its left daughter; a second
-    noun phrase is the left daughter of the verb phrase, a possessor or a postposition's
-    complement one step further down; the reciprocal is the left daughter of the lowest verbal
-    projection. -/
-def Configuration.anaphor : Configuration → Address
-  | .possessorInSubject => [.R, .L]
-  | .secondInVP => [.R, .R, .L]
+/-- The plural embedded subject out-activates a distractor of any number and case under any
+weighting that gives the hierarchical cue weight. The subject matches every cue, and the
+distractor lacks the `local` feature. -/
+theorem target_retrieved {s : Structure} (hs : s ≠ .indirectObject) {w : CueSource → ℕ}
+    (hw : 0 < w .hierarchical) (n : Number) (cT cD : Case) :
+    weightedActivation w (Role.features s .second n cD) birbirleriCues <
+      weightedActivation w (Role.features s .embeddedSubject .plural cT) birbirleriCues := by
+  rw [features_second hs, features_embeddedSubject]
+  refine weightedActivation_lt (matchCount_le fun c hc _ ↦ ?_) ⟨.hierarchical, hw, ?_⟩
+  · simp only [birbirleriCues_eq, List.mem_cons, List.not_mem_nil, or_false] at hc
+    rcases hc with rfl | rfl | rfl <;> simp
+  · simp [matchCount, birbirleriCues_eq]
 
-/-- The address of a clause-mate noun phrase. -/
-def Configuration.address : Configuration → Role → Address
-  | _, .embeddedSubject => [.L]
-  | .possessorInSubject, _ => [.L, .L]
-  | .secondInVP, .indirectObject => [.R, .L]
-  | .secondInVP, _ => [.R, .L, .L]
-
-/-- Principle A: an available antecedent is a clause-mate that c-commands the reciprocal. -/
-def Role.available (cfg : Configuration) (r : Role) : Prop :=
-  r.clauseMate = true ∧ cCommand (cfg.address r) cfg.anaphor = true
-
-instance (cfg : Configuration) (r : Role) : Decidable (r.available cfg) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The feature bundle of a clause-mate noun phrase: the c-command feature read off the
-    geometry, the clause index, its number, and its case. -/
-def Role.features (cfg : Configuration) (r : Role) (n : Number) (m : Marking) : List Feature :=
-  (if cCommand (cfg.address r) cfg.anaphor then [.cCommanding] else []) ++
-    [.clauseMate, .number n, .marking m]
-
-/-- A subject and an indirect object c-command the reciprocal; a possessor and a postposition's
-    complement do not. -/
-theorem available_iff (cfg : Configuration) (r : Role) :
-    r.available cfg ↔ (r = .embeddedSubject ∨ (cfg = .secondInVP ∧ r = .indirectObject)) := by
-  cases cfg <;> cases r <;> decide
-
-/-- The target out-activates a distractor of any number and case, for every weighting with
-    positive relational weight: with item-level cues tied, only the relational cue separates
-    them. -/
-theorem target_retrieved (cfg : Configuration) (w : CueSource → ℕ) (hw : 0 < w .relational)
-    (n : Number) (mT mD : Marking) :
-    weightedActivation w (Role.features cfg .distractor n mD) birbirleriCues <
-      weightedActivation w (Role.features cfg .embeddedSubject .plural mT) birbirleriCues := by
-  refine dominance (λ s => ?_) ⟨.relational, hw, ?_⟩
-  · cases cfg <;> cases s <;> cases n <;> cases mD <;> cases mT <;> decide
-  · cases cfg <;> cases n <;> cases mD <;> cases mT <;> decide
+/-- A distractor that matches the reciprocal in number out-activates one that does not, under
+any weighting that gives item-level cues weight. -/
+theorem distractor_interference {s : Structure} (hs : s ≠ .indirectObject) {w : CueSource → ℕ}
+    (hw : 0 < w .itemLevel) (c : Case) :
+    weightedActivation w (Role.features s .second .singular c) birbirleriCues <
+      weightedActivation w (Role.features s .second .plural c) birbirleriCues := by
+  rw [features_second hs, features_second hs]
+  refine weightedActivation_lt (matchCount_le fun c hc hb ↦ ?_) ⟨.itemLevel, hw, ?_⟩
+  · simp only [birbirleriCues_eq, List.mem_cons, List.not_mem_nil, or_false] at hc
+    rcases hc with rfl | rfl | rfl <;> simp_all
+  · simp [matchCount, birbirleriCues_eq]
 
 /-! ### The privileged representation -/
 
-/-- Direct access by structural position: a noun phrase is privileged at a retrieval site iff
-    it c-commands it, whatever its features. -/
-def privileged (cfg : Configuration) (r : Role) : Prop :=
-  cCommand (cfg.address r) cfg.anaphor = true
+/-- A noun phrase is in the privileged store at the reciprocal when it c-commands the reciprocal
+from within the reciprocal's clause. -/
+def Privileged (s : Structure) (r : Role) : Prop :=
+  r ∈ s.configuration.domain .reciprocal ∧ s.configuration.commands r .reciprocal
 
-/-- The privileged region holds exactly the c-commanders: the subject and, in the verb
-    phrase, the indirect object. -/
-theorem privileged_iff (cfg : Configuration) (r : Role) (hr : r ≠ .matrixSubject) :
-    privileged cfg r ↔ r.available cfg := by
-  cases r <;> simp_all [privileged, Role.available, Role.clauseMate]
+/-- The privileged store holds exactly Principle A's available antecedents. -/
+theorem privileged_iff_available {s : Structure} {r : Role} (hr : r ≠ .reciprocal) :
+    Privileged s r ↔ r.Available s := by
+  rw [Role.Available, Configuration.condition_anaphor (.inr rfl), Set.mem_empty_iff_false,
+    false_or, Configuration.locallyBound_pair_iff hr]
+  rfl
+
+/-- No distractor enters the privileged store. -/
+theorem not_privileged_second {s : Structure} (hs : s ≠ .indirectObject) :
+    ¬ Privileged s .second := by
+  rw [privileged_iff_available (by decide), available_iff]
+  simp [hs]
 
 /-! ### The paper's stimuli -/
 
-/-- A row's configuration, from its distractor or second noun phrase. -/
-def configuration? (r : LinguisticExample) : Option Configuration :=
-  match r.feature? "distractor", r.feature? "second" with
-  | some "possessor in subject", _ => some .possessorInSubject
-  | some "possessor in adjunct", _ | some "postpositional adjunct", _ => some .secondInVP
-  | _, some "indirect object" => some .secondInVP
-  | _, _ => none
+/-- The structure a row records, by its distractor or its second noun phrase. -/
+def structure? (x : LinguisticExample) : Option Structure :=
+  x.parse? "distractor" [("possessor in subject", .possessorInSubject),
+      ("possessor in adjunct", .possessorInAdjunct),
+      ("postpositional adjunct", .postpositionalAdjunct)] <|>
+    x.parse? "second" [("indirect object", .indirectObject)]
 
-/-- A reading's noun phrase. -/
-def Role.parse? : String → Option Role
-  | "matrix subject" => some .matrixSubject
-  | "embedded subject" => some .embeddedSubject
-  | "indirect object" => some .indirectObject
-  | "distractor" => some .distractor
-  | _ => none
+/-- The noun phrases the rows' readings name. -/
+def roles : List (String × Role) :=
+  [("matrix subject", .matrixSubject), ("embedded subject", .embeddedSubject),
+    ("distractor", .second), ("indirect object", .second)]
 
-/-- A row's distractor number. -/
-def distractorNumber? (r : LinguisticExample) : Option Number :=
-  match r.feature? "distractorNumber" with
-  | some "plural" => some .plural
-  | some "singular" => some .singular
-  | _ => none
-
-/-- A row's distractor case: genitive on possessors, dative under a postposition. -/
-def distractorCase? (r : LinguisticExample) : Option Marking :=
-  match r.feature? "distractor" with
-  | some "possessor in subject" | some "possessor in adjunct" => some .genitive
-  | some "postpositional adjunct" => some .dative
-  | _ => none
-
-/-- Each row's coindexation is Principle A on its geometry: the embedded subject and an
-    indirect object are available, the matrix subject and the distractors are not. -/
-theorem rows_available :
-    ∀ r ∈ Examples.all, ∀ cfg ∈ configuration? r, ∀ x ∈ r.readings, ∀ role ∈ Role.parse? x.1,
-      (x.2 = .acceptable ↔ role.available cfg) := by
+/-- Every row records its structure, and every reading names a noun phrase. -/
+theorem rows_parse :
+    ∀ x ∈ Examples.all, (structure? x).isSome ∧ ∀ y ∈ x.readings, (roles.lookup y.1).isSome := by
   decide
 
-/-- In every stimulus with a distractor, the plural embedded subject out-activates it under
-    any positive relational weight, whatever the distractor's number or case. -/
-theorem rows_target_retrieved (w : CueSource → ℕ) (hw : 0 < w .relational) :
-    ∀ r ∈ Examples.all, ∀ cfg ∈ configuration? r, ∀ num ∈ distractorNumber? r,
-      ∀ cas ∈ distractorCase? r,
-        weightedActivation w (Role.features cfg .distractor num cas) birbirleriCues <
-          weightedActivation w (Role.features cfg .embeddedSubject .plural .genitive)
-            birbirleriCues :=
-  λ _ _ cfg _ num _ cas _ => target_retrieved cfg w hw num .genitive cas
+/-- Each row's coindexations are Principle A on its structure. -/
+theorem rows_available : ∀ x ∈ Examples.all, ∀ s ∈ structure? x, ∀ y ∈ x.readings,
+    ∀ r ∈ roles.lookup y.1, (y.2 = .acceptable ↔ r.Available s) := by
+  decide
 
 end BakayEtAl2026

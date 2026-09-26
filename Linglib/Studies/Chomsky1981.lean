@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Binding.Basic
+public import Linglib.Syntax.Binding.Tree
 public import Linglib.Studies.Reinhart1976
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
@@ -19,9 +19,9 @@ framework-neutral conditions of `Syntax/Binding`. A noun phrase binds another wh
 coindexed and the first c-commands the second; an anaphor is bound in its governing category
 (Principle A), a pronominal is free there (Principle B), and an R-expression is free
 (Principle C). The positions are the noun phrases of a phrase-structure tree, the command
-relation is Reinhart's c-command (`Reinhart1976.CCommands`), the binding domain of a noun phrase
-is the minimal clause containing it (`Syntax.Tree.sCommand`), the dependency is coindexation,
-and no anaphor is exempt. An indexing is licit when coindexed noun phrases agree in φ-features
+relation is Reinhart's c-command, the binding domain of a noun phrase is the minimal clause
+containing it (`Syntax.Tree.clauseConfiguration`), the dependency is coindexation, and no
+anaphor is exempt. An indexing is licit when coindexed noun phrases agree in φ-features
 and it satisfies the three principles, and a tree is grammatical when some indexing is licit.
 
 Since nothing is exempt, an anaphor that nothing in its clause c-commands is out under every
@@ -88,17 +88,10 @@ variable {t : Tree Cat Word}
 
 /-! ### The binding configuration -/
 
-/-- The configuration on the noun phrases of `t` takes c-command as its command relation and the
-minimal clause containing a noun phrase as that noun phrase's binding domain. -/
-def configuration (t : Tree Cat Word) : Configuration (Nominal t) where
-  commands a b := Reinhart1976.CCommands t a.1.1 b.1.1
-  domain b := {a | (b.1.1, a.1.1) ∈ sCommand t}
-
-instance : DecidableRel (configuration t).commands :=
-  fun a b ↦ inferInstanceAs (Decidable (Reinhart1976.CCommands t a.1.1 b.1.1))
-
-instance (b : Nominal t) : DecidablePred (· ∈ (configuration t).domain b) :=
-  fun a ↦ inferInstanceAs (Decidable ((b.1.1, a.1.1) ∈ sCommand t))
+/-- The configuration on the noun phrases of `t` is the clause configuration of `t` restricted
+to them. -/
+abbrev configuration (t : Tree Cat Word) : Configuration (Nominal t) :=
+  t.clauseConfiguration.comap (·.1.1)
 
 /-- The binding class of a noun phrase is the binding class of its word. -/
 def classOf (x : Nominal t) : Option BindingClass := bindingClassOf x.1.2
@@ -143,7 +136,7 @@ theorem not_grammatical_of_not_locallyCommanded {b : Nominal t} {c : BindingClas
 /-- For two noun phrases coindexed with each other alone, Principle C is Reinhart's restriction
 (10b) read with c-command, the R-expressions being the noun phrases outside `pron`. -/
 theorem permits_iff {a b : Nominal t} (hab : a ≠ b) (pron : List TreePath) :
-    Reinhart1976.Permits (Reinhart1976.CCommands t) pron a.1.1 b.1.1 ↔
+    Reinhart1976.Permits (CCommands t) pron a.1.1 b.1.1 ↔
       (b.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) b) ∧
         (a.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) a) := by
   rw [Configuration.bound_pair_iff hab, pair_comm, Configuration.bound_pair_iff hab.symm]

@@ -8,19 +8,19 @@ public import Linglib.Data.Examples.Reinhart1976
 
 This file formalizes the first chapter of the dissertation, which replaces precede-and-command
 by constituent command as the relation restricting coreference. A node commands another, after
-Langacker, when neither dominates the other and the S node most immediately dominating the
-first dominates the second; the received domain of a node consists of the nodes it precedes and
+Langacker, when neither dominates the other and the S node most immediately dominating the first
+dominates the second; the received domain of a node consists of the nodes it precedes and
 commands, `PrecedesAndCommands`, and two noun phrases can corefer just in case, if either is in
 the domain of the other, the one in the domain is a pronoun, `Permits`. The dissertation's
-domain is instead the nodes a node c-commands, `CCommands`: neither dominates the other and the
-first branching node dominating the first dominates the second, so a domain is a constituent
-and linear order plays no part. Both domains are computed for the abstract tree (37), and the
-restriction under each is checked against the examples, `permits_rows`: the Rosa paradigm (11),
-Lasnik's free cases (12), preposed prepositional phrases, sentential and verbal prepositional
-phrases, and the Malagasy VOS pair. Precede-and-command fails exactly on the structures of
-types I and III of (50), where the two domains come apart, `cCommands_iff_precedesAndCommands`.
-C-command entails command whenever S nodes branch (49), and the formulation (10b) blocks
-whatever the pronoun-specific (10a) blocks, but not conversely.
+domain is instead the nodes a node c-commands (36), `Syntax.Tree.CCommands`: neither dominates
+the other and the first branching node dominating the first dominates the second, so a domain is
+a constituent and linear order plays no part. Both domains are computed for the abstract tree
+(37), and the restriction under each is checked against the examples, `permits_rows`: the Rosa
+paradigm (11), Lasnik's free cases (12), preposed prepositional phrases, sentential and verbal
+prepositional phrases, and the Malagasy VOS pair. Precede-and-command fails exactly on the
+structures of types I and III of (50), where the two domains come apart,
+`cCommands_iff_precedesAndCommands`. C-command entails command whenever S nodes branch (49), and
+the formulation (10b) blocks whatever the pronoun-specific (10a) blocks, but not conversely.
 
 ## Implementation notes
 
@@ -55,20 +55,12 @@ dominating the first dominates the second. -/
 def Commands (t : Tree Cat W) (a b : TreePath) : Prop :=
   (a, b) ∈ sCommand t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
 
-/-- A node c-commands another (36): neither dominates the other and the first branching node
-dominating the first dominates the second. -/
-def CCommands (t : Tree C W) (a b : TreePath) : Prop :=
-  (a, b) ∈ cCommandAt t ∧ ¬ a ≤ b ∧ ¬ b ≤ a
-
 /-- A node precedes and commands another: the domain relation of the received view (5). -/
 def PrecedesAndCommands (t : Tree Cat W) (a b : TreePath) : Prop :=
   TreePath.Precedes a b ∧ Commands t a b
 
 instance (t : Tree Cat W) : DecidableRel (Commands t) := λ _ _ => by
   unfold Commands; infer_instance
-
-instance (t : Tree C W) : DecidableRel (CCommands t) := λ _ _ => by
-  unfold CCommands; infer_instance
 
 instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := λ _ _ => by
   unfold PrecedesAndCommands; infer_instance

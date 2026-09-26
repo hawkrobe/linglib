@@ -42,6 +42,7 @@ inside it an anaphor meets its condition under any dependency, so both forms are
 * `Binding.BindingClass`, `Binding.bindingClassOf`: anaphor, pronominal or R-expression, read
   off a word's morphology.
 * `Binding.Configuration`: a command relation and a binding domain, ordered pointwise;
+  `Configuration.comap` pulls one back along a map of positions, and
   `Configuration.monoclausal` is the configuration of a single binding domain.
 * `Binding.pair`: the dependency relating two positions to each other alone.
 * `Configuration.Binds`, `Bound`, `LocallyBound`, `LocallyCommanded`, `exempt`.
@@ -159,6 +160,20 @@ instance : PartialOrder (Configuration ι) :=
 theorem le_def {s t : Configuration ι} :
     s ≤ t ↔ s.commands ≤ t.commands ∧ s.domain ≤ t.domain :=
   Iff.rfl
+
+/-- `s.comap f` is the configuration that `s` induces along `f`, in which one position commands
+another when their images do and a position's domain is the preimage of its image's. -/
+def comap {κ : Type*} (f : κ → ι) (s : Configuration ι) : Configuration κ where
+  commands a b := s.commands (f a) (f b)
+  domain b := f ⁻¹' s.domain (f b)
+
+instance {κ : Type*} (f : κ → ι) (s : Configuration ι) [DecidableRel s.commands] :
+    DecidableRel (s.comap f).commands :=
+  fun _ _ ↦ inferInstanceAs (Decidable (s.commands _ _))
+
+instance {κ : Type*} (f : κ → ι) (s : Configuration ι) [∀ b, DecidablePred (· ∈ s.domain b)]
+    (b : κ) : DecidablePred (· ∈ (s.comap f).domain b) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∈ s.domain _))
 
 /-- `monoclausal pos R` is the configuration of a single binding domain. The map `pos` reads a
 position as an object, one position commands another when its object `R`-commands the other's,
