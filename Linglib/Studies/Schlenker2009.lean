@@ -217,6 +217,6 @@ theorem satisfied_iff_impFilter (C : Set W) (p q : PartialProp W) :
     Satisfied C antecedent p ∧ Satisfied C (consequent p.assertion) q ↔
       presupSatisfied C (PartialProp.impFilter p q) := by
   rw [satisfied_iff (isLocalContext_antecedent C), satisfied_iff (isLocalContext_consequent C p),
-    presupSatisfied_impFilter]
+    PartialProp.presupSatisfied_impFilter]
 
 end Schlenker2009

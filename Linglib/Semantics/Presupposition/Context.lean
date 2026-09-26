@@ -13,8 +13,8 @@ of a conjunction or a conditional the context updated with the first argument's 
 second disjunct the context updated with its negation, and the first argument, or the argument
 of negation, the context itself. `Connective.localContext` is that table. Theories of projection
 agree on it and differ in why it holds, so each proves it of its own mechanism: Karttunen's
-filtering connectives are satisfaction in it (`presupSatisfied_andFilter` and its siblings),
-Heim's context change potentials evaluate their second argument in it
+filtering connectives are satisfaction in it (`PartialProp.presupSatisfied_andFilter` and its
+siblings), Heim's context change potentials evaluate their second argument in it
 (`Semantics/Dynamic/Partial.lean`), and [schlenker-2009] derives it from transparency. The
 theories part at disjunction, where the table is asymmetric and symmetric filtering is
 `PartialProp.orKPSymmetric`.
@@ -23,8 +23,9 @@ theories part at disjunction, where the table is asymmetric and symmetric filter
 
 * `presupSatisfied`, `presupProjects` — the context entails the presupposition, or does not.
 * `Connective`, `Connective.localContext` — the local context of a connective's second argument.
-* `presupSatisfied_andFilter`, `presupSatisfied_impFilter`, `presupSatisfied_orFilter` — the
-  filtering connectives are satisfaction in the local contexts.
+* `PartialProp.presupSatisfied_andFilter`, `PartialProp.presupSatisfied_impFilter`,
+  `PartialProp.presupSatisfied_orFilter` — the filtering connectives are satisfaction in the
+  local contexts.
 
 ## References
 
@@ -68,9 +69,9 @@ def Connective.localContext (C A : Set W) : Connective → Set W
   | cond => C ∩ A
   | disj => C ∩ Aᶜ
 
-namespace Context
+namespace PartialProp
 
-open Connective
+open Connective Context
 
 variable {C : Set W} {p q : PartialProp W}
 
@@ -97,6 +98,6 @@ theorem presupSatisfied_orFilter :
   ⟨fun h ↦ ⟨fun _ hw ↦ (h hw).1, fun _ hw ↦ (h hw.1).2 hw.2⟩,
     fun h _ hw ↦ ⟨h.1 hw, fun ha ↦ h.2 ⟨hw, ha⟩⟩⟩
 
-end Context
+end PartialProp
 
 end Presupposition

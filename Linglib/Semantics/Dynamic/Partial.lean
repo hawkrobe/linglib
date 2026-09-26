@@ -315,7 +315,7 @@ theorem admits_disj_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (
 Under `ofPartialProp`, the admittance conditions of the dynamic
 connectives are pointwise exactly the presuppositions of the *filtering*
 connectives of `Presupposition/Basic.lean`: both are satisfaction in the local contexts
-(`Context.presupSatisfied_andFilter` and its siblings), so Karttunen filtering is the
+(`PartialProp.presupSatisfied_andFilter` and its siblings), so Karttunen filtering is the
 composition law of partial updates, not a stipulation. -/
 
 /-- Dynamic conjunction admits `s` iff `s` satisfies `andFilter`'s
@@ -323,7 +323,7 @@ composition law of partial updates, not a stipulation. -/
 theorem admits_seq_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (PartialUpdate.seq (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.andFilter p q).presup w :=
-  (admits_seq_ofPartialProp_iff p _ s).trans Context.presupSatisfied_andFilter.symm
+  (admits_seq_ofPartialProp_iff p _ s).trans PartialProp.presupSatisfied_andFilter.symm
 
 /-- Dynamic conditional admits `s` iff `s` satisfies `impFilter`'s
     presupposition pointwise. -/
@@ -338,7 +338,7 @@ theorem admits_cond_ofPartialProp (p q : PartialProp W) (s : Set W) :
 theorem admits_disj_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (disj (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.orFilter p q).presup w :=
-  (admits_disj_ofPartialProp_iff p _ s).trans Context.presupSatisfied_orFilter.symm
+  (admits_disj_ofPartialProp_iff p _ s).trans PartialProp.presupSatisfied_orFilter.symm
 
 /-- Negation projects the atomic presupposition unchanged. -/
 theorem admits_neg_ofPartialProp (p : PartialProp W) (s : Set W) :
