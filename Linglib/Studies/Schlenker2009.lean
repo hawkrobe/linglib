@@ -55,7 +55,6 @@ paper. Uniqueness of the bottom element is `IsLeast.unique`.
 namespace Schlenker2009
 
 open Presupposition
-open Presupposition.Context
 open Presupposition.BeliefEmbedding
 open Heim1983
 
@@ -83,10 +82,10 @@ theorem IsLocalContext.unique {C : Set W} {env : Environment α W} {x y : α}
 /-- (16): the presupposition of `p` in the gap of `env` is satisfied in `C` when the local
 context exists and entails it. -/
 def Satisfied (C : Set W) (env : Environment (Set W) W) (p : PartialProp W) : Prop :=
-  ∃ x, IsLocalContext C env x ∧ presupSatisfied x p
+  ∃ x, IsLocalContext C env x ∧ p.Admits x
 
 theorem satisfied_iff {C x : Set W} {env : Environment (Set W) W} (h : IsLocalContext C env x)
-    (p : PartialProp W) : Satisfied C env p ↔ presupSatisfied x p :=
+    (p : PartialProp W) : Satisfied C env p ↔ p.Admits x :=
   ⟨λ ⟨_, hy, hp⟩ => h.unique hy ▸ hp, λ hp => ⟨x, h, hp⟩⟩
 
 /-! ### Propositional environments (§2.3.1) -/
@@ -205,7 +204,7 @@ both hold iff the context entails a king. -/
 theorem king_satisfied_iff_admits (C : Set W) :
     Satisfied C antecedent (kingHasSon king son) ∧
         Satisfied C (consequent (kingHasSon king son).assertion) (kingsSonBald king son bald) ↔
-      (ifKingHasSon king son bald).admits C := by
+      (ifKingHasSon king son bald).Admits C := by
   rw [satisfied_iff (isLocalContext_antecedent C), satisfied_iff (isLocalContext_consequent C
     (kingHasSon king son)), king_admits_iff]
   exact ⟨λ h => h.1, λ h => ⟨h, λ w hw => ⟨h w hw.1, hw.2⟩⟩⟩
@@ -215,8 +214,8 @@ theorem king_satisfied_iff_admits (C : Set W) :
 context satisfies the presupposition of the filtering connective. -/
 theorem satisfied_iff_impFilter (C : Set W) (p q : PartialProp W) :
     Satisfied C antecedent p ∧ Satisfied C (consequent p.assertion) q ↔
-      presupSatisfied C (PartialProp.impFilter p q) := by
+      (PartialProp.impFilter p q).Admits C := by
   rw [satisfied_iff (isLocalContext_antecedent C), satisfied_iff (isLocalContext_consequent C p),
-    PartialProp.presupSatisfied_impFilter]
+    PartialProp.admits_impFilter]
 
 end Schlenker2009

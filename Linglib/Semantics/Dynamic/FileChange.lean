@@ -66,7 +66,7 @@ later propositional presentation of the theory.
 namespace DynamicSemantics
 
 /-- A file change potential ([heim-1982]): a partial update of referential
-information states. Partiality is presupposition (`PartialUpdate.admits`); Heim numbers her
+information states. Partiality is presupposition (`PartialUpdate.Admits`); Heim numbers her
 cards, `V := ℕ`. -/
 abbrev FCP (W V M : Type*) := PartialUpdate (State W V M)
 
@@ -173,16 +173,16 @@ def def_ (x : V) (N : FCP W V M) : FCP W V M :=
   fun F : State W V M ↦
     Part.assert (State.Familiar F x ∧ N.supports F) fun _ ↦ Part.some F
 
-@[simp] theorem admits_neg : (neg φ).admits F ↔ φ.admits F := Iff.rfl
+@[simp] theorem admits_neg : (neg φ).Admits F ↔ φ.Admits F := Iff.rfl
 
 /-- The conditional admits a file iff its antecedent does and its consequent
 admits the antecedent's update. -/
 theorem admits_cond :
-    (cond φ ψ).admits F ↔ ∃ h : φ.admits F, ψ.admits ((φ F).get h) := Iff.rfl
+    (cond φ ψ).Admits F ↔ ∃ h : φ.Admits F, ψ.Admits ((φ F).get h) := Iff.rfl
 
 /-- The Novelty Condition is definedness. -/
 theorem admits_indef [DecidableEq V] (body : FCP W V M) :
-    (indef x body).admits F ↔ ∃ _ : State.Novel F x, (body (F.randomAssign x)).Dom :=
+    (indef x body).Admits F ↔ ∃ _ : State.Novel F x, (body (F.randomAssign x)).Dom :=
   Iff.rfl
 
 theorem indef_apply [DecidableEq V] (body : FCP W V M) (h : State.Novel F x) :
@@ -190,7 +190,7 @@ theorem indef_apply [DecidableEq V] (body : FCP W V M) (h : State.Novel F x) :
 
 /-- The Extended Familiarity Condition is definedness. -/
 theorem admits_def_ (N : FCP W V M) :
-    (def_ x N).admits F ↔ State.Familiar F x ∧ N.supports F :=
+    (def_ x N).Admits F ↔ State.Familiar F x ∧ N.supports F :=
   ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, trivial⟩⟩
 
 theorem def_apply (N : FCP W V M) (h : State.Familiar F x ∧ N.supports F) :
@@ -243,7 +243,7 @@ indefinites need no existential closure. -/
 def trueIn (F : State W V M) (φ : FCP W V M) : Prop := ∃ F' ∈ φ F, F'.Nonempty
 
 /-- Truth implies definedness. -/
-theorem trueIn_admits (h : trueIn F φ) : φ.admits F :=
+theorem trueIn_admits (h : trueIn F φ) : φ.Admits F :=
   let ⟨F', hF', _⟩ := h
   Part.dom_iff_mem.mpr ⟨F', hF'⟩
 

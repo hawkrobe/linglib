@@ -25,7 +25,7 @@ unsettled state to neither (`not_entailsP_and_entailsNot`, `know_contra_gap`), *
 complementary and exhaustive (`not_entailsP_and_compatibleNot`, `know_yiwei_exhaustive`). The
 fragments' veridicality gives *know* and *think* their profiles, and the factive presupposition of
 the substrate's veridical predicates is the requirement that the complement be Common Ground
-(`presupSatisfied_toPartialProp_veridical`); the rows check the reported judgments against the
+(`admits_toPartialProp_veridical`); the rows check the reported judgments against the
 admitted states (`rows_admits`).
 
 ## Implementation notes
@@ -114,17 +114,17 @@ variable {E : Type*}
 
 /-- A veridical predicate's presupposition is satisfied exactly when its complement is Common
 Ground: the factive presupposition (10). -/
-theorem presupSatisfied_toPartialProp_veridical (V : DoxasticPredicate W E)
+theorem admits_toPartialProp_veridical (V : DoxasticPredicate W E)
     (hV : V.veridicality = .veridical) (a : E) :
-    Context.presupSatisfied c (V.toPartialProp a p) ↔ EntailsP c p := by
-  simp only [Context.presupSatisfied, DoxasticPredicate.toPartialProp, hV]
+    (V.toPartialProp a p).Admits c ↔ EntailsP c p := by
+  simp only [PartialProp.Admits, DoxasticPredicate.toPartialProp, hV]
   exact Iff.rfl
 
 /-- A non-veridical predicate places no condition on the Common Ground. -/
-theorem presupSatisfied_toPartialProp_nonVeridical (V : DoxasticPredicate W E)
+theorem admits_toPartialProp_nonVeridical (V : DoxasticPredicate W E)
     (hV : V.veridicality = .nonVeridical) (a : E) :
-    Context.presupSatisfied c (V.toPartialProp a p) := by
-  simp only [Context.presupSatisfied, DoxasticPredicate.toPartialProp, hV]
+    (V.toPartialProp a p).Admits c := by
+  simp only [PartialProp.Admits, DoxasticPredicate.toPartialProp, hV]
   exact fun _ _ ↦ trivial
 
 /-! ### yǐwéi's postsupposition -/

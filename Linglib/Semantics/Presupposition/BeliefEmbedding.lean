@@ -28,7 +28,6 @@ the attitude holder).
 namespace Presupposition.BeliefEmbedding
 
 open Presupposition
-open Presupposition.Context
 
 variable {W : Type*} {Agent : Type*}
 

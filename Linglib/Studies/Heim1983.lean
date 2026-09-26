@@ -26,7 +26,7 @@ course of the update (§3.3).
 
 The propositional part (§2) uses the substrate's partial context change potentials over a
 type of worlds: `ofPartialProp` for a sentence with a presupposition and an assertion,
-`cond` for (14), `neg` for (15), and `admits` for definedness, so that the heritage
+`cond` for (14), `neg` for (15), and `Admits` for definedness, so that the heritage
 properties are the substrate's `admits_cond` and `admits_neg`. The file part (§3) uses the
 same potentials over pairs of a sequence `ℕ → M` and a world, with `atom`, `atomP`, and
 `every` stated here as (19)–(21) and entailment by a context read as inclusion. The paper
@@ -64,16 +64,16 @@ section Propositional
 variable {W : Type*}
 
 /-- (12): `S` presupposes `p` iff every context that admits `S` entails `p`. -/
-def Presupposes (φ : CCP.Partial W) (p : W → Prop) : Prop := ∀ c, φ.admits c → ∀ w ∈ c, p w
+def Presupposes (φ : CCP.Partial W) (p : W → Prop) : Prop := ∀ c, φ.Admits c → ∀ w ∈ c, p w
 
 /-- (13): `S` is true in `w` with respect to `c` iff the context `c` updated by `S` is true
     in `w`; defined only when `c` admits `S`. -/
-def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.admits c, w ∈ (φ c).get h
+def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.Admits c, w ∈ (φ c).get h
 
 /-- The content property is derivable from the potential: with respect to a context that is
     true in `w` and admits it, an atomic sentence is true in `w` iff its assertion holds. -/
 theorem trueWrt_ofPartialProp {p : PartialProp W} {c : Set W} {w : W} (hw : w ∈ c)
-    (h : (ofPartialProp p).admits c) : TrueWrt (ofPartialProp p) c w ↔ p.assertion w :=
+    (h : (ofPartialProp p).Admits c) : TrueWrt (ofPartialProp p) c w ↔ p.assertion w :=
   ⟨fun ⟨_, hm⟩ => hm.2, fun hq => ⟨h, hw, hq⟩⟩
 
 variable (king son bald : W → Prop)
@@ -93,7 +93,7 @@ variable {king son bald}
 /-- §2.1: a context admits (3) iff it entails that there is a king: it must admit (1), and
     its update by (1) then admits (2) automatically. -/
 theorem king_admits_iff (c : Set W) :
-    (ifKingHasSon king son bald).admits c ↔ ∀ w ∈ c, king w := by
+    (ifKingHasSon king son bald).Admits c ↔ ∀ w ∈ c, king w := by
   constructor
   · rintro ⟨h, -⟩
     exact h
@@ -127,9 +127,9 @@ def localNeg : CCP.Partial W := fun c => (φ (c ∩ p)).map (c \ ·)
 variable {φ p}
 
 /-- Both options make the update defined once the amended context admits `S`. -/
-theorem globalNeg_admits {c : Set W} (h : φ.admits (c ∩ p)) : (globalNeg φ p).admits c := h
+theorem globalNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (globalNeg φ p).Admits c := h
 
-theorem localNeg_admits {c : Set W} (h : φ.admits (c ∩ p)) : (localNeg φ p).admits c := h
+theorem localNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (localNeg φ p).Admits c := h
 
 /-- The global option's result entails the accommodated presupposition: (16) read in
     isolation has France with a king. -/
@@ -225,22 +225,22 @@ def every (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) : CCP.Partial ((ℕ �
 def File.NovelIn (c : File M W) (i : ℕ) : Prop :=
   ∀ g w a, (g, w) ∈ c ↔ (Function.update g i a, w) ∈ c
 
-theorem atom_admits (P : M → W → Prop) (i : ℕ) (c : File M W) : (atom P i).admits c := trivial
+theorem atom_admits (P : M → W → Prop) (i : ℕ) (c : File M W) : (atom P i).Admits c := trivial
 
 theorem atomP_admits_iff (pre P : M → W → Prop) (i : ℕ) (c : File M W) :
-    (atomP pre P i).admits c ↔ ∀ gw ∈ c, pre (gw.1 i) gw.2 := Iff.rfl
+    (atomP pre P i).Admits c ↔ ∀ gw ∈ c, pre (gw.1 i) gw.2 := Iff.rfl
 
 /-- The heritage of *every*: `c` admits `Every xᵢ, A, B` iff it admits `A` and `c + A` admits
     `B`. -/
 theorem every_admits_iff (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) (c : File M W) :
-    (every i A B).admits c ↔ ∃ h : A.admits c, B.admits ((A c).get h) :=
+    (every i A B).Admits c ↔ ∃ h : A.Admits c, B.Admits ((A c).get h) :=
   Iff.rfl
 
 /-- (ii) of §3.2: with a presupposition-free restrictor `A xᵢ` and a nuclear scope
     presupposing `pre xᵢ`, the file must satisfy `pre` at the `i`-th member of every pair
     that survives `A`. -/
 theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M W) :
-    (every i (atom A i) (atomP pre B i)).admits c ↔
+    (every i (atom A i) (atomP pre B i)).Admits c ↔
       ∀ gw ∈ c, A (gw.1 i) gw.2 → pre (gw.1 i) gw.2 :=
   ⟨fun ⟨_, h⟩ gw hgw hA => h gw ⟨hgw, hA⟩, fun h => ⟨trivial, fun gw hgw => h gw hgw.1 hgw.2⟩⟩
 
@@ -250,7 +250,7 @@ theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M
     stipulation is what makes the universal presupposition necessary, not only sufficient. -/
 theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
-    (every i (atom nation i) (atomP hasKing cherishes i)).admits c ↔
+    (every i (atom nation i) (atomP hasKing cherishes i)).Admits c ↔
       ∀ w ∈ c.prop, ∀ a, nation a w → hasKing a w := by
   rw [every_atom_admits_iff]
   constructor
@@ -266,7 +266,7 @@ theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W �
     [karttunen-peters-1979] predict no presupposition. -/
 theorem every_restrictor_presupposes (i : ℕ) (hasKing serves rewarded : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
-    (every i (atomP hasKing serves i) (atom rewarded i)).admits c ↔
+    (every i (atomP hasKing serves i) (atom rewarded i)).Admits c ↔
       ∀ w ∈ c.prop, ∀ a, hasKing a w := by
   constructor
   · rintro ⟨h, -⟩ w ⟨g, hg⟩ a
@@ -461,7 +461,7 @@ def fatManBicycle (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
     a bicycle, by (22): prima facie too strong. -/
 theorem fatManBicycle_admits_iff (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
-    (fatManBicycle i fatMan hasBicycle pushing).admits c ↔
+    (fatManBicycle i fatMan hasBicycle pushing).Admits c ↔
       ∀ w ∈ c.prop, ∀ a, fatMan a w → hasBicycle a w := by
   constructor
   · rintro ⟨_, h⟩ w ⟨g, hg⟩ a hf
@@ -479,7 +479,7 @@ def fatManBicycleAcc (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
 /-- The accommodated update is always defined, and its result entails that `xᵢ` was a fat
     man, had a bicycle, and was pushing it. -/
 theorem fatManBicycleAcc_admits (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
-    (c : File M W) : (fatManBicycleAcc i fatMan hasBicycle pushing).admits c :=
+    (c : File M W) : (fatManBicycleAcc i fatMan hasBicycle pushing).Admits c :=
   fun _ hgw => hgw.2.2
 
 theorem fatManBicycleAcc_entails (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
@@ -507,7 +507,7 @@ end Files
 /-- [karttunen-1973]'s filter for conjunction, relativized to the context itself as the set
     of background assumptions, is admittance of the sequenced update. -/
 theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : PartialProp W) :
-    (seq (ofPartialProp p) (ofPartialProp q)).admits c ↔
+    (seq (ofPartialProp p) (ofPartialProp q)).Admits c ↔
       ∀ w ∈ c, (Karttunen1973.conj c p q).presup w := by
   rw [admits_seq_ofPartialProp]
   constructor

@@ -60,25 +60,25 @@ variable {W E : Type*} (Dox : E → W → Set W) (a : E) (φ : CCP.Partial W) (p
 /-- Rule (18): `c + a believes φ` is defined iff `Dox_a(w) + φ` is defined for every `w ∈ c`,
 and then equals `{w ∈ c | Dox_a(w) + φ = Dox_a(w)}`. -/
 def believes : CCP.Partial W :=
-  λ c => ⟨∀ w ∈ c, φ.admits (Dox a w), λ _ => {w ∈ c | Dox a w ∈ φ (Dox a w)}⟩
+  λ c => ⟨∀ w ∈ c, φ.Admits (Dox a w), λ _ => {w ∈ c | Dox a w ∈ φ (Dox a w)}⟩
 
 /-- Karttunen's generalization: if `φ` presupposes `p`, then `a believes φ` presupposes that
 `a` believes `p`. -/
 theorem admits_believes_ofPartialProp :
-    (believes Dox a (ofPartialProp p)).admits c ↔
+    (believes Dox a (ofPartialProp p)).Admits c ↔
       ∀ w ∈ c, ModalLogic.Epistemic.knows Dox a p.presup w :=
   Iff.rfl
 
 /-- Karttunen's rule (3) on atomic complements: definedness on each `Dox_a(w)` is definedness
 on their union, the beliefs attributed to `a` in `c`. -/
 theorem admits_believes_iff_iUnion :
-    (believes Dox a (ofPartialProp p)).admits c ↔
-      (ofPartialProp p).admits (⋃ w ∈ c, Dox a w) :=
+    (believes Dox a (ofPartialProp p)).Admits c ↔
+      (ofPartialProp p).Admits (⋃ w ∈ c, Dox a w) :=
   Set.iUnion₂_subset_iff.symm
 
 /-- The definedness condition of (18) is the local-context condition of [schlenker-2009]. -/
 theorem admits_believes_iff_presupAttributedToHolder :
-    (believes Dox a (ofPartialProp p)).admits c ↔ presupAttributedToHolder ⟨c, Dox, a⟩ p :=
+    (believes Dox a (ofPartialProp p)).Admits c ↔ presupAttributedToHolder ⟨c, Dox, a⟩ p :=
   ⟨λ h w hw _ hx => h w hw hx.2, λ h w hw _ hx => h w hw ⟨hw, hx⟩⟩
 
 /-- (20) presupposes nothing: every context admits `John believes that Mary_i is here, and he
@@ -86,7 +86,7 @@ believes that Susan_F is here too_i`, where by (22) the *too*-clause presupposes
 here. -/
 theorem believes_too_admits (m s : Set W) :
     (seq (believes Dox a (ofPartialProp (.ofProp m)))
-      (believes Dox a (ofPartialProp ⟨m, s⟩))).admits c :=
+      (believes Dox a (ofPartialProp ⟨m, s⟩))).Admits c :=
   ⟨λ _ _ _ _ => trivial, λ _ hw => ((mem_ofPartialProp_self _ _).1 hw.2).2⟩
 
 /-- (25) `John doubts that Mary_i is here and believes that Susan_F is here too_i` is admitted
@@ -94,7 +94,7 @@ only by contexts in which John already believes Mary is here — which its first
 reduces to the absurd context. -/
 theorem doubt_too_admits_iff (m s : Set W) :
     (seq (neg (believes Dox a (ofPartialProp (.ofProp m))))
-      (believes Dox a (ofPartialProp ⟨m, s⟩))).admits c ↔ ∀ w ∈ c, Dox a w ⊆ m := by
+      (believes Dox a (ofPartialProp ⟨m, s⟩))).Admits c ↔ ∀ w ∈ c, Dox a w ⊆ m := by
   refine ⟨λ ⟨_, h⟩ w hw => ?_,
     λ h => ⟨λ _ _ _ _ => trivial, λ w hw => (hw.2 ⟨hw.1, ?_⟩).elim⟩⟩
   · by_contra hm
@@ -106,18 +106,18 @@ otherwise `c + a believes φ`. -/
 def knows : CCP.Partial W := λ c => Part.assert (c ∈ φ c) λ _ => believes Dox a φ c
 
 theorem admits_knows :
-    (knows Dox a φ).admits c ↔ c ∈ φ c ∧ (believes Dox a φ).admits c :=
+    (knows Dox a φ).Admits c ↔ c ∈ φ c ∧ (believes Dox a φ).Admits c :=
   exists_prop
 
 /-- A *know* report projects its complement's presupposition transparently. -/
-theorem transparentProjection_of_admits_knows (h : (knows Dox a (ofPartialProp p)).admits c) :
+theorem transparentProjection_of_admits_knows (h : (knows Dox a (ofPartialProp p)).Admits c) :
     transparentProjection c p :=
   ((mem_ofPartialProp_self _ _).1 h.fst).1
 
 /-- With veridical `Dox` on `c`, rule (18) already projects the complement's presupposition
 transparently — the factivity that `knows` imposes outright. -/
 theorem transparentProjection_of_admits_believes (hrefl : ∀ w ∈ c, w ∈ Dox a w)
-    (h : (believes Dox a (ofPartialProp p)).admits c) : transparentProjection c p :=
+    (h : (believes Dox a (ofPartialProp p)).Admits c) : transparentProjection c p :=
   opaque_implies_transparent_when_reflexive ⟨c, Dox, a⟩ p hrefl
     ((admits_believes_iff_presupAttributedToHolder Dox a p c).1 h)
 
@@ -141,8 +141,8 @@ def sellsCello : PartialProp CelloWorld := ⟨(· = .owns), λ _ => True⟩
 cello` is admitted and `Patrick knows he is selling his cello` is not: `celloDox` is not
 veridical at `lacks`. -/
 theorem believes_admits_not_knows :
-    (believes celloDox () (ofPartialProp sellsCello)).admits {.lacks} ∧
-      ¬ (knows celloDox () (ofPartialProp sellsCello)).admits {.lacks} :=
+    (believes celloDox () (ofPartialProp sellsCello)).Admits {.lacks} ∧
+      ¬ (knows celloDox () (ofPartialProp sellsCello)).Admits {.lacks} :=
   ⟨λ _ _ _ h => h,
    λ h => nomatch transparentProjection_of_admits_knows _ _ _ _ h rfl⟩
 

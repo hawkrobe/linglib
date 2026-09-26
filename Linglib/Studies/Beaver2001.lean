@@ -154,7 +154,7 @@ theorem empty_mem_eval_empty : ∀ φ : Formula W, ∅ ∈ φ.eval ∅
 def Satisfies (σ : Set W) (φ : Formula W) : Prop := PartialUpdate.supports σ φ.eval
 
 /-- `φ` presupposes `ψ` (D31, D46): every state admitting `φ` satisfies `ψ`. -/
-def Presupposes (φ ψ : Formula W) : Prop := ∀ σ, φ.eval.admits σ → Satisfies σ ψ
+def Presupposes (φ ψ : Formula W) : Prop := ∀ σ, φ.eval.Admits σ → Satisfies σ ψ
 
 /-- `φ` entails `ψ` (D26, D45): dynamic entailment between the two updates, which holds when
 every update with `φ` yields a state satisfying `ψ` (`entails_iff_forall`). -/
@@ -166,9 +166,9 @@ def ConsistentWith (σ : Set W) (φ : Formula W) : Prop := ∃ τ ∈ φ.eval σ
 /-- A test (D61): its only outputs are the input and the absurd state. -/
 def IsTest (φ : Formula W) : Prop := ∀ σ τ, τ ∈ φ.eval σ → τ = σ ∨ τ = ∅
 
-theorem admits_of_mem (h : τ ∈ φ.eval σ) : φ.eval.admits σ := Part.dom_iff_mem.2 ⟨τ, h⟩
+theorem admits_of_mem (h : τ ∈ φ.eval σ) : φ.eval.Admits σ := Part.dom_iff_mem.2 ⟨τ, h⟩
 
-theorem Satisfies.admits (h : Satisfies σ φ) : φ.eval.admits σ := admits_of_mem h
+theorem Satisfies.Admits (h : Satisfies σ φ) : φ.eval.Admits σ := admits_of_mem h
 
 theorem entails_iff_forall : Entails φ ψ ↔ ∀ σ τ, τ ∈ φ.eval σ → Satisfies τ ψ :=
   PartialUpdate.entails_bind_iff
@@ -210,7 +210,7 @@ theorem Presupposes.must (h : Presupposes φ ψ) : Presupposes (must φ) ψ := f
 
 /-- Presupposition composes (Fact 8.2). -/
 theorem Presupposes.trans (h₁ : Presupposes φ ψ) (h₂ : Presupposes ψ χ) : Presupposes φ χ :=
-  fun σ hσ => h₂ σ (h₁ σ hσ).admits
+  fun σ hσ => h₂ σ (h₁ σ hσ).Admits
 
 /-- `∂ψ and χ` presupposes `ψ`. -/
 theorem presup_and_presupposes (ψ χ : Formula W) : Presupposes (and (presup ψ) χ) ψ :=
@@ -247,7 +247,7 @@ theorem e154_not_unconditional :
       ¬Presupposes (implies (atom lands) (and (presup (atom weight)) (atom bothered)))
         (atom weight) := by
   refine ⟨{true}, {true}, Set.univ, fun h => ?_⟩
-  have hadm : (implies (atom {true}) (and (presup (atom {true})) (atom Set.univ))).eval.admits
+  have hadm : (implies (atom {true}) (and (presup (atom {true})) (atom Set.univ))).eval.Admits
       Set.univ :=
     Part.dom_iff_mem.2 ⟨_, mem_eval_not.2 ⟨_, mem_eval_and.2 ⟨_, mem_eval_atom.2 rfl,
       mem_eval_not.2 ⟨_, mem_eval_and.2 ⟨_, mem_eval_presup.2 ⟨mem_eval_atom.2 (by ext; simp), rfl⟩,
@@ -278,7 +278,7 @@ theorem satisfies_might_iff (hσ : σ.Nonempty) : Satisfies σ (might φ) ↔ Co
     exact mem_eval_might.2 ⟨υ, hυ, ite_eq_left hne⟩
 
 /-- A state admitting `φ` satisfies it iff it is inconsistent with `not φ` (Lemma 8.6). -/
-theorem satisfies_iff_not_consistentWith_not (h : φ.eval.admits σ) :
+theorem satisfies_iff_not_consistentWith_not (h : φ.eval.Admits σ) :
     Satisfies σ φ ↔ ¬ConsistentWith σ (not φ) := by
   constructor
   · rintro hs ⟨_, hτ, hne⟩
@@ -383,22 +383,22 @@ theorem not_falseAt_presup : ¬FalseAt w (presup φ) := fun h =>
   Set.singleton_ne_empty w (mem_eval_presup.1 h).2.symm
 
 /-- A world admitting `φ` makes it true or false. -/
-theorem trueAt_or_falseAt (h : φ.eval.admits {w}) : TrueAt w φ ∨ FalseAt w φ := by
+theorem trueAt_or_falseAt (h : φ.eval.Admits {w}) : TrueAt w φ ∨ FalseAt w φ := by
   have hget := Part.get_mem h
   rcases eq_singleton_or_eq_empty hget with e | e <;> rw [e] at hget
   · exact Or.inl hget
   · exact Or.inr hget
 
-theorem admits_presup_singleton : (presup φ).eval.admits {w} ↔ TrueAt w φ := Iff.rfl
+theorem admits_presup_singleton : (presup φ).eval.Admits {w} ↔ TrueAt w φ := Iff.rfl
 
 theorem not_trueAt_of_falseAt (h : FalseAt w φ) : ¬TrueAt w φ := fun h' =>
   Set.singleton_ne_empty w (Part.mem_unique h' h)
 
 /-- At an admitting world, falsity is the negation of truth. -/
-theorem falseAt_iff_not_trueAt (h : φ.eval.admits {w}) : FalseAt w φ ↔ ¬TrueAt w φ :=
+theorem falseAt_iff_not_trueAt (h : φ.eval.Admits {w}) : FalseAt w φ ↔ ¬TrueAt w φ :=
   ⟨not_trueAt_of_falseAt, fun hn => (trueAt_or_falseAt h).resolve_left hn⟩
 
-private theorem sep_trueAt_not (hadm : ∀ w ∈ σ, φ.eval.admits {w}) :
+private theorem sep_trueAt_not (hadm : ∀ w ∈ σ, φ.eval.Admits {w}) :
     {w ∈ σ | TrueAt w (not φ)} = σ \ {w ∈ σ | TrueAt w φ} :=
   Set.ext fun w => by
     by_cases hw : w ∈ σ
@@ -437,7 +437,7 @@ theorem falseAt_iff (hφ : NonModal φ) : FalseAt w φ ↔ tval φ w = .false :=
 
 /-- Admittance of a conjunction at a world. -/
 theorem admits_and_singleton :
-    (and φ ψ).eval.admits {w} ↔ φ.eval.admits {w} ∧ (TrueAt w φ → ψ.eval.admits {w}) := by
+    (and φ ψ).eval.Admits {w} ↔ φ.eval.Admits {w} ∧ (TrueAt w φ → ψ.eval.Admits {w}) := by
   constructor
   · rintro ⟨hφ, hψ⟩
     refine ⟨hφ, fun ht => ?_⟩
@@ -454,9 +454,9 @@ theorem admits_and_singleton :
 /-- Non-modal updates are distributive (Fact A.2): an update is defined iff it is defined at
 every world of the state, and keeps exactly the worlds at which the sentence is true. -/
 theorem mem_eval_iff (hφ : NonModal φ) (σ τ : Set W) :
-    τ ∈ φ.eval σ ↔ (∀ w ∈ σ, φ.eval.admits {w}) ∧ τ = {w ∈ σ | TrueAt w φ} := by
+    τ ∈ φ.eval σ ↔ (∀ w ∈ σ, φ.eval.Admits {w}) ∧ τ = {w ∈ σ | TrueAt w φ} := by
   induction hφ generalizing σ τ with
-  | atom p => simp [trueAt_atom, PartialUpdate.admits, eval]
+  | atom p => simp [trueAt_atom, PartialUpdate.Admits, eval]
   | @not φ' hφ ih =>
     rw [mem_eval_not]
     constructor
@@ -500,7 +500,7 @@ theorem satisfies_iff (hφ : NonModal φ) : Satisfies σ φ ↔ ∀ w ∈ σ, Tr
   · exact fun h => ⟨fun w hw => admits_of_mem (h w hw), (Set.sep_eq_self_iff_mem_true.2 h).symm⟩
 
 /-- A non-modal sentence is admitted iff it is admitted at every world of the state. -/
-theorem admits_iff (hφ : NonModal φ) : φ.eval.admits σ ↔ ∀ w ∈ σ, φ.eval.admits {w} :=
+theorem admits_iff (hφ : NonModal φ) : φ.eval.Admits σ ↔ ∀ w ∈ σ, φ.eval.Admits {w} :=
   ⟨fun h => ((mem_eval_iff hφ _ _).1 (Part.get_mem h)).1,
    fun h => Part.dom_iff_mem.2 ⟨_, (mem_eval_iff hφ _ _).2 ⟨h, rfl⟩⟩⟩
 
@@ -530,7 +530,7 @@ theorem presupposes_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
   · refine fun h => ⟨entails_iff_forall.2 fun σ τ hτ => ?_, entails_iff_forall.2 fun σ τ hτ => ?_⟩
     · have hs := (satisfies_iff hψ).1 (h σ (admits_of_mem hτ))
       exact (satisfies_iff hψ).2 fun w hw => hs w (eval_eliminative φ hτ hw)
-    · have ha : (not φ).eval.admits σ := admits_of_mem hτ
+    · have ha : (not φ).eval.Admits σ := admits_of_mem hτ
       have hs := (satisfies_iff hψ).1 (h σ ha)
       exact (satisfies_iff hψ).2 fun w hw => hs w (eval_eliminative (not φ) hτ hw)
   · rintro ⟨h₁, h₂⟩ σ hσ
