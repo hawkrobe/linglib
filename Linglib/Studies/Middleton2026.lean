@@ -605,19 +605,16 @@ def runPhraseMetaThenImpov
     operates at the terminal level — it deletes a whole bundle, not a
     feature within one. -/
 def participantDissimilation : ObliterationRule FeatureBundle :=
-  .ofBool (λ n =>
-    isAbsParticipantAuthor n.focus &&
-    n.rightCtx.any isErgParticipant)
+  .ofBool fun n ↦ isAbsParticipantAuthor n.focus && n.rightCtx.any isErgParticipant
 
 /-- **Ergative Metathesis** ([middleton-2026] (13),
     [arregi-nevins-2012] §3.2). Swap T with an immediately
     following ergative clitic when T is leftmost in the auxiliary.
-    The leftmost requirement (`left.isEmpty`) is what lets
+    The leftmost requirement (`n.leftCtx.isEmpty`) is what lets
     Participant Dissimilation *feed* Ergative Metathesis: only
     after PD deletes the absolutive clitic does T become leftmost. -/
 def ergativeMetathesis : TerminalMetathesisRule FeatureBundle :=
-  .ofBool (λ left t1 t2 _ =>
-    left.isEmpty && isT t1 && isErgClitic t2)
+  .ofBool fun n ↦ n.leftCtx.isEmpty && isT n.focus && n.rightCtx.head?.any isErgClitic
 
 /-- The Ondarru witness phrase from [middleton-2026] (17a):
     `s-endu-n` `[1pABS, T:past, 2sERG]`. The complementizer is
