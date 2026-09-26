@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Dayal2025
-public import Linglib.Fragments.English.QuestionParticles
+public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.English.Verbs
 public import Linglib.Fragments.HindiUrdu.Particles
 public import Linglib.Fragments.Japanese.Particles
@@ -71,7 +71,7 @@ lacks. Question particles sit at the layer their embedding distribution shows.
 namespace Dayal2025
 
 open Minimalist Question Data.Examples Clause
-open English English.QuestionParticles HindiUrdu.Particles Japanese.Particles
+open English English.Particles HindiUrdu.Particles Japanese.Particles
 
 /-! ### The three layers (7), (20) -/
 

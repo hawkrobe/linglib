@@ -144,8 +144,8 @@ def toPredicateCore : Predicate → Verb
   | .demonstrate => demonstrate.toVerb
   | .establish => establish.toVerb
   | .prove => prove.toVerb
-  | .beAnnoyed => beAnnoyed.toVerb
-  | .beRight => beRight.toVerb
+  | .beAnnoyed => beAnnoyed
+  | .beRight => beRight
 
 /-- Every predicate takes a finite clause complement, as the polar questions of the stimuli
 require. -/

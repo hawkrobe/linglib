@@ -37,15 +37,15 @@ inductive ToyEntity where
 
 instance : Fintype ToyEntity where
   elems := {.john, .mary, .pizza, .book}
-  complete := fun x => by cases x <;> simp
+  complete := fun x ↦ by cases x <;> simp
 
-/-- Function symbols of the toy signature: constants naming entities. -/
+/-- The function symbols of the toy signature are the constants naming entities. -/
 inductive toyFunc : ℕ → Type
   | john : toyFunc 0
   | mary : toyFunc 0
   deriving DecidableEq
 
-/-- Relation symbols of the toy signature: content words at their arities. -/
+/-- The relation symbols of the toy signature are the content words at their arities. -/
 inductive toyRel : ℕ → Type
   | sleep : toyRel 1
   | laugh : toyRel 1
@@ -85,54 +85,54 @@ abbrev readRel : toyLang.Relations 2 := .read
 
 namespace ToyFacts
 
-def sleep : ToyEntity → Prop := fun x =>
+def sleep : ToyEntity → Prop := fun x ↦
   match x with
   | .john => True
   | _ => False
 
-def laugh : ToyEntity → Prop := fun x =>
-  match x with
-  | .john => True
-  | .mary => True
-  | _ => False
-
-def student : ToyEntity → Prop := fun x =>
+def laugh : ToyEntity → Prop := fun x ↦
   match x with
   | .john => True
   | .mary => True
   | _ => False
 
-def person : ToyEntity → Prop := fun x =>
+def student : ToyEntity → Prop := fun x ↦
   match x with
   | .john => True
   | .mary => True
   | _ => False
 
-def thing : ToyEntity → Prop := fun _ => True
+def person : ToyEntity → Prop := fun x ↦
+  match x with
+  | .john => True
+  | .mary => True
+  | _ => False
 
-def pizza : ToyEntity → Prop := fun x =>
+def thing : ToyEntity → Prop := fun _ ↦ True
+
+def pizza : ToyEntity → Prop := fun x ↦
   match x with
   | .pizza => True
   | _ => False
 
-def book : ToyEntity → Prop := fun x =>
+def book : ToyEntity → Prop := fun x ↦
   match x with
   | .book => True
   | _ => False
 
-def see : ToyEntity → ToyEntity → Prop := fun subj obj =>
+def see : ToyEntity → ToyEntity → Prop := fun subj obj ↦
   match subj, obj with
   | .john, .mary => True
   | .mary, .john => True
   | _, _ => False
 
-def eat : ToyEntity → ToyEntity → Prop := fun subj obj =>
+def eat : ToyEntity → ToyEntity → Prop := fun subj obj ↦
   match subj, obj with
   | .john, .pizza => True
   | .mary, .pizza => True
   | _, _ => False
 
-def read : ToyEntity → ToyEntity → Prop := fun subj obj =>
+def read : ToyEntity → ToyEntity → Prop := fun subj obj ↦
   match subj, obj with
   | .john, .book => True
   | .mary, .book => True
@@ -140,8 +140,8 @@ def read : ToyEntity → ToyEntity → Prop := fun subj obj =>
 
 end ToyFacts
 
-/-- The toy structure: constants denote their entities; relations carry the
-facts (binary relations subject-first). -/
+/-- The toy structure, in which constants denote their entities and relations carry the
+facts, binary relations subject-first. -/
 abbrev toyStructure : toyLang.Structure ToyEntity where
   funMap f v :=
     match f, v with
@@ -189,20 +189,20 @@ structure. -/
 @[simp] theorem relMap_read (v : Fin 2 → ToyEntity) :
     toyStructure.RelMap readRel v = ToyFacts.read (v 0) (v 1) := rfl
 
-/-- The toy composition model: extensional (one world). -/
+/-- The toy composition model, extensional with one world. -/
 def toyModel : Model toyLang where
   E := ToyEntity
   W := Unit
   interp _ := toyStructure
 
-/-- The naming maps: word forms into the toy signature. -/
+/-- The naming maps send word forms into the toy signature. -/
 def toyNaming : LexNaming toyLang where
-  names := fun s =>
+  names := fun s ↦
     match s with
     | "John" => some johnConst
     | "Mary" => some maryConst
     | _ => none
-  preds₁ := fun s =>
+  preds₁ := fun s ↦
     match s with
     | "sleeps" => some sleepRel
     | "laughs" => some laughRel
@@ -212,7 +212,7 @@ def toyNaming : LexNaming toyLang where
     | "pizza" => some pizzaRel
     | "book" => some bookRel
     | _ => none
-  preds₂ := fun s =>
+  preds₂ := fun s ↦
     match s with
     | "sees" => some seeRel
     | "eats" => some eatRel
@@ -254,24 +254,24 @@ def sees_sem : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ex
 def eats_sem : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext eatRel ()
 def reads_sem : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext readRel ()
 
-instance : DecidablePred student_sem := fun x =>
+instance : DecidablePred student_sem := fun x ↦
   match x with
   | .john | .mary => .isTrue trivial
   | .pizza | .book => .isFalse id
 
-instance : DecidablePred person_sem := fun x =>
+instance : DecidablePred person_sem := fun x ↦
   match x with
   | .john | .mary => .isTrue trivial
   | .pizza | .book => .isFalse id
 
-instance : DecidablePred thing_sem := fun _ => .isTrue trivial
+instance : DecidablePred thing_sem := fun _ ↦ .isTrue trivial
 
 end ToyLexicon
 
 /-- Engine smoke test: "John sleeps" composes (via the real `Tree.interp`, over the
 naming-map-induced lexicon) to the model's fact. -/
 example :
-    Tree.interp toyLexicon (fun _ => ToyEntity.john)
+    Tree.interp toyLexicon (fun _ ↦ ToyEntity.john)
       (.node () [.terminal () "John", .terminal () "sleeps"] : Syntax.Tree Unit String)
       = some ⟨.t, ToyLexicon.sleeps_sem ToyLexicon.john_sem⟩ := rfl
 

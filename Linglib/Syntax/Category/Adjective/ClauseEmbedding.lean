@@ -16,18 +16,16 @@ entailment signature.
 
 Whether predication requires a copula is a language-level property
 ([stassen-2013]), not a property of the adjective: English realizes
-these predicates as *be* + adjective (`ClauseEmbeddingAdjective.toVerb`
-in `Fragments/English/Verbs/Copular.lean`), Mandarin and Japanese
-without a copula.
+these predicates as *be* + adjective, `ClauseEmbeddingAdjective.toVerb`
+with the copula *be*, Mandarin and Japanese without a copula.
 -/
 
 @[expose] public section
 
 open NaturalLogic (Signature)
 
-/-- A clause-embedding adjective: the `Adjective` core plus the
-    clausal-selection spine shared with clause-embedding verbs, but no
-    verbal morphology. -/
+/-- A clause-embedding adjective is the `Adjective` core with the clausal-selection spine it
+shares with clause-embedding verbs, and no verbal morphology. -/
 structure ClauseEmbeddingAdjective extends Adjective where
   /-- The frame of the clause the adjective embeds. -/
   frame : ArgumentFrame := .finiteClause
@@ -40,3 +38,17 @@ structure ClauseEmbeddingAdjective extends Adjective where
   /-- Entailment signature of the complement position. -/
   complementSig : Option Signature := none
   deriving Repr, BEq
+
+namespace ClauseEmbeddingAdjective
+
+/-- The verb an adjective forms with a copula, the copula's form before the adjective's and the
+adjective's clausal selection carried over. -/
+def toVerb (a : ClauseEmbeddingAdjective) (copula : String) : Verb where
+  form := copula ++ " " ++ a.form
+  frames := [a.frame]
+  factivity := a.factivity
+  attitude := a.attitude
+  opaqueContext := a.opaqueContext
+  complementSig := a.complementSig
+
+end ClauseEmbeddingAdjective
