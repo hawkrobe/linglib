@@ -1,735 +1,382 @@
 module
 
 public import Linglib.Core.Order.FourierMotzkin
-public import Linglib.Core.Order.Probability.Representability
+public import Linglib.Core.Order.Probability.Cancellation
 public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Order.Ring.Abs
+public import Mathlib.RingTheory.Localization.FractionRing
+public import Mathlib.RingTheory.Localization.Integer
 
 /-!
-# Scott's theorem: cancellation and representability
+# Scott's theorem
 
-Scott's cancellation framework for representability of comparative probability orderings
-by finitely additive measures. A comparative probability ordering ≿ is representable
-by a finitely additive measure iff it satisfies the **cancellation property**: no valid
-neutral portfolio has a strict member.
+[scott-1964]'s representation theorem for qualitative probability on a finite
+set: an order on the subsets of `Fin n` is represented by a finitely additive
+probability measure iff it satisfies finite cancellation. Cancellation is
+stated here in Scott's disjoint-comparison form (`Cancellation`): whenever the
+indicator vectors `1_{Aₖ} - 1_{Bₖ}` of a list of comparisons `Aₖ ≿ Bₖ` between
+disjoint sets sum to zero, every comparison in the list also holds reversed.
+This is equivalent to the balanced-sequence form `FiniteCancellation` of
+`Cancellation.lean` (`cancellation_iff_finiteCancellation`).
 
-The hard direction (cancellation → representable) is an instance of LP duality / Farkas'
-lemma (`Polyhedral.farkas`, in `Core/Order/FourierMotzkin.lean`): the feasibility polytope
-{p ≥ 0 : Σpᵢ = 1, ordering constraints} is nonempty iff no dual certificate of
-infeasibility exists, and such a certificate corresponds exactly to a neutral portfolio
-with a strict member.
+The hard direction is linear-programming duality over `ℚ` (`Polyhedral.farkas`):
+the weight vectors representing the order form a polyhedron, which is nonempty
+unless a Farkas certificate exists, and a certificate is a nonnegative
+weighting of valid comparisons that sums to zero yet weights a strict one.
+Clearing denominators turns it into a list violating `Cancellation`.
 
 ## Main declarations
 
-* `representable_implies_cancellation` — easy direction: measure existence → cancellation
-* `cancellation_implies_representable` — hard direction: cancellation → measure existence
-  (via `feasibleWeights`, `cancellation_nonempty`, `feasible_to_measure`)
-* `fa_cancellation_fin3`, `fa_cancellation_fin4` — the axioms imply cancellation on
-  `Fin 3` and `Fin 4` (in `CancellationFin4.lean`)
+* `Cancellation` — Scott's condition in disjoint-comparison form.
+* `FiniteCancellation.cancellation`, `Cancellation.finiteCancellation`,
+  `cancellation_iff_finiteCancellation` — the two forms agree.
+* `cancellation_implies_representable` — the Farkas direction.
+* `representable_iff_cancellation`, `representable_iff_finiteCancellation` —
+  Scott's theorem.
+* `cancellation_of_null_atom` — a null atom reduces cancellation to
+  representability one atom down.
 
-`[UPSTREAM]` candidate (see the note in `Defs.lean`); the balanced-sequence
-statement of the cancellation condition is in `Cancellation.lean`.
+`[UPSTREAM]` candidate (see the note in `Defs.lean`).
+
+## References
+
+* [scott-1964]
+* [kraft-pratt-seidenberg-1959]
 -/
 
 @[expose] public section
 
--- ═══════════════════════════════════════════════════════════════
--- Cancellation conditions for comparative probability
--- ═══════════════════════════════════════════════════════════════
-
 namespace ComparativeProbability
-
-attribute [local instance] Classical.propDecidable
-
--- ═══════════════════════════════════════════════════════════════
--- § 1. Gambles and Portfolios
--- ═══════════════════════════════════════════════════════════════
-
-/-- Characteristic vector of a disjoint comparison: χ_A - χ_B ∈ {-1,0,1}ⁿ -/
-def comparisonVec (n : ℕ) (A B : Finset (Fin n)) : Fin n → ℤ :=
-  fun i => (if i ∈ A then 1 else 0) - (if i ∈ B then 1 else 0)
-
-/-- A weighted comparison: a disjoint pair (A,B) with positive rational weight. -/
-structure WComparison (n : ℕ) where
-  left : Finset (Fin n)
-  right : Finset (Fin n)
-  weight : ℚ
-  disjoint : Disjoint left right
-  weight_pos : 0 < weight
-
-/-- A portfolio is a list of weighted comparisons. -/
-def Portfolio (n : ℕ) := List (WComparison n)
-
-namespace Portfolio
 
 variable {n : ℕ}
 
-/-- The weighted sum of comparison vectors at atom i. -/
-def weightedSum (P : Portfolio n) (i : Fin n) : ℚ :=
-  (P.map (fun wc => wc.weight * ((comparisonVec n wc.left wc.right i : ℤ) : ℚ))).sum
+/-! ### Comparison vectors -/
 
-/-- A portfolio is neutral if weighted vectors sum to zero at every atom. -/
-def isNeutral (P : Portfolio n) : Prop :=
-  ∀ i : Fin n, P.weightedSum i = 0
+/-- The comparison vector `1_{c.1} - 1_{c.2}` of a pair of finsets. -/
+def comparisonVec (c : Finset (Fin n) × Finset (Fin n)) (i : Fin n) : ℤ :=
+  (if i ∈ c.1 then 1 else 0) - (if i ∈ c.2 then 1 else 0)
 
-/-- A portfolio is valid for an ordering if each comparison holds. -/
-def isValid (P : Portfolio n) (ge : Set (Fin n) → Set (Fin n) → Prop) : Prop :=
-  ∀ (wc : WComparison n), List.Mem wc P →
-    ge (↑wc.left) (↑wc.right)
+/-- The sum of the comparison vectors of a list of pairs. -/
+def comparisonSum (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) : ℤ :=
+  (L.map (comparisonVec · i)).sum
 
-/-- A portfolio has a strict member if at least one comparison is strict. -/
-def hasStrict (P : Portfolio n) (ge : Set (Fin n) → Set (Fin n) → Prop) : Prop :=
-  ∃ (wc : WComparison n), List.Mem wc P ∧
-    ¬ge (↑wc.right) (↑wc.left)
+@[simp] theorem comparisonSum_nil (i : Fin n) :
+    comparisonSum ([] : List (Finset (Fin n) × Finset (Fin n))) i = 0 := rfl
 
-end Portfolio
+@[simp] theorem comparisonSum_cons (c : Finset (Fin n) × Finset (Fin n))
+    (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) :
+    comparisonSum (c :: L) i = comparisonVec c i + comparisonSum L i := by
+  simp [comparisonSum]
 
--- ═══════════════════════════════════════════════════════════════
--- § 2. Cancellation Property
--- ═══════════════════════════════════════════════════════════════
+theorem comparisonSum_perm {L L' : List (Finset (Fin n) × Finset (Fin n))} (h : L.Perm L') :
+    comparisonSum L = comparisonSum L' :=
+  funext fun _ ↦ (h.map _).sum_eq
 
-/-- The cancellation property: no valid neutral portfolio has a strict member. -/
-def Cancellation (n : ℕ) (ge : Set (Fin n) → Set (Fin n) → Prop) : Prop :=
-  ∀ P : Portfolio n, P.isValid ge → P.isNeutral → ¬P.hasStrict ge
+/-- Dot product with a comparison vector is the difference of the side sums. -/
+theorem sum_comparisonVec_mul (c : Finset (Fin n) × Finset (Fin n)) (x : Fin n → ℚ) :
+    ∑ j, (comparisonVec c j : ℚ) * x j = ∑ j ∈ c.1, x j - ∑ j ∈ c.2, x j := by
+  simp [comparisonVec, sub_mul, Finset.sum_sub_distrib, ite_mul, Finset.sum_ite_mem]
 
--- ═══════════════════════════════════════════════════════════════
--- § 3. Easy Direction: representable → cancellation
--- ═══════════════════════════════════════════════════════════════
+/-! ### Scott's condition -/
 
-private lemma list_sum_pos {l : List ℚ}
-    (hnn : ∀ x ∈ l, (0 : ℚ) ≤ x) (hp : ∃ x ∈ l, (0 : ℚ) < x) :
-    (0 : ℚ) < l.sum := by
-  obtain ⟨x, hx, hxp⟩ := hp
-  induction l with
-  | nil => simp at hx
-  | cons hd tl ih =>
-    simp only [List.sum_cons]
-    have htl_nn : ∀ y ∈ tl, (0 : ℚ) ≤ y :=
-      fun y hy => hnn y (List.mem_cons.mpr (Or.inr hy))
-    rcases List.mem_cons.mp hx with rfl | hxtl
-    · linarith [List.sum_nonneg htl_nn]
-    · linarith [hnn hd (.head _), ih htl_nn hxtl]
+/-- **Scott's cancellation condition**, disjoint-comparison form
+    ([scott-1964]): when the comparison vectors of a list of valid comparisons
+    between disjoint sets sum to zero, every comparison in the list also holds
+    reversed. -/
+def Cancellation (ge : Set (Fin n) → Set (Fin n) → Prop) : Prop :=
+  ∀ L : List (Finset (Fin n) × Finset (Fin n)), (∀ c ∈ L, Disjoint c.1 c.2) →
+    (∀ c ∈ L, ge ↑c.1 ↑c.2) → comparisonSum L = 0 → ∀ c ∈ L, ge ↑c.2 ↑c.1
 
-/-- The portfolio value (weighted sum of measure differences) equals the
-    dot product of singleton measures with the weighted comparison sums.
-    Proved by list induction on the portfolio; the key step connects
-    comparison vectors to measure differences via `FinAddMeasure.sum_mu_singleton`. -/
-private lemma finset_sum_as_univ {n : ℕ} (S : Finset (Fin n)) (f : Fin n → ℚ) :
-    S.sum f = Finset.univ.sum (fun i => if i ∈ S then f i else 0) := by
-  rw [← Finset.sum_filter]; congr 1; ext x; simp
+section Bridge
 
-private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
-    (L R : Finset (Fin n)) (hd : Disjoint L R) :
-    m ↑L - m ↑R =
-    Finset.univ.sum (fun i : Fin n =>
-      m {i} * ((comparisonVec n L R i : ℤ) : ℚ)) := by
-  rw [← m.sum_mu_singleton L, ← m.sum_mu_singleton R, finset_sum_as_univ L, finset_sum_as_univ R,
-      ← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [comparisonVec]
-  by_cases hL : i ∈ L <;> by_cases hR : i ∈ R <;> simp_all [Finset.disjoint_left.mp hd]
+open scoped Classical
 
-private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure ℚ (Fin n))
-    (P : Portfolio n) :
-    (P.map (fun wc => wc.weight * (m ↑wc.left - m ↑wc.right))).sum =
-    Finset.univ.sum (fun i => m {i} * Portfolio.weightedSum P i) := by
-  induction P with
-  | nil =>
-    simp only [List.map_nil, List.sum_nil]
-    exact (Finset.sum_eq_zero fun i _ => by simp [Portfolio.weightedSum]).symm
-  | cons wc tl ih =>
-    simp only [List.map_cons, List.sum_cons]; rw [ih]
-    -- Unfold weightedSum for cons
-    have hwsum : ∀ i, Portfolio.weightedSum (wc :: tl) i =
-        wc.weight * ((comparisonVec n wc.left wc.right i : ℤ) : ℚ) +
-        Portfolio.weightedSum tl i := fun _ => by
-      simp only [Portfolio.weightedSum, List.map_cons, List.sum_cons]
-    simp_rw [hwsum, mul_add, Finset.sum_add_distrib]
-    -- Suffices: w*(mu L - mu R) = Σ mu{i}*(w*compVec i)
-    congr 1
-    rw [single_comp_sum m wc.left wc.right wc.disjoint, Finset.mul_sum]
-    exact Finset.sum_congr rfl fun i _ => mul_left_comm _ _ _
-
-/-- **Easy direction**: If μ represents the ordering, no neutral portfolio has a
-    strict member. Each comparison contributes wⱼ·(μ(Aⱼ)−μ(Bⱼ)) ≥ 0 to the
-    portfolio value; if any is strict, the value is positive. But by the
-    interchange lemma, the value also equals Σᵢ μ({i})·weightedSum(i) = 0
-    by neutrality. -/
-theorem representable_implies_cancellation {n : ℕ}
-    {ge : Set (Fin n) → Set (Fin n) → Prop}
-    (m : FinAddMeasure ℚ (Fin n))
-    (hm : ∀ A B, ge A B ↔ m.inducedGe A B) :
-    Cancellation n ge := by
-  intro P hValid hNeutral ⟨wc, hwc_mem, hwc_strict⟩
-  -- Define the portfolio valuation function
-  let f : WComparison n → ℚ := fun wc => wc.weight * (m ↑wc.left - m ↑wc.right)
-  -- Each term is nonneg
-  have hnn : ∀ x ∈ P.map f, (0 : ℚ) ≤ x := by
-    intro x hx
-    obtain ⟨wc', hwc'_mem, rfl⟩ := List.mem_map.mp hx
-    exact mul_nonneg wc'.weight_pos.le
-      (sub_nonneg.mpr ((hm _ _).mp (hValid wc' hwc'_mem)))
-  -- The strict term is strictly positive
-  have hlt : m ↑wc.left > m ↑wc.right := by
-    by_contra h; push Not at h
-    exact hwc_strict ((hm _ _).mpr h)
-  have hp : ∃ x ∈ P.map f, (0 : ℚ) < x :=
-    ⟨f wc, List.mem_map.mpr ⟨wc, hwc_mem, rfl⟩,
-      mul_pos wc.weight_pos (sub_pos.mpr hlt)⟩
-  -- Portfolio value > 0
-  have hpos := list_sum_pos hnn hp
-  -- But by interchange, portfolio value = Σ_i mu_i * weightedSum_i = 0
-  rw [portfolio_interchange m P] at hpos
-  have hzero : Finset.univ.sum (fun i => m {i} * P.weightedSum i) = 0 :=
-    Finset.sum_eq_zero (fun i _ => by rw [hNeutral i, mul_zero])
-  linarith
-
--- ═══════════════════════════════════════════════════════════════
--- § 4. Hard Direction: cancellation → representable (Farkas/Scott)
--- ═══════════════════════════════════════════════════════════════
-
-/-- The feasibility polytope for measure representation: probability vectors
-    p : Fin n → ℚ that are nonneg, normalized, and **faithfully encode** the
-    ordering on disjoint pairs — exactly `sys.ge ↑A ↑B ↔ A.sum p ≥ B.sum p`.
-    The ↔ (rather than →) is essential: the forward direction ensures the
-    measure respects the ordering, while the backward direction ensures
-    strictness is preserved (no spurious ties). -/
-def feasibleWeights (n : ℕ) (sys : QualitativeProbability (Set (Fin n))) : Set (Fin n → ℚ) :=
-  { p | (∀ i, 0 ≤ p i) ∧
-        Finset.univ.sum p = 1 ∧
-        ∀ (A B : Finset (Fin n)), Disjoint A B →
-          (sys.ge ↑A ↑B ↔ A.sum p ≥ B.sum p) }
-
-/-- Point-mass measure from a weight vector: μ(A) = Σᵢ (if i ∈ A then pᵢ else 0).
-    Uses explicit if-then-else rather than Finset.filter to avoid DecidablePred
-    instance matching issues in rewrite tactics. -/
-private noncomputable def atomMu {n : ℕ} (p : Fin n → ℚ) (A : Set (Fin n)) : ℚ :=
-  Finset.univ.sum (fun i => if i ∈ A then p i else 0)
-
-/-- atomMu agrees with Finset.sum on finset coercions. -/
-private theorem atomMu_eq_finset_sum {n : ℕ} (p : Fin n → ℚ) (S : Finset (Fin n)) :
-    atomMu p ↑S = S.sum p := by
-  simp only [atomMu, Finset.mem_coe]
-  rw [← finset_sum_as_univ S p]
-
-/-- A feasible weight vector yields a representing measure.
-    Construction: μ(A) = Σᵢ (if i ∈ A then pᵢ else 0). Finite additivity follows
-    from a pointwise membership case split. Representation (ge ↔ μ(A) ≥ μ(B))
-    reduces to disjoint pairs via `reduce_to_disjoint` (using FA's Axiom A),
-    then applies the ↔ condition from `feasibleWeights`. -/
-private theorem feasible_to_measure {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    {p : Fin n → ℚ} (hp : p ∈ feasibleWeights n sys) :
-    Representable sys := by
-  obtain ⟨hnn, hsum, hcompat⟩ := hp
-  -- Nonneg: each summand is nonneg
-  have h_nonneg : ∀ A, 0 ≤ atomMu p A := fun A =>
-    Finset.sum_nonneg fun i _ => by split <;> [exact hnn i; rfl]
-  -- Finite additivity via pointwise case split on membership
-  have h_additive : ∀ A B : Set (Fin n), Disjoint A B →
-      atomMu p (A ∪ B) = atomMu p A + atomMu p B := by
-    intro A B hAB
-    simp only [atomMu, ← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    by_cases hA : i ∈ A <;> by_cases hB : i ∈ B <;>
-      simp_all [Set.mem_union, Set.disjoint_left.mp hAB]
-  -- Normalization: all atoms in univ
-  have h_total : atomMu p Set.univ = 1 := by
-    simp only [atomMu, Set.mem_univ, ite_true, hsum]
-  let m : FinAddMeasure ℚ (Fin n) := ⟨atomMu p, h_nonneg, h_additive, h_total⟩
-  -- Representation via reduce_to_disjoint
-  refine ⟨m, reduce_to_disjoint sys m (fun C D hdisj => ?_)⟩
-  -- Convert Sets C, D to Finsets via filter
-  have hCeq : (↑(Finset.univ.filter (· ∈ C)) : Set (Fin n)) = C := by ext x; simp
-  have hDeq : (↑(Finset.univ.filter (· ∈ D)) : Set (Fin n)) = D := by ext x; simp
-  have hfinDisj : Disjoint (Finset.univ.filter (· ∈ C)) (Finset.univ.filter (· ∈ D)) := by
-    rw [Finset.disjoint_left]; intro x hx1 hx2
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx1 hx2
-    exact Set.disjoint_left.mp hdisj hx1 hx2
-  -- hcompat on filter-finsets, transported to Sets via coercion identity
-  have key := hcompat _ _ hfinDisj.symm
-  rw [hCeq, hDeq] at key
-  -- Bridge atomMu on Sets to Finset.sum (conv_lhs avoids rewriting RHS)
-  have hmuC : atomMu p C = (Finset.univ.filter (· ∈ C)).sum p := by
-    conv_lhs => rw [show C = ↑(Finset.univ.filter (· ∈ C)) from hCeq.symm]
-    exact atomMu_eq_finset_sum p _
-  have hmuD : atomMu p D = (Finset.univ.filter (· ∈ D)).sum p := by
-    conv_lhs => rw [show D = ↑(Finset.univ.filter (· ∈ D)) from hDeq.symm]
-    exact atomMu_eq_finset_sum p _
-  -- Unfold `le`/`≤` to the ≿-form of `key` and rewrite atomMu to finset sums
-  change sys.ge D C ↔ atomMu p D ≥ atomMu p C
-  rw [hmuC, hmuD]; exact key
-
--- ── Step 4a. Not all singletons null ─────────────
-
-/-- If all singletons are null, then ∅ ≿ S for any finset S (by FA induction). -/
-private lemma ge_empty_of_all_null {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (hall : ∀ i, sys.ge ∅ {i}) (S : Finset (Fin n)) : sys.ge ∅ ↑S := by
-  induction S using Finset.induction_on with
-  | empty => simp only [Finset.coe_empty]; exact sys.refl ∅
-  | @insert a S' haS' ih =>
-    have h1 : (↑S' : Set (Fin n)) \ ({a} ∪ ↑S') = ∅ := by
-      ext x; simp only [Set.mem_sdiff, Set.mem_union, Finset.mem_coe,
-        Set.mem_empty_iff_false, iff_false, not_and, Decidable.not_not]
-      intro hx; exact Or.inr hx
-    have h2 : ({a} ∪ ↑S' : Set (Fin n)) \ ↑S' = {a} := by
-      ext x; simp only [Set.mem_sdiff, Set.mem_union, Set.mem_singleton_iff, Finset.mem_coe]
-      constructor
-      · rintro ⟨hx | hx, hnx⟩ <;> [exact hx; exact absurd hx hnx]
-      · rintro rfl; exact ⟨Or.inl rfl, fun h => haS' (Finset.mem_coe.mp h)⟩
-    rw [Finset.coe_insert, Set.insert_eq]
-    exact sys.trans (b := ↑S')
-      (by rw [sys.additive ({a} ∪ ↑S') ↑S', h2, h1]; exact hall a) ih
-
-/-- Not all singletons can be null: ∃ i, ¬sys.ge ∅ {i}. If all were null,
-    FA induction gives sys.ge ∅ Set.univ, contradicting nonTrivial. -/
-theorem not_all_null {n : ℕ} (sys : QualitativeProbability (Set (Fin n))) :
-    ∃ i : Fin n, ¬sys.ge ∅ {i} := by
-  by_contra hall; push Not at hall
-  exact sys.nonTrivial (by
-    rw [Set.top_eq_univ, Set.bot_eq_empty, ← Finset.coe_univ]
-    exact ge_empty_of_all_null sys hall _)
-
--- ── Step 4b. Farkas alternative (→ version) ─────
-
-private lemma finRange_map_sum {α : Type*} [AddCommMonoid α] {k : ℕ} (f : Fin k → α) :
-    ((List.finRange k).map f).sum = ∑ i : Fin k, f i := by
-  induction k with
-  | zero => simp [List.finRange]
-  | succ k ih =>
-    rw [List.finRange_succ, List.map_cons, List.sum_cons, List.map_map]
-    rw [ih (f ∘ Fin.succ), Fin.sum_univ_succ]; simp [Function.comp]
-
-/-- The comparison-vector dot product equals the finset-sum difference. -/
-private lemma compVec_as_sum_diff {n : ℕ} (A B : Finset (Fin n)) (x : Fin n → ℚ)
-    (hdisj : Disjoint A B) :
-    ∑ j : Fin n, ((comparisonVec n A B j : ℤ) : ℚ) * x j = A.sum x - B.sum x := by
-  rw [finset_sum_as_univ A x, finset_sum_as_univ B x, ← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  simp only [comparisonVec]
-  by_cases hA : j ∈ A <;> by_cases hB : j ∈ B <;>
-    simp_all [Finset.disjoint_left.mp hdisj]
-
-/-- All disjoint `ge`-pairs: disjoint (A, B) where `sys.ge ↑A ↑B`. -/
-private noncomputable def gePairsOf {n : ℕ} (sys : QualitativeProbability (Set (Fin n))) :
-    List (Finset (Fin n) × Finset (Fin n)) :=
-  ((Finset.univ ×ˢ Finset.univ : Finset _).filter
-    (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2)).toList
-
-private theorem gePairs_mem {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (A B : Finset (Fin n)) (hd : Disjoint A B) (hge : sys.ge ↑A ↑B) :
-    (A, B) ∈ gePairsOf sys := by
-  simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
-    Finset.mem_univ, true_and]; exact ⟨hd, hge⟩
-
-private theorem gePairs_disj {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (m : Fin (gePairsOf sys).length) :
-    Disjoint ((gePairsOf sys).get m).1 ((gePairsOf sys).get m).2 := by
-  have := List.get_mem (gePairsOf sys) m
-  simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.1
-
-private theorem gePairs_ge {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (m : Fin (gePairsOf sys).length) :
-    sys.ge ↑((gePairsOf sys).get m).1 ↑((gePairsOf sys).get m).2 := by
-  have := List.get_mem (gePairsOf sys) m
-  simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.2
-
--- ── Step 4b. The ordering LP: one Farkas application ─────
-
-/-- Split a sum over `Fin ((n + k) + K)` into nonneg + ordering + strict parts. -/
-private lemma sum_three_parts {n k K : ℕ} (f : Fin ((n + k) + K) → ℚ) :
-    ∑ i, f i = (∑ i : Fin n, f ⟨i.val, by omega⟩) +
-    (∑ m : Fin k, f ⟨n + m.val, by omega⟩) +
-    (∑ s : Fin K, f ⟨(n + k) + s.val, by omega⟩) := by
-  rw [Fin.sum_univ_add, Fin.sum_univ_add (fun i : Fin (n + k) => f (Fin.castAdd K i))]
-  congr 1
-
-/-- Weighted sum of a filterMap portfolio equals the Finset sum
-    (zero-weight terms contribute 0 and are skipped by filterMap). -/
-private lemma filterMap_weightedSum {n k' : ℕ}
-    (pairs : Fin k' → Finset (Fin n) × Finset (Fin n))
-    (w : Fin k' → ℚ) (hw : ∀ i, 0 ≤ w i)
-    (hdisj : ∀ i, Disjoint (pairs i).1 (pairs i).2)
-    (j : Fin n) :
-    Portfolio.weightedSum
-      ((List.finRange k').filterMap (fun i =>
-        if h : 0 < w i then
-          some ⟨(pairs i).1, (pairs i).2, w i, hdisj i, h⟩
-        else none)) j =
-    ∑ i : Fin k', w i *
-      ((comparisonVec n (pairs i).1 (pairs i).2 j : ℤ) : ℚ) := by
-  simp only [Portfolio.weightedSum]
-  conv_rhs => rw [← finRange_map_sum]
-  suffices ∀ l : List (Fin k'),
-      ((l.filterMap (fun i =>
-        if h : 0 < w i then
-          some ⟨(pairs i).1, (pairs i).2, w i, hdisj i, h⟩
-        else none)).map (fun wc : WComparison n =>
-        wc.weight * ((comparisonVec n wc.left wc.right j : ℤ) : ℚ))).sum =
-      (l.map (fun i =>
-        w i * ((comparisonVec n (pairs i).1 (pairs i).2 j : ℤ) : ℚ))).sum
-      from this _
-  intro l; induction l with
+/-- The comparison vector sum of a list of finset pairs is the difference of
+    the membership counts on its two sides. -/
+private theorem comparisonSum_eq_seqCount (L : List (Finset (Fin n) × Finset (Fin n)))
+    (i : Fin n) :
+    comparisonSum L i = seqCount i (L.map fun c ↦ (↑c.1 : Set (Fin n))) -
+      seqCount i (L.map fun c ↦ (↑c.2 : Set (Fin n))) := by
+  induction L with
   | nil => simp
-  | cons hd tl ih =>
-    simp only [List.map_cons, List.sum_cons]
-    by_cases hpos : 0 < w hd
-    · -- Include entry: filterMap keeps it
-      simp only [List.filterMap_cons, dite_eq_left hpos, List.map_cons, List.sum_cons, ih]
-    · -- Skip entry: filterMap drops it, contribution is 0
-      simp only [List.filterMap_cons, dite_eq_right hpos]
-      rw [ih]
-      have : w hd = 0 := le_antisymm (not_lt.mp hpos) (hw hd)
-      simp [this]
+  | cons c L ih =>
+    simp only [List.map_cons, seqCount_cons, comparisonSum_cons, ih, comparisonVec, Finset.mem_coe]
+    push_cast
+    ring
 
-/-- Strict pairs: disjoint (A, B) where sys.ge ↑A ↑B strictly (¬sys.ge ↑B ↑A). -/
-private noncomputable def strictPairsOf {n : ℕ} (sys : QualitativeProbability (Set (Fin n))) :
-    List (Finset (Fin n) × Finset (Fin n)) :=
-  ((Finset.univ ×ˢ Finset.univ : Finset _).filter
-    (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2 ∧ ¬sys.ge ↑ab.2 ↑ab.1)).toList
+/-- The balanced-sequence form implies the disjoint-comparison form. -/
+theorem FiniteCancellation.cancellation {ge : Set (Fin n) → Set (Fin n) → Prop}
+    (h : FiniteCancellation ge) : Cancellation ge := by
+  intro L hdisj hge hsum c hc
+  refine h ((L.erase c).map fun d ↦ ((↑d.1 : Set (Fin n)), (↑d.2 : Set (Fin n)))) ↑c.1 ↑c.2
+    (fun i ↦ ?_) fun p hp ↦ ?_
+  · have := congrFun ((comparisonSum_perm (List.perm_cons_erase hc)).symm.trans hsum) i
+    rw [comparisonSum_eq_seqCount] at this
+    simp only [List.map_map, List.map_cons, Function.comp_def, Pi.zero_apply] at this ⊢
+    omega
+  · obtain ⟨d, hd, rfl⟩ := List.mem_map.mp hp
+    exact hge d (List.mem_of_mem_erase hd)
 
-private theorem strictPairs_mem {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (A B : Finset (Fin n)) (hd : Disjoint A B) (hge : sys.ge ↑A ↑B) (hng : ¬sys.ge ↑B ↑A) :
-    (A, B) ∈ strictPairsOf sys := by
-  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
-    Finset.mem_univ, true_and]; exact ⟨hd, hge, hng⟩
+/-- Membership counts on the two sides of a list of set pairs differ by the
+    comparison vector sum. -/
+private theorem seqCount_sub_seqCount (P : List (Set (Fin n) × Set (Fin n))) (i : Fin n) :
+    (seqCount i (P.map Prod.fst) : ℤ) - seqCount i (P.map Prod.snd) =
+      (P.map fun p ↦ ((if i ∈ p.1 then 1 else 0) - (if i ∈ p.2 then 1 else 0) : ℤ)).sum := by
+  induction P with
+  | nil => simp
+  | cons p P ih =>
+    simp only [List.map_cons, seqCount_cons, List.sum_cons]
+    push_cast
+    rw [← ih]
+    ring
 
-private theorem strictPairs_disj {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (m : Fin (strictPairsOf sys).length) :
-    Disjoint ((strictPairsOf sys).get m).1 ((strictPairsOf sys).get m).2 := by
-  have := List.get_mem (strictPairsOf sys) m
-  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.1
+/-- The disjoint normal form `(A \ B, B \ A)` of a comparison of sets. -/
+private noncomputable def normalize (p : Set (Fin n) × Set (Fin n)) :
+    Finset (Fin n) × Finset (Fin n) :=
+  ((p.1 \ p.2).toFinset, (p.2 \ p.1).toFinset)
 
-private theorem strictPairs_ge {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (m : Fin (strictPairsOf sys).length) :
-    sys.ge ↑((strictPairsOf sys).get m).1 ↑((strictPairsOf sys).get m).2 := by
-  have := List.get_mem (strictPairsOf sys) m
-  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.2.1
+private theorem comparisonVec_normalize (p : Set (Fin n) × Set (Fin n)) (i : Fin n) :
+    comparisonVec (normalize p) i = (if i ∈ p.1 then 1 else 0) - (if i ∈ p.2 then 1 else 0) := by
+  simp only [comparisonVec, normalize, Set.mem_toFinset, Set.mem_sdiff]
+  by_cases h1 : i ∈ p.1 <;> by_cases h2 : i ∈ p.2 <;> simp [h1, h2]
 
-private theorem strictPairs_strict {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (m : Fin (strictPairsOf sys).length) :
-    ¬sys.ge ↑((strictPairsOf sys).get m).2 ↑((strictPairsOf sys).get m).1 := by
-  have := List.get_mem (strictPairsOf sys) m
-  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this; exact this.2.2.2
+/-- For a qualitative probability order the disjoint-comparison form implies
+    the balanced-sequence form: normalize every comparison by additivity. -/
+theorem Cancellation.finiteCancellation (sys : QualitativeProbability (Set (Fin n)))
+    (h : Cancellation sys.ge) : FiniteCancellation sys.ge := by
+  intro prem X Y hbal hprem
+  by_contra hYX
+  have hXY : sys.le Y X := (sys.total X Y).resolve_left hYX
+  have key := h (((X, Y) :: prem).map normalize) ?_ ?_ ?_ (normalize (X, Y))
+    (List.mem_cons_self ..)
+  · exact hYX ((sys.additive X Y).mpr (by simpa [normalize] using key))
+  · intro c hc
+    obtain ⟨p, -, rfl⟩ := List.mem_map.mp hc
+    exact Set.disjoint_toFinset.mpr disjoint_sdiff_sdiff
+  · intro c hc
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hc
+    simp only [QualitativeProbability.ge, normalize, Set.coe_toFinset]
+    rcases List.mem_cons.mp hp with rfl | hp
+    · exact (sys.additive Y X).mp hXY
+    · exact (sys.additive p.2 p.1).mp (hprem p hp)
+  · funext i
+    have key := seqCount_sub_seqCount ((X, Y) :: prem) i
+    simp only [List.map_cons, hbal i, sub_self, List.sum_cons] at key
+    simp only [comparisonSum, List.map_map, List.map_cons, Function.comp_def,
+      comparisonVec_normalize, Pi.zero_apply, List.sum_cons]
+    omega
 
-/-- `(univ, ∅)` is always a strict pair, so the strict list is nonempty. -/
-private theorem strictPairs_length_pos {n : ℕ} (sys : QualitativeProbability (Set (Fin n))) :
-    0 < (strictPairsOf sys).length :=
-  List.length_pos_of_mem (strictPairs_mem sys Finset.univ ∅ (Finset.disjoint_empty_right _)
-    (by rw [Finset.coe_univ, Finset.coe_empty]; exact sys.mono (Set.empty_subset _))
-    (by rw [Finset.coe_univ, Finset.coe_empty]; exact sys.nonTrivial))
+/-- The two forms of Scott's condition agree on a qualitative probability order. -/
+theorem cancellation_iff_finiteCancellation (sys : QualitativeProbability (Set (Fin n))) :
+    Cancellation sys.ge ↔ FiniteCancellation sys.ge :=
+  ⟨Cancellation.finiteCancellation sys, FiniteCancellation.cancellation⟩
 
-/-- The core LP step: cancellation implies the feasibility polytope is nonempty.
-    One Farkas application to the LP {p ≥ 0; compVec·p ≥ 0 per ge-pair;
-    compVec·p ≥ 1 per strict pair}: a feasible point normalizes to a member of
-    `feasibleWeights`; an infeasibility certificate assembles a valid neutral
-    portfolio with a strict member, contradicting cancellation. -/
-private theorem cancellation_nonempty {n : ℕ} (sys : QualitativeProbability (Set (Fin n)))
-    (hcancel : Cancellation n sys.ge) :
-    ∃ p, p ∈ feasibleWeights n sys := by
-  let gePairs : List (Finset (Fin n) × Finset (Fin n)) := gePairsOf sys
-  let k := gePairs.length
-  let sp := strictPairsOf sys
-  let K := sp.length
-  have hgePairsMem : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
-      (A, B) ∈ gePairs := gePairs_mem sys
-  have hgePairsDisj : ∀ m : Fin k, Disjoint (gePairs.get m).1 (gePairs.get m).2 :=
-    gePairs_disj sys
-  have hgePairsGe : ∀ m : Fin k, sys.ge ↑(gePairs.get m).1 ↑(gePairs.get m).2 :=
-    gePairs_ge sys
-  have hK_pos : 0 < K := strictPairs_length_pos sys
-  -- constraint function: n nonneg + k ordering + K strict
-  let ineqFn : Fin ((n + k) + K) → Polyhedral.Ineq n := fun i =>
-    if h : i.val < n then
-      ⟨fun j => if j = ⟨i.val, h⟩ then -1 else 0, 0⟩
-    else if _ : i.val < n + k then
-      ⟨fun j => -(((comparisonVec n (gePairs.get ⟨i.val - n, by omega⟩).1
-          (gePairs.get ⟨i.val - n, by omega⟩).2 j : ℤ) : ℚ)), 0⟩
-    else
-      ⟨fun j => -(((comparisonVec n (sp.get ⟨i.val - (n + k), by omega⟩).1
-          (sp.get ⟨i.val - (n + k), by omega⟩).2 j : ℤ) : ℚ)), -1⟩
-  let S : Polyhedral.System n := List.ofFn ineqFn
-  have hget : ∀ i : Fin ((n + k) + K), ineqFn i ∈ S :=
-    fun i => List.mem_ofFn.mpr ⟨i, rfl⟩
-  -- Apply Farkas
-  rcases Polyhedral.farkas S with ⟨x, hx⟩ | hcert
-  · -- ═══ Feasible case: extract and normalize ═══
-    have hsat : ∀ i : Fin ((n + k) + K), (ineqFn i).sat x := fun i => hx _ (hget i)
-    -- Extract nonnegativity
-    have hx_nn : ∀ i : Fin n, 0 ≤ x i := by
-      intro i
-      have h := hsat ⟨i.val, by omega⟩
-      simp only [ineqFn, dite_eq_left i.isLt, Polyhedral.Ineq.sat, Polyhedral.dot, ite_mul,
-        neg_one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
-      linarith
-    -- Extract ordering constraints
-    have hx_ord : ∀ (A B : Finset (Fin n)), Disjoint A B →
-        sys.ge ↑A ↑B → A.sum x ≥ B.sum x := by
-      intro A B hdisj hge
-      obtain ⟨⟨m, hm⟩, hget_m⟩ := List.mem_iff_get.mp (hgePairsMem A B hdisj hge)
-      have h := hsat ⟨n + m, by omega⟩
-      simp only [ineqFn, show ¬(n + m < n) from by omega, dite_false,
-        show (n + m < n + k) from by omega, dite_true,
-        Polyhedral.Ineq.sat, Polyhedral.dot] at h
-      simp only [show n + m - n = m from by omega] at h
-      simp only [neg_mul, Finset.sum_neg_distrib] at h
-      have hcv := compVec_as_sum_diff A B x hdisj
-      rw [hget_m] at h; linarith
-    -- Extract strict constraints
-    have hx_strict : ∀ s : Fin K, (sp.get s).1.sum x ≥ (sp.get s).2.sum x + 1 := by
-      intro ⟨s, hs⟩
-      have h := hsat ⟨n + k + s, by omega⟩
-      simp only [ineqFn, show ¬(n + k + s < n) from by omega, dite_false,
-        show ¬(n + k + s < n + k) from by omega,
-        Polyhedral.Ineq.sat, Polyhedral.dot] at h
-      simp only [show n + k + s - (n + k) = s from by omega] at h
-      simp only [neg_mul, Finset.sum_neg_distrib] at h
-      linarith [compVec_as_sum_diff (sp.get ⟨s, hs⟩).1 (sp.get ⟨s, hs⟩).2 x
-        (strictPairs_disj sys ⟨s, hs⟩)]
-    -- Normalize: Σx > 0 (from strict constraint on pair 0)
-    have hsum_pos : 0 < Finset.univ.sum x := by
-      have hpair : 0 < (sp.get ⟨0, hK_pos⟩).1.sum x := by
-        linarith [hx_strict ⟨0, hK_pos⟩,
-          Finset.sum_nonneg (fun i (_ : i ∈ (sp.get ⟨0, hK_pos⟩).2) => hx_nn i)]
-      linarith [Finset.sum_le_univ_sum_of_nonneg hx_nn (s := (sp.get ⟨0, hK_pos⟩).1)]
-    -- Define normalized vector
-    let σ := Finset.univ.sum x
-    have hσ_pos : 0 < σ := hsum_pos
-    have hσ_ne : σ ≠ 0 := ne_of_gt hσ_pos
-    refine ⟨fun i => x i / σ, fun i => div_nonneg (hx_nn i) (le_of_lt hσ_pos), ?_, ?_⟩
-    · -- Σ(x/σ) = 1
-      show Finset.univ.sum (fun i => x i / σ) = 1
-      rw [← Finset.sum_div]; exact div_self hσ_ne
-    · -- ↔ for disjoint pairs
-      intro A B hdisj
-      refine ⟨fun hge => ?_, fun hge => ?_⟩
-      · -- → direction
-        show A.sum (fun i => x i / σ) ≥ B.sum (fun i => x i / σ)
-        rw [← Finset.sum_div, ← Finset.sum_div]
-        exact div_le_div_of_nonneg_right (hx_ord A B hdisj hge) (le_of_lt hσ_pos)
-      · -- ← direction (contrapositive)
-        by_contra hng
-        have hBA : sys.ge ↑B ↑A := (sys.total ↑A ↑B).resolve_right hng
-        have hmem := strictPairs_mem sys B A hdisj.symm hBA hng
-        obtain ⟨⟨s, hs⟩, hgets⟩ := List.mem_iff_get.mp hmem
-        have hgap := hx_strict ⟨s, hs⟩
-        rw [hgets] at hgap
-        -- B.sum x > A.sum x, so A.sum (x/σ) < B.sum (x/σ)
-        have hlt : A.sum (fun i => x i / σ) < B.sum (fun i => x i / σ) := by
-          rw [← Finset.sum_div, ← Finset.sum_div]
-          exact div_lt_div_of_pos_right (by linarith) hσ_pos
-        linarith
-  · -- ═══ Infeasible case: certificate → cancellation violation ═══
-    exfalso
-    obtain ⟨cert⟩ := hcert
-    have hlen : S.length = (n + k) + K := List.length_ofFn
-    -- Cast cert weights to natural indices
-    let ws : Fin ((n + k) + K) → ℚ := fun i => cert.ws (i.cast hlen.symm)
-    have ws_nn : ∀ i, 0 ≤ ws i := fun i => cert.nonneg _
-    -- Transport: reindex sums
-    have hreindex : ∀ f : Fin S.length → ℚ,
-        ∑ i : Fin S.length, f i =
-        ∑ i : Fin ((n + k) + K), f (i.cast hlen.symm) :=
-      fun f => Fintype.sum_equiv (finCongr hlen) _ _ (fun i => by simp [finCongr])
-    have hS_get : ∀ i : Fin S.length,
-        S.get i = ineqFn (i.cast hlen) := fun i => List.get_ofFn ineqFn i
-    -- Coefficients zero
-    have hcoeffsZero : ∀ j : Fin n,
-        ∑ i : Fin ((n + k) + K), ws i * (ineqFn i).lhs j = 0 := by
-      intro j
-      have h := cert.coeffsZero j
-      rw [hreindex] at h; simp_rw [hS_get] at h; exact h
-    -- Bound negative
-    have hboundNeg :
-        ∑ i : Fin ((n + k) + K), ws i * (ineqFn i).rhs < 0 := by
-      have h := cert.boundNeg
-      rw [hreindex] at h; simp_rw [hS_get] at h; exact h
-    -- ── Decompose boundNeg: strict weights sum > 0 ──
-    have hstrictWtSum : 0 < ∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ := by
-      rw [sum_three_parts] at hboundNeg
-      have h1 : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).rhs = 0 :=
-        Finset.sum_eq_zero fun i _ => by
-          have : (ineqFn ⟨i.val, by omega⟩).rhs = 0 := by
-            simp only [ineqFn, dite_eq_left i.isLt]
-          simp [this]
-      have h2 : ∑ m : Fin k, ws ⟨n + m.val, by omega⟩ *
-          (ineqFn ⟨n + m.val, by omega⟩).rhs = 0 :=
-        Finset.sum_eq_zero fun m _ => by
-          have : (ineqFn ⟨n + m.val, by omega⟩).rhs = 0 := by
-            simp only [ineqFn, show ¬(n + m.val < n) from by omega,
-              show n + m.val < n + k from by omega, dite_false, dite_true]
-          simp [this]
-      have h3 : ∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ *
-          (ineqFn ⟨(n + k) + s.val, by omega⟩).rhs =
-          -(∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩) := by
-        have hrhs : ∀ s : Fin K, (ineqFn ⟨(n + k) + s.val, by omega⟩).rhs = (-1 : ℚ) := by
-          intro s; simp only [ineqFn, show ¬((n + k) + s.val < n) from by omega,
-            show ¬((n + k) + s.val < n + k) from by omega, dite_false]
-        simp_rw [hrhs, mul_neg_one, Finset.sum_neg_distrib]
-      linarith
-    -- ── Find s₀ with positive strict weight ──
-    obtain ⟨s₀, _, hs₀⟩ : ∃ s ∈ (Finset.univ : Finset (Fin K)),
-        0 < ws ⟨(n + k) + s.val, by omega⟩ := by
-      by_contra hall; push Not at hall
-      have : ∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ = 0 :=
-        Finset.sum_eq_zero fun s hs => le_antisymm (hall s hs)
-          (ws_nn ⟨(n + k) + s.val, by omega⟩)
-      linarith
-    -- ── Coefficient decomposition via sum_three_parts ──
-    have hDecomp : ∀ j : Fin n,
-        ws ⟨j.val, by omega⟩ +
-        (∑ m : Fin k, ws ⟨n + m.val, by omega⟩ *
-          ((comparisonVec n (gePairs.get m).1 (gePairs.get m).2 j : ℤ) : ℚ)) +
-        (∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ *
-          ((comparisonVec n (sp.get s).1 (sp.get s).2 j : ℤ) : ℚ)) = 0 := by
-      intro j; have h := hcoeffsZero j
-      rw [sum_three_parts] at h
-      -- Nonneg: only the j-th row contributes -ws(j)
-      have h_nn : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).lhs j =
-          -ws ⟨j.val, by omega⟩ := by
-        rw [Finset.sum_eq_single j]
-        · simp only [ineqFn, dite_eq_left j.isLt]; simp
-        · intro i _ hij
-          simp only [ineqFn, dite_eq_left i.isLt]
-          simp [show j ≠ i from Ne.symm hij]
-        · intro h; exact absurd (Finset.mem_univ j) h
-      -- Ordering: simplify lhs
-      have h_ord : ∀ m : Fin k, ws ⟨n + m.val, by omega⟩ *
-          (ineqFn ⟨n + m.val, by omega⟩).lhs j =
-          -(ws ⟨n + m.val, by omega⟩ *
-            ((comparisonVec n (gePairs.get m).1 (gePairs.get m).2 j : ℤ) : ℚ)) := by
-        intro m
-        have : (ineqFn ⟨n + m.val, by omega⟩).lhs j =
-            -(((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
-              (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ)) := by
-          simp only [ineqFn, show ¬(n + m.val < n) from by omega,
-            show n + m.val < n + k from by omega, dite_false, dite_true]
-          have : (⟨n + m.val - n, by omega⟩ : Fin k) = m := by
-            ext; show n + m.val - n = m.val; omega
-          rw [this]
-        rw [this]; ring
-      -- Strict: simplify lhs
-      have h_str : ∀ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ *
-          (ineqFn ⟨(n + k) + s.val, by omega⟩).lhs j =
-          -(ws ⟨(n + k) + s.val, by omega⟩ *
-            ((comparisonVec n (sp.get s).1 (sp.get s).2 j : ℤ) : ℚ)) := by
-        intro s
-        have : (ineqFn ⟨(n + k) + s.val, by omega⟩).lhs j =
-            -(((comparisonVec n (sp.get ⟨s.val, s.isLt⟩).1
-              (sp.get ⟨s.val, s.isLt⟩).2 j : ℤ) : ℚ)) := by
-          simp only [ineqFn, show ¬((n + k) + s.val < n) from by omega,
-            show ¬((n + k) + s.val < n + k) from by omega, dite_false]
-          have : (⟨(n + k) + s.val - (n + k), by omega⟩ : Fin K) = s := by
-            ext; show (n + k) + s.val - (n + k) = s.val; omega
-          rw [this]
-        rw [this]; ring
-      simp_rw [h_nn, h_ord, Finset.sum_neg_distrib, h_str, Finset.sum_neg_distrib] at h
-      linarith
-    -- ── Build portfolio violating cancellation ──
-    let Q_ord : List (WComparison n) :=
-      (List.finRange k).filterMap fun m =>
-        if h : 0 < ws ⟨n + m.val, by omega⟩ then
-          some ⟨(gePairs.get m).1, (gePairs.get m).2,
-            ws ⟨n + m.val, by omega⟩, hgePairsDisj m, h⟩
-        else none
-    let Q_strict : List (WComparison n) :=
-      (List.finRange K).filterMap fun s =>
-        if h : 0 < ws ⟨(n + k) + s.val, by omega⟩ then
-          some ⟨(sp.get s).1, (sp.get s).2,
-            ws ⟨(n + k) + s.val, by omega⟩, strictPairs_disj sys s, h⟩
-        else none
-    let Q_sing : List (WComparison n) :=
-      (List.finRange n).filterMap fun j =>
-        if h : 0 < ws ⟨j.val, by omega⟩ then
-          some ⟨{j}, ∅, ws ⟨j.val, by omega⟩, Finset.disjoint_empty_right _, h⟩
-        else none
-    let Q : Portfolio n := Q_ord ++ Q_strict ++ Q_sing
-    have hQ_strict : Q.hasStrict sys.ge :=
-      ⟨⟨(sp.get s₀).1, (sp.get s₀).2, ws ⟨(n + k) + s₀.val, by omega⟩,
-        strictPairs_disj sys s₀, hs₀⟩,
-        List.mem_append_left _ (List.mem_append_right _
-          (List.mem_filterMap.mpr ⟨s₀, List.mem_finRange s₀, dite_eq_left hs₀⟩)),
-        strictPairs_strict sys s₀⟩
-    have hQ_valid : Q.isValid sys.ge := by
-      intro wc hwc
-      rcases List.mem_append.mp hwc with h | h
-      · rcases List.mem_append.mp h with h | h
-        · obtain ⟨m, _, hm⟩ := List.mem_filterMap.mp h
-          split_ifs at hm with hpos
-          cases hm; exact hgePairsGe m
-        · obtain ⟨s, _, hs⟩ := List.mem_filterMap.mp h
-          split_ifs at hs with hpos
-          cases hs; exact strictPairs_ge sys s
-      · obtain ⟨j, _, hj⟩ := List.mem_filterMap.mp h
-        split_ifs at hj with hpos
-        cases hj
-        simp only [Finset.coe_singleton, Finset.coe_empty]
-        exact sys.mono (Set.empty_subset _)
-    have hQ_neutral : Q.isNeutral := by
-      intro j
-      show Portfolio.weightedSum (Q_ord ++ Q_strict ++ Q_sing) j = 0
-      simp only [Portfolio.weightedSum, List.map_append, List.sum_append]
-      rw [show (Q_ord.map _).sum = _ from filterMap_weightedSum
-            (fun m => ((gePairs.get m).1, (gePairs.get m).2))
-            (fun m => ws ⟨n + m.val, by omega⟩)
-            (fun m => ws_nn ⟨n + m.val, by omega⟩) hgePairsDisj j,
-          show (Q_strict.map _).sum = _ from filterMap_weightedSum
-            (fun s => ((sp.get s).1, (sp.get s).2))
-            (fun s => ws ⟨(n + k) + s.val, by omega⟩)
-            (fun s => ws_nn ⟨(n + k) + s.val, by omega⟩)
-            (strictPairs_disj sys) j,
-          show (Q_sing.map _).sum = _ from filterMap_weightedSum
-            (fun i => ({i}, (∅ : Finset (Fin n))))
-            (fun i => ws ⟨i.val, by omega⟩)
-            (fun i => ws_nn ⟨i.val, by omega⟩)
-            (fun _ => Finset.disjoint_empty_right _) j]
-      have hsing : ∑ i : Fin n, ws ⟨i.val, by omega⟩ *
-          ((comparisonVec n {i} ∅ j : ℤ) : ℚ) = ws ⟨j.val, by omega⟩ := by
-        rw [Finset.sum_eq_single j]
-        · simp [comparisonVec, Finset.mem_singleton]
-        · intro i _ hij
-          simp [comparisonVec, Finset.mem_singleton, Ne.symm hij]
-        · intro h; exact absurd (Finset.mem_univ j) h
-      rw [hsing]; linarith [hDecomp j]
-    exact absurd hQ_strict (hcancel Q hQ_valid hQ_neutral)
+end Bridge
 
--- ── Step 4d. Compose: cancellation → feasible weights ──
+/-! ### Weighted cancellation
 
-/-- **Scott's theorem** (hard direction): if no valid neutral portfolio has a
-    strict member, then a finitely additive measure exists representing the
-    ordering. Decomposes into two steps:
-    1. `cancellation_nonempty`: Farkas / LP duality shows the feasibility
-       polytope is nonempty when cancellation holds.
-    2. `feasible_to_measure`: a feasible weight vector constructs a
-       representing `FinAddMeasure`. -/
-theorem cancellation_implies_representable {n : ℕ}
-    (sys : QualitativeProbability (Set (Fin n)))
-    (hcancel : Cancellation n sys.ge) :
+The Farkas certificate is a rational weighting of comparisons; `Cancellation`
+handles it once the weights are cleared to natural multiplicities. -/
+
+/-- Nonnegative rationals over a finite index have a common positive
+    denominator `D`, with `D • w` natural-valued. -/
+private theorem exists_nat_mul {ι : Type*} [Fintype ι] (w : ι → ℚ) (hw : ∀ i, 0 ≤ w i) :
+    ∃ (D : ℕ) (m : ι → ℕ), 0 < D ∧ ∀ i, (m i : ℚ) = D * w i := by
+  obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors ℤ) Finset.univ w
+  choose z hz using fun i ↦ hb i (Finset.mem_univ i)
+  refine ⟨(b : ℤ).natAbs, fun i ↦ (z i).natAbs,
+    Int.natAbs_pos.mpr (nonZeroDivisors.coe_ne_zero b), fun i ↦ ?_⟩
+  have : ((z i : ℤ) : ℚ) = (b : ℤ) * w i := by simpa [zsmul_eq_mul] using hz i
+  rw [Nat.cast_natAbs, Nat.cast_natAbs, Int.cast_abs, Int.cast_abs, this, abs_mul,
+    abs_of_nonneg (hw i)]
+
+private theorem comparisonSum_flatMap {α : Type*} (l : List α)
+    (f : α → List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) :
+    comparisonSum (l.flatMap f) i = (l.map fun a ↦ comparisonSum (f a) i).sum := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    simp only [List.flatMap_cons, comparisonSum, List.map_append, List.sum_append,
+      List.map_cons, List.sum_cons] at ih ⊢
+    rw [ih]
+
+private theorem comparisonSum_replicate (m : ℕ) (c : Finset (Fin n) × Finset (Fin n))
+    (i : Fin n) : comparisonSum (List.replicate m c) i = m * comparisonVec c i := by
+  simp [comparisonSum, List.sum_replicate]
+
+/-- Cancellation for rational weightings: a nonnegative weighting of valid
+    comparisons whose comparison vectors sum to zero reverses every comparison
+    it weights. -/
+private theorem Cancellation.weighted {ge : Set (Fin n) → Set (Fin n) → Prop}
+    (h : Cancellation ge) (w : Finset (Fin n) × Finset (Fin n) → ℚ) (hw : ∀ c, 0 ≤ w c)
+    (hvalid : ∀ c, 0 < w c → Disjoint c.1 c.2 ∧ ge ↑c.1 ↑c.2)
+    (hsum : ∀ i, ∑ c, w c * comparisonVec c i = 0) {c : Finset (Fin n) × Finset (Fin n)}
+    (hc : 0 < w c) : ge ↑c.2 ↑c.1 := by
+  obtain ⟨D, m, hD, hm⟩ := exists_nat_mul w hw
+  have hpos : ∀ d, 0 < w d ↔ 0 < m d := fun d ↦ by
+    rw [← Nat.cast_pos (α := ℚ), hm]
+    exact ⟨fun h ↦ by positivity, fun h ↦ pos_of_mul_pos_right h (Nat.cast_nonneg D)⟩
+  have hmem : ∀ d, d ∈ Finset.univ.toList.flatMap (fun d ↦ List.replicate (m d) d) ↔ 0 < w d :=
+    fun d ↦ by simp [List.mem_flatMap, List.mem_replicate, hpos, Nat.pos_iff_ne_zero]
+  refine h _ (fun d hd ↦ (hvalid d ((hmem d).mp hd)).1) (fun d hd ↦ (hvalid d ((hmem d).mp hd)).2)
+    (funext fun i ↦ ?_) c ((hmem c).mpr hc)
+  have : ((comparisonSum (Finset.univ.toList.flatMap fun d ↦ List.replicate (m d) d) i : ℤ) : ℚ)
+      = D * ∑ d, w d * comparisonVec d i := by
+    rw [comparisonSum_flatMap, Finset.sum_map_toList, Finset.mul_sum]
+    push_cast
+    exact Finset.sum_congr rfl fun d _ ↦ by rw [comparisonSum_replicate]; push_cast; rw [hm]; ring
+  rw [hsum, mul_zero] at this
+  exact_mod_cast this
+
+/-! ### The Farkas direction -/
+
+section Farkas
+
+open scoped Classical
+
+variable (sys : QualitativeProbability (Set (Fin n)))
+
+/-- The comparisons between disjoint finsets that hold in `sys`. -/
+private noncomputable def validPairs : List (Finset (Fin n) × Finset (Fin n)) :=
+  (Finset.univ.filter fun c ↦ Disjoint c.1 c.2 ∧ sys.ge ↑c.1 ↑c.2).toList
+
+private theorem mem_validPairs {c : Finset (Fin n) × Finset (Fin n)} :
+    c ∈ validPairs sys ↔ Disjoint c.1 c.2 ∧ sys.ge ↑c.1 ↑c.2 := by
+  simp [validPairs]
+
+/-- The linear constraint of a comparison: `x(c.1) - x(c.2) ≥ 1` if `c` is
+    strict and `≥ 0` otherwise, written `lhs · x ≤ rhs`. -/
+private noncomputable def row (c : Finset (Fin n) × Finset (Fin n)) : Polyhedral.Ineq n :=
+  ⟨fun j ↦ -(comparisonVec c j : ℚ), if sys.ge ↑c.2 ↑c.1 then 0 else -1⟩
+
+private theorem row_sat {c : Finset (Fin n) × Finset (Fin n)} {x : Fin n → ℚ} :
+    (row sys c).sat x ↔
+      (if sys.ge ↑c.2 ↑c.1 then 0 else 1) ≤ ∑ j ∈ c.1, x j - ∑ j ∈ c.2, x j := by
+  simp only [row, Polyhedral.Ineq.sat, Polyhedral.dot, neg_mul, Finset.sum_neg_distrib,
+    sum_comparisonVec_mul]
+  split_ifs <;> constructor <;> intro h <;> linarith
+
+/-- The linear system of all valid comparisons. -/
+private noncomputable def system : Polyhedral.System n := (validPairs sys).map (row sys)
+
+/-- A solution of the system, normalized, is a representing measure. -/
+private theorem representable_of_feasible {x : Fin n → ℚ} (hx : ∀ r ∈ system sys, r.sat x) :
     Representable sys := by
-  obtain ⟨p, hp⟩ := cancellation_nonempty sys hcancel
-  exact feasible_to_measure sys hp
+  have hvalid : ∀ c : Finset (Fin n) × Finset (Fin n), Disjoint c.1 c.2 → sys.ge ↑c.1 ↑c.2 →
+      (if sys.ge ↑c.2 ↑c.1 then 0 else 1) ≤ ∑ j ∈ c.1, x j - ∑ j ∈ c.2, x j :=
+    fun c hd hg ↦ (row_sat sys).mp (hx _ (List.mem_map_of_mem ((mem_validPairs sys).mpr ⟨hd, hg⟩)))
+  have hnn : ∀ j, 0 ≤ x j := fun j ↦ by
+    have := hvalid ({j}, ∅) (Finset.disjoint_empty_right _) (by simpa using sys.bot_le _)
+    simp only [Finset.sum_singleton, Finset.sum_empty, sub_zero] at this
+    split_ifs at this <;> linarith
+  have hσ : 0 < ∑ j, x j := by
+    have := hvalid (Finset.univ, ∅) (Finset.disjoint_empty_right _) (by simpa using sys.bot_le _)
+    have hstrict : ¬sys.ge ↑(∅ : Finset (Fin n)) ↑(Finset.univ : Finset (Fin n)) := by
+      simpa [← Set.top_eq_univ, ← Set.bot_eq_empty] using sys.nonTrivial
+    simp only [hstrict, ite_false, Finset.sum_empty, sub_zero] at this
+    linarith
+  let m := FinAddMeasure.ofFintype (fun j ↦ x j / ∑ j, x j)
+    (fun j ↦ div_nonneg (hnn j) hσ.le) (by rw [← Finset.sum_div, div_self hσ.ne'])
+  have hm : ∀ A : Set (Fin n), m A = (∑ j ∈ A.toFinset, x j) / ∑ j, x j := fun A ↦ by
+    simp only [m, FinAddMeasure.ofFintype, FinAddMeasure.coe_mk]
+    rw [Finset.sum_div, ← Fintype.sum_ite_mem A.toFinset]
+    exact Finset.sum_congr rfl fun j _ ↦ by simp [Set.mem_toFinset]
+  refine ⟨m, reduce_to_disjoint sys m fun C D hCD ↦ ?_⟩
+  rw [hm, hm, div_le_div_iff_of_pos_right hσ]
+  constructor
+  · intro h
+    have := hvalid (D.toFinset, C.toFinset) (Set.disjoint_toFinset.mpr hCD.symm) (by simpa using h)
+    split_ifs at this <;> linarith
+  · intro h
+    by_contra hCD'
+    have := hvalid (C.toFinset, D.toFinset) (Set.disjoint_toFinset.mpr hCD)
+      (by simpa using (sys.total C D).resolve_left hCD')
+    rw [ite_eq_right (by simpa using hCD')] at this
+    linarith
 
-/-- **Scott's theorem**: an FA system is representable by a finitely additive
-    measure iff it satisfies the cancellation property. -/
-theorem representable_iff_cancellation {n : ℕ} (sys : QualitativeProbability (Set (Fin n))) :
-    Representable sys ↔ Cancellation n sys.ge :=
-  ⟨fun ⟨m, hm⟩ => representable_implies_cancellation m fun A B => hm B A,
-   cancellation_implies_representable sys⟩
+/-- A Farkas certificate for the system, regrouped by comparison, is a
+    nonnegative neutral weighting with positive weight on a strict comparison. -/
+private theorem not_cancellation_of_infeasCert (cert : Polyhedral.InfeasCert (system sys)) :
+    ¬Cancellation sys.ge := by
+  intro hcancel
+  have hlen : (system sys).length = (validPairs sys).length := List.length_map ..
+  -- the comparison behind each row
+  let pair : Fin (system sys).length → Finset (Fin n) × Finset (Fin n) := fun i ↦
+    (validPairs sys).get (i.cast hlen)
+  have hget : ∀ i, (system sys).get i = row sys (pair i) := fun i ↦ by
+    simp [system, List.get_eq_getElem, pair]
+  -- the weight of a comparison: the certificate weights of its rows
+  let w : Finset (Fin n) × Finset (Fin n) → ℚ := fun c ↦ ∑ i, if pair i = c then cert.ws i else 0
+  have hw : ∀ c, 0 ≤ w c := fun c ↦ Finset.sum_nonneg fun i _ ↦ by
+    split_ifs <;> simp [cert.nonneg]
+  have hregroup : ∀ g : Finset (Fin n) × Finset (Fin n) → ℚ,
+      ∑ c, w c * g c = ∑ i, cert.ws i * g (pair i) := fun g ↦ by
+    simp only [w, Finset.sum_mul, ite_mul, zero_mul]
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun i _ ↦ by rw [Finset.sum_ite_eq]; simp
+  have hpos : ∀ c, 0 < w c → ∃ i, pair i = c ∧ 0 < cert.ws i := fun c hc ↦ by
+    by_contra hall
+    push Not at hall
+    refine hc.not_ge (Finset.sum_nonpos fun i _ ↦ ?_)
+    split_ifs with hi
+    · exact hall i hi
+    · exact le_rfl
+  have hvalid : ∀ c, 0 < w c → Disjoint c.1 c.2 ∧ sys.ge ↑c.1 ↑c.2 := fun c hc ↦ by
+    obtain ⟨i, rfl, -⟩ := hpos c hc
+    exact (mem_validPairs sys).mp (List.get_mem _ _)
+  have hsum : ∀ j, ∑ c, w c * comparisonVec c j = 0 := fun j ↦ by
+    have h := cert.coeffsZero j
+    simp only [hget, row, mul_neg, Finset.sum_neg_distrib, neg_eq_zero] at h
+    rw [hregroup]; exact h
+  have hstrict : ∃ i, 0 < cert.ws i ∧ ¬sys.ge ↑(pair i).2 ↑(pair i).1 := by
+    by_contra hall
+    push Not at hall
+    have h := cert.boundNeg
+    simp only [hget, row] at h
+    refine h.not_ge (le_of_eq (Finset.sum_eq_zero fun i _ ↦ ?_).symm)
+    split_ifs with hi
+    · exact mul_zero _
+    · rw [le_antisymm (not_lt.mp fun hlt ↦ hi (hall i hlt)) (cert.nonneg i), zero_mul]
+  obtain ⟨i, hi, hstr⟩ := hstrict
+  refine hstr (hcancel.weighted w hw hvalid hsum (c := pair i) (lt_of_lt_of_le hi ?_))
+  have := Finset.single_le_sum (f := fun k ↦ if pair k = pair i then cert.ws k else 0)
+    (fun k _ ↦ by split_ifs <;> simp [cert.nonneg]) (Finset.mem_univ i)
+  simpa using this
 
-/-- A null atom plus a representability oracle one cardinality down yields
-    cancellation: swap the null atom to position 0 and apply `null_elem_reduce`. -/
-theorem cancellation_of_null_atom {n : ℕ} (sys : QualitativeProbability (Set (Fin (n + 2))))
+/-- **Scott's theorem**, hard direction: a qualitative probability order
+    satisfying cancellation is represented by a finitely additive measure. -/
+theorem cancellation_implies_representable (h : Cancellation sys.ge) : Representable sys :=
+  (Polyhedral.farkas (system sys)).elim (fun ⟨_, hx⟩ ↦ representable_of_feasible sys hx)
+    fun ⟨cert⟩ ↦ absurd h (not_cancellation_of_infeasCert sys cert)
+
+end Farkas
+
+/-! ### Scott's theorem -/
+
+/-- **Scott's theorem** ([scott-1964]), disjoint-comparison form. -/
+theorem representable_iff_cancellation (sys : QualitativeProbability (Set (Fin n))) :
+    Representable sys ↔ Cancellation sys.ge :=
+  ⟨fun h ↦ h.finiteCancellation.cancellation, cancellation_implies_representable sys⟩
+
+/-- **Scott's theorem** ([scott-1964]), balanced-sequence form. -/
+theorem representable_iff_finiteCancellation (sys : QualitativeProbability (Set (Fin n))) :
+    Representable sys ↔ FiniteCancellation sys.ge :=
+  (representable_iff_cancellation sys).trans (cancellation_iff_finiteCancellation sys)
+
+/-- A null atom plus representability one cardinality down yields cancellation:
+    swap the null atom to position 0 and apply `null_elem_reduce`. -/
+theorem cancellation_of_null_atom (sys : QualitativeProbability (Set (Fin (n + 2))))
     {j : Fin (n + 2)} (hj : sys.ge ∅ {j})
     (sub : ∀ sys' : QualitativeProbability (Set (Fin (n + 1))), Representable sys') :
-    Cancellation (n + 2) sys.ge := by
+    Cancellation sys.ge := by
   set σ := Equiv.swap (0 : Fin (n + 2)) j with hσ
   have h0 : (sys.transport σ).le {0} ∅ := by
     rw [perm_null_iff, show σ.symm 0 = j by simp [hσ]]; exact hj
   have hnn : ∃ i : Fin (n + 1), ¬(sys.transport σ).le {Fin.succ i} ∅ := by
-    obtain ⟨k, hk⟩ := not_all_null (sys.transport σ)
-    obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k :=
-      Fin.exists_succ_eq.mpr fun h => hk (h ▸ h0)
+    obtain ⟨k, hk⟩ := (sys.transport σ).exists_singleton_not_le_empty
+    obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k := Fin.exists_succ_eq.mpr fun h ↦ hk (h ▸ h0)
     exact ⟨i, hk⟩
-  obtain ⟨m, hm⟩ := perm_repr σ sys (null_elem_reduce _ h0 hnn sub)
-  exact representable_implies_cancellation m fun A B => hm B A
+  exact (representable_iff_cancellation sys).mp
+    (perm_repr σ sys (null_elem_reduce _ h0 hnn sub))
 
 end ComparativeProbability

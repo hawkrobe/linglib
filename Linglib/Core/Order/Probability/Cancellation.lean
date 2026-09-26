@@ -14,11 +14,12 @@ additive measure, [scott-1964] reformulating [kraft-pratt-seidenberg-1959])
 and its **generalized** strengthening (representability by a nonempty set of
 measures, [rios-insua-1992]; [alon-lehrer-2014]).
 
-`Scott.lean` proves Scott's theorem through an equivalent weighted-portfolio
-device; the bridge from that device to the balanced-sequence statement is
-`TODO`. What is here: the definitions, the derived properties of a cancellation
-order, and the soundness directions — measures induce cancellation orders, and
-representable qualitative probability orders satisfy finite cancellation.
+`Scott.lean` proves Scott's theorem in the disjoint-comparison form of the
+condition and shows the two forms agree
+(`ComparativeProbability.cancellation_iff_finiteCancellation`). What is here:
+the definitions, the derived properties of a cancellation order, and the
+soundness directions — measures induce cancellation orders, and representable
+qualitative probability orders satisfy finite cancellation.
 
 ## Main definitions
 
@@ -47,6 +48,13 @@ open scoped Classical in
 /-- Indicator count of a state across an event sequence. -/
 noncomputable def seqCount (s : W) (Es : List (Set W)) : ℕ :=
   (Es.map (fun E => if s ∈ E then (1 : ℕ) else 0)).sum
+
+@[simp] theorem seqCount_nil (s : W) : seqCount s [] = 0 := rfl
+
+open scoped Classical in
+@[simp] theorem seqCount_cons (s : W) (E : Set W) (Es : List (Set W)) :
+    seqCount s (E :: Es) = (if s ∈ E then 1 else 0) + seqCount s Es := by
+  simp [seqCount]
 
 /-- A **balanced** pair of event-sequences: every state lies in equally many
     events on the left as on the right. -/

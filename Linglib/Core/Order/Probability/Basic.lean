@@ -4,6 +4,7 @@ public import Linglib.Core.Order.Probability.Defs
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Data.Set.Image
 public import Mathlib.Logic.Equiv.Set
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Qualitative probability orders: basic API
@@ -18,6 +19,8 @@ set-carriers: pullback along an injection (`comap`) and along an equivalence
 * `QualitativeProbability.sup_le_sup_iff_right`, `sup_le_sup_right`,
   `sup_le_sup`.
 * `QualitativeProbability.comap`, `transport`, `elim0`.
+* `QualitativeProbability.exists_singleton_not_le_empty` — a finite carrier has
+  a non-null atom.
 -/
 
 @[expose] public section
@@ -97,5 +100,20 @@ def QualitativeProbability.elim0 {C : Sort*} (sys : QualitativeProbability (Set 
     rw [Set.top_eq_univ, Set.bot_eq_empty, ← this]; exact sys.refl ∅
   exact absurd h sys.nonTrivial
 
+/-- On a finite carrier some atom is not null: were every singleton at most as
+    likely as `∅`, so would be `Set.univ`. -/
+theorem QualitativeProbability.exists_singleton_not_le_empty {W : Type*} [Fintype W]
+    (sys : QualitativeProbability (Set W)) : ∃ i, ¬sys.le {i} ∅ := by
+  by_contra hall
+  push Not at hall
+  suffices h : ∀ S : Finset W, sys.le ↑S ∅ from
+    sys.nonTrivial (by simpa [Set.top_eq_univ, Set.bot_eq_empty] using h Finset.univ)
+  intro S
+  classical
+  induction S using Finset.induction_on with
+  | empty => rw [Finset.coe_empty]; exact sys.refl _
+  | insert a S ha ih =>
+    rw [Finset.coe_insert, Set.insert_eq]
+    simpa using sys.sup_le_sup (hall a) ih (by simpa using ha) disjoint_bot_left
 
 end ComparativeProbability
