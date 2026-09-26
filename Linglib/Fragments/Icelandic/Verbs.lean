@@ -20,8 +20,14 @@ are entries like any other.
 
 ## Main definitions
 
-* `Verb` — the entry, the root `Verb` with its `Verb.CaseArray`
-* `verbs` — the entries
+* `Verb`: the entry, the root `Verb` with its `Verb.CaseArray`.
+* `verbs`: the entries.
+
+## Main results
+
+* `subject_cases`, `object_cases`: each of the four cases of `Icelandic.Case.inventory` is the
+  case of some subject and of some object.
+* `subject_eq_nom_of_ditransitive`: a verb with two objects has a nominative subject.
 
 ## Implementation notes
 
@@ -226,5 +232,24 @@ def verbs : List Verb :=
     opna, hjalpa, strjuka, kasta, splundra, klaedast, sakna, krefjast, oska, thykja, finnast, lika,
     batna, leidast, askotnast, vanta, dreyma, bresta, saekja, idra, gefa, segja, syna, senda,
     leyna, svipta, raena, bidja, krefja, spyrja, lofa, skila, valda, synja, kosta, taka]
+
+/-! ### The cases on the verb
+
+Every one of the four cases marks subjects and objects. [thrainsson-2007]'s (4.30) to (4.32)
+set accusative, dative and genitive subjects beside the nominative ones, and its (4.61) the
+nominative objects of the dative-subject verbs beside the accusative, dative and genitive
+objects of (4.56) to (4.58). The triadic verbs of its table (4.62) all have nominative
+subjects. -/
+
+/-- Each of the four cases is the case of some subject. -/
+theorem subject_cases : (verbs.map (·.subject)).toFinset = Case.inventory := by decide
+
+/-- Each of the four cases is the case of some object. -/
+theorem object_cases : (verbs.flatMap (·.objects)).toFinset = Case.inventory := by decide
+
+/-- A verb with two objects has a nominative subject. -/
+theorem subject_eq_nom_of_ditransitive :
+    ∀ v ∈ verbs, v.objects.length = 2 → v.subject = .nom := by
+  decide
 
 end Icelandic.Verbs
