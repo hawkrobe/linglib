@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Pragmatics.Bidirectional
-public import Linglib.Semantics.Presupposition.Accommodation
 public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Blutner (2000): Some aspects of optimality in natural language interpretation
@@ -23,8 +23,7 @@ alternative exists, Zeevat's generalization.
 
 * `Form`, `Situation`, `formMarkedness`, `situationMarkedness`, `tableau` — the schematic
   tableaux and their two constraints F and C.
-* `ProjectionSite` — local, intermediate, global; mapped onto the standard accommodation
-  levels by `ProjectionSite.toAccommodationLevel`.
+* `ProjectionSite` — local, intermediate, global, following [van-der-sandt-1992].
 * `ProjectionSite.projection`, `beStrong` — the projections as propositions over worlds and
   the strength grade derived from entailment among them; `dogAvoidA`, `catAvoidA`,
   `accidentAvoidA` the paper's binding data.
@@ -273,25 +272,5 @@ theorem accommodation_blocked_is_Q :
 /-- The indefinite satisfies both principles against the whole generator. -/
 theorem indefinite_unblocked :
     ¬ Blocks (profile [accidentAvoidA]) ↑genAccident (.indefinite, .carHitHim) := by decide
-
-/-! ### Bridge to the accommodation levels
-
-The projection sites are the accommodation levels of the Heim/Lewis/van der Sandt tradition
-(`Presupposition.Accommodation`). -/
-
-open Presupposition.Accommodation
-
-/-- Map projection sites to the standard accommodation levels; a conditional has one
-intermediate site, indexed `0`. -/
-def ProjectionSite.toAccommodationLevel : ProjectionSite → AccommodationLevel
-  | .local => .local
-  | .intermediate => .intermediate 0
-  | .global => .global
-
-theorem global_is_global_accommodation :
-    ProjectionSite.global.toAccommodationLevel = AccommodationLevel.global := rfl
-
-theorem local_is_local_accommodation :
-    ProjectionSite.local.toAccommodationLevel = AccommodationLevel.local := rfl
 
 end Blutner2000

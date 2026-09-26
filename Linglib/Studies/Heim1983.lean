@@ -12,13 +12,15 @@ change potential is defined on it, a sentence presupposes what every admitting c
 entails (12), and the heritage properties that [karttunen-peters-1979] stipulate for *if*
 and *not* are read off the potentials (14) and (15): a context admits "If A, B" iff it admits
 A and its update by A admits B, and negation is a hole. The King example (1)–(3) is worked as
-the paper does (`king_admits_iff`), the two ways of accommodating a presupposition under
-negation are (16)'s global and local readings (`globalNeg_entails`, `localNeg_entails`), and
-contexts as sets of sequence–world pairs (§3) carry the potentials for open sentences and
-for *every* (21): under the novelty stipulation (22), "Every nation cherishes its king"
-presupposes that every nation has a king (`every_nation_presupposes`), a presupposition in
-the restrictor projects universally (23), and an indefinite's presupposition projects
-universally unless it is accommodated in the course of the update (§3.3).
+the paper does (`king_admits_iff`), and the two ways of accommodating a presupposition under
+negation are (16)'s global and local readings (`globalNeg_entails`, `localNeg_entails`); a
+preference for the global one recaptures [gazdar-1979]'s cancellation under the threat of
+inconsistency (`cancellation_only_under_inconsistency`). Contexts as sets of sequence–world
+pairs (§3) carry the potentials for open sentences and for *every* (21): under the novelty
+stipulation (22), "Every nation cherishes its king" presupposes that every nation has a king
+(`every_nation_presupposes`), a presupposition in the restrictor projects universally (23),
+and an indefinite's presupposition projects universally unless it is accommodated in the
+course of the update (§3.3).
 
 ## Implementation notes
 
@@ -151,6 +153,36 @@ theorem localNeg_entails {came : W → Prop} {c c' : Set W}
     result cannot contain a world without the presupposition, the local one can. -/
 theorem globalNeg_disjoint {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ∩ pᶜ = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨hw, hn⟩ => hn (globalNeg_entails h hw)
+
+open scoped Classical in
+/-- The paper's ceteris paribus preference for global over local accommodation: the global
+    result `g` continued by `k`, unless `k` is inconsistent with it, and otherwise the local
+    result `l` continued by `k`. -/
+noncomputable def preferGlobal (k g l : Set W) : Set W :=
+  if (g ∩ k).Nonempty then g ∩ k else l ∩ k
+
+/-- (16) in isolation: nothing contradicts the global result, so the preferred reading entails
+    that France has a king. -/
+theorem preferGlobal_univ_subset {c g : Set W} (l : Set W) (hg : g ∈ globalNeg φ p c)
+    (hne : g.Nonempty) : preferGlobal Set.univ g l ⊆ p := by
+  rw [preferGlobal, Set.inter_univ, ite_eq_left hne]
+  exact globalNeg_entails hg
+
+/-- (16) continued with "because France doesn't have a king": the continuation is inconsistent
+    with the global result, so the preferred reading is the local one. -/
+theorem preferGlobal_compl {c g : Set W} (l : Set W) (hg : g ∈ globalNeg φ p c) :
+    preferGlobal pᶜ g l = l ∩ pᶜ := by
+  rw [preferGlobal, globalNeg_disjoint hg, ite_eq_right Set.not_nonempty_empty]
+
+/-- The preference recaptures [gazdar-1979]'s assumption that presupposition cancellation
+    occurs only under the threat of inconsistency: a preferred reading that does not entail
+    the presupposition comes from a global result inconsistent with the continuation. -/
+theorem cancellation_only_under_inconsistency {c g l k : Set W} (hg : g ∈ globalNeg φ p c)
+    (h : ¬ preferGlobal k g l ⊆ p) : g ∩ k = ∅ := by
+  rw [preferGlobal] at h
+  split_ifs at h with hk
+  · exact absurd (Set.inter_subset_left.trans (globalNeg_entails hg)) h
+  · exact Set.not_nonempty_iff_eq_empty.1 hk
 
 end Propositional
 
