@@ -5,6 +5,7 @@ public import Linglib.Data.Examples.ColeHermon2008
 public import Linglib.Fragments.TobaBatak.Voice
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
 public import Linglib.Semantics.ArgumentStructure.Valency
+public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Movement.Freezing
 public import Linglib.Syntax.Minimalist.Movement.Reconstruction
 public import Linglib.Syntax.Minimalist.Movement.Remnant
@@ -43,15 +44,16 @@ The derivation is a `Derivation` on the syntactic-object carrier, freezing and b
 stage are the substrate's `Derivation.Frozen`, `CCommandsAt` and `BindsAtSomeStage`, and the
 paper's examples are the rows: `vos_remnant` says that the raised VoiceP is a remnant,
 `vos_hypothesis_only` and `derivational_only` single out, among the candidate analyses of word
-order and of binding, the paper's own, `table1` derives its three grades, `stageAt_sides` and
-`surface_sides` are the §6 claim over every attachment choice, and `english_passive` the §7
-contrast.
+order and of binding, the paper's own, `Licenses.derivational` shows the paper's binding
+condition the weakest of the configurational ones, `table1` derives its three grades,
+`stageAt_sides` and `surface_sides` are the §6 claim over every attachment choice, and
+`english_passive` the §7 contrast.
 
 ## Implementation notes
 
 * The clause is a token of the paper's transitive frame on the carrier; the substrate's
-  clause types serve other theories (Landau's inflection–complementizer pair, the surface
-  Binding-Principle clause over words, valency frames). Its slots are the two positions of
+  clause types serve other theories (Landau's inflection–complementizer pair, valency
+  frames). Its slots are the two positions of
   vP, `ArgPosition`, extended by the ditransitive goal, and the paper's roles are read off
   them.
 * Voice and v are separate heads (fn. 20). The carrier has no head adjunction: the verb and
@@ -107,7 +109,7 @@ agent's and the internal one the patient's, and the goal of a ditransitive. -/
 inductive Arg
   | core (p : ArgumentStructure.ArgPosition)
   | goal
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- The role the slot bears in the paper's clauses, the Semantic Hierarchy's actor, patient and
 dative. -/
@@ -407,10 +409,6 @@ namespace Reflexivization
 /-- A schematic clause of the configuration. -/
 def clause (a : Reflexivization) : Clause := .of a.voice "V" "Agent" "Patient"
 
-/-- The antecedent and the reflexive as objects. -/
-def pair? (a : Reflexivization) : Option (SyntacticObject × SyntacticObject) := do
-  return ((← a.clause.arg? a.antecedent), (← a.clause.arg? a.reflexive))
-
 /-- The derivation of the clause, through VOS. -/
 def derivation (a : Reflexivization) : Derivation := a.clause.derivation .vosHypothesis a.order
 
@@ -428,15 +426,41 @@ inductive BindingTheory
   | surface | lastSVOStage | derivational | semanticHierarchy
   deriving DecidableEq, Repr
 
-/-- The condition licenses the configuration. -/
-def BindingTheory.Licenses : BindingTheory → Reflexivization → Prop
-  | .surface, a => ∃ p ∈ a.pair?, a.derivation.BindsAtSurface p.1 p.2
-  | .lastSVOStage, a => ∃ p ∈ a.pair?, a.clause.svoStage.BindsAtSurface p.1 p.2
-  | .derivational, a => ∃ p ∈ a.pair?, a.derivation.BindsAtSomeStage p.1 p.2
-  | .semanticHierarchy, a => Outranks a.antecedent.role a.reflexive.role
+/-- The configuration a candidate condition reads on the argument slots of one clause. The
+three configurational candidates compare the slots' tokens by c-command at the surface, at the
+last SVO stage or at some stage; the Semantic Hierarchy compares their roles by rank. -/
+def BindingTheory.configuration : BindingTheory → Reflexivization → Binding.Configuration Arg
+  | .surface, a => .monoclausal a.clause.arg? fun x y ↦ a.derivation.BindsAtSurface x y
+  | .lastSVOStage, a =>
+      .monoclausal a.clause.arg? fun x y ↦ a.clause.svoStage.BindsAtSurface x y
+  | .derivational, a => .monoclausal a.clause.arg? fun x y ↦ a.derivation.BindsAtSomeStage x y
+  | .semanticHierarchy, _ => .monoclausal (some ·.role) Outranks
+
+/-- A candidate licenses a configuration when, under the candidate's configuration, the
+reflexive meets Condition A, coindexed with its antecedent alone. -/
+def BindingTheory.Licenses (th : BindingTheory) (a : Reflexivization) : Prop :=
+  (th.configuration a).Condition (Binding.pair a.antecedent a.reflexive) ∅ a.reflexive .reflexive
 
 instance (th : BindingTheory) (a : Reflexivization) : Decidable (th.Licenses a) := by
-  cases th <;> (unfold BindingTheory.Licenses; infer_instance)
+  cases th <;> (unfold BindingTheory.Licenses BindingTheory.configuration; infer_instance)
+
+/-- C-command at some stage licenses whatever c-command at the surface or at the last SVO stage
+licenses, so the paper's condition is the weakest of the configurational candidates. -/
+theorem BindingTheory.Licenses.derivational {th : BindingTheory} {a : Reflexivization}
+    (hth : th ≠ .semanticHierarchy) (h : th.Licenses a) :
+    BindingTheory.derivational.Licenses a := by
+  obtain ⟨voice, order, antecedent, reflexive⟩ := a
+  unfold BindingTheory.Licenses at h ⊢
+  refine Binding.Configuration.condition_mono (Or.inl rfl) ?_ h
+  cases th with
+  | surface => exact Binding.Configuration.monoclausal_mono fun _ _ h ↦ h.bindsAtSomeStage
+  | lastSVOStage =>
+    refine Binding.Configuration.monoclausal_mono fun _ _ h ↦ ?_
+    cases order
+    · exact h.bindsAtSomeStage.append
+    · exact h.bindsAtSomeStage.append.append
+  | derivational => exact le_rfl
+  | semanticHierarchy => exact absurd rfl hth
 
 /-- Only c-command at some stage fits the binding data of Table 1 ((17), (21), (37), (62),
 (66)–(68)): surface c-command loses every VOS antecedent, (62) and both passive orders

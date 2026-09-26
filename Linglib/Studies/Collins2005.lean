@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Collins2005
+public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Minimalist.Agree.Basic
 public import Linglib.Syntax.Minimalist.Movement.Freezing
 public import Linglib.Syntax.Minimalist.Movement.Remnant
@@ -40,8 +41,10 @@ the surface strings are its externalizations, Relativized Minimality is the subs
 closest-goal relation at the stage where Infl attracts, smuggling and remnant fronting are the
 substrate's step predicates, and the paper's examples are the rows: `rm_converges` singles out
 PartP movement, `licensing_rows` derives the c-command and binding judgments from surface and
-derivational c-command, `participle_rows` the auxiliary paradigm from the licensing principle,
-and `active_shares_vP` is the θ-uniformity the analysis was built for.
+derivational c-command, the binding judgments being the conditions of `Syntax/Binding` at the
+levels the paper assigns them, of which the rows force Principle B's (`principleB_anyStage`),
+`participle_rows` the auxiliary paradigm from the licensing principle, and `active_shares_vP`
+is the θ-uniformity the analysis was built for.
 
 ## Implementation notes
 
@@ -59,7 +62,8 @@ and `active_shares_vP` is the θ-uniformity the analysis was built for.
 * Principle A and bound-variable binding are evaluated at the surface, with reconstruction to
   any stage as the degraded option; Principle B at any stage, without the local-domain and
   Case-checked clauses of (83), which the monoclausal rows never exercise; Principle C at the
-  surface, as §9 argues.
+  surface, as §9 argues. The principles are the framework-neutral conditions of
+  `Syntax/Binding` on the two positions, under one monoclausal configuration per level.
 
 ## TODO
 
@@ -338,41 +342,70 @@ theorem order_rows : ∀ row ∈ Examples.all, ∀ o ∈ Order.ofRow row,
 
 /-! ### C-command and binding across the by-phrase (§3, §7, §9, §10) -/
 
-/-- The two positions the tests relate: the external argument and the third element of VP. -/
+/-- The two positions the tests relate are the external argument and the third element of VP. -/
 inductive Position
   | external | pp
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- The leaf at a position. -/
 def Clause.at? (p : Clause) : Position → Option LIToken
   | .external => some p.agent
   | .pp => p.extra
 
-/-- The dependencies the rows test: a negative polarity item and *the other* need a
-c-commanding licensor at the surface; a reflexive and a bound variable likewise, with
-reconstruction of PartP to a stage where the licensor c-commanded it as the degraded option,
-(72) and (75) (§9.1); a pronoun may not be c-commanded by a coindexed DP at any stage, Principle
-B applying as the DP is Merged, (83)–(84) after [sabel-1996] (§9.3); a name may not be
-c-commanded by a coindexed pronoun at the surface, Principle C without reconstruction (§9.2). -/
+/-- The level at which a binding condition is evaluated, the surface or any stage of the
+derivation, reconstruction included. -/
+inductive Level
+  | surface | anyStage
+  deriving DecidableEq, Repr
+
+/-- C-command at a level of `d`, at its last stage or at some stage. -/
+def Level.CCommands : Level → Derivation → SyntacticObject → SyntacticObject → Prop
+  | .surface, d => d.BindsAtSurface
+  | .anyStage, d => d.BindsAtSomeStage
+
+instance : ∀ (ℓ : Level) (d : Derivation), DecidableRel (ℓ.CCommands d)
+  | .surface, d => fun x y ↦ inferInstanceAs (Decidable (d.BindsAtSurface x y))
+  | .anyStage, d => fun x y ↦ inferInstanceAs (Decidable (d.BindsAtSomeStage x y))
+
+/-- The binding configuration of `p` at level `ℓ` of its derivation `d`, in which one position
+commands another when its leaf c-commands the other's there. -/
+abbrev Level.configuration (ℓ : Level) (p : Clause) (d : Derivation) :
+    Binding.Configuration Position :=
+  .monoclausal p.at? fun x y ↦ ℓ.CCommands d x y
+
+/-- The dependencies the rows test are a negative polarity item, *the other*, a bound variable,
+a reflexive, a pronoun and a name. -/
 inductive Dependency
   | npi | other | variable | reflexive | pronoun | name
   deriving DecidableEq, Repr
 
-/-- The judgment a dependency predicts for `d` when `x` must, or must not, c-command `y`; the
-reconstructed reflexive is `??` and the reconstructed bound variable `?`, as the paper grades
-them. -/
-def Dependency.predict (dep : Dependency) (d : Derivation) (x y : SyntacticObject) :
+open Binding in
+/-- The judgment a dependency predicts for the element at `y`, dependent on the element at `x`,
+in the derivation `d` of `p`. A reflexive meets Condition A at the surface, or only at some
+stage, which the paper grades `??`, (72); a bound variable is bound at the surface, or only at
+some stage, graded `?`, (75); a pronoun meets Condition B at every stage, Principle B applying as
+the DP is Merged, (83)–(84) (§9.3); a name meets Condition C at the surface, without
+reconstruction (§9.2); a negative polarity item and *the other* need a c-commanding licensor at
+the surface. -/
+def Dependency.predict (dep : Dependency) (p : Clause) (d : Derivation) (x y : Position) :
     Data.Examples.Judgment :=
   match dep with
   | .reflexive =>
-      if d.BindsAtSurface x y then .acceptable
-      else if d.BindsAtSomeStage x y then .questionable else .ungrammatical
+      if (Level.surface.configuration p d).Condition (pair x y) ∅ y .reflexive then .acceptable
+      else if (Level.anyStage.configuration p d).Condition (pair x y) ∅ y .reflexive then
+        .questionable
+      else .ungrammatical
   | .variable =>
-      if d.BindsAtSurface x y then .acceptable
-      else if d.BindsAtSomeStage x y then .marginal else .ungrammatical
-  | .pronoun => if d.BindsAtSomeStage x y then .ungrammatical else .acceptable
-  | .name => if d.BindsAtSurface x y then .ungrammatical else .acceptable
-  | _ => if d.BindsAtSurface x y then .acceptable else .ungrammatical
+      if (Level.surface.configuration p d).Bound (pair x y) y then .acceptable
+      else if (Level.anyStage.configuration p d).Bound (pair x y) y then .marginal
+      else .ungrammatical
+  | .pronoun =>
+      if (Level.anyStage.configuration p d).Condition (pair x y) ∅ y .pronoun then .acceptable
+      else .ungrammatical
+  | .name =>
+      if (Level.surface.configuration p d).Condition (pair x y) ∅ y .rExpression then .acceptable
+      else .ungrammatical
+  | _ => if (Level.surface.configuration p d).commands x y then .acceptable else .ungrammatical
 
 /-- A licensing row's configuration. -/
 structure Licensing where
@@ -396,19 +429,29 @@ def Licensing.ofRow (row : LinguisticExample) : Option Licensing := do
       ("reflexive", .reflexive), ("pronoun", .pronoun), ("name", .name)],
     ← row.parse? "antecedent" positions, ← row.parse? "dependent" positions⟩
 
-/-- The judgment the configuration predicts on the PartP-movement derivation. -/
-def Licensing.predict? (c : Licensing) : Option Data.Examples.Judgment := do
-  let x ← c.clause.at? c.antecedent
-  let y ← c.clause.at? c.dependent
-  return c.dependency.predict (c.clause.passive .partP c.evacuated) x y
+/-- The PartP-movement derivation of the configuration, with the PP evacuated or not. -/
+def Licensing.derivation (c : Licensing) : Derivation := c.clause.passive .partP c.evacuated
+
+/-- The judgment the configuration predicts on its derivation. -/
+def Licensing.predict (c : Licensing) : Data.Examples.Judgment :=
+  c.dependency.predict c.clause c.derivation c.antecedent c.dependent
 
 /-- The [barss-lasnik-1986] tests (10), Principle A (72), (74), the bound variable (75),
 Principle B (80) and Principle C (85) all follow from where the PP sits: evacuated to Spec,XP
 it is c-commanded by the external argument at the surface, inside the fronted PartP only before
 PartP moved. -/
 theorem licensing_rows : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row,
-    ∀ j ∈ c.predict?, j = row.judgment := by
+    c.predict = row.judgment := by
   decide
+
+/-- Principle B holds at every stage, as the external argument is Merged. Evaluated at the
+surface it would admit (80a), whose pronoun the fronted PartP has carried out of the external
+argument's c-command. -/
+theorem principleB_anyStage (ℓ : Level) :
+    (∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.dependency = .pronoun →
+      (row.judgment = .acceptable ↔ (ℓ.configuration c.clause c.derivation).Condition
+        (Binding.pair c.antecedent c.dependent) ∅ c.dependent .pronoun)) ↔ ℓ = .anyStage := by
+  cases ℓ <;> decide
 
 /-! ### Participle licensing (§3, (23)–(28)) -/
 
