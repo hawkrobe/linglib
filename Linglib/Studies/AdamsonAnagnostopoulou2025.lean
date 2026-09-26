@@ -3,9 +3,10 @@ module
 public import Linglib.Syntax.Minimalist.Agree.Coordination
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.Greek.StandardModern.Gender
-public import Linglib.Fragments.Icelandic.Gender
+public import Linglib.Fragments.Icelandic.Nouns
 public import Linglib.Fragments.Slavic.Serbian.Gender
 public import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
+public import Linglib.Studies.Corbett1991
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -32,12 +33,15 @@ excludes the masculine (`Greek.no_aba`, from `Morphology.Exponence.Realizes.of_r
 
 Icelandic differs only in its geometry, with MASC meaning male and FEM independent of it, so
 mismatched humans resolve neuter (`Icelandic.human_mismatch`) while fixed-gender *skáld* still
-resolves by its referent (`Icelandic.poet_jon`). In Bosnian/Croatian/Serbian MASC sits under
-INDIV, ANIM under MASC, and neuter is mass; a plural coordination bears GRP and hence INDIV
-(`System.plural`), so every coordination realizes masculine, even of two neuters
-(`BCS.human_mismatch`, `BCS.inanimate_mismatch`, `BCS.neuter_pair`). All three geometries satisfy
-mismatch resolution (`mismatchResolution`), and Table 2 follows from the geometries alone
-(`table2`).
+resolves by its referent (`Icelandic.poet_jon`). Corbett's resolution rule for Icelandic reads
+the genders alone and takes the neuter for any mixture; the geometry agrees with it on his
+coordinations (`Icelandic.corbett_rows`) and parts from it on *skáld*, which the rule resolves
+by its neuter gender and the geometry by its referent (`Icelandic.corbett_skald_jon`). In
+Bosnian/Croatian/Serbian MASC sits under INDIV, ANIM under MASC, and neuter is mass; a plural
+coordination bears GRP and hence INDIV (`System.plural`), so every coordination realizes
+masculine, even of two neuters (`BCS.human_mismatch`, `BCS.inanimate_mismatch`,
+`BCS.neuter_pair`). All three geometries satisfy mismatch resolution (`mismatchResolution`),
+and Table 2 follows from the geometries alone (`table2`).
 
 ## References
 
@@ -256,7 +260,7 @@ end Greek
 
 namespace Icelandic
 
-open _root_.Icelandic.Gender
+open _root_.Icelandic.Nouns
 
 /-- CLASS above independent MASC and FEM. -/
 def system : System where
@@ -280,7 +284,7 @@ def system : System where
     | _ => .cls
   vocabulary := threeWay
 
-def inanimate (n : Icelandic.Gender.Noun) : Bundle Node :=
+def inanimate (n : Icelandic.Nouns.Noun) : Bundle Node :=
   system.conceptual .thing ∪ system.arbitrary n.gender
 
 theorem masc_not_mem_entailments_fem : .masc ∉ system.geometry.entailments .fem := by decide
@@ -296,6 +300,31 @@ theorem poet_jon : skald.gender = .neuter ∧ system.resolved .man .man = some .
 theorem inanimate_mismatch :
     system.converted (inanimate fraegd) (inanimate frami) = some .neuter ∧
       system.formal (inanimate fraegd) (inanimate frami) = none := by
+  decide
+
+/-! #### Corbett's rule
+
+[corbett-1991]'s rule for Icelandic reads the conjuncts' genders alone
+(`Corbett1991.Icelandic.rules`): homogeneous masculines or feminines keep their gender and any
+mixture takes the neuter. The geometry reads referents instead, so the two agree wherever the
+gender is the referent's and part where it is not. -/
+
+/-- On Corbett's coordinations the rule and the geometry agree: the boy and the girl resolve
+neuter as mismatched humans, and the ewe and the lamb, which contribute CLASS alone as the
+paper's inanimates do, resolve neuter through it. -/
+theorem corbett_rows :
+    Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [drengur, telpa] =
+        some .neuter ∧
+      system.resolved .man .woman = some .neuter ∧
+      Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [aer, lamb] = some .neuter ∧
+      system.converted (inanimate aer) (inanimate lamb) = some .neuter := by
+  decide
+
+/-- *Skáldið og Jón eru frægir*: the rule resolves the neuter *skáld* and the masculine *Jón*
+to the neuter, the geometry to the masculine of the two men. -/
+theorem corbett_skald_jon :
+    Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [skald, jon] = some .neuter ∧
+      system.resolved .man .man = some .masculine := by
   decide
 
 end Icelandic
