@@ -3,21 +3,24 @@ module
 public import Linglib.Fragments.Slavic.Case
 
 /-!
-# Ukrainian Case Inventory
-[shevelov-1993] [blake-1994]
+# Ukrainian case inventory
 
-Per [shevelov-1993] (p. 956), Ukrainian preserves the original
-6-case set (NOM/ACC/GEN/DAT/INST/LOC) and additionally retains a
-productive vocative — robust in the singular (батько → батьку,
-син → сину, хлопець → хлопче), eroded in the plural except for
-панове/panove 'gentlemen'. `inventory` aliases the shared 6-case
-core; `Slavic.Case.fullInventory` carries the +VOC form.
+This file defines the Ukrainian cases, the seven of the Slavic inventory: "Ukrainian preserves the
+original set of cases: nominative, accusative, genitive, dative, instrumental and locative. In
+addition, the vocative is preserved even though the vocative singular in colloquial speech is
+occasionally replaced by the nominative and in the plural the vocative has no forms of its own,
+except in the word панове/panove 'gentlemen'" ([shevelov-1993], p. 956).
+
+## References
+
+* [shevelov-1993]
 -/
 
 @[expose] public section
 
 namespace Ukrainian.Case
 
-abbrev inventory : Finset Case := Slavic.Case.coreInventory
+/-- The Ukrainian cases are the seven of the Slavic inventory. -/
+abbrev inventory : Finset Case := Slavic.Case.fullInventory
 
 end Ukrainian.Case

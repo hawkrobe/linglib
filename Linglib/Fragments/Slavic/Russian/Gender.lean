@@ -4,59 +4,40 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
-# Russian Noun Gender
-[wade-2020] [corbett-1991] [kramer-2020] [kramer-2015] [corbett-1998]
+# Russian noun gender
 
-Russian has three surface genders: masculine, feminine, neuter. Gender
-is partly determined by the referent's gender (semantic core)
-and partly by morphological declension class.
+This file defines the three controller genders of Russian, masculine, feminine and neuter, and
+nouns with their gender, the gender of their referents where they have one, and their declension
+class. Gender is partly fixed by the referent and partly by the declension ([corbett-1991]):
+*djadja* 'uncle' declines like most feminines and is masculine by its referents, and the
+soft-sign nouns are feminine as a rule ([wade-2020] §63) but for *put'* 'way', of which "Despite
+feminine endings in the genitive, dative and prepositional singular, путь is qualified by masculine
+adjectives" (§66). The declension classes are Corbett's as [kramer-2020] reports them: *zakon*,
+*škola*, *kost'* and *vino* are her examples of the correlation of class and gender (18), the
+neuter *znamja* 'banner' (Wade §64) and the masculine *put'* of its exceptions (19), and the
+kinship and animal nouns stand for the semantic core (17). *Vrač* 'doctor' is masculine but takes
+feminine agreement on a predicate when the referent is female, *Врач обязана помочь больному* 'The
+doctor is obliged to help the patient' ([wade-2020] §313); the file records its declensional
+gender, and the hybrid agreement is in `Studies/Kramer2020.lean`.
 
-## Theory-neutral data layer
+The past-tense concord of the verb and the nominative endings of the adjective are the agreement
+evidence that the three genders are distinct ([corbett-1991]).
 
-Each entry is a `GenderedNoun` over the three controller genders, with a
-declension class besides:
+## References
 
-- `gender : Value` — the agreement-trigger fact (verified against
-  [wade-2020]).
-- `naturalGender : Option Gender` — the gender of the referents, where
-  the noun has one.
-- `declClass : Option DeclClass` — Russian-specific morphological
-  classification ([wade-2020]). Optional because semantic-core
-  nouns get their gender from the referent, not morphology.
-
-These fields suffice to project entries to [kramer-2015] Ch. 7's
-5-n DM analysis (projection in `Studies/Kramer2020.lean`); they also
-support [corbett-1991]'s controller-target classification directly.
-
-## Hybrid nouns
-
-*vrač* 'doctor' triggers feminine agreement on some targets (verb,
-predicate adjective) when the referent is female, while retaining
-masculine morphology ([wade-2020], e.g. "Врач обязана..." with
-fem.-agreeing predicate; [corbett-1991]). The Fragment encodes
-*vrač*'s morphological gender (masculine, derived from Class I); the
-hybrid agreement datum is `Kramer2020.hybridTargets`.
-
-## Per-entry verification
-
-Entries explicitly named in [kramer-2015]: *otec*, *put'*, *vrač*.
-All others are extrapolations from Kramer's framework, anchored on
-[wade-2020]'s declension and gender treatment + [corbett-1991]'s
-canonical 5-language sample. *kost'* (Class III feminine) verified at
-Wade ≈ noun-declension tables; *put'* (Class III masculine, sole
-exception) verified at Wade §6397; *znamja* (-мя neuter) is the textbook
-Class III neuter group.
+* [wade-2020]
+* [corbett-1991]
+* [corbett-1998]
+* [kramer-2020]
 -/
 
 @[expose] public section
 
 namespace Russian.Gender
 
--- ============================================================================
--- § 1: Genders and Declension Classes ([wade-2020])
--- ============================================================================
+/-! ### Genders and declension classes -/
 
-/-- Russian's three controller genders, the carrier ([corbett-1991]; [kramer-2015] ch. 7). -/
+/-- The three controller genders. -/
 inductive Value where
   | masc
   | fem
@@ -69,125 +50,111 @@ def Value.toLabel : Value → Gender
   | .fem => .feminine
   | .neut => .neuter
 
-/-- Russian declension classes. Gender correlates with class but neither
-    fully determines the other ([corbett-1991];
-    [kramer-2020] §2.3.2). -/
+/-- The declension classes, with which gender correlates without either fixing the other. -/
 inductive DeclClass where
-  | I    -- e.g. zakon 'law' (typically masculine)
-  | II   -- e.g. škola 'school' (typically feminine)
-  | III  -- e.g. kost' 'bone' (typically feminine; exceptions: put', znamja)
-  | IV   -- remaining patterns (typically neuter)
+  /-- The class of *zakon* 'law', typically masculine. -/
+  | I
+  /-- The class of *škola* 'school', typically feminine. -/
+  | II
+  /-- The class of *kost'* 'bone', typically feminine, with *put'* and *znamja* the exceptions. -/
+  | III
+  /-- The remaining patterns, typically neuter. -/
+  | IV
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Russian Noun (theory-neutral schema)
--- ============================================================================
-
-/-- A Russian noun: its gender, whether that gender comes from the
-    referents' gender, and its declension class. No commitment to any
-    specific theoretical framework — Kramer's DM categorizing head and
-    Corbett's controller-target classification are projections in
-    `Studies/`. For *vrač* 'doctor' (hybrid) the morphological gender is
-    encoded; the hybrid female-referent agreement is the datum
-    `Kramer2020.hybridTargets`. -/
+/-- A Russian noun with its controller gender, the gender of its referents where they have one,
+and its declension class. -/
 structure Noun extends GenderedNoun Value where
-  /-- Optional declension class. Semantic-core nouns may omit since
-      their gender is determined by the referent. -/
+  /-- The declension class, left out for a noun whose gender its referents fix. -/
   declClass : Option DeclClass := none
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: Semantic Core ([kramer-2020] ex. 17)
--- ============================================================================
+/-! ### Nouns whose referents fix their gender -/
 
+/-- *otec* 'father'. -/
 def otec : Noun :=
   { form := "otec", gloss := "father", gender := .masc, naturalGender := some .masculine }
+
+/-- *mat'* 'mother'. -/
 def mat' : Noun :=
   { form := "mat'", gloss := "mother", gender := .fem, naturalGender := some .feminine }
+
+/-- *brat* 'brother'. -/
 def brat : Noun :=
   { form := "brat", gloss := "brother", gender := .masc, naturalGender := some .masculine }
+
+/-- *sestra* 'sister'. -/
 def sestra : Noun :=
   { form := "sestra", gloss := "sister", gender := .fem, naturalGender := some .feminine }
+
+/-- *byk* 'bull'. -/
 def byk : Noun :=
   { form := "byk", gloss := "bull", gender := .masc, naturalGender := some .masculine }
+
+/-- *korova* 'cow'. -/
 def korova : Noun :=
   { form := "korova", gloss := "cow", gender := .fem, naturalGender := some .feminine }
-/-- *djadja* 'uncle': declension II like most feminines, masculine by its referents ([wade-2020];
-    [corbett-1991]). -/
+
+/-- *djadja* 'uncle', of the declension of most feminines and masculine by its referents. -/
 def djadja : Noun :=
   { form := "djadja", gloss := "uncle", gender := .masc, naturalGender := some .masculine
   , declClass := some .II }
 
--- ============================================================================
--- § 4: Remainder — Declension-Class Correlation ([kramer-2020] ex. 18)
--- ============================================================================
+/-! ### Nouns whose declension goes with their gender -/
 
+/-- *zakon* 'law'. -/
 def zakon : Noun := { form := "zakon", gloss := "law", gender := .masc, declClass := some .I }
+
+/-- *škola* 'school'. -/
 def škola : Noun := { form := "škola", gloss := "school", gender := .fem, declClass := some .II }
+
+/-- *kost'* 'bone', a soft-sign feminine ([wade-2020] §63). -/
 def kost' : Noun := { form := "kost'", gloss := "bone", gender := .fem, declClass := some .III }
+
+/-- *vino* 'wine'. -/
 def vino : Noun := { form := "vino", gloss := "wine", gender := .neut, declClass := some .IV }
 
--- ============================================================================
--- § 5: Class III Exceptions ([kramer-2020] ex. 19)
--- ============================================================================
-
-/-- *znamja* 'banner': Class III but neuter, not feminine (the -мя
-    neuter group; [corbett-1991]; [kramer-2020] ex. 19a). -/
+/-- *znamja* 'banner', of the class of *kost'* but neuter, one of the neuters in *-mja*
+([wade-2020] §64). -/
 def znamja : Noun :=
   { form := "znamja", gloss := "banner", gender := .neut, declClass := some .III }
 
-/-- *put'* 'way': the only masculine noun in Class III
-    ([wade-2020] §6397: "путь is qualified by masculine adjectives";
-    [corbett-1991]; [kramer-2020] ex. 19b). -/
+/-- *put'* 'way', of the class of *kost'* but masculine ([wade-2020] §66). -/
 def put' : Noun := { form := "put'", gloss := "way", gender := .masc, declClass := some .III }
 
--- ============================================================================
--- § 6: Hybrid Noun ([kramer-2020] ex. 15–16)
--- ============================================================================
-
-/-- *vrač* 'doctor': morphologically masculine (Class I), but triggers
-    feminine agreement on some targets when the referent is female
-    (verified at [wade-2020] "Врач обязана…" with feminine-agreeing
-    predicate). The Fragment encodes morphological gender; the hybrid
-    behavior is the datum `Kramer2020.hybridTargets`. -/
+/-- *vrač* 'doctor', masculine and of the class of *zakon*, which takes feminine agreement on a
+predicate when the referent is female ([wade-2020] §313). -/
 def vrač : Noun := { form := "vrač", gloss := "doctor", gender := .masc, declClass := some .I }
 
--- ============================================================================
--- § 7: Inventory
--- ============================================================================
+/-! ### The entries -/
 
+/-- The nouns whose referents fix their gender. -/
 def semanticCoreNouns : List Noun :=
   [otec, mat', brat, sestra, byk, korova, djadja]
 
+/-- The nouns whose gender goes with their declension, *znamja* and *put'* the exceptions. -/
 def remainderNouns : List Noun :=
   [zakon, škola, kost', vino, znamja, put']
 
+/-- The entries. -/
 def allNouns : List Noun :=
   semanticCoreNouns ++ remainderNouns ++ [vrač]
 
--- ============================================================================
--- § 8: Cross-class observation
--- ============================================================================
-
-/-- Declension class does not determine gender: *znamja* and *kost'*
-    share Class III but differ in surface gender (the Class III
-    counter-correlation [corbett-1991] highlights). -/
+/-- The declension class does not fix the gender: *znamja* and *kost'* share a class and differ in
+gender. -/
 theorem declClass_ne_gender :
     znamja.declClass = kost'.declClass ∧ znamja.gender ≠ kost'.gender := ⟨rfl, by decide⟩
 
--- ============================================================================
--- § 9: Concord evidence
--- ============================================================================
+/-! ### Agreement evidence -/
 
-/-- Past-tense verbal concord exponents: *-∅* / *-a* / *-o*
-    ([wade-2020]). Evidence type for `Gender.Faithful`. -/
+/-- The past-tense concord endings of the verb, *-∅*, *-a* and *-o*. -/
 inductive PastConcord where
   | zero
   | a
   | o
   deriving DecidableEq, Repr
 
-/-- Per-gender past-tense concord. -/
+/-- The past-tense concord ending of each gender. -/
 def Value.pastConcord : Value → PastConcord
   | .masc => .zero
   | .fem  => .a
@@ -213,9 +180,7 @@ def Value.adjEnding : Value → Bool → AdjEnding
 /-- The singular ending alone distinguishes the three genders. -/
 theorem faithful_adjEnding : Function.Injective (Value.adjEnding · false) := by decide
 
-/-- The carrier is faithful to the past-tense concord evidence:
-    *-∅* / *-a* / *-o* distinguishes all three genders on a single
-    target. [corbett-1991]'s genders-are-agreement-classes criterion. -/
+/-- The past-tense concord distinguishes the three genders on a single target. -/
 theorem faithful_pastConcord : Function.Injective Value.pastConcord := by decide
 
 end Russian.Gender

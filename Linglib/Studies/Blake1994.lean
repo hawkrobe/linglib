@@ -209,8 +209,9 @@ source and goal as well as location. -/
 def tarascan : Finset Case := {.nom, .acc, .gen, .loc, .inst, .com}
 
 /-- The systems Blake cites for the successive stages of the hierarchy, with the four cases of
-Ancient Greek (beside its vocative), German and Icelandic, the six of the Slavonic languages and of
-Turkish, the seven of Classical Armenian and the eight of Tamil. -/
+Ancient Greek (beside its vocative), German and Icelandic, the six of the Slavonic languages (beside
+the vocative of Polish, Czech and Serbo-Croat) and of Turkish, the seven of Classical Armenian and
+the eight of Tamil. -/
 def systems : List (Finset Case) :=
   [Greek.Ancient.Case.inventory, German.Case.inventory, Icelandic.Case.inventory,
     Polish.Case.inventory, Czech.Case.inventory, Slovak.Case.inventory, Serbian.Case.inventory,
@@ -269,7 +270,8 @@ theorem fragments_conform :
     ∀ inv ∈ [Greek.StandardModern.Case.inventory, Hindi.Case.inventory, Japanese.Case.inventory,
       Korean.Case.inventory, Telugu.Case.inventory, Belarusian.Case.inventory,
       Cassubian.Case.inventory, Russian.Case.inventory, Slovenian.Case.inventory,
-      Sorbian.Case.inventory, Ukrainian.Case.inventory], Conforms inv := by
+      Sorbian.Upper.Case.inventory, Sorbian.Lower.Case.inventory, Ukrainian.Case.inventory],
+      Conforms inv := by
   decide
 
 /-- Finnish has no dative, the allative marking the recipient. -/

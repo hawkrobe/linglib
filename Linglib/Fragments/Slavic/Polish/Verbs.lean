@@ -4,7 +4,7 @@ public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Verb.Stem
 
 /-!
-# Polish Verbal Lexicon
+# Polish verbs
 
 Prefix morphs and verb-stem entries for the Polish verbal-prefix data
 of [jablonska-2004] (and the Polish examples of [svenonius-2004]).
@@ -14,6 +14,11 @@ central analytical question and lives in `Studies/Jablonska2004.lean`,
 as does the assignment of stems to verbalizer classes. Aspect values are
 the dictionary-consensus ones: simplex stems are imperfective except the
 semelfactives.
+
+## References
+
+* [jablonska-2004]
+* [svenonius-2004]
 -/
 
 @[expose] public section

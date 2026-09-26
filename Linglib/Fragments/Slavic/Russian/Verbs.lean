@@ -4,7 +4,7 @@ public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Verb.Stem
 
 /-!
-# Russian Verbal Lexicon
+# Russian verbs
 
 Prefix morphs and verb-stem entries for the Russian verbal-prefix data
 of [svenonius-2004]. Prefixes carry only their form (`Morph.pref`);
@@ -13,6 +13,10 @@ stems carry citation form, aspect, and gloss. Analytical classification
 
 Transliteration follows [svenonius-2004] (*j* for palatalization, as in
 *brositj*).
+
+## References
+
+* [svenonius-2004]
 -/
 
 @[expose] public section

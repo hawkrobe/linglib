@@ -224,13 +224,13 @@ bylo* 568, *ni-* 7, and *ugodno* and the determiner *ljuboj* 9. The *-to*-series
 specifically but is not excluded from the functions of *-nibud'*, where *-nibud'* is preferred;
 *-libo* replaces *-nibud'* under indirect negation and in comparatives. -/
 def russian : List Series :=
-  [ ⟨"koe-", Russian.Indefinites.koeEntry, region [1]⟩,
-    ⟨"-to", Russian.Indefinites.toEntry, region [2, 3, 4, 5]⟩,
-    ⟨"-nibud'", Russian.Indefinites.nibudEntry, region [3, 4, 5]⟩,
-    ⟨"-libo", Russian.Indefinites.liboEntry, region [3, 4, 5, 6, 8]⟩,
-    ⟨"by to ni bylo", Russian.Indefinites.byToNiByloEntry, region [5, 6, 8]⟩,
-    ⟨"ni-", Russian.Indefinites.niEntry, region [7]⟩,
-    ⟨"ugodno", Russian.Indefinites.ugodnoEntry, region [9]⟩,
+  [ ⟨"koe-", Russian.Indefinites.koeKto, region [1]⟩,
+    ⟨"-to", Russian.Indefinites.ktoTo, region [2, 3, 4, 5]⟩,
+    ⟨"-nibud'", Russian.Indefinites.ktoNibud, region [3, 4, 5]⟩,
+    ⟨"-libo", Russian.Indefinites.ktoLibo, region [3, 4, 5, 6, 8]⟩,
+    ⟨"by to ni bylo", Russian.Indefinites.ktoByToNiBylo, region [5, 6, 8]⟩,
+    ⟨"ni-", Russian.Indefinites.nikto, region [7]⟩,
+    ⟨"ugodno", Russian.Indefinites.ktoUgodno, region [9]⟩,
     series "ljuboj" "ljuboj" .special [9] .determiner ]
 
 /-- The German series (A.1) are *etwas* 123456, *irgend-* 2345689, temporal *je* 4568, *jeder*

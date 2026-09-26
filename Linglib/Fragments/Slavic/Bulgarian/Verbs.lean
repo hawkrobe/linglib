@@ -4,7 +4,7 @@ public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Verb.Stem
 
 /-!
-# Bulgarian Verbal Lexicon
+# Bulgarian verbs
 
 Prefix morphs and verb-stem entries for the Bulgarian multiple-
 prefixation data of [istratkova-2004]. Citation forms are first-person
@@ -12,6 +12,10 @@ singular present (Bulgarian has no infinitive). Aspect values are the
 dictionary-consensus ones; the paper's reclassification of the simplex
 imperfectives as aspectless homogeneous verbs, like the classification
 of prefix occurrences, lives in `Studies/Istratkova2004.lean`.
+
+## References
+
+* [istratkova-2004]
 -/
 
 @[expose] public section

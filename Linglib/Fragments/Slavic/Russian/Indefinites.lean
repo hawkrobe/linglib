@@ -1,12 +1,14 @@
 module
 
+public import Linglib.Fragments.Slavic.Russian.Pronouns
 public import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
 # Russian indefinite pronouns
 
 Russian builds its indefinite series on the interrogative pronouns *kto* 'who' and *čto*
-'what'. Three of them divide the specific functions: *koe-kto*, with the prefix *koe-*, for a
+'what' of `Russian.Pronouns`, and each series is here a map from the interrogatives to the
+indefinites. Three of them divide the specific functions: *koe-kto*, with the prefix *koe-*, for a
 referent the speaker has in mind ("Koe-kto prišël" 'someone, I know who, came'); *kto-to*, with
 the suffix *-to*, mainly for one the speaker presupposes but cannot identify ("Kto-to prišël"
 'someone came'), though not excluded from non-specific uses; and *kto-nibud'*, with *-nibud'*,
@@ -26,52 +28,66 @@ confined to direct negation and *kto ugodno* to free choice.
 
 namespace Russian.Indefinites
 
-/-- *Koe-kto*: the prefix *koe-* on the interrogative, for a referent the speaker has in mind. -/
-def koeEntry : IndefinitePronoun where
-  form := "koe-kto"
-  ontology := .person
-  basis := .interrogative
+open Pronouns
 
-/-- *Kto-to*: the suffix *-to* on the interrogative, mainly for a referent the speaker
-presupposes but cannot identify. -/
-def toEntry : IndefinitePronoun where
-  form := "kto-to"
-  ontology := .person
-  basis := .interrogative
+/-! ### The series -/
 
-/-- *Kto-nibud'*: the suffix *-nibud'* on the interrogative, for irrealis non-specific
-reference and in questions and conditionals. -/
-def nibudEntry : IndefinitePronoun where
-  form := "kto-nibud'"
-  ontology := .person
-  basis := .interrogative
+/-- The *koe-* series attaches the prefix *koe-* to the interrogative. -/
+def koe : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative ("koe-" ++ ·)
 
-/-- *Kto-libo*: the functions of *-nibud'*, with indirect negation and the comparative. -/
-def liboEntry : IndefinitePronoun where
-  form := "kto-libo"
-  ontology := .person
-  basis := .interrogative
+/-- The *-to* series attaches the suffix *-to* to the interrogative. -/
+def to_ : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative (· ++ "-to")
 
-/-- *Kto by to ni bylo*: conditionals, indirect negation and the comparative. -/
-def byToNiByloEntry : IndefinitePronoun where
-  form := "kto by to ni bylo"
-  ontology := .person
-  basis := .interrogative
+/-- The *-nibud'* series attaches the suffix *-nibud'* to the interrogative. -/
+def nibud : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative (· ++ "-nibud'")
 
-/-- *Nikto* 'nobody': the negative prefix *ni-* on the interrogative, direct negation. -/
-def niEntry : IndefinitePronoun where
-  form := "nikto"
-  ontology := .person
-  basis := .interrogative
+/-- The *-libo* series attaches the suffix *-libo* to the interrogative. -/
+def libo : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative (· ++ "-libo")
 
-/-- *Kto ugodno* 'anyone': the interrogative with *ugodno* 'pleasing', free choice. -/
-def ugodnoEntry : IndefinitePronoun where
-  form := "kto ugodno"
-  ontology := .person
-  basis := .interrogative
+/-- The *by to ni bylo* series follows the interrogative with *by to ni bylo*. -/
+def byToNiBylo : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative (· ++ " by to ni bylo")
 
-/-- The Russian paradigm. -/
+/-- The negative series attaches the prefix *ni-* to the interrogative. -/
+def ni : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative ("ni" ++ ·)
+
+/-- The *ugodno* series follows the interrogative with *ugodno* 'pleasing'. -/
+def ugodno : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative (· ++ " ugodno")
+
+/-! ### The person row -/
+
+/-- *koe-kto* 'someone', for a referent the speaker has in mind. -/
+def koeKto : IndefinitePronoun := koe kto
+
+/-- *kto-to* 'someone', mainly for a referent the speaker presupposes but cannot identify. -/
+def ktoTo : IndefinitePronoun := to_ kto
+
+/-- *kto-nibud'* 'someone, anyone', for irrealis non-specific reference and in questions and
+conditionals. -/
+def ktoNibud : IndefinitePronoun := nibud kto
+
+/-- *kto-libo* 'anyone', with the functions of *kto-nibud'* and under indirect negation and in
+comparatives. -/
+def ktoLibo : IndefinitePronoun := libo kto
+
+/-- *kto by to ni bylo* 'anyone at all', in conditionals, under indirect negation and in
+comparatives. -/
+def ktoByToNiBylo : IndefinitePronoun := byToNiBylo kto
+
+/-- *nikto* 'nobody', under direct negation. -/
+def nikto : IndefinitePronoun := ni kto
+
+/-- *kto ugodno* 'anyone', of free choice. -/
+def ktoUgodno : IndefinitePronoun := ugodno kto
+
+/-- The person row of the series. -/
 def paradigm : List IndefinitePronoun :=
-  [koeEntry, toEntry, nibudEntry, liboEntry, byToNiByloEntry, niEntry, ugodnoEntry]
+  [koeKto, ktoTo, ktoNibud, ktoLibo, ktoByToNiBylo, nikto, ktoUgodno]
 
 end Russian.Indefinites

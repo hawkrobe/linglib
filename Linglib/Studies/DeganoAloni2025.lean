@@ -295,11 +295,11 @@ theorem examples :
     (∃ s ∈ Haspelmath1997.italian, s.label = "qualche-" ∧ Instantiates s .unmarked) ∧
       (∃ s ∈ Haspelmath1997.georgian, s.label = "-γac" ∧ Instantiates s .specific) ∧
       (∃ s ∈ Haspelmath1997.russian,
-        s.pronoun = Russian.Indefinites.nibudEntry ∧ Instantiates s .nonSpecific) ∧
+        s.pronoun = Russian.Indefinites.ktoNibud ∧ Instantiates s .nonSpecific) ∧
       (∃ s ∈ Haspelmath1997.german,
         s.pronoun = German.Indefinites.irgendEntry ∧ Instantiates s .epistemic) ∧
       (∃ s ∈ Haspelmath1997.russian,
-        s.pronoun = Russian.Indefinites.koeEntry ∧ Instantiates s .specificKnown) ∧
+        s.pronoun = Russian.Indefinites.koeKto ∧ Instantiates s .specificKnown) ∧
       ∃ s ∈ Haspelmath1997.kannada,
         s.pronoun = Kannada.Indefinites.ooEntry ∧ Instantiates s .specificUnknown := by
   decide

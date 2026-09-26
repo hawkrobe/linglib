@@ -3,33 +3,32 @@ module
 public import Linglib.Fragments.Slavic.Case
 
 /-!
-# Sorbian Case Inventory (Upper and Lower)
-[stone-1993-sorbian] [blake-1994]
+# Sorbian case inventories
 
-Per [stone-1993-sorbian] (p. 614): "Upper Sorbian has seven cases
-(nominative, vocative, accusative, genitive, dative, instrumental and
-locative). Lower Sorbian, having lost the vocative, has only six
-cases. All the dialects have at least six cases. ... Even in Upper
-Sorbian it is only masculine nouns that have a separate vocative form
-(and only in the singular). There is one exception to this rule: USo.
-mać 'mother' has vocative singular maći."
+This file defines the cases of Upper and of Lower Sorbian: "Upper Sorbian has seven cases
+(nominative, vocative, accusative, genitive, dative, instrumental and locative). Lower Sorbian,
+having lost the vocative, has only six cases" ([stone-1993-sorbian], p. 614). Even in Upper
+Sorbian only masculine nouns have a separate vocative form, and only in the singular, save *mać*
+'mother', vocative *maći*. In both languages the instrumental has lost its prepositionless
+function.
 
-Both varieties share the 6-case core (`coreInventory`); Upper Sorbian
-adds a productive masc-sg VOC. The Lower Sorbian vocative is attested
-"only in Jakubica's New Testament (1548)" — fossil only.
+## References
 
-Stone (p. 614) also documents that "in both Upper and Lower Sorbian
-the independent, prepositionless function of the instrumental has been
-lost" — the marked Slavic INST-prepositional pattern (cf. Slovene per
-[priestly-1993]; contrast with Russian [timberlake-1993] and
-Cassubian [stone-1993-cassubian] where bare predicative INST is
-robust).
+* [stone-1993-sorbian]
 -/
 
 @[expose] public section
 
-namespace Sorbian.Case
+namespace Sorbian.Upper.Case
 
+/-- The Upper Sorbian cases are the seven of the Slavic inventory. -/
+abbrev inventory : Finset Case := Slavic.Case.fullInventory
+
+end Sorbian.Upper.Case
+
+namespace Sorbian.Lower.Case
+
+/-- The Lower Sorbian cases are the six the Slavic languages share. -/
 abbrev inventory : Finset Case := Slavic.Case.coreInventory
 
-end Sorbian.Case
+end Sorbian.Lower.Case

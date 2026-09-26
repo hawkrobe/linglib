@@ -4,14 +4,18 @@ public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Russian question particles
-[esipova-romero-2023] [simik-2024]
 
-Russian marks formal polar questions with the second-position enclitic
-*li*, obligatory in subordinated polar questions, while colloquial
-matrix polar questions are marked by intonation alone (and can be used
-rhetorically, [esipova-romero-2023]). The clause-initial mirative
-*razve* is restricted to matrix polar questions ([simik-2024] §4.2.4);
-*neuželi* is its VERUM-only sibling.
+Russian marks formal polar questions with the second-position enclitic *li*, obligatory in
+embedded polar questions, while colloquial matrix polar questions are marked by intonation alone
+and can be used rhetorically ([esipova-romero-2023]). The clause-initial mirative *razve* cannot be
+used in embedded interrogatives or in wh-interrogatives ([simik-2024] §4.2.4, after Korotkova);
+*neuželi* is its sibling that lexicalizes VERUM.
+
+## References
+
+* [esipova-romero-2023]
+* [simik-2024]
+* [repp-geist-2022]
 -/
 
 @[expose] public section
@@ -28,7 +32,6 @@ def li : Particle where
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
     | .polar, .subordinated => some .obligatory
-    | .constituent, .matrix => some .excluded
     | _, _ => none
 
 /-- разве razve is the mirative/dubitative question particle, signalling

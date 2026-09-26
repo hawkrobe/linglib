@@ -3,47 +3,41 @@ module
 public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Polish Question Particles
-[simik-2024]
+# Polish question particles
 
-Lexical entries for Polish interrogative particles as `Particle` values.
-Bias classifications (czyżby's evidential requirement) and layer
-assignments live in `Simik2024`.
+Polish default polar questions are introduced by clause-initial *czy*, which the quiz question
+requires ([simik-2024] ex. 30); declarative polar questions without it are grammatical but carry
+evidential bias. The mirative *czyżby* is the Polish kin of Russian *razve* ([simik-2024] §4.2.4).
+The strategy profile and the bias of *czyżby* are in `Studies/Simik2024.lean`.
 
-## Cross-Module Connections
+## References
 
-- `Simik2024.polish` (`Studies/Simik2024`): PQ strategy profile
-  (clause-initial czy obligatory) and the neutral/evidential contrast
-- Cross-Slavic RAZVE family: czyżby is the Polish member
+* [simik-2024]
 -/
 
 @[expose] public section
 
 namespace Polish.QuestionParticles
 
-/-- czy — obligatory clause-initial PQ particle ([simik-2024] ex. 30).
-Verb-initial PQs possible but unacceptable in quiz scenarios. -/
+/-- *czy*, the clause-initial polar question particle. -/
 def czy : Particle where
   form := "czy"
   position := some .clauseInitial
   distribution := fun c e => match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .obligatory
-    | .constituent, .matrix => some .optional
     | _, _ => none
 
-/-- czyżby — mirative/dubitative particle (RAZVE family, [simik-2024]
-§4.2.4). Polish member of the cross-Slavic razve family. Evidential
-classification in `Simik2024`. -/
+/-- *czyżby*, the clause-initial mirative particle, kin of Russian *razve*. -/
 def czyzby : Particle where
   form := "czyżby"
   position := some .clauseInitial
   distribution := fun c e => match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
     | _, _ => none
 
+/-- The question particles. -/
 def allQuestionParticles : List Particle := [czy, czyzby]
 
 end Polish.QuestionParticles

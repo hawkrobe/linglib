@@ -8,9 +8,9 @@ public import Linglib.Syntax.Category.Noun.Basic
 
 This file defines the Czech noun as a lexical entry with its controller gender, its declension
 class and the nominative plural it takes lexically, and gives the model nouns of Short's
-declension tables, the nouns the grammars name as changing class with number, and the nouns of
-Stump's tables of Czech heteroclisis, whose classes follow from Short's grammar and the Academy
-grammar *Mluvnice češtiny*.
+declension tables and *kluk* 'boy', the nouns the grammars name as changing class with number,
+and the nouns of Stump's tables of Czech heteroclisis, whose classes follow from Short's grammar
+and the Academy grammar *Mluvnice češtiny*.
 
 A noun's class is that of its singular, and its plural follows the same class unless the noun
 changes class with number: "Modern masculines like *den* 'day' and *kořen* 'root' generally
@@ -39,8 +39,8 @@ vocative plural.
 * `Czech.stem_append_nomSg`: every entry's citation form is its stem followed by the nominative
   singular ending of its class
 * `Czech.gender_eq_cls_gender`: every entry has the gender of its class's table
-* `Czech.isVelar_stem_iff`, `Czech.isSome_ofChars_forms`: the velar stems are those of *sluha*
-  and *filolog*, and every form is written in Czech letters
+* `Czech.isVelar_stem_iff`, `Czech.isSome_ofChars_forms`: the velar stems are those of *kluk*,
+  *sluha* and *filolog*, and every form is written in Czech letters
 * `Czech.forms_examples`: the forms the grammars give Stump's nouns in the cells where they
   depart from the model nouns' tables
 
@@ -155,6 +155,13 @@ def kost : Noun := { form := "kost", gloss := "bone", gender := .feminine, cls :
 /-- *jehně* 'lamb', the neuter t-stem model (Table 9.7, p. 470). -/
 def jehne : Noun := { form := "jehně", gloss := "lamb", gender := .neuter, cls := .jehne }
 
+/-- *kluk* 'boy', a hard masculine animate with a velar stem, whose vocative singular *kluku* Short
+gives as a survival of the u-stem vocative, "chiefly as a means to avoid palatalization of velar
+stems" (p. 465). -/
+def kluk : Noun :=
+  { form := "kluk", gloss := "boy", gender := .mascAnimate, naturalGender := some .masculine,
+    cls := .chlap }
+
 /-! ### Nouns that change class with number -/
 
 /-- *den* 'day', which follows *stroj* in the singular and *hrady* in the plural (Short, p. 469),
@@ -221,10 +228,10 @@ def filolog : Noun :=
   { form := "filolog", gloss := "philologist", gender := .mascAnimate, cls := .chlap,
     nomPlural := some [["o", "v", "é"]] }
 
-/-- The entries are the model nouns of Short's tables, *den*, *kořen* and *pramen*, and Stump's
-other nouns. -/
+/-- The entries are the model nouns of Short's tables, *kluk*, *den*, *kořen* and *pramen*, and
+Stump's other nouns. -/
 def nouns : List Noun :=
-  [chlap, hrad, muz, stroj, mesto, srdce, uceni, zena, hrdina, duse, pani, kost, jehne, den,
+  [chlap, hrad, muz, stroj, mesto, srdce, uceni, zena, hrdina, duse, pani, kost, jehne, kluk, den,
     koren, pramen, pokoj, most, predseda, sluha, filosof, filolog]
 
 /-- Every entry's citation form is its stem followed by the nominative singular ending of its
@@ -232,9 +239,10 @@ class, so each is declined in a class whose nominative singular it has. -/
 theorem stem_append_nomSg : ∀ n ∈ nouns, n.stem ++ n.cls.nomSg = segments n.form := by
   decide +kernel
 
-/-- The velar stems among the entries are those of *sluha* and *filolog*, ending in *h* and
-*g*. -/
-theorem isVelar_stem_iff : ∀ n ∈ nouns, IsVelar n.stem ↔ n = sluha ∨ n = filolog := by
+/-- The velar stems among the entries are those of *kluk*, *sluha* and *filolog*, ending in *k*,
+*h* and *g*. -/
+theorem isVelar_stem_iff :
+    ∀ n ∈ nouns, IsVelar n.stem ↔ n = kluk ∨ n = sluha ∨ n = filolog := by
   decide +kernel
 
 /-- Every form of every entry is written in Czech letters, and so has phonemes. -/

@@ -92,8 +92,8 @@ def lexicon (p : List Series) : List (SpanRule 3 String) :=
 /-- The Russian series of the paper's row: *koe-*, *-to* and *-nibud'*. -/
 def russian : List Series :=
   Haspelmath1997.russian.filter fun e ↦
-    e.pronoun ∈ [Russian.Indefinites.koeEntry, Russian.Indefinites.toEntry,
-      Russian.Indefinites.nibudEntry]
+    e.pronoun ∈ [Russian.Indefinites.koeKto, Russian.Indefinites.ktoTo,
+      Russian.Indefinites.ktoNibud]
 
 /-! ### Syncretism and its absence -/
 

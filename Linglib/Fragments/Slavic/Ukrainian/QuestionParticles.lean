@@ -3,27 +3,23 @@ module
 public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Ukrainian Question Particles
-[simik-2024]
+# Ukrainian question particles
 
-Lexical entries for Ukrainian interrogative particles as `Particle`
-values. Bias classifications (xiba's evidential requirement) and layer
-assignments live in `Simik2024`.
+Ukrainian default polar questions are introduced by clause-initial *čy*, which the quiz question
+requires ([simik-2024] ex. 29). The mirative *xiba* is the Ukrainian kin of Russian *razve*
+([simik-2024] §4.2.4). The strategy profile and the bias of *xiba* are in
+`Studies/Simik2024.lean`.
 
-## Cross-Module Connections
+## References
 
-- `Simik2024.ukrainian` (`Studies/Simik2024`): PQ strategy profile
-  (clause-initial čy obligatory) and the neutral/evidential contrast
-- Cross-Slavic RAZVE family: xiba is the Ukrainian cognate of Russian
-  razve
+* [simik-2024]
 -/
 
 @[expose] public section
 
 namespace Ukrainian.QuestionParticles
 
-/-- чи čy — obligatory clause-initial PQ particle ([simik-2024] ex. 29).
-Neutral baseline. -/
+/-- чи *čy*, the clause-initial polar question particle. -/
 def cy : Particle where
   form := "čy"
   script := some "чи"
@@ -31,13 +27,9 @@ def cy : Particle where
   distribution := fun c e => match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .obligatory
-    | .constituent, .matrix => some .optional
     | _, _ => none
 
-/-- хіба xiba — mirative/dubitative particle (RAZVE family, [simik-2024]
-§4.2.4). Ukrainian cognate of Russian razve: indicates conflict between
-speaker's prior state and contextual evidence. Evidential classification
-in `Simik2024`. -/
+/-- хіба *xiba*, the clause-initial mirative particle, kin of Russian *razve*. -/
 def xiba : Particle where
   form := "xiba"
   script := some "хіба"
@@ -45,9 +37,9 @@ def xiba : Particle where
   distribution := fun c e => match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
     | _, _ => none
 
+/-- The question particles. -/
 def allQuestionParticles : List Particle := [cy, xiba]
 
 end Ukrainian.QuestionParticles

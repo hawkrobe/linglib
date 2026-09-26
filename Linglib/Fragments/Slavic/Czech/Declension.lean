@@ -432,12 +432,7 @@ theorem palatalize_examples :
       palatalize (segments "filolog") ++ ["í", "ch"] = segments "filolozích" := by
   decide +kernel
 
-/-! ### Caha's paradigms
-
-Two of Caha's paradigms differ from Short's tables in the locative singular: `hrad_sg` has
-*hradu* and `mesto_sg` *městu* where Short's Tables 9.2 and 9.4 give *hradě* and *městě*, both
-within the variation between *-ě* and *-u* that Short describes for the hard inanimates
-(p. 466) and the neuters (p. 467). -/
+/-! ### Caha's paradigms -/
 
 section Caha
 

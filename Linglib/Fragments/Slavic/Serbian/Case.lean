@@ -3,21 +3,24 @@ module
 public import Linglib.Fragments.Slavic.Case
 
 /-!
-# Serbo-Croat Case Inventory
-[browne-1993] [blake-1994]
+# Serbo-Croat case inventory
 
-Per [browne-1993] (p. 319), Serbo-Croat has a 7-case system with
-productive VOC; DAT and LOC have merged in the noun paradigm except for
-accentual distinctions in some monosyllables. `inventory` aliases
-the shared 6-case core; `Slavic.Case.fullInventory`
-carries the +VOC form. The directory name `Serbian` is historical;
-Browne's chapter covers the unified Serbo-Croat standard.
+This file defines the Serbo-Croat cases, the seven of the Slavic inventory: "There are seven cases:
+nominative, vocative, accusative, genitive, dative, instrumental, locative. Dative and locative
+have merged; only certain inanimate monosyllabic nouns distinguish them accentually in the
+singular" ([browne-1993], p. 318). The directory is named for Serbian; Browne's chapter describes
+the Serbo-Croat standard.
+
+## References
+
+* [browne-1993]
 -/
 
 @[expose] public section
 
 namespace Serbian.Case
 
-abbrev inventory : Finset Case := Slavic.Case.coreInventory
+/-- The Serbo-Croat cases are the seven of the Slavic inventory. -/
+abbrev inventory : Finset Case := Slavic.Case.fullInventory
 
 end Serbian.Case
