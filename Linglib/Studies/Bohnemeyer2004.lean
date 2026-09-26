@@ -39,8 +39,9 @@ are recorded here.
 * `applicativeLinking`, `causativeLinking`, `verbLinking`, `addedTermRole` — the two
   transitivizations as `Voice`s, and the role their added participant takes
 * `TransitivizerSuffix`, `transitivizerSuffix` — the overt suffix, kept apart from the linking
-* `DetransitivizationType`, `DetransitivizationType.template` — the antipassive, anticausative
-  and passive of (28)–(30), and the subevent each denotes
+* `DetransitivizationType`, `DetransitivizationType.retained` — the antipassive, anticausative
+  and passive of (28)–(30), and the subevent each denotes, a projection of the base's template
+  (`Subevent.of`)
 
 ## Main results
 
@@ -52,6 +53,9 @@ are recorded here.
   off their records rather than stipulated
 * `degree_achievements_causativize`, `haanEat_applicative_despite_inactive` — the counterexamples
   to aspect- and class-based linking
+* `predictLinking_roles`, `pivotSourceRole_toVoice` — the roles of transitivization (26)–(27)
+  and of detransitivization (28)–(30) follow from the subevent a participant occupies, by the
+  hierarchy (31)
 * `passive_anticausative_distinct_by_A_fate` — the fate of the initial A separates the two
 * `salience_agrees_on_shared_roots`, `haanEat_defies_transitiviser_diagnostic` — where this
   classification meets [lucy-1994]'s
@@ -214,6 +218,16 @@ def termRole : Subevent → TermRole
   | .causing => .A
   | .caused => .P
 
+/-- The other subevent of the chain. -/
+def Subevent.other : Subevent → Subevent
+  | .causing => .caused
+  | .caused => .causing
+
+/-- A subevent of a causative template: its causing or its caused subevent. -/
+def Subevent.of : Subevent → Template .event → Option (Template .event)
+  | .causing => Template.causing
+  | .caused => Template.caused
+
 /-- The marker set a core term role takes in Yukatek, (33): A takes set A and P set B. The sole
 argument of an intransitive takes whichever the viewpoint selects, which is the split
 (`sMarkerFromViewpoint`). -/
@@ -286,6 +300,21 @@ def addedRole (va : Voice) : Option TermRole := va.newParticipant
 /-- The role the base's S receives: that of the derived slot its participant occupies. -/
 def originalRole (va : Voice) : Option TermRole :=
   (va.image .external).bind va.targetRole
+
+/-- The subevent the base's participant occupies under transitivization: an internally-caused
+base is the causing process (26), an externally-caused one the caused event (27). -/
+def CausationType.baseSubevent : CausationType → Subevent
+  | .internal => .causing
+  | .external => .caused
+
+/-- Transitivization (26)–(27) with the hierarchy (31): the base's participant takes the role of
+the subevent it occupies and the added participant that of the other, so the instigator of an
+internally-caused process outranks the added argument, and the participant of an
+externally-caused event is outranked by it. -/
+theorem predictLinking_roles (c : CausationType) :
+    originalRole (predictLinking c) = some (termRole c.baseSubevent) ∧
+      addedRole (predictLinking c) = some (termRole c.baseSubevent.other) := by
+  cases c <;> decide
 
 /-- Applicative and causative linking are mirror images, and not by stipulation: each alternation
 adds a participant in the role the other leaves to the base's S, so the marker one assigns to the
@@ -462,18 +491,23 @@ theorem passive_anticausative_distinct_by_A_fate :
 /-! ### The subevent a detransitivized stem denotes
 
 "Antipassives denote the causing event, while anticausatives and passives denote the caused
-event" (§6): each detransitivization keeps one subevent of its base's causal chain. (29) and
-(30) leave open whether the caused event is a state change, and the contact verbs that
-passivize and anticausativize may not entail one. -/
+event" (§6): each detransitivization keeps one subevent of its base's causal chain, whose
+participant is the derived stem's sole argument. (29) and (30) leave open whether the caused
+event is a state change, and the contact verbs that passivize and anticausativize may not
+entail one. -/
 
-/-- The template a detransitivized stem denotes, a subevent of its base's template: the
-causing subevent for the antipassive (28), the caused one for the anticausative and passive
-((29)–(30)). The passive differs from the anticausative in participant structure, not in the
-subevent it denotes. -/
-def DetransitivizationType.template :
-    DetransitivizationType → Template .event → Option (Template .event)
-  | .antipassive => Template.causing
-  | .anticausative | .passive => Template.caused
+/-- The subevent a detransitivized stem denotes: the causing event for the antipassive (28), the
+caused event for the anticausative and the passive ((29)–(30)). The passive differs from the
+anticausative in participant structure, not in the subevent it denotes. -/
+def DetransitivizationType.retained : DetransitivizationType → Subevent
+  | .antipassive => .causing
+  | .anticausative | .passive => .caused
+
+/-- The template a detransitivized stem denotes, the retained subevent of its base's
+template. -/
+def DetransitivizationType.template (d : DetransitivizationType) :
+    Template .event → Option (Template .event) :=
+  d.retained.of
 
 /-- Rules (28)–(30) presuppose that only verbs encoding a causal relation between two subevents
 detransitivize. -/
@@ -481,7 +515,20 @@ theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType)
     (t : Template .event) :
     (d.template t).isSome ↔ ∃ c e, t = .cause c e := by
   cases d <;> cases t <;>
-    simp [DetransitivizationType.template, Template.causing, Template.caused]
+    simp [DetransitivizationType.template, DetransitivizationType.retained, Subevent.of,
+      Template.causing, Template.caused]
+
+/-- The initial role of the participant that a voice's derived construction privileges. -/
+def pivotSourceRole (va : Voice) : Option TermRole :=
+  (va.pivot.bind fun p ↦ (va.preimages p).head?).bind fun s ↦
+    (va.source.codingRole s).map TermRole.ofArgumentRole
+
+/-- The sole argument of a detransitivized stem is the participant of the subevent it denotes, in
+the role (33) gives that subevent: the S of an antipassive was the A, that of an anticausative
+or a passive the P. -/
+theorem pivotSourceRole_toVoice (d : DetransitivizationType) :
+    pivotSourceRole d.toVoice = some (termRole d.retained) := by
+  cases d <;> decide
 
 /-- On a transitive stem, the antipassive denotes the causing process and the anticausative the
 caused change. -/
