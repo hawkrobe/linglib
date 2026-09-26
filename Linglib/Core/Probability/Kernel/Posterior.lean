@@ -17,7 +17,8 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
 
 ## Main results
 
-* `ProbabilityTheory.posterior_apply_singleton` — `(κ†μ) x {ω} = μ {ω} * κ ω {x} / (κ ∘ₘ μ) {x}`.
+* `ProbabilityTheory.posterior_apply_singleton` — `(κ†μ) x {ω} = μ {ω} * κ ω {x} / (κ ∘ₘ μ) {x}`;
+  `comp_real_mul_posterior_real`, the same with the denominator cleared, at every observation.
 * `ProbabilityTheory.posterior_deterministic_eq_cond` — a deterministic observation's posterior
   is the prior conditioned on the observation's fibre.
 * `ProbabilityTheory.posterior_real_finset_lt_iff` — event comparison of the posterior.
@@ -152,6 +153,19 @@ theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω 
     ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} / (κ ∘ₘ μ).real {x} := by
   rw [measureReal_def, posterior_apply_singleton κ μ hx, ENNReal.toReal_div, ENNReal.toReal_mul,
     measureReal_def, measureReal_def, measureReal_def]
+
+/-- Bayes' rule on reals with the denominator cleared: the observation marginal times the
+posterior is the prior times the likelihood, at every state and observation. -/
+theorem comp_real_mul_posterior_real [Fintype Ω] (ω : Ω) (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} * ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} := by
+  obtain hx | hx := eq_or_ne ((κ ∘ₘ μ) {x}) 0
+  · have h0 : μ {ω} * κ ω {x} = 0 := by
+      rw [Measure.comp_apply_singleton, Finset.sum_eq_zero_iff] at hx
+      exact hx ω (Finset.mem_univ ω)
+    rw [measureReal_def, hx, ENNReal.toReal_zero, zero_mul, measureReal_def, measureReal_def,
+      ← ENNReal.toReal_mul, h0, ENNReal.toReal_zero]
+  · rw [posterior_real_singleton κ μ hx, mul_div_cancel₀]
+    rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
 
 /-- The posterior exceeds the prior at a state exactly when the state's likelihood of the
 observation exceeds the observation's marginal. -/

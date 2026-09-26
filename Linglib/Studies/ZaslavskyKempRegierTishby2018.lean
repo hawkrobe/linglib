@@ -33,6 +33,17 @@ self-consistent Boltzmann form in which a word's probability decays exponentiall
 divergence from the meaning (`ibUpdate`, `IsIBOptimum`, `isIBOptimum_of_forall_objective_le`), so
 that at finite `β` the optimal categories are soft (`IsIBOptimum.real_pos`).
 
+The cognitive source is the least informative source of the SI (§2). A least informative prior
+of a naming distribution maximizes the entropy of the meaning less its conditional entropy given
+the word (`IsLeastInformative`, eq. S10); that objective is the complexity of the lexicon
+(`measureEntropy_sub_condEntropy`, eq. S11), so the least informative priors are the
+capacity-achieving priors (`isLeastInformative_iff`) and, with positive mass everywhere, the
+fixed points of the Blahut–Arimoto update of [blahut-1972] and [arimoto-1972]
+(`IsLeastInformative.eq_blahutArimoto`). The complexity is also the word average of the
+divergence of the posterior from the prior (`complexity_eq_sum_klDiv_posterior`, eq. S12), and the
+universal source averages the least informative priors of the languages (`averagePrior`,
+eq. S13).
+
 ## Implementation notes
 
 * The information quantities are the mutual informations `Im[·]` of `InformationTheory`, and
@@ -63,6 +74,10 @@ that at finite `β` the optimal categories are soft (`IsIBOptimum.real_pos`).
 * [N. Tishby, F. C. Pereira and W. Bialek, *The information bottleneck method*
   (1999)][tishby-pereira-bialek-1999]
 * [C. E. Shannon, *A Mathematical Theory of Communication* (1948)][shannon-1948]
+* [R. E. Blahut, *Computation of channel capacity and rate-distortion functions*
+  (1972)][blahut-1972]
+* [S. Arimoto, *An algorithm for computing the capacity of arbitrary discrete memoryless
+  channels* (1972)][arimoto-1972]
 -/
 
 @[expose] public section
@@ -136,26 +151,13 @@ private theorem integral_compProd (f : M × W → ℝ) :
   refine sum_congr rfl fun w _ => ?_
   rw [Measure.compProd_real_singleton, smul_eq_mul, mul_assoc]
 
-omit [Fintype W] in
-private theorem comp_real_mul_posterior_real (m : M) (w : W) :
-    (encoder ∘ₘ source).real {w} * ((encoder†source) w).real {m}
-      = source.real {m} * (encoder m).real {w} := by
-  obtain hw | hw := eq_or_ne ((encoder ∘ₘ source) {w}) 0
-  · have h0 : source {m} * encoder m {w} = 0 := by
-      rw [Measure.comp_apply_singleton, sum_eq_zero_iff] at hw
-      exact hw m (mem_univ m)
-    rw [measureReal_def, hw, ENNReal.toReal_zero, zero_mul, measureReal_def, measureReal_def,
-      ← ENNReal.toReal_mul, h0, ENNReal.toReal_zero]
-  · rw [posterior_real_singleton encoder source hw, mul_div_cancel₀]
-    rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
-
 /-- Reweighting each word's posterior over meanings by the word marginal recovers the joint
 distribution of meanings and words. -/
 private theorem integral_compProd_eq_sum_posterior (f : M × W → ℝ) :
     ∫ p, f p ∂(source ⊗ₘ encoder)
       = ∑ w, (encoder ∘ₘ source).real {w} * ∑ m, ((encoder†source) w).real {m} * f (m, w) := by
   rw [integral_compProd]
-  simp_rw [mul_sum, ← mul_assoc, comp_real_mul_posterior_real]
+  simp_rw [mul_sum, ← mul_assoc, comp_real_mul_posterior_real encoder source]
   exact sum_comm
 
 omit [Fintype W] [MeasurableSingletonClass W] in
@@ -406,5 +408,70 @@ theorem efficiencyLoss_nonneg {β : ℝ} (hβ : 0 < β)
       objective meanings source encoder' β ≤ objective meanings source q β) :
     0 ≤ efficiencyLoss meanings source encoder encoder' β :=
   div_nonneg (sub_nonneg.2 (hmin encoder)) hβ.le
+
+/-! ### The least informative source -/
+
+section LeastInformative
+
+omit [Nonempty M] [IsProbabilityMeasure source] [IsMarkovKernel encoder] [Fintype W] [Fintype M]
+  [MeasurableSingletonClass M] [MeasurableSingletonClass W] in
+/-- A least informative prior for a naming distribution (SI eq. S10): a prior over the meanings
+maximizing the entropy of the meaning less its conditional entropy given the word. -/
+def IsLeastInformative : Prop :=
+  ∀ p : ProbabilityMeasure M,
+    Hm[(p : Measure M)] - H[Prod.fst | Prod.snd ; (p : Measure M) ⊗ₘ encoder]
+      ≤ Hm[source] - H[Prod.fst | Prod.snd ; source ⊗ₘ encoder]
+
+omit [Nonempty M] in
+/-- SI eq. S11: the objective of a least informative prior is the complexity of the lexicon under
+that prior, the information the words carry about the meanings. -/
+theorem measureEntropy_sub_condEntropy :
+    Hm[source] - H[Prod.fst | Prod.snd ; source ⊗ₘ encoder] = complexity source encoder := by
+  rw [condEntropy_fst_snd, Measure.fst_compProd, complexity]
+  ring
+
+omit [Nonempty M] in
+/-- SI eq. S11: the least informative priors are the capacity-achieving priors of the naming
+distribution, under which the lexicon is maximally complex. -/
+theorem isLeastInformative_iff :
+    IsLeastInformative source encoder ↔ complexity source encoder = channelCapacity encoder := by
+  rw [IsLeastInformative, measureEntropy_sub_condEntropy]
+  simp only [measureEntropy_sub_condEntropy]
+  refine ⟨fun h => le_antisymm (measureMutualInfo_compProd_le_channelCapacity encoder source)
+    (Real.iSup_le h (measureMutualInfo_nonneg _)), fun h p => ?_⟩
+  rw [h]
+  exact measureMutualInfo_compProd_le_channelCapacity encoder p
+
+/-- SI eq. S12: the complexity is the word average of the divergence of the posterior over
+meanings from the prior, so a least informative prior keeps the posteriors as far from it as
+the lexicon allows. -/
+theorem complexity_eq_sum_klDiv_posterior :
+    complexity source encoder
+      = ∑ w, (encoder ∘ₘ source).real {w} * (klDiv ((encoder†source) w) source).toReal := by
+  rw [complexity, ← measureMutualInfo_map_swap, ← compProd_posterior_eq_map_swap,
+    measureMutualInfo_compProd, posterior_comp_self]
+
+/-- A least informative prior "can be evaluated using the Blahut–Arimoto algorithm" (SI §2.1):
+one of positive mass everywhere is a fixed point of the Blahut–Arimoto update. -/
+theorem IsLeastInformative.eq_blahutArimoto (h : IsLeastInformative source encoder)
+    (hsource : ∀ m, source {m} ≠ 0) : source = blahutArimoto encoder source :=
+  (eq_blahutArimoto_iff encoder source).1 ⟨(isLeastInformative_iff source encoder).1 h, hsource⟩
+
+end LeastInformative
+
+omit [Fintype M] [MeasurableSingletonClass M] [Nonempty M] in
+/-- SI eq. S13: the universal least informative source averages the least informative priors of
+`L` languages. -/
+noncomputable def averagePrior {L : ℕ} (priors : Fin L → Measure M) : Measure M :=
+  (L : ℝ≥0∞)⁻¹ • ∑ l, priors l
+
+omit [Fintype M] [MeasurableSingletonClass M] [Nonempty M] in
+instance {L : ℕ} [NeZero L] (priors : Fin L → Measure M)
+    [∀ l, IsProbabilityMeasure (priors l)] : IsProbabilityMeasure (averagePrior priors) := by
+  constructor
+  rw [averagePrior, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
+  simp only [measure_univ, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one,
+    smul_eq_mul]
+  exact ENNReal.inv_mul_cancel (by exact_mod_cast NeZero.ne L) (ENNReal.natCast_ne_top L)
 
 end ZaslavskyKempRegierTishby2018
