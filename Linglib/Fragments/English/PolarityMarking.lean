@@ -3,36 +3,23 @@ module
 public import Linglib.Semantics.Polarity.Marking
 
 /-!
-# English Polarity-Marking Strategies
-[wilder-2013]
+# English polarity marking
 
-English marks polarity reversal (contradiction of a negative assertion)
-with emphatic *do* — auxiliary *do* bearing a pitch accent in an
-affirmative sentence that contradicts a prior negative claim.
+English marks a switch from negative to positive polarity, the contradiction of a negative
+claim, with emphatic *do*: the auxiliary bears a pitch accent in an affirmative sentence that
+contradicts a prior negative one, *He doesn't like cats. He DOES like cats*. Wilder separates
+this Verum-focus use, focus on the truth of the proposition, from the contrastive-topic use in
+which *do* marks a topic shift, *He DOES like cats, but he doesn't like dogs*; only the first
+is a polarity-marking device, sentence-internal, available in contrast and in correction, and
+the English analogue of German Verum focus.
 
-[wilder-2013] distinguishes two uses of emphatic *do*:
+## Main definitions
 
-1. **Verum-focus *do*** — polarity focus on the truth value of the
-   proposition. Contradicts a prior negative assertion.
-   "He doesn't like cats." → "He DOES like cats."
-   This is the English analogue of German Verum focus.
+* `English.PolarityMarking.emphaticDo`: the Verum-focus use of emphatic *do*.
 
-2. **Contrastive-topic *do*** — *do* marks a contrastive topic shift,
-   not polarity focus per se. "He DOES like cats (, but he doesn't
-   like dogs)." This use is not polarity-specific and is not modeled
-   here.
+## References
 
-Only the VF use of emphatic *do* is formalized as a polarity-marking
-entry, since it is the strategy that participates in the
-polarity-contrast/correction paradigm alongside Dutch *wel* and
-German Verum focus.
-
-## Key properties
-
-- Sentence-internal (auxiliary in I°)
-- Available in both contrast and correction contexts
-- Prosodic: pitch accent falls on *do*
-- Strategy: `.verumFocus` — targets the assertion level, like German VF
+* [wilder-2013]
 -/
 
 @[expose] public section
@@ -41,26 +28,16 @@ namespace English.PolarityMarking
 
 open PolarityMarker (Strategy Env)
 
-/-- Emphatic *do* (Verum-focus use) — English polarity-marking strategy.
-    Pitch accent on auxiliary *do* in an affirmative sentence contradicting
-    a negative context. Sentence-internal (auxiliary in I°).
-    Available in both contrast and correction contexts.
-    [wilder-2013]: VF-*do* targets the assertion operator,
-    like German Verum focus. -/
-abbrev emphaticDo : PolarityMarker where
+/-- Emphatic *do* in its Verum-focus use, a pitch accent on the auxiliary of an affirmative
+sentence contradicting a negative one, available sentence-internally in contrast and in
+correction. -/
+def emphaticDo : PolarityMarker where
   label := "emphatic do"
   prosodicTarget := some "auxiliary do"
   environments := {.sentenceInternal, .contrast, .correction}
   strategy := .verumFocus
 
-def allPolarityMarkings : List PolarityMarker := [emphaticDo]
-
--- Per-entry verification theorems
-theorem emphaticDo_no_form : emphaticDo.form = none := rfl
-theorem emphaticDo_prosodicTarget : emphaticDo.prosodicTarget = some "auxiliary do" := rfl
-theorem emphaticDo_sentenceInternal : Env.sentenceInternal ∈ emphaticDo.environments := by decide
-theorem emphaticDo_contrastOk : Env.contrast ∈ emphaticDo.environments := by decide
-theorem emphaticDo_correctionOk : Env.correction ∈ emphaticDo.environments := by decide
-theorem emphaticDo_strategy : emphaticDo.strategy = .verumFocus := rfl
+/-- The polarity-marking devices. -/
+def markers : List PolarityMarker := [emphaticDo]
 
 end English.PolarityMarking

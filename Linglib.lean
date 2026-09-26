@@ -702,8 +702,6 @@ import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.PropositionalLexemes
-import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Reciprocals
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.TemporalDeictic

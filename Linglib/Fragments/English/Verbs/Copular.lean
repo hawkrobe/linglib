@@ -4,15 +4,29 @@ public import Linglib.Syntax.Category.Adjective.ClauseEmbedding
 public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# English Copular Predicate Fragment
+# English copular predicates
 
-English clause-embedding adjectives that appear in copular constructions:
-"be annoyed (that p)", "be right (that p)".
+This file defines the English predicates of the form *be* + adjective that embed a clause: the
+emotive factive *annoyed (that p)* and the veridical non-factive *right (that p)*, which
+entails its complement without presupposing it, both from Degen and Tonhauser's projection
+experiments, and *able (to VP)*, which Karttunen classes as a necessary-condition predicate,
+its negation entailing the negation of the complement while its affirmative does not entail the
+complement, the actuality entailment arising from perfective aspect, as Nadathur shows, and not
+from the lexicon. The adjectives are `ClauseEmbeddingAdjective` entries, and the copular verbs
+are their realization with *be*.
 
-The adjective entries use `ClauseEmbeddingAdjective` (cross-linguistic type);
-the copular realization ("be" + adjective) is English-specific. The
-`toVerb` helper constructs the combined form for bridge theorems
-that need a uniform `Verb` interface.
+## Main definitions
+
+* `English.Verbs.Copular.annoyed`, `English.Verbs.Copular.right`: the adjectives.
+* `English.Verbs.Copular.beAnnoyed`, `English.Verbs.Copular.beRight`,
+  `English.Verbs.Copular.beAble`: the copular verbs.
+
+## References
+
+* [degen-tonhauser-2021]
+* [degen-tonhauser-2022]
+* [karttunen-1971]
+* [nadathur-2023]
 -/
 
 @[expose] public section
@@ -21,47 +35,28 @@ namespace English.Verbs.Copular
 
 open ArgumentStructure
 
-/-- "annoyed (that p)" — emotive factive clause-embedding adjective.
-    [degen-tonhauser-2021], [degen-tonhauser-2022]: canonically factive. -/
-def beAnnoyed : ClauseEmbeddingAdjective where
+/-- *annoyed (that p)*, an emotive factive adjective. -/
+def annoyed : ClauseEmbeddingAdjective where
   form := "annoyed"
   factivity := some .full
 
-/-- "right (that p)" — veridical nonfactive clause-embedding adjective.
-    [degen-tonhauser-2021], [degen-tonhauser-2022]: veridical nonfactive.
-    Entails its complement but does not presuppose it. -/
-def beRight : ClauseEmbeddingAdjective where
+/-- *right (that p)*, a veridical non-factive adjective, which entails its complement without
+presupposing it. -/
+def right : ClauseEmbeddingAdjective where
   form := "right"
 
-/-- "able (to VP)" — copular predicate with infinitival complement.
-    [karttunen-1971] §11: necessary-only (negation → ¬VP; affirmative ↛ VP).
-    [nadathur-2023]: one-way positive, **aspect-governed** — the actuality
-    entailment arises in perfective contexts, not from the lexicon. Therefore
-    NO `implicative`: the entailment is not unconditional like *manage*.
+/-- *be annoyed (that p)*. -/
+def beAnnoyed : Verb := annoyed.toVerb "be"
 
-    Not modeled via `ClauseEmbeddingAdjective` because `toVerb` doesn't transfer
-    `controlType`. Constructed as a direct `Verb` instead. -/
+/-- *be right (that p)*. -/
+def beRight : Verb := right.toVerb "be"
+
+/-- *be able (to VP)*, a subject-control predicate whose negation entails the negation of its
+complement and whose affirmative entails the complement only under perfective aspect, so no
+implicative entry. -/
 def beAble : Verb where
   form := "be able"
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
 
 end English.Verbs.Copular
-
--- ════════════════════════════════════════════════════
--- § English copular realization
--- ════════════════════════════════════════════════════
-
-open ArgumentStructure in
-/-- Construct a `Verb` for an English copular predicate.
-    The copula contributes "be"; the adjective contributes the semantics.
-    This is English-specific — other languages realize clause-embedding
-    adjectives differently (zero copula, verbal adjectives, etc.). -/
-def ClauseEmbeddingAdjective.toVerb
-    (a : ClauseEmbeddingAdjective) : Verb where
-  form := "be " ++ a.form
-  frames := [a.frame]
-  factivity := a.factivity
-  attitude := a.attitude
-  opaqueContext := a.opaqueContext
-  complementSig := a.complementSig
