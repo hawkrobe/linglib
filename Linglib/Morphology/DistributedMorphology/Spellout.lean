@@ -13,11 +13,13 @@ position in its neighborhood; the module inventory and its ordering follow
 the Basque morphotactics. The focus-level rule types
 (`ImpoverishmentRule` and kin) rewrite one terminal inside
 its `Neighborhood`; the operations here move, remove, and merge the
-terminals themselves, which no focus-level rule can express.
+terminals themselves, which no focus-level rule can express. Each is a
+rewrite of the domain at the first of its neighborhoods (`Neighborhood.along`)
+that satisfies the rule's condition.
 
 Each operation carries its position-count law, so terminal/exponent
-misalignment is arithmetic: neighborhood rewriting and terminal
-metathesis preserve the count, obliteration and fusion decrease it, and
+misalignment is arithmetic: terminal metathesis preserves the count,
+obliteration and fusion never increase it, and
 `Spellout.length_pf` says insertion positions equal terminals after the
 modules — Fission multiplies exponents within a position (`scansion`),
 not positions. `winner?_retreat` (`VocabularyInsertion/Basic.lean`) supplies the
@@ -29,8 +31,10 @@ fusion feeding one insertion).
 
 ## Main declarations
 
-* `SpelloutDomain`, `mapNeighborhoods` — the domain and the zipper lift
-  of focus-level rewriting
+* `SpelloutDomain`, `rewriteFirst` — the domain, and rewriting it at its
+  first neighborhood satisfying a condition; the count laws
+  `length_rewriteFirst_le` and `length_rewriteFirst` hold because each
+  neighborhood reassembles to the domain (`Neighborhood.toList_of_mem_along`)
 * `ObliterationRule`, `TerminalMetathesisRule` — whole-terminal deletion
   (Obliteration) and adjacent-terminal swap, with first-match applicators
   and count laws
@@ -58,26 +62,49 @@ fusion feeding one insertion).
 
 namespace DistributedMorphology
 
-
 /-- A spell-out domain: the linear sequence of terminals handed over by
 the syntax at spell-out. -/
 abbrev SpelloutDomain (Bundle : Type*) := List Bundle
 
-variable {Bundle Ctx : Type*}
+variable {Bundle : Type*}
 
-/-- Apply `f` to every terminal in its neighborhood: position `i` sees the
-earlier terminals as `leftCtx` and the later ones as `rightCtx`, nearest
-first. The domain lift of a focus-level rule such as Impoverishment, and of
-Vocabulary Insertion. -/
-def mapNeighborhoods {C : Type*} (f : Neighborhood Bundle → C)
-    (d : SpelloutDomain Bundle) : List C :=
-  d.mapIdx fun i b => f ⟨b, (d.take i).reverse, d.drop (i + 1)⟩
+open Neighborhood (along toList_of_mem_along)
 
-/-- Neighborhood rewriting preserves the number of terminals. -/
-@[simp] theorem length_mapNeighborhoods {C : Type*} (f : Neighborhood Bundle → C)
-    (d : SpelloutDomain Bundle) :
-    (mapNeighborhoods f d).length = d.length := by
-  simp [mapNeighborhoods]
+/-! ### Rewriting at the first neighborhood -/
+
+/-- Rewrite a domain at its first neighborhood satisfying `p`, scanning left to
+right: `f n` for the first such `n`, the domain unchanged if there is none.
+Obliteration, terminal metathesis, and the domain lift of Fusion are its
+instances. -/
+def rewriteFirst (p : Neighborhood Bundle → Prop) [DecidablePred p]
+    (f : Neighborhood Bundle → SpelloutDomain Bundle) (d : SpelloutDomain Bundle) :
+    SpelloutDomain Bundle :=
+  ((along d).find? fun n ↦ decide (p n)).elim d f
+
+section RewriteFirst
+
+variable {p : Neighborhood Bundle → Prop} [DecidablePred p]
+  {f : Neighborhood Bundle → SpelloutDomain Bundle}
+
+/-- A rewrite that never lengthens a neighborhood's string never lengthens the
+domain. -/
+theorem length_rewriteFirst_le (hf : ∀ n, (f n).length ≤ n.toList.length)
+    (d : SpelloutDomain Bundle) : (rewriteFirst p f d).length ≤ d.length := by
+  unfold rewriteFirst
+  cases h : (along d).find? fun n ↦ decide (p n) with
+  | none => exact le_rfl
+  | some n => simpa [toList_of_mem_along d (List.mem_of_find?_eq_some h)] using hf n
+
+/-- A rewrite that preserves the length of each neighborhood's string preserves
+the number of terminals. -/
+theorem length_rewriteFirst (hf : ∀ n, (f n).length = n.toList.length)
+    (d : SpelloutDomain Bundle) : (rewriteFirst p f d).length = d.length := by
+  unfold rewriteFirst
+  cases h : (along d).find? fun n ↦ decide (p n) with
+  | none => rfl
+  | some n => simpa [toList_of_mem_along d (List.mem_of_find?_eq_some h)] using hf n
+
+end RewriteFirst
 
 /-- A whole-terminal deletion rule — [arregi-nevins-2012]'s Obliteration:
 the terminal whose neighborhood satisfies `condition` is removed
@@ -99,102 +126,51 @@ def ofBool (cond : Neighborhood Bundle → Bool) : ObliterationRule Bundle where
   condition n := cond n = true
   decCond n := inferInstanceAs (Decidable (cond n = true))
 
-/-- Apply the rule, scanning left to right: the first terminal whose
-neighborhood fires is dropped; otherwise the domain is unchanged.
-`leftCtx` is accumulated nearest first. -/
-def apply (rule : ObliterationRule Bundle) (d : SpelloutDomain Bundle) :
-    SpelloutDomain Bundle :=
-  go [] d
-where
-  /-- Scan with the already-passed terminals in `left`, nearest first. -/
-  go : List Bundle → SpelloutDomain Bundle → SpelloutDomain Bundle
-  | left, [] => left.reverse
-  | left, t :: rest =>
-    if rule.condition ⟨t, left, rest⟩ then left.reverse ++ rest
-    else go (t :: left) rest
-
-private theorem length_go_le (rule : ObliterationRule Bundle) :
-    ∀ (rest left : List Bundle),
-      (apply.go rule left rest).length ≤ left.length + rest.length := by
-  intro rest
-  induction rest with
-  | nil => intro left; simp [apply.go]
-  | cons t rest ih =>
-    intro left
-    rw [apply.go]
-    split
-    · simp only [List.length_append, List.length_reverse, List.length_cons]
-      omega
-    · have := ih (t :: left)
-      simp only [List.length_cons] at this ⊢
-      omega
+/-- Apply the rule: the first terminal whose neighborhood fires is dropped;
+otherwise the domain is unchanged. -/
+def apply (rule : ObliterationRule Bundle) : SpelloutDomain Bundle → SpelloutDomain Bundle :=
+  rewriteFirst rule.condition fun n ↦ n.leftCtx.reverse ++ n.rightCtx
 
 /-- Obliteration never increases the number of terminals. -/
 theorem length_apply_le (rule : ObliterationRule Bundle)
-    (d : SpelloutDomain Bundle) : (rule.apply d).length ≤ d.length := by
-  simpa [apply] using length_go_le rule d []
+    (d : SpelloutDomain Bundle) : (rule.apply d).length ≤ d.length :=
+  length_rewriteFirst_le (fun n ↦ by simp [Neighborhood.toList]) d
 
 end ObliterationRule
 
 /-- An adjacent-terminal swap rule — the terminal-order metathesis of
 [arregi-nevins-2012]'s Metathesis module (Basque Ergative Metathesis,
-[middleton-2026] (13)). `condition` sees the terminals left of the pair
-(nearest first), the pair itself, and the terminals to its right. -/
+[middleton-2026] (13)): where `condition` holds of a neighborhood, its focus
+swaps with the terminal to its right. -/
 structure TerminalMetathesisRule (Bundle : Type*) where
-  /-- Does the rule swap the pair `t₁ t₂` in this context? -/
-  condition : List Bundle → Bundle → Bundle → List Bundle → Prop
+  /-- Does the focus swap with the terminal to its right? -/
+  condition : Neighborhood Bundle → Prop
   /-- Decidability witness for `condition`. -/
-  decCond : ∀ left t₁ t₂ right, Decidable (condition left t₁ t₂ right)
+  decCond : DecidablePred condition
 
 namespace TerminalMetathesisRule
 
-instance (rule : TerminalMetathesisRule Bundle) (left) (t₁ t₂ : Bundle)
-    (right) : Decidable (rule.condition left t₁ t₂ right) :=
-  rule.decCond left t₁ t₂ right
+instance (rule : TerminalMetathesisRule Bundle) (n : Neighborhood Bundle) :
+    Decidable (rule.condition n) := rule.decCond n
 
 /-- Build a terminal-metathesis rule from a Boolean condition. -/
-def ofBool (cond : List Bundle → Bundle → Bundle → List Bundle → Bool) :
-    TerminalMetathesisRule Bundle where
-  condition left t₁ t₂ right := cond left t₁ t₂ right = true
-  decCond left t₁ t₂ right :=
-    inferInstanceAs (Decidable (cond left t₁ t₂ right = true))
+def ofBool (cond : Neighborhood Bundle → Bool) : TerminalMetathesisRule Bundle where
+  condition n := cond n = true
+  decCond n := inferInstanceAs (Decidable (cond n = true))
 
-/-- Apply the rule, scanning left to right: the first adjacent pair whose
-context fires is swapped; otherwise the domain is unchanged. -/
-def apply (rule : TerminalMetathesisRule Bundle)
-    (d : SpelloutDomain Bundle) : SpelloutDomain Bundle :=
-  go [] d
-where
-  /-- Scan with the already-passed terminals in `left`, nearest first. -/
-  go : List Bundle → SpelloutDomain Bundle → SpelloutDomain Bundle
-  | left, [] => left.reverse
-  | left, [t] => left.reverse ++ [t]
-  | left, t₁ :: t₂ :: rest =>
-    if rule.condition left t₁ t₂ rest then left.reverse ++ t₂ :: t₁ :: rest
-    else go (t₁ :: left) (t₂ :: rest)
-
-private theorem length_go (rule : TerminalMetathesisRule Bundle) :
-    ∀ (rest left : List Bundle),
-      (apply.go rule left rest).length = left.length + rest.length := by
-  intro rest
-  induction rest with
-  | nil => intro left; simp [apply.go]
-  | cons t rest ih =>
-    intro left
-    cases rest with
-    | nil => simp [apply.go]
-    | cons t₂ rest' =>
-      rw [apply.go]
-      split
-      · simp
-      · have := ih (t :: left)
-        simp only [List.length_cons] at this ⊢
-        omega
+/-- Apply the rule: the first focus that has a terminal to its right and whose
+neighborhood fires swaps with that terminal; otherwise the domain is unchanged. -/
+def apply (rule : TerminalMetathesisRule Bundle) :
+    SpelloutDomain Bundle → SpelloutDomain Bundle :=
+  rewriteFirst (fun n ↦ n.rightCtx ≠ [] ∧ rule.condition n) fun
+    | ⟨t₁, l, t₂ :: r⟩ => l.reverse ++ t₂ :: t₁ :: r
+    | n => n.toList
 
 /-- Terminal metathesis preserves the number of terminals. -/
 @[simp] theorem length_apply (rule : TerminalMetathesisRule Bundle)
-    (d : SpelloutDomain Bundle) : (rule.apply d).length = d.length := by
-  simpa [apply] using length_go rule d []
+    (d : SpelloutDomain Bundle) : (rule.apply d).length = d.length :=
+  length_rewriteFirst (fun | ⟨_, _, _ :: _⟩ => by simp [Neighborhood.toList]
+                           | ⟨_, _, []⟩ => rfl) d
 
 end TerminalMetathesisRule
 
@@ -202,28 +178,18 @@ namespace FusionRule
 
 variable {F : Type*}
 
-/-- The domain lift of Fusion: fuse the first adjacent pair the rule
-licenses; otherwise the domain is unchanged. -/
-def applyFirstAdjacent (rule : FusionRule F) :
-    SpelloutDomain (List F) → SpelloutDomain (List F)
-  | [] => []
-  | [b] => [b]
-  | b₁ :: b₂ :: rest =>
-    if rule.condition b₁ b₂ then (b₁ ++ b₂) :: rest
-    else b₁ :: applyFirstAdjacent rule (b₂ :: rest)
+/-- The domain lift of Fusion: the first terminal that fuses with the terminal
+to its right does so; otherwise the domain is unchanged. -/
+def applyFirstAdjacent (rule : FusionRule F) : SpelloutDomain (List F) → SpelloutDomain (List F) :=
+  rewriteFirst (fun n ↦ ∃ q ∈ n.rightCtx.head?, rule.condition n.focus q) fun
+    | ⟨p, l, q :: r⟩ => l.reverse ++ (p ++ q) :: r
+    | n => n.toList
 
 /-- Fusion never increases the number of terminals. -/
-theorem length_applyFirstAdjacent_le (rule : FusionRule F) :
-    ∀ d : SpelloutDomain (List F), (rule.applyFirstAdjacent d).length ≤ d.length
-  | [] => by simp [applyFirstAdjacent]
-  | [b] => by simp [applyFirstAdjacent]
-  | b₁ :: b₂ :: rest => by
-    rw [applyFirstAdjacent]
-    split
-    · simp
-    · have := length_applyFirstAdjacent_le rule (b₂ :: rest)
-      simp only [List.length_cons] at this ⊢
-      omega
+theorem length_applyFirstAdjacent_le (rule : FusionRule F) (d : SpelloutDomain (List F)) :
+    (rule.applyFirstAdjacent d).length ≤ d.length :=
+  length_rewriteFirst_le (fun | ⟨_, _, _ :: _⟩ => by simp [Neighborhood.toList]
+                              | ⟨_, _, []⟩ => le_rfl) d
 
 end FusionRule
 
@@ -268,7 +234,7 @@ def run (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
 /-- The PF output: one insertion slot per surviving position. -/
 def pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     List (List F) :=
-  mapNeighborhoods s.insert (s.run d)
+  (along (s.run d)).map s.insert
 
 /-- Exponent slots equal terminals after the modules: the exponent count
 diverges from the syntactic terminal count only through the modules. -/

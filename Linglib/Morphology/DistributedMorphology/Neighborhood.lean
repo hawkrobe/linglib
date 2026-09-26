@@ -22,6 +22,8 @@ Principle's inclusion of sites, `⊆`.
   every positioned feature of `s` is one of `n`.
 * `Neighborhood.positioned`, `Neighborhood.toFinset`: the positioned features,
   listed and as a finite set.
+* `Neighborhood.around`, `Neighborhood.along`: the neighborhood of a position of
+  a string, and each terminal of a string in its neighborhood.
 
 ## Main results
 
@@ -32,6 +34,9 @@ Principle's inclusion of sites, `⊆`.
   features are on the focus.
 * `Neighborhood.card_toFinset_strictMono`: a strictly larger site has strictly
   more positioned features, the ground of the Subset Principle's specificity.
+* `Neighborhood.toList_of_mem_along`, `Neighborhood.nth_around`: each
+  neighborhood of a string reassembles to it, and terminal `k` stands at offset
+  `k - i` from position `i`.
 
 ## Implementation notes
 
@@ -111,6 +116,60 @@ variable [Inhabited Bundle] (n : Neighborhood Bundle) (k : ℕ)
 @[simp] theorem nth_neg_natCast_add_one : n.nth (-(k + 1)) = n.leftCtx.getD k default := rfl
 
 end nth
+
+/-! ### Neighborhoods of a string -/
+
+section String
+
+variable (d : List Bundle) (i : ℕ) (b : Bundle)
+
+/-- The terminals of a neighborhood, in linear order. -/
+def toList (n : Neighborhood Bundle) : List Bundle := n.leftCtx.reverse ++ n.focus :: n.rightCtx
+
+/-- The neighborhood of position `i` of the string `d`, with `b` in focus: the
+earlier terminals to its left and the later ones to its right, nearest first. -/
+def around : Neighborhood Bundle := ⟨b, (d.take i).reverse, d.drop (i + 1)⟩
+
+/-- Each terminal of the string `d` in its neighborhood, in order. -/
+def along : List (Neighborhood Bundle) := d.mapIdx (around d)
+
+@[simp] theorem toList_ofBundle : (ofBundle b).toList = [b] := rfl
+
+@[simp] theorem focus_around : (around d i b).focus = b := rfl
+
+/-- Reassembling the neighborhood of position `i` gives the string with `b` at `i`. -/
+theorem toList_around (h : i < d.length) : (around d i b).toList = d.set i b := by
+  simp [toList, around, List.set_eq_take_append_cons_drop, h]
+
+/-- Terminal `k` of the string sits at offset `k - i` from position `i`. -/
+theorem nth_around [Inhabited Bundle] {k : ℕ} (hi : i ≤ d.length) (hk : k ≠ i) :
+    (around d i b).nth (k - i) = d.getD k default := by
+  rcases Nat.lt_or_gt_of_ne hk with hk | hk
+  · obtain ⟨m, rfl⟩ : ∃ m, i = k + m + 1 := ⟨i - k - 1, by omega⟩
+    rw [show (k - ↑(k + m + 1) : ℤ) = -(m + 1) by omega, nth_neg_natCast_add_one]
+    simp only [around, List.getD_eq_getElem?_getD]
+    rw [List.getElem?_reverse (by simp; omega), List.length_take_of_le hi,
+      List.getElem?_take_of_lt (by omega), show k + m + 1 - 1 - m = k by omega]
+  · obtain ⟨m, rfl⟩ : ∃ m, k = i + m + 1 := ⟨k - i - 1, by omega⟩
+    rw [show (↑(i + m + 1) - i : ℤ) = m + 1 by omega, nth_natCast_add_one]
+    simp only [around, List.getD_eq_getElem?_getD, List.getElem?_drop]
+    rw [show i + 1 + m = i + m + 1 by omega]
+
+@[simp] theorem length_along : (along d).length = d.length := List.length_mapIdx
+
+@[simp] theorem getElem_along (h : i < (along d).length) :
+    (along d)[i] = around d i (d[i]'(by simpa using h)) :=
+  List.getElem_mapIdx
+
+@[simp] theorem map_focus_along : (along d).map focus = d :=
+  List.ext_getElem (by simp) fun _ _ _ ↦ by simp
+
+/-- Each neighborhood of a string reassembles to the string. -/
+theorem toList_of_mem_along {n : Neighborhood Bundle} (h : n ∈ along d) : n.toList = d := by
+  obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp h
+  rw [toList_around _ _ _ hi, List.set_getElem_self]
+
+end String
 
 /-! ### Positioned features -/
 

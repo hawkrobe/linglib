@@ -43,6 +43,9 @@ second parameter: they persist, or the item's features are rewritten away.
   the outer morphemes bare, so outward-looking conditioning sees features
   only.
 * `length_heads_insertAll`: insertion adds no morpheme.
+* `nth_contextAt_hierarchical`, `nth_contextAt_hierarchical_root`: under
+  hierarchy, head `j` stands at offset `j - i` from head `i` and the root at
+  `-(i + 1)`.
 
 ## References
 
@@ -178,8 +181,8 @@ def neighbors (i : ℕ) : Option (Morpheme F E) × Option (Morpheme F E) :=
 
 /-- The context head `i` presents to Vocabulary Insertion: its features in
 focus; inner context on the left, outer on the right, nearest first — under
-concatenation the unpruned neighbors, under hierarchy every morpheme of the
-complex head by distance. -/
+concatenation the unpruned neighbors, under hierarchy the neighborhood of head
+`i` in the complex head read from the root outward. -/
 def contextAt (loc : Locality) (expFeatures : E → List F) (i : ℕ) : Neighborhood (List F) :=
   match loc with
   | .concatenation =>
@@ -187,9 +190,28 @@ def contextAt (loc : Locality) (expFeatures : E → List F) (i : ℕ) : Neighbor
     ⟨(w.heads[i]?.map (·.feats)).getD [], (inner.map fun s => [visible expFeatures s]).getD [],
       (outer.map fun s => [visible expFeatures s]).getD []⟩
   | .hierarchical =>
-    ⟨(w.heads[i]?.map (·.feats)).getD [],
-      ((w.heads.take i).reverse ++ [w.root]).map (visible expFeatures),
-      (w.heads.drop (i + 1)).map (visible expFeatures)⟩
+    .around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
+      ((w.heads[i]?.map (·.feats)).getD [])
+
+/-- Under hierarchy, context is by distance: head `j` stands at offset `j - i`
+from head `i`. -/
+theorem nth_contextAt_hierarchical {expFeatures : E → List F} {i j : ℕ}
+    (hi : i ≤ w.heads.length) (hj : j ≠ i) :
+    (w.contextAt isNull .hierarchical expFeatures i).nth (j - i) =
+      (w.heads.map (visible expFeatures)).getD j [] := by
+  have := Neighborhood.nth_around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
+    ((w.heads[i]?.map (·.feats)).getD []) (k := j + 1) (by simpa using hi) (by omega)
+  simpa [contextAt, show ((j + 1 : ℕ) - (i + 1 : ℕ) : ℤ) = j - i by omega,
+    show (default : List F) = [] from rfl] using this
+
+/-- Under hierarchy, the root stands at offset `-(i + 1)` from head `i`. -/
+theorem nth_contextAt_hierarchical_root {expFeatures : E → List F} {i : ℕ}
+    (hi : i ≤ w.heads.length) :
+    (w.contextAt isNull .hierarchical expFeatures i).nth (-(i + 1)) =
+      visible expFeatures w.root := by
+  have := Neighborhood.nth_around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
+    ((w.heads[i]?.map (·.feats)).getD []) (k := 0) (by simpa using hi) (by omega)
+  simpa [contextAt, show ((0 : ℕ) - (i + 1 : ℕ) : ℤ) = -(i + 1) by omega] using this
 
 /-! ### Insertion -/
 
