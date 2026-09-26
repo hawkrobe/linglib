@@ -868,7 +868,6 @@ import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Extraction
 import Linglib.Fragments.Mayan.Tseltal.Agreement
-import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
 import Linglib.Fragments.Mayan.Yukatek.Agreement
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
