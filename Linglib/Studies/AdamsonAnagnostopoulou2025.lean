@@ -247,8 +247,8 @@ theorem no_aba (v : List (VocabularyItem Node Gender)) (hinj : (v.map exponent).
     (hn : Realizes v (Neighborhood.ofBundle [.cls]) φ)
     (hf : Realizes v (Neighborhood.ofBundle [.fem, .masc, .cls]) φ) :
     Realizes v (Neighborhood.ofBundle [.masc, .cls]) φ :=
-  Realizes.of_realizes hinj (fun _ h => List.Subset.trans h (by decide))
-    (fun _ h => List.Subset.trans h (by decide)) hn hf
+  Realizes.of_realizes hinj (fun _ h ↦ subset_trans h (by decide))
+    (fun _ h ↦ subset_trans h (by decide)) hn hf
 
 end Greek
 

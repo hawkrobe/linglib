@@ -110,8 +110,7 @@ theorem some_realize (c : Context) :
   have happ : Morphology.Exponence.applicable (v.items ++ [[] ⟷ v.elsewhere])
       (↑[c] : Neighborhood (List Context)) =
       Morphology.Exponence.applicable v.items ↑[c] ++ [[] ⟷ v.elsewhere] := by
-    simp [Morphology.Exponence.applicable, List.filter_append, VocabularyItem.applies_iff,
-      Neighborhood.subset_def]
+    simp [Morphology.Exponence.applicable, List.filter_append, VocabularyItem.applies_iff]
   simp only [realize, subsetPrinciple, Morphology.Exponence.realize,
     Morphology.Exponence.selectBy, happ, List.argmax_concat]
   cases (Morphology.Exponence.applicable v.items ↑[c]).argmax VocabularyItem.specificity with
