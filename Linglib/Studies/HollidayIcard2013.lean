@@ -1,7 +1,8 @@
 module
 
-public import Linglib.Logic.ComparativeProbability.WorldOrdering
+public import Linglib.Core.Order.Probability.Lift
 public import Linglib.Core.Order.Probability.Completeness
+public import Linglib.Logic.ComparativeProbability.Defs
 
 /-!
 # Holliday and Icard (2013): Measure semantics and qualitative semantics for epistemic modals
@@ -29,14 +30,13 @@ from intuitive entailments.
 
 ## Implementation notes
 
-* The order theory of both liftings and the measure classes are substrate; Figure 1's patterns
-  and the paper's axiom schemas (`Mon`, `Tran`, `A`, `BT`, as unbundled mixin classes) are the
-  paper's own apparatus and live here. Each pattern is derived once from the weakest axioms,
-  and a model discharges it by instance resolution: the measures carry every axiom, and a
-  world-ordering model carries a preorder on worlds, so both lifts are monotone and
-  transitive and the m-lifting of a finite preorder reverses complements. V6, V12 for the
-  l-lifting and V13 for the m-lifting use the lifts' own structure. V8–V10 are omitted, as in
-  Figure 1.
+* The axioms of comparative probability, the measure classes and the order theory of both
+  liftings are substrate (`Core/Order/Probability`); Figure 1's patterns are the paper's own
+  apparatus and live here. Each pattern is derived once from the weakest axioms, and a model
+  discharges it by instance resolution: the measures carry every axiom, and a world-ordering
+  model carries a preorder on worlds, so both lifts are monotone and transitive and the
+  m-lifting of a finite preorder reverses complements. V6, V12 for the l-lifting and V13 for
+  the m-lifting use the lifts' own structure. V8–V10 are omitted, as in Figure 1.
 * The refutations are countermodels: the uniform measure on three worlds for the measure
   classes, and the indiscriminate world order (every world at least as good as every other) on
   two or three worlds for the liftings.
@@ -119,48 +119,16 @@ def patternI3 : Prop := ∀ a b : α, Probably r a → r a b
 
 end Patterns
 
-/-! ### The axiom schemas as mixins
+/-! ### The patterns from the axioms
 
-The paper's logics are axiom schemas over the comparative (Figures 4–6): monotonicity `Mon`,
-transitivity `Tran` (mathlib's `IsTrans`), qualitative additivity `A` and non-triviality `BT`.
-Complement reversal, `a ≽ b → bᶜ ≽ aᶜ`, is not an axiom of the paper's logics but the property
-through which `A` yields V11 and V12, and the one the m-lifting shares with the measures. Each
-is an unbundled `Prop`-class, so a pattern is proved once from the weakest axioms and every
-model discharges it by instance resolution. -/
+The paper's logics are axiom schemas over the comparative (Figures 4–6): monotonicity
+`Mon`, transitivity `Tran`, qualitative additivity `A` and non-triviality `BT`, the mixin
+classes of `Core/Order/Probability/Defs`. Each pattern is derived once from the weakest
+axioms; a model discharges it by instance resolution. -/
 
-section Axioms
+section Derivations
 
-variable {α : Type*} [BooleanAlgebra α]
-
-/-- `Mon` (monotonicity): larger events are at least as likely. -/
-class IsLikelihoodMono (r : α → α → Prop) : Prop where
-  mono : ∀ a b : α, a ≤ b → r b a
-
-/-- Complement reversal: `a ≽ b → bᶜ ≽ aᶜ`. -/
-class IsComplementReversing (r : α → α → Prop) : Prop where
-  complRev : ∀ a b : α, r a b → r bᶜ aᶜ
-
-/-- `A` (qualitative additivity): `a ≽ b ↔ (a \ b) ≽ (b \ a)`. -/
-class IsQualitativeAdditive (r : α → α → Prop) : Prop where
-  qadd : ∀ a b : α, r a b ↔ r (a \ b) (b \ a)
-
-/-- `BT` (non-triviality): `⊥` is not at least as likely as `⊤`. -/
-class IsNontrivial (r : α → α → Prop) : Prop where
-  bot_not_ge_top : ¬ r ⊥ ⊤
-
-export IsLikelihoodMono (mono)
-export IsComplementReversing (complRev)
-export IsQualitativeAdditive (qadd)
-
-/-- Qualitative additivity implies complement reversal: `bᶜ \ aᶜ = a \ b` and
-`aᶜ \ bᶜ = b \ a` turn the additivity equivalence for `bᶜ, aᶜ` into the one for `a, b`. -/
-instance (priority := 100) instComplementReversingOfQualitativeAdditive
-    {r : α → α → Prop} [h : IsQualitativeAdditive r] : IsComplementReversing r where
-  complRev a b hab := by
-    rw [h.qadd bᶜ aᶜ, compl_sdiff_compl, compl_sdiff_compl]
-    exact (h.qadd a b).mp hab
-
-variable {r : α → α → Prop}
+variable {α : Type*} [BooleanAlgebra α] variable {r : α → α → Prop}
 
 /-- V1 holds for **any** relation: it is pure logic about `Strict` and double complement. -/
 theorem patternV1_holds : patternV1 r := by
@@ -233,54 +201,7 @@ theorem patternV13_of [IsLikelihoodMono r] [IsQualitativeAdditive r] : patternV1
   have hx := (qadd b (a ⊔ b)).mp hc
   rwa [hb, hab] at hx
 
-end Axioms
-
-/-! ### The models
-
-Every finitely and every qualitatively additive measure carries all four axioms. The lifts
-inherit transitivity from the world relation (`Core.Order.Domination`), monotonicity needs
-reflexivity, and complement reversal holds for the m-lifting of a finite preorder. -/
-
-section Models
-
-variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
-
-instance (m : FinAddMeasure K W) : IsLikelihoodMono m.inducedGe :=
-  ⟨m.toQualitativeProbability.mono'⟩
-
-instance (m : FinAddMeasure K W) : IsTrans (Set W) m.inducedGe :=
-  ⟨fun _ _ _ hab hbc ↦ m.toQualitativeProbability.trans hbc hab⟩
-
-instance (m : FinAddMeasure K W) : IsQualitativeAdditive m.inducedGe :=
-  ⟨fun A B ↦ m.toQualitativeProbability.additive B A⟩
-
-instance (m : FinAddMeasure K W) : IsNontrivial m.inducedGe :=
-  ⟨m.toQualitativeProbability.nonTrivial⟩
-
-instance (m : QualAddMeasure K W) : IsLikelihoodMono m.inducedGe :=
-  ⟨m.toQualitativeProbability.mono'⟩
-
-instance (m : QualAddMeasure K W) : IsTrans (Set W) m.inducedGe :=
-  ⟨fun _ _ _ hab hbc ↦ m.toQualitativeProbability.trans hbc hab⟩
-
-instance (m : QualAddMeasure K W) : IsQualitativeAdditive m.inducedGe :=
-  ⟨fun A B ↦ m.toQualitativeProbability.additive B A⟩
-
-instance (m : QualAddMeasure K W) : IsNontrivial m.inducedGe :=
-  ⟨m.toQualitativeProbability.nonTrivial⟩
-
-variable {ge_w : W → W → Prop}
-
-instance [Std.Refl ge_w] : IsLikelihoodMono (DominationLift ge_w) :=
-  ⟨fun _ _ h ↦ dominationLift_of_subset h⟩
-
-instance [Std.Refl ge_w] : IsLikelihoodMono (MatchingLift ge_w) :=
-  ⟨fun _ _ h ↦ matchingLift_of_subset h⟩
-
-instance [Finite W] [IsPreorder W ge_w] : IsComplementReversing (MatchingLift ge_w) :=
-  ⟨fun _ _ ↦ MatchingLift.compl⟩
-
-end Models
+end Derivations
 
 /-! ### Fact 1: Kratzer's world-ordering semantics -/
 

@@ -241,4 +241,40 @@ def FinAddMeasure.toQualitativeProbability (m : FinAddMeasure K W) :
 
 end
 
+/-! ### The induced orders carry the axioms
+
+Both induced orders are the `ge` of a qualitative probability order, so the mixin
+instances transfer; they are restated for `inducedGe` so that instance resolution finds
+them without unfolding. -/
+
+section
+
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {W : Type*}
+
+instance (m : QualAddMeasure K W) : IsLikelihoodMono m.inducedGe :=
+  ⟨m.toQualitativeProbability.mono'⟩
+
+instance (m : QualAddMeasure K W) : IsTrans (Set W) m.inducedGe :=
+  ⟨fun _ _ _ hab hbc ↦ m.toQualitativeProbability.trans hbc hab⟩
+
+instance (m : QualAddMeasure K W) : IsQualitativeAdditive m.inducedGe :=
+  ⟨fun A B ↦ m.toQualitativeProbability.additive B A⟩
+
+instance (m : QualAddMeasure K W) : IsNontrivial m.inducedGe :=
+  ⟨m.toQualitativeProbability.nonTrivial⟩
+
+instance (m : FinAddMeasure K W) : IsLikelihoodMono m.inducedGe :=
+  ⟨m.toQualitativeProbability.mono'⟩
+
+instance (m : FinAddMeasure K W) : IsTrans (Set W) m.inducedGe :=
+  ⟨fun _ _ _ hab hbc ↦ m.toQualitativeProbability.trans hbc hab⟩
+
+instance (m : FinAddMeasure K W) : IsQualitativeAdditive m.inducedGe :=
+  ⟨fun A B ↦ m.toQualitativeProbability.additive B A⟩
+
+instance (m : FinAddMeasure K W) : IsNontrivial m.inducedGe :=
+  ⟨m.toQualitativeProbability.nonTrivial⟩
+
+end
+
 end ComparativeProbability

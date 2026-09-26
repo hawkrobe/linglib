@@ -1,32 +1,32 @@
 module
 
-public import Linglib.Logic.ComparativeProbability.Defs
 public import Linglib.Core.Order.Domination
+public import Linglib.Core.Order.Probability.Defs
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
-# World-ordering semantics: the l-lifting as a comparative-probability model
+# The lifts as comparative probability orders
 
-[lewis-1973]'s comparative possibility lifts an ordering of worlds to an
-ordering of propositions (`DominationLift`); [holliday-icard-2013] (§5) take it
-as a semantics for comparative epistemic modals with complete logic WJR
-([halpern-2003] Thm. 7.5.1). This file gives the model-theoretic content of that
-completeness: a monotone, transitive comparison relation is an l-lifting of some
-reflexive world relation **iff** it satisfies right-union (axiom `J`) and
-determination by singletons.
+Both lifts of a reflexive relation are monotone likelihood orders, and the matching lift
+of a finite preorder reverses complements; transitivity they inherit in
+`Core/Order/Domination`. Over a total relation the strict domination lift is the ∃∀
+comparative possibility of [lewis-1973]. A monotone, transitive relation on `Set W` is
+the domination lift of some reflexive relation on `W` **iff** it is right-union closed
+and determined by singletons: [halpern-2003]'s representation (Thm. 7.5.1a), the
+model-theoretic core of the completeness of the logic WJR in [holliday-icard-2013].
 
 ## Main statements
 
-* `strict_dominationLift_iff` — over a total world relation the strict lift is
-  Lewis's ∃∀ clause.
-* `exists_dominationLift_repr`, `dominationLift_repr_iff` — the WJR
-  representation and its round trip.
+* `strict_dominationLift_iff` — over a total relation the strict lift is Lewis's ∃∀
+  clause.
+* `exists_dominationLift_repr`, `dominationLift_repr_iff` — the representation and its
+  round trip.
 
 ## References
 
 * [lewis-1973]
-* [holliday-icard-2013]
 * [halpern-2003]
+* [holliday-icard-2013]
 -/
 
 @[expose] public section
@@ -37,21 +37,30 @@ section
 
 variable {α : Type*} {r : α → α → Prop}
 
+instance [Std.Refl r] : IsLikelihoodMono (DominationLift r) :=
+  ⟨fun _ _ h ↦ dominationLift_of_subset h⟩
+
+instance [Std.Refl r] : IsLikelihoodMono (MatchingLift r) :=
+  ⟨fun _ _ h ↦ matchingLift_of_subset h⟩
+
+instance [Finite α] [IsPreorder α r] : IsComplementReversing (MatchingLift r) :=
+  ⟨fun _ _ ↦ MatchingLift.compl⟩
+
 /-- Over a **total** relation, the strict l-lifting collapses to Lewis's
 ∃∀ comparative possibility: some A-point strictly dominates every B-point. -/
 theorem strict_dominationLift_iff (hTotal : ∀ a b, r a b ∨ r b a)
     (A B : Set α) :
-    ComparativeProbability.Strict (DominationLift r) A B ↔
+    Strict (DominationLift r) A B ↔
     ∃ a ∈ A, ∀ b ∈ B, r a b ∧ ¬ r b a := by
   constructor
   · rintro ⟨-, hn⟩
     unfold DominationLift at hn
     push Not at hn
     obtain ⟨a, haA, ha⟩ := hn
-    exact ⟨a, haA, fun b hbB =>
+    exact ⟨a, haA, fun b hbB ↦
       ⟨(hTotal a b).resolve_right (ha b hbB), ha b hbB⟩⟩
   · rintro ⟨a, haA, ha⟩
-    refine ⟨fun b hbB => ⟨a, haA, (ha b hbB).1⟩, fun h => ?_⟩
+    refine ⟨fun b hbB ↦ ⟨a, haA, (ha b hbB).1⟩, fun h ↦ ?_⟩
     obtain ⟨b, hbB, hba⟩ := h a haA
     exact (ha b hbB).2 hba
 
@@ -67,7 +76,7 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
   classical
   suffices ∀ (s : Finset W), (∀ b, b ∈ s → ge A {b}) → ge A (↑s) by
     rw [← Set.coe_toFinset B]
-    exact this B.toFinset (fun b hb => h b (Set.mem_toFinset.mp hb))
+    exact this B.toFinset (fun b hb ↦ h b (Set.mem_toFinset.mp hb))
   intro s
   induction s using Finset.induction_on with
   | empty =>
@@ -78,7 +87,7 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
     intro hsub
     rw [Finset.coe_insert]
     exact hJ A _ _ (hsub _ (Finset.mem_insert_self _ _))
-      (ih (fun c hc => hsub c (Finset.mem_insert_of_mem hc)))
+      (ih (fun c hc ↦ hsub c (Finset.mem_insert_of_mem hc)))
 
 /-- **Theorem 2** ([halpern-2003], Thm. 7.5.1a; [holliday-icard-2013]):
     a monotone, transitive comparison relation satisfying J (right-union)
@@ -99,7 +108,7 @@ theorem exists_dominationLift_repr {W : Type*} [Fintype W]
     (hJ : RightUnion ge) (hDS : DeterminedBySingletons ge) :
     ∃ (ge_w : W → W → Prop) (_ : ∀ w, ge_w w w),
       ∀ A B, ge A B ↔ DominationLift ge_w A B := by
-  refine ⟨fun u v => ge {u} {v}, fun w => hMono {w} {w} subset_rfl, fun A B => ?_⟩
+  refine ⟨fun u v ↦ ge {u} {v}, fun w ↦ hMono {w} {w} subset_rfl, fun A B ↦ ?_⟩
   constructor
   · intro hAB b hbB
     have hBb : ge B {b} := hMono {b} B (Set.singleton_subset_iff.mpr hbB)
@@ -127,7 +136,7 @@ theorem dominationLift_repr_iff {W : Type*} [Fintype W]
     RightUnion ge ∧ DeterminedBySingletons ge := by
   constructor
   · rintro ⟨ge_w, -, hiff⟩
-    refine ⟨fun A B C hab hac => ?_, fun A b hA => ?_⟩
+    refine ⟨fun A B C hab hac ↦ ?_, fun A b hA ↦ ?_⟩
     · exact (hiff _ _).mpr (rightUnion_dominationLift _ _ _
         ((hiff _ _).mp hab) ((hiff _ _).mp hac))
     · obtain ⟨a, ha, hab⟩ := determinedBySingletons_dominationLift A b ((hiff _ _).mp hA)
