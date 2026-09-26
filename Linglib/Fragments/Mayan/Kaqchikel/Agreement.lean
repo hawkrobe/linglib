@@ -99,9 +99,8 @@ def setBExponent : ExponentTable :=
 
 /-! ### Argument positions -/
 
-/-- Every position triggers φ-agreement — Kaqchikel is non-differential
-    (contrast `Mam.IsPhiAgreed`); R/T default to
-    participating. -/
+/-- Every position triggers φ-agreement — Kaqchikel is non-differential, where San Juan
+    Atitán Mam leaves objects unagreed (`Mam.defaultSetB`); R/T default to participating. -/
 def IsPhiAgreed : ArgumentRole → Prop
   | .A | .P | .S | .R | .T => True
 

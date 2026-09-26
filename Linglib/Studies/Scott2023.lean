@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Fragments.Mayan.Mam.Agreement
+public import Linglib.Fragments.Mayan.Mam.Pronouns
+public import Linglib.Studies.Harbour2016
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Morphology.DistributedMorphology.Impoverishment
 public import Linglib.Syntax.Minimalist.Probe.Basic
@@ -36,9 +38,11 @@ dissertation's judgments (`Data/Examples/Scott2023`) instantiate the derivation
 ## Implementation notes
 
 * Features are Harbour's bivalent person and number features (Table 4.4) with the head a Set A
-  or Set B terminal sits on and the flag a copying probe leaves; the Fragment's `Mam.ScottFeatures`
-  supplies the cells. Contextual specifications of Vocabulary Items are features of the same
-  terminal, so the Extended Subset Principle is the substrate's `subsetPrinciple` over sites.
+  or Set B terminal sits on and the flag a copying probe leaves; the person features of a cell
+  are Harbour's signs of its referential category (`Harbour2016.signOf`), and the two pronoun
+  series the derivation targets are the fragment's `Mam.independent` and `Mam.subjPoss`.
+  Contextual specifications of Vocabulary Items are features of the same terminal, so the
+  Extended Subset Principle is the substrate's `subsetPrinciple` over sites.
 * Multiple insertion (§4.4.1) is read with the Extended Subset Principle: every applicable item
   is inserted unless a more specific applicable item realizes what it realizes, which is what
   keeps the generic plural *qa* out of the second-person plural *q=i*.
@@ -71,6 +75,63 @@ inductive Locus
   | infl | vn
   deriving DecidableEq, Repr
 
+/-! ### The cells -/
+
+/-- The seven person–number cells of the pronominal paradigm (Table 4.4), the quadripartition
+of persons crossed with number less the impossible first person singular inclusive. -/
+inductive PronCell where
+  | firstSg | firstPlExcl | firstPlIncl
+  | secondSg | secondPl
+  | thirdSg | thirdPl
+  deriving DecidableEq, Repr
+
+/-- The referential category of a cell. -/
+def PronCell.category : PronCell → Person.Category
+  | .firstSg => .speaker
+  | .firstPlExcl => .speakerOthers
+  | .firstPlIncl => .speakerAddressee
+  | .secondSg => .addressee
+  | .secondPl => .addresseeOthers
+  | .thirdSg => .other
+  | .thirdPl => .others
+
+/-- The person of a cell as the agreement paradigms see it, first against non-first. -/
+def PronCell.person : PronCell → Person
+  | .firstSg | .firstPlExcl | .firstPlIncl => .first
+  | .secondSg | .secondPl => .second
+  | .thirdSg | .thirdPl => .third
+
+/-- The number of a cell. -/
+def PronCell.number : PronCell → Number
+  | .firstSg | .secondSg | .thirdSg => .singular
+  | .firstPlExcl | .firstPlIncl | .secondPl | .thirdPl => .plural
+
+/-- The cell of the fragment's pronoun paradigms, with clusivity on the person. -/
+def PronCell.bundle : PronCell → Agreement.Bundle
+  | .firstSg => .pn .first .singular
+  | .firstPlExcl => .pn .firstExclusive .plural
+  | .firstPlIncl => .pn .firstInclusive .plural
+  | .secondSg => .pn .second .singular
+  | .secondPl => .pn .second .plural
+  | .thirdSg => .pn .third .singular
+  | .thirdPl => .pn .third .plural
+
+/-- The person features of a cell (Table 4.4) are Harbour's sign of its category, [±author] and
+[±participant], the latter an addressee feature under which the first person singular and
+exclusive are [−participant]. -/
+def PronCell.sign (c : PronCell) : Harbour2016.Sign := Harbour2016.signOf c.category
+
+/-- Whether a cell is singular. -/
+def PronCell.singular (c : PronCell) : Bool := c.number = .singular
+
+/-- The fragment's independent pronoun of a cell. -/
+def independentOf (c : PronCell) : Option PersonalPronoun := Mam.independent.realize c.bundle
+
+/-- The fragment's subject and possessor pronoun of a cell. -/
+def subjPossOf (c : PronCell) : Option PersonalPronoun := Mam.subjPoss.realize c.bundle
+
+/-! ### Features and Vocabulary Items -/
+
 /-- A feature of a terminal: Harbour's bivalent person and number features (Table 4.4), the
 locus a Set A or Set B terminal sits on, and the flag a probe leaves on a goal whose features it
 has copied (§4.4.3.2, Table 4.26). -/
@@ -84,7 +145,7 @@ inductive Feat
 
 /-- The features of a pronoun in a paradigm cell (Table 4.4). -/
 def cellFeats (c : PronCell) : List Feat :=
-  [.author c.features.author, .participant c.features.participant, .singular c.features.singular]
+  [.author c.sign.author, .participant c.sign.participant, .singular c.singular]
 
 /-- A Vocabulary Item as the dissertation writes them: the features it realizes, its contextual
 specification, and its exponent. -/
@@ -126,8 +187,8 @@ def insert1 (t : List Feat) : Option Morph := subsetPrinciple (vocabulary.map It
 /-- Multiple insertion at a pronoun (§4.4.1): every applicable item, unless a more specific
 applicable item realizes what it realizes. -/
 def insertAll (t : List Feat) : List Morph :=
-  let app := vocabulary.filter λ i => i.site.all (· ∈ t)
-  (app.filter λ i => !app.any λ j =>
+  let app := vocabulary.filter fun i ↦ i.site.all (· ∈ t)
+  (app.filter fun i ↦ !app.any fun j ↦
       j != i && i.realized.all (· ∈ j.realized) && i.site.all (· ∈ j.site)).map Item.exponent
 
 /-! ### Agreement (§3.4.2, §4.4.2) -/
@@ -147,7 +208,7 @@ def dp (r : ArgumentRole) : Encounter := ⟨some r, true, false⟩
 
 /-- The probe on Infl (73): it interacts with φ and is satisfied by φ or by transitive Voice, so
 either halts it, and it agrees with a goal only if the goal bears φ. -/
-def inflProbe : Probe Encounter := { int := λ e => e.phi, sat := λ e => e.phi || e.voiceTR }
+def inflProbe : Probe Encounter := { int := fun e ↦ e.phi, sat := fun e ↦ e.phi || e.voiceTR }
 
 /-- The probe on Infl of the agreeing-object grammar (56), satisfied by φ alone. -/
 def standardInflProbe : Probe Encounter := Probe.relativized (·.phi)
@@ -192,7 +253,7 @@ theorem agreedBy_A : agreedBy .A = some .vn := rfl
 theorem agreedBy_P : agreedBy .P = none := rfl
 
 /-- The features a probe copies (73a): author and number. -/
-def copied (c : PronCell) : List Feat := [.author c.features.author, .singular c.features.singular]
+def copied (c : PronCell) : List Feat := [.author c.sign.author, .singular c.singular]
 
 /-- The Set B terminal on Infl in the clause of an argument in a cell: the copied features if
 Infl agreed with the argument, at the Infl locus. -/
@@ -236,29 +297,29 @@ inductive Dim
 
 /-- Delete a dimension from a terminal. -/
 def delete (t : List Feat) (d : Dim) : List Feat :=
-  t.filter λ f => match f, d with
+  t.filter fun f ↦ match f, d with
     | .author _, .author | .participant _, .participant | .singular _, .singular => false
     | _, _ => true
 
 /-- Whether a terminal carries the flag of some probe. -/
-def flagged (t : List Feat) : Bool := t.any λ f => match f with | .flag _ => true | _ => false
+def flagged (t : List Feat) : Bool := t.any fun f ↦ match f with | .flag _ => true | _ => false
 
 /-- The impoverishment rule (84): number is deleted from a first-person pronoun a probe has
 flagged. -/
 def rule84 : ImpoverishmentRule (List Feat) Dim :=
-  .paradigmatic (λ t => (Feat.author true ∈ t) && flagged t) .singular
+  .paradigmatic (fun t ↦ (Feat.author true ∈ t) && flagged t) .singular
 
 /-- The optional rule (93): number is deleted from a second-person pronoun flagged by Voice or
 Poss. -/
 def rule93 : ImpoverishmentRule (List Feat) Dim :=
-  .paradigmatic (λ t => (Feat.participant true ∈ t) && (Feat.flag .vn ∈ t)) .singular
+  .paradigmatic (fun t ↦ (Feat.participant true ∈ t) && (Feat.flag .vn ∈ t)) .singular
 
 theorem rule84_paradigmatic : rule84.Paradigmatic :=
   ImpoverishmentRule.paradigmatic_isParadigmatic _ _
 
 /-- A pronoun terminal in a cell, flagged by the probe that copied its features, if any. -/
 def pronounTerminal (l : Option Locus) (c : PronCell) : List Feat :=
-  cellFeats c ++ (l.map λ l => [Feat.flag l]).getD []
+  cellFeats c ++ (l.map fun l ↦ [Feat.flag l]).getD []
 
 /-- The form of a pronoun in a cell under a grammar with impoverishment rules `rules`, flagged
 by `l`: the rules apply and every licensed item is inserted. -/
@@ -284,19 +345,19 @@ def morphemes : Option PersonalPronoun → List Morph
 
 /-- The independent series (Table 4.25): an unflagged pronoun, an object or the subject of a
 non-verbal predicate, hosts every item its features license. -/
-theorem form_unflagged (c : PronCell) : form none c = morphemes (independent c) := by
+theorem form_unflagged (c : PronCell) : form none c = morphemes (independentOf c) := by
   cases c <;> decide
 
 /-- The subject and possessor series (Table 4.25): a pronoun flagged by either locus loses its
 number if first person, so the bases *qin* and *qo* are bled and the enclitic remains. -/
-theorem form_flagged (l : Locus) (c : PronCell) : form (some l) c = morphemes (subjPoss c) := by
+theorem form_flagged (l : Locus) (c : PronCell) : form (some l) c = morphemes (subjPossOf c) := by
   cases l <;> cases c <;> decide
 
 /-- With the optional rule (93), second-person plural reduces to the enclitic in a Set A context
 but not in a Set B context ((89)–(91)). -/
 theorem form_rule93 :
     formWith [rule84, rule93] (some .vn) .secondPl = [.encl "i"] ∧
-      formWith [rule84, rule93] (some .infl) .secondPl = morphemes (subjPoss .secondPl) := by
+      formWith [rule84, rule93] (some .infl) .secondPl = morphemes (subjPossOf .secondPl) := by
   decide
 
 /-- The form of an argument in a cell: flagged by the probe that agreed with it. -/
@@ -305,15 +366,28 @@ def formAt (r : ArgumentRole) (c : PronCell) : List Morph := form (agreedBy r) c
 /-- The nominative alignment of reduction ((3), (8)): subjects take the reduced series and the
 object the independent series. -/
 theorem formAt_eq (c : PronCell) :
-    formAt .S c = morphemes (subjPoss c) ∧ formAt .A c = morphemes (subjPoss c) ∧
-      formAt .P c = morphemes (independent c) :=
+    formAt .S c = morphemes (subjPossOf c) ∧ formAt .A c = morphemes (subjPossOf c) ∧
+      formAt .P c = morphemes (independentOf c) :=
   ⟨form_flagged .infl c, form_flagged .vn c, form_unflagged c⟩
+
+/-- The disagreement generalization ([noyer-1992], §4.3.3), read off the fragment: a cell's
+independent pronoun contains the enclitic exactly when its author and participant features
+disagree. -/
+theorem encl_mem_independent_iff (c : PronCell) :
+    Morph.encl "i" ∈ morphemes (independentOf c) ↔ c.sign.author ≠ c.sign.participant := by
+  cases c <;> decide
+
+/-- Reduction is first-personhood: the subject and possessor pronoun differs from the independent
+one exactly at the [+author] cells (Table 4.1). -/
+theorem reduced_iff_author (c : PronCell) :
+    subjPossOf c ≠ independentOf c ↔ c.sign.author = true := by
+  cases c <;> decide
 
 /-! ### The judgments -/
 
 /-- A pronoun's spelling: its morphemes with clitic boundaries. -/
 def spell (ms : List Morph) : String :=
-  String.join (ms.map λ m => match m.kind with
+  String.join (ms.map fun m ↦ match m.kind with
     | .bound .after .clitic => "=" ++ m.form
     | _ => m.form)
 
