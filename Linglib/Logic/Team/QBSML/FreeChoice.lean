@@ -4,60 +4,43 @@ public import Linglib.Logic.Team.QBSML.Enrichment
 public import Linglib.Logic.Team.QBSML.Properties
 
 /-!
-# QBSML free-choice facts
+# Free choice in QBSML
 
-[aloni-vanormondt-2023] [aloni-2022]
+This file proves the free-choice, ignorance, distribution and negation facts of QBSML for
+arbitrary models. Each fact is a support consequence whose premise is a pragmatically enriched
+formula: an enriched split disjunction under a modal or a quantifier needs a non-empty witness
+for each disjunct, and the witness is transplanted into a `◇` or `∃` claim. Aloni and van
+Ormondt state the facts for the numerals `three ∨ more` of their modified-numeral puzzles;
+here they are stated for `NE`-free `α`, `β` where the proof allows, and for atoms where it
+does not.
 
-The free-choice, ignorance, distribution and negation facts of QBSML
-([aloni-vanormondt-2023] §5), as universal theorems over arbitrary QBSML
-models — the framework's account of why pragmatically enriched disjunctions
-under modals license both disjuncts:
+## Main results
 
-| Fact | Statement |
-|------|-----------|
-| 3   | `[Pa ∨ Pb]⁺ ⊨_epi ◇Pa ∧ ◇Pb` (ignorance, R state-based) |
-| 5   | `card(s)=1 ⇒ M, s ⊨ [∀x(Px ∨ Qx)]⁺ ⇒ M, s ⊨ ∃xPx ∧ ∃xQx` |
-| 6   | `[∀x(Px ∨ Qx)]⁺ ⊨_epi ∃x◇Px ∧ ∃x◇Qx` (distribution◇) |
-| 7   | `[□(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (□-free choice) |
-| 8   | `[◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (◇-free choice) |
-| 9   | `[∀x◇(Px ∨ Qx)]⁺ ⊨ ∀x◇Px ∧ ∀x◇Qx` (universal FC; [chemla-2009]) |
-| 10  | `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` (negation; ignorance disappears) |
-
-plus the quantified □-FC composite `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ`
-(`boxExiFC`) behind [yan-2023]'s Asher and Heim solutions. Fact 4
-(obviation) is a countermodel claim and lives with the concrete model in
-`Studies/AloniVanOrmondt2023.lean`, which instantiates the frame-free facts
-(5, 7–10) there; the epistemic Facts 3 and 6 require a state-based `R` and
-stay substrate-level.
-
-## Main declarations
-
-* `diamond_split` — the shared core: an enriched split disjunction
-  supported on a modal pairing yields a non-empty world-set witness for
-  each disjunct.
-* `narrowScopeFC`, `boxFC`, `universalFC` — the free-choice facts.
-* `boxExiFC` — quantified □-FC ([yan-2023] §4.4.3).
-* `ignorance`, `distribution`, `distributionEpi`, `negationStrip`.
+* `QBSML.diamond_split`: an enriched split disjunction supported on a modal pairing yields a
+  non-empty world-set witness for each disjunct, the shared core.
+* `QBSML.narrowScopeFC`, `QBSML.boxFC`, `QBSML.universalFC`: the free-choice facts, Facts 8,
+  7 and 9.
+* `QBSML.boxExiFC`: quantified box free choice, `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ`.
+* `QBSML.ignorance`, `QBSML.distribution`, `QBSML.distributionEpi`, `QBSML.negationStrip`:
+  Facts 3, 5, 6 and 10.
 
 ## Implementation notes
 
-1. **Enrichment strengthens** (`enrichment_strengthens_support`,
-   `Logic/Team/QBSML/Enrichment.lean`): the enriched form entails
-   the original on the NE-free fragment.
-2. **Diamond split** (`diamond_split`): the split `t₁ ∪ t₂ = modalLift X g`
-   supports the enriched disjuncts on its pieces; each piece is recovered
-   from its world projection, which serves as the `Finset W` witness.
-3. **NE strips**: `support_enrich_nec_iff` peels the derived `□`'s
-   enrichment; `antiSupport_strip_ne` the remaining `NE` conjuncts.
-4. **Witness reconstruction** (`support_exi_of_update_closure`,
-   `Logic/Team/QBSML/Properties.lean`): existential witnesses for
-   the quantified facts.
+Facts 3 and 6 need a state-based accessibility relation; the others hold in every model. Fact
+4, obviation, is a countermodel claim and lives with its model in
+`Studies/AloniVanOrmondt2023.lean`. `□` is the derived `¬◇¬`, so Fact 7 and the quantified
+composite go through `support_enrich_nec_iff` rather than the paper's primitive `□` clause.
+Universal free choice is the pattern Chemla attested experimentally, and the quantified
+composite is the shape behind Yan's Asher and Heim solutions.
 
-The negation fact requires no frame condition on `R` ([aloni-vanormondt-2023]
-page 564 proof of Fact 10: "Assume M, s ⊨ [¬(Pa ∨ Pb)]⁺. It follows that
-s ≠ ∅ and M, s ⫤ [Pa ∨ Pb]⁺" — frame conditions on `R` are not invoked);
-Facts 7 and the quantified composite hold with the *derived* `□` even though
-its enrichment differs from the paper's primitive `[□φ]⁺ = □[φ]⁺ ∧ NE`.
+## References
+
+* [aloni-vanormondt-2023] Aloni and van Ormondt, Modified Numerals and Split Disjunction: The
+  First-Order Case
+* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [chemla-2009] Chemla, Universal implicatures and free choice effects: Experimental data
+* [yan-2023] Yan, Monotonicity in Intensional Contexts: Weakening and Pragmatic Effects under
+  Modals and Attitudes
 -/
 
 @[expose] public section
@@ -74,24 +57,20 @@ variable {α β : Formula Var Const Pred} {s : Finset (Index W Var Domain)}
 
 /-! ### The diamond split -/
 
-/-- A subset of a modal pairing supporting an enriched formula yields a
-    non-empty world-set witness: project the worlds, pair them back with the
-    same assignment (`State.modalLift_worldProj_of_subset`), and discharge
-    the enrichment (`enrichment_strengthens_support`). One-sided engine of
-    `diamond_split`. -/
+/-- A subset of a modal pairing supporting an enriched formula yields a non-empty world-set
+witness. The proof projects the worlds, pairs them back with the same assignment, and
+discharges the enrichment. -/
 private theorem poss_of_subset_modalLift {X : Finset W}
     {g : PartialAssign Var Domain} {t : Finset (Index W Var Domain)}
     (hα : α.NEFree) (ht : t ⊆ State.modalLift X g)
     (h : support M α.enrich t) :
     ∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g) :=
   ⟨State.worldProj t, State.worldProj_subset_of_subset_modalLift ht,
-    State.worldProj_nonempty (enriched_support_implies_nonempty M α t h),
-    (State.modalLift_worldProj_of_subset ht).symm ▸
-      enrichment_strengthens_support M α t hα h⟩
+    State.worldProj_nonempty (nonempty_of_support_enrich h),
+    (State.modalLift_worldProj_of_subset ht).symm ▸ support_of_support_enrich hα h⟩
 
-/-- The shared core of the free-choice facts: an enriched split disjunction
-    supported on a modal pairing yields a non-empty world-set witness for
-    each disjunct — `poss_of_subset_modalLift` on each half of the split. -/
+/-- An enriched split disjunction supported on a modal pairing yields a non-empty world-set
+witness for each disjunct. This is the shared core of the free-choice facts. -/
 theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
     (hα : α.NEFree) (hβ : β.NEFree)
     (hsupp : support M (Formula.disj α β).enrich (State.modalLift X g)) :
@@ -101,74 +80,51 @@ theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
   exact ⟨poss_of_subset_modalLift M hα (splitsAs_left_subset hsplit) h₁,
     poss_of_subset_modalLift M hβ (splitsAs_right_subset hsplit) h₂⟩
 
-/-- Per-index form of the core: a state whose every index sees an enriched
-    split disjunction supports both diamonds (shared by Facts 8 and 9). -/
+/-- A state whose every index sees an enriched split disjunction supports both diamonds. -/
 private theorem possFC_on (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (.poss (Formula.disj α β).enrich) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
-  refine ⟨fun i hi => ?_, fun i hi => ?_⟩
+  refine ⟨fun i hi ↦ ?_, fun i hi ↦ ?_⟩
   · obtain ⟨X, hX, -, hsupp⟩ := h i hi
     exact (diamond_split M hα hβ hsupp).1.imp
-      fun Y ⟨hYX, hYne, hY⟩ => ⟨hYX.trans hX, hYne, hY⟩
+      fun Y ⟨hYX, hYne, hY⟩ ↦ ⟨hYX.trans hX, hYne, hY⟩
   · obtain ⟨X, hX, -, hsupp⟩ := h i hi
     exact (diamond_split M hα hβ hsupp).2.imp
-      fun Y ⟨hYX, hYne, hY⟩ => ⟨hYX.trans hX, hYne, hY⟩
+      fun Y ⟨hYX, hYne, hY⟩ ↦ ⟨hYX.trans hX, hYne, hY⟩
 
 /-! ### Free choice (Facts 7, 8 and 9) -/
 
-/-- **Fact 8 (◇-free choice / narrow-scope FC)** of [aloni-vanormondt-2023]
-    (the first-order analogue of [aloni-2022] Fact 4):
-
-    `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` for NE-free `α`, `β`.
-
-    Projects the diamond clause of the enrichment and applies the per-index
-    core `possFC_on` at `s`. -/
+/-- Narrow-scope free choice (Fact 8) is `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` for `NE`-free `α`, `β`. -/
 theorem narrowScopeFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.poss (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s :=
   possFC_on M hα hβ h.1
 
-/-- **Fact 9 (universal free choice)** of [aloni-vanormondt-2023], the
-    pattern attested experimentally by [chemla-2009]:
-
-    `[∀x◇(α ∨ β)]⁺ ⊨ ∀x◇α ∧ ∀x◇β` for NE-free `α`, `β`.
-
-    The enriched premise evaluates the enriched diamond at the universal
-    extension `s[x]`, so the conclusion is `possFC_on` at `s[x]` — the same
-    per-index argument as Fact 8, one extension up. -/
+/-- Universal free choice (Fact 9) is `[∀x◇(α ∨ β)]⁺ ⊨ ∀x◇α ∧ ∀x◇β` for `NE`-free `α`, `β`.
+It is Fact 8 at the universal extension `s[x]`. -/
 theorem universalFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.univ x (.poss (.disj α β)))) s) :
     support M (.univ x (.poss α)) s ∧ support M (.univ x (.poss β)) s :=
   possFC_on M hα hβ h.1.1
 
-/-- **Fact 7 (□-free choice)** of [aloni-vanormondt-2023]:
-
-    `[□(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` for NE-free `α`, `β`.
-
-    `□` is derived (`Formula.nec`), so the enrichment here is the
-    negation-clause enrichment of `¬◇¬(α ∨ β)` rather than the paper's
-    primitive `[□φ]⁺ = □[φ]⁺ ∧ NE` — but the fact holds all the same:
-    `support_enrich_nec_iff` puts the enriched disjunction on each index's
-    full accessible lift `R(wᵢ)[gᵢ]`, and `diamond_split` produces the
-    witnesses. -/
+/-- Box free choice (Fact 7) is `[□(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` for `NE`-free `α`, `β`, with the
+derived `□`. The enriched premise puts the enriched disjunction on each index's full accessible
+lift, where the diamond split produces the witnesses. -/
 theorem boxFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (Formula.nec (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
   rw [support_enrich_nec_iff] at h
-  exact ⟨fun i hi => (diamond_split M hα hβ (h.1 i hi)).1,
-    fun i hi => (diamond_split M hα hβ (h.1 i hi)).2⟩
+  exact ⟨fun i hi ↦ (diamond_split M hα hβ (h.1 i hi)).1,
+    fun i hi ↦ (diamond_split M hα hβ (h.1 i hi)).2⟩
 
 /-! ### Quantified □-free choice
 
-`[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` — the composite of Fact 7 with an
-existential under the modal, which is the form [yan-2023]'s Asher and Heim
-solutions invoke (its §4.4.3; see `Studies/Yan2023.lean`). -/
+`[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` is the composite of Fact 7 with an existential under the
+modal, the form Yan's Asher and Heim solutions invoke (see `Studies/Yan2023.lean`). -/
 
-/-- A non-empty subset `t` of a functional extension of a modal lift that
-    supports `γ` yields a `◇∃xγ`-witness: project `t`'s worlds, pair them
-    back with the original assignment, and reconstruct `t` via
-    `support_exi_of_update_closure`. The quantified analogue of
-    `poss_of_subset_modalLift`. -/
+/-- A non-empty subset `t` of a functional extension of a modal lift that supports `γ` yields
+a `◇∃xγ` witness. The proof projects the worlds of `t`, pairs them back with the original
+assignment, and reconstructs `t` by update closure. -/
 private theorem poss_exi_of_subset_extendFunctional
     {γ : Formula Var Const Pred} {X₀ : Finset W}
     {g : PartialAssign Var Domain} {x : Var}
@@ -204,37 +160,31 @@ private theorem poss_exi_of_subset_extendFunctional
   rw [Index.world_update]
   exact (State.mem_modalLift.mp hi).1
 
-/-- **Quantified □-free choice**: `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` for
-    NE-free `α`, `β`. The shape behind [yan-2023]'s Asher and Heim
-    solutions: the enriched premise puts the enriched split disjunction on
-    each index's full accessible lift's functional extension; each
-    non-empty half yields a `◇∃x`-witness by
-    `poss_exi_of_subset_extendFunctional`. -/
+/-- Quantified box free choice is `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` for `NE`-free `α`, `β`.
+The enriched premise puts the enriched split disjunction on the functional extension of each
+index's full accessible lift, and each non-empty half yields a `◇∃x` witness. -/
 theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M
       (Formula.enrich (Formula.nec (.exi x (.disj α β)))) s) :
     support M (.poss (.exi x α)) s ∧ support M (.poss (.exi x β)) s := by
   rw [support_enrich_nec_iff] at h
-  refine ⟨fun i hi => ?_, fun i hi => ?_⟩
+  refine ⟨fun i hi ↦ ?_, fun i hi ↦ ?_⟩
   · obtain ⟨hf, -, hD⟩ := (h.1 i hi).1
     obtain ⟨t₁, t₂, hsplit, h₁, -⟩ := hD.1
     exact poss_exi_of_subset_extendFunctional M
       (splitsAs_left_subset hsplit)
-      (enriched_support_implies_nonempty M α t₁ h₁)
-      (enrichment_strengthens_support M α t₁ hα h₁)
+      (nonempty_of_support_enrich h₁) (support_of_support_enrich hα h₁)
   · obtain ⟨hf, -, hD⟩ := (h.1 i hi).1
     obtain ⟨t₁, t₂, hsplit, -, h₂⟩ := hD.1
     exact poss_exi_of_subset_extendFunctional M
       (splitsAs_right_subset hsplit)
-      (enriched_support_implies_nonempty M β t₂ h₂)
-      (enrichment_strengthens_support M β t₂ hβ h₂)
+      (nonempty_of_support_enrich h₂) (support_of_support_enrich hβ h₂)
 
 /-! ### Ignorance (Fact 3) -/
 
-/-- A non-empty substate supporting a constant atom yields the diamond on
-    the whole state when `R` is state-based: transplant the substate's
-    worlds to every index. Sound only because constant atoms are
-    *assignment-invariant*. One-sided engine of `ignorance`. -/
+/-- A non-empty substate supporting a constant atom yields the diamond on the whole state
+when `R` is state-based, by transplanting the substate's worlds to every index. This is sound
+only because constant atoms are assignment-invariant. -/
 private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
     {t : Finset (Index W Var Domain)} (hSB : M.IsStateBased s) (hts : t ⊆ s)
     (htne : t.Nonempty) (h : support M (.predc P c) t) :
@@ -249,15 +199,9 @@ private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
     rw [← hjw]
     exact h j hj
 
-/-- **Fact 3 (ignorance)** of [aloni-vanormondt-2023]: on epistemic models
-    (state-based `R`),
-
-    `[Pc₁ ∨ Qc₂]⁺ ⊨_epi ◇Pc₁ ∧ ◇Qc₂`.
-
-    Stated for constant atoms, as in the paper's `Pa ∨ Pb`: the transplant
-    argument of `poss_predc_of_stateBased` needs assignment-invariance —
-    with a free variable in place of the constant the statement is false
-    (the transplanted indices carry the wrong assignments). -/
+/-- Ignorance (Fact 3) is `[Pc₁ ∨ Qc₂]⁺ ⊨ ◇Pc₁ ∧ ◇Qc₂` on a state-based `R`. It is stated
+for constant atoms, as in the paper's `Pa ∨ Pb`, since the transplant argument needs
+assignment-invariance and fails with a free variable in place of the constant. -/
 theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : M.IsStateBased s)
     (h : support M
       (Formula.enrich (.disj (.predc P c₁) (.predc Q c₂))) s) :
@@ -271,31 +215,20 @@ theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : M.IsStateBased s)
 
 /-! ### Negation behaviour (Fact 10) -/
 
-/-- **Fact 10 (negation behaviour)** of [aloni-vanormondt-2023]:
-
-    `[¬(α ∨ β)]⁺ ⊨ ¬α ∧ ¬β` for NE-free `α`, `β`.
-
-    Three NE-strips compose: outer `(¬enrich(α ∨ β)) ∧ NE`, then disj-anti
-    splits to `(antiSupport enrich α) ∧ (antiSupport enrich β)`, then
-    `enrichment_strengthens_antiSupport` for each disjunct.
-
-    No frame condition on `R` — the proof goes through for every model.
-    Negation cancels ignorance (paper §5.5): the `Nonempty` hypothesis is
-    discharged by the three NE-strips, leaving classical anti-support on
-    each disjunct. -/
+/-- Negation behaviour (Fact 10) is `[¬(α ∨ β)]⁺ ⊨ ¬α ∧ ¬β` for `NE`-free `α`, `β`, in every
+model. Stripping the outer `NE` leaves anti-support of the enriched disjuncts, which
+enrichment strengthens to classical anti-support of each. -/
 theorem negationStrip (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.neg (.disj α β))) s) :
     support M (.neg α) s ∧ support M (.neg β) s := by
-  have hDisj : antiSupport M (.disj α.enrich β.enrich) s :=
-    antiSupport_strip_ne M (.disj α.enrich β.enrich) s h.1
-  exact ⟨enrichment_strengthens_antiSupport M α s hα hDisj.1,
-    enrichment_strengthens_antiSupport M β s hβ hDisj.2⟩
+  have hDisj : antiSupport M (.disj α.enrich β.enrich) s := (antiSupport_conj_ne M _ s).mp h.1
+  exact ⟨antiSupport_of_antiSupport_enrich hα hDisj.1,
+    antiSupport_of_antiSupport_enrich hβ hDisj.2⟩
 
 /-! ### Distribution (Facts 5 and 6) -/
 
-/-- A non-empty subset `t` of the universal extension of a singleton state
-    that supports `γ` yields an existential witness on the singleton, by
-    `support_exi_of_update_closure`. The engine of Fact 5. -/
+/-- A non-empty subset `t` of the universal extension of a singleton state that supports `γ`
+yields an existential witness on the singleton. -/
 private theorem exi_of_subset_extendUniversal_singleton
     {γ : Formula Var Const Pred}
     {i : Index W Var Domain} {x : Var} {t : Finset (Index W Var Domain)}
@@ -315,16 +248,10 @@ private theorem exi_of_subset_extendUniversal_singleton
     subst hi''
     exact ⟨d, by rwa [hupd]⟩
 
-/-- **Fact 5 (distribution at maximal information)** of
-    [aloni-vanormondt-2023]: on a state of maximal information
-    (`card s = 1`, here `s = {i}`),
-
-    `[∀x(α ∨ β)]⁺ ⊨ ∃xα ∧ ∃xβ` for NE-free `α`, `β`.
-
-    The enriched premise splits the universal extension `{i}[x]` into
-    non-empty parts supporting the enriched disjuncts; because the state is
-    a singleton, every part extends the *same* index, so each part is the
-    image of a functional extension witnessing the existential. -/
+/-- Distribution at maximal information (Fact 5) is `[∀x(α ∨ β)]⁺ ⊨ ∃xα ∧ ∃xβ` for `NE`-free
+`α`, `β` on a singleton state `{i}`. The enriched premise splits the universal extension of
+`{i}` into non-empty parts, and each part extends the same index, so it is the image of a
+functional extension witnessing the existential. -/
 theorem distribution {x : Var} {i : Index W Var Domain}
     (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.univ x (.disj α β))) {i}) :
@@ -332,19 +259,14 @@ theorem distribution {x : Var} {i : Index W Var Domain}
   obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1.1
   exact ⟨exi_of_subset_extendUniversal_singleton M
       (splitsAs_left_subset hsplit)
-      (enriched_support_implies_nonempty M α t₁ h₁)
-      (enrichment_strengthens_support M α t₁ hα h₁),
-    exi_of_subset_extendUniversal_singleton M
-      (splitsAs_right_subset hsplit)
-      (enriched_support_implies_nonempty M β t₂ h₂)
-      (enrichment_strengthens_support M β t₂ hβ h₂)⟩
+      (nonempty_of_support_enrich h₁) (support_of_support_enrich hα h₁),
+    exi_of_subset_extendUniversal_singleton M (splitsAs_right_subset hsplit)
+      (nonempty_of_support_enrich h₂) (support_of_support_enrich hβ h₂)⟩
 
-/-- A non-empty subset `t` of `s[x]` supporting the atom `Px` yields
-    `∃x◇Px` on `s` when `R` is state-based: some index of `t` is `i₀[x/d]`
-    with `d ∈ I(i₀.world)(P)`, the individual extension `s[x/d]` (as the
-    constant functional) witnesses the existential, and state-basedness puts
-    `i₀.world` in every index's accessible set, so the singleton
-    `{i₀.world}` witnesses each diamond. The engine of Fact 6. -/
+/-- A non-empty subset `t` of `s[x]` supporting the atom `Px` yields `∃x◇Px` on `s` when `R`
+is state-based. Some index of `t` is `i₀[x/d]` with `d` in the extension of `P` at `i₀.world`;
+the constant functional extension `s[x/d]` witnesses the existential, and state-basedness puts
+`i₀.world` in every index's accessible set, so `{i₀.world}` witnesses each diamond. -/
 private theorem exi_poss_atom_of_subset_extendUniversal
     {P : Pred} {x : Var} {t : Finset (Index W Var Domain)}
     (hSB : M.IsStateBased s)
@@ -360,7 +282,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
   rw [← hassign] at hmem
   rw [Index.world_update] at hmem
   -- hmem : d ∈ M.relInterp₁ P i₀.world
-  refine ⟨fun _ => {d}, fun j _ => Finset.singleton_nonempty d, ?_⟩
+  refine ⟨fun _ ↦ {d}, fun j _ ↦ Finset.singleton_nonempty d, ?_⟩
   intro j hj
   obtain ⟨i, his, d'', hd'', hupd'⟩ := State.mem_extendFunctional.mp hj
   rw [Finset.mem_singleton] at hd''
@@ -382,15 +304,9 @@ private theorem exi_poss_atom_of_subset_extendUniversal
     · rw [hkw]
       exact hmem
 
-/-- **Fact 6 (distribution◇)** of [aloni-vanormondt-2023]: on epistemic
-    models (state-based `R`),
-
-    `[∀x(Px ∨ Qx)]⁺ ⊨ ∃x◇Px ∧ ∃x◇Qx`.
-
-    Stated for atoms, as in the paper (the proof evaluates the atom
-    pointwise at a single transplanted world; the paper notes the result
-    "can easily be generalised", which for arbitrary NE-free formulas would
-    route through flatness). -/
+/-- Epistemic distribution (Fact 6) is `[∀x(Px ∨ Qx)]⁺ ⊨ ∃x◇Px ∧ ∃x◇Qx` on a state-based
+`R`. It is stated for atoms, as in the paper, since the proof evaluates the atom pointwise at
+a single transplanted world. -/
 theorem distributionEpi {P Q : Pred} {x : Var} (hSB : M.IsStateBased s)
     (h : support M
       (Formula.enrich (.univ x (.disj (.pred P x) (.pred Q x)))) s) :
@@ -399,9 +315,9 @@ theorem distributionEpi {P Q : Pred} {x : Var} (hSB : M.IsStateBased s)
   obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1.1
   exact ⟨exi_poss_atom_of_subset_extendUniversal M hSB
       (splitsAs_left_subset hsplit)
-      (enriched_support_implies_nonempty M (.pred P x) t₁ h₁) h₁.1,
+      (nonempty_of_support_enrich h₁) h₁.1,
     exi_poss_atom_of_subset_extendUniversal M hSB
       (splitsAs_right_subset hsplit)
-      (enriched_support_implies_nonempty M (.pred Q x) t₂ h₂) h₂.1⟩
+      (nonempty_of_support_enrich h₂) h₂.1⟩
 
 end QBSML
