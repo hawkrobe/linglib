@@ -27,6 +27,8 @@ development is complementary.)
 * `Polyhedral.fmElim` — one step of FM elimination (eliminate last variable)
 * `Polyhedral.fmElim_equisat` — FM step preserves feasibility
 * `Polyhedral.farkas` — Farkas' lemma: feasible ∨ infeasibility certificate
+* `Polyhedral.gordan` — Gordan's alternative: a nonnegative combination of the rows of a
+  matrix is strictly positive, or a probability vector is sent to a nonpositive vector
 -/
 
 @[expose] public section
@@ -397,5 +399,94 @@ theorem farkas {n : ℕ} (S : System n) :
     rcases ih (fmElim S) with hfeas | hcert
     · exact Or.inl ((fmElim_equisat S).mpr hfeas)
     · exact Or.inr ⟨liftCert S (Classical.choice hcert)⟩
+
+/-! ### Gordan's alternative -/
+
+section Gordan
+
+variable {m n : ℕ} (M : Fin m → Fin n → ℚ)
+
+/-- The system `x ≥ 0`, `M x ≤ 0`, `∑ x ≥ 1`: row `none` is `-∑ x ≤ -1`, row `some (inl j)`
+is `-x j ≤ 0`, and row `some (inr i)` is `M i · x ≤ 0`. -/
+private def gordanRow : Option (Fin n ⊕ Fin m) → Ineq n
+  | none => ⟨fun _ ↦ -1, -1⟩
+  | some (Sum.inl j) => ⟨fun j' ↦ if j' = j then -1 else 0, 0⟩
+  | some (Sum.inr i) => ⟨M i, 0⟩
+
+private noncomputable def gordanSystem : System n :=
+  (Finset.univ : Finset (Option (Fin n ⊕ Fin m))).toList.map (gordanRow M)
+
+private theorem gordanRow_sat_none {x : Fin n → ℚ} :
+    (gordanRow M none).sat x ↔ 1 ≤ ∑ j, x j := by
+  simp only [gordanRow, Ineq.sat, dot, neg_one_mul, Finset.sum_neg_distrib]
+  constructor <;> intro h <;> linarith
+
+private theorem gordanRow_sat_inl {x : Fin n → ℚ} (j : Fin n) :
+    (gordanRow M (some (Sum.inl j))).sat x ↔ 0 ≤ x j := by
+  simp only [gordanRow, Ineq.sat, dot, ite_mul, neg_one_mul, zero_mul, Finset.sum_ite_eq',
+    Finset.mem_univ, ite_true]
+  constructor <;> intro h <;> linarith
+
+private theorem gordan_of_feasible (h : (gordanSystem M).feasible) :
+    ∃ x : Fin n → ℚ, (∀ j, 0 ≤ x j) ∧ ∑ j, x j = 1 ∧ ∀ i, ∑ j, M i j * x j ≤ 0 := by
+  obtain ⟨x, hx⟩ := h
+  have hrow : ∀ r, (gordanRow M r).sat x := fun r ↦
+    hx _ (List.mem_map.2 ⟨r, Finset.mem_toList.2 (Finset.mem_univ r), rfl⟩)
+  have h1 := (gordanRow_sat_none M).1 (hrow none)
+  have hnn : ∀ j, 0 ≤ x j := fun j ↦ (gordanRow_sat_inl M j).1 (hrow _)
+  have hM : ∀ i, ∑ j, M i j * x j ≤ 0 := fun i ↦ hrow (some (Sum.inr i))
+  have hs : 0 < ∑ j, x j := by linarith
+  refine ⟨fun j ↦ x j / ∑ j, x j, fun j ↦ div_nonneg (hnn j) hs.le, ?_, fun i ↦ ?_⟩
+  · simp_rw [div_eq_mul_inv]
+    rw [← Finset.sum_mul, mul_inv_cancel₀ hs.ne']
+  · simp_rw [div_eq_mul_inv, ← mul_assoc]
+    rw [← Finset.sum_mul]
+    exact mul_nonpos_iff.2 (Or.inr ⟨hM i, inv_nonneg.2 hs.le⟩)
+
+private theorem gordan_of_infeasCert (cert : InfeasCert (gordanSystem M)) :
+    ∃ y : Fin m → ℚ, (∀ i, 0 ≤ y i) ∧ ∀ j, 0 < ∑ i, y i * M i j := by
+  classical
+  have hlen : (gordanSystem M).length =
+      (Finset.univ : Finset (Option (Fin n ⊕ Fin m))).toList.length := List.length_map ..
+  -- the row behind each constraint position
+  let ro : Fin (gordanSystem M).length → Option (Fin n ⊕ Fin m) := fun k ↦
+    (Finset.univ : Finset (Option (Fin n ⊕ Fin m))).toList.get (k.cast hlen)
+  have hget : ∀ k, (gordanSystem M).get k = gordanRow M (ro k) := fun k ↦ by
+    simp [gordanSystem, List.get_eq_getElem, ro]
+  -- the weight of a row: the certificate weights of its positions
+  let w : Option (Fin n ⊕ Fin m) → ℚ := fun r ↦ ∑ k, if ro k = r then cert.ws k else 0
+  have hw : ∀ r, 0 ≤ w r := fun r ↦ Finset.sum_nonneg fun k _ ↦ by
+    split_ifs <;> simp [cert.nonneg]
+  have hregroup : ∀ g : Option (Fin n ⊕ Fin m) → ℚ,
+      ∑ r, w r * g r = ∑ k, cert.ws k * g (ro k) := fun g ↦ by
+    simp only [w, Finset.sum_mul, ite_mul, zero_mul]
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun k _ ↦ by rw [Finset.sum_ite_eq]; simp
+  have hnone : 0 < w none := by
+    have h := cert.boundNeg
+    simp only [hget] at h
+    rw [← hregroup fun r ↦ (gordanRow M r).rhs] at h
+    simp only [Fintype.sum_option, Fintype.sum_sum_type, gordanRow, mul_zero,
+      Finset.sum_const_zero, add_zero, mul_neg, mul_one] at h
+    linarith
+  refine ⟨fun i ↦ w (some (Sum.inr i)), fun i ↦ hw _, fun j ↦ ?_⟩
+  have h := cert.coeffsZero j
+  simp only [hget] at h
+  rw [← hregroup fun r ↦ (gordanRow M r).lhs j] at h
+  simp only [Fintype.sum_option, Fintype.sum_sum_type, gordanRow, mul_neg, mul_one, mul_ite,
+    mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true] at h
+  have := hw (some (Sum.inl j))
+  linarith
+
+/-- **Gordan's alternative** over `ℚ`: for `M : Fin m → Fin n → ℚ`, either some nonnegative
+combination of the rows of `M` is strictly positive in every coordinate, or some probability
+vector `x` satisfies `M x ≤ 0` coordinatewise. -/
+theorem gordan :
+    (∃ y : Fin m → ℚ, (∀ i, 0 ≤ y i) ∧ ∀ j, 0 < ∑ i, y i * M i j) ∨
+      ∃ x : Fin n → ℚ, (∀ j, 0 ≤ x j) ∧ ∑ j, x j = 1 ∧ ∀ i, ∑ j, M i j * x j ≤ 0 :=
+  (farkas (gordanSystem M)).elim (fun h ↦ Or.inr (gordan_of_feasible M h))
+    fun ⟨cert⟩ ↦ Or.inl (gordan_of_infeasCert M cert)
+
+end Gordan
 
 end Polyhedral
