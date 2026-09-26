@@ -28,8 +28,9 @@ both forms (`SeMarking.HasChoice`).
 
 ## Implementation notes
 
-The voice flavours are the substrate's non-thematic and reflexive flavours after
-[schaefer-2008], and the entailment profiles of anticausative subjects the substrate's; the
+The voice flavours are the non-thematic and reflexive Voice heads of
+`Syntax/Minimalist/Verbal/Voice.lean` after [schaefer-2008], and the entailments of an
+anticausative's sole argument are those of the French fragment's entries; the
 account presupposes the reflexive–anticausative syncretism of [koontz-garboden-2009]. The
 experiments' rating means are described in the paper and not represented.
 
@@ -48,20 +49,21 @@ open Minimalist.Voice ArgumentStructure French.Verbs
 
 /-! ### The classes -/
 
-/-- The morphological class of an anticausative: the bare form only, *changer de position*;
-the *se* form only, *s'affaiblir*; or both, *casser*, *plier*, *rougir*. -/
+/-- The morphological class of an anticausative is whether it has the bare form only, as
+*changer de position*, the *se* form only, as *s'affaiblir*, or both, as *casser*, *plier* and
+*rougir*. -/
 inductive SeMarking where
   | minusSe
   | plusSe
   | plusMinusSe
   deriving DecidableEq
 
-/-- Whether the speaker has a choice of form: only the verbs with both forms. -/
+/-- The speaker has a choice of form only for a verb with both forms. -/
 def SeMarking.HasChoice : SeMarking → Prop
   | .plusMinusSe => True
   | _ => False
 
-instance : DecidablePred SeMarking.HasChoice := λ m => by
+instance : DecidablePred SeMarking.HasChoice := fun m ↦ by
   cases m <;> unfold SeMarking.HasChoice <;> infer_instance
 
 /-- Whether the change a verb names is typically under its human undergoer's control (§1.1):
@@ -84,17 +86,17 @@ inductive ResponsibilityGoal where
   | conveyResponsibility
   deriving DecidableEq
 
-/-- The control level is not derivable from the entailment profile: the limited-control
+/-- The control level is not derivable from the entailment profile, since the limited-control
 *rougir* and the in-control *refroidir* share one. -/
 theorem control_level_not_from_entailments :
-    rougir.subjectEntailments = refroidir.subjectEntailments := by decide
+    rougir.objectEntailments = refroidir.objectEntailments := by decide
 
 /-- Movement entailments suffice for in-control status, *approcher*, but are not necessary,
 *refroidir* being in-control without them. -/
 theorem movement_sufficient_not_necessary :
-    approcher.subjectEntailments = some motionCosSubjectProfile ∧
-      refroidir.subjectEntailments = some cosSubjectProfile ∧
-      motionCosSubjectProfile.movement = true ∧ cosSubjectProfile.movement = false := by
+    approcher.objectEntailments = some movingUndergoer ∧
+      refroidir.objectEntailments = some undergoer ∧
+      movingUndergoer.movement = true ∧ undergoer.movement = false := by
   decide
 
 /-! ### The voice ambiguity of *se* -/
@@ -105,21 +107,21 @@ inductive Form where
   | se
   deriving DecidableEq
 
-/-- The paper's two flavours of Voice for a French anticausative: the non-thematic Voice of the
-marked anticausative, `Minimalist.Voice.anticausative`, and the reflexive Voice,
+/-- The paper's two flavours of Voice for a French anticausative are the non-thematic Voice of
+the marked anticausative, `Minimalist.Voice.anticausative`, and the reflexive Voice,
 `Minimalist.Voice.reflexive`. -/
 inductive Flavor where
   | nonThematic
   | reflexive
   deriving DecidableEq, Repr
 
-/-- The substrate head each flavour is. -/
+/-- The Voice head each flavour is. -/
 def Flavor.head : Flavor → Head
   | .nonThematic => Minimalist.Voice.anticausative
   | .reflexive => Minimalist.Voice.reflexive
 
-/-- The voice flavours a form admits: the bare form only the non-thematic anticausative, the
-*se* form the reflexive as well, the syncretism of [schaefer-2008] and
+/-- The voice flavours a form admits. The bare form admits only the non-thematic anticausative
+and the *se* form the reflexive as well, the syncretism of [schaefer-2008] and
 [koontz-garboden-2009]. -/
 def Form.voiceOptions : Form → List Flavor
   | .bare => [.nonThematic]
@@ -129,12 +131,12 @@ def Form.voiceOptions : Form → List Flavor
 theorem se_ambiguous :
     (∀ f : Form, Flavor.nonThematic ∈ f.voiceOptions) ∧
       Flavor.reflexive ∈ Form.se.voiceOptions ∧ Flavor.reflexive ∉ Form.bare.voiceOptions := by
-  refine ⟨λ f => ?_, by decide, by decide⟩
+  refine ⟨fun f ↦ ?_, by decide, by decide⟩
   cases f <;> decide
 
 /-! ### Managing the ambiguity (§2) -/
 
-/-- The agent bias: the reflexive parse of the *se* form is salient for a human argument. -/
+/-- The agent bias makes the reflexive parse of the *se* form salient for a human argument. -/
 def ReflexiveSalient : Animacy → Prop
   | .human => True
   | .nonhuman => False
@@ -145,10 +147,10 @@ def ReflexiveClashes : ControlLevel → Prop
   | .limitedControl => True
   | .inControl => False
 
-instance : DecidablePred ReflexiveSalient := λ a => by
+instance : DecidablePred ReflexiveSalient := fun a ↦ by
   cases a <;> unfold ReflexiveSalient <;> infer_instance
 
-instance : DecidablePred ReflexiveClashes := λ c => by
+instance : DecidablePred ReflexiveClashes := fun c ↦ by
   cases c <;> unfold ReflexiveClashes <;> infer_instance
 
 /-- The preferred form of a verb with a choice. -/
@@ -157,11 +159,11 @@ inductive Preference where
   | marked
   deriving DecidableEq
 
-/-- The predicted preference, from the Manner supermaxim: where the reflexive parse is salient,
-avoid the ambiguous form when that parse misleads and keep it when the bare form's inference
-that no agent was intended misleads instead; where no parse is salient, the marked form only
-when the speaker means to convey responsibility, the reflexive parse being the only way to
-assign a nonhuman agency. -/
+/-- The preference the Manner supermaxim predicts. Where the reflexive parse is salient, the
+speaker avoids the ambiguous form when that parse misleads and keeps it when the bare form's
+inference that no agent was intended misleads instead; where no parse is salient, the marked
+form is preferred only when the speaker means to convey responsibility, the reflexive parse
+being the only way to assign a nonhuman agency. -/
 def preference (ctrl : ControlLevel) (anim : Animacy) (goal : ResponsibilityGoal) :
     Option Preference :=
   if ReflexiveSalient anim then some (if ReflexiveClashes ctrl then .unmarked else .marked)
@@ -169,9 +171,10 @@ def preference (ctrl : ControlLevel) (anim : Animacy) (goal : ResponsibilityGoal
     | .neutral => none
     | .conveyResponsibility => some .marked
 
-/-- The three generalizations: the unmarked limited-control preference and the marked
-in-control preference with a human argument, the marked responsibility preference with a
-nonhuman one, and no preference for a nonhuman argument otherwise. -/
+/-- The three generalizations hold. With a human argument the limited-control verbs prefer the
+unmarked form and the in-control verbs the marked one, with a nonhuman argument the marked
+form is preferred to convey responsibility, and otherwise a nonhuman argument yields no
+preference. -/
 theorem generalizations (g : ResponsibilityGoal) (c : ControlLevel) :
     preference .limitedControl .human g = some .unmarked ∧
       preference .inControl .human g = some .marked ∧
@@ -179,7 +182,7 @@ theorem generalizations (g : ResponsibilityGoal) (c : ControlLevel) :
       preference c .nonhuman .neutral = none := by
   cases g <;> cases c <;> decide
 
-/-- Against the causation claim of [labelle-1992] and [labelle-doron-2010]: the same class of
+/-- Against the causation claim of [labelle-1992] and [labelle-doron-2010], the same class of
 verbs with a choice shows opposite preferences by control level, which no uniform semantic
 difference between the two forms could produce. -/
 theorem opposite_preferences_falsify_uniform_semantics (g : ResponsibilityGoal) :
@@ -188,10 +191,10 @@ theorem opposite_preferences_falsify_uniform_semantics (g : ResponsibilityGoal) 
 
 /-! ### Unaccusativity -/
 
-/-- The anticausative subject profiles predict unaccusativity: no volition, no causation, a
-patient. -/
+/-- The entailments of the anticausatives' sole argument predict unaccusativity, since they
+impose no volition and no causation and include a patient entailment. -/
 theorem cos_profiles_unaccusative :
-    PredictsUnaccusative cosSubjectProfile ∧ PredictsUnaccusative motionCosSubjectProfile := by
+    PredictsUnaccusative undergoer ∧ PredictsUnaccusative movingUndergoer := by
   decide
 
 end MartinSchaeferKastner2025

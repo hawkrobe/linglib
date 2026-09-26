@@ -4,16 +4,37 @@ public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # French verbs
-[song-1996]
 
-French causative predicates, centered on the *faire* causative.
-[song-1996] classifies *faire* as a COMPACT causative with free morpheme
-realization: the causative and effect verbs form a tight syntactic unit
-despite being separate words.
+This file defines the French verb entries: the causatives *faire* and *laisser*, the
+anticausatives of the causative alternation whose *se* is optional, and the transitive verbs
+whose passive agent is marked by *par* or *de*. An entry is a `Verb` with its argument frames
+and the proto-role entailments of its arguments in the sense of Dowty. Martin, Schäfer and
+Kastner sort the anticausatives by whether a human undergoer typically controls the change,
+and Staps and Rooryck group the transitive verbs by the agent preposition they take; both
+classifications are the papers' and live in their studies, while the entries here carry the
+frames and entailments the classifications are read from. A polysemous verb has one entry per
+sense, told apart by its `SenseTag`.
 
-"Je ferai lire le livre à Nicole" = "I will make Nicole read the book"
-(faire + infinitive = single predicate for case marking purposes)
+## Main definitions
 
+* `undergoer`, `movingUndergoer`: the entailments of an anticausative's sole argument, without
+  and with movement.
+* `independentParticipant`, `companionSubject`, `neglectSubject`: the entailments of the
+  arguments the transitive entries do not share with a template.
+* `allVerbs`: the entries.
+
+## Implementation notes
+
+The citation frame of an anticausative is `ArgumentFrame.unaccusative`, so its sole argument
+is the object slot and its entailments are the entry's `objectEntailments`; the transitive
+frame of the alternation is the second frame. The entries record no inflectional forms.
+
+## References
+
+* [dowty-1991]
+* [martin-schaefer-kastner-2025]
+* [staps-rooryck-2024]
+* [authier-revuz-1972]
 -/
 
 @[expose] public section
@@ -21,390 +42,178 @@ despite being separate words.
 namespace French.Verbs
 
 open ArgumentStructure
-open ArgumentStructure
-open ArgumentStructure (experiencerProfile)
 
-/-- French verb entry: extends Verb with French inflectional paradigm. -/
-structure FrenchVerbEntry extends Verb where
-  /-- 3sg present -/
-  form3sg : String
-  /-- Passé simple -/
-  formPasse : String
-  /-- Participe passé -/
-  formPartPasse : String
-  /-- Participe présent -/
-  formPartPres : String
-  deriving BEq
+/-! ### Causatives -/
 
-/-- faire — COMPACT causative (free morpheme). -/
-def faire : FrenchVerbEntry where
+/-- *faire* 'make', the causative that forms one predicate with its infinitive, as in *faire
+lire* 'make read'. -/
+def faire : Verb where
   form := "faire"
-  form3sg := "fait"
-  formPasse := "fit"
-  formPartPasse := "fait"
-  formPartPres := "faisant"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
-/-- laisser — permissive causative ("let"). -/
-def laisser : FrenchVerbEntry where
+/-- *laisser* 'let', the permissive causative. -/
+def laisser : Verb where
   form := "laisser"
-  form3sg := "laisse"
-  formPasse := "laissa"
-  formPartPasse := "laissé"
-  formPartPres := "laissant"
   frames := [ArgumentFrame.smallClause]
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .enable
 
-/-- French *faire* uses `.make` builder. -/
-theorem faire_is_make :
-    faire.causative = some .make := rfl
+/-! ### Anticausatives
 
-/-- French *laisser* uses `.enable` builder (permissive). -/
-theorem laisser_is_enable :
-    laisser.causative = some .enable := rfl
+The anticausatives with an optional *se* that Martin, Schäfer and Kastner test: the verbs of
+their experiment 1a, whose change a human undergoer typically does not control, and the verbs
+of their experiment 1b, whose change the undergoer typically controls. -/
 
-/-- *faire* and *laisser* have different builders (make vs enable). -/
-theorem faire_laisser_different :
-    faire.causative ≠ laisser.causative := by decide
+/-- The sole argument of an anticausative undergoes the change, is causally affected and
+exists independently of the event. It is not entailed to be sentient, as *le mur rougit* 'the
+wall reddened' shows, nor to be stationary, which is relative to another participant. -/
+def undergoer : EntailmentProfile :=
+  { independentExistence := true, changeOfState := true, causallyAffected := true }
 
--- ============================================================================
--- § Change-of-state verbs: property-change anticausative profile
--- [martin-schaefer-kastner-2025] experiments 1a & 1b
--- ============================================================================
+/-- The sole argument of an anticausative of motion or posture is an `undergoer` that also
+moves. -/
+def movingUndergoer : EntailmentProfile := { undergoer with movement := true }
 
-/-- Entailment profile for anticausative subjects of property-change verbs.
-    Shared by both limited-control (*rougir*, *brunir*) and in-control
-    (*durcir*, *refroidir*) property-change verbs — the control
-    classification reflects world knowledge, not lexical entailments.
-    Sentience is false: non-sentient subjects are possible (*le mur
-    rougit* 'the wall reddened'). Stationary is false: Dowty's
-    `stationary` is relative to another participant, not applicable
-    to sole arguments of intransitive verbs. -/
-def cosSubjectProfile : EntailmentProfile where
-  volition := false; sentience := false; causation := false
-  movement := false; independentExistence := true
-  changeOfState := true; incrementalTheme := false
-  causallyAffected := true; stationary := false
-  dependentExistence := false
+/-- The entry of an anticausative with an optional *se* has the unaccusative frame as its
+citation frame and the transitive frame of the alternation after it. -/
+def anticausative (form : String) (arg : EntailmentProfile := undergoer) : Verb :=
+  { form, frames := [ArgumentFrame.unaccusative, ArgumentFrame.np], objectEntailments := some arg }
 
-/-- brunir — 'turn brown(er)'. Limited-control ±se AC-verb. -/
-def brunir : FrenchVerbEntry where
-  form := "brunir"; form3sg := "brunit"; formPasse := "brunit"
-  formPartPasse := "bruni"; formPartPres := "brunissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+/-- *brunir* 'turn brown(er)' ([martin-schaefer-kastner-2025] (31)). -/
+def brunir : Verb := anticausative "brunir"
 
-/-- noircir — 'blacken, darken'. Limited-control ±se AC-verb. -/
-def noircir : FrenchVerbEntry where
-  form := "noircir"; form3sg := "noircit"; formPasse := "noircit"
-  formPartPasse := "noirci"; formPartPres := "noircissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+/-- *noircir* 'blacken' ([martin-schaefer-kastner-2025] (31)). -/
+def noircir : Verb := anticausative "noircir"
 
-/-- pâlir — 'get pale'. Limited-control ±se AC-verb. -/
-def palir : FrenchVerbEntry where
-  form := "pâlir"; form3sg := "pâlit"; formPasse := "pâlit"
-  formPartPasse := "pâli"; formPartPres := "pâlissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+/-- *pâlir* 'get pale' ([martin-schaefer-kastner-2025] (31)). -/
+def palir : Verb := anticausative "pâlir"
 
-/-- rajeunir — 'get young(er), rejuvenate'. Limited-control ±se AC-verb. -/
-def rajeunir : FrenchVerbEntry where
-  form := "rajeunir"; form3sg := "rajeunit"; formPasse := "rajeunit"
-  formPartPasse := "rajeuni"; formPartPres := "rajeunissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+/-- *rajeunir* 'get young(er)' ([martin-schaefer-kastner-2025] (31)). -/
+def rajeunir : Verb := anticausative "rajeunir"
 
-/-- rougir — 'redden, blush'. Limited-control ±se AC-verb. -/
-def rougir : FrenchVerbEntry where
-  form := "rougir"; form3sg := "rougit"; formPasse := "rougit"
-  formPartPasse := "rougi"; formPartPres := "rougissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+/-- *rougir* 'redden, blush' ([martin-schaefer-kastner-2025] (31)). -/
+def rougir : Verb := anticausative "rougir"
 
--- ============================================================================
--- § Change-of-state verbs: motion anticausative profile
--- [martin-schaefer-kastner-2025] experiment 1b (motion verbs)
--- ============================================================================
+/-- *approcher (de)* 'get close(r) to', whose undergoer moves
+([martin-schaefer-kastner-2025] (40)). -/
+def approcher : Verb := anticausative "approcher" movingUndergoer
 
-/-- Entailment profile for anticausative subjects of motion/posture
-    change-of-state verbs: like `cosSubjectProfile` but with `movement`
-    (the change involves physical displacement or posture reconfiguration).
-    Used for *approcher* 'get close' and *plier* 'bend', both in-control
-    verbs. Non-motion in-control verbs (*durcir*, *refroidir*) use
-    `cosSubjectProfile` instead. -/
-def motionCosSubjectProfile : EntailmentProfile where
-  volition := false; sentience := false; causation := false
-  movement := true; independentExistence := true
-  changeOfState := true; incrementalTheme := false
-  causallyAffected := true; stationary := false
-  dependentExistence := false
+/-- *durcir* 'harden' ([martin-schaefer-kastner-2025] (40)). -/
+def durcir : Verb := anticausative "durcir"
 
-/-- approcher (de) — 'get close(r) to'. In-control ±se AC-verb (motion). -/
-def approcher : FrenchVerbEntry where
-  form := "approcher"; form3sg := "approche"; formPasse := "approcha"
-  formPartPasse := "approché"; formPartPres := "approchant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some motionCosSubjectProfile
+/-- *plier* 'bend', whose undergoer changes posture ([martin-schaefer-kastner-2025] (40)). -/
+def plier : Verb := anticausative "plier" movingUndergoer
 
-/-- durcir — 'harden'. In-control ±se AC-verb (property-change). -/
-def durcir : FrenchVerbEntry where
-  form := "durcir"; form3sg := "durcit"; formPasse := "durcit"
-  formPartPasse := "durci"; formPartPres := "durcissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+/-- *radoucir* 'get soft(er)' ([martin-schaefer-kastner-2025] (40)). -/
+def radoucir : Verb := anticausative "radoucir"
 
-/-- plier — 'bend, fold'. In-control ±se AC-verb (motion). -/
-def plier : FrenchVerbEntry where
-  form := "plier"; form3sg := "plie"; formPasse := "plia"
-  formPartPasse := "plié"; formPartPres := "pliant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some motionCosSubjectProfile
+/-- *refroidir* 'get cold(er)' ([martin-schaefer-kastner-2025] (40)). -/
+def refroidir : Verb := anticausative "refroidir"
 
-/-- radoucir — 'get soft(er)'. In-control ±se AC-verb (property-change). -/
-def radoucir : FrenchVerbEntry where
-  form := "radoucir"; form3sg := "radoucit"; formPasse := "radoucit"
-  formPartPasse := "radouci"; formPartPres := "radoucissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+/-! ### Transitive verbs
 
-/-- refroidir — 'get cold(er)'. In-control ±se AC-verb (property-change). -/
-def refroidir : FrenchVerbEntry where
-  form := "refroidir"; form3sg := "refroidit"; formPasse := "refroidit"
-  formPartPasse := "refroidi"; formPartPres := "refroidissant"
-  frames := [ArgumentFrame.intransitive]
-  subjectEntailments := some cosSubjectProfile
+The verbs of Staps and Rooryck's Table 1 and of the sections that follow it, with the
+proto-role entailments of their subject and object. The prototypically transitive verbs have
+the accomplishment template's profiles, the psych verbs an experiencer subject, and the verbs
+of following and accompaniment an object that merely exists independently of the event. -/
 
--- ============================================================================
--- § Passive Agent preposition selection: par vs de
--- [staps-rooryck-2024]
--- ============================================================================
+/-- An argument entailed only to exist independently of the event, neither agentive nor
+affected: the object of a psych verb or of a verb of accompaniment, and the subject of a
+stative positional verb. -/
+def independentParticipant : EntailmentProfile := { independentExistence := true }
 
-/-- Prototypical transitive subject: V+S+C+M+IE (5 P-Ag).
-    [dowty-1991]'s canonical agent — the `accomplishmentSubjectProfile`
-    template default. Used for *laver*, *écrire*, *construire*, *tuer*, etc. -/
-abbrev protoTransSubjectProfile := accomplishmentSubjectProfile
+/-- The subject of *accompagner* is sentient and moves but is not entailed to be volitional,
+since the accompanying party may merely watch ([staps-rooryck-2024] §3.2). -/
+def companionSubject : EntailmentProfile :=
+  { sentience := true, movement := true, independentExistence := true }
 
-/-- Prototypical transitive object: CoS+CA (2 P-Pat).
-    Used for *laver*, *tuer*, etc. -/
-def protoTransObjectProfile : EntailmentProfile where
-  volition := false; sentience := false; causation := false
-  movement := false; independentExistence := false
-  changeOfState := true; incrementalTheme := false
-  causallyAffected := true; stationary := false
-  dependentExistence := false
+/-- The subject of the neglect reading of *abandonner* and *délaisser* is volitional and
+sentient but brings about no change. -/
+def neglectSubject : EntailmentProfile :=
+  { volition := true, sentience := true, independentExistence := true }
 
-/-- Experiencer subject: S+IE (2 P-Ag).
-    [dowty-1991]'s experiencer — `ArgumentStructure.experiencerProfile`,
-    the perception/psych-state class subject. Used for *aimer*, *adorer*,
-    *respecter*. -/
-abbrev experiencerSubjectProfile := experiencerProfile
+/-- The entry of a transitive verb with the given subject and object entailments, Vendler
+class and sense. -/
+def transitive (form : String) (subj obj : EntailmentProfile) (cls : Aspect.VendlerClass)
+    (tag : SenseTag := .default) : Verb :=
+  { form, frames := [ArgumentFrame.np], subjectEntailments := some subj,
+    objectEntailments := some obj, vendlerClass := some cls, senseTag := tag }
 
-/-- Minimal participant: IE only (1 P-Ag, 0 P-Pat).
-    The participant exists independently of the event but has no
-    agentive involvement (no volition, causation, movement) and no
-    patientive involvement (no change, affectedness).
+/-- *laver* 'wash' ([staps-rooryck-2024] Table 1). -/
+def laver : Verb :=
+  transitive "laver" accomplishmentSubjectProfile accomplishmentObjectProfile .accomplishment
 
-    Used for:
-    - Objects of psych verbs (*aimer*, *adorer*, *respecter*): the stimulus
-    - Objects of accompaniment/following verbs (*accompagner*, *suivre*,
-      *précéder*): the co-participant
-    - Subjects of stative positional verbs (*précéder*, stative *suivre*):
-      the entity in a fixed relation -/
-def minimalParticipantProfile : EntailmentProfile where
-  volition := false; sentience := false; causation := false
-  movement := false; independentExistence := true
-  changeOfState := false; incrementalTheme := false
-  causallyAffected := false; stationary := false
-  dependentExistence := false
+/-- *briser* 'break' ([staps-rooryck-2024] Table 1). -/
+def briser : Verb :=
+  transitive "briser" accomplishmentSubjectProfile accomplishmentObjectProfile .achievement
 
-/-- Stative positional subjects have the same profile as minimal
-    participants: IE only. The subject of *précéder* and the object
-    of *aimer* occupy the same proto-role space — both have no
-    agentive or patientive entailments beyond independent existence. -/
-abbrev stativePositionalSubjectProfile := minimalParticipantProfile
+/-- *écrire* 'write', a verb of creation ([staps-rooryck-2024] Table 1). -/
+def ecrire : Verb :=
+  transitive "écrire" accomplishmentSubjectProfile creationObject .accomplishment
 
-/-- Dynamic motion subject: V+S+M+IE (4 P-Ag).
-    The `activitySubjectProfile` template default (self-motion class) —
-    volitional self-propelled motion without causing a change in another
-    participant. Used for dynamic *suivre* ('follow' with volition). -/
-abbrev dynamicFollowSubjectProfile := activitySubjectProfile
+/-- *construire* 'build', a verb of creation ([staps-rooryck-2024] Table 1). -/
+def construire : Verb :=
+  transitive "construire" accomplishmentSubjectProfile creationObject .accomplishment
 
-/-- Accompany subject: S+M+IE (3 P-Ag).
-    Used for *accompagner*. Movement without obligatory volition:
-    the accompaniment may or may not be volitional (parents
-    accompanying children may be passive observers). -/
-def accompanySubjectProfile : EntailmentProfile where
-  volition := false; sentience := true; causation := false
-  movement := true; independentExistence := true
-  changeOfState := false; incrementalTheme := false
-  causallyAffected := false; stationary := false
-  dependentExistence := false
+/-- *tuer* 'kill', whose object does not survive the event ([staps-rooryck-2024] Table 1). -/
+def tuer : Verb :=
+  transitive "tuer" accomplishmentSubjectProfile
+    { accomplishmentObjectProfile with dependentExistence := true } .achievement
 
--- laver — 'wash'. Prototypical transitive: par only.
-def laver : FrenchVerbEntry where
-  form := "laver"; form3sg := "lave"; formPasse := "lava"
-  formPartPasse := "lavé"; formPartPres := "lavant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some protoTransSubjectProfile
-  objectEntailments := some protoTransObjectProfile
-  vendlerClass := some .accomplishment
+/-- *aimer* 'love', a stative psych verb ([staps-rooryck-2024] Table 1). -/
+def aimer : Verb := transitive "aimer" experiencerProfile independentParticipant .state
 
--- écrire — 'write'. Creation verb: par only.
-def ecrire : FrenchVerbEntry where
-  form := "écrire"; form3sg := "écrit"; formPasse := "écrivit"
-  formPartPasse := "écrit"; formPartPres := "écrivant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some protoTransSubjectProfile
-  objectEntailments := some { protoTransObjectProfile with
-    incrementalTheme := true, dependentExistence := true }
-  vendlerClass := some .accomplishment
+/-- *adorer* 'adore, worship', a stative psych verb ([staps-rooryck-2024] §3.2). -/
+def adorer : Verb := transitive "adorer" experiencerProfile independentParticipant .state
 
--- construire — 'build'. Creation verb: par only.
-def construire : FrenchVerbEntry where
-  form := "construire"; form3sg := "construit"; formPasse := "construisit"
-  formPartPasse := "construit"; formPartPres := "construisant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some protoTransSubjectProfile
-  objectEntailments := some { protoTransObjectProfile with
-    incrementalTheme := true, dependentExistence := true }
-  vendlerClass := some .accomplishment
+/-- *respecter* 'respect', a stative psych verb ([staps-rooryck-2024] Table 1). -/
+def respecter : Verb := transitive "respecter" experiencerProfile independentParticipant .state
 
--- tuer — 'kill'. Highly transitive: par only.
-def tuer : FrenchVerbEntry where
-  form := "tuer"; form3sg := "tue"; formPasse := "tua"
-  formPartPasse := "tué"; formPartPres := "tuant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some protoTransSubjectProfile
-  objectEntailments := some { protoTransObjectProfile with
-    dependentExistence := true }
-  vendlerClass := some .achievement
+/-- *accompagner* 'accompany' ([staps-rooryck-2024] §3.2). -/
+def accompagner : Verb :=
+  transitive "accompagner" companionSubject independentParticipant .activity
 
--- aimer — 'love'. Psych stative: both par and de.
-def aimer : FrenchVerbEntry where
-  form := "aimer"; form3sg := "aime"; formPasse := "aima"
-  formPartPasse := "aimé"; formPartPres := "aimant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some experiencerSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .state
+/-- *suivre* 'follow' in its goal-directed sense, with a volitional subject
+([staps-rooryck-2024] §3.3). -/
+def suivreDyn : Verb :=
+  transitive "suivre" activitySubjectProfile independentParticipant .activity
 
--- adorer — 'adore, worship'. Psych stative: both par and de.
-def adorer : FrenchVerbEntry where
-  form := "adorer"; form3sg := "adore"; formPasse := "adora"
-  formPartPasse := "adoré"; formPartPres := "adorant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some experiencerSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .state
+/-- *suivre* 'follow' in its stative positional sense, a purely spatial relation
+([staps-rooryck-2024] §3.3). -/
+def suivreStat : Verb :=
+  transitive "suivre" independentParticipant independentParticipant .state .stative
 
--- respecter — 'respect'. Psych stative: both par and de.
-def respecter : FrenchVerbEntry where
-  form := "respecter"; form3sg := "respecte"; formPasse := "respecta"
-  formPartPasse := "respecté"; formPartPres := "respectant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some experiencerSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .state
+/-- *précéder* 'precede' in its stative positional sense ([staps-rooryck-2024] §3.3). -/
+def preceder : Verb :=
+  transitive "précéder" independentParticipant independentParticipant .state
 
--- accompagner — 'accompany'. Par/de depending on involvement.
-def accompagner : FrenchVerbEntry where
-  form := "accompagner"; form3sg := "accompagne"; formPasse := "accompagna"
-  formPartPasse := "accompagné"; formPartPres := "accompagnant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some accompanySubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .activity
+/-- *abandonner* 'abandon' in its telic sense, an event of leaving behind
+([staps-rooryck-2024] §3.4, with examples from [authier-revuz-1972]). -/
+def abandonner : Verb :=
+  transitive "abandonner" accomplishmentSubjectProfile accomplishmentObjectProfile
+    .accomplishment
 
--- suivre — 'follow' (dynamic reading). Par preferred.
-def suivreDyn : FrenchVerbEntry where
-  form := "suivre"; form3sg := "suit"; formPasse := "suivit"
-  formPartPasse := "suivi"; formPartPres := "suivant"
-  frames := [ArgumentFrame.np]
-  senseTag := .default
-  subjectEntailments := some dynamicFollowSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .activity
+/-- *abandonner* 'neglect' in its atelic stative sense ([staps-rooryck-2024] §3.4, with
+examples from [authier-revuz-1972]). -/
+def abandonnerStat : Verb :=
+  transitive "abandonner" neglectSubject independentParticipant .state .stative
 
--- suivre — 'follow' (stative/positional reading). De preferred.
-def suivreStat : FrenchVerbEntry where
-  form := "suivre"; form3sg := "suit"; formPasse := "suivit"
-  formPartPasse := "suivi"; formPartPres := "suivant"
-  frames := [ArgumentFrame.np]
-  senseTag := .stative
-  subjectEntailments := some stativePositionalSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .state
+/-- *délaisser* 'leave behind' in its telic sense ([staps-rooryck-2024] §3.4). -/
+def delaisser : Verb :=
+  transitive "délaisser" accomplishmentSubjectProfile accomplishmentObjectProfile
+    .accomplishment
 
--- précéder — 'precede'. Stative: de preferred.
-def preceder : FrenchVerbEntry where
-  form := "précéder"; form3sg := "précède"; formPasse := "précéda"
-  formPartPasse := "précédé"; formPartPres := "précédant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some stativePositionalSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .state
+/-- *délaisser* 'neglect' in its atelic stative sense ([staps-rooryck-2024] §3.4). -/
+def delaisserStat : Verb :=
+  transitive "délaisser" neglectSubject independentParticipant .state .stative
 
-/-- Neglecting subject: V+S+IE (3 P-Ag). Used for the atelic, stative reading of
-*abandonner* and *délaisser* ('neglect'): the subject brings about no change. -/
-def neglectSubjectProfile : EntailmentProfile where
-  volition := true; sentience := true; causation := false
-  movement := false; independentExistence := true
-  changeOfState := false; incrementalTheme := false
-  causallyAffected := false; stationary := false
-  dependentExistence := false
-
--- abandonner — 'abandon' (telic reading): par.
-def abandonner : FrenchVerbEntry where
-  form := "abandonner"; form3sg := "abandonne"; formPasse := "abandonna"
-  formPartPasse := "abandonné"; formPartPres := "abandonnant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some protoTransSubjectProfile
-  objectEntailments := some protoTransObjectProfile
-  vendlerClass := some .accomplishment
-
--- abandonner — 'neglect' (atelic, stative reading): par/de ([authier-revuz-1972]).
-def abandonnerStat : FrenchVerbEntry where
-  form := "abandonner"; form3sg := "abandonne"; formPasse := "abandonna"
-  formPartPasse := "abandonné"; formPartPres := "abandonnant"
-  frames := [ArgumentFrame.np]
-  senseTag := .stative
-  subjectEntailments := some neglectSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .state
-
--- délaisser — 'abandon' (telic reading): par.
-def delaisser : FrenchVerbEntry where
-  form := "délaisser"; form3sg := "délaisse"; formPasse := "délaissa"
-  formPartPasse := "délaissé"; formPartPres := "délaissant"
-  frames := [ArgumentFrame.np]
-  subjectEntailments := some protoTransSubjectProfile
-  objectEntailments := some protoTransObjectProfile
-  vendlerClass := some .accomplishment
-
--- délaisser — 'neglect' (atelic, stative reading): par/de.
-def delaisserStat : FrenchVerbEntry where
-  form := "délaisser"; form3sg := "délaisse"; formPasse := "délaissa"
-  formPartPasse := "délaissé"; formPartPres := "délaissant"
-  frames := [ArgumentFrame.np]
-  senseTag := .stative
-  subjectEntailments := some neglectSubjectProfile
-  objectEntailments := some minimalParticipantProfile
-  vendlerClass := some .state
-
-def allVerbs : List FrenchVerbEntry :=
+/-- `allVerbs` lists the entries. -/
+def allVerbs : List Verb :=
   [faire, laisser,
-   brunir, noircir, palir, rajeunir, rougir,
-   approcher, durcir, plier, radoucir, refroidir,
-   laver, ecrire, construire, tuer,
-   aimer, adorer, respecter, accompagner,
-   suivreDyn, suivreStat, preceder,
-   abandonner, abandonnerStat, delaisser, delaisserStat]
-
-def lookup (form : String) : Option FrenchVerbEntry :=
-  allVerbs.find? (·.form == form)
+   brunir, noircir, palir, rajeunir, rougir, approcher, durcir, plier, radoucir, refroidir,
+   laver, briser, ecrire, construire, tuer, aimer, adorer, respecter, accompagner,
+   suivreDyn, suivreStat, preceder, abandonner, abandonnerStat, delaisser, delaisserStat]
 
 end French.Verbs
